@@ -238,26 +238,48 @@
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
+            gap: 10px;
+            padding: 10px 18px;
             background: linear-gradient(
                 135deg,
-                rgba(255, 255, 255, 0.06) 0%,
-                rgba(255, 255, 255, 0.02) 100%
+                rgba(255, 255, 255, 0.08) 0%,
+                rgba(255, 255, 255, 0.03) 50%,
+                rgba(255, 255, 255, 0.06) 100%
             );
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 100px;
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
             font-size: 0.8125rem;
             font-weight: 500;
             color: var(--text-secondary);
             margin-bottom: 40px;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        .status-badge .icon {
-            font-size: 0.75rem;
+        .status-orb {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #888;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-orb.online {
+            background: #22c55e;
+            animation: pulse-green 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { opacity: 0.7; transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            50% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 8px 2px rgba(34, 197, 94, 0.3); }
         }
 
         .hero h1 {
@@ -872,7 +894,7 @@
         <section class="hero">
             <div class="container">
                 <div class="status-badge" id="status-badge">
-                    <span class="icon">&#10033;</span>
+                    <div class="status-orb" id="status-orb"></div>
                     <span id="status-text">Checking status...</span>
                 </div>
 
@@ -1255,17 +1277,18 @@
         // Health check
         async function checkHealth() {
             const badge = document.getElementById('status-badge');
+            const orb = document.getElementById('status-orb');
             const text = document.getElementById('status-text');
             try {
                 const res = await fetch('https://jlcmcp.dev/health');
                 const data = await res.json();
                 if (data.status === 'healthy') {
-                    text.textContent = 'Server Online';
-                    badge.style.borderColor = '#22c55e';
-                    badge.querySelector('.icon').style.color = '#22c55e';
+                    text.textContent = 'MCP Server Online';
+                    badge.style.borderColor = 'rgba(34, 197, 94, 0.25)';
+                    orb.classList.add('online');
                 } else {
                     text.textContent = 'Degraded';
-                    badge.style.borderColor = '#f59e0b';
+                    badge.style.borderColor = 'rgba(245, 158, 11, 0.25)';
                 }
             } catch (e) {
                 text.textContent = 'Checking...';
