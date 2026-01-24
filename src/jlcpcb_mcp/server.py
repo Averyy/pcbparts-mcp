@@ -8,8 +8,8 @@ from typing import Any
 
 from fastmcp import FastMCP
 from mcp.types import ToolAnnotations
+from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 from starlette.routing import Route
 
@@ -274,21 +274,21 @@ async def health(request):
 # Create ASGI app
 def create_app():
     """Create the ASGI application."""
-    app = mcp.http_app(path="/mcp")
+    # Middleware list - rate limiting only (FastMCP handles CORS for MCP endpoints)
+    middleware = [
+        Middleware(RateLimitMiddleware, requests_per_minute=RATE_LIMIT_REQUESTS),
+    ]
+
+    # stateless_http=True required because Claude Code doesn't forward session cookies
+    app = mcp.http_app(
+        path="/mcp",
+        middleware=middleware,
+        transport="streamable-http",
+        stateless_http=True,
+    )
 
     # Add health check route
     app.routes.append(Route("/health", health))
-
-    # Add CORS for health check (browser requests)
-    app = CORSMiddleware(
-        app,
-        allow_origins=["*"],
-        allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["*"],
-    )
-
-    # Add rate limiting
-    app = RateLimitMiddleware(app)
 
     return app
 
