@@ -18,7 +18,25 @@ from .config import (
     MAX_ALTERNATIVES,
 )
 from .key_attributes import KEY_ATTRIBUTES
-from .manufacturer_aliases import MANUFACTURER_ALIASES
+from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
+import re
+
+def _normalize_manufacturer_name(name: str) -> str:
+    """Normalize manufacturer name for matching: lowercase, remove punctuation, collapse spaces."""
+    normalized = re.sub(r'[.,\-\(\)&]', ' ', name.lower())  # Replace punctuation with space
+    return re.sub(r'\s+', ' ', normalized).strip()  # Collapse multiple spaces
+
+# Build case-insensitive lookup for exact manufacturer names
+# This allows "molex" to match "MOLEX" without explicit aliases
+_MANUFACTURER_EXACT_NAMES: dict[str, str] = {name.lower(): name for name in KNOWN_MANUFACTURERS}
+
+# Build normalized lookups (without punctuation) for fuzzy matching
+_MANUFACTURER_ALIASES_NORMALIZED: dict[str, str] = {
+    _normalize_manufacturer_name(k): v for k, v in MANUFACTURER_ALIASES.items()
+}
+_MANUFACTURER_EXACT_NORMALIZED: dict[str, str] = {
+    _normalize_manufacturer_name(name): name for name in KNOWN_MANUFACTURERS
+}
 
 # Browser fingerprints for TLS impersonation
 BROWSER_FINGERPRINTS = ["chrome131", "chrome133a", "chrome136", "chrome142"]
@@ -138,10 +156,28 @@ class JLCPCBClient:
     def _resolve_manufacturer(self, name: str) -> str:
         """Resolve manufacturer alias to full name.
 
-        If the name matches an alias (case-insensitive), returns the full name.
-        Otherwise returns the original name unchanged.
+        Lookup order:
+        1. Check aliases exactly (case-insensitive)
+        2. Check exact manufacturer names (case-insensitive)
+        3. Check aliases with normalized punctuation
+        4. Check manufacturer names with normalized punctuation
+        5. Return original name unchanged
         """
-        return MANUFACTURER_ALIASES.get(name.lower(), name)
+        name_lower = name.lower()
+        # Check aliases first (abbreviations and alternate names)
+        if name_lower in MANUFACTURER_ALIASES:
+            return MANUFACTURER_ALIASES[name_lower]
+        # Check if it matches a known manufacturer name (case-insensitive)
+        if name_lower in _MANUFACTURER_EXACT_NAMES:
+            return _MANUFACTURER_EXACT_NAMES[name_lower]
+        # Try normalized matching (ignore punctuation like . , - & etc)
+        name_normalized = _normalize_manufacturer_name(name)
+        if name_normalized in _MANUFACTURER_ALIASES_NORMALIZED:
+            return _MANUFACTURER_ALIASES_NORMALIZED[name_normalized]
+        if name_normalized in _MANUFACTURER_EXACT_NORMALIZED:
+            return _MANUFACTURER_EXACT_NORMALIZED[name_normalized]
+        # Return original unchanged
+        return name
 
     def _resolve_manufacturers(self, names: list[str]) -> list[str]:
         """Resolve a list of manufacturer names/aliases."""
