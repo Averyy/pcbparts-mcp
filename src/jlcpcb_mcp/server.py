@@ -1,5 +1,6 @@
 """JLCPCB MCP Server - Search electronic components for PCB assembly."""
 
+import json
 import logging
 import time
 from collections import defaultdict
@@ -128,6 +129,45 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
+# Helpers to handle JSON string arrays from MCP clients
+def _parse_list_param(value: list[str] | str | None) -> list[str] | None:
+    """Parse a list parameter that may come as a JSON string from some MCP clients.
+
+    Claude Code's MCP client sometimes serializes list parameters as JSON strings
+    like '["a", "b"]' instead of actual arrays. This handles both cases.
+    """
+    if value is None:
+        return None
+    if isinstance(value, list):
+        return value
+    if isinstance(value, str):
+        try:
+            parsed = json.loads(value)
+            if isinstance(parsed, list):
+                return parsed
+        except json.JSONDecodeError:
+            pass
+    return None
+
+
+def _parse_parts_param(value: list[dict[str, Any]] | str) -> list[dict[str, Any]]:
+    """Parse a parts list parameter that may come as a JSON string.
+
+    For BOM tools where parts is required, handles both list and JSON string formats.
+    Returns empty list on parse failure (will be caught by validation).
+    """
+    if isinstance(value, list):
+        return value
+    if isinstance(value, str):
+        try:
+            parsed = json.loads(value)
+            if isinstance(parsed, list):
+                return parsed
+        except json.JSONDecodeError:
+            pass
+    return []
+
+
 # Tools
 
 @mcp.tool(
@@ -147,8 +187,8 @@ async def search_parts(
     library_type: str | None = None,
     package: str | None = None,
     manufacturer: str | None = None,
-    packages: list[str] | None = None,
-    manufacturers: list[str] | None = None,
+    packages: list[str] | str | None = None,
+    manufacturers: list[str] | str | None = None,
     sort_by: Literal["quantity", "price"] | None = None,
     page: int = 1,
     limit: int = 20,
@@ -188,6 +228,10 @@ async def search_parts(
     effective_page = max(1, page)
     effective_limit = max(1, min(limit, MAX_PAGE_SIZE))
 
+    # Parse list parameters (handles JSON strings from some MCP clients)
+    parsed_packages = _parse_list_param(packages)
+    parsed_manufacturers = _parse_list_param(manufacturers)
+
     return await _client.search(
         query=query,
         category_id=category_id,
@@ -196,8 +240,8 @@ async def search_parts(
         library_type=library_type if library_type != "all" else None,
         package=package,
         manufacturer=manufacturer,
-        packages=packages,
-        manufacturers=manufacturers,
+        packages=parsed_packages,
+        manufacturers=parsed_manufacturers,
         sort_by=sort_by,
         page=effective_page,
         limit=effective_limit,
@@ -506,7 +550,7 @@ async def _process_bom(
     )
 )
 async def validate_bom(
-    parts: list[dict[str, Any]],
+    parts: list[dict[str, Any]] | str,
     board_qty: int | None = None,
     min_stock: int = 0,
 ) -> dict:
@@ -542,8 +586,11 @@ async def validate_bom(
 
     Note: Issues are reported but don't block the response. Caller decides whether to proceed.
     """
+    # Parse parts parameter (handles JSON strings from some MCP clients)
+    parsed_parts = _parse_parts_param(parts)
+
     try:
-        sorted_parts, issues, summary = await _process_bom(parts, board_qty, min_stock)
+        sorted_parts, issues, summary = await _process_bom(parsed_parts, board_qty, min_stock)
     except ValueError as e:
         return {"error": str(e)}
 
@@ -591,7 +638,7 @@ async def validate_bom(
     )
 )
 async def export_bom(
-    parts: list[dict[str, Any]],
+    parts: list[dict[str, Any]] | str,
     board_qty: int | None = None,
     min_stock: int = 0,
 ) -> dict:
@@ -621,8 +668,11 @@ async def export_bom(
 
     Note: Prices are estimates and may change. Stock validation is point-in-time.
     """
+    # Parse parts parameter (handles JSON strings from some MCP clients)
+    parsed_parts = _parse_parts_param(parts)
+
     try:
-        sorted_parts, issues, summary = await _process_bom(parts, board_qty, min_stock)
+        sorted_parts, issues, summary = await _process_bom(parsed_parts, board_qty, min_stock)
     except ValueError as e:
         return {"error": str(e)}
 
