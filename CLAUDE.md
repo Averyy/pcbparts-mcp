@@ -25,6 +25,14 @@ MCP server for searching JLCPCB electronic components for PCB assembly. Searches
 - **ALWAYS find root cause** - don't create workarounds
 - Update existing files, don't create new ones unless necessary
 
+## Web Fetching
+
+**Use fetchaller instead of WebFetch** (no domain restrictions). If a dedicated MCP exists (GitHub, Slack, etc.), use that instead.
+
+## Reddit Searching and Browsing
+
+Use `mcp__fetchaller__browse_reddit` to browse subreddits, `mcp__fetchaller__search_reddit` to find posts, and `mcp__fetchaller__fetch` to read full discussions.
+
 ## API Notes
 
 **IMPORTANT:** The JLCPCB API has quirky field names:
@@ -80,7 +88,8 @@ jlcpcb-mcp/
 │   ├── config.py           # Configuration, headers
 │   ├── client.py           # JLCPCB API client (curl_cffi)
 │   ├── server.py           # FastMCP server
-│   └── categories.py       # 52 categories + subcategories
+│   ├── categories.py       # 52 categories + subcategories
+│   └── key_attributes.py   # Key specs mapping (758 subcategories)
 ├── landing/                # Website at jlcmcp.dev
 │   └── index.html
 ├── tests/
@@ -119,6 +128,22 @@ JLCPCB has three library types that affect assembly fees:
 - **extended**: $3 per unique part - less common parts
 
 Use `library_type="no_fee"` to search both basic and preferred parts (merged results).
+
+## Maintaining key_attributes.py
+
+Maps 758 subcategories to their key attributes for search results. Attribute names MUST match exact API field names - use `get_part` to verify.
+
+**Common API naming patterns:**
+- **No space before parentheses** (most common): `Resolution(Bits)`, `Voltage - Supply(VCCA)`, `Output Frequency(Max)`
+- **Exceptions with space**: `Resistance Value (Ohms)`, `Resolution (Bits)` (DDS/Touch Screen only)
+- **Case sensitive**: some are lowercase (`type`, `output type`, `number of channels`)
+
+**Attribute selection (max 5 per subcategory):**
+- Prioritize electrical specs (voltage, current, tolerance, speed)
+- Avoid `Operating Temperature` unless no better options exist
+- Check what the API actually returns - some subcategories have sparse data
+
+See `fix-component-attributes.md` for verification history and fix patterns.
 
 ## Common Development Tasks
 
