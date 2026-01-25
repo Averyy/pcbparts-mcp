@@ -91,7 +91,7 @@ Add to `.vscode/mcp.json`:
 |------|-------------|
 | `search_parts` | Search components with filters for category, stock, package(s), manufacturer(s), library type |
 | `get_part` | Get full details for a specific LCSC part code |
-| `find_alternatives` | Find similar parts with better stock in the same subcategory |
+| `find_alternatives` | Find similar parts in same subcategory with library_type, package, and EasyEDA filters |
 | `list_categories` | Get all 52 primary component categories |
 | `get_subcategories` | Get subcategories for a category |
 | `validate_bom` | Validate BOM parts, check stock/availability, calculate costs |
@@ -114,6 +114,17 @@ Add to `.vscode/mcp.json`:
 | `sort_by` | string | "quantity" (highest first) or "price" (cheapest first) |
 | `page` | int | Page number (default: 1) |
 | `limit` | int | Results per page (default: 20, max: 100) |
+
+### find_alternatives Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `lcsc` | string | LCSC part code to find alternatives for (e.g., "C82899") |
+| `min_stock` | int | Minimum stock for alternatives (default: 100) |
+| `same_package` | bool | Only return parts with the same package size |
+| `library_type` | string | "basic", "preferred", "no_fee", or "all" (default) to filter alternatives |
+| `has_easyeda_footprint` | bool | Filter by EasyEDA footprint availability |
+| `limit` | int | Max alternatives to return (default: 10, max: 50) |
 
 ## Example Prompts
 

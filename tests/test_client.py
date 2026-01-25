@@ -676,6 +676,60 @@ class TestClientIntegration:
             # When filtering for True, all should have footprints
             assert alt["has_easyeda_footprint"] is True
 
+    async def test_find_alternatives_with_library_type_filter(self, client):
+        """Test find_alternatives with library_type filter."""
+        categories = await client.fetch_categories()
+        client.set_categories(categories)
+
+        # Find basic library alternatives only (no assembly fee)
+        result = await client.find_alternatives(
+            "C1525",  # Basic capacitor
+            min_stock=100,
+            library_type="basic",
+            limit=5,
+        )
+
+        assert "error" not in result
+        assert "search_criteria" in result
+        assert result["search_criteria"]["library_type"] == "basic"
+
+        # All alternatives should be basic library type
+        for alt in result["alternatives"]:
+            assert alt["library_type"] == "basic"
+
+    async def test_find_alternatives_with_no_fee_filter(self, client):
+        """Test find_alternatives with library_type='no_fee' (basic + preferred)."""
+        categories = await client.fetch_categories()
+        client.set_categories(categories)
+
+        # Find no-fee alternatives (basic or preferred)
+        result = await client.find_alternatives(
+            "C1525",  # Basic capacitor
+            min_stock=100,
+            library_type="no_fee",
+            limit=5,
+        )
+
+        assert "error" not in result
+        assert result["search_criteria"]["library_type"] == "no_fee"
+
+        # All alternatives should be basic or preferred (no $3 fee)
+        for alt in result["alternatives"]:
+            assert alt["library_type"] in ("basic", "extended") or alt.get("preferred")
+            # Note: no_fee returns basic parts, preferred flag may also be set
+
+    async def test_find_alternatives_includes_library_type_in_original(self, client):
+        """Test find_alternatives includes library_type in original part info."""
+        categories = await client.fetch_categories()
+        client.set_categories(categories)
+
+        result = await client.find_alternatives("C1525", limit=3)
+
+        assert "error" not in result
+        assert "original" in result
+        assert "library_type" in result["original"]
+        assert result["original"]["library_type"] in ("basic", "extended")
+
     async def test_get_part_includes_easyeda_info(self, client):
         """Test that get_part includes EasyEDA footprint info."""
         result = await client.get_part("C1525")

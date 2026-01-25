@@ -114,7 +114,7 @@ jlcpcb-mcp/
 |------|-------------|
 | `search_parts` | Search components by keyword, category, filters, sorting |
 | `get_part` | Get full details for a specific LCSC part code |
-| `find_alternatives` | Find similar parts in same subcategory |
+| `find_alternatives` | Find similar parts in same subcategory with library_type, package, and EasyEDA filters |
 | `list_categories` | Get all 52 primary component categories |
 | `get_subcategories` | Get subcategories for a category |
 | `validate_bom` | Validate BOM parts, check stock/availability, calculate costs (no CSV) |
@@ -128,6 +128,19 @@ jlcpcb-mcp/
 - `easyeda_symbol_uuid` and `easyeda_footprint_uuid`: UUIDs for EasyEDA editor links
 
 Use `find_alternatives(has_easyeda_footprint=True)` to only get parts with EasyEDA footprints available.
+
+### find_alternatives Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `lcsc` | string | LCSC part code to find alternatives for (e.g., "C82899") |
+| `min_stock` | int | Minimum stock for alternatives (default: 100) |
+| `same_package` | bool | Only return parts with the same package size |
+| `library_type` | string | "basic", "preferred", "no_fee", or "all" (default) |
+| `has_easyeda_footprint` | bool | Filter by EasyEDA footprint availability |
+| `limit` | int | Max alternatives to return (default: 10, max: 50) |
+
+**Cost optimization:** Use `library_type="no_fee"` to find basic/preferred alternatives that avoid the $3 extended part fee.
 
 ### search_parts Filters
 

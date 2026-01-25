@@ -744,6 +744,7 @@ class JLCPCBClient:
         lcsc: str,
         min_stock: int = 100,
         same_package: bool = False,
+        library_type: str | None = None,
         has_easyeda_footprint: bool | None = None,
         limit: int = 10,
     ) -> dict[str, Any]:
@@ -755,6 +756,8 @@ class JLCPCBClient:
             lcsc: LCSC part code to find alternatives for (e.g., "C2557")
             min_stock: Minimum stock for alternatives (default: 100)
             same_package: If True, only return parts with the same package size
+            library_type: Filter by library type ("basic", "preferred", "no_fee", "extended")
+                          Use "no_fee" to find basic/preferred alternatives for extended parts.
             has_easyeda_footprint: If True, only return parts with EasyEDA footprints.
                                    If False, only parts without footprints.
                                    If None (default), don't filter by footprint.
@@ -768,6 +771,9 @@ class JLCPCBClient:
         effective_limit = max(1, min(limit, MAX_ALTERNATIVES))
         effective_min_stock = max(0, min_stock)
 
+        # Ensure categories are loaded for subcategory lookup
+        await self._ensure_categories()
+
         # Get the original part details (includes EasyEDA info)
         original = await self.get_part(lcsc)
         if not original:
@@ -780,6 +786,10 @@ class JLCPCBClient:
             "sort_by": "quantity",  # Best availability first
             "limit": effective_limit + extra_for_filtering,
         }
+
+        # Add library type filter if specified
+        if library_type:
+            search_params["library_type"] = library_type
 
         # Find subcategory ID using O(1) lookup
         subcategory_name = original.get("subcategory")
@@ -849,6 +859,7 @@ class JLCPCBClient:
                 "package": original.get("package"),
                 "stock": original.get("stock"),
                 "price": original.get("price"),
+                "library_type": original.get("library_type"),
                 "subcategory": original.get("subcategory"),
                 "key_specs": original.get("key_specs"),
                 "has_easyeda_footprint": original.get("has_easyeda_footprint"),
@@ -858,6 +869,7 @@ class JLCPCBClient:
                 "subcategory": subcategory_name,
                 "min_stock": effective_min_stock,
                 "same_package": same_package,
+                "library_type": library_type,
                 "has_easyeda_footprint": has_easyeda_footprint,
             },
         }

@@ -364,6 +364,7 @@ async def find_alternatives(
     lcsc: str,
     min_stock: int = 100,
     same_package: bool = False,
+    library_type: str | None = None,
     has_easyeda_footprint: bool | None = None,
     limit: int = 10,
 ) -> dict:
@@ -376,6 +377,13 @@ async def find_alternatives(
         lcsc: LCSC part code to find alternatives for (e.g., "C2557")
         min_stock: Minimum stock for alternatives (default: 100)
         same_package: If True, only return parts with the same package size
+        library_type: Filter alternatives by library type:
+            - "basic": Only basic parts (no assembly fee)
+            - "preferred": Only preferred parts (no assembly fee)
+            - "no_fee": Basic or preferred (no assembly fee) - best for cost optimization
+            - "extended": Only extended parts ($3 assembly fee each)
+            - "all" or None (default): All library types
+            Use "no_fee" to find cheaper alternatives for an extended part.
         has_easyeda_footprint: Filter by EasyEDA footprint availability:
             - True: Only return parts WITH EasyEDA footprints (for Atopile/KiCad users)
             - False: Only return parts WITHOUT footprints
@@ -384,8 +392,8 @@ async def find_alternatives(
         limit: Maximum alternatives to return (default: 10, max: 50)
 
     Returns:
-        Original part info (with has_easyeda_footprint) and list of alternatives sorted by stock.
-        Alternatives include key_specs for easy comparison.
+        Original part info (with library_type and has_easyeda_footprint) and list of alternatives
+        sorted by stock. Alternatives include library_type and key_specs for easy comparison.
         When filtering by footprint, alternatives also include EasyEDA UUIDs.
     """
     if not _client:
@@ -395,6 +403,7 @@ async def find_alternatives(
         lcsc=lcsc,
         min_stock=min_stock,
         same_package=same_package,
+        library_type=library_type if library_type != "all" else None,
         has_easyeda_footprint=has_easyeda_footprint,
         limit=limit,
     )
