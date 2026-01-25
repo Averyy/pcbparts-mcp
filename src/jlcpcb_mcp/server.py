@@ -80,15 +80,19 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     def _check_rate_limit(self, client_ip: str) -> bool:
         now = time.time()
         window_start = now - 60
+        # Filter old entries
         self.request_counts[client_ip] = [
             t for t in self.request_counts[client_ip] if t > window_start
         ]
-        # Clean up empty entries to prevent unbounded memory growth
+        # Clean up empty entries to prevent memory growth
         if not self.request_counts[client_ip]:
-            del self.request_counts[client_ip]
+            # New or quiet IP - not rate limited, start tracking
+            self.request_counts[client_ip] = [now]
             return False
+        # Check if rate limited before adding current request
         if len(self.request_counts[client_ip]) >= self.requests_per_minute:
             return True
+        # Add current request
         self.request_counts[client_ip].append(now)
         return False
 
@@ -142,7 +146,7 @@ async def search_parts(
         min_stock: Min stock qty (default 50). Set 0 for all including out-of-stock
         library_type: "basic", "preferred", "no_fee" (both), "extended" ($3/part), or "all"
         package: Single package size filter (e.g., "0402", "LQFP48")
-        manufacturer: Single manufacturer filter, case-sensitive (e.g., "Texas Instruments")
+        manufacturer: Single manufacturer filter. Supports aliases (e.g., "TI" -> "Texas Instruments")
         packages: Multiple package sizes (OR filter). E.g., ["0402", "0603", "0805"]
         manufacturers: Multiple manufacturers (OR filter). E.g., ["TI", "STMicroelectronics"]
         sort_by: "quantity" (highest first) or "price" (cheapest first). Default: relevance
@@ -150,27 +154,32 @@ async def search_parts(
         limit: Results per page (default: 20, max: 100)
 
     Returns:
-        Results with lcsc, model, manufacturer, package, stock, price, library_type.
-        Use get_part(lcsc) for full details and datasheet.
+        Results include: lcsc, model, manufacturer, package, stock, price, price_10 (volume),
+        library_type, preferred, category, subcategory,
+        key_specs (essential attributes for the component type - varies by subcategory).
+        Pagination: page, per_page, total, total_pages, has_more.
+        Use get_part(lcsc) for full details including datasheet and all attributes.
     """
     if not _client:
         raise RuntimeError("Client not initialized")
 
-    # Enforce valid limit range (1 to MAX_PAGE_SIZE)
+    # Validate parameters
+    effective_min_stock = max(0, min_stock)
+    effective_page = max(1, page)
     effective_limit = max(1, min(limit, MAX_PAGE_SIZE))
 
     return await _client.search(
         query=query,
         category_id=category_id,
         subcategory_id=subcategory_id,
-        min_stock=min_stock,
+        min_stock=effective_min_stock,
         library_type=library_type if library_type != "all" else None,
         package=package,
         manufacturer=manufacturer,
         packages=packages,
         manufacturers=manufacturers,
         sort_by=sort_by,
-        page=page,
+        page=effective_page,
         limit=effective_limit,
     )
 
@@ -270,6 +279,47 @@ async def get_subcategories(category_id: int) -> dict:
             for sub in category.get("subcategories", [])
         ],
     }
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Find Alternative Parts",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=False,
+    )
+)
+async def find_alternatives(
+    lcsc: str,
+    min_stock: int = 100,
+    same_package: bool = False,
+    limit: int = 10,
+) -> dict:
+    """Find alternative parts similar to a given component.
+
+    Searches the same subcategory for parts with better availability.
+    Useful when a part has low stock or you want to compare options.
+
+    Args:
+        lcsc: LCSC part code to find alternatives for (e.g., "C2557")
+        min_stock: Minimum stock for alternatives (default: 100)
+        same_package: If True, only return parts with the same package size
+        limit: Maximum alternatives to return (default: 10, max: 50)
+
+    Returns:
+        Original part info and list of alternatives sorted by stock.
+        Alternatives include key_specs for easy comparison.
+    """
+    if not _client:
+        raise RuntimeError("Client not initialized")
+
+    return await _client.find_alternatives(
+        lcsc=lcsc,
+        min_stock=min_stock,
+        same_package=same_package,
+        limit=limit,
+    )
 
 
 @mcp.tool(

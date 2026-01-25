@@ -132,9 +132,10 @@ class TestClient:
         assert "componentSpecification" not in params
 
     def test_build_search_params_manufacturers_multi(self, client):
-        """Multiple manufacturers use componentBrandList (OR filter)."""
-        params = client._build_search_params(manufacturers=["TI", "STMicroelectronics"])
-        assert params["componentBrandList"] == ["TI", "STMicroelectronics"]
+        """Multiple manufacturers use componentBrandList (OR filter) with alias resolution."""
+        params = client._build_search_params(manufacturers=["TI", "STM"])
+        # Aliases are resolved: TI -> Texas Instruments, STM -> STMicroelectronics
+        assert params["componentBrandList"] == ["Texas Instruments", "STMicroelectronics"]
         assert "componentBrand" not in params
 
     def test_build_search_params_manufacturers_empty(self, client):
@@ -146,8 +147,19 @@ class TestClient:
     def test_build_search_params_manufacturer_single_over_multi(self, client):
         """Multi-select manufacturers takes precedence over single manufacturer."""
         params = client._build_search_params(manufacturer="TI", manufacturers=["STM", "NXP"])
-        assert params["componentBrandList"] == ["STM", "NXP"]
+        # Aliases resolved: STM -> STMicroelectronics, NXP -> NXP Semicon
+        assert params["componentBrandList"] == ["STMicroelectronics", "NXP Semicon"]
         assert "componentBrand" not in params
+
+    def test_manufacturer_alias_resolution(self, client):
+        """Manufacturer aliases are resolved to full names."""
+        # Single manufacturer alias
+        params = client._build_search_params(manufacturer="ti")
+        assert params["componentBrand"] == "Texas Instruments"
+
+        # Unknown manufacturer passes through unchanged
+        params = client._build_search_params(manufacturer="Unknown Corp")
+        assert params["componentBrand"] == "Unknown Corp"
 
     def test_transform_part_slim(self, client):
         # Note: API returns firstSortName as subcategory, secondSortName as category
@@ -161,7 +173,14 @@ class TestClient:
             "preferredComponentFlag": False,
             "firstSortName": "IoT Modules",  # subcategory
             "secondSortName": "WiFi Modules",  # category
-            "componentPrices": [{"startNumber": 1, "endNumber": 9, "productPrice": 4.2016}],
+            "componentPrices": [
+                {"startNumber": 1, "endNumber": 9, "productPrice": 4.2016},
+                {"startNumber": 10, "endNumber": 29, "productPrice": 3.7052},
+            ],
+            "attributes": [
+                {"attribute_name_en": "Voltage", "attribute_value_name": "3.3V"},
+                {"attribute_name_en": "Frequency", "attribute_value_name": "2.4GHz"},
+            ],
         }
         result = client._transform_part(item, slim=True)
         assert result["lcsc"] == "C82899"
@@ -170,8 +189,83 @@ class TestClient:
         assert result["stock"] == 11117
         assert result["library_type"] == "extended"
         assert result["price"] == 4.2016
+        assert result["price_10"] == 3.7052  # Volume pricing
         assert result["category"] == "WiFi Modules"
+        assert result["subcategory"] == "IoT Modules"  # Now included in slim
+        assert result["key_specs"] == {"Voltage": "3.3V", "Frequency": "2.4GHz"}
         assert "datasheet" not in result
+        assert "attributes" not in result  # Full list not in slim
+
+    def test_transform_part_slim_single_price_tier(self, client):
+        """Parts with only one price tier should have price_10=None."""
+        item = {
+            "componentCode": "C12345",
+            "componentModelEn": "TEST",
+            "componentBrandEn": "Test",
+            "componentSpecificationEn": "0402",
+            "stockCount": 100,
+            "componentLibraryType": "base",
+            "preferredComponentFlag": False,
+            "firstSortName": "Test Sub",
+            "secondSortName": "Test Cat",
+            "componentPrices": [{"startNumber": 1, "endNumber": 9, "productPrice": 0.01}],
+        }
+        result = client._transform_part(item, slim=True)
+        assert result["price_10"] is None  # Only one price tier
+
+    def test_transform_part_no_prices(self, client):
+        """Parts with no price tiers should have price=None and price_10=None."""
+        item = {
+            "componentCode": "C12345",
+            "componentModelEn": "TEST",
+            "componentBrandEn": "Test",
+            "componentSpecificationEn": "0402",
+            "stockCount": 100,
+            "componentLibraryType": "base",
+            "preferredComponentFlag": False,
+            "firstSortName": "Test Sub",
+            "secondSortName": "Test Cat",
+            "componentPrices": [],  # Empty price list
+        }
+        result = client._transform_part(item, slim=True)
+        assert result["price"] is None
+        assert result["price_10"] is None
+
+    def test_transform_part_no_attributes(self, client):
+        """Parts with no attributes should have key_specs as empty dict."""
+        item = {
+            "componentCode": "C12345",
+            "componentModelEn": "TEST",
+            "componentBrandEn": "Test",
+            "componentSpecificationEn": "0402",
+            "stockCount": 100,
+            "componentLibraryType": "base",
+            "preferredComponentFlag": False,
+            "firstSortName": "Test Sub",
+            "secondSortName": "Test Cat",
+            "componentPrices": [{"startNumber": 1, "endNumber": 9, "productPrice": 0.01}],
+            "attributes": [],  # Empty attributes
+        }
+        result = client._transform_part(item, slim=True)
+        assert result["key_specs"] == {}  # Should be empty dict, not missing
+
+    def test_transform_part_missing_attributes_field(self, client):
+        """Parts without attributes field should have key_specs as empty dict."""
+        item = {
+            "componentCode": "C12345",
+            "componentModelEn": "TEST",
+            "componentBrandEn": "Test",
+            "componentSpecificationEn": "0402",
+            "stockCount": 100,
+            "componentLibraryType": "base",
+            "preferredComponentFlag": False,
+            "firstSortName": "Test Sub",
+            "secondSortName": "Test Cat",
+            "componentPrices": [{"startNumber": 1, "endNumber": 9, "productPrice": 0.01}],
+            # No "attributes" field at all
+        }
+        result = client._transform_part(item, slim=True)
+        assert result["key_specs"] == {}  # Should be empty dict, not missing
 
     def test_transform_part_full(self, client):
         # Note: API returns firstSortName as subcategory, secondSortName as category
@@ -201,8 +295,11 @@ class TestClient:
         result = client._transform_part(item, slim=False)
         assert result["lcsc"] == "C82899"
         assert result["library_type"] == "basic"
+        assert result["price"] == 4.2016
+        assert result["price_10"] == 3.7052
         assert result["category"] == "WiFi Modules"
         assert result["subcategory"] == "IoT Modules"
+        assert result["key_specs"] == {"Voltage": "3.3V"}  # Also in full mode
         assert result["datasheet"] == "https://example.com/datasheet.pdf"
         assert len(result["prices"]) == 2
         assert result["prices"][0]["qty"] == "1+"
@@ -263,6 +360,38 @@ class TestClient:
         # No categories set, should return None
         assert empty_client._match_category_by_name("led") is None
 
+    # Tests for subcategory name lookup
+
+    def test_get_subcategory_id_by_name(self, client):
+        """Subcategory ID lookup by name should work."""
+        # Client fixture has "Chip Resistor - Surface Mount" with id 2980
+        assert client.get_subcategory_id_by_name("Chip Resistor - Surface Mount") == 2980
+
+    def test_get_subcategory_id_by_name_not_found(self, client):
+        """Non-existent subcategory name should return None."""
+        assert client.get_subcategory_id_by_name("NonExistent Subcategory") is None
+
+    def test_get_subcategory_id_by_name_empty_cache(self):
+        """Subcategory lookup with empty cache should return None."""
+        empty_client = JLCPCBClient()
+        assert empty_client.get_subcategory_id_by_name("Anything") is None
+
+    # Tests for LCSC code validation
+
+    @pytest.mark.asyncio
+    async def test_get_part_invalid_lcsc_format(self, client):
+        """Invalid LCSC codes should return None without making API calls."""
+        # Missing C prefix
+        assert await client.get_part("12345") is None
+        # Non-numeric suffix
+        assert await client.get_part("CABC123") is None
+        # Empty string
+        assert await client.get_part("") is None
+        # Just C
+        assert await client.get_part("C") is None
+        # Whitespace
+        assert await client.get_part("   ") is None
+
 
 @pytest.mark.asyncio
 class TestClientIntegration:
@@ -280,6 +409,30 @@ class TestClientIntegration:
         assert "results" in result
         assert len(result["results"]) > 0
         assert result["results"][0]["lcsc"].startswith("C")
+
+    async def test_search_pagination_fields(self, client):
+        """Test pagination fields in search results."""
+        result = await client.search(query="resistor", limit=10)
+        # Check all pagination fields exist
+        assert "page" in result
+        assert "per_page" in result
+        assert "total" in result
+        assert "total_pages" in result
+        assert "has_more" in result
+        # Verify total_pages calculation
+        expected_pages = (result["total"] + 10 - 1) // 10  # ceil division
+        assert result["total_pages"] == expected_pages
+        assert result["per_page"] == 10
+        assert result["page"] == 1
+
+    async def test_search_results_have_key_specs(self, client):
+        """Test that search results include key_specs field."""
+        result = await client.search(query="10uF capacitor", limit=5)
+        assert len(result["results"]) > 0
+        # All results should have key_specs (even if empty dict)
+        for part in result["results"]:
+            assert "key_specs" in part, f"Part {part['lcsc']} missing key_specs"
+            assert isinstance(part["key_specs"], dict)
 
     async def test_search_category(self, client):
         """Test category filtering."""
@@ -407,3 +560,62 @@ class TestClientIntegration:
         prices = [r["price"] for r in result["results"] if r["price"] is not None]
         for i in range(len(prices) - 1):
             assert prices[i] <= prices[i + 1], "Results should be sorted by price ascending"
+
+    async def test_get_part_invalid_format_returns_none(self, client):
+        """Invalid LCSC codes should return None without API errors."""
+        result = await client.get_part("INVALID")
+        assert result is None
+
+    async def test_get_part_lowercase_works(self, client):
+        """Lowercase LCSC codes should work (normalized to uppercase)."""
+        result = await client.get_part("c82899")  # lowercase
+        assert result is not None
+        assert result["lcsc"] == "C82899"  # normalized to uppercase
+
+    async def test_find_alternatives(self, client):
+        """Test find_alternatives method on client."""
+        # Fetch categories first (required for subcategory lookup)
+        categories = await client.fetch_categories()
+        client.set_categories(categories)
+
+        # Find alternatives for a common 10k resistor
+        result = await client.find_alternatives("C25531", min_stock=100, limit=5)
+
+        # Should not have error
+        assert "error" not in result, f"Unexpected error: {result.get('error')}"
+
+        # Check original part info
+        assert result["original"]["lcsc"] == "C25531"
+        assert result["original"]["subcategory"] is not None
+
+        # Check alternatives
+        assert len(result["alternatives"]) > 0, "Should find alternatives"
+        # Original should not be in alternatives
+        for alt in result["alternatives"]:
+            assert alt["lcsc"] != "C25531", "Original should not be in alternatives"
+
+        # Check search criteria in response
+        assert result["search_criteria"]["min_stock"] == 100
+        assert result["search_criteria"]["same_package"] is False
+
+    async def test_find_alternatives_invalid_lcsc(self, client):
+        """Test find_alternatives with invalid LCSC code returns error dict."""
+        result = await client.find_alternatives("INVALID123")
+        assert "error" in result
+        assert "not found" in result["error"].lower()
+
+    async def test_find_alternatives_same_package(self, client):
+        """Test find_alternatives with same_package filter."""
+        # Fetch categories first
+        categories = await client.fetch_categories()
+        client.set_categories(categories)
+
+        # Find alternatives for a common capacitor with same package
+        result = await client.find_alternatives("C14663", min_stock=100, same_package=True, limit=5)
+
+        assert "error" not in result
+        original_package = result["original"]["package"]
+
+        # All alternatives should have the same package
+        for alt in result["alternatives"]:
+            assert alt["package"] == original_package, f"Expected {original_package}, got {alt['package']}"

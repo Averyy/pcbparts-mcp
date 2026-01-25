@@ -15,7 +15,10 @@ from .config import (
     DEFAULT_PAGE_SIZE,
     MAX_PAGE_SIZE,
     DEFAULT_MIN_STOCK,
+    MAX_ALTERNATIVES,
 )
+from .key_attributes import KEY_ATTRIBUTES
+from .manufacturer_aliases import MANUFACTURER_ALIASES
 
 # Browser fingerprints for TLS impersonation
 BROWSER_FINGERPRINTS = ["chrome131", "chrome133a", "chrome136", "chrome142"]
@@ -31,6 +34,7 @@ class JLCPCBClient:
         self._categories: list[dict[str, Any]] = []
         self._category_map: dict[int, dict[str, Any]] = {}  # id -> category
         self._subcategory_map: dict[int, tuple[int, dict[str, Any]]] = {}  # id -> (parent_id, subcategory)
+        self._subcategory_name_map: dict[str, int] = {}  # name -> subcategory_id
 
     def set_categories(self, categories: list[dict[str, Any]]) -> None:
         """Set pre-loaded categories to avoid redundant API calls.
@@ -40,11 +44,13 @@ class JLCPCBClient:
         self._categories = categories
         self._category_map.clear()
         self._subcategory_map.clear()
+        self._subcategory_name_map.clear()
 
         for cat in categories:
             self._category_map[cat["id"]] = cat
             for sub in cat.get("subcategories", []):
                 self._subcategory_map[sub["id"]] = (cat["id"], sub)
+                self._subcategory_name_map[sub["name"]] = sub["id"]
 
     def _get_browser(self) -> str:
         """Get a random browser fingerprint."""
@@ -95,6 +101,7 @@ class JLCPCBClient:
             self._category_map[cat["id"]] = cat
             for sub in cat.get("subcategories", []):
                 self._subcategory_map[sub["id"]] = (cat["id"], sub)
+                self._subcategory_name_map[sub["name"]] = sub["id"]
 
     def _get_category(self, category_id: int) -> dict[str, Any] | None:
         """Get category by ID from cache."""
@@ -103,6 +110,10 @@ class JLCPCBClient:
     def _get_subcategory(self, subcategory_id: int) -> tuple[int, dict[str, Any]] | None:
         """Get subcategory by ID from cache. Returns (parent_id, subcategory) or None."""
         return self._subcategory_map.get(subcategory_id)
+
+    def get_subcategory_id_by_name(self, name: str) -> int | None:
+        """Get subcategory ID by name from cache. O(1) lookup."""
+        return self._subcategory_name_map.get(name)
 
     # Common abbreviations mapped to category name substrings
     # These are resolved dynamically against fetched categories at runtime
@@ -123,6 +134,18 @@ class JLCPCBClient:
         "quantity": "STOCK_SORT",
         "price": "PRICE_SORT",
     }
+
+    def _resolve_manufacturer(self, name: str) -> str:
+        """Resolve manufacturer alias to full name.
+
+        If the name matches an alias (case-insensitive), returns the full name.
+        Otherwise returns the original name unchanged.
+        """
+        return MANUFACTURER_ALIASES.get(name.lower(), name)
+
+    def _resolve_manufacturers(self, names: list[str]) -> list[str]:
+        """Resolve a list of manufacturer names/aliases."""
+        return [self._resolve_manufacturer(name) for name in names]
 
     def _resolve_abbreviation(self, abbrev: str) -> int | None:
         """Resolve an abbreviation to a category ID using the live category cache."""
@@ -282,20 +305,21 @@ class JLCPCBClient:
         elif package:
             params["componentSpecification"] = package
 
-        # Manufacturer filtering (single or multi-select)
+        # Manufacturer filtering (single or multi-select) with alias resolution
         if manufacturers:
             # Multi-select: OR filter across multiple manufacturers
-            params["componentBrandList"] = manufacturers
+            params["componentBrandList"] = self._resolve_manufacturers(manufacturers)
         elif manufacturer:
-            params["componentBrand"] = manufacturer
+            params["componentBrand"] = self._resolve_manufacturer(manufacturer)
 
         return params
 
     def _transform_part(self, item: dict[str, Any], slim: bool = True) -> dict[str, Any]:
         """Transform API response to our format."""
-        # Get price from first tier
+        # Get price from first tier and volume price (10+) from second tier
         prices = item.get("componentPrices", [])
         price = prices[0]["productPrice"] if prices else None
+        price_10 = prices[1]["productPrice"] if len(prices) > 1 else None
 
         # Map library type
         lib_type = item.get("componentLibraryType", "")
@@ -307,28 +331,61 @@ class JLCPCBClient:
             library_type = lib_type
 
         # Note: API returns firstSortName as subcategory, secondSortName as category
+        stock = item.get("stockCount")
         result: dict[str, Any] = {
             "lcsc": item.get("componentCode"),
             "model": item.get("componentModelEn"),
             "manufacturer": item.get("componentBrandEn"),
             "package": item.get("componentSpecificationEn"),
-            "stock": item.get("stockCount"),
+            "stock": stock,
             "price": round(price, 4) if price else None,
+            "price_10": round(price_10, 4) if price_10 else None,
             "library_type": library_type,
             "preferred": item.get("preferredComponentFlag", False),
             "category": item.get("secondSortName"),  # Primary category
+            "subcategory": item.get("firstSortName"),  # Subcategory
         }
+
+        # Include key specs in slim mode
+        # Use subcategory-specific key attributes if available, otherwise top 5
+        attrs = item.get("attributes", [])
+        if attrs:
+            subcategory = item.get("firstSortName")  # API returns subcategory as firstSortName
+            key_attr_names = KEY_ATTRIBUTES.get(subcategory)  # Returns None if not found
+
+            if key_attr_names is not None:
+                # Filter to only the key attributes, preserving defined order
+                # Empty list means intentionally show no key_specs
+                attr_map = {
+                    a.get("attribute_name_en"): a.get("attribute_value_name")
+                    for a in attrs
+                    if a.get("attribute_name_en")
+                }
+                result["key_specs"] = {
+                    name: attr_map[name]
+                    for name in key_attr_names
+                    if name in attr_map
+                }
+            else:
+                # Fallback: first 5 attributes for unknown subcategories
+                result["key_specs"] = {
+                    a.get("attribute_name_en"): a.get("attribute_value_name")
+                    for a in attrs[:5]
+                    if a.get("attribute_name_en")
+                }
+        else:
+            # No attributes available
+            result["key_specs"] = {}
 
         if not slim:
             # Full details
-            result["subcategory"] = item.get("firstSortName")  # Subcategory
             result["description"] = item.get("describe")
             result["min_order"] = item.get("minPurchaseNum")
             result["reel_qty"] = item.get("encapsulationNumber")
             result["datasheet"] = item.get("dataManualUrl")
             result["lcsc_url"] = item.get("lcscGoodsUrl")
 
-            # Transform prices
+            # Transform all prices
             if prices:
                 result["prices"] = [
                     {
@@ -338,8 +395,7 @@ class JLCPCBClient:
                     for p in prices
                 ]
 
-            # Transform attributes
-            attrs = item.get("attributes", [])
+            # Full attributes list (beyond key_specs)
             if attrs:
                 result["attributes"] = [
                     {
@@ -406,18 +462,26 @@ class JLCPCBClient:
 
         results = [self._transform_part(item, slim=True) for item in items]
 
+        # Calculate total pages
+        total_pages = (total + limit - 1) // limit if limit > 0 else 0
+
         return {
             "results": results,
             "page": page,
             "per_page": limit,
             "total": total,
+            "total_pages": total_pages,
             "has_more": page * limit < total,
         }
 
     async def get_part(self, lcsc: str) -> dict[str, Any] | None:
         """Get full details for a specific part."""
         # Normalize LCSC code to uppercase (e.g., c20917 -> C20917)
-        lcsc = lcsc.upper()
+        lcsc = lcsc.strip().upper()
+
+        # Validate LCSC code format (C followed by digits)
+        if not lcsc or not lcsc.startswith("C") or not lcsc[1:].isdigit():
+            return None
 
         # Search for the exact part code
         params = {
@@ -437,6 +501,91 @@ class JLCPCBClient:
                 return self._transform_part(item, slim=False)
 
         return None
+
+    async def find_alternatives(
+        self,
+        lcsc: str,
+        min_stock: int = 100,
+        same_package: bool = False,
+        limit: int = 10,
+    ) -> dict[str, Any]:
+        """Find alternative parts similar to a given component.
+
+        Searches the same subcategory for parts with better availability.
+
+        Args:
+            lcsc: LCSC part code to find alternatives for (e.g., "C2557")
+            min_stock: Minimum stock for alternatives (default: 100)
+            same_package: If True, only return parts with the same package size
+            limit: Maximum alternatives to return (default: 10, max: 50)
+
+        Returns:
+            Dict with original part info and list of alternatives sorted by stock.
+        """
+        # Validate and cap limit
+        effective_limit = max(1, min(limit, MAX_ALTERNATIVES))
+        effective_min_stock = max(0, min_stock)
+
+        # Get the original part details
+        original = await self.get_part(lcsc)
+        if not original:
+            return {"error": f"Part {lcsc.strip().upper()} not found"}
+
+        # Build search params
+        search_params: dict[str, Any] = {
+            "min_stock": effective_min_stock,
+            "sort_by": "quantity",  # Best availability first
+            "limit": effective_limit + 5,  # Get extra to filter out original
+        }
+
+        # Find subcategory ID using O(1) lookup
+        subcategory_name = original.get("subcategory")
+        subcategory_id = None
+        warning = None
+        if subcategory_name:
+            subcategory_id = self.get_subcategory_id_by_name(subcategory_name)
+            if not subcategory_id:
+                warning = f"Subcategory '{subcategory_name}' not found in cache, searching all parts"
+
+        if subcategory_id:
+            search_params["subcategory_id"] = subcategory_id
+
+        # Filter by same package if requested
+        if same_package and original.get("package"):
+            search_params["package"] = original["package"]
+
+        result = await self.search(**search_params)
+
+        # Filter out the original part (normalize LCSC code for comparison)
+        original_lcsc = original.get("lcsc", "").upper()
+        alternatives = [
+            p for p in result.get("results", [])
+            if p.get("lcsc", "").upper() != original_lcsc
+        ][:effective_limit]
+
+        response: dict[str, Any] = {
+            "original": {
+                "lcsc": original.get("lcsc"),
+                "model": original.get("model"),
+                "manufacturer": original.get("manufacturer"),
+                "package": original.get("package"),
+                "stock": original.get("stock"),
+                "price": original.get("price"),
+                "subcategory": original.get("subcategory"),
+                "key_specs": original.get("key_specs"),
+            },
+            "alternatives": alternatives,
+            "search_criteria": {
+                "subcategory": subcategory_name,
+                "min_stock": effective_min_stock,
+                "same_package": same_package,
+            },
+        }
+
+        if warning:
+            response["warning"] = warning
+
+        return response
 
     async def fetch_categories(self) -> list[dict[str, Any]]:
         """Fetch current categories and subcategories from JLCPCB API.

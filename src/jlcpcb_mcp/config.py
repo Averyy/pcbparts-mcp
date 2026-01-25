@@ -17,6 +17,7 @@ MAX_RETRIES = 3
 DEFAULT_PAGE_SIZE = 20
 MAX_PAGE_SIZE = 100
 DEFAULT_MIN_STOCK = 50
+MAX_ALTERNATIVES = 50
 
 # User agent pool - real browser signatures from jlcpcb.com visitors
 _USER_AGENTS = [

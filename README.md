@@ -8,7 +8,11 @@ MCP server for searching JLCPCB electronic components directly from Claude, Curs
 
 - Search 1.5M+ JLCPCB components by keyword, category, stock, package, manufacturer
 - **Multi-select filters:** Search multiple packages or manufacturers at once (OR logic)
-- **Attribute search:** Find parts by specs like capacitance, voltage, resistance via keywords
+- **Key specs in results:** Electrical attributes (voltage, current, etc.) included in search results
+- **Manufacturer aliases:** Use common abbreviations like "TI", "STM", "Infineon" - auto-corrected to API names
+- **Find alternatives:** Discover similar parts with better availability
+- **Volume pricing:** See both unit price and 10+ quantity pricing
+- **Low stock warnings:** Parts with <500 units flagged for attention
 - Filter by library type (basic/preferred = no fee, extended = $3 fee)
 - Get detailed part info including pricing tiers and datasheets
 - Browse 52 component categories and subcategories
@@ -87,6 +91,7 @@ Add to `.vscode/mcp.json`:
 |------|-------------|
 | `search_parts` | Search components with filters for category, stock, package(s), manufacturer(s), library type |
 | `get_part` | Get full details for a specific LCSC part code |
+| `find_alternatives` | Find similar parts with better stock in the same subcategory |
 | `list_categories` | Get all 52 primary component categories |
 | `get_subcategories` | Get subcategories for a category |
 | `get_version` | Server version and health status |
