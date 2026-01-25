@@ -22,6 +22,8 @@ EASYEDA_CONCURRENT_LIMIT = 5  # Max concurrent EasyEDA requests to avoid rate li
 # Request settings
 REQUEST_TIMEOUT = 10.0
 MAX_RETRIES = 3
+JLCPCB_CONCURRENT_LIMIT = 10  # Max concurrent requests to JLCPCB API (prevents IP blocking)
+JLCPCB_REQUEST_JITTER = (0.1, 0.3)  # Random delay range (seconds) between requests
 DEFAULT_PAGE_SIZE = 20
 MAX_PAGE_SIZE = 100
 DEFAULT_MIN_STOCK = 50

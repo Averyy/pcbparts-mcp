@@ -20,6 +20,8 @@ from .config import (
     EASYEDA_REQUEST_TIMEOUT,
     EASYEDA_CACHE_MAX_SIZE,
     EASYEDA_CONCURRENT_LIMIT,
+    JLCPCB_CONCURRENT_LIMIT,
+    JLCPCB_REQUEST_JITTER,
     MAX_RETRIES,
     REQUEST_TIMEOUT,
     DEFAULT_PAGE_SIZE,
@@ -68,6 +70,8 @@ class JLCPCBClient:
         self._easyeda_cache: dict[str, tuple[float, dict[str, Any], bool]] = {}
         # Semaphore to limit concurrent EasyEDA requests (avoid rate limiting)
         self._easyeda_semaphore: asyncio.Semaphore | None = None
+        # Semaphore to limit concurrent JLCPCB requests (prevents IP blocking at scale)
+        self._jlcpcb_semaphore: asyncio.Semaphore | None = None
 
     def set_categories(self, categories: list[dict[str, Any]]) -> None:
         """Set pre-loaded categories to avoid redundant API calls.
@@ -232,42 +236,51 @@ class JLCPCBClient:
 
         Creates a fresh session for each request to avoid TLS fingerprint tracking.
         JLCPCB detects and blocks reused sessions after several requests.
+
+        Uses a semaphore to limit concurrent requests across all users, preventing
+        IP-based blocking when the server handles many simultaneous requests.
         """
         last_error: Exception | None = None
 
-        for attempt in range(MAX_RETRIES + 1):
-            # Fresh session for each attempt - avoids fingerprint tracking
-            session = self._create_session()
-            try:
-                # Fresh randomized headers for each request
-                headers = get_jlcpcb_headers()
-                logger.debug(f"JLCPCB request attempt {attempt + 1}: {params.get('keyword', params)}")
-                response = await session.post(
-                    url,
-                    json=params,
-                    headers=headers,
-                )
-                logger.debug(f"JLCPCB response: {response.status_code}")
-                response.raise_for_status()
-                data = response.json()
+        # Limit concurrent requests to JLCPCB to prevent IP blocking at scale
+        async with self._get_jlcpcb_semaphore():
+            for attempt in range(MAX_RETRIES + 1):
+                # Fresh session for each attempt - avoids fingerprint tracking
+                session = self._create_session()
+                try:
+                    # Fresh randomized headers for each request
+                    headers = get_jlcpcb_headers()
+                    logger.debug(f"JLCPCB request attempt {attempt + 1}: {params.get('keyword', params)}")
+                    response = await session.post(
+                        url,
+                        json=params,
+                        headers=headers,
+                    )
+                    logger.debug(f"JLCPCB response: {response.status_code}")
+                    response.raise_for_status()
+                    data = response.json()
 
-                # Check for API-level errors
-                if data.get("code") != 200:
-                    error_msg = data.get("message", "Unknown API error")
-                    raise ValueError(f"JLCPCB API error: {error_msg}")
+                    # Check for API-level errors
+                    if data.get("code") != 200:
+                        error_msg = data.get("message", "Unknown API error")
+                        raise ValueError(f"JLCPCB API error: {error_msg}")
 
-                return data
-            except Exception as e:
-                last_error = e
-                logger.warning(f"JLCPCB request failed (attempt {attempt + 1}): {type(e).__name__}: {e}")
-                if attempt < MAX_RETRIES:
-                    # Exponential backoff: 1s, 2s, 4s
-                    await asyncio.sleep(1.0 * (2 ** attempt))
-                else:
-                    raise
-            finally:
-                # Always close the session to avoid connection pooling
-                await session.close()
+                    # Add jitter between requests to appear more human-like
+                    jitter = random.uniform(*JLCPCB_REQUEST_JITTER)
+                    await asyncio.sleep(jitter)
+
+                    return data
+                except Exception as e:
+                    last_error = e
+                    logger.warning(f"JLCPCB request failed (attempt {attempt + 1}): {type(e).__name__}: {e}")
+                    if attempt < MAX_RETRIES:
+                        # Exponential backoff: 1s, 2s, 4s
+                        await asyncio.sleep(1.0 * (2 ** attempt))
+                    else:
+                        raise
+                finally:
+                    # Always close the session to avoid connection pooling
+                    await session.close()
 
         raise last_error  # type: ignore
 
@@ -276,6 +289,16 @@ class JLCPCBClient:
         if self._easyeda_semaphore is None:
             self._easyeda_semaphore = asyncio.Semaphore(EASYEDA_CONCURRENT_LIMIT)
         return self._easyeda_semaphore
+
+    def _get_jlcpcb_semaphore(self) -> asyncio.Semaphore:
+        """Get or create semaphore for rate-limiting JLCPCB requests.
+
+        Limits concurrent outbound requests to prevent IP-based blocking
+        when multiple users hit the server simultaneously.
+        """
+        if self._jlcpcb_semaphore is None:
+            self._jlcpcb_semaphore = asyncio.Semaphore(JLCPCB_CONCURRENT_LIMIT)
+        return self._jlcpcb_semaphore
 
     def _maybe_cleanup_easyeda_cache(self) -> None:
         """Cleanup cache only when it exceeds 90% of max size (avoids O(n) on every write)."""
