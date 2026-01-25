@@ -63,6 +63,26 @@ class TestValidateDesignators:
         issues = validate_designators(parts)
         assert len(issues) == 2
 
+    def test_empty_designators(self):
+        """Error when part has empty designators list."""
+        parts = [
+            {"lcsc": "C1525", "designators": []},
+        ]
+        issues = validate_designators(parts)
+        assert len(issues) == 1
+        assert issues[0].severity == "error"
+        assert "no designators" in issues[0].issue
+
+    def test_missing_designators_key(self):
+        """Error when part has no designators key."""
+        parts = [
+            {"lcsc": "C1525"},
+        ]
+        issues = validate_designators(parts)
+        assert len(issues) == 1
+        assert issues[0].severity == "error"
+        assert "no designators" in issues[0].issue
+
 
 class TestMergeDuplicateParts:
     """Tests for merging parts with same LCSC code."""

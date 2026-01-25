@@ -619,3 +619,67 @@ class TestClientIntegration:
         # All alternatives should have the same package
         for alt in result["alternatives"]:
             assert alt["package"] == original_package, f"Expected {original_package}, got {alt['package']}"
+
+    async def test_check_easyeda_footprint_valid_part(self, client):
+        """Test EasyEDA footprint check for a known part."""
+        # C1525 is a common capacitor that should have a footprint
+        result = await client.check_easyeda_footprint("C1525")
+        assert "has_easyeda_footprint" in result
+        assert result["has_easyeda_footprint"] in (True, False, None)
+        assert "easyeda_symbol_uuid" in result
+        assert "easyeda_footprint_uuid" in result
+
+    async def test_check_easyeda_footprint_invalid_format(self, client):
+        """Test EasyEDA footprint check with invalid LCSC format returns unknown."""
+        # Invalid format should return unknown (None) without crashing
+        result = await client.check_easyeda_footprint("INVALID")
+        assert result["has_easyeda_footprint"] is None
+
+        result = await client.check_easyeda_footprint("")
+        assert result["has_easyeda_footprint"] is None
+
+        result = await client.check_easyeda_footprint("123")
+        assert result["has_easyeda_footprint"] is None
+
+    async def test_check_easyeda_footprint_caching(self, client):
+        """Test that EasyEDA results are cached."""
+        # First call
+        result1 = await client.check_easyeda_footprint("C1525")
+
+        # Second call should be cached (no API hit)
+        result2 = await client.check_easyeda_footprint("C1525")
+
+        # Results should be identical
+        assert result1 == result2
+
+        # Check cache contains the entry
+        assert "C1525" in client._easyeda_cache
+
+    async def test_find_alternatives_with_easyeda_filter(self, client):
+        """Test find_alternatives with has_easyeda_footprint filter."""
+        categories = await client.fetch_categories()
+        client.set_categories(categories)
+
+        # Find alternatives with EasyEDA footprints only
+        result = await client.find_alternatives(
+            "C25531",  # Common 10k resistor
+            min_stock=100,
+            has_easyeda_footprint=True,
+            limit=5,
+        )
+
+        assert "error" not in result
+
+        # All alternatives should have EasyEDA info included
+        for alt in result["alternatives"]:
+            assert "has_easyeda_footprint" in alt
+            # When filtering for True, all should have footprints
+            assert alt["has_easyeda_footprint"] is True
+
+    async def test_get_part_includes_easyeda_info(self, client):
+        """Test that get_part includes EasyEDA footprint info."""
+        result = await client.get_part("C1525")
+        assert result is not None
+        assert "has_easyeda_footprint" in result
+        assert "easyeda_symbol_uuid" in result
+        assert "easyeda_footprint_uuid" in result

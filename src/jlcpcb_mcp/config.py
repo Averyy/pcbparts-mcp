@@ -14,6 +14,10 @@ JLCPCB_DETAIL_URL = "https://cart.jlcpcb.com/shoppingCart/smtGood/getComponentDe
 # EasyEDA API endpoint (for footprint/symbol availability check)
 EASYEDA_COMPONENT_URL = "https://easyeda.com/api/products/{lcsc}/components"
 EASYEDA_CACHE_TTL = 3600  # Cache footprint availability for 1 hour
+EASYEDA_ERROR_CACHE_TTL = 300  # Cache errors for 5 minutes to avoid hammering failing API
+EASYEDA_REQUEST_TIMEOUT = 5.0  # Shorter timeout for EasyEDA (non-critical)
+EASYEDA_CACHE_MAX_SIZE = 10000  # Max cached entries to prevent unbounded memory growth
+EASYEDA_CONCURRENT_LIMIT = 5  # Max concurrent EasyEDA requests to avoid rate limiting
 
 # Request settings
 REQUEST_TIMEOUT = 10.0

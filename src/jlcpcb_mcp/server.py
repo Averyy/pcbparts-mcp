@@ -101,9 +101,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.request_counts[client_ip] = [
             t for t in self.request_counts[client_ip] if t > window_start
         ]
-        # Clean up empty entries to prevent memory growth
+        # If IP has no recent requests, delete the key to prevent memory growth
+        # from accumulating stale IPs, then start fresh tracking
         if not self.request_counts[client_ip]:
-            # New or quiet IP - not rate limited, start tracking
+            del self.request_counts[client_ip]
             self.request_counts[client_ip] = [now]
             return False
         # Check if rate limited before adding current request
@@ -181,6 +182,8 @@ async def search_parts(
         raise RuntimeError("Client not initialized")
 
     # Validate parameters
+    if query and len(query) > 500:
+        return {"error": "Query too long (max 500 characters)"}
     effective_min_stock = max(0, min_stock)
     effective_page = max(1, page)
     effective_limit = max(1, min(limit, MAX_PAGE_SIZE))
@@ -364,13 +367,20 @@ async def _process_bom(
 
     Returns:
         Tuple of (processed parts, issues, summary)
+
+    Raises:
+        ValueError: If board_qty is <= 0
     """
     if not _client:
         raise RuntimeError("Client not initialized")
 
+    # Validate board_qty
+    if board_qty is not None and board_qty <= 0:
+        raise ValueError(f"board_qty must be positive, got {board_qty}")
+
     issues: list[BOMIssue] = []
 
-    # Step 1: Validate designators (check for duplicates)
+    # Step 1: Validate designators (check for duplicates and empty)
     issues.extend(validate_designators(parts))
 
     # Step 2: Merge duplicate LCSC codes
@@ -532,7 +542,10 @@ async def validate_bom(
 
     Note: Issues are reported but don't block the response. Caller decides whether to proceed.
     """
-    sorted_parts, issues, summary = await _process_bom(parts, board_qty, min_stock)
+    try:
+        sorted_parts, issues, summary = await _process_bom(parts, board_qty, min_stock)
+    except ValueError as e:
+        return {"error": str(e)}
 
     return {
         "parts": [
@@ -608,7 +621,10 @@ async def export_bom(
 
     Note: Prices are estimates and may change. Stock validation is point-in-time.
     """
-    sorted_parts, issues, summary = await _process_bom(parts, board_qty, min_stock)
+    try:
+        sorted_parts, issues, summary = await _process_bom(parts, board_qty, min_stock)
+    except ValueError as e:
+        return {"error": str(e)}
 
     # Generate CSV
     csv_content = generate_csv(sorted_parts)

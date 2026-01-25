@@ -1233,8 +1233,14 @@
             const text = 'claude mcp add --transport http jlcmcp https://jlcmcp.dev/mcp';
             navigator.clipboard.writeText(text);
             const btn = document.querySelector('.hero-cta .btn-primary');
-            btn.textContent = 'Copied!';
-            setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+            const fullSpan = btn.querySelector('.btn-text-full');
+            const shortSpan = btn.querySelector('.btn-text-short');
+            fullSpan.textContent = 'Copied!';
+            shortSpan.textContent = 'Copied!';
+            setTimeout(() => {
+                fullSpan.textContent = 'Copy to Clipboard';
+                shortSpan.textContent = 'Copy';
+            }, 2000);
         }
 
         // Terminal animation

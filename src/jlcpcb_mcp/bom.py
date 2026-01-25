@@ -53,19 +53,31 @@ class BOMResult:
 
 
 def validate_designators(parts_input: list[dict[str, Any]]) -> list[BOMIssue]:
-    """Check for duplicate designators across all parts.
+    """Check for duplicate and empty designators across all parts.
 
     Args:
         parts_input: List of part dicts with 'designators' lists
 
     Returns:
-        List of error issues for any duplicate designators
+        List of error issues for any duplicate or empty designators
     """
     issues: list[BOMIssue] = []
     seen: dict[str, int] = {}  # designator -> index where first seen
 
     for idx, part in enumerate(parts_input):
-        for designator in part.get("designators", []):
+        designators = part.get("designators", [])
+
+        # Check for empty designators list
+        if not designators:
+            issues.append(BOMIssue(
+                lcsc=part.get("lcsc"),
+                designators=[],
+                severity="error",
+                issue="Part has no designators",
+            ))
+            continue
+
+        for designator in designators:
             if designator in seen:
                 issues.append(BOMIssue(
                     lcsc=part.get("lcsc"),
