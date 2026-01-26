@@ -34,7 +34,7 @@ from .bom import (
     check_extended_part,
     check_easyeda_footprint,
 )
-from .pinout import parse_easyeda_pins, generate_pinout_summary
+from .pinout import parse_easyeda_pins
 
 logger = logging.getLogger(__name__)
 
@@ -503,10 +503,7 @@ async def get_pinout(lcsc: str | None = None, uuid: str | None = None) -> dict:
     if not pins:
         return {"error": "Invalid EasyEDA response - missing pin data"}
 
-    # Generate summary for complex components (MCUs with interfaces)
-    summary = generate_pinout_summary(pins)
-
-    result: dict = {
+    return {
         "lcsc": lcsc,
         "model": part.get("model") if part else None,
         "manufacturer": part.get("manufacturer") if part else None,
@@ -515,12 +512,6 @@ async def get_pinout(lcsc: str | None = None, uuid: str | None = None) -> dict:
         "pins": pins,
         "easyeda_symbol_uuid": symbol_uuid,
     }
-
-    # Only include summary for components with interfaces (MCUs, complex ICs)
-    if summary:
-        result["summary"] = summary
-
-    return result
 
 
 async def _process_bom(

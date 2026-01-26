@@ -147,7 +147,7 @@ Use `find_alternatives(has_easyeda_footprint=True)` to only get parts with EasyE
 
 ### get_pinout Tool
 
-Fetches component pin information from EasyEDA symbol data. Useful for verifying circuit connections in Atopile/KiCad.
+Fetches component pin information from EasyEDA symbol data. Returns raw data exactly as EasyEDA provides it.
 
 **Parameters:**
 | Parameter | Type | Description |
@@ -157,29 +157,37 @@ Fetches component pin information from EasyEDA symbol data. Useful for verifying
 
 **Returns:**
 - `pin_count`: Total number of pins
-- `pins`: List of pins with number, name, functions, and type
-- `summary`: (MCUs only) Interface summary with power/ground pins and peripheral counts
+- `pins`: List of pins with number, name, and electrical type (raw from EasyEDA)
 
-**Pin Types:**
-- `power`: VCC, VDD, VBAT, 3V3, etc.
-- `ground`: GND, VSS, AGND, etc.
-- `io`: GPIO, signal pins
-- `passive`: Numbered pins on resistors, capacitors
+**Electrical Types** (from EasyEDA):
+- `undefined`: Not set by symbol creator (most common)
+- `input`: Input pin
+- `output`: Output pin
+- `bidirectional`: I/O pin
+- `power`: Power pin
 
-**Example - STM32F103CBT6:**
+**Example - STM32F103C8T6:**
 ```json
 {"pin_count": 48, "pins": [
-  {"number": "1", "name": "VBAT", "functions": [], "type": "power"},
-  {"number": "10", "name": "PA0", "functions": ["WKUP", "USART2_CTS", "ADC12_IN0"], "type": "io"}
-], "summary": {"power": ["VBAT", "VDD"], "ground": ["VSS"], "interfaces": {"spi": {"count": 2}}}}
+  {"number": "1", "name": "VBAT", "electrical": "undefined"},
+  {"number": "2", "name": "PC13-TAMPER-RTC", "electrical": "undefined"}
+]}
 ```
 
 **Example - AO3400 MOSFET:**
 ```json
 {"pin_count": 3, "pins": [
-  {"number": "1", "name": "G", "functions": [], "type": "io"},
-  {"number": "2", "name": "S", "functions": [], "type": "io"},
-  {"number": "3", "name": "D", "functions": [], "type": "io"}
+  {"number": "1", "name": "G", "electrical": "undefined"},
+  {"number": "2", "name": "S", "electrical": "undefined"},
+  {"number": "3", "name": "D", "electrical": "undefined"}
+]}
+```
+
+**Example - RP2040** (has electrical types set):
+```json
+{"pin_count": 57, "pins": [
+  {"number": "1", "name": "1", "electrical": "bidirectional"},
+  {"number": "2", "name": "2", "electrical": "bidirectional"}
 ]}
 ```
 
