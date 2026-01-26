@@ -216,6 +216,8 @@ async def search_parts(
     query: str | None = None,
     category_id: int | None = None,
     subcategory_id: int | None = None,
+    category_name: str | None = None,
+    subcategory_name: str | None = None,
     min_stock: int = DEFAULT_MIN_STOCK,
     library_type: str | None = None,
     package: str | None = None,
@@ -232,8 +234,12 @@ async def search_parts(
         query: Search keywords including part numbers, model names, or attribute values
                (e.g., "ESP32", "10uF 25V", "STM32F103"). Attribute values like capacitance,
                voltage rating, resistance work as search terms.
-        category_id: Category ID from list_categories (e.g., 1=Resistors, 2=Capacitors)
-        subcategory_id: Subcategory ID from get_subcategories
+        category_id: Category ID from list_categories (e.g., 1=Resistors, 2=Capacitors).
+                     Takes precedence over category_name if both provided.
+        subcategory_id: Subcategory ID from get_subcategories.
+                        Takes precedence over subcategory_name if both provided.
+        category_name: Category name (alternative to category_id). E.g., "Resistors", "Capacitors"
+        subcategory_name: Subcategory name (alternative to subcategory_id). E.g., "Tactile Switches"
         min_stock: Min stock qty (default 50). Set 0 for all including out-of-stock
         library_type: "basic", "preferred", "no_fee" (both), "extended" ($3/part), or "all"
         package: Single package size filter (e.g., "0402", "LQFP48")
@@ -246,10 +252,18 @@ async def search_parts(
 
     Returns:
         Results include: lcsc, model, manufacturer, package, stock, price, price_10 (volume),
-        library_type, preferred, category, subcategory,
-        key_specs (essential attributes for the component type - varies by subcategory).
+        library_type, preferred, category, subcategory, mounting_type, key_specs.
+        mounting_type values: "smd", "through_hole", "not_sure", or "not_applicable".
         Pagination: page, per_page, total, total_pages, has_more.
         Use get_part(lcsc) for full details including datasheet and all attributes.
+
+    Note:
+        Each result includes mounting_type field for client-side filtering:
+        - "smd": Surface mount component
+        - "through_hole": Through-hole component
+        - "not_sure": Unable to determine from package/category info
+        - "not_applicable": Non-PCB item (cables, tools, fasteners, etc.)
+        The JLCPCB API does not support server-side mounting type filtering.
     """
     if not _client:
         raise RuntimeError("Client not initialized")
@@ -265,10 +279,30 @@ async def search_parts(
     parsed_packages = _parse_list_param(packages)
     parsed_manufacturers = _parse_list_param(manufacturers)
 
+    # Resolve category_name to category_id if provided (ID takes precedence)
+    resolved_category_id = category_id
+    if category_name and not category_id:
+        # Ensure categories are loaded before name resolution
+        if not _categories:
+            return {"error": "Categories not loaded. Server may still be starting up.", "hint": "Try again in a moment"}
+        resolved_category_id = _client.match_category_by_name(category_name)
+        if resolved_category_id is None:
+            return {"error": f"Category not found: '{category_name}'", "hint": "Use list_categories to see available categories"}
+
+    # Resolve subcategory_name to subcategory_id if provided (ID takes precedence)
+    resolved_subcategory_id = subcategory_id
+    if subcategory_name and not subcategory_id:
+        # Ensure categories are loaded before name resolution
+        if not _categories:
+            return {"error": "Categories not loaded. Server may still be starting up.", "hint": "Try again in a moment"}
+        resolved_subcategory_id = _client.get_subcategory_id_by_name(subcategory_name)
+        if resolved_subcategory_id is None:
+            return {"error": f"Subcategory not found: '{subcategory_name}'", "hint": "Use get_subcategories to see available subcategories for a category"}
+
     return await _client.search(
         query=query,
-        category_id=category_id,
-        subcategory_id=subcategory_id,
+        category_id=resolved_category_id,
+        subcategory_id=resolved_subcategory_id,
         min_stock=effective_min_stock,
         library_type=library_type if library_type != "all" else None,
         package=package,

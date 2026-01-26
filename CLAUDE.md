@@ -97,12 +97,14 @@ jlcpcb-mcp/
 │   ├── server.py           # FastMCP server
 │   ├── bom.py              # BOM generation and validation
 │   ├── pinout.py           # EasyEDA pinout parser
+│   ├── mounting.py         # Mounting type detection (SMD vs through-hole)
 │   ├── categories.py       # 52 categories + subcategories
 │   └── key_attributes.py   # Key specs mapping (758 subcategories)
 ├── landing/                # Website at jlcmcp.dev
 │   └── index.html
 ├── tests/
 │   ├── test_client.py      # Client unit + integration tests
+│   ├── test_mounting.py    # Mounting type detection unit tests
 │   ├── test_bom.py         # BOM unit + integration tests
 │   └── test_pinout.py      # Pinout parser unit + integration tests
 ├── Dockerfile
@@ -196,10 +198,19 @@ Fetches component pin information from EasyEDA symbol data. Returns raw data exa
 - **query**: Keywords including attribute values (e.g., "10uF 25V", "100k 1%")
 - **package/packages**: Single or multiple package sizes (OR logic for arrays)
 - **manufacturer/manufacturers**: Single or multiple manufacturers (OR logic for arrays)
-- **category_id/subcategory_id**: Filter by category from `list_categories`
+- **category_id/subcategory_id**: Filter by category ID from `list_categories`. ID takes precedence if both ID and name provided.
+- **category_name/subcategory_name**: Filter by name (alternative to IDs). E.g., `category_name="Capacitors"`, `subcategory_name="Tactile Switches"`
 - **library_type**: "basic", "preferred", "no_fee", "extended", or "all"
 - **min_stock**: Minimum stock quantity (default: 50)
 - **sort_by**: "quantity" (highest first) or "price" (cheapest first). Default: relevance
+
+**Mounting Type**: Each result includes a `mounting_type` field for client-side filtering. Possible values:
+- `"smd"` - Surface mount component
+- `"through_hole"` - Through-hole component
+- `"not_sure"` - Unable to determine from package/category info
+- `"not_applicable"` - Non-PCB item (cables, tools, fasteners, etc.)
+
+The JLCPCB API doesn't support server-side mounting type filtering, so filter results yourself if needed.
 
 ## Library Types
 

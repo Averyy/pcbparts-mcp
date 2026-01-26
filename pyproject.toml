@@ -1,6 +1,6 @@
 [project]
 name = "jlcpcb-mcp"
-version = "1.8.4"
+version = "1.9.0"
 description = "MCP server for searching JLCPCB electronic components"
 requires-python = ">=3.11"
 dependencies = [

@@ -35,6 +35,7 @@ from .config import (
 )
 from .key_attributes import KEY_ATTRIBUTES
 from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
+from .mounting import detect_mounting_type
 
 logger = logging.getLogger(__name__)
 
@@ -71,6 +72,7 @@ class JLCPCBClient:
         # Category cache - lazily populated from API or set externally
         self._categories: list[dict[str, Any]] = []
         self._category_map: dict[int, dict[str, Any]] = {}  # id -> category
+        self._category_name_map: dict[str, int] = {}  # lowercase name -> category_id (O(1) lookup)
         self._subcategory_map: dict[int, tuple[int, dict[str, Any]]] = {}  # id -> (parent_id, subcategory)
         self._subcategory_name_map: dict[str, int] = {}  # name -> subcategory_id
         # EasyEDA footprint cache: lcsc -> (timestamp, result_dict, is_error)
@@ -113,14 +115,40 @@ class JLCPCBClient:
         """
         self._categories = categories
         self._category_map.clear()
+        self._category_name_map.clear()
         self._subcategory_map.clear()
         self._subcategory_name_map.clear()
 
         for cat in categories:
             self._category_map[cat["id"]] = cat
+            self._build_category_name_mappings(cat)
             for sub in cat.get("subcategories", []):
                 self._subcategory_map[sub["id"]] = (cat["id"], sub)
-                self._subcategory_name_map[sub["name"]] = sub["id"]
+                # Store lowercase for case-insensitive matching
+                self._subcategory_name_map[sub["name"].lower()] = sub["id"]
+
+    def _build_category_name_mappings(self, cat: dict[str, Any]) -> None:
+        """Build O(1) name lookup mappings for a category.
+
+        Handles case-insensitive matching and simple singular forms.
+        Only adds singular mapping for simple -s plurals (not -ies, -es, etc.)
+        to avoid incorrect mappings like "Batteries" -> "Batterie".
+        """
+        name_lower = cat["name"].lower()
+        self._category_name_map[name_lower] = cat["id"]
+
+        # Only map singular form for simple -s plurals (not -ies, -es, -ses, -xes, -ches, -shes)
+        # e.g., "capacitors" -> "capacitor", "resistors" -> "resistor"
+        # but NOT "batteries" -> "batterie" or "switches" -> "switche"
+        if (
+            name_lower.endswith("s")
+            and not name_lower.endswith("ies")
+            and not name_lower.endswith("ses")
+            and not name_lower.endswith("xes")
+            and not name_lower.endswith("ches")
+            and not name_lower.endswith("shes")
+        ):
+            self._category_name_map[name_lower[:-1]] = cat["id"]
 
     def _get_browser(self) -> str:
         """Get a random browser fingerprint."""
@@ -154,9 +182,11 @@ class JLCPCBClient:
         # Build lookup maps
         for cat in self._categories:
             self._category_map[cat["id"]] = cat
+            self._build_category_name_mappings(cat)
             for sub in cat.get("subcategories", []):
                 self._subcategory_map[sub["id"]] = (cat["id"], sub)
-                self._subcategory_name_map[sub["name"]] = sub["id"]
+                # Store lowercase for case-insensitive matching
+                self._subcategory_name_map[sub["name"].lower()] = sub["id"]
 
     def _get_category(self, category_id: int) -> dict[str, Any] | None:
         """Get category by ID from cache."""
@@ -167,8 +197,10 @@ class JLCPCBClient:
         return self._subcategory_map.get(subcategory_id)
 
     def get_subcategory_id_by_name(self, name: str) -> int | None:
-        """Get subcategory ID by name from cache. O(1) lookup."""
-        return self._subcategory_name_map.get(name)
+        """Get subcategory ID by name from cache. O(1) case-insensitive lookup."""
+        if not name:
+            return None
+        return self._subcategory_name_map.get(name.lower())
 
     # Common abbreviations mapped to category name substrings
     # These are resolved dynamically against fetched categories at runtime
@@ -233,32 +265,32 @@ class JLCPCBClient:
                 return cat["id"]
         return None
 
-    def _match_category_by_name(self, query: str) -> int | None:
+    def match_category_by_name(self, query: str) -> int | None:
         """Match a query string against category names.
 
         Returns category_id if query matches a category name (case-insensitive).
         Handles common variations like singular/plural ("capacitor" -> "Capacitors"),
         and common abbreviations like "LED" -> Optoelectronics.
+
+        Note: Requires categories to be loaded first via set_categories() or _ensure_categories().
         """
         if not query or not self._categories:
             return None
 
         query_lower = query.lower().strip()
 
-        # Check explicit abbreviation mappings first (resolved dynamically)
+        # O(1) lookup for exact match or singular form
+        if query_lower in self._category_name_map:
+            return self._category_name_map[query_lower]
+
+        # Check explicit abbreviation mappings (resolved dynamically)
         abbrev_match = self._resolve_abbreviation(query_lower)
         if abbrev_match is not None:
             return abbrev_match
 
+        # Fallback: prefix matching for partial names (e.g., "resistor" matches "resistors")
         for cat in self._categories:
             cat_name = cat["name"].lower()
-            # Exact match
-            if query_lower == cat_name:
-                return cat["id"]
-            # Query is singular form of category (e.g., "capacitor" matches "capacitors")
-            if cat_name.endswith("s") and query_lower == cat_name[:-1]:
-                return cat["id"]
-            # Query matches start of category name (e.g., "resistor" matches "resistors")
             if cat_name.startswith(query_lower) and len(query_lower) >= 4:
                 return cat["id"]
 
@@ -690,11 +722,12 @@ class JLCPCBClient:
 
         # Note: API returns firstSortName as subcategory, secondSortName as category
         stock = item.get("stockCount")
+        package = item.get("componentSpecificationEn")
         result: dict[str, Any] = {
             "lcsc": item.get("componentCode"),
             "model": item.get("componentModelEn"),
             "manufacturer": item.get("componentBrandEn"),
-            "package": item.get("componentSpecificationEn"),
+            "package": package,
             "stock": stock,
             "price": round(price, 4) if price else None,
             "price_10": round(price_10, 4) if price_10 else None,
@@ -702,6 +735,11 @@ class JLCPCBClient:
             "preferred": item.get("preferredComponentFlag", False),
             "category": item.get("secondSortName"),  # Primary category
             "subcategory": item.get("firstSortName"),  # Subcategory
+            "mounting_type": detect_mounting_type(
+                package,
+                category=item.get("secondSortName"),
+                subcategory=item.get("firstSortName"),
+            ),  # "smd" or "through_hole"
         }
 
         # Include key specs in slim mode
@@ -790,7 +828,7 @@ class JLCPCBClient:
         # Auto-match query to category if no category specified
         # e.g., "capacitor" -> category_id=2 (Capacitors)
         if query and not category_id and not subcategory_id:
-            matched_category = self._match_category_by_name(query)
+            matched_category = self.match_category_by_name(query)
             if matched_category:
                 category_id = matched_category
                 query = None  # Use category filter instead of keyword
