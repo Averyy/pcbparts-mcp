@@ -594,9 +594,9 @@ class TestClientIntegration:
         for alt in result["alternatives"]:
             assert alt["lcsc"] != "C25531", "Original should not be in alternatives"
 
-        # Check search criteria in response
-        assert result["search_criteria"]["min_stock"] == 100
-        assert result["search_criteria"]["same_package"] is False
+        # Check search criteria in response - new format has compatibility info
+        assert "search_criteria" in result
+        assert "subcategory" in result["search_criteria"]
 
     async def test_find_alternatives_invalid_lcsc(self, client):
         """Test find_alternatives with invalid LCSC code returns error dict."""
@@ -691,7 +691,6 @@ class TestClientIntegration:
 
         assert "error" not in result
         assert "search_criteria" in result
-        assert result["search_criteria"]["library_type"] == "basic"
 
         # All alternatives should be basic library type
         for alt in result["alternatives"]:
@@ -711,12 +710,11 @@ class TestClientIntegration:
         )
 
         assert "error" not in result
-        assert result["search_criteria"]["library_type"] == "no_fee"
+        assert "search_criteria" in result
 
         # All alternatives should be basic or preferred (no $3 fee)
         for alt in result["alternatives"]:
-            assert alt["library_type"] in ("basic", "extended") or alt.get("preferred")
-            # Note: no_fee returns basic parts, preferred flag may also be set
+            assert alt["library_type"] in ("basic", "preferred") or alt.get("preferred")
 
     async def test_find_alternatives_includes_library_type_in_original(self, client):
         """Test find_alternatives includes library_type in original part info."""

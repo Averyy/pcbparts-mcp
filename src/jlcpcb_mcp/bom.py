@@ -312,6 +312,17 @@ def calculate_line_cost(
     return order_qty, unit_price, line_cost
 
 
+def _sanitize_csv_field(value: str) -> str:
+    """Sanitize a CSV field to prevent formula injection in Excel.
+
+    Prefixes values starting with formula characters (=, -, +, @, tab, carriage return)
+    with a single quote to prevent Excel from interpreting them as formulas.
+    """
+    if value and value[0] in ('=', '-', '+', '@', '\t', '\r'):
+        return "'" + value
+    return value
+
+
 def generate_csv(parts: list[BOMPart]) -> str:
     """Generate JLCPCB-compatible CSV from BOM parts.
 
@@ -330,13 +341,13 @@ def generate_csv(parts: list[BOMPart]) -> str:
     # Header row
     writer.writerow(["Comment", "Designator", "Footprint", "LCSC Part #"])
 
-    # Data rows
+    # Data rows - sanitize fields to prevent CSV injection
     for part in parts:
         writer.writerow([
-            part.comment,
-            part.designators_str,
-            part.footprint,
-            part.lcsc or "",
+            _sanitize_csv_field(part.comment),
+            _sanitize_csv_field(part.designators_str),
+            _sanitize_csv_field(part.footprint),
+            part.lcsc or "",  # LCSC codes are validated, no need to sanitize
         ])
 
     return output.getvalue()

@@ -1,6 +1,7 @@
 """JLCPCB API client for searching electronic components."""
 
 import asyncio
+import heapq
 import logging
 import random
 import re
@@ -36,6 +37,14 @@ from .config import (
 from .key_attributes import KEY_ATTRIBUTES
 from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
 from .mounting import detect_mounting_type
+from .alternatives import (
+    COMPATIBILITY_RULES,
+    is_compatible_alternative,
+    verify_primary_spec_match,
+    score_alternative,
+    build_response,
+    build_unsupported_response,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -965,7 +974,9 @@ class JLCPCBClient:
     ) -> dict[str, Any]:
         """Find alternative parts similar to a given component.
 
-        Searches the same subcategory for parts with better availability.
+        Uses spec-aware compatibility checking to ensure alternatives are safe to use.
+        For supported subcategories, verifies primary spec matches and same_or_better rules.
+        For unsupported subcategories, returns similar_parts for manual comparison.
 
         Args:
             lcsc: LCSC part code to find alternatives for (e.g., "C2557")
@@ -980,7 +991,8 @@ class JLCPCBClient:
             limit: Maximum alternatives to return (default: 10, max: 50)
 
         Returns:
-            Dict with original part info and list of alternatives sorted by stock.
+            Dict with original part info, alternatives (verified compatible), and
+            similar_parts (for unsupported categories requiring manual verification).
         """
         # Validate and cap limit
         effective_limit = max(1, min(limit, MAX_ALTERNATIVES))
@@ -994,26 +1006,42 @@ class JLCPCBClient:
         if not original:
             return {"error": f"Part {lcsc.strip().upper()} not found"}
 
-        # Build search params - get extra if we're filtering by footprint
-        extra_for_filtering = 20 if has_easyeda_footprint is not None else 5
+        # Check if category is supported for compatibility checking
+        subcategory_name = original.get("subcategory")
+        rules = COMPATIBILITY_RULES.get(subcategory_name) if subcategory_name else None
+        is_supported = rules is not None
+
+        # Get primary spec for search query
+        # For supported: use rules["primary"]
+        # For unsupported: use first KEY_ATTRIBUTE as best guess
+        if is_supported and rules:
+            primary_attr = rules.get("primary")
+        else:
+            key_attrs = KEY_ATTRIBUTES.get(subcategory_name, []) if subcategory_name else []
+            primary_attr = key_attrs[0] if key_attrs else None
+
+        primary_value = None
+        if primary_attr:
+            primary_value = original.get("key_specs", {}).get(primary_attr)
+
+        # Find subcategory ID using O(1) lookup
+        subcategory_id = None
+        if subcategory_name:
+            subcategory_id = self.get_subcategory_id_by_name(subcategory_name)
+
+        # Build search params - fetch extra for filtering (5x limit for compatibility filtering)
+        search_multiplier = 5 if is_supported else 3
+        extra_for_footprint = 20 if has_easyeda_footprint is not None else 0
         search_params: dict[str, Any] = {
             "min_stock": effective_min_stock,
             "sort_by": "quantity",  # Best availability first
-            "limit": effective_limit + extra_for_filtering,
+            "limit": effective_limit * search_multiplier + extra_for_footprint,
+            "library_type": "all",  # Don't filter here - let scoring prioritize
         }
 
-        # Add library type filter if specified
-        if library_type:
-            search_params["library_type"] = library_type
-
-        # Find subcategory ID using O(1) lookup
-        subcategory_name = original.get("subcategory")
-        subcategory_id = None
-        warning = None
-        if subcategory_name:
-            subcategory_id = self.get_subcategory_id_by_name(subcategory_name)
-            if not subcategory_id:
-                warning = f"Subcategory '{subcategory_name}' not found in cache, searching all parts"
+        # Add primary spec as query for more relevant results
+        if primary_value:
+            search_params["query"] = primary_value
 
         if subcategory_id:
             search_params["subcategory_id"] = subcategory_id
@@ -1024,75 +1052,93 @@ class JLCPCBClient:
 
         result = await self.search(**search_params)
 
-        # Filter out the original part (normalize LCSC code for comparison)
+        # Filter out the original part
         original_lcsc = original.get("lcsc", "").upper()
         candidates = [
             p for p in result.get("results", [])
             if p.get("lcsc", "").upper() != original_lcsc
         ]
 
-        # Filter by EasyEDA footprint availability if requested
-        # Note: When filtering, EasyEDA info is included in results; otherwise omitted for speed
-        if has_easyeda_footprint is not None:
-            # Get LCSC codes for all candidates (up to buffer size: limit + 20)
-            # Extra buffer accounts for ~50% parts not matching the footprint filter
-            candidate_codes = [p.get("lcsc", "") for p in candidates if p.get("lcsc")]
+        # Verify primary spec matches (JLCPCB search may return fuzzy matches)
+        verified = [
+            p for p in candidates
+            if not primary_attr or verify_primary_spec_match(original, p, primary_attr)
+        ]
 
-            # Fetch EasyEDA info in parallel (rate-limited by semaphore in check_easyeda_footprint)
+        # For SUPPORTED categories: filter to compatible alternatives
+        # For UNSUPPORTED categories: skip compatibility filtering
+        compatible: list[dict[str, Any]] = []
+        verification_info_map: dict[str, dict[str, Any]] = {}
+
+        if is_supported:
+            for p in verified:
+                is_compat, verify_info = is_compatible_alternative(original, p, subcategory_name or "")
+                if is_compat:
+                    compatible.append(p)
+                    verification_info_map[p.get("lcsc", "")] = verify_info
+        else:
+            compatible = verified
+            # Empty verification info for unsupported categories
+            for p in compatible:
+                verification_info_map[p.get("lcsc", "")] = {"specs_verified": [], "specs_unparseable": []}
+
+        # Filter by EasyEDA footprint availability if requested
+        # Pre-filter to limit EasyEDA API calls (2x limit provides buffer for filtering)
+        if has_easyeda_footprint is not None:
+            # Only check top candidates to avoid excessive API calls
+            max_easyeda_checks = effective_limit * 2
+            candidates_to_check = compatible[:max_easyeda_checks]
+            candidate_codes = [p.get("lcsc", "") for p in candidates_to_check if p.get("lcsc")]
             easyeda_results = await asyncio.gather(
                 *[self.check_easyeda_footprint(code) for code in candidate_codes]
             )
             easyeda_map = dict(zip(candidate_codes, easyeda_results))
 
-            # Filter to matching footprint status
-            filtered_alternatives = []
-            for part in candidates:
-                if len(filtered_alternatives) >= effective_limit:
-                    break
+            filtered_compatible = []
+            for part in candidates_to_check:
                 part_lcsc = part.get("lcsc", "")
                 if not part_lcsc:
                     continue
                 easyeda_info = easyeda_map.get(part_lcsc, {})
                 has_fp = easyeda_info.get("has_easyeda_footprint")
-                # Skip parts with unknown footprint status
                 if has_fp is None:
                     continue
-                # Include if matches filter
                 if has_fp == has_easyeda_footprint:
-                    # Add EasyEDA info to the part
                     part.update(easyeda_info)
-                    filtered_alternatives.append(part)
-            alternatives = filtered_alternatives
+                    filtered_compatible.append(part)
+            compatible = filtered_compatible
+
+        # Filter by library_type if specified (after compatibility check)
+        if library_type and library_type != "all":
+            if library_type == "no_fee":
+                compatible = [p for p in compatible if p.get("library_type") in ("basic", "preferred")]
+            elif library_type == "basic":
+                compatible = [p for p in compatible if p.get("library_type") == "basic"]
+            elif library_type == "preferred":
+                compatible = [p for p in compatible if p.get("preferred", False)]
+            elif library_type == "extended":
+                compatible = [p for p in compatible if p.get("library_type") == "extended"]
+
+        # Score and rank alternatives
+        min_price = min((p.get("price") for p in compatible if p.get("price")), default=None)
+        scored: list[tuple[int, dict[str, Any], dict[str, int], dict[str, Any]]] = []
+        for part in compatible:
+            score, breakdown = score_alternative(part, original, min_price)
+            verify_info = verification_info_map.get(part.get("lcsc", ""), {"specs_verified": [], "specs_unparseable": []})
+            scored.append((score, part, breakdown, verify_info))
+
+        # Use heapq for efficient top-k selection instead of full sort
+        top_scored = heapq.nlargest(effective_limit, scored, key=lambda x: x[0])
+
+        # Build response (different structure for supported vs unsupported)
+        if is_supported:
+            return build_response(
+                original, top_scored, subcategory_name or "", primary_attr, primary_value, effective_limit
+            )
         else:
-            alternatives = candidates[:effective_limit]
-
-        response: dict[str, Any] = {
-            "original": {
-                "lcsc": original.get("lcsc"),
-                "model": original.get("model"),
-                "manufacturer": original.get("manufacturer"),
-                "package": original.get("package"),
-                "stock": original.get("stock"),
-                "price": original.get("price"),
-                "library_type": original.get("library_type"),
-                "subcategory": original.get("subcategory"),
-                "key_specs": original.get("key_specs"),
-                "has_easyeda_footprint": original.get("has_easyeda_footprint"),
-            },
-            "alternatives": alternatives,
-            "search_criteria": {
-                "subcategory": subcategory_name,
-                "min_stock": effective_min_stock,
-                "same_package": same_package,
-                "library_type": library_type,
-                "has_easyeda_footprint": has_easyeda_footprint,
-            },
-        }
-
-        if warning:
-            response["warning"] = warning
-
-        return response
+            return build_unsupported_response(
+                original, top_scored, subcategory_name or "", primary_attr, effective_limit
+            )
 
     async def fetch_categories(self) -> list[dict[str, Any]]:
         """Fetch current categories and subcategories from JLCPCB API.

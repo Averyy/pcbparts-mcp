@@ -98,12 +98,14 @@ jlcpcb-mcp/
 │   ├── bom.py              # BOM generation and validation
 │   ├── pinout.py           # EasyEDA pinout parser
 │   ├── mounting.py         # Mounting type detection (SMD vs through-hole)
+│   ├── alternatives.py     # Spec-aware alternative finding (120+ subcategories)
 │   ├── categories.py       # 52 categories + subcategories
 │   └── key_attributes.py   # Key specs mapping (758 subcategories)
 ├── landing/                # Website at jlcmcp.dev
 │   └── index.html
 ├── tests/
 │   ├── test_client.py      # Client unit + integration tests
+│   ├── test_alternatives.py # Alternative finding unit + integration tests
 │   ├── test_mounting.py    # Mounting type detection unit tests
 │   ├── test_bom.py         # BOM unit + integration tests
 │   └── test_pinout.py      # Pinout parser unit + integration tests
@@ -119,7 +121,7 @@ jlcpcb-mcp/
 | `search_parts` | Search components by keyword, category, filters, sorting |
 | `get_part` | Get full details for a specific LCSC part code |
 | `get_pinout` | Get component pin information from EasyEDA symbol data |
-| `find_alternatives` | Find similar parts in same subcategory with library_type, package, and EasyEDA filters |
+| `find_alternatives` | Find spec-compatible alternatives with compatibility verification for 120+ subcategories |
 | `list_categories` | Get all 52 primary component categories |
 | `get_subcategories` | Get subcategories for a category |
 | `validate_bom` | Validate BOM parts, check stock/availability, calculate costs (no CSV) |
@@ -134,7 +136,18 @@ jlcpcb-mcp/
 
 Use `find_alternatives(has_easyeda_footprint=True)` to only get parts with EasyEDA footprints available.
 
-### find_alternatives Parameters
+### find_alternatives Tool
+
+Uses **spec-aware compatibility checking** to find verified alternatives for 120+ supported subcategories. For unsupported categories, returns `similar_parts` for manual comparison.
+
+**How it works:**
+1. Searches by primary spec value (resistance for resistors, capacitance for capacitors, etc.)
+2. Verifies `must_match` rules (e.g., capacitor dielectric, LED color, relay coil voltage)
+3. Verifies `same_or_better` rules (e.g., higher voltage rating OK, lower tolerance OK)
+4. Scores and ranks by library type (basic/preferred saves $3), stock, EasyEDA availability
+5. Returns `alternatives` (verified compatible) or `similar_parts` (unsupported - verify manually)
+
+**Parameters:**
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
@@ -145,7 +158,22 @@ Use `find_alternatives(has_easyeda_footprint=True)` to only get parts with EasyE
 | `has_easyeda_footprint` | bool | Filter by EasyEDA footprint availability |
 | `limit` | int | Max alternatives to return (default: 10, max: 50) |
 
+**Response structure (supported categories):**
+- `original`: Original part details
+- `alternatives`: List of verified-compatible alternatives with scores
+- `summary`: Count of basic/preferred alternatives, savings message
+- `comparison`: Side-by-side of original vs recommended alternative with savings calculation
+- `confidence`: "high" (all specs verified) or "medium" (some specs couldn't be parsed)
+
+**Response structure (unsupported categories):**
+- `original`: Original part details
+- `alternatives`: Empty list (can't verify compatibility)
+- `similar_parts`: List of similar parts for manual comparison
+- `manual_comparison`: Specs to verify manually
+
 **Cost optimization:** Use `library_type="no_fee"` to find basic/preferred alternatives that avoid the $3 extended part fee.
+
+**Supported subcategories include:** Resistors, capacitors (MLCC, electrolytic, tantalum, film), inductors, ferrite beads, MOSFETs, BJTs, JFETs, IGBTs, diodes (Schottky, Zener, general purpose, TVS), fuses, thermistors, LEDs, optocouplers, crystals, oscillators, LDO regulators, voltage references, digital isolators, switches (tactile, DIP, toggle, rocker), relays (power, signal, solid state), connectors (headers, terminals, USB, HDMI), and more.
 
 ### get_pinout Tool
 
