@@ -210,15 +210,15 @@ class TestGenerateComment:
 
     def test_user_override(self):
         """User override takes priority."""
-        part_data = {"model": "ABC123", "key_specs": {"Value": "100nF"}, "package": "0402"}
+        part_data = {"model": "ABC123", "specs": {"Value": "100nF"}, "package": "0402"}
         result = generate_comment(part_data, user_override="Custom Comment")
         assert result == "Custom Comment"
 
-    def test_key_specs_for_passives(self):
-        """Uses key_specs for passives (more useful than MPN)."""
+    def test_specs_for_passives(self):
+        """Uses specs for passives (more useful than MPN)."""
         part_data = {
             "model": "CL05B104KO5NNNC",
-            "key_specs": {"Capacitance": "100nF", "Voltage": "50V"},
+            "specs": {"Capacitance": "100nF", "Voltage": "50V"},
             "package": "0402",
         }
         result = generate_comment(part_data)
@@ -227,20 +227,20 @@ class TestGenerateComment:
         assert "0402" in result
 
     def test_model_for_ics(self):
-        """Falls back to model when key_specs is empty."""
-        part_data = {"model": "STM32F103C8T6", "key_specs": {}, "package": "LQFP-48"}
+        """Falls back to model when specs is empty."""
+        part_data = {"model": "STM32F103C8T6", "specs": {}, "package": "LQFP-48"}
         result = generate_comment(part_data)
         assert result == "STM32F103C8T6"
 
     def test_model_truncated(self):
         """Model is truncated to 50 chars."""
-        part_data = {"model": "A" * 100, "key_specs": {}, "package": "0402"}
+        part_data = {"model": "A" * 100, "specs": {}, "package": "0402"}
         result = generate_comment(part_data)
         assert len(result) == 50
 
     def test_package_fallback(self):
         """Falls back to package if no model."""
-        part_data = {"key_specs": {}, "package": "0402"}
+        part_data = {"specs": {}, "package": "0402"}
         result = generate_comment(part_data)
         assert result == "0402"
 
@@ -252,7 +252,7 @@ class TestGenerateComment:
     def test_no_duplicate_package(self):
         """Doesn't duplicate package if already in specs."""
         part_data = {
-            "key_specs": {"Value": "10K", "Package": "0603"},
+            "specs": {"Value": "10K", "Package": "0603"},
             "package": "0603",
         }
         result = generate_comment(part_data)

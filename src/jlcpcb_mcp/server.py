@@ -17,6 +17,7 @@ from starlette.routing import Route
 from . import __version__
 from .config import RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE
 from .client import JLCPCBClient
+from .db import get_db, SpecFilter, close_db, parse_smart_query
 from .bom import (
     BOMPart,
     BOMIssue,
@@ -45,29 +46,32 @@ _categories: list[dict[str, Any]] = []  # Live category cache
 
 @asynccontextmanager
 async def lifespan(app):
-    """Manage client lifecycle and fetch live categories on startup."""
+    """Manage client lifecycle, build DB, and load categories on startup."""
     global _client, _categories
     _client = JLCPCBClient()
 
-    # Fetch live categories from API (once, shared with client)
-    try:
-        _categories = await _client.fetch_categories()
-        _client.set_categories(_categories)  # Share cache with client
-        logger.info(f"Loaded {len(_categories)} categories from JLCPCB API")
-    except Exception as e:
-        logger.warning(f"Failed to fetch categories from API: {e}")
-        _categories = []
+    # Build/load DB on startup (not on first request)
+    db = get_db()
+    db._ensure_db()
+    stats = db.get_stats()
+    logger.info(f"Database ready: {stats.get('total_parts', 0)} parts")
+
+    # Load categories from DB (updated daily by scraper, no API call needed)
+    _categories = db.get_categories_for_client()
+    _client.set_categories(_categories)
+    logger.info(f"Loaded {len(_categories)} categories from database")
 
     yield
 
     if _client:
         await _client.close()
+    close_db()
 
 
 # Create MCP server
 mcp = FastMCP(
     name="jlcmcp",
-    instructions="JLCPCB component search for PCB assembly. No auth required. Use search_parts to find components, get_part for details.",
+    instructions="JLCPCB component search for PCB assembly. No auth required. Use search to find components, get_part for details.",
     lifespan=lifespan,
     icons=[
         Icon(src="https://jlcmcp.dev/favicon.svg", mimeType="image/svg+xml"),
@@ -205,14 +209,14 @@ def _parse_parts_param(value: list[dict[str, Any]] | str) -> list[dict[str, Any]
 
 @mcp.tool(
     annotations=ToolAnnotations(
-        title="Search JLCPCB Parts",
+        title="Search API (Live)",
         readOnlyHint=True,
         destructiveHint=False,
         idempotentHint=True,
         openWorldHint=False,
     )
 )
-async def search_parts(
+async def search_api(
     query: str | None = None,
     category_id: int | None = None,
     subcategory_id: int | None = None,
@@ -228,42 +232,31 @@ async def search_parts(
     page: int = 1,
     limit: int = 20,
 ) -> dict:
-    """Search JLCPCB components for PCB assembly.
+    """Live API search. Full catalog including out-of-stock, but keywords only (no parametric filters).
+
+    Use this when you need:
+    - Parts with stock < 100 or out-of-stock parts
+    - Real-time stock verification before placing an order
+    - Pagination through large result sets
 
     Args:
-        query: Search keywords including part numbers, model names, or attribute values
-               (e.g., "ESP32", "10uF 25V", "STM32F103"). Attribute values like capacitance,
-               voltage rating, resistance work as search terms.
-        category_id: Category ID from list_categories (e.g., 1=Resistors, 2=Capacitors).
-                     Takes precedence over category_name if both provided.
-        subcategory_id: Subcategory ID from get_subcategories.
-                        Takes precedence over subcategory_name if both provided.
-        category_name: Category name (alternative to category_id). E.g., "Resistors", "Capacitors"
-        subcategory_name: Subcategory name (alternative to subcategory_id). E.g., "Tactile Switches"
-        min_stock: Min stock qty (default 50). Set 0 for all including out-of-stock
-        library_type: "basic", "preferred", "no_fee" (both), "extended" ($3/part), or "all"
-        package: Single package size filter (e.g., "0402", "LQFP48")
-        manufacturer: Single manufacturer filter. Supports aliases (e.g., "TI" -> "Texas Instruments")
-        packages: Multiple package sizes (OR filter). E.g., ["0402", "0603", "0805"]
-        manufacturers: Multiple manufacturers (OR filter). E.g., ["TI", "STMicroelectronics"]
-        sort_by: "quantity" (highest first) or "price" (cheapest first). Default: relevance
-        page: Page number (default: 1)
-        limit: Results per page (default: 20, max: 100)
+        query: Search keywords (e.g., "ESP32", "10uF 25V", "STM32F103")
+        category_id: Category ID from list_categories
+        subcategory_id: Subcategory ID from get_subcategories
+        category_name: Category name (e.g., "Resistors", "Capacitors")
+        subcategory_name: Subcategory name (e.g., "Tactile Switches")
+        min_stock: Min stock (default 50). Set 0 for out-of-stock parts
+        library_type: "basic", "preferred", "no_fee", "extended", or "all"
+        package: Package filter (e.g., "0402", "LQFP48")
+        manufacturer: Manufacturer filter
+        packages: Multiple packages (OR filter)
+        manufacturers: Multiple manufacturers (OR filter)
+        sort_by: "quantity" or "price"
+        page: Page number (default 1)
+        limit: Results per page (default 20, max 100)
 
     Returns:
-        Results include: lcsc, model, manufacturer, package, stock, price, price_10 (volume),
-        library_type, preferred, category, subcategory, mounting_type, key_specs.
-        mounting_type values: "smd", "through_hole", "not_sure", or "not_applicable".
-        Pagination: page, per_page, total, total_pages, has_more.
-        Use get_part(lcsc) for full details including datasheet and all attributes.
-
-    Note:
-        Each result includes mounting_type field for client-side filtering:
-        - "smd": Surface mount component
-        - "through_hole": Through-hole component
-        - "not_sure": Unable to determine from package/category info
-        - "not_applicable": Non-PCB item (cables, tools, fasteners, etc.)
-        The JLCPCB API does not support server-side mounting type filtering.
+        Results with pagination. Use get_part(lcsc) for full details.
     """
     if not _client:
         raise RuntimeError("Client not initialized")
@@ -315,6 +308,207 @@ async def search_parts(
     )
 
 
+def _parse_spec_filters(filters: list[dict[str, str]] | str | None) -> list[SpecFilter] | None:
+    """Parse spec filters from various input formats."""
+    if filters is None:
+        return None
+
+    # Handle JSON string input from some MCP clients
+    if isinstance(filters, str):
+        try:
+            filters = json.loads(filters)
+        except json.JSONDecodeError:
+            return None
+
+    if not isinstance(filters, list):
+        return None
+
+    result = []
+    for f in filters:
+        if isinstance(f, dict) and "name" in f and "op" in f and "value" in f:
+            op = f["op"]
+            if op in ("=", ">=", "<=", ">", "<", "!="):
+                result.append(SpecFilter(f["name"], op, f["value"]))
+    return result if result else None
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Search Components",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=False,
+    )
+)
+async def search(
+    query: str | None = None,
+    subcategory_id: int | None = None,
+    subcategory_name: str | None = None,
+    spec_filters: list[dict[str, str]] | str | None = None,
+    min_stock: int = 100,
+    library_type: str | None = None,
+    prefer_no_fee: bool = True,
+    package: str | None = None,
+    packages: list[str] | str | None = None,
+    manufacturer: str | None = None,
+    match_all_terms: bool = True,
+    sort_by: Literal["stock", "price"] = "stock",
+    limit: int = 50,
+) -> dict:
+    """Fast DB search with natural language parsing and parametric filters. High-stock parts only (>=100).
+
+    Args:
+        query: Search query - supports natural language like:
+            - "10k resistor 0603 1%" (auto-detects type, value, package, tolerance)
+            - "100nF 25V capacitor" (auto-applies voltage >= 25V filter)
+            - "n-channel mosfet SOT-23" (auto-filters to MOSFETs subcategory)
+            Or use with explicit filters for text search within results.
+
+        subcategory_id: Subcategory ID (e.g., 2954 for MOSFETs)
+        subcategory_name: Subcategory name (e.g., "MOSFETs", "Schottky Diodes")
+        spec_filters: Parametric filters for precise searches. Each filter is a dict:
+            - name: Attribute name (Vgs(th), Capacitance, Voltage, etc.)
+            - op: Operator: "=", ">=", "<=", ">", "<"
+            - value: Value with units (e.g., "2.5V", "10uF", "20mΩ")
+            Example: [{"name": "Vgs(th)", "op": "<", "value": "2.5V"}]
+
+        min_stock: Minimum stock (default 100). Database only indexes stock >= 100.
+        library_type: "basic", "preferred", "extended", or None (all)
+        prefer_no_fee: Sort basic/preferred first (default True)
+        package: Single package filter (e.g., "0603", "SOT-23")
+        packages: Multiple packages (OR logic): ["0402", "0603", "0805"]
+        manufacturer: Manufacturer filter
+        match_all_terms: AND logic for query terms (default True)
+        sort_by: "stock" (highest) or "price" (cheapest)
+        limit: Max results (default 50, max 100)
+
+    Attribute aliases:
+        MOSFETs: Vgs(th), Vds, Id, Rds(on)
+        Diodes: Vr, If, Vf
+        Passives: Capacitance, Resistance, Inductance, Voltage, Tolerance
+
+    Returns:
+        results: Matching components with specs
+        total: Total count (before limit)
+        filters_applied: Applied filters (useful for debugging)
+        parsed: (when using natural language) What was extracted from query
+    """
+    # Validate query length to prevent abuse
+    MAX_QUERY_LENGTH = 500
+    if query and len(query) > MAX_QUERY_LENGTH:
+        return {"error": f"Query too long (max {MAX_QUERY_LENGTH} characters)", "results": [], "total": 0}
+
+    db = get_db()
+
+    # Parse explicit spec filters
+    parsed_filters = _parse_spec_filters(spec_filters)
+
+    # Parse packages array (handles JSON strings from some MCP clients)
+    parsed_packages = _parse_list_param(packages)
+
+    # Smart parsing: if query provided but no explicit category/filters, try to parse naturally
+    parsed_query_info = None
+    effective_subcategory_name = subcategory_name
+    effective_package = package
+    effective_query = query
+
+    if query and not subcategory_id and not subcategory_name and not parsed_filters:
+        # Parse natural language query
+        parsed = parse_smart_query(query)
+        parsed_query_info = {
+            "original_query": parsed.original,
+            "detected": parsed.detected,
+            "subcategory": parsed.subcategory,
+            "package": parsed.package,
+            "spec_filters": [f.to_dict() for f in parsed.spec_filters],
+            "remaining_text": parsed.remaining_text,
+        }
+
+        # Apply parsed values
+        if parsed.subcategory:
+            effective_subcategory_name = parsed.subcategory
+        if parsed.package and not package:
+            effective_package = parsed.package
+        if parsed.spec_filters:
+            parsed_filters = parsed.spec_filters
+        if parsed.remaining_text and len(parsed.remaining_text) >= 2:
+            effective_query = parsed.remaining_text
+        elif parsed.spec_filters or parsed.subcategory:
+            # Query was fully parsed into structured filters
+            effective_query = None
+
+    # Perform search - db.search() handles name resolution internally
+    result = db.search(
+        query=effective_query,
+        subcategory_id=subcategory_id,
+        subcategory_name=effective_subcategory_name,
+        spec_filters=parsed_filters,
+        library_type=library_type if library_type != "all" else None,
+        prefer_no_fee=prefer_no_fee,
+        min_stock=max(0, min_stock),
+        package=effective_package,
+        packages=parsed_packages,
+        manufacturer=manufacturer,
+        match_all_terms=match_all_terms,
+        sort_by=sort_by,
+        limit=min(limit, 100),
+    )
+
+    # Add parsing info if natural language was used
+    if parsed_query_info:
+        result["parsed"] = parsed_query_info
+
+    return result
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="List Filterable Attributes",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=False,
+    )
+)
+async def list_attributes(
+    subcategory_id: int | None = None,
+    subcategory_name: str | None = None,
+) -> dict:
+    """List available filterable attributes for a subcategory.
+
+    Use this to discover what spec_filters can be used with search().
+    Shows all attributes in the subcategory with their types and example values.
+
+    Args:
+        subcategory_id: Subcategory ID (e.g., 2954 for MOSFETs, 2929 for MLCC)
+        subcategory_name: Subcategory name (alternative to ID). E.g., "MOSFETs", "Chip Resistor"
+
+    Returns:
+        subcategory_id: Resolved subcategory ID
+        subcategory_name: Full subcategory name
+        attributes: List of filterable attributes, each with:
+            - name: Full attribute name as stored in database
+            - alias: Short name for use in spec_filters (e.g., "Vgs(th)" for "Gate Threshold Voltage")
+            - type: "numeric" (supports >=, <=, >, <, =) or "string" (= only)
+            - count: Number of parts with this attribute
+            - example_values: (numeric) Sample values like ["1V~2.5V", "0.5V"]
+            - values: (string) All distinct values like ["N-Channel", "P-Channel"]
+
+    Example usage:
+        1. list_attributes(subcategory_name="MOSFETs")
+        2. Find attribute "Gate Threshold Voltage (Vgs(th))" with alias "Vgs(th)"
+        3. Use in search: spec_filters=[{"name": "Vgs(th)", "op": "<", "value": "2.5V"}]
+
+    Tip: Use the alias (short name) in spec_filters for convenience.
+    """
+    db = get_db()
+    return db.list_attributes(
+        subcategory_id=subcategory_id,
+        subcategory_name=subcategory_name,
+    )
+
+
 @mcp.tool(
     annotations=ToolAnnotations(
         title="Get Part Details",
@@ -362,7 +556,7 @@ async def list_categories() -> dict:
 
     Returns:
         List of categories with id, name, part count, and subcategory count.
-        Use category_id with search_parts, or call get_subcategories for more specific filtering.
+        Use category_id with search/search_api, or call get_subcategories for more specific filtering.
 
     Note: Categories are fetched from JLCPCB API on server startup and cached.
     """
@@ -399,7 +593,7 @@ async def get_subcategories(category_id: int) -> dict:
 
     Returns:
         List of subcategories with id, name, and part count.
-        Pass subcategory_id to search_parts for filtered searches.
+        Pass subcategory_id to search() for filtered searches.
 
     Note: Categories are fetched from JLCPCB API on server startup and cached.
     """
@@ -460,7 +654,7 @@ async def find_alternatives(
 
     Returns:
         Original part info (with library_type and has_easyeda_footprint) and list of alternatives
-        sorted by stock. Alternatives include library_type and key_specs for easy comparison.
+        sorted by stock. Alternatives include library_type and specs for easy comparison.
         When filtering by footprint, alternatives also include EasyEDA UUIDs.
     """
     if not _client:
@@ -613,9 +807,6 @@ async def _process_bom(
     Raises:
         ValueError: If board_qty is <= 0
     """
-    if not _client:
-        raise RuntimeError("Client not initialized")
-
     # Validate board_qty
     if board_qty is not None and board_qty <= 0:
         raise ValueError(f"board_qty must be positive, got {board_qty}")
@@ -634,9 +825,10 @@ async def _process_bom(
         if not part.get("lcsc"):
             issues.extend(validate_manual_part(part))
 
-    # Step 4: Fetch LCSC parts
+    # Step 4: Fetch LCSC parts from local database (faster, no API calls)
     lcsc_codes = [p["lcsc"] for p in merged_parts if p.get("lcsc")]
-    fetched_parts = await _client.get_parts_batch(lcsc_codes) if lcsc_codes else {}
+    db = get_db()
+    fetched_parts = db.get_by_lcsc_batch(lcsc_codes) if lcsc_codes else {}
 
     # Step 5: Build BOMPart objects
     bom_parts: list[BOMPart] = []
@@ -677,7 +869,12 @@ async def _process_bom(
                     issues.append(mismatch)
 
             # Calculate pricing
+            # DB stores single price, API returns price tiers - handle both
+            db_price = fetched.get("price")
             prices = fetched.get("prices", [])
+            if db_price is not None and not prices:
+                # Convert single price to simple tier format
+                prices = [{"qty": "1+", "price": db_price}]
             order_qty, unit_price, line_cost = calculate_line_cost(
                 prices, len(designators), board_qty
             )

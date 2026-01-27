@@ -24,8 +24,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: '0.5'
+          memory: 768M  # DB is ~360MB + Python overhead
+          cpus: '1.0'
     logging:
       driver: "json-file"
       options:

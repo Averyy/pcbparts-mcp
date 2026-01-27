@@ -1,0 +1,98 @@
+name: Scrape JLCPCB Components
+
+on:
+  schedule:
+    # Daily at 12:21 UTC (7:21 AM EST / 8:21 PM China)
+    - cron: '21 12 * * *'
+  workflow_dispatch:
+    # Manual trigger with optional parameters
+    inputs:
+      workers:
+        description: 'Number of concurrent workers'
+        required: false
+        default: '10'
+        type: choice
+        options:
+          - '4'
+          - '6'
+          - '8'
+          - '10'
+
+# Prevent multiple scrape runs from overlapping
+concurrency:
+  group: scrape-jlcpcb
+  cancel-in-progress: false  # Let running scrape finish
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60  # ~8-15 min with 10 workers, plenty of buffer
+
+    permissions:
+      contents: write
+      actions: write  # Needed to trigger deploy workflow
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install curl_cffi
+
+      - name: Run scraper
+        run: |
+          WORKERS="${{ github.event.inputs.workers || '10' }}"
+          echo "Running scraper with $WORKERS workers..."
+          python scripts/scrape_components.py --workers "$WORKERS"
+
+      - name: Build database
+        run: |
+          echo "Building SQLite database..."
+          python scripts/build_database.py
+
+      - name: Show scrape results
+        run: |
+          echo "=== Manifest ==="
+          cat data/manifest.json | python -m json.tool
+          echo ""
+          echo "=== File sizes ==="
+          du -sh data/
+          du -sh data/categories/
+          du -sh data/components.db
+
+      - name: Commit and push data files
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Add all data files (JSONL + manifest + subcategories + built DB)
+          git add data/
+
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            # Get part count from manifest
+            PARTS=$(python -c "import json; print(json.load(open('data/manifest.json'))['total_parts'])")
+            git commit -m "Update component data: ${PARTS} parts ($(date +%Y-%m-%d))"
+            git push
+            echo "Data committed and pushed"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Trigger deploy
+        if: steps.commit.outputs.has_changes == 'true'
+        run: |
+          echo "Waiting 2 minutes for commit to propagate..."
+          sleep 120
+          gh workflow run docker-build.yml
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

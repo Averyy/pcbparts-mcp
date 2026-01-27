@@ -10,7 +10,6 @@ This module provides intelligent alternative finding that:
 import re
 from typing import Any, Callable
 
-from .key_attributes import KEY_ATTRIBUTES
 
 
 # =============================================================================
@@ -122,15 +121,24 @@ def parse_current(s: str) -> float | None:
 
 
 def parse_resistance(s: str) -> float | None:
-    """Parse resistance in ohms: '10kΩ' -> 10000, '10K' -> 10000, '4.7MΩ' -> 4700000"""
+    """Parse resistance in ohms: '10kΩ' -> 10000, '17mΩ' -> 0.017, '4.7MΩ' -> 4700000"""
     if not s:
         return None
+
+    # Check for milliohm (mΩ, mohm) BEFORE removing Ω symbol
+    # This distinguishes mΩ (milli) from MΩ (mega)
+    is_milliohm = "mΩ" in s or "mohm" in s.lower()
+
     # Normalize: remove Ω/ohm, handle k/K/M suffixes
     s = s.replace("Ω", "").replace("ohm", "").strip()
     match = _RESISTANCE_PATTERN.search(s)
     if not match:
         return None
     value = float(match.group(1))
+
+    if is_milliohm:
+        return value / 1000  # mΩ = milliohm
+
     suffix = (match.group(2) or "").upper()
     if suffix == "K":
         return value * 1000
@@ -300,6 +308,8 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Voltage - Forward(Vf@If)": parse_forward_voltage,
     "Voltage - DC Spark Over": parse_voltage,
     "Voltage - Supply": parse_voltage,  # For buzzers, etc.
+    "Gate Threshold Voltage (Vgs(th))": parse_voltage,  # MOSFETs: "4V", "4V@250uA"
+    "Gate Threshold Voltage": parse_voltage,  # Alternate name
     # Tolerances (percentage-based)
     "Tolerance": parse_tolerance,
     "Frequency Stability": parse_ppm,  # ±20ppm format
@@ -1385,8 +1395,8 @@ def is_compatible_alternative(
     if not rules:
         return True, {"specs_verified": [], "specs_unparseable": []}
 
-    orig_specs = original.get("key_specs", {})
-    cand_specs = candidate.get("key_specs", {})
+    orig_specs = original.get("specs", {})
+    cand_specs = candidate.get("specs", {})
 
     specs_verified: list[str] = []
     specs_unparseable: list[str] = []
@@ -1433,8 +1443,8 @@ def verify_primary_spec_match(
     original: dict[str, Any], candidate: dict[str, Any], primary_attr: str
 ) -> bool:
     """Verify candidate has same primary spec value as original."""
-    orig_value = original.get("key_specs", {}).get(primary_attr)
-    cand_value = candidate.get("key_specs", {}).get(primary_attr)
+    orig_value = original.get("specs", {}).get(primary_attr)
+    cand_value = candidate.get("specs", {}).get(primary_attr)
 
     if not orig_value or not cand_value:
         return True  # Can't verify, allow through
@@ -1649,8 +1659,8 @@ def build_unsupported_response(
     """Build response for unsupported subcategories - similar parts, not alternatives."""
     similar = scored_parts[:limit]
 
-    # Get the key specs to verify from KEY_ATTRIBUTES
-    specs_to_verify = KEY_ATTRIBUTES.get(subcategory, [])
+    # Use attribute names from original part for verification guidance
+    specs_to_verify = list(original.get("specs", {}).keys())
 
     similar_parts_output = []
     for score, part, breakdown, _ in similar:
@@ -1666,7 +1676,7 @@ def build_unsupported_response(
 
     primary_value = None
     if primary_attr:
-        primary_value = original.get("key_specs", {}).get(primary_attr)
+        primary_value = original.get("specs", {}).get(primary_attr)
 
     return {
         "original": original,
@@ -1679,7 +1689,7 @@ def build_unsupported_response(
             "price_note": "Prices shown are unit price at qty 1 tier",
         },
         "manual_comparison": {
-            "original_specs": original.get("key_specs", {}),
+            "original_specs": original.get("specs", {}),
             "specs_to_verify": specs_to_verify[:5],
             "guidance": (
                 f"Compare these specs manually: {', '.join(specs_to_verify[:5])}"

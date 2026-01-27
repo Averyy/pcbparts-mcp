@@ -47,3 +47,6 @@ htmlcov/
 
 # Playwright
 .playwright-mcp/
+
+# Built database (generated from JSONL on startup)
+data/components.db

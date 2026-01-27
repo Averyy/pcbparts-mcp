@@ -354,13 +354,19 @@
             transition: all 0.2s ease;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
-        .btn-code:hover {
+        .btn-code:hover,
+        .btn-code:focus {
             border-color: rgba(255, 255, 255, 0.2);
             background: linear-gradient(
                 135deg,
                 rgba(255, 255, 255, 0.1) 0%,
                 rgba(255, 255, 255, 0.04) 100%
             );
+            outline: none;
+        }
+        .btn-code:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
         }
 
         .code-cli { color: #7dd3fc; }
@@ -548,6 +554,7 @@
         }
 
         .tab:hover { color: var(--text-primary); }
+        .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
         .tab.active { background: var(--bg-tertiary); color: var(--text-primary); }
 
         .tab-content { display: none; max-width: 680px; margin: 0 auto; }
@@ -585,7 +592,9 @@
             transition: all 0.2s;
         }
 
-        .copy-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: #fff; }
+        .copy-btn:hover,
+        .copy-btn:focus { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: #fff; }
+        .copy-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
         .code-body {
             padding: 20px;
@@ -899,8 +908,8 @@
     <main>
         <section class="hero">
             <div class="container">
-                <div class="status-badge" id="status-badge">
-                    <div class="status-orb" id="status-orb"></div>
+                <div class="status-badge" id="status-badge" role="status" aria-live="polite">
+                    <div class="status-orb" id="status-orb" aria-hidden="true"></div>
                     <span id="status-text">Checking status...</span>
                 </div>
 
@@ -911,10 +920,10 @@
                 </p>
 
                 <div class="hero-cta">
-                    <div class="btn-code" onclick="copyInstall()" style="cursor: pointer;" title="Click to copy">
+                    <div class="btn-code" onclick="copyInstall()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copyInstall();}" style="cursor: pointer;" title="Click to copy" tabindex="0" role="button" aria-label="Copy install command: claude mcp add --transport http jlcmcp https://jlcmcp.dev/mcp">
                         <span class="code-cli">claude</span> <span class="code-cmd">mcp add</span> <span class="code-flag">--transport</span> <span class="code-arg">http</span> <span class="code-name">jlcmcp</span> <span class="code-url">https://jlcmcp.dev/mcp</span>
                     </div>
-                    <button class="btn-primary" onclick="copyInstall()"><span class="btn-text-full">Copy to Clipboard</span><span class="btn-text-short">Copy</span></button>
+                    <button class="btn-primary" onclick="copyInstall()" aria-label="Copy install command to clipboard"><span class="btn-text-full">Copy to Clipboard</span><span class="btn-text-short">Copy</span></button>
                 </div>
 
                 <p class="hero-link">Or see <a href="#setup">other install methods</a> for Cursor, Claude Desktop & more</p>
@@ -942,16 +951,16 @@
                 </div>
 
                 <div class="tabs-wrapper">
-                    <div class="tabs">
-                        <button class="tab active" data-tab="claude-code">Claude Code</button>
-                        <button class="tab" data-tab="claude-desktop">Claude Desktop</button>
-                        <button class="tab" data-tab="cursor">Cursor</button>
-                        <button class="tab" data-tab="vscode">VSCode</button>
-                        <button class="tab" data-tab="copilot-xcode">Copilot for Xcode</button>
+                    <div class="tabs" role="tablist" aria-label="Installation methods">
+                        <button class="tab active" id="tab-claude-code" data-tab="claude-code" role="tab" aria-selected="true" aria-controls="claude-code">Claude Code</button>
+                        <button class="tab" id="tab-claude-desktop" data-tab="claude-desktop" role="tab" aria-selected="false" aria-controls="claude-desktop">Claude Desktop</button>
+                        <button class="tab" id="tab-cursor" data-tab="cursor" role="tab" aria-selected="false" aria-controls="cursor">Cursor</button>
+                        <button class="tab" id="tab-vscode" data-tab="vscode" role="tab" aria-selected="false" aria-controls="vscode">VSCode</button>
+                        <button class="tab" id="tab-copilot-xcode" data-tab="copilot-xcode" role="tab" aria-selected="false" aria-controls="copilot-xcode">Copilot for Xcode</button>
                     </div>
                 </div>
 
-                <div id="claude-code" class="tab-content active">
+                <div id="claude-code" class="tab-content active" role="tabpanel" aria-labelledby="tab-claude-code">
                     <div class="code-block" style="margin-bottom: 16px;">
                         <div class="terminal-accent">
                             <div class="terminal-dots">
@@ -960,7 +969,7 @@
                                 <div class="terminal-dot"></div>
                             </div>
                             <span class="terminal-title">Project scope</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
                         <div class="code-body">
                             <pre>claude mcp add --transport http <span class="string">jlcmcp</span> <span class="string">https://jlcmcp.dev/mcp</span></pre>
@@ -974,7 +983,7 @@
                                 <div class="terminal-dot"></div>
                             </div>
                             <span class="terminal-title">User scope (all projects)</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
                         <div class="code-body">
                             <pre>claude mcp add -s user --transport http <span class="string">jlcmcp</span> <span class="string">https://jlcmcp.dev/mcp</span></pre>
@@ -988,13 +997,15 @@
                                 <div class="terminal-dot"></div>
                             </div>
                             <span class="terminal-title">~/.claude/settings.json</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
                         <div class="code-body">
                             <pre>{
   <span class="string">"permissions"</span>: {
     <span class="string">"allow"</span>: [
-      <span class="string">"mcp__jlcmcp__search_parts"</span>,
+      <span class="string">"mcp__jlcmcp__search"</span>,
+      <span class="string">"mcp__jlcmcp__search_api"</span>,
+      <span class="string">"mcp__jlcmcp__list_attributes"</span>,
       <span class="string">"mcp__jlcmcp__get_part"</span>,
       <span class="string">"mcp__jlcmcp__get_pinout"</span>,
       <span class="string">"mcp__jlcmcp__find_alternatives"</span>,
@@ -1010,7 +1021,7 @@
                     </div>
                 </div>
 
-                <div id="claude-desktop" class="tab-content">
+                <div id="claude-desktop" class="tab-content" role="tabpanel" aria-labelledby="tab-claude-desktop">
                     <div class="code-block" style="margin-bottom: 16px;">
                         <div class="terminal-accent">
                             <div class="terminal-dots">
@@ -1037,7 +1048,7 @@
                                 <div class="terminal-dot"></div>
                             </div>
                             <span class="terminal-title">Or edit config: ~/Library/Application Support/Claude/claude_desktop_config.json</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
                         <div class="code-body">
                             <pre>{
@@ -1052,7 +1063,7 @@
                     </div>
                 </div>
 
-                <div id="cursor" class="tab-content">
+                <div id="cursor" class="tab-content" role="tabpanel" aria-labelledby="tab-cursor">
                     <div class="code-block">
                         <div class="terminal-accent">
                             <div class="terminal-dots">
@@ -1061,7 +1072,7 @@
                                 <div class="terminal-dot"></div>
                             </div>
                             <span class="terminal-title">~/.cursor/mcp.json</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
                         <div class="code-body">
                             <pre>{
@@ -1076,7 +1087,7 @@
                     </div>
                 </div>
 
-                <div id="vscode" class="tab-content">
+                <div id="vscode" class="tab-content" role="tabpanel" aria-labelledby="tab-vscode">
                     <div class="code-block">
                         <div class="terminal-accent">
                             <div class="terminal-dots">
@@ -1085,7 +1096,7 @@
                                 <div class="terminal-dot"></div>
                             </div>
                             <span class="terminal-title">.vscode/mcp.json</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
                         <div class="code-body">
                             <pre>{
@@ -1100,7 +1111,7 @@
                     </div>
                 </div>
 
-                <div id="copilot-xcode" class="tab-content">
+                <div id="copilot-xcode" class="tab-content" role="tabpanel" aria-labelledby="tab-copilot-xcode">
                     <div class="code-block">
                         <div class="terminal-accent">
                             <div class="terminal-dots">
@@ -1109,7 +1120,7 @@
                                 <div class="terminal-dot"></div>
                             </div>
                             <span class="terminal-title">Copilot for Xcode → Extensions</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
                         <div class="code-body">
                             <pre>{
@@ -1137,9 +1148,11 @@
                 <div class="bento-grid">
                     <div class="bento-card bento-large">
                         <div class="icon-wrapper"><span class="icon">🛠️</span></div>
-                        <h3>9 MCP Tools</h3>
+                        <h3>11 MCP Tools</h3>
                         <div class="tools-list">
-                            <div class="tool-item"><code>search_parts</code> <span>Search with filters and sorting by quantity/price</span></div>
+                            <div class="tool-item"><code>search</code> <span>Primary search - smart parsing + parametric filters</span></div>
+                            <div class="tool-item"><code>search_api</code> <span>Live API search - real-time stock, full catalog</span></div>
+                            <div class="tool-item"><code>list_attributes</code> <span>Discover filterable attributes for spec_filters</span></div>
                             <div class="tool-item"><code>get_part</code> <span>Full details, datasheets, and EasyEDA footprint status</span></div>
                             <div class="tool-item"><code>get_pinout</code> <span>Get component pin information from EasyEDA symbol</span></div>
                             <div class="tool-item"><code>find_alternatives</code> <span>Spec-aware compatible alternatives for 120+ subcategories</span></div>
@@ -1221,9 +1234,13 @@
         // Tab switching
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab').forEach(t => {
+                    t.classList.remove('active');
+                    t.setAttribute('aria-selected', 'false');
+                });
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 tab.classList.add('active');
+                tab.setAttribute('aria-selected', 'true');
                 document.getElementById(tab.dataset.tab).classList.add('active');
             });
         });

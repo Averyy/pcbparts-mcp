@@ -183,7 +183,7 @@ def generate_comment(
 
     Priority:
     1. User-provided override
-    2. key_specs + package if concise (≤50 chars)
+    2. specs + package if concise (≤50 chars)
     3. model (MPN)
     4. package or "Unknown"
 
@@ -198,12 +198,12 @@ def generate_comment(
         return user_override
 
     model = part_data.get("model", "")
-    key_specs = part_data.get("key_specs", {})
+    specs = part_data.get("specs", {})
     package = part_data.get("package", "")
 
     # For passives, use specs (more useful than MPN)
-    if key_specs:
-        specs_str = " ".join(str(v) for v in key_specs.values() if v)
+    if specs:
+        specs_str = " ".join(str(v) for v in specs.values() if v)
         if specs_str:
             if package and package.lower() not in specs_str.lower():
                 specs_str = f"{specs_str} {package}"

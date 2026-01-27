@@ -34,7 +34,7 @@ from .config import (
     PART_CACHE_TTL,
     PART_CACHE_MAX_SIZE,
 )
-from .key_attributes import KEY_ATTRIBUTES
+from .subcategory_aliases import SUBCATEGORY_ALIASES, resolve_subcategory_name as _resolve_subcategory_name
 from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
 from .mounting import detect_mounting_type
 from .alternatives import (
@@ -207,10 +207,14 @@ class JLCPCBClient:
         return self._subcategory_map.get(subcategory_id)
 
     def get_subcategory_id_by_name(self, name: str) -> int | None:
-        """Get subcategory ID by name from cache. O(1) case-insensitive lookup."""
-        if not name:
-            return None
-        return self._subcategory_name_map.get(name.lower())
+        """Get subcategory ID by name from cache.
+
+        Supports:
+        - Common aliases like "mosfet", "mlcc", "ldo" via SUBCATEGORY_ALIASES
+        - Case-insensitive exact match
+        - Partial match with shortest-match priority (e.g., "crystal" -> "crystals")
+        """
+        return _resolve_subcategory_name(name, self._subcategory_name_map)
 
     # Common abbreviations mapped to category name substrings
     # These are resolved dynamically against fetched categories at runtime
@@ -325,7 +329,9 @@ class JLCPCBClient:
                 try:
                     # Fresh randomized headers for each request
                     headers = get_jlcpcb_headers()
-                    logger.debug(f"JLCPCB request attempt {attempt + 1}: {params.get('keyword', params)}")
+                    # Sanitize logged values to prevent log injection
+                    log_keyword = str(params.get('keyword', params)).replace('\n', '\\n').replace('\r', '\\r')
+                    logger.debug(f"JLCPCB request attempt {attempt + 1}: {log_keyword}")
                     response = await session.post(
                         url,
                         json=params,
@@ -733,6 +739,12 @@ class JLCPCBClient:
         # Note: API returns firstSortName as subcategory, secondSortName as category
         stock = item.get("stockCount")
         package = item.get("componentSpecificationEn")
+        subcategory = item.get("firstSortName")
+        category = item.get("secondSortName")
+        # Get subcategory_id from API or lookup by name
+        subcategory_id = item.get("firstSortId")
+        if not subcategory_id and subcategory:
+            subcategory_id = self._subcategory_name_map.get(subcategory.lower())
         result: dict[str, Any] = {
             "lcsc": item.get("componentCode"),
             "model": item.get("componentModelEn"),
@@ -743,45 +755,20 @@ class JLCPCBClient:
             "price_10": round(price_10, 4) if price_10 else None,
             "library_type": library_type,
             "preferred": item.get("preferredComponentFlag", False),
-            "category": item.get("secondSortName"),  # Primary category
-            "subcategory": item.get("firstSortName"),  # Subcategory
-            "mounting_type": detect_mounting_type(
-                package,
-                category=item.get("secondSortName"),
-                subcategory=item.get("firstSortName"),
-            ),  # "smd" or "through_hole"
+            "category": category,
+            "subcategory": subcategory,
+            "subcategory_id": subcategory_id,
+            "mounting_type": detect_mounting_type(package, category=category, subcategory=subcategory),
         }
 
         # Include key specs in slim mode
-        # Use subcategory-specific key attributes if available, otherwise top 5
-        attrs = item.get("attributes", [])
-        if attrs:
-            subcategory = item.get("firstSortName")  # API returns subcategory as firstSortName
-            key_attr_names = KEY_ATTRIBUTES.get(subcategory)  # Returns None if not found
-
-            if key_attr_names is not None:
-                # Filter to only the key attributes, preserving defined order
-                # Empty list means intentionally show no key_specs
-                attr_map = {
-                    a.get("attribute_name_en"): a.get("attribute_value_name")
-                    for a in attrs
-                    if a.get("attribute_name_en")
-                }
-                result["key_specs"] = {
-                    name: attr_map[name]
-                    for name in key_attr_names
-                    if name in attr_map
-                }
-            else:
-                # Fallback: first 5 attributes for unknown subcategories
-                result["key_specs"] = {
-                    a.get("attribute_name_en"): a.get("attribute_value_name")
-                    for a in attrs[:5]
-                    if a.get("attribute_name_en")
-                }
-        else:
-            # No attributes available
-            result["key_specs"] = {}
+        # All attributes as a dict for compatibility checking and display
+        attrs = item.get("attributes") or []  # Handle null/None
+        result["specs"] = {
+            a.get("attribute_name_en"): a.get("attribute_value_name")
+            for a in attrs
+            if a.get("attribute_name_en")
+        }
 
         if not slim:
             # Full details
@@ -801,7 +788,7 @@ class JLCPCBClient:
                     for p in prices
                 ]
 
-            # Full attributes list (beyond key_specs)
+            # Full attributes list (beyond specs)
             if attrs:
                 result["attributes"] = [
                     {
@@ -1015,16 +1002,15 @@ class JLCPCBClient:
 
         # Get primary spec for search query
         # For supported: use rules["primary"]
-        # For unsupported: use first KEY_ATTRIBUTE as best guess
+        # For unsupported: no primary spec (can't verify compatibility anyway)
         if is_supported and rules:
             primary_attr = rules.get("primary")
         else:
-            key_attrs = KEY_ATTRIBUTES.get(subcategory_name, []) if subcategory_name else []
-            primary_attr = key_attrs[0] if key_attrs else None
+            primary_attr = None
 
         primary_value = None
         if primary_attr:
-            primary_value = original.get("key_specs", {}).get(primary_attr)
+            primary_value = original.get("specs", {}).get(primary_attr)
 
         # Find subcategory ID using O(1) lookup
         subcategory_id = None

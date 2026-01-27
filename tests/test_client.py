@@ -192,7 +192,7 @@ class TestClient:
         assert result["price_10"] == 3.7052  # Volume pricing
         assert result["category"] == "WiFi Modules"
         assert result["subcategory"] == "IoT Modules"  # Now included in slim
-        assert result["key_specs"] == {"Voltage": "3.3V", "Frequency": "2.4GHz"}
+        assert result["specs"] == {"Voltage": "3.3V", "Frequency": "2.4GHz"}
         assert "datasheet" not in result
         assert "attributes" not in result  # Full list not in slim
 
@@ -232,7 +232,7 @@ class TestClient:
         assert result["price_10"] is None
 
     def test_transform_part_no_attributes(self, client):
-        """Parts with no attributes should have key_specs as empty dict."""
+        """Parts with no attributes should have specs as empty dict."""
         item = {
             "componentCode": "C12345",
             "componentModelEn": "TEST",
@@ -247,10 +247,10 @@ class TestClient:
             "attributes": [],  # Empty attributes
         }
         result = client._transform_part(item, slim=True)
-        assert result["key_specs"] == {}  # Should be empty dict, not missing
+        assert result["specs"] == {}  # Should be empty dict, not missing
 
     def test_transform_part_missing_attributes_field(self, client):
-        """Parts without attributes field should have key_specs as empty dict."""
+        """Parts without attributes field should have specs as empty dict."""
         item = {
             "componentCode": "C12345",
             "componentModelEn": "TEST",
@@ -265,7 +265,7 @@ class TestClient:
             # No "attributes" field at all
         }
         result = client._transform_part(item, slim=True)
-        assert result["key_specs"] == {}  # Should be empty dict, not missing
+        assert result["specs"] == {}  # Should be empty dict, not missing
 
     def test_transform_part_full(self, client):
         # Note: API returns firstSortName as subcategory, secondSortName as category
@@ -299,7 +299,7 @@ class TestClient:
         assert result["price_10"] == 3.7052
         assert result["category"] == "WiFi Modules"
         assert result["subcategory"] == "IoT Modules"
-        assert result["key_specs"] == {"Voltage": "3.3V"}  # Also in full mode
+        assert result["specs"] == {"Voltage": "3.3V"}  # Also in full mode
         assert result["datasheet"] == "https://example.com/datasheet.pdf"
         assert len(result["prices"]) == 2
         assert result["prices"][0]["qty"] == "1+"
@@ -425,14 +425,14 @@ class TestClientIntegration:
         assert result["per_page"] == 10
         assert result["page"] == 1
 
-    async def test_search_results_have_key_specs(self, client):
-        """Test that search results include key_specs field."""
+    async def test_search_results_have_specs(self, client):
+        """Test that search results include specs field."""
         result = await client.search(query="10uF capacitor", limit=5)
         assert len(result["results"]) > 0
-        # All results should have key_specs (even if empty dict)
+        # All results should have specs (even if empty dict)
         for part in result["results"]:
-            assert "key_specs" in part, f"Part {part['lcsc']} missing key_specs"
-            assert isinstance(part["key_specs"], dict)
+            assert "specs" in part, f"Part {part['lcsc']} missing specs"
+            assert isinstance(part["specs"], dict)
 
     async def test_search_category(self, client):
         """Test category filtering."""

@@ -375,14 +375,14 @@ class TestIsCompatibleAlternative:
 
     def test_resistor_compatible(self):
         original = {
-            "key_specs": {
+            "specs": {
                 "Resistance": "10kΩ",
                 "Tolerance": "5%",
                 "Power(Watts)": "1/4W",
             }
         }
         candidate = {
-            "key_specs": {
+            "specs": {
                 "Resistance": "10kΩ",
                 "Tolerance": "1%",  # Better tolerance
                 "Power(Watts)": "1/2W",  # Higher power
@@ -397,14 +397,14 @@ class TestIsCompatibleAlternative:
 
     def test_resistor_incompatible_tolerance(self):
         original = {
-            "key_specs": {
+            "specs": {
                 "Resistance": "10kΩ",
                 "Tolerance": "1%",  # Tight tolerance
                 "Power(Watts)": "1/4W",
             }
         }
         candidate = {
-            "key_specs": {
+            "specs": {
                 "Resistance": "10kΩ",
                 "Tolerance": "5%",  # Worse tolerance - should fail
                 "Power(Watts)": "1/4W",
@@ -417,7 +417,7 @@ class TestIsCompatibleAlternative:
 
     def test_capacitor_must_match_dielectric(self):
         original = {
-            "key_specs": {
+            "specs": {
                 "Capacitance": "100nF",
                 "Voltage Rating": "25V",
                 "Temperature Coefficient": "X7R",
@@ -425,7 +425,7 @@ class TestIsCompatibleAlternative:
         }
         # X5R dielectric should fail
         candidate = {
-            "key_specs": {
+            "specs": {
                 "Capacitance": "100nF",
                 "Voltage Rating": "50V",
                 "Temperature Coefficient": "X5R",  # Different dielectric
@@ -438,7 +438,7 @@ class TestIsCompatibleAlternative:
 
     def test_capacitor_compatible_higher_voltage(self):
         original = {
-            "key_specs": {
+            "specs": {
                 "Capacitance": "100nF",
                 "Voltage Rating": "25V",
                 "Temperature Coefficient": "X7R",
@@ -446,7 +446,7 @@ class TestIsCompatibleAlternative:
             }
         }
         candidate = {
-            "key_specs": {
+            "specs": {
                 "Capacitance": "100nF",
                 "Voltage Rating": "50V",  # Higher voltage - OK
                 "Temperature Coefficient": "X7R",  # Same dielectric
@@ -459,8 +459,8 @@ class TestIsCompatibleAlternative:
         assert is_compat is True
 
     def test_led_must_match_color(self):
-        original = {"key_specs": {"Illumination Color": "Red"}}
-        candidate = {"key_specs": {"Illumination Color": "Blue"}}
+        original = {"specs": {"Illumination Color": "Red"}}
+        candidate = {"specs": {"Illumination Color": "Blue"}}
         is_compat, _ = is_compatible_alternative(
             original, candidate, "LED Indication - Discrete"
         )
@@ -468,8 +468,8 @@ class TestIsCompatibleAlternative:
 
     def test_unsupported_category_passes(self):
         # For unsupported categories, always returns True
-        original = {"key_specs": {"Some Spec": "value"}}
-        candidate = {"key_specs": {"Some Spec": "different"}}
+        original = {"specs": {"Some Spec": "value"}}
+        candidate = {"specs": {"Some Spec": "different"}}
         is_compat, info = is_compatible_alternative(
             original, candidate, "Unknown Category That Does Not Exist"
         )
@@ -481,19 +481,19 @@ class TestVerifyPrimarySpecMatch:
     """Tests for verify_primary_spec_match function."""
 
     def test_resistance_match(self):
-        original = {"key_specs": {"Resistance": "10kΩ"}}
-        candidate = {"key_specs": {"Resistance": "10kΩ"}}
+        original = {"specs": {"Resistance": "10kΩ"}}
+        candidate = {"specs": {"Resistance": "10kΩ"}}
         assert verify_primary_spec_match(original, candidate, "Resistance") is True
 
     def test_resistance_mismatch(self):
-        original = {"key_specs": {"Resistance": "10kΩ"}}
-        candidate = {"key_specs": {"Resistance": "20kΩ"}}
+        original = {"specs": {"Resistance": "10kΩ"}}
+        candidate = {"specs": {"Resistance": "20kΩ"}}
         assert verify_primary_spec_match(original, candidate, "Resistance") is False
 
     def test_missing_spec_passes(self):
         # If we can't verify, we allow through
-        original = {"key_specs": {"Resistance": "10kΩ"}}
-        candidate = {"key_specs": {}}  # Missing spec
+        original = {"specs": {"Resistance": "10kΩ"}}
+        candidate = {"specs": {}}  # Missing spec
         assert verify_primary_spec_match(original, candidate, "Resistance") is True
 
 
@@ -600,8 +600,8 @@ class TestFindAlternativesIntegration:
         if "alternatives" in result and len(result["alternatives"]) > 0:
             # All alternatives should have same resistance
             for alt in result["alternatives"]:
-                key_specs = alt.get("key_specs", {})
-                resistance = key_specs.get("Resistance", "")
+                specs = alt.get("specs", {})
+                resistance = specs.get("Resistance", "")
                 # Should contain "10k" or "10000" or similar
                 if resistance:
                     parsed = parse_resistance(resistance)
@@ -634,7 +634,7 @@ class TestFindAlternativesIntegration:
         # If alternatives found, they should all be red LEDs
         if "alternatives" in result:
             for alt in result["alternatives"]:
-                color = alt.get("key_specs", {}).get("Illumination Color", "").lower()
+                color = alt.get("specs", {}).get("Illumination Color", "").lower()
                 # Color should match (red) or be empty (couldn't parse)
                 if color:
                     assert "red" in color
