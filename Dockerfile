@@ -7,23 +7,31 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy project files
-COPY pyproject.toml .
-COPY src/ src/
+# Install dependencies only (not the package itself)
+RUN pip install --no-cache-dir \
+    "mcp>=1.3.0" \
+    "fastmcp>=2.0.0" \
+    "curl_cffi>=0.7.0" \
+    "uvicorn[standard]" \
+    "starlette" \
+    "pydantic>=2.0"
 
-# Copy scraped component data (15MB compressed JSONL)
-# The SQLite database will be built on first startup (~6 seconds)
-COPY data/categories/ data/categories/
-COPY data/manifest.json data/
-COPY data/subcategories.json data/
+# Copy application code (preserve src/ structure for path resolution)
+COPY src/ /app/src/
+
+# Copy pyproject.toml for version info
+COPY pyproject.toml /app/
+
+# Copy scraped component data
+COPY data/categories/ /app/data/categories/
+COPY data/manifest.json /app/data/
+COPY data/subcategories.json /app/data/
 
 # Copy database build script
-COPY scripts/build_database.py scripts/
+COPY scripts/build_database.py /app/scripts/
 
-# Install dependencies
-RUN pip install --no-cache-dir .
-
-# Environment
+# Add src to Python path
+ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1
 ENV HTTP_PORT=8080
 ENV RATE_LIMIT_REQUESTS=100
