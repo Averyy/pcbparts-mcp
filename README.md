@@ -8,6 +8,9 @@ MCP server for searching JLCPCB electronic components directly from Claude, Curs
 
 - Search 1.5M+ JLCPCB components by keyword, category, stock, package, manufacturer
 - **Parametric search:** Filter by electrical specs (voltage, current, Rds(on), etc.)
+- **Indexed numeric columns:** Fast SQL queries on 67 parsed specs (resistance, capacitance, voltage, MCU flash/RAM, TVS clamping voltage, etc.)
+- **European notation support:** "4k7" = 4.7kΩ, "4R7" = 4.7Ω, "0R" = jumper
+- **Connector aliases:** U.FL, IPEX, MHF, I-PEX all search the same connector family
 - **Multi-select filters:** Search multiple packages or manufacturers at once (OR logic)
 - **Key specs in results:** Electrical attributes included in search results
 - **Manufacturer aliases:** Use common abbreviations like "TI", "STM", "Infineon"

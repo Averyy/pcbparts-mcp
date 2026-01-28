@@ -20,6 +20,17 @@ from typing import Any, Literal
 from .alternatives import SPEC_PARSERS
 from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
 from .mounting import detect_mounting_type
+from .parsers import (
+    parse_resistance,
+    parse_capacitance,
+    parse_inductance,
+    parse_voltage,
+    parse_current,
+    parse_tolerance,
+    parse_power,
+    parse_frequency,
+    parse_ppm,
+)
 from .subcategory_aliases import (
     SUBCATEGORY_ALIASES,
     resolve_subcategory_name as _resolve_subcategory_name,
@@ -28,6 +39,112 @@ from .subcategory_aliases import (
 
 logger = logging.getLogger(__name__)
 
+# Pre-sorted subcategory aliases keys by length (longest first)
+# Sorted once at module load for O(1) access instead of sorting per query
+_SUBCATEGORY_KEYWORDS_BY_LENGTH = sorted(SUBCATEGORY_ALIASES.keys(), key=len, reverse=True)
+
+
+# =============================================================================
+# SPEC TO COLUMN MAPPING
+# =============================================================================
+# Maps spec filter names (and aliases) to pre-computed database columns.
+# When a spec filter matches a column, we use SQL numeric queries instead of
+# LIKE patterns on JSON, which is much faster and uses indexes.
+#
+# Format: spec_name -> (column_name, parser_function)
+
+SPEC_TO_COLUMN: dict[str, tuple[str, Any]] = {
+    # Passives - Resistance
+    "Resistance": ("resistance_ohms", parse_resistance),
+
+    # Passives - Capacitance
+    "Capacitance": ("capacitance_f", parse_capacitance),
+
+    # Passives - Inductance
+    "Inductance": ("inductance_h", parse_inductance),
+    "DC Resistance(DCR)": ("dcr_ohms", parse_resistance),
+    "DCR": ("dcr_ohms", parse_resistance),
+    "Current - Saturation(Isat)": ("isat_a", parse_current),
+    "Current - Saturation (Isat)": ("isat_a", parse_current),
+    "Isat": ("isat_a", parse_current),
+
+    # Voltage
+    "Voltage Rating": ("voltage_max_v", parse_voltage),
+    "Voltage": ("voltage_max_v", parse_voltage),
+
+    # Current
+    "Current Rating": ("current_max_a", parse_current),
+
+    # Tolerance
+    "Tolerance": ("tolerance_pct", parse_tolerance),
+
+    # Power
+    "Power(Watts)": ("power_w", parse_power),
+    "Power": ("power_w", parse_power),
+    "Pd - Power Dissipation": ("power_w", parse_power),
+
+    # MOSFETs
+    "Drain to Source Voltage": ("vds_max_v", parse_voltage),
+    "Vds": ("vds_max_v", parse_voltage),
+    "Current - Continuous Drain(Id)": ("id_max_a", parse_current),
+    "Id": ("id_max_a", parse_current),
+    "RDS(on)": ("rds_on_ohms", parse_resistance),
+    "Rds(on)": ("rds_on_ohms", parse_resistance),
+
+    # Diodes
+    "Voltage - DC Reverse(Vr)": ("vr_max_v", parse_voltage),
+    "Vr": ("vr_max_v", parse_voltage),
+    "Current - Rectified": ("if_max_a", parse_current),
+    "If": ("if_max_a", parse_current),
+    "Voltage - Forward(Vf@If)": ("vf_v", parse_voltage),
+    "Vf": ("vf_v", parse_voltage),
+
+    # Voltage Regulators
+    "Output Voltage": ("vout_v", parse_voltage),
+    "Vout": ("vout_v", parse_voltage),
+    "Output Current": ("iout_max_a", parse_current),
+    "Iout": ("iout_max_a", parse_current),
+    "Voltage Dropout": ("vdropout_v", parse_voltage),
+    "Quiescent Current(Iq)": ("iq_ua", parse_current),
+    "Quiescent Current": ("iq_ua", parse_current),
+
+    # ADC/DAC
+    "Sampling Rate": ("sample_rate_hz", parse_frequency),
+
+    # Crystals
+    "Load Capacitance": ("load_capacitance_pf", parse_capacitance),
+    "Frequency Stability": ("freq_tolerance_ppm", parse_ppm),
+
+    # Op-Amps
+    "Gain Bandwidth Product": ("gbw_hz", parse_frequency),
+
+    # Capacitors
+    "Ripple Current": ("ripple_current_a", parse_current),
+    "Equivalent Series Resistance(ESR)": ("esr_ohms", parse_resistance),
+    "ESR": ("esr_ohms", parse_resistance),
+
+    # MCU
+    "Flash": ("flash_size_bytes", None),  # Special: memory size parser
+    "Program Memory Size": ("flash_size_bytes", None),
+    "SRAM": ("ram_size_bytes", None),
+    "RAM Size": ("ram_size_bytes", None),
+    "Speed": ("clock_speed_hz", parse_frequency),
+    "CPU Maximum Speed": ("clock_speed_hz", parse_frequency),
+
+    # Memory ICs
+    "Capacity": ("memory_capacity_bits", None),
+    "Memory Size": ("memory_capacity_bits", None),
+
+    # Battery Chargers
+    "Charging Current": ("charge_current_a", parse_current),
+    "Charge Current - Max": ("charge_current_a", parse_current),
+
+    # TVS / ESD
+    "Clamping Voltage": ("clamping_voltage_v", parse_voltage),
+    "Reverse Stand-Off Voltage (Vrwm)": ("standoff_voltage_v", parse_voltage),
+    "Peak Pulse Power(Ppk)": ("surge_power_w", parse_power),
+}
+
 
 # =============================================================================
 # Smart Query Parsing
@@ -35,9 +152,14 @@ logger = logging.getLogger(__name__)
 # Patterns for extracting values from natural language queries like "10k resistor 0603 1%"
 
 # Resistance patterns: 10k, 100R, 4.7k, 1M, 100ohm, 10kohm
+# Also supports European notation: 4k7 = 4.7kΩ, 4R7 = 4.7Ω, 1M5 = 1.5MΩ
 RESISTANCE_PATTERN = re.compile(
     r'\b(\d+(?:\.\d+)?)\s*([kKmMrRΩ]|ohm|kohm|mohm)\b',
     re.IGNORECASE
+)
+# European notation: digit + suffix + digit (e.g., 4k7, 4R7, 1M5)
+RESISTANCE_EURO_PATTERN = re.compile(
+    r'\b(\d+)([kKmMrR])(\d+)\b'
 )
 
 # Capacitance patterns: 10uF, 100nF, 1pF, 4.7uF, 100pf
@@ -81,6 +203,38 @@ PACKAGE_PATTERNS = [
 
 # SUBCATEGORY_ALIASES defined below (after SpecFilter) is used for component type detection
 
+# Query synonyms - expand search terms to include equivalent names
+# When any term in a group is searched, all terms in that group are searched
+# Format: (primary_term, [patterns]) where patterns are pre-compiled regexes
+# for all terms that should map to the primary term
+_SYNONYM_GROUPS: list[tuple[str, list[re.Pattern[str]]]] = [
+    # Miniature coaxial connectors - all names for the same connector family
+    # IPEX gives the most search results, so we map all variants to it
+    ("IPEX", [
+        re.compile(r"u\.fl", re.IGNORECASE),
+        re.compile(r"mhf", re.IGNORECASE),
+        re.compile(r"i-pex", re.IGNORECASE),
+        re.compile(r"hirose u\.fl", re.IGNORECASE),
+        re.compile(r"ipx", re.IGNORECASE),
+    ]),
+]
+
+
+def expand_query_synonyms(query: str) -> str:
+    """Expand query with synonyms for better search results.
+
+    For example, searching "U.FL" will also search for "IPEX" since they're
+    the same connector type with different trade names.
+    """
+    for primary_term, patterns in _SYNONYM_GROUPS:
+        for pattern in patterns:
+            if pattern.search(query):
+                # Found a match - replace with primary term
+                query = pattern.sub(primary_term, query)
+                break  # Only replace first match per group
+
+    return query
+
 
 @dataclass
 class ParsedQuery:
@@ -117,9 +271,8 @@ def parse_smart_query(query: str) -> ParsedQuery:
     query_lower = query.lower()
 
     # 1. Detect component type (longest match first to handle "ceramic capacitor" before "capacitor")
-    # Uses SUBCATEGORY_ALIASES which is defined below (function called at runtime)
-    sorted_keywords = sorted(SUBCATEGORY_ALIASES.keys(), key=len, reverse=True)
-    for keyword in sorted_keywords:
+    # Uses pre-sorted list for O(1) access instead of sorting per query
+    for keyword in _SUBCATEGORY_KEYWORDS_BY_LENGTH:
         if keyword in query_lower:
             result.subcategory = SUBCATEGORY_ALIASES[keyword]
             detected["component_type"] = keyword
@@ -135,8 +288,32 @@ def parse_smart_query(query: str) -> ParsedQuery:
         tokens_to_remove.append(tol_match.group(0))
 
     # 3. Extract resistance (only if likely a resistor context)
+    # Try European notation first (e.g., 4k7 = 4.7kΩ, 4R7 = 4.7Ω)
+    euro_res_match = RESISTANCE_EURO_PATTERN.search(query)
     res_match = RESISTANCE_PATTERN.search(query)
-    if res_match:
+
+    if euro_res_match:
+        int_part = euro_res_match.group(1)
+        suffix = euro_res_match.group(2).upper()
+        frac_part = euro_res_match.group(3)
+        value = f"{int_part}.{frac_part}"
+
+        if suffix == 'R':
+            normalized = f"{value}Ω"
+        elif suffix == 'K':
+            normalized = f"{value}kΩ"
+        elif suffix == 'M':
+            normalized = f"{value}MΩ"
+        else:
+            normalized = f"{value}{suffix}"
+
+        result.spec_filters.append(SpecFilter("Resistance", "=", normalized))
+        detected["resistance"] = normalized
+        tokens_to_remove.append(euro_res_match.group(0))
+        if not result.subcategory:
+            result.subcategory = "chip resistor - surface mount"
+            detected["component_type"] = "resistor (inferred)"
+    elif res_match:
         value = res_match.group(1)
         unit = res_match.group(2).upper()
         # Normalize unit
@@ -290,6 +467,85 @@ def _escape_like(value: str) -> str:
     return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
 
+def _is_integer(value: float, tol: float = 1e-9) -> bool:
+    """Check if a float value is effectively an integer.
+
+    Args:
+        value: The float to check
+        tol: Tolerance for floating point comparison
+
+    Returns:
+        True if value is within tolerance of its rounded value
+    """
+    return abs(value - round(value)) < tol
+
+
+def generate_value_patterns(spec_name: str, value: str, parsed_value: float | None) -> list[str]:
+    """Generate SQL LIKE patterns that match the actual spec value in JSON.
+
+    For Resistance="82k", generates patterns like:
+    - '%"Resistance", "82k%'   (matches "82kΩ", "82kohm")
+    - '%"Resistance", "82K%'   (case variant)
+
+    NOTE: Most numeric specs now use pre-computed columns via SPEC_TO_COLUMN,
+    which is faster than LIKE patterns. This function is used as a fallback
+    for specs without dedicated columns.
+
+    Args:
+        spec_name: Attribute name (e.g., "Resistance")
+        value: User-provided value (e.g., "82k")
+        parsed_value: Numeric value in base units (e.g., 82000)
+
+    Returns:
+        List of SQL LIKE patterns (limit 3 per attribute for query efficiency)
+    """
+    if parsed_value is None:
+        return []
+
+    name_escaped = _escape_like(spec_name)
+
+    # Generate only the most likely patterns (limit to 3 for SQL efficiency)
+    # Post-filtering will handle edge cases
+    value_escaped = _escape_like(value.rstrip("ΩωOHMohm"))
+
+    # Primary pattern: user's input as-is
+    patterns = [f'%"{name_escaped}", "{value_escaped}%']
+
+    # Secondary pattern: opposite case for the suffix (k/K, m/M)
+    value_lower = value_escaped.lower()
+    value_upper = value_escaped.upper()
+    if value_lower != value_upper:
+        # Add the opposite case variant
+        if value_escaped == value_lower:
+            patterns.append(f'%"{name_escaped}", "{value_upper}%')
+        else:
+            patterns.append(f'%"{name_escaped}", "{value_lower}%')
+
+    # Tertiary pattern: normalized value (for edge cases)
+    spec_name_lower = spec_name.lower()
+    if "resistance" in spec_name_lower and parsed_value >= 1000:
+        k_val = parsed_value / 1000
+        if _is_integer(k_val):
+            patterns.append(f'%"{name_escaped}", "{int(round(k_val))}k%')
+    elif "capacitance" in spec_name_lower:
+        uf = parsed_value * 1e6
+        if uf >= 1:
+            if _is_integer(uf):
+                patterns.append(f'%"{name_escaped}", "{int(round(uf))}u%')
+    elif "tolerance" in spec_name_lower:
+        # Tolerance uses ± prefix
+        pct = parsed_value
+        if _is_integer(pct):
+            patterns.append(f'%"{name_escaped}", "\\\\u00b1{int(round(pct))}\\%%')
+
+    return patterns[:3]  # Limit to 3 patterns max
+
+
+# REMOVED: Old verbose pattern generation - the above is sufficient
+# with post-filtering handling edge cases. Most specs now use
+# pre-computed columns (SPEC_TO_COLUMN) which bypasses this entirely.
+
+
 @dataclass
 class SpecFilter:
     """Filter for a component specification/attribute.
@@ -347,6 +603,15 @@ ATTRIBUTE_ALIASES: dict[str, list[str]] = {
     "Iout": ["Output Current"],
 }
 
+# Reverse lookup: full attribute name -> list of aliases
+# Built once at module load for O(1) lookup instead of O(n) iteration
+_ATTR_FULL_TO_ALIASES: dict[str, list[str]] = {}
+for _alias, _full_names in ATTRIBUTE_ALIASES.items():
+    for _full_name in _full_names:
+        if _full_name not in _ATTR_FULL_TO_ALIASES:
+            _ATTR_FULL_TO_ALIASES[_full_name] = []
+        _ATTR_FULL_TO_ALIASES[_full_name].append(_alias)
+
 
 # SUBCATEGORY_ALIASES is imported from subcategory_aliases.py
 
@@ -399,19 +664,42 @@ class ComponentDatabase:
 
         # Validate script path exists
         if not script_path.exists():
-            raise FileNotFoundError(f"Build script not found: {script_path}")
+            raise FileNotFoundError(
+                f"Build script not found: {script_path}\n"
+                f"The build_database.py script is required to create the component database."
+            )
 
+        # Load the build script module
         try:
             spec = importlib.util.spec_from_file_location("build_database", script_path)
             if spec is None or spec.loader is None:
-                raise ImportError(f"Cannot load build_database from {script_path}")
+                raise ImportError(
+                    f"Cannot create module spec for {script_path}\n"
+                    f"The script may have syntax errors or missing dependencies."
+                )
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
+        except SyntaxError as e:
+            logger.error(f"Syntax error in build script: {e}")
+            raise ImportError(f"Syntax error in {script_path}: {e}") from e
+        except ImportError as e:
+            logger.error(f"Failed to load build script: {e}")
+            raise
 
+        # Execute the build function
+        try:
+            if not hasattr(module, "build_database"):
+                raise AttributeError(
+                    f"build_database function not found in {script_path}\n"
+                    f"The script must define a build_database(data_dir, output, verbose) function."
+                )
             module.build_database(self.data_dir, self.db_path, verbose=True)
         except Exception as e:
-            logger.error(f"Failed to build database: {e}")
-            raise
+            logger.error(f"Database build failed: {e}")
+            raise RuntimeError(
+                f"Failed to build database from {self.data_dir}: {e}\n"
+                f"Check that the data directory contains valid component data files."
+            ) from e
 
     def _load_caches(self) -> None:
         """Load subcategory and category caches with reverse name lookups."""
@@ -445,16 +733,17 @@ class ComponentDatabase:
 
     def _get_attribute_names(self, name: str) -> list[str]:
         """Get all possible attribute names for a given name (including aliases)."""
-        # Check if this is an alias
+        # Check if this is an alias (e.g., "Vds" -> ["Drain to Source Voltage"])
         if name in ATTRIBUTE_ALIASES:
             return ATTRIBUTE_ALIASES[name]
-        # Check if this is already a full attribute name
+        # Check if this is already a full attribute name (has parser)
         if name in SPEC_PARSERS:
             return [name]
-        # Check if any alias maps to this
-        for alias, full_names in ATTRIBUTE_ALIASES.items():
-            if name in full_names:
-                return full_names
+        # Check if this full name maps to any aliases using O(1) reverse lookup
+        if name in _ATTR_FULL_TO_ALIASES:
+            # Get all names in the alias group
+            first_alias = _ATTR_FULL_TO_ALIASES[name][0]
+            return ATTRIBUTE_ALIASES[first_alias]
         # No alias found, return as-is
         return [name]
 
@@ -620,6 +909,11 @@ class ComponentDatabase:
         if not self._conn:
             return {"error": "Database not available", "results": [], "total": 0}
 
+        # Expand query synonyms for better search coverage
+        # e.g., "U.FL" -> "IPEX" since IPEX has more indexed parts
+        if query:
+            query = expand_query_synonyms(query)
+
         # Resolve subcategory_name to ID if needed (ID takes precedence)
         resolved_subcategory_id = subcategory_id
         resolved_subcategory_display_name: str | None = None
@@ -669,6 +963,17 @@ class ComponentDatabase:
             if len(query) > 500:
                 return {
                     "error": "Query too long (max 500 characters)",
+                    "results": [],
+                    "total": 0,
+                    "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
+                    "no_fee_available": False,
+                }
+
+            # Validate query for control characters and null bytes
+            # FTS5 can behave unexpectedly with these characters
+            if any(ord(c) < 32 and c not in '\t\n\r' for c in query) or '\x00' in query:
+                return {
+                    "error": "Query contains invalid characters",
                     "results": [],
                     "total": 0,
                     "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
@@ -786,13 +1091,65 @@ class ComponentDatabase:
             count_params.append(resolved_manufacturer)
 
         # Spec filters (the main feature!)
-        # For numeric comparisons, we do post-filtering in Python
-        # For string matches, we can use SQL LIKE
+        # OPTIMIZATION: Use pre-computed numeric columns when available (SPEC_TO_COLUMN)
+        # This uses SQL indexes and is much faster than LIKE patterns on JSON.
+        # Fall back to LIKE patterns for specs without dedicated columns.
         if spec_filters:
             for spec_filter in spec_filters:
                 # Get all possible attribute names (including aliases)
                 attr_names = self._get_attribute_names(spec_filter.name)
 
+                # First, check if we have a pre-computed column for this spec
+                # This is much faster than LIKE patterns on JSON
+                column_info = None
+                for name in [spec_filter.name] + attr_names:
+                    if name in SPEC_TO_COLUMN:
+                        column_info = SPEC_TO_COLUMN[name]
+                        break
+
+                if column_info and spec_filter.operator in (">=", "<=", ">", "<", "="):
+                    column_name, parser = column_info
+                    # Use the parser if available, otherwise try SPEC_PARSERS
+                    if parser is None:
+                        for name in attr_names:
+                            parser = SPEC_PARSERS.get(name)
+                            if parser:
+                                break
+
+                    if parser:
+                        parsed_value = parser(spec_filter.value)
+                        if parsed_value is not None:
+                            # Use SQL numeric comparison on pre-computed column
+                            # Add 1% tolerance for = operator to handle floating point
+                            if spec_filter.operator == "=":
+                                tolerance = abs(parsed_value) * 0.01 if parsed_value != 0 else 1e-9
+                                sql_parts.append(f"AND {column_name} BETWEEN ? AND ?")
+                                count_parts.append(f"AND {column_name} BETWEEN ? AND ?")
+                                params.extend([parsed_value - tolerance, parsed_value + tolerance])
+                                count_params.extend([parsed_value - tolerance, parsed_value + tolerance])
+                            elif spec_filter.operator == ">=":
+                                sql_parts.append(f"AND {column_name} >= ?")
+                                count_parts.append(f"AND {column_name} >= ?")
+                                params.append(parsed_value)
+                                count_params.append(parsed_value)
+                            elif spec_filter.operator == "<=":
+                                sql_parts.append(f"AND {column_name} <= ?")
+                                count_parts.append(f"AND {column_name} <= ?")
+                                params.append(parsed_value)
+                                count_params.append(parsed_value)
+                            elif spec_filter.operator == ">":
+                                sql_parts.append(f"AND {column_name} > ?")
+                                count_parts.append(f"AND {column_name} > ?")
+                                params.append(parsed_value)
+                                count_params.append(parsed_value)
+                            elif spec_filter.operator == "<":
+                                sql_parts.append(f"AND {column_name} < ?")
+                                count_parts.append(f"AND {column_name} < ?")
+                                params.append(parsed_value)
+                                count_params.append(parsed_value)
+                            continue  # Skip to next filter, we handled this one
+
+                # Fall back to LIKE patterns for specs without pre-computed columns
                 # Check if we have a parser for any of these names
                 parser = None
                 for name in attr_names:
@@ -805,22 +1162,33 @@ class ComponentDatabase:
                     parsed_value = parser(spec_filter.value)
 
                 if parsed_value is not None and spec_filter.operator in (">=", "<=", ">", "<", "="):
-                    # Numeric comparison (including exact match) - done in Python post-filter
-                    # This handles unit variations: "10k" matches "10kΩ", "10kohm", etc.
-                    # But we can still narrow down with SQL LIKE for the attribute name
-                    or_conditions = []
-                    for name in attr_names:
-                        or_conditions.append("attributes LIKE ? ESCAPE '\\'")
-                        pattern = f'%"{_escape_like(name)}"%'
-                        params.append(pattern)
-                        count_params.append(pattern)
-                    if or_conditions:
-                        combined = " OR ".join(or_conditions)
-                        sql_parts.append(f"AND ({combined})")
-                        count_parts.append(f"AND ({combined})")
+                    # Numeric comparison - still need post-filtering for these
+                    if spec_filter.operator == "=":
+                        or_conditions = []
+                        for name in attr_names:
+                            value_patterns = generate_value_patterns(name, spec_filter.value, parsed_value)
+                            for pattern in value_patterns:
+                                or_conditions.append("attributes LIKE ? ESCAPE '\\'")
+                                params.append(pattern)
+                                count_params.append(pattern)
+                        if or_conditions:
+                            combined = " OR ".join(or_conditions)
+                            sql_parts.append(f"AND ({combined})")
+                            count_parts.append(f"AND ({combined})")
+                    else:
+                        # For range comparisons, check attribute exists
+                        or_conditions = []
+                        for name in attr_names:
+                            or_conditions.append("attributes LIKE ? ESCAPE '\\'")
+                            pattern = f'%"{_escape_like(name)}"%'
+                            params.append(pattern)
+                            count_params.append(pattern)
+                        if or_conditions:
+                            combined = " OR ".join(or_conditions)
+                            sql_parts.append(f"AND ({combined})")
+                            count_parts.append(f"AND ({combined})")
                 elif spec_filter.operator == "=":
                     # String exact value match (non-numeric) - use LIKE patterns
-                    # JSON format has space after comma: ["Type", "N-Channel"]
                     or_conditions = []
                     for name in attr_names:
                         pattern = f'%"{_escape_like(name)}", "{_escape_like(spec_filter.value)}"%'
@@ -855,14 +1223,19 @@ class ComponentDatabase:
                 sql_parts.append("ORDER BY stock DESC")
 
         # Determine if we need to over-fetch for post-filtering
-        # Numeric comparisons require post-filtering in Python
-        # This includes = operator when we have a parser for the spec
+        # Specs that use pre-computed columns (SPEC_TO_COLUMN) don't need post-filtering
+        # Only specs falling back to LIKE patterns need Python post-filtering
         def needs_numeric_filter(sf: SpecFilter) -> bool:
+            # First check if this spec has a pre-computed column - if so, no post-filter needed
+            attr_names = self._get_attribute_names(sf.name)
+            for name in [sf.name] + attr_names:
+                if name in SPEC_TO_COLUMN:
+                    return False  # SQL handles this with indexed column query
+            # Otherwise, check if we need post-filtering for numeric comparison
             if sf.operator in (">=", "<=", ">", "<"):
                 return True
             if sf.operator == "=":
-                # Check if we have a parser for this spec
-                for name in self._get_attribute_names(sf.name):
+                for name in attr_names:
                     if SPEC_PARSERS.get(name):
                         return True
             return False
@@ -905,10 +1278,21 @@ class ComponentDatabase:
             total += count  # Sum up for total count
 
         # Pre-compute filter metadata for post-filtering (avoid repeated lookups)
-        filter_metadata: list[tuple[SpecFilter, list[str], Any, float | None]] = []
+        # Skip filters that used pre-computed SQL columns (already filtered in SQL)
+        filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]] = []
         if spec_filters:
             for spec_filter in spec_filters:
                 attr_names = self._get_attribute_names(spec_filter.name)
+
+                # Check if this spec used a pre-computed column - skip post-filtering
+                has_column = False
+                for name in [spec_filter.name] + attr_names:
+                    if name in SPEC_TO_COLUMN:
+                        has_column = True
+                        break
+                if has_column and spec_filter.operator in (">=", "<=", ">", "<", "="):
+                    continue  # SQL already handled this filter
+
                 # Find parser for any of these names
                 parser = None
                 for name in attr_names:
@@ -923,7 +1307,7 @@ class ComponentDatabase:
                 attr_names_set = set(attr_names)
                 filter_metadata.append((spec_filter, attr_names_set, parser, target_value))
 
-        # Post-filter for numeric spec comparisons
+        # Post-filter for numeric spec comparisons (only for specs without pre-computed columns)
         results = []
         for row in rows:
             part = self._row_to_dict(row)
@@ -952,11 +1336,7 @@ class ComponentDatabase:
                             break
 
                         # Apply comparison with small tolerance for floating point
-                        # Use relative tolerance of 1e-9 to handle precision issues
-                        # e.g., 10uF parses as 9.999999e-06 which should equal 10e-6
                         epsilon = abs(target_value) * 1e-9 if target_value != 0 else 1e-15
-                        # For = operator, use 1% tolerance to match similar values
-                        # e.g., "10k" should match "10kΩ" which both parse to 10000
                         eq_epsilon = abs(target_value) * 0.01 if target_value != 0 else 1e-9
 
                         if spec_filter.operator == "=" and abs(part_value - target_value) > eq_epsilon:
@@ -1319,14 +1699,22 @@ class ComponentDatabase:
         for row in cursor:
             if not row["attributes"]:
                 continue
-            attrs = json.loads(row["attributes"])
-            for name, value in attrs:
-                attr_counts[name] = attr_counts.get(name, 0) + 1
-                if name not in attr_values:
-                    attr_values[name] = set()
-                # Only collect up to 100 unique values per attribute
-                if len(attr_values[name]) < 100:
-                    attr_values[name].add(value)
+            try:
+                attrs = json.loads(row["attributes"])
+                for attr in attrs:
+                    # Handle malformed attributes gracefully
+                    if not isinstance(attr, (list, tuple)) or len(attr) != 2:
+                        continue
+                    name, value = attr
+                    attr_counts[name] = attr_counts.get(name, 0) + 1
+                    if name not in attr_values:
+                        attr_values[name] = set()
+                    # Only collect up to 100 unique values per attribute
+                    if len(attr_values[name]) < 100:
+                        attr_values[name].add(value)
+            except (json.JSONDecodeError, TypeError, ValueError):
+                # Skip malformed JSON
+                continue
 
         # Build reverse alias lookup
         alias_lookup: dict[str, str] = {}
