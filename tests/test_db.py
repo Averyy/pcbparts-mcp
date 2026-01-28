@@ -345,6 +345,16 @@ class TestSubcategoryAliases:
             name = db._subcategories[result]["name"]
             assert name == expected, f"'{alias}' should resolve to '{expected}', got '{name}'"
 
+    def test_esd_alias_resolves_to_tvs_esd(self):
+        """ESD aliases should resolve to the subcategory with actual parts."""
+        db = get_db()
+        # ESD, TVS, surge protection should all resolve to the same subcategory
+        for alias in ["ESD", "TVS", "esd protection", "surge protection"]:
+            result = db.resolve_subcategory_name(alias)
+            assert result is not None, f"Alias '{alias}' should resolve"
+            name = db._subcategories[result]["name"]
+            assert "TVS/ESD" in name, f"'{alias}' should resolve to TVS/ESD subcategory, got '{name}'"
+
 
 class TestShortestMatchPriority:
     """Test that shortest subcategory match wins."""

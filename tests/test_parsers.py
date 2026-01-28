@@ -221,3 +221,22 @@ class TestPackageExtraction:
         assert pkg is not None, f"Should extract package from '{query}'"
         assert pkg.upper() == expected_package.upper(), f"Expected {expected_package}, got {pkg}"
         assert remaining.strip() == expected_remaining.strip()
+
+
+class TestNoiseWordRemoval:
+    """Tests for noise word removal from queries."""
+
+    @pytest.mark.parametrize("query,expected", [
+        # Connector terms should be removed
+        ("USB-C receptacle", "USB-C"),
+        ("USB-C jack", "USB-C"),
+        ("USB-C plug", "USB-C"),
+        # Generic words should be removed
+        ("resistor for power supply", "resistor power supply"),
+        ("capacitor with high voltage", "capacitor high voltage"),
+    ])
+    def test_noise_word_removal(self, query: str, expected: str):
+        """Test that noise words are removed from queries."""
+        from jlcpcb_mcp.smart_parser.semantic import remove_noise_words
+        result = remove_noise_words(query)
+        assert result == expected, f"'{query}' should become '{expected}', got '{result}'"
