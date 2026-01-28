@@ -17,7 +17,9 @@ from starlette.routing import Route
 from . import __version__
 from .config import RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE
 from .client import JLCPCBClient
-from .db import get_db, SpecFilter, close_db, parse_smart_query
+from .db import get_db, close_db
+from .search import SpecFilter
+from .smart_parser import parse_smart_query
 from .bom import (
     BOMPart,
     BOMIssue,

@@ -2,7 +2,8 @@
 
 import pytest
 
-from jlcpcb_mcp.db import ComponentDatabase, SpecFilter, get_db
+from jlcpcb_mcp.db import ComponentDatabase, get_db
+from jlcpcb_mcp.search import SpecFilter
 
 
 class TestNameResolution:
@@ -580,7 +581,7 @@ class TestSmartQueryParsing:
 
     def test_parse_resistor_query(self):
         """Parse '10k resistor 0603 1%' into structured filters."""
-        from jlcpcb_mcp.db import parse_smart_query
+        from jlcpcb_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("10k resistor 0603 1%")
 
@@ -599,7 +600,7 @@ class TestSmartQueryParsing:
 
     def test_parse_capacitor_query(self):
         """Parse '100nF 25V capacitor' into structured filters."""
-        from jlcpcb_mcp.db import parse_smart_query
+        from jlcpcb_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("100nF 25V capacitor")
 
@@ -618,7 +619,7 @@ class TestSmartQueryParsing:
 
     def test_parse_mosfet_query(self):
         """Parse 'n-channel mosfet SOT-23' into structured filters."""
-        from jlcpcb_mcp.db import parse_smart_query
+        from jlcpcb_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("n-channel mosfet SOT-23")
 
@@ -627,7 +628,7 @@ class TestSmartQueryParsing:
 
     def test_parse_inductor_query(self):
         """Parse '10uH inductor' into structured filters."""
-        from jlcpcb_mcp.db import parse_smart_query
+        from jlcpcb_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("10uH inductor")
 
@@ -637,7 +638,7 @@ class TestSmartQueryParsing:
 
     def test_parse_query_infers_category(self):
         """Should infer category from value patterns even without keyword."""
-        from jlcpcb_mcp.db import parse_smart_query
+        from jlcpcb_mcp.smart_parser import parse_smart_query
 
         # Just "10k" should infer resistor
         result = parse_smart_query("10k 0402")
@@ -651,7 +652,7 @@ class TestSmartQueryParsing:
 
     def test_parse_query_remaining_text(self):
         """Remaining text should be cleaned up for FTS search."""
-        from jlcpcb_mcp.db import parse_smart_query
+        from jlcpcb_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("ESP32 module 3.3V")
 
@@ -662,7 +663,7 @@ class TestSmartQueryParsing:
 
     def test_parse_empty_query(self):
         """Empty or minimal queries should not crash."""
-        from jlcpcb_mcp.db import parse_smart_query
+        from jlcpcb_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("")
         assert result.remaining_text == ""
@@ -738,7 +739,7 @@ class TestSearchSmartParsing:
     def test_search_resistor(self):
         """Smart search should find 10k 0603 1% resistors."""
         db = get_db()
-        from jlcpcb_mcp.db import parse_smart_query
+        from jlcpcb_mcp.smart_parser import parse_smart_query
 
         parsed = parse_smart_query("10k resistor 0603 1%")
 
@@ -758,7 +759,7 @@ class TestSearchSmartParsing:
     def test_search_mosfet(self):
         """Smart search should find SOT-23 MOSFETs."""
         db = get_db()
-        from jlcpcb_mcp.db import parse_smart_query
+        from jlcpcb_mcp.smart_parser import parse_smart_query
 
         parsed = parse_smart_query("mosfet SOT-23")
 
