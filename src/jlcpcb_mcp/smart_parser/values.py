@@ -29,7 +29,8 @@ _IND = re.compile(r'\b(\d+(?:\.\d+)?)\s*(u[hH]|n[hH]|m[hH]|[u]H|nH|mH)\b')
 _VOLT = re.compile(r'\b(\d+(?:\.\d+)?)\s*([kK])?[vV]\b')
 
 # Current: 5A, 10A, 100mA, 500mA, 10uA
-_CURR = re.compile(r'\b(\d+(?:\.\d+)?)\s*([u]?[mM]?)[aA]\b')
+# Require space or start before number to avoid matching model suffixes like "6.0A" in "SMBJ6.0A"
+_CURR = re.compile(r'(?:^|(?<=\s))(\d+(?:\.\d+)?)\s*([u]?[mM]?)[aA]\b')
 
 # Frequency: 8MHz, 32.768kHz, 2.4GHz
 _FREQ = re.compile(r'\b(\d+(?:\.\d+)?)\s*([kKmMgG])?[hH][zZ]\b')

@@ -153,6 +153,32 @@ def build_manufacturer_clause(manufacturer: str) -> tuple[str, list[str]]:
     return "", []
 
 
+def build_mounting_type_clause(mounting_type: str | None) -> tuple[str, list[str]]:
+    """Build mounting type filter clause.
+
+    Filters based on description text containing mounting type keywords.
+    JLCPCB descriptions use "Through Hole" or "Surface Mount" terminology.
+
+    Args:
+        mounting_type: "Through Hole", "SMD", or None
+
+    Returns:
+        Tuple of (sql_clause, params)
+    """
+    if not mounting_type:
+        return "", []
+
+    mounting_lower = mounting_type.lower()
+    if mounting_lower in ("through hole", "tht", "through-hole"):
+        # Match "Through Hole" or "Plugin" (JLCPCB's term for THT)
+        return "AND (description LIKE ? OR description LIKE ?)", ["%Through Hole%", "%Plugin%"]
+    elif mounting_lower in ("smd", "surface mount", "smt"):
+        # Match "Surface Mount" or "SMD" in description
+        return "AND (description LIKE ? OR description LIKE ?)", ["%Surface Mount%", "%SMD%"]
+
+    return "", []
+
+
 def build_spec_filter_clauses(
     spec_filters: list[SpecFilter],
 ) -> tuple[list[str], list[Any], list[tuple[SpecFilter, set[str], Any, float | None]]]:

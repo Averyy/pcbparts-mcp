@@ -414,6 +414,7 @@ async def search(
     parsed_query_info = None
     effective_subcategory_name = subcategory_name
     effective_package = package
+    effective_mounting_type: str | None = None
     effective_query = query
 
     if query:
@@ -436,6 +437,8 @@ async def search(
             effective_package = parsed.package
         if parsed.spec_filters and not parsed_filters:
             parsed_filters = parsed.spec_filters
+        if parsed.mounting_type:
+            effective_mounting_type = parsed.mounting_type
 
         # Always use cleaned remaining_text for FTS (removes subcategory keywords, etc.)
         if parsed.remaining_text and len(parsed.remaining_text) >= 2:
@@ -456,6 +459,7 @@ async def search(
         package=effective_package,
         packages=parsed_packages,
         manufacturer=manufacturer,
+        mounting_type=effective_mounting_type,
         match_all_terms=match_all_terms,
         sort_by=sort_by,
         limit=min(limit, 100),
