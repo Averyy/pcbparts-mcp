@@ -128,6 +128,9 @@ NOISE_WORDS = {
     'for', 'with', 'and', 'or', 'the', 'a', 'an', 'to', 'in', 'of',
     'type', 'chip', 'component', 'part', 'parts', 'electronic', 'electronics',
     'antenna',  # Common in RF connector context but not in part descriptions
+    # Generic connector terms not used in JLCPCB descriptions
+    # JLCPCB uses "Female"/"Male" instead of "Receptacle"/"Plug"
+    'receptacle', 'jack', 'plug',
 }
 
 
