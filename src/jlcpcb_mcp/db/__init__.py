@@ -164,6 +164,7 @@ class ComponentDatabase:
         package: str | None = None,
         packages: list[str] | None = None,
         manufacturer: str | None = None,
+        mounting_type: str | None = None,
         match_all_terms: bool = True,
         sort_by: Literal["stock", "price", "relevance"] = "stock",
         limit: int = 50,
@@ -185,6 +186,7 @@ class ComponentDatabase:
             package: Package filter (exact match, single value)
             packages: Package filter (exact match, multiple values with OR logic)
             manufacturer: Manufacturer filter (exact match)
+            mounting_type: Mounting type filter ("Through Hole" or "SMD")
             match_all_terms: FTS matching mode (default True)
             sort_by: "stock" (default), "price", or "relevance" (requires query)
             limit: Max results (default 50)
@@ -210,6 +212,7 @@ class ComponentDatabase:
             package=package,
             packages=packages,
             manufacturer=manufacturer,
+            mounting_type=mounting_type,
             match_all_terms=match_all_terms,
             sort_by=sort_by,
             limit=limit,

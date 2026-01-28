@@ -17,6 +17,7 @@ from .query_builder import (
     build_stock_clause,
     build_package_clause,
     build_manufacturer_clause,
+    build_mounting_type_clause,
     build_spec_filter_clauses,
     build_sort_clause,
     needs_numeric_post_filter,
@@ -119,6 +120,7 @@ class SearchEngine:
         package: str | None = None,
         packages: list[str] | None = None,
         manufacturer: str | None = None,
+        mounting_type: str | None = None,
         match_all_terms: bool = True,
         sort_by: Literal["stock", "price", "relevance"] = "stock",
         limit: int = 50,
@@ -139,6 +141,7 @@ class SearchEngine:
             package: Single package filter
             packages: Multiple package filter (OR logic)
             manufacturer: Manufacturer filter
+            mounting_type: Filter by mounting type ("Through Hole" or "SMD")
             match_all_terms: FTS matching mode
             sort_by: Sort order
             limit: Max results
@@ -273,6 +276,15 @@ class SearchEngine:
             count_parts.append(mfr_sql)
             params.extend(mfr_params)
             count_params.extend(mfr_params)
+
+        # Mounting type filter (based on description text)
+        if mounting_type:
+            mount_sql, mount_params = build_mounting_type_clause(mounting_type)
+            if mount_sql:
+                sql_parts.append(mount_sql)
+                count_parts.append(mount_sql)
+                params.extend(mount_params)
+                count_params.extend(mount_params)
 
         # Spec filters
         post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]] = []
