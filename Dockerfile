@@ -27,8 +27,11 @@ COPY data/categories/ /app/data/categories/
 COPY data/manifest.json /app/data/
 COPY data/subcategories.json /app/data/
 
-# Copy database build script
+# Copy database build script and parsers module
 COPY scripts/build_database.py /app/scripts/
+
+# Build the SQLite database at image build time
+RUN python scripts/build_database.py --data-dir /app/data --output /app/data/components.db
 
 # Add src to Python path
 ENV PYTHONPATH=/app/src

@@ -36,12 +36,10 @@ from .subcategory_aliases import (
     resolve_subcategory_name as _resolve_subcategory_name,
     find_similar_subcategories as _find_similar_subcategories,
 )
+from .smart_parser import parse_smart_query, ParsedQuery  # New smart parser
 
 logger = logging.getLogger(__name__)
 
-# Pre-sorted subcategory aliases keys by length (longest first)
-# Sorted once at module load for O(1) access instead of sorting per query
-_SUBCATEGORY_KEYWORDS_BY_LENGTH = sorted(SUBCATEGORY_ALIASES.keys(), key=len, reverse=True)
 
 
 # =============================================================================
@@ -147,62 +145,8 @@ SPEC_TO_COLUMN: dict[str, tuple[str, Any]] = {
 
 
 # =============================================================================
-# Smart Query Parsing
+# Query Synonyms
 # =============================================================================
-# Patterns for extracting values from natural language queries like "10k resistor 0603 1%"
-
-# Resistance patterns: 10k, 100R, 4.7k, 1M, 100ohm, 10kohm
-# Also supports European notation: 4k7 = 4.7kΩ, 4R7 = 4.7Ω, 1M5 = 1.5MΩ
-RESISTANCE_PATTERN = re.compile(
-    r'\b(\d+(?:\.\d+)?)\s*([kKmMrRΩ]|ohm|kohm|mohm)\b',
-    re.IGNORECASE
-)
-# European notation: digit + suffix + digit (e.g., 4k7, 4R7, 1M5)
-RESISTANCE_EURO_PATTERN = re.compile(
-    r'\b(\d+)([kKmMrR])(\d+)\b'
-)
-
-# Capacitance patterns: 10uF, 100nF, 1pF, 4.7uF, 100pf
-CAPACITANCE_PATTERN = re.compile(
-    r'\b(\d+(?:\.\d+)?)\s*(u[fF]|n[fF]|p[fF]|[uμ]F|nF|pF)\b'
-)
-
-# Inductance patterns: 10uH, 100nH, 1mH, 4.7uH
-INDUCTANCE_PATTERN = re.compile(
-    r'\b(\d+(?:\.\d+)?)\s*(u[hH]|n[hH]|m[hH]|[uμ]H|nH|mH)\b'
-)
-
-# Voltage patterns: 25V, 50V, 100V (but not in model numbers like STM32F103)
-VOLTAGE_PATTERN = re.compile(
-    r'\b(\d+(?:\.\d+)?)\s*[vV]\b'
-)
-
-# Current patterns: 5A, 10A, 100mA, 500mA
-CURRENT_PATTERN = re.compile(
-    r'\b(\d+(?:\.\d+)?)\s*(m[aA]|[aA])\b'
-)
-
-# Tolerance patterns: 1%, 5%, 10%, 0.1%
-TOLERANCE_PATTERN = re.compile(
-    r'\b(\d+(?:\.\d+)?)\s*%'
-)
-
-# Package patterns (common sizes)
-PACKAGE_PATTERNS = [
-    # Imperial sizes
-    re.compile(r'\b(0201|0402|0603|0805|1206|1210|1812|2010|2512)\b'),
-    # SOT packages
-    re.compile(r'\b(SOT-?23(?:-[356])?|SOT-?89|SOT-?223)\b', re.IGNORECASE),
-    # TO packages
-    re.compile(r'\b(TO-?220[A-Z]?|TO-?252|TO-?263|TO-?92|DPAK|D2PAK)\b', re.IGNORECASE),
-    # QFN/QFP
-    re.compile(r'\b(QFN-?\d+|TQFP-?\d+|LQFP-?\d+|QFP-?\d+)\b', re.IGNORECASE),
-    # DIP/SOP
-    re.compile(r'\b(DIP-?\d+|SOP-?\d+|SOIC-?\d+|TSSOP-?\d+|MSOP-?\d+)\b', re.IGNORECASE),
-]
-
-# SUBCATEGORY_ALIASES defined below (after SpecFilter) is used for component type detection
-
 # Query synonyms - expand search terms to include equivalent names
 # When any term in a group is searched, all terms in that group are searched
 # Format: (primary_term, [patterns]) where patterns are pre-compiled regexes
@@ -236,192 +180,14 @@ def expand_query_synonyms(query: str) -> str:
     return query
 
 
-@dataclass
-class ParsedQuery:
-    """Result of parsing a smart query string."""
-    # Original query
-    original: str
-    # Remaining text after extracting structured parts (for FTS search)
-    remaining_text: str
-    # Detected subcategory (from component type keywords)
-    subcategory: str | None = None
-    # Extracted spec filters
-    spec_filters: list["SpecFilter"] = field(default_factory=list)
-    # Extracted package
-    package: str | None = None
-    # What was detected (for debugging/transparency)
-    detected: dict[str, Any] = field(default_factory=dict)
-
-
-def parse_smart_query(query: str) -> ParsedQuery:
-    """Parse a natural language query into structured filters.
-
-    Examples:
-        "10k resistor 0603 1%" -> subcategory=resistor, resistance=10k, package=0603, tolerance=1%
-        "100nF 25V capacitor" -> subcategory=capacitor, capacitance=100nF, voltage=25V
-        "n-channel mosfet SOT-23" -> subcategory=mosfets, package=SOT-23
-
-    Returns:
-        ParsedQuery with extracted components and remaining text for FTS search.
-    """
-    result = ParsedQuery(original=query, remaining_text=query)
-    detected: dict[str, Any] = {}
-    tokens_to_remove: list[str] = []
-
-    query_lower = query.lower()
-
-    # 1. Detect component type (longest match first to handle "ceramic capacitor" before "capacitor")
-    # Uses pre-sorted list for O(1) access instead of sorting per query
-    for keyword in _SUBCATEGORY_KEYWORDS_BY_LENGTH:
-        if keyword in query_lower:
-            result.subcategory = SUBCATEGORY_ALIASES[keyword]
-            detected["component_type"] = keyword
-            tokens_to_remove.append(keyword)
-            break
-
-    # 2. Extract tolerance (do before other patterns since 1% could conflict)
-    tol_match = TOLERANCE_PATTERN.search(query)
-    if tol_match:
-        tolerance = f"{tol_match.group(1)}%"
-        result.spec_filters.append(SpecFilter("Tolerance", "=", tolerance))
-        detected["tolerance"] = tolerance
-        tokens_to_remove.append(tol_match.group(0))
-
-    # 3. Extract resistance (only if likely a resistor context)
-    # Try European notation first (e.g., 4k7 = 4.7kΩ, 4R7 = 4.7Ω)
-    euro_res_match = RESISTANCE_EURO_PATTERN.search(query)
-    res_match = RESISTANCE_PATTERN.search(query)
-
-    if euro_res_match:
-        int_part = euro_res_match.group(1)
-        suffix = euro_res_match.group(2).upper()
-        frac_part = euro_res_match.group(3)
-        value = f"{int_part}.{frac_part}"
-
-        if suffix == 'R':
-            normalized = f"{value}Ω"
-        elif suffix == 'K':
-            normalized = f"{value}kΩ"
-        elif suffix == 'M':
-            normalized = f"{value}MΩ"
-        else:
-            normalized = f"{value}{suffix}"
-
-        result.spec_filters.append(SpecFilter("Resistance", "=", normalized))
-        detected["resistance"] = normalized
-        tokens_to_remove.append(euro_res_match.group(0))
-        if not result.subcategory:
-            result.subcategory = "chip resistor - surface mount"
-            detected["component_type"] = "resistor (inferred)"
-    elif res_match:
-        value = res_match.group(1)
-        unit = res_match.group(2).upper()
-        # Normalize unit
-        if unit in ('R', 'Ω', 'OHM'):
-            normalized = f"{value}Ω"
-        elif unit in ('K', 'KOHM'):
-            normalized = f"{value}kΩ"
-        elif unit in ('M', 'MOHM'):
-            normalized = f"{value}MΩ"
-        else:
-            normalized = f"{value}{unit}"
-
-        result.spec_filters.append(SpecFilter("Resistance", "=", normalized))
-        detected["resistance"] = normalized
-        tokens_to_remove.append(res_match.group(0))
-        # Auto-detect subcategory if not already set
-        if not result.subcategory:
-            result.subcategory = "chip resistor - surface mount"
-            detected["component_type"] = "resistor (inferred)"
-
-    # 4. Extract capacitance
-    cap_match = CAPACITANCE_PATTERN.search(query)
-    if cap_match:
-        value = cap_match.group(1)
-        unit = cap_match.group(2)
-        # Normalize unit
-        if unit.lower() in ('uf', 'μf'):
-            normalized = f"{value}uF"
-        elif unit.lower() == 'nf':
-            normalized = f"{value}nF"
-        elif unit.lower() == 'pf':
-            normalized = f"{value}pF"
-        else:
-            normalized = f"{value}{unit}"
-
-        result.spec_filters.append(SpecFilter("Capacitance", "=", normalized))
-        detected["capacitance"] = normalized
-        tokens_to_remove.append(cap_match.group(0))
-        # Auto-detect subcategory if not already set
-        if not result.subcategory:
-            result.subcategory = "multilayer ceramic capacitors mlcc - smd/smt"
-            detected["component_type"] = "capacitor (inferred)"
-
-    # 5. Extract inductance
-    ind_match = INDUCTANCE_PATTERN.search(query)
-    if ind_match:
-        value = ind_match.group(1)
-        unit = ind_match.group(2)
-        if unit.lower() in ('uh', 'μh'):
-            normalized = f"{value}uH"
-        elif unit.lower() == 'nh':
-            normalized = f"{value}nH"
-        elif unit.lower() == 'mh':
-            normalized = f"{value}mH"
-        else:
-            normalized = f"{value}{unit}"
-
-        result.spec_filters.append(SpecFilter("Inductance", "=", normalized))
-        detected["inductance"] = normalized
-        tokens_to_remove.append(ind_match.group(0))
-        # Auto-detect subcategory
-        if not result.subcategory:
-            result.subcategory = "inductors (smd)"
-            detected["component_type"] = "inductor (inferred)"
-
-    # 6. Extract voltage (common for capacitors, diodes, MOSFETs)
-    volt_match = VOLTAGE_PATTERN.search(query)
-    if volt_match:
-        voltage = f"{volt_match.group(1)}V"
-        result.spec_filters.append(SpecFilter("Voltage", ">=", voltage))
-        detected["voltage"] = voltage
-        tokens_to_remove.append(volt_match.group(0))
-
-    # 7. Extract current
-    curr_match = CURRENT_PATTERN.search(query)
-    if curr_match:
-        value = curr_match.group(1)
-        unit = curr_match.group(2).upper()
-        if unit == 'MA':
-            normalized = f"{value}mA"
-        else:
-            normalized = f"{value}A"
-        # Use Id for MOSFETs, If for diodes, generic otherwise
-        spec_name = "Id" if result.subcategory == "mosfets" else "If"
-        result.spec_filters.append(SpecFilter(spec_name, ">=", normalized))
-        detected["current"] = normalized
-        tokens_to_remove.append(curr_match.group(0))
-
-    # 8. Extract package
-    for pkg_pattern in PACKAGE_PATTERNS:
-        pkg_match = pkg_pattern.search(query)
-        if pkg_match:
-            result.package = pkg_match.group(1).upper()
-            detected["package"] = result.package
-            tokens_to_remove.append(pkg_match.group(0))
-            break
-
-    # 9. Build remaining text (remove extracted tokens)
-    remaining = query
-    for token in tokens_to_remove:
-        # Case-insensitive removal
-        remaining = re.sub(re.escape(token), '', remaining, flags=re.IGNORECASE)
-    # Clean up whitespace
-    remaining = ' '.join(remaining.split())
-    result.remaining_text = remaining
-    result.detected = detected
-
-    return result
+# Note: ParsedQuery and parse_smart_query are now imported from smart_parser.py
+# The old inline implementation has been replaced with a more comprehensive parser
+# that includes:
+# - Better model number detection (TP4056, STM32, ESP32, etc.)
+# - Category-aware attribute mapping (voltage -> Vds for MOSFETs, Vr for diodes)
+# - Semantic descriptor handling (low Vgs, bidirectional, I2C, etc.)
+# - Comprehensive package patterns including SOD-xxx
+# - Smarter FTS fallback when structured filters are present
 
 # Package family mappings - expand common package names to include variants
 # When user searches for "SOT-23", they likely want all SOT-23 variants

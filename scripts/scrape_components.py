@@ -517,15 +517,31 @@ async def run_scraper(
         with open(progress_file, "w") as f:
             json.dump(progress.to_dict(), f, indent=2)
 
-        # Write category files
+        # Write category files (deduplicated by LCSC)
         logger.info("")
         logger.info("Writing category files...")
         for cat_slug, parts in results.items():
+            # Deduplicate by LCSC part number
+            seen_lcsc: set[str] = set()
+            unique_parts = []
+            duplicates = 0
+            for part in parts:
+                lcsc = part.get("l")
+                if lcsc and lcsc not in seen_lcsc:
+                    seen_lcsc.add(lcsc)
+                    unique_parts.append(part)
+                else:
+                    duplicates += 1
+
             output_file = categories_dir / f"{cat_slug}.jsonl.gz"
             with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL) as f:
-                for part in parts:
+                for part in unique_parts:
                     f.write(json.dumps(part, separators=(",", ":")) + "\n")
-            logger.info(f"  {cat_slug}: {len(parts)} parts")
+
+            if duplicates > 0:
+                logger.info(f"  {cat_slug}: {len(unique_parts)} parts ({duplicates} duplicates removed)")
+            else:
+                logger.info(f"  {cat_slug}: {len(unique_parts)} parts")
 
         # Create empty files for categories with no parts
         all_cat_slugs = {slugify(cat["name"]) for cat in categories}
@@ -549,15 +565,25 @@ async def run_scraper(
                 # Append to category file
                 output_file = categories_dir / f"{subcat.category_slug}.jsonl.gz"
 
-                # Read existing
+                # Read existing and collect LCSC codes
                 existing = []
+                seen_lcsc: set[str] = set()
                 if output_file.exists():
                     with gzip.open(output_file, "rt") as f:
                         for line in f:
-                            existing.append(json.loads(line))
+                            part = json.loads(line)
+                            existing.append(part)
+                            if part.get("l"):
+                                seen_lcsc.add(part["l"])
 
-                # Add new parts
-                existing.extend(parts)
+                # Add new parts (deduplicated)
+                new_count = 0
+                for part in parts:
+                    lcsc = part.get("l")
+                    if lcsc and lcsc not in seen_lcsc:
+                        seen_lcsc.add(lcsc)
+                        existing.append(part)
+                        new_count += 1
 
                 # Write back
                 with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL) as f:
@@ -566,12 +592,13 @@ async def run_scraper(
 
                 progress.failed_subcategories.remove(subcat.id)
                 progress.completed_subcategories.add(subcat.id)
-                progress.total_parts += count
+                progress.total_parts += new_count
                 progress.category_counts[subcat.category_slug] = (
-                    progress.category_counts.get(subcat.category_slug, 0) + count
+                    progress.category_counts.get(subcat.category_slug, 0) + new_count
                 )
 
-                logger.info(f"  Retry OK: {subcat.name} ({count} parts)")
+                dup_msg = f", {count - new_count} duplicates" if new_count < count else ""
+                logger.info(f"  Retry OK: {subcat.name} ({new_count} parts{dup_msg})")
 
             except Exception as e:
                 logger.error(f"  Retry FAILED: {subcat.name} - {e}")

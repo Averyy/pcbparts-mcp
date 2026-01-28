@@ -8,9 +8,10 @@ Bugs and improvements discovered during testing.
 
 ### Spec Filter Pagination Bug
 
-**Status:** TODO
+**Status:** ✅ DONE (2026-01-27)
 **Priority:** High
 **Discovered:** Notecarrier-A BOM testing (2026-01-27)
+**Fixed:** Implemented Option A - SQL value patterns in `generate_value_patterns()` function
 
 **Problem**: `spec_filters=[SpecFilter("Resistance", "=", "82k")]` returns 0 results even though 82k resistors exist.
 
@@ -94,74 +95,234 @@ db.search(subcategory_name="resistor", package="0402",
 
 ## Schema Enhancement: Pre-Parsed Numeric Columns
 
-**Status:** TODO (deploy current version first)
+**Status:** ✅ DONE (2026-01-27)
+**Priority:** High
 **Breaking Changes:** OK (single user)
+**Fixed:** Added 45 numeric columns with parsers in `build_database.py`, indexed for efficient parametric search
 
 ### Problem
 
 SQLite stores specs as JSON strings like `"1.5V~2.5V"`. Can't do `WHERE vgs_th < 2.0` because it's not a number.
 
-Current workaround:
-1. SQL narrows with `LIKE '%"Vgs(th)"%'` (just checks attribute exists)
+Current workaround is broken:
+1. SQL narrows with `LIKE '%"Vgs(th)"%'` (just checks attribute exists, not value)
 2. Fetches 10x requested limit (up to 500 rows)
 3. Parses each row's spec value in Python
-4. Filters in Python: `if parsed_value < target_value`
-5. Returns first N matches
-
-Issues:
-- Wastes memory/CPU parsing rows that get thrown away
-- If fewer than N of fetched rows match, returns fewer results than actually exist
-- Can't get accurate total counts for parametric queries
+4. Filters in Python → misses results that exist but weren't fetched
 
 ### Schema Changes
 
-```sql
-ALTER TABLE components ADD COLUMN resistance_ohms REAL;
-ALTER TABLE components ADD COLUMN capacitance_f REAL;
-ALTER TABLE components ADD COLUMN inductance_h REAL;
-ALTER TABLE components ADD COLUMN voltage_v REAL;
-ALTER TABLE components ADD COLUMN voltage_min_v REAL;
-ALTER TABLE components ADD COLUMN voltage_max_v REAL;
-ALTER TABLE components ADD COLUMN current_a REAL;
-ALTER TABLE components ADD COLUMN power_w REAL;
-ALTER TABLE components ADD COLUMN tolerance_pct REAL;
-ALTER TABLE components ADD COLUMN vgs_th_min_v REAL;
-ALTER TABLE components ADD COLUMN vgs_th_max_v REAL;
-ALTER TABLE components ADD COLUMN vds_max_v REAL;
-ALTER TABLE components ADD COLUMN id_max_a REAL;
-ALTER TABLE components ADD COLUMN rds_on_ohms REAL;
-ALTER TABLE components ADD COLUMN vf_v REAL;
-ALTER TABLE components ADD COLUMN vr_max_v REAL;
-ALTER TABLE components ADD COLUMN if_max_a REAL;
+Based on actual JLCPCB attribute analysis (100 samples per category):
 
+```sql
+-- Universal (high coverage across categories)
+ALTER TABLE components ADD COLUMN voltage_max_v REAL;        -- caps, MOSFETs, diodes, connectors
+ALTER TABLE components ADD COLUMN current_max_a REAL;        -- inductors, diodes, LEDs, connectors
+ALTER TABLE components ADD COLUMN power_w REAL;              -- resistors, LEDs, transistors
+ALTER TABLE components ADD COLUMN tolerance_pct REAL;        -- R, C, L
+ALTER TABLE components ADD COLUMN temp_min_c REAL;           -- everything (767/1200 samples)
+ALTER TABLE components ADD COLUMN temp_max_c REAL;           -- everything
+
+-- Passives
+ALTER TABLE components ADD COLUMN resistance_ohms REAL;      -- resistors (100%)
+ALTER TABLE components ADD COLUMN capacitance_f REAL;        -- capacitors (100%)
+ALTER TABLE components ADD COLUMN inductance_h REAL;         -- inductors (100%)
+ALTER TABLE components ADD COLUMN dcr_ohms REAL;             -- inductors (100%)
+ALTER TABLE components ADD COLUMN isat_a REAL;               -- inductors (94%)
+ALTER TABLE components ADD COLUMN irms_a REAL;               -- inductors
+
+-- MOSFETs (all 100% coverage)
+ALTER TABLE components ADD COLUMN vds_max_v REAL;            -- Drain to Source Voltage
+ALTER TABLE components ADD COLUMN vgs_th_min_v REAL;         -- Gate Threshold (min)
+ALTER TABLE components ADD COLUMN vgs_th_max_v REAL;         -- Gate Threshold (max)
+ALTER TABLE components ADD COLUMN id_max_a REAL;             -- Continuous Drain Current
+ALTER TABLE components ADD COLUMN rds_on_ohms REAL;          -- RDS(on)
+ALTER TABLE components ADD COLUMN qg_nc REAL;                -- Gate Charge
+ALTER TABLE components ADD COLUMN ciss_pf REAL;              -- Input Capacitance
+
+-- Diodes
+ALTER TABLE components ADD COLUMN vf_v REAL;                 -- Forward Voltage (100%)
+ALTER TABLE components ADD COLUMN vr_max_v REAL;             -- Reverse Voltage (100%)
+ALTER TABLE components ADD COLUMN if_max_a REAL;             -- Rectified Current (100%)
+
+-- Voltage Regulators (LDO, DC-DC)
+ALTER TABLE components ADD COLUMN vout_v REAL;               -- Output Voltage (100%)
+ALTER TABLE components ADD COLUMN iout_max_a REAL;           -- Output Current (100%)
+ALTER TABLE components ADD COLUMN vdropout_v REAL;           -- Dropout Voltage (100%)
+ALTER TABLE components ADD COLUMN vin_min_v REAL;            -- Input Voltage min
+ALTER TABLE components ADD COLUMN vin_max_v REAL;            -- Input Voltage max
+
+-- RF / Frequency
+ALTER TABLE components ADD COLUMN freq_min_hz REAL;          -- RF, crystals, oscillators (95-99%)
+ALTER TABLE components ADD COLUMN freq_max_hz REAL;          -- RF, op-amps, oscillators, connectors
+ALTER TABLE components ADD COLUMN output_power_dbm REAL;     -- RF transmitters (81%)
+ALTER TABLE components ADD COLUMN sensitivity_dbm REAL;      -- RF receivers (76%)
+ALTER TABLE components ADD COLUMN data_rate_bps REAL;        -- RF transceivers (80%)
+
+-- LNA / RF Amplifier specific (37-46 occurrences in samples)
+ALTER TABLE components ADD COLUMN noise_figure_db REAL;      -- LNA, RF amps (100% coverage)
+ALTER TABLE components ADD COLUMN gain_db REAL;              -- LNA, RF amps, antennas (100%)
+ALTER TABLE components ADD COLUMN p1db_dbm REAL;             -- RF amps - 1dB compression (81%)
+ALTER TABLE components ADD COLUMN ip3_dbm REAL;              -- RF amps - 3rd order intercept (51%)
+
+-- ADC/DAC
+ALTER TABLE components ADD COLUMN resolution_bits INTEGER;   -- ADCs, DACs (100%)
+ALTER TABLE components ADD COLUMN sample_rate_hz REAL;       -- ADCs, DACs (97%)
+ALTER TABLE components ADD COLUMN num_channels INTEGER;      -- ADCs, DACs (100%)
+
+-- Crystals / Oscillators
+ALTER TABLE components ADD COLUMN load_capacitance_pf REAL;  -- Crystals (99%)
+ALTER TABLE components ADD COLUMN freq_tolerance_ppm REAL;   -- Crystals (96%)
+ALTER TABLE components ADD COLUMN esr_ohms REAL;             -- Crystals
+
+-- Connectors
+ALTER TABLE components ADD COLUMN num_pins INTEGER;          -- Connectors (100%)
+ALTER TABLE components ADD COLUMN pitch_mm REAL;             -- Connectors (100%)
+ALTER TABLE components ADD COLUMN num_rows INTEGER;          -- Connectors (100%)
+
+-- LEDs
+ALTER TABLE components ADD COLUMN wavelength_nm REAL;        -- LEDs (78%)
+ALTER TABLE components ADD COLUMN luminous_intensity_mcd REAL; -- LEDs (76%)
+ALTER TABLE components ADD COLUMN forward_current_ma REAL;   -- LEDs (83%)
+
+-- Op-Amps
+ALTER TABLE components ADD COLUMN gbw_hz REAL;               -- Gain Bandwidth Product (3934)
+ALTER TABLE components ADD COLUMN slew_rate_vus REAL;        -- Slew Rate V/µs (4106)
+ALTER TABLE components ADD COLUMN vos_uv REAL;               -- Input Offset Voltage (4930)
+ALTER TABLE components ADD COLUMN ib_na REAL;                -- Input Bias Current (4899)
+ALTER TABLE components ADD COLUMN cmrr_db REAL;              -- Common Mode Rejection Ratio (4548)
+ALTER TABLE components ADD COLUMN noise_nv_rthz REAL;        -- Noise Density nV/√Hz (3849)
+ALTER TABLE components ADD COLUMN num_amps INTEGER;          -- Number of Channels/Amps (4784)
+
+-- Capacitors (electrolytic-specific)
+ALTER TABLE components ADD COLUMN ripple_current_a REAL;     -- Ripple Current (9952)
+ALTER TABLE components ADD COLUMN esr_ohms REAL;             -- ESR (9269) - also crystals
+ALTER TABLE components ADD COLUMN lifetime_hours REAL;       -- Lifetime at temp (11519)
+
+-- Power / Efficiency
+ALTER TABLE components ADD COLUMN iq_ua REAL;                -- Quiescent Current (4112)
+ALTER TABLE components ADD COLUMN efficiency_pct REAL;       -- Efficiency % (156)
+
+-- Audio / RF
+ALTER TABLE components ADD COLUMN impedance_ohms REAL;       -- Speakers, antennas (183)
+ALTER TABLE components ADD COLUMN bandwidth_hz REAL;         -- Amplifiers, filters (282)
+
+-- Indexes for common queries
 CREATE INDEX idx_resistance ON components(resistance_ohms) WHERE resistance_ohms IS NOT NULL;
 CREATE INDEX idx_capacitance ON components(capacitance_f) WHERE capacitance_f IS NOT NULL;
--- etc for each column
+CREATE INDEX idx_inductance ON components(inductance_h) WHERE inductance_h IS NOT NULL;
+CREATE INDEX idx_voltage_max ON components(voltage_max_v) WHERE voltage_max_v IS NOT NULL;
+CREATE INDEX idx_current_max ON components(current_max_a) WHERE current_max_a IS NOT NULL;
+CREATE INDEX idx_vds ON components(vds_max_v) WHERE vds_max_v IS NOT NULL;
+CREATE INDEX idx_rds_on ON components(rds_on_ohms) WHERE rds_on_ohms IS NOT NULL;
+CREATE INDEX idx_freq_max ON components(freq_max_hz) WHERE freq_max_hz IS NOT NULL;
+CREATE INDEX idx_resolution ON components(resolution_bits) WHERE resolution_bits IS NOT NULL;
+CREATE INDEX idx_num_pins ON components(num_pins) WHERE num_pins IS NOT NULL;
+CREATE INDEX idx_ripple_current ON components(ripple_current_a) WHERE ripple_current_a IS NOT NULL;
+CREATE INDEX idx_esr ON components(esr_ohms) WHERE esr_ohms IS NOT NULL;
+CREATE INDEX idx_iq ON components(iq_ua) WHERE iq_ua IS NOT NULL;
+CREATE INDEX idx_gbw ON components(gbw_hz) WHERE gbw_hz IS NOT NULL;
 ```
 
-### Work Estimate
+**Total: ~59 columns** covering resistors, capacitors, inductors, MOSFETs, diodes, regulators, RF, ADC/DAC, crystals, connectors, LEDs, and op-amps.
 
-| Task | Time |
-|------|------|
-| Schema change | ~2 hours |
-| Scraper update (parse during scrape) | ~3 hours |
-| Query logic (SQL instead of Python) | ~2 hours |
-| Migration/rebuild | ~1 hour |
-| **Total** | **~8 hours** |
+### Attribute → Column Mapping
+
+| JLCPCB Attribute | Column |
+|------------------|--------|
+| `Resistance` | `resistance_ohms` |
+| `Capacitance` | `capacitance_f` |
+| `Inductance` | `inductance_h` |
+| `Voltage Rating` | `voltage_max_v` |
+| `Voltage - Supply` | `voltage_max_v` |
+| `Current Rating` | `current_max_a` |
+| `Current - Saturation(Isat)` | `isat_a` |
+| `DC Resistance(DCR)` | `dcr_ohms` |
+| `Drain to Source Voltage` | `vds_max_v` |
+| `Gate Threshold Voltage (Vgs(th))` | `vgs_th_min_v`, `vgs_th_max_v` |
+| `Current - Continuous Drain(Id)` | `id_max_a` |
+| `RDS(on)` | `rds_on_ohms` |
+| `Voltage - Forward(Vf@If)` | `vf_v` |
+| `Voltage - DC Reverse(Vr)` | `vr_max_v` |
+| `Current - Rectified` | `if_max_a` |
+| `Output Voltage` | `vout_v` |
+| `Output Current` | `iout_max_a` |
+| `Voltage Dropout` | `vdropout_v` |
+| `Frequency` / `Frequency Range` | `freq_min_hz`, `freq_max_hz` |
+| `Resolution(Bits)` | `resolution_bits` |
+| `Sampling Rate` | `sample_rate_hz` |
+| `Load Capacitance` | `load_capacitance_pf` |
+| `Number of Pins` | `num_pins` |
+| `Pitch` | `pitch_mm` |
+| `Ripple Current` | `ripple_current_a` |
+| `Equivalent Series Resistance(ESR)` | `esr_ohms` |
+| `Lifetime` | `lifetime_hours` |
+| `Quiescent Current` / `Quiescent Current(Iq)` | `iq_ua` |
+| `Common Mode Rejection Ratio(CMRR)` | `cmrr_db` |
+| `Noise density(eN)` | `noise_nv_rthz` |
+| `Number of Channels` | `num_amps` / `num_channels` |
+| `Efficiency` | `efficiency_pct` |
+| `Impedance` | `impedance_ohms` |
+| `Bandwidth` | `bandwidth_hz` |
+| `Noise Figure` | `noise_figure_db` |
+| `Gain` | `gain_db` |
+| `P1dB` | `p1db_dbm` |
+| `IP3` | `ip3_dbm` |
 
 ### Implementation Notes
 
-1. Reuse `SPEC_PARSERS` from `alternatives.py` for unit parsing
-2. Extract min/max from ranges: `"1.5V~2.5V"` → `min=1.5, max=2.5`
-3. Keep JSON `attributes` column for display and non-indexed specs
-4. Query logic: use SQL `WHERE` for indexed specs, fall back to Python for others
+1. Parse during scrape using extended `SPEC_PARSERS`
+2. Handle ranges: `"1.5V~2.5V"` → `min=1.5, max=2.5`
+3. Handle units: `"82kΩ"` → `82000`, `"10uF"` → `0.00001`
+4. Keep JSON `attributes` column for display and edge cases
+5. Query: use SQL `WHERE` for indexed columns, accurate counts
 
 ### Benefits
 
-- 10x faster parametric queries
+- Parametric search that actually works
+- Queries like `WHERE resistance_ohms = 82000 AND tolerance_pct <= 1`
+- Queries like `WHERE freq_max_hz > 10e9` (find mmWave parts)
 - Accurate result counts
-- No over-fetching
-- Simpler query code
+- No over-fetching hack
+
+### Impact: Needle-in-Haystack Problem
+
+Current part counts make keyword search useless for parametric needs:
+
+| Category | Parts | Problem |
+|----------|-------|---------|
+| Resistors | 67,043 | Finding 82kΩ 1% among 67K parts |
+| Capacitors | 40,933 | Finding low-ESR cap for SMPS |
+| Inductors | 29,153 | Finding 10µH with 5A saturation |
+| MOSFETs | 18,024 | Finding low Rds(on) for motor driver |
+| LDOs | 8,866 | Finding <10µA quiescent for battery |
+| Crystals | 7,872 | Finding specific load capacitance |
+
+### Search Scenarios: Before vs After
+
+**Low-ESR cap for SMPS:**
+- Before: Search "capacitor low ESR" → random results
+- After: `WHERE capacitance_f = 10e-6 AND esr_ohms < 0.1 AND voltage_max_v >= 25`
+
+**Low-power LDO for battery:**
+- Before: Search "LDO 3.3V" → 500+ parts, can't filter Iq
+- After: `WHERE vout_v = 3.3 AND iq_ua < 10 AND iout_max_a >= 0.1`
+
+**Precision op-amp:**
+- Before: Search "precision op amp" → keyword only
+- After: `WHERE vos_uv < 100 AND ib_na < 10 AND gbw_hz >= 1e6`
+
+**MOSFET for motor:**
+- Before: Search "N-channel 30V" → can't filter Rds(on)
+- After: `WHERE vds_max_v >= 30 AND id_max_a >= 10 AND rds_on_ohms < 0.01`
+
+**High-current inductor:**
+- Before: Search "10uH inductor" → returns 1.3A parts
+- After: `WHERE inductance_h = 10e-6 AND isat_a >= 5 AND dcr_ohms < 0.05`
+
+**mmWave RF:**
+- Before: Search "24GHz" → false positives from "2.4GHz"
+- After: `WHERE freq_max_hz >= 24e9`
 
 ---
 
@@ -256,73 +417,78 @@ db.search(query="35GHz", min_stock=0)  # Returns:
 
 **Fix Options**:
 1. **Phrase matching**: Use `"35GHz"` as exact phrase (won't match `2.35GHz`)
-2. **Pre-parse frequencies**: Extract numeric frequency values during scrape
-3. **Custom tokenizer**: Configure FTS5 to keep decimals together
+2. **Pre-parse frequencies**: Extract numeric frequency values during scrape (see Schema Enhancement)
 
-**Recommended**: Option 2 (pre-parse) since we need frequency filtering anyway.
+**Recommended**: Option 2 - solved by adding `freq_min_hz`, `freq_max_hz` columns.
 
 ---
 
 ### Key Specs Not Extracted to Search Results
-- **LNA chips**: `Noise Figure`, `Gain`, `P1dB` exist in get_part() but don't appear in search key_specs
-  - Example: C42432110 (MLNA0622G) - full specs in detail view, empty in search
-- **RF Amplifiers/Mixers/Detectors**: `Frequency Range` not in key_specs
-- **Crystals**: `Load Capacitance` shows as N/A in search results
-  - Data exists in attributes, just not extracted to key_specs
+- **LNA chips**: `Noise Figure`, `Gain`, `P1dB` → ✅ FIXED by schema columns
+- **RF Amplifiers/Mixers/Detectors**: `Frequency Range` → ✅ FIXED by freq_min/max_hz
+- **Crystals**: `Load Capacitance` → ✅ FIXED by load_capacitance_pf
 
 ### Inductor Current Rating Not Searchable
 - **Problem**: "2.2uH 3A" search returns 1.3A inductors
-- **Cause**: Current rating (`Isat`, `Irms`) not extracted or not filterable
-- **Fix needed**: Add `Current - Saturation(Isat)` to spec filters for inductors
+- → ✅ FIXED by `isat_a` column
 
 ### Search Query Parsing Issues
-1. **"470R" notation** - Doesn't parse correctly, need to support "470R" = "470Ω"
-2. **"0R" jumper resistors** - Search for "0R jumper" returns 0 results, need alias
-3. **"M.2 key E"** - FTS5 tokenization splits "M.2" incorrectly
+1. ✅ **"470R" notation** - ~~Doesn't parse correctly~~ FIXED: European notation support added
+2. ✅ **"0R" jumper resistors** - ~~Search for "0R jumper" returns 0 results~~ FIXED: 0R parses to 0Ω
+3. **"M.2 key E"** - FTS5 tokenization splits "M.2" incorrectly - **TODO**
 
-### Connector Alias Mapping Missing
-- **U.FL/IPEX/MHF** are the same connector but different names
-  - `query='U.FL'` finds 11, `query='IPEX'` finds different results
-  - Need alias mapping: U.FL = IPEX = MHF = I-PEX
+### Connector Alias Mapping ~~Missing~~ ✅ FIXED
+- ~~**U.FL/IPEX/MHF** are the same connector but different names~~
+- ✅ All now return 281 results via `expand_query_synonyms()`
 
 ### MOSFET Spec Extraction Wrong Field
 - **AO3420 search** - specs like `Vds` showed as "60pF" (pulled wrong attribute)
 - MOSFET attribute aliases may be mapping to wrong fields
+- → ⚠️ Need to verify attribute→column mapping during schema implementation
 
 ### Attribute Value Normalization
-- Frequency specs have inconsistent formats that break filtering:
-  - "2.4GHz~2.4835GHz" vs "2.4GHz" vs "DC~6GHz"
-  - Range queries don't work across these formats
+- Frequency specs have inconsistent formats: "2.4GHz~2.4835GHz" vs "2.4GHz" vs "DC~6GHz"
+- → ✅ FIXED by parsing to numeric `freq_min_hz`, `freq_max_hz` during scrape
 
 ### Natural Language Parsing Gaps
 - Query "ADC 10-bit 40MSPS" returned 0 results
-  - Should parse resolution (10-bit) and sample rate (40MSPS) as specs
-- Could add smart parsing for ADC/DAC specs similar to how we do resistors/capacitors
+- → ✅ FIXED by `resolution_bits`, `sample_rate_hz` columns
 
 ---
 
 ## Feature Requests
 
-### High Priority (enables new use cases)
+### High Priority
 
-1. **Frequency range filter** for RF components
-   - Extract `frequency_min_hz`, `frequency_max_hz` from descriptions
-   - Enable queries like `frequency_max > 10e9` for mmWave parts
-   - Would properly surface C2871887 (60GHz), C50176497 (35GHz switch)
+1. ✅ **Pre-parsed numeric columns** (see Schema Enhancement section above)
+   - ~67 columns covering all major component types (expanded from initial 45)
+   - Enables true parametric search: `WHERE resistance_ohms = 82000`
+   - Fixes: spec_filter bug, frequency search, inductor current, LNA specs, etc.
+   - **DONE 2026-01-27**
+   - **EXPANDED 2026-01-27**: Added IoT/hobby-focused columns:
+     - MCU: `flash_size_bytes` (2,006 parts), `ram_size_bytes` (1,413), `clock_speed_hz` (1,938)
+     - TVS/ESD: `clamping_voltage_v` (21,014), `standoff_voltage_v` (19,496), `surge_power_w` (14,014)
+     - Battery chargers: `charge_current_a` (696)
+     - Memory ICs: `memory_capacity_bits` (1,501)
+     - LEDs: `wavelength_nm` (3,392), `luminous_intensity_mcd` (3,059), `forward_current_ma` (1,635)
+     - MOSFETs: `ciss_pf` (16,056)
+     - Universal: `temp_min_c`, `temp_max_c` (253,287 parts each)
+     - Power: `efficiency_pct` (151)
 
-2. **Pre-parsed numeric columns** (see Schema Enhancement section)
-   - Resistance, capacitance, inductance, voltage, current
-   - Enables true parametric search without over-fetching
+### Medium Priority
 
-### Medium Priority (improves existing search)
+2. ✅ **European resistance notation** - "470R" → 470Ω, "4k7" → 4.7kΩ, "4R7" → 4.7Ω
+   - Added `RESISTANCE_EURO_PATTERN` in db.py and alternatives.py
+   - **DONE 2026-01-27**
 
-3. **Inductor current rating filter** - extract Isat/Irms
-4. **Crystal load capacitance filter** - extract from attributes
-5. **European resistance notation** - support "470R", "4k7", "4R7"
-6. **Connector alias mapping** - U.FL = IPEX = MHF = I-PEX
+3. ✅ **Connector alias mapping** - U.FL = IPEX = MHF = I-PEX
+   - Added `expand_query_synonyms()` in db.py
+   - **DONE 2026-01-27**
 
-### Low Priority (nice to have)
+4. ✅ **"0R" jumper resistor alias** - "0R" should find 0Ω resistors
+   - Handled by European notation fix (0R parses to 0Ω)
+   - **DONE 2026-01-27**
 
-7. **ADC/DAC parametric search** - parse resolution (bits) and sample rate
-8. **LNA key specs** - extract noise figure, gain, P1dB to search results
-9. **RF amp key specs** - extract frequency range to search results
+5. **"M.2 key E" tokenization** - FTS splits "M.2" incorrectly
+   - Could use phrase matching or token mapping
+   - **TODO**

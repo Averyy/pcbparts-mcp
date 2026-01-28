@@ -611,7 +611,8 @@ class TestSmartQueryParsing:
         assert cap_filter.value == "100nF"
 
         # Check voltage filter (should be >= for safety margin)
-        volt_filter = next(f for f in result.spec_filters if f.name == "Voltage")
+        # Note: New parser uses "Voltage Rating" (correct spec name) instead of generic "Voltage"
+        volt_filter = next(f for f in result.spec_filters if "Voltage" in f.name)
         assert volt_filter.operator == ">="
         assert "25V" in volt_filter.value
 
@@ -654,10 +655,10 @@ class TestSmartQueryParsing:
 
         result = parse_smart_query("ESP32 module 3.3V")
 
-        # ESP32 should remain in text
+        # ESP32 should remain in text (detected as model number)
         assert "esp32" in result.remaining_text.lower() or "module" in result.remaining_text.lower()
-        # Voltage should be extracted as filter
-        assert any(f.name == "Voltage" for f in result.spec_filters)
+        # Voltage should be extracted as filter (now uses "Voltage Rating" for generic voltage)
+        assert any("Voltage" in f.name for f in result.spec_filters)
 
     def test_parse_empty_query(self):
         """Empty or minimal queries should not crash."""
