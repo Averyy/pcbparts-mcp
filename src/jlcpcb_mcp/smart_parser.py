@@ -27,10 +27,16 @@ from .subcategory_aliases import SUBCATEGORY_ALIASES
 
 # Pre-compiled patterns for performance
 PACKAGE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
-    # Imperial chip sizes (passives)
+    # Imperial chip sizes (passives) - EIA standard format LLWW in 0.01"
+    # e.g., 0603 = 0.06" x 0.03" = 1.6mm x 0.8mm
     (re.compile(r'\b(01005|0201|0402|0603|0805|1206|1210|1812|2010|2512)\b'), 'imperial'),
 
-    # Metric chip sizes
+    # SMD metric dimensions (crystals, oscillators, LEDs) - format LLWW in 0.1mm
+    # e.g., 3215 = 3.2mm x 1.5mm, 5032 = 5.0mm x 3.2mm
+    # These expand to SMD{dim} variants like SMD3215-2P
+    (re.compile(r'\b(1610|1612|2012|2016|2520|2835|3014|3020|3030|3215|3225|3528|3535|5032|5050|5730|6035|7050|7060|8045|8080|9070)\b'), 'smd_metric'),
+
+    # Metric chip sizes (with M suffix)
     (re.compile(r'\b(0402M|0603M|0805M|1206M)\b', re.IGNORECASE), 'metric'),
 
     # SOT packages - comprehensive with any pin count suffix
@@ -402,6 +408,7 @@ def extract_values(query: str) -> tuple[list[ExtractedValue], str]:
         )))
 
     # Pin structure for headers (1x7, 2x20, etc.)
+    # This maps to the "Pin Structure" attribute (e.g., "1x16P"), not "Number of Pins"
     for match in _PIN_STRUCTURE.finditer(query):
         # Skip if already matched by dimension pattern
         if any(s <= match.start() < e for s, e, _ in extractions):
@@ -412,7 +419,7 @@ def extract_values(query: str) -> tuple[list[ExtractedValue], str]:
         extractions.append((match.start(), match.end(), ExtractedValue(
             raw=match.group(0),
             value=total_pins,
-            unit_type="pin_count",
+            unit_type="pin_structure",  # Maps to "Pin Structure" attribute
             normalized=f"{rows}x{pins_per_row}P"
         )))
 
@@ -823,6 +830,28 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
         "current": "Ic",
     },
 
+    # Battery Management / Chargers
+    "battery charger": {
+        "current": "Charge Current - Max",
+        "voltage": "Charging Saturation Voltage",
+    },
+    "lipo charger": {
+        "current": "Charge Current - Max",
+        "voltage": "Charging Saturation Voltage",
+    },
+    "lithium charger": {
+        "current": "Charge Current - Max",
+        "voltage": "Charging Saturation Voltage",
+    },
+    "battery management": {
+        "current": "Charge Current - Max",
+        "voltage": "Charging Saturation Voltage",
+    },
+    "charging ic": {
+        "current": "Charge Current - Max",
+        "voltage": "Charging Saturation Voltage",
+    },
+
     # Voltage Regulators
     "ldo": {
         "voltage": "Output Voltage",
@@ -1009,6 +1038,7 @@ def map_value_to_spec(
         "power": ("Power", ">="),
         "pin_count": ("Number of Pins", "="),
         "position_count": ("Number of Pins", "="),  # Positions map to pin count
+        "pin_structure": ("Pin Structure", "="),  # 1x16, 2x20, etc. for headers
         "pitch": ("Pitch", "="),
     }
 
@@ -1018,7 +1048,7 @@ def map_value_to_spec(
         if value.unit_type in cat_map:
             spec_name = cat_map[value.unit_type]
             # Determine operator based on spec type
-            if value.unit_type in ("resistance", "capacitance", "inductance", "frequency", "tolerance", "pin_count", "position_count", "pitch"):
+            if value.unit_type in ("resistance", "capacitance", "inductance", "frequency", "tolerance", "pin_count", "position_count", "pin_structure", "pitch"):
                 return spec_name, "="
             else:
                 return spec_name, ">="
@@ -1029,7 +1059,7 @@ def map_value_to_spec(
         cat_map = CATEGORY_ATTRIBUTE_MAP[component_type.lower()]
         if value.unit_type in cat_map:
             spec_name = cat_map[value.unit_type]
-            if value.unit_type in ("resistance", "capacitance", "inductance", "frequency", "tolerance", "pin_count", "position_count", "pitch"):
+            if value.unit_type in ("resistance", "capacitance", "inductance", "frequency", "tolerance", "pin_count", "position_count", "pin_structure", "pitch"):
                 return spec_name, "="
             else:
                 return spec_name, ">="
@@ -1201,7 +1231,25 @@ def parse_smart_query(query: str) -> ParsedQuery:
     # Step 6: Build spec filters from extracted values (category-aware)
     # Note: result.spec_filters may already have filters from Step 3 (keyword-based type filters)
 
+    # Categories where dimensions should be treated as package filters, not spec filters
+    # These components use package names like "SMD,4x4mm" rather than a "Dimensions" attribute
+    dimension_as_package_categories = {
+        "inductors (smd)", "power inductors", "inductors, coils, chokes",
+        "led", "leds", "light emitting diodes",
+    }
+    subcat_lower = (result.subcategory or "").lower()
+
     for value in values:
+        # Special handling: dimensions become package filter for inductors/LEDs
+        # e.g., "4x4mm" -> package="SMD,4x4mm" instead of Dimensions="4x4mm"
+        if value.unit_type == "dimensions":
+            if any(cat in subcat_lower for cat in dimension_as_package_categories):
+                # Convert to package format used by JLCPCB (e.g., "SMD,4x4mm")
+                if not result.package:
+                    result.package = f"SMD,{value.normalized}"
+                    detected["package_from_dimensions"] = result.package
+                continue  # Don't add as spec filter
+
         spec_name, operator = map_value_to_spec(value, subcategory, matched_keyword)
         result.spec_filters.append(SpecFilter(spec_name, operator, value.normalized))
 
@@ -1228,6 +1276,39 @@ def parse_smart_query(query: str) -> ParsedQuery:
 
         # Remove "dual" from remaining text to prevent FTS failure
         remaining = re.sub(r'\bdual\b', '', remaining, flags=re.IGNORECASE)
+        remaining = re.sub(r'\s+', ' ', remaining).strip()
+
+    # Step 6c: Handle "single row" / "double row" for pin headers
+    # Convert "16 pin header single row" -> Pin Structure = "1x16P"
+    header_keywords = ("header", "pin header", "male header", "female header")
+    is_header = matched_keyword and any(kw in matched_keyword.lower() for kw in header_keywords)
+    is_header = is_header or (result.subcategory and "header" in result.subcategory.lower())
+
+    if is_header and re.search(r'\b(single|1)\s*row\b', remaining, re.IGNORECASE):
+        # Find any "Number of Pins" filter and convert to "Pin Structure" with 1x prefix
+        for i, sf in enumerate(result.spec_filters):
+            if sf.name == "Number of Pins" and sf.value.endswith("P"):
+                pin_count = sf.value[:-1]  # Remove "P" suffix
+                if pin_count.isdigit():
+                    result.spec_filters[i] = SpecFilter("Pin Structure", "=", f"1x{pin_count}P")
+                    detected.setdefault("semantic", []).append(f"single row (-> Pin Structure=1x{pin_count}P)")
+        # Remove "single row" from remaining text
+        remaining = re.sub(r'\b(single|1)\s*row\b', '', remaining, flags=re.IGNORECASE)
+        remaining = re.sub(r'\s+', ' ', remaining).strip()
+
+    if is_header and re.search(r'\b(double|dual|2)\s*row\b', remaining, re.IGNORECASE):
+        # Find any "Number of Pins" filter and convert to "Pin Structure" with 2x prefix
+        # Note: for double row, the total pins = 2 * pins_per_row, so we need to divide
+        for i, sf in enumerate(result.spec_filters):
+            if sf.name == "Number of Pins" and sf.value.endswith("P"):
+                pin_count = sf.value[:-1]
+                if pin_count.isdigit():
+                    total = int(pin_count)
+                    pins_per_row = total // 2 if total % 2 == 0 else total
+                    result.spec_filters[i] = SpecFilter("Pin Structure", "=", f"2x{pins_per_row}P")
+                    detected.setdefault("semantic", []).append(f"double row (-> Pin Structure=2x{pins_per_row}P)")
+        # Remove "double/dual row" from remaining text
+        remaining = re.sub(r'\b(double|dual|2)\s*row\b', '', remaining, flags=re.IGNORECASE)
         remaining = re.sub(r'\s+', ' ', remaining).strip()
 
     # Step 7: Clean up remaining text

@@ -407,14 +407,15 @@ async def search(
     # Parse packages array (handles JSON strings from some MCP clients)
     parsed_packages = _parse_list_param(packages)
 
-    # Smart parsing: if query provided but no explicit category/filters, try to parse naturally
+    # Smart parsing: always parse query to clean up text and extract structured info
+    # This handles cases like "lipo charger" where terms don't exist in FTS index
     parsed_query_info = None
     effective_subcategory_name = subcategory_name
     effective_package = package
     effective_query = query
 
-    if query and not subcategory_id and not subcategory_name and not parsed_filters:
-        # Parse natural language query
+    if query:
+        # Parse natural language query to extract structured info and clean text
         parsed = parse_smart_query(query)
         parsed_query_info = {
             "original_query": parsed.original,
@@ -426,17 +427,19 @@ async def search(
             "remaining_text": parsed.remaining_text,
         }
 
-        # Apply parsed values
-        if parsed.subcategory:
+        # Apply parsed values only if user didn't provide explicit ones
+        if parsed.subcategory and not subcategory_name and not subcategory_id:
             effective_subcategory_name = parsed.subcategory
         if parsed.package and not package:
             effective_package = parsed.package
-        if parsed.spec_filters:
+        if parsed.spec_filters and not parsed_filters:
             parsed_filters = parsed.spec_filters
+
+        # Always use cleaned remaining_text for FTS (removes subcategory keywords, etc.)
         if parsed.remaining_text and len(parsed.remaining_text) >= 2:
             effective_query = parsed.remaining_text
         elif parsed.spec_filters or parsed.subcategory:
-            # Query was fully parsed into structured filters
+            # Query was fully parsed into structured filters, no text needed
             effective_query = None
 
     # Perform search - db.search() handles name resolution internally
