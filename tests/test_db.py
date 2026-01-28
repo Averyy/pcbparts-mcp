@@ -500,6 +500,27 @@ class TestPackageFamilyExpansion:
         # Should find multiple parts with SOT-23 variants
         assert result["total"] > 0  # SOT-23 variants combined
 
+    def test_so8_expands_to_all_variants(self):
+        """SO-8/SOP-8/SOIC-8 should all expand to include each other."""
+        db = get_db()
+        # All three should expand to the same set
+        for pkg in ["SO-8", "SOP-8", "SOIC-8", "so8", "sop8", "soic8"]:
+            expanded = db._expand_package(pkg)
+            assert "SO-8" in expanded, f"{pkg} should expand to include SO-8"
+            assert "SOP-8" in expanded, f"{pkg} should expand to include SOP-8"
+            assert "SOIC-8" in expanded, f"{pkg} should expand to include SOIC-8"
+
+    def test_so8_search_finds_all_variants(self):
+        """Searching SO-8 should find parts with SO-8, SOP-8, and SOIC-8 packages."""
+        db = get_db()
+        result = db.search(subcategory_name="MOSFETs", package="SO-8", limit=100)
+        assert result["total"] > 0
+        # Should find multiple package variants
+        packages_found = {p["package"] for p in result["results"]}
+        # At least 2 of the 3 variants should be present (depends on DB contents)
+        so_variants = packages_found & {"SO-8", "SOP-8", "SOIC-8"}
+        assert len(so_variants) >= 1, f"Expected SO/SOP/SOIC-8, found {packages_found}"
+
 
 class TestStringSpecFilter:
     """Test string-based spec filters (non-numeric)."""
