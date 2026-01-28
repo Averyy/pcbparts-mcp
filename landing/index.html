@@ -864,7 +864,8 @@
         @media (max-width: 768px) {
             .hero { padding: 140px 0 60px; }
             .hero h1 { font-size: 2.5rem; }
-            .nav-links { display: none; }
+            .nav-links { gap: 16px; }
+            .nav-links a { font-size: 0.8125rem; }
             .bento-grid { grid-template-columns: 1fr 1fr; }
             .bento-large { grid-column: span 2; grid-row: span 1; }
             .bento-wide { grid-column: span 2; }
@@ -916,7 +917,7 @@
                 <h1>Search JLCPCB components<br>directly in Claude</h1>
 
                 <p class="hero-subtitle">
-                    Search 1.5M+ JLCPCB electronic components via MCP. Real-time stock, pricing tiers, datasheets. No API key required.
+                    Search 1.5M+ JLCPCB components via MCP optimized for hobbyist and IoT projects. Real-time stock, pricing, datasheets.
                 </p>
 
                 <div class="hero-cta">
@@ -1166,20 +1167,26 @@
 
                     <div class="bento-card">
                         <div class="icon-wrapper"><span class="icon">⚡</span></div>
-                        <h3>Smart Filters</h3>
-                        <p>Filter by package, manufacturer, category, library type, and specs.</p>
+                        <h3>Smart Search</h3>
+                        <p>Auto-parses specs, expands package families, and filters by attributes the JLCPCB API can't.</p>
                     </div>
 
                     <div class="bento-card">
-                        <div class="icon-wrapper"><span class="icon">💰</span></div>
-                        <h3>Pricing Tiers</h3>
-                        <p>All pricing and quantity tiers from 1pc to 10,000+.</p>
+                        <div class="icon-wrapper"><span class="icon">📋</span></div>
+                        <h3>BOM Export</h3>
+                        <p>Generate JLCPCB-ready CSV with pricing breakdown, stock validation, and extended part fee warnings.</p>
                     </div>
 
-                    <div class="bento-card bento-wide">
+                    <div class="bento-card">
                         <div class="icon-wrapper"><span class="icon">📦</span></div>
                         <h3>1.5M+ Parts</h3>
                         <p>Full JLCPCB catalog with real-time stock. Capacitors, resistors, MCUs, connectors, ICs, and more across 52 categories.</p>
+                    </div>
+
+                    <div class="bento-card">
+                        <div class="icon-wrapper"><span class="icon">🧑‍💻</span></div>
+                        <h3>Maker-Focused Search</h3>
+                        <p>Optimized for dev boards, sensor breakouts, and the components that go with them.</p>
                     </div>
 
                     <div class="bento-card">
@@ -1201,9 +1208,9 @@
                     </div>
 
                     <div class="bento-card">
-                        <div class="icon-wrapper"><span class="icon">📋</span></div>
-                        <h3>BOM Export</h3>
-                        <p>Generate JLCPCB-ready CSV with cost estimates.</p>
+                        <div class="icon-wrapper"><span class="icon">💰</span></div>
+                        <h3>Pricing Tiers</h3>
+                        <p>All pricing and quantity tiers from 1pc to 10,000+.</p>
                     </div>
                 </div>
             </div>
