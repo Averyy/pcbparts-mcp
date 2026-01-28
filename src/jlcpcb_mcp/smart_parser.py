@@ -542,9 +542,9 @@ SEMANTIC_DESCRIPTORS: dict[str, list[SemanticFilter]] = {
     "low rds(on)": [SemanticFilter("RDS(on)", "<", "50mΩ", "low rds(on)")],
     "low on-resistance": [SemanticFilter("RDS(on)", "<", "50mΩ", "low on-resistance")],
 
-    # TVS/Diode polarity
-    "bidirectional": [SemanticFilter("Type", "=", "Bidirectional", "bidirectional")],
-    "unidirectional": [SemanticFilter("Type", "=", "Unidirectional", "unidirectional")],
+    # TVS/Diode polarity (DB uses "Polarity" not "Type" for this)
+    "bidirectional": [SemanticFilter("Polarity", "=", "Bidirectional", "bidirectional")],
+    "unidirectional": [SemanticFilter("Polarity", "=", "Unidirectional", "unidirectional")],
 
     # Interface types
     "i2c": [SemanticFilter("Interface", "=", "I2C", "i2c")],
@@ -554,8 +554,10 @@ SEMANTIC_DESCRIPTORS: dict[str, list[SemanticFilter]] = {
     "can": [SemanticFilter("Interface", "=", "CAN", "can")],
     "rs485": [SemanticFilter("Interface", "=", "RS485", "rs485")],
     "rs232": [SemanticFilter("Interface", "=", "RS232", "rs232")],
-    "1-wire": [SemanticFilter("Interface", "=", "1-Wire", "1-wire")],
-    "one-wire": [SemanticFilter("Interface", "=", "1-Wire", "one-wire")],
+    # Note: DS18B20 and similar use "Single-bus" not "1-Wire" in the Interface field
+    "1-wire": [SemanticFilter("Interface", "=", "Single-bus", "1-wire")],
+    "one-wire": [SemanticFilter("Interface", "=", "Single-bus", "one-wire")],
+    "single-bus": [SemanticFilter("Interface", "=", "Single-bus", "single-bus")],
 
     # MOSFET channel type
     "n-channel": [SemanticFilter("Type", "=", "N-Channel", "n-channel")],
@@ -569,45 +571,42 @@ SEMANTIC_DESCRIPTORS: dict[str, list[SemanticFilter]] = {
     "npn": [SemanticFilter("Type", "=", "NPN", "npn")],
     "pnp": [SemanticFilter("Type", "=", "PNP", "pnp")],
 
-    # LED colors
-    "red": [SemanticFilter("Color", "=", "Red", "red")],
-    "green": [SemanticFilter("Color", "=", "Green", "green")],
-    "blue": [SemanticFilter("Color", "=", "Blue", "blue")],
-    "yellow": [SemanticFilter("Color", "=", "Yellow", "yellow")],
-    "white": [SemanticFilter("Color", "=", "White", "white")],
-    "orange": [SemanticFilter("Color", "=", "Orange", "orange")],
-    "amber": [SemanticFilter("Color", "=", "Amber", "amber")],
-    "ir": [SemanticFilter("Type", "=", "Infrared", "ir")],
-    "infrared": [SemanticFilter("Type", "=", "Infrared", "infrared")],
+    # LED colors (DB uses "Illumination Color" not "Color")
+    "red": [SemanticFilter("Illumination Color", "=", "Red", "red")],
+    "green": [SemanticFilter("Illumination Color", "=", "Green", "green")],
+    "blue": [SemanticFilter("Illumination Color", "=", "Blue", "blue")],
+    "yellow": [SemanticFilter("Illumination Color", "=", "Yellow", "yellow")],
+    "white": [SemanticFilter("Illumination Color", "=", "White", "white")],
+    "orange": [SemanticFilter("Illumination Color", "=", "Orange", "orange")],
+    "amber": [SemanticFilter("Illumination Color", "=", "Amber", "amber")],
+    # Note: "ir"/"infrared" removed - IR LEDs are a separate subcategory, not a Type value
+
+    # Capacitor temperature coefficients / dielectrics
+    "c0g": [SemanticFilter("Temperature Coefficient", "=", "C0G", "c0g")],
+    "np0": [SemanticFilter("Temperature Coefficient", "=", "NP0", "np0")],
+    "x5r": [SemanticFilter("Temperature Coefficient", "=", "X5R", "x5r")],
+    "x7r": [SemanticFilter("Temperature Coefficient", "=", "X7R", "x7r")],
+    "x5s": [SemanticFilter("Temperature Coefficient", "=", "X5S", "x5s")],
+    "x6s": [SemanticFilter("Temperature Coefficient", "=", "X6S", "x6s")],
+    "x7s": [SemanticFilter("Temperature Coefficient", "=", "X7S", "x7s")],
+    "y5v": [SemanticFilter("Temperature Coefficient", "=", "Y5V", "y5v")],
+    "z5u": [SemanticFilter("Temperature Coefficient", "=", "Z5U", "z5u")],
 
     # Regulator output type
     "fixed": [SemanticFilter("Output Type", "=", "Fixed", "fixed")],
     "adjustable": [SemanticFilter("Output Type", "=", "Adjustable", "adjustable")],
     "variable": [SemanticFilter("Output Type", "=", "Adjustable", "variable")],
 
-    # Low power descriptors
-    "low power": [SemanticFilter("Quiescent Current", "<", "10uA", "low power")],
-    "low quiescent": [SemanticFilter("Quiescent Current", "<", "10uA", "low quiescent")],
-    "ultra low power": [SemanticFilter("Quiescent Current", "<", "1uA", "ultra low power")],
-
-    # High efficiency
-    "high efficiency": [SemanticFilter("Efficiency", ">", "90%", "high efficiency")],
-
     # Precision
     "precision": [SemanticFilter("Tolerance", "<=", "0.1%", "precision")],
     "high precision": [SemanticFilter("Tolerance", "<=", "0.05%", "high precision")],
 
-    # Fast switching
-    "fast": [SemanticFilter("Speed", "=", "Fast", "fast")],
-    "fast switching": [SemanticFilter("Speed", "=", "Fast", "fast switching")],
-    "fast recovery": [SemanticFilter("Type", "=", "Fast Recovery", "fast recovery")],
-    "ultrafast": [SemanticFilter("Type", "=", "Ultrafast", "ultrafast")],
-
-    # Mounting types (typically filtered differently but can be semantic)
-    "smd": [SemanticFilter("Mounting Type", "=", "SMD", "smd")],
-    "surface mount": [SemanticFilter("Mounting Type", "=", "SMD", "surface mount")],
-    "through hole": [SemanticFilter("Mounting Type", "=", "Through Hole", "through hole")],
-    "tht": [SemanticFilter("Mounting Type", "=", "Through Hole", "tht")],
+    # Note: Removed broken filters that don't match actual DB attributes:
+    # - "fast", "fast switching" (no "Speed" attribute)
+    # - "fast recovery", "ultrafast" (no such Type values in diodes)
+    # - "low power", "low quiescent", "ultra low power" (LDOs use "standby current" not "Quiescent Current")
+    # - "high efficiency" (no "Efficiency" attribute verified)
+    # - "smd", "surface mount", "through hole", "tht" (mounting_type is a top-level field, not a spec)
 }
 
 
@@ -639,6 +638,7 @@ def extract_semantic_descriptors(query: str) -> tuple[list[SemanticFilter], str]
 NOISE_WORDS = {
     'for', 'with', 'and', 'or', 'the', 'a', 'an', 'to', 'in', 'of',
     'type', 'chip', 'component', 'part', 'parts', 'electronic', 'electronics',
+    'antenna',  # Common in RF connector context but not in part descriptions
 }
 
 
@@ -1086,6 +1086,27 @@ def parse_smart_query(query: str) -> ParsedQuery:
     # Add semantic filters
     for sf in semantic_filters:
         result.spec_filters.append(SpecFilter(sf.spec_name, sf.operator, sf.value))
+
+    # Step 6b: Handle "dual" for MOSFETs
+    # "dual" is too common a word to add to NOISE_WORDS, but in MOSFET context
+    # it means Number="2 N-Channel" or "2 P-Channel"
+    if (result.subcategory and result.subcategory.lower() == "mosfets"
+            and re.search(r'\bdual\b', remaining, re.IGNORECASE)):
+        # Find which channel type was specified
+        channel_type = None
+        for sf in result.spec_filters:
+            if sf.name == "Type" and sf.value in ("N-Channel", "P-Channel"):
+                channel_type = sf.value
+                break
+
+        if channel_type:
+            # Add Number filter for dual channel
+            result.spec_filters.append(SpecFilter("Number", "=", f"2 {channel_type}"))
+            detected.setdefault("semantic", []).append(f"dual (-> Number=2 {channel_type})")
+
+        # Remove "dual" from remaining text to prevent FTS failure
+        remaining = re.sub(r'\bdual\b', '', remaining, flags=re.IGNORECASE)
+        remaining = re.sub(r'\s+', ' ', remaining).strip()
 
     # Step 7: Clean up remaining text
     remaining = remove_noise_words(remaining)
