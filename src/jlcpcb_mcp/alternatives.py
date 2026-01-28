@@ -158,6 +158,10 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Charge Current - Max": parse_current,
     # Level Shifters
     "Channel Type": None,
+    # Motor Drivers
+    "Number of H-bridges": None,
+    # Audio Amplifiers
+    "Class": None,  # Class D, Class AB, etc.
     # Wireless Modules
     "Output Power": parse_power,
 }
@@ -217,6 +221,10 @@ STRING_MATCH_SPECS = {
     "Number of Cells",
     # Level Shifters
     "Channel Type",
+    # Motor Drivers
+    "Number of H-bridges",
+    # Audio Amplifiers
+    "Class",
 }
 
 
@@ -1095,6 +1103,23 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
             "Voltage - Supply": "higher",
         },
     },
+    "Brushed DC Motor Drivers": {
+        "primary": "Output Current",
+        "must_match": ["Number of H-bridges"],  # Critical: 2-bridge can't replace 1-bridge
+        "same_or_better": {
+            "Output Current": "higher",
+            "Peak Current": "higher",
+            "RDS(on)": "lower",
+        },
+    },
+    # ============== AUDIO ==============
+    "Audio Amplifiers": {
+        "primary": "Class",  # Class D, Class AB, etc.
+        "must_match": ["Class"],
+        "same_or_better": {
+            "Output Power": "higher",
+        },
+    },
 }
 
 
@@ -1430,7 +1455,8 @@ def build_response(
             "savings": savings,
         }
 
-    # Build alternatives list with verification info and MOQ warnings
+    # Build alternatives list with verification info, MOQ warnings, and package warnings
+    original_pkg = original.get("package", "")
     alternatives_output = []
     for score, part, breakdown, verify_info in alternatives:
         alt: dict[str, Any] = {
@@ -1444,6 +1470,10 @@ def build_response(
         moq = part.get("min_order", 1)
         if moq and moq > 100:
             alt["moq_warning"] = f"High MOQ: {moq} units minimum"
+        # Add package warning if different from original
+        part_pkg = part.get("package", "")
+        if original_pkg and part_pkg and original_pkg != part_pkg:
+            alt["package_warning"] = f"Different package: {part_pkg} vs original {original_pkg}"
         alternatives_output.append(alt)
 
     return {
@@ -1482,6 +1512,7 @@ def build_unsupported_response(
 
     # Use attribute names from original part for verification guidance
     specs_to_verify = list(original.get("specs", {}).keys())
+    original_pkg = original.get("package", "")
 
     similar_parts_output = []
     for score, part, breakdown, _ in similar:
@@ -1493,6 +1524,10 @@ def build_unsupported_response(
         moq = part.get("min_order", 1)
         if moq and moq > 100:
             item["moq_warning"] = f"High MOQ: {moq} units minimum"
+        # Add package warning if different from original
+        part_pkg = part.get("package", "")
+        if original_pkg and part_pkg and original_pkg != part_pkg:
+            item["package_warning"] = f"Different package: {part_pkg} vs original {original_pkg}"
         similar_parts_output.append(item)
 
     primary_value = None

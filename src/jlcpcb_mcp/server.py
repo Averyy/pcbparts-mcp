@@ -421,6 +421,7 @@ async def search(
             "detected": parsed.detected,
             "subcategory": parsed.subcategory,
             "package": parsed.package,
+            "mounting_type": parsed.mounting_type,
             "spec_filters": [f.to_dict() for f in parsed.spec_filters],
             "remaining_text": parsed.remaining_text,
         }

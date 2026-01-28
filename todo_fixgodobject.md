@@ -2,76 +2,95 @@
 
 ## Problem
 
-`src/jlcpcb_mcp/db.py` contains a 600+ line `ComponentDatabase` class that handles 14 different responsibilities. This violates the Single Responsibility Principle and makes the code harder to test, maintain, and reuse.
+`src/jlcpcb_mcp/db.py` has grown to **1,596 lines** with `ComponentDatabase` spanning ~1,200 lines. The `search()` method alone is **547 lines**. This violates the Single Responsibility Principle and makes the code harder to test, maintain, and navigate.
 
-## Current Responsibilities
+## Current State (January 2026)
 
-| Responsibility | Methods | Lines (approx) |
-|----------------|---------|----------------|
-| Connection management | `_ensure_db()`, `close()`, `_conn`, `_conn_lock` | 40 |
-| Database building | `_build_database()` | 20 |
-| Cache loading | `_load_caches()` | 25 |
-| Name resolution | `resolve_subcategory_name()`, `resolve_category_name()`, `_find_similar_subcategories()` | 80 |
-| Package expansion | `_expand_package()` | 15 |
-| Manufacturer resolution | `_resolve_manufacturer()` | 20 |
-| Attribute aliases | `_get_attribute_names()` | 15 |
-| Search | `search()` | 150 |
-| Single lookups | `get_by_lcsc()`, `get_by_lcsc_batch()` | 50 |
-| Category queries | `find_by_subcategory()`, `get_categories_for_client()` | 70 |
-| Row transformation | `_row_to_dict()` | 40 |
-| Attribute discovery | `list_attributes()` | 100 |
-| Stats | `get_stats()` | 30 |
+| Responsibility | Methods | Lines |
+|----------------|---------|-------|
+| Connection/init | `__init__`, `_ensure_db`, `close` | 40 |
+| Database building | `_build_database` | 44 |
+| Cache loading | `_load_caches` | 24 |
+| Name resolution | `get_subcategory_name`, `get_category_for_subcategory`, `resolve_subcategory_name`, `resolve_category_name`, `_find_similar_subcategories` | 64 |
+| Package expansion | `_expand_package` | 17 |
+| Manufacturer resolution | `_resolve_manufacturer` | 21 |
+| Attribute aliases | `_get_attribute_names` | 16 |
+| **Search** | `search` | **547** |
+| Single lookups | `get_by_lcsc`, `get_by_lcsc_batch` | 54 |
+| Category queries | `find_by_subcategory`, `get_categories_for_client` | 132 |
+| Row transformation | `_row_to_dict` | 43 |
+| Attribute discovery | `list_attributes` | 147 |
+| Stats | `get_stats` | 38 |
+
+Also in db.py but outside the class:
+- `SpecFilter` class (lines 316-384, ~70 lines)
+- Helper functions: `expand_query_synonyms`, `_escape_like`, `_is_integer`, `generate_value_patterns` (lines 167-314, ~150 lines)
+
+## What's Been Extracted
+
+- [x] `subcategory_aliases.py` - 531 lines (aliases + resolution helpers)
+- [x] `manufacturer_aliases.py` - 261 lines
+- [x] `parsers.py` - 588 lines (value parsing)
+- [x] `smart_parser.py` - 1,152 lines (query interpretation)
 
 ## Problems
 
-1. **Testing difficulty** - Can't unit test name resolution without setting up a full SQLite database
-2. **No reuse** - `client.py` had to reimplement name resolution instead of importing shared logic
-3. **Navigation** - 600 lines to scroll through to find anything
-4. **Coupling** - All responsibilities are tightly coupled through `self`
+1. **547-line search() method** - Impossible to understand or modify safely
+2. **Testing requires full database** - Can't unit test pure logic in isolation
+3. **Navigation nightmare** - 1,600 lines to scroll through
+4. **Tight coupling** - All responsibilities interconnected through `self`
 
-## Proposed Refactor
+## Priority: Break Up search()
 
-### Phase 1: Extract Pure Functions (Low Risk)
+The `search()` method (lines 618-1164) is the biggest problem. It handles:
+- Parameter validation and normalization
+- Subcategory/category name resolution
+- Query synonym expansion
+- SQL query building with dynamic WHERE clauses
+- Spec filter parsing and application
+- Package expansion
+- Manufacturer resolution
+- Result sorting and pagination
+- Response formatting
 
-Move stateless logic to separate modules:
+### Recommended Extraction
 
 ```
 src/jlcpcb_mcp/
-  subcategory_aliases.py    # SUBCATEGORY_ALIASES + resolve_subcategory_name()  [DONE]
-  package_expansion.py      # PACKAGE_FAMILIES + expand_package()
-  attribute_aliases.py      # ATTRIBUTE_ALIASES + get_attribute_names()
+  search/
+    __init__.py           # Re-export SearchEngine
+    engine.py             # SearchEngine class (orchestration only, <100 lines)
+    query_builder.py      # SQL WHERE clause construction
+    param_resolver.py     # Name→ID resolution, package expansion, mfr resolution
+    response.py           # Result formatting, _row_to_dict
 ```
 
-### Phase 2: Extract Query Builders (Medium Risk)
+This would reduce `search()` to ~50-100 lines of orchestration.
 
-```
-src/jlcpcb_mcp/
-  query_builder.py          # SQL query construction for search()
-  spec_filter.py            # SpecFilter class + filter logic (already partially separate)
-```
-
-### Phase 3: Split Database Class (Higher Risk)
+## Secondary: Extract Other Query Methods
 
 ```
 src/jlcpcb_mcp/
   db/
-    __init__.py             # Re-export public API
-    connection.py           # Connection management, _ensure_db(), close()
-    search.py               # search(), find_by_subcategory()
-    lookup.py               # get_by_lcsc(), get_by_lcsc_batch()
-    metadata.py             # list_attributes(), get_stats(), get_categories_for_client()
-    builder.py              # _build_database()
+    __init__.py           # Re-export ComponentDatabase (slim version)
+    connection.py         # Connection management, _ensure_db(), close()
+    lookup.py             # get_by_lcsc(), get_by_lcsc_batch()
+    categories.py         # find_by_subcategory(), get_categories_for_client()
+    attributes.py         # list_attributes() (147 lines)
+    stats.py              # get_stats()
 ```
 
 ## Acceptance Criteria
 
-- [ ] All existing tests pass
-- [ ] No new test files needed for Phase 1 (pure functions testable in isolation)
-- [ ] `ComponentDatabase` reduced to <200 lines (connection + delegation)
+- [ ] All existing tests pass (774 lines in test_db.py)
+- [ ] `search()` method reduced to <100 lines (orchestration only)
+- [ ] `ComponentDatabase` reduced to <300 lines
+- [ ] Query building logic unit-testable without SQLite
 - [ ] Each extracted module has clear single responsibility
 
 ## Notes
 
-- Phase 1 is already partially done (SUBCATEGORY_ALIASES moved to subcategory_aliases.py)
-- Consider doing this incrementally across multiple PRs
-- Keep backward compatibility by re-exporting from original locations initially
+- Beta status with no external users - breaking changes acceptable
+- Do incrementally: extract search() first, then other methods
+- Keep backward compatibility by re-exporting from `db.py` initially
+- The `SpecFilter` class (lines 316-384) is already somewhat isolated and could move to `search/filters.py`

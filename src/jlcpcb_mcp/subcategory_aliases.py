@@ -28,6 +28,13 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "electrolytic": "aluminum electrolytic capacitors - smd",
     "electrolytic capacitor": "aluminum electrolytic capacitors - smd",
     "smd electrolytic": "aluminum electrolytic capacitors - smd",
+    # Through-hole electrolytic capacitors
+    "radial electrolytic": "aluminum electrolytic capacitors - leaded",
+    "radial electrolytic capacitor": "aluminum electrolytic capacitors - leaded",
+    "radial capacitor": "aluminum electrolytic capacitors - leaded",
+    "through hole electrolytic": "aluminum electrolytic capacitors - leaded",
+    "pth electrolytic": "aluminum electrolytic capacitors - leaded",
+    "leaded electrolytic": "aluminum electrolytic capacitors - leaded",
     "tantalum": "tantalum capacitors",
     "tantalum capacitor": "tantalum capacitors",
     "film capacitor": "film capacitors",
@@ -46,6 +53,15 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "shunt resistor": "current sense resistors / shunt resistors",
     "resistor array": "resistor networks, arrays",
     "resistor network": "resistor networks, arrays",
+    # Potentiometers / Trimmers / Variable Resistors
+    "potentiometer": "potentiometers, variable resistors",
+    "potentiometers": "potentiometers, variable resistors",
+    "pot": "potentiometers, variable resistors",
+    "trimmer": "potentiometers, variable resistors",
+    "trimpot": "potentiometers, variable resistors",
+    "trim pot": "potentiometers, variable resistors",
+    "variable resistor": "potentiometers, variable resistors",
+    "adjustable resistor": "potentiometers, variable resistors",
     # ==========================================================================
     # INDUCTORS
     # ==========================================================================

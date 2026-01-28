@@ -67,6 +67,8 @@ PACKAGE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r'\b(SMD-?\d+|LGA-?\d+)\b', re.IGNORECASE), 'module'),
     # SMA/SMB/SMC diode packages - but exclude "SMA connector" patterns
     (re.compile(r'\b(SM[ABC])\b(?!\s*connector)', re.IGNORECASE), 'diode_pkg'),
+    # Mxx diode package aliases (M4/M7 = SMA/DO-214AC, common in Asian datasheets)
+    (re.compile(r'\b(M[478])\b', re.IGNORECASE), 'mxx_diode_pkg'),
 
     # Connector specific
     (re.compile(r'\b(USB-?[ABC]|TYPE-?[ABC]|MICRO-?USB|MINI-?USB)\b', re.IGNORECASE), 'usb'),
@@ -89,10 +91,21 @@ def extract_package(query: str) -> tuple[str | None, str, str | None]:
             remaining = query[:match.start()] + query[match.end():]
             remaining = remaining.strip()
 
+            # Map Mxx diode packages to SMA/SMB (M4/M7=SMA, M8=SMB)
+            if pkg_type == 'mxx_diode_pkg':
+                if package in ('M4', 'M7'):
+                    package = 'SMA'
+                elif package == 'M8':
+                    package = 'SMB'
+
             # Suggest subcategory for connector packages
             suggested_subcat = None
             if pkg_type == 'usb':
                 suggested_subcat = 'usb connectors'
+                # USB-C/TYPE-C are NOT package names in JLCPCB (package is "SMD")
+                # They're connector types, so don't use as package filter
+                # Keep in query for text search instead
+                return None, query, suggested_subcat
 
             return package, remaining, suggested_subcat
     return None, query, None
@@ -365,14 +378,14 @@ def extract_values(query: str) -> tuple[list[ExtractedValue], str]:
             normalized=norm
         )))
 
-    # Pin count
+    # Pin count (normalize to "XP" format to match database values like "8P", "16P")
     for match in _PINS.finditer(query):
         pins = int(match.group(1))
         extractions.append((match.start(), match.end(), ExtractedValue(
             raw=match.group(0),
             value=pins,
             unit_type="pin_count",
-            normalized=f"{pins} pin"
+            normalized=f"{pins}P"
         )))
 
     # Position count (for connectors: 2-pos, 2 position, 2-way, 2P)
@@ -650,6 +663,32 @@ def remove_noise_words(query: str) -> str:
 
 
 # =============================================================================
+# MOUNTING TYPE EXTRACTION
+# =============================================================================
+
+# Mounting type patterns: PTH/THT -> Through Hole, SMD/SMT -> SMD
+_MOUNTING_TYPE_PATTERNS = [
+    (re.compile(r'\b(PTH|THT|through[- ]?hole|leaded)\b', re.IGNORECASE), "Through Hole"),
+    (re.compile(r'\b(SMD|SMT|surface[- ]?mount)\b', re.IGNORECASE), "SMD"),
+]
+
+
+def extract_mounting_type(query: str) -> tuple[str | None, str]:
+    """Extract mounting type from query.
+
+    Returns: (mounting_type, remaining_query)
+    Where mounting_type is "SMD" or "Through Hole" or None.
+    """
+    for pattern, mount_type in _MOUNTING_TYPE_PATTERNS:
+        match = pattern.search(query)
+        if match:
+            remaining = query[:match.start()] + query[match.end():]
+            remaining = re.sub(r'\s+', ' ', remaining).strip()
+            return mount_type, remaining
+    return None, query
+
+
+# =============================================================================
 # CATEGORY-AWARE ATTRIBUTE MAPPING
 # =============================================================================
 
@@ -835,13 +874,24 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
     },
 
     # Connectors - comprehensive mappings for all connector types
+    # USB connectors use "Number of Contacts" not "Number of Pins"
     "usb connector": {
-        "pin_count": "Number of Pins",
+        "pin_count": "Number of Contacts",
         "pitch": "Pitch",
-        "position_count": "Number of Pins",
+        "position_count": "Number of Contacts",
+    },
+    "usb connectors": {
+        "pin_count": "Number of Contacts",
+        "pitch": "Pitch",
+        "position_count": "Number of Contacts",
     },
     "usb-c": {
-        "pin_count": "Number of Pins",
+        "pin_count": "Number of Contacts",
+        "position_count": "Number of Contacts",
+    },
+    "type-c": {
+        "pin_count": "Number of Contacts",
+        "position_count": "Number of Contacts",
     },
     "connector": {
         "pin_count": "Number of Pins",
@@ -962,12 +1012,23 @@ def map_value_to_spec(
         "pitch": ("Pitch", "="),
     }
 
-    # Try to get category-specific mapping
+    # Try to get category-specific mapping from matched keyword
     if matched_keyword and matched_keyword.lower() in CATEGORY_ATTRIBUTE_MAP:
         cat_map = CATEGORY_ATTRIBUTE_MAP[matched_keyword.lower()]
         if value.unit_type in cat_map:
             spec_name = cat_map[value.unit_type]
             # Determine operator based on spec type
+            if value.unit_type in ("resistance", "capacitance", "inductance", "frequency", "tolerance", "pin_count", "position_count", "pitch"):
+                return spec_name, "="
+            else:
+                return spec_name, ">="
+
+    # Try to get category-specific mapping from component_type (subcategory)
+    # This handles cases like USB connectors where subcategory is set from package pattern
+    if component_type and component_type.lower() in CATEGORY_ATTRIBUTE_MAP:
+        cat_map = CATEGORY_ATTRIBUTE_MAP[component_type.lower()]
+        if value.unit_type in cat_map:
+            spec_name = cat_map[value.unit_type]
             if value.unit_type in ("resistance", "capacitance", "inductance", "frequency", "tolerance", "pin_count", "position_count", "pitch"):
                 return spec_name, "="
             else:
@@ -993,6 +1054,7 @@ class ParsedQuery:
     spec_filters: list[Any] = field(default_factory=list)  # List of SpecFilter
     package: str | None = None
     model_number: str | None = None
+    mounting_type: str | None = None  # "SMD" or "Through Hole"
     detected: dict[str, Any] = field(default_factory=dict)
 
 
@@ -1031,6 +1093,12 @@ def parse_smart_query(query: str) -> ParsedQuery:
         result.package = package
         detected["package"] = package
 
+    # Step 2b: Extract mounting type (PTH/THT -> Through Hole, SMD/SMT -> SMD)
+    mounting_type, remaining = extract_mounting_type(remaining)
+    if mounting_type:
+        result.mounting_type = mounting_type
+        detected["mounting_type"] = mounting_type
+
     # Step 3: Extract component type (subcategory)
     subcategory, remaining, matched_keyword = extract_component_type(remaining)
     if subcategory:
@@ -1054,6 +1122,17 @@ def parse_smart_query(query: str) -> ParsedQuery:
             elif kw_lower in ("pnp", "pnp transistor"):
                 result.spec_filters.append(SpecFilter("Type", "=", "PNP"))
                 detected.setdefault("semantic", []).append("pnp (from keyword)")
+
+        # Special case: "radial" or "through hole" with electrolytic -> leaded capacitors
+        if subcategory.lower() == "aluminum electrolytic capacitors - smd":
+            remaining_lower = remaining.lower()
+            if re.search(r'\b(radial|through.?hole|pth|leaded)\b', remaining_lower):
+                result.subcategory = "aluminum electrolytic capacitors - leaded"
+                detected["subcategory"] = result.subcategory
+                detected.setdefault("semantic", []).append("radial/through-hole (leaded)")
+                # Remove the modifier from remaining text
+                remaining = re.sub(r'\b(radial|through.?hole|pth|leaded)\b', '', remaining, flags=re.IGNORECASE).strip()
+                remaining = re.sub(r'\s+', ' ', remaining)
     elif pkg_suggested_subcat:
         # Use package-suggested subcategory (e.g., USB-C -> USB connectors)
         result.subcategory = pkg_suggested_subcat
@@ -1064,12 +1143,55 @@ def parse_smart_query(query: str) -> ParsedQuery:
     if values:
         detected["values"] = [{"raw": v.raw, "type": v.unit_type, "normalized": v.normalized} for v in values]
 
+    # Step 4a: Post-process standalone numbers as pin counts for connector types
+    # This handles cases like "8 pin header" where "pin header" was extracted first,
+    # leaving "8" alone which doesn't match the "N pin" pattern
+    connector_words = ("header", "connector", "terminal", "socket", "plug", "receptacle")
+    is_connector = matched_keyword and any(word in matched_keyword.lower() for word in connector_words)
+    if is_connector:
+        # Look for standalone numbers in remaining text that could be pin counts
+        standalone_num_match = re.search(r'\b(\d+)\b', remaining)
+        if standalone_num_match:
+            # Check if this number isn't already captured as a value
+            num_val = int(standalone_num_match.group(1))
+            # Only treat as pin count if reasonable (1-200 pins) and not already detected
+            if 1 <= num_val <= 200:
+                already_has_pin_count = any(v.unit_type == "pin_count" for v in values)
+                if not already_has_pin_count:
+                    values.append(ExtractedValue(
+                        raw=standalone_num_match.group(0),
+                        value=num_val,
+                        unit_type="pin_count",
+                        normalized=f"{num_val}P"
+                    ))
+                    detected.setdefault("values", []).append({
+                        "raw": standalone_num_match.group(0),
+                        "type": "pin_count",
+                        "normalized": f"{num_val}P"
+                    })
+                    # Remove the number from remaining
+                    remaining = remaining[:standalone_num_match.start()] + remaining[standalone_num_match.end():]
+                    remaining = re.sub(r'\s+', ' ', remaining).strip()
+
     # Step 4b: Infer subcategory from values if not already set
     if not result.subcategory and values:
         inferred = infer_subcategory_from_values(values)
         if inferred:
             result.subcategory = inferred
             detected["subcategory_inferred"] = inferred
+
+    # Step 4c: Override subcategory based on keywords in remaining text
+    # This handles cases like "10K trimmer" where value was detected first
+    remaining_lower = remaining.lower()
+    if re.search(r'\b(trimmer|potentiometer|trimpot|variable\s*resistor)\b', remaining_lower):
+        # Potentiometer/trimmer keywords should override chip resistor inference
+        if not result.subcategory or result.subcategory.lower() == "chip resistor - surface mount":
+            result.subcategory = "potentiometers, variable resistors"
+            detected["subcategory"] = result.subcategory
+            detected.setdefault("semantic", []).append("potentiometer/trimmer (from keyword)")
+            # Remove the keyword from remaining
+            remaining = re.sub(r'\b(trimmer|potentiometer|trimpot|variable\s*resistor)\b', '', remaining, flags=re.IGNORECASE).strip()
+            remaining = re.sub(r'\s+', ' ', remaining)
 
     # Step 5: Extract semantic descriptors
     semantic_filters, remaining = extract_semantic_descriptors(remaining)
@@ -1110,6 +1232,9 @@ def parse_smart_query(query: str) -> ParsedQuery:
 
     # Step 7: Clean up remaining text
     remaining = remove_noise_words(remaining)
+    # Remove orphaned hyphens and single characters (e.g., "- -F" -> "")
+    remaining = re.sub(r'\b[A-Za-z]\b', '', remaining)  # Single letters
+    remaining = re.sub(r'\s*-\s*', ' ', remaining)  # Orphaned hyphens
     remaining = re.sub(r'\s+', ' ', remaining).strip()
 
     # Step 8: Determine what to use for FTS search
@@ -1146,7 +1271,8 @@ def infer_subcategory_from_values(values: list[ExtractedValue]) -> str | None:
         return "chip resistor - surface mount"
     if "capacitance" in value_types:
         return "multilayer ceramic capacitors mlcc - smd/smt"
-    if "inductance" in value_types:
-        return "inductors (smd)"
+    # NOTE: Inductance does NOT infer a subcategory because inductors are split
+    # across multiple subcategories (Inductors (SMD), Power Inductors, etc.)
+    # This allows text search to work across all inductor categories
 
     return None
