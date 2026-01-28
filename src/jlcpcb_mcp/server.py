@@ -19,7 +19,7 @@ from .config import RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_
 from .client import JLCPCBClient
 from .db import get_db, close_db
 from .search import SpecFilter
-from .smart_parser import parse_smart_query
+from .smart_parser import parse_smart_query, merge_spec_filters
 from .bom import (
     BOMPart,
     BOMIssue,
@@ -435,8 +435,8 @@ async def search(
             effective_subcategory_name = parsed.subcategory
         if parsed.package and not package:
             effective_package = parsed.package
-        if parsed.spec_filters and not parsed_filters:
-            parsed_filters = parsed.spec_filters
+        # Merge auto-detected spec filters with manual ones (manual takes precedence)
+        parsed_filters = merge_spec_filters(parsed_filters, parsed.spec_filters)
         if parsed.mounting_type:
             effective_mounting_type = parsed.mounting_type
 

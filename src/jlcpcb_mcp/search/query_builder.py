@@ -132,10 +132,23 @@ def build_package_clause(packages: list[str]) -> tuple[str, list[str]]:
 
     Returns:
         Tuple of (sql_clause, params)
+
+    Notes:
+        Uses prefix matching (LIKE 'pkg%') to handle parenthetical variations.
+        E.g., "DO-214AC" matches both "DO-214AC" and "DO-214AC(SMA)".
     """
     if packages:
-        placeholders = ",".join("?" * len(packages))
-        return f"AND package IN ({placeholders})", packages
+        # Use LIKE with prefix matching to handle parenthetical variations
+        # e.g., "DO-214AC" should match "DO-214AC(SMA)"
+        or_conditions = []
+        params = []
+        for pkg in packages:
+            # Escape LIKE special characters
+            escaped_pkg = pkg.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            or_conditions.append("package LIKE ? ESCAPE '\\'")
+            params.append(f"{escaped_pkg}%")
+        combined = " OR ".join(or_conditions)
+        return f"AND ({combined})", params
     return "", []
 
 

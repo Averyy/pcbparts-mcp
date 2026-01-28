@@ -10,6 +10,7 @@ from ..subcategory_aliases import (
 )
 from .spec_filter import SpecFilter, get_attribute_names
 from .resolvers import expand_query_synonyms, expand_package, resolve_manufacturer
+from .mpn import normalize_mpn, looks_like_mpn
 from .query_builder import (
     build_fts_clause,
     build_subcategory_clause,
@@ -106,89 +107,48 @@ class SearchEngine:
             name, self._subcategory_name_to_id, self._subcategories, limit
         )
 
-    def search(
+    def _execute_search(
         self,
-        query: str | None = None,
-        subcategory_id: int | None = None,
-        subcategory_name: str | None = None,
-        category_id: int | None = None,
-        category_name: str | None = None,
-        spec_filters: list[SpecFilter] | None = None,
-        library_type: str | None = None,
-        prefer_no_fee: bool = True,
-        min_stock: int = 100,
-        package: str | None = None,
-        packages: list[str] | None = None,
-        manufacturer: str | None = None,
-        mounting_type: str | None = None,
-        match_all_terms: bool = True,
-        sort_by: Literal["stock", "price", "relevance"] = "stock",
-        limit: int = 50,
-        offset: int = 0,
+        query: str | None,
+        subcategory_id: int | None,
+        category_id: int | None,
+        spec_filters: list[SpecFilter] | None,
+        library_type: str | None,
+        min_stock: int,
+        expanded_packages: list[str],
+        manufacturer: str | None,
+        mounting_type: str | None,
+        match_all_terms: bool,
+        sort_by: Literal["stock", "price", "relevance"],
+        prefer_no_fee: bool,
+        limit: int,
+        offset: int,
     ) -> dict[str, Any]:
-        """Search components with parametric filtering.
+        """Execute a search query with pre-resolved parameters.
+
+        This is the core search execution method. It builds SQL, executes queries,
+        performs post-filtering, and returns results. Does NOT do parameter resolution
+        or validation - callers must handle that.
 
         Args:
-            query: Text search (FTS) for lcsc, mpn, manufacturer, description
-            subcategory_id: Filter by subcategory ID
-            subcategory_name: Filter by subcategory name
-            category_id: Filter by category ID
-            category_name: Filter by category name
-            spec_filters: List of SpecFilter for attribute-based filtering
-            library_type: Filter by library type
-            prefer_no_fee: Sort preference for basic/preferred first
-            min_stock: Minimum stock quantity
-            package: Single package filter
-            packages: Multiple package filter (OR logic)
-            manufacturer: Manufacturer filter
-            mounting_type: Filter by mounting type ("Through Hole" or "SMD")
-            match_all_terms: FTS matching mode
+            query: FTS search query (already validated/expanded)
+            subcategory_id: Resolved subcategory ID
+            category_id: Resolved category ID
+            spec_filters: List of SpecFilter objects
+            library_type: Library type filter
+            min_stock: Minimum stock threshold
+            expanded_packages: Pre-expanded package list
+            manufacturer: Manufacturer name (already resolved)
+            mounting_type: Mounting type filter
+            match_all_terms: FTS AND/OR mode
             sort_by: Sort order
-            limit: Max results
+            prefer_no_fee: Whether to prefer basic/preferred parts
+            limit: Maximum results to return
             offset: Pagination offset
 
         Returns:
-            Search results with metadata
+            Dict with results, total, library_type_counts, no_fee_available
         """
-        # Expand query synonyms
-        if query:
-            query = expand_query_synonyms(query)
-
-        # Resolve subcategory_name to ID
-        resolved_subcategory_id = subcategory_id
-        resolved_subcategory_display_name: str | None = None
-        if subcategory_name and not subcategory_id:
-            resolved_subcategory_id = self.resolve_subcategory_name(subcategory_name)
-            if resolved_subcategory_id is None:
-                similar = self._find_similar_subcategories(subcategory_name, limit=5)
-                return {
-                    "error": f"Subcategory not found: '{subcategory_name}'",
-                    "hint": "Use list_categories and get_subcategories to see available options",
-                    "similar_subcategories": similar,
-                    "results": [],
-                    "total": 0,
-                    "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
-                    "no_fee_available": False,
-                }
-            resolved_subcategory_display_name = self._subcategories[resolved_subcategory_id]["name"]
-
-        # Resolve category_name to ID
-        resolved_category_id = category_id
-        resolved_category_display_name: str | None = None
-        if category_name and not category_id:
-            resolved_category_id = self.resolve_category_name(category_name)
-            if resolved_category_id is None:
-                return {
-                    "error": f"Category not found: '{category_name}'",
-                    "hint": "Use list_categories to see available categories",
-                    "results": [],
-                    "total": 0,
-                    "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
-                    "no_fee_available": False,
-                }
-            resolved_category_display_name = self._categories[resolved_category_id]["name"]
-
-        # Build query
         sql_parts = ["SELECT * FROM components WHERE 1=1"]
         count_parts = ["SELECT COUNT(*) FROM components WHERE 1=1"]
         params: list[Any] = []
@@ -196,41 +156,16 @@ class SearchEngine:
 
         # FTS clause
         if query:
-            # Validate query
-            if len(query) > 500:
-                return {
-                    "error": "Query too long (max 500 characters)",
-                    "results": [],
-                    "total": 0,
-                    "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
-                    "no_fee_available": False,
-                }
-            if any(ord(c) < 32 and c not in '\t\n\r' for c in query) or '\x00' in query:
-                return {
-                    "error": "Query contains invalid characters",
-                    "results": [],
-                    "total": 0,
-                    "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
-                    "no_fee_available": False,
-                }
-
             fts_sql, fts_params = build_fts_clause(query, match_all_terms)
-            if not fts_sql:
-                return {
-                    "error": "Query contains no searchable terms",
-                    "results": [],
-                    "total": 0,
-                    "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
-                    "no_fee_available": False,
-                }
-            sql_parts.append(fts_sql)
-            count_parts.append(fts_sql)
-            params.extend(fts_params)
-            count_params.extend(fts_params)
+            if fts_sql:
+                sql_parts.append(fts_sql)
+                count_parts.append(fts_sql)
+                params.extend(fts_params)
+                count_params.extend(fts_params)
 
         # Subcategory/category filter
         subcat_sql, subcat_params = build_subcategory_clause(
-            resolved_subcategory_id, resolved_category_id, self._subcategories,
+            subcategory_id, category_id, self._subcategories,
             self._category_to_subcategories
         )
         if subcat_sql:
@@ -253,14 +188,7 @@ class SearchEngine:
             params.extend(stock_params)
             count_params.extend(stock_params)
 
-        # Package filter (expand families)
-        expanded_packages: list[str] = []
-        if packages:
-            for pkg in packages:
-                expanded_packages.extend(expand_package(pkg))
-        elif package:
-            expanded_packages = expand_package(package)
-
+        # Package filter
         pkg_sql, pkg_params = build_package_clause(expanded_packages)
         if pkg_sql:
             sql_parts.append(pkg_sql)
@@ -277,7 +205,7 @@ class SearchEngine:
             params.extend(mfr_params)
             count_params.extend(mfr_params)
 
-        # Mounting type filter (based on description text)
+        # Mounting type filter
         if mounting_type:
             mount_sql, mount_params = build_mounting_type_clause(mounting_type)
             if mount_sql:
@@ -289,12 +217,12 @@ class SearchEngine:
         # Spec filters
         post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]] = []
         if spec_filters:
-            spec_sqls, spec_params, post_filter_metadata = build_spec_filter_clauses(spec_filters)
+            spec_sqls, spec_params_list, post_filter_metadata = build_spec_filter_clauses(spec_filters)
             for spec_sql in spec_sqls:
                 sql_parts.append(spec_sql)
                 count_parts.append(spec_sql)
-            params.extend(spec_params)
-            count_params.extend(spec_params)
+            params.extend(spec_params_list)
+            count_params.extend(spec_params_list)
 
         # Sorting
         sort_clause = build_sort_clause(sort_by, prefer_no_fee, bool(query))
@@ -390,7 +318,188 @@ class SearchEngine:
         no_fee_available = library_type_counts["basic"] > 0 or library_type_counts["preferred"] > 0
 
         return {
-            "results": results,  # Already limited by loop break condition
+            "results": results,
+            "total": total,
+            "library_type_counts": library_type_counts,
+            "no_fee_available": no_fee_available,
+        }
+
+    def search(
+        self,
+        query: str | None = None,
+        subcategory_id: int | None = None,
+        subcategory_name: str | None = None,
+        category_id: int | None = None,
+        category_name: str | None = None,
+        spec_filters: list[SpecFilter] | None = None,
+        library_type: str | None = None,
+        prefer_no_fee: bool = True,
+        min_stock: int = 100,
+        package: str | None = None,
+        packages: list[str] | None = None,
+        manufacturer: str | None = None,
+        mounting_type: str | None = None,
+        match_all_terms: bool = True,
+        sort_by: Literal["stock", "price", "relevance"] = "stock",
+        limit: int = 50,
+        offset: int = 0,
+    ) -> dict[str, Any]:
+        """Search components with parametric filtering.
+
+        Args:
+            query: Text search (FTS) for lcsc, mpn, manufacturer, description
+            subcategory_id: Filter by subcategory ID
+            subcategory_name: Filter by subcategory name
+            category_id: Filter by category ID
+            category_name: Filter by category name
+            spec_filters: List of SpecFilter for attribute-based filtering
+            library_type: Filter by library type
+            prefer_no_fee: Sort preference for basic/preferred first
+            min_stock: Minimum stock quantity
+            package: Single package filter
+            packages: Multiple package filter (OR logic)
+            manufacturer: Manufacturer filter
+            mounting_type: Filter by mounting type ("Through Hole" or "SMD")
+            match_all_terms: FTS matching mode
+            sort_by: Sort order
+            limit: Max results
+            offset: Pagination offset
+
+        Returns:
+            Search results with metadata
+        """
+        # Expand query synonyms
+        if query:
+            query = expand_query_synonyms(query)
+
+        # Resolve subcategory_name to ID
+        resolved_subcategory_id = subcategory_id
+        resolved_subcategory_display_name: str | None = None
+        if subcategory_name and not subcategory_id:
+            resolved_subcategory_id = self.resolve_subcategory_name(subcategory_name)
+            if resolved_subcategory_id is None:
+                similar = self._find_similar_subcategories(subcategory_name, limit=5)
+                return {
+                    "error": f"Subcategory not found: '{subcategory_name}'",
+                    "hint": "Use list_categories and get_subcategories to see available options",
+                    "similar_subcategories": similar,
+                    "results": [],
+                    "total": 0,
+                    "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
+                    "no_fee_available": False,
+                }
+            resolved_subcategory_display_name = self._subcategories[resolved_subcategory_id]["name"]
+
+        # Resolve category_name to ID
+        resolved_category_id = category_id
+        resolved_category_display_name: str | None = None
+        if category_name and not category_id:
+            resolved_category_id = self.resolve_category_name(category_name)
+            if resolved_category_id is None:
+                return {
+                    "error": f"Category not found: '{category_name}'",
+                    "hint": "Use list_categories to see available categories",
+                    "results": [],
+                    "total": 0,
+                    "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
+                    "no_fee_available": False,
+                }
+            resolved_category_display_name = self._categories[resolved_category_id]["name"]
+
+        # Validate query
+        if query:
+            if len(query) > 500:
+                return {
+                    "error": "Query too long (max 500 characters)",
+                    "results": [],
+                    "total": 0,
+                    "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
+                    "no_fee_available": False,
+                }
+            if any(ord(c) < 32 and c not in '\t\n\r' for c in query) or '\x00' in query:
+                return {
+                    "error": "Query contains invalid characters",
+                    "results": [],
+                    "total": 0,
+                    "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
+                    "no_fee_available": False,
+                }
+
+            # Validate FTS will have searchable terms
+            fts_sql, _ = build_fts_clause(query, match_all_terms)
+            if not fts_sql:
+                return {
+                    "error": "Query contains no searchable terms",
+                    "results": [],
+                    "total": 0,
+                    "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
+                    "no_fee_available": False,
+                }
+
+        # Expand packages
+        expanded_packages: list[str] = []
+        if packages:
+            for pkg in packages:
+                expanded_packages.extend(expand_package(pkg))
+        elif package:
+            expanded_packages = expand_package(package)
+
+        # Execute the search
+        search_result = self._execute_search(
+            query=query,
+            subcategory_id=resolved_subcategory_id,
+            category_id=resolved_category_id,
+            spec_filters=spec_filters,
+            library_type=library_type,
+            min_stock=min_stock,
+            expanded_packages=expanded_packages,
+            manufacturer=manufacturer,
+            mounting_type=mounting_type,
+            match_all_terms=match_all_terms,
+            sort_by=sort_by,
+            prefer_no_fee=prefer_no_fee,
+            limit=limit,
+            offset=offset,
+        )
+
+        results = search_result["results"]
+        total = search_result["total"]
+        library_type_counts = search_result["library_type_counts"]
+        no_fee_available = search_result["no_fee_available"]
+
+        # MPN retry: If no results and query looks like a part number, try normalized variants
+        mpn_retry_query: str | None = None
+        if total == 0 and query and looks_like_mpn(query):
+            variants = normalize_mpn(query)
+            # Try each variant (skip first which is original)
+            for variant in variants[1:]:
+                retry_result = self._execute_search(
+                    query=variant,
+                    subcategory_id=resolved_subcategory_id,
+                    category_id=resolved_category_id,
+                    spec_filters=spec_filters,
+                    library_type=library_type,
+                    min_stock=min_stock,
+                    expanded_packages=expanded_packages,
+                    manufacturer=manufacturer,
+                    mounting_type=mounting_type,
+                    match_all_terms=match_all_terms,
+                    sort_by=sort_by,
+                    prefer_no_fee=prefer_no_fee,
+                    limit=limit,
+                    offset=offset,
+                )
+                if retry_result["total"] > 0:
+                    # Found results with normalized query
+                    mpn_retry_query = variant
+                    results = retry_result["results"]
+                    total = retry_result["total"]
+                    library_type_counts = retry_result["library_type_counts"]
+                    no_fee_available = retry_result["no_fee_available"]
+                    break
+
+        response: dict[str, Any] = {
+            "results": results,
             "total": total,
             "page_info": {
                 "limit": limit,
@@ -417,3 +526,13 @@ class SearchEngine:
             "library_type_counts": library_type_counts,
             "no_fee_available": no_fee_available,
         }
+
+        # Add MPN retry info if we found results via normalization
+        if mpn_retry_query:
+            response["mpn_normalized"] = {
+                "original_query": query,
+                "matched_query": mpn_retry_query,
+                "note": "Original query had no results; found matches using normalized MPN variant",
+            }
+
+        return response

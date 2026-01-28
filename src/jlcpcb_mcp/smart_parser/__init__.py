@@ -14,7 +14,7 @@ Key features:
 4. Smart FTS fallback (only search model numbers when structured filters exist)
 """
 
-from .parser import ParsedQuery, parse_smart_query
+from .parser import ParsedQuery, parse_smart_query, merge_spec_filters
 from .packages import PACKAGE_PATTERNS, extract_package
 from .values import ExtractedValue, extract_values
 from .models import MODEL_PATTERNS, extract_model_number
@@ -26,6 +26,7 @@ __all__ = [
     # Main API
     "parse_smart_query",
     "ParsedQuery",
+    "merge_spec_filters",
     # Data classes
     "ExtractedValue",
     "SemanticFilter",

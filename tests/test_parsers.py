@@ -213,6 +213,10 @@ class TestPackageExtraction:
         ("SOT-23 mosfet", "SOT-23", "mosfet"),
         ("QFN-24 mcu", "QFN-24", "mcu"),
         ("DIP-8 opamp", "DIP-8", "opamp"),
+        # Package variations without hyphens (Issue #3 fix)
+        ("NPN SOT23", "SOT-23", "NPN"),  # SOT23 normalizes to SOT-23
+        ("SOD323 diode", "SOD-323", "diode"),  # SOD323 normalizes to SOD-323
+        ("QFN32 mcu", "QFN32", "mcu"),  # QFN doesn't get hyphen added (only SOT/SOD/TO do)
     ])
     def test_package_extraction(self, query: str, expected_package: str, expected_remaining: str):
         """Test package extraction from various queries."""
@@ -221,6 +225,31 @@ class TestPackageExtraction:
         assert pkg is not None, f"Should extract package from '{query}'"
         assert pkg.upper() == expected_package.upper(), f"Expected {expected_package}, got {pkg}"
         assert remaining.strip() == expected_remaining.strip()
+
+
+class TestModelNumberExcludesPackages:
+    """Tests that package names are not detected as model numbers."""
+
+    @pytest.mark.parametrize("query", [
+        "NPN SOT23",
+        "diode SOD323",
+        "driver QFN32",
+        "ic TSSOP20",
+        "mosfet SOIC8",
+        "amp DIP8",
+    ])
+    def test_package_not_detected_as_model(self, query: str):
+        """Package-like strings (SOT23, SOD323, etc.) should NOT be detected as model numbers."""
+        from jlcpcb_mcp.smart_parser.models import extract_model_number
+        model, _ = extract_model_number(query)
+        # The package-like string should not be extracted as a model
+        if model:
+            # If something was extracted, it shouldn't be the package
+            package_like = ("SOT", "SOD", "SOP", "SOIC", "QFN", "DFN", "TSSOP", "DIP")
+            model_upper = model.upper()
+            for prefix in package_like:
+                assert not (model_upper.startswith(prefix) and len(model_upper) > len(prefix) and model_upper[len(prefix):].replace("L", "").isdigit()), \
+                    f"'{model}' looks like a package and should not be detected as model number"
 
 
 class TestNoiseWordRemoval:

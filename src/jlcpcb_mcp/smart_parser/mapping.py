@@ -47,11 +47,9 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
     },
     "zener": {
         "voltage": "Zener Voltage(Nom)",
-        "current": "If",
     },
     "zener diode": {
         "voltage": "Zener Voltage(Nom)",
-        "current": "If",
     },
     "rectifier": {
         "voltage": "Vr",
@@ -63,11 +61,11 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
     },
     "tvs": {
         "voltage": "Reverse Stand-Off Voltage (Vrwm)",
-        "current": "Peak Pulse Current-Ipp (10/1000us)",
+        "current": "Peak Pulse Current (Ipp)",
     },
     "tvs diode": {
         "voltage": "Reverse Stand-Off Voltage (Vrwm)",
-        "current": "Peak Pulse Current-Ipp (10/1000us)",
+        "current": "Peak Pulse Current (Ipp)",
     },
 
     # Inductors
@@ -184,25 +182,25 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
 
     # LEDs
     "led": {
-        "current": "Forward Current(If)",
-        "voltage": "Voltage - Forward(Vf@If)",
+        "current": "Forward Current",
+        "voltage": "Voltage - Forward(Vf)",
     },
     "leds": {
-        "current": "Forward Current(If)",
-        "voltage": "Voltage - Forward(Vf@If)",
+        "current": "Forward Current",
+        "voltage": "Voltage - Forward(Vf)",
     },
 
     # Fuses/PTCs
     "fuse": {
-        "voltage": "Voltage Rating",
+        "voltage": "Voltage - Max",
         "current": "Hold Current",
     },
     "ptc": {
-        "voltage": "Voltage Rating",
+        "voltage": "Voltage - Max",
         "current": "Hold Current",
     },
     "resettable fuse": {
-        "voltage": "Voltage Rating",
+        "voltage": "Voltage - Max",
         "current": "Hold Current",
     },
 
@@ -247,14 +245,14 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
         "position_count": "Number of Pins",
     },
     "female header": {
-        "pin_count": "Number of Pins",
+        "pin_count": "Number of Positions",
         "pitch": "Pitch",
-        "position_count": "Number of Pins",
+        "position_count": "Number of Positions",
     },
     "female headers": {
-        "pin_count": "Number of Pins",
+        "pin_count": "Number of Positions",
         "pitch": "Pitch",
-        "position_count": "Number of Pins",
+        "position_count": "Number of Positions",
     },
     "terminal block": {
         "pin_count": "Number of Pins",
@@ -295,29 +293,28 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
         "position_count": "Number of Pins",
     },
     "idc connector": {
-        "pin_count": "Number of Pins",
+        "pin_count": "Number of Positions or Pins",
         "pitch": "Pitch",
+        "position_count": "Number of Positions or Pins",
     },
     "idc connectors": {
-        "pin_count": "Number of Pins",
+        "pin_count": "Number of Positions or Pins",
         "pitch": "Pitch",
+        "position_count": "Number of Positions or Pins",
     },
     "ffc": {
-        "pin_count": "Number of Pins",
+        "pin_count": "Number of Contacts",
         "pitch": "Pitch",
+        "position_count": "Number of Contacts",
     },
     "fpc": {
-        "pin_count": "Number of Pins",
+        "pin_count": "Number of Contacts",
         "pitch": "Pitch",
+        "position_count": "Number of Contacts",
     },
 
-    # Switches
-    "tactile switch": {
-        "dimensions": "Size",
-    },
-    "push button": {
-        "dimensions": "Size",
-    },
+    # Switches - Note: Tactile switches use Width/Length/Switch Height, not a generic "Size"
+    # Dimension parsing would need specific handling for these attributes
 }
 
 

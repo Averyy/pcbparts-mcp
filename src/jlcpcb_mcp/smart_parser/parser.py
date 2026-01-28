@@ -275,3 +275,36 @@ def parse_smart_query(query: str) -> ParsedQuery:
     result.detected = detected
 
     return result
+
+
+def merge_spec_filters(
+    manual_filters: list[Any] | None,
+    auto_filters: list[Any] | None,
+) -> list[Any] | None:
+    """Merge manual and auto-detected spec filters.
+
+    Manual filters take precedence for the same attribute name (case-insensitive).
+    Auto-detected filters are added only if no manual filter exists for that attribute.
+
+    Args:
+        manual_filters: User-provided spec filters (take precedence)
+        auto_filters: Auto-detected filters from smart parsing
+
+    Returns:
+        Merged list of filters, or None if both inputs are None/empty
+    """
+    if not auto_filters:
+        return manual_filters
+    if not manual_filters:
+        return auto_filters
+
+    # Manual filters take precedence - build set of their attribute names
+    manual_names = {f.name.lower() for f in manual_filters}
+
+    # Start with manual filters, add auto filters that don't conflict
+    merged = list(manual_filters)
+    for auto_filter in auto_filters:
+        if auto_filter.name.lower() not in manual_names:
+            merged.append(auto_filter)
+
+    return merged if merged else None

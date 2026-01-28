@@ -14,6 +14,7 @@ from .resolvers import (
     IMPERIAL_CHIP_SIZES,
     SMD_PACKAGE_FAMILIES,
 )
+from .mpn import normalize_mpn, looks_like_mpn
 from .result import row_to_dict
 
 __all__ = [
@@ -29,5 +30,7 @@ __all__ = [
     "PACKAGE_FAMILIES",
     "IMPERIAL_CHIP_SIZES",
     "SMD_PACKAGE_FAMILIES",
+    "normalize_mpn",
+    "looks_like_mpn",
     "row_to_dict",
 ]
