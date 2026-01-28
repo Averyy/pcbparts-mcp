@@ -13,6 +13,7 @@
 
 ## Critical Rules
 
+- **NEVER test changes using the live MCP** undeployed code changes NEEDS to be tested locally via the database
 - **NEVER create mock data** unless explicitly told to
 - **NEVER replace existing code with simplified versions** - fix the actual problem
 - **ALWAYS find root cause** - don't create workarounds
