@@ -14,7 +14,7 @@ import threading
 from pathlib import Path
 from typing import Any, Literal
 
-from ..search import SearchEngine, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
+from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
 from .connection import build_database, load_caches
 from .lookup import get_by_lcsc, get_by_lcsc_batch
 from .categories import (
