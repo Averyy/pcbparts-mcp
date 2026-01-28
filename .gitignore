@@ -50,3 +50,8 @@ htmlcov/
 
 # Built database (generated from JSONL on startup)
 data/components.db
+data/components.db-wal
+data/components.db-shm
+data/jlcpcb_parts.db
+data/*.db-wal
+data/*.db-shm

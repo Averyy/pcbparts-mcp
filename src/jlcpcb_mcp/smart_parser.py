@@ -62,7 +62,11 @@ PACKAGE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r'\b(SOP-?\d+(?:-\d+)?(?:\([^)]+\))?|SOIC-?\d+(?:-\d+)?(?:\([^)]+\))?)\b', re.IGNORECASE), 'sop'),
 
     # Module packages (SMD-XX, LGA-XX) - NOT bare "MODULE" which is a common word
-    (re.compile(r'\b(SMD-?\d+|LGA-?\d+|SMA|SMB|SMC)\b', re.IGNORECASE), 'module'),
+    # SMA/SMB/SMC are diode packages, but SMA is also a connector type
+    # Only match SMA/SMB/SMC when NOT followed by "connector" to avoid conflict
+    (re.compile(r'\b(SMD-?\d+|LGA-?\d+)\b', re.IGNORECASE), 'module'),
+    # SMA/SMB/SMC diode packages - but exclude "SMA connector" patterns
+    (re.compile(r'\b(SM[ABC])\b(?!\s*connector)', re.IGNORECASE), 'diode_pkg'),
 
     # Connector specific
     (re.compile(r'\b(USB-?[ABC]|TYPE-?[ABC]|MICRO-?USB|MINI-?USB)\b', re.IGNORECASE), 'usb'),
@@ -144,6 +148,17 @@ _PINS = re.compile(r'\b(\d+)\s*-?pins?\b', re.IGNORECASE)
 
 # Dimensions: 6x6mm, 3.5x3.5mm
 _DIM = re.compile(r'\b(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)\s*(?:mm)?\b')
+
+# Pitch (connector spacing): 2.54mm pitch, 5.08mm, 1.27mm pitch
+# Match patterns like "2.54mm", "5.08mm pitch", "1.27 mm"
+# Common pitches: 1.0mm, 1.27mm, 2.0mm, 2.54mm, 3.5mm, 3.81mm, 5.0mm, 5.08mm
+_PITCH = re.compile(r'\b(\d+(?:\.\d+)?)\s*mm(?:\s+pitch)?\b', re.IGNORECASE)
+
+# Position count for connectors: 2-pos, 2 position, 2-position, 2P
+_POSITION = re.compile(r'\b(\d+)\s*-?\s*(?:pos(?:ition)?|way|P)\b', re.IGNORECASE)
+
+# Header pin structure: 1x7, 2x20, 1X40 (rows x pins per row)
+_PIN_STRUCTURE = re.compile(r'\b([12])\s*[xX×]\s*(\d+)\b')
 
 
 def _parse_resistance_value(match: re.Match) -> tuple[float, str]:
@@ -359,6 +374,52 @@ def extract_values(query: str) -> tuple[list[ExtractedValue], str]:
             unit_type="pin_count",
             normalized=f"{pins} pin"
         )))
+
+    # Position count (for connectors: 2-pos, 2 position, 2-way, 2P)
+    for match in _POSITION.finditer(query):
+        # Skip if already matched by another pattern
+        if any(s <= match.start() < e for s, e, _ in extractions):
+            continue
+        positions = int(match.group(1))
+        extractions.append((match.start(), match.end(), ExtractedValue(
+            raw=match.group(0),
+            value=positions,
+            unit_type="position_count",
+            normalized=f"{positions}P"
+        )))
+
+    # Pin structure for headers (1x7, 2x20, etc.)
+    for match in _PIN_STRUCTURE.finditer(query):
+        # Skip if already matched by dimension pattern
+        if any(s <= match.start() < e for s, e, _ in extractions):
+            continue
+        rows = int(match.group(1))
+        pins_per_row = int(match.group(2))
+        total_pins = rows * pins_per_row
+        extractions.append((match.start(), match.end(), ExtractedValue(
+            raw=match.group(0),
+            value=total_pins,
+            unit_type="pin_count",
+            normalized=f"{rows}x{pins_per_row}P"
+        )))
+
+    # Pitch (connector spacing) - extract common connector pitches
+    # Only extract specific common pitch values to avoid false positives
+    # 0.5mm and 1.0mm are common for FFC/FPC connectors
+    COMMON_PITCHES = {0.5, 0.8, 1.0, 1.25, 1.27, 2.0, 2.54, 3.5, 3.81, 5.0, 5.08, 7.62}
+    for match in _PITCH.finditer(query):
+        # Skip if already matched by another pattern
+        if any(s <= match.start() < e for s, e, _ in extractions):
+            continue
+        pitch_val = float(match.group(1))
+        # Only extract if it's a known connector pitch value
+        if pitch_val in COMMON_PITCHES:
+            extractions.append((match.start(), match.end(), ExtractedValue(
+                raw=match.group(0),
+                value=pitch_val,
+                unit_type="pitch",
+                normalized=f"{match.group(1)}mm"
+            )))
 
     # Dimensions
     for match in _DIM.finditer(query):
@@ -773,18 +834,98 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
         "current": "Hold Current",
     },
 
-    # Connectors
+    # Connectors - comprehensive mappings for all connector types
     "usb connector": {
         "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
     },
     "usb-c": {
         "pin_count": "Number of Pins",
     },
     "connector": {
         "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
     },
     "header": {
         "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
+    },
+    "pin header": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
+    },
+    "pin headers": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
+    },
+    "female header": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
+    },
+    "female headers": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
+    },
+    "terminal block": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
+        "voltage": "Voltage Rating (Max)",
+        "current": "Current Rating",
+    },
+    "screw terminal": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
+        "voltage": "Voltage Rating (Max)",
+        "current": "Current Rating",
+    },
+    "screw terminal blocks": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
+        "voltage": "Voltage Rating (Max)",
+        "current": "Current Rating",
+    },
+    "pluggable system terminal block": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
+        "voltage": "Voltage Rating (Max)",
+        "current": "Current Rating",
+    },
+    "jst": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
+    },
+    "wire to board connector": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+        "position_count": "Number of Pins",
+    },
+    "idc connector": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+    },
+    "idc connectors": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+    },
+    "ffc": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
+    },
+    "fpc": {
+        "pin_count": "Number of Pins",
+        "pitch": "Pitch",
     },
 
     # Switches
@@ -817,6 +958,8 @@ def map_value_to_spec(
         "tolerance": ("Tolerance", "="),
         "power": ("Power", ">="),
         "pin_count": ("Number of Pins", "="),
+        "position_count": ("Number of Pins", "="),  # Positions map to pin count
+        "pitch": ("Pitch", "="),
     }
 
     # Try to get category-specific mapping
@@ -825,7 +968,7 @@ def map_value_to_spec(
         if value.unit_type in cat_map:
             spec_name = cat_map[value.unit_type]
             # Determine operator based on spec type
-            if value.unit_type in ("resistance", "capacitance", "inductance", "frequency", "tolerance", "pin_count"):
+            if value.unit_type in ("resistance", "capacitance", "inductance", "frequency", "tolerance", "pin_count", "position_count", "pitch"):
                 return spec_name, "="
             else:
                 return spec_name, ">="

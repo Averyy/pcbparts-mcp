@@ -1084,7 +1084,69 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
             "Output Power": "higher",
         },
     },
+    # ============== MOTOR DRIVERS ==============
+    # Note: Many Motor Driver ICs have sparse specs in JLCPCB data.
+    # These rules apply when specs are available.
+    "Motor Driver ICs": {
+        "primary": "Output Current(Max)",
+        "same_or_better": {
+            "Output Current(Max)": "higher",
+            "Output Current": "higher",
+            "Voltage - Supply": "higher",
+        },
+    },
 }
+
+
+# =============================================================================
+# PIN COUNT NORMALIZATION (for connectors)
+# =============================================================================
+# Specs that represent pin/position counts needing normalization
+PIN_COUNT_SPECS = {
+    "Number of Pins",
+    "Number of Positions",
+    "Number of Positions or Pins",
+    "Pin Structure",
+    "Pins Structure",
+}
+
+
+def _normalize_pin_count(value: str) -> str:
+    """Normalize pin count values for comparison.
+
+    Examples:
+        '1x8P' -> '8'
+        '8P' -> '8'
+        '8' -> '8'
+        '2x10P' -> '20' (2 rows x 10 = 20 total pins)
+    """
+    import re
+
+    value = value.strip()
+
+    # Handle "NxMP" format (rows x pins per row) -> total
+    match = re.match(r"(\d+)\s*x\s*(\d+)\s*[Pp]?$", value)
+    if match:
+        rows = int(match.group(1))
+        pins_per_row = int(match.group(2))
+        return str(rows * pins_per_row)
+
+    # Handle "1xNP" format -> just N (single row)
+    match = re.match(r"1\s*x\s*(\d+)\s*[Pp]?$", value)
+    if match:
+        return match.group(1)
+
+    # Handle "NP" format -> N
+    match = re.match(r"(\d+)\s*[Pp]$", value)
+    if match:
+        return match.group(1)
+
+    # Handle plain number
+    match = re.match(r"(\d+)$", value)
+    if match:
+        return match.group(1)
+
+    return value
 
 
 # =============================================================================
@@ -1097,6 +1159,10 @@ def _values_match(orig_val: str, cand_val: str, spec: str) -> bool:
     # Special handler for complex formats
     if spec == "Impedance @ Frequency":
         return impedance_at_freq_match(orig_val, cand_val)
+
+    # Pin count specs: normalize before comparing (handles "8P" vs "1x8P" vs "8")
+    if spec in PIN_COUNT_SPECS:
+        return _normalize_pin_count(orig_val) == _normalize_pin_count(cand_val)
 
     # String-based specs: exact match (case-insensitive)
     if spec in STRING_MATCH_SPECS:

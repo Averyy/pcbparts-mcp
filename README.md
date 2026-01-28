@@ -180,7 +180,7 @@ Uses a local SQLite database built from scraped JLCPCB data (400K+ parts).
 | Passives | `Capacitance`, `Resistance`, `Inductance`, `Voltage`, `Tolerance`, `Power`, `DCR` |
 | Regulators | `Vout`, `Iout` |
 
-### Subcategory Aliases (80+ supported)
+### Subcategory Aliases (220+ supported)
 
 | Category | Aliases |
 |----------|---------|
@@ -193,9 +193,12 @@ Uses a local SQLite database built from scraped JLCPCB data (400K+ parts).
 | Regulators | `ldo`, `linear regulator`, `voltage regulator` |
 | DC-DC | `dc-dc`, `buck`, `boost`, `buck converter` |
 | Crystals | `crystal`, `xtal`, `oscillator`, `tcxo` |
-| Connectors | `usb-c`, `type-c`, `pin header`, `jst`, `terminal block` |
+| Connectors | `usb-c`, `type-c`, `pin header`, `jst`, `terminal block`, `qwiic`, `stemma qt` |
 | LEDs | `led`, `smd led`, `rgb led`, `ws2812`, `neopixel` |
 | Switches | `tactile switch`, `push button`, `button`, `dip switch` |
+| Displays | `lcd`, `oled`, `tft`, `7 segment` |
+| MCUs | `mcu`, `microcontroller` |
+| Data Converters | `adc`, `dac` |
 
 ### Package Family Expansion
 
@@ -358,7 +361,7 @@ Uses **spec-aware compatibility checking** to find verified alternatives for 120
 |-----------|------|-------------|
 | `lcsc` | string | LCSC part code to find alternatives for (e.g., "C82899") |
 | `min_stock` | int | Minimum stock for alternatives (default: 100) |
-| `same_package` | bool | Only return parts with the same package size |
+| `same_package` | bool | Only return parts with the same footprint (height variants like CASE-B-3528-21 vs -19 are matched) |
 | `library_type` | string | "basic", "preferred", "no_fee", or "all" (default) |
 | `has_easyeda_footprint` | bool | Filter by EasyEDA footprint availability |
 | `limit` | int | Max alternatives to return (default: 10, max: 50) |

@@ -57,6 +57,26 @@ def _normalize_manufacturer_name(name: str) -> str:
     normalized = re.sub(r'[.,\-\(\)&]', ' ', name.lower())  # Replace punctuation with space
     return re.sub(r'\s+', ' ', normalized).strip()  # Collapse multiple spaces
 
+
+def _normalize_package_for_matching(pkg: str) -> str:
+    """Normalize package name for fuzzy matching.
+
+    Strips height suffixes from tantalum/electrolytic capacitor packages.
+    These have identical footprints but different heights.
+
+    Examples:
+        'CASE-B-3528-21(mm)' -> 'CASE-B-3528'
+        'CASE-B-3528-19(mm)' -> 'CASE-B-3528'
+        'CASE-A-3216-18(mm)' -> 'CASE-A-3216'
+        'SOT-23-3L' -> 'SOT-23-3L' (no change)
+        'QFN-24-EP(4x4)' -> 'QFN-24-EP(4x4)' (no change)
+    """
+    # Only normalize known tantalum/electrolytic case packages: CASE-A through CASE-X
+    # Pattern: CASE-{letter}-{dims}-{height}(mm) -> CASE-{letter}-{dims}
+    # This is very specific to avoid false matches on other package types
+    pkg = re.sub(r"^(CASE-[A-Z]-\d{4})-\d{1,2}\(mm\)$", r"\1", pkg)
+    return pkg
+
 # Build case-insensitive lookup for exact manufacturer names
 # This allows "molex" to match "MOLEX" without explicit aliases
 _MANUFACTURER_EXACT_NAMES: dict[str, str] = {name.lower(): name for name in KNOWN_MANUFACTURERS}
@@ -1017,8 +1037,12 @@ class JLCPCBClient:
         if subcategory_name:
             subcategory_id = self.get_subcategory_id_by_name(subcategory_name)
 
-        # Build search params - fetch extra for filtering (5x limit for compatibility filtering)
+        # Build search params - fetch extra for filtering
+        # Higher multiplier when same_package=True since we post-filter by package
+        # (need more candidates to find matching package variants)
         search_multiplier = 5 if is_supported else 3
+        if same_package:
+            search_multiplier = 10  # More candidates for package filtering
         extra_for_footprint = 20 if has_easyeda_footprint is not None else 0
         search_params: dict[str, Any] = {
             "min_stock": effective_min_stock,
@@ -1043,9 +1067,8 @@ class JLCPCBClient:
         if subcategory_id:
             search_params["subcategory_id"] = subcategory_id
 
-        # Filter by same package if requested
-        if same_package and original.get("package"):
-            search_params["package"] = original["package"]
+        # Note: We don't pass package to search anymore - we do fuzzy post-filtering
+        # This allows matching variants like CASE-B-3528-21(mm) vs CASE-B-3528-19(mm)
 
         result = await self.search(**search_params)
 
@@ -1055,6 +1078,14 @@ class JLCPCBClient:
             p for p in result.get("results", [])
             if p.get("lcsc", "").upper() != original_lcsc
         ]
+
+        # Filter by same package if requested (using fuzzy matching)
+        if same_package and original.get("package"):
+            orig_pkg_normalized = _normalize_package_for_matching(original["package"])
+            candidates = [
+                p for p in candidates
+                if _normalize_package_for_matching(p.get("package", "")) == orig_pkg_normalized
+            ]
 
         # For SUPPORTED categories: verify primary spec matches and compatibility
         # For UNSUPPORTED categories: skip verification, just return similar_parts

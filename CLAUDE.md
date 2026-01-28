@@ -6,9 +6,10 @@
 
 ## Git Commit Rules
 
-- **NEVER commit without explicit permission** - Only commit when user explicitly asks ("commit this", "push these changes")
+- **GET LATEST FIRST** github actions runs automatically to commit new parts
+- **NEVER commit without explicit permission** only commit when user explicitly asks ("commit this", "push these changes")
 - **NEVER add Claude attribution** - No "Co-Authored-By: Claude" or similar
-- **Always bump version** in `pyproject.toml` (PATCH/MINOR/MAJOR per semver)
+- **Always bump version** in `pyproject.toml` (PATCH/MINOR/MAJOR per semver, ask permission before bumping major/minor, patch is the default)
 
 ## Critical Rules
 
@@ -54,3 +55,7 @@ uv venv && uv pip install -e ".[dev]"
 .venv/bin/pytest tests/ -v                    # all tests
 .venv/bin/pytest tests/ -v -k "not Integration"  # unit only
 ```
+
+## Testing Local Changes
+
+**The MCP tools in Claude Code connect to the deployed server (jlcmcp.dev), not your local code.** Test local changes before deployment. Always git pull/fetch and then re-build the local database if its more than a day old.

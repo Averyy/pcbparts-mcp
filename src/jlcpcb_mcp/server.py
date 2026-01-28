@@ -75,7 +75,7 @@ mcp = FastMCP(
     lifespan=lifespan,
     icons=[
         Icon(src="https://jlcmcp.dev/favicon.svg", mimeType="image/svg+xml"),
-        Icon(src="https://jlcmcp.dev/favicon-96x96.png", mimeType="image/png", sizes=["96x96"]),
+        Icon(src="https://jlcmcp.dev/web-app-manifest-512x512.png", mimeType="image/png", sizes=["512x512"]),
     ],
 )
 
