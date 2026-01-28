@@ -1159,6 +1159,11 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
+  "296": {
+    "name": "Flat washers",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
   "2981": {
     "name": "Heat sink / cooling fin",
     "category_id": 47,
@@ -1426,11 +1431,6 @@
   },
   "1643": {
     "name": "Type T magnetic ring",
-    "category_id": 47,
-    "category_name": "Hardware Fasteners"
-  },
-  "1656": {
-    "name": "Washer & retaining ring",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
