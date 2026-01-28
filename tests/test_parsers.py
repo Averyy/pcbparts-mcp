@@ -197,3 +197,27 @@ class TestParseMemorySize:
         """Test memory size parsing in bytes."""
         result = parse_memory_size(input_val)
         assert result == pytest.approx(expected), f"{input_val} should parse to {expected}"
+
+
+class TestPackageExtraction:
+    """Tests for package extraction from queries."""
+
+    @pytest.mark.parametrize("query,expected_package,expected_remaining", [
+        # SO-8 variants (the new fix)
+        ("30V N-Channel MOSFET SO-8", "SO-8", "30V N-Channel MOSFET"),
+        ("mosfet SO8", "SO8", "mosfet"),
+        ("SOP-8 mosfet", "SOP-8", "mosfet"),
+        ("SOIC-8 driver", "SOIC-8", "driver"),
+        # Other common packages
+        ("10k resistor 0603", "0603", "10k resistor"),
+        ("SOT-23 mosfet", "SOT-23", "mosfet"),
+        ("QFN-24 mcu", "QFN-24", "mcu"),
+        ("DIP-8 opamp", "DIP-8", "opamp"),
+    ])
+    def test_package_extraction(self, query: str, expected_package: str, expected_remaining: str):
+        """Test package extraction from various queries."""
+        from jlcpcb_mcp.smart_parser.packages import extract_package
+        pkg, remaining, _ = extract_package(query)
+        assert pkg is not None, f"Should extract package from '{query}'"
+        assert pkg.upper() == expected_package.upper(), f"Expected {expected_package}, got {pkg}"
+        assert remaining.strip() == expected_remaining.strip()

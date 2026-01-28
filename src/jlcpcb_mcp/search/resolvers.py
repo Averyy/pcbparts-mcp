@@ -63,6 +63,17 @@ PACKAGE_FAMILIES: dict[str, list[str]] = {
     "qfn-16": ["QFN-16", "QFN-16-EP(3x3)", "QFN-16-EP(4x4)", "QFN-16(3x3)", "VQFN-16"],
     "qfn-24": ["QFN-24", "QFN-24-EP(4x4)", "VQFN-24", "VQFN-24-EP(4x4)"],
     "qfn-32": ["QFN-32", "QFN-32-EP(5x5)", "VQFN-32", "VQFN-32-EP(5x5)"],
+    # SO/SOP/SOIC packages - JLCPCB uses all three variants interchangeably
+    "so-8": ["SO-8", "SOP-8", "SOIC-8"],
+    "sop-8": ["SO-8", "SOP-8", "SOIC-8"],
+    "soic-8": ["SO-8", "SOP-8", "SOIC-8"],
+    "so8": ["SO-8", "SOP-8", "SOIC-8"],
+    "sop8": ["SO-8", "SOP-8", "SOIC-8"],
+    "soic8": ["SO-8", "SOP-8", "SOIC-8"],
+    # Other common SO/SOP/SOIC sizes
+    "so-16": ["SO-16", "SOP-16", "SOIC-16"],
+    "sop-16": ["SO-16", "SOP-16", "SOIC-16"],
+    "soic-16": ["SO-16", "SOP-16", "SOIC-16"],
 }
 
 # Standard EIA imperial chip sizes used for passives (resistors, capacitors, inductors)

@@ -41,9 +41,11 @@ PACKAGE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     # DIP/SIP packages
     (re.compile(r'\b((?:P|S|SK|C)?DIP-?\d+(?:\([^)]+\))?|SIP-?\d+)\b', re.IGNORECASE), 'dip'),
 
-    # SOP/SOIC/SSOP/TSSOP/MSOP packages (order matters - TSSOP before SOP)
+    # SOP/SOIC/SO/SSOP/TSSOP/MSOP packages (order matters - TSSOP before SOP, SO last)
     (re.compile(r'\b(TSSOP-?\d+|SSOP-?\d+|MSOP-?\d+|QSOP-?\d+|HTSSOP-?\d+|VSSOP-?\d+)\b', re.IGNORECASE), 'tssop'),
     (re.compile(r'\b(SOP-?\d+(?:-\d+)?(?:\([^)]+\))?|SOIC-?\d+(?:-\d+)?(?:\([^)]+\))?)\b', re.IGNORECASE), 'sop'),
+    # SO-8 without P/IC suffix (must come after SOP/SOIC to avoid partial matches)
+    (re.compile(r'\b(SO-?\d+)\b', re.IGNORECASE), 'so'),
 
     # Module packages (SMD-XX, LGA-XX) - NOT bare "MODULE" which is a common word
     # SMA/SMB/SMC are diode packages, but SMA is also a connector type
