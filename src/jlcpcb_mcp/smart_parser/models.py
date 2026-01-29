@@ -4,16 +4,22 @@ import re
 
 
 # Common model number patterns (component-specific part numbers)
+# Order matters! More specific patterns must come before generic ones.
 MODEL_PATTERNS = [
-    # IC model numbers: STM32F103, ESP32-C3, TP4056, AMS1117
-    re.compile(r'\b([A-Z]{2,5}\d{2,5}[A-Z]?\d*(?:-[A-Z0-9]+)?)\b', re.IGNORECASE),
-    # Specific known patterns
-    re.compile(r'\b(ESP32-[A-Z0-9]+|STM32[A-Z]\d+[A-Z0-9]*|RP2040|ATMEGA\d+[A-Z]*|PIC\d+[A-Z0-9]*)\b', re.IGNORECASE),
+    # ESP32 modules use compound naming: ESP32-{variant}-{formfactor}-{version}
+    # e.g., ESP32-S3-MINI-1, ESP32-C3-WROOM-1, ESP32-S3-MINI-1-N8
+    # Must be FIRST to match full compound names before generic pattern truncates them
+    re.compile(r'\b(ESP32(?:-[A-Z0-9]+)+)\b', re.IGNORECASE),
+    # Other specific MCU/IC patterns
+    re.compile(r'\b(STM32[A-Z]\d+[A-Z0-9]*|RP2040|ATMEGA\d+[A-Z]*|PIC\d+[A-Z0-9]*)\b', re.IGNORECASE),
     re.compile(r'\b(TP[45]\d{3}|AMS\d{4}|LM\d{4}|NE555|TL\d{3}|LMV?\d{3,4}|TPS\d{4,5})\b', re.IGNORECASE),
     re.compile(r'\b(AO\d{4}|SI\d{4}|IRF\d{3,4}|IRLZ?\d{2,4}|2N\d{4}|BC\d{3})\b', re.IGNORECASE),
     re.compile(r'\b(WS2812[A-Z]*|SK6812|APA102|TLC5940)\b', re.IGNORECASE),
     # Diode/discrete model numbers: 1N4148, 1N5819, 1SS400
     re.compile(r'\b(1N\d{4}[A-Z]*|1SS\d{3}[A-Z]*|BAT\d{2}[A-Z]*|BAS\d{2}[A-Z]*|BAV\d{2}[A-Z]*)\b', re.IGNORECASE),
+    # Generic IC model numbers (last resort): STM32F103, TP4056, AMS1117
+    # This is intentionally last to avoid truncating specific patterns above
+    re.compile(r'\b([A-Z]{2,5}\d{2,5}[A-Z]?\d*(?:-[A-Z0-9]+)?)\b', re.IGNORECASE),
 ]
 
 # Package-like patterns that should NOT be treated as model numbers

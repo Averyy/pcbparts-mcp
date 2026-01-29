@@ -11,6 +11,7 @@ from .models import extract_model_number
 from .types import extract_component_type, extract_mounting_type
 from .semantic import extract_semantic_descriptors, remove_noise_words, CONNECTOR_NOISE_WORDS
 from .mapping import map_value_to_spec, infer_subcategory_from_values
+from .connectors import extract_connector_series, ConnectorSpec
 
 
 @dataclass
@@ -23,6 +24,7 @@ class ParsedQuery:
     package: str | None = None
     model_number: str | None = None
     mounting_type: str | None = None  # "SMD" or "Through Hole"
+    connector_spec: ConnectorSpec | None = None  # Extracted connector series/brand
     detected: dict[str, Any] = field(default_factory=dict)
 
 
@@ -69,6 +71,28 @@ def parse_smart_query(query: str) -> ParsedQuery:
     if mounting_type:
         result.mounting_type = mounting_type
         detected["mounting_type"] = mounting_type
+
+    # Step 2c: Extract connector series and brand aliases BEFORE component type extraction
+    # This must happen early because keywords like "jst sh", "qwiic" are also in subcategory_aliases
+    # and would otherwise be consumed as generic "wire to board connector" without series info
+    connector_spec, remaining = extract_connector_series(remaining)
+    if connector_spec:
+        result.connector_spec = connector_spec
+        result.subcategory = "wire to board connector"
+        detected["connector_spec"] = {
+            "series": connector_spec.series,
+            "pitch": connector_spec.pitch,
+            "pins": connector_spec.pins,
+        }
+        detected["subcategory"] = result.subcategory
+        # Add pitch filter if we know the pitch
+        if connector_spec.pitch:
+            result.spec_filters.append(SpecFilter("Pitch", "=", f"{connector_spec.pitch}mm"))
+            detected.setdefault("semantic", []).append(f"pitch={connector_spec.pitch}mm (from series)")
+        # Add pin count filter if specified by brand (e.g., Qwiic = 4-pin)
+        if connector_spec.pins:
+            result.spec_filters.append(SpecFilter("Number of Pins", "=", f"{connector_spec.pins}P"))
+            detected.setdefault("semantic", []).append(f"pins={connector_spec.pins} (from brand)")
 
     # Step 3: Extract component type (subcategory)
     subcategory, remaining, matched_keyword = extract_component_type(remaining)
@@ -163,6 +187,33 @@ def parse_smart_query(query: str) -> ParsedQuery:
             # Remove the keyword from remaining
             remaining = re.sub(r'\b(trimmer|potentiometer|trimpot|variable\s*resistor)\b', '', remaining, flags=re.IGNORECASE).strip()
             remaining = re.sub(r'\s+', ' ', remaining)
+
+    # Step 4d: Handle standalone numbers as impedance for ferrite beads
+    # "ferrite bead 0603 30" -> the "30" should be parsed as 30Ω impedance
+    if result.subcategory and result.subcategory.lower() == "ferrite beads":
+        standalone_num_match = re.search(r'\b(\d+)\b', remaining)
+        if standalone_num_match:
+            num_val = int(standalone_num_match.group(1))
+            # Common ferrite bead impedance values: 10-2000Ω typically
+            if 1 <= num_val <= 5000:
+                # Check if we already have an impedance value
+                already_has_impedance = any(v.unit_type == "resistance" for v in values)
+                if not already_has_impedance:
+                    values.append(ExtractedValue(
+                        raw=standalone_num_match.group(0),
+                        value=num_val,
+                        unit_type="resistance",  # Will map to Impedance @ Frequency
+                        normalized=f"{num_val}Ohm"
+                    ))
+                    detected.setdefault("values", []).append({
+                        "raw": standalone_num_match.group(0),
+                        "type": "impedance",
+                        "normalized": f"{num_val}Ohm"
+                    })
+                    detected.setdefault("semantic", []).append(f"impedance={num_val}Ω (from standalone number)")
+                    # Remove the number from remaining
+                    remaining = remaining[:standalone_num_match.start()] + remaining[standalone_num_match.end():]
+                    remaining = re.sub(r'\s+', ' ', remaining).strip()
 
     # Step 5: Extract semantic descriptors
     semantic_filters, remaining = extract_semantic_descriptors(remaining)
@@ -278,6 +329,17 @@ def parse_smart_query(query: str) -> ParsedQuery:
         result.remaining_text = ""
     else:
         result.remaining_text = query  # Fall back to original
+
+    # Step 8b: Add connector series term to FTS for better filtering
+    # This helps filter by series name in part descriptions/model numbers
+    if result.connector_spec and result.connector_spec.fts_term:
+        fts_term = result.connector_spec.fts_term
+        if result.remaining_text:
+            # Add series term if not already present
+            if fts_term.lower() not in result.remaining_text.lower():
+                result.remaining_text = f"{fts_term} {result.remaining_text}"
+        else:
+            result.remaining_text = fts_term
 
     result.detected = detected
 

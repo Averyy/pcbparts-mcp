@@ -686,36 +686,317 @@ Reference board BOMs for testing the MCP server. The LLM should determine approp
 
 ---
 
+## 28. Particle Tracker SoM Eval Board
+
+**Purpose:** Evaluation board for Particle Tracker SoM featuring GPS/GNSS, cellular connectivity, and IMU for asset tracking and fleet management. Provides battery charging, external GPIO, CAN bus, and complete power management for rapid prototyping of location-aware IoT devices.
+
+**Repository:** https://github.com/particle-iot/tracker-hardware/tree/master/eagle-eval
+
+### Key Components
+
+| Part Number | Description | Package |
+|-------------|-------------|---------|
+| Tracker SoM (T402/T523) | nRF52840 + Cellular Modem Module | M.2 connector |
+| BQ24195RGER | Li-Ion Battery Charger (2.5A) | VQFN-24 |
+| TPS62840DLCR | Ultra-Low Iq Buck Converter | WSON-6 |
+| TS3A5018PWR | Analog Switch 2:1 SPDT | TSSOP-16 |
+| MCP2542FD-E/MF | CAN FD Transceiver | DFN-8 |
+| Micro-USB | Power/Data Connector | SMD |
+| M8 8-pin | Industrial I/O Connector | Panel mount |
+| Grove 4-pin | Sensor Interface | SMD |
+| 0.1uF Capacitors | Decoupling | 0402/0603 |
+| 10K Resistors | Pull-ups/Pull-downs | 0402/0603 |
+
+---
+
+## 29. BeagleConnect Freedom
+
+**Purpose:** Open-hardware wireless IoT platform featuring TI CC1352P7 with dual-band (2.4GHz + Sub-1GHz) support for Zigbee, Thread, and BLE. Includes mikroBUS socket for 1000+ sensor add-ons, temperature/humidity/light sensors, battery charging, and Zephyr RTOS support for scalable IoT prototyping.
+
+**Repository:** https://github.com/beagleboard/beagleconnect-freedom
+
+### Key Components
+
+| Part Number | Description | Package |
+|-------------|-------------|---------|
+| CC1352P7RGZT | Dual-band Wireless MCU (2.4GHz + Sub-1GHz) | VQFN-64 |
+| MSP430F5503 | USB-to-UART Controller | LQFP-64 |
+| HDC2010 | Temperature & Humidity Sensor | WSON-6 |
+| OPT3001 | Ambient Light Sensor | SOT-563 |
+| W25Q16JVSNIQ | 16Mbit SPI Flash | SOIC-8 |
+| MCP73831T | LiPo Battery Charger | SOT-23-5 |
+| TPS62840DLC | Buck Converter | WSON-6 |
+| FT2232HL | USB-to-UART/JTAG | LQFP-64 |
+| Buzzer | Piezo Buzzer | SMD |
+| RGB LEDs | Status Indicators | 0805 |
+| mikroBUS Socket | Sensor/Expansion Socket | THT |
+| USB Micro-B | Power/Data Connector | SMD |
+| JST PH 2-pin | LiPo Battery Connector | SMD |
+| U.FL Connector | External Antenna | SMD |
+
+---
+
+## 30. PocketBeagle
+
+**Purpose:** Ultra-compact Linux single-board computer based on Octavo OSD3358 SiP (1GHz AM3358 + 512MB DDR3). The smallest BeagleBone at 55mm x 35mm, featuring 44 GPIO pins on 0.1" headers for breadboard compatibility, ideal for embedded Linux learning and space-constrained IoT gateways.
+
+**Repository:** https://github.com/beagleboard/pocketbeagle
+
+### Key Components
+
+| Part Number | Description | Package |
+|-------------|-------------|---------|
+| OSD3358-512M-BSM | AM3358 SiP (1GHz ARM + 512MB DDR3) | BGA-256 |
+| SN74LVC1G07DCKR | Single Buffer with Open-Drain | SC-70-5 |
+| ESDPSA0402V05 | ESD Protection Diode | 0402 |
+| 10118192-0001LF | Micro-USB B Connector | SMD |
+| ST-TF-003A | MicroSD Card Socket with detect | SMD |
+| 7A-24.000MAAJ-T | 24MHz Crystal Oscillator | 5032 |
+| 19-217/BHC-AN1P2/3T | Blue LED (x5 - USR0-3, PWR) | 0603 |
+| KMR231GLFS | Tactile Switch (Power button) | SMD |
+| LI0603G121R-10 | Ferrite Bead 120Ω (x2) | 0603 |
+| GRM21BR71A106KE51L | 10uF Ceramic Capacitor | 0805 |
+| 100nF Capacitors | Decoupling (x3) | 0402 |
+| 18pF Capacitors | Crystal Load (x2) | 0402 |
+| 1uF Capacitor | Bulk Decoupling | 0402 |
+| 1K-1M Resistors | Various pull-ups/pull-downs | 0402 |
+| Resistor Arrays | 1K, 10K, 100K arrays | 0804 (4x0402) |
+
+---
+
+## 31. ANAVI Thermometer
+
+**Purpose:** Open-source WiFi smart thermometer and environmental monitoring station. Features ESP8266 WiFi, DHT22 temperature/humidity sensor, terminal for waterproof DS18B20 probe, OLED display slot, and three I2C expansion slots for additional sensors. Designed for weather stations and home automation via MQTT.
+
+**Repository:** https://github.com/AnaviTechnology/anavi-thermometer
+
+### Key Components
+
+| Part Number | Description | Package |
+|-------------|-------------|---------|
+| ESP-12E | ESP8266 WiFi Module (4MB Flash) | Castellated Module |
+| DHT22 | Temperature & Humidity Sensor | 4-pin THT |
+| DS18B20 | 1-Wire Waterproof Temperature Sensor | Terminal block |
+| LD1117S33TR | 3.3V 800mA LDO Regulator | SOT-223 |
+| USB Micro-B | Power/Data Connector | SMD |
+| 128x64 OLED | I2C Display | 4-pin header |
+| 68R Resistor | LED Current Limit | 0603 |
+| 2K Resistor | GPIO Pull-up | 0603 |
+| 4.7K Resistors | I2C Pull-ups (x3) | 0603 |
+| 10K Resistor | DHT22 Pull-up | 0603 |
+| 10uF Capacitors | Bulk Decoupling (x2) | 0805 |
+| 100nF Capacitors | Bypass Capacitors | 0603 |
+| Tactile Switch | Reset Button | 6mm THT |
+| Red LED | Power/Status Indicator | 1206 |
+| 4-pin Headers | I2C Sensor Slots (x3) | 2.54mm PTH |
+| 3-pin Terminal | DS18B20 Connection | Screw terminal |
+| 4-pin Header | UART Debug | 2.54mm PTH |
+
+---
+
+## 32. Olimex ESP32-S2-DevKit-LiPo
+
+**Purpose:** Compact ESP32-S2 development board with native USB, WiFi, and integrated LiPo battery charging. Features WS2812B RGB LED, all GPIOs broken out on 0.1" headers, USB-C connectivity, and battery management for portable WiFi IoT projects and USB HID devices.
+
+**Repository:** https://github.com/OLIMEX/ESP32-S2-DevKit-LiPo
+
+### Key Components
+
+| Part Number | Description | Package |
+|-------------|-------------|---------|
+| ESP32-S2-WROOM | ESP32-S2 WiFi Module (4MB Flash) | Module |
+| MCP73831 | LiPo Battery Charger (500mA) | SOT-23-5 |
+| AMS1117-3.3 | 3.3V 1A LDO Regulator | SOT-223 |
+| WS2812B | RGB Addressable LED | 5050 |
+| USB Type-C | Power/Data/Programming Connector | SMD |
+| JST PH 2-pin | LiPo Battery Connector | SMD |
+| Tactile Switches | Reset & Boot Buttons (x2) | SMD |
+| Red LED | Power Indicator | 0805 |
+| Green LED | Charge Status | 0805 |
+| 10K Resistors | Pull-up/Pull-down | 0603 |
+| 100nF Capacitors | Decoupling | 0603 |
+| 10uF Capacitors | Bulk Decoupling | 0805 |
+| 2x20 Pin Headers | GPIO Breakout | 2.54mm PTH |
+
+---
+
+## 33. Grove - BMI088 6-Axis IMU
+
+**Purpose:** Grove-compatible 6-axis inertial measurement unit featuring Bosch BMI088 high-performance accelerometer and gyroscope. Designed for drone stabilization, robotics, and motion tracking with separate accelerometer and gyroscope dies for improved noise immunity. Supports both I2C and SPI interfaces.
+
+**Repository:** https://github.com/Seeed-Studio/Grove_6Axis_Accelerometer_And_Gyroscope_BMI088
+
+### Key Components
+
+| Part Number | Description | Package |
+|-------------|-------------|---------|
+| BMI088 | 6-Axis IMU (3-axis Accel + 3-axis Gyro) | LGA-16 (3x4.5mm) |
+| XC6206P332MR | 3.3V 200mA LDO Regulator | SOT-23 |
+| 10K Resistor | I2C Pull-ups (x2) | 0603 |
+| 100nF Capacitor | Decoupling (x2) | 0402 |
+| 10uF Capacitor | Bulk Decoupling | 0603 |
+| Grove 4-pin | I2C Connector | SMD |
+| Red LED | Power Indicator | 0603 |
+
+---
+
+## 34. ANAVI Fume Extractor
+
+**Purpose:** Open-source WiFi-enabled fume extractor controller with ESP8266, designed for soldering stations and workshops. Features relay-controlled 5V fan, MQ gas sensor input for air quality monitoring, OLED display, and three I2C sensor expansion slots. Integrates with home automation via MQTT for automated air quality management.
+
+**Repository:** https://github.com/AnaviTechnology/anavi-fume-extractor
+
+### Key Components
+
+| Part Number | Description | Package |
+|-------------|-------------|---------|
+| ESP-12E | ESP8266 WiFi Module (4MB Flash) | Castellated Module |
+| LD1117S33TR | 3.3V 800mA LDO Regulator | SOT-223 |
+| SANYOU SRD-05VDC | 5V SPDT Relay (10A) | THT |
+| 2N3904 | NPN Transistor (relay driver) | SOT-23 |
+| 1N4148W | Fast Switching Diode (flyback) | SOD-123 |
+| USB Micro-B | Power/Data Connector | SMD |
+| JST XH 2-pin | Fan Connector | THT |
+| 128x64 OLED | I2C Display | 4-pin header |
+| 68R Resistor | LED Current Limit | 0603 |
+| 2K Resistors | Pull-ups (x2) | 0603 |
+| 2.7K Resistor | Base Resistor | 0603 |
+| 27K Resistor | Base Resistor | 0603 |
+| 4.7K Resistors | I2C Pull-ups (x2) | 0603 |
+| 220K/56K Resistors | Voltage Divider (x2) | 0603 |
+| 10uF Capacitors | Bulk Decoupling (x2) | 0805 |
+| 100nF Capacitors | Bypass Capacitors | 0603 |
+| Tactile Switches | Reset/Config Buttons (x2) | 6mm THT |
+| Red LED | Power/Status Indicator | 1206 |
+| 4-pin Headers | I2C Sensor Slots (x4) | 2.54mm PTH |
+| 3-pin Header | Config Jumper | 2.54mm PTH |
+| 4-pin Header | Gas Sensor Connector | 2.54mm PTH |
+| 4-pin Header | UART Debug | 2.54mm PTH |
+
+---
+
+## 35. SparkFun Audio Codec Breakout - WM8960
+
+**Purpose:** Low-power stereo audio codec featuring WM8960 with 1W Class D speaker drivers and headphone amplifiers. Provides complete audio solution with stereo ADC/DAC, I2S digital audio interface, advanced DSP features including automatic level control (ALC), 3D audio enhancement, and programmable gain amplifiers. Designed for portable audio players, voice recording, and audio projects.
+
+**Repository:** https://github.com/sparkfun/SparkFun_Audio_Codec_Breakout_WM8960
+
+### Key Components
+
+| Part Number | Description | Package |
+|-------------|-------------|---------|
+| WM8960 | Stereo Audio Codec with 1W Class D Amp | QFN-32 |
+| XC6222B333MR | 3.3V 700mA LDO (Digital) | SOT-25 |
+| XC6222B331PR | 3.3V 700mA LDO (Analog) | SOT-25 |
+| TPS22916DBVR | Load Switch | SOT-23-6 |
+| 10K Resistors | Pull-ups/Pull-downs | 0603 |
+| 1K Resistors | I2C Pull-ups (x2) | 0603 |
+| 100K Resistor | HP detection | 0603 |
+| 10uF Capacitors | Bulk Decoupling (x4) | 0805 |
+| 1uF Capacitors | Decoupling (x6) | 0603 |
+| 100nF Capacitors | Bypass Capacitors (x4) | 0402 |
+| 220pF Capacitors | Audio Filter (x2) | 0402 |
+| Ferrite Beads | Power Filtering (x2) | 0603 |
+| 3.5mm Audio Jacks | Line In/Out, Headphone (x3) | SMD |
+| JST SH 4-pin | Qwiic Connector (x2) | SMD |
+| 2-pin Terminal | Speaker Output (x2) | 5.08mm pitch |
+| LEDs | Power Indicators (x2) | 0603 |
+| Tactile Switch | Volume control | SMD |
+
+---
+
+## 36. Adafruit PowerBoost 1000C
+
+**Purpose:** DC-DC boost converter with integrated LiPo battery charger providing 5.2V @ 1A output from 3.7V LiPo batteries. Features load-sharing circuitry allowing simultaneous charging and operation, low-battery indicator, and USB current limit resistors for iOS devices. Ideal for portable electronics, wearables, and battery-powered Raspberry Pi projects.
+
+**Repository:** https://github.com/adafruit/Adafruit-PowerBoost-1000C
+
+### Key Components
+
+| Part Number | Description | Package |
+|-------------|-------------|---------|
+| TPS61090RSAR | 5V Boost Converter (2.5A switch) | VQFN-20 |
+| MCP73831 | LiPo Battery Charger (500mA) | SOT-23-5 |
+| DMP3056L | P-Channel MOSFET (load sharing) | SOT-23 |
+| DMP2045U | P-Channel MOSFET (reverse polarity) | SOT-23 |
+| PMEG4010ER | Schottky Diode (x3) | SOD-123 |
+| 4.7uH Inductor | Boost Converter | 4x4mm |
+| 22uF Capacitors | Bulk Capacitors (x3) | 0805 |
+| 10uF Capacitor | Output Capacitor | 0805 |
+| 4.7uF Capacitor | Input Capacitor | 0603 |
+| 100nF Capacitors | Decoupling | 0402 |
+| 100K Resistors | Divider/Enable (x3) | 0603 |
+| 10K Resistors | Various (x4) | 0603 |
+| 2K Resistor | LED Current Limit | 0603 |
+| 1.21K Resistors | Feedback (x2) | 0603 |
+| USB Micro-B | Power Input | SMD |
+| JST PH 2-pin | LiPo Battery Connector | SMD |
+| Blue LED | Low Battery Indicator | 0603 |
+| Green LED | Charging Indicator | 0603 |
+| Enable Switch | Power enable | SMD |
+
+---
+
+## 37. Grove - Air Quality Sensor
+
+**Purpose:** Grove-compatible analog air quality sensor using MP503 gas-sensitive material. Detects harmful gases including CO, alcohol, acetone, thinner, and formaldehyde for indoor air quality monitoring. Provides qualitative air quality assessment suitable for automated air purifiers, ventilation systems, and environmental monitoring stations.
+
+**Repository:** https://github.com/Seeed-Studio/Grove_Air_quality_Sensor
+
+### Key Components
+
+| Part Number | Description | Package |
+|-------------|-------------|---------|
+| MP503 | Air Quality Gas Sensor | THT Module |
+| LM358 | Dual Op-Amp | SOIC-8 |
+| 3.3V LDO | Voltage Regulator | SOT-23 |
+| 1K Resistor | LED Current Limit | 0603 |
+| 10K Resistors | Pull-ups/Divider (x3) | 0603 |
+| 100K Resistor | Feedback Resistor | 0603 |
+| 10uF Capacitor | Bulk Decoupling | 0805 |
+| 100nF Capacitors | Bypass Capacitors (x2) | 0603 |
+| Grove 4-pin | Analog Connector | SMD |
+| Red LED | Power Indicator | 0603 |
+| Green LED | Status Indicator | 0603 |
+
+---
+
 ## Component Type Coverage Summary
 
 | Category | Components Covered |
 |----------|-------------------|
-| **MCUs** | RP2040, STM32L4R5/L433, ATmega32U4, ATSAMD21/51, ESP32-C3/C6/S3/WROOM/WROVER, ESP8266, W65C02, Apollo3 (Artemis) |
-| **Power ICs** | BQ24210, TPS62748/62A02/63020/65186/7A26, MAX17225, MCP73831, AP2112/2127/2139, ISL9122A, LM66200, MP2161, LD1117, SP6214, SY8089, TX4138, LM317, SE5218 |
+| **MCUs** | RP2040, STM32L4R5/L433, ATmega32U4, ATSAMD21/51, ESP32-C3/C6/S2/S3/WROOM/WROVER, ESP8266, W65C02, Apollo3 (Artemis), nRF52840, CC1352P7, MSP430F5503, OSD3358 (AM3358 SiP) |
+| **Power ICs** | BQ24195/24210, TPS61090/62748/62840/62A02/63020/65186/7A26, TPS22916 (load switch), MAX17225, MCP73831, AP2112/2127/2139, ISL9122A, LM66200, MP2161, LD1117/LD1117S33TR, AMS1117-3.3, XC6206/6222, SP6214, SY8089, TX4138, LM317, SE5218 |
 | **Motor Drivers** | A4988 (stepper), TB6612FNG (DC H-bridge) |
-| **Audio** | MAX98357A (I2S Class D amplifier) |
+| **Audio** | MAX98357A (I2S Class D amplifier), WM8960 (stereo codec with Class D) |
 | **Current Sensors** | INA219 (I2C power monitor) |
-| **GPS/GNSS** | Quectel L86-M33 |
-| **Sensors** | BME280, BME680, LSM6DSO, ICM-20948, LIS3DH |
+| **GPS/GNSS** | Quectel L86-M33, Tracker SoM (integrated GNSS) |
+| **Sensors** | BME280, BME680, LSM6DSO, BMI088, ICM-20948, LIS3DH, DHT22, DS18B20, HDC2010, OPT3001, MP503 (air quality) |
 | **Thermocouple** | MAX31855 |
-| **Protection** | TVS (SM6T6V8A, SMBJ6.0A, SMAJ58A), ESD (PESD5V0L5UV, ESD5Z3.3, SP3012, ESDLC5V0M5), PTC fuses |
+| **Protection** | TVS (SM6T6V8A, SMBJ6.0A, SMAJ58A), ESD (PESD5V0L5UV, ESDPSA0402V05, ESD5Z3.3, SP3012, ESDLC5V0M5), PTC fuses |
 | **Level Shifters** | 74LVC1T45, 74LVC245, 74HCT245, TXS0102 |
-| **Logic ICs** | 74HC595, CD4067, PCAL6416A (I/O Expander), SN74LVC1G34 |
-| **USB Controllers** | CH340C/E/X, CH334S (Hub), CH217K |
+| **Logic ICs** | 74HC595, CD4067, PCAL6416A (I/O Expander), SN74LVC1G34, SN74LVC1G07 |
+| **USB Controllers** | CH340C/E/X, CH334S (Hub), CH217K, FT2232HL (USB-UART/JTAG) |
 | **RTC** | PCF85063A |
-| **Analog Switches** | DGQ2788A |
-| **Op-Amps** | LMV321, LMV324, LMV331, LMV358 |
-| **MOSFETs** | SI2301 (P-ch), AO3420/IRF8721 (N-ch), MMBT7002K, SSM3J358R, WPM2015 |
-| **Transistors** | MMBT2222A (NPN), LMUN2235 (digital) |
+| **Analog Switches** | DGQ2788A, TS3A5018 |
+| **CAN Transceivers** | MCP2542FD (CAN FD) |
+| **Op-Amps** | LMV321, LMV324, LMV331, LMV358, LM358 |
+| **MOSFETs** | SI2301 (P-ch), DMP3056L/DMP2045U (P-ch), AO3420/IRF8721 (N-ch), MMBT7002K, SSM3J358R, WPM2015 |
+| **Transistors** | 2N3904, MMBT2222A (NPN), LMUN2235 (digital) |
+| **Diodes** | 1N4148W (fast switching), PMEG4010ER (Schottky) |
 | **Optocouplers** | PC817 |
-| **Relays** | RAS-0515 (5V SPDT) |
-| **Connectors** | USB-C, USB Micro-B, USB-A, HDMI, JST SH/PH, RJ45, u.FL, IPX, DC Barrel Jack, Screw Terminals |
+| **Relays** | RAS-0515 (5V SPDT), SANYOU SRD-05VDC (5V SPDT 10A) |
+| **Connectors** | USB-C, USB Micro-B, USB-A, HDMI, JST SH/PH/XH, RJ45, u.FL, IPX, M8 8-pin, M.2, mikroBUS, Grove, DC Barrel Jack, Screw Terminals, 3.5mm Audio Jacks |
 | **LEDs** | WS2812B/SK6812 (addressable), standard 0402/0603/0805/1206/3mm |
-| **Passives** | 0201/0402/0603/0805/1206/1210/2010 R/C, inductors, ferrites, trimmers, shunt resistors |
-| **Memory** | W25Q32/128 (SPI Flash), MT29F1G01 (NAND), ZD25Q16 |
+| **Displays** | TFT LCD modules, 128x64 OLED (I2C), e-paper |
+| **Buzzers** | Piezo buzzers (SMD/THT) |
+| **Passives** | 0201/0402/0603/0805/1206/1210/2010 R/C, inductors (4.7uH boost), ferrites, trimmers, shunt resistors, resistor arrays |
+| **Memory** | W25Q16/32/128 (SPI Flash), MT29F1G01 (NAND), ZD25Q16 |
 | **Battery Holders** | CR1220 (coin cell backup) |
 | **Ethernet** | LAN8710A PHY, PoE controllers |
 | **LoRa** | SX1276 transceiver |
-| **Zigbee/Thread** | ESP32-C6 (IEEE 802.15.4) |
+| **Zigbee/Thread** | ESP32-C6 (IEEE 802.15.4), CC1352P7 (2.4GHz + Sub-1GHz) |
 | **RF** | GPS LNA, GNSS modules, ceramic antennas, WiFi diplexers, u.FL/IPX connectors, RF matching networks |
 | **E-Ink** | TPS65186 display driver |
+| **Cellular** | Tracker SoM (LTE Cat-M1/NB-IoT) |
+| **Gas Sensors** | MP503 (air quality), MQ series (via analog interface) |
