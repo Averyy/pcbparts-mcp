@@ -9,7 +9,7 @@ from .packages import extract_package
 from .values import ExtractedValue, extract_values
 from .models import extract_model_number
 from .types import extract_component_type, extract_mounting_type
-from .semantic import extract_semantic_descriptors, remove_noise_words
+from .semantic import extract_semantic_descriptors, remove_noise_words, CONNECTOR_NOISE_WORDS
 from .mapping import map_value_to_spec, infer_subcategory_from_values
 
 
@@ -254,6 +254,13 @@ def parse_smart_query(query: str) -> ParsedQuery:
 
     # Step 7: Clean up remaining text
     remaining = remove_noise_words(remaining)
+
+    # Step 7b: Remove connector-specific noise words when in connector context
+    # Words like "power", "data", "signal" describe USB-C functionality but aren't searchable
+    if subcategory and 'connector' in subcategory.lower():
+        words = remaining.split()
+        remaining = ' '.join(w for w in words if w.lower() not in CONNECTOR_NOISE_WORDS)
+
     # Remove orphaned hyphens and single characters (e.g., "- -F" -> "")
     remaining = re.sub(r'\b[A-Za-z]\b', '', remaining)  # Single letters
     remaining = re.sub(r'\s*-\s*', ' ', remaining)  # Orphaned hyphens

@@ -3,6 +3,7 @@
 import sqlite3
 from typing import Any, Literal
 
+from ..config import DEFAULT_MIN_STOCK
 from ..alternatives import SPEC_PARSERS
 from ..subcategory_aliases import (
     resolve_subcategory_name as _resolve_subcategory_name,
@@ -334,7 +335,7 @@ class SearchEngine:
         spec_filters: list[SpecFilter] | None = None,
         library_type: str | None = None,
         prefer_no_fee: bool = True,
-        min_stock: int = 100,
+        min_stock: int = DEFAULT_MIN_STOCK,
         package: str | None = None,
         packages: list[str] | None = None,
         manufacturer: str | None = None,

@@ -3,6 +3,7 @@
 import sqlite3
 from typing import Any
 
+from ..config import DEFAULT_MIN_STOCK
 from ..alternatives import SPEC_PARSERS
 from ..search.result import row_to_dict
 from ..search.spec_filter import escape_like
@@ -87,7 +88,7 @@ def find_by_subcategory(
     subcategory_id: int,
     primary_spec: str | None = None,
     primary_value: Any = None,
-    min_stock: int = 100,
+    min_stock: int = DEFAULT_MIN_STOCK,
     library_type: str | None = None,
     prefer_no_fee: bool = True,
     limit: int = 100,
@@ -102,7 +103,7 @@ def find_by_subcategory(
         subcategory_id: Subcategory to search in
         primary_spec: Primary spec name to match (e.g., "Resistance")
         primary_value: Value to match for primary spec
-        min_stock: Minimum stock (default 100)
+        min_stock: Minimum stock (default 50)
         library_type: Filter by library type - "basic", "preferred", or "extended"
         prefer_no_fee: Sort preference (default True)
         limit: Max results to return

@@ -975,7 +975,7 @@ class JLCPCBClient:
     async def find_alternatives(
         self,
         lcsc: str,
-        min_stock: int = 100,
+        min_stock: int = DEFAULT_MIN_STOCK,
         same_package: bool = False,
         library_type: str | None = None,
         has_easyeda_footprint: bool | None = None,
@@ -989,7 +989,7 @@ class JLCPCBClient:
 
         Args:
             lcsc: LCSC part code to find alternatives for (e.g., "C2557")
-            min_stock: Minimum stock for alternatives (default: 100)
+            min_stock: Minimum stock for alternatives (default: 50)
             same_package: If True, only return parts with the same package size
             library_type: Filter by library type ("basic", "preferred", "no_fee", "extended")
                           Use "no_fee" to find basic/preferred alternatives for extended parts.
