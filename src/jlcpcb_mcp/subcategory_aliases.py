@@ -324,11 +324,28 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # ==========================================================================
     # SENSORS
     # ==========================================================================
+    # Temperature and humidity sensors - handle multiple word orders
+    # These must come before standalone "temperature sensor" to match first (longest-first sorting)
+    "temperature and humidity sensor": "temperature and humidity sensor",
+    "humidity and temperature sensor": "temperature and humidity sensor",
+    "temperature humidity sensor": "temperature and humidity sensor",
+    "humidity temperature sensor": "temperature and humidity sensor",
+    "temp and humidity sensor": "temperature and humidity sensor",
+    "humidity and temp sensor": "temperature and humidity sensor",
+    "temp humidity sensor": "temperature and humidity sensor",
+    "humidity temp sensor": "temperature and humidity sensor",
+    # Popular sensor families (with "sensor" keyword)
+    "dht sensor": "temperature and humidity sensor",  # DHT11/DHT22 family
+    "sht sensor": "temperature and humidity sensor",  # SHT3x family (Sensirion)
+    "bme sensor": "temperature and humidity sensor",  # BME280/BME680 family
+    "aht sensor": "temperature and humidity sensor",  # AHT10/AHT20 family
+    # Standalone temperature sensors (must come after combined sensors)
     "temperature sensor": "temperature sensors",
     "temp sensor": "temperature sensors",
     "thermistor": "ntc thermistors",
     "ntc": "ntc thermistors",
     "ptc thermistor": "ptc thermistors",
+    # Other sensors
     "accelerometer": "accelerometers",
     "gyroscope": "accelerometers",  # Often combined as IMU
     "imu": "accelerometers",
@@ -343,12 +360,27 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "photoresistor": "photoresistors",
     "ldr": "photoresistors",
     "pressure sensor": "pressure sensors",
-    "humidity sensor": "temperature and humidity sensor",
     "gas sensor": "gas sensors",
     "proximity sensor": "proximity sensors",
     "ultrasonic sensor": "ultrasonic receivers, transmitters",
     "encoder": "encoders",
     "rotary encoder": "encoders",
+    # ==========================================================================
+    # ANTENNAS (actual DB names: "Antennas", "Ceramic antenna", "Antenna spring", "Other antennas")
+    # ==========================================================================
+    "antenna": "antennas",
+    "antennas": "antennas",
+    "ceramic antenna": "ceramic antenna",
+    "chip antenna": "ceramic antenna",
+    "pcb antenna": "antennas",
+    "external antenna": "antennas",
+    "2.4ghz antenna": "antennas",  # Common WiFi/BLE frequency
+    "wifi antenna": "antennas",
+    "bluetooth antenna": "antennas",
+    "ble antenna": "antennas",
+    "gps antenna": "antennas",
+    "lte antenna": "antennas",
+    "5g antenna": "antennas",
     # ==========================================================================
     # MODULES
     # ==========================================================================

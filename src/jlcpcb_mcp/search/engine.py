@@ -291,7 +291,20 @@ class SearchEngine:
                             break
 
                         epsilon = abs(target_value) * 1e-9 if target_value != 0 else 1e-15
-                        eq_epsilon = abs(target_value) * 0.01 if target_value != 0 else 1e-9
+
+                        # Frequency matching needs wider tolerance for RF components
+                        # Common bands like "2.4GHz WiFi" spans 2.4-2.5GHz, and databases
+                        # often store "2.45GHz" when users search "2.4GHz"
+                        is_frequency = any(
+                            "frequency" in name.lower()
+                            for name in attr_names_set
+                        )
+                        if is_frequency:
+                            # Use 5% tolerance for frequency (allows 2.4GHz to match 2.45GHz)
+                            eq_epsilon = abs(target_value) * 0.05 if target_value != 0 else 1e-9
+                        else:
+                            # Use 1% tolerance for other specs
+                            eq_epsilon = abs(target_value) * 0.01 if target_value != 0 else 1e-9
 
                         if spec_filter.operator == "=" and abs(part_value - target_value) > eq_epsilon:
                             passes = False
