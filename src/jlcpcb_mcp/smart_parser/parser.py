@@ -85,14 +85,15 @@ def parse_smart_query(query: str) -> ParsedQuery:
             "pins": connector_spec.pins,
         }
         detected["subcategory"] = result.subcategory
-        # Add pitch filter if we know the pitch
-        if connector_spec.pitch:
-            result.spec_filters.append(SpecFilter("Pitch", "=", f"{connector_spec.pitch}mm"))
-            detected.setdefault("semantic", []).append(f"pitch={connector_spec.pitch}mm (from series)")
-        # Add pin count filter if specified by brand (e.g., Qwiic = 4-pin)
-        if connector_spec.pins:
-            result.spec_filters.append(SpecFilter("Number of Pins", "=", f"{connector_spec.pins}P"))
-            detected.setdefault("semantic", []).append(f"pins={connector_spec.pins} (from brand)")
+        # NOTE: Don't add pitch/pins as spec filters for connectors - most connectors in the
+        # database have empty attributes dicts, so spec filters will match nothing. The pitch
+        # and pin info is stored in connector_spec and used for FTS search instead.
+        # if connector_spec.pitch:
+        #     result.spec_filters.append(SpecFilter("Pitch", "=", f"{connector_spec.pitch}mm"))
+        #     detected.setdefault("semantic", []).append(f"pitch={connector_spec.pitch}mm (from series)")
+        # if connector_spec.pins:
+        #     result.spec_filters.append(SpecFilter("Number of Pins", "=", f"{connector_spec.pins}P"))
+        #     detected.setdefault("semantic", []).append(f"pins={connector_spec.pins} (from brand)")
 
     # Step 3: Extract component type (subcategory)
     subcategory, remaining, matched_keyword = extract_component_type(remaining)
@@ -137,6 +138,13 @@ def parse_smart_query(query: str) -> ParsedQuery:
     values, remaining = extract_values(remaining)
     if values:
         detected["values"] = [{"raw": v.raw, "type": v.unit_type, "normalized": v.normalized} for v in values]
+
+    # Step 4a-pre: Filter out dimension values for display components
+    # Display resolutions like "128x64" look like dimensions but should not be treated as such
+    if result.subcategory and 'display' in result.subcategory.lower():
+        values = [v for v in values if v.unit_type != "dimensions"]
+        if values:
+            detected["values"] = [{"raw": v.raw, "type": v.unit_type, "normalized": v.normalized} for v in values]
 
     # Step 4a: Post-process standalone numbers as pin counts for connector types
     # This handles cases like "8 pin header" where "pin header" was extracted first,
@@ -242,6 +250,12 @@ def parse_smart_query(query: str) -> ParsedQuery:
                     detected["package_from_dimensions"] = result.package
                 continue  # Don't add as spec filter
 
+        # Special handling: skip spec filters for connectors
+        # Most connectors in the database have empty attributes dicts, so spec filters fail
+        # Pin count, pitch, etc. should be used in FTS search instead
+        if result.subcategory and 'connector' in result.subcategory.lower():
+            continue  # Don't add spec filters for connectors
+
         spec_name, operator = map_value_to_spec(value, subcategory, matched_keyword)
         result.spec_filters.append(SpecFilter(spec_name, operator, value.normalized))
 
@@ -304,11 +318,18 @@ def parse_smart_query(query: str) -> ParsedQuery:
         remaining = re.sub(r'\s+', ' ', remaining).strip()
 
     # Step 7: Clean up remaining text
+    # Step 7a: Replace connector-specific synonyms
+    # "magnetics" is a common term for RJ45 connectors with integrated magnetics (transformers)
+    # JLCPCB lists these as "Filtered" in descriptions
+    if subcategory and 'connector' in subcategory.lower():
+        remaining = re.sub(r'\bmagnetics?\b', 'filtered', remaining, flags=re.IGNORECASE)
+
     remaining = remove_noise_words(remaining)
 
     # Step 7b: Remove connector-specific noise words when in connector context
     # Words like "power", "data", "signal" describe USB-C functionality but aren't searchable
-    if subcategory and 'connector' in subcategory.lower():
+    # Also applies to pin headers (male/female not indexed in descriptions)
+    if subcategory and ('connector' in subcategory.lower() or 'header' in subcategory.lower()):
         words = remaining.split()
         remaining = ' '.join(w for w in words if w.lower() not in CONNECTOR_NOISE_WORDS)
 

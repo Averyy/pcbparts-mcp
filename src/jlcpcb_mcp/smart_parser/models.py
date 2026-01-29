@@ -27,6 +27,7 @@ MODEL_PATTERNS = [
 PACKAGE_LIKE_PATTERNS = (
     'SOT', 'SOD', 'SOP', 'SOIC', 'SSOP', 'TSSOP', 'MSOP', 'QSOP',
     'QFN', 'DFN', 'QFP', 'LQFP', 'TQFP', 'BGA', 'DIP', 'SIP',
+    'CSP', 'WLCSP', 'LFCSP', 'UCSP', 'VCSP',  # Chip Scale Package variants
 )
 
 
@@ -45,7 +46,8 @@ def extract_model_number(query: str) -> tuple[str | None, str]:
             model = match.group(1)
             model_upper = model.upper()
             # Verify it's not a common word or measurement
-            if model_upper in ('LED', 'LCD', 'USB', 'SPI', 'I2C', 'ADC', 'DAC', 'MCU', 'CPU', 'GPU'):
+            if model_upper in ('LED', 'LCD', 'USB', 'SPI', 'I2C', 'ADC', 'DAC', 'MCU', 'CPU', 'GPU',
+                              'RJ45', 'RJ11', 'RJ12', 'RJ9', 'RJ22', 'RJ25'):  # Connector type codes
                 continue
             # Verify it's not a package name without hyphen (e.g., SOT23, SOD323, QFN32)
             # Check if model starts with a known package prefix followed by digits

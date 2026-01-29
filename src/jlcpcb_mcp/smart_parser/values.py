@@ -334,6 +334,12 @@ def extract_values(query: str) -> tuple[list[ExtractedValue], str]:
     for match in _DIM.finditer(query):
         # Store as tuple encoded in value (x*1000 + y for simple encoding)
         x, y = float(match.group(1)), float(match.group(2))
+
+        # Skip if dimensions are unreasonably large (>100) - likely pixel counts, not mm
+        # Display resolutions like "128x64" are handled in parser after subcategory is detected
+        if x > 100 or y > 100:
+            continue  # This is likely a display resolution, not a physical dimension
+
         extractions.append((match.start(), match.end(), ExtractedValue(
             raw=match.group(0),
             value=x * 1000 + y,  # Encoded
