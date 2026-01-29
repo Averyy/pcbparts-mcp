@@ -154,6 +154,29 @@ class TestSpecFilters:
         # May have fewer results with multiple filters
         assert result["total"] >= 0
 
+    def test_multiple_interface_values_use_or_logic(self):
+        """Multiple Interface filters should match components with EITHER value (OR logic)."""
+        from jlcpcb_mcp.smart_parser import parse_smart_query
+
+        # Parse a query that creates multiple Interface filters
+        result = parse_smart_query("sensor I2C SPI")
+        interface_filters = [f for f in result.spec_filters if f.name == "Interface"]
+
+        # Should create two separate filters
+        assert len(interface_filters) == 2
+        assert {f.value for f in interface_filters} == {"I2C", "SPI"}
+
+        # When searching, these should be grouped with OR logic
+        # (components with "I2C、SPI" should match)
+        from jlcpcb_mcp.search.query_builder import _group_multi_value_filters
+
+        grouped = _group_multi_value_filters(interface_filters)
+        assert len(grouped) == 1
+        assert isinstance(grouped[0], tuple)
+        spec_name, values = grouped[0]
+        assert spec_name == "Interface"
+        assert set(values) == {"I2C", "SPI"}
+
 
 class TestLibraryTypeAndPreference:
     """Test library_type filter and prefer_no_fee sort preference."""
@@ -354,6 +377,37 @@ class TestSubcategoryAliases:
             assert result is not None, f"Alias '{alias}' should resolve"
             name = db._subcategories[result]["name"]
             assert "TVS/ESD" in name, f"'{alias}' should resolve to TVS/ESD subcategory, got '{name}'"
+
+    def test_antenna_aliases(self):
+        """Antenna aliases should resolve correctly."""
+        db = get_db()
+        aliases = [
+            ("antenna", "antennas"),
+            ("ceramic antenna", "ceramic antenna"),
+            ("wifi antenna", "antennas"),
+            ("ble antenna", "antennas"),
+        ]
+        for alias, expected_lower in aliases:
+            result = db.resolve_subcategory_name(alias)
+            assert result is not None, f"Alias '{alias}' should resolve"
+            name = db._subcategories[result]["name"]
+            assert name.lower() == expected_lower, f"'{alias}' should resolve to '{expected_lower}', got '{name}'"
+
+    def test_temperature_humidity_sensor_word_order(self):
+        """Temperature+humidity sensor aliases should work regardless of word order."""
+        db = get_db()
+        expected = "temperature and humidity sensor"
+        aliases = [
+            "humidity temperature sensor",
+            "temperature humidity sensor",
+            "temp humidity sensor",
+            "humidity temp sensor",
+        ]
+        for alias in aliases:
+            result = db.resolve_subcategory_name(alias)
+            assert result is not None, f"Alias '{alias}' should resolve"
+            name = db._subcategories[result]["name"]
+            assert name.lower() == expected, f"'{alias}' should resolve to '{expected}', got '{name}'"
 
 
 class TestShortestMatchPriority:
@@ -702,6 +756,30 @@ class TestSmartQueryParsing:
 
         result = parse_smart_query("abc")
         assert result.remaining_text == "abc"
+
+    def test_parse_antenna_with_frequency(self):
+        """Parse 'ceramic antenna 2.4GHz' with subcategory and frequency."""
+        from jlcpcb_mcp.smart_parser import parse_smart_query
+
+        result = parse_smart_query("ceramic antenna 2.4GHz")
+        assert result.subcategory == "ceramic antenna"
+
+        # Should extract frequency filter
+        freq_filter = next((f for f in result.spec_filters if "freq" in f.name.lower()), None)
+        assert freq_filter is not None
+        assert freq_filter.value == "2.4GHz"
+
+    def test_parse_humidity_temperature_sensor(self):
+        """Parse 'humidity temperature sensor I2C' with correct subcategory."""
+        from jlcpcb_mcp.smart_parser import parse_smart_query
+
+        result = parse_smart_query("humidity temperature sensor I2C")
+        assert result.subcategory == "temperature and humidity sensor"
+
+        # Should extract I2C interface
+        interface_filters = [f for f in result.spec_filters if f.name == "Interface"]
+        assert len(interface_filters) == 1
+        assert interface_filters[0].value == "I2C"
 
 
 class TestListAttributes:
