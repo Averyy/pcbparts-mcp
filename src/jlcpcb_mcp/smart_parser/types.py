@@ -21,10 +21,10 @@ def extract_component_type(query: str) -> tuple[str | None, str, str | None]:
     query_lower = query.lower()
 
     for keyword in _SUBCATEGORY_KEYWORDS_BY_LENGTH:
-        if keyword in query_lower:
+        # Use word boundaries to avoid "sram" matching inside "PSRAM"
+        pattern = re.compile(r'\b' + re.escape(keyword) + r'\b', re.IGNORECASE)
+        if pattern.search(query_lower):
             # Remove the keyword from query
-            # Use word boundaries to avoid partial matches
-            pattern = re.compile(r'\b' + re.escape(keyword) + r'\b', re.IGNORECASE)
             remaining = pattern.sub('', query).strip()
             remaining = re.sub(r'\s+', ' ', remaining)
             return SUBCATEGORY_ALIASES[keyword], remaining, keyword

@@ -1,5 +1,6 @@
 """SQL query building functions for component search."""
 
+import re
 from typing import Any
 
 from ..alternatives import SPEC_PARSERS
@@ -124,6 +125,55 @@ def build_stock_clause(min_stock: int) -> tuple[str, list[int]]:
     return "", []
 
 
+def _expand_package_aliases(pkg: str) -> list[str]:
+    """Expand a package name to include common JLCPCB variations.
+
+    JLCPCB uses specific naming conventions that differ from common names:
+    - TQFP-44 → QFP-44 (JLCPCB doesn't use "T" prefix)
+    - QFN-56 → LQFN-56, WQFN-56, VQFN-56 (various QFN prefixes)
+    - UFQFPN-48 → UFQFPN-48 (same)
+
+    Returns list of package patterns to search for.
+    """
+    pkg_upper = pkg.upper()
+    variants = [pkg_upper]
+
+    # QFP variants: TQFP/LQFP/PQFP → also try bare QFP
+    qfp_match = re.match(r'^([TLP])?QFP-?(\d+)(.*)$', pkg_upper)
+    if qfp_match:
+        prefix, pins, suffix = qfp_match.groups()
+        # Add bare QFP-XX for TQFP/LQFP/PQFP
+        if prefix:
+            variants.append(f"QFP-{pins}{suffix or ''}")
+        # Also try with other prefixes
+        for p in ['', 'T', 'L', 'P', 'H']:
+            var = f"{p}QFP-{pins}" if p else f"QFP-{pins}"
+            if var not in variants:
+                variants.append(var)
+
+    # QFN variants: try LQFN, WQFN, VQFN, TQFN, bare QFN
+    qfn_match = re.match(r'^([LWVTU])?QFN-?(\d+)(.*)$', pkg_upper)
+    if qfn_match:
+        prefix, pins, suffix = qfn_match.groups()
+        # Try all common QFN prefixes
+        for p in ['', 'L', 'W', 'V', 'T', 'U']:
+            var = f"{p}QFN-{pins}" if p else f"QFN-{pins}"
+            if var not in variants:
+                variants.append(var)
+
+    # UFQFPN is its own thing, keep as-is
+    # SOIC/SOP/SO variants
+    soic_match = re.match(r'^(SOIC|SO|SOP)-?(\d+)(.*)$', pkg_upper)
+    if soic_match:
+        _, pins, suffix = soic_match.groups()
+        for p in ['SOIC-', 'SOP-', 'SO-']:
+            var = f"{p}{pins}"
+            if var not in variants:
+                variants.append(var)
+
+    return variants
+
+
 def build_package_clause(packages: list[str]) -> tuple[str, list[str]]:
     """Build package filter clause.
 
@@ -136,13 +186,26 @@ def build_package_clause(packages: list[str]) -> tuple[str, list[str]]:
     Notes:
         Uses prefix matching (LIKE 'pkg%') to handle parenthetical variations.
         E.g., "DO-214AC" matches both "DO-214AC" and "DO-214AC(SMA)".
+        Also expands package aliases (TQFP-44 → QFP-44, QFN-56 → LQFN-56, etc.)
     """
     if packages:
+        # Expand packages to include common variations
+        expanded_packages = []
+        for pkg in packages:
+            expanded_packages.extend(_expand_package_aliases(pkg))
+        # Dedupe while preserving order
+        seen = set()
+        unique_packages = []
+        for pkg in expanded_packages:
+            if pkg not in seen:
+                seen.add(pkg)
+                unique_packages.append(pkg)
+
         # Use LIKE with prefix matching to handle parenthetical variations
         # e.g., "DO-214AC" should match "DO-214AC(SMA)"
         or_conditions = []
         params = []
-        for pkg in packages:
+        for pkg in unique_packages:
             # Escape LIKE special characters
             escaped_pkg = pkg.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
             or_conditions.append("package LIKE ? ESCAPE '\\'")
@@ -295,11 +358,22 @@ def build_spec_filter_clauses(
         elif spec_filter.operator == "=":
             # String exact value match (non-numeric)
             use_substring_match = spec_filter.name.lower() == "interface"
+            # For "Impedance @ Frequency", use prefix match to match "100Ω@100MHz" from "100Ohm"
+            is_impedance_at_freq = spec_filter.name.lower() == "impedance @ frequency"
 
             or_conditions = []
             for name in attr_names:
                 if use_substring_match:
                     pattern = f'%"{_escape_like(name)}"%{_escape_like(spec_filter.value)}%'
+                elif is_impedance_at_freq:
+                    # Extract numeric part from value like "100Ohm" -> "100"
+                    # to match database format "100Ω@100MHz"
+                    numeric_match = re.match(r'^(\d+(?:\.\d+)?)', spec_filter.value)
+                    if numeric_match:
+                        numeric_part = numeric_match.group(1)
+                        pattern = f'%"{_escape_like(name)}", "{numeric_part}%'
+                    else:
+                        pattern = f'%"{_escape_like(name)}", "{_escape_like(spec_filter.value)}%'
                 else:
                     pattern = f'%"{_escape_like(name)}", "{_escape_like(spec_filter.value)}"%'
                 or_conditions.append("attributes LIKE ? ESCAPE '\\'")

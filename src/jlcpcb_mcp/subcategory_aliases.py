@@ -442,9 +442,22 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "level shifter": "translators, level shifters",
     "voltage translator": "translators, level shifters",
     "uart": "uart",
-    "usb uart": "uart",
-    "uart to usb": "uart",
-    "usb to uart": "uart",
+    # USB-to-UART converters (CH340, CP2102, FT232) are in "USB Converters", not "UART"
+    "usb uart": "usb converters",
+    "uart to usb": "usb converters",
+    "usb to uart": "usb converters",
+    "usb serial": "usb converters",
+    "usb to serial": "usb converters",
+    "serial to usb": "usb converters",
+    "usb converter": "usb converters",
+    # ==========================================================================
+    # CURRENT SENSE AMPLIFIERS (actual DB: "Current Sense Amplifiers")
+    # INA219, INA226, etc. are current sense amplifiers, not sensors
+    # ==========================================================================
+    "current sense amplifier": "current sense amplifiers",
+    "current sense amp": "current sense amplifiers",
+    "current monitor": "current sense amplifiers",
+    "power monitor": "current sense amplifiers",
 }
 
 

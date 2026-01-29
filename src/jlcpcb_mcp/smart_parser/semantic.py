@@ -112,10 +112,11 @@ def extract_semantic_descriptors(query: str) -> tuple[list[SemanticFilter], str]
     query_lower = query.lower()
 
     for descriptor in _SORTED_DESCRIPTORS:
-        if descriptor in query_lower:
+        # Use word boundary matching to avoid "blue" matching inside "bluetooth"
+        pattern = re.compile(r'\b' + re.escape(descriptor) + r'\b', re.IGNORECASE)
+        if pattern.search(query_lower):
             filters.extend(SEMANTIC_DESCRIPTORS[descriptor])
             # Remove from query (case-insensitive)
-            pattern = re.compile(re.escape(descriptor), re.IGNORECASE)
             remaining = pattern.sub('', remaining).strip()
             remaining = re.sub(r'\s+', ' ', remaining)
             query_lower = remaining.lower()

@@ -83,6 +83,15 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
     },
     "ferrite bead": {
         "current": "Current Rating",
+        "resistance": "Impedance @ Frequency",  # "100 ohm" -> impedance at 100MHz
+    },
+    "ferrite beads": {
+        "current": "Current Rating",
+        "resistance": "Impedance @ Frequency",
+    },
+    "ferrite": {
+        "current": "Current Rating",
+        "resistance": "Impedance @ Frequency",
     },
 
     # Capacitors
