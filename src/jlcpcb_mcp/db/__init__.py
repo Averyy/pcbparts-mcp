@@ -14,6 +14,7 @@ import threading
 from pathlib import Path
 from typing import Any, Literal
 
+from ..config import DEFAULT_MIN_STOCK
 from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
 from .connection import build_database, load_caches
 from .lookup import get_by_lcsc, get_by_lcsc_batch
@@ -160,7 +161,7 @@ class ComponentDatabase:
         spec_filters: list[SpecFilter] | None = None,
         library_type: str | None = None,
         prefer_no_fee: bool = True,
-        min_stock: int = 100,
+        min_stock: int = DEFAULT_MIN_STOCK,
         package: str | None = None,
         packages: list[str] | None = None,
         manufacturer: str | None = None,
@@ -238,7 +239,7 @@ class ComponentDatabase:
         subcategory_id: int,
         primary_spec: str | None = None,
         primary_value: Any = None,
-        min_stock: int = 100,
+        min_stock: int = DEFAULT_MIN_STOCK,
         library_type: str | None = None,
         prefer_no_fee: bool = True,
         limit: int = 100,

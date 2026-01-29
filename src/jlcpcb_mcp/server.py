@@ -348,7 +348,7 @@ async def search(
     subcategory_id: int | None = None,
     subcategory_name: str | None = None,
     spec_filters: list[dict[str, str]] | str | None = None,
-    min_stock: int = 100,
+    min_stock: int = DEFAULT_MIN_STOCK,
     library_type: str | None = None,
     prefer_no_fee: bool = True,
     package: str | None = None,
@@ -358,7 +358,7 @@ async def search(
     sort_by: Literal["stock", "price"] = "stock",
     limit: int = 50,
 ) -> dict:
-    """Fast DB search with natural language parsing and parametric filters. High-stock parts only (>=100).
+    """Fast DB search with natural language parsing and parametric filters. High-stock parts only (>=50).
 
     Args:
         query: Search query - supports natural language like:
@@ -375,7 +375,7 @@ async def search(
             - value: Value with units (e.g., "2.5V", "10uF", "20mΩ")
             Example: [{"name": "Vgs(th)", "op": "<", "value": "2.5V"}]
 
-        min_stock: Minimum stock (default 100). Database only indexes stock >= 100.
+        min_stock: Minimum stock (default 50). Database only indexes stock >= 50.
         library_type: "basic", "preferred", "extended", or None (all)
         prefer_no_fee: Sort basic/preferred first (default True)
         package: Single package filter (e.g., "0603", "SOT-23")
@@ -633,7 +633,7 @@ async def get_subcategories(category_id: int) -> dict:
 )
 async def find_alternatives(
     lcsc: str,
-    min_stock: int = 100,
+    min_stock: int = DEFAULT_MIN_STOCK,
     same_package: bool = False,
     library_type: str | None = None,
     has_easyeda_footprint: bool | None = None,
@@ -646,7 +646,7 @@ async def find_alternatives(
 
     Args:
         lcsc: LCSC part code to find alternatives for (e.g., "C2557")
-        min_stock: Minimum stock for alternatives (default: 100)
+        min_stock: Minimum stock for alternatives (default: 50)
         same_package: If True, only return parts with the same package size
         library_type: Filter alternatives by library type:
             - "basic": Only basic parts (no assembly fee)

@@ -151,7 +151,7 @@ async def test_pagination() -> TestResult:
         "currentPage": 1,
         "pageSize": 1,
         "searchSource": "search",
-        "startStockNumber": 100,
+        "startStockNumber": 50,
         "searchType": 3,
         "firstSortId": 1,  # Resistors category
         "firstSortName": "Resistors",
@@ -236,7 +236,7 @@ async def test_rate_limiting() -> TestResult:
             "currentPage": page,
             "pageSize": 100,
             "searchSource": "search",
-            "startStockNumber": 100,
+            "startStockNumber": 50,
             "searchType": 3,
             "secondSortId": subcat_id,
         }
@@ -318,7 +318,7 @@ async def test_data_completeness() -> TestResult:
             "currentPage": 1,
             "pageSize": 10,
             "searchSource": "search",
-            "startStockNumber": 100,
+            "startStockNumber": 50,
             "searchType": 3,
             "firstSortId": cat_id,
             "firstSortName": cat_name,
@@ -417,13 +417,13 @@ async def test_timing() -> TestResult:
         "currentPage": 1,
         "pageSize": 1,
         "searchSource": "search",
-        "startStockNumber": 100,
+        "startStockNumber": 50,
     }
 
     data = await make_request(params)
     total_parts = data.get("data", {}).get("componentPageInfo", {}).get("total", 0)
 
-    print(f"Total parts (stock >= 100): {total_parts:,}")
+    print(f"Total parts (stock >= 50): {total_parts:,}")
 
     # Calculate estimates
     pages_needed = (total_parts + 99) // 100

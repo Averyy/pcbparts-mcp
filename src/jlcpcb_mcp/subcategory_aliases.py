@@ -411,6 +411,9 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # ==========================================================================
     "eeprom": "eeprom",
     "flash": "nor flash",
+    "nor flash": "nor flash",
+    "nand": "nand flash",
+    "nand flash": "nand flash",
     "sram": "sram",
     "fram": "fram",
     # ==========================================================================

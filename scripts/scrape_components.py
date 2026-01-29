@@ -17,6 +17,7 @@ import logging
 import os
 import random
 import re
+import sys
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -24,6 +25,11 @@ from pathlib import Path
 from typing import Any
 
 from curl_cffi import requests as curl_requests
+
+# Add parent directory to path for imports when running as script
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
+from jlcpcb_mcp.config import DEFAULT_MIN_STOCK
 
 # Configure logging for scraper output
 logging.basicConfig(
@@ -35,7 +41,7 @@ logger = logging.getLogger(__name__)
 # === Configuration ===
 
 JLCPCB_SEARCH_URL = "https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList"
-STOCK_THRESHOLD = 100
+STOCK_THRESHOLD = DEFAULT_MIN_STOCK  # Minimum stock to include in database
 PAGE_SIZE = 100
 REQUEST_TIMEOUT = 15.0
 MAX_RETRIES = 3

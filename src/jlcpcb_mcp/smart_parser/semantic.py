@@ -134,6 +134,12 @@ NOISE_WORDS = {
     'receptacle', 'jack', 'plug',
 }
 
+# Connector-specific noise words - only removed when connector subcategory is detected
+# These describe connector functionality but aren't searchable in JLCPCB descriptions
+CONNECTOR_NOISE_WORDS = {
+    'power', 'data', 'signal', 'charging', 'delivery', 'pd',
+}
+
 
 def remove_noise_words(query: str) -> str:
     """Remove common noise words from query.
