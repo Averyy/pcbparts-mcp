@@ -255,6 +255,55 @@ def build_mounting_type_clause(mounting_type: str | None) -> tuple[str, list[str
     return "", []
 
 
+def _group_multi_value_filters(spec_filters: list[SpecFilter]) -> list[SpecFilter | tuple[str, list[str]]]:
+    """Group filters with same spec_name and operator="=" into OR groups.
+
+    For attributes like Interface where a component can have multiple values
+    (e.g., "I2C、SPI"), when the user searches for "I2C SPI", we should match
+    components that have EITHER value, not require both (OR logic, not AND).
+
+    Args:
+        spec_filters: List of SpecFilter objects
+
+    Returns:
+        List of either SpecFilter objects or tuples of (spec_name, [values])
+        for grouped filters
+    """
+    from collections import defaultdict
+
+    # Group filters by (normalized_name, operator)
+    groups: dict[tuple[str, str], list[SpecFilter]] = defaultdict(list)
+    for f in spec_filters:
+        key = (f.name.lower(), f.operator)
+        groups[key].append(f)
+
+    # Build result list
+    result: list[SpecFilter | tuple[str, list[str]]] = []
+    processed_keys: set[tuple[str, str]] = set()
+
+    for spec_filter in spec_filters:
+        key = (spec_filter.name.lower(), spec_filter.operator)
+
+        if key in processed_keys:
+            continue
+
+        filters_in_group = groups[key]
+
+        # If operator is "=" and multiple values exist, create an OR group
+        # This applies to Interface, Type, and other categorical attributes
+        if spec_filter.operator == "=" and len(filters_in_group) > 1:
+            # Create a grouped filter (spec_name, [values])
+            values = [f.value for f in filters_in_group]
+            result.append((spec_filter.name, values))
+            processed_keys.add(key)
+        else:
+            # Keep individual filter (will be AND'd with other filters)
+            result.append(spec_filter)
+            processed_keys.add(key)
+
+    return result
+
+
 def build_spec_filter_clauses(
     spec_filters: list[SpecFilter],
 ) -> tuple[list[str], list[Any], list[tuple[SpecFilter, set[str], Any, float | None]]]:
@@ -274,7 +323,44 @@ def build_spec_filter_clauses(
     params: list[Any] = []
     post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]] = []
 
-    for spec_filter in spec_filters:
+    # Group multi-value "=" filters (like multiple Interface values) for OR logic
+    grouped_filters = _group_multi_value_filters(spec_filters)
+
+    for item in grouped_filters:
+        # Handle grouped filters (spec_name, [values])
+        if isinstance(item, tuple):
+            spec_name, values = item
+            attr_names = get_attribute_names(spec_name)
+
+            # Build OR clause for all values: (Interface LIKE '%I2C%' OR Interface LIKE '%SPI%')
+            use_substring_match = spec_name.lower() == "interface"
+            is_impedance_at_freq = spec_name.lower() == "impedance @ frequency"
+
+            or_conditions = []
+            for value in values:
+                for name in attr_names:
+                    if use_substring_match:
+                        pattern = f'%"{_escape_like(name)}"%{_escape_like(value)}%'
+                    elif is_impedance_at_freq:
+                        numeric_match = re.match(r'^(\d+(?:\.\d+)?)', value)
+                        if numeric_match:
+                            numeric_part = numeric_match.group(1)
+                            pattern = f'%"{_escape_like(name)}", "{numeric_part}%'
+                        else:
+                            pattern = f'%"{_escape_like(name)}", "{_escape_like(value)}%'
+                    else:
+                        pattern = f'%"{_escape_like(name)}", "{_escape_like(value)}"%'
+                    or_conditions.append("attributes LIKE ? ESCAPE '\\'")
+                    params.append(pattern)
+
+            if or_conditions:
+                combined = " OR ".join(or_conditions)
+                sql_clauses.append(f"AND ({combined})")
+
+            continue
+
+        # Handle individual filter
+        spec_filter = item
         # Get all possible attribute names (including aliases)
         attr_names = get_attribute_names(spec_filter.name)
 
