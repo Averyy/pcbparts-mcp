@@ -38,6 +38,10 @@ PACKAGE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     # BGA packages
     (re.compile(r'\b((?:FC|W|T|M|U|P|F)?BGA-?\d+(?:\([^)]+\))?)\b', re.IGNORECASE), 'bga'),
 
+    # CSP packages (Chip Scale Package)
+    # Includes WLCSP (Wafer-Level CSP), LFCSP (Lead Frame CSP), UCSP (Ultra CSP), bare CSP, etc.
+    (re.compile(r'\b((?:WL|LF|U|FC|V)?CSP-?\d+(?:-EP)?(?:\([^)]+\))?)\b', re.IGNORECASE), 'csp'),
+
     # DIP/SIP packages
     (re.compile(r'\b((?:P|S|SK|C)?DIP-?\d+(?:\([^)]+\))?|SIP-?\d+)\b', re.IGNORECASE), 'dip'),
 

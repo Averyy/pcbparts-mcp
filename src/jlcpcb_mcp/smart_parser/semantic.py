@@ -131,13 +131,14 @@ NOISE_WORDS = {
     'antenna',  # Common in RF connector context but not in part descriptions
     # Generic connector terms not used in JLCPCB descriptions
     # JLCPCB uses "Female"/"Male" instead of "Receptacle"/"Plug"
-    'receptacle', 'jack', 'plug',
+    'receptacle', 'jack', 'plug', 'socket',
 }
 
 # Connector-specific noise words - only removed when connector subcategory is detected
 # These describe connector functionality but aren't searchable in JLCPCB descriptions
 CONNECTOR_NOISE_WORDS = {
     'power', 'data', 'signal', 'charging', 'delivery', 'pd',
+    'male', 'female',  # Gender terms not consistently indexed in connector descriptions
 }
 
 

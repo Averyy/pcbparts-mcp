@@ -781,6 +781,60 @@ class TestSmartQueryParsing:
         assert len(interface_filters) == 1
         assert interface_filters[0].value == "I2C"
 
+    def test_rj45_not_treated_as_model_number(self):
+        """RJ45 and similar connector codes should not be treated as model numbers."""
+        from jlcpcb_mcp.smart_parser import parse_smart_query
+
+        # Test RJ45
+        result = parse_smart_query("RJ45 connector THT")
+        assert result.model_number is None
+        assert result.subcategory == "ethernet connectors / modular connectors (rj45 rj11)"
+        assert result.mounting_type == "Through Hole"
+
+        # Test other RJ variants
+        for code in ["RJ11", "RJ12"]:
+            result = parse_smart_query(f"{code} connector")
+            assert result.model_number is None, f"{code} should not be detected as model number"
+
+    def test_magnetics_synonym_for_filtered_connectors(self):
+        """'magnetics' should be replaced with 'filtered' for connector searches."""
+        from jlcpcb_mcp.smart_parser import parse_smart_query
+
+        result = parse_smart_query("RJ45 magnetics THT")
+
+        # Should detect as ethernet connector
+        assert result.subcategory == "ethernet connectors / modular connectors (rj45 rj11)"
+        assert result.mounting_type == "Through Hole"
+
+        # "magnetics" should be replaced with "filtered" in remaining text
+        assert result.remaining_text == "filtered"
+
+        # Test that "magnetics" -> "filtered" replacement only happens for connectors
+        result_non_connector = parse_smart_query("magnetics sensor")
+        assert "filtered" not in result_non_connector.remaining_text.lower()
+
+    def test_csp_package_detection(self):
+        """CSP package variants (WLCSP, LFCSP, UCSP, etc.) should be detected correctly."""
+        from jlcpcb_mcp.smart_parser import parse_smart_query
+
+        test_cases = [
+            ("STM32L4 WLCSP144", "WLCSP144"),
+            ("STM32F4 LFCSP64", "LFCSP64"),
+            ("sensor UCSP-20", "UCSP-20"),
+            ("chip CSP100", "CSP100"),
+            ("IC VCSP48", "VCSP48"),
+        ]
+
+        for query, expected_package in test_cases:
+            result = parse_smart_query(query)
+            assert result.package == expected_package, \
+                f"Query '{query}' should detect package '{expected_package}', got '{result.package}'"
+
+        # CSP packages should not be treated as model numbers
+        result = parse_smart_query("CSP100")
+        assert result.package == "CSP100"
+        assert result.model_number is None
+
 
 class TestListAttributes:
     """Test attribute discovery endpoint."""

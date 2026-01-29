@@ -200,7 +200,12 @@ class ComponentDatabase:
         if not self._search_engine:
             return {"error": "Database not available", "results": [], "total": 0}
 
-        return self._search_engine.search(
+        # Clamp min_stock to match database reality (database only has parts with stock >= ~50)
+        # This prevents misleading searches where users think they can find 0-stock parts
+        original_min_stock = min_stock
+        min_stock = max(min_stock, DEFAULT_MIN_STOCK)
+
+        result = self._search_engine.search(
             query=query,
             subcategory_id=subcategory_id,
             subcategory_name=subcategory_name,
@@ -219,6 +224,16 @@ class ComponentDatabase:
             limit=limit,
             offset=offset,
         )
+
+        # Add warning if min_stock was clamped
+        if original_min_stock < DEFAULT_MIN_STOCK:
+            result["warning"] = (
+                f"Database only contains parts with stock >= {DEFAULT_MIN_STOCK}. "
+                f"Requested min_stock={original_min_stock} was increased to {DEFAULT_MIN_STOCK}. "
+                f"Use search_api tool for low-stock or out-of-stock parts."
+            )
+
+        return result
 
     def get_by_lcsc(self, lcsc: str) -> dict[str, Any] | None:
         """Get a single component by LCSC code."""
@@ -248,6 +263,8 @@ class ComponentDatabase:
         self._ensure_db()
         if not self._conn:
             return []
+        # Clamp min_stock to database minimum
+        min_stock = max(min_stock, DEFAULT_MIN_STOCK)
         return find_by_subcategory(
             conn=self._conn,
             subcategories=self._subcategories,
