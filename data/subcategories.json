@@ -189,6 +189,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1244,6 +1249,11 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
+  "2037": {
+    "name": "Non-metal Gasket",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
   "1662": {
     "name": "Nut",
     "category_id": 47,
@@ -1276,6 +1286,11 @@
   },
   "948": {
     "name": "Other Seals",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "941": {
+    "name": "Other studs",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
