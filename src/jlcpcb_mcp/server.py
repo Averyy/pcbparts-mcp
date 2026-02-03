@@ -75,10 +75,6 @@ mcp = FastMCP(
     name="jlcmcp",
     instructions="JLCPCB component search for PCB assembly. No auth required. Use search to find components, get_part for details.",
     lifespan=lifespan,
-    icons=[
-        Icon(src="https://jlcmcp.dev/favicon.svg", mimeType="image/svg+xml"),
-        Icon(src="https://jlcmcp.dev/web-app-manifest-512x512.png", mimeType="image/png", sizes=["512x512"]),
-    ],
 )
 
 
