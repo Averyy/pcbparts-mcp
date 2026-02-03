@@ -1554,11 +1554,6 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
-  "1671": {
-    "name": "Ceramic antenna",
-    "category_id": 46,
-    "category_name": "Industrial control electrical"
-  },
   "956": {
     "name": "Ceramic plugin capacitor",
     "category_id": 46,
@@ -1706,11 +1701,6 @@
   },
   "1205": {
     "name": "Miniature leakage protection circuit breaker",
-    "category_id": 46,
-    "category_name": "Industrial control electrical"
-  },
-  "1673": {
-    "name": "Other antennas",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
@@ -1913,6 +1903,11 @@
     "name": "Wire organizer",
     "category_id": 46,
     "category_name": "Industrial control electrical"
+  },
+  "94": {
+    "name": "Rust preventive/lubricant",
+    "category_id": 58,
+    "category_name": "Industrial reagents/lubrication/rust removal"
   },
   "3510": {
     "name": "Body Worn Camera",
@@ -2569,8 +2564,18 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
+  "85": {
+    "name": "Power adapter",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "3275": {
     "name": "Power cord",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "1207": {
+    "name": "Reel",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -2791,6 +2796,11 @@
   },
   "3627": {
     "name": "Air Pump",
+    "category_id": 55,
+    "category_name": "Pneumatic/hydraulic/valves/pumps"
+  },
+  "1203": {
+    "name": "Other pipes",
     "category_id": 55,
     "category_name": "Pneumatic/hydraulic/valves/pumps"
   },
@@ -3729,11 +3739,6 @@
     "category_id": 61,
     "category_name": "Wires and cables"
   },
-  "1452": {
-    "name": "Flat Flexible Jumpers, Cables (FFC, FPC)",
-    "category_id": 61,
-    "category_name": "Wires and cables"
-  },
   "181": {
     "name": "Hub/Adapter",
     "category_id": 61,
@@ -3791,6 +3796,11 @@
   },
   "84": {
     "name": "USB cable/data cable",
+    "category_id": 61,
+    "category_name": "Wires and cables"
+  },
+  "1443": {
+    "name": "Video Cables (DVI, HDMI)",
     "category_id": 61,
     "category_name": "Wires and cables"
   },
