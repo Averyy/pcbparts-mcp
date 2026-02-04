@@ -1284,11 +1284,6 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
-  "941": {
-    "name": "Other studs",
-    "category_id": 47,
-    "category_name": "Hardware Fasteners"
-  },
   "778": {
     "name": "padlock",
     "category_id": 47,
@@ -1903,11 +1898,6 @@
     "name": "Wire organizer",
     "category_id": 46,
     "category_name": "Industrial control electrical"
-  },
-  "94": {
-    "name": "Rust preventive/lubricant",
-    "category_id": 58,
-    "category_name": "Industrial reagents/lubrication/rust removal"
   },
   "3510": {
     "name": "Body Worn Camera",
@@ -3591,6 +3581,16 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "1758": {
+    "name": "Hex screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3660": {
+    "name": "torque screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
