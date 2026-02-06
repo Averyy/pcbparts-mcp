@@ -2549,6 +2549,11 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "3531": {
+    "name": "Network Switch",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3584,8 +3589,13 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "2336": {
-    "name": "Putty knife",
+  "934": {
+    "name": "Electric screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "1757": {
+    "name": "Palm screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
