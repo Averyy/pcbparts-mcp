@@ -254,6 +254,11 @@
     "category_id": 11,
     "category_name": "Circuit Protection"
   },
+  "3398": {
+    "name": "Cleaner",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -823,6 +828,11 @@
     "name": "V-Audio Modules",
     "category_id": 43,
     "category_name": "Educational Kits"
+  },
+  "2231": {
+    "name": "Pre-ordered Products",
+    "category_id": 15,
+    "category_name": "Electronic Tools/Instruments/Consumables"
   },
   "3063": {
     "name": "ADI",
@@ -1899,6 +1909,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "94": {
+    "name": "Rust preventive/lubricant",
+    "category_id": 58,
+    "category_name": "Industrial reagents/lubrication/rust removal"
+  },
   "3510": {
     "name": "Body Worn Camera",
     "category_id": 26,
@@ -2548,11 +2563,6 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
-  },
-  "3531": {
-    "name": "Network Switch",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
@@ -3594,8 +3604,13 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "1757": {
-    "name": "Palm screwdriver",
+  "1754": {
+    "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "1758": {
+    "name": "Hex screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
