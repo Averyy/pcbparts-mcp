@@ -189,6 +189,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -828,11 +833,6 @@
     "name": "V-Audio Modules",
     "category_id": 43,
     "category_name": "Educational Kits"
-  },
-  "2231": {
-    "name": "Pre-ordered Products",
-    "category_id": 15,
-    "category_name": "Electronic Tools/Instruments/Consumables"
   },
   "3063": {
     "name": "ADI",
@@ -3599,18 +3599,8 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "934": {
-    "name": "Electric screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1758": {
-    "name": "Hex screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
