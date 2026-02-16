@@ -8,6 +8,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "18080:8080"
+    env_file:
+      - path: .env
+        required: false
     environment:
       - HTTP_PORT=8080
       - RATE_LIMIT_REQUESTS=100

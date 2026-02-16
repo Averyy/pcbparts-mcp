@@ -11,6 +11,9 @@ services:
       - "8080:8080"
     networks:
       - web
+    env_file:
+      - path: .env
+        required: false
     environment:
       - HTTP_PORT=8080
       - RATE_LIMIT_REQUESTS=100

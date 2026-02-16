@@ -4,6 +4,84 @@ import sqlite3
 from typing import Any
 
 from ..search.result import row_to_dict
+from ..search.mpn import normalize_mpn
+
+
+def get_by_mpn(
+    conn: sqlite3.Connection,
+    mpn: str,
+    subcategories: dict[int, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Find components by manufacturer part number.
+
+    Tries exact match first (case-insensitive), then falls back to
+    FTS search with MPN normalization for variant matching.
+
+    Args:
+        conn: SQLite connection
+        mpn: Manufacturer part number (e.g., "LM358P", "STM32F103C8T6-TR")
+        subcategories: Dict mapping subcategory IDs to info
+
+    Returns:
+        List of matching component dicts, best matches first.
+        Empty list if no matches found.
+    """
+    mpn = mpn.strip()
+    if not mpn:
+        return []
+
+    results: list[dict[str, Any]] = []
+    seen_lcsc: set[str] = set()
+
+    # 1. Exact match on mpn column (case-insensitive)
+    cursor = conn.execute(
+        "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC",
+        [mpn],
+    )
+    for row in cursor:
+        part = row_to_dict(row, subcategories)
+        results.append(part)
+        seen_lcsc.add(part["lcsc"])
+
+    # 2. Try normalized MPN variants (strip -TR, insert T, etc.)
+    if not results:
+        variants = normalize_mpn(mpn)
+        for variant in variants:
+            cursor = conn.execute(
+                "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC",
+                [variant],
+            )
+            for row in cursor:
+                part = row_to_dict(row, subcategories)
+                if part["lcsc"] not in seen_lcsc:
+                    results.append(part)
+                    seen_lcsc.add(part["lcsc"])
+            if results:
+                break
+
+    # 3. Fall back to FTS if no exact matches
+    if not results:
+        for variant in normalize_mpn(mpn):
+            # Quote and add prefix match for FTS
+            escaped = variant.replace('"', '""')
+            fts_query = f'"{escaped}"*'
+            cursor = conn.execute(
+                """SELECT c.* FROM components c
+                   JOIN components_fts f ON c.lcsc = f.lcsc
+                   WHERE f.components_fts MATCH ?
+                   ORDER BY c.stock DESC
+                   LIMIT 10""",
+                [fts_query],
+            )
+            for row in cursor:
+                part = row_to_dict(row, subcategories)
+                if part["lcsc"] not in seen_lcsc:
+                    results.append(part)
+                    seen_lcsc.add(part["lcsc"])
+            if results:
+                break
+
+    return results
 
 
 def get_by_lcsc(

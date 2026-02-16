@@ -6,6 +6,8 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
+from .config import EXTENDED_PART_ASSEMBLY_FEE
+
 
 @dataclass
 class BOMIssue:
@@ -380,7 +382,7 @@ def generate_summary(
         if part.library_type == "extended":
             extended_parts_count += 1
 
-    extended_parts_fee = extended_parts_count * 3.0  # $3 per extended part
+    extended_parts_fee = extended_parts_count * EXTENDED_PART_ASSEMBLY_FEE
     total_with_fees = round(estimated_cost + extended_parts_fee, 2)
 
     # Check if all parts have sufficient stock
@@ -520,7 +522,7 @@ def check_extended_part(part: BOMPart) -> BOMIssue | None:
             lcsc=part.lcsc,
             designators=part.designators,
             severity="warning",
-            issue="Extended part: +$3 assembly fee",
+            issue=f"Extended part: +${EXTENDED_PART_ASSEMBLY_FEE:.0f} assembly fee",
         )
     return None
 

@@ -97,7 +97,7 @@ def build_library_type_clause(library_type: str | None) -> str:
     """Build library type filter clause.
 
     Args:
-        library_type: One of "basic", "preferred", "extended", or None
+        library_type: One of "basic", "preferred", "extended", "no_fee", or None
 
     Returns:
         SQL clause string (no params needed)
@@ -108,6 +108,8 @@ def build_library_type_clause(library_type: str | None) -> str:
         return "AND library_type = 'p'"
     elif library_type == "extended":
         return "AND library_type = 'e'"
+    elif library_type == "no_fee":
+        return "AND library_type IN ('b', 'p')"
     return ""
 
 

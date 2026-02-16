@@ -12,6 +12,7 @@ RUN pip install --no-cache-dir \
     "mcp>=1.3.0" \
     "fastmcp>=2.0.0" \
     "curl_cffi>=0.7.0" \
+    "httpx>=0.27.0" \
     "uvicorn[standard]" \
     "starlette" \
     "pydantic>=2.0"

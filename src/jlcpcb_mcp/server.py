@@ -15,8 +15,14 @@ from starlette.responses import JSONResponse
 from starlette.routing import Route
 
 from . import __version__
-from .config import RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE
+from .config import (
+    RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_BOM_PARTS,
+    MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
+)
 from .client import JLCPCBClient
+from .mouser import MouserClient
+from .digikey import DigiKeyClient
+from .cse import CSEClient
 from .db import get_db, close_db
 from .search import SpecFilter
 from .smart_parser import parse_smart_query, merge_spec_filters
@@ -43,13 +49,16 @@ logger = logging.getLogger(__name__)
 
 # Global state
 _client: JLCPCBClient | None = None
+_mouser_client: MouserClient | None = None
+_digikey_client: DigiKeyClient | None = None
+_cse_client: CSEClient | None = None
 _categories: list[dict[str, Any]] = []  # Live category cache
 
 
 @asynccontextmanager
 async def lifespan(app):
     """Manage client lifecycle, build DB, and load categories on startup."""
-    global _client, _categories
+    global _client, _mouser_client, _digikey_client, _cse_client, _categories
     _client = JLCPCBClient()
 
     # Build/load DB on startup (not on first request)
@@ -63,8 +72,28 @@ async def lifespan(app):
     _client.set_categories(_categories)
     logger.info(f"Loaded {len(_categories)} categories from database")
 
+    # Initialize Mouser client if API key is configured
+    if MOUSER_API_KEY:
+        _mouser_client = MouserClient(MOUSER_API_KEY)
+        logger.info("Mouser client initialized")
+
+    # Initialize DigiKey client if credentials are configured
+    if DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET:
+        _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET)
+        logger.info("DigiKey client initialized")
+
+    # CSE client always available (no API key needed)
+    _cse_client = CSEClient()
+    logger.info("CSE client initialized")
+
     yield
 
+    if _cse_client:
+        await _cse_client.close()
+    if _mouser_client:
+        await _mouser_client.close()
+    if _digikey_client:
+        await _digikey_client.close()
     if _client:
         await _client.close()
     close_db()
@@ -181,7 +210,7 @@ def _parse_list_param(value: list[str] | str | None) -> list[str] | None:
             if isinstance(parsed, list):
                 return parsed
         except json.JSONDecodeError:
-            pass
+            logger.debug(f"Failed to parse list parameter as JSON: {value[:100]!r}")
     return None
 
 
@@ -199,8 +228,20 @@ def _parse_parts_param(value: list[dict[str, Any]] | str) -> list[dict[str, Any]
             if isinstance(parsed, list):
                 return parsed
         except json.JSONDecodeError:
-            pass
+            logger.debug(f"Failed to parse parts parameter as JSON: {value[:100]!r}")
     return []
+
+
+def _validate_bom_parts(parsed_parts: list[dict[str, Any]]) -> dict | None:
+    """Validate parsed BOM parts list.
+
+    Returns error dict if validation fails, None if valid.
+    """
+    if not parsed_parts:
+        return {"error": "No parts provided. The 'parts' parameter must be a non-empty list of part objects."}
+    if len(parsed_parts) > MAX_BOM_PARTS:
+        return {"error": f"Too many parts ({len(parsed_parts)}). Maximum is {MAX_BOM_PARTS} parts per BOM."}
+    return None
 
 
 # Tools
@@ -214,7 +255,7 @@ def _parse_parts_param(value: list[dict[str, Any]] | str) -> list[dict[str, Any]
         openWorldHint=False,
     )
 )
-async def search_api(
+async def jlc_search_api(
     query: str | None = None,
     category_id: int | None = None,
     subcategory_id: int | None = None,
@@ -316,6 +357,7 @@ def _parse_spec_filters(filters: list[dict[str, str]] | str | None) -> list[Spec
         try:
             filters = json.loads(filters)
         except json.JSONDecodeError:
+            logger.debug(f"Failed to parse spec_filters as JSON: {filters[:100]!r}")
             return None
 
     if not isinstance(filters, list):
@@ -325,7 +367,7 @@ def _parse_spec_filters(filters: list[dict[str, str]] | str | None) -> list[Spec
     for f in filters:
         if isinstance(f, dict) and "name" in f and "op" in f and "value" in f:
             op = f["op"]
-            if op in ("=", ">=", "<=", ">", "<", "!="):
+            if op in ("=", ">=", "<=", ">", "<"):
                 result.append(SpecFilter(f["name"], op, f["value"]))
     return result if result else None
 
@@ -339,7 +381,7 @@ def _parse_spec_filters(filters: list[dict[str, str]] | str | None) -> list[Spec
         openWorldHint=False,
     )
 )
-async def search(
+async def jlc_search(
     query: str | None = None,
     subcategory_id: int | None = None,
     subcategory_name: str | None = None,
@@ -372,7 +414,7 @@ async def search(
             Example: [{"name": "Vgs(th)", "op": "<", "value": "2.5V"}]
 
         min_stock: Minimum stock (default 50). Database only indexes stock >= 50.
-        library_type: "basic", "preferred", "extended", or None (all)
+        library_type: "basic", "preferred", "no_fee", "extended", or None (all)
         prefer_no_fee: Sort basic/preferred first (default True)
         package: Single package filter (e.g., "0603", "SOT-23")
         packages: Multiple packages (OR logic): ["0402", "0603", "0805"]
@@ -477,7 +519,7 @@ async def search(
         openWorldHint=False,
     )
 )
-async def list_attributes(
+async def jlc_list_attributes(
     subcategory_id: int | None = None,
     subcategory_name: str | None = None,
 ) -> dict:
@@ -524,21 +566,49 @@ async def list_attributes(
         openWorldHint=False,
     )
 )
-async def get_part(lcsc: str) -> dict:
+async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     """Get full details for a specific JLCPCB part.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
+        mpn: Manufacturer part number (e.g., "LM358P", "STM32F103C8T6").
+             Searches local DB by exact MPN match, then normalized variants,
+             then full-text search. Useful for finding the JLCPCB equivalent
+             of a part from another distributor or reference design.
+
+    One of lcsc or mpn must be provided. If both are provided, lcsc takes precedence.
 
     Returns:
-        Full part details including description, all pricing tiers, datasheet URL,
+        For lcsc: Full part details including description, all pricing tiers, datasheet URL,
         component attributes, and EasyEDA footprint availability:
         - has_easyeda_footprint: True if EasyEDA has footprint/symbol, False if not, null if unknown
         - easyeda_symbol_uuid: UUID for direct EasyEDA editor link (null if no footprint)
         - easyeda_footprint_uuid: UUID for footprint (null if no footprint)
 
+        For mpn: List of matching JLCPCB parts from the local database (stock >= 50),
+        sorted by stock. Each result includes lcsc, model (MPN), manufacturer,
+        package, stock, price, library_type, category, subcategory, and specs.
+
         Note: has_easyeda_footprint=True means `ato create part` will work for Atopile/KiCad users.
     """
+    if not lcsc and not mpn:
+        return {"error": "Must provide either lcsc or mpn"}
+
+    # MPN lookup via local database
+    if mpn and not lcsc:
+        if len(mpn) > 100:
+            return {"error": "MPN too long (max 100 characters)"}
+        db = get_db()
+        results = db.get_by_mpn(mpn)
+        if not results:
+            return {"error": f"No JLCPCB parts found for MPN '{mpn}'", "mpn": mpn, "results": []}
+        return {
+            "mpn": mpn,
+            "total": len(results),
+            "results": results,
+        }
+
+    # LCSC lookup via live API (existing behavior)
     if not _client:
         raise RuntimeError("Client not initialized")
 
@@ -557,7 +627,7 @@ async def get_part(lcsc: str) -> dict:
         openWorldHint=False,
     )
 )
-async def list_categories() -> dict:
+async def jlc_list_categories() -> dict:
     """Get all primary component categories with their IDs.
 
     Returns:
@@ -591,7 +661,7 @@ async def list_categories() -> dict:
         openWorldHint=False,
     )
 )
-async def get_subcategories(category_id: int) -> dict:
+async def jlc_get_subcategories(category_id: int) -> dict:
     """Get all subcategories for a specific category.
 
     Args:
@@ -627,7 +697,7 @@ async def get_subcategories(category_id: int) -> dict:
         openWorldHint=False,
     )
 )
-async def find_alternatives(
+async def jlc_find_alternatives(
     lcsc: str,
     min_stock: int = DEFAULT_MIN_STOCK,
     same_package: bool = False,
@@ -685,7 +755,7 @@ async def find_alternatives(
         openWorldHint=False,
     )
 )
-async def get_pinout(lcsc: str | None = None, uuid: str | None = None) -> dict:
+async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> dict:
     """Get pin information for a component from EasyEDA symbol data.
 
     Returns raw pin data exactly as EasyEDA provides it, with no interpretation
@@ -950,7 +1020,7 @@ async def _process_bom(
         openWorldHint=False,
     )
 )
-async def validate_bom(
+async def jlc_validate_bom(
     parts: list[dict[str, Any]] | str,
     board_qty: int | None = None,
     min_stock: int = 0,
@@ -982,13 +1052,15 @@ async def validate_bom(
                 - "Out of stock (0 available)" (error)
                 - "Insufficient stock: need X, have Y" (error)
                 - "Duplicate designator: X appears multiple times" (error)
-                - "Extended part: +$3 assembly fee" (warning)
+                - "Extended part: +$X assembly fee" (warning)
                 - "No EasyEDA footprint available" (warning)
 
     Note: Issues are reported but don't block the response. Caller decides whether to proceed.
     """
-    # Parse parts parameter (handles JSON strings from some MCP clients)
+    # Parse and validate parts parameter
     parsed_parts = _parse_parts_param(parts)
+    if validation_error := _validate_bom_parts(parsed_parts):
+        return validation_error
 
     try:
         sorted_parts, issues, summary = await _process_bom(parsed_parts, board_qty, min_stock)
@@ -1038,7 +1110,7 @@ async def validate_bom(
         openWorldHint=False,
     )
 )
-async def export_bom(
+async def jlc_export_bom(
     parts: list[dict[str, Any]] | str,
     board_qty: int | None = None,
     min_stock: int = 0,
@@ -1069,8 +1141,10 @@ async def export_bom(
 
     Note: Prices are estimates and may change. Stock validation is point-in-time.
     """
-    # Parse parts parameter (handles JSON strings from some MCP clients)
+    # Parse and validate parts parameter
     parsed_parts = _parse_parts_param(parts)
+    if validation_error := _validate_bom_parts(parsed_parts):
+        return validation_error
 
     try:
         sorted_parts, issues, summary = await _process_bom(parsed_parts, board_qty, min_stock)
@@ -1113,6 +1187,262 @@ async def export_bom(
             for i in issues
         ],
     }
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Mouser Search",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=True,
+    )
+)
+async def mouser_search(
+    keyword: str,
+    manufacturer: str | None = None,
+    in_stock_only: bool = False,
+    limit: int = 20,
+    page: int = 1,
+) -> dict:
+    """Search Mouser's catalog by keyword. Useful for cross-referencing parts, finding datasheets, and checking broader availability.
+
+    Args:
+        keyword: Search terms (e.g., "STM32F103", "LM358", "100nF 0402")
+        manufacturer: Filter by manufacturer name (e.g., "Texas Instruments")
+        in_stock_only: Only return in-stock parts (default False)
+        limit: Results per page (1-50, default 20)
+        page: Page number (default 1)
+
+    Returns:
+        results: List of parts with mouser_pn, mfr_pn, manufacturer, description,
+                 category, stock, price, price_breaks, datasheet_url, product_url, rohs, lifecycle
+        total: Total matching results
+        page: Current page number
+    """
+    if not _mouser_client:
+        return {"error": "Mouser API key not configured. Set MOUSER_API_KEY in environment."}
+    if keyword and len(keyword) > 500:
+        return {"error": "Keyword too long (max 500 characters)"}
+
+    try:
+        return await _mouser_client.search(
+            keyword=keyword,
+            manufacturer=manufacturer,
+            in_stock_only=in_stock_only,
+            records=max(1, min(limit, 50)),
+            page=max(1, page),
+        )
+    except Exception as e:
+        logger.error(f"Mouser search failed: {type(e).__name__}: {e}")
+        return {"error": "Mouser search failed. Check server logs for details."}
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Mouser Part Lookup",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=True,
+    )
+)
+async def mouser_get_part(part_number: str) -> dict:
+    """Look up parts on Mouser by part number or MPN. Supports batch lookup with pipe-delimited numbers.
+
+    Args:
+        part_number: Mouser part number or manufacturer PN (e.g., "595-LM358P" or "LM358P").
+                     For batch lookup, pipe-delimit up to 10 numbers: "595-LM358P|511-LM358P"
+
+    Returns:
+        results: Full part details including all attributes, pricing tiers, availability, datasheet
+        total: Number of parts found
+    """
+    if not _mouser_client:
+        return {"error": "Mouser API key not configured. Set MOUSER_API_KEY in environment."}
+    if part_number and len(part_number) > 500:
+        return {"error": "Part number too long (max 500 characters)"}
+
+    try:
+        return await _mouser_client.get_part(part_number)
+    except Exception as e:
+        logger.error(f"Mouser part lookup failed: {type(e).__name__}: {e}")
+        return {"error": "Mouser part lookup failed. Check server logs for details."}
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="DigiKey Search",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=True,
+    )
+)
+async def digikey_search(
+    keywords: str,
+    manufacturer: str | None = None,
+    in_stock_only: bool = False,
+    limit: int = 20,
+    offset: int = 0,
+) -> dict:
+    """Search DigiKey's catalog by keyword. Useful for cross-referencing parts, finding datasheets, and checking broader availability.
+
+    Args:
+        keywords: Search terms (e.g., "STM32F103", "LM358", "100nF 0402")
+        manufacturer: Filter by manufacturer name (e.g., "Texas Instruments")
+        in_stock_only: Only return in-stock parts (default False)
+        limit: Results per page (1-50, default 20)
+        offset: Pagination offset (default 0)
+
+    Returns:
+        results: List of parts with digikey_pn, mfr_pn, manufacturer, description,
+                 category, stock, price, price_breaks, datasheet_url, product_url, rohs, parameters
+        total: Total matching results
+        offset: Current pagination offset
+    """
+    if not _digikey_client:
+        return {"error": "DigiKey API credentials not configured. Set DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET in environment."}
+    if keywords and len(keywords) > 500:
+        return {"error": "Keywords too long (max 500 characters)"}
+
+    try:
+        return await _digikey_client.search(
+            keywords=keywords,
+            manufacturer=manufacturer,
+            in_stock_only=in_stock_only,
+            limit=max(1, min(limit, 50)),
+            offset=max(0, offset),
+        )
+    except Exception as e:
+        logger.error(f"DigiKey search failed: {type(e).__name__}: {e}")
+        return {"error": "DigiKey search failed. Check server logs for details."}
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="DigiKey Part Lookup",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=True,
+    )
+)
+async def digikey_get_part(product_number: str) -> dict:
+    """Look up a part on DigiKey by product number.
+
+    Args:
+        product_number: DigiKey part number or manufacturer PN (e.g., "296-1395-5-ND" or "LM358P")
+
+    Returns:
+        Full product details including all parameters, pricing variations, availability, datasheet
+    """
+    if not _digikey_client:
+        return {"error": "DigiKey API credentials not configured. Set DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET in environment."}
+    if product_number and len(product_number) > 500:
+        return {"error": "Product number too long (max 500 characters)"}
+
+    try:
+        return await _digikey_client.get_part(product_number)
+    except Exception as e:
+        logger.error(f"DigiKey part lookup failed: {type(e).__name__}: {e}")
+        return {"error": "DigiKey part lookup failed. Check server logs for details."}
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="CSE Search (ECAD Models)",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=True,
+    )
+)
+async def cse_search(
+    query: str,
+    limit: int = 5,
+) -> dict:
+    """Search SamacSys ComponentSearchEngine for ECAD model availability and datasheets.
+
+    Use this to check if KiCad/Eagle/Altium symbols, footprints, and 3D models exist for a part.
+    No API key required.
+
+    Args:
+        query: MPN or keyword (e.g., "LM358P", "STM32F103", "ESP32")
+        limit: Max results to return (1-10, default 5)
+
+    Returns:
+        results: List of parts with mfr_part_number, manufacturer, description,
+                 datasheet_url, has_model (symbol/footprint available),
+                 has_3d (3D model available), model_quality (0-4),
+                 cse_part_id, pin_count, image_url
+        total: Total matching results
+    """
+    if not _cse_client:
+        return {"error": "CSE client not initialized"}
+    if query and len(query) > 500:
+        return {"error": "Query too long (max 500 characters)"}
+
+    limit = max(1, min(limit, 10))
+
+    try:
+        result = await _cse_client.search(query)
+        # Return a new dict to avoid mutating the cached result
+        return {
+            "results": result["results"][:limit],
+            "total": result["total"],
+        }
+    except Exception as e:
+        logger.error(f"CSE search failed: {type(e).__name__}: {e}")
+        return {"error": "CSE search failed. Check server logs for details."}
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Get KiCad Symbol & Footprint",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=True,
+    )
+)
+async def cse_get_kicad(
+    query: str | None = None,
+    part_id: int | None = None,
+) -> dict:
+    """Get KiCad schematic symbol and PCB footprint for any component.
+
+    Downloads from SamacSys ComponentSearchEngine. Works for any manufacturer's part,
+    not limited to JLCPCB. Returns the raw .kicad_sym and .kicad_mod file contents
+    as text that can be read directly or saved to a KiCad project.
+
+    Args:
+        query: MPN to search for (e.g., "LM358P", "STM32F103CBT6", "ESP32-WROOM-32E").
+               Finds the best matching part with an available model.
+        part_id: CSE part ID from a previous cse_search result (skips search step).
+               Use this if you already know the exact part.
+
+    One of query or part_id must be provided.
+
+    Returns:
+        kicad_symbol: Raw .kicad_sym file content (pin names, types, graphical symbol)
+        kicad_footprint: Raw .kicad_mod file content (pad layout, silkscreen, courtyard)
+        part_id: CSE part ID (for future lookups)
+        mfr_part_number, manufacturer, description: Part metadata (when searched by query)
+    """
+    if not _cse_client:
+        return {"error": "CSE client not initialized"}
+
+    if not query and not part_id:
+        return {"error": "Must provide either query or part_id"}
+    if query and len(query) > 500:
+        return {"error": "Query too long (max 500 characters)"}
+
+    try:
+        return await _cse_client.get_kicad(query=query, part_id=part_id)
+    except Exception as e:
+        logger.error(f"CSE get_kicad failed: {type(e).__name__}: {e}")
+        return {"error": "CSE get_kicad failed. Check server logs for details."}
 
 
 @mcp.tool(

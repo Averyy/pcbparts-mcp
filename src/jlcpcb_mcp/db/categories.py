@@ -126,6 +126,8 @@ def find_by_subcategory(
             sql_parts.append("AND library_type = 'p'")
         elif library_type == "extended":
             sql_parts.append("AND library_type = 'e'")
+        elif library_type == "no_fee":
+            sql_parts.append("AND library_type IN ('b', 'p')")
 
     # If primary spec value provided, filter by it
     if primary_spec and primary_value:

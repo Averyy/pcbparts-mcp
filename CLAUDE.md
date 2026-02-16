@@ -13,6 +13,7 @@
 
 ## Critical Rules
 
+- **NEVER blame external services** (Claude, Anthropic, Google, Reddit, etc.) for issues. If something isn't working, the problem is in THIS codebase. Investigate our code first, add logging, and find the real cause. Blaming external parties wastes time.
 - **NEVER test changes using the live MCP** undeployed code changes NEEDS to be tested locally via the database
 - **NEVER create mock data** unless explicitly told to
 - **NEVER replace existing code with simplified versions** - fix the actual problem
@@ -43,11 +44,15 @@ This is counterintuitive but verified. The client handles this mapping correctly
 
 ## Web Fetching
 
-Use **fetchaller** instead of WebFetch (no domain restrictions). Use dedicated MCPs for GitHub, Slack, etc.
+**CRITICAL: NEVER use WebFetch directly. ALWAYS use fetchaller first.**
+Load via `ToolSearch("fetchaller")` then use `mcp__fetchaller__fetch`. It has no domain restrictions.
+Add `raw: true` for raw HTML instead of markdown. If raw:true fails, use `curl` via Bash as fallback.
+Only fall back to WebFetch if fetchaller fails entirely.
+If a dedicated MCP exists (GitHub, Slack, etc.), use that instead.
 
-## Reddit
+## Reddit Searching and Browsing
 
-Use `mcp__fetchaller__browse_reddit`, `mcp__fetchaller__search_reddit`, and `mcp__fetchaller__fetch`.
+Load via `ToolSearch("fetchaller")` first. Use `mcp__fetchaller__browse_reddit` to browse subreddits, `mcp__fetchaller__search_reddit` to find posts, and `mcp__fetchaller__fetch` to read full discussions.
 
 ## Development
 

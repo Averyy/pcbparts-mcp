@@ -23,12 +23,16 @@ EASYEDA_CONCURRENT_LIMIT = 5  # Max concurrent EasyEDA requests to avoid rate li
 # Request settings
 REQUEST_TIMEOUT = 10.0
 MAX_RETRIES = 3
+
+# Assembly fee for extended parts (JLCPCB charges per unique extended part type)
+EXTENDED_PART_ASSEMBLY_FEE = 3.0
 JLCPCB_CONCURRENT_LIMIT = 10  # Max concurrent requests to JLCPCB API (prevents IP blocking)
 JLCPCB_REQUEST_JITTER = (0.1, 0.3)  # Random delay range (seconds) between requests
 DEFAULT_PAGE_SIZE = 20
 MAX_PAGE_SIZE = 100
 DEFAULT_MIN_STOCK = 50
 MAX_ALTERNATIVES = 50
+MAX_BOM_PARTS = 500
 
 # Part cache settings (JLCPCB API)
 PART_CACHE_TTL = 3600  # Cache part details for 1 hour
@@ -92,6 +96,33 @@ def get_random_user_agent() -> str:
     """Get a random user agent from the pool."""
     return random.choice(_USER_AGENTS)
 
+
+# Mouser API
+MOUSER_API_KEY = os.getenv("MOUSER_API_KEY", "")
+MOUSER_BASE_URL = "https://api.mouser.com/api/v2"
+MOUSER_CONCURRENT_LIMIT = 5
+MOUSER_CACHE_TTL = 3600
+
+# DigiKey API
+DIGIKEY_CLIENT_ID = os.getenv("DIGIKEY_CLIENT_ID", "")
+DIGIKEY_CLIENT_SECRET = os.getenv("DIGIKEY_CLIENT_SECRET", "")
+DIGIKEY_BASE_URL = "https://api.digikey.com/products/v4"
+DIGIKEY_TOKEN_URL = "https://api.digikey.com/v1/oauth2/token"
+DIGIKEY_CONCURRENT_LIMIT = 10
+DIGIKEY_CACHE_TTL = 3600
+DIGIKEY_LOCALE_SITE = os.getenv("DIGIKEY_LOCALE_SITE", "US")
+DIGIKEY_LOCALE_LANGUAGE = os.getenv("DIGIKEY_LOCALE_LANGUAGE", "en")
+DIGIKEY_LOCALE_CURRENCY = os.getenv("DIGIKEY_LOCALE_CURRENCY", "USD")
+
+# ComponentSearchEngine (SamacSys)
+# Search: rs.componentsearchengine.com alligator JSON API (no auth required)
+# Downloads: rs.componentsearchengine.com/ga/model.php (requires CSEARCH_USER/CSEARCH_PASS)
+CSE_CONCURRENT_LIMIT = 3
+CSE_CACHE_TTL = 3600
+CSE_KICAD_CACHE_TTL = 60 * 60 * 24  # Cache extracted KiCad files for 24 hours
+CSE_KICAD_CACHE_MAX_SIZE = 2000  # Max cached parts (each is a few KB of text)
+CSE_USER = os.getenv("CSEARCH_USER", "")
+CSE_PASS = os.getenv("CSEARCH_PASS", "")
 
 # Static fallback (used if needed)
 JLCPCB_HEADERS = get_jlcpcb_headers()

@@ -349,8 +349,12 @@ class JLCPCBClient:
                 try:
                     # Fresh randomized headers for each request
                     headers = get_jlcpcb_headers()
-                    # Sanitize logged values to prevent log injection
-                    log_keyword = str(params.get('keyword', params)).replace('\n', '\\n').replace('\r', '\\r')
+                    # Sanitize logged values to prevent log injection (control chars can manipulate terminal/logs)
+                    raw_keyword = str(params.get('keyword', params))
+                    log_keyword = raw_keyword if raw_keyword.isprintable() else ''.join(
+                        c if c.isprintable() or c == ' ' else f'\\x{ord(c):02x}'
+                        for c in raw_keyword
+                    )
                     logger.debug(f"JLCPCB request attempt {attempt + 1}: {log_keyword}")
                     response = await session.post(
                         url,
@@ -602,9 +606,9 @@ class JLCPCBClient:
 
         # Use semaphore to limit concurrent requests
         async with self._get_easyeda_semaphore():
-            # Retry loop with exponential backoff
+            # Retry loop with exponential backoff (MAX_RETRIES + 1 total attempts, consistent with _request)
             last_error: Exception | None = None
-            for attempt in range(MAX_RETRIES):
+            for attempt in range(MAX_RETRIES + 1):
                 session = self._create_session()
                 try:
                     url = EASYEDA_SYMBOL_URL.format(uuid=quote(uuid, safe=''))
@@ -640,14 +644,14 @@ class JLCPCBClient:
                 except Exception as e:
                     last_error = e
                     logger.warning(f"EasyEDA component fetch failed for {uuid} (attempt {attempt + 1}): {type(e).__name__}: {e}")
-                    if attempt < MAX_RETRIES - 1:
+                    if attempt < MAX_RETRIES:
                         await asyncio.sleep(0.5 * (2 ** attempt))  # Exponential backoff
                 finally:
                     await session.close()
 
             # All retries exhausted
             error = ValueError("Failed to fetch component data from EasyEDA")
-            logger.warning(f"EasyEDA component fetch failed for {uuid} after {MAX_RETRIES} attempts: {last_error}")
+            logger.warning(f"EasyEDA component fetch failed for {uuid} after {MAX_RETRIES + 1} attempts: {last_error}")
             await self._cache_easyeda_component_result(uuid, error, True)
             raise error
 
@@ -720,9 +724,11 @@ class JLCPCBClient:
             elif library_type == "preferred":
                 params["preferredComponentFlag"] = True
             elif library_type == "no_fee":
-                # Combines basic + preferred in single API call
-                params["componentLibraryType"] = "base"
-                params["preferredComponentFlag"] = True
+                # JLCPCB API doesn't support OR across library types in a single call.
+                # Setting componentLibraryType=base excludes preferred, and vice versa.
+                # Best approximation: exclude extended parts (don't set componentLibraryType=expand).
+                # This returns all types; extended results are filtered out client-side below.
+                pass
 
         # Package filtering (single or multi-select)
         if packages:
@@ -874,6 +880,11 @@ class JLCPCBClient:
         total = page_info.get("total") or 0
 
         results = [self._transform_part(item, slim=True) for item in items]
+
+        # Client-side filtering for no_fee: exclude extended parts since the
+        # JLCPCB API doesn't support OR-ing basic + preferred in one call
+        if library_type == "no_fee":
+            results = [r for r in results if r.get("library_type") != "extended"]
 
         # Calculate total pages
         total_pages = (total + limit - 1) // limit if limit > 0 else 0

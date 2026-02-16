@@ -500,6 +500,7 @@ def build_database(data_dir: Path, db_path: Path, verbose: bool = True) -> dict:
     conn.execute("CREATE INDEX idx_library_type ON components(library_type)")
     conn.execute("CREATE INDEX idx_package ON components(package)")
     conn.execute("CREATE INDEX idx_manufacturer ON components(manufacturer)")
+    conn.execute("CREATE INDEX idx_mpn ON components(mpn)")
     conn.execute("CREATE INDEX idx_price ON components(price)")
 
     # Composite indexes for common filter combinations

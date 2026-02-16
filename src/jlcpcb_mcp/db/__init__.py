@@ -17,7 +17,7 @@ from typing import Any, Literal
 from ..config import DEFAULT_MIN_STOCK
 from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
 from .connection import build_database, load_caches
-from .lookup import get_by_lcsc, get_by_lcsc_batch
+from .lookup import get_by_lcsc, get_by_lcsc_batch, get_by_mpn
 from .categories import (
     get_subcategory_name,
     get_category_for_subcategory,
@@ -241,6 +241,16 @@ class ComponentDatabase:
         if not self._conn:
             return None
         return get_by_lcsc(self._conn, lcsc, self._subcategories)
+
+    def get_by_mpn(self, mpn: str) -> list[dict[str, Any]]:
+        """Find components by manufacturer part number.
+
+        Tries exact match, then normalized variants, then FTS fallback.
+        """
+        self._ensure_db()
+        if not self._conn:
+            return []
+        return get_by_mpn(self._conn, mpn, self._subcategories)
 
     def get_by_lcsc_batch(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
         """Get multiple components by LCSC codes in a single query."""

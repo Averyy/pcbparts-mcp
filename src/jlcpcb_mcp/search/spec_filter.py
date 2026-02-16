@@ -118,7 +118,7 @@ SPEC_TO_COLUMN: dict[str, tuple[str, Any]] = {
 }
 
 
-_VALID_OPERATORS = frozenset({"=", ">=", "<=", ">", "<", "!="})
+_VALID_OPERATORS = frozenset({"=", ">=", "<=", ">", "<"})
 
 
 @dataclass
@@ -132,7 +132,7 @@ class SpecFilter:
         SpecFilter("Type", "=", "N-Channel")
     """
     name: str
-    operator: Literal["=", ">=", "<=", ">", "<", "!="]
+    operator: Literal["=", ">=", "<=", ">", "<"]
     value: str
 
     def __post_init__(self) -> None:

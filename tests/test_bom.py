@@ -1,6 +1,8 @@
 """Tests for BOM generation functionality."""
 
 import pytest
+from jlcpcb_mcp.config import EXTENDED_PART_ASSEMBLY_FEE, MAX_BOM_PARTS
+from jlcpcb_mcp.server import _validate_bom_parts
 from jlcpcb_mcp.bom import (
     BOMPart,
     BOMIssue,
@@ -545,7 +547,8 @@ class TestCheckExtendedPart:
         issue = check_extended_part(part)
         assert issue is not None
         assert issue.severity == "warning"
-        assert "$3" in issue.issue
+        assert "assembly fee" in issue.issue
+        assert f"${EXTENDED_PART_ASSEMBLY_FEE:.0f}" in issue.issue
 
     def test_basic_part(self):
         """No warning for basic parts."""
@@ -580,6 +583,39 @@ class TestCheckEasyedaFootprint:
                        has_easyeda_footprint=None)
         issue = check_easyeda_footprint(part)
         assert issue is None
+
+
+class TestValidateBomParts:
+    """Tests for BOM parts list validation."""
+
+    def test_empty_parts_list(self):
+        """Empty parts list returns error."""
+        result = _validate_bom_parts([])
+        assert result is not None
+        assert "error" in result
+        assert "No parts provided" in result["error"]
+
+    def test_valid_parts_list(self):
+        """Valid parts list returns None (no error)."""
+        parts = [{"lcsc": "C1525", "designators": ["C1"]}]
+        result = _validate_bom_parts(parts)
+        assert result is None
+
+    def test_too_many_parts(self):
+        """Parts list exceeding MAX_BOM_PARTS returns error."""
+        parts = [{"lcsc": f"C{i}", "designators": [f"C{i}"]} for i in range(MAX_BOM_PARTS + 1)]
+        result = _validate_bom_parts(parts)
+        assert result is not None
+        assert "error" in result
+        assert "Too many parts" in result["error"]
+        assert str(MAX_BOM_PARTS + 1) in result["error"]
+        assert str(MAX_BOM_PARTS) in result["error"]
+
+    def test_exactly_max_parts(self):
+        """Parts list at exactly MAX_BOM_PARTS is valid."""
+        parts = [{"lcsc": f"C{i}", "designators": [f"C{i}"]} for i in range(MAX_BOM_PARTS)]
+        result = _validate_bom_parts(parts)
+        assert result is None
 
 
 @pytest.mark.asyncio
