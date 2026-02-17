@@ -28,10 +28,10 @@
 
 ## Project Overview
 
-MCP server for JLCPCB component search. See README.md for full tool documentation.
+PCB Parts MCP server for electronic component search. See README.md for full tool documentation.
 
-- **Website:** https://jlcmcp.dev
-- **Endpoint:** https://jlcmcp.dev/mcp
+- **Website:** https://pcbparts.dev
+- **Endpoint:** https://pcbparts.dev/mcp
 - **Status:** Beta - breaking changes acceptable (no external users yet)
 
 ## API Gotcha
@@ -64,4 +64,4 @@ uv venv && uv pip install -e ".[dev]"
 
 ## Testing Local Changes
 
-**The MCP tools in Claude Code connect to the deployed server (jlcmcp.dev), not your local code.** Test local changes before deployment. Always git pull/fetch and then re-build the local database if its more than a day old.
+**The MCP tools in Claude Code connect to the deployed server (pcbparts.dev), not your local code.** Test local changes before deployment. Always git pull/fetch and then re-build the local database if its more than a day old.

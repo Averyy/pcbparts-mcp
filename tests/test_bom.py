@@ -1,9 +1,9 @@
 """Tests for BOM generation functionality."""
 
 import pytest
-from jlcpcb_mcp.config import EXTENDED_PART_ASSEMBLY_FEE, MAX_BOM_PARTS
-from jlcpcb_mcp.server import _validate_bom_parts
-from jlcpcb_mcp.bom import (
+from pcbparts_mcp.config import EXTENDED_PART_ASSEMBLY_FEE, MAX_BOM_PARTS
+from pcbparts_mcp.server import _validate_bom_parts
+from pcbparts_mcp.bom import (
     BOMPart,
     BOMIssue,
     validate_designators,
@@ -624,7 +624,7 @@ class TestBOMIntegration:
 
     @pytest.fixture
     async def client(self):
-        from jlcpcb_mcp.client import JLCPCBClient
+        from pcbparts_mcp.client import JLCPCBClient
         client = JLCPCBClient()
         yield client
         await client.close()

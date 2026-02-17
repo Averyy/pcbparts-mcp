@@ -1,4 +1,4 @@
-"""JLCPCB MCP Server - Search electronic components for PCB assembly."""
+"""PCB Parts MCP Server - Search electronic components for PCB assembly."""
 
 from pathlib import Path
 
@@ -7,7 +7,7 @@ def _get_version() -> str:
     # First try importlib.metadata (works when pip installed)
     try:
         from importlib.metadata import version
-        return version("jlcpcb-mcp")
+        return version("pcbparts-mcp")
     except Exception:
         pass
 

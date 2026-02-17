@@ -65,7 +65,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /root/jlcpcb-mcp || git clone git@github.com:Averyy/jlcpcb-mcp.git /root/jlcpcb-mcp && cd /root/jlcpcb-mcp
+            cd /root/pcbparts-mcp || git clone git@github.com:Averyy/pcbparts-mcp.git /root/pcbparts-mcp && cd /root/pcbparts-mcp
 
             # Pull latest files from repo
             git fetch origin main
@@ -73,8 +73,8 @@ jobs:
             git checkout origin/main -- landing/
 
             # Deploy landing page to web root
-            mkdir -p /var/www/jlcmcp
-            cp -r landing/* /var/www/jlcmcp/
+            mkdir -p /var/www/pcbparts
+            cp -r landing/* /var/www/pcbparts/
 
             # Stop old container, pull new image, start fresh
             docker compose down --remove-orphans
@@ -93,4 +93,4 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Image: \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "MCP endpoint: \`https://jlcmcp.dev/mcp\`" >> $GITHUB_STEP_SUMMARY
+          echo "MCP endpoint: \`https://pcbparts.dev/mcp\`" >> $GITHUB_STEP_SUMMARY

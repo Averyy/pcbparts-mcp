@@ -1,4 +1,4 @@
-"""Configuration for JLCPCB MCP server."""
+"""Configuration for PCB Parts MCP server."""
 
 import os
 import random

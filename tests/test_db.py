@@ -2,8 +2,8 @@
 
 import pytest
 
-from jlcpcb_mcp.db import ComponentDatabase, get_db
-from jlcpcb_mcp.search import SpecFilter
+from pcbparts_mcp.db import ComponentDatabase, get_db
+from pcbparts_mcp.search import SpecFilter
 
 
 class TestNameResolution:
@@ -113,7 +113,7 @@ class TestSpecFilters:
             vgs = part.get("specs", {}).get("Gate Threshold Voltage (Vgs(th))")
             if vgs:
                 # Parse the voltage value (e.g., "1.1V" -> 1.1)
-                from jlcpcb_mcp.alternatives import parse_voltage
+                from pcbparts_mcp.alternatives import parse_voltage
                 parsed = parse_voltage(vgs)
                 assert parsed is not None and parsed < 2.0, f"Vgs(th)={vgs} should be < 2V"
 
@@ -134,7 +134,7 @@ class TestSpecFilters:
         for part in result["results"]:
             voltage = part.get("specs", {}).get("Voltage Rating")
             if voltage:
-                from jlcpcb_mcp.alternatives import parse_voltage
+                from pcbparts_mcp.alternatives import parse_voltage
                 parsed = parse_voltage(voltage)
                 assert parsed is not None and parsed >= 25.0, f"Voltage={voltage} should be >= 25V"
 
@@ -156,7 +156,7 @@ class TestSpecFilters:
 
     def test_multiple_interface_values_use_or_logic(self):
         """Multiple Interface filters should match components with EITHER value (OR logic)."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         # Parse a query that creates multiple Interface filters
         result = parse_smart_query("sensor I2C SPI")
@@ -168,7 +168,7 @@ class TestSpecFilters:
 
         # When searching, these should be grouped with OR logic
         # (components with "I2C、SPI" should match)
-        from jlcpcb_mcp.search.query_builder import _group_multi_value_filters
+        from pcbparts_mcp.search.query_builder import _group_multi_value_filters
 
         grouped = _group_multi_value_filters(interface_filters)
         assert len(grouped) == 1
@@ -700,7 +700,7 @@ class TestSmartQueryParsing:
 
     def test_parse_resistor_query(self):
         """Parse '10k resistor 0603 1%' into structured filters."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("10k resistor 0603 1%")
 
@@ -719,7 +719,7 @@ class TestSmartQueryParsing:
 
     def test_parse_capacitor_query(self):
         """Parse '100nF 25V capacitor' into structured filters."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("100nF 25V capacitor")
 
@@ -738,7 +738,7 @@ class TestSmartQueryParsing:
 
     def test_parse_mosfet_query(self):
         """Parse 'n-channel mosfet SOT-23' into structured filters."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("n-channel mosfet SOT-23")
 
@@ -747,7 +747,7 @@ class TestSmartQueryParsing:
 
     def test_parse_inductor_query(self):
         """Parse '10uH inductor' into structured filters."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("10uH inductor")
 
@@ -757,7 +757,7 @@ class TestSmartQueryParsing:
 
     def test_parse_query_infers_category(self):
         """Should infer category from value patterns even without keyword."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         # Just "10k" should infer resistor
         result = parse_smart_query("10k 0402")
@@ -771,7 +771,7 @@ class TestSmartQueryParsing:
 
     def test_parse_query_remaining_text(self):
         """Remaining text should be cleaned up for FTS search."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("ESP32 module 3.3V")
 
@@ -782,7 +782,7 @@ class TestSmartQueryParsing:
 
     def test_parse_empty_query(self):
         """Empty or minimal queries should not crash."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("")
         assert result.remaining_text == ""
@@ -793,7 +793,7 @@ class TestSmartQueryParsing:
 
     def test_parse_antenna_with_frequency(self):
         """Parse 'ceramic antenna 2.4GHz' with subcategory and frequency."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("ceramic antenna 2.4GHz")
         assert result.subcategory == "ceramic antenna"
@@ -805,7 +805,7 @@ class TestSmartQueryParsing:
 
     def test_parse_humidity_temperature_sensor(self):
         """Parse 'humidity temperature sensor I2C' with correct subcategory."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("humidity temperature sensor I2C")
         assert result.subcategory == "temperature and humidity sensor"
@@ -817,7 +817,7 @@ class TestSmartQueryParsing:
 
     def test_rj45_not_treated_as_model_number(self):
         """RJ45 and similar connector codes should not be treated as model numbers."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         # Test RJ45
         result = parse_smart_query("RJ45 connector THT")
@@ -832,7 +832,7 @@ class TestSmartQueryParsing:
 
     def test_magnetics_synonym_for_filtered_connectors(self):
         """'magnetics' should be replaced with 'filtered' for connector searches."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("RJ45 magnetics THT")
 
@@ -849,7 +849,7 @@ class TestSmartQueryParsing:
 
     def test_csp_package_detection(self):
         """CSP package variants (WLCSP, LFCSP, UCSP, etc.) should be detected correctly."""
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         test_cases = [
             ("STM32L4 WLCSP144", "WLCSP144"),
@@ -936,7 +936,7 @@ class TestSearchSmartParsing:
     def test_search_resistor(self):
         """Smart search should find 10k 0603 1% resistors."""
         db = get_db()
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         parsed = parse_smart_query("10k resistor 0603 1%")
 
@@ -956,7 +956,7 @@ class TestSearchSmartParsing:
     def test_search_mosfet(self):
         """Smart search should find SOT-23 MOSFETs."""
         db = get_db()
-        from jlcpcb_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.smart_parser import parse_smart_query
 
         parsed = parse_smart_query("mosfet SOT-23")
 

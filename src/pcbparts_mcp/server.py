@@ -1,4 +1,4 @@
-"""JLCPCB MCP Server - Search electronic components for PCB assembly."""
+"""PCB Parts MCP Server - Search electronic components for PCB assembly."""
 
 import json
 import logging
@@ -101,8 +101,8 @@ async def lifespan(app):
 
 # Create MCP server
 mcp = FastMCP(
-    name="jlcmcp",
-    instructions="JLCPCB component search for PCB assembly. No auth required. Use search to find components, get_part for details.",
+    name="pcbparts",
+    instructions="PCB parts component search for PCB assembly. No auth required. Use search to find components, get_part for details.",
     lifespan=lifespan,
 )
 
@@ -1457,7 +1457,7 @@ async def cse_get_kicad(
 async def get_version() -> dict:
     """Get server version and health status."""
     return {
-        "service": "jlcpcb-mcp",
+        "service": "pcbparts-mcp",
         "version": __version__,
         "status": "healthy",
     }
@@ -1467,7 +1467,7 @@ async def get_version() -> dict:
 async def health(request):
     return JSONResponse({
         "status": "healthy",
-        "service": "jlcpcb-mcp",
+        "service": "pcbparts-mcp",
         "version": __version__,
     })
 
@@ -1501,7 +1501,7 @@ def main():
     """Run the server."""
     import uvicorn
     uvicorn.run(
-        "jlcpcb_mcp.server:app",
+        "pcbparts_mcp.server:app",
         host="0.0.0.0",
         port=HTTP_PORT,
         lifespan="on",

@@ -1,11 +1,11 @@
 services:
-  jlcpcb-mcp:
+  pcbparts-mcp:
     # Use GHCR image in production, or build locally with: docker compose build
-    image: ghcr.io/averyy/jlcpcb-mcp:latest
+    image: ghcr.io/averyy/pcbparts-mcp:latest
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: jlcpcb-mcp
+    container_name: pcbparts-mcp
     restart: unless-stopped
     ports:
       - "8080:8080"

@@ -6,10 +6,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from jlcpcb_mcp.mouser import MouserClient, _parse_stock, _parse_price, _normalize_part
-from jlcpcb_mcp.digikey import DigiKeyClient, _normalize_product
-from jlcpcb_mcp.cse import CSEClient, _normalize_part as cse_normalize_part
-from jlcpcb_mcp.cache import TTLCache
+from pcbparts_mcp.mouser import MouserClient, _parse_stock, _parse_price, _normalize_part
+from pcbparts_mcp.digikey import DigiKeyClient, _normalize_product
+from pcbparts_mcp.cse import CSEClient, _normalize_part as cse_normalize_part
+from pcbparts_mcp.cache import TTLCache
 
 
 # --- TTLCache tests ---
@@ -719,8 +719,8 @@ class TestGracefulDegradation:
 
     @pytest.mark.asyncio
     async def test_mouser_search_no_key(self):
-        from jlcpcb_mcp.server import mouser_search
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import mouser_search
+        import pcbparts_mcp.server as srv
         original = srv._mouser_client
         srv._mouser_client = None
         try:
@@ -732,8 +732,8 @@ class TestGracefulDegradation:
 
     @pytest.mark.asyncio
     async def test_mouser_get_part_no_key(self):
-        from jlcpcb_mcp.server import mouser_get_part
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import mouser_get_part
+        import pcbparts_mcp.server as srv
         original = srv._mouser_client
         srv._mouser_client = None
         try:
@@ -745,8 +745,8 @@ class TestGracefulDegradation:
 
     @pytest.mark.asyncio
     async def test_digikey_search_no_key(self):
-        from jlcpcb_mcp.server import digikey_search
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import digikey_search
+        import pcbparts_mcp.server as srv
         original = srv._digikey_client
         srv._digikey_client = None
         try:
@@ -758,8 +758,8 @@ class TestGracefulDegradation:
 
     @pytest.mark.asyncio
     async def test_digikey_get_part_no_key(self):
-        from jlcpcb_mcp.server import digikey_get_part
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import digikey_get_part
+        import pcbparts_mcp.server as srv
         original = srv._digikey_client
         srv._digikey_client = None
         try:
@@ -771,8 +771,8 @@ class TestGracefulDegradation:
 
     @pytest.mark.asyncio
     async def test_mouser_search_keyword_too_long(self):
-        from jlcpcb_mcp.server import mouser_search
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import mouser_search
+        import pcbparts_mcp.server as srv
         original = srv._mouser_client
         srv._mouser_client = MagicMock()  # Needs to be non-None to pass first check
         try:
@@ -784,8 +784,8 @@ class TestGracefulDegradation:
 
     @pytest.mark.asyncio
     async def test_digikey_search_keywords_too_long(self):
-        from jlcpcb_mcp.server import digikey_search
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import digikey_search
+        import pcbparts_mcp.server as srv
         original = srv._digikey_client
         srv._digikey_client = MagicMock()
         try:
@@ -1144,8 +1144,8 @@ class TestCSEGetKicad:
         mock_http.get = mock_get
         client._http = mock_http
 
-        with patch("jlcpcb_mcp.cse.CSE_USER", "user"), \
-             patch("jlcpcb_mcp.cse.CSE_PASS", "pass"):
+        with patch("pcbparts_mcp.cse.CSE_USER", "user"), \
+             patch("pcbparts_mcp.cse.CSE_PASS", "pass"):
             result = await client.get_kicad(query="LM358P")
 
         assert "error" not in result
@@ -1168,8 +1168,8 @@ class TestCSEGetKicad:
         mock_http.get = AsyncMock(return_value=download_resp)
         client._http = mock_http
 
-        with patch("jlcpcb_mcp.cse.CSE_USER", "user"), \
-             patch("jlcpcb_mcp.cse.CSE_PASS", "pass"):
+        with patch("pcbparts_mcp.cse.CSE_USER", "user"), \
+             patch("pcbparts_mcp.cse.CSE_PASS", "pass"):
             result = await client.get_kicad(part_id=12345)
 
         assert result["part_id"] == 12345
@@ -1197,8 +1197,8 @@ class TestCSEGetKicad:
         mock_http.get = mock_get
         client._http = mock_http
 
-        with patch("jlcpcb_mcp.cse.CSE_USER", "user"), \
-             patch("jlcpcb_mcp.cse.CSE_PASS", "pass"):
+        with patch("pcbparts_mcp.cse.CSE_USER", "user"), \
+             patch("pcbparts_mcp.cse.CSE_PASS", "pass"):
             await client.get_kicad(part_id=55555)
             result2 = await client.get_kicad(part_id=55555)
 
@@ -1208,8 +1208,8 @@ class TestCSEGetKicad:
 
     @pytest.mark.asyncio
     async def test_get_kicad_no_credentials(self, client):
-        with patch("jlcpcb_mcp.cse.CSE_USER", ""), \
-             patch("jlcpcb_mcp.cse.CSE_PASS", ""):
+        with patch("pcbparts_mcp.cse.CSE_USER", ""), \
+             patch("pcbparts_mcp.cse.CSE_PASS", ""):
             result = await client.get_kicad(query="LM358P")
         assert "error" in result
         assert "CSEARCH_USER" in result["error"]
@@ -1223,8 +1223,8 @@ class TestCSEGetKicad:
         mock_http.get = AsyncMock(return_value=search_resp)
         client._http = mock_http
 
-        with patch("jlcpcb_mcp.cse.CSE_USER", "user"), \
-             patch("jlcpcb_mcp.cse.CSE_PASS", "pass"):
+        with patch("pcbparts_mcp.cse.CSE_USER", "user"), \
+             patch("pcbparts_mcp.cse.CSE_PASS", "pass"):
             result = await client.get_kicad(query="NOMODEL")
 
         assert "error" in result
@@ -1245,8 +1245,8 @@ class TestCSEGetKicad:
         mock_http.get = mock_get
         client._http = mock_http
 
-        with patch("jlcpcb_mcp.cse.CSE_USER", "bad"), \
-             patch("jlcpcb_mcp.cse.CSE_PASS", "creds"):
+        with patch("pcbparts_mcp.cse.CSE_USER", "bad"), \
+             patch("pcbparts_mcp.cse.CSE_PASS", "creds"):
             result = await client.get_kicad(query="LM358P")
 
         assert "error" in result
@@ -1254,8 +1254,8 @@ class TestCSEGetKicad:
 
     @pytest.mark.asyncio
     async def test_get_kicad_no_query_or_id(self, client):
-        with patch("jlcpcb_mcp.cse.CSE_USER", "user"), \
-             patch("jlcpcb_mcp.cse.CSE_PASS", "pass"):
+        with patch("pcbparts_mcp.cse.CSE_USER", "user"), \
+             patch("pcbparts_mcp.cse.CSE_PASS", "pass"):
             result = await client.get_kicad()
         assert "error" in result
         assert "Must provide" in result["error"]
@@ -1266,8 +1266,8 @@ class TestCSEGetKicad:
 class TestCSEGracefulDegradation:
     @pytest.mark.asyncio
     async def test_cse_search_not_initialized(self):
-        from jlcpcb_mcp.server import cse_search
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import cse_search
+        import pcbparts_mcp.server as srv
         original = srv._cse_client
         srv._cse_client = None
         try:
@@ -1279,8 +1279,8 @@ class TestCSEGracefulDegradation:
 
     @pytest.mark.asyncio
     async def test_cse_search_handles_exception(self):
-        from jlcpcb_mcp.server import cse_search
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import cse_search
+        import pcbparts_mcp.server as srv
         original = srv._cse_client
 
         mock_client = MagicMock(spec=CSEClient)
@@ -1296,8 +1296,8 @@ class TestCSEGracefulDegradation:
 
     @pytest.mark.asyncio
     async def test_cse_get_kicad_not_initialized(self):
-        from jlcpcb_mcp.server import cse_get_kicad
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import cse_get_kicad
+        import pcbparts_mcp.server as srv
         original = srv._cse_client
         srv._cse_client = None
         try:
@@ -1309,8 +1309,8 @@ class TestCSEGracefulDegradation:
 
     @pytest.mark.asyncio
     async def test_cse_get_kicad_no_params(self):
-        from jlcpcb_mcp.server import cse_get_kicad
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import cse_get_kicad
+        import pcbparts_mcp.server as srv
         original = srv._cse_client
         srv._cse_client = MagicMock(spec=CSEClient)
         try:
@@ -1322,8 +1322,8 @@ class TestCSEGracefulDegradation:
 
     @pytest.mark.asyncio
     async def test_cse_search_query_too_long(self):
-        from jlcpcb_mcp.server import cse_search
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import cse_search
+        import pcbparts_mcp.server as srv
         original = srv._cse_client
         srv._cse_client = MagicMock(spec=CSEClient)
         try:
@@ -1341,21 +1341,21 @@ class TestGetPartMPN:
 
     @pytest.mark.asyncio
     async def test_get_part_requires_lcsc_or_mpn(self):
-        from jlcpcb_mcp.server import jlc_get_part
+        from pcbparts_mcp.server import jlc_get_part
         result = await jlc_get_part.fn()
         assert "error" in result
         assert "Must provide" in result["error"]
 
     @pytest.mark.asyncio
     async def test_get_part_mpn_too_long(self):
-        from jlcpcb_mcp.server import jlc_get_part
+        from pcbparts_mcp.server import jlc_get_part
         result = await jlc_get_part.fn(mpn="x" * 101)
         assert "error" in result
         assert "too long" in result["error"]
 
     @pytest.mark.asyncio
     async def test_get_part_mpn_not_found(self):
-        from jlcpcb_mcp.server import jlc_get_part
+        from pcbparts_mcp.server import jlc_get_part
         result = await jlc_get_part.fn(mpn="TOTALLYFAKE12345XYZ")
         assert "error" in result
         assert result["results"] == []
@@ -1364,7 +1364,7 @@ class TestGetPartMPN:
     @pytest.mark.asyncio
     async def test_get_part_mpn_found(self):
         """MPN lookup should find parts from local DB."""
-        from jlcpcb_mcp.server import jlc_get_part
+        from pcbparts_mcp.server import jlc_get_part
         result = await jlc_get_part.fn(mpn="AO3400A")
         if result.get("total", 0) > 0:
             assert result["mpn"] == "AO3400A"
@@ -1374,8 +1374,8 @@ class TestGetPartMPN:
     @pytest.mark.asyncio
     async def test_get_part_lcsc_takes_precedence(self):
         """When both lcsc and mpn are provided, lcsc should be used."""
-        from jlcpcb_mcp.server import jlc_get_part
-        import jlcpcb_mcp.server as srv
+        from pcbparts_mcp.server import jlc_get_part
+        import pcbparts_mcp.server as srv
         # Mock the client to track which path is taken
         original = srv._client
         mock_client = MagicMock()

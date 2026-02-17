@@ -1,8 +1,8 @@
-# JLCPCB MCP Server
+# PCB Parts MCP Server
 
 MCP server for searching JLCPCB electronic components directly from Claude, Cursor, and other AI coding assistants. Search 400K+ in-stock parts for PCB assembly with parametric filtering.
 
-**Website:** [jlcmcp.dev](https://jlcmcp.dev)
+**Website:** [pcbparts.dev](https://pcbparts.dev)
 
 ## Features
 
@@ -18,7 +18,7 @@ MCP server for searching JLCPCB electronic components directly from Claude, Curs
 ### Claude Code
 
 ```bash
-claude mcp add --transport http jlcmcp https://jlcmcp.dev/mcp
+claude mcp add --transport http pcbparts https://pcbparts.dev/mcp
 ```
 
 ### Claude Desktop
@@ -28,9 +28,9 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "jlcmcp": {
+    "pcbparts": {
       "type": "http",
-      "url": "https://jlcmcp.dev/mcp"
+      "url": "https://pcbparts.dev/mcp"
     }
   }
 }
@@ -149,18 +149,18 @@ Features: auto-fetches part details, merges duplicates, tiered pricing, flags ex
 
 ## API Details
 
-- **Endpoint:** `https://jlcmcp.dev/mcp`
-- **Health:** `https://jlcmcp.dev/health`
+- **Endpoint:** `https://pcbparts.dev/mcp`
+- **Health:** `https://pcbparts.dev/health`
 - **Rate Limit:** 100 requests/minute
 - **Auth:** None required
 
 ## Self-Hosting
 
 ```bash
-git clone https://github.com/Averyy/jlcpcb-mcp
-cd jlcpcb-mcp
+git clone https://github.com/Averyy/pcbparts-mcp
+cd pcbparts-mcp
 uv venv && uv pip install -e .
-.venv/bin/python -m jlcpcb_mcp.server  # http://localhost:8080/mcp
+.venv/bin/python -m pcbparts_mcp.server  # http://localhost:8080/mcp
 ```
 
 Or with Docker: `docker compose up -d`
@@ -171,6 +171,6 @@ MIT
 
 ## Links
 
-- [jlcmcp.dev](https://jlcmcp.dev)
+- [pcbparts.dev](https://pcbparts.dev)
 - [JLCPCB Parts Library](https://jlcpcb.com/parts)
 - [MCP Protocol](https://modelcontextprotocol.io)

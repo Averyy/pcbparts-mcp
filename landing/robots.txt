@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jlcmcp.dev/sitemap.xml
+Sitemap: https://pcbparts.dev/sitemap.xml

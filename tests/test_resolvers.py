@@ -1,7 +1,7 @@
 """Tests for search resolvers including MPN normalization."""
 
 import pytest
-from jlcpcb_mcp.search.mpn import normalize_mpn, looks_like_mpn
+from pcbparts_mcp.search.mpn import normalize_mpn, looks_like_mpn
 
 
 class TestLooksLikeMpn:

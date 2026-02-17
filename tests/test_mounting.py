@@ -1,7 +1,7 @@
-"""Tests for JLCPCB MCP server functions."""
+"""Tests for PCB Parts MCP server functions."""
 
 import pytest
-from jlcpcb_mcp.mounting import detect_mounting_type
+from pcbparts_mcp.mounting import detect_mounting_type
 
 
 class TestDetectMountingType:

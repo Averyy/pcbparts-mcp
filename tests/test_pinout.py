@@ -1,7 +1,7 @@
 """Tests for EasyEDA pinout parsing."""
 
 import pytest
-from jlcpcb_mcp.pinout import parse_easyeda_pins
+from pcbparts_mcp.pinout import parse_easyeda_pins
 
 
 class TestParsePins:
@@ -140,7 +140,7 @@ class TestParsePins:
 @pytest.fixture
 async def client():
     """Create a client for integration tests."""
-    from jlcpcb_mcp.client import JLCPCBClient
+    from pcbparts_mcp.client import JLCPCBClient
     client = JLCPCBClient()
     yield client
     await client.close()

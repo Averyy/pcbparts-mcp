@@ -23,7 +23,7 @@ from typing import Any
 # Add parent directory to path for imports when running as script
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from jlcpcb_mcp.parsers import (
+from pcbparts_mcp.parsers import (
     parse_capacitance,
     parse_capacitance_pf,
     parse_current,

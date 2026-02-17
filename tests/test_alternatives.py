@@ -2,7 +2,7 @@
 
 import pytest
 
-from jlcpcb_mcp.alternatives import (
+from pcbparts_mcp.alternatives import (
     # Parsers
     parse_voltage,
     parse_tolerance,
@@ -250,13 +250,13 @@ class TestParseDecibels:
     """Tests for parse_decibels function."""
 
     def test_simple_db(self):
-        from jlcpcb_mcp.alternatives import parse_decibels
+        from pcbparts_mcp.alternatives import parse_decibels
         assert parse_decibels("85dB") == 85.0
         assert parse_decibels("90 dB") == 90.0
         assert parse_decibels("75.5dB") == 75.5
 
     def test_invalid(self):
-        from jlcpcb_mcp.alternatives import parse_decibels
+        from pcbparts_mcp.alternatives import parse_decibels
         assert parse_decibels("") is None
         assert parse_decibels("loud") is None
 
@@ -582,7 +582,7 @@ class TestFindAlternativesIntegration:
     @pytest.fixture
     def client(self):
         """Create a client for testing."""
-        from jlcpcb_mcp.client import JLCPCBClient
+        from pcbparts_mcp.client import JLCPCBClient
         return JLCPCBClient()
 
     @pytest.mark.asyncio

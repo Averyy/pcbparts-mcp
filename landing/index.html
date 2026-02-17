@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JLCPCB MCP Server - Search Electronic Components in Claude & Cursor</title>
-    <meta name="description" content="JLCPCB MCP server for Claude, Cursor, and AI coding assistants. Search 1.5M+ electronic components with real-time stock, pricing tiers, and datasheets. No API key required.">
-    <meta name="keywords" content="JLCPCB, MCP, MCP server, JLCPCB MCP, electronic components, PCB assembly, SMT parts, Claude MCP, Cursor MCP, AI coding, LCSC parts, ESP32, STM32, capacitors, resistors, Model Context Protocol">
+    <title>PCB Parts MCP Server - Search Electronic Components in Claude & Cursor</title>
+    <meta name="description" content="PCB Parts MCP server for Claude, Cursor, and AI coding assistants. Search electronic components across JLCPCB, Mouser, and DigiKey with real-time stock, pricing, datasheets, and KiCad footprints. No API key required.">
+    <meta name="keywords" content="PCB Parts, MCP, MCP server, JLCPCB MCP, Mouser MCP, DigiKey MCP, electronic components, PCB assembly, SMT parts, Claude MCP, Cursor MCP, AI coding, LCSC parts, KiCad footprints, ESP32, STM32, capacitors, resistors, Model Context Protocol">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://jlcmcp.dev/">
+    <link rel="canonical" href="https://pcbparts.dev/">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 
     <!-- Favicons -->
@@ -15,41 +15,41 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="JLCMCP" />
+    <meta name="apple-mobile-web-app-title" content="PCB Parts MCP" />
     <link rel="manifest" href="site.webmanifest" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://jlcmcp.dev/">
-    <meta property="og:title" content="JLCPCB MCP Server - Search Electronic Components in Claude & Cursor">
-    <meta property="og:description" content="Search 1.5M+ JLCPCB electronic components via MCP. Real-time stock, pricing, datasheets.">
-    <meta property="og:image" content="https://jlcmcp.dev/jlcmcp-og.png">
+    <meta property="og:url" content="https://pcbparts.dev/">
+    <meta property="og:title" content="PCB Parts MCP Server - Search Electronic Components in Claude & Cursor">
+    <meta property="og:description" content="Search electronic components across JLCPCB, Mouser, and DigiKey via MCP. Real-time stock, pricing, datasheets, and KiCad footprints.">
+    <meta property="og:image" content="https://pcbparts.dev/pcbparts-og.png">
     <meta property="og:image:width" content="3408">
     <meta property="og:image:height" content="1828">
-    <meta property="og:image:alt" content="JLCPCB MCP - Search 1.5M+ electronic components via MCP">
-    <meta property="og:site_name" content="JLCPCB MCP">
+    <meta property="og:image:alt" content="PCB Parts MCP - Electronic component search across JLCPCB, Mouser, and DigiKey">
+    <meta property="og:site_name" content="PCB Parts MCP">
     <meta property="og:locale" content="en_US">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="JLCPCB MCP Server - Search Electronic Components in Claude & Cursor">
-    <meta name="twitter:description" content="Search 1.5M+ JLCPCB electronic components via MCP. Real-time stock, pricing, datasheets.">
-    <meta name="twitter:image" content="https://jlcmcp.dev/jlcmcp-og.png">
-    <meta name="twitter:image:alt" content="JLCPCB MCP - Search 1.5M+ electronic components via MCP">
+    <meta name="twitter:title" content="PCB Parts MCP Server - Search Electronic Components in Claude & Cursor">
+    <meta name="twitter:description" content="Search electronic components across JLCPCB, Mouser, and DigiKey via MCP. Real-time stock, pricing, datasheets, and KiCad footprints.">
+    <meta name="twitter:image" content="https://pcbparts.dev/pcbparts-og.png">
+    <meta name="twitter:image:alt" content="PCB Parts MCP - Electronic component search across JLCPCB, Mouser, and DigiKey">
 
     <!-- Additional SEO -->
-    <meta name="author" content="JLCPCB MCP">
+    <meta name="author" content="PCB Parts MCP">
     <meta name="generator" content="Hand-crafted HTML">
-    <link rel="me" href="https://github.com/Averyy/jlcpcb-mcp">
+    <link rel="me" href="https://github.com/Averyy/pcbparts-mcp">
 
     <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "WebApplication",
-        "name": "JLCPCB MCP",
-        "description": "Search 1.5M+ JLCPCB electronic components via MCP. Real-time stock, pricing tiers, datasheets.",
-        "url": "https://jlcmcp.dev/",
+        "name": "PCB Parts MCP",
+        "description": "Search electronic components across JLCPCB, Mouser, and DigiKey via MCP. Real-time stock, pricing tiers, datasheets, and KiCad footprints.",
+        "url": "https://pcbparts.dev/",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Any",
         "offers": {
@@ -58,122 +58,243 @@
             "priceCurrency": "USD"
         },
         "featureList": [
-            "Search 1.5M+ electronic components",
+            "Cross-distributor search: JLCPCB, Mouser, DigiKey",
             "Multi-select filters for packages and manufacturers",
             "Attribute search by specs like capacitance, voltage, resistance",
-            "Real-time stock levels",
+            "Real-time stock levels across distributors",
             "Pricing tiers from 1pc to 10,000+",
             "Datasheet links",
             "52 component categories",
-            "EasyEDA footprint availability detection",
+            "KiCad symbol and footprint downloads via SamacSys",
+            "MPN lookup across distributors",
             "BOM export with JLCPCB-compatible CSV",
             "Automatic cost calculation with extended part fee warnings",
             "No API key required"
         ],
         "sameAs": [
-            "https://github.com/Averyy/jlcpcb-mcp"
+            "https://github.com/Averyy/pcbparts-mcp"
         ]
     }
     </script>
 
-    <meta name="theme-color" content="#0a0a0a">
+    <meta name="theme-color" content="#0B1A12">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
     <style>
         :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #141414;
-            --bg-tertiary: #1a1a1a;
-            --bg-card: #111111;
-            --text-primary: #fafafa;
-            --text-secondary: #a1a1a1;
-            --text-tertiary: #666666;
-            --border-light: #262626;
-            --border-medium: #333333;
-            --accent: #0072FC;
-            --accent-light: #3d94ff;
-            --terminal-bg: #0d0d0d;
-            --terminal-header: #1a1a1a;
+            --pcb-bg: #0B1A12;
+            --pcb-surface: #0F2318;
+            --pcb-card: #0D1F16;
+            --pcb-trace: #1B4D35;
+            --pcb-trace-dim: #153D2A;
+            --pcb-bright: #00875A;
+            --copper: #CD7F32;
+            --copper-bright: #E8A94F;
+            --copper-dim: rgba(205, 127, 50, 0.15);
+            --silk: #E8E4D9;
+            --silk-dim: #8A9A8E;
+            --silk-faint: rgba(232, 228, 217, 0.06);
+            --phosphor: #33FF33;
+            --phosphor-dim: #1a8a1a;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--pcb-bg);
+            color: var(--silk);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
         .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
 
-        /* Navigation - Apple Glass */
+        /* ========== PCB BACKGROUND ARTWORK ========== */
+        .pcb-board {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            transform: translateZ(0);
+            contain: strict;
+        }
+
+        /* Routing grid */
+        .pcb-board::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--pcb-trace-dim) 1px, transparent 1px),
+                linear-gradient(90deg, var(--pcb-trace-dim) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.18;
+        }
+
+        .pcb-traces-svg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 300vh;
+            pointer-events: none;
+            z-index: 0;
+            transform: translateZ(0);
+            contain: strict;
+        }
+
+        .pcb-traces-animated {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            will-change: transform;
+            contain: layout style paint;
+        }
+
+        /* Animated signal flow on traces */
+        .trace-signal {
+            stroke: var(--copper-bright);
+            stroke-dasharray: 12 280;
+            animation: signal-flow 5s linear infinite;
+            opacity: 0.5;
+            will-change: stroke-dashoffset;
+        }
+        .trace-signal:nth-child(2) { animation-delay: -1.2s; stroke-dasharray: 10 320; animation-duration: 6s; }
+        .trace-signal:nth-child(3) { animation-delay: -2.8s; stroke-dasharray: 8 260; animation-duration: 4.5s; }
+        .trace-signal:nth-child(4) { animation-delay: -0.6s; stroke-dasharray: 14 300; animation-duration: 5.5s; }
+        .trace-signal:nth-child(5) { animation-delay: -3.5s; stroke-dasharray: 10 340; animation-duration: 7s; }
+        @keyframes signal-flow {
+            to { stroke-dashoffset: -292; }
+        }
+
+        /* Glowing via pulses — flash when signal passes (opacity only for perf) */
+        .via-glow {
+            fill: var(--copper-bright);
+            animation: via-flash 5s ease-in-out infinite;
+            opacity: 0.15;
+            will-change: opacity;
+        }
+        .via-glow:nth-child(2) { animation-duration: 6s; animation-delay: -1.2s; }
+        .via-glow:nth-child(3) { animation-duration: 4.5s; animation-delay: -2.8s; }
+        .via-glow:nth-child(4) { animation-duration: 4.5s; animation-delay: -1.4s; }
+        .via-glow:nth-child(5) { animation-duration: 5s; animation-delay: -3.2s; }
+        .via-glow:nth-child(6) { animation-duration: 7s; animation-delay: -3.5s; }
+        .via-glow:nth-child(7) { animation-duration: 7s; animation-delay: -5s; }
+        @keyframes via-flash {
+            0%, 85%, 100% { opacity: 0.15; }
+            90% { opacity: 0.8; }
+            95% { opacity: 0.3; }
+        }
+
+        /* Grain / solder mask texture (lightweight CSS noise) */
+        .pcb-grain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9998;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+            opacity: 0.012;
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        /* ========== NAVIGATION (Edge connector) ========== */
         nav {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
+            will-change: transform;
             z-index: 100;
-            padding: 16px 0;
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.03) 0%,
-                rgba(255, 255, 255, 0.01) 50%,
-                rgba(255, 255, 255, 0.03) 100%
-            );
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+            padding: 0;
+            background: rgba(5, 13, 8, 0.97);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: none;
+            background-image:
+                repeating-linear-gradient(
+                    90deg,
+                    var(--copper) 0px, var(--copper) 48px,
+                    transparent 48px, transparent 52px
+                );
+            background-size: 100% 3px;
+            background-position: bottom;
+            background-repeat: no-repeat;
         }
 
-        main, footer {
-            position: relative;
-            z-index: 2;
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 72px;
         }
-
-        nav .container { display: flex; justify-content: space-between; align-items: center; }
 
         .nav-logo {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1rem;
-            color: var(--text-primary);
             text-decoration: none;
-            letter-spacing: -0.01em;
+            color: var(--silk);
         }
 
-        .nav-logo .logo-jlcpcb { font-weight: 300; }
-        .nav-logo .logo-mcp { font-weight: 700; }
+        .nav-logo img { height: 32px; width: auto; }
 
-        .nav-logo img { height: 28px; width: auto; }
+        .nav-logo-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            word-spacing: -0.2em;
+        }
 
-        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-logo-text .dim { color: var(--silk-dim); font-weight: 400; }
+
+        .nav-links { display: flex; gap: 0; align-items: center; height: 100%; }
+
         .nav-links a {
-            color: var(--text-secondary);
+            color: var(--silk-dim);
             text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover { color: var(--text-primary); }
-
-        .nav-links a.nav-github {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0 20px;
+            height: 100%;
             display: inline-flex;
             align-items: center;
+            transition: color 0.2s, text-shadow 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--copper-bright);
+            text-shadow: 0 0 8px rgba(232, 169, 79, 0.4), 0 0 20px rgba(232, 169, 79, 0.15);
+        }
+
+        .nav-links a.nav-github {
             gap: 6px;
         }
-        .nav-links a.nav-github svg { width: 16px; height: 16px; flex-shrink: 0; }
+        .nav-links a.nav-github svg { width: 14px; height: 14px; flex-shrink: 0; }
 
-        /* Hero */
+        /* ========== HERO ========== */
         .hero {
-            padding: 160px 0 80px;
+            padding: 140px 0 60px;
             text-align: center;
             position: relative;
+            z-index: 2;
         }
 
         .hero .container {
@@ -181,129 +302,66 @@
             z-index: 1;
         }
 
-        /* Gradient orbs container */
-        .gradient-orbs {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-            overflow: visible;
-        }
-
-        .gradient-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(120px);
-            will-change: transform;
-        }
-
-        .gradient-orb-1 {
-            top: -15%;
-            left: -5%;
-            width: 1000px;
-            height: 600px;
-            background: rgba(30, 100, 200, 0.32);
-        }
-
-        .gradient-orb-2 {
-            top: 25%;
-            right: -20%;
-            width: 900px;
-            height: 550px;
-            background: rgba(50, 130, 220, 0.22);
-        }
-
-        .gradient-orb-3 {
-            top: 55%;
-            left: -15%;
-            width: 850px;
-            height: 500px;
-            background: rgba(40, 110, 180, 0.25);
-        }
-
-        .gradient-orb-4 {
-            top: 85%;
-            right: -10%;
-            width: 750px;
-            height: 450px;
-            background: rgba(60, 140, 240, 0.18);
-        }
-
-        .gradient-orb-5 {
-            top: 120%;
-            left: 10%;
-            width: 800px;
-            height: 480px;
-            background: rgba(35, 90, 170, 0.22);
-        }
-
+        /* LED-style status badge */
         .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            padding: 10px 18px;
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.08) 0%,
-                rgba(255, 255, 255, 0.03) 50%,
-                rgba(255, 255, 255, 0.06) 100%
-            );
-            backdrop-filter: blur(30px) saturate(150%);
-            -webkit-backdrop-filter: blur(30px) saturate(150%);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 10px;
-            font-size: 0.8125rem;
-            font-weight: 500;
-            color: var(--text-secondary);
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--pcb-trace);
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--silk-dim);
             margin-bottom: 40px;
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        .status-orb {
+        .status-led {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #888;
-            animation: pulse 2s ease-in-out infinite;
+            background: #555;
+            box-shadow: 0 0 0 2px rgba(205, 127, 50, 0.3);
         }
 
-        .status-orb.online {
+        .status-led.online {
             background: #22c55e;
-            animation: pulse-green 2s ease-in-out infinite;
+            box-shadow:
+                0 0 0 2px rgba(205, 127, 50, 0.3),
+                0 0 8px rgba(34, 197, 94, 0.6),
+                0 0 20px rgba(34, 197, 94, 0.2);
+            animation: led-pulse 2s ease-in-out infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.1); }
-        }
-
-        @keyframes pulse-green {
-            0%, 100% { opacity: 0.7; transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
-            50% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 8px 2px rgba(34, 197, 94, 0.3); }
+        @keyframes led-pulse {
+            0%, 100% { box-shadow: 0 0 0 2px rgba(205,127,50,0.3), 0 0 8px rgba(34,197,94,0.6), 0 0 20px rgba(34,197,94,0.2); }
+            50% { box-shadow: 0 0 0 2px rgba(205,127,50,0.3), 0 0 12px rgba(34,197,94,0.8), 0 0 30px rgba(34,197,94,0.3); }
         }
 
         .hero h1 {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: 3.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 3rem;
             font-weight: 700;
-            line-height: 1.15;
-            margin-bottom: 24px;
-            letter-spacing: -0.03em;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+            color: var(--silk);
         }
 
+        .hero h1 .copper { color: var(--copper-bright); }
+
         .hero-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            max-width: 560px;
+            font-size: 1.05rem;
+            color: var(--silk-dim);
+            max-width: 520px;
             margin: 0 auto 40px;
             line-height: 1.7;
         }
 
+        /* Install command - phosphor terminal style */
         .hero-cta {
             display: flex;
             justify-content: center;
@@ -313,174 +371,276 @@
             margin: 0 auto 16px;
         }
 
-        .btn-primary {
+        .install-cmd {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 0 28px;
-            height: 48px;
-            background: var(--accent);
-            color: #fff;
-            border-radius: 8px;
-            font-size: 0.9375rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: background 0.2s;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-primary:hover { background: var(--accent-light); }
-        .btn-text-short { display: none; }
-        .btn-text-full { display: inline; }
-
-        .btn-code {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
             gap: 6px;
             padding: 0 20px;
             height: 48px;
             white-space: nowrap;
             flex: 1;
-            background: rgba(20, 20, 22, 0.75);
-            backdrop-filter: blur(20px) saturate(150%);
-            -webkit-backdrop-filter: blur(20px) saturate(150%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
+            background: #000;
+            border: 1px solid var(--pcb-trace);
+            border-radius: 4px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            transition: all 0.2s ease;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            font-size: 0.9rem;
+            color: var(--phosphor);
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: inset 0 0 30px rgba(51, 255, 51, 0.03);
+            text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
         }
-        .btn-code:hover,
-        .btn-code:focus {
-            border-color: rgba(255, 255, 255, 0.2);
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.1) 0%,
-                rgba(255, 255, 255, 0.04) 100%
-            );
+
+        .install-cmd:hover,
+        .install-cmd:focus {
+            border-color: var(--phosphor-dim);
+            box-shadow: inset 0 0 30px rgba(51, 255, 51, 0.06), 0 0 15px rgba(51, 255, 51, 0.08);
             outline: none;
         }
-        .btn-code:focus-visible {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
-        }
 
-        .code-cli { color: #7dd3fc; }
-        .code-cmd { color: #86efac; }
-        .code-flag { color: #a1a1a6; }
-        .code-arg { color: #86efac; }
-        .code-name { color: #5a9cf5; }
-        .code-url { color: #86efac; }
+        .install-cmd .prompt { color: var(--copper); text-shadow: none; }
+        .install-cmd .flag { color: #888; text-shadow: none; }
+        .install-cmd .name { color: var(--copper-bright); text-shadow: 0 0 8px rgba(232, 169, 79, 0.3); }
+
+        .btn-copy {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 24px;
+            height: 48px;
+            background: var(--copper);
+            color: #000;
+            border-radius: 4px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: background 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-copy { position: relative; overflow: hidden; }
+        .btn-copy::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(
+                105deg, transparent 20%, rgba(255,255,255,0.25) 45%,
+                rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.25) 55%, transparent 80%
+            );
+            transform: translateX(-200%);
+            transition: transform 0.5s ease;
+            pointer-events: none;
+        }
+        .btn-copy:hover { background: var(--copper-bright); }
+        .btn-copy:hover::after { transform: translateX(50%); }
+        .btn-text-short { display: none; }
+        .btn-text-full { display: inline; }
 
         .hero-link {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
+            font-size: 0.8rem;
+            color: var(--silk-dim);
+            font-family: 'Space Mono', monospace;
         }
         .hero-link a {
-            color: var(--text-secondary);
+            color: var(--silk-dim);
             text-decoration: underline;
-            text-underline-offset: 2px;
-            transition: color 0.2s;
+            text-underline-offset: 3px;
+            text-decoration-color: var(--pcb-trace);
+            transition: color 0.2s, text-decoration-color 0.2s;
         }
-        .hero-link a:hover { color: var(--accent); }
+        .hero-link a:hover { color: var(--copper-bright); text-decoration-color: var(--copper); }
 
-        /* Terminal Demo */
+        /* ========== TERMINAL (CRT / green phosphor) ========== */
         .terminal-section {
             max-width: 800px;
-            margin: 64px auto 0;
+            margin: 56px auto 0;
         }
 
         .terminal-wrapper {
             position: relative;
-            border-radius: 16px;
+            border-radius: 6px;
             overflow: hidden;
+            border: 1px solid var(--pcb-trace);
             box-shadow:
-                0 25px 50px -12px rgba(0, 0, 0, 0.4),
-                0 0 0 1px rgba(255, 255, 255, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+                0 0 40px rgba(51, 255, 51, 0.04),
+                0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
-        .terminal-accent {
-            height: 48px;
-            background: linear-gradient(135deg, #1e3a5f 0%, #2a4a6f 100%);
+        .terminal-header {
+            height: 36px;
+            background: #111;
             display: flex;
             align-items: center;
-            padding: 0 20px;
-            gap: 16px;
+            padding: 0 16px;
+            gap: 12px;
+            border-bottom: 1px solid #222;
         }
 
-        .terminal-title {
-            flex: 1;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .terminal-dots {
+        .terminal-header-dots {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
 
-        .terminal-dot {
-            width: 12px;
-            height: 12px;
+        .terminal-header-dot {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
+            background: #333;
+        }
+
+        .terminal-header-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: #555;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
         }
 
         .terminal-body {
-            background: rgba(20, 20, 22, 0.75);
-            backdrop-filter: blur(20px) saturate(150%);
-            -webkit-backdrop-filter: blur(20px) saturate(150%);
-            padding: 24px 28px;
-            height: 368px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.05rem;
-            line-height: 1.9;
+            background: #000;
+            padding: 20px 24px;
+            height: 396px;
+            font-family: 'VT323', monospace;
+            font-size: 1.25rem;
+            line-height: 1.7;
             overflow: hidden;
             text-align: left;
+            position: relative;
+            color: var(--phosphor);
+            text-shadow: 0 0 6px rgba(51, 255, 51, 0.4);
+        }
+
+        /* CRT power-on flicker */
+        .terminal-body { animation: crt-on 0.6s ease-out; }
+        @keyframes crt-on {
+            0% { filter: brightness(15); opacity: 0; }
+            8% { filter: brightness(1); opacity: 0.6; }
+            15% { filter: brightness(1); opacity: 0; }
+            25% { filter: brightness(1); opacity: 0.9; }
+            35% { filter: brightness(1); opacity: 0.4; }
+            50% { filter: brightness(1); opacity: 1; }
+            100% { filter: brightness(1); opacity: 1; }
+        }
+
+        /* CRT glitch (triggered by JS) */
+        .terminal-body.crt-glitch {
+            animation: crt-glitch 0.12s steps(3) forwards;
+        }
+        @keyframes crt-glitch {
+            0% { transform: translate(0); }
+            33% { transform: translate(-3px, 1px) skewX(0.3deg); filter: hue-rotate(60deg) brightness(1.2); }
+            66% { transform: translate(2px, -1px) skewX(-0.2deg); }
+            100% { transform: translate(0); filter: none; }
+        }
+
+        /* CRT scanlines */
+        .terminal-body::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                transparent 0px,
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 2px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* CRT vignette */
+        .terminal-body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 60%,
+                rgba(0, 0, 0, 0.4) 100%
+            );
+            pointer-events: none;
+            z-index: 2;
         }
 
         .terminal-line {
-            margin-bottom: 2px;
+            margin-bottom: 1px;
             white-space: pre;
             opacity: 0;
-            animation: terminalFadeIn 0.15s ease-out forwards;
+            animation: termFade 0.12s ease-out forwards;
+            position: relative;
+            z-index: 0;
         }
 
-        @keyframes terminalFadeIn {
-            from { opacity: 0; transform: translateY(4px); }
+        @keyframes termFade {
+            from { opacity: 0; transform: translateY(3px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .terminal-prompt { color: #7a7a7a; }
-        .terminal-command { color: #f5a623; }
-        .terminal-output { color: #6b6b6b; }
-        .terminal-success { color: #5a9cf5; }
-        .terminal-result { color: #8a8a8a; }
-        .terminal-dollar { color: #5a9cf5; font-weight: 500; }
+        .terminal-prompt { color: var(--phosphor-dim); text-shadow: none; }
+        .terminal-command { color: var(--phosphor); }
+        .terminal-output { color: #1a7a1a; text-shadow: 0 0 4px rgba(51, 255, 51, 0.2); }
+        .terminal-success { color: var(--phosphor); }
+        .terminal-result { color: #2aaa2a; text-shadow: 0 0 4px rgba(51, 255, 51, 0.2); }
+        .terminal-dollar { color: var(--copper-bright); text-shadow: 0 0 6px rgba(232, 169, 79, 0.4); }
+        .term-lcsc { color: var(--copper); text-shadow: 0 0 5px rgba(205, 127, 50, 0.3); }
+        .term-mpn { color: #e0e0d0; text-shadow: 0 0 4px rgba(224, 224, 208, 0.15); }
+        .term-price { color: var(--copper-bright); text-shadow: 0 0 6px rgba(232, 169, 79, 0.35); }
+        .term-stock { color: #1a8a1a; text-shadow: 0 0 3px rgba(51, 255, 51, 0.15); }
+        .term-pkg { color: var(--silk-dim); text-shadow: none; display: none; }
         .terminal-spinner {
             display: inline-block;
             width: 10px;
             height: 10px;
-            border: 2px solid #6b6b6b;
-            border-top-color: #bbb;
+            border: 2px solid #1a5a1a;
+            border-top-color: var(--phosphor);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             margin-right: 8px;
             margin-bottom: 4px;
             vertical-align: middle;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Sections */
-        section { padding: 80px 0; }
+        /* ========== SECTION REVEAL ANIMATION ========== */
+        section {
+            padding: 80px 0;
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(20px);
+            scroll-margin-top: 96px;
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        section.revealed, .hero { opacity: 1; transform: translateY(0); }
+        .hero { opacity: 1; transform: none; }
+
+        /* Section trace connector (draws as you scroll) */
+        .section-trace {
+            stroke-dasharray: 500;
+            stroke-dashoffset: 500;
+            transition: stroke-dashoffset 1.2s ease-out;
+        }
+        .section-trace.visible { stroke-dashoffset: 0; }
+
+        /* ========== SCHEMATIC DIVIDER ========== */
+        .schematic-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 0;
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.6s ease-out 0.3s;
+        }
+        .schematic-divider.revealed { opacity: 1; }
+        .schematic-divider svg { overflow: visible; }
 
         .section-header {
             text-align: center;
@@ -488,35 +648,134 @@
         }
 
         .section-header h2 {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: 2.25rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.75rem;
             font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 16px;
+            letter-spacing: -0.01em;
+            margin-bottom: 12px;
+            color: var(--silk);
+            position: relative;
+            display: inline-block;
+        }
+        .section-header h2::before,
+        .section-header h2::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .section-header h2:hover::before {
+            opacity: 0.6;
+            color: #ff4444;
+            animation: glitch-r 0.25s steps(2) forwards;
+            clip-path: inset(15% 0 55% 0);
+        }
+        .section-header h2:hover::after {
+            opacity: 0.6;
+            color: #44ffff;
+            animation: glitch-b 0.25s steps(2) forwards;
+            clip-path: inset(50% 0 15% 0);
+        }
+        @keyframes glitch-r {
+            0% { transform: translate(0); }
+            50% { transform: translate(-2px, 1px); }
+            100% { transform: translate(0); }
+        }
+        @keyframes glitch-b {
+            0% { transform: translate(0); }
+            50% { transform: translate(2px, -1px); }
+            100% { transform: translate(0); }
         }
 
         .section-header p {
-            color: var(--text-secondary);
-            font-size: 1.0625rem;
-            max-width: 480px;
+            color: var(--silk-dim);
+            font-size: 1rem;
+            max-width: 680px;
             margin: 0 auto;
+            line-height: 1.7;
         }
 
-        /* Setup Tabs - Apple Glass Effect */
+        /* ========== SETUP SECTION (Pick-and-Place Machine View) ========== */
         .setup-section {
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.05) 0%,
-                rgba(255, 255, 255, 0.02) 50%,
-                rgba(255, 255, 255, 0.05) 100%
-            );
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.06),
-                0 4px 30px rgba(0, 0, 0, 0.1);
+            background: #060E09;
+            border-top: 1px solid var(--copper);
+            border-bottom: 1px solid var(--copper);
+            position: relative;
+            overflow: hidden;
+            padding-top: 48px;
+            padding-bottom: 60px;
+        }
+
+        /* PnP alignment grid */
+        .setup-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                /* Major grid */
+                linear-gradient(rgba(205, 127, 50, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(205, 127, 50, 0.07) 1px, transparent 1px),
+                /* Minor grid */
+                linear-gradient(rgba(205, 127, 50, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(205, 127, 50, 0.025) 1px, transparent 1px);
+            background-size:
+                80px 80px, 80px 80px,
+                16px 16px, 16px 16px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* PnP scan line — uses transform instead of top for GPU compositing */
+        .setup-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(205, 127, 50, 0.25), transparent);
+            box-shadow: 0 0 15px 3px rgba(205, 127, 50, 0.08);
+            animation: pnp-scan 8s ease-in-out infinite;
+            z-index: 0;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        @keyframes pnp-scan {
+            0%, 100% { transform: translateY(calc(var(--section-h, 500px) * 0.1)); opacity: 0; }
+            10% { opacity: 1; }
+            50% { transform: translateY(calc(var(--section-h, 500px) * 0.9)); opacity: 1; }
+            60% { opacity: 0; }
+        }
+
+        /* PnP overlay — corner SVGs pinned to each corner */
+        .pnp-corner {
+            position: absolute !important;
+            width: 240px;
+            height: 180px;
+            pointer-events: none;
+            z-index: 0 !important;
+            overflow: visible;
+        }
+        .pnp-corner-tl { top: 12px; left: 12px; }
+        .pnp-corner-tr { top: 12px; right: 12px; }
+        .pnp-corner-bl { bottom: 12px; left: 12px; }
+        .pnp-corner-br { bottom: 12px; right: 12px; }
+
+        /* PnP center overlay for reticles */
+        .pnp-center {
+            position: absolute !important;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0 !important;
+        }
+
+        .setup-section > * {
+            position: relative;
+            z-index: 1;
         }
 
         .tabs-wrapper {
@@ -527,416 +786,1029 @@
 
         .tabs {
             display: inline-flex;
-            gap: 4px;
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.04) 0%,
-                rgba(255, 255, 255, 0.01) 100%
-            );
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 4px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            gap: 2px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px;
+            border-radius: 4px;
+            border: 1px solid var(--pcb-trace);
         }
 
         .tab {
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 10px 22px;
+            border-radius: 3px;
             border: none;
             background: transparent;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            font-weight: 500;
+            color: var(--silk-dim);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.84rem;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background 0.2s, color 0.2s;
         }
 
-        .tab:hover { color: var(--text-primary); }
-        .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-        .tab.active { background: var(--bg-tertiary); color: var(--text-primary); }
+        .tab:hover { color: var(--silk); }
+        .tab:focus-visible { outline: 2px solid var(--copper); outline-offset: 2px; }
+        .tab.active {
+            background: var(--pcb-trace);
+            color: var(--silk);
+        }
 
         .tab-content { display: none; max-width: 680px; margin: 0 auto; }
         .tab-content.active { display: block; }
 
         .code-block {
-            background: var(--terminal-bg);
-            border-radius: 12px;
+            border-radius: 6px;
             overflow: hidden;
+            border: 1px solid var(--pcb-trace);
         }
 
-        .code-header {
-            padding: 14px 20px;
-            background: var(--terminal-header);
+        .code-block-header {
+            height: 36px;
+            background: #111;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+            border-bottom: 1px solid #222;
         }
 
-        .code-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: #888;
+        .code-block-header .dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .code-block-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .code-block-header .title {
+            flex: 1;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: #555;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
         }
 
         .copy-btn {
             background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #444;
+            color: #888;
             cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            transition: all 0.2s;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
         }
 
         .copy-btn:hover,
-        .copy-btn:focus { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: #fff; }
-        .copy-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .copy-btn:focus { background: rgba(255, 255, 255, 0.05); color: #ccc; border-color: #666; }
+        .copy-btn:focus-visible { outline: 2px solid var(--copper); outline-offset: 2px; }
 
-        .code-body {
-            padding: 20px;
+        .code-block-body {
+            padding: 18px 20px;
             overflow-x: auto;
-            background: rgba(20, 20, 22, 0.75);
-            backdrop-filter: blur(20px) saturate(150%);
-            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            background: #000;
         }
 
         pre {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             line-height: 1.7;
-            color: #e5e5e5;
+            color: #ccc;
         }
 
-        .string { color: #7dd3fc; }
+        .str { color: var(--phosphor); text-shadow: 0 0 6px rgba(51, 255, 51, 0.2); }
 
-        /* Bento Grid */
+        /* ========== BENTO GRID ========== */
         .bento-grid {
+            display: flex;
+            gap: 14px;
+        }
+
+        .bento-left {
+            flex: 1;
+            display: flex;
+        }
+
+        .bento-right {
+            flex: 1;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: auto auto auto;
-            gap: 16px;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            align-content: start;
         }
 
         .bento-card {
-            padding: 24px;
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.04) 0%,
-                rgba(255, 255, 255, 0.01) 100%
-            );
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            padding: 22px;
+            background: var(--pcb-card);
+            border: 1px solid var(--pcb-trace);
+            border-radius: 4px;
+            transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
             overflow: hidden;
             position: relative;
         }
 
-        .bento-card:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-4px) scale(1.02);
+        /* Component designator label */
+        .bento-card::after {
+            content: attr(data-ref);
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--silk-dim);
+            opacity: 0.35;
+            text-transform: uppercase;
+        }
+
+        /* Corner pads */
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--copper-dim);
+            border: 1px solid rgba(205, 127, 50, 0.25);
             box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 20px 40px rgba(0, 0, 0, 0.3);
+                calc(100% - 18px) 0 0 0 var(--copper-dim),
+                0 calc(100% - 18px) 0 0 var(--copper-dim),
+                calc(100% - 18px) calc(100% - 18px) 0 0 var(--copper-dim);
+            transition: background 0.15s ease, box-shadow 0.15s ease;
         }
 
-        .bento-card .icon-wrapper {
-            display: flex;
-            justify-content: flex-start;
-            margin-bottom: 16px;
+        .bento-card:hover {
+            border-color: var(--copper);
+            transform: translateY(-2px);
+            box-shadow:
+                0 0 0 1px var(--copper),
+                0 8px 30px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(205, 127, 50, 0.06);
         }
 
-        .bento-card .icon {
-            font-size: 2rem;
+        .bento-card:hover::before {
+            background: rgba(205, 127, 50, 0.35);
+            box-shadow:
+                calc(100% - 18px) 0 0 0 rgba(205, 127, 50, 0.35),
+                0 calc(100% - 18px) 0 0 rgba(205, 127, 50, 0.35),
+                calc(100% - 18px) calc(100% - 18px) 0 0 rgba(205, 127, 50, 0.35);
+        }
+
+        .bento-card .card-icon {
+            font-size: 1.75rem;
             display: block;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 14px;
+            filter: saturate(0.3) sepia(0.6) hue-rotate(50deg) brightness(0.8);
+            transition: filter 0.4s ease;
         }
 
-        .bento-card:hover .icon {
-            transform: scale(1.15) rotate(6deg);
+        .bento-card:hover .card-icon {
+            filter: saturate(1) sepia(0) hue-rotate(0deg) brightness(1);
         }
 
         .bento-card h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--silk);
         }
 
         .bento-card p {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            line-height: 1.6;
-        }
-
-        .bento-card code {
-            font-family: 'JetBrains Mono', monospace;
+            color: var(--silk-dim);
             font-size: 0.8rem;
-            font-weight: 500;
-            background: rgb(0 0 0 / 40%);
-            color: #74a4e1;
-            padding: 4px 8px;
-            border-radius: 5px;
+            line-height: 1.5;
         }
 
         /* Bento card sizes */
         .bento-large {
-            grid-column: span 2;
-            grid-row: span 2;
-            padding: 32px;
+            flex: 1;
+            padding: 28px;
         }
 
-        .bento-large .icon {
-            font-size: 3rem;
-        }
-
-        .bento-large .icon-wrapper {
-            margin-bottom: 20px;
-        }
+        .bento-large .card-icon { font-size: 2.25rem; }
 
         .bento-large h3 {
-            font-size: 1.25rem;
-            margin-bottom: 12px;
+            font-size: 1.05rem;
+            margin-bottom: 10px;
         }
 
         .bento-large p {
-            font-size: 0.9375rem;
+            font-size: 0.85rem;
         }
 
         .bento-wide {
             grid-column: span 2;
         }
 
-        .bento-tall {
-            grid-row: span 2;
-        }
-
-        /* Animated gradient border on hover */
-        .bento-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 20px;
-            padding: 1px;
-            background: linear-gradient(135deg, rgba(90, 156, 245, 0), rgba(90, 156, 245, 0));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            transition: background 0.4s ease;
-            pointer-events: none;
-        }
-
-        .bento-card:hover::before {
-            background: linear-gradient(135deg, rgba(90, 156, 245, 0.5), rgba(60, 180, 255, 0.3));
-        }
-
-        /* Tools list in bento card */
-        .bento-card .tools-list {
+        /* Tools list */
+        .tools-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-top: 16px;
+            gap: 8px;
+            margin-top: 14px;
         }
 
-        .bento-card .tools-list .tool-item {
+        .tool-item {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .bento-card .tools-list code {
+        .tool-item code {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.8rem;
             font-weight: 500;
-            color: #74a4e1;
-            background: rgb(0 0 0 / 40%);
-            padding: 4px 8px;
-            border-radius: 5px;
+            color: var(--copper-bright);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 3px 8px;
+            border-radius: 3px;
+            border: 1px solid rgba(205, 127, 50, 0.15);
             white-space: nowrap;
-            width: 150px;
+            width: 210px;
             text-align: center;
             flex-shrink: 0;
         }
 
-        .bento-card .tools-list span {
-            color: var(--text-secondary);
-            font-size: 0.8125rem;
+        .tool-item span {
+            color: var(--silk-dim);
+            font-size: 0.85rem;
             line-height: 1.4;
         }
 
-        /* Footer */
+        /* ========== FOOTER ========== */
         footer {
-            padding: 60px 0;
-            background: linear-gradient(
-                135deg,
-                rgba(20, 40, 80, 0.3) 0%,
-                rgba(15, 30, 60, 0.2) 50%,
-                rgba(20, 40, 80, 0.3) 100%
-            );
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border-top: 1px solid rgba(100, 150, 255, 0.1);
-            box-shadow:
-                inset 0 1px 0 rgba(100, 150, 255, 0.08),
-                0 -10px 40px rgba(20, 50, 100, 0.2);
+            padding: 50px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 2px solid var(--copper);
+            position: relative;
+            z-index: 2;
         }
 
-        .footer-legal {
-            text-align: left;
-        }
+        .footer-legal { text-align: left; }
 
         .footer-top {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
 
         .footer-brand {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.8125rem;
-        }
-
-        .footer-brand img {
-            height: 20px;
-        }
-
-        .footer-brand .logo-jlcpcb {
-            font-weight: 300;
-        }
-
-        .footer-brand .logo-mcp {
+            color: var(--silk);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
             font-weight: 700;
+            word-spacing: -0.2em;
         }
 
-        .footer-brand .separator {
-            margin: 0 6px;
-            color: var(--text-tertiary);
-        }
+        .footer-brand img { height: 22px; }
+        .footer-brand .dim { color: var(--silk-dim); font-weight: 400; }
 
-        .footer-legal .footer-contact a {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.8125rem;
+        .footer-contact a {
+            color: var(--silk-dim);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
             text-decoration: none;
+            letter-spacing: 0.04em;
             transition: color 0.2s;
         }
-
-        .footer-legal .footer-contact a:hover {
-            color: rgba(255, 255, 255, 0.9);
-        }
+        .footer-contact a:hover { color: var(--copper-bright); }
 
         .footer-legal p {
-            color: #888;
-            font-size: 0.75rem;
-            line-height: 1.6;
+            color: #a0b0a5;
+            font-size: 0.8rem;
+            line-height: 1.8;
             margin-bottom: 12px;
         }
 
-        .footer-legal p:last-child {
-            margin-bottom: 0;
-        }
+        .footer-legal p:last-child { margin-bottom: 0; }
 
         .footer-legal a {
-            color: var(--text-tertiary);
+            color: #b0c0b5;
             text-decoration: underline;
             text-underline-offset: 2px;
-            transition: color 0.2s;
+            text-decoration-color: var(--pcb-trace);
+            transition: color 0.2s, text-decoration-color 0.2s;
+        }
+        .footer-legal a:hover { color: var(--copper-bright); text-decoration-color: var(--copper); }
+
+        /* Terminal wider letter spacing on tablet+ */
+        @media (min-width: 769px) {
+            .terminal-body { letter-spacing: 0.06em; }
+            .term-pkg { display: inline; }
         }
 
-        .footer-legal a:hover {
-            color: var(--text-secondary);
-        }
-
-        /* Mobile */
+        /* ========== MOBILE ========== */
         @media (max-width: 768px) {
-            .hero { padding: 140px 0 60px; }
-            .hero h1 { font-size: 2.5rem; }
-            .nav-links { gap: 16px; }
-            .nav-links a { font-size: 0.8125rem; }
-            .bento-grid { grid-template-columns: 1fr 1fr; }
-            .bento-large { grid-column: span 2; grid-row: span 1; }
-            .bento-wide { grid-column: span 2; }
-            .footer-content { flex-direction: column; gap: 20px; text-align: center; }
+            .hero { padding: 120px 0 50px; }
+            .hero h1 { font-size: 2rem; }
+            .nav-links { gap: 0; }
+            .nav-links a { padding: 0 12px; font-size: 0.65rem; }
+            .bento-grid { flex-direction: column; }
+            .bento-right { grid-template-columns: 1fr 1fr; }
             .tabs { flex-wrap: wrap; justify-content: center; }
             .hero-cta { flex-wrap: nowrap; }
-            .btn-code { overflow-x: auto; flex-shrink: 1; min-width: 0; }
+            .install-cmd { overflow-x: auto; flex-shrink: 1; min-width: 0; font-size: 0.8rem; }
             .btn-text-short { display: inline; }
             .btn-text-full { display: none; }
+            .footer-top { flex-direction: column; gap: 12px; }
         }
 
         @media (max-width: 480px) {
-            .bento-grid { grid-template-columns: 1fr; }
-            .bento-large, .bento-wide { grid-column: span 1; }
+            .bento-right { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 1.6rem; }
+            .terminal-body { font-size: 1rem; height: 320px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .trace-signal,
+            .via-glow,
+            .status-led.online,
+            .terminal-spinner,
+            .setup-section::after { animation: none !important; }
+            .terminal-body { animation: none; }
+            .pcb-traces-animated { display: none; }
+            section { transition: none; opacity: 1; transform: none; }
+            .schematic-divider { transition: none; opacity: 1; }
+            html { scroll-behavior: auto; }
         }
     </style>
 </head>
 <body>
-    <div class="gradient-orbs">
-        <div class="gradient-orb gradient-orb-1"></div>
-        <div class="gradient-orb gradient-orb-2"></div>
-        <div class="gradient-orb gradient-orb-3"></div>
-        <div class="gradient-orb gradient-orb-4"></div>
-        <div class="gradient-orb gradient-orb-5"></div>
-    </div>
+    <!-- PCB Board Background -->
+    <div class="pcb-board"></div>
 
+    <!-- PCB Traces Artwork -->
+    <svg class="pcb-traces-svg" viewBox="0 0 1440 3600" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- ============ SIGNAL TRACES (45° chamfer routing) ============ -->
+        <g stroke="#1B4D35" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.38">
+            <!-- Top-left cluster: QFP breakout fan -->
+            <path d="M 150,160 H 240 L 270,190 V 340"/>
+            <path d="M 150,175 H 225 L 255,205 V 380"/>
+            <path d="M 150,190 H 210 L 240,220 V 420"/>
+            <path d="M 150,205 H 195 L 225,235 V 450"/>
+            <path d="M 270,130 H 370 L 400,160 H 520"/>
+            <path d="M 270,145 H 355 L 385,175 H 480 V 300"/>
+            <path d="M 285,130 V 80 L 315,50 H 480"/>
+            <path d="M 300,130 V 95 L 330,65 H 520"/>
+
+            <!-- Top-right cluster: connector breakout -->
+            <path d="M 1440,180 H 1300 L 1270,210 V 380"/>
+            <path d="M 1440,195 H 1315 L 1285,225 V 400"/>
+            <path d="M 1440,210 H 1330 L 1300,240 V 420"/>
+            <path d="M 1270,380 L 1240,410 H 1100 L 1070,440 V 600"/>
+            <path d="M 1285,400 L 1255,430 H 1130 L 1100,460 V 620"/>
+            <path d="M 1300,420 L 1270,450 H 1160 V 580"/>
+
+            <!-- Mid-left routing channel -->
+            <path d="M 0,550 H 120 L 150,580 V 720 L 180,750 H 350"/>
+            <path d="M 0,570 H 100 L 130,600 V 700 L 160,730 H 320 V 900"/>
+            <path d="M 350,750 L 380,780 H 520 L 550,810 V 980"/>
+            <path d="M 320,900 L 350,930 H 460 V 1100"/>
+
+            <!-- Mid-right routing -->
+            <path d="M 1440,700 H 1280 L 1250,730 V 880 L 1220,910 H 1050"/>
+            <path d="M 1440,720 H 1300 L 1270,750 V 860"/>
+            <path d="M 1050,910 L 1020,940 V 1100 L 990,1130 H 850"/>
+
+            <!-- Center area: bus routing (parallel traces) -->
+            <path d="M 580,1200 H 860"/>
+            <path d="M 580,1212 H 860"/>
+            <path d="M 580,1224 H 860"/>
+            <path d="M 580,1236 H 860"/>
+            <path d="M 860,1200 L 890,1230 V 1400"/>
+            <path d="M 860,1212 L 890,1242 V 1420"/>
+            <path d="M 860,1224 L 890,1254 V 1440"/>
+            <path d="M 860,1236 L 890,1266 V 1460"/>
+
+            <!-- Bottom-left: passive routing -->
+            <path d="M 0,1500 H 180 L 210,1530 V 1650"/>
+            <path d="M 210,1650 L 240,1680 H 380 V 1800"/>
+            <path d="M 0,1540 H 140 V 1720 L 170,1750 H 310"/>
+            <path d="M 380,1800 L 410,1830 H 560 L 590,1860 V 2000"/>
+            <path d="M 310,1750 L 340,1780 H 450 V 1950"/>
+
+            <!-- Bottom-right cluster -->
+            <path d="M 1440,1600 H 1280 L 1250,1630 V 1800"/>
+            <path d="M 1440,1620 H 1300 L 1270,1650 V 1820"/>
+            <path d="M 1250,1800 L 1220,1830 H 1080 V 2050"/>
+            <path d="M 1270,1820 L 1240,1850 H 1120 V 2020"/>
+            <path d="M 1080,2050 L 1050,2080 H 920 V 2250"/>
+
+            <!-- Additional routing for new components -->
+            <path d="M 700,500 L 730,530 H 850 V 410"/>
+            <path d="M 850,370 L 880,400 V 580"/>
+            <path d="M 400,1300 L 430,1330 H 580 V 1200"/>
+            <path d="M 700,1600 L 730,1630 H 860"/>
+            <path d="M 1200,1100 L 1230,1130 H 1280"/>
+            <path d="M 290,2100 V 2200 L 320,2230 H 450"/>
+
+            <!-- Deep routing - lower sections -->
+            <path d="M 0,2200 H 200 L 230,2230 V 2400"/>
+            <path d="M 230,2400 L 260,2430 H 450 L 480,2460 V 2600"/>
+            <path d="M 0,2240 H 160 V 2450 L 190,2480 H 380"/>
+            <path d="M 1440,2300 H 1260 L 1230,2330 V 2500 L 1200,2530 H 1040"/>
+            <path d="M 1440,2320 H 1280 L 1250,2350 V 2480"/>
+            <path d="M 1040,2530 V 2700 L 1010,2730 H 870"/>
+
+            <!-- Bottom traces -->
+            <path d="M 500,2800 H 700 L 730,2830 V 3000"/>
+            <path d="M 500,2815 H 680 L 710,2845 V 3020"/>
+            <path d="M 730,3000 L 760,3030 H 950"/>
+            <path d="M 200,2900 H 380 L 410,2930 V 3100"/>
+            <path d="M 1200,2800 V 3000 L 1170,3030 H 1000"/>
+            <path d="M 1220,2820 V 2980 L 1190,3010 H 1040 V 3200"/>
+        </g>
+
+        <!-- ============ POWER/GROUND TRACES (wider) ============ -->
+        <g stroke="#1B4D35" fill="none" stroke-linecap="round" opacity="0.22">
+            <!-- VCC rail -->
+            <path d="M 0,850 H 1440" stroke-width="5"/>
+            <!-- GND rail -->
+            <path d="M 0,870 H 1440" stroke-width="6"/>
+            <!-- Mid power -->
+            <path d="M 0,1900 H 1440" stroke-width="5"/>
+            <path d="M 0,1920 H 1440" stroke-width="6"/>
+            <!-- Bottom power -->
+            <path d="M 0,3050 H 1440" stroke-width="5"/>
+            <!-- Vertical power drops -->
+            <path d="M 400,850 V 1100" stroke-width="4"/>
+            <path d="M 1050,850 V 1150" stroke-width="4"/>
+            <path d="M 700,1900 V 2150" stroke-width="4"/>
+        </g>
+
+        <!-- ============ DIFFERENTIAL PAIRS ============ -->
+        <g stroke="#1B4D35" fill="none" stroke-width="1.5" stroke-linecap="round" opacity="0.3">
+            <!-- USB diff pair -->
+            <path d="M 620,350 L 650,380 H 820 L 850,410 V 580"/>
+            <path d="M 620,358 L 650,388 H 820 L 850,418 V 588"/>
+            <!-- Another diff pair -->
+            <path d="M 1000,1400 V 1600 L 970,1630 H 780"/>
+            <path d="M 1008,1400 V 1600 L 978,1630 H 788"/>
+        </g>
+
+        <!-- ============ COPPER PADS (component landings) ============ -->
+        <g fill="#CD7F32" opacity="0.1">
+            <!-- QFP-48 pads (top-left IC) -->
+            <!-- Top side pads -->
+            <rect x="165" y="125" width="8" height="3" rx="0.5"/>
+            <rect x="180" y="125" width="8" height="3" rx="0.5"/>
+            <rect x="195" y="125" width="8" height="3" rx="0.5"/>
+            <rect x="210" y="125" width="8" height="3" rx="0.5"/>
+            <rect x="225" y="125" width="8" height="3" rx="0.5"/>
+            <rect x="240" y="125" width="8" height="3" rx="0.5"/>
+            <rect x="255" y="125" width="8" height="3" rx="0.5"/>
+            <rect x="270" y="125" width="8" height="3" rx="0.5"/>
+            <rect x="285" y="125" width="8" height="3" rx="0.5"/>
+            <rect x="300" y="125" width="8" height="3" rx="0.5"/>
+            <rect x="315" y="125" width="8" height="3" rx="0.5"/>
+            <rect x="330" y="125" width="8" height="3" rx="0.5"/>
+            <!-- Left side pads -->
+            <rect x="145" y="140" width="3" height="8" rx="0.5"/>
+            <rect x="145" y="155" width="3" height="8" rx="0.5"/>
+            <rect x="145" y="170" width="3" height="8" rx="0.5"/>
+            <rect x="145" y="185" width="3" height="8" rx="0.5"/>
+            <rect x="145" y="200" width="3" height="8" rx="0.5"/>
+            <rect x="145" y="215" width="3" height="8" rx="0.5"/>
+            <rect x="145" y="230" width="3" height="8" rx="0.5"/>
+            <rect x="145" y="245" width="3" height="8" rx="0.5"/>
+            <rect x="145" y="260" width="3" height="8" rx="0.5"/>
+            <rect x="145" y="275" width="3" height="8" rx="0.5"/>
+            <rect x="145" y="290" width="3" height="8" rx="0.5"/>
+            <rect x="145" y="305" width="3" height="8" rx="0.5"/>
+            <!-- Bottom side pads -->
+            <rect x="165" y="325" width="8" height="3" rx="0.5"/>
+            <rect x="180" y="325" width="8" height="3" rx="0.5"/>
+            <rect x="195" y="325" width="8" height="3" rx="0.5"/>
+            <rect x="210" y="325" width="8" height="3" rx="0.5"/>
+            <rect x="225" y="325" width="8" height="3" rx="0.5"/>
+            <rect x="240" y="325" width="8" height="3" rx="0.5"/>
+            <rect x="255" y="325" width="8" height="3" rx="0.5"/>
+            <rect x="270" y="325" width="8" height="3" rx="0.5"/>
+            <rect x="285" y="325" width="8" height="3" rx="0.5"/>
+            <rect x="300" y="325" width="8" height="3" rx="0.5"/>
+            <rect x="315" y="325" width="8" height="3" rx="0.5"/>
+            <rect x="330" y="325" width="8" height="3" rx="0.5"/>
+            <!-- Right side pads -->
+            <rect x="345" y="140" width="3" height="8" rx="0.5"/>
+            <rect x="345" y="155" width="3" height="8" rx="0.5"/>
+            <rect x="345" y="170" width="3" height="8" rx="0.5"/>
+            <rect x="345" y="185" width="3" height="8" rx="0.5"/>
+            <rect x="345" y="200" width="3" height="8" rx="0.5"/>
+            <rect x="345" y="215" width="3" height="8" rx="0.5"/>
+            <rect x="345" y="230" width="3" height="8" rx="0.5"/>
+            <rect x="345" y="245" width="3" height="8" rx="0.5"/>
+            <rect x="345" y="260" width="3" height="8" rx="0.5"/>
+            <rect x="345" y="275" width="3" height="8" rx="0.5"/>
+            <rect x="345" y="290" width="3" height="8" rx="0.5"/>
+            <rect x="345" y="305" width="3" height="8" rx="0.5"/>
+
+            <!-- 0805 passive pads (scattered pairs) -->
+            <rect x="520" y="440" width="5" height="8" rx="0.5"/>
+            <rect x="536" y="440" width="5" height="8" rx="0.5"/>
+
+            <rect x="480" y="290" width="5" height="8" rx="0.5"/>
+            <rect x="496" y="290" width="5" height="8" rx="0.5"/>
+
+            <rect x="420" y="510" width="8" height="5" rx="0.5"/>
+            <rect x="420" y="526" width="8" height="5" rx="0.5"/>
+
+            <rect x="350" y="750" width="5" height="8" rx="0.5"/>
+            <rect x="366" y="750" width="5" height="8" rx="0.5"/>
+
+            <rect x="1050" y="900" width="5" height="8" rx="0.5"/>
+            <rect x="1066" y="900" width="5" height="8" rx="0.5"/>
+
+            <rect x="850" y="1090" width="8" height="5" rx="0.5"/>
+            <rect x="850" y="1106" width="8" height="5" rx="0.5"/>
+
+            <rect x="460" y="1090" width="5" height="8" rx="0.5"/>
+            <rect x="476" y="1090" width="5" height="8" rx="0.5"/>
+
+            <!-- Decoupling caps near ICs -->
+            <rect x="158" y="342" width="4" height="7" rx="0.5"/>
+            <rect x="170" y="342" width="4" height="7" rx="0.5"/>
+
+            <rect x="330" y="342" width="4" height="7" rx="0.5"/>
+            <rect x="342" y="342" width="4" height="7" rx="0.5"/>
+
+            <!-- SOIC-8 pads (right side, mid) -->
+            <rect x="1060" y="430" width="3" height="7" rx="0.5"/>
+            <rect x="1060" y="445" width="3" height="7" rx="0.5"/>
+            <rect x="1060" y="460" width="3" height="7" rx="0.5"/>
+            <rect x="1060" y="475" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="430" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="445" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="460" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="475" width="3" height="7" rx="0.5"/>
+
+            <!-- SOT-23 pads -->
+            <rect x="618" y="570" width="4" height="6" rx="0.5"/>
+            <rect x="630" y="570" width="4" height="6" rx="0.5"/>
+            <rect x="624" y="592" width="4" height="6" rx="0.5"/>
+
+            <!-- Through-hole connector pads (right edge) -->
+            <circle cx="1410" cy="170" r="4"/>
+            <circle cx="1410" cy="185" r="4"/>
+            <circle cx="1410" cy="200" r="4"/>
+            <circle cx="1410" cy="215" r="4"/>
+            <circle cx="1410" cy="230" r="4"/>
+            <circle cx="1410" cy="245" r="4"/>
+
+            <!-- Through-hole pin header pads (bottom area) -->
+            <circle cx="200" cy="2900" r="4"/>
+            <circle cx="215" cy="2900" r="4"/>
+            <circle cx="230" cy="2900" r="4"/>
+            <circle cx="245" cy="2900" r="4"/>
+            <circle cx="260" cy="2900" r="4"/>
+            <circle cx="200" cy="2915" r="4"/>
+            <circle cx="215" cy="2915" r="4"/>
+            <circle cx="230" cy="2915" r="4"/>
+            <circle cx="245" cy="2915" r="4"/>
+            <circle cx="260" cy="2915" r="4"/>
+
+            <!-- More 0805 passives in lower sections -->
+            <rect x="590" y="1850" width="5" height="8" rx="0.5"/>
+            <rect x="606" y="1850" width="5" height="8" rx="0.5"/>
+
+            <rect x="450" y="1940" width="5" height="8" rx="0.5"/>
+            <rect x="466" y="1940" width="5" height="8" rx="0.5"/>
+
+            <rect x="1120" y="2010" width="8" height="5" rx="0.5"/>
+            <rect x="1120" y="2026" width="8" height="5" rx="0.5"/>
+
+            <rect x="870" y="2240" width="5" height="8" rx="0.5"/>
+            <rect x="886" y="2240" width="5" height="8" rx="0.5"/>
+
+            <rect x="1040" y="2520" width="5" height="8" rx="0.5"/>
+            <rect x="1056" y="2520" width="5" height="8" rx="0.5"/>
+
+            <rect x="480" y="2590" width="5" height="8" rx="0.5"/>
+            <rect x="496" y="2590" width="5" height="8" rx="0.5"/>
+        </g>
+
+        <!-- ============ VIAS ============ -->
+        <g>
+            <!-- Annular rings -->
+            <g fill="none" stroke="#CD7F32" stroke-width="1.5" opacity="0.2">
+                <!-- Signal vias at trace junctions -->
+                <circle cx="270" cy="190" r="5"/>
+                <circle cx="255" cy="205" r="5"/>
+                <circle cx="400" cy="160" r="5"/>
+                <circle cx="1270" cy="210" r="5"/>
+                <circle cx="1250" cy="240" r="5"/>
+                <circle cx="150" cy="580" r="5"/>
+                <circle cx="130" cy="600" r="5"/>
+                <circle cx="180" cy="750" r="5"/>
+                <circle cx="380" cy="780" r="5"/>
+                <circle cx="550" cy="810" r="5"/>
+                <circle cx="1250" cy="730" r="5"/>
+                <circle cx="1220" cy="910" r="5"/>
+                <circle cx="990" cy="1130" r="5"/>
+                <circle cx="890" cy="1230" r="5"/>
+                <circle cx="890" cy="1242" r="5"/>
+                <circle cx="890" cy="1254" r="5"/>
+                <circle cx="890" cy="1266" r="5"/>
+                <circle cx="210" cy="1530" r="5"/>
+                <circle cx="240" cy="1680" r="5"/>
+                <circle cx="170" cy="1750" r="5"/>
+                <circle cx="1250" cy="1630" r="5"/>
+                <circle cx="1220" cy="1830" r="5"/>
+                <circle cx="1050" cy="2080" r="5"/>
+                <circle cx="230" cy="2230" r="5"/>
+                <circle cx="260" cy="2430" r="5"/>
+                <circle cx="1230" cy="2330" r="5"/>
+                <circle cx="1200" cy="2530" r="5"/>
+                <circle cx="730" cy="2830" r="5"/>
+                <circle cx="410" cy="2930" r="5"/>
+                <circle cx="1170" cy="3030" r="5"/>
+            </g>
+            <!-- Drill holes -->
+            <g fill="#0B1A12" stroke="none">
+                <circle cx="270" cy="190" r="2"/>
+                <circle cx="255" cy="205" r="2"/>
+                <circle cx="400" cy="160" r="2"/>
+                <circle cx="1270" cy="210" r="2"/>
+                <circle cx="1250" cy="240" r="2"/>
+                <circle cx="150" cy="580" r="2"/>
+                <circle cx="130" cy="600" r="2"/>
+                <circle cx="180" cy="750" r="2"/>
+                <circle cx="380" cy="780" r="2"/>
+                <circle cx="550" cy="810" r="2"/>
+                <circle cx="1250" cy="730" r="2"/>
+                <circle cx="1220" cy="910" r="2"/>
+                <circle cx="990" cy="1130" r="2"/>
+                <circle cx="890" cy="1230" r="2"/>
+                <circle cx="890" cy="1242" r="2"/>
+                <circle cx="890" cy="1254" r="2"/>
+                <circle cx="890" cy="1266" r="2"/>
+                <circle cx="210" cy="1530" r="2"/>
+                <circle cx="240" cy="1680" r="2"/>
+                <circle cx="170" cy="1750" r="2"/>
+                <circle cx="1250" cy="1630" r="2"/>
+                <circle cx="1220" cy="1830" r="2"/>
+                <circle cx="1050" cy="2080" r="2"/>
+                <circle cx="230" cy="2230" r="2"/>
+                <circle cx="260" cy="2430" r="2"/>
+                <circle cx="1230" cy="2330" r="2"/>
+                <circle cx="1200" cy="2530" r="2"/>
+                <circle cx="730" cy="2830" r="2"/>
+                <circle cx="410" cy="2930" r="2"/>
+                <circle cx="1170" cy="3030" r="2"/>
+            </g>
+
+            <!-- Via stitching rows (ground plane stitching) -->
+            <g fill="none" stroke="#CD7F32" stroke-width="1" opacity="0.1">
+                <!-- Top edge stitching -->
+                <circle cx="50" cy="30" r="3.5"/><circle cx="100" cy="30" r="3.5"/><circle cx="150" cy="30" r="3.5"/><circle cx="200" cy="30" r="3.5"/><circle cx="250" cy="30" r="3.5"/><circle cx="300" cy="30" r="3.5"/>
+                <circle cx="1140" cy="30" r="3.5"/><circle cx="1190" cy="30" r="3.5"/><circle cx="1240" cy="30" r="3.5"/><circle cx="1290" cy="30" r="3.5"/><circle cx="1340" cy="30" r="3.5"/><circle cx="1390" cy="30" r="3.5"/>
+                <!-- Left edge stitching -->
+                <circle cx="25" cy="100" r="3.5"/><circle cx="25" cy="150" r="3.5"/><circle cx="25" cy="200" r="3.5"/><circle cx="25" cy="250" r="3.5"/><circle cx="25" cy="300" r="3.5"/>
+                <circle cx="25" cy="1000" r="3.5"/><circle cx="25" cy="1050" r="3.5"/><circle cx="25" cy="1100" r="3.5"/><circle cx="25" cy="1150" r="3.5"/><circle cx="25" cy="1200" r="3.5"/>
+                <circle cx="25" cy="2500" r="3.5"/><circle cx="25" cy="2550" r="3.5"/><circle cx="25" cy="2600" r="3.5"/><circle cx="25" cy="2650" r="3.5"/>
+                <!-- Right edge stitching -->
+                <circle cx="1415" cy="400" r="3.5"/><circle cx="1415" cy="450" r="3.5"/><circle cx="1415" cy="500" r="3.5"/><circle cx="1415" cy="550" r="3.5"/>
+                <circle cx="1415" cy="1300" r="3.5"/><circle cx="1415" cy="1350" r="3.5"/><circle cx="1415" cy="1400" r="3.5"/><circle cx="1415" cy="1450" r="3.5"/>
+                <circle cx="1415" cy="2600" r="3.5"/><circle cx="1415" cy="2650" r="3.5"/><circle cx="1415" cy="2700" r="3.5"/>
+                <!-- Power rail stitching (along power traces) -->
+                <circle cx="500" cy="850" r="3.5"/><circle cx="600" cy="850" r="3.5"/><circle cx="700" cy="850" r="3.5"/><circle cx="800" cy="850" r="3.5"/><circle cx="900" cy="850" r="3.5"/>
+                <circle cx="500" cy="870" r="3.5"/><circle cx="600" cy="870" r="3.5"/><circle cx="700" cy="870" r="3.5"/><circle cx="800" cy="870" r="3.5"/><circle cx="900" cy="870" r="3.5"/>
+            </g>
+            <!-- Via stitching drill holes -->
+            <g fill="#0B1A12" opacity="0.6">
+                <circle cx="50" cy="30" r="1.2"/><circle cx="100" cy="30" r="1.2"/><circle cx="150" cy="30" r="1.2"/><circle cx="200" cy="30" r="1.2"/><circle cx="250" cy="30" r="1.2"/><circle cx="300" cy="30" r="1.2"/>
+                <circle cx="1140" cy="30" r="1.2"/><circle cx="1190" cy="30" r="1.2"/><circle cx="1240" cy="30" r="1.2"/><circle cx="1290" cy="30" r="1.2"/><circle cx="1340" cy="30" r="1.2"/><circle cx="1390" cy="30" r="1.2"/>
+                <circle cx="25" cy="100" r="1.2"/><circle cx="25" cy="150" r="1.2"/><circle cx="25" cy="200" r="1.2"/><circle cx="25" cy="250" r="1.2"/><circle cx="25" cy="300" r="1.2"/>
+                <circle cx="25" cy="1000" r="1.2"/><circle cx="25" cy="1050" r="1.2"/><circle cx="25" cy="1100" r="1.2"/><circle cx="25" cy="1150" r="1.2"/><circle cx="25" cy="1200" r="1.2"/>
+            </g>
+        </g>
+
+        <!-- ============ COMPONENT FOOTPRINTS (silkscreen outlines) ============ -->
+        <g stroke="#E8E4D9" fill="none" opacity="0.055">
+            <!-- QFP-48 body (top-left) -->
+            <rect x="155" y="130" width="190" height="200" rx="3" stroke-width="1"/>
+            <circle cx="168" cy="143" r="4" stroke-width="0.8"/>
+
+            <!-- SOIC-8 body (right side) -->
+            <rect x="1063" y="425" width="35" height="65" rx="1.5" stroke-width="0.8"/>
+            <path d="M 1073,425 A 5 3 0 0 1 1088,425" stroke-width="0.8"/>
+
+            <!-- SOT-23 (center-left) -->
+            <rect x="614" y="568" width="24" height="30" rx="1" stroke-width="0.8"/>
+
+            <!-- 0805 outlines (many scattered) -->
+            <rect x="517" y="437" width="27" height="14" rx="1" stroke-width="0.6"/>
+            <rect x="477" y="287" width="27" height="14" rx="1" stroke-width="0.6"/>
+            <rect x="416" y="507" width="14" height="27" rx="1" stroke-width="0.6"/>
+            <rect x="347" y="747" width="27" height="14" rx="1" stroke-width="0.6"/>
+            <rect x="1047" y="897" width="27" height="14" rx="1" stroke-width="0.6"/>
+            <rect x="846" y="1087" width="14" height="27" rx="1" stroke-width="0.6"/>
+            <rect x="457" y="1087" width="27" height="14" rx="1" stroke-width="0.6"/>
+            <rect x="587" y="1847" width="27" height="14" rx="1" stroke-width="0.6"/>
+            <rect x="447" y="1937" width="27" height="14" rx="1" stroke-width="0.6"/>
+            <rect x="1117" y="2007" width="14" height="27" rx="1" stroke-width="0.6"/>
+            <rect x="867" y="2237" width="27" height="14" rx="1" stroke-width="0.6"/>
+            <rect x="1037" y="2517" width="27" height="14" rx="1" stroke-width="0.6"/>
+            <rect x="477" y="2587" width="27" height="14" rx="1" stroke-width="0.6"/>
+
+            <!-- Decoupling cap outlines -->
+            <rect x="155" y="339" width="22" height="12" rx="1" stroke-width="0.6"/>
+            <rect x="327" y="339" width="22" height="12" rx="1" stroke-width="0.6"/>
+
+            <!-- Through-hole connector (right edge) -->
+            <rect x="1395" y="162" width="30" height="92" rx="2" stroke-width="1"/>
+
+            <!-- Pin header 2x5 (bottom area) -->
+            <rect x="192" y="2892" width="78" height="30" rx="1.5" stroke-width="0.8"/>
+
+            <!-- QFN-24 body (mid-right area) -->
+            <rect x="1150" y="1620" width="50" height="50" rx="2" stroke-width="0.8"/>
+            <circle cx="1160" cy="1630" r="3" stroke-width="0.6"/>
+
+            <!-- Electrolytic cap (circle) -->
+            <circle cx="560" cy="980" r="14" stroke-width="0.8"/>
+            <path d="M 553,968 V 992" stroke-width="0.6"/>
+
+            <!-- Crystal oscillator -->
+            <rect x="430" y="350" width="18" height="10" rx="1" stroke-width="0.6"/>
+
+            <!-- USB connector outline (top center-ish) -->
+            <rect x="600" y="340" width="45" height="22" rx="2" stroke-width="1"/>
+
+            <!-- Module footprint (large, lower area) -->
+            <rect x="900" y="2050" width="80" height="55" rx="2" stroke-width="1"/>
+            <circle cx="912" cy="2062" r="3" stroke-width="0.6"/>
+        </g>
+
+        <!-- Copper pour zones removed for cleaner background -->
+
+        <!-- ============ TEST POINTS ============ -->
+        <g fill="none" stroke="#CD7F32" opacity="0.15">
+            <circle cx="560" cy="620" r="7" stroke-width="2"/>
+            <circle cx="820" cy="780" r="7" stroke-width="2"/>
+            <circle cx="380" cy="1450" r="7" stroke-width="2"/>
+            <circle cx="1100" cy="1150" r="7" stroke-width="2"/>
+            <circle cx="650" cy="2400" r="7" stroke-width="2"/>
+        </g>
+        <g fill="#CD7F32" opacity="0.1">
+            <circle cx="560" cy="620" r="3"/>
+            <circle cx="820" cy="780" r="3"/>
+            <circle cx="380" cy="1450" r="3"/>
+            <circle cx="1100" cy="1150" r="3"/>
+            <circle cx="650" cy="2400" r="3"/>
+        </g>
+
+        <!-- ============ MOUNTING HOLES ============ -->
+        <g>
+            <g fill="none" stroke="#CD7F32" stroke-width="2" opacity="0.12">
+                <circle cx="60" cy="60" r="12"/>
+                <circle cx="1380" cy="60" r="12"/>
+                <circle cx="60" cy="3540" r="12"/>
+                <circle cx="1380" cy="3540" r="12"/>
+            </g>
+            <g fill="#050D08" stroke="none">
+                <circle cx="60" cy="60" r="6"/>
+                <circle cx="1380" cy="60" r="6"/>
+                <circle cx="60" cy="3540" r="6"/>
+                <circle cx="1380" cy="3540" r="6"/>
+            </g>
+        </g>
+
+        <!-- ============ FIDUCIAL MARKERS ============ -->
+        <g stroke="#CD7F32" fill="none" opacity="0.14">
+            <circle cx="720" cy="50" r="6" stroke-width="2"/>
+            <circle cx="720" cy="50" r="2" stroke-width="1"/>
+            <circle cx="720" cy="3550" r="6" stroke-width="2"/>
+            <circle cx="720" cy="3550" r="2" stroke-width="1"/>
+        </g>
+
+        <!-- ============ SILKSCREEN TEXT ============ -->
+        <g fill="#E8E4D9" font-family="Space Mono, monospace" letter-spacing="0.1em">
+            <!-- Component designators -->
+            <g opacity="0.04" font-size="7" font-weight="700">
+                <text x="220" y="120">U1</text>
+                <text x="1072" y="420">U2</text>
+                <text x="1155" y="1615">U3</text>
+                <text x="610" y="565">Q1</text>
+                <text x="527" y="435">R1</text>
+                <text x="487" y="285">R2</text>
+                <text x="357" y="745">R3</text>
+                <text x="1057" y="895">R4</text>
+                <text x="527" y="445" font-size="5">10K</text>
+                <text x="487" y="295" font-size="5">4K7</text>
+                <text x="557" y="968" font-size="6">C1</text>
+                <text x="155" y="352" font-size="5">100n</text>
+                <text x="327" y="352" font-size="5">100n</text>
+                <text x="430" y="348" font-size="5">Y1</text>
+                <text x="600" y="338" font-size="6">J1</text>
+                <text x="1395" y="160" font-size="6">J2</text>
+                <text x="192" y="2890" font-size="6">J3</text>
+                <text x="905" y="2048" font-size="6">U4</text>
+            </g>
+            <!-- Board info -->
+            <g opacity="0.04" font-size="9">
+                <text x="60" y="3580">pcbparts.dev</text>
+                <text x="1280" y="3580">REV 2.4</text>
+            </g>
+            <g opacity="0.03" font-size="7">
+                <text x="580" y="3580">PCB PARTS MCP — MADE WITH ELECTRONS</text>
+            </g>
+        </g>
+
+        <!-- ============ ADDITIONAL COMPONENT FOOTPRINTS (at signal endpoints) ============ -->
+        <!-- SOIC-16 at signal 2 endpoint (~1070, 600) -->
+        <g fill="#CD7F32" opacity="0.1">
+            <rect x="1045" y="590" width="3" height="7" rx="0.5"/>
+            <rect x="1045" y="604" width="3" height="7" rx="0.5"/>
+            <rect x="1045" y="618" width="3" height="7" rx="0.5"/>
+            <rect x="1045" y="632" width="3" height="7" rx="0.5"/>
+            <rect x="1045" y="646" width="3" height="7" rx="0.5"/>
+            <rect x="1045" y="660" width="3" height="7" rx="0.5"/>
+            <rect x="1045" y="674" width="3" height="7" rx="0.5"/>
+            <rect x="1045" y="688" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="590" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="604" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="618" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="632" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="646" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="660" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="674" width="3" height="7" rx="0.5"/>
+            <rect x="1095" y="688" width="3" height="7" rx="0.5"/>
+        </g>
+        <g stroke="#E8E4D9" fill="none" opacity="0.055">
+            <rect x="1048" y="585" width="50" height="115" rx="1.5" stroke-width="0.8"/>
+            <path d="M 1060,585 A 5 3 0 0 1 1080,585" stroke-width="0.8"/>
+        </g>
+
+        <!-- DIP-8 at signal 4 endpoint (~890, 1400) -->
+        <g fill="#CD7F32" opacity="0.1">
+            <circle cx="880" cy="1405" r="4"/>
+            <circle cx="880" cy="1420" r="4"/>
+            <circle cx="880" cy="1435" r="4"/>
+            <circle cx="880" cy="1450" r="4"/>
+            <circle cx="920" cy="1405" r="4"/>
+            <circle cx="920" cy="1420" r="4"/>
+            <circle cx="920" cy="1435" r="4"/>
+            <circle cx="920" cy="1450" r="4"/>
+        </g>
+        <g stroke="#E8E4D9" fill="none" opacity="0.055">
+            <rect x="870" y="1395" width="60" height="65" rx="2" stroke-width="0.8"/>
+            <path d="M 890,1395 A 5 4 0 0 1 910,1395" stroke-width="0.8"/>
+        </g>
+
+        <!-- Voltage regulator SOT-223 near signal 5 endpoint (~920, 2250) -->
+        <g fill="#CD7F32" opacity="0.1">
+            <rect x="905" y="2245" width="4" height="8" rx="0.5"/>
+            <rect x="917" y="2245" width="4" height="8" rx="0.5"/>
+            <rect x="929" y="2245" width="4" height="8" rx="0.5"/>
+            <rect x="910" y="2275" width="18" height="4" rx="0.5"/>
+        </g>
+        <g stroke="#E8E4D9" fill="none" opacity="0.055">
+            <rect x="900" y="2240" width="40" height="45" rx="1.5" stroke-width="0.8"/>
+        </g>
+
+        <!-- Extra scattered passives to fill sparse areas -->
+        <g fill="#CD7F32" opacity="0.1">
+            <!-- 0805 pair near (700, 500) -->
+            <rect x="695" y="495" width="5" height="8" rx="0.5"/>
+            <rect x="711" y="495" width="5" height="8" rx="0.5"/>
+            <!-- 0805 pair near (850, 350) -->
+            <rect x="845" y="345" width="8" height="5" rx="0.5"/>
+            <rect x="845" y="361" width="8" height="5" rx="0.5"/>
+            <!-- 0402 pair near (400, 1300) -->
+            <rect x="396" y="1296" width="4" height="6" rx="0.5"/>
+            <rect x="408" y="1296" width="4" height="6" rx="0.5"/>
+            <!-- 0805 pair near (700, 1600) -->
+            <rect x="695" y="1595" width="5" height="8" rx="0.5"/>
+            <rect x="711" y="1595" width="5" height="8" rx="0.5"/>
+            <!-- Inductor / large passive near (300, 2100) -->
+            <rect x="290" y="2090" width="8" height="12" rx="1"/>
+            <rect x="310" y="2090" width="8" height="12" rx="1"/>
+            <!-- SOT-23 near (1200, 1100) -->
+            <rect x="1195" y="1095" width="4" height="6" rx="0.5"/>
+            <rect x="1207" y="1095" width="4" height="6" rx="0.5"/>
+            <rect x="1201" y="1115" width="4" height="6" rx="0.5"/>
+        </g>
+        <g stroke="#E8E4D9" fill="none" opacity="0.055">
+            <rect x="692" y="492" width="27" height="14" rx="1" stroke-width="0.6"/>
+            <rect x="842" y="342" width="14" height="27" rx="1" stroke-width="0.6"/>
+            <rect x="393" y="1293" width="22" height="12" rx="1" stroke-width="0.6"/>
+            <rect x="692" y="1592" width="27" height="14" rx="1" stroke-width="0.6"/>
+            <rect x="286" y="2086" width="36" height="20" rx="1.5" stroke-width="0.8"/>
+            <rect x="1191" y="1091" width="24" height="30" rx="1" stroke-width="0.8"/>
+        </g>
+
+        <!-- Extra silkscreen designators for new components -->
+        <g fill="#E8E4D9" font-family="Space Mono, monospace" letter-spacing="0.1em" opacity="0.04" font-size="6" font-weight="700">
+            <text x="1050" y="582">U5</text>
+            <text x="872" y="1390">U6</text>
+            <text x="902" y="2237">U7</text>
+            <text x="702" y="490">R5</text>
+            <text x="848" y="340">R6</text>
+            <text x="398" y="1290">R7</text>
+            <text x="702" y="1590">R8</text>
+            <text x="290" y="2083">L1</text>
+            <text x="1195" y="1088">Q2</text>
+        </g>
+
+        <!-- ============ BOARD EDGE ============ -->
+        <g stroke="#CD7F32" fill="none" stroke-width="1.5" opacity="0.08">
+            <rect x="10" y="10" width="1420" height="3580" rx="6"/>
+        </g>
+
+    </svg>
+
+    <!-- Animated traces: separated so Chrome doesn't re-rasterize the 400+ element static SVG on every animation frame -->
+    <svg class="pcb-traces-animated" viewBox="0 0 1440 3600" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path class="trace-signal" d="M 150,160 H 240 L 270,190 V 340"/>
+            <path class="trace-signal" d="M 1440,180 H 1300 L 1270,210 V 380 L 1240,410 H 1100 L 1070,440 V 600"/>
+            <path class="trace-signal" d="M 0,550 H 120 L 150,580 V 720 L 180,750 H 350 L 380,780 H 520 L 550,810 V 980"/>
+            <path class="trace-signal" d="M 580,1200 H 860 L 890,1230 V 1400"/>
+            <path class="trace-signal" d="M 1440,1600 H 1280 L 1250,1630 V 1800 L 1220,1830 H 1080 V 2050 L 1050,2080 H 920 V 2250"/>
+        </g>
+        <g>
+            <circle class="via-glow" cx="270" cy="190" r="3"/>
+            <circle class="via-glow" cx="1270" cy="210" r="3"/>
+            <circle class="via-glow" cx="180" cy="750" r="3"/>
+            <circle class="via-glow" cx="550" cy="810" r="3"/>
+            <circle class="via-glow" cx="890" cy="1230" r="3"/>
+            <circle class="via-glow" cx="1250" cy="1630" r="3"/>
+            <circle class="via-glow" cx="1050" cy="2080" r="3"/>
+        </g>
+    </svg>
+
+    <!-- Grain texture (CSS-only, no SVG filter for performance) -->
+    <div class="pcb-grain"></div>
+
+    <!-- Navigation -->
     <nav>
         <div class="container">
             <a href="#" class="nav-logo">
-                <img src="favicon.svg" alt="JLCPCB MCP">
-                <span class="logo-text"><span class="logo-jlcpcb">JLCPCB</span><span class="logo-mcp">MCP</span></span>
+                <img src="favicon.svg" alt="PCB Parts MCP">
+                <span class="nav-logo-text">PCB <span class="dim">Parts MCP</span></span>
             </a>
             <div class="nav-links">
                 <a href="#setup">Setup</a>
                 <a href="#features">Tools</a>
-                <a href="https://github.com/Averyy/jlcpcb-mcp" target="_blank" class="nav-github"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>GitHub</a>
+                <a href="https://github.com/Averyy/pcbparts-mcp" target="_blank" class="nav-github"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>GitHub</a>
             </div>
         </div>
     </nav>
 
     <main>
+        <!-- HERO -->
         <section class="hero">
             <div class="container">
                 <div class="status-badge" id="status-badge" role="status" aria-live="polite">
-                    <div class="status-orb" id="status-orb" aria-hidden="true"></div>
+                    <div class="status-led" id="status-led" aria-hidden="true"></div>
                     <span id="status-text">Checking status...</span>
                 </div>
 
-                <h1>Search JLCPCB components<br>directly in Claude</h1>
+                <h1>Electronic component search<br>for <span class="copper">AI coding tools</span></h1>
 
                 <p class="hero-subtitle">
-                    Search 1.5M+ JLCPCB components via MCP optimized for hobbyist and IoT projects. Real-time stock, pricing, datasheets.
+                    Search 1.5M+ parts across JLCPCB, Mouser, and DigiKey. Real-time stock, pricing tiers, datasheets, and KiCad footprints. No API key needed.
                 </p>
 
                 <div class="hero-cta">
-                    <div class="btn-code" onclick="copyInstall()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copyInstall();}" style="cursor: pointer;" title="Click to copy" tabindex="0" role="button" aria-label="Copy install command: claude mcp add --transport http jlcmcp https://jlcmcp.dev/mcp">
-                        <span class="code-cli">claude</span> <span class="code-cmd">mcp add</span> <span class="code-flag">--transport</span> <span class="code-arg">http</span> <span class="code-name">jlcmcp</span> <span class="code-url">https://jlcmcp.dev/mcp</span>
+                    <div class="install-cmd" onclick="copyInstall()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copyInstall();}" title="Click to copy" tabindex="0" role="button" aria-label="Copy install command">
+                        <span class="prompt">$</span>&nbsp;<span>claude</span>&nbsp;<span>mcp add</span>&nbsp;<span class="flag">--transport</span>&nbsp;<span class="flag">http</span>&nbsp;<span class="name">pcbparts</span>&nbsp;<span>https://pcbparts.dev/mcp</span>
                     </div>
-                    <button class="btn-primary" onclick="copyInstall()" aria-label="Copy install command to clipboard"><span class="btn-text-full">Copy to Clipboard</span><span class="btn-text-short">Copy</span></button>
+                    <button class="btn-copy" onclick="copyInstall()" aria-label="Copy install command to clipboard"><span class="btn-text-full">Copy</span><span class="btn-text-short">Copy</span></button>
                 </div>
 
                 <p class="hero-link">Or see <a href="#setup">other install methods</a> for Cursor, Claude Desktop & more</p>
 
+                <!-- Terminal Demo -->
                 <div class="terminal-section">
                     <div class="terminal-wrapper">
-                        <div class="terminal-accent">
-                            <div class="terminal-dots">
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
+                        <div class="terminal-header">
+                            <div class="terminal-header-dots">
+                                <div class="terminal-header-dot"></div>
+                                <div class="terminal-header-dot"></div>
+                                <div class="terminal-header-dot"></div>
                             </div>
+                            <span class="terminal-header-title">serial monitor</span>
                         </div>
                         <div class="terminal-body" id="terminal-body"></div>
                     </div>
@@ -944,78 +1816,84 @@
             </div>
         </section>
 
+        <!-- Schematic divider: resistor zigzag -->
+        <div class="schematic-divider">
+            <svg width="280" height="24" viewBox="0 0 280 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="0" y1="12" x2="90" y2="12" stroke="var(--copper)" stroke-width="1.5" opacity="0.2"/>
+                <polyline points="90,12 100,4 110,20 120,4 130,20 140,4 150,20 160,4 170,20 180,12" stroke="var(--copper)" stroke-width="1.5" fill="none" opacity="0.25"/>
+                <line x1="180" y1="12" x2="280" y2="12" stroke="var(--copper)" stroke-width="1.5" opacity="0.2"/>
+                <text x="132" y="24" font-family="Space Mono, monospace" font-size="5" fill="var(--copper)" opacity="0.15" text-anchor="middle" letter-spacing="0.1em">R∞</text>
+            </svg>
+        </div>
 
+        <!-- SETUP -->
         <section id="setup" class="setup-section">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Connect your client</h2>
-                </div>
+            <!-- PnP corner overlays — mounting holes + status text only -->
+            <!-- Top-left -->
+            <svg class="pnp-corner pnp-corner-tl" viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <text x="8" y="18" font-family="JetBrains Mono, monospace" font-size="10" fill="#E8E4D9" opacity="0.28" letter-spacing="0.08em">FEEDER: 01  NOZZLE: N2</text>
+                <text x="8" y="34" font-family="JetBrains Mono, monospace" font-size="10" fill="#4CAF50" opacity="0.3" letter-spacing="0.08em">STATUS: READY</text>
+                <circle cx="18" cy="162" r="18" stroke="#CD7F32" stroke-width="2" opacity="0.15"/>
+                <circle cx="18" cy="162" r="9" fill="#040a06" opacity="0.9"/>
+                <circle cx="18" cy="162" r="10" stroke="#CD7F32" stroke-width="1" opacity="0.1"/>
+            </svg>
 
+            <!-- Top-right -->
+            <svg class="pnp-corner pnp-corner-tr" viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <text x="212" y="18" font-family="JetBrains Mono, monospace" font-size="10" fill="#E8E4D9" opacity="0.28" letter-spacing="0.08em" text-anchor="end">X: 142.50  Y: 87.20</text>
+                <text x="212" y="34" font-family="JetBrains Mono, monospace" font-size="10" fill="#E8E4D9" opacity="0.22" letter-spacing="0.08em" text-anchor="end">ROT: 0.0°  PRESSURE: OK</text>
+                <circle cx="202" cy="162" r="18" stroke="#CD7F32" stroke-width="2" opacity="0.15"/>
+                <circle cx="202" cy="162" r="9" fill="#040a06" opacity="0.9"/>
+                <circle cx="202" cy="162" r="10" stroke="#CD7F32" stroke-width="1" opacity="0.1"/>
+            </svg>
+
+            <!-- Bottom-left -->
+            <svg class="pnp-corner pnp-corner-bl" viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="18" cy="18" r="18" stroke="#CD7F32" stroke-width="2" opacity="0.15"/>
+                <circle cx="18" cy="18" r="9" fill="#040a06" opacity="0.9"/>
+                <circle cx="18" cy="18" r="10" stroke="#CD7F32" stroke-width="1" opacity="0.1"/>
+                <text x="8" y="170" font-family="JetBrains Mono, monospace" font-size="10" fill="#E8E4D9" opacity="0.2" letter-spacing="0.08em">BOARD: 001/100</text>
+            </svg>
+
+            <!-- Bottom-right -->
+            <svg class="pnp-corner pnp-corner-br" viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="202" cy="18" r="18" stroke="#CD7F32" stroke-width="2" opacity="0.15"/>
+                <circle cx="202" cy="18" r="9" fill="#040a06" opacity="0.9"/>
+                <circle cx="202" cy="18" r="10" stroke="#CD7F32" stroke-width="1" opacity="0.1"/>
+                <text x="212" y="170" font-family="JetBrains Mono, monospace" font-size="10" fill="#E8E4D9" opacity="0.2" letter-spacing="0.08em" text-anchor="end">CYCLE: 00:42</text>
+            </svg>
+            <div class="container">
                 <div class="tabs-wrapper">
                     <div class="tabs" role="tablist" aria-label="Installation methods">
                         <button class="tab active" id="tab-claude-code" data-tab="claude-code" role="tab" aria-selected="true" aria-controls="claude-code">Claude Code</button>
-                        <button class="tab" id="tab-claude-desktop" data-tab="claude-desktop" role="tab" aria-selected="false" aria-controls="claude-desktop">Claude Desktop</button>
+                        <button class="tab" id="tab-claude-desktop" data-tab="claude-desktop" role="tab" aria-selected="false" aria-controls="claude-desktop">Desktop</button>
                         <button class="tab" id="tab-cursor" data-tab="cursor" role="tab" aria-selected="false" aria-controls="cursor">Cursor</button>
                         <button class="tab" id="tab-vscode" data-tab="vscode" role="tab" aria-selected="false" aria-controls="vscode">VSCode</button>
-                        <button class="tab" id="tab-copilot-xcode" data-tab="copilot-xcode" role="tab" aria-selected="false" aria-controls="copilot-xcode">Copilot for Xcode</button>
+                        <button class="tab" id="tab-copilot-xcode" data-tab="copilot-xcode" role="tab" aria-selected="false" aria-controls="copilot-xcode">Xcode</button>
                     </div>
                 </div>
 
                 <div id="claude-code" class="tab-content active" role="tabpanel" aria-labelledby="tab-claude-code">
-                    <div class="code-block" style="margin-bottom: 16px;">
-                        <div class="terminal-accent">
-                            <div class="terminal-dots">
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                            </div>
-                            <span class="terminal-title">Project scope</span>
+                    <div class="code-block" style="margin-bottom: 14px;">
+                        <div class="code-block-header">
+                            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                            <span class="title">terminal</span>
                             <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
-                        <div class="code-body">
-                            <pre>claude mcp add --transport http <span class="string">jlcmcp</span> <span class="string">https://jlcmcp.dev/mcp</span></pre>
-                        </div>
-                    </div>
-                    <div class="code-block" style="margin-bottom: 16px;">
-                        <div class="terminal-accent">
-                            <div class="terminal-dots">
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                            </div>
-                            <span class="terminal-title">User scope (all projects)</span>
-                            <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
-                        </div>
-                        <div class="code-body">
-                            <pre>claude mcp add -s user --transport http <span class="string">jlcmcp</span> <span class="string">https://jlcmcp.dev/mcp</span></pre>
+                        <div class="code-block-body">
+                            <pre>claude mcp add -s user --transport http <span class="str">pcbparts</span> <span class="str">https://pcbparts.dev/mcp</span></pre>
                         </div>
                     </div>
                     <div class="code-block">
-                        <div class="terminal-accent">
-                            <div class="terminal-dots">
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                            </div>
-                            <span class="terminal-title">~/.claude/settings.json</span>
+                        <div class="code-block-header">
+                            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                            <span class="title">~/.claude/settings.json</span>
                             <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
-                        <div class="code-body">
+                        <div class="code-block-body">
                             <pre>{
-  <span class="string">"permissions"</span>: {
-    <span class="string">"allow"</span>: [
-      <span class="string">"mcp__jlcmcp__search"</span>,
-      <span class="string">"mcp__jlcmcp__search_api"</span>,
-      <span class="string">"mcp__jlcmcp__list_attributes"</span>,
-      <span class="string">"mcp__jlcmcp__get_part"</span>,
-      <span class="string">"mcp__jlcmcp__get_pinout"</span>,
-      <span class="string">"mcp__jlcmcp__find_alternatives"</span>,
-      <span class="string">"mcp__jlcmcp__list_categories"</span>,
-      <span class="string">"mcp__jlcmcp__get_subcategories"</span>,
-      <span class="string">"mcp__jlcmcp__validate_bom"</span>,
-      <span class="string">"mcp__jlcmcp__export_bom"</span>,
-      <span class="string">"mcp__jlcmcp__get_version"</span>
-    ]
+  <span class="str">"permissions"</span>: {
+    <span class="str">"allow"</span>: [<span class="str">"mcp__pcbparts__*"</span>]
   }
 }</pre>
                         </div>
@@ -1023,40 +1901,32 @@
                 </div>
 
                 <div id="claude-desktop" class="tab-content" role="tabpanel" aria-labelledby="tab-claude-desktop">
-                    <div class="code-block" style="margin-bottom: 16px;">
-                        <div class="terminal-accent">
-                            <div class="terminal-dots">
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                            </div>
-                            <span class="terminal-title">Add via Settings UI</span>
+                    <div class="code-block" style="margin-bottom: 14px;">
+                        <div class="code-block-header">
+                            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                            <span class="title">Add via Settings UI</span>
                         </div>
-                        <div class="code-body">
+                        <div class="code-block-body">
                             <pre>1. Open Claude Desktop
 2. Go to Settings → Connectors
 3. Click "Add custom connector"
-4. Enter name: <span class="string">jlcmcp</span>
-5. Set URL: <span class="string">https://jlcmcp.dev/mcp</span>
+4. Enter name: <span class="str">pcbparts</span>
+5. Set URL: <span class="str">https://pcbparts.dev/mcp</span>
 6. Click "Add"</pre>
                         </div>
                     </div>
                     <div class="code-block">
-                        <div class="terminal-accent">
-                            <div class="terminal-dots">
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                            </div>
-                            <span class="terminal-title">Or edit config: ~/Library/Application Support/Claude/claude_desktop_config.json</span>
+                        <div class="code-block-header">
+                            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                            <span class="title">~/Library/.../claude_desktop_config.json</span>
                             <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
-                        <div class="code-body">
+                        <div class="code-block-body">
                             <pre>{
-  <span class="string">"mcpServers"</span>: {
-    <span class="string">"jlcmcp"</span>: {
-      <span class="string">"type"</span>: <span class="string">"http"</span>,
-      <span class="string">"url"</span>: <span class="string">"https://jlcmcp.dev/mcp"</span>
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"pcbparts"</span>: {
+      <span class="str">"type"</span>: <span class="str">"http"</span>,
+      <span class="str">"url"</span>: <span class="str">"https://pcbparts.dev/mcp"</span>
     }
   }
 }</pre>
@@ -1066,21 +1936,17 @@
 
                 <div id="cursor" class="tab-content" role="tabpanel" aria-labelledby="tab-cursor">
                     <div class="code-block">
-                        <div class="terminal-accent">
-                            <div class="terminal-dots">
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                            </div>
-                            <span class="terminal-title">~/.cursor/mcp.json</span>
+                        <div class="code-block-header">
+                            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                            <span class="title">~/.cursor/mcp.json</span>
                             <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
-                        <div class="code-body">
+                        <div class="code-block-body">
                             <pre>{
-  <span class="string">"mcpServers"</span>: {
-    <span class="string">"jlcmcp"</span>: {
-      <span class="string">"type"</span>: <span class="string">"http"</span>,
-      <span class="string">"url"</span>: <span class="string">"https://jlcmcp.dev/mcp"</span>
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"pcbparts"</span>: {
+      <span class="str">"type"</span>: <span class="str">"http"</span>,
+      <span class="str">"url"</span>: <span class="str">"https://pcbparts.dev/mcp"</span>
     }
   }
 }</pre>
@@ -1090,21 +1956,17 @@
 
                 <div id="vscode" class="tab-content" role="tabpanel" aria-labelledby="tab-vscode">
                     <div class="code-block">
-                        <div class="terminal-accent">
-                            <div class="terminal-dots">
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                            </div>
-                            <span class="terminal-title">.vscode/mcp.json</span>
+                        <div class="code-block-header">
+                            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                            <span class="title">.vscode/mcp.json</span>
                             <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
-                        <div class="code-body">
+                        <div class="code-block-body">
                             <pre>{
-  <span class="string">"servers"</span>: {
-    <span class="string">"jlcmcp"</span>: {
-      <span class="string">"type"</span>: <span class="string">"http"</span>,
-      <span class="string">"url"</span>: <span class="string">"https://jlcmcp.dev/mcp"</span>
+  <span class="str">"servers"</span>: {
+    <span class="str">"pcbparts"</span>: {
+      <span class="str">"type"</span>: <span class="str">"http"</span>,
+      <span class="str">"url"</span>: <span class="str">"https://pcbparts.dev/mcp"</span>
     }
   }
 }</pre>
@@ -1114,125 +1976,140 @@
 
                 <div id="copilot-xcode" class="tab-content" role="tabpanel" aria-labelledby="tab-copilot-xcode">
                     <div class="code-block">
-                        <div class="terminal-accent">
-                            <div class="terminal-dots">
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                                <div class="terminal-dot"></div>
-                            </div>
-                            <span class="terminal-title">Copilot for Xcode → Extensions</span>
+                        <div class="code-block-header">
+                            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                            <span class="title">Copilot for Xcode → Extensions</span>
                             <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code to clipboard">Copy</button>
                         </div>
-                        <div class="code-body">
+                        <div class="code-block-body">
                             <pre>{
-  <span class="string">"mcpServers"</span>: {
-    <span class="string">"jlcmcp"</span>: {
-      <span class="string">"command"</span>: <span class="string">"npx"</span>,
-      <span class="string">"args"</span>: [<span class="string">"-y"</span>, <span class="string">"mcp-remote"</span>, <span class="string">"https://jlcmcp.dev/mcp"</span>]
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"pcbparts"</span>: {
+      <span class="str">"command"</span>: <span class="str">"npx"</span>,
+      <span class="str">"args"</span>: [<span class="str">"-y"</span>, <span class="str">"mcp-remote"</span>, <span class="str">"https://pcbparts.dev/mcp"</span>]
     }
   }
 }</pre>
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
 
+        <!-- Schematic divider: capacitor symbol -->
+        <div class="schematic-divider">
+            <svg width="280" height="24" viewBox="0 0 280 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="0" y1="12" x2="132" y2="12" stroke="var(--copper)" stroke-width="1.5" opacity="0.2"/>
+                <line x1="132" y1="3" x2="132" y2="21" stroke="var(--copper)" stroke-width="2" opacity="0.25"/>
+                <line x1="140" y1="3" x2="140" y2="21" stroke="var(--copper)" stroke-width="2" opacity="0.25"/>
+                <line x1="140" y1="12" x2="280" y2="12" stroke="var(--copper)" stroke-width="1.5" opacity="0.2"/>
+                <text x="136" y="24" font-family="Space Mono, monospace" font-size="5" fill="var(--copper)" opacity="0.15" text-anchor="middle" letter-spacing="0.1em">100n</text>
+            </svg>
+        </div>
+
+        <!-- FEATURES -->
         <section id="features">
             <div class="container">
                 <div class="section-header">
-                    <h2>JLCPCB MCP Features</h2>
-                    <p>Use your LLM to help you find the exact components you are looking for with ease.</p>
+                    <h2 data-text="Tools">Tools</h2>
+                    <p>Search parts across JLCPCB, Mouser, and DigiKey with 16 MCP tools. Compare stock and pricing across distributors, validate your BOM before ordering, export JLCPCB-compatible assembly CSVs, and download KiCad symbols and footprints.</p>
                 </div>
 
                 <div class="bento-grid">
-                    <div class="bento-card bento-large">
-                        <div class="icon-wrapper"><span class="icon">🛠️</span></div>
-                        <h3>11 MCP Tools</h3>
-                        <div class="tools-list">
-                            <div class="tool-item"><code>search</code> <span>Primary search - smart parsing + parametric filters</span></div>
-                            <div class="tool-item"><code>search_api</code> <span>Live API search - real-time stock, full catalog</span></div>
-                            <div class="tool-item"><code>list_attributes</code> <span>Discover filterable attributes for spec_filters</span></div>
-                            <div class="tool-item"><code>get_part</code> <span>Full details, datasheets, and EasyEDA footprint status</span></div>
-                            <div class="tool-item"><code>get_pinout</code> <span>Get component pin information from EasyEDA symbol</span></div>
-                            <div class="tool-item"><code>find_alternatives</code> <span>Spec-aware compatible alternatives for 120+ subcategories</span></div>
-                            <div class="tool-item"><code>list_categories</code> <span>Browse all 52 component categories</span></div>
-                            <div class="tool-item"><code>get_subcategories</code> <span>Drill into subcategories for precise discovery</span></div>
-                            <div class="tool-item"><code>validate_bom</code> <span>Check stock, pricing, and issues before export</span></div>
-                            <div class="tool-item"><code>export_bom</code> <span>Generate JLCPCB-compatible CSV with cost summary</span></div>
-                            <div class="tool-item"><code>get_version</code> <span>Server health and version info</span></div>
+                    <div class="bento-left">
+                        <div class="bento-card bento-large" data-ref="U1">
+                            <span class="card-icon">🛠️</span>
+                            <h3>16 MCP Tools</h3>
+                            <div class="tools-list">
+                                <div class="tool-item"><code>jlc_search</code> <span>Parametric search with spec filters</span></div>
+                                <div class="tool-item"><code>jlc_search_api</code> <span>Live API search, real-time stock</span></div>
+                                <div class="tool-item"><code>jlc_get_part</code> <span>Details, datasheets, footprints</span></div>
+                                <div class="tool-item"><code>jlc_get_pinout</code> <span>Pin info from EasyEDA symbols</span></div>
+                                <div class="tool-item"><code>jlc_find_alternatives</code> <span>Spec-compatible alternative parts</span></div>
+                                <div class="tool-item"><code>jlc_validate_bom</code> <span>Check BOM stock and pricing</span></div>
+                                <div class="tool-item"><code>jlc_export_bom</code> <span>JLCPCB-compatible assembly CSV</span></div>
+                                <div class="tool-item"><code>jlc_list_categories</code> <span>Browse component categories</span></div>
+                                <div class="tool-item"><code>jlc_get_subcategories</code> <span>Subcategories within a category</span></div>
+                                <div class="tool-item"><code>jlc_list_attributes</code> <span>Filterable specs per subcategory</span></div>
+                                <div class="tool-item"><code>mouser_search</code> <span>Search parts on Mouser</span></div>
+                                <div class="tool-item"><code>mouser_get_part</code> <span>Mouser part lookup by PN</span></div>
+                                <div class="tool-item"><code>digikey_search</code> <span>Search parts on DigiKey</span></div>
+                                <div class="tool-item"><code>digikey_get_part</code> <span>DigiKey part lookup by PN</span></div>
+                                <div class="tool-item"><code>cse_search</code> <span>ECAD models and datasheets</span></div>
+                                <div class="tool-item"><code>cse_get_kicad</code> <span>KiCad symbols and footprints</span></div>
+                            </div>
                         </div>
                     </div>
+                    <div class="bento-right">
+                        <div class="bento-card" data-ref="U2">
+                            <span class="card-icon">⚡</span>
+                            <h3>Smart Search</h3>
+                            <p>Auto-parses specs, expands package families, and filters by attributes the JLCPCB API can't.</p>
+                        </div>
 
-                    <div class="bento-card">
-                        <div class="icon-wrapper"><span class="icon">⚡</span></div>
-                        <h3>Smart Search</h3>
-                        <p>Auto-parses specs, expands package families, and filters by attributes the JLCPCB API can't.</p>
-                    </div>
+                        <div class="bento-card" data-ref="U3">
+                            <span class="card-icon">📋</span>
+                            <h3>BOM Export</h3>
+                            <p>Generate JLCPCB-ready CSV with pricing, stock validation, and extended part fee warnings.</p>
+                        </div>
 
-                    <div class="bento-card">
-                        <div class="icon-wrapper"><span class="icon">📋</span></div>
-                        <h3>BOM Export</h3>
-                        <p>Generate JLCPCB-ready CSV with pricing breakdown, stock validation, and extended part fee warnings.</p>
-                    </div>
+                        <div class="bento-card" data-ref="U4">
+                            <span class="card-icon">📦</span>
+                            <h3>1.5M+ Parts</h3>
+                            <p>Full JLCPCB catalog. Capacitors, resistors, MCUs, connectors across 52 categories.</p>
+                        </div>
 
-                    <div class="bento-card">
-                        <div class="icon-wrapper"><span class="icon">📦</span></div>
-                        <h3>1.5M+ Parts</h3>
-                        <p>Full JLCPCB catalog with real-time stock. Capacitors, resistors, MCUs, connectors, ICs, and more across 52 categories.</p>
-                    </div>
+                        <div class="bento-card" data-ref="U5">
+                            <span class="card-icon">🧑‍💻</span>
+                            <h3>Maker-Focused</h3>
+                            <p>Optimized for dev boards, sensor breakouts, and the components that go with them.</p>
+                        </div>
 
-                    <div class="bento-card">
-                        <div class="icon-wrapper"><span class="icon">🧑‍💻</span></div>
-                        <h3>Maker-Focused Search</h3>
-                        <p>Optimized for dev boards, sensor breakouts, and the components that go with them.</p>
-                    </div>
+                        <div class="bento-card" data-ref="R1">
+                            <span class="card-icon">🏷️</span>
+                            <h3>Library Types</h3>
+                            <p>Basic, preferred, extended. Filter by assembly fee.</p>
+                        </div>
 
-                    <div class="bento-card">
-                        <div class="icon-wrapper"><span class="icon">🏷️</span></div>
-                        <h3>Library Types</h3>
-                        <p>Basic, preferred, extended.</p>
-                    </div>
+                        <div class="bento-card" data-ref="R2">
+                            <span class="card-icon">🚀</span>
+                            <h3>No Auth</h3>
+                            <p>No API key or login needed. Just connect and search.</p>
+                        </div>
 
-                    <div class="bento-card">
-                        <div class="icon-wrapper"><span class="icon">🚀</span></div>
-                        <h3>No Auth</h3>
-                        <p>No API key or login needed.</p>
-                    </div>
+                        <div class="bento-card" data-ref="C1">
+                            <span class="card-icon">🔌</span>
+                            <h3>EasyEDA Footprints</h3>
+                            <p>Check footprint availability before you commit to a part.</p>
+                        </div>
 
-                    <div class="bento-card">
-                        <div class="icon-wrapper"><span class="icon">🔌</span></div>
-                        <h3>EasyEDA Footprints</h3>
-                        <p>Check footprint availability before you commit.</p>
-                    </div>
-
-                    <div class="bento-card">
-                        <div class="icon-wrapper"><span class="icon">💰</span></div>
-                        <h3>Pricing Tiers</h3>
-                        <p>All pricing and quantity tiers from 1pc to 10,000+.</p>
+                        <div class="bento-card" data-ref="C2">
+                            <span class="card-icon">💰</span>
+                            <h3>Pricing Tiers</h3>
+                            <p>All quantity tiers from 1pc to 10,000+.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-
     </main>
 
+    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="footer-legal">
                 <div class="footer-top">
                     <div class="footer-brand">
                         <img src="favicon.svg" alt="">
-                        <span><span class="logo-jlcpcb">JLCPCB</span><span class="logo-mcp">MCP</span></span>
+                        <span>PCB <span class="dim">Parts MCP</span></span>
                     </div>
                     <div class="footer-contact">
-                        <a href="mailto:info@jlcmcp.dev">info@jlcmcp.dev</a>
+                        <a href="mailto:info@pcbparts.dev">info@pcbparts.dev</a>
                     </div>
                 </div>
-                <p>© <span id="current-year"></span> JLCPCB MCP. An independent project not affiliated with, endorsed by, or sponsored by JLCPCB or LCSC Electronics.</p>
-                <p>JLCPCB, LCSC, and related product names are trademarks of their respective owners. All component data is sourced from JLCPCB's publicly available parts library and remains the intellectual property of JLCPCB.</p>
-                <p>This service provides search functionality over publicly available component data for development purposes. For official parts information, visit <a href="https://jlcpcb.com/parts" target="_blank">jlcpcb.com/parts</a>.</p>
+                <p>&copy; <span id="current-year"></span> PCB Parts MCP. An independent project. Not affiliated with or endorsed by JLCPCB, Mouser, DigiKey, or SamacSys.</p>
+                <p>Component data is aggregated from publicly available sources including JLCPCB's parts library, Mouser Electronics, DigiKey, and SamacSys ComponentSearchEngine. All product names, logos, and trademarks are property of their respective owners.</p>
+                <p>For official parts information, visit <a href="https://jlcpcb.com/parts" target="_blank">jlcpcb.com/parts</a>, <a href="https://www.mouser.com" target="_blank">mouser.com</a>, or <a href="https://www.digikey.com" target="_blank">digikey.com</a>.</p>
             </div>
         </div>
     </footer>
@@ -1262,54 +2139,69 @@
 
         // Copy install command
         function copyInstall() {
-            const text = 'claude mcp add --transport http jlcmcp https://jlcmcp.dev/mcp';
+            const text = 'claude mcp add --transport http pcbparts https://pcbparts.dev/mcp';
             navigator.clipboard.writeText(text);
-            const btn = document.querySelector('.hero-cta .btn-primary');
+            const btn = document.querySelector('.hero-cta .btn-copy');
             const fullSpan = btn.querySelector('.btn-text-full');
             const shortSpan = btn.querySelector('.btn-text-short');
             fullSpan.textContent = 'Copied!';
             shortSpan.textContent = 'Copied!';
             setTimeout(() => {
-                fullSpan.textContent = 'Copy to Clipboard';
+                fullSpan.textContent = 'Copy';
                 shortSpan.textContent = 'Copy';
             }, 2000);
         }
 
-        // Terminal animation
+        // Terminal animation - CRT style with typewriter effect
         const terminalLines = [
-            { type: 'command', text: 'claude "Find ESP32 modules with >1000 stock"', hasPrompt: true },
+            { type: 'command', text: 'claude "Find ESP32 modules with >1000 stock"', hasPrompt: true, typewriter: true },
             { type: 'output', text: '' },
-            { type: 'output', text: 'Searching JLCPCB components...', hasSpinner: true },
+            { type: 'output', text: 'Searching for PCB components...', hasSpinner: true, pause: 900 },
             { type: 'output', text: '' },
-            { type: 'success', text: '⏺ Found 47 components matching criteria' },
+            { type: 'success', text: '\u23FA Found 47 components matching criteria' },
             { type: 'output', text: '' },
-            { type: 'result', text: '  C3006824  ESP32-S3-WROOM-1-N8    $2.89   12,450 in stock' },
-            { type: 'result', text: '  C2913202  ESP32-WROOM-32E-N4     $2.45   28,320 in stock' },
-            { type: 'result', text: '  C7013410  ESP32-S2-SOLO-N4       $1.98    5,890 in stock' },
-            { type: 'result', text: '  C2838502  ESP32-C3-WROOM-02-N4   $1.76    8,240 in stock' },
-            { type: 'result', text: '  C5765158  ESP32-S3-MINI-1-N8     $2.12   15,670 in stock' },
-            { type: 'result', text: '  C2934560  ESP32-WROVER-E-N16R8   $3.45    3,120 in stock' },
-            { type: 'result', text: '  C2490092  ESP32-C6-WROOM-1-N8    $2.34    9,780 in stock' },
+            { type: 'result', html: '  <span class="term-lcsc">C3006824</span>    <span class="term-mpn">ESP32-S3-WROOM-1-N8</span>      <span class="term-price">$2.89</span>     <span class="term-stock">12,450 in stock</span>      <span class="term-pkg">SMD-38</span>' },
+            { type: 'result', html: '  <span class="term-lcsc">C2913202</span>    <span class="term-mpn">ESP32-WROOM-32E-N4</span>       <span class="term-price">$2.45</span>     <span class="term-stock">28,320 in stock</span>      <span class="term-pkg">SMD-38</span>' },
+            { type: 'result', html: '  <span class="term-lcsc">C7013410</span>    <span class="term-mpn">ESP32-S2-SOLO-N4</span>         <span class="term-price">$1.98</span>      <span class="term-stock">5,890 in stock</span>      <span class="term-pkg">SMD-32</span>' },
+            { type: 'result', html: '  <span class="term-lcsc">C2838502</span>    <span class="term-mpn">ESP32-C3-WROOM-02-N4</span>     <span class="term-price">$1.76</span>      <span class="term-stock">8,240 in stock</span>      <span class="term-pkg">SMD-18</span>' },
+            { type: 'result', html: '  <span class="term-lcsc">C5765158</span>    <span class="term-mpn">ESP32-S3-MINI-1-N8</span>       <span class="term-price">$2.12</span>     <span class="term-stock">15,670 in stock</span>      <span class="term-pkg">SMD-44</span>' },
+            { type: 'result', html: '  <span class="term-lcsc">C2934560</span>    <span class="term-mpn">ESP32-WROVER-E-N16R8</span>     <span class="term-price">$3.45</span>      <span class="term-stock">3,120 in stock</span>      <span class="term-pkg">SMD-38</span>' },
+            { type: 'result', html: '  <span class="term-lcsc">C2490092</span>    <span class="term-mpn">ESP32-C6-WROOM-1-N8</span>      <span class="term-price">$2.34</span>      <span class="term-stock">9,780 in stock</span>      <span class="term-pkg">SMD-24</span>' },
         ];
 
         const terminalBody = document.getElementById('terminal-body');
         let lineIndex = 0;
 
+        // Typewriter effect: types text char-by-char into a text node
+        function typewriterEffect(div, text, callback) {
+            let i = 0;
+            const textNode = document.createTextNode('');
+            div.appendChild(textNode);
+            function typeChar() {
+                if (i < text.length) {
+                    textNode.textContent += text[i];
+                    i++;
+                    const jitter = 18 + Math.random() * 28;
+                    setTimeout(typeChar, jitter);
+                } else {
+                    callback();
+                }
+            }
+            typeChar();
+        }
+
         function typeTerminal() {
             if (lineIndex >= terminalLines.length) {
-                // Fade out lines then restart
+                // Glitch clears the screen
                 setTimeout(() => {
-                    const lines = terminalBody.querySelectorAll('.terminal-line');
-                    lines.forEach(line => {
-                        line.style.transition = 'opacity 0.25s ease-out';
-                        line.style.opacity = '0';
-                    });
+                    terminalBody.classList.add('crt-glitch');
                     setTimeout(() => {
+                        terminalBody.classList.remove('crt-glitch');
                         terminalBody.innerHTML = '';
                         lineIndex = 0;
-                        setTimeout(typeTerminal, 150);
-                    }, 300);
-                }, 1800);
+                        setTimeout(typeTerminal, 300);
+                    }, 150);
+                }, 2000);
                 return;
             }
 
@@ -1317,7 +2209,18 @@
             const div = document.createElement('div');
             div.className = `terminal-line terminal-${line.type}`;
 
-            if (line.hasPrompt) {
+            if (line.hasPrompt && line.typewriter) {
+                const dollar = document.createElement('span');
+                dollar.className = 'terminal-dollar';
+                dollar.textContent = '$ ';
+                div.appendChild(dollar);
+                terminalBody.appendChild(div);
+                lineIndex++;
+                typewriterEffect(div, line.text, () => {
+                    setTimeout(typeTerminal, 200);
+                });
+                return;
+            } else if (line.hasPrompt) {
                 const dollar = document.createElement('span');
                 dollar.className = 'terminal-dollar';
                 dollar.textContent = '$ ';
@@ -1328,35 +2231,35 @@
                 spinner.className = 'terminal-spinner';
                 div.appendChild(spinner);
                 div.appendChild(document.createTextNode(line.text));
+            } else if (line.html) {
+                div.innerHTML = line.html;
             } else {
                 div.textContent = line.text;
             }
 
             terminalBody.appendChild(div);
-
             lineIndex++;
 
-            const delay = line.text === '' ? 100 : (line.type === 'command' ? 600 : 250);
+            let delay = line.text === '' ? 80 : (line.type === 'command' ? 500 : 180);
+            if (line.pause) delay += line.pause;
             setTimeout(typeTerminal, delay);
         }
 
-        setTimeout(typeTerminal, 800);
+        setTimeout(typeTerminal, 600);
 
         // Health check
         async function checkHealth() {
             const badge = document.getElementById('status-badge');
-            const orb = document.getElementById('status-orb');
+            const led = document.getElementById('status-led');
             const text = document.getElementById('status-text');
             try {
-                const res = await fetch('https://jlcmcp.dev/health');
+                const res = await fetch('https://pcbparts.dev/health');
                 const data = await res.json();
                 if (data.status === 'healthy') {
                     text.textContent = 'MCP Server Online';
-                    badge.style.borderColor = 'rgba(34, 197, 94, 0.25)';
-                    orb.classList.add('online');
+                    led.classList.add('online');
                 } else {
                     text.textContent = 'Degraded';
-                    badge.style.borderColor = 'rgba(245, 158, 11, 0.25)';
                 }
             } catch (e) {
                 text.textContent = 'Checking...';
@@ -1364,35 +2267,29 @@
         }
         checkHealth();
 
-        // Set current year
-        document.getElementById('current-year').textContent = new Date().getFullYear();
+        // CRT glitch is now triggered at end of each terminal cycle (in typeTerminal)
 
-        // Animated gradient orbs parallax - diagonal movement + scale
-        const orbs = document.querySelectorAll('.gradient-orb');
-        const orbMotion = [
-            { y: 0.25, x: 0.12, scale: 0.00015 },   // grows
-            { y: 0.18, x: -0.15, scale: -0.0001 },  // shrinks
-            { y: 0.30, x: 0.08, scale: 0.00012 },   // grows
-            { y: 0.12, x: -0.10, scale: -0.00008 }, // shrinks
-            { y: 0.22, x: 0.06, scale: 0.0001 }     // grows
-        ];
-        let ticking = false;
-        window.addEventListener('scroll', () => {
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    const scrollY = window.scrollY;
-                    orbs.forEach((orb, i) => {
-                        const m = orbMotion[i];
-                        const x = scrollY * m.x;
-                        const y = scrollY * m.y;
-                        const s = 1 + (scrollY * m.scale);
-                        orb.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
-                    });
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        });
+        // Section reveal with trace-drawing on scroll
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('revealed');
+                    e.target.querySelectorAll('.section-trace').forEach(t => t.classList.add('visible'));
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('section, .schematic-divider').forEach(s => revealObserver.observe(s));
+
+        // Set CSS variable for PnP scan line transform (avoids animating 'top')
+        const setupSection = document.querySelector('.setup-section');
+        if (setupSection) {
+            const setSectionH = () => setupSection.style.setProperty('--section-h', setupSection.offsetHeight + 'px');
+            setSectionH();
+            window.addEventListener('resize', setSectionH, { passive: true });
+        }
+
+        // Year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
 </body>
 </html>

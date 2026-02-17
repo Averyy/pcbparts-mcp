@@ -1,7 +1,7 @@
 """Tests for JLCPCB API client."""
 
 import pytest
-from jlcpcb_mcp.client import JLCPCBClient
+from pcbparts_mcp.client import JLCPCBClient
 
 
 class TestClient:

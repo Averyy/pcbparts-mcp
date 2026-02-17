@@ -2,7 +2,7 @@
 # Usage: docker compose -f docker-compose.local.yml up --build
 
 services:
-  jlcpcb-mcp:
+  pcbparts-mcp:
     build:
       context: .
       dockerfile: Dockerfile

@@ -29,7 +29,7 @@ from curl_cffi import requests as curl_requests
 # Add parent directory to path for imports when running as script
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from jlcpcb_mcp.config import DEFAULT_MIN_STOCK
+from pcbparts_mcp.config import DEFAULT_MIN_STOCK
 
 # Configure logging for scraper output
 logging.basicConfig(

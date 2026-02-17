@@ -10,7 +10,7 @@ This module provides intelligent alternative finding that:
 from typing import Any, Callable
 
 # Import shared parsers from the unified parsers module
-from jlcpcb_mcp.parsers import (
+from pcbparts_mcp.parsers import (
     parse_voltage,
     parse_tolerance,
     parse_ppm,

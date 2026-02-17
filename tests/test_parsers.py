@@ -2,7 +2,7 @@
 
 import pytest
 
-from jlcpcb_mcp.parsers import (
+from pcbparts_mcp.parsers import (
     parse_resistance,
     parse_capacitance,
     parse_voltage,
@@ -222,14 +222,14 @@ class TestModelNumberExtraction:
     ])
     def test_model_extraction(self, query: str, expected_model: str):
         """Test model number extraction from various queries."""
-        from jlcpcb_mcp.smart_parser.models import extract_model_number
+        from pcbparts_mcp.smart_parser.models import extract_model_number
         model, remaining = extract_model_number(query)
         assert model is not None, f"Should extract model from '{query}'"
         assert model.upper() == expected_model.upper(), f"Expected {expected_model}, got {model}"
 
     def test_esp32_mini_not_truncated(self):
         """ESP32-S3-MINI should not be truncated to ESP32-S3."""
-        from jlcpcb_mcp.smart_parser.models import extract_model_number
+        from pcbparts_mcp.smart_parser.models import extract_model_number
         model, remaining = extract_model_number("ESP32-S3-MINI-1 module")
         assert model == "ESP32-S3-MINI-1", f"Expected full model name, got '{model}'"
         assert remaining.strip() == "module"
@@ -256,7 +256,7 @@ class TestPackageExtraction:
     ])
     def test_package_extraction(self, query: str, expected_package: str, expected_remaining: str):
         """Test package extraction from various queries."""
-        from jlcpcb_mcp.smart_parser.packages import extract_package
+        from pcbparts_mcp.smart_parser.packages import extract_package
         pkg, remaining, _ = extract_package(query)
         assert pkg is not None, f"Should extract package from '{query}'"
         assert pkg.upper() == expected_package.upper(), f"Expected {expected_package}, got {pkg}"
@@ -276,7 +276,7 @@ class TestModelNumberExcludesPackages:
     ])
     def test_package_not_detected_as_model(self, query: str):
         """Package-like strings (SOT23, SOD323, etc.) should NOT be detected as model numbers."""
-        from jlcpcb_mcp.smart_parser.models import extract_model_number
+        from pcbparts_mcp.smart_parser.models import extract_model_number
         model, _ = extract_model_number(query)
         # The package-like string should not be extracted as a model
         if model:
@@ -302,7 +302,7 @@ class TestNoiseWordRemoval:
     ])
     def test_noise_word_removal(self, query: str, expected: str):
         """Test that noise words are removed from queries."""
-        from jlcpcb_mcp.smart_parser.semantic import remove_noise_words
+        from pcbparts_mcp.smart_parser.semantic import remove_noise_words
         result = remove_noise_words(query)
         assert result == expected, f"'{query}' should become '{expected}', got '{result}'"
 
@@ -319,7 +319,7 @@ class TestFerritBeadImpedance:
     ])
     def test_ferrite_impedance_parsing(self, query: str, expected_impedance: str):
         """Test that ferrite bead impedance is parsed from various formats."""
-        from jlcpcb_mcp.smart_parser.parser import parse_smart_query
+        from pcbparts_mcp.smart_parser.parser import parse_smart_query
         result = parse_smart_query(query)
         assert result.subcategory == "ferrite beads"
         impedance_filters = [f for f in result.spec_filters if "Impedance" in f.name]
@@ -342,7 +342,7 @@ class TestConnectorSeriesExtraction:
     ])
     def test_jst_series_extraction(self, query: str, expected_series: str, expected_pitch: float):
         """Test JST series detection and pitch mapping."""
-        from jlcpcb_mcp.smart_parser.connectors import extract_connector_series
+        from pcbparts_mcp.smart_parser.connectors import extract_connector_series
         spec, remaining = extract_connector_series(query)
         assert spec is not None, f"Should detect series in '{query}'"
         assert spec.series == expected_series, f"Expected series {expected_series}, got {spec.series}"
@@ -361,7 +361,7 @@ class TestConnectorSeriesExtraction:
     ])
     def test_brand_alias_expansion(self, query: str, expected_series: str, expected_pitch: float, expected_pins: int | None):
         """Test brand alias expansion (Qwiic, STEMMA QT, easyC)."""
-        from jlcpcb_mcp.smart_parser.connectors import extract_connector_series
+        from pcbparts_mcp.smart_parser.connectors import extract_connector_series
         spec, remaining = extract_connector_series(query)
         assert spec is not None, f"Should detect brand in '{query}'"
         assert spec.series == expected_series, f"Expected series {expected_series}, got {spec.series}"
@@ -370,7 +370,7 @@ class TestConnectorSeriesExtraction:
 
     def test_no_connector_series(self):
         """Test that non-connector queries return None."""
-        from jlcpcb_mcp.smart_parser.connectors import extract_connector_series
+        from pcbparts_mcp.smart_parser.connectors import extract_connector_series
         spec, remaining = extract_connector_series("10k resistor 0603")
         assert spec is None
         assert remaining == "10k resistor 0603"
@@ -381,7 +381,7 @@ class TestConnectorParserIntegration:
 
     def test_jst_sh_4pin_adds_filters(self):
         """JST SH 4-pin should add pitch and use SH for FTS."""
-        from jlcpcb_mcp.smart_parser.parser import parse_smart_query
+        from pcbparts_mcp.smart_parser.parser import parse_smart_query
         result = parse_smart_query("jst sh 4-pin")
         assert result.subcategory == "wire to board connector"
         # Check pitch filter was added
@@ -393,7 +393,7 @@ class TestConnectorParserIntegration:
 
     def test_qwiic_expands_to_full_spec(self):
         """Qwiic should expand to JST SH 1mm 4-pin with all filters."""
-        from jlcpcb_mcp.smart_parser.parser import parse_smart_query
+        from pcbparts_mcp.smart_parser.parser import parse_smart_query
         result = parse_smart_query("qwiic connector")
         assert result.subcategory == "wire to board connector"
         # Check pitch filter
@@ -409,7 +409,7 @@ class TestConnectorParserIntegration:
 
     def test_easyc_same_as_qwiic(self):
         """easyC should expand the same as Qwiic."""
-        from jlcpcb_mcp.smart_parser.parser import parse_smart_query
+        from pcbparts_mcp.smart_parser.parser import parse_smart_query
         result = parse_smart_query("easyc")
         assert result.subcategory == "wire to board connector"
         pitch_filters = [f for f in result.spec_filters if f.name == "Pitch"]
