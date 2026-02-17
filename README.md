@@ -165,6 +165,10 @@ uv venv && uv pip install -e .
 
 Or with Docker: `docker compose up -d`
 
+## LLM-Readable Documentation
+
+An [`llms.txt`](https://pcbparts.dev/llms.txt) file is available for LLMs and AI agents to quickly understand this service. See [llmstxt.org](https://llmstxt.org/) for the spec.
+
 ## License
 
 MIT

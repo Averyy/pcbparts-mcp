@@ -62,6 +62,10 @@ uv venv && uv pip install -e ".[dev]"
 .venv/bin/pytest tests/ -v -k "not Integration"  # unit only
 ```
 
+## llms.txt
+
+When updating the landing page (`landing/index.html`) with new features, tools, or setup instructions, also update `landing/llms.txt` to match. The llms.txt file is the LLM-readable version of the landing page content (tools list, setup instructions, feature descriptions, etc).
+
 ## Testing Local Changes
 
 **The MCP tools in Claude Code connect to the deployed server (pcbparts.dev), not your local code.** Test local changes before deployment. Always git pull/fetch and then re-build the local database if its more than a day old.
