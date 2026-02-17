@@ -62,6 +62,10 @@ uv venv && uv pip install -e ".[dev]"
 .venv/bin/pytest tests/ -v -k "not Integration"  # unit only
 ```
 
+## Frontend & Design Work
+
+**Always use the `/frontend-design` skill** for any frontend or design tasks (landing page, UI components, styling). Read `branding-style-guide.md` before making any visual changes — it defines the PCB-inspired design language, color palette, typography, and component patterns.
+
 ## llms.txt
 
 When updating the landing page (`landing/index.html`) with new features, tools, or setup instructions, also update `landing/llms.txt` to match. The llms.txt file is the LLM-readable version of the landing page content (tools list, setup instructions, feature descriptions, etc).
