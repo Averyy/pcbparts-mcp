@@ -30,7 +30,7 @@ JLCPCB_CONCURRENT_LIMIT = 10  # Max concurrent requests to JLCPCB API (prevents 
 JLCPCB_REQUEST_JITTER = (0.1, 0.3)  # Random delay range (seconds) between requests
 DEFAULT_PAGE_SIZE = 20
 MAX_PAGE_SIZE = 100
-DEFAULT_MIN_STOCK = 50
+DEFAULT_MIN_STOCK = 10
 MAX_ALTERNATIVES = 50
 MAX_BOM_PARTS = 500
 
