@@ -80,6 +80,7 @@ class Subcategory:
     category_id: int
     category_name: str
     category_slug: str
+    count: int = 0
 
 
 @dataclass
@@ -359,7 +360,9 @@ async def worker(
             break
 
         try:
+            t0 = time.time()
             parts, count = await scrape_subcategory(subcat, fingerprint)
+            elapsed = time.time() - t0
 
             async with results_lock:
                 # Add parts to category bucket
@@ -375,7 +378,12 @@ async def worker(
                 progress.total_parts += count
 
             await circuit_breaker.record_success()
-            status = "empty" if count == 0 else f"{count} parts"
+            if count == 0:
+                status = "empty"
+            elif elapsed < 60:
+                status = f"{count:,} parts ({elapsed:.1f}s)"
+            else:
+                status = f"{count:,} parts ({elapsed/60:.1f}m)"
             logger.info(f"  [W{worker_id}] {subcat.name}: {status}")
 
         except Exception as e:
@@ -442,6 +450,7 @@ async def run_scraper(
                 category_id=cat["id"],
                 category_name=cat["name"],
                 category_slug=cat_slug,
+                count=sub.get("count", 0),
             )
             subcategories.append(subcat)
             subcategory_map[str(sub["id"])] = {
@@ -458,6 +467,7 @@ async def run_scraper(
 
     # Filter out already completed subcategories
     pending = [s for s in subcategories if s.id not in progress.completed_subcategories]
+    pending.sort(key=lambda s: s.count, reverse=True)
     logger.info(f"Pending: {len(pending)} subcategories")
     logger.info("")
 
