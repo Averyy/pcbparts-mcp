@@ -284,7 +284,7 @@ async def jlc_search_api(
         subcategory_id: Subcategory ID from get_subcategories
         category_name: Category name (e.g., "Resistors", "Capacitors")
         subcategory_name: Subcategory name (e.g., "Tactile Switches")
-        min_stock: Min stock (default 50). Set 0 for out-of-stock parts
+        min_stock: Min stock (default DEFAULT_MIN_STOCK). Set 0 for out-of-stock parts
         library_type: "basic", "preferred", "no_fee", "extended", or "all"
         package: Package filter (e.g., "0402", "LQFP48")
         manufacturer: Manufacturer filter
@@ -396,7 +396,7 @@ async def jlc_search(
     sort_by: Literal["stock", "price"] = "stock",
     limit: int = 50,
 ) -> dict:
-    """Fast DB search with natural language parsing and parametric filters. High-stock parts only (>=50).
+    """Fast DB search with natural language parsing and parametric filters. In-stock parts only (stock >= DEFAULT_MIN_STOCK).
 
     Args:
         query: Search query - supports natural language like:
@@ -413,7 +413,7 @@ async def jlc_search(
             - value: Value with units (e.g., "2.5V", "10uF", "20mΩ")
             Example: [{"name": "Vgs(th)", "op": "<", "value": "2.5V"}]
 
-        min_stock: Minimum stock (default 50). Database only indexes stock >= 50.
+        min_stock: Minimum stock (default DEFAULT_MIN_STOCK). Database only indexes stock >= DEFAULT_MIN_STOCK.
         library_type: "basic", "preferred", "no_fee", "extended", or None (all)
         prefer_no_fee: Sort basic/preferred first (default True)
         package: Single package filter (e.g., "0603", "SOT-23")
@@ -585,7 +585,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
         - easyeda_symbol_uuid: UUID for direct EasyEDA editor link (null if no footprint)
         - easyeda_footprint_uuid: UUID for footprint (null if no footprint)
 
-        For mpn: List of matching JLCPCB parts from the local database (stock >= 50),
+        For mpn: List of matching JLCPCB parts from the local database (stock >= DEFAULT_MIN_STOCK),
         sorted by stock. Each result includes lcsc, model (MPN), manufacturer,
         package, stock, price, library_type, category, subcategory, and specs.
 
@@ -712,7 +712,7 @@ async def jlc_find_alternatives(
 
     Args:
         lcsc: LCSC part code to find alternatives for (e.g., "C2557")
-        min_stock: Minimum stock for alternatives (default: 50)
+        min_stock: Minimum stock for alternatives (default: DEFAULT_MIN_STOCK)
         same_package: If True, only return parts with the same package size
         library_type: Filter alternatives by library type:
             - "basic": Only basic parts (no assembly fee)

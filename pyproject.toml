@@ -1,6 +1,6 @@
 [project]
 name = "pcbparts-mcp"
-version = "3.0.2"
+version = "3.0.3"
 description = "MCP server for searching electronic components for PCB assembly"
 requires-python = ">=3.11"
 dependencies = [

@@ -34,7 +34,7 @@ Claude Desktop / Cursor / VSCode MCP config:
 
 | Tool | Description |
 |------|-------------|
-| `jlc_search` | Primary search - smart query parsing + parametric spec filters (local DB, 400K+ in-stock parts) |
+| `jlc_search` | Primary search - smart query parsing + parametric spec filters (local DB, 575K+ in-stock parts) |
 | `jlc_search_api` | Live JLCPCB API search - real-time stock, full 1.5M catalog, pagination, basic filters only |
 | `jlc_get_part` | Full details for a specific LCSC part code or MPN lookup |
 | `jlc_get_pinout` | Component pin information from EasyEDA symbols |
@@ -61,7 +61,7 @@ Use `jlc_search` (default) for:
 Use `jlc_search_api` when you need:
 - Real-time stock verification before ordering
 - Out-of-stock or low-stock parts (stock < 100)
-- Full 1.5M catalog (search indexes 400K+ with stock >= 100)
+- Full 1.5M catalog (search indexes 575K+ with stock >= 10)
 
 ## Library Types
 

@@ -14,11 +14,18 @@ Uses same TLS impersonation as our MCP server to avoid detection.
 import asyncio
 import json
 import random
+import sys
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from curl_cffi import requests as curl_requests
+
+# Add parent directory to path for imports when running as script
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
+from pcbparts_mcp.config import DEFAULT_MIN_STOCK
 
 # === TLS Impersonation Setup (same as client.py) ===
 
@@ -151,7 +158,7 @@ async def test_pagination() -> TestResult:
         "currentPage": 1,
         "pageSize": 1,
         "searchSource": "search",
-        "startStockNumber": 50,
+        "startStockNumber": DEFAULT_MIN_STOCK,
         "searchType": 3,
         "firstSortId": 1,  # Resistors category
         "firstSortName": "Resistors",
@@ -236,7 +243,7 @@ async def test_rate_limiting() -> TestResult:
             "currentPage": page,
             "pageSize": 100,
             "searchSource": "search",
-            "startStockNumber": 50,
+            "startStockNumber": DEFAULT_MIN_STOCK,
             "searchType": 3,
             "secondSortId": subcat_id,
         }
@@ -318,7 +325,7 @@ async def test_data_completeness() -> TestResult:
             "currentPage": 1,
             "pageSize": 10,
             "searchSource": "search",
-            "startStockNumber": 50,
+            "startStockNumber": DEFAULT_MIN_STOCK,
             "searchType": 3,
             "firstSortId": cat_id,
             "firstSortName": cat_name,
@@ -417,13 +424,13 @@ async def test_timing() -> TestResult:
         "currentPage": 1,
         "pageSize": 1,
         "searchSource": "search",
-        "startStockNumber": 50,
+        "startStockNumber": DEFAULT_MIN_STOCK,
     }
 
     data = await make_request(params)
     total_parts = data.get("data", {}).get("componentPageInfo", {}).get("total", 0)
 
-    print(f"Total parts (stock >= 50): {total_parts:,}")
+    print(f"Total parts (stock >= {DEFAULT_MIN_STOCK}): {total_parts:,}")
 
     # Calculate estimates
     pages_needed = (total_parts + 99) // 100
