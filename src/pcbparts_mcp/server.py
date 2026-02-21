@@ -20,7 +20,7 @@ from .config import (
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
 )
 from .client import JLCPCBClient
-from .mouser import MouserClient
+from .mouser import MouserClient, MouserAPIError
 from .digikey import DigiKeyClient
 from .cse import CSEClient
 from .db import get_db, close_db
@@ -1233,6 +1233,11 @@ async def mouser_search(
             records=max(1, min(limit, 50)),
             page=max(1, page),
         )
+    except MouserAPIError as e:
+        logger.error(f"Mouser search failed: {e}")
+        if e.code == "NotFound":
+            return {"error": "Manufacturer not found on Mouser. Try searching without the manufacturer filter, or use a different spelling."}
+        return {"error": "Mouser search failed. Check server logs for details."}
     except Exception as e:
         logger.error(f"Mouser search failed: {type(e).__name__}: {e}")
         return {"error": "Mouser search failed. Check server logs for details."}

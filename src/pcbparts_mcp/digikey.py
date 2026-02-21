@@ -134,16 +134,20 @@ class DigiKeyClient:
             if self._access_token and time.time() < self._token_expires_at - 100:
                 return self._access_token
 
-            response = await self._get_http().post(
-                DIGIKEY_TOKEN_URL,
-                data={
-                    "client_id": self._client_id,
-                    "client_secret": self._client_secret,
-                    "grant_type": "client_credentials",
-                },
-                headers={"Content-Type": "application/x-www-form-urlencoded"},
-            )
-            response.raise_for_status()
+            try:
+                response = await self._get_http().post(
+                    DIGIKEY_TOKEN_URL,
+                    data={
+                        "client_id": self._client_id,
+                        "client_secret": self._client_secret,
+                        "grant_type": "client_credentials",
+                    },
+                    headers={"Content-Type": "application/x-www-form-urlencoded"},
+                )
+            except httpx.HTTPError:
+                raise ValueError("DigiKey token request failed (network/connection error)")
+            if response.status_code >= 400:
+                raise ValueError(f"DigiKey token request failed (HTTP {response.status_code})")
             data = response.json()
 
             # Check for OAuth error responses (some providers return 200 with error)
@@ -175,18 +179,22 @@ class DigiKeyClient:
         headers = self._auth_headers(token)
         url = f"{DIGIKEY_BASE_URL}{path}"
 
-        async with self._get_semaphore():
-            response = await self._get_http().request(method, url, headers=headers, **kwargs)
-
-        # Handle token expiration mid-flight (retry outside semaphore)
-        if response.status_code == 401:
-            self._access_token = None
-            token = await self._ensure_token()
-            headers = self._auth_headers(token)
+        try:
             async with self._get_semaphore():
                 response = await self._get_http().request(method, url, headers=headers, **kwargs)
 
-        response.raise_for_status()
+            # Handle token expiration mid-flight (retry outside semaphore)
+            if response.status_code == 401:
+                self._access_token = None
+                token = await self._ensure_token()
+                headers = self._auth_headers(token)
+                async with self._get_semaphore():
+                    response = await self._get_http().request(method, url, headers=headers, **kwargs)
+        except httpx.HTTPError:
+            raise ValueError("DigiKey API request failed (network/connection error)")
+
+        if response.status_code >= 400:
+            raise ValueError(f"DigiKey API returned HTTP {response.status_code}")
         return response.json()
 
     async def search(

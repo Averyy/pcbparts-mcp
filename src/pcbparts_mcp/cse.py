@@ -128,10 +128,14 @@ class CSEClient:
         if offset > 0:
             params["offset"] = str(offset)
 
-        async with self._get_semaphore():
-            response = await self._get_http().get(_CSE_API_URL, params=params)
+        try:
+            async with self._get_semaphore():
+                response = await self._get_http().get(_CSE_API_URL, params=params)
+        except httpx.HTTPError:
+            raise ValueError("CSE API request failed (network/connection error)")
 
-        response.raise_for_status()
+        if response.status_code >= 400:
+            raise ValueError(f"CSE API returned HTTP {response.status_code}")
         data = response.json()
 
         if data.get("status") != "Success":
@@ -212,13 +216,16 @@ class CSEClient:
             }
 
         # Download the model zip (authenticated)
-        async with self._get_semaphore():
-            response = await self._get_http().get(
-                _CSE_MODEL_URL,
-                params={"partID": str(resolved_part_id)},
-                auth=(CSE_USER, CSE_PASS),
-                timeout=30,
-            )
+        try:
+            async with self._get_semaphore():
+                response = await self._get_http().get(
+                    _CSE_MODEL_URL,
+                    params={"partID": str(resolved_part_id)},
+                    auth=(CSE_USER, CSE_PASS),
+                    timeout=30,
+                )
+        except httpx.HTTPError:
+            return {"error": "CSE model download failed (network/connection error)"}
 
         if response.status_code == 401:
             return {"error": "CSE authentication failed. Check CSEARCH_USER and CSEARCH_PASS."}

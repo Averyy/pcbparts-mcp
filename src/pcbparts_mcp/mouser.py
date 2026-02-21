@@ -17,6 +17,15 @@ from .config import (
 
 logger = logging.getLogger(__name__)
 
+
+class MouserAPIError(Exception):
+    """Mouser API returned an error with a code and message."""
+
+    def __init__(self, code: str, message: str):
+        self.code = code
+        super().__init__(f"Mouser API error [{code}]: {message}")
+
+
 # Pre-compiled patterns for parsing Mouser fields
 _STOCK_RE = re.compile(r"(\d[\d,]*)\s+In Stock", re.IGNORECASE)
 _PRICE_RE = re.compile(r"[^\d.]")
@@ -130,7 +139,11 @@ class MouserClient:
         """
         url = f"{MOUSER_BASE_URL}{path}?apiKey={self._api_key}"
         async with self._get_semaphore():
-            response = await self._get_client().post(url, json=body)
+            try:
+                response = await self._get_client().post(url, json=body)
+            except httpx.HTTPError:
+                # Sanitize: httpx exceptions may include the full URL with API key
+                raise ValueError("Mouser API request failed (network/connection error)")
             # Catch HTTP errors to avoid leaking the API key (embedded in URL) into logs
             if response.status_code >= 400:
                 raise ValueError(f"Mouser API returned HTTP {response.status_code}")
@@ -139,8 +152,10 @@ class MouserClient:
         # Check for API errors
         errors = data.get("Errors", [])
         if errors:
-            msg = errors[0].get("Message", "Unknown Mouser API error")
-            raise ValueError(f"Mouser API error: {msg}")
+            err = errors[0]
+            code = err.get("Code", "")
+            msg = err.get("Message", "Unknown Mouser API error")
+            raise MouserAPIError(code, msg)
 
         return data
 

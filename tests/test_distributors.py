@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from pcbparts_mcp.mouser import MouserClient, _parse_stock, _parse_price, _normalize_part
+from pcbparts_mcp.mouser import MouserClient, MouserAPIError, _parse_stock, _parse_price, _normalize_part
 from pcbparts_mcp.digikey import DigiKeyClient, _normalize_product
 from pcbparts_mcp.cse import CSEClient, _normalize_part as cse_normalize_part
 from pcbparts_mcp.cache import TTLCache
@@ -386,14 +386,15 @@ class TestMouserClient:
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = {
-            "Errors": [{"Message": "Invalid API Key"}],
+            "Errors": [{"Code": "InvalidKey", "Message": "Invalid API Key"}],
             "SearchResults": None,
         }
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(client._client, "post", new_callable=AsyncMock, return_value=mock_response):
-            with pytest.raises(ValueError, match="Mouser API error"):
+            with pytest.raises(MouserAPIError) as exc_info:
                 await client.search("test")
+            assert exc_info.value.code == "InvalidKey"
 
     @pytest.mark.asyncio
     async def test_cache_hit(self, client):
