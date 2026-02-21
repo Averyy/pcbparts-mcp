@@ -417,7 +417,7 @@ class TestSubcategoryAliases:
         db = get_db()
         aliases = [
             ("antenna", "antennas"),
-            ("ceramic antenna", "ceramic antenna"),
+            ("ceramic antenna", "antennas"),
             ("wifi antenna", "antennas"),
             ("ble antenna", "antennas"),
         ]
@@ -796,7 +796,7 @@ class TestSmartQueryParsing:
         from pcbparts_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("ceramic antenna 2.4GHz")
-        assert result.subcategory == "ceramic antenna"
+        assert result.subcategory == "antennas"
 
         # Should extract frequency filter
         freq_filter = next((f for f in result.spec_filters if "freq" in f.name.lower()), None)

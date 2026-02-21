@@ -38,8 +38,7 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "tantalum": "tantalum capacitors",
     "tantalum capacitor": "tantalum capacitors",
     "film capacitor": "film capacitors",
-    "supercap": "supercapacitors",
-    "supercapacitor": "supercapacitors",
+    # Note: supercapacitors not available as a JLCPCB subcategory
     # ==========================================================================
     # RESISTORS
     # ==========================================================================
@@ -88,8 +87,13 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "esd protection": "esd and surge protection (tvs/esd)",
     "surge protection": "esd and surge protection (tvs/esd)",
     "esd": "esd and surge protection (tvs/esd)",
-    "rectifier": "rectifiers",
-    "rectifier diode": "rectifiers",
+    "rectifier": "bridge rectifiers",
+    "rectifier diode": "diodes - general purpose",
+    "fast recovery diode": "fast recovery / high efficiency diodes",
+    "fast diode": "fast recovery / high efficiency diodes",
+    "frd": "fast recovery / high efficiency diodes",
+    "sic diode": "sic diodes",
+    "silicon carbide diode": "sic diodes",
     # ==========================================================================
     # TRANSISTORS - MOSFETs
     # ==========================================================================
@@ -102,6 +106,13 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "nmos": "mosfets",
     "pmos": "mosfets",
     "power mosfet": "mosfets",
+    "gan mosfet": "gan transistors(gan hemt)",
+    "gan transistor": "gan transistors(gan hemt)",
+    "gan hemt": "gan transistors(gan hemt)",
+    "gallium nitride": "gan transistors(gan hemt)",
+    "sic mosfet": "silicon carbide field effect transistor (mosfet)",
+    "sic transistor": "silicon carbide field effect transistor (mosfet)",
+    "silicon carbide mosfet": "silicon carbide field effect transistor (mosfet)",
     # ==========================================================================
     # TRANSISTORS - BJT (actual DB name: "Bipolar (BJT)")
     # ==========================================================================
@@ -317,6 +328,8 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "push button": "tactile switches",
     "pushbutton": "tactile switches",
     "button": "tactile switches",
+    "pushbutton switch": "pushbutton switches",  # Panel-mount push buttons (distinct from PCB tactile)
+    "panel button": "pushbutton switches",
     "dip switch": "dip switches",
     "toggle switch": "toggle switches",
     "slide switch": "slide switches",
@@ -352,6 +365,8 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "hall sensor": "linear hall sensors",
     "hall effect": "linear hall sensors",
     "hall effect sensor": "linear hall sensors",
+    "hall switch": "hall switches",
+    "hall effect switch": "hall switches",
     "current sensor": "current sensors",
     "magnetic sensor": "magnetic angle sensors",
     "light sensor": "ambient light sensors",
@@ -363,15 +378,15 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "gas sensor": "gas sensors",
     "proximity sensor": "proximity sensors",
     "ultrasonic sensor": "ultrasonic receivers, transmitters",
-    "encoder": "encoders",
-    "rotary encoder": "encoders",
+    "encoder": "rotary encoders",
+    "rotary encoder": "rotary encoders",
     # ==========================================================================
-    # ANTENNAS (actual DB names: "Antennas", "Ceramic antenna", "Antenna spring", "Other antennas")
+    # ANTENNAS (actual DB names: "Antennas", "Antenna spring")
     # ==========================================================================
     "antenna": "antennas",
     "antennas": "antennas",
-    "ceramic antenna": "ceramic antenna",
-    "chip antenna": "ceramic antenna",
+    "ceramic antenna": "antennas",
+    "chip antenna": "antennas",
     "pcb antenna": "antennas",
     "external antenna": "antennas",
     "2.4ghz antenna": "antennas",  # Common WiFi/BLE frequency
@@ -409,10 +424,10 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # ==========================================================================
     # FUSES
     # ==========================================================================
-    "fuse": "fuses",
-    "resettable fuse": "ptc thermistors",
-    "ptc fuse": "ptc thermistors",
-    "polyfuse": "ptc thermistors",
+    "fuse": "disposable fuses",
+    "resettable fuse": "resettable fuses",
+    "ptc fuse": "resettable fuses",
+    "polyfuse": "resettable fuses",
     # ==========================================================================
     # OPTOCOUPLERS (actual DB: "Transistor, Photovoltaic Output Optoisolators")
     # ==========================================================================

@@ -18,6 +18,7 @@
 - **NEVER create mock data** unless explicitly told to
 - **NEVER replace existing code with simplified versions** - fix the actual problem
 - **ALWAYS find root cause** - don't create workarounds
+- **ALWAYS fix or note pre-existing issues** - if you discover failing tests or bugs unrelated to your current task, fix them or flag them to the user. Never dismiss them as "pre-existing"
 - **Update existing files** - don't create new ones unless necessary
 - **ALWAYS use proper TLS fingerprinting** when testing JLCPCB API - use `curl_cffi` with browser impersonation, proper headers, jitter delays, and user agents from `scrape_components.py`. Don't write quick test scripts that skip these - you'll get 403 blocked.
 

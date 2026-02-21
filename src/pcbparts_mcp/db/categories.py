@@ -103,7 +103,7 @@ def find_by_subcategory(
         subcategory_id: Subcategory to search in
         primary_spec: Primary spec name to match (e.g., "Resistance")
         primary_value: Value to match for primary spec
-        min_stock: Minimum stock (default 50)
+        min_stock: Minimum stock (default DEFAULT_MIN_STOCK)
         library_type: Filter by library type - "basic", "preferred", or "extended"
         prefer_no_fee: Sort preference (default True)
         limit: Max results to return

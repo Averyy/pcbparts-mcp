@@ -200,7 +200,7 @@ class ComponentDatabase:
         if not self._search_engine:
             return {"error": "Database not available", "results": [], "total": 0}
 
-        # Clamp min_stock to match database reality (database only has parts with stock >= ~50)
+        # Clamp min_stock to match database reality (database only has parts with stock >= DEFAULT_MIN_STOCK)
         # This prevents misleading searches where users think they can find 0-stock parts
         original_min_stock = min_stock
         min_stock = max(min_stock, DEFAULT_MIN_STOCK)

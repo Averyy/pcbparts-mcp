@@ -84,10 +84,10 @@ class TestClient:
         assert params["preferredComponentFlag"] is True
 
     def test_build_search_params_library_type_no_fee(self, client):
-        """no_fee combines basic + preferred in a single API call."""
+        """no_fee sets no API params; extended parts are filtered client-side."""
         params = client._build_search_params(library_type="no_fee")
-        assert params["componentLibraryType"] == "base"
-        assert params["preferredComponentFlag"] is True
+        assert "componentLibraryType" not in params
+        assert "preferredComponentFlag" not in params
 
     def test_build_search_params_sort_by_quantity(self, client):
         """Sort by quantity (highest first)."""
