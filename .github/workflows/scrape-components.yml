@@ -67,7 +67,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Add JSON files only (DB is built at Docker build time)
-          git add data/categories/ data/manifest.json data/subcategories.json
+          git add data/categories/ data/manifest.json data/subcategories.json data/history/
 
           # Check if there are changes to commit
           if git diff --staged --quiet; then

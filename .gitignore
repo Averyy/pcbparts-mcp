@@ -48,10 +48,14 @@ htmlcov/
 # Playwright
 .playwright-mcp/
 
-# Built database (generated from JSONL on startup)
+# Built databases (generated from JSONL at build time)
 data/components.db
 data/components.db-wal
 data/components.db-shm
+data/stock_history.db
+data/stock_history.db-wal
+data/stock_history.db-shm
+data/progress.json
 data/jlcpcb_parts.db
 data/*.db-wal
 data/*.db-shm

@@ -58,6 +58,40 @@ def build_database(data_dir: Path, db_path: Path) -> None:
         ) from e
 
 
+def build_history_database(data_dir: Path, db_path: Path) -> None:
+    """Build the stock history database from history JSONL files.
+
+    Args:
+        data_dir: Directory containing history/ subdirectory with JSONL.gz files
+        db_path: Output database path
+    """
+    import importlib.util
+    script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "build_history_db.py"
+
+    if not script_path.exists():
+        logger.warning(f"History build script not found: {script_path} — skipping history DB build")
+        return
+
+    try:
+        spec = importlib.util.spec_from_file_location("build_history_db", script_path)
+        if spec is None or spec.loader is None:
+            logger.warning(f"Cannot load history build script: {script_path}")
+            return
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    except (SyntaxError, ImportError) as e:
+        logger.warning(f"Failed to load history build script: {e}")
+        return
+
+    try:
+        if hasattr(module, "build_history_db"):
+            module.build_history_db(data_dir, db_path, verbose=True)
+        else:
+            logger.warning("build_history_db function not found in script")
+    except Exception as e:
+        logger.warning(f"History database build failed (non-fatal): {e}")
+
+
 def load_caches(
     conn: sqlite3.Connection,
 ) -> tuple[

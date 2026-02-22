@@ -725,7 +725,7 @@ class TestGracefulDegradation:
         original = srv._mouser_client
         srv._mouser_client = None
         try:
-            result = await mouser_search.fn(keyword="test")
+            result = await mouser_search(keyword="test")
             assert "error" in result
             assert "MOUSER_API_KEY" in result["error"]
         finally:
@@ -738,7 +738,7 @@ class TestGracefulDegradation:
         original = srv._mouser_client
         srv._mouser_client = None
         try:
-            result = await mouser_get_part.fn(part_number="595-LM358P")
+            result = await mouser_get_part(part_number="595-LM358P")
             assert "error" in result
             assert "MOUSER_API_KEY" in result["error"]
         finally:
@@ -751,7 +751,7 @@ class TestGracefulDegradation:
         original = srv._digikey_client
         srv._digikey_client = None
         try:
-            result = await digikey_search.fn(keywords="test")
+            result = await digikey_search(keywords="test")
             assert "error" in result
             assert "DIGIKEY_CLIENT_ID" in result["error"]
         finally:
@@ -764,7 +764,7 @@ class TestGracefulDegradation:
         original = srv._digikey_client
         srv._digikey_client = None
         try:
-            result = await digikey_get_part.fn(product_number="LM358P")
+            result = await digikey_get_part(product_number="LM358P")
             assert "error" in result
             assert "DIGIKEY_CLIENT_ID" in result["error"]
         finally:
@@ -777,7 +777,7 @@ class TestGracefulDegradation:
         original = srv._mouser_client
         srv._mouser_client = MagicMock()  # Needs to be non-None to pass first check
         try:
-            result = await mouser_search.fn(keyword="x" * 501)
+            result = await mouser_search(keyword="x" * 501)
             assert "error" in result
             assert "too long" in result["error"]
         finally:
@@ -790,7 +790,7 @@ class TestGracefulDegradation:
         original = srv._digikey_client
         srv._digikey_client = MagicMock()
         try:
-            result = await digikey_search.fn(keywords="x" * 501)
+            result = await digikey_search(keywords="x" * 501)
             assert "error" in result
             assert "too long" in result["error"]
         finally:
@@ -1272,7 +1272,7 @@ class TestCSEGracefulDegradation:
         original = srv._cse_client
         srv._cse_client = None
         try:
-            result = await cse_search.fn(query="LM358P")
+            result = await cse_search(query="LM358P")
             assert "error" in result
             assert "not initialized" in result["error"]
         finally:
@@ -1288,7 +1288,7 @@ class TestCSEGracefulDegradation:
         mock_client.search = AsyncMock(side_effect=ValueError("Connection failed"))
         srv._cse_client = mock_client
         try:
-            result = await cse_search.fn(query="LM358P")
+            result = await cse_search(query="LM358P")
             assert "error" in result
             # Error message is now generic (no exception details leaked)
             assert "CSE search failed" in result["error"]
@@ -1302,7 +1302,7 @@ class TestCSEGracefulDegradation:
         original = srv._cse_client
         srv._cse_client = None
         try:
-            result = await cse_get_kicad.fn(query="LM358P")
+            result = await cse_get_kicad(query="LM358P")
             assert "error" in result
             assert "not initialized" in result["error"]
         finally:
@@ -1315,7 +1315,7 @@ class TestCSEGracefulDegradation:
         original = srv._cse_client
         srv._cse_client = MagicMock(spec=CSEClient)
         try:
-            result = await cse_get_kicad.fn()
+            result = await cse_get_kicad()
             assert "error" in result
             assert "Must provide" in result["error"]
         finally:
@@ -1328,7 +1328,7 @@ class TestCSEGracefulDegradation:
         original = srv._cse_client
         srv._cse_client = MagicMock(spec=CSEClient)
         try:
-            result = await cse_search.fn(query="x" * 501)
+            result = await cse_search(query="x" * 501)
             assert "error" in result
             assert "too long" in result["error"]
         finally:
@@ -1343,21 +1343,21 @@ class TestGetPartMPN:
     @pytest.mark.asyncio
     async def test_get_part_requires_lcsc_or_mpn(self):
         from pcbparts_mcp.server import jlc_get_part
-        result = await jlc_get_part.fn()
+        result = await jlc_get_part()
         assert "error" in result
         assert "Must provide" in result["error"]
 
     @pytest.mark.asyncio
     async def test_get_part_mpn_too_long(self):
         from pcbparts_mcp.server import jlc_get_part
-        result = await jlc_get_part.fn(mpn="x" * 101)
+        result = await jlc_get_part(mpn="x" * 101)
         assert "error" in result
         assert "too long" in result["error"]
 
     @pytest.mark.asyncio
     async def test_get_part_mpn_not_found(self):
         from pcbparts_mcp.server import jlc_get_part
-        result = await jlc_get_part.fn(mpn="TOTALLYFAKE12345XYZ")
+        result = await jlc_get_part(mpn="TOTALLYFAKE12345XYZ")
         assert "error" in result
         assert result["results"] == []
         assert result["mpn"] == "TOTALLYFAKE12345XYZ"
@@ -1366,7 +1366,7 @@ class TestGetPartMPN:
     async def test_get_part_mpn_found(self):
         """MPN lookup should find parts from local DB."""
         from pcbparts_mcp.server import jlc_get_part
-        result = await jlc_get_part.fn(mpn="AO3400A")
+        result = await jlc_get_part(mpn="AO3400A")
         if result.get("total", 0) > 0:
             assert result["mpn"] == "AO3400A"
             assert len(result["results"]) > 0
@@ -1383,7 +1383,7 @@ class TestGetPartMPN:
         mock_client.get_part = AsyncMock(return_value={"lcsc": "C1525", "model": "test"})
         srv._client = mock_client
         try:
-            result = await jlc_get_part.fn(lcsc="C1525", mpn="AO3400A")
+            result = await jlc_get_part(lcsc="C1525", mpn="AO3400A")
             # Should call client.get_part (LCSC path), not DB lookup
             mock_client.get_part.assert_called_once_with("C1525")
         finally:
