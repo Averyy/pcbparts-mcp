@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "scraped_at": "2026-02-21T17:53:50.996006+00:00",
+  "scraped_at": "2026-02-21T21:31:23.447215+00:00",
   "stock_threshold": 10,
-  "total_parts": 575636,
+  "total_parts": 575621,
   "categories": {
     "amplifiers-comparators": {
       "id": 23,
@@ -25,7 +25,7 @@
     "capacitors": {
       "id": 2,
       "name": "Capacitors",
-      "count": 52777,
+      "count": 52774,
       "status": "complete"
     },
     "circuit-protection": {
@@ -43,7 +43,7 @@
     "connectors": {
       "id": 8,
       "name": "Connectors",
-      "count": 106780,
+      "count": 106779,
       "status": "complete"
     },
     "consumables-and-auxiliary-materials": {
@@ -61,7 +61,7 @@
     "data-acquisition": {
       "id": 29,
       "name": "Data Acquisition",
-      "count": 3322,
+      "count": 3321,
       "status": "complete"
     },
     "development-boards-tools": {
@@ -73,7 +73,7 @@
     "diodes": {
       "id": 4,
       "name": "Diodes",
-      "count": 34968,
+      "count": 34967,
       "status": "complete"
     },
     "displays": {
@@ -127,7 +127,7 @@
     "industrial-control-electrical": {
       "id": 46,
       "name": "Industrial control electrical",
-      "count": 1073,
+      "count": 1072,
       "status": "complete"
     },
     "instrumentation-and-meters": {
@@ -139,7 +139,7 @@
     "interface": {
       "id": 27,
       "name": "Interface",
-      "count": 7589,
+      "count": 7588,
       "status": "complete"
     },
     "iot-communication-modules": {
@@ -163,7 +163,7 @@
     "logic": {
       "id": 19,
       "name": "Logic",
-      "count": 8745,
+      "count": 8744,
       "status": "complete"
     },
     "magnetic-sensors": {
@@ -229,13 +229,13 @@
     "power-management-pmic": {
       "id": 9,
       "name": "Power Management (PMIC)",
-      "count": 31399,
+      "count": 31396,
       "status": "complete"
     },
     "power-modules": {
       "id": 68,
       "name": "Power Modules",
-      "count": 5431,
+      "count": 5433,
       "status": "complete"
     },
     "relays": {
@@ -247,7 +247,7 @@
     "resistors": {
       "id": 1,
       "name": "Resistors",
-      "count": 101060,
+      "count": 101057,
       "status": "complete"
     },
     "rf-and-wireless": {
@@ -265,7 +265,7 @@
     "signal-isolation-devices": {
       "id": 63,
       "name": "Signal Isolation Devices",
-      "count": 1349,
+      "count": 1348,
       "status": "complete"
     },
     "silicon-carbide-sic-devices": {
@@ -301,7 +301,7 @@
     "transistors-thyristors": {
       "id": 5,
       "name": "Transistors/Thyristors",
-      "count": 43451,
+      "count": 43450,
       "status": "complete"
     },
     "wires-and-cables": {

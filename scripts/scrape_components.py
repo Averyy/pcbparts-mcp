@@ -400,6 +400,145 @@ async def worker(
         queue.task_done()
 
 
+# === Stock History ===
+
+HISTORY_HIGH_STOCK_CAP = 1000  # Don't track stock changes for parts above this level
+
+
+def generate_stock_history(
+    categories_dir: Path,
+    history_dir: Path,
+    results: dict[str, list[dict[str, Any]]],
+) -> dict[str, int]:
+    """Compare old JSONL data with new scrape results and record stock changes.
+
+    Writes events to data/history/YYYY-MM.jsonl.gz as gzip multi-stream append.
+    Returns stats dict with event counts.
+
+    Note: Iterates results directly (no intermediate dict) to reduce peak memory.
+    Cross-category duplicate LCSCs are deduplicated via seen_lcsc set.
+    """
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    month = today[:7]  # YYYY-MM
+
+    # Load old data from existing JSONL files: {lcsc: (stock, price, lib_type)}
+    old_data: dict[str, tuple[int, float | None, str | None]] = {}
+    for gz_file in categories_dir.glob("*.jsonl.gz"):
+        with gzip.open(gz_file, "rt") as f:
+            for line in f:
+                if not line or line == "\n":
+                    continue
+                part = json.loads(line)
+                lcsc = part.get("l")
+                if lcsc:
+                    old_data[lcsc] = (
+                        part.get("s") or 0,
+                        part.get("$"),
+                        part.get("t"),
+                    )
+
+    if not old_data:
+        logger.info("No old data found — skipping history generation")
+        return {"skipped": True}
+
+    # Generate events by iterating results directly (avoids building a second large dict)
+    events: list[dict] = []
+    stats: dict[str, int] = {}
+    seen_lcsc: set[str] = set()  # Track new LCSCs for "gone" detection + cross-category dedup
+
+    def should_track_delta(stock: int, delta: int) -> bool:
+        """Apply tiered thresholds — don't track high-stock noise."""
+        if stock > HISTORY_HIGH_STOCK_CAP:
+            return False
+        if stock > 500:
+            return abs(delta) > 100
+        if stock > 100:
+            return abs(delta) > 25
+        return abs(delta) > 10
+
+    def add_event(event: dict) -> None:
+        """Append event and update stats inline."""
+        events.append(event)
+        etype = event.get("e", "change")
+        stats[etype] = stats.get(etype, 0) + 1
+
+    # Check all parts in new data
+    for parts_list in results.values():
+        for part in parts_list:
+            lcsc = part.get("l")
+            if not lcsc or lcsc in seen_lcsc:
+                continue
+            seen_lcsc.add(lcsc)
+
+            new_stock = part.get("s") or 0
+            new_price = part.get("$")
+            new_type = part.get("t")
+
+            if lcsc in old_data:
+                old_stock, old_price, old_type = old_data[lcsc]
+
+                # Reappeared (was 0, now has stock) — takes priority over stock change
+                if old_stock == 0 and new_stock > 0:
+                    add_event({
+                        "l": lcsc, "d": today,
+                        "s": new_stock, "$": new_price, "t": new_type,
+                        "e": "reappear",
+                    })
+                else:
+                    # Stock change (skip if reappearing — that's already tracked)
+                    delta = new_stock - old_stock
+                    if delta != 0 and should_track_delta(new_stock, delta):
+                        add_event({
+                            "l": lcsc, "d": today,
+                            "s": new_stock, "$": new_price, "t": new_type,
+                        })
+
+                # Library type change (independent of stock changes)
+                if old_type and new_type and old_type != new_type:
+                    add_event({
+                        "l": lcsc, "d": today,
+                        "s": new_stock, "$": new_price, "t": new_type,
+                        "e": "type_change",
+                    })
+            else:
+                # New part (not in old data)
+                if 0 < new_stock <= HISTORY_HIGH_STOCK_CAP:
+                    add_event({
+                        "l": lcsc, "d": today,
+                        "s": new_stock, "$": new_price, "t": new_type,
+                        "e": "new",
+                    })
+
+    # Disappeared parts (in old, not in new) — mark as gone
+    for lcsc, (old_stock, old_price, old_type) in old_data.items():
+        if lcsc not in seen_lcsc:
+            add_event({
+                "l": lcsc, "d": today,
+                "s": 0, "$": old_price, "t": old_type,
+                "e": "gone",
+            })
+
+    if not events:
+        logger.info("No stock history events to record")
+        return {"events": 0}
+
+    # Write events via gzip multi-stream append
+    history_dir.mkdir(parents=True, exist_ok=True)
+    history_file = history_dir / f"{month}.jsonl.gz"
+    with open(history_file, "ab") as raw_f:
+        with gzip.GzipFile(fileobj=raw_f, mode="wb") as gz:
+            for event in events:
+                gz.write((json.dumps(event, separators=(",", ":")) + "\n").encode())
+
+    stats["events"] = len(events)
+    logger.info(f"Stock history: {len(events)} events recorded to {history_file.name}")
+    for etype, count in sorted(stats.items()):
+        if etype != "events":
+            logger.info(f"  {etype}: {count}")
+
+    return stats
+
+
 # === Main Scraper ===
 
 async def run_scraper(
@@ -532,6 +671,17 @@ async def run_scraper(
         # Save progress periodically during scrape would be nice, but for now save at end
         with open(progress_file, "w") as f:
             json.dump(progress.to_dict(), f, indent=2)
+
+        # Generate stock history (compare old JSONL with new results)
+        # Skip on resume runs (old data is unreliable after partial updates)
+        if not resume:
+            try:
+                history_dir = output_dir / "history"
+                history_stats = generate_stock_history(categories_dir, history_dir, results)
+                if history_stats.get("events", 0) > 0:
+                    logger.info(f"Stock history: {history_stats['events']} events recorded")
+            except Exception:
+                logger.warning("Stock history generation failed (non-fatal):", exc_info=True)
 
         # Write category files (deduplicated by LCSC)
         logger.info("")
