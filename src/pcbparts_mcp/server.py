@@ -876,6 +876,10 @@ async def cse_search(
     Use this to check if KiCad/Eagle/Altium symbols, footprints, and 3D models exist for a part.
     No API key required.
 
+    WARNING: This tool is slow (up to 45s response time). Only use when you specifically need
+    ECAD model availability or datasheets from ComponentSearchEngine. For general part search,
+    use jlc_search instead. For EasyEDA footprint availability, use jlc_get_part.
+
     Args:
         query: MPN or keyword (e.g., "LM358P", "STM32F103", "ESP32")
         limit: Max results to return (1-10, default 5)
@@ -924,6 +928,9 @@ async def cse_get_kicad(
     Downloads from SamacSys ComponentSearchEngine. Works for any manufacturer's part,
     not limited to JLCPCB. Returns the raw .kicad_sym and .kicad_mod file contents
     as text that can be read directly or saved to a KiCad project.
+
+    WARNING: This tool is slow (up to 45s response time). Only use when you specifically need
+    KiCad symbol/footprint files. For checking if an EasyEDA footprint exists, use jlc_get_part instead.
 
     Args:
         query: MPN to search for (e.g., "LM358P", "STM32F103CBT6", "ESP32-WROOM-32E").

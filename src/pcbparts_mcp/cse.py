@@ -19,6 +19,7 @@ from .cache import TTLCache
 from .config import (
     CSE_CONCURRENT_LIMIT,
     CSE_RATE_LIMIT,
+    CSE_REQUEST_TIMEOUT,
     CSE_CACHE_TTL,
     CSE_KICAD_CACHE_TTL,
     CSE_KICAD_CACHE_MAX_SIZE,
@@ -104,7 +105,7 @@ class CSEClient:
 
     def _get_http(self) -> httpx.AsyncClient:
         if self._http is None:
-            self._http = httpx.AsyncClient(timeout=15)
+            self._http = httpx.AsyncClient(timeout=CSE_REQUEST_TIMEOUT)
         return self._http
 
     async def search(self, query: str, offset: int = 0) -> dict[str, Any]:
