@@ -1819,6 +1819,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "1279": {
+    "name": "Servo Motor",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "2521": {
     "name": "Socket/power strip/extension cord",
     "category_id": 46,
