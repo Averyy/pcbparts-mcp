@@ -62,6 +62,7 @@ DISTRIBUTOR_DAILY_LIMIT = int(os.getenv("DISTRIBUTOR_DAILY_LIMIT", "1000"))
 
 CSE_CONCURRENT_LIMIT = 3
 CSE_RATE_LIMIT = 0.15
+CSE_REQUEST_TIMEOUT = float(os.getenv("CSE_REQUEST_TIMEOUT", "45"))
 CSE_CACHE_TTL = 3600
 CSE_KICAD_CACHE_TTL = 60 * 60 * 24  # Cache extracted KiCad files for 24 hours
 CSE_KICAD_CACHE_MAX_SIZE = 2000  # Max cached parts (each is a few KB of text)
