@@ -18,6 +18,7 @@ import httpx
 from .cache import TTLCache
 from .config import (
     CSE_CONCURRENT_LIMIT,
+    CSE_RATE_LIMIT,
     CSE_CACHE_TTL,
     CSE_KICAD_CACHE_TTL,
     CSE_KICAD_CACHE_MAX_SIZE,
@@ -131,6 +132,7 @@ class CSEClient:
         try:
             async with self._get_semaphore():
                 response = await self._get_http().get(_CSE_API_URL, params=params)
+                await asyncio.sleep(CSE_RATE_LIMIT)
         except httpx.HTTPError:
             raise ValueError("CSE API request failed (network/connection error)")
 
@@ -224,6 +226,7 @@ class CSEClient:
                     auth=(CSE_USER, CSE_PASS),
                     timeout=30,
                 )
+                await asyncio.sleep(CSE_RATE_LIMIT)
         except httpx.HTTPError:
             return {"error": "CSE model download failed (network/connection error)"}
 

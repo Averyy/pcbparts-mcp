@@ -137,15 +137,20 @@ class TestParsePins:
         assert [p["name"] for p in pins] == ["A", "B", "C"]
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 async def client():
-    """Create a client for integration tests."""
+    """Create a shared client for integration tests.
+
+    Module-scoped so all tests share one wafer session (accumulated cookies,
+    proper rate limiting).
+    """
     from pcbparts_mcp.client import JLCPCBClient
     client = JLCPCBClient()
     yield client
     await client.close()
 
 
+@pytest.mark.integration
 class TestPinoutIntegration:
     """Integration tests that hit the real EasyEDA API."""
 

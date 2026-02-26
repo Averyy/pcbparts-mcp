@@ -84,7 +84,7 @@ class TestClient:
         assert params["preferredComponentFlag"] is True
 
     def test_build_search_params_library_type_no_fee(self, client):
-        """no_fee sets no API params; extended parts are filtered client-side."""
+        """no_fee sets no API params; search() handles it with two parallel calls."""
         params = client._build_search_params(library_type="no_fee")
         assert "componentLibraryType" not in params
         assert "preferredComponentFlag" not in params
@@ -294,7 +294,7 @@ class TestClient:
         }
         result = client._transform_part(item, slim=False)
         assert result["lcsc"] == "C82899"
-        assert result["library_type"] == "basic"
+        assert result["library_type"] == "preferred"
         assert result["price"] == 4.2016
         assert result["price_10"] == 3.7052
         assert result["category"] == "WiFi Modules"
@@ -393,11 +393,16 @@ class TestClient:
         assert await client.get_part("   ") is None
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 class TestClientIntegration:
-    """Integration tests that hit the real JLCPCB API."""
+    """Integration tests that hit the real JLCPCB API.
 
-    @pytest.fixture
+    Uses a class-scoped client so all tests share one wafer session,
+    accumulating cookies and respecting rate limits across tests.
+    """
+
+    @pytest.fixture(scope="class")
     async def client(self):
         client = JLCPCBClient()
         yield client

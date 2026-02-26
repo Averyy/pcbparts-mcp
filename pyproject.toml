@@ -1,14 +1,14 @@
 [project]
 name = "pcbparts-mcp"
-version = "3.1.0"
+version = "0.4.0"
 description = "MCP server for searching electronic components for PCB design and assembly"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     # MCP SDK and FastMCP framework
     "mcp>=1.3.0",
     "fastmcp>=3.0.0",
-    # HTTP client with browser impersonation (TLS fingerprinting)
-    "curl_cffi>=0.7.0",
+    # Anti-detection HTTP client (TLS fingerprinting, WAF solving, rotation)
+    "wafer-py>=0.1.4",
     # HTTP client for Mouser/DigiKey APIs
     "httpx>=0.27.0",
     # ASGI server and middleware
@@ -30,6 +30,14 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/pcbparts_mcp"]
 
+[tool.uv]
+# rnet (transitive dep of wafer-py) is a pre-release package
+prerelease = "allow"
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = [
+    "integration: hits live APIs (JLCPCB, EasyEDA) — run with pytest -m integration",
+]
+addopts = "-m 'not integration'"

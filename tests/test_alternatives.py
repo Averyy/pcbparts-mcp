@@ -576,21 +576,27 @@ class TestCompatibilityRulesCoverage:
 # =============================================================================
 
 
+@pytest.mark.integration
 class TestFindAlternativesIntegration:
     """Integration tests that hit the real JLCPCB API."""
 
-    @pytest.fixture
-    def client(self):
-        """Create a client for testing."""
+    @pytest.fixture(scope="class")
+    async def client(self):
+        """Create a shared client for integration tests.
+
+        Class-scoped so all tests share one wafer session (accumulated cookies,
+        proper rate limiting).
+        """
         from pcbparts_mcp.client import JLCPCBClient
-        return JLCPCBClient()
+        client = JLCPCBClient()
+        yield client
+        await client.close()
 
     @pytest.mark.asyncio
     async def test_resistor_alternatives(self, client):
         """Test finding alternatives for a 10k resistor."""
         # C25804 is a common 10kΩ 0603 resistor
         result = await client.find_alternatives("C25804", limit=5)
-        await client.close()
 
         assert "error" not in result
         assert "original" in result
@@ -613,7 +619,6 @@ class TestFindAlternativesIntegration:
         """Test finding alternatives for a 100nF capacitor."""
         # C1525 is a common 100nF 0402 X7R capacitor
         result = await client.find_alternatives("C1525", limit=5)
-        await client.close()
 
         assert "error" not in result
         assert "original" in result
@@ -627,7 +632,6 @@ class TestFindAlternativesIntegration:
         """Test finding alternatives for an LED."""
         # C2286 is a common red LED
         result = await client.find_alternatives("C2286", limit=5)
-        await client.close()
 
         assert "error" not in result
 
@@ -644,7 +648,6 @@ class TestFindAlternativesIntegration:
         """Test that unsupported categories return similar_parts instead of alternatives."""
         # C7466 is an STM32 MCU (unsupported category)
         result = await client.find_alternatives("C7466", limit=5)
-        await client.close()
 
         assert "error" not in result
 
@@ -660,7 +663,6 @@ class TestFindAlternativesIntegration:
     async def test_invalid_part_returns_error(self, client):
         """Test that invalid part codes return an error."""
         result = await client.find_alternatives("INVALID123")
-        await client.close()
 
         assert "error" in result
 
@@ -668,7 +670,6 @@ class TestFindAlternativesIntegration:
     async def test_library_type_filter(self, client):
         """Test filtering by library type."""
         result = await client.find_alternatives("C25804", library_type="no_fee", limit=5)
-        await client.close()
 
         assert "error" not in result
 
@@ -682,7 +683,6 @@ class TestFindAlternativesIntegration:
     async def test_scoring_prefers_basic_library(self, client):
         """Test that scoring prioritizes basic/preferred library parts."""
         result = await client.find_alternatives("C25804", limit=10)
-        await client.close()
 
         assert "error" not in result
 

@@ -8,129 +8,70 @@ Tests:
 3. Data completeness - Do we get full attributes array?
 4. Timing - How long does sustained scraping take?
 
-Uses same TLS impersonation as our MCP server to avoid detection.
+Uses wafer for anti-detection HTTP (TLS fingerprinting, rotation, rate limiting).
 """
 
 import asyncio
-import json
-import random
 import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from curl_cffi import requests as curl_requests
+import wafer
 
 # Add parent directory to path for imports when running as script
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pcbparts_mcp.config import DEFAULT_MIN_STOCK
 
-# === TLS Impersonation Setup (same as client.py) ===
-
-BROWSER_FINGERPRINTS = ["chrome131", "chrome133a", "chrome136", "chrome142"]
-
-USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0",
-]
-
-SEC_CH_UA = [
-    '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-    '"Google Chrome";v="133", "Chromium";v="133", "Not_A Brand";v="24"',
-]
-
-REFERERS = [
-    "https://jlcpcb.com/parts",
-    "https://jlcpcb.com/parts/basic_parts",
-    "https://jlcpcb.com/parts/componentSearch",
-    "https://jlcpcb.com/partdetail/",
-]
+# === Configuration ===
 
 JLCPCB_SEARCH_URL = "https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList"
 
-# Rate limiting config
-REQUEST_JITTER = (0.3, 0.7)  # Slightly more conservative for sustained scraping
 REQUEST_TIMEOUT = 15.0
 MAX_RETRIES = 3
 
 
-def get_headers() -> dict[str, str]:
-    """Generate randomized headers that look like a real browser."""
-    ua = random.choice(USER_AGENTS)
-    is_firefox = "Firefox" in ua
-
-    headers = {
-        "Host": "jlcpcb.com",
-        "User-Agent": ua,
-        "Accept": "application/json, text/plain, */*",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br, zstd",
-        "Content-Type": "application/json",
-        "Origin": "https://jlcpcb.com",
-        "Referer": random.choice(REFERERS),
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin",
-    }
-
-    if not is_firefox:
-        headers["Sec-Ch-Ua"] = random.choice(SEC_CH_UA)
-        headers["Sec-Ch-Ua-Mobile"] = "?0"
-        platform = '"Windows"' if "Windows" in ua else '"macOS"' if "Mac" in ua else '"Linux"'
-        headers["Sec-Ch-Ua-Platform"] = platform
-        headers["Priority"] = "u=1, i"
-
-    return headers
+def create_session() -> wafer.AsyncSession:
+    """Create a wafer session configured for JLCPCB verification."""
+    return wafer.AsyncSession(
+        timeout=REQUEST_TIMEOUT,
+        max_retries=MAX_RETRIES,
+        max_rotations=10,
+        max_failures=None,  # Disable session retirement — 403s during rotation are expected
+        rate_limit=0.3,
+        rate_jitter=0.4,  # More conservative for sustained testing
+        cache_dir=None,
+        rotate_every=1,
+        headers={
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+        },
+    )
 
 
-async def make_request(params: dict[str, Any], session: curl_requests.AsyncSession | None = None) -> dict[str, Any]:
-    """Make a single request with retry logic."""
-    last_error = None
+async def make_request(params: dict[str, Any], session: wafer.AsyncSession) -> dict[str, Any]:
+    """Make a single request. Wafer handles retries, rotation, and rate limiting."""
+    response = await session.post(
+        JLCPCB_SEARCH_URL,
+        json=params,
+        headers={
+            "Origin": "https://jlcpcb.com",
+            "Referer": "https://jlcpcb.com/parts",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Dest": "empty",
+        },
+    )
+    response.raise_for_status()
+    data = response.json()
 
-    for attempt in range(MAX_RETRIES):
-        # Fresh session per request (avoids TLS fingerprint tracking)
-        own_session = session is None
-        if own_session:
-            session = curl_requests.AsyncSession(
-                impersonate=random.choice(BROWSER_FINGERPRINTS),
-                timeout=REQUEST_TIMEOUT,
-            )
+    if data.get("code") != 200:
+        raise ValueError(f"API error: {data.get('message', 'Unknown')}")
 
-        try:
-            headers = get_headers()
-            response = await session.post(
-                JLCPCB_SEARCH_URL,
-                json=params,
-                headers=headers,
-            )
-            response.raise_for_status()
-            data = response.json()
-
-            if data.get("code") != 200:
-                raise ValueError(f"API error: {data.get('message', 'Unknown')}")
-
-            # Jitter between requests
-            jitter = random.uniform(*REQUEST_JITTER)
-            await asyncio.sleep(jitter)
-
-            return data
-
-        except Exception as e:
-            last_error = e
-            if attempt < MAX_RETRIES - 1:
-                wait = 1.0 * (2 ** attempt)
-                print(f"  Retry {attempt + 1} after {wait}s: {e}")
-                await asyncio.sleep(wait)
-        finally:
-            if own_session and session:
-                await session.close()
-
-    raise last_error  # type: ignore
+    return data
 
 
 @dataclass
@@ -141,7 +82,7 @@ class TestResult:
     duration: float = 0.0
 
 
-async def test_pagination() -> TestResult:
+async def test_pagination(session: wafer.AsyncSession) -> TestResult:
     """Test 1: Can we access very high page numbers?"""
     print("\n" + "=" * 60)
     print("TEST 1: PAGINATION LIMITS")
@@ -166,7 +107,7 @@ async def test_pagination() -> TestResult:
         "secondSortName": "Chip Resistor - Surface Mount",
     }
 
-    data = await make_request(params)
+    data = await make_request(params, session)
     total = data.get("data", {}).get("componentPageInfo", {}).get("total", 0)
     max_page = (total + 99) // 100
 
@@ -184,7 +125,7 @@ async def test_pagination() -> TestResult:
         params["pageSize"] = 100
 
         try:
-            data = await make_request(params)
+            data = await make_request(params, session)
             items = data.get("data", {}).get("componentPageInfo", {}).get("list", [])
             count = len(items)
 
@@ -215,7 +156,7 @@ async def test_pagination() -> TestResult:
     )
 
 
-async def test_rate_limiting() -> TestResult:
+async def test_rate_limiting(session: wafer.AsyncSession) -> TestResult:
     """Test 2: Can we make ~100 consecutive requests without being blocked?"""
     print("\n" + "=" * 60)
     print("TEST 2: RATE LIMITING (100 consecutive requests)")
@@ -250,7 +191,7 @@ async def test_rate_limiting() -> TestResult:
 
         req_start = time.time()
         try:
-            data = await make_request(params)
+            data = await make_request(params, session)
             items = data.get("data", {}).get("componentPageInfo", {}).get("list", [])
             successful += 1
             req_time = time.time() - req_start
@@ -297,7 +238,7 @@ async def test_rate_limiting() -> TestResult:
     )
 
 
-async def test_data_completeness() -> TestResult:
+async def test_data_completeness(session: wafer.AsyncSession) -> TestResult:
     """Test 3: Do we get full attributes array (not truncated)?"""
     print("\n" + "=" * 60)
     print("TEST 3: DATA COMPLETENESS")
@@ -334,7 +275,7 @@ async def test_data_completeness() -> TestResult:
         }
 
         try:
-            data = await make_request(params)
+            data = await make_request(params, session)
             items = data.get("data", {}).get("componentPageInfo", {}).get("list", [])
 
             if not items:
@@ -411,7 +352,7 @@ async def test_data_completeness() -> TestResult:
     )
 
 
-async def test_timing() -> TestResult:
+async def test_timing(session: wafer.AsyncSession) -> TestResult:
     """Test 4: Validate timing estimates for full scrape."""
     print("\n" + "=" * 60)
     print("TEST 4: TIMING VALIDATION")
@@ -427,7 +368,7 @@ async def test_timing() -> TestResult:
         "startStockNumber": DEFAULT_MIN_STOCK,
     }
 
-    data = await make_request(params)
+    data = await make_request(params, session)
     total_parts = data.get("data", {}).get("componentPageInfo", {}).get("total", 0)
 
     print(f"Total parts (stock >= {DEFAULT_MIN_STOCK}): {total_parts:,}")
@@ -475,16 +416,17 @@ async def main():
     print("This script tests whether we can reliably scrape all JLCPCB")
     print("components without hitting rate limits or pagination caps.")
     print()
-    print("Using same TLS impersonation as MCP server (curl_cffi)")
+    print("Using wafer for anti-detection HTTP")
     print()
 
-    results: list[TestResult] = []
+    async with create_session() as session:
+        results: list[TestResult] = []
 
-    # Run all tests
-    results.append(await test_pagination())
-    results.append(await test_rate_limiting())
-    results.append(await test_data_completeness())
-    results.append(await test_timing())
+        # Run all tests with shared session
+        results.append(await test_pagination(session))
+        results.append(await test_rate_limiting(session))
+        results.append(await test_data_completeness(session))
+        results.append(await test_timing(session))
 
     # Summary
     print("\n" + "=" * 60)
@@ -515,7 +457,7 @@ async def main():
         print()
         print("May need to:")
         print("  - Increase request delays")
-        print("  - Add more browser fingerprint rotation")
+        print("  - Increase max_rotations for wafer sessions")
         print("  - Implement request queuing")
 
     return 0 if all_passed else 1

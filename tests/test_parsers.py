@@ -377,44 +377,41 @@ class TestConnectorSeriesExtraction:
 
 
 class TestConnectorParserIntegration:
-    """Tests for connector series integration in the main parser."""
+    """Tests for connector series integration in the main parser.
 
-    def test_jst_sh_4pin_adds_filters(self):
-        """JST SH 4-pin should add pitch and use SH for FTS."""
+    Connector info is stored in connector_spec (not spec_filters) and the
+    series name is injected into remaining_text for FTS search.
+    """
+
+    def test_jst_sh_4pin_adds_connector_spec(self):
+        """JST SH 4-pin should populate connector_spec and inject SH into FTS."""
         from pcbparts_mcp.smart_parser.parser import parse_smart_query
         result = parse_smart_query("jst sh 4-pin")
         assert result.subcategory == "wire to board connector"
-        # Check pitch filter was added
-        pitch_filters = [f for f in result.spec_filters if f.name == "Pitch"]
-        assert len(pitch_filters) == 1
-        assert pitch_filters[0].value == "1.0mm"
-        # Check FTS includes SH
-        assert "SH" in result.remaining_text
+        assert result.connector_spec is not None
+        assert result.connector_spec.series == "SH"
+        assert result.connector_spec.pitch == 1.0
+        # FTS includes SH (case-insensitive — already present in "jst sh 4-pin")
+        assert "sh" in result.remaining_text.lower()
 
-    def test_qwiic_expands_to_full_spec(self):
-        """Qwiic should expand to JST SH 1mm 4-pin with all filters."""
+    def test_qwiic_expands_to_jst_sh(self):
+        """Qwiic should expand to JST SH with pitch and pin info."""
         from pcbparts_mcp.smart_parser.parser import parse_smart_query
         result = parse_smart_query("qwiic connector")
         assert result.subcategory == "wire to board connector"
-        # Check pitch filter
-        pitch_filters = [f for f in result.spec_filters if f.name == "Pitch"]
-        assert len(pitch_filters) == 1
-        assert pitch_filters[0].value == "1.0mm"
-        # Check pin count filter
-        pin_filters = [f for f in result.spec_filters if f.name == "Number of Pins"]
-        assert len(pin_filters) == 1
-        assert pin_filters[0].value == "4P"
-        # Check FTS includes SH
-        assert "SH" in result.remaining_text
+        assert result.connector_spec is not None
+        assert result.connector_spec.series == "SH"
+        assert result.connector_spec.pitch == 1.0
+        assert result.connector_spec.pins == 4
+        # FTS includes SH (injected by parser since "qwiic" doesn't contain "sh")
+        assert "sh" in result.remaining_text.lower()
 
     def test_easyc_same_as_qwiic(self):
         """easyC should expand the same as Qwiic."""
         from pcbparts_mcp.smart_parser.parser import parse_smart_query
         result = parse_smart_query("easyc")
         assert result.subcategory == "wire to board connector"
-        pitch_filters = [f for f in result.spec_filters if f.name == "Pitch"]
-        assert len(pitch_filters) == 1
-        assert pitch_filters[0].value == "1.0mm"
-        pin_filters = [f for f in result.spec_filters if f.name == "Number of Pins"]
-        assert len(pin_filters) == 1
-        assert pin_filters[0].value == "4P"
+        assert result.connector_spec is not None
+        assert result.connector_spec.series == "SH"
+        assert result.connector_spec.pitch == 1.0
+        assert result.connector_spec.pins == 4

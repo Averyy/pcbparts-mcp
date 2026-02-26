@@ -20,7 +20,7 @@
 - **ALWAYS find root cause** - don't create workarounds
 - **ALWAYS fix or note pre-existing issues** - if you discover failing tests or bugs unrelated to your current task, fix them or flag them to the user. Never dismiss them as "pre-existing"
 - **Update existing files** - don't create new ones unless necessary
-- **ALWAYS use proper TLS fingerprinting** when testing JLCPCB API - use `curl_cffi` with browser impersonation, proper headers, jitter delays, and user agents from `scrape_components.py`. Don't write quick test scripts that skip these - you'll get 403 blocked.
+- **ALWAYS use wafer** when testing JLCPCB API - use `wafer.AsyncSession` with embed="xhr" and proper config (see `client.py` or `scrape_components.py`). Don't write quick test scripts with raw httpx/aiohttp - you'll get 403 blocked.
 
 ## Library Types (Quick Reference)
 
@@ -59,13 +59,14 @@ Load via `ToolSearch("fetchaller")` first. Use `mcp__fetchaller__browse_reddit` 
 
 ```bash
 uv venv && uv pip install -e ".[dev]"
-.venv/bin/pytest tests/ -v                    # all tests
-.venv/bin/pytest tests/ -v -k "not Integration"  # unit only
+.venv/bin/pytest tests/ -v                    # unit tests only (default)
+.venv/bin/pytest tests/ -v -m integration     # integration tests (hits live APIs)
+.venv/bin/pytest tests/ -v -m ""              # all tests
 ```
 
 ## Frontend & Design Work
 
-**Always use the `/frontend-design` skill** for any frontend or design tasks (landing page, UI components, styling). Read `branding-style-guide.md` before making any visual changes — it defines the PCB-inspired design language, color palette, typography, and component patterns.
+**Always use the `/frontend-design` skill** for any frontend or design tasks (landing page, UI components, styling). Read `docs/branding-style-guide.md` before making any visual changes — it defines the PCB-inspired design language, color palette, typography, and component patterns.
 
 ## llms.txt
 

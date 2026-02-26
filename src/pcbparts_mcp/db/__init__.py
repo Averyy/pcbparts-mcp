@@ -230,7 +230,7 @@ class ComponentDatabase:
             result["warning"] = (
                 f"Database only contains parts with stock >= {DEFAULT_MIN_STOCK}. "
                 f"Requested min_stock={original_min_stock} was increased to {DEFAULT_MIN_STOCK}. "
-                f"Use search_api tool for low-stock or out-of-stock parts."
+                f"Use jlc_stock_check tool for low-stock or out-of-stock parts."
             )
 
         return result
@@ -296,7 +296,7 @@ class ComponentDatabase:
         self._ensure_db()
         if not self._conn:
             return []
-        return get_categories_for_client(self._subcategories)
+        return get_categories_for_client(self._conn, self._subcategories)
 
     def list_attributes(
         self,

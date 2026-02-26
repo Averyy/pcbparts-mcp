@@ -15,34 +15,19 @@ from starlette.responses import JSONResponse
 from starlette.routing import Route
 
 from . import __version__
+from .cache import DailyQuota
 from .config import (
-    RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_BOM_PARTS,
+    RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
+    DISTRIBUTOR_DAILY_LIMIT,
 )
 from .client import JLCPCBClient
-from .mouser import MouserClient, MouserAPIError
+from .mouser import MouserClient
 from .digikey import DigiKeyClient
 from .cse import CSEClient
 from .db import get_db, close_db
 from .search import SpecFilter
 from .smart_parser import parse_smart_query, merge_spec_filters
-from .bom import (
-    BOMPart,
-    BOMIssue,
-    validate_designators,
-    merge_duplicate_parts,
-    sort_by_designator,
-    generate_comment,
-    check_footprint_mismatch,
-    calculate_line_cost,
-    generate_csv,
-    generate_summary,
-    validate_manual_part,
-    check_stock_issues,
-    check_moq_issue,
-    check_extended_part,
-    check_easyeda_footprint,
-)
 from .pinout import parse_easyeda_pins
 
 logger = logging.getLogger(__name__)
@@ -74,12 +59,14 @@ async def lifespan(app):
 
     # Initialize Mouser client if API key is configured
     if MOUSER_API_KEY:
-        _mouser_client = MouserClient(MOUSER_API_KEY)
+        mouser_quota = DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT)
+        _mouser_client = MouserClient(MOUSER_API_KEY, quota=mouser_quota)
         logger.info("Mouser client initialized")
 
     # Initialize DigiKey client if credentials are configured
     if DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET:
-        _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET)
+        digikey_quota = DailyQuota("DigiKey", DISTRIBUTOR_DAILY_LIMIT)
+        _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, quota=digikey_quota)
         logger.info("DigiKey client initialized")
 
     # CSE client always available (no API key needed)
@@ -102,7 +89,7 @@ async def lifespan(app):
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB parts component search for PCB assembly. No auth required. Use search to find components, get_part for details.",
+    instructions="PCB parts component search for PCB assembly. No auth required. Use jlc_search (local DB) as the primary search tool — it's fast, free, and supports parametric filters. Only use jlc_stock_check for real-time stock verification or out-of-stock parts. Use mouser_get_part/digikey_get_part only to cross-reference a specific MPN (daily quota applies).",
     lifespan=lifespan,
 )
 
@@ -214,48 +201,19 @@ def _parse_list_param(value: list[str] | str | None) -> list[str] | None:
     return None
 
 
-def _parse_parts_param(value: list[dict[str, Any]] | str) -> list[dict[str, Any]]:
-    """Parse a parts list parameter that may come as a JSON string.
-
-    For BOM tools where parts is required, handles both list and JSON string formats.
-    Returns empty list on parse failure (will be caught by validation).
-    """
-    if isinstance(value, list):
-        return value
-    if isinstance(value, str):
-        try:
-            parsed = json.loads(value)
-            if isinstance(parsed, list):
-                return parsed
-        except json.JSONDecodeError:
-            logger.debug(f"Failed to parse parts parameter as JSON: {value[:100]!r}")
-    return []
-
-
-def _validate_bom_parts(parsed_parts: list[dict[str, Any]]) -> dict | None:
-    """Validate parsed BOM parts list.
-
-    Returns error dict if validation fails, None if valid.
-    """
-    if not parsed_parts:
-        return {"error": "No parts provided. The 'parts' parameter must be a non-empty list of part objects."}
-    if len(parsed_parts) > MAX_BOM_PARTS:
-        return {"error": f"Too many parts ({len(parsed_parts)}). Maximum is {MAX_BOM_PARTS} parts per BOM."}
-    return None
-
 
 # Tools
 
 @mcp.tool(
     annotations=ToolAnnotations(
-        title="Search API (Live)",
+        title="Stock Check (Live API)",
         readOnlyHint=True,
         destructiveHint=False,
         idempotentHint=True,
         openWorldHint=False,
     )
 )
-async def jlc_search_api(
+async def jlc_stock_check(
     query: str | None = None,
     category_id: int | None = None,
     subcategory_id: int | None = None,
@@ -271,17 +229,17 @@ async def jlc_search_api(
     page: int = 1,
     limit: int = 20,
 ) -> dict:
-    """Live API search. Full catalog including out-of-stock, but keywords only (no parametric filters).
+    """Real-time stock verification via live JLCPCB API. Use jlc_search first for most queries — it's faster and supports parametric filters.
 
-    Use this when you need:
-    - Parts with stock < 100 or out-of-stock parts
+    Only use this when you need:
     - Real-time stock verification before placing an order
+    - Parts with stock < 10 or out-of-stock parts
     - Pagination through large result sets
 
     Args:
         query: Search keywords (e.g., "ESP32", "10uF 25V", "STM32F103")
-        category_id: Category ID from list_categories
-        subcategory_id: Subcategory ID from get_subcategories
+        category_id: Category ID from search_help
+        subcategory_id: Subcategory ID from search_help
         category_name: Category name (e.g., "Resistors", "Capacitors")
         subcategory_name: Subcategory name (e.g., "Tactile Switches")
         min_stock: Min stock (default 10). Set 0 for out-of-stock parts
@@ -319,7 +277,7 @@ async def jlc_search_api(
             return {"error": "Categories not loaded. Server may still be starting up.", "hint": "Try again in a moment"}
         resolved_category_id = _client.match_category_by_name(category_name)
         if resolved_category_id is None:
-            return {"error": f"Category not found: '{category_name}'", "hint": "Use list_categories to see available categories"}
+            return {"error": f"Category not found: '{category_name}'", "hint": "Use search_help() to see available categories"}
 
     # Resolve subcategory_name to subcategory_id if provided (ID takes precedence)
     resolved_subcategory_id = subcategory_id
@@ -329,7 +287,7 @@ async def jlc_search_api(
             return {"error": "Categories not loaded. Server may still be starting up.", "hint": "Try again in a moment"}
         resolved_subcategory_id = _client.get_subcategory_id_by_name(subcategory_name)
         if resolved_subcategory_id is None:
-            return {"error": f"Subcategory not found: '{subcategory_name}'", "hint": "Use get_subcategories to see available subcategories for a category"}
+            return {"error": f"Subcategory not found: '{subcategory_name}'", "hint": "Use search_help(category=...) to see available subcategories"}
 
     return await _client.search(
         query=query,
@@ -512,49 +470,87 @@ async def jlc_search(
 
 @mcp.tool(
     annotations=ToolAnnotations(
-        title="List Filterable Attributes",
+        title="Search Help & Browse",
         readOnlyHint=True,
         destructiveHint=False,
         idempotentHint=True,
         openWorldHint=False,
     )
 )
-async def jlc_list_attributes(
-    subcategory_id: int | None = None,
-    subcategory_name: str | None = None,
+async def jlc_search_help(
+    category: str | int | None = None,
+    subcategory: str | int | None = None,
 ) -> dict:
-    """List available filterable attributes for a subcategory.
+    """Browse categories, subcategories, and filterable attributes to help build searches.
 
-    Use this to discover what spec_filters can be used with search().
-    Shows all attributes in the subcategory with their types and example values.
+    Call with no args to list all categories. Pass a category to see its subcategories.
+    Pass a subcategory to discover filterable attributes for use with jlc_search spec_filters.
 
     Args:
-        subcategory_id: Subcategory ID (e.g., 2954 for MOSFETs, 2929 for MLCC)
-        subcategory_name: Subcategory name (alternative to ID). E.g., "MOSFETs", "Chip Resistor"
+        category: Category name (e.g., "Connectors") or ID (e.g., 13). Lists subcategories.
+        subcategory: Subcategory name (e.g., "MOSFETs") or ID (e.g., 2954). Lists filterable attributes.
+
+    If both provided, subcategory takes precedence (more specific).
 
     Returns:
-        subcategory_id: Resolved subcategory ID
-        subcategory_name: Full subcategory name
-        attributes: List of filterable attributes, each with:
-            - name: Full attribute name as stored in database
-            - alias: Short name for use in spec_filters (e.g., "Vgs(th)" for "Gate Threshold Voltage")
-            - type: "numeric" (supports >=, <=, >, <, =) or "string" (= only)
-            - count: Number of parts with this attribute
-            - example_values: (numeric) Sample values like ["1V~2.5V", "0.5V"]
-            - values: (string) All distinct values like ["N-Channel", "P-Channel"]
+        No args: List of all categories with id, name, part count, subcategory count
+        category: Subcategories with id, name, part count
+        subcategory: Filterable attributes with name, alias, type, example values
 
-    Example usage:
-        1. list_attributes(subcategory_name="MOSFETs")
-        2. Find attribute "Gate Threshold Voltage (Vgs(th))" with alias "Vgs(th)"
-        3. Use in search: spec_filters=[{"name": "Vgs(th)", "op": "<", "value": "2.5V"}]
-
-    Tip: Use the alias (short name) in spec_filters for convenience.
+    Example:
+        1. search_help() → see all categories sorted by part count
+        2. search_help(category="Transistors") → see MOSFETs, BJTs, etc.
+        3. search_help(subcategory="MOSFETs") → see Vgs(th), Vds, Id, Rds(on) filters
+        4. jlc_search(query="n-channel", spec_filters=[{"name": "Vgs(th)", "op": "<", "value": "2.5V"}])
     """
-    db = get_db()
-    return db.list_attributes(
-        subcategory_id=subcategory_id,
-        subcategory_name=subcategory_name,
-    )
+    # Subcategory mode: list filterable attributes
+    if subcategory is not None:
+        db = get_db()
+        if isinstance(subcategory, int):
+            return db.list_attributes(subcategory_id=subcategory)
+        return db.list_attributes(subcategory_name=str(subcategory))
+
+    # Category mode: list subcategories
+    if category is not None:
+        if not _categories:
+            return {"error": "Categories not loaded. Server may still be starting up."}
+
+        matched = None
+        if isinstance(category, int):
+            matched = next((c for c in _categories if c["id"] == category), None)
+        else:
+            cat_lower = str(category).lower()
+            matched = next((c for c in _categories if c["name"].lower() == cat_lower), None)
+
+        if not matched:
+            return {"error": f"Category not found: '{category}'", "hint": "Call search_help() with no args to see all categories"}
+
+        subcats = sorted(matched.get("subcategories", []), key=lambda s: -s["count"])
+        return {
+            "category_id": matched["id"],
+            "category_name": matched["name"],
+            "subcategories": [
+                {"id": sub["id"], "name": sub["name"], "count": sub["count"]}
+                for sub in subcats
+            ],
+        }
+
+    # No args: list all categories
+    if not _categories:
+        return {"error": "Categories not loaded", "categories": []}
+
+    sorted_cats = sorted(_categories, key=lambda c: -c["count"])
+    return {
+        "categories": [
+            {
+                "id": cat["id"],
+                "name": cat["name"],
+                "count": cat["count"],
+                "subcategory_count": len(cat.get("subcategories", [])),
+            }
+            for cat in sorted_cats
+        ]
+    }
 
 
 @mcp.tool(
@@ -617,75 +613,6 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
         return {"error": f"Part {lcsc} not found"}
     return result
 
-
-@mcp.tool(
-    annotations=ToolAnnotations(
-        title="List Categories",
-        readOnlyHint=True,
-        destructiveHint=False,
-        idempotentHint=True,
-        openWorldHint=False,
-    )
-)
-async def jlc_list_categories() -> dict:
-    """Get all primary component categories with their IDs.
-
-    Returns:
-        List of categories with id, name, part count, and subcategory count.
-        Use category_id with search/search_api, or call get_subcategories for more specific filtering.
-
-    Note: Categories are fetched from JLCPCB API on server startup and cached.
-    """
-    if not _categories:
-        return {"error": "Categories not loaded", "categories": []}
-
-    return {
-        "categories": [
-            {
-                "id": cat["id"],
-                "name": cat["name"],
-                "count": cat["count"],
-                "subcategory_count": len(cat.get("subcategories", [])),
-            }
-            for cat in _categories
-        ]
-    }
-
-
-@mcp.tool(
-    annotations=ToolAnnotations(
-        title="Get Subcategories",
-        readOnlyHint=True,
-        destructiveHint=False,
-        idempotentHint=True,
-        openWorldHint=False,
-    )
-)
-async def jlc_get_subcategories(category_id: int) -> dict:
-    """Get all subcategories for a specific category.
-
-    Args:
-        category_id: Primary category ID (e.g., 1 for Resistors, 2 for Capacitors)
-
-    Returns:
-        List of subcategories with id, name, and part count.
-        Pass subcategory_id to search() for filtered searches.
-
-    Note: Categories are fetched from JLCPCB API on server startup and cached.
-    """
-    # Find category in live cache
-    category = next((c for c in _categories if c["id"] == category_id), None)
-    if not category:
-        return {"error": f"Category {category_id} not found"}
-
-    return {
-        "category_id": category_id,
-        "category_name": category["name"],
-        "subcategories": [
-            {"id": sub["id"], "name": sub["name"], "count": sub["count"]}
-            for sub in category.get("subcategories", [])
-        ],
-    }
 
 
 @mcp.tool(
@@ -868,380 +795,6 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> di
     return result
 
 
-async def _process_bom(
-    parts: list[dict[str, Any]],
-    board_qty: int | None = None,
-    min_stock: int = 0,
-) -> tuple[list[BOMPart], list[BOMIssue], dict[str, Any]]:
-    """Process BOM parts: validate, fetch, and calculate costs.
-
-    Internal helper used by both validate_bom and export_bom.
-
-    Returns:
-        Tuple of (processed parts, issues, summary)
-
-    Raises:
-        ValueError: If board_qty is <= 0
-    """
-    # Validate board_qty
-    if board_qty is not None and board_qty <= 0:
-        raise ValueError(f"board_qty must be positive, got {board_qty}")
-
-    issues: list[BOMIssue] = []
-
-    # Step 1: Validate designators (check for duplicates and empty)
-    issues.extend(validate_designators(parts))
-
-    # Step 2: Merge duplicate LCSC codes
-    merged_parts, merge_issues = merge_duplicate_parts(parts)
-    issues.extend(merge_issues)
-
-    # Step 3: Validate manual parts have required fields
-    for part in merged_parts:
-        if not part.get("lcsc"):
-            issues.extend(validate_manual_part(part))
-
-    # Step 4: Fetch LCSC parts from local database (faster, no API calls)
-    lcsc_codes = [p["lcsc"] for p in merged_parts if p.get("lcsc")]
-    db = get_db()
-    fetched_parts = db.get_by_lcsc_batch(lcsc_codes) if lcsc_codes else {}
-
-    # Step 5: Build BOMPart objects
-    bom_parts: list[BOMPart] = []
-
-    for part in merged_parts:
-        lcsc = part.get("lcsc")
-        designators = part.get("designators", [])
-        user_comment = part.get("comment")
-        user_footprint = part.get("footprint")
-
-        if lcsc:
-            lcsc = lcsc.strip().upper()
-            fetched = fetched_parts.get(lcsc)
-
-            if not fetched:
-                issues.append(BOMIssue(
-                    lcsc=lcsc,
-                    designators=designators,
-                    severity="error",
-                    issue="Part not found",
-                ))
-                # Create minimal BOMPart for tracking
-                bom_parts.append(BOMPart(
-                    lcsc=lcsc,
-                    designators=designators,
-                    quantity=len(designators),
-                    comment=user_comment or "Unknown",
-                    footprint=user_footprint or "Unknown",
-                ))
-                continue
-
-            # Check footprint mismatch
-            if user_footprint:
-                mismatch = check_footprint_mismatch(user_footprint, fetched.get("package"))
-                if mismatch:
-                    mismatch.lcsc = lcsc
-                    mismatch.designators = designators
-                    issues.append(mismatch)
-
-            # Calculate pricing
-            # DB stores single price, API returns price tiers - handle both
-            db_price = fetched.get("price")
-            prices = fetched.get("prices", [])
-            if db_price is not None and not prices:
-                # Convert single price to simple tier format
-                prices = [{"qty": "1+", "price": db_price}]
-            order_qty, unit_price, line_cost = calculate_line_cost(
-                prices, len(designators), board_qty
-            )
-
-            bom_part = BOMPart(
-                lcsc=lcsc,
-                designators=designators,
-                quantity=len(designators),
-                comment=generate_comment(fetched, user_comment),
-                footprint=user_footprint or fetched.get("package", "Unknown"),
-                stock=fetched.get("stock"),
-                price=unit_price,
-                order_qty=order_qty,
-                line_cost=line_cost,
-                library_type=fetched.get("library_type"),
-                min_order=fetched.get("min_order"),
-                manufacturer=fetched.get("manufacturer"),
-                model=fetched.get("model"),
-                has_easyeda_footprint=fetched.get("has_easyeda_footprint"),
-            )
-            bom_parts.append(bom_part)
-
-            # Check for stock issues
-            issues.extend(check_stock_issues(bom_part, min_stock, board_qty))
-
-            # Check MOQ
-            moq_issue = check_moq_issue(bom_part)
-            if moq_issue:
-                issues.append(moq_issue)
-
-            # Check extended part
-            ext_issue = check_extended_part(bom_part)
-            if ext_issue:
-                issues.append(ext_issue)
-
-            # Check EasyEDA footprint
-            eda_issue = check_easyeda_footprint(bom_part)
-            if eda_issue:
-                issues.append(eda_issue)
-
-        else:
-            # Manual part (no LCSC)
-            bom_parts.append(BOMPart(
-                lcsc=None,
-                designators=designators,
-                quantity=len(designators),
-                comment=user_comment or "Unknown",
-                footprint=user_footprint or "Unknown",
-                order_qty=len(designators) * (board_qty or 1),
-            ))
-
-    # Step 6: Sort by designator
-    sorted_parts = sort_by_designator(bom_parts)
-
-    # Step 7: Generate summary
-    summary = generate_summary(sorted_parts, board_qty, issues)
-
-    return sorted_parts, issues, summary
-
-
-@mcp.tool(
-    annotations=ToolAnnotations(
-        title="Validate BOM",
-        readOnlyHint=True,
-        destructiveHint=False,
-        idempotentHint=True,
-        openWorldHint=False,
-    )
-)
-async def jlc_validate_bom(
-    parts: list[dict[str, Any]] | str,
-    board_qty: int | None = None,
-    min_stock: int = 0,
-) -> dict:
-    """Validate a BOM and check part availability without generating CSV.
-
-    Use this for iterative checking during part selection. For final export,
-    use export_bom instead.
-
-    Args:
-        parts: List of parts, each with:
-            - lcsc: (optional) LCSC code like "C1525". If provided, auto-fetches details.
-            - designators: (required) List of designators, e.g., ["C1", "C2", "C3"]
-            - comment: (optional) Override auto-generated comment, or provide for manual parts
-            - footprint: (optional) Override auto-fetched footprint, or provide for manual parts
-        board_qty: (optional) Number of boards. Validates stock against total needed.
-            Example: board_qty=100 with 3× C1525 per board needs 300 in stock.
-        min_stock: (optional) Minimum stock threshold for warnings. Ignored if board_qty provided.
-
-    Returns:
-        parts: Structured data for each BOM line with lcsc, designators, quantity,
-               comment, footprint, stock, price, order_qty, line_cost, library_type,
-               min_order, manufacturer, model, has_easyeda_footprint.
-        summary: total_line_items, total_components, estimated_cost, extended_parts_count,
-                 extended_parts_fee, total_with_fees, board_qty, stock_sufficient.
-        issues: List of problems found. Each has lcsc, designators, severity (error/warning),
-                and human-readable issue description. Common issues:
-                - "Part not found" (error)
-                - "Out of stock (0 available)" (error)
-                - "Insufficient stock: need X, have Y" (error)
-                - "Duplicate designator: X appears multiple times" (error)
-                - "Extended part: +$X assembly fee" (warning)
-                - "No EasyEDA footprint available" (warning)
-
-    Note: Issues are reported but don't block the response. Caller decides whether to proceed.
-    """
-    # Parse and validate parts parameter
-    parsed_parts = _parse_parts_param(parts)
-    if validation_error := _validate_bom_parts(parsed_parts):
-        return validation_error
-
-    try:
-        sorted_parts, issues, summary = await _process_bom(parsed_parts, board_qty, min_stock)
-    except ValueError as e:
-        return {"error": str(e)}
-
-    return {
-        "parts": [
-            {
-                "lcsc": p.lcsc,
-                "designators": p.designators,
-                "designators_str": p.designators_str,
-                "quantity": p.quantity,
-                "comment": p.comment,
-                "footprint": p.footprint,
-                "stock": p.stock,
-                "price": p.price,
-                "order_qty": p.order_qty,
-                "line_cost": p.line_cost,
-                "library_type": p.library_type,
-                "min_order": p.min_order,
-                "manufacturer": p.manufacturer,
-                "model": p.model,
-                "has_easyeda_footprint": p.has_easyeda_footprint,
-            }
-            for p in sorted_parts
-        ],
-        "summary": summary,
-        "issues": [
-            {
-                "lcsc": i.lcsc,
-                "designators": i.designators,
-                "severity": i.severity,
-                "issue": i.issue,
-            }
-            for i in issues
-        ],
-    }
-
-
-@mcp.tool(
-    annotations=ToolAnnotations(
-        title="Export BOM",
-        readOnlyHint=True,
-        destructiveHint=False,
-        idempotentHint=True,
-        openWorldHint=False,
-    )
-)
-async def jlc_export_bom(
-    parts: list[dict[str, Any]] | str,
-    board_qty: int | None = None,
-    min_stock: int = 0,
-) -> dict:
-    """Generate a JLCPCB-compatible BOM CSV file.
-
-    Same as validate_bom but also generates CSV output for upload to JLCPCB.
-
-    Args:
-        parts: List of parts, each with:
-            - lcsc: (optional) LCSC code like "C1525". If provided, auto-fetches details.
-            - designators: (required) List of designators, e.g., ["C1", "C2", "C3"]
-            - comment: (optional) Override auto-generated comment, or provide for manual parts
-            - footprint: (optional) Override auto-fetched footprint, or provide for manual parts
-        board_qty: (optional) Number of boards. Validates stock against total needed.
-        min_stock: (optional) Minimum stock threshold for warnings.
-
-    Returns:
-        csv: JLCPCB-compatible CSV content (Comment,Designator,Footprint,LCSC Part #)
-        parts: Structured data for each BOM line (same as validate_bom)
-        summary: Cost and count summary (same as validate_bom)
-        issues: List of problems found (same as validate_bom)
-
-    CSV Format:
-        Comment,Designator,Footprint,LCSC Part #
-        100nF 50V X7R 0402,"C1,C2,C3",0402,C1525
-        10K 1% 0603,"R1,R2",0603,C25804
-
-    Note: Prices are estimates and may change. Stock validation is point-in-time.
-    """
-    # Parse and validate parts parameter
-    parsed_parts = _parse_parts_param(parts)
-    if validation_error := _validate_bom_parts(parsed_parts):
-        return validation_error
-
-    try:
-        sorted_parts, issues, summary = await _process_bom(parsed_parts, board_qty, min_stock)
-    except ValueError as e:
-        return {"error": str(e)}
-
-    # Generate CSV
-    csv_content = generate_csv(sorted_parts)
-
-    return {
-        "csv": csv_content,
-        "parts": [
-            {
-                "lcsc": p.lcsc,
-                "designators": p.designators,
-                "designators_str": p.designators_str,
-                "quantity": p.quantity,
-                "comment": p.comment,
-                "footprint": p.footprint,
-                "stock": p.stock,
-                "price": p.price,
-                "order_qty": p.order_qty,
-                "line_cost": p.line_cost,
-                "library_type": p.library_type,
-                "min_order": p.min_order,
-                "manufacturer": p.manufacturer,
-                "model": p.model,
-                "has_easyeda_footprint": p.has_easyeda_footprint,
-            }
-            for p in sorted_parts
-        ],
-        "summary": summary,
-        "issues": [
-            {
-                "lcsc": i.lcsc,
-                "designators": i.designators,
-                "severity": i.severity,
-                "issue": i.issue,
-            }
-            for i in issues
-        ],
-    }
-
-
-@mcp.tool(
-    annotations=ToolAnnotations(
-        title="Mouser Search",
-        readOnlyHint=True,
-        destructiveHint=False,
-        idempotentHint=True,
-        openWorldHint=True,
-    )
-)
-async def mouser_search(
-    keyword: str,
-    manufacturer: str | None = None,
-    in_stock_only: bool = False,
-    limit: int = 20,
-    page: int = 1,
-) -> dict:
-    """Search Mouser's catalog by keyword. Useful for cross-referencing parts, finding datasheets, and checking broader availability.
-
-    Args:
-        keyword: Search terms (e.g., "STM32F103", "LM358", "100nF 0402")
-        manufacturer: Filter by manufacturer name (e.g., "Texas Instruments")
-        in_stock_only: Only return in-stock parts (default False)
-        limit: Results per page (1-50, default 20)
-        page: Page number (default 1)
-
-    Returns:
-        results: List of parts with mouser_pn, mfr_pn, manufacturer, description,
-                 category, stock, price, price_breaks, datasheet_url, product_url, rohs, lifecycle
-        total: Total matching results
-        page: Current page number
-    """
-    if not _mouser_client:
-        return {"error": "Mouser API key not configured. Set MOUSER_API_KEY in environment."}
-    if keyword and len(keyword) > 500:
-        return {"error": "Keyword too long (max 500 characters)"}
-
-    try:
-        return await _mouser_client.search(
-            keyword=keyword,
-            manufacturer=manufacturer,
-            in_stock_only=in_stock_only,
-            records=max(1, min(limit, 50)),
-            page=max(1, page),
-        )
-    except MouserAPIError as e:
-        logger.error(f"Mouser search failed: {e}")
-        if e.code == "NotFound":
-            return {"error": "Manufacturer not found on Mouser. Try searching without the manufacturer filter, or use a different spelling."}
-        return {"error": "Mouser search failed. Check server logs for details."}
-    except Exception as e:
-        logger.error(f"Mouser search failed: {type(e).__name__}: {e}")
-        return {"error": "Mouser search failed. Check server logs for details."}
-
 
 @mcp.tool(
     annotations=ToolAnnotations(
@@ -1253,7 +806,7 @@ async def mouser_search(
     )
 )
 async def mouser_get_part(part_number: str) -> dict:
-    """Look up parts on Mouser by part number or MPN. Supports batch lookup with pipe-delimited numbers.
+    """Cross-reference a specific MPN on Mouser. Use jlc_search first for general component searches. Daily quota applies.
 
     Args:
         part_number: Mouser part number or manufacturer PN (e.g., "595-LM358P" or "LM358P").
@@ -1277,55 +830,6 @@ async def mouser_get_part(part_number: str) -> dict:
 
 @mcp.tool(
     annotations=ToolAnnotations(
-        title="DigiKey Search",
-        readOnlyHint=True,
-        destructiveHint=False,
-        idempotentHint=True,
-        openWorldHint=True,
-    )
-)
-async def digikey_search(
-    keywords: str,
-    manufacturer: str | None = None,
-    in_stock_only: bool = False,
-    limit: int = 20,
-    offset: int = 0,
-) -> dict:
-    """Search DigiKey's catalog by keyword. Useful for cross-referencing parts, finding datasheets, and checking broader availability.
-
-    Args:
-        keywords: Search terms (e.g., "STM32F103", "LM358", "100nF 0402")
-        manufacturer: Filter by manufacturer name (e.g., "Texas Instruments")
-        in_stock_only: Only return in-stock parts (default False)
-        limit: Results per page (1-50, default 20)
-        offset: Pagination offset (default 0)
-
-    Returns:
-        results: List of parts with digikey_pn, mfr_pn, manufacturer, description,
-                 category, stock, price, price_breaks, datasheet_url, product_url, rohs, parameters
-        total: Total matching results
-        offset: Current pagination offset
-    """
-    if not _digikey_client:
-        return {"error": "DigiKey API credentials not configured. Set DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET in environment."}
-    if keywords and len(keywords) > 500:
-        return {"error": "Keywords too long (max 500 characters)"}
-
-    try:
-        return await _digikey_client.search(
-            keywords=keywords,
-            manufacturer=manufacturer,
-            in_stock_only=in_stock_only,
-            limit=max(1, min(limit, 50)),
-            offset=max(0, offset),
-        )
-    except Exception as e:
-        logger.error(f"DigiKey search failed: {type(e).__name__}: {e}")
-        return {"error": "DigiKey search failed. Check server logs for details."}
-
-
-@mcp.tool(
-    annotations=ToolAnnotations(
         title="DigiKey Part Lookup",
         readOnlyHint=True,
         destructiveHint=False,
@@ -1334,7 +838,7 @@ async def digikey_search(
     )
 )
 async def digikey_get_part(product_number: str) -> dict:
-    """Look up a part on DigiKey by product number.
+    """Cross-reference a specific MPN on DigiKey. Use jlc_search first for general component searches. Daily quota applies.
 
     Args:
         product_number: DigiKey part number or manufacturer PN (e.g., "296-1395-5-ND" or "LM358P")
@@ -1450,23 +954,6 @@ async def cse_get_kicad(
         return {"error": "CSE get_kicad failed. Check server logs for details."}
 
 
-@mcp.tool(
-    annotations=ToolAnnotations(
-        title="Server Version",
-        readOnlyHint=True,
-        destructiveHint=False,
-        idempotentHint=True,
-        openWorldHint=False,
-    )
-)
-async def get_version() -> dict:
-    """Get server version and health status."""
-    return {
-        "service": "pcbparts-mcp",
-        "version": __version__,
-        "status": "healthy",
-    }
-
 
 # Health check endpoint
 async def health(request):
@@ -1502,9 +989,21 @@ def create_app():
 app = create_app()
 
 
+class _HealthFilterLog(logging.Filter):
+    """Suppress noisy /health access logs from Docker healthchecks."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        msg = record.getMessage()
+        return "/health" not in msg
+
+
 def main():
     """Run the server."""
     import uvicorn
+
+    # Suppress /health access log spam (Docker healthchecks every 10-30s)
+    logging.getLogger("uvicorn.access").addFilter(_HealthFilterLog())
+
     uvicorn.run(
         "pcbparts_mcp.server:app",
         host="0.0.0.0",

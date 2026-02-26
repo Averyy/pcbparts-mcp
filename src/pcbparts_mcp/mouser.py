@@ -1,9 +1,10 @@
 """Mouser Search API v2 client."""
 
-import asyncio
+from __future__ import annotations
+
 import logging
 import re
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import httpx
 
@@ -11,9 +12,11 @@ from .cache import TTLCache
 from .config import (
     MOUSER_API_KEY,
     MOUSER_BASE_URL,
-    MOUSER_CONCURRENT_LIMIT,
     MOUSER_CACHE_TTL,
 )
+
+if TYPE_CHECKING:
+    from .cache import DailyQuota
 
 logger = logging.getLogger(__name__)
 
@@ -115,22 +118,16 @@ def _normalize_part(part: dict[str, Any]) -> dict[str, Any]:
 class MouserClient:
     """Async client for Mouser Search API v2."""
 
-    def __init__(self, api_key: str = MOUSER_API_KEY):
+    def __init__(self, api_key: str = MOUSER_API_KEY, quota: DailyQuota | None = None):
         self._api_key = api_key
         self._client: httpx.AsyncClient | None = None
-        self._semaphore: asyncio.Semaphore | None = None
         self._cache = TTLCache(ttl=MOUSER_CACHE_TTL)
+        self._quota = quota
 
     def _get_client(self) -> httpx.AsyncClient:
         if self._client is None:
             self._client = httpx.AsyncClient(timeout=15.0)
         return self._client
-
-    def _get_semaphore(self) -> asyncio.Semaphore:
-        # Safe in single-threaded asyncio: no await between None check and assignment
-        if self._semaphore is None:
-            self._semaphore = asyncio.Semaphore(MOUSER_CONCURRENT_LIMIT)
-        return self._semaphore
 
     async def _post(self, path: str, body: dict[str, Any]) -> dict[str, Any]:
         """Make an authenticated POST request to Mouser API.
@@ -138,16 +135,15 @@ class MouserClient:
         Note: Mouser API v2 requires apiKey as a query parameter (their design).
         """
         url = f"{MOUSER_BASE_URL}{path}?apiKey={self._api_key}"
-        async with self._get_semaphore():
-            try:
-                response = await self._get_client().post(url, json=body)
-            except httpx.HTTPError:
-                # Sanitize: httpx exceptions may include the full URL with API key
-                raise ValueError("Mouser API request failed (network/connection error)")
-            # Catch HTTP errors to avoid leaking the API key (embedded in URL) into logs
-            if response.status_code >= 400:
-                raise ValueError(f"Mouser API returned HTTP {response.status_code}")
-            data = response.json()
+        try:
+            response = await self._get_client().post(url, json=body)
+        except httpx.HTTPError:
+            # Sanitize: httpx exceptions may include the full URL with API key
+            raise ValueError("Mouser API request failed (network/connection error)")
+        # Catch HTTP errors to avoid leaking the API key (embedded in URL) into logs
+        if response.status_code >= 400:
+            raise ValueError(f"Mouser API returned HTTP {response.status_code}")
+        data = response.json()
 
         # Check for API errors
         errors = data.get("Errors", [])
@@ -158,67 +154,6 @@ class MouserClient:
             raise MouserAPIError(code, msg)
 
         return data
-
-    async def search(
-        self,
-        keyword: str,
-        manufacturer: str | None = None,
-        in_stock_only: bool = False,
-        records: int = 20,
-        page: int = 1,
-    ) -> dict[str, Any]:
-        """Search Mouser by keyword.
-
-        Args:
-            keyword: Search terms
-            manufacturer: Filter by manufacturer name
-            in_stock_only: Only show in-stock parts
-            records: Results per page (max 50)
-            page: Page number (1-based)
-
-        Returns:
-            Dict with results, total, page
-        """
-        records = max(1, min(records, 50))
-
-        search_options = "None"
-        if in_stock_only:
-            search_options = "InStock"
-
-        # Use manufacturer-filtered endpoint only when manufacturer is specified;
-        # the /keywordandmanufacturer endpoint requires a non-empty manufacturerName
-        if manufacturer:
-            body = {
-                "SearchByKeywordMfrNameRequest": {
-                    "keyword": keyword,
-                    "manufacturerName": manufacturer,
-                    "records": records,
-                    "pageNumber": page,
-                    "searchOptions": search_options,
-                    "searchWithYourSignUpLanguage": "false",
-                }
-            }
-            data = await self._post("/search/keywordandmanufacturer", body)
-        else:
-            body = {
-                "SearchByKeywordRequest": {
-                    "keyword": keyword,
-                    "records": records,
-                    "pageNumber": page,
-                    "searchOptions": search_options,
-                    "searchWithYourSignUpLanguage": "false",
-                }
-            }
-            data = await self._post("/search/keyword", body)
-        search_results = data.get("SearchResults", {})
-        parts = search_results.get("Parts", [])
-        total = search_results.get("NumberOfResult", 0)
-
-        return {
-            "results": [_normalize_part(p) for p in parts],
-            "total": total,
-            "page": page,
-        }
 
     async def get_part(self, part_number: str) -> dict[str, Any]:
         """Look up part(s) by Mouser part number or MPN.
@@ -235,6 +170,12 @@ class MouserClient:
             cached = self._cache.get(cache_key)
             if cached is not None:
                 return cached
+
+        # Check daily quota (after cache so cache hits don't count)
+        if self._quota:
+            quota_error = self._quota.check()
+            if quota_error:
+                return quota_error
 
         body = {
             "SearchByPartRequest": {

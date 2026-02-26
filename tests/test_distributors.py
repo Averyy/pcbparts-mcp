@@ -9,7 +9,7 @@ import pytest
 from pcbparts_mcp.mouser import MouserClient, MouserAPIError, _parse_stock, _parse_price, _normalize_part
 from pcbparts_mcp.digikey import DigiKeyClient, _normalize_product
 from pcbparts_mcp.cse import CSEClient, _normalize_part as cse_normalize_part
-from pcbparts_mcp.cache import TTLCache
+from pcbparts_mcp.cache import TTLCache, DailyQuota
 
 
 # --- TTLCache tests ---
@@ -46,6 +46,106 @@ class TestTTLCache:
         assert len(cache) == 0
         cache.set("a", 1)
         assert len(cache) == 1
+
+
+# --- DailyQuota tests ---
+
+class TestDailyQuota:
+    def test_under_limit(self):
+        quota = DailyQuota("Test", 5)
+        for _ in range(5):
+            assert quota.check() is None
+
+    def test_blocks_at_limit(self):
+        quota = DailyQuota("Test", 3)
+        for _ in range(3):
+            assert quota.check() is None
+        result = quota.check()
+        assert result is not None
+        assert "error" in result
+        assert "daily quota exceeded" in result["error"]
+
+    def test_resets_on_new_day(self):
+        import datetime
+        quota = DailyQuota("Test", 2)
+        quota.check()
+        quota.check()
+        assert quota.check() is not None  # Over limit
+        # Simulate date change
+        quota._date = datetime.date.today() - datetime.timedelta(days=1)
+        assert quota.check() is None  # Reset
+
+    def test_remaining(self):
+        quota = DailyQuota("Test", 10)
+        assert quota.remaining == 10
+        quota.check()
+        assert quota.remaining == 9
+        quota.check()
+        assert quota.remaining == 8
+
+    @pytest.mark.asyncio
+    async def test_quota_error_flows_through_mouser_get_part(self):
+        """Quota errors flow through get_part when over limit."""
+        quota = DailyQuota("Mouser", 1)
+        c = MouserClient(api_key="test-key", quota=quota)
+        c._get_client()
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "Errors": [],
+            "SearchResults": {
+                "NumberOfResult": 1,
+                "Parts": [{
+                    "MouserPartNumber": "595-LM358P", "ManufacturerPartNumber": "LM358P",
+                    "Manufacturer": "TI", "Description": "", "Category": "",
+                    "Availability": "", "Min": "1", "PriceBreaks": [], "ProductAttributes": [],
+                }],
+            },
+        }
+        mock_response.raise_for_status = MagicMock()
+
+        with patch.object(c._client, "post", new_callable=AsyncMock, return_value=mock_response):
+            # First call succeeds (uses the 1 allowed request)
+            result = await c.get_part("595-LM358P")
+            assert "error" not in result
+
+            # Second call blocked by quota (different part to avoid cache)
+            result = await c.get_part("511-LM358P")
+            assert "error" in result
+            assert "daily quota exceeded" in result["error"]
+
+    @pytest.mark.asyncio
+    async def test_cache_hits_dont_count(self):
+        """Cache hits should not consume quota."""
+        quota = DailyQuota("Mouser", 1)
+        c = MouserClient(api_key="test-key", quota=quota)
+        c._get_client()
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "Errors": [],
+            "SearchResults": {
+                "NumberOfResult": 1,
+                "Parts": [{
+                    "MouserPartNumber": "595-LM358P", "ManufacturerPartNumber": "LM358P",
+                    "Manufacturer": "TI", "Description": "", "Category": "",
+                    "Availability": "", "Min": "1", "PriceBreaks": [], "ProductAttributes": [],
+                }],
+            },
+        }
+        mock_response.raise_for_status = MagicMock()
+
+        with patch.object(c._client, "post", new_callable=AsyncMock, return_value=mock_response):
+            # First call uses quota
+            result = await c.get_part("595-LM358P")
+            assert "error" not in result
+
+            # Second call hits cache, doesn't use quota
+            result = await c.get_part("595-LM358P")
+            assert "error" not in result
+            assert quota.remaining == 0  # Only 1 API call counted
 
 
 # --- Mouser helper tests ---
@@ -245,85 +345,10 @@ class TestDigiKeyNormalizeProduct:
 class TestMouserClient:
     @pytest.fixture
     def client(self):
-        c = MouserClient(api_key="test-key")
+        quota = DailyQuota("Mouser", 1000)
+        c = MouserClient(api_key="test-key", quota=quota)
         c._get_client()  # Eagerly init for patching in tests
         return c
-
-    @pytest.mark.asyncio
-    async def test_search(self, client):
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {
-            "Errors": [],
-            "SearchResults": {
-                "NumberOfResult": 1,
-                "Parts": [{
-                    "MouserPartNumber": "595-LM358P",
-                    "ManufacturerPartNumber": "LM358P",
-                    "Manufacturer": "Texas Instruments",
-                    "Description": "Dual Op Amp",
-                    "Category": "Op Amps",
-                    "Availability": "100 In Stock",
-                    "Min": "1",
-                    "PriceBreaks": [{"Quantity": 1, "Price": "$0.41", "Currency": "USD"}],
-                    "ProductAttributes": [],
-                }],
-            },
-        }
-        mock_response.raise_for_status = MagicMock()
-
-        with patch.object(client._client, "post", new_callable=AsyncMock, return_value=mock_response):
-            result = await client.search("LM358")
-
-        assert result["total"] == 1
-        assert len(result["results"]) == 1
-        assert result["results"][0]["mfr_part_number"] == "LM358P"
-        assert result["page"] == 1
-
-    @pytest.mark.asyncio
-    async def test_search_with_manufacturer(self, client):
-        """When manufacturer is provided, uses the keywordandmanufacturer endpoint."""
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {
-            "Errors": [],
-            "SearchResults": {"NumberOfResult": 0, "Parts": []},
-        }
-        mock_response.raise_for_status = MagicMock()
-
-        with patch.object(client._client, "post", new_callable=AsyncMock, return_value=mock_response) as mock_post:
-            await client.search("LM358", manufacturer="TI", in_stock_only=True, records=10, page=2)
-
-        # Verify the request body uses manufacturer endpoint
-        call_args = mock_post.call_args
-        url = call_args.args[0] if call_args.args else call_args[0][0]
-        assert "keywordandmanufacturer" in url
-        body = call_args.kwargs.get("json") or call_args[1].get("json")
-        req = body["SearchByKeywordMfrNameRequest"]
-        assert req["manufacturerName"] == "TI"
-        assert req["searchOptions"] == "InStock"
-        assert req["records"] == 10
-        assert req["pageNumber"] == 2
-
-    @pytest.mark.asyncio
-    async def test_search_without_manufacturer(self, client):
-        """When no manufacturer, uses the keyword-only endpoint."""
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {
-            "Errors": [],
-            "SearchResults": {"NumberOfResult": 0, "Parts": []},
-        }
-        mock_response.raise_for_status = MagicMock()
-
-        with patch.object(client._client, "post", new_callable=AsyncMock, return_value=mock_response) as mock_post:
-            await client.search("LM358")
-
-        call_args = mock_post.call_args
-        url = call_args.args[0] if call_args.args else call_args[0][0]
-        assert "/search/keyword?" in url
-        body = call_args.kwargs.get("json") or call_args[1].get("json")
-        assert "SearchByKeywordRequest" in body
 
     @pytest.mark.asyncio
     async def test_get_part_single(self, client):
@@ -393,7 +418,7 @@ class TestMouserClient:
 
         with patch.object(client._client, "post", new_callable=AsyncMock, return_value=mock_response):
             with pytest.raises(MouserAPIError) as exc_info:
-                await client.search("test")
+                await client.get_part("test")
             assert exc_info.value.code == "InvalidKey"
 
     @pytest.mark.asyncio
@@ -427,7 +452,8 @@ class TestMouserClient:
 class TestDigiKeyClient:
     @pytest.fixture
     def client(self):
-        c = DigiKeyClient(client_id="test-id", client_secret="test-secret")
+        quota = DailyQuota("DigiKey", 1000)
+        c = DigiKeyClient(client_id="test-id", client_secret="test-secret", quota=quota)
         c._get_http()  # Eagerly init for patching in tests
         return c
 
@@ -446,27 +472,34 @@ class TestDigiKeyClient:
     async def test_token_refresh(self, client):
         """Token is fetched on first request."""
         token_resp = self._mock_token_response()
-        search_resp = MagicMock()
-        search_resp.status_code = 200
-        search_resp.json.return_value = {
-            "Products": [],
-            "ProductsCount": 0,
-            "ExactMatches": [],
+        detail_resp = MagicMock()
+        detail_resp.status_code = 200
+        detail_resp.json.return_value = {
+            "Product": {
+                "Description": {"ProductDescription": "Test"},
+                "Manufacturer": {"Name": "Test"},
+                "ManufacturerProductNumber": "TEST123",
+                "QuantityAvailable": 100,
+                "ProductStatus": {"Status": "Active"},
+                "Category": {},
+                "Classifications": {},
+                "ProductVariations": [],
+                "Parameters": [],
+            },
         }
-        search_resp.raise_for_status = MagicMock()
+        detail_resp.raise_for_status = MagicMock()
 
         async def mock_request(method, url, **kwargs):
             if "oauth2/token" in url:
                 return token_resp
-            return search_resp
+            return detail_resp
 
-        # Also need to handle the post call for token
         async def mock_post(url, **kwargs):
             return token_resp
 
         with patch.object(client._http, "post", side_effect=mock_post):
             with patch.object(client._http, "request", side_effect=mock_request):
-                await client.search("test")
+                await client.get_part("TEST123")
 
         assert client._access_token == "test-token-123"
 
@@ -477,104 +510,28 @@ class TestDigiKeyClient:
         client._access_token = "existing-token"
         client._token_expires_at = time.time() + 500
 
-        search_resp = MagicMock()
-        search_resp.status_code = 200
-        search_resp.json.return_value = {
-            "Products": [],
-            "ProductsCount": 0,
-            "ExactMatches": [],
+        detail_resp = MagicMock()
+        detail_resp.status_code = 200
+        detail_resp.json.return_value = {
+            "Product": {
+                "Description": {"ProductDescription": "Test"},
+                "Manufacturer": {"Name": "Test"},
+                "ManufacturerProductNumber": "REUSE123",
+                "QuantityAvailable": 50,
+                "ProductStatus": {"Status": "Active"},
+                "Category": {},
+                "Classifications": {},
+                "ProductVariations": [],
+                "Parameters": [],
+            },
         }
-        search_resp.raise_for_status = MagicMock()
+        detail_resp.raise_for_status = MagicMock()
 
-        with patch.object(client._http, "request", new_callable=AsyncMock, return_value=search_resp):
-            await client.search("test")
+        with patch.object(client._http, "request", new_callable=AsyncMock, return_value=detail_resp):
+            await client.get_part("REUSE123")
 
         # Token should not have changed
         assert client._access_token == "existing-token"
-
-    @pytest.mark.asyncio
-    async def test_search(self, client):
-        client._access_token = "token"
-        client._token_expires_at = time.time() + 500
-
-        search_resp = MagicMock()
-        search_resp.status_code = 200
-        search_resp.json.return_value = {
-            "Products": [{
-                "Description": {"ProductDescription": "Dual Op Amp"},
-                "Manufacturer": {"Name": "TI"},
-                "ManufacturerProductNumber": "LM358P",
-                "UnitPrice": 0.29,
-                "QuantityAvailable": 15234,
-                "ProductStatus": {"Status": "Active"},
-                "Discontinued": False,
-                "Category": {"Name": "Op Amps"},
-                "Classifications": {},
-                "ProductVariations": [{
-                    "DigiKeyProductNumber": "296-1395-5-ND",
-                    "MinimumOrderQuantity": 1,
-                    "StandardPricing": [
-                        {"BreakQuantity": 1, "UnitPrice": 0.41, "TotalPrice": 0.41},
-                    ],
-                }],
-                "Parameters": [],
-            }],
-            "ProductsCount": 1,
-            "ExactMatches": [],
-        }
-        search_resp.raise_for_status = MagicMock()
-
-        with patch.object(client._http, "request", new_callable=AsyncMock, return_value=search_resp):
-            result = await client.search("LM358")
-
-        assert result["total"] == 1
-        assert len(result["results"]) == 1
-        assert result["results"][0]["mfr_part_number"] == "LM358P"
-        assert result["results"][0]["stock"] == 15234
-
-    @pytest.mark.asyncio
-    async def test_search_empty_mpn_dedup(self, client):
-        """Products with empty MPNs should not be deduplicated against each other."""
-        client._access_token = "token"
-        client._token_expires_at = time.time() + 500
-
-        search_resp = MagicMock()
-        search_resp.status_code = 200
-        search_resp.json.return_value = {
-            "Products": [
-                {
-                    "Description": {"ProductDescription": "Kit A"},
-                    "Manufacturer": {"Name": "TI"},
-                    "ManufacturerProductNumber": "",
-                    "QuantityAvailable": 100,
-                    "ProductStatus": {"Status": "Active"},
-                    "Category": {},
-                    "Classifications": {},
-                    "ProductVariations": [],
-                    "Parameters": [],
-                },
-                {
-                    "Description": {"ProductDescription": "Kit B"},
-                    "Manufacturer": {"Name": "TI"},
-                    "ManufacturerProductNumber": "",
-                    "QuantityAvailable": 50,
-                    "ProductStatus": {"Status": "Active"},
-                    "Category": {},
-                    "Classifications": {},
-                    "ProductVariations": [],
-                    "Parameters": [],
-                },
-            ],
-            "ProductsCount": 2,
-            "ExactMatches": [],
-        }
-        search_resp.raise_for_status = MagicMock()
-
-        with patch.object(client._http, "request", new_callable=AsyncMock, return_value=search_resp):
-            result = await client.search("test kits")
-
-        # Both products should be returned (not deduplicated)
-        assert len(result["results"]) == 2
 
     @pytest.mark.asyncio
     async def test_get_part(self, client):
@@ -666,9 +623,17 @@ class TestDigiKeyClient:
         resp_ok = MagicMock()
         resp_ok.status_code = 200
         resp_ok.json.return_value = {
-            "Products": [],
-            "ProductsCount": 0,
-            "ExactMatches": [],
+            "Product": {
+                "Description": {"ProductDescription": "Test"},
+                "Manufacturer": {"Name": "Test"},
+                "ManufacturerProductNumber": "RETRY123",
+                "QuantityAvailable": 10,
+                "ProductStatus": {"Status": "Active"},
+                "Category": {},
+                "Classifications": {},
+                "ProductVariations": [],
+                "Parameters": [],
+            },
         }
         resp_ok.raise_for_status = MagicMock()
 
@@ -688,9 +653,9 @@ class TestDigiKeyClient:
 
         with patch.object(client._http, "request", side_effect=mock_request):
             with patch.object(client._http, "post", side_effect=mock_post):
-                result = await client.search("test")
+                result = await client.get_part("RETRY123")
 
-        assert result["total"] == 0
+        assert result["total"] == 1
         # Token should be refreshed
         assert client._access_token == "test-token-123"
 
@@ -719,19 +684,6 @@ class TestGracefulDegradation:
     """Test that tools return helpful errors when API keys aren't configured."""
 
     @pytest.mark.asyncio
-    async def test_mouser_search_no_key(self):
-        from pcbparts_mcp.server import mouser_search
-        import pcbparts_mcp.server as srv
-        original = srv._mouser_client
-        srv._mouser_client = None
-        try:
-            result = await mouser_search(keyword="test")
-            assert "error" in result
-            assert "MOUSER_API_KEY" in result["error"]
-        finally:
-            srv._mouser_client = original
-
-    @pytest.mark.asyncio
     async def test_mouser_get_part_no_key(self):
         from pcbparts_mcp.server import mouser_get_part
         import pcbparts_mcp.server as srv
@@ -745,19 +697,6 @@ class TestGracefulDegradation:
             srv._mouser_client = original
 
     @pytest.mark.asyncio
-    async def test_digikey_search_no_key(self):
-        from pcbparts_mcp.server import digikey_search
-        import pcbparts_mcp.server as srv
-        original = srv._digikey_client
-        srv._digikey_client = None
-        try:
-            result = await digikey_search(keywords="test")
-            assert "error" in result
-            assert "DIGIKEY_CLIENT_ID" in result["error"]
-        finally:
-            srv._digikey_client = original
-
-    @pytest.mark.asyncio
     async def test_digikey_get_part_no_key(self):
         from pcbparts_mcp.server import digikey_get_part
         import pcbparts_mcp.server as srv
@@ -767,32 +706,6 @@ class TestGracefulDegradation:
             result = await digikey_get_part(product_number="LM358P")
             assert "error" in result
             assert "DIGIKEY_CLIENT_ID" in result["error"]
-        finally:
-            srv._digikey_client = original
-
-    @pytest.mark.asyncio
-    async def test_mouser_search_keyword_too_long(self):
-        from pcbparts_mcp.server import mouser_search
-        import pcbparts_mcp.server as srv
-        original = srv._mouser_client
-        srv._mouser_client = MagicMock()  # Needs to be non-None to pass first check
-        try:
-            result = await mouser_search(keyword="x" * 501)
-            assert "error" in result
-            assert "too long" in result["error"]
-        finally:
-            srv._mouser_client = original
-
-    @pytest.mark.asyncio
-    async def test_digikey_search_keywords_too_long(self):
-        from pcbparts_mcp.server import digikey_search
-        import pcbparts_mcp.server as srv
-        original = srv._digikey_client
-        srv._digikey_client = MagicMock()
-        try:
-            result = await digikey_search(keywords="x" * 501)
-            assert "error" in result
-            assert "too long" in result["error"]
         finally:
             srv._digikey_client = original
 
