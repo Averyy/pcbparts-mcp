@@ -3,17 +3,22 @@
 import asyncio
 import heapq
 import logging
-import random
 import re
 import time
 from typing import Any, Literal
 from urllib.parse import quote
 
-from curl_cffi import requests as curl_requests
+import wafer
+from wafer import (
+    ChallengeDetected,
+    ConnectionFailed,
+    EmptyResponse,
+    RateLimited,
+    WaferHTTPError,
+    WaferTimeout,
+)
 
 from .config import (
-    get_jlcpcb_headers,
-    get_random_user_agent,
     JLCPCB_SEARCH_URL,
     JLCPCB_DETAIL_URL,
     EASYEDA_COMPONENT_URL,
@@ -23,8 +28,12 @@ from .config import (
     EASYEDA_REQUEST_TIMEOUT,
     EASYEDA_CACHE_MAX_SIZE,
     EASYEDA_CONCURRENT_LIMIT,
+    EASYEDA_RATE_LIMIT,
+    EASYEDA_RATE_JITTER,
     JLCPCB_CONCURRENT_LIMIT,
-    JLCPCB_REQUEST_JITTER,
+    JLCPCB_RATE_LIMIT,
+    JLCPCB_RATE_JITTER,
+    JLCPCB_MAX_ROTATIONS,
     MAX_RETRIES,
     REQUEST_TIMEOUT,
     DEFAULT_PAGE_SIZE,
@@ -89,16 +98,12 @@ _MANUFACTURER_EXACT_NORMALIZED: dict[str, str] = {
     _normalize_manufacturer_name(name): name for name in KNOWN_MANUFACTURERS
 }
 
-# Browser fingerprints for TLS impersonation
-BROWSER_FINGERPRINTS = ["chrome131", "chrome133a", "chrome136", "chrome142"]
-
-
 class JLCPCBClient:
-    """Async client for JLCPCB component search API with browser impersonation."""
+    """Async client for JLCPCB component search API with anti-detection via wafer."""
 
     def __init__(self):
-        self._sessions: list[curl_requests.AsyncSession] = []
-        self._session_index = 0
+        self._jlcpcb_session: wafer.AsyncSession | None = None
+        self._easyeda_session: wafer.AsyncSession | None = None
         # Category cache - lazily populated from API or set externally
         self._categories: list[dict[str, Any]] = []
         self._category_map: dict[int, dict[str, Any]] = {}  # id -> category
@@ -180,27 +185,44 @@ class JLCPCBClient:
         ):
             self._category_name_map[name_lower[:-1]] = cat["id"]
 
-    def _get_browser(self) -> str:
-        """Get a random browser fingerprint."""
-        return random.choice(BROWSER_FINGERPRINTS)
+    def _get_jlcpcb_session(self) -> wafer.AsyncSession:
+        """Get or create persistent JLCPCB session.
 
-    def _create_session(self) -> curl_requests.AsyncSession:
-        """Create a fresh HTTP session with browser impersonation.
-
-        Each request gets a new session to avoid TLS fingerprint tracking.
-        JLCPCB detects and blocks reused sessions, so we create fresh ones.
+        Wafer handles TLS fingerprint rotation, header generation, rate limiting,
+        and retry logic automatically.
         """
-        return curl_requests.AsyncSession(
-            impersonate=self._get_browser(),
-            timeout=REQUEST_TIMEOUT,
-        )
+        if self._jlcpcb_session is None:
+            self._jlcpcb_session = wafer.AsyncSession(
+                timeout=REQUEST_TIMEOUT,
+                max_retries=MAX_RETRIES,
+                max_rotations=JLCPCB_MAX_ROTATIONS,
+                rate_limit=JLCPCB_RATE_LIMIT,
+                rate_jitter=JLCPCB_RATE_JITTER,
+                cache_dir=None,
+                rotate_every=1,
+                headers={
+                    "Accept": "application/json, text/plain, */*",
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "Accept-Encoding": "gzip, deflate, br, zstd",
+                },
+            )
+        return self._jlcpcb_session
+
+    def _get_easyeda_session(self) -> wafer.AsyncSession:
+        """Get or create persistent EasyEDA session."""
+        if self._easyeda_session is None:
+            self._easyeda_session = wafer.AsyncSession(
+                timeout=EASYEDA_REQUEST_TIMEOUT,
+                max_retries=MAX_RETRIES,
+                rate_limit=EASYEDA_RATE_LIMIT,
+                rate_jitter=EASYEDA_RATE_JITTER,
+            )
+        return self._easyeda_session
 
     async def close(self):
-        """Close any remaining HTTP sessions."""
-        # Sessions are now created per-request, but keep this for compatibility
-        for session in self._sessions:
-            await session.close()
-        self._sessions = []
+        """Release persistent HTTP sessions."""
+        self._jlcpcb_session = None
+        self._easyeda_session = None
 
     async def _ensure_categories(self) -> None:
         """Ensure categories are loaded (lazy initialization)."""
@@ -331,63 +353,65 @@ class JLCPCBClient:
         return None
 
     async def _request(self, url: str, params: dict[str, Any]) -> dict[str, Any]:
-        """Execute request with retry logic and browser impersonation.
+        """Execute request to JLCPCB API.
 
-        Creates a fresh session for each request to avoid TLS fingerprint tracking.
-        JLCPCB detects and blocks reused sessions after several requests.
+        Wafer handles TLS fingerprinting, header rotation, rate limiting,
+        retries, and 403 recovery automatically.
 
         Uses a semaphore to limit concurrent requests across all users, preventing
         IP-based blocking when the server handles many simultaneous requests.
         """
-        last_error: Exception | None = None
-
         # Limit concurrent requests to JLCPCB to prevent IP blocking at scale
         async with self._get_jlcpcb_semaphore():
-            for attempt in range(MAX_RETRIES + 1):
-                # Fresh session for each attempt - avoids fingerprint tracking
-                session = self._create_session()
-                try:
-                    # Fresh randomized headers for each request
-                    headers = get_jlcpcb_headers()
-                    # Sanitize logged values to prevent log injection (control chars can manipulate terminal/logs)
-                    raw_keyword = str(params.get('keyword', params))
-                    log_keyword = raw_keyword if raw_keyword.isprintable() else ''.join(
-                        c if c.isprintable() or c == ' ' else f'\\x{ord(c):02x}'
-                        for c in raw_keyword
-                    )
-                    logger.debug(f"JLCPCB request attempt {attempt + 1}: {log_keyword}")
-                    response = await session.post(
-                        url,
-                        json=params,
-                        headers=headers,
-                    )
-                    logger.debug(f"JLCPCB response: {response.status_code}")
-                    response.raise_for_status()
-                    data = response.json()
+            session = self._get_jlcpcb_session()
+            # Sanitize logged values to prevent log injection (control chars can manipulate terminal/logs)
+            raw_keyword = str(params.get('keyword', params))
+            log_keyword = raw_keyword if raw_keyword.isprintable() else ''.join(
+                c if c.isprintable() or c == ' ' else f'\\x{ord(c):02x}'
+                for c in raw_keyword
+            )
+            logger.debug(f"JLCPCB request: {log_keyword}")
+            try:
+                response = await session.post(
+                    url,
+                    json=params,
+                    headers={
+                        "Origin": "https://jlcpcb.com",
+                        "Referer": "https://jlcpcb.com/parts",
+                        "Sec-Fetch-Site": "same-origin",
+                        "Sec-Fetch-Mode": "cors",
+                        "Sec-Fetch-Dest": "empty",
+                    },
+                )
+            except ChallengeDetected as e:
+                logger.warning(f"JLCPCB WAF challenge ({e.challenge_type}): {log_keyword}")
+                raise ValueError("JLCPCB blocked request with WAF challenge — try again later")
+            except RateLimited:
+                logger.warning(f"JLCPCB rate limited: {log_keyword}")
+                raise ValueError("JLCPCB rate limited — try again later")
+            except EmptyResponse:
+                logger.warning(f"JLCPCB empty response: {log_keyword}")
+                raise ValueError("JLCPCB returned empty response — try again later")
+            except ConnectionFailed as e:
+                logger.warning(f"JLCPCB connection failed ({e.reason}): {log_keyword}")
+                raise ValueError("JLCPCB connection failed — try again later")
+            except WaferTimeout:
+                logger.warning(f"JLCPCB request timeout: {log_keyword}")
+                raise ValueError("JLCPCB request timed out — try again later")
+            logger.debug(f"JLCPCB response: {response.status_code}")
+            try:
+                response.raise_for_status()
+            except WaferHTTPError as e:
+                logger.warning(f"JLCPCB HTTP {e.status_code}: {log_keyword}")
+                raise ValueError(f"JLCPCB returned HTTP {e.status_code} — try again later")
+            data = response.json()
 
-                    # Check for API-level errors
-                    if data.get("code") != 200:
-                        error_msg = data.get("message", "Unknown API error")
-                        raise ValueError(f"JLCPCB API error: {error_msg}")
+            # Check for API-level errors
+            if data.get("code") != 200:
+                error_msg = data.get("message", "Unknown API error")
+                raise ValueError(f"JLCPCB API error: {error_msg}")
 
-                    # Add jitter between requests to appear more human-like
-                    jitter = random.uniform(*JLCPCB_REQUEST_JITTER)
-                    await asyncio.sleep(jitter)
-
-                    return data
-                except Exception as e:
-                    last_error = e
-                    logger.warning(f"JLCPCB request failed (attempt {attempt + 1}): {type(e).__name__}: {e}")
-                    if attempt < MAX_RETRIES:
-                        # Exponential backoff: 1s, 2s, 4s
-                        await asyncio.sleep(1.0 * (2 ** attempt))
-                    else:
-                        raise
-                finally:
-                    # Always close the session to avoid connection pooling
-                    await session.close()
-
-        raise last_error  # type: ignore
+            return data
 
     def _get_easyeda_semaphore(self) -> asyncio.Semaphore:
         """Get or create semaphore for rate-limiting EasyEDA requests."""
@@ -472,17 +496,12 @@ class JLCPCBClient:
 
         # Use semaphore to limit concurrent requests
         async with self._get_easyeda_semaphore():
-            session = self._create_session()
+            session = self._get_easyeda_session()
             try:
                 # URL-encode the LCSC code for safety
                 url = EASYEDA_COMPONENT_URL.format(lcsc=quote(lcsc, safe=''))
 
-                headers = {
-                    "Accept": "application/json",
-                    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-                }
-
-                response = await session.get(url, headers=headers, timeout=EASYEDA_REQUEST_TIMEOUT)
+                response = await session.get(url)
 
                 # 404 means no footprint exists
                 if response.status_code == 404:
@@ -523,9 +542,6 @@ class JLCPCBClient:
                 logger.warning(f"EasyEDA footprint check failed for {lcsc}: {type(e).__name__}: {e}")
                 await self._cache_easyeda_result(lcsc, unknown_result, True)
                 return unknown_result
-            finally:
-                # Always close the session to avoid connection pooling
-                await session.close()
 
     def _cleanup_easyeda_component_cache_unlocked(self) -> None:
         """Clean up expired entries if cache is too large. Must hold lock."""
@@ -606,54 +622,38 @@ class JLCPCBClient:
 
         # Use semaphore to limit concurrent requests
         async with self._get_easyeda_semaphore():
-            # Retry loop with exponential backoff (MAX_RETRIES + 1 total attempts, consistent with _request)
-            last_error: Exception | None = None
-            for attempt in range(MAX_RETRIES + 1):
-                session = self._create_session()
-                try:
-                    url = EASYEDA_SYMBOL_URL.format(uuid=quote(uuid, safe=''))
+            session = self._get_easyeda_session()
+            try:
+                url = EASYEDA_SYMBOL_URL.format(uuid=quote(uuid, safe=''))
 
-                    headers = {
-                        "Accept": "application/json",
-                        "User-Agent": get_random_user_agent(),
-                    }
+                response = await session.get(url)
+                response.raise_for_status()
+                data = response.json()
 
-                    response = await session.get(url, headers=headers, timeout=EASYEDA_REQUEST_TIMEOUT)
-                    response.raise_for_status()
-                    data = response.json()
+                # Check response structure
+                if not data.get("success"):
+                    error = ValueError("Failed to fetch component data from EasyEDA")
+                    logger.warning(f"EasyEDA API error for {uuid}: {data.get('message', 'Unknown error')}")
+                    await self._cache_easyeda_component_result(uuid, error, True)
+                    raise error
 
-                    # Check response structure
-                    if not data.get("success"):
-                        error = ValueError("Failed to fetch component data from EasyEDA")
-                        logger.warning(f"EasyEDA API error for {uuid}: {data.get('message', 'Unknown error')}")
-                        await self._cache_easyeda_component_result(uuid, error, True)
-                        raise error
+                result = data.get("result", {})
+                if "dataStr" not in result:
+                    error = ValueError("Invalid EasyEDA response - missing dataStr")
+                    await self._cache_easyeda_component_result(uuid, error, True)
+                    raise error
 
-                    result = data.get("result", {})
-                    if "dataStr" not in result:
-                        error = ValueError("Invalid EasyEDA response - missing dataStr")
-                        await self._cache_easyeda_component_result(uuid, error, True)
-                        raise error
+                # Cache successful result
+                await self._cache_easyeda_component_result(uuid, result, False)
+                return result
 
-                    # Cache successful result
-                    await self._cache_easyeda_component_result(uuid, result, False)
-                    return result
-
-                except ValueError:
-                    raise  # Don't retry validation errors
-                except Exception as e:
-                    last_error = e
-                    logger.warning(f"EasyEDA component fetch failed for {uuid} (attempt {attempt + 1}): {type(e).__name__}: {e}")
-                    if attempt < MAX_RETRIES:
-                        await asyncio.sleep(0.5 * (2 ** attempt))  # Exponential backoff
-                finally:
-                    await session.close()
-
-            # All retries exhausted
-            error = ValueError("Failed to fetch component data from EasyEDA")
-            logger.warning(f"EasyEDA component fetch failed for {uuid} after {MAX_RETRIES + 1} attempts: {last_error}")
-            await self._cache_easyeda_component_result(uuid, error, True)
-            raise error
+            except ValueError:
+                raise  # Don't retry validation errors
+            except Exception as e:
+                logger.warning(f"EasyEDA component fetch failed for {uuid}: {type(e).__name__}: {e}")
+                error = ValueError("Failed to fetch component data from EasyEDA")
+                await self._cache_easyeda_component_result(uuid, error, True)
+                raise error
 
     def _build_search_params(
         self,
@@ -724,10 +724,7 @@ class JLCPCBClient:
             elif library_type == "preferred":
                 params["preferredComponentFlag"] = True
             elif library_type == "no_fee":
-                # JLCPCB API doesn't support OR across library types in a single call.
-                # Setting componentLibraryType=base excludes preferred, and vice versa.
-                # Best approximation: exclude extended parts (don't set componentLibraryType=expand).
-                # This returns all types; extended results are filtered out client-side below.
+                # Handled in search() with two parallel API calls (basic + preferred)
                 pass
 
         # Package filtering (single or multi-select)
@@ -753,9 +750,13 @@ class JLCPCBClient:
         price = prices[0]["productPrice"] if prices else None
         price_10 = prices[1]["productPrice"] if len(prices) > 1 else None
 
-        # Map library type
+        # Map library type: preferred parts have componentLibraryType=expand but
+        # preferredComponentFlag=True — they have no assembly fee (same as basic)
         lib_type = item.get("componentLibraryType", "")
-        if lib_type == "base":
+        is_preferred = item.get("preferredComponentFlag", False)
+        if is_preferred:
+            library_type = "preferred"
+        elif lib_type == "base":
             library_type = "basic"
         elif lib_type == "expand":
             library_type = "extended"
@@ -856,35 +857,65 @@ class JLCPCBClient:
                 category_id = matched_category
                 query = None  # Use category filter instead of keyword
 
-        # Build and execute search
-        params = self._build_search_params(
-            query=query,
-            category_id=category_id,
-            subcategory_id=subcategory_id,
-            min_stock=min_stock,
-            library_type=library_type,
-            package=package,
-            manufacturer=manufacturer,
-            packages=packages,
-            manufacturers=manufacturers,
-            sort_by=sort_by,
-            page=page,
-            limit=limit,
-        )
-
-        response = await self._request(JLCPCB_SEARCH_URL, params)
-        data = response.get("data") or {}
-        page_info = data.get("componentPageInfo") or {}
-
-        items = page_info.get("list") or []
-        total = page_info.get("total") or 0
-
-        results = [self._transform_part(item, slim=True) for item in items]
-
-        # Client-side filtering for no_fee: exclude extended parts since the
-        # JLCPCB API doesn't support OR-ing basic + preferred in one call
+        # no_fee = basic + preferred, but the JLCPCB API can't OR these in one call.
+        # Make two parallel requests and merge results.
         if library_type == "no_fee":
-            results = [r for r in results if r.get("library_type") != "extended"]
+            shared = dict(
+                query=query, category_id=category_id, subcategory_id=subcategory_id,
+                min_stock=min_stock, package=package, manufacturer=manufacturer,
+                packages=packages, manufacturers=manufacturers,
+                sort_by=sort_by, page=page, limit=limit,
+            )
+            basic_params = self._build_search_params(**shared, library_type="basic")
+            preferred_params = self._build_search_params(**shared, library_type="preferred")
+
+            # Sequential to respect rate limits (same hostname)
+            basic_data = await self._request(JLCPCB_SEARCH_URL, basic_params)
+            preferred_data = await self._request(JLCPCB_SEARCH_URL, preferred_params)
+
+            basic_info = (basic_data.get("data") or {}).get("componentPageInfo") or {}
+            pref_info = (preferred_data.get("data") or {}).get("componentPageInfo") or {}
+
+            basic_items = basic_info.get("list") or []
+            pref_items = pref_info.get("list") or []
+
+            # Interleave basic and preferred so both types get fair representation
+            seen: set[str] = set()
+            items: list[dict[str, Any]] = []
+            bi, pi = 0, 0
+            while len(items) < limit and (bi < len(basic_items) or pi < len(pref_items)):
+                if bi < len(basic_items):
+                    lcsc = basic_items[bi].get("componentCode")
+                    if lcsc and lcsc not in seen:
+                        seen.add(lcsc)
+                        items.append(basic_items[bi])
+                    bi += 1
+                if len(items) < limit and pi < len(pref_items):
+                    lcsc = pref_items[pi].get("componentCode")
+                    if lcsc and lcsc not in seen:
+                        seen.add(lcsc)
+                        items.append(pref_items[pi])
+                    pi += 1
+
+            total = (basic_info.get("total") or 0) + (pref_info.get("total") or 0)
+            results = [self._transform_part(item, slim=True) for item in items]
+        else:
+            # Standard single-call path
+            params = self._build_search_params(
+                query=query, category_id=category_id, subcategory_id=subcategory_id,
+                min_stock=min_stock, library_type=library_type, package=package,
+                manufacturer=manufacturer, packages=packages, manufacturers=manufacturers,
+                sort_by=sort_by, page=page, limit=limit,
+            )
+
+            response = await self._request(JLCPCB_SEARCH_URL, params)
+            data = response.get("data") or {}
+            page_info = data.get("componentPageInfo") or {}
+
+            items = page_info.get("list") or []
+            total = page_info.get("total") or 0
+
+            results = [self._transform_part(item, slim=True) for item in items]
 
         # Calculate total pages
         total_pages = (total + limit - 1) // limit if limit > 0 else 0
@@ -897,42 +928,6 @@ class JLCPCBClient:
             "total_pages": total_pages,
             "has_more": page * limit < total,
         }
-
-    async def get_parts_batch(
-        self,
-        lcsc_codes: list[str],
-        concurrent_limit: int = 5,
-    ) -> dict[str, dict[str, Any] | None]:
-        """Fetch multiple parts in parallel with rate limiting.
-
-        Args:
-            lcsc_codes: List of LCSC codes to fetch
-            concurrent_limit: Max concurrent requests (default: 5 to avoid rate limiting)
-
-        Returns:
-            Dict mapping lcsc_code -> part_data (or None if not found)
-        """
-        if not lcsc_codes:
-            return {}
-
-        normalized_codes = [lcsc.strip().upper() for lcsc in lcsc_codes]
-
-        # Use semaphore to limit concurrent requests
-        semaphore = asyncio.Semaphore(concurrent_limit)
-
-        async def fetch_with_limit(code: str) -> tuple[str, dict[str, Any] | None]:
-            async with semaphore:
-                try:
-                    return (code, await self.get_part(code))
-                except Exception:
-                    return (code, None)
-
-        # Fetch all parts in parallel (limited by semaphore)
-        results_list = await asyncio.gather(
-            *[fetch_with_limit(code) for code in normalized_codes]
-        )
-
-        return dict(results_list)
 
     async def get_part(self, lcsc: str) -> dict[str, Any] | None:
         """Get full details for a specific part, including EasyEDA footprint availability.

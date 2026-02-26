@@ -1,5 +1,6 @@
 """Shared TTL cache with LRU eviction for distributor API clients."""
 
+import datetime
 import time
 from typing import Any
 
@@ -45,3 +46,37 @@ class TTLCache:
 
     def __len__(self) -> int:
         return len(self._data)
+
+
+class DailyQuota:
+    """Daily request quota counter that resets at UTC midnight.
+
+    Synchronous — safe for single-threaded asyncio (no lock needed).
+    """
+
+    def __init__(self, name: str, daily_limit: int):
+        self._name = name
+        self._limit = daily_limit
+        self._count = 0
+        self._date = datetime.date.today()
+
+    def _maybe_reset(self) -> None:
+        today = datetime.date.today()
+        if today != self._date:
+            self._count = 0
+            self._date = today
+
+    def check(self) -> dict | None:
+        """Increment counter and return error dict if over limit, else None."""
+        self._maybe_reset()
+        self._count += 1
+        if self._count > self._limit:
+            return {
+                "error": f"{self._name} daily quota exceeded ({self._limit} requests/day). Try again tomorrow or use jlc_search instead.",
+            }
+        return None
+
+    @property
+    def remaining(self) -> int:
+        self._maybe_reset()
+        return max(0, self._limit - self._count)

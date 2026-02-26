@@ -1,9 +1,11 @@
 """DigiKey Product Information API v4 client."""
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import time
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from urllib.parse import quote
 
 import httpx
@@ -14,12 +16,14 @@ from .config import (
     DIGIKEY_CLIENT_SECRET,
     DIGIKEY_BASE_URL,
     DIGIKEY_TOKEN_URL,
-    DIGIKEY_CONCURRENT_LIMIT,
     DIGIKEY_CACHE_TTL,
     DIGIKEY_LOCALE_SITE,
     DIGIKEY_LOCALE_LANGUAGE,
     DIGIKEY_LOCALE_CURRENCY,
 )
+
+if TYPE_CHECKING:
+    from .cache import DailyQuota
 
 logger = logging.getLogger(__name__)
 
@@ -95,27 +99,22 @@ class DigiKeyClient:
         self,
         client_id: str = DIGIKEY_CLIENT_ID,
         client_secret: str = DIGIKEY_CLIENT_SECRET,
+        quota: DailyQuota | None = None,
     ):
         self._client_id = client_id
         self._client_secret = client_secret
         self._http: httpx.AsyncClient | None = None
-        self._semaphore: asyncio.Semaphore | None = None
         # OAuth2 token state
         self._access_token: str | None = None
         self._token_expires_at: float = 0
         self._token_lock: asyncio.Lock | None = None
         self._cache = TTLCache(ttl=DIGIKEY_CACHE_TTL)
+        self._quota = quota
 
     def _get_http(self) -> httpx.AsyncClient:
         if self._http is None:
             self._http = httpx.AsyncClient(timeout=15.0)
         return self._http
-
-    def _get_semaphore(self) -> asyncio.Semaphore:
-        # Safe in single-threaded asyncio: no await between None check and assignment
-        if self._semaphore is None:
-            self._semaphore = asyncio.Semaphore(DIGIKEY_CONCURRENT_LIMIT)
-        return self._semaphore
 
     def _get_token_lock(self) -> asyncio.Lock:
         # Safe in single-threaded asyncio: no await between None check and assignment
@@ -180,86 +179,20 @@ class DigiKeyClient:
         url = f"{DIGIKEY_BASE_URL}{path}"
 
         try:
-            async with self._get_semaphore():
-                response = await self._get_http().request(method, url, headers=headers, **kwargs)
+            response = await self._get_http().request(method, url, headers=headers, **kwargs)
 
-            # Handle token expiration mid-flight (retry outside semaphore)
+            # Handle token expiration mid-flight
             if response.status_code == 401:
                 self._access_token = None
                 token = await self._ensure_token()
                 headers = self._auth_headers(token)
-                async with self._get_semaphore():
-                    response = await self._get_http().request(method, url, headers=headers, **kwargs)
+                response = await self._get_http().request(method, url, headers=headers, **kwargs)
         except httpx.HTTPError:
             raise ValueError("DigiKey API request failed (network/connection error)")
 
         if response.status_code >= 400:
             raise ValueError(f"DigiKey API returned HTTP {response.status_code}")
         return response.json()
-
-    async def search(
-        self,
-        keywords: str,
-        limit: int = 20,
-        offset: int = 0,
-        in_stock_only: bool = False,
-        manufacturer: str | None = None,
-    ) -> dict[str, Any]:
-        """Search DigiKey by keywords.
-
-        Args:
-            keywords: Search terms
-            limit: Results per page (max 50)
-            offset: Pagination offset
-            in_stock_only: Only show in-stock parts
-            manufacturer: Filter by manufacturer name (note: DigiKey uses IDs,
-                         so this is passed as a keyword modifier)
-
-        Returns:
-            Dict with results, total, offset
-        """
-        limit = max(1, min(limit, 50))
-
-        body: dict[str, Any] = {
-            "Keywords": keywords,
-            "Limit": limit,
-            "Offset": offset,
-        }
-
-        filter_options: dict[str, Any] = {}
-        if in_stock_only:
-            filter_options["SearchOptions"] = ["InStock"]
-        if filter_options:
-            body["FilterOptionsRequest"] = filter_options
-
-        # If manufacturer specified, append to keywords since DigiKey
-        # manufacturer filter requires numeric IDs we don't have
-        if manufacturer:
-            body["Keywords"] = f"{keywords} {manufacturer}"
-
-        data = await self._request("POST", "/search/keyword", json=body)
-        products = data.get("Products", [])
-        total = data.get("ProductsCount", 0)
-
-        # Also include exact matches
-        exact = data.get("ExactMatches", [])
-        all_products = exact + products
-
-        # Deduplicate by MPN (skip dedup for empty MPNs)
-        seen = set()
-        unique = []
-        for p in all_products:
-            mpn = p.get("ManufacturerProductNumber", "")
-            if not mpn or mpn not in seen:
-                if mpn:
-                    seen.add(mpn)
-                unique.append(p)
-
-        return {
-            "results": [_normalize_product(p) for p in unique[:limit]],
-            "total": total,
-            "offset": offset,
-        }
 
     async def get_part(self, product_number: str) -> dict[str, Any]:
         """Look up a part by DigiKey PN or manufacturer PN.
@@ -274,6 +207,12 @@ class DigiKeyClient:
         cached = self._cache.get(cache_key)
         if cached is not None:
             return cached
+
+        # Check daily quota (after cache so cache hits don't count)
+        if self._quota:
+            quota_error = self._quota.check()
+            if quota_error:
+                return quota_error
 
         # URL-encode to prevent path traversal or special chars altering the URL
         safe_pn = quote(product_number, safe='')

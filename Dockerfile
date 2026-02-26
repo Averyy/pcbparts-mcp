@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --no-cache-dir \
     "mcp>=1.3.0" \
     "fastmcp>=3.0.0" \
-    "curl_cffi>=0.7.0" \
+    "wafer-py>=0.1.2" \
     "httpx>=0.27.0" \
     "uvicorn[standard]" \
     "starlette" \
@@ -45,6 +45,9 @@ ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1
 ENV HTTP_PORT=8080
 ENV RATE_LIMIT_REQUESTS=100
+
+# Create wafer cookie cache dir (writable at runtime)
+RUN mkdir -p /app/data/wafer/cookies
 
 # Run as non-root user
 RUN adduser --disabled-password --gecos "" appuser

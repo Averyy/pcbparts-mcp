@@ -46,22 +46,37 @@ def get_category_for_subcategory(
 
 
 def get_categories_for_client(
+    conn: sqlite3.Connection | None,
     subcategories: dict[int, dict[str, Any]],
 ) -> list[dict[str, Any]]:
     """Export categories in format expected by JLCPCBClient.set_categories().
 
     Returns list of categories with nested subcategories, matching API format.
+    Includes real part counts from DB. Omits subcategories with 0 parts.
 
     Args:
+        conn: SQLite connection (for counting parts)
         subcategories: Dict mapping subcategory IDs to info
 
     Returns:
         List of category dicts with nested subcategories
     """
+    # Get real part counts per subcategory from DB
+    subcat_counts: dict[int, int] = {}
+    if conn:
+        cursor = conn.execute(
+            "SELECT subcategory_id, COUNT(*) FROM components GROUP BY subcategory_id"
+        )
+        subcat_counts = dict(cursor.fetchall())
+
     # Group subcategories by category
     categories_dict: dict[int, dict[str, Any]] = {}
 
     for subcat_id, info in subcategories.items():
+        count = subcat_counts.get(subcat_id, 0)
+        if count == 0:
+            continue  # Skip empty subcategories
+
         cat_id = info["category_id"]
         cat_name = info["category_name"]
 
@@ -76,8 +91,9 @@ def get_categories_for_client(
         categories_dict[cat_id]["subcategories"].append({
             "id": subcat_id,
             "name": info["name"],
-            "count": 0,  # Count not stored, but not needed for name resolution
+            "count": count,
         })
+        categories_dict[cat_id]["count"] += count
 
     return list(categories_dict.values())
 

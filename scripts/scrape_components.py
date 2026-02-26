@@ -2,7 +2,7 @@
 """
 Scrape all JLCPCB components for local database.
 
-Uses 4 concurrent workers with browser impersonation to avoid rate limiting.
+Uses concurrent workers with wafer for anti-detection HTTP to avoid rate limiting.
 Outputs gzipped JSONL files per category.
 
 Usage:
@@ -14,8 +14,6 @@ import asyncio
 import gzip
 import json
 import logging
-import os
-import random
 import re
 import sys
 import time
@@ -24,7 +22,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from curl_cffi import requests as curl_requests
+import wafer
+from wafer import ChallengeDetected, ConnectionFailed, RateLimited, WaferTimeout
 
 # Add parent directory to path for imports when running as script
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -45,30 +44,27 @@ STOCK_THRESHOLD = DEFAULT_MIN_STOCK  # Minimum stock to include in database
 PAGE_SIZE = 100
 REQUEST_TIMEOUT = 15.0
 MAX_RETRIES = 3
-JITTER_RANGE = (0.2, 0.4)
 WORKER_STAGGER = 0.1
 GZIP_LEVEL = 9
 
-# Browser fingerprints for TLS impersonation
-BROWSER_FINGERPRINTS = ["chrome131", "chrome133a", "chrome136", "chrome142"]
 
-USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
-]
-
-SEC_CH_UA = [
-    '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-    '"Google Chrome";v="133", "Chromium";v="133", "Not_A Brand";v="24"',
-]
-
-REFERERS = [
-    "https://jlcpcb.com/parts",
-    "https://jlcpcb.com/parts/basic_parts",
-    "https://jlcpcb.com/parts/componentSearch",
-]
+def create_scraper_session() -> wafer.AsyncSession:
+    """Create a wafer session configured for JLCPCB scraping."""
+    return wafer.AsyncSession(
+        timeout=REQUEST_TIMEOUT,
+        max_retries=MAX_RETRIES,
+        max_rotations=10,
+        max_failures=None,  # Disable session retirement — 403s during rotation are expected
+        rate_limit=0.3,
+        rate_jitter=0.0,
+        cache_dir=None,
+        rotate_every=1,
+        headers={
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+        },
+    )
 
 
 # === Data Classes ===
@@ -122,35 +118,6 @@ def slugify(name: str) -> str:
     return slug.strip("-")
 
 
-def get_headers() -> dict[str, str]:
-    """Generate randomized headers that look like a real browser."""
-    ua = random.choice(USER_AGENTS)
-    is_firefox = "Firefox" in ua
-
-    headers = {
-        "Host": "jlcpcb.com",
-        "User-Agent": ua,
-        "Accept": "application/json, text/plain, */*",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br, zstd",
-        "Content-Type": "application/json",
-        "Origin": "https://jlcpcb.com",
-        "Referer": random.choice(REFERERS),
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin",
-    }
-
-    if not is_firefox:
-        headers["Sec-Ch-Ua"] = random.choice(SEC_CH_UA)
-        headers["Sec-Ch-Ua-Mobile"] = "?0"
-        platform = '"Windows"' if "Windows" in ua else '"macOS"' if "Mac" in ua else '"Linux"'
-        headers["Sec-Ch-Ua-Platform"] = platform
-        headers["Priority"] = "u=1, i"
-
-    return headers
-
-
 def transform_part(item: dict[str, Any], subcategory_id: int) -> dict[str, Any]:
     """Transform API response to our compact schema."""
     # Get price from first tier
@@ -194,45 +161,39 @@ def transform_part(item: dict[str, Any], subcategory_id: int) -> dict[str, Any]:
 
 async def make_request(
     params: dict[str, Any],
-    fingerprint: str,
+    session: wafer.AsyncSession,
 ) -> dict[str, Any]:
-    """Make a single request with retry logic."""
-    last_error = None
-
-    for attempt in range(MAX_RETRIES):
-        session = curl_requests.AsyncSession(
-            impersonate=fingerprint,
-            timeout=REQUEST_TIMEOUT,
+    """Make a single request. Wafer handles retries, rotation, and rate limiting."""
+    try:
+        response = await session.post(
+            JLCPCB_SEARCH_URL,
+            json=params,
+            headers={
+                "Origin": "https://jlcpcb.com",
+                "Referer": "https://jlcpcb.com/parts",
+                "Sec-Fetch-Site": "same-origin",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Dest": "empty",
+            },
         )
-        try:
-            headers = get_headers()
-            response = await session.post(
-                JLCPCB_SEARCH_URL,
-                json=params,
-                headers=headers,
-            )
-            response.raise_for_status()
-            data = response.json()
+    except ChallengeDetected as e:
+        raise ValueError(f"JLCPCB WAF challenge detected ({e.challenge_type})")
+    except RateLimited:
+        raise ValueError("JLCPCB rate limited (rotations exhausted)")
+    except ConnectionFailed as e:
+        raise ValueError(f"JLCPCB connection failed ({e.reason})")
+    except WaferTimeout:
+        raise ValueError("JLCPCB request timed out")
+    response.raise_for_status()
+    data = response.json()
 
-            if data.get("code") != 200:
-                raise ValueError(f"API error: {data.get('message', 'Unknown')}")
+    if data.get("code") != 200:
+        raise ValueError(f"API error: {data.get('message', 'Unknown')}")
 
-            # Jitter between requests
-            await asyncio.sleep(random.uniform(*JITTER_RANGE))
-            return data
-
-        except Exception as e:
-            last_error = e
-            if attempt < MAX_RETRIES - 1:
-                wait = 1.0 * (2 ** attempt)
-                await asyncio.sleep(wait)
-        finally:
-            await session.close()
-
-    raise last_error  # type: ignore
+    return data
 
 
-async def fetch_categories(fingerprint: str) -> list[dict[str, Any]]:
+async def fetch_categories(session: wafer.AsyncSession) -> list[dict[str, Any]]:
     """Fetch all categories and subcategories from API."""
     params = {
         "currentPage": 1,
@@ -241,7 +202,7 @@ async def fetch_categories(fingerprint: str) -> list[dict[str, Any]]:
         "searchType": 3,
     }
 
-    data = await make_request(params, fingerprint)
+    data = await make_request(params, session)
     sort_list = data.get("data", {}).get("sortAndCountVoList", [])
 
     categories = []
@@ -266,7 +227,7 @@ async def fetch_categories(fingerprint: str) -> list[dict[str, Any]]:
 
 async def scrape_subcategory(
     subcat: Subcategory,
-    fingerprint: str,
+    session: wafer.AsyncSession,
 ) -> tuple[list[dict[str, Any]], int]:
     """Scrape all parts from a subcategory. Returns (parts, total_count)."""
     parts = []
@@ -285,7 +246,7 @@ async def scrape_subcategory(
             "secondSortName": subcat.name,
         }
 
-        data = await make_request(params, fingerprint)
+        data = await make_request(params, session)
         page_info = data.get("data", {}).get("componentPageInfo", {})
         items = page_info.get("list", [])
         total = page_info.get("total", 0)
@@ -333,7 +294,7 @@ class CircuitBreaker:
 
 async def worker(
     worker_id: int,
-    fingerprint: str,
+    session: wafer.AsyncSession,
     queue: asyncio.Queue[Subcategory | None],
     results: dict[str, list[dict[str, Any]]],
     progress: ScrapeProgress,
@@ -361,7 +322,7 @@ async def worker(
 
         try:
             t0 = time.time()
-            parts, count = await scrape_subcategory(subcat, fingerprint)
+            parts, count = await scrape_subcategory(subcat, session)
             elapsed = time.time() - t0
 
             async with results_lock:
@@ -572,8 +533,8 @@ async def run_scraper(
 
     # Fetch categories
     logger.info("Fetching categories...")
-    fingerprint = BROWSER_FINGERPRINTS[0]
-    categories = await fetch_categories(fingerprint)
+    async with create_scraper_session() as init_session:
+        categories = await fetch_categories(init_session)
     logger.info(f"Found {len(categories)} categories")
 
     # Build subcategory list
@@ -636,13 +597,13 @@ async def run_scraper(
                     for line in f:
                         results[cat_slug].append(json.loads(line))
 
-        # Start workers with staggered launch and different fingerprints
+        # Start workers with staggered launch — each gets its own wafer session
         logger.info(f"Starting {num_workers} workers...")
+        worker_sessions = [create_scraper_session() for _ in range(num_workers)]
         workers = []
         for i in range(num_workers):
-            fp = BROWSER_FINGERPRINTS[i % len(BROWSER_FINGERPRINTS)]
             task = asyncio.create_task(
-                worker(i, fp, queue, results, progress, results_lock, circuit_breaker)
+                worker(i, worker_sessions[i], queue, results, progress, results_lock, circuit_breaker)
             )
             workers.append(task)
             await asyncio.sleep(WORKER_STAGGER)
@@ -650,6 +611,9 @@ async def run_scraper(
         # Wait for all work to complete
         await queue.join()
         await asyncio.gather(*workers)
+
+        # Drop worker session references (no close() needed — wafer manages resources)
+        worker_sessions.clear()
 
         # Check if circuit breaker tripped
         if circuit_breaker.is_tripped():
@@ -723,10 +687,11 @@ async def run_scraper(
         logger.info("")
         logger.info(f"Retrying {len(progress.failed_subcategories)} failed subcategories...")
         failed_subcats = [s for s in subcategories if s.id in progress.failed_subcategories]
+        retry_session = create_scraper_session()
 
         for subcat in failed_subcats:
             try:
-                parts, count = await scrape_subcategory(subcat, BROWSER_FINGERPRINTS[0])
+                parts, count = await scrape_subcategory(subcat, retry_session)
 
                 # Append to category file
                 output_file = categories_dir / f"{subcat.category_slug}.jsonl.gz"
@@ -768,6 +733,8 @@ async def run_scraper(
 
             except Exception as e:
                 logger.error(f"  Retry FAILED: {subcat.name} - {e}")
+
+        del retry_session  # No close() needed — wafer manages resources
 
     # Generate manifest
     logger.info("")

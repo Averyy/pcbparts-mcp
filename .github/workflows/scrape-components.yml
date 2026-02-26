@@ -43,7 +43,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install curl_cffi
+          pip install wafer-py
 
       - name: Run scraper
         run: |

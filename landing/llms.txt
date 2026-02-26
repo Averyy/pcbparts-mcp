@@ -1,6 +1,6 @@
 # PCB Parts MCP Server
 
-> MCP server for searching electronic components across JLCPCB, Mouser, and DigiKey directly from Claude, Cursor, and other AI coding assistants. 1.5M+ parts with parametric filtering, BOM validation, and KiCad footprints. No API key required.
+> MCP server for searching electronic components across JLCPCB, Mouser, and DigiKey directly from Claude, Cursor, and other AI coding assistants. 1.5M+ parts with parametric filtering and KiCad footprints. No API key required.
 
 - Endpoint: `https://pcbparts.dev/mcp`
 - Transport: HTTP (Streamable HTTP)
@@ -34,34 +34,28 @@ Claude Desktop / Cursor / VSCode MCP config:
 
 | Tool | Description |
 |------|-------------|
-| `jlc_search` | Primary search - smart query parsing + parametric spec filters (local DB, 575K+ in-stock parts) |
-| `jlc_search_api` | Live JLCPCB API search - real-time stock, full 1.5M catalog, pagination, basic filters only |
+| `jlc_search` | Primary search - smart query parsing + parametric spec filters (local DB, 468K+ in-stock parts) |
+| `jlc_stock_check` | Real-time stock verification via live JLCPCB API (use jlc_search first for most queries) |
 | `jlc_get_part` | Full details for a specific LCSC part code or MPN lookup |
 | `jlc_get_pinout` | Component pin information from EasyEDA symbols |
 | `jlc_find_alternatives` | Find spec-compatible alternative parts with verification |
-| `jlc_list_attributes` | Discover filterable attributes for a subcategory |
-| `jlc_list_categories` | All 52 primary component categories |
-| `jlc_get_subcategories` | Subcategories within a category |
-| `jlc_validate_bom` | Validate BOM - check stock, calculate costs, flag issues |
-| `jlc_export_bom` | Generate JLCPCB-compatible BOM CSV with pricing |
-| `mouser_search` | Search Mouser's catalog by keyword |
-| `mouser_get_part` | Mouser part lookup by part number or MPN |
-| `digikey_search` | Search DigiKey's catalog by keyword |
-| `digikey_get_part` | DigiKey part lookup by product number |
+| `jlc_search_help` | Browse categories, subcategories, and filterable attributes |
+| `mouser_get_part` | Cross-reference a specific MPN on Mouser (daily quota applies) |
+| `digikey_get_part` | Cross-reference a specific MPN on DigiKey (daily quota applies) |
 | `cse_search` | Search SamacSys for ECAD models and datasheets |
 | `cse_get_kicad` | Download KiCad symbols and footprints |
 
-## search vs search_api
+## search vs stock_check
 
 Use `jlc_search` (default) for:
 - Parametric filtering ("Vgs(th) < 2V", "voltage >= 25V")
 - Smart query parsing ("10k 0603 1%" auto-detects value, package, tolerance)
 - Most searches
 
-Use `jlc_search_api` when you need:
+Use `jlc_stock_check` only when you need:
 - Real-time stock verification before ordering
-- Out-of-stock or low-stock parts (stock < 100)
-- Full 1.5M catalog (search indexes 575K+ with stock >= 10)
+- Out-of-stock or low-stock parts (stock < 10)
+- Full 1.5M catalog (search indexes 468K+ with stock >= 10)
 
 ## Library Types
 
@@ -100,7 +94,7 @@ Short names for parametric spec filters:
 | BJTs | `Vceo`, `Ic` |
 | Passives | `Capacitance`, `Resistance`, `Inductance`, `Voltage`, `Tolerance`, `Power` |
 
-Use `jlc_list_attributes` to discover all filterable specs for any subcategory.
+Use `jlc_search_help(subcategory=...)` to discover all filterable specs for any subcategory.
 
 ## Package Expansion
 
@@ -119,31 +113,13 @@ Finds verified-compatible alternatives using spec-aware rules:
 
 Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diodes (all types), LEDs, optocouplers, crystals, oscillators, LDOs, DC-DC converters, voltage references, WiFi/BT/LoRa modules, switches, relays, connectors, and more (120+ subcategories).
 
-## BOM Tools
-
-Input format for `jlc_validate_bom` and `jlc_export_bom`:
-
-```json
-{
-  "parts": [
-    {"lcsc": "C1525", "designators": ["C1", "C2", "C3"]},
-    {"lcsc": "C25804", "designators": ["R1", "R2"]},
-    {"designators": ["J1"], "comment": "USB-C", "footprint": "USB-C-SMD"}
-  ],
-  "board_qty": 100
-}
-```
-
-Features: auto-fetches part details, merges duplicates, tiered pricing, flags extended parts ($3 fee each), checks MOQ, reports EasyEDA footprint availability.
-
 ## Example Queries
 
 - "Find logic-level MOSFETs with Vgs(th) < 2V and Id >= 5A"
 - "100nF 25V capacitors in 0402 or 0603"
 - "Find alternatives for C82899 in basic library"
 - "STM32 microcontrollers with 10000+ stock"
-- "Validate my BOM and check for stock issues"
-- "Search Mouser for TPS63020 and compare with JLCPCB pricing"
+- "Cross-reference TPS63020 on Mouser and compare with JLCPCB pricing"
 
 ## Self-Hosting
 

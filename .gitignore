@@ -42,11 +42,17 @@ htmlcov/
 .env.local
 *.local.json
 
+# Docs (local planning files)
+docs/todo-*.md
+
 # Claude
 .claude/
 
 # Playwright
 .playwright-mcp/
+
+# Wafer cookie cache (created by scraper)
+data/wafer/
 
 # Built databases (generated from JSONL at build time)
 data/components.db
