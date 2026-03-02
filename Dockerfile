@@ -40,6 +40,11 @@ COPY data/history/ /app/data/history/
 COPY scripts/build_history_db.py /app/scripts/
 RUN python scripts/build_history_db.py --data-dir /app/data --output /app/data/stock_history.db
 
+# Build sensor database from scraped sensor JSON data
+COPY data/sensors/ /app/data/sensors/
+COPY scripts/build_sensor_db.py /app/scripts/
+RUN python scripts/build_sensor_db.py --data-dir /app/data --output /app/data/sensor.db --quiet
+
 # Add src to Python path
 ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1

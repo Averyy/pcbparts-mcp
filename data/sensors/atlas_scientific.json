@@ -1,0 +1,473 @@
+{
+  "source": "atlas_scientific",
+  "source_url": "https://atlas-scientific.com",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-01T15:50:27.980440+00:00",
+  "stats": {
+    "sensor_count": 28,
+    "total_products": 92,
+    "skipped": 23,
+    "errors": 0
+  },
+  "sensors": [
+    {
+      "id": "dooem",
+      "name": "DO OEM",
+      "measures": [
+        "dissolved_oxygen"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/do-oem-circuit/"
+      ],
+      "description": "With a small 12 x 11mm footprint, the Atlas Scientific OEM DO Circuit gives you full D.O. sensing capabilities without consuming costly board space.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "doprobe",
+      "name": "DO Probe",
+      "measures": [
+        "dissolved_oxygen"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/dissolved-oxygen-probe/",
+        "https://atlas-scientific.com/probes/industrial-dissolved-oxygen-probe/",
+        "https://atlas-scientific.com/probes/mini-d-o-probe/"
+      ],
+      "description": "The Atlas Scientific Lab Grade Dissolved Oxygen probe is a durable little probe that can work in almost any environment.",
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ecoem",
+      "name": "EC OEM",
+      "measures": [
+        "conductivity"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/conductivity-oem-circuit/"
+      ],
+      "description": "Designed for mass production, the OEM-EC Circuit lets engineers add laboratory-grade conductivity measurements to any product.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ecprobe",
+      "name": "Conductivity Probe",
+      "measures": [
+        "conductivity"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/8cm-k01/",
+        "https://atlas-scientific.com/probes/conductivity-probe-k-0-1/",
+        "https://atlas-scientific.com/probes/conductivity-probe-k-1-0/",
+        "https://atlas-scientific.com/probes/conductivity-probe-k-10/",
+        "https://atlas-scientific.com/probes/industrial-conductivity-probe-k-0-1/"
+      ],
+      "description": "The Atlas Scientific line of conductivity probes has been designed to provide stable and precise readings free of fringe effect over a broad conductivity range.",
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "envco2",
+      "name": "ENV-CO2",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/env-co2-p/",
+        "https://atlas-scientific.com/probes/env-co2-s/"
+      ],
+      "description": "The Atlas Scientific EZO-CO2 sensor is a compact Non-Dispersive Infrared (NDIR) sensor that gets right to the point, giving you the Co2 readings in ppm.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ezoco2",
+      "name": "EZO-CO2",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/co2-sensor/"
+      ],
+      "description": "The Atlas Scientific EZO-CO2 Research Grade CO2 Sensor is a compact Non-Dispersive Infrared sensor that gets right to the point, giving you the Co2 readings in ppm.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ezodo",
+      "name": "EZO-DO",
+      "measures": [
+        "dissolved_oxygen"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/dissolved-oxygen/ezo-complete-do/",
+        "https://atlas-scientific.com/embedded-solutions/ezo-dissolved-oxygen-circuit/"
+      ],
+      "description": "The Atlas Scientific EZO-DO Circuit gives you accurate D.O. readings in Mg/L and percent saturation.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ezoec",
+      "name": "EZO-EC",
+      "measures": [
+        "conductivity"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/conductivity/ezo-complete-ec/",
+        "https://atlas-scientific.com/embedded-solutions/ezo-conductivity-circuit/"
+      ],
+      "description": "The Atlas Scientific EZO-EC Circuit reads conductivity, salinity, and TDS (PPM) which are fundamental measurements of water chemistry.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ezoflo",
+      "name": "EZO-FLO",
+      "measures": [
+        "flow"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/ezo-embedded-flow-meter-totalizer/"
+      ],
+      "description": "The EZO-Flow can read be used with your own pulsed D.C. flow meter, or it can be connected to one of the flow meters we offer.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ezohum",
+      "name": "EZO-HUM",
+      "measures": [
+        "humidity"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/ezo-hum-embedded-humidity-probe-plastic/",
+        "https://atlas-scientific.com/probes/humidity-probe/",
+        "https://atlas-scientific.com/product/ezo-humidity-circuit/"
+      ],
+      "description": "Designed for a wide range of applications, from industrial processes to environmental monitoring, this Humidity Probe features a photosensitive resin body, ensuring the probes durability and adapta...",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ezoo2",
+      "name": "EZO-O2",
+      "measures": [
+        "oxygen"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/ezo-o2-embedded-oxygen-sensor-p/",
+        "https://atlas-scientific.com/probes/oxygen-sensor/"
+      ],
+      "description": "The Atlas Scientific gaseous oxygen sensor has been designed to read O2 levels from 0 – 42,000 ppt.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ezoorp",
+      "name": "EZO-ORP",
+      "measures": [
+        "orp"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/ezo-orp-circuit/",
+        "https://atlas-scientific.com/orp/ezo-complete-orp/"
+      ],
+      "description": "Atlas Scientific’s EZO-ORP circuit makes taking high accuracy ORP readings easy - from calibration to timed readings, this circuit is a drop-in solution to a complex measurement.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ezoph",
+      "name": "EZO-pH",
+      "measures": [
+        "ph"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/ezo-ph-circuit/",
+        "https://atlas-scientific.com/ph/ezo-complete-ph/"
+      ],
+      "description": "Atlas Scientific’s EZO-pH circuit gives engineers the ability to read pH with the same accuracy and capabilities that were traditionally only found in expensive bench-top meters.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ezoprs",
+      "name": "EZO-PRS",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/product/pressure-sensor/"
+      ],
+      "description": "The Atlas Scientific EZO-PRS is a digital pressure sensor that provides the accuracy you need at a reasonable cost. The sensor can read the pressure of a liquid, gas, or oil from 0-50 psi.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ezorgb",
+      "name": "EZO-RGB",
+      "measures": [
+        "color"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/color-sensor-p/",
+        "https://atlas-scientific.com/probes/color-sensor/"
+      ],
+      "description": "The Atlas Scientific EZO-RGB sensor has a weather-resistant housing, on-board LEDs and an easy to use data protocol so your machine can detect colors.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "ezortd",
+      "name": "EZO-RTD",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/ezo-rtd-temperature-circuit/"
+      ],
+      "description": "The Atlas Scientific EZO-RTD Circuit makes taking high accuracy readings from a platinum RTD probes easy.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "flowmeter",
+      "name": "Flow Meter",
+      "measures": [
+        "flow"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/1-2-flow-meter/",
+        "https://atlas-scientific.com/probes/1-4-flow-meter/",
+        "https://atlas-scientific.com/probes/3-4-flow-meter/",
+        "https://atlas-scientific.com/probes/3-8-flow-meter/"
+      ],
+      "description": "Check out Atlas Scientific’s 1/2″ Flow Meter and see how our products can help you finish your project today!",
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "orpoem",
+      "name": "ORP OEM",
+      "measures": [
+        "orp"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/orp-oem-circuit/"
+      ],
+      "description": "The Atlas Scientific OEM-ORP Circuit is small, surface-mountable, and low cost and is ready to meet your large-scale production needs.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "orpprobe",
+      "name": "ORP Probe",
+      "measures": [
+        "orp"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/consumer-grade-orp-probe/",
+        "https://atlas-scientific.com/probes/gen-3-industrial-orp-probe-gold/",
+        "https://atlas-scientific.com/probes/industrial-orp-probe/",
+        "https://atlas-scientific.com/probes/lab-grade-gold-orp-probe/",
+        "https://atlas-scientific.com/probes/micro-orp-probe/"
+      ],
+      "description": "The Atlas Scientific consumer-grade ORP probe is the perfect choice for testing water samples, environmental monitoring, basic lab work, and early-stage prototypes.",
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "phoem",
+      "name": "pH OEM",
+      "measures": [
+        "ph"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/ph-oem-circuit/"
+      ],
+      "description": "Atlas Scientifics OEM class pH circuit offer the engineers a slim downed version of the EZO-pH circuit. We cut out the fat and get right to the point, high accuracy pH readings.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "phprobe",
+      "name": "pH Probe",
+      "measures": [
+        "ph"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/consumer-grade-ph-probe/",
+        "https://atlas-scientific.com/probes/industrial-gen3-ph-probe-nt/",
+        "https://atlas-scientific.com/probes/industrial-ph-probe/",
+        "https://atlas-scientific.com/probes/micro-ph-probe/",
+        "https://atlas-scientific.com/probes/mini-ph-probe/"
+      ],
+      "description": "The Atlas Scientific Consumer Grade pH probe gives accurate readings over a wide pH range. This probe has been designed to work will in common pH reading application.",
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "pressuresensor",
+      "name": "Pressure Sensor",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/a-100-analog-pressure-sensor/",
+        "https://atlas-scientific.com/product/a-10-analog-pressure-sensor/"
+      ],
+      "description": "Check out Atlas Scientific’s A-100 Analog Pressure Sensor and see how we can help finish your project today!",
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "pt1000probe",
+      "name": "PT-1000 Probe",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/probes/industrial-pt-1000-temperature-probe/",
+        "https://atlas-scientific.com/probes/micro-pt-1000-temperature-probe/",
+        "https://atlas-scientific.com/probes/pt-1000-temperature-probe/",
+        "https://atlas-scientific.com/probes/spike-tip-temp-probe/",
+        "https://atlas-scientific.com/probes/standard-temp-probe/"
+      ],
+      "description": "The Industrial PT-1000 Temperature Probe is a high-accuracy 4-wire temperature sensor.",
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "rtdoem",
+      "name": "RTD OEM",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/rtd-temperature-oem-circuit/",
+        "https://atlas-scientific.com/product/rtd-2-temperature-oem-circuit/"
+      ],
+      "description": "For those engineers tasked with mass-producing a device that needs accurate temperature sensing capabilities, the OEM-RTD is a quick and easy solution to a complex problem.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "surveyordo",
+      "name": "Surveyor DO",
+      "measures": [
+        "dissolved_oxygen"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/dissolved-oxygen-meter/"
+      ],
+      "description": "If you are looking for basic measurements that you can rely on, The Atlas Scientific Surveyor Dissolved Oxygen Meter is your solution.",
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "surveyororp",
+      "name": "Surveyor ORP",
+      "measures": [
+        "orp"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/orp-sensor-meter/"
+      ],
+      "description": "For those of you looking to add ORP measurements into your device but want something simple, the Atlas Scientific Surveyor ORP Meter/Sensor is for you.",
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "surveyorph",
+      "name": "Surveyor pH",
+      "measures": [
+        "ph"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/surveryor-analog-ph-sensor-meter/"
+      ],
+      "description": "If you are building a machine that requires pH measuring capabilities, but you only need the accuracy found in a low-cost handheld pH meter, the Atlas Scientific Surveyor pH meter might be for you.",
+      "manufacturer": "Atlas Scientific"
+    },
+    {
+      "id": "surveyorrtd",
+      "name": "Surveyor Temperature",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://atlas-scientific.com/embedded-solutions/surveyor-analog-rtd-sensor-meter/"
+      ],
+      "description": "The Atlas Scientific Surveyor™ Analog Temperature Meter is an analog temperature sensing solution that gives consistent readings over the life of your machine",
+      "manufacturer": "Atlas Scientific"
+    }
+  ]
+}

@@ -1,0 +1,1679 @@
+{
+  "source": "circuitpython",
+  "source_url": "https://docs.circuitpython.org/projects/bundle/en/latest/drivers.html",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-01T17:29:34.592481+00:00",
+  "stats": {
+    "sensor_count": 115,
+    "total_entries_checked": 544,
+    "skipped_no_measures": 0
+  },
+  "sensors": [
+    {
+      "id": "adt7410",
+      "name": "adt7410",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/adt7410/en/latest/"
+      ],
+      "description": "ADT7410 High Accuracy Temperature Sensor"
+    },
+    {
+      "id": "adxl34x",
+      "name": "adxl34x",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/adxl34x/en/latest/"
+      ],
+      "description": "ADXL34x 3 Axis Accelerometer"
+    },
+    {
+      "id": "adxl37x",
+      "name": "adxl37x",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/adxl37x/en/latest/"
+      ],
+      "description": "ADXL37x 3 Axis Accelerometer"
+    },
+    {
+      "id": "ags02ma",
+      "name": "ags02ma",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ags02ma/en/latest/"
+      ],
+      "description": "AGS02MA Gas Sensor"
+    },
+    {
+      "id": "ahtx0",
+      "name": "ahtx0",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ahtx0/en/latest/"
+      ],
+      "description": "AHTx0 Tempertaure and Humidity Sensor"
+    },
+    {
+      "id": "am2320",
+      "name": "am2320",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/am2320/en/latest/"
+      ],
+      "description": "AM2320 Temperature and Humidity"
+    },
+    {
+      "id": "amg88xx",
+      "name": "amg88xx",
+      "measures": [
+        "ir_temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/amg88xx/en/latest/"
+      ],
+      "description": "AMG88xx Grid-Eye IR Camera"
+    },
+    {
+      "id": "apds9960",
+      "name": "apds9960",
+      "measures": [
+        "gesture",
+        "proximity"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/apds9960/en/latest/"
+      ],
+      "description": "APDS9960 Proximity, Light, RGB, and Gesture"
+    },
+    {
+      "id": "as5600",
+      "name": "as5600",
+      "measures": [
+        "magnetic_field",
+        "rotation"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/as5600/en/latest/"
+      ],
+      "description": "AS5600 Magnetic Angle Sensor"
+    },
+    {
+      "id": "as726x",
+      "name": "as726x",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/as726x/en/latest/"
+      ],
+      "description": "AS726x Color Spectrum Sensor"
+    },
+    {
+      "id": "as7341",
+      "name": "as7341",
+      "measures": [
+        "color",
+        "light"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/as7341/en/latest/"
+      ],
+      "description": "AS7341 11-Channel Multi-Spectral Digital Sensor"
+    },
+    {
+      "id": "bh1750",
+      "name": "bh1750",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/bh1750/en/latest/"
+      ],
+      "description": "BH1750 Ambient Light"
+    },
+    {
+      "id": "bme280",
+      "name": "bme280",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/bme280/en/latest/"
+      ],
+      "description": "BME280 Temperature, Humidity and Pressure"
+    },
+    {
+      "id": "bme680",
+      "name": "bme680",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/bme680/en/latest/"
+      ],
+      "description": "BME680 Temperature, Humidity, Pressure and Gas"
+    },
+    {
+      "id": "bmp280",
+      "name": "bmp280",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/bmp280/en/latest/"
+      ],
+      "description": "BMP280 Barometric Pressure and Altitude"
+    },
+    {
+      "id": "bmp3xx",
+      "name": "bmp3xx",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/bmp3xx/en/latest/"
+      ],
+      "description": "BMP3xx Barometric Pressure and Altimeter"
+    },
+    {
+      "id": "bmp5xx",
+      "name": "bmp5xx",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/bmp5xx/en/latest/"
+      ],
+      "description": "BMP5xx Barometric Pressure and Altimeter"
+    },
+    {
+      "id": "bno055",
+      "name": "bno055",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/bno055/en/latest/"
+      ],
+      "description": "BNO055 Accelerometer, Magnetometer, Gyroscope and Absolution Orientation"
+    },
+    {
+      "id": "bno08x",
+      "name": "bno08x",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/bno08x/en/latest/"
+      ],
+      "description": "BNO08X  9 Axis Sensor Fusion IMU"
+    },
+    {
+      "id": "bno08xrvc",
+      "name": "bno08x_rvc",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/bno08x_rvc/en/latest/"
+      ],
+      "description": "BNO08X_RVC Simple UART Heading Library"
+    },
+    {
+      "id": "cap1188",
+      "name": "cap1188",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/cap1188/en/latest/"
+      ],
+      "description": "CAP1188 8-Key Capacitive Touch"
+    },
+    {
+      "id": "ccs811",
+      "name": "ccs811",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ccs811/en/latest/"
+      ],
+      "description": "CCS811 Air Quality"
+    },
+    {
+      "id": "cst8xx",
+      "name": "cst8xx",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/cst8xx/en/latest/"
+      ],
+      "description": "CST8XX Capacitive Touch"
+    },
+    {
+      "id": "dht",
+      "name": "dht",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/dht/en/latest/"
+      ],
+      "description": "DHT Temperature and Humidity"
+    },
+    {
+      "id": "dps310",
+      "name": "dps310",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/dps310/en/latest/"
+      ],
+      "description": "DPS310 Precision Barometric Pressure / Altitude Sensor"
+    },
+    {
+      "id": "ds18x20",
+      "name": "ds18x20",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ds18x20/en/latest/"
+      ],
+      "description": "DS18x20 Temperature"
+    },
+    {
+      "id": "emc2101",
+      "name": "emc2101",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/emc2101/en/latest/"
+      ],
+      "description": "EMC2101 Fan Controller and Temperature monitor"
+    },
+    {
+      "id": "ens160",
+      "name": "ens160",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ens160/en/latest/"
+      ],
+      "description": "ENS160 (ScioSense) digital multi-gas sensor"
+    },
+    {
+      "id": "ft5336",
+      "name": "ft5336",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ft5336/en/latest/"
+      ],
+      "description": "FT5336 Capacitive Touch Screen Driver"
+    },
+    {
+      "id": "fxas21002c",
+      "name": "fxas21002c",
+      "measures": [
+        "gyroscope"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/fxas21002c/en/latest/"
+      ],
+      "description": "FXAS21002C Gyroscope"
+    },
+    {
+      "id": "fxos8700",
+      "name": "fxos8700",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/fxos8700/en/latest/"
+      ],
+      "description": "FXOS8700 Accelerometer"
+    },
+    {
+      "id": "hcsr04",
+      "name": "hcsr04",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/hcsr04/en/latest/"
+      ],
+      "description": "HC-SR04 Ultrasonic Range Sensors"
+    },
+    {
+      "id": "hdc302x",
+      "name": "hdc302x",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/hdc302x/en/latest/"
+      ],
+      "description": "HDC302x Temperature and Humidity Sensor"
+    },
+    {
+      "id": "hts221",
+      "name": "hts221",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/hts221/en/latest/"
+      ],
+      "description": "HTS221 Temperature and Humidity Sensor"
+    },
+    {
+      "id": "htu21d",
+      "name": "htu21d",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/htu21d/en/latest/"
+      ],
+      "description": "HTU21D Temperature and Humidity"
+    },
+    {
+      "id": "htu31d",
+      "name": "htu31d",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/htu31d/en/latest/"
+      ],
+      "description": "HTU31D Temperature and Humidity"
+    },
+    {
+      "id": "icm20x",
+      "name": "icm20x",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/icm20x/en/latest/"
+      ],
+      "description": "ICM20X Wide-range 6-DoF Accelerometer and Gyro Family"
+    },
+    {
+      "id": "ina228",
+      "name": "ina228",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ina228/en/latest/"
+      ],
+      "description": "INA228 High or Low Side Power Monitor"
+    },
+    {
+      "id": "ina23x",
+      "name": "ina23x",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ina23x/en/latest/"
+      ],
+      "description": "INA23x Current and Power Monitor"
+    },
+    {
+      "id": "ina260",
+      "name": "ina260",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ina260/en/latest/"
+      ],
+      "description": "INA260 Current and Power Monitor"
+    },
+    {
+      "id": "ina3221",
+      "name": "ina3221",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ina3221/en/latest/"
+      ],
+      "description": "INA3221 Three Channel Amp Power Monitor"
+    },
+    {
+      "id": "l3gd20",
+      "name": "l3gd20",
+      "measures": [
+        "gyroscope"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/l3gd20/en/latest/"
+      ],
+      "description": "L3GD20 3-Axis Gyroscope"
+    },
+    {
+      "id": "lis2mdl",
+      "name": "lis2mdl",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lis2mdl/en/latest/"
+      ],
+      "description": "LIS2MDL 3-Axis Magnetometer"
+    },
+    {
+      "id": "lis331",
+      "name": "lis331",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lis331/en/latest/"
+      ],
+      "description": "LIS331HH and H3LIS331 3-Axis Accelerometers"
+    },
+    {
+      "id": "lis3dh",
+      "name": "lis3dh",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lis3dh/en/latest/"
+      ],
+      "description": "LIS3DH Accelerometer"
+    },
+    {
+      "id": "lis3mdl",
+      "name": "lis3mdl",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lis3mdl/en/latest/"
+      ],
+      "description": "LIS3MDL 3-Axis Magnetometer"
+    },
+    {
+      "id": "lps28",
+      "name": "lps28",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lps28/en/latest/"
+      ],
+      "description": "LPS28 Pressure Sensor"
+    },
+    {
+      "id": "lps2x",
+      "name": "lps2x",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lps2x/en/latest/"
+      ],
+      "description": "LPS2X Family of Barometric Pressure, Temperature Sensors"
+    },
+    {
+      "id": "lps35hw",
+      "name": "lps35hw",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lps35hw/en/latest/"
+      ],
+      "description": "LPS35HW Water Resistant Barometric Pressure, Temperature"
+    },
+    {
+      "id": "lsm303",
+      "name": "lsm303",
+      "measures": [
+        "acceleration",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lsm303/en/latest/"
+      ],
+      "description": "LSM303 Accelerometer and Magnetometer"
+    },
+    {
+      "id": "lsm303accel",
+      "name": "lsm303-accel",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lsm303-accel/en/latest/"
+      ],
+      "description": "LSM303 Accelerometer Onl"
+    },
+    {
+      "id": "lsm303dlhmag",
+      "name": "lsm303dlh-mag",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lsm303dlh-mag/en/latest/"
+      ],
+      "description": "LSM303DLH Magnetometer Onl"
+    },
+    {
+      "id": "lsm6dsox",
+      "name": "lsm6dsox",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lsm6dsox/en/latest/"
+      ],
+      "description": "LSM6DSOX, LSM6DS33, and ISM330DHCT  Accelerometer, Gyroscope and Temperature"
+    },
+    {
+      "id": "lsm9ds0",
+      "name": "lsm9ds0",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lsm9ds0/en/latest/"
+      ],
+      "description": "LSM9DS0 Accelerometer, Magnetometer, Gyroscope and Temperature"
+    },
+    {
+      "id": "lsm9ds1",
+      "name": "lsm9ds1",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/lsm9ds1/en/latest/"
+      ],
+      "description": "LSM9DS1 Accelerometer, Magnetometer, Gyroscope and Temperature"
+    },
+    {
+      "id": "ltr329ltr303",
+      "name": "ltr329-ltr303",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ltr329-ltr303/en/latest/"
+      ],
+      "description": "LTR329 LTR303 Light Sensors"
+    },
+    {
+      "id": "ltr390",
+      "name": "ltr390",
+      "measures": [
+        "light",
+        "uv"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ltr390/en/latest/"
+      ],
+      "description": "LTR390 Ambient Light and UV Sensor"
+    },
+    {
+      "id": "max31855",
+      "name": "max31855",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/max31855/en/latest/"
+      ],
+      "description": "MAX31855 Thermocouple Amplifier, Temperature"
+    },
+    {
+      "id": "max31856",
+      "name": "max31856",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/max31856/en/latest/"
+      ],
+      "description": "MAX31856 Thermocouple Amplifier, Temperature"
+    },
+    {
+      "id": "max31865",
+      "name": "max31865",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/max31865/en/latest/"
+      ],
+      "description": "MAX31865 Thermocouple Amplifier, Temperature"
+    },
+    {
+      "id": "mcp9600",
+      "name": "mcp9600",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mcp9600/en/latest/"
+      ],
+      "description": "MCP9600 Thermocouple Amplifier"
+    },
+    {
+      "id": "mcp9808",
+      "name": "mcp9808",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mcp9808/en/latest/"
+      ],
+      "description": "MCP9808 Temperature"
+    },
+    {
+      "id": "mlx90393",
+      "name": "mlx90393",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mlx90393/en/latest/"
+      ],
+      "description": "MLX90393 3 Axis Magnetometer"
+    },
+    {
+      "id": "mlx90395",
+      "name": "mlx90395",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mlx90395/en/latest/"
+      ],
+      "description": "MLX90395 3-Axis Magnetometer"
+    },
+    {
+      "id": "mlx90614",
+      "name": "mlx90614",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mlx90614/en/latest/"
+      ],
+      "description": "MLX90614 Contactless Temperature"
+    },
+    {
+      "id": "mlx90632",
+      "name": "mlx90632",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mlx90632/en/latest/"
+      ],
+      "description": "MLX90632 FIR Remote Thermal Temperature Sensor"
+    },
+    {
+      "id": "mlx90640",
+      "name": "mlx90640",
+      "measures": [
+        "ir_temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mlx90640/en/latest/"
+      ],
+      "description": "MLX90640 Thermal Camera"
+    },
+    {
+      "id": "mma8451",
+      "name": "mma8451",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mma8451/en/latest/"
+      ],
+      "description": "MMA8451 3 Axis Accelerometer"
+    },
+    {
+      "id": "mmc56x3",
+      "name": "mmc56x3",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mmc56x3/en/latest/"
+      ],
+      "description": "MMC56X3 Magnetometers"
+    },
+    {
+      "id": "mpl115a2",
+      "name": "mpl115a2",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mpl115a2/en/latest/"
+      ],
+      "description": "MPL115A2 Barometric Pressure, Temperature"
+    },
+    {
+      "id": "mpl3115a2",
+      "name": "mpl3115a2",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mpl3115a2/en/latest/"
+      ],
+      "description": "MPL3115A2 Barometric Pressure, Altitude and Temperature Sensor"
+    },
+    {
+      "id": "mpr121",
+      "name": "mpr121",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mpr121/en/latest/"
+      ],
+      "description": "MPR121 Capacitive Touch Sensor"
+    },
+    {
+      "id": "mprls",
+      "name": "mprls",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mprls/en/latest/"
+      ],
+      "description": "MPRLS Ported Absolute Pressure"
+    },
+    {
+      "id": "mpu6050",
+      "name": "mpu6050",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/mpu6050/en/latest/"
+      ],
+      "description": "MPU6050 Accelerometer, Gyroscope, and Temperature Sensor"
+    },
+    {
+      "id": "ms8607",
+      "name": "ms8607",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/ms8607/en/latest/"
+      ],
+      "description": "MS8607 Pressure, Temperature, Humidity"
+    },
+    {
+      "id": "msa301",
+      "name": "msa301",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/msa301/en/latest/"
+      ],
+      "description": "MSA301 3 Axis Accelerometer"
+    },
+    {
+      "id": "opt4048",
+      "name": "opt4048",
+      "measures": [
+        "color",
+        "light"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/opt4048/en/latest/"
+      ],
+      "description": "OPT4048 Tri-Stimulus XYZ Color and Lux Sensor"
+    },
+    {
+      "id": "pct2075",
+      "name": "pct2075",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/pct2075/en/latest/"
+      ],
+      "description": "PCT2075 Temperature Sensor"
+    },
+    {
+      "id": "pm25",
+      "name": "pm25",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/pm25/en/latest/"
+      ],
+      "description": "PM25 Air Quality Sensor"
+    },
+    {
+      "id": "scd30",
+      "name": "scd30",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/scd30/en/latest/"
+      ],
+      "description": "SCD30 CO2, Temperature, and Humidity Sensor"
+    },
+    {
+      "id": "scd4x",
+      "name": "scd4x",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/scd4x/en/latest/"
+      ],
+      "description": "SCD4x Temperature and Humidity Sensor"
+    },
+    {
+      "id": "sen6x",
+      "name": "sen6x",
+      "measures": [
+        "gas",
+        "humidity",
+        "particulate",
+        "temperature",
+        "voc"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/sen6x/en/latest/"
+      ],
+      "description": "SEN6x Environmental Sensor"
+    },
+    {
+      "id": "sgp30",
+      "name": "sgp30",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/sgp30/en/latest/"
+      ],
+      "description": "SGP30 Air Quality"
+    },
+    {
+      "id": "sgp40",
+      "name": "sgp40",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/sgp40/en/latest/"
+      ],
+      "description": "SGP40 Air Quality Sensor"
+    },
+    {
+      "id": "sgp41",
+      "name": "sgp41",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/sgp41/en/latest/"
+      ],
+      "description": "SGP41 Multi-Pixel Gas Sensor"
+    },
+    {
+      "id": "sht31d",
+      "name": "sht31d",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/sht31d/en/latest/"
+      ],
+      "description": "SHT31-D Temperature and Humidity"
+    },
+    {
+      "id": "sht4x",
+      "name": "sht4x",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/sht4x/en/latest/"
+      ],
+      "description": "SHT4x Temperature and Humidity"
+    },
+    {
+      "id": "shtc3",
+      "name": "shtc3",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/shtc3/en/latest/"
+      ],
+      "description": "SHTC3 Temperature and Humidity"
+    },
+    {
+      "id": "si1145",
+      "name": "si1145",
+      "measures": [
+        "light",
+        "uv"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/si1145/en/latest/"
+      ],
+      "description": "SI1145 Digital UV Index IR Visible Light Sensor"
+    },
+    {
+      "id": "si7021",
+      "name": "si7021",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/si7021/en/latest/"
+      ],
+      "description": "Si7021 Temperature and Humidity"
+    },
+    {
+      "id": "spa06003",
+      "name": "spa06_003",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/spa06_003/en/latest/"
+      ],
+      "description": "SPA06-003 Temperature and Pressure"
+    },
+    {
+      "id": "sths34pf80",
+      "name": "sths34pf80",
+      "measures": [
+        "motion"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/sths34pf80/en/latest/"
+      ],
+      "description": "STHS34PF80 IR Presence / Motion Sensor"
+    },
+    {
+      "id": "stmpe610",
+      "name": "stmpe610",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/stmpe610/en/latest/"
+      ],
+      "description": "STMPE610 Resistive Touchscreen"
+    },
+    {
+      "id": "tc74",
+      "name": "tc74",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tc74/en/latest/"
+      ],
+      "description": "TC74 Digital Temperature Sensor"
+    },
+    {
+      "id": "tcs34725",
+      "name": "tcs34725",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tcs34725/en/latest/"
+      ],
+      "description": "TCS34725 Color Sensor"
+    },
+    {
+      "id": "tlv493d",
+      "name": "tlv493d",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tlv493d/en/latest/"
+      ],
+      "description": "TLV493D 3 Axis Magnetometer"
+    },
+    {
+      "id": "tmp006",
+      "name": "tmp006",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tmp006/en/latest/"
+      ],
+      "description": "TMP006 Contactless IR Thermopile Sensor"
+    },
+    {
+      "id": "tmp007",
+      "name": "tmp007",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tmp007/en/latest/"
+      ],
+      "description": "TMP007 Contactless Temperature"
+    },
+    {
+      "id": "tmp117",
+      "name": "tmp117",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tmp117/en/latest/"
+      ],
+      "description": "TMP117 High-Precision Temperature Sensor"
+    },
+    {
+      "id": "tsc2007",
+      "name": "tsc2007",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tsc2007/en/latest/"
+      ],
+      "description": "TSC2007 Resistive Touch Screen Driver"
+    },
+    {
+      "id": "tsl2561",
+      "name": "tsl2561",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tsl2561/en/latest/"
+      ],
+      "description": "TSL2561 Light Sensor"
+    },
+    {
+      "id": "tsl2591",
+      "name": "tsl2591",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tsl2591/en/latest/"
+      ],
+      "description": "TSL2591 High Dynamic Range Light Sensor"
+    },
+    {
+      "id": "tt21100",
+      "name": "tt21100",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tt21100/en/latest/"
+      ],
+      "description": "TT21100 Capacitive Touchscreen Driver"
+    },
+    {
+      "id": "us100",
+      "name": "us100",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/us100/en/latest/"
+      ],
+      "description": "US-100 Ultrasonic Distance Sensor"
+    },
+    {
+      "id": "vcnl4010",
+      "name": "vcnl4010",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/vcnl4010/en/latest/"
+      ],
+      "description": "VCNL4010 Proximity and Light"
+    },
+    {
+      "id": "vcnl4020",
+      "name": "vcnl4020",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/vcnl4020/en/latest/"
+      ],
+      "description": "VCNL4020 Proximity and Light"
+    },
+    {
+      "id": "vcnl4040",
+      "name": "vcnl4040",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/vcnl4040/en/latest/"
+      ],
+      "description": "VCNL4040 Proximity and Light"
+    },
+    {
+      "id": "vcnl4200",
+      "name": "vcnl4200",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/vcnl4200/en/latest/"
+      ],
+      "description": "VCNL4200 Proximity and Light"
+    },
+    {
+      "id": "veml6070",
+      "name": "veml6070",
+      "measures": [
+        "uv"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/veml6070/en/latest/"
+      ],
+      "description": "VEML6070 UV Index"
+    },
+    {
+      "id": "veml6075",
+      "name": "veml6075",
+      "measures": [
+        "uv"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/veml6075/en/latest/"
+      ],
+      "description": "VEML6075 UV Index"
+    },
+    {
+      "id": "veml7700",
+      "name": "veml7700",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/veml7700/en/latest/"
+      ],
+      "description": "VEML7700 High Accuracy Ambient Light Sensor"
+    },
+    {
+      "id": "vl53l0x",
+      "name": "vl53l0x",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/vl53l0x/en/latest/"
+      ],
+      "description": "VL53L0x ~30 - 1000 mm"
+    },
+    {
+      "id": "vl53l1x",
+      "name": "vl53l1x",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/vl53l1x/en/latest/"
+      ],
+      "description": "VL53L1X ~30 - 4000 mm"
+    },
+    {
+      "id": "vl53l4cd",
+      "name": "vl53l4cd",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/vl53l4cd/en/latest/"
+      ],
+      "description": "VL53L4CD Time of Flight"
+    },
+    {
+      "id": "vl6180x",
+      "name": "vl6180x",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/vl6180x/en/latest/"
+      ],
+      "description": "VL6180x 5 - 100 mm"
+    }
+  ]
+}

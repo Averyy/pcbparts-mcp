@@ -1,0 +1,2458 @@
+{
+  "source": "micropython",
+  "source_url": "https://raw.githubusercontent.com/mcauser/awesome-micropython/master/readme.md",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-01T17:29:34.357975+00:00",
+  "stats": {
+    "sensor_count": 165
+  },
+  "sensors": [
+    {
+      "id": "adt7410",
+      "name": "ADT7410",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_ADT7410"
+      ],
+      "description": "MicroPython Driver for the Analog Devices ADT7410 Temperature Sensor."
+    },
+    {
+      "id": "adxl343",
+      "name": "ADXL343",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_ADXL343"
+      ],
+      "description": "MicroPython Driver for the Analog Devices ADXL343 Accelerometer."
+    },
+    {
+      "id": "adxl345",
+      "name": "ADXL345-with-Pyboard",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/AbhinayBandaru/ADXL345-with-Pyboard",
+        "https://github.com/fanday/adxl345_micropython",
+        "https://github.com/AlekseyFedorovich/ADXL345_spi_micropython"
+      ],
+      "description": "Library for interacting through the SPI protocol with an 'Analog Devices ADXL345' accelerometer from an MCU flashed with MicroPython."
+    },
+    {
+      "id": "ags02ma",
+      "name": "AGS02MA",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_AGS02MA"
+      ],
+      "description": "MicroPython Driver for the AGS02MA TVOC sensor."
+    },
+    {
+      "id": "ahtx0",
+      "name": "ahtx0",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/targetblank/micropython_ahtx0"
+      ],
+      "description": "MicroPython driver for the AHT10 and AHT20 temperature and humidity sensors."
+    },
+    {
+      "id": "am2320",
+      "name": "am2320",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/micropython-am2320"
+      ],
+      "description": "Aosong AM2320 temperature and humidity sensor, I2C interface."
+    },
+    {
+      "id": "apds9960",
+      "name": "apds9960",
+      "measures": [
+        "gesture",
+        "proximity"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/apds9960.py"
+      ],
+      "description": "MicroPython Driver for the APDS9960, with simple gesture detection."
+    },
+    {
+      "id": "as5600l",
+      "name": "AS5600L",
+      "measures": [
+        "magnetic_field",
+        "rotation"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/capella-ben/microPython_AS5600L"
+      ],
+      "description": "MicroPython driver for AS5600L magnet rotary position sensor."
+    },
+    {
+      "id": "as6212",
+      "name": "AS6212",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_AS6212"
+      ],
+      "description": "MicroPython Library for the ASM AS6212 Temperature Sensor."
+    },
+    {
+      "id": "as7262x",
+      "name": "AS7262X_driver",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/rcolistete/MicroPython_AS7262X_driver"
+      ],
+      "description": "MicroPython driver for AS7262/AS7263 nano spectrometer sensor."
+    },
+    {
+      "id": "as726x",
+      "name": "AS726X_LoPy",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jajberni/AS726X_LoPy"
+      ],
+      "description": "MicroPython driver for the AS726X spectral sensor."
+    },
+    {
+      "id": "as7341",
+      "name": "as7341",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://gitlab.com/robhamerling/micropython-as7341"
+      ],
+      "description": "MicroPython library for AS7341."
+    },
+    {
+      "id": "atm90e26",
+      "name": "ATM90E26_Micropython",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/whatnick/ATM90E26_Micropython"
+      ],
+      "description": "Driver for ATM90E26 energy metering device."
+    },
+    {
+      "id": "bh1750",
+      "name": "bh1750",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/PinkInk/upylib/tree/master/bh1750",
+        "https://github.com/octaprog7/BH1750",
+        "https://github.com/adyavanapalli/bh1750.py"
+      ],
+      "description": "MicroPython module for the BH1750 ambient light sensor (ALS)."
+    },
+    {
+      "id": "bma220",
+      "name": "BMA220",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_BMA220"
+      ],
+      "description": "MicroPython Driver for the Bosch BMA220 Accelerometer."
+    },
+    {
+      "id": "bma400",
+      "name": "BMA400",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_BMA400"
+      ],
+      "description": "MicroPython Driver for the Bosch BMA400 Accelerometer."
+    },
+    {
+      "id": "bma423",
+      "name": "bma423-pure-mp",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/antirez/bma423-pure-mp"
+      ],
+      "description": "MicroPython Driver for the Bosch 423 accelerometer. Includes FIFO support. ⏩"
+    },
+    {
+      "id": "bme280",
+      "name": "bme280",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/kevbu/micropython-bme280",
+        "https://github.com/robert-hh/BME280",
+        "https://github.com/triplepoint/micropython_bme280_i2c",
+        "https://github.com/neliogodoi/MicroPython-BME280"
+      ],
+      "description": "A MicroPython module for communicating with the Bosch BME280 temperature, humidity, and pressure sensor."
+    },
+    {
+      "id": "bme680",
+      "name": "bme680-mqtt-micropython",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/robmarkcole/bme680-mqtt-micropython",
+        "https://github.com/robert-hh/BME680-Micropython",
+        "https://github.com/octaprog7/BME680",
+        "https://github.com/antirez/bme680-pure-mp"
+      ],
+      "description": "MicroPython module for the BME680, Bosch low power gas, pressure, temperature & humidity sensor."
+    },
+    {
+      "id": "bmi160",
+      "name": "BMI160",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_BMI160"
+      ],
+      "description": "ARCHIVED. MicroPython Driver for the Bosch BMI160 Accelerometer/Gyro Sensor."
+    },
+    {
+      "id": "bmi270",
+      "name": "BMI270",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_BMI270"
+      ],
+      "description": "ARCHIVED. MicroPython Driver for the Bosch BMI270 Accelerometer/Gyro Sensor."
+    },
+    {
+      "id": "bmm150",
+      "name": "BMM150",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_BMM150"
+      ],
+      "description": "MicroPython Driver for the Bosch BMM150 Magnetometer."
+    },
+    {
+      "id": "bmp180",
+      "name": "bmp180",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/micropython-IMU/micropython-bmp180",
+        "https://gitlab.com/flowolf/micropython-bmp180",
+        "https://github.com/octaprog7/BMP180"
+      ],
+      "description": "A module for MicroPython which provides a class for the BMP180 pressure sensor."
+    },
+    {
+      "id": "bmp280",
+      "name": "bmp280",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/dafvid/micropython-bmp280"
+      ],
+      "description": "Module for the BMP280 sensor."
+    },
+    {
+      "id": "bmp390",
+      "name": "BMP390",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/octaprog7/BMP390"
+      ],
+      "description": "MicroPython module for BMP390 pressure & temperature sensor."
+    },
+    {
+      "id": "bmp581",
+      "name": "bmp581",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/octaprog7/bmp581",
+        "https://github.com/jposada202020/MicroPython_BMP581"
+      ],
+      "description": "MicroPython module for BMP581, pressure and ambient temperature sensor from Bosch Sensortec."
+    },
+    {
+      "id": "bmp585",
+      "name": "BMPxxx",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/bradcar/MicroPython_BMPxxx"
+      ],
+      "description": "Driver for BMP585, BMP581, BMP390, BMP280 Bosch temperature/pressure sensors."
+    },
+    {
+      "id": "bmx055",
+      "name": "bmx055",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/micropython-IMU/micropython-bmx055"
+      ],
+      "description": "Driver for Bosch BMX055 IMU sensor."
+    },
+    {
+      "id": "bno055",
+      "name": "bno055",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/micropython-IMU/micropython-bno055",
+        "https://github.com/deshipu/micropython-bno055"
+      ],
+      "description": "Bosch BNO055 driver for MicroPython. IMU with hardware sensor fusion."
+    },
+    {
+      "id": "bno08xrvc",
+      "name": "bno08x-rvc",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/rdagger/micropython-bno08x-rvc"
+      ],
+      "description": "MicroPython library for BNO08x."
+    },
+    {
+      "id": "ccs811",
+      "name": "CCS811",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/Ledbelly2142/CCS811",
+        "https://github.com/Notthemarsian/CCS811"
+      ],
+      "description": "Basic MicroPython driver for CCS811 on ESP8266 boards."
+    },
+    {
+      "id": "cs5490",
+      "name": "cs5490_micropython",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/whatnick/cs5490_micropython"
+      ],
+      "description": "MicroPython Driver for CS5490 Energy Monitor IC."
+    },
+    {
+      "id": "d6fph",
+      "name": "D6F-PH",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/ekspla/D6F-PH"
+      ],
+      "description": "MicroPython module for differential pressure sensor, D6F-PH (OMRON)."
+    },
+    {
+      "id": "dht11",
+      "name": "Official DHT11+DHT12",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/micropython/micropython-lib/tree/master/micropython/drivers/sensor/dht"
+      ],
+      "description": "ESP8266 driver for DHT11 and DHT12 temperature and humidity sensor."
+    },
+    {
+      "id": "dht12",
+      "name": "dht12",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/micropython-dht12"
+      ],
+      "description": "Aosong DHT12 temperature and humidity sensor, I2C interface."
+    },
+    {
+      "id": "dps310",
+      "name": "DPS310",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_DPS310"
+      ],
+      "description": "MicroPython Driver for the DPS310 Sensor. (Archived)"
+    },
+    {
+      "id": "ens160",
+      "name": "ens160",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/octaprog7/ens160"
+      ],
+      "description": "MicroPython module for work with ENS160 Digital Metal-Oxide Multi-Gas Sensor."
+    },
+    {
+      "id": "esp32solar2",
+      "name": "esp32-solar2",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/octopusengine/esp32-solar2"
+      ],
+      "description": "Simple solar regulator - MicroPython project."
+    },
+    {
+      "id": "esp8266hmc5883l",
+      "name": "esp8266-hmc5883l",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/gvalkov/micropython-esp8266-hmc5883l"
+      ],
+      "description": "3-axis digital compass on the ESP8266."
+    },
+    {
+      "id": "ft6x06",
+      "name": "ft6x06",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/antirez/micropython-ft6x06"
+      ],
+      "description": "Simple driver for FT6x06 capacitive touch sensor in pure Python."
+    },
+    {
+      "id": "gp2y0a21yk",
+      "name": "GP2Y0A21YK",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/basanovase/GP2Y0A21YK"
+      ],
+      "description": "GP2Y0A21YK MicroPython library."
+    },
+    {
+      "id": "gp2y0e03",
+      "name": "gp2y0e03",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/deshipu-micropython-gp2y0e03"
+      ],
+      "description": "IR-LED distance measuring sensor using Sharp GP2Y0E03."
+    },
+    {
+      "id": "gy33",
+      "name": "gy33",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/QuirkyCort/micropython-gy33"
+      ],
+      "description": "UART and I2C drivers for GY-33 module (TCS3472 color sensor)."
+    },
+    {
+      "id": "h3lis200dl",
+      "name": "H3LIS200DL",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_H3LIS200DL"
+      ],
+      "description": "MicroPython Driver for the ST H3LIS200DL Accelerometer."
+    },
+    {
+      "id": "hcsr04",
+      "name": "hcsr04",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/rsc1975/micropython-hcsr04"
+      ],
+      "description": "Driver for HC-SR04 ultrasonic distance sensors."
+    },
+    {
+      "id": "hdc1008",
+      "name": "hdc1008",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/kfricke/micropython-hdc1008"
+      ],
+      "description": "Driver for the Texas Instruments HDC1008 humidity and temperature sensor."
+    },
+    {
+      "id": "hdc1080",
+      "name": "HDC1080",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_HDC1080",
+        "https://github.com/mcauser/micropython-hdc1080"
+      ],
+      "description": "MicroPython driver for the TI HDC1080 Temperature and Humidity sensor."
+    },
+    {
+      "id": "hs3003",
+      "name": "HS3003",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_HS3003"
+      ],
+      "description": "MicroPython Driver for the Renesas HS3003 Temperature and Humidity Sensor."
+    },
+    {
+      "id": "hscdtd008a",
+      "name": "HSCDTD008A",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/octaprog7/HSCDTD008A"
+      ],
+      "description": "MicroPython module for HSCDTD008A geomagnetic sensor."
+    },
+    {
+      "id": "hts221",
+      "name": "HTS221",
+      "measures": [
+        "humidity"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_HTS221"
+      ],
+      "description": "MicroPython Driver for the HTS221 Humidity Sensor."
+    },
+    {
+      "id": "htu21d",
+      "name": "htu21d-esp8266",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/julianhille/htu21d-esp8266",
+        "https://github.com/peterhinch/micropython-async/blob/master/v3/docs/HTU21D.md"
+      ],
+      "description": "This is a MicroPython module / class to measure data from the HTU21D."
+    },
+    {
+      "id": "htu21df",
+      "name": "HTU21DF",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_HTU21DF"
+      ],
+      "description": "MicroPython HTU21D-F Temperature & Humidity driver."
+    },
+    {
+      "id": "htu31d",
+      "name": "HTU31D",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_HTU31D"
+      ],
+      "description": "MicroPython library for TE HTU31D temperature and humidity sensors."
+    },
+    {
+      "id": "hx710",
+      "name": "hx710",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/hx710.py",
+        "https://github.com/robert-hh/hx710"
+      ],
+      "description": "MicroPython driver for the HX710 load cell interface."
+    },
+    {
+      "id": "hx711",
+      "name": "hx711",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/SergeyPiskunov/micropython-hx711",
+        "https://github.com/HowManyOliversAreThere/hx711_mpy-driver",
+        "https://github.com/robert-hh/hx711"
+      ],
+      "description": "MicroPython driver for HX711 24-Bit Analog-to-Digital Converter."
+    },
+    {
+      "id": "icg20660",
+      "name": "ICG20660",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_ICG20660"
+      ],
+      "description": "ARCHIVED. MicroPython Driver for the TDK ICG20660 Accelerometer/Gyro sensor."
+    },
+    {
+      "id": "icm20948",
+      "name": "ICM20948",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_ICM20948"
+      ],
+      "description": "ARCHIVED. MicroPython Driver for the TDK ICM20948 Accelerometer/Gyro Sensor."
+    },
+    {
+      "id": "icp10111",
+      "name": "ICP10111",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_ICP10111"
+      ],
+      "description": "MicroPython Driver for the TDK ICP-10111 Barometric Pressure and Temperature sensor. (Archived)"
+    },
+    {
+      "id": "ina219",
+      "name": "micropythonINA219",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/kabel42/micropythonINA219",
+        "https://github.com/robert-hh/INA219",
+        "https://gitlab.com/n.rj.powers/micropython-current-monitor",
+        "https://github.com/octaprog7/INA_TI"
+      ],
+      "description": "MicroPython module for controlling INA219, INA226 - A two-directional current / power monitor with the I2C interface."
+    },
+    {
+      "id": "iotycoind4",
+      "name": "IoTy coind4",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/coind4.py"
+      ],
+      "description": "Driver for the COIN-D4 360 degree LiDAR."
+    },
+    {
+      "id": "iotydelta2d",
+      "name": "IoTy delta2d",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/delta2d.py"
+      ],
+      "description": "Driver for the Delta-2D 360 degree LiDAR."
+    },
+    {
+      "id": "iotylds02rr",
+      "name": "IoTy lds02rr",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/lds02rr.py"
+      ],
+      "description": "Driver for the LDS02RR 360 degree LiDAR."
+    },
+    {
+      "id": "isl29125",
+      "name": "ISL29125",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_ISL29125"
+      ],
+      "description": "MicroPython Driver for the Intersil ISL29125 Color Sensor."
+    },
+    {
+      "id": "kx132",
+      "name": "KX132",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_KX132"
+      ],
+      "description": "MicroPython Driver for the Kionix KX132 Accelerometer."
+    },
+    {
+      "id": "l58touch",
+      "name": "L58Touch",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/russhughes/L58Touch"
+      ],
+      "description": "L58 Multi-Touch MicroPython Module."
+    },
+    {
+      "id": "ld2410",
+      "name": "ld2410",
+      "measures": [
+        "motion",
+        "proximity"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/ld2410.py"
+      ],
+      "description": "24GHz human presence sensing module, capable of detecting moving and stationary targets, and providing an approximate range."
+    },
+    {
+      "id": "lidarlightv3hp",
+      "name": "LidarLight_v3HP_micropython",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/Dnapert/LidarLight_v3HP_micropython"
+      ],
+      "description": "A MicroPython library for the Garmin Lidar Lite v3HP."
+    },
+    {
+      "id": "lis2hh12",
+      "name": "lis2hh12",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/tuupola/micropython-lis2hh12"
+      ],
+      "description": "I2C driver for LIS2HH12 3-axis accelerometer."
+    },
+    {
+      "id": "lis2mdl",
+      "name": "LIS2MDL",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_LIS2MDL"
+      ],
+      "description": "MicroPython Driver for the ST LIS2MDL Magnetometer sensor."
+    },
+    {
+      "id": "lis3dh",
+      "name": "LIS3DH",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/tinypico/tinypico-micropython/tree/master/lis3dh%20library",
+        "https://github.com/jposada202020/MicroPython_LIS3DH"
+      ],
+      "description": "MicroPython Driver for the LIS3DH 3-axis accelerometer."
+    },
+    {
+      "id": "lis3mdl",
+      "name": "LIS3MDL",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_LIS3MDL"
+      ],
+      "description": "MicroPython Driver for the ST LIS3MDL magnetometer."
+    },
+    {
+      "id": "lm75",
+      "name": "LM75-MicroPython",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/OldhamMade/LM75-MicroPython"
+      ],
+      "description": "Driver for LM75 digital temperature sensor, I2C interface."
+    },
+    {
+      "id": "lm75a",
+      "name": "lm75a",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/micropython-lm75a"
+      ],
+      "description": "Driver for the NXP LM75A digital temperature sensor."
+    },
+    {
+      "id": "lsm6dsox",
+      "name": "LSM6DSOX",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_LSM6DSOX"
+      ],
+      "description": "ARCHIVED. MicroPython Library for the ST LSM6DSOX accelerometer/gyro Sensor."
+    },
+    {
+      "id": "lsm9ds0",
+      "name": "lsm9ds0",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/micropython-IMU/micropython-lsm9ds0"
+      ],
+      "description": "LSM9DS0 g-force linear acceleration, Gauss magnetic and DPS angular rate sensors."
+    },
+    {
+      "id": "ltr390uv",
+      "name": "ltr390uv",
+      "measures": [
+        "light",
+        "uv"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/octaprog7/ltr390uv"
+      ],
+      "description": "MicroPython module for LTR390UV, ambient light sensor in the visible and ultraviolet ranges."
+    },
+    {
+      "id": "max30102",
+      "name": "MAX30102-MicroPython-driver",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/n-elia/MAX30102-MicroPython-driver",
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/max30102.py"
+      ],
+      "description": "MicroPython driver for the MAX30102, with heartbeat detection and BPM measurement."
+    },
+    {
+      "id": "max31855",
+      "name": "max31855",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/deshipu-micropython-max31855"
+      ],
+      "description": "Thermocouple amplifier, SPI interface."
+    },
+    {
+      "id": "max31856",
+      "name": "max31856",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/alinbaltaru/max31856"
+      ],
+      "description": "Precision thermocouple to digital converter with linearization, SPI interface."
+    },
+    {
+      "id": "max31865",
+      "name": "max31865",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/sufyanaslam198/max31865"
+      ],
+      "description": "Precision resistance-to-digital converter optimized for platinum resistance temperature detectors, SPI interface."
+    },
+    {
+      "id": "max44009",
+      "name": "max44009",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/micropython-max44009",
+        "https://github.com/rcolistete/MicroPython_MAX44009_driver"
+      ],
+      "description": "MicroPython driver for the MAX44009 ambient light sensor."
+    },
+    {
+      "id": "mc3479",
+      "name": "MC3479",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/Micropython_MC3479"
+      ],
+      "description": "MicroPython Driver for the MC3479 Accelerometer."
+    },
+    {
+      "id": "mcp39f521",
+      "name": "MCP39F521",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/warpme/MCP39F521"
+      ],
+      "description": "ESP8266 scripts for reading MCP39F521 power monitors."
+    },
+    {
+      "id": "mcp9700",
+      "name": "mcp9700",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://gitlab.com/CrispyCrafter/mcp9700"
+      ],
+      "description": "Generic MicroPython driver for MCP9700."
+    },
+    {
+      "id": "mcp9808",
+      "name": "mcp9808",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/kfricke/micropython-mcp9808",
+        "https://github.com/jposada202020/MicroPython_MCP9808"
+      ],
+      "description": "MicroPython Driver for the Microchip MCP9808 Temperature Sensor."
+    },
+    {
+      "id": "mics6814",
+      "name": "MICS6814-Micropython-driver",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://gitlab.com/DanNduati/MICS6814-Micropython-driver"
+      ],
+      "description": "ESP32 MicroPython driver for the Pimoroni MICS6814 breakout board."
+    },
+    {
+      "id": "mlx90393",
+      "name": "MLX90393",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_MLX90393"
+      ],
+      "description": "MicroPython Driver for the MLX90393 Magnetometer."
+    },
+    {
+      "id": "mlx90614",
+      "name": "mlx90614",
+      "measures": [
+        "ir_temperature",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/micropython-mlx90614"
+      ],
+      "description": "Driver for Melexis MLX90614 IR temperature sensor."
+    },
+    {
+      "id": "mlx90615",
+      "name": "MLX90615_driver",
+      "measures": [
+        "ir_temperature",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/rcolistete/MicroPython_MLX90615_driver"
+      ],
+      "description": "MicroPython driver for Melexis MLX90615 IR temperature sensor."
+    },
+    {
+      "id": "mma7660",
+      "name": "MMA7660",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/Bucknalla/MicroPython-3-Axis-Accelerometer/blob/master/MMA7660.py"
+      ],
+      "description": "Driver for MMA7660 1.5g 3-axis accelerometer."
+    },
+    {
+      "id": "mma8451",
+      "name": "MMA8451",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_MMA8451"
+      ],
+      "description": "MicroPython module for the MMA8451 3-axis accelerometer."
+    },
+    {
+      "id": "mma8452q",
+      "name": "MMA8452Q",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_MMA8452Q"
+      ],
+      "description": "MicroPython Driver for the NXP MMA8452Q Accelerometer."
+    },
+    {
+      "id": "mmc5603",
+      "name": "MMC5603",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_MMC5603",
+        "https://github.com/octaprog7/MMC5603"
+      ],
+      "description": "MicroPython driver for the Memsic MMC5603 Magnetometer."
+    },
+    {
+      "id": "mmc5983",
+      "name": "MMC5983",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_MMC5983"
+      ],
+      "description": "MicroPython Library for the Memsic MMC5983 Magnetometer."
+    },
+    {
+      "id": "mmr902",
+      "name": "MMR902",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_MMR902"
+      ],
+      "description": "MicroPython Driver for the Mitsumi MMR902 Micro Pressure Sensor. (Archived)"
+    },
+    {
+      "id": "mpbmp3xxfull",
+      "name": "mp-bmp3xx-full",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jornamon/mp-bmp3xx-full"
+      ],
+      "description": "MicroPython driver for the Bosch BMP3xx range of barometric pressure sensors. Includes FIFO support. ⏩"
+    },
+    {
+      "id": "mpl115a2",
+      "name": "mpl115a2",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/khoulihan/micropython-mpl115a2"
+      ],
+      "description": "Pyboard driver for the MPL115A2 barometric pressure sensor."
+    },
+    {
+      "id": "mpl3115a2",
+      "name": "MPL3115A2_MicroPython",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/PinsonJonas/MPL3115A2_MicroPython",
+        "https://github.com/jposada202020/MicroPython_MPL3115A2"
+      ],
+      "description": "MicroPython driver for the NXP MPL3115A2 Pressure and Temperature sensor. (Archived)"
+    },
+    {
+      "id": "mpr121",
+      "name": "mpr121",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/micropython-mpr121"
+      ],
+      "description": "Driver for MPR121 capacitive touch keypads and breakout boards."
+    },
+    {
+      "id": "mpu6050",
+      "name": "mpu6050",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/wybiral/micropython-mpu6050",
+        "https://github.com/mozanunal/micropython-mpu6050-mqtt-streamer",
+        "https://github.com/adamjezek98/MPU6050-ESP8266-MicroPython",
+        "https://github.com/OneMadGypsy/upy-motion",
+        "https://github.com/gitcnd/MPU6050-ESP32-MicroPython"
+      ],
+      "description": "MicroPython library for reading from MPU-6050 accelerometer and gyroscope modules."
+    },
+    {
+      "id": "mpu6886",
+      "name": "mpu6886",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/tuupola/micropython-mpu6886"
+      ],
+      "description": "MicroPython I2C driver for MPU6886 6-axis motion tracking device."
+    },
+    {
+      "id": "mpu9250",
+      "name": "mpu9250",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/tuupola/micropython-mpu9250",
+        "https://gitlab.com/nnayo/micropython-mpu9250"
+      ],
+      "description": "I2C driver for MPU9250 9-axis motion tracking device."
+    },
+    {
+      "id": "mpu9x50",
+      "name": "mpu9x50",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/micropython-IMU/micropython-mpu9x50"
+      ],
+      "description": "Driver for the InvenSense MPU9250 inertial measurement unit."
+    },
+    {
+      "id": "mpybh1750fvi",
+      "name": "mpy_bh1750fvi_esp8266",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/catdog2/mpy_bh1750fvi_esp8266"
+      ],
+      "description": "ESP8266 driver for BH1750FVI sensor."
+    },
+    {
+      "id": "mpybme280",
+      "name": "mpy_bme280_esp8266",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/catdog2/mpy_bme280_esp8266"
+      ],
+      "description": "Bosch BME280 temperature/pressure/humidity sensor."
+    },
+    {
+      "id": "mq135",
+      "name": "MQ135",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/rubfi/MQ135"
+      ],
+      "description": "Driver for MQ135 gas sensor."
+    },
+    {
+      "id": "ms5611",
+      "name": "MS5611",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_MS5611"
+      ],
+      "description": "MicroPython Driver for the TE MS5611 Pressure and Temperature Sensor. (Archived)"
+    },
+    {
+      "id": "ms5803",
+      "name": "ms5803-micropython",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/minyiky/ms5803-micropython"
+      ],
+      "description": "A MicroPython implementation of the driver for an MS5803 air/water pressure & temperature sensor."
+    },
+    {
+      "id": "msa301",
+      "name": "msa301-micropython-driver",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/wojciech-szmyt/msa301-micropython-driver"
+      ],
+      "description": "Homebrew MicroPython driver for MSA301 3-axis accelerometer. Tested on Raspberry Pico."
+    },
+    {
+      "id": "opt3001",
+      "name": "opt3001",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/octaprog7/opt3001"
+      ],
+      "description": "MicroPython module for OPT3001, external lighting sensor from Texas Instruments."
+    },
+    {
+      "id": "p1meter",
+      "name": "p1meter",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/Josverl/micropython-p1meter"
+      ],
+      "description": "A ESP32 sensor to read a p1 electricity meter and publish this to MQTT and Home Assistant, written in MicroPython."
+    },
+    {
+      "id": "pct2075",
+      "name": "PCT2075",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_PCT2075"
+      ],
+      "description": "MicroPython Driver for the NXP Semiconductors PCT2075 Temperature Sensor."
+    },
+    {
+      "id": "pms5003",
+      "name": "upython-aq-monitor",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/ayoy/upython-aq-monitor",
+        "https://github.com/kevinkk525/pms5003_micropython",
+        "https://github.com/miketeachman/micropython-pms5003-minimal"
+      ],
+      "description": "Driver for PMS5003 air quality sensor for MicroPython."
+    },
+    {
+      "id": "pms7003",
+      "name": "pms7003",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/pkucmus/micropython-pms7003"
+      ],
+      "description": "MicroPython driver for the PMS7003 Air Quality Sensor."
+    },
+    {
+      "id": "pybina219",
+      "name": "pyb_ina219",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/chrisb2/pyb_ina219"
+      ],
+      "description": "Driver for INA219 current sensor."
+    },
+    {
+      "id": "pygp2y",
+      "name": "pyGP2Y",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/amigcamel/pyGP2Y"
+      ],
+      "description": "MicroPython library for the Sharp GP2Y1014AU0F Dust Sensor."
+    },
+    {
+      "id": "pympu6050",
+      "name": "py-mpu6050",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/larsks/py-mpu6050"
+      ],
+      "description": "ESP8266 driver for MPU6050 accelerometer/gyroscope."
+    },
+    {
+      "id": "qmc5883",
+      "name": "QMC5883",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/robert-hh/QMC5883",
+        "https://github.com/octaprog7/QMC5883"
+      ],
+      "description": "Python class for the QMC5883 Three-Axis Digital Compass IC."
+    },
+    {
+      "id": "qmc5883l",
+      "name": "QMC5883L",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_QMC5883L"
+      ],
+      "description": "MicroPython Driver for the QMC5883L Accelerometer."
+    },
+    {
+      "id": "rcwl9620",
+      "name": "ultrasonic",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/HowManyOliversAreThere/micropython-i2c-ultrasonic"
+      ],
+      "description": "MicroPython driver for the RCWL-9620-based M5 I2C Ultrasonic Distance Unit."
+    },
+    {
+      "id": "rfd77402",
+      "name": "Qwiic_TOF_Module_RFD77402",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/ZIOCC/Qwiic_TOF_Module_RFD77402"
+      ],
+      "description": "Qwiic TOF Module (RFD77402) time-of-flight rangefinding module."
+    },
+    {
+      "id": "rm3100",
+      "name": "RM3100",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/octaprog7/RM3100"
+      ],
+      "description": "MicroPython module for RM3100 geomagnetic sensor."
+    },
+    {
+      "id": "scd30",
+      "name": "scd30",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/agners/micropython-scd30"
+      ],
+      "description": "MicroPython I2C driver for Sensirion SCD30 CO2 sensor module."
+    },
+    {
+      "id": "scd4x",
+      "name": "SCD4X",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/peter-l5/MicroPython_SCD4X",
+        "https://github.com/octaprog7/SCD4x"
+      ],
+      "description": "MicroPython module for work with SCD4x (SCD40, SCD41) low power CO2, temperature & humidity electroacoustic sensor from Sensirion."
+    },
+    {
+      "id": "sds011",
+      "name": "polly",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/g-sam/polly"
+      ],
+      "description": "SDS011 pollution sensor + Wemos D1 mini pro + MicroPython."
+    },
+    {
+      "id": "sgp40",
+      "name": "sgp40",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/agners/micropython-sgp40"
+      ],
+      "description": "MicroPython I2C driver for SGP40 VOC sensor module."
+    },
+    {
+      "id": "sht11",
+      "name": "sht11",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/2black0/micropython-sht11"
+      ],
+      "description": "Driver for Sensirion SHT11 temperature and humidity sensor."
+    },
+    {
+      "id": "sht20",
+      "name": "SHT20",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_SHT20"
+      ],
+      "description": "MicroPython Driver for the Sensirion SHT20 Temperature Sensor."
+    },
+    {
+      "id": "sht25",
+      "name": "sht25-micropython",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/Miceuz/sht25-micropython",
+        "https://gitlab.com/miceuz/sht25-micropython"
+      ],
+      "description": "MicroPython implementation of API of SHT25 humidity and temperature sensor."
+    },
+    {
+      "id": "sht30",
+      "name": "sht30",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/rsc1975/micropython-sht30",
+        "https://github.com/schinckel/micropython-sht30",
+        "https://github.com/robert-hh/SHT30"
+      ],
+      "description": "SHT30 sensor driver in pure Python based on I2C bus."
+    },
+    {
+      "id": "sht31",
+      "name": "sht31",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/kfricke/micropython-sht31"
+      ],
+      "description": "Driver for the SHT31 temperature and humidity sensor."
+    },
+    {
+      "id": "sht3x",
+      "name": "esp-sht3x-micropython",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/HAIZAKURA/esp-sht3x-micropython"
+      ],
+      "description": "A SHT3x (SHT30/31/35) library for ESP8266/ESP32 with MicroPython."
+    },
+    {
+      "id": "sht4x",
+      "name": "SHT4X",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_SHT4X",
+        "https://github.com/octaprog7/SHT4X"
+      ],
+      "description": "MicroPython module for controlling the SHT4x - 4th generation relative humidity and temperature sensor."
+    },
+    {
+      "id": "sht85",
+      "name": "sht85",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/octaprog7/sht85"
+      ],
+      "description": "MicroPython driver for the [Sensiron SHT85](https://sensirion.com/products/catalog/SHT85/) humidity and temperature sensor."
+    },
+    {
+      "id": "shtc3",
+      "name": "SHTC3",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_SHTC3"
+      ],
+      "description": "MicroPython Driver for the Sensirion SHTC3 Temperature and Humidity Sensor."
+    },
+    {
+      "id": "si1145",
+      "name": "SI1145",
+      "measures": [
+        "light",
+        "proximity",
+        "uv"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/neliogodoi/MicroPython-SI1145"
+      ],
+      "description": "SI1145 UV index, IR, visible light and proximity sensor."
+    },
+    {
+      "id": "si7005",
+      "name": "Si7005",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/Smrtokvitek/micropython-Si7005"
+      ],
+      "description": "Driver for Si7005 relative humidity and temperature sensor."
+    },
+    {
+      "id": "si7021",
+      "name": "si7021",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/deshipu-micropython-si7021",
+        "https://github.com/chrisbalmer/micropython-si7021",
+        "https://github.com/jposada202020/MicroPython_SI7021"
+      ],
+      "description": "MicroPython Library for the Temperature and Humidity SI7021 Sensor."
+    },
+    {
+      "id": "si705x",
+      "name": "Si705x",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/billyrayvalentine/micropython-Si705x"
+      ],
+      "description": "Silicon Labs Si705x series of temperature sensors, I2C interface."
+    },
+    {
+      "id": "si70xx",
+      "name": "Si70xx",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/billyrayvalentine/micropython-Si70xx"
+      ],
+      "description": "Silicon Labs Si70xx series of relative humidity and temperature sensors, I2C interface."
+    },
+    {
+      "id": "sngcja5",
+      "name": "SNGCJA5",
+      "measures": [
+        "gas",
+        "particulate"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/aleppax/micropython-SNGCJA5"
+      ],
+      "description": "MicroPython driver for Panasonic SN-GCJA5 particulate matter (PM) sensor."
+    },
+    {
+      "id": "stts22h",
+      "name": "STTS22H",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_STTS22H"
+      ],
+      "description": "MicroPython Driver for the STTS22H Temperature Sensor."
+    },
+    {
+      "id": "tcs3200",
+      "name": "TCS3200-MicroPython",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/uraich/TCS3200-MicroPython"
+      ],
+      "description": "A MicroPython driver and test programs for the TCS3200 color sensor."
+    },
+    {
+      "id": "tcs3430",
+      "name": "TCS3430",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_TCS3430"
+      ],
+      "description": "MicroPython driver for the AMS TCS3430 Color and ALS sensor."
+    },
+    {
+      "id": "tcs34725",
+      "name": "tcs34725",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://gitlab.com/robhamerling/micropython-tcs34725"
+      ],
+      "description": "Driver class for TCS34725 and TCS34727 color sensors."
+    },
+    {
+      "id": "tiina226",
+      "name": "TI_INA226_micropython",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/elschopi/TI_INA226_micropython"
+      ],
+      "description": "MicroPython driver for Texas Instruments INA226 power measuring IC."
+    },
+    {
+      "id": "tmp102",
+      "name": "tmp102",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/khoulihan/micropython-tmp102"
+      ],
+      "description": "Driver for TMP102 digital temperature sensor."
+    },
+    {
+      "id": "tmp1075",
+      "name": "tmp1075",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mattytrentini/micropython-tmp1075"
+      ],
+      "description": "Driver for the TI TMP1075 temperature sensor."
+    },
+    {
+      "id": "tmp117",
+      "name": "TMP117",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_TMP117",
+        "https://github.com/octaprog7/TMP117"
+      ],
+      "description": "MicroPython module for the TMP117 temperature sensor from Texas Instruments."
+    },
+    {
+      "id": "tsl2561",
+      "name": "tsl2561",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/kfricke/micropython-tsl2561"
+      ],
+      "description": "Driver for the TSL2561 illumination sensor from TAOS / ams."
+    },
+    {
+      "id": "ttp223",
+      "name": "ttp223",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/micropython-ttp223"
+      ],
+      "description": "Examples using TTP223 capacitive touch module."
+    },
+    {
+      "id": "ttp229bsf",
+      "name": "TTP229-BSF",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/alankrantas/micropython-TTP229-BSF"
+      ],
+      "description": "MicroPython ESP8266/ESP32 driver for TTP229-BSF 16-key capacitive keypad in serial interface mode."
+    },
+    {
+      "id": "uft6336u",
+      "name": "uFT6336U",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/fantasticdonkey/uFT6336U"
+      ],
+      "description": "MicroPython I2C driver for the Focus LCDs FT6336U capacitive touch panel controller IC."
+    },
+    {
+      "id": "upyapds9960",
+      "name": "uPy_APDS9960",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/rlangoy/uPy_APDS9960"
+      ],
+      "description": "MicroPython proximity library for ESP8266 using APDS9960."
+    },
+    {
+      "id": "us100",
+      "name": "us100",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/kfricke/micropython-us100"
+      ],
+      "description": "MicroPython driver for the US-100 sonar distance sensor."
+    },
+    {
+      "id": "vcnl4010",
+      "name": "VCNL4010",
+      "measures": [
+        "light",
+        "proximity"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/jposada202020/MicroPython_VCNL4010"
+      ],
+      "description": "MicroPython Driver for the Vishay VCNL4010 Proximity and Ambient Light Sensor."
+    },
+    {
+      "id": "veml6040",
+      "name": "veml6040",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/octaprog7/veml6040"
+      ],
+      "description": "MicroPython module for managing a color sensor RGBW, VEML6040 from Vishay."
+    },
+    {
+      "id": "veml6075",
+      "name": "VEML6075",
+      "measures": [
+        "light",
+        "uv"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/neliogodoi/MicroPython-VEML6075"
+      ],
+      "description": "Driver base for the VEML6075 UV light sensor."
+    },
+    {
+      "id": "veml7700",
+      "name": "veml7700",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/palouf34/veml7700",
+        "https://github.com/octaprog7/veml7700"
+      ],
+      "description": "MicroPython module for the VEML7700 ambient light sensor (ALS) from Vishay."
+    },
+    {
+      "id": "vl53l0x",
+      "name": "vl53l0x",
+      "measures": [
+        "distance",
+        "lidar",
+        "tof"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/deshipu-micropython-vl53l0x",
+        "https://github.com/uceeatz/VL53L0X",
+        "https://github.com/antirez/vl53l0x-nb"
+      ],
+      "description": "Fork of MicroPython driver for vl53l0x TOF sensor to add non-blocking mode."
+    },
+    {
+      "id": "vl53l1x",
+      "name": "vl53l1x_pico",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/drakxtwo/vl53l1x_pico",
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/vl53l1x.py"
+      ],
+      "description": "MicroPython driver for the VL53L1X ToF sensor."
+    },
+    {
+      "id": "vl53l5cx",
+      "name": "vl53l5cx",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mp-extras/vl53l5cx"
+      ],
+      "description": "MicroPython and CircuitPython Package for the [VL53L5CX](https://www.st.com/en/imaging-and-photonics-solutions/vl53l5cx.html) (4x4/8x8 ToF sensor array)."
+    },
+    {
+      "id": "vl6180",
+      "name": "vl6180",
+      "measures": [
+        "distance",
+        "light"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/mcauser/deshipu-micropython-vl6180"
+      ],
+      "description": "Time-of-Flight sensor, ambient light sensor & IR emitter."
+    },
+    {
+      "id": "vl6180x",
+      "name": "VL6180X",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/Ledbelly2142/VL6180X"
+      ],
+      "description": "MicroPython driver for the VL6180X sensor on the ESP32."
+    },
+    {
+      "id": "xpt2046touchpad",
+      "name": "XPT2046-touch-pad-driver",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "micropython"
+      ],
+      "urls": [
+        "https://github.com/robert-hh/XPT2046-touch-pad-driver"
+      ],
+      "description": "Driver for XPT2046 touch pad controller used in many TFT modules."
+    }
+  ]
+}

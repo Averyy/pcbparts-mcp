@@ -13,7 +13,8 @@ MCP server for searching electronic components across JLCPCB, Mouser, and DigiKe
 - **KiCad footprints:** Download symbols and footprints via SamacSys
 - **Pinout data:** Component pin information from EasyEDA symbols
 - **MPN lookup:** Find JLCPCB equivalents by manufacturer part number
-- **10 MCP tools** across 4 data sources
+- **Sensor recommendation:** Find sensor ICs by what they measure, protocol, or platform (1,500+ sensors, 56 measure types)
+- **11 MCP tools** across 6 data sources
 - No API key required for JLCPCB (Mouser/DigiKey optional)
 
 ## Quick Start
@@ -100,7 +101,7 @@ Add to Extensions config:
 
 | Tool | Description |
 |------|-------------|
-| `jlc_search` | **Primary search** — smart query parsing + parametric spec filters (local DB, 468K+ in-stock parts) |
+| `jlc_search` | **Primary search** — smart query parsing + parametric spec filters (local DB, 575K+ in-stock parts) |
 | `jlc_stock_check` | Real-time stock verification via live JLCPCB API (use `jlc_search` first) |
 | `jlc_get_part` | Full details for a specific LCSC part code or MPN lookup |
 | `jlc_get_pinout` | Component pin information from EasyEDA symbols |
@@ -119,6 +120,12 @@ Add to Extensions config:
 |------|-------------|
 | `digikey_get_part` | Cross-reference a specific MPN on DigiKey (daily quota applies) |
 
+### Sensor Recommendation (no key required)
+
+| Tool | Description |
+|------|-------------|
+| `sensor_recommend` | Find sensor ICs/modules by measurement need, protocol, or platform (1,500+ sensors, 56 measure types) |
+
 ### SamacSys (no key required)
 
 | Tool | Description |
@@ -136,7 +143,7 @@ Use **`jlc_search`** (default) for:
 Use **`jlc_stock_check`** only when you need:
 - Real-time stock verification before ordering
 - Out-of-stock or low-stock parts (stock < 10)
-- Full 1.5M catalog (search indexes 400K+ with stock ≥ 10)
+- Full 1.5M catalog (search indexes 575K+ with stock >= 10)
 
 ## Library Types
 
@@ -204,6 +211,8 @@ Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diode
 "STM32 microcontrollers with 10000+ stock"
 "Cross-reference TPS63020 on Mouser and compare with JLCPCB pricing"
 "Get KiCad footprint for ESP32-S3-WROOM-1"
+"What sensor should I use to measure CO2 on ESPHome?"
+"Recommend an IMU sensor with I2C interface"
 ```
 
 ## API Details

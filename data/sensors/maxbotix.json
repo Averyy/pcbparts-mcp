@@ -1,0 +1,1905 @@
+{
+  "source": "maxbotix",
+  "source_url": "https://www.maxbotix.com/products.json?limit=250",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-01T17:25:29.483252+00:00",
+  "stats": {
+    "sensor_count": 125,
+    "total_products": 145,
+    "skipped_retired": 2,
+    "skipped_non_sensor": 16,
+    "skipped_no_model": 1
+  },
+  "sensors": [
+    {
+      "id": "mb1710",
+      "name": "MB1710",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/5m-ultrasonic-ir-kiosk-proximity-sensor"
+      ],
+      "description": "The 5m Ultrasonic + IR Kiosk Proximity Sensor is a compact, low-voltage IR + ultrasonic sensor designed for kiosk and people-detection applications. By combining optical proximity sensing with ultr...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1711",
+      "name": "MB1711",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/5m-ultrasonic-ir-kiosk-proximity-sensor"
+      ],
+      "description": "The 5m Ultrasonic + IR Kiosk Proximity Sensor is a compact, low-voltage IR + ultrasonic sensor designed for kiosk and people-detection applications. By combining optical proximity sensing with ultr...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1712",
+      "name": "MB1712",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/5m-ultrasonic-ir-kiosk-proximity-sensor"
+      ],
+      "description": "The 5m Ultrasonic + IR Kiosk Proximity Sensor is a compact, low-voltage IR + ultrasonic sensor designed for kiosk and people-detection applications. By combining optical proximity sensing with ultr...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb8000",
+      "name": "MB8000",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb8000"
+      ],
+      "description": "MaxLidar™ MB8000: Precision LiDAR, 25m range, ±6 cm accuracy, 1kHz refresh rate, auto dust cleaning, IP5X-rated, Class 1 safe laser, industrial-grade, 3° FoV, low-power, UART/I2C interfaces.",
+      "manufacturer": "MaxBotix",
+      "type": "tof"
+    },
+    {
+      "id": "mb7368",
+      "name": "MB7368",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/flood-level-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7368"
+      ],
+      "description": "The Flood Level Ultrasonic Sensor provides highly accurate non-contact measurement for flood detection and water level monitoring. With 1 mm resolution and models available in 5 m and 10 m max rang...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7369",
+      "name": "MB7369",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/flood-level-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7369"
+      ],
+      "description": "The Flood Level Ultrasonic Sensor provides highly accurate non-contact measurement for flood detection and water level monitoring. With 1 mm resolution and models available in 5 m and 10 m max rang...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7388",
+      "name": "MB7388",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/flood-level-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7388"
+      ],
+      "description": "The Flood Level Ultrasonic Sensor provides highly accurate non-contact measurement for flood detection and water level monitoring. With 1 mm resolution and models available in 5 m and 10 m max rang...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7389",
+      "name": "MB7389",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/flood-level-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7389"
+      ],
+      "description": "The Flood Level Ultrasonic Sensor provides highly accurate non-contact measurement for flood detection and water level monitoring. With 1 mm resolution and models available in 5 m and 10 m max rang...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7568",
+      "name": "MB7568",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/flood-level-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7568"
+      ],
+      "description": "The Flood Level Ultrasonic Sensor provides highly accurate non-contact measurement for flood detection and water level monitoring. With 1 mm resolution and models available in 5 m and 10 m max rang...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7569",
+      "name": "MB7569",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/flood-level-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7569"
+      ],
+      "description": "The Flood Level Ultrasonic Sensor provides highly accurate non-contact measurement for flood detection and water level monitoring. With 1 mm resolution and models available in 5 m and 10 m max rang...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7588",
+      "name": "MB7588",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/flood-level-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7588"
+      ],
+      "description": "The Flood Level Ultrasonic Sensor provides highly accurate non-contact measurement for flood detection and water level monitoring. With 1 mm resolution and models available in 5 m and 10 m max rang...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7589",
+      "name": "MB7589",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/flood-level-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7589"
+      ],
+      "description": "The Flood Level Ultrasonic Sensor provides highly accurate non-contact measurement for flood detection and water level monitoring. With 1 mm resolution and models available in 5 m and 10 m max rang...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7354",
+      "name": "MB7354",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/snow-depth-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7354"
+      ],
+      "description": "Ultrasonic snow depth sensor for weather stations and environmental monitoring. 5 m maximum range, 1 mm resolution, and internal temperature compensation. Standard (~6 Hz Update Rate) or condensati...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7374",
+      "name": "MB7374",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/snow-depth-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7374"
+      ],
+      "description": "Ultrasonic snow depth sensor for weather stations and environmental monitoring. 5 m maximum range, 1 mm resolution, and internal temperature compensation. Standard (~6 Hz Update Rate) or condensati...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7554",
+      "name": "MB7554",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/snow-depth-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7554"
+      ],
+      "description": "Ultrasonic snow depth sensor for weather stations and environmental monitoring. 5 m maximum range, 1 mm resolution, and internal temperature compensation. Standard (~6 Hz Update Rate) or condensati...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7574",
+      "name": "MB7574",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/snow-depth-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb7574"
+      ],
+      "description": "Ultrasonic snow depth sensor for weather stations and environmental monitoring. 5 m maximum range, 1 mm resolution, and internal temperature compensation. Standard (~6 Hz Update Rate) or condensati...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb8450",
+      "name": "MB8450",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/vehicle-detection-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb8450"
+      ],
+      "description": "Ultrasonic vehicle detection sensor for drive-thru lanes, gates, and parking garages. 5 m maximum range, 1 cm resolution, and ~250 ms between readings (~4 Hz), plus a preset 1.5 m proximity zone. N...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb8460",
+      "name": "MB8460",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/vehicle-detection-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb8460"
+      ],
+      "description": "Ultrasonic vehicle detection sensor for drive-thru lanes, gates, and parking garages. 5 m maximum range, 1 cm resolution, and ~250 ms between readings (~4 Hz), plus a preset 1.5 m proximity zone. N...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb8480",
+      "name": "MB8480",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/vehicle-detection-ultrasonic-sensor",
+        "https://www.maxbotix.com/products/mb8480"
+      ],
+      "description": "Ultrasonic vehicle detection sensor for drive-thru lanes, gates, and parking garages. 5 m maximum range, 1 cm resolution, and ~250 ms between readings (~4 Hz), plus a preset 1.5 m proximity zone. N...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7853",
+      "name": "MB7853",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7853-tanksensor"
+      ],
+      "description": "NEW! This ultrasonic tank level sensor features a 1mm resolution with a minimum range of 300mm and a 16.5-meter maximum range and operates from 2.5V to 5V. The sensor has the following outputs: RS2...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7854",
+      "name": "MB7854",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7854-tanksensor"
+      ],
+      "description": "NEW! This ultrasonic tank level sensor features a 1mm resolution with a minimum range of 300mm and a 16.5-meter maximum range and operates from 5.5V to 40V. The sensor has the following outputs: RS...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7850",
+      "name": "MB7850",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7850"
+      ],
+      "description": "This ultrasonic tank level sensor features a 1cm resolution with a 5-cm minimum range and a 5-meter maximum range. The sensor has the following outputs: RS232 & TTL Serial, analog voltage, analog e...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7851",
+      "name": "MB7851",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7851-xl-tanksensor-wrma"
+      ],
+      "description": "MB7851 is a weather-resistant ultrasonic tank-level sensor with 1 mm resolution, 5 m max range, and ~2 Hz read rate. Output is selectable by wiring—RS232 or TTL serial, scaled analog voltage, or an...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7062",
+      "name": "MB7062",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7062"
+      ],
+      "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target. Uses a stability filter.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7066",
+      "name": "MB7066",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7066"
+      ],
+      "description": "Ranges from 20cm to 1068cm with a 10Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7060",
+      "name": "MB7060",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7060"
+      ],
+      "description": "This ultrasonic sensor provides range information from 20cm up to 765cm* for the nearest detectable target at 1-centimeter resolution with a speed of 10Hz, and pulse-width, analog voltage, and RS23...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7076",
+      "name": "MB7076",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7076"
+      ],
+      "description": "Ranges from 20cm to 1068cm with a 10Hz read rate. Analog envelope, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7070",
+      "name": "MB7070",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7070"
+      ],
+      "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Analog envelope, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7092",
+      "name": "MB7092",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7092"
+      ],
+      "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Analog envelope, analog voltage, and RS232 serial. Reports range to largest target. Uses a stability filter.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7137",
+      "name": "MB7137",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7137"
+      ],
+      "description": "Ranges from 20cm to 350cm with up to 40Hz read rate. I2C interface. Reports range to closest.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7150",
+      "name": "MB7150",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7150"
+      ],
+      "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Analog envelope, analog voltage, and TTL serial. Reports range to largest target. Uses a stability filter.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7155",
+      "name": "MB7155",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7155"
+      ],
+      "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Analog envelope, analog voltage, and TTL serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7363",
+      "name": "MB7363",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7363"
+      ],
+      "description": "High sensitivity. Ranges from 500mm to 9999mm with 6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7364",
+      "name": "MB7364",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7364"
+      ],
+      "description": "Ranges from 500mm to 5000mm with a 6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7366",
+      "name": "MB7366",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7366"
+      ],
+      "description": "Ranges from 500mm to 9999mm with a 6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7360",
+      "name": "MB7360",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7360"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a 7.5Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7375",
+      "name": "MB7375",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7375"
+      ],
+      "description": "Wide beam. Ranges from 500mm to 1525mm with 6.33Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7380",
+      "name": "MB7380",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7380"
+      ],
+      "description": "The MB7380 HRXL-MaxSonar-WRT is a reliable ultrasonic distance sensor designed to provide accurate measurements over a wide range. Perfect for various automation and robotics applications, this sen...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7383",
+      "name": "MB7383",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7383"
+      ],
+      "description": "High sensitivity. Ranges from 500mm to 9999mm with a 6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7386",
+      "name": "MB7386",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7386"
+      ],
+      "description": "Ranges from 500mm to 9999mm with a 6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7384",
+      "name": "MB7384",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7384"
+      ],
+      "description": "Ranges from 500mm to 5000mm with a 6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7395",
+      "name": "MB7395",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7395"
+      ],
+      "description": "Wide beam. Ranges from 500mm to 1525mm with 6.33Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7544",
+      "name": "MB7544",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7544"
+      ],
+      "description": "Ranges from 500mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target. Uses filtering to prevent rapid changes in readings. Filter resets ...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7534",
+      "name": "MB7534",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7534"
+      ],
+      "description": "Ranges from 500mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target. Uses filtering to prevent rapid changes in readings. Filter reset...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7560",
+      "name": "MB7560",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7560"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7564",
+      "name": "MB7564",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7564"
+      ],
+      "description": "Ranges from 500mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7563",
+      "name": "MB7563",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7563"
+      ],
+      "description": "High sensitivity. Ranges from 500mm to 9999mm with a 0.6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7566",
+      "name": "MB7566",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7566"
+      ],
+      "description": "Ranges from 500mm to 9999mm with a 0.6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7580",
+      "name": "MB7580",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7580"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7583",
+      "name": "MB7583",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7583"
+      ],
+      "description": "High sensitivity. Ranges from 500mm to 9999mm with a 0.6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7586",
+      "name": "MB7586",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7586"
+      ],
+      "description": "Ranges from 500mm to 9999mm with a 0.6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7584",
+      "name": "MB7584",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7584"
+      ],
+      "description": "Ranges from 500mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1001",
+      "name": "MB1001",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1001"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 6-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1000",
+      "name": "MB1000",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/ultrasonic_sensors_mb1000"
+      ],
+      "description": "Ranges from 6 inches to 254 inches with a 20Hz read rate. Widest detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1002",
+      "name": "MB1002",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1002"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 7-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1003",
+      "name": "MB1003",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1003"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a 10Hz read rate. Widest detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1006",
+      "name": "MB1006",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1006"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 9-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1005",
+      "name": "MB1005",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1005"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 8-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1004",
+      "name": "MB1004",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1004"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 7-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1009",
+      "name": "MB1009",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1009"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 12-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1007",
+      "name": "MB1007",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1007"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 10-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1013",
+      "name": "MB1013",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1013"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a 10Hz read rate. Wide detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1010",
+      "name": "MB1010",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1010"
+      ],
+      "description": "The LV-MaxSonar-EZ1 is an ideal entry-level ultrasonic distance sensor for hobby and indoor projects. Low power, high performance. Shop now.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1008",
+      "name": "MB1008",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1008"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 11-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1023",
+      "name": "MB1023",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1023"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a 10Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1014",
+      "name": "MB1014",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1014"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 5-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1034",
+      "name": "MB1034",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1034"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 2-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1024",
+      "name": "MB1024",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1024"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 3-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1020",
+      "name": "MB1020",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1020"
+      ],
+      "description": "Ranges from 6 inches to 254 inches with a 20Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1030",
+      "name": "MB1030",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1030"
+      ],
+      "description": "Ranges from 6 inches to 254 inches with a 20Hz read rate. Narrow detection field. High noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1033",
+      "name": "MB1033",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1033"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a 10Hz read rate. Narrow detection field. High noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1044",
+      "name": "MB1044",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1044"
+      ],
+      "description": "Ranges from 6 inches to 254 inches. 1-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1043",
+      "name": "MB1043",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1043"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a 10Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1040",
+      "name": "MB1040",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1040"
+      ],
+      "description": "Ranges from 6 inches to 254 inches with a 20Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1061",
+      "name": "MB1061",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1061"
+      ],
+      "description": "Contains two of each of the LV-MaxSonar-EZ sensors: MB1000, MB1010, MB1020, MB1030 & MB1040.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1060",
+      "name": "MB1060",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1060"
+      ],
+      "description": "Contains one of each of the LV-MaxSonar-EZ sensors: MB1000, MB1010, MB1020, MB1030 & MB1040.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1202",
+      "name": "MB1202",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1202"
+      ],
+      "description": "Ranges from 25cm to 765cm with up to 40Hz read rate. Widest detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1200",
+      "name": "MB1200",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1200"
+      ],
+      "description": "Ranges from 25cm to 765cm with a 10Hz read rate. Widest detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1212",
+      "name": "MB1212",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1212"
+      ],
+      "description": "Ranges from 25cm to 765cm with up to 40Hz read rate. Wide detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1210",
+      "name": "MB1210",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1210"
+      ],
+      "description": "Ranges from 25cm to 765cm with a 10Hz read rate. Wide detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1222",
+      "name": "MB1222",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1222"
+      ],
+      "description": "Ranges from 20cm to 765cm with up to 40Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1220",
+      "name": "MB1220",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1220"
+      ],
+      "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1232",
+      "name": "MB1232",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1232"
+      ],
+      "description": "Ranges from 20cm to 765cm with up to 40Hz read rate. Narrow detection field. High noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1230",
+      "name": "MB1230",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1230"
+      ],
+      "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Narrow detection field. High noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1242",
+      "name": "MB1242",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1242"
+      ],
+      "description": "Ranges from 20cm to 765cm with up to 40Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1240",
+      "name": "MB1240",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1240"
+      ],
+      "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1300",
+      "name": "MB1300",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1300"
+      ],
+      "description": "Ranges from 25cm to 765cm with a 10Hz read rate. Widest detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1261",
+      "name": "MB1261",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1261"
+      ],
+      "description": "Ranges from 25cm to 1068cm with a 10Hz read rate. Wide detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1260",
+      "name": "MB1260",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1260"
+      ],
+      "description": "Ranges from 25cm to 1068cm with a 10Hz read rate. Widest detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1320",
+      "name": "MB1320",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1320"
+      ],
+      "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1310",
+      "name": "MB1310",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1310"
+      ],
+      "description": "Ranges from 25cm to 765cm with a 10Hz read rate. Wide detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1360",
+      "name": "MB1360",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1360"
+      ],
+      "description": "Ranges from 25cm to 1068cm with a 10Hz read rate. Widest detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1340",
+      "name": "MB1340",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1340"
+      ],
+      "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1330",
+      "name": "MB1330",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1330"
+      ],
+      "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Narrow detection field. High noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1403",
+      "name": "MB1403",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1403"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a ~4Hz read rate. Widest detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1361",
+      "name": "MB1361",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1361"
+      ],
+      "description": "Ranges from 25cm to 1068cm with a 10Hz read rate. Wide detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1414",
+      "name": "MB1414",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1414"
+      ],
+      "description": "Ranges from 6 inches to 125 inches. 5-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1413",
+      "name": "MB1413",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1413"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a ~4Hz read rate. Wide detection field. Excellent for people detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1433",
+      "name": "MB1433",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1433"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a ~4Hz read rate. Narrow detection field. High noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1424",
+      "name": "MB1424",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1424"
+      ],
+      "description": "Ranges from 6 inches to 125 inches. 3-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1423",
+      "name": "MB1423",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1423"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a ~4Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1443",
+      "name": "MB1443",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1443"
+      ],
+      "description": "Ranges from 300mm to 5000mm with a ~4Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1434",
+      "name": "MB1434",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1434"
+      ],
+      "description": "Ranges from 6 inches to 125 inches. 2-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1603",
+      "name": "MB1603",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1603"
+      ],
+      "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1444",
+      "name": "MB1444",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1444"
+      ],
+      "description": "Ranges from 6 inches to 125 inches. 1-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1614",
+      "name": "MB1614",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1614"
+      ],
+      "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1613",
+      "name": "MB1613",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1613"
+      ],
+      "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1604",
+      "name": "MB1604",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1604"
+      ],
+      "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1624",
+      "name": "MB1624",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1624"
+      ],
+      "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1623",
+      "name": "MB1623",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1623"
+      ],
+      "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1643",
+      "name": "MB1643",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1643"
+      ],
+      "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1634",
+      "name": "MB1634",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1634"
+      ],
+      "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1633",
+      "name": "MB1633",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1633"
+      ],
+      "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb2530",
+      "name": "MB2530",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb2530"
+      ],
+      "description": "Ranges from 50 cm to 1650 cm with a 1.8Hz read rate. Excellent for cargo detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb1644",
+      "name": "MB1644",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb1644"
+      ],
+      "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb2532",
+      "name": "MB2532",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb2532"
+      ],
+      "description": "Ranges from 50 cm to 1650 cm with a 1.8Hz read rate. Excellent for cargo detection.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7040",
+      "name": "MB7040",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7040"
+      ],
+      "description": "Ranges from 20cm up to 765cm* with up to a 40Hz read rate. The sensor features I2C output and reports the range to the closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7051",
+      "name": "MB7051",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7051"
+      ],
+      "description": "Ranges from 50cm to 1041cm to the target with the largest acoustic return, a 5.1Hz read rate, with pulse-width, analog voltage, and RS232 serial outputs.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7053",
+      "name": "MB7053",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7053"
+      ],
+      "description": "Sensor ranges from 50cm to 1041cm to the target with the largest acoustic return at a 5.1Hz read rate, with 1cm resolution and pulse-width, analog voltage, and RS232 serial outputs.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7052",
+      "name": "MB7052",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7052"
+      ],
+      "description": "Ultrasonic sensor ranges to the largest acoustic return, with centimeter resolution, providing range information from 25cm up to 765cm*, at a 6.7Hz read rate with pulse-width, analog voltage, and R...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7138",
+      "name": "MB7138",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7138"
+      ],
+      "description": "Ranges from 20cm to 350cm with a 6.7Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to largest.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7139",
+      "name": "MB7139",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7139"
+      ],
+      "description": "Ranges from 20cm to 350cm with a 10Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7334",
+      "name": "MB7334",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7334"
+      ],
+      "description": "Ranges from 500mm to 5000mm with a 6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target. Uses filtering to prevent rapid changes in readings. Filter resets ...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7344",
+      "name": "MB7344",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7344"
+      ],
+      "description": "Ranges from 500mm to 5000mm with a 6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target. Uses filtering to prevent rapid changes in readings. Filter resets at...",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "mb7072",
+      "name": "MB7072",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.maxbotix.com/products/mb7072"
+      ],
+      "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target. Uses a stability filter.",
+      "manufacturer": "MaxBotix",
+      "type": "ultrasonic"
+    }
+  ]
+}

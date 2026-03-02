@@ -1,0 +1,4000 @@
+{
+  "source": "zephyr",
+  "source_url": "https://github.com/zephyrproject-rtos/zephyr",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-01T17:29:31.370355+00:00",
+  "stats": {
+    "sensor_count": 214,
+    "total_bindings": 435,
+    "skipped_internal": 41,
+    "skipped_bus_variant": 63,
+    "skipped_no_measures": 28
+  },
+  "sensors": [
+    {
+      "id": "2smpb",
+      "name": "2SMPB",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/omron,2smpb-02e.html"
+      ],
+      "description": "Omron 2SMPB-02E digital barometric pressure sensor.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Omron"
+    },
+    {
+      "id": "a01nyub",
+      "name": "A01NYUB",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/dfrobot,a01nyub.html"
+      ],
+      "description": "DFRobot A01NYUB Distance Sensor",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "DFRobot"
+    },
+    {
+      "id": "ad2s1210",
+      "name": "AD2S1210",
+      "measures": [
+        "rotation"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,ad2s1210.html"
+      ],
+      "description": "The AD2S1210 is a complete 10-bit to 16-bit resolution tracking resolver-to-digital converter, integrating an on-board programmable sinusoidal oscillator that provides sine wave excitation for reso...",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "ade7978",
+      "name": "ADE7978",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,ade7978.html"
+      ],
+      "description": "ADE7978 Isolated energy metering chipset for polyphase shunt meters",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adltc2990",
+      "name": "ADLTC2990",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adltc2990.html"
+      ],
+      "description": "ADLTC2990 Quad I2C Voltage, Current and Temperature Monitor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adt7310",
+      "name": "ADT7310",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adt7310.html"
+      ],
+      "description": "ADT7310 16-Bit digital SPI temperature sensor",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adt7420",
+      "name": "ADT7420",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adt7420.html"
+      ],
+      "description": "ADT7420 16-Bit digital I2C temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adxl345",
+      "name": "ADXL345",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adxl345.html"
+      ],
+      "description": "ADXL345 3-axis accelerometer with SPI connection",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adxl362",
+      "name": "ADXL362",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adxl362.html"
+      ],
+      "description": "ADXL362 3-axis SPI accelerometer When setting the accelerometer DTS properties and want to use streaming functionality, make sure to include adxl362.h and use the macros defined there for fifo-mode...",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adxl366",
+      "name": "ADXL366",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adxl366.html"
+      ],
+      "description": "ADXL366 3-axis nanopower accelerometer, accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adxl367",
+      "name": "ADXL367",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adxl367.html"
+      ],
+      "description": "ADXL367 3-axis nanopower accelerometer, accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adxl372",
+      "name": "ADXL372",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adxl372.html"
+      ],
+      "description": "ADXL372 3-axis high-g accelerometer, accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "afbrs50",
+      "name": "AFBRS50",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/brcm,afbr-s50.html"
+      ],
+      "description": "AFBR-S50 3D ToF sensor This sensor requires the SPI bus attached to it, to define the following pinctrl states: - pinctrl-0: default (SPI mode). - pinctrl-1: GPIO mode (used to access the internal ...",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Broadcom"
+    },
+    {
+      "id": "ags10",
+      "name": "AGS10",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/aosong,ags10.html"
+      ],
+      "description": "AOSONG AGS10 a high-performance TVOC Sensor With I2C Interface. See: http://www.aosong.com/en/products-86.html",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Aosong"
+    },
+    {
+      "id": "aht20",
+      "name": "AHT20",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/aosong,aht20.html"
+      ],
+      "description": "Aosong AHT20 (Digital-output Humidity and Temperature Sensor) The Aosong AHT20 sensor provides temperature and humidity measurements through an I2C bus.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Aosong"
+    },
+    {
+      "id": "ak8975",
+      "name": "AK8975",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/asahi-kasei,ak8975.html"
+      ],
+      "description": "Asahi Kasei AK8975 Magnetometer. See datasheet at https://www.akm.com/akm/en/file/datasheet/AK8975.pdf",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Asahi Kasei"
+    },
+    {
+      "id": "akm09918c",
+      "name": "AKM09918C",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/asahi-kasei,akm09918c.html"
+      ],
+      "description": "Asahi Kasei AKM09918C Magnetometer. See datasheet at https://www.akm.com/content/dam/documents/products/electronic-compass/ak09918c/ak09918c-en-datasheet.pdf",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Asahi Kasei"
+    },
+    {
+      "id": "als31300",
+      "name": "ALS31300",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/allegro,als31300.html"
+      ],
+      "description": "Allegro ALS31300 3D Linear Hall Effect Sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Allegro"
+    },
+    {
+      "id": "alspt19",
+      "name": "ALSPT19",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/everlight,als-pt19.html"
+      ],
+      "description": "Everlight ALS-PT19 Ambient Light Sensor",
+      "manufacturer": "Everlight"
+    },
+    {
+      "id": "am2301b",
+      "name": "AM2301B",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/aosong,am2301b.html"
+      ],
+      "description": "Aosong AM2301B (Digital-output Humidity and Temperature Sensor) The Aosong AM2301B sensor provides temperature and humidity measurements through an I2C bus.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Aosong"
+    },
+    {
+      "id": "apds9253",
+      "name": "APDS9253",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/avago,apds9253.html"
+      ],
+      "description": "APDS9253 ambient light, RGB",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Broadcom"
+    },
+    {
+      "id": "apds9306",
+      "name": "APDS9306",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/avago,apds9306.html"
+      ],
+      "description": "APDS9306 miniature Surface-Mount Digital Ambient Light Sensor.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Broadcom"
+    },
+    {
+      "id": "apds9960",
+      "name": "APDS9960",
+      "measures": [
+        "color",
+        "gesture",
+        "light",
+        "proximity"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/avago,apds9960.html"
+      ],
+      "description": "APDS9960 digital proximity, ambient light, RGB, and gesture sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Broadcom"
+    },
+    {
+      "id": "as5048",
+      "name": "AS5048",
+      "measures": [
+        "rotation"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,as5048.html"
+      ],
+      "description": "AMS AS5048 magnetic rotary sensor &spi3 { status = \"okay\"; as5048@0 { compatible = \"ams,as5048\"; reg = <0>; spi-max-frequency = <4000000>; }; }; compatible: \"ams,as5048\"",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "as5600",
+      "name": "AS5600",
+      "measures": [
+        "rotation"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,as5600.html"
+      ],
+      "description": "AMS (Austria Mikro Systeme) AS5600 Angular position sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "as6212",
+      "name": "AS6212",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,as6212.html"
+      ],
+      "description": "AMS AS6212 Digital Temperature Sensor.  See more info at https://ams.com/en/as621x",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "as6221",
+      "name": "AS6221",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,as6221.html"
+      ],
+      "description": "AMS AS6221 Digital Temperature Sensor.  See more info at https://ams.com/en/as6221",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "bh1730",
+      "name": "BH1730",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/rohm,bh1730.html"
+      ],
+      "description": "Rohm BH1730 ambient light sensor.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ROHM"
+    },
+    {
+      "id": "bh1750",
+      "name": "BH1750",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/rohm,bh1750.html"
+      ],
+      "description": "Rohm BH1750 ambient light sensor.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ROHM"
+    },
+    {
+      "id": "bh1790",
+      "name": "BH1790",
+      "measures": [
+        "biometric",
+        "optical"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/rohm,bh1790.html"
+      ],
+      "description": "Rohm BH1790 Optical Sensor for Heart Rate Monitor IC.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ROHM"
+    },
+    {
+      "id": "bma280",
+      "name": "BMA280",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bma280.html"
+      ],
+      "description": "Bosch BMA280 triaxial acceleration sensor.  See more info at: https://www.bosch-sensortec.com/products/motion-sensors/accelerometers/bma280.html",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bma4xx",
+      "name": "BMA4XX",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bma4xx.html"
+      ],
+      "description": "Bosch BMA4xx 3-axis acceleration sensors in SPI mode.  See more info at: https://www.bosch-sensortec.com/products/motion-sensors/accelerometers/ SPI mode is currently NOT supported in the driver bu...",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmc150",
+      "name": "BMC150",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmc150_magn.html"
+      ],
+      "description": "Bosch BMC150 Magnetometer.  See more info at: https://www.bosch-sensortec.com/bst/products/all_products/bmc150",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bme280",
+      "name": "BME280",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bme280.html"
+      ],
+      "description": "BME280 integrated environmental sensor",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bme680",
+      "name": "BME680",
+      "measures": [
+        "gas",
+        "humidity",
+        "pressure",
+        "temperature",
+        "voc"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bme680.html"
+      ],
+      "description": "The BME680 is an integrated environmental sensor that measures temperature, pressure, humidity and air quality",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmg160",
+      "name": "BMG160",
+      "measures": [
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmg160.html"
+      ],
+      "description": "Bosch BMG160 gyroscope.  See more info at: https://www.bosch-sensortec.com/bst/products/all_products/bmg160",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmi08x",
+      "name": "BMI08X",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmi08x-accel.html"
+      ],
+      "description": "BMI08X Accel inertial measurement unit",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmi160",
+      "name": "BMI160",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmi160.html"
+      ],
+      "description": "BMI160 inertial measurement unit",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmi270",
+      "name": "BMI270",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmi270.html"
+      ],
+      "description": "The BMI270 is an inertial measurement unit. See more info at: https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi270.html",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmi323",
+      "name": "BMI323",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmi323.html"
+      ],
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmm150",
+      "name": "BMM150",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmm150.html"
+      ],
+      "description": "Bosch BMM150 Geomagnetic sensor.  See more info at: https://www.bosch-sensortec.com/bst/products/all_products/bmm150",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmm350",
+      "name": "BMM350",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmm350.html"
+      ],
+      "description": "Bosch BMM350 Geomagnetic sensor.  See more info at: https://www.bosch-sensortec.com/products/motion-sensors/magnetometers/bmm350/",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmp180",
+      "name": "BMP180",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmp180.html"
+      ],
+      "description": "Bosch BMP180 pressure sensor accessed through I2C bus",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmp388",
+      "name": "BMP388",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmp388.html"
+      ],
+      "description": "Bosch BMP388 pressure sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmp390",
+      "name": "BMP390",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmp390.html"
+      ],
+      "description": "Bosch BMP390 pressure sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmp581",
+      "name": "BMP581",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmp581.html"
+      ],
+      "description": "The BMP581 is a Barometric pressure sensor. See more info at: https://www.bosch-sensortec.com/products/environmental-sensors/pressure-sensors/bmp581/ When setting the sensor DTS properties, make su...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "ccs811",
+      "name": "CCS811",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,ccs811.html"
+      ],
+      "description": "CCS811 digital air quality sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "dht",
+      "name": "DHT",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/aosong,dht.html"
+      ],
+      "description": "Aosong DHT (Digital-output Humidity and Temperature Sensor) The Aosong DHT family of sensors provide temperature and humidity measurements through a bidirectional serial digital signal.  The DHT11 ...",
+      "manufacturer": "Aosong"
+    },
+    {
+      "id": "dht20",
+      "name": "DHT20",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/aosong,dht20.html"
+      ],
+      "description": "Aosong DHT20 (Digital-output Humidity and Temperature Sensor) The Aosong DHT20 sensor provides temperature and humidity measurements through an I2C bus.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Aosong"
+    },
+    {
+      "id": "dps310",
+      "name": "DPS310",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/infineon,dps310.html"
+      ],
+      "description": "Infineon DPS310 temperature and pressure sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Infineon"
+    },
+    {
+      "id": "ds18b20",
+      "name": "DS18B20",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,ds18b20.html"
+      ],
+      "description": "Maxim 1-Wire temperature sensor",
+      "protocol": [
+        "one_wire"
+      ],
+      "manufacturer": "Maxim"
+    },
+    {
+      "id": "ds18s20",
+      "name": "DS18S20",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,ds18s20.html"
+      ],
+      "description": "Maxim 1-Wire ds18s20 temperature sensor",
+      "protocol": [
+        "one_wire"
+      ],
+      "manufacturer": "Maxim"
+    },
+    {
+      "id": "ds3231",
+      "name": "DS3231",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,ds3231-sensor.html"
+      ],
+      "description": "Maxim DS3231 I2C temperature sensor",
+      "manufacturer": "Maxim"
+    },
+    {
+      "id": "ens160",
+      "name": "ENS160",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sciosense,ens160.html"
+      ],
+      "description": "ScioSense ENS160 Digital Metal Oxide Multi-Gas Sensor on I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "ScioSense"
+    },
+    {
+      "id": "ens210",
+      "name": "ENS210",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,ens210.html"
+      ],
+      "description": "AMS (Austria Mikro Systeme) ens210 Relative Humidity and Temperature Sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "explorirm",
+      "name": "EXPLORIRM",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/gss,explorir-m.html"
+      ],
+      "description": "Gas Sensing Solutions CO2 sensor",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Gas Sensing Solutions"
+    },
+    {
+      "id": "f75303",
+      "name": "F75303",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/fintek,f75303.html"
+      ],
+      "description": "F75303 temperature sensor IC. This device has three temperature channels - one local (on-chip), and two remote.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Fintek"
+    },
+    {
+      "id": "fcxmldx5",
+      "name": "FCXMLDX5",
+      "measures": [
+        "oxygen"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ap,fcx-mldx5.html"
+      ],
+      "description": "Angst+Pfister O2 sensor",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Angst+Pfister"
+    },
+    {
+      "id": "fdc2x1x",
+      "name": "FDC2X1X",
+      "measures": [
+        "proximity",
+        "touch"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,fdc2x1x.html"
+      ],
+      "description": "Texas Instruments FDC2X1X capacitive sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "fxas21002",
+      "name": "FXAS21002",
+      "measures": [
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/nxp,fxas21002.html"
+      ],
+      "description": "FXAS21002 3-axis gyroscope sensor",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "NXP"
+    },
+    {
+      "id": "fxls8974",
+      "name": "FXLS8974",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/nxp,fxls8974.html"
+      ],
+      "description": "FXLS8974 3-axis accelerometer sensor",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "NXP"
+    },
+    {
+      "id": "fxos8700",
+      "name": "FXOS8700",
+      "measures": [
+        "acceleration",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/nxp,fxos8700.html"
+      ],
+      "description": "FXOS8700 6-axis accelerometer/magnetometer sensor",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "NXP"
+    },
+    {
+      "id": "hdc2010",
+      "name": "HDC2010",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,hdc2010.html"
+      ],
+      "description": "Texas Instruments HDC2010 Temperature and Humidity Sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "hdc2021",
+      "name": "HDC2021",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,hdc2021.html"
+      ],
+      "description": "Texas Instruments HDC2021 Temperature and Humidity Sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "hdc2022",
+      "name": "HDC2022",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,hdc2022.html"
+      ],
+      "description": "Texas Instruments HDC2022 Temperature and Humidity Sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "hdc2080",
+      "name": "HDC2080",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,hdc2080.html"
+      ],
+      "description": "Texas Instruments HDC2080 Temperature and Humidity Sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "hdc302x",
+      "name": "HDC302X",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,hdc302x.html"
+      ],
+      "description": "Texas Instruments HDC302X Temperature and Humidity Sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "hm330x",
+      "name": "HM330X",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/seeed,hm330x.html"
+      ],
+      "description": "Seeed Studio HM330x dust particle sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Seeed Studio"
+    },
+    {
+      "id": "hmc5883l",
+      "name": "HMC5883L",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/honeywell,hmc5883l.html"
+      ],
+      "description": "Honeywell HMC5883L 3-axis magnetometer sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Honeywell"
+    },
+    {
+      "id": "hp206c",
+      "name": "HP206C",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/hoperf,hp206c.html"
+      ],
+      "description": "HopeRF Electronic HP206C precision barometer and altimeter. See more info at: https://www.hoperf.com/sensor/pressure_sensor/HP206C.html",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "HopeRF"
+    },
+    {
+      "id": "hs300x",
+      "name": "HS300X",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/renesas,hs300x.html"
+      ],
+      "description": "Renesas HS300x humidity and temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Renesas"
+    },
+    {
+      "id": "hs400x",
+      "name": "HS400X",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/renesas,hs400x.html"
+      ],
+      "description": "Renesas HS400x humidity and temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Renesas"
+    },
+    {
+      "id": "hts221",
+      "name": "HTS221",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,hts221.html"
+      ],
+      "description": "STMicroelectronics HTS221 humidity and temperature sensor on I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "iaqcore",
+      "name": "IAQCORE",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,iaqcore.html"
+      ],
+      "description": "iAQ-core indoor air quality sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "icm42605",
+      "name": "ICM42605",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm42605.html"
+      ],
+      "description": "ICM-42605 motion tracking device",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "icm42686",
+      "name": "ICM42686",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm42686.html"
+      ],
+      "description": "ICM-42686 motion tracking device. When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm42686.h and use the macros d...",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "icm42688",
+      "name": "ICM42688",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm42688.html"
+      ],
+      "description": "ICM-42688 motion tracking device. When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm42688.h and use the macros d...",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "icm45605",
+      "name": "ICM45605",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm45605.html"
+      ],
+      "description": "ICM45605 High-precision 6-axis motion tracking device When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm45686.h ...",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "icm45605s",
+      "name": "ICM45605S",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm45605s.html"
+      ],
+      "description": "ICM45605S High-precision 6-axis motion tracking device When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm45686.h...",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "icm45686",
+      "name": "ICM45686",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm45686.html"
+      ],
+      "description": "ICM45686 High-precision 6-axis motion tracking device When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm45686.h ...",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "icm45686s",
+      "name": "ICM45686S",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm45686s.html"
+      ],
+      "description": "ICM45686S High-precision 6-axis motion tracking device When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm45686.h...",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "icm45688p",
+      "name": "ICM45688P",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm45688p.html"
+      ],
+      "description": "ICM45688P High-precision 6-axis motion tracking device When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm45686.h...",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "icp101xx",
+      "name": "ICP101XX",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icp101xx.html"
+      ],
+      "description": "ICP101xx High Accuracy, Low Power, Barometric Pressure and Temperature Sensors IC",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "icp201xx",
+      "name": "ICP201XX",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icp201xx.html"
+      ],
+      "description": "ICP201xx High Accuracy, Low Power, Barometric Pressure and Temperature Sensor IC",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "iis2dh",
+      "name": "IIS2DH",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,iis2dh.html"
+      ],
+      "description": "STMicroelectronics IIS2DH accelerometer accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "iis2dlpc",
+      "name": "IIS2DLPC",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,iis2dlpc.html"
+      ],
+      "description": "STMicroelectronics IIS2DLPC accelerometer accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "iis2iclx",
+      "name": "IIS2ICLX",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,iis2iclx.html"
+      ],
+      "description": "STMicroelectronics IIS2ICLX 2-axis accelerometer sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "iis2mdc",
+      "name": "IIS2MDC",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,iis2mdc.html"
+      ],
+      "description": "STMicroelectronics IIS2MDC magnetometer accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "iis328dq",
+      "name": "IIS328DQ",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,iis328dq.html"
+      ],
+      "description": "STMicroelectronics IIS328DQ accelerometer accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "iis3dhhc",
+      "name": "IIS3DHHC",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,iis3dhhc.html"
+      ],
+      "description": "STMicroelectronics IIS3DHHC 3-axis accelerometer accessed through SPI bus",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "iis3dwb",
+      "name": "IIS3DWB",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,iis3dwb.html"
+      ],
+      "description": "STMicroelectronics IIS3DWB 3-axis accelerometer accessed through SPI bus",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "ilps22qs",
+      "name": "ILPS22QS",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,ilps22qs.html"
+      ],
+      "description": "STMicroelectronics ILPS22QS pressure and temperature sensor connected to I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "ina226",
+      "name": "INA226",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,ina226.html"
+      ],
+      "description": "TI INA226 Bidirectional Current and Power Monitor. The <zephyr/dt-bindings/sensor/ina226.h> file should be included in the DeviceTree as it provides macros that can be used for initializing the con...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "ina230",
+      "name": "INA230",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,ina230.html"
+      ],
+      "description": "TI INA230, INA231 and INA236 Bidirectional Current and Power Monitor. The <zephyr/dt-bindings/sensor/ina230.h> file should be included in the DeviceTree and it provides macro that can be used for i...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "ina232",
+      "name": "INA232",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,ina232.html"
+      ],
+      "description": "TI INA232 Bidirectional Current and Power Monitor. The <zephyr/dt-bindings/sensor/ina230.h> file includes the macro for initializing the config register so it should be included.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "ina236",
+      "name": "INA236",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,ina236.html"
+      ],
+      "description": "TI INA236 Bidirectional Current and Power Monitor. The <zephyr/dt-bindings/sensor/ina230.h> file should be included in the DeviceTree and it provides macro that can be used for initializing the con...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "ina237",
+      "name": "INA237",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,ina237.html"
+      ],
+      "description": "TI INA237 Bidirectional Current and Power Monitor. The <zephyr/dt-bindings/sensor/ina237.h> file should be included in the DeviceTree and it provides macros that can be used for initializing the co...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "ina3221",
+      "name": "INA3221",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,ina3221.html"
+      ],
+      "description": "Texas Instruments INA3221 Triple-Channel Current/Power Monitor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "isl29035",
+      "name": "ISL29035",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/isil,isl29035.html"
+      ],
+      "description": "Intersil ISL29035 Light Sensor. See datasheet at https://www.renesas.com/us/en/www/doc/datasheet/isl29035.pdf",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Renesas"
+    },
+    {
+      "id": "ism330dhcx",
+      "name": "ISM330DHCX",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,ism330dhcx.html"
+      ],
+      "description": "STMicroelectronics ISM330DHCX 6-axis IMU (Inertial Measurement Unit) sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "ism6hg256x",
+      "name": "ISM6HG256X",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,ism6hg256x.html"
+      ],
+      "description": "STMicroelectronics ISM6HG256X 6-axis IMU (Inertial Measurement Unit) sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "ist8310",
+      "name": "IST8310",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/isentek,ist8310.html"
+      ],
+      "description": "iSentek ist8310 Geomagnetic sensor.  See more info at: https://isentek.com/products_view.php?PID=10&sn=13",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "iSentek"
+    },
+    {
+      "id": "jc424",
+      "name": "JC424",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/jedec,jc-42.4-temp.html"
+      ],
+      "description": "JEDEC JC42.4 compliant temperature sensor. See http://www.jedec.org/sites/default/files/docs/4_01_04R19.pdf. Driver based on the Microchip MCP9808 Digital Temperature Sensor. See http://ww1.microch...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Microchip"
+    },
+    {
+      "id": "lis2de12",
+      "name": "LIS2DE12",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lis2de12.html"
+      ],
+      "description": "STMicroelectronics LIS2DE12 3-axis ultra-low power accelerometer sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lis2dh",
+      "name": "LIS2DH",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lis2dh.html"
+      ],
+      "description": "STMicroelectronics LIS2DH 3-axis accelerometer accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lis2dh12",
+      "name": "LIS2DH12",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lis2dh12.html"
+      ],
+      "description": "STMicroelectronics LIS2DH12 3-axis accelerometer",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lis2ds12",
+      "name": "LIS2DS12",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lis2ds12.html"
+      ],
+      "description": "STMicroelectronics LIS2DS12 3-axis accelerometer accessed through SPI bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lis2du12",
+      "name": "LIS2DU12",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lis2du12.html"
+      ],
+      "description": "STMicroelectronics LIS2DU12 3-axis ultra-low power accelerometer sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lis2dux12",
+      "name": "LIS2DUX12",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lis2dux12.html"
+      ],
+      "description": "STMicroelectronics LIS2DUX12 3-axis accelerometer accessed through SPI bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lis2duxs12",
+      "name": "LIS2DUXS12",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lis2duxs12.html"
+      ],
+      "description": "STMicroelectronics LIS2DUXS12 3-axis accelerometer accessed through SPI bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lis2dw12",
+      "name": "LIS2DW12",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lis2dw12.html"
+      ],
+      "description": "STMicroelectronics LIS2DW12 3-axis accelerometer accessed through SPI bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lis2mdl",
+      "name": "LIS2MDL",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lis2mdl.html"
+      ],
+      "description": "STMicroelectronics LIS2MDL magnetometer accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lis3dh",
+      "name": "LIS3DH",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lis3dh.html"
+      ],
+      "description": "STMicroelectronics LIS3DH 3-axis accelerometer",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lis3mdl",
+      "name": "LIS3MDL",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lis3mdl-magn.html"
+      ],
+      "description": "STMicroelectronics LIS3MDL magnetometer",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lm95234",
+      "name": "LM95234",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/national,lm95234.html"
+      ],
+      "description": "LM95234 Quad Remote Diode and Local Temperature Sensor with SMBus Interface",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "lps22df",
+      "name": "LPS22DF",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lps22df.html"
+      ],
+      "description": "STMicroelectronics LPS22DF pressure and temperature sensor connected to I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lps22hb",
+      "name": "LPS22HB",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lps22hb-press.html"
+      ],
+      "description": "STMicroelectronics LPS22HB pressure sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lps22hh",
+      "name": "LPS22HH",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lps22hh.html"
+      ],
+      "description": "STMicroelectronics LPS22HH pressure and temperature sensor connected to I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lps25hb",
+      "name": "LPS25HB",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lps25hb-press.html"
+      ],
+      "description": "STMicroelectronics LPS25HB pressure sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lps28dfw",
+      "name": "LPS28DFW",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lps28dfw.html"
+      ],
+      "description": "STMicroelectronics LPS28DFW pressure and temperature sensor connected to I2C bus",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm303agr",
+      "name": "LSM303AGR",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm303agr-accel.html"
+      ],
+      "description": "STMicroelectronics LSM303AGR 3-axis accelerometer accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm303dlhc",
+      "name": "LSM303DLHC",
+      "measures": [
+        "acceleration",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm303dlhc-accel.html"
+      ],
+      "description": "STMicroelectronics LSM303DLHC magnetometer sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm6ds0",
+      "name": "LSM6DS0",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6ds0.html"
+      ],
+      "description": "STMicroelectronics LSM6DS0 6-axis accelerometer and gyrometer",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm6dsl",
+      "name": "LSM6DSL",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6dsl.html"
+      ],
+      "description": "STMicroelectronics LSM6DSL 6-axis accelerometer and gyrometer accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm6dso",
+      "name": "LSM6DSO",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6dso.html"
+      ],
+      "description": "STMicroelectronics LSM6DSO 6-axis IMU (Inertial Measurement Unit) sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm6dso16is",
+      "name": "LSM6DSO16IS",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6dso16is.html"
+      ],
+      "description": "STMicroelectronics LSM6DSO16IS 6-axis IMU (Inertial Measurement Unit) sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm6dso32",
+      "name": "LSM6DSO32",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6dso32.html"
+      ],
+      "description": "STMicroelectronics LSM6DSO32 6-axis IMU (Inertial Measurement Unit) sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm6dsv16x",
+      "name": "LSM6DSV16X",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6dsv16x.html"
+      ],
+      "description": "STMicroelectronics LSM6DSV16X 6-axis IMU (Inertial Measurement Unit) sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm6dsv320x",
+      "name": "LSM6DSV320X",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6dsv320x.html"
+      ],
+      "description": "STMicroelectronics LSM6DSV320X 6-axis IMU (Inertial Measurement Unit) sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm6dsv32x",
+      "name": "LSM6DSV32X",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6dsv32x.html"
+      ],
+      "description": "STMicroelectronics LSM6DSV32X 6-axis IMU (Inertial Measurement Unit) sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm6dsv80x",
+      "name": "LSM6DSV80X",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6dsv80x.html"
+      ],
+      "description": "STMicroelectronics LSM6DSV80X 6-axis IMU (Inertial Measurement Unit) sensor accessed through I2C bus",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm9ds0",
+      "name": "LSM9DS0",
+      "measures": [
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm9ds0-gyro.html"
+      ],
+      "description": "STMicroelectronics LSM9DS0-GYRO 3-axis gyro",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm9ds0mfd",
+      "name": "LSM9DS0MFD",
+      "measures": [
+        "acceleration",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm9ds0-mfd.html"
+      ],
+      "description": "STMicroelectronics LSM9DS0 3-axis accelerometer + magnetometer",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm9ds1",
+      "name": "LSM9DS1",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm9ds1.html"
+      ],
+      "description": "STMicroelectronics LSM9DS1 3-axis accelerometer + gyroscope accessed through I2C bus. This binding describe only the inertial part : accelerometer and gyroscope. When setting the accel-range, gyro-...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "lsm9ds1mag",
+      "name": "LSM9DS1MAG",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm9ds1_mag.html"
+      ],
+      "description": "STMicroelectronics LSM9DS1-MAG 3-axis magnetometer accessed through I2C bus. This binding describes only the magnetometer. When setting the mag-range and mag-odr properties in a .dts or .dtsi file ...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "ltr329",
+      "name": "LTR329",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/liteon,ltr329.html"
+      ],
+      "description": "LiteOn LTR-329 Digital Ambient Light Sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Lite-On"
+    },
+    {
+      "id": "ltr553",
+      "name": "LTR553",
+      "measures": [
+        "light",
+        "proximity"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/liteon,ltr553.html"
+      ],
+      "description": "LiteOn LTR-553 Digital Ambient Light and proximity sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Lite-On"
+    },
+    {
+      "id": "ltrf216a",
+      "name": "LTRF216A",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/liteon,ltrf216a.html"
+      ],
+      "description": "LiteOn F216A ambient light sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Lite-On"
+    },
+    {
+      "id": "max30101",
+      "name": "MAX30101",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,max30101.html"
+      ],
+      "description": "MAX30101 heart rate sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Maxim"
+    },
+    {
+      "id": "max30210",
+      "name": "MAX30210",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,max30210.html"
+      ],
+      "description": "MAX30210, a high-accuracy digital temperature sensor from Analog Devices.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "max31855",
+      "name": "MAX31855",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,max31855.html"
+      ],
+      "description": "MAX31855 SPI-based cold-junction compensated thermocouple-to-digital converter.",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Maxim"
+    },
+    {
+      "id": "max31865",
+      "name": "MAX31865",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,max31865.html"
+      ],
+      "description": "Maxim MAX31865 SPI RTD-to-Digital Converter Temperature Sensor. Find the datasheet here: https://datasheets.maximintegrated.com/en/ds/MAX31865.pdf",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Maxim"
+    },
+    {
+      "id": "max31875",
+      "name": "MAX31875",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,max31875.html"
+      ],
+      "description": "Maxim MAX31875 Low-Power I2C Temperature Sensor. Find the datasheet here: https://datasheets.maximintegrated.com/en/ds/MAX31875.pdf",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Maxim"
+    },
+    {
+      "id": "max32664c",
+      "name": "MAX32664C",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,max32664c.html"
+      ],
+      "description": "The MAX32664 is a ultra-low power biometric sensor hub. NOTES: This driver is primarily written to work with a MAX86141. Other sensors can be used but they are untested! The driver supports up to t...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Maxim"
+    },
+    {
+      "id": "max44009",
+      "name": "MAX44009",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,max44009.html"
+      ],
+      "description": "Maxim MAX44009 Ambient Light Sensor. See datasheet at https://datasheets.maximintegrated.com/en/ds/MAX44009.pdf",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Maxim"
+    },
+    {
+      "id": "max6675",
+      "name": "MAX6675",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,max6675.html"
+      ],
+      "description": "MAX6675 K-thermocouple to digital converter",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Maxim"
+    },
+    {
+      "id": "mb7040",
+      "name": "MB7040",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxbotix,mb7040.html"
+      ],
+      "description": "MB7040 ultrasonic distance sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "MaxBotix"
+    },
+    {
+      "id": "mc3419",
+      "name": "MC3419",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/memsic,mc3419.html"
+      ],
+      "description": "MC3419 3-axis accel sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Memsic"
+    },
+    {
+      "id": "mcp9600",
+      "name": "MCP9600",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/microchip,mcp9600.html"
+      ],
+      "description": "Microchip MCP9600 I2C Thermocouple EMF to Temperature Converter. See https://www.microchip.com/wwwproducts/en/MCP9600. When setting the DTS properties, make sure to include mcp9600.h and use the ma...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Microchip"
+    },
+    {
+      "id": "mcp970x",
+      "name": "MCP970X",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/microchip,mcp970x.html"
+      ],
+      "description": "Microchip MCP9700/9700A MCP9701/9701A Low-Power Linear Active Thermistor IC",
+      "manufacturer": "Microchip"
+    },
+    {
+      "id": "mhz19b",
+      "name": "MHZ19B",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/winsen,mhz19b.html"
+      ],
+      "description": "Winsen MHZ-19B CO2 Sensor",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Winsen"
+    },
+    {
+      "id": "mlx90394",
+      "name": "MLX90394",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/melexis,mlx90394.html"
+      ],
+      "description": "Melexis MLX90394 Magnetometer. See datasheet at https://media.melexis.com/-/media/files/documents/datasheets/mlx90394-datasheet-melexis.pdf",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Melexis"
+    },
+    {
+      "id": "mmc56x3",
+      "name": "MMC56X3",
+      "measures": [
+        "magnetic_field",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/memsic,mmc56x3.html"
+      ],
+      "description": "MMC56X3 3-axis magnetic and temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Memsic"
+    },
+    {
+      "id": "mpu6050",
+      "name": "MPU6050",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,mpu6050.html"
+      ],
+      "description": "MPU-6000 motion tracking device",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "mpu9250",
+      "name": "MPU9250",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,mpu9250.html"
+      ],
+      "description": "InvenSense MPU-9250 Nine-Axis (Gyro + Accelerometer + Compass). See more info at https://www.invensense.com/products/motion-tracking/9-axis/mpu-9250/",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "ms5607",
+      "name": "MS5607",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/meas,ms5607.html"
+      ],
+      "description": "TE Connectivity MS5607 digital pressure and temperature sensor. The Datasheet is at https://www.te.com/usa-en/product-CAT-BLPS0035.html",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "TE Connectivity"
+    },
+    {
+      "id": "ms5837",
+      "name": "MS5837",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/meas,ms5837-02ba.html"
+      ],
+      "description": "TE Connectivity MS5837-02BA digital pressure sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "TE Connectivity"
+    },
+    {
+      "id": "nct75",
+      "name": "NCT75",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/onnn,nct75.html"
+      ],
+      "description": "ON Semiconductor NCT75 temperature sensor with I2C interface",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ON Semiconductor"
+    },
+    {
+      "id": "opt3001",
+      "name": "OPT3001",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,opt3001.html"
+      ],
+      "description": "Texas Instruments OPT3001 ambient light sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "opt3004",
+      "name": "OPT3004",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,opt3004.html"
+      ],
+      "description": "Texas Instruments OPT3004 ambient light sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "p3t1755",
+      "name": "P3T1755",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/nxp,p3t1755.html"
+      ],
+      "description": "NXP P3T1755 digital temperature sensor connected to I2C bus.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "NXP"
+    },
+    {
+      "id": "paa3905",
+      "name": "PAA3905",
+      "measures": [
+        "optical"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/pixart,paa3905.html"
+      ],
+      "description": "PA3905 optical flow sensor",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "PixArt"
+    },
+    {
+      "id": "paj7620",
+      "name": "PAJ7620",
+      "measures": [
+        "gesture"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/pixart,paj7620.html"
+      ],
+      "description": "Pixart PAJ7620 gesture sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "PixArt"
+    },
+    {
+      "id": "pat9136",
+      "name": "PAT9136",
+      "measures": [
+        "flow"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/pixart,pat9136.html"
+      ],
+      "description": "PAT9136 optical flow sensor",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "PixArt"
+    },
+    {
+      "id": "rm3100",
+      "name": "RM3100",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/pni,rm3100.html"
+      ],
+      "description": "PNI RM3100 3-axis Magnetometer. The RM3100 can use either I2C or SPI as a communication bus. When using SPI, the device only supports SPI mode 0 or 3. When setting the odr property in a .dts or .dt...",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "PNI"
+    },
+    {
+      "id": "rv3032",
+      "name": "RV3032",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/microcrystal,rv3032-temp.html"
+      ],
+      "description": "RV3032C7 temperature sensor",
+      "manufacturer": "Micro Crystal"
+    },
+    {
+      "id": "s11059",
+      "name": "S11059",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/hamamatsu,s11059.html"
+      ],
+      "description": "Hamamatsu Photonics S11059 Color Sensor.  See datasheet at https://datasheetspdf.com/pdf/1323325/Hamamatsu/S11059-02DT/1",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Hamamatsu"
+    },
+    {
+      "id": "scd40",
+      "name": "SCD40",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,scd40.html"
+      ],
+      "description": "Sensirion SCD4x temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Sensirion"
+    },
+    {
+      "id": "scd41",
+      "name": "SCD41",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,scd41.html"
+      ],
+      "description": "Sensirion SCD4x temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Sensirion"
+    },
+    {
+      "id": "sgp40",
+      "name": "SGP40",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,sgp40.html"
+      ],
+      "description": "Sensirion SGP40 Multipixel Gas Sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Sensirion"
+    },
+    {
+      "id": "sht21",
+      "name": "SHT21",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,sht21.html"
+      ],
+      "description": "Sensirion SHT21 Humidity and Temperature Sensor This is compatible with the Measurement Specialties HUT21D, \"meas,htu21d\". For the Silicon Labs Si7006/13/20/21 series, use the \"silabs,si7006\" compa...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Sensirion"
+    },
+    {
+      "id": "sht3xd",
+      "name": "SHT3XD",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,sht3xd.html"
+      ],
+      "description": "Sensirion Humidity SHT3x-DIS humidity and temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Sensirion"
+    },
+    {
+      "id": "sht4x",
+      "name": "SHT4X",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,sht4x.html"
+      ],
+      "description": "Sensirion SHT4x humidity and temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Sensirion"
+    },
+    {
+      "id": "shtcx",
+      "name": "SHTCX",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,shtcx.html"
+      ],
+      "description": "Sensirion SHTCx humidity and temperature sensor Additionally use \"sensirion,shtc1\" or \"sensirion,shtc3\" compatibles such that a generic driver can consider chip specific behaviour. Example device t...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Sensirion"
+    },
+    {
+      "id": "si7006",
+      "name": "SI7006",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/silabs,si7006.html"
+      ],
+      "description": "Silicon Labs Si7006 Humidity and Temperature Sensor This is compatible with a range of Silicon Labs sensors, such as the Si7013, Si7020, and Si7021.  This binding will use a slightly different (bet...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Silicon Labs"
+    },
+    {
+      "id": "si7055",
+      "name": "SI7055",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/silabs,si7055.html"
+      ],
+      "description": "Si7055 temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Silicon Labs"
+    },
+    {
+      "id": "si7060",
+      "name": "SI7060",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/silabs,si7060.html"
+      ],
+      "description": "Si7060 temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Silicon Labs"
+    },
+    {
+      "id": "si7210",
+      "name": "SI7210",
+      "measures": [
+        "magnetic_field",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/silabs,si7210.html"
+      ],
+      "description": "Si7210 hall effect magnetic position and temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Silicon Labs"
+    },
+    {
+      "id": "sts4x",
+      "name": "STS4X",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,sts4x.html"
+      ],
+      "description": "Sensirion STS4x temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Sensirion"
+    },
+    {
+      "id": "stts22h",
+      "name": "STTS22H",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,stts22h.html"
+      ],
+      "description": "STMicroelectronics STTS22H temperature sensor connected to I2C bus When setting the sampling-rate property in a .dts or .dtsi file you may include stts22h.h and use the macros defined there.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "stts751",
+      "name": "STTS751",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,stts751.html"
+      ],
+      "description": "STMicroelectronics STTS751 temperature sensor connected to I2C bus",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "sx9500",
+      "name": "SX9500",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/semtech,sx9500.html"
+      ],
+      "description": "Semtech SX9500 capacitive proximity/button. See more info at https://www.semtech.com/products/smart-sensing/touch-proximity-devices/sx9500",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Semtech"
+    },
+    {
+      "id": "tcn75a",
+      "name": "TCN75A",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/microchip,tcn75a.html"
+      ],
+      "description": "TCN75A ambient temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Microchip"
+    },
+    {
+      "id": "tcs3400",
+      "name": "TCS3400",
+      "measures": [
+        "color",
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,tcs3400.html"
+      ],
+      "description": "AMS TCS3400 Color Light-to-Digital Converter",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "th02",
+      "name": "TH02",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/hoperf,th02.html"
+      ],
+      "description": "TH02 Temperature and Humidity sensor. See datasheet at http://www.datasheetspdf.com/mobile/748107/TH02.html",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "HopeRF"
+    },
+    {
+      "id": "tmag5170",
+      "name": "TMAG5170",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,tmag5170.html"
+      ],
+      "description": "Texas Instruments TMAG5170 high-precision, linear 3D Hall-effect sensor.",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tmag5273",
+      "name": "TMAG5273",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,tmag5273.html"
+      ],
+      "description": "Texas Instruments Low-Power Linear 3D Hall-Effect Sensor with an I2C interface. See the specification for the default I2C address. The specification of the sensor can be found at: https://www.ti.co...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tmd2620",
+      "name": "TMD2620",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,tmd2620.html"
+      ],
+      "description": "OSRAM ams TMD2620 Proximity Sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "tmp007",
+      "name": "TMP007",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,tmp007.html"
+      ],
+      "description": "TMP007 Digital Temperature Sensor.  See datasheet at https://cdn-shop.adafruit.com/datasheets/tmp007.pdf",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tmp1075",
+      "name": "TMP1075",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,tmp1075.html"
+      ],
+      "description": "TMP1075 Digital Temperature Sensor.  See more info at https://www.ti.com/product/TMP1075",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tmp108",
+      "name": "TMP108",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,tmp108.html"
+      ],
+      "description": "TMP108 Digital Temperature Sensor.  See more info at https://www.ti.com/product/TMP108",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tmp112",
+      "name": "TMP112",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,tmp112.html"
+      ],
+      "description": "TMP112 Digital Temperature Sensor.  See more info at https://www.ti.com/product/TMP112",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tmp114",
+      "name": "TMP114",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,tmp114.html"
+      ],
+      "description": "Texas Instruments TMP114 temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tmp11x",
+      "name": "TMP11X",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,tmp11x.html"
+      ],
+      "description": "Texas Instruments TMP11X temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tmp435",
+      "name": "TMP435",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,tmp435.html"
+      ],
+      "description": "Texas Instruments TMP435 temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tsicxx6",
+      "name": "TSICXX6",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ist,tsic-xx6.html"
+      ],
+      "description": "TSic xx6 temperature sensor. https://www.ist-ag.com/sites/default/files/downloads/ATTSic_E.pdf",
+      "manufacturer": "IST AG"
+    },
+    {
+      "id": "tsl2540",
+      "name": "TSL2540",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,tsl2540.html"
+      ],
+      "description": "TSL2540 series ambient light sensor.  See datasheet at https://ams.com/documents/20143/36005/TSL2540_DS000564_4-00.pdf/39728ac4-098c-9eca-b5ca-61d9c6f3a588",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "tsl2561",
+      "name": "TSL2561",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,tsl2561.html"
+      ],
+      "description": "OSRAM ams TSL2561 light sensor.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "tsl2591",
+      "name": "TSL2591",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,tsl2591.html"
+      ],
+      "description": "OSRAM ams TSL2591 ambient light sensor.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "vcnl36825t",
+      "name": "VCNL36825T",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/vishay,vcnl36825t.html"
+      ],
+      "description": "VCNL36825T proximity and ambient light sensor.  See datasheet at https://www.vishay.com/docs/84274/vcnl36825t.pdf",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Vishay"
+    },
+    {
+      "id": "vcnl4040",
+      "name": "VCNL4040",
+      "measures": [
+        "light",
+        "proximity"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/vishay,vcnl4040.html"
+      ],
+      "description": "VCNL4040 proximity and ambient light sensor.  See datasheet at https://www.vishay.com/docs/84274/vcnl4040.pdf",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Vishay"
+    },
+    {
+      "id": "veml6031",
+      "name": "VEML6031",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/vishay,veml6031.html"
+      ],
+      "description": "Vishay VEML6031 High Accuracy Ambient Light Sensor With I2C Interface. See: https://www.vishay.com/docs/80007/veml6031x00.pdf",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Vishay"
+    },
+    {
+      "id": "veml6046",
+      "name": "VEML6046",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/vishay,veml6046.html"
+      ],
+      "description": "Vishay VEML6046 RGBIR color sensor with I2C interface. See: https://www.vishay.com/docs/80173/veml6046x00.pdf",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Vishay"
+    },
+    {
+      "id": "veml7700",
+      "name": "VEML7700",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/vishay,veml7700.html"
+      ],
+      "description": "Vishay VEML7700 High Accuracy Ambient Light Sensor With I2C Interface. See: https://www.vishay.com/doc?84286",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Vishay"
+    },
+    {
+      "id": "vl53l0x",
+      "name": "VL53L0X",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,vl53l0x.html"
+      ],
+      "description": "STMicroelectronics VL53L0X Time of Flight sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "vl53l1x",
+      "name": "VL53L1X",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,vl53l1x.html"
+      ],
+      "description": "STMicroelectronics VL53L1X Time of Flight sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "wsenhids",
+      "name": "WSENHIDS",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/we,wsen-hids-2525020210002.html"
+      ],
+      "description": "Würth Elektronik WSEN-HIDS-2525020210002 humidity sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Würth Elektronik"
+    },
+    {
+      "id": "wsenisds",
+      "name": "WSENISDS",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/we,wsen-isds-2536030320001.html"
+      ],
+      "description": "Würth Elektronik WSEN-ISDS-2536030320001 acceleration and gyroscope sensor with integrated temperature sensor (I2C bus)",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Würth Elektronik"
+    },
+    {
+      "id": "wsenitds",
+      "name": "WSENITDS",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/we,wsen-itds-2533020201601.html"
+      ],
+      "description": "Würth Elektronik WSEN-ITDS-2533020201601 acceleration sensor with integrated temperature sensor (I2C bus)",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Würth Elektronik"
+    },
+    {
+      "id": "wsenpads",
+      "name": "WSENPADS",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/we,wsen-pads-2511020213301.html"
+      ],
+      "description": "Würth Elektronik WSEN-PADS-2511020213301 absolute pressure sensor (I2C bus)",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Würth Elektronik"
+    },
+    {
+      "id": "wsenpdms",
+      "name": "WSENPDMS",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/we,wsen-pdms-25131308XXX05.html"
+      ],
+      "description": "Würth Elektronik WSEN-PDMS-25131308XXX05 differential pressure sensor (I2C bus) Note: On some MCUs a speed of more than 100 kHz cannot be used.",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Würth Elektronik"
+    },
+    {
+      "id": "wsenpdus",
+      "name": "WSENPDUS",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/we,wsen-pdus-25131308XXXXX.html"
+      ],
+      "description": "Würth Elektronik WSEN-PDUS-25131308XXXXX differential pressure sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Würth Elektronik"
+    },
+    {
+      "id": "wsentids",
+      "name": "WSENTIDS",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/we,wsen-tids-2521020222501.html"
+      ],
+      "description": "Würth Elektronik WSEN-TIDS-2521020222501 temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Würth Elektronik"
+    },
+    {
+      "id": "xbr818",
+      "name": "XBR818",
+      "measures": [
+        "motion"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/phosense,xbr818.html"
+      ],
+      "description": "Phosense XBR818 I2C-capable 10 GHz Radar Sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Phosense"
+    }
+  ]
+}

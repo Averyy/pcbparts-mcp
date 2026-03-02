@@ -68,6 +68,7 @@
             "45+ component categories",
             "KiCad symbol and footprint downloads via SamacSys",
             "MPN lookup across distributors",
+            "Sensor IC recommendation across 1500+ sensors and 56 measure types",
             "No API key required"
         ],
         "sameAs": [
@@ -1018,7 +1019,7 @@
         .tools-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
             margin-top: 14px;
         }
 
@@ -1034,7 +1035,7 @@
             font-weight: 500;
             color: var(--copper-bright);
             background: rgba(0, 0, 0, 0.5);
-            padding: 3px 8px;
+            padding: 6px 8px;
             border-radius: 3px;
             border: 1px solid rgba(205, 127, 50, 0.15);
             white-space: nowrap;
@@ -2016,14 +2017,14 @@
             <div class="container">
                 <div class="section-header">
                     <h2 data-text="Tools">Tools</h2>
-                    <p>Search parts across JLCPCB, Mouser, and DigiKey with 10 MCP tools. Compare stock and pricing across distributors, find alternatives, and download KiCad symbols and footprints.</p>
+                    <p>Search parts across JLCPCB, Mouser, and DigiKey with 11 MCP tools. Compare stock and pricing, find alternatives, recommend sensors, and download KiCad footprints.</p>
                 </div>
 
                 <div class="bento-grid">
                     <div class="bento-left">
                         <div class="bento-card bento-large" data-ref="U1">
                             <span class="card-icon">🛠️</span>
-                            <h3>10 MCP Tools</h3>
+                            <h3>11 MCP Tools</h3>
                             <div class="tools-list">
                                 <div class="tool-item"><code>jlc_search</code> <span>Parametric search with spec filters</span></div>
                                 <div class="tool-item"><code>jlc_stock_check</code> <span>Real-time stock verification</span></div>
@@ -2031,6 +2032,7 @@
                                 <div class="tool-item"><code>jlc_get_pinout</code> <span>Pin info from EasyEDA symbols</span></div>
                                 <div class="tool-item"><code>jlc_find_alternatives</code> <span>Spec-compatible alternative parts</span></div>
                                 <div class="tool-item"><code>jlc_search_help</code> <span>Browse categories & filterable specs</span></div>
+                                <div class="tool-item"><code>sensor_recommend</code> <span>Sensor ICs by measure, protocol, platform</span></div>
                                 <div class="tool-item"><code>mouser_get_part</code> <span>Cross-reference MPN on Mouser</span></div>
                                 <div class="tool-item"><code>digikey_get_part</code> <span>Cross-reference MPN on DigiKey</span></div>
                                 <div class="tool-item"><code>cse_search</code> <span>ECAD models and datasheets</span></div>
@@ -2052,9 +2054,9 @@
                         </div>
 
                         <div class="bento-card" data-ref="U5">
-                            <span class="card-icon">🧑‍💻</span>
-                            <h3>Maker-Focused</h3>
-                            <p>Optimized for dev boards, sensor breakouts, and the components that go with them.</p>
+                            <span class="card-icon">📟</span>
+                            <h3>Sensor Search</h3>
+                            <p>1,500+ sensor ICs. Search by measure, protocol, or platform.</p>
                         </div>
 
                         <div class="bento-card" data-ref="R1">
@@ -2079,6 +2081,12 @@
                             <span class="card-icon">💰</span>
                             <h3>Pricing Tiers</h3>
                             <p>All quantity tiers from 1pc to 10,000+.</p>
+                        </div>
+
+                        <div class="bento-card" data-ref="U6">
+                            <span class="card-icon">🧑‍💻</span>
+                            <h3>Maker-Focused</h3>
+                            <p>Optimized for dev boards, sensors, and maker components.</p>
                         </div>
                     </div>
                 </div>

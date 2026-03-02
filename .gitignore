@@ -63,5 +63,6 @@ data/stock_history.db-wal
 data/stock_history.db-shm
 data/progress.json
 data/jlcpcb_parts.db
+data/sensor.db
 data/*.db-wal
 data/*.db-shm

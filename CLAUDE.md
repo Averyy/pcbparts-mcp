@@ -29,7 +29,9 @@
 
 ## Project Overview
 
-PCB Parts MCP server for electronic component search. See README.md for full tool documentation.
+PCB Parts MCP server for electronic component search and sensor recommendation. See README.md for full tool documentation.
+
+- **Sensor feature:** `sensor_recommend` tool — separate SQLite DB (`sensor.db`) from components. 14 scrapers produce `data/sensors/*.json`, merged by `scripts/build_sensor_db.py`, runtime at `src/pcbparts_mcp/sensor_db/`. Scraper reference: `docs/ref-sensor-scrapers.md`.
 
 - **Website:** https://pcbparts.dev
 - **Endpoint:** https://pcbparts.dev/mcp

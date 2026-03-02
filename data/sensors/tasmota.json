@@ -1,0 +1,1675 @@
+{
+  "source": "tasmota",
+  "source_url": "https://tasmota.github.io/docs/Supported-Peripherals/",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-01T22:31:39.241245+00:00",
+  "stats": {
+    "sensor_count": 103,
+    "total_rows_checked": 146,
+    "skipped_non_sensor": 35,
+    "skipped_no_measures": 0
+  },
+  "sensors": [
+    {
+      "id": "ads111x",
+      "name": "ADS111X",
+      "measures": [
+        "voltage"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "A/D Converter",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "adstds75lm75",
+      "name": "ADSTDS75LM75",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Temperature sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "aht1x",
+      "name": "AHT1X",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/AHT1x/"
+      ],
+      "description": "Asair AHT10/AHT15 temperature and humidity sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "aht2x",
+      "name": "AHT2X",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/AHT2x/"
+      ],
+      "description": "Asair AHT20/AHT21/AHT25/AM2301B temperature and humidity sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "am2301",
+      "name": "AM2301",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/AM2301/"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "am2301b",
+      "name": "AM2301B",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/AHT2x/"
+      ],
+      "description": "Temperature and humidity sensorUses same driver as AHT2X",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "am2302",
+      "name": "AM2302",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/AM2301/"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "am2320",
+      "name": "AM2320",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "am2321",
+      "name": "AM2321",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/AM2301/"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "apds9960",
+      "name": "APDS9960",
+      "measures": [
+        "color",
+        "gesture",
+        "light",
+        "proximity"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/APDS-9960/"
+      ],
+      "description": "Ambient light, RGB color and proximity sensor with gesture detection",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "as3935",
+      "name": "AS3935",
+      "measures": [
+        "weather"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/AS3935/"
+      ],
+      "description": "Franklin lightning sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "bh1750",
+      "name": "BH1750",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/BH1750/"
+      ],
+      "description": "Luminosity sensor"
+    },
+    {
+      "id": "bme280",
+      "name": "BME280",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/BME280/"
+      ],
+      "description": "temperature, humidity and pressure sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "bme680",
+      "name": "BME680",
+      "measures": [
+        "gas",
+        "humidity",
+        "pressure",
+        "temperature",
+        "voc"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/BME680/"
+      ],
+      "description": "temperature, humidity, pressure and gas sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "bme688",
+      "name": "BME688",
+      "measures": [
+        "gas",
+        "humidity",
+        "pressure",
+        "temperature",
+        "voc"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/BME680/"
+      ],
+      "description": "temperature, humidity, pressure and gas sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "bmp085",
+      "name": "BMP085",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/BME280/"
+      ],
+      "description": "Pressure sensor"
+    },
+    {
+      "id": "bmp180",
+      "name": "BMP180",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/BME280/"
+      ],
+      "description": "Pressure sensor"
+    },
+    {
+      "id": "bmp280",
+      "name": "BMP280",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/BME280/"
+      ],
+      "description": "Pressure sensor"
+    },
+    {
+      "id": "ccs811",
+      "name": "CCS811",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Gas and air quality sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "dht11",
+      "name": "DHT11",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/DHT11/"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "dht12",
+      "name": "DHT12",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "dht21",
+      "name": "DHT21",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/AM2301/"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "dht22",
+      "name": "DHT22",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/AM2301/"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "ds1621",
+      "name": "DS1621",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Temperature sensor",
+      "protocol": [
+        "one_wire"
+      ]
+    },
+    {
+      "id": "ds1624",
+      "name": "DS1624",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Temperature sensor",
+      "protocol": [
+        "one_wire"
+      ]
+    },
+    {
+      "id": "ds18x20",
+      "name": "DS18X20",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/DS18x20/"
+      ],
+      "description": "Temperature sensor",
+      "protocol": [
+        "one_wire"
+      ]
+    },
+    {
+      "id": "dypme007",
+      "name": "DYPME007",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Ultrasonic distance sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "ens161",
+      "name": "ENS161",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/ENS161/"
+      ],
+      "description": "Air quality sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "gdk101",
+      "name": "GDK101",
+      "measures": [
+        "radiation"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_106_gdk101.ino><strong>GDK101</strong></a"
+      ],
+      "description": "Gamma radiation sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "ggreg20v3",
+      "name": "GGREG20V3",
+      "measures": [
+        "radiation"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://github.com/iotdevicesdev/ggreg20-v3-tasmota-esp32-driver><strong>GGreg20_V3</strong></a"
+      ],
+      "description": "Ionizing radiation detector",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "hcsr04",
+      "name": "HCSR04",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/HC-SR04/"
+      ],
+      "description": "Ultrasonic sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "hdc1080",
+      "name": "HDC1080",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Texas Instruments HDC1080 humidity and temperature sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "hdc2010",
+      "name": "HDC2010",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Texas Instruments HDC2010 humidity and temperature sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "hlkld2410",
+      "name": "HLKLD2410",
+      "measures": [
+        "proximity",
+        "radar"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/HLK-LD2410/"
+      ],
+      "description": "24GHz mmWave presence sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "hlkld2410b",
+      "name": "HLKLD2410B",
+      "measures": [
+        "proximity",
+        "radar"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/HLK-LD2410/"
+      ],
+      "description": "24GHz mmWave presence sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "hlkld2410s",
+      "name": "HLKLD2410S",
+      "measures": [
+        "proximity",
+        "radar"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/HLK-LD2410S/"
+      ],
+      "description": "Low energy 24GHz mmWave presence sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "hm330x",
+      "name": "HM330X",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "SeedStudio Grove HM3301 particulate matter sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "hmc5883l",
+      "name": "HMC5883L",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "3-channels magnetic field sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "hp303b",
+      "name": "HP303B",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Barometric pressure sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "hpma115xx",
+      "name": "HPMA115XX",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Particulate matter sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "hrg15",
+      "name": "HRG15",
+      "measures": [
+        "rain"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Hydreon RG-15 rain gauge sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "htu21",
+      "name": "HTU21",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "hx711",
+      "name": "HX711",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Load cell sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "i2s",
+      "name": "I2S",
+      "measures": [
+        "sound"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/I2S-Audio/"
+      ],
+      "description": "I2S audio DAC and microphone"
+    },
+    {
+      "id": "icp10125",
+      "name": "ICP10125",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://https://gitlab.com/Parura57/icp10125-driver><strong>InvenSense"
+      ],
+      "description": "Barometer/pressure sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "ina219",
+      "name": "INA219",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "High-side DC current and voltage sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "ina226",
+      "name": "INA226",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "High-side or Low-side DC current and voltage sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "isl28022",
+      "name": "ISL28022",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "High-side DC current and voltage sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "k30",
+      "name": "K30",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "SenseAir CO2 sensors",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "k70",
+      "name": "K70",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "SenseAir CO2 sensors",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "lm75",
+      "name": "LM75",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Temperature sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "lmt01",
+      "name": "LMT01",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/LMT01/"
+      ],
+      "description": "Temperature sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "max17043",
+      "name": "MAX17043",
+      "measures": [
+        "voltage"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_110_max17043.ino><strong>MAX17043</strong></a"
+      ],
+      "description": "LiPo fuel gauge",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "max31855",
+      "name": "MAX31855",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/MAX31855/"
+      ],
+      "description": "Thermocouple sensor",
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "max31865",
+      "name": "MAX31865",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "RTD temperature sensor amplifier",
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "max44009",
+      "name": "MAX44009",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Ambient light sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "max6675",
+      "name": "MAX6675",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/MAX31855/"
+      ],
+      "description": "Thermocouple sensor",
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "mcp9808",
+      "name": "MCP9808",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/MCP9808/"
+      ],
+      "description": "Temperature sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "me007",
+      "name": "ME007",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://github.com/mathias-buder/water-level-measure><strong>ME007</strong></a"
+      ],
+      "description": "Ultrasonic distance sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "mgc3130",
+      "name": "MGC3130",
+      "measures": [
+        "gesture"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/MGC3130/"
+      ],
+      "description": "3D tracking and gesture Controller"
+    },
+    {
+      "id": "mhz19b",
+      "name": "MHZ19B",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/MH-Z19B/"
+      ],
+      "description": "CO2 sensor"
+    },
+    {
+      "id": "mlx90614",
+      "name": "MLX90614",
+      "measures": [
+        "ir_temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/MLX90614/"
+      ],
+      "description": "MLX9061X infrared thermometer",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "mlx90640",
+      "name": "MLX90640",
+      "measures": [
+        "ir_temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/MLX90640/"
+      ],
+      "description": "MLX90640 far infrared thermal sensor array",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "mpr121",
+      "name": "MPR121",
+      "measures": [
+        "proximity",
+        "touch"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/MPR121/"
+      ],
+      "description": "Proximity capacitive touch sensor controller (I2C)"
+    },
+    {
+      "id": "mpu6050",
+      "name": "MPU6050",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/MPU-6050/"
+      ],
+      "description": "3-axis gyroscope and 3-axis accelerometer sensor (I2C)"
+    },
+    {
+      "id": "ms01",
+      "name": "MS01",
+      "measures": [
+        "moisture"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Moisture sensor from Sonoff",
+      "protocol": [
+        "one_wire"
+      ]
+    },
+    {
+      "id": "paj7620",
+      "name": "PAJ7620",
+      "measures": [
+        "gesture"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/PAJ7620/"
+      ],
+      "description": "Gesture &amp; proximity detection sensor"
+    },
+    {
+      "id": "pjsnsr04t",
+      "name": "PJSNSR04T",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/HC-SR04/"
+      ],
+      "description": "Ultrasonic sensor",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "pms3003",
+      "name": "PMS3003",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://www.superhouse.tv/38-diy-air-quality-sensor-part-1-basic-model/"
+      ],
+      "description": "Particle concentration sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "pms5003",
+      "name": "PMS5003",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://www.superhouse.tv/38-diy-air-quality-sensor-part-1-basic-model/"
+      ],
+      "description": "Particle concentration sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "pms7003",
+      "name": "PMS7003",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://www.superhouse.tv/38-diy-air-quality-sensor-part-1-basic-model/"
+      ],
+      "description": "Particle concentration sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "pmsa003i",
+      "name": "PMSA003I",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_104_pmsa003i.ino><strong>PMSA003I</strong></a"
+      ],
+      "description": "Air quality sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "qmc5883l",
+      "name": "QMC5883L",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Magnetic field sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "scd30",
+      "name": "SCD30",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "CO2 sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "scd40",
+      "name": "SCD40",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/SCD4x/"
+      ],
+      "description": "CO2 sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "scd41",
+      "name": "SCD41",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/SCD4x/"
+      ],
+      "description": "CO2 sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "sds011",
+      "name": "SDS011",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/SDS011/"
+      ],
+      "description": "Laser dust sensor"
+    },
+    {
+      "id": "sds021",
+      "name": "SDS021",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/SDS011/"
+      ],
+      "description": "Laser dust sensor"
+    },
+    {
+      "id": "sen0390",
+      "name": "SEN0390",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Ambient light sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "sen5x",
+      "name": "SEN5X",
+      "measures": [
+        "gas",
+        "humidity",
+        "particulate",
+        "temperature",
+        "voc"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://blakadder.com/seeedstudio-grove-all-in-one-environmental-sensor-sen5x/"
+      ],
+      "description": "All-in-one environmental sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "sgp30",
+      "name": "SGP30",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Gas and air Quality sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "sgp40",
+      "name": "SGP40",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Gas and air Quality sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "sgp41",
+      "name": "SGP41",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://github.com/arendst/Tasmota/pull/18880#issue-1757083089><strong>SGP41</strong></a"
+      ],
+      "description": "VOC and NOx sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "sht1x",
+      "name": "SHT1X",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "sht30",
+      "name": "SHT30",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/SHT30/"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "sht4x",
+      "name": "SHT4X",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "si114x",
+      "name": "SI114X",
+      "measures": [
+        "light",
+        "uv"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "UV index, IR and visible light sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "si7021",
+      "name": "SI7021",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Temperature and humidity sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "sps30",
+      "name": "SPS30",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/SPS30/"
+      ],
+      "description": "Particulate matter"
+    },
+    {
+      "id": "t6703",
+      "name": "T6703",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Telaire T6700 series CO2 sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "t6713",
+      "name": "T6713",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Telaire T6700 series CO2 sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "tc74",
+      "name": "TC74",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_108_tc74.ino><strong>TC74</strong></a"
+      ],
+      "description": "Temperature sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "tfmini",
+      "name": "TFMINI",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "TFmini, TFmini Plus, TFmini Plus (indoor Version), TFmini-S LiDAR module",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "tsl2561",
+      "name": "TSL2561",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/TSL2561/"
+      ],
+      "description": "Luminosity sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "tsl2591",
+      "name": "TSL2591",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "description": "Luminosity sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "tx20",
+      "name": "TX20",
+      "measures": [
+        "wind"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/TX2x/"
+      ],
+      "description": "La Crosse TX2x / Technoline WS2300-15 anemometer (wind sensor)",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "tx23",
+      "name": "TX23",
+      "measures": [
+        "wind"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/TX2x/"
+      ],
+      "description": "La Crosse TX2x / Technoline WS2300-15 anemometer (wind sensor)",
+      "protocol": [
+        "gpio"
+      ]
+    },
+    {
+      "id": "veml6070",
+      "name": "VEML6070",
+      "measures": [
+        "uv"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/VEML6070/"
+      ],
+      "description": "UV sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "veml6075",
+      "name": "VEML6075",
+      "measures": [
+        "uv"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/VEML6075/"
+      ],
+      "description": "UVA/UVB/UVINDEX sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "veml7700",
+      "name": "VEML7700",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/VEML7700/"
+      ],
+      "description": "Ambient light intensity sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "vl53l0x",
+      "name": "VL53L0X",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/VL53Lxx/"
+      ],
+      "description": "Time of flight sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "vl53l1x",
+      "name": "VL53L1X",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/VL53Lxx/"
+      ],
+      "description": "Time of flight sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "ws2300",
+      "name": "WS2300",
+      "measures": [
+        "wind"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/TX2x/"
+      ],
+      "description": "La Crosse TX2x / Technoline WS2300-15 anemometer (wind sensor)",
+      "protocol": [
+        "gpio"
+      ]
+    }
+  ]
+}

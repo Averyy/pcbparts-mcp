@@ -1,0 +1,1589 @@
+{
+  "source": "bestmodules",
+  "source_url": "https://www.bestmodulescorp.com",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-02T15:29:44.396798+00:00",
+  "stats": {
+    "sensor_count": 81,
+    "total_pages_checked": 85,
+    "skipped": 1,
+    "errors": 0
+  },
+  "sensors": [
+    {
+      "id": "bce22s4421",
+      "name": "BCE-22S4421",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bce-22s4421-1.html"
+      ],
+      "description": "5.8GHz Microwave Radar Sensor Module Demo Board BCE-22S4421-1",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "type": "radar"
+    },
+    {
+      "id": "bm22o2221",
+      "name": "BM22O2221",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22o2221-a.html"
+      ],
+      "description": "Digital Sub-Micro Servo (0.11kg-cm) BM22O2221-A",
+      "protocol": [
+        "pwm",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "5.0-7.2"
+    },
+    {
+      "id": "bm22s2021",
+      "name": "BM22S2021",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s2021-1.html"
+      ],
+      "description": "Smoke Detector Digital Sensor BM22S2021-1. Automatic fault detection",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.0-5.0"
+    },
+    {
+      "id": "bm22s2301",
+      "name": "BM22S2301",
+      "measures": [
+        "gas",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s2301-1.html"
+      ],
+      "description": "Ultra-compact Smoke Detector Digital Sensor BM22S2301-1. Detection Range: 0.1 ~ 1.0dB/m",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "6.0-28.0"
+    },
+    {
+      "id": "bm22s3021",
+      "name": "BM22S3021",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s3021-1.html"
+      ],
+      "description": "Gas Detector Digital Sensor BM22S3021-1. Packing List: Gas Detector Digital Sensor BM22S3021-1 x 1",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "5",
+      "type": "semiconductor"
+    },
+    {
+      "id": "bm22s3031",
+      "name": "BM22S3031",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s3031-1.html"
+      ],
+      "description": "Catalytic Combustible Gas Detector Digital Sensor BM22S3031-1. Fault detection function. When the gas concentration is detected to exceed the alarm point for five seconds, the sensor alarms (config...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.5",
+      "type": "catalytic"
+    },
+    {
+      "id": "bm22s3221",
+      "name": "BM22S3221",
+      "measures": [
+        "co",
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s3221-1.html"
+      ],
+      "description": "Electrochemical CO Detector Digital Sensor BM22S3221-1. Fault detection function. When the CO concentration is detected to exceed the alarm threshold for five seconds, the sensor alarms.",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.5-5.0",
+      "type": "electrochemical"
+    },
+    {
+      "id": "bm22s3331",
+      "name": "BM22S3331",
+      "measures": [
+        "flow",
+        "gas",
+        "light",
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s3331-1.html"
+      ],
+      "description": "Electrochemical Alcohol Module BM22S3331-1. Breath Alcohol (BrAC) Measurement Characteristics - Measurement Range: 0.000mg/L~2.000mg/L - Resolution: 0.001mg/L (BrAC), 1mg/100mL (BAC)",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.0-5.5",
+      "type": "electrochemical"
+    },
+    {
+      "id": "bm22s3421",
+      "name": "BM22S3421",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s3421-1.html"
+      ],
+      "description": "Alcohol Digital Sensor BM22S3421-1. Detect alcohol (C 2 H 5 OH) concentration in the environment. Detection range: 0~400ppm - Concentration level: 1~4 (default alarm level: 3). Alarm (default: leve...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3-5",
+      "type": "mems"
+    },
+    {
+      "id": "bm22s4021",
+      "name": "BM22S4021",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s4021-1.html"
+      ],
+      "description": "PIR Digital Sensor BM22S4021-1. Detection area (FOV: H/V): 121° / 77°. Low voltage detection: 2.7/3.0/3.3/3.6/4.0V (configurable)",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "bm22s4022",
+      "name": "BM22S4022",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s4022-1.html"
+      ],
+      "description": "PIR Digital Sensor BM22S4022-1. Detection area (FOV: H/V): 86°/75°. Low voltage detection: 2.7/3.0/3.3/3.6/4.0V (configurable)",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "bm22s4023",
+      "name": "BM22S4023",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s4023-1.html"
+      ],
+      "description": "PIR Digital Sensor BM22S4023-1. Detection area (FOV: H/V): 91°/10°. Low voltage detection: 2.7/3.0/3.3/3.6/4.0V (configurable)",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "bm22s4024",
+      "name": "BM22S4024",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s4024-1.html"
+      ],
+      "description": "PIR Digital Sensor BM22S4024-1. Detection area (FOV: H/V): 10°/20°. Low voltage detection: 2.7/3.0/3.3/3.6/4.0V (configurable)",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "bm22s4221",
+      "name": "BM22S4221",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s4221-1.html"
+      ],
+      "description": "PIR Motion Digital Sensor BM22S4221-1. Wide detection distance: 9m to 13.2m (max.). Wide detection area (FOV: H/V): 122° / 106°. Low-power consuming: - Detection mode: - Standby mode: <10μA @3.0V (...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "bm22s4421",
+      "name": "BM22S4421",
+      "measures": [
+        "light",
+        "motion",
+        "radar",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s4421-1.html"
+      ],
+      "description": "5.8GHz Microwave Radar Sensor Module BM22S4421-1. Maximum detection distance: 5~14 meters ( configurable across 7 levels). Detection angle: 360°",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "4.0-12.0",
+      "type": "radar"
+    },
+    {
+      "id": "bm22s4422",
+      "name": "BM22S4422",
+      "measures": [
+        "light",
+        "motion",
+        "radar",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s4422-1.html"
+      ],
+      "description": "5.8GHz Microwave Radar Sensor Module Gen2 BM22S4422-1. Maximum detection distance: 20 meters. Detection angle: 360°",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "4.0-12.0",
+      "type": "radar"
+    },
+    {
+      "id": "bm25s2021",
+      "name": "BM25S2021",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm25s2021-1.html"
+      ],
+      "description": "Temperature and Humidity Digital Sensor BM25S2021-1. Accurate relative humidity sensor - Sensing range: 10%RH – 95%RH - Resolution: 0.1% RH - Accuracy: ±3%RH - Resistive-type sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5"
+    },
+    {
+      "id": "bm25s2621",
+      "name": "BM25S2621",
+      "measures": [
+        "humidity",
+        "moisture",
+        "particulate",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm25s2621-1.html"
+      ],
+      "description": "Soil Temperature and Moisture Detection Module BM25S2621-1. Humidity Measurement - Range: 0%RH ~ 75%RH - Resolution: 1%RH - Accuracy: ±8%RH. Temperature Measurement - Recommended Range: 5℃ ~ 60℃ - ...",
+      "protocol": [
+        "rs485",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5"
+    },
+    {
+      "id": "bm25s3221",
+      "name": "BM25S3221",
+      "measures": [
+        "humidity",
+        "particulate"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm25s3221-1.html"
+      ],
+      "description": "Laser PM2.5 Air Quality Sensor BM25S3221-1. Detection concentration range: 0~1000μg/m 3 - Accuracy: &ensp; ⬥ 0~100μg/m 3 : ±15μg/m 3 &ensp; ⬥ 101μg/m 3 ~1000μg/m 3 : ±15% - Resolution: 1μg/m 3",
+      "protocol": [
+        "pwm",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "4.8-5.5",
+      "type": "laser"
+    },
+    {
+      "id": "bm25s3321",
+      "name": "BM25S3321",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm25s3321-1.html"
+      ],
+      "description": "NDIR CO2 Digital Sensor BM25S3321-1. Detection range: 400ppm to 5000ppm - Resolution: 1ppm - Accuracy: ±(50ppm +5% read value)",
+      "protocol": [
+        "pwm",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "5.0",
+      "type": "ndir"
+    },
+    {
+      "id": "bm25s3421",
+      "name": "BM25S3421",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm25s3421-1.html"
+      ],
+      "description": "VOC Digital Sensor BM25S3421-1. Detect VOC concentration (ethanol, formaldehyde, and toluene). Detection range: 0~10ppm - Concentration level: 1~4 (default alarm level: 3). Alarm (default: level 3)...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3-5",
+      "type": "mems"
+    },
+    {
+      "id": "bm25s4021",
+      "name": "BM25S4021",
+      "measures": [
+        "water_quality"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm25s4021-1.html"
+      ],
+      "description": "TDS Sensor Water Quality Detection Module BM25S4021-1. Wide TDS measurement range: 0~5000 ppm - High accuracy: &emsp; ⬥ 5ppm~5000ppm @25℃: ±5% &emsp; ⬥ 5ppm~5000ppm @5℃~60℃: ±6% - Resolution: &emsp...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.1-5.5"
+    },
+    {
+      "id": "bm25s4221",
+      "name": "BM25S4221",
+      "measures": [
+        "temperature",
+        "water_quality"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm25s4221-1.html"
+      ],
+      "description": "Water Turbidity Detection Digital Module BM25S4221-1. Turbidity Measurement - Range: 0NTU ~ 1000NTU - Resolution: 1NTU - Accuracy: ±50NTU @ 0NTU ~ 800NTU ±75NTU @ 800NTU ~ 1000NTU. Temperature Meas...",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "5",
+      "type": "pyroelectric"
+    },
+    {
+      "id": "bm25s4421",
+      "name": "BM25S4421",
+      "measures": [
+        "ph"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm25s4421-1.html"
+      ],
+      "description": "pH Value (pH0-14) Digital Sensor Module BM25S4421-1",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf"
+    },
+    {
+      "id": "bm32s2021",
+      "name": "BM32S2021",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm32s2021-1.html"
+      ],
+      "description": "Proximity Sensing Module BM32S2021-1. Operating current: 1.5mA typical (3.3V/object detected at 85cm/scanning time = 0.5s). Detection distance: 1 - 100cm (at 25°C, indoor, reflector is A4 paper), d...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.0-5.5"
+    },
+    {
+      "id": "bm42p782n1",
+      "name": "BM42P782-N1",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm42p782-n1.html"
+      ],
+      "description": "Weighing Scale Module BM42P782-N1",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf"
+    },
+    {
+      "id": "bm42s3021",
+      "name": "BM42S3021",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm42s3021-1.html"
+      ],
+      "description": "Thermocouple Temperature Sensor Module BM42S3021-1. Temperature measurement range: - K-type : -270℃~1370℃ - N-type : -270℃~1300℃ - E-type: -270℃~1000℃ - J-type: -210℃~1190℃ - R-type: -50℃~1760℃",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.6-5.5"
+    },
+    {
+      "id": "bm42s5321",
+      "name": "BM42S5321",
+      "measures": [
+        "distance",
+        "light",
+        "particulate",
+        "tof"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm42s5321-1.html"
+      ],
+      "description": "VL53L1X Time of Flight Ranging (ToF) Module with MCU BM42S5321-1. Resolution: 1mm. Accuracy: - 40mm~1000mm: ±20mm - 1000mm~4000mm: ±2%. Measurement mode: Single / Continuous / Power-saving mode",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.0-5.5",
+      "type": "tof"
+    },
+    {
+      "id": "bm62s2201",
+      "name": "BM62S2201",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm62s2201-1.html"
+      ],
+      "description": "Digital Air Pressure Sensor BM62S2201-1. Pressure range: 0 to 1psi (68.95hPa). Resolution: 0.001psi. Accuracy: ±1 %FS @25℃",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5"
+    },
+    {
+      "id": "bm62s2301",
+      "name": "BM62S2301",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm62s2301-1.html"
+      ],
+      "description": "Air Velocity Digital Sensor BM62S2301-1. Measurement range: 0~15m/s - Accuracy: 5% R.D. + 0.1m/s - Repetitive Accuracy: 1% F.S. - Resolution: 12-bit",
+      "protocol": [
+        "analog"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3",
+      "type": "mems"
+    },
+    {
+      "id": "bm62s3202",
+      "name": "BM62S3202",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm62s3202-1.html"
+      ],
+      "description": "Digital Water Level Sensor BM62S3202-1. Measurement range: 0~600mmH 2 O - Accuracy: ±1.5% F.S. @0~70°C - Resolution: 1 mmH 2 O. Temperature measurement range: -40°C~85°C - Accuracy @5V: &emsp; ⬥ ±1...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5"
+    },
+    {
+      "id": "bm62s5601",
+      "name": "BM62S5601",
+      "measures": [
+        "distance",
+        "flow",
+        "oxygen",
+        "temperature",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm62s5601-1.html"
+      ],
+      "description": "Ultrasonic Oxygen Concentration & Flow Detection Module BM62S5601-1. Oxygen concentration: 21%~95.6% - Resolution: 0.1% - Accuracy: ±1.8% @5℃~45℃. Flow measurement range: 0L/min~10L/min - Resolutio...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "4.75-13.2",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "bm62s5602",
+      "name": "BM62S5602",
+      "measures": [
+        "distance",
+        "flow",
+        "oxygen",
+        "temperature",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm62s5602-1.html"
+      ],
+      "description": "Ultrasonic Oxygen Concentration & Flow Detection Module BM62S5602-1. Oxygen concentration measurement range: 21%–95.6% - Resolution: 0.1% - Accuracy: ±1.8% @ 5°C–45°C. Flow rate measurement range: ...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "4.75-13.20",
+      "type": "ultrasonic"
+    },
+    {
+      "id": "bm92d3021",
+      "name": "BM92D3021",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm92d3021-1.html"
+      ],
+      "description": "Roller Shutter AC Motor Obstruction Detection Module BM92D3021-1. Obstruction detection activation time: 2.5 seconds. Obstruction detection response time: 0.5 to 1.5 seconds (automatically adjusts ...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "10-20"
+    },
+    {
+      "id": "bm92s2222",
+      "name": "BM92S2222",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm92s2222-a.html"
+      ],
+      "description": "Capacitive Fingerprint Sensor (100) BM92S2222-A. Resolution : 508 dpi",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5",
+      "type": "capacitive"
+    },
+    {
+      "id": "bm92s2222a2",
+      "name": "BM92S2222-A2",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm92s2222-a2.html"
+      ],
+      "description": "Capacitive Fingerprint Sensor (100) BM92S2222-A2. Resolution : 508 dpi",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5",
+      "type": "capacitive"
+    },
+    {
+      "id": "bm92s2231",
+      "name": "BM92S2231",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm92s2231-1.html"
+      ],
+      "description": "Capacitive Fingerprint Sensor (1000) BM92S2231-1. Maximum fingerprint storage capacity: 1000 - Sensing pad dimension: 9.6 x 12.8mm - Image size: 192 x 256 pixel - Resolution: 508dpi",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.0",
+      "type": "capacitive"
+    },
+    {
+      "id": "bma26m202",
+      "name": "BMA26M202",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bma26m202.html"
+      ],
+      "description": "Smoke Detector Module (BMCOM) BMA26M202. Detect black smoke and white smoke - Detection range: 0.1~0.8 dB/m - Configurable alarm threshold (you can set different thresholds for white smoke and blac...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.0-5.5"
+    },
+    {
+      "id": "bma26m221",
+      "name": "BMA26M221",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bma26m221.html"
+      ],
+      "description": "PIR Detector Module (BMCOM) BMA26M221. Maximum detection distance: 3m. Detection area (FOV: H/V): 121° / 77°. Low voltage detection: 2.7/3.0/3.3/3.6/4.0V (configurable)",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "bma34m421",
+      "name": "BMA34M421",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bma34m421.html"
+      ],
+      "description": "Alcohol Detection Module (BMCOM) BMA34M421. Detect alcohol (C 2 H 5 OH) concentration in the environment. Detection range: 0~400ppm (outputs A/D value) - Concentration level: 1~4 (default alarm lev...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.0-5.0",
+      "type": "mems"
+    },
+    {
+      "id": "bma36m302",
+      "name": "BMA36M302",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bma36m302.html"
+      ],
+      "description": "Semiconductor Gas Detector Module (BMCOM) BMA36M302. Fault detection function. When the gas concentration is detected to exceed the alarm threshold for five seconds, the sensor alarms (configurable)",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "4.9-5.1",
+      "type": "semiconductor"
+    },
+    {
+      "id": "bma36m303",
+      "name": "BMA36M303",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bma36m303.html"
+      ],
+      "description": "Catalytic Combustible Gas Detector Module (BMCOM) BMA36M303. Fault detection function. When the gas concentration is detected to exceed the alarm threshold for five seconds, the sensor alarms (conf...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.0-3.6",
+      "type": "catalytic"
+    },
+    {
+      "id": "bma46m422",
+      "name": "BMA46M422",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bma46m422.html"
+      ],
+      "description": "PIR Detector Module (BMCOM) BMA46M422. Maximum detection distance: 9m to 13.2m. Detection area (FOV: H/V): 122° / 106°",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.0-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "bma46m422a",
+      "name": "BMA46M422A",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bma46m422a.html"
+      ],
+      "description": "PIR Detector Module BMA46M422A. Integrated PIR sensing module: BM22S4221-1 - Detection angle: 122° / 106° (H / V). Adjustable sensing parameters - Configurable sensitivity - Adjustable detection du...",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.0-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "bma56m322",
+      "name": "BMA56M322",
+      "measures": [
+        "co",
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bma56m322.html"
+      ],
+      "description": "Electrochemical CO Detector Module (BMCOM) BMA56M322. When the CO concentration is detected to exceed the alarm threshold for five seconds, the module alarms.. Fault detection function",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.5-5.0",
+      "type": "electrochemical"
+    },
+    {
+      "id": "bme21m621",
+      "name": "BME21M621",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme21m621.html"
+      ],
+      "description": "Air Pressure Sensor Module (BMCOM) BME21M621. Pressure range: 0 to 1psi (68.95hPa). Resolution: 0.001psi. Accuracy: ±1 %FS @25℃",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5"
+    },
+    {
+      "id": "bme25k322",
+      "name": "BME25K322",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme25k322.html"
+      ],
+      "description": "Laser PM2.5 Air Quality Module (BMCOM) BME25K322. Measures particles ranging from 0.3µm to 10µm. Detection concentration range: 0~1000μg/m 3 - Accuracy: &ensp; ⬥ 0~100μg/m 3 : ±15μg/m 3 &ensp; ⬥ 10...",
+      "protocol": [
+        "pwm",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "4.8-5.5",
+      "type": "laser"
+    },
+    {
+      "id": "bme26m301",
+      "name": "BME26M301",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme26m301.html"
+      ],
+      "description": "Air Velocity Digital Module (BMCOM) BME26M301. Measurement range: 0~15m/s - Accuracy: 5% R.D. + 0.1m/s - Repetitive Accuracy: 1% F.S. - Resolution: 12-bit",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3",
+      "type": "mems"
+    },
+    {
+      "id": "bme33m251",
+      "name": "BME33M251",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme33m251.html"
+      ],
+      "description": "Temperature and Humidity Digital Sensor (BMCOM) BME33M251. Accurate relative humidity sensor - Resolution: 0.1% RH - Accuracy: ±3%RH - Sensing range: 10%RH~95%RH - Resistive-type sensor",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5"
+    },
+    {
+      "id": "bme33m251a",
+      "name": "BME33M251A",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme33m251a.html"
+      ],
+      "description": "Temperature and Humidity Digital Sensor BME33M251A. Humidity specifications - Range: 10%RH ~ 95%RH - Resolution: 0.1%RH - Accuracy: ±3%RH (typ.). Temperature specifications - Range: -40℃ ~ 80℃ - Re...",
+      "protocol": [
+        "analog",
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5"
+    },
+    {
+      "id": "bme34m101",
+      "name": "BME34M101",
+      "measures": [
+        "moisture",
+        "soil_moisture"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme34m101.html"
+      ],
+      "description": "Capacitive Soil Moisture Detection Module BME34M101. Soil moisture detection range: 0~75% - Resolution: 1%. Ambient temperature sensing range: 5℃~60℃ - Resolution: 1℃",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5",
+      "type": "capacitive"
+    },
+    {
+      "id": "bme53m421",
+      "name": "BME53M421",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme53m421.html"
+      ],
+      "description": "VOC Digital Module (BMCOM) BME53M421. Detect VOC concentration (ethanol, formaldehyde, and toluene). Detection range: 0~10ppm - Concentration level: 1~4 (default alarm level: 3). Fault detection fu...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3-5",
+      "type": "mems"
+    },
+    {
+      "id": "bme58m332",
+      "name": "BME58M332",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme58m332.html"
+      ],
+      "description": "CO2 Detector Module (BMCOM) BME58M332. Detection range: 400ppm~5000ppm - Resolution: 1ppm - Accuracy: ±(50ppm +5% read value)",
+      "protocol": [
+        "pwm",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "4.9-5.1"
+    },
+    {
+      "id": "bme63m001",
+      "name": "BME63M001",
+      "measures": [
+        "water_quality"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme63m001.html"
+      ],
+      "description": "TDS Sensor Water Quality Detection Module (BMCOM) BME63M001",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf"
+    },
+    {
+      "id": "bme82m131",
+      "name": "BME82M131",
+      "measures": [
+        "light"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme82m131.html"
+      ],
+      "description": "VEML7700 Ambient Light Sensing Module BME82M131. Ambient Light Sensor (ALS): VEML7700 - Resolution: 16-bit - Measurement range: 0 to 120 klx - Accuracy: 0.0036 lx/ct",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5"
+    },
+    {
+      "id": "bme82m131a",
+      "name": "BME82M131A",
+      "measures": [
+        "light"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme82m131a.html"
+      ],
+      "description": "VEML7700 Ambient Light Sensing Module BME82M131A. Ambient light sensor: VEML7700 - Resolution: 16-bit - Measurement range: 0–120 klx - Accuracy: 0.0036 lx/ct",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5"
+    },
+    {
+      "id": "bmh01220",
+      "name": "BMH01220",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh01220.html"
+      ],
+      "description": "Weight Sensor Module 20kg BMH01220 (V2). Measurement range: 0~20kg - Accuracy: 0.05% F.S. (non-linearity) - Resolution: 1g",
+      "protocol": [
+        "analog",
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.6-5.5",
+      "type": "strain_gauge"
+    },
+    {
+      "id": "bmh05102",
+      "name": "BMH05102",
+      "measures": [
+        "biometric",
+        "temperature",
+        "weight"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh05102.html"
+      ],
+      "description": "Four-Electrode Heart Rate Body Fat Scale Module BMH05102. MCU: Holtek BH66F2662 , Body Fat Measurement Flash MCU, including datasheet, package dimension, etc.",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5"
+    },
+    {
+      "id": "bmh05104",
+      "name": "BMH05104",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh05104-2.html"
+      ],
+      "description": "4-Electrode Body Composition Module BMH05104-2. Weighing range: 3 to 300kg - Accuracy: 3~20kg: 10g / 20~300kg: 50g - Resolution: 0.1kg. Impedance measurement range: 5Ω~800Ω - Accuracy: 5Ω~100Ω: ±1Ω...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5"
+    },
+    {
+      "id": "bmh06203",
+      "name": "BMH06203",
+      "measures": [
+        "ir_temperature",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh06203-31.html"
+      ],
+      "description": "Infrared Thermometer Module BMH06203-31. Measure the ambient temperature, object temperature, body temperature.. Measurement resolution of 0.1℃. It takes 1 second from power-on to output the first ...",
+      "protocol": [
+        "analog",
+        "i2c",
+        "pwm"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.6-5.5",
+      "type": "pyroelectric"
+    },
+    {
+      "id": "bmh06206",
+      "name": "BMH06206",
+      "measures": [
+        "ir_temperature",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh06206-42.html"
+      ],
+      "description": "Infrared Thermometer Module BMH06206-42. Measures ambient temperature, object surface temperature, and human body temperature. Measurement resolution of 0.1°C",
+      "protocol": [
+        "analog",
+        "i2c",
+        "pwm"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.6-5.5",
+      "type": "pyroelectric"
+    },
+    {
+      "id": "bmh08002",
+      "name": "BMH08002",
+      "measures": [
+        "biometric",
+        "light",
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh08002-4.html"
+      ],
+      "description": "Oximeter and Heart Rate Module BMH08002-4. Place your finger flatly on the measurement area. Your finger should cover the entire measurement area to avoid any interference from indoor lighting.",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf"
+    },
+    {
+      "id": "bmh12m205",
+      "name": "BMH12M205",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh12m205.html"
+      ],
+      "description": "Weighing Kit (5Kg) Gen2 BMH12M205. Measurement range: 0~5kg - Accuracy: ⬥ 0~100g: ±2g ⬥ 100g~5kg: ±3g - Resolution: can be configured to 1g or 0.1g",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.6-5.5"
+    },
+    {
+      "id": "bmh23m001",
+      "name": "BMH23M001",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh23m001.html"
+      ],
+      "description": "BH45B1225 24-Bit ADC Module BMH23M001",
+      "protocol": [
+        "analog",
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5"
+    },
+    {
+      "id": "bmh23m002",
+      "name": "BMH23M002",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh23m002.html"
+      ],
+      "description": "BH45B1525 24-Bit ADC Module BMH23M002",
+      "protocol": [
+        "analog",
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5"
+    },
+    {
+      "id": "bmh63k203",
+      "name": "BMH63K203",
+      "measures": [
+        "ir_temperature",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh63k203.html"
+      ],
+      "description": "Infrared Thermometer Module (BMCOM) BMH63K203. Measurement range: 0℃~100℃ - Resolution: 0.1℃ - Accuracy： &ensp;◆ ±0.2℃ @32℃~43℃ &ensp;◆ ±0.3℃ @30℃~45℃ &ensp;◆ ±1℃ @0℃~100℃. Measure ambient temperat...",
+      "protocol": [
+        "analog",
+        "i2c",
+        "pwm"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.6-5.5",
+      "type": "pyroelectric"
+    },
+    {
+      "id": "bmh83m002",
+      "name": "BMH83M002",
+      "measures": [
+        "biometric",
+        "light",
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh83m002.html"
+      ],
+      "description": "Oximeter and Heart Rate Module (BMCOM) BMH83M002. Place your finger flatly on the measurement area. Your finger should cover the entire measurement area to avoid any interference from indoor lighting.",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf"
+    },
+    {
+      "id": "bml36m001",
+      "name": "BML36M001",
+      "measures": [
+        "distance",
+        "light",
+        "tof"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bml36m001.html"
+      ],
+      "description": "VL53L1X Time of Flight Ranging (ToF) Module BML36M001. Measurement range: - Long-distance mode: 40mm~4000mm - Short-distance mode: 40mm~1300mm. Resolution: 1mm",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.1-5.5",
+      "type": "tof"
+    },
+    {
+      "id": "bms26m833",
+      "name": "BMS26M833",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bms26m833.html"
+      ],
+      "description": "AMG8833 IR Array Sensor Module BMS26M833. Thermal detection area: 8x8 (64 pixels). Temperature range: 0℃~80℃ (+32℉~+176℉) - Accuracy: ± 2.5℃ (±4.5℉) - Resolution: 0.25℃ (0.45℉). Maximum detection d...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5"
+    },
+    {
+      "id": "bms33m332",
+      "name": "BMS33M332",
+      "measures": [
+        "light",
+        "proximity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bms33m332.html"
+      ],
+      "description": "Proximity and Ambient Light Sensing Module BMS33M332. Has a built-in ambient light sensor, the STK3337-X - Integrated ambient light sensor, proximity sensor and infrared LED - Ambient light sensing...",
+      "protocol": [
+        "analog",
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5",
+      "type": "pyroelectric"
+    },
+    {
+      "id": "bms56m605",
+      "name": "BMS56M605",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "motion"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bms56m605.html"
+      ],
+      "description": "MPU-6050 Gyroscope and Accelerometer Module BMS56M605",
+      "protocol": [
+        "analog",
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5"
+    },
+    {
+      "id": "bms81m001",
+      "name": "BMS81M001",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bms81m001.html"
+      ],
+      "description": "MPU-6050 Shake Detection Module BMS81M001",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5"
+    },
+    {
+      "id": "bmv23m001",
+      "name": "BMV23M001",
+      "measures": [
+        "sound"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmv23m001.html"
+      ],
+      "description": "Sound Detector Module BMV23M001",
+      "protocol": [
+        "analog"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.0-5.5"
+    },
+    {
+      "id": "developmenttools",
+      "name": "DEVELOPMENT-TOOLS",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/development-tools.html"
+      ],
+      "description": "Development Tools",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf"
+    },
+    {
+      "id": "gtm5210f32",
+      "name": "GTM-5210F32",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/gtm-5210f32.html"
+      ],
+      "description": "Fingerprint Sensor Module (200) GTM-5210F32. Resolution: 450 dpi",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-6"
+    },
+    {
+      "id": "gtm5210f52",
+      "name": "GTM-5210F52",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/gtm-5210f52.html"
+      ],
+      "description": "Fingerprint Sensor Module (3000) GTM-5210F52. Resolution: 450 dpi",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-6"
+    },
+    {
+      "id": "ht7m2126",
+      "name": "HT7M2126",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/ht7m2126.html"
+      ],
+      "description": "Miniaturized PIR Module HT7M2126. Low power consumption: Operating mode (Moving objects to be detected) Standby with detecting mode < 50&mu;A (Operating voltage 3.3V)",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "ht7m2127",
+      "name": "HT7M2127",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/ht7m2127.html"
+      ],
+      "description": "Miniaturized PIR Module HT7M2127. Low power consumption: Operating mode (Moving objects to be detected) Standby with detecting mode < 50&mu;A (Operating voltage 3.3V)",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "ht7m2136",
+      "name": "HT7M2136",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/ht7m2136.html"
+      ],
+      "description": "Miniaturized PIR Module HT7M2136. Low power consumption: Operating mode (Moving objects to be detected) Standby with detecting mode < 50&mu;A (Operating voltage 3.3V)",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "ht7m2156",
+      "name": "HT7M2156",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/ht7m2156.html"
+      ],
+      "description": "Miniaturized PIR Module HT7M2156. Low power consumption: Operating mode (Moving objects to be detected) Standby with detecting mode < 50&mu;A (Operating voltage 3.3V)",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "ht7m2176",
+      "name": "HT7M2176",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/ht7m2176.html"
+      ],
+      "description": "Miniaturized PIR Module HT7M2176. Low power consumption: Operating mode (Moving objects to be detected) Standby with detecting mode < 50&mu;A (Operating voltage 3.3V)",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    }
+  ]
+}

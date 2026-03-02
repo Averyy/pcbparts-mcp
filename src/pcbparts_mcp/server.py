@@ -26,6 +26,7 @@ from .mouser import MouserClient
 from .digikey import DigiKeyClient
 from .cse import CSEClient
 from .db import get_db, close_db
+from .sensor_db import get_sensor_db, close_sensor_db
 from .search import SpecFilter
 from .smart_parser import parse_smart_query, merge_spec_filters
 from .pinout import parse_easyeda_pins
@@ -57,6 +58,15 @@ async def lifespan(app):
     _client.set_categories(_categories)
     logger.info(f"Loaded {len(_categories)} categories from database")
 
+    # Initialize sensor database (non-fatal if unavailable)
+    try:
+        sensor_db = get_sensor_db()
+        sensor_db._ensure_db()
+        sensor_stats = sensor_db.get_stats()
+        logger.info(f"Sensor database: {sensor_stats.get('total_sensors', 0)} sensors")
+    except Exception as e:
+        logger.warning(f"Sensor database not available: {e}")
+
     # Initialize Mouser client if API key is configured
     if MOUSER_API_KEY:
         mouser_quota = DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT)
@@ -84,12 +94,13 @@ async def lifespan(app):
     if _client:
         await _client.close()
     close_db()
+    close_sensor_db()
 
 
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB parts component search for PCB assembly. No auth required. Use jlc_search (local DB) as the primary search tool — it's fast, free, and supports parametric filters. Only use jlc_stock_check for real-time stock verification or out-of-stock parts. Use mouser_get_part/digikey_get_part only to cross-reference a specific MPN (daily quota applies).",
+    instructions="PCB parts component search for PCB assembly. No auth required. Use jlc_search (local DB) as the primary search tool — it's fast, free, and supports parametric filters. Only use jlc_stock_check for real-time stock verification or out-of-stock parts. Use mouser_get_part/digikey_get_part only to cross-reference a specific MPN (daily quota applies). Use sensor_recommend to find sensor ICs/modules by what they measure, protocol, or platform. It answers \"what sensor should I use?\" — not for buying parts (use jlc_search for that).",
     lifespan=lifespan,
 )
 
@@ -960,6 +971,71 @@ async def cse_get_kicad(
         logger.error(f"CSE get_kicad failed: {type(e).__name__}: {e}")
         return {"error": "CSE get_kicad failed. Check server logs for details."}
 
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Sensor Recommend",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=False,
+    )
+)
+async def sensor_recommend(
+    query: str | None = None,
+    measure: str | list[str] | None = None,
+    type: str | None = None,
+    protocol: str | None = None,
+    platform: str | None = None,
+    limit: int = 15,
+) -> dict:
+    """Recommend sensor ICs and modules for a measurement need. Returns popular, well-supported options
+    with platform compatibility info.
+
+    NOT for buying parts — use jlc_search to find JLCPCB stock and pricing.
+    This answers: "What sensor should I use to measure X on my platform?"
+
+    Args:
+        query: Search by name, description, or manufacturer (e.g., "BME280", "waterproof temperature")
+        measure: What to measure. Single or AND multiple: "temperature", ["temperature", "pressure"].
+            Types: temperature, humidity, pressure, distance, co2, gas, particulate, light, color, uv,
+            acceleration, gyroscope, magnetic_field, current, voltage, motion, rotation, proximity,
+            gesture, radar, sound, flow, touch, weight, ph, dissolved_oxygen, conductivity, orp,
+            ir_temperature, biometric, radiation, gps, co, soil_moisture.
+            Aliases: "imu" → acceleration OR gyroscope OR magnetic_field. "barometric" → pressure.
+            Sub-measures (search directly): voc, pir, ultrasonic, lidar, tof, radar.
+        type: Sensing technology: "tof", "ultrasonic", "radar", "ndir", "electrochemical", "mems", etc.
+        protocol: Interface: "i2c", "spi", "uart", "one_wire", "analog", "digital", "pwm"
+        platform: Filter by support: "arduino", "esphome", "micropython", "circuitpython", "tasmota", "zephyr"
+        limit: Max results (default 15)
+
+    Returns:
+        Sensors sorted by platform support (how many platforms have drivers for this sensor).
+        Each result includes: name, manufacturer, measures, type, protocol,
+        voltage, platforms, platform_count, description, urls, datasheet_url (when available).
+    """
+    # Handle JSON-string measure param from some MCP clients
+    if isinstance(measure, str):
+        try:
+            parsed = json.loads(measure)
+            if isinstance(parsed, list):
+                measure = parsed
+        except json.JSONDecodeError:
+            pass
+
+    if query and len(query) > 500:
+        return {"error": "Query too long (max 500 characters)", "results": [], "total": 0}
+
+    sensor_db = get_sensor_db()
+    return sensor_db.search(
+        query=query,
+        measure=measure,
+        type=type,
+        protocol=protocol,
+        platform=platform,
+        limit=min(limit, 100),
+    )
 
 
 # Health check endpoint

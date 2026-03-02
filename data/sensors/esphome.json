@@ -1,0 +1,3226 @@
+{
+  "source": "esphome",
+  "source_url": "https://github.com/esphome/esphome",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-01T17:29:33.735891+00:00",
+  "stats": {
+    "sensor_count": 173,
+    "total_components_checked": 282,
+    "skipped_non_sensor": 91,
+    "skipped_no_measures": 1
+  },
+  "sensors": [
+    {
+      "id": "a01nyub",
+      "name": "a01nyub",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/a01nyub.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "a02yyuw",
+      "name": "a02yyuw",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/a02yyuw.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "ade7880",
+      "name": "ade7880",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ade7880.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x38"
+      ]
+    },
+    {
+      "id": "ade7953",
+      "name": "ade7953",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ade7953.html"
+      ],
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "i2c_address": [
+        "0x38"
+      ]
+    },
+    {
+      "id": "ads1115",
+      "name": "ads1115",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ads1115.html"
+      ],
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "ads1118",
+      "name": "ads1118",
+      "measures": [
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ads1118.html"
+      ],
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "ags10",
+      "name": "ags10",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ags10.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x1a"
+      ]
+    },
+    {
+      "id": "aht10",
+      "name": "aht10",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/aht10.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x38"
+      ]
+    },
+    {
+      "id": "am2315c",
+      "name": "am2315c",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/am2315c.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x38"
+      ]
+    },
+    {
+      "id": "am2320",
+      "name": "am2320",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/am2320.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x5c"
+      ]
+    },
+    {
+      "id": "apds9306",
+      "name": "apds9306",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/apds9306.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x52"
+      ]
+    },
+    {
+      "id": "apds9960",
+      "name": "apds9960",
+      "measures": [
+        "color",
+        "gesture",
+        "proximity"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/apds9960.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x39"
+      ]
+    },
+    {
+      "id": "as3935",
+      "name": "as3935",
+      "measures": [
+        "weather"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/as3935.html"
+      ]
+    },
+    {
+      "id": "as5600",
+      "name": "as5600",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/as5600.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x36"
+      ]
+    },
+    {
+      "id": "as7341",
+      "name": "as7341",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/as7341.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x39"
+      ]
+    },
+    {
+      "id": "atm90e26",
+      "name": "atm90e26",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/atm90e26.html"
+      ],
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "atm90e32",
+      "name": "atm90e32",
+      "measures": [
+        "current",
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/atm90e32.html"
+      ],
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "bh1750",
+      "name": "bh1750",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bh1750.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x23"
+      ]
+    },
+    {
+      "id": "bh1900nux",
+      "name": "bh1900nux",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bh1900nux.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x48"
+      ]
+    },
+    {
+      "id": "bl0906",
+      "name": "bl0906",
+      "measures": [
+        "current",
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bl0906.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "bl0939",
+      "name": "bl0939",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bl0939.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "bl0940",
+      "name": "bl0940",
+      "measures": [
+        "current",
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bl0940.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "bl0942",
+      "name": "bl0942",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bl0942.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "bme280",
+      "name": "bme280",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bme280.html"
+      ],
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "i2c_address": [
+        "0x77"
+      ]
+    },
+    {
+      "id": "bme680",
+      "name": "bme680",
+      "measures": [
+        "gas",
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bme680.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x76"
+      ]
+    },
+    {
+      "id": "bme680bsec",
+      "name": "bme680_bsec",
+      "measures": [
+        "co2",
+        "gas",
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bme680_bsec.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x76"
+      ]
+    },
+    {
+      "id": "bme68xbsec2",
+      "name": "bme68x_bsec2",
+      "measures": [
+        "co2",
+        "gas",
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bme68x_bsec2.html"
+      ]
+    },
+    {
+      "id": "bmi160",
+      "name": "bmi160",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bmi160.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x68"
+      ]
+    },
+    {
+      "id": "bmp085",
+      "name": "bmp085",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bmp085.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x77"
+      ]
+    },
+    {
+      "id": "bmp280",
+      "name": "bmp280",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bmp280.html"
+      ],
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "i2c_address": [
+        "0x77"
+      ]
+    },
+    {
+      "id": "bmp3xx",
+      "name": "bmp3xx",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bmp3xx.html"
+      ],
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "i2c_address": [
+        "0x77"
+      ]
+    },
+    {
+      "id": "bmp581",
+      "name": "bmp581",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/bmp581.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x46"
+      ]
+    },
+    {
+      "id": "ccs811",
+      "name": "ccs811",
+      "measures": [
+        "co2",
+        "gas",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ccs811.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x5a"
+      ]
+    },
+    {
+      "id": "cd74hc4067",
+      "name": "cd74hc4067",
+      "measures": [
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/cd74hc4067.html"
+      ]
+    },
+    {
+      "id": "cm1106",
+      "name": "cm1106",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/cm1106.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "cs5460a",
+      "name": "cs5460a",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/cs5460a.html"
+      ],
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "cse7761",
+      "name": "cse7761",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/cse7761.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "cse7766",
+      "name": "cse7766",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/cse7766.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "ctclamp",
+      "name": "ct_clamp",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ct_clamp.html"
+      ]
+    },
+    {
+      "id": "dalybms",
+      "name": "daly_bms",
+      "measures": [
+        "current",
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/daly_bms.html"
+      ],
+      "protocol": [
+        "uart"
+      ],
+      "i2c_address": [
+        "0x80"
+      ]
+    },
+    {
+      "id": "dht",
+      "name": "dht",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/dht.html"
+      ]
+    },
+    {
+      "id": "dht12",
+      "name": "dht12",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/dht12.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x5c"
+      ]
+    },
+    {
+      "id": "dps310",
+      "name": "dps310",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/dps310.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x77"
+      ]
+    },
+    {
+      "id": "ds18b20",
+      "name": "dallas_temp",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/dallas_temp.html"
+      ],
+      "protocol": [
+        "one_wire"
+      ]
+    },
+    {
+      "id": "ee895",
+      "name": "ee895",
+      "measures": [
+        "co2",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ee895.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x5f"
+      ]
+    },
+    {
+      "id": "emc2101",
+      "name": "emc2101",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/emc2101.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x4c"
+      ]
+    },
+    {
+      "id": "ens160",
+      "name": "ens160",
+      "measures": [
+        "co2",
+        "gas",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ens160.html"
+      ],
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "i2c_address": [
+        "0x52"
+      ]
+    },
+    {
+      "id": "ens210",
+      "name": "ens210",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ens210.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x43"
+      ]
+    },
+    {
+      "id": "ezopmp",
+      "name": "ezo_pmp",
+      "measures": [
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ezo_pmp.html"
+      ],
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "fingerprintgrow",
+      "name": "fingerprint_grow",
+      "measures": [
+        "biometric",
+        "face_recognition"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/fingerprint_grow.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "fs3000",
+      "name": "fs3000",
+      "measures": [
+        "wind"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/fs3000.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x28"
+      ]
+    },
+    {
+      "id": "gasmcv2",
+      "name": "grove_gas_mc_v2",
+      "measures": [
+        "co",
+        "gas",
+        "particulate"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/grove_gas_mc_v2.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x08"
+      ]
+    },
+    {
+      "id": "gcja5",
+      "name": "gcja5",
+      "measures": [
+        "gas",
+        "particulate"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/gcja5.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "gdk101",
+      "name": "gdk101",
+      "measures": [
+        "radiation"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/gdk101.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x18"
+      ]
+    },
+    {
+      "id": "glr01",
+      "name": "gl_r01",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/gl_r01.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x74"
+      ]
+    },
+    {
+      "id": "gp2y1010au0f",
+      "name": "gp2y1010au0f",
+      "measures": [
+        "gas",
+        "particulate"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/gp2y1010au0f.html"
+      ]
+    },
+    {
+      "id": "hc8",
+      "name": "hc8",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hc8.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "hdc1080",
+      "name": "hdc1080",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hdc1080.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "hdc2010",
+      "name": "hdc2010",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hdc2010.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "hdc302x",
+      "name": "hdc302x",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hdc302x.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x44"
+      ]
+    },
+    {
+      "id": "hlkfm22x",
+      "name": "hlk_fm22x",
+      "measures": [
+        "face_recognition"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hlk_fm22x.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "hlw8012",
+      "name": "hlw8012",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hlw8012.html"
+      ]
+    },
+    {
+      "id": "hlw8032",
+      "name": "hlw8032",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hlw8032.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "hm3301",
+      "name": "hm3301",
+      "measures": [
+        "gas",
+        "particulate"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hm3301.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "hmc5883l",
+      "name": "hmc5883l",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hmc5883l.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x1e"
+      ]
+    },
+    {
+      "id": "honeywellabp",
+      "name": "honeywellabp",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/honeywellabp.html"
+      ],
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "honeywellabp2",
+      "name": "honeywellabp2",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/honeywellabp2.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x28"
+      ]
+    },
+    {
+      "id": "honeywellhih",
+      "name": "honeywell_hih",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/honeywell_hih.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x27"
+      ]
+    },
+    {
+      "id": "hrxlmaxsonarwr",
+      "name": "hrxl_maxsonar_wr",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hrxl_maxsonar_wr.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "hte501",
+      "name": "hte501",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hte501.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "htu21d",
+      "name": "htu21d",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/htu21d.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "htu31d",
+      "name": "htu31d",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/htu31d.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "hx711",
+      "name": "hx711",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hx711.html"
+      ]
+    },
+    {
+      "id": "hydreonrgxx",
+      "name": "hydreon_rgxx",
+      "measures": [
+        "distance",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hydreon_rgxx.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "hyt271",
+      "name": "hyt271",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hyt271.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x28"
+      ]
+    },
+    {
+      "id": "iaqcore",
+      "name": "iaqcore",
+      "measures": [
+        "co2",
+        "gas"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/iaqcore.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x5a"
+      ]
+    },
+    {
+      "id": "ina219",
+      "name": "ina219",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ina219.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "ina226",
+      "name": "ina226",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ina226.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "ina260",
+      "name": "ina260",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ina260.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "ina2xx",
+      "name": "ina2xx",
+      "measures": [
+        "current",
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ina2xx.html"
+      ],
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "ina3221",
+      "name": "ina3221",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ina3221.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "jsnsr04t",
+      "name": "jsn_sr04t",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/jsn_sr04t.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "kmeteriso",
+      "name": "kmeteriso",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/kmeteriso.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x66"
+      ]
+    },
+    {
+      "id": "lc709203f",
+      "name": "lc709203f",
+      "measures": [
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/lc709203f.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x0b"
+      ]
+    },
+    {
+      "id": "ld2410",
+      "name": "ld2410",
+      "measures": [
+        "distance",
+        "light",
+        "proximity"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ld2410.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "ld2412",
+      "name": "ld2412",
+      "measures": [
+        "distance",
+        "light",
+        "proximity"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ld2412.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "ld2420",
+      "name": "ld2420",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ld2420.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "ld2450",
+      "name": "ld2450",
+      "measures": [
+        "distance",
+        "proximity"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ld2450.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "lm75b",
+      "name": "lm75b",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/lm75b.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x48"
+      ]
+    },
+    {
+      "id": "lps22",
+      "name": "lps22",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/lps22.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x5d"
+      ]
+    },
+    {
+      "id": "ltr390",
+      "name": "ltr390",
+      "measures": [
+        "light",
+        "uv"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ltr390.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x53"
+      ]
+    },
+    {
+      "id": "ltr501",
+      "name": "ltr501",
+      "measures": [
+        "distance",
+        "light",
+        "proximity"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ltr501.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x23"
+      ]
+    },
+    {
+      "id": "ltralsps",
+      "name": "ltr_als_ps",
+      "measures": [
+        "light",
+        "proximity"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ltr_als_ps.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x29"
+      ]
+    },
+    {
+      "id": "max17043",
+      "name": "max17043",
+      "measures": [
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/max17043.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x36"
+      ]
+    },
+    {
+      "id": "max31855",
+      "name": "max31855",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/max31855.html"
+      ],
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "max31856",
+      "name": "max31856",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/max31856.html"
+      ],
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "max31865",
+      "name": "max31865",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/max31865.html"
+      ],
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "max44009",
+      "name": "max44009",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/max44009.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x4a"
+      ]
+    },
+    {
+      "id": "max6675",
+      "name": "max6675",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/max6675.html"
+      ],
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "max9611",
+      "name": "max9611",
+      "measures": [
+        "current",
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/max9611.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x70"
+      ]
+    },
+    {
+      "id": "mcp9600",
+      "name": "mcp9600",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mcp9600.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x67"
+      ]
+    },
+    {
+      "id": "mcp9808",
+      "name": "mcp9808",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mcp9808.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x18"
+      ]
+    },
+    {
+      "id": "mhz19",
+      "name": "mhz19",
+      "measures": [
+        "co2",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mhz19.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "mics4514",
+      "name": "mics_4514",
+      "measures": [
+        "co"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mics_4514.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x75"
+      ]
+    },
+    {
+      "id": "mlx90393",
+      "name": "mlx90393",
+      "measures": [
+        "magnetic_field",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mlx90393.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x0c"
+      ]
+    },
+    {
+      "id": "mlx90614",
+      "name": "mlx90614",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mlx90614.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x5a"
+      ]
+    },
+    {
+      "id": "mmc5603",
+      "name": "mmc5603",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mmc5603.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x1e"
+      ]
+    },
+    {
+      "id": "mmc5983",
+      "name": "mmc5983",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mmc5983.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x30"
+      ]
+    },
+    {
+      "id": "mpl3115a2",
+      "name": "mpl3115a2",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mpl3115a2.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x60"
+      ]
+    },
+    {
+      "id": "mpu6050",
+      "name": "mpu6050",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mpu6050.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x68"
+      ]
+    },
+    {
+      "id": "mpu6886",
+      "name": "mpu6886",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mpu6886.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x68"
+      ]
+    },
+    {
+      "id": "mr24hpc1",
+      "name": "seeed_mr24hpc1",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/seeed_mr24hpc1.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "mr60bha2",
+      "name": "seeed_mr60bha2",
+      "measures": [
+        "biometric",
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/seeed_mr60bha2.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "ms5611",
+      "name": "ms5611",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ms5611.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x77"
+      ]
+    },
+    {
+      "id": "ms8607",
+      "name": "ms8607",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ms8607.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40",
+        "0x76"
+      ]
+    },
+    {
+      "id": "msa3xx",
+      "name": "msa3xx",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/msa3xx.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x26",
+        "0x62"
+      ]
+    },
+    {
+      "id": "nau7802",
+      "name": "nau7802",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/nau7802.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x2a"
+      ]
+    },
+    {
+      "id": "npi19",
+      "name": "npi19",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/npi19.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x28"
+      ]
+    },
+    {
+      "id": "opt3001",
+      "name": "opt3001",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/opt3001.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x44"
+      ]
+    },
+    {
+      "id": "pm1006",
+      "name": "pm1006",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/pm1006.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "pm2005",
+      "name": "pm2005",
+      "measures": [
+        "gas",
+        "particulate"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/pm2005.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x28"
+      ]
+    },
+    {
+      "id": "pmsa003i",
+      "name": "pmsa003i",
+      "measures": [
+        "gas",
+        "particulate"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/pmsa003i.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x12"
+      ]
+    },
+    {
+      "id": "pmsx003",
+      "name": "pmsx003",
+      "measures": [
+        "gas",
+        "humidity",
+        "particulate",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/pmsx003.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "pmwcs3",
+      "name": "pmwcs3",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/pmwcs3.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x63"
+      ]
+    },
+    {
+      "id": "qmc5883l",
+      "name": "qmc5883l",
+      "measures": [
+        "magnetic_field",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/qmc5883l.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x0d"
+      ]
+    },
+    {
+      "id": "qmp6988",
+      "name": "qmp6988",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/qmp6988.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x70"
+      ]
+    },
+    {
+      "id": "rd03d",
+      "name": "rd03d",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/rd03d.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "scd30",
+      "name": "scd30",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/scd30.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x61"
+      ]
+    },
+    {
+      "id": "scd4x",
+      "name": "scd4x",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/scd4x.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x62"
+      ]
+    },
+    {
+      "id": "sdp3x",
+      "name": "sdp3x",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sdp3x.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x21"
+      ]
+    },
+    {
+      "id": "sds011",
+      "name": "sds011",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sds011.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "sen0321",
+      "name": "sen0321",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sen0321.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x73"
+      ]
+    },
+    {
+      "id": "sen21231",
+      "name": "sen21231",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sen21231.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x62"
+      ]
+    },
+    {
+      "id": "sen5x",
+      "name": "sen5x",
+      "measures": [
+        "gas",
+        "humidity",
+        "particulate",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sen5x.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x69"
+      ]
+    },
+    {
+      "id": "sen6x",
+      "name": "sen6x",
+      "measures": [
+        "co2",
+        "gas",
+        "humidity",
+        "particulate",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sen6x.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x6b"
+      ]
+    },
+    {
+      "id": "senseair",
+      "name": "senseair",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/senseair.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "sfa30",
+      "name": "sfa30",
+      "measures": [
+        "gas",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sfa30.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x5d"
+      ]
+    },
+    {
+      "id": "sgp30",
+      "name": "sgp30",
+      "measures": [
+        "co2",
+        "gas"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sgp30.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x58"
+      ]
+    },
+    {
+      "id": "sgp4x",
+      "name": "sgp4x",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sgp4x.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x59"
+      ]
+    },
+    {
+      "id": "sht3x",
+      "name": "sht3xd",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sht3xd.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x44"
+      ]
+    },
+    {
+      "id": "sht4x",
+      "name": "sht4x",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sht4x.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x44"
+      ]
+    },
+    {
+      "id": "shtcx",
+      "name": "shtcx",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/shtcx.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x70"
+      ]
+    },
+    {
+      "id": "sm300d2",
+      "name": "sm300d2",
+      "measures": [
+        "co2",
+        "gas",
+        "humidity",
+        "particulate",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sm300d2.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "smt100",
+      "name": "smt100",
+      "measures": [
+        "humidity",
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/smt100.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "soundlevel",
+      "name": "sound_level",
+      "measures": [
+        "sound"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sound_level.html"
+      ]
+    },
+    {
+      "id": "sps30",
+      "name": "sps30",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sps30.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x69"
+      ]
+    },
+    {
+      "id": "sts3x",
+      "name": "sts3x",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sts3x.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x4a"
+      ]
+    },
+    {
+      "id": "stts22h",
+      "name": "stts22h",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/stts22h.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x3c"
+      ]
+    },
+    {
+      "id": "sungtil2",
+      "name": "sun_gtil2",
+      "measures": [
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sun_gtil2.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "t6615",
+      "name": "t6615",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/t6615.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "tc74",
+      "name": "tc74",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tc74.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x48"
+      ]
+    },
+    {
+      "id": "tcs34725",
+      "name": "tcs34725",
+      "measures": [
+        "color",
+        "light"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tcs34725.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x29"
+      ]
+    },
+    {
+      "id": "tee501",
+      "name": "tee501",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tee501.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x48"
+      ]
+    },
+    {
+      "id": "tem3200",
+      "name": "tem3200",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tem3200.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x28"
+      ]
+    },
+    {
+      "id": "tmp102",
+      "name": "tmp102",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tmp102.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x48"
+      ]
+    },
+    {
+      "id": "tmp1075",
+      "name": "tmp1075",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tmp1075.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x48"
+      ]
+    },
+    {
+      "id": "tmp117",
+      "name": "tmp117",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tmp117.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x48"
+      ]
+    },
+    {
+      "id": "tof10120",
+      "name": "tof10120",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tof10120.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x52"
+      ]
+    },
+    {
+      "id": "tsl2561",
+      "name": "tsl2561",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tsl2561.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x39"
+      ]
+    },
+    {
+      "id": "tsl2591",
+      "name": "tsl2591",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tsl2591.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x29"
+      ]
+    },
+    {
+      "id": "tx20",
+      "name": "tx20",
+      "measures": [
+        "wind"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tx20.html"
+      ]
+    },
+    {
+      "id": "ufireec",
+      "name": "ufire_ec",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ufire_ec.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x3c"
+      ]
+    },
+    {
+      "id": "ufireise",
+      "name": "ufire_ise",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ufire_ise.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x3f"
+      ]
+    },
+    {
+      "id": "ultrasonic",
+      "name": "ultrasonic",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ultrasonic.html"
+      ]
+    },
+    {
+      "id": "veml3235",
+      "name": "veml3235",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/veml3235.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x10"
+      ]
+    },
+    {
+      "id": "veml7700",
+      "name": "veml7700",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/veml7700.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x10"
+      ]
+    },
+    {
+      "id": "vl53l0x",
+      "name": "vl53l0x",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/vl53l0x.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x29"
+      ]
+    },
+    {
+      "id": "wts01",
+      "name": "wts01",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/wts01.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "xgzp68xx",
+      "name": "xgzp68xx",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/xgzp68xx.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x6d"
+      ]
+    },
+    {
+      "id": "xiaomilywsd02mmc",
+      "name": "xiaomi_lywsd02mmc",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/xiaomi_lywsd02mmc.html"
+      ]
+    },
+    {
+      "id": "xiaomixmwsdj04mmc",
+      "name": "xiaomi_xmwsdj04mmc",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/xiaomi_xmwsdj04mmc.html"
+      ]
+    },
+    {
+      "id": "zioultrasonic",
+      "name": "zio_ultrasonic",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/zio_ultrasonic.html"
+      ],
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "zyaura",
+      "name": "zyaura",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/zyaura.html"
+      ]
+    }
+  ]
+}

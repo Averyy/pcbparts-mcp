@@ -1,0 +1,1238 @@
+{
+  "source": "dfrobot",
+  "source_url": "https://github.com/DFRobot",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-01T17:30:01.159510+00:00",
+  "stats": {
+    "sensor_count": 82,
+    "total_repos": 476,
+    "dfrobot_repos": 235,
+    "skipped_non_sensor": 102,
+    "skipped_no_ic": 46,
+    "library_properties_fetched": 74
+  },
+  "sensors": [
+    {
+      "id": "10dof",
+      "name": "10DOF",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field",
+        "pressure"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_10DOF"
+      ]
+    },
+    {
+      "id": "64x8dtof",
+      "name": "64x8DTOF",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_64x8DTOF"
+      ],
+      "description": "Library for DFRobot 64x8DTOF 64*8 dToF Laser Ranging Sensor.(SKU:SEN0682)"
+    },
+    {
+      "id": "64xdtof",
+      "name": "64xDTOF",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_64xDTOF"
+      ],
+      "description": "Library for DFRobot 64x8DTOF 64*8 dToF Laser Ranging Sensor.(SKU:SEN0682)"
+    },
+    {
+      "id": "ads1115",
+      "name": "ADS1115",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_ADS1115"
+      ],
+      "description": "DFRobot Standard library(SKU:DFR0553)."
+    },
+    {
+      "id": "ads1115010v",
+      "name": "ADS1115_0_10V",
+      "measures": [
+        "voltage"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_ADS1115_0_10V"
+      ],
+      "description": "Easy to use ADS1115."
+    },
+    {
+      "id": "adxl345",
+      "name": "ADXL345",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_ADXL345"
+      ],
+      "description": "Six axis sensor library.(SKU:SEN0032)"
+    },
+    {
+      "id": "ags01db",
+      "name": "AGS01DB",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_AGS01DB"
+      ]
+    },
+    {
+      "id": "aht20",
+      "name": "AHT20",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_AHT20"
+      ],
+      "description": "DFRobot Standard library(SKU:SEN0527&SEN0528)."
+    },
+    {
+      "id": "apds9960",
+      "name": "ColorWaveSensorAPDS9960",
+      "measures": [
+        "color",
+        "gesture",
+        "proximity"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_ColorWaveSensorAPDS9960"
+      ]
+    },
+    {
+      "id": "as3935",
+      "name": "AS3935",
+      "measures": [
+        "weather"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_AS3935"
+      ],
+      "description": "DFRobot Lightning Sensor library.(SKU:SEN0290)"
+    },
+    {
+      "id": "as6221",
+      "name": "AS6221",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_AS6221"
+      ],
+      "description": "Easy to use AS6221."
+    },
+    {
+      "id": "as7341",
+      "name": "AS7341",
+      "measures": [
+        "color",
+        "light"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_AS7341"
+      ],
+      "description": "AS7341 is a 11 channel visible light sensor, which can measure 8 wavelengths of visible light, suitable for color detection, light color temperature detection and other scenes(SKU:SEN0365)"
+    },
+    {
+      "id": "bluxv30b",
+      "name": "B_LUX_V30B",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_B_LUX_V30B"
+      ],
+      "description": "DFRobot_B_LUX_V30B is the sensor library of DFRobot"
+    },
+    {
+      "id": "bme280",
+      "name": "BME280",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BME280"
+      ],
+      "description": "This is a Library for BME280, the function is to read temperature and humidity and pressure(SKU: SEN0236)."
+    },
+    {
+      "id": "bme680",
+      "name": "BME680",
+      "measures": [
+        "gas",
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BME680"
+      ],
+      "description": "DFRobot Standard library(SKU:SEN0248)."
+    },
+    {
+      "id": "bme68x",
+      "name": "BME68x",
+      "measures": [
+        "gas",
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BME68x"
+      ],
+      "description": "DFRobot Standard library(SKU:SEN0617)."
+    },
+    {
+      "id": "bmi160",
+      "name": "BMI160",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BMI160"
+      ],
+      "description": "DFRobot Standard library(SKU:SEN0250)."
+    },
+    {
+      "id": "bmm150",
+      "name": "BMM150",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BMM150"
+      ],
+      "description": "DFRobot Standard library(SKU：SEN0419)."
+    },
+    {
+      "id": "bmm350",
+      "name": "BMM350",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BMM350"
+      ],
+      "description": "DFRobot Standard 3-axis geomagnetic sensor library(SKU：SEN0419)."
+    },
+    {
+      "id": "bmp280",
+      "name": "BMP280",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BMP280"
+      ],
+      "description": "DFRobot Standard library(SKU:SEN0372)."
+    },
+    {
+      "id": "bmp58x",
+      "name": "BMP58X",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BMP58X"
+      ],
+      "description": "Read air pressure data (SKU:SEN0664/SEN0665/SEN0666/SEN0667)."
+    },
+    {
+      "id": "bmv080",
+      "name": "BMV080",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BMV080"
+      ],
+      "description": "Sensors"
+    },
+    {
+      "id": "bmx160",
+      "name": "BMX160",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BMX160"
+      ],
+      "description": "DFRobot_BMX160 is the Sensor library of DFRobot"
+    },
+    {
+      "id": "bno055",
+      "name": "BNO055",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BNO055"
+      ]
+    },
+    {
+      "id": "c4001",
+      "name": "C4001",
+      "measures": [
+        "motion"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_C4001"
+      ],
+      "description": "Determine whether the object is moving (SKU:SEN0610/SEN0609)."
+    },
+    {
+      "id": "c4002",
+      "name": "C4002",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_C4002"
+      ],
+      "description": "Standard library for DFRobot C4002 sensor.(SKU:SEN0691)"
+    },
+    {
+      "id": "ccs811",
+      "name": "CCS811",
+      "measures": [
+        "co2",
+        "gas"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_CCS811"
+      ],
+      "description": "DFRobot_CCS811 is the Sensor library of DFRobot"
+    },
+    {
+      "id": "ct1780",
+      "name": "CT1780",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_CT1780"
+      ],
+      "description": "1-Wire High Temperature Sersor (K-type)"
+    },
+    {
+      "id": "dht11",
+      "name": "DHT11",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_DHT11"
+      ],
+      "description": "DFRobot Standard library(SKU:DFR0067)."
+    },
+    {
+      "id": "dht20",
+      "name": "DHT20",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_DHT20"
+      ],
+      "description": "Provide an Arduino library to get Humidity and Temperature by reading data from dht20."
+    },
+    {
+      "id": "ec10",
+      "name": "EC10",
+      "measures": [
+        "water_quality"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_EC10"
+      ],
+      "description": "for measuring the liquid with high electrical conductivity(SKU: DFR0300-H)."
+    },
+    {
+      "id": "ens160",
+      "name": "ENS160",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_ENS160"
+      ],
+      "description": "This is a Library for ENS160, ENS160 is a Digital Metal-Oxide Multi-Gas Sensor(SKU: SEN0514/SEN0515)."
+    },
+    {
+      "id": "frn20",
+      "name": "FRN20",
+      "measures": [
+        "flow"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_FRN20"
+      ],
+      "description": "Easy to use FRN20 flow sensor."
+    },
+    {
+      "id": "gr1030",
+      "name": "GR10_30",
+      "measures": [
+        "gesture"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_GR10_30"
+      ],
+      "description": "This is a gesture sensor.(SKU:SEN0543)"
+    },
+    {
+      "id": "hmc5883l",
+      "name": "HMC5883L",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_HMC5883L"
+      ]
+    },
+    {
+      "id": "hx711",
+      "name": "HX711",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_HX711",
+        "https://github.com/DFRobot/DFRobot_HX711_I2C"
+      ],
+      "description": "By a simple mechanical structure with the sensor, that can be read to the mass of the body(SKU:SEN0160)"
+    },
+    {
+      "id": "icg20660l",
+      "name": "ICG20660L",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_ICG20660L"
+      ],
+      "description": "DFRobot Standard library(SKU:SEN0443)."
+    },
+    {
+      "id": "icm42688",
+      "name": "ICM42688",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_ICM42688"
+      ],
+      "description": "DFRobot_ICM42688 is a sensor library(SKU: SEN0352)."
+    },
+    {
+      "id": "icp10111",
+      "name": "ICP10111",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_ICP10111"
+      ],
+      "description": "This is an atmospheric pressure sensor.(SKU:SEN0516)"
+    },
+    {
+      "id": "ina219",
+      "name": "INA219",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_INA219"
+      ],
+      "description": "measure the current and voltage (SKU: SEN0291)."
+    },
+    {
+      "id": "itg3200",
+      "name": "ITG3200",
+      "measures": [
+        "gyroscope"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_ITG3200"
+      ],
+      "description": "A library of gyroscopic sensors(SKU:SEN0140)."
+    },
+    {
+      "id": "lidar07",
+      "name": "LIDAR07",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_LIDAR07"
+      ],
+      "description": "DFRobot_LIDAR07 is the sensor library of DFRobot(SKU:SEN0413)"
+    },
+    {
+      "id": "lis2dh12",
+      "name": "LIS2DH12",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_LIS2DH12"
+      ]
+    },
+    {
+      "id": "lis2dw12",
+      "name": "LIS",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_LIS"
+      ],
+      "description": "a sensor library.(SKU:SEN0405/SKU:SEN0407/SKU:SEN0408/SKU:SEN0409/SKU:SEN0411/SKU:SEN0412/SKU:SEN0224)"
+    },
+    {
+      "id": "lsm303",
+      "name": "LSM303",
+      "measures": [
+        "acceleration",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_LSM303"
+      ],
+      "description": "The LSM303DLH is a triple axis accelerometer combined with a triple axis magnetic sensor(SKU: SEN0079)."
+    },
+    {
+      "id": "ltr308",
+      "name": "LTR308",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_LTR308"
+      ],
+      "description": "It uses the lighting function of the LTR308."
+    },
+    {
+      "id": "ltr390uv",
+      "name": "LTR390UV",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_LTR390UV"
+      ],
+      "description": "A ambient light sensor.(SKU:SEN0540)"
+    },
+    {
+      "id": "lwlp5000",
+      "name": "LWLP",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_LWLP"
+      ],
+      "description": "The differential pressure between two probes of the differential pressure sensor can be obtained by this drive(SKU: SEN0343)."
+    },
+    {
+      "id": "max30102",
+      "name": "MAX30102",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_MAX30102"
+      ],
+      "description": "A display library."
+    },
+    {
+      "id": "max31855",
+      "name": "MAX31855",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_MAX31855"
+      ],
+      "description": "A library of temperature sensors(SKU:DFR0558)."
+    },
+    {
+      "id": "mcp9808",
+      "name": "MCP9808",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_MCP9808"
+      ],
+      "description": "High precision temperature sensor(SKU:SEN0345)."
+    },
+    {
+      "id": "mgc3130",
+      "name": "MGC3130",
+      "measures": [
+        "gesture"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_MGC3130"
+      ],
+      "description": "DFRobot_MGC3130 is the Gesture library of DFRobot"
+    },
+    {
+      "id": "mhz9041a",
+      "name": "MHZ9041A",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_MHZ9041A"
+      ],
+      "description": "Provide methane data (SKU:SEN0654)."
+    },
+    {
+      "id": "mics4514",
+      "name": "MICS",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_MICS"
+      ],
+      "description": "DFRobot Standard library."
+    },
+    {
+      "id": "mlx90614",
+      "name": "MLX90614",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_MLX90614"
+      ],
+      "description": "This is a Library for MLX90614, the function is to read temperature(SKU: SEN0206/SEN0263)."
+    },
+    {
+      "id": "mlx90621",
+      "name": "MLX90621",
+      "measures": [
+        "ir_temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_MLX90621"
+      ]
+    },
+    {
+      "id": "mpx5700",
+      "name": "MPX5700",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_MPX5700"
+      ],
+      "description": "A pressure sensor library.(SKU:SEN0456)"
+    },
+    {
+      "id": "msm261",
+      "name": "MSM261",
+      "measures": [
+        "sound"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_MSM261"
+      ],
+      "description": "This is an microphone  sensor.(SKU:SEN0526)"
+    },
+    {
+      "id": "paj7620u2",
+      "name": "PAJ7620U2",
+      "measures": [
+        "gesture"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_PAJ7620U2"
+      ],
+      "description": "DFRobot_PAJ7620U2 is the Sensor library of DFRobot"
+    },
+    {
+      "id": "pav3000",
+      "name": "PAV3000",
+      "measures": [
+        "flow"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_PAV3000"
+      ],
+      "description": "This is a driver library for an air velocity sensor."
+    },
+    {
+      "id": "pt100",
+      "name": "PT100",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_PT100"
+      ],
+      "description": "DFRobot high-temperature sensor (SKU：SEN0198)."
+    },
+    {
+      "id": "qmc5883",
+      "name": "QMC5883",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_QMC5883"
+      ],
+      "description": "Electronic compass drive library(SKU:SEN0140)."
+    },
+    {
+      "id": "scd4x",
+      "name": "SCD4X",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_SCD4X"
+      ],
+      "description": "This is a Library for SCD4X(SCD40/SCD41), SCD4X is a Digital Metal-Oxide Multi-Gas Sensor(SKU: SEN0536)."
+    },
+    {
+      "id": "sfa40",
+      "name": "SFA40",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_SFA40"
+      ],
+      "description": "Easy to use SFA40."
+    },
+    {
+      "id": "sgp40",
+      "name": "SGP40",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_SGP40"
+      ],
+      "description": "DFRobot_SGP40 is the sensor library of DFRobot"
+    },
+    {
+      "id": "sht20",
+      "name": "SHT20",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_SHT20"
+      ],
+      "description": "This is a Library for SHT20, SHT20, the new humidity and temperature sensor(SKU: SEN0227)."
+    },
+    {
+      "id": "sht3x",
+      "name": "SHT3x",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_SHT3x"
+      ],
+      "description": "Sht3x series T/H sensor(SKU: SEN0330,SEN0331,SEN0332,SEN0333,SEN0334)."
+    },
+    {
+      "id": "shtc3",
+      "name": "SHT",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_SHT"
+      ],
+      "description": "DFRobot Standard library."
+    },
+    {
+      "id": "sts3x",
+      "name": "STS3X",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_STS3X"
+      ],
+      "description": "This is a Library for STS3X, the function is to read temperature(SKU: SEN0434)."
+    },
+    {
+      "id": "tcs3430",
+      "name": "TCS3430",
+      "measures": [
+        "color",
+        "light"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_TCS3430"
+      ],
+      "description": "DFRobot_TCS3430 is the sensor library of DFRobot"
+    },
+    {
+      "id": "tcs34725",
+      "name": "TCS",
+      "measures": [
+        "color",
+        "light"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_TCS"
+      ],
+      "description": "A color sensor library"
+    },
+    {
+      "id": "tmf8x01",
+      "name": "TMF8x01",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_TMF8x01"
+      ],
+      "description": "DFRobot Standard library(SKU:SEN0430/SEN0429)."
+    },
+    {
+      "id": "urm07",
+      "name": "URM07",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_URM07"
+      ],
+      "description": "A range sensor(SKU:SEN0153)"
+    },
+    {
+      "id": "urm09",
+      "name": "URM09",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_URM09"
+      ],
+      "description": "DFRobot Standard library."
+    },
+    {
+      "id": "urm13",
+      "name": "URM13",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_URM13"
+      ],
+      "description": "URM13 driver library(SKU: SEN0352)."
+    },
+    {
+      "id": "uvindex240370sensor",
+      "name": "UVIndex240370Sensor",
+      "measures": [
+        "uv"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_UVIndex240370Sensor"
+      ],
+      "description": "A sensor that measures the intensity of ultraviolet light"
+    },
+    {
+      "id": "veml6075",
+      "name": "VEML6075",
+      "measures": [
+        "uv"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_VEML6075"
+      ],
+      "description": "DFRobot_VEML6075 is the Ultraviolet library of DFRobot"
+    },
+    {
+      "id": "veml7700",
+      "name": "VEML7700",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_VEML7700"
+      ],
+      "description": "This is a Library for VEML7700, the function is to read High Accuracy Ambient Light data(SKU: SEN0228)."
+    },
+    {
+      "id": "vl53l0x",
+      "name": "VL53L0X",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_VL53L0X"
+      ],
+      "description": "DFRobot Standard library(SKU:SEN0245)."
+    },
+    {
+      "id": "vl53l1x",
+      "name": "VL53L1X",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_VL53L1X"
+      ]
+    },
+    {
+      "id": "vl6180x",
+      "name": "VL6180X",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino",
+        "raspberry_pi"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_VL6180X"
+      ],
+      "description": "DFRobot_VL6180X is a sensor library."
+    },
+    {
+      "id": "wt61pc",
+      "name": "WT61PC",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_WT61PC"
+      ],
+      "description": "This is a Library for WT61PC(SKU: SEN0386)."
+    }
+  ]
+}

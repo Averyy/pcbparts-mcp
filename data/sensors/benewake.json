@@ -1,0 +1,316 @@
+{
+  "source": "benewake",
+  "source_url": "https://en.benewake.com",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-01T17:25:28.855225+00:00",
+  "stats": {
+    "sensor_count": 19,
+    "total_pages_checked": 19,
+    "errors": 0
+  },
+  "sensors": [
+    {
+      "id": "tf02pro",
+      "name": "TF02-Pro",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TF02Pro/index.html"
+      ],
+      "description": "Benewake TF02-Pro is a time-of-flight LiDAR, ranging performance up to 40m. TF02 Pro liDAR is widely used in drone altitude holding, intelligent transportation, etc..",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tf02prow",
+      "name": "TF02-Pro-W",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TF02ProW/index.html"
+      ],
+      "description": "TF02-Pro-W is a self-cleaning industrial LiDAR for bulk material level detection. 25m range, Modbus/RS-485 ready, LoRaWAN/4G options. Built for dust and smoke.",
+      "protocol": [
+        "rs485"
+      ],
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tf02i",
+      "name": "TF02-i",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TF02i/index.html"
+      ],
+      "description": "TF02-i is a 40m ToF LiDAR with IP65 protection and 100KLux ambient light resistance. RS-485/CAN ready. Ideal for drone altitude hold and smart parking.",
+      "protocol": [
+        "can",
+        "rs485"
+      ],
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tf03",
+      "name": "TF03",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TF03/index.html"
+      ],
+      "description": "TF03 is an IP67 industrial-grade single-point long-range LiDAR with 180m detection and 7kHz frame rate. Ideal for UAV, intelligent traffic, and security.",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tf350",
+      "name": "TF350",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TF350/index.html"
+      ],
+      "description": "TF350 is a 350m ultra-long-range solid-state LiDAR with IP67 rating and 7kHz frame rate. Built for bright and adverse weather. For UAV and industrial use.",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tfa170l",
+      "name": "TFA170-L",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TFA170L/index.html"
+      ],
+      "description": "TFA170-L is a 10g ultra-light drone proximity sensor with 170m range — among the lightest in its class. DO-160G capable. For gimbals and long-endurance UAVs.",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tfa300",
+      "name": "TFA300",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TFA300/index.html"
+      ],
+      "description": "TFA300 series is an ultra-high-frequency UAV LiDAR with 10,000Hz frame rate and 290m range. Only 10.5g. DroneCAN ready. For EO/IR gimbals and high-speed drones.",
+      "protocol": [
+        "can"
+      ],
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tfluna",
+      "name": "TF-Luna",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TFLuna/index.html"
+      ],
+      "description": "Benewake TF-Luna is an affordable single-point LiDAR range finder. It can achieve stable, accurate and highly sensitive range measurement for robotics, drones, and more.",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tfs20l",
+      "name": "TFS20-L",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TFS20L/index.html"
+      ],
+      "description": "TFS20-L is an ultra-compact dToF LiDAR at only 1.35g. 20m range, ±6cm accuracy, 100KLux sunlight resistance. Ideal for consumer drones, robots, and IoT.",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tfminiplus",
+      "name": "TFmini-Plus",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TFminiPlus/index.html"
+      ],
+      "description": "TFmini Plus is an IP65 LiDAR ranging sensors with ±5cm accuracy and drone-level anti-vibration. 12m range, 1000Hz. Pix compatible. For outdoor and harsh environments.",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tfminis",
+      "name": "TFmini-S",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TFminiS/index.html"
+      ],
+      "description": "TFmini-S is an ultra-compact micro LiDAR at only 5g. 12m range, 1000Hz frame rate, ±6cm accuracy. UART/I²C/I/O interfaces. Ideal for space-limited integration.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tfminii",
+      "name": "TFmini-i",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/TFminii/index.html"
+      ],
+      "description": "TFmini-i can/rs485 Industrial-grade ip65 ranging module, applications: pedestrian detection, vehicle detection, altitude gauge, robot",
+      "protocol": [
+        "can",
+        "rs485"
+      ],
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "vlsh5",
+      "name": "VLS-H5",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/VLSH5/index.html"
+      ],
+      "description": "benewake VLS-H5 Underwater 360° Single-Line Scanning By performing distance measurements of the pool walls through 360° scanning at 6 times per second, VLS-H5 acquires high-precision point cloud",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "hornrt",
+      "name": "Horn-RT",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/hornrt/index.html"
+      ],
+      "description": "Horn-RT is the first long-range 3D LiDAR in China based on the rail transit industry, meeting the industry's high-performance, high-reliability, and rigorous testing standards.",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "hornx2pro",
+      "name": "Horn-X2-Pro",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/hornx2pro/index.html"
+      ],
+      "description": "Horn-X2 Pro is widely applicable to various complex scenarios, providing high-quality point cloud information for customers. It is a 3D LiDAR that combines high performance and high security.",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tfnova",
+      "name": "TF-NOVA",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/tf-nova"
+      ],
+      "description": "TF-NOVA is a compact, high-accuracy line-pattern LiDAR sensor for area detection. Suitable for indoor and outdoor use in robotics, smart parking, and more.",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tfa1200l",
+      "name": "TFA1200-L",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/tfa1200-kilometer-level-lidar"
+      ],
+      "description": "The TFA1200-L is a lightweight, compact kilometer-range single-point LiDAR that ensures eye safety. It is used in inspection drones, drone pods, and engineering surveys, providing distance maintenance",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tfa1500l",
+      "name": "TFA1500-L",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/tfa1500-kilometer-level-lidar"
+      ],
+      "description": "TFA1500-L is a 1500m long-range drone rangefinder with up to 800Hz frame rate — kilometer-level precision at only 11g. For inspection and surveying drones.",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    },
+    {
+      "id": "tfuw500",
+      "name": "TF-UW500",
+      "measures": [
+        "distance",
+        "lidar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://en.benewake.com/tfuw500-underwater-lidar"
+      ],
+      "description": "Adopting a dToF (direct Time-of-Flight) solution, the TF-UW500 maintains the compact design and low-power efficiency of its predecessor, while achieving a tenfold increase in detection range in low...",
+      "manufacturer": "Benewake",
+      "type": "tof"
+    }
+  ]
+}

@@ -1,0 +1,644 @@
+{
+  "source": "hilink",
+  "source_url": "https://www.hlktech.net/index.php?id=product",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-01T17:27:40.176633+00:00",
+  "stats": {
+    "sensor_count": 36,
+    "total_products": 63,
+    "skipped_non_sensor": 21,
+    "errors": 0
+  },
+  "sensors": [
+    {
+      "id": "as201",
+      "name": "AS201",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1396",
+        "https://www.hlktech.net/index.php?id=1383"
+      ],
+      "description": "6-axis Attitude Sensor Gyroscope Module AS201 3-axis acceleration  3-axis gyroscope with BLE 5.1",
+      "manufacturer": "Hi-Link",
+      "type": "imu"
+    },
+    {
+      "id": "as2019",
+      "name": "AS201-9",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1380"
+      ],
+      "description": "9-axis Attitude Sensor Gyroscope Module AS201-9  Accelerometer Magnetic Field Attitude Angle Motion/posture Module",
+      "manufacturer": "Hi-Link",
+      "type": "imu"
+    },
+    {
+      "id": "ld012",
+      "name": "LD012",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=451"
+      ],
+      "description": "5.8GHz Ultra-low Power 5.8G Radar Sensor Module Radar Induction Switch Sensor Module HLK-LD012-5G",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld020",
+      "name": "LD020",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1283"
+      ],
+      "description": "5.8GHz Hi-link 5.8G X-band moving induction/detection sensor radar module LD020 widely used in fluorescent lamps, bulb lamps, tube lamps, ceiling lamps",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld021",
+      "name": "LD021",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1375"
+      ],
+      "description": "5.8GHz 5.8G radar sensing module human movement sensor HLK-LD021 low-power intelligent sensing switch",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld101",
+      "name": "LD101",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=968"
+      ],
+      "description": "10GHz 10G radar module intelligent microwave sensor switch Doppler human motion detection sensor LD101",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld101l",
+      "name": "LD101L",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1039"
+      ],
+      "description": "10GHz 10GHz Doppler X-band 1T1R Sensing Range 3-5m Micro/motion Radar Sensing Sensor Module HLK-LD101L Widely Using in Smart Lighting",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld101v",
+      "name": "LD101V",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1037"
+      ],
+      "description": "10GHz 10GHz Doppler X-band 1T1R Sensing Range 7m Micro/motion Radar Sensing Sensor Module HLK-LD101V Widely Using in Smart Switch",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld1040",
+      "name": "LD1040",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1347"
+      ],
+      "description": "10GHz Hi-link 10G radar sensing module HLK-LD1040 low-power micro motion intelligent sensing sensor uart output with MCU",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld1040c",
+      "name": "LD1040C",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1346"
+      ],
+      "description": "10GHz Hi-link 10G radar sensing module HLK-LD1040C low-power micro motion intelligent sensing sensor IFC output",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2401",
+      "name": "LD2401",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1290"
+      ],
+      "description": "24GHz HLK-LD2401 24G human presence radar sensing module LD2401 millimeter wave radar sensor",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2402",
+      "name": "LD2402",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1291"
+      ],
+      "description": "24GHz HLK-LD2402 24G millimeter wave radar induction module LD2402 human presence static micro motion sensor module",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2410",
+      "name": "LD2410",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=988"
+      ],
+      "description": "24GHz HLK-LD2410 24Ghz Human Presence Body Induction Distance Detection Radar Sensor Module support GPIO and UART ports",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2410b",
+      "name": "LD2410B",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1094"
+      ],
+      "description": "24GHz HLK-LD2410B+BLE 24Ghz Human Presence Body Induction Distance Detection Radar Sensor Module support GPIO and UART ",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2410c",
+      "name": "LD2410C",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1095"
+      ],
+      "description": "24GHz HLK-LD2410C 24Ghz Human Presence Induction Distance Detection Radar Sensor Module support BLE/UART adjustment paraments",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2410d",
+      "name": "LD2410D",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1376"
+      ],
+      "description": "24GHz 24G Human Presence Sensing Module LD2410D Mmwave Radar Sensing Switch Intelligent Sensor Radar Module 10 Millimeter Detection",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2410s",
+      "name": "LD2410S",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1176"
+      ],
+      "description": "24GHz 24G Ultra Low-power Radar Sensing Module LD2410S Human Presence Sensing Switch Intelligent Sensor",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2411",
+      "name": "LD2411",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1151"
+      ],
+      "description": "24GHz HLK-LD2411 24Ghz intelligent toilet radar sensor module gesture recognition induction automatic flipping and flushing",
+      "protocol": [
+        "gpio"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2411s",
+      "name": "LD2411S",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1152"
+      ],
+      "description": "24GHz HLK-LD2411S 24Ghz accurate distance detection radar sensor module support upper computer software to adjust paraments",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2412",
+      "name": "LD2412",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1199"
+      ],
+      "description": "HLK-LD2412 HLK-LD2410B/LD2410/LD2410C upgrade version ±75° Environment automatic learning noise reduction 9M Distance Sensing Radar Module",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2413",
+      "name": "LD2413",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1305",
+        "https://www.hlktech.net/index.php?id=1304"
+      ],
+      "description": "24GHz Hi-link 24G liquid level detection radar sensor module LD2413 no-touch high-precision ranging induction testboard kit",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2415h",
+      "name": "LD2415H",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1219"
+      ],
+      "description": "24GHz 24G millimeter wave vehicle speed measurement radar sensor module HLK-LD2415H remote speed measurement serial communication",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2450",
+      "name": "LD2450",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1157"
+      ],
+      "description": "24GHz 24Ghz one-transmitter-two-receiver human motion tracking trajectory radar module Wall mounted installation HLK-LD2450",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2451",
+      "name": "LD2451",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1282"
+      ],
+      "description": "24GHz Hi-link 24G vehicle motobycle bitrycle ranging and speed measurement millimeter wave radar LD2451 vehicle status monitoring sensor module",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2452",
+      "name": "LD2452",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1389"
+      ],
+      "description": "24GHz 24Ghz one-transmitter-two-receiver human motion tracking trajectory radar module Wall mounted installation special for air-condition HLK-LD2452",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2460",
+      "name": "LD2460",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1335"
+      ],
+      "description": "24GHz HLK-LD2460 2T4R 24G Millimeter Wave High-precision Multiple Targets Human Perception Trajectory Tracking Radar Sensor Module",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6001",
+      "name": "LD6001",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1313"
+      ],
+      "description": "60GHz Hi-link 60G radar sensor module LD6001 intelligent sensing detection of human body area position, quantity statistics, and walking trajectory",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6001a",
+      "name": "LD6001A",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1310",
+        "https://www.hlktech.net/index.php?id=1309"
+      ],
+      "description": "60GHz Hi-link 60G 4T4R high-precision multi-target up to 10 human movement trajectory sensing radar module HLK-LD6001A testboard/development board kit",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6001c",
+      "name": "LD6001C",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1312",
+        "https://www.hlktech.net/index.php?id=1311"
+      ],
+      "description": "60GHz Hi-link 60GHz millimeter wave radar entrance and exit counting people up to 8 radar sensing module HLK-LD6001C testboard kit",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6002",
+      "name": "LD6002",
+      "measures": [
+        "biometric",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1180",
+        "https://www.hlktech.net/index.php?id=1179"
+      ],
+      "description": "60GHz 60G Millimeter Wave Respiratory and Heartbeat Detection Radar Module HLK-LD6002 Non-contact Intelligent Monitoring with 2T2R",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6002c",
+      "name": "LD6002C",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1178",
+        "https://www.hlktech.net/index.php?id=1177"
+      ],
+      "description": "60GHz 60G Millimeter Wave Fall Detection Radar Module HLK-LD6002C Non-contact Intelligent Monitoring with 2T2R",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6002h",
+      "name": "LD6002H",
+      "measures": [
+        "biometric",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1293"
+      ],
+      "description": "60GHz HLK-LD6002H 60G infant respiratory and heartbeat detection radar module non-contact intelligent monitoring young child",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6004",
+      "name": "LD6004",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1391"
+      ],
+      "description": "60GHz Hi-link 60G high-precision millimeter wave radar LD6004 multi-target 3D human presence induction serial communication radae sensor module",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld8001",
+      "name": "LD8001",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1211"
+      ],
+      "description": "79GHz 79G millimeter wave liquid level detection sensor HLK-LD8001 radar module non-contact high-precision ranging up to 15m",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld8001b",
+      "name": "LD8001B",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1213"
+      ],
+      "description": "79GHz 79G millimeter wave liquid level detection sensor HLK-LD8001B non-contact radar module for high-precision level measurement 15m detect range",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld8001h",
+      "name": "LD8001H",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1209"
+      ],
+      "description": "79GHz 80G liquid water level detection sensor module HLK-LD8001H radar module non-contact, low-power, long-distance, high-precision",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    }
+  ]
+}

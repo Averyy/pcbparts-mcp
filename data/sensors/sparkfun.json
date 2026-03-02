@@ -1,0 +1,1740 @@
+{
+  "source": "sparkfun",
+  "source_url": "https://www.sparkfun.com/graphql",
+  "scraper_version": "1.0.0",
+  "scraped_at": "2026-03-01T17:29:29.607117+00:00",
+  "stats": {
+    "sensor_count": 119,
+    "total_products": 391,
+    "skipped_sku_prefix": 50,
+    "skipped_pattern": 62,
+    "skipped_no_ic": 109
+  },
+  "sensors": [
+    {
+      "id": "a111",
+      "name": "SparkFun Pulsed Radar Breakout - A111",
+      "measures": [
+        "distance",
+        "gesture"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-pulsed-radar-breakout-a111.html"
+      ],
+      "description": "The SparkFun Pulsed Radar Breakout provide you with a high-precision distance measurement unit with reliable speed, motion, or gesture-sensing capabilities"
+    },
+    {
+      "id": "acs37800",
+      "name": "SparkX Power Meter - ACS37800 (Qwiic)",
+      "measures": [
+        "current"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-power-meter-acs37800-qwiic.html",
+        "https://www.sparkfun.com/sparkx-power-meter-acs37800-qwiic.html"
+      ],
+      "description": "The ACS37800 power monitor delivers accurate measurements and configurable fault detection, with easy integration via Arduino library and serial-based configuration.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "acs723",
+      "name": "SparkFun Current Sensor Breakout - ACS723",
+      "measures": [
+        "current"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-current-sensor-breakout-acs723-low-current.html",
+        "https://www.sparkfun.com/sparkfun-current-sensor-breakout-acs723.html"
+      ],
+      "description": "Need to measure low current? This board senses 10mA to 5A safely using Hall-effect technology and i ncludes an op-amp to tune sensitivity for your specific range."
+    },
+    {
+      "id": "ad8232",
+      "name": "SparkFun Single Lead Heart Rate Monitor - AD8232",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-single-lead-heart-rate-monitor-ad8232.html"
+      ],
+      "description": "The AD8232 SparkFun Single Lead Heart Rate Monitor is a cost-effective board used to measure the electrical activity of the heart."
+    },
+    {
+      "id": "adxl313",
+      "name": "SparkFun Triple Axis Digital Accelerometer Breakout - ADXL313 (Qwiic)",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-triple-axis-digital-accelerometer-breakout-adxl313-qwiic.html"
+      ],
+      "description": "The SparkFun ADXL313 Breakout is a low power, high resolution (up to 13-bits) 3-axis accelerometer for measurement up to ±4g.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "adxl335",
+      "name": "LilyPad Accelerometer - ADXL335",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-adxl335.html",
+        "https://www.sparkfun.com/lilypad-accelerometer-adxl335.html"
+      ],
+      "description": "Breakout board for the 3 axis ADXL335 from Analog Devices. This is the latest in a long, proven line of analog sensors - the holy grail of accelerometers."
+    },
+    {
+      "id": "adxl345",
+      "name": "SparkFun Triple Axis Accelerometer Breakout - ADXL345",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-adxl345.html"
+      ]
+    },
+    {
+      "id": "adxl362",
+      "name": "SparkFun Triple Axis Accelerometer Breakout - ADXL362",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-adxl362.html"
+      ]
+    },
+    {
+      "id": "ah1815",
+      "name": "Hall-Effect Sensor - AH1815 (Non-Latching)",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/hall-effect-sensor-ah1815-non-latching.html"
+      ],
+      "description": "The AH1815 is an integrated Hall-Effect non-latched sensor."
+    },
+    {
+      "id": "ak9753",
+      "name": "SparkFun Human Presence Sensor Breakout - AK9753 (Qwiic)",
+      "measures": [
+        "ir_temperature",
+        "motion",
+        "pir",
+        "proximity"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-human-presence-sensor-breakout-ak9753-qwiic.html"
+      ],
+      "description": "This is not your normal PIR! The SparkFun AK9753 Human Presence Sensor Breakout is a Qwiic enabled, 4-channel Nondispersive Infrared Sensor (NDIR).",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "amg8833",
+      "name": "SparkFun Grid-EYE Infrared Array Breakout - AMG8833 (Qwiic)",
+      "measures": [
+        "ir_temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-grid-eye-infrared-array-breakout-amg8833-qwiic.html"
+      ],
+      "description": "The SparkFun Grid-EYE Infrared Array Breakout board is an 8x8 thermopile array, giving you a square of 64 pixels capable of independent temp detection.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "apds9960",
+      "name": "SparkFun RGB and Gesture Sensor - APDS-9960",
+      "measures": [
+        "color",
+        "gesture",
+        "light",
+        "proximity"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-rgb-and-gesture-sensor-apds-9960.html"
+      ]
+    },
+    {
+      "id": "as3935",
+      "name": "SparkFun Lightning Detector - AS3935",
+      "measures": [
+        "weather"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-lightning-detector-as3935.html"
+      ],
+      "description": "The SparkFun Lightning Detector adds lightning detection to your next weather station to make sure you are aware of any bad weather heading your way."
+    },
+    {
+      "id": "as6212",
+      "name": "SparkFun Digital Temperature Sensor Breakout - AS6212 (Qwiic)",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-digital-temperature-sensor-breakout-as6212-qwiic.html"
+      ],
+      "description": "The AS6212 digital temperature sensor from AMS provides high-accuracy temperature data combined with excellent power consumption on a small Qwiic board.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "as7262",
+      "name": "SparkFun Spectral Sensor Breakout - AS7262 Visible (Qwiic)",
+      "measures": [
+        "color"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-spectral-sensor-breakout-as7262-visible-qwiic.html"
+      ],
+      "description": "The SparkFun AS7262 Visible Spectral Sensor Breakout brings spectroscopy to the palm of your hand, making it easier than ever to measure and characterize how different materials absorb and reflect ...",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "as7263",
+      "name": "SparkFun Spectral Sensor Breakout - AS7263 NIR (Qwiic)",
+      "measures": [
+        "color"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-spectral-sensor-breakout-as7263-nir-qwiic.html"
+      ],
+      "description": "The SparkFun AS7263 Near Infrared (NIR) Spectral Sensor Breakout brings spectroscopy to the palm of your hand, making it easier than ever to measure and characterize how different materials absorb ...",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "as7265x",
+      "name": "SparkFun Triad Spectroscopy Sensor - AS7265x (Qwiic)",
+      "measures": [
+        "color",
+        "uv"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-triad-spectroscopy-sensor-as7265x-qwiic.html"
+      ],
+      "description": "The pocket-sized SparkFun Triad Spectroscopy Sensor combines three sensors to measure 18 distinct light channels (UV to IR) for material analysis and optical inspection.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "as7331",
+      "name": "SparkFun Spectral UV Sensor - AS7331 (Qwiic)",
+      "measures": [
+        "radiation",
+        "uv"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-mini-spectral-uv-sensor-as7331-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-spectral-uv-sensor-as7331-qwiic.html"
+      ],
+      "description": "The SparkFun Mini AS7331 Qwiic Spectral UV Sensor measures UV radiation on three channels: UVA, UVB, and UVC, with high sensitivity and accuracy.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "as7343",
+      "name": "SparkFun Spectral Sensor - AS7343 (Qwiic)",
+      "measures": [
+        "color"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-spectral-sensor-as7343-qwiic.html"
+      ],
+      "description": "Measure visible and near-infrared in any light with exceptional sensitivity across its entire sensing spectrum (~380nm to 1000nm).",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "at407",
+      "name": "Tilt Sensor - AT407",
+      "measures": [
+        "tilt"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/tilt-sensor-at407.html"
+      ]
+    },
+    {
+      "id": "at42qt1010",
+      "name": "SparkFun Capacitive Touch Breakout - AT42QT1010",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-capacitive-touch-breakout-at42qt1010.html"
+      ]
+    },
+    {
+      "id": "at42qt1011",
+      "name": "SparkFun Capacitive Touch Breakout - AT42QT1011",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-capacitive-touch-breakout-at42qt1011.html"
+      ]
+    },
+    {
+      "id": "bma400",
+      "name": "SparkFun Triple Axis Accelerometer Breakout - BMA400 (Qwiic)",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-bma400-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-micro-triple-axis-accelerometer-breakout-bma400-qwiic.html"
+      ],
+      "description": "The SparkFun Qwiic BMA400 Micro Triple Axis Accelerometer Breakout offers a 3-axis acceleration sensor perfect for ultra-low-power applications.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "bme280",
+      "name": "SparkFun Atmospheric Sensor Breakout - BME280",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-atmospheric-sensor-breakout-bme280-with-headers.html",
+        "https://www.sparkfun.com/sparkfun-atmospheric-sensor-breakout-bme280.html",
+        "https://www.sparkfun.com/sparkfun-atmospheric-sensor-breakout-bme280-qwiic.html"
+      ],
+      "description": "The SparkFun BME280 Atmospheric Sensor Breakout is an easy way to measure barometric pressure, humidity, and temperature readings without taking up too much space.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "bme680",
+      "name": "SparkFun Environmental Sensor Breakout - BME680 (Qwiic)",
+      "measures": [
+        "gas",
+        "humidity",
+        "pressure",
+        "temperature",
+        "voc"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-environmental-sensor-breakout-bme680-qwiic.html"
+      ],
+      "description": "This SparkFun Environmental Sensor is a breakout for the 4-in-1 BME680 gas sensor from Bosch.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "bme688",
+      "name": "Bosch BME688 Development Kit",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/bosch-bme688-development-kit.html",
+        "https://www.sparkfun.com/sparkfun-environmental-sensor-bme688-qwiic.html"
+      ],
+      "description": "The SparkFun BME688 Environmental Sensor combines a gas scanning sensor with temperature, humidity, & barometric pressure sensing for a complete AI sensor.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "bmi270",
+      "name": "SparkFun 6DoF IMU Breakout - BMI270 (Qwiic)",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-6dof-imu-breakout-bmi270-qwiic.html"
+      ],
+      "description": "The SparkFun BMI270 6DoF IMU Breakout is a Qwiic-enabled breakout board based on the ultra-low power BMI270 from Bosch.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "bmp384",
+      "name": "SparkFun Pressure Sensor - BMP384 (Qwiic)",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-micro-pressure-sensor-bmp384-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-pressure-sensor-bmp384-qwiic.html"
+      ],
+      "description": "The SparkFun Qwiic Micro Pressure Sensor features the BMP384 and excels at high-resolution measurements (up to 21-bit), all on an incredibly small board.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "bmp581",
+      "name": "SparkFun Pressure Sensor - BMP581 (Qwiic)",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-micro-pressure-sensor-bmp581-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-pressure-sensor-bmp581-qwiic.html"
+      ],
+      "description": "The SparkFun Qwiic Micro BMP581 Pressure Sensor is a standard-sized, 0.75in. by 0.3in. absolute pressure sensor breakout from Bosch Sensortec.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "bmv080",
+      "name": "SparkFun Air Quality PM1/PM2.5/PM10 Sensor - BMV080 (Qwiic)",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-air-quality-pm1-pm2-5-pm10-sensor-bmv080-qwiic.html"
+      ],
+      "description": "Measure air quality with unprecedented precision and size using the SparkFun Qwiic BMV080 sensor, the world's smallest PM1/PM2.5/PM10 detector.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "cap1203",
+      "name": "SparkFun Capacitive Touch Slider - CAP1203 (Qwiic)",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-capacitive-touch-slider-cap1203-qwiic.html"
+      ],
+      "description": "Add capacitive touch to your next project with Qwiic, allowing you to start exploring the touch capabilities as three unique touch inputs or as a slider.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "dht20",
+      "name": "Humidity and Temperature Sensor - DHT20",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/humidity-and-temperature-sensor-dht20.html"
+      ],
+      "description": "The DHT20 is a low cost humidity and temperature sensor with a I2C digital output protocol.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "ds18b20",
+      "name": "Temperature Sensor - Waterproof (DS18B20)",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/temperature-sensor-high-temperature-waterproof-ds18b20.html",
+        "https://www.sparkfun.com/temperature-sensor-waterproof-ds18b20.html"
+      ],
+      "description": "This waterproof, 6-foot digital temperature probe (DS18B20) provides precise measurements in wet or harsh environments and supports daisy-chaining multiple sensors on a single pin."
+    },
+    {
+      "id": "ekmb1107112",
+      "name": "SparkFun Qwiic PIR - 1uA (EKMB1107112)",
+      "measures": [
+        "motion",
+        "pir"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/panasonicr-pir-motion-sensor-ekmb1107112.html",
+        "https://www.sparkfun.com/sparkfun-qwiic-pir-1ua-ekmb1107112.html",
+        "https://www.sparkfun.com/sparkfun-pir-breakout-1ua-ekmb1107112.html"
+      ],
+      "description": "Great for detecting motion in a small area and optimized for small movements to offer motion-sensing options for battery powered applications w/ Qwiic I2C!",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "ekmc4607112k",
+      "name": "SparkFun Qwiic PIR - 170uA (EKMC4607112K)",
+      "measures": [
+        "motion",
+        "pir"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-qwiic-pir-170ua-ekmc4607112k.html",
+        "https://www.sparkfun.com/sparkfun-pir-breakout-170ua-ekmc4607112k.html"
+      ],
+      "description": "Great for detecting motion in a small area & optimized for small movements to offer motion-sensing options for continuously powered projects w/ Qwiic I2C!",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "ens160",
+      "name": "SparkFun Indoor Air Quality Sensor - ENS160 (Qwiic)",
+      "measures": [
+        "gas",
+        "humidity",
+        "pressure",
+        "temperature",
+        "voc"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-environmental-combo-breakout-ens160-bme280-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-indoor-air-quality-sensor-ens160-qwiic.html"
+      ],
+      "description": "Monitor AQI, eCO2, TVOCs, temperature, humidity, and barometric pressure from a single board, covering all your atmospheric-quality sensing needs with the popular ENS160 and BME280 ICs.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "fg3",
+      "name": "FGSensors FG-3+ Sensor",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/fgsensors-fg-3-sensor.html"
+      ],
+      "description": "The FGM-X series of devices are very high sensitivity magnetic field sensors operating in the ±50 microtesla range ( ±0.5 oersted )."
+    },
+    {
+      "id": "fs3000",
+      "name": "Renesas FS3000-1005 Air Velocity Module (SMD)",
+      "measures": [
+        "flow"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/renesas-fs3000-1005-air-velocity-module-smd.html",
+        "https://www.sparkfun.com/renesas-fs3000-air-velocity-sensor-module.html"
+      ],
+      "description": "The FS3000-1005 is a surface-mount type air velocity module that uses a MEMS thermopile-based sensor. The FS3000-1005 has a range of 0-7.23m/s (0-16.17mph)."
+    },
+    {
+      "id": "fs30001005",
+      "name": "SparkFun Air Velocity Sensor Breakout - FS3000-1005 (Qwiic)",
+      "measures": [
+        "flow"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-air-velocity-sensor-breakout-fs3000-1005-qwiic.html"
+      ],
+      "description": "The SparkFun FS3000-1005 Qwiic Air Velocity Sensor Breakout can help you accurately determine the speed and consistency of air moving around you.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "fs30001015",
+      "name": "SparkFun Air Velocity Sensor Breakout - FS3000-1015 (Qwiic)",
+      "measures": [
+        "flow"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-air-velocity-sensor-breakout-fs3000-1015-qwiic.html"
+      ],
+      "description": "The SparkFun FS3000-1015 Qwiic Air Velocity Sensor Breakout can help you accurately determine the speed and consistency of air moving around you.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "gp2y0a21yk",
+      "name": "Infrared Proximity Sensor - Sharp GP2Y0A21YK",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/infrared-proximity-sensor-sharp-gp2y0a21yk.html"
+      ]
+    },
+    {
+      "id": "gp2y0a41sk0f",
+      "name": "Infrared Proximity Sensor Short Range - Sharp GP2Y0A41SK0F",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/infrared-proximity-sensor-short-range-sharp-gp2y0a41sk0f.html"
+      ]
+    },
+    {
+      "id": "gp2y1010au0f",
+      "name": "Optical Dust Sensor - GP2Y1010AU0F",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/optical-dust-sensor-gp2y1010au0f.html"
+      ]
+    },
+    {
+      "id": "h3lis331dl",
+      "name": "SparkFun Triple Axis Accelerometer Breakout - H3LIS331DL",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-h3lis331dl.html"
+      ],
+      "description": "The SparkFun H3LIS331DL Triple Axis Accelerometer Breakout is a low-power, high-g accelerometer with I2C and SPI interface options.",
+      "protocol": [
+        "i2c",
+        "spi"
+      ]
+    },
+    {
+      "id": "hcsr04",
+      "name": "Ultrasonic Distance Sensor - 5V (HC-SR04)",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/ultrasonic-distance-sensor-3-3v-hc-sr04-180-red.html",
+        "https://www.sparkfun.com/sparkfun-qwiic-ultrasonic-distance-sensor-hc-sr04.html",
+        "https://www.sparkfun.com/ultrasonic-distance-sensor-3-3v-hc-sr04.html",
+        "https://www.sparkfun.com/ultrasonic-distance-sensor-hc-sr04.html"
+      ],
+      "description": "The HC-SR04 ultrasonic sensor offers economical, non-contact distance measurements from 2cm to 400cm with up to 3mm accuracy, integrating a transmitter, receiver, and control circuit.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "hmc6343",
+      "name": "SparkFun Digital Compass - HMC6343",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-digital-compass-hmc6343-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-hmc6343-breakout.html"
+      ],
+      "description": "Get professional-grade, tilt-compensated heading data instantly with this solder-free Qwiic update to our most capable compass module.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "hx711",
+      "name": "SparkFun Load Cell Amplifier - HX711",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-load-cell-amplifier-hx711.html"
+      ],
+      "description": "The SparkFun Load Cell Amplifier provides an easy way to interface with load cells and add precise weight measurement to your microcontroller projects."
+    },
+    {
+      "id": "icm20948",
+      "name": "SparkFun 9DoF IMU Breakout - ICM-20948 (Qwiic)",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-9dof-imu-breakout-icm-20948-qwiic.html"
+      ],
+      "description": "The SparkFun 9DoF IMU Breakout incorporates all the amazing features of the ICM-20948 into a Qwiic-enabled breakout board.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "ina169",
+      "name": "SparkFun Current Sensor Breakout - INA169",
+      "measures": [
+        "current"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-current-sensor-breakout-ina169.html"
+      ],
+      "description": "The INA169 is a “high-side current monitor,” which means that you place a resistor (a “shunt resistor”) on the positive power rail."
+    },
+    {
+      "id": "isl29125",
+      "name": "SparkFun RGB Light Sensor - ISL29125",
+      "measures": [
+        "light"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-rgb-light-sensor-isl29125.html"
+      ]
+    },
+    {
+      "id": "ism330dhcx",
+      "name": "SparkFun Micro 6DoF IMU - ISM330DHCX (Qwiic)",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-6dof-imu-breakout-ism330dhcx-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-micro-6dof-imu-ism330dhcx-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-9dof-imu-breakout-ism330dhcx-mmc5983ma-qwiic.html"
+      ],
+      "description": "The SparkFun Qwiic ISM330DHCX 6DoF IMU is a standard-sized, 1in.x1in. breakout featuring a high-performance 3D digital accelerometer and 3D digital gyroscope.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "kx132",
+      "name": "SparkFun Triple Axis Accelerometer Breakout - KX132 (Qwiic)",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-kx132-qwiic.html"
+      ],
+      "description": "This SparkFun Triple-Axis Accelerometer Breakout is a simple Qwiic breakout for the KX132 digital accelerometer from Kionix.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "kx134",
+      "name": "SparkFun Triple Axis Accelerometer Breakout - KX134 (Qwiic)",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-kx134-qwiic.html"
+      ],
+      "description": "This SparkFun Triple-Axis Accelerometer Breakout is a simple Qwiic breakout for the KX134 digital accelerometer from Kionix.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "lis3dh",
+      "name": "SparkFun Triple Axis Accelerometer Breakout - LIS3DH",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-micro-triple-axis-accelerometer-breakout-lis3dh-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-lis3dh-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-lis3dh.html"
+      ],
+      "description": "Easily add motion, orientation, and tap detection to your next project with this ultra-small, low-power Qwiic micro LIS3DH three-axis accelerometer breakout.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "lps28dfw",
+      "name": "SparkFun Absolute Digital Barometer - LPS28DFW (Qwiic)",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-micro-absolute-digital-barometer-lps28dfw-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-absolute-digital-barometer-lps28dfw-qwiic.html"
+      ],
+      "description": "The SparkFun Qwiic LPS28DFW Micro Absolute Digital Barometer offers a unique barometer breakout featuring the LPS28DFW from STMicroelectronics©.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "lsm6dso",
+      "name": "SparkFun 6 Degrees of Freedom Breakout - LSM6DSO (Qwiic)",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-6-degrees-of-freedom-breakout-lsm6dso-qwiic.html"
+      ],
+      "description": "The LSM6DSO 6DoF Breakout is an accelerometer and gyroscope sensor with a giant 9kB FIFO buffer and embedded processing interrupt functions.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "lsm6dsv16x",
+      "name": "SparkFun 6DoF IMU Breakout - LSM6DSV16X (Qwiic)",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-micro-6dof-imu-breakout-lsm6dsv16x-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-6dof-imu-breakout-lsm6dsv16x-qwiic.html"
+      ],
+      "description": "The SparkFun LSM6DSV16X Micro 6DoF IMU is a Qwiic-enabled, AI-featured, breakout based on the LSM6DSV16X from STMicroelectronics.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "max30101",
+      "name": "SparkFun Photodetector Breakout - MAX30101 (Qwiic)",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-photodetector-breakout-max30101-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-pulse-oximeter-and-heart-rate-sensor-max30101-max32664-qwiic.html"
+      ],
+      "description": "The SparkFun Photodetector Breakout is an updated version of the Particle Sensor Breakout, including the MAX30101, a highly sensitive optical sensor.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "max31820",
+      "name": "One-Wire Ambient Temperature Sensor - MAX31820",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/one-wire-ambient-temperature-sensor-max31820.html"
+      ]
+    },
+    {
+      "id": "max31855k",
+      "name": "SparkFun Thermocouple Breakout - MAX31855K",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-thermocouple-breakout-max31855k.html"
+      ],
+      "description": "The SparkFun MAX31855K Thermocouple Breakout is a simple 14-bit resolution, SPI-compatible, serial interface thermocouple digitizer.",
+      "protocol": [
+        "spi"
+      ]
+    },
+    {
+      "id": "mcp9600",
+      "name": "SparkFun Qwiic Thermocouple Amplifier - MCP9600 (PCC Connector)",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-qwiic-thermocouple-amplifier-mcp9600-screw-terminals.html",
+        "https://www.sparkfun.com/sparkfun-qwiic-thermocouple-amplifier-mcp9600-pcc-connector.html"
+      ],
+      "description": "The MCP9600 Breakout is a high accuracy Thermocouple Amplifier equipped with screw terminals and I2C interface, accessed over our Qwiic system.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "mlx90393",
+      "name": "SparkFun Triple Axis Magnetometer Breakout - MLX90393 (Qwiic)",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-triple-axis-magnetometer-breakout-mlx90393-qwiic.html"
+      ],
+      "description": "The SparkFun MLX90393 Magnetometer Breakout is a 3-axis magnetic sensor, capable of sensing very small fields even under saturation in larger fields.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "mlx90614",
+      "name": "Infrared Thermometer - MLX90614",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-ir-thermometer-evaluation-board-mlx90614.html",
+        "https://www.sparkfun.com/infrared-thermometer-mlx90614.html"
+      ]
+    },
+    {
+      "id": "mlx90640",
+      "name": "IR Array Sensor - 55 Degree FOV (MLX90640)",
+      "measures": [
+        "ir_temperature",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/ir-array-sensor-55-degree-fov-mlx90640.html",
+        "https://www.sparkfun.com/ir-array-sensor-110-degree-fov-mlx90640.html",
+        "https://www.sparkfun.com/sparkfun-ir-array-breakout-55-degree-fov-mlx90640-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-ir-array-breakout-110-degree-fov-mlx90640-qwiic.html"
+      ],
+      "description": "The MLX90640 is a fully calibrated 32x24 pixels thermal IR array in an industry standard 4-lead TO39 package with digital interface. The MLX90640 contains 768 FIR pixels. An ambient sensor is integ...",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "mma8452q",
+      "name": "3-Axis MEMS Accelerometer - MMA8452Q",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/3-axis-mems-accelerometer-mma8452q.html"
+      ]
+    },
+    {
+      "id": "mmc5983ma",
+      "name": "SparkFun Micro Magnetometer - MMC5983MA (Qwiic)",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-micro-magnetometer-mmc5983ma-qwiic.html"
+      ],
+      "description": "The SparkFun Qwiic Micro MMC5983MA Magnetometer is a micro-sized 0.75in. by 0.30in. sensor that utilizes a highly sensitive triple-axis magnetometer.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "mpl115a1",
+      "name": "Barometric Pressure Sensor - MPL115A1",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/barometric-pressure-sensor-mpl115a1.html"
+      ]
+    },
+    {
+      "id": "mpl3115a2",
+      "name": "SparkFun Altitude/Pressure Sensor Breakout - MPL3115A2",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-altitude-pressure-sensor-breakout-mpl3115a2.html"
+      ],
+      "description": "*must enable oversampling to achieve advertised accuracy github repo w/ example code: https://github.com/sparkfun/MPL3115A2_Breakout"
+    },
+    {
+      "id": "mpu6050",
+      "name": "3-Axis Gyro/Accelerometer IC - MPU-6050",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/3-axis-gyro-accelerometer-ic-mpu-6050.html"
+      ]
+    },
+    {
+      "id": "mq136",
+      "name": "Hydrogen Sulfide Gas Sensor - MQ-136",
+      "measures": [
+        "gas",
+        "h2s"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/hydrogen-sulfide-gas-sensor-mq-136.html"
+      ],
+      "description": "The MQ-136 is a Hydrogen Sulfide detection sensor with a sensing range of 1 - 200ppm. The sensing element is SnO2 which has lower conductivity in clean air"
+    },
+    {
+      "id": "mq137",
+      "name": "Ammonia Gas Sensor - MQ-137",
+      "measures": [
+        "gas",
+        "nh3"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/ammonia-gas-sensor-mq-137.html"
+      ],
+      "description": "The MQ-137 is an Ammonia (NH₃) gas sensor from Winsen. The sensing element is SnO2, which has lower conductivity in clean air."
+    },
+    {
+      "id": "mq2",
+      "name": "Smoke Sensor - MQ-2",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/smoke-sensor-mq-2.html"
+      ],
+      "description": "The MQ-2 is a smoke and combustible gas sensor from Winsen. It can detect flammable gas in a range of 300 - 10000ppm."
+    },
+    {
+      "id": "mq3",
+      "name": "Alcohol Gas Sensor - MQ-3",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/alcohol-gas-sensor-mq-3.html"
+      ],
+      "description": "This alcohol sensor is suitable for detecting alcohol concentration on your breath, just like your common breathalyzer."
+    },
+    {
+      "id": "mq4",
+      "name": "Methane CNG Gas Sensor - MQ-4",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/methane-cng-gas-sensor-mq-4.html"
+      ],
+      "description": "This is a simple-to-use compressed natural gas (CNG) sensor, suitable for sensing natural gas (composed of mostly Methane [CH4]) concentrations in the air."
+    },
+    {
+      "id": "mq6",
+      "name": "LPG Gas Sensor - MQ-6",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/lpg-gas-sensor-mq-6.html"
+      ],
+      "description": "This is a simple-to-use liquefied petroleum gas (LPG) sensor, suitable for sensing LPG (composed of mostly propane and butane) concentrations in the air."
+    },
+    {
+      "id": "mq7",
+      "name": "Carbon Monoxide Sensor - MQ-7",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/carbon-monoxide-sensor-mq-7.html"
+      ],
+      "description": "This is a simple-to-use Carbon Monoxide (CO) sensor, suitable for sensing CO concentrations in the air."
+    },
+    {
+      "id": "mq8",
+      "name": "Hydrogen Gas Sensor - MQ-8",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/hydrogen-gas-sensor-mq-8.html"
+      ],
+      "description": "This is a simple-to-use hydrogen gas sensor, suitable for sensing hydrogen concentrations in the air."
+    },
+    {
+      "id": "mq9b",
+      "name": "Dual Gas CO and CH4 Detection Sensor - MQ-9B",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/dual-gas-co-and-ch4-detection-sensor-mq-9b.html"
+      ],
+      "description": "The MQ-9B is a CO and CH₄ gas detection sensor form Winsen. The sensing material of the MQ-9B is SnO2, which has a low conductivity in clean air."
+    },
+    {
+      "id": "ms580314ba",
+      "name": "SparkFun Pressure Sensor Breakout - MS5803-14BA",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-pressure-sensor-breakout-ms5803-14ba.html"
+      ],
+      "description": "This is the MS5803-14BA Pressure Sensor Breakout, a high resolution pressure sensor with both an I2C and SPI interface.",
+      "protocol": [
+        "i2c",
+        "spi"
+      ]
+    },
+    {
+      "id": "ms8607",
+      "name": "Qwiic Pressure/Humidity/Temp (PHT) Sensor - MS8607",
+      "measures": [
+        "humidity",
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/qwiic-pressure-humidity-temp-pht-sensor-ms8607.html"
+      ],
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "nau7802",
+      "name": "SparkFun Qwiic Scale - NAU7802",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-qwiic-scale-nau7802.html"
+      ],
+      "description": "The SparkFun Qwiic Scale - NAU7802 is a small breakout board for the NAU7802 that enables easy reading of load cells to measure weight.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "opt4048",
+      "name": "SparkFun Tristimulus Color Sensor - OPT4048DTSR (Qwiic)",
+      "measures": [
+        "color"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-mini-tristimulus-color-sensor-opt4048dtsr-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-tristimulus-color-sensor-opt4048dtsr-qwiic.html"
+      ],
+      "description": "The SparkFun Mini Tristimulus Color Sensor - OPT4048DTSR (Qwiic) is built around the OPT4048 High Speed High Precision Tristimulus XYZ Color Sensor from TI",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "paa5160e1",
+      "name": "SparkFun Optical Tracking Odometry Sensor - PAA5160E1 (Qwiic)",
+      "measures": [
+        "motion"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-optical-tracking-odometry-sensor-paa5160e1-qwiic.html"
+      ],
+      "description": "The ultimate navigation upgrade for XRP and FTC robots. This all-in-one optical odometry sensor combines a high-speed PAA5160E1 chip with a built-in IMU for precise, drift-free tracking.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "pt100",
+      "name": "Platinum RTD Sensor - PT100",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/platinum-rtd-sensor-pt100.html"
+      ],
+      "description": "It is suitable for applications in the temperature range of -200°C to 600°C but are more commonly used in the range -50°C to +250°C."
+    },
+    {
+      "id": "rcwl0516",
+      "name": "Doppler Radar Sensor Module - RCWL-0516 (with Headers)",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/human-body-induction-module-rcwl-0516-with-headers.html"
+      ],
+      "description": "The Doppler Radar Sensor Module - RCWL-0516 is a sensor module for detecting moving objects."
+    },
+    {
+      "id": "scd30",
+      "name": "CO₂ Humidity and Temperature Sensor - SCD30",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/co-humidity-and-temperature-sensor-scd30.html"
+      ],
+      "description": "The SCD30 from Sensirion is a high quality NDIR based CO₂ sensor capable of detecting 400 to 10000ppm with an accuracy of ±(30ppm+3%)."
+    },
+    {
+      "id": "scd40",
+      "name": "SparkFun CO2 Humidity and Temperature Sensor - SCD40 (Qwiic)",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-co2-humidity-and-temperature-sensor-scd40-qwiic.html"
+      ],
+      "description": "The SparkFun Qwiic CO2 Humidity and Temperature Sensor features the SCD40 CO2 from Sensirion©.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "scd41",
+      "name": "SparkFun CO2 Humidity and Temperature Sensor - SCD41 (Qwiic)",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-indoor-air-quality-combo-sensor-scd41-sen55-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-co2-humidity-and-temperature-sensor-scd41-qwiic.html"
+      ],
+      "description": "The SparkFun Indoor Air Quality Sensor - SCD41 SEN55 (Qwiic) combines two excellent indoor air quality sensors in the SCD41 and SEN55 from Sensirion™.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "sen54",
+      "name": "Particle, VOC, Humidity, and Temperature Sensor - SEN54",
+      "measures": [
+        "gas",
+        "humidity",
+        "particulate",
+        "temperature",
+        "voc"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/particle-voc-humidity-and-temperature-sensor-sen54.html"
+      ],
+      "description": "The SEN54 measures particulate matter, VOC, humidity, and temperature in a single package."
+    },
+    {
+      "id": "sen55",
+      "name": "Sensirion Particle, VOC, Humidity, and Temperature Sensor - SEN55",
+      "measures": [
+        "gas",
+        "humidity",
+        "temperature",
+        "voc"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sensirion-particle-voc-humidity-and-temperature-sensor-sen55.html"
+      ],
+      "description": "The SEN55 environmental node is a straightforward, all-in-one sensor solution platform for the accurate measurement of various environmental parameters."
+    },
+    {
+      "id": "sgp40",
+      "name": "SparkFun Air Quality Sensor - SGP40 (Qwiic)",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-air-quality-sensor-sgp40-qwiic.html"
+      ],
+      "description": "The SparkFun SGP40 Air Quality Sensor provides a measurement of the air quality in your room or house.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "shtc3",
+      "name": "SparkFun Humidity Sensor Breakout - SHTC3 (Qwiic)",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-humidity-sensor-breakout-shtc3-qwiic.html"
+      ],
+      "description": "The SparkFun SHTC3 Humidity Sensor Breakout is a low cost, easy-to-use, highly accurate digital humidity and temperature sensor.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "si7021",
+      "name": "SparkFun Humidity and Temperature Sensor Breakout - Si7021",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-humidity-and-temperature-sensor-breakout-si7021.html"
+      ]
+    },
+    {
+      "id": "sps30",
+      "name": "Particulate Matter Sensor - SPS30",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/particulate-matter-sensor-sps30.html"
+      ]
+    },
+    {
+      "id": "stc31",
+      "name": "CO₂ Sensor - STC31 (Qwiic)",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-co2-sensor-stc31-qwiic.html",
+        "https://www.sparkfun.com/co-sensor-stc31-qwiic.html"
+      ],
+      "description": "Measure concentrations up to 100% with high repeatability and long-term stability, adds humidity and temperature compensation via a built-in SHTC3, and connects easily over I2C using the Qwiic ecos...",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "sths34pf80",
+      "name": "SparkFun Human Presence and Motion Sensor - STHS34PF80 (Qwiic)",
+      "measures": [
+        "motion"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-mini-human-presence-and-motion-sensor-sths34pf80-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-human-presence-and-motion-sensor-sths34pf80-qwiic.html"
+      ],
+      "description": "The SparkFun Qwiic Human Presence and Motion Sensor is built around the STHS34PF80 low-power, high-sensitivity IR sensor for presence and motion detection.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "stts22h",
+      "name": "SparkFun Temperature Sensor - STTS22H (Qwiic)",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-micro-temperature-sensor-stts22h-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-temperature-sensor-stts22h-qwiic.html"
+      ],
+      "description": "Thanks to its factory calibration the STTS22H offers high-end accuracy performance over the entire operating temperature range, reaching as low as ±0.5°C.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "tal220",
+      "name": "Load Cell - 10kg, Straight Bar (TAL220)",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/load-cell-10kg-straight-bar-tal220.html"
+      ]
+    },
+    {
+      "id": "tal220b",
+      "name": "Load Cell - 5kg, Straight Bar (TAL220B)",
+      "measures": [
+        "force",
+        "pressure",
+        "weight"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/load-cell-5kg-straight-bar-tal220b.html"
+      ],
+      "description": "This straight bar load cell (sometimes called a strain gauge) can translate up to 5kg of pressure (force) into an electrical signal."
+    },
+    {
+      "id": "tal221",
+      "name": "Mini Load Cell - 500g, Straight Bar (TAL221)",
+      "measures": [
+        "force",
+        "pressure",
+        "weight"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/mini-load-cell-500g-straight-bar-tal221.html",
+        "https://www.sparkfun.com/mini-load-cell-100g-straight-bar-tal221.html"
+      ],
+      "description": "This straight bar load cell (sometimes called a strain gauge) can translate up to 500g of pressure (force) into an electrical signal."
+    },
+    {
+      "id": "tas501",
+      "name": "Load Cell - 200kg, S-Type (TAS501)",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/load-cell-200kg-s-type-tas501.html"
+      ]
+    },
+    {
+      "id": "tas606",
+      "name": "Load Cell - 50kg, Disc (TAS606)",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/load-cell-200kg-disc-tas606.html",
+        "https://www.sparkfun.com/load-cell-50kg-disc-tas606.html"
+      ]
+    },
+    {
+      "id": "tct40",
+      "name": "SparkFun Ultrasonic Distance Sensor - TCT40 (Qwiic)",
+      "measures": [
+        "distance",
+        "ultrasonic"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-ultrasonic-distance-sensor-tct40-qwiic.html"
+      ],
+      "description": "The TCT40 distance sensor is excellent for non-contact distance readings from 2cm to 400cm. This unit features a pair of Qwiic connectors, allowing you to utilize I 2 C.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "temt6000",
+      "name": "SparkFun Ambient Light Sensor Breakout - TEMT6000",
+      "measures": [
+        "light"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-ambient-light-sensor-breakout-temt6000.html"
+      ],
+      "description": "Get a near-human-eye perspective with the TEMT6000 sensor, offering a simple analog output with a peak spectral sensitivity of 570nm."
+    },
+    {
+      "id": "tmag5273",
+      "name": "SparkFun Linear 3D Hall-Effect Sensor - TMAG5273 (Qwiic)",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-mini-linear-3d-hall-effect-sensor-tmag5273-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-linear-3d-hall-effect-sensor-tmag5273-qwiic.html"
+      ],
+      "description": "The TMAG5273 Qwiic Sensor is a low-power 3D hall-effect sensor that is perfect for detecting and measuring changes in a nearby magnetic field.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "tmf8820",
+      "name": "SparkFun Qwiic dToF Imager - TMF8820",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-qwiic-mini-dtof-imager-tmf8820.html",
+        "https://www.sparkfun.com/sparkfun-qwiic-dtof-imager-tmf8820.html"
+      ],
+      "description": "The SparkFun Qwiic Mini dToF TMF8820 Imager is a direct time-of-flight sensor that includes a single modular package with an associated VCSEL.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "tmf8821",
+      "name": "SparkFun Qwiic dToF Imager - TMF8821",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-qwiic-mini-dtof-imager-tmf8821.html",
+        "https://www.sparkfun.com/sparkfun-qwiic-dtof-imager-tmf8821.html"
+      ],
+      "description": "The SparkFun Qwiic Mini dToF TMF8821 Imager is a direct time-of-flight sensor that includes a single modular package with an associated VCSEL.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "tmp102",
+      "name": "SparkFun Digital Temperature Sensor - TMP102 (Qwiic)",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-digital-temperature-sensor-tmp102-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-digital-temperature-sensor-breakout-tmp102.html"
+      ],
+      "description": "The SparkFun TMP102 Qwiic is an easy-to-use digital temperature sensor equipped with a couple of Qwiic connectors for easy I2C communication.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "tmp117",
+      "name": "SparkFun High Precision Temperature Sensor - TMP117 (Qwiic)",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-high-precision-temperature-sensor-tmp117-qwiic.html"
+      ],
+      "description": "The SparkFun Qwiic TMP117 Breakout is a high precision temperature sensor equipped with an I2C interface.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "us1881",
+      "name": "Hall-Effect Sensor - US1881 (Latching)",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/hall-effect-sensor-us1881-latching.html"
+      ],
+      "description": "The US1881 is an integrated Hall-Effect latched sensor."
+    },
+    {
+      "id": "vcnl4040",
+      "name": "SparkFun Micro Proximity Sensor - 20cm, VCNL4040 (Qwiic)",
+      "measures": [
+        "light",
+        "motion",
+        "proximity"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-micro-proximity-sensor-20cm-vcnl4040-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-proximity-sensor-breakout-20cm-vcnl4040-qwiic.html"
+      ],
+      "description": "The SparkFun VCNL4040 Breakout provides simple, qualitative proximity detection up to 20cm with zero dead zone and an integrated ambient light sensor, all accessible via Qwiic.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "veml6030",
+      "name": "SparkFun Ambient Light Sensor - VEML6030 (Qwiic)",
+      "measures": [
+        "light"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-ambient-light-sensor-veml6030-qwiic.html"
+      ],
+      "description": "The VEML6030 is a high-accuracy ambient light sensor with a 16-bit resolution. Even more impressive is that it can detect light, similar to the human eye.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "veml7700",
+      "name": "Ambient Light Sensor - VEML7700 (Qwiic)",
+      "measures": [
+        "light"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-ambient-light-sensor-veml7700-qwiic.html",
+        "https://www.sparkfun.com/ambient-light-sensor-veml7700-qwiic.html"
+      ],
+      "description": "The SparkFun VEML7700 breakout is a high-resolution Qwiic ambient light sensor that measures lux from 0 to 167,000 with human-eye-like accuracy, I2C communication, and built-in compensation via an ...",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "vl53l1x",
+      "name": "SparkFun Distance Sensor Breakout - 4 Meter, VL53L1X (Qwiic)",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-distance-sensor-breakout-4-meter-vl53l1x-qwiic.html"
+      ],
+      "description": "Measure up to 4 meters with millimeter precision with this VL53L1X ToF sensor, which uses laser technology to provide accurate distance readings via I 2 C/Qwiic.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "vl53l4cd",
+      "name": "SparkFun Distance Sensor - 1.3 Meter, VL53L4CD (Qwiic)",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-distance-sensor-1-3-meter-vl53l4cd-qwiic.html"
+      ],
+      "description": "This SparkFun Distance Sensor Breakout utilizes the VL53L4CD next generation ToF sensor module to give you the highly accurate measurement given its size.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "vl53l5cx",
+      "name": "SparkFun Qwiic ToF Imager - VL53L5CX",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-qwiic-mini-tof-imager-vl53l5cx.html",
+        "https://www.sparkfun.com/sparkfun-qwiic-tof-imager-vl53l5cx.html"
+      ],
+      "description": "This Qwiic sensor captures a 63° wide depth map, making it perfect for gesture recognition, room mapping, and obstacle avoidance, giving your robot 3D vision!",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "vl6180",
+      "name": "SparkFun ToF Range Finder Sensor - VL6180",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-tof-range-finder-sensor-vl6180.html",
+        "https://www.sparkfun.com/sparkfun-tof-range-finder-breakout-vl6180.html"
+      ],
+      "description": "This is the SparkFun \"Time-of-Flight\" Range Finder equipped with the VL6180 distance sensor and acts as a near drop-in replacement for most Sharp sensors."
+    },
+    {
+      "id": "xm125",
+      "name": "SparkFun Pulsed Coherent Radar Sensor - Acconeer XM125 (Qwiic)",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-pulsed-coherent-radar-sensor-acconeer-xm125-qwiic.html"
+      ],
+      "description": "The SparkFun Qwiic Pulsed Coherent Radar Sensor - Acconeer XM125 brings powerful 60 GHz radar technology to your projects.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "zmod4450",
+      "name": "Gas Sensor Module - ZMOD4450",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/gas-sensor-module-zmod4450.html"
+      ],
+      "description": "The ZMOD4450 Gas Sensor Module is designed for detecting gases associated with food ripening or rotting."
+    }
+  ]
+}

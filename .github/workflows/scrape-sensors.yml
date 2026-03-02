@@ -1,0 +1,113 @@
+name: Scrape Sensor Data
+
+on:
+  schedule:
+    # Monthly on the 1st at 06:00 UTC
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
+    # Manual trigger
+
+# Prevent multiple scrape runs from overlapping
+concurrency:
+  group: scrape-sensors
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30  # Sensor scraping is lighter than components
+
+    permissions:
+      contents: write
+      actions: write  # Needed to trigger deploy workflow
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install wafer-py
+
+      - name: Run sensor scrapers
+        run: |
+          echo "Running sensor scrapers..."
+          python scripts/scrape_sensors.py
+
+      - name: Show scrape results
+        run: |
+          echo "=== Sensor data files ==="
+          ls -lh data/sensors/
+          echo ""
+          echo "=== Per-source stats ==="
+          for f in data/sensors/*.json; do
+            NAME=$(basename "$f" .json)
+            COUNT=$(python -c "import json; d=json.load(open('$f')); print(d.get('stats',{}).get('sensor_count','?'))" 2>/dev/null || echo "?")
+            echo "  $NAME: $COUNT sensors"
+          done
+
+      - name: Check for regressions
+        run: |
+          python -c "
+          import json, glob, sys
+          warnings = []
+          for f in glob.glob('data/sensors/*.json'):
+              try:
+                  d = json.load(open(f))
+                  stats = d.get('stats', {})
+                  count = stats.get('sensor_count', 0)
+                  source = d.get('source', f)
+                  errors = stats.get('errors', 0)
+                  if errors > 5:
+                      warnings.append(f'WARNING: {source} had {errors} errors')
+              except Exception as e:
+                  warnings.append(f'WARNING: Failed to read {f}: {e}')
+          if warnings:
+              print('\n'.join(warnings))
+          else:
+              print('No regressions detected')
+          "
+
+      - name: Commit and push data files
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Add sensor JSON files only (sensor.db is built at Docker build time)
+          git add data/sensors/
+
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            # Count total sensors across all sources
+            TOTAL=$(python -c "
+          import json, glob
+          total = 0
+          for f in glob.glob('data/sensors/*.json'):
+              try:
+                  total += json.load(open(f)).get('stats',{}).get('sensor_count',0)
+              except: pass
+          print(total)
+          ")
+            git commit -m "Update sensor data: ${TOTAL} sensors ($(date +%Y-%m-%d))"
+            git push
+            echo "Data committed and pushed"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Trigger deploy
+        if: steps.commit.outputs.has_changes == 'true'
+        run: |
+          echo "Waiting 2 minutes for commit to propagate..."
+          sleep 120
+          gh workflow run docker-build.yml
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
