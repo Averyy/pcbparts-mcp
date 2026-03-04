@@ -194,6 +194,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -258,6 +263,11 @@
     "name": "Varistors",
     "category_id": 11,
     "category_name": "Circuit Protection"
+  },
+  "3506": {
+    "name": "air purifier",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
   },
   "2101": {
     "name": "555 Timers / Counters",
@@ -2563,6 +2573,11 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
+  },
+  "164": {
+    "name": "Converter",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
