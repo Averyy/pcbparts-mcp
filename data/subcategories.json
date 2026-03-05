@@ -264,11 +264,6 @@
     "category_id": 11,
     "category_name": "Circuit Protection"
   },
-  "3506": {
-    "name": "air purifier",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -3781,6 +3776,11 @@
   },
   "1456": {
     "name": "Modular - Flat Cables",
+    "category_id": 61,
+    "category_name": "Wires and cables"
+  },
+  "1448": {
+    "name": "Multi-conductor cables",
     "category_id": 61,
     "category_name": "Wires and cables"
   },
