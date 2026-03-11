@@ -1074,6 +1074,11 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
+  "660": {
+    "name": "Cross slot half round head self-tapping screw",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
   "641": {
     "name": "Cross slot large flat head machine screw",
     "category_id": 47,
@@ -3611,11 +3616,6 @@
   },
   "921": {
     "name": "welding accessories",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1809": {
-    "name": "Wire cutter",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
