@@ -1419,6 +1419,11 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
+  "687": {
+    "name": "Swivel bolt",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
   "684": {
     "name": "T-bolt",
     "category_id": 47,
@@ -3606,6 +3611,11 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "159": {
+    "name": "Crimping pliers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
