@@ -14,7 +14,8 @@ MCP server for searching electronic components across JLCPCB, Mouser, and DigiKe
 - **Pinout data:** Component pin information from EasyEDA symbols
 - **MPN lookup:** Find JLCPCB equivalents by manufacturer part number
 - **Sensor recommendation:** Find sensor ICs by what they measure, protocol, or platform (1,500+ sensors, 56 measure types)
-- **11 MCP tools** across 6 data sources
+- **Design rules:** 41 curated PCB design reference files covering power, protection, interfaces, MCUs, layout, and EMC
+- **12 MCP tools** across 6 data sources
 - No API key required for JLCPCB (Mouser/DigiKey optional)
 
 ## Quick Start
@@ -126,6 +127,12 @@ Add to Extensions config:
 |------|-------------|
 | `sensor_recommend` | Find sensor ICs/modules by measurement need, protocol, or platform (1,500+ sensors, 56 measure types) |
 
+### Design Rules (no key required)
+
+| Tool | Description |
+|------|-------------|
+| `get_design_rules` | PCB design rules & best practices (41 curated reference files: power, protection, interfaces, MCUs, layout, EMC) |
+
 ### SamacSys (no key required)
 
 | Tool | Description |
@@ -213,6 +220,8 @@ Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diode
 "Get KiCad footprint for ESP32-S3-WROOM-1"
 "What sensor should I use to measure CO2 on ESPHome?"
 "Recommend an IMU sensor with I2C interface"
+"What are the design rules for USB-C?"
+"Show me LDO design best practices"
 ```
 
 ## API Details

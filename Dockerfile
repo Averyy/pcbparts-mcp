@@ -45,6 +45,9 @@ COPY data/sensors/ /app/data/sensors/
 COPY scripts/build_sensor_db.py /app/scripts/
 RUN python scripts/build_sensor_db.py --data-dir /app/data --output /app/data/sensor.db --quiet
 
+# Copy design rules (served markdown only, not raw sources)
+COPY data/design-rules/rules/ /app/data/design-rules/rules/
+
 # Add src to Python path
 ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1

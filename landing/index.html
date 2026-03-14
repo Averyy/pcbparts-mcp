@@ -1898,7 +1898,20 @@
                         <div class="code-block-body">
                             <pre>{
   <span class="str">"permissions"</span>: {
-    <span class="str">"allow"</span>: [<span class="str">"mcp__pcbparts__*"</span>]
+    <span class="str">"allow"</span>: [
+      <span class="str">"mcp__pcbparts__jlc_search"</span>,
+      <span class="str">"mcp__pcbparts__jlc_search_help"</span>,
+      <span class="str">"mcp__pcbparts__jlc_stock_check"</span>,
+      <span class="str">"mcp__pcbparts__jlc_get_part"</span>,
+      <span class="str">"mcp__pcbparts__jlc_find_alternatives"</span>,
+      <span class="str">"mcp__pcbparts__jlc_get_pinout"</span>,
+      <span class="str">"mcp__pcbparts__mouser_get_part"</span>,
+      <span class="str">"mcp__pcbparts__digikey_get_part"</span>,
+      <span class="str">"mcp__pcbparts__cse_search"</span>,
+      <span class="str">"mcp__pcbparts__cse_get_kicad"</span>,
+      <span class="str">"mcp__pcbparts__sensor_recommend"</span>,
+      <span class="str">"mcp__pcbparts__get_design_rules"</span>
+    ]
   }
 }</pre>
                         </div>
@@ -2017,14 +2030,14 @@
             <div class="container">
                 <div class="section-header">
                     <h2 data-text="Tools">Tools</h2>
-                    <p>Search parts across JLCPCB, Mouser, and DigiKey with 11 MCP tools. Compare stock and pricing, find alternatives, recommend sensors, and download KiCad footprints.</p>
+                    <p>Search parts across JLCPCB, Mouser, and DigiKey with 12 MCP tools. Compare stock and pricing, find alternatives, recommend sensors, and download KiCad footprints.</p>
                 </div>
 
                 <div class="bento-grid">
                     <div class="bento-left">
                         <div class="bento-card bento-large" data-ref="U1">
                             <span class="card-icon">🛠️</span>
-                            <h3>11 MCP Tools</h3>
+                            <h3>12 MCP Tools</h3>
                             <div class="tools-list">
                                 <div class="tool-item"><code>jlc_search</code> <span>Parametric search with spec filters</span></div>
                                 <div class="tool-item"><code>jlc_stock_check</code> <span>Real-time stock verification</span></div>
@@ -2037,6 +2050,7 @@
                                 <div class="tool-item"><code>digikey_get_part</code> <span>Cross-reference MPN on DigiKey</span></div>
                                 <div class="tool-item"><code>cse_search</code> <span>ECAD models and datasheets</span></div>
                                 <div class="tool-item"><code>cse_get_kicad</code> <span>KiCad symbols and footprints</span></div>
+                                <div class="tool-item"><code>get_design_rules</code> <span>PCB design rules & best practices</span></div>
                             </div>
                         </div>
                     </div>

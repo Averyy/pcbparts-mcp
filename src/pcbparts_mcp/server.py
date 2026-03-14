@@ -30,6 +30,7 @@ from .sensor_db import get_sensor_db, close_sensor_db
 from .search import SpecFilter
 from .smart_parser import parse_smart_query, merge_spec_filters
 from .pinout import parse_easyeda_pins
+from .design_rules import get_design_rules as _get_design_rules, _RULES_DIR, _build_index
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +68,14 @@ async def lifespan(app):
     except Exception as e:
         logger.warning(f"Sensor database not available: {e}")
 
+    # Validate design rules directory (non-fatal if unavailable)
+    if _RULES_DIR.is_dir():
+        from . import design_rules
+        design_rules._index = _build_index(_RULES_DIR)
+        logger.info(f"Design rules: {len(design_rules._index)} rule files")
+    else:
+        logger.warning(f"Design rules directory not found: {_RULES_DIR}")
+
     # Initialize Mouser client if API key is configured
     if MOUSER_API_KEY:
         mouser_quota = DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT)
@@ -100,7 +109,7 @@ async def lifespan(app):
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB parts component search for PCB assembly. No auth required. Use jlc_search (local DB) as the primary search tool — it's fast, free, and supports parametric filters. Only use jlc_stock_check for real-time stock verification or out-of-stock parts. Use mouser_get_part/digikey_get_part only to cross-reference a specific MPN (daily quota applies). Use sensor_recommend to find sensor ICs/modules by what they measure, protocol, or platform. It answers \"what sensor should I use?\" — not for buying parts (use jlc_search for that).",
+    instructions="PCB parts component search for PCB assembly. No auth required. Use jlc_search (local DB) as the primary search tool — it's fast, free, and supports parametric filters. Only use jlc_stock_check for real-time stock verification or out-of-stock parts. Use mouser_get_part/digikey_get_part only to cross-reference a specific MPN (daily quota applies). Use sensor_recommend to find sensor ICs/modules by what they measure, protocol, or platform. It answers \"what sensor should I use?\" — not for buying parts (use jlc_search for that). Use get_design_rules for PCB design best practices and reference material (power, protection, interfaces, MCUs, layout, EMC, etc.).",
     lifespan=lifespan,
 )
 
@@ -1036,6 +1045,40 @@ async def sensor_recommend(
         platform=platform,
         limit=min(limit, 100),
     )
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="PCB Design Rules",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=False,
+    )
+)
+async def get_design_rules(topic: str = "") -> dict:
+    """Look up curated PCB design rules and best practices.
+
+    41 reference files covering power, protection, interfaces, MCUs, layout, EMC, and more.
+    Call with no topic to see the full index. Use a keyword to find matching rules.
+
+    Args:
+        topic: Keyword to match against rule files (e.g. "ldo", "usb", "power", "esd", "esp32").
+               Matches against category/filename. Empty string returns the full index.
+
+    Returns:
+        content: The matched rule file(s) concatenated with --- separators
+        matched_files: List of matched file keys (e.g. ["power/ldo", "power/switching"])
+        topic: The search topic used
+
+    Examples:
+        get_design_rules("ldo") → LDO design rules (dropout, ESR, PSRR, thermal)
+        get_design_rules("usb") → USB design rules (D+/D- routing, CC resistors, power delivery)
+        get_design_rules("power") → All power rules (decoupling, LDO, switching, battery, power-path)
+        get_design_rules("esp32") → ESP32 design rules (strapping pins, RF, USB-JTAG)
+        get_design_rules("") → Full index of all available rule files
+    """
+    return _get_design_rules(topic)
 
 
 # Health check endpoint

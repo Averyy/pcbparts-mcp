@@ -33,6 +33,8 @@ PCB Parts MCP server for electronic component search and sensor recommendation. 
 
 - **Sensor feature:** `sensor_recommend` tool — separate SQLite DB (`sensor.db`) from components. 14 scrapers produce `data/sensors/*.json`, merged by `scripts/build_sensor_db.py`, runtime at `src/pcbparts_mcp/sensor_db/`. Scraper reference: `docs/ref-sensor-scrapers.md`.
 
+- **Design rules:** `get_design_rules` tool — 41 markdown reference files in `data/design-rules/rules/`, organized by category (guides, interfaces, power, protection, mcus, misc). Substring match on `category/filename`. Any edits to rule files must follow `data/design-rules/rules/DESIGN-STYLE-GUIDE.md`.
+
 - **Website:** https://pcbparts.dev
 - **Endpoint:** https://pcbparts.dev/mcp
 - **Status:** Beta - breaking changes acceptable (no external users yet)

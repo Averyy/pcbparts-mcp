@@ -45,6 +45,7 @@ Claude Desktop / Cursor / VSCode MCP config:
 | `sensor_recommend` | Find sensor ICs/modules by measurement need, protocol, or platform (1,500+ sensors, 56 measure types) |
 | `cse_search` | Search SamacSys for ECAD models and datasheets |
 | `cse_get_kicad` | Download KiCad symbols and footprints |
+| `get_design_rules` | PCB design rules & best practices (41 curated reference files: power, protection, interfaces, MCUs, layout, EMC) |
 
 ## search vs stock_check
 
@@ -123,6 +124,8 @@ Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diode
 - "Cross-reference TPS63020 on Mouser and compare with JLCPCB pricing"
 - "What sensor should I use to measure CO2 on ESPHome?"
 - "Recommend an IMU sensor with I2C interface"
+- "What are the design rules for USB-C?"
+- "Show me LDO design best practices"
 
 ## Self-Hosting
 
