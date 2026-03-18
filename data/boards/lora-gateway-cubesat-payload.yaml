@@ -1,0 +1,3947 @@
+name: LoRa Gateway CubeSat Payload
+slug: lora-gateway-cubesat-payload
+source: dpmj/masters-thesis-lora-gateway-compute-module-cubesat-payload-pcb
+format: kicad9
+description: LoRa LPWAN concentrator/gateway (SX1302 dual-channel), RPi CM5
+tags: [lora]
+key_ics: [SX1302]
+outline:
+  width_mm: 90.17
+  height_mm: 95.89
+design_rules:
+  layers: 6
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.2mm
+  min_via: 0.2mm
+components:
+- ref: BT301
+  value: Seiko MS621F
+  footprint: BatteryHolder_Seiko_MS621F
+  mpn: MS621F
+  description: Single-cell battery
+- ref: C1001
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C1002
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1003
+  value: 470nF
+  footprint: '0402'
+  mpn: CGA2B1X7S1C474K050BC
+- ref: C1004
+  value: 10pF
+  footprint: '0402'
+  mpn: GRM1555C1H100FA01D
+- ref: C1005
+  value: 1pF
+  footprint: '0402'
+  mpn: GRM1555C1H1R0WA01D
+- ref: C1006
+  value: 2pF
+  footprint: '0402'
+  mpn: GRM1555C2A2R0WA01D
+- ref: C1101
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1102
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1103
+  value: 56pF
+  footprint: '0402'
+  mpn: GCM1555C1H560FA16D
+- ref: C1104
+  value: 56pF
+  footprint: '0402'
+  mpn: GCM1555C1H560FA16D
+- ref: C1105
+  value: 56pF
+  footprint: '0402'
+  mpn: GCM1555C1H560FA16D
+- ref: C1106
+  value: 56pF
+  footprint: '0402'
+  mpn: GCM1555C1H560FA16D
+- ref: C1107
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1108
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1203
+  value: 10nF
+  footprint: '0402'
+- ref: C1204
+  value: 10uF
+  footprint: 0805
+  mpn: GRT21BC71E106KE13K
+- ref: C1205
+  value: 10nF
+  footprint: '0402'
+- ref: C1206
+  value: 47pF
+  footprint: '0402'
+  mpn: GRM1555C1H470JA01D
+- ref: C1207
+  value: 56pF
+  footprint: '0402'
+  mpn: GCM1555C1H560FA16D
+- ref: C1208
+  value: 10nF
+  footprint: '0402'
+- ref: C1209
+  value: 10nF
+  footprint: '0402'
+- ref: C1210
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C1212
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C1401
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C1402
+  value: pF
+  footprint: '0402'
+  mpn: GRM1555C1H102FA01D
+- ref: C1403
+  value: 56pF
+  footprint: '0402'
+  mpn: GCM1555C1H560FA16D
+- ref: C1404
+  value: 56pF
+  footprint: '0402'
+  mpn: GCM1555C1H560FA16D
+- ref: C1405
+  value: 3.3pF
+  footprint: '0402'
+  mpn: GJM1555C1H3R3WB01D
+- ref: C1501
+  value: 1.5pF
+  footprint: '0402'
+  mpn: GJM1555C1H1R5BB01D
+- ref: C1502
+  value: 2.7pF
+  footprint: '0402'
+  mpn: GJM1555C1H2R7WB01D
+- ref: C1503
+  value: 3.3pF
+  footprint: '0402'
+  mpn: GJM1555C1H3R3WB01D
+- ref: C1504
+  value: 3.3pF
+  footprint: '0402'
+  mpn: GJM1555C1H3R3CB01D
+- ref: C1601
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1602
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1603
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+  decouples: U1601
+- ref: C1604
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1605
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1606
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+  decouples: U1602
+- ref: C1701
+  value: 10uF
+  footprint: 0805
+  mpn: GRT21BC71E106KE13L
+  decouples: U1701
+- ref: C1702
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+  decouples: U1701
+- ref: C1703
+  value: 10uF
+  footprint: 0805
+  mpn: GRT21BC71E106KE13L
+- ref: C1704
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1705
+  value: pF
+  footprint: '0402'
+  mpn: C0402C392J3RACTU
+- ref: C1706
+  value: pF
+  footprint: '0402'
+  mpn: C0402C222J3RACTU
+- ref: C1707
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1708
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+  decouples: U1703
+- ref: C1709
+  value: 10uF
+  footprint: 0805
+  mpn: GRT21BC71E106KE13L
+- ref: C1710
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1711
+  value: 10uF
+  footprint: 0805
+  mpn: GRT21BC71E106KE13L
+- ref: C1712
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1713
+  value: pF
+  footprint: '0402'
+  mpn: C0402C392J3RACTU
+- ref: C1714
+  value: pF
+  footprint: '0402'
+  mpn: C0402C222J3RACTU
+- ref: C1801
+  value: 10uF
+  footprint: 0805
+  mpn: GRT21BC71E106KE13L
+- ref: C1802
+  value: 2.2nF
+  footprint: '0402'
+  mpn: C0402C222J3RACTU
+- ref: C1803
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1804
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1805
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1806
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1807
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1808
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1809
+  value: 470nF
+  footprint: '0402'
+  mpn: CGA2B1X7S1C474K050BC
+- ref: C1810
+  value: 10uF
+  footprint: 0805
+  mpn: GRT21BC71E106KE13L
+- ref: C1811
+  value: 2.2nF
+  footprint: '0402'
+  mpn: C0402C222J3RACTU
+- ref: C1812
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1813
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1814
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1815
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1816
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1817
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1818
+  value: 470nF
+  footprint: '0402'
+  mpn: CGA2B1X7S1C474K050BC
+- ref: C1901
+  value: 10uF
+  footprint: 0805
+  mpn: GRT21BC71E106KE13L
+- ref: C1902
+  value: 2.2nF
+  footprint: '0402'
+  mpn: C0402C222J3RACTU
+- ref: C1903
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1904
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1905
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1906
+  value: 47uF
+  footprint: 0805
+  mpn: GRM21BR61A476ME15K
+- ref: C1907
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1908
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1909
+  value: 22uF
+  footprint: 0805
+  mpn: CL21A226KOQNNNG
+- ref: C1910
+  value: 470nF
+  footprint: '0402'
+  mpn: CGA2B1X7S1C474K050BC
+- ref: C1911
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C1912
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1913
+  value: 10nF
+  footprint: '0402'
+  mpn: GCM155R71E103KA37J
+- ref: C1914
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1915
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C1916
+  value: 10uF
+  footprint: 0805
+  mpn: GRT21BC71E106KE13L
+- ref: C1917
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C1918
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1919
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1920
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C1921
+  value: 10uF
+  footprint: 0805
+  mpn: GRT21BC71E106KE13L
+- ref: C1922
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C1923
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1924
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C1925
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C201
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C202
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C203
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C204
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C401
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C402
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C403
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C404
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C405
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C406
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C407
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C408
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C409
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C410
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C411
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C412
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C413
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C414
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C501
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C502
+  value: 10uF
+  footprint: '0603'
+  mpn: GRT21BC71E106KE13L
+- ref: C503
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C504
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C505
+  value: 10uF
+  footprint: '0603'
+  mpn: GRT21BC71E106KE13L
+- ref: C601
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C701
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C702
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C703
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C704
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C705
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C706
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C707
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C708
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C709
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C710
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C711
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C712
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C713
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C801
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C802
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C803
+  value: 470nF
+  footprint: '0402'
+  mpn: CGA2B1X7S1C474K050BC
+- ref: C804
+  value: 47nF
+  footprint: '0402'
+  mpn: CC0402JRX7R8BB473
+- ref: C805
+  value: 47pF
+  footprint: '0402'
+  mpn: GRM1555C1H470JA01D
+- ref: C806
+  value: 10pF
+  footprint: '0402'
+  mpn: GRM1555C1H100FA01D
+- ref: C807
+  value: 3.3pF
+  footprint: '0402'
+  mpn: GJM1555C1H3R3WB01D
+- ref: C808
+  value: 39pF
+  footprint: '0402'
+  mpn: GRM1555C1H390FA01J
+- ref: C809
+  value: 5.6pF
+  footprint: '0402'
+  mpn: GRM1555C1H5R6BA01D
+- ref: C810
+  value: 2.2pF
+  footprint: '0402'
+  mpn: GRM1555C2A2R2WA01D
+- ref: C811
+  value: 1pF
+  footprint: '0402'
+  mpn: GRM1555C1H1R0WA01D
+- ref: C812
+  value: 2pF
+  footprint: '0402'
+  mpn: GRM1555C2A2R0WA01D
+- ref: C901
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155Z71A105KE01J
+- ref: C902
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R71C104KA88J
+- ref: C903
+  value: 470nF
+  footprint: '0402'
+  mpn: CGA2B1X7S1C474K050BC
+- ref: C904
+  value: 10pF
+  footprint: '0402'
+  mpn: GRM1555C1H100FA01D
+- ref: C905
+  value: 1pF
+  footprint: '0402'
+  mpn: GRM1555C1H1R0WA01D
+- ref: C906
+  value: 2pF
+  footprint: '0402'
+  mpn: GRM1555C2A2R0WA01D
+- ref: CSKB-H401
+  value: 2x26 header
+  footprint: 2X26
+  mpn: ESQ-126-39-G-D
+- ref: CSKB-H402
+  value: 2x26 header
+  footprint: 2X26
+  mpn: ESQ-126-39-G-D
+- ref: D1101
+  value: LXES1UTAA1-157
+  footprint: SOD-882
+  mpn: LXES1UTAA1-157
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D1601
+  value: green LED
+  footprint: '0402'
+- ref: D1602
+  value: green LED
+  footprint: '0402'
+- ref: D1603
+  value: green LED
+  footprint: '0402'
+- ref: D1604
+  value: green LED
+  footprint: '0402'
+- ref: D1605
+  value: green LED
+  footprint: '0402'
+- ref: D301
+  value: green LED
+  footprint: '0402'
+- ref: D401
+  value: SP0402B-ELC-01ETG
+  footprint: SOD-882
+  mpn: SP0402B-ELC-01ETG
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D501
+  value: SP0402B-ELC-01ETG
+  footprint: SOD-882
+  mpn: SP0402B-ELC-01ETG
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D701
+  value: schottky
+  footprint: SOD-882
+  description: Schottky diode
+- ref: D702
+  value: green LED
+  footprint: '0402'
+- ref: D703
+  value: green LED
+  footprint: '0402'
+- ref: D704
+  value: green LED
+  footprint: '0402'
+- ref: FB1801
+  value: 8.5 Ohms @ 100 MHz
+  footprint: '0603'
+  mpn: BLE18PS080SN1D
+- ref: FB1802
+  value: 8.5 Ohms @ 100 MHz
+  footprint: '0603'
+  mpn: BLE18PS080SN1D
+- ref: FB1901
+  value: 8.5 Ohms @ 100 MHz
+  footprint: '0603'
+  mpn: BLE18PS080SN1D
+- ref: FB501
+  value: 8.5 Ohms @ 100 MHz
+  footprint: '0603'
+  mpn: BLE18PS080SN1D
+- ref: FB601
+  value: 10 Ohms @ 100 MHz
+  footprint: '0402'
+  mpn: BLM15PG100SN1D
+- ref: J1101
+  value: coaxial connector
+  footprint: MMCX_Molex_73415-0961_Horizontal_1.6mm-PCB
+  mpn: 73415-0961
+  description: coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)
+- ref: J401
+  value: 1x14 header
+  footprint: Molex_PicoBlade_53261-1471
+  mpn: '532611471'
+  description: PicoBlade-14 SMD connector
+- ref: J501
+  value: USB-C
+  footprint: USB-C
+  description: USB 2.0-only 16P Type-C Receptacle connector
+- ref: J502
+  value: Micro_SD_Card_Det2
+  footprint: microSD_HC_Hirose_DM3AT-SF-PEJM5
+  description: Micro SD Card Socket with two card detection pins
+- ref: J503
+  value: USB-C
+  footprint: USB-C
+  description: USB 2.0-only 16P Type-C Receptacle connector
+- ref: L1001
+  value: 15uH
+  footprint: '1008'
+  mpn: VLS252010CX-150M-1
+- ref: L1002
+  value: 16nH
+  footprint: '0402'
+  mpn: LQW15AN16NG00D
+- ref: L1003
+  value: 33nH
+  footprint: '0402'
+  mpn: LQW15AN33NG00D
+- ref: L1201
+  value: 33nH
+  footprint: '0603'
+  mpn: LQW18AN33NG80D
+- ref: L1401
+  value: 68nH
+  footprint: '0603'
+  mpn: LQW18AN68NG80D
+- ref: L1402
+  value: 4.2nH
+  footprint: '0402'
+  mpn: LQW15AN4N2B8ZD
+- ref: L1403
+  value: 8.1nH
+  footprint: '0402'
+  mpn: LQW15AN8N1C10D
+- ref: L1501
+  value: 5.6nH
+  footprint: '0402'
+  mpn: LQW15AN5N6B8ZD
+- ref: L1502
+  value: 5.6nH
+  footprint: '0402'
+  mpn: LQW15AN5N6B8ZD
+- ref: L1801
+  value: 2.2uH
+  footprint: L_Bourns-SRN4018
+  mpn: SRN4018-2R2M
+- ref: L1802
+  value: 2.2uH
+  footprint: L_Bourns-SRN4018
+  mpn: SRN4018-2R2M
+- ref: L1901
+  value: 2.2uH
+  footprint: L_Bourns-SRN4018
+  mpn: SRN4018-2R2M
+- ref: L801
+  value: 15uH
+  footprint: '1008'
+  mpn: VLS252010CX-150M-1
+- ref: L802
+  value: 47nH
+  footprint: '0402'
+  mpn: LQW15AN47NG80D
+- ref: L803
+  value: 2.5nH
+  footprint: '0402'
+  mpn: LQW15AN2N5B0ZD
+- ref: L804
+  value: 4.7nH
+  footprint: '0402'
+  mpn: LQW15AN4N7B0ZD
+- ref: L805
+  value: 16nH
+  footprint: '0402'
+  mpn: LQW15AN16NG00D
+- ref: L806
+  value: 33nH
+  footprint: '0402'
+  mpn: LQW15AN33NG00D
+- ref: L901
+  value: 15uH
+  footprint: '1008'
+  mpn: VLS252010CX-150M-1
+- ref: L902
+  value: 16nH
+  footprint: '0402'
+  mpn: LQW15AN16NG00D
+- ref: L903
+  value: 33nH
+  footprint: '0402'
+  mpn: LQW15AN33NG00D
+- ref: Q1601
+  value: N-channel MOSFET
+  footprint: TSOT-23
+  mpn: PMV15ENEA
+  description: N-MOSFET transistor, gate/source/drain
+- ref: Q1602
+  value: N-channel MOSFET
+  footprint: TSOT-23
+  mpn: PMV15ENEA
+  description: N-MOSFET transistor, gate/source/drain
+- ref: R1001
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R1002
+  value: 220ohm
+  footprint: '0402'
+  mpn: RC0402FR-07220RL
+- ref: R1003
+  value: 100ohm
+  footprint: '0402'
+  mpn: RC0402FR-07100RL
+- ref: R1004
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R1201
+  value: 270ohm
+  footprint: '0402'
+  mpn: RC0402FR-07270RL
+- ref: R1202
+  value: 270ohm
+  footprint: '0402'
+  mpn: RC0402FR-07270RL
+- ref: R1203
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+  pulldown: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.VCTRL
+- ref: R1401
+  value: 124ohm
+  footprint: '0402'
+  mpn: ERA-2AEB1240X
+- ref: R1402
+  value: 127ohm
+  footprint: '1206'
+  mpn: ERA-8AEB1270V
+- ref: R1403
+  value: 124ohm
+  footprint: '0402'
+  mpn: ERA-2AEB1240X
+- ref: R1404
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+  pulldown: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/LNA.BYP
+- ref: R1405
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+  pulldown: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/nEN_LNA
+- ref: R1601
+  value: 680ohm
+  footprint: '0402'
+- ref: R1602
+  value: 680ohm
+  footprint: '0402'
+- ref: R1603
+  value: 680ohm
+  footprint: '0402'
+- ref: R1604
+  value: 680ohm
+  footprint: '0402'
+- ref: R1605
+  value: 680ohm
+  footprint: '0402'
+- ref: R1701
+  value: 220kohm
+  footprint: '0402'
+  mpn: RC0402FR-07220KL
+  pullup: /3.0-power/3.1-efuse/EFUSED.EN/UVLO
+- ref: R1702
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R1703
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R1704
+  value: 21kohm
+  footprint: '0402'
+  mpn: RC0402FR-1321KL
+- ref: R1705
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: AC0402FR-7D2K2L
+  pulldown: /3.0-power/3.1-efuse/EFUSED.ISENSE
+- ref: R1706
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402FR-0710KL
+  pulldown: /3.0-power/3.1-efuse/EFUSED.PGTH
+- ref: R1707
+  value: 64.9kohm
+  footprint: '0402'
+  mpn: RC0402FR-0764K9L
+  pulldown: /3.0-power/3.1-efuse/EFUSED.OVLO
+- ref: R1709
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+  pulldown: /1.0-digital/CM5_GPIO12_RADIO_POWER_EN
+- ref: R1710
+  value: 220kohm
+  footprint: '0402'
+  mpn: RC0402FR-07220KL
+- ref: R1711
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R1712
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R1713
+  value: 21kohm
+  footprint: '0402'
+  mpn: RC0402FR-1321KL
+- ref: R1714
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: AC0402FR-7D2K2L
+  pulldown: /3.0-power/3.1-efuse/EFUSERF.ISENSE
+- ref: R1715
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402FR-0710KL
+  pulldown: /3.0-power/3.1-efuse/EFUSERF.PGTH
+- ref: R1716
+  value: 64.9kohm
+  footprint: '0402'
+  mpn: RC0402FR-0764K9L
+  pulldown: /3.0-power/3.1-efuse/EFUSERF.OVLO
+- ref: R1801
+  value: 15.4kohm
+  footprint: '0402'
+  mpn: RC0402FR-0715K4L
+- ref: R1802
+  value: 4.87kohm
+  footprint: '0402'
+  mpn: RC0402FR-074K87L
+  pulldown: /3.0-power/3.2-psu-digital/DC3V3D.FB
+- ref: R1803
+  value: 42.2kohm
+  footprint: '0402'
+  mpn: RC0402FR-0742K2L
+  pulldown: /3.0-power/3.2-psu-digital/DC3V3D.SCONF
+- ref: R1805
+  value: 2.49kohm
+  footprint: '0402'
+  mpn: RC0402FR-072K49L
+- ref: R1806
+  value: 4.87kohm
+  footprint: '0402'
+  mpn: RC0402FR-074K87L
+  pulldown: /3.0-power/3.2-psu-digital/DC1V2D.FB
+- ref: R1807
+  value: 42.2kohm
+  footprint: '0402'
+  mpn: RC0402FR-0742K2L
+  pulldown: /3.0-power/3.2-psu-digital/DC1V2.SCONF
+- ref: R1808
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R1901
+  value: 16.9kohm
+  footprint: '0402'
+  mpn: AC0402FR-0716K9L
+- ref: R1902
+  value: 4.87kohm
+  footprint: '0402'
+  mpn: RC0402FR-074K87L
+  pulldown: /3.0-power/3.3-psu-rf/DC3V6RF.FB
+- ref: R1903
+  value: 42.2kohm
+  footprint: '0402'
+  mpn: RC0402FR-0742K2L
+  pulldown: /3.0-power/3.3-psu-rf/DC3V6RF.SCONF
+- ref: R1904
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R1905
+  value: 12.1kohm
+  footprint: '0402'
+  mpn: AC0402FR-0712K1L
+- ref: R1906
+  value: 4.87kohm
+  footprint: '0402'
+  mpn: RC0402FR-074K87L
+  pulldown: U1902.FB
+- ref: R1907
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R1908
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R301
+  value: 680ohm
+  footprint: '0402'
+- ref: R401
+  value: 100ohm
+  footprint: '0402'
+  mpn: AC0402FR-070RL
+- ref: R402
+  value: 100ohm
+  footprint: '0402'
+  mpn: AC0402FR-070RL
+- ref: R403
+  value: 100ohm
+  footprint: '0402'
+  mpn: AC0402FR-070RL
+- ref: R404
+  value: 120ohm
+  footprint: '0402'
+  mpn: AC0402FR-07120RL
+- ref: R405
+  value: 0ohm
+  footprint: '0402'
+  mpn: AC0402FR-070RL
+- ref: R406
+  value: 33ohm
+  footprint: '0402'
+  mpn: AC0402FR-0733RL
+- ref: R407
+  value: 100ohm
+  footprint: '0402'
+  mpn: AC0402FR-070RL
+- ref: R408
+  value: 100ohm
+  footprint: '0402'
+  mpn: AC0402FR-070RL
+- ref: R409
+  value: 100ohm
+  footprint: '0402'
+  mpn: AC0402FR-070RL
+- ref: R410
+  value: 120ohm
+  footprint: '0402'
+  mpn: AC0402FR-07120RL
+- ref: R411
+  value: 0ohm
+  footprint: '0402'
+  mpn: AC0402FR-070RL
+- ref: R412
+  value: 33ohm
+  footprint: '0402'
+  mpn: AC0402FR-0733RL
+- ref: R501
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+  pulldown: +3V3_SD
+- ref: R701
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R702
+  value: 10ohm
+  footprint: '0402'
+  mpn: RC0402FR-0710RL
+- ref: R703
+  value: 100ohm
+  footprint: '0402'
+  mpn: RC0402FR-07100RL
+- ref: R704
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R705
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+  pulldown: /2.0-radio/2.1-baseband/SX1302.RESET
+- ref: R706
+  value: 680ohm
+  footprint: '0402'
+- ref: R707
+  value: 33ohm
+  footprint: '0402'
+  mpn: AC0402FR-0733RL
+- ref: R708
+  value: 680ohm
+  footprint: '0402'
+- ref: R709
+  value: 680ohm
+  footprint: '0402'
+- ref: R710
+  value: 4.7kohm
+  footprint: '0402'
+  mpn: RC0402FR-074K7L
+- ref: R711
+  value: 4.7kohm
+  footprint: '0402'
+  mpn: RC0402FR-074K7L
+- ref: R712
+  value: 33ohm
+  footprint: '0402'
+  mpn: AC0402FR-0733RL
+- ref: R801
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R802
+  value: 220ohm
+  footprint: '0402'
+  mpn: RC0402FR-07220RL
+- ref: R803
+  value: 100ohm
+  footprint: '0402'
+  mpn: RC0402FR-07100RL
+- ref: R901
+  value: 47kohm
+  footprint: '0402'
+  mpn: RC0402FR-0747KL
+- ref: R902
+  value: 220ohm
+  footprint: '0402'
+  mpn: RC0402FR-07220RL
+- ref: R903
+  value: 100ohm
+  footprint: '0402'
+  mpn: RC0402FR-07100RL
+- ref: RN701
+  value: 33ohm
+  footprint: R_Array_Convex
+  mpn: YC164-FR-0733RL
+  description: 4 resistor network, parallel topology, split
+- ref: RN702
+  value: 33ohm
+  footprint: R_Array_Convex
+  mpn: YC164-FR-0733RL
+  description: 4 resistor network, parallel topology, split
+- ref: SW201
+  value: tactile switch
+  footprint: SW_Push_1P1T_NO_Vertical_Wuerth_434133025816
+- ref: SW202
+  value: switch
+  footprint: SW_DIP_SPSTx03_Slide_KingTek_DSHP03TJ_W5.25mm_P1.27mm_JPin
+  description: 3x DIP Switch, Single Pole Single Throw (SPST) switch, small symbol
+- ref: U1001
+  value: SX1261IMLTRT
+  footprint: QFN-24-1EP
+  description: 150 MHz to 960 MHz Low Power Long Range Transceiver, 14dBm output power
+- ref: U1101
+  value: 74AHC1G08
+  footprint: SOT-23-5
+  mpn: SN74AHC1G08DCK3
+  description: Single AND Gate, Low-Voltage CMOS
+- ref: U1102
+  value: BGS12P2L6
+  footprint: Infineon_PG-TSNP-6-10
+  description: SPDT DC-6GHz switch, 45dB isolation at 960MHz, PG-TSNP-6-10, high power
+- ref: U1103
+  value: SN74LVC1G00DBV
+  footprint: SOT-23-5
+  mpn: SN74LVC1G00DBVR
+  description: Single NAND Gate, Low-Voltage CMOS, SOT-23
+- ref: U1104
+  value: SN74LVC1G14DBV
+  footprint: SOT-23-5
+  mpn: SN74LVC1G14DBVR
+  description: Single Schmitt NOT Gate, Low-Voltage CMOS, SOT-23
+- ref: U1201
+  value: B4377
+  footprint: Filter_1411-5
+  mpn: B39871B4377P810
+  description: Low-loss SAW RF filter 50 Ohm 866.50 MHz 7 MHz BW
+- ref: U1202
+  value: CMX90A004
+  footprint: QFN-16-1EP
+  mpn: CMX90A004
+  description: 860-960 MHz 2 Watt GaAs HBT Power Amplifier
+- ref: U1203
+  value: TPS22917DBV
+  footprint: SOT-23-6
+  description: "1V to 5.5V, 2A, 80m\u03A9 Ultra-Low Leakage Load Switch, SOT23-6"
+- ref: U1401
+  value: SCN-3-13+
+  footprint: Mini-Circuits_FV1206-1
+  mpn: SCN-3-13+
+  description: Power Splitter/Combiner 3 Way-0 deg 50 Ohm 750 to 1325 MHz
+- ref: U1402
+  value: B4377
+  footprint: Filter_1411-5
+  mpn: B39871B4377P810
+  description: Low-loss SAW RF filter 50 Ohm 866.50 MHz 7 MHz BW
+- ref: U1403
+  value: B4377
+  footprint: Filter_1411-5
+  mpn: B39871B4377P810
+  description: Low-loss SAW RF filter 50 Ohm 866.50 MHz 7 MHz BW
+- ref: U1404
+  value: QPL9095
+  footprint: DFN-8-1EP
+  mpn: QPL9095SR
+  description: Ultra Low-Noise, Bypass LNA, bypass mode, 22 dB gain, +33 dBm OIP3, and 0.6 dB
+- ref: U1601
+  value: LM74700
+  footprint: SOT-23-6
+  description: Low Iq reverse battery protection ideal diode controller, SOT-23-6
+- ref: U1602
+  value: LM74700
+  footprint: SOT-23-6
+  description: Low Iq reverse battery protection ideal diode controller, SOT-23-6
+- ref: U1701
+  value: TPS259474x
+  footprint: Texas_VQFN-10-HR
+  description: True Reverse Current Blocking eFuse with Input Reverse Polarity Protection
+- ref: U1702
+  value: TLA2024
+  footprint: Texas_X2QFN-10
+  mpn: TLA2024IRUGR
+  description: 12-bit I2C ADC, Sigma-Delta, X2QFN-10
+- ref: U1703
+  value: TPS22917DBV
+  footprint: SOT-23-6
+  description: "1V to 5.5V, 2A, 80m\u03A9 Ultra-Low Leakage Load Switch, SOT23-6"
+- ref: U1704
+  value: TPS259474x
+  footprint: Texas_VQFN-10-HR
+  description: True Reverse Current Blocking eFuse with Input Reverse Polarity Protection
+- ref: U1801
+  value: TPS62912
+  footprint: Texas_RPU0010A_VQFN-HR-10
+  description: 2.2MHz or 1MHz, 2A, Low Noise, Low Ripple, Buck Converter with Integrated
+- ref: U1802
+  value: TPS62912
+  footprint: Texas_RPU0010A_VQFN-HR-10
+  description: 2.2MHz or 1MHz, 2A, Low Noise, Low Ripple, Buck Converter with Integrated
+- ref: U1901
+  value: TPS62912
+  footprint: Texas_RPU0010A_VQFN-HR-10
+  description: 2.2MHz or 1MHz, 2A, Low Noise, Low Ripple, Buck Converter with Integrated
+- ref: U1902
+  value: TPS73601DBV
+  footprint: SOT-23-5
+  description: Cap free NMOS 400mA Low Drop Adjustable Out Regulator, SOT-23-5
+- ref: U1903
+  value: LP5912-3.3
+  footprint: WSON-6-1EP
+  description: 500-mA Ultra-Low-Noise Low-IQ LDO, 3.3V, WSON-6
+- ref: U1904
+  value: LP5912-1.8
+  footprint: WSON-6-1EP
+  description: 500-mA Ultra-Low-Noise Low-IQ LDO, 1.8V, WSON-6
+- ref: U201
+  value: TMP117xxDRV
+  footprint: WSON-6-1EP
+  description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
+- ref: U202
+  value: TMP117xxDRV
+  footprint: WSON-6-1EP
+  description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
+- ref: U203
+  value: TMP117xxDRV
+  footprint: WSON-6-1EP
+  description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
+- ref: U204
+  value: TMP117xxDRV
+  footprint: WSON-6-1EP
+  description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
+- ref: U301
+  value: Compute_Module_5
+  footprint: CM5
+- ref: U401
+  value: MCP2558FD-xMF
+  footprint: DFN-8-1EP
+  description: CAN FD Transceiver with Silent Mode, up to 8 Mbps, DFN-8
+- ref: U402
+  value: MCP2518FD-xQBB
+  footprint: DFN-14-1EP
+  description: CAN FD Controller with SPI Interface, up to 8 Mbps, Vdd 2.7..5.5V, functional
+- ref: U403
+  value: MCP2558FD-xMF
+  footprint: DFN-8-1EP
+  description: CAN FD Transceiver with Silent Mode, up to 8 Mbps, DFN-8
+- ref: U404
+  value: MCP2518FD-xQBB
+  footprint: DFN-14-1EP
+  description: CAN FD Controller with SPI Interface, up to 8 Mbps, Vdd 2.7..5.5V, functional
+- ref: U501
+  value: TPS22917DBV
+  footprint: SOT-23-6
+  description: "1V to 5.5V, 2A, 80m\u03A9 Ultra-Low Leakage Load Switch, SOT23-6"
+- ref: U502
+  value: USBLC6-2
+  footprint: SOT-23-6
+  description: Very low capacitance ESD protection diode, 2 data-line, SOT-23-6
+- ref: U701
+  value: SX1302IMLTRT
+  footprint: Semtech SX1302 QFN-68-1EP_7x7mm_P0.35mm_EP5.49x5.49mm_ThermalVias
+  mpn: SX1302IMLTRT
+  description: LoRa Gateway Baseband Transceiver
+- ref: U801
+  value: SX1250IMLTRT
+  footprint: QFN-24-1EP
+  mpn: SX1250IMLTRT
+  description: Multi-band, Sub-GHz, RF Front End, LoRa modem
+- ref: U901
+  value: SX1250IMLTRT
+  footprint: QFN-24-1EP
+  mpn: SX1250IMLTRT
+  description: Multi-band, Sub-GHz, RF Front End, LoRa modem
+- ref: X601
+  value: 32 MHz 1.8 V TCXO
+  footprint: Oscillator_SMD_SeikoEpson_TG2520SMN-xxx-xxxxxx-4Pin
+  mpn: TG2520SMN 32.0000M-ECGNNM3
+- ref: Y401
+  value: SG-210STF
+  footprint: Oscillator_SMD_SeikoEpson_SG210-4Pin
+  mpn: SG-210STF 40.0000ML
+  description: CMOS Crystal Oscillator SPXO
+- ref: Y402
+  value: SG-210STF
+  footprint: Oscillator_SMD_SeikoEpson_SG210-4Pin
+  mpn: SG-210STF 40.0000ML
+  description: CMOS Crystal Oscillator SPXO
+nets:
+- name: +1V2_D
+  pins:
+  - C1816.2
+  - C1817.2
+  - C708.2
+  - C709.2
+  - C710.2
+  - C711.2
+  - C712.2
+  - C713.2
+  - FB1802.2
+  - R1805.1
+  - R1808.2
+  - U701.VCC_CORE@23
+  - U701.VCC_CORE@40
+  - U701.VCC_CORE@5
+  - U701.VCC_CORE@56
+- name: +1V8_RF
+  pins: [C1924.2, C1925.2, FB601.1, U1904.OUT]
+- name: +3V0_RTC
+  pins: [BT301.+, U301.VBAT]
+- name: +3V3_CM5
+  pins: [U301.CM5_3.3V@84, U301.CM5_3.3V@86, U301.GPIO_VREF]
+- name: +3V3_D
+  pins:
+  - C1101.2
+  - C1107.2
+  - C1108.2
+  - C1707.2
+  - C1807.2
+  - C1808.2
+  - C201.2
+  - C202.2
+  - C203.2
+  - C204.2
+  - C401.2
+  - C402.2
+  - C405.2
+  - C406.2
+  - C407.2
+  - C408.2
+  - C409.2
+  - C412.2
+  - C413.2
+  - C414.2
+  - C501.2
+  - C702.2
+  - C703.2
+  - C704.2
+  - C705.2
+  - C706.2
+  - C707.2
+  - FB1801.2
+  - R1602.2
+  - R1801.1
+  - R1904.2
+  - R1907.2
+  - R1908.2
+  - R701.2
+  - R702.2
+  - R704.2
+  - R710.1
+  - R711.1
+  - U1101.VCC
+  - U1103.VCC
+  - U1104.VCC
+  - U1702.ADDR
+  - U1702.VDD
+  - U201.V+
+  - U202.ADD0
+  - U202.V+
+  - U203.V+
+  - U204.V+
+  - U401.VIO
+  - U402.VDD
+  - U403.VIO
+  - U404.VDD
+  - U501.VIN
+  - U701.VCC_IO@14
+  - U701.VCC_IO@30
+  - U701.VCC_IO@47
+  - U701.VCC_IO@61
+  - Y401.Vcc
+  - Y401.nST
+  - Y402.Vcc
+  - Y402.nST
+- name: +3V3_RF
+  pins:
+  - C1001.2
+  - C1002.2
+  - C1102.2
+  - C1210.2
+  - C1212.2
+  - C1919.2
+  - C1920.2
+  - C1921.2
+  - C801.2
+  - C802.2
+  - C901.2
+  - C902.2
+  - R1001.1
+  - R1004.2
+  - R1604.2
+  - R801.1
+  - R901.1
+  - U1001.VBAT
+  - U1001.VBAT_IO
+  - U1001.VDD_IN
+  - U1102.VDD
+  - U1202.VBIAS1
+  - U1202.VBIAS2
+  - U1203.VIN
+  - U1903.OUT
+  - U801.VBAT_DIO
+  - U801.VBAT_RF
+  - U801.VDD_IN
+  - U901.VBAT_DIO
+  - U901.VBAT_RF
+  - U901.VDD_IN
+- name: +3V3_SD
+  pins: [C502.2, J502.VDD, R501.1, U501.QOD, U501.VOUT]
+- name: +3V6_RF
+  pins:
+  - C1203.2
+  - C1204.2
+  - C1205.2
+  - C1206.2
+  - C1907.2
+  - C1908.2
+  - C1909.2
+  - C1917.2
+  - C1918.2
+  - C1922.2
+  - C1923.2
+  - FB1901.2
+  - L1201.2
+  - R1603.2
+  - R1901.1
+  - U1202.VCC1
+  - U1903.IN
+  - U1904.IN
+- name: +4V2_RF
+  pins:
+  - C1401.2
+  - C1402.2
+  - C1913.2
+  - C1914.2
+  - C1915.2
+  - C1916.2
+  - L1401.2
+  - R1605.2
+  - R1905.1
+  - U1902.OUT
+- name: +5V
+  pins:
+  - C1603.2
+  - C1606.2
+  - C1701.2
+  - C1702.2
+  - C1708.2
+  - Q1601.D
+  - Q1602.D
+  - R1601.2
+  - R1701.1
+  - U1601.CATHODE
+  - U1602.CATHODE
+  - U1701.Vin
+  - U1703.VIN
+- name: +5V_CSKB
+  pins:
+  - C1604.2
+  - C1605.2
+  - CSKB-H402.Pin_25
+  - CSKB-H402.Pin_26
+  - D401.A2
+  - Q1602.S
+  - U1602.ANODE
+  - U1602.EN
+- name: +5V_EFUSE_D
+  pins:
+  - C1703.2
+  - C1704.2
+  - C1801.2
+  - C1802.2
+  - C1810.2
+  - C1811.2
+  - C403.2
+  - C404.2
+  - C410.2
+  - C411.2
+  - R1702.1
+  - R1703.1
+  - U1701.Vout
+  - U1801.VIN
+  - U1802.VIN
+  - U301.+5V@77
+  - U301.+5V@79
+  - U301.+5V@81
+  - U301.+5V@83
+  - U301.+5V@85
+  - U301.+5V@87
+  - U401.VDD
+  - U403.VDD
+- name: +5V_EFUSE_RF
+  pins:
+  - C1711.2
+  - C1712.2
+  - C1901.2
+  - C1902.2
+  - C1911.2
+  - C1912.2
+  - R1711.1
+  - R1712.1
+  - U1704.Vout
+  - U1901.VIN
+  - U1902.IN
+- name: +5V_USB
+  pins:
+  - C1601.2
+  - C1602.2
+  - C505.2
+  - FB501.2
+  - Q1601.S
+  - U1601.ANODE
+  - U1601.EN
+- name: /1.0-digital/1.1-compute-module/EEPROM_nWP
+  pins: [SW202.5, U301.EEPROM_nWP]
+- name: /1.0-digital/1.1-compute-module/GPIO24_CAN_A_INT
+  pins: [U301.GPIO24, U402.nINT]
+- name: /1.0-digital/1.1-compute-module/GPIO25_CAN_B_INT
+  pins: [U301.GPIO25, U404.nINT]
+- name: /1.0-digital/1.1-compute-module/PMIC_ENABLE
+  pins: [SW202.6, U301.PMIC_ENABLE]
+- name: /1.0-digital/1.1-compute-module/SD_CLK
+  pins: [J502.CLK, U301.SD_CLK]
+- name: /1.0-digital/1.1-compute-module/SD_CMD
+  pins: [J502.CMD, U301.SD_CMD]
+- name: /1.0-digital/1.1-compute-module/SD_DAT0
+  pins: [J502.DAT0, U301.SD_DAT0]
+- name: /1.0-digital/1.1-compute-module/SD_DAT1
+  pins: [J502.DAT1, U301.SD_DAT1]
+- name: /1.0-digital/1.1-compute-module/SD_DAT2
+  pins: [J502.DAT2, U301.SD_DAT2]
+- name: /1.0-digital/1.1-compute-module/SD_DAT3
+  pins: [J502.DAT3/CD, U301.SD_DAT3]
+- name: /1.0-digital/1.1-compute-module/SD_ENABLE
+  pins: [U301.SD_PWR_ON, U501.ON]
+- name: /1.0-digital/1.1-compute-module/SPI_1_CSN_0_CAN_A
+  pins: [R403.2, U301.GPIO18]
+- name: /1.0-digital/1.1-compute-module/SPI_1_CSN_1_CAN_B
+  pins: [R409.2, U301.GPIO17]
+- name: /1.0-digital/1.1-compute-module/SPI_1_MISO
+  pins: [R402.2, R408.2, U301.GPIO19]
+- name: /1.0-digital/1.1-compute-module/SPI_1_MOSI
+  pins: [R401.2, R407.2, U301.GPIO20]
+- name: /1.0-digital/1.1-compute-module/SPI_1_SCLK
+  pins: [R405.2, R411.2, U301.GPIO21]
+- name: /1.0-digital/1.1-compute-module/UART_0_RX
+  pins: [J401.OBC_UART.RX, U301.GPIO15]
+- name: /1.0-digital/1.1-compute-module/UART_0_TX
+  pins: [J401.OB_UART.TX, U301.GPIO14]
+- name: /1.0-digital/1.1-compute-module/nnRPIBOOT
+  pins: [SW202.4, U301.nnRPIBOOT]
+- name: /1.0-digital/1.2-interfaces/CAN_A.RXD
+  pins: [U401.RXD, U402.RXCAN]
+- name: /1.0-digital/1.2-interfaces/CAN_A.TXD
+  pins: [U401.TXD, U402.TXCAN]
+- name: /1.0-digital/1.2-interfaces/CAN_A_N
+  pins: [CSKB-H401.Pin_1, J401.CAN_A_L, R404.2, U401.CANL]
+- name: /1.0-digital/1.2-interfaces/CAN_A_OSC.OUT
+  pins: [R406.2, Y401.OUT]
+- name: /1.0-digital/1.2-interfaces/CAN_A_P
+  pins: [CSKB-H401.Pin_3, J401.CAN_A_H, R404.1, U401.CANH]
+- name: /1.0-digital/1.2-interfaces/CAN_B.RXD
+  pins: [U403.RXD, U404.RXCAN]
+- name: /1.0-digital/1.2-interfaces/CAN_B.TXD
+  pins: [U403.TXD, U404.TXCAN]
+- name: /1.0-digital/1.2-interfaces/CAN_B_N
+  pins: [CSKB-H402.Pin_1, R410.2, U403.CANL]
+- name: /1.0-digital/1.2-interfaces/CAN_B_OSC.OUT
+  pins: [R412.2, Y402.OUT]
+- name: /1.0-digital/1.2-interfaces/CAN_B_P
+  pins: [CSKB-H402.Pin_3, R410.1, U403.CANH]
+- name: /1.0-digital/1.3-usb/USB2_DATA_N
+  pins: [J501.D-@A7, J501.D-@B7, U301.USB_N, U502.I/O1@1, U502.I/O1@6]
+- name: /1.0-digital/1.3-usb/USB2_DATA_P
+  pins: [J501.D+@A6, J501.D+@B6, U301.USB_P, U502.I/O2@3, U502.I/O2@4]
+- name: /1.0-digital/1.3-usb/USB_CC1
+  pins: [J503.CC1, U301.CC1]
+- name: /1.0-digital/1.3-usb/USB_CC2
+  pins: [J503.CC2, U301.CC2]
+- name: /1.0-digital/1.3-usb/VUSB
+  pins:
+  - C503.2
+  - C504.2
+  - D501.A2
+  - FB501.1
+  - J503.VBUS@A4
+  - J503.VBUS@A9
+  - J503.VBUS@B4
+  - J503.VBUS@B9
+- name: /1.0-digital/1.3-usb/VUSB_NC
+  pins: [J501.VBUS@A4, J501.VBUS@A9, J501.VBUS@B4, J501.VBUS@B9, U502.VBUS]
+- name: /1.0-digital/CM5_GPIO12_RADIO_POWER_EN
+  pins: [R1709.1, U1703.ON, U301.GPIO12]
+- name: /1.0-digital/CM5_GPIO22_SX1261_DIO2
+  pins: [U1001.DIO2, U301.GPIO22]
+- name: /1.0-digital/CM5_GPIO23_SX1261_DIO1
+  pins: [U1001.DIO1, U301.GPIO23, U701.GPIO_7]
+- name: /1.0-digital/CM5_GPIO26_SX1302_GPIO8
+  pins: [U301.GPIO26, U701.GPIO_8]
+- name: /1.0-digital/CM5_GPIO27_SX1302_GPIO6
+  pins: [U301.GPIO27, U701.GPIO_6]
+- name: /1.0-digital/CM5_GPIO4_SX1261_BUSY
+  pins: [U1001.BUSY, U301.GPIO4]
+- name: /1.0-digital/CM5_GPIO5_SX1261_nRESET
+  pins: [R1001.2, U1001.nRESET, U301.GPIO5]
+- name: /1.0-digital/CM5_GPIO6_SX1302_RESET
+  pins: [D701.A, U301.GPIO6]
+- name: /1.0-digital/CM5_SPI_0_CSN_0_SX1302
+  pins: [R701.1, U301.GPIO8, U701.HOST_CSN]
+- name: /1.0-digital/CM5_SPI_0_CSN_1_SX1261
+  pins: [R1004.1, U1001.NSS, U301.GPIO7]
+- name: /1.0-digital/CM5_SPI_0_MISO
+  pins: [R1003.2, R703.2, U301.GPIO9]
+- name: /1.0-digital/CM5_SPI_0_MOSI
+  pins: [U1001.MOSI, U301.GPIO10, U701.HOST_MOSI]
+- name: /1.0-digital/CM5_SPI_0_SCLK
+  pins: [U1001.SCK, U301.GPIO11, U701.HOST_SCK]
+- name: /1.0-digital/I2C.SCL
+  pins:
+  - U1702.SCL
+  - U201.SCL
+  - U202.SCL
+  - U203.SCL
+  - U204.ADD0
+  - U204.SCL
+  - U301.GPIO3
+- name: /1.0-digital/I2C.SDA
+  pins:
+  - U1702.SDA
+  - U201.SDA
+  - U202.SDA
+  - U203.ADD0
+  - U203.SDA
+  - U204.SDA
+  - U301.GPIO2
+- name: /1.0-digital/PWR_BUTTON
+  pins: [CSKB-H401.Pin_13, SW201.2@2, U301.PWR_Button]
+- name: /2.0-radio/2.1-baseband/CTRL0_RF_EN
+  pins: [R704.1, U1101.2, U1103.1, U701.RADIO_A_CTRL_0/EN_LDO]
+- name: /2.0-radio/2.1-baseband/CTRL2_RF_SW
+  pins: [U1102.CTRL, U1104.2, U701.RADIO_A_CTRL_2/EN_PA]
+- name: /2.0-radio/2.1-baseband/CTRL3_RADIO_A_nRESET
+  pins: [R801.2, U701.RADIO_A_CTRL_3/nRESET, U801.nRESET]
+- name: /2.0-radio/2.1-baseband/CTRL4_RF_PA_EN
+  pins: [U1101.1, U701.RADIO_A_CTRL_4/PA_GAIN_0]
+- name: /2.0-radio/2.1-baseband/CTRL9_RADIO_B_nRESET
+  pins: [R901.2, U701.RADIO_B_CTRL_9/nRESET, U901.nRESET]
+- name: /2.0-radio/2.1-baseband/RADIO_A_CLK_32M
+  pins: [U701.RADIO_A_CLK_I@43, U801.BUSY]
+- name: /2.0-radio/2.1-baseband/RADIO_A_CLK_O
+  pins: [R707.1, U801.DIO5]
+- name: /2.0-radio/2.1-baseband/RADIO_A_CSN
+  pins: [U701.RADIO_A_CSN, U801.SCK]
+- name: /2.0-radio/2.1-baseband/RADIO_A_IQ0
+  pins: [RN701.R2.1, U801.DIO1]
+- name: /2.0-radio/2.1-baseband/RADIO_A_IQ1
+  pins: [RN701.R3.1, U801.DIO2]
+- name: /2.0-radio/2.1-baseband/RADIO_A_IQ2
+  pins: [RN701.R4.1, U801.DIO3]
+- name: /2.0-radio/2.1-baseband/RADIO_A_IQ3
+  pins: [RN701.R1.1, U801.DIO4]
+- name: /2.0-radio/2.1-baseband/RADIO_A_MISO
+  pins: [R803.2, U701.RADIO_A_MISO]
+- name: /2.0-radio/2.1-baseband/RADIO_A_MOSI
+  pins: [U701.RADIO_A_MOSI, U801.MOSI]
+- name: /2.0-radio/2.1-baseband/RADIO_A_SCK
+  pins: [U701.RADIO_A_SCK, U801.NSS]
+- name: /2.0-radio/2.1-baseband/RADIO_B_CLK_32M
+  pins: [U701.RADIO_A_CLK_I@34, U901.BUSY]
+- name: /2.0-radio/2.1-baseband/RADIO_B_CLK_O
+  pins: [R712.1, U901.DIO5]
+- name: /2.0-radio/2.1-baseband/RADIO_B_CSN
+  pins: [U701.RADIO_B_CSN, U901.SCK]
+- name: /2.0-radio/2.1-baseband/RADIO_B_IQ0
+  pins: [RN702.R2.1, U901.DIO1]
+- name: /2.0-radio/2.1-baseband/RADIO_B_IQ1
+  pins: [RN702.R3.1, U901.DIO2]
+- name: /2.0-radio/2.1-baseband/RADIO_B_IQ2
+  pins: [RN702.R4.1, U901.DIO3]
+- name: /2.0-radio/2.1-baseband/RADIO_B_IQ3
+  pins: [RN702.R1.1, U901.DIO4]
+- name: /2.0-radio/2.1-baseband/RADIO_B_MISO
+  pins: [R903.2, U701.RADIO_B_MISO]
+- name: /2.0-radio/2.1-baseband/RADIO_B_MOSI
+  pins: [U701.RADIO_B_MOSI, U901.MOSI]
+- name: /2.0-radio/2.1-baseband/RADIO_B_SCK
+  pins: [U701.RADIO_B_SCK, U901.NSS]
+- name: /2.0-radio/2.1-baseband/SX1302.RESET
+  pins: [C701.1, D701.K, R705.2, U701.RESET]
+- name: /2.0-radio/2.1-baseband/SX1302_CFG_OK
+  pins: [R706.2, U701.GPIO_0]
+- name: /2.0-radio/2.1-baseband/SX1302_RX_ON
+  pins: [R709.2, U701.GPIO_4]
+- name: /2.0-radio/2.1-baseband/SX1302_TX_ON
+  pins: [R708.2, U701.GPIO_2]
+- name: /2.0-radio/2.2-radio-a/RADIO_A_RFI
+  pins: [C811.1, L806.1, R1402.2, R1403.2, U1401.P3]
+- name: /2.0-radio/2.2-radio-a/RADIO_A_RFO
+  pins: [C810.1, L804.1, U1201.I]
+- name: /2.0-radio/2.2-radio-a/SX1250.DCC_SW
+  pins: [L801.2, U801.DCC_SW]
+- name: /2.0-radio/2.2-radio-a/SX1250.RFI_N
+  pins: [C811.2, L805.1, U801.RFI_N]
+- name: /2.0-radio/2.2-radio-a/SX1250.RFI_P
+  pins: [C812.1, L805.2, L806.2, U801.RFI_P]
+- name: /2.0-radio/2.2-radio-a/SX1250.RFO
+  pins: [C807.1, L802.2, L803.2, U801.RFO]
+- name: /2.0-radio/2.2-radio-a/SX1250.VREG
+  pins: [C803.2, L801.1, U801.VREG]
+- name: /2.0-radio/2.2-radio-a/SX1250.VR_PA
+  pins: [C804.2, C805.2, L802.1, U801.VR_PA]
+- name: /2.0-radio/2.2-radio-a/SX1250.XTA
+  pins: [C806.2, U801.XTA]
+- name: /2.0-radio/2.3-radio-b/RADIO_B_RFI
+  pins: [C905.1, L903.1, R1401.2, R1403.1, U1401.P2]
+- name: /2.0-radio/2.3-radio-b/SX1250.DCC_SW
+  pins: [L901.2, U901.DCC_SW]
+- name: /2.0-radio/2.3-radio-b/SX1250.RFI_N
+  pins: [C905.2, L902.1, U901.RFI_N]
+- name: /2.0-radio/2.3-radio-b/SX1250.RFI_P
+  pins: [C906.1, L902.2, L903.2, U901.RFI_P]
+- name: /2.0-radio/2.3-radio-b/SX1250.VREG
+  pins: [C903.2, L901.1, U901.VREG]
+- name: /2.0-radio/2.3-radio-b/SX1250.XTA
+  pins: [C904.2, U901.XTA]
+- name: /2.0-radio/2.4-radio-lbt/RADIO_LBT_RFI
+  pins: [C1005.1, L1003.1, R1401.1, R1402.1, U1401.P1]
+- name: /2.0-radio/2.4-radio-lbt/SX1261.DCC_SW
+  pins: [L1001.2, U1001.DCC_SW]
+- name: /2.0-radio/2.4-radio-lbt/SX1261.RFI_N
+  pins: [C1005.2, L1002.1, U1001.RFI_N]
+- name: /2.0-radio/2.4-radio-lbt/SX1261.RFI_P
+  pins: [C1006.1, L1002.2, L1003.2, U1001.RFI_P]
+- name: /2.0-radio/2.4-radio-lbt/SX1261.VREG
+  pins: [C1003.2, L1001.1, U1001.VREG]
+- name: /2.0-radio/2.4-radio-lbt/SX1261.XTA
+  pins: [C1004.2, U1001.XTA]
+- name: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/EN_PA
+  pins: [U1101.4, U1203.ON]
+- name: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.IN
+  pins: [U1201.O, U1202.IN]
+- name: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.OUT
+  pins: [C1207.1, U1202.OUT]
+- name: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.VCTRL
+  pins:
+  - C1208.2
+  - C1209.2
+  - R1201.2
+  - R1202.2
+  - R1203.1
+  - U1203.QOD
+  - U1203.VOUT
+- name: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.VDD
+  pins: [L1201.1, U1202.VCC2a, U1202.VCC2b]
+- name: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.VREF1
+  pins: [R1201.1, U1202.VREF1]
+- name: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.VREF2
+  pins: [R1202.1, U1202.VREF2]
+- name: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/LNA.BYP
+  pins: [R1404.1, U1404.VBYP]
+- name: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/LNA.I
+  pins: [L1403.1, U1404.RFI]
+- name: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/LNA.MA
+  pins: [C1404.1, L1403.2]
+- name: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/LNA.O
+  pins: [C1403.2, U1404.RFO]
+- name: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/LNA.VDD
+  pins: [L1401.1, U1404.VDD]
+- name: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/RX
+  pins: [C1106.1, U1403.I]
+- name: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/SAW1
+  pins: [C1404.2, U1403.O]
+- name: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/SAW2
+  pins: [C1403.1, U1402.I]
+- name: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/SPLT.IN
+  pins: [C1405.2, L1402.1, U1401.SUM]
+- name: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/SPLT.MA
+  pins: [L1402.2, U1402.O]
+- name: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/nEN_LNA
+  pins: [R1405.1, U1103.4, U1404.VSD]
+- name: /2.0-radio/2.5-rf-frontend/2.5.3-rf-filter/P1
+  pins: [C1104.2, C1501.1, C1502.1, L1501.2]
+- name: /2.0-radio/2.5-rf-frontend/2.5.3-rf-filter/P2
+  pins: [C1105.1, C1504.1, L1502.2]
+- name: /2.0-radio/2.5-rf-frontend/ANT
+  pins: [C1105.2, D1101.A2, J1101.In]
+- name: /2.0-radio/2.5-rf-frontend/RFSW.IN
+  pins: [C1104.1, U1102.RFIN]
+- name: /2.0-radio/2.5-rf-frontend/RFSW.RX
+  pins: [C1106.2, U1102.RF1]
+- name: /2.0-radio/2.5-rf-frontend/RFSW.TX
+  pins: [C1103.2, U1102.RF2]
+- name: /2.0-radio/TCXO.CLK
+  pins: [R1002.2, R802.2, R902.2, X601.OUT]
+- name: /2.0-radio/TCXO.VCC
+  pins: [C601.2, FB601.2, X601.Vcc]
+- name: /3.0-power/3.1-efuse/5V_IN_EFUSE_RF
+  pins: [C1709.2, C1710.2, R1710.1, U1703.QOD, U1703.VOUT, U1704.Vin]
+- name: /3.0-power/3.1-efuse/EFUSED.DVDT
+  pins: [C1705.2, U1701.dVdt]
+- name: /3.0-power/3.1-efuse/EFUSED.EN/UVLO
+  pins: [R1701.2, R1704.1, U1701.EN/UVLO]
+- name: /3.0-power/3.1-efuse/EFUSED.ISENSE
+  pins: [R1705.1, U1701.ILM, U1702.AIN0]
+- name: /3.0-power/3.1-efuse/EFUSED.ITIMER
+  pins: [C1706.2, U1701.ITIMER]
+- name: /3.0-power/3.1-efuse/EFUSED.OVLO
+  pins: [R1704.2, R1707.1, U1701.OVLO]
+- name: /3.0-power/3.1-efuse/EFUSED.PGTH
+  pins: [R1703.2, R1706.1, U1701.PGTH]
+- name: /3.0-power/3.1-efuse/EFUSERF.DVDT
+  pins: [C1713.2, U1704.dVdt]
+- name: /3.0-power/3.1-efuse/EFUSERF.EN/UVLO
+  pins: [R1710.2, R1713.1, U1704.EN/UVLO]
+- name: /3.0-power/3.1-efuse/EFUSERF.ISENSE
+  pins: [R1714.1, U1702.AIN1, U1704.ILM]
+- name: /3.0-power/3.1-efuse/EFUSERF.ITIMER
+  pins: [C1714.2, U1704.ITIMER]
+- name: /3.0-power/3.1-efuse/EFUSERF.OVLO
+  pins: [R1713.2, R1716.1, U1704.OVLO]
+- name: /3.0-power/3.1-efuse/EFUSERF.PGTH
+  pins: [R1712.2, R1715.1, U1704.PGTH]
+- name: /3.0-power/3.1-efuse/PG_EFD
+  pins: [R1702.2, U1701.PG, U1802.EN/SYNC, U301.GPIO13]
+- name: /3.0-power/3.1-efuse/PG_EFRF
+  pins: [R1711.2, U1704.PG, U1901.EN/SYNC, U1902.EN, U301.GPIO16]
+- name: /3.0-power/3.2-psu-digital/DC1V2.NR/SS
+  pins: [C1818.2, U1802.NR/SS]
+- name: /3.0-power/3.2-psu-digital/DC1V2.SCONF
+  pins: [R1807.2, U1802.S-CONF]
+- name: /3.0-power/3.2-psu-digital/DC1V2D.FB
+  pins: [R1805.2, R1806.1, U1802.FB]
+- name: /3.0-power/3.2-psu-digital/DC1V2D.SW
+  pins: [L1802.1, U1802.SW]
+- name: /3.0-power/3.2-psu-digital/DC1V2D.VO
+  pins:
+  - C1812.2
+  - C1813.2
+  - C1814.2
+  - C1815.2
+  - FB1802.1
+  - L1802.2
+  - U1802.VO
+- name: /3.0-power/3.2-psu-digital/DC3V3D.FB
+  pins: [R1801.2, R1802.1, U1801.FB]
+- name: /3.0-power/3.2-psu-digital/DC3V3D.NR/SS
+  pins: [C1809.2, U1801.NR/SS]
+- name: /3.0-power/3.2-psu-digital/DC3V3D.SCONF
+  pins: [R1803.2, U1801.S-CONF]
+- name: /3.0-power/3.2-psu-digital/DC3V3D.SW
+  pins: [L1801.1, U1801.SW]
+- name: /3.0-power/3.2-psu-digital/DC3V3D.VO
+  pins:
+  - C1803.2
+  - C1804.2
+  - C1805.2
+  - C1806.2
+  - FB1801.1
+  - L1801.2
+  - U1801.VO
+- name: /3.0-power/3.2-psu-digital/PG_1V2D
+  pins: [R1808.1, U1801.EN/SYNC, U1802.PG]
+- name: /3.0-power/3.3-psu-rf/DC3V6RF.FB
+  pins: [R1901.2, R1902.1, U1901.FB]
+- name: /3.0-power/3.3-psu-rf/DC3V6RF.NR/SS
+  pins: [C1910.2, U1901.NR/SS]
+- name: /3.0-power/3.3-psu-rf/DC3V6RF.SCONF
+  pins: [R1903.2, U1901.S-CONF]
+- name: /3.0-power/3.3-psu-rf/DC3V6RF.SW
+  pins: [L1901.1, U1901.SW]
+- name: /3.0-power/3.3-psu-rf/DC3V6RF.VO
+  pins:
+  - C1903.2
+  - C1904.2
+  - C1905.2
+  - C1906.2
+  - FB1901.1
+  - L1901.2
+  - U1901.VO
+- name: /3.0-power/3.3-psu-rf/PG_3V6RF
+  pins: [R1904.1, U1901.PG, U1903.EN, U1904.EN]
+- name: /3.0-power/PG_1V8RF
+  pins: [R1908.1, U1904.PG]
+- name: /3.0-power/PG_3V3RF
+  pins: [R1907.1, U1903.PG]
+- name: GND
+  pins:
+  - BT301.-
+  - C1001.1
+  - C1002.1
+  - C1003.1
+  - C1006.2
+  - C1101.1
+  - C1102.1
+  - C1107.1
+  - C1108.1
+  - C1203.1
+  - C1204.1
+  - C1205.1
+  - C1206.1
+  - C1208.1
+  - C1209.1
+  - C1210.1
+  - C1212.1
+  - C1401.1
+  - C1402.1
+  - C1405.1
+  - C1502.2
+  - C1503.2
+  - C1504.2
+  - C1601.1
+  - C1603.1
+  - C1604.1
+  - C1606.1
+  - C1701.1
+  - C1702.1
+  - C1703.1
+  - C1704.1
+  - C1705.1
+  - C1706.1
+  - C1707.1
+  - C1708.1
+  - C1709.1
+  - C1710.1
+  - C1711.1
+  - C1712.1
+  - C1713.1
+  - C1714.1
+  - C1801.1
+  - C1802.1
+  - C1803.1
+  - C1804.1
+  - C1805.1
+  - C1806.1
+  - C1807.1
+  - C1808.1
+  - C1809.1
+  - C1810.1
+  - C1811.1
+  - C1812.1
+  - C1813.1
+  - C1814.1
+  - C1815.1
+  - C1816.1
+  - C1817.1
+  - C1818.1
+  - C1901.1
+  - C1902.1
+  - C1903.1
+  - C1904.1
+  - C1905.1
+  - C1906.1
+  - C1907.1
+  - C1908.1
+  - C1909.1
+  - C1910.1
+  - C1911.1
+  - C1912.1
+  - C1914.1
+  - C1915.1
+  - C1916.1
+  - C1917.1
+  - C1918.1
+  - C1919.1
+  - C1920.1
+  - C1921.1
+  - C1922.1
+  - C1923.1
+  - C1924.1
+  - C1925.1
+  - C201.1
+  - C202.1
+  - C203.1
+  - C204.1
+  - C401.1
+  - C402.1
+  - C403.1
+  - C404.1
+  - C405.1
+  - C406.1
+  - C407.1
+  - C408.1
+  - C409.1
+  - C410.1
+  - C411.1
+  - C412.1
+  - C413.1
+  - C414.1
+  - C501.1
+  - C502.1
+  - C503.1
+  - C504.1
+  - C505.1
+  - C601.1
+  - C702.1
+  - C703.1
+  - C704.1
+  - C705.1
+  - C706.1
+  - C707.1
+  - C708.1
+  - C709.1
+  - C710.1
+  - C711.1
+  - C712.1
+  - C713.1
+  - C801.1
+  - C802.1
+  - C803.1
+  - C804.1
+  - C805.1
+  - C809.2
+  - C810.2
+  - C812.2
+  - C901.1
+  - C902.1
+  - C903.1
+  - C906.2
+  - CSKB-H402.Pin_29
+  - CSKB-H402.Pin_30
+  - CSKB-H402.Pin_31
+  - CSKB-H402.Pin_32
+  - D1101.A1
+  - D1601.K
+  - D1602.K
+  - D1603.K
+  - D1604.K
+  - D1605.K
+  - D301.K
+  - D401.A1
+  - D501.A1
+  - D702.K
+  - D703.K
+  - D704.K
+  - J1101.Ext@2
+  - J401.GND@3
+  - J401.GND@5
+  - J401.GND@8
+  - J401.MP@MP
+  - J501.GND@A1
+  - J501.GND@A12
+  - J501.GND@B1
+  - J501.GND@B12
+  - J501.SHIELD@S1
+  - J502.VSS
+  - J503.GND@A1
+  - J503.GND@A12
+  - J503.GND@B1
+  - J503.GND@B12
+  - J503.SHIELD@S1
+  - R1203.2
+  - R1404.2
+  - R1405.2
+  - R1705.2
+  - R1706.2
+  - R1707.2
+  - R1709.2
+  - R1714.2
+  - R1715.2
+  - R1716.2
+  - R1802.2
+  - R1803.1
+  - R1806.2
+  - R1807.1
+  - R1902.2
+  - R1903.1
+  - R1906.2
+  - R501.2
+  - R705.1
+  - SW201.1@1
+  - SW202.1
+  - SW202.2
+  - SW202.3
+  - U1001.GND@2
+  - U1001.GND@20
+  - U1001.GND@25
+  - U1001.GND@5
+  - U1001.GND@8
+  - U1101.GND
+  - U1102.GND
+  - U1103.GND
+  - U1104.GND
+  - U1201.GND@2
+  - U1201.GND@3
+  - U1201.GND@5
+  - U1202.GND@15
+  - U1202.GND@17
+  - U1202.NC@1
+  - U1202.NC@10
+  - U1202.NC@12
+  - U1202.NC@3
+  - U1202.NC@4
+  - U1202.NC@9
+  - U1203.GND
+  - U1401.GND@1
+  - U1401.GND@3
+  - U1402.GND@2
+  - U1402.GND@3
+  - U1402.GND@5
+  - U1403.GND@2
+  - U1403.GND@3
+  - U1403.GND@5
+  - U1404.GND@1
+  - U1404.GND@6
+  - U1404.GND@9
+  - U1404.NC
+  - U1601.GND
+  - U1602.GND
+  - U1701.GND
+  - U1702.GND
+  - U1703.GND
+  - U1704.GND
+  - U1801.PGND
+  - U1801.PSNS
+  - U1802.PGND
+  - U1802.PSNS
+  - U1901.PGND
+  - U1901.PSNS
+  - U1902.GND
+  - U1903.EP
+  - U1903.GND
+  - U1904.EP
+  - U1904.GND
+  - U201.ADD0
+  - U201.GND
+  - U202.GND
+  - U203.GND
+  - U204.GND
+  - U301.GND@1
+  - U301.GND@107
+  - U301.GND@108
+  - U301.GND@113
+  - U301.GND@114
+  - U301.GND@119
+  - U301.GND@120
+  - U301.GND@125
+  - U301.GND@126
+  - U301.GND@13
+  - U301.GND@131
+  - U301.GND@132
+  - U301.GND@137
+  - U301.GND@138
+  - U301.GND@14
+  - U301.GND@144
+  - U301.GND@150
+  - U301.GND@155
+  - U301.GND@156
+  - U301.GND@161
+  - U301.GND@162
+  - U301.GND@167
+  - U301.GND@168
+  - U301.GND@173
+  - U301.GND@174
+  - U301.GND@179
+  - U301.GND@180
+  - U301.GND@185
+  - U301.GND@186
+  - U301.GND@191
+  - U301.GND@192
+  - U301.GND@197
+  - U301.GND@198
+  - U301.GND@2
+  - U301.GND@22
+  - U301.GND@23
+  - U301.GND@32
+  - U301.GND@33
+  - U301.GND@42
+  - U301.GND@43
+  - U301.GND@52
+  - U301.GND@53
+  - U301.GND@59
+  - U301.GND@60
+  - U301.GND@65
+  - U301.GND@66
+  - U301.GND@7
+  - U301.GND@71
+  - U301.GND@74
+  - U301.GND@8
+  - U301.GND@98
+  - U301.MH@MH
+  - U301.nBT_nDisable
+  - U301.nWL_nDisable
+  - U401.S
+  - U401.VSS@2
+  - U401.VSS@9
+  - U402.VSS@15
+  - U402.VSS@7
+  - U403.S
+  - U403.VSS@2
+  - U403.VSS@9
+  - U404.VSS@15
+  - U404.VSS@7
+  - U501.GND
+  - U502.GND
+  - U701.GND@15
+  - U701.GND@24
+  - U701.GND@25
+  - U701.GND@39
+  - U701.GND@46
+  - U701.GND@55
+  - U701.GND@6
+  - U701.GND@62
+  - U701.GND@69
+  - U701.GND@9
+  - U701.PPS
+  - U701.SP_VALID
+  - U801.GND@20
+  - U801.GND@25
+  - U801.GND@7
+  - U901.GND@20
+  - U901.GND@25
+  - U901.GND@7
+  - X601.GND
+  - Y401.GND
+  - Y402.GND
+- name: Net-(C1004-Pad1)
+  pins: [C1004.1, R1002.1]
+- name: Net-(C1501-Pad2)
+  pins: [C1501.2, C1503.1, L1501.1, L1502.1]
+- name: Net-(C701-Pad2)
+  pins: [C701.2, R702.1]
+- name: Net-(C806-Pad1)
+  pins: [C806.1, R802.1]
+- name: Net-(C807-Pad2)
+  pins: [C807.2, C808.2, C809.1, L803.1]
+- name: Net-(C808-Pad1)
+  pins: [C808.1, L804.2]
+- name: Net-(C904-Pad1)
+  pins: [C904.1, R902.1]
+- name: Net-(D1601-A)
+  pins: [D1601.A, R1601.1]
+- name: Net-(D1602-A)
+  pins: [D1602.A, R1602.1]
+- name: Net-(D1603-A)
+  pins: [D1603.A, R1603.1]
+- name: Net-(D1604-A)
+  pins: [D1604.A, R1604.1]
+- name: Net-(D1605-A)
+  pins: [D1605.A, R1605.1]
+- name: Net-(D301-A)
+  pins: [D301.A, R301.2]
+- name: Net-(D702-A)
+  pins: [D702.A, R706.1]
+- name: Net-(D703-A)
+  pins: [D703.A, R708.1]
+- name: Net-(D704-A)
+  pins: [D704.A, R709.1]
+- name: Net-(Q1601-G)
+  pins: [Q1601.G, U1601.GATE]
+- name: Net-(Q1602-G)
+  pins: [Q1602.G, U1602.GATE]
+- name: Net-(RN701A-R1.2)
+  pins: [RN701.R1.2, U701.RADIO_A_IQ_3]
+- name: Net-(RN701B-R2.2)
+  pins: [RN701.R2.2, U701.RADIO_A_IQ_0]
+- name: Net-(RN701C-R3.2)
+  pins: [RN701.R3.2, U701.RADIO_A_IQ_1]
+- name: Net-(RN701D-R4.2)
+  pins: [RN701.R4.2, U701.RADIO_A_IQ_2]
+- name: Net-(RN702A-R1.2)
+  pins: [RN702.R1.2, U701.RADIO_B_IQ_3]
+- name: Net-(RN702B-R2.2)
+  pins: [RN702.R2.2, U701.RADIO_B_IQ_0]
+- name: Net-(RN702C-R3.2)
+  pins: [RN702.R3.2, U701.RADIO_B_IQ_1]
+- name: Net-(RN702D-R4.2)
+  pins: [RN702.R4.2, U701.RADIO_B_IQ_2]
+- name: Net-(U1001-MISO)
+  pins: [R1003.1, U1001.MISO]
+- name: Net-(U1103-Pad2)
+  pins: [U1103.2, U1104.4]
+- name: Net-(U1601-VCAP)
+  pins: [C1602.1, U1601.VCAP]
+- name: Net-(U1602-VCAP)
+  pins: [C1605.1, U1602.VCAP]
+- name: Net-(U1902-FB)
+  pins: [C1913.1, R1905.2, R1906.1, U1902.FB]
+- name: Net-(U301J-nPi_nLED_Activity)
+  pins: [R301.1, U301.nPi_nLED_Activity]
+- name: Net-(U402-OSC1)
+  pins: [R406.1, U402.OSC1]
+- name: Net-(U402-SCK)
+  pins: [R405.1, U402.SCK]
+- name: Net-(U402-SDI)
+  pins: [R401.1, U402.SDI]
+- name: Net-(U402-SDO)
+  pins: [R402.1, U402.SDO]
+- name: Net-(U402-nCS)
+  pins: [R403.1, U402.nCS]
+- name: Net-(U404-OSC1)
+  pins: [R412.1, U404.OSC1]
+- name: Net-(U404-SCK)
+  pins: [R411.1, U404.SCK]
+- name: Net-(U404-SDI)
+  pins: [R407.1, U404.SDI]
+- name: Net-(U404-SDO)
+  pins: [R408.1, U404.SDO]
+- name: Net-(U404-nCS)
+  pins: [R409.1, U404.nCS]
+- name: Net-(U701B-HOST_MISO)
+  pins: [R703.1, U701.HOST_MISO]
+- name: Net-(U701C-RADIO_A_IQ_4)
+  pins: [R707.2, U701.RADIO_A_IQ_4]
+- name: Net-(U701D-RADIO_B_IQ_4)
+  pins: [R712.2, U701.RADIO_B_IQ_4]
+- name: Net-(U701E-GPIO_10)
+  pins: [R710.2, U701.GPIO_10]
+- name: Net-(U701E-GPIO_11)
+  pins: [R711.2, U701.GPIO_11]
+- name: Net-(U801-MISO)
+  pins: [R803.1, U801.MISO]
+- name: Net-(U901-MISO)
+  pins: [R903.1, U901.MISO]
+positions:
+- ref: BT301
+  x: 153.87
+  y: 127.93
+  side: back
+- ref: C1001
+  x: 144.37
+  y: 126.43
+- ref: C1002
+  x: 139.87
+  y: 130.93
+  rot: 90.0
+- ref: C1003
+  x: 139.87
+  y: 128.43
+  rot: 90.0
+- ref: C1004
+  x: 139.87
+  y: 125.93
+- ref: C1005
+  x: 148.37
+  y: 129.43
+  rot: 180.0
+- ref: C1006
+  x: 147.87
+  y: 131.93
+  rot: -90.0
+- ref: C1101
+  x: 115.37
+  y: 127.93
+  rot: 180.0
+- ref: C1102
+  x: 169.37
+  y: 124.43
+- ref: C1103
+  x: 168.87
+  y: 119.93
+  rot: -90.0
+- ref: C1104
+  x: 171.37
+  y: 122.43
+- ref: C1105
+  x: 180.37
+  y: 122.43
+- ref: C1106
+  x: 167.37
+  y: 123.33
+  rot: 45.0
+- ref: C1107
+  x: 119.87
+  y: 127.93
+  rot: 180.0
+- ref: C1108
+  x: 124.37
+  y: 127.93
+  rot: 180.0
+- ref: C1203
+  x: 159.87
+  y: 108.93
+  rot: 180.0
+- ref: C1204
+  x: 165.62
+  y: 109.13
+  rot: 90.0
+- ref: C1205
+  x: 164.12
+  y: 109.43
+  rot: 90.0
+- ref: C1206
+  x: 163.12
+  y: 109.43
+  rot: 90.0
+- ref: C1207
+  x: 164.87
+  y: 113.13
+- ref: C1208
+  x: 163.37
+  y: 117.43
+  rot: -90.0
+- ref: C1209
+  x: 158.37
+  y: 117.43
+  rot: -90.0
+- ref: C1210
+  x: 160.37
+  y: 117.43
+  rot: 90.0
+- ref: C1212
+  x: 172.37
+  y: 88.93
+- ref: C1401
+  x: 161.87
+  y: 130.93
+  rot: -90.0
+- ref: C1402
+  x: 162.87
+  y: 130.93
+  rot: -90.0
+- ref: C1403
+  x: 158.62
+  y: 127.84
+  rot: -45.0
+- ref: C1404
+  x: 166.37
+  y: 127.43
+  rot: 45.0
+- ref: C1405
+  x: 157.62
+  y: 121.43
+  rot: -90.0
+- ref: C1501
+  x: 174.37
+  y: 121.43
+- ref: C1502
+  x: 172.87
+  y: 122.91
+  rot: -90.0
+- ref: C1503
+  x: 175.87
+  y: 122.91
+  rot: -90.0
+- ref: C1504
+  x: 178.87
+  y: 122.91
+  rot: -90.0
+- ref: C1601
+  x: 154.37
+  y: 70.93
+  rot: 180.0
+- ref: C1602
+  x: 157.37
+  y: 68.43
+  rot: 90.0
+- ref: C1603
+  x: 154.37
+  y: 65.93
+  rot: 180.0
+- ref: C1604
+  x: 140.87
+  y: 65.93
+- ref: C1605
+  x: 137.62
+  y: 68.43
+  rot: -90.0
+- ref: C1606
+  x: 140.87
+  y: 70.93
+- ref: C1701
+  x: 152.62
+  y: 78.43
+  rot: -90.0
+- ref: C1702
+  x: 151.12
+  y: 78.43
+  rot: -90.0
+- ref: C1703
+  x: 144.62
+  y: 78.43
+  rot: 90.0
+- ref: C1704
+  x: 146.12
+  y: 78.43
+  rot: 90.0
+- ref: C1705
+  x: 149.62
+  y: 75.43
+  rot: -90.0
+- ref: C1706
+  x: 147.62
+  y: 75.43
+  rot: -90.0
+- ref: C1707
+  x: 151.37
+  y: 85.3
+  rot: -90.0
+- ref: C1708
+  x: 156.12
+  y: 82.93
+- ref: C1709
+  x: 155.12
+  y: 89.43
+- ref: C1710
+  x: 155.12
+  y: 90.93
+- ref: C1711
+  x: 155.12
+  y: 97.43
+  rot: 180.0
+- ref: C1712
+  x: 155.12
+  y: 95.93
+  rot: 180.0
+- ref: C1713
+  x: 152.12
+  y: 92.43
+- ref: C1714
+  x: 152.12
+  y: 94.43
+- ref: C1801
+  x: 131.87
+  y: 88.18
+  rot: 90.0
+- ref: C1802
+  x: 130.37
+  y: 88.18
+  rot: 90.0
+- ref: C1803
+  x: 127.87
+  y: 90.68
+  rot: 180.0
+- ref: C1804
+  x: 127.87
+  y: 92.18
+  rot: 180.0
+- ref: C1805
+  x: 127.87
+  y: 94.18
+  rot: 180.0
+- ref: C1806
+  x: 127.87
+  y: 96.18
+  rot: 180.0
+- ref: C1807
+  x: 131.87
+  y: 96.18
+- ref: C1808
+  x: 131.87
+  y: 94.18
+- ref: C1809
+  x: 128.87
+  y: 84.68
+  rot: -90.0
+- ref: C1810
+  x: 145.12
+  y: 88.18
+  rot: 90.0
+- ref: C1811
+  x: 143.62
+  y: 88.18
+  rot: 90.0
+- ref: C1812
+  x: 141.12
+  y: 90.68
+  rot: 180.0
+- ref: C1813
+  x: 141.12
+  y: 92.18
+  rot: 180.0
+- ref: C1814
+  x: 141.12
+  y: 94.18
+  rot: 180.0
+- ref: C1815
+  x: 141.12
+  y: 96.18
+  rot: 180.0
+- ref: C1816
+  x: 145.12
+  y: 96.18
+- ref: C1817
+  x: 145.12
+  y: 94.18
+- ref: C1818
+  x: 142.12
+  y: 84.68
+  rot: -90.0
+- ref: C1901
+  x: 181.37
+  y: 84.93
+- ref: C1902
+  x: 181.37
+  y: 83.43
+- ref: C1903
+  x: 178.87
+  y: 80.93
+  rot: 90.0
+- ref: C1904
+  x: 177.37
+  y: 80.93
+  rot: 90.0
+- ref: C1905
+  x: 175.37
+  y: 80.93
+  rot: 90.0
+- ref: C1906
+  x: 173.37
+  y: 80.93
+  rot: 90.0
+- ref: C1907
+  x: 173.37
+  y: 84.93
+  rot: -90.0
+- ref: C1908
+  x: 175.37
+  y: 84.93
+  rot: -90.0
+- ref: C1909
+  x: 177.37
+  y: 84.93
+  rot: -90.0
+- ref: C1910
+  x: 184.87
+  y: 81.93
+  rot: 180.0
+- ref: C1911
+  x: 184.87
+  y: 87.43
+- ref: C1912
+  x: 184.87
+  y: 88.43
+- ref: C1913
+  x: 183.87
+  y: 94.43
+- ref: C1914
+  x: 185.87
+  y: 94.43
+  rot: 180.0
+- ref: C1915
+  x: 185.87
+  y: 95.43
+  rot: 180.0
+- ref: C1916
+  x: 185.37
+  y: 96.93
+  rot: 180.0
+- ref: C1917
+  x: 179.37
+  y: 88.68
+  rot: 180.0
+- ref: C1918
+  x: 179.37
+  y: 89.68
+  rot: 180.0
+- ref: C1919
+  x: 179.37
+  y: 94.18
+  rot: 180.0
+- ref: C1920
+  x: 179.37
+  y: 95.18
+  rot: 180.0
+- ref: C1921
+  x: 179.62
+  y: 96.68
+  rot: 180.0
+- ref: C1922
+  x: 175.12
+  y: 88.68
+  rot: 180.0
+- ref: C1923
+  x: 175.12
+  y: 89.68
+  rot: 180.0
+- ref: C1924
+  x: 175.12
+  y: 94.18
+  rot: 180.0
+- ref: C1925
+  x: 175.12
+  y: 95.18
+  rot: 180.0
+- ref: C201
+  x: 133.37
+  y: 115.88
+  rot: 90.0
+  side: back
+- ref: C202
+  x: 166.12
+  y: 113.43
+  rot: -90.0
+  side: back
+- ref: C203
+  x: 141.37
+  y: 80.91
+  rot: 90.0
+- ref: C204
+  x: 180.12
+  y: 86.95
+  rot: -90.0
+- ref: C401
+  x: 123.37
+  y: 75.2
+  rot: 90.0
+- ref: C402
+  x: 124.37
+  y: 75.2
+  rot: 90.0
+- ref: C403
+  x: 123.87
+  y: 72.93
+- ref: C404
+  x: 123.87
+  y: 71.93
+- ref: C405
+  x: 126.37
+  y: 67.93
+  rot: 90.0
+- ref: C406
+  x: 123.37
+  y: 80.43
+  rot: 90.0
+- ref: C407
+  x: 124.37
+  y: 80.43
+  rot: 90.0
+- ref: C408
+  x: 130.87
+  y: 75.18
+  rot: 90.0
+- ref: C409
+  x: 131.87
+  y: 75.18
+  rot: 90.0
+- ref: C410
+  x: 131.37
+  y: 72.93
+- ref: C411
+  x: 131.37
+  y: 71.93
+- ref: C412
+  x: 133.87
+  y: 67.93
+  rot: 90.0
+- ref: C413
+  x: 130.87
+  y: 80.43
+  rot: 90.0
+- ref: C414
+  x: 131.87
+  y: 80.43
+  rot: 90.0
+- ref: C501
+  x: 177.87
+  y: 79.45
+  rot: 90.0
+  side: back
+- ref: C502
+  x: 171.87
+  y: 79.95
+  rot: -90.0
+  side: back
+- ref: C503
+  x: 183.37
+  y: 63.93
+- ref: C504
+  x: 183.37
+  y: 60.93
+- ref: C505
+  x: 181.62
+  y: 60.93
+  rot: -90.0
+- ref: C601
+  x: 129.37
+  y: 123.93
+  rot: -90.0
+- ref: C701
+  x: 111.07
+  y: 117.68
+  rot: -90.0
+- ref: C702
+  x: 113.62
+  y: 118.86
+  rot: 90.0
+- ref: C703
+  x: 114.62
+  y: 118.86
+  rot: 90.0
+- ref: C704
+  x: 121.12
+  y: 122.18
+- ref: C705
+  x: 121.12
+  y: 121.18
+- ref: C706
+  x: 118.92
+  y: 110.83
+- ref: C707
+  x: 125.27
+  y: 114.73
+  rot: 90.0
+- ref: C708
+  x: 113.87
+  y: 115.18
+  rot: 90.0
+- ref: C709
+  x: 114.87
+  y: 115.18
+  rot: 90.0
+- ref: C710
+  x: 119.02
+  y: 122.18
+  rot: 180.0
+- ref: C711
+  x: 119.02
+  y: 121.18
+  rot: 180.0
+- ref: C712
+  x: 125.27
+  y: 117.98
+  rot: 90.0
+- ref: C713
+  x: 121.82
+  y: 111.18
+  rot: 180.0
+- ref: C801
+  x: 143.87
+  y: 109.93
+  rot: -90.0
+- ref: C802
+  x: 139.87
+  y: 114.43
+  rot: 90.0
+- ref: C803
+  x: 139.87
+  y: 111.93
+  rot: 90.0
+- ref: C804
+  x: 144.87
+  y: 109.93
+  rot: -90.0
+- ref: C805
+  x: 145.87
+  y: 109.93
+  rot: -90.0
+- ref: C806
+  x: 139.87
+  y: 109.43
+- ref: C807
+  x: 148.87
+  y: 110.43
+- ref: C808
+  x: 151.87
+  y: 112.18
+  rot: 135.0
+- ref: C809
+  x: 150.37
+  y: 110.95
+  rot: 90.0
+- ref: C810
+  x: 155.12
+  y: 112.95
+  rot: 90.0
+- ref: C811
+  x: 148.37
+  y: 112.93
+  rot: 180.0
+- ref: C812
+  x: 147.87
+  y: 115.43
+  rot: -90.0
+- ref: C901
+  x: 139.87
+  y: 117.43
+  rot: 180.0
+- ref: C902
+  x: 135.37
+  y: 121.43
+  rot: 90.0
+- ref: C903
+  x: 135.37
+  y: 118.93
+  rot: 90.0
+- ref: C904
+  x: 135.37
+  y: 116.43
+- ref: C905
+  x: 143.87
+  y: 119.92
+  rot: 180.0
+- ref: C906
+  x: 143.37
+  y: 122.43
+  rot: -90.0
+- ref: CSKB-H401
+  x: 116.84
+  y: 55.24
+  rot: 90.0
+- ref: CSKB-H402
+  x: 116.84
+  y: 50.16
+  rot: 90.0
+- ref: D1101
+  x: 182.37
+  y: 121.98
+  rot: -90.0
+- ref: D1601
+  x: 156.37
+  y: 77.18
+  rot: 90.0
+- ref: D1602
+  x: 133.62
+  y: 88.18
+  rot: -90.0
+- ref: D1603
+  x: 169.62
+  y: 86.18
+  rot: 90.0
+- ref: D1604
+  x: 176.12
+  y: 98.68
+- ref: D1605
+  x: 176.12
+  y: 99.68
+- ref: D301
+  x: 147.12
+  y: 101.93
+  rot: 180.0
+- ref: D401
+  x: 149.87
+  y: 45.23
+  rot: 180.0
+- ref: D501
+  x: 183.67
+  y: 65.38
+  rot: 90.0
+- ref: D701
+  x: 111.62
+  y: 115.68
+  rot: 90.0
+- ref: D702
+  x: 113.37
+  y: 113.68
+- ref: D703
+  x: 113.37
+  y: 111.68
+- ref: D704
+  x: 113.37
+  y: 109.68
+- ref: FB1801
+  x: 129.87
+  y: 98.18
+- ref: FB1802
+  x: 143.12
+  y: 98.18
+- ref: FB1901
+  x: 171.37
+  y: 82.93
+  rot: -90.0
+- ref: FB501
+  x: 181.62
+  y: 63.93
+  rot: 90.0
+- ref: FB601
+  x: 129.37
+  y: 125.93
+  rot: 90.0
+- ref: J1101
+  x: 187.38
+  y: 122.43
+  rot: 180.0
+- ref: J401
+  x: 108.07
+  y: 90.43
+  rot: -90.0
+- ref: J501
+  x: 106.55
+  y: 62.43
+  rot: -90.0
+- ref: J502
+  x: 177.87
+  y: 90.93
+  rot: -90.0
+  side: back
+- ref: J503
+  x: 189.37
+  y: 62.43
+  rot: 90.0
+- ref: L1001
+  x: 137.87
+  y: 128.93
+  rot: -90.0
+- ref: L1002
+  x: 146.87
+  y: 129.93
+  rot: -90.0
+- ref: L1003
+  x: 148.37
+  y: 130.43
+  rot: 180.0
+- ref: L1201
+  x: 161.87
+  y: 108.97
+  rot: 90.0
+- ref: L1401
+  x: 160.37
+  y: 130.93
+  rot: -90.0
+- ref: L1402
+  x: 157.62
+  y: 123.43
+  rot: -90.0
+- ref: L1403
+  x: 164.37
+  y: 128.18
+- ref: L1501
+  x: 174.37
+  y: 122.43
+  rot: 180.0
+- ref: L1502
+  x: 177.37
+  y: 122.43
+- ref: L1801
+  x: 123.37
+  y: 89.68
+  rot: -90.0
+- ref: L1802
+  x: 136.62
+  y: 89.68
+  rot: -90.0
+- ref: L1901
+  x: 179.87
+  y: 76.43
+  rot: 180.0
+- ref: L801
+  x: 137.87
+  y: 112.43
+  rot: -90.0
+- ref: L802
+  x: 147.37
+  y: 110.94
+  rot: -90.0
+- ref: L803
+  x: 148.87
+  y: 111.43
+  rot: 180.0
+- ref: L804
+  x: 153.62
+  y: 113.43
+  rot: 180.0
+- ref: L805
+  x: 146.87
+  y: 113.43
+  rot: -90.0
+- ref: L806
+  x: 148.37
+  y: 113.93
+  rot: 180.0
+- ref: L901
+  x: 133.37
+  y: 119.43
+  rot: -90.0
+- ref: L902
+  x: 142.37
+  y: 120.42
+  rot: -90.0
+- ref: L903
+  x: 143.87
+  y: 120.93
+  rot: 180.0
+- ref: Q1601
+  x: 149.87
+  y: 68.43
+  rot: 90.0
+- ref: Q1602
+  x: 145.37
+  y: 68.43
+  rot: -90.0
+- ref: R1001
+  x: 142.12
+  y: 133.43
+- ref: R1002
+  x: 137.87
+  y: 125.93
+  rot: 180.0
+- ref: R1003
+  x: 144.12
+  y: 133.43
+- ref: R1004
+  x: 146.12
+  y: 133.43
+- ref: R1201
+  x: 159.37
+  y: 117.43
+  rot: -90.0
+- ref: R1202
+  x: 162.37
+  y: 117.43
+  rot: -90.0
+- ref: R1203
+  x: 172.37
+  y: 94.93
+  rot: 180.0
+- ref: R1401
+  x: 152.62
+  y: 122.93
+  rot: 90.0
+- ref: R1402
+  x: 150.87
+  y: 121.93
+  rot: 90.0
+- ref: R1403
+  x: 152.62
+  y: 120.93
+  rot: 90.0
+- ref: R1404
+  x: 162.37
+  y: 125.93
+- ref: R1405
+  x: 160.37
+  y: 125.93
+  rot: 180.0
+- ref: R1601
+  x: 157.37
+  y: 77.18
+  rot: -90.0
+- ref: R1602
+  x: 133.62
+  y: 90.18
+  rot: -90.0
+- ref: R1603
+  x: 169.62
+  y: 84.18
+  rot: 90.0
+- ref: R1604
+  x: 178.12
+  y: 98.68
+- ref: R1605
+  x: 178.12
+  y: 99.68
+- ref: R1701
+  x: 146.12
+  y: 81.43
+  rot: 90.0
+- ref: R1702
+  x: 149.12
+  y: 81.43
+  rot: 90.0
+- ref: R1703
+  x: 150.12
+  y: 81.43
+  rot: 90.0
+- ref: R1704
+  x: 147.12
+  y: 81.43
+  rot: -90.0
+- ref: R1705
+  x: 148.62
+  y: 75.43
+  rot: 90.0
+- ref: R1706
+  x: 151.12
+  y: 81.43
+  rot: -90.0
+- ref: R1707
+  x: 148.12
+  y: 81.43
+  rot: -90.0
+- ref: R1709
+  x: 154.12
+  y: 82.93
+- ref: R1710
+  x: 158.12
+  y: 95.93
+  rot: 180.0
+- ref: R1711
+  x: 158.12
+  y: 92.93
+  rot: 180.0
+- ref: R1712
+  x: 158.12
+  y: 91.93
+  rot: 180.0
+- ref: R1713
+  x: 158.12
+  y: 94.93
+- ref: R1714
+  x: 152.12
+  y: 93.43
+  rot: 180.0
+- ref: R1715
+  x: 158.12
+  y: 90.93
+- ref: R1716
+  x: 158.12
+  y: 93.93
+- ref: R1801
+  x: 127.87
+  y: 84.68
+  rot: -90.0
+- ref: R1802
+  x: 126.87
+  y: 84.68
+  rot: 90.0
+- ref: R1803
+  x: 125.87
+  y: 84.68
+  rot: -90.0
+- ref: R1805
+  x: 140.12
+  y: 84.68
+  rot: -90.0
+- ref: R1806
+  x: 141.12
+  y: 84.68
+  rot: 90.0
+- ref: R1807
+  x: 139.12
+  y: 84.68
+  rot: -90.0
+- ref: R1808
+  x: 143.12
+  y: 84.68
+  rot: 90.0
+- ref: R1901
+  x: 184.87
+  y: 80.93
+  rot: 180.0
+- ref: R1902
+  x: 184.87
+  y: 79.93
+- ref: R1903
+  x: 184.87
+  y: 78.93
+  rot: 180.0
+- ref: R1904
+  x: 184.87
+  y: 82.93
+- ref: R1905
+  x: 183.87
+  y: 95.43
+  rot: 180.0
+- ref: R1906
+  x: 182.37
+  y: 94.93
+  rot: 90.0
+- ref: R1907
+  x: 181.62
+  y: 91.93
+  rot: 90.0
+- ref: R1908
+  x: 177.37
+  y: 91.93
+  rot: 90.0
+- ref: R301
+  x: 145.12
+  y: 101.93
+- ref: R401
+  x: 127.62
+  y: 72.43
+  rot: 90.0
+- ref: R402
+  x: 126.62
+  y: 72.43
+  rot: 90.0
+- ref: R403
+  x: 125.62
+  y: 72.43
+  rot: 90.0
+- ref: R404
+  x: 123.87
+  y: 65.93
+- ref: R405
+  x: 128.62
+  y: 72.43
+  rot: 90.0
+- ref: R406
+  x: 128.87
+  y: 80.43
+  rot: -90.0
+- ref: R407
+  x: 135.12
+  y: 72.43
+  rot: 90.0
+- ref: R408
+  x: 134.12
+  y: 72.43
+  rot: 90.0
+- ref: R409
+  x: 133.12
+  y: 72.43
+  rot: 90.0
+- ref: R410
+  x: 131.37
+  y: 65.93
+- ref: R411
+  x: 136.12
+  y: 72.43
+  rot: 90.0
+- ref: R412
+  x: 136.37
+  y: 80.43
+  rot: -90.0
+- ref: R501
+  x: 170.37
+  y: 79.95
+  rot: 90.0
+  side: back
+- ref: R701
+  x: 116.37
+  y: 111.43
+  rot: 90.0
+- ref: R702
+  x: 111.62
+  y: 119.18
+- ref: R703
+  x: 115.37
+  y: 111.43
+  rot: 90.0
+- ref: R704
+  x: 114.12
+  y: 117.36
+  rot: 180.0
+- ref: R705
+  x: 112.12
+  y: 117.68
+  rot: 90.0
+- ref: R706
+  x: 113.37
+  y: 112.68
+  rot: 180.0
+- ref: R707
+  x: 128.37
+  y: 112.93
+  rot: 180.0
+- ref: R708
+  x: 113.37
+  y: 110.68
+  rot: 180.0
+- ref: R709
+  x: 113.37
+  y: 108.68
+  rot: 180.0
+- ref: R710
+  x: 123.37
+  y: 111.43
+  rot: -90.0
+- ref: R711
+  x: 124.37
+  y: 111.43
+  rot: -90.0
+- ref: R712
+  x: 128.37
+  y: 117.93
+  rot: 180.0
+- ref: R801
+  x: 142.37
+  y: 117.43
+- ref: R802
+  x: 137.87
+  y: 109.43
+  rot: 180.0
+- ref: R803
+  x: 144.37
+  y: 117.43
+- ref: R901
+  x: 137.87
+  y: 124.43
+- ref: R902
+  x: 133.37
+  y: 116.43
+  rot: 180.0
+- ref: R903
+  x: 139.87
+  y: 124.43
+- ref: RN701
+  x: 128.37
+  y: 115.43
+  rot: 180.0
+- ref: RN702
+  x: 128.37
+  y: 120.43
+  rot: 180.0
+- ref: SW201
+  x: 108.87
+  y: 120.43
+  side: back
+- ref: SW202
+  x: 108.87
+  y: 113.93
+  rot: 90.0
+  side: back
+- ref: U1001
+  x: 143.37
+  y: 129.93
+  rot: -90.0
+- ref: U1101
+  x: 115.37
+  y: 125.43
+  rot: 180.0
+- ref: U1102
+  x: 169.37
+  y: 122.43
+- ref: U1103
+  x: 119.87
+  y: 125.43
+  rot: 180.0
+- ref: U1104
+  x: 124.37
+  y: 125.43
+  rot: 180.0
+- ref: U1201
+  x: 156.87
+  y: 113.43
+- ref: U1202
+  x: 160.87
+  y: 113.43
+- ref: U1203
+  x: 171.87
+  y: 91.93
+  rot: -90.0
+- ref: U1401
+  x: 155.12
+  y: 121.93
+  rot: 180.0
+- ref: U1402
+  x: 157.87
+  y: 125.68
+  rot: 90.0
+- ref: U1403
+  x: 166.87
+  y: 125.43
+  rot: -90.0
+- ref: U1404
+  x: 161.37
+  y: 127.93
+  rot: 180.0
+- ref: U1601
+  x: 154.37
+  y: 68.43
+  rot: 180.0
+- ref: U1602
+  x: 140.87
+  y: 68.43
+- ref: U1701
+  x: 148.62
+  y: 78.43
+  rot: 90.0
+- ref: U1702
+  x: 149.37
+  y: 86.05
+- ref: U1703
+  x: 155.12
+  y: 85.93
+  rot: -90.0
+- ref: U1704
+  x: 155.12
+  y: 93.43
+  rot: 180.0
+- ref: U1801
+  x: 127.87
+  y: 88.18
+- ref: U1802
+  x: 141.12
+  y: 88.18
+- ref: U1901
+  x: 181.37
+  y: 80.93
+  rot: -90.0
+- ref: U1902
+  x: 184.37
+  y: 91.43
+  rot: -90.0
+- ref: U1903
+  x: 179.62
+  y: 91.93
+  rot: 90.0
+- ref: U1904
+  x: 175.37
+  y: 91.93
+  rot: 90.0
+- ref: U201
+  x: 135.37
+  y: 115.63
+  rot: 180.0
+  side: back
+- ref: U202
+  x: 164.12
+  y: 113.93
+  side: back
+- ref: U203
+  x: 139.37
+  y: 80.43
+- ref: U204
+  x: 182.12
+  y: 87.43
+  rot: 180.0
+- ref: U301
+  x: 137.5
+  y: 85.0
+  rot: 90.0
+  side: back
+- ref: U401
+  x: 123.87
+  y: 68.93
+  rot: 90.0
+- ref: U402
+  x: 127.62
+  y: 75.93
+  rot: 90.0
+- ref: U403
+  x: 131.37
+  y: 68.93
+  rot: 90.0
+- ref: U404
+  x: 135.12
+  y: 75.93
+  rot: 90.0
+- ref: U501
+  x: 174.87
+  y: 79.95
+  rot: 180.0
+  side: back
+- ref: U502
+  x: 113.87
+  y: 62.43
+- ref: U701
+  x: 119.87
+  y: 116.43
+- ref: U801
+  x: 143.37
+  y: 113.93
+  rot: -90.0
+- ref: U901
+  x: 138.87
+  y: 120.93
+  rot: -90.0
+- ref: X601
+  x: 131.87
+  y: 124.93
+  rot: 90.0
+- ref: Y401
+  x: 126.62
+  y: 80.43
+  rot: -90.0
+- ref: Y402
+  x: 134.12
+  y: 80.43
+  rot: -90.0
+copper_pours:
+- net: +1V2_D
+  layers: [F.Cu, In2.Cu, In3.Cu]
+- net: +1V8_RF
+  layers: [F.Cu, In2.Cu, In3.Cu]
+- net: +3V0_RTC
+  layers: [B.Cu]
+- net: +3V3_D
+  layers: [B.Cu, F.Cu, In2.Cu, In3.Cu]
+- net: +3V3_RF
+  layers: [F.Cu, In3.Cu]
+- net: +3V3_SD
+  layers: [B.Cu]
+- net: +3V6_RF
+  layers: [F.Cu, In2.Cu, In3.Cu]
+- net: +4V2_RF
+  layers: [F.Cu, In3.Cu]
+- net: +5V
+  layers: [F.Cu, In3.Cu]
+- net: +5V_CSKB
+  layers: [F.Cu, In3.Cu]
+- net: +5V_EFUSE_D
+  layers: [B.Cu, F.Cu, In3.Cu]
+- net: +5V_EFUSE_RF
+  layers: [F.Cu, In3.Cu]
+- net: +5V_USB
+  layers: [F.Cu, In3.Cu]
+- net: /1.0-digital/1.1-compute-module/EEPROM_nWP
+  layers: [B.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/GPIO24_CAN_A_INT
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/GPIO25_CAN_B_INT
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/PMIC_ENABLE
+  layers: [B.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SD_CLK
+  layers: [B.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SD_CMD
+  layers: [B.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SD_DAT0
+  layers: [B.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SD_DAT1
+  layers: [B.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SD_DAT2
+  layers: [B.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SD_DAT3
+  layers: [B.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SD_ENABLE
+  layers: [B.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SPI_1_CSN_0_CAN_A
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SPI_1_CSN_1_CAN_B
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SPI_1_MISO
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SPI_1_MOSI
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/SPI_1_SCLK
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/1.1-compute-module/UART_0_RX
+  layers: [B.Cu, F.Cu]
+- net: /1.0-digital/1.1-compute-module/UART_0_TX
+  layers: [B.Cu, F.Cu]
+- net: /1.0-digital/1.1-compute-module/~{nRPIBOOT}
+  layers: [B.Cu, In2.Cu]
+- net: /1.0-digital/1.2-interfaces/CAN_A.RXD
+  layers: [F.Cu, In2.Cu]
+- net: /1.0-digital/1.2-interfaces/CAN_A.TXD
+  layers: [F.Cu, In2.Cu]
+- net: /1.0-digital/1.2-interfaces/CAN_A_N
+  layers: [F.Cu, In2.Cu]
+- net: /1.0-digital/1.2-interfaces/CAN_A_OSC.OUT
+  layers: [F.Cu]
+- net: /1.0-digital/1.2-interfaces/CAN_A_P
+  layers: [F.Cu, In2.Cu]
+- net: /1.0-digital/1.2-interfaces/CAN_B.RXD
+  layers: [F.Cu, In2.Cu]
+- net: /1.0-digital/1.2-interfaces/CAN_B.TXD
+  layers: [F.Cu, In2.Cu]
+- net: /1.0-digital/1.2-interfaces/CAN_B_N
+  layers: [F.Cu, In2.Cu]
+- net: /1.0-digital/1.2-interfaces/CAN_B_OSC.OUT
+  layers: [F.Cu]
+- net: /1.0-digital/1.2-interfaces/CAN_B_P
+  layers: [F.Cu, In2.Cu]
+- net: /1.0-digital/1.3-usb/USB2_DATA_N
+  layers: [B.Cu, F.Cu]
+- net: /1.0-digital/1.3-usb/USB2_DATA_P
+  layers: [B.Cu, F.Cu]
+- net: /1.0-digital/1.3-usb/USB_CC1
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/1.3-usb/USB_CC2
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/1.3-usb/VUSB
+  layers: [F.Cu, In3.Cu]
+- net: /1.0-digital/CM5_GPIO12_RADIO_POWER_EN
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/CM5_GPIO22_SX1261_DIO2
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/CM5_GPIO23_SX1261_DIO1
+  layers: [B.Cu, F.Cu, In2.Cu, In3.Cu]
+- net: /1.0-digital/CM5_GPIO26_SX1302_GPIO8
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/CM5_GPIO27_SX1302_GPIO6
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/CM5_GPIO4_SX1261_BUSY
+  layers: [B.Cu, F.Cu, In2.Cu, In3.Cu]
+- net: /1.0-digital/CM5_GPIO5_SX1261_~{RESET}
+  layers: [B.Cu, F.Cu, In2.Cu, In3.Cu]
+- net: /1.0-digital/CM5_GPIO6_SX1302_RESET
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /1.0-digital/CM5_SPI_0_CSN_0_SX1302
+  layers: [B.Cu, F.Cu, In3.Cu]
+- net: /1.0-digital/CM5_SPI_0_CSN_1_SX1261
+  layers: [B.Cu, F.Cu, In2.Cu, In3.Cu]
+- net: /1.0-digital/CM5_SPI_0_MISO
+  layers: [B.Cu, F.Cu, In2.Cu, In3.Cu]
+- net: /1.0-digital/CM5_SPI_0_MOSI
+  layers: [B.Cu, F.Cu, In2.Cu, In3.Cu]
+- net: /1.0-digital/CM5_SPI_0_SCLK
+  layers: [B.Cu, F.Cu, In2.Cu, In3.Cu]
+- net: /1.0-digital/I2C.SCL
+  layers: [B.Cu, F.Cu, In3.Cu]
+- net: /1.0-digital/I2C.SDA
+  layers: [B.Cu, F.Cu, In2.Cu, In3.Cu]
+- net: /1.0-digital/PWR_BUTTON
+  layers: [B.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/CTRL0_RF_EN
+  layers: [B.Cu, F.Cu]
+- net: /2.0-radio/2.1-baseband/CTRL2_RF_SW
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/CTRL3_RADIO_A_~{RESET}
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/CTRL4_RF_PA_EN
+  layers: [B.Cu, F.Cu]
+- net: /2.0-radio/2.1-baseband/CTRL9_RADIO_B_~{RESET}
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_A_CLK_32M
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_A_CLK_O
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_A_CSN
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_A_IQ0
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_A_IQ1
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_A_IQ2
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_A_IQ3
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_A_MISO
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_A_MOSI
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_A_SCK
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_B_CLK_32M
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_B_CLK_O
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_B_CSN
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_B_IQ0
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_B_IQ1
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_B_IQ2
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_B_IQ3
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_B_MISO
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_B_MOSI
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/RADIO_B_SCK
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.1-baseband/SX1302.RESET
+  layers: [F.Cu]
+- net: /2.0-radio/2.1-baseband/SX1302_CFG_OK
+  layers: [B.Cu, F.Cu, In3.Cu]
+- net: /2.0-radio/2.1-baseband/SX1302_RX_ON
+  layers: [F.Cu]
+- net: /2.0-radio/2.1-baseband/SX1302_TX_ON
+  layers: [F.Cu, In3.Cu]
+- net: /2.0-radio/2.2-radio-a/RADIO_A_RFI
+  layers: [F.Cu]
+- net: /2.0-radio/2.2-radio-a/RADIO_A_RFO
+  layers: [F.Cu]
+- net: /2.0-radio/2.2-radio-a/SX1250.DCC_SW
+  layers: [F.Cu]
+- net: /2.0-radio/2.2-radio-a/SX1250.RFI_N
+  layers: [F.Cu]
+- net: /2.0-radio/2.2-radio-a/SX1250.RFI_P
+  layers: [F.Cu]
+- net: /2.0-radio/2.2-radio-a/SX1250.RFO
+  layers: [F.Cu]
+- net: /2.0-radio/2.2-radio-a/SX1250.VREG
+  layers: [F.Cu]
+- net: /2.0-radio/2.2-radio-a/SX1250.VR_PA
+  layers: [F.Cu]
+- net: /2.0-radio/2.2-radio-a/SX1250.XTA
+  layers: [F.Cu]
+- net: /2.0-radio/2.3-radio-b/RADIO_B_RFI
+  layers: [F.Cu]
+- net: /2.0-radio/2.3-radio-b/SX1250.DCC_SW
+  layers: [F.Cu]
+- net: /2.0-radio/2.3-radio-b/SX1250.RFI_N
+  layers: [F.Cu]
+- net: /2.0-radio/2.3-radio-b/SX1250.RFI_P
+  layers: [F.Cu]
+- net: /2.0-radio/2.3-radio-b/SX1250.VREG
+  layers: [F.Cu]
+- net: /2.0-radio/2.3-radio-b/SX1250.XTA
+  layers: [F.Cu]
+- net: /2.0-radio/2.4-radio-lbt/RADIO_LBT_RFI
+  layers: [F.Cu]
+- net: /2.0-radio/2.4-radio-lbt/SX1261.DCC_SW
+  layers: [F.Cu]
+- net: /2.0-radio/2.4-radio-lbt/SX1261.RFI_N
+  layers: [F.Cu]
+- net: /2.0-radio/2.4-radio-lbt/SX1261.RFI_P
+  layers: [F.Cu]
+- net: /2.0-radio/2.4-radio-lbt/SX1261.VREG
+  layers: [F.Cu]
+- net: /2.0-radio/2.4-radio-lbt/SX1261.XTA
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/EN_PA
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.IN
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.OUT
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.VCTRL
+  layers: [F.Cu, In3.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.VDD
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.VREF1
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA.VREF2
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/PA_FILT.IN
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.1-rf-tx-path/TX_OUT
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/LNA.BYP
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/LNA.I
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/LNA.MA
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/LNA.O
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/LNA.VDD
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/RX
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/SAW1
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/SAW2
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/SPLT.IN
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/SPLT.MA
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.2-rf-rx-path/~{EN_LNA}
+  layers: [F.Cu, In2.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.3-rf-filter/P1
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/2.5.3-rf-filter/P2
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/ANT
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/RFSW.IN
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/RFSW.RX
+  layers: [F.Cu]
+- net: /2.0-radio/2.5-rf-frontend/RFSW.TX
+  layers: [F.Cu]
+- net: /2.0-radio/TCXO.CLK
+  layers: [F.Cu]
+- net: /2.0-radio/TCXO.VCC
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/5V_IN_EFUSE_RF
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/EFUSED.DVDT
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/EFUSED.EN{slash}UVLO
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/EFUSED.ISENSE
+  layers: [F.Cu, In2.Cu]
+- net: /3.0-power/3.1-efuse/EFUSED.ITIMER
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/EFUSED.OVLO
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/EFUSED.PGTH
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/EFUSERF.DVDT
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/EFUSERF.EN{slash}UVLO
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/EFUSERF.ISENSE
+  layers: [F.Cu, In2.Cu]
+- net: /3.0-power/3.1-efuse/EFUSERF.ITIMER
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/EFUSERF.OVLO
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/EFUSERF.PGTH
+  layers: [F.Cu]
+- net: /3.0-power/3.1-efuse/PG_EFD
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /3.0-power/3.1-efuse/PG_EFRF
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /3.0-power/3.2-psu-digital/DC1V2.NR{slash}SS
+  layers: [F.Cu]
+- net: /3.0-power/3.2-psu-digital/DC1V2.SCONF
+  layers: [F.Cu]
+- net: /3.0-power/3.2-psu-digital/DC1V2D.FB
+  layers: [F.Cu]
+- net: /3.0-power/3.2-psu-digital/DC1V2D.SW
+  layers: [F.Cu]
+- net: /3.0-power/3.2-psu-digital/DC1V2D.VO
+  layers: [F.Cu]
+- net: /3.0-power/3.2-psu-digital/DC3V3D.FB
+  layers: [F.Cu]
+- net: /3.0-power/3.2-psu-digital/DC3V3D.NR{slash}SS
+  layers: [F.Cu]
+- net: /3.0-power/3.2-psu-digital/DC3V3D.SCONF
+  layers: [F.Cu]
+- net: /3.0-power/3.2-psu-digital/DC3V3D.SW
+  layers: [F.Cu]
+- net: /3.0-power/3.2-psu-digital/DC3V3D.VO
+  layers: [F.Cu]
+- net: /3.0-power/3.2-psu-digital/PG_1V2D
+  layers: [F.Cu, In2.Cu]
+- net: /3.0-power/3.3-psu-rf/DC3V6RF.FB
+  layers: [F.Cu]
+- net: /3.0-power/3.3-psu-rf/DC3V6RF.NR{slash}SS
+  layers: [F.Cu]
+- net: /3.0-power/3.3-psu-rf/DC3V6RF.SCONF
+  layers: [F.Cu]
+- net: /3.0-power/3.3-psu-rf/DC3V6RF.SW
+  layers: [F.Cu]
+- net: /3.0-power/3.3-psu-rf/DC3V6RF.VO
+  layers: [F.Cu]
+- net: /3.0-power/3.3-psu-rf/PG_3V6RF
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /3.0-power/PG_1V8RF
+  layers: [F.Cu]
+- net: /3.0-power/PG_3V3D
+  layers: [F.Cu, In2.Cu]
+- net: /3.0-power/PG_3V3RF
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+- net: ''
+  layers: [F.Cu]
+  keepout: true

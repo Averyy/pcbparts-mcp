@@ -1,0 +1,275 @@
+name: Thingler Smart Plug
+slug: thingler-smart-plug
+source: thingler/smart-plug
+format: kicad6
+description: Mains smart plug (ESP32-PICO), TRIAC switching (BTA316B) via optocoupler
+tags: [isolation]
+key_ics: [ESP32-PICO, BTA316B]
+outline:
+  width_mm: 45.0
+  height_mm: 1.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.254mm
+  min_drill: 0.3mm
+  min_via: 0.6mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '1206'
+- ref: C2
+  value: 100nF
+  footprint: '1206'
+- ref: C3
+  value: 100nF
+  footprint: '1206'
+- ref: C4
+  value: 470uF
+  footprint: EIA-7343
+- ref: C5
+  value: 100nF
+  footprint: '1206'
+- ref: C6
+  value: 100nF
+  footprint: '1206'
+- ref: C7
+  value: 33uF
+  footprint: '1206'
+- ref: D1
+  value: ABS10A
+  footprint: ABS10A
+- ref: F1
+  value: Fuse 1A
+  footprint: fuse-2410
+- ref: J1
+  value: 1x4 screw terminal
+  footprint: 3d_power_connector
+- ref: L1
+  value: ME3220 12u
+  footprint: ME3220
+- ref: Q1
+  value: STGD5NB120SZ
+  footprint: TO-252
+- ref: Q2
+  value: BTA316B-600E
+  footprint: TO-263
+- ref: R1
+  value: 200kohm
+  footprint: '1206'
+- ref: R2
+  value: 200kohm
+  footprint: '1206'
+- ref: R3
+  value: 510kohm
+  footprint: '1206'
+- ref: R4
+  value: 510kohm
+  footprint: '1206'
+- ref: R5
+  value: 210ohm
+  footprint: '1206'
+- ref: R6
+  value: 113kohm
+  footprint: '1206'
+- ref: R7
+  value: 12.4kohm
+  footprint: '1206'
+- ref: R8
+  value: 180ohm
+  footprint: '1206'
+- ref: U1
+  value: THINGLER-ESP32-PICO
+  footprint: Thingler-esp32-vertical
+- ref: U2
+  value: SR086
+  footprint: SOIC-8-1EP
+- ref: U3
+  value: FODM3012
+  footprint: FODM3012
+- ref: U4
+  value: TPS560430X3F
+  footprint: SOT-23-6
+nets:
+- name: +3V3
+  pins: [C7.2, L1.2, U1.1, U4.3]
+- name: /12VDC
+  pins:
+  - C1.1
+  - C3.2
+  - C4.1
+  - C5.1
+  - Q1.3
+  - R6.2
+  - U2.6
+  - U4.4
+  - U4.5
+- name: AC
+  pins: [F1.2, J1.1, J1.2]
+  class: AC230V
+  trace_width: '1.5'
+- name: Earth
+  pins:
+  - C2.2
+  - C3.1
+  - C4.2
+  - C5.2
+  - C7.1
+  - D1.3
+  - R2.2
+  - R7.1
+  - U1.2
+  - U2.2
+  - U2.3
+  - U2.9
+  - U3.2
+  - U4.2
+- name: NEUT
+  pins: [D1.2, J1.4, Q2.1]
+  class: AC230V_HIGH_POWER
+  trace_width: '12.0'
+- name: Net-(C1-Pad2)
+  pins: [C1.2, U2.7]
+- name: Net-(C2-Pad1)
+  pins: [C2.1, U2.4]
+- name: Net-(C6-Pad1)
+  pins: [C6.1, U4.1]
+- name: Net-(C6-Pad2)
+  pins: [C6.2, L1.1, U4.6]
+- name: Net-(D1-Pad1)
+  pins: [D1.1, Q1.2, R1.1, R3.1]
+  class: AC230V
+  trace_width: '1.5'
+- name: Net-(D1-Pad4)
+  pins: [D1.4, F1.1]
+  class: AC230V
+  trace_width: '1.5'
+- name: Net-(J1-Pad3)
+  pins: [J1.3, Q2.2, R8.1]
+  class: AC230V_HIGH_POWER
+  trace_width: '12.0'
+- name: Net-(Q1-Pad1)
+  pins: [Q1.1, U2.8]
+- name: Net-(Q2-Pad3)
+  pins: [Q2.3, U3.3]
+  class: AC230V_LOW_POWER
+  trace_width: '0.7'
+- name: Net-(R1-Pad2)
+  pins: [R1.2, R2.1]
+  class: AC230V
+  trace_width: '1.5'
+- name: Net-(R3-Pad2)
+  pins: [R3.2, R4.1]
+  class: AC230V
+  trace_width: '1.5'
+- name: Net-(R4-Pad2)
+  pins: [R4.2, U2.1]
+  class: AC230V_LOW_POWER
+  trace_width: '0.7'
+- name: Net-(R5-Pad1)
+  pins: [R5.1, U3.1]
+- name: Net-(R5-Pad2)
+  pins: [R5.2, U1.8]
+- name: Net-(R6-Pad1)
+  pins: [R6.1, R7.2, U2.5]
+- name: Net-(R8-Pad2)
+  pins: [R8.2, U3.4]
+  class: AC230V_LOW_POWER
+  trace_width: '0.7'
+positions:
+- ref: C1
+  x: 167.0
+  y: 98.25
+  rot: 270.0
+- ref: C2
+  x: 170.0
+  y: 106.8
+  rot: 180.0
+- ref: C3
+  x: 169.1
+  y: 89.7
+  rot: 180.0
+- ref: C4
+  x: 171.1
+  y: 86.1
+- ref: C5
+  x: 175.4
+  y: 107.9
+  rot: 180.0
+- ref: C6
+  x: 170.5
+  y: 109.6
+- ref: C7
+  x: 185.9
+  y: 107.9
+  rot: 180.0
+- ref: D1
+  x: 179.75
+  y: 80.75
+  rot: 90.0
+- ref: F1
+  x: 171.25
+  y: 80.5
+  rot: 180.0
+- ref: J1
+  x: 177.7
+  y: 74.1
+- ref: L1
+  x: 179.8
+  y: 109.0
+  rot: 90.0
+- ref: Q1
+  x: 163.0
+  y: 89.85
+  rot: 90.0
+- ref: Q2
+  x: 188.1
+  y: 87.2
+  rot: 270.0
+- ref: R1
+  x: 161.75
+  y: 100.0
+- ref: R2
+  x: 164.75
+  y: 102.5
+- ref: R3
+  x: 165.0
+  y: 105.25
+- ref: R4
+  x: 170.6
+  y: 104.1
+- ref: R5
+  x: 185.9
+  y: 105.5
+- ref: R6
+  x: 169.1
+  y: 92.1
+  rot: 180.0
+- ref: R7
+  x: 169.1
+  y: 94.5
+  rot: 180.0
+- ref: R8
+  x: 180.6
+  y: 103.4
+  rot: 180.0
+- ref: U1
+  x: 194.5
+  y: 84.0
+  rot: 180.0
+  side: back
+- ref: U2
+  x: 172.25
+  y: 100.0
+  rot: 180.0
+- ref: U3
+  x: 174.1
+  y: 92.9
+  rot: 90.0
+- ref: U4
+  x: 176.0
+  y: 111.0
+  rot: 90.0
+copper_pours:
+- net: Earth
+  layers: [B.Cu, F.Cu]

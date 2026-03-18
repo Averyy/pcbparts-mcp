@@ -1,0 +1,3795 @@
+name: Cynthion
+slug: cynthion
+source: greatscottgadgets/cynthion-hardware
+format: kicad7
+description: USB 2.0 HS PHY (TUSB1310A), Lattice FPGA (LFE5U-12F)
+tags: [fpga]
+key_ics: [TUSB1310A, LFE5U-12F]
+outline:
+  width_mm: 56.0
+  height_mm: 56.0
+design_rules:
+  layers: 6
+  min_trace: 0.1mm
+  min_clearance: 0.1mm
+  min_drill: 0.15mm
+  min_via: 0.41mm
+components:
+- ref: C1
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A225KP8NNNC
+  description: CAP CER 2.2UF 10V X5R 0603
+  decouples: IC1
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U1
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: IC1
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: IC1
+- ref: C13
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: IC1
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: IC1
+- ref: C16
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C17
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C18
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C19
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C2
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A225KP8NNNC
+  description: CAP CER 2.2UF 10V X5R 0603
+  decouples: U12
+- ref: C20
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A225KP8NNNC
+  description: CAP CER 2.2UF 10V X5R 0603
+  decouples: U3
+- ref: C21
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U10
+- ref: C22
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C23
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C24
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: IC1
+- ref: C25
+  value: 330pF
+  footprint: '0402'
+  mpn: CL05C331JB5NNNC
+  manufacturer: Samsung
+  description: CAP CER 330PF 50V C0G/NP0 0402
+- ref: C26
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: IC1
+- ref: C27
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U4
+- ref: C28
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U5
+- ref: C29
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U4
+- ref: C3
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A225KP8NNNC
+  description: CAP CER 2.2UF 10V X5R 0603
+  decouples: IC1
+- ref: C30
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U5
+- ref: C31
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U10
+- ref: C32
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U10
+- ref: C33
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: IC1
+- ref: C34
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U6
+- ref: C35
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U7
+- ref: C36
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U8
+- ref: C37
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+- ref: C38
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U8
+- ref: C39
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U8
+- ref: C4
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A225KP8NNNC
+  description: CAP CER 2.2UF 10V X5R 0603
+  decouples: U15
+- ref: C40
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U1
+- ref: C47
+  value: 330pF
+  footprint: '0402'
+  mpn: CL05C331JB5NNNC
+  manufacturer: Samsung
+  description: CAP CER 330PF 50V C0G/NP0 0402
+- ref: C49
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U12
+- ref: C5
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U10
+- ref: C51
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C52
+  value: 330pF
+  footprint: '0402'
+  mpn: CL05C331JB5NNNC
+  manufacturer: Samsung
+  description: CAP CER 330PF 50V C0G/NP0 0402
+- ref: C53
+  value: 330pF
+  footprint: '0402'
+  mpn: CL05C331JB5NNNC
+  manufacturer: Samsung
+  description: CAP CER 330PF 50V C0G/NP0 0402
+- ref: C58
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U14
+- ref: C59
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U15
+- ref: C6
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U3
+- ref: C60
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U15
+- ref: C61
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U16
+- ref: C62
+  value: 1nF
+  footprint: '0402'
+  mpn: CL05B102KB5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1000PF 50V X7R 0402
+- ref: C63
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C64
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U10
+- ref: C65
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U10
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: IC1
+- ref: C73
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A225KP8NNNC
+  description: CAP CER 2.2UF 10V X5R 0603
+  decouples: U6
+- ref: C74
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: U12
+- ref: C76
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+- ref: C77
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+- ref: C78
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+- ref: C79
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C8
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C80
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C81
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C82
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C83
+  value: 1uF
+  footprint: '0402'
+  mpn: CL05A105MQ5NNNC
+  manufacturer: Samsung
+  description: CAP CER 1UF 6.3V X5R 0402 20%
+  decouples: IC1
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  mpn: CL05A104KA5NNNC
+  manufacturer: Samsung
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: IC1
+- ref: D1
+  value: D
+  footprint: SOD-123FL
+  manufacturer: Yangzhou Yangjie
+  mpn: U1D
+  description: SOD-123FL 200V 1.0A Diodes Rec
+- ref: D10
+  value: ICE BLUE
+  footprint: '0603'
+  mpn: MHT192WDT-ICE
+  manufacturer: MEIHUA
+- ref: D11
+  value: pink LED
+  footprint: '0603'
+  mpn: OSK40603C1E
+  manufacturer: OptoSupply
+- ref: D12
+  value: white LED
+  footprint: '0603'
+  mpn: ORH-W46G
+  manufacturer: Orient
+- ref: D13
+  value: pink LED
+  footprint: '0603'
+  mpn: OSK40603C1E
+  manufacturer: OptoSupply
+- ref: D14
+  value: ICE BLUE
+  footprint: '0603'
+  mpn: MHT192WDT-ICE
+  manufacturer: MEIHUA
+- ref: D15
+  value: 24V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B24,315
+- ref: D16
+  value: 6.2V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B6V2,315
+- ref: D17
+  value: 5.6V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B5V6,315
+- ref: D18
+  value: 24V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B24,315
+- ref: D19
+  value: 6.2V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B6V2,315
+- ref: D2
+  value: red LED
+  footprint: '0603'
+  mpn: OSR50603C1E
+  manufacturer: OptoSupply
+- ref: D20
+  value: 6.2V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B6V2,315
+- ref: D21
+  value: 5.6V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B5V6,315
+- ref: D22
+  value: 24V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B24,315
+- ref: D23
+  value: TVS
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: PESD36VS1UL,315
+  description: TVS DIODE 36VWM 80VC DFN1006-2
+- ref: D24
+  value: TVS
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: PESD36VS1UL,315
+  description: TVS DIODE 36VWM 80VC DFN1006-2
+- ref: D25
+  value: TVS
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: PESD36VS1UL,315
+  description: TVS DIODE 36VWM 80VC DFN1006-2
+- ref: D26
+  value: TVS
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: PESD36VS1UL,315
+  description: TVS DIODE 36VWM 80VC DFN1006-2
+- ref: D27
+  value: 6.2V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B6V2,315
+- ref: D28
+  value: 6.2V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B6V2,315
+- ref: D29
+  value: 6.2V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B6V2,315
+- ref: D3
+  value: orange LED
+  footprint: '0603'
+  mpn: E6C0603SEAC1UDA
+  manufacturer: EKINGLUX
+- ref: D30
+  value: 3.0V zener
+  footprint: DFN1006-2
+  manufacturer: Nexperia
+  mpn: BZX884-B3V0,315
+- ref: D4
+  value: yellow LED
+  footprint: '0603'
+  mpn: E6C0603UYAC1UDA
+  manufacturer: EKINGLUX
+- ref: D5
+  value: green LED
+  footprint: '0603'
+  mpn: ORH-G36G
+  manufacturer: Orient
+- ref: D6
+  value: blue LED
+  footprint: '0603'
+  mpn: ORH-B36G
+  manufacturer: Orient
+- ref: D7
+  value: purple LED
+  footprint: '0603'
+  mpn: OSVX0603C1E
+  manufacturer: OptoSupply
+- ref: D8
+  value: D
+  footprint: SOD-123FL
+  manufacturer: Yangzhou Yangjie
+  mpn: U1D
+  description: SOD-123FL 200V 1.0A Diodes Rec
+- ref: D9
+  value: SCHOTTKY
+  footprint: DSN1006-2
+  manufacturer: Nexperia
+  mpn: PMEG4010ESBYL
+- ref: FL1
+  value: common mode filter
+  footprint: L_CommonModeChoke_Murata_DLM0NS
+  manufacturer: Murata
+  mpn: DLM0NSB280HY2D
+  description: CMC 130MA 2LN 28 OHM SMD
+- ref: FL2
+  value: common mode filter
+  footprint: L_CommonModeChoke_Murata_DLM0NS
+  manufacturer: Murata
+  mpn: DLM0NSB280HY2D
+  description: CMC 130MA 2LN 28 OHM SMD
+- ref: FL3
+  value: common mode filter
+  footprint: L_CommonModeChoke_Murata_DLM0NS
+  manufacturer: Murata
+  mpn: DLM0NSB280HY2D
+  description: CMC 130MA 2LN 28 OHM SMD
+- ref: FL4
+  value: common mode filter
+  footprint: L_CommonModeChoke_Murata_DLM0NS
+  manufacturer: Murata
+  mpn: DLM0NSB280HY2D
+  description: CMC 130MA 2LN 28 OHM SMD
+- ref: IC1
+  value: ECP5
+  footprint: lattice_cabga256
+  manufacturer: Lattice
+  mpn: LFE5U-12F-6BG256C
+  description: FPGA - Field Programmable Gate Array ECP5; 12k LUTs; 1.1V
+- ref: J1
+  value: USB-C
+  footprint: USB-C
+  manufacturer: DEALON
+  mpn: USB-TYPE-C-019
+  description: CONN RCPT USB2.0 TYPE-C 16POS
+- ref: J11
+  value: spring contact
+  footprint: BW0033AG-L3.4W0.9H1.8
+  manufacturer: BAT WIRELESS
+  mpn: BW0033AG-L3.4W0.9H1.8
+  description: SPRING FINGER CONTACT 1.8MM
+- ref: J12
+  value: spring contact
+  footprint: BW0033AG-L3.4W0.9H1.8
+  manufacturer: BAT WIRELESS
+  mpn: BW0033AG-L3.4W0.9H1.8
+  description: SPRING FINGER CONTACT 1.8MM
+- ref: J13
+  value: spring contact
+  footprint: BW0033AG-L3.4W0.9H1.8
+  manufacturer: BAT WIRELESS
+  mpn: BW0033AG-L3.4W0.9H1.8
+  description: SPRING FINGER CONTACT 1.8MM
+- ref: J14
+  value: spring contact
+  footprint: BW0033AG-L3.4W0.9H1.8
+  manufacturer: BAT WIRELESS
+  mpn: BW0033AG-L3.4W0.9H1.8
+  description: SPRING FINGER CONTACT 1.8MM
+- ref: J15
+  value: spring contact
+  footprint: BW0033AG-L3.4W0.9H1.8
+  manufacturer: BAT WIRELESS
+  mpn: BW0033AG-L3.4W0.9H1.8
+  description: SPRING FINGER CONTACT 1.8MM
+- ref: J16
+  value: spring contact
+  footprint: BW0033AG-L3.4W0.9H1.8
+  manufacturer: BAT WIRELESS
+  mpn: BW0033AG-L3.4W0.9H1.8
+  description: SPRING FINGER CONTACT 1.8MM
+- ref: J2
+  value: USB-C
+  footprint: USB-C
+  manufacturer: DEALON
+  mpn: USB-TYPE-C-019
+  description: CONN RCPT USB2.0 TYPE-C 16POS
+- ref: J3
+  value: USB-A
+  footprint: USB_A_Kycon_KUSBXHT-SB-AS1N-B30-NF_Horizontal
+  manufacturer: Jing Extension of the Electronic Co.
+  mpn: C42411
+  description: USB A TYPE RECEPTACLE, SHORT BODY
+- ref: J4
+  value: USB-C
+  footprint: USB-C
+  manufacturer: DEALON
+  mpn: USB-TYPE-C-019
+  description: CONN RCPT USB2.0 TYPE-C 16POS
+- ref: J5
+  value: MEZZANINE
+  footprint: Amphenol_10132798-03
+  manufacturer: Amphenol
+  mpn: 10132798-031100LF
+  description: CONN RCPT 30POS SMD GOLD
+- ref: J6
+  value: MCU_SWD
+  footprint: SWD_CONNECTOR_LARGE_BOX
+  manufacturer: Samtec
+  mpn: FTSH-105-01-F-D-K
+  description: CONN HEADER VERT 10POS 1.27MM
+- ref: J7
+  value: 2x6 header
+  footprint: 2X6
+  mpn: DW254W-22-12-85
+  manufacturer: DEALON
+  description: CONN HDR 12POS 0.1 GOLD PCB R/A
+- ref: J8
+  value: 2x6 header
+  footprint: 2X6
+  mpn: DW254W-22-12-85
+  manufacturer: DEALON
+  description: CONN HDR 12POS 0.1 GOLD PCB R/A
+- ref: Q1
+  value: P-channel MOSFET
+  footprint: Vishay_PowerPAK_SC70-6L_Single
+  manufacturer: Vishay Siliconix
+  mpn: SIA483ADJ-T1-GE3
+- ref: Q10
+  value: 2PNP
+  footprint: SOT-363_SC-70-6
+  manufacturer: Yangzhou Yangjie
+  mpn: BC857BS
+  description: PNP+PNP TRANS 45V 0.2A SOT-363
+- ref: Q11
+  value: 2NPN
+  footprint: SOT-363_SC-70-6
+  manufacturer: Yangzhou Yangjie
+  mpn: BC847BS
+  description: SOT-363 NPN+NPN 0.3W 0.1A 50V
+- ref: Q12
+  value: P-channel MOSFET
+  footprint: SOT-23-3
+  manufacturer: Yangzhou Yangjie
+  mpn: YJL3401A
+  description: P-CH MOSFET 30V 4.4A SOT-23-3L
+- ref: Q13
+  value: 2PNP
+  footprint: SOT-363_SC-70-6
+  manufacturer: Yangzhou Yangjie
+  mpn: BC857BS
+  description: PNP+PNP TRANS 45V 0.2A SOT-363
+- ref: Q14
+  value: 2PNP
+  footprint: SOT-363_SC-70-6
+  manufacturer: Yangzhou Yangjie
+  mpn: BC857BS
+  description: PNP+PNP TRANS 45V 0.2A SOT-363
+- ref: Q15
+  value: 2PNP
+  footprint: SOT-363_SC-70-6
+  manufacturer: Yangzhou Yangjie
+  mpn: BC857BS
+  description: PNP+PNP TRANS 45V 0.2A SOT-363
+- ref: Q16
+  value: 2NPN
+  footprint: SOT-363_SC-70-6
+  manufacturer: Yangzhou Yangjie
+  mpn: BC847BS
+  description: SOT-363 NPN+NPN 0.3W 0.1A 50V
+- ref: Q2
+  value: P-channel MOSFET
+  footprint: Vishay_PowerPAK_SC70-6L_Single
+  manufacturer: Vishay Siliconix
+  mpn: SIA483ADJ-T1-GE3
+- ref: Q3
+  value: 2NPN
+  footprint: SOT-363_SC-70-6
+  manufacturer: Yangzhou Yangjie
+  mpn: BC847BS
+  description: SOT-363 NPN+NPN 0.3W 0.1A 50V
+- ref: Q4
+  value: P-channel MOSFET
+  footprint: Vishay_PowerPAK_SC70-6L_Single
+  manufacturer: Vishay Siliconix
+  mpn: SIA483ADJ-T1-GE3
+- ref: Q5
+  value: P-channel MOSFET
+  footprint: Vishay_PowerPAK_SC70-6L_Single
+  manufacturer: Vishay Siliconix
+  mpn: SIA483ADJ-T1-GE3
+- ref: Q6
+  value: P-channel MOSFET
+  footprint: Vishay_PowerPAK_SC70-6L_Single
+  manufacturer: Vishay Siliconix
+  mpn: SIA483ADJ-T1-GE3
+- ref: Q7
+  value: P-channel MOSFET
+  footprint: Vishay_PowerPAK_SC70-6L_Single
+  manufacturer: Vishay Siliconix
+  mpn: SIA483ADJ-T1-GE3
+- ref: Q8
+  value: 2NPN
+  footprint: SOT-363_SC-70-6
+  manufacturer: Yangzhou Yangjie
+  mpn: BC847BS
+  description: SOT-363 NPN+NPN 0.3W 0.1A 50V
+- ref: Q9
+  value: P-channel MOSFET
+  footprint: SOT-23-3
+  manufacturer: Yangzhou Yangjie
+  mpn: YJL3401A
+  description: P-CH MOSFET 30V 4.4A SOT-23-3L
+- ref: R1
+  value: 20mohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3BWFR020V
+  description: RES 0.02 OHM 1% 1/3W 0603
+- ref: R10
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+  pullup: D13.A
+- ref: R101
+  value: 8.06kohm
+  footprint: '0402'
+  mpn: ERJ-2RKF8061X
+  manufacturer: Panasonic
+  description: RES SMD 8.06K OHM 1% 1/10W 0402
+  pullup: SW1.1
+- ref: R102
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+  pulldown: /Debugger/FPGA_CONFIG.nINIT
+- ref: R103
+  value: 0ohm
+  footprint: '0402'
+  mpn: RC0402FR-070RL
+  manufacturer: Yageo
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R104
+  value: 18.7kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2RKF1872X
+  description: RES SMD 18.7K OHM 1% 1/10W 0402
+- ref: R105
+  value: 8.06kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2RKF8061X
+  description: RES SMD 8.06K OHM 1% 1/10W 0402
+- ref: R106
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pullup: SW3.1
+- ref: R107
+  value: 33kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2GEJ333X
+  description: RES SMD 33K OHM 5% 1/10W 0402
+- ref: R108
+  value: 330ohm
+  footprint: '0402'
+  mpn: RC0402FR-13330RL
+  manufacturer: Yageo
+  description: RES 330 OHM 1% 1/16W 0402
+- ref: R109
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+  pullup: /FPGA Bank 8 and Configuration Flash/FPGA_FLASH_CLK
+- ref: R11
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+  pullup: D14.A
+- ref: R110
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+  pullup: /FPGA Bank 8 and Configuration Flash/nCS
+- ref: R111
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pullup: /Debugger/MCU_SWCLK
+- ref: R112
+  value: 0ohm
+  footprint: '0402'
+  mpn: RC0402FR-070RL
+  manufacturer: Yageo
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R113
+  value: 0ohm
+  footprint: '0402'
+  mpn: RC0402FR-070RL
+  manufacturer: Yageo
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R114
+  value: 0ohm
+  footprint: '0402'
+  mpn: RC0402FR-070RL
+  manufacturer: Yageo
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R115
+  value: 0ohm
+  footprint: '0402'
+  mpn: RC0402FR-070RL
+  manufacturer: Yageo
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R116
+  value: 0ohm
+  footprint: '0402'
+  mpn: RC0402FR-070RL
+  manufacturer: Yageo
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R117
+  value: 0ohm
+  footprint: '0402'
+  mpn: RC0402FR-070RL
+  manufacturer: Yageo
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R118
+  value: 1kohm
+  footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
+  description: RES 1K OHM 5% 1/16W 0402
+- ref: R119
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+  pulldown: /FPGA Banks 6 and 7/RAM.nRESET
+- ref: R12
+  value: 330ohm
+  footprint: '0402'
+  mpn: RC0402FR-13330RL
+  manufacturer: Yageo
+  description: RES 330 OHM 1% 1/16W 0402
+- ref: R120
+  value: 100kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ104X
+  manufacturer: Panasonic
+  description: RES SMD 100K OHM 5% 1/10W 0402
+  pulldown: Q15.B1
+- ref: R13
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+  pullup: /FPGA Bank 8 and Configuration Flash/FPGA_CFG1
+- ref: R14
+  value: 330ohm
+  footprint: '0402'
+  mpn: RC0402FR-13330RL
+  manufacturer: Yageo
+  description: RES 330 OHM 1% 1/16W 0402
+- ref: R15
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pullup: /CONTROL Port/CONTROL_SWITCH
+- ref: R16
+  value: 8.06kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2RKF8061X
+  description: RES SMD 8.06K OHM 1% 1/10W 0402
+  pulldown: /CONTROL Port/CONTROL PHY/RBIAS
+- ref: R17
+  value: 20kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402JR-0720KL
+  description: RES SMD 20K OHM 5% 1/16W 0402
+- ref: R2
+  value: 20mohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3BWFR020V
+  description: RES 0.02 OHM 1% 1/3W 0603
+- ref: R22
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pulldown: /CONTROL Port/CONTROL_PHY.nRESET
+- ref: R25
+  value: 820kohm
+  footprint: '0402'
+  mpn: RC0402JR-07820KL
+  manufacturer: Yageo
+  description: RES 820K OHM 5% 1/16W 0402
+  pullup: /Debugger/nBTN_RESET
+- ref: R26
+  value: 1kohm
+  footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
+  description: RES 1K OHM 5% 1/16W 0402
+- ref: R27
+  value: 1kohm
+  footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
+  description: RES 1K OHM 5% 1/16W 0402
+- ref: R28
+  value: 1kohm
+  footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
+  description: RES 1K OHM 5% 1/16W 0402
+- ref: R29
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+- ref: R3
+  value: 33kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ333X
+  manufacturer: Panasonic
+  description: RES SMD 33K OHM 5% 1/10W 0402
+- ref: R30
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+- ref: R31
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+- ref: R32
+  value: 0ohm
+  footprint: '0402'
+  mpn: RC0402FR-070RL
+  manufacturer: Yageo
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R33
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+  pullup: /AUX Port/AUX_TYPE_C.SDA
+- ref: R34
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+  pulldown: /CONTROL Port/CONTROL_CC1
+- ref: R35
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+  pulldown: /CONTROL Port/CONTROL_CC2
+- ref: R38
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+  pullup: /AUX Port/AUX_TYPE_C.SCL
+- ref: R39
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pullup: /AUX Port/AUX_TYPE_C.nINT
+- ref: R4
+  value: 8.06kohm
+  footprint: '0402'
+  mpn: ERJ-2RKF8061X
+  manufacturer: Panasonic
+  description: RES SMD 8.06K OHM 1% 1/10W 0402
+  pullup: D30.K
+- ref: R40
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+- ref: R41
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pulldown: Q3.B1
+- ref: R42
+  value: 20mohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3BWFR020V
+  description: RES 0.02 OHM 1% 1/3W 0603
+- ref: R43
+  value: 33kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2GEJ333X
+  description: RES SMD 33K OHM 5% 1/10W 0402
+  pullup: /Power Distribution and Monitoring/nPOWER_GOOD
+- ref: R44
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+- ref: R45
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+- ref: R46
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+- ref: R47
+  value: 33kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ333X
+  manufacturer: Panasonic
+  description: RES SMD 33K OHM 5% 1/10W 0402
+- ref: R48
+  value: 33kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ333X
+  manufacturer: Panasonic
+  description: RES SMD 33K OHM 5% 1/10W 0402
+- ref: R49
+  value: 33kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ333X
+  manufacturer: Panasonic
+  description: RES SMD 33K OHM 5% 1/10W 0402
+- ref: R5
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+- ref: R50
+  value: 0ohm
+  footprint: '0402'
+  mpn: RC0402FR-070RL
+  manufacturer: Yageo
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R51
+  value: 8.06kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2RKF8061X
+  description: RES SMD 8.06K OHM 1% 1/10W 0402
+  pulldown: D30.A
+- ref: R52
+  value: 29.4kohm
+  footprint: '0402'
+  mpn: RC0402FR-0729K4L
+  manufacturer: Yageo
+  description: RES 29.4K OHM 1% 1/16W 0402
+  pullup: U6.PA07
+- ref: R53
+  value: 8.06kohm
+  footprint: '0402'
+  mpn: ERJ-2RKF8061X
+  manufacturer: Panasonic
+  description: RES SMD 8.06K OHM 1% 1/10W 0402
+  pulldown: U6.PA07
+- ref: R54
+  value: 0ohm
+  footprint: '0402'
+  mpn: RC0402FR-070RL
+  manufacturer: Yageo
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R55
+  value: 820kohm
+  footprint: '0402'
+  mpn: RC0402JR-07820KL
+  manufacturer: Yageo
+  description: RES 820K OHM 5% 1/16W 0402
+- ref: R56
+  value: 820kohm
+  footprint: '0402'
+  mpn: RC0402JR-07820KL
+  manufacturer: Yageo
+  description: RES 820K OHM 5% 1/16W 0402
+- ref: R57
+  value: 1kohm
+  footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
+  description: RES 1K OHM 5% 1/16W 0402
+- ref: R58
+  value: 1kohm
+  footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
+  description: RES 1K OHM 5% 1/16W 0402
+- ref: R59
+  value: 20mohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3BWFR020V
+  description: RES 0.02 OHM 1% 1/3W 0603
+- ref: R6
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+  pullup: /Debugger/FPGA_CONFIG.nPROGRAM
+- ref: R60
+  value: 33kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ333X
+  manufacturer: Panasonic
+  description: RES SMD 33K OHM 5% 1/10W 0402
+- ref: R61
+  value: 33kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ333X
+  manufacturer: Panasonic
+  description: RES SMD 33K OHM 5% 1/10W 0402
+- ref: R62
+  value: 100kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ104X
+  manufacturer: Panasonic
+  description: RES SMD 100K OHM 5% 1/10W 0402
+- ref: R63
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+- ref: R64
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pulldown: Q3.B2
+- ref: R65
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+- ref: R66
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pulldown: Q8.B1
+- ref: R67
+  value: 18.7kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2RKF1872X
+  description: RES SMD 18.7K OHM 1% 1/10W 0402
+- ref: R68
+  value: 820kohm
+  footprint: '0402'
+  mpn: RC0402JR-07820KL
+  manufacturer: Yageo
+  description: RES 820K OHM 5% 1/16W 0402
+- ref: R69
+  value: 33kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2GEJ333X
+  description: RES SMD 33K OHM 5% 1/10W 0402
+- ref: R7
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+  pullup: D10.A
+- ref: R70
+  value: 33kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2GEJ333X
+  description: RES SMD 33K OHM 5% 1/10W 0402
+  pulldown: D16.A
+- ref: R71
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+- ref: R72
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pulldown: Q11.B1
+- ref: R73
+  value: 18.7kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2RKF1872X
+  description: RES SMD 18.7K OHM 1% 1/10W 0402
+  pulldown: D17.A
+- ref: R74
+  value: 18.7kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2RKF1872X
+  description: RES SMD 18.7K OHM 1% 1/10W 0402
+- ref: R75
+  value: 820kohm
+  footprint: '0402'
+  mpn: RC0402JR-07820KL
+  manufacturer: Yageo
+  description: RES 820K OHM 5% 1/16W 0402
+- ref: R76
+  value: 33kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2GEJ333X
+  description: RES SMD 33K OHM 5% 1/10W 0402
+- ref: R77
+  value: 33kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2GEJ333X
+  description: RES SMD 33K OHM 5% 1/10W 0402
+  pulldown: D20.A
+- ref: R78
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+- ref: R79
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pulldown: Q11.B2
+- ref: R8
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+  pullup: D11.A
+- ref: R80
+  value: 18.7kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2RKF1872X
+  description: RES SMD 18.7K OHM 1% 1/10W 0402
+  pulldown: D21.A
+- ref: R81
+  value: 57.6kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-0757K6L
+  description: RES 57.6K OHM 1% 1/16W 0402
+  pullup: U3.ADJ/NC
+- ref: R82
+  value: 18.7kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2RKF1872X
+  description: RES SMD 18.7K OHM 1% 1/10W 0402
+  pulldown: U3.ADJ/NC
+- ref: R83
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+  pullup: /FPGA Banks 0 and 1/MON.SCL
+- ref: R84
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+  pullup: /FPGA Banks 0 and 1/MON.SDA
+- ref: R85
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pullup: /FPGA Banks 0 and 1/MON.SLOW
+- ref: R86
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pullup: /FPGA Banks 0 and 1/MON.GPIO
+- ref: R87
+  value: 5.1kohm
+  footprint: '0402'
+  mpn: RC0402JR-075K1L
+  manufacturer: Yageo
+  description: RES 5.1K OHM 5% 1/16W 0402
+  pullup: /FPGA Banks 0 and 1/MON.nPWRDN
+- ref: R88
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+- ref: R89
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pulldown: Q8.B2
+- ref: R9
+  value: 2.2kohm
+  footprint: '0402'
+  mpn: RC0402JR-072K2L
+  manufacturer: Yageo
+  description: RES 2.2K OHM 5% 1/16W 0402
+  pullup: D12.A
+- ref: R90
+  value: 100kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ104X
+  manufacturer: Panasonic
+  description: RES SMD 100K OHM 5% 1/10W 0402
+  pulldown: D27.A
+- ref: R91
+  value: 100kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ104X
+  manufacturer: Panasonic
+  description: RES SMD 100K OHM 5% 1/10W 0402
+  pulldown: Q13.B1
+- ref: R92
+  value: 100kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ104X
+  manufacturer: Panasonic
+  description: RES SMD 100K OHM 5% 1/10W 0402
+- ref: R93
+  value: 100kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ104X
+  manufacturer: Panasonic
+  description: RES SMD 100K OHM 5% 1/10W 0402
+- ref: R94
+  value: 100kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ104X
+  manufacturer: Panasonic
+  description: RES SMD 100K OHM 5% 1/10W 0402
+  pulldown: D28.A
+- ref: R95
+  value: 100kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ104X
+  manufacturer: Panasonic
+  description: RES SMD 100K OHM 5% 1/10W 0402
+  pulldown: Q14.B1
+- ref: R96
+  value: 100kohm
+  footprint: '0402'
+  mpn: ERJ-2GEJ104X
+  manufacturer: Panasonic
+  description: RES SMD 100K OHM 5% 1/10W 0402
+  pulldown: D29.A
+- ref: R99
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402JR-0710KL
+  manufacturer: Yageo
+  description: RES 10K OHM 5% 1/16W 0402
+  pullup: /AUX Port/AUX_TYPE_C.nFAULT
+- ref: RN1
+  value: 33ohm
+  footprint: R_Array_Convex
+  manufacturer: Yageo
+  mpn: YC124-JR-0733RL
+  description: RES ARRAY 4 RES 33 OHM 0804
+- ref: RN2
+  value: 33ohm
+  footprint: R_Array_Convex
+  manufacturer: Yageo
+  mpn: YC124-JR-0733RL
+  description: RES ARRAY 4 RES 33 OHM 0804
+- ref: RN3
+  value: 33ohm
+  footprint: R_Array_Convex
+  manufacturer: Yageo
+  mpn: YC124-JR-0733RL
+  description: RES ARRAY 4 RES 33 OHM 0804
+- ref: RN4
+  value: 33ohm
+  footprint: R_Array_Convex
+  manufacturer: Yageo
+  mpn: YC124-JR-0733RL
+  description: RES ARRAY 4 RES 33 OHM 0804
+- ref: RN5
+  value: 0ohm
+  footprint: R_Array_Convex
+  manufacturer: Yageo
+  mpn: YC124-JR-070RL
+  description: RES ARRAY 4 RES ZERO OHM 0804
+- ref: RN6
+  value: 0ohm
+  footprint: R_Array_Convex
+  manufacturer: Yageo
+  mpn: YC124-JR-070RL
+  description: RES ARRAY 4 RES ZERO OHM 0804
+- ref: RN7
+  value: 0ohm
+  footprint: R_Array_Convex
+  manufacturer: Yageo
+  mpn: YC124-JR-070RL
+  description: RES ARRAY 4 RES ZERO OHM 0804
+- ref: SW1
+  value: BTN_PROGRAM
+  footprint: SW_Tactile_SPST_Angled_TC-1109DE-B-F
+  manufacturer: XKB
+  mpn: TC-1109DE-B-F
+- ref: SW2
+  value: BTN_RESET
+  footprint: SW_Tactile_SPST_Angled_TC-1109DE-B-F
+  manufacturer: XKB
+  mpn: TC-1109DE-B-F
+- ref: SW3
+  value: BTN_USER
+  footprint: SW_Tactile_SPST_Angled_TC-1109DE-B-F
+  manufacturer: XKB
+  mpn: TC-1109DE-B-F
+- ref: U1
+  value: PAC1954
+  footprint: QFN-16-1EP
+  manufacturer: Microchip
+  mpn: PAC1954T-E/4MX
+  description: IC CURRENT/VOLT MON 1% 16VQFN
+- ref: U10
+  value: HyperRAM
+  footprint: BGA-24
+  manufacturer: Winbond
+  mpn: W956A8MBYA6I
+  description: DRAM 64Mb HyperRAM x8, 166MHz, Ind temp, 3.0V
+- ref: U12
+  value: FUSB302B
+  footprint: WQFN-14-1EP
+  manufacturer: onsemi
+  mpn: FUSB302BMPX
+  description: IC USB TYPE C CTLR PROGR 14-MLP
+- ref: U14
+  value: DPO2036
+  footprint: Diodes_UQFN2020-12_Type-B
+  manufacturer: Diodes Inc.
+  mpn: DPO2036DBB-7
+  description: DATALINE OVER VOLTAGE PROTECTION
+- ref: U15
+  value: 1V8REG
+  footprint: SOT-23-5
+  manufacturer: Microchip
+  mpn: MIC5504-1.8YM5-TR
+  description: IC REG LINEAR 1.8V 300MA SOT23-5
+- ref: U16
+  value: PI3USB102G
+  footprint: Diodes_10-TQFN_ZL
+  manufacturer: Diodes Inc.
+  mpn: PI3USB102GZLEX
+  description: IC USB 2.0 SWITCH 2:1 10TQFN
+- ref: U3
+  value: 3V3REG
+  footprint: DFN-8-1EP
+  manufacturer: Diodes Inc.
+  mpn: AP7361EA-33FGE-7
+  description: LDO CMOS HICURR U-DFN3030-8
+- ref: U4
+  value: 1V15REG
+  footprint: SOT-23-5
+  manufacturer: Toshiba
+  mpn: TCR2EF115,LM(CT
+  description: IC REG LINEAR 1.15V 200MA SMV
+- ref: U5
+  value: 2V5REG
+  footprint: SOT-23-5
+  manufacturer: Microchip
+  mpn: MIC5504-2.5YM5-TR
+  description: IC REG LINEAR 2.5V 300MA SOT23-5
+- ref: U6
+  value: ATSAMD11
+  footprint: QFN-24-1EP
+  manufacturer: Microchip
+  mpn: ATSAMD11D14A-MUT
+  description: IC MCU 32BIT 16KB FLASH 24QFN
+- ref: U7
+  value: W25Q32JVSS
+  footprint: SOIC-8
+  manufacturer: Winbond
+  mpn: W25Q32JVSSIQ
+  description: IC FLASH 32M SPI 133MHZ 8SOIC
+- ref: U8
+  value: USB3343-CP
+  footprint: VQFN-24-1EP
+  manufacturer: Microchip
+  mpn: USB3343-CP
+  description: IC TRANSCEIVER 1/1 24QFN
+- ref: Y1
+  value: Osc60MHz
+  footprint: SMD3225
+  manufacturer: SiTIME
+  mpn: SIT1602BC-23-33E-60.000000E
+  description: MEMS OSC XO 60.0000MHZ H/LV-CMOS
+nets:
+- name: +1V1
+  pins:
+  - C1.1
+  - C11.1
+  - C13.1
+  - C15.1
+  - C17.1
+  - C29.1
+  - C3.1
+  - C7.1
+  - C9.1
+  - IC1.VCC_1
+  - IC1.VCC_2
+  - IC1.VCC_3
+  - IC1.VCC_4
+  - IC1.VCC_5
+  - IC1.VCC_6
+  - U4.VOUT
+- name: +2V5
+  pins:
+  - C22.1
+  - C24.1
+  - C26.1
+  - C30.1
+  - IC1.VCCAUX_1
+  - IC1.VCCAUX_2
+  - U5.VOUT
+- name: +3V3
+  pins:
+  - C10.1
+  - C12.1
+  - C14.1
+  - C16.1
+  - C18.1
+  - C2.1
+  - C20.1
+  - C23.1
+  - C27.1
+  - C28.1
+  - C33.1
+  - C34.1
+  - C35.1
+  - C36.1
+  - C38.1
+  - C39.1
+  - C4.1
+  - C40.1
+  - C49.1
+  - C58.1
+  - C59.1
+  - C61.1
+  - C73.1
+  - C74.1
+  - C79.1
+  - C8.1
+  - C80.1
+  - C81.1
+  - D2.A
+  - D3.A
+  - D4.A
+  - D5.A
+  - D6.A
+  - D7.A
+  - IC1.D6/PB4B
+  - IC1.PL29C
+  - IC1.PL35C
+  - IC1.PL41A
+  - IC1.PL44A
+  - IC1.PL44C
+  - IC1.PL44D
+  - IC1.PL47A
+  - IC1.PR17D
+  - IC1.PR29B
+  - IC1.PR29D
+  - IC1.PR38A
+  - IC1.PR41A
+  - IC1.PR47A
+  - IC1.PR47C
+  - IC1.PR47D
+  - IC1.PR8D
+  - IC1.PT20A
+  - IC1.PT24A
+  - IC1.PT47A
+  - IC1.PT47B
+  - IC1.PT51B
+  - IC1.VCCIO0_1
+  - IC1.VCCIO0_2
+  - IC1.VCCIO1_1
+  - IC1.VCCIO1_2
+  - IC1.VCCIO2_1
+  - IC1.VCCIO2_2
+  - IC1.VCCIO3_1
+  - IC1.VCCIO3_2
+  - IC1.VCCIO6_1
+  - IC1.VCCIO6_2
+  - IC1.VCCIO8
+  - J5.Pin_15
+  - J5.Pin_16
+  - J6.VTref
+  - J7.Pin_12
+  - J7.Pin_6
+  - J8.Pin_12
+  - J8.Pin_6
+  - R10.1
+  - R101.1
+  - R106.1
+  - R109.1
+  - R11.1
+  - R110.1
+  - R111.1
+  - R13.2
+  - R15.1
+  - R25.1
+  - R32.2
+  - R33.1
+  - R38.1
+  - R39.1
+  - R4.1
+  - R43.1
+  - R52.1
+  - R54.1
+  - R6.1
+  - R7.1
+  - R8.1
+  - R81.1
+  - R83.1
+  - R84.1
+  - R85.1
+  - R86.1
+  - R87.1
+  - R9.1
+  - R99.1
+  - U1.VDD
+  - U12.VDD@3
+  - U12.VDD@4
+  - U14.VSYS
+  - U15.EN
+  - U15.VIN
+  - U16.VCC
+  - U3.OUT
+  - U4.EN
+  - U4.VIN
+  - U5.EN
+  - U5.VIN
+  - U6.VDD
+  - U7.VCC
+  - U8.CLKOUT
+  - U8.ID
+  - U8.VBAT
+  - U8.VDD33
+  - U8.VDDIO
+  - Y1.EN
+  - Y1.VDD
+- name: +5V
+  pins:
+  - C6.1
+  - D1.K
+  - D19.K
+  - D8.K
+  - D9.K
+  - U3.EN
+  - U3.IN
+- name: /AUX Port/AUX PHY/VBUS_CLAMPED
+  pins: [D15.K, R44.1, U12.VBUS]
+- name: /AUX Port/AUX Type C Controller/CC1
+  pins: [C52.1, J1.CC1, U14.CC1C]
+- name: /AUX Port/AUX Type C Controller/CC1S
+  pins: [U12.CC1@10, U12.CC1@11, U14.CC1S]
+- name: /AUX Port/AUX Type C Controller/CC2
+  pins: [C53.1, J1.CC2, U14.CC2C]
+- name: /AUX Port/AUX Type C Controller/CC2S
+  pins: [U12.CC2@1, U12.CC2@14, U14.CC2S]
+- name: /AUX Port/AUX Type C Controller/VCONN
+  pins: [C51.1, R32.1, U12.VCONN@12, U12.VCONN@13]
+- name: /AUX Port/AUX_D+
+  pins: [FL1.2, J1.D+@A6, J1.D+@B6]
+- name: /AUX Port/AUX_D-
+  pins: [FL1.4, J1.D-@A7, J1.D-@B7]
+- name: /AUX Port/AUX_SBU1
+  pins: [J1.SBU1, U14.SBU2C]
+- name: /AUX Port/AUX_SBU2
+  pins: [J1.SBU2, U14.SBU1C]
+- name: /AUX Port/AUX_TYPE_C.SBU1S
+  pins: [IC1.PR17B, U14.SBU2S]
+- name: /AUX Port/AUX_TYPE_C.SBU2S
+  pins: [IC1.PR20D, U14.SBU1S]
+- name: /AUX Port/AUX_TYPE_C.SCL
+  pins: [IC1.PR17A, R38.2, U12.SCL]
+- name: /AUX Port/AUX_TYPE_C.SDA
+  pins: [IC1.PR14C, R33.2, U12.SDA]
+- name: /AUX Port/AUX_TYPE_C.nFAULT
+  pins: [IC1.PR20C, R99.2, U14.FAULTB]
+- name: /AUX Port/AUX_TYPE_C.nINT
+  pins: [IC1.PR14D, R39.2, U12.INT_N]
+- name: /CONTROL Port/CONTROL PHY/CLK
+  pins: [RN5.R1.2, U8.REFCLK/XI]
+- name: /CONTROL Port/CONTROL PHY/DATA0
+  pins: [RN6.R1.2, U8.DATA0]
+- name: /CONTROL Port/CONTROL PHY/DATA1
+  pins: [RN6.R2.2, U8.DATA1]
+- name: /CONTROL Port/CONTROL PHY/DATA2
+  pins: [RN6.R3.2, U8.DATA2]
+- name: /CONTROL Port/CONTROL PHY/DATA3
+  pins: [RN6.R4.2, U8.DATA3]
+- name: /CONTROL Port/CONTROL PHY/DATA4
+  pins: [RN7.R1.2, U8.DATA4]
+- name: /CONTROL Port/CONTROL PHY/DATA5
+  pins: [RN7.R2.2, U8.DATA5]
+- name: /CONTROL Port/CONTROL PHY/DATA6
+  pins: [RN7.R3.2, U8.DATA6]
+- name: /CONTROL Port/CONTROL PHY/DATA7
+  pins: [RN7.R4.2, U8.DATA7]
+- name: /CONTROL Port/CONTROL PHY/DIR
+  pins: [RN5.R3.2, U8.DIR]
+- name: /CONTROL Port/CONTROL PHY/NXT
+  pins: [RN5.R4.2, U8.NXT]
+- name: /CONTROL Port/CONTROL PHY/PHY_D+
+  pins: [FL3.1, U8.D+]
+- name: /CONTROL Port/CONTROL PHY/PHY_D-
+  pins: [FL3.3, U8.D-]
+- name: /CONTROL Port/CONTROL PHY/RBIAS
+  pins: [R16.2, U8.RBIAS]
+- name: /CONTROL Port/CONTROL PHY/STP
+  pins: [RN5.R2.2, U8.STP]
+- name: /CONTROL Port/CONTROL PHY/VBUS_CLAMPED
+  pins: [D22.K, R17.1, R46.1]
+- name: /CONTROL Port/CONTROL PHY/VBUS_SENSE
+  pins: [R17.2, U8.VBUS]
+- name: /CONTROL Port/CONTROL PHY/VDD18
+  pins: [C37.1, U8.VDD18]
+- name: /CONTROL Port/CONTROL_CC1
+  pins: [C25.1, J2.CC1, R34.2]
+- name: /CONTROL Port/CONTROL_CC2
+  pins: [C47.1, J2.CC2, R35.2]
+- name: /CONTROL Port/CONTROL_D+
+  pins: [J2.D+@A6, J2.D+@B6, R56.2, U16.D-]
+- name: /CONTROL Port/CONTROL_D-
+  pins: [J2.D-@A7, J2.D-@B7, R55.1, U16.D+]
+- name: /CONTROL Port/CONTROL_MCU_D+
+  pins: [U16.2D-, U6.PA25]
+- name: /CONTROL Port/CONTROL_MCU_D-
+  pins: [U16.2D+, U6.PA24]
+- name: /CONTROL Port/CONTROL_PHY.CLK
+  pins: [IC1.PR32C, RN5.R1.1]
+- name: /CONTROL Port/CONTROL_PHY.DATA0
+  pins: [IC1.PR32A, RN6.R1.1]
+- name: /CONTROL Port/CONTROL_PHY.DATA1
+  pins: [IC1.PR35D, RN6.R2.1]
+- name: /CONTROL Port/CONTROL_PHY.DATA2
+  pins: [IC1.PR35A, RN6.R3.1]
+- name: /CONTROL Port/CONTROL_PHY.DATA3
+  pins: [IC1.PR32B, RN6.R4.1]
+- name: /CONTROL Port/CONTROL_PHY.DATA4
+  pins: [IC1.PR35B, RN7.R1.1]
+- name: /CONTROL Port/CONTROL_PHY.DATA5
+  pins: [IC1.PR38C, RN7.R2.1]
+- name: /CONTROL Port/CONTROL_PHY.DATA6
+  pins: [IC1.PR38D, RN7.R3.1]
+- name: /CONTROL Port/CONTROL_PHY.DATA7
+  pins: [IC1.PR38B, RN7.R4.1]
+- name: /CONTROL Port/CONTROL_PHY.DIR
+  pins: [IC1.PR26C, RN5.R3.1]
+- name: /CONTROL Port/CONTROL_PHY.NXT
+  pins: [IC1.PR26D, RN5.R4.1]
+- name: /CONTROL Port/CONTROL_PHY.STP
+  pins: [IC1.PR26B, RN5.R2.1]
+- name: /CONTROL Port/CONTROL_PHY.nRESET
+  pins: [IC1.PR26A, R22.1, U8.nRESET]
+- name: /CONTROL Port/CONTROL_RESET_DETECT
+  pins: [C62.1, R55.2, R56.1, U6.PA05]
+- name: /CONTROL Port/CONTROL_SWITCH
+  pins: [R15.2, U16.S, U6.PA06]
+- name: /Clock and Miscellaneous/CLOCK_60MHZ
+  pins: [IC1.PT29B, R108.1]
+- name: /Debugger/FPGA_ADV
+  pins: [IC1.D7/PB4A, U6.PA09/XOUT]
+- name: /Debugger/FPGA_CONFIG.DONE
+  pins: [IC1.DONE, U6.PA04]
+- name: /Debugger/FPGA_CONFIG.nINIT
+  pins: [IC1.nINIT, R102.1, R118.1]
+- name: /Debugger/FPGA_CONFIG.nPROGRAM
+  pins: [IC1.nPROGRAM, R5.1, R6.2, U6.PA08/XIN]
+- name: /Debugger/FPGA_JTAG.TCK
+  pins: [IC1.TCK, U6.PA15]
+- name: /Debugger/FPGA_JTAG.TDI
+  pins: [IC1.PR41B, IC1.TDI, U6.PA14]
+- name: /Debugger/FPGA_JTAG.TDO
+  pins: [IC1.TDO, U6.PA10]
+- name: /Debugger/FPGA_JTAG.TMS
+  pins: [IC1.PR41D, IC1.TMS, U6.PA11]
+- name: /Debugger/LED10
+  pins: [D10.K, U6.PA16]
+- name: /Debugger/LED11
+  pins: [D11.K, U6.PA17]
+- name: /Debugger/LED12
+  pins: [D12.K, U6.PA22]
+- name: /Debugger/LED13
+  pins: [D13.K, U6.PA23]
+- name: /Debugger/LED14
+  pins: [D14.K, U6.PA27]
+- name: /Debugger/MCU_SWCLK
+  pins: [J6.SWCLK/TCK, R111.2, U6.PA30/SWCLK]
+- name: /Debugger/MCU_SWDIO
+  pins: [J6.SWDIO/TMS, U6.PA31/SWDIO]
+- name: /Debugger/nBTN_PROGRAM
+  pins: [C76.1, R104.1, U6.PA02]
+- name: /Debugger/nBTN_RESET
+  pins: [J6.nRESET, R105.1, R25.2, SW2.1]
+- name: /Expansion Interfaces/A1
+  pins: [J7.Pin_1, RN1.R1.2]
+- name: /Expansion Interfaces/A10
+  pins: [J7.Pin_10, RN2.R2.2]
+- name: /Expansion Interfaces/A2
+  pins: [J7.Pin_2, RN1.R2.2]
+- name: /Expansion Interfaces/A3
+  pins: [J7.Pin_3, RN2.R3.2]
+- name: /Expansion Interfaces/A4
+  pins: [J7.Pin_4, RN2.R1.2]
+- name: /Expansion Interfaces/A7
+  pins: [J7.Pin_7, RN1.R4.2]
+- name: /Expansion Interfaces/A8
+  pins: [J7.Pin_8, RN1.R3.2]
+- name: /Expansion Interfaces/A9
+  pins: [J7.Pin_9, RN2.R4.2]
+- name: /Expansion Interfaces/B1
+  pins: [J8.Pin_1, RN4.R4.2]
+- name: /Expansion Interfaces/B10
+  pins: [J8.Pin_10, RN3.R1.2]
+- name: /Expansion Interfaces/B2
+  pins: [J8.Pin_2, RN4.R2.2]
+- name: /Expansion Interfaces/B3
+  pins: [J8.Pin_3, RN3.R4.2]
+- name: /Expansion Interfaces/B4
+  pins: [J8.Pin_4, RN3.R2.2]
+- name: /Expansion Interfaces/B7
+  pins: [J8.Pin_7, RN4.R3.2]
+- name: /Expansion Interfaces/B8
+  pins: [J8.Pin_8, RN4.R1.2]
+- name: /Expansion Interfaces/B9
+  pins: [J8.Pin_9, RN3.R3.2]
+- name: /Expansion Interfaces/MEZZANINE10
+  pins: [IC1.PR5D, J5.Pin_10]
+- name: /Expansion Interfaces/MEZZANINE11
+  pins: [IC1.PR5C, J5.Pin_11]
+- name: /Expansion Interfaces/MEZZANINE12
+  pins: [IC1.PR11B, J5.Pin_12]
+- name: /Expansion Interfaces/MEZZANINE13
+  pins: [IC1.PR11A, J5.Pin_13]
+- name: /Expansion Interfaces/MEZZANINE18
+  pins: [IC1.PR5A, J5.Pin_18]
+- name: /Expansion Interfaces/MEZZANINE19
+  pins: [IC1.PR5B, J5.Pin_19]
+- name: /Expansion Interfaces/MEZZANINE20
+  pins: [IC1.PR2A, J5.Pin_20]
+- name: /Expansion Interfaces/MEZZANINE21
+  pins: [IC1.PR2B, J5.Pin_21]
+- name: /Expansion Interfaces/MEZZANINE22
+  pins: [IC1.PT65B, J5.Pin_22]
+- name: /Expansion Interfaces/MEZZANINE23
+  pins: [IC1.PT60A, J5.Pin_23]
+- name: /Expansion Interfaces/MEZZANINE24
+  pins: [IC1.PT65A, J5.Pin_24]
+- name: /Expansion Interfaces/MEZZANINE25
+  pins: [IC1.PT62A, J5.Pin_25]
+- name: /Expansion Interfaces/MEZZANINE26
+  pins: [IC1.PT53B, J5.Pin_26]
+- name: /Expansion Interfaces/MEZZANINE27
+  pins: [IC1.PT56A, J5.Pin_27]
+- name: /Expansion Interfaces/MEZZANINE28
+  pins: [IC1.PT53A, J5.Pin_28]
+- name: /Expansion Interfaces/MEZZANINE3
+  pins: [IC1.PT35B, J5.Pin_3]
+- name: /Expansion Interfaces/MEZZANINE4
+  pins: [IC1.PT42A, J5.Pin_4]
+- name: /Expansion Interfaces/MEZZANINE5
+  pins: [IC1.PT44A, J5.Pin_5]
+- name: /Expansion Interfaces/MEZZANINE6
+  pins: [IC1.PT42B, J5.Pin_6]
+- name: /Expansion Interfaces/MEZZANINE7
+  pins: [IC1.PT49A, J5.Pin_7]
+- name: /Expansion Interfaces/MEZZANINE8
+  pins: [IC1.PR2D, J5.Pin_8]
+- name: /Expansion Interfaces/MEZZANINE9
+  pins: [IC1.PR2C, J5.Pin_9]
+- name: /Expansion Interfaces/PMOD_A1
+  pins: [IC1.PT38B, RN1.R1.1]
+- name: /Expansion Interfaces/PMOD_A10
+  pins: [IC1.PT44B, RN2.R2.1]
+- name: /Expansion Interfaces/PMOD_A2
+  pins: [IC1.PT38A, RN1.R2.1]
+- name: /Expansion Interfaces/PMOD_A3
+  pins: [IC1.PT51A, RN2.R3.1]
+- name: /Expansion Interfaces/PMOD_A4
+  pins: [IC1.PT56B, RN2.R1.1]
+- name: /Expansion Interfaces/PMOD_A7
+  pins: [IC1.PT35A, RN1.R4.1]
+- name: /Expansion Interfaces/PMOD_A8
+  pins: [IC1.PT33B, RN1.R3.1]
+- name: /Expansion Interfaces/PMOD_A9
+  pins: [IC1.PT40A, RN2.R4.1]
+- name: /Expansion Interfaces/PMOD_B1
+  pins: [IC1.PT11B, RN4.R4.1]
+- name: /Expansion Interfaces/PMOD_B10
+  pins: [IC1.PT29A, RN3.R1.1]
+- name: /Expansion Interfaces/PMOD_B2
+  pins: [IC1.PT15B, RN4.R2.1]
+- name: /Expansion Interfaces/PMOD_B3
+  pins: [IC1.PT22B, RN3.R4.1]
+- name: /Expansion Interfaces/PMOD_B4
+  pins: [IC1.PT27B, RN3.R2.1]
+- name: /Expansion Interfaces/PMOD_B7
+  pins: [IC1.PT15A, RN4.R3.1]
+- name: /Expansion Interfaces/PMOD_B8
+  pins: [IC1.PT18A, RN4.R1.1]
+- name: /Expansion Interfaces/PMOD_B9
+  pins: [IC1.PT18B, RN3.R3.1]
+- name: /FPGA Bank 8 and Configuration Flash/FPGA_CFG0
+  pins: [IC1.CFG0, R12.1]
+- name: /FPGA Bank 8 and Configuration Flash/FPGA_CFG1
+  pins: [IC1.CFG1, R13.1]
+- name: /FPGA Bank 8 and Configuration Flash/FPGA_CFG2
+  pins: [IC1.CFG2, R14.1]
+- name: /FPGA Bank 8 and Configuration Flash/FPGA_FLASH_CLK
+  pins: [IC1.MCLK/CCLK, R109.2, U7.CLK]
+- name: /FPGA Bank 8 and Configuration Flash/IO0
+  pins: [IC1.D0/PICO/IO0/PB11B, U7.DI(IO0)]
+- name: /FPGA Bank 8 and Configuration Flash/IO1
+  pins: [IC1.D1/POCI/IO1/PB11A, U7.DO(IO1)]
+- name: /FPGA Bank 8 and Configuration Flash/IO2
+  pins: [IC1.D2/IO2/PB9B, U7.IO2]
+- name: /FPGA Bank 8 and Configuration Flash/IO3
+  pins: [IC1.D3/IO3/PB9A, U7.IO3]
+- name: /FPGA Bank 8 and Configuration Flash/nCS
+  pins: [IC1.nHOLD/DI/BUSY/nCSSPI/PB15A, R110.2, U7.nCS]
+- name: /FPGA Bank 8 and Configuration Flash/nFPGA_SELF_PROGRAM
+  pins: [IC1.PR44B, R5.2]
+- name: /FPGA Banks 0 and 1/LED0
+  pins: [IC1.PT62B, R31.2]
+- name: /FPGA Banks 0 and 1/LED1
+  pins: [IC1.PT60B, R30.2]
+- name: /FPGA Banks 0 and 1/LED2
+  pins: [IC1.PT67A, R29.2]
+- name: /FPGA Banks 0 and 1/LED3
+  pins: [IC1.PT67B, R28.2]
+- name: /FPGA Banks 0 and 1/LED4
+  pins: [IC1.PT58A, R27.2]
+- name: /FPGA Banks 0 and 1/LED5
+  pins: [IC1.PT49B, R26.2]
+- name: /FPGA Banks 0 and 1/MON.GPIO
+  pins: [IC1.PT20B, R86.2, U1.GPIO/nALERT2]
+- name: /FPGA Banks 0 and 1/MON.SCL
+  pins: [IC1.PT24B, R83.2, U1.SCL]
+- name: /FPGA Banks 0 and 1/MON.SDA
+  pins: [IC1.PT27A, R84.2, U1.SDA]
+- name: /FPGA Banks 0 and 1/MON.SLOW
+  pins: [IC1.PT22A, R85.2, U1.SLOW/nALERT]
+- name: /FPGA Banks 0 and 1/MON.nPWRDN
+  pins: [IC1.PT13B, R87.2, U1.nPWRDN]
+- name: /FPGA Banks 2 and 3/nAUX_VBUS_IN_EN
+  pins: [IC1.PR29C, R78.2]
+- name: /FPGA Banks 2 and 3/nBTN_USER
+  pins: [C78.1, IC1.PR32D, R107.1]
+- name: /FPGA Banks 2 and 3/nCONTROL_VBUS_IN_EN
+  pins: [IC1.PR29A, R71.2]
+- name: /FPGA Banks 6 and 7/AUX_VBUS_EN
+  pins: [IC1.PL26B, R63.2]
+- name: /FPGA Banks 6 and 7/CONTROL_VBUS_EN
+  pins: [IC1.PL26A, R40.2]
+- name: /FPGA Banks 6 and 7/RAM.CK
+  pins: [IC1.PL2C, U10.CK]
+- name: /FPGA Banks 6 and 7/RAM.DQ0
+  pins: [IC1.PL11C, U10.DQ0]
+- name: /FPGA Banks 6 and 7/RAM.DQ1
+  pins: [IC1.PL2A, U10.DQ1]
+- name: /FPGA Banks 6 and 7/RAM.DQ2
+  pins: [IC1.PL5B, U10.DQ2]
+- name: /FPGA Banks 6 and 7/RAM.DQ3
+  pins: [IC1.PL11D, U10.DQ3]
+- name: /FPGA Banks 6 and 7/RAM.DQ4
+  pins: [IC1.PL5C, U10.DQ4]
+- name: /FPGA Banks 6 and 7/RAM.DQ5
+  pins: [IC1.PL8B, U10.DQ5]
+- name: /FPGA Banks 6 and 7/RAM.DQ6
+  pins: [IC1.PL5D, U10.DQ6]
+- name: /FPGA Banks 6 and 7/RAM.DQ7
+  pins: [IC1.PL11B, U10.DQ7]
+- name: /FPGA Banks 6 and 7/RAM.RWDS
+  pins: [IC1.PL8A, U10.RWDS]
+- name: /FPGA Banks 6 and 7/RAM.nCK
+  pins: [IC1.PL2D, U10.nCK]
+- name: /FPGA Banks 6 and 7/RAM.nCS
+  pins: [IC1.PL2B, U10.nCS]
+- name: /FPGA Banks 6 and 7/RAM.nRESET
+  pins: [IC1.PL5A, R119.1, U10.nRESET]
+- name: /FPGA Banks 6 and 7/TARGET_A_DISCHARGE
+  pins: [IC1.PL29A, R88.2]
+- name: /FPGA Banks 6 and 7/TARGET_C_VBUS_EN
+  pins: [IC1.PL29B, R65.2]
+- name: /FPGA Banks 6 and 7/TARGET_FS_MONITOR_D+
+  pins: [IC1.PL38A, R58.2]
+- name: /FPGA Banks 6 and 7/TARGET_FS_MONITOR_D-
+  pins: [IC1.PL38B, R57.2]
+- name: /Power Distribution and Monitoring/nPOWER_GOOD
+  pins:
+  - Q16.C1
+  - R103.2
+  - R112.2
+  - R113.2
+  - R114.2
+  - R115.2
+  - R116.2
+  - R117.2
+  - R43.2
+- name: /TARGET Port/TARGET PHY/PHY_D+
+  pins: [FL2.1, FL4.1]
+- name: /TARGET Port/TARGET PHY/PHY_D-
+  pins: [FL2.3, FL4.3]
+- name: /TARGET Port/TARGET PHY/VBUS_CLAMPED
+  pins: [D18.K, R45.1]
+- name: /TARGET Port/TARGET_A_D+
+  pins: [FL2.2, J3.D+, R58.1]
+- name: /TARGET Port/TARGET_A_D-
+  pins: [FL2.4, J3.D-, R57.1]
+- name: /TARGET Port/TARGET_C_D+
+  pins: [FL4.2, J4.D+@A6, J4.D+@B6]
+- name: /TARGET Port/TARGET_C_D-
+  pins: [FL4.4, J4.D-@A7, J4.D-@B7]
+- name: AUX_SENSE+
+  pins: [R42.3, U1.SENSE3+]
+- name: AUX_SENSE-
+  pins: [R42.2, U1.SENSE3-]
+- name: AUX_VBUS
+  pins: [D25.K, J1.VBUS@A4, J1.VBUS@A9, J1.VBUS@B4, J1.VBUS@B9, R42.4]
+- name: AUX_VBUS_IN
+  pins:
+  - D20.K
+  - Q10.E2
+  - Q12.S
+  - Q4.D
+  - R42.1
+  - R44.2
+  - R74.1
+  - R75.1
+- name: CONTROL_SENSE+
+  pins: [R1.2, U1.SENSE4+]
+- name: CONTROL_SENSE-
+  pins: [R1.3, U1.SENSE4-]
+- name: CONTROL_VBUS
+  pins: [D23.K, J2.VBUS@A4, J2.VBUS@A9, J2.VBUS@B4, J2.VBUS@B9, R1.1]
+- name: CONTROL_VBUS_IN
+  pins:
+  - D16.K
+  - Q1.D
+  - Q10.E1
+  - Q9.S
+  - R1.4
+  - R46.2
+  - R67.1
+  - R68.1
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.2
+  - C27.2
+  - C28.2
+  - C29.2
+  - C3.2
+  - C30.2
+  - C31.2
+  - C32.2
+  - C33.2
+  - C34.2
+  - C35.2
+  - C36.2
+  - C37.2
+  - C38.2
+  - C39.2
+  - C4.2
+  - C40.2
+  - C47.2
+  - C49.2
+  - C5.2
+  - C51.2
+  - C52.2
+  - C53.2
+  - C58.2
+  - C59.2
+  - C6.2
+  - C60.2
+  - C61.2
+  - C62.2
+  - C63.2
+  - C64.2
+  - C65.2
+  - C7.2
+  - C73.2
+  - C74.2
+  - C76.2
+  - C77.2
+  - C78.2
+  - C79.2
+  - C8.2
+  - C80.2
+  - C81.2
+  - C82.2
+  - C83.2
+  - C9.2
+  - D15.A
+  - D18.A
+  - D19.A
+  - D22.A
+  - D23.A
+  - D24.A
+  - D25.A
+  - D26.A
+  - IC1.GND_1
+  - IC1.GND_10
+  - IC1.GND_11
+  - IC1.GND_12
+  - IC1.GND_13
+  - IC1.GND_14
+  - IC1.GND_15
+  - IC1.GND_16
+  - IC1.GND_17
+  - IC1.GND_18
+  - IC1.GND_19
+  - IC1.GND_2
+  - IC1.GND_20
+  - IC1.GND_21
+  - IC1.GND_22
+  - IC1.GND_23
+  - IC1.GND_24
+  - IC1.GND_25
+  - IC1.GND_26
+  - IC1.GND_27
+  - IC1.GND_3
+  - IC1.GND_4
+  - IC1.GND_5
+  - IC1.GND_6
+  - IC1.GND_7
+  - IC1.GND_8
+  - IC1.GND_9
+  - IC1.PL14B
+  - IC1.PL14C
+  - IC1.PL14D
+  - IC1.PL20B
+  - IC1.PL29D
+  - IC1.PL32C
+  - IC1.PL32D
+  - IC1.PL47B
+  - IC1.PL47C
+  - IC1.PL47D
+  - IC1.PL8C
+  - IC1.PR35C
+  - IC1.PR44C
+  - IC1.PR44D
+  - IC1.PR47B
+  - IC1.PR8C
+  - IC1.PT13A
+  - IC1.PT33A
+  - IC1.PT40B
+  - IC1.PT58B
+  - J1.GND@A1
+  - J1.GND@A12
+  - J1.GND@B1
+  - J1.GND@B12
+  - J1.SHIELD@S1
+  - J11.Pin_1
+  - J12.Pin_1
+  - J13.Pin_1
+  - J14.Pin_1
+  - J15.Pin_1
+  - J16.Pin_1
+  - J2.GND@A1
+  - J2.GND@A12
+  - J2.GND@B1
+  - J2.GND@B12
+  - J2.SHIELD@S1
+  - J3.GND
+  - J3.Shield@5
+  - J4.GND@A1
+  - J4.GND@A12
+  - J4.GND@B1
+  - J4.GND@B12
+  - J4.SHIELD@S1
+  - J5.MountPin@MP
+  - J5.Pin_14
+  - J5.Pin_17
+  - J5.Pin_2
+  - J5.Pin_29
+  - J6.GND@3
+  - J6.GND@5
+  - J6.GNDDetect
+  - J7.Pin_11
+  - J7.Pin_5
+  - J8.Pin_11
+  - J8.Pin_5
+  - Q16.E1
+  - R102.2
+  - R117.1
+  - R119.2
+  - R12.2
+  - R120.1
+  - R14.2
+  - R16.1
+  - R22.2
+  - R34.1
+  - R35.1
+  - R41.2
+  - R51.2
+  - R53.2
+  - R64.2
+  - R66.2
+  - R70.2
+  - R72.2
+  - R73.2
+  - R77.2
+  - R79.2
+  - R80.2
+  - R82.2
+  - R89.2
+  - R90.1
+  - R91.1
+  - R94.1
+  - R95.1
+  - R96.1
+  - SW1.2
+  - SW1.SHIELD
+  - SW2.2
+  - SW2.SHIELD
+  - SW3.2
+  - SW3.SHIELD
+  - U1.ADDRSEL
+  - U1.GND@17
+  - U1.GND@3
+  - U10.VSS
+  - U10.VSSQ@C1
+  - U10.VSSQ@E5
+  - U12.GND@15
+  - U12.GND@8
+  - U12.GND@9
+  - U14.GND@11
+  - U14.GND@13
+  - U15.GND
+  - U16.GND
+  - U16.nOE
+  - U3.GND@4
+  - U3.GND@9
+  - U4.GND
+  - U5.GND
+  - U6.GND
+  - U7.GND
+  - U8.GND
+  - Y1.GND
+- name: Net-(D1-A)
+  pins: [D1.A, Q12.D]
+- name: Net-(D10-A)
+  pins: [D10.A, R7.2]
+- name: Net-(D11-A)
+  pins: [D11.A, R8.2]
+- name: Net-(D12-A)
+  pins: [D12.A, R9.2]
+- name: Net-(D13-A)
+  pins: [D13.A, R10.2]
+- name: Net-(D14-A)
+  pins: [D14.A, R11.2]
+- name: Net-(D16-A)
+  pins: [D16.A, Q10.C1, Q9.G, R68.2, R70.1]
+- name: Net-(D17-A)
+  pins: [D17.A, R73.1]
+- name: Net-(D17-K)
+  pins: [D17.K, R47.2, R67.2, R69.1]
+- name: Net-(D2-K)
+  pins: [D2.K, R26.1]
+- name: Net-(D20-A)
+  pins: [D20.A, Q10.C2, Q12.G, R75.2, R77.1]
+- name: Net-(D21-A)
+  pins: [D21.A, R80.1]
+- name: Net-(D21-K)
+  pins: [D21.K, R48.2, R74.2, R76.1]
+- name: Net-(D27-A)
+  pins: [D27.A, Q1.G, Q13.C1, Q2.G, R90.2]
+- name: Net-(D27-K)
+  pins: [D27.K, Q1.S@4, Q13.E1, Q13.E2, Q2.S@4, R3.1]
+- name: Net-(D28-A)
+  pins: [D28.A, Q14.C1, Q4.G, Q5.G, R94.2]
+- name: Net-(D28-K)
+  pins: [D28.K, Q14.E1, Q14.E2, Q4.S@4, Q5.S@4, R60.1]
+- name: Net-(D29-A)
+  pins: [D29.A, Q15.C1, Q6.G, Q7.G, R96.2]
+- name: Net-(D29-K)
+  pins: [D29.K, Q15.E1, Q15.E2, Q6.S@4, Q7.S@4, R61.1]
+- name: Net-(D3-K)
+  pins: [D3.K, R27.1]
+- name: Net-(D30-A)
+  pins: [D30.A, R50.1, R51.1]
+- name: Net-(D30-K)
+  pins: [D30.K, R4.2]
+- name: Net-(D4-K)
+  pins: [D4.K, R28.1]
+- name: Net-(D5-K)
+  pins: [D5.K, R29.1]
+- name: Net-(D6-K)
+  pins: [D6.K, R30.1]
+- name: Net-(D7-K)
+  pins: [D7.K, R31.1]
+- name: Net-(D8-A)
+  pins: [D8.A, Q9.D]
+- name: Net-(Q10A-B1)
+  pins: [Q10.B1, R47.1]
+- name: Net-(Q10B-B2)
+  pins: [Q10.B2, R48.1]
+- name: Net-(Q11A-B1)
+  pins: [Q11.B1, R71.1, R72.1]
+- name: Net-(Q11A-C1)
+  pins: [Q11.C1, R69.2]
+- name: Net-(Q11A-E1)
+  pins: [Q11.E1, R113.1]
+- name: Net-(Q11B-B2)
+  pins: [Q11.B2, R78.1, R79.1]
+- name: Net-(Q11B-C2)
+  pins: [Q11.C2, R76.2]
+- name: Net-(Q11B-E2)
+  pins: [Q11.E2, R116.1]
+- name: Net-(Q13A-B1)
+  pins: [Q13.B1, Q13.C2, R91.2]
+- name: Net-(Q13B-B2)
+  pins: [Q13.B2, R62.2]
+- name: Net-(Q14A-B1)
+  pins: [Q14.B1, Q14.C2, R95.2]
+- name: Net-(Q14B-B2)
+  pins: [Q14.B2, R92.2]
+- name: Net-(Q15A-B1)
+  pins: [Q15.B1, Q15.C2, R120.2]
+- name: Net-(Q15B-B2)
+  pins: [Q15.B2, R93.2]
+- name: Net-(Q16A-B1)
+  pins: [Q16.B1, R50.2]
+- name: Net-(Q3A-B1)
+  pins: [Q3.B1, R40.1, R41.1]
+- name: Net-(Q3A-C1)
+  pins: [Q3.C1, R3.2, R62.1]
+- name: Net-(Q3A-E1)
+  pins: [Q3.E1, R112.1]
+- name: Net-(Q3B-B2)
+  pins: [Q3.B2, R63.1, R64.1]
+- name: Net-(Q3B-C2)
+  pins: [Q3.C2, R60.2, R92.1]
+- name: Net-(Q3B-E2)
+  pins: [Q3.E2, R115.1]
+- name: Net-(Q8A-B1)
+  pins: [Q8.B1, R65.1, R66.1]
+- name: Net-(Q8A-C1)
+  pins: [Q8.C1, R61.2, R93.1]
+- name: Net-(Q8A-E1)
+  pins: [Q8.E1, R114.1]
+- name: Net-(Q8B-B2)
+  pins: [Q8.B2, R88.1, R89.1]
+- name: Net-(Q8B-C2)
+  pins: [Q8.C2, R49.2]
+- name: Net-(Q8B-E2)
+  pins: [Q8.E2, R103.1]
+- name: Net-(R101-Pad2)
+  pins: [R101.2, R104.2, SW1.1]
+- name: Net-(R106-Pad2)
+  pins: [R106.2, R107.2, SW3.1]
+- name: Net-(U14-CB)
+  pins: [C63.1, U14.CB]
+- name: Net-(U16-1D+)
+  pins: [FL3.4, U16.1D+]
+- name: Net-(U16-1D-)
+  pins: [FL3.2, U16.1D-]
+- name: Net-(U3-ADJ/NC)
+  pins: [R81.2, R82.1, U3.ADJ/NC]
+- name: Net-(U6-PA03)
+  pins: [R118.2, U6.PA03]
+- name: Net-(U6-PA07)
+  pins: [R52.2, R53.1, U6.PA07]
+- name: Net-(U6-PA28/nRST)
+  pins: [C77.1, R105.2, U6.PA28/nRST]
+- name: Net-(Y1-OUT)
+  pins: [R108.2, Y1.OUT]
+- name: TARGET_A_SENSE+
+  pins: [R2.3, U1.SENSE1+]
+- name: TARGET_A_SENSE-
+  pins: [R2.2, U1.SENSE1-]
+- name: TARGET_A_VBUS
+  pins: [D24.K, J3.VBUS, R2.4]
+- name: TARGET_A_VBUS_IN
+  pins: [Q2.D, Q5.D, Q6.D, R2.1, R49.1]
+- name: TARGET_C_SENSE+
+  pins: [R59.3, U1.SENSE2+]
+- name: TARGET_C_SENSE-
+  pins: [R59.2, U1.SENSE2-]
+- name: TARGET_C_VBUS
+  pins: [D26.K, J4.VBUS@A4, J4.VBUS@A9, J4.VBUS@B4, J4.VBUS@B9, R59.4]
+- name: TARGET_C_VBUS_IN
+  pins: [Q7.D, R45.2, R59.1]
+- name: VCCRAM
+  pins:
+  - C19.1
+  - C21.1
+  - C31.1
+  - C32.1
+  - C5.1
+  - C60.1
+  - C64.1
+  - C65.1
+  - C82.1
+  - C83.1
+  - IC1.PL11A
+  - IC1.PL17A
+  - IC1.PL17B
+  - IC1.PL17C
+  - IC1.PL17D
+  - IC1.PL20C
+  - IC1.PL23A
+  - IC1.PL23B
+  - IC1.PL8D
+  - IC1.VCCIO7_1
+  - IC1.VCCIO7_2
+  - R54.2
+  - U10.VCC
+  - U10.VCCQ@D1
+  - U10.VCCQ@E4
+  - U15.VOUT
+positions:
+- ref: C1
+  x: 125.1
+  y: 84.7
+  side: back
+- ref: C10
+  x: 137.9
+  y: 108.8
+  rot: 180.0
+- ref: C11
+  x: 131.2
+  y: 89.0
+  rot: 90.0
+  side: back
+- ref: C12
+  x: 135.1
+  y: 90.9
+  rot: 90.0
+  side: back
+- ref: C13
+  x: 131.6
+  y: 93.1
+  rot: 90.0
+  side: back
+- ref: C14
+  x: 131.6
+  y: 94.5
+  side: back
+- ref: C15
+  x: 134.9
+  y: 93.5
+  side: back
+- ref: C16
+  x: 129.5
+  y: 91.0
+  rot: 90.0
+  side: back
+- ref: C17
+  x: 131.6
+  y: 90.9
+  rot: -90.0
+  side: back
+- ref: C18
+  x: 133.8
+  y: 94.5
+  rot: 180.0
+  side: back
+- ref: C19
+  x: 133.7
+  y: 91.6
+  rot: 90.0
+  side: back
+- ref: C2
+  x: 125.83
+  y: 99.8
+  rot: 180.0
+  side: back
+- ref: C20
+  x: 116.6
+  y: 67.5
+  rot: 90.0
+- ref: C21
+  x: 146.2
+  y: 99.5
+  rot: -90.0
+  side: back
+- ref: C22
+  x: 135.1
+  y: 87.7
+  rot: 90.0
+  side: back
+- ref: C23
+  x: 137.0
+  y: 86.3
+  side: back
+- ref: C24
+  x: 130.5
+  y: 91.7
+  rot: 90.0
+  side: back
+- ref: C25
+  x: 110.2
+  y: 83.3
+  rot: -90.0
+  side: back
+- ref: C26
+  x: 133.8
+  y: 88.5
+  rot: 90.0
+  side: back
+- ref: C27
+  x: 123.5
+  y: 68.0
+  rot: 90.0
+- ref: C28
+  x: 129.3
+  y: 68.0
+  rot: 90.0
+- ref: C29
+  x: 120.5
+  y: 69.7
+- ref: C3
+  x: 125.1
+  y: 86.6
+  side: back
+- ref: C30
+  x: 126.3
+  y: 69.7
+- ref: C31
+  x: 149.2
+  y: 97.7
+  rot: -90.0
+  side: back
+- ref: C32
+  x: 143.52
+  y: 97.2
+  rot: 180.0
+  side: back
+- ref: C33
+  x: 135.6
+  y: 89.5
+  side: back
+- ref: C34
+  x: 127.1
+  y: 77.18
+  rot: 90.0
+  side: back
+- ref: C35
+  x: 137.5
+  y: 78.9
+- ref: C36
+  x: 116.1
+  y: 87.6
+  side: back
+- ref: C37
+  x: 118.9
+  y: 89.5
+  rot: 90.0
+  side: back
+- ref: C38
+  x: 114.9
+  y: 88.1
+  rot: -90.0
+- ref: C39
+  x: 118.4
+  y: 86.5
+  rot: -90.0
+  side: back
+- ref: C4
+  x: 139.4
+  y: 98.9
+  rot: 90.0
+  side: back
+- ref: C40
+  x: 134.2
+  y: 107.9
+  rot: 90.0
+- ref: C47
+  x: 110.2
+  y: 85.2
+  rot: 90.0
+  side: back
+- ref: C49
+  x: 118.0
+  y: 109.1
+  rot: 180.0
+- ref: C5
+  x: 145.4
+  y: 97.7
+  side: back
+- ref: C51
+  x: 115.7
+  y: 108.3
+  rot: -90.0
+  side: back
+- ref: C52
+  x: 110.2
+  y: 107.8
+  rot: -90.0
+  side: back
+- ref: C53
+  x: 110.2
+  y: 109.7
+  rot: 90.0
+  side: back
+- ref: C58
+  x: 114.5
+  y: 104.7
+- ref: C59
+  x: 143.0
+  y: 104.8
+  rot: -90.0
+- ref: C6
+  x: 112.5
+  y: 69.8
+- ref: C60
+  x: 148.2
+  y: 104.8
+  rot: -90.0
+- ref: C61
+  x: 115.4
+  y: 81.3
+- ref: C62
+  x: 113.4
+  y: 84.2
+  rot: 90.0
+  side: back
+- ref: C63
+  x: 114.5
+  y: 108.7
+- ref: C64
+  x: 144.8
+  y: 99.5
+  rot: -90.0
+  side: back
+- ref: C65
+  x: 146.8
+  y: 97.5
+  rot: -90.0
+  side: back
+- ref: C7
+  x: 132.7
+  y: 90.0
+  rot: -90.0
+  side: back
+- ref: C73
+  x: 128.3
+  y: 77.1
+  rot: 90.0
+  side: back
+- ref: C74
+  x: 124.3
+  y: 107.5
+  rot: -90.0
+  side: back
+- ref: C76
+  x: 121.4
+  y: 83.5
+  rot: -90.0
+  side: back
+- ref: C77
+  x: 126.62
+  y: 72.9
+  rot: 180.0
+  side: back
+- ref: C78
+  x: 117.5
+  y: 91.9
+  rot: -90.0
+  side: back
+- ref: C79
+  x: 129.9
+  y: 93.5
+  rot: 180.0
+  side: back
+- ref: C8
+  x: 129.3
+  y: 89.6
+  rot: 180.0
+  side: back
+- ref: C80
+  x: 127.0
+  y: 88.1
+  rot: 180.0
+  side: back
+- ref: C81
+  x: 135.5
+  y: 85.3
+  rot: 90.0
+  side: back
+- ref: C82
+  x: 137.9
+  y: 92.1
+  rot: -90.0
+  side: back
+- ref: C83
+  x: 136.1
+  y: 92.1
+  rot: -90.0
+  side: back
+- ref: C9
+  x: 132.6
+  y: 93.1
+  rot: 90.0
+  side: back
+- ref: D1
+  x: 111.7
+  y: 101.4
+  rot: -90.0
+- ref: D10
+  x: 110.0
+  y: 76.5
+  rot: -90.0
+- ref: D11
+  x: 113.0
+  y: 76.5
+  rot: -90.0
+- ref: D12
+  x: 116.0
+  y: 76.5
+  rot: -90.0
+- ref: D13
+  x: 119.0
+  y: 76.5
+  rot: -90.0
+- ref: D14
+  x: 122.0
+  y: 76.5
+  rot: -90.0
+- ref: D15
+  x: 114.5
+  y: 103.3
+  rot: -90.0
+  side: back
+- ref: D16
+  x: 108.1
+  y: 92.5
+  side: back
+- ref: D17
+  x: 109.9
+  y: 90.0
+  side: back
+- ref: D18
+  x: 150.05
+  y: 107.6
+  rot: 180.0
+  side: back
+- ref: D19
+  x: 111.5
+  y: 70.3
+  side: back
+- ref: D2
+  x: 114.5
+  y: 112.0
+  rot: -90.0
+- ref: D20
+  x: 109.7
+  y: 100.8
+  rot: -90.0
+  side: back
+- ref: D21
+  x: 107.7
+  y: 101.8
+  side: back
+- ref: D22
+  x: 113.0
+  y: 86.4
+  side: back
+- ref: D23
+  x: 108.1
+  y: 85.6
+  side: back
+- ref: D24
+  x: 154.8
+  y: 86.05
+  rot: 90.0
+  side: back
+- ref: D25
+  x: 108.1
+  y: 107.4
+  side: back
+- ref: D26
+  x: 155.9
+  y: 107.4
+  rot: 180.0
+  side: back
+- ref: D27
+  x: 145.3
+  y: 89.5
+  rot: 180.0
+  side: back
+- ref: D28
+  x: 153.9
+  y: 92.5
+  rot: 180.0
+  side: back
+- ref: D29
+  x: 153.7
+  y: 100.3
+  rot: 180.0
+  side: back
+- ref: D3
+  x: 117.5
+  y: 112.0
+  rot: -90.0
+- ref: D30
+  x: 145.3
+  y: 75.6
+  rot: 180.0
+  side: back
+- ref: D4
+  x: 120.5
+  y: 112.0
+  rot: -90.0
+- ref: D5
+  x: 123.5
+  y: 112.0
+  rot: -90.0
+- ref: D6
+  x: 126.5
+  y: 112.0
+  rot: -90.0
+- ref: D7
+  x: 129.5
+  y: 112.0
+  rot: -90.0
+- ref: D8
+  x: 111.7
+  y: 91.6
+  rot: 90.0
+- ref: D9
+  x: 111.5
+  y: 71.5
+  side: back
+- ref: FL1
+  x: 114.8
+  y: 103.3
+  rot: 180.0
+- ref: FL2
+  x: 148.8
+  y: 84.0
+- ref: FL3
+  x: 114.9
+  y: 85.9
+  rot: 90.0
+- ref: FL4
+  x: 148.8
+  y: 85.5
+  rot: -90.0
+- ref: IC1
+  x: 132.0
+  y: 92.0
+  rot: 180.0
+- ref: J1
+  x: 106.65
+  y: 109.0
+  rot: -90.0
+- ref: J11
+  x: 105.5
+  y: 108.0
+  rot: 90.0
+  side: back
+- ref: J12
+  x: 105.5
+  y: 85.0
+  rot: -90.0
+  side: back
+- ref: J13
+  x: 158.5
+  y: 86.5
+  rot: -90.0
+  side: back
+- ref: J14
+  x: 158.5
+  y: 108.0
+  rot: 90.0
+  side: back
+- ref: J15
+  x: 131.4
+  y: 118.5
+  rot: 180.0
+  side: back
+- ref: J16
+  x: 130.1
+  y: 65.5
+  rot: 180.0
+  side: back
+- ref: J2
+  x: 106.65
+  y: 84.0
+  rot: -90.0
+- ref: J3
+  x: 150.53
+  y: 87.5
+  rot: 90.0
+- ref: J4
+  x: 157.35
+  y: 109.0
+  rot: 90.0
+- ref: J5
+  x: 127.3
+  y: 105.7
+  rot: 180.0
+- ref: J6
+  x: 137.1
+  y: 68.6
+- ref: J7
+  x: 126.92
+  y: 115.5
+  rot: 90.0
+- ref: J8
+  x: 149.78
+  y: 115.5
+  rot: 90.0
+- ref: Q1
+  x: 143.7
+  y: 90.5
+  rot: 90.0
+- ref: Q10
+  x: 109.7
+  y: 96.5
+  rot: 180.0
+  side: back
+- ref: Q11
+  x: 113.4
+  y: 94.5
+  rot: 90.0
+  side: back
+- ref: Q12
+  x: 108.8
+  y: 101.5
+  rot: -90.0
+- ref: Q13
+  x: 145.1
+  y: 91.4
+  rot: 180.0
+  side: back
+- ref: Q14
+  x: 153.7
+  y: 94.6
+  rot: 180.0
+  side: back
+- ref: Q15
+  x: 153.7
+  y: 102.2
+  side: back
+- ref: Q16
+  x: 147.9
+  y: 74.7
+  side: back
+- ref: Q2
+  x: 146.6
+  y: 90.5
+  rot: -90.0
+- ref: Q3
+  x: 142.8
+  y: 94.7
+  rot: 180.0
+  side: back
+- ref: Q4
+  x: 155.1
+  y: 94.4
+  rot: -90.0
+- ref: Q5
+  x: 152.2
+  y: 94.4
+  rot: 90.0
+- ref: Q6
+  x: 152.2
+  y: 101.0
+  rot: 90.0
+- ref: Q7
+  x: 155.1
+  y: 101.0
+  rot: -90.0
+- ref: Q8
+  x: 152.6
+  y: 98.4
+  side: back
+- ref: Q9
+  x: 108.8
+  y: 91.5
+  rot: -90.0
+- ref: R1
+  x: 108.1
+  y: 83.5
+  rot: 90.0
+  side: back
+- ref: R10
+  x: 120.5
+  y: 76.0
+  rot: -90.0
+  side: back
+- ref: R101
+  x: 119.4
+  y: 83.5
+  rot: 90.0
+  side: back
+- ref: R102
+  x: 130.7
+  y: 85.6
+  rot: 90.0
+  side: back
+- ref: R103
+  x: 155.2
+  y: 98.8
+  side: back
+- ref: R104
+  x: 120.4
+  y: 83.5
+  rot: -90.0
+  side: back
+- ref: R105
+  x: 132.1
+  y: 73.5
+  rot: 90.0
+  side: back
+- ref: R106
+  x: 115.5
+  y: 90.6
+  rot: -90.0
+  side: back
+- ref: R107
+  x: 115.1
+  y: 92.1
+  rot: 180.0
+  side: back
+- ref: R108
+  x: 134.5
+  y: 105.5
+  rot: -90.0
+- ref: R109
+  x: 138.6
+  y: 75.1
+  rot: 90.0
+  side: back
+- ref: R11
+  x: 123.5
+  y: 76.0
+  rot: -90.0
+  side: back
+- ref: R110
+  x: 139.4
+  y: 76.6
+  side: back
+- ref: R111
+  x: 149.1
+  y: 69.9
+  rot: 90.0
+  side: back
+- ref: R112
+  x: 144.9
+  y: 94.8
+  rot: -90.0
+  side: back
+- ref: R113
+  x: 113.9
+  y: 96.6
+  rot: 180.0
+  side: back
+- ref: R114
+  x: 155.19
+  y: 97.8
+  side: back
+- ref: R115
+  x: 145.9
+  y: 94.8
+  rot: -90.0
+  side: back
+- ref: R116
+  x: 113.6
+  y: 91.9
+  rot: 90.0
+  side: back
+- ref: R117
+  x: 151.7
+  y: 75.7
+  side: back
+- ref: R118
+  x: 128.2
+  y: 79.91
+  rot: 90.0
+  side: back
+- ref: R119
+  x: 144.0
+  y: 100.9
+  side: back
+- ref: R12
+  x: 129.2
+  y: 88.0
+  rot: 180.0
+  side: back
+- ref: R120
+  x: 151.4
+  y: 104.5
+  rot: 90.0
+  side: back
+- ref: R13
+  x: 129.2
+  y: 87.0
+  rot: 180.0
+  side: back
+- ref: R14
+  x: 129.2
+  y: 86.0
+  rot: 180.0
+  side: back
+- ref: R15
+  x: 115.0
+  y: 81.9
+  rot: -90.0
+  side: back
+- ref: R16
+  x: 116.9
+  y: 90.0
+  rot: -90.0
+  side: back
+- ref: R17
+  x: 113.0
+  y: 87.4
+  side: back
+- ref: R2
+  x: 154.8
+  y: 88.5
+  rot: 90.0
+  side: back
+- ref: R22
+  x: 117.9
+  y: 89.5
+  rot: 90.0
+  side: back
+- ref: R25
+  x: 150.1
+  y: 69.9
+  rot: 90.0
+  side: back
+- ref: R26
+  x: 112.6
+  y: 111.6
+  rot: 90.0
+  side: back
+- ref: R27
+  x: 115.6
+  y: 111.6
+  rot: 90.0
+  side: back
+- ref: R28
+  x: 118.6
+  y: 111.6
+  rot: 90.0
+  side: back
+- ref: R29
+  x: 121.6
+  y: 111.6
+  rot: 90.0
+  side: back
+- ref: R3
+  x: 142.5
+  y: 92.7
+  rot: 180.0
+  side: back
+- ref: R30
+  x: 124.6
+  y: 111.6
+  rot: 90.0
+  side: back
+- ref: R31
+  x: 126.5
+  y: 111.7
+  rot: 180.0
+  side: back
+- ref: R32
+  x: 114.5
+  y: 104.8
+  rot: 180.0
+  side: back
+- ref: R33
+  x: 120.8
+  y: 104.1
+  rot: 180.0
+  side: back
+- ref: R34
+  x: 111.3
+  y: 83.3
+  rot: 90.0
+  side: back
+- ref: R35
+  x: 111.3
+  y: 85.2
+  rot: -90.0
+  side: back
+- ref: R38
+  x: 120.8
+  y: 105.3
+  rot: 180.0
+  side: back
+- ref: R39
+  x: 121.5
+  y: 106.9
+  rot: 90.0
+  side: back
+- ref: R4
+  x: 145.91
+  y: 76.7
+  rot: 180.0
+  side: back
+- ref: R40
+  x: 141.1
+  y: 96.6
+  rot: 180.0
+  side: back
+- ref: R41
+  x: 141.2
+  y: 97.6
+  side: back
+- ref: R42
+  x: 108.1
+  y: 109.5
+  rot: 90.0
+  side: back
+- ref: R43
+  x: 147.9
+  y: 76.7
+  side: back
+- ref: R44
+  x: 113.0
+  y: 102.9
+  rot: 180.0
+  side: back
+- ref: R45
+  x: 150.4
+  y: 106.0
+  rot: 90.0
+  side: back
+- ref: R46
+  x: 113.0
+  y: 88.4
+  rot: 180.0
+  side: back
+- ref: R47
+  x: 110.4
+  y: 93.5
+  rot: 90.0
+  side: back
+- ref: R48
+  x: 109.7
+  y: 98.4
+  rot: 180.0
+  side: back
+- ref: R49
+  x: 153.1
+  y: 96.5
+  side: back
+- ref: R5
+  x: 127.5
+  y: 82.3
+  rot: -90.0
+  side: back
+- ref: R50
+  x: 145.29
+  y: 74.5
+  side: back
+- ref: R51
+  x: 145.29
+  y: 73.5
+  side: back
+- ref: R52
+  x: 130.0
+  y: 78.2
+  side: back
+- ref: R53
+  x: 130.0
+  y: 77.2
+  rot: 180.0
+  side: back
+- ref: R54
+  x: 146.8
+  y: 103.4
+  side: back
+- ref: R55
+  x: 113.4
+  y: 82.2
+  rot: 90.0
+- ref: R56
+  x: 113.4
+  y: 84.2
+  rot: 90.0
+- ref: R57
+  x: 152.5
+  y: 84.5
+  side: back
+- ref: R58
+  x: 152.5
+  y: 83.5
+  side: back
+- ref: R59
+  x: 155.9
+  y: 109.5
+  rot: 90.0
+  side: back
+- ref: R6
+  x: 128.5
+  y: 82.3
+  rot: 90.0
+  side: back
+- ref: R60
+  x: 151.1
+  y: 95.9
+  rot: 180.0
+  side: back
+- ref: R61
+  x: 155.6
+  y: 100.1
+  side: back
+- ref: R62
+  x: 142.5
+  y: 91.7
+  side: back
+- ref: R63
+  x: 140.5
+  y: 91.3
+  rot: 90.0
+  side: back
+- ref: R64
+  x: 140.7
+  y: 94.2
+  rot: 90.0
+  side: back
+- ref: R65
+  x: 148.6
+  y: 96.1
+  rot: 180.0
+  side: back
+- ref: R66
+  x: 150.5
+  y: 97.7
+  rot: -90.0
+  side: back
+- ref: R67
+  x: 108.0
+  y: 90.0
+  side: back
+- ref: R68
+  x: 108.1
+  y: 93.5
+  side: back
+- ref: R69
+  x: 111.5
+  y: 93.5
+  rot: -90.0
+  side: back
+- ref: R7
+  x: 111.5
+  y: 76.0
+  rot: -90.0
+  side: back
+- ref: R70
+  x: 107.6
+  y: 96.5
+  rot: -90.0
+  side: back
+- ref: R71
+  x: 115.79
+  y: 95.1
+  side: back
+- ref: R72
+  x: 116.3
+  y: 93.6
+  rot: 90.0
+  side: back
+- ref: R73
+  x: 111.6
+  y: 90.0
+  side: back
+- ref: R74
+  x: 107.6
+  y: 100.29
+  rot: 90.0
+  side: back
+- ref: R75
+  x: 110.8
+  y: 100.8
+  rot: -90.0
+  side: back
+- ref: R76
+  x: 109.7
+  y: 99.4
+  side: back
+- ref: R77
+  x: 111.1
+  y: 102.7
+  rot: 180.0
+  side: back
+- ref: R78
+  x: 117.8
+  y: 93.4
+  side: back
+- ref: R79
+  x: 115.3
+  y: 93.6
+  rot: 90.0
+  side: back
+- ref: R8
+  x: 114.5
+  y: 76.0
+  rot: -90.0
+  side: back
+- ref: R80
+  x: 108.5
+  y: 102.9
+  side: back
+- ref: R81
+  x: 116.3
+  y: 68.33
+  rot: 180.0
+  side: back
+- ref: R82
+  x: 115.1
+  y: 69.4
+  rot: 180.0
+  side: back
+- ref: R83
+  x: 133.5
+  y: 109.6
+  rot: 180.0
+  side: back
+- ref: R84
+  x: 133.5
+  y: 110.6
+  rot: 180.0
+  side: back
+- ref: R85
+  x: 135.0
+  y: 110.09
+  rot: 90.0
+  side: back
+- ref: R86
+  x: 135.6
+  y: 111.8
+  rot: 180.0
+  side: back
+- ref: R87
+  x: 136.8
+  y: 110.3
+  rot: 90.0
+  side: back
+- ref: R88
+  x: 148.8
+  y: 99.9
+  rot: 180.0
+  side: back
+- ref: R89
+  x: 148.8
+  y: 100.9
+  rot: 180.0
+  side: back
+- ref: R9
+  x: 117.5
+  y: 76.0
+  rot: -90.0
+  side: back
+- ref: R90
+  x: 142.5
+  y: 90.7
+  side: back
+- ref: R91
+  x: 146.0
+  y: 93.3
+  side: back
+- ref: R92
+  x: 151.1
+  y: 94.9
+  side: back
+- ref: R93
+  x: 156.3
+  y: 101.1
+  rot: 180.0
+  side: back
+- ref: R94
+  x: 152.2
+  y: 92.5
+  side: back
+- ref: R95
+  x: 155.8
+  y: 95.1
+  rot: 90.0
+  side: back
+- ref: R96
+  x: 149.9
+  y: 104.5
+  side: back
+- ref: R99
+  x: 120.3
+  y: 106.9
+  rot: 90.0
+  side: back
+- ref: RN1
+  x: 130.45
+  y: 113.9
+  rot: -90.0
+  side: back
+- ref: RN2
+  x: 129.0
+  y: 111.2
+  rot: -90.0
+  side: back
+- ref: RN3
+  x: 139.35
+  y: 110.2
+  rot: -90.0
+  side: back
+- ref: RN4
+  x: 142.2
+  y: 111.5
+  rot: -90.0
+  side: back
+- ref: RN5
+  x: 122.7
+  y: 89.6
+  rot: 180.0
+- ref: RN6
+  x: 122.7
+  y: 86.4
+  rot: 180.0
+- ref: RN7
+  x: 121.4
+  y: 83.5
+  rot: 180.0
+- ref: SW1
+  x: 106.7
+  y: 70.5
+  rot: 90.0
+- ref: SW2
+  x: 157.3
+  y: 73.5
+  rot: -90.0
+- ref: SW3
+  x: 106.7
+  y: 95.0
+  rot: 90.0
+- ref: U1
+  x: 133.7
+  y: 111.1
+  rot: -90.0
+- ref: U10
+  x: 146.0
+  y: 98.5
+  rot: 180.0
+- ref: U12
+  x: 118.7
+  y: 106.7
+  rot: 90.0
+- ref: U14
+  x: 114.5
+  y: 106.7
+- ref: U15
+  x: 145.6
+  y: 105.3
+- ref: U16
+  x: 115.2
+  y: 83.2
+- ref: U3
+  x: 113.6
+  y: 67.5
+  rot: 180.0
+- ref: U4
+  x: 120.9
+  y: 67.5
+  rot: 180.0
+- ref: U5
+  x: 126.7
+  y: 67.5
+  rot: 180.0
+- ref: U6
+  x: 129.0
+  y: 76.0
+  rot: 90.0
+- ref: U7
+  x: 140.0
+  y: 75.5
+  rot: 180.0
+- ref: U8
+  x: 118.0
+  y: 88.0
+  rot: 180.0
+- ref: Y1
+  x: 137.3
+  y: 106.5
+  rot: 180.0
+copper_pours:
+- net: +1V1
+  layers: [B.Cu, In3.Cu]
+- net: +2V5
+  layers: [In3.Cu]
+- net: +3V3
+  layers: [F.Cu, In2.Cu]
+- net: +5V
+  layers: [B.Cu, F.Cu, In2.Cu, In3.Cu]
+- net: /TARGET Port/TARGET Type C Controller/VCONN
+  layers: [F&B.Cu]
+- net: AUX_VBUS
+  layers: [B.Cu, F.Cu]
+- net: AUX_VBUS_IN
+  layers: [B.Cu, F.Cu, In3.Cu]
+- net: CONTROL_VBUS
+  layers: [B.Cu, F.Cu]
+- net: CONTROL_VBUS_IN
+  layers: [B.Cu, F.Cu, In3.Cu]
+- net: GND
+  layers: [B.Cu, F&B.Cu, In1.Cu, In2.Cu, In4.Cu]
+- net: TARGET_A_VBUS
+  layers: [B.Cu]
+- net: TARGET_A_VBUS_IN
+  layers: [B.Cu, F.Cu, In3.Cu]
+- net: TARGET_C_VBUS
+  layers: [B.Cu, F.Cu]
+- net: TARGET_C_VBUS_IN
+  layers: [B.Cu, F.Cu]
+- net: VCCRAM
+  layers: [In3.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+  keepout: true

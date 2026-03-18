@@ -1,0 +1,643 @@
+name: ESP32 UWB DW3000
+slug: esp32-uwb-dw3000
+source: Makerfabs/Makerfabs-ESP32-UWB-DW3000
+format: eagle
+description: 'Ultra-wideband indoor positioning: ESP32 + Qorvo DW3000 UWB transceiver, centimeter-level ranging'
+key_ics: [ESP32]
+outline:
+  width_mm: 72.0
+  height_mm: 32.6
+design_rules:
+  layers: 2
+  min_trace: 10mil
+  min_clearance: 8mil
+  min_drill: 8mil
+  min_via: 6mil
+components:
+- ref: C1
+  value: 10uF
+  footprint: '0603'
+  decouples: U2
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C11
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-00868
+  decouples: U2
+- ref: C12
+  value: 100nF
+  footprint: '0603'
+- ref: C13
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-00868
+  decouples: U2
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+  decouples: U2
+- ref: C3
+  value: 10uF
+  footprint: '0603'
+  decouples: U4
+- ref: C4
+  value: 10uF
+  footprint: '0603'
+- ref: C5
+  value: 10uF
+  footprint: '0603'
+  decouples: U4
+- ref: C6
+  value: 10uF
+  footprint: '0603'
+  decouples: U2
+- ref: C7
+  value: 10uF
+  footprint: '0603'
+  voltage: 16V
+  decouples: U4
+- ref: C8
+  value: 10uF
+  footprint: '0603'
+  decouples: U5
+- ref: C9
+  value: 10uF
+  footprint: '0603'
+- ref: D1
+  value: green LED
+  footprint: 0805
+- ref: D2
+  value: green LED
+  footprint: 0805
+- ref: D3
+  value: green LED
+  footprint: 0805
+- ref: D4
+  value: green LED
+  footprint: 0805
+- ref: D5
+  value: green LED
+  footprint: 0805
+- ref: D6
+  value: B5819WS
+  footprint: SOD323
+- ref: FLASH
+  value: BUTTON
+  footprint: 157SW
+- ref: IC1
+  value: CP2104
+  footprint: QFN24_4MM_SMSC
+  description: CP2104
+- ref: J1
+  value: 1x20 header
+  footprint: 20P-2.54
+- ref: J2
+  value: 1x12 header
+  footprint: 12P-2.54
+- ref: J3
+  value: USB-MICRO-5P
+  footprint: MICRO-USB-5P
+- ref: Q3
+  value: S8050
+  footprint: SOT23
+  description: NPN audion
+- ref: Q4
+  value: S8050
+  footprint: SOT23
+  description: NPN audion
+- ref: R10
+  value: 470ohm
+  footprint: '0603'
+- ref: R11
+  value: 1kohm
+  footprint: '0603'
+- ref: R12
+  value: 1kohm
+  footprint: '0603'
+- ref: R13
+  value: 1kohm
+  footprint: '0603'
+- ref: R14
+  value: 1kohm
+  footprint: '0603'
+- ref: R15
+  value: 10kohm
+  footprint: '0603'
+  pulldown: IO34
+- ref: R16
+  value: 10kohm
+  footprint: '0603'
+  pullup: IO13/MOSI
+- ref: R17
+  value: 10kohm
+  footprint: '0603'
+  pullup: IO14/SCLK
+- ref: R20
+  value: 470ohm
+  footprint: '0603'
+- ref: R21
+  value: 470ohm
+  footprint: '0603'
+- ref: R22
+  value: 470ohm
+  footprint: '0603'
+- ref: R23
+  value: 470ohm
+  footprint: '0603'
+- ref: R24
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pullup: EN
+- ref: R3
+  value: 470ohm
+  footprint: '0603'
+- ref: R7
+  value: 10kohm
+  footprint: '0603'
+  pullup: IO0
+- ref: R8
+  value: 1kohm
+  footprint: '0603'
+- ref: R9
+  value: 10kohm
+  footprint: '0603'
+  pullup: RESET
+- ref: RST
+  value: BUTTON
+  footprint: 157SW
+- ref: U1
+  value: ESP32
+  footprint: ESP32-WROVER
+- ref: U2
+  value: ME6217C33M5G
+  footprint: SOT-23-5
+  prod_id: VREG-12457
+  description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
+- ref: U3
+  value: ESP-WROOM-32
+  footprint: ESP-WROOM-32
+- ref: U4
+  value: LD1117/3.3v
+  footprint: SOT89
+  description: Low Drop Fixed And Adjustable Positive Voltage Regulators
+- ref: U5
+  value: DWM1000
+  footprint: DWM1000
+nets:
+- name: +3V3
+  pins:
+  - C10.1
+  - C13.1
+  - C3.1
+  - C4.1
+  - C5.1
+  - C6.1
+  - C8.1
+  - D3.A
+  - IC1.G$1.REGIN
+  - IC1.G$1.VDD
+  - IC1.G$1.VIO
+  - J1.P$1
+  - R16.1
+  - R17.1
+  - R18.1
+  - R19.1
+  - R6.1
+  - R7.2
+  - R9.2
+  - U1.3V3
+  - U2.OUT
+  - U3.3V3
+  - U4.OUT
+  - U5.VDD3V3
+  - U5.VDD3V3.2
+  - U5.VDDAON
+  trace_width: '0.2032'
+- name: CLK
+  pins: [U1.CLK, U3.CLK]
+  trace_width: '0.2032'
+- name: CMD
+  pins: [U1.CMD, U3.CMD]
+  trace_width: '0.2032'
+- name: D+
+  pins: [IC1.G$1.D+, J3.DP]
+  trace_width: '0.2032'
+- name: D-
+  pins: [IC1.G$1.D-, J3.DM]
+  trace_width: '0.2032'
+- name: DTR
+  pins: [IC1.G$1.DTR, Q3.E, R12.2]
+  trace_width: '0.2032'
+- name: EN
+  pins: [R24.1, U2.EN]
+  trace_width: '0.2032'
+- name: EXTON
+  pins: [R8.2, U5.EXTON]
+  trace_width: '0.2032'
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.C
+  - D2.C
+  - D4.C
+  - D5.C
+  - FLASH.1
+  - IC1.G$1.GND
+  - IC1.G$2.TP
+  - J1.P$2
+  - J1.P$4
+  - J2.2
+  - J3.GND@1
+  - J3.GND@2
+  - J3.GND@3
+  - R15.2
+  - R3.1
+  - RST.1
+  - U1.GND1
+  - U1.GND2
+  - U1.GND3
+  - U1.P_GND
+  - U2.GND
+  - U3.GND
+  - U3.GND@1
+  - U3.GND@15
+  - U3.GND@38
+  - U4.GND
+  - U5.VSS
+  - U5.VSS.2
+  - U5.VSS.3
+  - U5.VSS.4
+  - U5.VSS.5
+  trace_width: '0.2032'
+- name: G_1_VPP
+  pins: [C9.1, IC1.G$1.VPP]
+  trace_width: '0.2032'
+- name: IO0
+  pins: [J2.5, Q3.C, R10.2, R7.1, U1.IO0, U3.IO0]
+  trace_width: '0.2032'
+- name: IO12/MISO
+  pins: [J1.P$6, R6.2, U1.IO12, U3.IO12]
+  trace_width: '0.2032'
+- name: IO13/MOSI
+  pins: [J1.P$7, R16.2, U1.IO13, U3.IO13]
+  trace_width: '0.2032'
+- name: IO14/SCLK
+  pins: [J1.P$8, R17.2, U1.IO14, U3.IO14]
+  trace_width: '0.2032'
+- name: IO15/NSS
+  pins: [J1.P$9, R18.2, U1.IO15, U3.IO15]
+  trace_width: '0.2032'
+- name: IO16
+  pins: [J2.8, U1.NC1, U3.IO16]
+  trace_width: '0.2032'
+- name: IO17
+  pins: [J2.9, U1.NC2, U3.IO17]
+  trace_width: '0.2032'
+- name: IO18
+  pins: [J1.P$10, U1.IO18, U3.IO18, U5.SPICLK]
+  trace_width: '0.2032'
+- name: IO19
+  pins: [J1.P$11, U1.IO19, U3.IO19, U5.SPIMISO]
+  trace_width: '0.2032'
+- name: IO2
+  pins: [J1.P$5, R19.2, U1.IO2, U3.IO2]
+  trace_width: '0.2032'
+- name: IO21/RES
+  pins: [J2.10, U1.IO21, U3.IO21]
+  trace_width: '0.2032'
+- name: IO22/DC
+  pins: [J2.11, U1.IO22, U3.IO22]
+  trace_width: '0.2032'
+- name: IO23
+  pins: [J2.12, U1.IO23, U3.IO23, U5.SPIMOSI]
+  trace_width: '0.2032'
+- name: IO25
+  pins: [J1.P$12, U1.IO25, U3.IO25]
+  trace_width: '0.2032'
+- name: IO26
+  pins: [J1.P$13, U1.IO26, U3.IO26]
+  trace_width: '0.2032'
+- name: IO27
+  pins: [J1.P$14, R14.1, U1.IO27, U3.IO27]
+  trace_width: '0.2032'
+- name: IO32
+  pins: [J1.P$15, R13.1, U1.IO32, U3.IO32]
+  trace_width: '0.2032'
+- name: IO33
+  pins: [J1.P$16, R8.1, U1.IO33, U3.IO33]
+  trace_width: '0.2032'
+- name: IO34
+  pins: [J1.P$17, R15.1, U1.IO34, U3.IO34, U5.IRQ]
+  trace_width: '0.2032'
+- name: IO35
+  pins: [J1.P$18, U1.IO35, U3.IO35]
+  trace_width: '0.2032'
+- name: IO36/SVP
+  pins: [J1.P$19, U1.SENSR_VP, U3.SENSOR_VP]
+  trace_width: '0.2032'
+- name: IO39/SVN
+  pins: [J1.P$20, U1.SENSR_VN, U3.SENSOR_VN]
+  trace_width: '0.2032'
+- name: IO4
+  pins: [J2.6, U1.IO4, U3.IO4, U5.SPICSN]
+  trace_width: '0.2032'
+- name: IO5
+  pins: [J2.7, U1.IO5, U3.IO5]
+  trace_width: '0.2032'
+- name: LEDRX
+  pins: [R21.1, U5.GPIO2]
+  trace_width: '0.2032'
+- name: LEDRXOK
+  pins: [R23.1, U5.GPIO0]
+  trace_width: '0.2032'
+- name: LEDSFD
+  pins: [R22.1, U5.GPIO1]
+  trace_width: '0.2032'
+- name: LEDTX
+  pins: [R20.1, U5.GPIO3]
+  trace_width: '0.2032'
+- name: N$1
+  pins: [D1.A, R20.2]
+  trace_width: '0.2032'
+- name: N$13
+  pins: [Q4.B, R12.1]
+  trace_width: '0.2032'
+- name: N$14
+  pins: [Q3.B, R11.1]
+  trace_width: '0.2032'
+- name: N$15
+  pins: [FLASH.2, R10.1]
+  trace_width: '0.2032'
+- name: N$16
+  pins: [D2.A, R21.2]
+  trace_width: '0.2032'
+- name: N$17
+  pins: [D4.A, R22.2]
+  trace_width: '0.2032'
+- name: N$18
+  pins: [D5.A, R23.2]
+  trace_width: '0.2032'
+- name: N$3
+  pins: [C14.1, U2.NC]
+  trace_width: '0.2032'
+- name: N$5
+  pins: [D3.C, R3.2]
+  trace_width: '0.2032'
+- name: NC
+  pins: [U1.NC, U3.NC]
+  trace_width: '0.2032'
+- name: RESET
+  pins:
+  - C12.1
+  - J1.P$3
+  - Q4.C
+  - R9.1
+  - RST.2
+  - U1.EN
+  - U3.EN
+  trace_width: '0.2032'
+- name: RSTN
+  pins: [R14.2, U5.RSTN]
+  trace_width: '0.2032'
+- name: RTS
+  pins: [IC1.G$1.RTS, Q4.E, R11.2]
+  trace_width: '0.2032'
+- name: RXD
+  pins: [IC1.G$1.TXD, J2.3, U1.RXD0, U3.RXD0]
+  trace_width: '0.2032'
+- name: SD0
+  pins: [U1.SD0, U3.SDO]
+  trace_width: '0.2032'
+- name: SD1
+  pins: [U1.SD1, U3.SD1]
+  trace_width: '0.2032'
+- name: SD2
+  pins: [U1.SD2, U3.SD2]
+  trace_width: '0.2032'
+- name: SD3
+  pins: [U1.SD3, U3.SD3]
+  trace_width: '0.2032'
+- name: TXD
+  pins: [IC1.G$1.RXD, J2.4, U1.TXD0, U3.TXD0]
+  trace_width: '0.2032'
+- name: VBUS
+  pins:
+  - C1.1
+  - C11.1
+  - C2.1
+  - D6.+
+  - IC1.G$1.VBUS
+  - J3.VCC
+  - R24.2
+  - U2.IN
+  trace_width: '0.2032'
+- name: VDD5V
+  pins: [C7.1, D6.-, J2.1, U4.IN]
+  trace_width: '0.2032'
+- name: WAKEUP
+  pins: [R13.2, U5.WAKEUP]
+  trace_width: '0.2032'
+positions:
+- ref: C1
+  x: 5.57
+  y: 9.82
+- ref: C10
+  x: 36.91
+  y: 19.86
+  rot: 90.0
+- ref: C11
+  x: 6.08
+  y: 9.01
+  rot: 270.0
+- ref: C12
+  x: 6.16
+  y: 21.06
+- ref: C13
+  x: 13.59
+  y: 10.85
+  rot: 90.0
+- ref: C2
+  x: 5.57
+  y: 11.25
+- ref: C3
+  x: 10.82
+  y: 3.94
+  rot: 180.0
+- ref: C4
+  x: 66.05
+  y: 28.2
+- ref: C5
+  x: 10.9
+  y: 2.43
+  rot: 180.0
+- ref: C6
+  x: 9.37
+  y: 12.29
+- ref: C7
+  x: 4.52
+  y: 6.79
+  rot: 90.0
+- ref: C8
+  x: 35.44
+  y: 19.88
+  rot: 90.0
+- ref: C9
+  x: 11.05
+  y: 21.49
+  rot: 90.0
+- ref: D1
+  x: 31.41
+  y: 25.7
+  rot: 270.0
+- ref: D2
+  x: 31.39
+  y: 27.55
+  rot: 270.0
+- ref: D3
+  x: 7.23
+  y: 3.94
+  rot: 270.0
+- ref: D4
+  x: 17.52
+  y: 27.34
+  rot: 90.0
+- ref: D5
+  x: 17.54
+  y: 25.51
+  rot: 90.0
+- ref: D6
+  x: 6.42
+  y: 7.23
+  rot: 270.0
+- ref: FLASH
+  x: 2.5
+  y: 22.5
+  rot: 90.0
+- ref: IC1
+  x: 11.46
+  y: 16.41
+  rot: 90.0
+- ref: J1
+  x: 40.57
+  y: 30.6
+- ref: J2
+  x: 52.0
+  y: 2.0
+  rot: 90.0
+- ref: J3
+  x: 4.5
+  y: 16.0
+  rot: 270.0
+- ref: Q3
+  x: 9.94
+  y: 25.76
+  rot: 270.0
+- ref: Q4
+  x: 9.93
+  y: 21.99
+  rot: 270.0
+- ref: R10
+  x: 6.24
+  y: 25.88
+  rot: 180.0
+- ref: R11
+  x: 14.18
+  y: 23.91
+  rot: 270.0
+- ref: R12
+  x: 12.71
+  y: 23.89
+  rot: 90.0
+- ref: R13
+  x: 36.83
+  y: 12.81
+  rot: 270.0
+- ref: R14
+  x: 35.12
+  y: 14.22
+  rot: 270.0
+- ref: R15
+  x: 16.63
+  y: 12.49
+  rot: 270.0
+- ref: R16
+  x: 45.57
+  y: 20.71
+  rot: 180.0
+- ref: R17
+  x: 45.56
+  y: 19.14
+  rot: 180.0
+- ref: R20
+  x: 27.45
+  y: 25.83
+- ref: R21
+  x: 27.46
+  y: 27.5
+- ref: R22
+  x: 21.5
+  y: 27.36
+  rot: 180.0
+- ref: R23
+  x: 21.48
+  y: 25.64
+  rot: 180.0
+- ref: R24
+  x: 7.44
+  y: 8.99
+  rot: 90.0
+- ref: R3
+  x: 7.04
+  y: 2.34
+- ref: R7
+  x: 6.24
+  y: 24.36
+- ref: R8
+  x: 38.57
+  y: 11.38
+  rot: 270.0
+- ref: R9
+  x: 6.23
+  y: 22.63
+- ref: RST
+  x: 2.42
+  y: 6.15
+  rot: 90.0
+- ref: U1
+  x: 40.16
+  y: 25.04
+  rot: 270.0
+- ref: U2
+  x: 10.33
+  y: 9.04
+  rot: 270.0
+- ref: U3
+  x: 56.6
+  y: 16.05
+- ref: U4
+  x: 10.06
+  y: 7.93
+- ref: U5
+  x: 29.36
+  y: 23.14
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

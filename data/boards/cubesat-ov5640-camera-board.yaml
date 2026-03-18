@@ -1,0 +1,335 @@
+name: CubeSat OV5640 Camera Board
+slug: cubesat-ov5640-camera-board
+source: proveskit/development_boards
+format: kicad8
+description: OV2640 + OV5640 image sensors on shared DVP bus, TLV743xx LDOs for 1.5V/2.8V sensor rails
+tags: [level-shifting, power-supply, sensors]
+key_ics: [TLV74315, TLV74328]
+outline:
+  width_mm: 21.41
+  height_mm: 37.77
+design_rules:
+  layers: 2
+  min_trace: 0.127mm
+  min_clearance: 0.127mm
+  min_drill: 0.2mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0603'
+  decouples: U2
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+  decouples: U2
+- ref: C11
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: C12
+  value: 22pF
+  footprint: '0603'
+- ref: C2
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C3
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C4
+  value: 10uF
+  footprint: 0805
+- ref: C5
+  value: 10uF
+  footprint: 0805
+- ref: C6
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: C7
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: C8
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: C9
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: D1
+  value: IR26-21C_L110_TR8
+  footprint: '0603'
+- ref: FB1
+  value: ferrite bead
+  footprint: '0603'
+- ref: J1
+  value: 1x1 header
+  footprint: TestPoint_Pad_D1.5mm
+- ref: J2
+  value: 1x5 header
+  footprint: 1X5
+- ref: J7
+  value: 1x12 header
+  footprint: Molex_Pico-Lock_504050-1291
+- ref: J8
+  value: 1x4 header
+  footprint: JST_SH_BM04B-SRSS-TB
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-2
+- ref: OSC1
+  value: 24MHz 3.3V Oscillator
+  footprint: Oscillator_SMD_SeikoEpson_SG8002CE-4Pin
+- ref: Q1
+  value: BSS83P
+  footprint: SOT-23
+- ref: Q2
+  value: BSS138
+  footprint: SOT-23
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  description: 100K 0603
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  description: 100K 0603
+  pullup: D1.A
+- ref: R6
+  value: 10kohm
+  footprint: '0603'
+  description: 100K 0603
+  pullup: X1.nRESET
+- ref: R7
+  value: 10kohm
+  footprint: '0603'
+  description: 100K 0603
+  pulldown: X1.PWDN
+- ref: U2
+  value: TLV74315
+  footprint: SOT-23-5
+- ref: U3
+  value: TLV74328
+  footprint: SOT-23-5
+- ref: X1
+  value: 1x24 header
+  footprint: Molex_502244-2430
+nets:
+- name: +3V3
+  pins:
+  - C4.1
+  - C5.1
+  - C6.1
+  - C9.1
+  - J8.Pin_2
+  - JP1.B
+  - OSC1.INH
+  - OSC1.VCC
+  - Q1.S
+  - R5.1
+  - R6.1
+  - U2.EN
+  - U2.IN
+  - U3.EN
+  - U3.IN
+  - X1.DOVDD
+- name: 1.5V
+  pins: [C1.1, C10.1, C2.1, C3.1, U2.OUT, X1.DVDD]
+- name: 2.8V
+  pins: [C11.1, C7.1, C8.1, U3.OUT, X1.AVDD]
+- name: AGND
+  pins: [FB1.P$2, X1.AGND]
+- name: BURN_RELAY_A / VS
+  pins: [J7.Pin_11, X1.VSYNC]
+- name: D4
+  pins: [J7.Pin_7, X1.DATA4]
+- name: D5
+  pins: [J7.Pin_6, X1.DATA5]
+- name: D6
+  pins: [J7.Pin_5, X1.DATA6]
+- name: D8
+  pins: [J7.Pin_3, X1.DATA8]
+- name: D9
+  pins: [J7.Pin_2, X1.DATA9]
+- name: ENABLE_BURN / D7
+  pins: [J7.Pin_4, X1.DATA7]
+- name: ENAB_RF / D3
+  pins: [J7.Pin_8, X1.DATA3]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.K
+  - FB1.P$1
+  - J2.Pin_1
+  - J7.Pin_1
+  - J8.Pin_1
+  - OSC1.GND
+  - Q2.S
+  - R7.2
+  - U2.GND
+  - U3.GND
+  - X1.DGND
+- name: HS
+  pins: [J7.Pin_12, X1.HSYNC]
+- name: I2C_RESET / D2
+  pins: [J7.Pin_9, X1.DATA2]
+- name: Net-(D1-A)
+  pins: [D1.A, R5.2]
+- name: Net-(J1-Pin_1)
+  pins: [J1.Pin_1, X1.STROBE]
+- name: Net-(JP1-A)
+  pins: [JP1.A, X1.DATA1]
+- name: Net-(OSC1-OUT)
+  pins: [OSC1.OUT, X1.XCLK]
+- name: Net-(Q1-G)
+  pins: [Q1.G, Q2.D, R1.2]
+- name: Net-(X1-PWDN)
+  pins: [R7.1, X1.PWDN]
+- name: Net-(X1-nRESET)
+  pins: [R6.2, X1.nRESET]
+- name: SCL1
+  pins: [J2.Pin_4, J8.Pin_4, X1.SCL]
+- name: SDA1
+  pins: [J2.Pin_3, J8.Pin_3, X1.SDA]
+- name: VBUS_RESET / PC
+  pins: [C12.1, J7.Pin_10, X1.PCLK]
+- name: pwr_ctrl
+  pins: [J2.Pin_2, Q2.G]
+- name: pwr_in
+  pins: [J2.Pin_5, Q1.D, R1.1]
+positions:
+- ref: C1
+  x: 158.79
+  y: 119.52
+  rot: -90.0
+- ref: C10
+  x: 153.47
+  y: 132.26
+  rot: 90.0
+- ref: C11
+  x: 158.11
+  y: 132.27
+  rot: 90.0
+- ref: C12
+  x: 150.41
+  y: 132.21
+  rot: 90.0
+- ref: C2
+  x: 154.95
+  y: 119.56
+  rot: -90.0
+- ref: C3
+  x: 157.0
+  y: 119.55
+  rot: -90.0
+- ref: C4
+  x: 166.13
+  y: 140.39
+- ref: C5
+  x: 166.13
+  y: 138.34
+- ref: C6
+  x: 153.4
+  y: 128.45
+  rot: 90.0
+- ref: C7
+  x: 157.0
+  y: 123.41
+  rot: -90.0
+- ref: C8
+  x: 154.95
+  y: 123.42
+  rot: -90.0
+- ref: C9
+  x: 151.95
+  y: 132.26
+  rot: 90.0
+- ref: D1
+  x: 165.28
+  y: 109.06
+  rot: 180.0
+- ref: FB1
+  x: 159.65
+  y: 132.27
+  rot: -90.0
+- ref: J1
+  x: 166.48
+  y: 135.16
+- ref: J2
+  x: 153.69
+  y: 105.66
+  rot: 90.0
+- ref: J7
+  x: 164.31
+  y: 121.92
+  rot: 90.0
+- ref: J8
+  x: 157.72
+  y: 113.36
+  rot: 90.0
+- ref: JP1
+  x: 148.38
+  y: 132.35
+  rot: 90.0
+- ref: OSC1
+  x: 157.41
+  y: 127.85
+  rot: 180.0
+- ref: Q1
+  x: 151.47
+  y: 110.91
+- ref: Q2
+  x: 151.47
+  y: 114.45
+- ref: R1
+  x: 154.3
+  y: 112.58
+  rot: -90.0
+- ref: R5
+  x: 162.0
+  y: 109.05
+- ref: R6
+  x: 156.55
+  y: 132.3
+  rot: -90.0
+- ref: R7
+  x: 155.0
+  y: 132.28
+  rot: 90.0
+- ref: U2
+  x: 151.42
+  y: 119.51
+- ref: U3
+  x: 151.45
+  y: 123.38
+- ref: X1
+  x: 155.57
+  y: 138.92
+copper_pours:
+- net: +3V3
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: SCL1
+  layers: [B.Cu, F.Cu]
+- net: SDA1
+  layers: [B.Cu, F.Cu]
+- net: pwr_ctrl
+  layers: [B.Cu, F.Cu]
+- net: pwr_in
+  layers: [B.Cu, F.Cu]

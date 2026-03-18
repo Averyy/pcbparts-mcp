@@ -1,0 +1,445 @@
+name: Zigbee Rotary Dimmer
+slug: zigbee-rotary-dimmer
+source: dagroe/zigbee-rotary-dimmer-switch
+format: kicad8
+description: Wall-mount Zigbee dimmer (ESP32-C6 native Zigbee), IRM-01-5 mains PSU
+tags: [zigbee-thread]
+key_ics: [ESP32-C6]
+outline:
+  width_mm: 42.0
+  height_mm: 39.5
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 10nF
+  footprint: '0402'
+  lcsc: C15195
+- ref: C2
+  value: 10nF
+  footprint: '0402'
+  lcsc: C15195
+- ref: C3
+  value: 47uF
+  footprint: C_Elec
+  lcsc: C59921
+  voltage: 16V
+  tolerance: 20%
+  decouples: U4
+- ref: C4
+  value: 47uF
+  footprint: C_Elec
+  lcsc: C59921
+  voltage: 16V
+  tolerance: 20%
+  decouples: U2
+- ref: C5
+  value: 1uF
+  footprint: '0603'
+  lcsc: C15849
+- ref: C6
+  value: 1uF
+  footprint: '0603'
+  lcsc: C15849
+  decouples: U2
+- ref: C7
+  value: 1uF
+  footprint: '0603'
+  lcsc: C15849
+  decouples: U2
+- ref: C8
+  value: 1uF
+  footprint: '0603'
+  lcsc: C15849
+- ref: D1
+  value: LESD5D5.0CT1G
+  footprint: SOD-523
+  lcsc: C20416613
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D2
+  value: LESD5D5.0CT1G
+  footprint: SOD-523
+  lcsc: C20416613
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D4
+  value: LESD5D5.0CT1G
+  footprint: SOD-523
+  lcsc: C20416613
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D5
+  value: 1N5819HW-7-F
+  footprint: SOD-123
+  lcsc: C82544
+  description: Schottky diode
+- ref: J1
+  value: JST SH 5-pin
+  footprint: JST_SH_SM05B-SRSS-TB
+  height: '2.95'
+  manufacturer: JST (JAPAN SOLDERLESS TERMINALS)
+  mpn: SM05B-SRSS-TB(LF)(SN)
+  lcsc: C136657
+- ref: J4
+  value: 1x2 header
+  footprint: JST_SH_SM02B-SRSS-TB
+  lcsc: C160402
+- ref: J5
+  value: 1x2 header
+  footprint: JST_SH_SM02B-SRSS-TB
+  lcsc: C160402
+- ref: J6
+  value: 1x2 header
+  footprint: JST_SH_SM02B-SRSS-TB
+  lcsc: C160402
+- ref: R1
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C1523
+  pullup: R4.1
+- ref: R10
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C1523
+  pullup: /D15
+- ref: R11
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C1523
+  pullup: /D18
+- ref: R12
+  value: 3.3kohm
+  footprint: '0603'
+  lcsc: C22978
+  pullup: U3.IO8
+- ref: R14
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C1523
+  pullup: /EN
+- ref: R2
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C1523
+  pullup: R3.2
+- ref: R3
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C1523
+- ref: R4
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C1523
+- ref: R5
+  value: 5.1kohm
+  footprint: '0603'
+  lcsc: C23186
+  pulldown: USB1.CC1
+- ref: R6
+  value: 5.1kohm
+  footprint: '0603'
+  lcsc: C23186
+  pulldown: USB1.CC2
+- ref: R7
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C1523
+  pullup: /D20
+- ref: R8
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C1523
+  pullup: /D09
+- ref: R9
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C1523
+  pullup: /D14
+- ref: U2
+  value: 'LDO: SPX3819M5-L-3-3'
+  footprint: SOT-23-5
+  lcsc: C9055
+  description: 500mA Low drop-out regulator, Fixed Output 3.3V, SOT-23-5
+- ref: U3
+  value: ESP32-C6-MINI
+  footprint: WIFIM-SMD_61P-L16.6-W13.2-P0.80-ESP32-C6-MINI-1-N4
+  manufacturer: "ESPRESSIF(\u4E50\u946B)"
+  lcsc: C5736265
+- ref: U4
+  value: SN74LV1T125DBV
+  footprint: SOT-23-5
+  lcsc: C473338
+  description: Single Power Supply, Single Buffer Gate with 3-State Output, CMOS Logic Level
+- ref: U6
+  value: 'LDO: SSP7603P50M5R'
+  footprint: SOT-23-5
+  manufacturer: "Siproin(\u4E0A\u6D77\u77FD\u670B)"
+  lcsc: C411033
+  description: 'Output Type: Maximum Input Voltage:15V Output Voltage:5V Output Voltage:5V MAX'
+- ref: USB1
+  value: USB-C
+  footprint: USB-C
+  manufacturer: "G-Switch(\u54C1\u8D5E)"
+  lcsc: C2843972
+nets:
+- name: +3.3V
+  pins:
+  - C4.1
+  - C7.2
+  - J1.1
+  - R1.1
+  - R10.1
+  - R11.1
+  - R12.2
+  - R14.1
+  - R2.1
+  - R7.1
+  - R8.1
+  - R9.1
+  - U2.OUT
+  - U3.3V3
+- name: +5V
+  pins: [C3.1, C6.2, D5.K, U2.EN, U2.IN, U4.VCC]
+- name: /D01
+  pins: [U3.IO1, U4.A]
+- name: /D06
+  pins: [J1.5, U3.IO6]
+- name: /D07
+  pins: [J1.4, U3.IO7]
+- name: /D09
+  pins: [R8.2, U3.IO9]
+- name: /D12
+  pins: [D2.A2, U3.IO12, USB1.DN1, USB1.DN2]
+- name: /D13
+  pins: [D4.A2, U3.IO13, USB1.DP1, USB1.DP2]
+- name: /D14
+  pins: [J4.Pin_2, R9.2, U3.IO14]
+- name: /D15
+  pins: [J5.Pin_2, R10.2, U3.IO15]
+- name: /D18
+  pins: [J6.Pin_2, R11.2, U3.IO18]
+- name: /D19
+  pins: [J1.3, U3.IO19]
+- name: /D20
+  pins: [R7.2, U3.IO20]
+- name: /D21
+  pins: [C1.2, R3.1, U3.IO21]
+- name: /D22
+  pins: [C2.2, R4.2, U3.IO22]
+- name: /EN
+  pins: [C5.2, R14.2, U3.EN]
+- name: GND
+  pins:
+  - C1.1
+  - C2.1
+  - C3.2
+  - C4.2
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - D1.A1
+  - D2.A1
+  - D4.A1
+  - J1.2
+  - J4.Pin_1
+  - J5.Pin_1
+  - J6.Pin_1
+  - R5.1
+  - R6.2
+  - U2.GND
+  - U3.GND@1
+  - U3.GND@11
+  - U3.GND@14
+  - U3.GND@2
+  - U3.GND@51
+  - U4.GND
+  - U4.nOE
+  - U6.GND
+  - USB1.GND@A1B12
+  - USB1.GND@B1A12
+- name: Net-(D1-A2)
+  pins: [D1.A2, D5.A, U6.VOUT, USB1.VBUS@A4B9, USB1.VBUS@B4A9]
+- name: Net-(J3-Pin_1)
+  pins: [C8.2, U6.CE, U6.VIN]
+- name: Net-(R1-Pad2)
+  pins: [R1.2, R4.1]
+- name: Net-(R2-Pad2)
+  pins: [R2.2, R3.2]
+- name: Net-(U3-IO8)
+  pins: [R12.1, U3.IO8]
+- name: Net-(USB1-CC1)
+  pins: [R5.2, USB1.CC1]
+- name: Net-(USB1-CC2)
+  pins: [R6.1, USB1.CC2]
+positions:
+- ref: C1
+  x: 180.5
+  y: 55.52
+  rot: 90.0
+  side: back
+- ref: C2
+  x: 177.0
+  y: 55.5
+  rot: 90.0
+  side: back
+- ref: C3
+  x: 151.82
+  y: 62.0
+  rot: 180.0
+  side: back
+- ref: C4
+  x: 179.5
+  y: 67.0
+  rot: -90.0
+  side: back
+- ref: C5
+  x: 152.5
+  y: 51.54
+  rot: 180.0
+  side: back
+- ref: C6
+  x: 177.5
+  y: 62.0
+  rot: -90.0
+  side: back
+- ref: C7
+  x: 179.0
+  y: 62.0
+  rot: -90.0
+  side: back
+- ref: C8
+  x: 178.5
+  y: 74.0
+  rot: 90.0
+  side: back
+- ref: D1
+  x: 156.0
+  y: 65.0
+  rot: -90.0
+  side: back
+- ref: D2
+  x: 157.5
+  y: 65.0
+  rot: -90.0
+  side: back
+- ref: D4
+  x: 152.5
+  y: 58.5
+  side: back
+- ref: D5
+  x: 156.5
+  y: 55.85
+  rot: -90.0
+  side: back
+- ref: J1
+  x: 158.2
+  y: 44.0
+  side: back
+- ref: J4
+  x: 185.12
+  y: 61.7
+  rot: -90.0
+  side: back
+- ref: J5
+  x: 185.12
+  y: 55.7
+  rot: -90.0
+  side: back
+- ref: J6
+  x: 185.12
+  y: 49.7
+  rot: -90.0
+  side: back
+- ref: R1
+  x: 178.0
+  y: 59.0
+  rot: 90.0
+  side: back
+- ref: R10
+  x: 184.0
+  y: 45.5
+  rot: -90.0
+  side: back
+- ref: R11
+  x: 185.0
+  y: 45.5
+  rot: -90.0
+  side: back
+- ref: R12
+  x: 180.49
+  y: 61.99
+  rot: -90.0
+  side: back
+- ref: R14
+  x: 152.0
+  y: 49.5
+  rot: 180.0
+  side: back
+- ref: R2
+  x: 179.5
+  y: 59.0
+  rot: 90.0
+  side: back
+- ref: R3
+  x: 179.5
+  y: 55.52
+  rot: -90.0
+  side: back
+- ref: R4
+  x: 178.0
+  y: 55.5
+  rot: 90.0
+  side: back
+- ref: R5
+  x: 154.52
+  y: 65.32
+  rot: -90.0
+  side: back
+- ref: R6
+  x: 150.5
+  y: 66.0
+  rot: 180.0
+  side: back
+- ref: R7
+  x: 177.0
+  y: 59.0
+  rot: 90.0
+  side: back
+- ref: R8
+  x: 180.5
+  y: 59.0
+  rot: 90.0
+  side: back
+- ref: R9
+  x: 183.0
+  y: 45.49
+  rot: -90.0
+  side: back
+- ref: U2
+  x: 185.36
+  y: 67.05
+  rot: 90.0
+  side: back
+- ref: U3
+  x: 175.9
+  y: 47.0
+  rot: -90.0
+  side: back
+- ref: U4
+  x: 156.36
+  y: 50.5
+  rot: 180.0
+  side: back
+- ref: U6
+  x: 152.86
+  y: 54.95
+  rot: 180.0
+  side: back
+- ref: USB1
+  x: 152.0
+  y: 70.28
+  rot: 180.0
+  side: back

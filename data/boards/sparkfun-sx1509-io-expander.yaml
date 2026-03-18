@@ -1,0 +1,328 @@
+name: SparkFun SX1509 IO Expander
+slug: sparkfun-sx1509-io-expander
+source: sparkfun/SX1509_IO-Expander
+format: eagle
+description: 16-GPIO expander with LED driver engine, keypad scanner
+tags: [led-driver, level-shifting]
+key_ics: [SX1509]
+outline:
+  width_mm: 25.4
+  height_mm: 35.56
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 6mil
+  min_drill: 15mil
+  min_via: 10mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+  decouples: U1
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+  decouples: U1
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+  decouples: U1
+- ref: JP1
+  value: 1x6 header
+  footprint: 1X06
+  prod_id: CONN-08437
+- ref: JP2
+  value: 1x6 header
+  footprint: 1X06
+  prod_id: CONN-08437
+- ref: JP3
+  value: 2x10 header
+  footprint: 2X10
+  description: This was SPECIALLY designed to be used with our Graphic LCD Backpack
+- ref: JP4
+  value: 2x10 header
+  footprint: 2X10
+  description: This was SPECIALLY designed to be used with our Graphic LCD Backpack
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+  power: 1/10W
+  pullup: '!INT'
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+  power: 1/10W
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+  power: 1/10W
+  pullup: '!RESET'
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+  power: 1/10W
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+  power: 1/10W
+  pullup: SJ4.1
+- ref: R6
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+  power: 1/10W
+  pullup: SJ5.1
+- ref: SJ1
+  value: solder jumper (NC)
+  footprint: SJ-3
+- ref: SJ2
+  value: VCC1-3.3V
+  footprint: SJ-2
+- ref: SJ3
+  value: VCC2-3.3V
+  footprint: SJ-2
+- ref: SJ4
+  value: solder jumper
+  footprint: SJ-3
+- ref: SJ5
+  value: solder jumper
+  footprint: SJ-3
+- ref: SJ6
+  value: A-VCC1
+  footprint: SJ-2
+- ref: SJ7
+  value: GND
+  footprint: SJ-2
+- ref: SJ8
+  value: B-VCC2
+  footprint: SJ-2
+- ref: SJ9
+  value: GND
+  footprint: SJ-2
+- ref: U1
+  value: SX1509
+  footprint: QFN-28
+  prod_id: IC-11311
+  description: Semtech SX1509
+nets:
+- name: '!INT'
+  pins: [JP1.1, R1.1, U1.!INT]
+- name: '!RESET'
+  pins: [JP1.2, JP2.2, R3.1, U1.!RESET]
+- name: '0'
+  pins: [JP3.4, 'U1.I/O[0]']
+- name: '1'
+  pins: [JP3.6, 'U1.I/O[1]']
+- name: '10'
+  pins: [JP4.6, 'U1.I/O[10]']
+- name: '11'
+  pins: [JP4.8, 'U1.I/O[11]']
+- name: '12'
+  pins: [JP4.12, 'U1.I/O[12]']
+- name: '13'
+  pins: [JP4.14, 'U1.I/O[13]']
+- name: '14'
+  pins: [JP4.16, 'U1.I/O[14]']
+- name: '15'
+  pins: [JP4.18, 'U1.I/O[15]']
+- name: '2'
+  pins: [JP3.8, 'U1.I/O[2]']
+- name: '3'
+  pins: [JP3.10, 'U1.I/O[3]']
+- name: 3.3V
+  pins:
+  - C1.1
+  - JP1.4
+  - JP2.4
+  - R1.2
+  - R3.2
+  - R5.2
+  - R6.2
+  - SJ1.2
+  - SJ2.2
+  - SJ3.2
+  - U1.VDDM
+- name: '4'
+  pins: [JP3.14, 'U1.I/O[4]']
+- name: '5'
+  pins: [JP3.16, 'U1.I/O[5]']
+- name: '6'
+  pins: [JP3.18, 'U1.I/O[6]']
+- name: '7'
+  pins: [JP3.20, 'U1.I/O[7]']
+- name: '8'
+  pins: [JP4.2, 'U1.I/O[8]']
+- name: '9'
+  pins: [JP4.4, 'U1.I/O[9]']
+- name: ADDR0
+  pins: [SJ4.2, U1.ADDR0]
+- name: ADDR1
+  pins: [SJ5.2, U1.ADDR1]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - JP1.3
+  - JP2.3
+  - JP3.2
+  - JP4.20
+  - SJ4.3
+  - SJ5.3
+  - SJ7.1
+  - SJ9.1
+  - U1.GND
+- name: N$1
+  pins: [R2.2, SJ1.3]
+- name: N$2
+  pins: [R4.2, SJ1.1]
+- name: N$3
+  pins:
+  - JP4.1
+  - JP4.11
+  - JP4.13
+  - JP4.15
+  - JP4.17
+  - JP4.19
+  - JP4.3
+  - JP4.5
+  - JP4.7
+  - JP4.9
+  - SJ8.1
+  - SJ9.2
+- name: N$8
+  pins: [R5.1, SJ4.1]
+- name: N$9
+  pins: [R6.1, SJ5.1]
+- name: OSCIO
+  pins: [JP2.1, U1.OSCIO]
+- name: PWRBUSA
+  pins:
+  - JP3.1
+  - JP3.11
+  - JP3.13
+  - JP3.15
+  - JP3.17
+  - JP3.19
+  - JP3.3
+  - JP3.5
+  - JP3.7
+  - JP3.9
+  - SJ6.1
+  - SJ7.2
+- name: SCL
+  pins: [JP1.6, JP2.6, R2.1, U1.SCL]
+- name: SDA
+  pins: [JP1.5, JP2.5, R4.1, U1.SDA]
+- name: VCC1
+  pins: [C2.1, JP3.12, SJ2.1, SJ6.2, U1.VCC1]
+- name: VCC2
+  pins: [C3.1, JP4.10, SJ3.1, SJ8.2, U1.VCC2]
+positions:
+- ref: C1
+  x: 15.24
+  y: 10.16
+  rot: 270.0
+- ref: C2
+  x: 8.26
+  y: 15.24
+  rot: 90.0
+- ref: C3
+  x: 17.14
+  y: 15.24
+  rot: 270.0
+- ref: JP1
+  x: 6.35
+  y: 34.29
+- ref: JP2
+  x: 6.35
+  y: 1.27
+- ref: JP3
+  x: 3.81
+  y: 17.78
+  rot: 270.0
+- ref: JP4
+  x: 21.59
+  y: 17.78
+  rot: 90.0
+- ref: R1
+  x: 7.62
+  y: 27.94
+  rot: 270.0
+- ref: R2
+  x: 17.78
+  y: 27.94
+  rot: 270.0
+- ref: R3
+  x: 8.89
+  y: 27.94
+  rot: 270.0
+- ref: R4
+  x: 12.7
+  y: 27.94
+  rot: 270.0
+- ref: R5
+  x: 10.16
+  y: 5.08
+  rot: 270.0
+- ref: R6
+  x: 15.24
+  y: 5.08
+  rot: 270.0
+- ref: SJ1
+  x: 15.24
+  y: 27.94
+- ref: SJ2
+  x: 8.89
+  y: 25.4
+  rot: 180.0
+- ref: SJ3
+  x: 16.51
+  y: 25.4
+- ref: SJ4
+  x: 10.16
+  y: 8.89
+  rot: 180.0
+- ref: SJ5
+  x: 15.24
+  y: 8.89
+- ref: SJ6
+  x: 3.81
+  y: 16.51
+  rot: 180.0
+- ref: SJ7
+  x: 3.81
+  y: 29.21
+- ref: SJ8
+  x: 21.59
+  y: 16.51
+- ref: SJ9
+  x: 21.59
+  y: 29.21
+  rot: 180.0
+- ref: U1
+  x: 12.7
+  y: 15.24
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

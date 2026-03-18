@@ -1,0 +1,442 @@
+name: ANAVI Macro Pad 8
+slug: anavi-macro-pad-8
+source: AnaviTechnology/anavi-macro-pad-8
+format: kicad7
+description: ATmega32U4 USB HID, Cherry MX switches
+tags: [keyboard]
+key_ics: [ATmega32U4]
+outline:
+  width_mm: 135.0
+  height_mm: 47.05
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.25mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 22pF
+  footprint: '0603'
+- ref: C2
+  value: 22pF
+  footprint: '0603'
+- ref: C3
+  value: 1uF
+  footprint: '0603'
+- ref: C4
+  value: 4.7uF
+  footprint: '0603'
+  decouples: U1
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+- ref: D1
+  value: 1N5819
+  footprint: SMA_Standard
+- ref: J1
+  value: USB Micro-B
+  footprint: USB_Micro-B_Molex-105017-0001
+- ref: J2
+  value: 1x4 header
+  footprint: 1X4
+- ref: J3
+  value: 1x3 header
+  footprint: LedConnector
+- ref: J4
+  value: 1x3 header
+  footprint: LedConnector
+- ref: J5
+  value: 2x3 header
+  footprint: 2X3
+- ref: L1
+  value: LED
+  footprint: LED_D3.0mm
+- ref: L2
+  value: LED
+  footprint: LED_D3.0mm
+- ref: L3
+  value: LED
+  footprint: LED_D3.0mm
+- ref: L4
+  value: LED
+  footprint: LED_D3.0mm
+- ref: L5
+  value: LED
+  footprint: LED_D3.0mm
+- ref: L6
+  value: LED
+  footprint: LED_D3.0mm
+- ref: L7
+  value: LED
+  footprint: LED_D3.0mm
+- ref: L8
+  value: LED
+  footprint: LED_D3.0mm
+- ref: Q1
+  value: NPN transistor
+  footprint: SOT-23
+- ref: R1
+  value: 20ohm
+  footprint: '0603'
+- ref: R10
+  value: 68ohm
+  footprint: '0603'
+- ref: R11
+  value: 68ohm
+  footprint: '0603'
+- ref: R12
+  value: 68ohm
+  footprint: '0603'
+- ref: R13
+  value: 24ohm
+  footprint: '0603'
+- ref: R14
+  value: 24ohm
+  footprint: '0603'
+- ref: R2
+  value: 20ohm
+  footprint: '0603'
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  pullup: U1.13
+- ref: R4
+  value: 470ohm
+  footprint: '0603'
+- ref: R5
+  value: 68ohm
+  footprint: '0603'
+- ref: R6
+  value: 68ohm
+  footprint: '0603'
+- ref: R7
+  value: 68ohm
+  footprint: '0603'
+- ref: R8
+  value: 68ohm
+  footprint: '0603'
+- ref: R9
+  value: 68ohm
+  footprint: '0603'
+- ref: SW1
+  value: switch
+  footprint: SW_Cherry_MX_1.00u_Plate
+- ref: SW2
+  value: switch
+  footprint: SW_Cherry_MX_1.00u_Plate
+- ref: SW3
+  value: switch
+  footprint: SW_Cherry_MX_1.00u_Plate
+- ref: SW4
+  value: switch
+  footprint: SW_Cherry_MX_1.00u_Plate
+- ref: SW5
+  value: switch
+  footprint: SW_Cherry_MX_1.00u_Plate
+- ref: SW6
+  value: switch
+  footprint: SW_Cherry_MX_1.00u_Plate
+- ref: SW7
+  value: switch
+  footprint: SW_Cherry_MX_1.00u_Plate
+- ref: SW8
+  value: switch
+  footprint: SW_Cherry_MX_1.00u_Plate
+- ref: SW9
+  value: switch
+  footprint: SW_PUSH_6mm_h4.3mm
+- ref: U1
+  value: ATmega32U4-AU
+  footprint: TQFP-44
+- ref: Y1
+  value: Crystal
+  footprint: SMD3225
+nets:
+- name: +5V
+  pins:
+  - C4.1
+  - C5.1
+  - D1.1
+  - J2.2
+  - J3.1
+  - J4.1
+  - J5.2
+  - Q1.3
+  - R3.2
+  - U1.14
+  - U1.2
+  - U1.24
+  - U1.34
+  - U1.42
+  - U1.44
+  - U1.7
+- name: /BACKLIT
+  pins: [Q1.1, U1.27]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.1
+  - C4.2
+  - C5.2
+  - J1.5
+  - J1.6
+  - J2.1
+  - J3.3
+  - J4.3
+  - J5.6
+  - L1.1
+  - L2.1
+  - L3.1
+  - L4.1
+  - L5.1
+  - L6.1
+  - L7.1
+  - L8.1
+  - SW1.2
+  - SW2.2
+  - SW3.2
+  - SW4.2
+  - SW5.2
+  - SW6.2
+  - SW7.2
+  - SW8.2
+  - U1.15
+  - U1.23
+  - U1.33
+  - U1.35
+  - U1.43
+  - U1.5
+- name: Net-(C1-Pad1)
+  pins: [C1.1, U1.17, Y1.1]
+- name: Net-(C2-Pad1)
+  pins: [C2.1, U1.16, Y1.2]
+- name: Net-(C3-Pad2)
+  pins: [C3.2, U1.6]
+- name: Net-(D1-Pad2)
+  pins: [D1.2, J1.1]
+- name: Net-(J1-Pad2)
+  pins: [J1.2, R2.2]
+- name: Net-(J1-Pad3)
+  pins: [J1.3, R1.2]
+- name: Net-(J2-Pad3)
+  pins: [J2.3, R13.1]
+- name: Net-(J2-Pad4)
+  pins: [J2.4, R14.1]
+- name: Net-(J3-Pad2)
+  pins: [J3.2, R4.1]
+- name: Net-(J5-Pad1)
+  pins: [J5.1, U1.11]
+- name: Net-(J5-Pad3)
+  pins: [J5.3, U1.9]
+- name: Net-(J5-Pad4)
+  pins: [J5.4, U1.10]
+- name: Net-(J5-Pad5)
+  pins: [J5.5, R3.1, U1.13]
+- name: Net-(L1-Pad2)
+  pins: [L1.2, R5.2]
+- name: Net-(L2-Pad2)
+  pins: [L2.2, R6.2]
+- name: Net-(L3-Pad2)
+  pins: [L3.2, R7.2]
+- name: Net-(L4-Pad2)
+  pins: [L4.2, R8.2]
+- name: Net-(L5-Pad2)
+  pins: [L5.2, R9.2]
+- name: Net-(L6-Pad2)
+  pins: [L6.2, R10.2]
+- name: Net-(L7-Pad2)
+  pins: [L7.2, R11.2]
+- name: Net-(L8-Pad2)
+  pins: [L8.2, R12.2]
+- name: Net-(Q1-Pad2)
+  pins:
+  - Q1.2
+  - R10.1
+  - R11.1
+  - R12.1
+  - R5.1
+  - R6.1
+  - R7.1
+  - R8.1
+  - R9.1
+- name: Net-(R1-Pad1)
+  pins: [R1.1, U1.4]
+- name: Net-(R13-Pad2)
+  pins: [R13.2, U1.18]
+- name: Net-(R14-Pad2)
+  pins: [R14.2, U1.19]
+- name: Net-(R2-Pad1)
+  pins: [R2.1, U1.3]
+- name: Net-(R4-Pad2)
+  pins: [R4.2, U1.39]
+- name: Net-(SW1-Pad1)
+  pins: [SW1.1, U1.25]
+- name: Net-(SW2-Pad1)
+  pins: [SW2.1, U1.31]
+- name: Net-(SW3-Pad1)
+  pins: [SW3.1, U1.1]
+- name: Net-(SW4-Pad1)
+  pins: [SW4.1, U1.28]
+- name: Net-(SW5-Pad1)
+  pins: [SW5.1, U1.29]
+- name: Net-(SW6-Pad1)
+  pins: [SW6.1, U1.36]
+- name: Net-(SW7-Pad1)
+  pins: [SW7.1, U1.37]
+- name: Net-(SW8-Pad1)
+  pins: [SW8.1, U1.38]
+positions:
+- ref: C1
+  x: 54.45
+  y: 80.8
+  rot: 180.0
+- ref: C2
+  x: 65.0
+  y: 82.49
+  rot: 90.0
+- ref: C3
+  x: 64.35
+  y: 71.21
+  rot: -90.0
+- ref: C4
+  x: 84.46
+  y: 67.4
+- ref: C5
+  x: 88.3
+  y: 67.49
+  rot: 90.0
+- ref: D1
+  x: 82.6
+  y: 63.0
+  rot: 180.0
+- ref: J1
+  x: 72.5
+  y: 57.69
+  rot: 180.0
+- ref: J2
+  x: 72.0
+  y: 97.14
+  rot: -90.0
+- ref: J3
+  x: 46.4
+  y: 76.0
+  rot: 180.0
+  side: back
+- ref: J4
+  x: 178.6
+  y: 75.92
+  rot: 180.0
+  side: back
+- ref: J5
+  x: 57.8
+  y: 89.8
+  rot: 180.0
+- ref: L1
+  x: 98.59
+  y: 73.31
+- ref: L2
+  x: 118.9
+  y: 73.3
+- ref: L3
+  x: 139.0
+  y: 73.3
+- ref: L4
+  x: 159.0
+  y: 73.3
+- ref: L5
+  x: 98.6
+  y: 93.5
+- ref: L6
+  x: 118.9
+  y: 93.5
+- ref: L7
+  x: 139.0
+  y: 93.5
+- ref: L8
+  x: 159.0
+  y: 93.5
+- ref: Q1
+  x: 82.8
+  y: 92.0
+  rot: 180.0
+- ref: R1
+  x: 66.8
+  y: 66.6
+  rot: 90.0
+- ref: R10
+  x: 120.25
+  y: 99.0
+- ref: R11
+  x: 140.25
+  y: 99.0
+- ref: R12
+  x: 160.25
+  y: 99.0
+- ref: R13
+  x: 63.65
+  y: 92.8
+- ref: R14
+  x: 71.25
+  y: 92.8
+- ref: R2
+  x: 74.2
+  y: 66.65
+  rot: 90.0
+- ref: R3
+  x: 62.25
+  y: 87.2
+  rot: -90.0
+- ref: R4
+  x: 55.0
+  y: 72.35
+  rot: 90.0
+- ref: R5
+  x: 99.8
+  y: 57.5
+- ref: R6
+  x: 120.0
+  y: 57.5
+- ref: R7
+  x: 140.25
+  y: 57.5
+- ref: R8
+  x: 161.0
+  y: 57.5
+- ref: R9
+  x: 100.0
+  y: 99.0
+- ref: SW1
+  x: 102.44
+  y: 62.82
+- ref: SW2
+  x: 163.04
+  y: 83.02
+- ref: SW3
+  x: 163.04
+  y: 62.82
+- ref: SW4
+  x: 142.84
+  y: 83.02
+- ref: SW5
+  x: 142.84
+  y: 62.82
+- ref: SW6
+  x: 122.64
+  y: 83.02
+- ref: SW7
+  x: 122.64
+  y: 62.82
+- ref: SW8
+  x: 102.44
+  y: 83.02
+- ref: U1
+  x: 76.5
+  y: 79.2
+- ref: Y1
+  x: 61.25
+  y: 77.75
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

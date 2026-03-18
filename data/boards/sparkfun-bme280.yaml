@@ -1,0 +1,162 @@
+name: SparkFun BME280
+slug: sparkfun-bme280
+source: sparkfun/SparkFun_BME280_Breakout_Board
+format: eagle
+description: BME280 I2C/SPI environmental sensor, pull-ups
+tags: [sensors]
+key_ics: [BME280]
+outline:
+  width_mm: 12.7
+  height_mm: 20.32
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 8mil
+  min_drill: 15mil
+  min_via: 10mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+  voltage: 25V
+  tolerance: 5%
+  decouples: U1
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+  voltage: 25V
+  tolerance: 5%
+  decouples: U1
+- ref: JP1
+  value: 1x4 header
+  footprint: 1X04
+- ref: JP2
+  value: 1x6 header
+  footprint: 1X06
+  prod_id: CONN-08437
+- ref: R1
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+  tolerance: 1%
+  power: 1/10W
+- ref: R2
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+  tolerance: 1%
+  power: 1/10W
+- ref: R3
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+  tolerance: 1%
+  power: 1/10W
+- ref: R4
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+  tolerance: 1%
+  power: 1/10W
+  pullup: SJ3.3
+- ref: SJ1
+  value: EN I2C PULL
+  footprint: SJ-3
+- ref: SJ2
+  value: EN I2C MODE
+  footprint: SJ-2
+- ref: SJ3
+  value: EN ADR PULLUP
+  footprint: SJ-3
+- ref: U1
+  value: BME280
+  footprint: BME280_LGA
+  prod_id: IC-13090
+nets:
+- name: '!CS'
+  pins: [JP2.1, R3.1, U1.!CS]
+- name: 3.3V
+  pins:
+  - C1.1
+  - C2.1
+  - JP1.2
+  - JP2.5
+  - R4.2
+  - SJ1.2
+  - SJ2.2
+  - U1.VDD
+  - U1.VDDIO
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - JP1.1
+  - JP2.6
+  - SJ3.1
+  - U1.GND1
+  - U1.GND2
+- name: N$1
+  pins: [R1.2, SJ1.3]
+- name: N$2
+  pins: [R2.2, SJ1.1]
+- name: N$3
+  pins: [R3.2, SJ2.1]
+- name: N$4
+  pins: [R4.1, SJ3.3]
+- name: SCK/SCL
+  pins: [JP1.4, JP2.4, R2.1, U1.SCK/SCL]
+- name: SDI/SDA
+  pins: [JP1.3, JP2.2, R1.1, U1.SDI/SDA]
+- name: SDO/ADR
+  pins: [JP2.3, SJ3.2, U1.SDO/ADR]
+positions:
+- ref: C1
+  x: 7.62
+  y: 15.8
+- ref: C2
+  x: 7.62
+  y: 14.21
+  rot: 180.0
+- ref: JP1
+  x: 1.27
+  y: 17.78
+  rot: 270.0
+- ref: JP2
+  x: 11.43
+  y: 5.08
+  rot: 90.0
+- ref: R1
+  x: 2.54
+  y: 6.99
+  rot: 180.0
+- ref: R2
+  x: 2.54
+  y: 5.71
+  rot: 180.0
+- ref: R3
+  x: 7.94
+  y: 6.99
+- ref: R4
+  x: 7.3
+  y: 17.78
+- ref: SJ1
+  x: 3.17
+  y: 6.35
+  rot: 90.0
+- ref: SJ2
+  x: 7.3
+  y: 6.67
+  rot: 270.0
+- ref: SJ3
+  x: 4.76
+  y: 19.05
+  rot: 180.0
+- ref: U1
+  x: 6.35
+  y: 11.43
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

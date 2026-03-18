@@ -1,0 +1,1209 @@
+name: emonTx v4
+slug: emontx-v4
+source: openenergymonitor/emontx4
+format: eagle
+description: AVR128DB48 direct-ADC energy monitoring (no metering IC), RFM69CW 433MHz radio
+tags: [adc-dac, energy-monitoring, sub-ghz]
+key_ics: [RFM69CW]
+outline:
+  width_mm: 99.9
+  height_mm: 64.91
+design_rules:
+  layers: 2
+  min_trace: 5mil
+  min_clearance: 5mil
+  min_drill: 0.3mm
+  min_via: 3mil
+components:
+- ref: ANALOG_EXPANDER
+  value: 1x9 header
+  footprint: 1X09
+  description: Pin header 1x10 0.1" spacing
+- ref: AP2112
+  value: AP2112K-3.3TRG1
+  footprint: SOT-5
+  description: 600mA 3.3V LDO Regulator Enable SOT23-5 DiodesZetex AP2112K-3.3TRG1, LDO
+  height: 1.3mm
+  manufacturer: Diodes Inc.
+  mpn: AP2112K-3.3TRG1
+- ref: AVRDB
+  value: AVR128DB48T-E_6LX
+  footprint: QFN-49
+  description: IC MCU 8BIT 128KB FLASH 48VQFN
+  height: 0.9mm
+  manufacturer: Microchip
+  mpn: AVR128DB48T-E/6LX
+- ref: C1
+  value: 10uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+  decouples: U$14
+- ref: C11
+  value: 10uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C14
+  value: 10uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C15
+  value: 22pF
+  footprint: '0603'
+- ref: C16
+  value: 10uF
+  footprint: '0603'
+  voltage: 6V
+  decouples: U$14
+- ref: C17
+  value: 22pF
+  footprint: '0603'
+- ref: C18
+  value: 100nF
+  footprint: '0603'
+- ref: C19
+  value: 2.2uF
+  footprint: '0603'
+  decouples: IC1
+- ref: C2
+  value: 10uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C20
+  value: 100nF
+  footprint: '0603'
+- ref: C21
+  value: 2.2uF
+  footprint: '0603'
+- ref: C22
+  value: 100nF
+  footprint: '0603'
+- ref: C23
+  value: 100nF
+  footprint: '0603'
+- ref: C24
+  value: 1uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C25
+  value: 100nF
+  footprint: '0603'
+- ref: C26
+  value: 1uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C27
+  value: 100nF
+  footprint: '0603'
+- ref: C28
+  value: 1uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C29
+  value: 10uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C3
+  value: 10uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C30
+  value: 10uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C4
+  value: 10uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C5
+  value: 1uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C6
+  value: 1uF
+  footprint: '0603'
+  voltage: 6V
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+- ref: C8
+  value: 10uF
+  footprint: '0603'
+  voltage: 6V
+- ref: CN1
+  value: 1x3 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-3
+  prod_id: CONN-08288
+- ref: CN2
+  value: 1x3 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-3
+  prod_id: CONN-08288
+- ref: CN3
+  value: 1x3 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-3
+  prod_id: CONN-08288
+- ref: CP2102
+  value: CP210x USB-UART
+  footprint: MLP28
+  description: Single-Chip USB to UART Bridge
+- ref: D1
+  value: ESD5Z3.3T1G
+  footprint: SOD-523
+- ref: D10
+  value: ESD5Z3.3T1G
+  footprint: SOD-523
+- ref: D11
+  value: ESD5Z3.3T1G
+  footprint: SOD-523
+- ref: D2
+  value: ESD5Z3.3T1G
+  footprint: SOD-523
+- ref: D3
+  value: ESD5Z3.3T1G
+  footprint: SOD-523
+- ref: D4
+  value: ESD5Z3.3T1G
+  footprint: SOD-523
+- ref: D5
+  value: ESD5Z3.3T1G
+  footprint: SOD-523
+- ref: D6
+  value: ESD5Z3.3T1G
+  footprint: SOD-523
+- ref: D7
+  value: ESD5Z3.3T1G
+  footprint: SOD-523
+- ref: D8
+  value: ESD5Z3.3T1G
+  footprint: SOD-523
+- ref: D9
+  value: ESD5Z3.3T1G
+  footprint: SOD-523
+- ref: IC1
+  value: MCP1501-10
+  footprint: SOIC-8
+  description: MICROCHIP - MCP1501-10E/SN - VOLTAGE REF, SERIES, 1.024V, NSOIC-8
+  height: 1.75mm
+  manufacturer: Microchip
+  mpn: MCP1501-10E/SN
+- ref: J1
+  value: SJ-3524-SMT-TR
+  footprint: '3524'
+  description: Phone Connectors Audio Jacks
+  height: mm
+  manufacturer: CUI Inc.
+  mpn: SJ-3524-SMT-TR
+- ref: J2
+  value: SJ-3524-SMT-TR
+  footprint: '3524'
+  description: Phone Connectors Audio Jacks
+  height: mm
+  manufacturer: CUI Inc.
+  mpn: SJ-3524-SMT-TR
+- ref: J3
+  value: SJ-3524-SMT-TR
+  footprint: '3524'
+  description: Phone Connectors Audio Jacks
+  height: mm
+  manufacturer: CUI Inc.
+  mpn: SJ-3524-SMT-TR
+- ref: J4
+  value: SJ-3524-SMT-TR
+  footprint: '3524'
+  description: Phone Connectors Audio Jacks
+  height: mm
+  manufacturer: CUI Inc.
+  mpn: SJ-3524-SMT-TR
+- ref: J5
+  value: SJ-3524-SMT-TR
+  footprint: '3524'
+  description: Phone Connectors Audio Jacks
+  height: mm
+  manufacturer: CUI Inc.
+  mpn: SJ-3524-SMT-TR
+- ref: J6
+  value: SJ-3524-SMT-TR
+  footprint: '3524'
+  description: Phone Connectors Audio Jacks
+  height: mm
+  manufacturer: CUI Inc.
+  mpn: SJ-3524-SMT-TR
+- ref: J9
+  value: RJ11
+  footprint: RJ11-6
+  prod_id: CONN-08590
+  description: RJ11 Jack - 6 pin
+- ref: JP1
+  value: 1x6 header
+  footprint: 1X06
+- ref: JP2
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed solder jumper
+- ref: JP3
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed solder jumper
+- ref: JP4
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed solder jumper
+- ref: JP5
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed solder jumper
+- ref: JP6
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed solder jumper
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+- ref: R10
+  value: 1kohm
+  footprint: '0603'
+- ref: R11
+  value: 33kohm
+  footprint: '0603'
+  pulldown: C4.2
+- ref: R12
+  value: 180kohm
+  footprint: '0603'
+  pullup: C4.2
+- ref: R13
+  value: 33kohm
+  footprint: '0603'
+  pulldown: C11.2
+- ref: R14
+  value: 180kohm
+  footprint: '0603'
+  pullup: C11.2
+- ref: R15
+  value: 33kohm
+  footprint: '0603'
+  pulldown: C14.2
+- ref: R17
+  value: 180kohm
+  footprint: '0603'
+  pullup: C14.2
+- ref: R19
+  value: 1kohm
+  footprint: '0603'
+- ref: R2
+  value: 1kohm
+  footprint: '0603'
+- ref: R20
+  value: 1kohm
+  footprint: '0603'
+- ref: R21
+  value: 33kohm
+  footprint: '0603'
+  pulldown: C29.2
+- ref: R23
+  value: 180kohm
+  footprint: '0603'
+  pullup: C29.2
+- ref: R24
+  value: 120kohm
+  footprint: '0603'
+  pullup: RFM_SEL
+- ref: R25
+  value: 1kohm
+  footprint: '0603'
+- ref: R26
+  value: 1kohm
+  footprint: '0603'
+- ref: R27
+  value: 10kohm
+  footprint: '0603'
+  pullup: RESET
+- ref: R28
+  value: 1kohm
+  footprint: '0603'
+- ref: R30
+  value: 10kohm
+  footprint: '0603'
+- ref: R31
+  value: 10kohm
+  footprint: '0603'
+  pulldown: VREFA
+- ref: R32
+  value: 10kohm
+  footprint: '0603'
+  pullup: AP2112.EN
+- ref: R33
+  value: 4.7kohm
+  footprint: '0603'
+  pullup: DS18B20
+- ref: R34
+  value: 10kohm
+  footprint: '0603'
+  pulldown: IC1.FEEDBACK
+- ref: R35
+  value: 10ohm
+  footprint: '0603'
+- ref: R37
+  value: 1kohm
+  footprint: '0603'
+- ref: R4
+  value: 33kohm
+  footprint: '0603'
+  pulldown: C3.2
+- ref: R40
+  value: 1kohm
+  footprint: '0603'
+- ref: R41
+  value: 33kohm
+  footprint: '0603'
+  pulldown: C30.2
+- ref: R42
+  value: 180kohm
+  footprint: '0603'
+  pullup: C30.2
+- ref: R43
+  value: 33kohm
+  footprint: '0603'
+  pulldown: C1.2
+- ref: R44
+  value: 180kohm
+  footprint: '0603'
+  pullup: C1.2
+- ref: R45
+  value: 33kohm
+  footprint: '0603'
+  pulldown: C2.2
+- ref: R46
+  value: 180kohm
+  footprint: '0603'
+  pullup: C2.2
+- ref: R47
+  value: 33kohm
+  footprint: '0603'
+  pulldown: C8.2
+- ref: R48
+  value: 180kohm
+  footprint: '0603'
+  pullup: C8.2
+- ref: R6
+  value: 180kohm
+  footprint: '0603'
+  pullup: C3.2
+- ref: S3
+  value: 2_SMT_DIP_SWITCH
+  footprint: DIP_SWITCH_SMT
+  description: Multicomp MCEMR-02-T 2 throw SMT DIP switch, Farnell 1524005
+- ref: SPI_EXT
+  value: 1x6 header
+  footprint: 1X06
+- ref: TX_LINK4
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Solder Jumper
+- ref: TX_LINK5
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Solder Jumper
+- ref: TX_LINK6
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Solder Jumper
+- ref: U$13
+  value: RJ45-8
+  footprint: RJ45-8
+  description: RJ45 Jack
+- ref: U$14
+  value: RFM12B
+  footprint: RFM12B
+- ref: UDPI
+  value: 1x3 header
+  footprint: 1X03
+- ref: USB-C
+  value: CSP-USC16-TR
+  footprint: USB-C
+  mpn: CSP-USC16-TR
+  description: CSP-USC16-TR TOBY
+- ref: X1
+  value: SMACONNECTOR
+  footprint: SMA90_DIP
+  description: SMA Connector
+- ref: XTAL
+  value: MCSJK-7U-12.00-12-10-80-B-10
+  footprint: MCSJK7U1200121080B10
+  description: CRYSTAL, 12MHZ, 12PF, 3.2MM X 2.5MM
+  height: 0.8mm
+  manufacturer: MULTICOMP
+  mpn: MCSJK-7U-12.00-12-10-80-B-10
+nets:
+- name: +5V
+  pins:
+  - AP2112.VIN
+  - C18.2
+  - C5.2
+  - CP2102.REGIN
+  - CP2102.VBUS
+  - J9.2
+  - JP1.4
+  - R32.1
+  - USB-C.VBUS1
+  class: power
+  trace_width: '0.3048'
+- name: 3.3V
+  pins:
+  - ANALOG_EXPANDER.2
+  - AP2112.VOUT
+  - AVRDB.AVDD
+  - AVRDB.VDD
+  - AVRDB.VDDIO2
+  - C10.1
+  - C16.1
+  - C19.1
+  - C20.1
+  - C24.1
+  - C25.1
+  - C26.1
+  - C27.1
+  - C28.1
+  - C6.2
+  - C7.2
+  - CN1.3
+  - CN2.3
+  - CN3.3
+  - IC1.SHDN
+  - IC1.VDD
+  - JP1.5
+  - R12.2
+  - R14.2
+  - R17.2
+  - R23.2
+  - R24.2
+  - R27.2
+  - R33.1
+  - R42.2
+  - R44.2
+  - R46.2
+  - R48.2
+  - R6.2
+  - U$13.2
+  - U$14.VCC
+  - UDPI.3
+  trace_width: '0.2032'
+- name: AGND
+  pins:
+  - ANALOG_EXPANDER.1
+  - AVRDB.GND_2
+  - C19.2
+  - C20.2
+  - C21.2
+  - C24.2
+  - D1.A
+  - D10.A
+  - D11.A
+  - D2.A
+  - D3.A
+  - D4.A
+  - D5.A
+  - D6.A
+  - D9.A
+  - IC1.GND_1
+  - IC1.GND_2
+  - IC1.GND_3
+  - IC1.NC
+  - J1.SLEEVE
+  - J1.TIP_SWITCH
+  - J2.SLEEVE
+  - J2.TIP_SWITCH
+  - J3.SLEEVE
+  - J3.TIP_SWITCH
+  - J4.SLEEVE
+  - J4.TIP_SWITCH
+  - J5.SLEEVE
+  - J5.TIP_SWITCH
+  - J6.SLEEVE
+  - J6.TIP_SWITCH
+  - J9.1
+  - R11.2
+  - R13.2
+  - R15.2
+  - R16.1
+  - R18.1
+  - R21.2
+  - R22.1
+  - R29.1
+  - R3.1
+  - R31.1
+  - R34.1
+  - R36.1
+  - R38.1
+  - R39.1
+  - R4.2
+  - R41.2
+  - R43.2
+  - R45.2
+  - R47.2
+  - R5.1
+  - R7.1
+  - R8.1
+  - R9.1
+  class: gnd
+  trace_width: '0.254'
+- name: ANALOG_INPUT
+  pins: [ANALOG_EXPANDER.4, AVRDB.PF3, TX_LINK4.1, U$13.8]
+  trace_width: '0.2032'
+- name: AVR_RX
+  pins: [AVRDB.PB1, JP1.3, JP5.2]
+  trace_width: '0.2032'
+- name: AVR_TX
+  pins: [AVRDB.PB0, JP1.2, JP6.2]
+  trace_width: '0.2032'
+- name: CT1
+  pins: [AVRDB.PD3, D2.C, R19.2]
+  trace_width: '0.2032'
+- name: CT10
+  pins: [ANALOG_EXPANDER.6, AVRDB.PF1_(XTAL32K2)]
+  trace_width: '0.2032'
+- name: CT11
+  pins: [ANALOG_EXPANDER.5, AVRDB.PF2]
+  trace_width: '0.2032'
+- name: CT2
+  pins: [AVRDB.PD4, D3.C, R20.2]
+  trace_width: '0.2032'
+- name: CT3
+  pins: [AVRDB.PD5, D4.C, R25.1]
+  trace_width: '0.2032'
+- name: CT4
+  pins: [AVRDB.PD6, D5.C, R26.2]
+  trace_width: '0.2032'
+- name: CT5
+  pins: [AVRDB.PE0, D1.C, R37.2]
+  trace_width: '0.2032'
+- name: CT6
+  pins: [AVRDB.PE1, D9.C, R40.2]
+  trace_width: '0.2032'
+- name: CT7
+  pins: [ANALOG_EXPANDER.9, AVRDB.PE2]
+  trace_width: '0.2032'
+- name: CT8
+  pins: [ANALOG_EXPANDER.8, AVRDB.PE3]
+  trace_width: '0.2032'
+- name: CT9
+  pins: [ANALOG_EXPANDER.7, AVRDB.PF0_(XTAL32K1)]
+  trace_width: '0.2032'
+- name: D+
+  pins: [CP2102.D+, D7.C, USB-C.D1+]
+  trace_width: '0.2032'
+- name: D-
+  pins: [CP2102.D-, D8.C, USB-C.D1-]
+  trace_width: '0.2032'
+- name: DIG1
+  pins: [U$14.ANT, X1.ANT]
+  trace_width: '0.2032'
+- name: DIGITAL
+  pins: [AVRDB.PA7, TX_LINK5.1]
+  trace_width: '0.2032'
+- name: DS18B20
+  pins:
+  - AVRDB.PB4
+  - JP2.1
+  - JP3.1
+  - JP4.1
+  - R33.2
+  - SPI_EXT.1
+  - U$13.4
+  trace_width: '0.2032'
+- name: DTR
+  pins: [C23.1, CP2102.DTR, JP1.1]
+  trace_width: '0.2032'
+- name: GND
+  pins:
+  - AP2112.GND
+  - AVRDB.EP
+  - AVRDB.GND_1
+  - AVRDB.GND_3
+  - C10.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.1
+  - C22.1
+  - C25.2
+  - C26.2
+  - C27.2
+  - C28.2
+  - C5.1
+  - C6.1
+  - C7.1
+  - CN1.1
+  - CN2.1
+  - CN3.1
+  - CP2102.GND
+  - CP2102.GND@EXP
+  - CP2102.GND@M
+  - D7.A
+  - D8.A
+  - JP1.6
+  - S3.1
+  - S3.2
+  - U$13.1
+  - U$13.3
+  - U$13.5
+  - U$14.GND
+  - UDPI.1
+  - USB-C.GND1
+  - USB-C.GND2
+  - USB-C.SHIELD
+  - X1.GND1
+  - X1.GND2
+  - X1.GND3
+  - X1.GND4
+  - XTAL.GND_1
+  - XTAL.GND_2
+  class: gnd
+  trace_width: '0.254'
+- name: LED
+  pins: [AVRDB.PB2, R10.2]
+  trace_width: '0.2032'
+- name: N$1
+  pins: [AP2112.EN, R32.2]
+  trace_width: '0.2032'
+- name: N$10
+  pins: [C3.1, J1.TIP, R5.2, R7.2]
+  trace_width: '0.2032'
+- name: N$11
+  pins: [C4.2, R11.1, R12.1, R20.1]
+  trace_width: '0.2032'
+- name: N$12
+  pins: [C29.1, J5.TIP, R29.2, R36.2]
+  trace_width: '0.2032'
+- name: N$13
+  pins: [C4.1, J2.TIP, R3.2, R8.2]
+  trace_width: '0.2032'
+- name: N$17
+  pins: [C1.2, R28.2, R43.1, R44.1]
+  trace_width: '0.2032'
+- name: N$18
+  pins: [CN1.2, JP2.2, TX_LINK6.2]
+  trace_width: '0.2032'
+- name: N$19
+  pins: [CN2.2, JP3.2, TX_LINK5.2]
+  trace_width: '0.2032'
+- name: N$2
+  pins: [C30.1, J6.TIP, R38.2, R39.2]
+  trace_width: '0.2032'
+- name: N$20
+  pins: [C2.2, R1.2, R45.1, R46.1]
+  trace_width: '0.2032'
+- name: N$21
+  pins: [CN3.2, JP4.2, TX_LINK4.2]
+  trace_width: '0.2032'
+- name: N$22
+  pins: [C8.2, R2.2, R47.1, R48.1]
+  trace_width: '0.2032'
+- name: N$29
+  pins: [C29.2, R21.1, R23.1, R37.1]
+  trace_width: '0.2032'
+- name: N$3
+  pins: [C11.1, J3.TIP, R22.2, R9.2]
+  trace_width: '0.2032'
+- name: N$32
+  pins: [C11.2, R13.1, R14.1, R25.2]
+  trace_width: '0.2032'
+- name: N$4
+  pins: [C22.2, CP2102.VDD]
+  trace_width: '0.2032'
+- name: N$5
+  pins: [C30.2, R40.1, R41.1, R42.1]
+  trace_width: '0.2032'
+- name: N$6
+  pins: [C21.1, R30.2, R35.1]
+  trace_width: '0.2032'
+- name: N$7
+  pins: [C3.2, R19.1, R4.1, R6.1]
+  trace_width: '0.2032'
+- name: N$8
+  pins: [C14.1, J4.TIP, R16.2, R18.2]
+  trace_width: '0.2032'
+- name: N$9
+  pins: [C14.2, R15.1, R17.1, R26.1]
+  trace_width: '0.2032'
+- name: OUT
+  pins: [IC1.FEEDBACK, IC1.OUT, R34.2, R35.2]
+  trace_width: '0.2032'
+- name: PULSE_INPUT
+  pins: [AVRDB.PA6, TX_LINK6.1, U$13.6]
+  trace_width: '0.2032'
+- name: RESET
+  pins: [AVRDB.PF6, C23.2, R27.1]
+  trace_width: '0.2032'
+- name: RFM_MISO
+  pins: [AVRDB.PC1, SPI_EXT.5, U$14.SDO]
+  trace_width: '0.2032'
+- name: RFM_MOSI
+  pins: [AVRDB.PC0, SPI_EXT.6, U$14.SDI]
+  trace_width: '0.2032'
+- name: RFM_SCK
+  pins: [AVRDB.PC2, SPI_EXT.4, U$14.SCK]
+  trace_width: '0.2032'
+- name: RFM_SEL
+  pins: [AVRDB.PB5, R24.1, SPI_EXT.3, U$14.SEL]
+  trace_width: '0.2032'
+- name: SWITCH1
+  pins: [AVRDB.PA4, S3.4]
+  trace_width: '0.2032'
+- name: SWITCH2
+  pins: [AVRDB.PA5, S3.3]
+  trace_width: '0.2032'
+- name: UDPI
+  pins: [AVRDB.UPDI, UDPI.2]
+  trace_width: '0.2032'
+- name: USB_RXD
+  pins: [CP2102.RXD, JP6.1]
+  trace_width: '0.2032'
+- name: USB_TXD
+  pins: [CP2102.TXD, JP5.1]
+  trace_width: '0.2032'
+- name: VREFA
+  pins: [ANALOG_EXPANDER.3, AVRDB.PD7, R30.1, R31.2]
+  trace_width: '0.2032'
+- name: VS1
+  pins: [C1.1, J9.6]
+  trace_width: '0.2032'
+- name: VS2
+  pins: [C2.1, J9.5]
+  trace_width: '0.2032'
+- name: VS3
+  pins: [C8.1, J9.4]
+  trace_width: '0.2032'
+- name: VSENS1
+  pins: [AVRDB.PD0, D6.C, R28.1]
+  trace_width: '0.2032'
+- name: VSENS2
+  pins: [AVRDB.PD1, D10.C, R1.1]
+  trace_width: '0.2032'
+- name: VSENS3
+  pins: [AVRDB.PD2, D11.C, R2.1]
+  trace_width: '0.2032'
+- name: XTALHF1
+  pins: [AVRDB.PA0_(XTALHF1), C15.1, XTAL.CRYSTAL_1]
+  trace_width: '0.2032'
+- name: XTALHF2
+  pins: [AVRDB.PA1_(XTALHF2), C17.1, XTAL.CRYSTAL_2]
+  trace_width: '0.2032'
+positions:
+- ref: ANALOG_EXPANDER
+  x: 36.5
+  y: 50.75
+- ref: AP2112
+  x: 41.59
+  y: 28.57
+  rot: 180.0
+- ref: AVRDB
+  x: 58.29
+  y: 48.23
+  rot: 180.0
+- ref: C1
+  x: 88.9
+  y: 62.55
+- ref: C10
+  x: 93.98
+  y: 29.84
+  rot: 90.0
+- ref: C11
+  x: 45.72
+  y: 61.91
+  rot: 270.0
+- ref: C14
+  x: 32.7
+  y: 61.91
+  rot: 270.0
+- ref: C15
+  x: 61.28
+  y: 39.05
+- ref: C16
+  x: 93.98
+  y: 25.4
+  rot: 270.0
+- ref: C17
+  x: 64.77
+  y: 41.91
+  rot: 270.0
+- ref: C18
+  x: 67.06
+  y: 29.72
+  rot: 180.0
+- ref: C19
+  x: 7.62
+  y: 50.8
+  rot: 90.0
+- ref: C2
+  x: 85.09
+  y: 62.55
+- ref: C20
+  x: 50.06
+  y: 50.98
+  rot: 270.0
+- ref: C21
+  x: 23.81
+  y: 50.8
+  rot: 90.0
+- ref: C22
+  x: 67.06
+  y: 27.18
+  rot: 180.0
+- ref: C23
+  x: 33.97
+  y: 38.73
+  rot: 90.0
+- ref: C24
+  x: 52.35
+  y: 50.98
+  rot: 270.0
+- ref: C25
+  x: 56.52
+  y: 42.55
+- ref: C26
+  x: 56.52
+  y: 40.32
+- ref: C27
+  x: 63.09
+  y: 52.12
+  rot: 90.0
+- ref: C28
+  x: 65.38
+  y: 52.12
+  rot: 90.0
+- ref: C29
+  x: 19.68
+  y: 61.91
+  rot: 270.0
+- ref: C3
+  x: 71.75
+  y: 61.91
+  rot: 270.0
+- ref: C30
+  x: 6.67
+  y: 61.91
+  rot: 270.0
+- ref: C4
+  x: 58.74
+  y: 61.91
+  rot: 270.0
+- ref: C5
+  x: 47.62
+  y: 28.57
+  rot: 270.0
+- ref: C6
+  x: 38.1
+  y: 28.57
+  rot: 270.0
+- ref: C7
+  x: 35.56
+  y: 28.57
+  rot: 270.0
+- ref: C8
+  x: 81.28
+  y: 62.55
+- ref: CN1
+  x: 27.0
+  y: 18.5
+- ref: CN2
+  x: 39.0
+  y: 18.5
+- ref: CN3
+  x: 51.0
+  y: 18.5
+- ref: CP2102
+  x: 60.96
+  y: 29.84
+  rot: 90.0
+- ref: D1
+  x: 17.46
+  y: 58.42
+  rot: 180.0
+- ref: D10
+  x: 83.82
+  y: 54.29
+  rot: 180.0
+- ref: D11
+  x: 79.69
+  y: 54.29
+  rot: 180.0
+- ref: D2
+  x: 69.53
+  y: 58.42
+  rot: 180.0
+- ref: D3
+  x: 56.83
+  y: 58.42
+  rot: 180.0
+- ref: D4
+  x: 43.5
+  y: 58.42
+  rot: 180.0
+- ref: D5
+  x: 30.48
+  y: 58.42
+  rot: 180.0
+- ref: D6
+  x: 87.95
+  y: 54.29
+  rot: 180.0
+- ref: D7
+  x: 60.01
+  y: 24.77
+  rot: 270.0
+- ref: D8
+  x: 67.94
+  y: 24.77
+  rot: 90.0
+- ref: D9
+  x: 4.45
+  y: 58.42
+  rot: 180.0
+- ref: IC1
+  x: 13.02
+  y: 50.8
+- ref: J1
+  x: 77.0
+  y: 80.0
+  rot: 270.0
+- ref: J2
+  x: 64.0
+  y: 80.0
+  rot: 270.0
+- ref: J3
+  x: 51.0
+  y: 80.0
+  rot: 270.0
+- ref: J4
+  x: 38.0
+  y: 80.0
+  rot: 270.0
+- ref: J5
+  x: 25.0
+  y: 80.0
+  rot: 270.0
+- ref: J6
+  x: 12.0
+  y: 80.0
+  rot: 270.0
+- ref: J9
+  x: 88.0
+  y: 75.0
+  rot: 180.0
+- ref: JP1
+  x: 28.0
+  y: 33.0
+  rot: 90.0
+- ref: JP2
+  x: 32.07
+  y: 23.5
+  rot: 270.0
+- ref: JP3
+  x: 44.13
+  y: 23.5
+  rot: 270.0
+- ref: JP4
+  x: 55.88
+  y: 23.5
+  rot: 270.0
+- ref: JP5
+  x: 55.68
+  y: 28.42
+  rot: 180.0
+- ref: JP6
+  x: 55.68
+  y: 30.67
+  rot: 180.0
+- ref: R1
+  x: 85.72
+  y: 54.29
+  rot: 90.0
+- ref: R10
+  x: 75.88
+  y: 21.27
+  rot: 90.0
+- ref: R11
+  x: 63.82
+  y: 58.42
+  rot: 270.0
+- ref: R12
+  x: 61.28
+  y: 58.42
+  rot: 270.0
+- ref: R13
+  x: 50.8
+  y: 58.42
+  rot: 270.0
+- ref: R14
+  x: 48.26
+  y: 58.42
+  rot: 270.0
+- ref: R15
+  x: 37.78
+  y: 58.42
+  rot: 270.0
+- ref: R17
+  x: 35.24
+  y: 58.42
+  rot: 270.0
+- ref: R19
+  x: 71.75
+  y: 58.42
+  rot: 270.0
+- ref: R2
+  x: 81.6
+  y: 54.29
+  rot: 90.0
+- ref: R20
+  x: 58.74
+  y: 58.42
+  rot: 270.0
+- ref: R21
+  x: 24.77
+  y: 58.42
+  rot: 270.0
+- ref: R23
+  x: 22.23
+  y: 58.42
+  rot: 270.0
+- ref: R24
+  x: 61.28
+  y: 36.51
+  rot: 180.0
+- ref: R25
+  x: 45.72
+  y: 58.42
+  rot: 90.0
+- ref: R26
+  x: 32.7
+  y: 58.42
+  rot: 270.0
+- ref: R27
+  x: 31.43
+  y: 38.73
+  rot: 270.0
+- ref: R28
+  x: 89.85
+  y: 54.29
+  rot: 90.0
+- ref: R30
+  x: 23.81
+  y: 47.31
+  rot: 90.0
+- ref: R31
+  x: 21.27
+  y: 47.31
+  rot: 270.0
+- ref: R32
+  x: 45.09
+  y: 28.57
+  rot: 90.0
+- ref: R33
+  x: 14.32
+  y: 33.73
+- ref: R34
+  x: 18.73
+  y: 50.8
+  rot: 90.0
+- ref: R35
+  x: 21.27
+  y: 50.8
+  rot: 90.0
+- ref: R37
+  x: 19.68
+  y: 58.42
+  rot: 270.0
+- ref: R4
+  x: 76.83
+  y: 58.42
+  rot: 270.0
+- ref: R40
+  x: 6.67
+  y: 58.42
+  rot: 270.0
+- ref: R41
+  x: 11.75
+  y: 58.42
+  rot: 270.0
+- ref: R42
+  x: 9.21
+  y: 58.42
+  rot: 270.0
+- ref: R43
+  x: 88.9
+  y: 57.47
+  rot: 180.0
+- ref: R44
+  x: 88.9
+  y: 60.01
+  rot: 180.0
+- ref: R45
+  x: 85.09
+  y: 57.47
+  rot: 180.0
+- ref: R46
+  x: 85.09
+  y: 60.01
+  rot: 180.0
+- ref: R47
+  x: 81.28
+  y: 57.47
+  rot: 180.0
+- ref: R48
+  x: 81.28
+  y: 60.01
+  rot: 180.0
+- ref: R6
+  x: 74.3
+  y: 58.42
+  rot: 270.0
+- ref: S3
+  x: 81.92
+  y: 46.99
+  rot: 90.0
+- ref: SPI_EXT
+  x: 71.25
+  y: 33.0
+  rot: 90.0
+- ref: TX_LINK4
+  x: 52.91
+  y: 23.42
+  rot: 270.0
+- ref: TX_LINK5
+  x: 40.95
+  y: 23.42
+  rot: 270.0
+- ref: TX_LINK6
+  x: 28.89
+  y: 23.5
+  rot: 270.0
+- ref: U$13
+  x: 16.0
+  y: 22.0
+- ref: U$14
+  x: 83.19
+  y: 31.75
+- ref: UDPI
+  x: 49.85
+  y: 41.27
+- ref: USB-C
+  x: 68.58
+  y: 20.95
+- ref: X1
+  x: 87.0
+  y: 19.5
+  rot: 180.0
+- ref: XTAL
+  x: 61.34
+  y: 41.97
+copper_pours:
+- net: AGND
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: GND1
+  layers: [F.Cu]
+- net: GND2
+  layers: [B.Cu]

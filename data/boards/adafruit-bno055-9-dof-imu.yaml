@@ -1,0 +1,238 @@
+name: Adafruit BNO055 9-DoF IMU
+slug: adafruit-bno055-9-dof-imu
+source: adafruit/Adafruit-BNO055-Breakout-PCB
+format: eagle
+description: 9-DoF IMU with fusion (BNO055), external crystal
+tags: [sensors]
+key_ics: [BNO055]
+outline:
+  width_mm: 25.4
+  height_mm: 20.32
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 22pF
+  footprint: '0603'
+- ref: C2
+  value: 22pF
+  footprint: '0603'
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+- ref: C7
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C8
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C9
+  value: 100nF
+  footprint: '0603'
+  decouples: U$2
+- ref: CONN3
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: CONN4
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: D1
+  value: 1n4148
+  footprint: SOD-323
+- ref: D2
+  value: green LED
+  footprint: '0603'
+- ref: JP2
+  value: 1x4 header
+  footprint: 1X04
+- ref: JP3
+  value: 1x6 header
+  footprint: 1X06
+- ref: Q3
+  value: BSS138
+  footprint: SOT363
+  description: Dual N-Channel MOSFET
+- ref: R1
+  value: 10kohm
+  footprint: RESPACK
+- ref: R3
+  value: 10kohm
+  footprint: RESPACK
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+  pullup: NRESET_3V
+- ref: U$2
+  value: BNO055
+  footprint: BNO055
+  description: BNO055
+- ref: U2
+  value: AP2112K-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: X2
+  value: '32.768'
+  footprint: XTAL3215
+  description: Low cost SMT crystals, no capacitors included
+nets:
+- name: 3.3V
+  pins:
+  - C8.1
+  - C9.1
+  - JP3.2
+  - Q3.1.G
+  - Q3.2.G
+  - R1.G$1.1
+  - R1.G$4.1
+  - R3.G$1.1
+  - R4.1
+  - U$2.NBOOT_LOAD_PIN
+  - U$2.PIN8(SWCLK)
+  - U$2.VDD
+  - U$2.VDDIO
+  - U2.OUT
+- name: CAP
+  pins: [C3.2, U$2.CAP]
+- name: GND
+  pins:
+  - C1.1
+  - C2.1
+  - C3.1
+  - C7.2
+  - C8.2
+  - C9.2
+  - CONN3.G$1.GND
+  - CONN3.G$2.MT
+  - CONN3.G$3.MT
+  - CONN4.G$1.GND
+  - CONN4.G$2.MT
+  - CONN4.G$3.MT
+  - D2.C
+  - JP3.3
+  - R3.G$2.1
+  - R3.G$3.2
+  - R3.G$4.2
+  - U$2.COM2(GND)
+  - U$2.GND@1
+  - U$2.GND@2
+  - U$2.PIN10(GND)
+  - U$2.PIN15(GND)
+  - U$2.PIN16(GND)
+  - U2.GND
+- name: I2CADDR_3V
+  pins: [JP2.2, R3.G$2.2, U$2.COM3/I2C_ADDR]
+- name: INT_3V
+  pins: [JP2.1, U$2.INT]
+- name: N$4
+  pins: [D2.A, R3.G$1.2]
+- name: NRESET_3V
+  pins: [D1.A, R4.2, U$2.NRESET]
+- name: PS0_3V
+  pins: [JP2.3, R3.G$3.1, U$2.PS0]
+- name: PS1_3V
+  pins: [JP2.4, R3.G$4.1, U$2.PS1]
+- name: RESET
+  pins: [D1.C, JP3.6]
+- name: SCL
+  pins: [CONN3.G$1.SCL, CONN4.G$1.SCL, JP3.4, Q3.1.D, R1.G$2.2]
+- name: SCL_3V
+  pins: [Q3.1.S, R1.G$4.2, U$2.COM1/SCL/RX]
+- name: SDA
+  pins: [CONN3.G$1.SDA, CONN4.G$1.SDA, JP3.5, Q3.2.D, R1.G$3.2]
+- name: SDA_3V
+  pins: [Q3.2.S, R1.G$1.2, U$2.COM0/SDA/TX]
+- name: VCC
+  pins:
+  - C7.1
+  - CONN3.G$1.V+
+  - CONN4.G$1.V+
+  - JP3.1
+  - R1.G$2.1
+  - R1.G$3.1
+  - U2.EN
+  - U2.IN
+  class: highpower
+  trace_width: '0.4064'
+- name: XIN32
+  pins: [C1.2, U$2.XIN32, X2.P$2]
+- name: XOUT32
+  pins: [C2.2, U$2.XOUT32, X2.P$1]
+positions:
+- ref: C1
+  x: 17.02
+  y: 10.16
+  rot: 90.0
+- ref: C2
+  x: 18.41
+  y: 9.72
+  rot: 270.0
+- ref: C3
+  x: 7.49
+  y: 9.4
+- ref: C7
+  x: 3.94
+  y: 5.97
+  rot: 180.0
+- ref: C8
+  x: 7.75
+  y: 11.05
+  rot: 180.0
+- ref: C9
+  x: 14.92
+  y: 13.14
+- ref: CONN3
+  x: 22.86
+  y: 10.16
+  rot: 90.0
+- ref: CONN4
+  x: 2.54
+  y: 10.16
+  rot: 270.0
+- ref: D1
+  x: 19.94
+  y: 6.16
+- ref: D2
+  x: 1.61
+  y: 14.36
+  rot: 90.0
+- ref: JP2
+  x: 12.7
+  y: 17.78
+- ref: JP3
+  x: 12.7
+  y: 2.54
+- ref: Q3
+  x: 16.13
+  y: 6.48
+  rot: 90.0
+- ref: R1
+  x: 18.54
+  y: 13.53
+  rot: 180.0
+- ref: R3
+  x: 10.86
+  y: 13.34
+- ref: R4
+  x: 23.62
+  y: 5.97
+  rot: 180.0
+- ref: U$2
+  x: 11.94
+  y: 8.89
+  rot: 270.0
+- ref: U2
+  x: 7.37
+  y: 6.6
+- ref: X2
+  x: 15.24
+  y: 9.91
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

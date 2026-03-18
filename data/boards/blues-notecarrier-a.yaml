@@ -1,0 +1,1005 @@
+name: Blues Notecarrier-A
+slug: blues-notecarrier-a
+source: blues/note-hardware
+format: kicad7
+description: BQ24210 LiPo+solar charger, MAX17225 boost
+tags: [battery-charging, esd-protection, power-supply]
+key_ics: [BQ24210, TPS62748, MAX17225]
+outline:
+  width_mm: 75.0
+  height_mm: 68.0
+design_rules:
+  layers: 4
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.2mm
+  min_via: 0.45mm
+components:
+- ref: ANT1
+  value: NN03-310
+  footprint: ANT-NN03310-LTE_NO-SILK
+  mpn: NN03-310
+  description: ANTENNA CHIP LTE/GNSS/BT D=30X3X1 NN03-310 IGNION SMT
+- ref: ANT2
+  value: NN03-320
+  footprint: ANT-NN03320-GPS_NO-SILK
+  mpn: NN03-320
+  description: ANTENNA CHIP GPS/BT D=3X7X2 NN03-320 IGNION SMT
+- ref: C1
+  value: 47u 16V-X5R
+  footprint: '1206'
+  description: CHIP CAP.CER. 47uF 16V 20% X5R 1206
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  description: CHIP CAP.CER. 100nF 16V 10% X7R 0402
+  voltage: 16V
+- ref: C11
+  value: 10n 1kV
+  footprint: '1206'
+  description: CHIP CAP.CER. 10nF 1000V 10% X7R 1206
+- ref: C12
+  value: 10u 25V-X5R
+  footprint: '1206'
+  description: CHIP CAP.CER. 10uF 25V X5R 10% 1206
+- ref: C13
+  value: 1u 16V-X5R
+  footprint: '0402'
+  description: CHIP CAP.CER. 1uF 16V 10% X5R 0402
+  decouples: U3
+- ref: C16
+  value: 100nF
+  footprint: '0402'
+  description: CHIP CAP.CER. 100nF 16V 10% X7R 0402
+  voltage: 16V
+- ref: C17
+  value: 33p 50V-C0G
+  footprint: '0402'
+  description: CHIP CAP.CER. 33pF 50V 5% C0G 0402
+- ref: C18
+  value: 33p 50V-C0G
+  footprint: '0402'
+  description: CHIP CAP.CER. 33pF 50V 5% C0G 0402
+- ref: C19
+  value: 33p 50V-C0G
+  footprint: '0402'
+  description: CHIP CAP.CER. 33pF 50V 5% C0G 0402
+- ref: C2
+  value: 4.7u 6.3V-X5R
+  footprint: '0402'
+  description: CHIP CAP.CER. 4.7uF 6.3V 20% X5R 0402
+- ref: C21
+  value: 1nF
+  footprint: FRACTUS-0404_NO-SILK
+  description: CHIP CAP.CER. 1nF 50V 10% X7R 0402
+  voltage: 50V
+- ref: C22
+  value: 1u 16V-X5R
+  footprint: '0402'
+  description: CHIP CAP.CER. 1uF 16V 10% X5R 0402
+- ref: C23
+  value: 100nF
+  footprint: '0402'
+  description: CHIP CAP.CER. 100nF 16V 10% X7R 0402
+  voltage: 16V
+- ref: C25
+  value: 0.5p 50V-C0G
+  footprint: FRACTUS-0404_NO-SILK
+  mpn: GJM1555C1HR50WB01
+  description: "CHIP CAP.CER. 0.5pF 50V \xB10.05pF C0G 0603 GJM1555C1HR50WB01 MURATA"
+- ref: C26
+  value: 1p 50V-C0G
+  footprint: FRACTUS-0404_NO-SILK
+  mpn: GJM1555C1H1R0WB01
+  description: "CHIP CAP.CER. 1pF 50V \xB10.05pF C0G 0603 GJM1555C1H1R0WB01 MURATA"
+- ref: C27
+  value: 2.2p 50V-C0G
+  footprint: FRACTUS-0404_NO-SILK
+  mpn: GJM1555C1H2R2WB01
+  description: "CHIP CAP.CER. 2.2pF 50V \xB10.05pF C0G 0603 GJM1555C1H2R2WB01 MURATA"
+- ref: C28
+  value: 4.6p 50V-C0G
+  footprint: FRACTUS-0404_NO-SILK
+  mpn: GJM1555C1H4R6WB01D
+  description: "CHIP CAP.CER. 4.6pF 50V \xB10.05pF C0G 0402 GJM1555C1H4R6WB01D MURATA"
+- ref: C29
+  value: 1.1p 50V-C0G
+  footprint: FRACTUS-0404_NO-SILK
+  mpn: GJM1555C1H1R1WB01D
+  description: "CHIP CAP.CER. 1.1pF 50V \xB10.05pF C0G 0402 GJM1555C1H1R1WB01D MURATA"
+- ref: C3
+  value: 10u 10V-X5R
+  footprint: '0603'
+  description: CHIP CAP.CER. 10uF 10V 10% X5R 0603
+  decouples: U1
+- ref: C4
+  value: 10u 10V-X5R
+  footprint: '0603'
+  description: CHIP CAP.CER. 10uF 10V 10% X5R 0603
+  decouples: U1
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  description: CHIP CAP.CER. 100nF 16V 10% X7R 0402
+  voltage: 16V
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  description: CHIP CAP.CER. 100nF 16V 10% X7R 0402
+  voltage: 16V
+  decouples: U2
+- ref: C7
+  value: 10u 6.3V-X5R
+  footprint: '0402'
+  description: CHIP CAP.CER. 10uF 6.3V 20% X5R 0402
+  decouples: U2
+- ref: C8
+  value: 10u 6.3V-X5R
+  footprint: '0402'
+  description: CHIP CAP.CER. 10uF 6.3V 20% X5R 0402
+  decouples: U2
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  description: CHIP CAP.CER. 100nF 16V 10% X7R 0402
+  voltage: 16V
+  decouples: U2
+- ref: DS2
+  value: FSV1045V
+  footprint: TO277-3
+  mpn: FSV1045V
+- ref: DS3
+  value: FSV1045V
+  footprint: TO277-3
+  mpn: FSV1045V
+- ref: DS4
+  value: STPS3H100U
+  footprint: SMB
+  mpn: STPS3H100U
+- ref: DS5
+  value: STPS3H100U
+  footprint: SMB
+  mpn: STPS3H100U
+- ref: DS6
+  value: FSV1045V
+  footprint: TO277-3
+  mpn: FSV1045V
+- ref: F1
+  value: SF-0603F150-2
+  footprint: '0603'
+  mpn: SF-0603F150-2
+- ref: F2
+  value: 3.5A/32V
+  footprint: '0603'
+  mpn: 0603SFV350F/32-2
+- ref: J10
+  value: '00711'
+  footprint: J-3-0254-FDT_H0508
+  mpn: '00711'
+  description: STRIP 3P F/D P=2.54 H=5.08 00711 4UCON
+- ref: J11
+  value: 10118192-0002LF
+  footprint: J-5-0065-FOS-USB10118192-NOF
+  mpn: 10118192-0002LF
+  description: "CONN. USB F/90\xB0 TYPE MICRO-B C.S. 10118192-0002LF FCI SMT"
+- ref: J12
+  value: B2B-PH-SM4-TBT(LF)
+  footprint: J-2-0200-MDS-B2B-PH-SM4
+  mpn: B2B-PH-SM4-TBT(LF)(SN)
+  description: CONN. PH 2P M/D P=2 B2B-PH-SM4-TBT(LF)(SN) JST SMT
+- ref: J13
+  value: JST SH 4-pin
+  footprint: J-4-0100-MDS-SH_NO-SILK
+  mpn: BM04B-SRSS-TBT(LF)(SN)
+  description: CONN. SH 4P M/D P=1 BM04B-SRSS-TBT(LF)(SN) JST SMT
+- ref: J14
+  value: JST SH 4-pin
+  footprint: J-4-0100-MDS-SH_NO-SILK
+  mpn: BM04B-SRSS-TBT(LF)(SN)
+  description: CONN. SH 4P M/D P=1 BM04B-SRSS-TBT(LF)(SN) JST SMT
+- ref: J3
+  value: B2B-PH-SM4-TBT(LF)
+  footprint: J-2-0200-MDS-B2B-PH-SM4
+  mpn: B2B-PH-SM4-TBT(LF)(SN)
+  description: CONN. PH 2P M/D P=2 B2B-PH-SM4-TBT(LF)(SN) JST SMT
+- ref: J4
+  value: B2B-PH-SM4-TBT(LF)
+  footprint: J-2-0200-MDS-B2B-PH-SM4
+  mpn: B2B-PH-SM4-TBT(LF)(SN)
+  description: CONN. PH 2P M/D P=2 B2B-PH-SM4-TBT(LF)(SN) JST SMT
+- ref: J5
+  value: NanoSIM - SF72S006VBAR2500
+  footprint: J-NANOSIM-SF72S006VBA_NO-FILL
+  mpn: SF72S006VBAR2500
+  description: "CONN. NANOSIM 8P F/90\xB0 PUSH-PUSH SF72S006VBAR2500 JAE ELECTRONICS SMT"
+- ref: J6
+  value: MDT420E01001
+  footprint: J-75-0050-MOS-M2-E_smaller-mask
+  description: "CONN. M.2 75P M/90\xB0 P=0.5 MDT420E01001 AMPHENOL SMT"
+- ref: J7
+  value: uFL-R-SMT-1-10
+  footprint: J-3-MDS-UFL_NO-SILK
+  mpn: U.FL-R-SMT-1(10)
+  description: CONN. RF M U.FL-R-SMT-1(10) HIROSE SMT
+- ref: J8
+  value: uFL-R-SMT-1-10
+  footprint: J-3-MDS-UFL_NO-SILK
+  mpn: U.FL-R-SMT-1(10)
+  description: CONN. RF M U.FL-R-SMT-1(10) HIROSE SMT
+- ref: J9
+  value: '12734'
+  footprint: J-22-0254-FDT-H0508_EDGE
+  mpn: '12734'
+  description: STRIP 22P F/D P=2.54 H=5.08 12734 4UCON
+- ref: L1
+  value: 2.2uH
+  footprint: LS-XFL4020
+  mpn: XFL4020-222MEC
+  description: INDUTTANZA 2.2 uH 3.1A 20% XFL4020-222MEC COILCRAFT SMT
+- ref: L2
+  value: 2.2uH
+  footprint: 0806
+  mpn: 1285AS-H-2R2M=P2
+  description: INDUTTANZA 2.2uH 1.5A 20% 0806 1285AS-H-2R2M=P2 MURATA SMT
+- ref: L5
+  value: LQW15AN7N5H00D
+  footprint: FRACTUS-0404_NO-SILK
+  mpn: LQW15AN7N5H00D
+  description: INDUTTANZA 7.5nH 0.57A 3% A FILO 0402 LQW15AN7N5H00D MURATA SMT
+- ref: L6
+  value: LQW18AN12NG80
+  footprint: FRACTUS-0404_NO-SILK
+  mpn: LQW18AN12NG80
+  description: INDUTTANZA 12nH 1.5A 2% 0603 LQW18AN12NG80 MURATA SMT
+- ref: L7
+  value: LQW18AN10NG80D
+  footprint: FRACTUS-0404_NO-SILK
+  mpn: LQW18AN10NG80D
+  description: INDUTTANZA 10nH 1.6A 2% 0603 LQW18AN10NG80D MURATA SMT
+- ref: L8
+  value: LQW18AN8N4G80D
+  footprint: FRACTUS-0404_NO-SILK
+  mpn: LQW18AN8N4G80D
+  description: INDUTTANZA 8.4nH 1.6A 2% 0603 LQW18AN8N4G80D MURATA SMT
+- ref: L9
+  value: LQW15AN2N3G80D
+  footprint: FRACTUS-0404_NO-SILK
+  mpn: LQW15AN2N3G80D
+  description: INDUTTANZA 2.3nH 2.53A 2% 0402 LQW15AN2N3G80D MURATA SMT
+- ref: OBJ1
+  value: 9774025151R
+  footprint: DIST-WASMSIM0250
+  description: DISTANZ. CIL. METALLO 5.1X2.5 9774025151R W.E SMT
+- ref: PAD1
+  value: TPS
+  footprint: PAD-THT-CAS-0100
+  description: CASTELLATED EDGE VIAS
+- ref: PAD2
+  value: TPS
+  footprint: PAD-THT-CAS-0100
+  description: CASTELLATED EDGE VIAS
+- ref: Q1
+  value: AO3420
+  footprint: SOT23
+- ref: R1
+  value: 10Mohm
+  footprint: '0402'
+  description: CHIP RES. 10M 0402 1/8W 5%
+  tolerance: 5%
+- ref: R10
+  value: 10kohm
+  footprint: '0402'
+  description: CHIP RES. 10K 0402 1/16W 1%
+  pulldown: U3.TS
+- ref: R12
+  value: 22ohm
+  footprint: '0603'
+  description: CHIP RES. 22R 0603 1/16W 1%
+- ref: R14
+  value: 22ohm
+  footprint: '0603'
+  description: CHIP RES. 22R 0603 1/16W 1%
+- ref: R15
+  value: 22ohm
+  footprint: '0603'
+  description: CHIP RES. 22R 0603 1/16W 1%
+- ref: R16
+  value: 15kohm
+  footprint: '0402'
+  description: CHIP RES. 15K 0402 1/16W 1%
+- ref: R18
+  value: 200kohm
+  footprint: '0402'
+  description: CHIP RES. 200K 0402 1/16W 1%
+- ref: R21
+  value: 1kohm
+  footprint: '0402'
+  description: CHIP RES. 1K 0402 1/16W 1%
+  pulldown: RST
+- ref: R22
+  value: 100kohm
+  footprint: '0402'
+  description: CHIP RES. 100K 0402 1/16W 1%
+  pulldown: U5.PON
+- ref: R25
+  value: 0ohm
+  footprint: FRACTUS-0404_NO-SILK
+  description: CHIP RES. 0R 0603 1/16W 1%
+- ref: R27
+  value: 0ohm
+  footprint: FRACTUS-0404_NO-SILK
+  description: CHIP RES. 0R 0603 1/16W 1%
+- ref: R28
+  value: 0ohm
+  footprint: FRACTUS-0404_NO-SILK
+  description: CHIP RES. 0R 0603 1/16W 1%
+- ref: R29
+  value: 0ohm
+  footprint: FRACTUS-0404_NO-SILK
+  description: CHIP RES. 0R 0603 1/16W 1%
+- ref: R4
+  value: 82kohm
+  footprint: '0402'
+  description: CHIP RES. 82K 0402 1/16W 1%
+  pulldown: U2.SEL
+- ref: R5
+  value: 1Mohm
+  footprint: '1206'
+  description: CHIP RES. 1M 1206 1/4W 1%
+- ref: R8
+  value: 10kohm
+  footprint: '0402'
+  description: CHIP RES. 10K 0402 1/16W 1%
+  pullup: U3.nEN
+- ref: R9
+  value: 470ohm
+  footprint: '0402'
+  description: CHIP RES. 470R 0402 1/16W 1%
+- ref: RR1
+  value: 100R/5%
+  footprint: RR-8X-1506
+  description: RETE RESISTIVA 8R sing. 100R 5% 1506 CAY16-101J8LF BOURNS SMT
+- ref: RR2
+  value: 100R/5%
+  footprint: RR-8X-1506
+  description: RETE RESISTIVA 8R sing. 100R 5% 1506 CAY16-101J8LF BOURNS SMT
+- ref: SW1
+  value: CJS-1200TA
+  footprint: SW_CJS-1200TA_NO-SILK
+  description: INTERR. SLITTA ON-ON DA C.S. CJS-1200TA NIDEC COPAL ELECTRONICS SMT
+- ref: TVS1
+  value: SM6T6V8A
+  footprint: SMB
+  description: DIODO TVS TRANSIL UNIDIR. 600W 6.8V SM6T6V8A SMB SMT
+- ref: TVS2
+  value: ESDLC5V0M5-TP
+  footprint: SOT666_NO-SILK
+  description: DIODO TVS TRANSIL UNIDIR. 20W 5V ESDLC5V0M5-TP SOT563 SMT
+- ref: U1
+  value: TPS62748
+  footprint: XFBGA8
+  mpn: TPS62748YFPT
+  description: I.C. DC/DC TPS62748YFPT TEXAS DSBGA8 SMT
+- ref: U2
+  value: MAX17225
+  footprint: WDFN6-0200X0200
+  mpn: MAX17225ELT+T
+  description: I.C. DC/DC MAX17225ELT+T MAXIM W-DFN6 SMT
+- ref: U3
+  value: BQ24210
+  footprint: WSON10-EXP_NO-SILK
+  mpn: BQ24210DQCT
+  description: INTEGRATO BQ24210DQCT WSON10 TEXAS SMT
+- ref: U5
+  value: BGA725L6E6327FTSA1
+  footprint: XFDFN6_NO-SILK
+  mpn: BGA725L6E6327FTSA1
+  description: INTEGRATO BGA725L6E6327FTSA1 INFINEON TSLP-6 SMT
+nets:
+- name: +1V8
+  pins:
+  - C3.1
+  - C4.1
+  - C8.1
+  - C9.1
+  - L1.2
+  - L2.2
+  - SW1.C
+  - U1.VOS
+  - U2.EN
+  - U2.IN
+- name: +3V3
+  pins: [C6.1, C7.1, SW1.A, U2.OUT]
+- name: /Connector/ATTN_P
+  pins: [J6.ATTN_P, RR2.R3_2]
+- name: /Connector/AUX_EN_P
+  pins: [J6.AUX_EN_P, RR2.R4_2]
+- name: /Connector/AUX_RX_P
+  pins: [J6.AUX_RX_P, RR2.R5_2]
+- name: /Connector/AUX_TX_P
+  pins: [J6.AUX_TX_P, RR2.R6_2]
+- name: /Connector/GPS_50
+  pins: [J8.In, U5.AO]
+- name: /Connector/GPS_50_A
+  pins: [L5.1, U5.AI]
+- name: /Connector/GPS_50_B
+  pins: [C21.1, L5.2]
+- name: /Connector/GPS_50_C
+  pins: [C21.2, R29.1]
+- name: /Connector/GPS_50_D
+  pins: [C28.1, C29.1, R29.2]
+- name: /Connector/GPS_50_E
+  pins: [ANT2.FEED-GPS@4, C29.2]
+- name: /Connector/LTE_50
+  pins: [J7.In, R28.1]
+- name: /Connector/LTE_50_A
+  pins: [R27.1, R28.2]
+- name: /Connector/LTE_50_B
+  pins: [C26.1, C27.2, L7.1, R27.2]
+- name: /Connector/LTE_50_C
+  pins: [C27.1, L8.1, L9.1]
+- name: /Connector/LTE_50_D
+  pins: [ANT1.FEED_LTE@1, L9.2]
+- name: /Connector/NRST
+  pins: [J6.NRST, Q1.D]
+- name: /Connector/RX_P
+  pins: [J6.RX_P, RR2.R7_2]
+- name: /Connector/SCL_P
+  pins: [J13.4, J14.4, J6.SCL_P, RR2.R1_2]
+- name: /Connector/SDA_P
+  pins: [J13.3, J14.3, J6.SDA_P, RR2.R2_2]
+- name: /Connector/SIM_CLK
+  pins: [J6.SIM_CLK, R14.1]
+- name: /Connector/SIM_IO
+  pins: [J6.SIM_IO, R12.1]
+- name: /Connector/SIM_NPRESENT
+  pins: [J5.DSW, J6.SIM_NPRESENT, TVS2.K3]
+- name: /Connector/SIM_RST
+  pins: [J6.SIM_RST, R15.1]
+- name: /Connector/SIM_VCC
+  pins: [C16.1, J5.VCC, J6.SIM_VCC, R16.2, TVS2.K2]
+- name: /Connector/TX_P
+  pins: [J6.TX_P, RR2.R8_2]
+- name: /Power/EN
+  pins: [C5.1, J9.Pin_8@8, R1.1, U1.EN]
+- name: ATTN
+  pins: [J9.Pin_13@13, RR1.R3_1]
+- name: AUX1
+  pins: [J6.AUX1, J9.Pin_17@17]
+- name: AUX2
+  pins: [J6.AUX2, J9.Pin_18@18]
+- name: AUX3
+  pins: [J6.AUX3, J9.Pin_19@19]
+- name: AUX4
+  pins: [J6.AUX4, J9.Pin_20@20]
+- name: AUX5
+  pins: [J6.NC38, U3.nCHG]
+- name: AUX_EN
+  pins: [J9.Pin_14@14, RR1.R4_1]
+- name: AUX_RX
+  pins: [J9.Pin_15@15, RR1.R5_1]
+- name: AUX_TX
+  pins: [J9.Pin_16@16, RR1.R6_1]
+- name: BOOT
+  pins: [J6.NC65, J9.Pin_10@10]
+- name: GND
+  pins:
+  - ANT2.M2
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C22.2
+  - C23.2
+  - C26.2
+  - C28.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - J10.Pin_1
+  - J10.Pin_2
+  - J10.Pin_3
+  - J11.GND
+  - J12.2
+  - J13.1
+  - J14.1
+  - J3.2
+  - J4.2
+  - J5.CSW
+  - J5.GND
+  - J5.SH@SH
+  - J6.GND@11
+  - J6.GND@18
+  - J6.GND@3
+  - J6.GND@33
+  - J6.GND@39
+  - J6.GND@45
+  - J6.GND@5
+  - J6.GND@51
+  - J6.GND@57
+  - J6.GND@6
+  - J6.GND@71
+  - J6.GND@73
+  - J7.Ext@2
+  - J8.Ext@2
+  - J9.Pin_7@7
+  - L7.2
+  - L8.2
+  - OBJ1.1
+  - PAD1.1@1
+  - PAD2.1@1
+  - Q1.S
+  - R10.1
+  - R21.1
+  - R22.1
+  - R4.1
+  - R5.2
+  - R9.1
+  - TVS1.A2
+  - TVS2.A
+  - U1.CTRL
+  - U1.GND
+  - U2.GND
+  - U3.EXP
+  - U3.VSS
+  - U5.GND
+  - U5.GNDRF
+- name: Net-(#FLG05-pwr)
+  pins: [DS5.K, DS6.C, U3.VBUS]
+- name: Net-(#PWR037-USB_SHIELD)
+  pins: [C11.1, J11.Shield@6, R5.1]
+- name: Net-(ANT1-MN1-A)
+  pins: [ANT1.MN1-A@2, C25.2, L6.1]
+- name: Net-(ANT1-MN1-B)
+  pins: [ANT1.MN1-B@3, C25.1, L6.2]
+- name: Net-(ANT1-MN2-A)
+  pins: [ANT1.MN2-A@5, R25.1]
+- name: Net-(ANT1-MN2-B)
+  pins: [ANT1.MN2-B@6, R25.2]
+- name: Net-(J5-CLK)
+  pins: [C18.1, J5.CLK, R14.2, TVS2.K1]
+- name: Net-(J5-I/O)
+  pins: [C19.1, J5.I/O, R12.2, R16.1, TVS2.K5]
+- name: Net-(J5-RST)
+  pins: [C17.1, J5.RST, R15.2, TVS2.K4]
+- name: Net-(RR1-R1_2)
+  pins: [RR1.R1_2, RR2.R1_1]
+- name: Net-(RR1-R2_2)
+  pins: [RR1.R2_2, RR2.R2_1]
+- name: Net-(RR1-R3_2)
+  pins: [RR1.R3_2, RR2.R3_1]
+- name: Net-(RR1-R4_2)
+  pins: [RR1.R4_2, RR2.R4_1]
+- name: Net-(RR1-R5_2)
+  pins: [RR1.R5_2, RR2.R5_1]
+- name: Net-(RR1-R6_2)
+  pins: [RR1.R6_2, RR2.R6_1]
+- name: Net-(RR1-R7_2)
+  pins: [RR1.R7_2, RR2.R7_1]
+- name: Net-(RR1-R8_2)
+  pins: [RR1.R8_2, RR2.R8_1]
+- name: Net-(U1-SW)
+  pins: [L2.1, U1.SW]
+- name: Net-(U2-LX)
+  pins: [L1.1, U2.LX]
+- name: Net-(U2-SEL)
+  pins: [R4.2, U2.SEL]
+- name: Net-(U3-ISET)
+  pins: [R9.2, U3.ISET]
+- name: Net-(U3-TS)
+  pins: [R10.2, U3.TS, U3.VTSB]
+- name: Net-(U3-nEN)
+  pins: [R8.1, U3.nEN, U3.nPG]
+- name: Net-(U5-PON)
+  pins: [R18.1, R22.2, U5.PON]
+- name: RST
+  pins: [C23.1, J9.Pin_9@9, Q1.G, R21.2]
+- name: RX
+  pins: [J9.Pin_21@21, RR1.R7_1]
+- name: SCL
+  pins: [J9.Pin_11@11, RR1.R1_1]
+- name: SDA
+  pins: [J9.Pin_12@12, RR1.R2_1]
+- name: TX
+  pins: [J9.Pin_22@22, RR1.R8_1]
+- name: USB_DM
+  pins: [J11.D-, J6.USB_DM]
+- name: USB_DP
+  pins: [J11.D+, J6.USB_DP]
+- name: V+
+  pins: [DS2.A1, DS2.A2, J12.1, J9.Pin_6@6]
+- name: VACT_GPS_OUT
+  pins: [J6.VACT_GPS_OUT, R18.2]
+- name: VBAT
+  pins:
+  - C13.1
+  - DS3.A1
+  - DS3.A2
+  - J4.1
+  - J9.Pin_2@2
+  - R8.2
+  - U3.BAT
+- name: VIO
+  pins:
+  - C22.1
+  - F1.1
+  - J13.2
+  - J14.2
+  - J9.Pin_4@4
+  - SW1.B
+  - U5.VCC
+- name: VIO_P
+  pins: [F1.2, J6.VIO_P@2, J6.VIO_P@4]
+- name: VMAIN
+  pins:
+  - C1.1
+  - C2.1
+  - DS2.C
+  - DS3.C
+  - DS4.K
+  - F2.1
+  - J9.Pin_3@3
+  - R1.2
+  - TVS1.A1
+  - U1.VIN
+  - U1.VSEL
+- name: VMODEM_P
+  pins: [F2.2, J6.VMODEM_P@70, J6.VMODEM_P@72, J6.VMODEM_P@74]
+- name: VSOLAR
+  pins: [C12.1, DS6.A1, DS6.A2, J3.1, J9.Pin_5@5]
+- name: VUSB
+  pins: [C10.1, DS4.A, DS5.A, J11.VBUS, J6.VUSB, J9.Pin_1@1]
+positions:
+- ref: ANT1
+  x: 79.0
+  y: 74.5
+- ref: ANT2
+  x: 59.0
+  y: 100.5
+  rot: 90.0
+- ref: C1
+  x: 74.89
+  y: 119.45
+  rot: 90.0
+- ref: C10
+  x: 70.74
+  y: 116.92
+  rot: 180.0
+- ref: C11
+  x: 63.07
+  y: 119.37
+  rot: 90.0
+- ref: C12
+  x: 118.99
+  y: 129.66
+  rot: 180.0
+- ref: C13
+  x: 115.46
+  y: 116.76
+  rot: 180.0
+- ref: C16
+  x: 110.88
+  y: 90.78
+- ref: C17
+  x: 113.41
+  y: 90.78
+  rot: 180.0
+- ref: C18
+  x: 111.56
+  y: 95.62
+  rot: 180.0
+- ref: C19
+  x: 113.48
+  y: 93.47
+  rot: 90.0
+- ref: C2
+  x: 76.55
+  y: 120.67
+  rot: 90.0
+- ref: C21
+  x: 57.76
+  y: 110.08
+  rot: 180.0
+- ref: C22
+  x: 64.44
+  y: 110.34
+  rot: -90.0
+- ref: C23
+  x: 77.79
+  y: 100.1
+  rot: 180.0
+- ref: C25
+  x: 67.25
+  y: 78.0
+  rot: 180.0
+- ref: C26
+  x: 69.45
+  y: 89.1
+  rot: -90.0
+- ref: C27
+  x: 67.21
+  y: 88.34
+- ref: C28
+  x: 57.75
+  y: 105.82
+- ref: C29
+  x: 57.0
+  y: 103.71
+  rot: 90.0
+- ref: C3
+  x: 77.89
+  y: 118.27
+  rot: 180.0
+- ref: C4
+  x: 77.89
+  y: 116.97
+  rot: 180.0
+- ref: C5
+  x: 80.68
+  y: 122.71
+- ref: C6
+  x: 75.46
+  y: 107.21
+  rot: 180.0
+- ref: C7
+  x: 75.46
+  y: 108.33
+  rot: 180.0
+- ref: C8
+  x: 74.9
+  y: 114.98
+  rot: 180.0
+- ref: C9
+  x: 74.9
+  y: 113.86
+  rot: 180.0
+- ref: DS2
+  x: 75.27
+  y: 129.0
+- ref: DS3
+  x: 70.24
+  y: 129.0
+- ref: DS4
+  x: 67.12
+  y: 123.64
+  rot: 90.0
+- ref: DS5
+  x: 71.42
+  y: 123.64
+  rot: 90.0
+- ref: DS6
+  x: 117.69
+  y: 126.04
+  rot: 90.0
+- ref: F1
+  x: 84.69
+  y: 97.54
+- ref: F2
+  x: 115.2
+  y: 101.17
+  rot: 180.0
+- ref: J10
+  x: 61.42
+  y: 92.98
+  rot: 90.0
+- ref: J11
+  x: 59.7
+  y: 126.3
+  rot: -90.0
+- ref: J12
+  x: 124.55
+  y: 106.97
+  rot: -90.0
+- ref: J13
+  x: 119.41
+  y: 109.25
+  rot: 180.0
+- ref: J14
+  x: 119.42
+  y: 104.33
+  rot: 180.0
+- ref: J3
+  x: 124.55
+  y: 128.63
+  rot: -90.0
+- ref: J4
+  x: 124.55
+  y: 116.81
+  rot: -90.0
+- ref: J5
+  x: 122.45
+  y: 93.44
+  rot: 90.0
+- ref: J6
+  x: 98.3
+  y: 96.34
+- ref: J7
+  x: 79.84
+  y: 89.9
+  rot: -90.0
+- ref: J8
+  x: 67.49
+  y: 108.34
+  rot: -90.0
+- ref: J9
+  x: 93.17
+  y: 138.7
+- ref: L1
+  x: 78.67
+  y: 111.26
+  rot: -90.0
+- ref: L2
+  x: 80.52
+  y: 120.31
+  rot: 90.0
+- ref: L5
+  x: 60.45
+  y: 108.74
+  rot: 180.0
+- ref: L6
+  x: 67.25
+  y: 76.68
+- ref: L7
+  x: 71.07
+  y: 89.1
+  rot: -90.0
+- ref: L8
+  x: 64.5
+  y: 89.09
+  rot: -90.0
+- ref: L9
+  x: 64.5
+  y: 86.05
+  rot: 90.0
+- ref: OBJ1
+  x: 98.3
+  y: 129.59
+  rot: -90.0
+- ref: PAD1
+  x: 130.0
+  y: 87.87
+  rot: 90.0
+- ref: PAD2
+  x: 55.0
+  y: 87.87
+  rot: 90.0
+- ref: Q1
+  x: 78.25
+  y: 98.54
+  rot: -90.0
+- ref: R1
+  x: 78.66
+  y: 122.71
+  rot: 180.0
+- ref: R10
+  x: 118.33
+  y: 121.52
+  rot: 180.0
+- ref: R12
+  x: 111.39
+  y: 93.11
+- ref: R14
+  x: 111.39
+  y: 94.41
+- ref: R15
+  x: 111.39
+  y: 89.57
+- ref: R16
+  x: 110.88
+  y: 91.9
+  rot: 180.0
+- ref: R18
+  x: 61.78
+  y: 111.0
+  rot: -90.0
+- ref: R21
+  x: 76.71
+  y: 98.09
+  rot: -90.0
+- ref: R22
+  x: 62.9
+  y: 111.0
+  rot: 90.0
+- ref: R25
+  x: 90.75
+  y: 76.68
+- ref: R27
+  x: 73.32
+  y: 88.34
+  rot: 180.0
+- ref: R28
+  x: 76.12
+  y: 88.34
+  rot: 180.0
+- ref: R29
+  x: 57.01
+  y: 107.97
+  rot: 90.0
+- ref: R4
+  x: 73.36
+  y: 111.89
+  rot: -90.0
+- ref: R5
+  x: 60.92
+  y: 119.34
+  rot: 90.0
+- ref: R8
+  x: 117.81
+  y: 115.64
+  rot: 180.0
+- ref: R9
+  x: 118.33
+  y: 122.64
+  rot: 180.0
+- ref: RR1
+  x: 89.85
+  y: 134.81
+  rot: 90.0
+- ref: RR2
+  x: 86.45
+  y: 131.42
+- ref: SW1
+  x: 79.52
+  y: 104.47
+  rot: -90.0
+- ref: TVS1
+  x: 80.31
+  y: 126.96
+  rot: -90.0
+- ref: TVS2
+  x: 111.39
+  y: 97.47
+  rot: -90.0
+- ref: U1
+  x: 78.33
+  y: 120.51
+- ref: U2
+  x: 75.27
+  y: 111.42
+  rot: -90.0
+- ref: U3
+  x: 117.36
+  y: 118.95
+  rot: 90.0
+- ref: U5
+  x: 63.1
+  y: 108.73
+  rot: -90.0
+copper_pours:
+- net: +1V8
+  layers: [F.Cu]
+- net: +3V3
+  layers: [F.Cu]
+- net: /Connector/GPS_50
+  layers: [F.Cu]
+- net: /Connector/GPS_50_A
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: V+
+  layers: [F.Cu]
+- net: VBAT
+  layers: [F.Cu, In2.Cu]
+- net: VIO
+  layers: [In2.Cu]
+- net: VIO_P
+  layers: [F.Cu]
+- net: VMAIN
+  layers: [F.Cu, In2.Cu]
+- net: VMODEM_P
+  layers: [F.Cu]
+- net: VUSB
+  layers: [F.Cu, In2.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu, In1.Cu]
+  keepout: true

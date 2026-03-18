@@ -1,0 +1,1125 @@
+name: MYSTAT Potentiostat
+slug: mystat-potentiostat
+source: matthew-yates/MYSTAT
+format: kicad7
+description: 'USB potentiostat/galvanostat for electrochemistry: 20-bit DAC (DAC1220), 22-bit ADC (MCP3550)'
+tags: [adc-dac, audio]
+key_ics: [DAC1220, MCP3550, ADR421]
+outline:
+  width_mm: 60.0
+  height_mm: 81.0
+design_rules:
+  layers: 4
+  min_trace: 0.254mm
+  min_clearance: 0.254mm
+  min_drill: 0.254mm
+  min_via: 0.381mm
+components:
+- ref: C1
+  value: 10nF
+  footprint: 0805
+  manufacturer: KEMET
+  mpn: C0805C103J5GACTU
+- ref: C10
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+  decouples: U5
+- ref: C11
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C12
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C13
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+  decouples: U7
+- ref: C14
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+  decouples: U6
+- ref: C15
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C16
+  value: 10uF
+  footprint: '1210'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL32B106KBJNNWE
+  decouples: U9
+- ref: C17
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+  decouples: U8
+- ref: C18
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C19
+  value: 12pF
+  footprint: 0805
+  manufacturer: Yageo
+  mpn: CC0805JRNPO9BN120
+- ref: C2
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C20
+  value: 12pF
+  footprint: 0805
+  manufacturer: Yageo
+  mpn: CC0805JRNPO9BN120
+- ref: C21
+  value: 3.3nF
+  footprint: 0805
+  manufacturer: Murata Electronics North America
+  mpn: GRM2165C1H332JA01D
+- ref: C22
+  value: 10nF
+  footprint: 0805
+  manufacturer: KEMET
+  mpn: C0805C103J5GACTU
+- ref: C23
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+  decouples: U10
+- ref: C24
+  value: pF
+  footprint: 0805
+  manufacturer: Yageo
+  mpn: CC0805KRX7R9BB472
+- ref: C25
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C26
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C27
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+  decouples: U13
+- ref: C28
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+  decouples: U14
+- ref: C29
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C3
+  value: 47uF
+  footprint: EEE-FT1V470AR
+  manufacturer: Panasonic Electronic Components
+  mpn: EEE-FT1V470AR
+  decouples: U4
+- ref: C30
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+  decouples: U15
+- ref: C31
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C32
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C33
+  value: 12pF
+  footprint: 0805
+  manufacturer: Yageo
+  mpn: CC0805JRNPO9BN120
+- ref: C34
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+  decouples: U16
+- ref: C35
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+  decouples: U17
+- ref: C36
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C37
+  value: 100nF
+  footprint: 0805
+  manufacturer: AVX Corporation
+  mpn: 08055C104KAT2A
+- ref: C38
+  value: 12pF
+  footprint: 0805
+  manufacturer: Yageo
+  mpn: CC0805JRNPO9BN120
+- ref: C39
+  value: 4.7uF
+  footprint: 0805
+  manufacturer: TDK Corporation
+  mpn: C2012X7R1V475K125AC
+- ref: C4
+  value: 4.7uF
+  footprint: '1206'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL31B475KBHNNNE
+  decouples: U2
+- ref: C5
+  value: 4.7uF
+  footprint: 0805
+  manufacturer: TDK Corporation
+  mpn: C2012X7R1V475K125AC
+- ref: C6
+  value: 4.7uF
+  footprint: 0805
+  manufacturer: TDK Corporation
+  mpn: C2012X7R1V475K125AC
+- ref: C7
+  value: 4.7uF
+  footprint: '1206'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL31B475KBHNNNE
+- ref: C8
+  value: 4.7uF
+  footprint: 0805
+  manufacturer: TDK Corporation
+  mpn: C2012X7R1V475K125AC
+  decouples: U4
+- ref: C9
+  value: 4.7uF
+  footprint: 0805
+  manufacturer: TDK Corporation
+  mpn: C2012X7R1V475K125AC
+  decouples: U4
+- ref: FB1
+  value: Ferrite_Bead
+  footprint: 0805
+  manufacturer: Vishay Dale
+  mpn: ILBB0805ER320V
+- ref: J1
+  value: PJ-063AH
+  footprint: CUI_PJ-063AH
+  manufacturer: CUI Inc.
+  mpn: PJ-063AH
+- ref: J2
+  value: 2173157-3
+  footprint: CONN_2173157-3
+  manufacturer: TE Connectivity AMP Connectors
+  mpn: 2173157-3
+- ref: J3
+  value: SJ1-42534-SMT
+  footprint: CUI_SJ1-42534-SMT
+  manufacturer: CUI Inc.
+  mpn: SJ1-42534-SMT-TR
+- ref: K1
+  value: '9011-05-11'
+  footprint: relay_9011-05-11
+  manufacturer: Coto Technology
+  mpn: '9011-05-11'
+- ref: K2
+  value: '9011-05-11'
+  footprint: relay_9011-05-11
+  manufacturer: Coto Technology
+  mpn: '9011-05-11'
+- ref: K3
+  value: '9011-05-11'
+  footprint: relay_9011-05-11
+  manufacturer: Coto Technology
+  mpn: '9011-05-11'
+- ref: K4
+  value: '9011-05-11'
+  footprint: relay_9011-05-11
+  manufacturer: Coto Technology
+  mpn: '9011-05-11'
+- ref: K5
+  value: '9011-05-11'
+  footprint: relay_9011-05-11
+  manufacturer: Coto Technology
+  mpn: '9011-05-11'
+- ref: P1
+  value: 1x6 header
+  footprint: 1X6
+  manufacturer: Sullins Connector Solutions
+  mpn: PRPC006SAAN-RC
+- ref: R1
+  value: 60.4 kohm
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-6ENF6042V
+  pulldown: U2.G1
+- ref: R10
+  value: 27ohm
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-6ENF27R0V
+- ref: R11
+  value: 10kohm
+  footprint: 0805
+  manufacturer: Yageo
+  mpn: RC0805FR-0710KL
+- ref: R12
+  value: 402k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB4023V
+- ref: R13
+  value: 75k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB753V
+- ref: R14
+  value: 402k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB4023V
+- ref: R15
+  value: 75k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB753V
+- ref: R16
+  value: 100k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB104V
+- ref: R17
+  value: 75k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB753V
+- ref: R18
+  value: 75k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB753V
+- ref: R19
+  value: 1k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB102V
+- ref: R2
+  value: 8.87 kohm*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB8871V
+- ref: R20
+  value: 75k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB753V
+- ref: R21
+  value: 18k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB183V
+- ref: R22
+  value: 75k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB753V
+- ref: R23
+  value: 2k*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-6AEB202V
+- ref: R24
+  value: 10R*
+  footprint: 0805
+  manufacturer: TE Connectivity Passive Product
+  mpn: 2-1625868-7
+- ref: R25
+  value: 1R*
+  footprint: 0805
+  manufacturer: Susumu
+  mpn: RL1220S-1R0-F
+- ref: R3
+  value: 88.7 kohm*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-PB6B8872V
+- ref: R4
+  value: 178 kohm
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-6ENF1783V
+- ref: R5
+  value: 294 kohm*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-PB6B2943V
+- ref: R6
+  value: 174 kohm*
+  footprint: 0805
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-PB6B1743V
+- ref: R7
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Yageo
+  mpn: RC0805FR-071KL
+- ref: R8
+  value: 10kohm
+  footprint: 0805
+  manufacturer: Yageo
+  mpn: RC0805FR-0710KL
+  pulldown: Vref
+- ref: R9
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Yageo
+  mpn: RC0805FR-071KL
+- ref: U10
+  value: OPA192
+  footprint: OPA192
+  manufacturer: Texas Instruments
+  mpn: OPA192IDBVR
+- ref: U11
+  value: BUF634A
+  footprint: SOIC-8
+  manufacturer: Texas Instruments
+  mpn: BUF634AIDR
+- ref: U12
+  value: ADG1419
+  footprint: MSOP-8
+  manufacturer: Analog Devices Inc.
+  mpn: ADG1419BRMZ-REEL7
+- ref: U13
+  value: OPA192
+  footprint: OPA192
+  manufacturer: Texas Instruments
+  mpn: OPA192IDBVR
+- ref: U14
+  value: OPA192
+  footprint: OPA192
+  manufacturer: Texas Instruments
+  mpn: OPA192IDBVR
+- ref: U15
+  value: OPA192
+  footprint: OPA192
+  manufacturer: Texas Instruments
+  mpn: OPA192IDBVR
+- ref: U16
+  value: OPA192
+  footprint: OPA192
+  manufacturer: Texas Instruments
+  mpn: OPA192IDBVR
+- ref: U17
+  value: OPA192
+  footprint: OPA192
+  manufacturer: Texas Instruments
+  mpn: OPA192IDBVR
+- ref: U2
+  value: LTM8045
+  footprint: MODULE
+  manufacturer: Linear Technology/Analog Devices
+  mpn: LTM8045IY
+- ref: U3
+  value: ADP7182AUJZ-R7
+  footprint: TSOT-23-5
+  manufacturer: Analog Devices Inc.
+  mpn: ADP7182AUJZ-R7
+- ref: U4
+  value: ADP7118AUJZ-5.0-R7
+  footprint: TSOT-23-5
+  manufacturer: Analog Devices Inc.
+  mpn: ADP7118AUJZ-5.0-R7
+- ref: U5
+  value: PIC16F1459
+  footprint: SOIC-20W
+  manufacturer: Microchip Technology
+  mpn: PIC16F1459-I/SO
+- ref: U6
+  value: ADR421
+  footprint: SOIC-8
+  manufacturer: Analog Devices Inc.
+  mpn: ADR421ARZ
+- ref: U7
+  value: MCP3550-60
+  footprint: SOIC-8
+  manufacturer: Microchip Technology
+  mpn: MCP3550-60E/SN
+- ref: U8
+  value: MCP3550-60
+  footprint: SOIC-8
+  manufacturer: Microchip Technology
+  mpn: MCP3550-60E/SN
+- ref: U9
+  value: DAC1220
+  footprint: DAC1220
+  manufacturer: Texas Instruments
+  mpn: DAC1220E
+- ref: X1
+  value: 2.5 MHz
+  footprint: Crystal_HC49-U_Vertical
+  manufacturer: ECS Inc.
+  mpn: ECS-25-S-1X
+nets:
+- name: +13.4V
+  pins:
+  - C23.2
+  - C27.2
+  - C28.1
+  - C30.2
+  - C34.1
+  - C35.2
+  - C9.2
+  - R5.1
+  - U10.5
+  - U11.7
+  - U12.4
+  - U13.5
+  - U14.5
+  - U15.5
+  - U16.5
+  - U17.5
+  - U4.5
+- name: +15V
+  pins:
+  - C3.1
+  - C4.1
+  - C8.2
+  - J1.1
+  - U2.G3
+  - U2.G4
+  - U2.G5
+  - U2.H4
+  - U2.H5
+  - U4.1
+  - U4.3
+- name: +5V
+  pins:
+  - C10.1
+  - C13.1
+  - C14.1
+  - C16.1
+  - C17.1
+  - C2.2
+  - C39.2
+  - FB1.2
+  - P1.2
+  - U5.1
+  - U6.2
+  - U7.8
+  - U8.8
+  - U9.1
+  - U9.5
+- name: -13.4V
+  pins:
+  - C26.1
+  - C29.2
+  - C31.1
+  - C32.2
+  - C36.1
+  - C37.1
+  - C6.2
+  - R3.2
+  - U10.2
+  - U11.4
+  - U12.7
+  - U13.2
+  - U14.2
+  - U15.2
+  - U16.2
+  - U17.2
+  - U3.5
+- name: -15V
+  pins:
+  - C5.2
+  - C7.1
+  - R4.2
+  - U2.A4
+  - U2.A5
+  - U2.B4
+  - U2.B5
+  - U3.2
+  - U3.3
+- name: A3
+  pins: [R4.1, U2.A3]
+- name: CE
+  pins: [J3.2, R16.1, R19.1, R24.1, R25.1, U17.3]
+- name: CELL_ON
+  pins: [K1.2, U5.3]
+- name: CS1
+  pins: [U5.11, U9.14]
+- name: CS2
+  pins: [U5.10, U7.7, U8.7]
+- name: DAC_out
+  pins: [C21.2, U10.3, U9.11]
+- name: G1
+  pins: [R1.1, U2.G1]
+- name: GND
+  pins:
+  - C1.1
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.1
+  - C20.2
+  - C23.1
+  - C25.2
+  - C26.2
+  - C27.1
+  - C28.2
+  - C29.1
+  - C3.2
+  - C30.1
+  - C31.2
+  - C32.1
+  - C34.2
+  - C35.1
+  - C36.2
+  - C37.2
+  - C39.1
+  - C4.2
+  - C5.1
+  - C6.1
+  - C7.2
+  - C8.1
+  - C9.1
+  - J1.2
+  - J1.3
+  - J2.5
+  - J2.S1
+  - J2.S2
+  - J2.S3
+  - J2.S4
+  - K1.3
+  - K2.3
+  - K2.4
+  - K3.3
+  - K3.4
+  - K4.3
+  - K4.4
+  - K5.3
+  - K5.4
+  - P1.3
+  - R1.2
+  - R2.1
+  - R22.2
+  - R23.2
+  - R6.2
+  - R8.2
+  - U12.3
+  - U2.A1
+  - U2.A2
+  - U2.B1
+  - U2.B2
+  - U2.B3
+  - U2.C1
+  - U2.C2
+  - U2.C3
+  - U2.C4
+  - U2.C5
+  - U2.D1
+  - U2.D2
+  - U2.D3
+  - U2.D4
+  - U2.D5
+  - U2.E2
+  - U2.E3
+  - U2.E4
+  - U2.E5
+  - U2.F2
+  - U2.F3
+  - U2.F4
+  - U2.F5
+  - U2.G2
+  - U2.H1
+  - U2.H2
+  - U2.H3
+  - U3.1
+  - U4.2
+  - U5.20
+  - U6.4
+  - U7.4
+  - U8.4
+  - U9.13
+  - U9.4
+- name: I_MEAS
+  pins: [C38.2, R20.2, R9.1, U12.8, U16.1]
+- name: MODE_SW
+  pins: [U12.6, U5.2]
+- name: Net-(C1-Pad2)
+  pins: [C1.2, FB1.1, J2.1]
+- name: Net-(C11-Pad1)
+  pins: [C11.1, U5.17]
+- name: Net-(C12-Pad1)
+  pins: [C12.1, R7.2, U7.2]
+- name: Net-(C18-Pad1)
+  pins: [C18.1, R9.2, U8.2]
+- name: Net-(C19-Pad1)
+  pins: [C19.1, U9.2, X1.1]
+- name: Net-(C20-Pad1)
+  pins: [C20.1, U9.3, X1.2]
+- name: Net-(C21-Pad1)
+  pins: [C21.1, U9.10]
+- name: Net-(C22-Pad1)
+  pins: [C22.1, U9.9]
+- name: Net-(C24-Pad1)
+  pins: [C24.1, K1.1, R10.1, U11.6]
+- name: Net-(C24-Pad2)
+  pins: [C24.2, R11.1, U10.4]
+- name: Net-(C25-Pad1)
+  pins: [C25.1, R10.2]
+- name: Net-(C33-Pad1)
+  pins: [C33.1, R14.1, R15.2, U14.4]
+- name: Net-(C38-Pad1)
+  pins: [C38.1, R20.1, R22.1, U16.4]
+- name: Net-(J2-Pad2)
+  pins: [J2.2, U5.18]
+- name: Net-(J2-Pad3)
+  pins: [J2.3, U5.19]
+- name: Net-(K2-Pad1)
+  pins: [K2.1, R16.2]
+- name: Net-(K3-Pad1)
+  pins: [K3.1, R19.2]
+- name: Net-(K4-Pad1)
+  pins: [K4.1, R24.2]
+- name: Net-(K5-Pad1)
+  pins: [K5.1, R25.2]
+- name: Net-(P1-Pad1)
+  pins: [P1.1, U5.4]
+- name: Net-(P1-Pad4)
+  pins: [P1.4, U5.16]
+- name: Net-(P1-Pad5)
+  pins: [P1.5, U5.15]
+- name: Net-(R11-Pad2)
+  pins: [R11.2, U12.1]
+- name: Net-(R12-Pad1)
+  pins: [R12.1, R13.1, U14.3]
+- name: Net-(R12-Pad2)
+  pins: [R12.2, U13.1, U13.4]
+- name: Net-(R14-Pad2)
+  pins: [R14.2, U15.1, U15.4]
+- name: Net-(R17-Pad2)
+  pins: [R17.2, R18.2, U16.3]
+- name: Net-(R18-Pad1)
+  pins: [R18.1, R21.2, U17.1]
+- name: Net-(R2-Pad2)
+  pins: [R2.2, R3.1, U3.4]
+- name: Net-(R21-Pad1)
+  pins: [R21.1, R23.1, U17.4]
+- name: Net-(R5-Pad2)
+  pins: [R5.2, R6.1, U4.4]
+- name: Net-(U10-Pad1)
+  pins: [U10.1, U11.3]
+- name: RANGE1
+  pins: [K5.2, U5.7]
+- name: RANGE2
+  pins: [K4.2, U5.6]
+- name: RANGE3
+  pins: [K3.2, U5.5]
+- name: RANGE4
+  pins: [K2.2, U5.8]
+- name: RE
+  pins: [J3.3, U15.3]
+- name: SCK
+  pins: [U5.12, U7.5, U8.5, U9.16]
+- name: SDIO
+  pins: [U5.13, U7.6, U9.15]
+- name: SDIO2
+  pins: [U5.9, U8.6]
+- name: SE
+  pins: [J3.1, U13.3]
+- name: V_MEAS
+  pins: [C33.2, R15.1, R7.1, U12.2, U14.1]
+- name: Vref
+  pins:
+  - C15.1
+  - C22.2
+  - R13.2
+  - R17.1
+  - R8.1
+  - U6.6
+  - U7.1
+  - U7.3
+  - U8.1
+  - U8.3
+  - U9.12
+- name: WE
+  pins: [J3.4, K1.4]
+positions:
+- ref: C1
+  x: 77.3
+  y: 125.3
+- ref: C10
+  x: 72.4
+  y: 97.8
+- ref: C11
+  x: 54.66
+  y: 95.0
+  rot: -90.0
+- ref: C12
+  x: 55.21
+  y: 68.8
+  rot: 90.0
+- ref: C13
+  x: 59.8
+  y: 82.1
+- ref: C14
+  x: 89.6
+  y: 103.3
+  rot: 90.0
+- ref: C15
+  x: 76.87
+  y: 104.0
+  rot: -90.0
+- ref: C16
+  x: 55.19
+  y: 111.71
+  rot: 90.0
+- ref: C17
+  x: 66.0
+  y: 82.1
+  rot: 180.0
+- ref: C18
+  x: 63.0
+  y: 68.8
+  rot: 90.0
+- ref: C19
+  x: 57.45
+  y: 122.59
+  rot: 180.0
+- ref: C2
+  x: 72.6
+  y: 128.7
+- ref: C20
+  x: 62.29
+  y: 122.61
+- ref: C21
+  x: 64.2
+  y: 104.8
+  rot: 180.0
+- ref: C22
+  x: 66.8
+  y: 109.0
+  rot: -90.0
+- ref: C23
+  x: 98.9
+  y: 75.1
+  rot: 180.0
+- ref: C24
+  x: 93.1
+  y: 90.5
+  rot: -90.0
+- ref: C25
+  x: 101.7
+  y: 57.2
+- ref: C26
+  x: 98.9
+  y: 84.0
+- ref: C27
+  x: 88.5
+  y: 68.2
+- ref: C28
+  x: 88.4
+  y: 73.5
+- ref: C29
+  x: 84.3
+  y: 64.7
+  rot: 90.0
+- ref: C3
+  x: 92.6
+  y: 112.0
+  rot: 90.0
+- ref: C30
+  x: 96.9
+  y: 68.2
+- ref: C31
+  x: 89.4
+  y: 82.4
+- ref: C32
+  x: 92.8
+  y: 64.7
+  rot: 90.0
+- ref: C33
+  x: 89.4
+  y: 86.8
+  rot: 180.0
+- ref: C34
+  x: 84.2
+  y: 83.5
+  rot: 90.0
+- ref: C35
+  x: 81.0
+  y: 70.6
+  rot: 90.0
+- ref: C36
+  x: 76.0
+  y: 83.0
+  rot: -90.0
+- ref: C37
+  x: 76.5
+  y: 65.4
+  rot: -90.0
+- ref: C38
+  x: 80.0
+  y: 90.9
+- ref: C39
+  x: 72.6
+  y: 125.3
+- ref: C4
+  x: 86.2
+  y: 119.9
+  rot: 90.0
+- ref: C5
+  x: 93.63
+  y: 100.22
+  rot: -90.0
+- ref: C6
+  x: 103.03
+  y: 100.22
+  rot: 90.0
+- ref: C7
+  x: 86.2
+  y: 113.8
+  rot: -90.0
+- ref: C8
+  x: 96.65
+  y: 105.94
+  rot: -90.0
+- ref: C9
+  x: 106.05
+  y: 105.94
+  rot: 90.0
+- ref: FB1
+  x: 77.3
+  y: 128.7
+  rot: 180.0
+- ref: J1
+  x: 100.0
+  y: 118.7
+  rot: -90.0
+- ref: J2
+  x: 86.0
+  y: 126.1
+- ref: J3
+  x: 80.0
+  y: 54.5
+  rot: -90.0
+- ref: K1
+  x: 96.7
+  y: 53.5
+  rot: -90.0
+- ref: K2
+  x: 55.1
+  y: 56.3
+- ref: K3
+  x: 70.6
+  y: 56.3
+- ref: K4
+  x: 65.5
+  y: 56.3
+- ref: K5
+  x: 60.3
+  y: 56.3
+- ref: P1
+  x: 67.4
+  y: 127.7
+  rot: -90.0
+- ref: R1
+  x: 73.55
+  y: 119.1
+  rot: -90.0
+- ref: R10
+  x: 101.7
+  y: 53.6
+- ref: R11
+  x: 89.3
+  y: 95.3
+  rot: 180.0
+- ref: R12
+  x: 84.3
+  y: 70.8
+  rot: 90.0
+- ref: R13
+  x: 84.3
+  y: 76.4
+  rot: -90.0
+- ref: R14
+  x: 92.8
+  y: 70.9
+  rot: 90.0
+- ref: R15
+  x: 89.4
+  y: 90.3
+- ref: R16
+  x: 55.1
+  y: 52.8
+  rot: 180.0
+- ref: R17
+  x: 76.0
+  y: 77.9
+  rot: -90.0
+- ref: R18
+  x: 79.9
+  y: 78.5
+  rot: 180.0
+- ref: R19
+  x: 70.6
+  y: 52.7
+  rot: 180.0
+- ref: R2
+  x: 97.43
+  y: 95.82
+- ref: R20
+  x: 80.0
+  y: 87.6
+- ref: R21
+  x: 80.0
+  y: 74.8
+- ref: R22
+  x: 76.0
+  y: 88.3
+  rot: -90.0
+- ref: R23
+  x: 75.7
+  y: 71.0
+  rot: 90.0
+- ref: R24
+  x: 65.5
+  y: 52.8
+  rot: 180.0
+- ref: R25
+  x: 60.3
+  y: 52.8
+  rot: 180.0
+- ref: R3
+  x: 102.23
+  y: 95.82
+- ref: R4
+  x: 86.9
+  y: 108.9
+- ref: R5
+  x: 100.5
+  y: 113.8
+  rot: 180.0
+- ref: R6
+  x: 100.45
+  y: 110.34
+- ref: R7
+  x: 58.51
+  y: 68.8
+  rot: 90.0
+- ref: R8
+  x: 73.37
+  y: 104.0
+  rot: -90.0
+- ref: R9
+  x: 66.4
+  y: 68.8
+  rot: -90.0
+- ref: U10
+  x: 98.9
+  y: 79.6
+  rot: 90.0
+- ref: U11
+  x: 99.1
+  y: 90.0
+  rot: 180.0
+- ref: U12
+  x: 80.0
+  y: 95.9
+  rot: 180.0
+- ref: U13
+  x: 88.5
+  y: 63.8
+  rot: -90.0
+- ref: U14
+  x: 88.4
+  y: 78.0
+  rot: 90.0
+- ref: U15
+  x: 96.9
+  y: 63.8
+  rot: -90.0
+- ref: U16
+  x: 80.0
+  y: 83.2
+  rot: -90.0
+- ref: U17
+  x: 80.0
+  y: 65.4
+  rot: -90.0
+- ref: U2
+  x: 80.08
+  y: 115.49
+- ref: U3
+  x: 98.23
+  y: 100.22
+- ref: U4
+  x: 101.25
+  y: 105.94
+- ref: U5
+  x: 62.5
+  y: 92.1
+  rot: 180.0
+- ref: U6
+  x: 83.1
+  y: 103.7
+  rot: 180.0
+- ref: U7
+  x: 56.91
+  y: 75.8
+  rot: -90.0
+- ref: U8
+  x: 64.84
+  y: 75.78
+  rot: -90.0
+- ref: U9
+  x: 61.19
+  y: 110.61
+  rot: 90.0
+- ref: X1
+  x: 57.47
+  y: 118.19
+copper_pours:
+- net: +15V
+  layers: [F.Cu]
+- net: -15V
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: Vref
+  layers: [F.Cu]

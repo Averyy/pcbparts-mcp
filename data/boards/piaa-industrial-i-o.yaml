@@ -1,0 +1,1050 @@
+name: PIAA Industrial I/O
+slug: piaa-industrial-i-o
+source: soypat/piaa
+format: kicad7
+description: "Industrial I/O board: RS485 (MAX3072E), 6\xD7 optocoupler PWM outputs"
+tags: [isolation, power-supply, rs485]
+key_ics: [MAX3072E, RP2040]
+outline:
+  width_mm: 98.55
+  height_mm: 53.83
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: 0805
+  decouples: U1
+- ref: C10
+  value: 100nF
+  footprint: 0805
+  decouples: U4
+- ref: C11
+  value: 100nF
+  footprint: 0805
+  decouples: U5
+- ref: C12
+  value: 100nF
+  footprint: 0805
+  decouples: U6
+- ref: C13
+  value: 10uF
+  footprint: Electrolytic-3x5
+  voltage: 6.3V
+  decouples: U7
+- ref: C14
+  value: 100nF
+  footprint: '0201'
+  decouples: U7
+- ref: C15
+  value: 470uF
+  footprint: Electrolytic-4x3
+- ref: C16
+  value: 330uF
+  footprint: Electrolytic-3x5
+  decouples: U9
+- ref: C17
+  value: 10uF
+  footprint: Electrolytic-3x5
+  decouples: U10
+- ref: C2
+  value: 1uF
+  footprint: 0805
+  decouples: U2
+- ref: C3
+  value: 1uF
+  footprint: 0805
+  decouples: U3
+- ref: C4
+  value: 1uF
+  footprint: 0805
+  decouples: U4
+- ref: C5
+  value: 1uF
+  footprint: 0805
+  decouples: U5
+- ref: C6
+  value: 1uF
+  footprint: 0805
+  decouples: U6
+- ref: C7
+  value: 100nF
+  footprint: 0805
+  decouples: U1
+- ref: C8
+  value: 100nF
+  footprint: 0805
+  decouples: U2
+- ref: C9
+  value: 100nF
+  footprint: 0805
+  decouples: U3
+- ref: D1
+  value: LED RED
+  footprint: '0603'
+- ref: D10
+  value: LED YL
+  footprint: '0603'
+- ref: D11
+  value: LED YL
+  footprint: '0603'
+- ref: D12
+  value: LED YL
+  footprint: '0603'
+- ref: D13
+  value: LED YL
+  footprint: '0603'
+- ref: D14
+  value: MURS360T3G
+  footprint: MURS360T3G
+- ref: D15
+  value: B540C-13-F
+  footprint: B540C-13-F
+- ref: D16
+  value: PMEG3020EH
+  footprint: SOD-123F
+- ref: D17
+  value: SMAZ5V6
+  footprint: SMAZ5V6
+- ref: D18
+  value: LED RED
+  footprint: '0603'
+- ref: D2
+  value: LED RED
+  footprint: '0603'
+- ref: D3
+  value: LED RED
+  footprint: '0603'
+- ref: D4
+  value: LED RED
+  footprint: '0603'
+- ref: D5
+  value: LED RED
+  footprint: '0603'
+- ref: D6
+  value: LED RED
+  footprint: '0603'
+- ref: D7
+  value: PSD12C
+  footprint: SOD-323
+- ref: D8
+  value: PSD12C
+  footprint: SOD-323
+- ref: D9
+  value: PSD12C
+  footprint: SOD-323
+- ref: F1
+  value: PTS12066V100
+  footprint: PTS12066V100
+- ref: F2
+  value: PTS12066V100
+  footprint: PTS12066V100
+- ref: F3
+  value: PTS12066V100
+  footprint: PTS12066V100
+- ref: F4
+  value: PTS12066V100
+  footprint: PTS12066V100
+- ref: F5
+  value: PTS12066V100
+  footprint: PTS12066V100
+- ref: F6
+  value: PTS12066V100
+  footprint: PTS12066V100
+- ref: F7
+  value: PTS18126V300
+  footprint: PTS18126V300
+- ref: J1
+  value: 1x3 screw terminal
+  footprint: TerminalBlock_bornier-3_P5.08mm
+- ref: J2
+  value: 2x4 header
+  footprint: 2X4
+- ref: J6
+  value: 1x6 screw terminal
+  footprint: TerminalBlock_bornier-6_P5.08mm
+- ref: J7
+  value: 1x5 screw terminal
+  footprint: TerminalBlock_bornier-5_P5.08mm
+- ref: J8
+  value: 1x2 screw terminal
+  footprint: TerminalBlock_bornier-2_P5.08mm
+- ref: J9
+  value: 1x6 header
+  footprint: 2X3
+- ref: JP1
+  value: 1x2 header
+  footprint: 1X2
+- ref: JP2
+  value: 1x2 header
+  footprint: 1X2
+- ref: JP3
+  value: 1x2 header
+  footprint: 1X2
+- ref: JP4
+  value: 1x2 header
+  footprint: 1X2
+- ref: L1
+  value: 47uH
+  footprint: 0805
+- ref: P1
+  value: PS2805-4
+  footprint: SSOP-16
+- ref: PS1
+  value: USMF020
+  footprint: USMF020
+- ref: PS2
+  value: USMF020
+  footprint: USMF020
+- ref: Q1
+  value: FQT13N06L
+  footprint: SOT-223
+- ref: Q2
+  value: FQT13N06L
+  footprint: SOT-223
+- ref: Q3
+  value: FQT13N06L
+  footprint: SOT-223
+- ref: Q4
+  value: FQT13N06L
+  footprint: SOT-223
+- ref: Q5
+  value: FQT13N06L
+  footprint: SOT-223
+- ref: Q6
+  value: FQT13N06L
+  footprint: SOT-223
+- ref: R1
+  value: 330ohm
+  footprint: '0201'
+- ref: R10
+  value: 100kohm
+  footprint: '0201'
+  pulldown: U7.B
+- ref: R11
+  value: 100kohm
+  footprint: '0201'
+  pullup: U7.A
+- ref: R12
+  value: 680ohm
+  footprint: '0201'
+- ref: R13
+  value: 120ohm
+  footprint: '0201'
+- ref: R14
+  value: 680ohm
+  footprint: '0201'
+- ref: R15
+  value: 100 @
+  footprint: '1206'
+  power: 1/2W
+- ref: R16
+  value: 2.2kohm
+  footprint: '0201'
+  pullup: D10.A
+- ref: R17
+  value: 100kohm
+  footprint: '0201'
+  pullup: /DIN0
+- ref: R18
+  value: 2.2kohm
+  footprint: '0201'
+  pullup: D11.A
+- ref: R19
+  value: 100kohm
+  footprint: '0201'
+  pullup: /DIN1
+- ref: R2
+  value: 330ohm
+  footprint: '0201'
+- ref: R20
+  value: 2.2kohm
+  footprint: '0201'
+  pullup: D12.A
+- ref: R21
+  value: 100kohm
+  footprint: '0201'
+  pullup: /DIN2
+- ref: R22
+  value: 2.2kohm
+  footprint: '0201'
+  pullup: D13.A
+- ref: R23
+  value: 100kohm
+  footprint: '0201'
+  pullup: /DIN3
+- ref: R24
+  value: 3.3kohm
+  footprint: '0201'
+- ref: R25
+  value: 3.3kohm
+  footprint: '0201'
+- ref: R26
+  value: 3.3kohm
+  footprint: '0201'
+- ref: R27
+  value: 3.3kohm
+  footprint: '0201'
+- ref: R28
+  value: 4.7kohm
+  footprint: '0201'
+- ref: R29
+  value: 4.7kohm
+  footprint: '0201'
+- ref: R3
+  value: 330ohm
+  footprint: '0201'
+- ref: R30
+  value: 4.7kohm
+  footprint: '0201'
+- ref: R31
+  value: 4.7kohm
+  footprint: '0201'
+- ref: R32
+  value: 1kohm
+  footprint: '0603'
+  pullup: D18.A
+- ref: R4
+  value: 330ohm
+  footprint: '0201'
+- ref: R5
+  value: 330ohm
+  footprint: '0201'
+- ref: R6
+  value: 330ohm
+  footprint: '0201'
+- ref: R7
+  value: 4.7kohm
+  footprint: '0201'
+  pullup: /RS485_TX
+- ref: R8
+  value: 4.7kohm
+  footprint: '0201'
+  pulldown: U7.nRE
+- ref: R9
+  value: 4.7kohm
+  footprint: '0201'
+  pulldown: /RS485_DIR
+- ref: U1
+  value: MCP1416
+  footprint: SOT-23-5
+- ref: U10
+  value: NCP1117-3.3_SOT223
+  footprint: SOT-223-3_TabPin2
+- ref: U2
+  value: MCP1416
+  footprint: SOT-23-5
+- ref: U3
+  value: MCP1416
+  footprint: SOT-23-5
+- ref: U4
+  value: MCP1416
+  footprint: SOT-23-5
+- ref: U5
+  value: MCP1416
+  footprint: SOT-23-5
+- ref: U6
+  value: MCP1416
+  footprint: SOT-23-5
+- ref: U7
+  value: MAX3072E
+  footprint: SOIC-8
+- ref: U8
+  value: Pico
+  footprint: RPi_Pico_SMD_TH
+- ref: U9
+  value: LM2596S-5
+  footprint: TO-263
+nets:
+- name: +24V
+  pins: [D14.1, J8.Pin_1]
+- name: +3V3
+  pins:
+  - C17.1
+  - J9.Pin_5
+  - J9.Pin_6
+  - R16.1
+  - R17.1
+  - R18.1
+  - R19.1
+  - R20.1
+  - R21.1
+  - R22.1
+  - R23.1
+  - U10.VO@2
+- name: +5V
+  pins:
+  - C1.1
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C16.1
+  - C2.1
+  - C3.1
+  - C4.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - D16.K
+  - D17.2
+  - D7.1
+  - J9.Pin_3
+  - J9.Pin_4
+  - L1.1
+  - R11.2
+  - R12.2
+  - R32.1
+  - R7.2
+  - U1.Vdd
+  - U10.VI
+  - U2.Vdd
+  - U3.Vdd
+  - U4.Vdd
+  - U5.Vdd
+  - U6.Vdd
+  - U7.VCC
+  - U8.VSYS@39
+  - U9.FB
+- name: /COM
+  pins:
+  - J7.Pin_5
+  - P1.CA0
+  - P1.CA1
+  - P1.CA2
+  - P1.CA3
+  - R28.2
+  - R29.2
+  - R30.2
+  - R31.2
+- name: /DIN0
+  pins: [D10.K, P1.C0, R17.2, U8.GPIO12@16]
+- name: /DIN1
+  pins: [D11.K, P1.C1, R19.2, U8.GPIO13@17]
+- name: /DIN2
+  pins: [D12.K, P1.C2, R21.2, U8.GPIO14@19]
+- name: /DIN3
+  pins: [D13.K, P1.C3, R23.2, U8.GPIO15@20]
+- name: /DOUT0
+  pins: [U5.IN, U8.GPIO16@21]
+- name: /DOUT1
+  pins: [U6.IN, U8.GPIO17@22]
+- name: /DOUT2
+  pins: [U1.IN, U8.GPIO18@24]
+- name: /DOUT3
+  pins: [U2.IN, U8.GPIO19@25]
+- name: /DOUT4
+  pins: [U3.IN, U8.GPIO20@26]
+- name: /DOUT5
+  pins: [U4.IN, U8.GPIO21@27]
+- name: /GPIO0
+  pins: [J2.Pin_1, U8.GPIO0@1]
+- name: /GPIO1
+  pins: [J2.Pin_2, U8.GPIO1@2]
+- name: /GPIO2
+  pins: [J2.Pin_3, U8.GPIO2@4]
+- name: /GPIO3
+  pins: [J2.Pin_4, U8.GPIO3@5]
+- name: /GPIO4
+  pins: [J2.Pin_5, U8.GPIO4@6]
+- name: /GPIO5
+  pins: [J2.Pin_6, U8.GPIO5@7]
+- name: /GPIO6
+  pins: [J2.Pin_7, U8.GPIO6@9]
+- name: /GPIO7
+  pins: [J2.Pin_8, U8.GPIO7@10]
+- name: /IN0
+  pins: [J7.Pin_1, R24.2, R28.1]
+- name: /IN1
+  pins: [J7.Pin_2, R25.2, R29.1]
+- name: /IN2
+  pins: [J7.Pin_3, R26.2, R30.1]
+- name: /IN3
+  pins: [J7.Pin_4, R27.2, R31.1]
+- name: /OUT0
+  pins: [F5.1, J6.Pin_6]
+- name: /OUT1
+  pins: [F6.1, J6.Pin_5]
+- name: /OUT2
+  pins: [F1.1, J6.Pin_4]
+- name: /OUT3
+  pins: [F2.1, J6.Pin_3]
+- name: /OUT4
+  pins: [F3.1, J6.Pin_2]
+- name: /OUT5
+  pins: [F4.1, J6.Pin_1]
+- name: /RS485_DIR
+  pins: [JP1.B, R9.2, U7.DE, U8.GPIO10@14]
+- name: /RS485_RX
+  pins: [U7.RO, U8.GPIO9@12]
+- name: /RS485_TX
+  pins: [R7.1, U7.DI, U8.GPIO8@11]
+- name: A
+  pins:
+  - D7.2
+  - D8.1
+  - JP2.A
+  - JP3.B
+  - PS1.1
+  - R11.1
+  - U7.A
+- name: D
+  pins: [F3.2, Q3.D@4]
+- name: D_2
+  pins: [F5.2, Q5.D@4]
+- name: D_3
+  pins: [F2.2, Q2.D@4]
+- name: D_4
+  pins: [F6.2, Q6.D@4]
+- name: D_5
+  pins: [F4.2, Q4.D@4]
+- name: D_6
+  pins: [F1.2, Q1.D@4]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.K
+  - D15.1
+  - D17.1
+  - D18.K
+  - D2.K
+  - D3.K
+  - D4.K
+  - D5.K
+  - D6.K
+  - D9.2
+  - J8.Pin_2
+  - J9.Pin_1
+  - J9.Pin_2
+  - P1.E0
+  - P1.E1
+  - P1.E2
+  - P1.E3
+  - Q1.S
+  - Q2.S
+  - Q3.S
+  - Q4.S
+  - Q5.S
+  - Q6.S
+  - R10.1
+  - R14.1
+  - R15.1
+  - R8.1
+  - R9.1
+  - U1.GND
+  - U10.GND
+  - U2.GND
+  - U3.GND
+  - U4.GND
+  - U5.GND
+  - U6.GND
+  - U7.GND
+  - U8.GND@13
+  - U8.GND@18
+  - U8.GND@23
+  - U8.GND@28
+  - U8.GND@3
+  - U8.GND@38
+  - U8.GND@8
+  - U9.GND@3
+  - U9.nON/OFF
+- name: Net-(D1-Pad2)
+  pins: [D1.A, R1.1]
+- name: Net-(D10-Pad2)
+  pins: [D10.A, R16.2]
+- name: Net-(D11-Pad2)
+  pins: [D11.A, R18.2]
+- name: Net-(D12-Pad2)
+  pins: [D12.A, R20.2]
+- name: Net-(D13-Pad2)
+  pins: [D13.A, R22.2]
+- name: Net-(D14-Pad2)
+  pins: [D14.2, F7.1]
+- name: Net-(D18-Pad2)
+  pins: [D18.A, R32.2]
+- name: Net-(D2-Pad2)
+  pins: [D2.A, R2.1]
+- name: Net-(D3-Pad2)
+  pins: [D3.A, R3.1]
+- name: Net-(D4-Pad2)
+  pins: [D4.A, R4.1]
+- name: Net-(D5-Pad2)
+  pins: [D5.A, R5.1]
+- name: Net-(D6-Pad2)
+  pins: [D6.A, R6.1]
+- name: Net-(D8-Pad2)
+  pins:
+  - D8.2
+  - D9.1
+  - JP4.B
+  - PS2.1
+  - R10.2
+  - R13.1
+  - U7.B
+- name: Net-(J1-Pad3)
+  pins: [J1.Pin_3, R15.2]
+- name: Net-(JP2-Pad2)
+  pins: [JP2.B, R12.1]
+- name: Net-(JP3-Pad1)
+  pins: [JP3.A, R13.2]
+- name: Net-(JP4-Pad1)
+  pins: [JP4.A, R14.2]
+- name: Net-(P1-Pad1)
+  pins: [P1.AC0, R24.1]
+- name: Net-(P1-Pad3)
+  pins: [P1.AC1, R25.1]
+- name: Net-(P1-Pad5)
+  pins: [P1.AC2, R26.1]
+- name: Net-(P1-Pad7)
+  pins: [P1.AC3, R27.1]
+- name: Net-(PS1-Pad2)
+  pins: [J1.Pin_2, PS1.2]
+- name: Net-(PS2-Pad2)
+  pins: [J1.Pin_1, PS2.2]
+- name: OUT
+  pins: [Q3.G, R3.2, U3.OUT]
+- name: OUT_2
+  pins: [Q4.G, R4.2, U4.OUT]
+- name: OUT_3
+  pins: [Q5.G, R5.2, U5.OUT]
+- name: OUT_4
+  pins: [D15.2, L1.2, U9.OUT]
+- name: OUT_5
+  pins: [Q2.G, R2.2, U2.OUT]
+- name: OUT_6
+  pins: [Q1.G, R1.2, U1.OUT]
+- name: OUT_7
+  pins: [Q6.G, R6.2, U6.OUT]
+- name: VBUS
+  pins: [D16.A, U8.VBUS@40]
+- name: VIN
+  pins: [C15.1, F7.2, U9.VIN]
+- name: nRE
+  pins: [JP1.A, R8.2, U7.nRE]
+positions:
+- ref: C1
+  x: 167.24
+  y: 118.11
+  side: back
+- ref: C10
+  x: 167.45
+  y: 104.19
+  side: back
+- ref: C11
+  x: 167.33
+  y: 129.65
+  side: back
+- ref: C12
+  x: 167.34
+  y: 123.57
+  side: back
+- ref: C13
+  x: 122.12
+  y: 113.22
+  rot: 180.0
+- ref: C14
+  x: 127.6
+  y: 107.31
+  rot: 180.0
+- ref: C15
+  x: 193.19
+  y: 82.97
+  rot: 90.0
+- ref: C16
+  x: 173.34
+  y: 86.47
+  rot: -90.0
+- ref: C17
+  x: 163.45
+  y: 89.79
+  rot: 90.0
+- ref: C2
+  x: 167.33
+  y: 115.45
+  side: back
+- ref: C3
+  x: 167.37
+  y: 110.34
+  side: back
+- ref: C4
+  x: 167.43
+  y: 106.23
+  side: back
+- ref: C5
+  x: 167.32
+  y: 127.64
+  side: back
+- ref: C6
+  x: 167.34
+  y: 125.57
+  side: back
+- ref: C7
+  x: 167.22
+  y: 120.13
+  side: back
+- ref: C8
+  x: 167.34
+  y: 113.41
+  side: back
+- ref: C9
+  x: 167.39
+  y: 108.29
+  side: back
+- ref: D1
+  x: 170.79
+  y: 120.2
+- ref: D10
+  x: 130.41
+  y: 120.12
+- ref: D11
+  x: 130.44
+  y: 122.86
+- ref: D12
+  x: 130.47
+  y: 125.3
+- ref: D13
+  x: 130.44
+  y: 127.74
+- ref: D14
+  x: 192.79
+  y: 85.35
+  rot: -90.0
+  side: back
+- ref: D15
+  x: 178.76
+  y: 88.78
+  rot: 90.0
+- ref: D16
+  x: 161.93
+  y: 81.28
+  rot: 90.0
+- ref: D17
+  x: 169.67
+  y: 84.88
+  rot: 90.0
+- ref: D18
+  x: 162.56
+  y: 85.12
+  rot: 90.0
+- ref: D2
+  x: 171.01
+  y: 115.22
+- ref: D3
+  x: 171.12
+  y: 110.65
+- ref: D4
+  x: 171.19
+  y: 105.95
+- ref: D5
+  x: 170.66
+  y: 129.22
+- ref: D6
+  x: 170.66
+  y: 125.44
+- ref: D7
+  x: 116.37
+  y: 88.37
+  rot: -90.0
+- ref: D8
+  x: 116.35
+  y: 93.41
+  rot: -90.0
+- ref: D9
+  x: 115.61
+  y: 99.0
+  rot: -90.0
+  side: back
+- ref: F1
+  x: 195.98
+  y: 109.6
+- ref: F2
+  x: 196.31
+  y: 104.92
+- ref: F3
+  x: 196.31
+  y: 99.84
+- ref: F4
+  x: 196.12
+  y: 105.29
+  rot: 180.0
+- ref: F5
+  x: 189.74
+  y: 129.64
+  rot: -90.0
+- ref: F6
+  x: 196.22
+  y: 115.21
+- ref: F7
+  x: 194.52
+  y: 93.81
+  rot: 90.0
+- ref: J1
+  x: 110.94
+  y: 97.16
+  rot: 90.0
+- ref: J2
+  x: 126.08
+  y: 83.44
+- ref: J6
+  x: 201.15
+  y: 98.38
+  rot: -90.0
+- ref: J7
+  x: 110.94
+  y: 102.97
+  rot: -90.0
+- ref: J8
+  x: 201.29
+  y: 87.63
+  rot: -90.0
+- ref: J9
+  x: 126.36
+  y: 96.44
+- ref: JP1
+  x: 134.49
+  y: 111.38
+  rot: 180.0
+- ref: JP2
+  x: 116.8
+  y: 85.88
+  rot: 90.0
+- ref: JP3
+  x: 119.41
+  y: 98.75
+  rot: 180.0
+- ref: JP4
+  x: 116.91
+  y: 106.02
+  rot: 180.0
+- ref: L1
+  x: 173.35
+  y: 82.55
+- ref: P1
+  x: 122.71
+  y: 119.44
+- ref: PS1
+  x: 116.43
+  y: 92.11
+  rot: 180.0
+  side: back
+- ref: PS2
+  x: 116.41
+  y: 97.32
+  rot: 180.0
+  side: back
+- ref: Q1
+  x: 177.3
+  y: 119.38
+- ref: Q2
+  x: 186.5
+  y: 114.58
+- ref: Q3
+  x: 177.38
+  y: 109.85
+- ref: Q4
+  x: 186.52
+  y: 104.76
+- ref: Q5
+  x: 177.1
+  y: 128.42
+- ref: Q6
+  x: 186.34
+  y: 124.32
+- ref: R1
+  x: 171.15
+  y: 119.04
+  rot: 180.0
+- ref: R10
+  x: 128.55
+  y: 111.3
+  rot: 180.0
+  side: back
+- ref: R11
+  x: 117.37
+  y: 90.43
+  rot: 90.0
+- ref: R12
+  x: 117.62
+  y: 88.23
+  rot: -90.0
+- ref: R13
+  x: 119.81
+  y: 101.04
+- ref: R14
+  x: 116.92
+  y: 107.87
+  rot: 90.0
+  side: back
+- ref: R15
+  x: 113.72
+  y: 87.03
+  rot: -90.0
+  side: back
+- ref: R16
+  x: 132.7
+  y: 120.55
+  rot: 180.0
+- ref: R17
+  x: 134.28
+  y: 121.43
+  rot: 180.0
+- ref: R18
+  x: 132.73
+  y: 123.17
+  rot: 180.0
+- ref: R19
+  x: 134.3
+  y: 124.06
+  rot: 180.0
+- ref: R2
+  x: 171.34
+  y: 114.03
+  rot: 180.0
+- ref: R20
+  x: 132.75
+  y: 125.69
+  rot: 180.0
+- ref: R21
+  x: 133.03
+  y: 126.54
+  rot: 180.0
+- ref: R22
+  x: 132.72
+  y: 128.16
+  rot: 180.0
+- ref: R23
+  x: 131.59
+  y: 128.94
+  rot: 180.0
+- ref: R24
+  x: 115.7
+  y: 116.59
+  rot: 90.0
+- ref: R25
+  x: 115.49
+  y: 119.94
+  rot: 90.0
+- ref: R26
+  x: 115.44
+  y: 123.1
+  rot: 90.0
+- ref: R27
+  x: 115.4
+  y: 125.09
+  rot: 90.0
+- ref: R28
+  x: 109.18
+  y: 105.82
+  rot: -90.0
+  side: back
+- ref: R29
+  x: 109.18
+  y: 110.27
+  rot: -90.0
+  side: back
+- ref: R3
+  x: 171.32
+  y: 109.45
+  rot: 180.0
+- ref: R30
+  x: 108.9
+  y: 115.65
+  rot: -90.0
+  side: back
+- ref: R31
+  x: 109.18
+  y: 120.77
+  rot: -90.0
+  side: back
+- ref: R32
+  x: 164.08
+  y: 83.76
+  rot: -90.0
+- ref: R4
+  x: 170.72
+  y: 104.78
+  rot: 180.0
+- ref: R5
+  x: 171.13
+  y: 128.07
+  rot: 180.0
+- ref: R6
+  x: 170.94
+  y: 124.27
+  rot: 180.0
+- ref: R7
+  x: 134.18
+  y: 105.28
+  rot: 180.0
+- ref: R8
+  x: 136.47
+  y: 111.58
+  rot: -90.0
+- ref: R9
+  x: 135.85
+  y: 108.46
+  rot: 180.0
+- ref: U1
+  x: 167.14
+  y: 119.26
+- ref: U10
+  x: 165.48
+  y: 96.52
+  rot: 180.0
+- ref: U2
+  x: 167.35
+  y: 114.34
+- ref: U3
+  x: 167.36
+  y: 109.19
+- ref: U4
+  x: 167.39
+  y: 104.92
+- ref: U5
+  x: 167.0
+  y: 128.27
+- ref: U6
+  x: 167.0
+  y: 124.46
+- ref: U7
+  x: 129.09
+  y: 110.62
+  rot: 180.0
+- ref: U8
+  x: 148.59
+  y: 104.14
+- ref: U9
+  x: 185.02
+  y: 91.58
+  rot: -90.0
+copper_pours:
+- net: +5V
+  layers: [B.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [B.Cu]
+  keepout: true

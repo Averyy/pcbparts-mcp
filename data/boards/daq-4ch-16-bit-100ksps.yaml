@@ -1,0 +1,416 @@
+name: DAQ 4CH 16-bit 100kSps
+slug: daq-4ch-16-bit-100ksps
+source: merouanelakdim/daq-high-precision-module
+format: kicad7
+description: 4-channel precision DAQ (STM32G0), analog MUX
+tags: [isolation]
+key_ics: [STM32G0]
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C0
+  value: 4.7uF
+  footprint: 0805
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+- ref: C11
+  value: 100nF
+  footprint: '0603'
+- ref: C12
+  value: 100nF
+  footprint: '0603'
+- ref: C13
+  value: 100nF
+  footprint: '0603'
+- ref: C14
+  value: 100nF
+  footprint: '0603'
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+- ref: C5
+  value: 10uF
+  footprint: 0805
+- ref: C6
+  value: 4.7uF
+  footprint: 0805
+- ref: C7
+  value: 4.7uF
+  footprint: 0805
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+- ref: C9
+  value: 220pF
+  footprint: '0603'
+- ref: CBYP1
+  value: 10 nF
+  footprint: '0603'
+- ref: CIN1
+  value: 1 uF
+  footprint: 0805
+- ref: COUT1
+  value: 10 uF
+  footprint: 0805
+- ref: Cdec1
+  value: 100 nF
+  footprint: '0603'
+- ref: D1
+  value: LED
+  footprint: '0603'
+- ref: D2
+  value: LED
+  footprint: '0603'
+- ref: D3
+  value: LED
+  footprint: '0603'
+- ref: FB1
+  value: ferrite bead
+  footprint: '0603'
+- ref: J1_POWER_IN1
+  value: 1x2 header
+  footprint: 1X2
+- ref: J_SW1
+  value: 1x6 header
+  footprint: 1X6
+- ref: J_UART1
+  value: 1x4 header
+  footprint: 1X4
+- ref: J_UART2
+  value: 1x4 header
+  footprint: 1X4
+- ref: R1
+  value: 1 kohm
+  footprint: '0603'
+- ref: R2
+  value: 1 kohm
+  footprint: '0603'
+- ref: R3
+  value: 1 kohm
+  footprint: '0603'
+- ref: R4
+  value: 33 ohm
+  footprint: '0603'
+- ref: R5
+  value: 10 kohm
+  footprint: '0603'
+- ref: R6
+  value: 1 kohm
+  footprint: '0603'
+- ref: R7
+  value: 1 kohm
+  footprint: '0603'
+- ref: R8
+  value: 1 kohm
+  footprint: '0603'
+- ref: R9
+  value: 1 kohm
+  footprint: '0603'
+- ref: U1
+  value: "LT1763\u20113.3"
+  footprint: SOT-23-5
+- ref: U2
+  value: STM32G0B1KBTx
+  footprint: LQFP-32
+- ref: U3
+  value: ADS8681RUM
+  footprint: QFN-16-1EP
+- ref: U5
+  value: CD4052B
+  footprint: SOIC-16
+nets:
+- name: +3V3_ANA
+  pins:
+  - C10.1
+  - C2.1
+  - C7.1
+  - C8.2
+  - COUT1.1
+  - Cdec1.2
+  - FB1.1
+  - R5.2
+  - U1.OUT
+  - U3.AVDD
+  - U3.DVDD
+  - U5.VDD
+- name: +3V3_DIG
+  pins:
+  - C0.1
+  - C1.2
+  - C4.1
+  - C5.1
+  - FB1.2
+  - J_SW1.Pin_1
+  - J_UART1.Pin_1
+  - U2.VDD
+- name: +5V_IN
+  pins: [CIN1.1, J1_POWER_IN1.Pin_1, U1.IN]
+- name: CH1_FILT
+  pins: [C11.2, R6.2, U5.X0]
+- name: CH1_IN
+  pins: [J_UART2.Pin_3, R6.1]
+- name: CH2_FILT
+  pins: [C12.2, R7.2, U5.X1]
+- name: CH2_IN
+  pins: [J_UART2.Pin_2, R7.1]
+- name: CH3_FILT
+  pins: [C13.2, R8.2, U5.X2]
+- name: CH3_IN
+  pins: [J_UART2.Pin_1, R8.1]
+- name: CH4_FILT
+  pins: [C14.2, R9.2, U5.X3]
+- name: CH4_IN
+  pins: [J_UART2.Pin_4, R9.1]
+- name: GND
+  pins:
+  - C0.2
+  - C1.1
+  - C10.2
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.1
+  - C7.2
+  - C8.1
+  - C9.1
+  - CBYP1.2
+  - CIN1.2
+  - COUT1.2
+  - Cdec1.1
+  - D1.K
+  - D2.K
+  - D3.K
+  - J1_POWER_IN1.Pin_2
+  - J_SW1.Pin_3
+  - J_UART1.Pin_4
+  - U1.GND
+  - U2.VSS
+  - U3.AGND
+  - U3.AIN_GND
+  - U3.DGND
+  - U3.PAD
+  - U3.REFGND
+  - U5.INH
+  - U5.VEE
+  - U5.VSS
+- name: MUX_OUT
+  pins: [R4.1, U5.X]
+- name: MUX_S0
+  pins: [U2.PB1, U5.A]
+- name: MUX_S1
+  pins: [U2.PB2, U5.B]
+- name: Net-(D1-A)
+  pins: [D1.A, R1.1]
+- name: Net-(D2-A)
+  pins: [D2.A, R2.1]
+- name: Net-(D3-A)
+  pins: [D3.A, R3.1]
+- name: Net-(J_SW1-Pin_4)
+  pins: [J_SW1.Pin_4, U2.PA13]
+- name: Net-(J_SW1-Pin_5)
+  pins: [J_SW1.Pin_5, U2.PA14]
+- name: Net-(J_SW1-Pin_6)
+  pins: [J_SW1.Pin_6, U2.PF2]
+- name: Net-(J_UART1-Pin_2)
+  pins: [J_UART1.Pin_2, U2.PA2]
+- name: Net-(J_UART1-Pin_3)
+  pins: [J_UART1.Pin_3, U2.PA3]
+- name: Net-(U1-BP)
+  pins: [CBYP1.1, U1.BP]
+- name: Net-(U2-PC14)
+  pins: [R2.2, U2.PC14]
+- name: Net-(U2-PC15)
+  pins: [R3.2, U2.PC15]
+- name: Net-(U2-PC6)
+  pins: [R1.2, U2.PC6]
+- name: Net-(U3-AIN_P)
+  pins: [C9.2, R4.2, U3.AIN_P]
+- name: Net-(U3-REFCAP)
+  pins: [C6.2, U3.REFCAP]
+- name: Net-(U3-REFIO)
+  pins: [C3.1, U3.REFIO]
+- name: Net-(U3-nRST)
+  pins: [R5.1, U3.nRST]
+- name: SPI_CS_ADC
+  pins: [U2.PB0, U3.CONVST/nCS]
+- name: SPI_MISO
+  pins: [U2.PA6, U3.SDO-0]
+- name: SPI_MOSI
+  pins: [U2.PA7, U3.SDI]
+- name: SPI_SCK
+  pins: [U2.PA5, U3.SCLK]
+positions:
+- ref: C0
+  x: 114.0
+  y: 97.4
+  rot: -90.0
+- ref: C1
+  x: 115.8
+  y: 97.5
+  rot: 90.0
+- ref: C10
+  x: 125.62
+  y: 74.1
+  rot: 180.0
+- ref: C11
+  x: 132.6
+  y: 82.1
+  rot: 180.0
+- ref: C12
+  x: 132.6
+  y: 79.1
+  rot: 180.0
+- ref: C13
+  x: 132.6
+  y: 76.1
+  rot: 180.0
+- ref: C14
+  x: 132.6
+  y: 85.1
+  rot: 180.0
+- ref: C2
+  x: 125.1
+  y: 95.6
+  rot: -90.0
+- ref: C3
+  x: 131.22
+  y: 92.5
+- ref: C4
+  x: 129.0
+  y: 98.3
+- ref: C5
+  x: 121.3
+  y: 95.4
+  rot: 90.0
+- ref: C6
+  x: 131.12
+  y: 90.7
+  rot: 180.0
+- ref: C7
+  x: 123.33
+  y: 95.4
+  rot: -90.0
+- ref: C8
+  x: 126.6
+  y: 95.6
+  rot: 90.0
+- ref: C9
+  x: 129.03
+  y: 88.9
+  rot: 180.0
+- ref: CBYP1
+  x: 132.8
+  y: 103.3
+- ref: CIN1
+  x: 132.5
+  y: 95.9
+  rot: 180.0
+- ref: COUT1
+  x: 129.2
+  y: 101.7
+  rot: 180.0
+- ref: Cdec1
+  x: 128.62
+  y: 74.1
+  rot: 180.0
+- ref: D1
+  x: 110.17
+  y: 82.2
+  rot: 90.0
+- ref: D2
+  x: 106.8
+  y: 97.2
+  rot: -90.0
+- ref: D3
+  x: 110.6
+  y: 98.0
+  rot: 180.0
+- ref: FB1
+  x: 129.0
+  y: 99.9
+  rot: 180.0
+- ref: J1_POWER_IN1
+  x: 137.1
+  y: 99.12
+- ref: J_SW1
+  x: 103.2
+  y: 97.78
+  rot: 180.0
+- ref: J_UART1
+  x: 111.9
+  y: 102.7
+  rot: 90.0
+- ref: J_UART2
+  x: 137.0
+  y: 77.6
+- ref: R1
+  x: 111.7
+  y: 82.2
+  rot: -90.0
+- ref: R2
+  x: 108.3
+  y: 97.2
+  rot: 90.0
+- ref: R3
+  x: 110.6
+  y: 96.5
+- ref: R4
+  x: 129.4
+  y: 86.8
+  rot: 180.0
+- ref: R5
+  x: 125.3
+  y: 86.5
+- ref: R6
+  x: 132.6
+  y: 80.6
+  rot: 180.0
+- ref: R7
+  x: 132.6
+  y: 77.6
+  rot: 180.0
+- ref: R8
+  x: 132.6
+  y: 74.6
+  rot: 180.0
+- ref: R9
+  x: 132.6
+  y: 83.6
+  rot: 180.0
+- ref: U1
+  x: 132.8
+  y: 100.4
+  rot: -90.0
+- ref: U2
+  x: 111.1
+  y: 89.0
+  rot: 90.0
+- ref: U3
+  x: 124.85
+  y: 90.74
+  rot: 180.0
+- ref: U5
+  x: 126.42
+  y: 80.1
+copper_pours:
+- net: GND
+  layers: [B.Cu]

@@ -1,0 +1,446 @@
+name: SolarMeshtasticNode
+slug: solarmeshtasticnode
+source: h0lad/SolarMeshtasticNode
+format: kicad9
+description: 'Solar-powered Meshtastic node: Heltec HT-CT62 LoRa module, BQ25185 MPPT solar charger'
+tags: [battery-charging, energy-harvesting, lora]
+key_ics: [BQ25185]
+outline:
+  width_mm: 66.85
+  height_mm: 87.0
+design_rules:
+  layers: 4
+  min_trace: 0.1mm
+  min_clearance: 0.1mm
+  min_drill: 0.2mm
+  min_via: 0.4mm
+components:
+- ref: BAT1
+  value: BH-26650-A5BJ001
+  footprint: BAT-TH_BH-18650-A1AJ005
+  lcsc: C6937119
+- ref: C1
+  value: 4.7uF
+  footprint: 0805
+- ref: C14
+  value: 100nF
+  footprint: 0805
+- ref: C15
+  value: 100nF
+  footprint: 0805
+- ref: C2
+  value: 1uF
+  footprint: 0805
+- ref: C3
+  value: 10uF
+  footprint: 0805
+- ref: C4
+  value: 4.7uF
+  footprint: 0805
+  decouples: U3
+- ref: C5
+  value: 47uF
+  footprint: '1206'
+  decouples: U2
+- ref: C6
+  value: 1uF
+  footprint: 0805
+- ref: C7
+  value: C
+  footprint: '1206'
+- ref: C8
+  value: 100nF
+  footprint: 0805
+  decouples: U2
+- ref: D2
+  value: LED
+  footprint: 0805
+- ref: D3
+  value: LED
+  footprint: 0805
+- ref: J1
+  value: 1x2 header
+  footprint: JST_PH_B2B-PH-K
+- ref: J2
+  value: 1x2 header
+  footprint: JST_PH_B2B-PH-K
+- ref: J3
+  value: 1x4 header
+  footprint: JST_PH_B4B-PH-K
+- ref: J5
+  value: 1x4 header
+  footprint: JST_PH_B4B-PH-K
+- ref: J7
+  value: 1x4 header
+  footprint: JST_PH_B4B-PH-K
+- ref: J8
+  value: 1x2 header
+  footprint: JST_PH_B2B-PH-K
+- ref: Q1
+  value: MMBT2222A
+  footprint: SOT-23
+  description: 600mA Ic, 40V Vce, NPN Transistor, SOT-23
+- ref: Q2
+  value: MMBT2222A
+  footprint: SOT-23
+  description: 600mA Ic, 40V Vce, NPN Transistor, SOT-23
+- ref: R1
+  value: 1kohm
+  footprint: 0805
+- ref: R10
+  value: 100kohm
+  footprint: 0805
+  pullup: /ESP32_ENABLE
+- ref: R11
+  value: 1Mohm
+  footprint: 0805
+- ref: R12
+  value: 1Mohm
+  footprint: 0805
+- ref: R13
+  value: R
+  footprint: 0805
+- ref: R14
+  value: R
+  footprint: 0805
+- ref: R15
+  value: 470ohm
+  footprint: 0805
+- ref: R2
+  value: 10kohm
+  footprint: 0805
+  pullup: /I2C_SCL
+- ref: R3
+  value: 100kohm
+  footprint: 0805
+  pulldown: U1.ILM/VSET
+- ref: R4
+  value: 300ohm
+  footprint: 0805
+- ref: R5
+  value: 10kohm
+  footprint: 0805
+- ref: R6
+  value: 1kohm
+  footprint: 0805
+  pullup: SW1.3
+- ref: R7
+  value: 10kohm
+  footprint: 0805
+- ref: R8
+  value: 1kohm
+  footprint: 0805
+- ref: R9
+  value: 10kohm
+  footprint: 0805
+  pullup: /I2C_SDA
+- ref: SW1
+  value: SSSS811101
+  footprint: SW-SMD_SSSS811101
+  lcsc: C109335
+- ref: SW2
+  value: tactile switch
+  footprint: SMA_L4.3-W2.6-LS5.1-RD
+- ref: U1
+  value: BQ25185
+  footprint: SON-11
+- ref: U2
+  value: HT-CT62
+  footprint: Heltec_HT-CT62
+  description: LoRa/LoRaWAN node module with ESP32-C3 and SX1262
+- ref: U3
+  value: HE9073A30MR
+  footprint: SOT-23-3_L2.9-W1.6-P1.90-LS2.8-BR-CW
+  lcsc: C723793
+- ref: U4
+  value: APX803L05-32SA-7
+  footprint: SOT-23-3
+  description: 35ms Active Low 1 SOT-23 Supervisor and Reset ICs ROHS
+- ref: U9
+  value: SS26
+  footprint: SMA_L4.3-W2.6-LS5.1-RD
+  lcsc: C5350986
+nets:
+- name: +3V3
+  pins:
+  - C4.1
+  - C5.2
+  - C8.2
+  - D2.A
+  - D3.A
+  - J5.Pin_2
+  - J7.Pin_2
+  - R10.1
+  - R2.2
+  - R6.1
+  - R9.2
+  - U2.VDD
+  - U3.VOUT
+- name: /ADC_LIPO
+  pins: [C14.1, R11.2, R12.1, U2.GPIO1]
+- name: /ADC_VBUS
+  pins: [C15.1, R13.2, R14.1, U2.GPIO0]
+- name: /ESP32_BOOTLOADER_MODE_1
+  pins: [SW1.2, U2.GPIO9]
+- name: /ESP32_ENABLE
+  pins: [R10.2, R15.1, U2.EN, U4.nReset]
+- name: /I2C_SCL
+  pins: [J5.Pin_4, J7.Pin_4, R2.1, U2.GPIO18_DN]
+- name: /I2C_SDA
+  pins: [J5.Pin_3, J7.Pin_3, R9.1, U2.GPIO19_DP]
+- name: /LED_STAT1
+  pins: [R5.2, U1.STAT1]
+- name: /LED_STAT2
+  pins: [R7.2, U1.STAT2]
+- name: /U_RX
+  pins: [J3.Pin_4, U2.GPIO20_RXD]
+- name: /U_TX
+  pins: [J3.Pin_3, U2.GPIO21_TXD]
+- name: /VBUS
+  pins: [C2.2, J2.Pin_2, R13.1, U1.IN, U9.K]
+- name: /VLIPO
+  pins: [BAT1.1, C6.1, J1.Pin_2, U1.BAT]
+- name: /VLOAD
+  pins:
+  - C1.1
+  - C3.2
+  - C7.2
+  - R11.1
+  - U1.SYS
+  - U3.VIN
+  - U4.Vcc
+- name: GND
+  pins:
+  - BAT1.2
+  - C1.2
+  - C14.2
+  - C15.2
+  - C2.1
+  - C3.1
+  - C4.2
+  - C5.1
+  - C6.2
+  - C7.1
+  - C8.1
+  - J1.Pin_1
+  - J2.Pin_1
+  - J3.Pin_1
+  - J5.Pin_1
+  - J7.Pin_1
+  - J8.Pin_2
+  - Q1.E
+  - Q2.E
+  - R12.2
+  - R14.2
+  - R3.2
+  - R4.2
+  - SW1.1
+  - SW1.4
+  - SW1.5
+  - SW1.6
+  - SW1.7
+  - SW2.2
+  - U1./CE
+  - U1.GND@11
+  - U1.GND@5
+  - U2.GND@13
+  - U2.GND@2
+  - U2.GND@21
+  - U3.GND
+  - U4.GND
+- name: Net-(D2-K)
+  pins: [D2.K, R1.1]
+- name: Net-(D3-K)
+  pins: [D3.K, R8.1]
+- name: Net-(J3-Pin_2)
+  pins: [J3.Pin_2, U9.A]
+- name: Net-(J8-Pin_1)
+  pins: [J8.Pin_1, U1.TS/MR]
+- name: Net-(Q1-B)
+  pins: [Q1.B, R5.1]
+- name: Net-(Q1-C)
+  pins: [Q1.C, R1.2]
+- name: Net-(Q2-B)
+  pins: [Q2.B, R7.1]
+- name: Net-(Q2-C)
+  pins: [Q2.C, R8.2]
+- name: Net-(R15-Pad2)
+  pins: [R15.2, SW2.1]
+- name: Net-(R6-Pad2)
+  pins: [R6.2, SW1.3]
+- name: Net-(U1-ILM/VSET)
+  pins: [R3.1, U1.ILM/VSET]
+- name: Net-(U1-ISET)
+  pins: [R4.1, U1.ISET]
+positions:
+- ref: BAT1
+  x: 125.0
+  y: 79.5
+  rot: 90.0
+- ref: C1
+  x: 160.44
+  y: 91.75
+  rot: 90.0
+- ref: C14
+  x: 161.92
+  y: 81.63
+  rot: -90.0
+- ref: C15
+  x: 155.85
+  y: 81.63
+  rot: -90.0
+- ref: C2
+  x: 165.59
+  y: 91.76
+  rot: -90.0
+- ref: C3
+  x: 162.72
+  y: 91.76
+  rot: -90.0
+- ref: C4
+  x: 153.81
+  y: 92.72
+  rot: 90.0
+- ref: C5
+  x: 168.8
+  y: 61.6
+  rot: 90.0
+- ref: C6
+  x: 160.46
+  y: 94.8
+  rot: 180.0
+- ref: C7
+  x: 165.5
+  y: 80.95
+  rot: -90.0
+- ref: C8
+  x: 166.6
+  y: 61.01
+  rot: 90.0
+- ref: D2
+  x: 148.09
+  y: 102.21
+  rot: 180.0
+- ref: D3
+  x: 148.1
+  y: 100.1
+  rot: 180.0
+- ref: J1
+  x: 140.3
+  y: 107.3
+- ref: J2
+  x: 171.55
+  y: 107.45
+- ref: J3
+  x: 141.0
+  y: 42.95
+- ref: J5
+  x: 153.97
+  y: 48.76
+- ref: J7
+  x: 154.0
+  y: 43.0
+- ref: J8
+  x: 162.5
+  y: 107.5
+- ref: Q1
+  x: 155.82
+  y: 103.07
+  rot: 180.0
+- ref: Q2
+  x: 155.82
+  y: 99.37
+  rot: 180.0
+- ref: R1
+  x: 151.96
+  y: 102.24
+- ref: R10
+  x: 168.7
+  y: 79.7
+  rot: 180.0
+- ref: R11
+  x: 157.9
+  y: 81.6
+  rot: 90.0
+- ref: R12
+  x: 159.91
+  y: 81.6
+  rot: -90.0
+- ref: R13
+  x: 151.85
+  y: 81.6
+  rot: 90.0
+- ref: R14
+  x: 153.85
+  y: 81.6
+  rot: -90.0
+- ref: R15
+  x: 167.2
+  y: 74.5
+  rot: 90.0
+- ref: R2
+  x: 158.45
+  y: 55.7
+- ref: R3
+  x: 169.5
+  y: 97.35
+- ref: R4
+  x: 169.5
+  y: 95.3
+- ref: R5
+  x: 158.75
+  y: 103.32
+  rot: 90.0
+- ref: R6
+  x: 167.3
+  y: 48.6
+- ref: R7
+  x: 158.75
+  y: 99.52
+  rot: 90.0
+- ref: R8
+  x: 151.96
+  y: 100.1
+- ref: R9
+  x: 152.35
+  y: 55.7
+  rot: 180.0
+- ref: SW1
+  x: 170.9
+  y: 44.4
+  rot: 180.0
+- ref: SW2
+  x: 167.15
+  y: 69.15
+  rot: 90.0
+- ref: U1
+  x: 164.17
+  y: 95.37
+- ref: U2
+  x: 156.1
+  y: 68.85
+  rot: 180.0
+- ref: U3
+  x: 157.3
+  y: 92.8
+  rot: 180.0
+- ref: U4
+  x: 169.0
+  y: 82.3
+  rot: 180.0
+- ref: U9
+  x: 149.15
+  y: 82.43
+  rot: 90.0
+copper_pours:
+- net: +3V3
+  layers: [In2.Cu]
+- net: /VBUS
+  layers: [F.Cu]
+- net: /VLOAD
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: ''
+  layers: [F.Cu]
+  keepout: true

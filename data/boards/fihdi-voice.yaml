@@ -1,0 +1,1228 @@
+name: Fihdi Voice
+slug: fihdi-voice
+source: Fihdi/Eurorack
+format: kicad7
+description: 'Complete analog synth voice: voltage-controlled oscillator, state-variable filter'
+tags: [eurorack, signal-conditioning]
+key_ics: [TL072, TL074]
+outline:
+  width_mm: 193.98
+  height_mm: 98.5
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: C
+  footprint: Axial
+- ref: C2
+  value: C
+  footprint: Axial
+- ref: C3
+  value: C
+  footprint: Axial
+- ref: C4
+  value: C
+  footprint: Axial
+- ref: C5
+  value: 5nF
+  footprint: Axial
+- ref: C6
+  value: 5nF
+  footprint: Axial
+- ref: D1
+  value: D
+  footprint: DO-15_P5.08mm_Vertical_AnodeUp
+- ref: D2
+  value: D
+  footprint: DO-15_P5.08mm_Vertical_AnodeUp
+- ref: D3
+  value: D
+  footprint: DO-15_P5.08mm_Vertical_AnodeUp
+- ref: D4
+  value: D
+  footprint: DO-15_P5.08mm_Vertical_AnodeUp
+- ref: D5
+  value: D
+  footprint: A-405_P7.62mm_Horizontal
+- ref: D6
+  value: D
+  footprint: A-405_P7.62mm_Horizontal
+- ref: D7
+  value: LED
+  footprint: LED_D5.0mm
+- ref: J1
+  value: 1x6 header
+  footprint: 1X6
+- ref: J2
+  value: 1x12 header
+  footprint: 1X12
+- ref: J3
+  value: 1x11 header
+  footprint: 1X11
+- ref: J4
+  value: 2x6 header
+  footprint: 2X6
+- ref: J5
+  value: 1x11 header
+  footprint: 1X11
+- ref: J6
+  value: 1x10 header
+  footprint: 1X10
+- ref: J7
+  value: 2x6 header
+  footprint: 2X6
+- ref: J8
+  value: 1x12 header
+  footprint: 1X12
+- ref: J9
+  value: 1x6 header
+  footprint: 1X6
+- ref: Q1
+  value: BC547
+  footprint: TO-92
+- ref: Q10
+  value: BC547
+  footprint: TO-92
+- ref: Q11
+  value: BC557
+  footprint: TO-92
+- ref: Q12
+  value: BC547
+  footprint: TO-92
+- ref: Q13
+  value: BC547
+  footprint: TO-92
+- ref: Q14
+  value: BC547
+  footprint: TO-92
+- ref: Q2
+  value: BC557
+  footprint: TO-92
+- ref: Q3
+  value: BC557
+  footprint: TO-92
+- ref: Q4
+  value: BC547
+  footprint: TO-92
+- ref: Q5
+  value: BC547
+  footprint: TO-92
+- ref: Q6
+  value: BC557
+  footprint: TO-92
+- ref: Q7
+  value: BC547
+  footprint: TO-92
+- ref: Q8
+  value: BC547
+  footprint: TO-92
+- ref: Q9
+  value: BC547
+  footprint: TO-92
+- ref: R1
+  value: 100kohm
+  footprint: Axial
+  pulldown: C5.1
+- ref: R10
+  value: 100kohm
+  footprint: Axial
+- ref: R11
+  value: 1Mohm
+  footprint: Axial
+- ref: R12
+  value: 10kohm
+  footprint: Axial
+- ref: R13
+  value: R
+  footprint: Axial
+- ref: R14
+  value: R
+  footprint: Axial
+- ref: R15
+  value: R
+  footprint: Axial
+- ref: R16
+  value: R
+  footprint: Axial
+- ref: R17
+  value: R
+  footprint: Axial
+- ref: R18
+  value: R
+  footprint: Axial
+- ref: R19
+  value: R
+  footprint: Axial
+- ref: R2
+  value: 100kohm
+  footprint: Axial
+  pulldown: Q1.B
+- ref: R20
+  value: 0ohm
+  footprint: Axial
+- ref: R21
+  value: 2.2kohm
+  footprint: Axial
+  pulldown: D7.K
+- ref: R22
+  value: R
+  footprint: Axial
+- ref: R23
+  value: 100kohm
+  footprint: Axial
+  pulldown: U8.+@5
+- ref: R24
+  value: 100kohm
+  footprint: Axial
+  pullup: U8.+@5
+- ref: R25
+  value: 100kohm
+  footprint: Axial
+- ref: R26
+  value: 100kohm
+  footprint: Axial
+- ref: R27
+  value: 200kohm
+  footprint: Axial
+- ref: R28
+  value: 100kohm
+  footprint: Axial
+  pulldown: U11.C@3
+- ref: R29
+  value: 10kohm
+  footprint: Axial
+- ref: R3
+  value: 100kohm
+  footprint: Axial
+  pullup: Q1.C
+- ref: R30
+  value: 10kohm
+  footprint: Axial
+  pulldown: D4.K
+- ref: R31
+  value: MAX 1k (optional)
+  footprint: Axial
+- ref: R32
+  value: 100kohm
+  footprint: Axial
+- ref: R33
+  value: 100kohm
+  footprint: Axial
+- ref: R34
+  value: 100kohm
+  footprint: Axial
+- ref: R35
+  value: 100kohm
+  footprint: Axial
+- ref: R36
+  value: 1kohm
+  footprint: Axial
+- ref: R37
+  value: 1kohm
+  footprint: Axial
+- ref: R38
+  value: 100kohm
+  footprint: Axial
+- ref: R39
+  value: 100kohm
+  footprint: Axial
+  pulldown: D5.A
+- ref: R4
+  value: 10kohm
+  footprint: Axial
+- ref: R40
+  value: 100kohm
+  footprint: Axial
+- ref: R41
+  value: 200ohm
+  footprint: Axial
+- ref: R42
+  value: 50kohm
+  footprint: Axial
+  pullup: U13.+@3
+- ref: R43
+  value: 50kohm
+  footprint: Axial
+  pullup: U13.-@2
+- ref: R44
+  value: 200kohm
+  footprint: Axial
+  pulldown: U13.+@3
+- ref: R45
+  value: 200kohm
+  footprint: Axial
+- ref: R46
+  value: 1kohm
+  footprint: Axial
+- ref: R47
+  value: 1kohm
+  footprint: Axial
+- ref: R48
+  value: 100kohm
+  footprint: Axial
+- ref: R49
+  value: 100kohm
+  footprint: Axial
+- ref: R5
+  value: 100kohm
+  footprint: Axial
+- ref: R50
+  value: 1kohm
+  footprint: Axial
+- ref: R51
+  value: 10kohm
+  footprint: Axial
+  pulldown: C4.1
+- ref: R52
+  value: 10kohm
+  footprint: Axial
+- ref: R53
+  value: 100kohm
+  footprint: Axial
+- ref: R54
+  value: 100kohm
+  footprint: Axial
+- ref: R55
+  value: 100kohm
+  footprint: Axial
+- ref: R56
+  value: 100kohm
+  footprint: Axial
+- ref: R57
+  value: 100kohm
+  footprint: Axial
+- ref: R58
+  value: 100kohm
+  footprint: Axial
+- ref: R59
+  value: 100kohm
+  footprint: Axial
+  pulldown: CVFIN
+- ref: R6
+  value: 100kohm
+  footprint: Axial
+- ref: R60
+  value: 1kohm
+  footprint: Axial
+  pulldown: TRP
+- ref: R64
+  value: 10kohm
+  footprint: Axial
+- ref: R69
+  value: 1kohm
+  footprint: Axial
+- ref: R7
+  value: 100kohm
+  footprint: Axial
+- ref: R72
+  value: 1kohm
+  footprint: Axial
+- ref: R73
+  value: 1kohm
+  footprint: Axial
+- ref: R8
+  value: 1kohm
+  footprint: Axial
+- ref: R9
+  value: 1kohm
+  footprint: Axial
+  pulldown: R8.2
+- ref: RV1
+  value: potentiometer
+  footprint: AlpsPot
+- ref: RV10
+  value: potentiometer
+  footprint: AlpsPot
+- ref: RV11
+  value: potentiometer
+  footprint: AlpsPot
+- ref: RV12
+  value: potentiometer
+  footprint: AlpsPot
+- ref: RV2
+  value: potentiometer
+  footprint: AlpsPot
+- ref: RV3
+  value: potentiometer
+  footprint: AlpsPot
+- ref: RV4
+  value: potentiometer
+  footprint: AlpsPot
+- ref: RV5
+  value: potentiometer
+  footprint: AlpsPot
+- ref: RV6
+  value: potentiometer
+  footprint: AlpsPot
+- ref: RV7
+  value: potentiometer
+  footprint: AlpsPot
+- ref: RV8
+  value: potentiometer
+  footprint: AlpsPot
+- ref: RV9
+  value: potentiometer
+  footprint: AlpsPot
+- ref: U1
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U10
+  value: TL072
+  footprint: DIP-8
+- ref: U11
+  value: '4013'
+  footprint: DIP-14
+- ref: U12
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U13
+  value: TL074
+  footprint: DIP-14
+- ref: U14
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U15
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U16
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U17
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U18
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U2
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U23
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U24
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U25
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U26
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U3
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U4
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U5
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U6
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+- ref: U7
+  value: TL072
+  footprint: DIP-8
+  description: Dual Low-Noise JFET-Input Operational Amplifiers, DIP-8/SOIC-8
+- ref: U8
+  value: TL074
+  footprint: DIP-14
+- ref: U9
+  value: 3.5mm audio jack
+  footprint: 3mm5 Mono Aux
+nets:
+- name: +12V
+  pins:
+  - J1.Pin_1
+  - J1.Pin_6
+  - J3.Pin_11
+  - J5.Pin_11
+  - J6.Pin_2
+  - J9.Pin_1
+  - J9.Pin_6
+  - Q14.C
+  - Q2.E
+  - R11.1
+  - R24.2
+  - R3.2
+  - R42.2
+  - R43.2
+  - RV1.1
+  - RV11.1
+  - RV5.1
+  - RV7.1
+  - RV8.3
+  - U10.V+
+  - U11.VDD
+  - U13.V+
+  - U7.V+
+  - U8.V+
+- name: -12V
+  pins:
+  - J1.Pin_2
+  - J1.Pin_5
+  - J2.Pin_11
+  - J6.Pin_10
+  - J8.Pin_11
+  - J9.Pin_2
+  - J9.Pin_5
+  - Q3.C
+  - Q7.E
+  - Q9.E
+  - RV1.3
+  - RV11.3
+  - RV5.3
+  - U10.V-
+  - U13.V-
+  - U7.V-
+  - U8.V-
+- name: ACC
+  pins: [J2.Pin_4, J8.Pin_4, R46.1, U17.1]
+- name: BP
+  pins: [J3.Pin_6, J5.Pin_6, J6.Pin_8, R72.1]
+- name: CVFIN
+  pins: [J3.Pin_4, J5.Pin_4, R59.1, U25.1]
+- name: DECAY
+  pins:
+  - J2.Pin_3
+  - J8.Pin_3
+  - Q12.B
+  - Q13.B
+  - Q13.C
+  - R48.2
+  - R49.2
+- name: DFF
+  pins: [J2.Pin_6, J8.Pin_6, RV3.3, U11.Q@1]
+- name: ENV
+  pins:
+  - D7.A
+  - J2.Pin_2
+  - J8.Pin_2
+  - Q14.E
+  - R50.2
+  - RV10.1
+  - RV2.1
+  - RV6.1
+- name: GND
+  pins:
+  - C1.2
+  - C6.1
+  - D4.A
+  - D6.A
+  - J1.Pin_3
+  - J1.Pin_4
+  - J2.Pin_10
+  - J6.Pin_1
+  - J8.Pin_10
+  - J9.Pin_3
+  - J9.Pin_4
+  - Q1.E
+  - Q10.B
+  - Q11.C
+  - Q12.E
+  - Q13.E
+  - Q4.E
+  - Q5.E
+  - Q6.B
+  - R1.1
+  - R13.2
+  - R18.2
+  - R2.1
+  - R21.1
+  - R23.2
+  - R28.2
+  - R30.1
+  - R39.1
+  - R41.1
+  - R44.1
+  - R51.1
+  - R60.1
+  - R9.2
+  - RV10.3
+  - RV2.3
+  - RV3.1
+  - RV4.3
+  - RV6.3
+  - RV7.3
+  - RV8.1
+  - RV9.3
+  - U10.+@3
+  - U11.R@4
+  - U11.S@6
+  - U11.VSS
+  - U13.+@10
+  - U13.+@12
+  - U7.+@3
+  - U7.+@5
+  - U8.+@12
+- name: LP
+  pins: [J3.Pin_7, J5.Pin_7, J6.Pin_6, R69.1]
+- name: Net-(C3-Pad2)
+  pins: [C3.2, R26.1]
+- name: Net-(C4-Pad1)
+  pins: [C4.1, R29.2, R51.2]
+- name: Net-(C5-Pad1)
+  pins: [C5.1, R1.2, R52.2]
+- name: Net-(D1-A)
+  pins: [D1.A, D2.A, U8.7]
+- name: Net-(D1-K)
+  pins: [D1.K, Q4.C, R31.1, U8.+@3]
+- name: Net-(D2-K)
+  pins: [D2.K, R12.1]
+- name: Net-(D3-A)
+  pins: [D3.A, R20.2, U10.7]
+- name: Net-(D3-K)
+  pins: [D3.K, R28.1, U11.C@3]
+- name: Net-(D4-K)
+  pins: [C4.2, D4.K, Q5.B, R30.2]
+- name: Net-(D5-A)
+  pins: [D5.A, Q2.C, R39.2]
+- name: Net-(D5-K)
+  pins: [C6.2, D5.K, Q12.C, Q14.B, R73.2]
+- name: Net-(D6-K)
+  pins: [D6.K, Q11.B, R46.2]
+- name: Net-(D7-K)
+  pins: [D7.K, R21.2]
+- name: Net-(Q1-B)
+  pins: [C5.2, Q1.B, R2.2]
+- name: Net-(Q1-C)
+  pins: [Q1.C, R3.1, R4.1]
+- name: Net-(Q10-C)
+  pins: [Q10.C, R43.1, R45.1, U13.-@2]
+- name: Net-(Q10-E)
+  pins: [Q10.E, Q8.E, Q9.C]
+- name: Net-(Q11-E)
+  pins: [Q11.E, R73.1]
+- name: Net-(Q2-B)
+  pins: [Q2.B, R4.2]
+- name: Net-(Q3-E)
+  pins: [Q3.E, Q4.B, R11.2]
+- name: Net-(Q5-C)
+  pins: [C1.1, Q5.C, R31.2, U8.-@6]
+- name: Net-(Q6-C)
+  pins: [Q6.C, Q7.B, Q7.C, Q9.B]
+- name: Net-(Q6-E)
+  pins: [Q6.E, R38.2]
+- name: Net-(Q8-B)
+  pins: [Q8.B, R40.2, R41.2]
+- name: Net-(Q8-C)
+  pins: [Q8.C, R42.1, R44.2, U13.+@3]
+- name: Net-(R10-Pad1)
+  pins: [R10.1, RV2.2]
+- name: Net-(R14-Pad1)
+  pins: [R14.1, RV5.2]
+- name: Net-(R15-Pad1)
+  pins: [R15.1, U3.1]
+- name: Net-(R19-Pad2)
+  pins: [R19.2, U4.1]
+- name: Net-(R20-Pad1)
+  pins: [R20.1, R27.1]
+- name: Net-(R22-Pad2)
+  pins: [R22.2, U5.1]
+- name: Net-(R32-Pad1)
+  pins: [R32.1, RV7.2]
+- name: Net-(R33-Pad1)
+  pins: [R33.1, RV6.2]
+- name: Net-(R34-Pad1)
+  pins: [R34.1, RV4.2]
+- name: Net-(R35-Pad2)
+  pins: [R35.2, R36.2, U13.8]
+- name: Net-(R37-Pad1)
+  pins: [R37.1, R38.1, U13.14]
+- name: Net-(R47-Pad2)
+  pins: [R47.2, U15.1]
+- name: Net-(R48-Pad1)
+  pins: [R48.1, RV8.2]
+- name: Net-(R49-Pad1)
+  pins: [R49.1, U18.1]
+- name: Net-(R5-Pad1)
+  pins: [R5.1, RV1.2]
+- name: Net-(R50-Pad1)
+  pins: [R50.1, U9.1]
+- name: Net-(R53-Pad1)
+  pins: [R53.1, RV9.2]
+- name: Net-(R54-Pad1)
+  pins: [R54.1, RV10.2]
+- name: Net-(R55-Pad1)
+  pins: [R55.1, RV11.2]
+- name: Net-(R56-Pad2)
+  pins: [R56.2, R58.1, U7.1]
+- name: Net-(R57-Pad2)
+  pins: [R57.2, R64.1, U7.7]
+- name: Net-(R6-Pad1)
+  pins: [R6.1, U1.1]
+- name: Net-(R69-Pad2)
+  pins: [R69.2, U24.1]
+- name: Net-(R7-Pad1)
+  pins: [R7.1, U2.1]
+- name: Net-(R72-Pad2)
+  pins: [R72.2, U26.1]
+- name: Net-(R8-Pad2)
+  pins: [R8.2, R9.1]
+- name: Net-(RV4-Pad1)
+  pins: [RV4.1, U12.1]
+- name: Net-(RV9-Pad1)
+  pins: [RV9.1, U23.1]
+- name: Net-(U10A--)
+  pins: [R25.1, R26.2, R27.2, U10.-@2]
+- name: Net-(U10B-+)
+  pins: [C2.2, R13.1, U10.+@5, U8.+@10]
+- name: Net-(U10B--)
+  pins: [R16.2, U10.-@6, U8.14]
+- name: Net-(U11A-D)
+  pins: [U11.D@5, U11.nQ@2]
+- name: Net-(U13D--)
+  pins: [R36.1, R37.2, U13.-@13]
+- name: Net-(U7B--)
+  pins: [R57.1, R58.2, U7.-@6]
+- name: Net-(U8A--)
+  pins: [C2.1, U8.-@2, U8.1]
+- name: Net-(U8B-+)
+  pins: [R12.2, R23.1, R24.1, U8.+@5]
+- name: Net-(U8C--)
+  pins: [R17.2, R18.1, U8.-@9]
+- name: PWMCV
+  pins: [J2.Pin_8, J8.Pin_8, R14.2, R15.2, R16.1, U8.-@13]
+- name: RES
+  pins: [J3.Pin_5, J5.Pin_5, J6.Pin_9, RV12.1]
+- name: SAW
+  pins: [J3.Pin_1, J5.Pin_1, R17.1, R19.1, U8.8]
+- name: SQR
+  pins: [J3.Pin_2, J5.Pin_2, R22.1, R25.2, U10.1]
+- name: SUB
+  pins: [C3.1, J2.Pin_7, J8.Pin_7, RV3.2]
+- name: SYNC
+  pins: [J2.Pin_5, J8.Pin_5, R29.1, U6.1]
+- name: TRG
+  pins: [J2.Pin_1, J8.Pin_1, R52.1, U16.1]
+- name: TRP
+  pins: [J6.Pin_5, R60.2, R64.2]
+- name: VCACV
+  pins:
+  - J3.Pin_10
+  - J5.Pin_10
+  - R32.2
+  - R33.2
+  - R34.2
+  - R35.1
+  - U13.-@9
+- name: VCAIN
+  pins: [J3.Pin_8, J5.Pin_8, R40.1, U14.1]
+- name: VCAOUT
+  pins: [J3.Pin_9, J5.Pin_9, R45.2, R47.1, U13.1]
+- name: VCFCV
+  pins:
+  - J3.Pin_3
+  - J5.Pin_3
+  - R53.2
+  - R54.2
+  - R55.2
+  - R56.1
+  - U7.-@2
+- name: VCOCV
+  pins:
+  - J2.Pin_9
+  - J8.Pin_9
+  - Q3.B
+  - R10.2
+  - R5.2
+  - R6.2
+  - R7.2
+  - R8.1
+- name: VGND2
+  pins: [J2.Pin_12, J6.Pin_3, J8.Pin_12, R59.2, RV12.2, RV12.3]
+positions:
+- ref: C1
+  x: 180.75
+  y: 117.05
+  rot: -90.0
+- ref: C2
+  x: 204.7
+  y: 111.91
+  rot: 90.0
+- ref: C3
+  x: 177.5
+  y: 81.38
+- ref: C4
+  x: 193.5
+  y: 100.06
+  rot: 180.0
+- ref: C5
+  x: 223.49
+  y: 81.34
+- ref: C6
+  x: 256.73
+  y: 74.04
+  rot: -90.0
+- ref: D1
+  x: 187.25
+  y: 122.54
+  rot: 90.0
+- ref: D2
+  x: 200.9
+  y: 122.04
+  rot: 90.0
+- ref: D3
+  x: 198.75
+  y: 79.62
+  rot: 90.0
+- ref: D4
+  x: 186.25
+  y: 95.8
+  rot: 90.0
+- ref: D5
+  x: 254.05
+  y: 86.84
+  rot: 180.0
+- ref: D6
+  x: 219.79
+  y: 79.52
+  rot: -90.0
+- ref: D7
+  x: 150.33
+  y: 59.75
+- ref: J1
+  x: 192.79
+  y: 136.83
+  rot: -90.0
+- ref: J2
+  x: 83.15
+  y: 74.23
+  rot: 90.0
+- ref: J3
+  x: 234.29
+  y: 91.83
+  rot: -90.0
+  side: back
+- ref: J4
+  x: 217.39
+  y: 136.77
+  rot: 90.0
+- ref: J5
+  x: 138.23
+  y: 98.23
+  rot: 90.0
+- ref: J6
+  x: 237.49
+  y: 102.79
+- ref: J7
+  x: 217.39
+  y: 131.37
+  rot: 90.0
+- ref: J8
+  x: 179.29
+  y: 67.83
+  rot: 90.0
+- ref: J9
+  x: 212.37
+  y: 121.05
+- ref: Q1
+  x: 235.24
+  y: 80.38
+  rot: 90.0
+- ref: Q10
+  x: 251.07
+  y: 129.15
+- ref: Q11
+  x: 256.75
+  y: 87.83
+- ref: Q12
+  x: 253.28
+  y: 81.34
+  rot: 180.0
+- ref: Q13
+  x: 253.28
+  y: 75.69
+  rot: 180.0
+- ref: Q14
+  x: 261.29
+  y: 79.36
+  rot: 90.0
+- ref: Q2
+  x: 243.69
+  y: 80.39
+  rot: 90.0
+- ref: Q3
+  x: 191.21
+  y: 132.33
+- ref: Q4
+  x: 203.79
+  y: 131.65
+  rot: 180.0
+- ref: Q5
+  x: 181.75
+  y: 100.06
+  rot: 90.0
+- ref: Q6
+  x: 256.25
+  y: 122.83
+- ref: Q7
+  x: 258.75
+  y: 134.09
+- ref: Q8
+  x: 251.07
+  y: 134.17
+- ref: Q9
+  x: 258.75
+  y: 129.13
+- ref: R1
+  x: 231.05
+  y: 77.84
+  rot: 180.0
+- ref: R10
+  x: 97.37
+  y: 112.75
+  rot: 90.0
+- ref: R11
+  x: 190.98
+  y: 126.83
+- ref: R12
+  x: 197.4
+  y: 123.61
+  rot: 90.0
+- ref: R13
+  x: 207.29
+  y: 104.52
+  rot: -90.0
+- ref: R14
+  x: 80.87
+  y: 114.06
+  rot: 90.0
+- ref: R15
+  x: 78.37
+  y: 114.06
+  rot: 90.0
+- ref: R16
+  x: 182.9
+  y: 112.11
+  rot: 90.0
+- ref: R17
+  x: 201.75
+  y: 98.42
+  rot: 90.0
+- ref: R18
+  x: 198.9
+  y: 98.61
+  rot: 90.0
+- ref: R19
+  x: 121.77
+  y: 124.94
+  rot: -90.0
+- ref: R2
+  x: 223.43
+  y: 84.84
+- ref: R20
+  x: 187.67
+  y: 85.83
+- ref: R21
+  x: 150.37
+  y: 76.06
+  rot: 90.0
+- ref: R22
+  x: 124.77
+  y: 124.94
+  rot: -90.0
+- ref: R23
+  x: 194.4
+  y: 115.99
+  rot: -90.0
+- ref: R24
+  x: 191.25
+  y: 115.99
+  rot: -90.0
+- ref: R25
+  x: 177.44
+  y: 72.23
+- ref: R26
+  x: 177.44
+  y: 75.38
+- ref: R27
+  x: 177.44
+  y: 78.53
+- ref: R28
+  x: 202.29
+  y: 78.52
+  rot: -90.0
+- ref: R29
+  x: 195.25
+  y: 89.25
+  rot: -90.0
+- ref: R3
+  x: 238.43
+  y: 83.34
+- ref: R30
+  x: 189.79
+  y: 89.52
+  rot: -90.0
+- ref: R31
+  x: 183.75
+  y: 124.61
+  rot: 90.0
+- ref: R32
+  x: 157.06
+  y: 103.25
+- ref: R33
+  x: 164.27
+  y: 114.06
+  rot: 90.0
+- ref: R34
+  x: 147.77
+  y: 115.06
+  rot: 90.0
+- ref: R35
+  x: 263.6
+  y: 99.4
+  rot: 180.0
+- ref: R36
+  x: 245.98
+  y: 101.93
+- ref: R37
+  x: 245.98
+  y: 99.33
+- ref: R38
+  x: 264.79
+  y: 105.52
+  rot: -90.0
+- ref: R39
+  x: 235.43
+  y: 86.34
+- ref: R4
+  x: 239.24
+  y: 80.15
+  rot: 90.0
+- ref: R40
+  x: 243.79
+  y: 105.52
+  rot: -90.0
+- ref: R41
+  x: 255.81
+  y: 137.93
+  rot: 180.0
+- ref: R42
+  x: 248.61
+  y: 127.31
+  rot: -90.0
+- ref: R43
+  x: 246.21
+  y: 134.94
+  rot: 90.0
+- ref: R44
+  x: 251.84
+  y: 123.97
+  rot: 90.0
+- ref: R45
+  x: 246.59
+  y: 124.17
+  rot: 90.0
+- ref: R46
+  x: 219.79
+  y: 69.02
+  rot: -90.0
+- ref: R47
+  x: 164.97
+  y: 127.04
+  rot: -90.0
+- ref: R48
+  x: 139.18
+  y: 80.75
+  rot: 180.0
+- ref: R49
+  x: 127.37
+  y: 73.44
+  rot: -90.0
+- ref: R5
+  x: 83.87
+  y: 106.44
+  rot: -90.0
+- ref: R50
+  x: 165.39
+  y: 66.75
+  rot: 180.0
+- ref: R51
+  x: 192.75
+  y: 89.25
+  rot: -90.0
+- ref: R52
+  x: 231.05
+  y: 74.84
+  rot: 180.0
+- ref: R53
+  x: 111.96
+  y: 113.25
+- ref: R54
+  x: 133.58
+  y: 113.25
+  rot: 180.0
+- ref: R55
+  x: 111.96
+  y: 94.75
+- ref: R56
+  x: 215.29
+  y: 112.64
+  rot: 90.0
+- ref: R57
+  x: 230.29
+  y: 102.83
+  rot: -90.0
+- ref: R58
+  x: 218.48
+  y: 102.83
+- ref: R59
+  x: 143.68
+  y: 103.75
+  rot: 180.0
+- ref: R6
+  x: 78.56
+  y: 122.75
+- ref: R60
+  x: 232.79
+  y: 122.58
+  rot: 90.0
+- ref: R64
+  x: 229.66
+  y: 122.64
+  rot: 90.0
+- ref: R69
+  x: 138.58
+  y: 141.75
+  rot: 180.0
+- ref: R7
+  x: 100.37
+  y: 112.75
+  rot: 90.0
+- ref: R72
+  x: 138.58
+  y: 137.75
+  rot: 180.0
+- ref: R73
+  x: 264.1
+  y: 83.83
+  rot: 180.0
+- ref: R8
+  x: 94.87
+  y: 105.33
+  rot: -90.0
+- ref: R9
+  x: 92.37
+  y: 112.75
+  rot: 90.0
+- ref: RV1
+  x: 76.86
+  y: 100.8
+- ref: RV10
+  x: 127.46
+  y: 119.2
+- ref: RV11
+  x: 111.46
+  y: 101.0
+- ref: RV12
+  x: 127.46
+  y: 101.06
+- ref: RV2
+  x: 92.86
+  y: 119.4
+- ref: RV3
+  x: 92.86
+  y: 100.8
+- ref: RV4
+  x: 145.26
+  y: 119.4
+- ref: RV5
+  x: 76.86
+  y: 119.4
+- ref: RV6
+  x: 161.46
+  y: 119.4
+- ref: RV7
+  x: 153.86
+  y: 100.8
+- ref: RV8
+  x: 136.26
+  y: 70.8
+- ref: RV9
+  x: 111.46
+  y: 119.2
+- ref: U1
+  x: 78.67
+  y: 129.35
+- ref: U10
+  x: 187.63
+  y: 72.76
+- ref: U11
+  x: 205.45
+  y: 72.76
+- ref: U12
+  x: 157.27
+  y: 141.35
+- ref: U13
+  x: 246.57
+  y: 113.16
+  rot: 90.0
+- ref: U14
+  x: 146.27
+  y: 141.35
+  rot: 90.0
+- ref: U15
+  x: 168.27
+  y: 141.35
+  rot: 90.0
+- ref: U16
+  x: 96.37
+  y: 59.75
+- ref: U17
+  x: 110.07
+  y: 59.75
+- ref: U18
+  x: 123.87
+  y: 59.75
+- ref: U2
+  x: 89.67
+  y: 141.35
+- ref: U23
+  x: 134.07
+  y: 129.35
+- ref: U24
+  x: 123.27
+  y: 141.35
+  rot: 90.0
+- ref: U25
+  x: 112.27
+  y: 129.35
+  rot: 90.0
+- ref: U26
+  x: 112.27
+  y: 141.35
+- ref: U3
+  x: 78.67
+  y: 141.35
+  rot: 90.0
+- ref: U4
+  x: 100.67
+  y: 141.35
+  rot: 90.0
+- ref: U5
+  x: 100.87
+  y: 129.35
+- ref: U6
+  x: 89.67
+  y: 129.35
+  rot: 90.0
+- ref: U7
+  x: 218.43
+  y: 106.51
+- ref: U8
+  x: 186.12
+  y: 112.1
+  rot: 90.0
+- ref: U9
+  x: 161.67
+  y: 59.75
+copper_pours:
+- net: +12V
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu]

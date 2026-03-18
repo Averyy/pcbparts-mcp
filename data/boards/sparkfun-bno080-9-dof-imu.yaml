@@ -1,0 +1,344 @@
+name: SparkFun BNO080 9-DoF IMU
+slug: sparkfun-bno080-9-dof-imu
+source: sparkfun/Qwiic_IMU_BNO080
+format: eagle
+description: 9-DoF IMU with sensor fusion (BNO080/085), SPI/I2C/UART
+tags: [sensors]
+key_ics: [BNO080]
+outline:
+  width_mm: 30.48
+  height_mm: 25.4
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 12mil
+  min_via: 7mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U2
+- ref: C3
+  value: 22pF
+  footprint: '0603'
+  prod_id: CAP-07876
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U2
+- ref: C5
+  value: 22pF
+  footprint: '0603'
+  prod_id: CAP-07876
+- ref: D1
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-00819
+  description: Red SMD LED
+- ref: J1
+  value: 1x6 header
+  footprint: 1X06
+  prod_id: CONN-08437
+- ref: J2
+  value: 1x4 header
+  footprint: 1X04
+- ref: J3
+  value: 1x4 header
+  footprint: 1X04
+- ref: J4
+  value: 1x4 header
+  footprint: 1X04
+- ref: J5
+  value: 1x1 header
+  footprint: 1X01
+- ref: J6
+  value: 1x8 header
+  footprint: 1X08
+  prod_id: CONN-08438
+- ref: J7
+  value: 1x2 header
+  footprint: 1X02
+- ref: J8
+  value: 1x2 header
+  footprint: 1X02
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pullup: '!RST'
+- ref: R10
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+  pullup: S_SCL
+- ref: R12
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R13
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R2
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+  pulldown: D1.C
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pullup: ADDR/MOSI
+- ref: R6
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pullup: '!BOOT'
+- ref: R7
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: PS0/WAKE
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: PS1
+- ref: R9
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+  pullup: S_SDA
+- ref: SJ1
+  value: normally closed solder jumper
+  footprint: SJ-3
+- ref: SJ2
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ3
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ4
+  value: solder jumper
+  footprint: SJ-2
+- ref: U2
+  value: BNO080
+  footprint: LGA-28
+  prod_id: SEN-13947
+  description: Hillcrest Labs BNO080 - High Precision IMU (VR)
+- ref: Y1
+  value: 32.768kHz
+  footprint: CRYSTAL-SMD-3.2X1.5MM
+  prod_id: XTAL-13062
+  description: 32.768kHz Crystal
+nets:
+- name: '!BOOT'
+  pins: [J5.1, R6.1, U2.!BOOT]
+- name: '!CS'
+  pins: [J6.6, U2.!H_CS]
+- name: '!INT'
+  pins: [J7.2, U2.!H_INT]
+- name: '!RST'
+  pins: [J6.8, J7.1, R1.1, U2.!RST]
+- name: 3.3V
+  pins:
+  - C2.1
+  - C4.1
+  - D1.A
+  - J1.3
+  - J2.VCC
+  - J3.VCC
+  - J4.VCC
+  - J6.2
+  - R1.2
+  - R10.2
+  - R3.2
+  - R6.2
+  - R9.2
+  - SJ1.2
+  - SJ3.1
+  - SJ4.1
+  - U2.VDD
+  - U2.VDDIO
+- name: ADDR/MOSI
+  pins: [J6.5, R3.1, SJ2.2, U2.H_SA0/MOSI]
+- name: CAP
+  pins: [C1.1, U2.CAP]
+- name: CLKSEL1
+  pins: [C3.1, U2.CLKSEL1, Y1.1]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - J1.1
+  - J2.GND
+  - J3.GND
+  - J4.GND
+  - J6.1
+  - R2.1
+  - R7.1
+  - R8.1
+  - SJ2.1
+  - U2.CLKSEL0
+  - U2.GND
+  - U2.GNDIO
+- name: N$3
+  pins: [D1.C, R2.2]
+- name: PS0/WAKE
+  pins: [J6.7, J8.2, R7.2, SJ3.2, U2.PS0/WAKE]
+- name: PS1
+  pins: [J8.1, R8.2, SJ4.2, U2.PS1]
+- name: SCL/SCK/RX
+  pins:
+  - J1.4
+  - J2.SCL
+  - J3.SCL
+  - J4.SCL
+  - J6.3
+  - R12.1
+  - U2.H_SCL/SCLK/RX
+- name: SCL_PU
+  pins: [R12.2, SJ1.1]
+- name: SDA/MISO/TX
+  pins:
+  - J1.5
+  - J2.SDA
+  - J3.SDA
+  - J4.SDA
+  - J6.4
+  - R13.1
+  - U2.H_SDA/MISO/TX
+- name: SDA_PU
+  pins: [R13.2, SJ1.3]
+- name: S_SCL
+  pins: [R10.1, U2.S_SCL]
+- name: S_SDA
+  pins: [R9.1, U2.S_SDA]
+- name: XIN32
+  pins: [C5.1, U2.XIN32, Y1.2]
+positions:
+- ref: C1
+  x: 12.32
+  y: 7.62
+  rot: 270.0
+- ref: C2
+  x: 10.16
+  y: 16.51
+  rot: 90.0
+- ref: C3
+  x: 17.78
+  y: 16.51
+  rot: 270.0
+- ref: C4
+  x: 14.22
+  y: 7.62
+  rot: 270.0
+- ref: C5
+  x: 12.7
+  y: 16.51
+  rot: 90.0
+- ref: D1
+  x: 27.56
+  y: 18.29
+  rot: 270.0
+- ref: J1
+  x: 8.89
+  y: 19.05
+- ref: J2
+  x: 5.08
+  y: 12.7
+  rot: 270.0
+- ref: J3
+  x: 11.43
+  y: 1.27
+- ref: J4
+  x: 25.4
+  y: 12.7
+  rot: 90.0
+- ref: J5
+  x: 1.27
+  y: 7.62
+- ref: J6
+  x: 6.35
+  y: 24.13
+- ref: J7
+  x: 21.59
+  y: 1.27
+- ref: J8
+  x: 8.89
+  y: 1.27
+  rot: 180.0
+- ref: R1
+  x: 16.13
+  y: 7.62
+  rot: 270.0
+- ref: R10
+  x: 18.03
+  y: 7.62
+  rot: 270.0
+- ref: R12
+  x: 26.67
+  y: 7.62
+- ref: R13
+  x: 26.67
+  y: 2.54
+- ref: R2
+  x: 29.08
+  y: 18.29
+  rot: 270.0
+- ref: R3
+  x: 21.84
+  y: 7.62
+  rot: 270.0
+- ref: R6
+  x: 10.16
+  y: 12.7
+  rot: 90.0
+- ref: R7
+  x: 10.41
+  y: 7.62
+  rot: 90.0
+- ref: R8
+  x: 8.51
+  y: 7.62
+  rot: 90.0
+- ref: R9
+  x: 19.94
+  y: 7.62
+  rot: 270.0
+- ref: SJ1
+  x: 26.67
+  y: 5.08
+  rot: 270.0
+- ref: SJ2
+  x: 24.13
+  y: 8.89
+- ref: SJ3
+  x: 6.35
+  y: 6.35
+  rot: 180.0
+- ref: SJ4
+  x: 6.35
+  y: 8.89
+  rot: 180.0
+- ref: U2
+  x: 15.24
+  y: 12.7
+  rot: 90.0
+- ref: Y1
+  x: 15.24
+  y: 16.51
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

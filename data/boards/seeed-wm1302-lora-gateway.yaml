@@ -1,0 +1,1115 @@
+name: Seeed WM1302 LoRa Gateway
+slug: seeed-wm1302-lora-gateway
+source: Seeed-Studio/OPL_Kicad_Library
+format: eagle
+description: 'LoRa concentrator: SX1302 + dual SX1250 transceivers, SKY66420 PA/LNA'
+tags: [lora]
+key_ics: [SX1302, SX1250, SKY66420]
+components:
+- ref: ANT1
+  value: U.FL-R-SMT-1
+  footprint: U-FL3P-SMD-2.6X2.6X1.0MM
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+- ref: C10
+  value: 3.6pF
+  footprint: '0402'
+- ref: C11
+  value: 56pF
+  footprint: '0402'
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+- ref: C13
+  value: 1uF
+  footprint: '0402'
+- ref: C14
+  value: 10pF
+  footprint: '0402'
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+- ref: C16
+  value: 56pF
+  footprint: '0402'
+- ref: C17
+  value: 56pF
+  footprint: '0402'
+- ref: C18
+  value: 56pF
+  footprint: '0402'
+- ref: C19
+  value: 100nF
+  footprint: '0402'
+- ref: C2
+  value: 2.2pF
+  footprint: '0402'
+- ref: C20
+  value: 1uF
+  footprint: '0402'
+- ref: C21
+  value: 1uF
+  footprint: '0402'
+- ref: C22
+  value: 10uF
+  footprint: '0603'
+- ref: C23
+  value: 100nF
+  footprint: '0402'
+- ref: C24
+  value: 1uF
+  footprint: '0402'
+- ref: C25
+  value: 100nF
+  footprint: '0402'
+- ref: C26
+  value: 100nF
+  footprint: '0402'
+  decouples: U3
+- ref: C27
+  value: 10uF
+  footprint: '0603'
+  decouples: U3
+- ref: C28
+  value: 1uF
+  footprint: '0402'
+- ref: C29
+  value: 100nF
+  footprint: '0402'
+- ref: C3
+  value: 10uF
+  footprint: '0603'
+- ref: C32
+  value: 100nF
+  footprint: '0402'
+- ref: C33
+  value: 10uF
+  footprint: '0603'
+- ref: C34
+  value: 470nF
+  footprint: '0402'
+- ref: C35
+  value: 1uF
+  footprint: '0402'
+- ref: C36
+  value: 47nF
+  footprint: '0402'
+- ref: C37
+  value: 47pF
+  footprint: '0402'
+- ref: C38
+  value: 10pF
+  footprint: '0402'
+- ref: C39
+  value: 1uF
+  footprint: '0402'
+- ref: C4
+  value: 56pF
+  footprint: '0402'
+- ref: C40
+  value: 1uF
+  footprint: '0402'
+- ref: C41
+  value: 100nF
+  footprint: '0402'
+- ref: C42
+  value: 1uF
+  footprint: '0402'
+- ref: C43
+  value: 100nF
+  footprint: '0402'
+- ref: C44
+  value: 1uF
+  footprint: '0402'
+- ref: C45
+  value: 100nF
+  footprint: '0402'
+- ref: C46
+  value: 470nF
+  footprint: '0402'
+- ref: C47
+  value: 1uF
+  footprint: '0402'
+- ref: C48
+  value: 1uF
+  footprint: '0402'
+- ref: C49
+  value: 4.7uF
+  footprint: '0603'
+  decouples: U3
+- ref: C5
+  value: 3.6pF
+  footprint: '0402'
+- ref: C50
+  value: 10nF
+  footprint: '0402'
+  decouples: U3
+- ref: C51
+  value: 1nF
+  footprint: '0402'
+  decouples: U3
+- ref: C52
+  value: 100pF
+  footprint: '0402'
+- ref: C53
+  value: 3.3pF
+  footprint: '0402'
+- ref: C54
+  value: 39pF
+  footprint: '0402'
+- ref: C55
+  value: 100pF
+  footprint: '0402'
+  decouples: U3
+- ref: C57
+  value: 10pF
+  footprint: '0402'
+- ref: C58
+  value: 1.3pF
+  footprint: '0402'
+- ref: C59
+  value: 1.8pF
+  footprint: '0402'
+- ref: C6
+  value: 3.6pF
+  footprint: '0402'
+- ref: C60
+  value: 3.3pF
+  footprint: '0402'
+- ref: C61
+  value: 3.3pF
+  footprint: '0402'
+- ref: C62
+  value: 10nF
+  footprint: '0402'
+- ref: C64
+  value: 56pF
+  footprint: '0402'
+- ref: C67
+  value: 100nF
+  footprint: '0402'
+- ref: C69
+  value: 10uF
+  footprint: 0805
+- ref: C7
+  value: 5.6pF
+  footprint: '0402'
+- ref: C70
+  value: 10uF
+  footprint: 0805
+- ref: C71
+  value: 10uF
+  footprint: 0805
+- ref: C72
+  value: 10uF
+  footprint: 0805
+- ref: C8
+  value: 56pF
+  footprint: '0402'
+- ref: C82
+  value: 2.7pF
+  footprint: '0402'
+- ref: C83
+  value: 100nF
+  footprint: '0402'
+- ref: C9
+  value: 3.6pF
+  footprint: '0402'
+- ref: C90
+  value: 2.2uF
+  footprint: '0603'
+- ref: C91
+  value: 5.6pF
+  footprint: '0402'
+- ref: C92
+  value: 10uF
+  footprint: '0603'
+- ref: D1
+  value: green LED
+  footprint: '0402'
+- ref: D2
+  value: red LED
+  footprint: '0402'
+- ref: D3
+  value: blue LED
+  footprint: '0402'
+- ref: D4
+  value: green LED
+  footprint: '0402'
+- ref: D5
+  value: LXES15AAA1-153
+  footprint: '0402'
+- ref: D7
+  value: BAT54XV2T1G
+  footprint: SOD-523
+- ref: FB1
+  value: BLM15PD121SN1D
+  footprint: F0402
+- ref: L1
+  value: LQP15MN1N2B02D
+  footprint: '0402'
+- ref: L10
+  value: LQW15AN2N5B00D
+  footprint: '0402'
+- ref: L11
+  value: LQW15AN4N7C00D
+  footprint: '0402'
+- ref: L12
+  value: LQW15AN12NG00D
+  footprint: '0402'
+- ref: L13
+  value: LQW15AN12NG00D
+  footprint: '0402'
+- ref: L14
+  value: 15uH
+  footprint: 0805
+- ref: L16
+  value: LQW15AN7N5G00D
+  footprint: '0402'
+- ref: L17
+  value: LQW15AN5N6C10D
+  footprint: '0402'
+- ref: L2
+  value: LQW15AN6N8G00D
+  footprint: '0402'
+- ref: L24
+  value: LQW15AN5N6C10D
+  footprint: '0402'
+- ref: L4
+  value: 0ohm
+  footprint: F0603
+- ref: L5
+  value: 1uH
+  footprint: L4.4X3.0MM
+- ref: L6
+  value: 15uH
+  footprint: 0805
+- ref: L8
+  value: LQW15AN3N0B00
+  footprint: '0402'
+- ref: L9
+  value: LQW15AN47NJ00D
+  footprint: '0402'
+- ref: Q10
+  value: CJ2102
+  footprint: SOT-323
+  description: 'IRLL014:'
+- ref: Q8
+  value: CJ2101
+  footprint: SOT-323
+- ref: R1
+  value: 10kohm
+  footprint: '0402'
+  pulldown: 1302_RESET
+- ref: R10
+  value: 100ohm
+  footprint: '0402'
+- ref: R14
+  value: 100ohm
+  footprint: '0402'
+- ref: R15
+  value: 100ohm
+  footprint: '0402'
+- ref: R16
+  value: 100ohm
+  footprint: '0402'
+- ref: R17
+  value: 0ohm
+  footprint: '0402'
+- ref: R18
+  value: 0ohm
+  footprint: '0402'
+- ref: R19
+  value: 0ohm
+  footprint: '0402'
+- ref: R2
+  value: 0ohm
+  footprint: '0603'
+- ref: R20
+  value: 0ohm
+  footprint: '0402'
+- ref: R21
+  value: 0ohm
+  footprint: '0402'
+- ref: R22
+  value: 0ohm
+  footprint: '0402'
+- ref: R23
+  value: 0ohm
+  footprint: '0402'
+- ref: R24
+  value: 0ohm
+  footprint: '0402'
+- ref: R25
+  value: 0ohm
+  footprint: '0402'
+- ref: R26
+  value: 0ohm
+  footprint: '0402'
+- ref: R27
+  value: 0ohm
+  footprint: '0402'
+- ref: R28
+  value: 0ohm
+  footprint: '0402'
+- ref: R29
+  value: 0ohm
+  footprint: '0402'
+- ref: R30
+  value: 680ohm
+  footprint: '0402'
+- ref: R31
+  value: 680ohm
+  footprint: '0402'
+- ref: R32
+  value: 680ohm
+  footprint: '0402'
+- ref: R33
+  value: 10kohm
+  footprint: '0402'
+  pullup: 1302_CS
+- ref: R34
+  value: 10kohm
+  footprint: '0402'
+  pullup: FEM_CS
+- ref: R39
+  value: 100ohm
+  footprint: '0402'
+- ref: R4
+  value: 10kohm
+  footprint: '0402'
+  pulldown: X1.ENABLE
+- ref: R43
+  value: 0ohm
+  footprint: '0402'
+- ref: R44
+  value: 0ohm
+  footprint: '0402'
+- ref: R46
+  value: 0ohm
+  footprint: '0402'
+- ref: R47
+  value: 1kohm
+  footprint: '0402'
+  pullup: D4.+
+- ref: R49
+  value: 0ohm
+  footprint: '0402'
+- ref: R5
+  value: 100ohm
+  footprint: '0402'
+- ref: R54
+  value: 0ohm
+  footprint: '0402'
+- ref: R59
+  value: 0ohm
+  footprint: '0402'
+- ref: R6
+  value: 220ohm
+  footprint: '0402'
+- ref: R65
+  value: 10kohm
+  footprint: '0402'
+  pullup: U13.!EVENT
+- ref: R69
+  value: 0ohm
+  footprint: '0402'
+- ref: R7
+  value: 0ohm
+  footprint: '0603'
+- ref: R74
+  value: 0ohm
+  footprint: '0402'
+- ref: R75
+  value: 0ohm
+  footprint: '0402'
+- ref: R78
+  value: 100kohm
+  footprint: '0402'
+  pullup: Q10.D
+- ref: R79
+  value: 1kohm
+  footprint: '0402'
+  pullup: Q10.G
+- ref: R8
+  value: 10kohm
+  footprint: '0402'
+  pullup: U4.CE
+- ref: R80
+  value: 10ohm
+  footprint: '0402'
+- ref: R81
+  value: 0ohm
+  footprint: '0402'
+- ref: R82
+  value: 100kohm
+  footprint: '0402'
+  pullup: U6.EN
+- ref: R83
+  value: 200k_1%
+  footprint: '0402'
+- ref: R87
+  value: 200k_1%
+  footprint: '0402'
+- ref: R9
+  value: 220ohm
+  footprint: '0402'
+- ref: S1
+  value: '323030226'
+  footprint: SHIELD_CLIP
+- ref: S2
+  value: '323030226'
+  footprint: SHIELD_CLIP
+- ref: S3
+  value: '323030226'
+  footprint: SHIELD_CLIP
+- ref: S4
+  value: '323030226'
+  footprint: SHIELD_CLIP
+- ref: S5
+  value: '323030226'
+  footprint: SHIELD_CLIP
+- ref: S6
+  value: '323030226'
+  footprint: SHIELD_CLIP
+- ref: U1
+  value: SX1302IMLTRT
+  footprint: QFN68-0.35-7X7X0.75MM
+- ref: U10
+  value: HDF866A3-S6
+  footprint: FILTER6P-1.1-3X3X1.3MM
+- ref: U13
+  value: STTS751
+  footprint: UDFN-6L
+- ref: U2
+  value: HDF866A3-S6
+  footprint: FILTER6P-1.1-3X3X1.3MM
+- ref: U5
+  value: SX1250IMLTRT
+  footprint: QFN24G-0.5-4X4MM
+- ref: U6
+  value: MP2161GJ
+  footprint: TSOT23-8
+- ref: U7
+  value: SX1250IMLTRT
+  footprint: QFN24G-0.5-4X4MM
+- ref: U8
+  value: HDF866A3-S6
+  footprint: FILTER6P-1.1-3X3X1.3MM
+- ref: U9
+  value: SKY66420-11
+  footprint: MODULE16P-0.5-3X3X0.75MM
+- ref: X1
+  value: DSB221SDN
+  footprint: X4-SMD-2.5X2.0X1.0MM
+- ref: X3
+  value: 2x1 header
+  footprint: X2-SMD-3.2X1.5X0.55MM
+nets:
+- name: 1302_CS
+  pins: [R33.2, R43.1, U1.HOST_CSN, U12.PA4]
+- name: 1302_RESET
+  pins: [C1.2, D7.-, R1.2, U1.RESET, U12.PA2]
+- name: 1302_RESET_HOST
+  pins: [D7.+, R59.1]
+- name: 32MHZ
+  pins: [R37.2, R6.2, R9.2, X1.OUT]
+- name: ANT
+  pins: [C59.2, C60.1, L17.1, U9.ANT]
+- name: BOOT0
+  pins: [R56.2, R57.1, U12.BOOT0]
+- name: CE
+  pins: [R8.1, U4.CE]
+- name: CONFIG_OK
+  pins: [R31.1, U1.GPIO0]
+- name: CPS
+  pins: [C17.2, R15.1, U9.CPS]
+- name: CSD
+  pins: [C16.2, R14.1, U9.CSD]
+- name: CTX
+  pins: [C18.2, R16.1, U9.CTX]
+- name: DCC_SW
+  pins: [L6.2, U5.DCC_SW]
+- name: DCC_SW_2
+  pins: [L14.2, U7.DCC_SW]
+- name: DCC_SW_3
+  pins: [L20.2, U11.DCC_SW]
+- name: DM
+  pins: [J1.36, R66.1]
+- name: DP
+  pins: [J1.38, R64.1]
+- name: EN
+  pins: [R82.2, U6.EN]
+- name: EVENT
+  pins: [R65.2, U13.!EVENT]
+- name: FB
+  pins: [R83.1, R87.2, U6.FB]
+- name: FEM_CS
+  pins: [R14.2, R34.1, U1.RADIO_CTRL0, U3.CE]
+- name: FEM_PA_ON
+  pins: [R15.2, U1.RADIO_CTRL4]
+- name: GND
+  pins:
+  - ANT1.GND1
+  - ANT1.GND2
+  - ANT2.GND1
+  - ANT2.GND2
+  - C12.1
+  - C13.1
+  - C15.1
+  - C16.1
+  - C17.1
+  - C18.1
+  - C19.1
+  - C2.1
+  - C20.1
+  - C21.1
+  - C22.1
+  - C23.1
+  - C24.1
+  - C25.1
+  - C26.1
+  - C27.1
+  - C28.1
+  - C29.1
+  - C3.1
+  - C30.1
+  - C31.1
+  - C32.1
+  - C33.1
+  - C34.1
+  - C35.1
+  - C36.1
+  - C37.1
+  - C39.1
+  - C40.1
+  - C41.1
+  - C42.1
+  - C43.1
+  - C44.1
+  - C45.1
+  - C46.1
+  - C47.1
+  - C48.1
+  - C49.1
+  - C5.1
+  - C50.1
+  - C51.1
+  - C52.1
+  - C55.1
+  - C56.1
+  - C57.1
+  - C58.1
+  - C60.2
+  - C61.2
+  - C62.1
+  - C63.2
+  - C65.2
+  - C67.2
+  - C69.1
+  - C7.1
+  - C70.1
+  - C71.1
+  - C72.1
+  - C73.2
+  - C74.2
+  - C76.1
+  - C77.2
+  - C78.2
+  - C80.1
+  - C81.2
+  - C82.2
+  - C83.1
+  - C84.2
+  - C85.1
+  - C86.1
+  - C87.1
+  - C88.1
+  - C89.1
+  - C9.1
+  - C90.1
+  - C92.1
+  - D1.-
+  - D2.-
+  - D3.-
+  - D4.-
+  - D5.1
+  - D6.1
+  - J1.GND@1
+  - J1.GND@10
+  - J1.GND@11
+  - J1.GND@12
+  - J1.GND@13
+  - J1.GND@14
+  - J1.GND@15
+  - J1.GND@166
+  - J1.GND@2
+  - J1.GND@3
+  - J1.GND@4
+  - J1.GND@5
+  - J1.GND@6
+  - J1.GND@7
+  - J1.GND@8
+  - J1.GND@9
+  - Q10.S
+  - R1.1
+  - R11.1
+  - R12.1
+  - R17.2
+  - R4.1
+  - R53.1
+  - R53.2
+  - R54.1
+  - R54.2
+  - R55.1
+  - R55.2
+  - R57.2
+  - R73.1
+  - R74.1
+  - R74.2
+  - R87.1
+  - S1.S1
+  - S2.S1
+  - S3.S1
+  - S4.S1
+  - S5.S1
+  - S6.S1
+  - TP3.T
+  - U1.GND
+  - U1.GND@1
+  - U1.GND@2
+  - U1.GND@3
+  - U1.GND@4
+  - U1.GND@5
+  - U1.GND@6
+  - U1.GND@7
+  - U1.GND@8
+  - U1.GND@9
+  - U10.GND
+  - U10.GND@1
+  - U10.GND@2
+  - U10.GND@3
+  - U11.GND
+  - U11.GND@1
+  - U11.GND@2
+  - U11.GND@3
+  - U11.PAD
+  - U12.PAD
+  - U12.VSS
+  - U12.VSS@1
+  - U13.ADDR/!THERM
+  - U13.GND
+  - U2.GND
+  - U2.GND@1
+  - U2.GND@2
+  - U2.GND@3
+  - U3.VSS
+  - U4.VSS
+  - U5.GND
+  - U5.GND@1
+  - U5.PAD
+  - U6.AGND
+  - U6.PGND
+  - U7.GND
+  - U7.GND@1
+  - U7.PAD
+  - U8.GND
+  - U8.GND@1
+  - U8.GND@2
+  - U8.GND@3
+  - U9.EPAD
+  - U9.GND
+  - U9.GND@1
+  - X1.GND
+- name: HOST_CS0
+  pins: [J1.51, R43.2]
+- name: HOST_CS1
+  pins: [J1.25, R51.2]
+- name: HOST_IO1
+  pins: [J1.33, R61.2]
+- name: HOST_IO2
+  pins: [J1.31, R63.2]
+- name: HOST_IO4
+  pins: [J1.8, R67.2]
+- name: HOST_IO5
+  pins: [J1.10, R60.2]
+- name: HOST_MISO
+  pins: [R39.1, R44.2]
+- name: HOST_MOSI
+  pins: [J1.49, R46.2]
+- name: HOST_MOSI_2
+  pins: [R5.1, U1.HOST_MOSI]
+- name: HOST_RST
+  pins: [J1.22, R59.2, R77.2]
+- name: HOST_SCK
+  pins: [J1.45, R49.2]
+- name: HOST_SCK_2
+  pins: [R10.1, U1.HOST_SCK]
+- name: I2C_SCL
+  pins: [R68.2, R76.1, R81.1, U12.PB6, U13.SCL]
+- name: I2C_SDA
+  pins: [R58.2, R70.1, R75.1, U12.PB7, U13.SDA]
+- name: IN
+  pins: [C2.2, L11.2, R52.1, U8.IN]
+- name: IN_2
+  pins: [C11.1, R13.2, U2.IN]
+- name: IN_3
+  pins: [R35.2, R62.1, R69.2, U10.IN]
+- name: MCU_RESET
+  pins: [C85.2, R71.2, R77.1, TP5.T, U12.NRST]
+- name: MISO
+  pins: [R44.1, R45.1, U1.HOST_MISO, U11.MISO]
+- name: MISO_A
+  pins: [U1.RADIO_A_MISO, U5.MISO]
+- name: MISO_B
+  pins: [U1.RADIO_B_MISO, U7.MISO]
+- name: MOSI
+  pins: [R40.2, R46.1, R48.1, R5.2]
+- name: MOSI_2
+  pins: [R40.1, U11.MOSI]
+- name: MOSI_A
+  pins: [U1.RADIO_A_MOSI, U5.MOSI]
+- name: MOSI_B
+  pins: [U1.RADIO_B_MOSI, U7.MOSI]
+- name: N$104
+  pins: [J1.47, R39.2]
+- name: N$109
+  pins: [C78.1, C79.1, L21.2]
+- name: N$110
+  pins: [ANT2.D, C79.2, D6.2]
+- name: N$111
+  pins: [C59.1, C91.2]
+- name: N$119
+  pins: [C77.1, L21.1, R62.2]
+- name: N$12
+  pins: [R3.1, R4.2, X1.ENABLE]
+- name: N$122
+  pins: [R64.2, U12.PA12]
+- name: N$123
+  pins: [R66.2, U12.PA11]
+- name: N$124
+  pins: [C92.2, Q10.G, R79.2]
+- name: N$129
+  pins: [J1.14, R76.2]
+- name: N$130
+  pins: [J1.16, R70.2]
+- name: N$133
+  pins: [J1.30, R81.2]
+- name: N$134
+  pins: [J1.32, R75.2]
+- name: N$14
+  pins: [C62.2, L4.1, R3.2, X1.VDD]
+- name: N$16
+  pins: [D4.+, R47.2]
+- name: N$23
+  pins: [C14.2, R6.1]
+- name: N$26
+  pins: [C64.1, C82.1, L24.2]
+- name: N$32
+  pins: [C38.2, R9.1]
+- name: N$35
+  pins: [C54.2, L11.1]
+- name: N$36
+  pins: [C53.2, C54.1, C7.2, L10.2]
+- name: N$37
+  pins: [C4.1, C8.2, R12.2]
+- name: N$7
+  pins: [C68.1, C74.1, C75.2]
+- name: N$80
+  pins: [D3.+, R32.2]
+- name: N$81
+  pins: [D2.+, R31.2]
+- name: N$82
+  pins: [D1.+, R30.2]
+- name: N$83
+  pins: [Q10.D, Q8.G, R78.2]
+- name: N$84
+  pins: [C1.1, R80.1]
+- name: N$88
+  pins: [C56.2, C57.2, L16.1, L8.2]
+- name: N$9
+  pins: [C66.2, R37.1]
+- name: N$92
+  pins: [C61.1, C91.1, L17.2, L24.1]
+- name: N$94
+  pins: [ANT1.D, C64.2, D5.2]
+- name: OUT
+  pins: [C8.1, R11.2, R52.2, U8.OUT]
+- name: OUT_2
+  pins: [R35.1, U10.OUT, U9.LNA_IN]
+- name: OUT_3
+  pins: [C10.1, C6.1, C75.1, R13.1, U2.OUT]
+- name: PA0_CLK_IN
+  pins: [R72.2, R73.2, U12.PA0-CLK_IN]
+- name: PA_OUT
+  pins: [L2.1, L8.1, U9.PA_OUT]
+- name: PC14_OSC32_IN
+  pins: [C81.1, U12.PC14-OSC32_IN, X3.2]
+- name: PC15_OSC32_OUT
+  pins: [C84.1, U12.PC15-OSC32_OUT, X3.1]
+- name: PG
+  pins: [TP15.T, U6.PG]
+- name: PPS
+  pins: [J1.19, TP2.T, U1.PPS, U12.PB4]
+- name: RADIO_A_CLK_32M
+  pins: [R25.2, R72.1, U5.BUSY]
+- name: RADIO_A_CLK_I
+  pins: [R25.1, U1.RADIO_A_CLK_I]
+- name: RADIO_A_CLK_O
+  pins: [R28.2, U5.DIO5]
+- name: RADIO_A_CSN
+  pins: [U1.RADIO_A_CSN, U5.NSS]
+- name: RADIO_A_IQ0
+  pins: [R26.1, U1.RADIO_A_IQ0]
+- name: RADIO_A_IQ1
+  pins: [R27.1, U1.RADIO_A_IQ1]
+- name: RADIO_A_IQ2
+  pins: [R29.1, U1.RADIO_A_IQ2]
+- name: RADIO_A_IQ3
+  pins: [R24.1, U1.RADIO_A_IQ3]
+- name: RADIO_A_IQ4
+  pins: [R28.1, U1.RADIO_A_IQ4]
+- name: RADIO_A_IQ_0
+  pins: [R26.2, U5.DIO1]
+- name: RADIO_A_IQ_1
+  pins: [R27.2, U5.DIO2]
+- name: RADIO_A_IQ_2
+  pins: [R29.2, U5.DIO3]
+- name: RADIO_A_IQ_3
+  pins: [R24.2, U5.DIO4]
+- name: RADIO_A_RESET
+  pins: [U1.RADIO_CTRL3, U5.NRESET]
+- name: RADIO_A_RFIN
+  pins: [C6.2, L12.2, U5.RFI_N]
+- name: RADIO_A_RFIP
+  pins: [C5.2, L12.1, U5.RFI_P]
+- name: RADIO_B_CLK_32M
+  pins: [R19.2, U7.BUSY]
+- name: RADIO_B_CLK_I
+  pins: [R19.1, U1.RADIO_B_CLK_I]
+- name: RADIO_B_CLK_O
+  pins: [R22.2, U7.DIO5]
+- name: RADIO_B_CSN
+  pins: [U1.RADIO_B_CSN, U7.NSS]
+- name: RADIO_B_IQ0
+  pins: [R20.2, U7.DIO1]
+- name: RADIO_B_IQ0_2
+  pins: [R20.1, U1.RADIO_B_IQ0]
+- name: RADIO_B_IQ1
+  pins: [R21.1, U1.RADIO_B_IQ1]
+- name: RADIO_B_IQ2
+  pins: [R23.1, U1.RADIO_B_IQ2]
+- name: RADIO_B_IQ3
+  pins: [R18.1, U1.RADIO_B_IQ3]
+- name: RADIO_B_IQ4
+  pins: [R22.1, U1.RADIO_B_IQ4]
+- name: RADIO_B_IQ_1
+  pins: [R21.2, U7.DIO2]
+- name: RADIO_B_IQ_2
+  pins: [R23.2, U7.DIO3]
+- name: RADIO_B_IQ_3
+  pins: [R18.2, U7.DIO4]
+- name: RADIO_B_RESET
+  pins: [U1.RADIO_CTRL9, U7.NRESET]
+- name: RADIO_B_RFIN
+  pins: [C10.2, L13.2, U7.RFI_N]
+- name: RADIO_B_RFIP
+  pins: [C9.2, L13.1, U7.RFI_P]
+- name: RFO
+  pins: [C53.1, L10.1, L9.1, U5.RFO]
+- name: RX
+  pins: [C11.2, U9.RX]
+- name: RX_FLT
+  pins: [R69.1, U9.RX_FLT]
+- name: RX_ON
+  pins: [R32.1, U1.GPIO4]
+- name: SCK
+  pins: [R10.2, R41.2, R49.1, R50.1]
+- name: SCK_2
+  pins: [R41.1, U11.SCK]
+- name: SCK_A
+  pins: [U1.RADIO_A_SCK, U5.SCK]
+- name: SCK_B
+  pins: [U1.RADIO_B_SCK, U7.SCK]
+- name: SP_VALID
+  pins: [R17.1, U1.SP_VALID]
+- name: STM32_MISO
+  pins: [R45.2, U12.PA6]
+- name: STM32_MOSI
+  pins: [R48.2, U12.PA7]
+- name: STM32_SCK
+  pins: [R50.2, U12.PA5]
+- name: SW
+  pins: [L5.1, U6.SW]
+- name: SWCLK
+  pins: [TP7.T, U12.PA14]
+- name: SWDIO
+  pins: [TP8.T, U12.PA13]
+- name: SX1261_BUSY
+  pins: [R67.1, U11.BUSY, U12.PA3]
+- name: SX1261_CS
+  pins: [R42.1, R51.1, U11.NSS, U12.PB0]
+- name: SX1261_IO1
+  pins: [R61.1, U1.GPIO7, U11.DIO1, U12.PB1]
+- name: SX1261_IO2
+  pins: [R63.1, U11.DIO2]
+- name: SX1261_IO3
+  pins: [TP9.T, U11.DIO3]
+- name: SX1261_RFIN
+  pins: [C68.2, L22.2, U11.RFI_N]
+- name: SX1261_RFIP
+  pins: [C73.1, L22.1, U11.RFI_P]
+- name: SX1261_RST
+  pins: [R38.1, R60.1, U11.NRESET, U12.PA8]
+- name: SX1302_GPIO8
+  pins: [U1.GPIO8, U12.PB3]
+- name: TX
+  pins: [C4.2, U9.TX]
+- name: TX_IN
+  pins: [C58.2, L16.2, U9.TX_IN]
+- name: TX_ON
+  pins: [R30.1, U1.GPIO2]
+- name: TX_RX_SW
+  pins: [R16.2, U1.RADIO_CTRL2]
+- name: VCC0
+  pins: [C52.2, FB1.1, L1.2, U9.VCC0]
+- name: VCC1
+  pins: [L1.1, U9.VCC1]
+- name: VCCIO
+  pins:
+  - C19.2
+  - C20.2
+  - C25.2
+  - C28.2
+  - C3.2
+  - C41.2
+  - C42.2
+  - C45.2
+  - C47.2
+  - C76.2
+  - C80.2
+  - C83.2
+  - C86.2
+  - C87.2
+  - C88.2
+  - C89.2
+  - C90.2
+  - Q8.D
+  - R33.1
+  - R34.2
+  - R56.1
+  - R58.1
+  - R65.1
+  - R68.1
+  - R71.1
+  - R80.2
+  - TP1.T
+  - U1.VCC_IO
+  - U1.VCC_IO@1
+  - U1.VCC_IO@2
+  - U1.VCC_IO@3
+  - U12.VDD
+  - U12.VDD@1
+  - U12.VDDA
+  - U13.VDD
+- name: VCC_1V2
+  pins:
+  - C12.2
+  - C13.2
+  - C23.2
+  - C24.2
+  - C29.2
+  - C40.2
+  - C43.2
+  - C44.2
+  - C71.2
+  - C72.2
+  - L5.2
+  - R79.1
+  - R83.2
+  - TP14.T
+  - U1.VCC_CORE
+  - U1.VCC_CORE@1
+  - U1.VCC_CORE@2
+  - U1.VCC_CORE@3
+  - U6.OUT
+- name: VCC_FEM
+  pins:
+  - C26.2
+  - C27.2
+  - C49.2
+  - C50.2
+  - C51.2
+  - C55.2
+  - FB1.2
+  - L2.2
+  - R2.2
+  - TP6.T
+  - U3.VOUT
+- name: VCC_RADIO
+  pins:
+  - C21.2
+  - C32.2
+  - C33.2
+  - C35.2
+  - C39.2
+  - C48.2
+  - C67.1
+  - L15.1
+  - L4.2
+  - L7.1
+  - R36.1
+  - R38.2
+  - R42.2
+  - R7.2
+  - TP10.T
+  - U11.VBAT
+  - U11.VBAT_IO
+  - U4.VOUT
+  - U5.VBAT_DIO
+  - U5.VBAT_RF
+  - U5.VDD_IN
+  - U7.VBAT_DIO
+  - U7.VBAT_RF
+  - U7.VDD_IN
+- name: VDD_IN
+  pins: [C65.1, L18.2, R36.2, U11.VDD_IN]
+- name: VIN
+  pins:
+  - C15.2
+  - C22.2
+  - C30.2
+  - C31.2
+  - C69.2
+  - C70.2
+  - J1.3V3@1
+  - J1.3V3@2
+  - J1.3V3@3
+  - J1.3V3@4
+  - J1.3V3@5
+  - Q8.S
+  - R2.1
+  - R47.1
+  - R7.1
+  - R78.1
+  - R8.2
+  - R82.1
+  - TP4.T
+  - U3.VIN
+  - U4.VIN
+  - U6.VIN
+- name: VREG
+  pins: [C34.2, L6.1, L7.2, U5.VREG]
+- name: VREG_2
+  pins: [C46.2, L14.1, L15.2, U7.VREG]
+- name: VREG_3
+  pins: [C63.1, L18.1, L20.1, U11.VREG]
+- name: VR_PA
+  pins: [C36.2, C37.2, L9.2, U5.VR_PA]
+- name: XTA
+  pins: [C14.1, U5.XTA]
+- name: XTA_2
+  pins: [C38.1, U7.XTA]
+- name: XTA_3
+  pins: [C66.1, U11.XTA]

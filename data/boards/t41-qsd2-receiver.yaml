@@ -1,0 +1,632 @@
+name: T41 QSD2 Receiver
+slug: t41-qsd2-receiver
+source: Greg-R/qsd2
+format: kicad7
+description: 'Double-balanced quadrature sampling detector: ADT4-6T+ transformer, GALI-39+ wideband LNA'
+tags: [ham-radio-rf]
+key_ics: [AD8226, GALI-39+, SN74CBT3253]
+outline:
+  width_mm: 100.0
+  height_mm: 75.0
+design_rules:
+  layers: 2
+  min_trace: 0.152mm
+  min_clearance: 0.152mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C10
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C11
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C12
+  value: 2.2nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C13
+  value: 1uF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C14
+  value: 2.2nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C15
+  value: 1uF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C16
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C17
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C18
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C19
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C2
+  value: 10nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C22
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C23
+  value: 1uF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C24
+  value: 1uF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C25
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C26
+  value: 1uF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C27
+  value: 1uF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C29
+  value: 10uF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C3
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C30
+  value: 10uF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C31
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C32
+  value: 10nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C33
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C4
+  value: 10uF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C5
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C6
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C7
+  value: 10uF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: J1
+  value: 5-1814832-1
+  footprint: RF_SMA_Vertical_5-1814832-1
+  mpn: 5-1814832-1
+  manufacturer: TE Connectivity AMP Connectors
+  description: CONN SMA JACK STR 50 OHM PCB
+- ref: J2
+  value: 5-1814832-1
+  footprint: RF_SMA_Vertical_5-1814832-1
+  mpn: 5-1814832-1
+  manufacturer: TE Connectivity AMP Connectors
+  description: CONN SMA JACK STR 50 OHM PCB
+- ref: J3
+  value: 2x8 header
+  footprint: IDC-Header
+- ref: J4
+  value: SJ-3524-SMT
+  footprint: CUI_SJ-3524-SMT
+  manufacturer: CUI Inc
+- ref: R1
+  value: 270ohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R10
+  value: 100ohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R11
+  value: 100ohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R12
+  value: 100ohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R13
+  value: 100ohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R14
+  value: 100ohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R15
+  value: 2kohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+  pulldown: C33.2
+- ref: R2
+  value: 270ohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R23
+  value: 2.61kohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R24
+  value: 2.61kohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R28
+  value: 1kohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R3
+  value: 270ohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R4
+  value: 20ohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R5
+  value: 1kohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R6
+  value: 10ohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R7
+  value: 1kohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: R9
+  value: 100ohm
+  footprint: '1206'
+  description: Resistor, small US symbol
+- ref: TR1
+  value: ADT4-6T+
+  footprint: Mini-Circuits_CD637_H5.23mm
+  description: 1.5-70MHz 1:4 RF Transformer, Unbalanced to Balanced Center Tap, CD637
+- ref: U1
+  value: SN74LVC1G14DBV
+  footprint: SOT-23-5
+  description: Single Schmitt NOT Gate, Low-Voltage CMOS, SOT-23
+- ref: U10
+  value: GALI-39
+  footprint: SOT-89-3
+  description: DC-7000MHz +19.7dB Low Noise Amplifier, SOT-89
+- ref: U2
+  value: SN74LVC1G14DBV
+  footprint: SOT-23-5
+  description: Single Schmitt NOT Gate, Low-Voltage CMOS, SOT-23
+- ref: U3
+  value: SN74CBT3253
+  footprint: TSSOP-16
+  description: Dual 1 to 4 Analog Multiplexer
+- ref: U4
+  value: SN74AC74PW
+  footprint: TSSOP-14
+- ref: U5
+  value: AD8226ARZ-R7
+  footprint: R_8_ADI
+- ref: U6
+  value: AD8226ARZ-R7
+  footprint: R_8_ADI
+- ref: U7
+  value: AP2120N-2.5TRG1
+  footprint: SOT-23_DIO
+- ref: U8
+  value: AP2120N-2.5TRG1
+  footprint: SOT-23_DIO
+- ref: U9
+  value: UA78M05IDCYR
+  footprint: DCY0004A_N
+nets:
+- name: /12V_FILT
+  pins: [C3.2, C7.1, R3.1, R6.2, U9.INPUT]
+- name: /12_0V
+  pins: [C11.1, J3.Pin_5, J3.Pin_6, R6.1]
+- name: /5V_FILT
+  pins:
+  - C1.2
+  - C10.2
+  - C13.1
+  - C15.1
+  - C22.2
+  - C24.1
+  - C26.1
+  - C4.1
+  - C6.2
+  - R7.2
+  - U1.VCC
+  - U2.VCC
+  - U3.VCC
+  - U4.VCC
+  - U4.n1CLR
+  - U4.n2CLR
+  - U5.VS+
+  - U6.VS+
+  - U7.VIN
+  - U8.VIN
+  - U9.OUTPUT
+- name: /CLK1
+  pins: [J1.2, U2.2, U4.1CLK]
+- name: /CLK2
+  pins: [U2.4, U4.2CLK]
+- name: /FB1
+  pins: [U1.2, U4.1D, U4.n1Q]
+- name: /FB2
+  pins: [U4.2D, U4.n2Q]
+- name: /LO_I
+  pins: [U1.4, U3.S0]
+- name: /LO_Q
+  pins: [U3.S1, U4.2Q]
+- name: /PREN
+  pins: [C31.2, R28.2, U4.n1PRE, U4.n2PRE]
+- name: /REF_I
+  pins: [C23.1, R16.2, U5.REF, U7.VOUT]
+- name: /REF_Q
+  pins: [C27.1, R16.1, U6.REF, U8.VOUT]
+- name: /SET
+  pins: [C25.1, J3.Pin_1, R28.1]
+- name: GND
+  pins:
+  - C1.1
+  - C10.1
+  - C11.2
+  - C13.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C20.1
+  - C21.1
+  - C22.1
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.2
+  - C27.2
+  - C3.1
+  - C31.1
+  - C33.1
+  - C4.2
+  - C5.1
+  - C6.1
+  - C7.2
+  - J1.1
+  - J2.1
+  - J3.Pin_11
+  - J3.Pin_12
+  - J3.Pin_15
+  - J3.Pin_16
+  - J3.Pin_7
+  - J3.Pin_8
+  - J4.1
+  - R1.2
+  - R15.1
+  - R2.2
+  - TR1.3
+  - U1.GND
+  - U10.GND
+  - U2.GND
+  - U3.1nOE
+  - U3.2nOE
+  - U3.GND
+  - U4.GND
+  - U5.VS-
+  - U6.VS-
+  - U7.GND
+  - U8.GND
+  - U9.COMMON@2
+  - U9.COMMON@4
+- name: Net-(C2-Pad1)
+  pins: [C2.1, J2.2]
+- name: Net-(C2-Pad2)
+  pins: [C2.2, U10.1]
+- name: Net-(C20-Pad2)
+  pins: [C20.2, J4.3, R14.2]
+- name: Net-(C21-Pad2)
+  pins: [C21.2, J4.2, R13.1]
+- name: Net-(C29-Pad2)
+  pins: [C29.2, R14.1]
+- name: Net-(C30-Pad2)
+  pins: [C30.2, R13.2]
+- name: Net-(C32-Pad1)
+  pins: [C32.1, R3.2, U10.3]
+- name: Net-(C32-Pad2)
+  pins: [C32.2, R1.1, R4.1]
+- name: Net-(C33-Pad2)
+  pins: [C33.2, R15.2, R5.1, TR1.5]
+- name: Net-(C5-Pad2)
+  pins: [C5.2, R5.2, R7.1]
+- name: Net-(R2-Pad1)
+  pins: [R2.1, R4.2, TR1.1]
+- name: Net-(U3-1A)
+  pins: [TR1.6, U3.1A]
+- name: Net-(U3-1B1)
+  pins: [C14.1, C19.1, R12.1, U3.1B1, U3.2B4]
+- name: Net-(U3-1B2)
+  pins: [C12.1, C17.1, R10.1, U3.1B2, U3.2B3]
+- name: Net-(U3-1B3)
+  pins: [C12.2, C16.1, R9.1, U3.1B3, U3.2B2]
+- name: Net-(U3-1B4)
+  pins: [C14.2, C18.1, R11.1, U3.1B4, U3.2B1]
+- name: Net-(U3-2A)
+  pins: [TR1.4, U3.2A]
+- name: Net-(U5-IN+)
+  pins: [R11.2, U5.IN+]
+- name: Net-(U5-IN-)
+  pins: [R12.2, U5.IN-]
+- name: Net-(U5-VOUT)
+  pins: [C30.1, U5.VOUT]
+- name: Net-(U6-IN+)
+  pins: [R10.2, U6.IN+]
+- name: Net-(U6-IN-)
+  pins: [R9.2, U6.IN-]
+- name: Net-(U6-VOUT)
+  pins: [C29.1, U6.VOUT]
+- name: RG
+  pins: [R23.1, U6.RG@3]
+- name: RG_2
+  pins: [R23.2, U6.RG@2]
+- name: RG_3
+  pins: [R24.1, U5.RG@2]
+- name: RG_4
+  pins: [R24.2, U5.RG@3]
+positions:
+- ref: C1
+  x: 144.19
+  y: 69.09
+  rot: 180.0
+  side: back
+- ref: C10
+  x: 142.33
+  y: 59.45
+  side: back
+- ref: C11
+  x: 111.1
+  y: 71.77
+  rot: -90.0
+- ref: C12
+  x: 137.7
+  y: 67.17
+  rot: -90.0
+- ref: C13
+  x: 170.07
+  y: 85.7
+- ref: C14
+  x: 134.5
+  y: 67.15
+  rot: 90.0
+- ref: C15
+  x: 166.43
+  y: 74.1
+- ref: C16
+  x: 142.05
+  y: 74.45
+  rot: -90.0
+- ref: C17
+  x: 145.15
+  y: 74.47
+  rot: -90.0
+- ref: C18
+  x: 135.3
+  y: 74.47
+  rot: -90.0
+- ref: C19
+  x: 139.0
+  y: 74.45
+  rot: -90.0
+- ref: C2
+  x: 113.08
+  y: 45.36
+- ref: C22
+  x: 144.27
+  y: 52.2
+  rot: 180.0
+- ref: C23
+  x: 169.05
+  y: 79.6
+- ref: C24
+  x: 169.2
+  y: 56.6
+- ref: C25
+  x: 104.65
+  y: 55.4
+- ref: C26
+  x: 172.93
+  y: 69.12
+- ref: C27
+  x: 171.9
+  y: 62.42
+- ref: C29
+  x: 172.07
+  y: 59.48
+- ref: C3
+  x: 112.05
+  y: 53.58
+  rot: -90.0
+- ref: C30
+  x: 169.25
+  y: 76.9
+- ref: C31
+  x: 146.18
+  y: 51.82
+  rot: 180.0
+  side: back
+- ref: C32
+  x: 119.8
+  y: 52.15
+- ref: C33
+  x: 133.4
+  y: 59.55
+  rot: 180.0
+  side: back
+- ref: C4
+  x: 116.3
+  y: 80.47
+  rot: -90.0
+- ref: C5
+  x: 132.5
+  y: 46.15
+- ref: C6
+  x: 140.88
+  y: 47.0
+  rot: 180.0
+- ref: C7
+  x: 115.5
+  y: 64.71
+- ref: J1
+  x: 151.13
+  y: 45.21
+- ref: J2
+  x: 105.03
+  y: 45.21
+- ref: J3
+  x: 103.21
+  y: 62.5
+- ref: J4
+  x: 195.05
+  y: 53.45
+  rot: 180.0
+- ref: R1
+  x: 124.33
+  y: 48.01
+  rot: 90.0
+- ref: R10
+  x: 155.72
+  y: 64.12
+- ref: R11
+  x: 152.55
+  y: 78.96
+  rot: -90.0
+- ref: R12
+  x: 154.05
+  y: 74.2
+- ref: R13
+  x: 174.56
+  y: 76.9
+  rot: 180.0
+- ref: R14
+  x: 173.93
+  y: 54.54
+  rot: 90.0
+- ref: R15
+  x: 131.65
+  y: 53.4
+  rot: 180.0
+- ref: R2
+  x: 127.6
+  y: 48.01
+  rot: 90.0
+- ref: R23
+  x: 159.93
+  y: 61.98
+  rot: 90.0
+- ref: R24
+  x: 156.7
+  y: 78.2
+  rot: -90.0
+- ref: R28
+  x: 148.59
+  y: 65.91
+  rot: 180.0
+- ref: R3
+  x: 115.28
+  y: 53.59
+  rot: 90.0
+- ref: R4
+  x: 125.45
+  y: 52.15
+- ref: R5
+  x: 132.49
+  y: 49.95
+- ref: R6
+  x: 112.55
+  y: 67.6
+- ref: R7
+  x: 137.95
+  y: 49.95
+- ref: R9
+  x: 157.1
+  y: 60.04
+  rot: 90.0
+- ref: TR1
+  x: 130.36
+  y: 59.54
+- ref: U1
+  x: 141.75
+  y: 66.65
+  rot: 180.0
+- ref: U10
+  x: 119.78
+  y: 46.88
+- ref: U2
+  x: 151.16
+  y: 55.46
+  rot: -90.0
+- ref: U3
+  x: 138.83
+  y: 59.48
+  rot: -90.0
+- ref: U4
+  x: 145.88
+  y: 59.45
+  rot: 90.0
+- ref: U5
+  x: 162.44
+  y: 78.95
+- ref: U6
+  x: 165.29
+  y: 61.78
+- ref: U7
+  x: 171.26
+  y: 82.68
+  rot: 180.0
+- ref: U8
+  x: 174.12
+  y: 65.92
+  rot: 180.0
+- ref: U9
+  x: 119.4
+  y: 73.92
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [B.Cu, F&B.Cu, F.Cu]
+  keepout: true

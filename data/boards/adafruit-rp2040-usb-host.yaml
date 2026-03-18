@@ -1,0 +1,737 @@
+name: Adafruit RP2040 USB Host
+slug: adafruit-rp2040-usb-host
+source: adafruit/Adafruit-Feather-RP2040-USB-Host-PCB
+format: eagle
+description: USB host via RP2040 PIO, USB-A connector
+tags: [esd-protection, usb]
+key_ics: [RP2040]
+outline:
+  width_mm: 50.8
+  height_mm: 22.86
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 7mil
+  min_drill: 8mil
+  min_via: 5mil
+components:
+- ref: C1
+  value: 10uF
+  footprint: 0805
+  voltage: 16V
+- ref: C10
+  value: 1uF
+  footprint: '0402'
+  voltage: 25V
+  decouples: U1
+- ref: C11
+  value: 1uF
+  footprint: '0402'
+  voltage: 25V
+  decouples: IC1
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C15
+  value: 1uF
+  footprint: '0402'
+  voltage: 25V
+  decouples: U2
+- ref: C17
+  value: 1uF
+  footprint: '0402'
+  voltage: 25V
+  decouples: IC1
+- ref: C18
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C19
+  value: 22uF
+  footprint: 0805
+  decouples: IC2
+- ref: C2
+  value: 22pF
+  footprint: '0402'
+- ref: C20
+  value: 10uF
+  footprint: 0805
+  voltage: 16V
+  decouples: U3
+- ref: C21
+  value: 22uF
+  footprint: 0805
+- ref: C22
+  value: 22uF
+  footprint: 0805
+  decouples: IC2
+- ref: C26
+  value: 100nF
+  footprint: '0402'
+  decouples: IC2
+- ref: C27
+  value: 100nF
+  footprint: '0402'
+- ref: C28
+  value: 10uF
+  footprint: 0805
+  voltage: 16V
+- ref: C3
+  value: 22pF
+  footprint: '0402'
+- ref: C4
+  value: 10uF
+  footprint: 0805
+  voltage: 16V
+  decouples: U2
+- ref: C5
+  value: 10uF
+  footprint: 0805
+  voltage: 16V
+  decouples: U1
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C8
+  value: 1uF
+  footprint: '0402'
+  voltage: 25V
+  decouples: IC1
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: CHG
+  value: orange LED
+  footprint: '0603'
+- ref: CONN1
+  value: STEMMA QT
+  footprint: JST_SH4_RA
+  lcsc: C145961
+- ref: D3
+  value: 1N5819
+  footprint: SOD-323_MINI
+- ref: D4
+  value: PMEG2020AEA
+  footprint: SOD-323F
+- ref: IC1
+  value: RP2040
+  footprint: QFN56_7MM_REDUCEDEPAD
+  lcsc: C2040
+- ref: IC2
+  value: TPS61023
+  footprint: SOT563
+- ref: JP1
+  value: 1x16 header
+  footprint: 1X16
+- ref: JP3
+  value: 1x12 header
+  footprint: 1X12
+- ref: L
+  value: red LED
+  footprint: '0603'
+- ref: L1
+  value: 1uH
+  footprint: '5045'
+- ref: L2
+  value: green LED
+  footprint: '0603'
+- ref: LED1
+  value: WS2812B
+  footprint: SK6805_1515
+  lcsc: C2890035
+- ref: Q3
+  value: DMG3415UFY
+  footprint: DFN2015-3
+  description: P-Channel Mosfet
+- ref: R1
+  value: 10kohm
+  footprint: '0402'
+  pullup: '!RESET'
+- ref: R10
+  value: 22ohm
+  footprint: '0402'
+- ref: R11
+  value: 1kohm
+  footprint: '0402'
+- ref: R12
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: CC2
+- ref: R13
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: CC1
+- ref: R14
+  value: 100kohm
+  footprint: '0402'
+  pullup: 5V_EN
+- ref: R15
+  value: 732kohm
+  footprint: '0402'
+  pullup: FB
+- ref: R16
+  value: 100kohm
+  footprint: '0402'
+  pulldown: FB
+- ref: R17
+  value: 22ohm
+  footprint: '0402'
+- ref: R18
+  value: 22ohm
+  footprint: '0402'
+- ref: R19
+  value: FUSE
+  footprint: 0805
+- ref: R2
+  value: 10kohm
+  footprint: '0402'
+- ref: R20
+  value: 10kohm
+  footprint: '0402'
+- ref: R3
+  value: 10kohm
+  footprint: '0402'
+- ref: R4
+  value: 10kohm
+  footprint: '0402'
+- ref: R5
+  value: 10kohm
+  footprint: '0402'
+  pullup: QSPI_CS
+- ref: R6
+  value: 1kohm
+  footprint: '0402'
+- ref: R7
+  value: 10kohm
+  footprint: '0402'
+- ref: R8
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: U3.PROG
+- ref: R9
+  value: 22ohm
+  footprint: '0402'
+- ref: SW1
+  value: RKB2
+  footprint: BTN_RKB2
+  description: SMT Tact Switches RKB2
+- ref: SW2
+  value: RKB2
+  footprint: BTN_RKB2
+  description: SMT Tact Switches RKB2
+- ref: U1
+  value: 8MB QSPI
+  footprint: USON8
+  description: SOIC8 SPI Flash
+- ref: U2
+  value: RT9080-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: U3
+  value: MCP73831
+  footprint: SOT-23-5
+  lcsc: C424093
+  description: MCP73831/2 LIPO Charger
+- ref: X1
+  value: JSTPH
+  footprint: JSTPH2_BATT
+  lcsc: C47647
+- ref: X2
+  value: USB A
+  footprint: USB_HOST-SMT
+  description: USB - Type A Connectors
+- ref: X6
+  value: USB Type C
+  footprint: USB-C
+  lcsc: C165948
+  description: USB Type-C USB 2.0
+- ref: Y1
+  value: 12MHz/12pF
+  footprint: CRYSTAL
+nets:
+- name: '!RESET'
+  pins: [IC1./RUN, JP1.16, R1.2, SW1.P, SW1.P1]
+- name: +3V3
+  pins:
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C15.1
+  - C17.1
+  - C4.1
+  - C5.1
+  - C9.1
+  - CONN1.G$1.V+
+  - IC1.ADC_IOVDD
+  - IC1.IOVDD
+  - IC1.USB_IOVDD
+  - IC1.VREG_IOVDD
+  - JP1.14
+  - JP1.15
+  - R1.1
+  - R14.1
+  - R5.2
+  - U1.VCC
+  - U2.OUT
+- name: 1.2V
+  pins: [C18.2, C6.2, C7.2, C8.1, IC1.DVDD, IC1.VREG_VOUT]
+- name: 5.0V
+  pins: [C19.1, C22.1, C26.2, IC2.VOUT, R15.1, R19.2]
+- name: 5V_EN
+  pins: [IC1.GPIO18, IC2.EN, R14.2]
+- name: A0
+  pins: [IC1.GPIO26/AD0, JP1.12]
+- name: A1
+  pins: [IC1.GPIO27/AD1, JP1.11]
+- name: A2
+  pins: [IC1.GPIO28/AD2, JP1.10]
+- name: A3
+  pins: [IC1.GPIO29/AD3, JP1.9]
+- name: CC1
+  pins: [R13.2, X6.CC1]
+- name: CC2
+  pins: [R12.2, X6.CC2]
+- name: D+
+  pins: [IC1.USB_D+, R10.2]
+- name: D-
+  pins: [IC1.USB_D-, R9.2]
+- name: D10
+  pins: [IC1.GPIO10, JP3.7]
+- name: D11
+  pins: [IC1.GPIO11, JP3.6]
+- name: D12
+  pins: [IC1.GPIO12, JP3.5]
+- name: D13
+  pins: [IC1.GPIO13, JP3.4, R7.1]
+- name: D24
+  pins: [IC1.GPIO24, JP1.8]
+- name: D25
+  pins: [IC1.GPIO25, JP1.7]
+- name: D4
+  pins: [IC1.GPIO4, JP1.1]
+- name: D5
+  pins: [IC1.GPIO5, JP3.10]
+- name: D6
+  pins: [IC1.GPIO6, JP3.9]
+- name: D9
+  pins: [IC1.GPIO9, JP3.8]
+- name: EN
+  pins: [JP3.2, R3.1, U2.EN]
+- name: FB
+  pins: [IC2.FB, R15.2, R16.1]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C17.2
+  - C18.1
+  - C19.2
+  - C2.1
+  - C20.2
+  - C21.2
+  - C22.2
+  - C26.1
+  - C27.1
+  - C28.2
+  - C3.1
+  - C4.2
+  - C5.2
+  - C6.1
+  - C7.1
+  - C8.2
+  - C9.2
+  - CONN1.G$1.GND
+  - CONN1.G$2.MT
+  - CONN1.G$3.MT
+  - IC1.GND
+  - IC1.TESTEN
+  - IC2.GND
+  - JP1.13
+  - L.C
+  - L2.C
+  - LED1.GND
+  - R12.1
+  - R13.1
+  - R16.2
+  - R4.1
+  - R8.2
+  - SW1.S
+  - SW1.S1
+  - SW2.S
+  - SW2.S1
+  - U1.VSS
+  - U2.GND
+  - U3.VSS
+  - X1.G$1.1
+  - X1.MT1.P$1
+  - X1.MT2.P$1
+  - X2.GND
+  - X6.GND
+  class: power
+  trace_width: '0.3048'
+- name: MISO
+  pins: [IC1.GPIO8, JP1.4]
+- name: MOSI
+  pins: [IC1.GPIO15, JP1.5]
+- name: N$1
+  pins: [CHG.C, R2.1]
+- name: N$10
+  pins: [R19.1, R20.1, X2.VBUS]
+- name: N$11
+  pins: [L2.A, R20.2]
+- name: N$16
+  pins: [D3.A, R11.2]
+- name: N$2
+  pins: [L.A, R7.2]
+- name: N$6
+  pins: [C3.2, R6.1, Y1.1]
+- name: N$8
+  pins: [R17.1, X2.D+]
+- name: N$9
+  pins: [R18.1, X2.D-]
+- name: NEOPIXEL
+  pins: [IC1.GPIO21, LED1.DI]
+- name: NEOPIX_PWR
+  pins: [IC1.GPIO20, LED1.VDD]
+- name: PROG
+  pins: [R8.1, U3.PROG]
+- name: QSPI_CS
+  pins: [IC1.!QSPI_CS, R11.1, R5.1, U1.SSEL]
+- name: QSPI_DATA[0]
+  pins: [IC1.QSPI_SD0, U1.MOSI]
+- name: QSPI_DATA[1]
+  pins: [IC1.QSPI_SD1, U1.MISO]
+- name: QSPI_DATA[2]
+  pins: [IC1.QSPI_SD2, U1.WP#/IO2]
+- name: QSPI_DATA[3]
+  pins: [IC1.QSPI_SD3, U1.HOLD#/IO3]
+- name: QSPI_SCK
+  pins: [IC1.QSPI_SCLK, U1.SCK]
+- name: RX
+  pins: [IC1.GPIO1, JP1.3]
+- name: SCK
+  pins: [IC1.GPIO14, JP1.6]
+- name: SCL
+  pins: [CONN1.G$1.SCL, IC1.GPIO3, JP3.11]
+- name: SDA
+  pins: [CONN1.G$1.SDA, IC1.GPIO2, JP3.12]
+- name: STAT
+  pins: [R2.2, U3.STAT]
+- name: SW
+  pins: [IC2.SW, L1.2]
+- name: TX
+  pins: [IC1.GPIO0, JP1.2]
+- name: USBBOOT
+  pins: [D3.C, IC1.GPIO7, SW2.P, SW2.P1, TP3.P$1]
+- name: USBH_D+
+  pins: [IC1.GPIO16, R17.2]
+- name: USBH_D-
+  pins: [IC1.GPIO17, R18.2]
+- name: USB_D+
+  pins: [D+1.TP, R10.1, X6.D+]
+- name: USB_D-
+  pins: [D-1.TP, R9.1, X6.D-]
+- name: VBAT
+  pins: [C20.1, JP3.1, Q3.D, U3.VBAT, X1.G$1.2]
+  class: power
+  trace_width: '0.3048'
+- name: VBUS
+  pins:
+  - CHG.A
+  - D4.A
+  - JP3.3
+  - Q3.G
+  - R4.2
+  - U3.VDD
+  - X6.VBUS
+  class: power
+  trace_width: '0.3048'
+- name: VHI
+  pins:
+  - C1.1
+  - C21.1
+  - C27.2
+  - C28.1
+  - D4.C
+  - IC2.VIN
+  - L1.1
+  - Q3.S
+  - R3.2
+  - U2.IN
+- name: XIN
+  pins: [C2.2, IC1.XIN, Y1.2]
+- name: XOUT
+  pins: [IC1.XOUT, R6.2]
+positions:
+- ref: C1
+  x: 19.94
+  y: 18.63
+- ref: C10
+  x: 23.06
+  y: 18.98
+  rot: 180.0
+- ref: C11
+  x: 12.7
+  y: 4.45
+  rot: 90.0
+- ref: C12
+  x: 23.05
+  y: 17.65
+  rot: 180.0
+- ref: C13
+  x: 27.5
+  y: 7.3
+- ref: C14
+  x: 16.76
+  y: 10.29
+  rot: 180.0
+- ref: C15
+  x: 17.46
+  y: 12.83
+  rot: 90.0
+- ref: C17
+  x: 28.26
+  y: 10.29
+- ref: C18
+  x: 16.76
+  y: 9.4
+- ref: C19
+  x: 36.13
+  y: 4.25
+  rot: 180.0
+- ref: C2
+  x: 12.73
+  y: 11.56
+  rot: 90.0
+- ref: C20
+  x: 10.22
+  y: 12.13
+  rot: 180.0
+- ref: C21
+  x: 36.96
+  y: 15.88
+- ref: C22
+  x: 36.13
+  y: 6.06
+  rot: 180.0
+- ref: C26
+  x: 36.96
+  y: 8.26
+- ref: C27
+  x: 37.21
+  y: 12.45
+  rot: 180.0
+- ref: C28
+  x: 36.96
+  y: 13.97
+- ref: C3
+  x: 12.64
+  y: 9.53
+  rot: 270.0
+- ref: C4
+  x: 14.67
+  y: 13.38
+  rot: 180.0
+- ref: C5
+  x: 29.01
+  y: 13.37
+  rot: 270.0
+- ref: C6
+  x: 28.57
+  y: 11.18
+  rot: 180.0
+- ref: C7
+  x: 28.32
+  y: 9.08
+  rot: 180.0
+- ref: C8
+  x: 28.32
+  y: 8.19
+- ref: C9
+  x: 14.1
+  y: 8.45
+  rot: 180.0
+- ref: CHG
+  x: 1.91
+  y: 5.4
+  rot: 270.0
+- ref: CONN1
+  x: 33.08
+  y: 16.32
+  rot: 270.0
+- ref: D3
+  x: 20.26
+  y: 4.19
+- ref: D4
+  x: 5.71
+  y: 20.13
+  rot: 90.0
+- ref: IC1
+  x: 22.29
+  y: 10.16
+  rot: 270.0
+- ref: IC2
+  x: 36.96
+  y: 9.78
+  rot: 270.0
+- ref: JP1
+  x: 25.4
+  y: 1.27
+  rot: 180.0
+- ref: JP3
+  x: 30.48
+  y: 21.65
+- ref: L
+  x: 1.82
+  y: 17.42
+  rot: 90.0
+- ref: L1
+  x: 33.02
+  y: 9.78
+  rot: 270.0
+- ref: L2
+  x: 39.18
+  y: 19.05
+  rot: 270.0
+- ref: LED1
+  x: 27.23
+  y: 5.46
+  rot: 270.0
+- ref: Q3
+  x: 20.38
+  y: 16.85
+- ref: R1
+  x: 16.76
+  y: 8.45
+- ref: R10
+  x: 7.75
+  y: 11.75
+  rot: 270.0
+- ref: R11
+  x: 22.67
+  y: 4.19
+  rot: 270.0
+- ref: R12
+  x: 5.71
+  y: 5.91
+  rot: 180.0
+- ref: R13
+  x: 5.14
+  y: 16.95
+  rot: 180.0
+- ref: R14
+  x: 29.46
+  y: 6.1
+  rot: 270.0
+- ref: R15
+  x: 38.29
+  y: 8.61
+  rot: 90.0
+- ref: R16
+  x: 38.29
+  y: 10.73
+  rot: 90.0
+- ref: R17
+  x: 31.31
+  y: 3.81
+  rot: 180.0
+- ref: R18
+  x: 31.31
+  y: 5.14
+  rot: 180.0
+- ref: R19
+  x: 38.8
+  y: 5.4
+  rot: 270.0
+- ref: R2
+  x: 5.71
+  y: 4.0
+- ref: R20
+  x: 39.18
+  y: 17.78
+  rot: 180.0
+- ref: R3
+  x: 16.64
+  y: 19.01
+- ref: R4
+  x: 5.71
+  y: 4.95
+  rot: 180.0
+- ref: R5
+  x: 24.59
+  y: 18.68
+  rot: 90.0
+- ref: R6
+  x: 16.76
+  y: 11.18
+- ref: R7
+  x: 5.14
+  y: 17.84
+  rot: 180.0
+- ref: R8
+  x: 7.71
+  y: 9.02
+  rot: 90.0
+- ref: R9
+  x: 7.75
+  y: 13.65
+  rot: 90.0
+- ref: SW1
+  x: 9.53
+  y: 5.08
+  rot: 180.0
+- ref: SW2
+  x: 15.88
+  y: 5.08
+  rot: 180.0
+- ref: U1
+  x: 27.62
+  y: 17.91
+- ref: U2
+  x: 16.89
+  y: 16.45
+  rot: 180.0
+- ref: U3
+  x: 10.12
+  y: 9.53
+  rot: 90.0
+- ref: X1
+  x: 10.92
+  y: 17.65
+- ref: X2
+  x: 41.15
+  y: 11.43
+  rot: 90.0
+- ref: X6
+  x: 3.87
+  y: 11.43
+  rot: 270.0
+- ref: Y1
+  x: 14.48
+  y: 10.73
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

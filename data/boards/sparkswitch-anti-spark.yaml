@@ -1,0 +1,129 @@
+name: SparkSwitch Anti-Spark
+slug: sparkswitch-anti-spark
+source: vedderb/SparkSwitch
+format: kicad_legacy
+description: 'Active precharge / anti-spark switch by VESC creator: MOSFET-based inrush current limiting'
+tags: [drone-uav]
+outline:
+  width_mm: 40.0
+  height_mm: 32.0
+design_rules:
+  layers: 2
+  min_trace: 0.254mm
+  min_clearance: 0.254mm
+  min_drill: 0.4mm
+  min_via: 0.889mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: 0805
+  voltage: 100V
+- ref: D2
+  value: ZENERsmall
+  footprint: Diode-SMA
+- ref: P1
+  value: IN+
+  footprint: 1PAD
+- ref: P2
+  value: IN-
+  footprint: 1PAD
+- ref: P3
+  value: SW
+  footprint: 1PAD
+- ref: P4
+  value: OUT+
+  footprint: 1PAD
+- ref: P5
+  value: OUT-
+  footprint: 1PAD
+- ref: P6
+  value: FUSE_A
+  footprint: 1PAD
+- ref: P7
+  value: 12V_SW
+  footprint: 1PAD
+- ref: P8
+  value: 12V_SW
+  footprint: 1PAD
+- ref: P9
+  value: FUSE_B
+  footprint: 1PAD
+- ref: Q1
+  value: IRFS7530
+  footprint: D2PAK-7-GDS
+- ref: Q2
+  value: IRFS7530
+  footprint: D2PAK-7-GDS
+- ref: R1
+  value: 1Mohm
+  footprint: '0603'
+- ref: R2
+  value: 1kohm
+  footprint: '0603'
+nets:
+- name: Net-(C1-Pad1)
+  pins: [C1.1, R2.2]
+- name: Net-(C1-Pad2)
+  pins: [C1.2, D2.2, P7.1, Q1.G, Q2.G]
+- name: Net-(D2-Pad1)
+  pins: [D2.1, P2.1, P8.1, Q1.S, Q2.S]
+- name: Net-(P1-Pad1)
+  pins: [P1.1, P6.1]
+- name: Net-(P3-Pad1)
+  pins: [P3.1, R1.2]
+- name: Net-(P4-Pad1)
+  pins: [P4.1, P9.1, R1.1]
+- name: Net-(P5-Pad1)
+  pins: [P5.1, Q1.D, Q2.D, R2.1]
+positions:
+- ref: C1
+  x: 120.52
+  y: 85.22
+- ref: D2
+  x: 121.41
+  y: 91.06
+  rot: 270.0
+- ref: P1
+  x: 115.82
+  y: 74.68
+- ref: P2
+  x: 115.82
+  y: 99.06
+- ref: P3
+  x: 115.19
+  y: 81.53
+  rot: 90.0
+- ref: P4
+  x: 148.34
+  y: 74.68
+- ref: P5
+  x: 148.34
+  y: 99.06
+- ref: P6
+  x: 127.51
+  y: 74.68
+- ref: P7
+  x: 115.19
+  y: 86.87
+  rot: 90.0
+- ref: P8
+  x: 115.19
+  y: 92.2
+  rot: 90.0
+- ref: P9
+  x: 138.81
+  y: 74.68
+- ref: Q1
+  x: 128.78
+  y: 89.15
+- ref: Q2
+  x: 140.21
+  y: 89.15
+- ref: R1
+  x: 120.52
+  y: 80.52
+  rot: 180.0
+- ref: R2
+  x: 120.52
+  y: 82.93
+  rot: 180.0

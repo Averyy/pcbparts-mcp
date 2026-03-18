@@ -1,0 +1,359 @@
+name: Soldered TCA9548A I2C Mux
+slug: soldered-tca9548a-i2c-mux
+source: SolderedElectronics/I2C-multiplexer-TCA9548A-breakout-hardware-design
+format: kicad7
+description: "8-channel I2C multiplexer \u2014 critical for multi-sensor bus management, address conflict resolution"
+tags: [i2c-mux]
+key_ics: [TCA9548APWR]
+outline:
+  width_mm: 54.0
+  height_mm: 38.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C2
+  value: 10uF
+  footprint: '1206'
+  decouples: U1
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-2
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-2
+- ref: JP3
+  value: solder jumper
+  footprint: SJ-2
+- ref: K1
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K10
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K11
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K12
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: K13
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: K14
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K15
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K16
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: K17
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: K18
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K19
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K2
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K3
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: K4
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: K5
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: K6
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K7
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K8
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: K9
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  pulldown: A0
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+  pulldown: A1
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  pulldown: A2
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+  pullup: U1.nRESET
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  pullup: SCL
+- ref: R6
+  value: 10kohm
+  footprint: '0603'
+  pullup: SDA
+- ref: U1
+  value: TCA9548APWR
+  footprint: TSSOP-24
+nets:
+- name: A0
+  pins: [JP1.1, R1.2, U1.A0]
+- name: A1
+  pins: [JP2.1, R2.2, U1.A1]
+- name: A2
+  pins: [JP3.1, R3.2, U1.A2]
+- name: GND
+  pins:
+  - C1.1
+  - C2.2
+  - K1.GND
+  - K1.SHIELD@5
+  - K10.GND
+  - K10.SHIELD@5
+  - K11.GND
+  - K11.SHIELD@5
+  - K12.1
+  - K13.1
+  - K14.GND
+  - K14.SHIELD@5
+  - K15.GND
+  - K15.SHIELD@5
+  - K16.1
+  - K17.1
+  - K18.GND
+  - K18.SHIELD@5
+  - K19.GND
+  - K19.SHIELD@5
+  - K2.GND
+  - K2.SHIELD@5
+  - K3.1
+  - K4.1
+  - K5.1
+  - K6.GND
+  - K6.SHIELD@5
+  - K7.GND
+  - K7.SHIELD@5
+  - K8.1
+  - K9.1
+  - R1.1
+  - R2.1
+  - R3.1
+  - U1.GND
+- name: SCL
+  pins: [K1.SCL, K2.SCL, K3.4, R5.1, U1.SCL]
+- name: SCL0
+  pins: [K5.4, K7.SCL, U1.SC0]
+- name: SCL1
+  pins: [K10.SCL, K8.4, U1.SC1]
+- name: SCL2
+  pins: [K12.4, K14.SCL, U1.SC2]
+- name: SCL3
+  pins: [K16.4, K18.SCL, U1.SC3]
+- name: SCL4
+  pins: [K4.4, K6.SCL, U1.SC4]
+- name: SCL5
+  pins: [K11.SCL, K9.4, U1.SC5]
+- name: SCL6
+  pins: [K13.4, K15.SCL, U1.SC6]
+- name: SCL7
+  pins: [K17.4, K19.SCL, U1.SC7]
+- name: SDA
+  pins: [K1.SDA, K2.SDA, K3.3, R6.1, U1.SDA]
+- name: SDA0
+  pins: [K5.3, K7.SDA, U1.SD0]
+- name: SDA1
+  pins: [K10.SDA, K8.3, U1.SD1]
+- name: SDA2
+  pins: [K12.3, K14.SDA, U1.SD2]
+- name: SDA3
+  pins: [K16.3, K18.SDA, U1.SD3]
+- name: SDA4
+  pins: [K4.3, K6.SDA, U1.SD4]
+- name: SDA5
+  pins: [K11.SDA, K9.3, U1.SD5]
+- name: SDA6
+  pins: [K13.3, K15.SDA, U1.SD6]
+- name: SDA7
+  pins: [K17.3, K19.SDA, U1.SD7]
+- name: VCC
+  pins:
+  - C1.2
+  - C2.1
+  - JP1.2
+  - JP2.2
+  - JP3.2
+  - K1.3V3
+  - K10.3V3
+  - K11.3V3
+  - K12.2
+  - K13.2
+  - K14.3V3
+  - K15.3V3
+  - K16.2
+  - K17.2
+  - K18.3V3
+  - K19.3V3
+  - K2.3V3
+  - K3.2
+  - K4.2
+  - K5.2
+  - K6.3V3
+  - K7.3V3
+  - K8.2
+  - K9.2
+  - R4.1
+  - R5.2
+  - R6.2
+  - U1.VCC
+- name: nRESET
+  pins: [R4.2, U1.nRESET]
+positions:
+- ref: C1
+  x: 125.03
+  y: 115.28
+  rot: -90.0
+- ref: C2
+  x: 127.03
+  y: 114.47
+  rot: 90.0
+- ref: JP1
+  x: 136.03
+  y: 114.47
+  rot: -90.0
+- ref: JP2
+  x: 133.03
+  y: 114.47
+  rot: -90.0
+- ref: JP3
+  x: 130.03
+  y: 114.47
+  rot: -90.0
+- ref: K1
+  x: 143.72
+  y: 108.47
+  rot: -90.0
+- ref: K10
+  x: 125.11
+  y: 97.78
+- ref: K11
+  x: 114.94
+  y: 129.18
+  rot: 180.0
+- ref: K12
+  x: 114.94
+  y: 102.97
+  rot: 180.0
+  side: back
+- ref: K13
+  x: 125.11
+  y: 123.97
+  side: back
+- ref: K14
+  x: 114.94
+  y: 97.78
+- ref: K15
+  x: 125.11
+  y: 129.18
+  rot: 180.0
+- ref: K16
+  x: 104.78
+  y: 102.97
+  rot: 180.0
+  side: back
+- ref: K17
+  x: 135.26
+  y: 123.97
+  side: back
+- ref: K18
+  x: 104.78
+  y: 97.78
+- ref: K19
+  x: 135.26
+  y: 129.18
+  rot: 180.0
+- ref: K2
+  x: 143.72
+  y: 118.47
+  rot: -90.0
+- ref: K3
+  x: 94.53
+  y: 113.47
+  rot: 90.0
+  side: back
+- ref: K4
+  x: 104.78
+  y: 123.97
+  side: back
+- ref: K5
+  x: 135.26
+  y: 102.97
+  rot: 180.0
+  side: back
+- ref: K6
+  x: 104.78
+  y: 129.18
+  rot: 180.0
+- ref: K7
+  x: 135.26
+  y: 97.78
+- ref: K8
+  x: 125.11
+  y: 102.97
+  rot: 180.0
+  side: back
+- ref: K9
+  x: 114.94
+  y: 123.97
+  side: back
+- ref: R1
+  x: 136.03
+  y: 111.47
+  rot: -90.0
+- ref: R2
+  x: 133.03
+  y: 111.47
+  rot: -90.0
+- ref: R3
+  x: 130.03
+  y: 111.47
+  rot: -90.0
+- ref: R4
+  x: 126.03
+  y: 110.08
+  rot: 180.0
+- ref: R5
+  x: 139.53
+  y: 112.47
+  rot: 180.0
+- ref: R6
+  x: 139.53
+  y: 113.97
+  rot: 180.0
+- ref: U1
+  x: 120.03
+  y: 113.47
+  rot: -90.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]

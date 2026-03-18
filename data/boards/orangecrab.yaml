@@ -1,0 +1,2080 @@
+name: OrangeCrab
+slug: orangecrab
+source: orangecrab-fpga/orangecrab-hardware
+format: kicad_legacy
+description: ECP5 FPGA (LFE5U-25F), DDR3L SDRAM
+tags: [fpga, rf-sdr]
+key_ics: [LFE5U-25F, ECP5]
+outline:
+  width_mm: 50.8
+  height_mm: 22.86
+design_rules:
+  layers: 6
+  min_trace: 0.089mm
+  min_clearance: 0.089mm
+  min_drill: 0.15mm
+  min_via: 0.23mm
+components:
+- ref: C1
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C10
+  value: 10pF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03C100JA3GNNC
+- ref: C11
+  value: 10uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R60J106ME15D
+  decouples: U7
+- ref: C12
+  value: 4.7uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R61A475MEAAD
+  decouples: U2
+- ref: C13
+  value: 4.7uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R61A475MEAAD
+  decouples: U5
+- ref: C14
+  value: 10uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R60J106ME15D
+- ref: C15
+  value: 10uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R60J106ME15D
+- ref: C16
+  value: 10uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R60J106ME15D
+- ref: C17
+  value: 10uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R60J106ME15D
+- ref: C18
+  value: 10pF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03C100JA3GNNC
+- ref: C19
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C2
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C20
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C21
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: JMK105C6105KV-F
+- ref: C22
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: JMK105C6105KV-F
+- ref: C23
+  value: 22uF
+  footprint: '0603'
+  manufacturer: Murata Electronics North America
+  mpn: GRM188R60J226MEA0D
+- ref: C24
+  value: 22uF
+  footprint: '0603'
+  manufacturer: Murata Electronics North America
+  mpn: GRM188R60J226MEA0D
+- ref: C25
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C26
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C27
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C28
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C29
+  value: 10uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R60J106ME15D
+- ref: C3
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: JMK105C6105KV-F
+- ref: C30
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C31
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C32
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C33
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C34
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: JMK105C6105KV-F
+- ref: C35
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: JMK105C6105KV-F
+- ref: C36
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: JMK105C6105KV-F
+- ref: C37
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: JMK105C6105KV-F
+- ref: C4
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C46
+  value: 4.7uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R61A475MEAAD
+- ref: C47
+  value: 4.7uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R61A475MEAAD
+- ref: C48
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C49
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C5
+  value: 10pF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03C100JA3GNNC
+- ref: C50
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C51
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C52
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C53
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C54
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C55
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C56
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C57
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C58
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C59
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C6
+  value: 10uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R60J106ME15D
+  decouples: U1
+- ref: C60
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C61
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C62
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C63
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C64
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C65
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C66
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C67
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C68
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C69
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C7
+  value: 10uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R60J106ME15D
+  decouples: U2
+- ref: C70
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C71
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C74
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C75
+  value: 100nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03A104KQ3NNNC
+- ref: C76
+  value: 10nF
+  footprint: '0201'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL03B103KP3NNNC
+- ref: C77
+  value: 4.7uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R61A475MEAAD
+- ref: C8
+  value: 10uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R60J106ME15D
+- ref: C9
+  value: 10uF
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R60J106ME15D
+- ref: D1
+  value: multicolor LED
+  footprint: 0404LED_RGB
+  manufacturer: OSRAM Opto Semiconductors Inc.
+  mpn: LRTB R48G-P9Q7-1+R7S5-26+N5P-68-ZB
+- ref: D2
+  value: multicolor LED
+  footprint: 0404LED_RGB
+  manufacturer: OSRAM Opto Semiconductors Inc.
+  mpn: LRTB R48G-P9Q7-1+R7S5-26+N5P-68-ZB
+- ref: FB1
+  value: 600ohm
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: BLM15AG601SN1D
+- ref: FB2
+  value: 600ohm
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: BLM15AG601SN1D
+- ref: FB3
+  value: 600ohm
+  footprint: '0402'
+  manufacturer: Murata Electronics North America
+  mpn: BLM15AG601SN1D
+- ref: J1
+  value: 1x12 header
+  footprint: Feather_PinHeader
+  mpn: DNP
+- ref: J2
+  value: 1x16 header
+  footprint: Feather_PinHeader
+  mpn: DNP
+- ref: J3
+  value: USB-C
+  footprint: USB-C
+  manufacturer: GCT
+  mpn: USB4105-GF-A
+- ref: J4
+  value: MicroSd
+  footprint: molex_microsd_1040310811
+  mpn: '1040310811'
+  manufacturer: Molex
+- ref: J5
+  value: JST
+  footprint: JST_PH_B2B-PH-SM4-TB
+  mpn: S2B-PH-SM4-TB(LF)(SN)
+  manufacturer: JST Sales America Inc.
+- ref: J6
+  value: 1x5 header
+  footprint: 1X5
+  mpn: DNP
+- ref: L1
+  value: 2.2uH
+  footprint: 0805
+  manufacturer: Murata Electronics
+  mpn: LQM21PN2R2NGCD
+- ref: L2
+  value: 2.2uH
+  footprint: 0805
+  manufacturer: Murata Electronics
+  mpn: LQM21PN2R2NGCD
+- ref: L3
+  value: 2.2uH
+  footprint: 0805
+  manufacturer: Murata Electronics
+  mpn: LQM21PN2R2NGCD
+- ref: OSC1
+  value: KC2520B48.0000C10E00
+  footprint: Oscilator
+  mpn: ECS-2520MV-480-BN-TR
+  manufacturer: ECS Inc.
+- ref: R1
+  value: 1kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-071KL
+- ref: R10
+  value: 56.2kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0756K2L
+  pulldown: U5.14
+- ref: R11
+  value: 3.09kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-073K09L
+  pulldown: U5.12
+- ref: R12
+  value: 4.32kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-074K32L
+  pulldown: U5.16
+- ref: R13
+  value: 51ohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0751RL
+- ref: R14
+  value: 5.1kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-075K1L
+  pulldown: J3.B5
+- ref: R15
+  value: 120kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-07120KL
+  pulldown: U1.1
+- ref: R16
+  value: 5.1kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-075K1L
+  pulldown: J3.A5
+- ref: R17
+  value: 100kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-07100KL
+- ref: R19
+  value: 240ohm
+  footprint: '0402'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0402FR-07240RL
+- ref: R2
+  value: 1kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-071KL
+  pulldown: ECP5_VREF
+- ref: R20
+  value: 1.5kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-071K5L
+- ref: R21
+  value: 20ohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0720RL
+- ref: R22
+  value: 1.5kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-071K5L
+- ref: R23
+  value: 4.7kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-074K7L
+- ref: R24
+  value: 3.57kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-073K57L
+- ref: R25
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+  pullup: EN
+- ref: R26
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+  pulldown: U5.1
+- ref: R27
+  value: 4.7kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-074K7L
+  pulldown: JTAG_TCK
+- ref: R28
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+- ref: R29
+  value: 20ohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0720RL
+- ref: R3
+  value: 51ohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0751RL
+- ref: R30
+  value: 4.7kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-074K7L
+- ref: R31
+  value: 1.5kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-071K5L
+- ref: R32
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+  pullup: U9.16
+- ref: R33
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+  pulldown: U9.16
+- ref: R34
+  value: 150kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-07150KL
+- ref: R35
+  value: 120kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-07120KL
+  pulldown: U2.1
+- ref: R37
+  value: 360kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-07360KL
+- ref: R38
+  value: 82kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0782KL
+  pulldown: U7.1
+- ref: R39
+  value: 4.7kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-074K7L
+- ref: R4
+  value: 4.7kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-074K7L
+- ref: R40
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+- ref: R41
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+- ref: R42
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+- ref: R43
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+- ref: R44
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+- ref: R45
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+  pulldown: ADC_SENSE_HI
+- ref: R46
+  value: 5.1kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-075K1L
+- ref: R48
+  value: 51ohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0751RL
+- ref: R49
+  value: 51ohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0751RL
+- ref: R5
+  value: 51ohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0751RL
+- ref: R50
+  value: 51ohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0751RL
+- ref: R51
+  value: 51ohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0751RL
+- ref: R6
+  value: 51ohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0751RL
+- ref: R7
+  value: 10kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-0710KL
+- ref: R8
+  value: 4.7kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-074K7L
+- ref: R9
+  value: 3.57kohm
+  footprint: '0201'
+  manufacturer: "\u200EYageo\u200E"
+  mpn: RC0201FR-073K57L
+  pulldown: U5.15
+- ref: SW1
+  value: tactile switch
+  footprint: PTS_810_SMT_Switch
+  mpn: PTS810 SJM 250 SMTR LFS
+  manufacturer: C&K
+- ref: U1
+  value: TLV62569DRL
+  footprint: SOT-563
+  manufacturer: Texas Instruments
+  mpn: TLV62569DRLR
+- ref: U10
+  value: NCP115-2.5
+  footprint: Texas_X2SON-4
+  mpn: NCP115CMX250TCG
+  manufacturer: ON Semiconductor
+- ref: U2
+  value: TLV62569DRL
+  footprint: SOT-563
+  manufacturer: Texas Instruments
+  mpn: TLV62569DRLR
+- ref: U3
+  value: LFE5U-25F-8MG285C
+  footprint: csBGA285
+  mpn: LFE5U-25F-8MG285C
+  manufacturer: Lattice Semiconductor Corporation
+- ref: U4
+  value: MT41K64M16TW-107_J
+  footprint: BGA-96
+  mpn: MT41K64M16TW-107:J TR
+  manufacturer: Micron Technology Inc.
+- ref: U5
+  value: BQ24232
+  footprint: QFN-16-1EP
+  mpn: BQ24232RGTR
+  manufacturer: Texas Instruments
+- ref: U6
+  value: W25Q128JVP
+  footprint: WSON-8-1EP
+  mpn: W25Q128JVPIQ
+  manufacturer: Winbond Electronics
+- ref: U7
+  value: TLV62569DRL
+  footprint: SOT-563
+  manufacturer: Texas Instruments
+  mpn: TLV62569DRLR
+- ref: U9
+  value: 74HC4067BQ
+  footprint: Texas_RGY_R-PVQFN-N24_EP2.05x3.1mm
+  manufacturer: Nexperia USA Inc.
+  mpn: 74HC4067BQ\\,118
+nets:
+- name: /DRAM/RAM_VDD
+  pins:
+  - C21.1
+  - C23.1
+  - C30.1
+  - C32.1
+  - C34.1
+  - C36.1
+  - FB2.1
+  - U4.B2
+  - U4.D9
+  - U4.G7
+  - U4.K2
+  - U4.K8
+  - U4.N1
+  - U4.N9
+  - U4.R1
+  - U4.R9
+- name: /DRAM/RAM_VDDQ
+  pins:
+  - C22.1
+  - C24.1
+  - C31.1
+  - C33.1
+  - C35.1
+  - C37.1
+  - FB3.1
+  - U4.A1
+  - U4.A8
+  - U4.C1
+  - U4.C9
+  - U4.D2
+  - U4.E9
+  - U4.F1
+  - U4.H2
+  - U4.H9
+- name: /DRAM/RAM_ZQ
+  pins: [R19.1, U4.L8]
+- name: /IO/A0
+  pins: [J2.5, R48.1, U9.8]
+- name: /IO/A1
+  pins: [J2.6, R49.1, U9.7]
+- name: /IO/A2
+  pins: [J2.7, R50.1, U9.6]
+- name: /IO/A3
+  pins: [J2.8, R51.1, U9.5]
+- name: /IO/A4
+  pins: [J2.9, R6.1, U9.4]
+- name: /IO/A5
+  pins: [J2.10, R3.1, U9.3]
+- name: /IO/AREF
+  pins: [C71.1, J2.3, U9.2]
+- name: /IO/_USB_D_N
+  pins: [J3.A7, J3.B7, R29.2]
+- name: /IO/_USB_D_P
+  pins: [J3.A6, J3.B6, R21.1]
+- name: ADC_CTRL0
+  pins: [R46.1, U3.G1]
+- name: ADC_CTRL1
+  pins: [U3.F1, U9.15]
+- name: ADC_MUX0
+  pins: [U3.F4, U9.10]
+- name: ADC_MUX1
+  pins: [U3.F3, U9.11]
+- name: ADC_MUX2
+  pins: [U3.F2, U9.14]
+- name: ADC_MUX3
+  pins: [U3.H1, U9.13]
+- name: ADC_SENSE_HI
+  pins: [R44.2, R45.2, U3.H3]
+- name: ADC_SENSE_LO
+  pins: [C28.1, R46.2, U3.G3]
+- name: ECP5_VREF
+  pins:
+  - C1.1
+  - C19.1
+  - C2.1
+  - C20.1
+  - C25.1
+  - C26.1
+  - C3.1
+  - C4.1
+  - R1.2
+  - R2.1
+  - U3.B4
+  - U3.C15
+  - U3.H15
+  - U4.H1
+  - U4.M8
+- name: EN
+  pins:
+  - J1.2
+  - R18.1
+  - R25.1
+  - R36.1
+  - U1.5
+  - U10.3
+  - U2.5
+  - U7.5
+- name: FPGA_RESET
+  pins: [J2.1, R39.1, U3.T15, U3.V17]
+- name: GND
+  pins:
+  - C1.2
+  - C11.1
+  - C12.2
+  - C13.2
+  - C14.1
+  - C15.1
+  - C16.1
+  - C17.1
+  - C19.2
+  - C2.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.2
+  - C27.2
+  - C28.2
+  - C29.1
+  - C3.2
+  - C30.2
+  - C31.2
+  - C32.2
+  - C33.2
+  - C34.2
+  - C35.2
+  - C36.2
+  - C37.2
+  - C4.2
+  - C46.2
+  - C47.2
+  - C48.2
+  - C49.2
+  - C50.2
+  - C51.2
+  - C52.2
+  - C53.2
+  - C54.2
+  - C55.2
+  - C56.2
+  - C57.2
+  - C58.2
+  - C59.2
+  - C6.1
+  - C60.2
+  - C61.2
+  - C62.2
+  - C63.2
+  - C64.2
+  - C65.2
+  - C66.2
+  - C67.2
+  - C68.2
+  - C69.2
+  - C7.1
+  - C70.1
+  - C71.2
+  - C74.2
+  - C75.2
+  - C76.2
+  - C77.2
+  - C8.1
+  - C9.1
+  - J2.16
+  - J2.4
+  - J3.A1
+  - J3.A12
+  - J3.B1
+  - J3.B12
+  - J3.S1
+  - J4.6
+  - J4.MP
+  - J5.1
+  - J5.MP
+  - J6.5
+  - OSC1.2
+  - R10.1
+  - R11.1
+  - R12.1
+  - R14.2
+  - R15.2
+  - R16.2
+  - R19.2
+  - R2.2
+  - R26.1
+  - R27.1
+  - R33.2
+  - R35.2
+  - R38.2
+  - R45.1
+  - R9.1
+  - SW1.1
+  - U1.2
+  - U10.2
+  - U2.2
+  - U3.B16
+  - U3.B3
+  - U3.E10
+  - U3.E11
+  - U3.E12
+  - U3.E14
+  - U3.E5
+  - U3.E7
+  - U3.E8
+  - U3.E9
+  - U3.F10
+  - U3.F11
+  - U3.F12
+  - U3.F13
+  - U3.F14
+  - U3.F5
+  - U3.F6
+  - U3.F7
+  - U3.F8
+  - U3.F9
+  - U3.G10
+  - U3.G11
+  - U3.G12
+  - U3.G13
+  - U3.G17
+  - U3.G2
+  - U3.G6
+  - U3.G7
+  - U3.G8
+  - U3.G9
+  - U3.H10
+  - U3.H11
+  - U3.H12
+  - U3.H13
+  - U3.H6
+  - U3.H7
+  - U3.H8
+  - U3.H9
+  - U3.J10
+  - U3.J11
+  - U3.J12
+  - U3.J13
+  - U3.J6
+  - U3.J7
+  - U3.J8
+  - U3.J9
+  - U3.K10
+  - U3.K11
+  - U3.K12
+  - U3.K13
+  - U3.K14
+  - U3.K5
+  - U3.K6
+  - U3.K7
+  - U3.K8
+  - U3.K9
+  - U3.L10
+  - U3.L11
+  - U3.L12
+  - U3.L13
+  - U3.L14
+  - U3.L15
+  - U3.L16
+  - U3.L17
+  - U3.L2
+  - U3.L5
+  - U3.L6
+  - U3.L7
+  - U3.L8
+  - U3.L9
+  - U3.M10
+  - U3.M11
+  - U3.M12
+  - U3.M13
+  - U3.M6
+  - U3.M7
+  - U3.M8
+  - U3.M9
+  - U3.N10
+  - U3.N11
+  - U3.N12
+  - U3.N7
+  - U3.N8
+  - U3.N9
+  - U3.P10
+  - U3.P12
+  - U3.P5
+  - U3.P6
+  - U3.P8
+  - U3.R1
+  - U3.R10
+  - U3.R2
+  - U3.R3
+  - U3.T1
+  - U3.T10
+  - U3.T11
+  - U3.T12
+  - U3.T16
+  - U3.T2
+  - U3.T3
+  - U3.T4
+  - U3.T5
+  - U3.T6
+  - U3.T7
+  - U3.T8
+  - U3.T9
+  - U3.U1
+  - U3.U10
+  - U3.U11
+  - U3.U12
+  - U3.U14
+  - U3.U2
+  - U3.U3
+  - U3.U4
+  - U3.U5
+  - U3.U6
+  - U3.U7
+  - U3.U8
+  - U3.U9
+  - U3.V10
+  - U3.V15
+  - U3.V4
+  - U3.V5
+  - U3.V6
+  - U3.V7
+  - U3.V8
+  - U3.V9
+  - U4.A9
+  - U4.B1
+  - U4.B3
+  - U4.B9
+  - U4.D1
+  - U4.D8
+  - U4.E1
+  - U4.E2
+  - U4.E8
+  - U4.F9
+  - U4.G1
+  - U4.G9
+  - U4.J2
+  - U4.J8
+  - U4.M1
+  - U4.M9
+  - U4.P1
+  - U4.P9
+  - U4.T1
+  - U4.T9
+  - U5.17
+  - U5.4
+  - U5.6
+  - U5.8
+  - U6.4
+  - U7.2
+  - U9.12
+  - U9.20
+  - U9.21
+  - U9.22
+  - U9.9
+- name: IO_0
+  pins: [J2.14, U3.N17]
+- name: IO_1
+  pins: [J2.15, U3.M18]
+- name: IO_10
+  pins: [J1.7, U3.B8]
+- name: IO_11
+  pins: [J1.6, U3.A8]
+- name: IO_12
+  pins: [J1.5, U3.H2]
+- name: IO_13
+  pins: [J1.4, U3.J2]
+- name: IO_5
+  pins: [J1.10, U3.B10]
+- name: IO_6
+  pins: [J1.9, U3.B9]
+- name: IO_9
+  pins: [J1.8, U3.C8]
+- name: IO_A0
+  pins: [R48.2, U3.L4]
+- name: IO_A1
+  pins: [R49.2, U3.N3]
+- name: IO_A2
+  pins: [R50.2, U3.N4]
+- name: IO_A3
+  pins: [R51.2, U3.H4]
+- name: IO_A4
+  pins: [R6.2, U3.G4]
+- name: IO_A5
+  pins: [R3.2, U3.T17]
+- name: IO_MISO
+  pins: [J2.13, U3.N15]
+- name: IO_MOSI
+  pins: [J2.12, U3.N16]
+- name: IO_SCK
+  pins: [J2.11, U3.R17]
+- name: IO_SCL
+  pins: [J1.11, U3.C9]
+- name: IO_SDA
+  pins: [J1.12, U3.C10]
+- name: JTAG_TCK
+  pins: [J6.4, R27.2, U3.U13]
+- name: JTAG_TDI
+  pins: [J6.2, U3.T13]
+- name: JTAG_TDO
+  pins: [J6.3, U3.V14]
+- name: JTAG_TMS
+  pins: [J6.1, U3.V13]
+- name: LED_B
+  pins: [R24.1, U3.J3]
+- name: LED_G
+  pins: [R23.1, U3.M3]
+- name: LED_R
+  pins: [R22.1, U3.K4]
+- name: Net-(C10-Pad1)
+  pins: [C10.1, R34.1, R35.1, U2.1]
+- name: Net-(C18-Pad1)
+  pins: [C18.1, R37.1, R38.1, U7.1]
+- name: Net-(C27-Pad1)
+  pins: [C27.1, R13.1, R5.1]
+- name: Net-(C29-Pad2)
+  pins: [C29.2, C70.2, FB1.1, J4.4]
+- name: Net-(C5-Pad1)
+  pins: [C5.1, R15.1, R17.1, U1.1]
+- name: Net-(D1-Pad2)
+  pins: [D1.2, R22.2]
+- name: Net-(D1-Pad3)
+  pins: [D1.3, R23.2]
+- name: Net-(D1-Pad4)
+  pins: [D1.4, R24.2]
+- name: Net-(D2-Pad2)
+  pins: [D2.2, R8.2]
+- name: Net-(D2-Pad3)
+  pins: [D2.3, R7.2]
+- name: Net-(J3-PadA5)
+  pins: [J3.A5, R16.1]
+- name: Net-(J3-PadB5)
+  pins: [J3.B5, R14.1]
+- name: Net-(L1-Pad1)
+  pins: [L1.1, U1.4]
+- name: Net-(L2-Pad1)
+  pins: [L2.1, U2.4]
+- name: Net-(L3-Pad1)
+  pins: [L3.1, U7.4]
+- name: Net-(R10-Pad2)
+  pins: [R10.2, U5.14]
+- name: Net-(R11-Pad2)
+  pins: [R11.2, U5.12]
+- name: Net-(R12-Pad2)
+  pins: [R12.2, U5.16]
+- name: Net-(R26-Pad2)
+  pins: [R26.2, U5.1]
+- name: Net-(R32-Pad2)
+  pins: [R32.2, R33.1, U9.16]
+- name: Net-(R44-Pad1)
+  pins: [R44.1, U9.1]
+- name: Net-(R7-Pad1)
+  pins: [R7.1, U5.7]
+- name: Net-(R8-Pad1)
+  pins: [R8.1, U5.9]
+- name: Net-(R9-Pad2)
+  pins: [R9.2, U5.15]
+- name: P1.1V
+  pins:
+  - C15.2
+  - C17.2
+  - C48.1
+  - C5.2
+  - C50.1
+  - C52.1
+  - C54.1
+  - C56.1
+  - C57.1
+  - C58.1
+  - C59.1
+  - C60.1
+  - C61.1
+  - L1.2
+  - R17.2
+  - U3.D10
+  - U3.D11
+  - U3.D8
+  - U3.D9
+  - U3.J14
+  - U3.J15
+  - U3.J4
+  - U3.J5
+  - U3.M15
+  - U3.M4
+  - U3.P11
+  - U3.P7
+  - U3.P9
+  - U9.17
+- name: P1.35V
+  pins:
+  - C10.2
+  - C62.1
+  - C64.1
+  - C66.1
+  - C68.1
+  - C8.2
+  - C9.2
+  - FB2.2
+  - FB3.2
+  - L2.2
+  - R1.1
+  - R34.2
+  - R4.1
+  - U3.B18
+  - U3.C6
+  - U3.D17
+  - U3.G14
+  - U3.G5
+  - U3.H14
+  - U3.H5
+  - U3.K15
+  - U3.K16
+  - U3.K17
+  - U3.M14
+  - U3.N14
+  - U9.19
+- name: P2.5V
+  pins:
+  - C47.1
+  - C49.1
+  - C51.1
+  - C53.1
+  - C55.1
+  - U10.1
+  - U3.E13
+  - U3.E6
+  - U3.N6
+  - U3.P13
+  - U9.18
+- name: P3.3V
+  pins:
+  - C14.2
+  - C16.2
+  - C18.2
+  - C46.1
+  - C63.1
+  - C65.1
+  - C67.1
+  - C69.1
+  - C74.1
+  - C75.1
+  - D1.1
+  - FB1.2
+  - J2.2
+  - L3.2
+  - OSC1.1
+  - OSC1.4
+  - R28.1
+  - R30.2
+  - R31.2
+  - R37.2
+  - R39.2
+  - R40.1
+  - R41.1
+  - R42.1
+  - R43.1
+  - U10.4
+  - U3.D12
+  - U3.D7
+  - U3.M5
+  - U3.N13
+  - U3.N5
+  - U3.P14
+  - U3.T14
+  - U6.8
+  - U9.23
+  - U9.24
+- name: PUSB_VBUS
+  pins:
+  - C77.1
+  - J1.3
+  - J3.A4
+  - J3.A9
+  - J3.B4
+  - J3.B9
+  - U5.13
+- name: QSPI_D2
+  pins: [U3.R18, U6.3]
+- name: QSPI_D3
+  pins: [U3.N18, U6.7]
+- name: RAM_A0
+  pins: [U3.C4, U4.N3]
+- name: RAM_A1
+  pins: [U3.D2, U4.P7]
+- name: RAM_A10
+  pins: [U3.A7, U4.L7]
+- name: RAM_A11
+  pins: [U3.C2, U4.R7]
+- name: RAM_A12
+  pins: [U3.B6, U4.N7]
+- name: RAM_A13
+  pins: [U3.C1, U4.T3]
+- name: RAM_A14
+  pins: [U3.A2, U4.T7]
+- name: RAM_A15
+  pins: [U3.C7, U4.M7]
+- name: RAM_A2
+  pins: [U3.D3, U4.P3]
+- name: RAM_A3
+  pins: [U3.A3, U4.N2]
+- name: RAM_A4
+  pins: [U3.A4, U4.P8]
+- name: RAM_A5
+  pins: [U3.D4, U4.P2]
+- name: RAM_A6
+  pins: [U3.C3, U4.R8]
+- name: RAM_A7
+  pins: [U3.B2, U4.R2]
+- name: RAM_A8
+  pins: [U3.B1, U4.T8]
+- name: RAM_A9
+  pins: [U3.D1, U4.R3]
+- name: RAM_BA0
+  pins: [U3.D6, U4.M2]
+- name: RAM_BA1
+  pins: [U3.B7, U4.N8]
+- name: RAM_BA2
+  pins: [U3.A6, U4.M3]
+- name: RAM_CAS#
+  pins: [U3.D13, U4.K3]
+- name: RAM_CK+
+  pins: [R5.2, U3.J18, U4.J7]
+- name: RAM_CK-
+  pins: [R13.2, U3.K18, U4.K7]
+- name: RAM_CKE
+  pins: [U3.D18, U4.K9]
+- name: RAM_CS#
+  pins: [U3.A12, U4.L2]
+- name: RAM_D0
+  pins: [U3.C17, U4.E3]
+- name: RAM_D1
+  pins: [U3.D15, U4.F7]
+- name: RAM_D10
+  pins: [U3.G15, U4.C8]
+- name: RAM_D11
+  pins: [U3.F15, U4.C2]
+- name: RAM_D12
+  pins: [U3.J16, U4.A7]
+- name: RAM_D13
+  pins: [U3.C18, U4.A2]
+- name: RAM_D14
+  pins: [U3.H16, U4.B8]
+- name: RAM_D15
+  pins: [U3.F18, U4.A3]
+- name: RAM_D2
+  pins: [U3.B17, U4.F2]
+- name: RAM_D3
+  pins: [U3.C16, U4.F8]
+- name: RAM_D4
+  pins: [U3.A15, U4.H3]
+- name: RAM_D5
+  pins: [U3.B13, U4.H8]
+- name: RAM_D6
+  pins: [U3.A17, U4.G2]
+- name: RAM_D7
+  pins: [U3.A13, U4.H7]
+- name: RAM_D8
+  pins: [U3.F17, U4.D7]
+- name: RAM_D9
+  pins: [U3.F16, U4.C3]
+- name: RAM_LDM
+  pins: [U3.G16, U4.E7]
+- name: RAM_LDQS+
+  pins: [U3.G18, U4.C7]
+- name: RAM_LDQS-
+  pins: [U3.H17, U4.B7]
+- name: RAM_ODT
+  pins: [U3.C13, U4.K1]
+- name: RAM_RAS#
+  pins: [U3.C12, U4.J3]
+- name: RAM_RESET#
+  pins: [U3.L18, U4.T2]
+- name: RAM_UDM
+  pins: [U3.D16, U4.D3]
+- name: RAM_UDQS+
+  pins: [U3.B15, U4.F3]
+- name: RAM_UDQS-
+  pins: [U3.A16, U4.G3]
+- name: RAM_WE#
+  pins: [U3.B12, U4.L3]
+- name: REF_CLK
+  pins: [OSC1.3, U3.A9]
+- name: SD0_CD
+  pins: [J4.9, R28.2, U3.L1]
+- name: SD0_CLK
+  pins: [J4.5, U3.K1]
+- name: SD0_CMD
+  pins: [J4.3, R42.2, U3.K2]
+- name: SD0_DAT0
+  pins: [J4.7, R41.2, U3.J1]
+- name: SD0_DAT1
+  pins: [J4.8, R40.2, U3.K3]
+- name: SD0_DAT2
+  pins: [J4.1, R43.2, U3.L3]
+- name: SD0_DAT3
+  pins: [J4.2, U3.M1]
+- name: SPI_CONFIG_MISO
+  pins: [U3.T18, U6.2]
+- name: SPI_CONFIG_MOSI
+  pins: [U3.U18, U6.5]
+- name: SPI_CONFIG_SCK
+  pins: [R31.1, U3.U16, U6.6]
+- name: SPI_CONFIG_SS
+  pins: [R30.1, U3.U17, U6.1]
+- name: USB_D+
+  pins: [R20.1, R21.2, U3.N1]
+- name: USB_D-
+  pins: [R29.1, U3.M2]
+- name: USB_PULLUP
+  pins: [R20.2, U3.N2]
+- name: USER_BUTTON
+  pins: [C76.1, R4.2, SW1.2, U3.J17]
+- name: VBATT
+  pins: [C13.1, J1.1, J5.2, R32.1, U5.2, U5.3]
+- name: VSYS
+  pins:
+  - C11.2
+  - C12.1
+  - C6.2
+  - C7.2
+  - D2.1
+  - R18.2
+  - R25.2
+  - R36.2
+  - U1.3
+  - U2.3
+  - U5.10
+  - U5.11
+  - U5.5
+  - U7.3
+positions:
+- ref: C1
+  x: 163.9
+  y: 97.16
+  rot: 90.0
+  side: back
+- ref: C10
+  x: 150.89
+  y: 100.5
+  rot: 90.0
+- ref: C11
+  x: 144.53
+  y: 109.83
+- ref: C12
+  x: 147.33
+  y: 104.22
+- ref: C13
+  x: 141.91
+  y: 102.91
+  rot: 90.0
+- ref: C14
+  x: 149.46
+  y: 106.36
+  rot: 180.0
+- ref: C15
+  x: 146.38
+  y: 110.82
+- ref: C16
+  x: 149.46
+  y: 107.23
+  rot: 180.0
+- ref: C17
+  x: 146.38
+  y: 109.93
+- ref: C18
+  x: 146.78
+  y: 108.31
+- ref: C19
+  x: 164.03
+  y: 103.4
+  rot: 180.0
+  side: back
+- ref: C2
+  x: 180.95
+  y: 97.85
+- ref: C20
+  x: 161.0
+  y: 102.9
+  rot: 180.0
+  side: back
+- ref: C21
+  x: 168.8
+  y: 108.4
+  rot: 180.0
+- ref: C22
+  x: 176.0
+  y: 110.2
+  rot: 180.0
+- ref: C23
+  x: 170.4
+  y: 110.2
+- ref: C24
+  x: 179.0
+  y: 110.2
+- ref: C25
+  x: 161.25
+  y: 105.0
+  rot: 270.0
+  side: back
+- ref: C26
+  x: 164.35
+  y: 106.75
+  rot: 270.0
+  side: back
+- ref: C27
+  x: 179.51
+  y: 102.38
+  rot: 90.0
+  side: back
+- ref: C28
+  x: 162.7
+  y: 97.11
+  rot: 90.0
+  side: back
+- ref: C29
+  x: 144.93
+  y: 94.5
+  rot: 270.0
+  side: back
+- ref: C3
+  x: 180.94
+  y: 98.66
+- ref: C30
+  x: 169.17
+  y: 108.92
+  rot: 180.0
+  side: back
+- ref: C31
+  x: 178.97
+  y: 108.42
+  rot: 90.0
+  side: back
+- ref: C32
+  x: 178.78
+  y: 99.99
+  rot: 90.0
+  side: back
+- ref: C33
+  x: 171.66
+  y: 109.29
+  rot: 180.0
+  side: back
+- ref: C34
+  x: 177.71
+  y: 108.36
+  rot: 270.0
+  side: back
+- ref: C35
+  x: 179.51
+  y: 106.01
+  side: back
+- ref: C36
+  x: 171.71
+  y: 96.61
+  rot: 90.0
+  side: back
+- ref: C37
+  x: 169.16
+  y: 108.1
+  rot: 180.0
+  side: back
+- ref: C4
+  x: 165.29
+  y: 97.16
+  rot: 90.0
+  side: back
+- ref: C46
+  x: 153.84
+  y: 110.08
+  rot: 90.0
+- ref: C47
+  x: 156.69
+  y: 109.88
+  rot: 270.0
+- ref: C48
+  x: 161.87
+  y: 100.18
+  rot: 270.0
+  side: back
+- ref: C49
+  x: 163.2
+  y: 100.22
+  rot: 270.0
+  side: back
+- ref: C5
+  x: 149.13
+  y: 108.23
+  rot: 180.0
+- ref: C50
+  x: 161.2
+  y: 101.45
+  rot: 90.0
+  side: back
+- ref: C51
+  x: 158.2
+  y: 99.55
+  rot: 90.0
+  side: back
+- ref: C52
+  x: 159.8
+  y: 97.4
+  rot: 180.0
+  side: back
+- ref: C53
+  x: 158.2
+  y: 103.4
+  rot: 270.0
+  side: back
+- ref: C54
+  x: 160.1
+  y: 100.9
+  side: back
+- ref: C55
+  x: 163.65
+  y: 102.4
+  rot: 180.0
+  side: back
+- ref: C56
+  x: 160.15
+  y: 99.9
+  side: back
+- ref: C57
+  x: 159.7
+  y: 102.5
+  rot: 90.0
+  side: back
+- ref: C58
+  x: 161.2
+  y: 99.95
+  rot: 270.0
+  side: back
+- ref: C59
+  x: 164.56
+  y: 99.95
+  side: back
+- ref: C6
+  x: 151.51
+  y: 107.23
+  rot: 180.0
+- ref: C60
+  x: 162.65
+  y: 101.4
+  rot: 180.0
+  side: back
+- ref: C61
+  x: 161.7
+  y: 98.2
+  rot: 90.0
+  side: back
+- ref: C62
+  x: 162.54
+  y: 100.19
+  rot: 270.0
+  side: back
+- ref: C63
+  x: 158.2
+  y: 98.4
+  rot: 180.0
+  side: back
+- ref: C64
+  x: 163.1
+  y: 104.85
+  rot: 180.0
+  side: back
+- ref: C65
+  x: 160.55
+  y: 98.9
+  side: back
+- ref: C66
+  x: 158.95
+  y: 104.55
+  rot: 270.0
+  side: back
+- ref: C67
+  x: 157.42
+  y: 101.4
+  side: back
+- ref: C68
+  x: 163.53
+  y: 98.92
+  rot: 180.0
+  side: back
+- ref: C69
+  x: 163.07
+  y: 108.4
+  rot: 270.0
+  side: back
+- ref: C7
+  x: 151.46
+  y: 103.88
+  rot: 90.0
+- ref: C70
+  x: 141.08
+  y: 95.42
+  rot: 270.0
+  side: back
+- ref: C71
+  x: 147.2
+  y: 111.45
+  side: back
+- ref: C74
+  x: 169.85
+  y: 102.05
+  rot: 90.0
+- ref: C75
+  x: 168.63
+  y: 100.75
+- ref: C76
+  x: 183.5
+  y: 103.35
+- ref: C77
+  x: 145.96
+  y: 102.06
+- ref: C8
+  x: 149.91
+  y: 98.41
+  rot: 270.0
+- ref: C9
+  x: 150.88
+  y: 98.41
+  rot: 270.0
+- ref: D1
+  x: 137.05
+  y: 97.23
+  rot: 270.0
+- ref: D2
+  x: 137.05
+  y: 108.67
+  rot: 270.0
+- ref: FB1
+  x: 145.95
+  y: 94.5
+  rot: 90.0
+  side: back
+- ref: FB2
+  x: 168.2
+  y: 110.0
+  rot: 270.0
+- ref: FB3
+  x: 173.9
+  y: 110.2
+  rot: 180.0
+- ref: J1
+  x: 164.99
+  y: 92.79
+- ref: J2
+  x: 159.91
+  y: 113.11
+- ref: J3
+  x: 136.61
+  y: 102.95
+  rot: 270.0
+- ref: J4
+  x: 141.37
+  y: 102.88
+  rot: 90.0
+  side: back
+- ref: J5
+  x: 145.21
+  y: 98.88
+- ref: J6
+  x: 154.11
+  y: 97.38
+- ref: L1
+  x: 149.01
+  y: 110.13
+  rot: 180.0
+- ref: L2
+  x: 149.51
+  y: 101.36
+  rot: 90.0
+- ref: L3
+  x: 146.94
+  y: 107.13
+- ref: OSC1
+  x: 168.18
+  y: 102.78
+  rot: 90.0
+- ref: R1
+  x: 180.94
+  y: 99.44
+  rot: 180.0
+- ref: R10
+  x: 144.11
+  y: 101.88
+- ref: R11
+  x: 147.08
+  y: 103.46
+  rot: 180.0
+- ref: R12
+  x: 142.16
+  y: 101.03
+- ref: R13
+  x: 178.31
+  y: 103.45
+  rot: 180.0
+  side: back
+- ref: R14
+  x: 138.61
+  y: 108.28
+- ref: R15
+  x: 150.19
+  y: 108.61
+  rot: 90.0
+- ref: R16
+  x: 138.63
+  y: 97.63
+- ref: R17
+  x: 149.13
+  y: 108.95
+  rot: 180.0
+- ref: R19
+  x: 172.9
+  y: 99.97
+  side: back
+- ref: R2
+  x: 180.93
+  y: 100.15
+- ref: R20
+  x: 159.0
+  y: 95.35
+  rot: 180.0
+- ref: R21
+  x: 157.48
+  y: 95.35
+- ref: R22
+  x: 140.11
+  y: 95.97
+  rot: 180.0
+- ref: R23
+  x: 140.11
+  y: 96.77
+  rot: 180.0
+- ref: R24
+  x: 140.11
+  y: 97.57
+  rot: 180.0
+- ref: R25
+  x: 142.96
+  y: 107.45
+  rot: 90.0
+- ref: R26
+  x: 142.16
+  y: 101.67
+- ref: R27
+  x: 157.38
+  y: 100.41
+  rot: 180.0
+  side: back
+- ref: R28
+  x: 145.73
+  y: 96.12
+  rot: 180.0
+  side: back
+- ref: R29
+  x: 157.48
+  y: 94.72
+  rot: 180.0
+- ref: R3
+  x: 156.58
+  y: 103.4
+  rot: 270.0
+  side: back
+- ref: R30
+  x: 156.5
+  y: 107.92
+- ref: R31
+  x: 163.76
+  y: 108.41
+  rot: 90.0
+  side: back
+- ref: R32
+  x: 147.44
+  y: 100.71
+  rot: 270.0
+- ref: R33
+  x: 147.44
+  y: 102.12
+  rot: 270.0
+- ref: R34
+  x: 151.61
+  y: 100.5
+  rot: 90.0
+- ref: R35
+  x: 150.88
+  y: 102.0
+  rot: 270.0
+- ref: R37
+  x: 146.78
+  y: 109.03
+- ref: R38
+  x: 145.74
+  y: 108.68
+  rot: 270.0
+- ref: R39
+  x: 156.5
+  y: 108.54
+- ref: R4
+  x: 183.5
+  y: 102.6
+  rot: 180.0
+- ref: R40
+  x: 143.71
+  y: 94.38
+  rot: 270.0
+  side: back
+- ref: R41
+  x: 143.11
+  y: 94.38
+  rot: 270.0
+  side: back
+- ref: R42
+  x: 142.51
+  y: 94.38
+  rot: 270.0
+  side: back
+- ref: R43
+  x: 141.91
+  y: 94.38
+  rot: 270.0
+  side: back
+- ref: R44
+  x: 158.84
+  y: 96.91
+  rot: 90.0
+  side: back
+- ref: R45
+  x: 158.21
+  y: 96.91
+  rot: 90.0
+  side: back
+- ref: R46
+  x: 157.28
+  y: 96.88
+  rot: 90.0
+  side: back
+- ref: R48
+  x: 156.11
+  y: 100.78
+  rot: 90.0
+  side: back
+- ref: R49
+  x: 155.96
+  y: 98.88
+  rot: 90.0
+  side: back
+- ref: R5
+  x: 178.31
+  y: 102.78
+  rot: 180.0
+  side: back
+- ref: R50
+  x: 156.53
+  y: 98.88
+  rot: 90.0
+  side: back
+- ref: R51
+  x: 157.11
+  y: 98.88
+  rot: 90.0
+  side: back
+- ref: R6
+  x: 155.9
+  y: 103.4
+  rot: 270.0
+  side: back
+- ref: R7
+  x: 142.26
+  y: 106.52
+  rot: 180.0
+- ref: R8
+  x: 146.57
+  y: 105.36
+  rot: 270.0
+- ref: R9
+  x: 142.16
+  y: 100.38
+- ref: SW1
+  x: 181.9
+  y: 106.45
+  rot: 90.0
+- ref: U1
+  x: 151.63
+  y: 109.11
+  rot: 270.0
+- ref: U10
+  x: 155.22
+  y: 110.06
+  rot: 180.0
+- ref: U2
+  x: 149.71
+  y: 104.0
+  rot: 180.0
+- ref: U3
+  x: 161.2
+  y: 100.9
+  rot: 270.0
+- ref: U4
+  x: 174.85
+  y: 102.4
+  rot: 180.0
+- ref: U5
+  x: 144.28
+  y: 104.47
+- ref: U6
+  x: 163.88
+  y: 108.65
+- ref: U7
+  x: 144.31
+  y: 108.0
+  rot: 90.0
+- ref: U9
+  x: 158.81
+  y: 108.71
+  rot: 90.0
+  side: back
+copper_pours:
+- net: /DRAM/RAM_VDD
+  layers: [In3.Cu]
+- net: /DRAM/RAM_VDDQ
+  layers: [In3.Cu]
+- net: ECP5_VREF
+  layers: [In3.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In4.Cu]
+- net: P1.1V
+  layers: [F.Cu, In3.Cu]
+- net: P1.35V
+  layers: [F.Cu, In3.Cu]
+- net: P2.5V
+  layers: [In3.Cu]
+- net: P3.3V
+  layers: [F.Cu, In3.Cu]
+- net: PUSB_VBUS
+  layers: [In3.Cu]
+- net: VBATT
+  layers: [F.Cu, In3.Cu]
+- net: VSYS
+  layers: [F.Cu, In3.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+  keepout: true

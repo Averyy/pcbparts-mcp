@@ -1,0 +1,736 @@
+name: T41 SDR Main Board
+slug: t41-sdr-main-board
+source: Greg-R/t41_2_main_board
+format: kicad7
+description: 'Teensy 4.1 (600MHz ARM) SDR transceiver main board: Si5351 synthesis, audio codec'
+tags: [audio, ham-radio, rf-sdr]
+key_ics: [Teensy4.1]
+outline:
+  width_mm: 100.0
+  height_mm: 100.0
+design_rules:
+  layers: 2
+  min_trace: 0.152mm
+  min_clearance: 0.152mm
+  min_drill: 0.3mm
+  min_via: 1mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '1206'
+- ref: C10
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C11
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C12
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C13
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C14
+  value: 2.2nF
+  footprint: '1206'
+- ref: C15
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C16
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C17
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C18
+  value: 100nF
+  footprint: '1206'
+- ref: C19
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C2
+  value: 10uF
+  footprint: '1206'
+- ref: C3
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C4
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C5
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C6
+  value: 100nF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C7
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C8
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: C9
+  value: 470pF
+  footprint: '1206'
+  description: Unpolarized capacitor, small symbol
+- ref: FB1
+  value: ferrite bead
+  footprint: '1206'
+  description: Ferrite bead, small symbol
+- ref: FB10
+  value: ferrite bead
+  footprint: '1206'
+  description: Ferrite bead, small symbol
+- ref: FB2
+  value: ferrite bead
+  footprint: '1206'
+  description: Ferrite bead, small symbol
+- ref: FB3
+  value: ferrite bead
+  footprint: '1206'
+  description: Ferrite bead, small symbol
+- ref: FB4
+  value: ferrite bead
+  footprint: '1206'
+  description: Ferrite bead, small symbol
+- ref: FB5
+  value: ferrite bead
+  footprint: '1206'
+  description: Ferrite bead, small symbol
+- ref: FB6
+  value: ferrite bead
+  footprint: '1206'
+  description: Ferrite bead, small symbol
+- ref: FB7
+  value: ferrite bead
+  footprint: '1206'
+  description: Ferrite bead, small symbol
+- ref: FB8
+  value: ferrite bead
+  footprint: '1206'
+  description: Ferrite bead, small symbol
+- ref: FB9
+  value: ferrite bead
+  footprint: '1206'
+  description: Ferrite bead, small symbol
+- ref: IC1
+  value: 74HC125D
+  footprint: SOIC-14
+- ref: J1
+  value: 2x8 header
+  footprint: IDC-Header
+- ref: J10
+  value: SJ-3524-SMT
+  footprint: CUI_SJ-3524-SMT
+  manufacturer: CUI Inc
+- ref: J11
+  value: 1x2 header
+  footprint: 1X2
+  mpn: B2B-XH-A(LF)(SN)
+  manufacturer: JST Sales America Inc.
+  description: CONN HEADER VERT 2POS 2.5MM
+- ref: J13
+  value: 1x3 header
+  footprint: 1X3
+  mpn: B3B-XH-A(LF)(SN)
+  manufacturer: JST Sales America Inc.
+  description: CONN HEADER VERT 3POS 2.5MM
+- ref: J15
+  value: 1x4 header
+  footprint: 1X4
+  mpn: B4B-XH-A(LF)(SN)
+  manufacturer: JST Sales America Inc.
+  description: CONN HEADER VERT 4POS 2.5MM
+- ref: J16
+  value: 1x3 header
+  footprint: 1X3
+  mpn: B3B-XH-A(LF)(SN)
+  manufacturer: JST Sales America Inc.
+  description: CONN HEADER VERT 3POS 2.5MM
+- ref: J2
+  value: 2x5 header
+  footprint: IDC-Header
+- ref: J3
+  value: 2x5 header
+  footprint: IDC-Header
+- ref: J4
+  value: 2x5 header
+  footprint: IDC-Header
+- ref: J5
+  value: 2x5 header
+  footprint: IDC-Header
+- ref: J6
+  value: SJ-3524-SMT
+  footprint: CUI_SJ-3524-SMT
+  manufacturer: CUI Inc
+- ref: J7
+  value: SJ-3524-SMT
+  footprint: CUI_SJ-3524-SMT
+  manufacturer: CUI Inc
+- ref: J8
+  value: SJ-3524-SMT
+  footprint: CUI_SJ-3524-SMT
+  manufacturer: CUI Inc
+- ref: J9
+  value: 1x3 header
+  footprint: 1X3
+  mpn: B3B-XH-A(LF)(SN)
+  manufacturer: JST Sales America Inc.
+  description: CONN HEADER VERT 3POS 2.5MM
+- ref: R1
+  value: 470ohm
+  footprint: '1206'
+  description: Resistor, US symbol
+- ref: R10
+  value: 0ohm
+  footprint: '1206'
+  description: Resistor, US symbol
+- ref: R11
+  value: 0ohm
+  footprint: '1206'
+  description: Resistor, US symbol
+- ref: R2
+  value: 100ohm
+  footprint: '1206'
+  description: Resistor, US symbol
+- ref: R3
+  value: 100ohm
+  footprint: '1206'
+  description: Resistor, US symbol
+- ref: R4
+  value: 100ohm
+  footprint: '1206'
+  description: Resistor, US symbol
+- ref: R5
+  value: 1kohm
+  footprint: '1206'
+  description: Resistor, US symbol
+- ref: R6
+  value: 4.7kohm
+  footprint: '1206'
+  description: Resistor, US symbol
+- ref: R7
+  value: 4.7kohm
+  footprint: '1206'
+  description: Resistor, US symbol
+- ref: R8
+  value: 1kohm
+  footprint: '1206'
+  description: Resistor, US symbol
+- ref: U1
+  value: Teensy4.1
+  footprint: Teensy41
+- ref: U4
+  value: P82B715DR
+  footprint: SOIC-8
+nets:
+- name: /12V_FIL
+  pins: [C4.1, FB1.2]
+- name: /12V_IN
+  pins: [FB1.1, J1.Pin_5, J1.Pin_6, J3.Pin_7]
+- name: /15MFILTER
+  pins: [C13.2, FB9.2, U1.29_TX7]
+- name: /20MFILTER
+  pins: [C11.2, FB7.1, U1.28_RX7]
+- name: /3V3
+  pins: [J13.3, U1.3V3@46]
+- name: /3_3V_FIL
+  pins:
+  - C1.1
+  - C17.1
+  - C6.1
+  - FB3.2
+  - IC1.14
+  - J16.1
+  - R5.2
+  - R6.2
+  - R7.2
+  - R8.2
+  - U2.3.3@5
+  - U2.3.3@7
+  - U3.A3V3
+  - U3.VIN
+  - U3.XSMT
+  - U4.VCC
+- name: /3_3V_IN
+  pins: [FB3.1, J1.Pin_13, J1.Pin_14, J3.Pin_8]
+- name: /40MFILTER
+  pins: [C12.2, FB8.2, U1.31_CTX3]
+- name: /5V_FIL
+  pins: [C5.1, FB2.2, J16.3, U1.VIN, U2.5V]
+- name: /5V_IN
+  pins: [FB2.1, J1.Pin_10, J1.Pin_9]
+- name: /80MFILTER
+  pins: [C10.2, FB6.1, U1.30_CRX3]
+- name: /BCK
+  pins: [R4.2, U1.21_A7_RX5_BCLK1, U3.BCK]
+- name: /CLK0
+  pins: [IC1.9, U1.13_SCK_LED]
+- name: /CLK0_OUT
+  pins: [IC1.8, J5.Pin_3]
+- name: /CS
+  pins: [IC1.1, IC1.10, IC1.4, J5.Pin_6, U1.10_CS_MQSR]
+- name: /DIN
+  pins: [U1.32_OUT1B, U3.DIN]
+- name: /DISP_PWR
+  pins: [C18.1, J16.2, J5.Pin_7, J5.Pin_8]
+- name: /KEY1
+  pins: [C7.2, FB4.1, U1.36_CS]
+- name: /KEY2
+  pins: [C8.2, FB5.1, U1.35_TX8]
+- name: /LRCLK
+  pins: [R2.2, U1.20_A6_TX5_LRCLK1, U3.LRCK]
+- name: /MCLK
+  pins: [R3.2, U1.23_A9_CRX1_MCLK1]
+- name: /MIC_AUDIO
+  pins: [J11.1, J8.2]
+- name: /MISO
+  pins: [IC1.6, U1.12_MISO_MQSL]
+- name: /MISO_IN
+  pins: [IC1.5, J5.Pin_5]
+- name: /MOSI
+  pins: [IC1.2, U1.11_MOSI_CTX1]
+- name: /MOSI_OUT
+  pins: [IC1.3, J5.Pin_4]
+- name: /MUTE
+  pins: [C16.2, J15.1, U1.38_CS1_IN1]
+- name: /OUT
+  pins: [U1.6_OUT1D, U2.OUT]
+- name: /PTT
+  pins: [J8.3, U1.37_CS]
+- name: /RESET
+  pins: [J1.Pin_1, U1.0_RX1_CRX2_CS1]
+- name: /SCL
+  pins: [R6.1, U1.19_A5_SCL, U4.SY]
+- name: /SCL_OUT1
+  pins: [J1.Pin_4, R11.2, R8.1, U4.LY]
+- name: /SDA
+  pins: [R7.1, U1.18_A4_SDA, U4.SX]
+- name: /SDA_OUT1
+  pins: [J1.Pin_3, R10.1, R5.1, U4.LX]
+- name: /SWITCH_MATRIX
+  pins: [C3.1, J13.1, U1.39_MISO1_OUT1A]
+- name: /TXRX
+  pins: [C15.1, C19.1, FB10.2, J1.Pin_2, U1.22_A8_CTX1]
+- name: GND
+  pins:
+  - C1.2
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C15.2
+  - C16.1
+  - C17.2
+  - C18.2
+  - C19.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.1
+  - C8.1
+  - C9.1
+  - IC1.7
+  - J1.Pin_11
+  - J1.Pin_12
+  - J1.Pin_15
+  - J1.Pin_16
+  - J1.Pin_7
+  - J1.Pin_8
+  - J10.1
+  - J11.2
+  - J13.2
+  - J15.2
+  - J15.4
+  - J2.Pin_1
+  - J2.Pin_2
+  - J3.Pin_9
+  - J4.Pin_1
+  - J4.Pin_2
+  - J5.Pin_10
+  - J5.Pin_9
+  - J6.1
+  - J8.1
+  - U1.GND@1
+  - U1.GND@34
+  - U1.GND@47
+  - U2.FMY
+  - U2.GND@14
+  - U2.GND@4
+  - U2.GND@8
+  - U2.MD0
+  - U2.MD1
+  - U3.AGND@2
+  - U3.AGND@4
+  - U3.DEMP
+  - U3.FLT
+  - U3.FMT
+  - U3.GND
+  - U3.SCK
+  - U4.GND
+- name: Net-(C14-Pad2)
+  pins: [C14.2, C2.1, R1.2]
+- name: Net-(C2-Pad2)
+  pins: [C2.2, C9.2, J15.3]
+- name: Net-(FB4-Pad2)
+  pins: [FB4.2, J10.2]
+- name: Net-(FB5-Pad2)
+  pins: [FB5.2, J10.3]
+- name: Net-(J2-Pin_5)
+  pins: [J2.Pin_5, U1.2_OUT2]
+- name: Net-(J2-Pin_6)
+  pins: [J2.Pin_6, U1.4_BCLK2]
+- name: Net-(J2-Pin_7)
+  pins: [J2.Pin_7, U1.3_LRCLK2]
+- name: Net-(J2-Pin_8)
+  pins: [J2.Pin_8, U1.5_IN2]
+- name: Net-(J3-Pin_1)
+  pins: [FB6.2, J3.Pin_1]
+- name: Net-(J3-Pin_10)
+  pins: [FB10.1, J3.Pin_10]
+- name: Net-(J3-Pin_2)
+  pins: [FB8.1, J3.Pin_2]
+- name: Net-(J3-Pin_3)
+  pins: [FB7.2, J3.Pin_3]
+- name: Net-(J3-Pin_4)
+  pins: [FB9.1, J3.Pin_4]
+- name: Net-(J3-Pin_5)
+  pins: [J3.Pin_5, R10.2]
+- name: Net-(J3-Pin_6)
+  pins: [J3.Pin_6, R11.1]
+- name: Net-(J4-Pin_5)
+  pins: [J4.Pin_5, U1.16_A2_RX4_SCL1]
+- name: Net-(J4-Pin_6)
+  pins: [J4.Pin_6, U1.14_A0_TX3_SPDIF_OUT]
+- name: Net-(J4-Pin_7)
+  pins: [J4.Pin_7, U1.17_A3_TX4_SDA1]
+- name: Net-(J4-Pin_8)
+  pins: [J4.Pin_8, U1.15_A1_RX3_SPDIF_IN]
+- name: Net-(J7-Pad1)
+  pins: [J7.1, J9.2]
+- name: Net-(J7-Pad2)
+  pins: [J7.2, J9.1]
+- name: Net-(J7-Pad3)
+  pins: [J7.3, J9.3]
+- name: Net-(U2-BCK)
+  pins: [R4.1, U2.BCK]
+- name: Net-(U2-LRC)
+  pins: [R2.1, U2.LRC]
+- name: Net-(U2-L_IN)
+  pins: [J6.2, U2.L_IN]
+- name: Net-(U2-R_IN)
+  pins: [J6.3, U2.R_IN]
+- name: Net-(U2-SCK)
+  pins: [R3.1, U2.SCK]
+- name: Net-(U3-LROUT)
+  pins: [R1.1, U3.LROUT]
+positions:
+- ref: C1
+  x: 178.33
+  y: 104.99
+  rot: -90.0
+- ref: C10
+  x: 114.22
+  y: 117.23
+- ref: C11
+  x: 121.67
+  y: 112.66
+  side: back
+- ref: C12
+  x: 118.75
+  y: 95.77
+  rot: 180.0
+- ref: C13
+  x: 121.59
+  y: 101.98
+  rot: 180.0
+  side: back
+- ref: C14
+  x: 154.1
+  y: 135.06
+  rot: -90.0
+- ref: C15
+  x: 104.14
+  y: 96.91
+  rot: 180.0
+  side: back
+- ref: C16
+  x: 138.56
+  y: 136.49
+- ref: C17
+  x: 138.1
+  y: 111.39
+  rot: 90.0
+- ref: C18
+  x: 186.87
+  y: 92.24
+  rot: 90.0
+- ref: C19
+  x: 120.37
+  y: 120.49
+- ref: C2
+  x: 149.74
+  y: 136.54
+  rot: 180.0
+- ref: C3
+  x: 190.6
+  y: 124.8
+  rot: 180.0
+- ref: C4
+  x: 114.99
+  y: 124.14
+  rot: 90.0
+- ref: C5
+  x: 114.99
+  y: 129.63
+  rot: 90.0
+- ref: C6
+  x: 114.99
+  y: 137.5
+  rot: -90.0
+- ref: C7
+  x: 120.19
+  y: 91.5
+  rot: 90.0
+- ref: C8
+  x: 121.03
+  y: 86.75
+  rot: 180.0
+- ref: C9
+  x: 144.15
+  y: 136.54
+- ref: FB1
+  x: 110.16
+  y: 125.87
+- ref: FB10
+  x: 104.06
+  y: 100.47
+  side: back
+- ref: FB2
+  x: 110.16
+  y: 130.95
+- ref: FB3
+  x: 110.21
+  y: 136.03
+- ref: FB4
+  x: 115.55
+  y: 90.06
+  rot: 180.0
+- ref: FB5
+  x: 115.62
+  y: 86.75
+  rot: 180.0
+- ref: FB6
+  x: 114.28
+  y: 113.93
+  rot: 180.0
+- ref: FB7
+  x: 121.59
+  y: 109.36
+  rot: 180.0
+  side: back
+- ref: FB8
+  x: 115.7
+  y: 98.95
+- ref: FB9
+  x: 121.54
+  y: 105.55
+  rot: 180.0
+  side: back
+- ref: IC1
+  x: 180.8
+  y: 97.5
+  rot: 180.0
+- ref: J1
+  x: 100.0
+  y: 120.79
+- ref: J10
+  x: 100.62
+  y: 94.12
+- ref: J11
+  x: 117.55
+  y: 79.95
+- ref: J13
+  x: 192.07
+  y: 121.25
+  rot: 180.0
+  side: back
+- ref: J15
+  x: 139.99
+  y: 131.56
+- ref: J16
+  x: 131.4
+  y: 134.62
+  rot: 90.0
+- ref: J2
+  x: 192.57
+  y: 69.56
+  rot: 180.0
+  side: back
+- ref: J3
+  x: 112.7
+  y: 108.09
+  rot: 90.0
+  side: back
+- ref: J4
+  x: 180.57
+  y: 57.66
+  rot: -90.0
+  side: back
+- ref: J5
+  x: 190.07
+  y: 101.33
+  side: back
+- ref: J6
+  x: 100.61
+  y: 59.82
+- ref: J7
+  x: 100.61
+  y: 71.25
+- ref: J8
+  x: 100.61
+  y: 82.68
+- ref: J9
+  x: 118.42
+  y: 72.96
+  rot: 90.0
+- ref: R1
+  x: 157.0
+  y: 131.96
+  rot: -90.0
+- ref: R10
+  x: 109.17
+  y: 112.69
+  rot: 90.0
+- ref: R11
+  x: 106.25
+  y: 115.17
+  rot: -90.0
+  side: back
+- ref: R2
+  x: 146.01
+  y: 72.12
+  rot: 180.0
+- ref: R3
+  x: 146.01
+  y: 75.4
+  rot: 180.0
+- ref: R4
+  x: 145.96
+  y: 67.32
+  rot: 180.0
+- ref: R5
+  x: 128.71
+  y: 116.34
+  rot: 180.0
+- ref: R6
+  x: 142.61
+  y: 119.39
+- ref: R7
+  x: 128.71
+  y: 119.39
+  rot: 180.0
+- ref: R8
+  x: 142.61
+  y: 116.34
+- ref: U1
+  x: 164.67
+  y: 96.91
+  rot: 90.0
+- ref: U4
+  x: 135.62
+  y: 117.87
+copper_pours:
+- net: /12V_FIL
+  layers: [F.Cu]
+- net: /12V_IN
+  layers: [F.Cu]
+- net: /15MFILTER
+  layers: [B.Cu]
+- net: /20MFILTER
+  layers: [B.Cu, F.Cu]
+- net: /3V3
+  layers: [F.Cu]
+- net: /3_3V_FIL
+  layers: [B.Cu, F.Cu]
+- net: /3_3V_IN
+  layers: [B.Cu, F.Cu]
+- net: /40MFILTER
+  layers: [F.Cu]
+- net: /5V_FIL
+  layers: [B.Cu, F.Cu]
+- net: /5V_IN
+  layers: [F.Cu]
+- net: /80MFILTER
+  layers: [F.Cu]
+- net: /BCK
+  layers: [B.Cu, F.Cu]
+- net: /CLK0
+  layers: [F.Cu]
+- net: /CLK0_OUT
+  layers: [F.Cu]
+- net: /CS
+  layers: [B.Cu, F.Cu]
+- net: /DIN
+  layers: [F.Cu]
+- net: /DISP_PWR
+  layers: [F.Cu]
+- net: /KEY1
+  layers: [F.Cu]
+- net: /KEY2
+  layers: [F.Cu]
+- net: /LRCLK
+  layers: [B.Cu, F.Cu]
+- net: /MCLK
+  layers: [B.Cu, F.Cu]
+- net: /MIC_AUDIO
+  layers: [F.Cu]
+- net: /MISO
+  layers: [F.Cu]
+- net: /MISO_IN
+  layers: [F.Cu]
+- net: /MOSI
+  layers: [F.Cu]
+- net: /MOSI_OUT
+  layers: [F.Cu]
+- net: /MUTE
+  layers: [B.Cu, F.Cu]
+- net: /OUT
+  layers: [B.Cu, F.Cu]
+- net: /PTT
+  layers: [F.Cu]
+- net: /RESET
+  layers: [F.Cu]
+- net: /SCL
+  layers: [F.Cu]
+- net: /SCL_OUT1
+  layers: [B.Cu, F.Cu]
+- net: /SDA
+  layers: [F.Cu]
+- net: /SDA_OUT1
+  layers: [B.Cu, F.Cu]
+- net: /SWITCH_MATRIX
+  layers: [F.Cu]
+- net: /TXRX
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu]
+  keepout: true

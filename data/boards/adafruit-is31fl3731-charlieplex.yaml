@@ -1,0 +1,233 @@
+name: Adafruit IS31FL3731 CharliePlex
+slug: adafruit-is31fl3731-charlieplex
+source: adafruit/Adafruit-IS31FL3731-CharliePlex-LED-Breakout-PCB
+format: eagle
+description: I2C LED matrix driver (IS31FL3731), charlieplexing
+tags: [display, led-driver]
+key_ics: [IS31FL3731]
+outline:
+  width_mm: 43.18
+  height_mm: 27.94
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 7mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+- ref: C3
+  value: 220nF
+  footprint: '0603'
+- ref: C4
+  value: 10uF
+  footprint: 0805
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: CONN1
+  value: STEMMA QT
+  footprint: JST_SH4
+  lcsc: C2845363
+- ref: CONN2
+  value: STEMMA QT
+  footprint: JST_SH4
+  lcsc: C2845363
+- ref: JP2
+  value: 1x13 header
+  footprint: 1X13
+- ref: JP4
+  value: 1x13 header
+  footprint: 1X13
+- ref: JP5
+  value: 1x7 header
+  footprint: 1X07
+- ref: R1
+  value: 20kohm
+  footprint: '0603'
+  pulldown: REXT
+- ref: R2
+  value: 20kohm
+  footprint: '0603'
+  pullup: SHUTDOWN
+- ref: R3
+  value: 20kohm
+  footprint: '0603'
+  pullup: SDA
+- ref: R4
+  value: 20kohm
+  footprint: '0603'
+  pullup: SCL
+- ref: R5
+  value: 20kohm
+  footprint: '0603'
+  pullup: INTB
+- ref: R6
+  value: 20kohm
+  footprint: '0603'
+  pulldown: ADDR
+- ref: U1
+  value: IS31FL3731
+  footprint: QFN28_4MM_0.4MM
+  description: IS31FL3731 PWM LED Matrix Driver
+nets:
+- name: ADDR
+  pins: [JP4.12, R6.2, U1.ADDR]
+- name: AUDIOIN
+  pins: [C3.2, JP4.13, JP5.5]
+- name: AUDIOIN_2
+  pins: [C3.1, U1.AUDIOIN]
+- name: CA1
+  pins: [JP4.1, U1.CA1]
+- name: CA2
+  pins: [JP4.2, U1.CA2]
+- name: CA3
+  pins: [JP4.3, U1.CA3]
+- name: CA4
+  pins: [JP4.4, U1.CA4]
+- name: CA5
+  pins: [JP4.5, U1.CA5]
+- name: CA6
+  pins: [JP4.6, U1.CA6]
+- name: CA7
+  pins: [JP4.7, U1.CA7]
+- name: CA8
+  pins: [JP4.8, U1.CA8]
+- name: CA9
+  pins: [JP4.9, U1.CA9]
+- name: CB1
+  pins: [JP2.5, U1.CB1]
+- name: CB2
+  pins: [JP2.6, U1.CB2]
+- name: CB3
+  pins: [JP2.7, U1.CB3]
+- name: CB4
+  pins: [JP2.8, U1.CB4]
+- name: CB5
+  pins: [JP2.9, U1.CB5]
+- name: CB6
+  pins: [JP2.10, U1.CB6]
+- name: CB7
+  pins: [JP2.11, U1.CB7]
+- name: CB8
+  pins: [JP2.12, U1.CB8]
+- name: CB9
+  pins: [JP2.13, U1.CB9]
+- name: C_FILT
+  pins: [C2.1, U1.C_FILT]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C4.2
+  - C5.2
+  - CONN1.G$1.GND
+  - CONN1.G$2.MT
+  - CONN1.G$3.MT
+  - CONN2.G$1.GND
+  - CONN2.G$2.MT
+  - CONN2.G$3.MT
+  - JP2.2
+  - JP5.2
+  - R1.1
+  - R6.1
+  - U1.GND
+- name: INTB
+  pins: [JP4.11, JP5.6, R5.1, U1.INTB]
+- name: REXT
+  pins: [R1.2, U1.R_EXT]
+- name: SCL
+  pins: [CONN1.G$1.SCL, CONN2.G$1.SCL, JP2.3, JP5.3, R4.1, U1.SCL]
+- name: SDA
+  pins: [CONN1.G$1.SDA, CONN2.G$1.SDA, JP2.4, JP5.4, R3.1, U1.SDA]
+- name: SHUTDOWN
+  pins: [JP4.10, JP5.7, R2.2, U1.SHUTDOWN]
+- name: VCC
+  pins:
+  - C1.1
+  - C4.1
+  - C5.1
+  - CONN1.G$1.V+
+  - CONN2.G$1.V+
+  - JP2.1
+  - JP5.1
+  - R2.1
+  - R3.2
+  - R4.2
+  - R5.2
+  - U1.VCC
+positions:
+- ref: C1
+  x: 33.15
+  y: 8.64
+  rot: 270.0
+- ref: C2
+  x: 17.91
+  y: 18.54
+  rot: 180.0
+- ref: C3
+  x: 35.69
+  y: 8.13
+  rot: 270.0
+- ref: C4
+  x: 6.6
+  y: 18.8
+  rot: 270.0
+- ref: C5
+  x: 26.16
+  y: 9.14
+- ref: CONN1
+  x: 40.01
+  y: 17.78
+  rot: 90.0
+- ref: CONN2
+  x: 40.01
+  y: 10.16
+  rot: 90.0
+- ref: JP2
+  x: 21.59
+  y: 26.67
+- ref: JP4
+  x: 21.59
+  y: 1.27
+- ref: JP5
+  x: 2.54
+  y: 13.97
+  rot: 270.0
+- ref: R1
+  x: 31.5
+  y: 13.72
+  rot: 180.0
+- ref: R2
+  x: 29.72
+  y: 9.65
+  rot: 270.0
+- ref: R3
+  x: 10.03
+  y: 18.8
+  rot: 90.0
+- ref: R4
+  x: 8.51
+  y: 18.8
+  rot: 90.0
+- ref: R5
+  x: 31.24
+  y: 9.65
+  rot: 90.0
+- ref: R6
+  x: 12.95
+  y: 16.76
+- ref: U1
+  x: 21.59
+  y: 13.97
+  rot: 135.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

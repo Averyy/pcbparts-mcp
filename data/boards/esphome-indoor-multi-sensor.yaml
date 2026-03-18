@@ -1,0 +1,1363 @@
+name: ESPHome Indoor Multi-Sensor
+slug: esphome-indoor-multi-sensor
+source: mikelawrence/esphome-indoor-multi-sensor-hardware
+format: kicad9
+description: 'Comprehensive multi-sensor: ESP32-S3-WROOM-1, supports 5 radar modules (HLK-LD2410/2450'
+tags: [audio, rf-sdr, robotics, sensors]
+key_ics: [ESP32-S3-WROOM-1, BME280, SCD40, SHT40]
+outline:
+  width_mm: 52.5
+  height_mm: 59.7
+design_rules:
+  layers: 4
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.3mm
+  min_via: 0.45mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KA5NQNC
+  description: Capacitor, 1uF, MLCC, 25V, X5R, 10%, 0402
+  lcsc: C52923
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C11
+  value: 22uF
+  footprint: '0603'
+  mpn: GRM188R60J226MEA0D
+  manufacturer: Murata
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+- ref: C12
+  value: 22uF
+  footprint: '0603'
+  mpn: GRM188R60J226MEA0D
+  manufacturer: Murata
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+- ref: C13
+  value: 22uF
+  footprint: '0603'
+  mpn: GRM188R60J226MEA0D
+  manufacturer: Murata
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+  decouples: U3
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C15
+  value: 22uF
+  footprint: '0603'
+  mpn: GRM188R60J226MEA0D
+  manufacturer: Murata
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+- ref: C16
+  value: 22uF
+  footprint: '0603'
+  mpn: GRM188R60J226MEA0D
+  manufacturer: Murata
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+  decouples: U5
+- ref: C17
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C18
+  value: 22uF
+  footprint: '0603'
+  mpn: GRM188R60J226MEA0D
+  manufacturer: Murata
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+- ref: C19
+  value: 22uF
+  footprint: '0603'
+  mpn: GRM188R60J226MEA0D
+  manufacturer: Murata
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+- ref: C2
+  value: 22uF
+  footprint: '0603'
+  mpn: GRM188R60J226MEA0D
+  manufacturer: Murata
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+- ref: C20
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+  decouples: U7
+- ref: C21
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C22
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KA5NQNC
+  description: Capacitor, 1uF, MLCC, 25V, X5R, 10%, 0402
+  lcsc: C52923
+- ref: C23
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C24
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C25
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KA5NQNC
+  description: Capacitor, 1uF, MLCC, 25V, X5R, 10%, 0402
+  lcsc: C52923
+- ref: C26
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KA5NQNC
+  description: Capacitor, 1uF, MLCC, 25V, X5R, 10%, 0402
+  lcsc: C52923
+- ref: C27
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KA5NQNC
+  description: Capacitor, 1uF, MLCC, 25V, X5R, 10%, 0402
+  lcsc: C52923
+- ref: C28
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C29
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C3
+  value: 22uF
+  footprint: '0603'
+  mpn: GRM188R60J226MEA0D
+  manufacturer: Murata
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+- ref: C30
+  value: 22uF
+  footprint: '0603'
+  mpn: GRM188R60J226MEA0D
+  manufacturer: Murata
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+- ref: C31
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KA5NQNC
+  description: Capacitor, 1uF, MLCC, 25V, X5R, 10%, 0402
+  lcsc: C52923
+- ref: C32
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C33
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C34
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KA5NQNC
+  description: Capacitor, 1uF, MLCC, 25V, X5R, 10%, 0402
+  lcsc: C52923
+- ref: C35
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C36
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KA5NQNC
+  description: Capacitor, 1uF, MLCC, 25V, X5R, 10%, 0402
+  lcsc: C52923
+- ref: C37
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KA5NQNC
+  description: Capacitor, 1uF, MLCC, 25V, X5R, 10%, 0402
+  lcsc: C52923
+- ref: C38
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C39
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+- ref: C4
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KA5NQNC
+  description: Capacitor, 1uF, MLCC, 25V, X5R, 10%, 0402
+  lcsc: C52923
+- ref: C40
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+- ref: C41
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+- ref: C5
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KA5NQNC
+  description: Capacitor, 1uF, MLCC, 25V, X5R, 10%, 0402
+  lcsc: C52923
+  decouples: U2
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+  decouples: U6
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B104KB54PNC
+  description: Capacitor, 100nF, MLCC, 50V, X7R, 10%, 0402
+  lcsc: C307331
+  decouples: U3
+- ref: C8
+  value: 22uF
+  footprint: '0603'
+  manufacturer: Murata
+  mpn: GRM188R60J226MEA0D
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+  decouples: U6
+- ref: C9
+  value: 22uF
+  footprint: '0603'
+  mpn: GRM188R60J226MEA0D
+  manufacturer: Murata
+  description: Capacitor, 22uF, MLCC, 6.3V, X5R, 20%, 0603
+  lcsc: C77042
+  decouples: U2
+- ref: D1
+  value: ESDA8P80-1U1M
+  footprint: TVS_ESDA25P35-1U1M
+  manufacturer: STMicroelectronics
+  mpn: ESDA8P80-1U1M
+  description: TVS, Unidirectional high power, QFN-2
+- ref: D2
+  value: ESDA8P80-1U1M
+  footprint: TVS_ESDA25P35-1U1M
+  manufacturer: STMicroelectronics
+  mpn: ESDA8P80-1U1M
+  description: TVS, Unidirectional high power, QFN-2
+- ref: D3
+  value: ESDA8P80-1U1M
+  footprint: TVS_ESDA25P35-1U1M
+  manufacturer: STMicroelectronics
+  mpn: ESDA8P80-1U1M
+  description: TVS, Unidirectional high power, QFN-2
+- ref: D4
+  value: NeoPixel_THT
+  footprint: LED_D5.0mm-4_RGB
+  manufacturer: Adafruit
+  mpn: '1938'
+  description: RGB LED with integrated controller, 5mm/8mm LED package
+- ref: J1
+  value: 1x6 header
+  footprint: JST_GH_BM06B-GHS-TBT
+  mpn: BM06B-GHS-TBT
+  manufacturer: JST
+  description: 6-Position, 1.25 mm pitch, Wire-to-Board connector
+  lcsc: C189892
+- ref: J2
+  value: USB-C
+  footprint: USB-C
+  manufacturer: Phoenix Contact
+  mpn: '1332645'
+  description: Connector, USB 2.0, 16P, Type-C, Receptacle
+- ref: J3
+  value: 1x5 header
+  footprint: 1X5
+  manufacturer: Samtec
+  mpn: CES-105-01-T-S
+- ref: J4
+  value: 1x5 header
+  footprint: 1X5
+  manufacturer: Samtec
+  mpn: RSM-105-02-S-S
+- ref: J5
+  value: 1x2 header
+  footprint: 1X2
+  manufacturer: Same Sky
+  mpn: CMS-251437-24SP-X8
+  description: Solder Holes for up to 24 ga wire
+- ref: J6
+  value: 2x4 header
+  footprint: 2X4
+  manufacturer: Molex
+  mpn: 79109-1003
+  description: Socket, 8 position, 2mm spacing, dual row, 02x04, SMT
+- ref: L1
+  value: 1uH
+  footprint: '1008'
+  mpn: DFE252012F-1R0M=P2
+  manufacturer: Murata
+  description: Inductor, 1uH, 3.3A, 20%, 1008
+  lcsc: C435392
+- ref: L2
+  value: 1uH
+  footprint: '1008'
+  mpn: DFE252012F-1R0M=P2
+  manufacturer: Murata
+  description: Inductor, 1uH, 3.3A, 20%, 1008
+  lcsc: C435392
+- ref: MK1
+  value: ICS-43434
+  footprint: InvenSense_ICS-43434-6
+  manufacturer: TDK InvenSense
+  mpn: ICS-43434
+  description: TDK InvenSense MEMS Microphone, 24-bit I2S, 65 dBA SNR, LGA-6
+- ref: Q1
+  value: MMBFJ201
+  footprint: SOT-23
+  manufacturer: Onsemi
+  mpn: MMBFJ201
+  description: 20mA min, 35V, 30mOhm max, 3-10V Vgs(off), N-Channel JFET, SOT-23
+  lcsc: C891687
+- ref: R1
+  value: 499Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW0402499KFKED
+  description: "Resistor, 499K\u03A9, 62.5mW, 1%, 0402"
+- ref: R10
+  value: 80mohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mpn: WSLP0603R0800FEB
+  description: "Current Sense Resistor, 80m\u03A9, 400mW, 1%, 75ppm, 0603"
+- ref: R11
+  value: 100Kohm
+  footprint: '0402'
+  mpn: CRCW0402100KFKED
+  manufacturer: Vishay / Dale
+  description: "Resistor, 100K\u03A9, 62.5mW, 1%, 0402"
+  pulldown: U3.GAIN_SLOT
+- ref: R12
+  value: 10Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW040210K0FKED
+  description: "Resistor, 10K\u03A9, 62.5mW, 1%, 0402"
+  pullup: BOOT
+- ref: R13
+  value: 10Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW040210K0FKED
+  description: "Resistor, 10K\u03A9, 62.5mW, 1%, 0402"
+  pullup: CHIP_PU
+- ref: R14
+  value: 4.7ohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW04024R70FKED
+  description: "Resistor, 4.7\u03A9, 62.5mW, 1%, 0402"
+- ref: R15
+  value: 64.9Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW040264K9FKED
+  description: "Resistor, 64.9K\u03A9, 62.5mW, 1%, 0402"
+- ref: R16
+  value: 100Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW0402100KFKED
+  description: "Resistor, 100K\u03A9, 62.5mW, 1%, 0402"
+  pulldown: U12.+@5
+- ref: R19
+  value: 5.1Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW04025K10FKED
+  description: "Resistor, 5.1K\u03A9, 62.5mW, 1%, 0402"
+  pulldown: J2.CC1
+- ref: R2
+  value: 100Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW0402100KFKED
+  description: "Resistor, 100K\u03A9, 62.5mW, 1%, 0402"
+  pulldown: U2.FB
+- ref: R20
+  value: 5.1Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW04025K10FKED
+  description: "Resistor, 5.1K\u03A9, 62.5mW, 1%, 0402"
+  pulldown: J2.CC2
+- ref: R21
+  value: 133Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW0402133KFKED
+  description: "Resistor, 133K\u03A9, 62.5mW, 1%, 0402"
+- ref: R3
+  value: 634Kohm
+  footprint: '0402'
+  mpn: CRCW0402634KFKED
+  manufacturer: Vishay / Dale
+  description: "Resistor, 634K\u03A9, 62.5mW, 1%, 0402"
+- ref: R4
+  value: 453Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW0402453KFKED
+  description: "Resistor, 453K\u03A9, 62.5mW, 1%, 0402"
+- ref: R5
+  value: 100Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW0402100KFKED
+  description: "Resistor, 100K\u03A9, 62.5mW, 1%, 0402"
+  pulldown: U5.FB
+- ref: R6
+  value: 5.1Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW04025K10FKED
+  description: "Resistor, 5.1K\u03A9, 62.5mW, 1%, 0402"
+  pullup: /SDA1
+- ref: R7
+  value: 5.1Kohm
+  footprint: '0402'
+  manufacturer: Vishay / Dale
+  mpn: CRCW04025K10FKED
+  description: "Resistor, 5.1K\u03A9, 62.5mW, 1%, 0402"
+  pullup: /SCL1
+- ref: R8
+  value: 68mohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mpn: WSLP0603R0680FEA
+  description: "Current Sense Resistor, 68m\u03A9, 400mW, 1%, 75ppm, 0603"
+- ref: R9
+  value: 150mohm
+  footprint: 0805
+  manufacturer: Vishay
+  mpn: WSL0805R1500FEA18
+  description: "Current Sense Resistor, 150m\u03A9, 250mW, 1%, 75ppm, 0805"
+- ref: SW1
+  value: BOOT
+  footprint: SW_SPST_B3U-1000P-B
+  mpn: B3U-1000P
+  manufacturer: Omron
+  description: Switch, SMD
+  lcsc: C231329
+- ref: SW2
+  value: RESET
+  footprint: SW_SPST_B3U-1000P-B
+  mpn: B3U-1000P
+  manufacturer: Omron
+  description: Switch, SMD
+  lcsc: C231329
+- ref: U1
+  value: SN74LV1T34DBV
+  footprint: SOT-23-5
+  manufacturer: Texas Instruments
+  mpn: SN74LV1T34DBV
+  description: IC, Single Power Supply, Single Buffer GATE, CMOS Logic, Level Shifter, SOT-23-5
+  lcsc: C100024
+- ref: U10
+  value: SCD41
+  footprint: Sensirion_SCD4x-1EP
+  mpn: SCD41-D-R2
+  manufacturer: Sensirion
+  description: Photoacoustic CO2 sensor, I2C, 2.4-5.5 V, High accuracy 400 - 5000 ppm
+- ref: U11
+  value: BMP581
+  footprint: BMP581
+  manufacturer: Bosch Sensortec
+  mpn: BMP581
+  description: Barometric Pressure Sensor, 24-bit, Low-power and Low-noise, SMD
+- ref: U12
+  value: MCP6042
+  footprint: MSOP-8
+  manufacturer: Microchip
+  mpn: MCP6042T-I/MS
+  description: Dual Operational Amplifiers, Rail-to-Rail Input/Output, MSOP-8
+  lcsc: C627438
+- ref: U13
+  value: ADS1115
+  footprint: TSSOP-10
+  manufacturer: Texas Instruments
+  mpn: ADS1115IDGS
+  description: Ultra-Small, Low-Power, I2C-Compatible, 860-SPS, 16-Bit ADCs With Internal
+  lcsc: C37593
+- ref: U14
+  value: SHT45
+  footprint: Sensirion_DFN-4
+  mpn: SHT45-AD1B-R2
+  manufacturer: Sensirion
+  description: "Digital Humidity and Temperature Sensor, \xB11%RH, \xB10.1\xB0C, I2C, 1.08-3.6V, 16bit"
+- ref: U15
+  value: EKMC1603111
+  footprint: EKMC163111
+  manufacturer: Panasonic
+  mpn: EKMC1603111
+  description: Passive Infrared (PIR) Motion Sensor, THT
+- ref: U16
+  value: TGS5141
+  footprint: '5141'
+  manufacturer: Figaro
+  mpn: TGS5141-P00
+  description: Carbon Monoxide Sensor, Long life, THT
+- ref: U17
+  value: DS18S20
+  footprint: TO-92
+  manufacturer: Maxim
+  mpn: DS18S20+
+  description: High-Precision 1-Wire Digital Thermometer TO-92
+- ref: U18
+  value: INA238
+  footprint: VSSOP-10
+  manufacturer: Texas Instruments
+  mpn: INA238AIDGSR
+  description: IC, 85V, 16-Bit, High-Precision Power Monitor With I2C Interface, VSSOP-10
+- ref: U19
+  value: INA238
+  footprint: VSSOP-10
+  manufacturer: Texas Instruments
+  mpn: INA238AIDGSR
+  description: IC, 85V, 16-Bit, High-Precision Power Monitor With I2C Interface, VSSOP-10
+- ref: U2
+  value: TLV62568DRL
+  footprint: SOT-6
+  manufacturer: Texas Instruments
+  mpn: TLV62568DRL
+  description: High Efficiency Synchronous Buck Converter, Adjustable Output 0.6V-5.5V, 1A
+  lcsc: C398372
+- ref: U3
+  value: MAX98357A
+  footprint: TQFN-16-1EP
+  mpn: MAX98357AETE
+  manufacturer: Maxim
+  description: Mono DAC with amplifier, I2S, PCM, TDM, 32-bit, 96khz, 3.2W, TQFP-16
+- ref: U4
+  value: TLV75533PDRV
+  footprint: VREG_TLV75533PDRVR
+  manufacturer: Texas Instruments
+  mpn: TLV75533PDRV
+  description: 500mA Low Dropout Voltage Regulator, Fixed Output 3.3V, WSON6
+- ref: U5
+  value: TLV62568DRL
+  footprint: SOT-6
+  manufacturer: Texas Instruments
+  mpn: TLV62568DRL
+  description: High Efficiency Synchronous Buck Converter, Adjustable Output 0.6V-5.5V, 1A
+  lcsc: C398372
+- ref: U6
+  value: ESP32-S3-WROOM-2-N32R16V
+  footprint: ESP32-S3-WROOM-2
+  manufacturer: Espressif
+  mpn: ESP32-S3-WROOM-2-N32R16V
+  description: RF Module, ESP32-S3 SoC, Wi-Fi 802.11b/g/n, Bluetooth, BLE, 32-bit, 3.3V
+- ref: U7
+  value: INA228
+  footprint: VSSOP-10
+  manufacturer: Texas Instruments
+  mpn: INA228AIDGSR
+  description: IC, 85-V, 20-Bit, Ultra-Precise Power-Energy-Charge Monitor With I2C Interface
+  lcsc: C2887910
+- ref: U8
+  value: TSL2591
+  footprint: AMS_TSL25911FN
+  manufacturer: AMS
+  mpn: TSL2591
+  description: Light to digital converter, 2.7 to 3.6V Vdd, DFN-6
+- ref: U9
+  value: SGP41
+  footprint: XCDR_SGP40-D-R4
+  mpn: SGP41-D-R4
+  manufacturer: Sensirion
+  description: Indoor Air Quality Sensor, MOx based, DFN-6
+nets:
+- name: +3.3V
+  pins:
+  - C20.2
+  - C3.1
+  - C4.1
+  - C6.2
+  - C8.1
+  - J3.Pin_1
+  - R12.1
+  - R13.1
+  - R6.1
+  - R7.1
+  - R8.2
+  - U18.Vin-
+  - U6.3V3
+  - U7.VS
+- name: +3.3VA
+  pins:
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.1
+  - C28.1
+  - C29.1
+  - C30.1
+  - C32.2
+  - C33.1
+  - C34.1
+  - C35.1
+  - C36.1
+  - C38.2
+  - C39.2
+  - C40.2
+  - C41.2
+  - J1.Pin_1
+  - J1.Pin_6
+  - MK1.VDD
+  - R10.2
+  - R14.1
+  - R15.1
+  - U10.VDD@19
+  - U10.VDD@7
+  - U11.CSB
+  - U11.SDO/ADR
+  - U11.VDD
+  - U11.VDDIO
+  - U12.V+
+  - U13.VDD
+  - U14.VDD
+  - U15.VCC
+  - U17.VDD
+  - U18.VS
+  - U19.VS
+  - U19.Vin-
+  - U8.VDD
+  - U9.VDDH
+- name: +5V
+  pins:
+  - C1.1
+  - C13.1
+  - C16.1
+  - C2.1
+  - C5.1
+  - C7.1
+  - C9.1
+  - D4.VDD
+  - J4.Pin_5
+  - J6.Pin_8
+  - R9.2
+  - U1.VCC
+  - U2.EN
+  - U2.VIN
+  - U3.VDD@7
+  - U3.VDD@8
+  - U5.EN
+  - U5.VIN
+  - U7.Vin-
+- name: /1WIRE
+  pins: [U17.DQ, U6.IO21]
+- name: /D+
+  pins: [D3.C, J2.D+@A6, J2.D+@B6, U6.USB_D+]
+- name: /D-
+  pins: [D2.C, J2.D-@A7, J2.D-@B7, U6.USB_D-]
+- name: /ESP32-S3/SPK+
+  pins: [J5.Pin_1, U3.OUTP]
+- name: /ESP32-S3/SPK-
+  pins: [J5.Pin_2, U3.OUTN]
+- name: /Environmental Sensors 2/CO_VREF
+  pins: [Q1.D, U12.+@3, U12.-@6, U12.7, U13.AIN0, U16.WE]
+- name: /PIR_OUT
+  pins: [U15.VOUT, U6.IO38]
+- name: /Power Supplies/+3.3VA_SRC
+  pins: [C14.2, C15.1, R10.1, U19.Vbus, U19.Vin+, U4.OUT]
+- name: /Power Supplies/+3.3V_SRC
+  pins:
+  - C17.2
+  - C18.1
+  - C19.1
+  - L2.2
+  - R4.1
+  - R8.1
+  - U18.Vbus
+  - U18.Vin+
+- name: /Power Supplies/+3.6V_SRC
+  pins:
+  - C10.2
+  - C11.1
+  - C12.1
+  - L1.2
+  - R1.1
+  - U4.EN
+  - U4.IN
+- name: /Power Supplies/SW_3V3
+  pins: [L2.1, U5.SW]
+- name: /Power Supplies/SW_3V6
+  pins: [L1.1, U2.SW]
+- name: /RDRA_OUT
+  pins: [J3.Pin_5, U6.IO16]
+- name: /RDRA_SIG1
+  pins: [J3.Pin_4, U6.IO17]
+- name: /RDRA_SIG2
+  pins: [J3.Pin_3, U6.IO18]
+- name: /RDRB_OUT
+  pins: [J4.Pin_1, U6.IO7]
+- name: /RDRB_RX
+  pins: [J4.Pin_3, J6.Pin_7, U6.IO5]
+- name: /RDRB_TX
+  pins: [J4.Pin_2, J6.Pin_5, U6.IO6]
+- name: /SCL1
+  pins:
+  - R7.2
+  - U10.SCL
+  - U11.SCK/SCL
+  - U13.SCL
+  - U14.SCL
+  - U18.SCL
+  - U19.A0
+  - U19.SCL
+  - U6.IO47
+  - U7.SCL
+  - U8.SCL
+  - U9.SCL
+- name: /SCL2
+  pins: [J1.Pin_4, U6.RXD0]
+- name: /SDA1
+  pins:
+  - R6.2
+  - U10.SDA
+  - U11.SDI/SDA
+  - U13.SDA
+  - U14.SDA
+  - U18.A0
+  - U18.SDA
+  - U19.SDA
+  - U6.IO48
+  - U7.SDA
+  - U8.SDA
+  - U9.SDA
+- name: /SDA2
+  pins: [J1.Pin_3, U6.TXD0]
+- name: /VBUS
+  pins:
+  - D1.C
+  - J2.VBUS@A4
+  - J2.VBUS@A9
+  - J2.VBUS@B4
+  - J2.VBUS@B9
+  - R9.1
+  - U7.Vbus
+  - U7.Vin+
+- name: BOOT
+  pins: [C21.2, R12.2, SW1.2, U6.IO0]
+- name: CHIP_PU
+  pins: [C22.1, R13.2, SW2.2, U6.EN]
+- name: GND
+  pins:
+  - C1.2
+  - C10.1
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.1
+  - C15.2
+  - C16.2
+  - C17.1
+  - C18.2
+  - C19.2
+  - C2.2
+  - C20.1
+  - C21.1
+  - C22.2
+  - C23.1
+  - C24.1
+  - C25.1
+  - C26.2
+  - C27.2
+  - C28.2
+  - C29.2
+  - C3.2
+  - C30.2
+  - C31.2
+  - C32.1
+  - C33.2
+  - C34.2
+  - C35.2
+  - C36.2
+  - C38.1
+  - C39.1
+  - C4.2
+  - C40.1
+  - C41.1
+  - C5.2
+  - C6.1
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.A
+  - D2.A
+  - D3.A
+  - D4.GND
+  - J1.MountPin@MP
+  - J1.Pin_2
+  - J1.Pin_5
+  - J2.GND@A1
+  - J2.GND@A12
+  - J2.GND@B1
+  - J2.GND@B12
+  - J2.SHIELD@S1
+  - J3.Pin_2
+  - J4.Pin_4
+  - J6.Pin_2
+  - MK1.GND
+  - MK1.LR
+  - Q1.G
+  - R11.1
+  - R16.2
+  - R19.2
+  - R2.2
+  - R20.2
+  - R5.2
+  - SW1.1
+  - SW2.1
+  - U1.GND
+  - U10.GND@20
+  - U10.GND@21
+  - U10.GND@6
+  - U11.VSS@3
+  - U11.VSS@8
+  - U11.VSS@9
+  - U12.V-
+  - U13.ADDR
+  - U13.AIN2
+  - U13.AIN3
+  - U13.GND
+  - U14.VSS
+  - U15.GND
+  - U17.GND
+  - U18.A1
+  - U18.GND
+  - U19.A1
+  - U19.GND
+  - U2.GND
+  - U3.GND@11
+  - U3.GND@15
+  - U3.GND@3
+  - U3.PAD
+  - U4.GND@3
+  - U4.GND@7
+  - U5.GND
+  - U6.GND@1
+  - U6.GND@40
+  - U6.GND@41
+  - U7.A0
+  - U7.A1
+  - U7.GND
+  - U8.GND
+  - U9.EP
+  - U9.NA
+  - U9.VSS
+- name: I2S1_BCLK
+  pins: [U3.BCLK, U6.IO11]
+- name: I2S1_DOUT
+  pins: [U3.DIN, U6.IO10]
+- name: I2S1_EN
+  pins: [R3.1, U6.IO9]
+- name: I2S1_WS
+  pins: [U3.LRCLK, U6.IO12]
+- name: I2S2_BCLK
+  pins: [MK1.SCK, U6.IO42]
+- name: I2S2_DIN
+  pins: [MK1.SD, U6.IO41]
+- name: I2S2_WS
+  pins: [MK1.WS, U6.IO40]
+- name: LED
+  pins: [U1.A, U6.IO8]
+- name: Net-(D4-DIN)
+  pins: [D4.DIN, U1.Y]
+- name: Net-(J2-CC1)
+  pins: [J2.CC1, R19.1]
+- name: Net-(J2-CC2)
+  pins: [J2.CC2, R20.1]
+- name: Net-(Q1-S)
+  pins: [C37.1, Q1.S, R21.1, U12.-@2, U16.CE@2]
+- name: Net-(U12B-+)
+  pins: [C31.1, R15.2, R16.1, U12.+@5]
+- name: Net-(U13-AIN1)
+  pins: [C37.2, R21.2, U12.1, U13.AIN1]
+- name: Net-(U2-FB)
+  pins: [R1.2, R2.1, U2.FB]
+- name: Net-(U3-GAIN_SLOT)
+  pins: [R11.2, U3.GAIN_SLOT]
+- name: Net-(U3-nSD_MODE)
+  pins: [R3.2, U3.nSD_MODE]
+- name: Net-(U5-FB)
+  pins: [R4.2, R5.1, U5.FB]
+- name: Net-(U9-VDD)
+  pins: [C27.1, R14.2, U9.VDD]
+positions:
+- ref: C1
+  x: 138.75
+  y: 35.67
+  rot: -90.0
+- ref: C10
+  x: 102.83
+  y: 45.08
+  rot: -90.0
+- ref: C11
+  x: 104.03
+  y: 44.95
+  rot: 90.0
+- ref: C12
+  x: 105.53
+  y: 44.95
+  rot: 90.0
+- ref: C13
+  x: 120.15
+  y: 45.7
+  rot: -90.0
+- ref: C14
+  x: 110.56
+  y: 46.25
+  rot: 180.0
+- ref: C15
+  x: 110.69
+  y: 45.06
+- ref: C16
+  x: 98.6
+  y: 52.68
+  rot: 90.0
+- ref: C17
+  x: 102.83
+  y: 52.83
+  rot: -90.0
+- ref: C18
+  x: 104.03
+  y: 52.7
+  rot: 90.0
+- ref: C19
+  x: 105.53
+  y: 52.7
+  rot: 90.0
+- ref: C2
+  x: 139.98
+  y: 35.55
+  rot: -90.0
+- ref: C20
+  x: 102.18
+  y: 61.24
+  rot: 180.0
+- ref: C21
+  x: 132.15
+  y: 63.78
+- ref: C22
+  x: 140.15
+  y: 63.78
+- ref: C23
+  x: 96.89
+  y: 65.72
+  rot: -90.0
+- ref: C24
+  x: 103.31
+  y: 66.24
+  rot: -90.0
+- ref: C25
+  x: 115.6
+  y: 66.25
+  rot: -90.0
+- ref: C26
+  x: 125.93
+  y: 65.94
+  rot: 90.0
+- ref: C27
+  x: 130.73
+  y: 66.66
+  rot: 90.0
+- ref: C28
+  x: 129.82
+  y: 71.56
+  rot: -90.0
+- ref: C29
+  x: 130.85
+  y: 71.56
+  rot: -90.0
+- ref: C3
+  x: 117.28
+  y: 36.54
+- ref: C30
+  x: 139.9
+  y: 72.05
+- ref: C31
+  x: 109.2
+  y: 74.85
+- ref: C32
+  x: 120.43
+  y: 74.85
+- ref: C33
+  x: 106.3
+  y: 75.8
+  rot: 180.0
+- ref: C34
+  x: 137.5
+  y: 76.13
+  rot: -90.0
+- ref: C35
+  x: 115.95
+  y: 79.9
+  rot: 90.0
+- ref: C36
+  x: 137.5
+  y: 81.42
+  rot: 90.0
+- ref: C37
+  x: 107.1
+  y: 84.65
+  rot: 180.0
+- ref: C38
+  x: 139.13
+  y: 87.28
+  rot: 180.0
+- ref: C39
+  x: 131.48
+  y: 91.31
+  rot: 180.0
+- ref: C4
+  x: 117.16
+  y: 37.79
+- ref: C40
+  x: 109.5
+  y: 57.33
+  rot: 90.0
+- ref: C41
+  x: 112.34
+  y: 50.38
+  rot: 90.0
+- ref: C5
+  x: 101.89
+  y: 39.18
+  rot: -135.0
+- ref: C6
+  x: 140.15
+  y: 41.75
+  rot: 180.0
+- ref: C7
+  x: 120.15
+  y: 43.29
+  rot: 90.0
+- ref: C8
+  x: 140.15
+  y: 42.95
+- ref: C9
+  x: 98.6
+  y: 44.93
+  rot: 90.0
+- ref: D1
+  x: 118.83
+  y: 81.6
+  rot: 90.0
+- ref: D2
+  x: 121.42
+  y: 81.6
+  rot: 90.0
+- ref: D3
+  x: 123.08
+  y: 81.6
+  rot: 90.0
+- ref: D4
+  x: 100.75
+  y: 38.05
+  rot: 45.0
+  side: back
+- ref: J1
+  x: 141.5
+  y: 78.78
+  rot: -90.0
+- ref: J2
+  x: 121.75
+  y: 88.8
+- ref: J3
+  x: 116.11
+  y: 34.89
+  rot: -90.0
+  side: back
+- ref: J4
+  x: 136.5
+  y: 35.48
+  rot: -90.0
+  side: back
+- ref: J5
+  x: 119.55
+  y: 41.25
+  rot: 90.0
+  side: back
+- ref: J6
+  x: 141.0
+  y: 79.65
+  rot: -90.0
+  side: back
+- ref: L1
+  x: 102.5
+  y: 47.8
+- ref: L2
+  x: 102.5
+  y: 55.55
+- ref: MK1
+  x: 137.75
+  y: 89.77
+- ref: Q1
+  x: 102.41
+  y: 78.44
+  rot: 135.0
+- ref: R1
+  x: 100.8
+  y: 42.25
+  rot: 180.0
+- ref: R10
+  x: 109.36
+  y: 48.2
+- ref: R11
+  x: 117.56
+  y: 48.8
+  rot: 180.0
+- ref: R12
+  x: 134.15
+  y: 63.78
+  rot: 180.0
+- ref: R13
+  x: 138.2
+  y: 63.78
+- ref: R14
+  x: 128.72
+  y: 68.29
+- ref: R15
+  x: 107.28
+  y: 74.85
+- ref: R16
+  x: 109.23
+  y: 75.8
+- ref: R19
+  x: 120.12
+  y: 81.6
+  rot: 90.0
+- ref: R2
+  x: 100.8
+  y: 43.2
+- ref: R20
+  x: 124.38
+  y: 81.6
+  rot: 90.0
+- ref: R21
+  x: 107.1
+  y: 83.65
+  rot: 180.0
+- ref: R3
+  x: 120.15
+  y: 48.02
+  rot: 180.0
+- ref: R4
+  x: 100.8
+  y: 50.05
+  rot: 180.0
+- ref: R5
+  x: 100.8
+  y: 51.0
+- ref: R6
+  x: 112.34
+  y: 56.95
+  rot: 180.0
+- ref: R7
+  x: 112.34
+  y: 55.85
+  rot: 180.0
+- ref: R8
+  x: 106.45
+  y: 55.1
+- ref: R9
+  x: 97.34
+  y: 59.74
+  rot: 90.0
+- ref: SW1
+  x: 133.15
+  y: 66.65
+  rot: 90.0
+- ref: SW2
+  x: 139.2
+  y: 66.65
+  rot: 90.0
+- ref: U1
+  x: 123.41
+  y: 41.1
+  rot: 180.0
+- ref: U10
+  x: 109.41
+  y: 68.14
+  rot: -90.0
+- ref: U11
+  x: 128.07
+  y: 71.56
+- ref: U12
+  x: 107.75
+  y: 79.9
+  rot: 90.0
+- ref: U13
+  x: 112.75
+  y: 82.65
+- ref: U14
+  x: 131.5
+  y: 89.65
+  rot: -90.0
+- ref: U15
+  x: 121.75
+  y: 74.85
+  rot: 180.0
+  side: back
+- ref: U16
+  x: 101.1
+  y: 82.65
+  rot: -90.0
+  side: back
+- ref: U17
+  x: 115.59
+  y: 87.17
+  rot: 90.0
+  side: back
+- ref: U18
+  x: 107.2
+  y: 59.05
+  rot: 90.0
+- ref: U19
+  x: 110.12
+  y: 52.11
+  rot: 90.0
+- ref: U2
+  x: 101.0
+  y: 44.95
+- ref: U3
+  x: 117.3
+  y: 45.45
+  rot: 90.0
+- ref: U4
+  x: 107.75
+  y: 46.23
+  rot: 180.0
+- ref: U5
+  x: 101.0
+  y: 52.7
+- ref: U6
+  x: 135.14
+  y: 53.45
+  rot: -90.0
+- ref: U7
+  x: 101.49
+  y: 58.99
+  rot: 180.0
+- ref: U8
+  x: 98.85
+  y: 65.72
+  rot: -90.0
+- ref: U9
+  x: 128.08
+  y: 66.34
+  rot: 180.0
+copper_pours:
+- net: +3.3V
+  layers: [B.Cu, F.Cu]
+- net: +3.3VA
+  layers: [F.Cu, In2.Cu]
+- net: +5V
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /D+
+  layers: [F.Cu]
+- net: /D-
+  layers: [F.Cu]
+- net: /Environmental Sensors 2/CO_V_{REF}
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: /Power Supplies/+3.3VA_SRC
+  layers: [F.Cu]
+- net: /Power Supplies/+3.3V_SRC
+  layers: [F.Cu]
+- net: /Power Supplies/+3.6V_SRC
+  layers: [F.Cu]
+- net: /Power Supplies/SW_3V3
+  layers: [F.Cu]
+- net: /Power Supplies/SW_3V6
+  layers: [F.Cu]
+- net: /VBUS
+  layers: [F.Cu, In2.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]

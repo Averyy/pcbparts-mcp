@@ -1,0 +1,250 @@
+name: SparkFun Qwiic Relay
+slug: sparkfun-qwiic-relay
+source: sparkfun/Qwiic_Relay
+format: eagle
+description: 'I2C relay control: ATtiny85 I2C bridge MCU, MMBT2222AL NPN relay driver'
+tags: [relay]
+key_ics: [ATTINY85]
+outline:
+  width_mm: 25.4
+  height_mm: 57.15
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 7mil
+  min_drill: 15mil
+  min_via: 7mil
+components:
+- ref: C1
+  value: 10uF
+  footprint: '0603'
+  prod_id: CAP-11015
+  decouples: U3
+- ref: D1
+  value: 1A/23V/620mV
+  footprint: SOD-323
+  prod_id: DIO-11623
+  description: Schottky diode
+- ref: D2
+  value: blue LED
+  footprint: '0603'
+  prod_id: DIO-08575
+  description: Blue SMD LED
+- ref: D3
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-00819
+  description: Red SMD LED
+- ref: J1
+  value: 1x4 header
+  footprint: 1X04
+  prod_id: CONN-09696
+- ref: J2
+  value: Qwiic connector
+  footprint: 1X04
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J3
+  value: Qwiic connector
+  footprint: 1X04
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J4
+  value: 3x2 header
+  footprint: 2X3
+  description: AVR ISP 6 Pin
+- ref: J5
+  value: 1x3 screw terminal
+  footprint: SCREWTERMINAL-5MM-3
+  prod_id: CONN-10134
+- ref: JP10
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP7
+  value: solder jumper (NC)
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+- ref: K1
+  value: SPDT relay
+  footprint: RELAY_G5LE
+  prod_id: COMP-14214
+  description: SPDT Electromechanical Relay
+- ref: Q4
+  value: 600mA/40V
+  footprint: SOT-23-3
+  prod_id: TRANS-08049
+  description: NPN transistor
+- ref: R1
+  value: 10ohm
+  footprint: '0603'
+  prod_id: RES-09834
+- ref: R2
+  value: 330ohm
+  footprint: '0603'
+  prod_id: RES-00818
+- ref: R4
+  value: 330ohm
+  footprint: '0603'
+  prod_id: RES-00818
+- ref: R6
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R7
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pullup: '!RESET'
+- ref: R9
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+  pulldown: D3.C
+- ref: U3
+  value: ATTINY85
+  footprint: ATTINY85
+  prod_id: IC-09092
+nets:
+- name: '!RESET'
+  pins: [J4.5, R8.2, U3.PB5]
+- name: 3.3V
+  pins:
+  - C1.1
+  - D2.A
+  - D3.A
+  - J1.3
+  - J2.2
+  - J3.2
+  - J4.2
+  - JP7.2
+  - R1.2
+  - R8.1
+  - U3.VCC
+- name: COM
+  pins: [J5.2, K1.MAIN]
+- name: GND
+  pins:
+  - C1.2
+  - J1.4
+  - J2.1
+  - J3.1
+  - J4.6
+  - JP10.2
+  - Q4.E
+  - R9.2
+  - U3.GND
+- name: MISO
+  pins: [J4.1, U3.PB1]
+- name: N$1
+  pins: [Q4.B, R2.1]
+- name: N$10
+  pins: [JP7.3, R6.2]
+- name: N$13
+  pins: [D3.C, R9.1]
+- name: N$2
+  pins: [D1.A, K1.COIL2, Q4.C, R4.1]
+- name: N$4
+  pins: [JP7.1, R7.2]
+- name: N$5
+  pins: [JP10.1, U3.PB3]
+- name: N$7
+  pins: [D1.C, K1.COIL1, R1.1]
+- name: N$8
+  pins: [D2.C, R4.2]
+- name: NC
+  pins: [J5.1, K1.NC]
+- name: 'NO'
+  pins: [J5.3, K1.NO]
+- name: RELAY_CTR
+  pins: [R2.2, U3.PB4]
+- name: SCL
+  pins: [J1.1, J2.4, J3.4, J4.3, R6.1, U3.PB2]
+- name: SDA
+  pins: [J1.2, J2.3, J3.3, J4.4, R7.1, U3.PB0]
+positions:
+- ref: C1
+  x: 7.62
+  y: 49.53
+  rot: 90.0
+- ref: D1
+  x: 2.54
+  y: 39.37
+- ref: D2
+  x: 22.86
+  y: 43.18
+  rot: 180.0
+- ref: D3
+  x: 2.54
+  y: 41.91
+  rot: 180.0
+- ref: J1
+  x: 16.51
+  y: 55.88
+  rot: 180.0
+- ref: J2
+  x: 20.32
+  y: 48.26
+  rot: 90.0
+- ref: J3
+  x: 5.08
+  y: 48.26
+  rot: 270.0
+- ref: J4
+  x: 12.7
+  y: 41.91
+  rot: 90.0
+- ref: J5
+  x: 17.78
+  y: 10.16
+  rot: 180.0
+- ref: JP10
+  x: 3.81
+  y: 41.4
+- ref: JP7
+  x: 12.7
+  y: 49.53
+- ref: K1
+  x: 12.7
+  y: 25.4
+  rot: 90.0
+- ref: Q4
+  x: 22.86
+  y: 39.37
+  rot: 270.0
+- ref: R1
+  x: 2.54
+  y: 40.64
+- ref: R2
+  x: 7.11
+  y: 40.64
+  rot: 270.0
+- ref: R4
+  x: 22.86
+  y: 41.91
+  rot: 180.0
+- ref: R6
+  x: 15.24
+  y: 49.53
+  rot: 90.0
+- ref: R7
+  x: 10.16
+  y: 49.53
+  rot: 90.0
+- ref: R8
+  x: 17.78
+  y: 49.53
+  rot: 270.0
+- ref: R9
+  x: 2.54
+  y: 43.18
+- ref: U3
+  x: 12.7
+  y: 40.64
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

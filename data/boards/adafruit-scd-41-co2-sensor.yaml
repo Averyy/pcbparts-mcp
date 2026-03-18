@@ -1,0 +1,207 @@
+name: Adafruit SCD-41 CO2 Sensor
+slug: adafruit-scd-41-co2-sensor
+source: adafruit/Adafruit-SCD-4x-PCB
+format: eagle
+description: NDIR CO2 + temp + humidity (Sensirion SCD-41), AP2112K LDO
+tags: [level-shifting, power-supply, sensors]
+key_ics: [SCD-41, AP2112K]
+outline:
+  width_mm: 25.4
+  height_mm: 22.86
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  decouples: U2
+- ref: C2
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C3
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C4
+  value: 10uF
+  footprint: 0805
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+- ref: CONN3
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: CONN4
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: D1
+  value: green LED
+  footprint: '0603'
+- ref: JP2
+  value: 1x5 header
+  footprint: 1X05
+- ref: Q2
+  value: BSS138
+  footprint: SOT363
+  description: Dual N-Channel MOSFET
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  pullup: SJ3.2
+- ref: R3
+  value: 10kohm
+  footprint: RESPACK
+- ref: SJ1
+  value: 2-way solder jumper
+  footprint: SJ-3
+- ref: SJ2
+  value: 2-way solder jumper
+  footprint: SJ-3
+- ref: SJ3
+  value: smd solder jumper
+  footprint: SJ-2
+- ref: U2
+  value: AP2112K-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: X1
+  value: SCD-41
+  footprint: SCD41
+nets:
+- name: 3.3V
+  pins:
+  - C1.1
+  - C3.1
+  - JP2.2
+  - Q2.1.G
+  - Q2.2.G
+  - R1.1
+  - R3.G$2.1
+  - R3.G$4.1
+  - SJ1.1
+  - SJ2.1
+  - U2.OUT
+  class: lowpower
+  trace_width: '0.254'
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - CONN3.G$1.GND
+  - CONN3.G$2.MT
+  - CONN3.G$3.MT
+  - CONN4.G$1.GND
+  - CONN4.G$2.MT
+  - CONN4.G$3.MT
+  - D1.C
+  - JP2.3
+  - U2.GND
+  - X1.GND
+  class: highpower
+  trace_width: '0.3048'
+- name: N$1
+  pins: [D1.A, SJ3.1]
+- name: N$2
+  pins: [R3.G$1.1, R3.G$3.1, SJ1.2]
+  class: highpower
+  trace_width: '0.3048'
+- name: N$3
+  pins: [C4.1, C5.1, SJ2.2, X1.VDD, X1.VDDH]
+  class: lowpower
+  trace_width: '0.254'
+- name: N$4
+  pins: [R1.2, SJ3.2]
+- name: SCL
+  pins: [CONN3.G$1.SCL, CONN4.G$1.SCL, JP2.4, Q2.1.D, R3.G$1.2]
+- name: SCL_3V
+  pins: [Q2.1.S, R3.G$2.2, X1.SCL]
+- name: SDA
+  pins: [CONN3.G$1.SDA, CONN4.G$1.SDA, JP2.5, Q2.2.D, R3.G$3.2]
+- name: SDA_3V
+  pins: [Q2.2.S, R3.G$4.2, X1.SDA]
+- name: VCC
+  pins:
+  - C2.1
+  - CONN3.G$1.V+
+  - CONN4.G$1.V+
+  - JP2.1
+  - SJ1.3
+  - SJ2.3
+  - U2.EN
+  - U2.IN
+  class: highpower
+  trace_width: '0.3048'
+positions:
+- ref: C1
+  x: 6.73
+  y: 10.16
+  rot: 90.0
+- ref: C2
+  x: 2.16
+  y: 6.35
+  rot: 180.0
+- ref: C3
+  x: 9.27
+  y: 5.97
+- ref: C4
+  x: 9.14
+  y: 18.29
+  rot: 180.0
+- ref: C5
+  x: 12.95
+  y: 5.46
+- ref: CONN3
+  x: 22.86
+  y: 11.43
+  rot: 90.0
+- ref: CONN4
+  x: 2.54
+  y: 11.43
+  rot: 270.0
+- ref: D1
+  x: 1.91
+  y: 15.75
+  rot: 90.0
+- ref: JP2
+  x: 12.7
+  y: 2.54
+- ref: Q2
+  x: 19.81
+  y: 6.6
+  rot: 90.0
+- ref: R1
+  x: 1.91
+  y: 17.02
+- ref: R3
+  x: 20.32
+  y: 16.26
+  rot: 180.0
+- ref: SJ1
+  x: 17.27
+  y: 18.92
+  rot: 180.0
+- ref: SJ2
+  x: 7.87
+  y: 18.92
+  rot: 180.0
+- ref: SJ3
+  x: 5.33
+  y: 16.38
+  rot: 90.0
+- ref: U2
+  x: 5.71
+  y: 6.22
+- ref: X1
+  x: 12.7
+  y: 12.19
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

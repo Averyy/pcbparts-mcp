@@ -1,0 +1,1776 @@
+name: CM4 DSI-to-LVDS Adapter
+slug: cm4-dsi-to-lvds-adapter
+source: antmicro/cm4-baseboard-lvds-adapter
+format: kicad9
+description: MIPI DSI to dual-channel LVDS display bridge (SN65DSI84), level shifting
+tags: [level-shifting, power-supply, video]
+key_ics: [SN65DSI84, TPS61176]
+outline:
+  width_mm: 52.0
+  height_mm: 43.0
+design_rules:
+  layers: 6
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.15mm
+  min_via: 0.45mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: '0402'
+  mpn: CC0402MRX5R5BB106
+  manufacturer: YAGEO
+  description: "SMD Multilayer Ceramic Capacitor, 10 \xB5F, 6.3 V, 0402 [1005 Metric], \xB1 20%, X5R"
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C11
+  value: 10nF
+  footprint: '0402'
+  mpn: GRM155R71H103KA88D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 10000 pF, 50 V, 0402 [1005 Metric], \xB1 10%"
+- ref: C12
+  value: 10nF
+  footprint: '0402'
+  mpn: GRM155R71H103KA88D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 10000 pF, 50 V, 0402 [1005 Metric], \xB1 10%"
+- ref: C13
+  value: 10nF
+  footprint: '0402'
+  mpn: GRM155R71H103KA88D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 10000 pF, 50 V, 0402 [1005 Metric], \xB1 10%"
+- ref: C14
+  value: 1uF
+  footprint: '0402'
+  mpn: C1005X6S1A105K050BC
+  manufacturer: TDK
+  description: "SMD Multilayer Ceramic Capacitor, 1 \xB5F, 10 V, 0402 [1005 Metric], \xB1 10%, X6S, C"
+- ref: C15
+  value: 10uF
+  footprint: '0402'
+  mpn: CC0402MRX5R5BB106
+  manufacturer: YAGEO
+  description: "SMD Multilayer Ceramic Capacitor, 10 \xB5F, 6.3 V, 0402 [1005 Metric], \xB1 20%, X5R"
+- ref: C16
+  value: 330nF
+  footprint: '0402'
+  mpn: GRM155R61J334KE01J
+  manufacturer: Murata
+  voltage: 63V
+  description: 330n capacitor in 0402 package with 63VDC max voltage and X5R dielectric
+- ref: C17
+  value: 220nF
+  footprint: '0402'
+  mpn: GRM155R71C224KA12D
+  manufacturer: Murata
+  voltage: 16V
+  description: "SMD Multilayer Ceramic Capacitor, 0.22 \xB5F, 16 V, 0402 [1005 Metric], \xB1 10%"
+- ref: C18
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C2
+  value: 1uF
+  footprint: '0402'
+  mpn: C1005X6S1A105K050BC
+  manufacturer: TDK
+  description: "SMD Multilayer Ceramic Capacitor, 1 \xB5F, 10 V, 0402 [1005 Metric], \xB1 10%, X6S, C"
+  decouples: U1
+- ref: C20
+  value: 2.2nF
+  footprint: '0402'
+  mpn: C0402C222J5RACTU
+  manufacturer: KEMET
+  description: "SMD Multilayer Ceramic Capacitor, 2200 pF, 50 V, 0402 [1005 Metric], \xB1 5%, X7R"
+- ref: C21
+  value: 1nF
+  footprint: '0402'
+  mpn: GRM1555C1H102JA01D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 1000 pF, 50 V, 0402 [1005 Metric], \xB1 5%, C0G"
+- ref: C22
+  value: 330nF
+  footprint: '0402'
+  mpn: GRM155R61J334KE01J
+  manufacturer: Murata
+  voltage: 63V
+  description: 330n capacitor in 0402 package with 63VDC max voltage and X5R dielectric
+- ref: C23
+  value: 22uF
+  footprint: 0805
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL21A226MAYNNNE
+  voltage: 25V
+  description: SMT Multilayer Ceramic Capacitor, 22uF, +/-20%, 25V, X5R, 0805 [2012 Metric]
+- ref: C24
+  value: 22pF
+  footprint: '0402'
+  mpn: CC0402JRNPO9BN220
+  manufacturer: YAGEO
+  description: "SMD Multilayer Ceramic Capacitor, 22 pF, 50 V, 0402 [1005 Metric], \xB1 5%, C0G /"
+- ref: C25
+  value: 10nF
+  footprint: '0402'
+  mpn: GRM155R71H103KA88D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 10000 pF, 50 V, 0402 [1005 Metric], \xB1 10%"
+- ref: C26
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155R61E105KE11J
+  manufacturer: Murata
+  voltage: 25V
+  description: "SMD Multilayer Ceramic Capacitor, 1 \xB5F, 25 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C27
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C28
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155R61E105KE11J
+  manufacturer: Murata
+  voltage: 25V
+  description: "SMD Multilayer Ceramic Capacitor, 1 \xB5F, 25 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C29
+  value: 22uF
+  footprint: 0805
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL21A226MAYNNNE
+  voltage: 25V
+  description: SMT Multilayer Ceramic Capacitor, 22uF, +/-20%, 25V, X5R, 0805 [2012 Metric]
+- ref: C3
+  value: 1uF
+  footprint: '0402'
+  mpn: C1005X6S1A105K050BC
+  manufacturer: TDK
+  description: "SMD Multilayer Ceramic Capacitor, 1 \xB5F, 10 V, 0402 [1005 Metric], \xB1 10%, X6S, C"
+  decouples: U1
+- ref: C30
+  value: 22uF
+  footprint: 0805
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL21A226MAYNNNE
+  voltage: 25V
+  description: SMT Multilayer Ceramic Capacitor, 22uF, +/-20%, 25V, X5R, 0805 [2012 Metric]
+- ref: C31
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C32
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C33
+  value: 22pF
+  footprint: '0402'
+  mpn: CC0402JRNPO9BN220
+  manufacturer: YAGEO
+  description: "SMD Multilayer Ceramic Capacitor, 22 pF, 50 V, 0402 [1005 Metric], \xB1 5%, C0G /"
+- ref: C34
+  value: 330nF
+  footprint: '0402'
+  mpn: GRM155R61J334KE01J
+  manufacturer: Murata
+  voltage: 63V
+  description: 330n capacitor in 0402 package with 63VDC max voltage and X5R dielectric
+- ref: C35
+  value: 330nF
+  footprint: '0402'
+  mpn: GRM155R61J334KE01J
+  manufacturer: Murata
+  voltage: 63V
+  description: 330n capacitor in 0402 package with 63VDC max voltage and X5R dielectric
+- ref: C36
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C37
+  value: 220nF
+  footprint: '0402'
+  mpn: GRM155R71C224KA12D
+  manufacturer: Murata
+  voltage: 16V
+  description: "SMD Multilayer Ceramic Capacitor, 0.22 \xB5F, 16 V, 0402 [1005 Metric], \xB1 10%"
+- ref: C38
+  value: 22uF
+  footprint: 0805
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL21A226MAYNNNE
+  voltage: 25V
+  description: SMT Multilayer Ceramic Capacitor, 22uF, +/-20%, 25V, X5R, 0805 [2012 Metric]
+- ref: C39
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155R61E105KE11J
+  manufacturer: Murata
+  voltage: 25V
+  description: "SMD Multilayer Ceramic Capacitor, 1 \xB5F, 25 V, 0402 [1005 Metric], \xB1 10%, X5R"
+  decouples: U6
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+  decouples: U2
+- ref: C40
+  value: 1uF
+  footprint: '0402'
+  mpn: GRM155R61E105KE11J
+  manufacturer: Murata
+  voltage: 25V
+  description: "SMD Multilayer Ceramic Capacitor, 1 \xB5F, 25 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C41
+  value: 22uF
+  footprint: 0805
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL21A226MAYNNNE
+  voltage: 25V
+  description: SMT Multilayer Ceramic Capacitor, 22uF, +/-20%, 25V, X5R, 0805 [2012 Metric]
+  decouples: U6
+- ref: C42
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C43
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C44
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C45
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C46
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C47
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C49
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+  decouples: U2
+- ref: C6
+  value: 10uF
+  footprint: '0402'
+  mpn: CC0402MRX5R5BB106
+  manufacturer: YAGEO
+  description: "SMD Multilayer Ceramic Capacitor, 10 \xB5F, 6.3 V, 0402 [1005 Metric], \xB1 20%, X5R"
+- ref: C7
+  value: 1uF
+  footprint: '0402'
+  mpn: C1005X6S1A105K050BC
+  manufacturer: TDK
+  description: "SMD Multilayer Ceramic Capacitor, 1 \xB5F, 10 V, 0402 [1005 Metric], \xB1 10%, X6S, C"
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  mpn: GRM155R61H104KE14D
+  manufacturer: Murata
+  voltage: 50V
+  description: "SMD Multilayer Ceramic Capacitor, 0.1 \xB5F, 50 V, 0402 [1005 Metric], \xB1 10%, X5R"
+- ref: D1
+  value: green LED
+  footprint: '0603'
+  mpn: KP-1608ZGC
+  manufacturer: Kingbright
+  description: LED, Green, SMD, 0603, 20 mA, 3.3 V, 525 nm
+- ref: D10
+  value: BAT54S-E3-08
+  footprint: SOT-23-3
+  manufacturer: Vishay
+  mpn: BAT54S-E3-08
+  description: "Small Signal Schottky Diode, Dual Serial, 30 V, 200 mA, 400 mV, 600 mA, 125 \xB0C"
+- ref: D11
+  value: green LED
+  footprint: '0603'
+  mpn: KP-1608ZGC
+  manufacturer: Kingbright
+  description: LED, Green, SMD, 0603, 20 mA, 3.3 V, 525 nm
+- ref: D2
+  value: green LED
+  footprint: '0603'
+  mpn: KP-1608ZGC
+  manufacturer: Kingbright
+  description: LED, Green, SMD, 0603, 20 mA, 3.3 V, 525 nm
+- ref: D3
+  value: PUSB3F96X
+  footprint: Nexperia_DFN-10
+  manufacturer: Nexperia
+  mpn: PUSB3F96X
+  description: TVS diode array, 10 kV, DFN-2510, 5.5 V, 0.5 pF
+- ref: D4
+  value: PUSB3F96X
+  footprint: Nexperia_DFN-10
+  manufacturer: Nexperia
+  mpn: PUSB3F96X
+  description: TVS diode array, 10 kV, DFN-2510, 5.5 V, 0.5 pF
+- ref: D5
+  value: green LED
+  footprint: '0603'
+  mpn: KP-1608ZGC
+  manufacturer: Kingbright
+  description: LED, Green, SMD, 0603, 20 mA, 3.3 V, 525 nm
+- ref: D6
+  value: BAT54S-E3-08
+  footprint: SOT-23-3
+  manufacturer: Vishay
+  mpn: BAT54S-E3-08
+  description: "Small Signal Schottky Diode, Dual Serial, 30 V, 200 mA, 400 mV, 600 mA, 125 \xB0C"
+- ref: D7
+  value: RB521S30T1G
+  footprint: SOD-523
+  mpn: RB521S30T1G
+  manufacturer: ON Semiconductor
+  description: "Small Signal Schottky Diode, Single, 30 V, 200 mA, 500 mV, 1 A, 125 \xB0C"
+- ref: D8
+  value: green LED
+  footprint: '0603'
+  mpn: KP-1608ZGC
+  manufacturer: Kingbright
+  description: LED, Green, SMD, 0603, 20 mA, 3.3 V, 525 nm
+- ref: D9
+  value: PMEG3010CEJ,115
+  footprint: SOD-323F
+  mpn: PMEG3010CEJ,115
+  manufacturer: Nexperia
+  description: Schottky Rectifier, 30 V, 1 A, Single, SOD-323F, 2 Pins, 520 mV
+- ref: FB1
+  value: 220ohm
+  footprint: '0603'
+  mpn: MPZ1608S221ATA00
+  manufacturer: TDK
+  description: "Ferrite Bead, 0603 [1608 Metric], 220 ohm, 2.2 A, MPZ, 0.05 ohm, \xB1 25%, DC"
+- ref: J1
+  value: Plug_Molex_SlimStack_2x20_556500488
+  footprint: Conn_Plug_Molex_SlimStack
+  mpn: '556500488'
+  manufacturer: Molex
+  description: Mezzanine Connector, Header, 0.5 mm, 2 Rows, 40 Contacts, Surface Mount
+- ref: J2
+  value: JST SUR 1x10
+  footprint: Conn_JST_SUR
+  mpn: SM10B-SURS-TF
+  manufacturer: JST Automotive Connectors
+- ref: J3
+  value: 1x40 header
+  footprint: Conn_FFC_Amphenol
+  mpn: 62684-401100AHLF
+  manufacturer: Amphenol
+  description: FFC & FPC Connectors, 40 pin, 0.5mm, SMD/SMT, Right Angle, Bottom Concact
+- ref: L1
+  value: 3.3uH
+  footprint: '1008'
+  mpn: TFM252012ALMA3R3MTAA
+  manufacturer: TDK
+  description: "3.3 \xB5H Shielded Thin Film Inductor 2 A 140mOhm Max 1008 (2520 Metric)"
+- ref: L2
+  value: 10uH
+  footprint: '8200'
+  manufacturer: Murata
+  mpn: 82103C
+  description: "Power Inductor (SMT), 10 \xB5H, 500 mA, Unshielded, 8200"
+- ref: Q1
+  value: PJE138K
+  footprint: SOT-523
+  mpn: PJE138K_R1_00001
+  manufacturer: PANJIT
+  description: MOSFET, N Channel, 50V, 0.35A, 4.5 ohm, SOT-523, Surface Mount
+- ref: Q2
+  value: PJE138K
+  footprint: SOT-523
+  mpn: PJE138K_R1_00001
+  manufacturer: PANJIT
+  description: MOSFET, N Channel, 50V, 0.35A, 4.5 ohm, SOT-523, Surface Mount
+- ref: Q3
+  value: SSM3J332R
+  footprint: SOT-23-3
+  mpn: SSM3J332R,LF
+  manufacturer: Toshiba
+  description: Power MOSFET, P Channel, 30 V, 6 A, 0.036 ohm, SOT-23F, Surface Mount
+- ref: Q4
+  value: PJE138K
+  footprint: SOT-523
+  mpn: PJE138K_R1_00001
+  manufacturer: PANJIT
+  description: MOSFET, N Channel, 50V, 0.35A, 4.5 ohm, SOT-523, Surface Mount
+- ref: Q5
+  value: SSM3J332R
+  footprint: SOT-23-3
+  mpn: SSM3J332R,LF
+  manufacturer: Toshiba
+  description: Power MOSFET, P Channel, 30 V, 6 A, 0.036 ohm, SOT-23F, Surface Mount
+- ref: Q6
+  value: PJE138K
+  footprint: SOT-523
+  mpn: PJE138K_R1_00001
+  manufacturer: PANJIT
+  description: MOSFET, N Channel, 50V, 0.35A, 4.5 ohm, SOT-523, Surface Mount
+- ref: Q7
+  value: SSM3J332R
+  footprint: SOT-23-3
+  mpn: SSM3J332R,LF
+  manufacturer: Toshiba
+  description: Power MOSFET, P Channel, 30 V, 6 A, 0.036 ohm, SOT-23F, Surface Mount
+- ref: Q8
+  value: PJE138K
+  footprint: SOT-523
+  mpn: PJE138K_R1_00001
+  manufacturer: PANJIT
+  description: MOSFET, N Channel, 50V, 0.35A, 4.5 ohm, SOT-523, Surface Mount
+- ref: R1
+  value: 470ohm
+  footprint: '0402'
+  mpn: CR0402-FX-4700GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 470 ohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+- ref: R10
+  value: 100kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1003GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 100 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pullup: Q2.D
+- ref: R11
+  value: 100kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1003GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 100 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pulldown: Q2.G
+- ref: R12
+  value: 0ohm
+  footprint: '0402'
+  mpn: ERJ2GE0R00X
+  manufacturer: Panasonic
+  description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
+- ref: R13
+  value: 590kohm
+  footprint: '0402'
+  mpn: RC0402FR-07590KL
+  manufacturer: YAGEO
+  tolerance: 1%
+  description: "SMD Chip Resistor, 590 kohm, \xB1 1%, 100 mW, 0402 [1005 Metric], Thick Film"
+- ref: R14
+  value: 120kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1203GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 120 kohm, \xB1 1%, 100 mW, 0402 [1005 Metric], Thick Film"
+- ref: R15
+  value: 330kohm
+  footprint: '0402'
+  mpn: CR0402-FX-3303GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: SMD Chip Resistor
+  pullup: D7.A
+- ref: R16
+  value: 49.9kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-4992GLF
+  tolerance: 1%
+  description: "SMD Chip Resistor, 49.9 kohm, \xB1 1%, 63 mW, 0402 [1005 Metric], Thick Film"
+  pulldown: D7.A
+- ref: R17
+  value: 100kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1003GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 100 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pullup: Q4.D
+- ref: R18
+  value: 1Mohm
+  footprint: '0402'
+  mpn: CR0402-FX-1004GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 1 Mohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+- ref: R19
+  value: 590kohm
+  footprint: '0402'
+  mpn: RC0402FR-07590KL
+  manufacturer: YAGEO
+  tolerance: 1%
+  description: "SMD Chip Resistor, 590 kohm, \xB1 1%, 100 mW, 0402 [1005 Metric], Thick Film"
+  pulldown: U4.IN
+- ref: R2
+  value: 1.5kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1501GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 1.5 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pullup: D5.A
+- ref: R20
+  value: 0ohm
+  footprint: '0402'
+  mpn: ERJ2GE0R00X
+  manufacturer: Panasonic
+  description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
+- ref: R21
+  value: 1.5kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1501GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 1.5 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+- ref: R22
+  value: 0ohm
+  footprint: '0402'
+  mpn: ERJ2GE0R00X
+  manufacturer: Panasonic
+  description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
+- ref: R23
+  value: 0ohm
+  footprint: '0402'
+  mpn: ERJ2GE0R00X
+  manufacturer: Panasonic
+  description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
+- ref: R24
+  value: 10kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1002GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 10 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+- ref: R25
+  value: 820kohm
+  footprint: '0402'
+  mpn: CR0402-FX-8203GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 820 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+- ref: R26
+  value: 100kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1003GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 100 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pulldown: U4.FB
+- ref: R27
+  value: 110kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1103GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 110 kohm, \xB1 1%, 63 mW, 0402 [1005 Metric], Thick Film"
+  pulldown: U4.FBP
+- ref: R28
+  value: 1.5Mohm
+  footprint: '0402'
+  mpn: CR0402-FX-1504GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: SMD Chip Resistor
+- ref: R29
+  value: 20ohm
+  footprint: '0603'
+  mpn: CR0603-FX-20R0ELF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 20 ohm, \xB1 1%, 100 mW, 0603 [1608 Metric], Thick Film"
+- ref: R3
+  value: 100ohm
+  footprint: '0402'
+  mpn: CR0402-FX-1000GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 100 ohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+- ref: R30
+  value: 330kohm
+  footprint: '0402'
+  mpn: CR0402-FX-3303GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: SMD Chip Resistor
+- ref: R31
+  value: 1.2ohm
+  footprint: '0402'
+  mpn: CR0402-FX-1R20GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 1.2 ohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+- ref: R32
+  value: 510kohm
+  footprint: '0402'
+  mpn: CR0402-FX-5103GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 510 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+- ref: R33
+  value: 100kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1003GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 100 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+- ref: R34
+  value: 0ohm
+  footprint: '0402'
+  mpn: ERJ2GE0R00X
+  manufacturer: Panasonic
+  description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
+- ref: R35
+  value: 0ohm
+  footprint: '0402'
+  mpn: ERJ2GE0R00X
+  manufacturer: Panasonic
+  description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
+- ref: R36
+  value: 110kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1103GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 110 kohm, \xB1 1%, 63 mW, 0402 [1005 Metric], Thick Film"
+  pullup: U6.FB
+- ref: R37
+  value: 10kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1002GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 10 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pulldown: U6.FB
+- ref: R38
+  value: 470ohm
+  footprint: '0402'
+  mpn: CR0402-FX-4700GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 470 ohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+- ref: R39
+  value: 10kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1002GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 10 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pullup: /Antmicro CM4 Baseboard DSI Connector /DSICtrl.nRST
+- ref: R4
+  value: 100kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1003GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 100 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pulldown: U3.IRQ
+- ref: R41
+  value: 0ohm
+  footprint: '0402'
+  mpn: ERJ2GE0R00X
+  manufacturer: Panasonic
+  description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
+- ref: R42
+  value: 10kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1002GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 10 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pullup: /LVDS and Touchscreen Connectors/SHLR
+- ref: R46
+  value: 0ohm
+  footprint: '0402'
+  mpn: ERJ2GE0R00X
+  manufacturer: Panasonic
+  description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
+- ref: R47
+  value: 10kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1002GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 10 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pullup: /Antmicro CM4 Baseboard DSI Connector /DSICtrl.nIRQ1
+- ref: R49
+  value: 100kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1003GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 100 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+- ref: R5
+  value: 0ohm
+  footprint: '0402'
+  mpn: ERJ2GE0R00X
+  manufacturer: Panasonic
+  description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
+- ref: R51
+  value: 0ohm
+  footprint: '0402'
+  mpn: ERJ2GE0R00X
+  manufacturer: Panasonic
+  description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
+- ref: R7
+  value: 10kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1002GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 10 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pulldown: U3.ADDR
+- ref: R8
+  value: 10kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1002GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 10 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
+  pulldown: U3.REFCLK
+- ref: R9
+  value: 1kohm
+  footprint: '0402'
+  mpn: CR0402-FX-1001GLF
+  manufacturer: Bourns
+  tolerance: 1%
+  description: "SMD Chip Resistor, 1 kohm, \xB1 1%, 63 mW, 0402 [1005 Metric], Thick Film, General"
+- ref: U1
+  value: TLV70018_SC70
+  footprint: SC-70-5
+  mpn: TLV70018DCKR
+  manufacturer: Texas Instruments
+  description: Fixed LDO Voltage Regulator, 2V to 5.5V, 175mV drop, 1.8V/200mA out, SC-70-5
+- ref: U2
+  value: NTS0104
+  footprint: DHVQFN-14-1EP
+  mpn: NTS0104BQ
+  manufacturer: NXP
+  description: Voltage Level Translator Bidirectional 1 Circuit 4 Channel 50Mbps 14-DHVQFN
+- ref: U3
+  value: SN65DSI84
+  footprint: HTQFP-64
+  mpn: SN65DSI84TPAPRQ1
+  manufacturer: Texas Instruments
+  description: "Automotive Single-Channel MIPI\xAE DSI to Dual-Link LVDS Bridge"
+- ref: U4
+  value: TPS65150_HTSSOP
+  footprint: HTSSOP-24_W4.4mm_P0.65mm
+  manufacturer: Texas Instruments
+  mpn: TPS65150PWP
+  description: Universal LCD bias Power Supply with integrated VCOM Buffer
+- ref: U5
+  value: MPQ7235GQBE
+  footprint: QFN-13
+  mpn: MPQ7235GQBE-AEC1-Z
+  manufacturer: Monolithic Power Systems
+- ref: U6
+  value: TLV76701_WSON
+  footprint: WSON-6-1EP
+  mpn: TLV76701DRVT
+  manufacturer: Texas Instruments
+  description: 'LDO voltage regulator 1A, Vin: 2.5V-16V, Vout: 0.8V-14.6V; Iq: 50uA'
+nets:
+- name: +10V5
+  pins:
+  - C39.2
+  - Q5.S
+  - R17.2
+  - R18.2
+  - R2.2
+  - R35.2
+  - U6.EN
+  - U6.IN
+- name: +18V
+  pins: [C42.2, J3.38, R15.2, R22.2]
+- name: +1V8
+  pins:
+  - C3.2
+  - C5.2
+  - FB1.1
+  - Q1.G
+  - R49.1
+  - U1.VOUT
+  - U2.OE
+  - U2.VCC_A
+- name: +3V3
+  pins:
+  - C2.2
+  - C4.2
+  - C47.2
+  - J1.12
+  - J3.2
+  - J3.3
+  - R3.2
+  - R39.2
+  - R42.2
+  - R47.2
+  - U1.VIN
+  - U2.VCC_B
+- name: +3V9
+  pins: [C45.2, J3.1, R23.2]
+- name: +5V
+  pins:
+  - C1.2
+  - D3.CH1@1
+  - D3.CH1@10
+  - J1.10
+  - J1.4
+  - J1.6
+  - J1.8
+  - J2.10
+  - Q3.S
+  - R1.2
+  - R10.2
+  - R20.2
+  - R38.2
+- name: +9V6
+  pins: [C41.1, C44.2, J3.29, R36.2, U6.OUT]
+- name: +VLED
+  pins: [C46.2, J3.39, J3.40, R34.2]
+- name: -6V
+  pins: [C49.2, J3.35, R12.2]
+- name: -VLED
+  pins: [C46.1, J3.31, J3.32, R30.1, R31.2]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSI.CLK_N
+  pins: [J1.27, U3.DACN]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSI.CLK_P
+  pins: [J1.29, U3.DACP]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSI.D0_N
+  pins: [J1.21, U3.DA0N]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSI.D0_P
+  pins: [J1.23, U3.DA0P]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSI.D1_N
+  pins: [J1.15, U3.DA1N]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSI.D1_P
+  pins: [J1.17, U3.DA1P]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSI.D2_N
+  pins: [J1.9, U3.DA2N]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSI.D2_P
+  pins: [J1.11, U3.DA2P]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSI.D3_N
+  pins: [J1.3, U3.DA3N]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSI.D3_P
+  pins: [J1.5, U3.DA3P]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSICtrl.DIM
+  pins: [J1.28, Q6.G]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSICtrl.EN
+  pins: [D7.C, J1.24, J3.6, R9.1, U1.EN, U2.B3]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSICtrl.GPIO
+  pins: [D4.CH2@2, D4.CH2@9, J1.30, J2.4]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSICtrl.SCL
+  pins: [D3.CH2@2, D3.CH2@9, J1.18, J2.9, U2.B2]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSICtrl.SDA
+  pins: [D3.CH3@4, D3.CH3@7, J1.16, J2.8, U2.B1]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSICtrl.nIRQ1
+  pins: [J1.20, Q8.D, R47.1]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSICtrl.nIRQ2
+  pins: [D3.CH4@5, D3.CH4@6, J1.22, J2.7]
+- name: /Antmicro CM4 Baseboard DSI Connector /DSICtrl.nRST
+  pins: [C43.2, J1.26, J3.5, R39.1, R51.1]
+- name: /DSI to LVDS/DSICtrl_1V8.EN
+  pins: [U2.A3, U3.EN]
+- name: /DSI to LVDS/DSICtrl_1V8.SCL
+  pins: [U2.A2, U3.SCL]
+- name: /DSI to LVDS/DSICtrl_1V8.SDA
+  pins: [U2.A1, U3.SDA]
+- name: /DSI to LVDS/LVDS.CLK_N
+  pins: [J3.17, U3.A_CLKN]
+- name: /DSI to LVDS/LVDS.CLK_P
+  pins: [J3.18, U3.A_CLKP]
+- name: /DSI to LVDS/LVDS.D0_N
+  pins: [J3.8, U3.A_Y0N]
+- name: /DSI to LVDS/LVDS.D0_P
+  pins: [J3.9, U3.A_Y0P]
+- name: /DSI to LVDS/LVDS.D1_N
+  pins: [J3.11, U3.A_Y1N]
+- name: /DSI to LVDS/LVDS.D1_P
+  pins: [J3.12, U3.A_Y1P]
+- name: /DSI to LVDS/LVDS.D2_N
+  pins: [J3.14, U3.A_Y2N]
+- name: /DSI to LVDS/LVDS.D2_P
+  pins: [J3.15, U3.A_Y2P]
+- name: /DSI to LVDS/LVDS.D3_N
+  pins: [J3.20, U3.A_Y3N]
+- name: /DSI to LVDS/LVDS.D3_P
+  pins: [J3.21, U3.A_Y3P]
+- name: /LVDS and Touchscreen Connectors/RST_TS
+  pins: [D4.CH1@1, D4.CH1@10, J2.5, R51.2]
+- name: /LVDS and Touchscreen Connectors/SELB
+  pins: [J3.28, R41.1]
+- name: /LVDS and Touchscreen Connectors/SHLR
+  pins: [J3.33, R42.1]
+- name: /LVDS and Touchscreen Connectors/TP10_TS
+  pins: [D4.CH3@4, D4.CH3@7, J2.1]
+- name: /LVDS and Touchscreen Connectors/UPDN
+  pins: [J3.34, R46.1]
+- name: /Power/ADJ
+  pins: [C24.2, U4.ADJ]
+- name: /Power/COMP
+  pins: [C20.2, U4.COMP]
+- name: /Power/DLY1
+  pins: [C25.2, U4.DLY1]
+- name: /Power/DLY2
+  pins: [C27.2, U4.DLY2]
+- name: /Power/FDLY
+  pins: [R5.2, U4.FDLY]
+- name: /Power/FLK
+  pins: [R20.1, U4.CTRL]
+- name: /Power/ViBOOST
+  pins: [C23.1, L1.1, Q3.D, R5.1, U4.VIN]
+- name: GND
+  pins:
+  - C1.1
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C15.1
+  - C16.1
+  - C17.1
+  - C18.1
+  - C2.1
+  - C20.1
+  - C21.1
+  - C23.2
+  - C24.1
+  - C25.1
+  - C26.1
+  - C27.1
+  - C28.1
+  - C29.2
+  - C3.1
+  - C30.2
+  - C31.1
+  - C32.1
+  - C35.1
+  - C38.2
+  - C39.1
+  - C4.1
+  - C40.1
+  - C41.2
+  - C42.1
+  - C43.1
+  - C44.1
+  - C45.1
+  - C47.1
+  - C49.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - D1.C
+  - D11.C
+  - D2.C
+  - D3.GND@3
+  - D3.GND@8
+  - D4.CH4@5
+  - D4.CH4@6
+  - D4.GND@3
+  - D4.GND@8
+  - D5.C
+  - D6.2
+  - J1.1
+  - J1.13
+  - J1.14
+  - J1.19
+  - J1.2
+  - J1.25
+  - J1.31
+  - J1.32
+  - J1.7
+  - J1.MP
+  - J2.6
+  - J2.MP
+  - J3.10
+  - J3.13
+  - J3.16
+  - J3.19
+  - J3.22
+  - J3.25
+  - J3.30
+  - J3.7
+  - J3.SH
+  - Q1.S
+  - Q2.S
+  - Q4.S
+  - Q6.S
+  - Q8.S
+  - R11.1
+  - R16.1
+  - R19.1
+  - R26.1
+  - R27.1
+  - R31.1
+  - R37.1
+  - R4.2
+  - R41.2
+  - R46.2
+  - R49.2
+  - R7.1
+  - R8.2
+  - U1.GND
+  - U2.GND
+  - U2.GNDPAD
+  - U3.GND@23
+  - U3.GND@26
+  - U3.GND@52
+  - U3.PAD
+  - U4.AGND
+  - U4.EP
+  - U4.PGND@7
+  - U4.PGND@8
+  - U5.GND@11
+  - U5.GND@12
+  - U5.GND@13
+  - U5.GND@8
+  - U6.GND@3
+  - U6.GND@5
+  - U6.PAD
+- name: Net-(C16-Pad2)
+  pins: [C16.2, D6.1, R12.1, R13.2]
+- name: Net-(C22-Pad2)
+  pins: [C22.2, D6.3]
+- name: Net-(C34-Pad1)
+  pins: [C34.1, D10.3]
+- name: Net-(C36-Pad2)
+  pins: [C36.2, R29.2]
+- name: Net-(C38-Pad1)
+  pins: [C38.1, L2.2, R34.1]
+- name: Net-(D1-A)
+  pins: [D1.A, R1.1]
+- name: Net-(D11-A)
+  pins: [D11.A, R21.1]
+- name: Net-(D2-A)
+  pins: [D2.A, R3.1]
+- name: Net-(D5-A)
+  pins: [D5.A, R2.1]
+- name: Net-(D7-A)
+  pins: [C18.2, D7.A, Q4.G, R15.1, R16.2]
+- name: Net-(D8-A)
+  pins: [D8.A, R38.1]
+- name: Net-(D8-C)
+  pins: [D8.C, Q1.D]
+- name: Net-(D9-A)
+  pins: [D9.A, L1.2, U4.SW@5, U4.SW@6]
+- name: Net-(D9-C)
+  pins:
+  - C28.2
+  - C30.1
+  - C33.2
+  - C37.2
+  - D10.1
+  - D9.C
+  - Q7.S
+  - R25.2
+  - R32.2
+  - U4.SUP
+- name: Net-(Q2-D)
+  pins: [Q2.D, Q3.G, R10.1]
+- name: Net-(Q2-G)
+  pins: [C15.2, Q2.G, R11.2, R9.2]
+- name: Net-(Q4-D)
+  pins: [Q4.D, Q5.G, R17.1]
+- name: Net-(Q5-D)
+  pins:
+  - C29.1
+  - C31.2
+  - Q5.D
+  - R21.2
+  - R24.2
+  - U5.IN@1
+  - U5.IN@2
+- name: Net-(Q6-D)
+  pins: [Q6.D, R24.1, U5.DIM]
+- name: Net-(Q7-D)
+  pins: [C40.2, Q7.D, R35.1]
+- name: Net-(Q7-G)
+  pins: [C37.1, Q7.G, R32.1, R33.2]
+- name: Net-(Q8-G)
+  pins: [Q8.G, R4.1, U3.IRQ]
+- name: Net-(U3-ADDR)
+  pins: [R7.2, U3.ADDR]
+- name: Net-(U3-REFCLK)
+  pins: [R8.1, U3.REFCLK]
+- name: Net-(U3-VCORE)
+  pins: [C14.2, U3.VCORE]
+- name: Net-(U4-CPI)
+  pins: [C35.2, D10.2, R28.2, U4.CPI]
+- name: Net-(U4-DRVN)
+  pins: [C22.1, U4.DRVN]
+- name: Net-(U4-DRVP)
+  pins: [C34.2, U4.DRVP]
+- name: Net-(U4-FB)
+  pins: [C33.1, R25.1, R26.2, U4.FB]
+- name: Net-(U4-FBN)
+  pins: [R13.1, R14.2, U4.FBN]
+- name: Net-(U4-FBP)
+  pins: [R27.2, R28.1, U4.FBP]
+- name: Net-(U4-GD)
+  pins: [R33.1, U4.GD]
+- name: Net-(U4-IN)
+  pins: [C21.2, R18.1, R19.2, U4.IN]
+- name: Net-(U4-REF)
+  pins: [C17.2, R14.1, U4.REF]
+- name: Net-(U4-VCOM)
+  pins: [C26.2, R23.1, U4.VCOM]
+- name: Net-(U4-VGH)
+  pins: [R22.1, U4.VGH]
+- name: Net-(U5-BST)
+  pins: [R29.1, U5.BST]
+- name: Net-(U5-FB)
+  pins: [R30.2, U5.FB]
+- name: Net-(U5-SW)
+  pins: [C36.1, L2.1, U5.SW]
+- name: Net-(U5-VCC)
+  pins: [C32.2, U5.VCC]
+- name: Net-(U6-FB)
+  pins: [R36.1, R37.2, U6.FB]
+- name: VCC
+  pins:
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - FB1.2
+  - U3.VCC@14
+  - U3.VCC@18
+  - U3.VCC@3
+  - U3.VCC@32
+  - U3.VCC@35
+  - U3.VCC@40
+  - U3.VCC@43
+  - U3.VCC@48
+  - U3.VCC@49
+  - U3.VCC@55
+  - U3.VCC@58
+  - U3.VCC@63
+positions:
+- ref: C1
+  x: 112.7
+  y: 212.95
+  rot: -90.0
+  side: back
+- ref: C10
+  x: 119.09
+  y: 207.63
+  rot: -90.0
+- ref: C11
+  x: 120.12
+  y: 207.63
+  rot: -90.0
+- ref: C12
+  x: 118.62
+  y: 200.68
+  rot: 180.0
+- ref: C13
+  x: 125.5
+  y: 205.47
+- ref: C14
+  x: 118.27
+  y: 211.48
+  rot: 90.0
+  side: back
+- ref: C15
+  x: 147.13
+  y: 202.25
+  rot: 180.0
+- ref: C16
+  x: 147.05
+  y: 220.0
+  rot: -90.0
+  side: back
+- ref: C17
+  x: 151.45
+  y: 216.72
+  rot: 90.0
+  side: back
+- ref: C18
+  x: 148.35
+  y: 189.2
+  rot: 180.0
+  side: back
+- ref: C2
+  x: 141.25
+  y: 211.05
+  rot: 180.0
+  side: back
+- ref: C20
+  x: 148.2
+  y: 216.72
+  rot: 90.0
+  side: back
+- ref: C21
+  x: 156.97
+  y: 207.5
+  rot: 180.0
+  side: back
+- ref: C22
+  x: 152.55
+  y: 216.72
+  rot: -90.0
+  side: back
+- ref: C23
+  x: 145.8
+  y: 205.15
+  rot: -90.0
+  side: back
+- ref: C24
+  x: 156.98
+  y: 213.0
+  rot: 180.0
+  side: back
+- ref: C25
+  x: 145.47
+  y: 212.25
+  side: back
+- ref: C26
+  x: 155.14
+  y: 204.44
+  rot: -90.0
+  side: back
+- ref: C27
+  x: 145.48
+  y: 207.85
+  side: back
+- ref: C28
+  x: 153.56
+  y: 202.46
+  side: back
+- ref: C29
+  x: 156.12
+  y: 192.4
+  side: back
+- ref: C3
+  x: 141.25
+  y: 214.92
+  rot: 180.0
+  side: back
+- ref: C30
+  x: 152.64
+  y: 200.93
+  rot: 180.0
+  side: back
+- ref: C31
+  x: 155.25
+  y: 190.88
+  rot: 180.0
+  side: back
+- ref: C32
+  x: 153.8
+  y: 185.4
+  rot: 180.0
+  side: back
+- ref: C33
+  x: 145.48
+  y: 208.95
+  rot: 180.0
+  side: back
+- ref: C34
+  x: 153.55
+  y: 216.72
+  rot: 90.0
+  side: back
+- ref: C35
+  x: 156.15
+  y: 220.5
+  rot: 180.0
+  side: back
+- ref: C36
+  x: 159.0
+  y: 184.15
+  rot: -90.0
+  side: back
+- ref: C37
+  x: 155.8
+  y: 202.46
+  rot: 180.0
+  side: back
+- ref: C38
+  x: 153.85
+  y: 182.8
+  rot: -90.0
+  side: back
+- ref: C39
+  x: 146.16
+  y: 192.6
+  rot: -90.0
+  side: back
+- ref: C4
+  x: 118.2
+  y: 217.15
+  side: back
+- ref: C40
+  x: 152.3
+  y: 199.37
+  side: back
+- ref: C41
+  x: 144.37
+  y: 189.55
+  side: back
+- ref: C42
+  x: 119.15
+  y: 185.35
+  rot: 90.0
+- ref: C43
+  x: 142.15
+  y: 202.75
+  rot: 90.0
+  side: back
+- ref: C44
+  x: 123.6
+  y: 185.35
+  rot: 90.0
+- ref: C45
+  x: 137.75
+  y: 185.2
+  rot: 90.0
+- ref: C46
+  x: 120.0
+  y: 181.0
+  rot: 180.0
+  side: back
+- ref: C47
+  x: 136.65
+  y: 185.2
+  rot: 90.0
+- ref: C49
+  x: 120.6
+  y: 185.35
+  rot: 90.0
+- ref: C5
+  x: 120.55
+  y: 217.15
+  rot: 180.0
+  side: back
+- ref: C6
+  x: 125.09
+  y: 200.18
+  rot: 90.0
+- ref: C7
+  x: 125.5
+  y: 204.4
+- ref: C8
+  x: 124.02
+  y: 200.21
+  rot: 90.0
+- ref: C9
+  x: 118.62
+  y: 201.78
+  rot: 180.0
+- ref: D1
+  x: 153.59
+  y: 221.1
+  rot: 90.0
+- ref: D10
+  x: 153.25
+  y: 219.55
+  rot: 180.0
+  side: back
+- ref: D11
+  x: 156.53
+  y: 221.1
+  rot: 90.0
+- ref: D2
+  x: 152.12
+  y: 221.1
+  rot: 90.0
+- ref: D3
+  x: 113.94
+  y: 215.01
+  rot: -90.0
+  side: back
+- ref: D4
+  x: 113.89
+  y: 219.45
+  rot: -90.0
+  side: back
+- ref: D5
+  x: 155.06
+  y: 221.1
+  rot: 90.0
+- ref: D6
+  x: 149.5
+  y: 219.55
+  side: back
+- ref: D7
+  x: 148.4
+  y: 188.0
+  rot: 180.0
+  side: back
+- ref: D8
+  x: 150.65
+  y: 221.1
+  rot: 90.0
+- ref: D9
+  x: 153.0
+  y: 204.48
+  rot: 180.0
+  side: back
+- ref: FB1
+  x: 130.57
+  y: 199.33
+  rot: 180.0
+  side: back
+- ref: J1
+  x: 137.2
+  y: 203.45
+  rot: 90.0
+- ref: J2
+  x: 110.37
+  y: 217.0
+  rot: 90.0
+  side: back
+- ref: J3
+  x: 127.91
+  y: 185.44
+  rot: 180.0
+  side: back
+- ref: L1
+  x: 149.45
+  y: 204.17
+  side: back
+- ref: L2
+  x: 156.65
+  y: 182.95
+  rot: 90.0
+  side: back
+- ref: Q1
+  x: 145.21
+  y: 215.62
+  side: back
+- ref: Q2
+  x: 148.65
+  y: 200.58
+  rot: -90.0
+  side: back
+- ref: Q3
+  x: 145.75
+  y: 200.82
+  rot: -90.0
+  side: back
+- ref: Q4
+  x: 148.3
+  y: 193.05
+  side: back
+- ref: Q5
+  x: 151.5
+  y: 193.7
+  rot: 90.0
+  side: back
+- ref: Q6
+  x: 151.15
+  y: 188.8
+  side: back
+- ref: Q7
+  x: 156.3
+  y: 199.28
+  rot: 180.0
+  side: back
+- ref: Q8
+  x: 116.5
+  y: 212.55
+  side: back
+- ref: R1
+  x: 153.59
+  y: 218.88
+  rot: 90.0
+- ref: R10
+  x: 145.15
+  y: 201.15
+- ref: R11
+  x: 147.17
+  y: 203.35
+  rot: 180.0
+- ref: R12
+  x: 145.95
+  y: 220.03
+  rot: 90.0
+  side: back
+- ref: R13
+  x: 149.25
+  y: 216.72
+  rot: -90.0
+  side: back
+- ref: R14
+  x: 150.35
+  y: 216.72
+  rot: -90.0
+  side: back
+- ref: R15
+  x: 148.3
+  y: 191.3
+  side: back
+- ref: R16
+  x: 148.3
+  y: 190.25
+  rot: 180.0
+  side: back
+- ref: R17
+  x: 148.8
+  y: 194.75
+  side: back
+- ref: R18
+  x: 156.95
+  y: 208.6
+- ref: R19
+  x: 156.95
+  y: 209.7
+  rot: 180.0
+- ref: R2
+  x: 155.06
+  y: 218.88
+  rot: 90.0
+- ref: R20
+  x: 156.98
+  y: 213.0
+- ref: R21
+  x: 156.53
+  y: 218.88
+  rot: 90.0
+- ref: R22
+  x: 156.97
+  y: 214.1
+- ref: R23
+  x: 156.3
+  y: 204.44
+  rot: 90.0
+  side: back
+- ref: R24
+  x: 151.51
+  y: 190.55
+  side: back
+- ref: R25
+  x: 145.47
+  y: 210.05
+  rot: 180.0
+  side: back
+- ref: R26
+  x: 145.47
+  y: 211.15
+  side: back
+- ref: R27
+  x: 156.95
+  y: 208.6
+  rot: 180.0
+  side: back
+- ref: R28
+  x: 156.95
+  y: 209.7
+  side: back
+- ref: R29
+  x: 158.15
+  y: 187.25
+  side: back
+- ref: R3
+  x: 152.12
+  y: 218.88
+  rot: 90.0
+- ref: R30
+  x: 152.15
+  y: 186.4
+  rot: -90.0
+  side: back
+- ref: R31
+  x: 150.88
+  y: 186.41
+  rot: 90.0
+  side: back
+- ref: R32
+  x: 156.2
+  y: 199.3
+  rot: 180.0
+- ref: R33
+  x: 156.2
+  y: 198.3
+- ref: R34
+  x: 152.3
+  y: 182.1
+  rot: -90.0
+  side: back
+- ref: R35
+  x: 152.3
+  y: 198.3
+  rot: 180.0
+  side: back
+- ref: R36
+  x: 143.4
+  y: 188.05
+  rot: 180.0
+  side: back
+- ref: R37
+  x: 145.35
+  y: 188.05
+  rot: 180.0
+  side: back
+- ref: R38
+  x: 150.65
+  y: 218.88
+  rot: 90.0
+- ref: R39
+  x: 143.6
+  y: 202.75
+  rot: -90.0
+  side: back
+- ref: R4
+  x: 116.5
+  y: 210.9
+  side: back
+- ref: R41
+  x: 110.1
+  y: 192.5
+  rot: 180.0
+- ref: R42
+  x: 112.1
+  y: 190.8
+- ref: R46
+  x: 110.09
+  y: 189.2
+  rot: 180.0
+- ref: R47
+  x: 142.7
+  y: 204.9
+- ref: R49
+  x: 145.18
+  y: 213.87
+  side: back
+- ref: R5
+  x: 147.1
+  y: 216.72
+  rot: 90.0
+  side: back
+- ref: R51
+  x: 115.65
+  y: 219.45
+  rot: -90.0
+- ref: R7
+  x: 133.62
+  y: 198.98
+  rot: 90.0
+  side: back
+- ref: R8
+  x: 127.47
+  y: 208.88
+  rot: 90.0
+- ref: R9
+  x: 145.15
+  y: 202.25
+- ref: U1
+  x: 141.52
+  y: 212.9
+  side: back
+- ref: U2
+  x: 119.4
+  y: 219.7
+  rot: 180.0
+  side: back
+- ref: U3
+  x: 121.78
+  y: 203.63
+  rot: 180.0
+  side: back
+- ref: U4
+  x: 151.15
+  y: 210.3
+  rot: -90.0
+  side: back
+- ref: U5
+  x: 154.64
+  y: 188.24
+  rot: 90.0
+  side: back
+- ref: U6
+  x: 144.32
+  y: 192.12
+  rot: -90.0
+  side: back
+copper_pours:
+- net: +10V5
+  layers: [B.Cu]
+- net: +3V3
+  layers: [B.Cu, In2.Cu]
+- net: +5V
+  layers: [B.Cu, In2.Cu]
+- net: +VLED
+  layers: [B.Cu, In2.Cu]
+- net: -VLED
+  layers: [B.Cu, In2.Cu]
+- net: /Power/Vi_{BOOST}
+  layers: [B.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In4.Cu]

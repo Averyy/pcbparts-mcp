@@ -1,0 +1,488 @@
+name: Unexpected Maker ReflowMaster
+slug: unexpected-maker-reflowmaster
+source: UnexpectedMaker/ReflowMaster
+format: eagle
+description: ATSAMD21, MAX31855 thermocouple
+tags: [sensors]
+key_ics: [ATSAMD21, MAX31855]
+outline:
+  width_mm: 44.7
+  height_mm: 41.15
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 20mil
+  min_via: 10mil
+components:
+- ref: '1'
+  value: RD
+  footprint: 0805
+- ref: '13'
+  value: GR
+  footprint: 0805
+- ref: '2'
+  value: yellow LED
+  footprint: 0805
+- ref: B1
+  value: tactile switch
+  footprint: TACTILE_SWITCH_PTH_RIGHT_ANGLE_KIT
+  prod_id: CONN-10672
+  description: Momentary Switch (Pushbutton) - SPST
+- ref: B2
+  value: tactile switch
+  footprint: TACTILE_SWITCH_PTH_RIGHT_ANGLE_KIT
+  prod_id: CONN-10672
+  description: Momentary Switch (Pushbutton) - SPST
+- ref: B3
+  value: tactile switch
+  footprint: TACTILE_SWITCH_PTH_RIGHT_ANGLE_KIT
+  prod_id: CONN-10672
+  description: Momentary Switch (Pushbutton) - SPST
+- ref: B4
+  value: tactile switch
+  footprint: TACTILE_SWITCH_PTH_RIGHT_ANGLE_KIT
+  prod_id: CONN-10672
+  description: Momentary Switch (Pushbutton) - SPST
+- ref: BUZZ
+  value: 1x2 header
+  footprint: 1X02
+- ref: C1
+  value: 1uF
+  footprint: 0805
+- ref: C14
+  value: 1uF
+  footprint: 0805
+- ref: C2
+  value: 12pF
+  footprint: 0805
+- ref: C3
+  value: 100nF
+  footprint: 0805
+- ref: C4
+  value: 12pF
+  footprint: 0805
+- ref: C5
+  value: 10nF
+  footprint: 0805
+- ref: C6
+  value: 10uF
+  footprint: 0805
+- ref: C7
+  value: 100nF
+  footprint: 0805
+- ref: C8
+  value: 10uF
+  footprint: 0805
+- ref: D1
+  value: MBR120
+  footprint: SOD-123
+- ref: FAN
+  value: 1x2 header
+  footprint: 1X02
+- ref: J1
+  value: 1x4 header
+  footprint: 1X04
+  prod_id: CONN-09696
+- ref: J2
+  value: USB_MICRO-B
+  footprint: USB-B-MICRO-SMD
+  prod_id: CONN-11752
+  description: USB Type Micro-B Connector
+- ref: K-TYPE
+  value: 1x2 header
+  footprint: 1X02
+- ref: LDO
+  value: AP2112K
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: MAX31855
+  value: SOIC8
+  footprint: SO08-UNIVERSAL
+  description: A placeholder for generic narrow & wide SOIC8 foorptints - used on the DIP
+- ref: Q1
+  value: 600mA/40V
+  footprint: SOT-23-3
+  prod_id: TRANS-08049
+  description: NPN transistor
+- ref: R1
+  value: 100kohm
+  footprint: 0805
+  pullup: EN
+- ref: R11
+  value: 10kohm
+  footprint: 0805
+  pulldown: A0
+- ref: R2
+  value: 430kohm
+  footprint: 0805
+- ref: R3
+  value: 2kohm
+  footprint: 0805
+  pullup: 1.A
+- ref: R4
+  value: 10kohm
+  footprint: 0805
+  pulldown: A1
+- ref: R5
+  value: 10kohm
+  footprint: 0805
+  pulldown: A2
+- ref: R6
+  value: 10kohm
+  footprint: 0805
+  pulldown: A3
+- ref: R7
+  value: 300ohm
+  footprint: 0805
+- ref: R8
+  value: 2kohm
+  footprint: 0805
+- ref: R9
+  value: 1.2kohm
+  footprint: 0805
+- ref: RELAY
+  value: 1x2 header
+  footprint: 1X02
+- ref: SW1
+  value: tactile switch
+  footprint: KMR2
+  description: SMT 6mm switch, EVQQ2 series
+- ref: SWITCH
+  value: 1x2 header
+  footprint: 1X02
+- ref: TFT
+  value: 1x14 header
+  footprint: 1X14
+- ref: X2
+  value: '32.768'
+  footprint: XTAL3215
+  description: Low cost SMT crystals, no capacitors included
+nets:
+- name: '!RESET'
+  pins: [SAMD21.!RESET!, SW1.P, SW1.P1]
+  trace_width: '0.2032'
+- name: +3V3
+  pins:
+  - B1.1
+  - B2.1
+  - B3.1
+  - B4.1
+  - C3.2
+  - C7.1
+  - C8.1
+  - LDO.OUT
+  - MAX31855.4
+  - SAMD21.VDDANA
+  - SAMD21.VDDIN
+  - SAMD21.VDDIO@17
+  - SAMD21.VDDIO@36
+  - TFT.8
+  trace_width: '0.2032'
+- name: A0
+  pins: [B1.2, R11.2, SAMD21.PA02(AIN0/DAC)]
+  trace_width: '0.2032'
+- name: A1
+  pins: [B2.2, R4.2, 'SAMD21.PB08(AIN2/SER4:0/TC4:0)']
+  trace_width: '0.2032'
+- name: A2
+  pins: [B3.2, R5.2, 'SAMD21.PB09(AIN3/SER4:1/TC4:1)']
+  trace_width: '0.2032'
+- name: A3
+  pins: [B4.2, R6.2, 'SAMD21.PA04(AIN4/REFB/SER0:0/TC0:0)']
+  trace_width: '0.2032'
+- name: A4
+  pins: [BUZZ.1, 'SAMD21.PA05(AIN5/SER0:1/TC0:1)']
+  trace_width: '0.2032'
+- name: A5
+  pins: [R9.2, 'SAMD21.PB02(AIN10/SER5:0)']
+  trace_width: '0.2032'
+- name: AREF
+  pins: [C14.1, SAMD21.PA03(AIN1/REFA)]
+  trace_width: '0.2032'
+- name: BASE
+  pins: [Q1.B, R9.1]
+  trace_width: '0.2032'
+- name: D+
+  pins: [J2.D+, 'SAMD21.PA25(SER3:3+)']
+  trace_width: '0.2032'
+- name: D-
+  pins: [J2.D-, 'SAMD21.PA24(SER3:2+)']
+  trace_width: '0.2032'
+- name: D0
+  pins: ['SAMD21.PA11(AIN19/SER0:3+)', TFT.5]
+  trace_width: '0.2032'
+- name: D1
+  pins: ['SAMD21.PA10(AIN18/SER0:2+)', TFT.4]
+  trace_width: '0.2032'
+- name: D10
+  pins: [MAX31855.6, 'SAMD21.PA18(SER1:2+)']
+  trace_width: '0.2032'
+- name: D11
+  pins: [MAX31855.7, 'SAMD21.PA16(I2C/SER1:0+)']
+  trace_width: '0.2032'
+- name: D12
+  pins: [MAX31855.5, 'SAMD21.PA19(SER1:3+)']
+  trace_width: '0.2032'
+- name: D13
+  pins: [R7.1, 'SAMD21.PA17(I2C/SER1:1+)']
+  trace_width: '0.2032'
+- name: D3
+  pins: ['SAMD21.PA09(I2C/AIN17/SER0:1+)', TFT.3]
+  trace_width: '0.2032'
+- name: D5
+  pins: [R8.1, RELAY.2, 'SAMD21.PA15(XOUT/SER2:3+)']
+  trace_width: '0.2032'
+- name: D6
+  pins: [J1.4, 'SAMD21.PA20(SER5:2+)']
+  trace_width: '0.2032'
+- name: D7
+  pins: [J1.3, 'SAMD21.PA21(SER5:3+)']
+  trace_width: '0.2032'
+- name: EN
+  pins: [LDO.EN, R1.2]
+  trace_width: '0.2032'
+- name: FAN
+  pins: [D1.A, FAN.2, Q1.C]
+  trace_width: '0.2032'
+- name: GND
+  pins:
+  - 1.C
+  - 13.C
+  - 2.C
+  - BUZZ.2
+  - C1.2
+  - C14.2
+  - C2.2
+  - C3.1
+  - C4.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - J2.GND
+  - J2.SHIELD
+  - LDO.GND
+  - MAX31855.1
+  - Q1.E
+  - R11.1
+  - R2.2
+  - R4.1
+  - R5.1
+  - R6.1
+  - RELAY.1
+  - SAMD21.GND@18
+  - SAMD21.GND@35
+  - SAMD21.GND@42
+  - SAMD21.GNDANA
+  - SW1.S
+  - SW1.S1
+  - TFT.2
+  trace_width: '0.2032'
+- name: MISO
+  pins: ['SAMD21.PA12(I2C/SER2:0+)', TFT.9]
+  trace_width: '0.2032'
+- name: MOSI
+  pins: ['SAMD21.PB10(SER4:2+)', TFT.6]
+  trace_width: '0.2032'
+- name: N$1
+  pins: [1.A, R3.2]
+  trace_width: '0.2032'
+- name: N$2
+  pins: [13.A, R7.2]
+  trace_width: '0.2032'
+- name: N$3
+  pins: [2.A, R8.2]
+  trace_width: '0.2032'
+- name: N$5
+  pins: [C4.1, 'SAMD21.PA00(XIN32/SER1:0/TC2:0)', X2.P$2]
+  trace_width: '0.2032'
+- name: N$7
+  pins: [C2.1, 'SAMD21.PA01(XOUT32/SER1:1/TC2:1)', X2.P$1]
+  trace_width: '0.2032'
+- name: SCK
+  pins: ['SAMD21.PB11(SER4:3+)', TFT.7]
+  trace_width: '0.2032'
+- name: SCL
+  pins: [J1.1, 'SAMD21.PA23(I2C/SER3:0+)']
+  trace_width: '0.2032'
+- name: SDA
+  pins: [J1.2, 'SAMD21.PA22(I2C/SER3:0+)']
+  trace_width: '0.2032'
+- name: T+
+  pins: [C5.1, K-TYPE.2, MAX31855.3]
+  trace_width: '0.2032'
+- name: T-
+  pins: [C5.2, K-TYPE.1, MAX31855.2]
+  trace_width: '0.2032'
+- name: VBUS
+  pins:
+  - C6.1
+  - D1.C
+  - FAN.1
+  - J2.VBUS
+  - LDO.IN
+  - R1.1
+  - R2.1
+  - R3.1
+  - SWITCH.1
+  - SWITCH.2
+  - TFT.1
+  trace_width: '0.2032'
+- name: VDDCORE
+  pins: [C1.1, SAMD21.VDDCORE]
+  trace_width: '0.2032'
+positions:
+- ref: '1'
+  x: 14.86
+  y: 34.54
+  rot: 270.0
+- ref: '13'
+  x: 14.86
+  y: 36.42
+  rot: 270.0
+- ref: '2'
+  x: 30.48
+  y: 33.78
+  rot: 180.0
+- ref: B1
+  x: 55.37
+  y: 37.85
+  rot: 90.0
+- ref: B2
+  x: 55.37
+  y: 27.69
+  rot: 90.0
+- ref: B3
+  x: 55.37
+  y: 17.53
+  rot: 90.0
+- ref: B4
+  x: 55.37
+  y: 7.37
+  rot: 90.0
+- ref: BUZZ
+  x: 38.23
+  y: 4.06
+- ref: C1
+  x: 20.48
+  y: 21.08
+  rot: 90.0
+- ref: C14
+  x: 28.82
+  y: 10.11
+  rot: 270.0
+- ref: C2
+  x: 26.48
+  y: 10.16
+  rot: 270.0
+- ref: C3
+  x: 33.78
+  y: 36.07
+  rot: 270.0
+- ref: C4
+  x: 24.29
+  y: 10.14
+  rot: 270.0
+- ref: C5
+  x: 38.1
+  y: 38.73
+- ref: C6
+  x: 19.44
+  y: 36.0
+- ref: C7
+  x: 20.08
+  y: 14.29
+  rot: 270.0
+- ref: C8
+  x: 18.19
+  y: 14.29
+  rot: 270.0
+- ref: D1
+  x: 24.51
+  y: 4.95
+  rot: 180.0
+- ref: FAN
+  x: 29.84
+  y: 4.06
+- ref: J1
+  x: 16.26
+  y: 40.89
+- ref: J2
+  x: 14.48
+  y: 25.91
+- ref: K-TYPE
+  x: 39.37
+  y: 41.15
+  rot: 180.0
+- ref: LDO
+  x: 15.4
+  y: 16.42
+  rot: 180.0
+- ref: MAX31855
+  x: 38.1
+  y: 33.02
+  rot: 180.0
+- ref: Q1
+  x: 19.56
+  y: 4.32
+  rot: 180.0
+- ref: R1
+  x: 15.35
+  y: 19.57
+  rot: 180.0
+- ref: R11
+  x: 50.29
+  y: 36.83
+  rot: 90.0
+- ref: R2
+  x: 19.43
+  y: 33.91
+- ref: R3
+  x: 14.86
+  y: 32.64
+  rot: 180.0
+- ref: R4
+  x: 50.42
+  y: 26.67
+  rot: 90.0
+- ref: R5
+  x: 50.42
+  y: 16.64
+  rot: 90.0
+- ref: R6
+  x: 50.29
+  y: 6.48
+  rot: 90.0
+- ref: R7
+  x: 14.81
+  y: 38.22
+  rot: 180.0
+- ref: R8
+  x: 29.72
+  y: 36.83
+  rot: 180.0
+- ref: R9
+  x: 19.56
+  y: 7.49
+  rot: 180.0
+- ref: RELAY
+  x: 28.19
+  y: 41.15
+- ref: SW1
+  x: 25.66
+  y: 30.73
+  rot: 270.0
+- ref: SWITCH
+  x: 22.1
+  y: 30.23
+  rot: 180.0
+- ref: TFT
+  x: 45.97
+  y: 6.1
+  rot: 90.0
+- ref: X2
+  x: 25.38
+  y: 13.23
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

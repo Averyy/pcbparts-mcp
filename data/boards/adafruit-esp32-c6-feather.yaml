@@ -1,0 +1,460 @@
+name: Adafruit ESP32-C6 Feather
+slug: adafruit-esp32-c6-feather
+source: adafruit/Adafruit-ESP32-C6-Feather-PCB
+format: eagle
+description: ESP32-C6 Feather, LiPo fuel gauge (MAX17048)
+tags: [battery-charging, battery-management]
+key_ics: [MAX17048, ESP32-C6]
+outline:
+  width_mm: 50.8
+  height_mm: 22.86
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C10
+  value: 1uF
+  footprint: '0603'
+  decouples: U1
+- ref: C11
+  value: 10uF
+  footprint: 0805
+- ref: C12
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: C2
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C4
+  value: 1uF
+  footprint: '0603'
+- ref: C6
+  value: 10uF
+  footprint: 0805
+- ref: C7
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C8
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C9
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: CHG
+  value: orange LED
+  footprint: '0603'
+- ref: CONN1
+  value: JST SH
+  footprint: JST_SH4_RA
+  lcsc: C145961
+- ref: D3
+  value: red LED
+  footprint: '0603'
+- ref: D4
+  value: MBR540
+  footprint: SOD-123
+- ref: JP1
+  value: 1x16 header
+  footprint: 1X16
+- ref: JP3
+  value: 1x12 header
+  footprint: 1X12
+- ref: LED1
+  value: WS2812B
+  footprint: LED3535_FULLPADS
+- ref: Q3
+  value: DMG3415U
+  footprint: SOT23-R
+  description: P-Channel Mosfet
+- ref: R1
+  value: 5.1kohm
+  footprint: '0603'
+  pullup: RESET
+- ref: R10
+  value: 5.1kohm
+  footprint: '0603'
+- ref: R12
+  value: 100kohm
+  footprint: '0603'
+- ref: R2
+  value: 5.1kohm
+  footprint: '0603'
+- ref: R3
+  value: 10kohm
+  footprint: RESPACK
+  pulldown: SDA
+- ref: R4
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: U3.PROG
+- ref: R5
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: X3.CC2
+- ref: R6
+  value: 100kohm
+  footprint: '0603'
+  pullup: IO9/BOOT/NEOPIX
+- ref: R7
+  value: 100kohm
+  footprint: '0603'
+- ref: R8
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: X3.CC1
+- ref: SJ1
+  value: smd solder jumper
+  footprint: SJ-2
+- ref: SW1
+  value: KMR2
+  footprint: BTN_RKB2
+  description: SMT Tact Switches RKB2
+- ref: SW2
+  value: KMR2
+  footprint: BTN_RKB2
+  description: SMT Tact Switches RKB2
+- ref: U1
+  value: ESP32-C6-MINI
+  footprint: ESP32-PICO-MINI
+- ref: U2
+  value: AP2112/RT9080-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: U3
+  value: MCP73831
+  footprint: SOT-23-5
+  lcsc: C424093
+  description: MCP73831/2 LIPO Charger
+- ref: U4
+  value: AHT20-F
+  footprint: LONGAN-IC_SNR6-1.0-3X3X1MM
+  lcsc: C2757850
+- ref: U5
+  value: AP2112/RT9080-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: X1
+  value: JSTPH
+  footprint: JSTPH2_BATT
+  lcsc: C47647
+- ref: X2
+  value: MAX17048
+  footprint: TDFN8
+  description: LiPo fuel gauge
+- ref: X3
+  value: USB C
+  footprint: USB-C
+  lcsc: C165948
+  description: USB Type-C USB 2.0
+nets:
+- name: 3.3V
+  pins:
+  - C1.1
+  - C10.1
+  - C2.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - JP1.14
+  - JP1.15
+  - R1.2
+  - R6.2
+  - U1.3V3
+  - U2.OUT
+- name: A0
+  pins: [JP1.12, U1.IO1/ADC1_1]
+- name: A1
+  pins: [JP1.11, U1.IO4/ADC1_4]
+- name: A2/IO6
+  pins: [JP1.10, JP3.9, U1.IO6/ADC1_6]
+- name: A3/IO5
+  pins: [JP1.9, JP3.10, U1.IO5/ADC1_5]
+- name: A4
+  pins: [JP1.8, U1.IO3/ADC1_3]
+- name: A5
+  pins: [JP1.7, U1.IO2/ADC1_2]
+- name: D+
+  pins: [U1.IO13/D+, X3.D+]
+- name: D-
+  pins: [U1.IO12/D-, X3.D-]
+- name: EN
+  pins: [JP3.2, R7.1, U2.EN]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C2.2
+  - C4.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - CONN1.G$1.GND
+  - CONN1.G$2.MT
+  - CONN1.G$3.MT
+  - D3.C
+  - JP1.13
+  - LED1.GND
+  - R12.1
+  - R3.G$4.1
+  - R4.1
+  - R5.1
+  - R8.1
+  - SW1.P
+  - SW1.P1
+  - SW2.P
+  - SW2.P1
+  - U1.GND
+  - U2.GND
+  - U3.VSS
+  - U4.GND
+  - U5.GND
+  - X1.G$1.1
+  - X1.MT1.P$1
+  - X1.MT2.P$1
+  - X2.QSTRT
+  - X2.VSS
+  - X3.GND
+- name: I2C_PWR
+  pins: [R3.G$4.2, U1.IO20, U5.EN]
+- name: IO0
+  pins: [JP3.6, U1.IO0_BOOT0/ADC1_0]
+- name: IO14
+  pins: [JP3.5, U1.IO14]
+- name: IO15
+  pins: [JP3.4, R10.1, U1.IO15]
+- name: IO7
+  pins: [JP3.8, U1.IO7]
+- name: IO8
+  pins: [JP3.7, U1.IO8]
+- name: IO9/BOOT/NEOPIX
+  pins: [JP1.1, LED1.DI, R6.1, SW1.S, SW1.S1, U1.IO9]
+- name: MISO
+  pins: [JP1.4, U1.IO23]
+- name: MOSI
+  pins: [JP1.5, U1.IO22]
+- name: N$1
+  pins: [CHG.C, R2.1]
+- name: N$2
+  pins: [SJ1.2, U3.VDD]
+  class: Power
+  trace_width: '0.3048'
+- name: N$5
+  pins: [D3.A, R10.2]
+- name: N$8
+  pins: [R8.2, X3.CC1]
+- name: N$9
+  pins: [R5.2, X3.CC2]
+- name: PROG
+  pins: [R4.2, U3.PROG]
+- name: RESET
+  pins: [C4.1, JP1.16, R1.1, SW2.S, SW2.S1, U1.EN]
+- name: RX
+  pins: [JP1.3, U1.RXD0]
+- name: SCK
+  pins: [JP1.6, U1.IO21]
+- name: SCL
+  pins: [CONN1.G$1.SCL, JP3.11, R3.G$1.1, U1.IO18, U4.SCL, X2.SCL]
+- name: SDA
+  pins: [CONN1.G$1.SDA, JP3.12, R3.G$2.1, U1.IO19, U4.SDA, X2.SDA]
+- name: STAT
+  pins: [R2.2, U3.STAT]
+- name: TX
+  pins: [JP1.2, U1.TXD0]
+- name: VBAT
+  pins:
+  - C12.1
+  - JP3.1
+  - Q3.D
+  - U3.VBAT
+  - X1.G$1.2
+  - X2.CELL
+  - X2.VDD
+  class: Power
+  trace_width: '0.3048'
+- name: VBUS
+  pins:
+  - CHG.A
+  - D4.A
+  - JP3.3
+  - Q3.G
+  - R12.2
+  - SJ1.1
+  - X3.VBUS
+  class: Power
+  trace_width: '0.3048'
+- name: VHI
+  pins: [C6.1, D4.C, Q3.S, R7.2, U2.IN, U5.IN]
+  class: Power
+  trace_width: '0.3048'
+- name: VSENSOR
+  pins:
+  - C11.1
+  - CONN1.G$1.V+
+  - LED1.VDD
+  - R3.G$1.2
+  - R3.G$2.2
+  - R3.G$3.1
+  - R3.G$3.2
+  - U4.VDD
+  - U5.OUT
+  class: Power
+  trace_width: '0.3048'
+positions:
+- ref: C1
+  x: 15.68
+  y: 13.13
+- ref: C10
+  x: 42.93
+  y: 18.8
+- ref: C11
+  x: 26.04
+  y: 8.26
+  rot: 180.0
+- ref: C12
+  x: 21.54
+  y: 15.68
+- ref: C2
+  x: 18.34
+  y: 11.94
+  rot: 90.0
+- ref: C4
+  x: 22.86
+  y: 4.95
+  rot: 90.0
+- ref: C6
+  x: 12.94
+  y: 9.39
+  rot: 270.0
+- ref: C7
+  x: 28.19
+  y: 17.65
+- ref: C8
+  x: 19.62
+  y: 5.2
+  rot: 270.0
+- ref: C9
+  x: 28.19
+  y: 15.68
+- ref: CHG
+  x: 1.46
+  y: 5.46
+  rot: 270.0
+- ref: CONN1
+  x: 23.11
+  y: 11.43
+  rot: 270.0
+- ref: D3
+  x: 1.46
+  y: 17.53
+  rot: 90.0
+- ref: D4
+  x: 11.16
+  y: 11.99
+  rot: 180.0
+- ref: JP1
+  x: 25.4
+  y: 1.27
+  rot: 180.0
+- ref: JP3
+  x: 30.48
+  y: 21.59
+- ref: LED1
+  x: 30.54
+  y: 5.84
+- ref: Q3
+  x: 10.4
+  y: 9.51
+- ref: R1
+  x: 21.34
+  y: 4.95
+  rot: 90.0
+- ref: R10
+  x: 5.71
+  y: 20.7
+  rot: 270.0
+- ref: R12
+  x: 6.36
+  y: 5.66
+  rot: 180.0
+- ref: R2
+  x: 6.34
+  y: 4.11
+- ref: R3
+  x: 26.92
+  y: 11.94
+  rot: 270.0
+- ref: R4
+  x: 15.67
+  y: 15.88
+  rot: 90.0
+- ref: R5
+  x: 8.19
+  y: 8.28
+  rot: 90.0
+- ref: R6
+  x: 30.48
+  y: 11.81
+  rot: 90.0
+- ref: R7
+  x: 18.67
+  y: 8.88
+- ref: R8
+  x: 5.08
+  y: 17.27
+- ref: SJ1
+  x: 14.61
+  y: 17.78
+  rot: 180.0
+- ref: SW1
+  x: 16.13
+  y: 5.08
+- ref: SW2
+  x: 10.79
+  y: 5.08
+- ref: U1
+  x: 39.75
+  y: 11.56
+  rot: 270.0
+- ref: U2
+  x: 15.54
+  y: 10.16
+- ref: U3
+  x: 18.11
+  y: 16.26
+- ref: U4
+  x: 24.77
+  y: 17.34
+  rot: 270.0
+- ref: U5
+  x: 25.65
+  y: 5.33
+  rot: 270.0
+- ref: X1
+  x: 10.92
+  y: 17.72
+- ref: X2
+  x: 21.59
+  y: 17.97
+  rot: 90.0
+- ref: X3
+  x: 3.94
+  y: 11.43
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

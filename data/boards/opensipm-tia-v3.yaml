@@ -1,0 +1,216 @@
+name: OpenSiPM TIA v3
+slug: opensipm-tia-v3
+source: OpenSiPM/sipm-bias-control
+format: kicad9
+description: 'Research-grade transimpedance amplifier: current-domain pole-zero cancellation for high dynamic range (40B+
+  photons/sec)'
+tags: [photonics, analog]
+key_ics: [OPA847]
+outline:
+  width_mm: 25.35
+  height_mm: 25.35
+design_rules:
+  layers: 4
+  min_trace: 0.13mm
+  min_clearance: 0.2mm
+  min_drill: 0.2mm
+  min_via: 0.45mm
+components:
+- ref: C1
+  value: 2.2uF
+  footprint: '1206'
+  voltage: 100V
+- ref: C2
+  value: 330pF
+  footprint: '0402'
+- ref: C3
+  value: 330pF
+  footprint: '0402'
+- ref: C4
+  value: 2.2uF
+  footprint: '1206'
+  voltage: 100V
+- ref: C5
+  value: 1uF
+  footprint: '0402'
+  voltage: 10V
+  decouples: U1
+- ref: C7
+  value: 1uF
+  footprint: '0402'
+- ref: C8
+  value: 22uF
+  footprint: '0603'
+- ref: C9
+  value: 1uF
+  footprint: '0402'
+  voltage: 10V
+- ref: D1
+  value: SIPM
+  footprint: S14420
+- ref: J1
+  value: 2x3 header
+  footprint: 2X3
+- ref: J2
+  value: coaxial connector
+  footprint: SMB_Jack_Vertical
+  digikey: WM5528-ND
+- ref: L1
+  value: 100nH
+  footprint: '0603'
+- ref: L2
+  value: 1.5uH
+  footprint: '0603'
+- ref: R1
+  value: 50ohm
+  footprint: '0402'
+- ref: R11
+  value: 10ohm
+  footprint: '0402'
+- ref: R2
+  value: 1.5kohm
+  footprint: '0402'
+- ref: R23
+  value: 33ohm
+  footprint: '0402'
+- ref: R3
+  value: 68ohm
+  footprint: '0402'
+- ref: R5
+  value: 3.3ohm
+  footprint: '0402'
+- ref: R7
+  value: 5kohm
+  footprint: '0402'
+- ref: U1
+  value: OPA847
+  footprint: OPA847IDBVT
+nets:
+- name: +VDC
+  pins: [J1.Pin_5, R11.1]
+- name: /OUT
+  pins: [R1.1, R2.2, U1.1]
+- name: /VBiasFilt
+  pins: [C1.1, C4.1, D1.K, R11.2]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.CASE
+  - J1.Pin_6
+  - J2.Ext@2
+  - L1.2
+  - R3.1
+- name: LINE
+  pins: [J1.Pin_4, R7.2]
+- name: Net-(C2-Pad1)
+  pins: [C2.1, L2.1, R1.2]
+- name: Net-(D1-A)
+  pins: [D1.A, R23.1, R5.2]
+- name: Net-(J2-In)
+  pins: [C3.1, J2.In, L2.2]
+- name: Net-(L1-Pad1)
+  pins: [L1.1, R5.1]
+- name: Net-(U1-+)
+  pins: [C7.1, C8.1, R3.2, R7.1, U1.+]
+- name: Net-(U1--)
+  pins: [R2.1, R23.2, U1.-]
+- name: VDDA
+  pins: [C5.1, J1.Pin_3, U1.V+]
+- name: VSSA
+  pins: [C9.1, J1.Pin_2, U1.V-]
+positions:
+- ref: C1
+  x: 200.2
+  y: 103.4
+  rot: -90.0
+- ref: C2
+  x: 192.0
+  y: 93.9
+- ref: C3
+  x: 194.28
+  y: 94.41
+  rot: 90.0
+- ref: C4
+  x: 202.4
+  y: 103.4
+  rot: -90.0
+- ref: C5
+  x: 192.95
+  y: 97.35
+  rot: 180.0
+- ref: C7
+  x: 189.69
+  y: 100.2
+  rot: 180.0
+- ref: C8
+  x: 189.69
+  y: 101.3
+  rot: 180.0
+- ref: C9
+  x: 190.25
+  y: 98.75
+  rot: 90.0
+- ref: D1
+  x: 200.0
+  y: 100.0
+  side: back
+- ref: J1
+  x: 206.9
+  y: 97.5
+- ref: J2
+  x: 200.03
+  y: 91.95
+- ref: L1
+  x: 196.0
+  y: 104.36
+  rot: -90.0
+- ref: L2
+  x: 192.34
+  y: 95.1
+- ref: R1
+  x: 191.43
+  y: 96.95
+  rot: 90.0
+- ref: R11
+  x: 205.2
+  y: 105.3
+  rot: 180.0
+- ref: R2
+  x: 192.57
+  y: 99.17
+  rot: 90.0
+  side: back
+- ref: R23
+  x: 195.5
+  y: 100.15
+  rot: 180.0
+- ref: R3
+  x: 189.69
+  y: 102.4
+- ref: R5
+  x: 196.0
+  y: 101.75
+  rot: 90.0
+- ref: R7
+  x: 191.85
+  y: 102.4
+- ref: U1
+  x: 192.64
+  y: 99.2
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: VDDA
+  layers: [In2.Cu]
+- net: VSSA
+  layers: [In2.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+  keepout: true

@@ -1,0 +1,121 @@
+name: SparkFun MAX3232 RS-232
+slug: sparkfun-max3232-rs-232
+source: sparkfun/MAX3232_Breakout
+format: eagle
+description: RS-232 level shifter (MAX3232), charge pump capacitors
+tags: [level-shifting, rs232]
+key_ics: [MAX3232]
+outline:
+  width_mm: 25.4
+  height_mm: 13.97
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 8mil
+  min_drill: 15mil
+  min_via: 10mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+  decouples: U1
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+  decouples: U1
+- ref: JP2
+  value: 1x10 header
+  footprint: 1X10
+- ref: U1
+  value: MAX3232
+  footprint: SOIC-16
+  description: RS232 Transceiver
+nets:
+- name: C1+
+  pins: [C1.1, U1.C1+]
+- name: C1-
+  pins: [C1.2, U1.C1-]
+- name: C2+
+  pins: [C2.1, U1.C2+]
+- name: C2-
+  pins: [C2.2, U1.C2-]
+- name: GND
+  pins: [C3.2, C4.2, C5.2, JP2.6, U1.GND]
+- name: R1IN
+  pins: [JP2.3, U1.R1IN]
+- name: R1OUT
+  pins: [JP2.9, U1.R1OUT]
+- name: R2IN
+  pins: [JP2.4, U1.R2IN]
+- name: R2OUT
+  pins: [JP2.10, U1.R2OUT]
+- name: T1IN
+  pins: [JP2.7, U1.T1IN]
+- name: T1OUT
+  pins: [JP2.1, U1.T1OUT]
+- name: T2IN
+  pins: [JP2.8, U1.T2IN]
+- name: T2OUT
+  pins: [JP2.2, U1.T2OUT]
+- name: V+
+  pins: [C3.1, U1.V+]
+- name: V-
+  pins: [C4.1, U1.V-]
+- name: VCC
+  pins: [C5.1, JP2.5, U1.VCC]
+positions:
+- ref: C1
+  x: 17.02
+  y: 12.7
+  rot: 180.0
+- ref: C2
+  x: 13.34
+  y: 12.7
+  rot: 180.0
+- ref: C3
+  x: 20.45
+  y: 9.39
+  rot: 90.0
+- ref: C4
+  x: 9.91
+  y: 12.7
+  rot: 180.0
+- ref: C5
+  x: 20.45
+  y: 5.67
+  rot: 90.0
+- ref: JP2
+  x: 24.13
+  y: 1.27
+  rot: 180.0
+- ref: U1
+  x: 12.7
+  y: 7.62
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

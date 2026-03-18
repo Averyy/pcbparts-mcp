@@ -1,0 +1,170 @@
+name: Adafruit ADS1115 ADC
+slug: adafruit-ads1115-adc
+source: adafruit/ADS1X15-Breakout-Board-PCBs
+format: eagle
+description: 16-bit I2C ADC with PGA (ADS1115), 4-channel
+tags: [adc-dac, signal-conditioning]
+key_ics: [ADS1115]
+outline:
+  width_mm: 25.4
+  height_mm: 17.78
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C3
+  value: 10uF
+  footprint: 0805
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: CONN3
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: CONN4
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: D1
+  value: green LED
+  footprint: '0603'
+- ref: FB3
+  value: ferrite bead
+  footprint: '0603'
+- ref: FB4
+  value: ferrite bead
+  footprint: '0603'
+- ref: JP1
+  value: 1x6 header
+  footprint: 1X06
+- ref: JP2
+  value: 1x6 header
+  footprint: 1X06
+- ref: R1
+  value: 10kohm
+  footprint: RESPACK
+  pulldown: SCL
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+- ref: SJ2
+  value: smd solder jumper
+  footprint: SJ-2
+- ref: U1
+  value: ADS1115IDGST
+  footprint: MSOP10
+  description: 16-bit 4-channel I2C ADC
+nets:
+- name: ADDR
+  pins: [JP2.5, R1.G$1.1, U1.ADDR]
+- name: AGND
+  pins: [C1.1, C5.2, FB4.P$2, JP1.6, U1.GND]
+- name: AIN0
+  pins: [JP1.5, U1.AIN0]
+- name: AIN1
+  pins: [JP1.4, U1.AIN1]
+- name: AIN2
+  pins: [JP1.3, U1.AIN2]
+- name: AIN3
+  pins: [JP1.2, U1.AIN3]
+- name: ALERT
+  pins: [JP2.6, R1.G$2.1, U1.ALERT]
+- name: AVDD
+  pins: [C1.2, C5.1, FB3.P$2, JP1.1, U1.VDD]
+- name: GND
+  pins:
+  - C3.2
+  - CONN3.G$1.GND
+  - CONN3.G$2.MT
+  - CONN3.G$3.MT
+  - CONN4.G$1.GND
+  - CONN4.G$2.MT
+  - CONN4.G$3.MT
+  - D1.C
+  - FB4.P$1
+  - JP2.2
+  - R1.G$1.2
+- name: N$1
+  pins: [R2.2, SJ2.1]
+  class: highpower
+  trace_width: '0.3048'
+- name: N$3
+  pins: [D1.A, R2.1]
+- name: SCL
+  pins: [CONN3.G$1.SCL, CONN4.G$1.SCL, JP2.3, R1.G$4.1, U1.SCL]
+- name: SDA
+  pins: [CONN3.G$1.SDA, CONN4.G$1.SDA, JP2.4, R1.G$3.1, U1.SDA]
+- name: VCC
+  pins:
+  - C3.1
+  - CONN3.G$1.V+
+  - CONN4.G$1.V+
+  - FB3.P$1
+  - JP2.1
+  - R1.G$2.2
+  - R1.G$3.2
+  - R1.G$4.2
+  - SJ2.2
+  class: highpower
+  trace_width: '0.3048'
+positions:
+- ref: C1
+  x: 8.13
+  y: 11.94
+- ref: C3
+  x: 8.26
+  y: 5.71
+- ref: C5
+  x: 8.13
+  y: 10.03
+  rot: 180.0
+- ref: CONN3
+  x: 22.73
+  y: 8.89
+  rot: 90.0
+- ref: CONN4
+  x: 2.67
+  y: 8.89
+  rot: 270.0
+- ref: D1
+  x: 3.56
+  y: 12.57
+  rot: 90.0
+- ref: FB3
+  x: 8.0
+  y: 8.45
+- ref: FB4
+  x: 17.59
+  y: 9.53
+  rot: 180.0
+- ref: JP1
+  x: 12.7
+  y: 15.24
+- ref: JP2
+  x: 12.7
+  y: 2.54
+- ref: R1
+  x: 12.7
+  y: 6.41
+  rot: 180.0
+- ref: R2
+  x: 5.59
+  y: 12.32
+  rot: 90.0
+- ref: SJ2
+  x: 4.57
+  y: 12.06
+- ref: U1
+  x: 12.95
+  y: 9.53
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

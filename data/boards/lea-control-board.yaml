@@ -1,0 +1,3826 @@
+name: LEA Control Board
+slug: lea-control-board
+source: upb-lea/LCB-CCB-01_LEA_Control_Board
+format: kicad9
+description: 'Isolated gate-driver interface for power electronics: automotive-grade ISO7741, CAS-120TA isolated DC-DC'
+tags: [automotive, isolation, power-supply]
+key_ics: [FT2232HL, MIC5259-3.3, ADG736BRMZ, ISO_ISO7741FQDWWQ1, MIC5504-1.2]
+outline:
+  width_mm: 85.0
+  height_mm: 55.0
+design_rules:
+  layers: 8
+  min_trace: 0.1mm
+  min_clearance: 0.1mm
+  min_drill: 0.2mm
+  min_via: 0.4mm
+components:
+- ref: C201
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V475K
+  description: Capacitor 0603
+- ref: C202
+  value: 10nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-CGA3E2X7R1H103K
+  description: Capacitor 0603
+- ref: C203
+  value: 10nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-CGA3E2X7R1H103K
+  description: Capacitor 0603
+- ref: C204
+  value: 1uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H105K
+  description: Capacitor 0603
+- ref: C205
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V475K
+  description: Capacitor 0603
+- ref: C206
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C207
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V475K
+  description: Capacitor 0603
+- ref: C208
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C209
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C210
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C211
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C212
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C213
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C214
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C215
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C216
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V475K
+  description: Capacitor 0603
+- ref: C217
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C218
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C219
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C220
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C221
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C222
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C223
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C301
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V225K
+  description: Capacitor 0603
+- ref: C302
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C303
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C304
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V225K
+  description: Capacitor 0603
+- ref: C305
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V225K
+  description: Capacitor 0603
+- ref: C306
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C307
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C308
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V225K
+  description: Capacitor 0603
+- ref: C601
+  value: 1uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H105K
+  description: Capacitor 0603
+- ref: C602
+  value: 1uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H105K
+  description: Capacitor 0603
+- ref: C603
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V225K
+  description: Capacitor 0603
+- ref: C604
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V225K
+  description: Capacitor 0603
+- ref: C605
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V225K
+  description: Capacitor 0603
+- ref: C607
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V225K
+  description: Capacitor 0603
+- ref: C608
+  value: 2.2uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1V225K
+  description: Capacitor 0603
+- ref: C701
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C702
+  value: 10nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-CGA3E2X7R1H103K
+  description: Capacitor 0603
+- ref: C703
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C704
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C705
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C706
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C707
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C708
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C709
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C710
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C711
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C712
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C713
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C714
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C715
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C716
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C717
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C718
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C719
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C720
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C721
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C722
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C723
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C724
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C725
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C726
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C727
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C728
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C729
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C730
+  value: 100nF
+  footprint: '0402'
+  manufacturer: TDK
+  mouser: 810-C1005X7R1H104K
+  description: Capacitor 0402
+- ref: C740
+  value: 1uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H105K
+  description: Capacitor 0603
+- ref: C741
+  value: 1uF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H105K
+  description: Capacitor 0603
+- ref: C801
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C804
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C807
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C810
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C813
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C814
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C815
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C816
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C817
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C901
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C902
+  value: 100nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X5R1H104K
+  description: Capacitor 0603
+- ref: C905
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C906
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C907
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C908
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C909
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C910
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C911
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C912
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C913
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C914
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C915
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C916
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C917
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C918
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C919
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C920
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C921
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C922
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C923
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C924
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C925
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C926
+  value: 100pF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608C0G1H101KAA
+  description: Capacitor 0603
+- ref: C927
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C928
+  value: 1nF
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-C1608X7R1H102KAE
+  description: Capacitor 0603
+- ref: C929
+  value: 22uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mouser: 187-CL10A226KQ8NRNE
+  description: Capacitor 0603
+- ref: D1001
+  value: 2mA
+  footprint: '0603'
+  manufacturer: Kingbright
+  mouser: 604-APTD1608LCGCK
+- ref: D1002
+  value: 2mA
+  footprint: '0603'
+  manufacturer: Kingbright
+  mouser: 604-APTD1608LCGCK
+- ref: D1003
+  value: 2mA
+  footprint: '0603'
+  manufacturer: Kingbright
+  mouser: 604-APTD1608LCGCK
+- ref: D1004
+  value: 2mA
+  footprint: '0603'
+  manufacturer: Kingbright
+  mouser: 604-APTD1608LSYCK
+- ref: D1005
+  value: 2mA
+  footprint: '0603'
+  manufacturer: Kingbright
+  mouser: 604-APHD1608LSURCK
+- ref: D1006
+  value: 2mA
+  footprint: '0603'
+  manufacturer: Kingbright
+  mouser: 604-APHD1608LSURCK
+- ref: D201
+  value: 2mA
+  footprint: '0603'
+  manufacturer: Kingbright
+  mouser: 604-APTD1608LCGCK
+- ref: D202
+  value: 1A0
+  footprint: SOD-323_Infineon
+  manufacturer: Infineon
+  mouser: 726-BAS3010A-03WE6
+  description: Schottky Diodes & Rectifiers Medium Power IF Diode
+- ref: D203
+  value: 2mA
+  footprint: '0603'
+  manufacturer: Kingbright
+  mouser: 604-APHD1608LVBCD
+- ref: D204
+  value: 2mA
+  footprint: '0603'
+  manufacturer: Kingbright
+  mouser: 604-APHD1608LVBCD
+- ref: D801
+  value: 150mA
+  footprint: SOD-323_Panjit
+  manufacturer: Panjit
+  mouser: 241-BAS316_R1_00001
+- ref: D802
+  value: 150mA
+  footprint: SOD-323_Panjit
+  manufacturer: Panjit
+  mouser: 241-BAS316_R1_00001
+- ref: D803
+  value: 150mA
+  footprint: SOD-323_Panjit
+  manufacturer: Panjit
+  mouser: 241-BAS316_R1_00001
+- ref: D804
+  value: 150mA
+  footprint: SOD-323_Panjit
+  manufacturer: Panjit
+  mouser: 241-BAS316_R1_00001
+- ref: J201
+  value: USBC_GTC_USB4110-GF-A
+  footprint: USB-C
+  manufacturer: GTC
+  mouser: 640-USB4110-GF-A
+  description: USB Connectors USB Type C, 2.0, Rec, SMT , G/F, RA , Top Mnt, T & R
+- ref: J202
+  value: FTR-110-03-G-D-06-TR
+  footprint: FTR-110-03-G-D-06
+  manufacturer: Samtec
+  mouser: 200-FTR11003GD06TR
+  description: 20 pin SMD Micro Header, 1.27 mm pitch
+- ref: J401
+  value: Molex_532617006
+  footprint: 6-PinHeader_Molex_532617006
+  manufacturer: Molex
+  mouser: 538-53261-7006
+  description: 6 Pin Male, right angle, 1.25mm Pitch
+- ref: J402
+  value: ERF5-075-05.0-L-DV-TR
+  footprint: ERF5-075-05.0-L-DV
+  manufacturer: Samtec
+  mouser: 200-ERF507505.0LDVTR
+  description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed Socket
+- ref: J403
+  value: ERF5-075-05.0-L-DV-TR
+  footprint: ERF5-075-05.0-L-DV
+  manufacturer: Samtec
+  mouser: 200-ERF507505.0LDVTR
+  description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed Socket
+- ref: J501
+  value: ERM5-075-05.0-L-DV-K-TR
+  footprint: ERM5-075-05.0-L-DV
+  manufacturer: Samtec
+  mouser: 200-ERM5075050LDVKTR
+  description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed
+- ref: J502
+  value: ERM5-075-05.0-L-DV-K-TR
+  footprint: ERM5-075-05.0-L-DV
+  manufacturer: Samtec
+  mouser: 200-ERM5075050LDVKTR
+  description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed
+- ref: L201
+  value: Ferrite_0603
+  footprint: '0603'
+  manufacturer: Murata
+  mouser: 530-FCB-0603-601A
+  description: Ferrite Bead, 0603, 600Ohm, 300mA
+- ref: L202
+  value: Ferrite_0603
+  footprint: '0603'
+  manufacturer: Murata
+  mouser: 530-FCB-0603-601A
+  description: Ferrite Bead, 0603, 600Ohm, 300mA
+- ref: L601
+  value: 60R 3A5
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-MPZ1608S600ATAH0
+  description: Ferrite Bead, 0603
+- ref: L603
+  value: 60R 3A5
+  footprint: '0603'
+  manufacturer: TDK
+  mouser: 810-MPZ1608S600ATAH0
+  description: Ferrite Bead, 0603
+- ref: R1001
+  value: 680ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW0603680RFKEAC
+  description: Resistor 0603
+- ref: R1002
+  value: 680ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW0603680RFKEAC
+  description: Resistor 0603
+- ref: R1003
+  value: 680ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW0603680RFKEAC
+  description: Resistor 0603
+- ref: R1004
+  value: 680ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW0603680RFKEAC
+  description: Resistor 0603
+- ref: R1005
+  value: 680ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW0603680RFKEAC
+  description: Resistor 0603
+- ref: R1006
+  value: 680ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW0603680RFKEAC
+  description: Resistor 0603
+- ref: R201
+  value: 2.2kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06032K20FKEAC
+  description: Resistor 0603
+- ref: R202
+  value: 680ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW0603680RFKEAC
+  description: Resistor 0603
+- ref: R203
+  value: 4.7kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06034K70FKEBC
+  description: Resistor 0603
+  pulldown: /XDS100 - Page 2/CC1
+- ref: R204
+  value: 4.7kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06034K70FKEBC
+  description: Resistor 0603
+  pulldown: /XDS100 - Page 2/CC2
+- ref: R205
+  value: 2.2kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06032K20FKEAC
+  description: Resistor 0603
+- ref: R206
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R207
+  value: 2.2kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06032K20FKEAC
+  description: Resistor 0603
+- ref: R208
+  value: 2.2kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06032K20FKEAC
+  description: Resistor 0603
+  pulldown: U201.ACBUS5
+- ref: R209
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R210
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060310K0FKEAC
+  description: Resistor 0603
+- ref: R211
+  value: 2.2kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06032K20FKEAC
+  description: Resistor 0603
+- ref: R213
+  value: 680ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW0603680RFKEAC
+  description: Resistor 0603
+- ref: R214
+  value: 680ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW0603680RFKEAC
+  description: Resistor 0603
+- ref: R217
+  value: 12kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060312K0FKEAC
+  description: Resistor 0603
+  pulldown: /XDS100 - Page 2/REF
+- ref: R220
+  value: 4.7kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06034K70FKEBC
+  description: Resistor 0603
+- ref: R221
+  value: 4.7kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06034K70FKEBC
+  description: Resistor 0603
+- ref: R222
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R223
+  value: 2.2kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06032K20FKEAC
+  description: Resistor 0603
+  pulldown: TRST_LV
+- ref: R224
+  value: 4.7kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06034K70FKEBC
+  description: Resistor 0603
+- ref: R301
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R302
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R601
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R701
+  value: 2.2kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06032K20FKEAC
+  description: Resistor 0603
+- ref: R702
+  value: 2.2kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06032K20FKEAC
+  description: Resistor 0603
+- ref: R703
+  value: 2.2kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06032K20FKEAC
+  description: Resistor 0603
+- ref: R704
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R705
+  value: 2.2kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06032K20FKEAC
+  description: Resistor 0603
+- ref: R706
+  value: 2.2kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06032K20FKEAC
+  description: Resistor 0603
+  pulldown: TRST_HV
+- ref: R707
+  value: 33ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060333R0FKEAC
+  description: Resistor 0603
+- ref: R708
+  value: 33ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060333R0FKEAC
+  description: Resistor 0603
+- ref: R709
+  value: 33ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060333R0FKEAC
+  description: Resistor 0603
+- ref: R710
+  value: 33ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060333R0FKEAC
+  description: Resistor 0603
+- ref: R711
+  value: 56ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060356R0FKEAC
+  description: Resistor 0603
+- ref: R712
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R713
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R714
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R715
+  value: 10ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060310R0FKEAC
+  description: Resistor 0603
+- ref: R801
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R802
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R803
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R804
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R805
+  value: 4.7kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06034K70FKEBC
+  description: Resistor 0603
+- ref: R806
+  value: 4.7kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06034K70FKEBC
+  description: Resistor 0603
+- ref: R807
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060310K0FKEAC
+  description: Resistor 0603
+  pulldown: /Error Detection - Page 8/OPA1IN+
+- ref: R808
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060310K0FKEAC
+  description: Resistor 0603
+  pulldown: /Error Detection - Page 8/OPA3IN+
+- ref: R809
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R810
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R811
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R812
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R813
+  value: 4.7kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06034K70FKEBC
+  description: Resistor 0603
+- ref: R814
+  value: 4.7kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06034K70FKEBC
+  description: Resistor 0603
+- ref: R815
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060310K0FKEAC
+  description: Resistor 0603
+  pulldown: /Error Detection - Page 8/OPA2IN+
+- ref: R816
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW060310K0FKEAC
+  description: Resistor 0603
+  pulldown: /Error Detection - Page 8/OPA4IN+
+- ref: R820
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R821
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R822
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R823
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: R901
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R902
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R903
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R904
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R905
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R906
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R907
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R908
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R909
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R910
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R911
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R912
+  value: 1kohm
+  footprint: 0805
+  manufacturer: Vishay
+  mouser: 71-CRCW08051K00FKEAC
+  description: Resistor 0805
+- ref: R913
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R914
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R915
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R916
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R917
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R918
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R919
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R920
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R921
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R922
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R923
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R924
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06031K00FKEAC
+  description: Resistor 0603
+- ref: R925
+  value: 0ohm
+  footprint: '0603'
+  manufacturer: Vishay
+  mouser: 71-CRCW06030000Z0EAC
+  description: Resistor 0603
+- ref: S201
+  value: CAS-120TA
+  footprint: CAS-120TA
+  manufacturer: Nidec
+  mouser: 229-CAS-120TA
+  description: Slide Switches SPDT, ON-ON, slide, J-hook SMD terminals, 100mA @ 6V DC
+- ref: S301
+  value: CAS-120TA
+  footprint: CAS-120TA
+  manufacturer: Nidec
+  mouser: 229-CAS-120TA
+  description: Slide Switches SPDT, ON-ON, slide, J-hook SMD terminals, 100mA @ 6V DC
+- ref: SW701
+  value: switch
+  footprint: Sw_Push_RightAngle
+  manufacturer: Omron Electronics
+  mouser: 653-B3U-3000PM
+  description: Push button switch, right angle, generic, two pins
+- ref: U201
+  value: FT2232HL
+  footprint: LQFP-64
+  manufacturer: FTDI
+  mouser: 895-FT2232HL-TRAY
+  description: USB Interface IC USB HS to Dual UART/ FIFO/SPI/JTAG/I2C
+- ref: U202
+  value: 93LC56BT-I_OT
+  footprint: SOT-23-6_Microchip
+  manufacturer: Microchip
+  mouser: 579-93LC56BT-I/OT
+  description: EEPROM Serial-Microwire 2K-Bit 128 x 16 2MHz,93LC56BT-I/OT,SOT-23-6,SMD
+- ref: U203
+  value: MIC5259-3.3
+  footprint: SOT-23-5_Microchip
+  manufacturer: Microchip
+  mouser: 998-MIC5259-3.3YD5TR
+  description: LDO Voltage Regulator 3.3V 300mA
+- ref: U204
+  value: ADG736BRMZ
+  footprint: MSOP10_AnalogDevices
+  manufacturer: Analog Devices
+  mouser: 584-ADG736BRMZ
+  description: Analog Devices ADG736BRMZ, Analogue SPDT Switch Dual SPDT, 3 V, 5 V, 10-Pin MSOP
+- ref: U205
+  value: ADG736BRMZ
+  footprint: MSOP10_AnalogDevices
+  manufacturer: Analog Devices
+  mouser: 584-ADG736BRMZ
+  description: Analog Devices ADG736BRMZ, Analogue SPDT Switch Dual SPDT, 3 V, 5 V, 10-Pin MSOP
+- ref: U206
+  value: ADG736BRMZ
+  footprint: MSOP10_AnalogDevices
+  manufacturer: Analog Devices
+  mouser: 584-ADG736BRMZ
+  description: Analog Devices ADG736BRMZ, Analogue SPDT Switch Dual SPDT, 3 V, 5 V, 10-Pin MSOP
+- ref: U301
+  value: ISO_ISO7741FQDWWQ1
+  footprint: SOIC-16_TI_DWW0016A_Optimized
+  manufacturer: Texas Instruments
+  mouser: 595-ISO7741FQDWWQ1
+  description: ISO774x-Q1 Automotive, High-Speed, Reinforced Quad-Channel Digital Isolators
+- ref: U302
+  value: ISO_ISO7741FQDWWQ1
+  footprint: SOIC-16_TI_DWW0016A_Optimized
+  manufacturer: Texas Instruments
+  mouser: 595-ISO7741FQDWWQ1
+  description: ISO774x-Q1 Automotive, High-Speed, Reinforced Quad-Channel Digital Isolators
+- ref: U601
+  value: MIC5504-1.2
+  footprint: SOT-23-5_Microchip
+  manufacturer: Microchip
+  mouser: 998-MIC5504-1.2YM5TR
+  description: LDO Voltage Regulator 1.2V 300mA
+- ref: U701
+  value: TPS3702CX33DDCT
+  footprint: TSOT-23-6_TI
+  manufacturer: Texas Instruments
+  mouser: 595-TPS3702CX33DDCT
+  description: Supervisory Circuits High-Acc, Fixed Threshold OV/UV Mntr
+- ref: U702
+  value: TPS3702CX12DDCT
+  footprint: TSOT-23-6_TI
+  manufacturer: Texas Instruments
+  mouser: 595-TPS3702CX12DDCT
+  description: Supervisory Circuits High-Acc, Fixed Threshold OV/UV Mntr
+- ref: U703
+  value: TMS320F28388D
+  footprint: BGA-361
+  manufacturer: Texas Instruments
+  mouser: 595-F28388DZWTSR
+  description: MCU C2000 32-bit, Dual-core C28x architecture
+- ref: U704
+  value: PI6C49CB04AQ3WEX
+  footprint: SOIC-8
+  manufacturer: Diodes Incorporated
+  mouser: 621-PI6C49CB04AQ3WEX
+  description: Clock Buffer LOW SKEW 1 TO 4 CLOCK BUFFER
+- ref: U801
+  value: 74HC74PW
+  footprint: TSSOP-14-Nexperia
+  manufacturer: Nexperia
+  mouser: 771-74HC74PW-T
+  description: Flip-Flops 74HC74PW/SOT402/TSSOP14
+- ref: U802
+  value: 74HC74PW
+  footprint: TSSOP-14-Nexperia
+  manufacturer: Nexperia
+  mouser: 771-74HC74PW-T
+  description: Flip-Flops 74HC74PW/SOT402/TSSOP14
+- ref: U803
+  value: TLV3202AIDGKR
+  footprint: VSSOP-8-TI
+  mouser: 595-TLV3202AIDGKR
+  manufacturer: Texas Instruments
+- ref: U804
+  value: TLV3202AIDGKR
+  footprint: VSSOP-8-TI
+  mouser: 595-TLV3202AIDGKR
+  manufacturer: Texas Instruments
+- ref: U805
+  value: 74ALVC08PW
+  footprint: TSSOP-14-Nexperia
+  mouser: 771-ALVC08PW118
+  manufacturer: Nexperia
+  description: 4 gate, 8 input, 4 Output, AND gate, Logic Gates 74ALVC08PW/TSSOP14
+- ref: U901
+  value: MAX6037AAUK30+T
+  footprint: SOT-23-5_Microchip
+  manufacturer: Maxim Integrated
+  mouser: 700-MAX6037AAUK30T
+  description: Precision Voltage Reference 3.0V
+- ref: Y201
+  value: ECS-2033-120-AU
+  footprint: Osc_ECS
+  manufacturer: ECS
+  mouser: 520-2033-120-AU
+  description: Standard Clock Oscillators 12.000 MHZ 3.3Volt 100 ppm -55C +125C
+- ref: Y701
+  value: ECS-2520S33-250-FN-TR
+  footprint: Osc_ECS
+  manufacturer: ECS
+  mouser: 520-2520S33-250-FNT
+  description: Standard Clock Oscillators 25MHz 3.3V 10ppm -40C +85C
+nets:
+- name: +1.2V_HV
+  pins:
+  - C608.2
+  - C708.1
+  - C709.1
+  - C710.1
+  - C711.1
+  - C712.1
+  - C713.1
+  - C714.1
+  - L603.1
+  - R711.1
+  - U702.SENSE
+  - U703.VDD@E11
+  - U703.VDD@E9
+  - U703.VDD@F11
+  - U703.VDD@F9
+  - U703.VDD@G14
+  - U703.VDD@G15
+  - U703.VDD@J14
+  - U703.VDD@J15
+  - U703.VDD@K5
+  - U703.VDD@K6
+  - U703.VDD@P10
+  - U703.VDD@P13
+  - U703.VDD@R10
+  - U703.VDD@R13
+- name: +1.8V_HV
+  pins:
+  - C216.1
+  - C217.1
+  - C218.1
+  - C219.1
+  - C220.1
+  - U201.VCORE@12
+  - U201.VCORE@37
+  - U201.VCORE@64
+  - U201.VREGOUT
+- name: +1V2_HV
+  pins: [C602.2, C607.2, L603.2, U601.VOUT]
+- name: +3.3V_HV
+  pins:
+  - C604.2
+  - C605.2
+  - C706.1
+  - C707.1
+  - C715.1
+  - C716.1
+  - C717.1
+  - C718.1
+  - C719.1
+  - C720.1
+  - C721.1
+  - C722.1
+  - C723.1
+  - C724.1
+  - C725.1
+  - C726.1
+  - C727.1
+  - C728.1
+  - C729.1
+  - C730.1
+  - C901.2
+  - D1001.A
+  - J401.Pin_6
+  - L601.1
+  - R301.1
+  - R302.1
+  - R601.1
+  - R701.2
+  - R702.2
+  - R703.1
+  - R705.1
+  - R712.1
+  - R713.1
+  - R714.1
+  - R801.2
+  - R802.2
+  - R809.2
+  - R810.2
+  - R820.1
+  - R821.1
+  - R822.2
+  - R823.1
+  - S301.1
+  - U703.VDD3VFL@R11
+  - U703.VDD3VFL@R12
+  - U703.VDDA@P6
+  - U703.VDDA@R6
+  - U703.VDDIO@A18
+  - U703.VDDIO@A9
+  - U703.VDDIO@B1
+  - U703.VDDIO@E10
+  - U703.VDDIO@E13
+  - U703.VDDIO@E16
+  - U703.VDDIO@E7
+  - U703.VDDIO@F10
+  - U703.VDDIO@F13
+  - U703.VDDIO@F16
+  - U703.VDDIO@F4
+  - U703.VDDIO@F7
+  - U703.VDDIO@G4
+  - U703.VDDIO@G5
+  - U703.VDDIO@G6
+  - U703.VDDIO@H5
+  - U703.VDDIO@H6
+  - U703.VDDIO@L14
+  - U703.VDDIO@L15
+  - U703.VDDIO@M1
+  - U703.VDDIO@M5
+  - U703.VDDIO@M6
+  - U703.VDDIO@N14
+  - U703.VDDIO@N15
+  - U703.VDDIO@P9
+  - U703.VDDIO@R9
+  - U703.VDDIO@V19
+  - U703.VDDIO@W8
+  - U703.VDDOSC@H16
+  - U703.VDDOSC@H17
+  - U901.IN
+  - U901.nSHDN
+- name: +3.3V_LV
+  pins:
+  - C204.1
+  - C209.1
+  - C210.1
+  - C211.1
+  - C212.1
+  - C213.1
+  - C214.1
+  - C215.1
+  - C221.1
+  - C222.1
+  - C223.1
+  - C301.1
+  - C302.1
+  - C305.1
+  - C306.1
+  - D201.A
+  - D203.A
+  - D204.A
+  - L201.2
+  - L202.2
+  - R201.1
+  - R205.2
+  - R207.1
+  - R210.2
+  - R220.2
+  - R221.1
+  - R224.1
+  - S201.1
+  - U201.VCCIO@20
+  - U201.VCCIO@31
+  - U201.VCCIO@42
+  - U201.VCCIO@56
+  - U201.VREGIN
+  - U202.VCC
+  - U203.Vout
+  - U204.VDD
+  - U205.VDD
+  - U206.VDD
+  - U301.EN1
+  - U301.VCC1
+  - U302.EN1
+  - U302.VCC1
+  - Y201.Tri-State
+  - Y201.Vdd
+- name: +3V3_Connector_HV
+  pins:
+  - C603.2
+  - J402.1
+  - J402.10
+  - J402.2
+  - J402.3
+  - J402.4
+  - J402.5
+  - J402.6
+  - J402.7
+  - J402.8
+  - J402.9
+  - J501.1
+  - J501.10
+  - J501.2
+  - J501.3
+  - J501.4
+  - J501.5
+  - J501.6
+  - J501.7
+  - J501.8
+  - J501.9
+  - L601.2
+- name: +5V_LV
+  pins: [C201.1, C202.1, D202.C, U203.EN, U203.Vin]
+- name: /Analog Filter - Page 9/A0_P
+  pins: [C915.1, R911.1, U703.ADCINA0/DACOUTA]
+- name: /Analog Filter - Page 9/A1_N
+  pins: [C916.1, R912.1, U703.ADCINA1/DACOUTB]
+- name: /Analog Filter - Page 9/A2_P
+  pins: [C905.1, R901.1, U703.ADCINA2/CMPIN1P]
+- name: /Analog Filter - Page 9/A3_N
+  pins: [C906.1, R902.1, U703.ADCINA3/CMPIN1N]
+- name: /Analog Filter - Page 9/A4_P
+  pins: [C907.1, R903.1, U703.ADCINA4/CMPIN2P]
+- name: /Analog Filter - Page 9/A5_N
+  pins: [C908.1, R904.1, U703.ADCINA5/CMPIN2N]
+- name: /Analog Filter - Page 9/ADC_Ref3.0V
+  pins: [C902.1, R925.1, U901.OUT]
+- name: /Analog Filter - Page 9/B0_P
+  pins: [C921.1, R917.1, U703.ADCINB0/VDAC]
+- name: /Analog Filter - Page 9/B1_N
+  pins: [C922.1, R918.1, U703.ADCINB1/DACOUTC]
+- name: /Analog Filter - Page 9/B2_P
+  pins: [C913.1, R909.1, U703.ADCINB2/CMPIN3P]
+- name: /Analog Filter - Page 9/B3_N
+  pins: [C914.1, R910.1, U703.ADCINB3/CMPIN3N]
+- name: /Analog Filter - Page 9/B4_P
+  pins: [C911.1, R907.1, U703.ADCINB4]
+- name: /Analog Filter - Page 9/B5_N
+  pins: [C912.1, R908.1, U703.ADCINB5]
+- name: /Analog Filter - Page 9/C2_P
+  pins: [C909.1, R905.1, U703.ADCINC2/CMPIN6P]
+- name: /Analog Filter - Page 9/C3_N
+  pins: [C910.1, R906.1, U703.ADCINC3/CMPIN6N]
+- name: /Analog Filter - Page 9/C4_P
+  pins: [C918.1, R914.1, U703.ADCINC4/CMPIN5P]
+- name: /Analog Filter - Page 9/C5_N
+  pins: [C917.1, R913.1, U703.ADCINC5/CMPIN5N]
+- name: /Analog Filter - Page 9/D0_P
+  pins: [C926.1, R922.1, U703.ADCIND0/CMPIN7P]
+- name: /Analog Filter - Page 9/D1_N
+  pins: [C925.1, R921.1, U703.ADCIND1/CMPIN7N]
+- name: /Analog Filter - Page 9/D2_P
+  pins: [C923.1, R919.1, U703.ADCIND2/CMPIN8P]
+- name: /Analog Filter - Page 9/D3_N
+  pins: [C924.1, R920.1, U703.ADCIND3/CMPIN8N]
+- name: /Analog Filter - Page 9/D4_P
+  pins: [C928.1, R924.1, U703.ADCIND4]
+- name: /Analog Filter - Page 9/D5_N
+  pins: [C927.1, R923.1, U703.ADCIND5]
+- name: /Analog Filter - Page 9/IN14_P
+  pins: [C919.1, R915.1, U703.ADCIN14/CMPIN4P]
+- name: /Analog Filter - Page 9/IN15_N
+  pins: [C920.1, R916.1, U703.ADCIN15/CMPIN4N]
+- name: /Analog Filter - Page 9/VREFH
+  pins: [C929.1, R925.2, U703.VREFHIA, U703.VREFHIB, U703.VREFHIC, U703.VREFHID]
+- name: /Error Detection - Page 8/1Y
+  pins: [U805.1Y, U805.3B]
+- name: /Error Detection - Page 8/2Y
+  pins: [U805.2Y, U805.3A]
+- name: /Error Detection - Page 8/FF1_Data
+  pins: [R805.2, U801.SD@4, U803.1]
+- name: /Error Detection - Page 8/FF2_Data
+  pins: [R813.2, U801.SD@10, U803.7]
+- name: /Error Detection - Page 8/FF3_Data
+  pins: [R806.2, U802.SD@4, U804.1]
+- name: /Error Detection - Page 8/FF4_Data
+  pins: [R814.2, U802.SD@10, U804.7]
+- name: /Error Detection - Page 8/OPA1IN+
+  pins: [D801.A, R801.1, R807.2, U803.+@3]
+- name: /Error Detection - Page 8/OPA1IN-
+  pins: [C801.1, R803.2, U803.-@2]
+- name: /Error Detection - Page 8/OPA2IN+
+  pins: [D803.A, R809.1, R815.2, U803.+@5]
+- name: /Error Detection - Page 8/OPA2_IN-
+  pins: [C807.1, R811.2, U803.-@6]
+- name: /Error Detection - Page 8/OPA3IN+
+  pins: [D802.A, R802.1, R808.2, U804.+@3]
+- name: /Error Detection - Page 8/OPA3IN-
+  pins: [C804.1, R804.2, U804.-@2]
+- name: /Error Detection - Page 8/OPA4IN+
+  pins: [D804.A, R810.1, R816.2, U804.+@5]
+- name: /Error Detection - Page 8/OPA4IN-
+  pins: [C810.1, R812.2, U804.-@6]
+- name: /Isolation - Page 3/Enable_Output
+  pins: [S301.2, U301.EN2, U302.EN2]
+- name: /MCU - Page 7/25MHz_CLK
+  pins: [U704.CLK, Y701.Output]
+- name: /MCU - Page 7/CLK_F283XX_25MHz
+  pins: [R707.1, U703.X1]
+- name: /MCU - Page 7/MCU_XRSn
+  pins: [C702.1, R703.2, R704.2, R715.2, U703.XRSn]
+- name: /XDS100 - Page 2/CC1
+  pins: [J201.CC1, R203.2]
+- name: /XDS100 - Page 2/CC2
+  pins: [J201.CC2, R204.1]
+- name: /XDS100 - Page 2/CLK_12MHz
+  pins: [U201.OSCI, Y201.Output]
+- name: /XDS100 - Page 2/D+
+  pins: [J201.Dp1, J201.Dp2, U201.DP]
+- name: /XDS100 - Page 2/D-
+  pins: [J201.Dn1, J201.Dn2, U201.DM]
+- name: /XDS100 - Page 2/Debug_Select
+  pins:
+  - S201.2
+  - U204.IN1
+  - U204.IN2
+  - U205.IN1
+  - U205.IN2
+  - U206.IN1
+  - U206.IN2
+- name: /XDS100 - Page 2/EE_CLK
+  pins: [U201.EECLK, U202.CLK]
+- name: /XDS100 - Page 2/EE_CS
+  pins: [U201.EECS, U202.CS]
+- name: /XDS100 - Page 2/EE_Data
+  pins: [R211.2, U201.EEDATA, U202.DI]
+- name: /XDS100 - Page 2/EXT_TCK
+  pins: [J202.11, R222.1, U205.S2B]
+- name: /XDS100 - Page 2/EXT_TDI
+  pins: [J202.3, U205.S1B]
+- name: /XDS100 - Page 2/EXT_TDO
+  pins: [J202.7, U206.S2B]
+- name: /XDS100 - Page 2/EXT_TMS
+  pins: [J202.1, U204.S1B]
+- name: /XDS100 - Page 2/EXT_TRST
+  pins: [J202.2, U204.S2B]
+- name: /XDS100 - Page 2/LED54
+  pins: [R213.2, U201.BCBUS3]
+- name: /XDS100 - Page 2/LED55
+  pins: [R214.2, U201.BCBUS4]
+- name: /XDS100 - Page 2/REF
+  pins: [R217.2, U201.REF]
+- name: /XDS100 - Page 2/RESET
+  pins: [R205.1, U201.RESET#]
+- name: /XDS100 - Page 2/Shield
+  pins: [J201.Shield@S, R209.2]
+- name: /XDS100 - Page 2/VBUS
+  pins: [D202.A, J201.VBUS@A4B9, J201.VBUS@B4A9]
+- name: /XDS100 - Page 2/VPHY
+  pins: [C205.1, C206.1, L202.1, U201.VPHY]
+- name: /XDS100 - Page 2/VPLL
+  pins: [C207.1, C208.1, L201.1, U201.VPLL]
+- name: /XDS100 - Page 2/XDS100_TCK
+  pins: [R206.1, U201.ADBUS0, U205.S2A]
+- name: /XDS100 - Page 2/XDS100_TDI
+  pins: [U201.ADBUS1, U205.S1A]
+- name: /XDS100 - Page 2/XDS100_TDO
+  pins: [U201.ADBUS2, U206.S2A]
+- name: /XDS100 - Page 2/XDS100_TMS
+  pins: [U201.ADBUS3, U204.S1A]
+- name: /XDS100 - Page 2/XDS100_TRST
+  pins: [U201.ADBUS4, U204.S2A]
+- name: ADC_A0_P
+  pins: [J402.118, J501.118, R911.2]
+- name: ADC_A1_N
+  pins: [J402.116, J501.116, R912.2]
+- name: ADC_A2_P
+  pins: [J402.123, J501.123, R803.1, R901.2]
+- name: ADC_A3_N
+  pins: [J402.121, J501.121, R902.2]
+- name: ADC_A4_P
+  pins: [J402.124, J501.124, R903.2]
+- name: ADC_A5_N
+  pins: [J402.122, J501.122, R904.2]
+- name: ADC_B0_P
+  pins: [J402.129, J501.129, R917.2]
+- name: ADC_B1_N
+  pins: [J402.127, J501.127, R918.2]
+- name: ADC_B2_P
+  pins: [J402.130, J501.130, R804.1, R909.2]
+- name: ADC_B3_N
+  pins: [J402.128, J501.128, R910.2]
+- name: ADC_B4_P
+  pins: [J402.135, J501.135, R907.2]
+- name: ADC_B5_N
+  pins: [J402.133, J501.133, R908.2]
+- name: ADC_C2_P
+  pins: [J402.136, J501.136, R905.2]
+- name: ADC_C3_N
+  pins: [J402.134, J501.134, R906.2]
+- name: ADC_C4_P
+  pins: [J402.141, J501.141, R811.1, R914.2]
+- name: ADC_C5_N
+  pins: [J402.139, J501.139, R913.2]
+- name: ADC_D0_P
+  pins: [J402.142, J501.142, R812.1, R922.2]
+- name: ADC_D1_N
+  pins: [J402.140, J501.140, R921.2]
+- name: ADC_D2_P
+  pins: [J402.147, J501.147, R919.2]
+- name: ADC_D3_N
+  pins: [J402.145, J501.145, R920.2]
+- name: ADC_D4_P
+  pins: [J402.148, J501.148, R924.2]
+- name: ADC_D5_N
+  pins: [J402.146, J501.146, R923.2]
+- name: ADC_IN14_P
+  pins: [J402.117, J501.117, R915.2]
+- name: ADC_IN15_N
+  pins: [J402.115, J501.115, R916.2]
+- name: CANA_RX|GPIO36
+  pins: [J403.141, J502.141, U703.GPIO_36]
+- name: CANA_TX|GPIO37
+  pins: [J403.142, J502.142, U703.GPIO_37]
+- name: CANB_RX|GPIO39
+  pins: [J403.137, J502.137, U703.GPIO_39]
+- name: CANB_TX|GPIO38
+  pins: [J403.138, J502.138, U703.GPIO_38]
+- name: CM-I2CA_SCL|GPIO32
+  pins: [J403.144, J502.144, U703.GPIO_32]
+- name: CM-I2CA_SDA|GPIO31
+  pins: [J403.143, J502.143, U703.GPIO_31]
+- name: ENET_CLK_25MHz
+  pins: [J402.91, J501.91, R710.1]
+- name: ENET_MDIO_CLK|GPIO105
+  pins: [J402.61, J501.61, U703.GPIO_105]
+- name: ENET_MDIO_DATA|GPIO106
+  pins: [J402.67, J501.67, U703.GPIO_106]
+- name: ENET_MII_COL|GPIO110
+  pins: [J402.69, J501.69, U703.GPIO_110]
+- name: ENET_MII_CRS|GPIO109
+  pins: [J402.73, J501.73, U703.GPIO_109]
+- name: ENET_MII_INTR|GPIO108
+  pins: [J402.63, J501.63, U703.GPIO_108]
+- name: ENET_MII_RX_CLK|GPIO111
+  pins: [J402.75, J501.75, U703.GPIO_111]
+- name: ENET_MII_RX_DV|GPIO112
+  pins: [J402.70, J501.70, U703.GPIO_112]
+- name: ENET_MII_RX_Data0|GPIO114
+  pins: [J402.76, J501.76, U703.GPIO_114]
+- name: ENET_MII_RX_Data1|GPIO115
+  pins: [J402.87, J501.87, U703.GPIO_115]
+- name: ENET_MII_RX_Data2|GPIO116
+  pins: [J402.92, J501.92, U703.GPIO_116]
+- name: ENET_MII_RX_Data3|GPIO117
+  pins: [J402.88, J501.88, U703.GPIO_117]
+- name: ENET_MII_RX_ERR|GPIO113
+  pins: [J402.79, J501.79, U703.GPIO_113]
+- name: ENET_MII_TX_CLK|GPIO120
+  pins: [J402.86, J501.86, U703.GPIO_120]
+- name: ENET_MII_TX_Data0|GPIO121
+  pins: [J402.90, J501.90, U703.GPIO_121]
+- name: ENET_MII_TX_Data1|GPIO122
+  pins: [J402.80, J501.80, U703.GPIO_122]
+- name: ENET_MII_TX_Data2|GPIO123
+  pins: [J402.85, J501.85, U703.GPIO_123]
+- name: ENET_MII_TX_Data3|GPIO124
+  pins: [J402.89, J501.89, U703.GPIO_124]
+- name: ENET_MII_TX_EN|GPIO118
+  pins: [J402.81, J501.81, U703.GPIO_118]
+- name: ENET_MII_TX_ERR|GPIO119
+  pins: [J402.82, J501.82, U703.GPIO_119]
+- name: ENET_PPS1|GPIO48
+  pins: [J402.74, J501.74, U703.GPIO_48]
+- name: ENET_PPSO|GPIO47
+  pins: [J402.64, J501.64, U703.GPIO_47]
+- name: ENET_REVMII_MDIO_RST|GPIO107
+  pins: [J402.68, J501.68, U703.GPIO_107]
+- name: ENET_RMII_CLK|GPIO73
+  pins: [J402.62, J501.62, U703.GPIO_73]
+- name: EPWM10A|GPIO163
+  pins: [J403.29, J502.29, U703.GPIO_163]
+- name: EPWM10B|GPIO164
+  pins: [J403.30, J502.30, U703.GPIO_164]
+- name: EPWM11A|GPIO165
+  pins: [J403.33, J502.33, U703.GPIO_165]
+- name: EPWM11B|GPIO166
+  pins: [J403.34, J502.34, U703.GPIO_166]
+- name: EPWM12A|GPIO167
+  pins: [J403.35, J502.35, U703.GPIO_167]
+- name: EPWM12B|GPIO168
+  pins: [J403.36, J502.36, U703.GPIO_168]
+- name: EPWM13A|GPIO137
+  pins: [J403.39, J502.39, U703.GPIO_137]
+- name: EPWM13B|GPIO138
+  pins: [J403.40, J502.40, U703.GPIO_138]
+- name: EPWM14A|GPIO139
+  pins: [J403.41, J502.41, U703.GPIO_139]
+- name: EPWM14B|GPIO140
+  pins: [J403.42, J502.42, U703.GPIO_140]
+- name: EPWM15A|GPIO141
+  pins: [J403.45, J502.45, U703.GPIO_141]
+- name: EPWM15B|GPIO142
+  pins: [J403.46, J502.46, U703.GPIO_142]
+- name: EPWM16A|GPIO143
+  pins: [J403.47, J502.47, U703.GPIO_143]
+- name: EPWM16B|GPIO144
+  pins: [J403.48, J502.48, U703.GPIO_144]
+- name: EPWM1A|GPIO145
+  pins: [J403.3, J502.3, U703.GPIO_145]
+- name: EPWM1B|GPIO146
+  pins: [J403.4, J502.4, U703.GPIO_146]
+- name: EPWM2A|GPIO147
+  pins: [J403.5, J502.5, U703.GPIO_147]
+- name: EPWM2B|GPIO148
+  pins: [J403.6, J502.6, U703.GPIO_148]
+- name: EPWM3A|GPIO149
+  pins: [J403.9, J502.9, U703.GPIO_149]
+- name: EPWM3B|GPIO150
+  pins: [J403.10, J502.10, U703.GPIO_150]
+- name: EPWM4A|GPIO151
+  pins: [J403.11, J502.11, U703.GPIO_151]
+- name: EPWM4B|GPIO152
+  pins: [J403.12, J502.12, U703.GPIO_152]
+- name: EPWM5A|GPIO8
+  pins: [J403.15, J502.15, U703.GPIO_8]
+- name: EPWM5B|GPIO9
+  pins: [J403.16, J502.16, U703.GPIO_9]
+- name: EPWM6A|GPIO155
+  pins: [J403.17, J502.17, U703.GPIO_155]
+- name: EPWM6B|GPIO156
+  pins: [J403.18, J502.18, U703.GPIO_156]
+- name: EPWM7A|GPIO157
+  pins: [J403.21, J502.21, U703.GPIO_157]
+- name: EPWM7B|GPIO158
+  pins: [J403.22, J502.22, U703.GPIO_158]
+- name: EPWM8A|GPIO159
+  pins: [J403.23, J502.23, U703.GPIO_159]
+- name: EPWM8B|GPIO160
+  pins: [J403.24, J502.24, U703.GPIO_160]
+- name: EPWM9A|GPIO161
+  pins: [J403.27, J502.27, U703.GPIO_161]
+- name: EPWM9B|GPIO162
+  pins: [J403.28, J502.28, U703.GPIO_162]
+- name: ESC_I2C_SCL|GPIO30
+  pins: [J403.106, J502.106, U703.GPIO_30]
+- name: ESC_I2C_SDA|GPIO29
+  pins: [J403.108, J502.108, U703.GPIO_29]
+- name: ESC_LATCH0|GPIO125
+  pins: [J403.107, J502.107, U703.GPIO_125]
+- name: ESC_LATCH1|GPIO126
+  pins: [J403.111, J502.111, U703.GPIO_126]
+- name: ESC_LED_ERR|GPIO60
+  pins: [J403.95, J502.95, U703.GPIO_60]
+- name: ESC_LED_LINK0_ACTIVE|GPIO58
+  pins: [J403.100, J502.100, U703.GPIO_58]
+- name: ESC_LED_LINK1_ACTIVE|GPIO59
+  pins: [J403.96, J502.96, U703.GPIO_59]
+- name: ESC_LED_RUN|GPIO61
+  pins: [J403.90, J502.90, U703.GPIO_61]
+- name: ESC_LED_STATE_RUN|GPIO62
+  pins: [J403.83, J502.83, U703.GPIO_62]
+- name: ESC_MDIO_CLK|GPIO46
+  pins: [J403.58, J502.58, U703.GPIO_46]
+- name: ESC_MDIO_DATA|GPIO153
+  pins: [J403.70, J502.70, U703.GPIO_153]
+- name: ESC_PHY0_LINKSTATUS|GPIO86
+  pins: [J403.69, J502.69, U703.GPIO_86]
+- name: ESC_PHY1_LINKSTATUS|GPIO68
+  pins: [J403.82, J502.82, U703.GPIO_68]
+- name: ESC_PHY_CLK|GPIO154
+  pins: [J403.65, J502.65, U703.GPIO_154]
+- name: ESC_PHY_RESETn|GPIO76
+  pins: [J403.84, J502.84, U703.GPIO_76]
+- name: ESC_RX0_CLK|GPIO77
+  pins: [J403.72, J502.72, U703.GPIO_77]
+- name: ESC_RX0_DATA0|GPIO80
+  pins: [J403.63, J502.63, U703.GPIO_80]
+- name: ESC_RX0_DATA1|GPIO81
+  pins: [J403.64, J502.64, U703.GPIO_81]
+- name: ESC_RX0_DATA2|GPIO82
+  pins: [J403.59, J502.59, U703.GPIO_82]
+- name: ESC_RX0_DATA3|GPIO83
+  pins: [J403.66, J502.66, U703.GPIO_83]
+- name: ESC_RX0_DV|GPIO78
+  pins: [J403.81, J502.81, U703.GPIO_78]
+- name: ESC_RX0_ERR|GPIO79
+  pins: [J403.88, J502.88, U703.GPIO_79]
+- name: ESC_RX1_CLK|GPIO69
+  pins: [J403.76, J502.76, U703.GPIO_69]
+- name: ESC_RX1_DATA0|GPIO63
+  pins: [J403.87, J502.87, U703.GPIO_63]
+- name: ESC_RX1_DATA1|GPIO64
+  pins: [J403.93, J502.93, U703.GPIO_64]
+- name: ESC_RX1_DATA2|GPIO65
+  pins: [J403.94, J502.94, U703.GPIO_65]
+- name: ESC_RX1_DATA3|GPIO66
+  pins: [J403.89, J502.89, U703.GPIO_66]
+- name: ESC_RX1_DV|GPIO136
+  pins: [J403.99, J502.99, U703.GPIO_136]
+- name: ESC_RX1_ERR|GPIO71
+  pins: [J403.75, J502.75, U703.GPIO_71]
+- name: ESC_SYNC0|GPIO127
+  pins: [J403.112, J502.112, U703.GPIO_127]
+- name: ESC_SYNC1|GPIO128
+  pins: [J403.113, J502.113, U703.GPIO_128]
+- name: ESC_TX0_CLK|GPIO85
+  pins: [J403.78, J502.78, U703.GPIO_85]
+- name: ESC_TX0_DATA0|GPIO87
+  pins: [J403.71, J502.71, U703.GPIO_87]
+- name: ESC_TX0_DATA1|GPIO88
+  pins: [J403.54, J502.54, U703.GPIO_88]
+- name: ESC_TX0_DATA2|GPIO89
+  pins: [J403.53, J502.53, U703.GPIO_89]
+- name: ESC_TX0_DATA3|GPIO90
+  pins: [J403.57, J502.57, U703.GPIO_90]
+- name: ESC_TX0_ENA|GPIO84
+  pins: [C741.1, J403.60, J502.60, R702.1, U703.GPIO_84]
+- name: ESC_TX1_CLK|GPIO130
+  pins: [J403.117, J502.117, U703.GPIO_130]
+- name: ESC_TX1_DATA0|GPIO131
+  pins: [J403.105, J502.105, U703.GPIO_131]
+- name: ESC_TX1_DATA1|GPIO132
+  pins: [J403.101, J502.101, U703.GPIO_132]
+- name: ESC_TX1_DATA2|GPIO134
+  pins: [J403.102, J502.102, U703.GPIO_134]
+- name: ESC_TX1_DATA3|GPIO72
+  pins: [C740.1, J403.77, J502.77, R701.1, U703.GPIO_72]
+- name: ESC_TX1_ENA|GPIO129
+  pins: [J403.114, J502.114, U703.GPIO_129]
+- name: FreePin1
+  pins: [J402.15, J501.15]
+- name: FreePin3
+  pins: [J402.95, J501.95]
+- name: FreePin4
+  pins: [J402.96, J501.96]
+- name: FreePin5
+  pins: [J402.97, J501.97]
+- name: FreePin6
+  pins: [J402.98, J501.98]
+- name: FreePin7
+  pins: [J402.101, J501.101]
+- name: FreePin8
+  pins: [J402.102, J501.102]
+- name: GND_HV
+  pins:
+  - C303.2
+  - C304.2
+  - C307.2
+  - C308.2
+  - C601.1
+  - C602.1
+  - C603.1
+  - C604.1
+  - C605.1
+  - C607.1
+  - C608.1
+  - C701.2
+  - C702.2
+  - C703.2
+  - C704.2
+  - C705.2
+  - C706.2
+  - C707.2
+  - C708.2
+  - C709.2
+  - C710.2
+  - C711.2
+  - C712.2
+  - C713.2
+  - C714.2
+  - C715.2
+  - C716.2
+  - C717.2
+  - C718.2
+  - C719.2
+  - C720.2
+  - C721.2
+  - C722.2
+  - C723.2
+  - C724.2
+  - C725.2
+  - C726.2
+  - C727.2
+  - C728.2
+  - C729.2
+  - C730.2
+  - C740.2
+  - C741.2
+  - C801.2
+  - C804.2
+  - C807.2
+  - C810.2
+  - C813.2
+  - C814.2
+  - C815.2
+  - C816.2
+  - C817.2
+  - C901.1
+  - C902.2
+  - C905.2
+  - C906.2
+  - C907.2
+  - C908.2
+  - C909.2
+  - C910.2
+  - C911.2
+  - C912.2
+  - C913.2
+  - C914.2
+  - C915.2
+  - C916.2
+  - C917.2
+  - C918.2
+  - C919.2
+  - C920.2
+  - C921.2
+  - C922.2
+  - C923.2
+  - C924.2
+  - C925.2
+  - C926.2
+  - C927.2
+  - C928.2
+  - C929.2
+  - J401.Pin_1
+  - J402.100
+  - J402.103
+  - J402.104
+  - J402.105
+  - J402.106
+  - J402.11
+  - J402.113
+  - J402.114
+  - J402.119
+  - J402.12
+  - J402.120
+  - J402.125
+  - J402.126
+  - J402.13
+  - J402.131
+  - J402.132
+  - J402.137
+  - J402.138
+  - J402.14
+  - J402.143
+  - J402.144
+  - J402.149
+  - J402.150
+  - J402.19
+  - J402.20
+  - J402.25
+  - J402.26
+  - J402.31
+  - J402.32
+  - J402.37
+  - J402.38
+  - J402.43
+  - J402.44
+  - J402.53
+  - J402.54
+  - J402.59
+  - J402.60
+  - J402.65
+  - J402.66
+  - J402.71
+  - J402.72
+  - J402.77
+  - J402.78
+  - J402.83
+  - J402.84
+  - J402.93
+  - J402.94
+  - J402.99
+  - J403.1
+  - J403.103
+  - J403.104
+  - J403.109
+  - J403.110
+  - J403.115
+  - J403.116
+  - J403.121
+  - J403.122
+  - J403.127
+  - J403.128
+  - J403.13
+  - J403.133
+  - J403.134
+  - J403.139
+  - J403.14
+  - J403.140
+  - J403.145
+  - J403.146
+  - J403.149
+  - J403.150
+  - J403.19
+  - J403.2
+  - J403.20
+  - J403.25
+  - J403.26
+  - J403.31
+  - J403.32
+  - J403.37
+  - J403.38
+  - J403.43
+  - J403.44
+  - J403.49
+  - J403.50
+  - J403.55
+  - J403.56
+  - J403.61
+  - J403.62
+  - J403.67
+  - J403.68
+  - J403.7
+  - J403.73
+  - J403.74
+  - J403.79
+  - J403.8
+  - J403.80
+  - J403.85
+  - J403.86
+  - J403.91
+  - J403.92
+  - J403.97
+  - J403.98
+  - J501.100
+  - J501.103
+  - J501.104
+  - J501.105
+  - J501.106
+  - J501.11
+  - J501.113
+  - J501.114
+  - J501.119
+  - J501.12
+  - J501.120
+  - J501.125
+  - J501.126
+  - J501.13
+  - J501.131
+  - J501.132
+  - J501.137
+  - J501.138
+  - J501.14
+  - J501.143
+  - J501.144
+  - J501.149
+  - J501.150
+  - J501.19
+  - J501.20
+  - J501.25
+  - J501.26
+  - J501.31
+  - J501.32
+  - J501.37
+  - J501.38
+  - J501.43
+  - J501.44
+  - J501.53
+  - J501.54
+  - J501.59
+  - J501.60
+  - J501.65
+  - J501.66
+  - J501.71
+  - J501.72
+  - J501.77
+  - J501.78
+  - J501.83
+  - J501.84
+  - J501.93
+  - J501.94
+  - J501.99
+  - J502.1
+  - J502.103
+  - J502.104
+  - J502.109
+  - J502.110
+  - J502.115
+  - J502.116
+  - J502.121
+  - J502.122
+  - J502.127
+  - J502.128
+  - J502.13
+  - J502.133
+  - J502.134
+  - J502.139
+  - J502.14
+  - J502.140
+  - J502.145
+  - J502.146
+  - J502.149
+  - J502.150
+  - J502.19
+  - J502.2
+  - J502.20
+  - J502.25
+  - J502.26
+  - J502.31
+  - J502.32
+  - J502.37
+  - J502.38
+  - J502.43
+  - J502.44
+  - J502.49
+  - J502.50
+  - J502.55
+  - J502.56
+  - J502.61
+  - J502.62
+  - J502.67
+  - J502.68
+  - J502.7
+  - J502.73
+  - J502.74
+  - J502.79
+  - J502.8
+  - J502.80
+  - J502.85
+  - J502.86
+  - J502.91
+  - J502.92
+  - J502.97
+  - J502.98
+  - R1001.1
+  - R1002.1
+  - R1003.1
+  - R1004.1
+  - R1005.1
+  - R1006.1
+  - R706.2
+  - R711.2
+  - R807.1
+  - R808.1
+  - R815.1
+  - R816.1
+  - S301.3
+  - SW701.1
+  - U301.GND2@15
+  - U301.GND2@9
+  - U302.GND2@15
+  - U302.GND2@9
+  - U601.GND
+  - U701.GND
+  - U702.GND
+  - U703.VREFLOA
+  - U703.VREFLOB
+  - U703.VREFLOC
+  - U703.VREFLOD
+  - U703.VSS@A1
+  - U703.VSS@A10
+  - U703.VSS@A19
+  - U703.VSS@E12
+  - U703.VSS@E14
+  - U703.VSS@E15
+  - U703.VSS@E5
+  - U703.VSS@E6
+  - U703.VSS@E8
+  - U703.VSS@F12
+  - U703.VSS@F14
+  - U703.VSS@F15
+  - U703.VSS@F5
+  - U703.VSS@F6
+  - U703.VSS@F8
+  - U703.VSS@G16
+  - U703.VSS@G17
+  - U703.VSS@H10
+  - U703.VSS@H11
+  - U703.VSS@H12
+  - U703.VSS@H14
+  - U703.VSS@H15
+  - U703.VSS@H8
+  - U703.VSS@H9
+  - U703.VSS@J10
+  - U703.VSS@J11
+  - U703.VSS@J12
+  - U703.VSS@J5
+  - U703.VSS@J6
+  - U703.VSS@J8
+  - U703.VSS@J9
+  - U703.VSS@K10
+  - U703.VSS@K11
+  - U703.VSS@K12
+  - U703.VSS@K14
+  - U703.VSS@K15
+  - U703.VSS@K8
+  - U703.VSS@K9
+  - U703.VSS@L10
+  - U703.VSS@L11
+  - U703.VSS@L12
+  - U703.VSS@L18
+  - U703.VSS@L5
+  - U703.VSS@L6
+  - U703.VSS@L8
+  - U703.VSS@L9
+  - U703.VSS@M10
+  - U703.VSS@M11
+  - U703.VSS@M12
+  - U703.VSS@M14
+  - U703.VSS@M15
+  - U703.VSS@M8
+  - U703.VSS@M9
+  - U703.VSS@N1
+  - U703.VSS@N5
+  - U703.VSS@N6
+  - U703.VSS@P11
+  - U703.VSS@P12
+  - U703.VSS@P14
+  - U703.VSS@P15
+  - U703.VSS@P7
+  - U703.VSS@P8
+  - U703.VSS@R14
+  - U703.VSS@R15
+  - U703.VSS@R7
+  - U703.VSS@R8
+  - U703.VSS@W19
+  - U703.VSS@W7
+  - U703.VSSA@P1
+  - U703.VSSA@P5
+  - U703.VSSA@R5
+  - U703.VSSA@V7
+  - U703.VSSA@W1
+  - U703.VSSOSC@H18
+  - U703.VSSOSC@H19
+  - U704.GND
+  - U801.CP@11
+  - U801.CP@3
+  - U801.D@12
+  - U801.D@2
+  - U801.GND
+  - U802.CP@11
+  - U802.CP@3
+  - U802.D@12
+  - U802.D@2
+  - U802.GND
+  - U803.GND
+  - U804.GND
+  - U805.4A
+  - U805.4B
+  - U805.GND
+  - U901.GND
+  - Y701.Gnd
+- name: GND_LV
+  pins:
+  - C201.2
+  - C202.2
+  - C203.2
+  - C204.2
+  - C205.2
+  - C206.2
+  - C207.2
+  - C208.2
+  - C209.2
+  - C210.2
+  - C211.2
+  - C212.2
+  - C213.2
+  - C214.2
+  - C215.2
+  - C216.2
+  - C217.2
+  - C218.2
+  - C219.2
+  - C220.2
+  - C221.2
+  - C222.2
+  - C223.2
+  - C301.2
+  - C302.2
+  - C305.2
+  - C306.2
+  - J201.GND@A1B12
+  - J201.GND@B1A12
+  - J202.10
+  - J202.12
+  - J202.16
+  - J202.17
+  - J202.18
+  - J202.19
+  - J202.20
+  - J202.4
+  - J202.8
+  - R202.1
+  - R203.1
+  - R204.2
+  - R208.1
+  - R209.1
+  - R217.1
+  - R223.2
+  - S201.3
+  - U201.AGND
+  - U201.GND@1
+  - U201.GND@11
+  - U201.GND@15
+  - U201.GND@25
+  - U201.GND@35
+  - U201.GND@47
+  - U201.GND@5
+  - U201.GND@51
+  - U201.TEST
+  - U202.VSS
+  - U203.GND
+  - U204.GND
+  - U205.GND
+  - U206.GND
+  - U301.GND1@2
+  - U301.GND1@8
+  - U302.GND1@2
+  - U302.GND1@8
+  - U302.INC
+  - Y201.Gnd
+- name: GPIO104_nErr3
+  pins: [J402.51, J501.51, U703.GPIO_104, U802.nQ@6, U805.2B]
+- name: GPIO10_RstFF1
+  pins: [U703.GPIO_10, U801.RD@1]
+- name: GPIO11_RstFF4
+  pins: [U703.GPIO_11, U802.RD@13]
+- name: GPIO14_nErr4
+  pins: [J402.55, J501.55, U703.GPIO_14, U802.nQ@8, U805.2A]
+- name: GPIO15_Err1
+  pins: [J402.48, J501.48, U703.GPIO_15, U801.Q@5]
+- name: GPIO20_nErr1
+  pins: [J402.47, J501.47, U703.GPIO_20, U801.nQ@6, U805.1A]
+- name: GPIO21_nErr2
+  pins: [J402.49, J501.49, U703.GPIO_21, U801.nQ@8, U805.1B]
+- name: GPIO33
+  pins: [J402.57, J501.57, U703.GPIO_33]
+- name: GPIO34
+  pins: [J402.58, J501.58, U703.GPIO_34]
+- name: GPIO40
+  pins: [J403.132, J502.132, U703.GPIO_40]
+- name: GPIO41
+  pins: [J403.120, J502.120, U703.GPIO_41]
+- name: GPIO44
+  pins: [J403.119, J502.119, U703.GPIO_44]
+- name: GPIO45
+  pins: [J403.118, J502.118, U703.GPIO_45]
+- name: GPIO49
+  pins: [J403.135, J502.135, U703.GPIO_49]
+- name: GPIO50
+  pins: [J403.136, J502.136, U703.GPIO_50]
+- name: GPIO51
+  pins: [J403.131, J502.131, U703.GPIO_51]
+- name: GPIO52
+  pins: [J403.129, J502.129, U703.GPIO_52]
+- name: GPIO53
+  pins: [J403.130, J502.130, U703.GPIO_53]
+- name: GPIO95_Err2
+  pins: [J402.50, J501.50, U703.GPIO_95, U801.Q@9]
+- name: GPIO96_Err4
+  pins: [J402.56, J501.56, U703.GPIO_96, U802.Q@9]
+- name: GPIO97_RstFF2
+  pins: [U703.GPIO_97, U801.RD@13]
+- name: GPIO98_RstFF3
+  pins: [U703.GPIO_98, U802.RD@1]
+- name: GPIO99_Err3
+  pins: [J402.52, J501.52, U703.GPIO_99, U802.Q@5]
+- name: I2CA_SCL|GPIO1
+  pins: [J402.21, J501.21, U703.GPIO_1]
+- name: I2CA_SDA|GPIO0
+  pins: [J402.22, J501.22, U703.GPIO_0]
+- name: LED_Green|GPIO3
+  pins: [D1003.A, U703.GPIO_3]
+- name: LED_Green|GPIO5
+  pins: [D1002.A, U703.GPIO_5]
+- name: LED_Red|GPIO6
+  pins: [D1005.A, U703.GPIO_6]
+- name: LED_Red|GPIO7
+  pins: [D1006.A, U703.GPIO_7]
+- name: LED_Yellow|GPIO2
+  pins: [D1004.A, U703.GPIO_2]
+- name: MCAN_RX|GPIO70
+  pins: [J402.17, J501.17, U703.GPIO_70]
+- name: MCAN_TX|GPIO4
+  pins: [J402.18, J501.18, U703.GPIO_4]
+- name: Net-(D1001-PadC)
+  pins: [D1001.C, R1001.2]
+- name: Net-(D1002-PadC)
+  pins: [D1002.C, R1002.2]
+- name: Net-(D1003-PadC)
+  pins: [D1003.C, R1003.2]
+- name: Net-(D1004-PadC)
+  pins: [D1004.C, R1004.2]
+- name: Net-(D1005-PadC)
+  pins: [D1005.C, R1005.2]
+- name: Net-(D1006-PadC)
+  pins: [D1006.C, R1006.2]
+- name: Net-(D201-PadC)
+  pins: [D201.C, R202.2]
+- name: Net-(D203-PadC)
+  pins: [D203.C, R213.1]
+- name: Net-(D204-PadC)
+  pins: [D204.C, R214.1]
+- name: Net-(D801-PadC)
+  pins: [D801.C, R805.1]
+- name: Net-(D802-PadC)
+  pins: [D802.C, R806.1]
+- name: Net-(D803-PadC)
+  pins: [D803.C, R813.1]
+- name: Net-(D804-PadC)
+  pins: [D804.C, R814.1]
+- name: Net-(J202-Pad13)
+  pins: [J202.13, R220.1]
+- name: Net-(J202-Pad14)
+  pins: [J202.14, R221.2]
+- name: Net-(J202-Pad5)
+  pins: [J202.5, R224.2]
+- name: Net-(J202-Pad9)
+  pins: [J202.9, R222.2]
+- name: Net-(R715-Pad1)
+  pins: [R715.1, SW701.2]
+- name: Net-(U201-ACBUS2)
+  pins: [R207.2, U201.ACBUS2]
+- name: Net-(U201-ACBUS5)
+  pins: [R208.2, U201.ACBUS5]
+- name: Net-(U201-ADBUS7)
+  pins: [R206.2, U201.ADBUS7]
+- name: Net-(U201-BDBUS2)
+  pins: [U201.BDBUS2, U201.BDBUS3]
+- name: Net-(U202-DO)
+  pins: [R210.1, R211.1, U202.DO]
+- name: Net-(U203-BYP)
+  pins: [C203.1, U203.BYP]
+- name: Net-(U301-VCC2)
+  pins: [C303.1, C304.1, R301.2, U301.VCC2]
+- name: Net-(U302-VCC2)
+  pins: [C307.1, C308.1, R302.2, U302.VCC2]
+- name: Net-(U601-EN)
+  pins: [C601.2, R601.2, U601.EN, U601.VIN]
+- name: Net-(U701-SENSE)
+  pins:
+  - C701.1
+  - C703.1
+  - R712.2
+  - U701.SENSE
+  - U701.SET
+  - U701.VDD
+  - U702.SET
+  - U702.VDD
+- name: Net-(U701-UV)
+  pins: [R704.1, U701.UV, U702.UV]
+- name: Net-(U704-OE)
+  pins: [C705.1, R714.2, U704.OE, U704.VDD]
+- name: Net-(U704-Q1)
+  pins: [R707.2, U704.Q1]
+- name: Net-(U704-Q2)
+  pins: [R708.2, U704.Q2]
+- name: Net-(U704-Q3)
+  pins: [R709.2, U704.Q3]
+- name: Net-(U704-Q4)
+  pins: [R710.2, U704.Q4]
+- name: Net-(U801C-VCC)
+  pins: [C813.1, C815.1, R820.2, U801.VCC, U802.VCC]
+- name: Net-(U803C-VCC)
+  pins: [C814.1, R821.2, U803.VCC]
+- name: Net-(U804C-VCC)
+  pins: [C816.1, R823.2, U804.VCC]
+- name: Net-(U805-VCC)
+  pins: [C817.1, R822.1, U805.VCC]
+- name: Net-(Y701-Tri-State)
+  pins: [C704.1, R713.2, Y701.Tri-State, Y701.Vdd]
+- name: P0_CLK_25MHz
+  pins: [J403.148, J502.148, R709.1]
+- name: P1_CLK_25MHz
+  pins: [J403.147, J502.147, R708.1]
+- name: SCIA_RX_HV
+  pins: [U302.OUTA, U703.GPIO_28]
+- name: SCIA_RX_LV
+  pins: [U201.BDBUS1, U302.OUTD]
+- name: SCIA_TX_HV
+  pins: [U302.IND, U703.GPIO_135]
+- name: SCIA_TX_LV
+  pins: [U201.BDBUS0, U302.INA]
+- name: SCIB_RX|GPIO23
+  pins: [J402.46, J501.46, U703.GPIO_23]
+- name: SCIB_TX|GPIO22
+  pins: [J402.45, J501.45, U703.GPIO_22]
+- name: SCIC_RX|GPIO13
+  pins: [J402.24, J501.24, U703.GPIO_13]
+- name: SCIC_TX|GPIO12
+  pins: [J402.23, J501.23, U703.GPIO_12]
+- name: SPIA_CLK|GPIO18
+  pins: [J402.30, J501.30, U703.GPIO_18]
+- name: SPIA_MISO|GPIO17
+  pins: [J402.28, J501.28, U703.GPIO_17]
+- name: SPIA_MOSI|GPIO16
+  pins: [J402.27, J501.27, U703.GPIO_16]
+- name: SPIA_STEn|GPIO19
+  pins: [J402.29, J501.29, U703.GPIO_19]
+- name: SPIB_CLK|GPIO26
+  pins: [J402.42, J501.42, U703.GPIO_26]
+- name: SPIB_MISO|GPIO25
+  pins: [J402.40, J501.40, U703.GPIO_25]
+- name: SPIB_MOSI|GPIO24
+  pins: [J402.39, J501.39, U703.GPIO_24]
+- name: SPIB_STEn|GPIO27
+  pins: [J402.41, J501.41, U703.GPIO_27]
+- name: SPIC_CLK|GPIO102
+  pins: [J402.36, J501.36, U703.GPIO_102]
+- name: SPIC_MISO|GPIO101
+  pins: [J402.34, J501.34, U703.GPIO_101]
+- name: SPIC_MOSI|GPIO100
+  pins: [J402.33, J501.33, U703.GPIO_100]
+- name: SPIC_STEn|GPIO103
+  pins: [J402.35, J501.35, U703.GPIO_103]
+- name: SPID_CLK|GPIO93
+  pins: [J401.Pin_5, U703.GPIO_93]
+- name: SPID_MISO|GPIO92
+  pins: [J401.Pin_3, U703.GPIO_92]
+- name: SPID_MOSI|GPIO91
+  pins: [J401.Pin_4, U703.GPIO_91]
+- name: SPID_STEn|GPIO94
+  pins: [J401.Pin_2, U703.GPIO_94]
+- name: SSIA_CLK|GPIO56
+  pins: [J403.124, J502.124, U703.GPIO_56]
+- name: SSIA_FSS|GPIO57
+  pins: [J403.123, J502.123, U703.GPIO_57]
+- name: SSIA_RX|GPIO55
+  pins: [J403.125, J502.125, U703.GPIO_55]
+- name: SSIA_TX|GPIO54
+  pins: [J403.126, J502.126, U703.GPIO_54]
+- name: TCK_HV
+  pins: [U301.OUTC, U703.TCK]
+- name: TCK_LV
+  pins: [U205.D2, U301.INC]
+- name: TDI_HV
+  pins: [U301.OUTB, U703.TDI]
+- name: TDI_LV
+  pins: [U205.D1, U301.INB]
+- name: TDO_HV
+  pins: [U301.IND, U703.TDO]
+- name: TDO_LV
+  pins: [U206.D2, U301.OUTD]
+- name: TMS_HV
+  pins: [R705.2, U301.OUTA, U703.TMS]
+- name: TMS_LV
+  pins: [R201.2, U204.D1, U301.INA]
+- name: TRST_HV
+  pins: [R706.1, U302.OUTB, U703.TRSTn]
+- name: TRST_LV
+  pins: [R223.1, U204.D2, U302.INB]
+- name: UARTA_RX|GPIO43
+  pins: [J403.52, J502.52, U703.GPIO_43]
+- name: UARTA_TX|GPIO42
+  pins: [J403.51, J502.51, U703.GPIO_42]
+- name: nErr_AND_output
+  pins: [J402.16, J501.16, U805.3Y]
+positions:
+- ref: C201
+  x: 37.7
+  y: 121.25
+  rot: -90.0
+- ref: C202
+  x: 39.3
+  y: 121.25
+  rot: -90.0
+- ref: C203
+  x: 46.4
+  y: 121.85
+- ref: C204
+  x: 46.15
+  y: 119.1
+  rot: 90.0
+- ref: C205
+  x: 31.78
+  y: 93.8
+  rot: -90.0
+- ref: C206
+  x: 32.38
+  y: 90.9
+  rot: -90.0
+- ref: C207
+  x: 39.2
+  y: 92.7
+  rot: -90.0
+- ref: C208
+  x: 35.98
+  y: 90.9
+  rot: -90.0
+- ref: C209
+  x: 26.7
+  y: 99.0
+  rot: -90.0
+- ref: C210
+  x: 28.18
+  y: 93.3
+- ref: C211
+  x: 27.15
+  y: 79.85
+  rot: 180.0
+- ref: C212
+  x: 34.48
+  y: 74.6
+  rot: 90.0
+- ref: C213
+  x: 42.78
+  y: 80.59
+  rot: -90.0
+- ref: C214
+  x: 27.08
+  y: 82.5
+  rot: 180.0
+- ref: C215
+  x: 42.78
+  y: 84.59
+  rot: 90.0
+- ref: C216
+  x: 36.08
+  y: 74.6
+  rot: 90.0
+- ref: C217
+  x: 37.98
+  y: 74.6
+  rot: 90.0
+- ref: C218
+  x: 27.78
+  y: 87.3
+  rot: -90.0
+- ref: C219
+  x: 37.58
+  y: 90.9
+  rot: -90.0
+- ref: C220
+  x: 29.68
+  y: 74.6
+  rot: 90.0
+- ref: C221
+  x: 33.45
+  y: 97.8
+  rot: 90.0
+- ref: C222
+  x: 42.3
+  y: 98.38
+  rot: 90.0
+- ref: C223
+  x: 44.9
+  y: 97.45
+- ref: C301
+  x: 46.7
+  y: 99.35
+  rot: 180.0
+- ref: C302
+  x: 46.7
+  y: 100.85
+  rot: 180.0
+- ref: C303
+  x: 63.5
+  y: 101.15
+- ref: C304
+  x: 63.5
+  y: 99.65
+- ref: C305
+  x: 46.7
+  y: 79.75
+  rot: 180.0
+- ref: C306
+  x: 46.7
+  y: 81.25
+  rot: 180.0
+- ref: C307
+  x: 63.5
+  y: 81.45
+- ref: C308
+  x: 63.5
+  y: 79.95
+- ref: C601
+  x: 104.3
+  y: 105.45
+  rot: -90.0
+  side: back
+- ref: C602
+  x: 107.6
+  y: 108.25
+  side: back
+- ref: C603
+  x: 102.8
+  y: 79.95
+  rot: 180.0
+  side: back
+- ref: C604
+  x: 104.9
+  y: 79.15
+  rot: 90.0
+  side: back
+- ref: C605
+  x: 77.9
+  y: 99.93
+  rot: 90.0
+  side: back
+- ref: C607
+  x: 102.1
+  y: 102.65
+  rot: 90.0
+  side: back
+- ref: C608
+  x: 100.6
+  y: 102.65
+  rot: 90.0
+  side: back
+- ref: C701
+  x: 68.14
+  y: 109.65
+- ref: C702
+  x: 92.73
+  y: 110.12
+  rot: 180.0
+- ref: C703
+  x: 72.64
+  y: 109.65
+- ref: C704
+  x: 70.4
+  y: 112.45
+  rot: 180.0
+  side: back
+- ref: C705
+  x: 66.2
+  y: 102.05
+  rot: 180.0
+  side: back
+- ref: C706
+  x: 88.1
+  y: 98.35
+  rot: -90.0
+  side: back
+- ref: C707
+  x: 86.95
+  y: 98.35
+  rot: -90.0
+  side: back
+- ref: C708
+  x: 86.6
+  y: 100.35
+  side: back
+- ref: C709
+  x: 89.6
+  y: 96.95
+  rot: -90.0
+  side: back
+- ref: C710
+  x: 94.15
+  y: 100.45
+  rot: 180.0
+  side: back
+- ref: C711
+  x: 91.95
+  y: 104.05
+  rot: 90.0
+  side: back
+- ref: C712
+  x: 90.34
+  y: 103.23
+  rot: 90.0
+  side: back
+- ref: C713
+  x: 92.55
+  y: 99.65
+  rot: 90.0
+  side: back
+- ref: C714
+  x: 87.0
+  y: 103.25
+  rot: 90.0
+  side: back
+- ref: C715
+  x: 90.95
+  y: 108.25
+  rot: -90.0
+  side: back
+- ref: C716
+  x: 93.55
+  y: 105.55
+  rot: 90.0
+  side: back
+- ref: C717
+  x: 82.75
+  y: 111.1
+  rot: 180.0
+  side: back
+- ref: C718
+  x: 92.05
+  y: 97.95
+  rot: 180.0
+  side: back
+- ref: C719
+  x: 92.35
+  y: 95.6
+  rot: 180.0
+  side: back
+- ref: C720
+  x: 90.36
+  y: 105.65
+  rot: -90.0
+  side: back
+- ref: C721
+  x: 97.4
+  y: 91.75
+  side: back
+- ref: C722
+  x: 97.6
+  y: 109.3
+  rot: 180.0
+  side: back
+- ref: C723
+  x: 88.6
+  y: 103.55
+  side: back
+- ref: C724
+  x: 88.38
+  y: 91.45
+  rot: 90.0
+  side: back
+- ref: C725
+  x: 83.6
+  y: 100.34
+  rot: 180.0
+  side: back
+- ref: C726
+  x: 87.29
+  y: 101.65
+  side: back
+- ref: C727
+  x: 98.7
+  y: 100.25
+  rot: -90.0
+  side: back
+- ref: C728
+  x: 82.75
+  y: 109.45
+  rot: 180.0
+  side: back
+- ref: C729
+  x: 81.0
+  y: 100.15
+  rot: -90.0
+  side: back
+- ref: C730
+  x: 92.5
+  y: 102.0
+  rot: 90.0
+  side: back
+- ref: C740
+  x: 109.0
+  y: 95.15
+  rot: -90.0
+- ref: C741
+  x: 104.3
+  y: 95.15
+  rot: -90.0
+- ref: C801
+  x: 87.1
+  y: 82.08
+  rot: 180.0
+- ref: C804
+  x: 87.1
+  y: 88.55
+  rot: 180.0
+- ref: C807
+  x: 96.1
+  y: 82.67
+- ref: C810
+  x: 96.1
+  y: 89.25
+- ref: C813
+  x: 105.3
+  y: 79.3
+- ref: C814
+  x: 95.3
+  y: 79.6
+- ref: C815
+  x: 107.4
+  y: 88.35
+  rot: -90.0
+- ref: C816
+  x: 95.2
+  y: 86.1
+- ref: C817
+  x: 102.2
+  y: 81.45
+  rot: 180.0
+  side: back
+- ref: C901
+  x: 72.3
+  y: 97.64
+  rot: -90.0
+  side: back
+- ref: C902
+  x: 67.3
+  y: 97.64
+  rot: 90.0
+  side: back
+- ref: C905
+  x: 67.3
+  y: 83.75
+  rot: -90.0
+- ref: C906
+  x: 69.3
+  y: 83.75
+  rot: -90.0
+- ref: C907
+  x: 71.4
+  y: 83.75
+  rot: -90.0
+- ref: C908
+  x: 73.4
+  y: 83.75
+  rot: -90.0
+- ref: C909
+  x: 75.4
+  y: 83.75
+  rot: -90.0
+- ref: C910
+  x: 77.5
+  y: 83.75
+  rot: -90.0
+- ref: C911
+  x: 67.3
+  y: 93.95
+  rot: -90.0
+- ref: C912
+  x: 69.3
+  y: 93.95
+  rot: -90.0
+- ref: C913
+  x: 71.3
+  y: 93.95
+  rot: -90.0
+- ref: C914
+  x: 73.3
+  y: 93.95
+  rot: -90.0
+- ref: C915
+  x: 75.3
+  y: 93.95
+  rot: -90.0
+- ref: C916
+  x: 77.3
+  y: 93.95
+  rot: -90.0
+- ref: C917
+  x: 81.65
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C918
+  x: 80.2
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C919
+  x: 78.75
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C920
+  x: 77.3
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C921
+  x: 75.85
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C922
+  x: 74.4
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C923
+  x: 72.95
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C924
+  x: 71.5
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C925
+  x: 70.05
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C926
+  x: 68.6
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C927
+  x: 67.15
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C928
+  x: 65.7
+  y: 83.8
+  rot: -90.0
+  side: back
+- ref: C929
+  x: 79.5
+  y: 97.75
+- ref: D1001
+  x: 108.25
+  y: 97.55
+- ref: D1002
+  x: 108.25
+  y: 107.55
+- ref: D1003
+  x: 108.25
+  y: 105.75
+- ref: D1004
+  x: 108.25
+  y: 103.95
+- ref: D1005
+  x: 108.25
+  y: 102.15
+- ref: D1006
+  x: 108.25
+  y: 100.34
+- ref: D201
+  x: 31.4
+  y: 71.22
+  rot: -90.0
+- ref: D202
+  x: 34.8
+  y: 120.6
+  rot: 90.0
+- ref: D203
+  x: 36.5
+  y: 71.22
+  rot: -90.0
+- ref: D204
+  x: 42.2
+  y: 71.22
+  rot: -90.0
+- ref: D801
+  x: 90.75
+  y: 80.5
+  rot: 180.0
+  side: back
+- ref: D802
+  x: 90.6
+  y: 86.55
+  rot: 180.0
+  side: back
+- ref: D803
+  x: 91.25
+  y: 83.9
+  rot: 180.0
+  side: back
+- ref: D804
+  x: 91.2
+  y: 89.6
+  rot: 180.0
+  side: back
+- ref: J201
+  x: 32.4
+  y: 116.6
+  rot: -90.0
+- ref: J202
+  x: 40.89
+  y: 111.18
+- ref: J401
+  x: 104.89
+  y: 96.85
+  rot: 90.0
+  side: back
+- ref: J402
+  x: 84.9
+  y: 74.35
+- ref: J403
+  x: 84.9
+  y: 119.35
+- ref: J501
+  x: 84.9
+  y: 74.35
+  rot: 180.0
+  side: back
+- ref: J502
+  x: 84.9
+  y: 119.35
+  rot: 180.0
+  side: back
+- ref: L201
+  x: 40.68
+  y: 92.7
+  rot: -90.0
+- ref: L202
+  x: 30.28
+  y: 93.8
+  rot: -90.0
+- ref: L601
+  x: 102.8
+  y: 78.35
+  rot: 180.0
+  side: back
+- ref: L603
+  x: 100.98
+  y: 100.5
+  side: back
+- ref: R1001
+  x: 105.25
+  y: 97.56
+- ref: R1002
+  x: 105.25
+  y: 107.55
+- ref: R1003
+  x: 105.25
+  y: 105.75
+- ref: R1004
+  x: 105.25
+  y: 103.95
+- ref: R1005
+  x: 105.25
+  y: 102.15
+- ref: R1006
+  x: 105.25
+  y: 100.35
+- ref: R201
+  x: 44.1
+  y: 103.8
+- ref: R202
+  x: 29.75
+  y: 71.1
+  rot: 90.0
+- ref: R203
+  x: 34.8
+  y: 114.6
+  rot: 90.0
+- ref: R204
+  x: 34.8
+  y: 117.3
+  rot: 90.0
+- ref: R205
+  x: 39.78
+  y: 90.3
+- ref: R206
+  x: 44.38
+  y: 82.95
+  rot: 90.0
+- ref: R207
+  x: 40.5
+  y: 74.6
+  rot: -90.0
+- ref: R208
+  x: 42.28
+  y: 74.6
+  rot: -90.0
+- ref: R209
+  x: 32.5
+  y: 108.45
+  rot: 180.0
+- ref: R210
+  x: 31.6
+  y: 97.5
+  rot: 90.0
+- ref: R211
+  x: 31.6
+  y: 100.2
+  rot: -90.0
+- ref: R213
+  x: 34.9
+  y: 71.1
+  rot: -90.0
+- ref: R214
+  x: 40.65
+  y: 71.1
+  rot: -90.0
+- ref: R217
+  x: 33.98
+  y: 90.9
+  rot: 90.0
+- ref: R220
+  x: 38.7
+  y: 118.65
+  rot: 180.0
+- ref: R221
+  x: 44.09
+  y: 118.4
+  rot: 180.0
+- ref: R222
+  x: 35.5
+  y: 111.85
+  rot: 90.0
+- ref: R223
+  x: 33.45
+  y: 100.5
+  rot: -90.0
+- ref: R224
+  x: 35.5
+  y: 109.15
+  rot: 90.0
+- ref: R301
+  x: 63.5
+  y: 98.15
+  rot: 180.0
+- ref: R302
+  x: 63.5
+  y: 78.45
+  rot: 180.0
+- ref: R601
+  x: 104.9
+  y: 108.45
+  rot: 180.0
+  side: back
+- ref: R701
+  x: 107.5
+  y: 95.15
+  rot: -90.0
+- ref: R702
+  x: 105.8
+  y: 95.15
+  rot: -90.0
+- ref: R703
+  x: 92.75
+  y: 111.65
+- ref: R704
+  x: 72.6
+  y: 114.75
+- ref: R705
+  x: 66.0
+  y: 104.75
+  rot: -90.0
+- ref: R706
+  x: 65.4
+  y: 86.35
+  rot: 90.0
+- ref: R707
+  x: 66.7
+  y: 111.85
+  rot: 90.0
+  side: back
+- ref: R708
+  x: 65.1
+  y: 111.85
+  rot: 90.0
+  side: back
+- ref: R709
+  x: 63.5
+  y: 111.85
+  rot: 90.0
+  side: back
+- ref: R710
+  x: 63.7
+  y: 101.45
+  rot: -90.0
+  side: back
+- ref: R711
+  x: 99.1
+  y: 102.65
+  rot: -90.0
+  side: back
+- ref: R712
+  x: 68.1
+  y: 114.75
+- ref: R713
+  x: 71.4
+  y: 107.35
+  rot: -90.0
+  side: back
+- ref: R714
+  x: 69.9
+  y: 103.6
+  rot: 180.0
+  side: back
+- ref: R715
+  x: 104.9
+  y: 114.35
+  rot: -90.0
+  side: back
+- ref: R801
+  x: 90.1
+  y: 79.88
+  rot: 180.0
+- ref: R802
+  x: 90.1
+  y: 86.35
+  rot: 180.0
+- ref: R803
+  x: 87.1
+  y: 80.58
+- ref: R804
+  x: 87.1
+  y: 87.05
+- ref: R805
+  x: 93.8
+  y: 79.75
+  rot: -90.0
+  side: back
+- ref: R806
+  x: 93.7
+  y: 86.25
+  rot: -90.0
+  side: back
+- ref: R807
+  x: 86.5
+  y: 79.75
+  rot: -90.0
+  side: back
+- ref: R808
+  x: 86.25
+  y: 86.0
+  rot: -90.0
+  side: back
+- ref: R809
+  x: 96.1
+  y: 84.15
+- ref: R810
+  x: 96.1
+  y: 90.75
+- ref: R811
+  x: 96.1
+  y: 81.17
+  rot: 180.0
+- ref: R812
+  x: 96.1
+  y: 87.75
+  rot: 180.0
+- ref: R813
+  x: 94.9
+  y: 82.25
+  side: back
+- ref: R814
+  x: 94.9
+  y: 88.55
+  side: back
+- ref: R815
+  x: 86.95
+  y: 83.15
+  rot: -90.0
+  side: back
+- ref: R816
+  x: 86.8
+  y: 88.8
+  rot: -90.0
+  side: back
+- ref: R820
+  x: 102.6
+  y: 79.3
+- ref: R821
+  x: 95.3
+  y: 79.75
+  rot: -90.0
+  side: back
+- ref: R822
+  x: 104.9
+  y: 81.45
+  side: back
+- ref: R823
+  x: 95.2
+  y: 86.25
+  rot: -90.0
+  side: back
+- ref: R901
+  x: 67.3
+  y: 80.75
+  rot: 90.0
+- ref: R902
+  x: 69.3
+  y: 80.75
+  rot: 90.0
+- ref: R903
+  x: 71.4
+  y: 80.75
+  rot: 90.0
+- ref: R904
+  x: 73.4
+  y: 80.75
+  rot: 90.0
+- ref: R905
+  x: 75.4
+  y: 80.75
+  rot: 90.0
+- ref: R906
+  x: 77.5
+  y: 80.75
+  rot: 90.0
+- ref: R907
+  x: 67.3
+  y: 90.95
+  rot: 90.0
+- ref: R908
+  x: 69.3
+  y: 90.95
+  rot: 90.0
+- ref: R909
+  x: 71.3
+  y: 90.95
+  rot: 90.0
+- ref: R910
+  x: 73.3
+  y: 90.95
+  rot: 90.0
+- ref: R911
+  x: 75.3
+  y: 90.95
+  rot: 90.0
+- ref: R912
+  x: 77.3
+  y: 90.95
+  rot: 90.0
+- ref: R913
+  x: 81.65
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R914
+  x: 80.2
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R915
+  x: 78.75
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R916
+  x: 77.3
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R917
+  x: 75.85
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R918
+  x: 74.4
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R919
+  x: 72.95
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R920
+  x: 71.5
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R921
+  x: 70.05
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R922
+  x: 68.6
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R923
+  x: 67.15
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R924
+  x: 65.7
+  y: 81.0
+  rot: 90.0
+  side: back
+- ref: R925
+  x: 74.5
+  y: 99.25
+  side: back
+- ref: S201
+  x: 33.3
+  y: 104.75
+  rot: 90.0
+- ref: S301
+  x: 71.65
+  y: 104.1
+  rot: 180.0
+- ref: SW701
+  x: 103.6
+  y: 113.45
+  rot: -90.0
+- ref: U201
+  x: 35.2
+  y: 82.79
+  rot: 90.0
+- ref: U202
+  x: 29.15
+  y: 100.5
+- ref: U203
+  x: 41.3
+  y: 120.9
+  rot: -90.0
+- ref: U204
+  x: 36.0
+  y: 98.35
+  rot: -90.0
+- ref: U205
+  x: 39.8
+  y: 98.38
+  rot: -90.0
+- ref: U206
+  x: 44.9
+  y: 94.95
+  rot: 180.0
+- ref: U301
+  x: 55.2
+  y: 107.35
+  rot: -90.0
+- ref: U302
+  x: 55.2
+  y: 87.65
+  rot: -90.0
+- ref: U601
+  x: 105.9
+  y: 105.88
+  rot: 90.0
+  side: back
+- ref: U701
+  x: 68.2
+  y: 112.22
+  rot: 180.0
+- ref: U702
+  x: 72.73
+  y: 112.22
+  rot: 180.0
+- ref: U703
+  x: 89.95
+  y: 100.75
+  rot: -90.0
+- ref: U704
+  x: 65.7
+  y: 106.65
+  rot: 180.0
+  side: back
+- ref: U801
+  x: 102.66
+  y: 82.8
+- ref: U802
+  x: 102.66
+  y: 89.55
+- ref: U803
+  x: 91.6
+  y: 82.38
+- ref: U804
+  x: 91.6
+  y: 88.85
+- ref: U805
+  x: 100.9
+  y: 86.05
+  rot: 90.0
+  side: back
+- ref: U901
+  x: 69.79
+  y: 96.05
+  side: back
+- ref: Y201
+  x: 29.2
+  y: 91.0
+- ref: Y701
+  x: 70.4
+  y: 110.17
+  rot: 180.0
+  side: back
+copper_pours:
+- net: +3.3V_HV
+  layers: [B.Cu, In6.Cu]
+- net: +3.3V_LV
+  layers: [F.Cu, In4.Cu, In6.Cu]
+- net: +3V3_Connector_HV
+  layers: [B.Cu, F.Cu]
+- net: +5V_LV
+  layers: [F.Cu]
+- net: GND_HV
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: GND_LV
+  layers: [F.Cu, In1.Cu, In3.Cu]
+- net: ''
+  layers:
+  - B.Cu
+  - F.Cu
+  - In1.Cu
+  - In2.Cu
+  - In3.Cu
+  - In4.Cu
+  - In5.Cu
+  - In6.Cu
+  keepout: true

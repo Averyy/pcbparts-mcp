@@ -1,0 +1,163 @@
+name: SimpleFMCWRadar GainBlock
+slug: simplefmcwradar-gainblock
+source: lukeweston/SimpleFMCWRadar
+format: eagle
+description: HMC476 gain block amplifier x3, standalone RF amplifier chain
+tags: [rf-sdr]
+key_ics: [HMC476]
+outline:
+  width_mm: 27.3
+  height_mm: 15.2
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 13mil
+  min_via: 7mil
+components:
+- ref: ATT1
+  value: -3dB
+  footprint: PAT1220
+  description: Susumu PAT1220 SMD chip attenuator
+- ref: C1
+  value: 100pF
+  footprint: '0603'
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+- ref: C3
+  value: 2.2uF
+  footprint: 0805
+- ref: C4
+  value: 1nF
+  footprint: '0603'
+- ref: C5
+  value: 100pF
+  footprint: '0402'
+- ref: C6
+  value: 100pF
+  footprint: '0603'
+- ref: IC1
+  value: HMC476MP86
+  footprint: WW107
+  description: Mini-Circuits ERA-2SM+ MMIC amplifier
+- ref: J1
+  value: RF Input
+  footprint: J502-ND-142-0701-881
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0701-881
+  description: SMA 50 Ohm
+- ref: J2
+  value: TPS
+  footprint: P1-13
+  description: TEST PIN
+- ref: J3
+  value: RF Out
+  footprint: J502-ND-142-0701-881
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0701-881
+  description: SMA 50 Ohm
+- ref: J4
+  value: TPS
+  footprint: P1-13
+  description: TEST PIN
+- ref: L1
+  value: 3.3nH
+  footprint: '0603'
+- ref: LED1
+  value: Power
+  footprint: '0603'
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+- ref: R2
+  value: 56ohm
+  footprint: 0805
+nets:
+- name: GND
+  pins:
+  - ATT1.3
+  - C2.2
+  - C3.1
+  - C4.2
+  - C5.2
+  - IC1.GND
+  - J1.GND
+  - J3.GND
+  - J4.PP
+  - LED1.C
+- name: IN
+  pins: [C1.2, IC1.IN]
+- name: N$1
+  pins: [ATT1.1, J1.1]
+- name: N$2
+  pins: [ATT1.2, C1.1]
+- name: N$3
+  pins: [LED1.A, R1.1]
+- name: N$5
+  pins: [C6.2, J3.1]
+- name: N$8
+  pins: [C3.2, C4.1, C5.1, L1.1, R2.1]
+- name: N$9
+  pins: [C2.1, J2.PP, R1.2, R2.2]
+- name: OUT
+  pins: [C6.1, IC1.OUT, L1.2]
+positions:
+- ref: ATT1
+  x: 4.13
+  y: 5.26
+- ref: C1
+  x: 6.75
+  y: 5.71
+- ref: C2
+  x: 12.88
+  y: 9.68
+- ref: C3
+  x: 16.16
+  y: 11.27
+  rot: 180.0
+- ref: C4
+  x: 16.06
+  y: 9.53
+- ref: C5
+  x: 15.81
+  y: 8.37
+- ref: C6
+  x: 17.34
+  y: 5.71
+- ref: IC1
+  x: 11.43
+  y: 5.71
+  rot: 270.0
+- ref: J1
+  x: -2.38
+  y: 5.71
+- ref: J2
+  x: 10.29
+  y: 11.27
+- ref: J3
+  x: 24.09
+  y: 5.71
+  rot: 180.0
+- ref: J4
+  x: 6.48
+  y: 11.27
+- ref: L1
+  x: 15.26
+  y: 6.48
+  rot: 270.0
+- ref: LED1
+  x: 6.51
+  y: 8.57
+  rot: 90.0
+- ref: R1
+  x: 8.26
+  y: 8.57
+  rot: 90.0
+- ref: R2
+  x: 12.98
+  y: 11.27
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

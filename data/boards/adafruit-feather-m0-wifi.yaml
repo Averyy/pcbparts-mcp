@@ -1,0 +1,421 @@
+name: Adafruit Feather M0 WiFi
+slug: adafruit-feather-m0-wifi
+source: adafruit/Adafruit-Feather-M0-WiFi-WINC1500-PCB
+format: eagle
+description: ATSAMD21G18 + ATWINC1500 WiFi module, Feather form factor
+tags: [wifi]
+key_ics: [ATSAMD21G18, ATWINC1500]
+outline:
+  width_mm: 57.39
+  height_mm: 25.41
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0603'
+  decouples: U$4
+- ref: C14
+  value: 1uF
+  footprint: '0603'
+- ref: C2
+  value: 22pF
+  footprint: '0603'
+- ref: C3
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: C4
+  value: 22pF
+  footprint: '0603'
+- ref: C5
+  value: 10uF
+  footprint: 0805
+  decouples: U$4
+- ref: C6
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: C7
+  value: 1uF
+  footprint: '0603'
+  decouples: U2
+- ref: C8
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: CHG
+  value: orange LED
+  footprint: 0805
+- ref: D1
+  value: MBR120
+  footprint: SOD-123
+- ref: JP1
+  value: 1x16 header
+  footprint: 1X16
+- ref: JP3
+  value: 1x12 header
+  footprint: 1X12
+- ref: L
+  value: red LED
+  footprint: 0805
+- ref: NET
+  value: yellow LED
+  footprint: 0805
+- ref: R1
+  value: 100kohm
+  footprint: '0603'
+  pullup: EN
+- ref: R10
+  value: 1kohm
+  footprint: '0603'
+- ref: R11
+  value: 1kohm
+  footprint: '0603'
+  pullup: SWCLK
+- ref: R2
+  value: 1kohm
+  footprint: '0603'
+- ref: R3
+  value: 100kohm
+  footprint: '0603'
+  pullup: D9
+- ref: R4
+  value: 100kohm
+  footprint: '0603'
+  pulldown: D4_WINC_RST
+- ref: R5
+  value: 1kohm
+  footprint: '0603'
+- ref: R6
+  value: 100kohm
+  footprint: '0603'
+  pulldown: D9
+- ref: R7
+  value: 2.2kohm
+  footprint: '0603'
+- ref: R8
+  value: 4.7kohm
+  footprint: '0603'
+  pulldown: U3.PROG
+- ref: R9
+  value: 100kohm
+  footprint: '0603'
+  pulldown: D2_CHIP_EN
+- ref: SW1
+  value: tactile switch
+  footprint: KMR2
+  description: SMT 6mm switch, EVQQ2 series
+- ref: U$4
+  value: ATSAMD21G18
+  footprint: TQFN48_7MM
+- ref: U2
+  value: AP2112K-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: U3
+  value: MCP73831
+  footprint: SOT-23-5
+  description: MCP73831/2 LIPO Charger
+- ref: WIFI
+  value: green LED
+  footprint: 0805
+- ref: X1
+  value: JSTPH
+  footprint: JSTPH2
+  description: 'JST 2-Pin Right-Angle Connector PH-Series - 4UConnector: 17311 SH-Series'
+- ref: X2
+  value: '32.768'
+  footprint: XTAL3215
+  description: Low cost SMT crystals, no capacitors included
+- ref: X3
+  value: microUSB
+  footprint: 4UCONN_20329_V2
+  description: USB Connectors
+- ref: X4
+  value: ATWINC1500
+  footprint: ATWINC1500_MR210PA
+  description: ATWINC1500_MR210PA wifi module
+nets:
+- name: '!RESET'
+  pins: [JP1.16, SW1.P, SW1.P1, U$4./RESET]
+- name: +3V3
+  pins:
+  - C5.1
+  - C7.1
+  - C8.1
+  - JP1.15
+  - NET.A
+  - R11.2
+  - U$4.VDDA
+  - U$4.VDDIN
+  - U$4.VDDIO
+  - U2.OUT
+  - WIFI.A
+  - X4.SPI_CFG
+  - X4.VBAT
+  - X4.VDDIO
+- name: A0
+  pins: [JP1.12, U$4.PA02/EINT2/AIN0/Y0/VOUT]
+- name: A1
+  pins: [JP1.11, U$4.PB08/I8/AIN2/SERCOM4.0]
+- name: A2
+  pins: [JP1.10, U$4.PB09/I9/AIN3/SERCOM4.1]
+- name: A3
+  pins: [JP1.9, U$4.PA04/EINT4/VREFB/AIN4/SERCOM0.0]
+- name: A4
+  pins: [JP1.8, U$4.PA05/EINT5/AIN5/SERCOM0.1]
+- name: A5
+  pins: [JP1.7, U$4.PB02/I2/AIN10/SERCOM5.0]
+- name: AREF
+  pins: [C14.1, JP1.14, U$4.PA03/EINT3/VREFA/AIN1]
+- name: D+
+  pins: [U$4.PA25/I13/SERCOM3+5.3/D+, X3.D+]
+- name: D-
+  pins: [U$4.PA24/I12/SERCOM3+5.2/D-, X3.D-]
+- name: D0
+  pins: [JP1.3, U$4.PA11/I11/AIN19/SERCOM0+2.3/I2SF0]
+- name: D1
+  pins: [JP1.2, U$4.PA10/I10/AIN18/SERCOM0+2.2/I2SCK]
+- name: D10
+  pins: [JP3.7, U$4.PA18/I2/SERCOM1+3.2]
+- name: D11
+  pins: [JP3.6, U$4.PA16/I2C/I0/SERCOM1+3.0]
+- name: D12
+  pins: [JP3.5, U$4.PA19/I3/SERCOM1+3.3/I2SD0]
+- name: D13
+  pins: [JP3.4, R7.1, U$4.PA17/I2C/I1/SERCOM1+3.1]
+- name: D2_CHIP_EN
+  pins: [R9.1, U$4.PA14/I14/SERCOM2+4.2, X4.CHIP_EN]
+- name: D4_WINC_RST
+  pins: [R4.1, U$4.PA08/I2C/AIN16/SERCOM0+2.0/I2SD1, X4.!RESET]
+- name: D5
+  pins: [JP3.10, U$4.PA15/I15/SERCOM3+4.3]
+- name: D6
+  pins: [JP3.9, U$4.PA20/I4/SERCOM3+5.2/I2SSC]
+- name: D7_WINC_IRQ
+  pins: [U$4.PA21/I5/SERCOM3+5.3/I2SFS0, X4.!IRQ]
+- name: D8_WINC_CS
+  pins: [U$4.PA06/EINT6/AIN6/SERCOM0.2, X4.CS]
+- name: D9
+  pins: [JP3.8, R3.2, R6.1, U$4.PA07/I7/AIN7/SERCOM0.3/I2SD0]
+- name: EN
+  pins: [JP3.2, R1.2, U2.EN]
+- name: GND
+  pins:
+  - C1.2
+  - C14.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - JP1.13
+  - L.C
+  - R4.2
+  - R6.2
+  - R8.2
+  - R9.2
+  - SW1.S
+  - SW1.S1
+  - U$4.GND
+  - U$4.GNDA
+  - U2.GND
+  - U3.VSS
+  - X1.1
+  - X3.GND
+  - X4.GND
+  - X4.GND@1
+  - X4.GND@2
+- name: MISO
+  pins: [JP1.4, U$4.PA12/I12/I2C/SERCOM2+4.0, X4.MISO]
+- name: MOSI
+  pins: [JP1.5, U$4.PB10/I10/SERCOM4.2/I2SMC, X4.MOSI]
+- name: N$1
+  pins: [CHG.C, R2.1]
+- name: N$10
+  pins: [NET.C, R10.2]
+- name: N$2
+  pins: [L.A, R7.2]
+- name: N$6
+  pins: [R5.1, X4.GPIO15]
+- name: N$8
+  pins: [R10.1, X4.GPIO16]
+- name: N$9
+  pins: [R5.2, WIFI.C]
+- name: PA00_EINT0_SERCOM1_0
+  pins: [C2.1, U$4.PA00/EINT0/SERCOM1.0, X2.P$1]
+- name: PA01_EINT1_SERCOM1_1
+  pins: [C4.1, U$4.PA01/EINT1/SERCOM1.1, X2.P$2]
+- name: PROG
+  pins: [R8.1, U3.PROG]
+- name: SCK
+  pins: [JP1.6, U$4.PB11/I11/SERCOM4.3/I2SCL, X4.SCK]
+- name: SCL
+  pins: [JP3.11, U$4.PA23/I2C/I7/SERCOM3+5.1/SOF]
+- name: SDA
+  pins: [JP3.12, U$4.PA22/I2C/I6/SERCOM3+5.0]
+- name: STAT
+  pins: [R2.2, U3.STAT]
+- name: SWCLK
+  pins: [R11.1, TP1.P$1, U$4.PA30/I10/SECOM1.2/SWCLK]
+- name: SWDIO
+  pins: [TP2.P$1, U$4.PA31/I11/SECOM1.3/SWDIO]
+- name: VBAT
+  pins: [C3.1, D1.A, JP3.1, R3.1, U3.VBAT, X1.2]
+- name: VBUS
+  pins:
+  - C6.1
+  - CHG.A
+  - D1.C
+  - JP3.3
+  - R1.1
+  - U2.IN
+  - U3.VDD
+  - X3.VBUS
+- name: VDDCORE
+  pins: [C1.1, U$4.VDDCORE]
+- name: WAKE
+  pins: [JP1.1, X4.WAKE]
+positions:
+- ref: C1
+  x: 17.27
+  y: 11.94
+  rot: 90.0
+- ref: C14
+  x: 10.72
+  y: 4.34
+- ref: C2
+  x: 17.58
+  y: 7.16
+  rot: 90.0
+- ref: C3
+  x: 11.43
+  y: 11.18
+  rot: 270.0
+- ref: C4
+  x: 16.26
+  y: 7.16
+  rot: 90.0
+- ref: C5
+  x: 29.84
+  y: 17.53
+  rot: 90.0
+- ref: C6
+  x: 8.09
+  y: 12.96
+  rot: 90.0
+- ref: C7
+  x: 15.89
+  y: 11.91
+  rot: 90.0
+- ref: C8
+  x: 13.86
+  y: 11.62
+  rot: 270.0
+- ref: CHG
+  x: 2.41
+  y: 5.59
+  rot: 270.0
+- ref: D1
+  x: 17.78
+  y: 18.67
+  rot: 180.0
+- ref: JP1
+  x: 25.4
+  y: 1.27
+  rot: 180.0
+- ref: JP3
+  x: 30.48
+  y: 21.59
+- ref: L
+  x: 2.65
+  y: 17.36
+  rot: 90.0
+- ref: NET
+  x: 47.88
+  y: 1.91
+  rot: 180.0
+- ref: R1
+  x: 15.62
+  y: 16.13
+  rot: 90.0
+- ref: R10
+  x: 46.52
+  y: 1.79
+  rot: 270.0
+- ref: R11
+  x: 16.76
+  y: 9.27
+  rot: 180.0
+- ref: R2
+  x: 6.1
+  y: 4.32
+- ref: R3
+  x: 22.23
+  y: 18.67
+- ref: R4
+  x: 28.83
+  y: 5.08
+  rot: 270.0
+- ref: R5
+  x: 46.48
+  y: 21.15
+  rot: 90.0
+- ref: R6
+  x: 22.48
+  y: 17.4
+  rot: 180.0
+- ref: R7
+  x: 5.71
+  y: 20.95
+  rot: 270.0
+- ref: R8
+  x: 13.84
+  y: 4.32
+  rot: 180.0
+- ref: R9
+  x: 30.1
+  y: 13.59
+  rot: 90.0
+- ref: SW1
+  x: 9.4
+  y: 6.48
+  rot: 180.0
+- ref: U$4
+  x: 24.13
+  y: 9.65
+- ref: U2
+  x: 18.16
+  y: 15.49
+  rot: 180.0
+- ref: U3
+  x: 13.84
+  y: 7.75
+  rot: 180.0
+- ref: WIFI
+  x: 47.88
+  y: 20.95
+- ref: X1
+  x: 10.79
+  y: 19.3
+- ref: X2
+  x: 17.65
+  y: 4.57
+- ref: X3
+  x: 4.45
+  y: 11.43
+  rot: 270.0
+- ref: X4
+  x: 39.37
+  y: 11.38
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

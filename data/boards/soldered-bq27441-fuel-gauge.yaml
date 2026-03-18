@@ -1,0 +1,256 @@
+name: Soldered BQ27441 Fuel Gauge
+slug: soldered-bq27441-fuel-gauge
+source: SolderedElectronics/Fuel-gauge-BQ27441-breakout-hardware-design
+format: kicad7
+description: "Coulomb-counting fuel gauge (BQ27441) \u2014 different from voltage-based MAX17048"
+tags: [battery-management]
+key_ics: [BQ27441, MAX17048]
+outline:
+  width_mm: 38.0
+  height_mm: 22.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0603'
+- ref: C2
+  value: 1uF
+  footprint: '0603'
+  decouples: U1
+- ref: C3
+  value: 2.2uF
+  footprint: '0603'
+- ref: C4
+  value: 2.2uF
+  footprint: '0603'
+  decouples: U3
+- ref: JP1
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP2
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP3
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP4
+  value: solder jumper
+  footprint: SJ-2
+- ref: K1
+  value: 1x1 header
+  footprint: HEADER_MALE
+- ref: K2
+  value: JST-2pin-SMD
+  footprint: JST-2pin-SMD
+- ref: K3
+  value: screw terminal
+  footprint: TERMINAL_KF235-5.0-2P
+- ref: K4
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K5
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K6
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  pulldown: BIN
+- ref: R6
+  value: 10mohm
+  footprint: '1206'
+- ref: R7
+  value: 1.8Mohm
+  footprint: '0603'
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  pullup: GPOUT
+- ref: U1
+  value: BQ27441DRZR
+  footprint: BQ27441
+- ref: U2
+  value: dual NMOS
+  footprint: SOT-363
+- ref: U3
+  value: SE5218
+  footprint: SOT-23-5
+nets:
+- name: 3V3
+  pins:
+  - C4.2
+  - JP2.2
+  - JP4.2
+  - K4.3V3
+  - K5.3V3
+  - U2.G1
+  - U2.G2
+  - U3.VOUT
+- name: 5V
+  pins: [JP1.2, JP3.2, JP4.1, K6.2]
+- name: BIN
+  pins: [R5.2, R7.1, U1.BIN]
+- name: EN
+  pins: [C3.2, JP3.1, U3.EN, U3.VIN]
+- name: GND
+  pins:
+  - C1.1
+  - C2.1
+  - C3.1
+  - C4.1
+  - K2.-
+  - K3.2
+  - K4.GND
+  - K4.SHIELD@5
+  - K5.GND
+  - K5.SHIELD@5
+  - K6.1
+  - R5.1
+  - U1.VSS
+  - U3.GND
+- name: GPOUT
+  pins: [K1.1, R8.1, U1.GPOUT]
+- name: Net-(C1-Pad2)
+  pins: [C1.2, U1.VDD]
+- name: SCL3,3
+  pins: [K4.SCL, K5.SCL, R4.1, U2.S1]
+- name: SCL5
+  pins: [K6.4, R2.2, U1.SCL, U2.D1]
+- name: SCL_PULL3,3
+  pins: [JP2.1, R4.2]
+- name: SCL_PULL5
+  pins: [JP1.1, R2.1]
+- name: SDA3,3
+  pins: [K4.SDA, K5.SDA, R1.2, U2.S2]
+- name: SDA5
+  pins: [K6.3, R3.1, U1.SDA, U2.D2]
+- name: SDA_PULL3,3
+  pins: [JP2.3, R1.1]
+- name: SDA_PULL5
+  pins: [JP1.3, R3.2]
+- name: VCC
+  pins: [C2.2, K2.+, R6.1, U1.BAT, U1.SRP]
+- name: VSYS
+  pins: [K3.1, R6.2, R7.2, R8.2, U1.SRN]
+positions:
+- ref: C1
+  x: 126.0
+  y: 106.1
+  rot: 90.0
+- ref: C2
+  x: 132.2
+  y: 100.09
+  rot: -90.0
+- ref: C3
+  x: 121.6
+  y: 102.4
+- ref: C4
+  x: 118.6
+  y: 98.3
+  rot: -90.0
+- ref: JP1
+  x: 121.6
+  y: 104.5
+  rot: -90.0
+- ref: JP2
+  x: 120.4
+  y: 108.2
+  rot: 90.0
+- ref: JP3
+  x: 121.6
+  y: 100.7
+- ref: JP4
+  x: 126.4
+  y: 100.6
+  rot: 90.0
+- ref: K1
+  x: 117.57
+  y: 112.5
+  rot: 180.0
+  side: back
+- ref: K2
+  x: 137.4
+  y: 97.47
+- ref: K3
+  x: 140.5
+  y: 108.5
+  rot: 90.0
+- ref: K4
+  x: 113.3
+  y: 108.7
+  rot: 90.0
+- ref: K5
+  x: 113.3
+  y: 101.6
+  rot: 90.0
+- ref: K6
+  x: 126.46
+  y: 112.5
+  rot: 180.0
+  side: back
+- ref: R1
+  x: 117.6
+  y: 102.8
+  rot: 90.0
+- ref: R2
+  x: 119.1
+  y: 102.8
+  rot: 90.0
+- ref: R3
+  x: 123.9
+  y: 106.1
+  rot: -90.0
+- ref: R4
+  x: 120.0
+  y: 110.2
+- ref: R5
+  x: 128.1
+  y: 106.2
+- ref: R6
+  x: 133.4
+  y: 104.0
+  rot: -90.0
+- ref: R7
+  x: 133.4
+  y: 110.1
+- ref: R8
+  x: 133.4
+  y: 108.6
+- ref: U1
+  x: 128.41
+  y: 103.39
+  rot: 90.0
+- ref: U2
+  x: 128.3
+  y: 98.0
+  rot: 180.0
+- ref: U3
+  x: 121.5
+  y: 98.2
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]
+- net: VCC
+  layers: [F.Cu]
+- net: VSYS
+  layers: [F.Cu]

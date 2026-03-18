@@ -1,0 +1,781 @@
+name: ADUMx165 USB Isolator
+slug: adumx165-usb-isolator
+source: acha666/ADUMx165_USB_Isolator
+format: kicad7
+description: Isolated USB 2.0 High-Speed 480 Mbps (ADUM3165, 3.75kV)
+tags: [isolation, power-supply, usb]
+key_ics: [SN6505B]
+outline:
+  width_mm: 50.0
+  height_mm: 36.5
+design_rules:
+  layers: 4
+  min_trace: 0.12mm
+  min_clearance: 0.12mm
+  min_drill: 0.2mm
+  min_via: 0.45mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+  decouples: U1
+- ref: C10
+  value: 1uF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C11
+  value: 22uF
+  footprint: '0603'
+  voltage: 10V
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C14
+  value: 22uF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+  voltage: 10V
+  decouples: U5
+- ref: C15
+  value: 10uF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C16
+  value: 1uF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+  decouples: U6
+- ref: C18
+  value: 100uF
+  footprint: EIA-7343
+  voltage: 16V
+  decouples: U7
+- ref: C19
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C2
+  value: 12pF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C20
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C21
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C22
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C3
+  value: 12pF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+  decouples: U3
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+  decouples: U6
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: D1
+  value: MBR120VLSF
+  footprint: SOD-123F
+  description: Schottky diode, small symbol, filled shape
+- ref: D2
+  value: MBR120VLSF
+  footprint: SOD-123F
+  description: Schottky diode, small symbol, filled shape
+- ref: D3
+  value: LED
+  footprint: '0402'
+  description: Light emitting diode, small symbol, filled shape
+- ref: F1
+  value: 1A
+  footprint: '0603'
+  description: Resettable fuse, polymeric positive temperature coefficient, small symbol
+- ref: F2
+  value: 500mA
+  footprint: '0402'
+  description: Resettable fuse, polymeric positive temperature coefficient, small symbol
+- ref: F3
+  value: 500mA
+  footprint: '0402'
+  description: Resettable fuse, polymeric positive temperature coefficient, small symbol
+- ref: F4
+  value: 500mA
+  footprint: '0402'
+  description: Resettable fuse, polymeric positive temperature coefficient, small symbol
+- ref: F5
+  value: 500mA
+  footprint: '0402'
+  description: Resettable fuse, polymeric positive temperature coefficient, small symbol
+- ref: FB1
+  value: 120R@100M
+  footprint: '0603'
+  description: Ferrite bead, small symbol
+- ref: FB2
+  value: 120R@100M
+  footprint: '0402'
+  description: Ferrite bead, small symbol
+- ref: FB3
+  value: 120R@100M
+  footprint: '0402'
+  description: Ferrite bead, small symbol
+- ref: FB4
+  value: 120R@100M
+  footprint: '0402'
+  description: Ferrite bead, small symbol
+- ref: FB5
+  value: 120R@100M
+  footprint: '0402'
+  description: Ferrite bead, small symbol
+- ref: J1
+  value: XKB_U262-16XN-4BVC11
+  footprint: USB-C
+  description: USB 2.0-only 16P Type-C Receptacle connector
+- ref: J2
+  value: HRO_TYPE-C-31-M-17
+  footprint: USB-C
+  description: USB Power-Only 6P Type-C Receptacle connector
+- ref: J3
+  value: XKB_U221-041N-4V33
+  footprint: U221-041N-4V33
+  description: USB Type A connector
+- ref: J4
+  value: XKB_U221-041N-4V33
+  footprint: U221-041N-4V33
+  description: USB Type A connector
+- ref: J5
+  value: XKB_U221-041N-4V33
+  footprint: U221-041N-4V33
+  description: USB Type A connector
+- ref: J6
+  value: XKB_U221-041N-4V33
+  footprint: U221-041N-4V33
+  description: USB Type A connector
+- ref: R1
+  value: 5.1kohm
+  footprint: '0402'
+  description: Resistor, small symbol
+  pulldown: J1.CC1
+- ref: R2
+  value: 5.1kohm
+  footprint: '0402'
+  description: Resistor, small symbol
+  pulldown: J1.CC2
+- ref: R3
+  value: 5.1kohm
+  footprint: '0402'
+  description: Resistor, small symbol
+  pulldown: J2.CC2
+- ref: R4
+  value: 5.1kohm
+  footprint: '0402'
+  description: Resistor, small symbol
+  pulldown: J2.CC1
+- ref: R5
+  value: 33kohm
+  footprint: '0402'
+  description: Resistor, small symbol
+- ref: R6
+  value: 10kohm
+  footprint: '0402'
+  description: Resistor, small symbol
+  pulldown: U5.PR1
+- ref: R7
+  value: 2kohm
+  footprint: '0402'
+  description: Resistor, small symbol
+  pullup: D3.A
+- ref: R8
+  value: 110kohm
+  footprint: '0402'
+  description: Resistor, small symbol
+  pullup: U4.FB
+- ref: R9
+  value: 20kohm
+  footprint: '0402'
+  description: Resistor, small symbol
+  pulldown: U4.FB
+- ref: T1
+  value: DA2303-AL
+  footprint: DA2303-AL
+- ref: U1
+  value: SN6505BDBV
+  footprint: SOT-23-6
+  description: Low Noise, 1A, Transformer Drivers for Isolated Power Supplies, 420 kHz
+- ref: U10
+  value: USBLC6-2
+  footprint: SOT-666
+  description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+- ref: U2
+  value: USBLC6-2
+  footprint: SOT-666
+  description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+- ref: U3
+  value: ADUM3165
+  footprint: SSOP-20
+- ref: U4
+  value: TLV76750DRVx
+  footprint: WSON-6-1EP
+  description: 1A, 16V Precision Linear Voltage Regulator, with enable pin, Adjustable Output
+- ref: U5
+  value: TPS2116DRL
+  footprint: SOT-583-8
+  description: 2 Channnels Power Mux with Manual and Priority Switchover, 1.6-5.5V Input
+- ref: U6
+  value: CH334P
+  footprint: QFN-16-1EP
+  description: USB HUB controller, UART, QFN-16
+- ref: U7
+  value: USBLC6-2
+  footprint: SOT-666
+  description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+- ref: U8
+  value: USBLC6-2
+  footprint: SOT-666
+  description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+- ref: U9
+  value: USBLC6-2
+  footprint: SOT-666
+  description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+- ref: Y1
+  value: 24Mhz/12pF
+  footprint: SMD2016
+  description: Four pin crystal, GND on pins 2 and 4, small symbol
+- ref: Y2
+  value: CSTxE12M
+  footprint: Resonator_SMD_Murata_CSTxExxV-3Pin
+  description: Three pin ceramic resonator, small symbol
+nets:
+- name: +5V
+  pins: [C14.1, R8.1, U4.OUT, U5.VIN2]
+- name: /D1+
+  pins: [U6.D1+, U7.I/O1@1]
+- name: /D1-
+  pins: [U6.D1-, U7.I/O2@3]
+- name: /D1A+
+  pins: [J3.D+, U7.I/O1@6]
+- name: /D1A-
+  pins: [J3.D-, U7.I/O2@4]
+- name: /D2+
+  pins: [U6.D2+, U8.I/O1@1]
+- name: /D2-
+  pins: [U6.D2-, U8.I/O2@3]
+- name: /D2A+
+  pins: [J4.D+, U8.I/O1@6]
+- name: /D2A-
+  pins: [J4.D-, U8.I/O2@4]
+- name: /D3+
+  pins: [U6.D3+, U9.I/O1@1]
+- name: /D3-
+  pins: [U6.D3-, U9.I/O2@3]
+- name: /D3A+
+  pins: [J5.D+, U9.I/O1@6]
+- name: /D3A-
+  pins: [J5.D-, U9.I/O2@4]
+- name: /D4+
+  pins: [U10.I/O2@3, U6.D4+]
+- name: /D4-
+  pins: [U10.I/O1@1, U6.D4-]
+- name: /D4A+
+  pins: [J6.D+, U10.I/O2@4]
+- name: /D4A-
+  pins: [J6.D-, U10.I/O1@6]
+- name: /DD+
+  pins: [U3.DD+, U6.DU+]
+- name: /DD-
+  pins: [U3.DD-, U6.DU-]
+- name: /UD+
+  pins: [U2.I/O2@3, U3.UD+]
+- name: /UD-
+  pins: [U2.I/O1@1, U3.UD-]
+- name: EXTVIN
+  pins: [C12.1, J2.VBUS@A9, J2.VBUS@B9, R5.1, U5.MODE, U5.VIN1]
+- name: GND1
+  pins:
+  - C1.2
+  - C2.1
+  - C3.1
+  - C4.2
+  - C5.1
+  - C6.1
+  - J1.GND@A1
+  - J1.GND@A12
+  - J1.GND@B1
+  - J1.GND@B12
+  - J1.SHIELD@S1
+  - R1.2
+  - R2.2
+  - U1.GND
+  - U2.GND
+  - U3.GND1@10
+  - U3.GND1@2
+  - U3.GND1@4
+  - U3.GND1@7
+  - Y1.2
+  - Y1.4
+- name: GND2
+  pins:
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.1
+  - C14.2
+  - C15.1
+  - C16.1
+  - C18.2
+  - C19.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C7.2
+  - C8.1
+  - C9.2
+  - J2.GND@A12
+  - J2.GND@B12
+  - J2.SHIELD@S1
+  - J3.GND
+  - J3.Shield@5
+  - J4.GND
+  - J4.Shield@5
+  - J5.GND
+  - J5.Shield@5
+  - J6.GND
+  - J6.Shield@5
+  - R3.2
+  - R4.2
+  - R6.2
+  - R9.2
+  - T1.OUT1B@7
+  - T1.OUT2A@6
+  - U10.GND
+  - U3.GND2@11
+  - U3.GND2@15
+  - U3.GND2@16
+  - U3.GND2@17
+  - U3.GND2@19
+  - U4.GND@3
+  - U4.GND@5
+  - U4.PAD@7
+  - U5.GND
+  - U6.GND
+  - U7.GND
+  - U8.GND
+  - U9.GND
+  - Y2.2
+- name: Net-(D1-A)
+  pins: [D1.A, T1.OUT1A@8]
+- name: Net-(D1-K)
+  pins:
+  - C10.1
+  - C11.1
+  - C9.1
+  - D1.K
+  - D2.K
+  - U4.EN
+  - U4.IN
+- name: Net-(D2-A)
+  pins: [D2.A, T1.OUT2B@5]
+- name: Net-(D3-A)
+  pins: [D3.A, R7.2]
+- name: Net-(D3-K)
+  pins: [D3.K, U5.ST]
+- name: Net-(F1-Pad1)
+  pins: [F1.1, J1.VBUS@A4, J1.VBUS@A9, J1.VBUS@B4, J1.VBUS@B9]
+- name: Net-(F2-Pad2)
+  pins: [F2.2, FB2.1]
+- name: Net-(F3-Pad2)
+  pins: [F3.2, FB3.1]
+- name: Net-(F4-Pad2)
+  pins: [F4.2, FB4.1]
+- name: Net-(F5-Pad2)
+  pins: [F5.2, FB5.1]
+- name: Net-(J1-CC1)
+  pins: [J1.CC1, R1.1]
+- name: Net-(J1-CC2)
+  pins: [J1.CC2, R2.1]
+- name: Net-(J1-D+-PadA6)
+  pins: [J1.D+@A6, J1.D+@B6, U2.I/O2@4]
+- name: Net-(J1-D--PadA7)
+  pins: [J1.D-@A7, J1.D-@B7, U2.I/O1@6]
+- name: Net-(J2-CC1)
+  pins: [J2.CC1, R4.1]
+- name: Net-(J2-CC2)
+  pins: [J2.CC2, R3.1]
+- name: Net-(J3-VBUS)
+  pins: [C19.1, FB2.2, J3.VBUS]
+- name: Net-(J4-VBUS)
+  pins: [C20.1, FB3.2, J4.VBUS]
+- name: Net-(J5-VBUS)
+  pins: [C21.1, FB4.2, J5.VBUS]
+- name: Net-(J6-VBUS)
+  pins: [C22.1, FB5.2, J6.VBUS]
+- name: Net-(U1-D1)
+  pins: [T1.OUT1A@4, U1.D1]
+- name: Net-(U1-D2)
+  pins: [T1.OUT2B@1, U1.D2]
+- name: Net-(U2-VBUS)
+  pins: [C4.1, F1.2, FB1.1, U2.VBUS]
+- name: Net-(U3-VDD1)
+  pins: [C5.2, U3.VDD1]
+- name: Net-(U3-VDD2)
+  pins: [C8.2, U3.VDD2]
+- name: Net-(U3-XI1)
+  pins: [C2.2, U3.XI1, Y1.3]
+- name: Net-(U3-XO1)
+  pins: [C3.2, U3.XO1, Y1.1]
+- name: Net-(U4-FB)
+  pins: [R8.2, R9.1, U4.FB]
+- name: Net-(U5-PR1)
+  pins: [R5.2, R6.1, U5.PR1]
+- name: Net-(U6-VDD33)
+  pins: [C13.2, C15.2, U6.VDD33]
+- name: Net-(U6-XI)
+  pins: [U6.XI, Y2.3]
+- name: Net-(U6-XO)
+  pins: [U6.XO, Y2.1]
+- name: VBUS1
+  pins:
+  - C1.1
+  - C6.2
+  - FB1.2
+  - T1.OUT1B@3
+  - T1.OUT2A@2
+  - U1.EN
+  - U1.VCC
+  - U3.VBUS1
+- name: VBUS2
+  pins:
+  - C16.2
+  - C18.1
+  - C7.1
+  - F2.1
+  - F3.1
+  - F4.1
+  - F5.1
+  - R7.1
+  - U10.VBUS
+  - U3.VBUS2
+  - U5.VOUT@2
+  - U5.VOUT@7
+  - U6.V5
+  - U7.VBUS
+  - U8.VBUS
+  - U9.VBUS
+positions:
+- ref: C1
+  x: 115.3
+  y: 116.3
+  rot: 180.0
+- ref: C10
+  x: 135.09
+  y: 112.7
+  rot: 90.0
+- ref: C11
+  x: 132.18
+  y: 113.05
+  rot: 180.0
+- ref: C12
+  x: 141.05
+  y: 110.7
+- ref: C13
+  x: 134.1
+  y: 132.5
+- ref: C14
+  x: 136.05
+  y: 112.7
+  rot: -90.0
+- ref: C15
+  x: 135.95
+  y: 132.5
+  rot: 180.0
+- ref: C16
+  x: 132.25
+  y: 132.5
+- ref: C18
+  x: 137.3
+  y: 118.7
+  rot: -90.0
+- ref: C19
+  x: 144.47
+  y: 112.75
+  rot: 180.0
+- ref: C2
+  x: 119.23
+  y: 128.75
+  rot: 90.0
+- ref: C20
+  x: 144.47
+  y: 103.15
+- ref: C21
+  x: 144.5
+  y: 132.1
+- ref: C22
+  x: 144.5
+  y: 122.75
+- ref: C3
+  x: 115.43
+  y: 128.75
+  rot: -90.0
+- ref: C4
+  x: 116.9
+  y: 110.44
+  rot: -90.0
+- ref: C5
+  x: 118.83
+  y: 127.15
+- ref: C6
+  x: 118.83
+  y: 126.2
+- ref: C7
+  x: 130.55
+  y: 126.38
+  rot: -90.0
+- ref: C8
+  x: 130.55
+  y: 128.23
+  rot: 90.0
+- ref: C9
+  x: 134.14
+  y: 112.7
+  rot: 90.0
+- ref: D1
+  x: 133.26
+  y: 116.3
+  rot: 90.0
+- ref: D2
+  x: 133.26
+  y: 120.9
+  rot: -90.0
+- ref: D3
+  x: 139.75
+  y: 113.65
+  rot: 180.0
+- ref: F1
+  x: 118.9
+  y: 110.2
+- ref: F2
+  x: 144.47
+  y: 114.65
+  rot: 180.0
+- ref: F3
+  x: 144.47
+  y: 101.25
+- ref: F4
+  x: 144.5
+  y: 134.0
+- ref: F5
+  x: 144.5
+  y: 120.85
+- ref: FB1
+  x: 118.9
+  y: 111.74
+  rot: 180.0
+- ref: FB2
+  x: 144.47
+  y: 113.7
+- ref: FB3
+  x: 144.47
+  y: 102.2
+  rot: 180.0
+- ref: FB4
+  x: 144.5
+  y: 133.05
+  rot: 180.0
+- ref: FB5
+  x: 144.5
+  y: 121.8
+  rot: 180.0
+- ref: J1
+  x: 116.0
+  y: 103.3
+  rot: 180.0
+- ref: J2
+  x: 137.5
+  y: 103.0
+  rot: 180.0
+- ref: J3
+  x: 146.5
+  y: 108.0
+  rot: 90.0
+- ref: J4
+  x: 146.5
+  y: 108.0
+  rot: -90.0
+  side: back
+- ref: J5
+  x: 146.5
+  y: 127.5
+  rot: 90.0
+- ref: J6
+  x: 146.5
+  y: 127.5
+  rot: -90.0
+  side: back
+- ref: R1
+  x: 115.9
+  y: 110.44
+  rot: -90.0
+- ref: R2
+  x: 112.6
+  y: 110.44
+  rot: -90.0
+- ref: R3
+  x: 137.84
+  y: 109.6
+  rot: 180.0
+- ref: R4
+  x: 139.74
+  y: 109.6
+- ref: R5
+  x: 140.4
+  y: 112.1
+  rot: -90.0
+- ref: R6
+  x: 141.35
+  y: 112.1
+  rot: 90.0
+- ref: R7
+  x: 137.85
+  y: 113.64
+- ref: R8
+  x: 136.43
+  y: 110.83
+  rot: 90.0
+- ref: R9
+  x: 136.43
+  y: 108.95
+  rot: 90.0
+- ref: T1
+  x: 125.1
+  y: 118.6
+- ref: U1
+  x: 116.1
+  y: 118.6
+  rot: 180.0
+- ref: U10
+  x: 141.85
+  y: 129.1
+  rot: 90.0
+- ref: U2
+  x: 114.25
+  y: 111.04
+  rot: 90.0
+- ref: U3
+  x: 125.1
+  y: 129.15
+- ref: U4
+  x: 134.35
+  y: 110.4
+  rot: 180.0
+- ref: U5
+  x: 138.24
+  y: 111.55
+  rot: 180.0
+- ref: U6
+  x: 134.26
+  y: 129.64
+  rot: 180.0
+- ref: U7
+  x: 140.95
+  y: 121.28
+  rot: 90.0
+- ref: U8
+  x: 138.1
+  y: 124.9
+- ref: U9
+  x: 138.1
+  y: 127.1
+- ref: Y1
+  x: 117.33
+  y: 128.95
+- ref: Y2
+  x: 138.2
+  y: 131.2
+  rot: 90.0
+copper_pours:
+- net: +5V
+  layers: [F.Cu]
+- net: /D1+
+  layers: [F.Cu]
+- net: /D1-
+  layers: [F.Cu]
+- net: /D1A+
+  layers: [F.Cu]
+- net: /D1A-
+  layers: [F.Cu]
+- net: /D2+
+  layers: [F.Cu]
+- net: /D2-
+  layers: [F.Cu]
+- net: /D2A+
+  layers: [B.Cu, F.Cu]
+- net: /D2A-
+  layers: [B.Cu, F.Cu]
+- net: /D3+
+  layers: [F.Cu]
+- net: /D3-
+  layers: [F.Cu]
+- net: /D3A+
+  layers: [F.Cu]
+- net: /D3A-
+  layers: [F.Cu]
+- net: /D4+
+  layers: [F.Cu]
+- net: /D4-
+  layers: [F.Cu]
+- net: /D4A+
+  layers: [B.Cu, F.Cu]
+- net: /D4A-
+  layers: [B.Cu, F.Cu]
+- net: /DD+
+  layers: [F.Cu]
+- net: /DD-
+  layers: [F.Cu]
+- net: /UD+
+  layers: [F.Cu]
+- net: /UD-
+  layers: [F.Cu]
+- net: EXTVIN
+  layers: [F.Cu]
+- net: GND1
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: GND2
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: VBUS1
+  layers: [F.Cu, In2.Cu]
+- net: VBUS2
+  layers: [F.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+  keepout: true

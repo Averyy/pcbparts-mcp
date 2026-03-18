@@ -1,0 +1,284 @@
+name: Olimex BB-ADS1262
+slug: olimex-bb-ads1262
+source: OLIMEX/BB-ADS1262
+format: kicad_legacy
+description: 32-bit precision ADC (ADS1262), split GNDA/GNDD ground planes
+tags: [adc-dac]
+key_ics: [ADS1262]
+outline:
+  width_mm: 46.99
+  height_mm: 17.78
+design_rules:
+  layers: 2
+  min_trace: 0.175mm
+  min_clearance: 0.178mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C18
+  value: 22uF
+  footprint: '0603'
+  voltage: 6.3V
+- ref: C19
+  value: 22uF
+  footprint: '0603'
+  voltage: 10V
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+- ref: C21
+  value: 1uF
+  footprint: '0603'
+- ref: C22
+  value: 1uF
+  footprint: '0603'
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+- ref: C4
+  value: 1uF
+  footprint: '0603'
+- ref: C5
+  value: 4.7nF
+  footprint: '0603'
+- ref: C6
+  value: 1uF
+  footprint: '0603'
+- ref: CON1
+  value: 1x13 header
+  footprint: HN1x13
+- ref: CON2
+  value: 1x10 header
+  footprint: HN1x10
+- ref: CON3
+  value: BH10S
+  footprint: UEXTF
+- ref: D1
+  value: 1N5819/SS14
+  footprint: SOD-123_KA
+- ref: D3
+  value: 1N5819/SS14
+  footprint: SOD-123_KA
+- ref: FB1
+  value: FB0603
+  footprint: '0603'
+- ref: L1
+  value: CL10 10uH SD73
+  footprint: SD73
+- ref: R1
+  value: 0ohm
+  footprint: R_0603_5MIL_0R(Board_Mounted)
+- ref: R17
+  value: 9.1K_1%
+  footprint: '0603'
+- ref: R18
+  value: 1.05K_1%
+  footprint: '0603'
+- ref: R2
+  value: 1kohm
+  footprint: '0603'
+- ref: R27
+  value: 5.6K_1%
+  footprint: '0603'
+- ref: R28
+  value: 1.05K_1%
+  footprint: '0603'
+- ref: SJ1
+  value: SJ_Closed
+  footprint: SJ_Closed
+- ref: U1
+  value: ADS1262
+  footprint: TSSOP28-PW
+- ref: U2
+  value: MT3608
+  footprint: SOT-23-6
+- ref: U3
+  value: AP2127K-ADJ
+  footprint: SOT-23-5
+nets:
+- name: +3.3VD
+  pins: [C2.1, CON2.1, CON3.1, R2.1, SJ1.1, U1.19]
+- name: +5VA
+  pins: [C22.1, C3.1, CON1.13, D1.1, R27.1, U1.6]
+- name: /AIN0
+  pins: [CON1.1, U1.21]
+- name: /AIN1
+  pins: [CON1.2, U1.22]
+- name: /AIN2
+  pins: [CON1.3, U1.23]
+- name: /AIN3
+  pins: [CON1.4, U1.24]
+- name: /AIN4
+  pins: [CON1.5, U1.25]
+- name: /AIN5
+  pins: [CON1.6, U1.26]
+- name: /AIN6
+  pins: [CON1.7, U1.27]
+- name: /AIN7
+  pins: [CON1.8, U1.28]
+- name: /AIN8
+  pins: [CON1.9, U1.1]
+- name: /AIN9
+  pins: [CON1.10, U1.2]
+- name: /AINCOM
+  pins: [CON1.11, U1.3]
+- name: /CS#
+  pins: [CON2.8, CON3.10, U1.10]
+- name: /DRDY#
+  pins: [CON2.4, U1.14]
+- name: /MISO
+  pins: [CON2.5, CON3.7, U1.13]
+- name: /MOSI
+  pins: [CON2.6, CON3.8, U1.12]
+- name: /PWDN#
+  pins: [CON2.3, R2.2, U1.20]
+- name: /SCK
+  pins: [CON2.7, CON3.9, U1.11]
+- name: /START
+  pins: [CON2.9, U1.9]
+- name: GNDA
+  pins:
+  - C22.2
+  - C3.2
+  - C4.2
+  - CON1.12
+  - R1.1
+  - R28.2
+  - U1.7
+- name: GNDD
+  pins:
+  - C18.2
+  - C19.2
+  - C2.2
+  - C21.2
+  - C6.2
+  - CON2.10
+  - CON2.2
+  - CON3.2
+  - R1.2
+  - R18.2
+  - U1.15
+  - U1.18
+  - U2.2
+  - U3.2
+- name: Net-(C18-Pad1)
+  pins: [C18.1, L1.1, SJ1.2, U2.4, U2.5]
+- name: Net-(C19-Pad1)
+  pins: [C19.1, D3.1, FB1.1, R17.1]
+- name: Net-(C21-Pad1)
+  pins: [C21.1, FB1.2, U3.1, U3.3]
+- name: Net-(C4-Pad1)
+  pins: [C4.1, U1.8]
+- name: Net-(C5-Pad1)
+  pins: [C5.1, U1.4]
+- name: Net-(C5-Pad2)
+  pins: [C5.2, U1.5]
+- name: Net-(C6-Pad1)
+  pins: [C6.1, U1.17]
+- name: Net-(D1-Pad2)
+  pins: [D1.2, U3.5]
+- name: Net-(D3-Pad2)
+  pins: [D3.2, L1.2, U2.1]
+- name: Net-(R17-Pad2)
+  pins: [R17.2, R18.1, U2.3]
+- name: Net-(R27-Pad2)
+  pins: [R27.2, R28.1, U3.4]
+positions:
+- ref: C18
+  x: 97.98
+  y: 48.45
+- ref: C19
+  x: 97.03
+  y: 58.17
+  rot: 180.0
+- ref: C2
+  x: 67.31
+  y: 54.61
+  rot: 180.0
+- ref: C21
+  x: 97.03
+  y: 59.94
+  rot: 180.0
+- ref: C22
+  x: 90.02
+  y: 59.89
+  rot: 90.0
+- ref: C3
+  x: 82.55
+  y: 56.26
+- ref: C4
+  x: 82.55
+  y: 54.36
+- ref: C5
+  x: 82.55
+  y: 58.17
+- ref: C6
+  x: 67.31
+  y: 52.7
+  rot: 180.0
+- ref: CON1
+  x: 73.66
+  y: 63.5
+- ref: CON2
+  x: 73.66
+  y: 48.26
+- ref: CON3
+  x: 52.07
+  y: 55.88
+- ref: D1
+  x: 92.01
+  y: 63.44
+- ref: D3
+  x: 96.27
+  y: 55.88
+  rot: 180.0
+- ref: FB1
+  x: 99.69
+  y: 59.05
+  rot: 270.0
+- ref: L1
+  x: 90.49
+  y: 51.5
+- ref: R1
+  x: 63.5
+  y: 59.05
+  rot: 180.0
+- ref: R17
+  x: 99.69
+  y: 55.56
+  rot: 90.0
+- ref: R18
+  x: 99.69
+  y: 52.01
+  rot: 90.0
+- ref: R2
+  x: 63.5
+  y: 52.7
+- ref: R27
+  x: 91.8
+  y: 59.89
+  rot: 90.0
+- ref: R28
+  x: 90.91
+  y: 57.35
+  rot: 180.0
+- ref: SJ1
+  x: 88.29
+  y: 49.4
+  side: back
+- ref: U1
+  x: 74.93
+  y: 55.88
+  rot: 180.0
+- ref: U2
+  x: 96.14
+  y: 51.88
+  rot: 270.0
+- ref: U3
+  x: 96.65
+  y: 62.48
+copper_pours:
+- net: GNDA
+  layers: [B.Cu, F.Cu]
+- net: GNDD
+  layers: [B.Cu, F.Cu]

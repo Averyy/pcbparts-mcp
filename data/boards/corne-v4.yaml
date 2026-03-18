@@ -1,0 +1,2198 @@
+name: Corne v4
+slug: corne-v4
+source: foostan/crkbd
+format: kicad7
+description: RP2040 split keyboard, W25Q128 flash
+tags: [esd-protection, keyboard, led-driver]
+key_ics: [RP2040, W25Q128]
+outline:
+  width_mm: 277.23
+  height_mm: 107.49
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.19mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: BT1
+  value: Breakaway Tabs
+  footprint: Breakaway_Tabs
+- ref: BT2
+  value: Breakaway Tabs
+  footprint: Breakaway_Tabs
+- ref: BT3
+  value: Breakaway Tabs
+  footprint: Breakaway_Tabs
+- ref: BT4
+  value: Breakaway Tabs
+  footprint: Breakaway_Tabs
+- ref: C1
+  value: 27pF
+  footprint: '0402'
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C11
+  value: 10uF
+  footprint: '0402'
+  decouples: U2
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C16
+  value: 1uF
+  footprint: '0402'
+  decouples: U4
+- ref: C2
+  value: 27pF
+  footprint: '0402'
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C5
+  value: 1uF
+  footprint: '0402'
+  decouples: U1
+- ref: C6
+  value: 10uF
+  footprint: '0402'
+  decouples: U2
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C8
+  value: 1uF
+  footprint: '0402'
+  decouples: U1
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: D1
+  value: 1N4148WT
+  footprint: SOD-523
+- ref: EXLED1
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: EXLED2
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: EXSW1
+  value: rotary encoder
+  footprint: keyswitch_cherrymx_hotswap_1u_rotary_encoder_ec12
+- ref: EXSW2
+  value: rotary encoder
+  footprint: keyswitch_cherrymx_hotswap_1u_rotary_encoder_ec12
+- ref: J1
+  value: USB-C
+  footprint: TYPE-C-31-M-13C
+- ref: J2
+  value: TRS
+  footprint: PJ-398A-5A_PJ-399B-6A
+- ref: J3
+  value: 1x4 header
+  footprint: OLED
+- ref: J4
+  value: 1x3 header
+  footprint: 1X3
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-2
+- ref: LED1
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED10
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED11
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED12
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED13
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED14
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED15
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED16
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED17
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED18
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED19
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED2
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED20
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED21
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED3
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED4
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED5
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED6
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED7
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED8
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: LED9
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: R1
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: J1.CC1
+- ref: R2
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: J1.CC2
+- ref: R3
+  value: 1kohm
+  footprint: '0402'
+- ref: R4
+  value: 27ohm
+  footprint: '0402'
+- ref: R5
+  value: 27ohm
+  footprint: '0402'
+- ref: R6
+  value: 1kohm
+  footprint: '0402'
+- ref: R7
+  value: 10kohm
+  footprint: '0402'
+  pullup: /left/QSPI_SS
+- ref: R8
+  value: 5.6kohm
+  footprint: '0402'
+  pullup: /left/USB_VBUS_PIN
+- ref: R9
+  value: 10kohm
+  footprint: '0402'
+  pulldown: /left/USB_VBUS_PIN
+- ref: SMDSW1
+  value: TS-1088R-02026
+  footprint: TS-1088R-02026
+- ref: SMDSW2
+  value: TS-1088R-02026
+  footprint: TS-1088R-02026
+- ref: SW1
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1.5u
+- ref: SW10
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW11
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW12
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW13
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW14
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW15
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW16
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW17
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW18
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW19
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW2
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW20
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW21
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW3
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW4
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW5
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW6
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW7
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW8
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: SW9
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: U1
+  value: RP2040
+  footprint: QFN-56-1EP
+- ref: U2
+  value: NCP1117LPST33T3G
+  footprint: SOT-223-3_TabPin2
+- ref: U3
+  value: TPD4E05U06DQAR
+  footprint: USON-10
+- ref: U4
+  value: W25Q128JVSIQ
+  footprint: SOIC-8
+- ref: Y1
+  value: 12MHz 18pF
+  footprint: SMD3225
+  description: "12MHz 18pF \xB120ppm SMD3225-4P Crystals ROHS"
+- ref: ZD1
+  value: RB521S30T1G
+  footprint: SOD-523
+- ref: rBT1
+  value: Breakaway Tabs
+  footprint: Breakaway_Tabs
+- ref: rBT2
+  value: Breakaway Tabs
+  footprint: Breakaway_Tabs
+- ref: rBT3
+  value: Breakaway Tabs
+  footprint: Breakaway_Tabs
+- ref: rBT4
+  value: Breakaway Tabs
+  footprint: Breakaway_Tabs
+- ref: rC1
+  value: 27pF
+  footprint: '0402'
+- ref: rC10
+  value: 100nF
+  footprint: '0402'
+- ref: rC11
+  value: 10uF
+  footprint: '0402'
+- ref: rC12
+  value: 100nF
+  footprint: '0402'
+- ref: rC13
+  value: 100nF
+  footprint: '0402'
+- ref: rC14
+  value: 100nF
+  footprint: '0402'
+- ref: rC15
+  value: 100nF
+  footprint: '0402'
+- ref: rC16
+  value: 1uF
+  footprint: '0402'
+- ref: rC2
+  value: 27pF
+  footprint: '0402'
+- ref: rC3
+  value: 100nF
+  footprint: '0402'
+- ref: rC4
+  value: 100nF
+  footprint: '0402'
+- ref: rC5
+  value: 1uF
+  footprint: '0402'
+- ref: rC6
+  value: 10uF
+  footprint: '0402'
+- ref: rC7
+  value: 100nF
+  footprint: '0402'
+- ref: rC8
+  value: 1uF
+  footprint: '0402'
+- ref: rC9
+  value: 100nF
+  footprint: '0402'
+- ref: rD1
+  value: 1N4148WT
+  footprint: SOD-523
+- ref: rEXLED1
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rEXLED2
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rEXSW1
+  value: rotary encoder
+  footprint: keyswitch_cherrymx_hotswap_1u_rotary_encoder_ec12
+- ref: rEXSW2
+  value: rotary encoder
+  footprint: keyswitch_cherrymx_hotswap_1u_rotary_encoder_ec12
+- ref: rJ1
+  value: USB-C
+  footprint: TYPE-C-31-M-13C
+- ref: rJ2
+  value: TRS
+  footprint: PJ-398A-5A_PJ-399B-6A
+- ref: rJ3
+  value: 1x4 header
+  footprint: OLED
+- ref: rJ4
+  value: 1x3 header
+  footprint: 1X3
+- ref: rJP1
+  value: solder jumper
+  footprint: SJ-2
+- ref: rLED1
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED10
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED11
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED12
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED13
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED14
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED15
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED16
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED17
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED18
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED19
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED2
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED20
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED21
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED3
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED4
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED5
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED6
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED7
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED8
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rLED9
+  value: YS-SK6812MINI-E
+  footprint: YS-SK6812MINI-E
+- ref: rR1
+  value: 5.1kohm
+  footprint: '0402'
+- ref: rR2
+  value: 5.1kohm
+  footprint: '0402'
+- ref: rR3
+  value: 1kohm
+  footprint: '0402'
+- ref: rR4
+  value: 27ohm
+  footprint: '0402'
+- ref: rR5
+  value: 27ohm
+  footprint: '0402'
+- ref: rR6
+  value: 1kohm
+  footprint: '0402'
+- ref: rR7
+  value: 10kohm
+  footprint: '0402'
+- ref: rR8
+  value: 5.6kohm
+  footprint: '0402'
+- ref: rR9
+  value: 10kohm
+  footprint: '0402'
+- ref: rSMDSW1
+  value: TS-1088R-02026
+  footprint: TS-1088R-02026
+- ref: rSMDSW2
+  value: TS-1088R-02026
+  footprint: TS-1088R-02026
+- ref: rSW1
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1.5u
+- ref: rSW10
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW11
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW12
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW13
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW14
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW15
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW16
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW17
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW18
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW19
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW2
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW20
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW21
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW3
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW4
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW5
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW6
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW7
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW8
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rSW9
+  value: tactile switch
+  footprint: keyswitch_cherrymx_hotswap_1u
+- ref: rU1
+  value: RP2040
+  footprint: QFN-56-1EP
+- ref: rU2
+  value: NCP1117LPST33T3G
+  footprint: SOT-223-3_TabPin2
+- ref: rU3
+  value: TPD4E05U06DQAR
+  footprint: USON-10
+- ref: rU4
+  value: W25Q128JVSIQ
+  footprint: SOIC-8
+- ref: rY1
+  value: 12MHz 18pF
+  footprint: SMD3225
+  description: "12MHz 18pF \xB120ppm SMD3225-4P Crystals ROHS"
+- ref: rZD1
+  value: RB521S30T1G
+  footprint: SOD-523
+nets:
+- name: +1V1
+  pins: [C3.1, C4.1, C5.1, U1.DVDD@23, U1.DVDD@50, U1.VREG_VOUT]
+- name: +1V1R
+  pins: [rC3.1, rC4.1, rC5.1, rU1.DVDD@23, rU1.DVDD@50, rU1.VREG_VOUT]
+- name: +3V3
+  pins:
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C15.1
+  - C16.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - R7.2
+  - U1.ADC_AVDD
+  - U1.GPIO21
+  - U1.IOVDD@1
+  - U1.IOVDD@10
+  - U1.IOVDD@22
+  - U1.IOVDD@33
+  - U1.IOVDD@42
+  - U1.IOVDD@49
+  - U1.USB_VDD
+  - U1.VREG_IN
+  - U2.VO@2
+  - U4.VCC
+- name: +3V3R
+  pins:
+  - rC10.1
+  - rC11.1
+  - rC12.1
+  - rC13.1
+  - rC14.1
+  - rC15.1
+  - rC16.1
+  - rC7.1
+  - rC8.1
+  - rC9.1
+  - rR7.2
+  - rU1.ADC_AVDD
+  - rU1.IOVDD@1
+  - rU1.IOVDD@10
+  - rU1.IOVDD@22
+  - rU1.IOVDD@33
+  - rU1.IOVDD@42
+  - rU1.IOVDD@49
+  - rU1.USB_VDD
+  - rU1.VREG_IN
+  - rU2.VO@2
+  - rU4.VCC
+- name: +5V
+  pins: [C6.1, D1.A, J2.T, J3.Pin_3, U2.VI, ZD1.K]
+- name: +5VR
+  pins: [rC6.1, rD1.A, rJ2.T, rJ3.Pin_3, rU2.VI, rZD1.K]
+- name: /left/D+
+  pins:
+  - J1.D+@A6
+  - J1.D+@B6
+  - R4.1
+  - U3.D1+
+  - U3.D2+
+  - U3.NC@10
+  - U3.NC@7
+- name: /left/D-
+  pins:
+  - J1.D-@A7
+  - J1.D-@B7
+  - R5.2
+  - U3.D1-
+  - U3.D2-
+  - U3.NC@6
+  - U3.NC@9
+- name: /left/KEY1
+  pins: [SW1.1, U1.GPIO11]
+- name: /left/KEY10
+  pins: [SW10.1, U1.GPIO28_ADC2]
+- name: /left/KEY11
+  pins: [SW11.1, U1.GPIO27_ADC1]
+- name: /left/KEY12
+  pins: [SW12.1, U1.GPIO26_ADC0]
+- name: /left/KEY13
+  pins: [SW13.1, U1.GPIO23]
+- name: /left/KEY14
+  pins: [SW14.1, U1.GPIO24]
+- name: /left/KEY15
+  pins: [SW15.1, U1.GPIO25]
+- name: /left/KEY16
+  pins: [SW16.1, U1.GPIO16]
+- name: /left/KEY17
+  pins: [SW17.1, U1.GPIO18]
+- name: /left/KEY18
+  pins: [SW18.1, U1.GPIO20]
+- name: /left/KEY19
+  pins: [SW19.1, U1.GPIO22]
+- name: /left/KEY2
+  pins: [SW2.1, U1.GPIO9]
+- name: /left/KEY20
+  pins: [SW20.1, U1.GPIO19]
+- name: /left/KEY21
+  pins: [SW21.1, U1.GPIO17]
+- name: /left/KEY3
+  pins: [SW3.1, U1.GPIO2]
+- name: /left/KEY4
+  pins: [SW4.1, U1.GPIO0]
+- name: /left/KEY5
+  pins: [SW5.1, U1.GPIO29_ADC3]
+- name: /left/KEY6
+  pins: [SW6.1, U1.GPIO1]
+- name: /left/KEY7
+  pins: [SW7.1, U1.GPIO3]
+- name: /left/KEY8
+  pins: [SW8.1, U1.GPIO15]
+- name: /left/KEY9
+  pins: [SW9.1, U1.GPIO14]
+- name: /left/KEYEX1
+  pins: [EXSW1.S2@S2, U1.GPIO4]
+- name: /left/KEYEX2
+  pins: [EXSW2.S2@S2, U1.GPIO8]
+- name: /left/LED
+  pins: [LED1.DIN, U1.GPIO10]
+- name: /left/QSPI_SCLK
+  pins: [U1.QSPI_SCLK, U4.CLK]
+- name: /left/QSPI_SD0
+  pins: [U1.QSPI_SD0, U4.DI(IO0)]
+- name: /left/QSPI_SD1
+  pins: [U1.QSPI_SD1, U4.DO(IO1)]
+- name: /left/QSPI_SD2
+  pins: [U1.QSPI_SD2, U4.IO2]
+- name: /left/QSPI_SD3
+  pins: [U1.QSPI_SD3, U4.IO3]
+- name: /left/QSPI_SS
+  pins: [R6.1, R7.1, U1.QSPI_SS, U4.nCS]
+- name: /left/RE0A
+  pins: [EXSW1.A, U1.GPIO5]
+- name: /left/RE1A
+  pins: [EXSW2.A, J3.Pin_1, U1.GPIO6]
+- name: /left/REB
+  pins: [EXSW1.B, EXSW2.B, J3.Pin_2, U1.GPIO7]
+- name: /left/SWCLK
+  pins: [J4.Pin_1, U1.SWCLK]
+- name: /left/SWD
+  pins: [J4.Pin_3, U1.SWD]
+- name: /left/TX
+  pins: [J2.R, U1.GPIO12]
+- name: /left/USB_VBUS_PIN
+  pins: [R8.2, R9.1, U1.GPIO13]
+- name: /right/D+
+  pins:
+  - rJ1.D+@A6
+  - rJ1.D+@B6
+  - rR4.1
+  - rU3.D1+
+  - rU3.D2+
+  - rU3.NC@10
+  - rU3.NC@7
+- name: /right/D-
+  pins:
+  - rJ1.D-@A7
+  - rJ1.D-@B7
+  - rR5.2
+  - rU3.D1-
+  - rU3.D2-
+  - rU3.NC@6
+  - rU3.NC@9
+- name: /right/KEY1
+  pins: [rSW1.1, rU1.GPIO19]
+- name: /right/KEY10
+  pins: [rSW10.1, rU1.GPIO29_ADC3]
+- name: /right/KEY11
+  pins: [rSW11.1, rU1.GPIO0]
+- name: /right/KEY12
+  pins: [rSW12.1, rU1.GPIO2]
+- name: /right/KEY13
+  pins: [rSW13.1, rU1.GPIO3]
+- name: /right/KEY14
+  pins: [rSW14.1, rU1.GPIO4]
+- name: /right/KEY15
+  pins: [rSW15.1, rU1.GPIO5]
+- name: /right/KEY16
+  pins: [rSW16.1, rU1.GPIO18]
+- name: /right/KEY17
+  pins: [rSW17.1, rU1.GPIO14]
+- name: /right/KEY18
+  pins: [rSW18.1, rU1.GPIO9]
+- name: /right/KEY19
+  pins: [rSW19.1, rU1.GPIO8]
+- name: /right/KEY2
+  pins: [rSW2.1, rU1.GPIO22]
+- name: /right/KEY20
+  pins: [rSW20.1, rU1.GPIO11]
+- name: /right/KEY21
+  pins: [rSW21.1, rU1.GPIO15]
+- name: /right/KEY3
+  pins: [rSW3.1, rU1.GPIO26_ADC0]
+- name: /right/KEY4
+  pins: [rSW4.1, rU1.GPIO27_ADC1]
+- name: /right/KEY5
+  pins: [rSW5.1, rU1.GPIO1]
+- name: /right/KEY6
+  pins: [rSW6.1, rU1.GPIO28_ADC2]
+- name: /right/KEY7
+  pins: [rSW7.1, rU1.GPIO20]
+- name: /right/KEY8
+  pins: [rSW8.1, rU1.GPIO17]
+- name: /right/KEY9
+  pins: [rSW9.1, rU1.GPIO16]
+- name: /right/KEYEX1
+  pins: [rEXSW1.S2@S2, rU1.GPIO25]
+- name: /right/KEYEX2
+  pins: [rEXSW2.S2@S2, rU1.GPIO23]
+- name: /right/LED
+  pins: [rLED1.DIN, rU1.GPIO10]
+- name: /right/QSPI_SCLK
+  pins: [rU1.QSPI_SCLK, rU4.CLK]
+- name: /right/QSPI_SD0
+  pins: [rU1.QSPI_SD0, rU4.DI(IO0)]
+- name: /right/QSPI_SD1
+  pins: [rU1.QSPI_SD1, rU4.DO(IO1)]
+- name: /right/QSPI_SD2
+  pins: [rU1.QSPI_SD2, rU4.IO2]
+- name: /right/QSPI_SD3
+  pins: [rU1.QSPI_SD3, rU4.IO3]
+- name: /right/QSPI_SS
+  pins: [rR6.1, rR7.1, rU1.QSPI_SS, rU4.nCS]
+- name: /right/RE0A
+  pins: [rEXSW1.A, rU1.GPIO24]
+- name: /right/RE1A
+  pins: [rEXSW2.A, rJ3.Pin_1, rU1.GPIO6]
+- name: /right/REB
+  pins: [rEXSW1.B, rEXSW2.B, rJ3.Pin_2, rU1.GPIO7]
+- name: /right/SWCLK
+  pins: [rJ4.Pin_1, rU1.SWCLK]
+- name: /right/SWD
+  pins: [rJ4.Pin_3, rU1.SWD]
+- name: /right/TX
+  pins: [rJ2.R, rU1.GPIO12]
+- name: /right/USB_VBUS_PIN
+  pins: [rR8.2, rR9.1, rU1.GPIO13]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - EXLED1.VSS
+  - EXLED2.VSS
+  - EXSW1.C
+  - EXSW1.S1@S1
+  - EXSW2.C
+  - EXSW2.S1@S1
+  - J1.GND@A1
+  - J1.GND@A12
+  - J1.GND@B1
+  - J1.GND@B12
+  - J1.SHIELD@S1
+  - J2.S
+  - J3.Pin_4
+  - J4.Pin_2
+  - LED1.VSS
+  - LED10.VSS
+  - LED11.VSS
+  - LED12.VSS
+  - LED13.VSS
+  - LED14.VSS
+  - LED15.VSS
+  - LED16.VSS
+  - LED17.VSS
+  - LED18.VSS
+  - LED19.VSS
+  - LED2.VSS
+  - LED20.VSS
+  - LED21.VSS
+  - LED3.VSS
+  - LED4.VSS
+  - LED5.VSS
+  - LED6.VSS
+  - LED7.VSS
+  - LED8.VSS
+  - LED9.VSS
+  - R1.1
+  - R2.1
+  - R9.2
+  - SMDSW1.1
+  - SMDSW2.1
+  - SW1.2
+  - SW10.2
+  - SW11.2
+  - SW12.2
+  - SW13.2
+  - SW14.2
+  - SW15.2
+  - SW16.2
+  - SW17.2
+  - SW18.2
+  - SW19.2
+  - SW2.2
+  - SW20.2
+  - SW21.2
+  - SW3.2
+  - SW4.2
+  - SW5.2
+  - SW6.2
+  - SW7.2
+  - SW8.2
+  - SW9.2
+  - U1.GND
+  - U1.TESTEN
+  - U2.GND
+  - U3.GND@3
+  - U3.GND@8
+  - U4.GND
+  - Y1.2
+  - Y1.4
+- name: GNDR
+  pins:
+  - rC1.2
+  - rC10.2
+  - rC11.2
+  - rC12.2
+  - rC13.2
+  - rC14.2
+  - rC15.2
+  - rC16.2
+  - rC2.2
+  - rC3.2
+  - rC4.2
+  - rC5.2
+  - rC6.2
+  - rC7.2
+  - rC8.2
+  - rC9.2
+  - rEXLED1.VSS
+  - rEXLED2.VSS
+  - rEXSW1.C
+  - rEXSW1.S1@S1
+  - rEXSW2.C
+  - rEXSW2.S1@S1
+  - rJ1.GND@A1
+  - rJ1.GND@A12
+  - rJ1.GND@B1
+  - rJ1.GND@B12
+  - rJ1.SHIELD@S1
+  - rJ2.S
+  - rJ3.Pin_4
+  - rJ4.Pin_2
+  - rLED1.VSS
+  - rLED10.VSS
+  - rLED11.VSS
+  - rLED12.VSS
+  - rLED13.VSS
+  - rLED14.VSS
+  - rLED15.VSS
+  - rLED16.VSS
+  - rLED17.VSS
+  - rLED18.VSS
+  - rLED19.VSS
+  - rLED2.VSS
+  - rLED20.VSS
+  - rLED21.VSS
+  - rLED3.VSS
+  - rLED4.VSS
+  - rLED5.VSS
+  - rLED6.VSS
+  - rLED7.VSS
+  - rLED8.VSS
+  - rLED9.VSS
+  - rR1.1
+  - rR2.1
+  - rR9.2
+  - rSMDSW1.1
+  - rSMDSW2.1
+  - rSW1.2
+  - rSW10.2
+  - rSW11.2
+  - rSW12.2
+  - rSW13.2
+  - rSW14.2
+  - rSW15.2
+  - rSW16.2
+  - rSW17.2
+  - rSW18.2
+  - rSW19.2
+  - rSW2.2
+  - rSW20.2
+  - rSW21.2
+  - rSW3.2
+  - rSW4.2
+  - rSW5.2
+  - rSW6.2
+  - rSW7.2
+  - rSW8.2
+  - rSW9.2
+  - rU1.GND
+  - rU1.GPIO21
+  - rU1.TESTEN
+  - rU2.GND
+  - rU3.GND@3
+  - rU3.GND@8
+  - rU4.GND
+  - rY1.2
+  - rY1.4
+- name: Net-(C2-Pad1)
+  pins: [C2.1, R3.1, Y1.3]
+- name: Net-(D1-K)
+  pins:
+  - D1.K
+  - EXLED1.VDD
+  - EXLED2.VDD
+  - LED1.VDD
+  - LED10.VDD
+  - LED11.VDD
+  - LED12.VDD
+  - LED13.VDD
+  - LED14.VDD
+  - LED15.VDD
+  - LED16.VDD
+  - LED17.VDD
+  - LED18.VDD
+  - LED19.VDD
+  - LED2.VDD
+  - LED20.VDD
+  - LED21.VDD
+  - LED3.VDD
+  - LED4.VDD
+  - LED5.VDD
+  - LED6.VDD
+  - LED7.VDD
+  - LED8.VDD
+  - LED9.VDD
+- name: Net-(EXLED1-DIN)
+  pins: [EXLED1.DIN, JP1.B, LED21.DOUT]
+- name: Net-(EXLED1-DOUT)
+  pins: [EXLED1.DOUT, EXLED2.DIN]
+- name: Net-(J1-CC1)
+  pins: [J1.CC1, R1.2]
+- name: Net-(J1-CC2)
+  pins: [J1.CC2, R2.2]
+- name: Net-(JP1-A)
+  pins: [JP1.A, LED18.DOUT, LED19.DIN]
+- name: Net-(LED1-DOUT)
+  pins: [LED1.DOUT, LED2.DIN]
+- name: Net-(LED10-DIN)
+  pins: [LED10.DIN, LED9.DOUT]
+- name: Net-(LED10-DOUT)
+  pins: [LED10.DOUT, LED11.DIN]
+- name: Net-(LED11-DOUT)
+  pins: [LED11.DOUT, LED12.DIN]
+- name: Net-(LED12-DOUT)
+  pins: [LED12.DOUT, LED13.DIN]
+- name: Net-(LED13-DOUT)
+  pins: [LED13.DOUT, LED14.DIN]
+- name: Net-(LED14-DOUT)
+  pins: [LED14.DOUT, LED15.DIN]
+- name: Net-(LED15-DOUT)
+  pins: [LED15.DOUT, LED16.DIN]
+- name: Net-(LED16-DOUT)
+  pins: [LED16.DOUT, LED17.DIN]
+- name: Net-(LED17-DOUT)
+  pins: [LED17.DOUT, LED18.DIN]
+- name: Net-(LED19-DOUT)
+  pins: [LED19.DOUT, LED20.DIN]
+- name: Net-(LED2-DOUT)
+  pins: [LED2.DOUT, LED3.DIN]
+- name: Net-(LED20-DOUT)
+  pins: [LED20.DOUT, LED21.DIN]
+- name: Net-(LED3-DOUT)
+  pins: [LED3.DOUT, LED4.DIN]
+- name: Net-(LED4-DOUT)
+  pins: [LED4.DOUT, LED5.DIN]
+- name: Net-(LED5-DOUT)
+  pins: [LED5.DOUT, LED6.DIN]
+- name: Net-(LED6-DOUT)
+  pins: [LED6.DOUT, LED7.DIN]
+- name: Net-(LED7-DOUT)
+  pins: [LED7.DOUT, LED8.DIN]
+- name: Net-(LED8-DOUT)
+  pins: [LED8.DOUT, LED9.DIN]
+- name: Net-(R6-Pad2)
+  pins: [R6.2, SMDSW1.2]
+- name: Net-(U1-RUN)
+  pins: [SMDSW2.2, U1.RUN]
+- name: Net-(U1-USB_DM)
+  pins: [R5.1, U1.USB_DM]
+- name: Net-(U1-USB_DP)
+  pins: [R4.2, U1.USB_DP]
+- name: Net-(U1-XIN)
+  pins: [C1.1, U1.XIN, Y1.1]
+- name: Net-(U1-XOUT)
+  pins: [R3.2, U1.XOUT]
+- name: Net-(rC2-Pad1)
+  pins: [rC2.1, rR3.1, rY1.3]
+- name: Net-(rD1-K)
+  pins:
+  - rD1.K
+  - rEXLED1.VDD
+  - rEXLED2.VDD
+  - rLED1.VDD
+  - rLED10.VDD
+  - rLED11.VDD
+  - rLED12.VDD
+  - rLED13.VDD
+  - rLED14.VDD
+  - rLED15.VDD
+  - rLED16.VDD
+  - rLED17.VDD
+  - rLED18.VDD
+  - rLED19.VDD
+  - rLED2.VDD
+  - rLED20.VDD
+  - rLED21.VDD
+  - rLED3.VDD
+  - rLED4.VDD
+  - rLED5.VDD
+  - rLED6.VDD
+  - rLED7.VDD
+  - rLED8.VDD
+  - rLED9.VDD
+- name: Net-(rEXLED1-DIN)
+  pins: [rEXLED1.DIN, rJP1.B, rLED21.DOUT]
+- name: Net-(rEXLED1-DOUT)
+  pins: [rEXLED1.DOUT, rEXLED2.DIN]
+- name: Net-(rJ1-CC1)
+  pins: [rJ1.CC1, rR1.2]
+- name: Net-(rJ1-CC2)
+  pins: [rJ1.CC2, rR2.2]
+- name: Net-(rJP1-A)
+  pins: [rJP1.A, rLED18.DOUT, rLED19.DIN]
+- name: Net-(rLED1-DOUT)
+  pins: [rLED1.DOUT, rLED2.DIN]
+- name: Net-(rLED10-DIN)
+  pins: [rLED10.DIN, rLED9.DOUT]
+- name: Net-(rLED10-DOUT)
+  pins: [rLED10.DOUT, rLED11.DIN]
+- name: Net-(rLED11-DOUT)
+  pins: [rLED11.DOUT, rLED12.DIN]
+- name: Net-(rLED12-DOUT)
+  pins: [rLED12.DOUT, rLED13.DIN]
+- name: Net-(rLED13-DOUT)
+  pins: [rLED13.DOUT, rLED14.DIN]
+- name: Net-(rLED14-DOUT)
+  pins: [rLED14.DOUT, rLED15.DIN]
+- name: Net-(rLED15-DOUT)
+  pins: [rLED15.DOUT, rLED16.DIN]
+- name: Net-(rLED16-DOUT)
+  pins: [rLED16.DOUT, rLED17.DIN]
+- name: Net-(rLED17-DOUT)
+  pins: [rLED17.DOUT, rLED18.DIN]
+- name: Net-(rLED19-DOUT)
+  pins: [rLED19.DOUT, rLED20.DIN]
+- name: Net-(rLED2-DOUT)
+  pins: [rLED2.DOUT, rLED3.DIN]
+- name: Net-(rLED20-DOUT)
+  pins: [rLED20.DOUT, rLED21.DIN]
+- name: Net-(rLED3-DOUT)
+  pins: [rLED3.DOUT, rLED4.DIN]
+- name: Net-(rLED4-DOUT)
+  pins: [rLED4.DOUT, rLED5.DIN]
+- name: Net-(rLED5-DOUT)
+  pins: [rLED5.DOUT, rLED6.DIN]
+- name: Net-(rLED6-DOUT)
+  pins: [rLED6.DOUT, rLED7.DIN]
+- name: Net-(rLED7-DOUT)
+  pins: [rLED7.DOUT, rLED8.DIN]
+- name: Net-(rLED8-DOUT)
+  pins: [rLED8.DOUT, rLED9.DIN]
+- name: Net-(rR6-Pad2)
+  pins: [rR6.2, rSMDSW1.2]
+- name: Net-(rU1-RUN)
+  pins: [rSMDSW2.2, rU1.RUN]
+- name: Net-(rU1-USB_DM)
+  pins: [rR5.1, rU1.USB_DM]
+- name: Net-(rU1-USB_DP)
+  pins: [rR4.2, rU1.USB_DP]
+- name: Net-(rU1-XIN)
+  pins: [rC1.1, rU1.XIN, rY1.1]
+- name: Net-(rU1-XOUT)
+  pins: [rR3.2, rU1.XOUT]
+- name: VBUS
+  pins: [J1.VBUS@A4, J1.VBUS@A9, J1.VBUS@B4, J1.VBUS@B9, R8.1, ZD1.A]
+- name: VBUSR
+  pins: [rJ1.VBUS@A4, rJ1.VBUS@A9, rJ1.VBUS@B4, rJ1.VBUS@B9, rR8.1, rZD1.A]
+positions:
+- ref: BT1
+  x: -90.49
+  y: -22.13
+- ref: BT2
+  x: -52.39
+  y: -22.13
+- ref: BT3
+  x: -128.59
+  y: 41.18
+- ref: BT4
+  x: -109.54
+  y: 41.18
+- ref: C1
+  x: -72.58
+  y: 49.24
+  rot: 180.0
+  side: back
+- ref: C10
+  x: -84.61
+  y: 37.53
+  rot: 90.0
+  side: back
+- ref: C11
+  x: -54.86
+  y: 37.99
+  rot: 90.0
+  side: back
+- ref: C12
+  x: -80.36
+  y: 34.17
+  rot: 180.0
+  side: back
+- ref: C13
+  x: -80.36
+  y: 33.1
+  rot: 180.0
+  side: back
+- ref: C14
+  x: -69.29
+  y: 34.38
+  side: back
+- ref: C15
+  x: -75.67
+  y: 31.52
+  rot: 90.0
+  side: back
+- ref: C16
+  x: -59.45
+  y: 36.67
+  rot: 180.0
+  side: back
+- ref: C2
+  x: -74.74
+  y: 49.28
+  side: back
+- ref: C3
+  x: -78.11
+  y: 43.46
+  rot: -90.0
+  side: back
+- ref: C4
+  x: -74.64
+  y: 31.52
+  rot: 90.0
+  side: back
+- ref: C5
+  x: -78.86
+  y: 31.51
+  rot: 90.0
+  side: back
+- ref: C6
+  x: -39.92
+  y: 40.75
+  rot: 90.0
+  side: back
+- ref: C7
+  x: -76.96
+  y: 43.46
+  rot: -90.0
+  side: back
+- ref: C8
+  x: -79.9
+  y: 31.51
+  rot: 90.0
+  side: back
+- ref: C9
+  x: -67.05
+  y: 40.17
+  side: back
+- ref: D1
+  x: -27.12
+  y: -6.78
+  side: back
+- ref: EXLED1
+  x: -14.29
+  y: 4.76
+  rot: 180.0
+  side: back
+- ref: EXLED2
+  x: -14.29
+  y: 23.81
+  rot: 180.0
+  side: back
+- ref: EXSW1
+  x: -14.29
+  y: 0.0
+  rot: 180.0
+  side: back
+- ref: EXSW2
+  x: -14.29
+  y: 19.05
+  rot: 180.0
+  side: back
+- ref: J1
+  x: -12.29
+  y: -15.96
+  side: back
+- ref: J2
+  x: -4.27
+  y: 34.65
+  rot: 90.0
+  side: back
+- ref: J3
+  x: -14.29
+  y: 28.85
+- ref: J4
+  x: -116.24
+  y: 33.74
+  rot: 180.0
+  side: back
+- ref: JP1
+  x: -115.76
+  y: -2.29
+  rot: 180.0
+  side: back
+- ref: LED1
+  x: -14.9
+  y: 53.81
+  rot: -113.88
+  side: back
+- ref: LED10
+  x: -71.44
+  y: 28.57
+  rot: 180.0
+  side: back
+- ref: LED11
+  x: -71.44
+  y: 9.53
+  rot: 180.0
+  side: back
+- ref: LED12
+  x: -71.44
+  y: -9.53
+  rot: 180.0
+  side: back
+- ref: LED13
+  x: -90.49
+  y: -7.14
+  rot: 180.0
+  side: back
+- ref: LED14
+  x: -90.49
+  y: 11.91
+  rot: 180.0
+  side: back
+- ref: LED15
+  x: -90.49
+  y: 30.96
+  rot: 180.0
+  side: back
+- ref: LED16
+  x: -109.54
+  y: 35.72
+  rot: 180.0
+  side: back
+- ref: LED17
+  x: -109.54
+  y: 16.67
+  rot: 180.0
+  side: back
+- ref: LED18
+  x: -109.54
+  y: -2.38
+  rot: 180.0
+  side: back
+- ref: LED19
+  x: -128.59
+  y: -2.38
+  rot: 180.0
+  side: back
+- ref: LED2
+  x: -33.34
+  y: 33.34
+  rot: 180.0
+  side: back
+- ref: LED20
+  x: -128.59
+  y: 16.67
+  rot: 180.0
+  side: back
+- ref: LED21
+  x: -128.59
+  y: 35.72
+  rot: 180.0
+  side: back
+- ref: LED3
+  x: -33.34
+  y: 14.29
+  rot: 180.0
+  side: back
+- ref: LED4
+  x: -33.34
+  y: -4.76
+  rot: 180.0
+  side: back
+- ref: LED5
+  x: -52.39
+  y: -7.14
+  rot: 180.0
+  side: back
+- ref: LED6
+  x: -52.39
+  y: 11.91
+  rot: 180.0
+  side: back
+- ref: LED7
+  x: -52.39
+  y: 30.96
+  rot: 180.0
+  side: back
+- ref: LED8
+  x: -42.08
+  y: 54.46
+  rot: 168.06
+  side: back
+- ref: LED9
+  x: -61.91
+  y: 52.39
+  rot: 180.0
+  side: back
+- ref: R1
+  x: -19.42
+  y: -15.31
+  rot: -90.0
+  side: back
+- ref: R2
+  x: -5.13
+  y: -15.27
+  rot: -90.0
+  side: back
+- ref: R3
+  x: -75.14
+  y: 43.74
+  side: back
+- ref: R4
+  x: -76.73
+  y: 31.53
+  rot: -90.0
+  side: back
+- ref: R5
+  x: -77.8
+  y: 31.53
+  rot: 90.0
+  side: back
+- ref: R6
+  x: -86.82
+  y: 37.55
+  rot: -90.0
+  side: back
+- ref: R7
+  x: -85.72
+  y: 37.55
+  rot: -90.0
+  side: back
+- ref: R8
+  x: -22.84
+  y: -13.78
+  rot: 180.0
+  side: back
+- ref: R9
+  x: -22.86
+  y: -15.33
+  side: back
+- ref: SMDSW1
+  x: -93.09
+  y: 35.73
+  rot: -90.0
+  side: back
+- ref: SMDSW2
+  x: -89.08
+  y: 35.73
+  rot: -90.0
+  side: back
+- ref: SW1
+  x: -19.26
+  y: 51.88
+  rot: -113.88
+  side: back
+- ref: SW10
+  x: -71.44
+  y: 23.81
+  rot: 180.0
+  side: back
+- ref: SW11
+  x: -71.44
+  y: 4.76
+  rot: 180.0
+  side: back
+- ref: SW12
+  x: -71.44
+  y: -14.29
+  rot: 180.0
+  side: back
+- ref: SW13
+  x: -90.49
+  y: -11.91
+  rot: 180.0
+  side: back
+- ref: SW14
+  x: -90.49
+  y: 7.14
+  rot: 180.0
+  side: back
+- ref: SW15
+  x: -90.49
+  y: 26.19
+  rot: 180.0
+  side: back
+- ref: SW16
+  x: -109.54
+  y: 30.96
+  rot: 180.0
+  side: back
+- ref: SW17
+  x: -109.54
+  y: 11.91
+  rot: 180.0
+  side: back
+- ref: SW18
+  x: -109.54
+  y: -7.14
+  rot: 180.0
+  side: back
+- ref: SW19
+  x: -128.59
+  y: -7.14
+  rot: 180.0
+  side: back
+- ref: SW2
+  x: -33.34
+  y: 28.57
+  rot: 180.0
+  side: back
+- ref: SW20
+  x: -128.59
+  y: 11.91
+  rot: 180.0
+  side: back
+- ref: SW21
+  x: -128.59
+  y: 30.96
+  rot: 180.0
+  side: back
+- ref: SW3
+  x: -33.34
+  y: 9.53
+  rot: 180.0
+  side: back
+- ref: SW4
+  x: -33.34
+  y: -9.53
+  rot: 180.0
+  side: back
+- ref: SW5
+  x: -52.39
+  y: -11.91
+  rot: 180.0
+  side: back
+- ref: SW6
+  x: -52.39
+  y: 7.14
+  rot: 180.0
+  side: back
+- ref: SW7
+  x: -52.39
+  y: 26.19
+  rot: 180.0
+  side: back
+- ref: SW8
+  x: -41.1
+  y: 49.8
+  rot: 168.06
+  side: back
+- ref: SW9
+  x: -61.91
+  y: 47.62
+  rot: 180.0
+  side: back
+- ref: U1
+  x: -74.61
+  y: 37.64
+  rot: 180.0
+  side: back
+- ref: U2
+  x: -49.85
+  y: 38.48
+  rot: 180.0
+  side: back
+- ref: U3
+  x: -22.65
+  y: -11.51
+  side: back
+- ref: U4
+  x: -62.67
+  y: 33.21
+  side: back
+- ref: Y1
+  x: -73.94
+  y: 46.25
+  rot: 180.0
+  side: back
+- ref: ZD1
+  x: -20.97
+  y: -14.55
+  rot: -90.0
+  side: back
+- ref: rBT1
+  x: 90.49
+  y: -22.13
+- ref: rBT2
+  x: 52.39
+  y: -22.13
+- ref: rBT3
+  x: 128.59
+  y: 41.18
+- ref: rBT4
+  x: 109.54
+  y: 41.18
+- ref: rC1
+  x: 74.66
+  y: 49.28
+  rot: 180.0
+  side: back
+- ref: rC10
+  x: 66.48
+  y: 38.38
+  rot: 180.0
+  side: back
+- ref: rC11
+  x: 56.7
+  y: 37.45
+  rot: -90.0
+  side: back
+- ref: rC12
+  x: 68.88
+  y: 34.2
+  rot: 180.0
+  side: back
+- ref: rC13
+  x: 68.88
+  y: 33.1
+  rot: 180.0
+  side: back
+- ref: rC14
+  x: 79.88
+  y: 34.32
+  rot: 90.0
+  side: back
+- ref: rC15
+  x: 73.57
+  y: 31.55
+  rot: 90.0
+  side: back
+- ref: rC16
+  x: 85.67
+  y: 33.77
+  rot: 180.0
+  side: back
+- ref: rC2
+  x: 72.5
+  y: 49.33
+  side: back
+- ref: rC3
+  x: 70.05
+  y: 43.97
+  rot: -90.0
+  side: back
+- ref: rC4
+  x: 74.59
+  y: 31.55
+  rot: 90.0
+  side: back
+- ref: rC5
+  x: 70.38
+  y: 31.55
+  rot: 90.0
+  side: back
+- ref: rC6
+  x: 46.13
+  y: 35.16
+  rot: -90.0
+  side: back
+- ref: rC7
+  x: 71.13
+  y: 43.97
+  rot: -90.0
+  side: back
+- ref: rC8
+  x: 69.34
+  y: 31.55
+  rot: 90.0
+  side: back
+- ref: rC9
+  x: 84.51
+  y: 37.28
+  rot: 90.0
+  side: back
+- ref: rD1
+  x: 28.05
+  y: -6.78
+  rot: 180.0
+  side: back
+- ref: rEXLED1
+  x: 14.29
+  y: 4.76
+  rot: 180.0
+  side: back
+- ref: rEXLED2
+  x: 14.29
+  y: 23.81
+  rot: 180.0
+  side: back
+- ref: rEXSW1
+  x: 14.29
+  y: 0.0
+  rot: 180.0
+  side: back
+- ref: rEXSW2
+  x: 14.29
+  y: 19.05
+  rot: 180.0
+  side: back
+- ref: rJ1
+  x: 12.29
+  y: -15.96
+  side: back
+- ref: rJ2
+  x: 4.27
+  y: 34.65
+  rot: -90.0
+  side: back
+- ref: rJ3
+  x: 14.29
+  y: 28.85
+- ref: rJ4
+  x: 116.24
+  y: 33.74
+  rot: 180.0
+  side: back
+- ref: rJP1
+  x: 115.76
+  y: -2.29
+  side: back
+- ref: rLED1
+  x: 14.9
+  y: 53.81
+  rot: 113.88
+  side: back
+- ref: rLED10
+  x: 71.44
+  y: 28.57
+  rot: 180.0
+  side: back
+- ref: rLED11
+  x: 71.44
+  y: 9.53
+  rot: 180.0
+  side: back
+- ref: rLED12
+  x: 71.44
+  y: -9.53
+  rot: 180.0
+  side: back
+- ref: rLED13
+  x: 90.49
+  y: -7.14
+  rot: 180.0
+  side: back
+- ref: rLED14
+  x: 90.49
+  y: 11.91
+  rot: 180.0
+  side: back
+- ref: rLED15
+  x: 90.49
+  y: 30.96
+  rot: 180.0
+  side: back
+- ref: rLED16
+  x: 109.54
+  y: 35.72
+  rot: 180.0
+  side: back
+- ref: rLED17
+  x: 109.54
+  y: 16.67
+  rot: 180.0
+  side: back
+- ref: rLED18
+  x: 109.54
+  y: -2.38
+  rot: 180.0
+  side: back
+- ref: rLED19
+  x: 128.59
+  y: -2.38
+  rot: 180.0
+  side: back
+- ref: rLED2
+  x: 33.34
+  y: 33.34
+  rot: 180.0
+  side: back
+- ref: rLED20
+  x: 128.59
+  y: 16.67
+  rot: 180.0
+  side: back
+- ref: rLED21
+  x: 128.59
+  y: 35.72
+  rot: 180.0
+  side: back
+- ref: rLED3
+  x: 33.34
+  y: 14.29
+  rot: 180.0
+  side: back
+- ref: rLED4
+  x: 33.34
+  y: -4.76
+  rot: 180.0
+  side: back
+- ref: rLED5
+  x: 52.39
+  y: -7.14
+  rot: 180.0
+  side: back
+- ref: rLED6
+  x: 52.39
+  y: 11.91
+  rot: 180.0
+  side: back
+- ref: rLED7
+  x: 52.39
+  y: 30.96
+  rot: 180.0
+  side: back
+- ref: rLED8
+  x: 42.08
+  y: 54.46
+  rot: -168.06
+  side: back
+- ref: rLED9
+  x: 61.91
+  y: 52.39
+  rot: 180.0
+  side: back
+- ref: rR1
+  x: 5.12
+  y: -15.28
+  rot: -90.0
+  side: back
+- ref: rR2
+  x: 19.42
+  y: -15.29
+  rot: -90.0
+  side: back
+- ref: rR3
+  x: 74.21
+  y: 43.31
+  side: back
+- ref: rR4
+  x: 72.51
+  y: 31.55
+  rot: -90.0
+  side: back
+- ref: rR5
+  x: 71.44
+  y: 31.55
+  rot: 90.0
+  side: back
+- ref: rR6
+  x: 86.79
+  y: 37.32
+  rot: -90.0
+  side: back
+- ref: rR7
+  x: 85.63
+  y: 37.29
+  rot: -90.0
+  side: back
+- ref: rR8
+  x: 22.86
+  y: -13.9
+  side: back
+- ref: rR9
+  x: 22.83
+  y: -15.5
+  rot: 180.0
+  side: back
+- ref: rSMDSW1
+  x: 89.86
+  y: 35.73
+  rot: -90.0
+  side: back
+- ref: rSMDSW2
+  x: 93.99
+  y: 35.73
+  rot: -90.0
+  side: back
+- ref: rSW1
+  x: 19.26
+  y: 51.88
+  rot: 113.88
+  side: back
+- ref: rSW10
+  x: 71.44
+  y: 23.81
+  rot: 180.0
+  side: back
+- ref: rSW11
+  x: 71.44
+  y: 4.76
+  rot: 180.0
+  side: back
+- ref: rSW12
+  x: 71.44
+  y: -14.29
+  rot: 180.0
+  side: back
+- ref: rSW13
+  x: 90.49
+  y: -11.91
+  rot: 180.0
+  side: back
+- ref: rSW14
+  x: 90.49
+  y: 7.14
+  rot: 180.0
+  side: back
+- ref: rSW15
+  x: 90.49
+  y: 26.19
+  rot: 180.0
+  side: back
+- ref: rSW16
+  x: 109.54
+  y: 30.96
+  rot: 180.0
+  side: back
+- ref: rSW17
+  x: 109.54
+  y: 11.91
+  rot: 180.0
+  side: back
+- ref: rSW18
+  x: 109.54
+  y: -7.14
+  rot: 180.0
+  side: back
+- ref: rSW19
+  x: 128.59
+  y: -7.14
+  rot: 180.0
+  side: back
+- ref: rSW2
+  x: 33.34
+  y: 28.57
+  rot: 180.0
+  side: back
+- ref: rSW20
+  x: 128.59
+  y: 11.91
+  rot: 180.0
+  side: back
+- ref: rSW21
+  x: 128.59
+  y: 30.96
+  rot: 180.0
+  side: back
+- ref: rSW3
+  x: 33.34
+  y: 9.53
+  rot: 180.0
+  side: back
+- ref: rSW4
+  x: 33.34
+  y: -9.53
+  rot: 180.0
+  side: back
+- ref: rSW5
+  x: 52.39
+  y: -11.91
+  rot: 180.0
+  side: back
+- ref: rSW6
+  x: 52.39
+  y: 7.14
+  rot: 180.0
+  side: back
+- ref: rSW7
+  x: 52.39
+  y: 26.19
+  rot: 180.0
+  side: back
+- ref: rSW8
+  x: 41.1
+  y: 49.8
+  rot: -168.06
+  side: back
+- ref: rSW9
+  x: 61.91
+  y: 47.62
+  rot: 180.0
+  side: back
+- ref: rU1
+  x: 74.61
+  y: 37.64
+  rot: 180.0
+  side: back
+- ref: rU2
+  x: 51.41
+  y: 36.99
+  side: back
+- ref: rU3
+  x: 22.65
+  y: -11.51
+  rot: 180.0
+  side: back
+- ref: rU4
+  x: 81.87
+  y: 30.14
+  side: back
+- ref: rY1
+  x: 74.3
+  y: 46.27
+  rot: 180.0
+  side: back
+- ref: rZD1
+  x: 20.94
+  y: -14.7
+  rot: -90.0
+  side: back
+copper_pours:
+- net: +1V1
+  layers: [B.Cu, F.Cu]
+- net: +1V1R
+  layers: [B.Cu, F.Cu]
+- net: +3V3
+  layers: [B.Cu, F.Cu]
+- net: +3V3R
+  layers: [B.Cu, F.Cu]
+- net: +5V
+  layers: [B.Cu, F.Cu]
+- net: +5VR
+  layers: [B.Cu, F.Cu]
+- net: /left/D+
+  layers: [B.Cu, F.Cu]
+- net: /left/D-
+  layers: [B.Cu, F.Cu]
+- net: /left/KEY1
+  layers: [B.Cu]
+- net: /left/KEY10
+  layers: [B.Cu]
+- net: /left/KEY11
+  layers: [B.Cu]
+- net: /left/KEY12
+  layers: [B.Cu]
+- net: /left/KEY13
+  layers: [B.Cu, F.Cu]
+- net: /left/KEY14
+  layers: [B.Cu, F.Cu]
+- net: /left/KEY15
+  layers: [B.Cu]
+- net: /left/KEY16
+  layers: [B.Cu, F.Cu]
+- net: /left/KEY17
+  layers: [B.Cu, F.Cu]
+- net: /left/KEY18
+  layers: [B.Cu, F.Cu]
+- net: /left/KEY19
+  layers: [B.Cu, F.Cu]
+- net: /left/KEY2
+  layers: [B.Cu]
+- net: /left/KEY20
+  layers: [B.Cu, F.Cu]
+- net: /left/KEY21
+  layers: [B.Cu, F.Cu]
+- net: /left/KEY3
+  layers: [B.Cu]
+- net: /left/KEY4
+  layers: [B.Cu]
+- net: /left/KEY5
+  layers: [B.Cu]
+- net: /left/KEY6
+  layers: [B.Cu]
+- net: /left/KEY7
+  layers: [B.Cu]
+- net: /left/KEY8
+  layers: [B.Cu]
+- net: /left/KEY9
+  layers: [B.Cu]
+- net: /left/KEYEX1
+  layers: [B.Cu, F.Cu]
+- net: /left/KEYEX2
+  layers: [B.Cu, F.Cu]
+- net: /left/LED
+  layers: [B.Cu]
+- net: /left/QSPI_SCLK
+  layers: [B.Cu, F.Cu]
+- net: /left/QSPI_SD0
+  layers: [B.Cu, F.Cu]
+- net: /left/QSPI_SD3
+  layers: [B.Cu, F.Cu]
+- net: /left/QSPI_SS
+  layers: [B.Cu, F.Cu]
+- net: /left/RE0A
+  layers: [B.Cu]
+- net: /left/RE1A
+  layers: [B.Cu]
+- net: /left/REB
+  layers: [B.Cu]
+- net: /left/SWCLK
+  layers: [B.Cu, F.Cu]
+- net: /left/SWD
+  layers: [B.Cu, F.Cu]
+- net: /left/TX
+  layers: [B.Cu, F.Cu]
+- net: /left/USB_VBUS_PIN
+  layers: [B.Cu, F.Cu]
+- net: /right/D+
+  layers: [B.Cu, F.Cu]
+- net: /right/D-
+  layers: [B.Cu, F.Cu]
+- net: /right/KEY1
+  layers: [B.Cu]
+- net: /right/KEY10
+  layers: [B.Cu]
+- net: /right/KEY11
+  layers: [B.Cu]
+- net: /right/KEY12
+  layers: [B.Cu]
+- net: /right/KEY13
+  layers: [B.Cu]
+- net: /right/KEY14
+  layers: [B.Cu]
+- net: /right/KEY15
+  layers: [B.Cu]
+- net: /right/KEY16
+  layers: [B.Cu, F.Cu]
+- net: /right/KEY17
+  layers: [B.Cu]
+- net: /right/KEY18
+  layers: [B.Cu]
+- net: /right/KEY19
+  layers: [B.Cu]
+- net: /right/KEY2
+  layers: [B.Cu, F.Cu]
+- net: /right/KEY20
+  layers: [B.Cu]
+- net: /right/KEY21
+  layers: [B.Cu]
+- net: /right/KEY3
+  layers: [B.Cu]
+- net: /right/KEY4
+  layers: [B.Cu]
+- net: /right/KEY5
+  layers: [B.Cu]
+- net: /right/KEY6
+  layers: [B.Cu]
+- net: /right/KEY7
+  layers: [B.Cu]
+- net: /right/KEY8
+  layers: [B.Cu]
+- net: /right/KEY9
+  layers: [B.Cu]
+- net: /right/KEYEX1
+  layers: [B.Cu]
+- net: /right/KEYEX2
+  layers: [B.Cu, F.Cu]
+- net: /right/LED
+  layers: [B.Cu, F.Cu]
+- net: /right/QSPI_SCLK
+  layers: [B.Cu, F.Cu]
+- net: /right/QSPI_SD0
+  layers: [B.Cu, F.Cu]
+- net: /right/QSPI_SD2
+  layers: [B.Cu]
+- net: /right/QSPI_SD3
+  layers: [B.Cu, F.Cu]
+- net: /right/QSPI_SS
+  layers: [B.Cu, F.Cu]
+- net: /right/RE0A
+  layers: [B.Cu]
+- net: /right/RE1A
+  layers: [B.Cu, F.Cu]
+- net: /right/REB
+  layers: [B.Cu, F.Cu]
+- net: /right/SWCLK
+  layers: [B.Cu, F.Cu]
+- net: /right/SWD
+  layers: [B.Cu, F.Cu]
+- net: /right/TX
+  layers: [B.Cu, F.Cu]
+- net: /right/USB_VBUS_PIN
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: GNDR
+  layers: [B.Cu, F.Cu]
+- net: VBUS
+  layers: [B.Cu, F.Cu]
+- net: VBUSR
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [F.Cu]
+  keepout: true

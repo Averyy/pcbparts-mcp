@@ -1,0 +1,182 @@
+name: Adafruit TPS61169 CC Boost LED Driver
+slug: adafruit-tps61169-cc-boost-led-driver
+source: adafruit/Adafruit-TPS61169-Constant-Current-Boost-Converter-PCB
+format: eagle
+description: "TPS61169 constant-current boost LED driver, 3-5V\u219240V/400mA"
+tags: [led-driver, power-supply]
+key_ics: [TPS61169]
+outline:
+  width_mm: 25.4
+  height_mm: 19.05
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 7mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+- ref: C2
+  value: 1uF
+  footprint: '0603'
+  voltage: 50V
+- ref: C7
+  value: 22uF
+  footprint: 0805
+  decouples: U3
+- ref: C8
+  value: 1uF
+  footprint: '0603'
+  voltage: 50V
+- ref: D2
+  value: PMEG4010ER
+  footprint: SOD-123FL
+- ref: JP1
+  value: 1x5 header
+  footprint: 1X05
+- ref: L1
+  value: 6.8~10uH
+  footprint: INDUCTOR
+  current: 2A
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  pullup: PWM
+- ref: R2
+  value: 4.2ohm
+  footprint: '0603'
+- ref: R3
+  value: 8.2ohm
+  footprint: '0603'
+- ref: R4
+  value: 1ohm
+  footprint: '0603'
+- ref: R5
+  value: 2.1ohm
+  footprint: '0603'
+- ref: R7
+  value: 8.2ohm
+  footprint: '0603'
+- ref: SW2
+  value: 4DIP 1.27mm
+  footprint: DIPSWITCH_4PIN_1.27
+  description: DIP Switch - 4 Pin
+- ref: U3
+  value: TPS61169
+  footprint: SC70-5
+  description: FAN5331 - LED/OLED 20V Boost Converter
+- ref: X1
+  value: 1x2 header
+  footprint: TERMBLOCK
+- ref: X2
+  value: 1x2 header
+  footprint: TERMBLOCK
+nets:
+- name: +24V
+  pins: [C2.1, C8.1, D2.C, JP1.4, X1.2]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C7.2
+  - C8.2
+  - JP1.2
+  - R2.1
+  - R3.1
+  - R4.1
+  - R5.1
+  - R7.1
+  - U3.GND
+  - X2.2
+- name: LEDK
+  pins:
+  - C1.1
+  - JP1.5
+  - R7.2
+  - SW2.1OFF
+  - SW2.2OFF
+  - SW2.3OFF
+  - SW2.4OFF
+  - U3.FB
+  - X1.1
+- name: N$1
+  pins: [R5.2, SW2.2ON]
+- name: N$2
+  pins: [R3.2, SW2.4ON]
+- name: N$3
+  pins: [R2.2, SW2.3ON]
+- name: N$4
+  pins: [R4.2, SW2.1ON]
+- name: PWM
+  pins: [JP1.3, R1.1, U3.SHDN]
+- name: SW
+  pins: [D2.A, L1.2, U3.SW]
+- name: VIN
+  pins: [C7.1, JP1.1, L1.1, R1.2, U3.VIN, X2.1]
+positions:
+- ref: C1
+  x: 16.26
+  y: 11.56
+  rot: 180.0
+- ref: C2
+  x: 16.26
+  y: 6.99
+  rot: 180.0
+- ref: C7
+  x: 8.38
+  y: 11.3
+  rot: 90.0
+- ref: C8
+  x: 16.26
+  y: 8.51
+  rot: 180.0
+- ref: D2
+  x: 15.88
+  y: 5.46
+  rot: 180.0
+- ref: JP1
+  x: 12.7
+  y: 2.54
+- ref: L1
+  x: 10.54
+  y: 6.99
+- ref: R1
+  x: 9.91
+  y: 11.3
+  rot: 270.0
+- ref: R2
+  x: 6.99
+  y: 16.76
+- ref: R3
+  x: 6.99
+  y: 18.29
+- ref: R4
+  x: 6.99
+  y: 13.72
+- ref: R5
+  x: 6.99
+  y: 15.24
+- ref: R7
+  x: 16.26
+  y: 10.03
+- ref: SW2
+  x: 13.46
+  y: 15.62
+  rot: 90.0
+- ref: U3
+  x: 12.45
+  y: 11.05
+  rot: 90.0
+- ref: X1
+  x: 21.59
+  y: 9.53
+  rot: 90.0
+- ref: X2
+  x: 3.81
+  y: 9.53
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

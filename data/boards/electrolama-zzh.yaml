@@ -1,0 +1,380 @@
+name: Electrolama zzh
+slug: electrolama-zzh
+source: electrolama/zig-a-zig-ah
+format: eagle
+description: 'CC2652R1 bare-die Zigbee/Thread/BLE coordinator: full RF front-end with 2.4GHz balun (LFB182G45), CH340E USB-UART'
+tags: [rf-sdr, usb, zigbee-thread]
+key_ics: [LFB182G45, CC2652R1, CH340E]
+outline:
+  width_mm: 34.4
+  height_mm: 13.8
+design_rules:
+  layers: 4
+  min_trace: 5mil
+  min_clearance: 5mil
+  min_drill: 10mil
+  min_via: 4mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+  decouples: IC3
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  decouples: IC3
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+  decouples: IC3
+- ref: C14
+  value: 22uF
+  footprint: 0805
+  decouples: IC3
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+  decouples: IC3
+- ref: C16
+  value: 22uF
+  footprint: 0805
+  decouples: IC3
+- ref: C17
+  value: 100nF
+  footprint: '0402'
+  decouples: IC3
+- ref: C18
+  value: 100nF
+  footprint: '0402'
+  decouples: IC3
+- ref: C2
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C3
+  value: 22uF
+  footprint: 0805
+  decouples: IC2
+- ref: C4
+  value: 22uF
+  footprint: 0805
+  decouples: IC2
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+- ref: C6
+  value: 12pF
+  footprint: '0402'
+- ref: C7
+  value: 12pF
+  footprint: '0402'
+- ref: C8
+  value: 1uF
+  footprint: '0402'
+- ref: D1
+  value: PRTR5V0U2F,115
+  footprint: SOT886
+  description: ESD Suppressor, NXP, PRTR5V0U2F
+  height: 0.5mm
+  manufacturer: Nexperia
+  mpn: PRTR5V0U2F,115
+- ref: FL1
+  value: balun
+  footprint: LFB182G45BG5D920
+  description: Balance Matching BAND PASS FILTER
+  height: mm
+  manufacturer: Murata Electronics
+  mpn: LFB182G45BG5D920
+- ref: IC1
+  value: CH340E
+  footprint: MSOP10
+- ref: IC2
+  value: ME6211C33R5G
+  footprint: SOT-5
+- ref: IC3
+  value: CC2652R
+  footprint: QFN-49
+  description: Texas Instruments SimpleLink? Multi-Standard CC2652R Wireless MCU 48-VQFN -40
+  height: 1mm
+  manufacturer: Texas Instruments
+  mpn: CC2652R1FRGZT
+- ref: L1
+  value: BLM18HE152SN1
+  footprint: '0603'
+- ref: L2
+  value: 6.8uH
+  footprint: 0805
+- ref: L3
+  value: 0H
+  footprint: '0402'
+- ref: LED1
+  value: LED
+  footprint: '0603'
+- ref: MOD1
+  value: ZZH_MODULE
+  footprint: ZZH_MODULE
+- ref: R1
+  value: 100kohm
+  footprint: '0402'
+  pullup: RESET
+- ref: R2
+  value: 100ohm
+  footprint: '0402'
+- ref: R3
+  value: 100kohm
+  footprint: '0402'
+  pullup: BSL
+- ref: SW1
+  value: K2-1177SW-D4DW-06
+  footprint: K2-1177SW-D4DW-06
+- ref: Y1
+  value: Q22FA12800150
+  footprint: XTAL-4P-2016
+  description: "48MHz \xB110ppm Crystal 7pF 50 Ohms 4-SMD, No Lead"
+- ref: Y2
+  value: 32.768KHz
+  footprint: XTAL-2P-3215
+  lcsc: C32346
+  description: SMD Crystal Resonators 32.768KHz +/-20ppm SMD-3215_2P RoHS
+nets:
+- name: ANT
+  pins: [C10.2, L3.2, MOD1.G$2.SMA_SIGNAL]
+- name: BSL
+  pins: [IC3.DIO_13, R3.2, SW1.2_1, SW1.2_2]
+- name: DCDC_SW
+  pins: [IC3.DCDC_SW, L2.1]
+- name: DCOUPL
+  pins: [C8.2, IC3.DCOUPL]
+- name: GND
+  pins:
+  - C1.1
+  - C10.1
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C2.1
+  - C3.2
+  - C4.2
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - CON3.GND@3
+  - D1.2
+  - FL1.GND@2
+  - FL1.GND@5
+  - FL1.GND@6
+  - IC1.GND
+  - IC2.GND
+  - IC3.EP
+  - LED1.C
+  - MOD1.G$1.USB_GND
+  - MOD1.G$1.USB_SHIELD@1
+  - MOD1.G$1.USB_SHIELD@2
+  - MOD1.G$2.SMA_SHIELD@1
+  - MOD1.G$2.SMA_SHIELD@2
+  - MOD1.G$2.SMA_SHIELD@3
+  - MOD1.G$2.SMA_SHIELD@4
+  - SW1.1_1
+  - SW1.1_2
+  - Y1.2
+  - Y1.4
+- name: LED
+  pins: [IC3.DIO_7, R2.1]
+- name: N$16
+  pins: [LED1.A, R2.2]
+- name: PC_RX
+  pins: [IC1.RXD, IC3.DIO_3]
+- name: PC_TX
+  pins: [IC1.TXD, IC3.DIO_2]
+- name: RESET
+  pins: [C5.2, CON3.NRESET, IC3.RESET_N, R1.1]
+- name: RF_N
+  pins: [FL1.BAL@4, IC3.RF_N]
+- name: RF_P
+  pins: [FL1.BAL@3, IC3.RF_P]
+- name: TCK
+  pins: [CON3.SWDCLK/TCK, IC3.JTAG_TCKC]
+- name: TMS
+  pins: [CON3.SWDIO/TMS, IC3.JTAG_TMSC]
+- name: UD+
+  pins: [D1.6, IC1.UD+]
+- name: UD-
+  pins: [D1.4, IC1.UD-]
+- name: UNBAL
+  pins: [C9.2, FL1.UNBAL, L3.1]
+- name: USB_D+
+  pins: [D1.1, MOD1.G$1.USB_D+]
+- name: USB_D-
+  pins: [D1.3, MOD1.G$1.USB_D-]
+- name: VCC
+  pins:
+  - C1.2
+  - C2.2
+  - C4.1
+  - CON3.VCC
+  - IC1.V3
+  - IC1.VCC
+  - IC2.VOUT
+  - L1.1
+  - R1.2
+  - R3.1
+- name: VDDR
+  pins: [C16.1, C17.1, C18.1, IC3.VDDR, IC3.VDDR_RF, L2.2]
+- name: VDDS
+  pins:
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C15.1
+  - IC3.VDDS
+  - IC3.VDDS2
+  - IC3.VDDS3
+  - IC3.VDDS_DCDC
+  - L1.2
+- name: VUSB
+  pins: [C3.1, D1.5, IC2.EN, IC2.VIN, MOD1.G$1.USB_V]
+- name: X32K_Q1
+  pins: [C6.2, IC3.X32K_Q1, Y2.1]
+- name: X32K_Q2
+  pins: [C7.2, IC3.X32K_Q2, Y2.2]
+- name: X48M_N
+  pins: [IC3.X48M_N, Y1.3]
+- name: X48M_P
+  pins: [IC3.X48M_P, Y1.1]
+positions:
+- ref: C1
+  x: 9.78
+  y: 7.75
+- ref: C11
+  x: 24.0
+  y: 12.32
+  rot: 180.0
+- ref: C12
+  x: 20.73
+  y: 12.32
+- ref: C13
+  x: 20.83
+  y: 2.03
+  rot: 270.0
+- ref: C14
+  x: 15.24
+  y: 4.19
+  rot: 180.0
+- ref: C15
+  x: 17.53
+  y: 2.03
+  rot: 270.0
+- ref: C16
+  x: 15.24
+  y: 8.38
+- ref: C17
+  x: 21.84
+  y: 2.03
+  rot: 270.0
+- ref: C18
+  x: 25.78
+  y: 2.79
+  rot: 270.0
+- ref: C2
+  x: 11.81
+  y: 7.75
+- ref: C3
+  x: 7.16
+  y: 2.03
+  rot: 270.0
+- ref: C4
+  x: 15.24
+  y: 2.16
+- ref: C5
+  x: 18.54
+  y: 2.03
+  rot: 90.0
+- ref: C6
+  x: 27.94
+  y: 8.13
+  rot: 180.0
+- ref: C7
+  x: 27.94
+  y: 12.95
+  rot: 180.0
+- ref: C8
+  x: 18.8
+  y: 12.32
+- ref: D1
+  x: 7.37
+  y: 7.75
+  rot: 270.0
+- ref: FL1
+  x: 26.8
+  y: 5.11
+- ref: IC1
+  x: 10.16
+  y: 5.33
+- ref: IC2
+  x: 11.81
+  y: 1.65
+- ref: IC3
+  x: 21.72
+  y: 7.62
+  rot: 180.0
+- ref: L1
+  x: 16.38
+  y: 11.56
+  rot: 90.0
+- ref: L2
+  x: 15.24
+  y: 6.22
+  rot: 180.0
+- ref: L3
+  x: 28.64
+  y: 5.52
+- ref: LED1
+  x: 28.63
+  y: 1.02
+  rot: 180.0
+- ref: MOD1
+  x: 0.0
+  y: 0.0
+- ref: R1
+  x: 19.56
+  y: 2.03
+  rot: 270.0
+- ref: R2
+  x: 26.21
+  y: 1.02
+- ref: R3
+  x: 10.67
+  y: 9.19
+- ref: SW1
+  x: 12.45
+  y: 11.56
+  rot: 180.0
+- ref: Y1
+  x: 23.77
+  y: 1.65
+  rot: 90.0
+- ref: Y2
+  x: 27.94
+  y: 10.54
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [F.Cu, In1.Cu, In14.Cu]
+- net: VCC
+  layers: [In14.Cu]
+- net: VDDR
+  layers: [In14.Cu]
+- net: VDDS
+  layers: [In14.Cu]

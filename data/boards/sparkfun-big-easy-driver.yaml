@@ -1,0 +1,521 @@
+name: SparkFun Big Easy Driver
+slug: sparkfun-big-easy-driver
+source: sparkfun/Big_Easy_Driver
+format: eagle
+description: A4988 microstepping stepper driver, current sense
+tags: [3d-printer, current-sensing, motor-control, power-supply]
+key_ics: [A4988]
+outline:
+  width_mm: 36.83
+  height_mm: 30.48
+design_rules:
+  layers: 4
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 13mil
+  min_via: 10mil
+components:
+- ref: 3/5V
+  value: solder jumper
+  footprint: SJ-2
+  description: Solder Jumper
+- ref: APWR
+  value: solder jumper
+  footprint: SJ-2
+  description: Solder Jumper
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08390
+  voltage: 100V
+  tolerance: 10%
+  decouples: IC2
+- ref: C10
+  value: 220nF
+  footprint: '0603'
+  prod_id: CAP-09885
+  voltage: 50V
+  tolerance: 20%
+- ref: C11
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08390
+  voltage: 100V
+  tolerance: 10%
+- ref: C14
+  value: 47uF
+  footprint: PANASONIC_D
+  prod_id: CAP-10547
+  voltage: 50V
+  tolerance: 20%
+  decouples: IC1
+- ref: C2
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-00868
+  voltage: 16V
+  tolerance: 10%
+  decouples: IC1
+- ref: C6
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08390
+  voltage: 100V
+  tolerance: 10%
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08390
+  voltage: 100V
+  tolerance: 10%
+  decouples: IC1
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08390
+  voltage: 100V
+  tolerance: 10%
+  decouples: IC1
+- ref: C9
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08390
+  voltage: 100V
+  tolerance: 10%
+  decouples: IC1
+- ref: D1
+  value: B340A-13-F
+  footprint: DO-214AC
+- ref: IC1
+  value: A4988
+  footprint: QFN-28-5MM_ALT1
+  prod_id: IC-11483
+  description: DMOS Microstepping Driver with Translator
+- ref: IC2
+  value: LM317L
+  footprint: SCHMALZHAUS_SOT89
+  description: Voltage Regulator
+- ref: JP1
+  value: 1x2 header
+  footprint: 1X02
+- ref: JP10
+  value: 1x4 header
+  footprint: 1X04
+- ref: JP11
+  value: 1x4 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-4_LOCK
+- ref: JP12
+  value: 1x4 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-4_LOCK
+- ref: JP13
+  value: 1x2 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-2_LOCK
+- ref: JP14
+  value: 1x4 header
+  footprint: 1X04
+- ref: JP3
+  value: 1x4 header
+  footprint: 1X04
+- ref: JP5
+  value: 1x4 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-4_LOCK
+- ref: JP6
+  value: 1x2 header
+  footprint: 1X02
+- ref: JP7
+  value: 1x2 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-2_LOCK
+- ref: PWR_LED
+  value: yellow LED
+  footprint: '0603'
+- ref: R1
+  value: 20kohm
+  footprint: '0603'
+  prod_id: RES-09231
+  tolerance: 5%
+  pullup: MS1
+- ref: R10
+  value: 20kohm
+  footprint: '0603'
+  prod_id: RES-09231
+  tolerance: 5%
+  pulldown: ENABLE
+- ref: R11
+  value: 20kohm
+  footprint: '0603'
+  prod_id: RES-09231
+  tolerance: 5%
+  pullup: DIR
+- ref: R12
+  value: 20kohm
+  footprint: '0603'
+  prod_id: RES-09231
+  tolerance: 5%
+  pullup: STEP
+- ref: R13
+  value: 8.2kohm
+  footprint: '0603'
+  prod_id: RES-10646
+  tolerance: 5%
+  power: 1/10W
+  pullup: R16.CCW
+- ref: R14
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+  tolerance: 1%
+- ref: R15
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+  tolerance: 1%
+- ref: R16
+  value: 10kohm
+  footprint: TRIMPOT-3MM-2
+  pulldown: CUR_REF
+- ref: R18
+  value: 110mohm
+  footprint: '2010'
+  prod_id: RES-08354
+  tolerance: 1%
+- ref: R19
+  value: 110mohm
+  footprint: '2010'
+  prod_id: RES-08354
+  tolerance: 1%
+- ref: R2
+  value: 20kohm
+  footprint: '0603'
+  prod_id: RES-09231
+  tolerance: 5%
+  pullup: MS2
+- ref: R20
+  value: 20kohm
+  footprint: '0603'
+  prod_id: RES-09231
+  tolerance: 5%
+  pulldown: IC1.ROSC
+- ref: R3
+  value: 20kohm
+  footprint: '0603'
+  prod_id: RES-09231
+  tolerance: 5%
+  pullup: MS3
+- ref: R4
+  value: 20kohm
+  footprint: '0603'
+  prod_id: RES-09231
+  tolerance: 5%
+  pullup: SLEEP
+- ref: R5
+  value: 20kohm
+  footprint: '0603'
+  prod_id: RES-09231
+  tolerance: 5%
+  pullup: RESET
+- ref: R6
+  value: 390ohm
+  footprint: '0603'
+  prod_id: RES-07864
+  tolerance: 1%
+- ref: R7
+  value: 330ohm
+  footprint: '0603'
+  prod_id: RES-00818
+  tolerance: 1%
+- ref: R8
+  value: 240ohm
+  footprint: '0603'
+  prod_id: RES-07849
+  tolerance: 1%
+- ref: R9
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+  tolerance: 1%
+  pullup: PWR_LED.A
+nets:
+- name: 5V_ALT
+  pins: [APWR.1, IC2.OUT, IC2.OUT@1, R8.2]
+- name: ADJ
+  pins: [IC2.ADJ, R6.2, R8.1]
+- name: COILA+
+  pins: [IC1.OUT1B, JP3.4, JP5.4]
+- name: COILA-
+  pins: [IC1.OUT1A, JP3.3, JP5.3]
+- name: COILB+
+  pins: [IC1.OUT2B, JP3.1, JP5.1]
+- name: COILB-
+  pins: [IC1.OUT2A, JP3.2, JP5.2]
+- name: CP1
+  pins: [C6.1, IC1.CP1]
+- name: CP2
+  pins: [C6.2, IC1.CP2]
+- name: CUR_REF
+  pins: [IC1.REF, R16.WIPER, TP1.TP]
+- name: DIR
+  pins: [IC1.DIR, R11.1, R14.2]
+- name: DIR_IN
+  pins: [JP12.4, JP14.4, R14.1]
+- name: ENABLE
+  pins: [IC1.ENABLE, JP13.1, JP6.1, R10.1]
+- name: GND
+  pins:
+  - 3/5V.2
+  - C1.2
+  - C10.2
+  - C14.-
+  - C2.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - IC1.GND@1
+  - IC1.GND@2
+  - IC1.GND_PAD
+  - JP1.1
+  - JP12.2
+  - JP14.2
+  - JP7.1
+  - PWR_LED.C
+  - R10.2
+  - R16.CW
+  - R18.1
+  - R19.1
+  - R20.2
+  - R7.1
+- name: MS1
+  pins: [IC1.MS1, JP13.2, JP6.2, R1.1]
+- name: MS2
+  pins: [IC1.MS2, JP10.1, JP11.1, R2.1]
+- name: MS3
+  pins: [IC1.MS3, JP10.2, JP11.2, R3.1]
+- name: N$1
+  pins: [D1.A, JP1.2, JP7.2]
+- name: N$2
+  pins: [PWR_LED.A, R9.1]
+- name: N$3
+  pins: [R13.2, R16.CCW]
+- name: N$4
+  pins: [3/5V.1, R6.1, R7.2]
+- name: RESET
+  pins: [IC1.RESET, JP10.3, JP11.3, R5.1]
+- name: ROSC
+  pins: [IC1.ROSC, R20.1]
+- name: SENSE1
+  pins: [IC1.SENSE1, R19.2]
+- name: SENSE2
+  pins: [IC1.SENSE2, R18.2]
+- name: SLEEP
+  pins: [IC1.SLEEP, JP10.4, JP11.4, R4.1]
+- name: STEP
+  pins: [IC1.STEP, R12.1, R15.2]
+- name: STEP_IN
+  pins: [JP12.3, JP14.3, R15.1]
+- name: V+
+  pins:
+  - C1.1
+  - C11.2
+  - C14.+
+  - C8.1
+  - C9.1
+  - D1.C
+  - IC1.VBB1
+  - IC1.VBB2
+  - IC2.IN
+- name: VCC
+  pins:
+  - APWR.2
+  - C2.1
+  - C7.1
+  - IC1.VDD
+  - JP12.1
+  - JP14.1
+  - R1.2
+  - R11.2
+  - R12.2
+  - R13.1
+  - R2.2
+  - R3.2
+  - R4.2
+  - R5.2
+  - R9.2
+- name: VCP
+  pins: [C11.1, IC1.VCP]
+- name: VREG
+  pins: [C10.1, IC1.VREG]
+positions:
+- ref: 3/5V
+  x: 2.54
+  y: 20.32
+  rot: 180.0
+- ref: APWR
+  x: 5.08
+  y: 20.32
+- ref: C1
+  x: 7.49
+  y: 28.57
+  rot: 270.0
+- ref: C10
+  x: 9.7
+  y: 11.3
+  rot: 180.0
+- ref: C11
+  x: 9.7
+  y: 12.85
+  rot: 180.0
+- ref: C14
+  x: 27.94
+  y: 19.05
+  rot: 270.0
+- ref: C2
+  x: 7.49
+  y: 20.95
+  rot: 90.0
+- ref: C6
+  x: 9.7
+  y: 14.38
+- ref: C7
+  x: 21.72
+  y: 9.02
+  rot: 270.0
+- ref: C8
+  x: 11.43
+  y: 18.67
+  rot: 180.0
+- ref: C9
+  x: 21.59
+  y: 18.67
+- ref: D1
+  x: 33.02
+  y: 25.4
+  rot: 90.0
+- ref: IC1
+  x: 16.51
+  y: 15.24
+- ref: IC2
+  x: 3.43
+  y: 27.05
+  rot: 90.0
+- ref: JP1
+  x: 25.4
+  y: 25.4
+- ref: JP10
+  x: 12.7
+  y: 5.08
+- ref: JP11
+  x: 9.5
+  y: 2.46
+- ref: JP12
+  x: 23.5
+  y: 2.46
+- ref: JP13
+  x: 2.5
+  y: 2.46
+- ref: JP14
+  x: 22.86
+  y: 5.08
+- ref: JP3
+  x: 12.7
+  y: 25.4
+- ref: JP5
+  x: 11.31
+  y: 27.98
+- ref: JP6
+  x: 7.62
+  y: 5.08
+- ref: JP7
+  x: 25.31
+  y: 27.98
+- ref: PWR_LED
+  x: 32.41
+  y: 8.92
+- ref: R1
+  x: 7.62
+  y: 9.02
+  rot: 90.0
+- ref: R10
+  x: 9.7
+  y: 17.04
+  rot: 180.0
+- ref: R11
+  x: 27.3
+  y: 9.02
+  rot: 90.0
+- ref: R12
+  x: 23.62
+  y: 9.02
+  rot: 90.0
+- ref: R13
+  x: 23.88
+  y: 12.57
+  rot: 90.0
+- ref: R14
+  x: 29.08
+  y: 9.02
+  rot: 90.0
+- ref: R15
+  x: 25.53
+  y: 9.02
+  rot: 90.0
+- ref: R16
+  x: 27.05
+  y: 12.95
+  rot: 270.0
+- ref: R18
+  x: 12.19
+  y: 21.59
+- ref: R19
+  x: 20.83
+  y: 21.59
+  rot: 180.0
+- ref: R2
+  x: 10.16
+  y: 9.02
+  rot: 90.0
+- ref: R20
+  x: 18.03
+  y: 9.02
+  rot: 270.0
+- ref: R3
+  x: 12.83
+  y: 9.02
+  rot: 90.0
+- ref: R4
+  x: 19.94
+  y: 9.02
+  rot: 90.0
+- ref: R5
+  x: 15.24
+  y: 9.02
+  rot: 90.0
+- ref: R6
+  x: 5.08
+  y: 22.86
+- ref: R7
+  x: 1.78
+  y: 22.86
+- ref: R8
+  x: 7.49
+  y: 25.27
+  rot: 90.0
+- ref: R9
+  x: 30.86
+  y: 9.02
+  rot: 90.0
+copper_pours:
+- net: 5V_ALT
+  layers: [F.Cu]
+- net: COILA+
+  layers: [B.Cu, F.Cu]
+- net: COILA-
+  layers: [F.Cu]
+- net: COILB+
+  layers: [B.Cu, F.Cu]
+- net: COILB-
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In14.Cu]
+- net: V+
+  layers: [F.Cu]
+- net: VCC
+  layers: [In1.Cu]

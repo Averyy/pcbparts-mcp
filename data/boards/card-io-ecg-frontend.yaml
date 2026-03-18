@@ -1,0 +1,402 @@
+name: Card/IO ECG Frontend
+slug: card-io-ecg-frontend
+source: card-io-ecg/card-io-hw
+format: kicad9
+description: Single-lead ECG acquisition (ADS1291), capacitive touch wakeup
+key_ics: [ADS1291]
+outline:
+  width_mm: 30.5
+  height_mm: 21.5
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.15mm
+  min_drill: 0.3mm
+  min_via: 0.3mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+- ref: C11
+  value: 100pF
+  footprint: '0603'
+- ref: C12
+  value: 100pF
+  footprint: '0603'
+- ref: C13
+  value: 100pF
+  footprint: '0603'
+- ref: C14
+  value: 100pF
+  footprint: '0603'
+- ref: C15
+  value: 100pF
+  footprint: '0603'
+- ref: C16
+  value: 1.5nF
+  footprint: '0603'
+- ref: C17
+  value: 100pF
+  footprint: '0603'
+- ref: C2
+  value: 1uF
+  footprint: '0603'
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C4
+  value: 1uF
+  footprint: '0603'
+  decouples: U2
+- ref: C5
+  value: 4.7nF
+  footprint: '0603'
+- ref: C6
+  value: 4.7nF
+  footprint: '0603'
+- ref: C7
+  value: 1uF
+  footprint: '0603'
+- ref: C8
+  value: 1uF
+  footprint: '0603'
+- ref: C9
+  value: 10uF
+  footprint: 0805
+- ref: Q1
+  value: T2N7002AK,LM
+  footprint: SOT-23
+- ref: Q2
+  value: NX3008PBK,215
+  footprint: SOT-23
+- ref: Q3
+  value: NX3008PBK,215
+  footprint: SOT-23
+- ref: Q4
+  value: T2N7002AK,LM
+  footprint: SOT-23
+- ref: Q5
+  value: NX3008PBK,215
+  footprint: SOT-23
+- ref: Q6
+  value: T2N7002AK,LM
+  footprint: SOT-23
+- ref: R1
+  value: 2kohm
+  footprint: '0603'
+- ref: R10
+  value: 1Mohm
+  footprint: '0603'
+- ref: R11
+  value: 1Mohm
+  footprint: '0603'
+- ref: R12
+  value: 1Mohm
+  footprint: '0603'
+- ref: R13
+  value: 1Mohm
+  footprint: '0603'
+- ref: R14
+  value: 100kohm
+  footprint: '0603'
+  pullup: Q6.D
+- ref: R15
+  value: 0ohm
+  footprint: '0603'
+- ref: R16
+  value: 1Mohm
+  footprint: '0603'
+- ref: R17
+  value: 1Mohm
+  footprint: '0603'
+- ref: R2
+  value: 2kohm
+  footprint: '0603'
+- ref: R3
+  value: 1Mohm
+  footprint: '0603'
+- ref: R4
+  value: 1Mohm
+  footprint: '0603'
+- ref: R5
+  value: 2kohm
+  footprint: '0603'
+- ref: R6
+  value: 2kohm
+  footprint: '0603'
+- ref: R7
+  value: 0ohm
+  footprint: '0603'
+- ref: R8
+  value: 1Mohm
+  footprint: '0603'
+- ref: R9
+  value: 1Mohm
+  footprint: '0603'
+- ref: U1
+  value: ADS1291/2
+  footprint: ADS1291-2
+- ref: U2
+  value: KC2016Z2
+  footprint: KC2016Z
+nets:
+- name: +3.3V
+  pins: [C3.1, C4.1, R14.2, R17.2, U1.DVDD, U2.VCC]
+- name: +BATT
+  pins:
+  - C1.1
+  - C2.1
+  - Q2.S
+  - Q3.S
+  - Q5.S
+  - R10.2
+  - R15.1
+  - U1.AVDD
+  - U1.RESP_MODN/IN3N
+  - U1.RESP_MODP/IN3P
+  - U1.RLDIN/RLDREF
+- name: /CLKSEL
+  pins: [R17.1, U1.CLKSEL]
+- name: /ECG2P
+  pins: [C14.1, C15.2, R15.2, R6.2, U1.IN2P]
+- name: /L
+  pins: [Q5.G, R1.1, R3.1]
+- name: /R
+  pins: [R12.2, R2.1, R7.2]
+- name: /R2
+  pins: [R6.1, R7.1]
+- name: /TOFF
+  pins: [Q1.D, Q3.G, Q4.G, R10.1]
+- name: /TOUCH_OFF
+  pins: [Q1.G, R11.2, U1.GPIO1/RCLK1]
+- name: /VGND
+  pins: [C16.1, R8.2, U1.RLDOUT]
+- name: GND
+  pins:
+  - C3.2
+  - C4.2
+  - Q1.S
+  - Q6.S
+  - R11.1
+  - R13.1
+  - R16.1
+  - R4.1
+  - U1.DGND
+  - U1.START
+  - U2.GND
+- name: GNDA
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C2.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - Q4.S
+  - R9.1
+  - U1.AVSS
+  - U1.PAD/AVSS
+  - U1.VREFN
+- name: Net-(Q2-D)
+  pins: [Q2.D, R3.2]
+- name: Net-(Q2-G)
+  pins: [Q2.G, Q3.D, R9.2]
+- name: Net-(Q4-D)
+  pins: [Q4.D, R12.1]
+- name: Net-(Q5-D)
+  pins: [Q5.D, Q6.G, R13.2]
+- name: Net-(Q6-D)
+  pins: [Q6.D, R14.1]
+- name: Net-(U1-CLK)
+  pins: [U1.CLK, U2.CLK]
+- name: Net-(U1-IN1N)
+  pins: [C11.1, C17.1, R1.2, U1.IN1N]
+- name: Net-(U1-IN1P)
+  pins: [C12.1, C17.2, R2.2, U1.IN1P]
+- name: Net-(U1-IN2N)
+  pins: [C13.1, C15.1, R5.2, U1.IN2N]
+- name: Net-(U1-PGA1N)
+  pins: [C6.1, U1.PGA1N]
+- name: Net-(U1-PGA1P)
+  pins: [C6.2, U1.PGA1P]
+- name: Net-(U1-PGA2N)
+  pins: [C5.1, U1.PGA2N]
+- name: Net-(U1-PGA2P)
+  pins: [C5.2, U1.PGA2P]
+- name: Net-(U1-RLDINV)
+  pins: [C16.2, R8.1, U1.RLDINV]
+- name: Net-(U1-VCAP1)
+  pins: [C7.1, U1.VCAP1]
+- name: Net-(U1-VCAP2)
+  pins: [C8.1, U1.VCAP2]
+- name: Net-(U1-VREFP)
+  pins: [C10.1, C9.1, U1.VREFP]
+- name: Net-(U1-nPDN/nRESET)
+  pins: [R16.2, U1.nPDN/nRESET]
+- name: Net-(U2-INH)
+  pins: [R4.2, U2.INH]
+positions:
+- ref: C1
+  x: 130.57
+  y: 76.58
+- ref: C10
+  x: 126.83
+  y: 76.6
+  rot: -90.0
+- ref: C11
+  x: 120.12
+  y: 69.52
+- ref: C12
+  x: 120.11
+  y: 71.52
+- ref: C13
+  x: 120.1
+  y: 73.1
+- ref: C14
+  x: 120.1
+  y: 75.1
+- ref: C15
+  x: 122.4
+  y: 74.1
+  rot: -90.0
+- ref: C16
+  x: 128.72
+  y: 66.8
+- ref: C17
+  x: 122.42
+  y: 70.52
+  rot: -90.0
+- ref: C2
+  x: 130.57
+  y: 78.12
+- ref: C3
+  x: 134.22
+  y: 69.95
+  rot: 90.0
+- ref: C4
+  x: 135.8
+  y: 69.95
+  rot: 90.0
+- ref: C5
+  x: 125.35
+  y: 74.35
+  rot: -90.0
+- ref: C6
+  x: 125.35
+  y: 69.9
+  rot: -90.0
+- ref: C7
+  x: 128.3
+  y: 76.6
+  rot: -90.0
+- ref: C8
+  x: 131.06
+  y: 67.6
+  rot: 90.0
+- ref: C9
+  x: 125.1
+  y: 77.6
+  rot: -90.0
+- ref: Q1
+  x: 129.7
+  y: 64.22
+  rot: 180.0
+- ref: Q2
+  x: 120.28
+  y: 63.5
+  rot: 180.0
+- ref: Q3
+  x: 124.12
+  y: 63.48
+  rot: 180.0
+- ref: Q4
+  x: 120.66
+  y: 66.9
+  rot: 180.0
+- ref: Q5
+  x: 116.64
+  y: 63.0
+  rot: 90.0
+- ref: Q6
+  x: 139.44
+  y: 65.18
+- ref: R1
+  x: 117.05
+  y: 69.3
+- ref: R10
+  x: 126.83
+  y: 63.38
+  rot: 90.0
+- ref: R11
+  x: 132.49
+  y: 64.22
+  rot: -90.0
+- ref: R12
+  x: 116.4
+  y: 67.75
+  rot: 180.0
+- ref: R13
+  x: 136.68
+  y: 65.08
+  rot: 90.0
+- ref: R14
+  x: 139.4
+  y: 67.7
+  rot: 180.0
+- ref: R15
+  x: 123.88
+  y: 74.4
+  rot: 90.0
+- ref: R16
+  x: 139.4
+  y: 69.3
+- ref: R17
+  x: 133.15
+  y: 77.78
+  rot: 90.0
+- ref: R2
+  x: 117.05
+  y: 70.78
+- ref: R3
+  x: 116.8
+  y: 66.0
+- ref: R4
+  x: 139.4
+  y: 70.9
+- ref: R5
+  x: 117.05
+  y: 73.92
+- ref: R6
+  x: 117.05
+  y: 75.4
+- ref: R7
+  x: 117.05
+  y: 72.35
+- ref: R8
+  x: 128.72
+  y: 68.3
+  rot: 180.0
+- ref: R9
+  x: 124.67
+  y: 66.0
+  rot: 180.0
+- ref: U1
+  x: 129.3
+  y: 72.12
+- ref: U2
+  x: 133.3
+  y: 75.72
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: GNDA
+  layers: [B.Cu, F.Cu]

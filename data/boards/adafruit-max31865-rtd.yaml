@@ -1,0 +1,214 @@
+name: Adafruit MAX31865 RTD
+slug: adafruit-max31865-rtd
+source: adafruit/Adafruit-MAX31865-PCB
+format: eagle
+description: PT100/PT1000 RTD interface (MAX31865), reference resistor
+tags: [sensors]
+key_ics: [MAX31865]
+outline:
+  width_mm: 25.4
+  height_mm: 27.94
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: 0805
+  decouples: U3
+- ref: C2
+  value: 100nF
+  footprint: 0805
+- ref: C3
+  value: 100nF
+  footprint: 0805
+- ref: C4
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: C5
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: D1
+  value: 1N4148
+  footprint: SOD-323
+- ref: D2
+  value: 1N4148
+  footprint: SOD-323
+- ref: D3
+  value: 1N4148
+  footprint: SOD-323
+- ref: FB1
+  value: ferrite bead
+  footprint: 0805
+- ref: JP1
+  value: 1x8 header
+  footprint: 1X08
+- ref: R1
+  value: 430ohm 4300ohm 0.1%
+  footprint: 0805
+- ref: R6
+  value: 10kohm
+  footprint: 0805
+  pullup: U1.SDI
+- ref: R7
+  value: 10kohm
+  footprint: 0805
+  pullup: U1.CS
+- ref: R8
+  value: 10kohm
+  footprint: 0805
+  pullup: U1.SCLK
+- ref: SJ1
+  value: 2-way solder jumper
+  footprint: SJ-3
+- ref: U1
+  value: MAX31865
+  footprint: QFN20_4MM_0.65MM
+  description: MAX31865 - Resistance to Digital Convertor for Platinum Resistance Temperature
+- ref: U3
+  value: MIC5225-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: X1
+  value: 1x2 header
+  footprint: TERMBLOCK
+- ref: X2
+  value: 1x2 header
+  footprint: TERMBLOCK
+nets:
+- name: BIAS
+  pins: [R1.2, U1.BIAS, U1.REFIN+]
+- name: CS
+  pins: [D3.A, R7.1, U1.CS]
+- name: CS_5V
+  pins: [D3.C, JP1.7]
+- name: DRDY
+  pins: [JP1.8, U1.DRDY]
+- name: FORCE+
+  pins: [SJ1.3, U1.FORCE+, X1.2]
+- name: FORCE-
+  pins: [U1.FORCE-, X2.1]
+- name: FORCE2
+  pins: [SJ1.2, U1.FORCE2]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C4.2
+  - C5.2
+  - JP1.2
+  - SJ1.1
+  - U1.AGND@2
+  - U1.ANGD@1
+  - U1.GND
+  - U1.PAD
+  - U3.GND
+- name: N$4
+  pins: [C2.1, FB1.P$1, U1.VDD]
+- name: REFIN
+  pins: [R1.1, U1.ISENSOR, U1.REFIN-]
+- name: RTDIN+
+  pins: [C3.1, U1.RTDIN+, X1.1]
+- name: RTDIN-
+  pins: [C3.2, U1.RTDIN-, X2.2]
+- name: SCLK
+  pins: [D2.A, R8.1, U1.SCLK]
+- name: SCLK_5V
+  pins: [D2.C, JP1.4]
+- name: SDI
+  pins: [D1.A, R6.1, U1.SDI]
+- name: SDI_5V
+  pins: [D1.C, JP1.6]
+- name: SDO
+  pins: [JP1.5, U1.SDO]
+- name: VDD
+  pins:
+  - C1.1
+  - C5.1
+  - FB1.P$2
+  - JP1.3
+  - R6.2
+  - R7.2
+  - R8.2
+  - U1.DVDD
+  - U3.OUT
+- name: VIN
+  pins: [C4.1, JP1.1, U3.EN, U3.IN]
+positions:
+- ref: C1
+  x: 4.57
+  y: 14.86
+- ref: C2
+  x: 17.27
+  y: 9.78
+- ref: C3
+  x: 12.7
+  y: 16.26
+  rot: 180.0
+- ref: C4
+  x: 4.57
+  y: 5.97
+- ref: C5
+  x: 4.57
+  y: 12.57
+- ref: D1
+  x: 16.51
+  y: 6.6
+  rot: 90.0
+- ref: D2
+  x: 10.29
+  y: 5.97
+  rot: 180.0
+- ref: D3
+  x: 20.57
+  y: 6.86
+  rot: 90.0
+- ref: FB1
+  x: 13.84
+  y: 6.6
+  rot: 270.0
+- ref: JP1
+  x: 12.7
+  y: 2.67
+- ref: R1
+  x: 17.53
+  y: 11.94
+  rot: 180.0
+- ref: R6
+  x: 18.54
+  y: 6.6
+  rot: 270.0
+- ref: R7
+  x: 22.61
+  y: 6.86
+  rot: 270.0
+- ref: R8
+  x: 7.24
+  y: 6.73
+  rot: 270.0
+- ref: SJ1
+  x: 18.29
+  y: 16.0
+- ref: U1
+  x: 12.19
+  y: 11.81
+  rot: 90.0
+- ref: U3
+  x: 4.57
+  y: 9.27
+- ref: X1
+  x: 16.26
+  y: 24.26
+  rot: 180.0
+- ref: X2
+  x: 9.27
+  y: 24.26
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

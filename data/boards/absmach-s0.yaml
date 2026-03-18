@@ -1,0 +1,969 @@
+name: Absmach S0
+slug: absmach-s0
+source: absmach/s0
+format: kicad9
+description: Wireless M-Bus (RC-S2LP-868), multi-radio gateway
+tags: [sub-ghz]
+key_ics: [ESP32-C6-MINI-1/U, SIM7080G, TXB0108RGY, RC-S2LP-868, AMS1117-3.3]
+outline:
+  width_mm: 54.63
+  height_mm: 86.28
+design_rules:
+  layers: 4
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 22uF
+  footprint: 0805
+  lcsc: C45783
+  decouples: U4
+- ref: C10
+  value: 10uF
+  footprint: 0805
+  lcsc: C15850
+  decouples: U2
+- ref: C11
+  value: 10uF
+  footprint: 0805
+  lcsc: C15850
+  decouples: U2
+- ref: C12
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+- ref: C13
+  value: 22pF
+  footprint: 0805
+  lcsc: C1804
+- ref: C14
+  value: 22pF
+  footprint: 0805
+  lcsc: C1804
+- ref: C15
+  value: 22pF
+  footprint: 0805
+  lcsc: C1804
+- ref: C16
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+  decouples: U4
+- ref: C17
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+  decouples: U4
+- ref: C18
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+  decouples: U5
+- ref: C19
+  value: 10uF
+  footprint: 0805
+  lcsc: C15850
+- ref: C2
+  value: 10uF
+  footprint: 0805
+  lcsc: C15850
+  decouples: U4
+- ref: C20
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+- ref: C21
+  value: 10uF
+  footprint: 0805
+  lcsc: C15850
+- ref: C22
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+- ref: C3
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+- ref: C4
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+- ref: C5
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+  decouples: U2
+- ref: C6
+  value: 100uF
+  footprint: '1206'
+  lcsc: C15008
+  decouples: U2
+- ref: C7
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+- ref: C8
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+- ref: C9
+  value: 100nF
+  footprint: 0805
+  lcsc: C49678
+- ref: D1
+  value: ESD9B5.0ST5G
+  footprint: SOD-923
+  lcsc: C111566
+  description: ESD protection diode, 5.0Vrwm, SOD-923
+- ref: D10
+  value: ESD9B5.0ST5G
+  footprint: SOD-923
+  lcsc: C111566
+  description: ESD protection diode, 5.0Vrwm, SOD-923
+- ref: D11
+  value: ESD9B5.0ST5G
+  footprint: SOD-923
+  lcsc: C111566
+  description: ESD protection diode, 5.0Vrwm, SOD-923
+- ref: D12
+  value: LED
+  footprint: 0805
+  lcsc: C6848499
+- ref: D2
+  value: ESD9B5.0ST5G
+  footprint: SOD-923
+  lcsc: C111566
+  description: ESD protection diode, 5.0Vrwm, SOD-923
+- ref: D3
+  value: ESDA6V1SC5
+  footprint: SOT-23-5
+  lcsc: C2935146
+  description: "Quad TVS Diode Array, 6.1V Standoff, 4 Channels, 400W, \xB130kV, SOT-23-5"
+- ref: D4
+  value: LED
+  footprint: 0805
+  lcsc: C6848499
+- ref: D5
+  value: LED
+  footprint: 0805
+  lcsc: C6848499
+- ref: D6
+  value: ESD9B5.0ST5G
+  footprint: SOD-923
+  lcsc: C111566
+  description: ESD protection diode, 5.0Vrwm, SOD-923
+- ref: D7
+  value: ESD9B5.0ST5G
+  footprint: SOD-923
+  lcsc: C111566
+  description: ESD protection diode, 5.0Vrwm, SOD-923
+- ref: D8
+  value: ESD9B5.0ST5G
+  footprint: SOD-923
+  lcsc: C111566
+  description: ESD protection diode, 5.0Vrwm, SOD-923
+- ref: D9
+  value: ESD9B5.0ST5G
+  footprint: SOD-923
+  lcsc: C111566
+  description: ESD protection diode, 5.0Vrwm, SOD-923
+- ref: F1
+  value: fuse
+  footprint: '1206'
+  lcsc: C3105
+- ref: FB1
+  value: ferrite bead
+  footprint: '1206'
+  lcsc: C668306
+- ref: J1
+  value: SWD 10-pin
+  footprint: 2X5
+  lcsc: C2935953
+  description: Cortex Debug Connector, standard ARM Cortex-M SWD and JTAG interface
+- ref: J2
+  value: coaxial connector
+  footprint: U.FL_Hirose_U.FL-R-SMT-1_Vertical
+  lcsc: C88373
+  description: coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)
+- ref: J3
+  value: coaxial connector
+  footprint: U.FL_Hirose_U.FL-R-SMT-1_Vertical
+  lcsc: C88373
+  description: coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)
+- ref: J4
+  value: ESP32 USB
+  footprint: USB-C
+  lcsc: C2765186
+  description: USB 2.0-only 14P Type-C Receptacle connector
+- ref: J5
+  value: SIM7080G USBC
+  footprint: USB-C
+  lcsc: C2765186
+  description: USB 2.0-only 14P Type-C Receptacle connector
+- ref: J6
+  value: 1x2 header
+  footprint: JST_EH_B2B-EH-A
+  lcsc: C20079
+- ref: J7
+  value: 2x23 header
+  footprint: 2X23
+  lcsc: C725895
+- ref: J8
+  value: 2x23 header
+  footprint: 2X23
+  lcsc: C725895
+- ref: Q1
+  value: NPN transistor
+  footprint: SOT-23
+  lcsc: C2150
+- ref: Q2
+  value: NPN transistor
+  footprint: SOT-23
+  lcsc: C2150
+- ref: Q3
+  value: NPN transistor
+  footprint: SOT-23
+  lcsc: C2150
+- ref: R1
+  value: 10kohm
+  footprint: 0805
+  lcsc: C17414
+  pullup: GPIO8
+- ref: R10
+  value: 100ohm
+  footprint: 0805
+  lcsc: C17408
+- ref: R11
+  value: 100ohm
+  footprint: 0805
+  lcsc: C17408
+- ref: R12
+  value: 4.7kohm
+  footprint: 0805
+  lcsc: C17673
+- ref: R13
+  value: 4.7kohm
+  footprint: 0805
+  lcsc: C17673
+- ref: R14
+  value: 47kohm
+  footprint: 0805
+  lcsc: C17713
+  pulldown: Q2.B
+- ref: R15
+  value: 47kohm
+  footprint: 0805
+  lcsc: C17713
+  pulldown: Q3.B
+- ref: R16
+  value: 100ohm
+  footprint: 0805
+  lcsc: C17408
+- ref: R17
+  value: 10kohm
+  footprint: 0805
+  lcsc: C17414
+  pulldown: U5.SDN
+- ref: R18
+  value: 5.1kohm
+  footprint: 0805
+  lcsc: C27834
+  pulldown: J4.CC2
+- ref: R19
+  value: 5.1kohm
+  footprint: 0805
+  lcsc: C27834
+  pulldown: J4.CC1
+- ref: R2
+  value: 10kohm
+  footprint: 0805
+  lcsc: C17414
+  pullup: MCU_RST
+- ref: R20
+  value: 5.1kohm
+  footprint: 0805
+  lcsc: C27834
+  pulldown: J5.CC2
+- ref: R21
+  value: 5.1kohm
+  footprint: 0805
+  lcsc: C27834
+  pulldown: J5.CC1
+- ref: R22
+  value: 200ohm
+  footprint: 0805
+  lcsc: C17540
+- ref: R3
+  value: 10kohm
+  footprint: 0805
+  lcsc: C17414
+  pullup: GPIO9
+- ref: R4
+  value: 10kohm
+  footprint: 0805
+  lcsc: C17414
+  pullup: D1.A2
+- ref: R5
+  value: 22ohm
+  footprint: 0805
+  lcsc: C17561
+- ref: R6
+  value: 4.7kohm
+  footprint: 0805
+  lcsc: C17673
+- ref: R7
+  value: 22ohm
+  footprint: 0805
+  lcsc: C17561
+- ref: R8
+  value: 22ohm
+  footprint: 0805
+  lcsc: C17561
+- ref: R9
+  value: 47kohm
+  footprint: 0805
+  lcsc: C17713
+  pulldown: Q1.B
+- ref: SW1
+  value: tactile switch
+  footprint: SW_Push_SPST_NO_Alps_SKRK
+  lcsc: C720477
+- ref: SW2
+  value: tactile switch
+  footprint: SW_Push_SPST_NO_Alps_SKRK
+  lcsc: C720477
+- ref: U1
+  value: ESP32-C6-MINI-1/U
+  footprint: XCVR_ESP32-C3-MINI-1U-N4
+  lcsc: C20627095
+  description: ESP32-C6-MINI-1 is a module that supports 2.4 GHz Wi-Fi 6 (802.11 ax)
+- ref: U2
+  value: SIM7080G
+  footprint: XCVR_SIM7080G
+  manufacturer: SIMCOM
+  lcsc: C2943992
+- ref: U3
+  value: NANO SIM XG6P H1.35
+  footprint: SIM-SMD_NANO-SIM-XG6P-H1.35
+  lcsc: C7529386
+- ref: U4
+  value: TXB0108RGY
+  footprint: Texas_RGY_R-PVQFN-N20_EP2.05x3.05mm
+  lcsc: C194701
+  description: "8-Bit Bidirectional Voltage-Level Translator, Auto Direction Sensing and \xB115-kV"
+- ref: U5
+  value: RC-S2LP-868
+  footprint: XCVR_RC-S2LP-868
+  digikey: 3206-RC-S2LP-868TR-ND
+  manufacturer: Radio Controlli
+  mpn: RC-S2LP-868
+  lcsc: C37069913
+- ref: U6
+  value: AMS1117-3.3
+  footprint: SOT-223-3_TabPin2
+  lcsc: C6186
+  description: 1A Low Dropout regulator, positive, 3.3V fixed output, SOT-223
+nets:
+- name: +1V8
+  pins: [C10.2, C16.2, U2.VDD_EXT, U4.VCCA]
+- name: +3V3
+  pins:
+  - C1.1
+  - C17.2
+  - C18.1
+  - C2.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - D4.A
+  - D5.A
+  - FB1.2
+  - J1.VTref
+  - J7.Pin_3
+  - J7.Pin_4
+  - R1.1
+  - R2.1
+  - R22.1
+  - R3.1
+  - R4.1
+  - U1.3V3
+  - U2.VBAT
+  - U2.VBAT__1
+  - U4.VCCB
+  - U5.VCC@13
+  - U5.VCC@14
+- name: +5V
+  pins:
+  - C11.2
+  - D6.A2
+  - D7.A2
+  - F1.1
+  - J4.VBUS@A4
+  - J4.VBUS@A9
+  - J4.VBUS@B4
+  - J4.VBUS@B9
+  - J5.VBUS@A4
+  - J5.VBUS@A9
+  - J5.VBUS@B4
+  - J5.VBUS@B9
+  - J6.Pin_1
+  - J7.Pin_7
+  - J7.Pin_8
+  - U2.USB_VBUS
+- name: ETH_CS
+  pins: [J1.SWCLK/TCK, J8.Pin_43, U1.MTCK/GPIO6/ADC1_CH6]
+- name: ETH_INT
+  pins: [J8.Pin_9, U1.GPIO3/ADC1_CH3]
+- name: ETH_RST
+  pins: [J8.Pin_7, U1.GPIO2/ADC1_CH2]
+- name: GND
+  pins:
+  - C1.2
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C15.1
+  - C16.1
+  - C17.1
+  - C18.2
+  - C19.2
+  - C2.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.A1
+  - D10.A1
+  - D11.A1
+  - D12.K
+  - D2.A1
+  - D3.A
+  - D6.A1
+  - D7.A1
+  - D8.A1
+  - D9.A1
+  - J1.GND@3
+  - J1.GND@5
+  - J1.GNDDetect
+  - J2.Ext@2
+  - J3.Ext@2
+  - J4.GND@A1
+  - J4.GND@A12
+  - J4.GND@B1
+  - J4.GND@B12
+  - J4.SHIELD@S1
+  - J5.GND@A1
+  - J5.GND@A12
+  - J5.GND@B1
+  - J5.GND@B12
+  - J5.SHIELD@S1
+  - J6.Pin_2
+  - J7.Pin_1
+  - J7.Pin_2
+  - J7.Pin_34
+  - J7.Pin_43
+  - J7.Pin_44
+  - J7.Pin_45
+  - J7.Pin_46
+  - J8.Pin_1
+  - J8.Pin_2
+  - Q1.E
+  - Q2.E
+  - Q3.E
+  - R14.2
+  - R15.2
+  - R17.2
+  - R18.2
+  - R19.2
+  - R20.2
+  - R21.2
+  - R9.2
+  - SW1.1
+  - SW2.1
+  - U1.GND@1
+  - U1.GND@11
+  - U1.GND@14
+  - U1.GND@2
+  - U1.GND@36
+  - U1.GND@37
+  - U1.GND@38
+  - U1.GND@39
+  - U1.GND@40
+  - U1.GND@41
+  - U1.GND@42
+  - U1.GND@43
+  - U1.GND@44
+  - U1.GND@45
+  - U1.GND@46
+  - U1.GND@47
+  - U1.GND@48
+  - U1.GND@50
+  - U1.GND@51
+  - U1.GND@52
+  - U1.GND@53
+  - U2.GND
+  - U2.GND__1
+  - U2.GND__10
+  - U2.GND__11
+  - U2.GND__12
+  - U2.GND__13
+  - U2.GND__14
+  - U2.GND__15
+  - U2.GND__16
+  - U2.GND__17
+  - U2.GND__18
+  - U2.GND__19
+  - U2.GND__2
+  - U2.GND__20
+  - U2.GND__21
+  - U2.GND__22
+  - U2.GND__3
+  - U2.GND__4
+  - U2.GND__5
+  - U2.GND__6
+  - U2.GND__7
+  - U2.GND__8
+  - U2.GND__9
+  - U3.GND@10
+  - U3.GND@11
+  - U3.GND@5
+  - U3.GND@8
+  - U3.GND@9
+  - U4.GND@11
+  - U4.GND@21
+  - U5.GND@11
+  - U5.GND@12
+  - U5.GND@15
+  - U5.GND@16
+  - U5.GND@17
+  - U5.GND@18
+  - U5.GND@19
+  - U5.GND@21
+  - U5.GND@9
+  - U6.GND
+- name: GNSS_ANT
+  pins: [J2.In, U2.GNSS_ANT]
+- name: GPIO8
+  pins: [R1.2, U1.GPIO8]
+- name: GPIO9
+  pins: [C4.1, R3.2, SW2.2, U1.GPIO9]
+- name: MBUS_RX
+  pins: [J8.Pin_25, U1.GPIO22]
+- name: MBUS_TX
+  pins: [J8.Pin_26, U1.GPIO23]
+- name: MCU_RST
+  pins: [C3.1, J1.nRESET, R2.2, SW1.2, U1.EN/CHIP_PU]
+- name: MISO
+  pins: [J7.Pin_30, U1.GPIO19, U5.SDO]
+- name: MOSI
+  pins: [J7.Pin_29, U1.GPIO18, U5.SDI]
+- name: MTDI
+  pins: [J1.NC/TDI, J8.Pin_46, U1.MTDI/GPIO5/ADC1_CH5]
+- name: MTDO
+  pins: [J1.SWO/TDO, J8.Pin_44, U1.MTDO/GPIO7]
+- name: MTMS
+  pins: [J1.SWDIO/TMS, J8.Pin_45, U1.MTMS/GPIO4/ADC1_CH4]
+- name: NETLIGHT
+  pins: [R12.1, U2.NETLIGHT]
+- name: Net-(D1-A2)
+  pins: [D1.A2, R4.2]
+- name: Net-(D12-A)
+  pins: [D12.A, R22.2]
+- name: Net-(D4-K)
+  pins: [D4.K, R10.2]
+- name: Net-(D5-K)
+  pins: [D5.K, R11.2]
+- name: Net-(J4-CC1)
+  pins: [J4.CC1, R19.1]
+- name: Net-(J4-CC2)
+  pins: [J4.CC2, R18.1]
+- name: Net-(J5-CC1)
+  pins: [J5.CC1, R21.1]
+- name: Net-(J5-CC2)
+  pins: [J5.CC2, R20.1]
+- name: Net-(Q1-B)
+  pins: [Q1.B, R6.2, R9.1]
+- name: Net-(Q2-B)
+  pins: [Q2.B, R12.2, R14.1]
+- name: Net-(Q2-C)
+  pins: [Q2.C, R10.1]
+- name: Net-(Q3-B)
+  pins: [Q3.B, R13.2, R15.1]
+- name: Net-(Q3-C)
+  pins: [Q3.C, R11.1]
+- name: Net-(U3-CLK)
+  pins: [C14.2, R7.2, U3.CLK]
+- name: Net-(U3-I/O)
+  pins: [C15.2, R8.2, U3.I/O]
+- name: Net-(U3-RST)
+  pins: [C13.2, R5.2, U3.RST]
+- name: Net-(U5-SDN)
+  pins: [R16.2, R17.1, U5.SDN]
+- name: Net-(U6-VI)
+  pins: [C19.1, C20.1, F1.2, U6.VI]
+- name: Net-(U6-VO)
+  pins: [C21.1, C22.1, FB1.1, U6.VO@2]
+- name: PWRKEY
+  pins: [D2.A2, Q1.C, U2.PWRKEY]
+- name: RF_ANT
+  pins: [J3.In, U2.RF_ANT]
+- name: SCK
+  pins: [J7.Pin_31, U1.GPIO20, U5.SCLK]
+- name: SCL
+  pins: [J7.Pin_19, U4.B8]
+- name: SDA
+  pins: [J7.Pin_20, U4.B7]
+- name: SIM7080G_D+
+  pins: [D11.A2, J5.D+@A6, J5.D+@B6, J8.Pin_5, U2.USB_DP]
+- name: SIM7080G_D-
+  pins: [D10.A2, J5.D-@A7, J5.D-@B7, J8.Pin_6, U2.USB_DM]
+- name: SIM7080G_DTR
+  pins: [J8.Pin_17, U4.B5]
+- name: SIM7080G_PWR
+  pins: [J8.Pin_15, R6.1, U1.GPIO14]
+- name: SIM7080G_RING
+  pins: [J8.Pin_18, U4.B6]
+- name: SIM7080G_RX
+  pins: [J7.Pin_13, U1.U0TXD/GPIO16, U4.B2]
+- name: SIM7080G_TX
+  pins: [J7.Pin_11, U1.U0RXD/GPIO17, U4.B1]
+- name: SIM_CLK
+  pins: [D3.K@4, R7.1, U2.SIM_CLK]
+- name: SIM_CTS
+  pins: [U2.UART1_CTS, U4.A4]
+- name: SIM_DATA
+  pins: [D3.K@5, R8.1, U2.SIM_DATA]
+- name: SIM_DTR
+  pins: [U2.UART1_DTR, U4.A5]
+- name: SIM_RI
+  pins: [U2.UART1_RI, U4.A6]
+- name: SIM_RST
+  pins: [D3.K@3, R5.1, U2.SIM_RST]
+- name: SIM_RTS
+  pins: [U2.UART1_RTS, U4.A3]
+- name: SIM_RX
+  pins: [U2.UART1_RXD, U4.A2]
+- name: SIM_SCL
+  pins: [U2.I2C_SCL, U4.A8]
+- name: SIM_SDA
+  pins: [U2.I2C_SDA, U4.A7]
+- name: SIM_TX
+  pins: [U2.UART1_TXD, U4.A1]
+- name: SIM_VDD
+  pins: [C12.2, D3.K@1, U2.SIM_VDD, U3.VCC]
+- name: STATUS
+  pins: [R13.1, U2.STATUS]
+- name: USB_D+
+  pins: [D9.A2, J4.D+@A6, J4.D+@B6, J7.Pin_22, U1.GPIO12/USB_D-]
+- name: USB_D-
+  pins: [D8.A2, J4.D-@A7, J4.D-@B7, J7.Pin_21, U1.GPIO13/USB_D+]
+- name: WMBUS_CS
+  pins: [J8.Pin_8, U1.GPIO21, U5.CSN]
+- name: WMBUS_SDN
+  pins: [R16.1, U1.GPIO15]
+positions:
+- ref: C1
+  x: 60.41
+  y: 71.53
+  rot: 90.0
+- ref: C10
+  x: 73.57
+  y: 90.37
+  rot: 180.0
+- ref: C11
+  x: 57.37
+  y: 103.91
+  rot: -90.0
+- ref: C12
+  x: 56.06
+  y: 112.75
+  rot: -90.0
+- ref: C13
+  x: 58.89
+  y: 112.75
+  rot: -90.0
+- ref: C14
+  x: 61.72
+  y: 112.75
+  rot: -90.0
+- ref: C15
+  x: 64.55
+  y: 112.75
+  rot: -90.0
+- ref: C16
+  x: 53.8
+  y: 77.37
+  rot: -90.0
+- ref: C17
+  x: 53.06
+  y: 74.45
+- ref: C18
+  x: 67.87
+  y: 114.96
+  rot: -90.0
+- ref: C19
+  x: 84.45
+  y: 65.27
+  rot: -90.0
+- ref: C2
+  x: 62.65
+  y: 71.53
+  rot: 90.0
+- ref: C20
+  x: 86.74
+  y: 65.27
+  rot: -90.0
+- ref: C21
+  x: 81.99
+  y: 74.7
+  rot: 90.0
+- ref: C22
+  x: 79.83
+  y: 74.7
+  rot: 90.0
+- ref: C3
+  x: 50.84
+  y: 62.81
+  rot: 90.0
+- ref: C4
+  x: 82.93
+  y: 85.78
+  rot: -90.0
+- ref: C5
+  x: 72.75
+  y: 96.35
+  rot: 90.0
+- ref: C6
+  x: 75.22
+  y: 95.75
+  rot: 90.0
+- ref: C7
+  x: 77.68
+  y: 96.35
+  rot: 90.0
+- ref: C8
+  x: 74.42
+  y: 100.19
+  rot: -90.0
+- ref: C9
+  x: 76.67
+  y: 100.23
+  rot: -90.0
+- ref: D1
+  x: 53.63
+  y: 110.2
+  rot: -90.0
+- ref: D10
+  x: 56.9
+  y: 59.44
+  rot: 90.0
+- ref: D11
+  x: 58.35
+  y: 59.49
+  rot: 90.0
+- ref: D12
+  x: 75.01
+  y: 104.33
+  rot: -90.0
+- ref: D2
+  x: 76.87
+  y: 90.23
+- ref: D3
+  x: 52.85
+  y: 104.63
+- ref: D4
+  x: 85.48
+  y: 98.82
+  rot: -90.0
+- ref: D5
+  x: 85.29
+  y: 90.42
+  rot: -90.0
+- ref: D6
+  x: 94.52
+  y: 54.7
+  rot: -90.0
+- ref: D7
+  x: 54.82
+  y: 56.25
+- ref: D8
+  x: 87.98
+  y: 60.09
+  rot: 90.0
+- ref: D9
+  x: 86.81
+  y: 60.09
+  rot: 90.0
+- ref: F1
+  x: 89.3
+  y: 64.52
+  rot: -90.0
+- ref: FB1
+  x: 81.46
+  y: 78.01
+- ref: J1
+  x: 60.59
+  y: 67.6
+  rot: 180.0
+- ref: J2
+  x: 52.46
+  y: 70.91
+  rot: 90.0
+- ref: J3
+  x: 64.58
+  y: 104.27
+  rot: -90.0
+- ref: J4
+  x: 88.36
+  y: 51.91
+  rot: 180.0
+- ref: J5
+  x: 57.66
+  y: 50.62
+  rot: 180.0
+- ref: J6
+  x: 48.16
+  y: 51.69
+  rot: -90.0
+- ref: J7
+  x: 44.44
+  y: 65.62
+- ref: J8
+  x: 92.64
+  y: 65.68
+- ref: Q1
+  x: 77.05
+  y: 87.79
+  rot: 180.0
+- ref: Q2
+  x: 82.33
+  y: 100.92
+- ref: Q3
+  x: 81.97
+  y: 92.4
+- ref: R1
+  x: 74.12
+  y: 83.04
+  rot: 90.0
+- ref: R10
+  x: 81.88
+  y: 97.94
+- ref: R11
+  x: 81.88
+  y: 89.53
+- ref: R12
+  x: 79.08
+  y: 100.79
+  rot: -90.0
+- ref: R13
+  x: 78.78
+  y: 92.34
+  rot: -90.0
+- ref: R14
+  x: 82.03
+  y: 103.82
+- ref: R15
+  x: 81.82
+  y: 95.53
+- ref: R16
+  x: 69.62
+  y: 105.59
+- ref: R17
+  x: 67.74
+  y: 110.12
+  rot: -90.0
+- ref: R18
+  x: 85.06
+  y: 59.31
+  rot: -90.0
+- ref: R19
+  x: 89.71
+  y: 59.31
+  rot: -90.0
+- ref: R2
+  x: 53.27
+  y: 62.82
+  rot: -90.0
+- ref: R20
+  x: 54.87
+  y: 58.76
+  rot: -90.0
+- ref: R21
+  x: 60.35
+  y: 58.74
+  rot: -90.0
+- ref: R22
+  x: 72.8
+  y: 104.33
+  rot: -90.0
+- ref: R3
+  x: 82.95
+  y: 82.06
+  rot: -90.0
+- ref: R4
+  x: 51.11
+  y: 110.14
+- ref: R5
+  x: 57.44
+  y: 108.77
+  rot: -90.0
+- ref: R6
+  x: 77.16
+  y: 84.92
+- ref: R7
+  x: 60.31
+  y: 108.77
+  rot: -90.0
+- ref: R8
+  x: 63.19
+  y: 108.77
+  rot: -90.0
+- ref: R9
+  x: 79.13
+  y: 82.82
+- ref: SW1
+  x: 52.5
+  y: 66.53
+- ref: SW2
+  x: 86.3
+  y: 84.01
+  rot: 90.0
+- ref: U1
+  x: 70.77
+  y: 75.25
+- ref: U2
+  x: 61.36
+  y: 92.72
+  rot: -90.0
+- ref: U3
+  x: 59.56
+  y: 122.7
+- ref: U4
+  x: 57.77
+  y: 76.89
+  rot: 90.0
+- ref: U5
+  x: 78.05
+  y: 118.71
+  rot: 180.0
+- ref: U6
+  x: 86.86
+  y: 71.98
+  rot: -90.0
+copper_pours:
+- net: +3V3
+  layers: [In2.Cu]
+- net: GND
+  layers: [In1.Cu]

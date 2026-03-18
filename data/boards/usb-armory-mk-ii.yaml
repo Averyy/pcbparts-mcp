@@ -1,0 +1,132 @@
+name: USB Armory Mk II
+slug: usb-armory-mk-ii
+source: usbarmory/usbarmory
+format: kicad7
+description: i.MX6ULZ SoC, DDR3 SDRAM
+tags: [security, embedded]
+key_ics: [PF1510, MCIMX6Z0DVM09AB]
+components:
+- ref: C1
+  value: 4.7uF
+  footprint: SM0402
+  manufacturer: Murata Electronics North America
+- ref: C10
+  value: 1uF
+  footprint: SM0201
+  manufacturer: Murata Electronics North America
+- ref: C11
+  value: 100nF
+  footprint: SM0201
+  manufacturer: Murata Electronics North America
+- ref: C12
+  value: 100nF
+  footprint: SM0201
+  manufacturer: Murata Electronics North America
+- ref: C13
+  value: 2.2uF
+  footprint: SM0402
+  manufacturer: Murata Electronics North America
+- ref: C14
+  value: 1uF
+  footprint: SM0201
+  manufacturer: Murata Electronics North America
+- ref: C15
+  value: 1uF
+  footprint: SM0201
+  manufacturer: Murata Electronics North America
+- ref: C16
+  value: 47uF
+  footprint: SM0603
+  manufacturer: Murata Electronics North America
+- ref: C17
+  value: 10uF
+  footprint: SM0402
+  manufacturer: Samsung Electro-Mechanics
+- ref: C18
+  value: 10uF
+  footprint: SM0402
+  manufacturer: Samsung Electro-Mechanics
+- ref: C2
+  value: 4.7uF
+  footprint: SM0402
+  manufacturer: Murata Electronics North America
+- ref: C20
+  value: 10uF
+  footprint: SM0402
+  manufacturer: Samsung Electro-Mechanics
+- ref: C21
+  value: 10uF
+  footprint: SM0402
+  manufacturer: Samsung Electro-Mechanics
+- ref: C22
+  value: 10uF
+  footprint: SM0402
+  manufacturer: Samsung Electro-Mechanics
+- ref: C23
+  value: 4.7uF
+  footprint: SM0402
+  manufacturer: Murata Electronics North America
+- ref: C24
+  value: 10uF
+  footprint: SM0402
+  manufacturer: Samsung Electro-Mechanics
+- ref: C25
+  value: 1uF
+  footprint: SM0201
+  manufacturer: Murata Electronics North America
+- ref: C26
+  value: 10uF
+  footprint: SM0402
+  manufacturer: Samsung Electro-Mechanics
+- ref: C27
+  value: 470nF
+  footprint: SM0201
+  manufacturer: Murata Electronics North America
+- ref: C3
+  value: 4.7uF
+  footprint: SM0402
+  manufacturer: Murata Electronics North America
+- ref: C32
+  value: 10uF
+  footprint: SM0402
+  manufacturer: Samsung Electro-Mechanics
+- ref: C4
+  value: 1uF
+  footprint: SM0201
+  manufacturer: Murata Electronics North America
+- ref: C8
+  value: 1uF
+  footprint: SM0201
+  manufacturer: Murata Electronics North America
+- ref: C9
+  value: 1uF
+  footprint: SM0201
+  manufacturer: Murata Electronics North America
+- ref: L1
+  value: 1uH
+  footprint: SM0603
+  manufacturer: Murata Electronics North America
+- ref: L2
+  value: 1uH
+  footprint: SM0603
+  manufacturer: Murata Electronics North America
+- ref: L3
+  value: 1uH
+  footprint: SM0603
+  manufacturer: Murata Electronics North America
+- ref: R1
+  value: 100kohm
+  footprint: SM0201
+  manufacturer: Vishay Dale
+- ref: R2
+  value: 100kohm
+  footprint: SM0201
+  manufacturer: Vishay Dale
+- ref: R22
+  value: 100kohm
+  footprint: SM0201
+  manufacturer: Vishay Dale
+- ref: U1
+  value: MC34PF1510A6EP
+  footprint: SOT1369-4
+  manufacturer: NXP

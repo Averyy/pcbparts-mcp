@@ -1,0 +1,702 @@
+name: ASAC-FC rev-b
+slug: asac-fc-rev-b
+source: victorhook/asac-fc
+format: kicad7
+description: 'RP2040 flight controller: BMI270 IMU (SPI), USB-C'
+tags: [drone-uav, motor-control, sensors]
+key_ics: [DShot, RP2040, STM32, BMI270]
+outline:
+  width_mm: 36.0
+  height_mm: 43.0
+design_rules:
+  layers: 4
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.25mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 30pF
+  footprint: '0402'
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  decouples: U3
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+  decouples: U5
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+  decouples: U5
+- ref: C15
+  value: 1uF
+  footprint: '0402'
+  decouples: U2
+- ref: C16
+  value: 100nF
+  footprint: '0402'
+  decouples: U2
+- ref: C17
+  value: 100nF
+  footprint: '0402'
+  decouples: U3
+- ref: C18
+  value: 100nF
+  footprint: '0402'
+  decouples: U2
+- ref: C19
+  value: 100nF
+  footprint: '0402'
+- ref: C2
+  value: 30pF
+  footprint: '0402'
+- ref: C20
+  value: 10uF
+  footprint: 0805
+- ref: C21
+  value: 10uF
+  footprint: 0805
+- ref: C22
+  value: 10uF
+  footprint: 0805
+  decouples: U4
+- ref: C23
+  value: 10uF
+  footprint: 0805
+  decouples: U5
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C7
+  value: 1uF
+  footprint: '0402'
+  decouples: U5
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+  decouples: U2
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  decouples: U2
+- ref: D1
+  value: LED
+  footprint: '0603'
+- ref: D2
+  value: LED
+  footprint: '0603'
+- ref: D3
+  value: LED
+  footprint: '0603'
+- ref: D4
+  value: schottky
+  footprint: SOD-123
+- ref: D5
+  value: schottky
+  footprint: SOD-123
+- ref: J1
+  value: 1x3 header
+  footprint: Conn
+- ref: J10
+  value: USB-C
+  footprint: USB-SMD_GT-USB-7010AN
+- ref: J12
+  value: 1x4 header
+  footprint: Conn
+- ref: J14
+  value: 1x3 header
+  footprint: 1X3
+- ref: J15
+  value: 1x4 header
+  footprint: Conn
+- ref: J2
+  value: 1x4 header
+  footprint: Conn
+- ref: J3
+  value: 1x4 header
+  footprint: Conn
+- ref: J4
+  value: 1x3 header
+  footprint: Conn
+- ref: J5
+  value: 1x4 header
+  footprint: Conn
+- ref: J6
+  value: 1x3 header
+  footprint: Conn
+- ref: J7
+  value: 1x2 header
+  footprint: Conn
+- ref: J8
+  value: 1x4 header
+  footprint: Conn
+- ref: J9
+  value: 1x3 header
+  footprint: Conn
+- ref: Q1
+  value: P-channel MOSFET
+  footprint: SOT-23
+- ref: R1
+  value: 1kohm
+  footprint: '0402'
+- ref: R10
+  value: 10kohm
+  footprint: '0402'
+- ref: R11
+  value: 5.6kohm
+  footprint: '0402'
+  pulldown: /VBAT_ADC
+- ref: R12
+  value: 1kohm
+  footprint: '0402'
+- ref: R13
+  value: 10kohm
+  footprint: '0402'
+  pullup: /QSPI_SS
+- ref: R14
+  value: 10kohm
+  footprint: '0402'
+  pulldown: /VBAT
+- ref: R15
+  value: 10kohm
+  footprint: '0402'
+- ref: R16
+  value: 20kohm
+  footprint: '0402'
+  pulldown: /VUSB_SENSE
+- ref: R2
+  value: 27.4ohm
+  footprint: '0402'
+- ref: R3
+  value: 27.4ohm
+  footprint: '0402'
+- ref: R4
+  value: 10kohm
+  footprint: '0402'
+  pullup: /nRESET
+- ref: R5
+  value: 5.11kohm
+  footprint: '0402'
+  pulldown: J10.CC2
+- ref: R6
+  value: 5.11kohm
+  footprint: '0402'
+  pulldown: J10.CC1
+- ref: R7
+  value: 330ohm
+  footprint: '0402'
+- ref: R8
+  value: 330ohm
+  footprint: '0402'
+- ref: R9
+  value: 330ohm
+  footprint: '0402'
+- ref: SW1
+  value: switch
+  footprint: SW-SMD_TS-1086EV-16
+- ref: U1
+  value: BMI270
+  footprint: BMI270
+  manufacturer: Bosch Sensortec
+- ref: U2
+  value: RP2040
+  footprint: QFN-56-1EP
+- ref: U3
+  value: W25Q128JVSIQ
+  footprint: SOIC-8
+- ref: U4
+  value: AMS1117-5.0
+  footprint: SOT-223-3_TabPin2
+- ref: U5
+  value: AMS1117-3.3
+  footprint: SOT-223-3_TabPin2
+- ref: Y1
+  value: CM4012M00020T8188087
+  footprint: SMD2520
+nets:
+- name: +1V1
+  pins: [C15.1, C16.1, C18.1, U2.DVDD@23, U2.DVDD@50, U2.VREG_VOUT]
+- name: +3.3V
+  pins:
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C17.1
+  - C23.1
+  - C3.1
+  - C4.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - J12.Pin_3
+  - J15.Pin_3
+  - J2.Pin_3
+  - R13.2
+  - R4.1
+  - U1.VDD
+  - U1.VDDIO
+  - U2.ADC_AVDD
+  - U2.IOVDD@1
+  - U2.IOVDD@10
+  - U2.IOVDD@22
+  - U2.IOVDD@33
+  - U2.IOVDD@42
+  - U2.IOVDD@49
+  - U2.USB_VDD
+  - U2.VREG_IN
+  - U3.VCC
+  - U5.VO@2
+- name: +5V
+  pins: [C22.1, J5.Pin_3, J8.Pin_3, U4.VO@2]
+- name: /CSB/CS
+  pins: [U1.CSB, U2.GPIO13]
+- name: /GPIO22
+  pins: [J12.Pin_1, U2.GPIO22]
+- name: /GPIO23
+  pins: [J12.Pin_2, U2.GPIO23]
+- name: /GPIO24
+  pins: [J2.Pin_1, U2.GPIO24]
+- name: /GPIO25
+  pins: [J2.Pin_2, U2.GPIO25]
+- name: /IMU_INT_1
+  pins: [U1.INT1, U2.GPIO10]
+- name: /IMU_INT_2
+  pins: [U1.INT2, U2.GPIO9]
+- name: /LED_BLUE
+  pins: [R7.2, U2.GPIO8]
+- name: /LED_GREEN
+  pins: [R9.2, U2.GPIO27_ADC1]
+- name: /LED_RED
+  pins: [R8.2, U2.GPIO26_ADC0]
+- name: /M1
+  pins: [J1.Pin_2, U2.GPIO1]
+- name: /M2
+  pins: [J4.Pin_2, U2.GPIO0]
+- name: /M3
+  pins: [J6.Pin_2, U2.GPIO20]
+- name: /M4
+  pins: [J9.Pin_2, U2.GPIO18]
+- name: /QSPI_CLK
+  pins: [U2.QSPI_SCLK, U3.CLK]
+- name: /QSPI_SD0
+  pins: [U2.QSPI_SD0, U3.DI(IO0)]
+- name: /QSPI_SD1
+  pins: [U2.QSPI_SD1, U3.DO(IO1)]
+- name: /QSPI_SD2
+  pins: [U2.QSPI_SD2, U3.IO2]
+- name: /QSPI_SD3
+  pins: [U2.QSPI_SD3, U3.IO3]
+- name: /QSPI_SS
+  pins: [R12.2, R13.1, U2.QSPI_SS, U3.nCS]
+- name: /RX1
+  pins: [J8.Pin_1, U2.GPIO5]
+- name: /RX_2_PIO
+  pins: [J5.Pin_1, U2.GPIO7]
+- name: /SCK
+  pins: [U1.SCX, U2.GPIO14]
+- name: /SCL1
+  pins: [J15.Pin_1, U2.GPIO3]
+- name: /SDA1
+  pins: [J15.Pin_2, U2.GPIO2]
+- name: /SDI/MOSI
+  pins: [U1.SDX, U2.GPIO11]
+- name: /SDO/MISO
+  pins: [U1.SDO, U2.GPIO12]
+- name: /SWCLK
+  pins: [J14.Pin_1, U2.SWCLK]
+- name: /SWD
+  pins: [J14.Pin_3, U2.SWD]
+- name: /TX1
+  pins: [J8.Pin_2, U2.GPIO4]
+- name: /TX_2_PIO
+  pins: [J5.Pin_2, U2.GPIO6]
+- name: /USB+
+  pins: [J10.D+@A6, J10.D+@B6, R2.1]
+- name: /USB-
+  pins: [J10.D-@A7, J10.D-@B7, R3.1]
+- name: /VBAT
+  pins:
+  - C20.1
+  - D4.A
+  - J1.Pin_1@1
+  - J3.Pin_1
+  - J3.Pin_2
+  - J4.Pin_1@1
+  - J6.Pin_1@1
+  - J9.Pin_1@1
+  - Q1.G
+  - R10.1
+  - R14.1
+  - U4.VI
+- name: /VBAT_ADC
+  pins: [R10.2, R11.1, U2.GPIO28_ADC2]
+- name: /VBUS
+  pins: [D5.A, J10.VBUS@A4, R15.1]
+- name: /VSYS
+  pins: [C21.1, D4.K, Q1.S, U5.VI]
+- name: /VUSB_SENSE
+  pins: [R15.2, R16.1, U2.GPIO19]
+- name: /XIN
+  pins: [C1.1, U2.XIN, Y1.1]
+- name: /XOUT
+  pins: [R1.2, U2.XOUT]
+- name: /nRESET
+  pins: [J7.Pin_1, R4.2, U2.RUN]
+- name: /nUSB_BOOT
+  pins: [C19.1, R12.1, SW1.A]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C3.2
+  - C4.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.K
+  - D2.K
+  - D3.K
+  - J1.Pin_3@3
+  - J10.GND@A1
+  - J12.Pin_4
+  - J14.Pin_2
+  - J15.Pin_4
+  - J2.Pin_4
+  - J3.Pin_3
+  - J3.Pin_4
+  - J4.Pin_3@3
+  - J5.Pin_4
+  - J6.Pin_3@3
+  - J7.Pin_2
+  - J8.Pin_4
+  - J9.Pin_3@3
+  - R11.2
+  - R14.2
+  - R16.2
+  - R5.2
+  - R6.2
+  - SW1.B
+  - U1.GND
+  - U1.GNDIO
+  - U2.GND
+  - U2.TESTEN
+  - U3.GND
+  - U4.GND
+  - U5.GND
+  - Y1.2
+  - Y1.4
+- name: Net-(C2-Pad1)
+  pins: [C2.1, R1.1, Y1.3]
+- name: Net-(D1-Pad2)
+  pins: [D1.A, R7.1]
+- name: Net-(D2-Pad2)
+  pins: [D2.A, R8.1]
+- name: Net-(D3-Pad2)
+  pins: [D3.A, R9.1]
+- name: Net-(D5-Pad1)
+  pins: [D5.K, Q1.D]
+- name: Net-(J10-PadA5)
+  pins: [J10.CC1, R6.1]
+- name: Net-(J10-PadB5)
+  pins: [J10.CC2, R5.1]
+- name: USB_DM
+  pins: [R3.2, U2.USB_DM]
+- name: USB_DP
+  pins: [R2.2, U2.USB_DP]
+positions:
+- ref: C1
+  x: 119.76
+  y: 110.8
+  rot: -90.0
+- ref: C10
+  x: 130.93
+  y: 116.33
+  rot: 45.0
+- ref: C11
+  x: 128.0
+  y: 112.81
+  rot: 45.0
+- ref: C12
+  x: 118.14
+  y: 113.8
+  rot: 135.0
+- ref: C13
+  x: 123.13
+  y: 125.31
+  rot: -135.0
+- ref: C14
+  x: 124.01
+  y: 128.02
+  rot: -45.0
+- ref: C15
+  x: 125.54
+  y: 126.4
+  rot: -45.0
+- ref: C16
+  x: 117.33
+  y: 114.61
+  rot: 135.0
+- ref: C17
+  x: 132.15
+  y: 126.19
+  rot: -90.0
+- ref: C18
+  x: 128.65
+  y: 123.24
+  rot: -45.0
+- ref: C19
+  x: 138.46
+  y: 116.57
+  rot: -90.0
+- ref: C2
+  x: 115.12
+  y: 110.76
+  rot: 90.0
+- ref: C20
+  x: 127.45
+  y: 132.47
+  rot: 90.0
+  side: back
+- ref: C21
+  x: 113.55
+  y: 127.0
+  rot: 90.0
+  side: back
+- ref: C22
+  x: 127.49
+  y: 128.94
+  rot: 90.0
+  side: back
+- ref: C23
+  x: 115.77
+  y: 126.97
+  rot: 90.0
+  side: back
+- ref: C3
+  x: 123.58
+  y: 112.11
+- ref: C4
+  x: 126.31
+  y: 110.86
+- ref: C7
+  x: 124.76
+  y: 127.22
+  rot: -45.0
+- ref: C8
+  x: 127.87
+  y: 124.0
+  rot: -45.0
+- ref: C9
+  x: 117.41
+  y: 122.85
+  rot: -90.0
+- ref: D1
+  x: 136.18
+  y: 101.23
+  rot: -90.0
+- ref: D2
+  x: 140.51
+  y: 113.24
+  rot: 180.0
+- ref: D3
+  x: 140.49
+  y: 121.33
+  rot: 180.0
+- ref: D4
+  x: 115.67
+  y: 131.25
+  rot: -90.0
+  side: back
+- ref: D5
+  x: 111.16
+  y: 125.1
+  rot: 90.0
+  side: back
+- ref: J1
+  x: 140.62
+  y: 108.1
+- ref: J10
+  x: 109.72
+  y: 117.46
+  rot: -90.0
+- ref: J12
+  x: 129.82
+  y: 100.83
+  rot: 90.0
+- ref: J14
+  x: 107.15
+  y: 116.24
+  rot: 180.0
+  side: back
+- ref: J15
+  x: 123.72
+  y: 100.85
+  rot: 90.0
+- ref: J2
+  x: 129.82
+  y: 104.0
+  rot: 90.0
+- ref: J3
+  x: 111.58
+  y: 104.0
+  rot: 90.0
+- ref: J4
+  x: 140.57
+  y: 126.85
+  rot: 180.0
+- ref: J5
+  x: 111.58
+  y: 100.84
+  rot: 90.0
+- ref: J6
+  x: 107.57
+  y: 126.85
+  rot: 180.0
+- ref: J7
+  x: 111.71
+  y: 111.01
+  rot: 90.0
+- ref: J8
+  x: 117.66
+  y: 100.83
+  rot: 90.0
+- ref: J9
+  x: 107.55
+  y: 107.98
+- ref: Q1
+  x: 112.6
+  y: 131.66
+  rot: -90.0
+  side: back
+- ref: R1
+  x: 118.93
+  y: 113.07
+  rot: -45.0
+- ref: R10
+  x: 120.98
+  y: 127.06
+  rot: 90.0
+- ref: R11
+  x: 122.05
+  y: 127.05
+  rot: -90.0
+- ref: R12
+  x: 134.97
+  y: 126.18
+  rot: 90.0
+- ref: R13
+  x: 133.59
+  y: 126.21
+  rot: -90.0
+- ref: R14
+  x: 111.42
+  y: 128.6
+  rot: 90.0
+  side: back
+- ref: R15
+  x: 114.61
+  y: 120.26
+  rot: 90.0
+- ref: R16
+  x: 115.78
+  y: 120.28
+  rot: -90.0
+- ref: R2
+  x: 127.11
+  y: 124.82
+  rot: 135.0
+- ref: R3
+  x: 126.35
+  y: 125.56
+  rot: 135.0
+- ref: R4
+  x: 116.17
+  y: 116.22
+  rot: -45.0
+- ref: R5
+  x: 115.74
+  y: 123.71
+  rot: -90.0
+  side: back
+- ref: R6
+  x: 114.72
+  y: 123.68
+  rot: -90.0
+  side: back
+- ref: R7
+  x: 136.19
+  y: 103.78
+  rot: -90.0
+- ref: R8
+  x: 136.74
+  y: 116.1
+  rot: 180.0
+- ref: R9
+  x: 136.77
+  y: 117.12
+  rot: 180.0
+- ref: SW1
+  x: 140.39
+  y: 117.38
+  rot: 90.0
+- ref: U1
+  x: 123.55
+  y: 110.09
+- ref: U2
+  x: 123.7
+  y: 118.53
+  rot: -135.0
+- ref: U3
+  x: 134.39
+  y: 121.57
+  rot: 180.0
+- ref: U4
+  x: 132.2
+  y: 129.97
+  rot: 90.0
+  side: back
+- ref: U5
+  x: 120.88
+  y: 130.32
+  rot: 90.0
+  side: back
+- ref: Y1
+  x: 117.43
+  y: 110.55
+  rot: 180.0
+copper_pours:
+- net: /VBAT
+  layers: [F&B.Cu, In2.Cu]
+- net: GND
+  layers: [B.Cu, F&B.Cu, F.Cu, In1.Cu]

@@ -1,0 +1,620 @@
+name: BeagleBoard PocketBeagle
+slug: beagleboard-pocketbeagle
+source: beagleboard/pocketbeagle
+format: kicad_legacy
+description: OSD3358 SiP (AM3358 + 512MB DDR3), microSD
+tags: [sbc]
+key_ics: [OSD3358]
+outline:
+  width_mm: 55.0
+  height_mm: 35.0
+design_rules:
+  layers: 4
+  min_trace: 0.152mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+  voltage: 6.3V
+  decouples: U2
+- ref: C2
+  value: 18pF
+  footprint: '0402'
+  voltage: 50V
+- ref: C3
+  value: 18pF
+  footprint: '0402'
+  voltage: 50V
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+  voltage: 6.3V
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  voltage: 6.3V
+  decouples: U1
+- ref: C6
+  value: 10uF
+  footprint: '0603'
+  voltage: 10V
+  decouples: U1
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  voltage: 6.3V
+- ref: LED1
+  value: PWR
+  footprint: '0603'
+- ref: P1
+  value: 2x18 header
+  footprint: TH-2X18-(35MIL-DIA)-W_O-SILK
+- ref: P2
+  value: 2x18 header
+  footprint: TH-2X18-(35MIL-DIA)-W_O-SILK
+- ref: R1
+  value: 1kohm
+  footprint: '0402'
+  pulldown: /N$4
+- ref: R10
+  value: 10kohm
+  footprint: RN0804
+- ref: R11
+  value: 10kohm
+  footprint: RN0804
+- ref: R12
+  value: 10kohm
+  footprint: '0402'
+  pulldown: /JTAG_TRST#
+- ref: R2
+  value: 1Mohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R3
+  value: 10kohm
+  footprint: '0402'
+  pulldown: /N$22
+- ref: R4
+  value: 1kohm
+  footprint: RN0804
+- ref: R5
+  value: 10kohm
+  footprint: RN0804
+- ref: R6
+  value: 100kohm
+  footprint: RN0804
+- ref: R7
+  value: 100kohm
+  footprint: RN0804
+- ref: R8
+  value: 100kohm
+  footprint: RN0804
+- ref: R9
+  value: 100kohm
+  footprint: RN0804
+- ref: SW1
+  value: POWER
+  footprint: MINI_PUSHBUTTON
+- ref: U1
+  value: OSD3358-512M-BSM
+  footprint: OSD335X-BGA-256
+- ref: U2
+  value: SN74LVC1G07DCK
+  footprint: SC70(TI-DCK)
+- ref: U3
+  value: TPD4S012DRY
+  footprint: SON-6(TI)-DRY
+- ref: USR0
+  value: LTST-C191TBKT
+  footprint: '0603'
+- ref: USR1
+  value: LTST-C191TBKT
+  footprint: '0603'
+- ref: USR2
+  value: LTST-C191TBKT
+  footprint: '0603'
+- ref: USR3
+  value: LTST-C191TBKT
+  footprint: '0603'
+- ref: X1
+  value: 10118192-0001LF
+  footprint: 10118192-0001LF(MICRO-USB-B-AMPHENOL-FCI)
+- ref: X2
+  value: MICROSD
+  footprint: MICROSD
+- ref: Y1
+  value: 24 MHz
+  footprint: CRYSTAL
+nets:
+- name: /(U1.A1)PWM0A
+  pins: [P1.36, U1.A1]
+- name: /(U1.A10)I2C2.SCL
+  pins: [P1.28, U1.A10]
+- name: /(U1.A11)I2C1.SDA
+  pins: [P2.11, U1.A11]
+- name: /(U1.A12)UART0.RX
+  pins: [P1.32, U1.A12]
+- name: /(U1.A13)SPI0.CLK
+  pins: [P1.8, U1.A13]
+- name: /(U1.A14)SPI0.CS
+  pins: [P1.6, U1.A14]
+- name: /(U1.A15)MMC0.D1
+  pins: [R11.6, U1.A15, X2.8]
+- name: /(U1.A16)MMC0.D0
+  pins: [R11.5, U1.A16, X2.7]
+- name: /(U1.A2)PRU-0.1
+  pins: [P1.33, U1.A2]
+- name: /(U1.A3)PRU-0.4
+  pins: [P1.31, U1.A3]
+- name: /(U1.A4)SPI1.CS
+  pins: [P2.31, U1.A4]
+- name: /(U1.A8)AIN0~1.8V
+  pins: [P1.19, U1.A8]
+- name: /(U1.B1)PRU-0.3
+  pins: [P2.30, U1.B1]
+- name: /(U1.B10)I2C2.SDA
+  pins: [P1.26, U1.B10]
+- name: /(U1.B11)I2C1.SCL
+  pins: [P2.9, U1.B11]
+- name: /(U1.B12)UART0.TX
+  pins: [P1.30, U1.B12]
+- name: /(U1.B13)SPI0.MISO
+  pins: [P1.10, U1.B13]
+- name: /(U1.B14)SPI0.MOSI
+  pins: [P1.12, U1.B14]
+- name: /(U1.B15)MMC0.CLK
+  pins: [R10.4, U1.B15, X2.5]
+- name: /(U1.B16)MMC0.CMD
+  pins: [R10.3, U1.B16, X2.3]
+- name: /(U1.B2)PRU-0.2
+  pins: [P2.32, U1.B2]
+- name: /(U1.B3)PRU-0.5
+  pins: [P2.34, U1.B3]
+- name: /(U1.B4)PRU-0.16
+  pins: [P1.20, U1.B4]
+- name: /(U1.B6)AIN2~1.8V
+  pins: [P1.23, U1.B6]
+- name: /(U1.B7)VREF+
+  pins: [C7.1, P1.18, U1.A7, U1.B7]
+- name: /(U1.B8)AIN1~1.8V
+  pins: [P1.21, U1.B8]
+- name: /(U1.B9)VREF-
+  pins: [C7.2, P1.17, U1.A9, U1.B9]
+- name: /(U1.C12)SPI1.MISO
+  pins: [P2.27, U1.C12]
+- name: /(U1.C13)SPI1.MOSI
+  pins: [P2.25, U1.C13]
+- name: /(U1.C14)MMC0.CD
+  pins: [R11.7, U1.C14, X2.9]
+- name: /(U1.C15)MMC0.D3
+  pins: [R10.2, U1.C15, X2.2]
+- name: /(U1.C16)MMC0.D2
+  pins: [R10.1, U1.C16, X2.1]
+- name: /(U1.C3)PRU-0.6
+  pins: [P2.28, U1.C3]
+- name: /(U1.C4)PRU-0.7
+  pins: [P1.29, U1.C4]
+- name: /(U1.C5)SPI1.CLK
+  pins: [P2.29, U1.C5]
+- name: /(U1.C6)AIN3~1.8V
+  pins: [P1.25, U1.C6]
+- name: /(U1.C7)AIN4~1.8V
+  pins: [P1.27, U1.C7]
+- name: /(U1.C8)AIN5~1.8V
+  pins: [R5.1, R5.2, U1.C8]
+- name: /(U1.C9)AIN6~1.8V
+  pins: [R5.3, R5.4, U1.C9]
+- name: /(U1.E1)
+  pins: [P1.4, U1.E1]
+- name: /(U1.F1)
+  pins: [P1.35, U1.F1]
+- name: /(U1.F2)AIN6~3.3V
+  pins: [P1.2, R5.6, U1.F2]
+- name: /(U1.F3)AIN5~3.3V
+  pins: [P2.35, R5.7, U1.F3]
+- name: /(U1.G1)LCD.D2.B5
+  pins: [R9.6, U1.G1]
+- name: /(U1.G2)LCD.D1.B4
+  pins: [R9.7, U1.G2]
+- name: /(U1.G3)LCD.D0.B3
+  pins: [R9.8, U1.G3]
+- name: /(U1.H1)LCD.D5.G2
+  pins: [R8.3, U1.H1]
+- name: /(U1.H2)LCD.D4.B7
+  pins: [R8.4, U1.H2]
+- name: /(U1.H3)LCD.D3.B6
+  pins: [R9.5, U1.H3]
+- name: /(U1.J1)LCD.D8.G5
+  pins: [R7.4, U1.J1]
+- name: /(U1.J2)LCD.D7.G4
+  pins: [R8.1, U1.J2]
+- name: /(U1.J3)LCD.D6.G3
+  pins: [R8.2, U1.J3]
+- name: /(U1.K1)LCD.D11.R3
+  pins: [R7.1, U1.K1]
+- name: /(U1.K14)USBC.ID
+  pins: [U1.K14, U3.3, X1.ID]
+- name: /(U1.K15)USBC.D+
+  pins: [U1.K15, U3.1, X1.D+]
+- name: /(U1.K16)USBC.D-
+  pins: [U1.K16, U3.2, X1.D-]
+- name: /(U1.K2)LCD.D10.G7
+  pins: [R7.2, U1.K2]
+- name: /(U1.K3)LCD.D9.G6
+  pins: [R7.3, U1.K3]
+- name: /(U1.L1)LCD.D14.R6
+  pins: [R6.2, U1.L1]
+- name: /(U1.L14)USB1.ID
+  pins: [P1.13, U1.L14]
+- name: /(U1.L15)USB1.D+
+  pins: [P1.11, U1.L15]
+- name: /(U1.L16)USB1.D-
+  pins: [P1.9, U1.L16]
+- name: /(U1.L2)LCD.D13.R5
+  pins: [R6.3, U1.L2]
+- name: /(U1.L3)LCD.D12.R4
+  pins: [R6.4, U1.L3]
+- name: /(U1.M14)USB1.DRVVBUS
+  pins: [P1.3, U1.M14]
+- name: /(U1.M15)USB1.VBUS
+  pins: [P1.5, U1.M15]
+- name: /(U1.M2)EEPROM.WP
+  pins: [U1.M2, U1.N3]
+- name: /(U1.M3)LCD.D15.R7
+  pins: [R6.1, U1.M3]
+- name: /(U1.N13)AIN7~1.8V
+  pins: [P2.36, U1.N13]
+- name: /(U1.N14)
+  pins: [P2.8, U1.N14]
+- name: /(U1.P12)PWM1A
+  pins: [P2.1, U1.P12]
+- name: /(U1.P13)USR0
+  pins: [U1.P13, USR0.A]
+- name: /(U1.P14)USR3
+  pins: [U1.P14, USR3.A]
+- name: /(U1.P15)UART4.RX
+  pins: [P2.5, U1.P15]
+- name: /(U1.P5)GPIO-0.23
+  pins: [P2.3, U1.P5]
+- name: /(U1.P6)
+  pins: [P2.24, U1.P6]
+- name: /(U1.P7)PRU-0.15
+  pins: [P2.18, U1.P7]
+- name: /(U1.R11)RESET#
+  pins: [P2.26, U1.R11, U2.4]
+- name: /(U1.R13)
+  pins: [P2.10, U1.R13]
+- name: /(U1.R14)USR2
+  pins: [U1.R14, USR2.A]
+- name: /(U1.R15)
+  pins: [P2.4, U1.R15]
+- name: /(U1.R16)UART4.TX
+  pins: [P2.7, U1.R16]
+- name: /(U1.R5)GPIO-0.26
+  pins: [P1.34, U1.R5]
+- name: /(U1.R6)
+  pins: [P2.33, U1.R6]
+- name: /(U1.R7)
+  pins: [P2.20, U1.R7]
+- name: /(U1.T11)PWR.BTN
+  pins: [P2.12, SW1.3, SW1.4, U1.T11]
+- name: /(U1.T14)USR1
+  pins: [U1.T14, USR1.A]
+- name: /(U1.T15)
+  pins: [P2.6, U1.T15]
+- name: /(U1.T16)
+  pins: [P2.2, U1.T16]
+- name: /(U1.T5)
+  pins: [P2.19, U1.T5]
+- name: /(U1.T6)PRU-0.14
+  pins: [P2.22, U1.T6]
+- name: /(U1.T7)
+  pins: [P2.17, U1.T7]
+- name: /BAT.TEMP
+  pins: [P2.16, U1.N6]
+- name: /JTAG_TRST#
+  pins: [R12.2, U1.D3]
+- name: /N$1
+  pins: [R4.3, USR2.K]
+- name: /N$12
+  pins: [U1.D6, U1.D7]
+- name: /N$2
+  pins: [R4.4, USR3.K]
+- name: /N$22
+  pins: [R3.2, U1.M16]
+- name: /N$24
+  pins: [U1.N4, U1.N5]
+- name: /N$25
+  pins: [U1.L4, U1.M4]
+- name: /N$26
+  pins: [U1.D4, U1.E4]
+- name: /N$27
+  pins: [U1.N10, U1.N11]
+- name: /N$31
+  pins: [U1.C11, U1.D11]
+- name: /N$32
+  pins: [U1.C10, U1.D10]
+- name: /N$4
+  pins: [LED1.K, R1.2]
+- name: /N$5
+  pins: [R4.2, USR1.K]
+- name: /N$6
+  pins: [R4.1, USR0.K]
+- name: /OSC.GND
+  pins: [C2.1, C3.1, U1.N15]
+- name: /OSC.IN
+  pins: [C2.2, R2.2, U1.P16, Y1.2]
+- name: /OSC.OUT
+  pins: [C3.2, R2.1, U1.N16, Y1.1]
+- name: /PMIC_PGOOD
+  pins: [U1.N12, U1.P11, U2.2]
+- name: CGND
+  pins: [FB2.1, X1.CGND, X2.G1, X2.G2, X2.G3, X2.G4]
+- name: GND
+  pins:
+  - C1.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - FB2.2
+  - P1.15
+  - P1.16
+  - P1.22
+  - P2.15
+  - P2.21
+  - R1.1
+  - R12.1
+  - R3.1
+  - R4.5
+  - R4.6
+  - R4.7
+  - R4.8
+  - R5.5
+  - R5.8
+  - R6.5
+  - R6.6
+  - R6.8
+  - R7.5
+  - R7.6
+  - R7.7
+  - R7.8
+  - R8.6
+  - R8.7
+  - R8.8
+  - R9.1
+  - R9.2
+  - R9.3
+  - SW1.1
+  - SW1.2
+  - U1.D8
+  - U1.D9
+  - U1.E10
+  - U1.E11
+  - U1.E12
+  - U1.E5
+  - U1.E6
+  - U1.E7
+  - U1.E8
+  - U1.E9
+  - U1.F12
+  - U1.F5
+  - U1.G12
+  - U1.G5
+  - U1.H12
+  - U1.H13
+  - U1.H4
+  - U1.H5
+  - U1.J12
+  - U1.J13
+  - U1.J4
+  - U1.J5
+  - U1.K12
+  - U1.K5
+  - U1.L12
+  - U1.L5
+  - U1.M10
+  - U1.M11
+  - U1.M12
+  - U1.M5
+  - U1.M6
+  - U1.M7
+  - U1.M8
+  - U1.M9
+  - U1.N8
+  - U1.N9
+  - U2.3
+  - U3.4
+  - X1.GND
+  - X2.6
+- name: SYS_5V
+  pins: [P1.24, P2.13, U1.K6, U1.K7, U1.L6, U1.L7]
+- name: USB_DC
+  pins:
+  - C4.1
+  - FB1.2
+  - P1.7
+  - U1.J16
+  - U1.P9
+  - U1.R9
+  - U1.T9
+  - U3.6
+- name: VBUS.RAW
+  pins: [FB1.1, X1.VBUS]
+- name: VDD_1V8
+  pins:
+  - U1.F10
+  - U1.G10
+  - U1.H10
+  - U1.H11
+  - U1.J10
+  - U1.J11
+  - U1.K10
+  - U1.L10
+- name: VDD_3V3A
+  pins:
+  - U1.F8
+  - U1.F9
+  - U1.G8
+  - U1.G9
+  - U1.H7
+  - U1.H8
+  - U1.H9
+  - U1.J7
+  - U1.J8
+  - U1.J9
+  - U1.K8
+  - U1.K9
+  - U1.L8
+  - U1.L9
+- name: VDD_3V3AUX
+  pins: [LED1.A, U1.F11, U1.G11]
+- name: VDD_3V3B
+  pins:
+  - C5.1
+  - C6.1
+  - P1.14
+  - P2.23
+  - R10.5
+  - R10.6
+  - R10.7
+  - R10.8
+  - R11.2
+  - R11.3
+  - R11.4
+  - R6.7
+  - R8.5
+  - R9.4
+  - U1.F6
+  - U1.F7
+  - U1.G6
+  - U1.G7
+  - X2.4
+- name: VDD_5V
+  pins: [P1.1, U1.P10, U1.R10, U1.T10]
+- name: VDD_RTC
+  pins: [C1.1, U1.K11, U1.L11, U2.5]
+- name: VIN.BAT
+  pins: [P2.14, U1.N7, U1.P8, U1.R8, U1.T8]
+positions:
+- ref: C1
+  x: 124.68
+  y: 96.6
+  rot: 180.0
+- ref: C2
+  x: 131.42
+  y: 96.98
+  rot: 180.0
+- ref: C3
+  x: 131.42
+  y: 100.28
+  rot: 180.0
+- ref: C4
+  x: 129.76
+  y: 102.95
+  rot: 90.0
+- ref: C5
+  x: 156.74
+  y: 105.13
+  rot: 90.0
+- ref: C6
+  x: 155.9
+  y: 110.24
+  rot: 180.0
+- ref: C7
+  x: 167.56
+  y: 114.2
+- ref: LED1
+  x: 124.68
+  y: 95.07
+  rot: 90.0
+- ref: P1
+  x: 148.5
+  y: 117.7
+- ref: P2
+  x: 148.5
+  y: 92.3
+- ref: R1
+  x: 124.68
+  y: 93.55
+- ref: R10
+  x: 161.08
+  y: 95.83
+- ref: R11
+  x: 163.98
+  y: 95.83
+  rot: 180.0
+- ref: R12
+  x: 162.38
+  y: 113.89
+  rot: 180.0
+- ref: R2
+  x: 131.42
+  y: 98.63
+  rot: 90.0
+- ref: R3
+  x: 128.49
+  y: 105.87
+- ref: R4
+  x: 124.05
+  y: 116.03
+  rot: 180.0
+- ref: R5
+  x: 155.14
+  y: 97.36
+  rot: 270.0
+- ref: R6
+  x: 155.14
+  y: 100.94
+  rot: 270.0
+- ref: R7
+  x: 155.14
+  y: 103.38
+  rot: 270.0
+- ref: R8
+  x: 155.14
+  y: 105.82
+  rot: 270.0
+- ref: R9
+  x: 155.14
+  y: 108.25
+  rot: 90.0
+- ref: SW1
+  x: 129.26
+  y: 108.28
+- ref: U1
+  x: 143.1
+  y: 104.98
+  rot: 90.0
+- ref: U2
+  x: 124.68
+  y: 98.63
+  rot: 90.0
+- ref: U3
+  x: 131.03
+  y: 102.95
+  rot: 90.0
+- ref: USR0
+  x: 130.53
+  y: 112.6
+- ref: USR1
+  x: 128.24
+  y: 112.6
+- ref: USR2
+  x: 125.95
+  y: 112.6
+- ref: USR3
+  x: 123.67
+  y: 112.6
+- ref: X1
+  x: 122.45
+  y: 105.0
+  rot: 270.0
+- ref: X2
+  x: 158.46
+  y: 107.29
+- ref: Y1
+  x: 128.62
+  y: 98.63
+  rot: 90.0

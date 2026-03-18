@@ -1,0 +1,252 @@
+name: BioAmp EXG Pill
+slug: bioamp-exg-pill
+source: upsidedownlabs/BioAmp-EXG-Pill
+format: kicad7
+description: 'Biopotential analog frontend (25.4x10mm): TL074 quad op-amp instrumentation amplifier for ECG/EMG/EEG/EOG'
+tags: [biomedical, analog]
+key_ics: [TL074]
+outline:
+  width_mm: 25.4
+  height_mm: 10.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 47uF
+  footprint: 0805
+- ref: C2
+  value: 1nF
+  footprint: '0603'
+- ref: C3
+  value: 10uF
+  footprint: '0603'
+- ref: C4
+  value: 1nF
+  footprint: '0603'
+- ref: C5
+  value: BPFC_C
+  footprint: '0603'
+- ref: C6
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C7
+  value: 10uF
+  footprint: '0603'
+  decouples: U1
+- ref: J1
+  value: 1x3 header
+  footprint: 1X3
+- ref: J2
+  value: 1x3 header
+  footprint: 1X3
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-2
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-2
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+- ref: R10
+  value: 220kohm
+  footprint: '0603'
+- ref: R11
+  value: 0ohm
+  footprint: '0603'
+- ref: R12
+  value: BPFC_R
+  footprint: '0603'
+- ref: R13
+  value: 1Mohm
+  footprint: '0603'
+- ref: R14
+  value: 1Mohm
+  footprint: '0603'
+- ref: R2
+  value: 220kohm
+  footprint: '0603'
+- ref: R3
+  value: 1Mohm
+  footprint: '0603'
+- ref: R4
+  value: 220kohm
+  footprint: '0603'
+- ref: R5
+  value: 22kohm
+  footprint: '0603'
+- ref: R6
+  value: RG
+  footprint: '0603'
+- ref: R7
+  value: 22kohm
+  footprint: '0603'
+- ref: R8
+  value: 1Mohm
+  footprint: '0603'
+- ref: R9
+  value: 1Mohm
+  footprint: '0603'
+- ref: U1
+  value: op-amp
+  footprint: TSSOP-14
+nets:
+- name: DRL
+  pins: [J2.Pin_1, JP2.C, R11.1]
+- name: GND
+  pins: [C3.2, C6.1, C7.1, J1.Pin_2, R9.1, U1.V-]
+- name: IN+
+  pins: [C4.1, J2.Pin_2, R14.1, U1.+@5]
+- name: IN-
+  pins: [C4.2, J2.Pin_3, R13.2, U1.+@3]
+- name: Net-(C1-Pad2)
+  pins: [C1.2, R1.1]
+- name: Net-(C3-Pad1)
+  pins: [C3.1, R8.1, R9.2, U1.+@12]
+- name: Net-(JP1-Pad1)
+  pins: [JP1.A, R4.1]
+- name: Net-(JP2-Pad1)
+  pins: [JP2.A, R13.1]
+- name: Net-(JP2-Pad3)
+  pins: [JP2.B, R14.2]
+- name: Net-(R10-Pad2)
+  pins: [R10.2, R6.1, R7.1, U1.-@6]
+- name: Net-(R2-Pad1)
+  pins: [R2.1, R5.2, R6.2, U1.-@2]
+- name: Net-(R5-Pad1)
+  pins: [R5.1, R7.2, U1.1]
+- name: VCC
+  pins: [C6.2, C7.2, J1.Pin_3, R8.2, U1.V+]
+- name: ampRef
+  pins: [R11.2, R2.2, U1.+@10, U1.-@13, U1.14]
+- name: bpfIN
+  pins:
+  - C1.1
+  - C2.2
+  - C5.2
+  - R12.2
+  - R3.2
+  - R4.2
+  - U1.-@9
+- name: bpfOUT
+  pins:
+  - C2.1
+  - C5.1
+  - J1.Pin_1
+  - JP1.B
+  - R12.1
+  - R3.1
+  - U1.8
+- name: inaOUT
+  pins: [R1.2, R10.1, U1.7]
+positions:
+- ref: C1
+  x: 122.06
+  y: 90.91
+- ref: C2
+  x: 117.76
+  y: 93.24
+  rot: -90.0
+- ref: C3
+  x: 116.27
+  y: 96.58
+  rot: -90.0
+- ref: C4
+  x: 125.71
+  y: 91.05
+  rot: 180.0
+- ref: C5
+  x: 116.54
+  y: 92.44
+  rot: -90.0
+  side: back
+- ref: C6
+  x: 117.76
+  y: 96.59
+  rot: 90.0
+- ref: C7
+  x: 125.53
+  y: 98.19
+- ref: J1
+  x: 112.38
+  y: 91.94
+- ref: J2
+  x: 132.7
+  y: 91.93
+- ref: JP1
+  x: 117.35
+  y: 96.85
+  side: back
+- ref: JP2
+  x: 128.3
+  y: 95.15
+  rot: 90.0
+  side: back
+- ref: R1
+  x: 129.45
+  y: 90.66
+  rot: 180.0
+- ref: R10
+  x: 129.46
+  y: 92.16
+  rot: 180.0
+- ref: R11
+  x: 122.16
+  y: 98.21
+  rot: 180.0
+- ref: R12
+  x: 118.05
+  y: 92.43
+  rot: -90.0
+  side: back
+- ref: R13
+  x: 129.44
+  y: 95.15
+  rot: 180.0
+- ref: R14
+  x: 129.46
+  y: 93.65
+- ref: R2
+  x: 119.26
+  y: 96.59
+  rot: -90.0
+- ref: R3
+  x: 119.26
+  y: 93.24
+  rot: -90.0
+- ref: R4
+  x: 116.26
+  y: 93.24
+  rot: 90.0
+- ref: R5
+  x: 129.45
+  y: 96.64
+- ref: R6
+  x: 128.02
+  y: 91.7
+  rot: 180.0
+  side: back
+- ref: R7
+  x: 129.45
+  y: 98.14
+  rot: 180.0
+- ref: R8
+  x: 114.81
+  y: 93.25
+  rot: 90.0
+- ref: R9
+  x: 114.81
+  y: 96.6
+  rot: 90.0
+- ref: U1
+  x: 123.91
+  y: 94.66
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

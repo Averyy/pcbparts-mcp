@@ -1,0 +1,808 @@
+name: Seeed Wio LR1121
+slug: seeed-wio-lr1121
+source: Seeed-Studio/OPL_Kicad_Library
+format: kicad9
+description: Multi-band LoRa (LR1121), RF switch (SKY13373)
+tags: [lora]
+key_ics: [LR1121, SKY13373]
+outline:
+  width_mm: 17.0
+  height_mm: 12.0
+design_rules:
+  layers: 4
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 1.2pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013021'
+  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+- ref: C11
+  value: 1uF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302010270'
+  description: "SMD CAP Ceramic;1uF-6.3V-\xB120%-X5R;0201"
+  decouples: U3
+- ref: C12
+  value: 47pF
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '302012202'
+  description: SMD CAP Ceramic 47PF-25V-C0G/NP0;0201
+  decouples: U3
+- ref: C13
+  value: 100nF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302010271'
+  description: SMD CAP Ceramic 100nF-10V-10%-X5R;0201
+  decouples: U2
+- ref: C14
+  value: 3.3pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302011041'
+  description: "SMD CAP Ceramic 3.3pF-25V\xB10.1pF-NPO;0201"
+- ref: C15
+  value: 3.3pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302011041'
+  description: "SMD CAP Ceramic 3.3pF-25V\xB10.1pF-NPO;0201"
+- ref: C18
+  value: 1.5pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013025'
+  description: SMD CAP Ceramic 1.5PF-50V-0.1pF-NPO;0201
+- ref: C19
+  value: 1nF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302010389'
+  description: SMD CAP Ceramic 1nF-16V-10%-X7R;0201
+- ref: C2
+  value: 42pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013021'
+  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+- ref: C20
+  value: 1.5pF
+  footprint: '0201'
+  manufacturer: YAGEO
+- ref: C22
+  value: 1.2pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013023'
+  description: SMD CAP Ceramic 1.2PF-50V-0.1pF-NPO;0201
+- ref: C24
+  value: 3pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013021'
+  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+- ref: C25
+  value: 1pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302010274'
+  description: SMD CAP Ceramic;1pF-50V-0.25%-NPO;0201
+- ref: C26
+  value: 1pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302010274'
+  description: SMD CAP Ceramic;1pF-50V-0.25%-NPO;0201
+- ref: C27
+  value: 33pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013021'
+  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+- ref: C28
+  value: 1.3pF
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '302013028'
+  description: SMD CAP Ceramic 1.3pF-50V-0.1pF-NPO;0201
+- ref: C29
+  value: 1.6pF
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '302013029'
+  description: SMD CAP Ceramic 1.6pF-50V-0.1pF-NPO;0201
+- ref: C3
+  value: 6.8pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013021'
+  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+- ref: C30
+  value: 0.8pF
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '302011837'
+  description: SMD CAP Ceramic 0.8PF-50V-0.01pF-C0G/NP0;0201
+- ref: C31
+  value: 470nF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302012521'
+  description: SMD CAP Ceramic;470nF-6.3V;0201
+- ref: C32
+  value: 1nF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302010389'
+  description: SMD CAP Ceramic 1nF-16V-10%-X7R;0201
+- ref: C33
+  value: 1nF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302010389'
+  description: SMD CAP Ceramic 1nF-16V-10%-X7R;0201
+- ref: C34
+  value: 10pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302010389'
+  description: SMD CAP Ceramic 1nF-16V-10%-X7R;0201
+- ref: C35
+  value: 470nF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302012521'
+  description: SMD CAP Ceramic;470nF-6.3V;0201
+- ref: C36
+  value: 100nF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302010271'
+  description: SMD CAP Ceramic 100nF-10V-10%-X5R;0201
+- ref: C37
+  value: 6.8pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013021'
+  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+- ref: C38
+  value: 6.8pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013021'
+  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+- ref: C39
+  value: 47pF
+  footprint: '0201'
+  manufacturer: YAGEO
+- ref: C4
+  value: 6.8pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013021'
+  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+- ref: C40
+  value: 6.8pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013021'
+  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+- ref: C41
+  value: 47pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013021'
+  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+- ref: C42
+  value: 100nF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302010271'
+  description: SMD CAP Ceramic 100nF-10V-10%-X5R;0201
+- ref: C43
+  value: 33pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013021'
+  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+- ref: C5
+  value: 1.2pF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302013023'
+  description: SMD CAP Ceramic 1.2PF-50V-0.1pF-NPO;0201
+- ref: C6
+  value: 2.2nF
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '302010426'
+  description: SMD CAP 2.2nF-10V-10%-X7R;0201
+- ref: C7
+  value: 47pF
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '302012202'
+  description: SMD CAP Ceramic 47PF-25V-C0G/NP0;0201
+- ref: C8
+  value: 47pF
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '302012202'
+  description: SMD CAP Ceramic 47PF-25V-C0G/NP0;0201
+- ref: C9
+  value: 3pF
+  footprint: '0201'
+  manufacturer: YAGEO
+- ref: FB1
+  value: 120ohm
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '303030259'
+  description: SMD Ferrite Bead 120R-200mA;0201
+- ref: J1
+  value: '818000500'
+  footprint: U-FL4P-SMD-1
+  manufacturer: "\u7535\u8FDE"
+  mpn: '320080244'
+  description: SMD IPEX-GEN4 Female CONN;4P-L1.7*W1.7*H0.6mm
+- ref: J2
+  value: '818000500'
+  footprint: U-FL4P-SMD-1
+  manufacturer: "\u7535\u8FDE"
+  mpn: '320080244'
+  description: SMD IPEX-GEN4 Female CONN;4P-L1.7*W1.7*H0.6mm
+- ref: L1
+  value: 47nH
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: '303010245'
+  description: SMD Inductor 3.3nH-0.2nH-450mA;0201
+- ref: L10
+  value: 3.6nH
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '303011721'
+  description: SMD Inductor;3.6nH-0.1H-400mA;0201
+- ref: L11
+  value: 3.6nH
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '303011721'
+  description: SMD Inductor;3.6nH-0.1H-400mA;0201
+- ref: L12
+  value: 10uH
+  footprint: '0201'
+  manufacturer: TDK
+  mpn: '303011378'
+  description: SMD Inductor 10uH-20%-60mA;0603
+- ref: L13
+  value: 47nH
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '303010245'
+  description: SMD Inductor 3.3nH-0.2nH-450mA;0201
+- ref: L2
+  value: 3.3nH
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '303010245'
+  description: SMD Inductor 3.3nH-0.2nH-450mA;0201
+- ref: L3
+  value: 8.2nH
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '303011716'
+  description: SMD Inductor;8.2nH-3%-250mA;0201
+- ref: L5
+  value: 9.1nH
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '303011719'
+  description: SMD Inductor;9.1nH-3%-250mA;0201
+- ref: L6
+  value: 2.7nH
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '303010094'
+  description: SMD Inductor;2.7nH-0.1nH-500mA;0201
+- ref: L7
+  value: 6.8nH
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '303010171'
+  description: SMD Inductor 6.8nH-3%-300mA;0201
+- ref: L8
+  value: 6.8nH
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '303010171'
+  description: SMD Inductor 6.8nH-3%-300mA;0201
+- ref: L9
+  value: 47nH
+  footprint: '0201'
+  manufacturer: Murata
+  mpn: '303011717'
+  description: SMD Inductor;47nH-3%-100mA;0201
+- ref: OSC1
+  value: 32MHz
+  footprint: X4_SMD_2
+  manufacturer: KDS
+  mpn: '306020441'
+  description: SMD Oscillator TCXO;32MHz-1.5ppm-L2.5*W2.0*H0.8mm
+- ref: R1
+  value: 200ohm
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '301013351'
+  description: SMD RES 200R-1%-1/20W;0201
+- ref: R2
+  value: 100ohm
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '301010765'
+  description: "SMD RES 100K-\xB11%-1/20W;0201"
+- ref: R3
+  value: 100ohm
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '301010765'
+  description: "SMD RES 100K-\xB11%-1/20W;0201"
+- ref: R4
+  value: 220ohm
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '301010765'
+  description: "SMD RES 100K-\xB11%-1/20W;0201"
+- ref: R7
+  value: 100kohm
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '301010765'
+  description: "SMD RES 100K-\xB11%-1/20W;0201"
+  pullup: LR1121_RSTN
+- ref: R8
+  value: 0ohm
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '301013351'
+  description: SMD RES 200R-1%-1/20W;0201
+- ref: R9
+  value: 0ohm
+  footprint: '0201'
+  manufacturer: YAGEO
+  mpn: '301013351'
+  description: SMD RES 200R-1%-1/20W;0201
+- ref: SH1
+  value: RF Shielding
+  footprint: ''
+  description: DIP PoE module;4+3P-2.54mm-L53*W14*H12.58mm
+- ref: U1
+  value: SKY13373-460
+  footprint: QFN12_0D5
+  manufacturer: SKYWORKS
+  mpn: '310060742'
+  description: SMD IC RF Switch;0.1GHz-8GHz SP3T;QFN-12 2*2*0.55 mm
+- ref: U2
+  value: LR1121
+  footprint: QFN32_0D5
+  manufacturer: Semtech
+  mpn: TMP-874
+  description: SMD IC LoRa Edge;QFN32;5*5mm
+- ref: U3
+  value: LR1121 PIN OUT
+  footprint: MODULE24_1D27
+  mpn: TMP-881
+  description: SMD Lora Module;
+- ref: X1
+  value: 32.768kHz
+  footprint: X2_SMD
+  manufacturer: KDS
+  mpn: '306011285'
+  description: SMD Crystal 32.768KHz-9pF-20ppm-80KR;2P-2.0*1.2*0.6mm
+nets:
+- name: 2.4G_RF
+  pins: [C43.2, U3.2]
+- name: GND_POWER
+  pins:
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C18.2
+  - C19.2
+  - C22.2
+  - C25.2
+  - C26.2
+  - C28.2
+  - C29.2
+  - C3.2
+  - C30.2
+  - C31.2
+  - C32.2
+  - C33.2
+  - C35.2
+  - C36.2
+  - C37.2
+  - C38.2
+  - C4.2
+  - C40.2
+  - C42.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - J1.2
+  - J1.3
+  - J1.4
+  - J2.2
+  - J2.3
+  - J2.4
+  - OSC1.1
+  - OSC1.2
+  - U1.10
+  - U1.12
+  - U1.13
+  - U1.2
+  - U1.7
+  - U1.8
+  - U2.13
+  - U2.33
+  - U3.1
+  - U3.10
+  - U3.13
+  - U3.15
+  - U3.16
+  - U3.17
+  - U3.18
+  - U3.19
+  - U3.22
+  - U3.24
+  - U3.3
+  - U3.9
+- name: HP_LF
+  pins: [C1.1, L1.2, L2.1, R1.2, U2.32]
+- name: LP_LF
+  pins: [C9.1, L13.2, L6.1, U2.31]
+- name: LR1121_BUSY
+  pins: [U2.25, U3.8]
+- name: LR1121_DIO8
+  pins: [U2.10, U3.11]
+- name: LR1121_DIO9_INT
+  pins: [U2.9, U3.12]
+- name: LR1121_RSTN
+  pins: [C42.1, R7.2, U2.6, U3.14]
+- name: LR1121_SPI_MISO
+  pins: [U2.21, U3.7]
+- name: LR1121_SPI_MOSI
+  pins: [U2.22, U3.6]
+- name: LR1121_SPI_NSS
+  pins: [U2.24, U3.4]
+- name: LR1121_SPI_SCK
+  pins: [U2.23, U3.5]
+- name: MCU_DIO5
+  pins: [R3.1, U2.20]
+- name: MCU_DIO6
+  pins: [R2.1, U2.19]
+- name: N18704063
+  pins: [C25.1, U2.7, X1.1]
+- name: N18704080
+  pins: [C26.1, U2.8, X1.2]
+- name: N18704168
+  pins: [L12.2, U2.14]
+- name: N18704177
+  pins: [C31.1, L12.1, U2.12]
+- name: N18704981
+  pins: [C37.1, C9.2, L6.2, L7.1]
+- name: N18704990
+  pins: [C1.2, C3.1, L2.2, L3.1]
+- name: N18705097
+  pins: [C2.1, C4.1, L3.2]
+- name: N18705182
+  pins: [C38.1, C39.1, L7.2]
+- name: N18705449
+  pins: [C18.1, C39.2, U1.3]
+- name: N18705460
+  pins: [C2.2, C5.1, U1.1]
+- name: N18706098
+  pins: [C20.2, C40.1, C41.1, L9.2]
+- name: N18706198
+  pins: [C41.2, U1.9]
+- name: N18706539
+  pins: [C24.1, C29.1, L10.2, L11.1]
+- name: N18706650
+  pins: [C24.2, C27.1, C30.1, C43.1, L11.2]
+- name: N18706671
+  pins: [C27.2, J2.1]
+- name: N18712116
+  pins: [C14.1, L5.1, U1.11]
+- name: N18712319
+  pins: [C36.1, FB1.2, OSC1.4]
+- name: N18712325
+  pins: [C34.1, OSC1.3]
+- name: N18712327
+  pins: [C34.2, R4.1]
+- name: N18713044
+  pins: [C15.1, L5.2, R8.1, R9.1]
+- name: N18751757
+  pins: [J1.1, R8.2]
+- name: RFIO_HF
+  pins: [C28.1, L10.1, U2.26]
+- name: RFI_N
+  pins: [C22.1, L8.2, L9.1, U2.29]
+- name: RFI_P
+  pins: [C20.1, L8.1, U2.30]
+- name: RFSW0_V1
+  pins: [C33.1, R3.2, U1.4]
+- name: RFSW1_V2
+  pins: [C32.1, R2.2, U1.5]
+- name: RFSW_VDD
+  pins: [C19.1, U1.6]
+- name: SUBG_RF
+  pins: [R9.2, U3.23]
+- name: VDD_RF
+  pins:
+  - C11.1
+  - C12.1
+  - C13.1
+  - R7.1
+  - U2.15
+  - U2.2
+  - U3.20
+  - U3.21
+- name: VR_PA
+  pins:
+  - C6.1
+  - C7.1
+  - C8.1
+  - L1.1
+  - L13.1
+  - R1.1
+  - U2.1
+- name: VTCXO
+  pins: [C35.1, FB1.1, U2.3]
+- name: XTA
+  pins: [R4.2, U2.4]
+positions:
+- ref: C1
+  x: 153.59
+  y: 97.44
+- ref: C11
+  x: 150.41
+  y: 97.39
+- ref: C12
+  x: 150.41
+  y: 97.95
+- ref: C13
+  x: 145.03
+  y: 103.27
+  rot: 180.0
+- ref: C14
+  x: 158.85
+  y: 101.06
+- ref: C15
+  x: 158.85
+  y: 99.4
+- ref: C18
+  x: 156.94
+  y: 99.4
+- ref: C19
+  x: 155.32
+  y: 101.96
+  rot: -90.0
+- ref: C2
+  x: 156.49
+  y: 98.49
+- ref: C20
+  x: 152.6
+  y: 100.58
+- ref: C22
+  x: 153.13
+  y: 101.71
+- ref: C24
+  x: 153.92
+  y: 104.71
+- ref: C25
+  x: 146.09
+  y: 98.0
+  rot: -90.0
+- ref: C26
+  x: 146.09
+  y: 96.73
+  rot: 90.0
+- ref: C27
+  x: 155.54
+  y: 104.07
+- ref: C28
+  x: 152.23
+  y: 102.42
+  rot: 55.0
+- ref: C29
+  x: 153.46
+  y: 103.32
+  rot: 55.0
+- ref: C3
+  x: 154.41
+  y: 97.74
+  rot: 90.0
+- ref: C30
+  x: 154.7
+  y: 104.33
+  rot: -90.0
+- ref: C31
+  x: 145.01
+  y: 99.57
+  rot: 180.0
+- ref: C32
+  x: 146.59
+  y: 104.73
+  rot: 180.0
+- ref: C33
+  x: 151.14
+  y: 104.73
+- ref: C34
+  x: 149.33
+  y: 96.43
+  rot: -90.0
+- ref: C35
+  x: 150.41
+  y: 96.83
+- ref: C36
+  x: 150.01
+  y: 95.97
+  rot: -90.0
+- ref: C37
+  x: 153.67
+  y: 99.6
+  rot: -90.0
+- ref: C38
+  x: 155.2
+  y: 99.61
+  rot: -90.0
+- ref: C39
+  x: 155.95
+  y: 99.4
+- ref: C4
+  x: 155.75
+  y: 98.23
+  rot: 90.0
+- ref: C40
+  x: 153.88
+  y: 101.37
+  rot: -90.0
+- ref: C41
+  x: 153.6
+  y: 100.58
+- ref: C42
+  x: 145.96
+  y: 95.76
+- ref: C43
+  x: 155.29
+  y: 104.33
+  rot: -90.0
+- ref: C5
+  x: 157.77
+  y: 98.9
+- ref: C6
+  x: 151.22
+  y: 97.84
+  rot: 90.0
+- ref: C7
+  x: 152.38
+  y: 98.74
+- ref: C8
+  x: 152.66
+  y: 96.39
+- ref: C9
+  x: 152.91
+  y: 99.3
+- ref: FB1
+  x: 150.62
+  y: 95.97
+  rot: 90.0
+- ref: J1
+  x: 158.67
+  y: 95.71
+  rot: -90.0
+- ref: J2
+  x: 158.71
+  y: 104.71
+  rot: 180.0
+- ref: L1
+  x: 152.66
+  y: 97.48
+  rot: -90.0
+- ref: L10
+  x: 152.71
+  y: 103.06
+  rot: -35.0
+- ref: L11
+  x: 153.92
+  y: 104.07
+- ref: L12
+  x: 145.01
+  y: 101.42
+  rot: -90.0
+- ref: L13
+  x: 152.12
+  y: 99.6
+  rot: -90.0
+- ref: L2
+  x: 153.59
+  y: 97.99
+- ref: L3
+  x: 154.97
+  y: 98.49
+- ref: L5
+  x: 158.6
+  y: 100.17
+  rot: 90.0
+- ref: L6
+  x: 152.91
+  y: 99.86
+- ref: L7
+  x: 154.44
+  y: 99.4
+- ref: L8
+  x: 152.35
+  y: 101.34
+  rot: -90.0
+- ref: L9
+  x: 153.13
+  y: 101.15
+- ref: OSC1
+  x: 147.78
+  y: 96.84
+  rot: -90.0
+- ref: R1
+  x: 151.93
+  y: 97.74
+  rot: -90.0
+- ref: R2
+  x: 147.86
+  y: 104.73
+  rot: 180.0
+- ref: R3
+  x: 149.13
+  y: 104.73
+- ref: R4
+  x: 149.33
+  y: 97.65
+  rot: -90.0
+- ref: R7
+  x: 144.86
+  y: 95.76
+- ref: R8
+  x: 158.78
+  y: 98.45
+  rot: 45.0
+- ref: R9
+  x: 158.42
+  y: 98.45
+  rot: 135.0
+- ref: U1
+  x: 156.96
+  y: 101.22
+  rot: -90.0
+- ref: U2
+  x: 148.75
+  y: 101.37
+  rot: 180.0
+- ref: U3
+  x: 150.13
+  y: 100.25
+  rot: 90.0
+- ref: X1
+  x: 145.07
+  y: 97.37
+  rot: 90.0
+copper_pours:
+- net: GND_POWER
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]

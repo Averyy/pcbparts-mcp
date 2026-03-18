@@ -1,0 +1,181 @@
+name: Linux-CH32V003
+slug: linux-ch32v003
+source: tvlad1234/linux-ch32v003
+format: kicad6
+description: Minimal CH32V003F4P6 RISC-V board, 24 MHz crystal
+tags: [power-supply]
+key_ics: [CH32V003f4p6, CH330N, AMS1117-3.3]
+outline:
+  width_mm: 36.07
+  height_mm: 20.95
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: C
+  footprint: 0805
+- ref: C2
+  value: C
+  footprint: 0805
+  decouples: U2
+- ref: C3
+  value: C
+  footprint: 0805
+  decouples: U4
+- ref: C4
+  value: C
+  footprint: 0805
+  decouples: U3
+- ref: C5
+  value: C
+  footprint: 0805
+  decouples: U4
+- ref: J1
+  value: 1x7 header
+  footprint: 1X7
+- ref: J2
+  value: 1x2 header
+  footprint: 1X2
+- ref: J3
+  value: USB Micro-B
+  footprint: USB_Micro-B_Amphenol_10104110_Horizontal
+- ref: SW1
+  value: Reset
+  footprint: SW_SPST_B3U-1000P
+- ref: U1
+  value: CH32V003f4p6
+  footprint: TSSOP-20
+- ref: U2
+  value: 8 megabytes SPI PSRAM
+  footprint: SOIC-8
+- ref: U3
+  value: CH330N
+  footprint: SOIC-8
+- ref: U4
+  value: AMS1117-3.3
+  footprint: SOT-223-3_TabPin2
+nets:
+- name: +3.3V
+  pins:
+  - C2.1
+  - C3.1
+  - C4.1
+  - J1.Pin_4
+  - U1.VDD
+  - U2.VCC
+  - U3.V3
+  - U3.VCC
+  - U4.VO@2
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - J1.Pin_3
+  - J1.Pin_6
+  - J2.Pin_1
+  - J3.GND
+  - J3.Shield@6
+  - SW1.2
+  - U1.vss
+  - U2.VSS
+  - U3.GND
+  - U4.GND
+- name: LINUX_RX
+  pins: [U1.PD6_A6_UART_RX, U3.TXD]
+- name: LINUX_TX
+  pins: [U1.PD5_A5_UART_TX, U3.RXD]
+- name: MISO
+  pins: [J1.Pin_7, U1.PC7_MISO, U2.SO/SIO]
+- name: MOSI
+  pins: [J1.Pin_2, U1.PC6_MOSI, U2.SI/SIO]
+- name: Net-(J3-D+)
+  pins: [J3.D+, U3.UD+]
+- name: Net-(J3-D-)
+  pins: [J3.D-, U3.UD-]
+- name: Net-(U1-PD7_NRST_T2CH4)
+  pins: [C1.1, SW1.1, U1.PD7_NRST_T2CH4]
+- name: PSRAM_CS
+  pins: [U1.PD2_A4_T1CH2, U2.nCE]
+- name: SCK
+  pins: [J1.Pin_5, U1.PC5_SCK, U2.SCLK]
+- name: SD_CS
+  pins: [J1.Pin_1, U1.PC0_T2CH3]
+- name: SWIO
+  pins: [J2.Pin_2, U1.SWIO&PD1_T1CH3N]
+- name: VBUS
+  pins: [C5.1, J3.VBUS, U4.VI]
+positions:
+- ref: C1
+  x: 151.56
+  y: 89.85
+  rot: 180.0
+  side: back
+- ref: C2
+  x: 137.61
+  y: 96.96
+  rot: 90.0
+  side: back
+- ref: C3
+  x: 163.24
+  y: 90.87
+  side: back
+- ref: C4
+  x: 155.32
+  y: 104.01
+  rot: -90.0
+  side: back
+- ref: C5
+  x: 167.83
+  y: 100.77
+  side: back
+- ref: J1
+  x: 151.85
+  y: 103.95
+  rot: -90.0
+- ref: J2
+  x: 143.96
+  y: 90.1
+  rot: -90.0
+  side: back
+- ref: J3
+  x: 164.08
+  y: 105.5
+  rot: 180.0
+  side: back
+- ref: SW1
+  x: 156.66
+  y: 89.85
+  side: back
+- ref: U1
+  x: 150.31
+  y: 95.57
+  rot: 180.0
+  side: back
+- ref: U2
+  x: 141.67
+  y: 96.58
+  rot: -90.0
+  side: back
+- ref: U3
+  x: 157.8
+  y: 97.98
+  rot: 90.0
+  side: back
+- ref: U4
+  x: 165.42
+  y: 95.69
+  rot: 180.0
+  side: back
+copper_pours:
+- net: GND
+  layers: [B.Cu]
+- net: ''
+  layers: [B.Cu]
+  keepout: true

@@ -1,0 +1,366 @@
+name: SparkFun u-blox MAX-M10S
+slug: sparkfun-u-blox-max-m10s
+source: sparkfun/SparkFun_u-blox_MAX-M10S
+format: eagle
+description: u-blox MAX-M10S ultra-low-power L1 GNSS, Qwiic I2C
+tags: [gps-gnss]
+key_ics: [MAX-M10S]
+outline:
+  width_mm: 38.1
+  height_mm: 30.48
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 7mil
+  min_drill: 0.3mm
+  min_via: 7mil
+components:
+- ref: B1
+  value: 6.8MM_COIN_CELL
+  footprint: ML414H_IV01E
+  prod_id: BATT-14267
+  description: SEIKO ML414H-IV01E Reflowable Lithium Battery
+- ref: C1
+  value: 47pF
+  footprint: '0402'
+  prod_id: CAP-15063
+- ref: C3
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+- ref: D1
+  value: yellow LED
+  footprint: '0603'
+  prod_id: DIO-09003
+  description: Yellow SMD LED
+- ref: D10
+  value: PESD0402
+  footprint: '0402'
+  prod_id: DIO-15359
+  description: ESD protection diode
+- ref: D2
+  value: 0.5A/40V/420mV
+  footprint: SOD-323
+  prod_id: DIO-10955
+  description: Schottky diode
+- ref: E1
+  value: SMA antenna
+  footprint: SMA-EDGE
+  prod_id: CONN-08289
+  description: SMA Antenna Connector w/ Ground
+- ref: FB2
+  value: 2.66ohm
+  footprint: '0402'
+  prod_id: NDUC-15072
+- ref: J1
+  value: USB-to-Serial
+  footprint: 1X06
+  description: 6-pin header connection for use with the "FTDI BASIC" pinout - TARGET SIDE.
+- ref: J2
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+- ref: J3
+  value: 1x4 header
+  footprint: 1X04
+- ref: J4
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+- ref: J5
+  value: 1x8 header
+  footprint: 1X08
+- ref: JP5
+  value: solder jumper (NO)
+  footprint: SJ-3
+  description: Normally open jumper
+- ref: LED2
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-00819
+  description: Red SMD LED
+- ref: MEAS
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: PPS_LED
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: PWR
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R11
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R14
+  value: 33ohm
+  footprint: '0402'
+  prod_id: RES-14883
+- ref: R18
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R19
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R2
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R20
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R21
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R3
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R4
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R5
+  value: 3.3kohm
+  footprint: '0603'
+  prod_id: RES-07851
+- ref: R6
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R7
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R8
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: U1
+  value: MAX-M10S
+  footprint: MAX-M10S
+  prod_id: IC-15926
+nets:
+- name: '!RESET'
+  pins: [J5.8, R19.2]
+- name: '!SAFE'
+  pins: [J5.3, R20.2]
+- name: 3.3V
+  pins:
+  - D2.A
+  - J2.2
+  - J3.VCC
+  - J4.2
+  - J5.2
+  - JP5.2
+  - MEAS.2
+  - PWR.2
+  - U1.VCC
+  - U1.V_IO
+  class: 3.3V
+  trace_width: '0.508'
+- name: ANT_VCC
+  pins: [C1.1, FB2.2, R14.1]
+- name: BACKUP
+  pins: [B1.+, C3.1, R5.1, U1.V_BKCP]
+- name: EXTINT_LV
+  pins: [R18.1, U1.EXTINT]
+- name: GND
+  pins:
+  - B1.-
+  - C1.2
+  - C3.2
+  - D1.C
+  - D10.2
+  - E1.GND
+  - J1.GND
+  - J2.1
+  - J3.GND
+  - J4.1
+  - J5.1
+  - LED2.C
+  - U1.GND
+- name: GPS_RF
+  pins: [D10.1, E1.SIGNAL, FB2.1, U1.RF_IN]
+  class: RF
+  trace_width: '0.889'
+- name: INT
+  pins: [J5.7, R18.2]
+- name: N$1
+  pins: [J1.VCC, MEAS.1]
+  class: 3.3V
+  trace_width: '0.508'
+- name: N$10
+  pins: [LED2.A, R1.1]
+- name: N$17
+  pins: [PWR.1, R1.2]
+- name: N$2
+  pins: [D1.A, R11.1]
+- name: N$4
+  pins: [PPS_LED.1, R11.2]
+- name: N$5
+  pins: [JP5.1, R8.2]
+- name: N$6
+  pins: [D2.C, R5.2]
+- name: N$8
+  pins: [JP5.3, R7.2]
+- name: PPS
+  pins: [J5.6, PPS_LED.2, R21.2]
+- name: PPS_LV
+  pins: [R21.1, U1.TIMEPULSE]
+- name: RST_LV
+  pins: [R19.1, U1.!RESET!]
+- name: RXI
+  pins: [J1.TXO, J5.5, R6.2]
+- name: RXLV
+  pins: [R6.1, U1.RX]
+- name: SAFE_LV
+  pins: [R20.1, U1.!SAFEBOOT!]
+- name: SCL
+  pins: [J2.4, J3.SCL, J4.4, R4.2, R7.1]
+- name: SCL_LV
+  pins: [R4.1, U1.SCL]
+- name: SDA
+  pins: [J2.3, J3.SDA, J4.3, R2.2, R8.1]
+- name: SDA_LV
+  pins: [R2.1, U1.SDA]
+- name: TXLV
+  pins: [R3.1, U1.TX]
+- name: TXO
+  pins: [J1.RXI, J5.4, R3.2]
+- name: VCC_RF
+  pins: [R14.2, U1.VCC_RF]
+positions:
+- ref: B1
+  x: 6.35
+  y: 21.59
+  rot: 180.0
+- ref: C1
+  x: 25.4
+  y: 14.1
+- ref: C3
+  x: 6.35
+  y: 13.97
+- ref: D1
+  x: 20.32
+  y: 25.4
+- ref: D10
+  x: 26.0
+  y: 12.5
+  rot: 90.0
+- ref: D2
+  x: 6.35
+  y: 17.78
+- ref: E1
+  x: 34.42
+  y: 15.24
+  rot: 270.0
+- ref: FB2
+  x: 24.9
+  y: 12.5
+  rot: 90.0
+- ref: J1
+  x: 16.51
+  y: 1.27
+- ref: J2
+  x: 10.16
+  y: 5.08
+- ref: J3
+  x: 22.86
+  y: 29.21
+  rot: 180.0
+- ref: J4
+  x: 10.16
+  y: 25.4
+  rot: 180.0
+- ref: J5
+  x: 1.27
+  y: 24.13
+  rot: 270.0
+- ref: JP5
+  x: 15.24
+  y: 7.62
+  rot: 270.0
+- ref: LED2
+  x: 20.32
+  y: 22.86
+- ref: MEAS
+  x: 26.67
+  y: 5.08
+  rot: 90.0
+- ref: PPS_LED
+  x: 12.7
+  y: 25.4
+- ref: PWR
+  x: 12.7
+  y: 22.86
+- ref: R1
+  x: 16.51
+  y: 22.86
+  rot: 180.0
+- ref: R11
+  x: 16.51
+  y: 25.4
+  rot: 180.0
+- ref: R14
+  x: 25.4
+  y: 15.24
+  rot: 180.0
+- ref: R18
+  x: 11.43
+  y: 13.97
+  rot: 180.0
+- ref: R19
+  x: 11.43
+  y: 12.06
+  rot: 180.0
+- ref: R2
+  x: 30.48
+  y: 24.13
+  rot: 90.0
+- ref: R20
+  x: 26.67
+  y: 24.13
+  rot: 90.0
+- ref: R21
+  x: 11.43
+  y: 15.75
+  rot: 180.0
+- ref: R3
+  x: 11.43
+  y: 19.68
+  rot: 180.0
+- ref: R4
+  x: 28.57
+  y: 24.13
+  rot: 90.0
+- ref: R5
+  x: 6.35
+  y: 15.88
+- ref: R6
+  x: 11.43
+  y: 17.78
+  rot: 180.0
+- ref: R7
+  x: 11.43
+  y: 8.26
+- ref: R8
+  x: 11.43
+  y: 10.16
+- ref: U1
+  x: 19.05
+  y: 15.24
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

@@ -1,0 +1,234 @@
+name: GoodTag
+slug: goodtag
+source: travisgoodspeed/goodtag
+format: kicad_legacy
+description: 'NFC Type V tag (RF430FRL152H): NFC energy harvesting, antenna matching'
+tags: [energy-harvesting, nfc-rfid, sensors]
+key_ics: [RF430FRL152H]
+outline:
+  width_mm: 85.6
+  height_mm: 53.98
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 22pF
+  footprint: '0402'
+- ref: C11
+  value: 1uF
+  footprint: '0402'
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+- ref: C2
+  value: 91pF
+  footprint: '0402'
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+- ref: C5
+  value: 22pF
+  footprint: '0402'
+- ref: C6
+  value: 2.2uF
+  footprint: '0402'
+- ref: C7
+  value: 10nF
+  footprint: '0402'
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+- ref: C9
+  value: 10nF
+  footprint: '0402'
+- ref: J1
+  value: JTAG
+  footprint: 1X6
+- ref: J2
+  value: 1x6 header
+  footprint: 1X6
+- ref: J3
+  value: U.FL
+  footprint: U.FL_Molex_MCRF_73412-0110_Vertical
+- ref: L1
+  value: Antenna
+  footprint: GW10ANT
+- ref: R1
+  value: 1kohm
+  footprint: '0402'
+- ref: R2
+  value: 1kohm
+  footprint: '0402'
+- ref: R3
+  value: 100kohm
+  footprint: '0402'
+- ref: R4
+  value: 10kohm
+  footprint: '0402'
+  pulldown: /TMS
+- ref: RT1
+  value: 100kohm
+  footprint: '0402'
+- ref: U1
+  value: RF430FRL152
+  footprint: RF430FRL152H
+nets:
+- name: /ADC0
+  pins: [J2.6, U1.13]
+- name: /P1.0
+  pins: [J2.5, U1.12]
+- name: /P1.1
+  pins: [J2.4, U1.11]
+- name: /P1.2
+  pins: [J2.3, U1.9]
+- name: /P1.3
+  pins: [J2.2, U1.8]
+- name: /SVSS
+  pins: [C11.2, R3.1, RT1.1, U1.15]
+- name: /TCK
+  pins: [J1.5, U1.22]
+- name: /TDI
+  pins: [J1.4, U1.21]
+- name: /TDO
+  pins: [J1.3, U1.20]
+- name: /TMP_REF
+  pins: [R2.2, U1.17]
+- name: /TMP_THERM
+  pins: [R1.2, U1.18]
+- name: /TMS
+  pins: [J1.2, R4.1, U1.19]
+- name: /VDDB
+  pins: [C12.2, J1.6, U1.4]
+- name: GND
+  pins:
+  - C1.1
+  - C11.1
+  - C12.1
+  - C3.2
+  - C4.2
+  - C5.1
+  - C6.2
+  - C8.2
+  - C9.2
+  - J1.1
+  - J2.1
+  - R10.1
+  - R11.1
+  - R4.2
+  - U1.25
+- name: Net-(C1-Pad2)
+  pins: [C1.2, R1.1, RT1.2]
+- name: Net-(C10-Pad1)
+  pins: [C10.1, C2.1, J3.1, L1.1, U1.1]
+- name: Net-(C10-Pad2)
+  pins: [C10.2, C2.2, J3.2, L1.2, U1.2]
+- name: Net-(C3-Pad1)
+  pins: [C3.1, U1.23]
+- name: Net-(C4-Pad1)
+  pins: [C4.1, U1.24]
+- name: Net-(C5-Pad2)
+  pins: [C5.2, R2.1, R3.2]
+- name: Net-(C6-Pad1)
+  pins: [C6.1, U1.3]
+- name: Net-(C7-Pad1)
+  pins: [C7.1, U1.5]
+- name: Net-(C7-Pad2)
+  pins: [C7.2, U1.6]
+- name: Net-(C8-Pad1)
+  pins: [C8.1, U1.7]
+- name: Net-(C9-Pad1)
+  pins: [C9.1, U1.10]
+- name: Net-(R10-Pad2)
+  pins: [R10.2, U1.16]
+- name: Net-(R11-Pad2)
+  pins: [R11.2, U1.14]
+positions:
+- ref: C1
+  x: 116.94
+  y: 64.8
+  rot: 180.0
+- ref: C11
+  x: 112.86
+  y: 73.95
+  rot: 180.0
+- ref: C12
+  x: 101.11
+  y: 74.93
+- ref: C2
+  x: 96.4
+  y: 71.02
+  rot: 270.0
+- ref: C3
+  x: 105.17
+  y: 65.55
+  rot: 180.0
+- ref: C4
+  x: 105.19
+  y: 67.45
+  rot: 180.0
+- ref: C5
+  x: 120.3
+  y: 66.11
+  rot: 270.0
+- ref: C6
+  x: 101.11
+  y: 73.03
+  rot: 180.0
+- ref: C7
+  x: 103.72
+  y: 76.7
+- ref: C8
+  x: 101.11
+  y: 78.11
+  rot: 180.0
+- ref: C9
+  x: 108.5
+  y: 78.72
+  rot: 270.0
+- ref: J1
+  x: 116.5
+  y: 61.45
+  rot: 270.0
+- ref: J2
+  x: 103.85
+  y: 86.05
+  rot: 90.0
+- ref: J3
+  x: 92.53
+  y: 72.0
+  rot: 180.0
+- ref: L1
+  x: 52.45
+  y: 96.0
+- ref: R1
+  x: 109.75
+  y: 66.81
+  rot: 270.0
+- ref: R2
+  x: 117.11
+  y: 71.1
+  rot: 180.0
+- ref: R3
+  x: 117.55
+  y: 67.47
+  rot: 270.0
+- ref: R4
+  x: 112.31
+  y: 64.2
+- ref: RT1
+  x: 113.8
+  y: 66.52
+  rot: 90.0
+- ref: U1
+  x: 107.5
+  y: 72.75
+copper_pours:
+- net: GND
+  layers: [B.Cu]

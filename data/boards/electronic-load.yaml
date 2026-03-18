@@ -1,0 +1,1062 @@
+name: Electronic Load
+slug: electronic-load
+source: Dominik-Workshop/electronic-load
+format: eagle
+description: 'Programmable DC electronic load (50V/8A/200W): ATmega328P, ADS1115 16-bit ADC'
+tags: [adc-dac, signal-conditioning]
+key_ics: [ATmega328P, LM4140, MCP4725, AD8630]
+outline:
+  width_mm: 121.9
+  height_mm: 88.57
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 0.35mm
+  min_via: 8mil
+components:
+- ref: C1
+  value: 1nF
+  footprint: '0603'
+- ref: C10
+  value: 1uF
+  footprint: '0603'
+- ref: C11
+  value: 4700uF
+  footprint: E7,5-16
+- ref: C12
+  value: 4700uF
+  footprint: E7,5-16
+- ref: C13
+  value: 100nF
+  footprint: '0603'
+- ref: C14
+  value: 6-9p
+  footprint: '0603'
+- ref: C15
+  value: 6-9p
+  footprint: '0603'
+- ref: C16
+  value: 100nF
+  footprint: '0603'
+  decouples: U6
+- ref: C17
+  value: 10uF
+  footprint: CT3528
+- ref: C18
+  value: 10uF
+  footprint: CT3528
+- ref: C19
+  value: omit
+  footprint: '0603'
+- ref: C2
+  value: 1nF
+  footprint: '0603'
+- ref: C21
+  value: 100nF
+  footprint: '0603'
+- ref: C22
+  value: 100nF
+  footprint: '0603'
+  decouples: U5
+- ref: C23
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C25
+  value: 100nF
+  footprint: '0603'
+  decouples: U7
+- ref: C26
+  value: 10uF
+  footprint: B/3528-21W
+  decouples: IC7
+- ref: C27
+  value: 10uF
+  footprint: B/3528-21W
+  decouples: IC7
+- ref: C28
+  value: 22pF
+  footprint: '0603'
+- ref: C29
+  value: 22pF
+  footprint: '0603'
+- ref: C3
+  value: 1nF
+  footprint: '0603'
+- ref: C4
+  value: 1nF
+  footprint: '0603'
+- ref: C5
+  value: 1nF
+  footprint: '0603'
+- ref: C6
+  value: 100nF
+  footprint: '0603'
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: C8
+  value: 10uF
+  footprint: CT3528
+  decouples: U$3
+- ref: C9
+  value: 1uF
+  footprint: CT3216
+- ref: D5
+  value: BYG22B
+  footprint: DO-214AC
+- ref: D7
+  value: LL4148
+  footprint: DIOMELF3515N
+  description: Check availability
+  manufacturer: Taiwan Semiconductor
+  mpn: LL4148 L1
+- ref: IC7
+  value: LM1117-5.0
+  footprint: SOT223
+- ref: J1
+  value: XT60-M
+  footprint: AMASS_XT60-M
+  description: DC supply; XT60; male; PIN:2; for cable; soldered; 60A; 500V Check availability
+  manufacturer: AMASS
+  mpn: XT60-M
+- ref: J2
+  value: B2B-XH
+  footprint: JST_B2B-XH-A(LF)(SN)
+  description: Connector Header Through Hole 2 position 0.098 (2.50mm)
+  manufacturer: JST Sales
+  mpn: B2B-XH-A(LF)(SN)
+- ref: J3
+  value: B4B-XH
+  footprint: JST_B4B-XH-A(LF)(SN)
+  description: Check availability
+  manufacturer: JST Sales America Inc.
+  mpn: B4B-XH-A(LF)(SN)
+- ref: J4
+  value: B2B-XH
+  footprint: JST_B2B-XH-A(LF)(SN)
+  description: Connector Header Through Hole 2 position 0.098 (2.50mm)
+  manufacturer: JST Sales
+  mpn: B2B-XH-A(LF)(SN)
+- ref: J5
+  value: B2B-XH
+  footprint: JST_B2B-XH-A(LF)(SN)
+  description: Connector Header Through Hole 2 position 0.098 (2.50mm)
+  manufacturer: JST Sales
+  mpn: B2B-XH-A(LF)(SN)
+- ref: J6
+  value: B2B-XH
+  footprint: JST_B2B-XH-A(LF)(SN)
+  description: Connector Header Through Hole 2 position 0.098 (2.50mm)
+  manufacturer: JST Sales
+  mpn: B2B-XH-A(LF)(SN)
+- ref: J7
+  value: B2B-XH
+  footprint: JST_B2B-XH-A(LF)(SN)
+  description: Connector Header Through Hole 2 position 0.098 (2.50mm)
+  manufacturer: JST Sales
+  mpn: B2B-XH-A(LF)(SN)
+- ref: J8
+  value: B5B-XH
+  footprint: JST_B5B-XH-A(LF)(SN)
+  description: Check availability
+  manufacturer: JST Sales America Inc.
+  mpn: B5B-XH-A(LF)(SN)
+- ref: JP1
+  value: 1x9 header
+  footprint: 1X09
+- ref: JP2
+  value: B4B-XH
+  footprint: JST_B4B-XH-A(LF)(SN)
+  description: Check availability
+  manufacturer: JST Sales America Inc.
+  mpn: B4B-XH-A(LF)(SN)
+- ref: Q1
+  value: IRFP25*
+  footprint: TO-247
+  description: 33A/27A, 200V/150V, 0.085/0.012 Ohm, N-Channel Power MOSFET
+- ref: Q10
+  value: S9015
+  footprint: SOT23
+- ref: Q11
+  value: S9015
+  footprint: SOT23
+- ref: Q2
+  value: IRFP25*
+  footprint: TO-247
+  description: 33A/27A, 200V/150V, 0.085/0.012 Ohm, N-Channel Power MOSFET
+- ref: Q3
+  value: IRFP25*
+  footprint: TO-247
+  description: 33A/27A, 200V/150V, 0.085/0.012 Ohm, N-Channel Power MOSFET
+- ref: Q4
+  value: IRFP25*
+  footprint: TO-247
+  description: 33A/27A, 200V/150V, 0.085/0.012 Ohm, N-Channel Power MOSFET
+- ref: Q5
+  value: 32768Hz
+  footprint: TC26H
+- ref: Q6
+  value: IRLML6244
+  footprint: SOT23
+- ref: Q7
+  value: BD911
+  footprint: TO220V
+- ref: Q8
+  value: S9015
+  footprint: SOT23
+- ref: Q9
+  value: S9015
+  footprint: SOT23
+- ref: R1
+  value: 1kohm
+  footprint: 0805
+- ref: R10
+  value: 200mohm
+  footprint: '4527'
+- ref: R11
+  value: 1kohm
+  footprint: 0805
+- ref: R12
+  value: 1kohm
+  footprint: '0603'
+- ref: R13
+  value: 10kohm
+  footprint: '0603'
+- ref: R14
+  value: 200mohm
+  footprint: '4527'
+- ref: R15
+  value: 200mohm
+  footprint: '4527'
+- ref: R16
+  value: 1kohm
+  footprint: 0805
+- ref: R17
+  value: 1kohm
+  footprint: '0603'
+- ref: R18
+  value: 10kohm
+  footprint: '0603'
+- ref: R19
+  value: 200mohm
+  footprint: '4527'
+- ref: R2
+  value: 1kohm
+  footprint: '0603'
+- ref: R20
+  value: 200mohm
+  footprint: '4527'
+- ref: R21
+  value: 10kohm
+  footprint: '0603'
+- ref: R22
+  value: 560ohm
+  footprint: '0603'
+- ref: R23
+  value: 1Mohm
+  footprint: '0603'
+- ref: R24
+  value: 10kohm
+  footprint: '0603'
+- ref: R25
+  value: 1Mohm
+  footprint: '0603'
+- ref: R26
+  value: 10kohm
+  footprint: '0603'
+  pulldown: U5.+IN
+- ref: R27
+  value: 4.7kohm
+  footprint: '0603'
+- ref: R28
+  value: 4.7kohm
+  footprint: '0603'
+- ref: R29
+  value: 10kohm
+  footprint: '0603'
+  pullup: RST
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+- ref: R30
+  value: 1kohm
+  footprint: '0603'
+- ref: R31
+  value: 1kohm
+  footprint: 0805
+  pullup: BASE
+- ref: R32
+  value: 68kohm
+  footprint: '0603'
+  pullup: VR1.R
+- ref: R33
+  value: 18kohm
+  footprint: '0603'
+  pulldown: VR1.R
+- ref: R34
+  value: 1kohm
+  footprint: '0603'
+- ref: R35
+  value: 10kohm
+  footprint: '0603'
+  pulldown: TEMP
+- ref: R36
+  value: 10kohm
+  footprint: '0603'
+  pullup: TRIGG
+- ref: R37
+  value: 100kohm
+  footprint: '0603'
+- ref: R38
+  value: 100kohm
+  footprint: '0603'
+- ref: R39
+  value: 100kohm
+  footprint: '0603'
+- ref: R4
+  value: 200mohm
+  footprint: '4527'
+- ref: R40
+  value: 100kohm
+  footprint: '0603'
+- ref: R41
+  value: 1kohm
+  footprint: '0603'
+- ref: R42
+  value: 1kohm
+  footprint: '0603'
+- ref: R43
+  value: 1kohm
+  footprint: '0603'
+- ref: R44
+  value: 1kohm
+  footprint: '0603'
+- ref: R5
+  value: 200mohm
+  footprint: '4527'
+- ref: R6
+  value: 1kohm
+  footprint: 0805
+- ref: R7
+  value: 1kohm
+  footprint: '0603'
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+- ref: R9
+  value: 200mohm
+  footprint: '4527'
+- ref: SPI
+  value: MA03-2
+  footprint: MA03-2
+- ref: U$2
+  value: 16MHz oscillator
+  footprint: CRYSTAL_3,4X2,7
+- ref: U$3
+  value: LM4140
+  footprint: SOIC8
+- ref: U1
+  value: AD8630
+  footprint: ANALOG_DEVICES_AD8630ARZ-REEL7_0
+  manufacturer: Analog Devices
+  mpn: AD8630ARZ-REEL7
+  description: ADI-ADxxxx_OPxxxx-X-14
+- ref: U2
+  value: MCP4725A0T-E
+  footprint: SOT-6
+  description: MCP4725 Series 1 Ch I2C EEPROM Memory 5
+  manufacturer: Microchip
+  mpn: MCP4725A0T-E/CH
+- ref: U3
+  value: ADS1115
+  footprint: MSOP10
+  description: 16-Bit Del-Sig ADC Four single-ended inputs or two differential inputs Internal
+  manufacturer: Texas Instruments
+  mpn: ADS1115
+- ref: U4
+  value: ATMEGA328P-AU
+  footprint: QFP-32
+  description: ATmega Series 20 MHz 32 KB Flash 2 KB SRAM 8-Bit Microcontroller - TQFP-32
+  manufacturer: Microchip Technology
+  mpn: ATMEGA328P-AU
+- ref: U5
+  value: OPA277
+  footprint: SOIC-08_150MIL
+  description: High Precision OPERATIONAL AMPLIFIERS
+  manufacturer: Texas Instruments
+  mpn: OPA277
+- ref: U6
+  value: MCP79410-I
+  footprint: SOIC-8
+  description: MCP79410 Series 5
+  manufacturer: Microchip
+  mpn: MCP79410-I/SN
+- ref: U7
+  value: ICL7660CPAZSOIC
+  footprint: SOIC8
+  description: CMOS Voltage Converters Check availability
+- ref: U8
+  value: PC817X2NIP0F
+  footprint: SOT-4
+  description: PC817 Series 1 Channel 80 V 5000 Vrms General Purpose Photocoupler - DIP-4
+  manufacturer: Sharp Microelectronics
+  mpn: PC817X2NIP0F
+- ref: VR1
+  value: TL431
+  footprint: TO92-CLP
+  description: VOLTAGE REGULATOR
+nets:
+- name: '!OFF'
+  pins: [R37.1, R38.1, R39.1, R40.1, U4.PD4]
+- name: -5V
+  pins: [C18.-, C21.1, U5.V-, U7.VOUT]
+- name: 12V
+  pins: [C26.+, D5.C, IC7.IN, J2.1, Q7.E, R32.1]
+- name: 16V
+  pins: [C11.+, C12.+, Q7.C, R31.1]
+- name: 4,096V
+  pins: [C13.1, C9.+, R27.1, R28.1, U$3.VREF, U2.VDD]
+- name: 5V
+  pins:
+  - C16.1
+  - C19.1
+  - C22.2
+  - C23.1
+  - C25.1
+  - C27.+
+  - C7.1
+  - C8.+
+  - IC7.OUT
+  - IC7.OUT1
+  - J3.3
+  - J6.1
+  - J8.1
+  - Q10.E
+  - Q11.E
+  - Q8.E
+  - Q9.E
+  - R29.1
+  - R36.2
+  - SPI.2
+  - U$3.ENABLE
+  - U$3.VIN
+  - U1.D.+V
+  - U3.VDD
+  - U4.AVCC
+  - U4.VCC
+  - U5.V+
+  - U6.VCC
+  - U7.V+
+- name: A
+  pins: [D7.K, R34.1, U8.A]
+- name: AREF
+  pins: [C6.1, U4.AREF]
+- name: A_OUT_A
+  pins: [C1.1, R1.1, U1.A.OUT_A]
+- name: A__IN_A
+  pins: [Q8.C, R2.1, R3.2, U1.A.-IN_A]
+- name: BASE
+  pins: [C10.1, Q7.B, R31.2, VR1.C]
+- name: B_OUT_B
+  pins: [C2.1, R6.1, U1.B.OUT_B]
+- name: B__IN_B
+  pins: [Q9.C, R7.1, R8.2, U1.B.-IN_B]
+- name: CAP
+  pins: [C17.+, U7.CAP+]
+- name: CAP_2
+  pins: [C17.-, U7.CAP-]
+- name: CURRENT
+  pins: [R41.1, R42.1, R43.1, R44.1, U3.AIN0]
+- name: C_OUT_C
+  pins: [C3.1, R11.1, U1.C.OUT_C]
+- name: C__IN_C
+  pins: [Q10.C, R12.1, R13.2, U1.C.-IN_C]
+- name: DAC_OUT
+  pins: [R21.2, U2.VOUT]
+- name: D_OUT_D
+  pins: [C4.1, R16.1, U1.D.OUT_D]
+- name: D__IN_D
+  pins: [Q11.C, R17.1, R18.2, U1.D.-IN_D]
+- name: ENC_A
+  pins: [J8.3, U4.PD2]
+- name: ENC_B
+  pins: [J8.2, U4.PC3]
+- name: ENC_SW
+  pins: [J8.4, U4.PD3]
+- name: FAN
+  pins: [R30.1, U4.PD5]
+- name: GND
+  pins:
+  - C10.2
+  - C11.-
+  - C12.-
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C18.+
+  - C21.2
+  - C22.1
+  - C23.2
+  - C25.2
+  - C26.-
+  - C27.-
+  - C28.2
+  - C29.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.-
+  - C9.-
+  - IC7.GND
+  - J1.-
+  - J3.4
+  - J8.5
+  - JP2.4
+  - Q6.S
+  - R10.1
+  - R14.1
+  - R15.1
+  - R19.1
+  - R20.1
+  - R22.2
+  - R26.1
+  - R33.2
+  - R35.1
+  - R4.1
+  - R5.1
+  - R9.1
+  - SPI.6
+  - U$2.2
+  - U$3.GND
+  - U1.D.-V
+  - U2.A0
+  - U2.VSS
+  - U3.ADDR
+  - U3.AIN3
+  - U3.VSS
+  - U4.GND
+  - U6.VSS
+  - U7.GND
+  - U8.ET
+  - VR1.A
+- name: IN
+  pins: [R25.2, R26.2, U5.+IN]
+- name: IN_2
+  pins: [R23.2, R24.1, U5.-IN]
+- name: I_SET
+  pins:
+  - C5.1
+  - R21.1
+  - R22.1
+  - U1.A.+IN_A
+  - U1.B.+IN_B
+  - U1.C.+IN_C
+  - U1.D.+IN_D
+- name: KP1
+  pins: [JP1.1, U4.PD6]
+- name: KP2
+  pins: [JP1.2, U4.PD7]
+- name: KP3
+  pins: [JP1.3, U4.PB0]
+- name: KP4
+  pins: [JP1.4, U4.PB1]
+- name: KP5
+  pins: [JP1.5, U4.PB2]
+- name: KP6
+  pins: [JP1.6, U4.PC0]
+- name: KP7
+  pins: [JP1.7, U4.PC1]
+- name: KP8
+  pins: [JP1.8, U4.PC2]
+- name: KP9/MOSI
+  pins: [JP1.9, SPI.4, U4.PB3]
+- name: MISO
+  pins: [SPI.1, U4.PB4]
+- name: N$11
+  pins: [Q2.G, R6.2]
+- name: N$12
+  pins: [Q8.B, R37.2]
+- name: N$15
+  pins: [C3.2, R12.2]
+- name: N$17
+  pins: [Q3.G, R11.2]
+- name: N$20
+  pins: [C4.2, R17.2]
+- name: N$22
+  pins: [Q4.G, R16.2]
+- name: N$24
+  pins: [D5.A, J2.2, Q6.D]
+- name: N$25
+  pins: [J4.2, R25.1]
+- name: N$26
+  pins: [J4.1, R23.1]
+- name: N$3
+  pins: [C1.2, R2.2]
+- name: N$30
+  pins: [Q6.G, R30.2]
+- name: N$37
+  pins: [Q9.B, R38.2]
+- name: N$38
+  pins: [R32.2, R33.1, VR1.R]
+- name: N$40
+  pins: [Q10.B, R39.2]
+- name: N$42
+  pins: [Q11.B, R40.2]
+- name: N$5
+  pins: [Q1.G, R1.2]
+- name: N$7
+  pins: [J7.2, R34.2]
+- name: N$8
+  pins: [J1.+, Q1.D, Q2.D, Q3.D, Q4.D]
+- name: N$9
+  pins: [C2.2, R7.2]
+- name: OSC
+  pins: [C19.2, U7.OSC]
+- name: RST
+  pins: [JP2.1, R29.2, SPI.5, U4.PC6/!RESET]
+- name: RX
+  pins: [JP2.2, U4.PD0]
+- name: SCK
+  pins: [SPI.3, U4.PB5]
+- name: SCL
+  pins: [J3.1, R27.2, U2.SCL, U3.SCL, U4.PC5, U6.SCL]
+- name: SDA
+  pins: [J3.2, R28.2, U2.SDA, U3.SDA, U4.PC4, U6.SDA]
+- name: TEMP
+  pins: [J6.2, R35.2, U4.ADC6]
+- name: TRIGG
+  pins: [R36.1, U4.ADC7, U8.CT]
+- name: TX
+  pins: [JP2.3, U4.PD1]
+- name: T_GND
+  pins: [D7.A, J7.1, U8.C]
+- name: VOLTAGE+
+  pins: [R24.2, U3.AIN2, U5.OUT]
+- name: V_SHUNT_1
+  pins: [Q1.S, R3.1, R4.2, R44.2, R5.2]
+- name: V_SHUNT_2
+  pins: [Q2.S, R10.2, R43.2, R8.1, R9.2]
+- name: V_SHUNT_3
+  pins: [Q3.S, R13.1, R14.2, R15.2, R42.2]
+- name: V_SHUNT_4
+  pins: [Q4.S, R18.1, R19.2, R20.2, R41.2]
+- name: X1
+  pins: [C14.1, Q5.2, U6.X1]
+- name: X2
+  pins: [C15.1, Q5.1, U6.X2]
+- name: XTL1
+  pins: [C28.1, U$2.1, U4.PB6]
+- name: XTL2
+  pins: [C29.1, U$2.3, U4.PB7]
+positions:
+- ref: C1
+  x: 54.61
+  y: 36.32
+  rot: 180.0
+- ref: C10
+  x: 32.38
+  y: 20.32
+  rot: 90.0
+- ref: C11
+  x: 10.16
+  y: 13.34
+  rot: 180.0
+- ref: C12
+  x: 10.16
+  y: 29.84
+  rot: 180.0
+- ref: C13
+  x: 77.72
+  y: 33.27
+  rot: 90.0
+- ref: C14
+  x: 103.5
+  y: 43.05
+  rot: 180.0
+- ref: C15
+  x: 103.5
+  y: 41.02
+  rot: 180.0
+- ref: C16
+  x: 109.86
+  y: 34.92
+  rot: 90.0
+- ref: C17
+  x: 86.87
+  y: 14.1
+- ref: C18
+  x: 90.93
+  y: 20.19
+  rot: 90.0
+- ref: C19
+  x: 84.96
+  y: 25.27
+- ref: C2
+  x: 54.61
+  y: 27.18
+  rot: 180.0
+- ref: C21
+  x: 79.76
+  y: 19.56
+- ref: C22
+  x: 79.12
+  y: 22.1
+  rot: 90.0
+- ref: C23
+  x: 60.96
+  y: 31.75
+  rot: 180.0
+- ref: C25
+  x: 82.68
+  y: 20.45
+  rot: 270.0
+- ref: C26
+  x: 48.26
+  y: 19.68
+  rot: 180.0
+- ref: C27
+  x: 48.26
+  y: 16.51
+  rot: 180.0
+- ref: C28
+  x: 102.36
+  y: 13.46
+- ref: C29
+  x: 102.36
+  y: 7.24
+  rot: 180.0
+- ref: C3
+  x: 67.31
+  y: 27.18
+- ref: C4
+  x: 67.31
+  y: 36.32
+- ref: C5
+  x: 73.28
+  y: 34.29
+  rot: 90.0
+- ref: C6
+  x: 109.47
+  y: 12.06
+  rot: 90.0
+- ref: C7
+  x: 66.8
+  y: 22.99
+  rot: 180.0
+- ref: C8
+  x: 90.81
+  y: 34.29
+  rot: 90.0
+- ref: C9
+  x: 87.12
+  y: 37.21
+  rot: 270.0
+- ref: D5
+  x: 22.86
+  y: 29.84
+  rot: 270.0
+- ref: D7
+  x: 76.2
+  y: 6.99
+  rot: 270.0
+- ref: IC7
+  x: 46.99
+  y: 10.16
+  rot: 180.0
+- ref: J1
+  x: 5.08
+  y: 68.58
+  rot: 90.0
+- ref: J2
+  x: 26.67
+  y: 29.84
+  rot: 90.0
+- ref: J3
+  x: 104.14
+  y: 24.13
+- ref: J4
+  x: 67.94
+  y: 14.35
+  rot: 90.0
+- ref: J5
+  x: 6.99
+  y: 53.34
+  rot: 90.0
+- ref: J6
+  x: 115.44
+  y: 18.41
+  rot: 90.0
+- ref: J7
+  x: 67.94
+  y: 6.35
+  rot: 90.0
+- ref: J8
+  x: 114.94
+  y: 30.48
+  rot: 90.0
+- ref: JP1
+  x: 103.63
+  y: 2.79
+- ref: JP2
+  x: 114.94
+  y: 45.09
+  rot: 90.0
+- ref: Q1
+  x: 15.24
+  y: 87.63
+- ref: Q10
+  x: 68.58
+  y: 28.96
+  rot: 90.0
+- ref: Q11
+  x: 67.82
+  y: 37.08
+  rot: 90.0
+- ref: Q2
+  x: 45.72
+  y: 87.63
+- ref: Q3
+  x: 76.2
+  y: 87.63
+- ref: Q4
+  x: 106.68
+  y: 87.63
+- ref: Q5
+  x: 107.31
+  y: 41.66
+- ref: Q6
+  x: 31.75
+  y: 29.84
+  rot: 180.0
+- ref: Q7
+  x: 29.21
+  y: 10.16
+  rot: 180.0
+- ref: Q8
+  x: 54.61
+  y: 34.54
+  rot: 270.0
+- ref: Q9
+  x: 54.61
+  y: 30.48
+  rot: 270.0
+- ref: R1
+  x: 11.3
+  y: 78.61
+  rot: 90.0
+- ref: R10
+  x: 55.88
+  y: 62.23
+  rot: 90.0
+- ref: R11
+  x: 70.74
+  y: 78.49
+  rot: 90.0
+- ref: R12
+  x: 67.31
+  y: 29.21
+- ref: R13
+  x: 70.36
+  y: 29.21
+  rot: 180.0
+- ref: R14
+  x: 66.04
+  y: 62.23
+  rot: 90.0
+- ref: R15
+  x: 76.2
+  y: 62.23
+  rot: 90.0
+- ref: R16
+  x: 101.22
+  y: 78.49
+  rot: 90.0
+- ref: R17
+  x: 67.31
+  y: 34.29
+- ref: R18
+  x: 70.36
+  y: 34.29
+  rot: 180.0
+- ref: R19
+  x: 86.36
+  y: 62.23
+  rot: 90.0
+- ref: R2
+  x: 54.61
+  y: 34.29
+  rot: 180.0
+- ref: R20
+  x: 96.52
+  y: 62.23
+  rot: 90.0
+- ref: R21
+  x: 77.85
+  y: 35.81
+- ref: R22
+  x: 75.31
+  y: 34.29
+  rot: 90.0
+- ref: R23
+  x: 74.55
+  y: 15.62
+  rot: 90.0
+- ref: R24
+  x: 72.01
+  y: 18.41
+  rot: 90.0
+- ref: R25
+  x: 76.58
+  y: 15.62
+  rot: 90.0
+- ref: R26
+  x: 79.76
+  y: 17.53
+  rot: 180.0
+- ref: R27
+  x: 85.47
+  y: 30.73
+  rot: 180.0
+- ref: R28
+  x: 85.47
+  y: 28.7
+  rot: 180.0
+- ref: R29
+  x: 109.6
+  y: 15.88
+- ref: R3
+  x: 51.56
+  y: 34.29
+- ref: R30
+  x: 34.92
+  y: 29.84
+  rot: 90.0
+- ref: R31
+  x: 30.48
+  y: 15.88
+  rot: 180.0
+- ref: R32
+  x: 25.4
+  y: 17.14
+  rot: 90.0
+- ref: R33
+  x: 25.4
+  y: 20.32
+  rot: 90.0
+- ref: R34
+  x: 72.39
+  y: 6.99
+  rot: 270.0
+- ref: R35
+  x: 113.03
+  y: 15.88
+  rot: 90.0
+- ref: R36
+  x: 90.81
+  y: 6.99
+  rot: 270.0
+- ref: R37
+  x: 58.42
+  y: 34.92
+- ref: R38
+  x: 58.42
+  y: 36.96
+- ref: R39
+  x: 67.82
+  y: 32.0
+  rot: 180.0
+- ref: R4
+  x: 25.4
+  y: 62.23
+  rot: 90.0
+- ref: R40
+  x: 67.82
+  y: 34.04
+  rot: 180.0
+- ref: R41
+  x: 62.74
+  y: 22.86
+  rot: 90.0
+- ref: R42
+  x: 60.71
+  y: 22.86
+  rot: 90.0
+- ref: R43
+  x: 58.67
+  y: 22.86
+  rot: 90.0
+- ref: R44
+  x: 56.64
+  y: 22.86
+  rot: 90.0
+- ref: R5
+  x: 35.56
+  y: 62.23
+  rot: 90.0
+- ref: R6
+  x: 40.26
+  y: 78.49
+  rot: 90.0
+- ref: R7
+  x: 54.61
+  y: 29.21
+  rot: 180.0
+- ref: R8
+  x: 51.56
+  y: 29.21
+- ref: R9
+  x: 45.72
+  y: 62.23
+  rot: 90.0
+- ref: SPI
+  x: 114.17
+  y: 9.27
+  rot: 270.0
+- ref: U$2
+  x: 101.6
+  y: 11.43
+  rot: 270.0
+- ref: U$3
+  x: 95.25
+  y: 35.81
+- ref: U1
+  x: 60.96
+  y: 31.75
+- ref: U2
+  x: 81.66
+  y: 34.8
+- ref: U3
+  x: 66.8
+  y: 20.45
+  rot: 270.0
+- ref: U4
+  x: 102.87
+  y: 12.06
+- ref: U5
+  x: 75.56
+  y: 21.59
+  rot: 90.0
+- ref: U6
+  x: 106.05
+  y: 36.2
+  rot: 270.0
+- ref: U7
+  x: 86.23
+  y: 20.19
+- ref: U8
+  x: 83.82
+  y: 6.99
+- ref: VR1
+  x: 29.21
+  y: 19.05
+copper_pours:
+- net: 5V
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: T_GND
+  layers: [B.Cu, F.Cu]

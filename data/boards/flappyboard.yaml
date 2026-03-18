@@ -1,0 +1,408 @@
+name: FlappyBoard
+slug: flappyboard
+source: metro94/FlappyBoard
+format: kicad6
+description: Minimal CH32V203G6 RISC-V dev board with native USB 2.0 FS, USB-C
+key_ics: [XC6206B331MR, CH32V203G6]
+outline:
+  width_mm: 17.78
+  height_mm: 35.56
+design_rules:
+  layers: 2
+  min_trace: 0.127mm
+  min_clearance: 0.127mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: 0805
+  lcsc: C28323
+- ref: C2
+  value: 1uF
+  footprint: 0805
+  lcsc: C28323
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+  lcsc: C14663
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  lcsc: C14663
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+  lcsc: C14663
+- ref: C6
+  value: 27pF
+  footprint: '0603'
+- ref: C7
+  value: 27pF
+  footprint: '0603'
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+  lcsc: C14663
+- ref: D1
+  value: LED
+  footprint: 0805
+  lcsc: C2892177
+- ref: D2
+  value: LED
+  footprint: 0805
+  lcsc: C2892178
+- ref: F1
+  value: Fuse_Small
+  footprint: 0805
+  lcsc: C116170
+- ref: J1
+  value: USB-C
+  footprint: USB-C
+  lcsc: C963370
+- ref: J2
+  value: 1x14 header
+  footprint: Pin
+- ref: J3
+  value: 1x14 header
+  footprint: Pin
+- ref: J4
+  value: 1x4 header
+  footprint: Pin
+- ref: R1
+  value: 5.1kohm
+  footprint: '0603'
+  lcsc: C23186
+  pulldown: J1.CC2
+- ref: R2
+  value: 5.1kohm
+  footprint: '0603'
+  lcsc: C23186
+  pulldown: J1.CC1
+- ref: R3
+  value: 51kohm
+  footprint: '0603'
+  lcsc: C23196
+  pulldown: /PB8
+- ref: R4
+  value: 1kohm
+  footprint: '0603'
+  lcsc: C21190
+- ref: R5
+  value: 1kohm
+  footprint: '0603'
+  lcsc: C21190
+- ref: R6
+  value: 1kohm
+  footprint: '0603'
+  lcsc: C21190
+- ref: SW1
+  value: switch
+  footprint: SW_DIP_SPSTx02_Slide_Copal_CHS-02B_W7.62mm_P1.27mm
+  lcsc: C3293142
+- ref: SW2
+  value: tactile switch
+  footprint: SW_Push_1P1T_NO_Vertical_Wuerth_434133025816
+  lcsc: C2888884
+- ref: SW3
+  value: tactile switch
+  footprint: SW_Push_1P1T_NO_Vertical_Wuerth_434133025816
+  lcsc: C2888884
+- ref: U1
+  value: XC6206B331MR
+  footprint: SOT-23-5
+  lcsc: C82942
+- ref: U2
+  value: CH32V203G6
+  footprint: QFN-28-1EP
+  lcsc: C5142280
+- ref: Y1
+  value: Crystal_GND24_Small
+  footprint: SMD3225
+nets:
+- name: /+3V3
+  pins:
+  - C2.1
+  - C3.1
+  - C4.1
+  - J3.Pin_14
+  - J4.Pin_1
+  - R6.1
+  - SW2.1@1
+  - U1.VOUT
+  - U2.VDD
+  - U2.VDDA
+- name: /+5V
+  pins: [C1.1, F1.2, U1.CE, U1.VIN]
+- name: /NRST
+  pins: [C8.1, J3.Pin_13, SW3.2@2, U2.NRST]
+- name: /PA0
+  pins: [J2.Pin_12, U2.PA0/WKUP/ADC0]
+- name: /PA1
+  pins: [J2.Pin_13, U2.PA1/ADC1]
+- name: /PA10_11
+  pins: [J3.Pin_3, SW1.1, U2.PA10/PA11/USB1DM]
+- name: /PA12
+  pins: [J3.Pin_2, SW1.2, U2.PA12/USB1DP]
+- name: /PA13
+  pins: [J2.Pin_1, J4.Pin_3, U2.PA13/SWDIO]
+- name: /PA14
+  pins: [J2.Pin_2, J4.Pin_4, U2.PA14/SWCLK]
+- name: /PA15
+  pins: [J2.Pin_3, U2.PA15]
+- name: /PA2
+  pins: [J3.Pin_12, U2.PA2/ADC2]
+- name: /PA3
+  pins: [J3.Pin_11, U2.PA3/ADC3]
+- name: /PA4
+  pins: [J3.Pin_10, U2.PA4/ADC4]
+- name: /PA5
+  pins: [J3.Pin_9, U2.PA5/ADC5]
+- name: /PA6
+  pins: [J3.Pin_8, U2.PA6/ADC6]
+- name: /PA7
+  pins: [J3.Pin_7, U2.PA7/ADC7]
+- name: /PA9
+  pins: [J3.Pin_4, U2.PA9]
+- name: /PB0
+  pins: [J3.Pin_6, U2.PB0/ADC8]
+- name: /PB1
+  pins: [J3.Pin_5, U2.PB1/ADC9]
+- name: /PB3
+  pins: [J2.Pin_4, U2.PB3]
+- name: /PB4
+  pins: [J2.Pin_5, U2.PB4]
+- name: /PB5
+  pins: [J2.Pin_6, U2.PB5]
+- name: /PB6
+  pins: [J2.Pin_7, U2.PB6]
+- name: /PB7
+  pins: [J2.Pin_8, U2.PB7]
+- name: /PB8
+  pins: [C5.1, J2.Pin_9, R3.1, R5.1, U2.BOOT0/PB8]
+- name: /PD0
+  pins: [C6.1, J2.Pin_10, U2.OSC_IN/PD0, Y1.1]
+- name: /PD1
+  pins: [C7.1, J2.Pin_11, U2.OSC_OUT/PD1, Y1.3]
+- name: /VBUS
+  pins: [F1.1, J1.VBUS@A4, J1.VBUS@A9, J1.VBUS@B4, J1.VBUS@B9, J3.Pin_1]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - D1.K
+  - D2.K
+  - J1.GND@A1
+  - J1.GND@A12
+  - J1.GND@B1
+  - J1.GND@B12
+  - J1.SHIELD@S1
+  - J2.Pin_14
+  - J4.Pin_2
+  - R1.2
+  - R2.2
+  - R3.2
+  - SW3.1@1
+  - U1.GND
+  - U2.VSS@16
+  - U2.VSS@29
+  - Y1.2
+  - Y1.4
+- name: Net-(D1-Pad2)
+  pins: [D1.A, R4.2, R5.2]
+- name: Net-(D2-Pad2)
+  pins: [D2.A, R6.2]
+- name: Net-(J1-PadA5)
+  pins: [J1.CC1, R2.1]
+- name: Net-(J1-PadA6)
+  pins: [J1.D+@A6, J1.D+@B6, SW1.3]
+- name: Net-(J1-PadA7)
+  pins: [J1.D-@A7, J1.D-@B7, SW1.4]
+- name: Net-(J1-PadB5)
+  pins: [J1.CC2, R1.1]
+- name: Net-(R4-Pad1)
+  pins: [R4.1, SW2.2@2]
+positions:
+- ref: C1
+  x: 32.89
+  y: 32.77
+  rot: 180.0
+  side: back
+- ref: C2
+  x: 32.89
+  y: 38.86
+  rot: 180.0
+  side: back
+- ref: C3
+  x: 36.32
+  y: 38.61
+  side: back
+- ref: C4
+  x: 29.59
+  y: 41.4
+  rot: 180.0
+  side: back
+- ref: C5
+  x: 29.59
+  y: 45.97
+  rot: 180.0
+  side: back
+- ref: C6
+  x: 29.59
+  y: 47.5
+  rot: 180.0
+  side: back
+- ref: C7
+  x: 29.59
+  y: 49.02
+  rot: 180.0
+  side: back
+- ref: C8
+  x: 29.59
+  y: 50.55
+  rot: 180.0
+  side: back
+- ref: D1
+  x: 30.99
+  y: 54.99
+  rot: 180.0
+- ref: D2
+  x: 35.05
+  y: 54.99
+- ref: F1
+  x: 36.32
+  y: 32.77
+  rot: 180.0
+  side: back
+- ref: J1
+  x: 33.02
+  y: 27.55
+  rot: 180.0
+- ref: J2
+  x: 25.4
+  y: 25.4
+- ref: J3
+  x: 40.64
+  y: 25.4
+- ref: J4
+  x: 36.83
+  y: 58.42
+  rot: -90.0
+- ref: R1
+  x: 29.59
+  y: 32.77
+  rot: 180.0
+  side: back
+- ref: R2
+  x: 29.59
+  y: 34.29
+  rot: 180.0
+  side: back
+- ref: R3
+  x: 29.59
+  y: 44.45
+  rot: 180.0
+  side: back
+- ref: R4
+  x: 29.59
+  y: 53.47
+  side: back
+- ref: R5
+  x: 29.59
+  y: 54.99
+  side: back
+- ref: R6
+  x: 36.45
+  y: 54.99
+  rot: 180.0
+  side: back
+- ref: SW1
+  x: 33.02
+  y: 33.53
+  rot: 180.0
+- ref: SW2
+  x: 30.1
+  y: 51.69
+- ref: SW3
+  x: 35.94
+  y: 51.69
+- ref: U1
+  x: 36.32
+  y: 35.81
+  rot: -90.0
+  side: back
+- ref: U2
+  x: 33.02
+  y: 40.64
+  rot: 45.0
+- ref: Y1
+  x: 33.02
+  y: 46.99
+copper_pours:
+- net: /+3V3
+  layers: [B.Cu, F.Cu]
+- net: /+5V
+  layers: [B.Cu]
+- net: /NRST
+  layers: [B.Cu, F.Cu]
+- net: /PA0
+  layers: [F.Cu]
+- net: /PA1
+  layers: [F.Cu]
+- net: /PA10_11
+  layers: [F.Cu]
+- net: /PA12
+  layers: [F.Cu]
+- net: /PA13
+  layers: [B.Cu, F.Cu]
+- net: /PA14
+  layers: [B.Cu, F.Cu]
+- net: /PA15
+  layers: [F.Cu]
+- net: /PA2
+  layers: [F.Cu]
+- net: /PA3
+  layers: [F.Cu]
+- net: /PA4
+  layers: [F.Cu]
+- net: /PA5
+  layers: [F.Cu]
+- net: /PA6
+  layers: [F.Cu]
+- net: /PA7
+  layers: [F.Cu]
+- net: /PA9
+  layers: [F.Cu]
+- net: /PB0
+  layers: [F.Cu]
+- net: /PB1
+  layers: [F.Cu]
+- net: /PB3
+  layers: [F.Cu]
+- net: /PB4
+  layers: [F.Cu]
+- net: /PB5
+  layers: [F.Cu]
+- net: /PB6
+  layers: [F.Cu]
+- net: /PB7
+  layers: [F.Cu]
+- net: /PB8
+  layers: [B.Cu, F.Cu]
+- net: /PD0
+  layers: [B.Cu, F.Cu]
+- net: /PD1
+  layers: [B.Cu, F.Cu]
+- net: /VBUS
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [B.Cu]
+  keepout: true

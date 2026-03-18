@@ -1,0 +1,1243 @@
+name: OpenInverter Mainboard v3.4
+slug: openinverter-mainboard-v3-4
+source: jsphuebner/inverter-hardware
+format: eagle
+description: '3-phase EV motor inverter mainboard: STM32F103, CAN bus (SN65HVD230)'
+tags: [can-bus, current-sensing, inverter, motor-control, power-supply, sensors]
+key_ics: [SN65HVD230, STM32F103, LM2596]
+outline:
+  width_mm: 79.68
+  height_mm: 80.0
+design_rules:
+  layers: 2
+  min_trace: 10mil
+  min_clearance: 5mil
+  min_drill: 0.5mm
+  min_via: 8mil
+components:
+- ref: ALIVE
+  value: green LED
+  footprint: 0805
+- ref: C1
+  value: 10uF
+  footprint: 0805
+- ref: C10
+  value: 1uF
+  footprint: '0603'
+- ref: C11
+  value: 1nF
+  footprint: '0603'
+- ref: C12
+  value: 1nF
+  footprint: '0603'
+- ref: C13
+  value: 1uF
+  footprint: '0603'
+- ref: C14
+  value: 1uF
+  footprint: '0603'
+- ref: C15
+  value: 1uF
+  footprint: '0603'
+- ref: C16
+  value: 1uF
+  footprint: '0603'
+- ref: C17
+  value: 1uF
+  footprint: '0603'
+- ref: C19
+  value: 1uF
+  footprint: '0603'
+- ref: C2
+  value: 10uF
+  footprint: 0805
+- ref: C20
+  value: 470uF
+  footprint: UD-6,3X7,7
+- ref: C21
+  value: 1uF
+  footprint: '0603'
+- ref: C22
+  value: 10uF
+  footprint: 0805
+  decouples: IC8
+- ref: C23
+  value: 1uF
+  footprint: '0603'
+  decouples: IC4
+- ref: C24
+  value: 1uF
+  footprint: '0603'
+- ref: C25
+  value: 1uF
+  footprint: '0603'
+  decouples: IC4
+- ref: C26
+  value: 20pF
+  footprint: '0603'
+- ref: C27
+  value: 20pF
+  footprint: '0603'
+- ref: C28
+  value: 1uF
+  footprint: '0603'
+  decouples: IC5
+- ref: C29
+  value: 1uF
+  footprint: '0603'
+  decouples: IC4
+- ref: C3
+  value: 1uF
+  footprint: '0603'
+- ref: C30
+  value: 1uF
+  footprint: '0603'
+  decouples: IC9
+- ref: C31
+  value: 1uF
+  footprint: '0603'
+- ref: C32
+  value: 1uF
+  footprint: '0603'
+- ref: C33
+  value: 1uF
+  footprint: '0603'
+- ref: C34
+  value: 22nF
+  footprint: '0603'
+- ref: C35
+  value: 22nF
+  footprint: '0603'
+- ref: C36
+  value: 22nF
+  footprint: '0603'
+- ref: C37
+  value: 22nF
+  footprint: '0603'
+- ref: C38
+  value: 1nF
+  footprint: '0603'
+- ref: C39
+  value: 1uF
+  footprint: '0603'
+- ref: C4
+  value: 1uF
+  footprint: '0603'
+- ref: C40
+  value: 1uF
+  footprint: '0603'
+- ref: C41
+  value: 1nF
+  footprint: '0603'
+- ref: C42
+  value: 1nF
+  footprint: '0603'
+- ref: C43
+  value: 1uF
+  footprint: '0603'
+- ref: C44
+  value: 22nF
+  footprint: '0603'
+- ref: C45
+  value: 470uF
+  footprint: UD-6,3X7,7
+- ref: C46
+  value: 10uF
+  footprint: 0805
+- ref: C47
+  value: 22nF
+  footprint: '0603'
+- ref: C48
+  value: 1uF
+  footprint: '0603'
+  decouples: IC3
+- ref: C5
+  value: 1uF
+  footprint: '0603'
+- ref: C6
+  value: 1uF
+  footprint: '0603'
+- ref: C7
+  value: 1uF
+  footprint: '0603'
+- ref: C8
+  value: 680uF
+  footprint: UD-10X10
+- ref: C9
+  value: 1uF
+  footprint: '0603'
+- ref: D1
+  value: CDBA540-HF
+  footprint: SMB
+  description: Schottky Diode
+- ref: D2
+  value: CDBA540-HF
+  footprint: SMB
+  description: Schottky Diode
+- ref: D3
+  value: SBR1A40S3-7
+  footprint: SOD-323F
+- ref: IC1
+  value: LM2596
+  footprint: TO263-5
+  manufacturer: NATIONAL SEMICONDUCTOR
+  mpn: LM2596S-ADJ/NOPB
+  description: "SIMPLE SWITCHER\xAE Power Converter 150 kHz 3A Step-Down Voltage Regulator"
+- ref: IC2
+  value: TDA2822
+  footprint: SOIC-8
+  description: OP AMP
+- ref: IC3
+  value: SN65HVD230DR
+  footprint: SOIC-8
+  description: CAN transceiver
+- ref: IC4
+  value: STM32F103RBT6
+  footprint: TQFP64
+  description: STM32F101/103 64pin LQFP
+- ref: IC5
+  value: MIC2288YD5
+  footprint: SOT-23-5
+- ref: IC6
+  value: ULN2003A
+  footprint: SOIC-16
+  description: DRIVER ARRAY
+- ref: IC7
+  value: LM2901
+  footprint: SOIC-14
+  description: Low Power Low Offset Voltage Quad Comparators
+- ref: IC8
+  value: REG1117
+  footprint: SOT223
+  mpn: REG1117
+  description: 800mA and 1A Low Dropout (LDO) Positive Regulator
+- ref: IC9
+  value: NC7SZ10P6X
+  footprint: SC70-6
+  description: 3-input NAND gate
+- ref: J1
+  value: Tag-Connect SWD
+  footprint: TC2030-MCP
+  description: ARM20-CTX 20-Pin to TC2030-IDC Adapter for Cortex 6-Pin (TC2030-IDC family)
+- ref: JP1
+  value: 2x5 header
+  footprint: 2X05
+- ref: JP2
+  value: 2x13 header
+  footprint: 2X13
+- ref: JP3
+  value: 2x7 header
+  footprint: 2X07
+- ref: JP7
+  value: 2x8 header
+  footprint: 2X08
+- ref: L1
+  value: 10uH
+  footprint: '2012'
+- ref: L2
+  value: 47uH
+  footprint: CDRH125
+- ref: L3
+  value: 10uH
+  footprint: '2012'
+- ref: L4
+  value: 10uH
+  footprint: '2825'
+- ref: PWR
+  value: green LED
+  footprint: 0805
+- ref: Q1
+  value: 8MHz
+  footprint: CRYSTAL-TXC-7A
+  description: Various standard crystals
+- ref: R1
+  value: 220ohm
+  footprint: '0603'
+- ref: R10
+  value: 1.2kohm
+  footprint: '0603'
+  pulldown: PC8
+- ref: R11
+  value: 510ohm
+  footprint: '0603'
+- ref: R12
+  value: 1.2kohm
+  footprint: '0603'
+  pulldown: PC7
+- ref: R13
+  value: 1.2kohm
+  footprint: '0603'
+  pulldown: PC6
+- ref: R14
+  value: 10kohm
+  footprint: '0603'
+  pulldown: THROTTLE2
+- ref: R15
+  value: 510ohm
+  footprint: '0603'
+- ref: R16
+  value: 510ohm
+  footprint: '0603'
+- ref: R17
+  value: 510ohm
+  footprint: '0603'
+- ref: R18
+  value: 510ohm
+  footprint: '0603'
+- ref: R19
+  value: 1.2kohm
+  footprint: '0603'
+  pulldown: PA4/ADC4
+- ref: R2
+  value: 3.3kohm
+  footprint: '0603'
+- ref: R20
+  value: 10kohm
+  footprint: '0603'
+- ref: R21
+  value: 10kohm
+  footprint: '0603'
+- ref: R22
+  value: 10kohm
+  footprint: '0603'
+  pulldown: THROTTLE1
+- ref: R23
+  value: 1.2kohm
+  footprint: '0603'
+  pulldown: PA3/ADC3
+- ref: R24
+  value: 10kohm
+  footprint: '0603'
+- ref: R25
+  value: 10kohm
+  footprint: '0603'
+- ref: R26
+  value: 1.2kohm
+  footprint: '0603'
+  pulldown: PA2/ADC2
+- ref: R27
+  value: 1.2kohm
+  footprint: '0603'
+  pulldown: PB6/TIM4_CH1
+- ref: R29
+  value: 1.2kohm
+  footprint: '0603'
+  pulldown: PB5
+- ref: R3
+  value: 3.3kohm
+  footprint: '0603'
+- ref: R31
+  value: 10kohm
+  footprint: '0603'
+- ref: R32
+  value: 510ohm
+  footprint: '0603'
+- ref: R33
+  value: 510ohm
+  footprint: '0603'
+- ref: R35
+  value: 3.3kohm
+  footprint: '0603'
+- ref: R36
+  value: 510ohm
+  footprint: '0603'
+- ref: R37
+  value: 10kohm
+  footprint: '0603'
+- ref: R38
+  value: 10kohm
+  footprint: '0603'
+- ref: R39
+  value: 10kohm
+  footprint: '0603'
+- ref: R4
+  value: 3.3kohm
+  footprint: '0603'
+- ref: R40
+  value: 510ohm
+  footprint: '0603'
+- ref: R41
+  value: 10kohm
+  footprint: '0603'
+- ref: R42
+  value: 3.3kohm
+  footprint: '0603'
+- ref: R43
+  value: 10kohm
+  footprint: '0603'
+  pullup: PA1/TIM2_CH2
+- ref: R44
+  value: 3.3kohm
+  footprint: '0603'
+- ref: R45
+  value: 10kohm
+  footprint: '0603'
+  pullup: PC9
+- ref: R46
+  value: 10kohm
+  footprint: '0603'
+  pulldown: IC2.A.+IN
+- ref: R47
+  value: 10kohm
+  footprint: '0603'
+- ref: R48
+  value: 3.3kohm
+  footprint: '0603'
+- ref: R49
+  value: 3.3kohm
+  footprint: '0603'
+- ref: R5
+  value: 4.7kohm
+  footprint: '0603'
+- ref: R50
+  value: 4.7kohm
+  footprint: '0603'
+  pulldown: PA5/ADC5
+- ref: R51
+  value: 4.7kohm
+  footprint: '0603'
+  pulldown: PB0/ADC8
+- ref: R52
+  value: 10ohm
+  footprint: '0603'
+- ref: R6
+  value: 3.3kohm
+  footprint: '0603'
+- ref: R7
+  value: 3.3kohm
+  footprint: '0603'
+- ref: R8
+  value: 3.3kohm
+  footprint: '0603'
+- ref: R9
+  value: 3.3kohm
+  footprint: '0603'
+- ref: SJ1
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ2
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ3
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ4
+  value: solder jumper
+  footprint: SJ-2
+- ref: T1
+  value: AP9T18GH-HF
+  footprint: D-PAK_TO252AA
+nets:
+- name: +12V
+  pins: [D1.A, JP2.24, SJ1.2]
+- name: AN_POWER_VDDA
+  pins: [C24.2, IC4.AN_POWER.VDDA, L3.1]
+- name: A_OUT
+  pins: [C46.1, IC2.A.OUT, R52.2]
+- name: A__IN
+  pins: [C32.1, IC7.A.-IN, IC7.B.-IN, R37.2]
+- name: A__IN_2
+  pins: [C37.2, IC2.A.+IN, R46.2]
+- name: A__IN_3
+  pins: [C39.2, IC2.A.-IN]
+- name: CANH
+  pins: [IC3.CANH, JP2.26]
+- name: CANL
+  pins: [IC3.CANL, JP2.25]
+- name: CD
+  pins: [IC6.CD+, SJ1.1]
+- name: C__IN
+  pins: [C33.1, IC7.C.+IN, IC7.D.+IN, R38.2]
+- name: ENC_A/S2
+  pins: [JP2.3, R21.2, SJ2.1]
+- name: ENC_B/S3
+  pins: [JP2.1, R20.2, SJ3.1]
+- name: ENC_Z/R1
+  pins: [C46.2, JP2.4]
+- name: FB
+  pins: [IC5.FB, R35.1, R36.2]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C19.2
+  - C2.2
+  - C20.-
+  - C21.2
+  - C22.2
+  - C23.1
+  - C24.1
+  - C25.1
+  - C26.2
+  - C27.2
+  - C28.2
+  - C29.1
+  - C3.2
+  - C30.1
+  - C31.2
+  - C32.2
+  - C33.2
+  - C34.2
+  - C35.2
+  - C36.2
+  - C38.2
+  - C39.1
+  - C4.2
+  - C40.2
+  - C41.2
+  - C42.2
+  - C43.1
+  - C44.1
+  - C45.-
+  - C47.1
+  - C48.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.-
+  - C9.2
+  - D2.A
+  - IC1.!ON!/OFF
+  - IC1.GND
+  - IC2.P.V-
+  - IC3.RS
+  - IC3.VSS
+  - IC4.AN_POWER.VSSA
+  - IC4.POWER.VSS_1
+  - IC4.POWER.VSS_2
+  - IC4.POWER.VSS_3
+  - IC4.POWER.VSS_4
+  - IC4.RESET.BOOT0
+  - IC5.GND
+  - IC6.GND
+  - IC6.I7
+  - IC7.P.GND
+  - IC8.GND
+  - IC9.PWR.GND
+  - J1.GND
+  - JP1.2
+  - JP2.23
+  - JP3.12
+  - JP3.4
+  - JP3.8
+  - JP7.10
+  - JP7.15
+  - JP7.16
+  - JP7.5
+  - JP7.7
+  - PWR.C
+  - R1.1
+  - R10.1
+  - R12.1
+  - R13.1
+  - R14.1
+  - R16.2
+  - R19.1
+  - R22.1
+  - R23.1
+  - R26.1
+  - R27.1
+  - R29.1
+  - R36.1
+  - R46.1
+  - R50.1
+  - R51.1
+  - T1.S
+- name: I_L1
+  pins: [JP7.6, R48.1]
+- name: I_L2
+  pins: [JP7.9, R49.1]
+- name: MTEMP+
+  pins: [JP2.22, R15.1]
+- name: MTEMP-
+  pins: [JP2.21, R16.1, R31.1]
+- name: N$11
+  pins: [C44.2, C47.2, R52.1]
+- name: N$12
+  pins: [R40.2, R41.1]
+- name: N$17
+  pins: [C35.1, R42.2, R44.1]
+- name: N$18
+  pins: [C36.1, C37.1, R44.2]
+- name: N$22
+  pins: [PWR.A, R32.2]
+- name: N$23
+  pins: [ALIVE.A, R33.2]
+- name: N$28
+  pins: [C2.1, JP1.1, L1.2]
+- name: N$3
+  pins: [R17.2, SJ3.2]
+- name: N$30
+  pins: [C34.1, R41.2, R42.1]
+- name: N$8
+  pins: [R18.2, SJ2.2]
+- name: N$9
+  pins: [C1.1, R1.2, SJ4.2]
+- name: NRST
+  pins: [C21.1, IC4.RESET.NRST]
+- name: OUT
+  pins: [D2.C, IC1.OUT, L2.1]
+- name: OUT_BRAKE
+  pins: [IC6.O6, JP2.10]
+- name: OUT_DCSW
+  pins: [IC6.O7, JP2.12, T1.D]
+- name: OUT_ERR
+  pins: [IC6.O5, JP2.14]
+- name: OUT_OVTMP
+  pins: [IC6.O4, JP2.16]
+- name: OUT_PRE
+  pins: [IC6.O1, IC6.O2, JP2.20]
+- name: OUT_TEMP
+  pins: [IC6.O3, JP2.18]
+- name: PA1/TIM2_CH2
+  pins:
+  - IC4.PORTA_L.PA1
+  - IC7.A.OUT
+  - IC7.B.OUT
+  - IC7.C.OUT
+  - IC7.D.OUT
+  - IC9.NAME.I0
+  - R43.1
+- name: PA10/TIM1_CH3
+  pins: [IC4.PORTA_H.PA10, JP3.10]
+- name: PA11/CANRX
+  pins: [IC3.RXD, IC4.PORTA_H.PA11]
+- name: PA12/CANTX
+  pins: [IC3.TXD, IC4.PORTA_H.PA12]
+- name: PA2/ADC2
+  pins: [C9.1, IC4.PORTA_L.PA2, R26.2, R4.2]
+- name: PA3/ADC3
+  pins: [C7.1, IC4.PORTA_L.PA3, IC9.NAME.I1, R23.2, R5.2]
+- name: PA4/ADC4
+  pins: [C6.1, IC4.PORTA_L.PA4, R19.2, R6.2]
+- name: PA5/ADC5
+  pins: [C41.1, IC4.PORTA_L.PA5, IC7.A.+IN, IC7.C.-IN, R48.2, R50.2]
+- name: PA6/TIM3_CH1
+  pins: [C12.1, IC4.PORTA_L.PA6, R21.1]
+- name: PA7/TIM3_CH2
+  pins: [C11.1, IC4.PORTA_L.PA7, R20.1]
+- name: PA8/TIM1_CH1
+  pins: [IC4.PORTA_H.PA8, JP3.2]
+- name: PA9/TIM1_CH2
+  pins: [IC4.PORTA_H.PA9, JP3.6]
+- name: PB0/ADC8
+  pins: [C42.1, IC4.PORTB_L.PB0, IC7.B.+IN, IC7.D.-IN, R49.2, R51.2]
+- name: PB1/ADC9
+  pins: [IC4.PORTB_L.PB1, IC6.I1, IC6.I2]
+- name: PB10/USART3_TX
+  pins: [IC4.PORTB_H.PB10, JP1.3]
+- name: PB11/USART3_RX
+  pins: [IC4.PORTB_H.PB11, JP1.4]
+- name: PB12/TIM1_BKIN
+  pins: [IC4.PORTB_H.PB12, IC9.NAME.O]
+- name: PB5
+  pins: [C16.1, IC4.PORTB_L.PB5, R2.2, R29.2]
+- name: PB6/TIM4_CH1
+  pins: [C15.1, IC4.PORTB_L.PB6, R27.2, R3.2]
+- name: PB7/TIM4_CH2
+  pins: [IC4.PORTB_L.PB7, R37.1]
+- name: PB8/TIM4_CH3
+  pins: [IC4.PORTB_H.PB8, R38.1]
+- name: PB9/TIM4_CH4
+  pins: [IC4.PORTB_H.PB9, IC6.I3]
+- name: PC0/ADC10
+  pins: [C14.1, IC4.PORTC_L.PC0, R25.2]
+- name: PC1/ADC11
+  pins: [C13.1, IC4.PORTC_L.PC1, R24.2]
+- name: PC10
+  pins: [IC4.PORTC_H.PC10, IC6.I5]
+- name: PC11
+  pins: [IC4.PORTC_H.PC11, IC6.I4]
+- name: PC12
+  pins: [ALIVE.C, IC4.PORTC_H.PC12]
+- name: PC13
+  pins: [IC4.PORTC_H.PC13, T1.G]
+- name: PC2/ADC12
+  pins: [C17.1, IC4.PORTC_L.PC2, R31.2]
+- name: PC3/ADC13
+  pins: [C40.1, IC4.PORTC_L.PC3, R47.2]
+- name: PC4/ADC14
+  pins: [C31.1, IC4.PORTC_L.PC4, R39.1]
+- name: PC5/ADC15
+  pins: [IC4.PORTC_L.PC5, IC6.I6]
+- name: PC6
+  pins: [C5.1, IC4.PORTC_L.PC6, R13.2, R7.2]
+- name: PC7
+  pins: [C4.1, IC4.PORTC_L.PC7, R12.2, R8.2]
+- name: PC8
+  pins: [C3.1, IC4.PORTC_H.PC8, R10.2, R9.2]
+- name: PC9
+  pins: [C38.1, IC4.PORTC_H.PC9, IC9.NAME.I2, JP3.13, R45.1]
+- name: PD2/TIM3_ETR
+  pins: [IC4.PORTD/OSC.PD2, R40.1]
+- name: PORTA_H_PA13
+  pins: [IC4.PORTA_H.PA13, J1.SWDIO/TMS]
+- name: PORTA_H_PA14
+  pins: [IC4.PORTA_H.PA14, J1.SWCLK/TCK]
+- name: PORTD_OSC_PD0_OSC
+  pins: [C26.1, IC4.PORTD/OSC.PD0/OSC<=, Q1.2]
+- name: PORTD_OSC_PD1_OSC
+  pins: [C27.1, IC4.PORTD/OSC.PD1/OSC=>, Q1.1]
+- name: P_V
+  pins: [C43.2, C45.+, D3.C, IC2.P.V+, R35.2]
+- name: S4/S1
+  pins: [JP2.2, R11.1, SJ4.1]
+- name: SIG_BMS
+  pins: [JP2.19, R9.1]
+- name: SIG_BRAKE
+  pins: [JP2.9, R4.1]
+- name: SIG_CRUISE
+  pins: [JP2.5, R2.1]
+- name: SIG_EMCYSTOP
+  pins: [JP2.17, R8.1]
+- name: SIG_FORWARD
+  pins: [JP2.13, R6.1]
+- name: SIG_MPROT
+  pins: [JP2.11, R5.1]
+- name: SIG_REVERSE
+  pins: [JP2.15, R7.1]
+- name: SIG_START
+  pins: [JP2.7, R3.1]
+- name: SW
+  pins: [D3.A, IC5.SW, L4.2]
+- name: THROTTLE1
+  pins: [JP2.6, R22.2, R24.1]
+- name: THROTTLE2
+  pins: [JP2.8, R14.2, R25.1]
+- name: TIM1_CH1N
+  pins: [IC4.PORTB_H.PB13, JP3.3]
+- name: TIM1_CH2N
+  pins: [IC4.PORTB_H.PB14, JP3.7]
+- name: TIM1_CH3N
+  pins: [IC4.PORTB_H.PB15, JP3.11]
+- name: TMPHS
+  pins: [JP7.13, R39.2]
+- name: UDC
+  pins: [JP7.4, R47.1]
+- name: VCC
+  pins:
+  - C19.1
+  - C20.+
+  - C28.1
+  - IC1.FB
+  - IC5./SHDN
+  - IC5.VIN
+  - IC7.P.V+
+  - IC8.VIN
+  - JP3.1
+  - JP3.5
+  - JP3.9
+  - JP7.1
+  - JP7.11
+  - JP7.12
+  - JP7.2
+  - JP7.8
+  - L2.2
+  - L4.1
+  - R11.2
+  - R15.2
+  - R17.1
+  - R18.1
+  - R43.2
+  - R45.2
+- name: VCCIO
+  pins:
+  - C22.1
+  - C23.2
+  - C25.2
+  - C29.2
+  - C30.2
+  - C48.1
+  - IC3.VDD
+  - IC4.AN_POWER.VBAT
+  - IC4.POWER.VDD_1
+  - IC4.POWER.VDD_2
+  - IC4.POWER.VDD_3
+  - IC4.POWER.VDD_4
+  - IC8.VOUT
+  - IC9.PWR.VCC
+  - J1.VCC
+  - L1.1
+  - L3.2
+  - R32.1
+  - R33.1
+- name: VIN
+  pins: [C10.1, C8.+, D1.C, IC1.VIN]
+positions:
+- ref: ALIVE
+  x: 75.31
+  y: 18.75
+  rot: 90.0
+- ref: C1
+  x: 9.5
+  y: 7.62
+  rot: 180.0
+- ref: C10
+  x: 17.35
+  y: 62.02
+  rot: 180.0
+- ref: C11
+  x: 39.03
+  y: 46.99
+- ref: C12
+  x: 50.34
+  y: 50.81
+- ref: C13
+  x: 5.08
+  y: 13.45
+  rot: 180.0
+- ref: C14
+  x: 5.08
+  y: 18.52
+  rot: 180.0
+- ref: C15
+  x: 30.48
+  y: 25.4
+  rot: 270.0
+- ref: C16
+  x: 30.48
+  y: 21.59
+  rot: 270.0
+- ref: C17
+  x: 21.59
+  y: 50.8
+  rot: 180.0
+- ref: C19
+  x: 44.98
+  y: 59.62
+  rot: 270.0
+- ref: C2
+  x: 60.0
+  y: 55.62
+  rot: 90.0
+- ref: C20
+  x: 45.16
+  y: 66.47
+  rot: 270.0
+- ref: C21
+  x: 64.09
+  y: 40.31
+- ref: C22
+  x: 41.22
+  y: 28.57
+  rot: 180.0
+- ref: C23
+  x: 42.53
+  y: 45.72
+  rot: 270.0
+- ref: C24
+  x: 56.52
+  y: 45.5
+  rot: 180.0
+- ref: C25
+  x: 51.19
+  y: 48.07
+  rot: 270.0
+- ref: C26
+  x: 63.13
+  y: 28.96
+  rot: 270.0
+- ref: C27
+  x: 64.09
+  y: 37.78
+- ref: C28
+  x: 18.39
+  y: 4.05
+  rot: 90.0
+- ref: C29
+  x: 41.27
+  y: 31.11
+- ref: C3
+  x: 30.48
+  y: 48.26
+  rot: 270.0
+- ref: C30
+  x: 54.61
+  y: 31.75
+  rot: 180.0
+- ref: C31
+  x: 45.0
+  y: 56.25
+  rot: 90.0
+- ref: C32
+  x: 50.47
+  y: 63.5
+  rot: 180.0
+- ref: C33
+  x: 56.54
+  y: 60.96
+  rot: 180.0
+- ref: C34
+  x: 58.42
+  y: 12.7
+- ref: C35
+  x: 54.61
+  y: 12.7
+- ref: C36
+  x: 50.8
+  y: 12.7
+- ref: C37
+  x: 46.99
+  y: 12.7
+  rot: 180.0
+- ref: C38
+  x: 50.43
+  y: 20.28
+  rot: 180.0
+- ref: C39
+  x: 46.99
+  y: 17.78
+  rot: 180.0
+- ref: C4
+  x: 30.48
+  y: 44.45
+  rot: 270.0
+- ref: C40
+  x: 50.47
+  y: 66.04
+  rot: 180.0
+- ref: C41
+  x: 56.54
+  y: 66.04
+  rot: 180.0
+- ref: C42
+  x: 60.96
+  y: 66.04
+  rot: 180.0
+- ref: C43
+  x: 35.56
+  y: 11.43
+  rot: 90.0
+- ref: C44
+  x: 29.21
+  y: 16.5
+  rot: 270.0
+- ref: C45
+  x: 30.79
+  y: 6.49
+  rot: 90.0
+- ref: C46
+  x: 14.05
+  y: 7.66
+  rot: 180.0
+- ref: C47
+  x: 26.71
+  y: 16.5
+  rot: 270.0
+- ref: C48
+  x: 2.81
+  y: 50.62
+  rot: 90.0
+- ref: C5
+  x: 30.48
+  y: 40.64
+  rot: 270.0
+- ref: C6
+  x: 30.48
+  y: 36.83
+  rot: 270.0
+- ref: C7
+  x: 30.48
+  y: 33.02
+  rot: 270.0
+- ref: C8
+  x: 11.98
+  y: 68.64
+  rot: 270.0
+- ref: C9
+  x: 30.48
+  y: 29.21
+  rot: 270.0
+- ref: D1
+  x: 6.25
+  y: 59.69
+  rot: 180.0
+- ref: D2
+  x: 21.59
+  y: 58.42
+  rot: 270.0
+- ref: D3
+  x: 25.4
+  y: 8.26
+  rot: 90.0
+- ref: IC1
+  x: 22.86
+  y: 69.85
+- ref: IC2
+  x: 40.62
+  y: 12.81
+  rot: 270.0
+- ref: IC3
+  x: 7.62
+  y: 50.8
+  rot: 270.0
+- ref: IC4
+  x: 48.26
+  y: 38.1
+  rot: 180.0
+- ref: IC5
+  x: 21.4
+  y: 4.35
+  rot: 180.0
+- ref: IC6
+  x: 6.88
+  y: 38.75
+  rot: 270.0
+- ref: IC7
+  x: 68.27
+  y: 65.71
+  rot: 180.0
+- ref: IC8
+  x: 41.91
+  y: 20.32
+  rot: 180.0
+- ref: IC9
+  x: 55.94
+  y: 25.31
+  rot: 180.0
+- ref: J1
+  x: 70.0
+  y: 31.56
+  rot: 90.0
+- ref: JP1
+  x: 68.58
+  y: 50.8
+  rot: 270.0
+- ref: JP2
+  x: 15.24
+  y: 35.56
+  rot: 90.0
+- ref: JP3
+  x: 54.61
+  y: 6.35
+  rot: 180.0
+- ref: JP7
+  x: 50.8
+  y: 74.93
+- ref: L1
+  x: 56.88
+  y: 52.5
+- ref: L2
+  x: 35.08
+  y: 63.92
+  rot: 180.0
+- ref: L3
+  x: 55.96
+  y: 49.06
+  rot: 90.0
+- ref: L4
+  x: 25.21
+  y: 4.35
+  rot: 90.0
+- ref: PWR
+  x: 71.25
+  y: 18.75
+  rot: 90.0
+- ref: Q1
+  x: 63.06
+  y: 33.58
+  rot: 90.0
+- ref: R1
+  x: 8.89
+  y: 10.16
+- ref: R10
+  x: 27.94
+  y: 48.26
+  rot: 90.0
+- ref: R11
+  x: 5.14
+  y: 10.2
+  rot: 180.0
+- ref: R12
+  x: 27.94
+  y: 44.45
+  rot: 90.0
+- ref: R13
+  x: 27.94
+  y: 40.64
+  rot: 90.0
+- ref: R14
+  x: 8.89
+  y: 21.07
+- ref: R15
+  x: 8.89
+  y: 45.72
+  rot: 180.0
+- ref: R16
+  x: 21.59
+  y: 45.72
+- ref: R17
+  x: 21.59
+  y: 17.78
+  rot: 180.0
+- ref: R18
+  x: 21.59
+  y: 22.86
+  rot: 180.0
+- ref: R19
+  x: 27.94
+  y: 36.83
+  rot: 90.0
+- ref: R2
+  x: 21.59
+  y: 25.4
+- ref: R20
+  x: 21.59
+  y: 15.24
+  rot: 180.0
+- ref: R21
+  x: 21.59
+  y: 20.32
+  rot: 180.0
+- ref: R22
+  x: 8.89
+  y: 15.98
+- ref: R23
+  x: 27.94
+  y: 33.02
+  rot: 90.0
+- ref: R24
+  x: 8.89
+  y: 13.45
+  rot: 180.0
+- ref: R25
+  x: 8.89
+  y: 18.52
+  rot: 180.0
+- ref: R26
+  x: 27.94
+  y: 29.21
+  rot: 90.0
+- ref: R27
+  x: 27.94
+  y: 25.4
+  rot: 90.0
+- ref: R29
+  x: 27.94
+  y: 21.59
+  rot: 90.0
+- ref: R3
+  x: 21.59
+  y: 27.94
+- ref: R31
+  x: 21.59
+  y: 48.26
+- ref: R32
+  x: 71.25
+  y: 22.81
+  rot: 270.0
+- ref: R33
+  x: 75.31
+  y: 22.81
+  rot: 270.0
+- ref: R35
+  x: 22.04
+  y: 8.79
+- ref: R36
+  x: 18.41
+  y: 8.79
+- ref: R37
+  x: 50.5
+  y: 61.13
+- ref: R38
+  x: 56.55
+  y: 58.69
+- ref: R39
+  x: 48.12
+  y: 56.25
+  rot: 90.0
+- ref: R4
+  x: 21.59
+  y: 30.48
+- ref: R40
+  x: 62.17
+  y: 12.7
+  rot: 180.0
+- ref: R41
+  x: 58.44
+  y: 15.24
+  rot: 180.0
+- ref: R42
+  x: 54.61
+  y: 15.24
+  rot: 180.0
+- ref: R43
+  x: 74.93
+  y: 65.39
+  rot: 90.0
+- ref: R44
+  x: 50.8
+  y: 15.24
+  rot: 180.0
+- ref: R45
+  x: 54.61
+  y: 17.78
+- ref: R46
+  x: 46.99
+  y: 15.24
+  rot: 180.0
+- ref: R47
+  x: 50.47
+  y: 68.58
+- ref: R48
+  x: 56.54
+  y: 68.58
+- ref: R49
+  x: 60.96
+  y: 68.58
+- ref: R5
+  x: 21.59
+  y: 33.02
+- ref: R50
+  x: 56.52
+  y: 63.5
+- ref: R51
+  x: 60.96
+  y: 63.5
+- ref: R52
+  x: 26.74
+  y: 13.04
+  rot: 270.0
+- ref: R6
+  x: 21.59
+  y: 35.56
+- ref: R7
+  x: 21.59
+  y: 38.1
+- ref: R8
+  x: 21.59
+  y: 40.64
+- ref: R9
+  x: 21.59
+  y: 43.18
+- ref: SJ1
+  x: 3.44
+  y: 45.31
+  rot: 90.0
+- ref: SJ2
+  x: 19.06
+  y: 22.81
+- ref: SJ3
+  x: 18.75
+  y: 17.81
+- ref: SJ4
+  x: 11.56
+  y: 11.56
+  rot: 270.0
+- ref: T1
+  x: 6.56
+  y: 27.81
+copper_pours:
+- net: GND
+  layers: [F.Cu]
+- net: VCC
+  layers: [B.Cu]
+- net: VCCIO
+  layers: [B.Cu]

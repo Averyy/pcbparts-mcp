@@ -1,0 +1,135 @@
+name: HV Flyback Converter
+slug: hv-flyback-converter
+source: newell/hv-flyback-converter
+format: kicad8
+description: "High-voltage isolated flyback (4\u20136V\u2192180V output), LT3957A controller"
+tags: [isolation]
+key_ics: [LT3957AEUHE#PBF]
+design_rules:
+  layers: 2
+  min_trace: 0.152mm
+  min_clearance: 0.152mm
+  min_drill: 0.254mm
+  min_via: 0.508mm
+components:
+- ref: C1
+  value: 100uF
+  footprint: '1206'
+  mpn: CC1206MKX5R5BB107
+- ref: C10
+  value: 68nF
+  footprint: '1210'
+  manufacturer: Murata Electronics
+  mpn: GCJ32QR7LV683KW01K
+  description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 0.068 uF 630 VDC 10% 1210 X7R
+- ref: C2
+  value: 100uF
+  footprint: '1206'
+  mpn: CC1206MKX5R5BB107
+- ref: C3
+  value: 100nF
+  footprint: 0805
+  mpn: CC0805JRX7R9BB104
+- ref: C4
+  value: 100pF
+  footprint: 0805
+  mpn: CC0805JRNPO9BN101
+- ref: C5
+  value: 10nF
+  footprint: 0805
+- ref: C6
+  value: 220pF
+  footprint: 0805
+  mpn: CC0805JRNPO9BN221
+- ref: C7
+  value: 4.7uF
+  footprint: 0805
+- ref: C8
+  value: 10nF
+  footprint: 0805
+- ref: C9
+  value: 68nF
+  footprint: '1210'
+  manufacturer: Murata Electronics
+  mpn: GCJ32QR7LV683KW01K
+  description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 0.068 uF 630 VDC 10% 1210 X7R
+- ref: D1
+  value: PESD5V0L1BSLAZ
+  footprint: SOD-882
+  mpn: PESD5V0L1BSLAZ
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D2
+  value: PESD5V0L1BSLAZ
+  footprint: SOD-882
+  mpn: PESD5V0L1BSLAZ
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D3
+  value: MMSZ5258B
+  footprint: SOD-123F
+  mpn: MMSZ5258B
+  description: 500mW Zener Diode, SOD-123F
+- ref: D4
+  value: ES2F-E3/52T
+  footprint: SMB
+  description: Surface-Mount Ultrafast Plastic Rectifier, 300V 2A 35ns
+- ref: J1
+  value: 1x3 screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-3
+- ref: J2
+  value: 1x2 screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2
+- ref: R1
+  value: 100kohm
+  footprint: 0805
+  mpn: RC0805FR-07100KL
+- ref: R2
+  value: 4.7kohm
+  footprint: 0805
+  mpn: RC0805FR-074K7L
+- ref: R3
+  value: 100kohm
+  footprint: 0805
+  mpn: RC0805FR-07100KL
+- ref: R4
+  value: 140kohm
+  footprint: 0805
+  mpn: AC0805FR-07140KL
+- ref: R5
+  value: 22ohm
+  footprint: 0805
+  mpn: RC0805FR-0722RL
+- ref: R6
+  value: 10kohm
+  footprint: 0805
+  mpn: RC0805FR-0710KL
+- ref: R7
+  value: 22ohm
+  footprint: 0805
+  mpn: RC0805FR-0722RL
+- ref: R8
+  value: 1.8Mohm
+  footprint: '1206'
+  height: '0.65'
+  manufacturer: YAGEO
+  mpn: RC1206FR-071M8L
+  description: Thick Film Resistors - SMD 1.8 MOhms 250 mW 1206 1%
+- ref: R9
+  value: 15.8kohm
+  footprint: 0805
+  mpn: RC0805FR-0715K8L
+- ref: SW1
+  value: switch
+  footprint: SW_SPDT_PCM12
+  description: Switch, single pole double throw
+- ref: TR1
+  value: DA2032-ALD
+  footprint: SOP-12
+  mpn: DA2032-ALD
+  description: COILCRAFT - DA2032-ALD - TRANSFORMER, FLYBACK, LT3750, SMD
+- ref: U1
+  value: LT3957AEUHE#PBF
+  footprint: LT3958EUHETRPBF
+  height: '0.8'
+  manufacturer: Analog Devices
+  mpn: LT3957AEUHE#PBF
+  description: DC/DC Cntrlr Single-OUT Flyback/Step Up 1200kHz Automotive 28-Pin QFN EP Tube

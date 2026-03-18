@@ -1,0 +1,288 @@
+name: ANAVI Fixed Power Delivery
+slug: anavi-fixed-power-delivery
+source: AnaviTechnology/anavi-fixed-power-delivery
+format: kicad8
+description: USB-C PD sink (CYPD3177-24LQXQ), CC1/CC2 handling
+tags: [usb-pd]
+key_ics: [CYPD3177-24LQXQ, DMP3013SFV]
+outline:
+  width_mm: 17.72
+  height_mm: 42.1
+design_rules:
+  layers: 2
+components:
+- ref: C1
+  value: 390pF
+  footprint: '0603'
+- ref: C2
+  value: 390pF
+  footprint: '0603'
+- ref: C3
+  value: 3.3uF
+  footprint: 0805
+- ref: C4
+  value: 1uF
+  footprint: '0603'
+- ref: C5
+  value: 1uF
+  footprint: '0603'
+- ref: C6
+  value: 1uF
+  footprint: '0603'
+  decouples: U1
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C9
+  value: 1uF
+  footprint: '0603'
+- ref: D1
+  value: 15V
+  footprint: SOD-323
+- ref: D2
+  value: LED
+  footprint: '1206'
+- ref: J1
+  value: USB-C
+  footprint: USB-C
+- ref: J2
+  value: 1x2 screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2
+- ref: Q1
+  value: DMP3013SFV
+  footprint: Diodes_PowerDI3333-8
+- ref: Q2
+  value: DMP3013SFV
+  footprint: Diodes_PowerDI3333-8
+- ref: R1
+  value: 5.1kohm
+  footprint: '0603'
+  pullup: U1.ISNK_COARSE
+- ref: R10
+  value: 2.4kohm
+  footprint: '0603'
+  pulldown: U1.VBUS_MIN
+- ref: R2
+  value: 2.4kohm
+  footprint: '0603'
+  pulldown: U1.ISNK_COARSE
+- ref: R3
+  value: 5.1kohm
+  footprint: '0603'
+  pullup: U1.VBUS_MAX
+- ref: R4
+  value: 2.4kohm
+  footprint: '0603'
+  pulldown: U1.VBUS_MAX
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+- ref: R6
+  value: 1kohm
+  footprint: '0603'
+- ref: R7
+  value: 47kohm
+  footprint: '0603'
+- ref: R8
+  value: 68ohm
+  footprint: '0603'
+- ref: R9
+  value: 5.1kohm
+  footprint: '0603'
+  pullup: U1.VBUS_MIN
+- ref: U1
+  value: CYPD3177
+  footprint: QFN-24-1EP
+nets:
+- name: +3V3
+  pins:
+  - C6.1
+  - C7.1
+  - C8.1
+  - R1.1
+  - R3.1
+  - R9.1
+  - U1.VDDD
+- name: /CC1
+  pins: [C1.1, J1.CC1, U1.CC1]
+- name: /CC2
+  pins: [C2.1, J1.CC2, U1.CC2]
+- name: /D+
+  pins: [J1.D+@A6, J1.D+@B6, U1.D+]
+- name: /D-
+  pins: [J1.D-@A7, J1.D-@B7, U1.D-]
+- name: /VBUSIN
+  pins:
+  - C3.1
+  - C4.1
+  - J1.VBUS@A4
+  - J1.VBUS@A9
+  - J1.VBUS@B4
+  - J1.VBUS@B9
+  - Q1.D
+  - R5.1
+  - U1.VBUS_IN
+- name: /VBUSOUT
+  pins: [C9.1, J2.Pin_1, Q2.D]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D2.K
+  - J1.GND@A1
+  - J1.GND@A12
+  - J1.GND@B1
+  - J1.GND@B12
+  - J1.SHIELD@S1
+  - J2.Pin_2
+  - R10.2
+  - R2.2
+  - R4.2
+  - U1.EPAD
+  - U1.GND
+  - U1.ISNK_FINE
+  - U1.VSS
+- name: Net-(D1-A)
+  pins:
+  - C4.2
+  - D1.A
+  - Q1.G
+  - Q2.G
+  - R5.2
+  - R6.1
+  - R7.2
+- name: Net-(D1-K)
+  pins:
+  - D1.K
+  - Q1.2
+  - Q1.3
+  - Q1.S
+  - Q2.2
+  - Q2.3
+  - Q2.S
+  - R7.1
+- name: Net-(D2-A)
+  pins: [D2.A, R8.2]
+- name: Net-(U1-FAULT)
+  pins: [R8.1, U1.FAULT]
+- name: Net-(U1-ISNK_COARSE)
+  pins: [R1.2, R2.1, U1.ISNK_COARSE]
+- name: Net-(U1-VBUS_FET_EN)
+  pins: [R6.2, U1.VBUS_FET_EN]
+- name: Net-(U1-VBUS_MAX)
+  pins: [R3.2, R4.1, U1.VBUS_MAX]
+- name: Net-(U1-VBUS_MIN)
+  pins: [R10.1, R9.2, U1.VBUS_MIN]
+- name: Net-(U1-VCCD)
+  pins: [C5.1, U1.VCCD]
+positions:
+- ref: C1
+  x: 130.53
+  y: 93.37
+  rot: 90.0
+- ref: C2
+  x: 129.0
+  y: 93.37
+  rot: 90.0
+- ref: C3
+  x: 124.68
+  y: 87.18
+- ref: C4
+  x: 124.68
+  y: 89.21
+- ref: C5
+  x: 132.81
+  y: 104.29
+  rot: -90.0
+- ref: C6
+  x: 128.24
+  y: 104.29
+  rot: -90.0
+- ref: C7
+  x: 129.76
+  y: 104.29
+  rot: -90.0
+- ref: C8
+  x: 131.29
+  y: 104.29
+  rot: -90.0
+- ref: C9
+  x: 124.33
+  y: 106.99
+- ref: D1
+  x: 124.57
+  y: 97.82
+- ref: D2
+  x: 133.71
+  y: 88.34
+  rot: -90.0
+- ref: J1
+  x: 129.51
+  y: 79.81
+  rot: 180.0
+- ref: J2
+  x: 127.05
+  y: 113.8
+- ref: Q1
+  x: 124.63
+  y: 94.29
+  rot: 90.0
+- ref: Q2
+  x: 124.63
+  y: 103.46
+  rot: -90.0
+- ref: R1
+  x: 136.35
+  y: 85.38
+  rot: -90.0
+- ref: R10
+  x: 136.38
+  y: 103.66
+  rot: -90.0
+- ref: R2
+  x: 136.35
+  y: 89.09
+  rot: -90.0
+- ref: R3
+  x: 136.38
+  y: 96.41
+  rot: 90.0
+- ref: R4
+  x: 136.38
+  y: 92.8
+  rot: 90.0
+- ref: R5
+  x: 124.69
+  y: 90.99
+- ref: R6
+  x: 130.27
+  y: 101.65
+- ref: R7
+  x: 124.55
+  y: 99.85
+- ref: R8
+  x: 134.08
+  y: 92.91
+  rot: 90.0
+- ref: R9
+  x: 136.38
+  y: 99.94
+  rot: -90.0
+- ref: U1
+  x: 131.8
+  y: 98.1
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]

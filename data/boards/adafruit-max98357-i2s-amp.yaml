@@ -1,0 +1,114 @@
+name: Adafruit MAX98357 I2S Amp
+slug: adafruit-max98357-i2s-amp
+source: adafruit/Adafruit-MAX98357-I2S-Amp-Breakout
+format: eagle
+description: MAX98357A I2S Class D mono amp, EMI filtering
+tags: [audio]
+key_ics: [MAX98357A]
+outline:
+  width_mm: 17.78
+  height_mm: 19.05
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: 0805
+  decouples: U1
+- ref: C2
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C4
+  value: 220pF
+  footprint: 0805
+- ref: C5
+  value: 220pF
+  footprint: 0805
+- ref: FB1
+  value: ferrite bead
+  footprint: 0805
+- ref: FB2
+  value: ferrite bead
+  footprint: 0805
+- ref: JP1
+  value: 1x7 header
+  footprint: 1X07
+- ref: R1
+  value: 1Mohm
+  footprint: 0805
+- ref: U1
+  value: MAX98357A
+  footprint: QFN16_3MM
+  description: MAX98357
+- ref: X1
+  value: 1x2 header
+  footprint: TERMBLOCK
+nets:
+- name: BCLK
+  pins: [JP1.6, U1.BCLK]
+- name: DIN
+  pins: [JP1.5, U1.DIN]
+- name: GAIN
+  pins: [JP1.4, U1.GAIN]
+- name: GND
+  pins: [C1.2, C2.2, C4.2, C5.2, JP1.2, U1.GND]
+- name: LRCLK
+  pins: [JP1.7, U1.LRCLK]
+- name: OUTN
+  pins: [FB2.P$1, U1.OUTN]
+- name: OUTP
+  pins: [FB1.P$1, U1.OUTP]
+- name: SD_MODE
+  pins: [JP1.3, R1.1, U1.!SD_MODE]
+- name: VDD
+  pins: [C1.1, C2.1, JP1.1, R1.2, U1.VDD]
+- name: VO+
+  pins: [C5.1, FB1.P$2, X1.2]
+- name: VO-
+  pins: [C4.1, FB2.P$2, X1.1]
+positions:
+- ref: C1
+  x: 12.7
+  y: 8.13
+  rot: 90.0
+- ref: C2
+  x: 14.73
+  y: 8.13
+  rot: 90.0
+- ref: C4
+  x: 2.54
+  y: 10.92
+  rot: 180.0
+- ref: C5
+  x: 15.11
+  y: 10.92
+- ref: FB1
+  x: 11.43
+  y: 10.92
+- ref: FB2
+  x: 6.35
+  y: 10.92
+  rot: 180.0
+- ref: JP1
+  x: 8.89
+  y: 2.54
+  rot: 180.0
+- ref: R1
+  x: 13.72
+  y: 5.33
+- ref: U1
+  x: 8.89
+  y: 7.62
+  rot: 90.0
+- ref: X1
+  x: 8.89
+  y: 15.49
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

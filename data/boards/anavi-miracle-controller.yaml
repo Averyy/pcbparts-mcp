@@ -1,0 +1,235 @@
+name: ANAVI Miracle Controller
+slug: anavi-miracle-controller
+source: AnaviTechnology/anavi-miracle-controller
+format: kicad_legacy
+description: WS2812B LED strip controller (ESP8266), 5V/12V input select
+tags: [led-driver, level-shifting, wifi]
+key_ics: [ESP8266]
+outline:
+  width_mm: 74.93
+  height_mm: 40.64
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.254mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: 0805
+- ref: C2
+  value: 10uF
+  footprint: 0805
+- ref: C3
+  value: 10uF
+  footprint: 0805
+- ref: C4
+  value: 10uF
+  footprint: 0805
+- ref: D1
+  value: LED
+  footprint: '1206'
+- ref: ESP-12
+  value: ESP-12E
+  footprint: ESP-12E_SMD
+- ref: J1
+  value: dc_jack
+  footprint: dc_socket
+- ref: JP1
+  value: 1x3 header
+  footprint: 1X3
+- ref: L1
+  value: SN74AHCT125D
+  footprint: SOIC-14
+- ref: P1
+  value: 1x3 header
+  footprint: 1X3
+- ref: R1
+  value: 68ohm
+  footprint: '0603'
+- ref: R2
+  value: 4,7K
+  footprint: '0603'
+- ref: R3
+  value: 4,7K
+  footprint: '0603'
+- ref: R4
+  value: 2kohm
+  footprint: '0603'
+  pullup: ESP-12.12
+- ref: SW1
+  value: switch
+  footprint: SW_PUSH_6mm_h4.3mm
+- ref: T1
+  value: 1x6 screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-6
+- ref: U1
+  value: I2C_SENS_1
+  footprint: 1X4
+- ref: U2
+  value: I2C_SENS_1
+  footprint: 1X4
+- ref: U3
+  value: I2C_SENS_1
+  footprint: 1X4
+- ref: U4
+  value: 1x4 header
+  footprint: 1X4
+- ref: U6
+  value: 1x4 header
+  footprint: 1X4
+- ref: V1
+  value: NCP1117ST50T3G
+  footprint: SOT-223
+- ref: V2
+  value: LD1117S33TR
+  footprint: SOT-223
+nets:
+- name: +12V
+  pins: [C1.1, JP1.3, V1.3]
+- name: +3V3
+  pins:
+  - C4.1
+  - ESP-12.3
+  - ESP-12.8
+  - R2.1
+  - R3.1
+  - R4.2
+  - U1.1
+  - U2.1
+  - U3.1
+  - V2.2
+- name: +5V
+  pins: [C2.1, C3.1, JP1.1, L1.14, V1.2, V2.3]
+- name: /LED1
+  pins: [L1.3, T1.2]
+- name: /LED2
+  pins: [L1.6, T1.5]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - D1.1
+  - ESP-12.10
+  - ESP-12.9
+  - J1.1
+  - J1.2
+  - L1.1
+  - L1.4
+  - L1.7
+  - P1.1
+  - T1.1
+  - T1.4
+  - U1.2
+  - U2.2
+  - U3.2
+  - V1.1
+  - V2.1
+- name: Net-(D1-Pad2)
+  pins: [D1.2, R1.2]
+- name: Net-(ESP-12-Pad12)
+  pins: [ESP-12.12, R4.1]
+- name: Net-(ESP-12-Pad13)
+  pins: [ESP-12.13, R2.2, U1.4, U2.4, U3.4]
+- name: Net-(ESP-12-Pad14)
+  pins: [ESP-12.14, R3.2, U1.3, U2.3, U3.3]
+- name: Net-(ESP-12-Pad15)
+  pins: [ESP-12.15, P1.3]
+- name: Net-(ESP-12-Pad16)
+  pins: [ESP-12.16, P1.2]
+- name: Net-(ESP-12-Pad4)
+  pins: [ESP-12.4, R1.1]
+- name: Net-(ESP-12-Pad5)
+  pins: [ESP-12.5, L1.5]
+- name: Net-(ESP-12-Pad6)
+  pins: [ESP-12.6, L1.2]
+- name: Net-(J1-Pad3)
+  pins: [J1.3, JP1.2, T1.3, T1.6]
+positions:
+- ref: C1
+  x: 79.38
+  y: 88.98
+  rot: 90.0
+- ref: C2
+  x: 79.35
+  y: 84.87
+  rot: 270.0
+- ref: C3
+  x: 83.51
+  y: 89.11
+  rot: 270.0
+- ref: C4
+  x: 83.47
+  y: 84.79
+  rot: 270.0
+- ref: D1
+  x: 76.43
+  y: 104.05
+  rot: 180.0
+- ref: ESP-12
+  x: 88.57
+  y: 79.96
+- ref: J1
+  x: 67.48
+  y: 95.25
+  rot: 270.0
+- ref: JP1
+  x: 79.32
+  y: 98.04
+  rot: 180.0
+- ref: L1
+  x: 130.39
+  y: 89.6
+  rot: 90.0
+- ref: P1
+  x: 108.74
+  y: 75.08
+  rot: 90.0
+- ref: R1
+  x: 76.1
+  y: 108.45
+  rot: 180.0
+- ref: R2
+  x: 109.47
+  y: 95.25
+  rot: 180.0
+- ref: R3
+  x: 115.49
+  y: 95.25
+  rot: 180.0
+- ref: R4
+  x: 81.05
+  y: 103.96
+  rot: 90.0
+- ref: T1
+  x: 102.88
+  y: 106.64
+- ref: U1
+  x: 116.37
+  y: 90.68
+  rot: 270.0
+- ref: U2
+  x: 116.37
+  y: 85.6
+  rot: 270.0
+- ref: U3
+  x: 116.37
+  y: 80.52
+  rot: 270.0
+- ref: V1
+  x: 70.24
+  y: 85.34
+  rot: 180.0
+- ref: V2
+  x: 80.45
+  y: 76.34
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu]
+  keepout: true

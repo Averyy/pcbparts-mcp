@@ -1,0 +1,192 @@
+name: Adafruit VL53L0X ToF
+slug: adafruit-vl53l0x-tof
+source: adafruit/Adafruit-VL53L0X-ToF-Distance-Sensor-PCB
+format: eagle
+description: Time-of-Flight laser ranging (1.2m), XSHUT/GPIO1
+tags: [sensors]
+key_ics: [VL53L0X, LP5907-2.8]
+outline:
+  width_mm: 25.4
+  height_mm: 17.78
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C4
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: C5
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: C6
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: CONN3
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: CONN4
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: D1
+  value: 1N4148
+  footprint: SOD-323
+- ref: D2
+  value: green LED
+  footprint: '0603'
+- ref: JP2
+  value: 1x6 header
+  footprint: 1X06
+- ref: Q3
+  value: BSS138
+  footprint: SOT363
+  description: Dual N-Channel MOSFET
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  pullup: XSHUT_2.8V
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+  pullup: GPIO
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  pullup: D2.A
+- ref: R7
+  value: 10kohm
+  footprint: RESPACK
+- ref: U1
+  value: VL53L0X
+  footprint: LGA12_ST
+  description: VL53L0X
+- ref: U3
+  value: LP5907-2.8
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+nets:
+- name: 2.8V
+  pins:
+  - C5.1
+  - C6.1
+  - Q3.G$1.G
+  - Q3.G$2.G
+  - R1.2
+  - R2.2
+  - R7.G$2.1
+  - R7.G$4.1
+  - U1.AVDD
+  - U1.AVDDVCSEL
+  - U3.OUT
+- name: GND
+  pins:
+  - C4.2
+  - C5.2
+  - C6.2
+  - CONN3.G$1.GND
+  - CONN3.G$2.MT
+  - CONN3.G$3.MT
+  - CONN4.G$1.GND
+  - CONN4.G$2.MT
+  - CONN4.G$3.MT
+  - D2.C
+  - JP2.2
+  - U1.AVSSVCSEL
+  - U1.GND@1
+  - U1.GND@2
+  - U1.GND@3
+  - U1.GND@4
+  - U3.GND
+- name: GPIO
+  pins: [JP2.5, R2.1, U1.GPIO1]
+- name: N$1
+  pins: [D2.A, R3.1]
+- name: SCL
+  pins: [CONN3.G$1.SCL, CONN4.G$1.SCL, JP2.3, Q3.G$1.D, R7.G$1.2]
+- name: SCL_3V
+  pins: [Q3.G$1.S, R7.G$2.2, U1.SCL]
+- name: SDA
+  pins: [CONN3.G$1.SDA, CONN4.G$1.SDA, JP2.4, Q3.G$2.D, R7.G$3.2]
+- name: SDA_3V
+  pins: [Q3.G$2.S, R7.G$4.2, U1.SDA]
+- name: VCC
+  pins:
+  - C4.1
+  - CONN3.G$1.V+
+  - CONN4.G$1.V+
+  - JP2.1
+  - R3.2
+  - R7.G$1.1
+  - R7.G$3.1
+  - U3.EN
+  - U3.IN
+  class: highpower
+  trace_width: '0.4064'
+- name: XSHUT
+  pins: [D1.C, JP2.6]
+- name: XSHUT_2.8V
+  pins: [D1.A, R1.1, U1.XSHUT]
+positions:
+- ref: C4
+  x: 8.0
+  y: 5.71
+- ref: C5
+  x: 8.64
+  y: 11.94
+- ref: C6
+  x: 10.41
+  y: 6.48
+  rot: 270.0
+- ref: CONN3
+  x: 22.73
+  y: 8.89
+  rot: 90.0
+- ref: CONN4
+  x: 2.67
+  y: 8.89
+  rot: 270.0
+- ref: D1
+  x: 18.16
+  y: 5.84
+  rot: 180.0
+- ref: D2
+  x: 3.68
+  y: 12.57
+  rot: 90.0
+- ref: JP2
+  x: 12.7
+  y: 2.54
+- ref: Q3
+  x: 17.53
+  y: 8.64
+  rot: 90.0
+- ref: R1
+  x: 12.7
+  y: 12.32
+- ref: R2
+  x: 15.24
+  y: 6.35
+  rot: 90.0
+- ref: R3
+  x: 5.71
+  y: 12.45
+  rot: 270.0
+- ref: R7
+  x: 17.14
+  y: 12.45
+  rot: 180.0
+- ref: U1
+  x: 12.7
+  y: 8.89
+  rot: 270.0
+- ref: U3
+  x: 8.13
+  y: 8.76
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

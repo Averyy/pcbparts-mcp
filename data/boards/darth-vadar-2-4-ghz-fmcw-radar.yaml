@@ -1,0 +1,335 @@
+name: DARTH-VADAR 2.4 GHz FMCW Radar
+slug: darth-vadar-2-4-ghz-fmcw-radar
+source: pratapppv/DARTH-VADAR
+format: eagle
+description: 'Best-documented open-source RF PCB: MAX2750 VCO, GVA-60+ PA'
+tags: [rf-sdr, radar-fmcw]
+key_ics: [MAX2750, MDB-73H+, GVA-60+, BGA622]
+outline:
+  width_mm: 45.0
+  height_mm: 55.59
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 0.2mm
+  min_drill: 0.35mm
+  min_via: 8mil
+components:
+- ref: C1
+  value: 220pF
+  footprint: 0805
+  decouples: IC2
+- ref: C2
+  value: 220pF
+  footprint: 0805
+  decouples: IC2
+- ref: C3
+  value: 100nF
+  footprint: 0805
+- ref: C4
+  value: 47pF
+  footprint: 0805
+- ref: C5
+  value: 150pF
+  footprint: 0805
+  decouples: IC3
+- ref: C6
+  value: 47pF
+  footprint: 0805
+- ref: C7
+  value: 680pF
+  footprint: 0805
+- ref: C8
+  value: 680pF
+  footprint: 0805
+- ref: IC1
+  value: PD2425J5050S2HF
+  footprint: PD2425J5050S2HF
+  description: Wilkinson power divider
+  height: 0.58mm
+  manufacturer: ANAREN
+  mpn: PD2425J5050S2HF
+- ref: IC2
+  value: BGS12PN10
+  footprint: BGSA11GN10E6327XTSA1
+  description: SPDT RF switch
+  height: 0.4mm
+  manufacturer: Infineon
+  mpn: BGS12PN10E6327XTSA1
+- ref: IC3
+  value: BGS12PN10
+  footprint: BGSA11GN10E6327XTSA1
+  description: SPDT RF switch
+  height: 0.4mm
+  manufacturer: Infineon
+  mpn: BGS12PN10E6327XTSA1
+- ref: J1
+  value: 1x2 header
+  footprint: 10X02MTA
+  description: AMP connector
+- ref: J2
+  value: 1x2 header
+  footprint: 10X02MTA
+  description: AMP connector
+- ref: J3
+  value: 1x2 header
+  footprint: 10X02MTA
+  description: AMP connector
+- ref: L1
+  value: MS85
+  footprint: MS85
+- ref: L3
+  value: 2.2nH
+  footprint: INDC2012X103N
+  description: 2.2nH Unshielded Multilayer Inductor 300mA 100mOhm Max 0805 _2012 Metric_
+  manufacturer: Bourns
+  mpn: CE201210-2N2D
+- ref: LNA
+  value: BGA622H6820XTSA1
+  footprint: BGA622H6820XTSA1
+  description: BGA622 Silicon Germanium Wide Band Low Noise Amplifier with 2 kV ESD Protection
+  height: 0.9mm
+  manufacturer: Infineon
+  mpn: BGA622H6820XTSA1
+- ref: LNA_IN
+  value: SMA-
+  footprint: J502-ND-142-0711-821
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0711-821
+  description: SMA 50 Ohm
+- ref: LO_IN
+  value: U.FL-R-SMT-1
+  footprint: HRS_U.FL-R-SMT-1(10)
+  description: U.FL _UMCC_ Connector Receptacle, Male Pin 50Ohm Surface Mount Solder
+  manufacturer: Hirose
+  mpn: U.FL-R-SMT-1_10_
+- ref: OUT_1
+  value: SMA-
+  footprint: J502-ND-142-0711-821
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0711-821
+  description: SMA 50 Ohm
+- ref: OUT_2
+  value: SMA-
+  footprint: J502-ND-142-0711-821
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0711-821
+  description: SMA 50 Ohm
+- ref: R1
+  value: 100ohm
+  footprint: '0603'
+- ref: U$1
+  value: MDB-73H+
+  footprint: QFN24
+- ref: U$2
+  value: GVA-60+
+  footprint: SOT89
+  description: MiniCircuits GVA-60+ SiGE Power Amplifier
+- ref: U1
+  value: MAX2750
+  footprint: SOP-8
+  description: 2.4GHz ISM-band VCO
+  manufacturer: Maxim Integrated
+  mpn: MAX2750EUA+
+- ref: X6
+  value: VCO Test
+  footprint: J502-ND-142-0711-821
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0711-821
+  description: SMA 50 Ohm
+- ref: X7
+  value: SMA-
+  footprint: J502-ND-142-0711-821
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0711-821
+  description: SMA 50 Ohm
+nets:
+- name: BYP
+  pins: [C3.2, U1.BYP]
+- name: CTRL
+  pins: [IC2.CTRL, J2.2]
+- name: CTRL_2
+  pins: [IC3.CTRL, J3.2]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.1
+  - C5.1
+  - IC1.GND_1
+  - IC1.GND_2
+  - IC1.GND_3
+  - IC2.GND_1
+  - IC2.GND_2
+  - IC2.GND_3
+  - IC2.GND_4
+  - IC3.GND_1
+  - IC3.GND_2
+  - IC3.GND_3
+  - IC3.GND_4
+  - LNA.GND
+  - LNA_IN.2
+  - LO_IN.GND
+  - OUT_1.2
+  - OUT_2.2
+  - TP4.TP
+  - U$1.GND
+  - U$2.GND
+  - U1.GND
+  - U1.GND@1
+  - X6.2
+  - X7.2
+- name: IF
+  pins: [IF_OUT.TP, U$1.IF]
+- name: LNA_OUT
+  pins: [C6.2, IC3.ANT]
+- name: LO
+  pins: [LO_IN.SIG, U$1.LO]
+- name: N$1
+  pins: [C4.2, L3.1]
+- name: N$3
+  pins: [L3.2, LNA.IN]
+- name: N$7
+  pins: [C4.1, LNA_IN.1]
+- name: N$9
+  pins: [C6.1, L2.2, LNA.OUT]
+- name: OUTPUT_1
+  pins: [IC1.OUTPUT_1, OUT_2.1, R1.1]
+- name: OUTPUT_2
+  pins: [IC1.OUTPUT_2, OUT_1.1, R1.2]
+- name: PAIN
+  pins: [C7.1, IC2.RF1]
+- name: PAOUT
+  pins: [C8.2, IC1.INPUT]
+- name: RF2
+  pins: [IC2.RF2, X6.1]
+- name: RF2_2
+  pins: [IC3.RF2, X7.1]
+- name: RFIN
+  pins: [C7.2, U$2.RFIN]
+- name: RFOUT_POWER
+  pins: [C8.1, L1.1, U$2.RFOUT_POWER]
+- name: RF_IN
+  pins: [IC3.RF1, U$1.RF]
+- name: SHDN
+  pins: [J1.1, U1.!SHDN]
+- name: TUNE
+  pins: [J1.2, U1.TUNE]
+- name: VCC
+  pins:
+  - C1.1
+  - C2.1
+  - C5.2
+  - IC2.VDD
+  - IC3.VDD
+  - J2.1
+  - J3.1
+  - L1.2
+  - L2.1
+  - LNA.VCC
+  - TP1.TP
+  - TP2.TP
+  - TP3.TP
+  - U1.VCC1
+  - U1.VCC2
+- name: VCO
+  pins: [IC2.ANT, U1.OUT]
+positions:
+- ref: C1
+  x: 11.9
+  y: 10.91
+- ref: C2
+  x: 16.95
+  y: 10.81
+- ref: C3
+  x: 4.49
+  y: 2.07
+- ref: C4
+  x: 11.44
+  y: 34.1
+- ref: C5
+  x: 16.42
+  y: 36.5
+- ref: C6
+  x: 21.76
+  y: 40.1
+  rot: 90.0
+- ref: C7
+  x: 12.47
+  y: 14.1
+- ref: C8
+  x: 24.8
+  y: 13.08
+  rot: 270.0
+- ref: IC1
+  x: 24.8
+  y: 9.51
+  rot: 180.0
+- ref: IC2
+  x: 8.4
+  y: 14.7
+  rot: 180.0
+- ref: IC3
+  x: 28.3
+  y: 41.1
+  rot: 90.0
+- ref: J1
+  x: 2.8
+  y: 5.3
+  rot: 90.0
+- ref: J2
+  x: 9.23
+  y: 22.2
+- ref: J3
+  x: 34.3
+  y: 40.3
+  rot: 270.0
+- ref: L1
+  x: 32.98
+  y: 14.08
+  rot: 270.0
+- ref: L3
+  x: 16.32
+  y: 34.05
+- ref: LNA
+  x: 21.11
+  y: 35.06
+- ref: LNA_IN
+  x: 0.0
+  y: 34.1
+- ref: LO_IN
+  x: 27.7
+  y: 26.1
+  rot: 180.0
+- ref: OUT_1
+  x: 33.1
+  y: 0.1
+  rot: 90.0
+- ref: OUT_2
+  x: 17.4
+  y: 0.0
+  rot: 90.0
+- ref: R1
+  x: 24.9
+  y: 7.4
+- ref: U$1
+  x: 27.44
+  y: 34.48
+  rot: 270.0
+- ref: U$2
+  x: 19.18
+  y: 16.11
+- ref: U1
+  x: 8.71
+  y: 6.11
+  rot: 90.0
+- ref: X6
+  x: 0.0
+  y: 14.1
+- ref: X7
+  x: 27.7
+  y: 50.0
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

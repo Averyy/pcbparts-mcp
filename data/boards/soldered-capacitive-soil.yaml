@@ -1,0 +1,223 @@
+name: Soldered Capacitive Soil
+slug: soldered-capacitive-soil
+source: SolderedElectronics/Capacitive-soil-sensor-hardware-design
+format: kicad7
+description: 555 timer (TLC555) + SGM358 op-amp analog signal conditioning, trimmer pot
+tags: [signal-conditioning]
+key_ics: [TLC555]
+outline:
+  width_mm: 22.0
+  height_mm: 109.0
+design_rules:
+  layers: 2
+  min_trace: 0.127mm
+  min_clearance: 0.127mm
+  min_drill: 0.2mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0603'
+- ref: C2
+  value: 10nF
+  footprint: '0603'
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C4
+  value: 470pF
+  footprint: '0603'
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+  decouples: U2
+- ref: D1
+  value: BAT20J
+  footprint: SOD-323
+- ref: K1
+  value: 1x3 header
+  footprint: HEADER_MALE
+- ref: R1
+  value: 1Mohm
+  footprint: '0603'
+- ref: R10
+  value: 100kohm
+  footprint: '0603'
+- ref: R11
+  value: 47kohm
+  footprint: '0603'
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+- ref: R3
+  value: 330ohm
+  footprint: '0603'
+- ref: R4
+  value: 1.6kohm
+  footprint: '0603'
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+- ref: R6
+  value: 47kohm
+  footprint: '0603'
+- ref: R7
+  value: 100kohm
+  footprint: '0603'
+  pulldown: R6.1
+- ref: R8
+  value: tc33x-2-103e
+  footprint: tc33x-2-103e
+- ref: R9
+  value: 10kohm
+  footprint: '0603'
+- ref: U1
+  value: TLC555CD
+  footprint: SOIC-8
+- ref: U2
+  value: SGM358YMS
+  footprint: MSOP-8
+nets:
+- name: CONT
+  pins: [C2.2, U1.CONT]
+- name: DISCH
+  pins: [R3.1, R4.1, U1.DISCH]
+- name: GND
+  pins:
+  - C1.2
+  - C2.1
+  - C3.1
+  - C4.1
+  - C7.2
+  - C8.2
+  - K1.3
+  - PAD2.1
+  - R1.2
+  - R7.1
+  - R8.3
+  - U1.GND
+  - U2.INB+
+  - U2.VSS
+- name: IN+
+  pins: [R5.2, R6.2, U2.INA+]
+- name: IN-
+  pins: [R10.1, R9.2, U2.INA-]
+- name: INB
+  pins: [U2.INB-, U2.OUTB]
+- name: Net-(C7-Pad1)
+  pins: [C7.1, R8.2, R9.1]
+- name: Net-(D1-Pad1)
+  pins: [D1.A, PAD1.1, R2.1]
+- name: Net-(R10-Pad2)
+  pins: [R10.2, R11.1]
+- name: Net-(R6-Pad1)
+  pins: [R6.1, R7.2]
+- name: OUT
+  pins: [K1.1, R11.2, U2.OUTA]
+- name: OUT_2
+  pins: [R2.2, U1.OUT]
+- name: TRIG
+  pins: [C4.2, R4.2, U1.THRES, U1.TRIG]
+- name: VCC
+  pins:
+  - C3.2
+  - C8.1
+  - K1.2
+  - R3.2
+  - R8.1
+  - U1.RESET
+  - U1.VDD
+  - U2.VDD
+- name: VSEN
+  pins: [C1.1, D1.K, R1.1, R5.1]
+positions:
+- ref: C1
+  x: 92.7
+  y: 70.6
+  rot: 180.0
+- ref: C2
+  x: 95.92
+  y: 74.8
+  rot: 180.0
+- ref: C3
+  x: 100.9
+  y: 72.1
+  rot: 90.0
+- ref: C4
+  x: 95.8
+  y: 78.9
+  rot: 180.0
+- ref: C7
+  x: 97.25
+  y: 56.95
+  rot: -90.0
+- ref: C8
+  x: 103.8
+  y: 61.0
+  rot: -90.0
+- ref: D1
+  x: 97.1
+  y: 83.5
+  rot: 180.0
+- ref: K1
+  x: 97.1
+  y: 49.5
+  side: back
+- ref: R1
+  x: 92.7
+  y: 72.0
+  rot: 180.0
+- ref: R10
+  x: 93.8
+  y: 62.2
+  rot: -90.0
+- ref: R11
+  x: 92.3
+  y: 62.2
+  rot: 90.0
+- ref: R2
+  x: 97.1
+  y: 82.1
+  rot: 180.0
+- ref: R3
+  x: 98.53
+  y: 77.4
+- ref: R4
+  x: 95.83
+  y: 77.4
+  rot: 180.0
+- ref: R5
+  x: 93.3
+  y: 65.1
+  rot: 90.0
+- ref: R6
+  x: 91.8
+  y: 65.1
+  rot: 90.0
+- ref: R7
+  x: 90.3
+  y: 65.1
+  rot: -90.0
+- ref: R8
+  x: 101.9
+  y: 56.5
+  rot: 90.0
+- ref: R9
+  x: 98.7
+  y: 57.0
+  rot: -90.0
+- ref: U1
+  x: 97.2
+  y: 69.1
+  rot: -90.0
+- ref: U2
+  x: 99.55
+  y: 61.25
+  rot: -90.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]

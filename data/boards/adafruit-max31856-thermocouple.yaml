@@ -1,0 +1,212 @@
+name: Adafruit MAX31856 Thermocouple
+slug: adafruit-max31856-thermocouple
+source: adafruit/Adafruit-MAX31856-PCB
+format: eagle
+description: Universal thermocouple ADC (all TC types), MIC5225-3.3 LDO
+tags: [adc-dac, esd-protection, power-supply, sensors]
+key_ics: [mic5225-3.3, MAX31856]
+outline:
+  width_mm: 24.13
+  height_mm: 21.59
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 10nF
+  footprint: 0805_10MGAP
+- ref: C2
+  value: 100nF
+  footprint: 0805
+- ref: C3
+  value: 10nF
+  footprint: 0805
+- ref: C4
+  value: 100nF
+  footprint: 0805
+  decouples: U2
+- ref: C5
+  value: 100nF
+  footprint: 0805
+  decouples: U1
+- ref: C6
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C7
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: D1
+  value: 1N4148
+  footprint: SOD-323
+- ref: D2
+  value: 1N4148
+  footprint: SOD-323
+- ref: D3
+  value: 1N4148
+  footprint: SOD-323
+- ref: JP1
+  value: 1x9 header
+  footprint: 1X09
+- ref: R1
+  value: 100ohm
+  footprint: 0805
+- ref: R2
+  value: 100ohm
+  footprint: 0805
+- ref: R3
+  value: 10kohm
+  footprint: 0805
+  pullup: SDO_3V
+- ref: R4
+  value: 10kohm
+  footprint: 0805
+  pullup: SCK_3V
+- ref: R5
+  value: 10kohm
+  footprint: 0805
+  pullup: '!CS_3V'
+- ref: U1
+  value: mic5225-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: U2
+  value: MAX31856
+  footprint: TSSOP14
+  description: MAX31856
+- ref: X1
+  value: 1x2 header
+  footprint: TERMBLOCK
+nets:
+- name: '!CS'
+  pins: [D1.C, JP1.3]
+- name: '!CS_3V'
+  pins: [D1.A, R5.1, U2.!CS]
+- name: '!FAULT'
+  pins: [JP1.2, U2.!FAULT]
+- name: 3.3V
+  pins:
+  - C4.1
+  - C5.1
+  - C7.1
+  - JP1.8
+  - R3.2
+  - R4.2
+  - R5.2
+  - U1.OUT
+  - U2.AVDD
+  - U2.DVDD
+- name: DRDY
+  pins: [JP1.1, U2.!DRDY]
+- name: GND
+  pins:
+  - C1.1
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - JP1.7
+  - U1.GND
+  - U2.AGND
+  - U2.DGND
+- name: SCK
+  pins: [D2.C, JP1.6]
+- name: SCK_3V
+  pins: [D2.A, R4.1, U2.SCK]
+- name: SDI
+  pins: [D3.C, JP1.4]
+- name: SDO
+  pins: [JP1.5, U2.SDO]
+- name: SDO_3V
+  pins: [D3.A, R3.1, U2.SDI]
+- name: T+
+  pins: [C2.2, C3.1, R2.2, U2.T+]
+- name: T-
+  pins: [C1.2, C2.1, R1.2, U2.T-]
+- name: THERM+
+  pins: [R2.1, X1.1]
+- name: THERM-
+  pins: [R1.1, U2.BIAS, X1.2]
+- name: VIN
+  pins: [C6.1, JP1.9, U1.EN, U1.IN]
+positions:
+- ref: C1
+  x: 15.75
+  y: 10.41
+  rot: 90.0
+- ref: C2
+  x: 12.06
+  y: 13.21
+  rot: 180.0
+- ref: C3
+  x: 7.11
+  y: 11.3
+  rot: 180.0
+- ref: C4
+  x: 7.11
+  y: 5.84
+  rot: 180.0
+- ref: C5
+  x: 7.11
+  y: 9.4
+  rot: 180.0
+- ref: C6
+  x: 2.79
+  y: 5.84
+- ref: C7
+  x: 2.79
+  y: 13.08
+- ref: D1
+  x: 22.73
+  y: 7.49
+  rot: 90.0
+- ref: D2
+  x: 18.54
+  y: 7.49
+  rot: 90.0
+- ref: D3
+  x: 20.7
+  y: 7.49
+  rot: 90.0
+- ref: JP1
+  x: 12.06
+  y: 2.54
+  rot: 180.0
+- ref: R1
+  x: 15.49
+  y: 13.21
+  rot: 180.0
+- ref: R2
+  x: 8.64
+  y: 13.21
+- ref: R3
+  x: 20.7
+  y: 12.45
+  rot: 90.0
+- ref: R4
+  x: 18.54
+  y: 12.45
+  rot: 90.0
+- ref: R5
+  x: 22.73
+  y: 12.45
+  rot: 90.0
+- ref: U1
+  x: 2.79
+  y: 9.53
+- ref: U2
+  x: 11.81
+  y: 8.26
+  rot: 180.0
+- ref: X1
+  x: 12.06
+  y: 17.78
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

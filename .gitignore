@@ -45,6 +45,9 @@ htmlcov/
 # Docs (local planning files)
 docs/todo-*.md
 
+# Board repo cache (sparse clones for parse_boards.py)
+.cache/repos/
+
 # Claude
 .claude/
 

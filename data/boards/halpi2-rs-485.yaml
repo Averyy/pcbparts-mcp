@@ -1,0 +1,226 @@
+name: HALPI2 RS-485
+slug: halpi2-rs-485
+source: hatlabs/HALPI2-hardware
+format: kicad9
+description: 'Isolated RS-485: ISO7741 digital isolator + isolated DC-DC (IB0303S), SP3485EN transceiver'
+tags: [isolation, power-supply, rs485]
+key_ics: [IB0303S]
+components:
+- ref: C154
+  value: 4.7uF
+  footprint: '0603'
+  lcsc: C19666
+  description: Unpolarized capacitor, small symbol
+- ref: C155
+  value: 4.7uF
+  footprint: '0603'
+  lcsc: C19666
+  description: Unpolarized capacitor, small symbol
+- ref: C156
+  value: 1uF
+  footprint: '0402'
+  lcsc: C52923
+  description: Unpolarized capacitor, small symbol
+- ref: C157
+  value: 1nF
+  footprint: '1808'
+  lcsc: C784081
+  description: Unpolarized capacitor, small symbol
+- ref: C158
+  value: 4.7uF
+  footprint: '0603'
+  lcsc: C19666
+  description: Unpolarized capacitor, small symbol
+- ref: C159
+  value: 1uF
+  footprint: '0402'
+  lcsc: C52923
+  description: Unpolarized capacitor, small symbol
+- ref: C160
+  value: 4.7uF
+  footprint: '0603'
+  lcsc: C19666
+  description: Unpolarized capacitor, small symbol
+- ref: C161
+  value: 1uF
+  footprint: '0402'
+  lcsc: C52923
+  description: Unpolarized capacitor, small symbol
+- ref: C162
+  value: 100pF
+  footprint: '0603'
+  lcsc: C14858
+  description: Unpolarized capacitor, small symbol
+- ref: C163
+  value: 100pF
+  footprint: '0603'
+  lcsc: C14858
+  description: Unpolarized capacitor, small symbol
+- ref: C164
+  value: 100pF
+  footprint: '0603'
+  lcsc: C14858
+  description: Unpolarized capacitor, small symbol
+- ref: C165
+  value: 100pF
+  footprint: '0603'
+  lcsc: C14858
+  description: Unpolarized capacitor, small symbol
+- ref: C166
+  value: 1uF
+  footprint: '0402'
+  lcsc: C52923
+  description: Unpolarized capacitor, small symbol
+- ref: D31
+  value: SM712
+  footprint: SOT-23
+  lcsc: C521963
+  description: 7V/12V, 600W Asymmetrical TVS Diode Array, SOT-23
+- ref: D32
+  value: SM712
+  footprint: SOT-23
+  lcsc: C521963
+  description: 7V/12V, 600W Asymmetrical TVS Diode Array, SOT-23
+- ref: D33
+  value: SMAJ16CA
+  footprint: SMA
+  lcsc: C19077537
+  description: 400W bidirectional Transient Voltage Suppressor, 16.0Vr, SMA(DO-214AC)
+- ref: D34
+  value: SMAJ16CA
+  footprint: SMA
+  lcsc: C19077537
+  description: 400W bidirectional Transient Voltage Suppressor, 16.0Vr, SMA(DO-214AC)
+- ref: D35
+  value: GREEN LED
+  footprint: '0603'
+  lcsc: C965804
+- ref: D36
+  value: GREEN LED
+  footprint: '0603'
+  lcsc: C965804
+- ref: F2
+  value: nSMD005/60V
+  footprint: '1206'
+  lcsc: C2830235
+  description: Resettable fuse, polymeric positive temperature coefficient
+- ref: F3
+  value: nSMD005/60V
+  footprint: '1206'
+  lcsc: C2830235
+  description: Resettable fuse, polymeric positive temperature coefficient
+- ref: F4
+  value: nSMD005/60V
+  footprint: '1206'
+  lcsc: C2830235
+  description: Resettable fuse, polymeric positive temperature coefficient
+- ref: F5
+  value: nSMD005/60V
+  footprint: '1206'
+  lcsc: C2830235
+  description: Resettable fuse, polymeric positive temperature coefficient
+- ref: FL2
+  value: PCAQ2012B-201T030
+  footprint: L_CommonModeChoke_PCAQ2012B
+  lcsc: C2926967
+  description: Coupled inductor with ferrite core
+- ref: FL3
+  value: PCAQ2012B-201T030
+  footprint: L_CommonModeChoke_PCAQ2012B
+  lcsc: C2926967
+  description: Coupled inductor with ferrite core
+- ref: J29
+  value: 1x5 header
+  footprint: PhoenixContact_MCV_1,5_5-G-3.81
+  lcsc: C8391
+- ref: JP2
+  value: 1x3 header
+  footprint: 1X3
+  lcsc: C41417360
+  description: Jumper, 3-pole, pins 1+2 closed/bridged
+- ref: JP3
+  value: 1x2 header
+  footprint: 1X2
+  lcsc: C492401
+  description: Jumper, 2-pole, closed/bridged
+- ref: JP4
+  value: 1x2 header
+  footprint: 1X2
+  lcsc: C492401
+  description: Jumper, 2-pole, open
+- ref: L8
+  value: 4.7uH
+  footprint: 0805
+  lcsc: C394959
+- ref: L9
+  value: 4.7uH
+  footprint: 0805
+  lcsc: C394959
+- ref: PS2
+  value: B0505S-1
+  footprint: SIP-4_L11.7-W6.0-P2.54_B0305S-1WR3
+  lcsc: C7465178
+  description: 3W, 1000 VDC isolated DC/DC converter, 5V input, 5V output, SIP
+- ref: Q9
+  value: 2N7002
+  footprint: SOT-23
+  lcsc: C8545
+  description: 0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23
+- ref: R103
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C25744
+  description: Resistor, small symbol
+- ref: R104
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C25744
+  description: Resistor, small symbol
+- ref: R105
+  value: 10kohm
+  footprint: '0402'
+  lcsc: C25744
+  description: Resistor, small symbol
+- ref: R106
+  value: 10ohm
+  footprint: '0402'
+  lcsc: C25077
+  description: Resistor, small symbol
+- ref: R107
+  value: 10ohm
+  footprint: '0402'
+  lcsc: C25077
+  description: Resistor, small symbol
+- ref: R108
+  value: 10ohm
+  footprint: '0402'
+  lcsc: C25077
+  description: Resistor, small symbol
+- ref: R109
+  value: 10ohm
+  footprint: '0402'
+  lcsc: C25077
+  description: Resistor, small symbol
+- ref: R110
+  value: 3.3kohm
+  footprint: '0402'
+  lcsc: C25890
+- ref: R111
+  value: 3.3kohm
+  footprint: '0402'
+  lcsc: C25890
+- ref: U47
+  value: "\u03C0141M31"
+  footprint: SOIC-16
+  lcsc: C471605
+  description: High-Speed, Robust-EMC Reinforced and Basic Quad-Channel Digital Isolators
+- ref: U48
+  value: SP3485EN-L
+  footprint: SOIC-8
+  lcsc: C8963
+  description: Industrial 3.3V Low Power Half-Duplex RS-485 Transceiver 10Mbps, SOIC-8
+- ref: U49
+  value: SP3485EN-L
+  footprint: SOIC-8
+  lcsc: C8963
+  description: Industrial 3.3V Low Power Half-Duplex RS-485 Transceiver 10Mbps, SOIC-8

@@ -1,0 +1,264 @@
+name: SilentStepStick TMC2209
+slug: silentstepstick-tmc2209
+source: watterott/SilentStepStick
+format: eagle
+description: Trinamic TMC2209 stepper driver module (StepStick/Pololu form factor), UART config
+tags: [stepper-driver, motor-control]
+key_ics: [TMC2209]
+outline:
+  width_mm: 15.24
+  height_mm: 20.32
+design_rules:
+  layers: 4
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.25mm
+  min_via: 6mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+  voltage: 50V
+- ref: C2
+  value: 4.7uF
+  footprint: '0402'
+  voltage: 6.3V
+  decouples: IC1
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+  voltage: 50V
+- ref: C4
+  value: 22nF
+  footprint: '0402'
+  voltage: 50V
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  voltage: 50V
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  voltage: 50V
+- ref: C7A
+  value: 1uF
+  footprint: 0805
+  voltage: 50V
+- ref: C7B
+  value: 10uF
+  footprint: '1206'
+  voltage: 35V
+- ref: C8
+  value: 10uF
+  footprint: '1206'
+  voltage: 35V
+- ref: IC1
+  value: TMC2209
+  footprint: QFN28-PAD3.7
+  description: Trinamic TMC2209 Stepper Motor Driver (5V
+- ref: J1
+  value: 1x8 header
+  footprint: MA08-1
+- ref: J2
+  value: 1x8 header
+  footprint: MA08-1
+- ref: J3
+  value: 1x2 header
+  footprint: MA02-1
+- ref: JMP
+  value: solder jumper
+  footprint: SJ-3
+  description: 3-Pin Jumper
+- ref: R1
+  value: 20kohm
+  footprint: '0402'
+  pulldown: PDN_UART
+- ref: R2
+  value: 20kohm
+  footprint: '0402'
+- ref: R4
+  value: 20kohm
+  footprint: POT_EVM3R
+  pulldown: VREF
+- ref: R5
+  value: 20kohm
+  footprint: '0402'
+  pullup: VREF1
+- ref: R6
+  value: 110mohm
+  footprint: 0805
+- ref: R7
+  value: 110mohm
+  footprint: 0805
+nets:
+- name: +5V
+  pins: [C2.2, IC1.5VOUT, R5.2]
+- name: BRA
+  pins: [IC1.BRA, R7.2]
+- name: BRB
+  pins: [IC1.BRB, R6.2]
+- name: CPI
+  pins: [C4.2, IC1.CPI]
+- name: CPO
+  pins: [C4.1, IC1.CPO]
+- name: DIAG
+  pins: [IC1.DIAG, J3.2]
+- name: DIR
+  pins: [IC1.DIR, J1.1]
+- name: EN
+  pins: [IC1.ENN, J1.8, R2.2]
+- name: GND
+  pins:
+  - C1.1
+  - C2.1
+  - C3.2
+  - C5.2
+  - C7A.2
+  - C7B.2
+  - C8.2
+  - IC1.CLK
+  - IC1.GND
+  - IC1.STDBY
+  - J2.2
+  - J2.8
+  - R1.1
+  - R4.E
+  - R6.1
+  - R7.1
+- name: INDEX
+  pins: [IC1.INDEX, J3.1]
+- name: MS1
+  pins: [IC1.MS1, J1.7]
+- name: MS2
+  pins: [IC1.MS2, J1.6]
+- name: N$1
+  pins: [J1.4, JMP.3]
+- name: N$2
+  pins: [J1.3, JMP.1]
+- name: OA1
+  pins: [IC1.OA1, J2.4]
+- name: OA2
+  pins: [IC1.OA2, J2.3]
+- name: OB1
+  pins: [IC1.OB1, J2.5]
+- name: OB2
+  pins: [IC1.OB2, J2.6]
+- name: PDN_UART
+  pins: [IC1.PDN_UART, JMP.2, R1.2]
+- name: SPREAD
+  pins: [IC1.SPREAD, J1.5]
+- name: STEP
+  pins: [IC1.STEP, J1.2]
+- name: VCP
+  pins: [C6.2, IC1.VCP]
+- name: VIO
+  pins: [C1.2, IC1.VCC_IO, J2.7, R2.1]
+- name: VM
+  pins:
+  - C3.1
+  - C5.1
+  - C6.1
+  - C7A.1
+  - C7B.1
+  - C8.1
+  - IC1.VS
+  - J2.1
+- name: VREF
+  pins: [IC1.VREF, R4.S]
+- name: VREF1
+  pins: [R4.A, R5.1]
+positions:
+- ref: C1
+  x: 11.68
+  y: 16.82
+  rot: 90.0
+- ref: C2
+  x: 4.92
+  y: 14.7
+- ref: C3
+  x: 10.1
+  y: 14.22
+  rot: 180.0
+- ref: C4
+  x: 7.24
+  y: 14.54
+  rot: 270.0
+- ref: C5
+  x: 10.16
+  y: 7.11
+- ref: C6
+  x: 7.11
+  y: 15.72
+  rot: 270.0
+- ref: C7A
+  x: 4.78
+  y: 18.68
+  rot: 180.0
+- ref: C7B
+  x: 5.03
+  y: 18.68
+  rot: 180.0
+- ref: C8
+  x: 9.91
+  y: 18.67
+- ref: IC1
+  x: 7.62
+  y: 10.67
+  rot: 270.0
+- ref: J1
+  x: 1.27
+  y: 10.16
+- ref: J2
+  x: 13.97
+  y: 10.16
+  rot: 180.0
+- ref: J3
+  x: 5.08
+  y: 1.27
+  rot: 270.0
+- ref: JMP
+  x: 3.3
+  y: 13.97
+- ref: R1
+  x: 3.3
+  y: 6.35
+  rot: 180.0
+- ref: R2
+  x: 5.59
+  y: 6.6
+  rot: 270.0
+- ref: R4
+  x: 10.03
+  y: 2.03
+  rot: 270.0
+- ref: R5
+  x: 7.75
+  y: 4.19
+  rot: 270.0
+- ref: R6
+  x: 11.65
+  y: 13.18
+  rot: 270.0
+- ref: R7
+  x: 11.59
+  y: 8.2
+  rot: 90.0
+copper_pours:
+- net: BRA
+  layers: [F.Cu]
+- net: BRB
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: OA1
+  layers: [F.Cu]
+- net: OA2
+  layers: [F.Cu]
+- net: OB1
+  layers: [F.Cu]
+- net: OB2
+  layers: [F.Cu]
+- net: VIO
+  layers: [In14.Cu]
+- net: VM
+  layers: [F.Cu, In14.Cu]

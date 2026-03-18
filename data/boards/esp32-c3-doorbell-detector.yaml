@@ -1,0 +1,189 @@
+name: ESP32-C3 Doorbell Detector
+slug: esp32-c3-doorbell-detector
+source: paulc/c3zero-doorbell
+format: kicad9
+description: Doorbell ring detection via ACS712 Hall-effect AC current sensor, ESP32-C3
+tags: [current-sensing, sensors]
+key_ics: [ESP32-C3]
+outline:
+  width_mm: 50.0
+  height_mm: 75.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.175mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 1nF
+  footprint: 0805
+- ref: C2
+  value: 100nF
+  footprint: 0805
+- ref: C3
+  value: 470uF
+  footprint: Electrolytic-10x10
+- ref: C5
+  value: 100nF
+  footprint: 0805
+- ref: C6
+  value: 22uF
+  footprint: Electrolytic-10x10
+  decouples: U2
+- ref: C7
+  value: 100nF
+  footprint: 0805
+  decouples: U2
+- ref: D1
+  value: DF06S
+  footprint: Diode_Bridge_OnSemi_SDIP-4L
+  description: Bridge Rectifier, 420V Vrms, 1.5A If, SMDIP-4
+- ref: D2
+  value: 1N5817
+  footprint: SOD-323
+  description: 20V 1A Schottky Barrier Rectifier Diode, DO-41
+- ref: J1
+  value: 1x2 screw terminal
+  footprint: TerminalBlock_Phoenix_MPT-0,5-2-2.54
+- ref: J2
+  value: 1x2 screw terminal
+  footprint: TerminalBlock_Phoenix_MPT-0,5-2-2.54
+- ref: J3
+  value: 1x2 header
+  footprint: JST_EH_B2B-EH-A
+- ref: J4
+  value: 1x3 header
+  footprint: JST_EH_B3B-EH-A
+- ref: R1
+  value: 470ohm
+  footprint: 0805
+- ref: R2
+  value: 470ohm
+  footprint: 0805
+- ref: R3
+  value: 470ohm
+  footprint: 0805
+- ref: SW1
+  value: switch
+  footprint: SW_SPDT_CK_JS102011SAQN
+  description: Switch, single pole double throw
+- ref: U1
+  value: ACS712xLCTR-05B
+  footprint: SOIC-8
+  description: "\xB15A Bidirectional Hall-Effect Current Sensor, +5.0V supply, 185mV/A, SOIC-8"
+- ref: U2
+  value: AMS1117-5.0
+  footprint: SOT-223-3_TabPin2
+  description: 1A Low Dropout regulator, positive, 5.0V fixed output, SOT-223
+nets:
+- name: +5V
+  pins: [C6.1, C7.1, D2.A, U2.VO@2]
+- name: +5V Internal
+  pins: [C2.1, D2.K, J4.Pin_1, U1.VCC]
+- name: /ADC Input
+  pins: [R1.2, R2.1]
+- name: /Reset
+  pins: [J3.Pin_2, R3.1]
+- name: /V Sense
+  pins: [R1.1, U1.VIOUT]
+- name: /VAC In A
+  pins: [D1.4, J1.Pin_1, U1.IP+@1, U1.IP+@2]
+- name: /VAC In B
+  pins: [D1.3, J1.Pin_2, J2.Pin_1]
+- name: /VAC Out A
+  pins: [J2.Pin_2, U1.IP-@3, U1.IP-@4]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - D1.-
+  - J3.Pin_1
+  - J4.Pin_3
+  - R2.2
+  - U1.GND
+  - U2.GND
+- name: Net-(D1-+)
+  pins: [C3.1, D1.+, SW1.B]
+- name: Net-(SW1-A)
+  pins: [C5.1, SW1.A, U2.VI]
+- name: Net-(U1-FILTER)
+  pins: [C1.1, U1.FILTER]
+positions:
+- ref: C1
+  x: 148.75
+  y: 119.0
+  rot: 90.0
+- ref: C2
+  x: 138.75
+  y: 119.5
+  rot: -90.0
+- ref: C3
+  x: 128.7
+  y: 103.0
+- ref: C5
+  x: 130.08
+  y: 90.12
+- ref: C6
+  x: 127.13
+  y: 73.87
+- ref: C7
+  x: 117.88
+  y: 88.82
+  rot: -90.0
+- ref: D1
+  x: 127.4
+  y: 117.0
+- ref: D2
+  x: 139.59
+  y: 74.44
+  rot: 90.0
+- ref: J1
+  x: 129.37
+  y: 130.0
+- ref: J2
+  x: 147.05
+  y: 130.0
+- ref: J3
+  x: 159.61
+  y: 118.5
+  rot: 90.0
+- ref: J4
+  x: 159.29
+  y: 80.34
+  rot: 90.0
+- ref: R1
+  x: 143.25
+  y: 113.0
+- ref: R2
+  x: 147.84
+  y: 113.0
+- ref: R3
+  x: 153.66
+  y: 116.0
+  rot: 180.0
+- ref: SW1
+  x: 117.25
+  y: 103.0
+  rot: -90.0
+- ref: U1
+  x: 143.16
+  y: 121.53
+  rot: 90.0
+- ref: U2
+  x: 123.13
+  y: 86.87
+  rot: 90.0
+copper_pours:
+- net: +5V
+  layers: [F.Cu]
+- net: /VAC In A
+  layers: [F.Cu]
+- net: /VAC Out A
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu]

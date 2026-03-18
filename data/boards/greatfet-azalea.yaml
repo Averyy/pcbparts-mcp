@@ -1,0 +1,1226 @@
+name: GreatFET Azalea
+slug: greatfet-azalea
+source: greatscottgadgets/greatfet-hardware
+format: kicad_legacy
+description: LPC4330 dual-core Cortex-M4/M0, USB HS device
+key_ics: [LPC4330]
+outline:
+  width_mm: 70.61
+  height_mm: 53.34
+design_rules:
+  layers: 4
+  min_trace: 0.203mm
+  min_clearance: 0.152mm
+  min_drill: 0.33mm
+  min_via: 0.686mm
+components:
+- ref: C1
+  value: 18pF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C180J5GAC
+  description: CAP CER 18PF 50V 5% NP0 0603
+- ref: C10
+  value: 1uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107B7105KA-T
+  description: CAP CER 1UF 10V 10% X7R 0603
+  decouples: U5
+- ref: C11
+  value: 10uF
+  footprint: 0805
+  manufacturer: Taiyo Yuden
+  mpn: LMK212ABJ106KG-T
+  description: CAP CER 10UF 10V 10% X5R 0805
+- ref: C12
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+  decouples: U3
+- ref: C13
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+  decouples: U1
+- ref: C14
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+- ref: C15
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+- ref: C16
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+- ref: C17
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+  decouples: U1
+- ref: C18
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+- ref: C19
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+- ref: C2
+  value: 18pF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C180J5GAC
+  description: CAP CER 18PF 50V 5% NP0 0603
+- ref: C20
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+  decouples: U2
+- ref: C21
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+  decouples: U2
+- ref: C22
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+  decouples: U2
+- ref: C23
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+- ref: C24
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+- ref: C25
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+- ref: C3
+  value: 1uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107B7105KA-T
+  description: CAP CER 1UF 10V 10% X7R 0603
+  decouples: U3
+- ref: C4
+  value: 10uF
+  footprint: 0805
+  manufacturer: Taiyo Yuden
+  mpn: LMK212ABJ106KG-T
+  description: CAP CER 10UF 10V 10% X5R 0805
+  decouples: U3
+- ref: C5
+  value: 18pF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C180J5GAC
+  description: CAP CER 18PF 50V 5% NP0 0603
+- ref: C6
+  value: 18pF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C180J5GAC
+  description: CAP CER 18PF 50V 5% NP0 0603
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C104M4RAC
+  description: CAP CER 0.1UF 16V 20% X7R 0603
+  decouples: U2
+- ref: C8
+  value: 18pF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C180J5GAC
+  description: CAP CER 18PF 50V 5% NP0 0603
+- ref: C9
+  value: 18pF
+  footprint: '0603'
+  manufacturer: Kemet
+  mpn: C0603C180J5GAC
+  description: CAP CER 18PF 50V 5% NP0 0603
+- ref: D1
+  value: LED1
+  footprint: '0603'
+  manufacturer: Lumex
+  mpn: SML-LX0603GW-TR
+  description: LED GREEN DIFFUSED 0603 SMD
+- ref: D2
+  value: LED2
+  footprint: '0603'
+  manufacturer: Lumex
+  mpn: SML-LX0603YW-TR
+  description: LED YELLOW DIFFUSED 0603 SMD
+- ref: D3
+  value: LED3
+  footprint: '0603'
+  manufacturer: Lumex
+  mpn: SML-LX0603GW-TR
+  description: LED GREEN DIFFUSED 0603 SMD
+- ref: D4
+  value: LED4
+  footprint: '0603'
+  manufacturer: Lumex
+  mpn: SML-LX0603YW-TR
+  description: LED YELLOW DIFFUSED 0603 SMD
+- ref: D5
+  value: VBUS_DIODE
+  footprint: SOD128
+  manufacturer: NXP
+  mpn: PMEG3050EP,115
+  description: DIODE SCHOTTKY 30V 5A SOD128
+- ref: FB1
+  value: FILTER
+  footprint: 0805
+  manufacturer: Murata
+  mpn: BLM21PG221SN1D
+  description: FERRITE CHIP 220 OHM 2000MA 0805
+- ref: FB2
+  value: FILTER
+  footprint: 0805
+  manufacturer: Murata
+  mpn: BLM21PG221SN1D
+  description: FERRITE CHIP 220 OHM 2000MA 0805
+- ref: FB3
+  value: FILTER
+  footprint: 0805
+  manufacturer: Murata
+  mpn: BLM21PG221SN1D
+  description: FERRITE CHIP 220 OHM 2000MA 0805
+- ref: J1
+  value: 2x20 header
+  footprint: HEADER-2x20
+  manufacturer: Samtec
+  mpn: SSW-120-01-F-D
+- ref: J2
+  value: 2x20 header
+  footprint: HEADER-2x20
+  manufacturer: Samtec
+  mpn: SSW-120-01-F-D
+- ref: J3
+  value: USB-MICRO-B-SHIELDED
+  footprint: USB-MICROB-FCI-10103592-LONGPADS
+  manufacturer: FCI
+  mpn: 10103592-0001LF
+  description: CONN RCPT REV MICRO USB TYPE B
+- ref: J4
+  value: USB-MICRO-B-SHIELDED
+  footprint: USB-MICROB-FCI-10103592-LONGPADS
+  manufacturer: FCI
+  mpn: 10103592-0001LF
+  description: CONN RCPT REV MICRO USB TYPE B
+- ref: J5
+  value: JTAG
+  footprint: 50MIL-HEADER-2x5-TH
+- ref: J6
+  value: 2x4 header
+  footprint: HEADER-SMT-2x4
+- ref: J7
+  value: 1x20 header
+  footprint: HEADER-1x20
+  manufacturer: Sullins
+  mpn: PRPC020SAAN-RC
+- ref: R1
+  value: 330ohm
+  footprint: '0603'
+  manufacturer: Stackpole
+  mpn: RMCF0603JT330R
+  description: RES 330 OHM 1/10W 5% 0603 SMD
+- ref: R10
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pullup: /DBGEN
+- ref: R11
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pullup: /TCK
+- ref: R12
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pullup: /TDO
+- ref: R13
+  value: 12kohm
+  footprint: '0603'
+  manufacturer: Stackpole
+  mpn: RMCF0603FT12K0
+  description: RES SMD 12K OHM 1% 1/10W 0603
+  pulldown: U1.24
+- ref: R14
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pullup: /WAKEUP0
+- ref: R15
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pullup: /P2_7
+- ref: R16
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pulldown: /USB1_EN
+- ref: R17
+  value: 1.8kohm
+  footprint: '0603'
+  manufacturer: Stackpole
+  mpn: RMCF0603JT1K80
+  description: RES SMD 1.8K OHM 5% 1/10W 0603
+  pullup: /I2C0_SDA
+- ref: R18
+  value: 1.8kohm
+  footprint: '0603'
+  manufacturer: Stackpole
+  mpn: RMCF0603JT1K80
+  description: RES SMD 1.8K OHM 5% 1/10W 0603
+  pullup: /I2C0_SCL
+- ref: R19
+  value: 33ohm
+  footprint: '0603'
+  manufacturer: Yageo
+  mpn: RC0603FR-0733RL
+  description: RES 33.0 OHM 1/10W 1% 0603 SMD
+- ref: R2
+  value: 330ohm
+  footprint: '0603'
+  manufacturer: Stackpole
+  mpn: RMCF0603JT330R
+  description: RES 330 OHM 1/10W 5% 0603 SMD
+- ref: R20
+  value: 33ohm
+  footprint: '0603'
+  manufacturer: Yageo
+  mpn: RC0603FR-0733RL
+  description: RES 33.0 OHM 1/10W 1% 0603 SMD
+- ref: R21
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+- ref: R22
+  value: 18kohm
+  footprint: '0603'
+  manufacturer: Yageo
+  mpn: RC0603JR-0718KL
+  description: RES SMD 18K OHM 5% 1/10W 0603
+  pulldown: /USB1_SENSE
+- ref: R23
+  value: 43.2kohm
+  footprint: '0603'
+  manufacturer: Yageo
+  mpn: RC0603FR-0743K2L
+  description: RES SMD 43.2K OHM 1% 1/10W 0603
+  pulldown: U5.5
+- ref: R24
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pullup: /USB1_FAULT
+- ref: R25
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+- ref: R26
+  value: 18kohm
+  footprint: '0603'
+  manufacturer: Yageo
+  mpn: RC0603JR-0718KL
+  description: RES SMD 18K OHM 5% 1/10W 0603
+  pulldown: /USB0_SENSE
+- ref: R27
+  value: 15kohm
+  footprint: '0603'
+  manufacturer: Yageo
+  mpn: RC0603JR-0715KL
+  description: RES SMD 15K OHM 5% 1/10W 0603
+  pulldown: /USB0_D-
+- ref: R28
+  value: 15kohm
+  footprint: '0603'
+  manufacturer: Yageo
+  mpn: RC0603JR-0715KL
+  description: RES SMD 15K OHM 5% 1/10W 0603
+  pulldown: /USB0_D+
+- ref: R29
+  value: 15kohm
+  footprint: '0603'
+  manufacturer: Yageo
+  mpn: RC0603JR-0715KL
+  description: RES SMD 15K OHM 5% 1/10W 0603
+  pulldown: /USB1_D-
+- ref: R3
+  value: 330ohm
+  footprint: '0603'
+  manufacturer: Stackpole
+  mpn: RMCF0603JT330R
+  description: RES 330 OHM 1/10W 5% 0603 SMD
+- ref: R30
+  value: 15kohm
+  footprint: '0603'
+  manufacturer: Yageo
+  mpn: RC0603JR-0715KL
+  description: RES SMD 15K OHM 5% 1/10W 0603
+  pulldown: /USB1_D+
+- ref: R4
+  value: 330ohm
+  footprint: '0603'
+  manufacturer: Stackpole
+  mpn: RMCF0603JT330R
+  description: RES 330 OHM 1/10W 5% 0603 SMD
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pullup: /RESET
+- ref: R6
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pulldown: /P2_8
+- ref: R7
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pulldown: /P2_9
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pulldown: /P1_2
+- ref: R9
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Panasonic
+  mpn: ERJ-3GEYJ103V
+  description: RES 10K OHM 1/10W 5% 0603 SMD
+  pullup: /P1_1
+- ref: SW1
+  value: DFU
+  footprint: SWITCH-PTS840-P
+  manufacturer: C&K Components
+  mpn: PTS840 PM SMTR LFS
+  description: SWITCH TACTILE SPST-NO 0.05A 12V
+- ref: SW2
+  value: RESET
+  footprint: SWITCH-PTS840-P
+  manufacturer: C&K Components
+  mpn: PTS840 PM SMTR LFS
+  description: SWITCH TACTILE SPST-NO 0.05A 12V
+- ref: U1
+  value: LPC4330FBD144
+  footprint: LQFP144
+  manufacturer: NXP
+  mpn: LPC4330FBD144,551
+  description: IC MCU ARM ROMLESS 144LQFP
+- ref: U2
+  value: W25Q16DV
+  footprint: SOIC8-208
+  manufacturer: Winbond
+  mpn: W25Q16JVSSIQ
+  description: IC FLASH 16MBIT 104MHZ 8SOIC
+- ref: U3
+  value: AP7333
+  footprint: SOT-23-3
+  manufacturer: Diodes Inc.
+  mpn: AP7333-33SAG-7
+  description: IC REG LDO 3.3V .3A SOT23
+- ref: U4
+  value: IP4220CZ6
+  footprint: SOT457
+  manufacturer: NXP
+  mpn: IP4220CZ6,125
+  description: IC USB DUAL ESD PROTECT 6TSOP
+- ref: U5
+  value: AP2553W6-7
+  footprint: SOT457
+  manufacturer: Diodes Inc.
+  mpn: AP2553W6-7
+  description: IC PD SW CURR LIMIT SOT26
+- ref: W1
+  value: VBUS_BYPASS
+  footprint: '0603'
+- ref: X1
+  value: MCU_XTAL
+  footprint: XTAL3.2x2.5mm-EXT
+  manufacturer: TXC
+  mpn: 7V-12.000MAAE-T
+  description: CRYSTAL 12.000 MHZ 12PF SMD
+- ref: X2
+  value: RTC_XTAL
+  footprint: XTAL-AB26TRQ
+  manufacturer: Abracon
+  mpn: AB26TRQ-32.768KHZ-T
+  description: CRYSTAL 32.768KHZ 12.5PF SMD
+nets:
+- name: +5V
+  pins:
+  - C10.1
+  - C4.1
+  - D5.1
+  - J2.2
+  - J6.5
+  - J6.6
+  - U3.1
+  - U5.1
+  - W1.1
+- name: /ADC0_0
+  pins: [J2.5, U1.6]
+- name: /ADC0_2
+  pins: [J7.5, U1.143]
+- name: /ADC0_5
+  pins: [J7.4, U1.144]
+- name: /CLK0
+  pins: [J1.11, U1.45]
+- name: /CLK2
+  pins: [J2.12, U1.99]
+- name: /DBGEN
+  pins: [R10.2, U1.28]
+- name: /I2C0_SCL
+  pins: [J2.40, R18.2, U1.92]
+- name: /I2C0_SDA
+  pins: [J2.39, R17.2, U1.93]
+- name: /LED1
+  pins: [D1.1, U1.134]
+- name: /LED2
+  pins: [D2.1, U1.3]
+- name: /LED3
+  pins: [D3.1, U1.133]
+- name: /LED4
+  pins: [D4.1, U1.132]
+- name: /P0_0
+  pins: [J1.4, U1.32]
+- name: /P0_1
+  pins: [J1.6, U1.34]
+- name: /P1_0
+  pins: [J1.7, U1.38]
+- name: /P1_1
+  pins: [J1.10, R9.2, U1.42]
+- name: /P1_10
+  pins: [J1.20, U1.53]
+- name: /P1_11
+  pins: [J1.22, U1.55]
+- name: /P1_12
+  pins: [J1.21, U1.56]
+- name: /P1_13
+  pins: [J1.26, U1.60]
+- name: /P1_14
+  pins: [J1.25, U1.61]
+- name: /P1_15
+  pins: [J1.28, U1.62]
+- name: /P1_16
+  pins: [J1.30, U1.64]
+- name: /P1_17
+  pins: [J1.32, U1.66]
+- name: /P1_18
+  pins: [J1.31, U1.67]
+- name: /P1_19
+  pins: [J1.38, U1.68]
+- name: /P1_2
+  pins: [J1.12, R8.1, U1.43]
+- name: /P1_20
+  pins: [J1.37, U1.70]
+- name: /P1_3
+  pins: [J1.40, U1.44]
+- name: /P1_4
+  pins: [J1.39, U1.47]
+- name: /P1_5
+  pins: [J1.13, U1.48]
+- name: /P1_6
+  pins: [J1.16, U1.49]
+- name: /P1_7
+  pins: [J1.15, U1.50]
+- name: /P1_8
+  pins: [J1.18, U1.51]
+- name: /P1_9
+  pins: [J1.17, U1.52]
+- name: /P2_0
+  pins: [J1.35, U1.75]
+- name: /P2_1
+  pins: [J2.35, U1.81]
+- name: /P2_10
+  pins: [J7.14, U1.104]
+- name: /P2_11
+  pins: [J7.13, U1.105]
+- name: /P2_12
+  pins: [J7.7, U1.106]
+- name: /P2_13
+  pins: [J7.8, U1.108]
+- name: /P2_2
+  pins: [J2.33, U1.84]
+- name: /P2_3
+  pins: [J2.20, U1.87]
+- name: /P2_4
+  pins: [J2.19, U1.88]
+- name: /P2_5
+  pins: [J2.18, U1.91]
+- name: /P2_6
+  pins: [J2.15, U1.95]
+- name: /P2_7
+  pins: [J2.14, R15.2, U1.96]
+- name: /P2_8
+  pins: [J2.13, R6.1, SW1.1, U1.98]
+- name: /P2_9
+  pins: [J7.6, R7.1, U1.102]
+- name: /P3_0
+  pins: [J2.26, U1.112]
+- name: /P3_1
+  pins: [J2.24, U1.114]
+- name: /P3_2
+  pins: [J2.22, U1.116]
+- name: /P3_3
+  pins: [J2.32, U1.118, U2.6]
+- name: /P3_4
+  pins: [J2.28, U1.119, U2.7]
+- name: /P3_5
+  pins: [J2.37, U1.121, U2.3]
+- name: /P3_6
+  pins: [J2.38, U1.122, U2.2]
+- name: /P3_7
+  pins: [J2.30, U1.123, U2.5]
+- name: /P4_0
+  pins: [J2.4, U1.1]
+- name: /P4_10
+  pins: [J1.5, U1.35]
+- name: /P4_2
+  pins: [J2.8, U1.8]
+- name: /P4_3
+  pins: [J2.9, U1.7]
+- name: /P4_4
+  pins: [J2.7, U1.9]
+- name: /P4_5
+  pins: [J2.6, U1.10]
+- name: /P4_6
+  pins: [J2.10, U1.11]
+- name: /P4_7
+  pins: [J2.11, U1.14]
+- name: /P4_8
+  pins: [J2.3, U1.15]
+- name: /P4_9
+  pins: [J1.3, U1.33]
+- name: /P5_0
+  pins: [J1.8, U1.37]
+- name: /P5_1
+  pins: [J1.9, U1.39]
+- name: /P5_2
+  pins: [J1.14, U1.46]
+- name: /P5_3
+  pins: [J1.19, U1.54]
+- name: /P5_4
+  pins: [J1.24, U1.57]
+- name: /P5_5
+  pins: [J1.23, U1.58]
+- name: /P5_6
+  pins: [J1.27, U1.63]
+- name: /P5_7
+  pins: [J1.29, U1.65]
+- name: /P6_0
+  pins: [J1.36, U1.73]
+- name: /P6_1
+  pins: [J7.18, U1.74]
+- name: /P6_10
+  pins: [J7.15, U1.100]
+- name: /P6_2
+  pins: [J7.17, U1.78]
+- name: /P6_3
+  pins: [J2.36, U1.79]
+- name: /P6_4
+  pins: [J7.2, U1.80]
+- name: /P6_5
+  pins: [J7.3, U1.82]
+- name: /P6_6
+  pins: [J2.34, U1.83]
+- name: /P6_7
+  pins: [J2.31, U1.85]
+- name: /P6_8
+  pins: [J2.29, U1.86]
+- name: /P6_9
+  pins: [J7.16, U1.97]
+- name: /P7_0
+  pins: [J2.27, U1.110]
+- name: /P7_1
+  pins: [J2.25, U1.113]
+- name: /P7_2
+  pins: [J2.23, U1.115]
+- name: /P7_7
+  pins: [J2.16, U1.140]
+- name: /P9_5
+  pins: [J1.33, U1.69]
+- name: /P9_6
+  pins: [J1.34, U1.72]
+- name: /PF_4
+  pins: [J2.21, U1.120]
+- name: /RESET
+  pins: [J5.10, J7.11, R5.2, SW2.1, U1.128]
+- name: /RTCX1
+  pins: [C2.1, J7.10, U1.125, X2.2]
+- name: /RTCX2
+  pins: [C1.1, U1.126, X2.1]
+- name: /RTC_ALARM
+  pins: [J7.9, U1.129]
+- name: /SPIFI_CS
+  pins: [U1.124, U2.1]
+- name: /TCK
+  pins: [J5.4, R11.2, U1.27]
+- name: /TDI
+  pins: [J5.8, U1.26]
+- name: /TDO
+  pins: [J5.6, R12.2, U1.31]
+- name: /TMS
+  pins: [J5.2, U1.30]
+- name: /USB0_D+
+  pins: [J3.3, R28.1, U1.18, U4.1]
+- name: /USB0_D-
+  pins: [J3.2, R27.1, U1.20, U4.6]
+- name: /USB0_ID
+  pins: [J3.4, U1.22, U4.3]
+- name: /USB0_SENSE
+  pins: [R25.2, R26.2, U1.21]
+- name: /USB0_SHIELD
+  pins: [FB2.2, J3.0]
+- name: /USB0_VBUS
+  pins: [FB1.1, J3.1, U4.5]
+- name: /USB1_D+
+  pins: [C9.1, R20.2, R30.1, U1.89]
+- name: /USB1_D-
+  pins: [C8.1, R19.2, R29.1, U1.90]
+- name: /USB1_EN
+  pins: [R16.2, U1.103, U5.3]
+- name: /USB1_FAULT
+  pins: [R24.1, U1.117, U5.4]
+- name: /USB1_SENSE
+  pins: [R21.2, R22.2, U1.101]
+- name: /USB1_SHIELD
+  pins: [FB3.1, J4.0]
+- name: /USB1_VBUS
+  pins: [C11.1, J4.1, J6.7, J6.8, R21.1, U5.6]
+- name: /VBAT
+  pins: [J7.12, U1.127]
+- name: /WAKEUP0
+  pins: [J2.17, R14.2, U1.130]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - FB2.1
+  - FB3.2
+  - J1.1
+  - J2.1
+  - J3.5
+  - J4.5
+  - J5.3
+  - J5.5
+  - J5.9
+  - J6.1
+  - J6.2
+  - J7.1
+  - J7.19
+  - R13.2
+  - R16.1
+  - R22.1
+  - R23.1
+  - R26.1
+  - R27.2
+  - R28.2
+  - R29.2
+  - R30.2
+  - R6.2
+  - R7.2
+  - R8.2
+  - SW2.2
+  - U1.109
+  - U1.135
+  - U1.19
+  - U1.2
+  - U1.23
+  - U1.4
+  - U1.40
+  - U1.76
+  - U2.4
+  - U3.3
+  - U4.2
+  - U5.2
+  - X1.2
+  - X1.4
+- name: Net-(C5-Pad1)
+  pins: [C5.1, U1.12, X1.1]
+- name: Net-(C6-Pad1)
+  pins: [C6.1, U1.13, X1.3]
+- name: Net-(D1-Pad2)
+  pins: [D1.2, R1.2]
+- name: Net-(D2-Pad2)
+  pins: [D2.2, R2.2]
+- name: Net-(D3-Pad2)
+  pins: [D3.2, R3.2]
+- name: Net-(D4-Pad2)
+  pins: [D4.2, R4.2]
+- name: Net-(D5-Pad2)
+  pins: [D5.2, FB1.2, R25.1, W1.2]
+- name: Net-(J4-Pad2)
+  pins: [J4.2, R19.1]
+- name: Net-(J4-Pad3)
+  pins: [J4.3, R20.1]
+- name: Net-(R13-Pad1)
+  pins: [R13.1, U1.24]
+- name: Net-(R23-Pad2)
+  pins: [R23.2, U5.5]
+- name: VCC
+  pins:
+  - C12.1
+  - C13.1
+  - C14.1
+  - C15.1
+  - C16.1
+  - C17.1
+  - C18.1
+  - C19.1
+  - C20.1
+  - C21.1
+  - C22.1
+  - C23.1
+  - C24.1
+  - C25.1
+  - C3.1
+  - C7.1
+  - J1.2
+  - J5.1
+  - J6.3
+  - J6.4
+  - J7.20
+  - R1.1
+  - R10.1
+  - R11.1
+  - R12.1
+  - R14.1
+  - R15.1
+  - R17.1
+  - R18.1
+  - R2.1
+  - R24.2
+  - R3.1
+  - R4.1
+  - R5.1
+  - R9.1
+  - SW1.2
+  - U1.107
+  - U1.111
+  - U1.131
+  - U1.136
+  - U1.137
+  - U1.138
+  - U1.139
+  - U1.141
+  - U1.142
+  - U1.16
+  - U1.17
+  - U1.25
+  - U1.36
+  - U1.41
+  - U1.5
+  - U1.59
+  - U1.71
+  - U1.77
+  - U1.94
+  - U2.8
+  - U3.2
+positions:
+- ref: C1
+  x: 140.97
+  y: 86.11
+  rot: 90.0
+- ref: C10
+  x: 170.43
+  y: 85.09
+  rot: 180.0
+- ref: C11
+  x: 172.85
+  y: 88.65
+  rot: 90.0
+- ref: C12
+  x: 127.51
+  y: 92.71
+  rot: 180.0
+- ref: C13
+  x: 127.51
+  y: 99.57
+  rot: 180.0
+- ref: C14
+  x: 127.51
+  y: 104.9
+  rot: 180.0
+- ref: C15
+  x: 128.27
+  y: 110.49
+  rot: 270.0
+- ref: C16
+  x: 135.13
+  y: 115.57
+  rot: 270.0
+- ref: C17
+  x: 144.53
+  y: 115.57
+  rot: 270.0
+- ref: C18
+  x: 151.89
+  y: 114.81
+- ref: C19
+  x: 157.48
+  y: 107.19
+- ref: C2
+  x: 144.78
+  y: 86.11
+  rot: 90.0
+- ref: C20
+  x: 157.48
+  y: 98.55
+- ref: C21
+  x: 157.48
+  y: 92.46
+- ref: C22
+  x: 150.37
+  y: 86.11
+  rot: 90.0
+- ref: C23
+  x: 139.19
+  y: 86.11
+  rot: 90.0
+- ref: C24
+  x: 136.91
+  y: 86.11
+  rot: 90.0
+- ref: C25
+  x: 134.62
+  y: 86.11
+  rot: 90.0
+- ref: C3
+  x: 115.57
+  y: 85.6
+  rot: 180.0
+- ref: C4
+  x: 118.36
+  y: 88.9
+  rot: 90.0
+- ref: C5
+  x: 126.75
+  y: 94.36
+  rot: 180.0
+- ref: C6
+  x: 123.16
+  y: 96.77
+  rot: 90.0
+- ref: C7
+  x: 157.48
+  y: 89.92
+- ref: C8
+  x: 163.4
+  y: 96.1
+  rot: 90.0
+- ref: C9
+  x: 163.4
+  y: 99.2
+  rot: 270.0
+- ref: D1
+  x: 108.2
+  y: 81.79
+  rot: 81.0
+- ref: D2
+  x: 107.19
+  y: 90.93
+  rot: 86.1
+- ref: D3
+  x: 107.19
+  y: 104.65
+  rot: 93.9
+- ref: D4
+  x: 108.2
+  y: 113.79
+  rot: 99.0
+- ref: D5
+  x: 119.2
+  y: 104.65
+  rot: 180.0
+- ref: FB1
+  x: 114.43
+  y: 101.09
+- ref: FB2
+  x: 113.28
+  y: 103.25
+  rot: 180.0
+- ref: FB3
+  x: 169.67
+  y: 103.76
+  rot: 180.0
+- ref: J1
+  x: 142.24
+  y: 120.65
+- ref: J2
+  x: 142.24
+  y: 74.93
+- ref: J3
+  x: 105.92
+  y: 97.79
+- ref: J4
+  x: 174.14
+  y: 97.79
+  rot: 180.0
+- ref: J5
+  x: 122.43
+  y: 110.62
+- ref: J6
+  x: 170.18
+  y: 110.49
+  rot: 90.0
+  side: back
+- ref: J7
+  x: 142.24
+  y: 78.74
+- ref: R1
+  x: 111.76
+  y: 82.55
+  rot: 180.0
+- ref: R10
+  x: 119.76
+  y: 107.82
+- ref: R11
+  x: 116.08
+  y: 107.7
+  rot: 270.0
+- ref: R12
+  x: 124.21
+  y: 107.82
+- ref: R13
+  x: 127.51
+  y: 103.12
+  rot: 180.0
+- ref: R14
+  x: 139.32
+  y: 82.42
+- ref: R15
+  x: 157.48
+  y: 96.52
+  rot: 180.0
+- ref: R16
+  x: 167.64
+  y: 86.11
+  rot: 270.0
+- ref: R17
+  x: 165.4
+  y: 81.94
+  rot: 270.0
+- ref: R18
+  x: 167.1
+  y: 81.96
+  rot: 270.0
+- ref: R19
+  x: 165.86
+  y: 96.7
+  rot: 180.0
+- ref: R2
+  x: 110.74
+  y: 90.17
+  rot: 180.0
+- ref: R20
+  x: 165.86
+  y: 98.3
+  rot: 180.0
+- ref: R21
+  x: 166.88
+  y: 93.73
+  rot: 180.0
+- ref: R22
+  x: 164.34
+  y: 92.96
+  rot: 270.0
+- ref: R23
+  x: 168.15
+  y: 91.69
+- ref: R24
+  x: 166.88
+  y: 88.65
+  rot: 180.0
+- ref: R25
+  x: 119.2
+  y: 101.2
+  rot: 90.0
+- ref: R26
+  x: 121.2
+  y: 101.2
+  rot: 90.0
+- ref: R27
+  x: 117.4
+  y: 99.65
+  rot: 270.0
+- ref: R28
+  x: 117.4
+  y: 96.55
+  rot: 90.0
+- ref: R29
+  x: 161.2
+  y: 96.1
+  rot: 90.0
+- ref: R3
+  x: 110.74
+  y: 105.41
+  rot: 180.0
+- ref: R30
+  x: 161.2
+  y: 99.2
+  rot: 270.0
+- ref: R4
+  x: 111.6
+  y: 112.0
+  rot: 270.0
+- ref: R5
+  x: 113.03
+  y: 87.88
+  rot: 270.0
+- ref: R6
+  x: 113.28
+  y: 108.2
+  rot: 270.0
+- ref: R7
+  x: 131.57
+  y: 82.42
+- ref: R8
+  x: 131.55
+  y: 116.36
+- ref: R9
+  x: 128.27
+  y: 115.57
+  rot: 270.0
+- ref: SW1
+  x: 108.2
+  y: 109.22
+  rot: 276.4
+- ref: SW2
+  x: 108.2
+  y: 86.36
+  rot: 263.6
+- ref: U1
+  x: 142.24
+  y: 100.84
+- ref: U2
+  x: 159.0
+  y: 86.11
+  rot: 180.0
+- ref: U3
+  x: 115.57
+  y: 88.9
+  rot: 270.0
+- ref: U4
+  x: 114.37
+  y: 98.11
+  rot: 180.0
+- ref: U5
+  x: 170.18
+  y: 88.65
+  rot: 180.0
+- ref: W1
+  x: 117.23
+  y: 103.76
+  rot: 180.0
+  side: back
+- ref: X1
+  x: 126.47
+  y: 96.75
+  rot: 180.0
+- ref: X2
+  x: 142.94
+  y: 87.59
+  rot: 90.0
+copper_pours:
+- net: +5V
+  layers: [B.Cu, F.Cu]
+- net: /USB0_SHIELD
+  layers: [F.Cu]
+- net: /USB1_SHIELD
+  layers: [F.Cu]
+- net: GND
+  layers: [C2.Cu, F.Cu]
+- net: VCC
+  layers: [C3.Cu, F.Cu]

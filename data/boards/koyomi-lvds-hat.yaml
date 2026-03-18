@@ -1,0 +1,417 @@
+name: Koyomi LVDS Hat
+slug: koyomi-lvds-hat
+source: exentio/koyomi-lvds-hat
+format: kicad8
+description: RPi LVDS transmitter hat (SN75LVDS83B FlatLink) for repurposing laptop panels, I-PEX micro-coax connector
+tags: [ham-radio]
+key_ics: [SN75LVDS83B, AP2114H-2.5]
+outline:
+  width_mm: 65.0
+  height_mm: 56.5
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0603'
+  decouples: IC1
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+  decouples: IC1
+- ref: C3
+  value: 10nF
+  footprint: '0603'
+  decouples: IC1
+- ref: C4
+  value: 1uF
+  footprint: '0603'
+  decouples: U1
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C6
+  value: 10nF
+  footprint: '0603'
+  decouples: U1
+- ref: C7
+  value: 4.7uF
+  footprint: '0603'
+  decouples: U1
+- ref: C8
+  value: 4.7uF
+  footprint: '0603'
+  decouples: U1
+- ref: FL1
+  value: DLP2ADN121HL4L
+  footprint: Murata_DLP2ADN121HL4L
+  description: EMI 4-inductor filter
+- ref: FL2
+  value: DLP2ADN121HL4L
+  footprint: Murata_DLP2ADN121HL4L
+  description: EMI 4-inductor filter
+- ref: IC1
+  value: SN75LVDS83B
+  footprint: TSSOP56
+  manufacturer: Texas Instruments
+  mpn: SN75LVDS83B
+  digikey: 296-24529-6-ND
+  description: 5/0 Driver LVDS 56-BGA MICROSTAR JUNIOR (7.0x4.5)
+- ref: J1
+  value: RPi_GPIO
+  footprint: Samtec_HLE-120-02-XXX-DV-BE-XX-XX
+- ref: J2
+  value: 20374-R30E-31
+  footprint: I-PEX_20374-R30E-31
+  manufacturer: I-PEX
+  mpn: 20374-R30E-31
+  description: 30 POS Right Angle SMD 0.4 mm pitch vertical mating type micro-coaxial
+- ref: J4
+  value: Qwiic connector
+  footprint: JST_SH_SM04B-SRSS-TB
+- ref: R1
+  value: 4.7kohm
+  footprint: '0603'
+  pullup: CLKSEL
+- ref: R2
+  value: 4.7kohm
+  footprint: '0603'
+  pullup: SHTDN
+- ref: RN1
+  value: 47ohm
+  footprint: R_Array_Convex
+  description: 4 resistor network, parallel topology
+- ref: RN2
+  value: 47ohm
+  footprint: R_Array_Convex
+  description: 4 resistor network, parallel topology
+- ref: RN3
+  value: 47ohm
+  footprint: R_Array_Convex
+  description: 4 resistor network, parallel topology
+- ref: RN4
+  value: 47ohm
+  footprint: R_Array_Convex
+  description: 4 resistor network, parallel topology
+- ref: RN5
+  value: 47ohm
+  footprint: R_Array_Convex
+  description: 4 resistor network, parallel topology
+- ref: RN6
+  value: 47ohm
+  footprint: R_Array_Convex
+  description: 4 resistor network, parallel topology
+- ref: U1
+  value: AP2114H-2.5
+  footprint: SOT-223-3_TabPin2
+nets:
+- name: +2V5
+  pins:
+  - C4.1
+  - C5.1
+  - C6.1
+  - C8.1
+  - J2.4
+  - J2.5
+  - J2.6
+  - U1.VO@2
+- name: +3V3
+  pins:
+  - C1.1
+  - C2.1
+  - C3.1
+  - C7.1
+  - IC1.IOVCC@1
+  - IC1.IOVCC@2
+  - IC1.LVDSVCC
+  - IC1.PLLVCC
+  - IC1.VCC@1
+  - J1.3.3V@1
+  - J1.3.3V@17
+  - J4.Pin_2
+  - R1.1
+  - R2.1
+  - U1.VI
+- name: +5V
+  pins: [J1.5V@2, J1.5V@4]
+- name: B0
+  pins: [J1.BCM4_GPCLK0, RN1.R2.2]
+- name: B1
+  pins: [J1.BCM5, RN4.R1.2]
+- name: B2
+  pins: [J1.BCM6, RN5.R4.2]
+- name: B3
+  pins: [J1.BCM7_CE1, RN3.R1.2]
+- name: B4
+  pins: [J1.BCM8_CE0, RN3.R2.2]
+- name: B5
+  pins: [J1.BCM9_MISO, RN3.R3.2]
+- name: CLKIN
+  pins: [J1.BCM0_ID_SD, RN4.R2.2]
+- name: CLKSEL
+  pins: [IC1.CLKSEL, R1.2]
+- name: D0
+  pins: [IC1.D0, RN5.R1.1]
+- name: D1
+  pins: [IC1.D1, RN2.R3.1]
+- name: D12
+  pins: [IC1.D12, RN5.R2.1]
+- name: D13
+  pins: [IC1.D13, RN1.R1.1]
+- name: D14
+  pins: [IC1.D14, RN2.R4.1]
+- name: D15
+  pins: [IC1.D15, RN1.R2.1]
+- name: D18
+  pins: [IC1.D18, RN4.R1.1]
+- name: D19
+  pins: [IC1.D19, RN5.R4.1]
+- name: D2
+  pins: [IC1.D2, RN2.R2.1]
+- name: D20
+  pins: [IC1.D20, RN3.R1.1]
+- name: D21
+  pins: [IC1.D21, RN3.R2.1]
+- name: D22
+  pins: [IC1.D22, RN3.R3.1]
+- name: D24
+  pins: [IC1.D24, RN1.R3.1]
+- name: D25
+  pins: [IC1.D25, RN1.R4.1]
+- name: D26
+  pins: [IC1.D26, RN4.R3.1]
+- name: D3
+  pins: [IC1.D3, RN6.R4.1]
+- name: D4
+  pins: [IC1.D4, RN6.R3.1]
+- name: D6
+  pins: [IC1.D6, RN6.R2.1]
+- name: D7
+  pins: [IC1.D7, RN3.R4.2]
+- name: D8
+  pins: [IC1.D8, RN4.R4.1]
+- name: D9
+  pins: [IC1.D9, RN5.R3.1]
+- name: ENABLE
+  pins: [J1.BCM1_ID_SC, RN4.R3.2]
+- name: G0
+  pins: [J1.BCM10_MOSI, RN3.R4.1]
+- name: G1
+  pins: [J1.BCM11_SCLK, RN4.R4.2]
+- name: G2
+  pins: [J1.BCM12_PWM0, RN5.R3.2]
+- name: G3
+  pins: [J1.BCM13_PWM1, RN5.R2.2]
+- name: G4
+  pins: [J1.BCM14_TXD, RN1.R1.2]
+- name: G5
+  pins: [J1.BCM15_RXD, RN2.R4.2]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - IC1.D10
+  - IC1.D11
+  - IC1.D16
+  - IC1.D17
+  - IC1.D23
+  - IC1.D27
+  - IC1.D5
+  - IC1.GND@1
+  - IC1.GND@10
+  - IC1.GND@2
+  - IC1.GND@3
+  - IC1.GND@4
+  - IC1.GND@5
+  - IC1.GND@6
+  - IC1.GND@7
+  - IC1.GND@8
+  - IC1.GND@9
+  - J1.GND@14
+  - J1.GND@20
+  - J1.GND@25
+  - J1.GND@30
+  - J1.GND@34
+  - J1.GND@39
+  - J1.GND@6
+  - J1.GND@9
+  - J2.7
+  - J2.8
+  - J2.9
+  - J2.SHIELD
+  - J2.SHIELD__1
+  - J4.MountPin@MP
+  - J4.Pin_1
+  - U1.GND
+- name: HSYNC
+  pins: [J1.BCM3_SCL, RN1.R3.2]
+- name: L_CLKIN
+  pins: [IC1.CLKIN, RN4.R2.1]
+- name: Net-(IC1-CLCKOUTM)
+  pins: [FL2.3, IC1.CLCKOUTM]
+- name: Net-(IC1-CLCKOUTP)
+  pins: [FL2.1, IC1.CLCKOUTP]
+- name: Net-(IC1-Y0M)
+  pins: [FL1.7, IC1.Y0M]
+- name: Net-(IC1-Y0P)
+  pins: [FL1.5, IC1.Y0P]
+- name: Net-(IC1-Y1M)
+  pins: [FL1.3, IC1.Y1M]
+- name: Net-(IC1-Y1P)
+  pins: [FL1.1, IC1.Y1P]
+- name: Net-(IC1-Y2M)
+  pins: [FL2.7, IC1.Y2M]
+- name: Net-(IC1-Y2P)
+  pins: [FL2.5, IC1.Y2P]
+- name: R0
+  pins: [J1.BCM16, RN5.R1.2]
+- name: R1
+  pins: [J1.BCM17, RN2.R3.2]
+- name: R2
+  pins: [J1.BCM18_PCM_C, RN2.R2.2]
+- name: R3
+  pins: [J1.BCM19_MISO_PCM_FS, RN6.R4.2]
+- name: R4
+  pins: [J1.BCM20_MOSI_PCM_DI, RN6.R3.2]
+- name: R5
+  pins: [J1.BCM21_SCLK_PCM_DO, RN6.R2.2]
+- name: RX0+
+  pins: [FL1.6, J2.28]
+- name: RX0-
+  pins: [FL1.8, J2.29]
+- name: RX1+
+  pins: [FL1.2, J2.26]
+- name: RX1-
+  pins: [FL1.4, J2.27]
+- name: RX2+
+  pins: [FL2.6, J2.24]
+- name: RX2-
+  pins: [FL2.8, J2.25]
+- name: RXCLK+
+  pins: [FL2.2, J2.22]
+- name: RXCLK-
+  pins: [FL2.4, J2.23]
+- name: SCL
+  pins: [J1.BCM24, J4.Pin_4]
+- name: SDA
+  pins: [J1.BCM23, J4.Pin_3]
+- name: SHTDN
+  pins: [IC1.nSHTDN, R2.2]
+- name: VAD
+  pins: [J2.1, J2.2]
+- name: VSYNC
+  pins: [J1.BCM2_SDA, RN1.R4.2]
+positions:
+- ref: C1
+  x: 113.26
+  y: 46.47
+  rot: 180.0
+- ref: C2
+  x: 113.26
+  y: 49.4
+  rot: 180.0
+- ref: C3
+  x: 113.24
+  y: 52.3
+  rot: 180.0
+- ref: C4
+  x: 118.9
+  y: 64.7
+  rot: 90.0
+- ref: C5
+  x: 115.8
+  y: 64.7
+  rot: 90.0
+- ref: C6
+  x: 112.7
+  y: 64.7
+  rot: 90.0
+- ref: C7
+  x: 101.6
+  y: 61.9
+  rot: -90.0
+- ref: C8
+  x: 105.94
+  y: 70.4
+  rot: 180.0
+- ref: FL1
+  x: 128.65
+  y: 67.22
+- ref: FL2
+  x: 125.95
+  y: 67.17
+- ref: IC1
+  x: 123.5
+  y: 50.0
+  rot: -90.0
+- ref: J1
+  x: 123.5
+  y: 26.0
+  rot: 90.0
+  side: back
+- ref: J2
+  x: 123.5
+  y: 72.5
+- ref: J4
+  x: 152.79
+  y: 39.26
+  rot: 90.0
+- ref: R1
+  x: 100.5
+  y: 48.9
+  rot: -90.0
+- ref: R2
+  x: 106.5
+  y: 48.9
+  rot: -90.0
+- ref: RN1
+  x: 104.85
+  y: 33.6
+  rot: 90.0
+  side: back
+- ref: RN2
+  x: 113.6
+  y: 33.6
+  rot: 90.0
+  side: back
+- ref: RN3
+  x: 125.2
+  y: 32.1
+  rot: 90.0
+  side: back
+- ref: RN4
+  x: 132.0
+  y: 32.1
+  rot: 90.0
+  side: back
+- ref: RN5
+  x: 140.5
+  y: 32.55
+  rot: 90.0
+  side: back
+- ref: RN6
+  x: 142.4
+  y: 42.25
+  rot: 90.0
+  side: back
+- ref: U1
+  x: 106.78
+  y: 64.18
+  rot: -90.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu]
+  keepout: true

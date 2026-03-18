@@ -1,0 +1,952 @@
+name: CM5 Minima REV2
+slug: cm5-minima-rev2
+source: piecol/CM5_MINIMA_REV2
+format: kicad7
+description: 'Ultra-compact CM5 carrier (54x57mm): USB-C PD, GbE'
+tags: [sensors, usb-pd, video]
+key_ics: [SHTC3]
+outline:
+  width_mm: 54.55
+  height_mm: 57.14
+design_rules:
+  layers: 6
+  min_trace: 0.15mm
+  min_clearance: 0.13mm
+  min_drill: 0.3mm
+  min_via: 0.45mm
+components:
+- ref: C101
+  value: 100nF
+  footprint: '0402'
+- ref: C102
+  value: 100nF
+  footprint: '0402'
+- ref: C401
+  value: 100nF
+  footprint: '0402'
+  mpn: CC0402KRX7R7BB104
+- ref: C501
+  value: 100nF
+  footprint: '0402'
+  decouples: U405
+- ref: C502
+  value: 100nF
+  footprint: '0402'
+- ref: C601
+  value: 4.7uF
+  footprint: 0805
+  mpn: C0805C475M3PAC
+- ref: C602
+  value: 100nF
+  footprint: '0402'
+  mpn: CC0402KRX7R7BB104
+- ref: C701
+  value: 10uF
+  footprint: 0805
+  decouples: U701
+- ref: C702
+  value: 100uF
+  footprint: EIA-7343
+  decouples: U701
+- ref: C703
+  value: 10uF
+  footprint: 0805
+  decouples: U701
+- ref: C704
+  value: 10uF
+  footprint: 0805
+  decouples: U702
+- ref: C705
+  value: 10uF
+  footprint: 0805
+  decouples: U702
+- ref: C706
+  value: 100nF
+  footprint: '0402'
+  decouples: U702
+- ref: C707
+  value: 4.7nF
+  footprint: '0402'
+- ref: C708
+  value: 10uF
+  footprint: 0805
+- ref: C709
+  value: 10uF
+  footprint: 0805
+- ref: C710
+  value: 10uF
+  footprint: 0805
+- ref: C711
+  value: 10uF
+  footprint: 0805
+- ref: C712
+  value: 100nF
+  footprint: '0402'
+- ref: D101
+  value: RCLAMP0502BA
+  footprint: SOT-416
+- ref: D401
+  value: PUSB3F96X
+  footprint: DFN2510A-10_L2.5-W1.0-P0.50-BL
+  lcsc: C478121
+- ref: D402
+  value: PUSB3F96X
+  footprint: DFN2510A-10_L2.5-W1.0-P0.50-BL
+  lcsc: C478121
+- ref: D403
+  value: PUSB3F96X
+  footprint: DFN2510A-10_L2.5-W1.0-P0.50-BL
+  lcsc: C478121
+- ref: D502
+  value: RCLAMP0502BA
+  footprint: SOT-416
+- ref: D605
+  value: green LED
+  footprint: LED-SMD_L1.7-W0.6-RD
+- ref: D606
+  value: green LED
+  footprint: LED-SMD_L1.7-W0.6-RD
+- ref: D701
+  value: RCLAMP0502BA
+  footprint: SOT-416
+- ref: D702
+  value: green LED
+  footprint: LED-SMD_L1.7-W0.6-RD
+- ref: J101
+  value: USB-C
+  footprint: USB-C
+  description: Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal
+- ref: J501
+  value: GT-HD001B-CNNG1
+  footprint: EDAC 690-019-298-412
+- ref: J502
+  value: 1x4 header
+  footprint: JST_SH_BM04B-SRSS-TB
+  description: Generic connectable mounting pin connector, single row, 01x04, script generated
+- ref: J503
+  value: 1x10 header
+  footprint: JST_SUR_BM10B-SURS-TF
+  description: Generic connectable mounting pin connector, single row, 01x10, script generated
+- ref: J601
+  value: JST_SHBM04B-SRSS-TB
+  footprint: JST_SH_BM04B-SRSS-TB
+- ref: J701
+  value: M.2
+  footprint: M.2 M Key socket 2230
+  description: M.2 Socket 3 Mechanical Key M
+- ref: J802
+  value: 1x22 header
+  footprint: Hirose_FH12-22S-0.5SH
+- ref: L701
+  value: 2.2uH
+  footprint: L_Bourns_SRP5030CC
+- ref: M701
+  value: M.2 Solder Nut
+  footprint: MountingHole_3.78mm_M2_Pad_TopOnly
+- ref: Module301
+  value: ComputeModule5-CM5
+  footprint: Raspberry-Pi-5-Compute-Module_GPIO
+  description: RaspberryPi Compute module 5
+- ref: Module302
+  value: ComputeModule5-CM5
+  footprint: Raspberry-Pi-5-Compute-Module_HSS
+  description: RaspberryPi Compute module 5
+- ref: R101
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R102
+  value: 0ohm
+  footprint: '0402'
+- ref: R104
+  value: 10kohm
+  footprint: '0402'
+  pulldown: /CM5/EEPROM_nWP
+- ref: R105
+  value: 0ohm
+  footprint: '0402'
+- ref: R106
+  value: 0ohm
+  footprint: '0402'
+- ref: R401
+  value: 470ohm
+  footprint: '0402'
+- ref: R402
+  value: 470ohm
+  footprint: '0402'
+- ref: R403
+  value: 0ohm
+  footprint: '0402'
+- ref: R501
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R502
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R605
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R606
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R701
+  value: 15kohm
+  footprint: '0402'
+  pulldown: U701.ILIM
+- ref: R702
+  value: 22kohm
+  footprint: '0402'
+  pullup: /USB/CC2
+- ref: R703
+  value: 22kohm
+  footprint: '0402'
+  pullup: /USB/CC1
+- ref: R704
+  value: 100kohm
+  footprint: '0402'
+  pulldown: /CM5/PCIE_PI.PWR_EN
+- ref: R705
+  value: 10kohm
+  footprint: '0402'
+- ref: R706
+  value: 2.2kohm
+  footprint: '0402'
+  pulldown: /PCIe-M2/FB
+- ref: R707
+  value: 2.2kohm
+  footprint: '0402'
+- ref: SW101
+  value: MK-11C04-G013
+  footprint: SW-SMD_MK-11C04-G013
+  lcsc: C778185
+- ref: SW501
+  value: TS-1010A-B
+  footprint: SW-SMD_TS-1010A-B
+  lcsc: C381059
+- ref: T401
+  value: 7498111120AR
+  footprint: 7498111120AR
+  manufacturer: "W\xFCrth Elektronik"
+  mpn: 7498111120AR
+- ref: U401
+  value: TPD4EUSB30
+  footprint: USON-10
+  mpn: TPD4EUSB30
+- ref: U402
+  value: TPD4EUSB30
+  footprint: USON-10
+  mpn: TPD4EUSB30
+- ref: U405
+  value: STMPS2151STR
+  footprint: SOT-23-5
+  lcsc: C135998
+- ref: U601
+  value: SHTC3
+  footprint: Sensirion_DFN-4-1EP
+  description: "Humidity and Temperature Sensor, \xB12%RH, \xB10.2\xB0C, I2C, 1.62-3.6V, DFN-4"
+- ref: U602
+  value: SN74LVC1G14DBVR
+  footprint: SOT-353_SC-70-5
+  mpn: SN74LVC1G14DBVR
+- ref: U701
+  value: AP22653W6
+  footprint: SOT-23-6
+- ref: U702
+  value: AP3441SHE-7B
+  footprint: DFN-8-1EP
+- ref: U703
+  value: ASEK-32.768KHZ-L-R-T
+  footprint: SMD3225
+- ref: USB701
+  value: USB-C
+  footprint: USB-C
+  lcsc: C5454943
+nets:
+- name: +1V8
+  pins: [Module301.+1.8v_(Output)@88, Module301.+1.8v_(Output)@90]
+- name: +3V3_PI
+  pins:
+  - C601.1
+  - C602.1
+  - J502.Pin_4
+  - J503.Pin_1
+  - J802.Pin_22
+  - Module301.+3.3v_(Output)@84
+  - Module301.+3.3v_(Output)@86
+  - R102.1
+  - R501.1
+  - R502.1
+  - T401.14
+  - T401.2
+  - U601.VDD
+- name: +5V
+  pins:
+  - C101.1
+  - C102.1
+  - C501.1
+  - C701.1
+  - C704.1
+  - C705.1
+  - C706.1
+  - D605.A
+  - D606.A
+  - J101.VBUS@A4
+  - J101.VBUS@A9
+  - J101.VBUS@B4
+  - J101.VBUS@B9
+  - J601.Pin_1
+  - Module301.+5v_(Input)@77
+  - Module301.+5v_(Input)@79
+  - Module301.+5v_(Input)@81
+  - Module301.+5v_(Input)@83
+  - Module301.+5v_(Input)@85
+  - Module301.+5v_(Input)@87
+  - R101.1
+  - R702.2
+  - R703.2
+  - U405.EN
+  - U405.VIN
+  - U602.VCC
+  - U701.IN
+  - U702.VIN
+- name: /CC1
+  pins: [J101.CC1, Module301.CC1]
+- name: /CC2
+  pins: [J101.CC2, Module301.CC2]
+- name: /CM5/BL_GPIO18
+  pins: [J503.Pin_5, Module301.GPIO18]
+- name: /CM5/CAM_GPIO0
+  pins: [J802.Pin_17, Module301.CAM_GPIO0]
+- name: /CM5/CAM_GPIO1
+  pins: [J802.Pin_18, Module301.CAM_GPIO1]
+- name: /CM5/CS_GPIO24
+  pins: [J503.Pin_7, Module301.GPIO24]
+- name: /CM5/DC_GPI25
+  pins: [J503.Pin_3, Module301.GPIO25]
+- name: /CM5/DPHY0_P.C_N
+  pins: [J802.Pin_8, Module302.MIPI0_C_N]
+- name: /CM5/DPHY0_P.C_P
+  pins: [J802.Pin_9, Module302.MIPI0_C_P]
+- name: /CM5/DPHY0_P.D0_N
+  pins: [J802.Pin_2, Module302.MIPI0_D0_N]
+- name: /CM5/DPHY0_P.D0_P
+  pins: [J802.Pin_3, Module302.MIPI0_D0_P]
+- name: /CM5/DPHY0_P.D1_N
+  pins: [J802.Pin_5, Module302.MIPI0_D1_N]
+- name: /CM5/DPHY0_P.D1_P
+  pins: [J802.Pin_6, Module302.MIPI0_D1_P]
+- name: /CM5/DPHY0_P.D2_N
+  pins: [J802.Pin_11, Module302.MIPI0_D2_N]
+- name: /CM5/DPHY0_P.D2_P
+  pins: [J802.Pin_12, Module302.MIPI0_D2_P]
+- name: /CM5/DPHY0_P.D3_N
+  pins: [J802.Pin_14, Module302.MIPI0_D3_N]
+- name: /CM5/DPHY0_P.D3_P
+  pins: [J802.Pin_15, Module302.MIPI0_D3_P]
+- name: /CM5/EEPROM_nWP
+  pins: [Module301.EEPROM_nWP, R104.2]
+- name: /CM5/ETH_PI.TRD0_N
+  pins: [Module301.Ethernet_Pair0_N, T401.D1-, U401.9, U401.D1-]
+- name: /CM5/ETH_PI.TRD0_P
+  pins: [Module301.Ethernet_Pair0_P, T401.D1+, U401.10, U401.D1+]
+- name: /CM5/ETH_PI.TRD1_N
+  pins: [Module301.Ethernet_Pair1_N, T401.D2-, U401.6, U401.D2-]
+- name: /CM5/ETH_PI.TRD1_P
+  pins: [Module301.Ethernet_Pair1_P, T401.D2+, U401.7, U401.D2+]
+- name: /CM5/ETH_PI.TRD2_N
+  pins: [Module301.Ethernet_Pair2_N, T401.D3-, U402.9, U402.D1-]
+- name: /CM5/ETH_PI.TRD2_P
+  pins: [Module301.Ethernet_Pair2_P, T401.D3+, U402.10, U402.D1+]
+- name: /CM5/ETH_PI.TRD3_N
+  pins: [Module301.Ethernet_Pair3_N, T401.D4-, U402.6, U402.D2-]
+- name: /CM5/ETH_PI.TRD3_P
+  pins: [Module301.Ethernet_Pair3_P, T401.D4+, U402.7, U402.D2+]
+- name: /CM5/ETH_nLED_ACTIVITY
+  pins: [Module301.Ethernet_nLED3(3.3v), R401.1]
+- name: /CM5/GPIO4
+  pins: [Module301.GPIO4, R106.2]
+- name: /CM5/GPIO5
+  pins: [Module301.GPIO5, R105.2]
+- name: /CM5/GPIO_VREF
+  pins: [Module301.GPIO_VREF(1.8v/3.3v_Input), R102.2]
+- name: /CM5/HDMI_PI.CEC
+  pins: [D403.CH1, D403.NC@10, J501.CEC, Module302.HDMI0_CEC]
+- name: /CM5/HDMI_PI.CK_N
+  pins: [D401.CH4, D401.NC@6, J501.CK-, Module302.HDMI0_CLK_N]
+- name: /CM5/HDMI_PI.CK_P
+  pins: [D401.CH3, D401.NC@7, J501.CK+, Module302.HDMI0_CLK_P]
+- name: /CM5/HDMI_PI.D0_N
+  pins: [D401.CH2, D401.NC@9, J501.D0-, Module302.HDMI0_TX0_N]
+- name: /CM5/HDMI_PI.D0_P
+  pins: [D401.CH1, D401.NC@10, J501.D0+, Module302.HDMI0_TX0_P]
+- name: /CM5/HDMI_PI.D1_N
+  pins: [D402.CH4, D402.NC@6, J501.D1-, Module302.HDMI0_TX1_N]
+- name: /CM5/HDMI_PI.D1_P
+  pins: [D402.CH3, D402.NC@7, J501.D1+, Module302.HDMI0_TX1_P]
+- name: /CM5/HDMI_PI.D2_N
+  pins: [D402.CH2, D402.NC@9, J501.D2-, Module302.HDMI0_TX2_N]
+- name: /CM5/HDMI_PI.D2_P
+  pins: [D402.CH1, D402.NC@10, J501.D2+, Module302.HDMI0_TX2_P]
+- name: /CM5/HDMI_PI.HOTPLUG
+  pins: [D403.CH2, D403.NC@9, J501.HPD/HEAC-, Module302.HDMI0_HOTPLUG]
+- name: /CM5/HDMI_PI.SCL
+  pins: [D403.CH4, D403.NC@6, J501.SCL, Module302.HDMI0_SCL]
+- name: /CM5/HDMI_PI.SDA
+  pins: [D403.CH3, D403.NC@7, J501.SDA, Module302.HDMI0_SDA]
+- name: /CM5/MISO_GPIO19
+  pins: [J503.Pin_10, Module301.GPIO19]
+- name: /CM5/MOSI_GPIO20
+  pins: [J503.Pin_9, Module301.GPIO20]
+- name: /CM5/PCIE_PI.CLK_N
+  pins: [J701.REFCLKn, Module302.PCIe_CLK_N]
+- name: /CM5/PCIE_PI.CLK_P
+  pins: [J701.REFCLKp, Module302.PCIe_CLK_P]
+- name: /CM5/PCIE_PI.PWR_EN
+  pins: [Module302.PCIE_PWR_EN, R704.1, U702.EN]
+- name: /CM5/PCIE_PI.RX_N
+  pins: [J701.PETp0, Module302.PCIe_RX_N]
+- name: /CM5/PCIE_PI.RX_P
+  pins: [J701.PETn0, Module302.PCIe_RX_P]
+- name: /CM5/PCIE_PI.TX_N
+  pins: [J701.PERp0, Module302.PCIe_TX_N]
+- name: /CM5/PCIE_PI.TX_P
+  pins: [J701.PERn0, Module302.PCIe_TX_P]
+- name: /CM5/PCIE_PI.nCLKREQ
+  pins: [J701.nCLKREQ, Module302.PCIe_nCLKREQ]
+- name: /CM5/PCIE_PI.nRST
+  pins: [J701.nPERST, Module302.PCIe_nRST]
+- name: /CM5/PCIE_PI.nWAKE
+  pins: [J701.nPEWAKE, Module302.PCIE_nWAKE]
+- name: /CM5/PI_nLED_PWR
+  pins: [Module301.LED_nPWR, U602.2]
+- name: /CM5/PWM
+  pins: [J601.Pin_2, Module301.FAN_PWM]
+- name: /CM5/PWR_BUT
+  pins: [Module301.PWR_BUT, SW501.1]
+- name: /CM5/RST_GPIO27
+  pins: [J503.Pin_4, Module301.GPIO27]
+- name: /CM5/SCLK_GPIO21
+  pins: [J503.Pin_8, Module301.GPIO21]
+- name: /CM5/TACHO
+  pins: [J601.Pin_4, Module301.FAN_TACHO]
+- name: /CM5/USB2P.D_N
+  pins: [D701.K2, Module302.USB3-0-D_N, USB701.D-@A7, USB701.D-@B7]
+- name: /CM5/USB2P.D_P
+  pins: [D701.K1, Module302.USB3-0-D_P, USB701.D+@A6, USB701.D+@B6]
+- name: /CM5/VBUS_EN
+  pins: [Module302.VBUS_EN, U701.EN]
+- name: /CM5/nLED_ACTIVITY
+  pins: [Module301.LED_nACT, R606.2]
+- name: /CM5/nLED_SPEED_100_1000
+  pins: [Module301.Ethernet_nLED2(3.3v), R402.1]
+- name: /CM5/nRPIBOOT
+  pins: [Module301.nRPIBOOT, SW101.C]
+- name: /PCIe-M2/FB
+  pins: [C707.2, R705.2, R706.1, U702.FB]
+- name: /PCIe-M2/RX
+  pins: [J701.NC@22, R105.1]
+- name: /PCIe-M2/TX
+  pins: [J701.NC@20, R106.1]
+- name: /SCL
+  pins: [D502.K1, J502.Pin_2, J802.Pin_20, Module301.SCL0, R502.2, U601.SCL]
+- name: /SDA
+  pins: [D502.K2, J502.Pin_1, J802.Pin_21, Module301.SDA0, R501.2, U601.SDA]
+- name: /USB/CC1
+  pins: [R703.1, USB701.CC1]
+- name: /USB/CC2
+  pins: [R702.1, USB701.CC2]
+- name: /USB_C.D_N
+  pins: [D101.K2, J101.D-@A7, J101.D-@B7, Module302.USB2_N]
+- name: /USB_C.D_P
+  pins: [D101.K1, J101.D+@A6, J101.D+@B6, Module302.USB2_P]
+- name: GND
+  pins:
+  - C101.2
+  - C102.2
+  - C401.2
+  - C501.2
+  - C502.2
+  - C601.2
+  - C602.2
+  - C701.2
+  - C702.2
+  - C703.2
+  - C704.2
+  - C705.2
+  - C706.2
+  - C708.2
+  - C709.2
+  - C710.2
+  - C711.2
+  - C712.2
+  - D101.A
+  - D401.GND@3
+  - D401.GND@8
+  - D402.GND@3
+  - D402.GND@8
+  - D403.GND@3
+  - D403.GND@8
+  - D502.A
+  - D701.A
+  - J101.GND@A1
+  - J101.GND@A12
+  - J101.GND@B1
+  - J101.GND@B12
+  - J101.SHIELD@1
+  - J501.CKS
+  - J501.D0S
+  - J501.D1S
+  - J501.D2S
+  - J501.GND
+  - J501.SH@SH1
+  - J501.SH@SH2
+  - J501.SH@SH3
+  - J501.SH@SH4
+  - J502.Pin_3
+  - J503.Pin_2
+  - J503.Pin_6
+  - J601.Pin_3
+  - J701.GND@1
+  - J701.GND@15
+  - J701.GND@21
+  - J701.GND@27
+  - J701.GND@3
+  - J701.GND@33
+  - J701.GND@39
+  - J701.GND@45
+  - J701.GND@51
+  - J701.GND@57
+  - J701.GND@71
+  - J701.GND@73
+  - J701.GND@75
+  - J701.GND@9
+  - J701.S1
+  - J701.S2
+  - J802.Pin_1
+  - J802.Pin_10
+  - J802.Pin_13
+  - J802.Pin_16
+  - J802.Pin_19
+  - J802.Pin_4
+  - J802.Pin_7
+  - Module301.GND@1
+  - Module301.GND@13
+  - Module301.GND@14
+  - Module301.GND@2
+  - Module301.GND@22
+  - Module301.GND@23
+  - Module301.GND@32
+  - Module301.GND@33
+  - Module301.GND@42
+  - Module301.GND@43
+  - Module301.GND@52
+  - Module301.GND@53
+  - Module301.GND@59
+  - Module301.GND@60
+  - Module301.GND@65
+  - Module301.GND@66
+  - Module301.GND@7
+  - Module301.GND@71
+  - Module301.GND@74
+  - Module301.GND@8
+  - Module301.GND@98
+  - Module302.GND@107
+  - Module302.GND@108
+  - Module302.GND@113
+  - Module302.GND@114
+  - Module302.GND@119
+  - Module302.GND@120
+  - Module302.GND@125
+  - Module302.GND@126
+  - Module302.GND@131
+  - Module302.GND@132
+  - Module302.GND@137
+  - Module302.GND@138
+  - Module302.GND@144
+  - Module302.GND@150
+  - Module302.GND@155
+  - Module302.GND@156
+  - Module302.GND@161
+  - Module302.GND@162
+  - Module302.GND@167
+  - Module302.GND@168
+  - Module302.GND@173
+  - Module302.GND@174
+  - Module302.GND@179
+  - Module302.GND@180
+  - Module302.GND@185
+  - Module302.GND@186
+  - Module302.GND@191
+  - Module302.GND@192
+  - Module302.GND@197
+  - Module302.GND@198
+  - R101.2
+  - R104.1
+  - R403.2
+  - R701.2
+  - R704.2
+  - R706.2
+  - SW101.1
+  - SW101.4
+  - SW101.5
+  - SW501.2
+  - SW501.3
+  - SW501.4@4
+  - SW501.5@5
+  - T401.GND
+  - U401.GND@3
+  - U401.GND@8
+  - U402.GND@3
+  - U402.GND@8
+  - U405.GND
+  - U601.VSS
+  - U602.GND
+  - U701.GND
+  - U702.PAD
+  - U702.PGND
+  - U702.SGND
+  - U703.GND
+  - USB701.EP@1
+  - USB701.GND@A1
+  - USB701.GND@A12
+  - USB701.GND@B1
+  - USB701.GND@B12
+- name: HDMI_+5V
+  pins: [C502.1, J501.+5V, U405.VOUT]
+- name: M2_3V3
+  pins:
+  - C707.1
+  - C708.1
+  - C709.1
+  - C710.1
+  - C711.1
+  - C712.1
+  - D702.A
+  - J701.3.3V@12
+  - J701.3.3V@14
+  - J701.3.3V@16
+  - J701.3.3V@18
+  - J701.3.3V@2
+  - J701.3.3V@4
+  - J701.3.3V@70
+  - J701.3.3V@72
+  - J701.3.3V@74
+  - L701.2
+  - R705.1
+  - U703.EN
+  - U703.VDD
+- name: Net-(D605-K)
+  pins: [D605.K, R605.1]
+- name: Net-(D606-K)
+  pins: [D606.K, R606.1]
+- name: Net-(D702-K)
+  pins: [D702.K, R707.1]
+- name: Net-(J701-DAS/nDSS/nLED1)
+  pins: [J701.DAS/nDSS/nLED1, R707.2]
+- name: Net-(J701-SUSCLK)
+  pins: [J701.SUSCLK, U703.Out]
+- name: Net-(R401-Pad2)
+  pins: [R401.2, T401.1]
+- name: Net-(R402-Pad2)
+  pins: [R402.2, T401.13]
+- name: Net-(R605-Pad2)
+  pins: [R605.2, U602.4]
+- name: Net-(T401-SHIELD1)
+  pins: [R403.1, T401.SHIELD1, T401.SHIELD2]
+- name: Net-(T401-VCC)
+  pins: [C401.1, T401.VCC]
+- name: Net-(U701-ILIM)
+  pins: [R701.1, U701.ILIM]
+- name: Net-(U702-LX)
+  pins: [L701.1, U702.LX]
+- name: VBUS_USB2.0
+  pins:
+  - C702.1
+  - C703.1
+  - U701.OUT
+  - USB701.VBUS@A4
+  - USB701.VBUS@A9
+  - USB701.VBUS@B4
+  - USB701.VBUS@B9
+positions:
+- ref: C101
+  x: 84.0
+  y: 47.15
+  rot: 180.0
+- ref: C102
+  x: 88.33
+  y: 47.15
+- ref: C401
+  x: 101.28
+  y: 33.02
+- ref: C501
+  x: 90.2
+  y: 69.95
+  rot: -90.0
+- ref: C502
+  x: 95.1
+  y: 67.9
+  rot: 90.0
+- ref: C601
+  x: 123.78
+  y: 68.24
+  rot: 90.0
+- ref: C602
+  x: 83.75
+  y: 75.65
+  rot: 90.0
+- ref: C701
+  x: 89.55
+  y: 67.25
+  rot: 90.0
+- ref: C702
+  x: 86.15
+  y: 64.9
+  rot: -90.0
+  side: back
+- ref: C703
+  x: 86.08
+  y: 70.22
+- ref: C704
+  x: 120.03
+  y: 65.45
+- ref: C705
+  x: 120.03
+  y: 67.42
+- ref: C706
+  x: 118.55
+  y: 69.4
+  rot: 180.0
+- ref: C707
+  x: 122.03
+  y: 70.47
+  rot: 90.0
+- ref: C708
+  x: 113.7
+  y: 63.55
+  rot: 180.0
+- ref: C709
+  x: 113.7
+  y: 65.53
+  rot: 180.0
+- ref: C710
+  x: 126.95
+  y: 34.23
+- ref: C711
+  x: 101.35
+  y: 30.85
+  rot: 90.0
+- ref: C712
+  x: 124.6
+  y: 35.88
+  rot: 90.0
+- ref: D101
+  x: 86.15
+  y: 54.36
+  rot: -90.0
+- ref: D401
+  x: 99.35
+  y: 67.34
+  rot: 180.0
+- ref: D402
+  x: 102.35
+  y: 67.34
+  rot: 180.0
+- ref: D403
+  x: 95.97
+  y: 75.24
+  side: back
+- ref: D502
+  x: 127.83
+  y: 68.75
+  rot: 90.0
+- ref: D605
+  x: 131.94
+  y: 59.62
+  rot: -90.0
+- ref: D606
+  x: 131.94
+  y: 56.68
+  rot: -90.0
+- ref: D701
+  x: 86.15
+  y: 58.25
+  rot: 90.0
+- ref: D702
+  x: 98.76
+  y: 24.9
+- ref: J101
+  x: 86.15
+  y: 50.7
+  rot: 180.0
+- ref: J501
+  x: 99.1
+  y: 71.6
+- ref: J502
+  x: 126.39
+  y: 72.57
+  rot: 180.0
+- ref: J503
+  x: 92.43
+  y: 55.19
+  rot: 90.0
+- ref: J601
+  x: 107.9
+  y: 64.33
+  rot: 180.0
+- ref: J701
+  x: 113.6
+  y: 30.73
+- ref: J802
+  x: 128.0
+  y: 46.62
+  rot: 90.0
+- ref: L701
+  x: 114.62
+  y: 70.05
+  rot: 90.0
+- ref: M701
+  x: 113.61
+  y: 58.94
+- ref: Module301
+  x: 127.25
+  y: 77.6
+  rot: 180.0
+  side: back
+- ref: Module302
+  x: 127.25
+  y: 77.6
+  rot: 180.0
+  side: back
+- ref: R101
+  x: 89.25
+  y: 69.95
+  rot: -90.0
+- ref: R102
+  x: 125.15
+  y: 64.57
+  rot: -90.0
+- ref: R104
+  x: 131.69
+  y: 48.54
+  rot: 90.0
+  side: back
+- ref: R105
+  x: 109.81
+  y: 37.1
+  rot: -90.0
+- ref: R106
+  x: 108.86
+  y: 37.1
+  rot: -90.0
+- ref: R401
+  x: 100.4
+  y: 42.8
+  rot: 180.0
+- ref: R402
+  x: 99.88
+  y: 30.07
+  rot: -90.0
+- ref: R403
+  x: 84.4
+  y: 25.9
+- ref: R501
+  x: 125.75
+  y: 68.5
+- ref: R502
+  x: 125.75
+  y: 69.45
+- ref: R605
+  x: 128.79
+  y: 58.09
+  rot: 180.0
+- ref: R606
+  x: 130.44
+  y: 56.7
+  rot: -90.0
+- ref: R701
+  x: 88.25
+  y: 69.95
+  rot: -90.0
+- ref: R702
+  x: 84.5
+  y: 57.99
+  rot: 90.0
+- ref: R703
+  x: 87.78
+  y: 57.98
+  rot: 90.0
+- ref: R704
+  x: 121.55
+  y: 72.11
+  rot: 180.0
+- ref: R705
+  x: 121.08
+  y: 70.47
+  rot: 90.0
+- ref: R706
+  x: 121.58
+  y: 69.08
+- ref: R707
+  x: 101.76
+  y: 25.63
+  rot: -90.0
+- ref: SW101
+  x: 130.18
+  y: 72.88
+  rot: -90.0
+  side: back
+- ref: SW501
+  x: 130.55
+  y: 66.51
+- ref: T401
+  x: 94.07
+  y: 36.12
+  rot: 90.0
+- ref: U401
+  x: 101.53
+  y: 39.17
+  rot: 180.0
+- ref: U402
+  x: 101.44
+  y: 34.99
+  rot: 180.0
+- ref: U405
+  x: 92.59
+  y: 67.24
+  rot: 180.0
+- ref: U601
+  x: 85.5
+  y: 75.65
+  rot: 90.0
+- ref: U602
+  x: 129.46
+  y: 59.98
+  rot: 180.0
+- ref: U701
+  x: 86.52
+  y: 67.25
+  rot: 180.0
+- ref: U702
+  x: 119.2
+  y: 71.35
+  rot: -90.0
+- ref: U703
+  x: 122.4
+  y: 36.12
+  rot: 90.0
+- ref: USB701
+  x: 86.15
+  y: 62.25
+  rot: 180.0
+copper_pours:
+- net: +3V3_PI
+  layers: [B.Cu, F.Cu]
+- net: +5V
+  layers: [B.Cu, In3.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In4.Cu]
+- net: M2_3V3
+  layers: [F.Cu, In3.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+  keepout: true

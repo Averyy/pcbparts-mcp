@@ -1,0 +1,1963 @@
+name: MicroMod Asset Tracker
+slug: micromod-asset-tracker
+source: sparkfun/MicroMod_Asset_Tracker
+format: eagle
+description: LTE Cat-M1 cellular asset tracker (u-blox SARA-R5), MicroMod processor socket
+tags: [gps-gnss]
+key_ics: [SN74AVC4T774PW, SARA-R510M8S, MCP73831, MAX17048, AP7361C-33]
+outline:
+  width_mm: 76.2
+  height_mm: 76.2
+design_rules:
+  layers: 4
+  min_trace: 5mil
+  min_clearance: 5mil
+  min_drill: 0.2mm
+  min_via: 0.13mm
+components:
+- ref: BT1
+  value: ML414H
+  footprint: ML414H_IV01E
+  prod_id: BATT-14267
+  description: SEIKO ML414H-IV01E Reflowable Lithium Battery
+- ref: BYP
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U5
+- ref: C10
+  value: 47pF
+  footprint: '0603'
+  prod_id: CAP-08913
+- ref: C11
+  value: 47pF
+  footprint: '0603'
+  prod_id: CAP-08913
+- ref: C12
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+- ref: C13
+  value: 220nF
+  footprint: '0603'
+  prod_id: CAP-07822
+  decouples: U5
+- ref: C14
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+  decouples: U1
+- ref: C15
+  value: 68pF
+  footprint: '0603'
+  prod_id: CAP-14092
+  decouples: U1
+- ref: C16
+  value: 10uF
+  footprint: '0603'
+  prod_id: CAP-11015
+- ref: C17
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-00868
+- ref: C18
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Murata
+  prod_id: CAP-15358
+- ref: C19
+  value: 27pF
+  footprint: '0402'
+  manufacturer: Murata
+  prod_id: CAP-15357
+- ref: C2
+  value: 10uF
+  footprint: EIA3216
+  prod_id: CAP-00811
+  decouples: U5
+- ref: C20
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: C21
+  value: 47pF
+  footprint: '0603'
+  prod_id: CAP-08913
+- ref: C22
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: IC1
+- ref: C23
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: IC2
+- ref: C24
+  value: 15pF
+  footprint: '0603'
+  prod_id: CAP-07881
+- ref: C3
+  value: 4.7uF
+  footprint: '0603'
+  prod_id: CAP-08280
+- ref: C31
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U8
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: C46
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: C5
+  value: 220nF
+  footprint: '0603'
+  prod_id: CAP-07822
+- ref: C51
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+- ref: C52
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+  decouples: U13
+- ref: C53
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+  decouples: U14
+- ref: C54
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+  decouples: U14
+- ref: C6
+  value: 4.7uF
+  footprint: '0603'
+  prod_id: CAP-14106
+- ref: C7
+  value: 47pF
+  footprint: '0603'
+  prod_id: CAP-08913
+- ref: C8
+  value: 47pF
+  footprint: '0603'
+  prod_id: CAP-08913
+- ref: C9
+  value: 1nF
+  footprint: '0603'
+  prod_id: CAP-07886
+- ref: D1
+  value: 3.3V
+  footprint: SOD-323
+  prod_id: DIO-11284
+  description: Zener Diode
+- ref: D10
+  value: PESD0402
+  footprint: '0402'
+  prod_id: DIO-15359
+  description: ESD protection diode
+- ref: D11
+  value: PESD0402
+  footprint: '0402'
+  prod_id: DIO-15359
+  description: ESD protection diode
+- ref: D12
+  value: green LED
+  footprint: '0603'
+  prod_id: DIO-00821
+  description: Green SMD LED
+- ref: D13
+  value: blue LED
+  footprint: '0603'
+  prod_id: DIO-08575
+  description: Blue SMD LED
+- ref: D14
+  value: white LED
+  footprint: '0603'
+  prod_id: DIO-09004
+  description: White SMD LED
+- ref: D2
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-00819
+  description: Red SMD LED
+- ref: D3
+  value: BAS70-05
+  footprint: SOT-23-3
+  prod_id: DIO-14829
+- ref: D4
+  value: yellow LED
+  footprint: '0603'
+  prod_id: DIO-09003
+  description: Yellow SMD LED
+- ref: D5
+  value: yellow LED
+  footprint: '0603'
+  prod_id: DIO-09003
+  description: Yellow SMD LED
+- ref: D6
+  value: 3A/10V/280mV
+  footprint: SOD-323
+  prod_id: DIO-14072
+  description: Schottky diode
+- ref: D7
+  value: 1A/15V/220mV
+  footprint: DO-214BA
+  prod_id: DIO-15271
+  description: Schottky diode
+- ref: D8
+  value: DT1042-04SO-7
+  footprint: SOT-23-6
+  prod_id: DIO-14095
+- ref: DSR
+  value: solder jumper (NC)
+  footprint: SJ-3
+  description: Normally closed trace jumper (1 of 2 connections)
+- ref: E1
+  value: SPH0641LM4H-1
+  footprint: SPH0641LM4H-1_MICROPHONE
+  prod_id: IC-14361
+  description: SPH0641LM4H-1 Microphone
+- ref: E3
+  value: SMA antenna
+  footprint: SMA-EDGE-SMD
+  prod_id: CONN-15100
+  description: SMA Antenna Connector w/ Ground
+- ref: E4
+  value: SMA antenna
+  footprint: SMA-EDGE-SMD
+  prod_id: CONN-15100
+  description: SMA Antenna Connector w/ Ground
+- ref: F2
+  value: 6V/2A
+  footprint: '1210'
+  prod_id: RES-14313
+  description: Resettable Fuse PPTC
+- ref: FB1
+  value: 30ohm
+  footprint: '0603'
+  prod_id: NDUC-13805
+  current: 1.8A
+- ref: IC1
+  value: SN74AVC4T774PW
+  footprint: SOP-16
+  description: Texas Instruments,SN74AVC4T774PW,IC, Texas Instruments SN74AVC4T774PW, Dual
+  manufacturer: Texas Instruments
+  mpn: SN74AVC4T774PW
+  prod_id: IC-15360
+- ref: IC2
+  value: SN74AVC4T774PW
+  footprint: SOP-16
+  description: Texas Instruments,SN74AVC4T774PW,IC, Texas Instruments SN74AVC4T774PW, Dual
+  manufacturer: Texas Instruments
+  mpn: SN74AVC4T774PW
+  prod_id: IC-15360
+- ref: IC3
+  value: SN74AVC4T774PW
+  footprint: SOP-16
+  description: Texas Instruments,SN74AVC4T774PW,IC, Texas Instruments SN74AVC4T774PW, Dual
+  manufacturer: Texas Instruments
+  mpn: SN74AVC4T774PW
+  prod_id: IC-15360
+- ref: J1
+  value: USB-C
+  footprint: USB-C
+  prod_id: CONN-14122
+  description: USB Type C 16Pin Connector
+- ref: J10
+  value: 1x6 header
+  footprint: 1X06
+- ref: J11
+  value: microSD
+  footprint: MICRO-SD-SOCKET
+  prod_id: CONN-07820
+  description: microSD Socket for Transflash
+- ref: J12
+  value: 1x4 header
+  footprint: 1X04
+- ref: J13
+  value: 1x1 header
+  footprint: 1X01
+- ref: J14
+  value: 1x4 header
+  footprint: 1X04
+- ref: J15
+  value: JST_2MM_MALE
+  footprint: JST-2-SMD
+  prod_id: CONN-11443
+  description: JST 2MM MALE RA CONNECTOR
+- ref: J16
+  value: 1x2 header
+  footprint: 1X02
+- ref: J17
+  value: NANO_SIM
+  footprint: NANO_SIM_WURTH_693043020611
+  prod_id: CONN-14097
+- ref: J18
+  value: SARA_USB
+  footprint: 1X04
+  prod_id: CONN-09696
+- ref: J19
+  value: 1x1 header
+  footprint: 1X01
+- ref: J2
+  value: JTAG
+  footprint: 2X5-PTH-1.27MM
+  description: Cortex Debug Connector - 10 pin
+- ref: J4
+  value: MICROMOD
+  footprint: M.2-CONNECTOR-E
+  prod_id: CONN-14877
+  description: MicroMod Connector
+- ref: J5
+  value: 1x5 header
+  footprint: 1X05
+- ref: J6
+  value: 1x5 header
+  footprint: 1X05
+- ref: J7
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J8
+  value: 1x6 header
+  footprint: 1X06
+- ref: J9
+  value: 1x1 header
+  footprint: 1X01
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+- ref: JP10
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP11
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP12
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP13
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP14
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP15
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP16
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP17
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP18
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP19
+  value: solder jumper (NC)
+  footprint: SJ-3
+  description: Normally closed trace jumper (1 of 2 connections)
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+- ref: JP20
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP3
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP4
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP5
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP6
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP7
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP8
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP9
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: L2
+  value: 68nH
+  footprint: 0402_COILCRAFT
+  prod_id: NDUC-15356
+- ref: Q1
+  value: 310mA/60V/1.6ohm
+  footprint: SOT323
+  prod_id: TRANS-11151
+  description: N-channel MOSFETs
+- ref: Q10
+  value: 20V/0.2A/8MHz/1.2ohm/1Vth
+  footprint: SOT-416FL
+  prod_id: TRANS-14399
+  description: N-channel MOSFETs
+- ref: Q2
+  value: 310mA/60V/1.6ohm
+  footprint: SOT323
+  prod_id: TRANS-11151
+  description: N-channel MOSFETs
+- ref: Q3
+  value: 310mA/60V/1.6ohm
+  footprint: SOT323
+  prod_id: TRANS-11151
+  description: N-channel MOSFETs
+- ref: Q4
+  value: 310mA/60V/1.6ohm
+  footprint: SOT323
+  prod_id: TRANS-11151
+  description: N-channel MOSFETs
+- ref: Q5
+  value: 20V/0.2A/8MHz/1.2ohm/1Vth
+  footprint: SOT-416FL
+  prod_id: TRANS-14399
+  description: N-channel MOSFETs
+- ref: Q6
+  value: 20V/4.2A/52mohm/1.4W
+  footprint: SOT-23-3
+  prod_id: TRAN-14388
+  description: P-channel MOSFETs
+- ref: Q7
+  value: 310mA/60V/1.6ohm
+  footprint: SOT323
+  prod_id: TRANS-11151
+  description: N-channel MOSFETs
+- ref: Q8
+  value: 310mA/60V/1.6ohm
+  footprint: SOT323
+  prod_id: TRANS-11151
+  description: N-channel MOSFETs
+- ref: Q9
+  value: 310mA/60V/1.6ohm
+  footprint: SOT323
+  prod_id: TRANS-11151
+  description: N-channel MOSFETs
+- ref: R1
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R10
+  value: 20kohm
+  footprint: '0603'
+  prod_id: RES-09383
+  pullup: VIN/3.1
+- ref: R11
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R12
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R13
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R14
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+  pulldown: U2.PROG
+- ref: R15
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: '!RESET!'
+- ref: R16
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: ICM_PWR
+- ref: R17
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: MICROSD_PWR
+- ref: R18
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: LTE_PWR_ON
+- ref: R19
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: RTS1
+- ref: R2
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: J1.CC1
+- ref: R20
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: DSR
+- ref: R21
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R22
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R23
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R24
+  value: 10ohm
+  footprint: '0603'
+  prod_id: RES-12581
+- ref: R25
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: Q8.D
+- ref: R26
+  value: 200kohm
+  footprint: '0603'
+  prod_id: RES-09385
+  pullup: U7.EN
+- ref: R27
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R28
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R29
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+  pullup: Q5.S
+- ref: R3
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: J1.CC2
+- ref: R30
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+  pullup: SARA_INT
+- ref: R31
+  value: 0ohm
+  footprint: '0603'
+  prod_id: RES-08609
+- ref: R32
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R33
+  value: 100ohm
+  footprint: '0603'
+  prod_id: RES-07863
+- ref: R34
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R35
+  value: 470ohm
+  footprint: '0603'
+  prod_id: RES-07869
+- ref: R36
+  value: 0ohm
+  footprint: '0603'
+  prod_id: RES-08609
+- ref: R37
+  value: 0ohm
+  footprint: '0603'
+  prod_id: RES-08609
+- ref: R38
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: Q1.D
+- ref: R39
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: Q3.D
+- ref: R4
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R40
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: DTR
+- ref: R41
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: SD_!CS!
+- ref: R42
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+  pullup: Q7.G
+- ref: R43
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R44
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: SARA_!ON!
+- ref: R45
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: ANT_REG_EN
+- ref: R48
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+  pullup: ICM-20948-LV_SDO
+- ref: R5
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: U5.EN
+- ref: R6
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+- ref: R7
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R8
+  value: 3.3kohm
+  footprint: '0603'
+  prod_id: RES-07851
+- ref: R9
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: S1
+  value: RESET
+  footprint: TACTILE_SWITCH_SMD_5.2MM
+  prod_id: SWCH-14139
+  description: Momentary Switch (Pushbutton) - SPST
+- ref: S2
+  value: BOOT
+  footprint: TACTILE_SWITCH_SMD_5.2MM
+  prod_id: SWCH-14139
+  description: Momentary Switch (Pushbutton) - SPST
+- ref: S3
+  value: SARA_PWR
+  footprint: TACTILE_SWITCH_SMD_5.2MM
+  prod_id: SWCH-14139
+  description: Momentary Switch (Pushbutton) - SPST
+- ref: U1
+  value: SARA-R510M8S
+  footprint: SARA-LGA
+  prod_id: IC-15573
+- ref: U13
+  value: 9DoF IMU
+  footprint: QFN24-3X3-ICM-20948
+  prod_id: IC-14247
+  description: ICM-20948 9 Degree of Freedom IMU
+- ref: U14
+  value: 1.8V/100mA
+  footprint: SC70
+  prod_id: VREG-08428
+  description: Voltage Regulator - SP6214
+- ref: U2
+  value: MCP73831
+  footprint: SOT-23-5
+  prod_id: IC-09995
+  description: MCP73831T Li-Ion, Li-Pol Controller
+- ref: U3
+  value: 3.3V
+  footprint: SOT-23-5
+  prod_id: VREG-12457
+  description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
+- ref: U4
+  value: MAX17048
+  footprint: DFN-8
+  prod_id: IC-12551
+  description: Micropower 1-Cell Li+ ModelGauge
+- ref: U5
+  value: AP7361C-33
+  footprint: UDFN-8
+  prod_id: VREG-14094
+  description: AP7361C 3.3V LDO Regulator
+- ref: U7
+  value: PCA9306
+  footprint: VSSOP_8PIN
+  prod_id: IC-14450
+  description: Bidirectional I2C level shifter
+- ref: U8
+  value: 74HC1G04
+  footprint: SOT353
+  prod_id: COMP-08268
+  description: Single Inverter
+- ref: VIN/3
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+nets:
+- name: '!BOOT!'
+  pins: [J4.!BOOT!, S2.2]
+  trace_width: '0.000153125'
+- name: '!RESET!'
+  pins:
+  - C9.1
+  - J2.!RESET
+  - J4.!RESET!
+  - J9.1
+  - R15.1
+  - S1.2
+  - U8.G1.A
+  trace_width: '0.000153125'
+- name: 1.8V
+  pins:
+  - C52.1
+  - C53.1
+  - IC3.DIR1
+  - IC3.VCCA
+  - J6.4
+  - Q10.G
+  - R48.2
+  - U13.VDD
+  - U13.VDDIO
+  - U14.OUT
+  trace_width: '0.000153125'
+- name: 3.3V
+  pins:
+  - 3V3_LED.2
+  - C14.1
+  - C15.1
+  - C16.1
+  - C24.1
+  - C31.1
+  - C54.1
+  - D12.A
+  - D13.A
+  - D14.A
+  - D3.A1
+  - EN.2
+  - IC1.VCCB
+  - IC2.VCCB
+  - IC3.VCCB
+  - J12.2
+  - J14.2
+  - J2.VCC
+  - J4.3.3V
+  - J6.2
+  - J7.2
+  - JP1.2
+  - JP2.2
+  - JP6.2
+  - MEAS.2
+  - Q6.S
+  - R15.2
+  - R16.2
+  - R25.1
+  - R26.2
+  - R30.2
+  - R38.2
+  - R39.2
+  - R41.2
+  - R44.2
+  - R45.1
+  - U1.VCC
+  - U14.IN
+  - U8.G2.P$V+
+  trace_width: '0.000153125'
+- name: 3.3V_EN
+  pins: [J4.3.3V_EN, VE.1]
+  trace_width: '0.000153125'
+- name: A0
+  pins: [J4.A0, J8.1]
+  trace_width: '0.000153125'
+- name: A1
+  pins: [J4.A1, J8.2]
+  trace_width: '0.000153125'
+- name: ANT_GNSS_PWR_EN
+  pins: [R13.1, U1.GPIO2]
+  trace_width: '0.000153125'
+- name: ANT_REG_EN
+  pins: [Q9.D, R45.2, U3.EN]
+  trace_width: '0.000153125'
+- name: CHG_LED
+  pins: [R21.1, U2.STAT]
+  trace_width: '0.000153125'
+- name: CTS1
+  pins: [IC1.B3, J4.CTS1, TP7.1]
+  trace_width: '0.000153125'
+- name: D0
+  pins: [J4.D0, J5.4, J8.5]
+  trace_width: '0.000153125'
+- name: D1
+  pins: [J4.D1/CAM_TRIG, J8.6]
+  trace_width: '0.000153125'
+- name: DCD
+  pins: [IC2.B2, J4.RX2, TP19.1]
+  trace_width: '0.000153125'
+- name: DIR4
+  pins: [DSR.2, IC2.DIR4]
+  trace_width: '0.000153125'
+- name: DSR
+  pins: [IC2.B4, JP17.2, R20.2, TP21.1]
+  trace_width: '0.000153125'
+- name: DTR
+  pins: [IC2.B1, J4.TX2, R40.1, TP18.1]
+  trace_width: '0.000153125'
+- name: EN
+  pins: [D1.C, R5.1, U5.EN, VE.2]
+  trace_width: '0.000153125'
+- name: EN_2
+  pins: [R26.1, U7.EN, U7.VREF2]
+  trace_width: '0.000153125'
+- name: G0
+  pins: [J4.G0/BUS0, JP10.1]
+  trace_width: '0.000153125'
+- name: G1
+  pins: [J4.G1/BUS1, JP11.1]
+  trace_width: '0.000153125'
+- name: G1_Y
+  pins: [R28.1, U8.G1.Y]
+  trace_width: '0.000153125'
+- name: G2
+  pins: [J4.G2/BUS2, JP12.1]
+  trace_width: '0.000153125'
+- name: G3
+  pins: [J4.G3/BUS3, JP13.1]
+  trace_width: '0.000153125'
+- name: G4
+  pins: [J4.G4/BUS4, JP14.1]
+  trace_width: '0.000153125'
+- name: G5
+  pins: [J4.G5/BUS5, JP15.1]
+  trace_width: '0.000153125'
+- name: G6
+  pins: [J4.G6/BUS6, JP16.1]
+  trace_width: '0.000153125'
+- name: G7
+  pins: [J4.G7/BUS7, JP17.1]
+  trace_width: '0.000153125'
+- name: GND
+  pins:
+  - BT1.-
+  - C1.2
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C19.2
+  - C2.-
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C24.2
+  - C3.2
+  - C31.2
+  - C4.2
+  - C46.2
+  - C5.2
+  - C51.2
+  - C52.2
+  - C53.2
+  - C54.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.A
+  - D10.2
+  - D11.2
+  - D2.C
+  - D4.C
+  - D8.2
+  - D8.5
+  - DSR.1
+  - E1.GND
+  - E1.SEL
+  - E3.GND
+  - E4.GND
+  - IC1.!OE
+  - IC1.DIR2
+  - IC1.DIR4
+  - IC1.GND
+  - IC2.!OE
+  - IC2.DIR1
+  - IC2.GND
+  - IC3.!OE
+  - IC3.DIR2
+  - IC3.DIR3
+  - IC3.DIR4
+  - IC3.GND
+  - J1.GND
+  - J10.1
+  - J10.2
+  - J10.3
+  - J10.4
+  - J10.5
+  - J10.6
+  - J11.GND
+  - J11.SHIELD
+  - J12.1
+  - J14.1
+  - J15.-
+  - J16.2
+  - J17.GND
+  - J18.4
+  - J2.GND
+  - J4.GND
+  - J5.5
+  - J6.5
+  - J7.1
+  - L1.2
+  - Q1.S
+  - Q2.S
+  - Q3.S
+  - Q4.S
+  - Q7.S
+  - Q8.S
+  - Q9.S
+  - R14.1
+  - R17.1
+  - R18.2
+  - R19.1
+  - R2.1
+  - R20.1
+  - R3.1
+  - R40.2
+  - R9.1
+  - S1.1
+  - S2.1
+  - S3.2
+  - U1.GND
+  - U13.GND
+  - U14.GND
+  - U2.VSS
+  - U3.GND
+  - U4.CTG
+  - U4.GND
+  - U4.QSTRT
+  - U5.GND
+  - U7.GND
+  - U8.G2.P$V-
+  trace_width: '0.000153125'
+- name: I2C_SCL
+  pins: [J12.4, J4.I2C_SCL, J7.4, R12.1, U4.SCL]
+  trace_width: '0.000153125'
+- name: I2C_SDA
+  pins: [J12.3, J4.I2C_SDA, J7.3, R7.1, U4.SDA]
+  trace_width: '0.000153125'
+- name: I2S_SCK/PDM_CLK
+  pins: [E1.CLK, JP18.2]
+  trace_width: '0.000153125'
+- name: I2S_WS/PDM_DAT
+  pins: [E1.DATA, JP20.2]
+  trace_width: '0.000153125'
+- name: ICM-20948-LV_!CS!
+  pins: [IC3.A4, U13.!CS]
+  trace_width: '0.000153125'
+- name: ICM-20948-LV_INT
+  pins: [IC3.A1, U13.INT]
+  trace_width: '0.000153125'
+- name: ICM-20948-LV_SCK
+  pins: [IC3.A3, U13.SCL/SCLK]
+  trace_width: '0.000153125'
+- name: ICM-20948-LV_SDI
+  pins: [IC3.A2, U13.SDA/SDI]
+  trace_width: '0.000153125'
+- name: ICM-20948-LV_SDO
+  pins: [Q10.S, R48.1, U13.AD0/SDO]
+  trace_width: '0.000153125'
+- name: ICM_!CS!
+  pins: [IC3.B4, J4.SPI_!CS!]
+  trace_width: '0.000153125'
+- name: ICM_INT
+  pins: [IC3.B1, JP9.1]
+  trace_width: '0.000153125'
+- name: ICM_PWR
+  pins: [JP13.2, R16.1, U14.EN]
+  trace_width: '0.000153125'
+- name: LTE_PWR_ON
+  pins: [JP12.2, R18.1, R27.1]
+  trace_width: '0.000153125'
+- name: MICROSD_PWR
+  pins: [JP11.2, Q6.G, R17.2]
+  trace_width: '0.000153125'
+- name: N$1
+  pins: [R6.2, VIN_LED.1]
+  trace_width: '0.000153125'
+- name: N$10
+  pins: [J1.CC1, R2.2]
+  trace_width: '0.000153125'
+- name: N$11
+  pins: [J1.CC2, R3.2]
+  trace_width: '0.000153125'
+- name: N$13
+  pins: [JP2.1, R7.2]
+  trace_width: '0.000153125'
+- name: N$14
+  pins: [BT1.+, D6.A, R8.1, TP24.1]
+  trace_width: '0.000153125'
+- name: N$15
+  pins: [C18.2, E3.SIGNAL, L2.2]
+  trace_width: '0.000153125'
+- name: N$16
+  pins: [C19.1, D10.1, L2.1, R23.2]
+  trace_width: '0.000153125'
+- name: N$17
+  pins: [J4.I2C_SDA1, JP8.2]
+  trace_width: '0.000153125'
+- name: N$18
+  pins: [R10.2, VIN/3.1]
+  trace_width: '0.000153125'
+- name: N$19
+  pins: [J4.I2C_!INT!, JP9.2]
+  trace_width: '0.000153125'
+- name: N$2
+  pins: [JP1.3, R4.2]
+  trace_width: '0.000153125'
+- name: N$21
+  pins: [D5.C, R21.2]
+  trace_width: '0.000153125'
+- name: N$25
+  pins: [C21.1, FB1.1, R24.2, TP22.1]
+  trace_width: '0.000153125'
+- name: N$26
+  pins: [Q2.G, R27.2]
+  trace_width: '0.000153125'
+- name: N$27
+  pins: [Q4.G, R28.2]
+  trace_width: '0.000153125'
+- name: N$29
+  pins: [JP6.1, R22.2]
+  trace_width: '0.000153125'
+- name: N$3
+  pins: [JP1.1, R1.2]
+  trace_width: '0.000153125'
+- name: N$32
+  pins: [Q1.G, R32.2]
+  trace_width: '0.000153125'
+- name: N$33
+  pins: [J13.1, Q1.D, R33.1, R38.1]
+  trace_width: '0.000153125'
+- name: N$34
+  pins: [D12.C, R33.2]
+  trace_width: '0.000153125'
+- name: N$35
+  pins: [Q3.G, R34.2]
+  trace_width: '0.000153125'
+- name: N$36
+  pins: [J19.1, Q3.D, R35.1, R39.1]
+  trace_width: '0.000153125'
+- name: N$37
+  pins: [D13.C, R35.2]
+  trace_width: '0.000153125'
+- name: N$4
+  pins: [E1.VDD, EN.1]
+  trace_width: '0.000153125'
+- name: N$40
+  pins: [Q8.G, R13.2]
+  trace_width: '0.000153125'
+- name: N$42
+  pins: [Q8.D, Q9.G, R25.2]
+  trace_width: '0.000153125'
+- name: N$43
+  pins: [JP19.2, Q5.S, R29.1]
+  trace_width: '0.000153125'
+- name: N$47
+  pins: [Q7.G, R42.2]
+  trace_width: '0.000153125'
+- name: N$49
+  pins: [D14.C, R43.2]
+  trace_width: '0.000153125'
+- name: N$5
+  pins: [J4.I2C_SCL1, JP7.2]
+  trace_width: '0.000153125'
+- name: N$51
+  pins: [J4.AUD_LRCLK, JP20.1]
+  trace_width: '0.000153125'
+- name: N$52
+  pins: [J4.AUD_BCLK, JP18.1]
+  trace_width: '0.000153125'
+- name: N$6
+  pins: [3V3_LED.1, R11.2]
+  trace_width: '0.000153125'
+- name: N$7
+  pins: [D2.A, R11.1]
+  trace_width: '0.000153125'
+- name: N$8
+  pins: [D4.A, R6.1]
+  trace_width: '0.000153125'
+- name: N$9
+  pins: [JP2.3, R12.2]
+  trace_width: '0.000153125'
+- name: OUT
+  pins: [C17.1, C20.1, R24.1, U3.OUT]
+  trace_width: '0.000153125'
+- name: PROG
+  pins: [R14.2, U2.PROG]
+  trace_width: '0.000153125'
+- name: PWM0
+  pins: [J4.PWM0, J8.3]
+  trace_width: '0.000153125'
+- name: PWM1
+  pins: [J4.PWM1, J8.4]
+  trace_width: '0.000153125'
+- name: REGOUT
+  pins: [C51.1, U13.REGOUT]
+  trace_width: '0.000153125'
+- name: RI
+  pins: [IC2.B3, JP14.2, TP20.1]
+  trace_width: '0.000153125'
+- name: RTC_3V
+  pins: [D3.C, D6.C, J4.RTC_3V, R8.2]
+  trace_width: '0.000153125'
+- name: RTS1
+  pins: [IC1.B4, J4.RTS1, R19.2, TP8.1]
+  trace_width: '0.000153125'
+- name: RX1
+  pins: [IC1.B1, J4.RX1, TP5.1]
+  trace_width: '0.000153125'
+- name: RXD_O
+  pins: [R36.2, U1.RXD_O]
+  trace_width: '0.000153125'
+- name: SARA_!ON!
+  pins: [JP16.2, Q7.D, R43.1, R44.1, TP13.1]
+  trace_width: '0.000153125'
+- name: SARA_!RESET!
+  pins: [Q4.D, U1.RESET_N]
+  trace_width: '0.000153125'
+- name: SARA_ANT
+  pins: [C18.1, L1.1, U1.ANT]
+  trace_width: '0.000153125'
+- name: SARA_ANT_DET
+  pins: [R23.1, U1.ANT_DET]
+  trace_width: '0.000153125'
+- name: SARA_ANT_GNSS
+  pins: [D11.1, E4.SIGNAL, FB1.2, U1.ANT_GNSS]
+  trace_width: '0.000153125'
+- name: SARA_CTS
+  pins: [IC1.A3, TP3.1, U1.CTS_O]
+  trace_width: '0.000153125'
+- name: SARA_DCD/RXD2O
+  pins: [IC2.A2, TP15.1, U1.DCD_O]
+  trace_width: '0.000153125'
+- name: SARA_DSR/RTS2I
+  pins: [IC2.A4, TP17.1, U1.DSR_O]
+  trace_width: '0.000153125'
+- name: SARA_DTR/TXD2I
+  pins: [IC2.A1, TP14.1, U1.DTR_I]
+  trace_width: '0.000153125'
+- name: SARA_EXT_INT
+  pins: [JP19.3, U1.EXT_INT]
+  trace_width: '0.000153125'
+- name: SARA_GPIO3
+  pins: [JP19.1, U1.GPIO3]
+  trace_width: '0.000153125'
+- name: SARA_INT
+  pins: [JP15.2, Q5.D, R30.1, TP12.1]
+  trace_width: '0.000153125'
+- name: SARA_NI
+  pins: [R34.1, U1.GPIO1]
+  trace_width: '0.000153125'
+- name: SARA_PWR_ON
+  pins: [Q2.D, S3.1, U1.PWR_ON]
+  trace_width: '0.000153125'
+- name: SARA_RI/CTS2O
+  pins: [IC2.A3, TP16.1, U1.RI_O]
+  trace_width: '0.000153125'
+- name: SARA_RTS
+  pins: [IC1.A4, TP4.1, U1.RTS_I]
+  trace_width: '0.000153125'
+- name: SARA_RXD
+  pins: [IC1.A1, R36.1, TP1.1]
+  trace_width: '0.000153125'
+- name: SARA_SCL
+  pins: [J14.4, JP7.1, R4.1, U7.SCL2]
+  trace_width: '0.000153125'
+- name: SARA_SCL_1.8V
+  pins: [TP10.1, U1.SCL, U7.SCL1]
+  trace_width: '0.000153125'
+- name: SARA_SDA
+  pins: [J14.3, JP8.1, R1.1, U7.SDA2]
+  trace_width: '0.000153125'
+- name: SARA_SDA_1.8V
+  pins: [TP9.1, U1.SDA, U7.SDA1]
+  trace_width: '0.000153125'
+- name: SARA_TP
+  pins: [R32.1, U1.GPIO6/TP]
+  trace_width: '0.000153125'
+- name: SARA_TXD
+  pins: [IC1.A2, R37.1, TP2.1]
+  trace_width: '0.000153125'
+- name: SARA_USB_D+
+  pins: [J18.2, JP4.2, U1.USB_D+]
+  trace_width: '0.000153125'
+- name: SARA_USB_D-
+  pins: [J18.1, JP3.2, U1.USB_D-]
+  trace_width: '0.000153125'
+- name: SARA_VUSB_DET
+  pins: [J18.3, JP5.2, U1.VUSB_DET]
+  trace_width: '0.000153125'
+- name: SD_!CS!
+  pins: [J11.DAT3/!CS!, JP10.2, R41.1]
+  trace_width: '0.000153125'
+- name: SD_PWR
+  pins: [C46.1, J11.VCC, Q6.D, TP23.1]
+  trace_width: '0.000153125'
+- name: SIM_CLK
+  pins: [C8.1, D8.1, J17.CLK, U1.SIM_CLK]
+  trace_width: '0.000153125'
+- name: SIM_IO
+  pins: [C10.2, D8.6, J17.IO, U1.SIM_IO]
+  trace_width: '0.000153125'
+- name: SIM_RST
+  pins: [C7.1, D8.4, J17.RST, U1.SIM_RST]
+  trace_width: '0.000153125'
+- name: SPI_SCK
+  pins: [IC3.B3, J11.CLK/SCK, J4.SPI_SCK, J5.1]
+  trace_width: '0.000153125'
+- name: SPI_SDI
+  pins: [J11.DAT0/SDO, J4.SPI_SDI, J5.3, Q10.D, R22.1]
+  trace_width: '0.000153125'
+- name: SPI_SDO
+  pins: [IC3.B2, J11.CMD/SDI, J4.SPI_SDO, J5.2]
+  trace_width: '0.000153125'
+- name: SWDCK
+  pins: [J2.SWDCLK, J4.SWDCK]
+  trace_width: '0.000153125'
+- name: SWDIO
+  pins: [J2.SWDIO, J4.SWDIO]
+  trace_width: '0.000153125'
+- name: TX1
+  pins: [IC1.B2, J4.TX1, TP6.1]
+  trace_width: '0.000153125'
+- name: TXD_I
+  pins: [R37.2, U1.TXD_I]
+  trace_width: '0.000153125'
+- name: USB_D+
+  pins: [J1.D+, J4.USB_D+, JP4.1]
+  trace_width: '0.000153125'
+- name: USB_D-
+  pins: [J1.D-, J4.USB_D-, JP3.1]
+  trace_width: '0.000153125'
+- name: VCCIO
+  pins:
+  - C22.1
+  - C23.1
+  - DSR.3
+  - IC1.DIR1
+  - IC1.DIR3
+  - IC1.VCCA
+  - IC2.DIR2
+  - IC2.DIR3
+  - IC2.VCCA
+  - J6.3
+  - Q5.G
+  - R29.2
+  - R31.1
+  - R42.1
+  - U7.VREF1
+  trace_width: '0.000153125'
+- name: VIN
+  pins:
+  - BYP.2
+  - C1.1
+  - C13.1
+  - C2.+
+  - D5.A
+  - D7.C
+  - F2.2
+  - J4.USB_VIN
+  - J6.1
+  - R5.2
+  - U2.VIN
+  - U3.IN
+  - U5.IN
+  - VIN/3.2
+  - VIN_LED.2
+  trace_width: '0.000153125'
+- name: VIN/3
+  pins: [J4.BATT_VIN/3, R10.1, R9.2]
+  trace_width: '0.000153125'
+- name: VREG_3.3V
+  pins: [C3.1, C4.1, C5.1, MEAS.1, U5.OUT]
+  trace_width: '0.000153125'
+- name: VSIM
+  pins: [C11.2, C12.2, D8.3, J17.VCC, U1.VSIM]
+  trace_width: '0.000153125'
+- name: V_BATT
+  pins:
+  - C6.1
+  - D7.A
+  - J15.+
+  - J16.1
+  - U2.VBAT
+  - U4.CELL
+  - U4.VDD
+  trace_width: '0.000153125'
+- name: V_INT
+  pins: [R31.2, U1.V_INT]
+  trace_width: '0.000153125'
+- name: V_USB
+  pins: [BYP.1, F2.1, J1.VBUS, JP5.1]
+  trace_width: '0.000153125'
+positions:
+- ref: BT1
+  x: 29.21
+  y: 3.81
+  rot: 90.0
+- ref: BYP
+  x: 8.89
+  y: 3.81
+  rot: 90.0
+- ref: C1
+  x: 13.72
+  y: 10.16
+  rot: 90.0
+- ref: C10
+  x: 44.58
+  y: 72.77
+  rot: 270.0
+- ref: C11
+  x: 37.72
+  y: 72.77
+  rot: 270.0
+- ref: C12
+  x: 36.2
+  y: 72.77
+  rot: 270.0
+- ref: C13
+  x: 15.24
+  y: 10.16
+  rot: 90.0
+- ref: C14
+  x: 29.72
+  y: 72.39
+  rot: 90.0
+- ref: C15
+  x: 28.19
+  y: 72.39
+  rot: 90.0
+- ref: C16
+  x: 26.67
+  y: 72.39
+  rot: 90.0
+- ref: C17
+  x: 58.8
+  y: 54.99
+  rot: 180.0
+- ref: C18
+  x: 21.46
+  y: 65.53
+  rot: 180.0
+- ref: C19
+  x: 19.18
+  y: 58.93
+  rot: 180.0
+- ref: C2
+  x: 11.43
+  y: 8.89
+  rot: 270.0
+- ref: C20
+  x: 58.8
+  y: 56.52
+  rot: 180.0
+- ref: C21
+  x: 58.8
+  y: 61.59
+  rot: 180.0
+- ref: C22
+  x: 44.83
+  y: 47.62
+  rot: 270.0
+- ref: C23
+  x: 28.32
+  y: 44.7
+  rot: 180.0
+- ref: C24
+  x: 25.15
+  y: 72.39
+  rot: 90.0
+- ref: C3
+  x: 23.24
+  y: 9.27
+- ref: C31
+  x: 56.52
+  y: 39.37
+  rot: 270.0
+- ref: C4
+  x: 23.24
+  y: 10.79
+- ref: C46
+  x: 46.99
+  y: 8.89
+  rot: 270.0
+- ref: C5
+  x: 23.24
+  y: 12.32
+- ref: C51
+  x: 38.1
+  y: 42.29
+- ref: C52
+  x: 41.27
+  y: 38.1
+  rot: 270.0
+- ref: C53
+  x: 43.18
+  y: 38.1
+  rot: 270.0
+- ref: C54
+  x: 46.35
+  y: 34.04
+- ref: C6
+  x: 33.66
+  y: 11.18
+  rot: 180.0
+- ref: C7
+  x: 39.24
+  y: 72.77
+  rot: 90.0
+- ref: C8
+  x: 46.1
+  y: 72.77
+  rot: 90.0
+- ref: C9
+  x: 10.16
+  y: 19.68
+  rot: 270.0
+- ref: D1
+  x: 19.43
+  y: 14.35
+  rot: 270.0
+- ref: D10
+  x: 19.18
+  y: 60.96
+  rot: 180.0
+- ref: D11
+  x: 53.34
+  y: 67.18
+  rot: 90.0
+- ref: D12
+  x: 2.54
+  y: 49.53
+- ref: D13
+  x: 2.54
+  y: 51.44
+- ref: D14
+  x: 2.54
+  y: 53.34
+- ref: D2
+  x: 2.54
+  y: 47.62
+  rot: 180.0
+- ref: D3
+  x: 27.94
+  y: 12.06
+  rot: 180.0
+- ref: D4
+  x: 2.54
+  y: 45.72
+  rot: 180.0
+- ref: D5
+  x: 45.72
+  y: 2.54
+- ref: D6
+  x: 27.94
+  y: 9.4
+  rot: 180.0
+- ref: D7
+  x: 39.12
+  y: 12.57
+- ref: D8
+  x: 41.91
+  y: 73.03
+  rot: 180.0
+- ref: DSR
+  x: 29.97
+  y: 52.83
+  rot: 270.0
+- ref: E1
+  x: 59.69
+  y: 39.37
+- ref: E3
+  x: 16.51
+  y: 76.2
+- ref: E4
+  x: 59.69
+  y: 76.2
+- ref: F2
+  x: 11.43
+  y: 3.81
+  rot: 90.0
+- ref: FB1
+  x: 59.69
+  y: 64.26
+  rot: 90.0
+- ref: IC1
+  x: 40.51
+  y: 47.5
+  rot: 270.0
+- ref: IC2
+  x: 33.78
+  y: 47.5
+  rot: 270.0
+- ref: IC3
+  x: 38.99
+  y: 31.11
+  rot: 270.0
+- ref: J1
+  x: 19.05
+  y: 6.35
+- ref: J10
+  x: 74.93
+  y: 27.94
+  rot: 90.0
+- ref: J11
+  x: 50.16
+  y: 17.78
+  rot: 180.0
+- ref: J12
+  x: 74.93
+  y: 25.4
+  rot: 270.0
+- ref: J13
+  x: 1.27
+  y: 66.04
+- ref: J14
+  x: 74.93
+  y: 50.8
+  rot: 270.0
+- ref: J15
+  x: 38.1
+  y: 3.81
+  rot: 180.0
+- ref: J16
+  x: 36.83
+  y: 2.54
+- ref: J17
+  x: 69.22
+  y: 58.42
+  rot: 90.0
+- ref: J18
+  x: 1.27
+  y: 63.5
+  rot: 270.0
+- ref: J19
+  x: 1.27
+  y: 68.58
+- ref: J2
+  x: 30.48
+  y: 17.78
+- ref: J4
+  x: 31.75
+  y: 31.75
+  rot: 270.0
+- ref: J5
+  x: 1.27
+  y: 43.18
+  rot: 270.0
+- ref: J6
+  x: 1.27
+  y: 20.32
+  rot: 270.0
+- ref: J7
+  x: 71.12
+  y: 11.43
+  rot: 90.0
+- ref: J8
+  x: 72.39
+  y: 27.94
+  rot: 90.0
+- ref: J9
+  x: 1.27
+  y: 7.62
+- ref: JP1
+  x: 66.04
+  y: 46.99
+  rot: 90.0
+- ref: JP10
+  x: 31.11
+  y: 27.94
+- ref: JP11
+  x: 31.11
+  y: 29.97
+- ref: JP12
+  x: 31.11
+  y: 32.0
+- ref: JP13
+  x: 31.11
+  y: 34.04
+- ref: JP14
+  x: 31.11
+  y: 36.07
+- ref: JP15
+  x: 22.23
+  y: 42.04
+- ref: JP16
+  x: 22.23
+  y: 40.01
+- ref: JP17
+  x: 22.23
+  y: 37.97
+- ref: JP18
+  x: 62.87
+  y: 40.13
+  rot: 90.0
+- ref: JP19
+  x: 51.12
+  y: 70.48
+- ref: JP2
+  x: 68.58
+  y: 11.43
+  rot: 90.0
+- ref: JP20
+  x: 56.52
+  y: 40.13
+  rot: 90.0
+- ref: JP3
+  x: 20.26
+  y: 52.07
+  rot: 90.0
+- ref: JP4
+  x: 18.54
+  y: 49.91
+  rot: 90.0
+- ref: JP5
+  x: 16.51
+  y: 52.07
+  rot: 90.0
+- ref: JP6
+  x: 49.53
+  y: 41.27
+  rot: 180.0
+- ref: JP7
+  x: 56.52
+  y: 53.34
+  rot: 270.0
+- ref: JP8
+  x: 53.47
+  y: 53.34
+  rot: 270.0
+- ref: JP9
+  x: 38.61
+  y: 29.59
+- ref: L2
+  x: 19.56
+  y: 65.09
+  rot: 90.0
+- ref: Q1
+  x: 12.7
+  y: 48.64
+  rot: 90.0
+- ref: Q10
+  x: 44.07
+  y: 41.27
+  rot: 270.0
+- ref: Q2
+  x: 44.83
+  y: 50.8
+  rot: 90.0
+- ref: Q3
+  x: 12.7
+  y: 51.44
+  rot: 90.0
+- ref: Q4
+  x: 48.64
+  y: 50.8
+  rot: 90.0
+- ref: Q5
+  x: 51.94
+  y: 72.39
+  rot: 270.0
+- ref: Q6
+  x: 46.99
+  y: 12.7
+  rot: 180.0
+- ref: Q7
+  x: 12.7
+  y: 54.23
+  rot: 90.0
+- ref: Q8
+  x: 55.31
+  y: 44.45
+  rot: 270.0
+- ref: Q9
+  x: 60.58
+  y: 45.21
+- ref: R1
+  x: 66.04
+  y: 45.72
+  rot: 180.0
+- ref: R10
+  x: 14.35
+  y: 13.34
+- ref: R11
+  x: 8.89
+  y: 47.62
+- ref: R12
+  x: 69.22
+  y: 15.24
+  rot: 90.0
+- ref: R13
+  x: 54.36
+  y: 47.62
+  rot: 270.0
+- ref: R14
+  x: 39.37
+  y: 20.32
+  rot: 270.0
+- ref: R15
+  x: 8.26
+  y: 19.68
+  rot: 270.0
+- ref: R16
+  x: 46.35
+  y: 35.56
+  rot: 180.0
+- ref: R17
+  x: 46.99
+  y: 15.24
+- ref: R18
+  x: 15.88
+  y: 55.24
+  rot: 180.0
+- ref: R19
+  x: 46.1
+  y: 44.7
+  rot: 180.0
+- ref: R2
+  x: 16.51
+  y: 7.62
+- ref: R20
+  x: 28.32
+  y: 46.23
+- ref: R21
+  x: 45.72
+  y: 5.08
+- ref: R22
+  x: 46.35
+  y: 41.27
+- ref: R23
+  x: 22.23
+  y: 58.93
+  rot: 180.0
+- ref: R24
+  x: 59.69
+  y: 59.05
+  rot: 90.0
+- ref: R25
+  x: 57.98
+  y: 45.34
+  rot: 270.0
+- ref: R26
+  x: 54.86
+  y: 52.7
+  rot: 270.0
+- ref: R27
+  x: 47.24
+  y: 47.62
+  rot: 90.0
+- ref: R28
+  x: 49.53
+  y: 47.62
+  rot: 90.0
+- ref: R29
+  x: 48.9
+  y: 72.77
+  rot: 90.0
+- ref: R3
+  x: 21.59
+  y: 7.62
+  rot: 180.0
+- ref: R30
+  x: 51.56
+  y: 74.3
+  rot: 180.0
+- ref: R31
+  x: 29.59
+  y: 52.96
+- ref: R32
+  x: 15.88
+  y: 48.01
+  rot: 180.0
+- ref: R33
+  x: 8.89
+  y: 49.53
+  rot: 180.0
+- ref: R34
+  x: 15.88
+  y: 50.8
+  rot: 180.0
+- ref: R35
+  x: 8.89
+  y: 51.44
+  rot: 180.0
+- ref: R36
+  x: 41.91
+  y: 52.83
+  rot: 180.0
+- ref: R37
+  x: 38.61
+  y: 52.83
+- ref: R38
+  x: 7.62
+  y: 66.04
+- ref: R39
+  x: 7.62
+  y: 68.58
+- ref: R4
+  x: 66.04
+  y: 43.18
+  rot: 180.0
+- ref: R40
+  x: 28.32
+  y: 47.75
+  rot: 180.0
+- ref: R41
+  x: 36.7
+  y: 20.32
+  rot: 270.0
+- ref: R42
+  x: 15.88
+  y: 53.59
+  rot: 180.0
+- ref: R43
+  x: 8.89
+  y: 53.34
+  rot: 180.0
+- ref: R44
+  x: 15.88
+  y: 56.9
+- ref: R45
+  x: 60.58
+  y: 47.62
+- ref: R48
+  x: 41.27
+  y: 41.4
+  rot: 90.0
+- ref: R5
+  x: 17.65
+  y: 14.22
+  rot: 270.0
+- ref: R6
+  x: 8.89
+  y: 45.72
+- ref: R7
+  x: 66.67
+  y: 15.24
+  rot: 90.0
+- ref: R8
+  x: 27.94
+  y: 7.62
+- ref: R9
+  x: 14.35
+  y: 14.86
+  rot: 180.0
+- ref: S1
+  x: 3.81
+  y: 26.67
+  rot: 90.0
+- ref: S2
+  x: 10.16
+  y: 26.67
+  rot: 90.0
+- ref: S3
+  x: 16.51
+  y: 26.67
+  rot: 270.0
+- ref: U1
+  x: 38.1
+  y: 62.23
+- ref: U13
+  x: 38.1
+  y: 38.1
+  rot: 180.0
+- ref: U14
+  x: 46.35
+  y: 38.1
+- ref: U2
+  x: 38.1
+  y: 16.51
+  rot: 270.0
+- ref: U3
+  x: 60.58
+  y: 50.67
+- ref: U4
+  x: 33.91
+  y: 13.84
+  rot: 90.0
+- ref: U5
+  x: 19.05
+  y: 10.16
+  rot: 90.0
+- ref: U7
+  x: 54.61
+  y: 57.15
+  rot: 270.0
+- ref: U8
+  x: 51.82
+  y: 47.62
+  rot: 180.0
+- ref: VIN/3
+  x: 16.48
+  y: 14.64
+  rot: 270.0
+copper_pours:
+- net: 3.3V
+  layers: [In14.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: VIN
+  layers: [F.Cu]
+- net: VREG_3.3V
+  layers: [F.Cu]

@@ -1,0 +1,320 @@
+name: PLC77 Glitcher
+slug: plc77-glitcher
+source: travisgoodspeed/plc77-glitcher
+format: kicad7
+description: 'Voltage glitching for fault injection: high-speed power/clock switching, timing circuits'
+tags: [security]
+key_ics: [AT90S2313P, MAX232, POWER1]
+outline:
+  width_mm: 114.28
+  height_mm: 100.0
+design_rules:
+  layers: 16
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: B1
+  value: RB1A
+  footprint: RB1A
+- ref: C1
+  value: 100nF
+  footprint: C5B3
+- ref: C10
+  value: 10uF
+  footprint: E2,0-5
+- ref: C2
+  value: 35uF
+  footprint: E2,0-5
+- ref: C3
+  value: 100nF
+  footprint: C5B3
+- ref: C4
+  value: 27pF
+  footprint: C5B3
+- ref: C5
+  value: 27pF
+  footprint: C5B3
+- ref: C6
+  value: 10uF
+  footprint: E2,0-5
+- ref: C8
+  value: 10uF
+  footprint: E2,0-5
+- ref: C9
+  value: 10uF
+  footprint: E2,0-5
+- ref: CDR1
+  value: CHEAPREADR
+  footprint: CHEAPREA
+- ref: D1
+  value: Red/Grn LED
+  footprint: LED2
+- ref: D2
+  value: 1N4004
+  footprint: DO41-10
+- ref: D3
+  value: 1N4004
+  footprint: DO41-10
+- ref: D4
+  value: 1N4148
+  footprint: DO35-10
+- ref: D5
+  value: 1N4148
+  footprint: DO35-10
+- ref: IC1
+  value: AT90S2313P
+  footprint: DIL20
+- ref: IC2
+  value: '7405'
+  footprint: DIL14
+- ref: IC3
+  value: MAX232
+  footprint: DIL16
+- ref: IC4
+  value: 74HC00N
+  footprint: DIL14
+- ref: J1
+  value: FLOPPY-4
+  footprint: FLOPPY-4
+- ref: Q1
+  value: 3.5795 MHZ
+  footprint: HC49U-V
+- ref: R1
+  value: 1Mohm
+  footprint: '1210'
+- ref: R11
+  value: 2.2kohm
+  footprint: '1206'
+- ref: R3
+  value: 470ohm
+  footprint: '1210'
+- ref: R4
+  value: 470ohm
+  footprint: '1210'
+- ref: U$7
+  value: POWER1
+  footprint: POWER1
+- ref: U1
+  value: 7805T
+  footprint: TO220H
+- ref: X1
+  value: F09HP
+  footprint: F09HP
+nets:
+- name: GND
+  pins:
+  - B1.-
+  - C1.1
+  - C2.-
+  - C3.1
+  - C4.1
+  - C5.1
+  - C8.-
+  - CDR1.P$12
+  - CDR1.P$9
+  - IC1.10
+  - IC2.7
+  - IC3.15
+  - IC4.7
+  - J1.3
+  - U1.2
+  - X1.5
+- name: N$1
+  pins: [C9.-, IC3.5]
+- name: N$10
+  pins:
+  - CDR1.P$3
+  - IC1.5
+  - IC4.8
+  - R1.1
+  - R10.1
+  - R11.1
+  - R9.1
+- name: N$11
+  pins: [D4.K, D5.A]
+- name: N$12
+  pins: [CDR1.P$2, IC1.14]
+- name: N$13
+  pins: [IC3.8, X1.7]
+- name: N$15
+  pins: [B1.+, C1.2, U1.1]
+- name: N$16
+  pins: [X1.4, X1.6]
+- name: N$17
+  pins: [D1.A, IC2.8, R4.1, R6.1]
+- name: N$18
+  pins: [CDR1.P$10, IC2.12, IC3.10, IC4.12, IC4.13]
+- name: N$19
+  pins: [CDR1.P$1, CDR1.P$4, D4.A, R2.1]
+- name: N$2
+  pins: [IC2.1, IC2.3, IC2.6, R5.1, R8.1]
+- name: N$21
+  pins: [IC3.7, X1.2]
+- name: N$22
+  pins: [D5.K, IC2.2, IC2.4]
+- name: N$23
+  pins: [IC2.9, IC3.12, IC4.1, IC4.4, IC4.5]
+- name: N$24
+  pins: [D1.K, IC2.10, R3.1, R7.2]
+- name: N$28
+  pins: [IC2.13, IC4.6]
+- name: N$29
+  pins: [C5.2, IC4.10, IC4.9, Q1.2, R1.2, R9.2]
+- name: N$3
+  pins: [C10.-, IC3.3]
+- name: N$31
+  pins: [IC4.11, IC4.2]
+- name: N$34
+  pins: [IC3.13, X1.3]
+- name: N$36
+  pins: [IC1.16, IC2.5]
+- name: N$37
+  pins: [IC2.11, IC4.3]
+- name: N$4
+  pins: [C10.+, IC3.1]
+- name: N$41
+  pins: [C2.+, D3.A, U1.3]
+- name: N$42
+  pins: [D2.A, J1.4]
+- name: N$5
+  pins: [C9.+, IC3.4]
+- name: N$6
+  pins: [C6.-, IC3.6]
+- name: N$7
+  pins: [C8.+, IC3.2]
+- name: N$8
+  pins: [C4.2, Q1.1, R10.2, R11.2]
+- name: N$9
+  pins: [IC1.13, IC3.9]
+- name: P_2
+  pins: [B1.AC1, U$7.P$2]
+- name: P_3
+  pins: [B1.AC2, U$7.P$3, U$7.P$4]
+- name: VCC
+  pins:
+  - C3.2
+  - C6.+
+  - D2.K
+  - D3.K
+  - IC1.20
+  - IC2.14
+  - IC3.16
+  - IC4.14
+  - R2.2
+  - R3.2
+  - R4.2
+  - R5.2
+  - R6.2
+  - R7.1
+  - R8.2
+positions:
+- ref: B1
+  x: 111.68
+  y: 139.29
+  rot: 180.0
+- ref: C1
+  x: 118.66
+  y: 139.61
+  rot: 270.0
+- ref: C10
+  x: 137.71
+  y: 67.86
+  rot: 180.0
+- ref: C2
+  x: 147.55
+  y: 137.07
+  rot: 270.0
+- ref: C3
+  x: 150.09
+  y: 125.32
+  rot: 90.0
+- ref: C4
+  x: 109.77
+  y: 113.58
+- ref: C5
+  x: 109.45
+  y: 130.09
+- ref: C6
+  x: 122.47
+  y: 68.17
+- ref: C8
+  x: 145.97
+  y: 68.17
+- ref: C9
+  x: 130.09
+  y: 68.17
+  rot: 180.0
+- ref: CDR1
+  x: 182.8
+  y: 102.78
+- ref: D1
+  x: 199.31
+  y: 137.07
+  rot: 90.0
+- ref: D2
+  x: 151.68
+  y: 91.99
+  rot: 90.0
+- ref: D3
+  x: 142.16
+  y: 128.18
+  rot: 270.0
+- ref: D4
+  x: 150.73
+  y: 100.24
+- ref: D5
+  x: 135.17
+  y: 100.24
+- ref: IC1
+  x: 132.31
+  y: 92.3
+  rot: 180.0
+- ref: IC2
+  x: 129.46
+  y: 107.23
+  rot: 180.0
+- ref: IC3
+  x: 129.77
+  y: 77.7
+  rot: 180.0
+- ref: IC4
+  x: 126.92
+  y: 123.74
+  rot: 180.0
+- ref: J1
+  x: 97.07
+  y: 111.99
+  rot: 270.0
+- ref: Q1
+  x: 109.45
+  y: 121.83
+  rot: 270.0
+- ref: R1
+  x: 116.12
+  y: 127.55
+  rot: 270.0
+- ref: R11
+  x: 113.26
+  y: 119.93
+  rot: 90.0
+- ref: R3
+  x: 160.25
+  y: 132.31
+  rot: 90.0
+- ref: R4
+  x: 155.81
+  y: 131.99
+  rot: 90.0
+- ref: U$7
+  x: 101.52
+  y: 134.85
+- ref: U1
+  x: 129.46
+  y: 139.29
+  rot: 90.0
+- ref: X1
+  x: 105.01
+  y: 82.14
+  rot: 90.0

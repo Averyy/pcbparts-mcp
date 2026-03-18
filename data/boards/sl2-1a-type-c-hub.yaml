@@ -1,0 +1,354 @@
+name: SL2.1A Type-C Hub
+slug: sl2-1a-type-c-hub
+source: Hugoyhu/SL2.1A-Type-C-Hub
+format: kicad8
+description: 4-port USB 2.0 hub (SL2.1A) with USB-C downstream ports, per-port PTC fuses
+key_ics: [SL2.1A]
+outline:
+  width_mm: 57.4
+  height_mm: 27.94
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: 0805
+- ref: C10
+  value: 1uF
+  footprint: 0805
+- ref: C11
+  value: 100nF
+  footprint: 0805
+- ref: C2
+  value: 10uF
+  footprint: 0805
+- ref: C3
+  value: 10uF
+  footprint: 0805
+- ref: C4
+  value: 1uF
+  footprint: 0805
+- ref: C5
+  value: 100nF
+  footprint: 0805
+- ref: C6
+  value: 1uF
+  footprint: 0805
+- ref: C7
+  value: 100nF
+  footprint: 0805
+- ref: C8
+  value: 1uF
+  footprint: 0805
+- ref: C9
+  value: 100nF
+  footprint: 0805
+- ref: D1
+  value: SD1206T020S1R0
+  footprint: '1206'
+- ref: D2
+  value: LED
+  footprint: '1206'
+- ref: J1
+  value: USB-C
+  footprint: USB-C
+- ref: J2
+  value: USB-C
+  footprint: USB-C
+- ref: J3
+  value: USB-C
+  footprint: USB-C
+- ref: J4
+  value: USB-C
+  footprint: USB-C
+- ref: J5
+  value: USB-C
+  footprint: USB-C
+- ref: R1
+  value: 5.1kohm
+  footprint: 0805
+  pulldown: J1.CC1
+- ref: R10
+  value: 56kohm
+  footprint: 0805
+- ref: R11
+  value: 100ohm
+  footprint: 0805
+- ref: R2
+  value: 5.1kohm
+  footprint: 0805
+  pulldown: J1.CC2
+- ref: R3
+  value: 56kohm
+  footprint: 0805
+- ref: R4
+  value: 56kohm
+  footprint: 0805
+- ref: R5
+  value: 56kohm
+  footprint: 0805
+- ref: R6
+  value: 56kohm
+  footprint: 0805
+- ref: R7
+  value: 56kohm
+  footprint: 0805
+- ref: R8
+  value: 56kohm
+  footprint: 0805
+- ref: R9
+  value: 56kohm
+  footprint: 0805
+- ref: U1
+  value: SL2.1A
+  footprint: SOIC-16
+nets:
+- name: /D+
+  pins: [J1.D+@A6, J1.D+@B6, U1.UDP]
+- name: /D-
+  pins: [J1.D-@A7, J1.D-@B7, U1.UDM]
+- name: /D1+
+  pins: [J2.D+@A6, J2.D+@B6, U1.DP1]
+- name: /D1-
+  pins: [J2.D-@A7, J2.D-@B7, U1.DM1]
+- name: /D2+
+  pins: [J3.D+@A6, J3.D+@B6, U1.DP2]
+- name: /D2-
+  pins: [J3.D-@A7, J3.D-@B7, U1.DM2]
+- name: /D3+
+  pins: [J4.D+@A6, J4.D+@B6, U1.DP3]
+- name: /D3-
+  pins: [J4.D-@A7, J4.D-@B7, U1.DM3]
+- name: /D4+
+  pins: [J5.D+@A6, J5.D+@B6, U1.DP4]
+- name: /D4-
+  pins: [J5.D-@A7, J5.D-@B7, U1.DM4]
+- name: /VBUS
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.K
+  - J2.VBUS@A4
+  - J2.VBUS@A9
+  - J2.VBUS@B4
+  - J2.VBUS@B9
+  - J3.VBUS@A4
+  - J3.VBUS@A9
+  - J3.VBUS@B4
+  - J3.VBUS@B9
+  - J4.VBUS@A4
+  - J4.VBUS@A9
+  - J4.VBUS@B4
+  - J4.VBUS@B9
+  - J5.VBUS@A4
+  - J5.VBUS@A9
+  - J5.VBUS@B4
+  - J5.VBUS@B9
+  - R10.2
+  - R11.2
+  - R3.1
+  - R4.2
+  - R5.1
+  - R6.2
+  - R7.1
+  - R8.2
+  - R9.1
+  - U1.VCC5V
+- name: GND
+  pins:
+  - C1.1
+  - C10.1
+  - C11.1
+  - C2.2
+  - C3.1
+  - C4.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - D2.K
+  - J1.GND@A1
+  - J1.GND@A12
+  - J1.GND@B1
+  - J1.GND@B12
+  - J1.SHIELD@S1
+  - J2.GND@A1
+  - J2.GND@A12
+  - J2.GND@B1
+  - J2.GND@B12
+  - J2.SHIELD@S1
+  - J3.GND@A1
+  - J3.GND@A12
+  - J3.GND@B1
+  - J3.GND@B12
+  - J3.SHIELD@S1
+  - J4.GND@A1
+  - J4.GND@A12
+  - J4.GND@B1
+  - J4.GND@B12
+  - J4.SHIELD@S1
+  - J5.GND@A1
+  - J5.GND@A12
+  - J5.GND@B1
+  - J5.GND@B12
+  - J5.SHIELD@S1
+  - R1.1
+  - R2.2
+  - U1.GND
+  - U1.XIN
+- name: Net-(D1-A)
+  pins: [D1.A, J1.VBUS@A4, J1.VBUS@A9, J1.VBUS@B4, J1.VBUS@B9]
+- name: Net-(D2-A)
+  pins: [D2.A, R11.1]
+- name: Net-(J1-CC1)
+  pins: [J1.CC1, R1.2]
+- name: Net-(J1-CC2)
+  pins: [J1.CC2, R2.1]
+- name: Net-(J2-CC1)
+  pins: [J2.CC1, R3.2]
+- name: Net-(J2-CC2)
+  pins: [J2.CC2, R4.1]
+- name: Net-(J3-CC1)
+  pins: [J3.CC1, R5.2]
+- name: Net-(J3-CC2)
+  pins: [J3.CC2, R6.1]
+- name: Net-(J4-CC1)
+  pins: [J4.CC1, R7.2]
+- name: Net-(J4-CC2)
+  pins: [J4.CC2, R8.1]
+- name: Net-(J5-CC1)
+  pins: [J5.CC1, R9.2]
+- name: Net-(J5-CC2)
+  pins: [J5.CC2, R10.1]
+- name: Net-(U1-VDD18)
+  pins: [C3.2, U1.VDD18]
+- name: Net-(U1-VDD3)
+  pins: [C2.1, U1.VDD3]
+positions:
+- ref: C1
+  x: 97.56
+  y: 84.58
+  rot: 180.0
+- ref: C10
+  x: 76.43
+  y: 95.27
+  rot: -90.0
+- ref: C11
+  x: 67.31
+  y: 96.01
+  rot: -90.0
+- ref: C2
+  x: 80.54
+  y: 85.85
+  rot: 180.0
+- ref: C3
+  x: 80.52
+  y: 83.82
+- ref: C4
+  x: 99.95
+  y: 95.25
+  rot: -90.0
+- ref: C5
+  x: 108.71
+  y: 95.22
+  rot: -90.0
+- ref: C6
+  x: 97.92
+  y: 95.25
+  rot: -90.0
+- ref: C7
+  x: 89.15
+  y: 95.74
+  rot: -90.0
+- ref: C8
+  x: 87.12
+  y: 95.73
+  rot: -90.0
+- ref: C9
+  x: 78.49
+  y: 95.27
+  rot: -90.0
+- ref: D1
+  x: 67.02
+  y: 82.3
+  rot: 180.0
+- ref: D2
+  x: 60.74
+  y: 98.55
+- ref: J1
+  x: 55.88
+  y: 86.36
+  rot: -90.0
+- ref: J2
+  x: 104.9
+  y: 105.62
+- ref: J3
+  x: 93.72
+  y: 105.62
+- ref: J4
+  x: 82.55
+  y: 105.62
+- ref: J5
+  x: 71.37
+  y: 105.63
+- ref: R1
+  x: 67.04
+  y: 85.09
+  rot: 180.0
+- ref: R10
+  x: 74.42
+  y: 95.27
+  rot: 90.0
+- ref: R11
+  x: 60.72
+  y: 94.74
+- ref: R2
+  x: 67.06
+  y: 88.11
+- ref: R3
+  x: 101.98
+  y: 95.22
+  rot: -90.0
+- ref: R4
+  x: 106.68
+  y: 95.21
+  rot: 90.0
+- ref: R5
+  x: 91.19
+  y: 97.77
+  rot: -90.0
+- ref: R6
+  x: 95.91
+  y: 95.23
+  rot: 90.0
+- ref: R7
+  x: 80.52
+  y: 95.27
+  rot: -90.0
+- ref: R8
+  x: 85.09
+  y: 97.77
+  rot: 90.0
+- ref: R9
+  x: 69.34
+  y: 96.01
+  rot: -90.0
+- ref: U1
+  x: 88.14
+  y: 88.14
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]

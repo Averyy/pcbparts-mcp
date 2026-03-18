@@ -1,0 +1,181 @@
+name: ADSBee RF Board
+slug: adsbee-rf-board
+source: CoolNamesAllTaken/adsbee
+format: kicad8
+description: 'Complete 1090MHz ADS-B RF frontend: SAW-6 bandpass filter, BGA2818 wideband LNA'
+tags: [rf-sdr]
+key_ics: [SE4150L, MAX2112]
+outline:
+  width_mm: 44.0
+  height_mm: 28.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 22nF
+  footprint: '0603'
+  decouples: U2
+- ref: C2
+  value: 10uF
+  footprint: 0805
+- ref: C3
+  value: 39pF
+  footprint: '0603'
+- ref: C4
+  value: 39pF
+  footprint: '0603'
+- ref: C5
+  value: 39pF
+  footprint: '0603'
+- ref: C6
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C7
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C8
+  value: 39pF
+  footprint: '0603'
+- ref: D1
+  value: 40V 1A
+  footprint: DO-41_SOD81_P7.62mm_Horizontal
+  mpn: 1N5819
+- ref: J1
+  value: coaxial connector
+  footprint: SMA_Amphenol_132289_EdgeMount
+  mpn: '132289'
+- ref: J2
+  value: 1x2 header
+  footprint: 1X2
+- ref: J6
+  value: coaxial connector
+  footprint: SMA_Amphenol_132289_EdgeMount
+  mpn: '132289'
+- ref: U1
+  value: AZ1117-3.3
+  footprint: SOT-223-3_TabPin2
+- ref: U2
+  value: BGA2818
+  footprint: SOT-363_SC-70-6
+- ref: X1
+  value: SF2321D
+  footprint: Filter_SAW-6
+  mpn: SF2321D
+- ref: X2
+  value: SF2321D
+  footprint: Filter_SAW-6
+  mpn: SF2321D
+nets:
+- name: +3V3
+  pins: [C1.1, C6.1, C7.1, U1.VO@2, U2.Vcc]
+- name: +5V
+  pins: [D1.A, J2.Pin_1]
+- name: /IN
+  pins: [C3.1, J1.In]
+- name: /OUT
+  pins: [C8.2, J6.In]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C6.2
+  - C7.2
+  - J1.Ext@2
+  - J2.Pin_2
+  - J6.Ext@2
+  - U1.GND
+  - U2.G@2
+  - U2.G@4
+  - U2.G@5
+  - X1.GND@1
+  - X1.GND@3
+  - X1.GND@4
+  - X1.GND@6
+  - X2.GND@1
+  - X2.GND@3
+  - X2.GND@4
+  - X2.GND@6
+- name: Net-(C4-Pad2)
+  pins: [C4.2, U2.6]
+- name: Net-(C5-Pad1)
+  pins: [C5.1, U2.3]
+- name: Net-(D1-K)
+  pins: [C2.1, D1.K, U1.VI]
+- name: Net-(X1-IN)
+  pins: [C3.2, X1.IN]
+- name: Net-(X1-OUT)
+  pins: [C4.1, X1.OUT]
+- name: Net-(X2-IN)
+  pins: [C5.2, X2.IN]
+- name: Net-(X2-OUT)
+  pins: [C8.1, X2.OUT]
+positions:
+- ref: C1
+  x: 52.59
+  y: 27.25
+  rot: 180.0
+- ref: C2
+  x: 48.0
+  y: 36.0
+  rot: 180.0
+- ref: C3
+  x: 41.0
+  y: 25.0
+- ref: C4
+  x: 49.59
+  y: 25.25
+  rot: 90.0
+- ref: C5
+  x: 55.59
+  y: 24.25
+  rot: -90.0
+- ref: C6
+  x: 58.9
+  y: 33.95
+  rot: 90.0
+- ref: C7
+  x: 61.0
+  y: 33.95
+  rot: 90.0
+- ref: C8
+  x: 64.0
+  y: 25.0
+- ref: D1
+  x: 47.81
+  y: 33.0
+  rot: 180.0
+- ref: J1
+  x: 33.0
+  y: 28.0
+  rot: 180.0
+- ref: J2
+  x: 40.73
+  y: 37.62
+  rot: -90.0
+  side: back
+- ref: J6
+  x: 71.0
+  y: 28.0
+- ref: U1
+  x: 54.0
+  y: 36.0
+  rot: -90.0
+- ref: U2
+  x: 52.59
+  y: 24.25
+  rot: 180.0
+- ref: X1
+  x: 45.59
+  y: 25.0
+- ref: X2
+  x: 59.59
+  y: 25.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

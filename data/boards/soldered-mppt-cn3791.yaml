@@ -1,0 +1,299 @@
+name: Soldered MPPT CN3791
+slug: soldered-mppt-cn3791
+source: SolderedElectronics/MPPT-Li-Ion-CN3791-charger-board-hardware-design
+format: kicad7
+description: MPPT solar charging (CN3791), varistor
+tags: [battery-charging, energy-harvesting]
+key_ics: [CN3791]
+outline:
+  width_mm: 54.0
+  height_mm: 38.0
+design_rules:
+  layers: 2
+  min_trace: 0.127mm
+  min_clearance: 0.127mm
+  min_drill: 0.2mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: '1206'
+  decouples: U1
+- ref: C2
+  value: 1uF
+  footprint: '0603'
+  decouples: U1
+- ref: C3
+  value: 220uF
+  footprint: ELECTROLITIC_CAP
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+- ref: C5
+  value: 220nF
+  footprint: '0603'
+- ref: C6
+  value: 10uF
+  footprint: '1206'
+- ref: C7
+  value: 220uF
+  footprint: ELECTROLITIC_CAP
+- ref: D1
+  value: green LED
+  footprint: '0402'
+- ref: D2
+  value: red LED
+  footprint: '0402'
+- ref: D3
+  value: AOD4185
+  footprint: DPAK
+- ref: D4
+  value: RBR5LAM30ATFTR
+  footprint: RBR5LAM30ATFTR
+- ref: D5
+  value: purple LED
+  footprint: '0402'
+- ref: JP1
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: K1
+  value: screw terminal
+  footprint: TERMINAL_KF235-5.0-2P
+- ref: K2
+  value: 2x4 header
+  footprint: HEADER_MALE
+- ref: K3
+  value: JST-2pin-SMD
+  footprint: JST-2pin-SMD
+- ref: K6
+  value: screw terminal
+  footprint: TERMINAL_KF235-5.0-2P
+- ref: L1
+  value: 47uH
+  footprint: YPRH1209-470M
+- ref: R1
+  value: 4.7kohm
+  footprint: '0402'
+  pullup: D1.A
+- ref: R10
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R2
+  value: 120ohm
+  footprint: '0603'
+- ref: R3
+  value: 30kohm
+  footprint: '0603'
+  pulldown: K2.1
+- ref: R4
+  value: 62kohm
+  footprint: '0603'
+  pulldown: K2.2
+- ref: R5
+  value: 300kohm
+  footprint: '0603'
+  pullup: U1.MPPT
+- ref: R6
+  value: 130kohm
+  footprint: '0603'
+  pulldown: K2.3
+- ref: R7
+  value: 75kohm
+  footprint: '0603'
+  pulldown: U1.MPPT
+- ref: R8
+  value: 40mohm
+  footprint: '1210'
+- ref: R9
+  value: 2.2kohm
+  footprint: '0402'
+- ref: U1
+  value: CN3791
+  footprint: CN3791
+nets:
+- name: BAT
+  pins: [C6.2, C7.+, K3.+, K6.1, R8.2, U1.BAT]
+- name: CHRG
+  pins: [D2.K, U1.CHRG]
+- name: COM
+  pins: [R2.2, U1.COM]
+- name: CSP
+  pins: [L1.2, R8.1, U1.CSP]
+- name: DONE
+  pins: [D1.K, U1.DONE]
+- name: DRV
+  pins: [D3.G, U1.DRV]
+- name: GND
+  pins:
+  - C1.1
+  - C2.1
+  - C3.-
+  - C5.1
+  - C6.1
+  - C7.-
+  - D4.A
+  - D5.K
+  - K1.1
+  - K3.-
+  - K6.2
+  - R3.1
+  - R4.1
+  - R6.1
+  - R7.1
+  - U1.GND
+- name: MPPT
+  pins:
+  - K2.4
+  - K2.5
+  - K2.6
+  - K2.7
+  - K2.8
+  - R5.1
+  - R7.2
+  - U1.MPPT
+- name: Net-(C5-Pad2)
+  pins: [C5.2, R2.1]
+- name: Net-(D1-Pad1)
+  pins: [D1.A, D2.A, R1.1]
+- name: Net-(D3-Pad2)
+  pins: [D3.D, D4.C, L1.1]
+- name: Net-(D5-Pad1)
+  pins: [D5.A, R9.2]
+- name: Net-(JP1-Pad2)
+  pins: [JP1.2, R10.1]
+- name: Net-(K2-Pad2)
+  pins: [K2.2, R4.2]
+- name: Net-(K2-Pad3)
+  pins: [K2.3, R6.2]
+- name: Net-(R10-Pad2)
+  pins: [R10.2, R9.1]
+- name: Net-(R3-Pad2)
+  pins: [K2.1, R3.2]
+- name: VCC
+  pins:
+  - C1.2
+  - C2.2
+  - C3.+
+  - C4.2
+  - D3.S
+  - JP1.1
+  - K1.2
+  - R1.2
+  - R5.2
+  - U1.VCC
+- name: VG
+  pins: [C4.1, U1.VG]
+positions:
+- ref: C1
+  x: 117.29
+  y: 113.11
+  rot: 90.0
+- ref: C2
+  x: 122.62
+  y: 107.35
+  rot: 90.0
+- ref: C3
+  x: 114.1
+  y: 98.8
+  rot: 90.0
+- ref: C4
+  x: 124.2
+  y: 107.35
+  rot: 90.0
+- ref: C5
+  x: 126.12
+  y: 117.42
+- ref: C6
+  x: 138.5
+  y: 115.4
+- ref: C7
+  x: 142.3
+  y: 125.2
+- ref: D1
+  x: 121.9
+  y: 117.7
+  rot: 180.0
+- ref: D2
+  x: 121.9
+  y: 115.0
+  rot: 180.0
+- ref: D3
+  x: 123.2
+  y: 98.55
+  rot: 180.0
+- ref: D4
+  x: 127.1
+  y: 104.0
+- ref: D5
+  x: 105.8
+  y: 99.1
+- ref: JP1
+  x: 105.8
+  y: 103.2
+  rot: 180.0
+- ref: K1
+  x: 108.6
+  y: 112.58
+  rot: -90.0
+- ref: K2
+  x: 127.3
+  y: 127.5
+  rot: 90.0
+- ref: K3
+  x: 150.05
+  y: 102.5
+  rot: -90.0
+- ref: K6
+  x: 148.0
+  y: 112.58
+  rot: 90.0
+- ref: L1
+  x: 137.8
+  y: 99.15
+- ref: R1
+  x: 119.9
+  y: 115.0
+  rot: 180.0
+- ref: R10
+  x: 105.8
+  y: 101.7
+  rot: 180.0
+- ref: R2
+  x: 126.14
+  y: 115.94
+  rot: 180.0
+- ref: R3
+  x: 120.3
+  y: 128.8
+- ref: R4
+  x: 120.3
+  y: 127.3
+- ref: R5
+  x: 129.4
+  y: 114.67
+  rot: 180.0
+- ref: R6
+  x: 134.4
+  y: 127.3
+  rot: 180.0
+- ref: R7
+  x: 134.4
+  y: 128.8
+  rot: 180.0
+- ref: R8
+  x: 138.64
+  y: 110.93
+  rot: -90.0
+- ref: R9
+  x: 105.8
+  y: 100.5
+- ref: U1
+  x: 127.3
+  y: 111.2
+copper_pours:
+- net: BAT
+  layers: [F.Cu]
+- net: GND
+  layers: [F&B.Cu]
+- net: VCC
+  layers: [F.Cu]

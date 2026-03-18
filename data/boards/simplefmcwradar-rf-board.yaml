@@ -1,0 +1,528 @@
+name: SimpleFMCWRadar RF Board
+slug: simplefmcwradar-rf-board
+source: lukeweston/SimpleFMCWRadar
+format: eagle
+description: '5.8 GHz FMCW radar RF board: HMC431 VCO, HMC717 LNA'
+tags: [rf-sdr, radar-fmcw]
+key_ics: [HMC431, HMC717, HMC219]
+outline:
+  width_mm: 45.09
+  height_mm: 31.11
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 13mil
+  min_via: 7mil
+components:
+- ref: ATT1
+  value: -3dB
+  footprint: PAT1220
+  description: Susumu PAT1220 SMD chip attenuator
+- ref: ATT2
+  value: -3dB
+  footprint: PAT1220
+  description: Susumu PAT1220 SMD chip attenuator
+- ref: ATT3
+  value: -6dB
+  footprint: PAT1220
+  description: Susumu PAT1220 SMD chip attenuator
+- ref: C1
+  value: 1uF
+  footprint: '0603'
+  decouples: IC1
+- ref: C10
+  value: 1nF
+  footprint: '0402'
+- ref: C11
+  value: 2.2uF
+  footprint: '0603'
+- ref: C12
+  value: 100pF
+  footprint: '0402'
+- ref: C13
+  value: 100pF
+  footprint: '0402'
+- ref: C14
+  value: 100pF
+  footprint: '0402'
+- ref: C15
+  value: 100pF
+  footprint: '0402'
+- ref: C16
+  value: 1000000uF
+  footprint: '0402'
+- ref: C17
+  value: 100pF
+  footprint: '0402'
+- ref: C18
+  value: 10nF
+  footprint: '0402'
+- ref: C19
+  value: 100pF
+  footprint: '0402'
+- ref: C2
+  value: 4.7uF
+  footprint: '0603'
+- ref: C20
+  value: 100pF
+  footprint: '0402'
+- ref: C21
+  value: 100pF
+  footprint: '0402'
+- ref: C22
+  value: 1nF
+  footprint: '0402'
+- ref: C23
+  value: 1.2pF
+  footprint: '0402'
+- ref: C24
+  value: 1000000uF
+  footprint: '0402'
+- ref: C25
+  value: 2.2uF
+  footprint: '0603'
+- ref: C3
+  value: 4.7uF
+  footprint: '0603'
+- ref: C4
+  value: 10nF
+  footprint: '0402'
+- ref: C5
+  value: 100pF
+  footprint: '0402'
+- ref: C6
+  value: 100pF
+  footprint: '0402'
+- ref: C7
+  value: 100pF
+  footprint: '0402'
+- ref: C8
+  value: 2.2uF
+  footprint: '0603'
+- ref: C9
+  value: 1nF
+  footprint: '0402'
+- ref: IC1
+  value: MCP1700
+  footprint: SOT23
+  description: 250 mA, 16V, Low Quiescent Current LDO Regulator
+- ref: IC2
+  value: HMC431LP4
+  footprint: QFN24
+  description: MMIC VCO w/ BUFFER AMPLIFIER, 2.25 - 2.5 GHz
+- ref: IC3
+  value: HMC476MP86
+  footprint: WW107
+  description: Mini-Circuits ERA-2SM+ MMIC amplifier
+- ref: IC4
+  value: HMC219AMS8
+  footprint: 8-MSOP
+  description: Hittite HMC219AMS8 double-balanced microwave mixer
+- ref: IC5
+  value: HMC474MP86E
+  footprint: WW107
+  description: Mini-Circuits ERA-2SM+ MMIC amplifier
+- ref: IC6
+  value: HMC474MP86E
+  footprint: WW107
+  description: Mini-Circuits ERA-2SM+ MMIC amplifier
+- ref: IC7
+  value: HMC717LP3
+  footprint: 16-QFN
+  description: Hittite HMC717LP3 6GHz LNA
+- ref: J1
+  value: 1x4 header
+  footprint: 1X04
+- ref: J2
+  value: IF Out
+  footprint: J502-ND-142-0701-881
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0701-881
+  description: SMA 50 Ohm
+- ref: J3
+  value: Tx Antenna
+  footprint: J502-ND-142-0701-881
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0701-881
+  description: SMA 50 Ohm
+- ref: J4
+  value: Rx Antenna
+  footprint: J502-ND-142-0701-881
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0701-881
+  description: SMA 50 Ohm
+- ref: LED1
+  value: Power
+  footprint: '0603'
+- ref: LED2
+  value: VCO On
+  footprint: '0603'
+- ref: Q1
+  value: 2N7002P
+  footprint: SOT-23-3
+  description: 2N7002 N-ch MOSFET in SOT-23
+- ref: Q2
+  value: BSS84
+  footprint: SOT-23-3
+  description: DMP2035U P-channel MOSFET in SOT-23
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+  pullup: LED1.A
+- ref: R10
+  value: 0ohm
+  footprint: '0402'
+- ref: R11
+  value: 2.0kohm
+  footprint: '0402'
+  pulldown: IC7.BIAS
+- ref: R12
+  value: 0ohm
+  footprint: '0402'
+- ref: R2
+  value: 10ohm
+  footprint: '0603'
+- ref: R3
+  value: 100kohm
+  footprint: '0603'
+  pulldown: Q1.G
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+- ref: R5
+  value: 1kohm
+  footprint: '0603'
+- ref: R6
+  value: 56ohm
+  footprint: 0805
+- ref: R7
+  value: 56ohm
+  footprint: 0805
+- ref: R8
+  value: 100ohm
+  footprint: '0402'
+- ref: R9
+  value: 56ohm
+  footprint: 0805
+nets:
+- name: +5V
+  pins:
+  - C1.2
+  - C16.2
+  - C17.2
+  - C21.2
+  - C24.2
+  - IC1.VI
+  - J1.2
+  - R1.2
+  - R10.2
+  - R12.2
+  - R6.2
+  - R7.1
+  - R9.1
+- name: BIAS
+  pins: [C18.2, IC7.BIAS, R11.2]
+- name: GND
+  pins:
+  - ATT1.3
+  - ATT2.3
+  - ATT3.3
+  - C1.1
+  - C10.1
+  - C11.1
+  - C12.1
+  - C16.1
+  - C17.1
+  - C18.1
+  - C19.2
+  - C2.2
+  - C21.1
+  - C22.2
+  - C24.1
+  - C25.1
+  - C3.2
+  - C4.2
+  - C6.1
+  - C8.1
+  - C9.1
+  - IC1.GND
+  - IC2.GND
+  - IC3.GND
+  - IC4.GND
+  - IC5.GND
+  - IC6.GND
+  - IC7.GND
+  - J1.1
+  - J2.GND
+  - J3.GND
+  - J4.GND
+  - LED1.C
+  - LED2.C
+  - Q1.S
+  - R11.1
+  - R3.1
+- name: IF
+  pins: [ATT2.2, IC4.IF]
+- name: IN
+  pins: [C5.2, IC3.IN]
+- name: IN_2
+  pins: [C15.1, IC6.IN]
+- name: IN_3
+  pins: [C23.2, IC7.IN]
+- name: IN_4
+  pins: [C14.2, IC5.IN]
+- name: LO
+  pins: [ATT3.2, IC4.LO]
+- name: N$10
+  pins: [C20.1, J3.1]
+- name: N$13
+  pins: [Q1.G, R2.1, R3.2]
+- name: N$16
+  pins: [C23.1, J4.1]
+- name: N$21
+  pins: [LED1.A, R1.1]
+- name: N$25
+  pins: [ATT3.1, C13.2]
+- name: N$27
+  pins: [C3.1, C4.1, IC2.VCC, Q2.D, R5.2]
+- name: N$29
+  pins: [Q1.D, Q2.G, R4.2]
+- name: N$3
+  pins: [ATT1.2, C5.1]
+- name: N$30
+  pins: [J1.4, R2.2]
+- name: N$32
+  pins: [LED2.A, R5.1]
+- name: N$36
+  pins: [ATT2.1, J2.1]
+- name: N$9
+  pins: [C14.1, C15.2, C7.2, R8.1, R8.2]
+- name: OUT
+  pins: [C19.1, C20.2, C22.1, C25.2, IC6.OUT, R9.2]
+- name: OUT_2
+  pins: [C11.2, C6.2, C7.1, C9.2, IC3.OUT, R6.1]
+- name: OUT_3
+  pins: [C10.2, C12.2, C13.1, C8.2, IC5.OUT, R7.2]
+- name: RF
+  pins: [IC4.RF, IC7.OUT]
+- name: RFOUT
+  pins: [ATT1.1, IC2.RFOUT]
+- name: VDD1
+  pins: [IC7.VDD1, R12.1]
+- name: VDD2
+  pins: [IC7.VDD2, R10.1]
+- name: VO
+  pins: [C2.1, IC1.VO, Q2.S, R4.1]
+- name: VTUNE
+  pins: [IC2.VTUNE, J1.3]
+positions:
+- ref: ATT1
+  x: 8.65
+  y: 23.84
+- ref: ATT2
+  x: 16.76
+  y: 7.62
+  rot: 90.0
+- ref: ATT3
+  x: 26.86
+  y: 8.89
+  rot: 270.0
+- ref: C1
+  x: 7.14
+  y: 19.11
+  rot: 270.0
+- ref: C10
+  x: 20.9
+  y: 17.36
+- ref: C11
+  x: 16.0
+  y: 29.37
+  rot: 180.0
+- ref: C12
+  x: 20.9
+  y: 18.63
+- ref: C13
+  x: 27.3
+  y: 11.51
+  rot: 270.0
+- ref: C14
+  x: 27.3
+  y: 20.72
+  rot: 270.0
+- ref: C15
+  x: 28.34
+  y: 24.94
+  rot: 180.0
+- ref: C16
+  x: 30.86
+  y: 3.48
+  rot: 270.0
+- ref: C17
+  x: 32.08
+  y: 3.48
+  rot: 270.0
+- ref: C18
+  x: 33.84
+  y: 8.89
+  rot: 180.0
+- ref: C19
+  x: 30.27
+  y: 26.86
+  rot: 180.0
+- ref: C2
+  x: 14.61
+  y: 14.61
+  rot: 270.0
+- ref: C20
+  x: 37.7
+  y: 24.94
+  rot: 180.0
+- ref: C21
+  x: 35.64
+  y: 3.48
+  rot: 270.0
+- ref: C22
+  x: 30.27
+  y: 29.84
+  rot: 180.0
+- ref: C23
+  x: 37.62
+  y: 6.16
+  rot: 180.0
+- ref: C24
+  x: 36.8
+  y: 3.48
+  rot: 270.0
+- ref: C25
+  x: 33.04
+  y: 29.84
+  rot: 180.0
+- ref: C3
+  x: 6.95
+  y: 27.7
+  rot: 90.0
+- ref: C4
+  x: 5.52
+  y: 27.62
+  rot: 90.0
+- ref: C5
+  x: 11.43
+  y: 24.29
+- ref: C6
+  x: 13.29
+  y: 26.04
+- ref: C7
+  x: 20.52
+  y: 24.29
+- ref: C8
+  x: 20.68
+  y: 19.9
+- ref: C9
+  x: 13.29
+  y: 29.37
+- ref: IC1
+  x: 10.24
+  y: 18.31
+  rot: 90.0
+- ref: IC2
+  x: 4.76
+  y: 24.03
+- ref: IC3
+  x: 15.95
+  y: 24.29
+  rot: 270.0
+- ref: IC4
+  x: 26.35
+  y: 5.83
+  rot: 270.0
+- ref: IC5
+  x: 27.3
+  y: 16.11
+  rot: 180.0
+- ref: IC6
+  x: 32.94
+  y: 24.94
+  rot: 270.0
+- ref: IC7
+  x: 34.13
+  y: 6.44
+  rot: 90.0
+- ref: J1
+  x: 2.78
+  y: 1.98
+  rot: 90.0
+- ref: J2
+  x: 16.31
+  y: 5.68
+  rot: 270.0
+- ref: J3
+  x: 39.45
+  y: 24.94
+- ref: J4
+  x: 39.37
+  y: 6.16
+- ref: LED1
+  x: 3.33
+  y: 16.91
+  rot: 180.0
+- ref: LED2
+  x: 3.33
+  y: 14.61
+  rot: 180.0
+- ref: Q1
+  x: 10.24
+  y: 10.87
+  rot: 90.0
+- ref: Q2
+  x: 10.24
+  y: 14.61
+  rot: 90.0
+- ref: R1
+  x: 6.35
+  y: 16.91
+- ref: R10
+  x: 33.29
+  y: 3.48
+  rot: 270.0
+- ref: R11
+  x: 33.84
+  y: 10.16
+  rot: 180.0
+- ref: R12
+  x: 34.41
+  y: 3.48
+  rot: 270.0
+- ref: R2
+  x: 7.46
+  y: 8.18
+  rot: 180.0
+- ref: R3
+  x: 8.22
+  y: 5.95
+  rot: 90.0
+- ref: R4
+  x: 13.1
+  y: 14.61
+  rot: 270.0
+- ref: R5
+  x: 6.35
+  y: 14.61
+- ref: R6
+  x: 12.94
+  y: 27.7
+  rot: 180.0
+- ref: R7
+  x: 23.18
+  y: 18.26
+  rot: 270.0
+- ref: R8
+  x: 25.32
+  y: 24.29
+  rot: 270.0
+- ref: R9
+  x: 29.92
+  y: 28.34
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

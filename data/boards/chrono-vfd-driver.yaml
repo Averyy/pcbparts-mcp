@@ -1,0 +1,365 @@
+name: Chrono VFD Driver
+slug: chrono-vfd-driver
+source: ansemjo/chronovfd
+format: kicad9
+description: Vacuum fluorescent display driver for IVL2-7/5 tube, ATtiny414
+tags: [power-supply]
+key_ics: [IVL2-5_7, ATtiny414-SS, LM2733YMF, HV5812WG, ZXBM5210-S]
+outline:
+  width_mm: 75.0
+  height_mm: 40.0
+design_rules:
+  layers: 2
+  min_trace: 0.1mm
+  min_clearance: 0.25mm
+  min_drill: 0.2mm
+  min_via: 0.45mm
+components:
+- ref: A1
+  value: '2022'
+  footprint: ahoi-mask
+- ref: C1
+  value: 4.7uF
+  footprint: 0805
+  mpn: UMK212BBJ475KG-T
+  manufacturer: Taiyo Yuden
+  decouples: U3
+- ref: C2
+  value: 82pF
+  footprint: 0805
+  mpn: CC0805JRNPO9BN820
+  manufacturer: Yageo
+- ref: C3
+  value: 4.7uF
+  footprint: 0805
+  mpn: UMK212BBJ475KG-T
+  manufacturer: Taiyo Yuden
+- ref: C4
+  value: 10uF
+  footprint: 0805
+- ref: C5
+  value: 100nF
+  footprint: 0805
+  mpn: UMK212BBJ475KG-T
+  manufacturer: Taiyo Yuden
+  decouples: U2
+- ref: C6
+  value: 1uF
+  footprint: 0805
+  mpn: UMK212BBJ475KG-T
+  manufacturer: Taiyo Yuden
+  decouples: U2
+- ref: D1
+  value: 1N5819HW-7-F
+  footprint: SOD-123
+  mpn: 1N5819HW-7-F
+  manufacturer: Diodes Inc.
+- ref: D2
+  value: LED
+  footprint: 0805
+- ref: J1
+  value: 1x5 header
+  footprint: 1X5
+  mpn: PREC040DBAN-M71RC
+  manufacturer: Sullins
+- ref: J2
+  value: UPDI
+  footprint: UPDI_PogoProg_pinHoles
+- ref: J3
+  value: 1x4 header
+  footprint: JST_SH_SM04B-SRSS-TB
+- ref: L1
+  value: 10uH
+  footprint: '1210'
+  mpn: LBC3225T100MR
+  manufacturer: Taiyo Yuden
+- ref: L2
+  value: 10uH
+  footprint: '1210'
+- ref: R1
+  value: 10kohm
+  footprint: 0805
+  mpn: RC0805FR-0747KL
+  manufacturer: Yageo
+  pullup: HV_EN
+- ref: R14
+  value: 10kohm
+  footprint: 0805
+  mpn: RC0805FR-0747KL
+  manufacturer: Yageo
+  pulldown: HV_BLANK
+- ref: R2
+  value: 13kohm
+  footprint: 0805
+  mpn: RC0805FR-0713KL
+  manufacturer: Yageo
+  pulldown: U3.FB
+- ref: R3
+  value: 240kohm
+  footprint: 0805
+  mpn: RC0805FR-07240KL
+  manufacturer: Yageo
+- ref: R4
+  value: 660ohm
+  footprint: 0805
+- ref: R5
+  value: 0ohm
+  footprint: '1206'
+- ref: R6
+  value: 0ohm
+  footprint: '1206'
+- ref: R7
+  value: 10kohm
+  footprint: 0805
+  mpn: RC0805FR-0710KL
+  manufacturer: Yageo
+  pullup: SCL
+- ref: R8
+  value: 10kohm
+  footprint: 0805
+  mpn: RC0805FR-0710KL
+  manufacturer: Yageo
+  pullup: SDA
+- ref: U1
+  value: IVL2-5_7
+  footprint: IVL2-7_5
+  mpn: IVL2-7/5
+- ref: U2
+  value: ATtiny414-SS
+  footprint: SOIC-14
+- ref: U3
+  value: LM2733YMF
+  footprint: SOT-23-5
+  mpn: LM2733YMF/NOPB
+  manufacturer: Texas Instr
+- ref: U4
+  value: HV5812WG
+  footprint: SOIC-28W
+  mpn: HV5812WG-G
+  manufacturer: Microchip
+- ref: U5
+  value: ZXBM5210-S
+  footprint: SOIC-8
+nets:
+- name: +5V
+  pins:
+  - C1.1
+  - C5.1
+  - C6.1
+  - J1.Pin_2
+  - J2.Pin_3@3
+  - J3.Pin_2
+  - L1.1
+  - L2.1
+  - R1.1
+  - R7.1
+  - R8.2
+  - U2.VCC
+  - U3.VIN
+  - U4.VDD
+  - U5.VDD
+- name: /G1
+  pins: [U1.G1@2, U4.HVOUT14]
+- name: /G2
+  pins: [U1.G2@6, U4.HVOUT1]
+- name: /G3
+  pins: [U1.G3@8, U4.HVOUT3]
+- name: /G4
+  pins: [U1.G4@11, U4.HVOUT6]
+- name: /G5
+  pins: [U1.G5@15, U4.HVOUT10]
+- name: /a
+  pins: [U1.a, U4.HVOUT9]
+- name: /b
+  pins: [U1.b, U4.HVOUT7]
+- name: /c
+  pins: [U1.c, U4.HVOUT2]
+- name: /d
+  pins: [U1.d, U4.HVOUT5]
+- name: /db
+  pins: [U1.db, U4.HVOUT4]
+- name: /dt
+  pins: [U1.dt, U4.HVOUT13]
+- name: /e
+  pins: [U1.e, U4.HVOUT11]
+- name: /f
+  pins: [U1.f, U4.HVOUT8]
+- name: /g
+  pins: [U1.g, U4.HVOUT12]
+- name: FB
+  pins: [C2.1, R2.2, R3.2, U3.FB]
+- name: FILAMENT+
+  pins: [R6.1, U1.F+@23]
+- name: FILAMENT-
+  pins: [R5.1, U1.F-@17]
+- name: FIL_FWD
+  pins: [U2.PB2, U5.FWD]
+- name: FIL_REF
+  pins: [U2.PA6, U5.VREF]
+- name: FIL_REV
+  pins: [U2.PB3, U5.REV]
+- name: GND
+  pins:
+  - C1.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - J1.Pin_1
+  - J2.Pin_2@2
+  - J3.MountPin@MP
+  - J3.Pin_1
+  - R14.2
+  - R2.1
+  - R4.2
+  - U2.GND
+  - U3.GND
+  - U4.GND
+  - U5.GND
+- name: HV
+  pins: [C2.2, C3.1, D1.K, R3.1, U4.VPP_HV]
+- name: HV_BLANK
+  pins: [R14.1, U2.PA5, U4.BLANKING]
+- name: HV_CLOCK
+  pins: [U2.PA3, U4.CLOCK]
+- name: HV_DATA_IN
+  pins: [U2.PA1, U4.DATA_IN]
+- name: HV_EN
+  pins: [R1.2, U3.EN]
+- name: HV_STROBE
+  pins: [U2.PA4, U4.STROBE]
+- name: Net-(D2-Pad1)
+  pins: [D2.K, R4.1]
+- name: Net-(U2-Pad5)
+  pins: [D2.A, U2.PA7]
+- name: OUT1
+  pins: [R5.2, U5.OUT1]
+- name: OUT2
+  pins: [R6.2, U5.OUT2]
+- name: SCL
+  pins: [J1.Pin_4, J3.Pin_4, R7.2, U2.PB0]
+- name: SDA
+  pins: [J1.Pin_3, J3.Pin_3, R8.1, U2.PB1]
+- name: SW
+  pins: [D1.A, L1.2, U3.SW]
+- name: UPDI
+  pins: [J1.Pin_5, J2.Pin_1@1, U2.nRESET/PA0]
+- name: VM
+  pins: [C4.1, L2.2, U5.VM]
+positions:
+- ref: A1
+  x: 94.2
+  y: 76.75
+  rot: -11.0
+- ref: C1
+  x: 152.45
+  y: 69.29
+  rot: 90.0
+- ref: C2
+  x: 144.43
+  y: 65.33
+  rot: 90.0
+- ref: C3
+  x: 149.38
+  y: 63.68
+  rot: 180.0
+- ref: C4
+  x: 105.89
+  y: 59.05
+  rot: -90.0
+- ref: C5
+  x: 118.39
+  y: 65.46
+  rot: 90.0
+- ref: C6
+  x: 120.68
+  y: 65.46
+  rot: 90.0
+- ref: D1
+  x: 152.55
+  y: 64.82
+  rot: -90.0
+- ref: D2
+  x: 106.58
+  y: 66.98
+  rot: -90.0
+- ref: J1
+  x: 90.0
+  y: 58.5
+- ref: J2
+  x: 107.75
+  y: 75.79
+  rot: 180.0
+- ref: J3
+  x: 99.47
+  y: 66.47
+  rot: 180.0
+- ref: L1
+  x: 155.35
+  y: 68.38
+  rot: 90.0
+- ref: L2
+  x: 108.81
+  y: 59.56
+  rot: 90.0
+- ref: R1
+  x: 149.5
+  y: 71.3
+  rot: 180.0
+- ref: R14
+  x: 114.83
+  y: 64.19
+- ref: R2
+  x: 145.39
+  y: 68.27
+  rot: 180.0
+- ref: R3
+  x: 146.46
+  y: 65.33
+  rot: -90.0
+- ref: R4
+  x: 104.55
+  y: 66.98
+  rot: -90.0
+- ref: R5
+  x: 106.55
+  y: 55.75
+- ref: R6
+  x: 139.04
+  y: 55.8
+  rot: 180.0
+- ref: R7
+  x: 104.55
+  y: 71.81
+  rot: 90.0
+- ref: R8
+  x: 106.58
+  y: 71.82
+  rot: -90.0
+- ref: U1
+  x: 162.0
+  y: 49.97
+  rot: 180.0
+  side: back
+- ref: U2
+  x: 112.55
+  y: 69.01
+  rot: -90.0
+- ref: U3
+  x: 149.5
+  y: 67.87
+  rot: -90.0
+- ref: U4
+  x: 131.6
+  y: 69.01
+  rot: -90.0
+- ref: U5
+  x: 114.81
+  y: 58.09
+copper_pours:
+- net: +5V
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: HV
+  layers: [F.Cu]

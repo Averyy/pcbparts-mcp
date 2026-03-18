@@ -1,0 +1,231 @@
+name: ExpressLRS RX 20x20 v2
+slug: expresslrs-rx-20x20-v2
+source: ExpressLRS/ExpressLRS-Hardware
+format: eagle
+description: SX1280 2.4GHz LoRa RC receiver, ESP8285
+tags: [lora]
+key_ics: [SX1280, ESP8285]
+outline:
+  width_mm: 26.25
+  height_mm: 24.0
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 12mil
+  min_via: 6mil
+components:
+- ref: C1
+  value: 10uF
+  footprint: CAPM3528X210
+  decouples: U$5
+- ref: C2
+  value: 100uF
+  footprint: CAPM3528X210
+  decouples: U2
+- ref: D1
+  value: blue LED
+  footprint: '0603'
+  mpn: 19-217-BHC-ZL1M2RY-3T
+  description: '304090045'
+- ref: E2
+  value: ANTENNA
+  footprint: TRACE_ANTENNA_2.4GHZ_15.2MM
+  description: Chip antenna
+- ref: JMP1
+  value: 0R-JUMP
+  footprint: A0R-JMP
+  description: SMD 0R 0805 Jumper
+- ref: R3
+  value: 330ohm
+  footprint: 0805
+  mpn: RC0805JR-071KL
+  tolerance: 5%
+  power: 1/8W
+- ref: R4
+  value: 330ohm
+  footprint: 0805
+  mpn: RC0805JR-071KL
+  tolerance: 5%
+  power: 1/8W
+- ref: R5
+  value: 330ohm
+  footprint: 0805
+  mpn: RC0805JR-071KL
+  tolerance: 5%
+  power: 1/8W
+- ref: S1
+  value: DTSM-3
+  footprint: DTSM-3
+- ref: U$1
+  value: ESP-M2
+  footprint: ESP-M2
+  description: ESP8285 Module - M2
+  manufacturer: Doctors of Intelligence & Technology Co., LTD
+  mpn: ESP-M2
+- ref: U$2
+  value: 1x1 header
+  footprint: PAD1
+- ref: U$3
+  value: 1x1 header
+  footprint: PAD1
+- ref: U$4
+  value: 1x1 header
+  footprint: PAD1
+- ref: U$5
+  value: 1x1 header
+  footprint: PAD1
+- ref: U$6
+  value: 1x1 header
+  footprint: PAD1
+- ref: U1
+  value: SX1280
+  footprint: SX1280
+  description: 2.4GHz LoRa transceiver
+- ref: U2
+  value: AMS1117-3.3
+  footprint: SOT-4
+  description: Sot223/Pkg 1-Amp 3
+  manufacturer: Advanced Monolithic Systems
+  mpn: AMS1117-3.3
+- ref: X1
+  value: '734120110'
+  footprint: '734120110'
+  description: MICRO COAXIAL CONNECTOR RECEPTACLE VERTICAL
+  manufacturer: Molex
+  mpn: 734-12-0110
+nets:
+- name: 3V3
+  pins:
+  - C2.1
+  - JMP1.1
+  - R5.2
+  - U$1.VCC
+  - U$4.1
+  - U1.VCC
+  - U2.VOUT
+- name: ANT
+  pins: [U1.ANT, X1.1]
+- name: BOOT
+  pins: [S1.1, U$1.IO0]
+- name: BUSY
+  pins: [U$1.IO5, U1.BUSY]
+- name: DIO1
+  pins: [U$1.IO4, U1.DIO1]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - D1.-
+  - E2.GND
+  - JMP1.3
+  - S1.2
+  - U$1.GND
+  - U$1.GND2
+  - U$6.1
+  - U1.GND1
+  - U1.GND2
+  - U1.GND3
+  - U1.GND4
+  - U2.ADJ/GND
+  - X1.2
+- name: IO16
+  pins: [R4.1, U$1.IO16]
+- name: MISO
+  pins: [U$1.IO12, U1.MISO]
+- name: MOSI
+  pins: [U$1.IO13, U1.MOSI]
+- name: N$1
+  pins: [D1.+, R4.2]
+- name: NRESET
+  pins: [U$1.IO2, U1.NRESET]
+- name: NSS
+  pins: [U$1.IO15, U1.NSS]
+- name: RX
+  pins: [U$1.RX, U$2.1]
+- name: SCK
+  pins: [U$1.IO14, U1.SCK]
+- name: TCXO
+  pins: [JMP1.2, U1.TCXOEN]
+- name: TX
+  pins: [R3.1, R5.1, U$3.1]
+- name: TXD0
+  pins: [R3.2, U$1.TX]
+- name: VIN
+  pins: [C1.1, U$5.1, U2.VIN]
+- name: WIFI
+  pins: [E2.SIGNAL, U$1.ANT]
+positions:
+- ref: C1
+  x: 2.75
+  y: 15.0
+  rot: 90.0
+- ref: C2
+  x: -2.0
+  y: 15.0
+  rot: 90.0
+- ref: D1
+  x: 14.5
+  y: 0.0
+- ref: E2
+  x: 6.5
+  y: 12.75
+- ref: JMP1
+  x: 20.66
+  y: 10.0
+- ref: R3
+  x: 14.15
+  y: 17.38
+  rot: 270.0
+- ref: R4
+  x: 6.0
+  y: 0.0
+  rot: 270.0
+- ref: R5
+  x: 8.5
+  y: 17.25
+  rot: 90.0
+- ref: S1
+  x: -1.75
+  y: 6.85
+  rot: 90.0
+- ref: U$1
+  x: 5.46
+  y: 5.59
+  rot: 270.0
+- ref: U$2
+  x: 12.62
+  y: 20.75
+  rot: 90.0
+- ref: U$3
+  x: 15.16
+  y: 20.75
+  rot: 90.0
+- ref: U$4
+  x: 10.08
+  y: 20.75
+  rot: 90.0
+- ref: U$5
+  x: 7.54
+  y: 20.75
+  rot: 90.0
+- ref: U$6
+  x: 5.0
+  y: 20.75
+  rot: 90.0
+- ref: U1
+  x: 10.0
+  y: 10.0
+  rot: 180.0
+- ref: U2
+  x: -0.08
+  y: 6.96
+- ref: X1
+  x: -1.54
+  y: 15.6
+  rot: 90.0
+copper_pours:
+- net: 3V3
+  layers: [B.Cu]
+- net: GND
+  layers: [F.Cu]

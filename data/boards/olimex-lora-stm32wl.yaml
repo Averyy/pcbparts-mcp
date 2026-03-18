@@ -1,0 +1,595 @@
+name: Olimex LoRa-STM32WL
+slug: olimex-lora-stm32wl
+source: OLIMEX/LoRa-STM32WL-DevKIT
+format: kicad_legacy
+description: Integrated LoRa SoC (STM32WL), magnetometer (IIS2MDCTR)
+tags: [lora]
+key_ics: [STM32WL, IIS2MDCTR]
+outline:
+  width_mm: 58.42
+  height_mm: 55.88
+design_rules:
+  layers: 2
+  min_trace: 0.178mm
+  min_clearance: 0.178mm
+  min_drill: 0.4mm
+  min_via: 0.7mm
+components:
+- ref: BAT1
+  value: BTH-DP-AA-LF
+  footprint: BATTERY-1xAA
+- ref: BATTERY1
+  value: HN1x2
+  footprint: HN1x2_Jumper
+- ref: BB-STM32WL_PLATFORM1
+  value: 2xPN_F-D-1X12-LF
+  footprint: BB-STM32WL
+- ref: BUTTON1
+  value: T1107A
+  footprint: T1107A(6x3,8x2,5MM)
+- ref: C1
+  value: 4.7uF
+  footprint: '0603'
+  voltage: 6.3V
+- ref: C10
+  value: 220nF +80-20% 10VDC
+  footprint: '0402'
+- ref: C11
+  value: 2.2uF
+  footprint: '0402'
+  voltage: 6.3V
+  tolerance: 20%
+  decouples: U2
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C13
+  value: 22uF
+  footprint: '0603'
+  voltage: 6.3V
+- ref: C2
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+  decouples: U2
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+  decouples: U2
+- ref: C4
+  value: 4.7uF
+  footprint: '0603'
+  voltage: 6.3V
+  decouples: U1
+- ref: C5
+  value: 2.2uF
+  footprint: '0402'
+  voltage: 6.3V
+  tolerance: 20%
+  decouples: U3
+- ref: C6
+  value: 220nF +80-20% 10VDC
+  footprint: '0402'
+- ref: C7
+  value: 4.7uF
+  footprint: '0603'
+  voltage: 6.3V
+- ref: C8
+  value: 220nF +80-20% 10VDC
+  footprint: '0402'
+  decouples: U5
+- ref: C9
+  value: 4.7uF
+  footprint: '0603'
+  decouples: U4
+- ref: CON1
+  value: 1x10 header
+  footprint: HN1x10
+- ref: D1
+  value: 1N5819
+  footprint: SOD-123_KA
+- ref: FET1
+  value: WPM2015-3/TR
+  footprint: SOT23
+- ref: FET2
+  value: WPM2015-3/TR
+  footprint: SOT23
+- ref: L1
+  value: FB0805 600R
+  footprint: 0805
+  current: 2A
+- ref: LED1
+  value: LED/0603/RED/300 mCd
+  footprint: '0603'
+- ref: LED2
+  value: LED/0603/GREEN/300 mCd
+  footprint: '0603'
+- ref: LED3
+  value: LED/0603/YELLOW/150 mCd
+  footprint: '0603'
+- ref: R1
+  value: 220ohm
+  footprint: '0402'
+- ref: R10
+  value: 10kohm
+  footprint: '0402'
+  pullup: /I2C1_SDA
+- ref: R11
+  value: 10kohm
+  footprint: '0402'
+  pullup: /I2C1_SCL
+- ref: R12
+  value: 22ohm
+  footprint: '0402'
+- ref: R13
+  value: 10kohm
+  footprint: '0402'
+  pullup: U2.4
+- ref: R14
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R15
+  value: 10kohm
+  footprint: '0402'
+- ref: R16
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R17
+  value: 10kohm
+  footprint: '0402'
+  pulldown: U2.31
+- ref: R18
+  value: 10kohm
+  footprint: '0402'
+- ref: R19
+  value: 100kohm
+  footprint: '0402'
+  pullup: PB12
+- ref: R2
+  value: 1.5kohm
+  footprint: '0402'
+- ref: R3
+  value: 2.2kohm
+  footprint: '0402'
+  pulldown: /CMSIS-DAP/VDEB
+- ref: R4
+  value: 1.5kohm
+  footprint: '0402'
+- ref: R5
+  value: 220ohm
+  footprint: '0402'
+- ref: R6
+  value: 220ohm
+  footprint: '0402'
+- ref: R7
+  value: 22ohm
+  footprint: '0402'
+- ref: R8
+  value: SNS-LDR5MM
+  footprint: R_PHOTO-Device
+- ref: R9
+  value: 10kohm
+  footprint: '0402'
+  pulldown: R8.2
+- ref: RESET1
+  value: T1107A
+  footprint: T1107A(6x3,8x2,5MM)
+- ref: SB1
+  value: NA
+  footprint: WU02S
+- ref: SJ1
+  value: SJ_Closed_Board_Mounted
+  footprint: SJ-1
+- ref: U1
+  value: ME6210A33PG
+  footprint: SOT89
+- ref: U2
+  value: STM32L052K8U3
+  footprint: QFN32_EP(33)
+- ref: U3
+  value: IIS2MDCTR
+  footprint: LGA-12
+- ref: U4
+  value: BME280
+  footprint: BME280
+- ref: U5
+  value: AHT20
+  footprint: AHT20
+- ref: UEXT1
+  value: BH10S
+  footprint: GBH-254-SMT-10
+- ref: USB1
+  value: MISB-SWMM-5B-LF
+  footprint: USB-MICRO_MISB-SWMM-5B_LF
+nets:
+- name: +3.3V
+  pins:
+  - C11.1
+  - C2.1
+  - C3.1
+  - C4.1
+  - D1.2
+  - FET1.1
+  - R13.2
+  - R18.2
+  - U1.3
+  - U2.1
+  - U2.17
+  - U2.5
+- name: /CMSIS-DAP/5V_USB
+  pins: [C1.2, R2.2, U1.2, USB1.1]
+- name: /CMSIS-DAP/USART_RX
+  pins: [R5.2, U2.9]
+- name: /CMSIS-DAP/USART_TX
+  pins: [R6.2, U2.8]
+- name: /CMSIS-DAP/USBD_DN
+  pins: [R7.1, USB1.2]
+- name: /CMSIS-DAP/USBD_DP
+  pins: [R12.1, R4.1, USB1.3]
+- name: /CMSIS-DAP/USBD_N
+  pins: [R7.2, U2.21]
+- name: /CMSIS-DAP/USBD_P
+  pins: [R12.2, U2.22]
+- name: /CMSIS-DAP/VDEB
+  pins: [R2.1, R3.2, U2.13]
+- name: /CMSIS-DAP/nRESET
+  pins: [R1.2, U2.32]
+- name: /I2C1_SCL
+  pins: [BB-STM32WL_PLATFORM1.4, R11.2, U3.1, U4.4, U5.3, UEXT1.5]
+- name: /I2C1_SDA
+  pins: [BB-STM32WL_PLATFORM1.3, R10.2, U3.4, U4.3, U5.4, UEXT1.6]
+- name: /LPUART1_RX
+  pins: [BB-STM32WL_PLATFORM1.20, UEXT1.4]
+- name: /LPUART1_TX
+  pins: [BB-STM32WL_PLATFORM1.19, UEXT1.3]
+- name: /SPI1_MISO
+  pins: [BB-STM32WL_PLATFORM1.24, UEXT1.7]
+- name: /SPI1_MOSI
+  pins: [BB-STM32WL_PLATFORM1.23, UEXT1.8]
+- name: /SPI1_NSS
+  pins: [BB-STM32WL_PLATFORM1.21, UEXT1.10]
+- name: /SPI1_SCK
+  pins: [BB-STM32WL_PLATFORM1.22, UEXT1.9]
+- name: /SWCLK1
+  pins: [BB-STM32WL_PLATFORM1.1, U2.11]
+- name: /SWCLK2
+  pins: [CON1.8, U2.24]
+- name: /SWDIO1
+  pins: [BB-STM32WL_PLATFORM1.2, U2.10]
+- name: /SWDIO2
+  pins: [CON1.9, U2.23]
+- name: /USART1_RX
+  pins: [BB-STM32WL_PLATFORM1.9, R6.1]
+- name: /USART1_TX
+  pins: [BB-STM32WL_PLATFORM1.11, R5.1]
+- name: /nBOOT0
+  pins: [BB-STM32WL_PLATFORM1.10, U2.30]
+- name: /nINT
+  pins: [BB-STM32WL_PLATFORM1.12, U3.7]
+- name: GND
+  pins:
+  - BAT1.2
+  - BB-STM32WL_PLATFORM1.18
+  - BB-STM32WL_PLATFORM1.8
+  - BUTTON1.2
+  - C1.1
+  - C10.2
+  - C11.2
+  - C12.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.1
+  - CON1.10
+  - CON1.2
+  - L1.1
+  - LED1.1
+  - LED2.1
+  - LED3.1
+  - R17.1
+  - R18.1
+  - R3.1
+  - R9.1
+  - RESET1.2
+  - SB1.2
+  - U1.1
+  - U2.33
+  - U3.6
+  - U3.8
+  - U4.1
+  - U4.7
+  - U5.5
+  - UEXT1.2
+  - USB1.5
+- name: NRST
+  pins: [BB-STM32WL_PLATFORM1.6, R1.1, RESET1.1]
+- name: Net-(BAT1-Pad1)
+  pins: [BAT1.1, BATTERY1.1]
+- name: Net-(BATTERY1-Pad2)
+  pins: [BATTERY1.2, FET1.3]
+- name: Net-(C12-Pad1)
+  pins: [C12.1, R13.1, U2.4]
+- name: Net-(C6-Pad1)
+  pins: [C6.1, U3.5]
+- name: Net-(L1-Pad2)
+  pins: [L1.2, USB1.0]
+- name: Net-(LED1-Pad2)
+  pins: [LED1.2, R16.2]
+- name: Net-(LED2-Pad2)
+  pins: [LED2.2, R15.2]
+- name: Net-(LED3-Pad2)
+  pins: [LED3.2, R14.2]
+- name: Net-(R14-Pad1)
+  pins: [R14.1, U2.26]
+- name: Net-(R15-Pad1)
+  pins: [R15.1, U2.27]
+- name: Net-(R16-Pad1)
+  pins: [R16.1, U2.28]
+- name: Net-(R17-Pad2)
+  pins: [R17.2, U2.31]
+- name: Net-(R4-Pad2)
+  pins: [R4.2, U2.25]
+- name: Net-(R8-Pad2)
+  pins: [R8.2, R9.2, SJ1.1]
+- name: Net-(SB1-Pad1)
+  pins: [SB1.1, U2.12]
+- name: PA0
+  pins: [BB-STM32WL_PLATFORM1.14, BUTTON1.1, C10.1, CON1.6]
+- name: PA1
+  pins: [BB-STM32WL_PLATFORM1.15, CON1.5]
+- name: PA6
+  pins: [BB-STM32WL_PLATFORM1.17, CON1.3]
+- name: PB12
+  pins: [BB-STM32WL_PLATFORM1.16, C13.1, CON1.4, FET2.1, R19.1]
+- name: PB4
+  pins: [BB-STM32WL_PLATFORM1.13, CON1.7, SJ1.2]
+- name: VDD
+  pins:
+  - BB-STM32WL_PLATFORM1.7
+  - C13.2
+  - C7.1
+  - D1.1
+  - FET1.2
+  - FET2.2
+  - R19.2
+- name: VDDIO
+  pins:
+  - C5.1
+  - C8.1
+  - C9.2
+  - CON1.1
+  - FET2.3
+  - R10.1
+  - R11.1
+  - R8.1
+  - U3.10
+  - U3.3
+  - U3.9
+  - U4.2
+  - U4.5
+  - U4.6
+  - U4.8
+  - U5.2
+  - UEXT1.1
+positions:
+- ref: BAT1
+  x: 83.82
+  y: 127.76
+- ref: BATTERY1
+  x: 67.31
+  y: 138.43
+- ref: BB-STM32WL_PLATFORM1
+  x: 86.02
+  y: 103.18
+- ref: BUTTON1
+  x: 107.06
+  y: 106.68
+- ref: C1
+  x: 90.17
+  y: 94.49
+  rot: 90.0
+- ref: C10
+  x: 101.6
+  y: 110.49
+  rot: 270.0
+- ref: C11
+  x: 85.72
+  y: 97.03
+  rot: 90.0
+- ref: C12
+  x: 82.55
+  y: 106.05
+  rot: 270.0
+- ref: C13
+  x: 109.38
+  y: 77.49
+- ref: C2
+  x: 81.53
+  y: 106.05
+  rot: 270.0
+- ref: C3
+  x: 84.58
+  y: 106.05
+  rot: 270.0
+- ref: C4
+  x: 94.13
+  y: 95.86
+  rot: 180.0
+- ref: C5
+  x: 111.76
+  y: 95.89
+  rot: 270.0
+- ref: C6
+  x: 109.09
+  y: 99.31
+- ref: C7
+  x: 75.69
+  y: 100.58
+  rot: 90.0
+- ref: C8
+  x: 82.93
+  y: 110.74
+  rot: 180.0
+- ref: C9
+  x: 69.34
+  y: 113.16
+  rot: 90.0
+- ref: CON1
+  x: 85.09
+  y: 138.43
+- ref: D1
+  x: 94.49
+  y: 98.04
+- ref: FET1
+  x: 94.74
+  y: 101.73
+  rot: 90.0
+- ref: FET2
+  x: 92.33
+  y: 105.54
+- ref: L1
+  x: 78.36
+  y: 94.36
+  rot: 90.0
+- ref: LED1
+  x: 99.44
+  y: 138.56
+  rot: 90.0
+- ref: LED2
+  x: 101.09
+  y: 138.56
+  rot: 90.0
+- ref: LED3
+  x: 102.74
+  y: 138.56
+  rot: 90.0
+- ref: R1
+  x: 79.12
+  y: 104.14
+- ref: R10
+  x: 75.56
+  y: 112.52
+  rot: 270.0
+- ref: R11
+  x: 75.56
+  y: 110.24
+  rot: 90.0
+- ref: R12
+  x: 82.55
+  y: 96.39
+  rot: 270.0
+- ref: R13
+  x: 83.57
+  y: 106.05
+  rot: 270.0
+- ref: R14
+  x: 79.12
+  y: 99.57
+  rot: 180.0
+- ref: R15
+  x: 79.12
+  y: 100.58
+  rot: 180.0
+- ref: R16
+  x: 79.12
+  y: 101.6
+  rot: 180.0
+- ref: R17
+  x: 79.12
+  y: 103.12
+- ref: R18
+  x: 87.12
+  y: 97.03
+  rot: 270.0
+- ref: R19
+  x: 95.12
+  y: 105.03
+  rot: 90.0
+- ref: R2
+  x: 88.52
+  y: 97.03
+  rot: 90.0
+- ref: R3
+  x: 89.03
+  y: 98.55
+  rot: 180.0
+- ref: R4
+  x: 81.53
+  y: 96.39
+  rot: 270.0
+- ref: R5
+  x: 75.56
+  y: 92.33
+  rot: 270.0
+- ref: R6
+  x: 75.56
+  y: 97.28
+  rot: 270.0
+- ref: R7
+  x: 83.57
+  y: 96.39
+  rot: 270.0
+- ref: R8
+  x: 104.39
+  y: 99.44
+  rot: 180.0
+- ref: R9
+  x: 101.6
+  y: 102.87
+  rot: 90.0
+- ref: RESET1
+  x: 107.06
+  y: 114.3
+- ref: SB1
+  x: 90.07
+  y: 100.69
+- ref: SJ1
+  x: 103.0
+  y: 102.74
+  rot: 270.0
+  side: back
+- ref: U1
+  x: 93.47
+  y: 91.06
+- ref: U2
+  x: 83.52
+  y: 101.37
+- ref: U3
+  x: 108.84
+  y: 96.14
+- ref: U4
+  x: 78.6
+  y: 113.03
+  rot: 90.0
+- ref: U5
+  x: 83.44
+  y: 113.41
+  rot: 180.0
+- ref: UEXT1
+  x: 62.23
+  y: 107.19
+  rot: 90.0
+- ref: USB1
+  x: 83.82
+  y: 89.79
+  rot: 90.0
+copper_pours:
+- net: /CMSIS-DAP/5V_USB
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [F&B.Cu]
+  keepout: true

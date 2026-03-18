@@ -1,0 +1,477 @@
+name: Blues Notecarrier-Pi
+slug: blues-notecarrier-pi
+source: blues/note-hardware
+format: kicad7
+description: Raspberry Pi HAT design pattern, M.2 Notecard + NanoSIM
+tags: [robotics]
+outline:
+  width_mm: 65.0
+  height_mm: 56.5
+design_rules:
+  layers: 4
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.254mm
+  min_via: 0.508mm
+components:
+- ref: C1
+  value: 22u 25V-X5R
+  footprint: '1206'
+  description: CHIP CAP.CER. 22uF 25V 10% X5R 1206
+- ref: C2
+  value: 22u 25V-X5R
+  footprint: '1206'
+  description: CHIP CAP.CER. 22uF 25V 10% X5R 1206
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+  description: CHIP CAP.CER. 100nF 16V 10% X7R 0402
+  voltage: 16V
+- ref: C4
+  value: 33p 50V-C0G
+  footprint: '0402'
+  description: CHIP CAP.CER. 33pF 50V 5% C0G 0402
+- ref: C5
+  value: 33p 50V-C0G
+  footprint: '0402'
+  description: CHIP CAP.CER. 33pF 50V 5% C0G 0402
+- ref: C6
+  value: 33p 50V-C0G
+  footprint: '0402'
+  description: CHIP CAP.CER. 33pF 50V 5% C0G 0402
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  description: CHIP CAP.CER. 100nF 16V 10% X7R 0402
+  voltage: 16V
+- ref: C8
+  value: 10n 1kV
+  footprint: '1206'
+  description: CHIP CAP.CER. 10nF 1000V 10% X7R 1206
+- ref: DS1
+  value: STPS3H100U
+  footprint: SMB
+  mpn: STPS3H100U
+- ref: DS2
+  value: STPS3H100U
+  footprint: SMB
+  mpn: STPS3H100U
+- ref: DSW1
+  value: DIP-SW-CHS-01TB
+  footprint: DSS-CHS-01TB
+  description: DIP SWITCH 1P/D BLACK CHS-01TB COPAL SMT
+- ref: DSW2
+  value: DIP-SW-CHS-01TB
+  footprint: DSS-CHS-01TB
+  description: DIP SWITCH 1P/D BLACK CHS-01TB COPAL SMT
+- ref: DSW3
+  value: DIP-SW-CHS-01TB
+  footprint: DSS-CHS-01TB
+  description: DIP SWITCH 1P/D BLACK CHS-01TB COPAL SMT
+- ref: F1
+  value: SF-0603F150-2
+  footprint: '0603'
+  mpn: SF-0603F150-2
+- ref: F2
+  value: 3.5A/32V
+  footprint: '0603'
+  mpn: 0603SFV350F/32-2
+- ref: J1
+  value: '2223'
+  footprint: J-20x2-0254-FDT-SSQX03
+  mpn: '2223'
+  description: STRIP 20P F/D DOPPIA FILA P=2.54 2223 ADAFRUIT
+- ref: J2
+  value: NanoSIM - SF72S006VBAR2500
+  footprint: J-NANOSIM-SF72S006VBA_NO-FILL
+  mpn: SF72S006VBAR2500
+  description: "CONN. NANOSIM 8P F/90\xB0 PUSH-PUSH SF72S006VBAR2500 JAE ELECTRONICS SMT"
+- ref: J3
+  value: MDT420E01001
+  footprint: J-75-0050-MOS-M2-E
+  description: "CONN. M.2 75P M/90\xB0 P=0.5 MDT420E01001 AMPHENOL SMT"
+- ref: J4
+  value: 10118192-0002LF
+  footprint: J-5-0065-FOS-USB10118192-NOF
+  mpn: 10118192-0002LF
+  description: "CONN. USB F/90\xB0 TYPE MICRO-B C.S. 10118192-0002LF FCI SMT"
+- ref: J5
+  value: GROVE
+  footprint: J-4-0200-MOS-GROVE_NO-SILK
+  description: "CONN. GROVE 4P M/90\xB0 P=2 1125R-SMT-4P SEEDSTUDIO SMT"
+- ref: OBJ1
+  value: 9774025151R
+  footprint: DIST-WASMSIM0250
+  description: DISTANZ. CIL. METALLO 5.1X2.5 9774025151R W.E SMT
+- ref: R1
+  value: 22ohm
+  footprint: '0603'
+  description: CHIP RES. 22R 0603 1/16W 1%
+- ref: R10
+  value: 100ohm
+  footprint: '0402'
+  description: CHIP RES. 100R 0402 1/16W 1%
+- ref: R11
+  value: 100ohm
+  footprint: '0402'
+  description: CHIP RES. 100R 0402 1/16W 1%
+- ref: R12
+  value: 100ohm
+  footprint: '0402'
+  description: CHIP RES. 100R 0402 1/16W 1%
+- ref: R13
+  value: 100ohm
+  footprint: '0402'
+  description: CHIP RES. 100R 0402 1/16W 1%
+- ref: R2
+  value: 22ohm
+  footprint: '0603'
+  description: CHIP RES. 22R 0603 1/16W 1%
+- ref: R3
+  value: 22ohm
+  footprint: '0603'
+  description: CHIP RES. 22R 0603 1/16W 1%
+- ref: R4
+  value: 15kohm
+  footprint: '0402'
+  description: CHIP RES. 15K 0402 1/16W 1%
+- ref: R5
+  value: 1Mohm
+  footprint: '1206'
+  description: CHIP RES. 1M 1206 1/4W 1%
+- ref: R6
+  value: 100ohm
+  footprint: '0402'
+  description: CHIP RES. 100R 0402 1/16W 1%
+- ref: R7
+  value: 100ohm
+  footprint: '0402'
+  description: CHIP RES. 100R 0402 1/16W 1%
+- ref: R8
+  value: 100ohm
+  footprint: '0402'
+  description: CHIP RES. 100R 0402 1/16W 1%
+- ref: R9
+  value: 100ohm
+  footprint: '0402'
+  description: CHIP RES. 100R 0402 1/16W 1%
+- ref: TVS1
+  value: SM6T6V8A
+  footprint: SMB
+  description: DIODO TVS TRANSIL UNIDIR. 600W 6.8V SM6T6V8A SMB SMT
+- ref: TVS2
+  value: SM2T3V3A
+  footprint: D-DO216AA_NO-SILK
+  description: DIODO TVS TRANSIL UNDIR. 200W 3.6V SM2T3V3A DO216AA SMT
+- ref: TVS3
+  value: SM6T6V8A
+  footprint: SMB
+  description: DIODO TVS TRANSIL UNIDIR. 600W 6.8V SM6T6V8A SMB SMT
+- ref: TVS4
+  value: ESDLC5V0M5-TP
+  footprint: SOT666_NO-SILK
+  description: DIODO TVS TRANSIL UNIDIR. 20W 5V ESDLC5V0M5-TP SOT563 SMT
+nets:
+- name: /ATTN
+  pins: [DSW3.2, J1.Pin_31]
+- name: /AUX_EN
+  pins: [DSW2.2, J3.AUX_EN_P]
+- name: /AUX_RX
+  pins: [J1.Pin_8, R10.1]
+- name: /AUX_RX_P
+  pins: [J3.AUX_RX_P, R11.2]
+- name: /AUX_TX
+  pins: [J1.Pin_10, R12.1]
+- name: /AUX_TX_P
+  pins: [J3.AUX_TX_P, R13.2]
+- name: /SCL
+  pins: [J1.Pin_5, J5.1, R6.1]
+- name: /SDA
+  pins: [J1.Pin_3, J5.2, R8.1]
+- name: /SIM_CLK
+  pins: [J3.SIM_CLK, R3.1]
+- name: /SIM_IO
+  pins: [J3.SIM_IO, R1.1]
+- name: /SIM_NPRESENT
+  pins: [J2.DSW, J3.SIM_NPRESENT, TVS4.K3]
+- name: /SIM_RST
+  pins: [J3.SIM_RST, R2.1]
+- name: /SIM_VCC
+  pins: [C3.1, J2.VCC, J3.SIM_VCC, R4.2, TVS4.K2]
+- name: /USB_DM
+  pins: [J3.USB_DM, J4.D-]
+- name: /USB_DP
+  pins: [J3.USB_DP, J4.D+]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - J1.Pin_14
+  - J1.Pin_20
+  - J1.Pin_25
+  - J1.Pin_30
+  - J1.Pin_34
+  - J1.Pin_39
+  - J1.Pin_6
+  - J1.Pin_9
+  - J2.CSW
+  - J2.GND
+  - J2.SH@SH
+  - J3.GND@11
+  - J3.GND@18
+  - J3.GND@3
+  - J3.GND@33
+  - J3.GND@39
+  - J3.GND@45
+  - J3.GND@5
+  - J3.GND@51
+  - J3.GND@57
+  - J3.GND@6
+  - J3.GND@71
+  - J3.GND@73
+  - J4.GND
+  - J5.4
+  - OBJ1.1
+  - R5.2
+  - TVS1.A2
+  - TVS2.A2
+  - TVS3.A2
+  - TVS4.A
+- name: Net-(J2-CLK)
+  pins: [C5.1, J2.CLK, R3.2, TVS4.K1]
+- name: Net-(J2-I/O)
+  pins: [C6.1, J2.I/O, R1.2, R4.1, TVS4.K5]
+- name: Net-(J2-RST)
+  pins: [C4.1, J2.RST, R2.2, TVS4.K4]
+- name: Net-(J3-ATTN_P)
+  pins: [DSW3.1, J3.ATTN_P]
+- name: Net-(J3-SCL_P)
+  pins: [J3.SCL_P, R7.2]
+- name: Net-(J3-SDA_P)
+  pins: [J3.SDA_P, R9.2]
+- name: Net-(J3-VACT_GPS_IN)
+  pins: [DSW1.1, J3.VACT_GPS_IN]
+- name: Net-(J4-Shield)
+  pins: [C8.1, J4.Shield@6, R5.1]
+- name: Net-(R10-Pad2)
+  pins: [R10.2, R11.1]
+- name: Net-(R12-Pad2)
+  pins: [R12.2, R13.1]
+- name: Net-(R6-Pad2)
+  pins: [R6.2, R7.1]
+- name: Net-(R8-Pad2)
+  pins: [R8.2, R9.1]
+- name: V+
+  pins: [C2.1, DS2.A, J1.Pin_2, J1.Pin_4, TVS3.A1]
+- name: VACT_GPS_OUT
+  pins: [DSW1.2, J3.VACT_GPS_OUT]
+- name: VIO
+  pins: [C1.1, F1.1, J1.Pin_1, TVS2.A1]
+- name: VIO_P
+  pins: [DSW2.1, F1.2, J3.VIO_P@2, J3.VIO_P@4, J5.3]
+- name: VMODEM
+  pins: [DS1.K, DS2.K, F2.1, TVS1.A1]
+- name: VMODEM_P
+  pins: [F2.2, J3.VMODEM_P@70, J3.VMODEM_P@72, J3.VMODEM_P@74]
+- name: VUSB
+  pins: [C7.1, DS1.A, J3.VUSB, J4.VBUS]
+positions:
+- ref: C1
+  x: 71.79
+  y: 94.67
+  rot: 180.0
+  side: back
+- ref: C2
+  x: 72.76
+  y: 102.86
+  rot: 90.0
+  side: back
+- ref: C3
+  x: 97.57
+  y: 120.08
+  rot: -90.0
+  side: back
+- ref: C4
+  x: 97.5
+  y: 122.55
+  rot: 90.0
+  side: back
+- ref: C5
+  x: 103.4
+  y: 121.11
+  rot: 90.0
+  side: back
+- ref: C6
+  x: 100.55
+  y: 123.0
+  rot: 180.0
+  side: back
+- ref: C7
+  x: 75.25
+  y: 129.99
+  side: back
+- ref: C8
+  x: 72.82
+  y: 134.4
+  rot: -90.0
+  side: back
+- ref: DS1
+  x: 80.34
+  y: 109.43
+  rot: 180.0
+  side: back
+- ref: DS2
+  x: 80.34
+  y: 104.35
+  rot: 180.0
+  side: back
+- ref: DSW1
+  x: 106.24
+  y: 96.58
+  side: back
+- ref: DSW2
+  x: 114.14
+  y: 96.58
+  side: back
+- ref: DSW3
+  x: 122.04
+  y: 96.58
+  side: back
+- ref: F1
+  x: 75.83
+  y: 94.63
+  side: back
+- ref: F2
+  x: 96.66
+  y: 104.93
+  side: back
+- ref: J1
+  x: 97.5
+  y: 87.5
+  side: back
+- ref: J2
+  x: 100.42
+  y: 132.45
+  rot: 180.0
+  side: back
+- ref: J3
+  x: 89.0
+  y: 97.75
+- ref: J4
+  x: 69.7
+  y: 127.8
+  rot: 90.0
+  side: back
+- ref: J5
+  x: 118.85
+  y: 124.98
+- ref: OBJ1
+  x: 89.0
+  y: 131.0
+  rot: -90.0
+- ref: R1
+  x: 100.19
+  y: 120.59
+  rot: -90.0
+  side: back
+- ref: R10
+  x: 93.75
+  y: 93.16
+  rot: -90.0
+  side: back
+- ref: R11
+  x: 93.75
+  y: 95.18
+  rot: -90.0
+  side: back
+- ref: R12
+  x: 94.87
+  y: 93.16
+  rot: -90.0
+  side: back
+- ref: R13
+  x: 94.87
+  y: 95.18
+  rot: -90.0
+  side: back
+- ref: R2
+  x: 96.12
+  y: 120.59
+  rot: -90.0
+  side: back
+- ref: R3
+  x: 101.99
+  y: 120.59
+  rot: -90.0
+  side: back
+- ref: R4
+  x: 98.84
+  y: 120.08
+  rot: 90.0
+  side: back
+- ref: R5
+  x: 75.07
+  y: 134.38
+  rot: -90.0
+  side: back
+- ref: R6
+  x: 89.44
+  y: 93.16
+  rot: -90.0
+  side: back
+- ref: R7
+  x: 89.44
+  y: 95.18
+  rot: -90.0
+  side: back
+- ref: R8
+  x: 90.56
+  y: 93.16
+  rot: -90.0
+  side: back
+- ref: R9
+  x: 90.56
+  y: 95.18
+  rot: -90.0
+  side: back
+- ref: TVS1
+  x: 80.6
+  y: 113.39
+  rot: -90.0
+  side: back
+- ref: TVS2
+  x: 70.73
+  y: 92.08
+  side: back
+- ref: TVS3
+  x: 68.58
+  y: 98.27
+  side: back
+- ref: TVS4
+  x: 106.55
+  y: 120.94
+  side: back
+copper_pours:
+- net: GND
+  layers: [B.Cu, In1.Cu, In2.Cu]
+- net: V+
+  layers: [B.Cu]
+- net: VIO
+  layers: [B.Cu]
+- net: VIO_P
+  layers: [F.Cu]
+- net: VMODEM
+  layers: [B.Cu]
+- net: VMODEM_P
+  layers: [B.Cu, F.Cu]
+- net: VUSB
+  layers: [B.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+  keepout: true

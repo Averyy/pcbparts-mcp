@@ -1,0 +1,161 @@
+name: SparkFun ACS712 Current Sensor
+slug: sparkfun-acs712-current-sensor
+source: sparkfun/Low_Current_Sensor_Breakout-ACS712
+format: eagle
+description: Hall-effect current sensor (ACS712), isolated measurement
+tags: [current-sensing, isolation, sensors]
+key_ics: [ACS712]
+outline:
+  width_mm: 29.21
+  height_mm: 15.24
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 20mil
+  min_via: 10mil
+components:
+- ref: C1
+  value: 100pF
+  footprint: '0402'
+- ref: C2
+  value: 100nF
+  footprint: '0402'
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+  decouples: U2
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C5
+  value: 1nF
+  footprint: '0402'
+- ref: JP1
+  value: 1x1 header
+  footprint: 1X01
+  description: Header 1
+- ref: JP2
+  value: 1x1 header
+  footprint: 1X01
+  description: Header 1
+- ref: JP3
+  value: 1x3 header
+  footprint: 1X03
+- ref: JP4
+  value: 1x1 header
+  footprint: 1X01
+  description: Header 1
+- ref: JP5
+  value: 1x1 header
+  footprint: 1X01
+  description: Header 1
+- ref: R1
+  value: 47kohm
+  footprint: '0402'
+- ref: R2
+  value: 1kohm
+  footprint: '0402'
+- ref: R3
+  value: TRIMPOT
+  footprint: TRIMPOT-3MM
+- ref: R4
+  value: TRIMPOT
+  footprint: TRIMPOT-3MM
+- ref: U1
+  value: ACS712
+  footprint: SOIC-8
+- ref: U2
+  value: OPA344
+  footprint: SOT-23-5
+nets:
+- name: 5V
+  pins: [C3.1, C4.2, JP3.1, R4.CW, U1.VCC, U2.V+]
+- name: FILT
+  pins: [C5.1, U1.FILT]
+- name: GND
+  pins:
+  - C2.2
+  - C3.2
+  - C4.1
+  - C5.2
+  - JP3.3
+  - R4.CCW
+  - U1.GND
+  - U2.V-
+- name: IN
+  pins: [C1.2, R1.2, R3.CW, R3.WIPER, U2.-IN]
+- name: IN_2
+  pins: [C2.1, R4.WIPER, U2.+IN]
+- name: IP+
+  pins: [JP1.1, JP4.1, U1.IP+@1, U1.IP+@2]
+- name: IP-
+  pins: [JP2.1, JP5.1, U1.IP-@3, U1.IP-@4]
+- name: N$4
+  pins: [R2.1, R3.CCW]
+- name: VO
+  pins: [C1.1, JP3.2, R1.1, U2.OUT]
+- name: VOUT
+  pins: [R2.2, U1.VOUT]
+positions:
+- ref: C1
+  x: 24.13
+  y: 7.62
+  rot: 270.0
+- ref: C2
+  x: 20.32
+  y: 11.43
+- ref: C3
+  x: 21.59
+  y: 3.81
+  rot: 180.0
+- ref: C4
+  x: 11.43
+  y: 11.43
+- ref: C5
+  x: 11.43
+  y: 3.81
+- ref: JP1
+  x: 2.54
+  y: 12.7
+- ref: JP2
+  x: 2.54
+  y: 2.54
+- ref: JP3
+  x: 27.94
+  y: 5.08
+  rot: 90.0
+- ref: JP4
+  x: 2.54
+  y: 8.89
+- ref: JP5
+  x: 2.54
+  y: 6.35
+- ref: R1
+  x: 22.86
+  y: 7.62
+  rot: 270.0
+- ref: R2
+  x: 16.51
+  y: 7.62
+  rot: 180.0
+- ref: R3
+  x: 16.51
+  y: 3.81
+  rot: 270.0
+- ref: R4
+  x: 16.51
+  y: 11.43
+  rot: 270.0
+- ref: U1
+  x: 10.16
+  y: 7.62
+  rot: 270.0
+- ref: U2
+  x: 20.32
+  y: 7.62
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

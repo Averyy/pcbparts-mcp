@@ -1,0 +1,827 @@
+name: SparkFun UM980 Triband
+slug: sparkfun-um980-triband
+source: sparkfun/SparkFun_UM980_Triband_GNSS_RTK_Breakout
+format: kicad8
+description: Unicore UM980 triband (L1/L2/L5) RTK GNSS, SMA edge-mount
+tags: [esd-protection, gps-gnss]
+key_ics: [UM980, CH340C]
+outline:
+  width_mm: 50.8
+  height_mm: 50.8
+design_rules:
+  layers: 4
+  min_trace: 0.152mm
+  min_clearance: 0.152mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: BT1
+  value: 6.8mm_ML414H
+  footprint: ML414H_IV01E
+  prod_id: BATT-14267
+  description: Reflowable coin cell battery
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+  decouples: U2
+- ref: C12
+  value: 2.2uF
+  footprint: '0603'
+  prod_id: CAP-07888
+  voltage: 10V
+  tolerance: 20%
+  decouples: U8
+- ref: C13
+  value: 100pF
+  footprint: '0603'
+  prod_id: CAP-07883
+  voltage: 50V
+  tolerance: 10%
+  decouples: U8
+- ref: C15
+  value: 22uF
+  footprint: '0603'
+  prod_id: CAP-14464
+  voltage: 6.3V
+  tolerance: 20%
+- ref: C16
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+- ref: C17
+  value: 22uF
+  footprint: '0603'
+  prod_id: CAP-14464
+  voltage: 6.3V
+  tolerance: 20%
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+  decouples: U2
+- ref: C3
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+  voltage: 16V
+  tolerance: 10%
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+- ref: C5
+  value: 100pF
+  footprint: '0603'
+  prod_id: CAP-07883
+  voltage: 50V
+  tolerance: 10%
+  decouples: U2
+- ref: C6
+  value: 100pF
+  footprint: '0603'
+  prod_id: CAP-07883
+  voltage: 50V
+  tolerance: 10%
+- ref: C7
+  value: 100pF
+  footprint: '0603'
+  prod_id: CAP-07883
+  voltage: 50V
+  tolerance: 10%
+- ref: C8
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+  voltage: 16V
+  tolerance: 10%
+  decouples: U2
+- ref: D1
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-17976
+- ref: D10
+  value: PESD3V3L4UG
+  footprint: SOT-353
+  prod_id: DIO-19494
+  description: Low capacitance unidirectional quadruple ESD protection diode array, 3.3V
+- ref: D11
+  value: PESD3V3L4UG
+  footprint: SOT-353
+  prod_id: DIO-19494
+  description: Low capacitance unidirectional quadruple ESD protection diode array, 3.3V
+- ref: D2
+  value: white LED
+  footprint: '0603'
+  prod_id: DIO-09004
+- ref: D3
+  value: blue LED
+  footprint: '0603'
+  prod_id: DIO-08575
+- ref: D4
+  value: yellow LED
+  footprint: '0603'
+  prod_id: DIO-09003
+- ref: D5
+  value: PMEG4005EJ
+  footprint: SOD-323
+  prod_id: DIO-10955
+  description: Schottky diode
+- ref: D6
+  value: PESD0402
+  footprint: '0402'
+  prod_id: DIO-15359
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D9
+  value: PESD3V3L4UG
+  footprint: SOT-353
+  prod_id: DIO-19494
+  description: Low capacitance unidirectional quadruple ESD protection diode array, 3.3V
+- ref: F1
+  value: 6V/0.75A/1.5A
+  footprint: '1206'
+  prod_id: RES-11150
+  description: Resettable fuse 750mA
+- ref: J1
+  value: USB-C
+  footprint: USB-C
+  prod_id: CONN-14122
+  description: USB 2.0-only Type-C Receptacle connector
+- ref: J4
+  value: 1x2 header
+  footprint: 1x02
+- ref: J5
+  value: SMA_Edge
+  footprint: SMA_Edge
+  prod_id: CONN-08289
+  description: SMA PCB Edge Mount connector
+- ref: J6
+  value: JST Locking
+  footprint: JST_SMD_1.25mm-4_Locking
+  prod_id: CONN-15303
+- ref: J7
+  value: 1x6 header
+  footprint: 1x06
+- ref: J8
+  value: 1x9 header
+  footprint: 1x09
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-3
+  description: 3-pole Solder Jumper, pins 1+2 closed/bridged
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-2
+  description: Solder Jumper, 2-pole, closed/bridged
+- ref: JP3
+  value: solder jumper
+  footprint: SJ-2
+  description: Solder Jumper, 2-pole, closed/bridged
+- ref: JP4
+  value: solder jumper
+  footprint: SJ-2
+  description: Solder Jumper, 2-pole, closed/bridged
+- ref: JP5
+  value: solder jumper
+  footprint: SJ-2
+  description: Solder Jumper, 2-pole, closed/bridged
+- ref: JP6
+  value: solder jumper
+  footprint: SJ-3
+  description: 3-pole Solder Jumper, pins 1+2 closed/bridged
+- ref: JP7
+  value: solder jumper
+  footprint: SJ-2
+  description: Solder Jumper, 2-pole, closed/bridged
+- ref: JP8
+  value: solder jumper
+  footprint: SJ-2
+  description: Solder Jumper, 2-pole, closed/bridged
+- ref: L1
+  value: 68nH
+  footprint: '0402'
+  prod_id: NDUC-15356
+- ref: L2
+  value: ferrite bead
+  footprint: '0603'
+  prod_id: NDUC-07859
+- ref: R1
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: J1.CC2
+- ref: R12
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R13
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R14
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R15
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R16
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R17
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R18
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R19
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R2
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: J1.CC1
+- ref: R20
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R27
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R28
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R29
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R3
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R30
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R31
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R32
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R33
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R34
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R4
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R5
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R6
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R7
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R8
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: U1
+  value: DT1042-04
+  footprint: SOT-23-6
+  prod_id: IC-13538
+  description: Very low capacitance ESD protection diode, 4 data-line, SOT-23-6
+- ref: U2
+  value: AP2112K-3.3
+  footprint: SOT-23-5
+  prod_id: VREG-12457
+  description: 600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage
+- ref: U5
+  value: UM980
+  footprint: UM980
+  prod_id: GPS-19527
+- ref: U8
+  value: CH340C
+  footprint: SO-16
+  prod_id: IC-14038
+  description: USB serial converter, UART, SOIC-16
+nets:
+- name: +5V
+  pins:
+  - C1.1
+  - F1.2
+  - J8.Pin_8
+  - JP6.B
+  - U1.VCC
+  - U2.EN
+  - U2.VIN
+- name: /D+
+  pins: [J1.D+@A6, J1.D+@B6, U1.I/O4, U8.UD+]
+- name: /D-
+  pins: [J1.D-@A7, J1.D-@B7, U1.I/O3, U8.UD-]
+- name: 3.3V
+  pins:
+  - C12.1
+  - C13.1
+  - C2.1
+  - C5.1
+  - C8.1
+  - JP2.B
+  - JP6.A
+  - JP8.B
+  - L2.1
+  - U2.VOUT
+  - U8.V3
+  - U8.VCC
+- name: 3.3V_A
+  pins:
+  - C15.1
+  - C16.1
+  - C17.1
+  - D5.A
+  - L2.2
+  - R12.1
+  - R13.1
+  - R14.1
+  - U5.VCC@33
+  - U5.VCC@34
+- name: ANT_BIAS
+  pins: [C4.1, C6.1, JP1.C, L1.1]
+- name: ANT_IN
+  pins: [C7.2, U5.ANT_IN]
+- name: ERR_STAT
+  pins: [D11.K3, J8.Pin_3, R27.2]
+- name: EVENT
+  pins: [D10.K1, J8.Pin_6, R31.2]
+- name: GND
+  pins:
+  - BT1.-
+  - C1.2
+  - C12.2
+  - C13.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C8.2
+  - D1.K
+  - D10.A
+  - D11.A
+  - D2.K
+  - D3.K
+  - D4.K
+  - D6.A1
+  - D9.A
+  - J1.GND@GND
+  - J5.Ext@2
+  - J6.Pin_4
+  - J7.Pin_6
+  - J8.Pin_9
+  - JP7.A
+  - R1.2
+  - R2.2
+  - U1.GND
+  - U2.GND
+  - U5.GND@1
+  - U5.GND@100
+  - U5.GND@101
+  - U5.GND@102
+  - U5.GND@12
+  - U5.GND@14
+  - U5.GND@3
+  - U5.GND@32
+  - U5.GND@37
+  - U5.GND@41
+  - U5.GND@48
+  - U5.GND@55
+  - U5.GND@56
+  - U5.GND@57
+  - U5.GND@58
+  - U5.GND@59
+  - U5.GND@60
+  - U5.GND@61
+  - U5.GND@62
+  - U5.GND@63
+  - U5.GND@64
+  - U5.GND@65
+  - U5.GND@66
+  - U5.GND@67
+  - U5.GND@68
+  - U5.GND@69
+  - U5.GND@70
+  - U5.GND@71
+  - U5.GND@72
+  - U5.GND@73
+  - U5.GND@74
+  - U5.GND@75
+  - U5.GND@76
+  - U5.GND@77
+  - U5.GND@78
+  - U5.GND@79
+  - U5.GND@80
+  - U5.GND@81
+  - U5.GND@82
+  - U5.GND@83
+  - U5.GND@84
+  - U5.GND@85
+  - U5.GND@86
+  - U5.GND@87
+  - U5.GND@88
+  - U5.GND@89
+  - U5.GND@90
+  - U5.GND@91
+  - U5.GND@92
+  - U5.GND@93
+  - U5.GND@94
+  - U5.GND@95
+  - U5.GND@96
+  - U5.GND@97
+  - U5.GND@98
+  - U5.GND@99
+  - U8.GND
+- name: Net-(D1-A)
+  pins: [D1.A, R4.2]
+- name: Net-(D2-A)
+  pins: [D2.A, R3.2]
+- name: Net-(D3-A)
+  pins: [D3.A, R6.2]
+- name: Net-(D4-A)
+  pins: [D4.A, R5.2]
+- name: Net-(D5-PadC)
+  pins: [D5.C, R7.1]
+- name: Net-(D6-A2)
+  pins: [C7.1, D6.A2, J5.In, L1.2]
+- name: Net-(F1-Pad1)
+  pins: [F1.1, J1.VBUS@VBUS]
+- name: Net-(J1-CC1)
+  pins: [J1.CC1, R2.1]
+- name: Net-(J1-CC2)
+  pins: [J1.CC2, R1.1]
+- name: Net-(J1-SHIELD)
+  pins: [J1.SHIELD, JP7.B]
+- name: Net-(J6-Pin_1)
+  pins: [J6.Pin_1, JP6.C]
+- name: Net-(J6-Pin_2)
+  pins: [J6.Pin_2, R8.2]
+- name: Net-(J7-Pin_4)
+  pins: [J7.Pin_4, JP8.A]
+- name: Net-(JP2-A)
+  pins: [JP2.A, R4.1]
+- name: Net-(JP3-A)
+  pins: [JP3.A, R5.1]
+- name: Net-(JP4-A)
+  pins: [JP4.A, R6.1]
+- name: Net-(JP5-A)
+  pins: [JP5.A, R3.1]
+- name: Net-(R13-Pad2)
+  pins: [R13.2, R33.1]
+- name: Net-(R14-Pad2)
+  pins: [R14.2, R32.1]
+- name: Net-(U5-BIF_28)
+  pins: [R32.2, U5.BIF_28]
+- name: Net-(U5-BIF_29)
+  pins: [R33.2, U5.BIF_29]
+- name: Net-(U5-ERR_STAT)
+  pins: [R27.1, U5.ERR_STAT]
+- name: Net-(U5-EVENT)
+  pins: [R31.1, U5.EVENT]
+- name: Net-(U5-PPS)
+  pins: [R30.1, U5.PPS]
+- name: Net-(U5-PVT_STAT)
+  pins: [R29.1, U5.PVT_STAT]
+- name: Net-(U5-RTK_STAT)
+  pins: [R28.1, U5.RTK_STAT]
+- name: Net-(U5-RXD1)
+  pins: [R16.1, U5.RXD1]
+- name: Net-(U5-RXD2)
+  pins: [R18.1, U5.RXD2]
+- name: Net-(U5-RXD3)
+  pins: [R20.1, U5.RXD3]
+- name: Net-(U5-TXD1)
+  pins: [R15.1, U5.TXD1]
+- name: Net-(U5-TXD2)
+  pins: [R17.1, U5.TXD2]
+- name: Net-(U5-TXD3)
+  pins: [R19.1, U5.TXD3]
+- name: Net-(U5-nRESET)
+  pins: [R34.1, U5.nRESET]
+- name: PPS
+  pins: [D10.K2, J8.Pin_7, JP3.B, R30.2]
+- name: PVT_STAT
+  pins: [D10.K3, J8.Pin_5, JP4.B, R29.2]
+- name: RTK_STAT
+  pins: [D10.K4, J8.Pin_4, JP5.B, R28.2]
+- name: RXD1
+  pins: [R16.2, U8.TXD]
+- name: RXD2
+  pins: [D9.K1, J4.Pin_2, R18.2, R8.1]
+- name: RXD3
+  pins: [D9.K3, J7.Pin_3, R20.2]
+- name: TXD1
+  pins: [R15.2, U8.RXD]
+- name: TXD2
+  pins: [D9.K2, J4.Pin_1, J6.Pin_3, R17.2]
+- name: TXD3
+  pins: [D9.K4, J7.Pin_2, R19.2]
+- name: VCC_RF
+  pins: [JP1.A, U5.VCC_RF]
+- name: V_ANT_EXT
+  pins: [D11.K1, J8.Pin_1, JP1.B]
+- name: V_BCKP
+  pins: [BT1.+, C3.1, R7.2, U5.V_BCKP]
+- name: nRESET
+  pins: [D11.K2, J8.Pin_2, R12.2, R34.2]
+positions:
+- ref: BT1
+  x: 114.3
+  y: 142.24
+- ref: C1
+  x: 104.14
+  y: 114.3
+- ref: C12
+  x: 120.65
+  y: 120.65
+- ref: C13
+  x: 115.57
+  y: 120.65
+  rot: 180.0
+- ref: C15
+  x: 120.65
+  y: 118.11
+- ref: C16
+  x: 115.57
+  y: 115.57
+  rot: 180.0
+- ref: C17
+  x: 120.65
+  y: 115.57
+- ref: C2
+  x: 107.95
+  y: 116.84
+  rot: -90.0
+- ref: C3
+  x: 119.38
+  y: 144.78
+- ref: C4
+  x: 143.76
+  y: 127.25
+- ref: C5
+  x: 110.49
+  y: 116.84
+  rot: -90.0
+- ref: C6
+  x: 143.76
+  y: 128.78
+- ref: C7
+  x: 141.99
+  y: 132.21
+  rot: -90.0
+- ref: C8
+  x: 113.03
+  y: 116.84
+  rot: -90.0
+- ref: D1
+  x: 107.95
+  y: 134.62
+  rot: 180.0
+- ref: D10
+  x: 125.73
+  y: 109.22
+- ref: D11
+  x: 130.81
+  y: 109.22
+  rot: 180.0
+- ref: D2
+  x: 118.11
+  y: 137.16
+  rot: 180.0
+- ref: D3
+  x: 118.1
+  y: 134.6
+  rot: 180.0
+- ref: D4
+  x: 107.95
+  y: 137.16
+  rot: 180.0
+- ref: D5
+  x: 119.38
+  y: 139.7
+  rot: 180.0
+- ref: D6
+  x: 144.78
+  y: 131.95
+  rot: 90.0
+- ref: D9
+  x: 123.19
+  y: 144.78
+- ref: F1
+  x: 111.76
+  y: 121.92
+  rot: 90.0
+- ref: J1
+  x: 107.95
+  y: 127.0
+  rot: -90.0
+- ref: J4
+  x: 120.65
+  y: 151.13
+- ref: J5
+  x: 148.55
+  y: 131.44
+  rot: -90.0
+- ref: J6
+  x: 102.87
+  y: 142.24
+  rot: -90.0
+- ref: J7
+  x: 125.73
+  y: 151.13
+- ref: J8
+  x: 135.89
+  y: 102.87
+  rot: 180.0
+- ref: JP1
+  x: 143.0
+  y: 124.97
+  side: back
+- ref: JP2
+  x: 104.14
+  y: 134.62
+  side: back
+- ref: JP3
+  x: 104.14
+  y: 137.16
+  side: back
+- ref: JP4
+  x: 114.3
+  y: 134.6
+  side: back
+- ref: JP5
+  x: 114.3
+  y: 137.16
+  side: back
+- ref: JP6
+  x: 110.49
+  y: 140.97
+  rot: 180.0
+  side: back
+- ref: JP7
+  x: 102.87
+  y: 127.0
+  rot: -90.0
+  side: back
+- ref: JP8
+  x: 132.08
+  y: 142.24
+  rot: 180.0
+  side: back
+- ref: L1
+  x: 143.38
+  y: 130.94
+  rot: -90.0
+- ref: L2
+  x: 115.57
+  y: 118.11
+- ref: R1
+  x: 104.78
+  y: 132.72
+  rot: 180.0
+- ref: R12
+  x: 137.16
+  y: 113.03
+  rot: 90.0
+- ref: R13
+  x: 116.84
+  y: 113.03
+  rot: 90.0
+- ref: R14
+  x: 114.3
+  y: 113.03
+  rot: 90.0
+- ref: R15
+  x: 111.76
+  y: 129.54
+- ref: R16
+  x: 111.76
+  y: 132.08
+- ref: R17
+  x: 124.46
+  y: 113.03
+  rot: 90.0
+- ref: R18
+  x: 127.0
+  y: 113.03
+  rot: 90.0
+- ref: R19
+  x: 125.73
+  y: 140.97
+  rot: -90.0
+- ref: R2
+  x: 104.78
+  y: 121.28
+  rot: 180.0
+- ref: R20
+  x: 128.27
+  y: 140.97
+  rot: -90.0
+- ref: R27
+  x: 129.54
+  y: 113.03
+  rot: 90.0
+- ref: R28
+  x: 132.08
+  y: 113.03
+  rot: 90.0
+- ref: R29
+  x: 134.62
+  y: 113.03
+  rot: 90.0
+- ref: R3
+  x: 114.3
+  y: 137.16
+- ref: R30
+  x: 137.16
+  y: 140.97
+  rot: -90.0
+- ref: R31
+  x: 134.62
+  y: 140.97
+  rot: -90.0
+- ref: R32
+  x: 121.92
+  y: 113.03
+  rot: -90.0
+- ref: R33
+  x: 119.38
+  y: 113.03
+  rot: -90.0
+- ref: R34
+  x: 139.7
+  y: 113.03
+  rot: 90.0
+- ref: R4
+  x: 104.14
+  y: 134.62
+- ref: R5
+  x: 104.14
+  y: 137.16
+- ref: R6
+  x: 114.3
+  y: 134.6
+- ref: R7
+  x: 119.38
+  y: 142.24
+- ref: R8
+  x: 114.3
+  y: 147.32
+  rot: 180.0
+- ref: U1
+  x: 111.76
+  y: 127.0
+  rot: 180.0
+- ref: U2
+  x: 104.14
+  y: 116.84
+- ref: U5
+  x: 132.08
+  y: 127.0
+  rot: 90.0
+- ref: U8
+  x: 118.11
+  y: 127.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]

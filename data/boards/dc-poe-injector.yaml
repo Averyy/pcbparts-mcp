@@ -1,0 +1,837 @@
+name: DC PoE Injector
+slug: dc-poe-injector
+source: jwpleow/DC_PoE_Injector
+format: kicad8
+description: Quad-port 802.3at PoE power sourcing equipment (TPS23861), DC input midspan injector
+tags: [ethernet]
+key_ics: [TPS23861]
+outline:
+  width_mm: 68.1
+  height_mm: 102.5
+design_rules:
+  layers: 4
+  min_trace: 0.127mm
+  min_clearance: 0.127mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: 0805
+  lcsc: C28233
+  voltage: 100V
+- ref: C10
+  value: 10nF
+  footprint: 0805
+  lcsc: C106844
+  description: Unpolarized capacitor, small symbol
+  voltage: 200V
+- ref: C11
+  value: 10nF
+  footprint: 0805
+  lcsc: C106844
+  description: Unpolarized capacitor, small symbol
+  voltage: 200V
+- ref: C12
+  value: 1n 2kV
+  footprint: '1206'
+  lcsc: C9196
+  description: Unpolarized capacitor, small symbol
+- ref: C13
+  value: 1n 2kV
+  footprint: '1206'
+  lcsc: C9196
+  description: Unpolarized capacitor, small symbol
+- ref: C14
+  value: 68uF
+  footprint: Electrolytic
+  lcsc: C278544
+- ref: C15
+  value: 4.7uF
+  footprint: '1206'
+  lcsc: C29823
+  description: Unpolarized capacitor, small symbol
+  decouples: U2
+- ref: C16
+  value: 4.7uF
+  footprint: '1206'
+  lcsc: C29823
+  description: Unpolarized capacitor, small symbol
+  decouples: U2
+- ref: C17
+  value: 10nF
+  footprint: '0603'
+  lcsc: C57112
+  description: Unpolarized capacitor, small symbol
+  decouples: U2
+- ref: C18
+  value: 4.7uF
+  footprint: '1210'
+  lcsc: C381466
+  voltage: 100V
+- ref: C19
+  value: 4.7uF
+  footprint: '1210'
+  lcsc: C381466
+  voltage: 100V
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+  lcsc: C14663
+  voltage: 50V
+  decouples: U1
+- ref: C20
+  value: 68uF
+  footprint: Electrolytic
+  lcsc: C278544
+  voltage: 100V
+- ref: C21
+  value: 68uF
+  footprint: Electrolytic
+  lcsc: C278544
+  voltage: 100V
+- ref: C22
+  value: 100pF
+  footprint: '0402'
+  lcsc: C1546
+  description: Unpolarized capacitor, small symbol
+- ref: C23
+  value: 1.5nF
+  footprint: '0603'
+  lcsc: C1595
+  description: Unpolarized capacitor, small symbol
+- ref: C24
+  value: 470nF
+  footprint: '0603'
+  lcsc: C1623
+  description: Unpolarized capacitor, small symbol
+  voltage: 25V
+- ref: C25
+  value: 100nF
+  footprint: '0603'
+  lcsc: C14663
+  description: Unpolarized capacitor, small symbol
+- ref: C26
+  value: 1uF
+  footprint: 0805
+  lcsc: C28323
+  description: Unpolarized capacitor, small symbol
+- ref: C27
+  value: 10uF
+  footprint: 0805
+  lcsc: C440198
+  description: Unpolarized capacitor, small symbol
+  decouples: U3
+- ref: C28
+  value: 10uF
+  footprint: 0805
+  lcsc: C440198
+  description: Unpolarized capacitor, small symbol
+  decouples: U3
+- ref: C29
+  value: 1uF
+  footprint: 0805
+  lcsc: C28323
+  description: Unpolarized capacitor, small symbol
+- ref: C3
+  value: 100nF
+  footprint: 0805
+  lcsc: C28233
+  voltage: 100V
+- ref: C30
+  value: 1uF
+  footprint: 0805
+  lcsc: C28323
+  description: Unpolarized capacitor, small symbol
+- ref: C4
+  value: 10nF
+  footprint: 0805
+  lcsc: C106844
+  description: Unpolarized capacitor, small symbol
+  voltage: 200V
+- ref: C5
+  value: 10nF
+  footprint: 0805
+  lcsc: C106844
+  description: Unpolarized capacitor, small symbol
+  voltage: 200V
+- ref: C6
+  value: 10nF
+  footprint: 0805
+  lcsc: C106844
+  description: Unpolarized capacitor, small symbol
+  voltage: 200V
+- ref: C7
+  value: 10nF
+  footprint: 0805
+  lcsc: C106844
+  description: Unpolarized capacitor, small symbol
+  voltage: 200V
+- ref: C8
+  value: 10nF
+  footprint: 0805
+  lcsc: C106844
+  description: Unpolarized capacitor, small symbol
+  voltage: 200V
+- ref: C9
+  value: 10nF
+  footprint: 0805
+  lcsc: C106844
+  description: Unpolarized capacitor, small symbol
+  voltage: 200V
+- ref: D1
+  value: SMBJ58A 58V
+  footprint: SMB
+  lcsc: C135085
+  description: Zener diode
+- ref: D2
+  value: TVS3300DRVx
+  footprint: DRV0006A
+  lcsc: C2863624
+- ref: D3
+  value: STPS3H100UF
+  footprint: SMBflat
+  lcsc: C155643
+  description: Schottky diode
+- ref: D4
+  value: LED
+  footprint: '0603'
+  lcsc: C2286
+- ref: F1
+  value: 1.1A PTC
+  footprint: '2920'
+  lcsc: C315903
+- ref: J1
+  value: 1x2 header
+  footprint: PhoenixContact_SPT_2.5_2-H-5.0
+  lcsc: C5443538
+- ref: J2
+  value: R-RJ45R08P-C000
+  footprint: R-RJ45R08P-C000
+  lcsc: C386757
+  description: RJ45, Horizontal, Shielded with LED
+- ref: J3
+  value: R-RJ45R08P-C000
+  footprint: R-RJ45R08P-C000
+  lcsc: C386757
+  description: RJ45, Horizontal, Shielded with LED
+- ref: J4
+  value: 1x2 header
+  footprint: SolderWire-2.5sqmm
+- ref: L1
+  value: 22uH
+  footprint: L_TaiTech_TMPC1265
+  lcsc: C305224
+  current: 9A
+- ref: Q1
+  value: IRLR3410TRPBF
+  footprint: TO-252
+  lcsc: C3017
+  description: N-MOSFET transistor, gate/drain/source
+- ref: Q2
+  value: CSD19537Q3T
+  footprint: CSD19537Q3T
+  description: N-MOSFET transistor, source/gate/drain
+- ref: R1
+  value: 47ohm
+  footprint: '0603'
+  lcsc: C23182
+  description: Resistor, small symbol
+- ref: R10
+  value: 75ohm
+  footprint: 0805
+  lcsc: C20638
+  description: Resistor, small symbol
+- ref: R11
+  value: 75ohm
+  footprint: 0805
+  lcsc: C20638
+  description: Resistor, small symbol
+- ref: R12
+  value: 75ohm
+  footprint: 0805
+  lcsc: C20638
+  description: Resistor, small symbol
+- ref: R13
+  value: 48.7kohm
+  footprint: '0402'
+  lcsc: C26981
+  description: Resistor, small symbol
+- ref: R14
+  value: 120kohm
+  footprint: '0603'
+  lcsc: C25808
+  description: Resistor, small symbol
+- ref: R15
+  value: 100ohm
+  footprint: '0603'
+  lcsc: C22775
+  description: Resistor, small symbol
+- ref: R16
+  value: 15mohm
+  footprint: '2512'
+  lcsc: C520400
+  description: Resistor, small symbol
+- ref: R17
+  value: 48.7kohm
+  footprint: '0402'
+  lcsc: C26981
+  description: Resistor, small symbol
+  pulldown: U2.RT
+- ref: R18
+  value: 2.26kohm
+  footprint: '0603'
+  lcsc: C22904
+  description: Resistor, small symbol
+  pulldown: U2.FB
+- ref: R19
+  value: 5.76kohm
+  footprint: '0603'
+  lcsc: C23070
+  description: Resistor, small symbol
+- ref: R2
+  value: 510mohm
+  footprint: 0805
+  lcsc: C491234
+  description: Resistor, small symbol
+  tolerance: 1%
+- ref: R20
+  value: 2.26kohm
+  footprint: '0603'
+  lcsc: C22904
+  description: Resistor, small symbol
+  pulldown: D4.K
+- ref: R21
+  value: 48.7kohm
+  footprint: '0402'
+  lcsc: C26981
+  description: Resistor, small symbol
+- ref: R3
+  value: 510mohm
+  footprint: 0805
+  lcsc: C491234
+  description: Resistor, small symbol
+  tolerance: 1%
+- ref: R4
+  value: 22.1ohm
+  footprint: '0603'
+  lcsc: C22958
+  description: Resistor, small symbol
+- ref: R5
+  value: 75ohm
+  footprint: 0805
+  lcsc: C20638
+  description: Resistor, small symbol
+- ref: R6
+  value: 75ohm
+  footprint: 0805
+  lcsc: C20638
+  description: Resistor, small symbol
+- ref: R7
+  value: 75ohm
+  footprint: 0805
+  lcsc: C20638
+  description: Resistor, small symbol
+- ref: R8
+  value: 75ohm
+  footprint: 0805
+  lcsc: C20638
+  description: Resistor, small symbol
+- ref: R9
+  value: 75ohm
+  footprint: 0805
+  lcsc: C20638
+  description: Resistor, small symbol
+- ref: T1
+  value: SM51625EL
+  footprint: SM51625EL
+  height: '6.25'
+  manufacturer: Bourns
+  mpn: SM51625EL
+  lcsc: C5357757
+  description: LAN 10/100/1000 Base-T (PoE++) Transformer
+- ref: U1
+  value: TPS23861
+  footprint: TPS23861
+  lcsc: C93245
+  description: IEEE 802.3at Quad Port Power-over-Ethernet PSE Controller
+- ref: U2
+  value: LM5155QDSSRQ1
+  footprint: DSS0012x
+  height: '0.8'
+  manufacturer: Texas Instruments
+  mpn: LM5155QDSSRQ1
+  lcsc: C1849528
+  description: Switching Controllers 2.2MHz wide VIN non-synchronous boost/SEPIC/flyback
+- ref: U3
+  value: TPS7B8233QDGNRQ1
+  footprint: DGN0008G
+  height: '1.1'
+  manufacturer: Texas Instruments
+  mpn: TPS7B8233QDGNRQ1
+  lcsc: C5220182
+  description: Automotive 300-mA high-voltage ultra-low-IQ low-dropout (LDO) linear regulator
+nets:
+- name: +3.3V
+  pins: [C2.2, C28.1, U1.VDD, U1.nSHTDWN, U3.OUT]
+- name: /CH1_DRAIN
+  pins: [F1.1, Q1.D@2, R1.1]
+- name: /CH1_GATE
+  pins: [Q1.G, U1.GATE1]
+- name: /CH1_SEN
+  pins: [Q1.S, R2.1, R3.1, R4.1]
+- name: /Connectors/EthIN_12_N
+  pins: [J3.2, T1.TD1-]
+- name: /Connectors/EthIN_12_P
+  pins: [J3.1, T1.TD1+]
+- name: /Connectors/EthIN_36_N
+  pins: [J3.6, T1.TD2-]
+- name: /Connectors/EthIN_36_P
+  pins: [J3.3, T1.TD2+]
+- name: /Connectors/EthIN_45_N
+  pins: [J3.4, T1.TD3-]
+- name: /Connectors/EthIN_45_P
+  pins: [J3.5, T1.TD3+]
+- name: /Connectors/EthIN_78_N
+  pins: [J3.7, T1.TD4-]
+- name: /Connectors/EthIN_78_P
+  pins: [J3.8, T1.TD4+]
+- name: /Connectors/POE_Eth_12_N
+  pins: [J2.1, T1.MX1-]
+- name: /Connectors/POE_Eth_12_P
+  pins: [J2.2, T1.MX1+]
+- name: /Connectors/POE_Eth_36_N
+  pins: [J2.6, T1.MX2-]
+- name: /Connectors/POE_Eth_36_P
+  pins: [J2.3, T1.MX2+]
+- name: /Connectors/POE_Eth_45_N
+  pins: [J2.5, T1.MX3-]
+- name: /Connectors/POE_Eth_45_P
+  pins: [J2.4, T1.MX3+]
+- name: /Connectors/POE_Eth_78_N
+  pins: [J2.8, T1.MX4-]
+- name: /Connectors/POE_Eth_78_P
+  pins: [J2.7, T1.MX4+]
+- name: /Power/PGOOD_BOOST
+  pins: [D4.A, R13.2, R21.1, U2.PGOOD]
+- name: /Power/VCC_BOOST
+  pins: [C26.2, R13.1, U2.VCC]
+- name: GND
+  pins:
+  - C1.1
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.1
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.1
+  - C24.1
+  - C25.1
+  - C26.1
+  - C27.2
+  - C28.2
+  - C29.1
+  - C30.1
+  - D2.A@1
+  - D2.A@2
+  - D2.A@3
+  - D2.A@7
+  - J1.Pin_2@2
+  - J2.SH@13
+  - J3.SH@13
+  - J4.Pin_1
+  - R16.2
+  - R17.1
+  - R18.2
+  - R2.2
+  - R20.2
+  - R3.2
+  - U1.A3
+  - U1.AGND
+  - U1.DGND
+  - U1.DRAIN2
+  - U1.DRAIN3
+  - U1.DRAIN4
+  - U1.KSENSA
+  - U1.KSENSB
+  - U1.SCL
+  - U1.SDAI
+  - U1.SEN2
+  - U1.SEN3
+  - U1.SEN4
+  - U2.AGND
+  - U2.EP
+  - U2.PGND
+  - U3.EP
+  - U3.GND@4
+  - U3.GND@5
+  - U3.GND@6
+- name: Net-(C10-Pad2)
+  pins: [C10.2, R11.1]
+- name: Net-(C11-Pad2)
+  pins: [C11.2, R12.1]
+- name: Net-(C12-Pad1)
+  pins: [C12.1, R5.2, R6.2, R7.2, R8.2]
+- name: Net-(C13-Pad1)
+  pins: [C13.1, R10.2, R11.2, R12.2, R9.2]
+- name: Net-(C25-Pad2)
+  pins: [C25.2, R19.1]
+- name: Net-(C4-Pad2)
+  pins: [C4.2, R5.1]
+- name: Net-(C5-Pad2)
+  pins: [C5.2, R6.1]
+- name: Net-(C6-Pad2)
+  pins: [C6.2, R7.1]
+- name: Net-(C7-Pad2)
+  pins: [C7.2, R8.1]
+- name: Net-(C8-Pad2)
+  pins: [C8.2, R9.1]
+- name: Net-(C9-Pad2)
+  pins: [C9.2, R10.1]
+- name: Net-(D3-A)
+  pins: [D3.A, L1.2, Q2.D@3]
+- name: Net-(D4-K)
+  pins: [D4.K, R20.1]
+- name: Net-(Q2-G)
+  pins: [Q2.G, U2.GATE]
+- name: Net-(Q2-S)
+  pins: [Q2.S@1, R15.1, R16.1]
+- name: Net-(T1-TCT1)
+  pins: [C11.1, T1.TCT1]
+- name: Net-(T1-TCT2)
+  pins: [C10.1, T1.TCT2]
+- name: Net-(T1-TCT3)
+  pins: [C9.1, T1.TCT3]
+- name: Net-(T1-TCT4)
+  pins: [C8.1, T1.TCT4]
+- name: Net-(U1-DRAIN1)
+  pins: [R1.2, U1.DRAIN1]
+- name: Net-(U1-SEN1)
+  pins: [R4.2, U1.SEN1]
+- name: Net-(U1-nRESET)
+  pins: [C30.2, U1.nRESET]
+- name: Net-(U2-COMP)
+  pins: [C23.2, R19.2, U2.COMP]
+- name: Net-(U2-CS)
+  pins: [C22.1, R15.2, U2.CS]
+- name: Net-(U2-FB)
+  pins: [R14.2, R18.1, U2.FB]
+- name: Net-(U2-RT)
+  pins: [R17.2, U2.RT]
+- name: Net-(U2-SS)
+  pins: [C24.2, U2.SS]
+- name: Net-(U3-EN)
+  pins: [C29.2, R21.2, U3.EN]
+- name: POE_12
+  pins: [C4.1, T1.MCT1]
+- name: POE_36
+  pins: [C5.1, T1.MCT2]
+- name: POE_45
+  pins:
+  - C1.2
+  - C18.1
+  - C19.1
+  - C20.1
+  - C21.1
+  - C3.2
+  - C6.1
+  - D1.K
+  - D3.K
+  - J4.Pin_2
+  - R14.1
+  - T1.MCT3
+  - U1.VPWR
+- name: POE_78
+  pins: [C3.1, C7.1, D1.A, F1.2, T1.MCT4]
+- name: VCC
+  pins:
+  - C14.1
+  - C15.1
+  - C16.1
+  - C17.1
+  - C27.1
+  - D2.K@4
+  - D2.K@5
+  - D2.K@6
+  - J1.Pin_1@1
+  - L1.1
+  - U2.BIAS
+  - U2.UVLO/SYNC
+  - U3.IN
+positions:
+- ref: C1
+  x: 90.45
+  y: 128.25
+  rot: 180.0
+- ref: C10
+  x: 75.25
+  y: 120.5
+  rot: -90.0
+- ref: C11
+  x: 77.25
+  y: 120.5
+  rot: -90.0
+- ref: C12
+  x: 77.0
+  y: 95.75
+  rot: 90.0
+- ref: C13
+  x: 74.25
+  y: 128.25
+  rot: -90.0
+- ref: C14
+  x: 73.75
+  y: 69.0
+  rot: 90.0
+- ref: C15
+  x: 100.03
+  y: 77.0
+- ref: C16
+  x: 99.28
+  y: 79.5
+- ref: C17
+  x: 102.0
+  y: 81.5
+  rot: 180.0
+- ref: C18
+  x: 96.08
+  y: 89.0
+- ref: C19
+  x: 96.08
+  y: 92.25
+- ref: C2
+  x: 87.2
+  y: 136.45
+  rot: -90.0
+- ref: C20
+  x: 96.5
+  y: 102.0
+  rot: 180.0
+- ref: C21
+  x: 96.5
+  y: 116.0
+  rot: 180.0
+- ref: C22
+  x: 103.6
+  y: 85.0
+  rot: 90.0
+- ref: C23
+  x: 105.85
+  y: 88.25
+- ref: C24
+  x: 112.2
+  y: 84.25
+  rot: 180.0
+- ref: C25
+  x: 102.85
+  y: 86.75
+- ref: C26
+  x: 105.1
+  y: 83.5
+  rot: 90.0
+- ref: C27
+  x: 108.2
+  y: 126.0
+  rot: 180.0
+- ref: C28
+  x: 108.3
+  y: 134.5
+  rot: 180.0
+- ref: C29
+  x: 106.5
+  y: 124.0
+- ref: C3
+  x: 82.0
+  y: 109.0
+  rot: 90.0
+- ref: C30
+  x: 90.95
+  y: 138.7
+  rot: 180.0
+- ref: C4
+  x: 74.43
+  y: 102.59
+  rot: 90.0
+- ref: C5
+  x: 72.43
+  y: 102.59
+  rot: 90.0
+- ref: C6
+  x: 80.0
+  y: 104.0
+  rot: 90.0
+- ref: C7
+  x: 77.2
+  y: 104.0
+  rot: 90.0
+- ref: C8
+  x: 71.25
+  y: 120.5
+  rot: -90.0
+- ref: C9
+  x: 73.25
+  y: 120.5
+  rot: -90.0
+- ref: D1
+  x: 85.5
+  y: 109.0
+  rot: -90.0
+- ref: D2
+  x: 65.1
+  y: 68.03
+  rot: 90.0
+- ref: D3
+  x: 90.6
+  y: 89.5
+  rot: 180.0
+- ref: D4
+  x: 109.5
+  y: 78.25
+  rot: -90.0
+- ref: F1
+  x: 83.9
+  y: 117.4
+  rot: 90.0
+- ref: J1
+  x: 60.0
+  y: 65.5
+  rot: -90.0
+- ref: J2
+  x: 57.68
+  y: 88.14
+  rot: -90.0
+- ref: J3
+  x: 57.68
+  y: 131.07
+  rot: -90.0
+- ref: J4
+  x: 110.5
+  y: 106.3
+  rot: 90.0
+- ref: L1
+  x: 90.35
+  y: 74.25
+  rot: 180.0
+- ref: Q1
+  x: 82.47
+  y: 128.4
+  rot: 180.0
+- ref: Q2
+  x: 88.17
+  y: 84.22
+  rot: 90.0
+- ref: R1
+  x: 87.0
+  y: 130.68
+  rot: -90.0
+- ref: R10
+  x: 73.25
+  y: 123.91
+  rot: -90.0
+- ref: R11
+  x: 75.25
+  y: 123.91
+  rot: -90.0
+- ref: R12
+  x: 77.25
+  y: 123.91
+  rot: -90.0
+- ref: R13
+  x: 111.5
+  y: 81.0
+  rot: -90.0
+- ref: R14
+  x: 109.5
+  y: 90.0
+  rot: 90.0
+- ref: R15
+  x: 101.53
+  y: 85.25
+- ref: R16
+  x: 94.8
+  y: 85.25
+- ref: R17
+  x: 111.7
+  y: 83.0
+  rot: 180.0
+- ref: R18
+  x: 112.2
+  y: 85.75
+- ref: R19
+  x: 105.85
+  y: 86.75
+- ref: R2
+  x: 95.4
+  y: 127.54
+  rot: -90.0
+- ref: R20
+  x: 107.25
+  y: 77.5
+  rot: 180.0
+- ref: R21
+  x: 108.75
+  y: 124.0
+  rot: -90.0
+- ref: R3
+  x: 93.4
+  y: 127.54
+  rot: -90.0
+- ref: R4
+  x: 97.17
+  y: 127.7
+  rot: -90.0
+- ref: R5
+  x: 74.43
+  y: 99.1
+  rot: 90.0
+- ref: R6
+  x: 72.43
+  y: 99.09
+  rot: 90.0
+- ref: R7
+  x: 80.0
+  y: 100.5
+  rot: 90.0
+- ref: R8
+  x: 77.2
+  y: 100.5
+  rot: 90.0
+- ref: R9
+  x: 71.25
+  y: 123.91
+  rot: -90.0
+- ref: T1
+  x: 61.5
+  y: 109.75
+  rot: 90.0
+- ref: U1
+  x: 93.0
+  y: 133.5
+- ref: U2
+  x: 107.8
+  y: 84.0
+  rot: -90.0
+- ref: U3
+  x: 108.25
+  y: 130.25
+  rot: 180.0
+copper_pours:
+- net: +3.3V
+  layers: [F.Cu]
+- net: /CH1_DRAIN
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F&B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: POE_45
+  layers: [B.Cu, F.Cu]
+- net: POE_78
+  layers: [B.Cu, F.Cu]
+- net: VCC
+  layers: [B.Cu, F&B.Cu, F.Cu, In1.Cu]

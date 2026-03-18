@@ -1,0 +1,1001 @@
+name: RPi CM5 IO Board rev2
+slug: rpi-cm5-io-board-rev2
+source: rpi-cm5io
+format: kicad7
+description: 'CM5 reference design: dual HDMI 2.1, M.2 PCIe Gen 3 x4, USB 3.0, USB-C PD input'
+tags: [ethernet, usb, usb-pd, video]
+key_ics: []
+outline:
+  width_mm: 160.0
+  height_mm: 90.0
+design_rules:
+  layers: 4
+  min_trace: 0.1mm
+  min_clearance: 0.125mm
+  min_drill: 0.2mm
+  min_via: 0.45mm
+components:
+- ref: BT1
+  value: coin cell holder
+  footprint: '3034'
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+- ref: C11
+  value: 4.7nF
+  footprint: '0402'
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+- ref: C14
+  value: 10uF
+  footprint: 0805
+- ref: C15
+  value: 10uF
+  footprint: 0805
+- ref: C16
+  value: 10uF
+  footprint: 0805
+- ref: C17
+  value: 10uF
+  footprint: 0805
+- ref: C18
+  value: 100nF
+  footprint: '0402'
+- ref: C19
+  value: 100nF
+  footprint: '0402'
+- ref: C2
+  value: 10uF
+  footprint: 0805
+- ref: C3
+  value: 100uF
+  footprint: EIA-7343
+- ref: C4
+  value: 10uF
+  footprint: 0805
+- ref: C5
+  value: 10uF
+  footprint: 0805
+- ref: C6
+  value: 10uF
+  footprint: 0805
+- ref: C7
+  value: 10uF
+  footprint: 0805
+- ref: C8
+  value: 10uF
+  footprint: 0805
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+- ref: D1
+  value: LED Red
+  footprint: '0603'
+- ref: D2
+  value: LED Green
+  footprint: '0603'
+- ref: D3
+  value: LED Green
+  footprint: '0603'
+- ref: J10
+  value: 690-019-298-412
+  footprint: EDAC 690-019-298-412
+- ref: J11
+  value: USB-C
+  footprint: USB-C
+- ref: J12
+  value: USB3_A
+  footprint: MTCONN_UBAF30-D2011
+- ref: J14
+  value: JST_SHBM04B-SRSS-TB
+  footprint: JST_SH_BM04B-SRSS-TB
+- ref: J16
+  value: 1x22 header
+  footprint: Hirose_FH12-22S-0.5SH
+- ref: J2
+  value: 2x7 header
+  footprint: PinHeader
+- ref: J22
+  value: 690-019-298-412
+  footprint: EDAC 690-019-298-412
+- ref: J4
+  value: M.2
+  footprint: M.2 M Key socket
+  description: M.2 Socket 3 Mechanical Key M
+- ref: J5
+  value: 1x22 header
+  footprint: Hirose_FH12-22S-0.5SH
+- ref: J6
+  value: 2x2 header
+  footprint: PinHeader
+- ref: J7
+  value: Micro_SD_Card_Det
+  footprint: '1892'
+- ref: J8
+  value: 2x20 header
+  footprint: PinHeader
+- ref: J9
+  value: 2x2 header
+  footprint: PinHeader
+- ref: L1
+  value: 2.2uH
+  footprint: L_Bourns_SRP5030CC
+- ref: Module1
+  value: ComputeModule5-CM5
+  footprint: Raspberry-Pi-5-Compute-Module
+  description: RaspberryPi Compute module 5
+- ref: R1
+  value: 1kohm
+  footprint: '0402'
+- ref: R10
+  value: 1kohm
+  footprint: '0402'
+- ref: R11
+  value: 10kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R12
+  value: 15kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: Net-(U6-ILIM)
+- ref: R13
+  value: 10kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R14
+  value: 100kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: /CM5_HighSpeed/PCIE_PWR_EN
+- ref: R15
+  value: 10kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R16
+  value: 2.2kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: /PCIe-M2/FB
+- ref: R17
+  value: 1kohm
+  footprint: '0402'
+- ref: R2
+  value: 470ohm
+  footprint: '0402'
+- ref: R3
+  value: 470ohm
+  footprint: '0402'
+- ref: R5
+  value: 0ohm
+  footprint: 0805
+- ref: R6
+  value: 2.2kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R7
+  value: 2.2kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R8
+  value: 2.2kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R9
+  value: 2.2kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: /+5v
+- ref: SW1
+  value: Right angle Tact button
+  footprint: SW_Tactile_SPST_Angled_PTS645Vx58-2LFS
+- ref: U1
+  value: TPD4EUSB30
+  footprint: USON-10
+- ref: U12
+  value: RT9742SNGV
+  footprint: TSOT-23
+- ref: U18
+  value: RT9742GGJ5
+  footprint: SOT-23-5
+- ref: U2
+  value: TPD4EUSB30
+  footprint: USON-10
+- ref: U3
+  value: MagJack-A70-112-331N126
+  footprint: TRJG0926HENL
+- ref: U6
+  value: AP22653W6
+  footprint: SOT-23-6
+- ref: U7
+  value: ASEK-32.768KHZ-L-R-T
+  footprint: SMD3225
+- ref: U8
+  value: AP3441SHE-7B
+  footprint: DFN-8
+nets:
+- name: /+3.3v
+  pins:
+  - D1.2
+  - D2.2
+  - J16.22
+  - J5.22
+  - J8.1
+  - J8.17
+  - Module1.84
+  - Module1.86
+  - R11.1
+  - R13.1
+  - R5.1
+  - R8.1
+  - U18.5
+  - U3.15
+  - U3.17
+- name: /+5v
+  pins:
+  - C10.1
+  - C12.1
+  - C18.1
+  - C2.1
+  - C4.1
+  - C6.1
+  - C9.1
+  - J11.A4
+  - J11.A9
+  - J11.B4
+  - J11.B9
+  - J14.1
+  - J8.2
+  - J8.4
+  - Module1.77
+  - Module1.79
+  - Module1.81
+  - Module1.83
+  - Module1.85
+  - Module1.87
+  - R9.1
+  - U12.1
+  - U6.1
+  - U8.3
+- name: /CC1
+  pins: [J11.A5, Module1.94]
+- name: /CC2
+  pins: [J11.B5, Module1.96]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/+1.8v
+  pins: [Module1.88, Module1.90]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/CAM_GPIO0
+  pins: [J5.17, Module1.97]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/CAM_GPIO1
+  pins: [J5.18, Module1.100]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/EEPROM_nWP
+  pins: [J2.4, Module1.20]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/ETH_LEDG
+  pins: [Module1.17, R2.2]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/ETH_LEDY
+  pins: [Module1.15, R3.2]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO10
+  pins: [J8.19, Module1.44]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO11
+  pins: [J8.23, Module1.38]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO12
+  pins: [J8.32, Module1.31]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO13
+  pins: [J8.33, Module1.28]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO14
+  pins: [J8.8, Module1.55]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO15
+  pins: [J8.10, Module1.51]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO16
+  pins: [J8.36, Module1.29]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO17
+  pins: [J8.11, Module1.50]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO18
+  pins: [J8.12, Module1.49]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO19
+  pins: [J8.35, Module1.26]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO2
+  pins: [J8.3, Module1.58]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO20
+  pins: [J8.38, Module1.27]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO21
+  pins: [J8.40, Module1.25]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO22
+  pins: [J8.15, Module1.46]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO23
+  pins: [J8.16, Module1.47]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO24
+  pins: [J8.18, Module1.45]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO25
+  pins: [J8.22, Module1.41]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO26
+  pins: [J8.37, Module1.24]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO27
+  pins: [J8.13, Module1.48]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO3
+  pins: [J8.5, Module1.56]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO4
+  pins: [J8.7, Module1.54]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO5
+  pins: [J8.29, Module1.34]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO6
+  pins: [J8.31, Module1.30]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO7
+  pins: [J8.26, Module1.37]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO8
+  pins: [J8.24, Module1.39]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO9
+  pins: [J8.21, Module1.40]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO_VREF
+  pins: [Module1.78, R5.2, R6.1, R7.1]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/ID_SC
+  pins: [J6.1, J8.28, Module1.35]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/ID_SD
+  pins: [J6.3, J8.27, Module1.36]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/PMIC_ENABLE
+  pins: [J2.12, Module1.99]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/PWM
+  pins: [J14.2, Module1.19, R11.2]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/PWR_BUT
+  pins: [J2.14, Module1.92, SW1.1]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_CLK
+  pins: [J7.5, Module1.57]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_CMD
+  pins: [J7.3, Module1.62]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT0
+  pins: [J7.7, Module1.63]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT1
+  pins: [J7.8, Module1.67]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT2
+  pins: [J7.1, Module1.69]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT3
+  pins: [J7.2, Module1.61]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_PWR
+  pins: [C5.1, J7.4, U18.1]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_PWR_ON
+  pins: [Module1.75, R13.2, U18.4]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SYNC_OUT
+  pins: [J2.6, Module1.18]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TACHO
+  pins: [J14.4, Module1.16]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TR0_TAP
+  pins: [J9.3, U3.11]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TR1_TAP
+  pins: [J9.1, U3.12]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TR2_TAP
+  pins: [J9.2, U3.13]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TR3_TAP
+  pins: [J9.4, U3.14]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD0_N
+  pins: [Module1.10, U2.4, U2.7, U3.2]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD0_P
+  pins: [Module1.12, U2.5, U2.6, U3.1]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD1_N
+  pins: [Module1.6, U2.2, U2.9, U3.6]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD1_P
+  pins: [Module1.4, U2.1, U2.10, U3.3]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD2_N
+  pins: [Module1.9, U1.4, U1.7, U3.8]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD2_P
+  pins: [Module1.11, U1.5, U1.6, U3.7]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD3_N
+  pins: [Module1.5, U1.2, U1.9, U3.10]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD3_P
+  pins: [Module1.3, U1.1, U1.10, U3.9]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/USBOTG
+  pins: [J2.10, Module1.101]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/VBAT
+  pins: [BT1.1, Module1.76]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/nPWR_LED
+  pins: [Module1.95, R10.2]
+- name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/nRPIBOOT
+  pins: [J2.2, Module1.93]
+- name: /CM5_HighSpeed/DPHY0_C_N
+  pins: [J5.8, Module1.127]
+- name: /CM5_HighSpeed/DPHY0_C_P
+  pins: [J5.9, Module1.129]
+- name: /CM5_HighSpeed/DPHY0_D0_N
+  pins: [J5.2, Module1.115]
+- name: /CM5_HighSpeed/DPHY0_D0_P
+  pins: [J5.3, Module1.117]
+- name: /CM5_HighSpeed/DPHY0_D1_N
+  pins: [J5.5, Module1.121]
+- name: /CM5_HighSpeed/DPHY0_D1_P
+  pins: [J5.6, Module1.123]
+- name: /CM5_HighSpeed/DPHY0_D2_N
+  pins: [J5.11, Module1.133]
+- name: /CM5_HighSpeed/DPHY0_D2_P
+  pins: [J5.12, Module1.135]
+- name: /CM5_HighSpeed/DPHY0_D3_N
+  pins: [J5.14, Module1.139]
+- name: /CM5_HighSpeed/DPHY0_D3_P
+  pins: [J5.15, Module1.141]
+- name: /CM5_HighSpeed/DPHY1_C_N
+  pins: [J16.8, Module1.187]
+- name: /CM5_HighSpeed/DPHY1_C_P
+  pins: [J16.9, Module1.189]
+- name: /CM5_HighSpeed/DPHY1_D0_N
+  pins: [J16.2, Module1.175]
+- name: /CM5_HighSpeed/DPHY1_D0_P
+  pins: [J16.3, Module1.177]
+- name: /CM5_HighSpeed/DPHY1_D1_N
+  pins: [J16.5, Module1.181]
+- name: /CM5_HighSpeed/DPHY1_D1_P
+  pins: [J16.6, Module1.183]
+- name: /CM5_HighSpeed/DPHY1_D2_N
+  pins: [J16.11, Module1.193]
+- name: /CM5_HighSpeed/DPHY1_D2_P
+  pins: [J16.12, Module1.195]
+- name: /CM5_HighSpeed/DPHY1_D3_N
+  pins: [J16.14, Module1.194]
+- name: /CM5_HighSpeed/DPHY1_D3_P
+  pins: [J16.15, Module1.196]
+- name: /CM5_HighSpeed/HDMI0_CEC
+  pins: [J22.13, Module1.151]
+- name: /CM5_HighSpeed/HDMI0_CK_N
+  pins: [J22.12, Module1.190]
+- name: /CM5_HighSpeed/HDMI0_CK_P
+  pins: [J22.10, Module1.188]
+- name: /CM5_HighSpeed/HDMI0_D0_N
+  pins: [J22.9, Module1.184]
+- name: /CM5_HighSpeed/HDMI0_D0_P
+  pins: [J22.7, Module1.182]
+- name: /CM5_HighSpeed/HDMI0_D1_N
+  pins: [J22.6, Module1.178]
+- name: /CM5_HighSpeed/HDMI0_D1_P
+  pins: [J22.4, Module1.176]
+- name: /CM5_HighSpeed/HDMI0_D2_N
+  pins: [J22.3, Module1.172]
+- name: /CM5_HighSpeed/HDMI0_D2_P
+  pins: [J22.1, Module1.170]
+- name: /CM5_HighSpeed/HDMI0_HOTPLUG
+  pins: [J22.19, Module1.153]
+- name: /CM5_HighSpeed/HDMI0_SCL
+  pins: [J22.15, Module1.200]
+- name: /CM5_HighSpeed/HDMI0_SDA
+  pins: [J22.16, Module1.199]
+- name: /CM5_HighSpeed/HDMI1_CEC
+  pins: [J10.13, Module1.149]
+- name: /CM5_HighSpeed/HDMI1_CK_N
+  pins: [J10.12, Module1.166]
+- name: /CM5_HighSpeed/HDMI1_CK_P
+  pins: [J10.10, Module1.164]
+- name: /CM5_HighSpeed/HDMI1_D0_N
+  pins: [J10.9, Module1.160]
+- name: /CM5_HighSpeed/HDMI1_D0_P
+  pins: [J10.7, Module1.158]
+- name: /CM5_HighSpeed/HDMI1_D1_N
+  pins: [J10.6, Module1.154]
+- name: /CM5_HighSpeed/HDMI1_D1_P
+  pins: [J10.4, Module1.152]
+- name: /CM5_HighSpeed/HDMI1_D2_N
+  pins: [J10.3, Module1.148]
+- name: /CM5_HighSpeed/HDMI1_D2_P
+  pins: [J10.1, Module1.146]
+- name: /CM5_HighSpeed/HDMI1_HOTPLUG
+  pins: [J10.19, Module1.143]
+- name: /CM5_HighSpeed/HDMI1_SCL
+  pins: [J10.15, Module1.147]
+- name: /CM5_HighSpeed/HDMI1_SDA
+  pins: [J10.16, Module1.145]
+- name: /CM5_HighSpeed/HDMI_5v
+  pins: [C13.1, J10.18, J22.18, U12.2]
+- name: /CM5_HighSpeed/PCIE_CLK_N
+  pins: [J4.53, Module1.112]
+- name: /CM5_HighSpeed/PCIE_CLK_P
+  pins: [J4.55, Module1.110]
+- name: /CM5_HighSpeed/PCIE_PWR_EN
+  pins: [Module1.106, R14.1, U8.7]
+- name: /CM5_HighSpeed/PCIE_RX_N
+  pins: [J4.43, Module1.118]
+- name: /CM5_HighSpeed/PCIE_RX_P
+  pins: [J4.41, Module1.116]
+- name: /CM5_HighSpeed/PCIE_TX_N
+  pins: [J4.49, Module1.124]
+- name: /CM5_HighSpeed/PCIE_TX_P
+  pins: [J4.47, Module1.122]
+- name: /CM5_HighSpeed/PCIE_nCLKREQ
+  pins: [J4.52, Module1.102]
+- name: /CM5_HighSpeed/PCIE_nRST
+  pins: [J4.50, Module1.109]
+- name: /CM5_HighSpeed/PCIE_nWAKE
+  pins: [J4.54, Module1.104]
+- name: /CM5_HighSpeed/SCL0
+  pins: [J5.20, Module1.80]
+- name: /CM5_HighSpeed/SCL1
+  pins: [J16.20, J6.2, R7.2]
+- name: /CM5_HighSpeed/SDA0
+  pins: [J5.21, Module1.82]
+- name: /CM5_HighSpeed/SDA1
+  pins: [J16.21, J6.4, R6.2]
+- name: /CM5_HighSpeed/USB3-0-D_N
+  pins: [J12.A2, Module1.136]
+- name: /CM5_HighSpeed/USB3-0-D_P
+  pins: [J12.A3, Module1.134]
+- name: /CM5_HighSpeed/USB3-0-RX_N
+  pins: [J12.A6, Module1.128]
+- name: /CM5_HighSpeed/USB3-0-RX_P
+  pins: [J12.A5, Module1.130]
+- name: /CM5_HighSpeed/USB3-0-TX_N
+  pins: [J12.A9, Module1.140]
+- name: /CM5_HighSpeed/USB3-0-TX_P
+  pins: [J12.A8, Module1.142]
+- name: /CM5_HighSpeed/USB3-1-D_N
+  pins: [J12.B2, Module1.165]
+- name: /CM5_HighSpeed/USB3-1-D_P
+  pins: [J12.B3, Module1.163]
+- name: /CM5_HighSpeed/USB3-1-RX_N
+  pins: [J12.B6, Module1.157]
+- name: /CM5_HighSpeed/USB3-1-RX_P
+  pins: [J12.B5, Module1.159]
+- name: /CM5_HighSpeed/USB3-1-TX_N
+  pins: [J12.B9, Module1.169]
+- name: /CM5_HighSpeed/USB3-1-TX_P
+  pins: [J12.B8, Module1.171]
+- name: /CM5_HighSpeed/VBUS
+  pins: [C3.1, C7.1, C8.1, J12.A1, J12.B1, U6.6]
+- name: /CM5_HighSpeed/VBUS_EN
+  pins: [Module1.111, U6.3]
+- name: /PCIe-M2/FB
+  pins: [C11.2, R15.2, R16.1, U8.1]
+- name: /PCIe-M2/M2_3v3
+  pins:
+  - C11.1
+  - C14.1
+  - C15.1
+  - C16.1
+  - C17.1
+  - C19.1
+  - D3.2
+  - J4.12
+  - J4.14
+  - J4.16
+  - J4.18
+  - J4.2
+  - J4.4
+  - J4.70
+  - J4.72
+  - J4.74
+  - L1.2
+  - R15.1
+  - U7.1
+  - U7.4
+- name: /USB2_N
+  pins: [J11.A7, J11.B7, Module1.103]
+- name: /USB2_P
+  pins: [J11.A6, J11.B6, Module1.105]
+- name: GND
+  pins:
+  - BT1.2
+  - C1.2
+  - C10.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - J10.11
+  - J10.17
+  - J10.2
+  - J10.5
+  - J10.8
+  - J10.SH1
+  - J10.SH2
+  - J10.SH3
+  - J10.SH4
+  - J11.A1
+  - J11.A12
+  - J11.B1
+  - J11.B12
+  - J11.S1
+  - J12.10
+  - J12.A4
+  - J12.A7
+  - J12.B4
+  - J12.B7
+  - J14.3
+  - J16.1
+  - J16.10
+  - J16.13
+  - J16.16
+  - J16.19
+  - J16.4
+  - J16.7
+  - J2.1
+  - J2.11
+  - J2.13
+  - J2.3
+  - J2.5
+  - J2.7
+  - J2.9
+  - J22.11
+  - J22.17
+  - J22.2
+  - J22.5
+  - J22.8
+  - J22.SH1
+  - J22.SH2
+  - J22.SH3
+  - J22.SH4
+  - J4.1
+  - J4.15
+  - J4.21
+  - J4.27
+  - J4.3
+  - J4.33
+  - J4.39
+  - J4.45
+  - J4.51
+  - J4.57
+  - J4.71
+  - J4.73
+  - J4.75
+  - J4.9
+  - J4.M1
+  - J4.M2
+  - J4.M3
+  - J4.M4
+  - J4.S1
+  - J4.S2
+  - J5.1
+  - J5.10
+  - J5.13
+  - J5.16
+  - J5.19
+  - J5.4
+  - J5.7
+  - J7.11
+  - J7.6
+  - J8.14
+  - J8.20
+  - J8.25
+  - J8.30
+  - J8.34
+  - J8.39
+  - J8.6
+  - J8.9
+  - Module1.1
+  - Module1.107
+  - Module1.108
+  - Module1.113
+  - Module1.114
+  - Module1.119
+  - Module1.120
+  - Module1.125
+  - Module1.126
+  - Module1.13
+  - Module1.131
+  - Module1.132
+  - Module1.137
+  - Module1.138
+  - Module1.14
+  - Module1.144
+  - Module1.150
+  - Module1.155
+  - Module1.156
+  - Module1.161
+  - Module1.162
+  - Module1.167
+  - Module1.168
+  - Module1.173
+  - Module1.174
+  - Module1.179
+  - Module1.180
+  - Module1.185
+  - Module1.186
+  - Module1.191
+  - Module1.192
+  - Module1.197
+  - Module1.198
+  - Module1.2
+  - Module1.22
+  - Module1.23
+  - Module1.32
+  - Module1.33
+  - Module1.42
+  - Module1.43
+  - Module1.52
+  - Module1.53
+  - Module1.59
+  - Module1.60
+  - Module1.65
+  - Module1.66
+  - Module1.7
+  - Module1.71
+  - Module1.74
+  - Module1.8
+  - Module1.98
+  - R12.2
+  - R14.2
+  - R16.2
+  - R9.2
+  - SW1.2
+  - U1.3
+  - U1.8
+  - U12.3
+  - U18.2
+  - U2.3
+  - U2.8
+  - U3.19
+  - U3.20
+  - U6.2
+  - U7.2
+  - U8.4
+  - U8.8
+  - U8.9
+- name: Net-(C1-Pad1)
+  pins: [C1.1, U3.4, U3.5]
+- name: Net-(D1-K)
+  pins: [D1.1, R10.1]
+- name: Net-(D2-K)
+  pins: [D2.1, R1.1]
+- name: Net-(D3-K)
+  pins: [D3.1, R17.1]
+- name: Net-(J16-Pin_17)
+  pins: [J16.17, R8.2]
+- name: Net-(J4-DAS{slash}~{DSS}{slash}~{LED1})
+  pins: [J4.10, R17.2]
+- name: Net-(J4-SUSCLK)
+  pins: [J4.68, U7.3]
+- name: Net-(Module1A-LED_nACT)
+  pins: [Module1.21, R1.2]
+- name: Net-(U3-LEDG_K)
+  pins: [R3.1, U3.18]
+- name: Net-(U3-LEDY_K)
+  pins: [R2.1, U3.16]
+- name: Net-(U6-ILIM)
+  pins: [R12.1, U6.5]
+- name: Net-(U8-LX)
+  pins: [L1.1, U8.6]
+positions:
+- ref: BT1
+  x: 90.0
+  y: 123.2
+  rot: -90.0
+- ref: C1
+  x: 152.3
+  y: 138.3
+  rot: 90.0
+- ref: C10
+  x: 206.5
+  y: 140.09
+  rot: -90.0
+- ref: C11
+  x: 204.8
+  y: 138.9
+- ref: C12
+  x: 111.55
+  y: 149.5
+  rot: 90.0
+- ref: C13
+  x: 116.8
+  y: 148.6
+  rot: 90.0
+- ref: C14
+  x: 212.55
+  y: 136.0
+  rot: 180.0
+- ref: C15
+  x: 212.55
+  y: 142.0
+  rot: 180.0
+- ref: C16
+  x: 212.55
+  y: 140.0
+  rot: 180.0
+- ref: C17
+  x: 212.54
+  y: 138.0
+  rot: 180.0
+- ref: C18
+  x: 190.22
+  y: 151.1
+- ref: C19
+  x: 209.1
+  y: 145.32
+  rot: -90.0
+- ref: C2
+  x: 188.44
+  y: 129.7
+  rot: 180.0
+- ref: C3
+  x: 185.9
+  y: 141.59
+  rot: 90.0
+- ref: C4
+  x: 209.05
+  y: 140.0
+- ref: C5
+  x: 199.45
+  y: 143.75
+  rot: 180.0
+- ref: C6
+  x: 209.05
+  y: 142.0
+- ref: C7
+  x: 170.15
+  y: 141.9
+- ref: C8
+  x: 170.14
+  y: 139.5
+- ref: C9
+  x: 184.22
+  y: 151.1
+  rot: 180.0
+- ref: D1
+  x: 112.7
+  y: 158.9
+  rot: 180.0
+- ref: D2
+  x: 116.35
+  y: 158.9
+  rot: 180.0
+- ref: D3
+  x: 211.5
+  y: 158.9
+  rot: 180.0
+- ref: J10
+  x: 127.0
+  y: 150.45
+- ref: J11
+  x: 187.0
+  y: 157.53
+- ref: J12
+  x: 172.0
+  y: 151.45
+- ref: J14
+  x: 205.3
+  y: 82.7
+  rot: 90.0
+- ref: J16
+  x: 126.5
+  y: 75.0
+  rot: 180.0
+- ref: J2
+  x: 139.0
+  y: 74.5
+  rot: 90.0
+- ref: J22
+  x: 102.0
+  y: 150.45
+- ref: J4
+  x: 226.5
+  y: 152.5
+  rot: 180.0
+- ref: J5
+  x: 90.5
+  y: 75.0
+  rot: 180.0
+- ref: J6
+  x: 120.4
+  y: 103.2
+  rot: 90.0
+- ref: J7
+  x: 201.08
+  y: 152.45
+  rot: 180.0
+- ref: J8
+  x: 87.37
+  y: 108.77
+  rot: 90.0
+- ref: J9
+  x: 141.77
+  y: 151.77
+  rot: 180.0
+- ref: L1
+  x: 209.95
+  y: 132.1
+- ref: Module1
+  x: 195.5
+  y: 73.5
+  rot: 180.0
+- ref: R1
+  x: 115.8
+  y: 156.4
+  rot: 90.0
+- ref: R10
+  x: 113.6
+  y: 156.4
+  rot: 90.0
+- ref: R11
+  x: 209.2
+  y: 88.95
+  rot: 90.0
+- ref: R12
+  x: 186.8
+  y: 136.1
+  rot: 180.0
+- ref: R13
+  x: 203.65
+  y: 93.35
+  rot: 90.0
+- ref: R14
+  x: 205.9
+  y: 135.31
+  rot: -90.0
+- ref: R15
+  x: 204.8
+  y: 137.9
+- ref: R16
+  x: 206.5
+  y: 137.41
+  rot: 90.0
+- ref: R17
+  x: 212.6
+  y: 156.8
+  rot: 90.0
+- ref: R2
+  x: 162.6
+  y: 138.22
+  rot: 90.0
+- ref: R3
+  x: 160.3
+  y: 138.22
+  rot: 90.0
+- ref: R5
+  x: 196.0
+  y: 81.5
+- ref: R6
+  x: 111.69
+  y: 94.6
+- ref: R7
+  x: 111.69
+  y: 96.1
+- ref: R8
+  x: 133.22
+  y: 79.7
+- ref: R9
+  x: 206.3
+  y: 143.5
+  rot: -90.0
+- ref: SW1
+  x: 106.25
+  y: 72.9
+- ref: U1
+  x: 155.4
+  y: 138.28
+  rot: -90.0
+- ref: U12
+  x: 114.1
+  y: 147.6
+  rot: 90.0
+- ref: U18
+  x: 206.9
+  y: 93.35
+  rot: 180.0
+- ref: U2
+  x: 149.4
+  y: 138.28
+  rot: -90.0
+- ref: U3
+  x: 153.0
+  y: 150.5
+- ref: U6
+  x: 187.5
+  y: 133.26
+  rot: -90.0
+- ref: U7
+  x: 211.55
+  y: 146.2
+  rot: -90.0
+- ref: U8
+  x: 208.6
+  y: 137.0
+  rot: 90.0

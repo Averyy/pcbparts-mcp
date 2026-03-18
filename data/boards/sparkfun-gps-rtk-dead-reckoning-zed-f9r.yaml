@@ -1,0 +1,750 @@
+name: SparkFun GPS-RTK Dead Reckoning ZED-F9R
+slug: sparkfun-gps-rtk-dead-reckoning-zed-f9r
+source: sparkfun/SparkFun_GPS_Dead_Reckoning_ZED-F9R
+format: eagle
+description: u-blox ZED-F9R multi-band L1/L2 RTK GNSS with internal 3D IMU for dead reckoning, 30Hz sensor fusion
+tags: [gps-gnss, sensors]
+outline:
+  width_mm: 43.18
+  height_mm: 50.8
+design_rules:
+  layers: 2
+  min_trace: 5mil
+  min_clearance: 5mil
+  min_drill: 0.3mm
+  min_via: 5mil
+components:
+- ref: BT2
+  value: reflowable battery
+  footprint: MS421R_IV03E
+  prod_id: BAT-16685
+  description: SEIKO Reflowable Lithium Batteries
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+  prod_id: CAP-14993
+  decouples: U1
+- ref: C10
+  value: 1uF
+  footprint: '0402'
+  prod_id: CAP-12417
+  decouples: U5
+- ref: C11
+  value: 2.2uF
+  footprint: '0402'
+  prod_id: CAP-14232
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  prod_id: CAP-14993
+  decouples: U5
+- ref: C2
+  value: 1uF
+  footprint: '0402'
+  prod_id: CAP-12417
+  decouples: U5
+- ref: C3
+  value: 1nF
+  footprint: '0402'
+  prod_id: CAP-15061
+- ref: C4
+  value: 1nF
+  footprint: '0402'
+  prod_id: CAP-15061
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  prod_id: CAP-14993
+  decouples: U5
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  prod_id: CAP-14993
+  decouples: U4
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  prod_id: CAP-14993
+  decouples: U3
+- ref: C8
+  value: 47pF
+  footprint: '0402'
+  prod_id: CAP-15063
+- ref: C9
+  value: 1uF
+  footprint: '0402'
+  prod_id: CAP-12417
+  decouples: U5
+- ref: D1
+  value: 15V
+  footprint: SOT-23-3
+  prod_id: DIO-15071
+  description: Zener Diode
+- ref: D2
+  value: 15V
+  footprint: SOT-23-3
+  prod_id: DIO-15071
+  description: Zener Diode
+- ref: D3
+  value: PRTR5V0U2
+  footprint: SOT886
+  prod_id: DIO-14084
+  description: A small ESD protection device
+- ref: D4
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-00819
+  description: Red SMD LED
+- ref: D5
+  value: blue LED
+  footprint: '0603'
+  prod_id: DIO-08575
+  description: Blue SMD LED
+- ref: D6
+  value: blue LED
+  footprint: '0603'
+  prod_id: DIO-08575
+  description: Blue SMD LED
+- ref: D7
+  value: blue LED
+  footprint: '0603'
+  prod_id: DIO-08575
+  description: Blue SMD LED
+- ref: D8
+  value: 0.5A/40V/420mV
+  footprint: SOD-323
+  prod_id: DIO-10955
+  description: Schottky diode
+- ref: D9
+  value: PESD0402
+  footprint: '0402'
+  prod_id: DIO-15359
+  description: ESD protection diode
+- ref: E1
+  value: SMA antenna
+  footprint: SMA-EDGE
+  prod_id: CONN-08289
+  description: SMA Antenna Connector w/ Ground
+- ref: FB1
+  value: 120ohm
+  footprint: '0402'
+  prod_id: NDUC-14206
+- ref: GEO
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: I2C
+  value: solder jumper (NC)
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+- ref: J2
+  value: USB-C
+  footprint: USB-C
+  prod_id: CONN-14122
+  description: USB Type C 16Pin Connector
+- ref: J3
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J4
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J5
+  value: 1x11 header
+  footprint: 1X11
+- ref: J6
+  value: 1x9 header
+  footprint: 1X09
+- ref: J7
+  value: 1x6 header
+  footprint: 1X06
+- ref: PPS
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: PWR
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: R1
+  value: 3.3kohm
+  footprint: '0603'
+  prod_id: RES-07851
+- ref: R10
+  value: 33ohm
+  footprint: 1206_RA
+  prod_id: RES-15081
+- ref: R11
+  value: 33ohm
+  footprint: 1206_RA
+  prod_id: RES-15081
+- ref: R12
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R13
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R14
+  value: 5.1kohm
+  footprint: '0402'
+  prod_id: RES-14340
+  pulldown: J2.CC2
+- ref: R15
+  value: 5.1kohm
+  footprint: '0402'
+  prod_id: RES-14340
+  pulldown: J2.CC1
+- ref: R16
+  value: 2.2kohm
+  footprint: '0402'
+  prod_id: RES-14341
+- ref: R17
+  value: 1kohm
+  footprint: '0402'
+  prod_id: RES-14342
+- ref: R18
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R19
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R2
+  value: 3.3kohm
+  footprint: '0603'
+  prod_id: RES-07851
+- ref: R20
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R21
+  value: 27ohm
+  footprint: '0603'
+  prod_id: RES-09334
+- ref: R22
+  value: 27ohm
+  footprint: '0603'
+  prod_id: RES-09334
+- ref: R23
+  value: 2.2kohm
+  footprint: '0402'
+  prod_id: RES-14341
+- ref: R24
+  value: 3.3kohm
+  footprint: '0603'
+  prod_id: RES-07851
+- ref: R3
+  value: 100kohm
+  footprint: '0402'
+  prod_id: RES-13495
+- ref: R4
+  value: 910ohm
+  footprint: '0603'
+  prod_id: RES-13860
+- ref: R5
+  value: 470ohm
+  footprint: '0603'
+  prod_id: RES-07869
+- ref: R6
+  value: 470ohm
+  footprint: '0603'
+  prod_id: RES-07869
+- ref: R7
+  value: 910ohm
+  footprint: '0603'
+  prod_id: RES-13860
+- ref: R8
+  value: 33ohm
+  footprint: 1206_RA
+  prod_id: RES-15081
+- ref: R9
+  value: 33ohm
+  footprint: 1206_RA
+  prod_id: RES-15081
+- ref: RTK
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: SHIELD
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: SPI
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: U1
+  value: DUAL-OPTO_HCPL-073L
+  footprint: SOIC-8
+  prod_id: IC-15070
+  description: HCPL-073L
+- ref: U3
+  value: UHS_INVERTER_SCHMITT_TRIGGERSIP6
+  footprint: SIP6_MICROPAK2
+  prod_id: IC-17000
+  description: NC7SZ14
+- ref: U4
+  value: UHS_INVERTER_SCHMITT_TRIGGERSIP6
+  footprint: SIP6_MICROPAK2
+  prod_id: IC-17000
+  description: NC7SZ14
+- ref: U5
+  value: 3.3V
+  footprint: SOT-23-5
+  prod_id: VREG-12457
+  description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
+- ref: U6
+  value: U-BLOX_ZED-F9R
+  footprint: UBLOX_ZED_F9R
+  prod_id: IC-14716
+  description: u-blox ZED-F9K ADR
+nets:
+- name: '!RESET'
+  pins: [J6.4, R8.B.1]
+- name: '!SAFEBOOT'
+  pins: [J6.3, R8.C.1]
+- name: 3.3V
+  pins:
+  - C1.1
+  - C10.1
+  - C12.1
+  - C2.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - D4.A
+  - D6.A
+  - D8.A
+  - I2C.2
+  - J3.2
+  - J4.2
+  - J5.3
+  - J6.8
+  - R3.2
+  - R4.2
+  - R7.2
+  - U1.VCC
+  - U3.VCC
+  - U4.VCC
+  - U5.OUT
+  - U6.VCC
+  - U6.V_USB
+- name: DIR
+  pins: [R10.C.1, U6.DIR]
+- name: DIR+
+  pins: [J5.9, R1.1]
+- name: DIR_IN
+  pins: [R5.2, U1.ANODE2]
+- name: DIR_INV
+  pins: [R4.1, U1.VOUT2, U4.A]
+- name: DIR_OUT
+  pins: [R10.C.2, U4.Y]
+- name: DMINUS
+  pins: [R21.2, U6.USB_D-]
+- name: DPLUS
+  pins: [R22.2, U6.USB_D+]
+- name: D_SEL
+  pins: [SPI.1, U6.D_SEL]
+- name: EXTINT
+  pins: [R8.D.2, U6.EXTINT]
+- name: GEOF_STAT
+  pins: [D7.A, R11.B.2]
+- name: GEO_FENCE_STAT
+  pins: [R11.B.1, U6.GEO_FENCE_STAT]
+- name: GND
+  pins:
+  - BT2.-
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.A
+  - D2.A
+  - D3.2
+  - D9.1
+  - E1.GND
+  - GEO.1
+  - J2.GND
+  - J3.1
+  - J4.1
+  - J5.1
+  - J5.10
+  - J5.8
+  - J6.9
+  - J7.6
+  - PPS.1
+  - PWR.1
+  - R14.1
+  - R15.1
+  - R3.1
+  - SHIELD.1
+  - SPI.2
+  - U1.CATHODE1
+  - U1.CATHODE2
+  - U1.GND
+  - U3.GND
+  - U4.GND
+  - U5.GND
+  - U6.GND
+- name: INT
+  pins: [J6.2, R8.D.1]
+- name: N$1
+  pins: [I2C.1, R23.2]
+- name: N$10
+  pins: [D3.4, R22.1]
+- name: N$14
+  pins: [J2.CC2, R14.2]
+- name: N$15
+  pins: [J2.CC1, R15.2]
+- name: N$2
+  pins: [D8.C, R24.2]
+- name: N$22
+  pins: [R19.1, RTK.2]
+- name: N$23
+  pins: [PPS.2, R18.1]
+- name: N$24
+  pins: [D5.C, R18.2]
+- name: N$25
+  pins: [D6.C, R19.2]
+- name: N$3
+  pins: [I2C.3, R16.2]
+- name: N$33
+  pins: [GEO.2, R20.1]
+- name: N$34
+  pins: [D7.C, R20.2]
+- name: N$35
+  pins: [C4.1, D2.C, R2.2, R6.1]
+- name: N$37
+  pins: [C3.1, D1.C, R1.2, R5.1]
+- name: N$4
+  pins: [D4.C, R17.2]
+- name: N$5
+  pins: [C8.1, FB1.2, R13.1]
+- name: N$6
+  pins: [D3.3, J2.D+]
+- name: N$7
+  pins: [D3.1, J2.D-]
+- name: N$8
+  pins: [PWR.2, R17.1]
+- name: N$9
+  pins: [D3.6, R21.1]
+- name: PPS
+  pins: [D5.A, J6.1, R12.2]
+- name: RESET
+  pins: [R8.B.2, U6.!RESET!]
+- name: RF_IN
+  pins: [D9.2, E1.SIGNAL, FB1.1, U6.RF_IN]
+  class: Antenna
+  trace_width: '1'
+- name: RTK_STAT
+  pins: [R11.A.2, RTK.1]
+- name: RTK_STAT_2
+  pins: [R11.A.1, U6.RTK_STAT]
+- name: RX2
+  pins: [R10.B.1, U6.RX2]
+- name: RXI/CIPO
+  pins: [J5.5, R9.B.1]
+- name: RXI2
+  pins: [J7.3, R10.B.2]
+- name: RX_CIPO
+  pins: [R9.B.2, U6.RX/CIPO]
+- name: SAFEBOOT
+  pins: [R8.C.2, U6.!SAFEBOOT!]
+- name: SCL/CLK
+  pins: [J3.4, J4.4, J5.7, J6.6, R16.1, R9.D.1]
+- name: SCL_CLK
+  pins: [R9.D.2, U6.SCL/CLK]
+- name: SDA/!CS
+  pins: [J3.3, J4.3, J5.4, J6.7, R23.1, R9.C.1]
+- name: SDA__CS
+  pins: [R9.C.2, U6.SDA/!CS!]
+- name: SHIELD
+  pins: [J2.SHLD, SHIELD.2]
+- name: TIMEPULSE
+  pins: [R12.1, U6.TIMEPULSE]
+- name: TX2
+  pins: [R10.A.1, U6.TX2]
+- name: TXO/COPI
+  pins: [J5.6, R9.A.1]
+- name: TXO2
+  pins: [J7.2, R10.A.2]
+- name: TX_COPI
+  pins: [R9.A.2, U6.TX/COPI]
+- name: TX_READY
+  pins: [J6.5, R8.A.1]
+- name: TX_READY_2
+  pins: [R8.A.2, U6.TX_READY]
+- name: VIN
+  pins: [C9.1, D3.5, J2.VBUS, J5.2, U5.EN, U5.IN]
+- name: V_BATT
+  pins: [BT2.+, C11.1, R24.1, TP1.1, U6.V_BKCP]
+- name: V_RF
+  pins: [R13.2, U6.V_RF]
+- name: WHEEL_TKS
+  pins: [R10.D.1, U6.WHEEL_TKS]
+- name: WT+
+  pins: [J5.11, R2.1]
+- name: WT_IN
+  pins: [R6.2, U1.ANODE1]
+- name: WT_INV
+  pins: [R7.1, U1.VOUT1, U3.A]
+- name: WT_OUT
+  pins: [R10.D.2, U3.Y]
+positions:
+- ref: BT2
+  x: 28.83
+  y: 43.05
+  rot: 270.0
+- ref: C1
+  x: 27.56
+  y: 5.71
+- ref: C10
+  x: 26.16
+  y: 37.49
+  rot: 90.0
+- ref: C11
+  x: 21.84
+  y: 34.8
+- ref: C12
+  x: 19.56
+  y: 34.54
+- ref: C2
+  x: 25.02
+  y: 34.8
+- ref: C3
+  x: 35.98
+  y: 18.01
+  rot: 180.0
+- ref: C4
+  x: 35.58
+  y: 6.89
+  rot: 180.0
+- ref: C5
+  x: 19.53
+  y: 35.53
+- ref: C6
+  x: 26.29
+  y: 13.46
+  rot: 90.0
+- ref: C7
+  x: 22.38
+  y: 10.8
+  rot: 270.0
+- ref: C8
+  x: 21.08
+  y: 13.84
+- ref: C9
+  x: 23.11
+  y: 40.89
+- ref: D1
+  x: 35.98
+  y: 15.54
+- ref: D2
+  x: 36.11
+  y: 9.31
+- ref: D3
+  x: 12.45
+  y: 41.96
+  rot: 270.0
+- ref: D4
+  x: 24.13
+  y: 2.54
+- ref: D5
+  x: 28.45
+  y: 2.54
+- ref: D6
+  x: 35.94
+  y: 2.54
+- ref: D7
+  x: 32.13
+  y: 2.54
+- ref: D8
+  x: 27.99
+  y: 38.1
+  rot: 270.0
+- ref: D9
+  x: 17.53
+  y: 11.43
+  rot: 180.0
+- ref: E1
+  x: 14.02
+  y: 2.24
+  rot: 180.0
+- ref: FB1
+  x: 17.53
+  y: 15.62
+- ref: GEO
+  x: 32.13
+  y: 1.6
+- ref: I2C
+  x: 9.65
+  y: 33.27
+  rot: 90.0
+- ref: J2
+  x: 12.7
+  y: 44.48
+  rot: 180.0
+- ref: J3
+  x: 5.08
+  y: 41.91
+  rot: 270.0
+- ref: J4
+  x: 38.1
+  y: 41.91
+  rot: 90.0
+- ref: J5
+  x: 41.91
+  y: 36.83
+  rot: 270.0
+- ref: J6
+  x: 1.27
+  y: 16.51
+  rot: 90.0
+- ref: J7
+  x: 34.29
+  y: 49.53
+  rot: 180.0
+- ref: PPS
+  x: 28.45
+  y: 1.6
+- ref: PWR
+  x: 24.64
+  y: 1.6
+- ref: R1
+  x: 35.98
+  y: 13.23
+  rot: 180.0
+- ref: R10
+  x: 35.43
+  y: 29.46
+  rot: 270.0
+- ref: R11
+  x: 35.43
+  y: 22.23
+  rot: 270.0
+- ref: R12
+  x: 9.37
+  y: 18.41
+  rot: 180.0
+- ref: R13
+  x: 21.34
+  y: 15.62
+- ref: R14
+  x: 6.35
+  y: 47.75
+  rot: 270.0
+- ref: R15
+  x: 19.05
+  y: 47.75
+  rot: 270.0
+- ref: R16
+  x: 9.75
+  y: 34.13
+- ref: R17
+  x: 24.13
+  y: 1.14
+- ref: R18
+  x: 28.45
+  y: 1.14
+- ref: R19
+  x: 35.94
+  y: 1.14
+- ref: R2
+  x: 35.98
+  y: 5.42
+  rot: 180.0
+- ref: R20
+  x: 32.13
+  y: 1.14
+- ref: R21
+  x: 13.97
+  y: 38.1
+  rot: 270.0
+- ref: R22
+  x: 12.45
+  y: 38.1
+  rot: 270.0
+- ref: R23
+  x: 9.75
+  y: 32.66
+- ref: R24
+  x: 30.12
+  y: 38.1
+  rot: 270.0
+- ref: R3
+  x: 19.71
+  y: 36.73
+  rot: 180.0
+- ref: R4
+  x: 30.48
+  y: 13.68
+  rot: 90.0
+- ref: R5
+  x: 35.98
+  y: 19.54
+  rot: 180.0
+- ref: R6
+  x: 35.98
+  y: 11.73
+  rot: 180.0
+- ref: R7
+  x: 24.79
+  y: 7.78
+  rot: 270.0
+- ref: R8
+  x: 8.76
+  y: 24.26
+  rot: 270.0
+- ref: R9
+  x: 8.76
+  y: 28.7
+  rot: 270.0
+- ref: RTK
+  x: 36.07
+  y: 1.6
+- ref: SHIELD
+  x: 17.14
+  y: 48.01
+- ref: SPI
+  x: 9.47
+  y: 27.13
+  rot: 90.0
+- ref: U1
+  x: 29.94
+  y: 9.26
+  rot: 90.0
+- ref: U3
+  x: 24.2
+  y: 10.94
+- ref: U4
+  x: 28.19
+  y: 13.46
+  rot: 90.0
+- ref: U5
+  x: 23.62
+  y: 38.23
+  rot: 180.0
+- ref: U6
+  x: 22.86
+  y: 25.4
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: RF_IN
+  layers: [F.Cu]
+- net: SHIELD
+  layers: [B.Cu, F.Cu]

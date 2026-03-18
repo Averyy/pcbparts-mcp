@@ -1,0 +1,129 @@
+name: Soldered 1S Battery Protection
+slug: soldered-1s-battery-protection
+source: SolderedElectronics/1S-Li-Ion-battery-protection-hardware-design
+format: kicad7
+description: DW01-P protection IC + FS8205A dual MOSFET, over-charge/discharge/short protection
+tags: [power-protection]
+key_ics: [DW01+G, FS8205A]
+outline:
+  width_mm: 22.0
+  height_mm: 22.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+- ref: D1
+  value: purple LED
+  footprint: '0402'
+- ref: JP1
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: K1
+  value: 1x1 header
+  footprint: HEADER_MALE
+- ref: K2
+  value: 1x1 header
+  footprint: HEADER_MALE
+- ref: K3
+  value: JST-2pin-SMD
+  footprint: JST-2pin-SMD
+- ref: K4
+  value: 1x2 header
+  footprint: HEADER_MALE
+- ref: R1
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R2
+  value: 1kohm
+  footprint: '0603'
+  pulldown: U1.CS
+- ref: R3
+  value: 100ohm
+  footprint: '0603'
+- ref: U1
+  value: DW01+G
+  footprint: SOT-23-6
+- ref: U2
+  value: FS8205A
+  footprint: TSSOP8
+nets:
+- name: CS
+  pins: [R2.2, U1.CS]
+- name: GND
+  pins: [D1.K, K4.1, R2.1, U2.S2@6, U2.S2@7]
+- name: GND_ISO
+  pins: [C1.2, K2.1, K3.-, U1.GND, U2.S1@2, U2.S1@3]
+- name: Net-(C1-Pad1)
+  pins: [C1.1, R3.1, U1.VCC]
+- name: Net-(D1-Pad1)
+  pins: [D1.A, R1.2]
+- name: Net-(JP1-Pad2)
+  pins: [JP1.2, R1.1]
+- name: OC
+  pins: [U1.OC, U2.G2]
+- name: OD
+  pins: [U1.OD, U2.G1]
+- name: VBAT
+  pins: [JP1.1, K1.1, K3.+, K4.2, R3.2]
+positions:
+- ref: C1
+  x: 94.2
+  y: 149.8
+  rot: 90.0
+- ref: D1
+  x: 100.0
+  y: 151.2
+  rot: -90.0
+- ref: JP1
+  x: 100.0
+  y: 146.8
+  rot: -90.0
+- ref: K1
+  x: 98.0
+  y: 139.5
+  rot: 180.0
+  side: back
+- ref: K2
+  x: 84.0
+  y: 139.5
+  rot: 180.0
+  side: back
+- ref: K3
+  x: 91.0
+  y: 143.0
+- ref: K4
+  x: 91.0
+  y: 158.5
+  side: back
+- ref: R1
+  x: 100.0
+  y: 149.0
+  rot: -90.0
+- ref: R2
+  x: 87.8
+  y: 151.3
+  rot: 90.0
+- ref: R3
+  x: 96.5
+  y: 150.5
+- ref: U1
+  x: 91.0
+  y: 150.5
+- ref: U2
+  x: 84.7
+  y: 149.0
+  rot: -90.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]
+- net: GND_ISO
+  layers: [F&B.Cu]
+- net: ''
+  layers: [F.Cu]
+  keepout: true

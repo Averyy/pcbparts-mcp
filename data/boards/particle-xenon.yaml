@@ -1,0 +1,1064 @@
+name: Particle Xenon
+slug: particle-xenon
+source: particle-iot/xenon
+format: eagle
+description: nRF52840 BLE 5.0, RF antenna switch (SKY13351)
+tags: [bluetooth]
+key_ics: [SKY13351, nRF52840]
+outline:
+  width_mm: 22.86
+  height_mm: 50.8
+design_rules:
+  layers: 4
+  min_trace: 4mil
+  min_clearance: 6mil
+  min_drill: 0.2mm
+  min_via: 3mil
+components:
+- ref: ANT
+  value: ANT_F
+  footprint: ANTENNA_F2_PCB
+  description: F Style 2
+- ref: BAT
+  value: 2-pin connector
+  footprint: CON_2.0MM_SMT
+- ref: BUTTON
+  value: TS-1185A-020
+  footprint: TS-1185A-020
+- ref: C1
+  value: 10pF
+  footprint: '0402'
+- ref: C10
+  value: 10pF
+  footprint: '0402'
+- ref: C11
+  value: 4.7uF
+  footprint: '0402'
+  decouples: U1
+- ref: C12
+  value: 1uF
+  footprint: '0402'
+  decouples: U1
+- ref: C13
+  value: 1uF
+  footprint: '0402'
+- ref: C14
+  value: 1uF
+  footprint: '0402'
+  decouples: U1
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+- ref: C16
+  value: 12pF
+  footprint: '0402'
+- ref: C17
+  value: 12pF
+  footprint: '0402'
+- ref: C18
+  value: 100pF
+  footprint: '0402'
+- ref: C19
+  value: 12pF
+  footprint: '0402'
+- ref: C20
+  value: 12pF
+  footprint: '0402'
+- ref: C21
+  value: 4.7uF
+  footprint: '0402'
+  decouples: U5
+- ref: C22
+  value: 0.5pF
+  footprint: '0402'
+- ref: C23
+  value: 0.5pF
+  footprint: '0402'
+- ref: C24
+  value: 100nF
+  footprint: '0402'
+- ref: C25
+  value: 10uF
+  footprint: 0805
+- ref: C26
+  value: 100nF
+  footprint: '0402'
+  decouples: U5
+- ref: C27
+  value: 22uF
+  footprint: 0805
+  decouples: U6
+- ref: C28
+  value: 33pF
+  footprint: '0402'
+- ref: C3
+  value: 33pF
+  footprint: '0402'
+- ref: C30
+  value: 1.2nF
+  footprint: '0402'
+- ref: C31
+  value: 100nF
+  footprint: '0402'
+- ref: C32
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C34
+  value: 100nF
+  footprint: '0402'
+- ref: C35
+  value: 100nF
+  footprint: '0402'
+- ref: C36
+  value: 10nF
+  footprint: '0402'
+- ref: C37
+  value: 100nF
+  footprint: '0402'
+  decouples: U6
+- ref: C38
+  value: 1nF
+  footprint: '0402'
+  decouples: U6
+- ref: C39
+  value: 100nF
+  footprint: '0402'
+  decouples: U6
+- ref: C4
+  value: 4.7uF
+  footprint: '0402'
+- ref: C40
+  value: 1nF
+  footprint: '0402'
+  decouples: U6
+- ref: C41
+  value: 10uF
+  footprint: '0603'
+  decouples: U6
+- ref: C42
+  value: 100pF
+  footprint: '0402'
+  decouples: U6
+- ref: C43
+  value: 47nF
+  footprint: '0402'
+- ref: C44
+  value: 100pF
+  footprint: '0402'
+  decouples: U6
+- ref: C45
+  value: 820pF
+  footprint: '0402'
+- ref: C46
+  value: 33pF
+  footprint: '0402'
+  decouples: U6
+- ref: C47
+  value: 4.7uF
+  footprint: '0402'
+- ref: C48
+  value: 10nF
+  footprint: '0402'
+- ref: C5
+  value: 1pF
+  footprint: '0402'
+- ref: C6
+  value: 1pF
+  footprint: '0402'
+- ref: C7
+  value: 10pF
+  footprint: '0402'
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C9
+  value: 4.7uF
+  footprint: '0402'
+  decouples: U1
+- ref: CNG
+  value: orange LED
+  footprint: '0603'
+- ref: D2
+  value: LRB551V
+  footprint: SOD-323
+- ref: D3
+  value: B5819w
+  footprint: SOD-123
+- ref: D4
+  value: ss3p
+  footprint: DIODE-DO-220AA(SMP)
+- ref: DEBUG
+  value: CON5X2
+  footprint: CON5X2_1.27
+- ref: F1
+  value: 6V 1A
+  footprint: F0805
+- ref: HEAD1
+  value: 1x16 header
+  footprint: HEADER_16P2.54
+- ref: HEAD2
+  value: SIP-12
+  footprint: SIP-12
+- ref: L1
+  value: 3.9nH
+  footprint: R-0402S
+- ref: L2
+  value: 10uH
+  footprint: R-0603A
+- ref: L3
+  value: 10uH
+  footprint: R-0603A
+- ref: L4
+  value: 15nH
+  footprint: R-0402S
+- ref: L5
+  value: 4.7uH
+  footprint: INDUCTOR-NR3015
+- ref: L7
+  value: 15nH
+  footprint: R-0402S
+- ref: LED1
+  value: blue LED
+  footprint: '0603'
+- ref: NFC
+  value: UFL
+  footprint: IPEX-20279-001E
+  description: Ultra Miniature Coaxial SMT RF Receptacle
+- ref: Q1
+  value: 2n7002
+  footprint: SOT323
+  description: NMOS
+- ref: Q2
+  value: IRLML6401
+  footprint: SOT-23
+  description: PMOS
+- ref: Q3
+  value: IRLML6401
+  footprint: SOT-23
+  description: PMOS
+- ref: Q4
+  value: 2n7002
+  footprint: SOT323
+  description: NMOS
+- ref: R1
+  value: 3kohm
+  footprint: R-0402S
+  pullup: CNG.K
+- ref: R10
+  value: 30kohm
+  footprint: R-0402S
+  pullup: Q1.1
+- ref: R11
+  value: 100kohm
+  footprint: R-0402S
+  pullup: F_CS
+- ref: R14
+  value: 1kohm
+  footprint: R-0402S
+- ref: R15
+  value: 806kohm
+  footprint: R-0402S
+  tolerance: 1%
+- ref: R16
+  value: 2Mohm
+  footprint: R-0402S
+- ref: R17
+  value: 10kohm
+  footprint: R-0402S
+  pulldown: P0.12
+- ref: R18
+  value: 200kohm
+  footprint: R-0402S
+  pullup: EN
+- ref: R19
+  value: 5.6kohm
+  footprint: R-0402S
+  pullup: P0.12
+- ref: R2
+  value: 0ohm
+  footprint: R-0402S
+- ref: R20
+  value: 1kohm
+  footprint: R-0402S
+- ref: R21
+  value: 806kohm
+  footprint: R-0402S
+  pullup: Q1.3
+- ref: R22
+  value: 6.2kohm
+  footprint: R-0402S
+  pulldown: /CHG
+- ref: R23
+  value: 200kohm
+  footprint: R-0402S
+  pullup: LI+
+- ref: R25
+  value: 0ohm
+  footprint: R-0402S
+- ref: R3
+  value: 0ohm
+  footprint: R-0402S
+- ref: R4
+  value: 2kohm
+  footprint: R-0402S
+  pulldown: U3.ISEN
+- ref: R5
+  value: 1kohm
+  footprint: R-0402S
+- ref: R6
+  value: 10kohm
+  footprint: R-0402S
+  pullup: /RST
+- ref: R7
+  value: 1kohm
+  footprint: R-0402S
+- ref: R8
+  value: 1kohm
+  footprint: R-0402S
+- ref: RESET
+  value: TS-1185A-020
+  footprint: TS-1185A-020
+- ref: RF
+  value: UFL
+  footprint: IPEX-20279-001E
+  description: Ultra Miniature Coaxial SMT RF Receptacle
+- ref: RGB
+  value: RGB-LED-CLMVB-FKA
+  footprint: PLCC4-2MM-RGB
+  description: CREE CLMVB-FKA RGB LED 2mm x 2mm
+- ref: U$2
+  value: SKY13351-378
+  footprint: MLPD-6-1X1
+- ref: U1
+  value: NRF52840
+  footprint: AQN507X7X0.85_HA-74_V2
+- ref: U3
+  value: XC6208A42
+  footprint: USP-6C
+- ref: U5
+  value: SPI flash
+  footprint: USON8-3X4
+- ref: U6
+  value: XC9258A33CER
+  footprint: USP-6C
+- ref: USB
+  value: USB Micro-B
+  footprint: MICRO_USB
+  description: Micro-USB
+- ref: Y1
+  value: 32.768K 9P 20PPM
+  footprint: CRY_3215
+- ref: Y2
+  value: 32M 8P 10PPM
+  footprint: CRY_2520
+nets:
+- name: /CHG
+  pins: [D2.P$2, R20.1, R22.1, U3./CHG]
+- name: /RST
+  pins:
+  - C24.2
+  - DEBUG.10
+  - HEAD1.16
+  - R6.1
+  - RESET.P$3
+  - RESET.P$4
+  - U1.P0.18/RESET@AC13
+- name: 3.3V
+  pins:
+  - C27.1
+  - C37.2
+  - C38.2
+  - C42.2
+  - C46.2
+  - D5.P$1
+  - DEBUG.1
+  - HEAD1.15
+  - L5.2
+  - L7.1
+  - R25.2
+  - U6.VOUT
+- name: A0
+  pins: [HEAD1.12, U1.P0.03/AIN1@B13]
+- name: A1
+  pins: [HEAD1.11, U1.P0.04/AIN2@J1]
+- name: A2
+  pins: [HEAD1.10, U1.P0.28/AIN4@B11]
+- name: A3
+  pins: [HEAD1.9, U1.P0.29/AIN5@A10]
+- name: A4
+  pins: [HEAD1.8, U1.P0.30/AIN6@B9]
+- name: A5
+  pins: [HEAD1.7, U1.P0.31/AIN7@A8]
+- name: ANT_H23
+  pins: [C5.2, L1.1, U1.ANT@H23]
+- name: BAT_DET
+  pins: [C36.1, R15.2, R16.1, U1.P0.05/AIN3@K2]
+- name: BLUE
+  pins: [R5.1, U1.P0.15@AD10]
+- name: D+
+  pins: [R2.2, USB.D+]
+- name: D-
+  pins: [R3.2, USB.D-]
+- name: D2
+  pins: [HEAD2.3, U1.P1.01@Y23]
+- name: D3
+  pins: [HEAD2.4, U1.P1.02@W24]
+- name: D4
+  pins: [HEAD2.5, U1.P1.08@P2]
+- name: D5
+  pins: [HEAD2.6, U1.P1.10@A20]
+- name: D6
+  pins: [HEAD2.7, U1.P1.11@B19]
+- name: D7
+  pins: [HEAD2.8, R14.1, U1.P1.12@B17]
+- name: D8
+  pins: [HEAD2.9, U1.P1.03@V23]
+- name: DCCH_AB2
+  pins: [L2.1, U1.DCCH@AB2]
+- name: DCC_B3
+  pins: [L3.1, U1.DCC@B3]
+- name: DEC1_C1
+  pins: [C15.2, U1.DEC1@C1]
+- name: DEC2_A18
+  pins: [C29.2, U1.DEC2@A18]
+- name: DEC3V3_AC5
+  pins: [C4.2, U1.DEC3V3@AC5]
+- name: DEC3_D23
+  pins: [C18.1, U1.DEC3@D23]
+- name: DEC4_B5
+  pins: [C13.1, C33.1, C43.1, L4.2, U1.DEC4@B5, U1.DEC6@E24]
+- name: DEC5_N24
+  pins: [C45.1, U1.DEC5@N24]
+- name: DN
+  pins: [R3.1, U1.D-@AD4]
+- name: DP
+  pins: [R2.1, U1.D+@AD6]
+- name: EN
+  pins: [C48.2, HEAD2.11, R18.1, U6.CE]
+- name: F_/HOLD
+  pins: [R13.2, U1.P0.23@AC19, U5./HOLD]
+- name: F_/WP
+  pins: [R12.1, U1.P0.22@AD18, U5./WP]
+- name: F_CLK
+  pins: [U1.P0.19@AC15, U5.CLK]
+- name: F_CS
+  pins: [R11.1, U1.P0.17@AD12, U5./CS]
+- name: F_SI
+  pins: [U1.P0.20@AD16, U5.SI]
+- name: F_SO
+  pins: [U1.P0.21@AC17, U5.SO]
+- name: GND
+  pins:
+  - ANT.GND
+  - BAT.1
+  - BUTTON.P$3
+  - BUTTON.P$4
+  - C11.1
+  - C12.1
+  - C13.2
+  - C14.2
+  - C15.1
+  - C16.1
+  - C17.1
+  - C18.2
+  - C19.1
+  - C2.2
+  - C20.2
+  - C21.1
+  - C22.1
+  - C23.1
+  - C24.1
+  - C25.1
+  - C26.1
+  - C27.2
+  - C28.1
+  - C29.1
+  - C3.1
+  - C31.1
+  - C32.1
+  - C33.2
+  - C34.2
+  - C35.2
+  - C36.2
+  - C37.1
+  - C38.1
+  - C39.1
+  - C4.1
+  - C40.1
+  - C41.2
+  - C42.1
+  - C43.2
+  - C44.1
+  - C45.2
+  - C46.1
+  - C47.2
+  - C48.1
+  - C5.1
+  - C6.1
+  - C8.1
+  - C9.1
+  - D1.1
+  - DEBUG.3
+  - DEBUG.5
+  - DEBUG.9
+  - HEAD1.13
+  - LED1.K
+  - Q1.2
+  - Q4.2
+  - R16.2
+  - R17.1
+  - R22.2
+  - R24.1
+  - R26.1
+  - R4.2
+  - RESET.P$1
+  - RESET.P$2
+  - RF.GND@1
+  - U$2.GND
+  - U1.VSS@B7
+  - U1.VSS_PA@F23
+  - U1.VSS_PAD
+  - U3.VSS
+  - U5.GND
+  - U5.GND1
+  - U6.VSS
+  - USB.GND
+  - USB.GND1
+  - USB.GND3
+  - USB.GND4
+  - USB.GND5
+  - USB.ID
+  - Y2.2
+  - Y2.4
+- name: GREEN
+  pins: [R7.1, U1.P0.14@AC9]
+- name: INPUT
+  pins: [C7.1, U$2.INPUT]
+- name: ISEN
+  pins: [R4.1, U3.ISEN]
+- name: LI+
+  pins:
+  - BAT.2
+  - C25.2
+  - HEAD2.12
+  - Q3.3
+  - R15.1
+  - R23.1
+  - S4.1
+  - U3.VBAT
+- name: LX
+  pins: [L5.1, U6.LX]
+- name: MISO
+  pins: [HEAD1.4, U1.P1.14@B15]
+- name: MODE
+  pins: [BUTTON.P$1, BUTTON.P$2, HEAD1.14, U1.P0.11@T2]
+- name: MOSI
+  pins: [HEAD1.5, U1.P1.13@A16]
+- name: N$10
+  pins: [C1.1, C2.1, RF.1]
+- name: N$13
+  pins: [LED1.A, R14.2]
+- name: N$14
+  pins: [L2.2, S3.1]
+- name: N$18
+  pins: [F1.1, USB.VBUS]
+- name: N$20
+  pins: [C47.1, D5.P$2, L7.2, S5.2]
+- name: N$21
+  pins: [CNG.K, R1.1, R20.2]
+- name: N$23
+  pins: [R8.2, RGB.4]
+- name: N$24
+  pins: [R25.1, R26.2, RGB.1]
+- name: N$25
+  pins: [C31.2, D4.CATHODE, Q2.3]
+- name: N$26
+  pins: [R5.2, RGB.2]
+- name: N$27
+  pins: [R7.2, RGB.3]
+- name: N$3
+  pins: [C6.2, C7.2, L1.2]
+- name: N$31
+  pins: [C10.2, C22.2, C30.2]
+- name: N$32
+  pins: [ANT.RF, C23.2, C30.1]
+- name: N$33
+  pins: [Q1.1, Q2.1, Q4.3, R10.1, R24.2]
+- name: N$36
+  pins: [Q1.3, Q3.1, R21.2]
+- name: N$6
+  pins: [L3.2, L4.1]
+- name: NFC1
+  pins: [NFC.GND@1, U1.P0.09/NFC1@L24]
+- name: NFC2
+  pins: [NFC.1, U1.P0.10/NFC2@J24]
+- name: OUT1
+  pins: [C1.2, U$2.OUT1]
+- name: OUT2
+  pins: [C10.1, U$2.OUT2]
+- name: P0.12
+  pins: [Q4.1, R17.2, R19.2, U1.P0.12@U1]
+- name: P0.24
+  pins: [C3.2, U$2.VCTL1, U1.P0.24@AD20]
+- name: P0.25
+  pins: [C28.2, U$2.VCTL2, U1.P0.25@AC21]
+- name: P0_00_XL1_D2
+  pins: [C16.2, U1.P0.00/XL1@D2, Y1.2]
+- name: P0_01_XL2_F2
+  pins: [C17.2, U1.P0.01/XL2@F2, Y1.1]
+- name: P1.09
+  pins: [D2.P$1, U1.P1.09@R1]
+- name: RED
+  pins: [R8.1, U1.P0.13@AD8]
+- name: RX
+  pins: [HEAD1.3, U1.P0.08@N1]
+- name: SCK
+  pins: [HEAD1.6, U1.P1.15@A14]
+- name: SCL
+  pins: [HEAD2.2, U1.P0.27@H2]
+- name: SDA
+  pins: [HEAD2.1, U1.P0.26@G1]
+- name: SWDCLK
+  pins: [DEBUG.4, SWDC.1, U1.SWDCLK@AA24]
+- name: SWDIO
+  pins: [DEBUG.2, SWDI.1, U1.SWDIO@AC24]
+- name: SWO
+  pins: [DEBUG.6, SWO.1, U1.P1.00@AD22]
+- name: TX
+  pins: [HEAD1.2, U1.P0.06@L1]
+- name: VDD
+  pins:
+  - C12.2
+  - C14.1
+  - C21.2
+  - C26.2
+  - C32.2
+  - C8.2
+  - R11.2
+  - R12.2
+  - R13.1
+  - R6.2
+  - S1.1
+  - S3.2
+  - U1.VDD@A22
+  - U1.VDD@AD14
+  - U1.VDD@AD23
+  - U1.VDD@B1
+  - U1.VDD@W1
+  - U5.VCC
+- name: VDDH
+  pins: [C11.2, S1.2, S4.2, S5.1, U1.VDDH@Y2]
+- name: VIN
+  pins:
+  - C39.2
+  - C40.2
+  - C41.1
+  - C44.2
+  - Q2.2
+  - Q3.2
+  - R10.2
+  - R18.2
+  - R21.1
+  - R23.2
+  - U6.VIN
+- name: VIN_2
+  pins: [C34.1, D3.P$2, U3.VIN]
+- name: VUSB
+  pins:
+  - C35.1
+  - C9.2
+  - CNG.A
+  - D1.2
+  - D3.P$1
+  - D4.ANODE
+  - F1.2
+  - HEAD2.10
+  - R1.2
+  - R19.1
+  - U1.VBUS@AD2
+- name: XC1_B24
+  pins: [C20.1, U1.XC1@B24, Y2.1]
+- name: XC2_A23
+  pins: [C19.2, U1.XC2@A23, Y2.3]
+positions:
+- ref: ANT
+  x: 19.67
+  y: 5.45
+  rot: 180.0
+- ref: BAT
+  x: 18.58
+  y: 40.0
+  rot: 270.0
+- ref: BUTTON
+  x: 6.6
+  y: 33.27
+  rot: 180.0
+- ref: C1
+  x: 8.41
+  y: 6.78
+- ref: C10
+  x: 12.34
+  y: 7.07
+- ref: C11
+  x: 9.07
+  y: 19.4
+- ref: C12
+  x: 17.73
+  y: 18.49
+  rot: 180.0
+- ref: C13
+  x: 18.14
+  y: 15.94
+  rot: 270.0
+- ref: C14
+  x: 18.56
+  y: 12.31
+- ref: C15
+  x: 17.72
+  y: 19.47
+  rot: 180.0
+- ref: C16
+  x: 17.72
+  y: 20.38
+  rot: 180.0
+- ref: C17
+  x: 17.74
+  y: 21.37
+  rot: 180.0
+- ref: C18
+  x: 15.03
+  y: 9.17
+  rot: 270.0
+- ref: C19
+  x: 18.56
+  y: 11.25
+  rot: 180.0
+- ref: C20
+  x: 15.88
+  y: 9.15
+  rot: 270.0
+- ref: C21
+  x: 7.12
+  y: 21.76
+  rot: 90.0
+- ref: C22
+  x: 13.81
+  y: 7.53
+  rot: 270.0
+- ref: C23
+  x: 16.16
+  y: 6.26
+  rot: 180.0
+- ref: C24
+  x: 8.26
+  y: 30.7
+  rot: 270.0
+- ref: C25
+  x: 8.88
+  y: 36.9
+- ref: C26
+  x: 4.82
+  y: 30.7
+  rot: 270.0
+- ref: C27
+  x: 11.95
+  y: 24.75
+- ref: C28
+  x: 12.3
+  y: 8.33
+  rot: 180.0
+- ref: C3
+  x: 8.71
+  y: 8.96
+  rot: 270.0
+- ref: C30
+  x: 15.25
+  y: 7.06
+  rot: 180.0
+- ref: C31
+  x: 19.87
+  y: 44.97
+  rot: 180.0
+- ref: C32
+  x: 6.61
+  y: 14.39
+- ref: C34
+  x: 12.59
+  y: 42.05
+  rot: 90.0
+- ref: C35
+  x: 13.92
+  y: 42.24
+  rot: 180.0
+- ref: C36
+  x: 4.96
+  y: 36.47
+  rot: 270.0
+- ref: C37
+  x: 10.18
+  y: 24.68
+  rot: 90.0
+- ref: C38
+  x: 9.4
+  y: 24.67
+  rot: 90.0
+- ref: C39
+  x: 15.18
+  y: 28.88
+  rot: 270.0
+- ref: C4
+  x: 6.57
+  y: 18.67
+- ref: C40
+  x: 17.02
+  y: 27.1
+  rot: 90.0
+- ref: C41
+  x: 16.09
+  y: 26.98
+  rot: 270.0
+- ref: C42
+  x: 8.59
+  y: 24.67
+  rot: 90.0
+- ref: C43
+  x: 17.26
+  y: 15.94
+  rot: 270.0
+- ref: C44
+  x: 17.88
+  y: 27.09
+  rot: 90.0
+- ref: C45
+  x: 8.56
+  y: 10.19
+  rot: 180.0
+- ref: C46
+  x: 7.8
+  y: 24.67
+  rot: 90.0
+- ref: C47
+  x: 9.29
+  y: 22.84
+  rot: 90.0
+- ref: C48
+  x: 13.22
+  y: 25.85
+- ref: C5
+  x: 13.2
+  y: 10.33
+  rot: 180.0
+- ref: C6
+  x: 10.95
+  y: 9.85
+  rot: 270.0
+- ref: C7
+  x: 10.12
+  y: 8.97
+  rot: 90.0
+- ref: C8
+  x: 6.42
+  y: 11.6
+- ref: C9
+  x: 6.56
+  y: 17.72
+- ref: CNG
+  x: 6.1
+  y: 48.75
+  rot: 270.0
+- ref: D2
+  x: 4.72
+  y: 45.69
+- ref: D3
+  x: 11.29
+  y: 41.98
+  rot: 270.0
+- ref: D4
+  x: 17.29
+  y: 45.61
+  rot: 180.0
+- ref: DEBUG
+  x: 6.85
+  y: 41.15
+  rot: 90.0
+- ref: F1
+  x: 13.17
+  y: 44.27
+  rot: 270.0
+- ref: HEAD1
+  x: 1.27
+  y: 25.4
+- ref: HEAD2
+  x: 21.59
+  y: 20.32
+  rot: 180.0
+- ref: L1
+  x: 12.26
+  y: 9.43
+  rot: 180.0
+- ref: L2
+  x: 6.66
+  y: 19.73
+  rot: 180.0
+- ref: L3
+  x: 17.41
+  y: 17.35
+- ref: L4
+  x: 18.98
+  y: 16.83
+  rot: 270.0
+- ref: L5
+  x: 10.25
+  y: 27.29
+  rot: 270.0
+- ref: L7
+  x: 11.7
+  y: 23.1
+  rot: 270.0
+- ref: LED1
+  x: 16.78
+  y: 48.77
+  rot: 90.0
+- ref: NFC
+  x: 11.43
+  y: 49.01
+  rot: 180.0
+- ref: Q1
+  x: 13.9
+  y: 30.23
+  rot: 270.0
+- ref: Q2
+  x: 17.53
+  y: 24.28
+  rot: 270.0
+- ref: Q3
+  x: 17.19
+  y: 29.69
+- ref: Q4
+  x: 14.65
+  y: 22.3
+  rot: 180.0
+- ref: R1
+  x: 5.01
+  y: 49.0
+  rot: 90.0
+- ref: R10
+  x: 15.38
+  y: 24.84
+  rot: 270.0
+- ref: R11
+  x: 4.75
+  y: 24.25
+- ref: R14
+  x: 21.72
+  y: 45.31
+  rot: 90.0
+- ref: R15
+  x: 6.82
+  y: 36.47
+  rot: 270.0
+- ref: R16
+  x: 5.87
+  y: 36.47
+  rot: 270.0
+- ref: R17
+  x: 12.56
+  y: 23.09
+  rot: 270.0
+- ref: R18
+  x: 14.34
+  y: 24.82
+  rot: 270.0
+- ref: R19
+  x: 17.75
+  y: 22.31
+  rot: 180.0
+- ref: R2
+  x: 7.55
+  y: 45.92
+- ref: R20
+  x: 5.02
+  y: 47.3
+  rot: 90.0
+- ref: R21
+  x: 15.67
+  y: 31.14
+  rot: 180.0
+- ref: R22
+  x: 6.22
+  y: 46.88
+- ref: R23
+  x: 13.78
+  y: 36.17
+- ref: R25
+  x: 4.1
+  y: 36.44
+  rot: 90.0
+- ref: R3
+  x: 7.57
+  y: 45.16
+- ref: R4
+  x: 12.6
+  y: 40.28
+  rot: 90.0
+- ref: R5
+  x: 11.81
+  y: 30.69
+  rot: 90.0
+- ref: R6
+  x: 7.23
+  y: 30.7
+  rot: 270.0
+- ref: R7
+  x: 10.9
+  y: 30.69
+  rot: 90.0
+- ref: R8
+  x: 9.94
+  y: 30.69
+  rot: 90.0
+- ref: RESET
+  x: 16.26
+  y: 33.27
+  rot: 180.0
+- ref: RF
+  x: 6.0
+  y: 9.2
+  rot: 210.0
+- ref: RGB
+  x: 11.43
+  y: 33.27
+  rot: 90.0
+- ref: U$2
+  x: 10.09
+  y: 7.35
+  rot: 90.0
+- ref: U1
+  x: 11.97
+  y: 14.59
+  rot: 270.0
+- ref: U3
+  x: 11.64
+  y: 37.86
+  rot: 90.0
+- ref: U5
+  x: 5.92
+  y: 27.35
+  rot: 90.0
+- ref: U6
+  x: 13.4
+  y: 27.35
+- ref: USB
+  x: 11.43
+  y: 46.7
+- ref: Y1
+  x: 14.9
+  y: 19.93
+- ref: Y2
+  x: 17.89
+  y: 9.46
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In14.Cu]

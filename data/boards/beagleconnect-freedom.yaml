@@ -1,0 +1,1928 @@
+name: BeagleConnect Freedom
+slug: beagleconnect-freedom
+source: beagleboard/beagleconnect-freedom
+format: kicad7
+description: CC1352P7 dual-band wireless MCU, MSP430F5503
+tags: [usb, zigbee-thread]
+key_ics: [CC1352P7, FT2232HL]
+outline:
+  width_mm: 35.8
+  height_mm: 58.0
+design_rules:
+  layers: 4
+  min_trace: 0.089mm
+  min_clearance: 0.127mm
+  min_drill: 0.2mm
+  min_via: 0.45mm
+components:
+- ref: AE1
+  value: Antenna_Dipole
+  footprint: RFECA3216060A1T
+- ref: B1
+  value: 0900PC15A0036E
+  footprint: 0900PC15A0036
+- ref: BZ1
+  value: Buzzer
+  footprint: BUZZER3-5.5X5X2MM
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U1
+- ref: C10
+  value: 10uF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U2
+- ref: C11
+  value: 10uF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+- ref: C12
+  value: 10uF
+  footprint: '0603'
+  description: CAP CER 0.1UF 10V X5R 0402
+- ref: C13
+  value: 100pF
+  footprint: '0402'
+  description: CAP CER 100PF 50V C0G/NPO 0402
+- ref: C14
+  value: 10uF
+  footprint: '0402'
+  description: CAP CER 10UF 6.3V X5R 0603
+  decouples: U7
+- ref: C15
+  value: 8pF
+  footprint: '0402'
+  description: CAP CER 8PF 50V C0G/NP0 0402
+- ref: C16
+  value: 8pF
+  footprint: '0402'
+  description: CAP CER 8PF 50V C0G/NP0 0402
+- ref: C17
+  value: 1uF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+- ref: C18
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U4
+- ref: C19
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U4
+- ref: C2
+  value: 1nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+- ref: C20
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U4
+- ref: C21
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U4
+- ref: C22
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+- ref: C23
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+- ref: C24
+  value: 22uF
+  footprint: '0603'
+  description: CAP CER 22UF 10V X5R 0603
+- ref: C25
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U5
+- ref: C26
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+- ref: C27
+  value: 100pF
+  footprint: '0201'
+  description: CAP CER 100pF 50V NPO 0201
+- ref: C28
+  value: 2.4pF
+  footprint: '0201'
+  description: CAP CER 2.4PF 50V NP0 0201
+- ref: C3
+  value: 24pF
+  footprint: '0402'
+- ref: C31
+  value: 0.5pF
+  footprint: '0201'
+  description: CAP CER 1PF 50V C0G/NP0 0201
+- ref: C33
+  value: 3.9pF
+  footprint: '0201'
+  description: CAP CER 3.9PF 50V C0G/NP0 0201
+- ref: C34
+  value: 0F
+  footprint: '0201'
+  description: CAP CER 1PF 50V C0G/NP0 0402
+- ref: C36
+  value: 47pF
+  footprint: '0201'
+  description: CAP CER 47PF 50V C0G/NP0 0201
+- ref: C37
+  value: 1nF
+  footprint: '0402'
+  description: CAP CER 1PF 50V C0G/NP0 0402
+- ref: C38
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+- ref: C39
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+- ref: C4
+  value: 24pF
+  footprint: '0402'
+- ref: C40
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U7
+- ref: C41
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U8
+- ref: C42
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U9
+- ref: C44
+  value: 220nF
+  footprint: '0402'
+- ref: C45
+  value: 10uF
+  footprint: '0402'
+  description: CAP CER 10UF 6.3V X5R 0603
+  decouples: U7
+- ref: C46
+  value: 2.4pF
+  footprint: '0201'
+  description: CAP CER 2.4PF 50V NP0 0201
+- ref: C47
+  value: DNP 7P
+  footprint: '0402'
+  description: 7pF-50V-0.5pF-NPO;0402
+- ref: C48
+  value: DNP 7P
+  footprint: '0402'
+  description: 7pF-50V-0.5pF-NPO;0402
+- ref: C49
+  value: 3pF
+  footprint: '0201'
+  description: CAP CER 3PF 50V C0G 0402
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+- ref: C50
+  value: 100pF
+  footprint: '0201'
+  description: CAP CER 100pF 50V NPO 0201
+  decouples: U4
+- ref: C51
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U10
+- ref: C52
+  value: 4.7pF
+  footprint: '0201'
+  description: CAP CER 4.7PF 50V C0G/NP0 0201
+- ref: C53
+  value: 100pF
+  footprint: '0201'
+  description: CAP CER 100pF 50V NPO 0201
+- ref: C54
+  value: 100pF
+  footprint: '0201'
+  description: CAP CER 100pF 50V NPO 0402
+- ref: C55
+  value: 10nF
+  footprint: '0201'
+  description: CAP CER 10nF 50V X7R 0201
+  decouples: U4
+- ref: C56
+  value: 0.7pF
+  footprint: '0201'
+  description: CAP CER 0.7PF 50V C0G/NP0 0402
+- ref: C6
+  value: 10uF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U1
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  description: CAP CER 0.1UF 10V X5R 0402
+  decouples: U1
+- ref: C8
+  value: 220nF
+  footprint: '0402'
+- ref: C9
+  value: 470nF
+  footprint: '0402'
+- ref: D10
+  value: ESDPSA0402V05
+  footprint: '0402'
+- ref: D100
+  value: 1N4148WS
+  footprint: SOD-323
+- ref: D11
+  value: ESDPSA0402V05
+  footprint: '0402'
+- ref: D12
+  value: BAT54XV2
+  footprint: SOD-523
+- ref: D13
+  value: BAT54XV2
+  footprint: SOD-523
+- ref: D2
+  value: LED
+  footprint: '0402'
+- ref: D3
+  value: LED
+  footprint: '0402'
+- ref: D4
+  value: LED
+  footprint: '0402'
+- ref: D5
+  value: LED
+  footprint: '0402'
+- ref: D6
+  value: LED
+  footprint: '0402'
+- ref: D7
+  value: LED
+  footprint: '0402'
+- ref: D8
+  value: ESDPSA0402V05
+  footprint: '0402'
+- ref: D9
+  value: PMEG6020ER,115
+  footprint: SOD-123
+- ref: F1
+  value: 3A
+  footprint: '1812'
+- ref: J1
+  value: 1x2 header
+  footprint: 1X2
+- ref: J2
+  value: TAG-CONNECT-10
+  footprint: Tag-Connect-10
+- ref: J3
+  value: TAG-CONNECT-10
+  footprint: Tag-Connect-10
+- ref: J4
+  value: mikroBUS
+  footprint: MikroBus-SMD
+  description: Order 2 of these connectors! Right tight top
+- ref: J5
+  value: mikroBUS
+  footprint: MikroBus-SMD
+- ref: J8
+  value: UFL
+  footprint: A-1JB
+  description: CONN UMC JACK STR 50 OHM SMD
+- ref: L1
+  value: 120R-1.3A
+  footprint: '0402'
+  description: FERRITE BEAD 1.5 KOHM 0603 1LN
+- ref: L10
+  value: 1nH
+  footprint: '0201'
+  description: FIXED IND 1NH 1A 100 MOHM SMD
+- ref: L11
+  value: 1nH
+  footprint: '0201'
+  description: FIXED IND 1NH 1A 100 MOHM SMD
+- ref: L12
+  value: 12nH
+  footprint: '0201'
+  description: FIXED IND 12NH 500MA 100 MOHM SMD
+- ref: L13
+  value: 12nH
+  footprint: '0201'
+  description: FIXED IND 12NH 500MA 100 MOHM SMD
+- ref: L14
+  value: 3.9nH
+  footprint: '0201'
+  description: FIXED IND 3.9NH 170MA 100 MOHM SMD
+- ref: L15
+  value: 0H
+  footprint: '0201'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: L2
+  value: 470nH
+  footprint: L2X1.6X1MM
+- ref: L3
+  value: 120R-1.3A
+  footprint: '0402'
+  description: FERRITE BEAD 1.5 KOHM 0603 1LN
+- ref: L4
+  value: 6.8uH
+  footprint: 0805
+  description: FERRITE BEAD 1.5 KOHM 0805 1LN
+- ref: L5
+  value: 0.002nH
+  footprint: '0201'
+  description: CAP CER 2.0PF 50V NP0 0201
+- ref: L6
+  value: 0H
+  footprint: '0201'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: L7
+  value: 27nH
+  footprint: '0201'
+  description: FIXED IND 27NH 120MA 100MOHM SMD
+- ref: L8
+  value: 2.5nH
+  footprint: '0201'
+  description: FIXED IND 2.5NH 600MA 100 MOHM SMD
+- ref: L9
+  value: 4.7nH
+  footprint: '0201'
+  description: FIXED IND 4.7NH 350MA 100 MOHM SMD
+- ref: Q1
+  value: CJ2305
+  footprint: SOT-23
+- ref: Q2
+  value: 2N7002PW
+  footprint: SOT-323_SC-70
+- ref: Q3
+  value: BC856S
+  footprint: SOT-363_SC-70-6
+- ref: Q4
+  value: CJ2305
+  footprint: SOT-23
+- ref: R1
+  value: 1kohm
+  footprint: '0402'
+  description: RES SMD 1K OHM 5% 1/16W 0402
+  pulldown: D2.K
+- ref: R10
+  value: 470ohm
+  footprint: '0402'
+- ref: R11
+  value: 1kohm
+  footprint: '0402'
+  description: RES SMD 1K OHM 5% 1/16W 0402
+  pullup: USER_BOOT
+- ref: R12
+  value: 100kohm
+  footprint: '0402'
+  description: RES SMD 100K OHM 5% 1/16W 0402
+  pulldown: Q2.G
+- ref: R13
+  value: 100ohm
+  footprint: '0402'
+- ref: R14
+  value: 1Mohm
+  footprint: '0402'
+- ref: R15
+  value: 33ohm
+  footprint: '0402'
+- ref: R16
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R17
+  value: 47kohm
+  footprint: '0402'
+  pullup: /USB Input/nMSP430_RST
+- ref: R18
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: USB1.CC2
+- ref: R19
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: USB1.CC1
+- ref: R2
+  value: 1kohm
+  footprint: '0402'
+  description: RES SMD 1K OHM 5% 1/16W 0402
+  pulldown: D3.K
+- ref: R20
+  value: 10ohm
+  footprint: '0402'
+- ref: R21
+  value: 10ohm
+  footprint: '0402'
+- ref: R22
+  value: 1Mohm
+  footprint: '0402'
+- ref: R23
+  value: 0ohm
+  footprint: '0402'
+- ref: R24
+  value: 0ohm
+  footprint: '0402'
+- ref: R25
+  value: 0ohm
+  footprint: '0402'
+- ref: R26
+  value: 0ohm
+  footprint: '0402'
+- ref: R27
+  value: 0ohm
+  footprint: '0402'
+- ref: R28
+  value: 0ohm
+  footprint: '0402'
+- ref: R29
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R3
+  value: 1kohm
+  footprint: '0402'
+  description: RES SMD 1K OHM 5% 1/16W 0402
+  pulldown: D4.K
+- ref: R30
+  value: 1.5kohm
+  footprint: '0402'
+- ref: R31
+  value: 1.2kohm
+  footprint: '0402'
+  pulldown: U2.ISET
+- ref: R32
+  value: 47kohm
+  footprint: '0402'
+- ref: R33
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R34
+  value: 453kohm
+  footprint: '0402'
+  pullup: U3.FB
+- ref: R35
+  value: 100kohm
+  footprint: '0402'
+  pulldown: U3.FB
+- ref: R36
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R37
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R38
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R39
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R4
+  value: 1kohm
+  footprint: '0402'
+  description: RES SMD 1K OHM 5% 1/16W 0402
+  pulldown: D5.K
+- ref: R40
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R41
+  value: 2.21kohm
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+  pullup: RESET_N
+- ref: R42
+  value: 2.21kohm
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+  pulldown: MB1_CTRL
+- ref: R43
+  value: 2.21kohm
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+  pullup: U6.nWP/SIO2
+- ref: R44
+  value: 2.21kohm
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+  pullup: nFLASH_CS
+- ref: R45
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R46
+  value: 100kohm
+  footprint: '0402'
+  description: RES SMD 100K OHM 5% 1/16W 0402
+  pullup: RESET_N
+- ref: R47
+  value: 100kohm
+  footprint: '0402'
+  description: RES SMD 100K OHM 5% 1/16W 0402
+  pullup: USER_BOOT
+- ref: R48
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R49
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R5
+  value: 1kohm
+  footprint: '0402'
+  description: RES SMD 1K OHM 5% 1/16W 0402
+  pulldown: D6.K
+- ref: R50
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R51
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R52
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R53
+  value: 2.21kohm
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+  pullup: U9.nCS
+- ref: R54
+  value: 0ohm
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R55
+  value: 2.21kohm
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+  pullup: I2C_CTRL
+- ref: R56
+  value: 10kohm
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+  pullup: SCL
+- ref: R57
+  value: 10kohm
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+  pullup: SDA
+- ref: R58
+  value: DNP 0
+  footprint: '0402'
+  description: RES 0 OHM JUMPER 1/16W 0402
+- ref: R59
+  value: DNP 2.21K
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+- ref: R6
+  value: 1kohm
+  footprint: '0402'
+  description: RES SMD 1K OHM 5% 1/16W 0402
+- ref: R60
+  value: 4.7kohm
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+  pullup: SEN_SDA
+- ref: R61
+  value: 4.7kohm
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+  pullup: SEN_SCL
+- ref: R7
+  value: 2.21kohm
+  footprint: '0402'
+  description: RES SMD 2.21K OHM 1% 1/10W 0402
+  pullup: INT_SENSOR
+- ref: R8
+  value: 100kohm
+  footprint: '0402'
+  pulldown: Q3.B1
+- ref: R9
+  value: 100kohm
+  footprint: '0402'
+  pulldown: Q3.C2
+- ref: SH1
+  value: Shield
+  footprint: SHIELDING
+- ref: SW1
+  value: TS23M-BN-PT-PF
+  footprint: TS23M-BN-PT-PF
+- ref: SW2
+  value: TS23M-BN-PT-PF
+  footprint: TS23M-BN-PT-PF
+- ref: U1
+  value: MSP430F5503
+  footprint: Texas_S-PVQFN-N48_EP5.15x5.15mm
+- ref: U10
+  value: TS5A2066YZPR
+  footprint: TS5A2066YZPR
+  description: SMD IC Dual SPST DSBGA-8
+- ref: U11
+  value: SKY13317-373
+  footprint: SKY13317-373LF
+- ref: U2
+  value: BQ21040
+  footprint: SOT-23-6
+- ref: U3
+  value: TPS62821
+  footprint: TPS62821DLC
+  description: IC REG BUCK ADJ 1A 8VSON-HR
+- ref: U4
+  value: CC1352P
+  footprint: QFN-48-1EP
+- ref: U5
+  value: TS5A23157
+  footprint: QFN10_0.6
+- ref: U6
+  value: GD25Q16CEIGR
+  footprint: MX25R8035FZUIL0
+  description: IC FLASH 8M SPI 33MHZ 8USON
+- ref: U7
+  value: OPT3001
+  footprint: USON6
+- ref: U8
+  value: HDC2010
+  footprint: HDC2010
+- ref: U9
+  value: LIS2DE12
+  footprint: LGA-12
+- ref: USB1
+  value: USB-C
+  footprint: USB-C
+- ref: Y1
+  value: 24MHz
+  footprint: SMD3225
+- ref: Y2
+  value: 32.768KHz
+  footprint: SMD2012
+- ref: Y3
+  value: 48MHz
+  footprint: SMD2016
+nets:
+- name: /Programming/CC1352_TDI
+  pins: [J2.Pin_8, R16.2]
+- name: /Programming/CC1352_TDO
+  pins: [J2.Pin_6, R29.2]
+- name: /RF/DCDC_SW
+  pins: [L4.2, U4.DCDC_SW]
+- name: /RF/RF_2_4GHZ_N
+  pins: [B1.BP_2_4_GHZ_RF_N, U4.RF_N_2_4GHZ]
+- name: /RF/RF_2_4GHZ_P
+  pins: [B1.BP_2_4_GHZ_RF_P, U4.RF_P_2_4GHZ]
+- name: /RF/RF_SUB_1GHZ_N
+  pins: [B1.BP_SUB-1_GHZ_RF_N, U4.RF_N_SUB_1GHZ]
+- name: /RF/RF_SUB_1GHZ_P
+  pins: [B1.BP_SUB-1_GHZ_RF_P, U4.RF_P_SUB_1GHZ]
+- name: /RF/RX_TX
+  pins: [B1.RX_TX, C27.1, U4.RX_TX]
+- name: /RF/VDDR
+  pins: [C22.2, C23.2, C24.2, L4.1, U4.VDDR, U4.VDDR_RF]
+- name: /USB Input/D+
+  pins: [R21.1, R22.1, R30.2, U1.PU.0/DP]
+- name: /USB Input/D-
+  pins: [R20.1, U1.PU.1/DM]
+- name: /USB Input/D_N
+  pins: [D10.A1, R20.2, USB1.D-@A7, USB1.D-@B7]
+- name: /USB Input/D_P
+  pins: [D11.A1, R21.2, USB1.D+@A6, USB1.D+@B6]
+- name: /USB Input/MSP430_TEST
+  pins: [J3.Pin_7, R24.1]
+- name: /USB Input/MSP_PUR
+  pins: [R13.1, R14.2, R30.1, U1.PUR]
+- name: /USB Input/VBUS
+  pins:
+  - D8.A1
+  - F1.2
+  - U1.VBUS
+  - USB1.VBUS@A4
+  - USB1.VBUS@A9
+  - USB1.VBUS@B4
+  - USB1.VBUS@B9
+- name: /USB Input/XTAL1
+  pins: [C4.2, U1.P5.2/XT2IN, Y1.1]
+- name: /USB Input/XTAL2
+  pins: [C3.2, U1.P5.3/XT2OUT, Y1.3]
+- name: /USB Input/nMSP430_RST
+  pins: [C2.2, J3.Pin_1, R17.1, U1.nRST/NMI/SBWTDIO]
+- name: 2.4G
+  pins: [D6.A, R58.1, U4.DIO_18]
+- name: 3V3
+  pins:
+  - BZ1.-
+  - C1.1
+  - C13.1
+  - C14.1
+  - C40.2
+  - C41.2
+  - C42.2
+  - C45.1
+  - C6.2
+  - C7.2
+  - D100.K
+  - D4.A
+  - D7.A
+  - J2.Pin_1
+  - J3.Pin_4
+  - J4.+3.3V
+  - J5.+3.3V
+  - L1.2
+  - L2.2
+  - Q1.S
+  - R11.1
+  - R17.2
+  - R34.2
+  - R36.2
+  - R41.1
+  - R43.1
+  - R44.1
+  - R45.1
+  - R46.1
+  - R47.1
+  - R51.2
+  - R53.1
+  - R7.1
+  - U1.DVCC1
+  - U1.DVCC2
+  - U7.VDD
+  - U8.VDD
+  - U9.Vdd
+  - U9.Vdd_IO
+- name: 5V
+  pins: [C10.2, D9.A, F1.1, J4.+5V, J5.+5V, U2.VIN]
+- name: 900M
+  pins: [D5.A, U1.P6.1/CB1]
+- name: ADDR
+  pins: [R51.1, U8.ADDR]
+- name: ADDR_2
+  pins: [R48.2, U7.ADDR]
+- name: ALT_IN
+  pins: [C11.2, J1.Pin_2, Q3.E1, Q4.D, R32.2, U2.OUT]
+- name: AN_MB1
+  pins: [J4.AN, U4.DIO_23]
+- name: AN_MB2
+  pins: [J5.AN, U4.DIO_24]
+- name: AVCC1
+  pins: [C5.2, L1.1, U1.AVCC1]
+- name: B1
+  pins: [Q3.B1, Q3.B2, Q3.C1, R8.2]
+- name: BUZZER_CTL
+  pins: [R10.2, U1.PM_UCB1CLK/PM_UCA1STE/P4.3]
+- name: C2
+  pins: [Q3.C2, Q4.G, R9.2]
+- name: CC1352_RX_MB1_RX
+  pins: [J4.RX, U5.NC1]
+- name: CC1352_RX_MB2_RX
+  pins: [J5.RX, R37.2]
+- name: CC1352_RX_MSP430_TX
+  pins: [U1.PM_UCA1TXD/PM_UCA1SIMO/P4.4, U5.NO1]
+- name: CC1352_TCK
+  pins: [J2.Pin_4, U4.JTAG_TCKC]
+- name: CC1352_TMS
+  pins: [J2.Pin_2, U4.JTAG_TMSC]
+- name: CC1352_TX_MB1_TX
+  pins: [J4.TX, U5.NC2]
+- name: CC1352_TX_MB2_TX
+  pins: [J5.TX, R38.2]
+- name: CC1352_TX_MSP430_RX
+  pins: [U1.PM_UCA1RXD/PM_UCA1SOMI/P4.5, U5.NO2]
+- name: COM1
+  pins: [R39.2, U5.COM1]
+- name: COM2
+  pins: [R40.2, U5.COM2]
+- name: CS_MB1
+  pins: [J4.CS, U4.DIO_28]
+- name: CS_MB2
+  pins: [J5.CS, U4.DIO_27]
+- name: DCOUPL
+  pins: [C17.2, U4.DCOUPL]
+- name: DIO_10
+  pins: [R50.1, U4.DIO_10]
+- name: DIO_11
+  pins: [R52.1, U4.DIO_11]
+- name: DIO_12
+  pins: [R39.1, U4.DIO_12]
+- name: DIO_13
+  pins: [R40.1, U4.DIO_13]
+- name: DIO_21
+  pins: [R37.1, U4.DIO_21]
+- name: DIO_22
+  pins: [R38.1, U4.DIO_22]
+- name: DIO_9
+  pins: [R33.1, U4.DIO_9]
+- name: FB
+  pins: [C13.2, R34.1, R35.2, U3.FB]
+- name: GND
+  pins:
+  - AE1.2
+  - B1.GND@10
+  - B1.GND@2
+  - B1.GND@3
+  - C1.2
+  - C10.1
+  - C11.1
+  - C12.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.1
+  - C18.1
+  - C19.1
+  - C2.1
+  - C20.1
+  - C21.1
+  - C22.1
+  - C23.1
+  - C24.1
+  - C25.1
+  - C26.1
+  - C27.2
+  - C28.1
+  - C29.1
+  - C3.1
+  - C30.2
+  - C31.1
+  - C32.2
+  - C33.1
+  - C37.2
+  - C38.1
+  - C39.1
+  - C4.1
+  - C40.1
+  - C41.1
+  - C42.1
+  - C43.1
+  - C44.1
+  - C45.2
+  - C47.2
+  - C48.2
+  - C5.1
+  - C50.2
+  - C51.1
+  - C52.1
+  - C55.2
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - D10.A2
+  - D11.A2
+  - D8.A2
+  - J1.Pin_1
+  - J2.Pin_3
+  - J2.Pin_5
+  - J3.Pin_9
+  - J4.GND@8
+  - J4.GND@9
+  - J5.GND@8
+  - J5.GND@9
+  - J8.2
+  - J8.3
+  - L8.1
+  - Q2.S
+  - R1.2
+  - R12.2
+  - R14.1
+  - R18.2
+  - R19.2
+  - R2.2
+  - R22.2
+  - R26.1
+  - R27.1
+  - R28.1
+  - R3.2
+  - R31.2
+  - R35.1
+  - R4.2
+  - R42.2
+  - R48.1
+  - R5.2
+  - R54.2
+  - R59.2
+  - R8.1
+  - R9.1
+  - SH1.1
+  - SH1.2
+  - SH1.3
+  - SH1.4
+  - SH1.5
+  - SW1.2
+  - SW1.3
+  - SW1.4
+  - SW1.5
+  - SW2.2
+  - SW2.3
+  - SW2.4
+  - SW2.5
+  - U1.AVSS1
+  - U1.AVSS2
+  - U1.DVSS1
+  - U1.DVSS2
+  - U1.EP
+  - U1.VSSU
+  - U10.GND
+  - U11.VSS
+  - U2.GND
+  - U3.AGND
+  - U3.PGND
+  - U4.GND/EP
+  - U5.GND
+  - U6.EP
+  - U6.GND
+  - U7.GND
+  - U8.GND
+  - U9.GND@6
+  - U9.GND@7
+  - U9.GND@8
+  - U9.RES
+  - USB1.GND@A1
+  - USB1.GND@A12
+  - USB1.GND@B1
+  - USB1.GND@B12
+  - USB1.SHIELD@S1
+  - Y1.2
+  - Y1.4
+  - Y3.2
+  - Y3.4
+- name: I2C_CTRL
+  pins: [R55.2, U10.IN1, U10.IN2, U4.DIO_14]
+- name: INT
+  pins: [R49.2, U7.INT]
+- name: INT_HDC2010
+  pins: [D12.K, U8.DRDY/INT]
+- name: INT_LIS2DE12_1
+  pins: [D13.K, U9.INT1]
+- name: INT_MB1
+  pins: [J4.INT, R29.1, U4.DIO_16/JTAG_TDO]
+- name: INT_MB2
+  pins: [J5.INT, U4.DIO_20]
+- name: INT_SENSOR
+  pins: [D12.A, D13.A, R49.1, R7.2, U4.DIO_7]
+- name: ISET
+  pins: [R31.1, U2.ISET]
+- name: LED1
+  pins: [D3.A, U1.P6.2/CB2]
+- name: LED2
+  pins: [D2.A, U1.P6.3/CB3]
+- name: MB1_CTRL
+  pins: [R42.1, U1.P4.6, U5.IN1, U5.IN2]
+- name: MISO
+  pins: [J4.MISO, J5.MISO, R52.2, U1.TA0.3/P1.4, U6.SO/SIO1]
+- name: MOSI
+  pins: [J4.MOSI, J5.MOSI, R33.2, U1.TA0.4/P1.5, U6.SI/SIO0]
+- name: Net-(AE1-Pad1)
+  pins: [AE1.1, C31.2, L5.1]
+  class: RF
+  trace_width: '0.294'
+- name: Net-(AE1-Pad3)
+  pins: [AE1.Attach, C37.1]
+- name: Net-(B1-Pad1)
+  pins: [B1.UBP_2_4_GHZ, C34.1, C43.2]
+  class: RF
+  trace_width: '0.294'
+- name: Net-(B1-Pad4)
+  pins: [B1.UBP_SUB-1_GHZ, C54.2]
+  class: RF
+  trace_width: '0.294'
+- name: Net-(BZ1-Pad2)
+  pins: [BZ1.+, D100.A, R15.1]
+- name: Net-(C26-Pad2)
+  pins: [C26.2, R45.2, U6.VCC]
+- name: Net-(C28-Pad2)
+  pins: [C28.2, L10.1, L13.2, L7.1]
+  class: RF
+  trace_width: '0.294'
+- name: Net-(C29-Pad2)
+  pins: [C29.2, C34.2, L15.2, L5.2]
+  class: RF
+  trace_width: '0.294'
+- name: Net-(C30-Pad1)
+  pins: [C30.1, C36.2, L6.2]
+  class: RF
+  trace_width: '0.294'
+- name: Net-(C32-Pad1)
+  pins: [C32.1, J8.1, L6.1]
+- name: Net-(C33-Pad2)
+  pins: [C33.2, C46.2, C56.2, L13.1, L14.2]
+  class: RF
+  trace_width: '0.294'
+- name: Net-(C46-Pad1)
+  pins: [C46.1, L11.1, L12.1, L7.2]
+- name: Net-(C49-Pad1)
+  pins: [C49.1, L8.2]
+- name: Net-(C49-Pad2)
+  pins: [C49.2, C56.1, L14.1, L9.2]
+- name: Net-(C52-Pad2)
+  pins: [C52.2, C53.2, L9.1]
+- name: Net-(D2-Pad1)
+  pins: [D2.K, R1.1]
+- name: Net-(D3-Pad1)
+  pins: [D3.K, R2.1]
+- name: Net-(D4-Pad1)
+  pins: [D4.K, R3.1]
+- name: Net-(D5-Pad1)
+  pins: [D5.K, R4.1]
+- name: Net-(D6-Pad1)
+  pins: [D6.K, R5.1]
+- name: Net-(D7-Pad1)
+  pins: [D7.K, R6.1]
+- name: Net-(Q1-Pad3)
+  pins: [Q1.D, R13.2]
+- name: Net-(Q2-Pad1)
+  pins: [Q2.G, R10.1, R12.1]
+- name: Net-(Q2-Pad3)
+  pins: [Q2.D, R15.2]
+- name: Net-(R18-Pad1)
+  pins: [R18.1, USB1.CC2]
+- name: Net-(R19-Pad1)
+  pins: [R19.1, USB1.CC1]
+- name: P4_7
+  pins: [R25.2, U1.P4.7]
+- name: PM_UCB1STE_PM_UCA1CLK_P4_0
+  pins: [R28.2, U1.PM_UCB1STE/PM_UCA1CLK/P4.0]
+- name: PWM_MB1
+  pins: [J4.PWM, R16.1, U4.DIO_17/JTAG_TDI]
+- name: PWM_MB2
+  pins: [J5.PWM, U4.DIO_19]
+- name: RESET_N
+  pins:
+  - C38.2
+  - J2.Pin_10
+  - R23.1
+  - R41.2
+  - R46.2
+  - SW1.1
+  - U4.RESET_N
+  - U6.nRST/SIO3
+- name: RF1
+  pins: [C53.1, U11.RF1]
+- name: RF2
+  pins: [C54.1, U11.RF2]
+- name: RF3
+  pins: [L15.1, U11.RF3]
+- name: RFC
+  pins: [C36.1, U11.RFC]
+- name: RF_SW_CTRL1
+  pins: [U11.V1, U4.DIO_29]
+- name: RF_SW_CTRL2
+  pins: [U11.V2, U4.DIO_30]
+- name: RST_MB1
+  pins: [J4.RST, U4.DIO_6]
+- name: RST_MB2
+  pins: [J5.RST, U4.DIO_5]
+- name: SA0_SDO
+  pins: [R54.1, U9.SA0/SDO]
+- name: SBWTCK_TEST
+  pins: [R24.2, U1.SBWTCK/TEST]
+- name: SCK
+  pins: [J4.SCK, J5.SCK, R50.2, U1.TA1CLK/CBOUT/P1.6, U6.SCLK]
+- name: SCL
+  pins: [J4.SCL, J5.SCL, R56.2, U1.PM_UCB1SOMI/PM_UCB1SCL/P4.2, U10.COM2, U4.DIO_25]
+- name: SDA
+  pins: [J4.SDA, J5.SDA, R57.2, U1.PM_UCB1SIMO/PM_UCB1SDA/P4.1, U10.COM1, U4.DIO_26]
+- name: SEN_SCL
+  pins: [R61.2, U10.NO2, U7.SCL, U8.SCL, U9.SCL/SPC]
+- name: SEN_SDA
+  pins: [R60.2, U10.NO1, U7.SDA, U8.SDA, U9.SDA/SDI]
+- name: SW
+  pins: [L2.1, U3.SW]
+- name: TA0CLK_ACLK_P1_0
+  pins: [R26.2, U1.TA0CLK/ACLK/P1.0]
+- name: TA0_0_P1_1
+  pins: [R27.2, U1.TA0.0/P1.1]
+- name: TA1_1_P2_0
+  pins: [R23.2, U1.TA1.1/P2.0]
+- name: TS
+  pins: [R32.1, U2.TS]
+- name: TX_20DBM_N
+  pins: [L10.2, U4.TX_20DBM_N]
+- name: TX_20DBM_P
+  pins: [L11.2, U4.TX_20DBM_P]
+- name: USER_BOOT
+  pins:
+  - C39.2
+  - Q1.G
+  - R11.2
+  - R25.1
+  - R47.2
+  - SW2.1
+  - U4.DIO_15
+- name: V18
+  pins: [C8.2, U1.V18]
+- name: V3
+  pins: [R58.2, R59.1, U11.V3]
+- name: VCORE
+  pins: [C9.2, U1.VCORE]
+- name: VDD
+  pins: [L3.2, R36.1]
+- name: VDDS
+  pins:
+  - C18.2
+  - C19.2
+  - C20.2
+  - C21.2
+  - C25.2
+  - C50.1
+  - C51.2
+  - C55.1
+  - L12.2
+  - L3.1
+  - R55.1
+  - R56.1
+  - R57.1
+  - R60.1
+  - R61.1
+  - U10.V+
+  - U4.VDDS
+  - U4.VDDS2
+  - U4.VDDS3
+  - U4.VDDS_DCDC
+  - U5.V+
+- name: VUSB
+  pins: [C44.2, U1.VUSB]
+- name: V_ALT
+  pins: [C12.1, D9.K, Q3.E2, Q4.S, U3.EN, U3.VIN]
+- name: X32K_Q1
+  pins: [C15.1, U4.X32K_Q1, Y2.1]
+- name: X32K_Q2
+  pins: [C16.1, U4.X32K_Q2, Y2.2]
+- name: X48M_N
+  pins: [C47.1, U4.X48M_N, Y3.1]
+- name: X48M_P
+  pins: [C48.1, U4.X48M_P, Y3.3]
+- name: nCHG
+  pins: [R6.2, U2.nCHG]
+- name: nCS
+  pins: [R53.2, U9.nCS]
+- name: nFLASH_CS
+  pins: [R44.2, U1.TA1.0/P1.7, U4.DIO_8, U6.nCS]
+- name: nWP_SIO2
+  pins: [R43.2, U6.nWP/SIO2]
+positions:
+- ref: AE1
+  x: 257.26
+  y: 46.56
+  rot: 90.0
+  side: back
+- ref: B1
+  x: 276.72
+  y: 49.16
+  rot: 90.0
+  side: back
+- ref: BZ1
+  x: 278.49
+  y: 75.95
+  rot: 180.0
+  side: back
+- ref: C1
+  x: 259.41
+  y: 56.98
+- ref: C10
+  x: 278.92
+  y: 35.86
+  rot: 180.0
+- ref: C11
+  x: 277.2
+  y: 40.37
+  rot: 90.0
+- ref: C12
+  x: 282.91
+  y: 34.5
+- ref: C13
+  x: 282.88
+  y: 41.25
+  rot: 180.0
+- ref: C14
+  x: 285.75
+  y: 36.18
+  rot: 180.0
+- ref: C15
+  x: 277.66
+  y: 47.15
+  rot: -90.0
+- ref: C16
+  x: 277.65
+  y: 45.14
+  rot: 90.0
+- ref: C17
+  x: 287.35
+  y: 40.89
+  rot: -90.0
+  side: back
+- ref: C18
+  x: 284.18
+  y: 53.95
+  rot: 90.0
+  side: back
+- ref: C19
+  x: 287.68
+  y: 49.62
+  rot: 90.0
+  side: back
+- ref: C2
+  x: 269.01
+  y: 55.67
+  rot: -90.0
+- ref: C20
+  x: 279.24
+  y: 40.88
+  rot: -90.0
+  side: back
+- ref: C21
+  x: 286.34
+  y: 40.88
+  rot: -90.0
+  side: back
+- ref: C22
+  x: 279.64
+  y: 53.95
+  rot: 90.0
+  side: back
+- ref: C23
+  x: 283.18
+  y: 53.95
+  rot: 90.0
+  side: back
+- ref: C24
+  x: 283.59
+  y: 49.89
+  rot: -90.0
+- ref: C25
+  x: 280.9
+  y: 61.12
+  rot: 90.0
+  side: back
+- ref: C26
+  x: 267.89
+  y: 76.69
+  rot: 90.0
+  side: back
+- ref: C27
+  x: 274.07
+  y: 47.29
+  rot: 90.0
+  side: back
+- ref: C28
+  x: 275.91
+  y: 44.2
+  rot: 180.0
+  side: back
+- ref: C3
+  x: 270.02
+  y: 55.67
+  rot: -90.0
+- ref: C31
+  x: 262.56
+  y: 43.79
+  rot: 90.0
+  side: back
+- ref: C33
+  x: 275.56
+  y: 41.59
+  rot: -90.0
+  side: back
+- ref: C34
+  x: 266.02
+  y: 43.42
+  rot: 180.0
+  side: back
+- ref: C36
+  x: 266.24
+  y: 38.35
+  rot: 180.0
+  side: back
+- ref: C37
+  x: 257.23
+  y: 50.01
+  rot: -90.0
+  side: back
+- ref: C38
+  x: 267.44
+  y: 76.07
+- ref: C39
+  x: 278.54
+  y: 76.1
+- ref: C4
+  x: 271.42
+  y: 55.67
+  rot: -90.0
+- ref: C40
+  x: 290.55
+  y: 34.12
+  rot: -90.0
+- ref: C41
+  x: 289.89
+  y: 73.17
+  rot: 90.0
+  side: back
+- ref: C42
+  x: 279.99
+  y: 69.5
+  rot: 180.0
+- ref: C44
+  x: 273.35
+  y: 55.67
+  rot: -90.0
+- ref: C45
+  x: 285.75
+  y: 37.23
+  rot: 180.0
+- ref: C46
+  x: 274.78
+  y: 43.06
+  rot: 90.0
+  side: back
+- ref: C47
+  x: 282.19
+  y: 53.97
+  rot: -90.0
+  side: back
+- ref: C48
+  x: 280.64
+  y: 53.95
+  rot: -90.0
+  side: back
+- ref: C49
+  x: 275.11
+  y: 40.45
+  rot: 180.0
+  side: back
+- ref: C5
+  x: 267.79
+  y: 62.52
+  rot: 90.0
+- ref: C50
+  x: 274.08
+  y: 45.31
+  rot: -90.0
+  side: back
+- ref: C51
+  x: 278.58
+  y: 65.29
+- ref: C52
+  x: 275.59
+  y: 39.31
+  rot: 90.0
+  side: back
+- ref: C53
+  x: 273.57
+  y: 38.35
+  side: back
+- ref: C54
+  x: 273.81
+  y: 48.42
+  side: back
+- ref: C55
+  x: 273.3
+  y: 44.54
+  rot: -90.0
+  side: back
+- ref: C56
+  x: 274.01
+  y: 41.58
+  rot: -90.0
+  side: back
+- ref: C6
+  x: 266.75
+  y: 64.5
+  rot: 90.0
+- ref: C7
+  x: 267.78
+  y: 64.5
+  rot: 90.0
+- ref: C8
+  x: 272.38
+  y: 55.67
+  rot: -90.0
+- ref: C9
+  x: 269.25
+  y: 67.58
+  rot: 90.0
+- ref: D10
+  x: 272.48
+  y: 33.49
+  rot: -90.0
+- ref: D100
+  x: 278.93
+  y: 71.76
+  rot: 180.0
+  side: back
+- ref: D11
+  x: 275.52
+  y: 33.49
+  rot: -90.0
+- ref: D12
+  x: 289.9
+  y: 67.2
+- ref: D13
+  x: 289.9
+  y: 67.2
+  side: back
+- ref: D2
+  x: 291.15
+  y: 51.38
+  rot: 90.0
+- ref: D3
+  x: 291.15
+  y: 47.31
+  rot: 90.0
+- ref: D4
+  x: 291.15
+  y: 55.31
+  rot: 90.0
+- ref: D5
+  x: 291.15
+  y: 59.31
+  rot: 90.0
+- ref: D6
+  x: 291.12
+  y: 63.38
+  rot: 90.0
+- ref: D7
+  x: 291.15
+  y: 43.31
+  rot: 90.0
+- ref: D8
+  x: 270.44
+  y: 33.49
+  rot: -90.0
+- ref: D9
+  x: 276.65
+  y: 34.03
+  rot: 180.0
+  side: back
+- ref: F1
+  x: 271.0
+  y: 33.91
+  rot: 180.0
+  side: back
+- ref: J1
+  x: 274.15
+  y: 60.02
+  rot: -90.0
+  side: back
+- ref: J2
+  x: 257.65
+  y: 54.19
+- ref: J3
+  x: 257.65
+  y: 54.2
+  side: back
+- ref: J4
+  x: 273.96
+  y: 68.78
+- ref: J5
+  x: 273.96
+  y: 68.77
+  rot: 180.0
+  side: back
+- ref: J8
+  x: 258.32
+  y: 38.36
+  side: back
+- ref: L1
+  x: 266.76
+  y: 62.51
+  rot: -90.0
+- ref: L10
+  x: 276.49
+  y: 45.85
+  rot: -45.0
+  side: back
+- ref: L11
+  x: 275.95
+  y: 46.39
+  rot: -45.0
+  side: back
+- ref: L12
+  x: 274.43
+  y: 44.19
+  rot: 180.0
+  side: back
+- ref: L13
+  x: 275.56
+  y: 43.06
+  rot: -90.0
+  side: back
+- ref: L14
+  x: 274.79
+  y: 41.58
+  rot: -90.0
+  side: back
+- ref: L15
+  x: 265.69
+  y: 43.08
+  rot: -90.0
+  side: back
+- ref: L2
+  x: 287.75
+  y: 36.58
+- ref: L3
+  x: 284.86
+  y: 41.28
+  rot: 180.0
+- ref: L4
+  x: 285.43
+  y: 49.67
+  rot: 90.0
+- ref: L5
+  x: 263.71
+  y: 43.45
+  side: back
+- ref: L6
+  x: 263.95
+  y: 38.35
+  side: back
+- ref: L7
+  x: 275.22
+  y: 44.95
+  rot: 180.0
+  side: back
+- ref: L8
+  x: 276.38
+  y: 40.14
+  rot: -90.0
+  side: back
+- ref: L9
+  x: 274.79
+  y: 39.31
+  rot: -90.0
+  side: back
+- ref: Q1
+  x: 280.78
+  y: 55.61
+  rot: 180.0
+- ref: Q2
+  x: 280.94
+  y: 63.02
+  rot: -90.0
+- ref: Q3
+  x: 276.19
+  y: 52.66
+- ref: Q4
+  x: 276.19
+  y: 55.18
+  rot: -90.0
+  side: back
+- ref: R1
+  x: 289.87
+  y: 51.53
+  rot: 90.0
+- ref: R10
+  x: 278.79
+  y: 60.48
+  rot: 180.0
+- ref: R11
+  x: 283.36
+  y: 55.66
+  rot: -90.0
+- ref: R12
+  x: 280.8
+  y: 60.48
+- ref: R13
+  x: 278.16
+  y: 55.69
+  rot: -90.0
+- ref: R14
+  x: 277.15
+  y: 55.68
+  rot: 90.0
+- ref: R15
+  x: 280.73
+  y: 65.3
+- ref: R16
+  x: 261.38
+  y: 56.98
+- ref: R17
+  x: 268.04
+  y: 55.67
+  rot: 90.0
+- ref: R18
+  x: 271.46
+  y: 33.49
+  rot: -90.0
+- ref: R19
+  x: 276.53
+  y: 33.5
+  rot: -90.0
+- ref: R2
+  x: 289.93
+  y: 47.52
+  rot: 90.0
+- ref: R20
+  x: 273.49
+  y: 33.49
+  rot: 90.0
+- ref: R21
+  x: 274.51
+  y: 33.49
+  rot: 90.0
+- ref: R22
+  x: 275.62
+  y: 56.19
+- ref: R23
+  x: 274.75
+  y: 67.61
+  rot: 90.0
+- ref: R24
+  x: 263.33
+  y: 56.98
+- ref: R25
+  x: 278.79
+  y: 59.01
+  rot: 180.0
+- ref: R26
+  x: 270.26
+  y: 67.56
+  rot: 90.0
+- ref: R27
+  x: 271.27
+  y: 67.56
+  rot: 90.0
+- ref: R28
+  x: 278.68
+  y: 63.52
+  rot: 180.0
+- ref: R29
+  x: 265.28
+  y: 56.98
+  rot: 180.0
+- ref: R3
+  x: 290.0
+  y: 55.31
+  rot: 90.0
+- ref: R30
+  x: 275.62
+  y: 55.17
+  rot: 180.0
+- ref: R31
+  x: 280.88
+  y: 35.86
+  rot: 180.0
+- ref: R32
+  x: 279.32
+  y: 41.47
+- ref: R33
+  x: 280.25
+  y: 40.88
+  rot: 90.0
+  side: back
+- ref: R34
+  x: 282.89
+  y: 40.23
+- ref: R35
+  x: 282.88
+  y: 39.21
+  rot: 180.0
+- ref: R36
+  x: 284.37
+  y: 39.68
+  rot: 90.0
+- ref: R37
+  x: 258.91
+  y: 64.5
+  rot: -90.0
+  side: back
+- ref: R38
+  x: 258.91
+  y: 66.53
+  rot: -90.0
+  side: back
+- ref: R39
+  x: 283.3
+  y: 40.88
+  rot: 90.0
+  side: back
+- ref: R4
+  x: 290.11
+  y: 59.45
+  rot: 90.0
+- ref: R40
+  x: 284.31
+  y: 40.88
+  rot: 90.0
+  side: back
+- ref: R41
+  x: 269.93
+  y: 76.68
+  rot: 90.0
+  side: back
+- ref: R42
+  x: 278.79
+  y: 57.51
+  rot: 90.0
+  side: back
+- ref: R43
+  x: 268.89
+  y: 70.31
+  rot: -90.0
+  side: back
+- ref: R44
+  x: 267.88
+  y: 70.32
+  rot: -90.0
+  side: back
+- ref: R45
+  x: 268.92
+  y: 76.69
+  rot: 90.0
+  side: back
+- ref: R46
+  x: 269.4
+  y: 76.07
+  rot: 180.0
+- ref: R47
+  x: 280.5
+  y: 76.1
+  rot: 180.0
+- ref: R48
+  x: 289.51
+  y: 34.12
+  rot: -90.0
+- ref: R49
+  x: 289.39
+  y: 39.32
+- ref: R5
+  x: 290.09
+  y: 63.38
+  rot: 90.0
+- ref: R50
+  x: 281.26
+  y: 40.88
+  rot: 90.0
+  side: back
+- ref: R51
+  x: 289.92
+  y: 69.95
+  rot: -90.0
+  side: back
+- ref: R52
+  x: 282.28
+  y: 40.88
+  rot: 90.0
+  side: back
+- ref: R53
+  x: 279.99
+  y: 74.25
+  rot: 90.0
+- ref: R54
+  x: 281.0
+  y: 74.27
+  rot: -90.0
+- ref: R55
+  x: 285.33
+  y: 40.88
+  rot: -90.0
+  side: back
+- ref: R56
+  x: 278.68
+  y: 61.5
+  rot: 180.0
+- ref: R57
+  x: 278.68
+  y: 62.51
+  rot: 180.0
+- ref: R58
+  x: 265.48
+  y: 40.85
+  rot: 90.0
+  side: back
+- ref: R59
+  x: 263.97
+  y: 40.37
+  rot: 180.0
+  side: back
+- ref: R6
+  x: 289.94
+  y: 43.31
+  rot: 90.0
+- ref: R60
+  x: 286.41
+  y: 39.68
+  rot: 90.0
+- ref: R61
+  x: 285.39
+  y: 39.68
+  rot: 90.0
+- ref: R7
+  x: 287.74
+  y: 38.87
+  rot: -90.0
+- ref: R8
+  x: 278.77
+  y: 52.52
+  rot: 90.0
+- ref: R9
+  x: 275.75
+  y: 52.82
+  rot: 180.0
+  side: back
+- ref: SH1
+  x: 275.02
+  y: 44.19
+  rot: 180.0
+  side: back
+- ref: SW1
+  x: 270.95
+  y: 79.57
+- ref: SW2
+  x: 276.99
+  y: 79.57
+- ref: U1
+  x: 273.01
+  y: 61.76
+- ref: U10
+  x: 278.99
+  y: 67.05
+  rot: -90.0
+- ref: U11
+  x: 269.3
+  y: 39.16
+  rot: -90.0
+  side: back
+- ref: U2
+  x: 279.8
+  y: 38.78
+  rot: 90.0
+- ref: U3
+  x: 283.19
+  y: 37.15
+  rot: 90.0
+- ref: U4
+  x: 282.89
+  y: 47.15
+  side: back
+- ref: U5
+  x: 278.79
+  y: 60.39
+  side: back
+- ref: U6
+  x: 268.63
+  y: 73.42
+  rot: -90.0
+  side: back
+- ref: U7
+  x: 289.88
+  y: 36.88
+  rot: -90.0
+- ref: U8
+  x: 289.92
+  y: 69.9
+  rot: 180.0
+- ref: U9
+  x: 280.24
+  y: 71.54
+  rot: 90.0
+- ref: USB1
+  x: 274.0
+  y: 27.82
+  rot: 180.0
+- ref: Y1
+  x: 270.91
+  y: 52.9
+  rot: 180.0
+- ref: Y2
+  x: 276.16
+  y: 46.13
+  rot: 90.0
+- ref: Y3
+  x: 281.5
+  y: 56.29
+  rot: 180.0
+  side: back
+copper_pours:
+- net: /RF/RF_2_4GHZ_N
+  layers: [F.Cu]
+- net: /USB Input/VBUS
+  layers: [B.Cu]
+- net: 3V3
+  layers: [F.Cu, In1.Cu]
+- net: 5V
+  layers: [B.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: VDDS
+  layers: [F.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+  keepout: true
