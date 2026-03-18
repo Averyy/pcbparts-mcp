@@ -1,0 +1,139 @@
+name: SparkFun FemtoBuck
+slug: sparkfun-femtobuck
+source: sparkfun/FemtoBuck
+format: eagle
+description: 'AL8860 hysteretic buck constant-current LED driver: 350/660mA (solder jumper selectable), 6-36V input'
+tags: [led-driver, power-supply]
+key_ics: [AL8860]
+outline:
+  width_mm: 10.16
+  height_mm: 37.45
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 8mil
+  min_drill: 15mil
+  min_via: 7mil
+components:
+- ref: C1
+  value: 1uF
+  footprint: '1206'
+  tolerance: 10%
+- ref: C2
+  value: 2.2uF
+  footprint: '1206'
+  tolerance: 10%
+  decouples: U1
+- ref: CH1
+  value: CONN_02
+  footprint: SCREWTERMINAL-3.5MM-2_LOCK
+  prod_id: CONN-08399
+- ref: D1
+  value: MBRA140
+  footprint: SMA-DIODE
+  prod_id: DIO-08053
+- ref: JP1
+  value: 1x4 header
+  footprint: 1X04
+- ref: JP2
+  value: 1x2 header
+  footprint: 1X02
+- ref: L1
+  value: 33uH
+  footprint: SRN6045
+  prod_id: NDUC-11627
+  tolerance: 20%
+  current: 1.4A
+- ref: R1
+  value: 300mohm
+  footprint: 0805
+  prod_id: RES-11622
+  tolerance: 1%
+  power: 1/8W
+- ref: R2
+  value: 300mohm
+  footprint: 0805
+  prod_id: RES-11622
+  tolerance: 1%
+  power: 1/8W
+- ref: SJ2
+  value: NO Jumper
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: U1
+  value: AL8860
+  footprint: SOT-23-5
+nets:
+- name: CTRL_CH1
+  pins: [JP1.4, U1.CTRL]
+  trace_width: '0.254'
+- name: GND
+  pins: [C2.2, JP1.1, JP1.3, U1.GND]
+  trace_width: '0.254'
+- name: N$1
+  pins: [R1.2, SJ2.2]
+  trace_width: '0.254'
+- name: OUT+
+  pins: [C1.1, CH1.2, JP2.1, R1.1, R2.2, U1.SET]
+  trace_width: '0.254'
+- name: OUT-
+  pins: [C1.2, CH1.1, JP2.2, L1.2]
+  class: power
+  trace_width: '0.508'
+- name: SW
+  pins: [D1.A, L1.1, U1.SW]
+  trace_width: '0.254'
+- name: VIN
+  pins: [C2.1, D1.C, JP1.2, R2.1, SJ2.1, U1.VIN]
+  trace_width: '0.254'
+positions:
+- ref: C1
+  x: 8.89
+  y: 22.23
+  rot: 270.0
+- ref: C2
+  x: 3.81
+  y: 26.92
+  rot: 180.0
+- ref: CH1
+  x: 3.3
+  y: 9.27
+- ref: D1
+  x: 1.91
+  y: 22.86
+  rot: 90.0
+- ref: JP1
+  x: 1.27
+  y: 31.75
+- ref: JP2
+  x: 6.35
+  y: 6.35
+  rot: 180.0
+- ref: L1
+  x: 5.08
+  y: 16.51
+- ref: R1
+  x: 8.89
+  y: 26.04
+  rot: 90.0
+- ref: R2
+  x: 7.37
+  y: 26.04
+  rot: 270.0
+- ref: SJ2
+  x: 8.38
+  y: 28.19
+- ref: U1
+  x: 5.08
+  y: 21.97
+copper_pours:
+- net: GND
+  layers: [B.Cu]
+- net: OUT+
+  layers: [F.Cu]
+- net: OUT-
+  layers: [F.Cu]
+- net: SW
+  layers: [F.Cu]
+- net: VIN
+  layers: [F.Cu]

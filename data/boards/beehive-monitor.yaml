@@ -1,0 +1,364 @@
+name: Beehive Monitor
+slug: beehive-monitor
+source: waterclear1/BeehiveMonitor_Hardware
+format: kicad9
+description: 'IoT beehive monitor: ESP32-S3, weight scale (HX711)'
+tags: [adc-dac, sensors]
+key_ics: [HX711, ADXL362, BME280, ESP32-S3]
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+- ref: C10
+  value: 10uF
+  footprint: '0603'
+  voltage: 25V
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+- ref: C20
+  value: 10uF
+  footprint: '0603'
+- ref: C21
+  value: 10uF
+  footprint: '0603'
+- ref: C23
+  value: 10uF
+  footprint: '0603'
+- ref: C25
+  value: 10uF
+  footprint: '0603'
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+  decouples: U2
+- ref: C6
+  value: 10uF
+  footprint: '1210'
+  decouples: U2
+- ref: C7
+  value: 10uF
+  footprint: '1210'
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+  prod_id: CAP-00810
+  decouples: U3
+- ref: C9
+  value: 10uF
+  footprint: '0603'
+  voltage: 25V
+- ref: IC1
+  value: MP2307
+  footprint: SO8-TH
+  manufacturer: Monolithic Power
+  mpn: MP2307
+- ref: J2
+  value: 1x4 header
+  footprint: JST_XH_B4B-XH-A
+- ref: J4
+  value: 1x7 header
+  footprint: JST_XH_B7B-XH-A
+- ref: JP2
+  value: 1x2 header
+  footprint: 1X02
+- ref: JP4
+  value: 1x5 header
+  footprint: 1X05
+- ref: L1
+  value: 3.3uH
+  footprint: 0805
+- ref: Q1
+  value: MMBT4403
+  footprint: SOT-23-3
+- ref: R1
+  value: 20kohm
+  footprint: '0603'
+- ref: R12
+  value: 10kohm
+  footprint: '0603'
+  pullup: EN
+- ref: R13
+  value: 100ohm
+  footprint: '0603'
+- ref: R14
+  value: 5.1kohm
+  footprint: 0805
+- ref: R15
+  value: 5.1kohm
+  footprint: 0805
+- ref: R16
+  value: 4.7kohm
+  footprint: '0603'
+- ref: R17
+  value: 4.7kohm
+  footprint: '0603'
+- ref: R2
+  value: 8.2kohm
+  footprint: '0603'
+  pulldown: U2.VFB
+- ref: R3
+  value: 100ohm
+  footprint: '0603'
+- ref: R4
+  value: 100ohm
+  footprint: '0603'
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  pullup: U2.RATE
+- ref: SJ2
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: U1
+  value: ESP32-S3-WROOM-1U
+  footprint: XCVR_ESP32-S3-WROOM-1U
+  manufacturer: Espressif Systems
+  mpn: ESP32-S3-WROOM-1U
+- ref: U2
+  value: HX711
+  footprint: SOP-16
+  description: 24-Bit Analog-to-Digital Converter (ADC) for Weight Scales
+- ref: U3
+  value: ADXL362
+  footprint: LGA-16-3X2.5
+  manufacturer: Analog Devices
+  prod_id: IC-11297
+  mpn: ADXL362
+- ref: U5
+  value: TP5100
+  footprint: QFN-17
+  manufacturer: NanJing Top Power ASIC Corp.
+  mpn: TP5100
+- ref: U6
+  value: MCP1700x-330xxTT
+  footprint: SOT-23
+  description: 250mA Low Quiscent Current LDO, 3.3V output, SOT-23
+nets:
+- name: +12V
+  pins: [C20.1, U5.VIN@1, U5.VIN@16, U5.VIN@4, U5.VIN@5]
+- name: +3.3V
+  pins:
+  - C25.1
+  - C8.2
+  - J2.Pin_1
+  - J4.Pin_1
+  - R12.1
+  - U1.3V3
+  - U3.VDDIO
+  - U3.VS
+  - U6.VO
+- name: +BATT
+  pins: [C10.1, C9.1, IC1.IN]
+- name: /A+
+  pins: [JP4.2, R4.1]
+- name: /A-
+  pins: [JP4.3, R3.1]
+- name: /AVDD
+  pins: [C3.1, C7.1, JP4.5, L1.1]
+- name: /B+
+  pins: [JP2.1, U2.INB+]
+- name: /B-
+  pins: [JP2.2, U2.INB-]
+- name: BOOT
+  pins: [R13.1, U1.IO0]
+- name: EN
+  pins: [R12.2, U1.EN]
+- name: GND
+  pins:
+  - C10.2
+  - C2.1
+  - C20.2
+  - C21.2
+  - C23.2
+  - C25.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.1
+  - C9.2
+  - IC1.GND
+  - J2.Pin_2
+  - J4.Pin_2
+  - JP4.1
+  - JP4.4
+  - R14.2
+  - R15.2
+  - R2.1
+  - SJ2.1
+  - U1.GND@1
+  - U1.GND@40
+  - U1.GND@41_1
+  - U1.GND@41_2
+  - U1.GND@41_3
+  - U1.GND@41_4
+  - U1.GND@41_5
+  - U1.GND@41_6
+  - U1.GND@41_7
+  - U1.GND@41_8
+  - U1.GND@41_9
+  - U2.AGND
+  - U2.XI
+  - U3.GND@P$12
+  - U3.GND@P$13
+  - U3.GND@P$16
+  - U5.EXP
+  - U5.GND
+  - U5.TS
+- name: LX
+  pins: [U5.LX@2, U5.LX@3]
+- name: Net-(BT1-+)
+  pins: [C21.1, U5.BAT]
+- name: Net-(BT1--)
+  pins: [U5.CS, U5.RTRICK, U5.VREG]
+- name: Net-(IC1-SW)
+  pins: [IC1.SW, U6.VI]
+- name: Net-(J2-Pin_3)
+  pins: [J2.Pin_3, U3.INT1]
+- name: Net-(J2-Pin_4)
+  pins: [J2.Pin_4, U3.INT2]
+- name: Net-(Q1-B)
+  pins: [Q1.B, U2.BASE]
+- name: Net-(Q1-C)
+  pins: [L1.2, Q1.C, R1.2, U2.AVDD]
+- name: Net-(U2-INA+)
+  pins: [C1.2, R4.2, U2.INA+]
+- name: Net-(U2-INA-)
+  pins: [C1.1, R3.2, U2.INA-]
+- name: Net-(U2-RATE)
+  pins: [R5.1, SJ2.2, U2.RATE]
+- name: Net-(U2-VBG)
+  pins: [C2.2, U2.VBG]
+- name: Net-(U2-VFB)
+  pins: [R1.1, R2.2, U2.VFB]
+- name: Net-(U5-VS)
+  pins: [C23.1, U5.VS]
+- name: SCK
+  pins: [J4.Pin_4, U2.PD_SCK]
+- name: VCC
+  pins: [C5.1, C6.1, Q1.E, R5.2, U2.VSUP]
+- name: VDD
+  pins: [C4.1, U2.DVDD]
+positions:
+- ref: C1
+  x: 126.11
+  y: 33.29
+- ref: C10
+  x: 170.28
+  y: 85.84
+- ref: C2
+  x: 126.11
+  y: 36.3
+- ref: C20
+  x: 1.68
+  y: 8.55
+- ref: C21
+  x: 1.68
+  y: 11.06
+- ref: C23
+  x: 1.68
+  y: 13.57
+- ref: C25
+  x: 1.68
+  y: 16.09
+- ref: C3
+  x: 126.11
+  y: 39.32
+- ref: C4
+  x: 126.11
+  y: 42.34
+- ref: C5
+  x: 126.11
+  y: 45.35
+- ref: C6
+  x: 127.79
+  y: 54.93
+- ref: C7
+  x: 127.79
+  y: 58.73
+- ref: C8
+  x: 138.5
+  y: 52.5
+- ref: C9
+  x: 170.28
+  y: 83.33
+- ref: IC1
+  x: 165.11
+  y: 86.28
+- ref: J2
+  x: 138.4
+  y: 28.76
+- ref: J4
+  x: 2.98
+  y: 2.88
+- ref: JP2
+  x: 126.96
+  y: 62.5
+- ref: JP4
+  x: 104.51
+  y: 58.64
+- ref: L1
+  x: 129.9
+  y: 45.06
+- ref: Q1
+  x: 131.04
+  y: 48.91
+- ref: R1
+  x: 130.22
+  y: 32.99
+- ref: R12
+  x: 10.73
+  y: 8.51
+- ref: R13
+  x: 10.73
+  y: 10.93
+- ref: R14
+  x: 6.22
+  y: 8.78
+- ref: R15
+  x: 6.22
+  y: 11.72
+- ref: R2
+  x: 130.22
+  y: 35.41
+- ref: R3
+  x: 130.22
+  y: 37.83
+- ref: R4
+  x: 130.22
+  y: 40.26
+- ref: R5
+  x: 130.22
+  y: 42.68
+- ref: SJ2
+  x: 132.17
+  y: 54.65
+- ref: U1
+  x: 113.84
+  y: 42.15
+- ref: U2
+  x: 120.81
+  y: 58.92
+- ref: U3
+  x: 137.5
+  y: 46.0
+- ref: U5
+  x: 153.14
+  y: 28.52
+- ref: U6
+  x: 170.56
+  y: 89.5

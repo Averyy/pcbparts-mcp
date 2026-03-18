@@ -1,0 +1,756 @@
+name: BlueESC
+slug: blueesc
+source: bluerobotics/BlueESC
+format: eagle
+description: Underwater BLDC ESC for marine thrusters/ROVs, SimonK firmware compatible
+tags: [motor-control, underwater]
+key_ics: [ATMEGA168, ACS711]
+outline:
+  width_mm: 49.48
+  height_mm: 30.9
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 13mil
+  min_via: 7mil
+components:
+- ref: C1
+  value: 1uF
+  footprint: 0805
+  voltage: 60V
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+  decouples: U$8
+- ref: C11
+  value: 100uF
+  footprint: EIA7343
+  decouples: U$3
+- ref: C15
+  value: 100uF
+  footprint: EIA7343
+  decouples: U$3
+- ref: C16
+  value: 100uF
+  footprint: EIA7343
+- ref: C17
+  value: 100uF
+  footprint: EIA7343
+- ref: C2
+  value: 1uF
+  footprint: 0805
+  voltage: 60V
+- ref: C3
+  value: 1uF
+  footprint: 0805
+  voltage: 60V
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  decouples: U2
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+- ref: C6
+  value: 1uF
+  footprint: '0603'
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+  decouples: U2
+- ref: C9
+  value: 1uF
+  footprint: EIA3216
+  decouples: U2
+- ref: D1
+  value: Schottky
+  footprint: SOD-323
+  prod_id: DIO-09646
+- ref: D2
+  value: Schottky
+  footprint: SOD-323
+  prod_id: DIO-09646
+- ref: D3
+  value: Schottky
+  footprint: SOD-323
+  prod_id: DIO-09646
+- ref: LED1
+  value: blue LED
+  footprint: SMT-LED-3X2-RA
+- ref: LED2
+  value: red LED
+  footprint: SMT-LED-3X2-RA
+- ref: Q1
+  value: BC817-40W
+  footprint: SOT23
+  description: Generic NPN BJT
+- ref: Q2
+  value: BC817-40W
+  footprint: SOT23
+  description: Generic NPN BJT
+- ref: Q3
+  value: BC817-40W
+  footprint: SOT23
+  description: Generic NPN BJT
+- ref: Q4
+  value: N-channel MOSFET
+  footprint: TDSON-8
+- ref: Q5
+  value: N-channel MOSFET
+  footprint: TDSON-8
+- ref: Q6
+  value: N-channel MOSFET
+  footprint: TDSON-8
+- ref: Q7
+  value: N-channel MOSFET
+  footprint: TDSON-8
+- ref: Q8
+  value: N-channel MOSFET
+  footprint: TDSON-8
+- ref: Q9
+  value: N-channel MOSFET
+  footprint: TDSON-8
+- ref: R1
+  value: 47kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R10
+  value: 18kohm
+  footprint: '0603'
+  tolerance: 1%
+  pullup: L_VBAT
+- ref: R11
+  value: 3.3kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R12
+  value: 10kohm
+  footprint: '0603'
+  tolerance: 1%
+  pullup: RESET
+- ref: R13
+  value: 10kohm
+  footprint: '0603'
+  tolerance: 1%
+  pullup: SDA
+- ref: R14
+  value: 10kohm
+  footprint: '0603'
+  tolerance: 1%
+  pullup: SCL
+- ref: R15
+  value: 1kohm
+  footprint: '0603'
+  pullup: LED1.A
+- ref: R16
+  value: 4.7kohm
+  footprint: '0603'
+- ref: R17
+  value: 2.2kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R18
+  value: 4.7kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R19
+  value: 100ohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R2
+  value: 47kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R20
+  value: 3.3kohm
+  footprint: '0603'
+  tolerance: 1%
+  pullup: TEMP_ADC
+- ref: R21
+  value: 100ohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R22
+  value: 10kohm
+  footprint: '0603'
+  tolerance: 1%
+  pulldown: GATE_AL
+- ref: R23
+  value: 2.2kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R24
+  value: 4.7kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R25
+  value: 100ohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R26
+  value: 100ohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R27
+  value: 10kohm
+  footprint: '0603'
+  tolerance: 1%
+  pulldown: GATE_BL
+- ref: R28
+  value: 2.2kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R29
+  value: 4.7kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R3
+  value: 47kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R30
+  value: 100ohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R31
+  value: 100ohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R32
+  value: 10kohm
+  footprint: '0603'
+  tolerance: 1%
+  pulldown: GATE_CL
+- ref: R33
+  value: 10kohm
+  footprint: '0603'
+  tolerance: 1%
+  pulldown: TEMP_ADC
+- ref: R34
+  value: 47kohm
+  footprint: '0603'
+- ref: R35
+  value: 470kohm
+  footprint: '0603'
+  pulldown: PWM
+- ref: R4
+  value: 47kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R5
+  value: 47kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R6
+  value: 47kohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R7
+  value: 4.7kohm
+  footprint: '0603'
+  pulldown: SENSE_A
+- ref: R8
+  value: 4.7kohm
+  footprint: '0603'
+  pulldown: SENSE_B
+- ref: R9
+  value: 4.7kohm
+  footprint: '0603'
+  pulldown: SENSE_C
+- ref: U$16
+  value: HEADER-6
+  footprint: HEADER-2MM-6POS
+- ref: U$17
+  value: HEADER-12
+  footprint: HEADER-2MM-12POS
+- ref: U$3
+  value: ACS7XX
+  footprint: 12-WFQFN
+- ref: U$4
+  value: HEADER-6
+  footprint: HEADER-2MM-6POS
+- ref: U$8
+  value: HEADER-12
+  footprint: HEADER-2MM-12POS
+- ref: U1
+  value: ATMEGA168
+  footprint: TQFP32-08
+  description: Atmel 32-pin 8-bit micro, 16k flash
+- ref: U2
+  value: LDO regulator
+  footprint: SOT-23-5
+  description: Voltage Regulator LDO
+- ref: Y1
+  value: resonator
+  footprint: RESONATOR-SMD
+  description: Resonator
+nets:
+- name: CENTER
+  pins: [R1.1, R2.1, R3.1, U1.PD6(AIN0)]
+- name: CURRENT_ADC
+  pins: [U$3.VIOUT, U$8.4]
+- name: CURRENT_ADC_FILTERED
+  pins: [C6.1, R34.2, U1.PC3(ADC3)]
+- name: GATE_AH
+  pins: [Q4.G, R19.2]
+- name: GATE_AL
+  pins: [Q5.G, R21.2, R22.2]
+- name: GATE_BH
+  pins: [Q6.G, R25.2]
+- name: GATE_BL
+  pins: [Q7.G, R26.2, R27.2]
+- name: GATE_CH
+  pins: [Q8.G, R30.2]
+- name: GATE_CL
+  pins: [Q9.G, R31.2, R32.2]
+- name: GND
+  pins:
+  - C10.2
+  - C11.-
+  - C15.-
+  - C16.-
+  - C17.-
+  - Q1.E
+  - Q2.E
+  - Q3.E
+  - Q5.S
+  - Q7.S
+  - Q9.S
+  - R22.1
+  - R27.1
+  - R32.1
+  - R33.1
+  - U$3.GND
+  - U$4.1
+  - U$8.1
+  - U$8.12
+  - U$8.2
+- name: LED_STATUS
+  pins: [LED1.C, U1.PB2(SS/OC1B)]
+- name: LED_WARN
+  pins: [R16.2, U1.PB1(OC1A)]
+- name: L_CURRENT_ADC
+  pins: [R34.1, U$17.4]
+- name: L_GND
+  pins:
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C9.-
+  - LED2.C
+  - R11.1
+  - R35.1
+  - R7.1
+  - R8.1
+  - R9.1
+  - U$16.1
+  - U$17.1
+  - U$17.12
+  - U$17.2
+  - U1.AGND
+  - U1.GND@1
+  - U1.GND@2
+  - U2.GND
+  - Y1.2
+- name: L_PHASE_A
+  pins: [R4.2, U$16.2]
+- name: L_PHASE_B
+  pins: [R5.2, U$16.3]
+- name: L_PHASE_C
+  pins: [R6.2, U$16.4]
+- name: L_PWM_AH
+  pins: [U$17.5, U1.PD2(INT0)]
+- name: L_PWM_AL
+  pins: [U$17.6, U1.PD3(INT1)]
+- name: L_PWM_BH
+  pins: [U$17.7, U1.PD4(XCK/T0)]
+- name: L_PWM_BL
+  pins: [U$17.8, U1.PD5(T1)]
+- name: L_PWM_CH
+  pins: [U$17.9, U1.PD7(AIN1)]
+- name: L_PWM_CL
+  pins: [U$17.10, U1.PB3(MOSI/OC2)]
+- name: L_TEMP_ADC
+  pins: [U$16.5, U1.ADC7]
+- name: L_VBAT
+  pins: [R10.2, U$17.11, U2.IN]
+- name: N$12
+  pins: [C3.1, D1.C, R17.2]
+- name: N$15
+  pins: [C1.1, D2.C, R23.2]
+- name: N$16
+  pins: [LED1.A, R15.1]
+- name: N$19
+  pins: [C2.1, D3.C, R28.2]
+- name: N$2
+  pins: [Q1.B, R18.2]
+- name: N$3
+  pins: [LED2.A, R16.1]
+- name: N$4
+  pins: [Q1.C, R17.1, R19.1]
+- name: N$5
+  pins: [Q2.B, R24.2]
+- name: N$6
+  pins: [Q2.C, R23.1, R25.1]
+- name: N$7
+  pins: [Q3.B, R29.2]
+- name: N$9
+  pins: [Q3.C, R28.1, R30.1]
+- name: PB6_XTAL1_TOSC1
+  pins: [U1.PB6(XTAL1/TOSC1), Y1.1]
+- name: PB7_XTAL2_TOSC2
+  pins: [U1.PB7(XTAL2/TOSC2), Y1.3]
+- name: PHASE_A
+  pins: [C3.2, Q4.S, Q5.D, U$4.2]
+- name: PHASE_B
+  pins: [C1.2, Q6.S, Q7.D, U$4.3]
+- name: PHASE_C
+  pins: [C2.2, Q8.S, Q9.D, U$4.4]
+- name: PWM
+  pins: [R35.2, U1.PB0(ICP)]
+- name: PWM_AH
+  pins: [R18.1, U$8.5]
+- name: PWM_AL
+  pins: [R21.1, U$8.6]
+- name: PWM_BH
+  pins: [R24.1, U$8.7]
+- name: PWM_BL
+  pins: [R26.1, U$8.8]
+- name: PWM_CH
+  pins: [R29.1, U$8.9]
+- name: PWM_CL
+  pins: [R31.1, U$8.10]
+- name: RESET
+  pins: [C5.1, R12.1, U1.PC6(/RESET)]
+- name: SCL
+  pins: [R14.1, U1.PC5(ADC5/SCL)]
+- name: SDA
+  pins: [R13.1, U1.PC4(ADC4/SDA)]
+- name: SENSE_A
+  pins: [R1.2, R4.1, R7.2, U1.PC0(ADC0)]
+- name: SENSE_B
+  pins: [R2.2, R5.1, R8.2, U1.PC1(ADC1)]
+- name: SENSE_C
+  pins: [R3.2, R6.1, R9.2, U1.PC2(ADC2)]
+- name: TEMP_ADC
+  pins: [R20.1, R33.2, U$4.5]
+- name: VBAT
+  pins:
+  - D1.A
+  - D2.A
+  - D3.A
+  - Q4.D
+  - Q6.D
+  - Q8.D
+  - U$3.IP-1
+  - U$3.IP-2
+  - U$8.11
+- name: VBAT+
+  pins: [C11.+, C15.+, C16.+, C17.+, U$3.IP+1, U$3.IP+2]
+- name: VBAT_ADC
+  pins: [R10.1, R11.2, U1.ADC6]
+- name: VCC5V
+  pins:
+  - C4.1
+  - C7.1
+  - C9.+
+  - R12.2
+  - R13.2
+  - R14.2
+  - R15.2
+  - U$16.6
+  - U$17.3
+  - U1.AREF
+  - U1.AVCC
+  - U1.VCC@1
+  - U1.VCC@2
+  - U2.OUT
+- name: VCC5V-1
+  pins: [R20.2, U$4.6]
+- name: VCC5V-2
+  pins: [C10.1, U$3.VCC, U$8.3]
+positions:
+- ref: C1
+  x: 15.67
+  y: 20.15
+  rot: 180.0
+- ref: C10
+  x: 20.91
+  y: 5.55
+  rot: 270.0
+- ref: C11
+  x: 8.69
+  y: 9.04
+- ref: C15
+  x: 8.21
+  y: 15.39
+- ref: C16
+  x: 8.69
+  y: 28.09
+- ref: C17
+  x: 8.85
+  y: 21.74
+- ref: C2
+  x: 15.67
+  y: 30.0
+  rot: 180.0
+- ref: C3
+  x: 15.67
+  y: 10.31
+  rot: 180.0
+- ref: C4
+  x: 34.25
+  y: 23.96
+  rot: 90.0
+- ref: C5
+  x: 31.86
+  y: 23.96
+  rot: 90.0
+- ref: C6
+  x: 45.72
+  y: 9.53
+  rot: 270.0
+- ref: C7
+  x: 44.77
+  y: 25.73
+  rot: 180.0
+- ref: C9
+  x: 34.88
+  y: 27.14
+- ref: D1
+  x: 15.35
+  y: 15.87
+  rot: 180.0
+- ref: D2
+  x: 15.35
+  y: 25.39
+  rot: 180.0
+- ref: D3
+  x: 14.24
+  y: 34.12
+  rot: 180.0
+- ref: LED1
+  x: 29.84
+  y: 4.92
+  rot: 150.3
+- ref: LED2
+  x: 44.77
+  y: 4.92
+  rot: 210.2
+- ref: Q1
+  x: 17.1
+  y: 5.55
+  rot: 90.0
+- ref: Q2
+  x: 17.58
+  y: 15.39
+  rot: 90.0
+- ref: Q3
+  x: 17.58
+  y: 25.23
+  rot: 90.0
+- ref: Q4
+  x: 15.67
+  y: 10.95
+  rot: 90.0
+- ref: Q5
+  x: 8.37
+  y: 9.36
+  rot: 180.0
+- ref: Q6
+  x: 15.67
+  y: 19.84
+  rot: 90.0
+- ref: Q7
+  x: 8.37
+  y: 19.2
+  rot: 180.0
+- ref: Q8
+  x: 15.67
+  y: 29.68
+  rot: 90.0
+- ref: Q9
+  x: 8.37
+  y: 29.04
+  rot: 180.0
+- ref: R1
+  x: 31.71
+  y: 14.44
+  rot: 270.0
+- ref: R10
+  x: 29.01
+  y: 28.89
+- ref: R11
+  x: 29.01
+  y: 26.19
+  rot: 180.0
+- ref: R12
+  x: 29.01
+  y: 23.49
+  rot: 180.0
+- ref: R13
+  x: 38.42
+  y: 6.35
+  rot: 180.0
+- ref: R14
+  x: 38.42
+  y: 4.13
+  rot: 180.0
+- ref: R15
+  x: 34.45
+  y: 4.13
+- ref: R16
+  x: 41.28
+  y: 5.5
+  rot: 90.0
+- ref: R17
+  x: 19.48
+  y: 10.31
+  rot: 180.0
+- ref: R18
+  x: 19.48
+  y: 8.41
+  rot: 180.0
+- ref: R19
+  x: 15.67
+  y: 8.41
+  rot: 180.0
+- ref: R2
+  x: 32.18
+  y: 17.14
+  rot: 180.0
+- ref: R20
+  x: 1.54
+  y: 26.35
+  rot: 270.0
+- ref: R21
+  x: 19.48
+  y: 12.22
+  rot: 180.0
+- ref: R22
+  x: 15.67
+  y: 12.53
+  rot: 180.0
+- ref: R23
+  x: 19.48
+  y: 20.15
+  rot: 180.0
+- ref: R24
+  x: 19.48
+  y: 18.25
+  rot: 180.0
+- ref: R25
+  x: 15.67
+  y: 18.25
+  rot: 180.0
+- ref: R26
+  x: 19.48
+  y: 22.06
+  rot: 180.0
+- ref: R27
+  x: 15.67
+  y: 22.06
+- ref: R28
+  x: 19.48
+  y: 30.0
+  rot: 180.0
+- ref: R29
+  x: 19.48
+  y: 28.09
+  rot: 180.0
+- ref: R3
+  x: 31.71
+  y: 19.84
+  rot: 90.0
+- ref: R30
+  x: 15.67
+  y: 28.09
+  rot: 180.0
+- ref: R31
+  x: 19.48
+  y: 31.9
+  rot: 180.0
+- ref: R32
+  x: 15.67
+  y: 31.9
+- ref: R33
+  x: 12.5
+  y: 24.92
+  rot: 90.0
+- ref: R34
+  x: 45.56
+  y: 12.54
+  rot: 180.0
+- ref: R35
+  x: 34.45
+  y: 6.35
+- ref: R4
+  x: 29.01
+  y: 13.96
+  rot: 180.0
+- ref: R5
+  x: 29.01
+  y: 17.14
+  rot: 180.0
+- ref: R6
+  x: 29.01
+  y: 20.31
+  rot: 180.0
+- ref: R7
+  x: 29.02
+  y: 11.79
+- ref: R8
+  x: 29.01
+  y: 9.68
+- ref: R9
+  x: 29.01
+  y: 7.61
+- ref: U$16
+  x: 26.15
+  y: 12.53
+  rot: 90.0
+- ref: U$17
+  x: 48.37
+  y: 6.82
+  rot: 90.0
+- ref: U$3
+  x: 17.74
+  y: 5.23
+  rot: 180.0
+- ref: U$4
+  x: 1.07
+  y: 12.85
+  rot: 90.0
+- ref: U$8
+  x: 23.29
+  y: 7.14
+  rot: 90.0
+- ref: U1
+  x: 39.92
+  y: 17.77
+  rot: 180.0
+- ref: U2
+  x: 40.28
+  y: 27.93
+  rot: 90.0
+- ref: Y1
+  x: 45.2
+  y: 23.33
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: L_GND
+  layers: [B.Cu, F.Cu]
+- net: PHASE_A
+  layers: [B.Cu]
+- net: PHASE_B
+  layers: [B.Cu]
+- net: PHASE_C
+  layers: [B.Cu]
+- net: VBAT
+  layers: [B.Cu]
+- net: VBAT+
+  layers: [B.Cu, F.Cu]

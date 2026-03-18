@@ -1,0 +1,264 @@
+name: Olimex RVPC
+slug: olimex-rvpc
+source: OLIMEX/RVPC
+format: kicad7
+description: CH32V003 RISC-V MCU, VGA output via resistor DAC
+tags: [adc-dac, keyboard]
+key_ics: [CH32V003J4M6]
+outline:
+  width_mm: 31.0
+  height_mm: 50.0
+design_rules:
+  layers: 2
+  min_trace: 0.254mm
+  min_clearance: 0.254mm
+  min_drill: 0.6mm
+  min_via: 1mm
+components:
+- ref: BLU1
+  value: Opened
+  footprint: SJ-1
+- ref: C1
+  value: 100nF
+  footprint: '2010'
+  voltage: 25V
+  decouples: U1
+- ref: D1
+  value: 1N4148
+  footprint: DO35_1K_2A
+- ref: GND1
+  value: TESTPAD
+  footprint: TEST_PAD40x70_SQUARE
+- ref: GRN1
+  value: Soldered
+  footprint: SJ-1
+- ref: PGM/DBG1
+  value: NS
+  footprint: HN1x2
+- ref: PS2_KBD1
+  value: MDR6_MINI-DIN
+  footprint: PS2_MDR6_MINI-DIN
+- ref: PWR_JACK1
+  value: PWRJ-2mm
+  footprint: PWRJ-2mm(YDJ-1136)
+- ref: PWR_LED1
+  value: LED/PTH/5MM/RED
+  footprint: LED-5mm-PTH-KA
+- ref: R1
+  value: 2kohm
+  footprint: R_0.125W_PTH
+  power: 1/8W
+  pulldown: PWR_LED1.K
+- ref: R2
+  value: 470ohm
+  footprint: R_0.125W_PTH
+  power: 1/8W
+- ref: R3
+  value: 470ohm
+  footprint: R_0.125W_PTH
+  power: 1/8W
+- ref: R4
+  value: 470ohm
+  footprint: R_0.125W_PTH
+  power: 1/8W
+- ref: R5
+  value: 2kohm
+  footprint: R_0.125W_PTH
+  power: 1/8W
+  pullup: /PA2\KBD_DAT
+- ref: R6
+  value: 2kohm
+  footprint: R_0.125W_PTH
+  power: 1/8W
+  pullup: /PD1\SWIO\KBD_CLK
+- ref: R7
+  value: 100ohm
+  footprint: R_0.125W_PTH
+  power: 1/8W
+- ref: R8
+  value: 2kohm
+  footprint: R_0.125W_PTH
+  power: 1/8W
+- ref: RED1
+  value: Opened
+  footprint: SJ-1
+- ref: SPK1
+  value: speaker
+  footprint: Speaker_QMB-09B-03_1-Plus_2-Minus
+- ref: T1
+  value: 2N3904
+  footprint: TO-92
+- ref: U1
+  value: CH32V003J4M6
+  footprint: SOIC-8_150mil
+- ref: VGA1
+  value: HDR15-3.08-14.5T/VGA15/14.5mm
+  footprint: VGA15-F(HDR15-3.08-14.5T)_DrillSlot
+nets:
+- name: +5V
+  pins:
+  - C1.2
+  - PS2_KBD1.4
+  - PWR_JACK1.+
+  - PWR_LED1.A
+  - R5.1
+  - R6.1
+  - R7.1
+  - U1.VDD
+- name: /PA2\KBD_DAT
+  pins: [PS2_KBD1.1, R5.2, U1.PA2/OSCO/A0/T1CH2N/OPP0/AETR2_]
+- name: /PC1\T2CH4_1\HSync
+  pins: [U1.PC1/SDA/NSS/T2CH4_/T2CH1ETR_/T1BKIN_/URX_, VGA1.HSync]
+- name: /PC2\T2CH2_1\Video_Out
+  pins: [R2.2, R3.2, R4.2, U1.PC2/SCL/URTS/T1BKIN/AETR_/T2CH2_/T1ETR_]
+- name: /PC4\T1CH4_2\Audio
+  pins: [R8.2, U1.PC4/A2/T1CH4/MCO/T1CH1CH2N_]
+- name: /PD1\SWIO\KBD_CLK
+  pins: [PGM/DBG1.1, PS2_KBD1.5, R6.2, U1.PD1/SWIO/AETR2/T1CH3N/SCL_/URX_]
+- name: /PD6\T2CH3_3\VSync
+  pins: [U1.PD6/A6/URX/T2CH3_/UTX_, VGA1.VSync]
+- name: GND
+  pins:
+  - C1.1
+  - GND1.Pad
+  - PGM/DBG1.2
+  - PS2_KBD1.3
+  - PS2_KBD1.SHIELD1@9
+  - PWR_JACK1.-@-
+  - R1.2
+  - T1.E
+  - U1.VSS
+  - VGA1.Blue_RTN
+  - VGA1.GND@10
+  - VGA1.GND@5
+  - VGA1.Green_RTN
+  - VGA1.Red_RTN
+  - VGA1.Shield1
+  - VGA1.Shield2
+- name: Net-(BLU1-Pad2)
+  pins: [BLU1.2, R4.1]
+- name: Net-(D1-A)
+  pins: [D1.A, SPK1.MINUS, T1.C]
+- name: Net-(D1-K)
+  pins: [D1.K, R7.2, SPK1.PLUS]
+- name: Net-(GRN1-Pad2)
+  pins: [GRN1.2, R3.1]
+- name: Net-(PWR_LED1-K)
+  pins: [PWR_LED1.K, R1.1]
+- name: Net-(R2-Pad1)
+  pins: [R2.1, RED1.2]
+- name: Net-(T1-B)
+  pins: [R8.1, T1.B]
+- name: Net-(VGA1-Blue)
+  pins: [BLU1.1, VGA1.Blue]
+- name: Net-(VGA1-Green)
+  pins: [GRN1.1, VGA1.Green]
+- name: Net-(VGA1-Red)
+  pins: [RED1.1, VGA1.Red]
+positions:
+- ref: BLU1
+  x: 146.5
+  y: 79.0
+  rot: -90.0
+  side: back
+- ref: C1
+  x: 149.5
+  y: 102.5
+  rot: 90.0
+- ref: D1
+  x: 141.5
+  y: 94.0
+  rot: 90.0
+- ref: GND1
+  x: 159.5
+  y: 88.75
+  rot: 90.0
+- ref: GRN1
+  x: 144.0
+  y: 79.0
+  rot: -90.0
+  side: back
+- ref: PGM/DBG1
+  x: 152.0
+  y: 82.75
+  rot: 90.0
+- ref: PS2_KBD1
+  x: 139.0
+  y: 115.5
+- ref: PWR_JACK1
+  x: 159.5
+  y: 108.5
+  rot: 90.0
+- ref: PWR_LED1
+  x: 157.0
+  y: 97.0
+  rot: -90.0
+- ref: R1
+  x: 157.0
+  y: 90.5
+  rot: 90.0
+- ref: R2
+  x: 141.5
+  y: 83.5
+  rot: -90.0
+- ref: R3
+  x: 144.0
+  y: 83.5
+  rot: -90.0
+- ref: R4
+  x: 146.5
+  y: 83.5
+  rot: -90.0
+- ref: R5
+  x: 146.5
+  y: 102.5
+  rot: -90.0
+- ref: R6
+  x: 144.0
+  y: 102.5
+  rot: -90.0
+- ref: R7
+  x: 141.5
+  y: 102.5
+  rot: 90.0
+- ref: R8
+  x: 149.0
+  y: 83.5
+  rot: -90.0
+- ref: RED1
+  x: 141.5
+  y: 79.0
+  rot: -90.0
+  side: back
+- ref: SPK1
+  x: 135.0
+  y: 94.0
+  rot: 90.0
+- ref: T1
+  x: 138.2
+  y: 87.25
+  rot: 90.0
+- ref: U1
+  x: 147.5
+  y: 93.0
+- ref: VGA1
+  x: 145.5
+  y: 71.37
+  rot: 180.0
+copper_pours:
+- net: +5V
+  layers: [F.Cu]
+- net: /PA2\KBD_DAT
+  layers: [B.Cu, F.Cu]
+- net: /PC1\T2CH4_1\HSync
+  layers: [F.Cu]
+- net: /PC2\T2CH2_1\Video_Out
+  layers: [F.Cu]
+- net: /PC4\T1CH4_2\Audio
+  layers: [B.Cu, F.Cu]
+- net: /PD1\SWIO\KBD_CLK
+  layers: [B.Cu, F.Cu]
+- net: /PD6\T2CH3_3\VSync
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [F&B.Cu]

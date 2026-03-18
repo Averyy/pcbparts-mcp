@@ -1,0 +1,4359 @@
+name: HackRF One
+slug: hackrf-one
+source: greatscottgadgets/hackrf
+format: kicad7
+description: 'SDR RF front-end: LPC4320 MCU, MAX2837 transceiver'
+tags: [adc-dac, rf-sdr]
+key_ics: [LPC4320, MAX2837, MAX5864, RFFC5072, MGA-81563]
+outline:
+  width_mm: 120.0
+  height_mm: 75.0
+design_rules:
+  layers: 4
+  min_trace: 0.127mm
+  min_clearance: 0.127mm
+  min_drill: 0.254mm
+  min_via: 0.457mm
+components:
+- ref: C1
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+  decouples: U4
+- ref: C10
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C100
+  value: 330nF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX5R6BB334
+  description: CAP CER 0.33UF 10V X5R 0402
+- ref: C101
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C102
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C103
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C104
+  value: 3pF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GCM1555C1H3R0CA16D
+  description: CAP CER 3PF 50V C0G/NP0 0402
+- ref: C105
+  value: 10uF
+  footprint: 0805
+  manufacturer: Samsung
+  mpn: CL21A106KOQNNNE
+  description: CAP CER 10UF 16V X5R 0805
+- ref: C106
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KP5NNNC
+  description: CAP CER 1UF 10V X5R 0402
+- ref: C107
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C108
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C109
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C11
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C110
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C111
+  value: 3pF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GCM1555C1H3R0CA16D
+  description: CAP CER 3PF 50V C0G/NP0 0402
+- ref: C112
+  value: 180pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402JRNPO9BN181
+  description: CAP CER 180PF 50V C0G/NPO 0402
+- ref: C113
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U19
+- ref: C114
+  value: 3.3nF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX7R9BB332
+  description: CAP CER 3300PF 50V X7R 0402
+- ref: C115
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C116
+  value: 47pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C470JB5NNNC
+  description: CAP CER 47PF 50V C0G/NP0 0402
+- ref: C118
+  value: 18pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C180JB5NNNC
+  description: CAP CER 18PF 50V 5% C0G/NP0 0402
+- ref: C119
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U19
+- ref: C12
+  value: 330pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C331JB5NNNC
+  description: CAP CER 330PF 50V C0G/NP0 0402
+- ref: C120
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U19
+- ref: C121
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U19
+- ref: C122
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U19
+- ref: C123
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U18
+- ref: C124
+  value: 2.2uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: LMK105BJ225MV-F
+  description: CAP CER 2.2UF 10V 20% X5R 0402
+  decouples: U18
+- ref: C125
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C126
+  value: 10uF
+  footprint: 0805
+  manufacturer: Samsung
+  mpn: CL21A106KOQNNNE
+  description: CAP CER 10UF 16V X5R 0805
+- ref: C127
+  value: 10uF
+  footprint: 0805
+  manufacturer: Samsung
+  mpn: CL21A106KOQNNNE
+  description: CAP CER 10UF 16V X5R 0805
+- ref: C128
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C129
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C13
+  value: 330pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C331JB5NNNC
+  description: CAP CER 330PF 50V C0G/NP0 0402
+- ref: C130
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U23
+- ref: C131
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C132
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C133
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U23
+- ref: C134
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C135
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U20
+- ref: C136
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C137
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U20
+- ref: C138
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U20
+- ref: C139
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U20
+- ref: C14
+  value: 8.2pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402CRNPO9BN8R2
+  description: CAP CER 8.2PF 50V C0G/NPO 0402
+- ref: C140
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C141
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U23
+- ref: C142
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U23
+- ref: C143
+  value: 10uF
+  footprint: 0805
+  manufacturer: Samsung
+  mpn: CL21A106KOQNNNE
+  description: CAP CER 10UF 16V X5R 0805
+- ref: C144
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U20
+- ref: C145
+  value: 10uF
+  footprint: 0805
+  manufacturer: Samsung
+  mpn: CL21A106KOQNNNE
+  description: CAP CER 10UF 16V X5R 0805
+- ref: C146
+  value: 10uF
+  footprint: 0805
+  manufacturer: Samsung
+  mpn: CL21A106KOQNNNE
+  description: CAP CER 10UF 16V X5R 0805
+- ref: C147
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C148
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U24
+- ref: C149
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U24
+- ref: C15
+  value: 180pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402JRNPO9BN181
+  description: CAP CER 180PF 50V C0G/NPO 0402
+- ref: C150
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U24
+- ref: C151
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U24
+- ref: C152
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U24
+- ref: C153
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U24
+- ref: C154
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+  decouples: U24
+- ref: C156
+  value: 47pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C470JB5NNNC
+  description: CAP CER 47PF 50V C0G/NP0 0402
+- ref: C157
+  value: 18pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C180JB5NNNC
+  description: CAP CER 18PF 50V 5% C0G/NP0 0402
+- ref: C158
+  value: 18pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C180JB5NNNC
+  description: CAP CER 18PF 50V 5% C0G/NP0 0402
+- ref: C159
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C101JB5NNNC
+  description: CAP CER 100PF 50V 5% C0G/NP0 0402
+- ref: C16
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C160
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C101JB5NNNC
+  description: CAP CER 100PF 50V 5% C0G/NP0 0402
+- ref: C161
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KP5NNNC
+  description: CAP CER 1UF 10V X5R 0402
+- ref: C162
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C163
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C164
+  value: 18pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C180JB5NNNC
+  description: CAP CER 18PF 50V 5% C0G/NP0 0402
+- ref: C165
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C101JB5NNNC
+  description: CAP CER 100PF 50V 5% C0G/NP0 0402
+- ref: C166
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C167
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C168
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C101JB5NNNC
+  description: CAP CER 100PF 50V 5% C0G/NP0 0402
+- ref: C169
+  value: 1.8pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402CRNPO9BN1R8
+  description: CAP CER 1.8PF 50V C0G/NPO 0402
+- ref: C17
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C170
+  value: 1.8pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402CRNPO9BN1R8
+  description: CAP CER 1.8PF 50V C0G/NPO 0402
+- ref: C171
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KP5NNNC
+  description: CAP CER 1UF 10V X5R 0402
+- ref: C18
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C19
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C2
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+  decouples: U4
+- ref: C20
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C21
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C22
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C23
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C24
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C25
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C26
+  value: 47pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C470JB5NNNC
+  description: CAP CER 47PF 50V C0G/NP0 0402
+- ref: C27
+  value: 47pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C470JB5NNNC
+  description: CAP CER 47PF 50V C0G/NP0 0402
+- ref: C28
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C29
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C3
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C30
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C31
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C32
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C33
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C34
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C35
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C36
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C37
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C38
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C39
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C4
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C40
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C41
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C101JB5NNNC
+  description: CAP CER 100PF 50V 5% C0G/NP0 0402
+- ref: C42
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C101JB5NNNC
+  description: CAP CER 100PF 50V 5% C0G/NP0 0402
+- ref: C43
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C44
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C45
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C46
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C47
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C48
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C49
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C5
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C50
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C51
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C52
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C101JB5NNNC
+  description: CAP CER 100PF 50V 5% C0G/NP0 0402
+- ref: C53
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A105KP5NNNC
+  description: CAP CER 1UF 10V X5R 0402
+- ref: C54
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C55
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C56
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C57
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C58
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C59
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C6
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C60
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C61
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C62
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C63
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C64
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C65
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C66
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C67
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C68
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C101JB5NNNC
+  description: CAP CER 100PF 50V 5% C0G/NP0 0402
+- ref: C69
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C101JB5NNNC
+  description: CAP CER 100PF 50V 5% C0G/NP0 0402
+- ref: C7
+  value: 33pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C330JB5NNNC
+  description: CAP CER 33PF 50V C0G/NP0 0402
+- ref: C70
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C101JB5NNNC
+  description: CAP CER 100PF 50V 5% C0G/NP0 0402
+- ref: C71
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C72
+  value: 2.2uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: LMK105BJ225MV-F
+  description: CAP CER 2.2UF 10V 20% X5R 0402
+- ref: C73
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C74
+  value: 2.2uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: LMK105BJ225MV-F
+  description: CAP CER 2.2UF 10V 20% X5R 0402
+- ref: C75
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C76
+  value: 2.2uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: LMK105BJ225MV-F
+  description: CAP CER 2.2UF 10V 20% X5R 0402
+- ref: C77
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C78
+  value: 2.2uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: LMK105BJ225MV-F
+  description: CAP CER 2.2UF 10V 20% X5R 0402
+- ref: C79
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C8
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C80
+  value: 2.2uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: LMK105BJ225MV-F
+  description: CAP CER 2.2UF 10V 20% X5R 0402
+- ref: C81
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C82
+  value: 2.2uF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: LMK105BJ225MV-F
+  description: CAP CER 2.2UF 10V 20% X5R 0402
+- ref: C83
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C84
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C85
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C86
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C87
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C88
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+  decouples: U17
+- ref: C89
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C90
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C101JB5NNNC
+  description: CAP CER 100PF 50V 5% C0G/NP0 0402
+- ref: C91
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05A104KA5NNNC
+  description: CAP CER 0.1UF 25V X5R 0402
+- ref: C92
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C93
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05B103KB5NNNC
+  description: CAP CER 10000PF 50V X7R 0402
+- ref: C94
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C95
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C96
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: C97
+  value: 330nF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX5R6BB334
+  description: CAP CER 0.33UF 10V X5R 0402
+- ref: C98
+  value: 330nF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX5R6BB334
+  description: CAP CER 0.33UF 10V X5R 0402
+- ref: C99
+  value: 22pF
+  footprint: '0402'
+  manufacturer: Samsung
+  mpn: CL05C220JB5NNNC
+  description: CAP CER 22PF 50V C0G/NP0 0402
+- ref: D1
+  value: GSG-DIODE-TVS-BI
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: LXES15AAA1-100
+  description: TVS DIODE ESD .05PF 15KV 0402
+- ref: D10
+  value: schottky
+  footprint: DSN1006-2
+  manufacturer: Nexperia
+  mpn: PMEG4010ESBYL
+- ref: D2
+  value: VAALED
+  footprint: LTST-S220
+  manufacturer: Lite-On
+  mpn: LTST-S220KRKT
+- ref: D3
+  value: GSG-DIODE-TVS-BI
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: LXES15AAA1-100
+  description: TVS DIODE ESD .05PF 15KV 0402
+- ref: D4
+  value: USBLED
+  footprint: LTST-S220
+  manufacturer: Lite-On
+  mpn: LTST-S220KGKT
+- ref: D5
+  value: RXLED
+  footprint: LTST-S220
+  manufacturer: Lite-On
+  mpn: LTST-S220KSKT
+- ref: D6
+  value: TXLED
+  footprint: LTST-S220
+  manufacturer: Lite-On
+  mpn: LTST-S220KRKT
+- ref: D7
+  value: VCCLED
+  footprint: LTST-S220
+  manufacturer: Lite-On
+  mpn: LTST-S220KGKT
+- ref: D8
+  value: 1V8LED
+  footprint: LTST-S220
+  manufacturer: Lite-On
+  mpn: LTST-S220KSKT
+- ref: D9
+  value: GSG-DIODE-TVS-BI
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: LXES15AAA1-100
+  description: TVS DIODE ESD .05PF 15KV 0402
+- ref: FB1
+  value: FILTER
+  footprint: 0805
+  manufacturer: Murata
+  mpn: BLM21PG221SN1D
+  description: FERRITE CHIP 220 OHM 2000MA 0805
+- ref: FB2
+  value: FILTER
+  footprint: 0805
+  manufacturer: Murata
+  mpn: BLM21PG221SN1D
+  description: FERRITE CHIP 220 OHM 2000MA 0805
+- ref: FB3
+  value: FILTER
+  footprint: 0805
+  manufacturer: Murata
+  mpn: BLM21PG221SN1D
+  description: FERRITE CHIP 220 OHM 2000MA 0805
+- ref: J1
+  value: USB-MICRO-B
+  footprint: GSG-USB-MICROB-FCI-10103592-EXT
+  manufacturer: FCI
+  mpn: 10103592-0001LF
+  description: CONN RCPT REV MICRO USB TYPE B
+- ref: J10
+  value: GND_CLIP
+  footprint: GSG-TEST-POINT-S1751-46R
+  manufacturer: Harwin
+  mpn: S1751-46R
+  description: PC TEST POINT TIN SMD
+- ref: J2
+  value: RF-SHIELD-FRAME
+  footprint: GSG-SHIELD-BMI-S-230
+  manufacturer: Laird
+  mpn: BMI-S-230-F-R
+  description: BOARD SHIELD 2INX1.5IN FRAME
+- ref: L10
+  value: 4.7uH
+  footprint: NRG-4026
+  manufacturer: Taiyo Yuden
+  mpn: NRS4018T4R7MDGJ
+  description: FIXED IND 4.7UH 1.7A 84 MOHM SMD
+- ref: L11
+  value: 4.7uH
+  footprint: NRG-4026
+  manufacturer: Taiyo Yuden
+  mpn: NRS4018T4R7MDGJ
+  description: FIXED IND 4.7UH 1.7A 84 MOHM SMD
+- ref: L12
+  value: 10uH
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: BRL1608T100M
+  description: INDUCTR 10UH 220MA 20% 0603 SMD
+- ref: L13
+  value: 10uH
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: BRL1608T100M
+  description: INDUCTR 10UH 220MA 20% 0603 SMD
+- ref: L2
+  value: 10uH
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: BRL1608T100M
+  description: INDUCTR 10UH 220MA 20% 0603 SMD
+- ref: L3
+  value: 10uH
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: BRL1608T100M
+  description: INDUCTR 10UH 220MA 20% 0603 SMD
+- ref: L5
+  value: 10uH
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: BRL1608T100M
+  description: INDUCTR 10UH 220MA 20% 0603 SMD
+- ref: L7
+  value: 6.2nH
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: LQG15HS6N2S02D
+  description: FIXED IND 6.2NH 600MA 220MOHM SMD
+- ref: NT1
+  value: 1V8
+  footprint: HEADER-1x2-SHORTED
+- ref: NT2
+  value: VCC
+  footprint: HEADER-1x2-SHORTED
+- ref: NT3
+  value: VAA
+  footprint: HEADER-1x2-SHORTED
+- ref: P16
+  value: CLKIN
+  footprint: GSG-SMA-73251-2120
+  manufacturer: Molex
+  mpn: 73251-2121
+  description: CONN SMA JACK 50 OHM EDGE MNT W/JAM NUT & LOCK WASHER
+- ref: P2
+  value: CLKOUT
+  footprint: GSG-SMA-73251-2120
+  manufacturer: Molex
+  mpn: 73251-2121
+  description: CONN SMA JACK 50 OHM EDGE MNT W/JAM NUT & LOCK WASHER
+- ref: P20
+  value: 2x11 header
+  footprint: GSG-HEADER-2x11
+  manufacturer: Sullins
+  mpn: PPPC112LFBN-RC
+  description: CONN HEADER FMAL 22PS.1" DL GOLD
+- ref: P22
+  value: 2x13 header
+  footprint: GSG-HEADER-2x13
+  manufacturer: Sullins
+  mpn: PPPC132LFBN-RC
+  description: CONN HEADER FMAL 26PS.1" DL GOLD
+- ref: P25
+  value: 1x6 header
+  footprint: GSG-HEADER-1x6
+- ref: P26
+  value: LPC_JTAG
+  footprint: GSG-50MIL-HEADER-2x5-TH
+  manufacturer: Sullins
+  mpn: GRPB052VWVN-RC
+  description: CONN HEADER .050" 10PS DL PCB AU
+- ref: P28
+  value: 2x11 header
+  footprint: GSG-HEADER-2x11
+  manufacturer: Sullins
+  mpn: PPPC112LFBN-RC
+  description: CONN HEADER FMAL 22PS.1" DL GOLD
+- ref: P29
+  value: CPLD_JTAG
+  footprint: GSG-HEADER-1x2
+- ref: P3
+  value: 1x2 header
+  footprint: GSG-HEADER-NOMARK-1x2
+- ref: P30
+  value: 2x10 header
+  footprint: GSG-HEADER-2x10
+- ref: P4
+  value: ANTENNA
+  footprint: GSG-SMA-73251-2120
+  manufacturer: Molex
+  mpn: 73251-2121
+  description: CONN SMA JACK 50 OHM EDGE MNT W/JAM NUT & LOCK WASHER
+- ref: P5
+  value: 2x3 header
+  footprint: GSG-HEADER-2x3
+- ref: P80
+  value: 1x2 header
+  footprint: GSG-HEADER-NOMARK-1x2
+- ref: P9
+  value: 2x8 header
+  footprint: GSG-HEADER-2x8
+  manufacturer: Sullins
+  mpn: PPPC082LFBN-RC
+  description: CONN HEADER FMAL 16PS.1" DL GOLD
+- ref: Q1
+  value: MOSFET
+  footprint: SOT-23-3
+  manufacturer: Yangzhou Yangjie
+  mpn: YJL2301C
+  description: P-CH MOSFET 20V 3.4A SOT-23-3L
+- ref: Q2
+  value: MOSFET
+  footprint: SOT-23-3
+  manufacturer: Yangzhou Yangjie
+  mpn: YJL2301C
+  description: P-CH MOSFET 20V 3.4A SOT-23-3L
+- ref: Q3
+  value: MOSFET
+  footprint: SOT-23-3
+  manufacturer: Yangzhou Yangjie
+  mpn: YJL2301C
+  description: P-CH MOSFET 20V 3.4A SOT-23-3L
+- ref: Q4
+  value: MOSFET
+  footprint: SOT-23-3
+  manufacturer: Yangzhou Yangjie
+  mpn: YJL2301C
+  description: P-CH MOSFET 20V 3.4A SOT-23-3L
+- ref: Q5
+  value: MOSFET
+  footprint: SOT-23-3
+  manufacturer: Yangzhou Yangjie
+  mpn: YJL2301C
+  description: P-CH MOSFET 20V 3.4A SOT-23-3L
+- ref: R1
+  value: 470ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT470R
+  description: RES TF 1/16W 470 OHM 5% 0402
+- ref: R10
+  value: 1kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT1K00
+  description: RES 1K OHM 1/16W 1% 0402
+- ref: R100
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R104
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: /baseband/INTR
+- ref: R105
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: /baseband/OEB
+- ref: R11
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: '!VAA_ENABLE'
+- ref: R12
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: U23.USB0_ID
+- ref: R13
+  value: 1kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT1K00
+  description: RES 1K OHM 1/16W 1% 0402
+- ref: R14
+  value: 4.7kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT4K70
+  description: RES 4.7K OHM 1/16W 1% 0402
+  pulldown: /baseband/TXBBI-
+- ref: R15
+  value: 4.7kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT4K70
+  description: RES 4.7K OHM 1/16W 1% 0402
+  pulldown: /baseband/TXBBI+
+- ref: R16
+  value: 4.7kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT4K70
+  description: RES 4.7K OHM 1/16W 1% 0402
+  pulldown: /baseband/TXBBQ+
+- ref: R17
+  value: 4.7kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT4K70
+  description: RES 4.7K OHM 1/16W 1% 0402
+  pulldown: /baseband/TXBBQ-
+- ref: R18
+  value: 1.8kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT1K80
+  description: RES TF 1.8K OHM 5% 1/16W 0402
+- ref: R19
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R2
+  value: 470ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT470R
+  description: RES TF 1/16W 470 OHM 5% 0402
+- ref: R20
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402ZT0R00
+  description: RES 0.0 OHM 1/16W 0402 SMD
+- ref: R21
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402ZT0R00
+  description: RES 0.0 OHM 1/16W 0402 SMD
+- ref: R22
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402ZT0R00
+  description: RES 0.0 OHM 1/16W 0402 SMD
+- ref: R23
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402ZT0R00
+  description: RES 0.0 OHM 1/16W 0402 SMD
+- ref: R24
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+- ref: R25
+  value: 475ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT470R
+  description: RES TF 1/16W 470 OHM 5% 0402
+- ref: R26
+  value: 475ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT470R
+  description: RES TF 1/16W 470 OHM 5% 0402
+- ref: R27
+  value: 1.8kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT1K80
+  description: RES TF 1.8K OHM 5% 1/16W 0402
+  pullup: SDA
+- ref: R28
+  value: 1.8kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT1K80
+  description: RES TF 1.8K OHM 5% 1/16W 0402
+  pullup: SCL
+- ref: R29
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+- ref: R3
+  value: 22kohm
+  footprint: '0402'
+  manufacturer: Panasonic
+  mpn: ERJ-2GEJ223X
+  description: RES 22K OHM 1/10W 5% 0402 SMD
+- ref: R30
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R31
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R32
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R33
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R34
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R36
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+- ref: R37
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pulldown: /mcu/usb/power/VBUSCTRL
+- ref: R38
+  value: 15.4kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-0715K4L
+  description: RES 15.4K OHM 1% 1/16W 0402
+  pullup: /mcu/usb/power/ADC0_3
+- ref: R39
+  value: 330kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT330K
+  description: RES TF 1/16W 330K OHM 1% 0402
+  pulldown: /mcu/usb/power/ADC0_3
+- ref: R4
+  value: 51kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT51K0
+  description: RES TF 51K OHM 1% 0.0625W 0402
+  pulldown: U4.REXT
+- ref: R41
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pulldown: XCVR_EN
+- ref: R42
+  value: 18ohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402JR-0718RL
+  description: RES 18 OHM 5% 1/16W 0402
+- ref: R43
+  value: 18ohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402JR-0718RL
+  description: RES 18 OHM 5% 1/16W 0402
+- ref: R46
+  value: 162kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT162K
+  description: RES TF 1/16W 162K OHM 1% 0402
+  pulldown: U21.ADJ2
+- ref: R47
+  value: 330kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT330K
+  description: RES TF 1/16W 330K OHM 1% 0402
+- ref: R48
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: /mcu/usb/power/WAKEUP
+- ref: R49
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: SW2.2
+- ref: R5
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: MIXER_RESETX
+- ref: R51
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+- ref: R52
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+- ref: R54
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pulldown: /mcu/usb/power/EN1V8
+- ref: R55
+  value: 162kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT162K
+  description: RES TF 1/16W 162K OHM 1% 0402
+  pulldown: U21.DEF1
+- ref: R56
+  value: 715kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT715K
+  description: RES TF 1/16W 715K OHM 1% 0402
+- ref: R57
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402ZT0R00
+  description: RES 0.0 OHM 1/16W 0402 SMD
+- ref: R58
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402ZT0R00
+  description: RES 0.0 OHM 1/16W 0402 SMD
+- ref: R59
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: /mcu/usb/power/ISP
+- ref: R6
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: MIXER_ENX
+- ref: R62
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+- ref: R63
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: /mcu/usb/power/TDO
+- ref: R64
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: /mcu/usb/power/DBGEN
+- ref: R65
+  value: 18kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402JR-0718KL
+  description: RES SMD 18K OHM 5% 1/16W 0402
+  pulldown: U23.USB0_VBUS
+- ref: R66
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: /mcu/usb/power/TCK
+- ref: R67
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pullup: /mcu/usb/power/P1_1
+- ref: R68
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pulldown: /mcu/usb/power/P1_2
+- ref: R69
+  value: 12kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-0712KL
+  description: RES 12K OHM 1% 1/16W 0402
+  pulldown: /mcu/usb/power/RREF
+- ref: R7
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pulldown: SW1.2
+- ref: R72
+  value: 470ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT470R
+  description: RES TF 1/16W 470 OHM 5% 0402
+- ref: R73
+  value: 1kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT1K00
+  description: RES 1K OHM 1/16W 1% 0402
+- ref: R74
+  value: 1.8kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT1K80
+  description: RES TF 1.8K OHM 5% 1/16W 0402
+- ref: R75
+  value: 470ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT470R
+  description: RES TF 1/16W 470 OHM 5% 0402
+- ref: R76
+  value: 1kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT1K00
+  description: RES 1K OHM 1/16W 1% 0402
+- ref: R77
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R78
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R79
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R8
+  value: 1kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT1K00
+  description: RES 1K OHM 1/16W 1% 0402
+- ref: R80
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R81
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R85
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pulldown: CLKIN
+- ref: R86
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R87
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R88
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R89
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R9
+  value: 1kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402FT1K00
+  description: RES 1K OHM 1/16W 1% 0402
+- ref: R90
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R91
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R93
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT10K0
+  description: RES 10K OHM 1/16W 5% 0402 SMD
+  pulldown: /mcu/usb/power/P2_9
+- ref: R94
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R96
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R98
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: R99
+  value: 39ohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT39R0
+  description: RES 39 OHM 1/16W 5% 0402 SMD
+- ref: SW1
+  value: DFU
+  footprint: GSG-SWITCH-FSMRA
+  manufacturer: TE Connectivity
+  mpn: FSMRA3JH
+- ref: SW2
+  value: RESET
+  footprint: GSG-SWITCH-FSMRA
+  manufacturer: TE Connectivity
+  mpn: FSMRA3JH
+- ref: T1
+  value: MIX_IN_BALUN
+  footprint: GSG-B0310J50100AHF
+  manufacturer: TTM
+  mpn: B0310J50100AHF
+  description: Ultra Low Profile 0805 Balun 50 to 100 ohm Balanced
+- ref: T2
+  value: MIX_OUT_BALUN
+  footprint: GSG-B0310J50100AHF
+  manufacturer: TTM
+  mpn: B0310J50100AHF
+  description: Ultra Low Profile 0805 Balun 50 to 100 ohm Balanced
+- ref: T3
+  value: RX_BALUN
+  footprint: GSG-2500BL14M100
+  manufacturer: Johanson Technology
+  mpn: 2500BL14M100T
+  description: BALUN CERAMIC CHIP WIMAX 2.5GHZ
+- ref: T4
+  value: TX_BALUN
+  footprint: GSG-2500BL14M100
+  manufacturer: Johanson Technology
+  mpn: 2500BL14M100T
+  description: BALUN CERAMIC CHIP WIMAX 2.5GHZ
+- ref: U1
+  value: SKY13453
+  footprint: SKY13350-385LF
+  manufacturer: Skyworks
+  mpn: SKY13453-385LF
+  description: IC RF SWITCH 6GHZ 6QFN
+- ref: U10
+  value: SKY13453
+  footprint: SKY13350-385LF
+  manufacturer: Skyworks
+  mpn: SKY13453-385LF
+  description: IC RF SWITCH 6GHZ 6QFN
+- ref: U11
+  value: SKY13453
+  footprint: SKY13350-385LF
+  manufacturer: Skyworks
+  mpn: SKY13453-385LF
+  description: IC RF SWITCH 6GHZ 6QFN
+- ref: U12
+  value: SKY13317
+  footprint: GSG-SKY13317-373LF
+  manufacturer: Skyworks
+  mpn: SKY13317-373LF
+  description: 20 MHz-6.0 GHz pHEMT GaAs SP3T Switch
+- ref: U13
+  value: MGA-81563
+  footprint: SOT-363
+  manufacturer: Avago
+  mpn: MGA-81563-TR1G
+  description: 0.1-6 GHz 3 V, 14 dBm Amplifier
+- ref: U14
+  value: SKY13317
+  footprint: GSG-SKY13317-373LF
+  manufacturer: Skyworks
+  mpn: SKY13317-373LF
+  description: 20 MHz-6.0 GHz pHEMT GaAs SP3T Switch
+- ref: U15
+  value: TVS
+  footprint: GSG-LXES1TBCC2-004
+  manufacturer: Vishay
+  mpn: VBUS54CV-HSF-G4-08
+  description: TVS DIODE 5.5V 22V LLP75-6L
+- ref: U17
+  value: MAX2837
+  footprint: QFN-48
+  manufacturer: Maxim
+  mpn: MAX2837ETM+T
+  description: IC TXRX 2.3GHZ-2.7GHZ 48TQFN
+- ref: U18
+  value: MAX5864
+  footprint: QFN-48
+  manufacturer: Maxim
+  mpn: MAX5864ETM+T
+  description: IC ANLG FRONT END 22MSPS 48-TQFN
+- ref: U19
+  value: SI5351C
+  footprint: QFN-20
+  manufacturer: Silicon Laboratories Inc
+  mpn: SI5351C-B-GM
+  description: IC CLK GENERATOR 160MHZ 20QFN
+- ref: U2
+  value: SKY13453
+  footprint: SKY13350-385LF
+  manufacturer: Skyworks
+  mpn: SKY13453-385LF
+  description: IC RF SWITCH 6GHZ 6QFN
+- ref: U20
+  value: W25Q80
+  footprint: SOIC-8
+  manufacturer: Winbond
+  mpn: W25Q80DVSSIG
+  description: IC FLASH 8MBIT 8SOIC
+- ref: U21
+  value: TPS62410
+  footprint: GSG-S-PVSON-N10
+  manufacturer: Texas Instruments
+  mpn: TPS62410DRCR
+  description: IC BUCK SYNC DUAL ADJ 0.8A 10SON
+- ref: U23
+  value: LPC4320FBD144
+  footprint: LQFP-144
+  manufacturer: NXP
+  mpn: LPC4320FBD144,551
+  description: IC MCU 32BIT 144LQFP
+- ref: U24
+  value: GSG-XC2C64A-7VQG100C
+  footprint: VQ-100
+  manufacturer: Xilinx
+  mpn: XC2C64A-7VQG100C
+  description: IC CR-II CPLD 64MCELL 100-VQFP
+- ref: U25
+  value: MGA-81563
+  footprint: SOT-363
+  manufacturer: Avago
+  mpn: MGA-81563-TR1G
+  description: 0.1-6 GHz 3 V, 14 dBm Amplifier
+- ref: U3
+  value: lowpass filter
+  footprint: LP-0603
+  manufacturer: AVX
+  mpn: LP0603A1880ANTR
+  description: FILTER LOW PASS 1880MHZ 0603 SMD
+- ref: U4
+  value: RFFC5072
+  footprint: QFN-32
+  manufacturer: RFMD
+  mpn: RFFC5072TR7
+  description: WIDEBAND SYNTHESIZER/VCO WITH INTEGRATED 6GHz MIXER
+- ref: U5
+  value: SKY13453
+  footprint: SKY13350-385LF
+  manufacturer: Skyworks
+  mpn: SKY13453-385LF
+  description: IC RF SWITCH 6GHZ 6QFN
+- ref: U6
+  value: SKY13453
+  footprint: SKY13350-385LF
+  manufacturer: Skyworks
+  mpn: SKY13453-385LF
+  description: IC RF SWITCH 6GHZ 6QFN
+- ref: U7
+  value: SKY13453
+  footprint: SKY13350-385LF
+  manufacturer: Skyworks
+  mpn: SKY13453-385LF
+  description: IC RF SWITCH 6GHZ 6QFN
+- ref: U8
+  value: highpass filter
+  footprint: GSG-HP-DEA
+  manufacturer: TDK
+  mpn: DEA162400HT-8004B1
+  description: FILTER HIGHPASS WLAN&BLUETOOTH
+- ref: U9
+  value: SKY13317
+  footprint: GSG-SKY13317-373LF
+  manufacturer: Skyworks
+  mpn: SKY13317-373LF
+  description: 20 MHz-6.0 GHz pHEMT GaAs SP3T Switch
+- ref: X1
+  value: 25MHz
+  footprint: GSG-XTAL3.2x2.5mm
+  manufacturer: Abracon
+  mpn: ABM8-25.000MHZ-10-D1G-T
+- ref: X2
+  value: 12MHz
+  footprint: GSG-XTAL3.2x2.5mm
+  manufacturer: TXC
+  mpn: 7V-12.000MAAE-T
+- ref: X3
+  value: RTC_XTAL
+  footprint: GSG-XTAL-AB26TRQ
+  manufacturer: Abracon
+  mpn: AB26TRQ-32.768KHZ-T
+nets:
+- name: '!MIX_BYPASS'
+  pins: [C38.2, C7.2, U1.VCTL, U23.P1_7, U9.V2]
+- name: '!RX_AMP_PWR'
+  pins: [Q1.G, R29.2, U23.P2_12]
+- name: '!TX_AMP_PWR'
+  pins: [Q2.G, R24.1, U23.P6_9]
+- name: '!VAA_ENABLE'
+  pins: [P5.Pin_5, Q3.G, R11.2, U23.P5_0]
+- name: +1V8
+  pins: [C151.1, C152.1, NT1.1, U24.VCC@26, U24.VCC@57]
+- name: /baseband/CLK0
+  pins: [R31.2, U19.CLK0]
+- name: /baseband/CLK1
+  pins: [R32.2, U19.CLK1]
+- name: /baseband/CLK2
+  pins: [R94.2, U19.CLK2]
+- name: /baseband/CLK3
+  pins: [R33.2, U19.CLK3]
+- name: /baseband/CLK5
+  pins: [C115.1, U19.CLK5]
+- name: /baseband/COM
+  pins: [C97.1, U18.COM]
+- name: /baseband/CPOUT+
+  pins: [C112.2, R25.1, U17.CPOUT+]
+- name: /baseband/CPOUT-
+  pins: [C112.1, R26.1, U17.CPOUT-]
+- name: /baseband/IA+
+  pins: [C101.1, C110.1, R20.1, U18.IA+]
+- name: /baseband/IA-
+  pins: [C101.2, C109.1, R21.1, U18.IA-]
+- name: /baseband/ID+
+  pins: [R13.1, U18.ID+]
+- name: /baseband/ID-
+  pins: [R10.1, U18.ID-]
+- name: /baseband/INTR
+  pins: [R104.2, U19.INTR]
+- name: /baseband/OEB
+  pins: [R105.2, U19.OEB]
+- name: /baseband/QA+
+  pins: [C103.2, C107.1, R23.1, U18.QA+]
+- name: /baseband/QA-
+  pins: [C103.1, C108.1, R22.1, U18.QA-]
+- name: /baseband/QD+
+  pins: [R8.1, U18.QD+]
+- name: /baseband/QD-
+  pins: [R9.1, U18.QD-]
+- name: /baseband/REFN
+  pins: [C98.1, U18.REFN]
+- name: /baseband/REFP
+  pins: [C100.1, U18.REFP]
+- name: /baseband/RXBBI+
+  pins: [P9.Pin_7, R20.2, U17.RXBBI+]
+- name: /baseband/RXBBI-
+  pins: [P9.Pin_5, R21.2, U17.RXBBI-]
+- name: /baseband/RXBBQ+
+  pins: [P9.Pin_6, R22.2, U17.RXBBQ+]
+- name: /baseband/RXBBQ-
+  pins: [P9.Pin_4, R23.2, U17.RXBBQ-]
+- name: /baseband/TXBBI+
+  pins: [C96.1, P9.Pin_12, R10.2, R15.1, U17.TXBBI+]
+- name: /baseband/TXBBI-
+  pins: [C96.2, P9.Pin_10, R13.2, R14.1, U17.TXBBI-]
+- name: /baseband/TXBBQ+
+  pins: [C95.2, P9.Pin_11, R16.1, R9.2, U17.TXBBQ+]
+- name: /baseband/TXBBQ-
+  pins: [C95.1, P9.Pin_13, R17.1, R8.2, U17.TXBBQ-]
+- name: /baseband/XA
+  pins: [C170.2, U19.XA, X1.3]
+- name: /baseband/XB
+  pins: [C169.2, U19.XB, X1.1]
+- name: /baseband/XTAL2
+  pins: [C115.2, C116.1, U17.XTAL2]
+- name: /frontend/!ANT_BIAS
+  pins: [Q4.G, R36.1, U4.GPO1/ADD1]
+- name: /frontend/REF_IN
+  pins: [C67.2, C70.1, U4.REF_IN]
+- name: /frontend/RX_AMP_IN
+  pins: [C58.1, U14.RF3]
+- name: /frontend/RX_AMP_OUT
+  pins: [C50.2, U12.RF1]
+- name: /frontend/TX_AMP_IN
+  pins: [C59.1, U12.RF3]
+- name: /frontend/TX_AMP_OUT
+  pins: [C62.1, U14.RF1]
+- name: /mcu/usb/power/ADC0_0
+  pins: [P20.Pin_20, U23.ADC0_0/ADC1_0/DAC]
+- name: /mcu/usb/power/ADC0_2
+  pins: [P20.Pin_16, U23.ADC0_2/ADC1_2]
+- name: /mcu/usb/power/ADC0_3
+  pins: [R38.2, R39.1, U23.ADC0_3/ADC1_3]
+- name: /mcu/usb/power/ADC0_5
+  pins: [P20.Pin_18, U23.ADC0_5/ADC1_5]
+- name: /mcu/usb/power/ADC0_6
+  pins: [P20.Pin_14, U23.ADC0_6/ADC1_6]
+- name: /mcu/usb/power/B1AUX13
+  pins: [P28.Pin_16, U24.BANK1F4M13]
+- name: /mcu/usb/power/B1AUX14
+  pins: [P28.Pin_15, U24.BANK1F4M14]
+- name: /mcu/usb/power/B2AUX1
+  pins: [P30.Pin_18, U24.BANK2F1M1]
+- name: /mcu/usb/power/B2AUX10
+  pins: [P30.Pin_9, U24.BANK2F1M10]
+- name: /mcu/usb/power/B2AUX11
+  pins: [P30.Pin_8, U24.BANK2F1M11]
+- name: /mcu/usb/power/B2AUX12
+  pins: [P30.Pin_7, U24.BANK2F1M12]
+- name: /mcu/usb/power/B2AUX13
+  pins: [P30.Pin_6, U24.BANK2F1M13]
+- name: /mcu/usb/power/B2AUX14
+  pins: [P30.Pin_5, U24.BANK2F1M14]
+- name: /mcu/usb/power/B2AUX15
+  pins: [P30.Pin_4, U24.BANK2F1M15]
+- name: /mcu/usb/power/B2AUX16
+  pins: [P30.Pin_3, U24.BANK2F1M16]
+- name: /mcu/usb/power/B2AUX2
+  pins: [P30.Pin_17, U24.BANK2F1M2]
+- name: /mcu/usb/power/B2AUX3
+  pins: [P30.Pin_16, U24.BANK2F1M3]
+- name: /mcu/usb/power/B2AUX4
+  pins: [P30.Pin_15, U24.BANK2F1M4]
+- name: /mcu/usb/power/B2AUX5
+  pins: [P30.Pin_14, U24.BANK2F1M5]
+- name: /mcu/usb/power/B2AUX6
+  pins: [P30.Pin_13, U24.BANK2F1M6]
+- name: /mcu/usb/power/B2AUX7
+  pins: [P30.Pin_12, U24.BANK2F1M7]
+- name: /mcu/usb/power/B2AUX8
+  pins: [P30.Pin_11, U24.BANK2F1M8]
+- name: /mcu/usb/power/B2AUX9
+  pins: [P30.Pin_10, U24.BANK2F1M9]
+- name: /mcu/usb/power/BANK2F3M1
+  pins: [R77.2, U24.BANK2F3M1]
+- name: /mcu/usb/power/BANK2F3M10
+  pins: [R90.2, U24.BANK2F3M10]
+- name: /mcu/usb/power/BANK2F3M11
+  pins: [R91.2, U24.BANK2F3M11]
+- name: /mcu/usb/power/BANK2F3M12
+  pins: [P28.Pin_21, R96.2, U24.BANK2F3M12]
+- name: /mcu/usb/power/BANK2F3M14
+  pins: [R98.2, U24.BANK2F3M14]
+- name: /mcu/usb/power/BANK2F3M15
+  pins: [R99.2, U24.BANK2F3M15]
+- name: /mcu/usb/power/BANK2F3M16
+  pins: [R100.2, U24.BANK2F3M16]
+- name: /mcu/usb/power/BANK2F3M2
+  pins: [P28.Pin_18, R78.2, U24.BANK2F3M2]
+- name: /mcu/usb/power/BANK2F3M3
+  pins: [R79.2, U24.BANK2F3M3]
+- name: /mcu/usb/power/BANK2F3M4
+  pins: [P28.Pin_22, R80.2, U24.BANK2F3M4]
+- name: /mcu/usb/power/BANK2F3M5
+  pins: [R81.2, U24.BANK2F3M5]
+- name: /mcu/usb/power/BANK2F3M6
+  pins: [P28.Pin_20, R86.2, U24.BANK2F3M6]
+- name: /mcu/usb/power/BANK2F3M7
+  pins: [R87.2, U24.BANK2F3M7]
+- name: /mcu/usb/power/BANK2F3M8
+  pins: [R88.2, U24.BANK2F3M8]
+- name: /mcu/usb/power/BANK2F3M9
+  pins: [R89.2, U24.BANK2F3M9]
+- name: /mcu/usb/power/CPLD_TCK
+  pins: [P28.Pin_17, U23.P6_1, U24.TCK]
+- name: /mcu/usb/power/CPLD_TDI
+  pins: [P28.Pin_19, U23.P6_2, U24.TDI]
+- name: /mcu/usb/power/CPLD_TDO
+  pins: [P29.Pin_2, U23.P9_5, U24.TDO]
+- name: /mcu/usb/power/CPLD_TMS
+  pins: [P29.Pin_1, U23.P6_5, U24.TMS]
+- name: /mcu/usb/power/DBGEN
+  pins: [R64.1, U23.DBGEN]
+- name: /mcu/usb/power/DM
+  pins: [R58.1, U23.USB0_DM]
+- name: /mcu/usb/power/DP
+  pins: [R57.1, U23.USB0_DP]
+- name: /mcu/usb/power/EN1V8
+  pins: [R54.2, R76.2, U21.EN2, U23.P6_10]
+- name: /mcu/usb/power/GCK0
+  pins: [P30.Pin_19, U24.BANK1F2M7]
+- name: /mcu/usb/power/GPIO3_10
+  pins: [P20.Pin_7, U23.P7_2]
+- name: /mcu/usb/power/GPIO3_11
+  pins: [P20.Pin_8, U23.P7_3]
+- name: /mcu/usb/power/GPIO3_12
+  pins: [P20.Pin_9, U23.P7_4]
+- name: /mcu/usb/power/GPIO3_13
+  pins: [P20.Pin_10, U23.P7_5]
+- name: /mcu/usb/power/GPIO3_14
+  pins: [P20.Pin_11, U23.P7_6]
+- name: /mcu/usb/power/GPIO3_15
+  pins: [P20.Pin_12, U23.P7_7]
+- name: /mcu/usb/power/GPIO3_8
+  pins: [P20.Pin_5, U23.P7_0]
+- name: /mcu/usb/power/GPIO3_9
+  pins: [P20.Pin_6, U23.P7_1]
+- name: /mcu/usb/power/GP_CLKIN
+  pins: [C156.1, R34.1, U23.P4_7]
+- name: /mcu/usb/power/I2C1_SCL
+  pins: [P22.Pin_5, U23.P2_4]
+- name: /mcu/usb/power/I2C1_SDA
+  pins: [P22.Pin_6, U23.P2_3]
+- name: /mcu/usb/power/I2S0_RX_MCLK
+  pins: [P22.Pin_14, U23.P6_0]
+- name: /mcu/usb/power/I2S0_RX_SCK
+  pins: [P22.Pin_12, U23.PF_4]
+- name: /mcu/usb/power/I2S0_RX_SDA
+  pins: [P22.Pin_13, U23.P3_2]
+- name: /mcu/usb/power/I2S0_RX_WS
+  pins: [P22.Pin_15, U23.P3_1]
+- name: /mcu/usb/power/I2S0_TX_MCLK
+  pins: [P22.Pin_17, U23.CLK2]
+- name: /mcu/usb/power/I2S0_TX_SCK
+  pins: [P22.Pin_16, U23.P3_0]
+- name: /mcu/usb/power/ISP
+  pins: [P25.Pin_2, R59.2, U23.P2_7]
+- name: /mcu/usb/power/LED1
+  pins: [P5.Pin_3, R72.2, U23.P4_1]
+- name: /mcu/usb/power/LED2
+  pins: [P5.Pin_4, R73.2, U23.P4_2]
+- name: /mcu/usb/power/LED3
+  pins: [P5.Pin_6, R74.2, U23.P6_12]
+- name: /mcu/usb/power/P1_1
+  pins: [R67.1, U23.P1_1]
+- name: /mcu/usb/power/P1_2
+  pins: [R68.1, U23.P1_2]
+- name: /mcu/usb/power/P2_13
+  pins: [P22.Pin_22, U23.P2_13]
+- name: /mcu/usb/power/P2_8
+  pins: [P22.Pin_23, R30.1, U23.P2_8]
+- name: /mcu/usb/power/P2_9
+  pins: [P22.Pin_21, R93.1, U23.P2_9]
+- name: /mcu/usb/power/REG_OUT1
+  pins: [C145.2, C146.2, L11.1, NT2.2, R56.1, U21.FB1]
+- name: /mcu/usb/power/REG_OUT2
+  pins: [C125.1, C126.1, C127.1, L10.2, NT1.2, R47.1]
+- name: /mcu/usb/power/RESET
+  pins: [P22.Pin_3, P25.Pin_6, P26.Pin_10, R19.1, U23.RESET]
+- name: /mcu/usb/power/RREF
+  pins: [R69.1, U23.USB0_RREF]
+- name: /mcu/usb/power/RTCX1
+  pins: [C118.1, U23.RTCX1, X3.2]
+- name: /mcu/usb/power/RTCX2
+  pins: [C164.1, U23.RTCX2, X3.1]
+- name: /mcu/usb/power/RTC_ALARM
+  pins: [P20.Pin_2, U23.RTC_ALARM]
+- name: /mcu/usb/power/SD_CD
+  pins: [P28.Pin_3, U23.P1_13]
+- name: /mcu/usb/power/SD_CLK
+  pins: [P28.Pin_11, U23.CLK0]
+- name: /mcu/usb/power/SD_CMD
+  pins: [P28.Pin_9, U23.P1_6]
+- name: /mcu/usb/power/SD_DAT0
+  pins: [P28.Pin_7, U23.P1_9]
+- name: /mcu/usb/power/SD_DAT1
+  pins: [P28.Pin_6, U23.P1_10]
+- name: /mcu/usb/power/SD_DAT2
+  pins: [P28.Pin_5, U23.P1_11]
+- name: /mcu/usb/power/SD_DAT3
+  pins: [P28.Pin_4, U23.P1_12]
+- name: /mcu/usb/power/SD_POW
+  pins: [P28.Pin_10, U23.P1_5]
+- name: /mcu/usb/power/SD_VOLT0
+  pins: [P28.Pin_8, U23.P1_8]
+- name: /mcu/usb/power/SGPIO0
+  pins: [R79.1, U23.P0_0]
+- name: /mcu/usb/power/SGPIO1
+  pins: [R81.1, U23.P0_1]
+- name: /mcu/usb/power/SGPIO10
+  pins: [R88.1, U23.P1_14]
+- name: /mcu/usb/power/SGPIO11
+  pins: [R91.1, U23.P1_17]
+- name: /mcu/usb/power/SGPIO12
+  pins: [R96.1, U23.P1_18]
+- name: /mcu/usb/power/SGPIO13
+  pins: [R78.1, U23.P4_8]
+- name: /mcu/usb/power/SGPIO14
+  pins: [R80.1, U23.P4_9]
+- name: /mcu/usb/power/SGPIO15
+  pins: [R86.1, U23.P4_10]
+- name: /mcu/usb/power/SGPIO2
+  pins: [R89.1, U23.P1_15]
+- name: /mcu/usb/power/SGPIO3
+  pins: [R90.1, U23.P1_16]
+- name: /mcu/usb/power/SGPIO4
+  pins: [R98.1, U23.P6_3]
+- name: /mcu/usb/power/SGPIO5
+  pins: [R99.1, U23.P6_6]
+- name: /mcu/usb/power/SGPIO6
+  pins: [R100.1, U23.P2_2]
+- name: /mcu/usb/power/SGPIO7
+  pins: [R87.1, U23.P1_0]
+- name: /mcu/usb/power/SGPIO9
+  pins: [R77.1, U23.P4_3]
+- name: /mcu/usb/power/SPIFI_CIPO
+  pins: [P22.Pin_7, U20.DO, U23.P3_6]
+- name: /mcu/usb/power/SPIFI_COPI
+  pins: [P22.Pin_9, U20.DI, U23.P3_7]
+- name: /mcu/usb/power/SPIFI_CS
+  pins: [U20.CS, U23.P3_8]
+- name: /mcu/usb/power/SPIFI_SCK
+  pins: [P22.Pin_8, U20.CLK, U23.P3_3]
+- name: /mcu/usb/power/SPIFI_SIO2
+  pins: [U20.WP, U23.P3_5]
+- name: /mcu/usb/power/SPIFI_SIO3
+  pins: [U20.HOLD, U23.P3_4]
+- name: /mcu/usb/power/TCK
+  pins: [P26.Pin_4, R66.2, U23.TCK/SWDCLK]
+- name: /mcu/usb/power/TDI
+  pins: [P26.Pin_8, U23.TDI]
+- name: /mcu/usb/power/TDO
+  pins: [P26.Pin_6, R63.1, U23.TDO/SWO]
+- name: /mcu/usb/power/TMS
+  pins: [P26.Pin_2, U23.TMS/SWDIO]
+- name: /mcu/usb/power/U0_RXD
+  pins: [P22.Pin_19, P25.Pin_4, U23.P2_1]
+- name: /mcu/usb/power/U0_TXD
+  pins: [P22.Pin_20, P25.Pin_5, U23.P2_0]
+- name: /mcu/usb/power/USB_SHIELD
+  pins: [C155.1, J1.SHIELD@0, P80.Pin_1, P80.Pin_2, R35.1]
+- name: /mcu/usb/power/VBAT
+  pins: [C136.1, P20.Pin_1, U23.VBAT]
+- name: /mcu/usb/power/VBUS
+  pins: [FB1.2, P20.Pin_21, Q5.S, R62.2, U15.VDD]
+- name: /mcu/usb/power/VBUSCTRL
+  pins: [P20.Pin_17, Q5.G, R37.2]
+- name: /mcu/usb/power/VIN
+  pins: [C143.1, C147.1, P20.Pin_22, Q5.D, R52.1, U21.VIN]
+- name: /mcu/usb/power/VREGMODE
+  pins: [R51.2, U23.P6_11]
+- name: /mcu/usb/power/WAKEUP
+  pins: [P20.Pin_4, R48.2, U23.WAKEUP0]
+- name: /mcu/usb/power/XTAL1
+  pins: [C157.1, U23.XTAL1, X2.1]
+- name: /mcu/usb/power/XTAL2
+  pins: [C158.1, U23.XTAL2, X2.3]
+- name: ADJ2
+  pins: [C125.2, R46.2, R47.2, U21.ADJ2]
+- name: AMP_BYPASS
+  pins: [C57.1, C65.2, U12.V2, U14.V2, U23.P2_10]
+- name: BYPASS
+  pins: [C106.1, U17.BYPASS]
+- name: CLK6
+  pins: [P22.Pin_25, U19.CLK6]
+- name: CLKIN
+  pins: [D3.K, P16.RF, P22.Pin_2, R85.1, U19.CLKIN]
+- name: CLKOUT
+  pins: [C165.1, D9.K, P2.RF, P22.Pin_1, R33.1]
+- name: CS_AD
+  pins: [U18.CS, U23.P5_7]
+- name: CS_XCVR
+  pins: [U17.CS, U23.P1_20]
+- name: DA0
+  pins: [U18.DA0, U24.BANK1F4M8]
+- name: DA1
+  pins: [U18.DA1, U24.BANK1F4M7]
+- name: DA2
+  pins: [U18.DA2, U24.BANK1F4M6]
+- name: DA3
+  pins: [U18.DA3, U24.BANK1F4M5]
+- name: DA4
+  pins: [U18.DA4, U24.BANK1F4M4]
+- name: DA5
+  pins: [U18.DA5, U24.BANK1F4M3]
+- name: DA6
+  pins: [U18.DA6, U24.BANK1F4M2]
+- name: DA7
+  pins: [U18.DA7, U24.BANK1F4M1]
+- name: DD0
+  pins: [U18.DD0, U24.BANK1F2M16]
+- name: DD1
+  pins: [U18.DD1, U24.BANK1F2M15]
+- name: DD2
+  pins: [U18.DD2, U24.BANK1F2M14]
+- name: DD3
+  pins: [U18.DD3, U24.BANK1F2M13]
+- name: DD4
+  pins: [U18.DD4, U24.BANK1F2M12]
+- name: DD5
+  pins: [U18.DD5, U24.BANK1F2M11]
+- name: DD6
+  pins: [U18.DD6, U24.BANK1F2M9]
+- name: DD7
+  pins: [U18.DD7, U24.BANK1F2M6]
+- name: DD8
+  pins: [U18.DD8, U24.BANK1F2M5]
+- name: DD9
+  pins: [U18.DD9, U24.BANK1F2M4]
+- name: DEF1
+  pins: [R55.2, R56.2, U21.DEF1]
+- name: EN1
+  pins: [R52.2, U21.EN1]
+- name: ESD1
+  pins: [J1.D+, R57.2, U15.ESD1]
+- name: ESD2
+  pins: [J1.D-, R58.2, U15.ESD2]
+- name: GCK1
+  pins: [C68.1, P28.Pin_14, R31.1, U18.CLK, U24.BANK1F2M8]
+- name: GCK2
+  pins: [C69.1, P28.Pin_13, R32.1, U24.BANK1F2M10]
+- name: GND
+  pins:
+  - C1.2
+  - C10.1
+  - C100.2
+  - C105.2
+  - C106.2
+  - C107.2
+  - C108.2
+  - C109.2
+  - C11.1
+  - C110.2
+  - C113.2
+  - C116.2
+  - C118.2
+  - C119.2
+  - C12.2
+  - C120.2
+  - C121.2
+  - C122.2
+  - C123.2
+  - C124.2
+  - C126.2
+  - C127.2
+  - C128.2
+  - C129.2
+  - C13.2
+  - C130.2
+  - C131.2
+  - C132.2
+  - C133.2
+  - C134.2
+  - C135.2
+  - C136.2
+  - C137.2
+  - C138.2
+  - C139.2
+  - C140.2
+  - C141.2
+  - C142.2
+  - C143.2
+  - C144.2
+  - C145.1
+  - C146.1
+  - C147.2
+  - C148.2
+  - C149.2
+  - C150.2
+  - C151.2
+  - C152.2
+  - C153.2
+  - C154.2
+  - C155.2
+  - C156.2
+  - C157.2
+  - C158.2
+  - C159.2
+  - C16.2
+  - C160.2
+  - C161.2
+  - C162.1
+  - C163.1
+  - C164.2
+  - C165.2
+  - C166.2
+  - C167.2
+  - C168.2
+  - C169.1
+  - C170.1
+  - C171.2
+  - C19.1
+  - C2.2
+  - C22.1
+  - C24.1
+  - C25.2
+  - C29.2
+  - C3.2
+  - C30.2
+  - C33.2
+  - C34.2
+  - C35.2
+  - C36.2
+  - C37.2
+  - C38.1
+  - C39.1
+  - C4.2
+  - C40.1
+  - C41.2
+  - C42.2
+  - C45.1
+  - C47.1
+  - C49.1
+  - C5.2
+  - C52.2
+  - C53.2
+  - C54.2
+  - C55.2
+  - C56.2
+  - C57.2
+  - C6.2
+  - C60.1
+  - C63.2
+  - C65.1
+  - C66.1
+  - C68.2
+  - C69.2
+  - C7.1
+  - C70.2
+  - C71.2
+  - C72.2
+  - C73.2
+  - C74.2
+  - C75.2
+  - C76.2
+  - C77.2
+  - C78.2
+  - C79.2
+  - C80.2
+  - C81.2
+  - C82.2
+  - C83.2
+  - C84.2
+  - C85.2
+  - C86.2
+  - C87.2
+  - C88.2
+  - C89.2
+  - C90.2
+  - C91.2
+  - C92.2
+  - C93.2
+  - C94.2
+  - C97.2
+  - C98.2
+  - D1.A
+  - D2.K
+  - D3.A
+  - D4.K
+  - D5.K
+  - D6.K
+  - D7.K
+  - D8.K
+  - D9.A
+  - FB3.2
+  - J10.Pin_1
+  - J2.SHIELD@0
+  - P16.GND@2
+  - P2.GND@2
+  - P20.Pin_13
+  - P20.Pin_15
+  - P20.Pin_19
+  - P22.Pin_10
+  - P22.Pin_18
+  - P22.Pin_4
+  - P25.Pin_1
+  - P26.Pin_3
+  - P26.Pin_5
+  - P26.Pin_9
+  - P28.Pin_12
+  - P28.Pin_2
+  - P3.Pin_1
+  - P3.Pin_2
+  - P30.Pin_2
+  - P30.Pin_20
+  - P4.GND@2
+  - P5.Pin_1
+  - P9.Pin_1
+  - P9.Pin_14
+  - P9.Pin_15
+  - P9.Pin_16
+  - P9.Pin_2
+  - P9.Pin_3
+  - P9.Pin_8
+  - P9.Pin_9
+  - R14.2
+  - R15.2
+  - R16.2
+  - R17.2
+  - R35.2
+  - R37.1
+  - R39.2
+  - R4.1
+  - R41.1
+  - R46.1
+  - R54.1
+  - R55.1
+  - R65.1
+  - R68.2
+  - R69.2
+  - R7.2
+  - R85.2
+  - R93.2
+  - SW1.SHIELD@0
+  - SW2.1
+  - SW2.SHIELD@0
+  - T3.PC
+  - T3.S2
+  - T4.PC
+  - T4.S2
+  - U1.GND
+  - U10.GND
+  - U11.GND
+  - U12.GND@0
+  - U13.GND@1
+  - U13.GND@2
+  - U13.GND@4
+  - U13.GND@5
+  - U14.GND@0
+  - U15.GND
+  - U17.EP@0
+  - U17.GNDCP
+  - U17.GNDRXLNA
+  - U17.GNDVCO
+  - U18.EP@0
+  - U18.GND@12
+  - U18.GND@37
+  - U18.GND@42
+  - U18.GND@5
+  - U18.GND@7
+  - U18.OGND
+  - U19.GND@0
+  - U2.GND
+  - U20.GND
+  - U21.GND
+  - U21.PP@0
+  - U23.ADC0_4/ADC1_4
+  - U23.USB0_VSSA_REF
+  - U23.USB0_VSSA_TERM
+  - U23.VSSA
+  - U23.VSSIO@109
+  - U23.VSSIO@4
+  - U23.VSSIO@40
+  - U23.VSSIO@76
+  - U24.GND@100
+  - U24.GND@21
+  - U24.GND@31
+  - U24.GND@62
+  - U24.GND@69
+  - U24.GND@84
+  - U25.GND@1
+  - U25.GND@2
+  - U25.GND@4
+  - U25.GND@5
+  - U3.GND@2
+  - U3.GND@3
+  - U4.EP@0
+  - U4.TM
+  - U5.GND
+  - U6.GND
+  - U7.GND
+  - U8.GND@2
+  - U8.GND@4
+  - U9.GND@0
+  - X1.2
+  - X1.4
+  - X2.2
+  - X2.4
+- name: HP
+  pins: [C11.2, U23.P4_0, U6.VCTL]
+- name: IN
+  pins: [C17.1, U3.IN]
+- name: IN_2
+  pins: [C27.1, U8.IN]
+- name: IN_3
+  pins: [C58.2, U13.IN]
+- name: IN_4
+  pins: [C59.2, U25.IN]
+- name: LFILT1
+  pins: [C14.2, R3.1, U4.LFILT1]
+- name: LFILT3
+  pins: [C12.1, R1.2, U4.LFILT3]
+- name: LFITLT2
+  pins: [C14.1, C15.1, R2.1, U4.LFITLT2]
+- name: LP
+  pins: [C29.1, U23.P5_1, U5.VCTL]
+- name: MCU_CLK
+  pins: [R34.2, U19.CLK7]
+- name: MIXER_ENX
+  pins: [C35.1, R6.2, U23.P5_4, U4.ENX]
+- name: MIXER_RESETX
+  pins: [C34.1, R5.2, U23.P5_5, U4.RESETX]
+- name: MIXER_SCLK
+  pins: [C36.1, U23.P2_6, U4.SCLK]
+- name: MIXER_SDATA
+  pins: [C37.1, U23.P6_4, U4.SDATA]
+- name: MIX_BYPASS
+  pins: [C47.2, U11.VCTL, U23.P6_8]
+- name: MIX_CLK
+  pins: [C67.1, U19.CLK4]
+- name: MIX_IPN
+  pins: [L1.2, T1.PR1, U4.MIX_IPN]
+- name: MIX_IPP
+  pins: [L1.1, T1.PR2, U4.MIX_IPP]
+- name: MIX_OPN
+  pins: [L2.1, L4.2, T2.PR2, U4.MIX_OPN]
+- name: MIX_OPP
+  pins: [L3.1, L4.1, T2.PR1, U4.MIX_OPP]
+- name: MODE_DATA
+  pins: [R51.1, U21.MODE/DATA]
+- name: Net-(C102-Pad2)
+  pins: [C102.2, L6.2, T3.PR1]
+- name: Net-(C104-Pad2)
+  pins: [C104.2, L8.1, T4.PR2]
+- name: Net-(C105-Pad1)
+  pins: [C105.1, FB2.2, NT3.2]
+- name: Net-(C111-Pad2)
+  pins: [C111.2, L8.2, T4.PR1]
+- name: Net-(C114-Pad1)
+  pins: [C114.1, R26.2]
+- name: Net-(C114-Pad2)
+  pins: [C114.2, R25.2]
+- name: Net-(C13-Pad1)
+  pins: [C13.1, R1.1, R2.2]
+- name: Net-(C15-Pad2)
+  pins: [C15.2, R3.2]
+- name: Net-(C160-Pad1)
+  pins: [C160.1, C162.2, L12.1, R43.1]
+- name: Net-(C163-Pad2)
+  pins: [C163.2, C52.1, L5.1, R42.2]
+- name: Net-(C64-Pad2)
+  pins: [C64.2, D1.K, L13.2, P4.RF]
+- name: Net-(C99-Pad2)
+  pins: [C99.2, L6.1, T3.PR2]
+- name: Net-(D10-Pad1)
+  pins: [D10.K, L13.1]
+- name: Net-(D10-Pad2)
+  pins: [D10.A, Q4.D]
+- name: Net-(D2-Pad2)
+  pins: [D2.A, R18.1]
+- name: Net-(D4-Pad2)
+  pins: [D4.A, R72.1]
+- name: Net-(D5-Pad2)
+  pins: [D5.A, R73.1]
+- name: Net-(D6-Pad2)
+  pins: [D6.A, R74.1]
+- name: Net-(D7-Pad2)
+  pins: [D7.A, R75.1]
+- name: Net-(D8-Pad2)
+  pins: [D8.A, R76.1]
+- name: Net-(FB1-Pad1)
+  pins: [FB1.1, J1.VBUS]
+- name: Net-(FB2-Pad1)
+  pins: [FB2.1, Q3.D]
+- name: Net-(FB3-Pad1)
+  pins: [FB3.1, J1.GND]
+- name: Net-(Q1-Pad3)
+  pins: [Q1.D, R42.1]
+- name: Net-(Q2-Pad3)
+  pins: [Q2.D, R43.2]
+- name: Net-(R19-Pad2)
+  pins: [R19.2, R49.2, SW2.2]
+- name: Net-(R30-Pad2)
+  pins: [R30.2, R7.1, SW1.2]
+- name: OUT
+  pins: [C18.2, U3.OUT]
+- name: OUT_2
+  pins: [C26.1, U8.OUT]
+- name: OUT_3
+  pins: [C50.1, L5.2, U13.OUT]
+- name: OUT_4
+  pins: [C62.2, L12.2, U25.OUT]
+- name: REXT
+  pins: [R4.2, U4.REXT]
+- name: RF1
+  pins: [C9.1, U7.RF1]
+- name: RF1_2
+  pins: [C9.2, U2.RF1]
+- name: RF1_3
+  pins: [C18.1, U5.RF1]
+- name: RF1_4
+  pins: [C21.1, U1.RF1]
+- name: RF1_5
+  pins: [C27.2, U6.RF1]
+- name: RF1_6
+  pins: [C32.2, U9.RF1]
+- name: RF1_7
+  pins: [C43.2, U11.RF1]
+- name: RF1_8
+  pins: [C51.2, U10.RF1]
+- name: RF2
+  pins: [C17.2, U6.RF2]
+- name: RF2_10
+  pins: [C61.2, U12.RF2]
+- name: RF2_2
+  pins: [C21.2, U7.RF2]
+- name: RF2_3
+  pins: [C23.1, U10.RF2]
+- name: RF2_4
+  pins: [C23.2, U2.RF2]
+- name: RF2_5
+  pins: [C26.2, U5.RF2]
+- name: RF2_6
+  pins: [C31.1, U9.RF2]
+- name: RF2_7
+  pins: [C32.1, U1.RF2]
+- name: RF2_8
+  pins: [C51.1, U11.RF2]
+- name: RF2_9
+  pins: [C61.1, U14.RF2]
+- name: RF3
+  pins: [C43.1, U9.RF3]
+- name: RFC
+  pins: [C8.2, U1.RFC]
+- name: RFC_10
+  pins: [C64.1, U14.RFC]
+- name: RFC_2
+  pins: [C20.1, U6.RFC]
+- name: RFC_3
+  pins: [C20.2, U2.RFC]
+- name: RFC_4
+  pins: [C28.2, U7.RFC]
+- name: RFC_5
+  pins: [C31.2, U5.RFC]
+- name: RFC_6
+  pins: [C44.1, U12.RFC]
+- name: RFC_7
+  pins: [C44.2, U9.RFC]
+- name: RFC_8
+  pins: [C46.1, U10.RFC]
+- name: RFC_9
+  pins: [C48.1, U11.RFC]
+- name: RSSI
+  pins: [U17.RSSI, U23.ADC0_1/ADC1_1]
+- name: RX
+  pins:
+  - C24.2
+  - C33.1
+  - C45.2
+  - U10.VCTL
+  - U2.VCTL
+  - U23.P2_5
+  - U7.VCTL
+- name: RXENABLE
+  pins: [U17.RXENABLE, U23.P4_5]
+- name: RXRF
+  pins: [C99.1, L7.1, U17.RXRF+]
+- name: RXRF_2
+  pins: [C102.1, L7.2, U17.RXRF-]
+- name: RX_AMP
+  pins: [C60.2, C66.2, U12.V1, U14.V3, U23.P2_11]
+- name: RX_IF
+  pins: [C48.2, T3.S1]
+- name: RX_MIX_BP
+  pins: [C40.2, U23.P5_3, U9.V3]
+- name: S1
+  pins: [C28.1, T1.S1]
+- name: S1_2
+  pins: [C46.2, T2.S1]
+- name: S2
+  pins: [C25.1, T1.S2]
+- name: S2_2
+  pins: [C49.2, T2.S2]
+- name: SCL
+  pins: [P22.Pin_26, R28.2, U19.SCL, U23.I2C0_SCL]
+- name: SDA
+  pins: [P22.Pin_24, R27.2, U19.SDA, U23.I2C0_SDA]
+- name: SGPIO_CLK
+  pins: [C159.1, R94.1, U23.P9_6]
+- name: SSP1_CIPO
+  pins: [C168.1, U17.DOUT, U23.P1_3]
+- name: SSP1_COPI
+  pins: [U17.DIN, U18.DIN, U23.P1_4]
+- name: SSP1_SCK
+  pins: [U17.SCLK, U18.SCLK, U23.P1_19]
+- name: SW1
+  pins: [L11.2, U21.SW1]
+- name: SW2
+  pins: [L10.1, U21.SW2]
+- name: TXENABLE
+  pins: [U17.TXENABLE, U23.P4_4]
+- name: TXRF
+  pins: [C104.1, L9.1, U17.TXRF+]
+- name: TXRF_2
+  pins: [C111.1, L9.2, U17.TXRF-]
+- name: TX_AMP
+  pins: [C55.1, C63.1, U12.V3, U14.V1, U23.P5_6]
+- name: TX_IF
+  pins: [C8.1, T4.S1]
+- name: TX_MIX_BP
+  pins: [C39.2, U23.P5_2, U9.V1]
+- name: USB0_ID
+  pins: [J1.ID, R12.2, U23.USB0_ID]
+- name: USB0_VBUS
+  pins: [R62.1, R65.2, U23.USB0_VBUS]
+- name: VAA
+  pins:
+  - C10.2
+  - C16.1
+  - C161.1
+  - C166.1
+  - C171.1
+  - C19.2
+  - C22.2
+  - C3.1
+  - C30.1
+  - C4.1
+  - C41.1
+  - C42.1
+  - C5.1
+  - C53.1
+  - C54.1
+  - C56.1
+  - C6.1
+  - C71.1
+  - C72.1
+  - C73.1
+  - C74.1
+  - C75.1
+  - C76.1
+  - C77.1
+  - C78.1
+  - C79.1
+  - C80.1
+  - C81.1
+  - C82.1
+  - C83.1
+  - C84.1
+  - C85.1
+  - C86.1
+  - C87.1
+  - C89.1
+  - C90.1
+  - C91.1
+  - C92.1
+  - C93.1
+  - C94.1
+  - L2.2
+  - L3.2
+  - NT3.1
+  - Q1.S
+  - Q2.S
+  - Q4.S
+  - R18.2
+  - R24.2
+  - R29.1
+  - R36.2
+  - U1.VDD
+  - U10.VDD
+  - U11.VDD
+  - U17.VCCCP
+  - U17.VCCRXFL
+  - U17.VCCRXLNA
+  - U17.VCCRXMX
+  - U17.VCCRXVGA
+  - U17.VCCTXMX
+  - U17.VCCTXPAD
+  - U17.VCCVCO
+  - U17.VCCXTAL
+  - U18.REFIN
+  - U18.VDD@11
+  - U18.VDD@2
+  - U18.VDD@33
+  - U18.VDD@39
+  - U18.VDD@43
+  - U18.VDD@8
+  - U2.VDD
+  - U4.ANA_VDD1
+  - U4.ANA_VDD2
+  - U5.VDD
+  - U6.VDD
+  - U7.VDD
+- name: VCC
+  pins:
+  - C1.1
+  - C113.1
+  - C119.1
+  - C120.1
+  - C121.1
+  - C122.1
+  - C123.1
+  - C124.1
+  - C128.1
+  - C129.1
+  - C130.1
+  - C131.1
+  - C132.1
+  - C133.1
+  - C134.1
+  - C135.1
+  - C137.1
+  - C138.1
+  - C139.1
+  - C140.1
+  - C141.1
+  - C142.1
+  - C144.1
+  - C148.1
+  - C149.1
+  - C150.1
+  - C153.1
+  - C154.1
+  - C167.1
+  - C2.1
+  - C88.1
+  - NT2.1
+  - P20.Pin_3
+  - P22.Pin_11
+  - P26.Pin_1
+  - P28.Pin_1
+  - P30.Pin_1
+  - P5.Pin_2
+  - Q3.S
+  - R104.1
+  - R105.1
+  - R11.1
+  - R12.1
+  - R27.1
+  - R28.1
+  - R38.1
+  - R48.1
+  - R49.1
+  - R5.1
+  - R59.1
+  - R6.1
+  - R63.2
+  - R64.2
+  - R66.1
+  - R67.2
+  - R75.2
+  - SW1.1
+  - U17.VCCDIG
+  - U18.OVDD
+  - U19.VDD
+  - U19.VDDOA
+  - U19.VDDOB
+  - U19.VDDOC
+  - U19.VDDOD
+  - U20.VCC
+  - U23.ADC0_7/ADC1_7
+  - U23.USB0_VDDA3V3
+  - U23.USB0_VDDA3V3_DRIVER
+  - U23.VDDA
+  - U23.VDDIO@107
+  - U23.VDDIO@111
+  - U23.VDDIO@141
+  - U23.VDDIO@36
+  - U23.VDDIO@41
+  - U23.VDDIO@5
+  - U23.VDDIO@71
+  - U23.VDDIO@77
+  - U23.VDDREG@131
+  - U23.VDDREG@25
+  - U23.VDDREG@59
+  - U23.VDDREG@94
+  - U24.VAUX
+  - U24.VCCIO1@38
+  - U24.VCCIO1@51
+  - U24.VCCIO2@88
+  - U24.VCCIO2@98
+  - U4.DIG_VDD
+- name: XCVR_EN
+  pins: [R41.2, U17.ENABLE, U23.P4_6]
+positions:
+- ref: C1
+  x: 91.1
+  y: 163.05
+  rot: -90.0
+- ref: C10
+  x: 87.98
+  y: 143.48
+- ref: C100
+  x: 98.45
+  y: 118.56
+  rot: -90.0
+- ref: C101
+  x: 100.65
+  y: 123.7
+- ref: C102
+  x: 108.01
+  y: 148.5
+  rot: -90.0
+- ref: C103
+  x: 103.77
+  y: 123.7
+- ref: C104
+  x: 110.05
+  y: 148.5
+  rot: -90.0
+- ref: C105
+  x: 87.15
+  y: 124.35
+  rot: 90.0
+- ref: C106
+  x: 111.95
+  y: 136.31
+  rot: 90.0
+- ref: C107
+  x: 104.47
+  y: 122.16
+  rot: 90.0
+- ref: C108
+  x: 103.2
+  y: 122.16
+  rot: 90.0
+- ref: C109
+  x: 101.35
+  y: 122.16
+  rot: 90.0
+- ref: C11
+  x: 84.71
+  y: 143.46
+  rot: 90.0
+- ref: C110
+  x: 100.08
+  y: 122.16
+  rot: 90.0
+- ref: C111
+  x: 111.06
+  y: 148.5
+  rot: -90.0
+- ref: C112
+  x: 113.73
+  y: 138.34
+  rot: -90.0
+- ref: C113
+  x: 123.15
+  y: 165.47
+  rot: -90.0
+- ref: C114
+  x: 116.78
+  y: 138.34
+  rot: -90.0
+- ref: C115
+  x: 122.81
+  y: 161.61
+  rot: 180.0
+- ref: C116
+  x: 120.86
+  y: 160.55
+  rot: 180.0
+- ref: C118
+  x: 160.9
+  y: 155.1
+  rot: 180.0
+- ref: C119
+  x: 129.25
+  y: 158.48
+  rot: 90.0
+- ref: C12
+  x: 87.79
+  y: 153.83
+  rot: -90.0
+- ref: C120
+  x: 131.63
+  y: 160.62
+  rot: 90.0
+- ref: C121
+  x: 122.03
+  y: 162.71
+  rot: 180.0
+- ref: C122
+  x: 125.84
+  y: 158.31
+  rot: 180.0
+- ref: C123
+  x: 108.99
+  y: 113.06
+- ref: C124
+  x: 108.99
+  y: 112.04
+- ref: C125
+  x: 173.47
+  y: 117.79
+  rot: 180.0
+- ref: C126
+  x: 169.53
+  y: 117.41
+- ref: C127
+  x: 169.53
+  y: 115.25
+- ref: C128
+  x: 150.85
+  y: 123.28
+  rot: 135.0
+- ref: C129
+  x: 143.93
+  y: 125.34
+  rot: 135.0
+- ref: C13
+  x: 88.56
+  y: 150.91
+  rot: 180.0
+- ref: C130
+  x: 137.56
+  y: 131.72
+  rot: 135.0
+- ref: C131
+  x: 132.9
+  y: 137.0
+  rot: 180.0
+- ref: C132
+  x: 134.5
+  y: 145.71
+  rot: -135.0
+- ref: C133
+  x: 140.43
+  y: 151.48
+  rot: -135.0
+- ref: C134
+  x: 145.01
+  y: 156.06
+  rot: -135.0
+- ref: C135
+  x: 153.81
+  y: 155.7
+  rot: -45.0
+- ref: C136
+  x: 159.47
+  y: 150.04
+  rot: -45.0
+- ref: C137
+  x: 160.9
+  y: 148.6
+  rot: -45.0
+- ref: C138
+  x: 162.97
+  y: 146.54
+  rot: -45.0
+- ref: C139
+  x: 164.41
+  y: 145.1
+  rot: -45.0
+- ref: C14
+  x: 90.33
+  y: 152.68
+  rot: 90.0
+- ref: C140
+  x: 164.95
+  y: 136.48
+  rot: -45.0
+- ref: C141
+  x: 157.31
+  y: 127.59
+  rot: 45.0
+- ref: C142
+  x: 160.1
+  y: 130.55
+  rot: 45.0
+- ref: C143
+  x: 174.48
+  y: 112.08
+  rot: -90.0
+- ref: C144
+  x: 153.62
+  y: 160.58
+  rot: 180.0
+- ref: C145
+  x: 169.53
+  y: 108.65
+  rot: 180.0
+- ref: C146
+  x: 169.53
+  y: 106.49
+  rot: 180.0
+- ref: C147
+  x: 172.83
+  y: 112.08
+  rot: -90.0
+- ref: C148
+  x: 137.67
+  y: 118.16
+  rot: -90.0
+- ref: C149
+  x: 138.59
+  y: 111.7
+- ref: C15
+  x: 90.84
+  y: 150.91
+- ref: C150
+  x: 130.81
+  y: 105.59
+  rot: 90.0
+- ref: C151
+  x: 117.09
+  y: 108.38
+  rot: 90.0
+- ref: C152
+  x: 124.41
+  y: 128.01
+- ref: C153
+  x: 114.55
+  y: 117.02
+  rot: 180.0
+- ref: C154
+  x: 118.5
+  y: 126.69
+  rot: 180.0
+- ref: C156
+  x: 122.76
+  y: 159.0
+  rot: 180.0
+- ref: C157
+  x: 164.32
+  y: 134.24
+  rot: 45.0
+- ref: C158
+  x: 164.86
+  y: 130.46
+  rot: -45.0
+- ref: C159
+  x: 130.99
+  y: 150.97
+  rot: 180.0
+- ref: C16
+  x: 106.5
+  y: 164.16
+  rot: 90.0
+- ref: C160
+  x: 75.55
+  y: 161.81
+  rot: 180.0
+- ref: C161
+  x: 78.11
+  y: 168.18
+  rot: -90.0
+- ref: C162
+  x: 76.69
+  y: 163.08
+- ref: C163
+  x: 70.0
+  y: 151.1
+  rot: -90.0
+- ref: C164
+  x: 162.0
+  y: 151.9
+- ref: C165
+  x: 134.7
+  y: 166.8
+  rot: 180.0
+- ref: C166
+  x: 119.72
+  y: 166.14
+  rot: -90.0
+- ref: C167
+  x: 81.79
+  y: 120.11
+  rot: -90.0
+- ref: C168
+  x: 139.76
+  y: 127.5
+  rot: 180.0
+- ref: C169
+  x: 127.38
+  y: 169.9
+  rot: 180.0
+- ref: C17
+  x: 82.94
+  y: 141.94
+- ref: C170
+  x: 122.5
+  y: 168.2
+  rot: 90.0
+- ref: C171
+  x: 72.62
+  y: 167.88
+  rot: -90.0
+- ref: C18
+  x: 78.87
+  y: 141.94
+- ref: C19
+  x: 77.09
+  y: 143.34
+  rot: 90.0
+- ref: C2
+  x: 90.08
+  y: 163.05
+  rot: -90.0
+- ref: C20
+  x: 87.81
+  y: 141.53
+- ref: C21
+  x: 102.44
+  y: 165.38
+  rot: 180.0
+- ref: C22
+  x: 95.97
+  y: 166.27
+- ref: C23
+  x: 101.27
+  y: 151.18
+  rot: 90.0
+- ref: C24
+  x: 92.68
+  y: 143.48
+  rot: -90.0
+- ref: C25
+  x: 97.19
+  y: 163.73
+- ref: C26
+  x: 78.87
+  y: 138.89
+  rot: 180.0
+- ref: C27
+  x: 82.94
+  y: 138.89
+- ref: C28
+  x: 97.19
+  y: 164.88
+- ref: C29
+  x: 75.42
+  y: 138.71
+  rot: 180.0
+- ref: C3
+  x: 93.13
+  y: 163.05
+  rot: -90.0
+- ref: C30
+  x: 86.1
+  y: 138.2
+- ref: C31
+  x: 75.6
+  y: 142.45
+  rot: 90.0
+- ref: C32
+  x: 102.44
+  y: 168.81
+  rot: 180.0
+- ref: C33
+  x: 100.11
+  y: 164.14
+  rot: 90.0
+- ref: C34
+  x: 98.31
+  y: 151.92
+  rot: 90.0
+- ref: C35
+  x: 97.17
+  y: 151.16
+  rot: 90.0
+- ref: C36
+  x: 96.02
+  y: 150.78
+  rot: 90.0
+- ref: C37
+  x: 93.74
+  y: 149.91
+  rot: 180.0
+- ref: C38
+  x: 72.45
+  y: 142.83
+- ref: C39
+  x: 81.31
+  y: 147.35
+  rot: 90.0
+- ref: C4
+  x: 92.11
+  y: 163.05
+  rot: -90.0
+- ref: C40
+  x: 72.45
+  y: 144.07
+- ref: C41
+  x: 99.33
+  y: 161.83
+- ref: C42
+  x: 98.06
+  y: 154.72
+  rot: 180.0
+- ref: C43
+  x: 72.01
+  y: 145.41
+  rot: 180.0
+- ref: C44
+  x: 79.68
+  y: 149.43
+  rot: 90.0
+- ref: C45
+  x: 102.59
+  y: 155.65
+- ref: C46
+  x: 103.05
+  y: 156.79
+  rot: 180.0
+- ref: C47
+  x: 112.17
+  y: 156.57
+  rot: 90.0
+- ref: C48
+  x: 108.74
+  y: 154.0
+  rot: 90.0
+- ref: C49
+  x: 100.85
+  y: 156.24
+  rot: -90.0
+- ref: C5
+  x: 92.34
+  y: 152.33
+  rot: 90.0
+- ref: C50
+  x: 75.68
+  y: 152.92
+- ref: C51
+  x: 106.74
+  y: 159.43
+  rot: 180.0
+- ref: C52
+  x: 70.0
+  y: 153.2
+  rot: -90.0
+- ref: C53
+  x: 70.95
+  y: 148.0
+  rot: 180.0
+- ref: C54
+  x: 103.12
+  y: 159.66
+  rot: 180.0
+- ref: C55
+  x: 80.38
+  y: 153.43
+- ref: C56
+  x: 107.39
+  y: 154.86
+  rot: 90.0
+- ref: C57
+  x: 76.83
+  y: 149.43
+  rot: 90.0
+- ref: C58
+  x: 71.61
+  y: 157.11
+  rot: 90.0
+- ref: C59
+  x: 79.74
+  y: 155.71
+- ref: C6
+  x: 93.36
+  y: 152.33
+  rot: 90.0
+- ref: C60
+  x: 75.04
+  y: 151.4
+- ref: C61
+  x: 76.36
+  y: 156.32
+  rot: 90.0
+- ref: C62
+  x: 75.55
+  y: 160.03
+- ref: C63
+  x: 73.09
+  y: 162.24
+  rot: -90.0
+- ref: C64
+  x: 71.13
+  y: 160.81
+  rot: 180.0
+- ref: C65
+  x: 69.84
+  y: 158.0
+- ref: C66
+  x: 69.84
+  y: 155.84
+- ref: C67
+  x: 121.08
+  y: 164.3
+  rot: -90.0
+- ref: C68
+  x: 127.46
+  y: 155.72
+  rot: 90.0
+- ref: C69
+  x: 129.09
+  y: 154.27
+- ref: C7
+  x: 107.08
+  y: 168.58
+  rot: 180.0
+- ref: C70
+  x: 121.08
+  y: 166.33
+  rot: -90.0
+- ref: C71
+  x: 100.48
+  y: 118.56
+  rot: -90.0
+- ref: C72
+  x: 99.47
+  y: 118.56
+  rot: -90.0
+- ref: C73
+  x: 103.4
+  y: 118.56
+  rot: -90.0
+- ref: C74
+  x: 102.39
+  y: 118.56
+  rot: -90.0
+- ref: C75
+  x: 105.44
+  y: 118.56
+  rot: -90.0
+- ref: C76
+  x: 106.45
+  y: 118.56
+  rot: -90.0
+- ref: C77
+  x: 101.63
+  y: 106.37
+  rot: 90.0
+- ref: C78
+  x: 100.61
+  y: 106.37
+  rot: 90.0
+- ref: C79
+  x: 96.74
+  y: 110.49
+  rot: 180.0
+- ref: C8
+  x: 113.92
+  y: 155.45
+  rot: -90.0
+- ref: C80
+  x: 97.24
+  y: 108.84
+  rot: 90.0
+- ref: C81
+  x: 96.1
+  y: 113.16
+  rot: 180.0
+- ref: C82
+  x: 96.1
+  y: 112.14
+  rot: 180.0
+- ref: C83
+  x: 96.35
+  y: 115.32
+  rot: 180.0
+- ref: C84
+  x: 105.98
+  y: 147.49
+  rot: -90.0
+- ref: C85
+  x: 109.03
+  y: 147.49
+  rot: -90.0
+- ref: C86
+  x: 113.73
+  y: 145.2
+  rot: -90.0
+- ref: C87
+  x: 114.24
+  y: 141.9
+- ref: C88
+  x: 115.0
+  y: 140.88
+- ref: C89
+  x: 114.24
+  y: 139.87
+- ref: C9
+  x: 85.4
+  y: 149.17
+  rot: 90.0
+- ref: C90
+  x: 109.92
+  y: 136.31
+  rot: 90.0
+- ref: C91
+  x: 110.93
+  y: 136.31
+  rot: 90.0
+- ref: C92
+  x: 103.06
+  y: 140.12
+  rot: 180.0
+- ref: C93
+  x: 103.06
+  y: 141.14
+  rot: 180.0
+- ref: C94
+  x: 103.06
+  y: 143.55
+  rot: 180.0
+- ref: C95
+  x: 92.46
+  y: 123.46
+- ref: C96
+  x: 95.58
+  y: 123.46
+- ref: C97
+  x: 96.42
+  y: 118.56
+  rot: -90.0
+- ref: C98
+  x: 97.43
+  y: 118.56
+  rot: -90.0
+- ref: C99
+  x: 107.0
+  y: 148.5
+  rot: -90.0
+- ref: D1
+  x: 66.2
+  y: 161.5
+  rot: 90.0
+- ref: D10
+  x: 70.65
+  y: 162.89
+  rot: -90.0
+- ref: D2
+  x: 61.27
+  y: 135.12
+  rot: -90.0
+- ref: D3
+  x: 173.03
+  y: 165.37
+  rot: 90.0
+- ref: D4
+  x: 61.27
+  y: 139.69
+  rot: -90.0
+- ref: D5
+  x: 61.27
+  y: 144.27
+  rot: -90.0
+- ref: D6
+  x: 61.27
+  y: 148.84
+  rot: -90.0
+- ref: D7
+  x: 61.0
+  y: 117.9
+  rot: -90.0
+- ref: D8
+  x: 61.27
+  y: 130.55
+  rot: -90.0
+- ref: D9
+  x: 175.68
+  y: 151.0
+  rot: 180.0
+- ref: FB1
+  x: 171.0
+  y: 122.05
+  rot: 180.0
+- ref: FB2
+  x: 83.92
+  y: 122.53
+  rot: 180.0
+- ref: FB3
+  x: 171.0
+  y: 127.8
+  rot: 180.0
+- ref: J1
+  x: 180.0
+  y: 124.0
+  rot: 180.0
+- ref: J10
+  x: 114.0
+  y: 129.5
+  rot: -90.0
+- ref: J2
+  x: 93.0
+  y: 152.0
+- ref: L10
+  x: 165.21
+  y: 115.76
+  rot: -90.0
+- ref: L11
+  x: 165.21
+  y: 108.14
+  rot: -90.0
+- ref: L12
+  x: 77.33
+  y: 160.92
+  rot: 90.0
+- ref: L13
+  x: 69.4
+  y: 161.8
+  rot: 90.0
+- ref: L2
+  x: 98.69
+  y: 159.8
+  rot: -90.0
+- ref: L3
+  x: 98.69
+  y: 156.75
+  rot: 90.0
+- ref: L5
+  x: 73.14
+  y: 152.92
+- ref: L7
+  x: 107.51
+  y: 146.98
+- ref: NT1
+  x: 146.36
+  y: 112.77
+- ref: NT2
+  x: 159.06
+  y: 112.77
+- ref: NT3
+  x: 84.13
+  y: 126.74
+  rot: 90.0
+- ref: P16
+  x: 178.97
+  y: 163.0
+  rot: 180.0
+- ref: P2
+  x: 178.97
+  y: 145.0
+  rot: 180.0
+- ref: P20
+  x: 171.76
+  y: 143.25
+  rot: 90.0
+- ref: P22
+  x: 152.71
+  y: 164.84
+  rot: 180.0
+- ref: P25
+  x: 143.82
+  y: 158.49
+- ref: P26
+  x: 152.3
+  y: 117.01
+  rot: -90.0
+- ref: P28
+  x: 123.5
+  y: 143.25
+  rot: 90.0
+- ref: P29
+  x: 131.12
+  y: 133.09
+- ref: P3
+  x: 145.09
+  y: 119.12
+  rot: -90.0
+- ref: P30
+  x: 148.9
+  y: 106.42
+  rot: 180.0
+- ref: P4
+  x: 61.03
+  y: 161.0
+- ref: P5
+  x: 89.21
+  y: 106.42
+  rot: 180.0
+- ref: P80
+  x: 178.11
+  y: 131.82
+  rot: -90.0
+- ref: P9
+  x: 98.1
+  y: 129.28
+  rot: 180.0
+- ref: Q1
+  x: 72.38
+  y: 150.38
+- ref: Q2
+  x: 77.22
+  y: 165.39
+  rot: 180.0
+- ref: Q3
+  x: 85.04
+  y: 119.68
+- ref: Q4
+  x: 70.62
+  y: 165.28
+  rot: 180.0
+- ref: Q5
+  x: 166.3
+  y: 121.56
+  rot: -90.0
+- ref: R1
+  x: 89.06
+  y: 152.68
+  rot: -90.0
+- ref: R10
+  x: 94.95
+  y: 121.94
+  rot: -90.0
+- ref: R100
+  x: 126.67
+  y: 128.52
+  rot: 90.0
+- ref: R104
+  x: 128.1
+  y: 168.01
+  rot: 180.0
+- ref: R105
+  x: 131.79
+  y: 165.21
+  rot: 90.0
+- ref: R11
+  x: 146.03
+  y: 123.39
+  rot: 180.0
+- ref: R12
+  x: 167.16
+  y: 130.98
+  rot: 90.0
+- ref: R13
+  x: 96.22
+  y: 121.94
+  rot: -90.0
+- ref: R14
+  x: 96.22
+  y: 124.98
+  rot: -90.0
+- ref: R15
+  x: 94.95
+  y: 124.98
+  rot: -90.0
+- ref: R16
+  x: 93.09
+  y: 124.98
+  rot: -90.0
+- ref: R17
+  x: 91.82
+  y: 124.98
+  rot: -90.0
+- ref: R18
+  x: 63.3
+  y: 133.34
+- ref: R19
+  x: 68.97
+  y: 112.06
+  rot: 90.0
+- ref: R2
+  x: 89.7
+  y: 149.64
+  rot: 180.0
+- ref: R20
+  x: 100.01
+  y: 125.23
+  rot: -90.0
+- ref: R21
+  x: 101.28
+  y: 125.23
+  rot: -90.0
+- ref: R22
+  x: 103.14
+  y: 125.23
+  rot: -90.0
+- ref: R23
+  x: 104.41
+  y: 125.23
+  rot: -90.0
+- ref: R24
+  x: 75.69
+  y: 168.82
+  rot: 180.0
+- ref: R25
+  x: 115.25
+  y: 138.85
+- ref: R26
+  x: 115.25
+  y: 137.83
+- ref: R27
+  x: 134.17
+  y: 161.31
+- ref: R28
+  x: 133.43
+  y: 158.19
+- ref: R29
+  x: 73.9
+  y: 147.97
+  rot: 180.0
+- ref: R3
+  x: 91.35
+  y: 152.68
+  rot: 90.0
+- ref: R30
+  x: 68.97
+  y: 125.01
+  rot: 90.0
+- ref: R31
+  x: 127.44
+  y: 157.83
+  rot: -90.0
+- ref: R32
+  x: 128.55
+  y: 156.41
+  rot: -90.0
+- ref: R33
+  x: 134.93
+  y: 165.2
+  rot: 90.0
+- ref: R34
+  x: 123.88
+  y: 160.12
+- ref: R36
+  x: 70.62
+  y: 167.68
+- ref: R37
+  x: 160.84
+  y: 124.94
+- ref: R38
+  x: 165.7
+  y: 147.7
+  rot: 180.0
+- ref: R39
+  x: 165.7
+  y: 148.7
+- ref: R4
+  x: 94.37
+  y: 152.33
+  rot: -90.0
+- ref: R41
+  x: 139.76
+  y: 126.23
+- ref: R42
+  x: 71.1
+  y: 152.0
+  rot: -90.0
+- ref: R43
+  x: 78.4
+  y: 163.7
+  rot: -90.0
+- ref: R46
+  x: 173.47
+  y: 115.76
+  rot: 180.0
+- ref: R47
+  x: 173.47
+  y: 116.78
+  rot: 180.0
+- ref: R48
+  x: 167.5
+  y: 151.6
+  rot: 180.0
+- ref: R49
+  x: 67.87
+  y: 110.99
+  rot: -90.0
+- ref: R5
+  x: 138.36
+  y: 130.93
+  rot: -45.0
+- ref: R51
+  x: 159.92
+  y: 119.35
+  rot: 180.0
+- ref: R52
+  x: 177.15
+  y: 108.78
+  rot: 90.0
+- ref: R54
+  x: 163.43
+  y: 111.95
+- ref: R55
+  x: 173.47
+  y: 109.41
+  rot: 180.0
+- ref: R56
+  x: 173.47
+  y: 108.4
+  rot: 180.0
+- ref: R57
+  x: 165.68
+  y: 125.28
+- ref: R58
+  x: 165.68
+  y: 124.47
+- ref: R59
+  x: 141.03
+  y: 156.38
+  rot: 180.0
+- ref: R6
+  x: 139.12
+  y: 130.17
+  rot: -45.0
+- ref: R62
+  x: 159.97
+  y: 121.66
+- ref: R63
+  x: 156.19
+  y: 120.03
+  rot: -90.0
+- ref: R64
+  x: 155.05
+  y: 121.13
+  rot: 90.0
+- ref: R65
+  x: 160.0
+  y: 122.83
+  rot: 180.0
+- ref: R66
+  x: 156.85
+  y: 116.81
+  rot: 180.0
+- ref: R67
+  x: 139.76
+  y: 123.69
+  rot: 180.0
+- ref: R68
+  x: 139.76
+  y: 124.96
+  rot: 180.0
+- ref: R69
+  x: 158.12
+  y: 128.4
+  rot: 45.0
+- ref: R7
+  x: 67.87
+  y: 123.95
+  rot: 90.0
+- ref: R72
+  x: 63.3
+  y: 137.92
+- ref: R73
+  x: 63.3
+  y: 142.49
+- ref: R74
+  x: 63.3
+  y: 147.06
+- ref: R75
+  x: 63.05
+  y: 116.71
+- ref: R76
+  x: 63.3
+  y: 129.41
+- ref: R77
+  x: 140.34
+  y: 114.73
+  rot: 180.0
+- ref: R78
+  x: 140.34
+  y: 115.75
+  rot: 180.0
+- ref: R79
+  x: 140.34
+  y: 116.76
+  rot: 180.0
+- ref: R8
+  x: 91.82
+  y: 121.94
+  rot: -90.0
+- ref: R80
+  x: 140.34
+  y: 117.78
+  rot: 180.0
+- ref: R81
+  x: 140.34
+  y: 118.8
+  rot: 180.0
+- ref: R85
+  x: 131.58
+  y: 169.28
+  rot: -90.0
+- ref: R86
+  x: 140.34
+  y: 119.81
+  rot: 180.0
+- ref: R87
+  x: 140.34
+  y: 120.83
+  rot: 180.0
+- ref: R88
+  x: 134.35
+  y: 128.47
+  rot: 90.0
+- ref: R89
+  x: 132.82
+  y: 128.5
+  rot: 90.0
+- ref: R9
+  x: 93.09
+  y: 121.94
+  rot: -90.0
+- ref: R90
+  x: 131.8
+  y: 128.5
+  rot: 90.0
+- ref: R91
+  x: 130.78
+  y: 128.5
+  rot: 90.0
+- ref: R93
+  x: 141.03
+  y: 155.19
+  rot: 180.0
+- ref: R94
+  x: 132.21
+  y: 162.43
+  rot: 180.0
+- ref: R96
+  x: 129.77
+  y: 128.5
+  rot: 90.0
+- ref: R98
+  x: 128.71
+  y: 128.52
+  rot: 90.0
+- ref: R99
+  x: 127.69
+  y: 128.52
+  rot: 90.0
+- ref: SW1
+  x: 62.7
+  y: 124.4
+  rot: -90.0
+- ref: SW2
+  x: 62.7
+  y: 111.4
+  rot: -90.0
+- ref: T1
+  x: 95.16
+  y: 164.11
+  rot: -90.0
+- ref: T2
+  x: 100.72
+  y: 158.27
+- ref: T3
+  x: 107.51
+  y: 151.55
+  rot: 90.0
+- ref: T4
+  x: 110.55
+  y: 151.55
+  rot: 90.0
+- ref: U1
+  x: 105.43
+  y: 167.05
+  rot: -90.0
+- ref: U10
+  x: 104.96
+  y: 158.16
+  rot: 90.0
+- ref: U11
+  x: 109.63
+  y: 156.28
+- ref: U12
+  x: 77.71
+  y: 153.81
+  rot: -90.0
+- ref: U13
+  x: 72.88
+  y: 154.95
+  rot: -90.0
+- ref: U14
+  x: 73.11
+  y: 159.12
+  rot: 90.0
+- ref: U15
+  x: 170.03
+  y: 124.88
+  rot: -90.0
+- ref: U17
+  x: 108.65
+  y: 141.9
+  rot: 90.0
+- ref: U18
+  x: 102.9
+  y: 112.46
+  rot: 90.0
+- ref: U19
+  x: 127.47
+  y: 162.93
+  rot: 90.0
+- ref: U2
+  x: 89.89
+  y: 144.88
+- ref: U20
+  x: 160.76
+  y: 158.65
+  rot: 180.0
+- ref: U21
+  x: 169.53
+  y: 111.95
+  rot: 180.0
+- ref: U23
+  x: 149.25
+  y: 140.14
+  rot: -135.0
+- ref: U24
+  x: 126.75
+  y: 117.02
+  rot: -90.0
+- ref: U25
+  x: 79.74
+  y: 158.0
+  rot: 90.0
+- ref: U3
+  x: 81.03
+  y: 142.95
+- ref: U4
+  x: 92.62
+  y: 157.76
+  rot: -90.0
+- ref: U5
+  x: 77.35
+  y: 140.41
+  rot: 90.0
+- ref: U6
+  x: 84.46
+  y: 140.41
+  rot: -90.0
+- ref: U7
+  x: 98.97
+  y: 166.27
+- ref: U8
+  x: 80.65
+  y: 137.87
+  rot: 180.0
+- ref: U9
+  x: 77.85
+  y: 146.3
+  rot: 180.0
+- ref: X1
+  x: 124.68
+  y: 168.77
+  rot: 90.0
+- ref: X2
+  x: 163.15
+  y: 132.35
+  rot: 45.0
+- ref: X3
+  x: 161.5
+  y: 153.5
+copper_pours:
+- net: /mcu/usb/power/USB_SHIELD
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [In1.Cu]
+- net: VAA
+  layers: [In2.Cu]
+- net: VCC
+  layers: [In2.Cu]
+- net: ''
+  layers: [In1.Cu, In2.Cu]
+  keepout: true

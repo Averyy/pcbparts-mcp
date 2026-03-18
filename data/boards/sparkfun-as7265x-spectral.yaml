@@ -1,0 +1,461 @@
+name: SparkFun AS7265x Spectral
+slug: sparkfun-as7265x-spectral
+source: sparkfun/Qwiic_Spectral_Sensor_AS7265x
+format: eagle
+description: 18-channel spectral sensor (3-sensor triad), I2C multi-device
+tags: [sensors]
+key_ics: [AS72651, AS72652, AS72653]
+outline:
+  width_mm: 35.56
+  height_mm: 40.64
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 7mil
+  min_drill: 15mil
+  min_via: 7mil
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-00868
+  decouples: U2
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U1
+- ref: C3
+  value: 10uF
+  footprint: '0603'
+  prod_id: CAP-11015
+  decouples: U1
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U3
+- ref: C5
+  value: 10uF
+  footprint: '0603'
+  prod_id: CAP-11015
+  decouples: U3
+- ref: C6
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U4
+- ref: C7
+  value: 10uF
+  footprint: '0603'
+  prod_id: CAP-11015
+  decouples: U4
+- ref: D1
+  value: blue LED
+  footprint: '0603'
+  prod_id: DIO-08575
+  description: Blue SMD LED
+- ref: D2
+  value: 5700k
+  footprint: SUPER_BRIGHT_SMD_LED_3014
+  prod_id: DIO-13728
+  description: White SMD LED
+- ref: D3
+  value: IR
+  footprint: '0603'
+  prod_id: DIO-14125
+  description: Infrared LED (IR)
+- ref: D4
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-00819
+  description: Red SMD LED
+- ref: D5
+  value: UV
+  footprint: PLCC-2
+  prod_id: DIO-14126
+- ref: J1
+  value: Qwiic connector
+  footprint: 1X04
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J2
+  value: 1x6 header
+  footprint: 1X06
+  prod_id: CONN-08437
+- ref: J3
+  value: 1x2 header
+  footprint: 1X02
+- ref: J4
+  value: Qwiic connector
+  footprint: 1X04
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J5
+  value: 2x3 header
+  footprint: 2X3
+  description: AVR ISP 6 Pin
+- ref: J8
+  value: 1x4 header
+  footprint: 1X04
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP3
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP4
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP5
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP7
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: U3.MISO
+- ref: R10
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+  pullup: SDA_S
+- ref: R11
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R12
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R2
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pullup: I2C_ENB
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pullup: '!RST'
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: U3.!CS_SD
+- ref: R7
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: U4.MISO
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: U4.!CS_SD
+- ref: R9
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+  pullup: SCL_S
+- ref: U1
+  value: AS72651
+  footprint: LGA20
+  prod_id: IC-14127
+- ref: U2
+  value: 4MB Flash
+  footprint: SOIC-8
+  prod_id: IC-12455
+  description: AT25SF041 4Mb Serial Flash Memory
+- ref: U3
+  value: AS72652
+  footprint: LGA20
+  prod_id: IC-14128
+- ref: U4
+  value: AS72653
+  footprint: LGA20
+  prod_id: IC-14129
+nets:
+- name: '!CS_EE'
+  pins: [J5.5, U1.!CS_EE, U2.!CS]
+- name: '!INT'
+  pins: [J3.1, U1.!INT]
+- name: '!RST'
+  pins: [J3.2, R4.1, U1.!RST, U4.!RST]
+- name: '!RST-ADDR'
+  pins: [U1.ADDR, U3.!RST]
+- name: 3.3V
+  pins:
+  - BULB1.A
+  - BULB2.A
+  - BULB3.A
+  - C1.1
+  - C2.1
+  - C3.1
+  - C4.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - D1.A
+  - J1.2
+  - J2.4
+  - J4.2
+  - J5.2
+  - J8.2
+  - JP1.2
+  - JP3.2
+  - JP4.2
+  - JP5.2
+  - JP7.2
+  - R10.2
+  - R3.2
+  - R4.2
+  - R9.2
+  - U1.VDD
+  - U2.!HOLD(D3)
+  - U2.!WP(D2)
+  - U2.VCC
+  - U3.VDD
+  - U4.VDD
+  class: Power
+  trace_width: '0.3048'
+- name: CS_SD
+  pins: [R5.2, U3.!CS_SD]
+- name: CS_SD_2
+  pins: [R8.2, U4.!CS_SD]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - D4.C
+  - J1.1
+  - J2.6
+  - J4.1
+  - J5.6
+  - J8.1
+  - JP2.1
+  - R1.1
+  - R5.1
+  - R7.1
+  - R8.1
+  - U1.GND
+  - U2.GND
+  - U3.GND
+  - U4.GND
+- name: I2C_ENB
+  pins: [JP2.2, R3.1, TP1.1, U1.I2C_ENB]
+- name: LED_DRV
+  pins: [BULB1.C, D2.C, U1.LED_DRV]
+- name: LED_DRV1
+  pins: [BULB2.C, D3.C, U3.LED_DRV]
+- name: LED_DRV2
+  pins: [BULB3.C, D5.C, U4.LED_DRV]
+- name: LED_IND
+  pins: [D1.C, U1.LED_IND]
+- name: MISO
+  pins: [J5.1, U1.MISO, U2.SO(D1)]
+- name: MISO_2
+  pins: [R1.2, U3.MISO]
+- name: MISO_3
+  pins: [R7.2, U4.MISO]
+- name: MOSI
+  pins: [J5.4, U1.MOSI, U2.SI(D0)]
+- name: N$1
+  pins: [JP7.1, R2.2]
+- name: N$11
+  pins: [D5.A, JP3.1]
+- name: N$4
+  pins: [JP1.3, R12.2]
+- name: N$5
+  pins: [JP1.1, R11.2]
+- name: N$6
+  pins: [D2.A, JP4.1]
+- name: N$7
+  pins: [D4.A, R2.1]
+- name: N$8
+  pins: [D3.A, JP5.1]
+- name: RX/SCL
+  pins: [J1.4, J2.3, J4.4, J8.4, R11.1, U1.RX/SCL]
+- name: SCK
+  pins: [J5.3, U1.SCK, U2.SCK]
+- name: SCL_S
+  pins: [R9.1, U1.SCL_M, U3.SCL_S, U4.SCL_S]
+- name: SDA_S
+  pins: [R10.1, U1.SDA_M, U3.SDA_S, U4.SDA_S]
+- name: TX/SDA
+  pins: [J1.3, J2.2, J4.3, J8.3, R12.1, U1.TX/SDA]
+positions:
+- ref: C1
+  x: 12.7
+  y: 34.29
+  rot: 90.0
+- ref: C2
+  x: 17.78
+  y: 21.97
+  rot: 180.0
+- ref: C3
+  x: 22.35
+  y: 26.67
+  rot: 90.0
+- ref: C4
+  x: 20.32
+  y: 17.53
+  rot: 240.0
+- ref: C5
+  x: 26.67
+  y: 19.05
+  rot: 330.0
+- ref: C6
+  x: 13.47
+  y: 11.26
+  rot: 210.0
+- ref: C7
+  x: 15.25
+  y: 17.59
+  rot: 120.0
+- ref: D1
+  x: 26.67
+  y: 30.48
+- ref: D2
+  x: 11.18
+  y: 22.86
+  rot: 60.0
+- ref: D3
+  x: 24.38
+  y: 22.86
+  rot: 300.0
+- ref: D4
+  x: 8.89
+  y: 30.48
+- ref: D5
+  x: 17.78
+  y: 11.43
+- ref: J1
+  x: 5.08
+  y: 19.05
+  rot: 270.0
+- ref: J2
+  x: 24.13
+  y: 39.37
+  rot: 180.0
+- ref: J3
+  x: 13.97
+  y: 1.27
+  rot: 180.0
+- ref: J4
+  x: 30.48
+  y: 19.05
+  rot: 90.0
+- ref: J5
+  x: 17.78
+  y: 34.29
+  rot: 270.0
+- ref: J8
+  x: 24.13
+  y: 1.27
+  rot: 180.0
+- ref: JP1
+  x: 6.99
+  y: 34.29
+- ref: JP2
+  x: 10.16
+  y: 30.48
+  rot: 180.0
+- ref: JP3
+  x: 19.05
+  y: 9.02
+  rot: 270.0
+- ref: JP4
+  x: 8.93
+  y: 22.73
+  rot: 150.0
+- ref: JP5
+  x: 25.58
+  y: 24.58
+  rot: 30.0
+- ref: JP7
+  x: 5.08
+  y: 27.94
+- ref: R1
+  x: 22.35
+  y: 11.43
+  rot: 330.0
+- ref: R10
+  x: 22.86
+  y: 30.48
+- ref: R11
+  x: 3.81
+  y: 34.29
+  rot: 90.0
+- ref: R12
+  x: 10.29
+  y: 34.29
+  rot: 90.0
+- ref: R2
+  x: 5.08
+  y: 30.48
+  rot: 180.0
+- ref: R3
+  x: 13.21
+  y: 26.67
+  rot: 270.0
+- ref: R4
+  x: 22.86
+  y: 34.29
+  rot: 90.0
+- ref: R5
+  x: 28.19
+  y: 13.08
+  rot: 240.0
+- ref: R7
+  x: 8.89
+  y: 19.05
+  rot: 210.0
+- ref: R8
+  x: 7.33
+  y: 13.02
+  rot: 120.0
+- ref: R9
+  x: 24.13
+  y: 26.67
+  rot: 270.0
+- ref: U1
+  x: 17.78
+  y: 26.67
+  rot: 270.0
+- ref: U2
+  x: 17.78
+  y: 34.29
+  rot: 270.0
+- ref: U3
+  x: 24.38
+  y: 15.24
+  rot: 60.0
+- ref: U4
+  x: 11.18
+  y: 15.24
+  rot: 300.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

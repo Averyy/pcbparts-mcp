@@ -1,0 +1,108 @@
+name: SparkFun Motor Driver TB6612FNG
+slug: sparkfun-motor-driver-tb6612fng
+source: sparkfun/Motor_Driver-Dual_TB6612FNG
+format: eagle
+description: TB6612FNG dual H-bridge, 1.2A continuous per motor
+tags: [motor-control]
+key_ics: [TB6612FNG]
+outline:
+  width_mm: 20.32
+  height_mm: 20.32
+design_rules:
+  layers: 2
+  min_trace: 10mil
+  min_clearance: 10mil
+  min_drill: 20mil
+  min_via: 10mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+  prod_id: CAP-12416
+- ref: C2
+  value: 100nF
+  footprint: '0402'
+  prod_id: CAP-12416
+  decouples: U1
+- ref: C3
+  value: 10uF
+  footprint: EIA3528
+  prod_id: CAP-08063
+- ref: JP1
+  value: 1x8 header
+  footprint: 1X08
+- ref: JP2
+  value: 1x8 header
+  footprint: 1X08
+- ref: U1
+  value: TB6612FNG
+  footprint: SSOP24
+  prod_id: IC-09363
+  description: Toshiba 1A dual motor driver IC-09363
+nets:
+- name: A01
+  pins: [JP1.5, U1.A01@1, U1.A01@2]
+- name: A02
+  pins: [JP1.4, U1.A02@5, U1.A02@6]
+- name: AIN1
+  pins: [JP2.3, U1.AIN1]
+- name: AIN2
+  pins: [JP2.2, U1.AIN2]
+- name: B01
+  pins: [JP1.2, U1.B01@11, U1.B01@12]
+- name: B02
+  pins: [JP1.3, U1.B02@7, U1.B02@8]
+- name: BIN1
+  pins: [JP2.5, U1.BIN1]
+- name: BIN2
+  pins: [JP2.6, U1.BIN2]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.-
+  - JP1.1
+  - JP1.6
+  - JP2.8
+  - U1.GND
+  - U1.PGND1@3
+  - U1.PGND1@4
+  - U1.PGND2@10
+  - U1.PGND2@9
+- name: PWMA
+  pins: [JP2.1, U1.PWMA]
+- name: PWMB
+  pins: [JP2.7, U1.PWMB]
+- name: STBY
+  pins: [JP2.4, U1.STBY]
+- name: VCC
+  pins: [C2.1, JP1.7, U1.VCC]
+- name: VM
+  pins: [C1.1, C3.+, JP1.8, U1.VM1, U1.VM2, U1.VM3]
+positions:
+- ref: C1
+  x: 11.43
+  y: 13.97
+- ref: C2
+  x: 8.89
+  y: 13.97
+  rot: 180.0
+- ref: C3
+  x: 10.16
+  y: 16.51
+  rot: 180.0
+- ref: JP1
+  x: 2.54
+  y: 1.27
+  rot: 90.0
+- ref: JP2
+  x: 17.78
+  y: 19.05
+  rot: 270.0
+- ref: U1
+  x: 10.16
+  y: 8.89
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

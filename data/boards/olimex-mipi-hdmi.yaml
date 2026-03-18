@@ -1,0 +1,705 @@
+name: Olimex MIPI-HDMI
+slug: olimex-mipi-hdmi
+source: OLIMEX/MIPI-HDMI
+format: kicad7
+description: LT8912B MIPI-DSI to HDMI converter, multi-rail power (1.8V/3.3V/5V)
+tags: [video]
+key_ics: [ME2188C50M5G, LT8912B, RCLAMP0524P]
+outline:
+  width_mm: 24.0
+  height_mm: 60.0
+design_rules:
+  layers: 4
+  min_trace: 0.127mm
+  min_clearance: 0.127mm
+  min_drill: 0.3mm
+  min_via: 0.6mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: '0402'
+  voltage: 6.3V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C11
+  value: 27pF
+  footprint: '0402'
+  voltage: 50V
+  tolerance: 5%
+  dielectric: C0G
+- ref: C12
+  value: 27pF
+  footprint: '0402'
+  voltage: 50V
+  tolerance: 5%
+  dielectric: C0G
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C16
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C17
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C18
+  value: 2.2nF
+  footprint: '0402'
+  voltage: 50V
+  tolerance: 10%
+  dielectric: X7R
+- ref: C19
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C2
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C20
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C3
+  value: 22uF
+  footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C4
+  value: 22uF
+  footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C5
+  value: 10uF
+  footprint: '0402'
+  voltage: 6.3V
+  dielectric: X5R
+  tolerance: 20%
+- ref: C6
+  value: 47uF
+  footprint: 0805
+  voltage: 6.3V
+  tolerance: 20%
+  dielectric: X5R
+  decouples: U1
+- ref: C7
+  value: 47uF
+  footprint: 0805
+  voltage: 6.3V
+  tolerance: 20%
+  dielectric: X5R
+  decouples: U1
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  voltage: 10V
+  tolerance: 20%
+  dielectric: X5R
+- ref: D1
+  value: 1N5819S4
+  footprint: SOD-123_1C-2A_KA
+- ref: D2
+  value: 1N5819S4
+  footprint: SOD-123_1C-2A_KA
+- ref: FET1
+  value: BSS138
+  footprint: SOT23
+- ref: FET2
+  value: BSS138
+  footprint: SOT23
+- ref: FET3
+  value: BSS138
+  footprint: SOT23
+- ref: FET4
+  value: BSS138
+  footprint: SOT23
+- ref: HDMI1
+  value: HDMI-SWM-19
+  footprint: HDMI-SWM-19_Paste
+- ref: L1
+  value: 600ohm
+  footprint: 0805
+  current: 2A
+- ref: L2
+  value: 600ohm
+  footprint: 0805
+  current: 2A
+- ref: L3
+  value: 600ohm
+  footprint: 0805
+  current: 2A
+- ref: L4
+  value: 22uH
+  footprint: CD53(54)
+- ref: MIPI-DSI1
+  value: 15-pin FFC
+  footprint: FPC-15P-1mm-Right_Angle(AFA07-S15FCC-00)
+- ref: Q1
+  value: 25MHz
+  footprint: TSX-3.2x2.5mm_GND(3)
+- ref: Q2
+  value: BC817-40
+  footprint: SOT23
+- ref: R1
+  value: 10kohm
+  footprint: '0402'
+  pullup: U1.CE
+- ref: R10
+  value: 10kohm
+  footprint: '0402'
+- ref: R11
+  value: 1Mohm
+  footprint: '0402'
+- ref: R12
+  value: 6.04kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: U2.R6K
+- ref: R13
+  value: 100kohm
+  footprint: '0402'
+- ref: R14
+  value: 100kohm
+  footprint: '0402'
+  pulldown: /HPD_DET
+- ref: R15
+  value: 100kohm
+  footprint: '0402'
+  pulldown: /TX_HPD
+- ref: R2
+  value: 240ohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R3
+  value: 110ohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R4
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R5
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R6
+  value: 10kohm
+  footprint: '0402'
+  pullup: /GPIO7\I2C_SDA
+- ref: R7
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R8
+  value: 10kohm
+  footprint: '0402'
+  pullup: /GPIO8\I2C_SCL
+- ref: R9
+  value: 2.2kohm
+  footprint: '0402'
+- ref: U1
+  value: ME2188C50M5G
+  footprint: SOT-23-5
+- ref: U2
+  value: LT8912B
+  footprint: QFN64
+- ref: U3
+  value: RCLAMP0524P
+  footprint: SLP2510P8_TEST
+- ref: U4
+  value: RCLAMP0524P
+  footprint: SLP2510P8_TEST
+- ref: U5
+  value: RCLAMP0524P
+  footprint: SLP2510P8_TEST
+- ref: VR1
+  value: LD1117AG-AD-AA3-A-R
+  footprint: SOT223
+nets:
+- name: +3.3V
+  pins:
+  - C1.1
+  - C2.1
+  - C3.1
+  - C5.1
+  - FET3.G
+  - FET4.G
+  - L4.1
+  - MIPI-DSI1.P14
+  - MIPI-DSI1.P15
+  - R1.1
+  - R6.1
+  - R8.1
+  - VR1.IN
+- name: +5V
+  pins: [C6.1, C7.1, D1.A, D2.A, U1.Vout]
+- name: /+5V_HDMI
+  pins: [D2.K, HDMI1.18]
+- name: /DSI_CLKN
+  pins: [MIPI-DSI1.P5, U2.MIPIRX_CKN]
+- name: /DSI_CLKP
+  pins: [MIPI-DSI1.P6, U2.MIPIRX_CKP]
+- name: /DSI_DATA0N
+  pins: [MIPI-DSI1.P8, U2.MIPIRX0_DN]
+- name: /DSI_DATA0P
+  pins: [MIPI-DSI1.P9, U2.MIPIRX0_DP]
+- name: /DSI_DATA1N
+  pins: [MIPI-DSI1.P2, U2.MIPIRX1_DN]
+- name: /DSI_DATA1P
+  pins: [MIPI-DSI1.P3, U2.MIPIRX1_DP]
+- name: /GPIO7\I2C_SDA
+  pins: [FET2.D, FET3.S, MIPI-DSI1.P12, R6.2]
+- name: /GPIO8\I2C_SCL
+  pins: [FET1.D, FET4.S, MIPI-DSI1.P11, R8.2]
+- name: /HPD_DET
+  pins: [HDMI1.19, R13.2, R14.1, U5.IN4, U5.OUT4]
+- name: /HSCL
+  pins: [FET4.D, HDMI1.15, R9.2, U5.IN2, U5.OUT2]
+- name: /HSDA
+  pins: [FET3.D, HDMI1.16, R7.2, U5.IN3, U5.OUT3]
+- name: /LT8912_SCL
+  pins: [FET1.S, R4.2, U2.S_SCL]
+- name: /LT8912_SDA
+  pins: [FET2.S, R5.2, U2.S_SDA]
+- name: /TX0_DN
+  pins: [HDMI1.9, U2.HDMITX0_DN, U4.IN2, U4.OUT2]
+- name: /TX0_DP
+  pins: [HDMI1.7, U2.HDMITX0_DP, U4.IN1, U4.OUT1]
+- name: /TX1_DN
+  pins: [HDMI1.6, U2.HDMITX1_DN, U3.IN4, U3.OUT4]
+- name: /TX1_DP
+  pins: [HDMI1.4, U2.HDMITX1_DP, U3.IN3, U3.OUT3]
+- name: /TX2_DN
+  pins: [HDMI1.3, U2.HDMITX2_DN, U3.IN2, U3.OUT2]
+- name: /TX2_DP
+  pins: [HDMI1.1, U2.HDMITX2_DP, U3.IN1, U3.OUT1]
+- name: /TX_CKN
+  pins: [HDMI1.12, U2.HDMITX_CKN, U4.IN4, U4.OUT4]
+- name: /TX_CKP
+  pins: [HDMI1.10, U2.HDMITX_CKP, U4.IN3, U4.OUT3]
+- name: /TX_HPD
+  pins: [Q2.E, R15.1, U2.HPD_CBUS]
+- name: GND
+  pins:
+  - C1.2
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C15.2
+  - C16.1
+  - C17.2
+  - C19.1
+  - C2.2
+  - C20.1
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.1
+  - C9.2
+  - HDMI1.11
+  - HDMI1.17
+  - HDMI1.2
+  - HDMI1.23@0
+  - HDMI1.5
+  - HDMI1.8
+  - MIPI-DSI1.P0@0
+  - MIPI-DSI1.P1
+  - MIPI-DSI1.P10
+  - MIPI-DSI1.P13
+  - MIPI-DSI1.P4
+  - MIPI-DSI1.P7
+  - Q1.case@3
+  - R12.1
+  - R14.2
+  - R15.2
+  - R3.1
+  - U1.GND
+  - U2.VSS@17
+  - U2.VSS@32
+  - U2.VSS@56
+  - U2.VSS@65
+  - U2.VSSA_HDMIPLL
+  - U2.VSSA_HDMITX@23
+  - U2.VSSA_HDMITX@29
+  - U2.VSSA_LVDSPLL
+  - U2.VSSA_LVDSTX
+  - U2.VSSA_MIPIRX
+  - U2.VSSA_SYSCLK
+  - U3.GND@3
+  - U3.GND@8
+  - U4.GND@3
+  - U4.GND@8
+  - U5.GND@3
+  - U5.GND@8
+- name: LT8912_VCCA
+  pins:
+  - C13.2
+  - C14.2
+  - C16.2
+  - C17.1
+  - C9.1
+  - L2.2
+  - U2.VCCA_HDMITX
+  - U2.VCCA_LVDSPLL
+  - U2.VCCA_LVDSTX
+  - U2.VCCA_MIPIRX
+  - U2.VCCA_SYSCLK
+- name: LT8912_VCCA_HDMIPLL
+  pins: [C18.1, C19.2, L1.2, U2.VCCA_HDMIPLL]
+- name: LT8912_VDD
+  pins:
+  - C10.2
+  - C15.1
+  - C20.2
+  - FET1.G
+  - FET2.G
+  - L3.2
+  - R10.2
+  - R4.1
+  - R5.1
+  - U2.VDD@18
+  - U2.VDD@33
+  - U2.VDD@57
+- name: Net-(D1-K)
+  pins: [D1.K, R7.1, R9.1]
+- name: Net-(Q2-B)
+  pins: [Q2.B, R13.1]
+- name: Net-(U1-CE)
+  pins: [R1.2, U1.CE]
+- name: Net-(U1-LX)
+  pins: [L4.2, U1.LX]
+- name: Net-(U2-LPF)
+  pins: [C18.2, U2.LPF]
+- name: Net-(U2-R6K)
+  pins: [R12.2, U2.R6K]
+- name: Net-(U2-RESET_N)
+  pins: [C8.2, R10.1, U2.RESET_N]
+- name: Net-(U2-XTALI)
+  pins: [C12.2, Q1.2, R11.2, U2.XTALI]
+- name: Net-(U2-XTALO)
+  pins: [C11.2, Q1.1, R11.1, U2.XTALO]
+- name: Net-(VR1-ADJ/GND)
+  pins: [R2.2, R3.2, VR1.ADJ/GND]
+- name: VCC_1.8V
+  pins:
+  - C4.1
+  - L1.1
+  - L2.1
+  - L3.1
+  - Q2.C
+  - R2.1
+  - VR1.OUT@2
+positions:
+- ref: C1
+  x: 154.43
+  y: 112.69
+  rot: 180.0
+- ref: C10
+  x: 143.51
+  y: 89.15
+- ref: C11
+  x: 141.22
+  y: 89.15
+- ref: C12
+  x: 141.22
+  y: 83.82
+  rot: 180.0
+- ref: C13
+  x: 143.89
+  y: 84.96
+  rot: 90.0
+- ref: C14
+  x: 143.51
+  y: 83.57
+- ref: C15
+  x: 156.97
+  y: 92.25
+  rot: -90.0
+- ref: C16
+  x: 149.48
+  y: 79.63
+  rot: -90.0
+- ref: C17
+  x: 157.5
+  y: 87.2
+- ref: C18
+  x: 150.62
+  y: 79.63
+  rot: -90.0
+- ref: C19
+  x: 151.76
+  y: 79.63
+  rot: -90.0
+- ref: C2
+  x: 154.43
+  y: 111.8
+  rot: 180.0
+- ref: C20
+  x: 153.75
+  y: 81.5
+  rot: 180.0
+- ref: C3
+  x: 160.56
+  y: 104.85
+  rot: -90.0
+- ref: C4
+  x: 158.81
+  y: 104.85
+  rot: -90.0
+- ref: C5
+  x: 139.45
+  y: 100.84
+  rot: 90.0
+- ref: C6
+  x: 140.72
+  y: 93.98
+  rot: 180.0
+- ref: C7
+  x: 140.72
+  y: 91.82
+  rot: 180.0
+- ref: C8
+  x: 143.64
+  y: 92.58
+  rot: 90.0
+- ref: C9
+  x: 148.5
+  y: 95.5
+  rot: -90.0
+- ref: D1
+  x: 141.6
+  y: 82.0
+  rot: 180.0
+- ref: D2
+  x: 141.6
+  y: 79.75
+  rot: 180.0
+- ref: FET1
+  x: 149.0
+  y: 106.75
+  rot: 90.0
+- ref: FET2
+  x: 152.75
+  y: 106.75
+  rot: 90.0
+- ref: FET3
+  x: 158.75
+  y: 80.5
+- ref: FET4
+  x: 158.75
+  y: 83.75
+- ref: HDMI1
+  x: 150.0
+  y: 66.0
+- ref: L1
+  x: 160.5
+  y: 92.5
+  rot: 90.0
+- ref: L2
+  x: 153.75
+  y: 98.75
+  rot: 90.0
+- ref: L3
+  x: 158.75
+  y: 92.5
+  rot: 90.0
+- ref: L4
+  x: 143.38
+  y: 103.5
+- ref: MIPI-DSI1
+  x: 150.0
+  y: 118.0
+- ref: Q1
+  x: 141.35
+  y: 86.49
+  rot: 90.0
+- ref: Q2
+  x: 151.2
+  y: 100.86
+  rot: 90.0
+- ref: R1
+  x: 145.29
+  y: 96.01
+  rot: -90.0
+- ref: R10
+  x: 143.64
+  y: 90.68
+  rot: 90.0
+- ref: R11
+  x: 143.89
+  y: 86.87
+  rot: 90.0
+- ref: R12
+  x: 152.0
+  y: 95.5
+  rot: 90.0
+- ref: R13
+  x: 153.16
+  y: 79.63
+  rot: 90.0
+- ref: R14
+  x: 154.18
+  y: 79.63
+  rot: -90.0
+- ref: R15
+  x: 150.5
+  y: 98.3
+  rot: 180.0
+- ref: R2
+  x: 157.06
+  y: 103.85
+  rot: 180.0
+- ref: R3
+  x: 157.06
+  y: 105.35
+  rot: 180.0
+- ref: R4
+  x: 149.0
+  y: 104.14
+  rot: 180.0
+- ref: R5
+  x: 152.8
+  y: 104.14
+  rot: 180.0
+- ref: R6
+  x: 160.02
+  y: 87.5
+  rot: 180.0
+- ref: R7
+  x: 156.25
+  y: 80.5
+  rot: 90.0
+- ref: R8
+  x: 160.02
+  y: 86.23
+- ref: R9
+  x: 156.25
+  y: 82.55
+  rot: -90.0
+- ref: U1
+  x: 142.75
+  y: 97.79
+  rot: 90.0
+- ref: U2
+  x: 150.0
+  y: 88.03
+- ref: U3
+  x: 146.75
+  y: 74.94
+- ref: U4
+  x: 150.0
+  y: 75.0
+- ref: U5
+  x: 153.25
+  y: 75.0
+- ref: VR1
+  x: 158.25
+  y: 98.75
+  rot: -90.0
+copper_pours:
+- net: +3.3V
+  layers: [F.Cu, In2.Cu]
+- net: +5V
+  layers: [F.Cu]
+- net: /+5V_HDMI
+  layers: [B.Cu, F.Cu]
+- net: /DSI_CLKN
+  layers: [B.Cu, F.Cu]
+- net: /DSI_CLKP
+  layers: [B.Cu, F.Cu]
+- net: /DSI_DATA0N
+  layers: [B.Cu, F.Cu]
+- net: /DSI_DATA0P
+  layers: [B.Cu, F.Cu]
+- net: /DSI_DATA1N
+  layers: [B.Cu, F.Cu]
+- net: /DSI_DATA1P
+  layers: [B.Cu, F.Cu]
+- net: /GPIO7\I2C_SDA
+  layers: [B.Cu, F.Cu]
+- net: /GPIO8\I2C_SCL
+  layers: [B.Cu, F.Cu]
+- net: /HPD_DET
+  layers: [B.Cu, F.Cu]
+- net: /HSCL
+  layers: [F.Cu]
+- net: /HSDA
+  layers: [F.Cu]
+- net: /LT8912_SCL
+  layers: [B.Cu, F.Cu]
+- net: /LT8912_SDA
+  layers: [B.Cu, F.Cu]
+- net: /TX0_DN
+  layers: [B.Cu, F.Cu]
+- net: /TX0_DP
+  layers: [B.Cu, F.Cu]
+- net: /TX1_DN
+  layers: [B.Cu, F.Cu]
+- net: /TX1_DP
+  layers: [B.Cu, F.Cu]
+- net: /TX2_DN
+  layers: [B.Cu, F.Cu]
+- net: /TX2_DP
+  layers: [B.Cu, F.Cu]
+- net: /TX_CKN
+  layers: [B.Cu, F.Cu]
+- net: /TX_CKP
+  layers: [B.Cu, F.Cu]
+- net: /TX_HPD
+  layers: [F.Cu]
+- net: GND
+  layers: [F&B.Cu, In1.Cu]
+- net: LT8912_VCCA
+  layers: [B.Cu, F.Cu]
+- net: LT8912_VCCA_HDMIPLL
+  layers: [B.Cu, F.Cu]
+- net: LT8912_VDD
+  layers: [B.Cu, F.Cu]
+- net: VCC_1.8V
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+  keepout: true

@@ -1,0 +1,378 @@
+name: SparkFun Soft Power Switch
+slug: sparkfun-soft-power-switch
+source: sparkfun/SparkFun_Soft_Power_Switch_USB-C
+format: kicad7
+description: Soft latching power (SN74LVC1G175 flip-flop + MOSFET)
+tags: [level-shifting]
+key_ics: [SN74LVC1G14DCK]
+outline:
+  width_mm: 25.4
+  height_mm: 25.4
+design_rules:
+  layers: 2
+  min_trace: 0.152mm
+  min_clearance: 0.152mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+  voltage: 16V
+  tolerance: 10%
+- ref: C2
+  value: 47uF
+  footprint: EIA-3528
+  prod_id: CAP-08310
+  voltage: 10V
+  tolerance: 10%
+  description: Polarized tantalum capacitor
+- ref: C3
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+  voltage: 16V
+  tolerance: 10%
+  decouples: U2
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08390
+  voltage: 100V
+  tolerance: 10%
+  decouples: U3
+- ref: D1
+  value: BAS16J
+  footprint: SOD-323
+  prod_id: DIO-09646
+- ref: D2
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-17976
+- ref: D3
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-17976
+- ref: F1
+  value: 6V/2.0A/4.0A
+  footprint: '1210'
+  prod_id: RES-14313
+  description: Resettable fuse 2A
+- ref: J1
+  value: USB-C
+  footprint: USB-C
+  prod_id: CONN-14122
+  description: USB 2.0-only Type-C Receptacle connector
+- ref: J2
+  value: USB-C
+  footprint: USB-C
+  prod_id: CONN-14122
+  description: USB 2.0-only Type-C Receptacle connector
+- ref: J3
+  value: 1x6 header
+  footprint: 1x06
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-2
+  description: Solder Jumper, 2-pole, closed/bridged
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-2
+  description: Solder Jumper, 2-pole, closed/bridged
+- ref: Q1
+  value: BSS138
+  footprint: SOT-23-3
+  prod_id: TRANS-00830
+  description: N-MOSFET transistor, drain/gate/source
+- ref: Q2
+  value: BSS138
+  footprint: SOT-23-3
+  prod_id: TRANS-00830
+  description: N-MOSFET transistor, drain/gate/source
+- ref: Q3
+  value: SIL2308
+  footprint: SOT23-6-Tight
+  prod_id: TRANS-15717
+  description: Dual N-Channel P-Channel MOSFET
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+  pullup: BTN
+- ref: R10
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+- ref: R11
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: J1.CC2
+- ref: R12
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: J1.CC1
+- ref: R2
+  value: 200kohm
+  footprint: '0603'
+  prod_id: RES-09385
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R5
+  value: 100ohm
+  footprint: '0603'
+  prod_id: RES-07863
+- ref: R6
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R7
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: 'OFF'
+- ref: R8
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R9
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: SW1
+  value: switch
+  footprint: Push_SMD
+  prod_id: SWCH-14139
+  description: Single Pole Single Throw (SPST) switch
+- ref: U2
+  value: SN74LVC1G14DCK
+  footprint: SOT-353
+  prod_id: IC-21903
+  description: Single Schmitt-Trigger Inverter, Low-Voltage CMOS, 1.65V to 5.5V, SOT-353 (SC70)
+- ref: U3
+  value: SN74LVC1G17DCK
+  footprint: SOT-353
+  prod_id: IC-21904
+  description: Single Schmitt-Trigger Buffer, Low-Voltage CMOS, 1.65V to 5.5V, SOT-353 (SC70)
+- ref: U4
+  value: SN74LVC1G175DCK
+  footprint: SOT-323
+  prod_id: IC-21905
+  description: Single D-Type Flip-Flop With Asynchronous Clear, 1.65V to 5.5V, SOT-323 (SC70)
+nets:
+- name: BTN
+  pins:
+  - C1.1
+  - D1.A
+  - J3.Pin_4
+  - R1.2
+  - R2.2
+  - SW1.2@2
+  - U2.2
+- name: EN
+  pins: [R9.2, U4.Q]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - D2.K
+  - D3.K
+  - J1.GND@GND
+  - J1.SHIELD
+  - J2.GND@GND
+  - J2.SHIELD
+  - J3.Pin_6
+  - Q1.S
+  - Q2.S
+  - Q3.S
+  - R11.2
+  - R12.2
+  - R7.2
+  - SW1.1@1
+  - U2.GND
+  - U3.GND
+  - U4.GND
+- name: Net-(C2-Pad1)
+  pins: [C2.1, D1.C, R2.1, R5.1, U3.2]
+- name: Net-(D2-A)
+  pins: [D2.A, R3.2]
+- name: Net-(D3-A)
+  pins: [D3.A, R4.2]
+- name: Net-(J1-CC1)
+  pins: [J1.CC1, R12.1]
+- name: Net-(J1-CC2)
+  pins: [J1.CC2, R11.1]
+- name: Net-(J1-D+-PadA6)
+  pins: [J1.D+@A6, J1.D+@B6, J2.D+@A6, J2.D+@B6]
+- name: Net-(J1-D--PadA7)
+  pins: [J1.D-@A7, J1.D-@B7, J2.D-@A7, J2.D-@B7]
+- name: Net-(JP1-A)
+  pins: [JP1.A, R3.1]
+- name: Net-(JP2-A)
+  pins: [JP2.A, R4.1]
+- name: Net-(Q1-D)
+  pins: [Q1.D, R5.2]
+- name: Net-(Q1-G)
+  pins: [Q1.G, R6.1]
+- name: Net-(Q2-G)
+  pins: [Q2.G, R8.2]
+- name: Net-(Q3A-D)
+  pins: [Q3.D@6, Q3.G@3, R10.1]
+- name: Net-(Q3A-G)
+  pins: [Q3.G@1, R9.1]
+- name: Net-(Q3B-1)
+  pins: [F1.1, Q3.1, R10.2]
+- name: Net-(U4-CLK)
+  pins: [R8.1, U2.4, U4.CLK]
+- name: Net-(U4-nCLR)
+  pins: [U3.4, U4.nCLR]
+- name: 'OFF'
+  pins: [J3.Pin_2, R6.2, R7.1]
+- name: PUSH
+  pins: [J3.Pin_3, Q2.D]
+- name: VIN
+  pins:
+  - C3.1
+  - C4.1
+  - F1.2
+  - J1.VBUS@VBUS
+  - J3.Pin_5
+  - JP1.B
+  - R1.1
+  - U2.VCC
+  - U3.VCC
+  - U4.D
+  - U4.VCC
+- name: VOUT
+  pins: [J2.VBUS@VBUS, J3.Pin_1, JP2.B, Q3.D@4]
+positions:
+- ref: C1
+  x: 120.78
+  y: 105.16
+  rot: 90.0
+- ref: C2
+  x: 128.27
+  y: 119.38
+  rot: -90.0
+- ref: C3
+  x: 122.94
+  y: 101.6
+  rot: 90.0
+- ref: C4
+  x: 133.6
+  y: 101.6
+  rot: 90.0
+- ref: D1
+  x: 118.11
+  y: 105.66
+- ref: D2
+  x: 117.6
+  y: 117.86
+- ref: D3
+  x: 138.94
+  y: 117.86
+  rot: 180.0
+- ref: F1
+  x: 128.27
+  y: 109.86
+  rot: 90.0
+- ref: J1
+  x: 122.17
+  y: 111.76
+  rot: -90.0
+- ref: J2
+  x: 134.37
+  y: 111.76
+  rot: 90.0
+- ref: J3
+  x: 134.62
+  y: 123.19
+  rot: 180.0
+- ref: JP1
+  x: 119.13
+  y: 117.86
+  rot: 180.0
+  side: back
+- ref: JP2
+  x: 137.41
+  y: 117.86
+  side: back
+- ref: Q1
+  x: 124.71
+  y: 120.4
+- ref: Q2
+  x: 131.83
+  y: 120.4
+  rot: 180.0
+- ref: Q3
+  x: 128.27
+  y: 113.79
+- ref: R1
+  x: 135.76
+  y: 105.22
+  rot: 90.0
+- ref: R10
+  x: 126.62
+  y: 116.2
+  rot: 180.0
+- ref: R11
+  x: 124.71
+  y: 113.28
+  rot: -90.0
+- ref: R12
+  x: 124.71
+  y: 110.24
+  rot: 90.0
+- ref: R2
+  x: 138.43
+  y: 105.66
+- ref: R3
+  x: 120.65
+  y: 117.86
+  rot: 180.0
+- ref: R4
+  x: 135.89
+  y: 117.86
+- ref: R5
+  x: 124.71
+  y: 117.98
+- ref: R6
+  x: 122.17
+  y: 120.4
+  rot: -90.0
+- ref: R7
+  x: 131.83
+  y: 117.98
+- ref: R8
+  x: 134.37
+  y: 120.4
+  rot: -90.0
+- ref: R9
+  x: 129.92
+  y: 116.2
+- ref: SW1
+  x: 128.27
+  y: 102.11
+- ref: U2
+  x: 122.94
+  y: 105.28
+- ref: U3
+  x: 133.6
+  y: 105.28
+  rot: 180.0
+- ref: U4
+  x: 128.27
+  y: 106.3
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]

@@ -1,0 +1,227 @@
+name: Soldered DRV8825 Stepper
+slug: soldered-drv8825-stepper
+source: SolderedElectronics/Stepper-motor-driver-DRV8825-board-hardware-design
+format: kicad7
+description: 32-microstep stepper driver (DRV8825), current limiting
+tags: [3d-printer, motor-control]
+key_ics: [DRV8825, A4988]
+outline:
+  width_mm: 38.0
+  height_mm: 22.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 12101C335K4T2A
+  footprint: '1210'
+- ref: C2
+  value: 100nF
+  footprint: 0805
+- ref: C3
+  value: 100nF
+  footprint: 0805
+- ref: C4
+  value: 100nF
+  footprint: 0805
+- ref: C5
+  value: 08051C103KAT2A
+  footprint: 0805
+- ref: C6
+  value: 470nF
+  footprint: '0603'
+  decouples: U1
+- ref: D1
+  value: purple LED
+  footprint: '0402'
+- ref: JP1
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: K1
+  value: 1x8 header
+  footprint: HEADER_MALE
+- ref: K2
+  value: 1x8 header
+  footprint: HEADER_MALE
+- ref: R1
+  value: 73L2R20G
+  footprint: '0603'
+- ref: R2
+  value: 1Mohm
+  footprint: '0603'
+- ref: R3
+  value: 73L2R20G
+  footprint: '0603'
+- ref: R4
+  value: tc33x-2-104e
+  footprint: tc33x-2-103e
+- ref: R5
+  value: 1.5kohm
+  footprint: '0603'
+- ref: R6
+  value: 10kohm
+  footprint: '0603'
+- ref: R7
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+- ref: U1
+  value: DRV8825
+  footprint: DRV8825
+nets:
+- name: 3V3
+  pins: [C6.2, R4.1, U1.V3P3OUT]
+- name: A1
+  pins: [K2.4, U1.AOUT1]
+- name: A2
+  pins: [K2.3, U1.AOUT2]
+- name: AVREF
+  pins: [R4.2, U1.AVREF, U1.BVREF]
+- name: B1
+  pins: [K2.5, U1.BOUT1]
+- name: B2
+  pins: [K2.6, U1.BOUT2]
+- name: CP1
+  pins: [C5.2, U1.CP1]
+- name: CP2
+  pins: [C5.1, U1.CP2]
+- name: DIR
+  pins: [K1.1, U1.DIR]
+- name: GND
+  pins:
+  - C1.1
+  - C2.1
+  - C3.1
+  - C6.1
+  - D1.K
+  - K2.1
+  - K2.7
+  - R1.1
+  - R3.1
+  - R4.3
+  - U1.GND@14
+  - U1.GND@28
+  - U1.TP@29
+- name: ISENA
+  pins: [R1.2, U1.ISENA]
+- name: ISENB
+  pins: [R3.2, U1.ISENB]
+- name: MODE0
+  pins: [K1.7, U1.MODE0]
+- name: MODE1
+  pins: [K1.6, U1.MODE1]
+- name: MODE2
+  pins: [K1.5, U1.MODE2]
+- name: Net-(D1-Pad1)
+  pins: [D1.A, R7.2]
+- name: Net-(JP1-Pad2)
+  pins: [JP1.2, R7.1]
+- name: STEP
+  pins: [K1.2, U1.STEP]
+- name: VCP
+  pins: [C4.2, R2.2, U1.VCP]
+- name: VMM
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.1
+  - JP1.1
+  - K2.8
+  - R2.1
+  - U1.VMA
+  - U1.VMB
+- name: nEN
+  pins: [K1.8, U1.nENBL]
+- name: nFAULT
+  pins: [K2.2, R5.1, R6.2, R8.2]
+- name: nFAULT_2
+  pins: [R5.2, U1.nFAULT]
+- name: nRESET
+  pins: [K1.4, R8.1, U1.nRESET]
+- name: nSLEEP
+  pins: [K1.3, R6.1, U1.nSLEEP]
+positions:
+- ref: C1
+  x: 98.45
+  y: 132.85
+  rot: -90.0
+- ref: C2
+  x: 94.25
+  y: 133.15
+  rot: -90.0
+- ref: C3
+  x: 100.85
+  y: 140.62
+  rot: 90.0
+- ref: C4
+  x: 96.95
+  y: 140.75
+  rot: -90.0
+- ref: C5
+  x: 94.45
+  y: 141.75
+  rot: -90.0
+- ref: C6
+  x: 82.65
+  y: 133.0
+- ref: D1
+  x: 101.35
+  y: 127.85
+  rot: 90.0
+- ref: JP1
+  x: 101.35
+  y: 132.35
+  rot: 90.0
+- ref: K1
+  x: 88.85
+  y: 127.96
+  side: back
+- ref: K2
+  x: 88.85
+  y: 145.74
+  side: back
+- ref: R1
+  x: 98.85
+  y: 138.14
+  rot: 180.0
+- ref: R2
+  x: 98.85
+  y: 140.75
+  rot: -90.0
+- ref: R3
+  x: 98.85
+  y: 136.64
+  rot: 180.0
+- ref: R4
+  x: 73.65
+  y: 136.85
+  rot: 180.0
+- ref: R5
+  x: 82.35
+  y: 140.35
+  rot: -90.0
+- ref: R6
+  x: 82.35
+  y: 136.85
+  rot: -90.0
+- ref: R7
+  x: 101.35
+  y: 130.15
+  rot: 90.0
+- ref: R8
+  x: 80.85
+  y: 136.85
+  rot: -90.0
+- ref: U1
+  x: 88.85
+  y: 136.85
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]

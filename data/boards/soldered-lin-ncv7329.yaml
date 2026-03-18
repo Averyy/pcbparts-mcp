@@ -1,0 +1,129 @@
+name: Soldered LIN NCV7329
+slug: soldered-lin-ncv7329
+source: SolderedElectronics/LIN-Transceiver-NCV7329-MASTER-breakout-hardware-design
+format: kicad7
+description: "LIN bus transceiver (NCV7329) \u2014 automotive protocol, not covered elsewhere"
+tags: [automotive]
+key_ics: [NCV7329]
+outline:
+  width_mm: 22.0
+  height_mm: 38.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 2.2uF
+  footprint: '0603'
+- ref: C2
+  value: 270pF
+  footprint: '0603'
+- ref: D1
+  value: diode
+  footprint: M4_DIODA
+- ref: D2
+  value: purple LED
+  footprint: '0402'
+- ref: D3
+  value: diode
+  footprint: M4_DIODA
+- ref: JP1
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: K1
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: K2
+  value: screw terminal
+  footprint: TERMINAL_KF235-5.0-3P
+- ref: R1
+  value: 4.7kohm
+  footprint: '0603'
+  pulldown: EN
+- ref: R2
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R3
+  value: 1kohm
+  footprint: '0603'
+- ref: U1
+  value: NCV7329
+  footprint: SOIC-8
+nets:
+- name: EN
+  pins: [K1.2, R1.2, U1.EN]
+- name: GND
+  pins:
+  - C1.1
+  - C2.1
+  - D2.K
+  - K1.1
+  - K2.2
+  - R1.1
+  - U1.GND
+- name: LIN
+  pins: [C2.2, D3.K, K2.3, U1.LIN]
+- name: Net-(D2-Pad1)
+  pins: [D2.A, R2.2]
+- name: Net-(D3-Pad1)
+  pins: [D3.A, R3.1]
+- name: Net-(JP1-Pad2)
+  pins: [JP1.2, R2.1]
+- name: RXD
+  pins: [K1.4, U1.RxD]
+- name: TXD
+  pins: [K1.3, U1.TxD]
+- name: VCC
+  pins: [D1.A, JP1.1, K2.1]
+- name: Vbb
+  pins: [C1.2, D1.K, R3.2, U1.Vbb]
+positions:
+- ref: C1
+  x: 120.0
+  y: 111.8
+- ref: C2
+  x: 114.5
+  y: 112.0
+- ref: D1
+  x: 126.9
+  y: 111.5
+  rot: 180.0
+- ref: D2
+  x: 127.0
+  y: 105.0
+  rot: 90.0
+- ref: D3
+  x: 114.5
+  y: 108.0
+  rot: -90.0
+- ref: JP1
+  x: 128.0
+  y: 108.0
+  rot: 90.0
+- ref: K1
+  x: 123.0
+  y: 93.5
+  side: back
+- ref: K2
+  x: 122.9
+  y: 122.8
+- ref: R1
+  x: 120.0
+  y: 102.2
+- ref: R2
+  x: 129.0
+  y: 105.0
+  rot: 90.0
+- ref: R3
+  x: 114.5
+  y: 104.0
+- ref: U1
+  x: 120.0
+  y: 107.0
+  rot: -90.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]

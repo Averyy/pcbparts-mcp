@@ -1,0 +1,630 @@
+name: ESP32 4-Channel Relays
+slug: esp32-4-channel-relays
+source: leomanangka/esp32-4-channel-relays
+format: kicad7
+description: ESP32-WROOM-32, 4x SRD-05VDC relay with flyback diodes
+tags: [relay]
+key_ics: [ESP32-WROOM-32]
+outline:
+  width_mm: 83.49
+  height_mm: 83.69
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.2mm
+  min_drill: 0.2mm
+  min_via: 0.7mm
+components:
+- ref: C1
+  value: 22uF
+  footprint: 0805
+  decouples: U1
+- ref: C2
+  value: 22uF
+  footprint: 0805
+  decouples: U1
+- ref: C3
+  value: 100nF
+  footprint: 0805
+  decouples: U2
+- ref: C4
+  value: 100nF
+  footprint: 0805
+  decouples: U1
+- ref: C5
+  value: 100nF
+  footprint: 0805
+- ref: C6
+  value: 100nF
+  footprint: 0805
+  decouples: U4
+- ref: C7
+  value: 22uF
+  footprint: 0805
+- ref: C8
+  value: 100nF
+  footprint: 0805
+- ref: C9
+  value: 100nF
+  footprint: 0805
+- ref: D1
+  value: yellow LED
+  footprint: 0805
+- ref: D2
+  value: red LED
+  footprint: 0805
+- ref: D3
+  value: 1N4007
+  footprint: MELF
+- ref: D4
+  value: red LED
+  footprint: 0805
+- ref: D5
+  value: 1N4007
+  footprint: MELF
+- ref: D6
+  value: red LED
+  footprint: 0805
+- ref: D7
+  value: 1N4007
+  footprint: MELF
+- ref: D8
+  value: red LED
+  footprint: 0805
+- ref: D9
+  value: 1N4007
+  footprint: MELF
+- ref: F1
+  value: 500mA
+  footprint: '1206'
+- ref: J1
+  value: 1x3 screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+- ref: J2
+  value: 1x3 screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+- ref: J3
+  value: 1x3 screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+- ref: J4
+  value: 1x3 screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+- ref: K1
+  value: SRD-05VDC-SL-C
+  footprint: RELAY_SRD-05VDC-SL-C
+  manufacturer: SONGLE RELAY
+- ref: K2
+  value: SRD-05VDC-SL-C
+  footprint: RELAY_SRD-05VDC-SL-C
+  manufacturer: SONGLE RELAY
+- ref: K3
+  value: SRD-05VDC-SL-C
+  footprint: RELAY_SRD-05VDC-SL-C
+  manufacturer: SONGLE RELAY
+- ref: K4
+  value: SRD-05VDC-SL-C
+  footprint: RELAY_SRD-05VDC-SL-C
+  manufacturer: SONGLE RELAY
+- ref: Q1
+  value: MBT3904DW1
+  footprint: SOT-363_SC-70-6
+- ref: Q2
+  value: BC547A
+  footprint: TSOT-23
+- ref: Q3
+  value: BC547A
+  footprint: TSOT-23
+- ref: Q4
+  value: BC547A
+  footprint: TSOT-23
+- ref: Q5
+  value: BC547A
+  footprint: TSOT-23
+- ref: R1
+  value: 2kohm
+  footprint: 0805
+  pullup: D1.A
+- ref: R10
+  value: 1kohm
+  footprint: 0805
+- ref: R11
+  value: 1kohm
+  footprint: 0805
+  pullup: U6.1
+- ref: R12
+  value: 1kohm
+  footprint: 0805
+- ref: R13
+  value: 1kohm
+  footprint: 0805
+  pullup: U7.1
+- ref: R14
+  value: 1kohm
+  footprint: 0805
+- ref: R15
+  value: 1kohm
+  footprint: 0805
+  pullup: U8.1
+- ref: R16
+  value: 1kohm
+  footprint: 0805
+- ref: R2
+  value: 5.1kohm
+  footprint: 0805
+  pulldown: USB1.CC1
+- ref: R3
+  value: 5.1kohm
+  footprint: 0805
+  pulldown: USB1.CC2
+- ref: R4
+  value: 22ohm
+  footprint: 0805
+- ref: R5
+  value: 22ohm
+  footprint: 0805
+- ref: R6
+  value: 10kohm
+  footprint: 0805
+- ref: R7
+  value: 10kohm
+  footprint: 0805
+- ref: R8
+  value: 10kohm
+  footprint: 0805
+  pullup: /RESET
+- ref: R9
+  value: 1kohm
+  footprint: 0805
+  pullup: U5.1
+- ref: SW1
+  value: switch
+  footprint: SW_SPST_SKQG_WithStem
+- ref: SW2
+  value: switch
+  footprint: SW_SPST_SKQG_WithStem
+- ref: U1
+  value: AMS1117-3.3
+  footprint: SOT-223-3_TabPin2
+- ref: U2
+  value: CH340C
+  footprint: SOIC-16
+- ref: U3
+  value: PRTR5V0U2X
+  footprint: SOT-143
+- ref: U4
+  value: ESP32-WROOM-32
+  footprint: ESP32-WROOM-32
+- ref: U5
+  value: PC817
+  footprint: SMDIP-4_W7.62mm
+- ref: U6
+  value: PC817
+  footprint: SMDIP-4_W7.62mm
+- ref: U7
+  value: PC817
+  footprint: SMDIP-4_W7.62mm
+- ref: U8
+  value: PC817
+  footprint: SMDIP-4_W7.62mm
+- ref: USB1
+  value: HRO-TYPE-C-31-M-12
+  footprint: HRO-TYPE-C-31-M-12-HandSoldering
+nets:
+- name: +3.3V
+  pins:
+  - C2.1
+  - C3.1
+  - C6.1
+  - C7.1
+  - R8.1
+  - U1.VO@2
+  - U2.V3
+  - U4.VDD
+- name: +5V
+  pins:
+  - C1.1
+  - C4.2
+  - D3.K
+  - D5.K
+  - D7.K
+  - D9.K
+  - F1.2
+  - K1.A1
+  - K2.A1
+  - K3.A1
+  - K4.A1
+  - R1.1
+  - R11.2
+  - R13.2
+  - R15.2
+  - R9.2
+  - U1.VI
+  - U2.VCC
+  - U5.4
+  - U6.4
+  - U7.4
+  - U8.4
+- name: /COM-1
+  pins: [J1.Pin_2, K1.COM]
+- name: /COM-2
+  pins: [J2.Pin_2, K2.COM]
+- name: /COM-3
+  pins: [J3.Pin_2, K3.COM]
+- name: /COM-4
+  pins: [J4.Pin_2, K4.COM]
+- name: /D+
+  pins: [R4.2, U2.UD+]
+- name: /D-
+  pins: [R5.2, U2.UD-]
+- name: /DN
+  pins: [R5.1, U3.IO2, USB1.DN1, USB1.DN2]
+- name: /DP
+  pins: [R4.1, U3.IO1, USB1.DP1, USB1.DP2]
+- name: /DTR
+  pins: [R7.2, U2.nDTR]
+- name: /IO_0
+  pins: [C9.2, Q1.C1, SW2.1, U4.IO0]
+- name: /IO_18
+  pins: [D6.K, U4.IO18]
+- name: /IO_19
+  pins: [D4.K, U4.IO19]
+- name: /IO_21
+  pins: [D2.K, U4.IO21]
+- name: /IO_5
+  pins: [D8.K, U4.IO5]
+- name: /NC-1
+  pins: [J1.Pin_3, K1.NC]
+- name: /NC-2
+  pins: [J2.Pin_3, K2.NC]
+- name: /NC-3
+  pins: [J3.Pin_3, K3.NC]
+- name: /NC-4
+  pins: [J4.Pin_3, K4.NC]
+- name: /NO-1
+  pins: [J1.Pin_1, K1.NO]
+- name: /NO-2
+  pins: [J2.Pin_1, K2.NO]
+- name: /NO-3
+  pins: [J3.Pin_1, K3.NO]
+- name: /NO-4
+  pins: [J4.Pin_1, K4.NO]
+- name: /RESET
+  pins: [C5.1, C8.2, Q1.C2, R8.2, SW1.1, U4.EN]
+- name: /RTS
+  pins: [R6.1, U2.nRTS]
+- name: /RX
+  pins: [U2.RXD, U4.TXD0/IO1]
+- name: /TX
+  pins: [U2.TXD, U4.RXD0/IO3]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.1
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.1
+  - C9.1
+  - D1.K
+  - Q2.E
+  - Q3.E
+  - Q4.E
+  - Q5.E
+  - R2.2
+  - R3.2
+  - SW1.2
+  - SW2.2
+  - U1.GND
+  - U2.GND
+  - U3.GND
+  - U4.GND@1
+  - U4.GND@15
+  - U4.GND@38
+  - U4.GND@39
+  - USB1.GND@1
+  - USB1.GND@12
+  - USB1.SHIELD@13
+- name: Net-(D1-A)
+  pins: [D1.A, R1.2]
+- name: Net-(D2-A)
+  pins: [D2.A, U5.2]
+- name: Net-(D3-A)
+  pins: [D3.A, K1.A2, Q2.C]
+- name: Net-(D4-A)
+  pins: [D4.A, U6.2]
+- name: Net-(D5-A)
+  pins: [D5.A, K2.A2, Q3.C]
+- name: Net-(D6-A)
+  pins: [D6.A, U7.2]
+- name: Net-(D7-A)
+  pins: [D7.A, K3.A2, Q4.C]
+- name: Net-(D8-A)
+  pins: [D8.A, U8.2]
+- name: Net-(D9-A)
+  pins: [D9.A, K4.A2, Q5.C]
+- name: Net-(Q1-B1)
+  pins: [Q1.B1, Q1.E2, R6.2]
+- name: Net-(Q1-B2)
+  pins: [Q1.B2, Q1.E1, R7.1]
+- name: Net-(Q2-B)
+  pins: [Q2.B, R10.2]
+- name: Net-(Q3-B)
+  pins: [Q3.B, R12.2]
+- name: Net-(Q4-B)
+  pins: [Q4.B, R14.2]
+- name: Net-(Q5-B)
+  pins: [Q5.B, R16.2]
+- name: Net-(R10-Pad1)
+  pins: [R10.1, U5.3]
+- name: Net-(R11-Pad1)
+  pins: [R11.1, U6.1]
+- name: Net-(R12-Pad1)
+  pins: [R12.1, U6.3]
+- name: Net-(R13-Pad1)
+  pins: [R13.1, U7.1]
+- name: Net-(R14-Pad1)
+  pins: [R14.1, U7.3]
+- name: Net-(R15-Pad1)
+  pins: [R15.1, U8.1]
+- name: Net-(R16-Pad1)
+  pins: [R16.1, U8.3]
+- name: Net-(R9-Pad1)
+  pins: [R9.1, U5.1]
+- name: Net-(USB1-CC1)
+  pins: [R2.1, USB1.CC1]
+- name: Net-(USB1-CC2)
+  pins: [R3.1, USB1.CC2]
+- name: VCC
+  pins: [F1.1, U3.VCC, USB1.VBUS@11, USB1.VBUS@2]
+positions:
+- ref: C1
+  x: 164.83
+  y: 85.47
+  rot: 90.0
+- ref: C2
+  x: 164.83
+  y: 89.66
+  rot: -90.0
+- ref: C3
+  x: 152.51
+  y: 75.69
+  rot: 180.0
+- ref: C4
+  x: 161.63
+  y: 85.09
+  rot: 180.0
+- ref: C5
+  x: 123.4
+  y: 80.51
+  rot: 180.0
+- ref: C6
+  x: 124.67
+  y: 72.26
+  rot: 90.0
+- ref: C7
+  x: 121.37
+  y: 72.28
+  rot: 90.0
+- ref: C8
+  x: 117.58
+  y: 79.35
+  rot: 90.0
+- ref: C9
+  x: 117.58
+  y: 84.7
+  rot: -90.0
+- ref: D1
+  x: 174.48
+  y: 90.04
+  rot: 180.0
+- ref: D2
+  x: 114.91
+  y: 105.66
+- ref: D3
+  x: 118.22
+  y: 109.09
+  rot: 180.0
+- ref: D4
+  x: 132.81
+  y: 105.66
+- ref: D5
+  x: 136.25
+  y: 109.09
+  rot: 180.0
+- ref: D6
+  x: 150.59
+  y: 105.66
+- ref: D7
+  x: 154.03
+  y: 109.09
+  rot: 180.0
+- ref: D8
+  x: 168.38
+  y: 105.66
+- ref: D9
+  x: 171.84
+  y: 109.09
+  rot: 180.0
+- ref: F1
+  x: 170.8
+  y: 86.48
+  rot: 180.0
+- ref: J1
+  x: 110.95
+  y: 139.66
+- ref: J2
+  x: 128.76
+  y: 139.66
+- ref: J3
+  x: 146.54
+  y: 139.66
+- ref: J4
+  x: 164.32
+  y: 139.66
+- ref: K1
+  x: 116.03
+  y: 122.17
+  rot: -90.0
+- ref: K2
+  x: 133.84
+  y: 122.17
+  rot: -90.0
+- ref: K3
+  x: 151.62
+  y: 122.17
+  rot: -90.0
+- ref: K4
+  x: 169.43
+  y: 122.17
+  rot: -90.0
+- ref: Q1
+  x: 109.07
+  y: 88.66
+  rot: 180.0
+- ref: Q2
+  x: 109.4
+  y: 109.03
+  rot: 180.0
+- ref: Q3
+  x: 127.43
+  y: 109.09
+  rot: 180.0
+- ref: Q4
+  x: 145.21
+  y: 109.09
+  rot: 180.0
+- ref: Q5
+  x: 163.05
+  y: 109.09
+  rot: 180.0
+- ref: R1
+  x: 170.29
+  y: 90.04
+- ref: R10
+  x: 120.12
+  y: 105.66
+  rot: 180.0
+- ref: R11
+  x: 132.71
+  y: 97.51
+- ref: R12
+  x: 138.04
+  y: 105.66
+  rot: 180.0
+- ref: R13
+  x: 150.48
+  y: 97.51
+- ref: R14
+  x: 155.81
+  y: 105.66
+  rot: 180.0
+- ref: R15
+  x: 168.26
+  y: 97.51
+- ref: R16
+  x: 173.59
+  y: 105.66
+  rot: 180.0
+- ref: R2
+  x: 170.84
+  y: 83.18
+  rot: -90.0
+- ref: R3
+  x: 170.84
+  y: 77.99
+  rot: 90.0
+- ref: R4
+  x: 161.8
+  y: 79.52
+  rot: 180.0
+- ref: R5
+  x: 161.8
+  y: 81.53
+  rot: 180.0
+- ref: R6
+  x: 113.76
+  y: 88.64
+  rot: 180.0
+- ref: R7
+  x: 113.77
+  y: 90.93
+- ref: R8
+  x: 123.79
+  y: 76.45
+- ref: R9
+  x: 114.92
+  y: 97.53
+- ref: SW1
+  x: 110.98
+  y: 76.78
+  rot: 180.0
+- ref: SW2
+  x: 110.98
+  y: 83.94
+  rot: 180.0
+- ref: U1
+  x: 158.99
+  y: 89.93
+  rot: 180.0
+- ref: U2
+  x: 153.32
+  y: 80.64
+  rot: -90.0
+- ref: U3
+  x: 166.91
+  y: 80.51
+  rot: -90.0
+- ref: U4
+  x: 136.25
+  y: 79.52
+- ref: U5
+  x: 118.09
+  y: 101.47
+- ref: U6
+  x: 135.87
+  y: 101.47
+- ref: U7
+  x: 153.65
+  y: 101.47
+- ref: U8
+  x: 171.43
+  y: 101.47
+- ref: USB1
+  x: 182.67
+  y: 80.77
+  rot: 90.0
+copper_pours:
+- net: +3.3V
+  layers: [F.Cu]
+- net: +5V
+  layers: [F.Cu]
+- net: /COM-1
+  layers: [F.Cu]
+- net: /COM-2
+  layers: [F.Cu]
+- net: /COM-3
+  layers: [F.Cu]
+- net: /COM-4
+  layers: [F.Cu]
+- net: /NC-1
+  layers: [F.Cu]
+- net: /NC-2
+  layers: [F.Cu]
+- net: /NC-3
+  layers: [F.Cu]
+- net: /NC-4
+  layers: [F.Cu]
+- net: /NO-1
+  layers: [F.Cu]
+- net: /NO-2
+  layers: [F.Cu]
+- net: /NO-3
+  layers: [F.Cu]
+- net: /NO-4
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu]
+- net: VCC
+  layers: [F.Cu]

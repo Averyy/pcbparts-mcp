@@ -1,0 +1,79 @@
+name: ESPresence
+slug: espresence
+source: JamieKaiRemkes/ESPresence
+format: kicad7
+description: '24GHz mmWave presence sensor: HLK-LD2410 radar module, ESP32-C3 SuperMini'
+tags: [led-driver, rf-sdr, sensors]
+key_ics: [ESP32-C3]
+outline:
+  width_mm: 40.64
+  height_mm: 50.8
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: D1
+  value: WS2812B
+  footprint: LED_WS2812B_PLCC4
+- ref: J1
+  value: 1x2 screw terminal
+  footprint: RHDRRA2W95P0X500
+  height: '12.8'
+  manufacturer: Wurth Elektronik
+  mpn: '691101710002'
+- ref: PS1
+  value: HLK-10M05
+  footprint: HLK-10M05
+  manufacturer: Hi-link
+  mpn: HLK-10M05
+  description: 10W Ultra-Compact Power Module
+- ref: U1
+  value: ESP32-C3_SUPERMINI
+  footprint: ESP32-C3_SUPERMINI
+  mpn: ESP32-C3 SuperMini
+  manufacturer: Espressif
+  description: Super tiny ESP32-C3 board
+- ref: U2
+  value: LD2410_
+  footprint: LD2410 (B)
+nets:
+- name: +5V
+  pins: [D1.VSS, PS1.+VO, U1.5V, U2.VCC_5-12v]
+- name: GND
+  pins: [D1.VDD, PS1.-VO, U1.GND, U2.GND]
+- name: Net-(PS1-Pad1)
+  pins: [J1.2, PS1.AC1]
+- name: Net-(PS1-Pad2)
+  pins: [J1.1, PS1.AC2]
+- name: Net-(U1-Pad7)
+  pins: [D1.DIN, U1.GPIO7]
+- name: RX
+  pins: [U1.GPIO3, U2.RX]
+- name: TX
+  pins: [U1.GPIO1, U2.TX]
+positions:
+- ref: D1
+  x: 71.12
+  y: 127.0
+  rot: -90.0
+  side: back
+- ref: J1
+  x: 71.12
+  y: 160.02
+  rot: -90.0
+- ref: PS1
+  x: 91.44
+  y: 144.78
+  rot: 90.0
+- ref: U1
+  x: 93.98
+  y: 137.16
+  rot: 90.0
+  side: back
+- ref: U2
+  x: 67.72
+  y: 154.94
+  rot: 90.0

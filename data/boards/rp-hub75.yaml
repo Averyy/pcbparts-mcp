@@ -1,0 +1,488 @@
+name: RP-HUB75
+slug: rp-hub75
+source: RoboticsBrno/RP-HUB75
+format: kicad9
+description: HUB75E LED matrix panel driver (RP2350), shift-register scan chain
+tags: [display]
+key_ics: [RP2350]
+outline:
+  width_mm: 45.0
+  height_mm: 52.0
+design_rules:
+  layers: 2
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.3mm
+  min_via: 0.45mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+  lcsc: C1525
+  decouples: U2
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  lcsc: C1525
+  decouples: U3
+- ref: C11
+  value: 4.7uF
+  footprint: 0805
+  lcsc: C1779
+  decouples: U3
+- ref: C12
+  value: 4.7uF
+  footprint: 0805
+  lcsc: C1779
+  decouples: U1
+- ref: C13
+  value: 4.7uF
+  footprint: 0805
+  lcsc: C1779
+  decouples: U1
+- ref: C15
+  value: 4.7uF
+  footprint: 0805
+  lcsc: C1779
+- ref: C16
+  value: 100nF
+  footprint: '0402'
+  lcsc: C1525
+- ref: C17
+  value: 100nF
+  footprint: '0402'
+  lcsc: C1525
+  decouples: U3
+- ref: C18
+  value: 10pF
+  footprint: '0402'
+  lcsc: C32949
+- ref: C19
+  value: 10pF
+  footprint: '0402'
+  lcsc: C32949
+- ref: C2
+  value: 100nF
+  footprint: '0402'
+  lcsc: C1525
+  decouples: U2
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+  lcsc: C1525
+  decouples: U2
+- ref: C4
+  value: 4.7uF
+  footprint: 0805
+  lcsc: C1779
+  decouples: U2
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  lcsc: C1525
+  decouples: U2
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  lcsc: C1525
+  decouples: U2
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  lcsc: C1525
+  decouples: U2
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+  lcsc: C1525
+  decouples: U2
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  lcsc: C1525
+  decouples: U2
+- ref: D1
+  value: LED
+  footprint: 0805
+  lcsc: C84256
+- ref: D2
+  value: LED
+  footprint: 0805
+  lcsc: C84256
+- ref: J1
+  value: 2x8 header
+  footprint: 2X8
+  lcsc: C30734
+- ref: J2
+  value: USB-C
+  footprint: USB-C
+  lcsc: C2988369
+  description: USB 2.0-only 16P Type-C Receptacle connector
+- ref: J3
+  value: 1x2 screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08
+  lcsc: C8465
+- ref: J5
+  value: USB-A
+  footprint: USB_A_Kycon_KUSBX-AS1N-B_Horizontal
+  lcsc: C2346
+  description: USB Type A connector
+- ref: J6
+  value: 1x10 header
+  footprint: JST_XH_S10B-XH-A-1
+  lcsc: C491718
+- ref: L1
+  value: 3.3uH
+  footprint: '1008'
+  lcsc: C337916
+- ref: R1
+  value: 33ohm
+  footprint: '0402'
+  lcsc: C25105
+- ref: R2
+  value: 5.1kohm
+  footprint: '0402'
+  lcsc: C25905
+  pulldown: J2.CC1
+- ref: R3
+  value: 5.1kohm
+  footprint: '0402'
+  lcsc: C25905
+  pulldown: J2.CC2
+- ref: R4
+  value: 1kohm
+  footprint: '0402'
+  lcsc: C11702
+- ref: R5
+  value: 1kohm
+  footprint: '0402'
+  lcsc: C11702
+  pullup: D1.A
+- ref: R6
+  value: 1kohm
+  footprint: '0402'
+  lcsc: C11702
+- ref: SW1
+  value: tactile switch
+  footprint: SW_SPST_TS-1088-xR025
+  lcsc: C720477
+- ref: U1
+  value: AMS1117-3.3
+  footprint: SOT-223-3_TabPin2
+  lcsc: C6186
+- ref: U2
+  value: RP2350_60QFN
+  footprint: RP2350-QFN-60-1EP
+  lcsc: C42411118
+- ref: U3
+  value: ZD25WQ80CTIGT
+  footprint: SOIC-8
+  lcsc: C7525143
+- ref: Y1
+  value: TXM12M0004322CBCDO00T
+  footprint: SMD3225
+  lcsc: C362368
+nets:
+- name: +1V1
+  pins:
+  - C1.1
+  - C2.1
+  - C3.1
+  - C4.1
+  - L1.1
+  - U2.DVDD@23
+  - U2.DVDD@39
+  - U2.DVDD@6
+  - U2.VREG_FB
+- name: +3V3
+  pins:
+  - C10.1
+  - C11.1
+  - C13.1
+  - C17.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - R1.2
+  - R5.1
+  - U1.VO@2
+  - U2.ADC_AVDD
+  - U2.IOVDD@1
+  - U2.IOVDD@11
+  - U2.IOVDD@20
+  - U2.IOVDD@30
+  - U2.IOVDD@38
+  - U2.IOVDD@45
+  - U2.QSPI_IOVDD
+  - U2.USB_OTP_VDD
+  - U2.VREG_VIN
+  - U3.VCC
+- name: +5V
+  pins:
+  - C12.1
+  - C15.1
+  - C16.1
+  - J2.VBUS@A4
+  - J2.VBUS@A9
+  - J2.VBUS@B4
+  - J2.VBUS@B9
+  - J3.Pin_2
+  - J5.VBUS
+  - J6.Pin_2
+  - J6.Pin_3
+  - U1.VI
+- name: /QSPI_SCLK
+  pins: [U2.QSPI_SCLK, U3.CLK]
+- name: /QSPI_SD0
+  pins: [U2.QSPI_SD0, U3.DI(IO0)]
+- name: /QSPI_SD1
+  pins: [U2.QSPI_SD1, U3.DO(IO1)]
+- name: /QSPI_SD2
+  pins: [U2.QSPI_SD2, U3.IO2]
+- name: /QSPI_SD3
+  pins: [U2.QSPI_SD3, U3.IO3]
+- name: /QSPI_SS
+  pins: [SW1.2, U2.QSPI_SS, U3.nCS]
+- name: /XIN
+  pins: [C18.1, U2.XIN, Y1.1]
+- name: /XOUT
+  pins: [R4.1, U2.XOUT]
+- name: A
+  pins: [J1.Pin_9, U2.GPIO7]
+- name: B
+  pins: [J1.Pin_10, U2.GPIO8]
+- name: B1
+  pins: [J1.Pin_3, U2.GPIO2]
+- name: B2
+  pins: [J1.Pin_7, U2.GPIO5]
+- name: C
+  pins: [J1.Pin_11, U2.GPIO9]
+- name: CLK
+  pins: [J1.Pin_13, U2.GPIO11]
+- name: D
+  pins: [J1.Pin_12, U2.GPIO10]
+- name: D+
+  pins: [J2.D+@A6, J2.D+@B6, J5.D+, U2.USB_DP]
+- name: D-
+  pins: [J2.D-@A7, J2.D-@B7, J5.D-, U2.USB_DM]
+- name: E
+  pins: [J1.Pin_8, U2.GPIO6]
+- name: G1
+  pins: [J1.Pin_2, U2.GPIO1]
+- name: G2
+  pins: [J1.Pin_6, U2.GPIO4]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.K
+  - D2.K
+  - J1.Pin_16
+  - J1.Pin_4
+  - J2.GND@A1
+  - J2.GND@A12
+  - J2.GND@B1
+  - J2.GND@B12
+  - J2.SHIELD@S1
+  - J3.Pin_1
+  - J5.GND
+  - J5.Shield@5
+  - J6.Pin_1
+  - J6.Pin_8
+  - R2.2
+  - R3.2
+  - SW1.1
+  - U1.GND
+  - U2.GND@61
+  - U2.VREG_PGND
+  - U3.GND
+  - Y1.2
+  - Y1.4
+- name: LAT
+  pins: [J1.Pin_14, U2.GPIO12]
+- name: Net-(C19-Pad1)
+  pins: [C19.1, R4.2, Y1.3]
+- name: Net-(D1-A)
+  pins: [D1.A, R5.2]
+- name: Net-(D2-A)
+  pins: [D2.A, R6.2]
+- name: Net-(J2-CC1)
+  pins: [J2.CC1, R2.1]
+- name: Net-(J2-CC2)
+  pins: [J2.CC2, R3.1]
+- name: Net-(U2-VREG_AVDD)
+  pins: [R1.1, U2.VREG_AVDD]
+- name: Net-(U2-VREG_LX)
+  pins: [L1.2, U2.VREG_LX]
+- name: OE
+  pins: [J1.Pin_15, U2.GPIO13]
+- name: R1
+  pins: [J1.Pin_1, U2.GPIO0]
+- name: R2
+  pins: [J1.Pin_5, U2.GPIO3]
+- name: SPI_CK/D3
+  pins: [J6.Pin_7, U2.GPIO22]
+- name: SPI_CS/D2
+  pins: [J6.Pin_6, U2.GPIO21]
+- name: SPI_EX/CK
+  pins: [J6.Pin_10, U2.GPIO24]
+- name: SPI_RX/D1
+  pins: [J6.Pin_5, U2.GPIO20]
+- name: SPI_TX/CS
+  pins: [J6.Pin_9, U2.GPIO23]
+- name: SPI_TX/D0
+  pins: [J6.Pin_4, U2.GPIO19]
+- name: STATUS
+  pins: [R6.1, U2.GPIO18]
+positions:
+- ref: C1
+  x: 206.2
+  y: 99.0
+- ref: C10
+  x: 195.6
+  y: 93.1
+  rot: 135.0
+- ref: C11
+  x: 194.2
+  y: 94.1
+  rot: 135.0
+- ref: C12
+  x: 211.0
+  y: 95.65
+  rot: -90.0
+- ref: C13
+  x: 203.7
+  y: 86.3
+  rot: -90.0
+- ref: C15
+  x: 204.5
+  y: 111.6
+  rot: 90.0
+- ref: C16
+  x: 202.9
+  y: 111.9
+  rot: 90.0
+- ref: C17
+  x: 202.1
+  y: 85.72
+  rot: -90.0
+- ref: C18
+  x: 197.2
+  y: 108.8
+  rot: 90.0
+- ref: C19
+  x: 202.8
+  y: 108.8
+  rot: -90.0
+- ref: C2
+  x: 193.9
+  y: 98.4
+  rot: 135.0
+- ref: C3
+  x: 202.0
+  y: 106.4
+- ref: C4
+  x: 202.1
+  y: 90.6
+- ref: C5
+  x: 197.26
+  y: 105.54
+  rot: -135.0
+- ref: C6
+  x: 206.2
+  y: 103.5
+- ref: C7
+  x: 192.4
+  y: 100.5
+  rot: 135.0
+- ref: C8
+  x: 206.2
+  y: 97.4
+- ref: C9
+  x: 206.2
+  y: 100.0
+- ref: D1
+  x: 208.5
+  y: 106.2
+  rot: 90.0
+- ref: D2
+  x: 210.7
+  y: 106.2
+  rot: 90.0
+- ref: J1
+  x: 180.31
+  y: 83.62
+  rot: 180.0
+  side: back
+- ref: J2
+  x: 200.0
+  y: 119.0
+- ref: J3
+  x: 219.87
+  y: 119.05
+  rot: 90.0
+- ref: J5
+  x: 183.5
+  y: 109.77
+- ref: J6
+  x: 210.25
+  y: 76.35
+  rot: 180.0
+- ref: L1
+  x: 202.1
+  y: 93.0
+- ref: R1
+  x: 206.2
+  y: 96.4
+- ref: R2
+  x: 206.8
+  y: 120.4
+- ref: R3
+  x: 206.8
+  y: 119.2
+- ref: R4
+  x: 200.0
+  y: 106.4
+- ref: R5
+  x: 206.2
+  y: 104.5
+- ref: R6
+  x: 206.2
+  y: 105.5
+- ref: SW1
+  x: 181.6
+  y: 79.3
+- ref: U1
+  x: 208.5
+  y: 89.0
+  rot: 90.0
+- ref: U2
+  x: 200.0
+  y: 100.0
+- ref: U3
+  x: 195.3
+  y: 87.12
+- ref: Y1
+  x: 200.0
+  y: 108.8
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

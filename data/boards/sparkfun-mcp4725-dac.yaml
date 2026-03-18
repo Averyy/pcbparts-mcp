@@ -1,0 +1,107 @@
+name: SparkFun MCP4725 DAC
+slug: sparkfun-mcp4725-dac
+source: sparkfun/MCP4725_Breakout
+format: eagle
+description: 12-bit I2C DAC with EEPROM, address select
+tags: [adc-dac, audio]
+key_ics: [MCP4725]
+outline:
+  width_mm: 15.24
+  height_mm: 15.24
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 8mil
+  min_drill: 15mil
+  min_via: 10mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: JP5
+  value: 1x4 header
+  footprint: 1X04
+- ref: JP6
+  value: 1x2 header
+  footprint: 1X02
+- ref: R1
+  value: 4.7kohm
+  footprint: '0603'
+- ref: R2
+  value: 4.7kohm
+  footprint: '0603'
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  pulldown: SJ2.3
+- ref: SJ1
+  value: solder jumper (NC)
+  footprint: SJ-3
+- ref: SJ2
+  value: solder jumper (NC)
+  footprint: SJ-3
+- ref: U1
+  value: MCP4725
+  footprint: SOT-23-6
+  prod_id: IC-08886
+  description: Microchip 12-bit I2C DAC, SOT23-6
+nets:
+- name: AO
+  pins: [SJ2.2, U1.AO]
+- name: GND
+  pins: [C1.2, JP5.4, JP6.1, R3.1, U1.VSS]
+- name: N$1
+  pins: [R2.2, SJ1.1]
+- name: N$2
+  pins: [R1.2, SJ1.3]
+- name: N$4
+  pins: [R3.2, SJ2.3]
+- name: SCL
+  pins: [JP5.1, R1.1, U1.SCL]
+- name: SDA
+  pins: [JP5.2, R2.1, U1.SDA]
+- name: VCC
+  pins: [C1.1, JP5.3, SJ1.2, SJ2.1, U1.VDD]
+- name: VOUT
+  pins: [JP6.2, U1.VOUT]
+positions:
+- ref: C1
+  x: 9.53
+  y: 12.06
+  rot: 90.0
+- ref: JP5
+  x: 1.27
+  y: 8.89
+  rot: 270.0
+- ref: JP6
+  x: 1.27
+  y: 11.43
+  rot: 90.0
+- ref: R1
+  x: 7.62
+  y: 12.06
+  rot: 270.0
+- ref: R2
+  x: 5.71
+  y: 12.06
+  rot: 90.0
+- ref: R3
+  x: 9.53
+  y: 3.81
+  rot: 90.0
+- ref: SJ1
+  x: 7.62
+  y: 13.34
+  rot: 180.0
+- ref: SJ2
+  x: 7.62
+  y: 3.17
+  rot: 90.0
+- ref: U1
+  x: 7.62
+  y: 7.62
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

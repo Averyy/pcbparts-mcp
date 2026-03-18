@@ -1,0 +1,1130 @@
+name: moteus c1
+slug: moteus-c1
+source: mjbots/moteus
+format: kicad7
+description: STM32G474 FOC robot servo controller, DRV8323S gate driver
+tags: [can-bus, inverter, motor-control, pwm-servo, robotics]
+key_ics: [STM32G474, DRV8323S]
+outline:
+  width_mm: 38.0
+  height_mm: 38.0
+design_rules:
+  layers: 4
+  min_trace: 0.127mm
+  min_clearance: 0.127mm
+  min_drill: 0.254mm
+  min_via: 0.381mm
+components:
+- ref: AUX2
+  value: JST GH 7-pin
+  footprint: JST_SM07B-GHS-TB(LF)(SN)
+  manufacturer: JST
+  mpn: SM07B-GHS-TB(LF)(SN)
+- ref: C1
+  value: 1uF
+  footprint: 0805
+  mpn: GCM21BC72A105KE36L
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U1
+- ref: C10
+  value: 1uF
+  footprint: '0402'
+  mpn: MF-CAP-0402-1uF
+  decouples: U3
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-0.1uF
+  decouples: U3
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-0.1uF
+  decouples: U3
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-0.1uF
+  decouples: U3
+- ref: C14
+  value: 1uF
+  footprint: '0603'
+  mpn: C1608X7R1E105K080AE
+  manufacturer: TDK
+  voltage: 25V
+- ref: C15
+  value: 100nF
+  footprint: '0603'
+  mpn: GCJ188R72A104KA01D
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U4
+- ref: C16
+  value: 47nF
+  footprint: '0603'
+  mpn: C0603X473K1RAC7867
+  manufacturer: KEMET
+  voltage: 100V
+- ref: C17
+  value: 1uF
+  footprint: '0402'
+  mpn: MF-CAP-0402-1uF
+- ref: C18
+  value: 1uF
+  footprint: '0603'
+  mpn: MF-CAP-0603-1uF
+  decouples: U4
+- ref: C2
+  value: 22uF
+  footprint: '1206'
+  mpn: GRM31CR71A226KE15L
+  manufacturer: MURATA
+  decouples: U2
+- ref: C20
+  value: 100nF
+  footprint: '1206'
+  mpn: 12061C104KAT2A
+  manufacturer: KYOCERA AVX
+  voltage: 100V
+- ref: C23
+  value: 1nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-1nF
+- ref: C24
+  value: 1nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-1nF
+- ref: C25
+  value: 1nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-1nF
+- ref: C26
+  value: 100nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-0.1uF
+  decouples: U5
+- ref: C27
+  value: 100nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-0.1uF
+  decouples: U5
+- ref: C28
+  value: 100nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-0.1uF
+- ref: C29
+  value: 100nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-0.1uF
+- ref: C3
+  value: 1uF
+  footprint: '0402'
+  mpn: MF-CAP-0402-1uF
+  decouples: U2
+- ref: C30
+  value: 100nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-0.1uF
+- ref: C31
+  value: 1uF
+  footprint: '0402'
+  mpn: MF-CAP-0402-1uF
+- ref: C32
+  value: 1uF
+  footprint: '0402'
+  mpn: MF-CAP-0402-1uF
+  decouples: U3
+- ref: C37
+  value: 100nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-0.1uF
+  decouples: U6
+- ref: C38
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U1
+- ref: C39
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+- ref: C4
+  value: 1uF
+  footprint: '0402'
+  mpn: MF-CAP-0402-1uF
+  decouples: U2
+- ref: C40
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U1
+- ref: C41
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U1
+- ref: C42
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+- ref: C43
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U4
+- ref: C44
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U4
+- ref: C45
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U4
+- ref: C46
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U4
+- ref: C47
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U4
+- ref: C48
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U1
+- ref: C49
+  value: 4.7uF
+  footprint: '1206'
+  mpn: GRJ31CC72A475KE01K
+  manufacturer: MURATA
+  voltage: 100V
+  decouples: U1
+- ref: C5
+  value: 1uF
+  footprint: '0603'
+  mpn: MF-CAP-0603-1uF
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-0.1uF
+- ref: C7
+  value: 10uF
+  footprint: '1206'
+  mpn: MF-CAP-1206-10uF
+  decouples: U3
+- ref: C8
+  value: 4.7uF
+  footprint: '0603'
+  mpn: CL10A475KP8NNNC
+  decouples: U3
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  mpn: MF-CAP-0402-0.1uF
+  decouples: U3
+- ref: CAN1
+  value: JST PH 3-pin
+  footprint: JST_S3B-PH-SM4-TB(LF)(SN)
+  manufacturer: JST
+  mpn: S3B-PH-SM4-TB(LF)(SN)
+- ref: D1
+  value: SMBJ48D-M3/I
+  footprint: SMB
+  mpn: SMBJ48D-M3/I
+  manufacturer: VISHAY
+- ref: D11
+  value: BAT41KFILM
+  footprint: SOD-523_STM
+  mpn: BAT41KFILM
+  manufacturer: ST
+- ref: D12
+  value: BAT41KFILM
+  footprint: SOD-523_STM
+  mpn: BAT41KFILM
+  manufacturer: ST
+- ref: D13
+  value: LED
+  footprint: '0603'
+  mpn: MF-LED-0603-RED
+- ref: D14
+  value: LED
+  footprint: '0603'
+  mpn: MF-LED-0603-GREEN
+- ref: D7
+  value: BAT41KFILM
+  footprint: SOD-523_STM
+  mpn: BAT41KFILM
+  manufacturer: ST
+- ref: J1
+  value: XT30PW-M
+  footprint: AMASS_XT30PW-M
+  manufacturer: AMASS
+  mpn: XT30PW-M
+- ref: L1
+  value: 47uH
+  footprint: IND_4018-WE-LQS_WRE
+  mpn: '74404042470'
+  manufacturer: Wurth Electronics
+- ref: Q3
+  value: TPN19008QM_LQ
+  footprint: TSON Advance_TOS
+  mpn: TPN19008QM,LQ
+  manufacturer: TOSHIBA
+- ref: Q4
+  value: TPN19008QM_LQ
+  footprint: TSON Advance_TOS
+  mpn: TPN19008QM,LQ
+  manufacturer: TOSHIBA
+- ref: R1
+  value: 0ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-0
+- ref: R13
+  value: 22ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-22
+- ref: R14
+  value: 22ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-22
+- ref: R15
+  value: 22ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-22
+- ref: R17
+  value: 100kohm
+  footprint: '0402'
+  mpn: RC0402FR-07100KL
+  manufacturer: YAGEO
+  tolerance: 1%
+  pullup: /VT Sense/VBAT_SENSE
+- ref: R18
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402FR-0710KL
+  manufacturer: YAGEO
+  tolerance: 1%
+  pulldown: /VT Sense/VTEMP_MOT
+- ref: R19
+  value: 4.7kohm
+  footprint: '0402'
+  mpn: RC0402FR-074K7L
+  manufacturer: YAGEO
+  tolerance: 1%
+  pulldown: /VT Sense/VBAT_SENSE
+- ref: R2
+  value: 2kohm
+  footprint: '0402'
+  mpn: MF-RES-0402-2K
+  pullup: /Gate Driver/DRV8323_MISO
+- ref: R20
+  value: 47kohm
+  footprint: '0402'
+  mpn: NCP15WB473F03RC
+  manufacturer: MURATA
+  pullup: /VT Sense/VTEMP_FET
+- ref: R21
+  value: 10kohm
+  footprint: '0402'
+  mpn: RC0402FR-0710KL
+  manufacturer: YAGEO
+  tolerance: 1%
+  pulldown: /VT Sense/VTEMP_FET
+- ref: R22
+  value: 2kohm
+  footprint: '0402'
+  mpn: MF-RES-0402-2K
+- ref: R23
+  value: 2kohm
+  footprint: '0402'
+  mpn: MF-RES-0402-2K
+- ref: R24
+  value: 100ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-100
+- ref: R25
+  value: 100ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-100
+- ref: R26
+  value: 100ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-100
+- ref: R27
+  value: 100ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-100
+- ref: R28
+  value: 0ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-0
+- ref: R29
+  value: 560ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-560
+- ref: R3
+  value: 2kohm
+  footprint: '0402'
+  mpn: MF-RES-0402-2K
+  pullup: /Gate Driver/DRV8323_FAULT
+- ref: R30
+  value: 560ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-560
+- ref: R31
+  value: 2kohm
+  footprint: '0402'
+  mpn: MF-RES-0402-2K
+  pulldown: U3.PB10
+- ref: R33
+  value: 100kohm
+  footprint: '0402'
+  mpn: RC0402FR-07100KL
+  pulldown: /LED Sense/DAC
+- ref: R34
+  value: 100ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-100
+- ref: R35
+  value: 100ohm
+  footprint: '0402'
+  mpn: MF-RES-0402-100
+- ref: R9
+  value: 2mohm
+  footprint: 0805
+  mpn: CSSH0805FT2L00
+  manufacturer: STACKPOLE
+- ref: SWD1
+  value: JST ZR 6-pin
+  footprint: JST_S6B-ZR-SM4A-TF(LF)(SN)
+  manufacturer: JST
+  mpn: S6B-ZR-SM4A-TF(LF)(SN)
+- ref: U1
+  value: MAX15062BATA+T
+  footprint: 21-0487A_MXM
+  mpn: MAX15062BATA+T
+  manufacturer: MAXIM
+- ref: U2
+  value: TLV70233PDBVR
+  footprint: SOT-23-5
+  mpn: TLV70233PDBVR
+  manufacturer: TI
+- ref: U3
+  value: STM32G474CEU6
+  footprint: UFQFPN-48
+  mpn: STM32G474CEU6
+  manufacturer: ST
+- ref: U4
+  value: DRV8323SRTAR
+  footprint: RTA0040B
+  mpn: DRV8323SRTAR
+  manufacturer: TI
+- ref: U5
+  value: TCAN1057AEV-Q1
+  footprint: SOIC-8
+  mpn: TCAN1057AEVDRQ1
+  manufacturer: TI
+- ref: U6
+  value: AS5047P
+  footprint: TSSOP14_OSM
+  mpn: AS5047P-ATSM
+  manufacturer: OSRAM
+nets:
+- name: +3V
+  pins:
+  - AUX2.2
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C18.2
+  - C26.1
+  - C32.1
+  - C37.1
+  - C4.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - R2.1
+  - R20.1
+  - R28.2
+  - R29.1
+  - R3.1
+  - R30.1
+  - SWD1.6
+  - U2.OUT
+  - U3.VBAT
+  - U3.VDD@23
+  - U3.VDD@35
+  - U3.VDD@48
+  - U3.VDDA
+  - U3.VREF+
+  - U4.VREF
+  - U5.VIO
+  - U6.VDD3V
+- name: +5V
+  pins:
+  - AUX2.1
+  - C2.1
+  - C27.1
+  - C3.1
+  - C31.1
+  - L1.1
+  - U1.FB/VOUT
+  - U2.EN
+  - U2.IN
+  - U5.VCC
+- name: /CAN/CAN_N
+  pins: [CAN1.2, U5.CANL]
+- name: /CAN/CAN_P
+  pins: [CAN1.1, U5.CANH]
+- name: /CAN/CAN_RX
+  pins: [U3.PB5, U5.RXD]
+- name: /CAN/CAN_TX
+  pins: [U3.PB6, U5.TXD]
+- name: /Current Sense/CUR1
+  pins: [R13.1, U4.SOC]
+- name: /Current Sense/CUR2
+  pins: [R14.1, U4.SOB]
+- name: /Current Sense/CUR3
+  pins: [R15.1, U4.SOA]
+- name: /Current Sense/FCUR1
+  pins: [C23.1, R13.2, U3.PA3]
+- name: /Current Sense/FCUR2
+  pins: [C24.1, R14.2, U3.PA6]
+- name: /Current Sense/FCUR3
+  pins: [C25.1, R15.2, U3.PB1]
+- name: /Gate Driver/DRV8323_CS
+  pins: [U3.PB0, U4.GAIN_SCS_N]
+- name: /Gate Driver/DRV8323_FAULT
+  pins: [R3.2, U3.PB13, U4.FAULT_N]
+- name: /Gate Driver/DRV8323_MISO
+  pins: [R2.2, U3.PC11, U4.MODE_SDO]
+- name: /Gate Driver/DRV8323_MOSI
+  pins: [U3.PC13, U4.IDRIVE_SDI]
+- name: /Gate Driver/DRV8323_SCLK
+  pins: [U3.PC10, U4.VDS_SCLK]
+- name: /Gate Driver/GHB
+  pins: [Q3.GATE, U4.GHB]
+- name: /Gate Driver/GLB
+  pins: [D7.1, Q4.GATE, U4.GLB]
+- name: /Gate Driver/MOTOR1
+  pins: [U3.PA0, U4.INHA]
+- name: /Gate Driver/MOTOR2
+  pins: [U3.PA1, U4.INHB]
+- name: /Gate Driver/MOTOR3
+  pins: [U3.PA2, U4.INHC]
+- name: /Gate Driver/MOTOR_ENABLE
+  pins: [U3.PC14-OSC32_IN, U4.ENABLE]
+- name: /Gate Driver/MOTOR_HIZ
+  pins: [U3.PC15-OSC32_OUT, U4.INLA, U4.INLB, U4.INLC]
+- name: /H Bridge B/OUTX
+  pins:
+  - Q3.SOURCE@1
+  - Q3.SOURCE@2
+  - Q3.SOURCE@3
+  - Q4.DRAIN@5
+  - Q4.DRAIN@6
+  - Q4.DRAIN@7
+  - Q4.DRAIN@8
+  - U4.SHB
+- name: /H Bridge B/SPX_Q
+  pins: [C20.2, Q4.SOURCE@1, Q4.SOURCE@2, Q4.SOURCE@3, R9.1]
+- name: /LED Sense/DAC
+  pins: [R33.1, U3.PA4]
+- name: /LED Sense/LED1
+  pins: [D13.K, U3.PB15]
+- name: /LED Sense/LED2
+  pins: [D14.K, U3.PC6]
+- name: /VT Sense/VBAT_SENSE
+  pins: [C29.1, R17.2, R19.1, U3.PA9]
+- name: /VT Sense/VTEMP_FET
+  pins: [C30.1, R20.2, R21.1, U3.PB12]
+- name: /VT Sense/VTEMP_MOT
+  pins: [C28.1, R18.1, U3.PA8]
+- name: /aux1/AS5047_CS
+  pins: [U3.PB2, U6.CSn]
+- name: /aux1/AUX1_A
+  pins: [U3.PA5, U6.CLK]
+- name: /aux1/AUX1_B
+  pins: [U3.PB4, U6.MISO]
+- name: /aux1/AUX1_C
+  pins: [U3.PA7, U6.MOSI]
+- name: /aux1/AUX1_D
+  pins: [R34.2, U3.PA15]
+- name: /aux1/AUX1_E
+  pins: [R35.2, U3.PB3, U3.PB9]
+- name: /aux2/AUX2P_A
+  pins: [AUX2.3, R24.1]
+- name: /aux2/AUX2P_B
+  pins: [AUX2.4, R25.1]
+- name: /aux2/AUX2P_C
+  pins: [AUX2.5, R26.1]
+- name: /aux2/AUX2P_D
+  pins: [AUX2.6, R27.1]
+- name: /aux2/AUX2_A
+  pins: [R24.2, U3.PF1-OSC_OUT]
+- name: /aux2/AUX2_B
+  pins: [R22.2, R25.2, U3.PA10, U3.PF0-OSC_IN]
+- name: /aux2/AUX2_C
+  pins: [R23.2, R26.2, U3.PA11, U3.PC4]
+- name: /aux2/AUX2_D
+  pins: [R27.2, U3.PB7]
+- name: /aux2/AUX2_I2C_PULLUP
+  pins: [D11.2, D12.2, U3.PA12]
+- name: /stm32g4/NRST
+  pins: [C6.1, SWD1.2, U3.PG10-NRST]
+- name: /stm32g4/SWCLK
+  pins: [SWD1.5, U3.PA14]
+- name: /stm32g4/SWDIO
+  pins: [SWD1.3, U3.PA13]
+- name: GND
+  pins:
+  - AUX2.7
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C17.1
+  - C18.1
+  - C2.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.2
+  - C27.2
+  - C28.2
+  - C29.2
+  - C3.2
+  - C30.2
+  - C31.2
+  - C32.2
+  - C37.2
+  - C4.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - CAN1.3
+  - R1.2
+  - R18.2
+  - R19.2
+  - R21.2
+  - R31.2
+  - R33.2
+  - SWD1.4
+  - U1.GND
+  - U2.GND
+  - U3.EPAD
+  - U4.AGND
+  - U5.GND
+  - U5.STB
+  - U6.GND
+  - U6.TEST
+- name: GNDPWR
+  pins:
+  - C1.2
+  - C15.1
+  - C38.2
+  - C39.2
+  - C40.2
+  - C41.2
+  - C42.2
+  - C43.2
+  - C44.2
+  - C45.2
+  - C46.2
+  - C47.2
+  - C48.2
+  - C49.2
+  - C5.2
+  - D1.A2
+  - D7.2
+  - J1.N
+  - R9.2
+  - U4.PAD
+  - U4.PGND
+- name: Net-(D11-Pad1)
+  pins: [D11.1, R22.1]
+- name: Net-(D12-Pad1)
+  pins: [D12.1, R23.1]
+- name: Net-(D13-A)
+  pins: [D13.A, R29.2]
+- name: Net-(D14-A)
+  pins: [D14.A, R30.2]
+- name: Net-(U1-LX)
+  pins: [L1.2, U1.LX]
+- name: Net-(U1-MODE)
+  pins: [R1.1, U1.MODE]
+- name: Net-(U1-VCC)
+  pins: [C5.1, U1.VCC]
+- name: Net-(U3A-PB10)
+  pins: [R31.1, U3.PB10]
+- name: Net-(U4-CPH)
+  pins: [C16.2, U4.CPH]
+- name: Net-(U4-CPL)
+  pins: [C16.1, U4.CPL]
+- name: Net-(U4-DVDD)
+  pins: [C17.2, U4.DVDD]
+- name: Net-(U4-VCP)
+  pins: [C14.2, U4.VCP]
+- name: Net-(U6-VDD)
+  pins: [R28.1, U6.VDD]
+- name: V+
+  pins:
+  - C1.1
+  - C14.1
+  - C15.2
+  - C20.1
+  - C38.1
+  - C39.1
+  - C40.1
+  - C41.1
+  - C42.1
+  - C43.1
+  - C44.1
+  - C45.1
+  - C46.1
+  - C47.1
+  - C48.1
+  - C49.1
+  - D1.A1
+  - J1.P
+  - Q3.DRAIN@5
+  - Q3.DRAIN@6
+  - Q3.DRAIN@7
+  - Q3.DRAIN@8
+  - R17.1
+  - U1.EN/UVLO
+  - U1.VIN
+  - U4.VDRAIN
+  - U4.VM
+positions:
+- ref: AUX2
+  x: 166.0
+  y: 106.3
+  rot: 90.0
+- ref: C1
+  x: 133.0
+  y: 97.1
+  rot: -90.0
+  side: back
+- ref: C10
+  x: 161.03
+  y: 108.59
+- ref: C11
+  x: 152.86
+  y: 109.59
+- ref: C12
+  x: 158.72
+  y: 115.53
+  rot: -45.0
+  side: back
+- ref: C13
+  x: 161.03
+  y: 109.51
+  rot: 180.0
+- ref: C14
+  x: 156.85
+  y: 99.55
+  rot: -45.0
+- ref: C15
+  x: 155.45
+  y: 100.15
+  rot: 45.0
+  side: back
+- ref: C16
+  x: 157.7
+  y: 102.16
+  rot: 45.0
+- ref: C17
+  x: 152.14
+  y: 105.42
+  side: back
+- ref: C18
+  x: 149.55
+  y: 104.4
+  rot: 135.0
+  side: back
+- ref: C2
+  x: 138.6
+  y: 102.7
+  rot: 90.0
+  side: back
+- ref: C20
+  x: 149.6
+  y: 91.95
+- ref: C23
+  x: 145.35
+  y: 102.35
+  rot: 135.0
+  side: back
+- ref: C24
+  x: 148.45
+  y: 111.01
+  rot: -90.0
+  side: back
+- ref: C25
+  x: 149.45
+  y: 110.9
+  rot: -90.0
+  side: back
+- ref: C26
+  x: 139.65
+  y: 109.65
+  rot: 90.0
+  side: back
+- ref: C27
+  x: 142.85
+  y: 116.95
+  side: back
+- ref: C28
+  x: 133.0
+  y: 94.05
+- ref: C29
+  x: 161.75
+  y: 104.33
+  rot: 180.0
+- ref: C3
+  x: 138.63
+  y: 105.55
+  side: back
+- ref: C30
+  x: 163.0
+  y: 100.6
+  rot: 180.0
+- ref: C31
+  x: 165.88
+  y: 110.88
+  side: back
+- ref: C32
+  x: 165.86
+  y: 109.28
+  side: back
+- ref: C37
+  x: 145.63
+  y: 98.42
+  rot: 90.0
+  side: back
+- ref: C38
+  x: 142.7
+  y: 89.0
+  rot: -90.0
+  side: back
+- ref: C39
+  x: 165.37
+  y: 89.6
+  rot: -90.0
+- ref: C4
+  x: 132.6
+  y: 107.0
+  rot: -90.0
+  side: back
+- ref: C40
+  x: 135.3
+  y: 90.85
+  rot: -90.0
+- ref: C41
+  x: 140.1
+  y: 89.0
+  rot: -90.0
+  side: back
+- ref: C42
+  x: 161.45
+  y: 89.0
+  rot: -90.0
+  side: back
+- ref: C43
+  x: 159.15
+  y: 89.0
+  rot: -90.0
+  side: back
+- ref: C44
+  x: 156.85
+  y: 89.0
+  rot: -90.0
+  side: back
+- ref: C45
+  x: 152.75
+  y: 89.0
+  rot: -90.0
+  side: back
+- ref: C46
+  x: 150.45
+  y: 89.0
+  rot: -90.0
+  side: back
+- ref: C47
+  x: 148.15
+  y: 89.0
+  rot: -90.0
+  side: back
+- ref: C48
+  x: 145.4
+  y: 89.0
+  rot: -90.0
+  side: back
+- ref: C49
+  x: 137.45
+  y: 89.0
+  rot: -90.0
+  side: back
+- ref: C5
+  x: 136.0
+  y: 95.6
+  side: back
+- ref: C6
+  x: 135.65
+  y: 94.58
+  rot: 180.0
+- ref: C7
+  x: 163.0
+  y: 100.9
+  side: back
+- ref: C8
+  x: 158.6
+  y: 108.52
+  rot: 180.0
+- ref: C9
+  x: 161.03
+  y: 107.67
+- ref: CAN1
+  x: 157.3
+  y: 111.25
+  rot: 180.0
+- ref: D1
+  x: 142.1
+  y: 100.25
+  rot: -90.0
+  side: back
+- ref: D11
+  x: 167.78
+  y: 106.0
+  rot: 90.0
+  side: back
+- ref: D12
+  x: 167.8
+  y: 103.25
+  rot: 90.0
+  side: back
+- ref: D13
+  x: 133.4
+  y: 111.9
+  rot: 180.0
+- ref: D14
+  x: 136.8
+  y: 111.9
+- ref: D7
+  x: 148.5
+  y: 94.55
+  rot: 180.0
+- ref: J1
+  x: 143.93
+  y: 116.0
+  rot: 180.0
+- ref: L1
+  x: 134.9
+  y: 102.4
+  rot: 90.0
+  side: back
+- ref: Q3
+  x: 148.47
+  y: 88.5
+  rot: -90.0
+- ref: Q4
+  x: 152.3
+  y: 88.5
+  rot: 90.0
+- ref: R1
+  x: 137.4
+  y: 98.7
+  rot: 90.0
+  side: back
+- ref: R13
+  x: 146.8
+  y: 103.7
+  rot: 180.0
+  side: back
+- ref: R14
+  x: 148.11
+  y: 109.14
+  rot: -90.0
+  side: back
+- ref: R15
+  x: 149.64
+  y: 109.02
+  rot: -45.0
+  side: back
+- ref: R17
+  x: 161.75
+  y: 102.43
+- ref: R18
+  x: 133.0
+  y: 93.05
+- ref: R19
+  x: 161.75
+  y: 103.38
+  rot: 180.0
+- ref: R2
+  x: 148.97
+  y: 113.95
+  rot: 45.0
+  side: back
+- ref: R20
+  x: 163.55
+  y: 91.84
+  rot: -90.0
+  side: back
+- ref: R21
+  x: 161.45
+  y: 100.44
+  rot: -90.0
+- ref: R22
+  x: 166.12
+  y: 106.97
+  rot: 180.0
+  side: back
+- ref: R23
+  x: 166.12
+  y: 103.95
+  rot: 180.0
+  side: back
+- ref: R24
+  x: 165.03
+  y: 108.22
+  side: back
+- ref: R25
+  x: 164.3
+  y: 106.0
+  side: back
+- ref: R26
+  x: 164.25
+  y: 105.05
+  side: back
+- ref: R27
+  x: 164.25
+  y: 103.28
+  side: back
+- ref: R28
+  x: 145.63
+  y: 100.27
+  rot: 90.0
+  side: back
+- ref: R29
+  x: 133.3
+  y: 111.7
+  rot: 180.0
+  side: back
+- ref: R3
+  x: 146.4
+  y: 108.6
+  side: back
+- ref: R30
+  x: 137.05
+  y: 111.7
+  side: back
+- ref: R31
+  x: 161.82
+  y: 107.67
+  rot: 90.0
+  side: back
+- ref: R33
+  x: 160.2
+  y: 103.95
+  rot: -90.0
+- ref: R34
+  x: 167.22
+  y: 100.48
+  rot: -90.0
+  side: back
+- ref: R35
+  x: 166.26
+  y: 100.81
+  rot: -90.0
+  side: back
+- ref: R9
+  x: 153.25
+  y: 92.49
+  rot: -90.0
+- ref: SWD1
+  x: 136.64
+  y: 101.3
+  rot: -90.0
+- ref: U1
+  x: 135.5
+  y: 98.1
+  rot: -90.0
+  side: back
+- ref: U2
+  x: 135.2
+  y: 106.75
+  rot: 180.0
+  side: back
+- ref: U3
+  x: 156.92
+  y: 110.11
+  rot: -45.0
+  side: back
+- ref: U4
+  x: 151.86
+  y: 101.39
+  rot: -135.0
+- ref: U5
+  x: 142.88
+  y: 112.92
+  rot: 90.0
+  side: back
+- ref: U6
+  x: 150.0
+  y: 100.0
+  rot: 180.0
+  side: back
+copper_pours:
+- net: +3V
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /H Bridge A/OUTX
+  layers: [F.Cu]
+- net: /H Bridge A/SPX_Q
+  layers: [F.Cu]
+- net: /H Bridge B/OUTX
+  layers: [F.Cu]
+- net: /H Bridge B/SPX_Q
+  layers: [F.Cu]
+- net: /H Bridge C/OUTX
+  layers: [F.Cu]
+- net: /H Bridge C/SPX_Q
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: GNDPWR
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: V+
+  layers: [B.Cu, F.Cu, In2.Cu]

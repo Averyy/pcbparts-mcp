@@ -1,0 +1,1095 @@
+name: SparkFun IoT BLDC Motor
+slug: sparkfun-iot-bldc-motor
+source: sparkfun/SparkFun_IoT_Brushless_Motor_Driver
+format: eagle
+description: BLDC motor (TMC6300), 3-phase current sense (INA240 x3)
+tags: [current-sensing, inverter, motor-control, sensors]
+key_ics: [ESP32-WROOM-32D, TMC6300]
+outline:
+  width_mm: 85.09
+  height_mm: 60.96
+design_rules:
+  layers: 4
+  min_trace: 5mil
+  min_clearance: 5mil
+  min_drill: 0.2mm
+  min_via: 5mil
+components:
+- ref: '!STBY'
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: BYP
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-16503
+  decouples: U4
+- ref: C10
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+  decouples: U2
+- ref: C11
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: C12
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U2
+- ref: C13
+  value: 10uF
+  footprint: '0603'
+  prod_id: CAP-11015
+  decouples: U6
+- ref: C14
+  value: 10uF
+  footprint: '0603'
+  prod_id: CAP-11015
+  decouples: U6
+- ref: C15
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+- ref: C16
+  value: 33pF
+  footprint: '0603'
+  prod_id: CAP-10142
+- ref: C17
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+  decouples: U3
+- ref: C18
+  value: 10uF
+  footprint: '0603'
+  prod_id: CAP-11015
+- ref: C19
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-16503
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-16503
+- ref: C20
+  value: 22uF
+  footprint: '0603'
+  prod_id: CAP-14464
+- ref: C21
+  value: 22uF
+  footprint: '0603'
+  prod_id: CAP-14464
+- ref: C22
+  value: 22uF
+  footprint: '0603'
+  prod_id: CAP-14464
+  decouples: U3
+- ref: C23
+  value: 100nF
+  footprint: '0402'
+  prod_id: CAP-15083
+  decouples: U8
+- ref: C24
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+  decouples: U7
+- ref: C25
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+  decouples: U11
+- ref: C26
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+  decouples: U9
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+  decouples: U10
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-16503
+- ref: C5
+  value: 10nF
+  footprint: '0603'
+  prod_id: CAP-00867
+- ref: C6
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U5
+- ref: C7
+  value: 10uF
+  footprint: '0603'
+  prod_id: CAP-13210
+  decouples: U5
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-16503
+- ref: C9
+  value: 2.2uF
+  footprint: '0603'
+  prod_id: CAP-07888
+  decouples: U2
+- ref: D1
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-17976
+  description: Red SMD LED
+- ref: D2
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-17976
+  description: Red SMD LED
+- ref: D4
+  value: blue LED
+  footprint: '0603'
+  prod_id: DIO-08575
+  description: Blue SMD LED
+- ref: D5
+  value: green LED
+  footprint: '0603'
+  prod_id: DIO-00821
+  description: Green SMD LED
+- ref: D7
+  value: 3.3V
+  footprint: SOD-323
+  prod_id: DIO-11284
+  description: Zener Diode
+- ref: DIAG
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: F1
+  value: 6V/2A
+  footprint: '1210'
+  prod_id: RES-14313
+  description: Resettable Fuse PPTC
+- ref: I2C
+  value: solder jumper (NC)
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+- ref: INT
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: J1
+  value: USB-C
+  footprint: USB-C
+  prod_id: CONN-14122
+  description: USB Type C 16Pin Connector
+- ref: J2
+  value: 1x2 header
+  footprint: 1X02
+- ref: J4
+  value: 1x8 header
+  footprint: 1X08
+- ref: J5
+  value: 1x8 header
+  footprint: 1X08
+- ref: J7
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: L1
+  value: 4.7uH
+  footprint: INDUCTOR
+  prod_id: NDUC-15245
+- ref: MEAS
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: MPWR
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: P1
+  value: '0532610371'
+  footprint: MOLEX_0532610371
+  description: Picoblade Connector, 3 Circuit Single Row, Right Angle Surface Mount SMT PCB
+  prod_id: CONN-16168
+- ref: PWR
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: Q1
+  value: dual PNP transistor
+  footprint: SOT363
+  prod_id: TRANS-14386
+  description: Dual PNP Transistors in Single Package
+- ref: Q2
+  value: NPN Transistors
+  footprint: SC70-6
+  prod_id: TRANS-13337
+  description: Dual NPN Transistors in Single Package
+- ref: Q3
+  value: 20V/4.2A/52mohm/1.4W
+  footprint: SOT-23-3
+  prod_id: TRANS-14388
+  description: P-channel MOSFETs
+- ref: R1
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: Q1.G1.B
+- ref: R10
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: ESP_18/VH
+- ref: R11
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: ESP_17/UL
+- ref: R12
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: ESP_16/UH
+- ref: R13
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+  pulldown: D4.C
+- ref: R14
+  value: 12mohm
+  footprint: '0603'
+  prod_id: RES-14691
+- ref: R15
+  value: 330ohm
+  footprint: '0603'
+  prod_id: RES-00818
+- ref: R16
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pullup: '!RESET'
+- ref: R17
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+- ref: R18
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: J1.CC2
+- ref: R19
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: J1.CC1
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R20
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+  pulldown: U9.G1.-IN
+- ref: R21
+  value: 20kohm
+  footprint: '0603'
+  prod_id: RES-09383
+- ref: R22
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+- ref: R24
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: U2.EN
+- ref: R26
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R27
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R28
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R32
+  value: 12mohm
+  footprint: '0603'
+  prod_id: RES-14691
+- ref: R33
+  value: 12mohm
+  footprint: '0603'
+  prod_id: RES-14691
+- ref: R34
+  value: 12mohm
+  footprint: '0603'
+  prod_id: RES-14691
+- ref: R4
+  value: 1Mohm
+  footprint: '0603'
+  prod_id: RES-07868
+- ref: R5
+  value: 93.1kohm
+  footprint: '0603'
+  prod_id: RES-14393
+- ref: R6
+  value: 30.1kohm
+  footprint: '0603'
+  prod_id: RES-14690
+  pulldown: FB
+- ref: R7
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: ESP_33/WL
+- ref: R8
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: ESP_19/WH
+- ref: R9
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: ESP_23/VL
+- ref: S1
+  value: tactile switch
+  footprint: TACTILE_SWITCH_SMD_5.2MM
+  prod_id: SWCH-14139
+  description: Momentary Switch (Pushbutton) - SPST - Two Circuits
+- ref: S2
+  value: tactile switch
+  footprint: TACTILE_SWITCH_SMD_5.2MM
+  prod_id: SWCH-14139
+  description: Momentary Switch (Pushbutton) - SPST - Two Circuits
+- ref: S3
+  value: tactile switch
+  footprint: TACTILE_SWITCH_SMD_5.2MM
+  prod_id: SWCH-14139
+  description: Momentary Switch (Pushbutton) - SPST - Two Circuits
+- ref: S4
+  value: tactile switch
+  footprint: TACTILE_SWITCH_SMD_5.2MM
+  prod_id: SWCH-14139
+  description: Momentary Switch (Pushbutton) - SPST - Two Circuits
+- ref: SHLD
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: STAT
+  value: WS2812
+  footprint: '2020'
+  prod_id: DIO-15591
+  description: Addressable RGB LED - 1 Wire
+- ref: U1
+  value: TMC6300
+  footprint: QFN-20
+  prod_id: IC-17193
+- ref: U10
+  value: INA240A1
+  footprint: D8
+  prod_id: IC-18906
+  description: Bidirectional, Ultra-Precide Current Sense Amplifier
+- ref: U11
+  value: INA240A1
+  footprint: D8
+  prod_id: IC-18906
+  description: Bidirectional, Ultra-Precide Current Sense Amplifier
+- ref: U2
+  value: 3.3V
+  footprint: SOT-23-5
+  prod_id: VREG-12457
+  description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
+- ref: U3
+  value: ESP32-WROOM-32D
+  footprint: ESP-WROOM-32D
+  prod_id: IC-15676
+  description: ESP-WROOM-32D - trace antenna (includes keepout) ESP-WROOM-32U - U
+- ref: U4
+  value: CH340C
+  footprint: SOIC-16
+  prod_id: IC-14038
+- ref: U5
+  value: ESD Diode
+  footprint: SOT-23-6
+  prod_id: IC-13538
+- ref: U6
+  value: AP63357
+  footprint: V-DFN3020-13
+  mpn: AP63357DV-7
+  prod_id: VREG-17224
+  description: The AP63356/AP63357 is a 3
+- ref: U7
+  value: INA240A1
+  footprint: D8
+  prod_id: IC-18906
+  description: Bidirectional, Ultra-Precide Current Sense Amplifier
+- ref: U8
+  value: TMAG5273
+  footprint: SOT23-6_DBV
+  prod_id: ROB-18440
+  description: Board Mount Hall Effect / Magnetic Sensors
+- ref: U9
+  value: MCP6021T
+  footprint: SOT-23-5
+  prod_id: IC-12504
+  description: MCP6021T-E/OT OP AMP
+nets:
+- name: '!RESET'
+  pins: [J5.3, Q2.G1.E, R16.1, S2.1, S2.2, U3.EN]
+- name: 1.8_VOUT
+  pins: [C8.1, U1.1.8VOUT]
+- name: 3.3V
+  pins:
+  - C1.1
+  - C17.1
+  - C22.1
+  - C23.1
+  - C24.1
+  - C25.1
+  - C26.1
+  - C3.1
+  - C4.1
+  - C9.1
+  - I2C.2
+  - INT.2
+  - J2.2
+  - J7.2
+  - PWR.2
+  - R16.2
+  - STAT.VCC
+  - U10.REF2
+  - U10.VS
+  - U11.REF2
+  - U11.VS
+  - U2.OUT
+  - U3.3V3
+  - U4.VCC
+  - U7.REF2
+  - U7.VS
+  - U8.VCC
+  - U9.G2.P$V+
+- name: 3.3V_A
+  pins:
+  - C16.2
+  - C18.1
+  - C19.1
+  - C2.1
+  - C20.1
+  - C21.1
+  - D7.C
+  - L1.2
+  - MPWR.2
+  - R5.2
+  - U1.VS
+- name: 5V
+  pins:
+  - BYP.2
+  - C10.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - F1.2
+  - R24.2
+  - U2.IN
+  - U6.VIN
+- name: 5V_MEAS
+  pins: [MEAS.1, Q1.G2.E, Q3.S]
+- name: BST
+  pins: [C15.1, U6.BST]
+- name: CH340-RX
+  pins: [U3.TX-IO1, U4.RXI]
+- name: CH340-TX
+  pins: [U3.RX-IO3, U4.TXO]
+- name: D
+  pins: [D5.A, DIAG.1]
+- name: D+
+  pins: [J1.D+, U4.UD+, U5.IO3]
+- name: D-
+  pins: [J1.D-, U4.UD-, U5.IO4]
+- name: DTR
+  pins: [Q2.G2.E, R2.2, U4.!DTR]
+- name: EN
+  pins: [R24.1, U2.EN]
+- name: ESP_0/QPWR
+  pins: [J5.2, Q2.G2.C, S1.1, S1.2, U3.IOA0]
+- name: ESP_12/GPIO1
+  pins: [J4.8, U3.POCI2/IOA12]
+- name: ESP_13/AUX2
+  pins: [J5.8, S4.1, S4.2, U3.PICO2/IOA13]
+- name: ESP_14/AUX1
+  pins: [J5.7, S3.1, S3.2, U3.SCK2/IOA14]
+- name: ESP_15/GPIO4
+  pins: [J4.7, U3.CS2/IOA15]
+- name: ESP_16/UH
+  pins: [R12.2, TP3.1, U1.UH, U3.IO16]
+- name: ESP_17/UL
+  pins: [R11.2, TP4.1, U1.UL, U3.IO17]
+- name: ESP_18/VH
+  pins: [R10.2, TP5.1, U1.VH, U3.SCK3/IO18]
+- name: ESP_19/WH
+  pins: [R8.2, TP7.1, U1.WH, U3.POCI3/IO19]
+- name: ESP_2/RGB_DI
+  pins: [J5.6, STAT.DI, TP1.1, U3.IOA2]
+- name: ESP_21/TP_SDA
+  pins: [J4.3, J7.3, R27.1, U3.SDA/IO21, U8.SDA]
+- name: ESP_22/TP_SCL
+  pins: [J4.2, J7.4, R26.1, U3.SCL/IO22, U8.SCL]
+- name: ESP_23/VL
+  pins: [R9.2, TP6.1, U1.VL, U3.PICO3/IO23]
+- name: ESP_25/TP_A1
+  pins: [J4.6, U3.DAC1/IOA25]
+- name: ESP_26/TP_A0
+  pins: [J4.5, U3.DAC2/IOA26]
+- name: ESP_27/GPIO2
+  pins: [J4.4, U3.IOA27]
+- name: ESP_32/CURR_SENSE
+  pins: [J5.4, R21.2, TP9.1, U3.XTAL_P/IOA32, U9.G1.OUT]
+- name: ESP_33/WL
+  pins: [R7.2, TP8.1, U1.WL, U3.XTAL_N/IOA33]
+- name: ESP_34/DIAG
+  pins: [DIAG.2, U1.DIAG, U3.IA34]
+- name: ESP_35/U_OUT
+  pins: [TP10.1, U3.IA35, U7.OUT]
+- name: ESP_36/V_OUT
+  pins: [TP11.1, U11.OUT, U3.SENSOR_VP/IA36]
+- name: ESP_39/W_OUT
+  pins: [TP12.1, U10.OUT, U3.SENSOR_VN/IA39]
+- name: ESP_4/!INT_MAG
+  pins: [J5.5, R28.1, U3.IOA4, U8.!INT]
+- name: ESP_5/!STDBY
+  pins: ['!STBY.2', U1.VIO/!STDBY!, U3.CS3/IO5]
+- name: FB
+  pins: [C16.1, R5.1, R6.2, U6.FB]
+- name: G1_B
+  pins: [Q2.G1.B, R2.1]
+- name: G1_B_2
+  pins: [Q1.G1.B, Q1.G1.E, Q1.G2.B, R1.2]
+- name: G1__IN
+  pins: [R20.2, R21.1, U9.G1.-IN]
+- name: G2_B
+  pins: [Q2.G2.B, R3.1]
+- name: G2_C
+  pins: [Q1.G2.C, Q3.G, R4.2]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.-
+  - C8.2
+  - C9.2
+  - D1.C
+  - D2.C
+  - D7.A
+  - J1.GND
+  - J2.1
+  - J4.1
+  - J7.1
+  - R1.1
+  - R10.1
+  - R11.1
+  - R12.1
+  - R13.1
+  - R14.1
+  - R15.1
+  - R18.1
+  - R19.1
+  - R20.1
+  - R4.1
+  - R6.1
+  - R7.1
+  - R8.1
+  - R9.1
+  - S1.3
+  - S1.4
+  - S2.3
+  - S2.4
+  - S3.3
+  - S3.4
+  - S4.3
+  - S4.4
+  - SHLD.1
+  - STAT.GND
+  - U1.GND
+  - U10.GND
+  - U10.NC
+  - U10.REF1
+  - U11.GND
+  - U11.NC
+  - U11.REF1
+  - U2.GND
+  - U3.GND
+  - U4.GND
+  - U5.VSS
+  - U6.COMP
+  - U6.GND
+  - U7.GND
+  - U7.NC
+  - U7.REF1
+  - U8.GND
+  - U8.TEST
+  - U9.G2.P$V-
+- name: MOTOR_EN
+  pins: [J5.1, U6.EN]
+- name: N$1
+  pins: [J1.CC1, R19.2]
+- name: N$11
+  pins: [INT.1, R28.2]
+- name: N$12
+  pins: [I2C.3, R26.2]
+- name: N$13
+  pins: [I2C.1, R27.2]
+- name: N$15
+  pins: [PWR.1, R17.2]
+- name: N$17
+  pins: [BYP.1, C11.1, F1.1, MEAS.2]
+- name: N$26
+  pins: [D1.A, R22.1]
+- name: N$27
+  pins: [MPWR.1, R22.2]
+- name: N$29
+  pins: [D4.C, R13.2]
+- name: N$3
+  pins: [J1.CC2, R18.2]
+- name: N$33
+  pins: [D5.C, R15.2]
+- name: N$9
+  pins: [D2.A, R17.1]
+- name: RTS
+  pins: [Q2.G1.C, R3.2, U4.!RTS]
+- name: S
+  pins: ['!STBY.1', D4.A]
+- name: SENSE
+  pins: [R14.2, U1.BRUV, U1.BRW, U9.G1.+IN]
+- name: SENSE_U
+  pins: [R32.1, U1.U, U7.IN+]
+- name: SENSE_V
+  pins: [R33.1, U1.V, U11.IN+]
+- name: SENSE_W
+  pins: [R34.1, U1.W, U10.IN+]
+- name: SHLD
+  pins: [J1.SHLD, SHLD.2]
+- name: SW
+  pins: [C15.2, L1.1, U6.SW]
+- name: TP2
+  pins: [STAT.DO, TP2.1]
+- name: U
+  pins: [P1.3, R32.2, TP13.1, U7.IN-]
+- name: V
+  pins: [P1.2, R33.2, TP14.1, U11.IN-]
+- name: V3
+  pins: [C5.1, U4.V3]
+- name: VCP
+  pins: [C2.2, U1.VCP]
+- name: V_USB
+  pins: [C6.1, C7.+, J1.VBUS, Q1.G1.C, Q3.D, U5.VCC]
+- name: W
+  pins: [P1.1, R34.2, TP15.1, U10.IN-]
+positions:
+- ref: '!STBY'
+  x: 52.58
+  y: 53.34
+  rot: 90.0
+- ref: BYP
+  x: 33.27
+  y: 39.24
+  rot: 180.0
+- ref: C1
+  x: 21.21
+  y: 45.97
+- ref: C10
+  x: 40.89
+  y: 33.78
+  rot: 270.0
+- ref: C11
+  x: 33.66
+  y: 39.24
+- ref: C12
+  x: 39.12
+  y: 33.78
+  rot: 270.0
+- ref: C13
+  x: 37.72
+  y: 39.12
+  rot: 180.0
+- ref: C14
+  x: 37.72
+  y: 40.64
+  rot: 180.0
+- ref: C15
+  x: 40.51
+  y: 45.72
+  rot: 180.0
+- ref: C16
+  x: 42.29
+  y: 43.31
+  rot: 90.0
+- ref: C17
+  x: 9.65
+  y: 8.26
+- ref: C18
+  x: 70.48
+  y: 54.1
+- ref: C19
+  x: 70.48
+  y: 55.63
+- ref: C2
+  x: 65.66
+  y: 58.42
+  rot: 270.0
+- ref: C20
+  x: 36.96
+  y: 46.48
+  rot: 270.0
+- ref: C21
+  x: 35.43
+  y: 46.48
+  rot: 270.0
+- ref: C22
+  x: 6.35
+  y: 8.26
+  rot: 180.0
+- ref: C23
+  x: 70.61
+  y: 16.76
+  rot: 270.0
+- ref: C24
+  x: 66.67
+  y: 42.93
+  rot: 90.0
+- ref: C25
+  x: 66.67
+  y: 36.58
+  rot: 90.0
+- ref: C26
+  x: 69.98
+  y: 36.07
+  rot: 270.0
+- ref: C3
+  x: 76.83
+  y: 40.39
+  rot: 90.0
+- ref: C4
+  x: 31.62
+  y: 25.91
+- ref: C5
+  x: 12.7
+  y: 44.45
+  rot: 90.0
+- ref: C6
+  x: 11.56
+  y: 35.56
+  rot: 270.0
+- ref: C7
+  x: 9.53
+  y: 35.56
+  rot: 90.0
+- ref: C8
+  x: 62.61
+  y: 49.4
+  rot: 180.0
+- ref: C9
+  x: 44.58
+  y: 39.5
+- ref: D1
+  x: 31.75
+  y: 49.53
+- ref: D2
+  x: 25.4
+  y: 49.53
+- ref: D4
+  x: 53.34
+  y: 49.4
+- ref: D5
+  x: 53.34
+  y: 55.5
+  rot: 180.0
+- ref: D7
+  x: 53.34
+  y: 45.09
+  rot: 180.0
+- ref: DIAG
+  x: 53.34
+  y: 57.4
+- ref: F1
+  x: 33.27
+  y: 36.7
+- ref: I2C
+  x: 39.75
+  y: 55.63
+  rot: 270.0
+- ref: INT
+  x: 47.5
+  y: 13.34
+  rot: 180.0
+- ref: J1
+  x: 6.6
+  y: 40.64
+  rot: 270.0
+- ref: J2
+  x: 45.72
+  y: 58.42
+  rot: 180.0
+- ref: J4
+  x: 7.62
+  y: 2.54
+- ref: J5
+  x: 30.48
+  y: 2.54
+- ref: J7
+  x: 29.21
+  y: 55.88
+  rot: 180.0
+- ref: L1
+  x: 40.01
+  y: 48.77
+  rot: 180.0
+- ref: MEAS
+  x: 27.94
+  y: 36.83
+  rot: 180.0
+- ref: MPWR
+  x: 31.75
+  y: 48.26
+- ref: P1
+  x: 78.74
+  y: 50.8
+- ref: PWR
+  x: 25.4
+  y: 48.64
+- ref: Q1
+  x: 29.46
+  y: 44.32
+  rot: 180.0
+- ref: Q2
+  x: 22.86
+  y: 40.64
+  rot: 270.0
+- ref: Q3
+  x: 29.46
+  y: 40.51
+  rot: 180.0
+- ref: R1
+  x: 32.0
+  y: 44.32
+  rot: 90.0
+- ref: R10
+  x: 62.61
+  y: 58.42
+  rot: 270.0
+- ref: R11
+  x: 57.78
+  y: 54.74
+- ref: R12
+  x: 64.14
+  y: 58.42
+  rot: 270.0
+- ref: R13
+  x: 53.34
+  y: 47.88
+- ref: R14
+  x: 70.48
+  y: 59.31
+  rot: 180.0
+- ref: R15
+  x: 53.34
+  y: 53.98
+  rot: 180.0
+- ref: R16
+  x: 46.99
+  y: 21.34
+  rot: 270.0
+- ref: R17
+  x: 25.4
+  y: 48.01
+- ref: R18
+  x: 5.08
+  y: 33.02
+- ref: R19
+  x: 10.16
+  y: 44.45
+  rot: 270.0
+- ref: R2
+  x: 22.86
+  y: 42.93
+  rot: 180.0
+- ref: R20
+  x: 76.2
+  y: 35.56
+  rot: 270.0
+- ref: R21
+  x: 75.56
+  y: 33.02
+  rot: 180.0
+- ref: R22
+  x: 31.75
+  y: 48.01
+- ref: R24
+  x: 44.7
+  y: 32.89
+  rot: 180.0
+- ref: R26
+  x: 36.83
+  y: 53.72
+- ref: R27
+  x: 36.83
+  y: 57.15
+- ref: R28
+  x: 40.64
+  y: 8.89
+  rot: 180.0
+- ref: R3
+  x: 22.86
+  y: 38.1
+  rot: 180.0
+- ref: R32
+  x: 70.36
+  y: 50.16
+- ref: R33
+  x: 70.48
+  y: 52.58
+- ref: R34
+  x: 70.48
+  y: 57.78
+- ref: R4
+  x: 33.27
+  y: 41.53
+  rot: 180.0
+- ref: R5
+  x: 43.81
+  y: 43.31
+  rot: 90.0
+- ref: R6
+  x: 45.34
+  y: 43.31
+  rot: 270.0
+- ref: R7
+  x: 57.78
+  y: 53.21
+- ref: R8
+  x: 61.09
+  y: 58.42
+  rot: 270.0
+- ref: R9
+  x: 57.78
+  y: 51.69
+- ref: S1
+  x: 31.75
+  y: 20.32
+- ref: S2
+  x: 41.91
+  y: 20.32
+- ref: S3
+  x: 31.75
+  y: 12.7
+- ref: S4
+  x: 41.91
+  y: 12.7
+- ref: SHLD
+  x: 3.43
+  y: 35.81
+  rot: 90.0
+- ref: STAT
+  x: 31.62
+  y: 27.94
+- ref: U1
+  x: 63.5
+  y: 53.34
+  rot: 270.0
+- ref: U10
+  x: 72.39
+  y: 40.64
+- ref: U11
+  x: 62.23
+  y: 36.83
+- ref: U2
+  x: 44.7
+  y: 36.7
+- ref: U3
+  x: 13.97
+  y: 20.32
+  rot: 180.0
+- ref: U4
+  x: 17.14
+  y: 39.37
+  rot: 270.0
+- ref: U5
+  x: 10.16
+  y: 40.64
+  rot: 90.0
+- ref: U6
+  x: 39.37
+  y: 43.18
+- ref: U7
+  x: 62.23
+  y: 43.18
+- ref: U8
+  x: 68.26
+  y: 16.69
+  rot: 90.0
+- ref: U9
+  x: 72.39
+  y: 35.56
+copper_pours:
+- net: 3.3V
+  layers: [F.Cu, In14.Cu]
+- net: 3.3V_A
+  layers: [F.Cu, In14.Cu]
+- net: 5V
+  layers: [F.Cu]
+- net: BST
+  layers: [F.Cu]
+- net: FB
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: SENSE_U
+  layers: [F.Cu]
+- net: SENSE_V
+  layers: [F.Cu]
+- net: SENSE_W
+  layers: [F.Cu]
+- net: SW
+  layers: [F.Cu]
+- net: U
+  layers: [F.Cu]
+- net: V
+  layers: [F.Cu]
+- net: V_USB
+  layers: [In14.Cu]
+- net: W
+  layers: [F.Cu]

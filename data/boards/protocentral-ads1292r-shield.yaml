@@ -1,0 +1,453 @@
+name: ProtoCentral ADS1292R Shield
+slug: protocentral-ads1292r-shield
+source: Protocentral/ADS1292rShield_Breakout
+format: eagle
+description: 2-channel 24-bit ECG + respiration (ADS1292R), driven right leg circuit
+key_ics: [ADS1292R]
+outline:
+  width_mm: 52.0
+  height_mm: 53.0
+design_rules:
+  layers: 4
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 0.3mm
+  min_via: 10mil
+components:
+- ref: C1
+  value: 47pF
+  footprint: '0402'
+- ref: C10
+  value: 47nF
+  footprint: '0402'
+- ref: C11
+  value: 47nF
+  footprint: '0402'
+- ref: C12
+  value: 47pF
+  footprint: '0402'
+- ref: C13
+  value: 2.2nF
+  footprint: '0402'
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+- ref: C15
+  value: 2.2nF
+  footprint: '0402'
+- ref: C16
+  value: 2.2nF
+  footprint: '0402'
+- ref: C17
+  value: 100nF
+  footprint: '0402'
+- ref: C18
+  value: 2.2nF
+  footprint: '0402'
+- ref: C19
+  value: 47pF
+  footprint: '0402'
+- ref: C2
+  value: 1uF
+  footprint: '0402'
+  dielectric: C0G
+- ref: C20
+  value: 1uF
+  footprint: '0402'
+  decouples: U3
+- ref: C21
+  value: 1uF
+  footprint: '0402'
+  decouples: U3
+- ref: C24
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C26
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C3
+  value: 1uF
+  footprint: '0402'
+  dielectric: C0G
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+- ref: C5
+  value: 10uF
+  footprint: '0603'
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  decouples: U$3
+- ref: C7
+  value: 1uF
+  footprint: '0402'
+  decouples: U$3
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+  decouples: U$3
+- ref: C9
+  value: 1uF
+  footprint: '0402'
+  decouples: U1
+- ref: JP5
+  value: 502-35RASMT4BHNTRX
+  footprint: AUDIO-JACK-3.5MM-SMD
+  prod_id: CONN-10353
+  description: 3.5mm Audio Jack
+- ref: M1
+  value: ARDUINO
+  footprint: ARDUINO
+- ref: POWER1
+  value: red LED
+  footprint: CHIPLED_0603
+- ref: R28
+  value: 51kohm
+  footprint: '0402'
+- ref: R29
+  value: 51kohm
+  footprint: '0402'
+- ref: R30
+  value: 100kohm
+  footprint: '0402'
+- ref: R31
+  value: 40.2kohm
+  footprint: '0402'
+- ref: R32
+  value: 40.2kohm
+  footprint: '0402'
+- ref: R33
+  value: 10Mohm
+  footprint: '0402'
+- ref: R34
+  value: 10Mohm
+  footprint: '0402'
+- ref: R35
+  value: 10Mohm
+  footprint: '0402'
+- ref: R36
+  value: 10Mohm
+  footprint: '0402'
+- ref: R37
+  value: 1Mohm
+  footprint: '0402'
+- ref: R38
+  value: 100kohm
+  footprint: '0402'
+- ref: R39
+  value: 0ohm
+  footprint: '0402'
+- ref: R40
+  value: 330ohm
+  footprint: '0402'
+- ref: SJ1
+  value: solder jumper
+  footprint: SJ-2
+- ref: U$1
+  value: CERT
+  footprint: CERT-SMALL-SILK
+- ref: U$3
+  value: ADS1292R
+  footprint: SQFP-S-5X5-32
+- ref: U1
+  value: TXB0108PWR
+  footprint: TSSOP20
+  description: 8-Bit Bi-Directional Level Shifter
+- ref: U3
+  value: AP2112K-3.3
+  footprint: SOT-23-5
+  description: Voltage Regulator LDO
+nets:
+- name: '!ADS_DRDY'
+  pins: [U$3.!DRDY, U1.A1]
+- name: '!ARD_DRDY'
+  pins: [M1.D6, U1.B1]
+- name: +3V3
+  pins:
+  - C20.2
+  - C26.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - POWER1.A
+  - R33.1
+  - R35.1
+  - SJ1.3
+  - U$3.AVDD@12
+  - U$3.CLKSEL
+  - U$3.DVDD@23
+  - U1.OE
+  - U1.VCCA
+  - U3.OUT
+- name: +5V
+  pins: [C21.2, M1.5V, M1.5V@1, SJ1.1, U3.EN, U3.IN]
+- name: ADS_CLK
+  pins: [U$3.CLK, U1.A8]
+- name: ADS_PWDN
+  pins: [U$3.!PWDN/RESET, U1.A7]
+- name: ADS_START
+  pins: [U$3.START, U1.A6]
+- name: ARD_CLK
+  pins: [M1.D3, U1.B8]
+- name: ARD_CS0
+  pins: [M1.D7, U1.B5]
+- name: ARD_MISO
+  pins: [M1.D12, M1.MISO, U1.B2]
+- name: ARD_MOSI
+  pins: [M1.D11, M1.MOSI, U1.B4]
+- name: ARD_PWDN
+  pins: [M1.D4, U1.B7]
+- name: ARD_SCK
+  pins: [M1.D13, M1.SCK, U1.B3]
+- name: ARD_START
+  pins: [M1.D5, U1.B6]
+- name: GND
+  pins:
+  - C1.2
+  - C19.2
+  - C2.1
+  - C20.1
+  - C21.1
+  - C24.1
+  - C26.1
+  - C3.1
+  - C4.1
+  - C5.2
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - M1.GND
+  - M1.GND@1
+  - M1.GND@2
+  - M1.GND@3
+  - R34.1
+  - R36.1
+  - R40.1
+  - U$3.AVSS@13
+  - U$3.DGND@24
+  - U$3.VREFN
+  - U1.GND
+  - U3.GND
+- name: IN1N
+  pins: [C18.2, R33.2, R34.2, U$3.IN1N]
+- name: IN1P
+  pins: [C15.2, R35.2, R36.2, U$3.IN1P]
+- name: IN2N
+  pins: [R28.2, U$3.IN2N]
+- name: IN2P
+  pins: [R29.2, U$3.IN2P]
+- name: N$112
+  pins: [C14.1, C19.1, JP5.RIGHT, R29.1]
+- name: N$114
+  pins: [JP5.SLEEVE, R30.1]
+- name: N$116
+  pins: [C13.2, R31.1]
+- name: N$117
+  pins: [C13.1, C14.2, C15.1]
+- name: N$119
+  pins: [C16.2, R32.1]
+- name: N$120
+  pins: [C16.1, C17.2, C18.1]
+- name: N$121
+  pins: [C1.1, C17.1, JP5.LEFT, R28.1]
+- name: N$128
+  pins: [C12.1, R30.2, R37.1, R38.1, R39.1]
+- name: N$131
+  pins: [POWER1.C, R40.2]
+- name: PGA1N
+  pins: [C11.1, U$3.PGA1N]
+- name: PGA1P
+  pins: [C11.2, U$3.PGA1P]
+- name: PGA2N
+  pins: [C10.1, U$3.PGA2N]
+- name: PGA2P
+  pins: [C10.2, U$3.PGA2P]
+- name: RESP_MODN
+  pins: [R32.2, U$3.RESP_MODN]
+- name: RESP_MODP
+  pins: [R31.2, U$3.RESP_MODP]
+- name: RLDINV
+  pins: [C12.2, R37.2, U$3.RLDINV]
+- name: RLDIN_RLDREF
+  pins: [R38.2, U$3.RLDIN/RLDREF]
+- name: RLDOUT
+  pins: [R39.2, U$3.RLDOUT]
+- name: SPI_CS0
+  pins: [U$3.!CS, U1.A5]
+- name: SPI_MISO
+  pins: [U$3.DOUT, U1.A2]
+- name: SPI_MOSI
+  pins: [U$3.DIN, U1.A4]
+- name: SPI_SCK
+  pins: [U$3.SCLK, U1.A3]
+- name: VCAP1
+  pins: [C3.2, U$3.VCAP1]
+- name: VCAP2
+  pins: [C2.2, U$3.VCAP2]
+- name: VCC
+  pins: [C24.2, SJ1.2, U1.VCCB]
+- name: VREFP
+  pins: [C4.2, C5.1, U$3.VREFP]
+positions:
+- ref: C1
+  x: 28.0
+  y: 12.9
+  rot: 270.0
+- ref: C10
+  x: 28.87
+  y: 19.29
+- ref: C11
+  x: 24.49
+  y: 19.39
+- ref: C12
+  x: 19.81
+  y: 23.59
+- ref: C13
+  x: 30.3
+  y: 15.61
+  rot: 180.0
+- ref: C14
+  x: 30.29
+  y: 16.81
+- ref: C15
+  x: 25.68
+  y: 16.31
+- ref: C16
+  x: 19.55
+  y: 17.49
+  rot: 90.0
+- ref: C17
+  x: 22.42
+  y: 16.21
+  rot: 180.0
+- ref: C18
+  x: 22.43
+  y: 17.39
+- ref: C19
+  x: 33.7
+  y: 16.1
+  rot: 270.0
+- ref: C2
+  x: 20.75
+  y: 25.98
+- ref: C20
+  x: 21.02
+  y: 10.0
+  rot: 270.0
+- ref: C21
+  x: 27.36
+  y: 10.2
+  rot: 270.0
+- ref: C24
+  x: 22.13
+  y: 35.61
+  rot: 90.0
+- ref: C26
+  x: 30.23
+  y: 32.21
+  rot: 270.0
+- ref: C3
+  x: 34.31
+  y: 20.74
+  rot: 180.0
+- ref: C4
+  x: 34.27
+  y: 19.51
+  rot: 180.0
+- ref: C5
+  x: 34.54
+  y: 18.25
+- ref: C6
+  x: 34.36
+  y: 23.19
+  rot: 180.0
+- ref: C7
+  x: 34.33
+  y: 21.93
+  rot: 180.0
+- ref: C8
+  x: 22.69
+  y: 28.41
+- ref: C9
+  x: 22.65
+  y: 29.59
+- ref: JP5
+  x: 51.73
+  y: 15.11
+  rot: 180.0
+- ref: M1
+  x: 0.0
+  y: 0.0
+- ref: POWER1
+  x: 19.01
+  y: 9.37
+  rot: 90.0
+- ref: R28
+  x: 27.56
+  y: 16.42
+  rot: 90.0
+- ref: R29
+  x: 28.95
+  y: 18.15
+  rot: 180.0
+- ref: R30
+  x: 18.54
+  y: 26.01
+- ref: R31
+  x: 19.3
+  y: 21.38
+- ref: R32
+  x: 22.25
+  y: 20.78
+- ref: R33
+  x: 22.25
+  y: 18.49
+- ref: R34
+  x: 22.27
+  y: 19.59
+- ref: R35
+  x: 25.69
+  y: 17.49
+- ref: R36
+  x: 25.71
+  y: 15.19
+- ref: R37
+  x: 19.83
+  y: 24.79
+- ref: R38
+  x: 18.03
+  y: 24.0
+  rot: 270.0
+- ref: R39
+  x: 16.79
+  y: 24.01
+  rot: 270.0
+- ref: R40
+  x: 16.41
+  y: 9.37
+- ref: SJ1
+  x: 44.93
+  y: 39.71
+  rot: 90.0
+- ref: U$1
+  x: 40.7
+  y: 41.4
+  rot: 90.0
+- ref: U$3
+  x: 26.66
+  y: 24.08
+- ref: U1
+  x: 26.03
+  y: 34.51
+- ref: U3
+  x: 24.0
+  y: 10.3
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

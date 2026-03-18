@@ -1,0 +1,836 @@
+name: SparkFun PCA9685 Pi Servo Hat
+slug: sparkfun-pca9685-pi-servo-hat
+source: sparkfun/Pi_Servo_Hat
+format: eagle
+description: 16-channel PWM driver (PCA9685), servo power distribution
+tags: [power-distribution, pwm-servo]
+key_ics: [PCA9685]
+outline:
+  width_mm: 65.0
+  height_mm: 30.0
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 7mil
+  min_drill: 10mil
+  min_via: 5mil
+components:
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: C17
+  value: 10nF
+  footprint: '0603'
+  prod_id: CAP-00867
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U3
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: C5
+  value: 100uF
+  footprint: PANASONIC_D
+  prod_id: CAP-12547
+- ref: C6
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: D1
+  value: green LED
+  footprint: '0603'
+  prod_id: DIO-00821
+  description: Green SMD LED
+- ref: D2
+  value: yellow LED
+  footprint: '0603'
+  prod_id: DIO-09003
+  description: Yellow SMD LED
+- ref: F2
+  value: 16V/2.5A(5A TRIP)
+  footprint: '1812'
+  prod_id: RES-14390
+  description: Resettable Fuse PPTC
+- ref: J1
+  value: 2x20 header
+  footprint: 2X20
+  description: Raspberry Pi GPIO Header
+- ref: J10
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J11
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J12
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J13
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J14
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J15
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J16
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J17
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J18
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J19
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J20
+  value: USB C
+  footprint: USB-C
+  prod_id: CONN-14122
+  description: USB Type C 16Pin Connector
+- ref: J21
+  value: 1x4 header
+  footprint: 1X04
+  prod_id: CONN-09696
+- ref: J3
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J4
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J5
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J6
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J7
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J8
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: J9
+  value: 1x3 header
+  footprint: 1X03
+  prod_id: XXX-00000
+- ref: JP2
+  value: FUSE BP
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP3
+  value: I2C
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+- ref: JP4
+  value: PI ISO
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: Q1
+  value: 310mA/60V/1.6ohm
+  footprint: SOT323
+  prod_id: TRANS-11151
+  description: N-channel MOSFETs
+- ref: Q10
+  value: dual PNP transistor
+  footprint: SOT363
+  prod_id: TRAN-14386
+  description: Dual PNP Transistors in Single Package
+- ref: Q11
+  value: dual NPN transistor
+  footprint: SC70-6
+  prod_id: TRANS-13337
+  description: Dual NPN Transistors in Single Package
+- ref: Q12
+  value: 20V/4.2A/52mohm/1.4W
+  footprint: SOT-23-3
+  prod_id: TRAN-14388
+  description: P-channel MOSFETs
+- ref: Q2
+  value: 20V/4.2A/52mohm/1.4W
+  footprint: SOT-23-3
+  prod_id: TRAN-14388
+  description: P-channel MOSFETs
+- ref: Q3
+  value: dual PNP transistor
+  footprint: SOT363
+  prod_id: TRAN-14386
+  description: Dual PNP Transistors in Single Package
+- ref: Q4
+  value: 310mA/60V/1.6ohm
+  footprint: SOT323
+  prod_id: TRANS-11151
+  description: N-channel MOSFETs
+- ref: Q5
+  value: 20V/4.2A/52mohm/1.4W
+  footprint: SOT-23-3
+  prod_id: TRAN-14388
+  description: P-channel MOSFETs
+- ref: Q6
+  value: dual PNP transistor
+  footprint: SOT363
+  prod_id: TRAN-14386
+  description: Dual PNP Transistors in Single Package
+- ref: Q7
+  value: 20V/4.2A/52mohm/1.4W
+  footprint: SOT-23-3
+  prod_id: TRAN-14388
+  description: P-channel MOSFETs
+- ref: Q8
+  value: dual PNP transistor
+  footprint: SOT363
+  prod_id: TRAN-14386
+  description: Dual PNP Transistors in Single Package
+- ref: Q9
+  value: 20V/4.2A/52mohm/1.4W
+  footprint: SOT-23-3
+  prod_id: TRAN-14388
+  description: P-channel MOSFETs
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R10
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: CC2
+- ref: R11
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: CC1
+- ref: R12
+  value: 330ohm
+  footprint: '0603'
+  prod_id: RES-00818
+- ref: R13
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: Q8.G$1.B
+- ref: R14
+  value: 47kohm
+  footprint: '0603'
+  prod_id: RES-07871
+  pulldown: Q10.G$2.C
+- ref: R15
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: Q10.G$1.B
+- ref: R16
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+  pullup: D2.A
+- ref: R17
+  value: 240ohm
+  footprint: '0603'
+  prod_id: RES-07849
+- ref: R18
+  value: 240ohm
+  footprint: '0603'
+  prod_id: RES-07849
+- ref: R19
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R20
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: RVR-5V
+- ref: R21
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: USB-5V
+- ref: R3
+  value: 47kohm
+  footprint: '0603'
+  prod_id: RES-07871
+  pulldown: Q2.G
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R6
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: Q3.G$1.B
+- ref: R7
+  value: 47kohm
+  footprint: '0603'
+  prod_id: RES-07871
+  pulldown: Q5.G
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pulldown: Q6.G$1.B
+- ref: R9
+  value: 47kohm
+  footprint: '0603'
+  prod_id: RES-07871
+  pulldown: Q7.G
+- ref: S1
+  value: SPDT switch
+  footprint: SWITCH_SPST_SMD_A
+  prod_id: SWCH-10651
+  description: Single Pole, Double Throw (SPDT) Switch
+- ref: U1
+  value: PCA9685
+  footprint: TSSOP-28_4MM
+  prod_id: IC-12271
+  description: 16-channel 12-bit PWM
+- ref: U2
+  value: SN74LVC1G32DCKR
+  footprint: SOT353
+  prod_id: IC-10842
+  description: Single OR gate
+- ref: U3
+  value: CH340C
+  footprint: SOIC-16
+  prod_id: IC-14038
+nets:
+- name: 3.3V
+  pins:
+  - C3.1
+  - C7.1
+  - J1.3.3V@1
+  - J1.3.3V@17
+  - J19.2
+  - JP3.2
+  - Q1.G
+  - Q4.G
+  - R12.2
+  - R16.2
+  - TP22.1
+  - U3.VCC
+- name: CC1
+  pins: [J20.CC1, R11.2]
+- name: CC2
+  pins: [J20.CC2, R10.2]
+- name: CH0
+  pins: [J3.3, TP0.1, U1.CH0]
+- name: CH1
+  pins: [J4.3, TP1.1, U1.CH1]
+- name: CH10
+  pins: [J13.3, TP10.1, U1.CH10]
+- name: CH11
+  pins: [J14.3, TP11.1, U1.CH11]
+- name: CH12
+  pins: [J15.3, TP12.1, U1.CH12]
+- name: CH13
+  pins: [J16.3, TP13.1, U1.CH13]
+- name: CH14
+  pins: [J17.3, TP14.1, U1.CH14]
+- name: CH15
+  pins: [J18.3, TP15.1, U1.CH15]
+- name: CH2
+  pins: [J5.3, TP2.1, U1.CH2]
+- name: CH3
+  pins: [J6.3, TP3.1, U1.CH3]
+- name: CH340-TXO
+  pins: [D1.C, S1.O, TP23.1, U3.TXO]
+- name: CH4
+  pins: [J7.3, TP4.1, U1.CH4]
+- name: CH5
+  pins: [J8.3, TP5.1, U1.CH5]
+- name: CH6
+  pins: [J9.3, TP6.1, U1.CH6]
+- name: CH7
+  pins: [J10.3, TP7.1, U1.CH7]
+- name: CH8
+  pins: [J11.3, TP8.1, U1.CH8]
+- name: CH9
+  pins: [J12.3, TP9.1, U1.CH9]
+- name: D+
+  pins: [J20.D+, U3.UD+]
+- name: D-
+  pins: [J20.D-, U3.UD-]
+- name: G1_Y
+  pins: [R17.1, U2.G1.Y]
+- name: GND
+  pins:
+  - C10.2
+  - C17.2
+  - C3.2
+  - C4.2
+  - C5.-
+  - C6.2
+  - C7.2
+  - C8.2
+  - J1.GND@14
+  - J1.GND@20
+  - J1.GND@25
+  - J1.GND@30
+  - J1.GND@34
+  - J1.GND@39
+  - J1.GND@6
+  - J1.GND@9
+  - J10.1
+  - J11.1
+  - J12.1
+  - J13.1
+  - J14.1
+  - J15.1
+  - J16.1
+  - J17.1
+  - J18.1
+  - J19.1
+  - J20.GND
+  - J21.3
+  - J3.1
+  - J4.1
+  - J5.1
+  - J6.1
+  - J7.1
+  - J8.1
+  - J9.1
+  - Q11.Q1.E
+  - Q11.Q2.E
+  - R10.1
+  - R11.1
+  - R13.1
+  - R14.1
+  - R15.1
+  - R20.1
+  - R21.1
+  - R3.1
+  - R6.1
+  - R7.1
+  - R8.1
+  - R9.1
+  - TP17.1
+  - U1.!OE
+  - U1.EXTCLK
+  - U1.VSS
+  - U2.G2.P$V-
+  - U3.GND
+- name: G_1_B
+  pins: [Q3.G$1.B, Q3.G$1.C, Q3.G$2.B, R6.2]
+- name: G_1_B_2
+  pins: [Q6.G$1.B, Q6.G$1.C, Q6.G$2.B, R8.2]
+- name: G_1_B_3
+  pins: [Q8.G$1.B, Q8.G$1.C, Q8.G$2.B, R13.2]
+- name: G_1_B_4
+  pins: [Q10.G$1.B, Q10.G$1.C, Q10.G$2.B, R15.2]
+- name: G_2_C
+  pins: [Q2.G, Q3.G$2.C, R3.2]
+- name: G_2_C_2
+  pins: [Q5.G, Q6.G$2.C, R7.2]
+- name: G_2_C_3
+  pins: [Q7.G, Q8.G$2.C, R9.2]
+- name: G_2_C_4
+  pins: [Q10.G$2.C, Q9.G, R14.2]
+- name: LV_SCL
+  pins: [J1.SCL, J19.4, Q1.S, R4.1, TP18.1]
+- name: LV_SDA
+  pins: [J1.SDA, J19.3, Q4.S, R5.1, TP19.1]
+- name: N$2
+  pins: [JP3.3, R4.2]
+- name: N$20
+  pins: [J1.5V@2, JP4.2]
+- name: N$5
+  pins: [JP3.1, R5.2]
+- name: N$6
+  pins: [D2.A, R16.1]
+- name: N$7
+  pins: [D1.A, R12.1]
+- name: PI-5V
+  pins:
+  - C4.1
+  - C8.1
+  - JP4.1
+  - Q10.G$2.E
+  - Q12.D
+  - Q7.S
+  - Q8.G$2.E
+  - Q9.S
+  - R1.2
+  - R18.2
+  - R19.2
+  - R2.2
+  - TP24.1
+  - U1.VDD
+  - U2.G2.P$V+
+- name: PI-RXI
+  pins: [J1.RXI, S1.P, TP26.1]
+- name: PI-TXO
+  pins: [D2.C, J1.TXO, J21.1, TP20.1, U3.RXI]
+- name: Q1_B
+  pins: [Q11.Q1.B, Q11.Q2.C, R18.1]
+- name: Q1_C
+  pins: [Q11.Q1.C, Q12.G, R19.1]
+- name: Q2_B
+  pins: [Q11.Q2.B, R17.2]
+- name: RVR-5V
+  pins:
+  - J21.4
+  - Q2.D
+  - Q3.G$1.E
+  - Q7.D
+  - Q8.G$1.E
+  - R20.2
+  - TP25.1
+  - U2.G1.A
+- name: RVR-TXO
+  pins: [J21.2, S1.S, TP21.1]
+- name: SCL
+  pins: [Q1.D, R2.1, U1.SCL]
+- name: SDA
+  pins: [Q4.D, R1.1, U1.SDA]
+- name: SERVO
+  pins:
+  - C5.+
+  - C6.1
+  - J10.2
+  - J11.2
+  - J12.2
+  - J13.2
+  - J14.2
+  - J15.2
+  - J16.2
+  - J17.2
+  - J18.2
+  - J3.2
+  - J4.2
+  - J5.2
+  - J6.2
+  - J7.2
+  - J8.2
+  - J9.2
+  - Q12.S
+  - Q2.S
+  - Q3.G$2.E
+  - Q5.S
+  - Q6.G$2.E
+  - TP16.1
+- name: USB-5V
+  pins:
+  - F2.2
+  - JP2.2
+  - Q10.G$1.E
+  - Q5.D
+  - Q6.G$1.E
+  - Q9.D
+  - R21.2
+  - U2.G1.B
+- name: V3
+  pins: [C17.1, U3.V3]
+- name: VBUS
+  pins: [C10.1, F2.1, J20.VBUS, JP2.1]
+  class: power
+  trace_width: '0.508'
+positions:
+- ref: C10
+  x: 7.47
+  y: 8.41
+  rot: 180.0
+- ref: C17
+  x: 8.48
+  y: 19.86
+  rot: 90.0
+- ref: C3
+  x: 12.62
+  y: 22.56
+- ref: C4
+  x: 40.26
+  y: 20.57
+- ref: C5
+  x: 61.34
+  y: 10.67
+  rot: 270.0
+- ref: C6
+  x: 57.37
+  y: 9.69
+  rot: 90.0
+- ref: C7
+  x: 49.81
+  y: 11.51
+- ref: C8
+  x: 43.71
+  y: 11.61
+- ref: D1
+  x: 10.82
+  y: 8.59
+  rot: 180.0
+- ref: D2
+  x: 10.82
+  y: 10.29
+  rot: 180.0
+- ref: F2
+  x: 9.04
+  y: 3.65
+  rot: 270.0
+- ref: J1
+  x: 8.34
+  y: 25.28
+- ref: J10
+  x: 35.56
+  y: 1.27
+  rot: 90.0
+- ref: J11
+  x: 38.1
+  y: 1.27
+  rot: 90.0
+- ref: J12
+  x: 40.64
+  y: 1.27
+  rot: 90.0
+- ref: J13
+  x: 43.18
+  y: 1.27
+  rot: 90.0
+- ref: J14
+  x: 45.72
+  y: 1.27
+  rot: 90.0
+- ref: J15
+  x: 48.26
+  y: 1.27
+  rot: 90.0
+- ref: J16
+  x: 50.8
+  y: 1.27
+  rot: 90.0
+- ref: J17
+  x: 53.34
+  y: 1.27
+  rot: 90.0
+- ref: J18
+  x: 55.88
+  y: 1.27
+  rot: 90.0
+- ref: J19
+  x: 59.69
+  y: 19.05
+  rot: 90.0
+- ref: J20
+  x: 6.35
+  y: 15.24
+  rot: 270.0
+- ref: J21
+  x: 19.05
+  y: 11.43
+  rot: 90.0
+- ref: J3
+  x: 17.78
+  y: 1.27
+  rot: 90.0
+- ref: J4
+  x: 20.32
+  y: 1.27
+  rot: 90.0
+- ref: J5
+  x: 22.86
+  y: 1.27
+  rot: 90.0
+- ref: J6
+  x: 25.4
+  y: 1.27
+  rot: 90.0
+- ref: J7
+  x: 27.94
+  y: 1.27
+  rot: 90.0
+- ref: J8
+  x: 30.48
+  y: 1.27
+  rot: 90.0
+- ref: J9
+  x: 33.02
+  y: 1.27
+  rot: 90.0
+- ref: JP2
+  x: 8.06
+  y: 1.65
+  rot: 180.0
+- ref: JP3
+  x: 56.74
+  y: 13.97
+  rot: 270.0
+- ref: JP4
+  x: 6.05
+  y: 22.83
+  rot: 90.0
+- ref: Q1
+  x: 49.76
+  y: 13.97
+- ref: Q10
+  x: 14.1
+  y: 10.26
+- ref: Q11
+  x: 13.94
+  y: 16.71
+  rot: 270.0
+- ref: Q12
+  x: 13.67
+  y: 13.16
+  rot: 270.0
+- ref: Q2
+  x: 26.9
+  y: 17.2
+- ref: Q3
+  x: 26.39
+  y: 14.05
+  rot: 180.0
+- ref: Q4
+  x: 46.89
+  y: 13.97
+- ref: Q5
+  x: 9.68
+  y: 6.86
+  rot: 270.0
+- ref: Q6
+  x: 10.54
+  y: 4.06
+- ref: Q7
+  x: 11.73
+  y: 18.24
+  rot: 90.0
+- ref: Q8
+  x: 11.0
+  y: 20.73
+  rot: 270.0
+- ref: Q9
+  x: 11.28
+  y: 10.08
+  rot: 180.0
+- ref: R1
+  x: 44.6
+  y: 14.1
+  rot: 270.0
+- ref: R10
+  x: 1.91
+  y: 8.13
+- ref: R11
+  x: 1.91
+  y: 22.48
+- ref: R12
+  x: 12.93
+  y: 5.89
+  rot: 270.0
+- ref: R13
+  x: 14.35
+  y: 21.26
+- ref: R14
+  x: 6.35
+  y: 8.28
+  rot: 180.0
+- ref: R15
+  x: 12.88
+  y: 7.57
+  rot: 180.0
+- ref: R16
+  x: 11.46
+  y: 5.92
+  rot: 270.0
+- ref: R17
+  x: 32.16
+  y: 12.88
+- ref: R18
+  x: 10.64
+  y: 15.85
+- ref: R19
+  x: 10.64
+  y: 14.38
+- ref: R2
+  x: 42.82
+  y: 14.1
+  rot: 270.0
+- ref: R20
+  x: 32.23
+  y: 17.75
+  rot: 180.0
+- ref: R21
+  x: 35.38
+  y: 14.33
+  rot: 90.0
+- ref: R3
+  x: 24.26
+  y: 19.94
+  rot: 270.0
+- ref: R4
+  x: 52.83
+  y: 12.98
+- ref: R5
+  x: 52.81
+  y: 14.96
+- ref: R6
+  x: 24.61
+  y: 11.81
+  rot: 90.0
+- ref: R7
+  x: 13.31
+  y: 1.83
+  rot: 270.0
+- ref: R8
+  x: 11.38
+  y: 1.83
+  rot: 270.0
+- ref: R9
+  x: 14.35
+  y: 19.79
+- ref: S1
+  x: 27.87
+  y: 15.82
+  rot: 270.0
+- ref: U1
+  x: 35.04
+  y: 15.04
+- ref: U2
+  x: 32.05
+  y: 15.49
+  rot: 270.0
+- ref: U3
+  x: 12.7
+  y: 16.51
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: SHLD
+  layers: [B.Cu, F.Cu]

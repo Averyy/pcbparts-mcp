@@ -1,0 +1,244 @@
+name: ANAVI Gardening uHAT
+slug: anavi-gardening-uhat
+source: AnaviTechnology/anavi-gardening
+format: kicad_legacy
+description: SPI ADC (MCP3002) for analog soil/moisture sensors on RPi, sensor signal conditioning
+tags: [adc-dac, sensors, signal-conditioning]
+key_ics: [MCP3002]
+outline:
+  width_mm: 65.0
+  height_mm: 30.0
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.254mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 100000uF
+  footprint: '0603'
+- ref: D1
+  value: LED
+  footprint: '1206'
+- ref: D2
+  value: LED
+  footprint: '1206'
+- ref: JP1
+  value: 1x2 header
+  footprint: 1X2
+- ref: P1
+  value: 1x3 header
+  footprint: KLEMA
+- ref: P2
+  value: 1x3 header
+  footprint: 1X3
+- ref: P3
+  value: 1x3 header
+  footprint: 1X3
+- ref: P4
+  value: 2x5 header
+  footprint: 2X5
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+  pullup: U1.7
+- ref: R2
+  value: 4.7kohm
+  footprint: '0603'
+  pullup: U1.6
+- ref: R3
+  value: 4.7kohm
+  footprint: '0603'
+  pullup: U1.5
+- ref: R4
+  value: 270ohm
+  footprint: '0603'
+- ref: R5
+  value: 4.7kohm
+  footprint: '0603'
+  pullup: P1.2
+- ref: R6
+  value: 4.7kohm
+  footprint: '0603'
+  pullup: RASP_CONN1.3
+- ref: R7
+  value: 4.7kohm
+  footprint: '0603'
+  pullup: RASP_CONN1.5
+- ref: R8
+  value: 270ohm
+  footprint: '0603'
+- ref: RASP_CONN1
+  value: Raspberry_PI
+  footprint: 2X20
+- ref: SENS1
+  value: I2C_SENS_1
+  footprint: 1X4
+- ref: SENS2
+  value: I2C_SENS_1
+  footprint: 1X4
+- ref: U1
+  value: CAT24C32WI-GT3
+  footprint: DIP-8
+- ref: U2
+  value: MCP3002
+  footprint: SOIC-8
+- ref: UART1
+  value: 1x4 header
+  footprint: 1X4
+nets:
+- name: +3V3
+  pins:
+  - C1.1
+  - P1.3
+  - P4.8
+  - R1.1
+  - R2.1
+  - R3.1
+  - R5.1
+  - R6.1
+  - R7.1
+  - RASP_CONN1.1
+  - RASP_CONN1.17
+  - SENS1.1
+  - SENS2.1
+  - U1.8
+  - U2.8
+- name: +5V
+  pins: [P4.10, P4.7, P4.9, RASP_CONN1.2, RASP_CONN1.4]
+- name: GND
+  pins:
+  - C1.2
+  - D1.1
+  - D2.1
+  - JP1.2
+  - P1.1
+  - P4.2
+  - P4.4
+  - P4.6
+  - RASP_CONN1.14
+  - RASP_CONN1.20
+  - RASP_CONN1.25
+  - RASP_CONN1.30
+  - RASP_CONN1.34
+  - RASP_CONN1.39
+  - RASP_CONN1.6
+  - RASP_CONN1.9
+  - SENS1.2
+  - SENS2.2
+  - U1.1
+  - U1.2
+  - U1.3
+  - U1.4
+  - U2.4
+- name: Net-(D1-Pad2)
+  pins: [D1.2, R4.1]
+- name: Net-(D2-Pad2)
+  pins: [D2.2, R8.1]
+- name: Net-(JP1-Pad1)
+  pins: [JP1.1, R1.2, U1.7]
+- name: Net-(P1-Pad2)
+  pins: [P1.2, R5.2, RASP_CONN1.7]
+- name: Net-(P4-Pad1)
+  pins: [P4.1, RASP_CONN1.12]
+- name: Net-(P4-Pad3)
+  pins: [P4.3, RASP_CONN1.13]
+- name: Net-(P4-Pad5)
+  pins: [P4.5, RASP_CONN1.11]
+- name: Net-(R2-Pad2)
+  pins: [R2.2, RASP_CONN1.28, U1.6]
+- name: Net-(R3-Pad2)
+  pins: [R3.2, RASP_CONN1.27, U1.5]
+- name: Net-(R4-Pad2)
+  pins: [R4.2, RASP_CONN1.15]
+- name: Net-(R6-Pad2)
+  pins: [R6.2, RASP_CONN1.3, SENS1.4, SENS2.4]
+- name: Net-(R7-Pad2)
+  pins: [R7.2, RASP_CONN1.5, SENS1.3, SENS2.3]
+- name: Net-(R8-Pad2)
+  pins: [R8.2, RASP_CONN1.16]
+- name: Net-(RASP_CONN1-Pad19)
+  pins: [RASP_CONN1.19, U2.5]
+- name: Net-(RASP_CONN1-Pad21)
+  pins: [RASP_CONN1.21, U2.6]
+- name: Net-(RASP_CONN1-Pad23)
+  pins: [RASP_CONN1.23, U2.7]
+- name: Net-(RASP_CONN1-Pad24)
+  pins: [RASP_CONN1.24, U2.1]
+positions:
+- ref: C1
+  x: 211.84
+  y: 84.71
+  rot: 90.0
+- ref: D1
+  x: 158.25
+  y: 101.45
+  rot: 180.0
+- ref: D2
+  x: 164.1
+  y: 101.45
+  rot: 180.0
+- ref: JP1
+  x: 210.95
+  y: 95.19
+  rot: 270.0
+- ref: P1
+  x: 172.0
+  y: 97.66
+- ref: P4
+  x: 153.92
+  y: 95.12
+  rot: 180.0
+- ref: R1
+  x: 211.84
+  y: 89.92
+  rot: 270.0
+- ref: R2
+  x: 208.79
+  y: 89.92
+  rot: 270.0
+- ref: R3
+  x: 208.79
+  y: 84.84
+  rot: 90.0
+- ref: R4
+  x: 157.6
+  y: 95.0
+  rot: 90.0
+- ref: R5
+  x: 164.3
+  y: 95.0
+  rot: 270.0
+- ref: R6
+  x: 158.81
+  y: 84.96
+- ref: R7
+  x: 158.81
+  y: 89.53
+- ref: R8
+  x: 160.75
+  y: 94.95
+  rot: 90.0
+- ref: RASP_CONN1
+  x: 156.85
+  y: 79.8
+  rot: 90.0
+- ref: SENS1
+  x: 171.93
+  y: 89.53
+  rot: 270.0
+- ref: SENS2
+  x: 171.93
+  y: 84.45
+  rot: 270.0
+- ref: U1
+  x: 196.66
+  y: 84.45
+- ref: U2
+  x: 192.47
+  y: 89.47
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

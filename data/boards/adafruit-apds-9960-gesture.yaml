@@ -1,0 +1,141 @@
+name: Adafruit APDS-9960 Gesture
+slug: adafruit-apds-9960-gesture
+source: adafruit/Adafruit-APDS9960-Breakout-PCB
+format: eagle
+description: Gesture/proximity/ALS/color (APDS-9960), IR LED drive
+tags: [sensors]
+key_ics: [APDS-9960]
+outline:
+  width_mm: 17.78
+  height_mm: 17.78
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: 0805
+  decouples: U1
+- ref: C2
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C3
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: JP1
+  value: 1x6 header
+  footprint: 1X06
+- ref: Q1
+  value: BSS138
+  footprint: SOT23-WIDE
+  description: N-Channel Mosfet
+- ref: Q2
+  value: BSS138
+  footprint: SOT23-WIDE
+  description: N-Channel Mosfet
+- ref: R1
+  value: 10kohm
+  footprint: 0805
+  pullup: SCL_3V
+- ref: R2
+  value: 10kohm
+  footprint: 0805
+  pullup: SDA_3V
+- ref: R3
+  value: 10kohm
+  footprint: 0805
+  pullup: SCL
+- ref: R4
+  value: 10kohm
+  footprint: 0805
+  pullup: SDA
+- ref: U1
+  value: APDS-9960
+  footprint: '9960'
+  description: APDS-9960 - Digital Proximity Sensor with Ambient Light/RGB/Gesture Detection
+- ref: U2
+  value: VREG
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+nets:
+- name: 3.3V
+  pins:
+  - C1.1
+  - C3.1
+  - JP1.2
+  - Q1.G
+  - Q2.G
+  - R1.2
+  - R2.2
+  - U1.LEDA
+  - U1.VDD
+  - U2.OUT
+- name: GND
+  pins: [C1.2, C2.2, C3.2, JP1.3, U1.GND, U2.GND]
+- name: INT
+  pins: [JP1.6, U1.INT]
+- name: LDR
+  pins: [U1.LDR, U1.LEDK]
+- name: SCL
+  pins: [JP1.4, Q1.D, R3.1]
+- name: SCL_3V
+  pins: [Q1.S, R1.1, U1.SCL]
+- name: SDA
+  pins: [JP1.5, Q2.D, R4.1]
+- name: SDA_3V
+  pins: [Q2.S, R2.1, U1.SDA]
+- name: VIN
+  pins: [C2.1, JP1.1, R3.2, R4.2, U2.EN, U2.IN]
+positions:
+- ref: C1
+  x: 6.22
+  y: 8.51
+  rot: 90.0
+- ref: C2
+  x: 2.54
+  y: 5.84
+- ref: C3
+  x: 2.54
+  y: 11.43
+  rot: 180.0
+- ref: JP1
+  x: 8.89
+  y: 2.54
+- ref: Q1
+  x: 12.19
+  y: 8.89
+  rot: 90.0
+- ref: Q2
+  x: 15.75
+  y: 8.89
+  rot: 270.0
+- ref: R1
+  x: 12.19
+  y: 11.68
+  rot: 180.0
+- ref: R2
+  x: 15.75
+  y: 11.68
+  rot: 180.0
+- ref: R3
+  x: 12.19
+  y: 6.1
+- ref: R4
+  x: 15.75
+  y: 6.1
+  rot: 180.0
+- ref: U1
+  x: 8.89
+  y: 8.89
+- ref: U2
+  x: 2.92
+  y: 8.76
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

@@ -1,0 +1,111 @@
+name: TV-B-Gone Implant
+slug: tv-b-gone-implant
+source: travisgoodspeed/tvbgimplant
+format: kicad7
+description: "ATtiny IR LED driver circuit \u2014 current-limited LED arrays, IR emission patterns. Simple but niche."
+tags: [led-driver]
+key_ics: [ATtiny85-20M]
+outline:
+  width_mm: 22.91
+  height_mm: 10.88
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: D1
+  value: IR204A
+  footprint: LED_D3.0mm_IRBlack
+- ref: J1
+  value: 2x3 header
+  footprint: 2X3
+- ref: Q1
+  value: BC817
+  footprint: SOT-23
+- ref: R1
+  value: 120ohm
+  footprint: '0603'
+- ref: R2
+  value: 120ohm
+  footprint: '0603'
+- ref: R3
+  value: 120ohm
+  footprint: '0603'
+- ref: SW1
+  value: tactile switch
+  footprint: SW_Tactile_SPST_NO_Straight_CK_PTS636Sx25SMTRLFS
+- ref: U1
+  value: ATtiny85-20M
+  footprint: QFN-20-1EP
+nets:
+- name: /MISO
+  pins: [J1.MISO, R3.1, U1.PB1]
+- name: /MOSI
+  pins: [J1.MOSI, R1.1, U1.AREF/PB0]
+- name: /RST
+  pins: [J1.nRST, SW1.2, U1.nRESET/PB5]
+- name: /SCK
+  pins: [J1.SCK, U1.PB2]
+- name: GND
+  pins:
+  - C1.2
+  - J1.GND
+  - Q1.E
+  - R3.2
+  - SW1.1
+  - U1.GND@21
+  - U1.GND@8
+  - U1.XTAL1/PB3
+  - U1.XTAL2/PB4
+- name: Net-(D1-K)
+  pins: [D1.K, R2.2]
+- name: Net-(Q1-B)
+  pins: [Q1.B, R1.2]
+- name: Net-(Q1-C)
+  pins: [Q1.C, R2.1]
+- name: VCC
+  pins: [C1.1, D1.A, J1.VCC, U1.VCC]
+positions:
+- ref: C1
+  x: 99.5
+  y: 74.44
+  rot: -90.0
+- ref: D1
+  x: 102.87
+  y: 76.2
+  rot: 90.0
+- ref: J1
+  x: 88.9
+  y: 73.66
+- ref: Q1
+  x: 102.23
+  y: 79.68
+  rot: 90.0
+- ref: R1
+  x: 99.5
+  y: 77.92
+  rot: -90.0
+- ref: R2
+  x: 104.78
+  y: 79.38
+  rot: 90.0
+- ref: R3
+  x: 95.69
+  y: 80.01
+  rot: 180.0
+- ref: SW1
+  x: 85.0
+  y: 76.2
+  rot: -90.0
+- ref: U1
+  x: 95.87
+  y: 75.55
+copper_pours:
+- net: GND
+  layers: [B.Cu]

@@ -1,0 +1,511 @@
+name: OpenSiPM Bias Control
+slug: opensipm-bias-control
+source: OpenSiPM/sipm-bias-control
+format: kicad9
+description: 'SiPM high-voltage bias generator: LT8362 boost converter (50-60V output)'
+tags: [adc-dac, audio, power-supply, sbc]
+key_ics: [ATSAMD21E18A-AF, LT8361EMSE/LT8362EMSE, MCP47FEB22A2-E_ST, MIC5317-3.3, RT9072B]
+outline:
+  width_mm: 37.61
+  height_mm: 30.6
+design_rules:
+  layers: 4
+  min_trace: 0.1mm
+  min_clearance: 0.1mm
+  min_drill: 0.15mm
+  min_via: 0.45mm
+components:
+- ref: C1
+  value: 22uF
+  footprint: '0603'
+  voltage: 10V
+  decouples: IC1
+- ref: C10
+  value: 2.2uF
+  footprint: '0603'
+  decouples: U1
+- ref: C11
+  value: 2.2uF
+  footprint: '1206'
+  voltage: 100V
+- ref: C12
+  value: 25pF
+  footprint: '0603'
+- ref: C13
+  value: 2.2uF
+  footprint: '1206'
+  voltage: 100V
+- ref: C14
+  value: 2.2uF
+  footprint: '0603'
+- ref: C15
+  value: 2.2nF
+  footprint: '0603'
+- ref: C16
+  value: 10nF
+  footprint: '0603'
+- ref: C17
+  value: 2.2uF
+  footprint: '0603'
+  decouples: U3
+- ref: C18
+  value: 2.2uF
+  footprint: '0603'
+  decouples: IC2
+- ref: C2
+  value: 2.2uF
+  footprint: '0603'
+  decouples: IC4
+- ref: C3
+  value: 1uF
+  footprint: '0603'
+- ref: C4
+  value: 22uF
+  footprint: '0603'
+  voltage: 10V
+  decouples: IC1
+- ref: C5
+  value: 2.2uF
+  footprint: '1206'
+  voltage: 100V
+- ref: C6
+  value: 2.2uF
+  footprint: '1206'
+  voltage: 100V
+- ref: C7
+  value: 2.2uF
+  footprint: '0603'
+- ref: C8
+  value: 2.2uF
+  footprint: '1206'
+  voltage: 100V
+- ref: C9
+  value: 2.2uF
+  footprint: '0603'
+  decouples: U1
+- ref: D2
+  value: 1N4148WS
+  footprint: SOD-323F
+- ref: D3
+  value: PMEG6030EP
+  footprint: SOD-128
+- ref: IC1
+  value: LT8361EMSE/LT8362EMSE
+  footprint: LT8364IMSE-PBF
+  height: '1.1'
+  manufacturer: Linear Technology
+  mpn: LT8364EMSE#TRPBF
+  description: Switching Voltage Regulators Low IQ Boost/SEPIC/ Inverting Converter with 4A
+- ref: IC2
+  value: ATSAMD21E18A-AF
+  footprint: ATSAMD21E18A-AF
+  height: '1.2'
+  manufacturer: Microchip
+  mpn: ATSAMD21E18A-AFT
+  description: ARM Microcontrollers - MCU Cortex-M0+,64KB FLASH,8KB SRAM T&R, - 32TQFP 125C
+- ref: IC4
+  value: MCP47FEB22A2-E_ST
+  footprint: SOP-8
+  height: '1.2'
+  manufacturer: Microchip
+  mpn: MCP47FEB22A2-E/ST
+  description: Digital to Analog Converters - DAC Dual channel 12-bit nonvolatile, I2C DAC
+- ref: J2
+  value: 1x4 header
+  footprint: 1X4
+- ref: J3
+  value: 1x6 header
+  footprint: 2X3
+- ref: J4
+  value: USB-C
+  footprint: CUI_UJ20-C-V-C-2-SMT-TR_fixedV2
+  lcsc: https://jlcpcb.com/partdetail/SHOUHAN-TYPE_C_16PLC_H100/C3151747
+  description: USB 2.0-only 16P Type-C Receptacle connector
+- ref: L1
+  value: 3.3uH
+  footprint: SRP05204R7K
+  mpn: SRP05203R3K
+- ref: R1
+  value: 5.1kohm
+  footprint: '0603'
+  pullup: /SDA
+- ref: R10
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: /nSHDN
+- ref: R11
+  value: 36.5kohm
+  footprint: '0603'
+- ref: R12
+  value: 39kohm
+  footprint: '0603'
+  pulldown: IC1.RT
+- ref: R13
+  value: 5ohm
+  footprint: '0603'
+- ref: R15
+  value: 39kohm
+  footprint: '0603'
+  pulldown: U2.FB
+- ref: R16
+  value: 39kohm
+  footprint: '0603'
+- ref: R2
+  value: 69.8kohm
+  footprint: '0603'
+- ref: R3
+  value: 5.1kohm
+  footprint: '0603'
+  pullup: /LDO_SHDN
+- ref: R4
+  value: 1Mohm
+  footprint: '0603'
+- ref: R5
+  value: 1Mohm
+  footprint: '0603'
+- ref: R6
+  value: 39k (LT8361) 52.3k (LT8362)
+  footprint: '0603'
+- ref: R7
+  value: 5.1kohm
+  footprint: '0603'
+  pullup: /SCL
+- ref: R8
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: J4.CC2
+- ref: R9
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: J4.CC1
+- ref: U1
+  value: MIC5317-3.3
+  footprint: MIC5317-3.3YM5-TR
+- ref: U2
+  value: RT9072B
+  footprint: SOT-23-5
+- ref: U3
+  value: MCP6C02T-020E
+  footprint: SOT-23-6
+nets:
+- name: +3V3
+  pins:
+  - C10.1
+  - C18.2
+  - C2.1
+  - IC2.VDDANA
+  - IC2.VDDIN
+  - IC4.VDD
+  - R1.1
+  - R3.2
+  - R7.1
+  - U1.VOUT
+- name: +5V
+  pins:
+  - C1.1
+  - C17.1
+  - C4.1
+  - C9.1
+  - IC1.VIN
+  - J3.Pin_1
+  - J4.VBUS@A4
+  - J4.VBUS@A9
+  - J4.VBUS@B4
+  - J4.VBUS@B9
+  - L1.2
+  - U1.EN
+  - U1.VIN
+  - U3.Vdd
+- name: /BIAS
+  pins:
+  - C11.1
+  - C12.1
+  - C5.1
+  - C6.1
+  - HV5.1
+  - J3.Pin_5
+  - R5.1
+  - U2.VOUT
+- name: /BOOST_OUT
+  pins: [C8.1, D3.K, R13.2, R4.1, U3.Vip]
+- name: /Boost_Gain
+  pins: [HV4.1, IC2.PA02, R2.1]
+- name: /FBX
+  pins: [D2.K, IC1.FBX, R2.2, R4.2, R6.1]
+- name: /INTVCC
+  pins: [C3.2, HV6.1, IC1.INTVCC]
+- name: /LDO_SHDN
+  pins: [HV9.1, IC2.PA00, R3.1, U2.!SHDN]
+- name: /OFFSET
+  pins: [IC4.VOUT1, J3.Pin_4]
+- name: /RESET
+  pins: [IC2.nRESET, J2.Pin_4]
+- name: /SCL
+  pins: [IC2.PA09, IC4.SCL, R7.2]
+- name: /SDA
+  pins: [IC2.PA08, IC4.SDA, R1.2]
+- name: /SWCLK
+  pins: [IC2.PA30, J2.Pin_1]
+- name: /SWDIO
+  pins: [IC2.PA31, J2.Pin_2]
+- name: /USB_DN
+  pins: [IC2.PA24, J4.D-@A7, J4.D-@B7]
+- name: /USB_DP
+  pins: [IC2.PA25, J4.D+@A6, J4.D+@B6]
+- name: /gain
+  pins: [HV3.1, IC4.VOUT0, R16.2]
+- name: /nSHDN
+  pins: [IC1.EN/UVLO, IC2.PA10, R10.1, TP_BoostEnable1.1]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C13.2
+  - C14.1
+  - C15.1
+  - C16.1
+  - C17.2
+  - C18.1
+  - C2.2
+  - C3.1
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - IC1.BIAS
+  - IC1.EP
+  - IC2.GND_1
+  - IC2.GND_2
+  - IC4.VSS
+  - J2.Pin_3
+  - J3.Pin_6
+  - J4.GND@A1
+  - J4.GND@A12
+  - J4.GND@B1
+  - J4.GND@B12
+  - J4.SHIELD@S1
+  - R10.2
+  - R12.2
+  - R15.2
+  - R6.2
+  - R8.2
+  - R9.2
+  - TP_GND1.1
+  - TP_GND2.1
+  - U1.GND
+  - U2.GND
+  - U3.Vref
+  - U3.Vss
+- name: Net-(C15-Pad2)
+  pins: [C15.2, R11.1]
+- name: Net-(D2-A)
+  pins: [D2.A, TP_MCP_Out1.1, U3.Vout]
+- name: Net-(D3-A)
+  pins: [D3.A, IC1.SW1, IC1.SW2, L1.1]
+- name: Net-(IC1-RT)
+  pins: [IC1.RT, R12.1]
+- name: Net-(IC1-SS)
+  pins: [C16.2, IC1.SS]
+- name: Net-(IC1-VC)
+  pins: [IC1.VC, R11.2]
+- name: Net-(IC2-VDDCORE)
+  pins: [C7.1, IC2.VDDCORE, TP_1.22V1.1]
+- name: Net-(IC4-VREF)
+  pins: [C14.2, IC4.VREF]
+- name: Net-(J4-CC1)
+  pins: [J4.CC1, R9.1]
+- name: Net-(J4-CC2)
+  pins: [J4.CC2, R8.1]
+- name: Net-(U2-FB)
+  pins: [C12.2, R15.1, R16.1, R5.2, U2.FB]
+- name: Net-(U2-Vin)
+  pins: [C13.1, HV1.1, HV2.1, R13.1, U2.Vin, U3.Vim]
+positions:
+- ref: C1
+  x: 180.18
+  y: 114.97
+  rot: -90.0
+- ref: C10
+  x: 190.25
+  y: 95.12
+- ref: C11
+  x: 208.4
+  y: 111.38
+  rot: 180.0
+- ref: C12
+  x: 209.63
+  y: 114.43
+  rot: -90.0
+- ref: C13
+  x: 203.84
+  y: 115.19
+  rot: -90.0
+- ref: C14
+  x: 204.78
+  y: 107.05
+  rot: -90.0
+- ref: C15
+  x: 182.93
+  y: 117.5
+- ref: C16
+  x: 185.12
+  y: 106.35
+  rot: 180.0
+- ref: C17
+  x: 188.09
+  y: 113.79
+- ref: C18
+  x: 187.2
+  y: 102.3
+  rot: -45.0
+- ref: C2
+  x: 204.7
+  y: 103.95
+  rot: 90.0
+- ref: C3
+  x: 181.9
+  y: 115.03
+  rot: 90.0
+- ref: C4
+  x: 179.35
+  y: 98.2
+  rot: 90.0
+- ref: C5
+  x: 208.4
+  y: 106.55
+  rot: 180.0
+- ref: C6
+  x: 208.4
+  y: 108.97
+  rot: 180.0
+- ref: C7
+  x: 189.15
+  y: 101.05
+  rot: 45.0
+- ref: C8
+  x: 178.1
+  y: 111.5
+  rot: 45.0
+  side: back
+- ref: C9
+  x: 193.8
+  y: 92.71
+  rot: 90.0
+- ref: D2
+  x: 185.5
+  y: 115.11
+  rot: -90.0
+- ref: D3
+  x: 177.1
+  y: 110.75
+  rot: 90.0
+- ref: IC1
+  x: 180.93
+  y: 110.54
+  rot: 90.0
+- ref: IC2
+  x: 193.27
+  y: 105.66
+  rot: 45.0
+- ref: IC4
+  x: 202.15
+  y: 105.83
+  rot: 90.0
+- ref: J2
+  x: 186.56
+  y: 99.82
+  rot: 180.0
+  side: back
+- ref: J3
+  x: 207.39
+  y: 98.26
+- ref: J4
+  x: 200.05
+  y: 97.85
+- ref: L1
+  x: 179.2
+  y: 103.65
+  rot: 90.0
+- ref: R1
+  x: 196.22
+  y: 112.27
+  rot: 90.0
+- ref: R10
+  x: 191.35
+  y: 112.62
+  rot: 180.0
+- ref: R11
+  x: 183.73
+  y: 114.98
+  rot: 90.0
+- ref: R12
+  x: 185.12
+  y: 108.0
+- ref: R13
+  x: 191.03
+  y: 116.15
+  rot: -90.0
+- ref: R15
+  x: 211.07
+  y: 117.47
+  rot: -90.0
+- ref: R16
+  x: 207.35
+  y: 117.36
+  rot: 180.0
+- ref: R2
+  x: 185.12
+  y: 111.17
+  rot: 180.0
+- ref: R3
+  x: 199.68
+  y: 112.26
+  rot: -90.0
+- ref: R4
+  x: 185.12
+  y: 112.7
+  rot: 180.0
+- ref: R5
+  x: 211.16
+  y: 114.43
+  rot: -90.0
+- ref: R6
+  x: 185.13
+  y: 109.65
+- ref: R7
+  x: 198.02
+  y: 112.26
+  rot: 90.0
+- ref: R8
+  x: 206.7
+  y: 94.4
+- ref: R9
+  x: 193.25
+  y: 97.45
+  rot: 180.0
+- ref: U1
+  x: 190.82
+  y: 92.58
+  rot: 180.0
+- ref: U2
+  x: 206.97
+  y: 114.74
+- ref: U3
+  x: 188.21
+  y: 116.59
+  rot: 90.0
+copper_pours:
+- net: +3V3
+  layers: [In2.Cu]
+- net: +5V
+  layers: [In2.Cu]
+- net: /BIAS
+  layers: [In2.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: ''
+  layers: [F.Cu, In1.Cu]
+  keepout: true

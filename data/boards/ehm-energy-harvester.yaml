@@ -1,0 +1,828 @@
+name: EHM Energy Harvester
+slug: ehm-energy-harvester
+source: tinstructor/EHM
+format: eagle
+description: 'BQ25570 nano-power energy harvesting: MPPT boost charger for TEG/solar, dual MAX9934 current sense amplifiers'
+tags: [energy-harvesting, adc-dac]
+key_ics: [BQ25570, MAX9934, MAX4715]
+outline:
+  width_mm: 85.0
+  height_mm: 55.0
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 0.3mm
+  min_via: 8mil
+components:
+- ref: C1
+  value: 10nF
+  footprint: 0805
+- ref: C10
+  value: 100nF
+  footprint: 0805
+  decouples: U3
+- ref: C12
+  value: 4.7uF
+  footprint: 0805
+  decouples: U3
+- ref: C16
+  value: 100nF
+  footprint: 0805
+- ref: C17
+  value: 100nF
+  footprint: 0805
+  decouples: U2
+- ref: C18
+  value: 100uF
+  footprint: '1210'
+- ref: C19
+  value: 100nF
+  footprint: 0805
+  decouples: U4
+- ref: C2
+  value: 4.7uF
+  footprint: 0805
+  decouples: U1
+- ref: C20
+  value: 100nF
+  footprint: 0805
+  decouples: U5
+- ref: C21
+  value: 100nF
+  footprint: 0805
+  decouples: U6
+- ref: C22
+  value: 1.5nF
+  footprint: '0603'
+- ref: C23
+  value: 1uF
+  footprint: 0805
+  decouples: U7
+- ref: C24
+  value: 1uF
+  footprint: 0805
+  decouples: U7
+- ref: C3
+  value: 100nF
+  footprint: 0805
+  decouples: U1
+- ref: C4
+  value: 4.7uF
+  footprint: 0805
+  decouples: U2
+- ref: C5
+  value: 100nF
+  footprint: 0805
+  decouples: U2
+- ref: C6
+  value: 22uF
+  footprint: 0805
+  decouples: U3
+- ref: C8
+  value: 100nF
+  footprint: 0805
+- ref: C9
+  value: 4.7uF
+  footprint: 0805
+- ref: F1
+  value: 120mA PTC
+  footprint: '1206'
+- ref: J1
+  value: 282834-2
+  footprint: CONN_282834-2
+  description: Terminal block; 2
+  manufacturer: TE Connectivity
+  mpn: 282834-2
+- ref: J2
+  value: 282834-2
+  footprint: CONN_282834-2
+  description: Terminal block; 2
+  manufacturer: TE Connectivity
+  mpn: 282834-2
+- ref: J3
+  value: 282834-2
+  footprint: CONN_282834-2
+  description: Terminal block; 2
+  manufacturer: TE Connectivity
+  mpn: 282834-2
+- ref: J4
+  value: 282834-2
+  footprint: CONN_282834-2
+  description: Terminal block; 2
+  manufacturer: TE Connectivity
+  mpn: 282834-2
+- ref: J5
+  value: 282834-2
+  footprint: CONN_282834-2
+  description: Terminal block; 2
+  manufacturer: TE Connectivity
+  mpn: 282834-2
+- ref: J6
+  value: JST SH 2-pin
+  footprint: SM02B-SRSS-TB
+  description: CONN HEADER SH 2POS SIDE 1MM TIN
+- ref: J7
+  value: JST SH 6-pin
+  footprint: SM06B-SRSS-B
+  description: JST (JAPAN SOLDERLESS TERMINALS) - SM06B-SRSS-TB(LF)(SN) - CONNECTOR, HEADER
+- ref: JP1
+  value: 2x5 header
+  footprint: 2X05
+- ref: JP2
+  value: 2x3 header
+  footprint: 2X03
+- ref: L1
+  value: DR73-100-R
+  footprint: DR73
+- ref: L2
+  value: DR73-220-R
+  footprint: DR73
+- ref: R1
+  value: 10.7kohm
+  footprint: '0603'
+  pulldown: CMES1
+- ref: R10
+  value: 7.15Mohm
+  footprint: '0603'
+- ref: R11
+  value: 50mohm
+  footprint: Y14870RXX000B9R
+- ref: R12
+  value: 7.15Mohm
+  footprint: '0603'
+- ref: R13
+  value: 5.76Mohm
+  footprint: '0603'
+- ref: R14
+  value: 50ohm
+  footprint: '0603'
+- ref: R15
+  value: 50ohm
+  footprint: '0603'
+- ref: R16
+  value: 10Mohm
+  footprint: '0603'
+- ref: R17
+  value: 10Mohm
+  footprint: '0603'
+- ref: R18
+  value: 10Mohm
+  footprint: '0603'
+- ref: R19
+  value: 10Mohm
+  footprint: '0603'
+- ref: R2
+  value: 9.31kohm
+  footprint: '0603'
+  pulldown: CMES2
+- ref: R20
+  value: 5.23Mohm
+  footprint: '0603'
+- ref: R21
+  value: 0ohm
+  footprint: '0603'
+- ref: R22
+  value: 7.87Mohm
+  footprint: '0603'
+- ref: R23
+  value: 50ohm
+  footprint: '0603'
+- ref: R24
+  value: 200ohm
+  footprint: '0603'
+- ref: R3
+  value: 100mohm
+  footprint: Y14870RXX000B9R
+- ref: R4
+  value: 7.32Mohm
+  footprint: '0603'
+- ref: R5
+  value: 5.62Mohm
+  footprint: '0603'
+- ref: R6
+  value: 10kohm
+  footprint: '0603'
+  pullup: U1.CS
+- ref: R7
+  value: 10kohm
+  footprint: '0603'
+  pullup: U2.CS
+- ref: R8
+  value: 5.11Mohm
+  footprint: '0603'
+- ref: R9
+  value: 866kohm
+  footprint: '0603'
+- ref: SJ1
+  value: solder jumper
+  footprint: SJ
+- ref: SJ10
+  value: solder jumper
+  footprint: SJ
+- ref: SJ11
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ12
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ13
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ14
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ15
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ2
+  value: solder jumper
+  footprint: SJ
+- ref: SJ3
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ4
+  value: solder jumper
+  footprint: SJ
+- ref: SJ5
+  value: solder jumper
+  footprint: SJ
+- ref: SJ6
+  value: solder jumper
+  footprint: SJ
+- ref: SJ7
+  value: solder jumper
+  footprint: SJ
+- ref: SJ8
+  value: solder jumper
+  footprint: SJ
+- ref: SJ9
+  value: solder jumper
+  footprint: SJ
+- ref: U1
+  value: MAX9934TAUA
+  footprint: 21-0036K
+  description: Linear IC - Op-amp Maxim Integrated MAX9934TAUA+ Current sensor uMAX 8
+  manufacturer: Maxim Integrated
+  mpn: MAX9934TAUA+
+- ref: U2
+  value: MAX9934TAUA
+  footprint: 21-0036K
+  description: Linear IC - Op-amp Maxim Integrated MAX9934TAUA+ Current sensor uMAX 8
+  manufacturer: Maxim Integrated
+  mpn: MAX9934TAUA+
+- ref: U3
+  value: BQ25570RGRR
+  footprint: QFN-21
+  description: Ultra Low Power Harvester Power Management IC with Boost Charger, and Nanopower
+  manufacturer: Texas Instruments
+  mpn: BQ25570RGRR
+- ref: U4
+  value: MAX4715
+  footprint: SC70-5L
+- ref: U5
+  value: OPA314IDCKR
+  footprint: SC70-5L
+- ref: U6
+  value: DG2034EDQ-T1-GE3
+  footprint: MSOP10
+- ref: U7
+  value: ADS7041IRUGR
+  footprint: QFN-8
+nets:
+- name: '!CS!'
+  pins: [R14.1, TP20.TP, U7.!CS!]
+- name: A0
+  pins: [J7.1, U6.A0]
+- name: A1
+  pins: [J7.2, U6.A1]
+- name: AINP
+  pins: [C22.2, R24.1, TP17.TP, U7.AINP]
+- name: BUF_IN
+  pins:
+  - SJ10.1
+  - SJ11.1
+  - SJ12.3
+  - SJ13.1
+  - SJ14.1
+  - SJ15.3
+  - U6.COM
+- name: BUF_OUT
+  pins: [R24.2, SJ13.2]
+- name: CMES1
+  pins: [R1.2, SJ15.2, TP24.TP, U1.OUT]
+- name: CMES2
+  pins: [R2.2, SJ14.2, TP23.TP, U2.OUT]
+- name: COM
+  pins: [SJ3.3, U4.COM]
+- name: CS
+  pins: [R6.2, U1.CS]
+- name: CS_2
+  pins: [R7.2, U2.CS]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.1
+  - C20.2
+  - C21.2
+  - C22.1
+  - C23.1
+  - C24.2
+  - C3.1
+  - C4.1
+  - C5.1
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - J1.1
+  - J2.1
+  - J3.1
+  - J4.1
+  - J5.1
+  - J6.2
+  - J6.SHIELD
+  - J7.6
+  - J7.SHIELD
+  - JP1.10
+  - JP1.4
+  - JP2.6
+  - R1.1
+  - R13.1
+  - R17.1
+  - R19.1
+  - R2.1
+  - R20.1
+  - R5.1
+  - R8.1
+  - TP12.TP
+  - TP4.TP
+  - U1.GROUND
+  - U2.GROUND
+  - U3.EP@1
+  - U3.EP@2
+  - U3.EP@3
+  - U3.EP@4
+  - U3.EP@5
+  - U3.NC1
+  - U3.NC2
+  - U3.VSS@1
+  - U3.VSS@2
+  - U4.GND
+  - U5.VCC-
+  - U6.GND
+  - U7.AINM
+  - U7.GND
+- name: IN
+  pins: [SJ13.3, U5.IN-, U5.OUT]
+- name: IN_2
+  pins: [SJ10.2, TP14.TP, U5.IN+]
+- name: LBOOST
+  pins: [L2.2, TP2.TP, U3.LBOOST]
+- name: LBUCK
+  pins: [L1.2, TP1.TP, U3.LBUCK]
+- name: N$12
+  pins: [J7.5, R15.2]
+- name: N$2
+  pins: [R20.2, R21.1]
+- name: N$3
+  pins: [JP1.8, R21.2, R22.1]
+- name: N$6
+  pins: [F1.2, J5.2]
+- name: N$9
+  pins: [J7.3, R14.2]
+- name: NEN
+  pins: [JP1.1, JP1.3, U3.!EN]
+- name: OK_HYST
+  pins: [R10.2, R9.1, U3.OK_HYST]
+- name: OK_PROG
+  pins: [R10.1, R8.2, U3.OK_PROG]
+- name: RSN2
+  pins:
+  - C14.1
+  - J1.2
+  - J3.2
+  - R3.2
+  - SJ1.2
+  - SJ3.1
+  - SJ9.2
+  - TP9.TP
+  - U2.RSN
+- name: RSP1
+  pins:
+  - C16.1
+  - J2.2
+  - R11.2
+  - R16.2
+  - SJ2.2
+  - TP11.TP
+  - U1.RSP
+- name: RSP1_DIV
+  pins: [R16.1, R17.2, SJ11.2, TP16.TP]
+- name: S1
+  pins: [SJ11.3, U6.S1]
+- name: S2
+  pins: [SJ12.1, U6.S2]
+- name: S3
+  pins: [SJ14.3, U6.S3]
+- name: S4
+  pins: [SJ15.1, U6.S4]
+- name: SCLK
+  pins: [R15.1, TP22.TP, U7.SCLK]
+- name: SDO
+  pins: [J7.4, R23.1, TP21.TP]
+- name: SDO_2
+  pins: [R23.2, U7.SDO]
+- name: SW
+  pins: [J6.1, U4.IN]
+- name: V+
+  pins: [C19.1, SJ9.1, U4.NO, U4.V+]
+- name: VBAT
+  pins: [C18.1, J4.2, JP1.2, R18.2, TP6.TP, U3.VBAT]
+- name: VBAT_DIV
+  pins: [R18.1, R19.2, SJ12.2, TP19.TP]
+- name: VBAT_OK
+  pins: [JP2.4, TP7.TP, U3.VBAT_OK]
+- name: VBAT_OV
+  pins: [R4.1, R5.2, U3.VBAT_OV]
+- name: VCC_SW
+  pins:
+  - F1.1
+  - SJ3.2
+  - SJ4.1
+  - SJ5.1
+  - SJ6.1
+  - SJ7.1
+  - SJ8.1
+- name: VCC_SW1
+  pins: [C2.2, C3.2, R6.1, SJ4.2, TP26.TP, U1.VCC]
+- name: VCC_SW2
+  pins: [C4.2, C5.2, R7.1, SJ5.2, TP25.TP, U2.VCC]
+- name: VCC_SW3
+  pins: [C21.1, SJ6.2, TP13.TP, U6.EN, U6.V+]
+- name: VCC_SW4
+  pins: [C20.1, SJ7.2, TP15.TP, U5.VCC+]
+- name: VCC_SW5
+  pins: [C23.2, C24.1, SJ8.2, TP18.TP, U7.AVDD, U7.DVDD]
+- name: VIN_DC
+  pins:
+  - C10.1
+  - C12.1
+  - C13.1
+  - C15.1
+  - L2.1
+  - R11.1
+  - R22.2
+  - SJ2.1
+  - TP10.TP
+  - U1.RSN
+  - U3.VIN_DC
+- name: VOC_SAMP
+  pins: [JP1.5, JP1.7, JP1.9, U3.VOC_SAMP]
+- name: VOUT
+  pins:
+  - C17.1
+  - C6.1
+  - C7.1
+  - L1.1
+  - R3.1
+  - SJ1.1
+  - TP3.TP
+  - U2.RSP
+  - U3.VOUT
+- name: VOUT_EN
+  pins: [JP2.1, JP2.3, JP2.5, U3.VOUT_EN]
+- name: VOUT_SET
+  pins: [R12.1, R13.2, U3.VOUT_SET]
+- name: VRDIV
+  pins: [R12.2, R4.2, R9.2, TP8.TP, U3.VRDIV]
+- name: VREF_SAMP
+  pins: [C1.1, U3.VREF_SAMP]
+- name: VSTOR
+  pins:
+  - C11.1
+  - C8.1
+  - C9.1
+  - JP1.6
+  - JP2.2
+  - TP5.TP
+  - U3.VSTOR
+positions:
+- ref: C1
+  x: 19.0
+  y: 15.0
+  rot: 180.0
+- ref: C10
+  x: 20.5
+  y: 24.0
+  rot: 270.0
+- ref: C12
+  x: 16.5
+  y: 24.0
+  rot: 270.0
+- ref: C16
+  x: 10.5
+  y: 51.5
+  rot: 90.0
+- ref: C17
+  x: 50.5
+  y: 28.5
+  rot: 90.0
+- ref: C18
+  x: 21.0
+  y: 37.5
+  rot: 90.0
+- ref: C19
+  x: 65.5
+  y: 12.5
+- ref: C2
+  x: 27.0
+  y: 51.5
+  rot: 270.0
+- ref: C20
+  x: 66.0
+  y: 42.0
+- ref: C21
+  x: 53.0
+  y: 51.0
+  rot: 90.0
+- ref: C22
+  x: 67.5
+  y: 51.0
+  rot: 90.0
+- ref: C23
+  x: 75.0
+  y: 46.0
+  rot: 90.0
+- ref: C24
+  x: 72.0
+  y: 49.5
+- ref: C3
+  x: 24.0
+  y: 51.5
+  rot: 270.0
+- ref: C4
+  x: 56.5
+  y: 28.5
+  rot: 270.0
+- ref: C5
+  x: 53.5
+  y: 28.5
+  rot: 270.0
+- ref: C6
+  x: 38.0
+  y: 22.0
+  rot: 180.0
+- ref: C8
+  x: 28.0
+  y: 26.5
+- ref: C9
+  x: 28.0
+  y: 29.0
+- ref: F1
+  x: 63.0
+  y: 3.5
+- ref: J1
+  x: 49.0
+  y: 6.0
+  rot: 180.0
+- ref: J2
+  x: 6.0
+  y: 41.0
+  rot: 90.0
+- ref: J3
+  x: 41.0
+  y: 6.0
+  rot: 180.0
+- ref: J4
+  x: 6.0
+  y: 33.0
+  rot: 90.0
+- ref: J5
+  x: 71.0
+  y: 6.0
+  rot: 180.0
+- ref: J6
+  x: 80.0
+  y: 13.0
+  rot: 90.0
+- ref: J7
+  x: 80.0
+  y: 30.0
+  rot: 90.0
+- ref: JP1
+  x: 16.5
+  y: 5.0
+  rot: 180.0
+- ref: JP2
+  x: 7.0
+  y: 16.0
+  rot: 90.0
+- ref: L1
+  x: 38.0
+  y: 31.0
+  rot: 180.0
+- ref: L2
+  x: 18.0
+  y: 31.0
+- ref: R1
+  x: 27.0
+  y: 46.0
+- ref: R10
+  x: 31.0
+  y: 11.0
+  rot: 270.0
+- ref: R11
+  x: 14.0
+  y: 45.0
+  rot: 90.0
+- ref: R12
+  x: 34.2
+  y: 14.0
+  rot: 180.0
+- ref: R13
+  x: 35.0
+  y: 19.0
+  rot: 270.0
+- ref: R14
+  x: 71.5
+  y: 35.5
+  rot: 270.0
+- ref: R15
+  x: 74.0
+  y: 35.5
+  rot: 270.0
+- ref: R16
+  x: 38.5
+  y: 43.5
+  rot: 270.0
+- ref: R17
+  x: 41.5
+  y: 43.5
+  rot: 90.0
+- ref: R18
+  x: 38.5
+  y: 47.5
+  rot: 90.0
+- ref: R19
+  x: 41.5
+  y: 47.5
+  rot: 270.0
+- ref: R2
+  x: 58.5
+  y: 23.5
+- ref: R20
+  x: 12.5
+  y: 16.0
+  rot: 90.0
+- ref: R21
+  x: 12.5
+  y: 20.0
+  rot: 90.0
+- ref: R22
+  x: 12.5
+  y: 24.0
+  rot: 90.0
+- ref: R23
+  x: 71.5
+  y: 42.0
+  rot: 90.0
+- ref: R24
+  x: 64.5
+  y: 51.0
+  rot: 270.0
+- ref: R3
+  x: 46.5
+  y: 21.5
+  rot: 270.0
+- ref: R4
+  x: 23.0
+  y: 11.0
+  rot: 270.0
+- ref: R5
+  x: 19.0
+  y: 11.0
+  rot: 90.0
+- ref: R6
+  x: 27.0
+  y: 43.0
+- ref: R7
+  x: 58.5
+  y: 21.0
+- ref: R8
+  x: 35.0
+  y: 11.0
+  rot: 90.0
+- ref: R9
+  x: 27.0
+  y: 11.0
+  rot: 270.0
+- ref: SJ1
+  x: 42.5
+  y: 18.0
+  rot: 270.0
+- ref: SJ10
+  x: 57.0
+  y: 49.7
+  rot: 270.0
+- ref: SJ11
+  x: 45.0
+  y: 42.5
+  rot: 270.0
+- ref: SJ12
+  x: 45.0
+  y: 48.5
+  rot: 270.0
+- ref: SJ13
+  x: 60.5
+  y: 50.5
+  rot: 270.0
+- ref: SJ14
+  x: 51.0
+  y: 40.0
+  rot: 180.0
+- ref: SJ15
+  x: 51.0
+  y: 51.0
+- ref: SJ2
+  x: 19.0
+  y: 41.0
+  rot: 90.0
+- ref: SJ3
+  x: 56.5
+  y: 12.5
+- ref: SJ4
+  x: 62.0
+  y: 20.0
+  rot: 90.0
+- ref: SJ5
+  x: 65.0
+  y: 20.0
+  rot: 90.0
+- ref: SJ6
+  x: 68.0
+  y: 20.0
+  rot: 90.0
+- ref: SJ7
+  x: 71.0
+  y: 20.0
+  rot: 90.0
+- ref: SJ8
+  x: 74.0
+  y: 20.0
+  rot: 90.0
+- ref: SJ9
+  x: 56.0
+  y: 7.5
+  rot: 180.0
+- ref: U1
+  x: 21.0
+  y: 46.0
+  rot: 270.0
+- ref: U2
+  x: 53.0
+  y: 22.5
+  rot: 270.0
+- ref: U3
+  x: 28.0
+  y: 20.0
+- ref: U4
+  x: 63.3
+  y: 8.1
+  rot: 270.0
+- ref: U5
+  x: 64.5
+  y: 46.0
+  rot: 180.0
+- ref: U6
+  x: 49.5
+  y: 45.5
+- ref: U7
+  x: 70.0
+  y: 46.0
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: RSN2
+  layers: [B.Cu, F.Cu]
+- net: RSP1
+  layers: [B.Cu, F.Cu]
+- net: VCC_SW3
+  layers: [F.Cu]
+- net: VCC_SW5
+  layers: [F.Cu]
+- net: VIN_DC
+  layers: [B.Cu, F.Cu]
+- net: VOUT
+  layers: [B.Cu, F.Cu]

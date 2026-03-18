@@ -1,0 +1,631 @@
+name: GoodWatch
+slug: goodwatch
+source: travisgoodspeed/goodwatch
+format: kicad7
+description: CC430F6137 (MSP430 + sub-GHz radio SoC), LCD driving
+tags: [display, sub-ghz]
+key_ics: [CC430F613x, SN74AXC4T774RSVR, FT232RQ]
+outline:
+  width_mm: 75.2
+  height_mm: 101.2
+design_rules:
+  layers: 2
+  min_trace: 0.125mm
+  min_clearance: 0.15mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: A1
+  value: YageoS432
+  footprint: YageoS432
+  manufacturer: Yaego
+- ref: BRD1
+  value: CA53BOARD
+  footprint: ca53board
+- ref: BT1
+  value: AAAA
+  footprint: BE-AAAA-PC
+- ref: BT2
+  value: AAAA
+  footprint: BE-AAAA-PC
+- ref: BZ1
+  value: Buzzer
+  footprint: '1203'
+- ref: C1
+  value: 47uF
+  footprint: '0603'
+- ref: C10
+  value: 220pF
+  footprint: '0402'
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+  decouples: U4
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+- ref: C2
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C4
+  value: 10uF
+  footprint: '0402'
+- ref: C5
+  value: 470nF
+  footprint: '0402'
+- ref: C6
+  value: 12pF
+  footprint: '0402'
+- ref: C7
+  value: 12pF
+  footprint: '0402'
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+- ref: D1
+  value: green LED
+  footprint: '0402'
+- ref: D2
+  value: red LED
+  footprint: '0402'
+- ref: J1
+  value: ANT_U.FL
+  footprint: U.FL_Molex_MCRF_73412-0110_Vertical
+  manufacturer: '0734120110'
+- ref: J2
+  value: DX07S016JA1R1500
+  footprint: JAE_DX07S016JA1R1500
+  manufacturer: JAE Industry Ltd.
+- ref: J3
+  value: SMA
+  footprint: SMA_Amphenol_132289_EdgeMount
+- ref: L1
+  value: Ferrite 1k
+  footprint: '0402'
+- ref: LCD1
+  value: CA53LCD
+  footprint: ca53lcd
+- ref: R1
+  value: 75kohm
+  footprint: '0402'
+  pullup: RST
+- ref: R2
+  value: 56kohm
+  footprint: '0402'
+  pulldown: U1.44
+- ref: R3
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: J2.3
+- ref: R4
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: J2.9
+- ref: R5
+  value: 270ohm
+  footprint: '0402'
+- ref: R6
+  value: 270ohm
+  footprint: '0402'
+- ref: SW0
+  value: tactile switch
+  footprint: TL6700
+- ref: SW1
+  value: tactile switch
+  footprint: TL6700
+- ref: SW10
+  value: tactile switch
+  footprint: TL6700
+- ref: SW11
+  value: tactile switch
+  footprint: TL6700
+- ref: SW12
+  value: tactile switch
+  footprint: TL6700
+- ref: SW13
+  value: tactile switch
+  footprint: TL6700
+- ref: SW14
+  value: tactile switch
+  footprint: TL6700
+- ref: SW15
+  value: tactile switch
+  footprint: TL6700
+- ref: SW16
+  value: tactile switch
+  footprint: TL6700
+- ref: SW17
+  value: tactile switch
+  footprint: TL6700
+- ref: SW2
+  value: tactile switch
+  footprint: TL6700
+- ref: SW3
+  value: tactile switch
+  footprint: TL6700
+- ref: SW4
+  value: tactile switch
+  footprint: TL6700
+- ref: SW5
+  value: tactile switch
+  footprint: TL6700
+- ref: SW6
+  value: tactile switch
+  footprint: TL6700
+- ref: SW7
+  value: tactile switch
+  footprint: TL6700
+- ref: SW8
+  value: tactile switch
+  footprint: TL6700
+- ref: SW9
+  value: tactile switch
+  footprint: TL6700
+- ref: U1
+  value: CC430F613x
+  footprint: CC430F613x
+  manufacturer: Texas Instruments
+- ref: U2
+  value: 0915LP15B02
+  footprint: LP15
+  manufacturer: 0500LP15A500, 0915LP15B02
+- ref: U3
+  value: B0310J50100AHF
+  footprint: B0310J50100AHF
+  manufacturer: B0310J50100AH
+- ref: U4
+  value: SN74AXC4T774RSVR
+  footprint: SN74AXC4T774RSVR
+- ref: U5
+  value: FT232RQ
+  footprint: FT232RQ-REEL
+- ref: Y1
+  value: 32.768kHz
+  footprint: SMD3215
+  manufacturer: Abracon
+- ref: Y2
+  value: FA128 26MHz
+  footprint: FA128
+  manufacturer: FA-128 26.0000MF10Z-W5
+nets:
+- name: /BUZZ
+  pins: [BRD1.8, BZ1.1, U1.57]
+- name: /COM0
+  pins: [LCD1.2, U1.5]
+- name: /COM1
+  pins: [LCD1.3, U1.6]
+- name: /COM2
+  pins: [LCD1.4, U1.7]
+- name: /LCDCAP
+  pins: [C4.1, U1.4]
+- name: /RFVCC
+  pins:
+  - C8.1
+  - C9.1
+  - L1.1
+  - U1.38
+  - U1.39
+  - U1.42
+  - U1.43
+  - U1.45
+- name: /RF_N
+  pins: [U1.41, U3.3]
+- name: /RF_P
+  pins: [U1.40, U3.4]
+- name: /RF_XIN
+  pins: [C6.1, U1.36, Y2.1]
+- name: /RF_XOUT
+  pins: [C7.1, U1.37, Y2.3]
+- name: /USB/DTR#
+  pins: [U4.11, U5.31]
+- name: /USB/RTS#
+  pins: [U4.10, U5.32]
+- name: /USB/RXD
+  pins: [U4.9, U5.2]
+- name: /USB/RXLED
+  pins: [R5.1, U5.21]
+- name: /USB/TXD
+  pins: [U4.12, U5.30]
+- name: /USB/TXLED
+  pins: [R6.1, U5.22]
+- name: /USB/USBDM
+  pins: [J2.5, J2.8, U5.15]
+- name: /USB/USBDP
+  pins: [J2.6, J2.7, U5.14]
+- name: /USB/VBUS
+  pins: [C13.1, D1.2, D2.2, J2.11, J2.2, U5.19]
+- name: /USB/VCCB
+  pins: [C12.1, U4.13, U5.1, U5.16]
+- name: /VCORE
+  pins: [C5.1, U1.10]
+- name: GND
+  pins:
+  - BRD1.2
+  - BRD1.7
+  - BT2.2
+  - BZ1.2
+  - C1.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - J1.2
+  - J2.1
+  - J2.12
+  - J2.S1
+  - J2.S2
+  - J2.S3
+  - J2.S4
+  - J2.S5
+  - J2.S6
+  - J3.2
+  - R2.2
+  - R3.1
+  - R4.2
+  - SW16.2
+  - SW17.2
+  - U1.53
+  - U1.65
+  - U2.1
+  - U2.3
+  - U2.5
+  - U2.7
+  - U3.2
+  - U4.15
+  - U4.16
+  - U4.5
+  - U4.7
+  - U4.8
+  - U5.17
+  - U5.20
+  - U5.24
+  - U5.26
+  - U5.33
+  - U5.4
+  - Y2.2
+  - Y2.4
+- name: MODE
+  pins: [BRD1.3, SW16.1, U1.3, U4.1]
+- name: Net-(A1-Pad1)
+  pins: [A1.1, C10.2, J1.1, J3.1]
+- name: Net-(BT1-Pad2)
+  pins: [BT1.2, BT2.1]
+- name: Net-(C10-Pad1)
+  pins: [C10.1, U2.4]
+- name: Net-(D1-Pad1)
+  pins: [D1.1, R5.2]
+- name: Net-(D2-Pad1)
+  pins: [D2.1, R6.2]
+- name: Net-(J2-Pad3)
+  pins: [J2.3, R3.2]
+- name: Net-(J2-Pad9)
+  pins: [J2.9, R4.1]
+- name: Net-(LCD1-Pad10)
+  pins: [LCD1.10, U1.31]
+- name: Net-(LCD1-Pad11)
+  pins: [LCD1.11, U1.30]
+- name: Net-(LCD1-Pad12)
+  pins: [LCD1.12, U1.29]
+- name: Net-(LCD1-Pad13)
+  pins: [LCD1.13, U1.28]
+- name: Net-(LCD1-Pad14)
+  pins: [LCD1.14, U1.27]
+- name: Net-(LCD1-Pad15)
+  pins: [LCD1.15, U1.26]
+- name: Net-(LCD1-Pad16)
+  pins: [LCD1.16, U1.24]
+- name: Net-(LCD1-Pad17)
+  pins: [LCD1.17, U1.23]
+- name: Net-(LCD1-Pad18)
+  pins: [LCD1.18, U1.22]
+- name: Net-(LCD1-Pad19)
+  pins: [LCD1.19, U1.21]
+- name: Net-(LCD1-Pad20)
+  pins: [LCD1.20, U1.20]
+- name: Net-(LCD1-Pad21)
+  pins: [LCD1.21, U1.19]
+- name: Net-(LCD1-Pad22)
+  pins: [LCD1.22, U1.18]
+- name: Net-(LCD1-Pad23)
+  pins: [LCD1.23, U1.17]
+- name: Net-(LCD1-Pad24)
+  pins: [LCD1.24, U1.16]
+- name: Net-(LCD1-Pad25)
+  pins: [LCD1.25, U1.15]
+- name: Net-(LCD1-Pad26)
+  pins: [LCD1.26, U1.14]
+- name: Net-(LCD1-Pad27)
+  pins: [LCD1.27, U1.13]
+- name: Net-(LCD1-Pad28)
+  pins: [LCD1.28, U1.12]
+- name: Net-(LCD1-Pad29)
+  pins: [LCD1.29, U1.9]
+- name: Net-(LCD1-Pad35)
+  pins: [LCD1.35, U1.8]
+- name: Net-(LCD1-Pad6)
+  pins: [LCD1.6, U1.35]
+- name: Net-(LCD1-Pad7)
+  pins: [LCD1.7, U1.34]
+- name: Net-(LCD1-Pad8)
+  pins: [LCD1.8, U1.33]
+- name: Net-(LCD1-Pad9)
+  pins: [LCD1.9, U1.32]
+- name: Net-(R2-Pad1)
+  pins: [R2.1, U1.44]
+- name: Net-(U1-Pad54)
+  pins: [U1.54, Y1.2]
+- name: Net-(U1-Pad55)
+  pins: [U1.55, Y1.1]
+- name: Net-(U2-Pad8)
+  pins: [U2.8, U3.1]
+- name: P17
+  pins: [SW12.1, SW13.1, SW14.1, SW15.1, U1.1]
+- name: P20
+  pins: [SW11.1, SW3.1, SW6.1, SW9.1, U1.64]
+- name: P21
+  pins: [SW10.1, SW2.1, SW5.1, SW8.1, U1.63]
+- name: P22
+  pins: [SW0.1, SW1.1, SW4.1, SW7.1, U1.62]
+- name: P23
+  pins: [SW15.2, SW7.2, SW8.2, SW9.2, U1.61]
+- name: P24
+  pins: [SW14.2, SW4.2, SW5.2, SW6.2, U1.60]
+- name: P25
+  pins: [SW1.2, SW13.2, SW2.2, SW3.2, U1.59]
+- name: P26
+  pins: [SW0.2, SW10.2, SW11.2, SW12.2, U1.58]
+- name: PRGM
+  pins: [BRD1.4, SW17.1, U1.2, U4.4]
+- name: RST
+  pins: [BRD1.6, R1.2, U1.51, U4.2]
+- name: TST
+  pins: [BRD1.5, U1.50, U4.3]
+- name: VCC
+  pins:
+  - BRD1.1
+  - BT1.1
+  - C1.1
+  - C11.1
+  - C2.1
+  - C3.1
+  - L1.2
+  - R1.1
+  - U1.11
+  - U1.25
+  - U1.52
+  - U1.56
+  - U4.14
+  - U4.6
+positions:
+- ref: A1
+  x: 109.45
+  y: 63.5
+  side: back
+- ref: BRD1
+  x: 96.6
+  y: 86.4
+- ref: BT1
+  x: 140.0
+  y: 122.0
+  rot: 180.0
+  side: back
+- ref: BT2
+  x: 78.0
+  y: 122.0
+  rot: 180.0
+  side: back
+- ref: BZ1
+  x: 109.1
+  y: 112.4
+  rot: -90.0
+  side: back
+- ref: C1
+  x: 100.54
+  y: 62.65
+  side: back
+- ref: C10
+  x: 100.0
+  y: 81.8
+  rot: 180.0
+- ref: C11
+  x: 138.6
+  y: 89.42
+  rot: -90.0
+- ref: C12
+  x: 137.6
+  y: 80.4
+  rot: 180.0
+- ref: C13
+  x: 136.6
+  y: 82.89
+  rot: 90.0
+- ref: C2
+  x: 114.25
+  y: 75.22
+- ref: C3
+  x: 108.3
+  y: 79.0
+  rot: 90.0
+  side: back
+- ref: C4
+  x: 115.52
+  y: 79.67
+- ref: C5
+  x: 114.25
+  y: 76.24
+- ref: C6
+  x: 101.0
+  y: 73.04
+  rot: 180.0
+- ref: C7
+  x: 98.48
+  y: 75.0
+  rot: 90.0
+- ref: C8
+  x: 105.4
+  y: 77.5
+  side: back
+- ref: C9
+  x: 105.4
+  y: 75.5
+  side: back
+- ref: D1
+  x: 130.12
+  y: 80.9
+  rot: 180.0
+- ref: D2
+  x: 130.12
+  y: 83.9
+  rot: 180.0
+- ref: J1
+  x: 99.8
+  y: 67.05
+  side: back
+- ref: J2
+  x: 138.6
+  y: 76.4
+  rot: 180.0
+- ref: J3
+  x: 85.6
+  y: 75.4
+  rot: 90.0
+- ref: L1
+  x: 105.4
+  y: 76.49
+  side: back
+- ref: LCD1
+  x: 99.0
+  y: 70.2
+- ref: R1
+  x: 100.0
+  y: 82.8
+  rot: 180.0
+- ref: R2
+  x: 101.9
+  y: 79.3
+  rot: -90.0
+- ref: R3
+  x: 145.6
+  y: 74.89
+  rot: -90.0
+- ref: R4
+  x: 131.6
+  y: 74.92
+  rot: 90.0
+- ref: R5
+  x: 133.12
+  y: 80.9
+  rot: 180.0
+- ref: R6
+  x: 133.12
+  y: 83.9
+  rot: 180.0
+- ref: SW0
+  x: 88.0
+  y: 150.0
+- ref: SW1
+  x: 88.0
+  y: 133.0
+- ref: SW10
+  x: 102.0
+  y: 150.0
+- ref: SW11
+  x: 116.0
+  y: 150.0
+- ref: SW12
+  x: 130.0
+  y: 150.0
+- ref: SW13
+  x: 130.0
+  y: 133.0
+- ref: SW14
+  x: 130.0
+  y: 116.0
+- ref: SW15
+  x: 130.0
+  y: 99.0
+- ref: SW16
+  x: 82.6
+  y: 85.4
+  rot: -90.0
+- ref: SW17
+  x: 124.1
+  y: 115.9
+  rot: 180.0
+  side: back
+- ref: SW2
+  x: 102.0
+  y: 133.0
+- ref: SW3
+  x: 116.0
+  y: 133.0
+- ref: SW4
+  x: 88.0
+  y: 116.0
+- ref: SW5
+  x: 102.0
+  y: 116.0
+- ref: SW6
+  x: 116.0
+  y: 116.0
+- ref: SW7
+  x: 88.0
+  y: 99.0
+- ref: SW8
+  x: 102.0
+  y: 99.0
+- ref: SW9
+  x: 116.0
+  y: 99.0
+- ref: U1
+  x: 107.6
+  y: 77.0
+  rot: 180.0
+- ref: U2
+  x: 100.0
+  y: 79.8
+  rot: 90.0
+- ref: U3
+  x: 100.97
+  y: 77.34
+  rot: 180.0
+- ref: U4
+  x: 142.4
+  y: 90.6
+  rot: 90.0
+- ref: U5
+  x: 140.6
+  y: 84.4
+  rot: 180.0
+- ref: Y1
+  x: 114.13
+  y: 84.88
+  rot: 180.0
+  side: back
+- ref: Y2
+  x: 100.4
+  y: 74.72
+  rot: 180.0
+copper_pours:
+- net: /RFVCC
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]

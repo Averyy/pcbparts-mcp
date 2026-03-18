@@ -1,0 +1,4128 @@
+name: S3XY-BMS Tesla Retrofit
+slug: s3xy-bms-tesla-retrofit
+source: clowrey/S3XY-BMS-PCB
+format: kicad8
+description: 'Tesla Model 3/Y 400V battery pack retrofit BMS: RP2350B, TI INA228 20-bit current sensor'
+tags: [battery-management, current-sensing, isolation, sensors]
+key_ics: [RP2350B, INA228]
+outline:
+  width_mm: 280.0
+  height_mm: 113.0
+design_rules:
+  layers: 4
+  min_trace: 0.14mm
+  min_clearance: 0.1mm
+  min_drill: 0.25mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: 0805
+  voltage: 50V
+  description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+- ref: C100
+  value: 1uF
+  footprint: '0603'
+  description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
+- ref: C101
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C102
+  value: 100pF
+  footprint: '0603'
+  description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
+- ref: C103
+  value: 100pF
+  footprint: '0603'
+  description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
+- ref: C11
+  value: 22uF
+  footprint: 0805
+  voltage: 25V
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C112
+  value: 680uF
+  footprint: CP_Radial_D10.0mm_P5.00mm
+  voltage: 35V Polymer
+  description: 35V 4.1A@100kHz 680uF Polymer
+- ref: C117
+  value: 15pF
+  footprint: '0402'
+  description: 0402CG150J500NT
+- ref: C118
+  value: 15pF
+  footprint: '0402'
+  description: 0402CG150J500NT
+- ref: C12
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C120
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C123
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C124
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C126
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C127
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C128
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C129
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C130
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C131
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C132
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C14
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+  decouples: U13
+- ref: C15
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C16
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C17
+  value: 1uF
+  footprint: '0603'
+  description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
+- ref: C18
+  value: 1uF
+  footprint: '0603'
+  description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
+- ref: C19
+  value: 1uF
+  footprint: '0603'
+  description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
+- ref: C2
+  value: 10uF
+  footprint: 0805
+  voltage: 50V
+  description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
+- ref: C20
+  value: 1uF
+  footprint: '0603'
+  description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
+- ref: C21
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+  decouples: U28
+- ref: C22
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+  decouples: U32
+- ref: C23
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C25
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+  decouples: U1
+- ref: C26
+  value: 1uF
+  footprint: '0603'
+  description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
+- ref: C27
+  value: 1uF
+  footprint: '0603'
+  description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
+- ref: C28
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C29
+  value: 10uF
+  footprint: 0805
+  voltage: 50V X5R
+  description: "10uF 50V X5R \xB110% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+- ref: C3
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C30
+  value: 100pF
+  footprint: '0603'
+  description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
+- ref: C31
+  value: 100pF
+  footprint: '0603'
+  description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
+- ref: C32
+  value: 4.7uF
+  footprint: '0402'
+  description: CL05A475MP5NRNC
+- ref: C33
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C34
+  value: 680uF
+  footprint: CP_Radial_D10.0mm_P5.00mm
+  voltage: 35V Polymer
+  description: 35V 4.1A@100kHz 680uF Polymer
+- ref: C35
+  value: 15pF
+  footprint: '0402'
+  description: 0402CG150J500NT
+- ref: C36
+  value: 15pF
+  footprint: '0402'
+  description: 0402CG150J500NT
+- ref: C37
+  value: 4.7uF
+  footprint: '0402'
+  description: CL05A475MP5NRNC
+  decouples: U27
+- ref: C38
+  value: 22uF
+  footprint: 0805
+  voltage: 25V
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C39
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+  decouples: U25
+- ref: C40
+  value: 1uF
+  footprint: '0603'
+  description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
+- ref: C41
+  value: 100nF
+  footprint: '0603'
+- ref: C42
+  value: 100nF
+  footprint: '0603'
+  description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
+- ref: C43
+  value: 100nF
+  footprint: '0603'
+- ref: C44
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C45
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C46
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+- ref: C47
+  value: 4.7uF
+  footprint: '0402'
+  description: CL05A475MP5NRNC
+- ref: C48
+  value: 4.7uF
+  footprint: '0402'
+  description: CL05A475MP5NRNC
+  decouples: U27
+- ref: C49
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+- ref: C50
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+  decouples: U21
+- ref: C51
+  value: 10uF
+  footprint: 0805
+  voltage: 50V X5R
+  description: "10uF 50V X5R \xB110% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+- ref: C52
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C53
+  value: 4.7uF
+  footprint: '0603'
+  description: "CL10A475KO8NNNC - 16V 4.7uF X5R \xB110%"
+  decouples: U21
+- ref: C54
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C55
+  value: 10uF
+  footprint: 0805
+  voltage: 50V
+  description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
+  decouples: U17
+- ref: C56
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C57
+  value: 10uF
+  footprint: 0805
+  voltage: 50V
+  description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
+  decouples: U17
+- ref: C58
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+- ref: C59
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U11
+- ref: C6
+  value: 10uF
+  footprint: 0805
+  voltage: 50V X5R
+  description: "10uF 50V X5R \xB110% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+- ref: C60
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U11
+- ref: C61
+  value: 4.7uF
+  footprint: '0402'
+  description: CL05A475MP5NRNC
+- ref: C62
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C63
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U11
+- ref: C64
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U11
+- ref: C65
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U11
+- ref: C66
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U11
+- ref: C67
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U11
+- ref: C68
+  value: 100pF
+  footprint: '0603'
+  description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
+- ref: C69
+  value: 680uF
+  footprint: CP_Radial_D10.0mm_P5.00mm
+  voltage: 35V Polymer
+  description: 35V 4.1A@100kHz 680uF Polymer
+  decouples: U17
+- ref: C7
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C70
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+- ref: C71
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C72
+  value: 4.7uF
+  footprint: '0402'
+  description: CL05A475MP5NRNC
+- ref: C73
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C74
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U11
+- ref: C75
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U27
+- ref: C76
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C77
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C78
+  value: 100nF
+  footprint: '0402'
+  description: CL05B104KO5NNNC
+  decouples: U11
+- ref: C79
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+  decouples: U15
+- ref: C8
+  value: 10uF
+  footprint: 0805
+  voltage: 50V
+  description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
+- ref: C80
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+  decouples: U19
+- ref: C81
+  value: 1nF
+  footprint: '1206'
+  description: 1206B102K202NT
+- ref: C82
+  value: 1nF
+  footprint: '1206'
+  description: 1206B102K202NT
+- ref: C83
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C84
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C85
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C86
+  value: 1uF
+  footprint: '0603'
+  description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
+- ref: C87
+  value: 4.7uF
+  footprint: '0402'
+  description: CL05A475MP5NRNC
+- ref: C88
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C89
+  value: 4.7uF
+  footprint: '0402'
+  description: CL05A475MP5NRNC
+  decouples: U11
+- ref: C9
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C90
+  value: 1uF
+  footprint: '0603'
+  description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
+- ref: C91
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C92
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C93
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+  decouples: U18
+- ref: C94
+  value: 100nF
+  footprint: '0603'
+- ref: C95
+  value: 22uF
+  footprint: 0805
+  voltage: 25V X5R
+  description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
+- ref: C96
+  value: 10uF
+  footprint: 0805
+  voltage: 50V X5R
+  description: "10uF 50V X5R \xB110% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+- ref: C97
+  value: 100nF
+  footprint: '0603'
+  description: CC0603KRX7R9BB104 - 100nF 50V X7R
+- ref: C98
+  value: 10uF
+  footprint: 0805
+  voltage: 50V
+  description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
+  decouples: U19
+- ref: C99
+  value: 10uF
+  footprint: 0805
+  voltage: 50V
+  description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
+  decouples: U15
+- ref: D1
+  value: SMCJ33CA
+  footprint: SMC
+  description: 1.5kW@10/1000us 1uA 28.2A@10/1000us 33V 40.6V 53.3V Bidirectional IEC 61000-4-2
+- ref: D10
+  value: SMCJ33CA
+  footprint: SMC
+  description: 1.5kW@10/1000us 1uA 28.2A@10/1000us 33V 40.6V 53.3V Bidirectional IEC 61000-4-2
+- ref: D11
+  value: SS54
+  footprint: SMA
+  description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
+- ref: D12
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D13
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D14
+  value: SS54
+  footprint: SMA
+  description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
+- ref: D15
+  value: SS54
+  footprint: SMA
+  description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
+- ref: D16
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D17
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D18
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D19
+  value: green LED
+  footprint: 0805
+- ref: D2
+  value: green LED
+  footprint: 0805
+- ref: D20
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D21
+  value: SS54
+  footprint: SMA
+  description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
+- ref: D22
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D23
+  value: white LED
+  footprint: 0805
+- ref: D24
+  value: SS54
+  footprint: SMA
+  description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
+- ref: D25
+  value: SMCJ33CA
+  footprint: SMC
+  description: 1.5kW@10/1000us 1uA 28.2A@10/1000us 33V 40.6V 53.3V Bidirectional IEC 61000-4-2
+- ref: D26
+  value: white LED
+  footprint: 0805
+- ref: D27
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D28
+  value: red LED
+  footprint: 0805
+- ref: D29
+  value: white LED
+  footprint: 0805
+- ref: D3
+  value: green LED
+  footprint: 0805
+- ref: D30
+  value: SS54
+  footprint: SMA
+  description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
+- ref: D31
+  value: white LED
+  footprint: 0805
+- ref: D32
+  value: white LED
+  footprint: 0805
+- ref: D33
+  value: red LED
+  footprint: 0805
+- ref: D34
+  value: red LED
+  footprint: 0805
+- ref: D35
+  value: white LED
+  footprint: 0805
+- ref: D36
+  value: SS54
+  footprint: SMA
+  description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
+- ref: D37
+  value: green LED
+  footprint: 0805
+- ref: D38
+  value: green LED
+  footprint: 0805
+- ref: D39
+  value: SS54
+  footprint: SMA
+  description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
+- ref: D4
+  value: green LED
+  footprint: 0805
+- ref: D40
+  value: red LED
+  footprint: 0805
+- ref: D41
+  value: red LED
+  footprint: 0805
+- ref: D42
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D43
+  value: red LED
+  footprint: 0805
+- ref: D44
+  value: green LED
+  footprint: 0805
+- ref: D45
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D46
+  value: white LED
+  footprint: 0805
+- ref: D47
+  value: white LED
+  footprint: 0805
+- ref: D49
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D5
+  value: white LED
+  footprint: 0805
+- ref: D50
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D51
+  value: SMB6.8CA
+  footprint: SMB
+  description: Bidirectional transient-voltage-suppression diode
+- ref: D53
+  value: SS54
+  footprint: SMA
+  description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
+- ref: D6
+  value: SS54
+  footprint: SMA
+  description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
+- ref: D7
+  value: SMCJ33CA
+  footprint: SMC
+  description: 1.5kW@10/1000us 1uA 28.2A@10/1000us 33V 40.6V 53.3V Bidirectional IEC 61000-4-2
+- ref: D8
+  value: green LED
+  footprint: 0805
+- ref: D9
+  value: SS54
+  footprint: SMA
+  description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
+- ref: FB1
+  value: 120ohm@100MHz
+  footprint: '0603'
+  description: "120\u03A9@100MHz 2A 50m\u03A9 \xB125% 0603 Ferrite BeadsBLM18PG121SN1D"
+- ref: FB2
+  value: 600R@100MHz
+  footprint: '0603'
+  description: "200mA 450m\u03A9"
+- ref: FB3
+  value: 120ohm@100MHz
+  footprint: '0603'
+  description: "120\u03A9@100MHz 2A 50m\u03A9 \xB125% 0603 Ferrite BeadsBLM18PG121SN1D"
+- ref: FB4
+  value: 600R@100MHz
+  footprint: '0603'
+  description: "200mA 450m\u03A9"
+- ref: FB5
+  value: 600R@100MHz
+  footprint: '0603'
+  description: "200mA 450m\u03A9 600\u03A9@100MHz"
+- ref: FB6
+  value: 600R@100MHz
+  footprint: '0603'
+  description: "200mA 450m\u03A9"
+- ref: FB7
+  value: 120ohm@100MHz
+  footprint: '0603'
+  description: "120\u03A9@100MHz 2A 50m\u03A9 \xB125% 0603 Ferrite BeadsBLM18PG121SN1D"
+- ref: FL1
+  value: SDCW3225S-2-102TF
+  footprint: FILTER-SMD_4P-L3.2-W2.5-BL
+- ref: FL3
+  value: SDCW3225S-2-102TF
+  footprint: FILTER-SMD_4P-L3.2-W2.5-BL
+- ref: J15
+  value: USB-C
+  footprint: USB-C
+  description: USB 2.0-only 16P Type-C Receptacle connector
+- ref: J17
+  value: USB-C
+  footprint: USB-C
+  description: USB 2.0-only 16P Type-C Receptacle connector
+- ref: J18
+  value: USB-C
+  footprint: USB-C
+  description: USB 2.0-only 16P Type-C Receptacle connector
+- ref: J19
+  value: 8P8C_LED_Shielded_x2
+  footprint: RJ45_Amphenol_RJHSE538X-02
+  description: RJ connector, 8P8C (8 positions 8 connected), two LEDs, RJ45, Shielded, two
+- ref: J3
+  value: 8P8C_LED_Shielded_x2
+  footprint: RJ45_Amphenol_RJHSE538X-02
+  description: RJ connector, 8P8C (8 positions 8 connected), two LEDs, RJ45, Shielded, two
+- ref: J6
+  value: OEM Connector
+  footprint: CONN_SD-34912-001_02_MOL
+- ref: JP10
+  value: solder jumper
+  footprint: SJ-2
+  description: Jumper, 2-pole, open
+- ref: JP11
+  value: solder jumper
+  footprint: SJ-2
+  description: Jumper, 2-pole, open
+- ref: JP12
+  value: solder jumper
+  footprint: SJ-2
+  description: Jumper, 2-pole, open
+- ref: L1
+  value: 6.8uH
+  footprint: L_Changjiang_FXL0630
+- ref: L2
+  value: 6.8uH
+  footprint: L_Changjiang_FXL0630
+- ref: L3
+  value: 22uH
+  footprint: L_Changjiang_FXL1040
+  current: 5.5A
+- ref: L4
+  value: 6.8uH
+  footprint: L_Changjiang_FXL0630
+- ref: L5
+  value: 6.8uH
+  footprint: L_Changjiang_FXL0630
+- ref: L6
+  value: 3.3uH
+  footprint: L_pol_2016
+- ref: L7
+  value: 3.3uH
+  footprint: L_pol_2016
+- ref: L8
+  value: 22uH
+  footprint: L_Changjiang_FXL1040
+  current: 5.5A
+- ref: L9
+  value: 6.8uH
+  footprint: L_Changjiang_FXL0630
+- ref: PS1
+  value: MFM-15-5
+  footprint: Converter_ACDC_MeanWell_MFM-15-xx_THT
+  description: Meanwell AC/DC converter, 80-264VAC, output 5V, 15 watts
+- ref: Q1
+  value: CRSM034N06L2
+  footprint: AO_DFN-8-1EP
+  description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
+- ref: Q2
+  value: CRSM034N06L2
+  footprint: AO_DFN-8-1EP
+  description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
+- ref: Q3
+  value: CRSM034N06L2
+  footprint: AO_DFN-8-1EP
+  description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
+- ref: Q5
+  value: CRSM034N06L2
+  footprint: AO_DFN-8-1EP
+  description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R10
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R100
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R101
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R102
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R103
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R104
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R105
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R106
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R107
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R108
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R109
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R11
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R110
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R111
+  value: 510r
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R112
+  value: 510r
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R113
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: CTR-FC-Pos
+- ref: R114
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R115
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R116
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R117
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: CTR-FC-NEG
+- ref: R118
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R119
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R12
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: I2C SCL Shunt
+- ref: R120
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R124
+  value: 510r
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R125
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R126
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R127
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R128
+  value: 120r
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R13
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: I2C SDA Shunt
+- ref: R130
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R131
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R134
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R135
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R14
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R140
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: 5V Sense
+- ref: R144
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R146
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: 5V Sense
+- ref: R148
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R149
+  value: 1kohm
+  footprint: '0402'
+  pulldown: U17.VSENSE
+- ref: R15
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R150
+  value: 100kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R153
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R155
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R16
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R167
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R168
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R17
+  value: 100kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: U19.OUTB
+- ref: R170
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R171
+  value: 33r
+  footprint: '0402'
+  description: 0402WGF330JTCE
+- ref: R174
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: J18.CC1
+- ref: R175
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: J18.CC2
+- ref: R18
+  value: 120r
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R19
+  value: 33r
+  footprint: '0402'
+  description: 0402WGF330JTCE
+- ref: R193
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R194
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R195
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R196
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R2
+  value: 47r
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R20
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R21
+  value: 22ohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R214
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R215
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R216
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R217
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R218
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R219
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R22
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: Emergency Stop
+- ref: R220
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R221
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R222
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R223
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R224
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R225
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R226
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R227
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R228
+  value: 220r
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R229
+  value: 220r
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R23
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R24
+  value: 22ohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R25
+  value: 100kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: U19.OUTA
+- ref: R26
+  value: 33ohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R27
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R28
+  value: 100kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R29
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: VContactor Sense
+- ref: R3
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R30
+  value: 100r
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R31
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: Extra Input
+- ref: R33
+  value: 33r
+  footprint: '0402'
+  description: 0402WGF330JTCE
+- ref: R34
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R35
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R36
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R37
+  value: 2.2kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R38
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R39
+  value: 2.2kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R4
+  value: 100kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: U15.OUTA
+- ref: R40
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R41
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R42
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: SX Serial RX
+- ref: R43
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R44
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R45
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R46
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R47
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R48
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R49
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R5
+  value: 33ohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R50
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: FC-CTR-POS-AUX
+- ref: R51
+  value: 22ohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R52
+  value: 22ohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R53
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: J17.CC1
+- ref: R54
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R55
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: J17.CC2
+- ref: R56
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: D23.A
+- ref: R57
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+  pulldown: /GPIO0
+- ref: R58
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R59
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+  pullup: /MCU2_GPIO0
+- ref: R6
+  value: 33ohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R60
+  value: 3.3kohm
+  footprint: '0402'
+  pullup: U17.VSENSE
+- ref: R61
+  value: 510r
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R62
+  value: 100kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: U15.OUTB
+- ref: R63
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R64
+  value: 1kohm
+  footprint: '0402'
+  description: 0402WGF1001TCE
+- ref: R65
+  value: 2.7kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: BatSPI_MISO
+- ref: R66
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: 3.3V Sense
+- ref: R67
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: 3.3V Sense
+- ref: R68
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R69
+  value: 33ohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R7
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R70
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R71
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R72
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R73
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: FC-CTR-NEG-AUX
+- ref: R74
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R75
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: D26.A
+- ref: R76
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R78
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R79
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R8
+  value: 47r
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R80
+  value: 33r
+  footprint: '0402'
+  description: 0402WGF330JTCE
+- ref: R81
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R82
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: I2C SCL Vsense
+- ref: R83
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R84
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R85
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: I2C SDA Vsense
+- ref: R86
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R87
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R88
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R89
+  value: 510r
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R9
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R90
+  value: 100ohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R91
+  value: 24kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R92
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R93
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: CTR_EN
+- ref: R95
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: CTR-LNK-POS
+- ref: R96
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: CTR-LNK-NEG
+- ref: R98
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: R99
+  value: 1Mohm
+  footprint: '1206'
+  description: Resistor, small symbol
+- ref: SW1
+  value: TS-1187A-B-A-B
+  footprint: SW_Push_1P1T_XKB_TS-1187A
+  description: BOOT
+- ref: SW2
+  value: TS-1187A-B-A-B
+  footprint: SW_Push_1P1T_XKB_TS-1187A
+  description: RESET
+- ref: SW3
+  value: TS-1187A-B-A-B
+  footprint: SW_Push_1P1T_XKB_TS-1187A
+  description: BOOT
+- ref: SW4
+  value: TS-1187A-B-A-B
+  footprint: SW_Push_1P1T_XKB_TS-1187A
+  description: RESET
+- ref: TH1
+  value: B59451C1130B070
+  footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
+  description: Temperature dependent resistor, positive temperature coefficient
+- ref: TH2
+  value: B59451C1130B070
+  footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
+  description: Temperature dependent resistor, positive temperature coefficient
+- ref: TH3
+  value: B59451C1130B070
+  footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
+  description: Temperature dependent resistor, positive temperature coefficient
+- ref: TH4
+  value: B59451C1130B070
+  footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
+  description: Temperature dependent resistor, positive temperature coefficient
+- ref: TH5
+  value: B59451C1130B070
+  footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
+  description: Temperature dependent resistor, positive temperature coefficient
+- ref: TH6
+  value: B59451C1130B070
+  footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
+  description: Temperature dependent resistor, positive temperature coefficient
+- ref: TR10
+  value: HM2113ZNLT
+  footprint: HM2113ZNLT
+  description: Low profile BMS Transformers
+- ref: U1
+  value: SN74LV1T08DBVR
+  footprint: SOT-23-5
+  description: Single power supply 2-input POSITIVE AND Gate with Logic Level Shifter
+- ref: U10
+  value: LTV-217-B-G
+  footprint: SSOP-4
+  description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+- ref: U11
+  value: RP2354B
+  footprint: RP2350-QFN-80-1EP
+  description: 2Mbit internal flash
+- ref: U12
+  value: ADS1115
+  footprint: TSSOP-10
+  description: Ultra-Small, Low-Power, I2C-Compatible, 860-SPS, 16-Bit ADCs With Internal
+- ref: U13
+  value: ISO1050DUB
+  footprint: SOP-8
+  description: Isolated CAN Transceiver, SOP-8
+- ref: U14
+  value: F0505S-1
+  footprint: H0505S-1WR2
+  description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+- ref: U15
+  value: UCC27524DR
+  footprint: SOIC-8
+  description: Dual 5A MOSFET driver, 4.5V..18V supply, non-inverting, SOIC-8
+- ref: U17
+  value: TPS5430DDAR
+  footprint: TI_SO-PowerPAD-8_ThermalVias
+  lcsc: C9864
+  description: 500kHz 3A
+- ref: U18
+  value: ISO1540
+  footprint: SOIC-8
+  description: I2C Isolator, 2.5 kVrms, Bidirectional clock and data, SOIC-8
+- ref: U19
+  value: UCC27524DR
+  footprint: SOIC-8
+  description: Dual 5A MOSFET driver, 4.5V..18V supply, non-inverting, SOIC-8
+- ref: U2
+  value: ISO1540
+  footprint: SOIC-8
+  description: I2C Isolator, 2.5 kVrms, Bidirectional clock and data, SOIC-8
+- ref: U20
+  value: LTV-217-B-G
+  footprint: SSOP-4
+  description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+- ref: U21
+  value: AMS1117-3.3
+  footprint: SOT-223-3_TabPin2
+  description: 1A Low Dropout regulator, positive, 3.3V fixed output, SOT-223
+- ref: U22
+  value: F0505S-1
+  footprint: H0505S-1WR2
+  description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+- ref: U23
+  value: F0505S-1
+  footprint: H0505S-1WR2
+  description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+- ref: U24
+  value: F0505S-1
+  footprint: H0505S-1WR2
+  description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+- ref: U25
+  value: ISO1050DUB
+  footprint: SOP-8
+  description: Isolated CAN Transceiver, SOP-8
+- ref: U27
+  value: RP2354B
+  footprint: RP2350-QFN-80-1EP
+  description: 2MB internal flash
+- ref: U28
+  value: AM26LV32EIDR
+  footprint: SOIC-16
+  description: 32Mbps 3.3V RS485 Quad Line Receivers, SOIC-16
+- ref: U3
+  value: INA228
+  footprint: VSSOP-10
+  description: Shunt Monitor
+- ref: U32
+  value: SP3485EN-L
+  footprint: SOIC-8
+  description: 10Mbps 2mA 3.3V 32 Half-Duplex Transceiver SOIC-8 RS-485 / RS-422 ICs ROHS
+- ref: U4
+  value: ISO1540
+  footprint: SOIC-8
+  description: I2C Isolator, 2.5 kVrms, Bidirectional clock and data, SOIC-8
+- ref: U5
+  value: LTV-217-B-G
+  footprint: SSOP-4
+  description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+- ref: U6
+  value: F0505S-1
+  footprint: H0505S-1WR2
+  description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+- ref: U7
+  value: LTV-217-B-G
+  footprint: SSOP-4
+  description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+- ref: U8
+  value: LTV-217-B-G
+  footprint: SSOP-4
+  description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+- ref: U9
+  value: LTV-217-B-G
+  footprint: SSOP-4
+  description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+- ref: Y1
+  value: ABM8-272-T3
+  footprint: SMD3225
+  description: 12MHz
+- ref: Y2
+  value: ABM8-272-T3
+  footprint: SMD3225
+  description: 12MHz
+nets:
+- name: +1V1
+  pins:
+  - C120.1
+  - C123.1
+  - C48.1
+  - C71.1
+  - L7.1
+  - U27.DVDD@10
+  - U27.DVDD@32
+  - U27.DVDD@51
+  - U27.VREG_FB
+- name: +1V1_2
+  pins:
+  - C46.1
+  - C58.1
+  - C70.1
+  - C87.1
+  - L6.1
+  - U11.DVDD@10
+  - U11.DVDD@32
+  - U11.DVDD@51
+  - U11.VREG_FB
+- name: +3.3V
+  pins:
+  - C124.1
+  - C126.1
+  - C127.1
+  - C128.1
+  - C129.1
+  - C130.1
+  - C131.1
+  - C14.1
+  - C21.1
+  - C22.2
+  - C25.1
+  - C37.1
+  - C4.1
+  - C53.2
+  - C59.1
+  - C60.1
+  - C63.1
+  - C64.1
+  - C65.1
+  - C66.1
+  - C67.1
+  - C73.1
+  - C74.1
+  - C75.1
+  - C78.1
+  - C89.1
+  - C93.1
+  - D2.A
+  - D28.A
+  - D37.A
+  - D38.A
+  - D40.A
+  - D41.A
+  - R12.1
+  - R13.1
+  - R171.2
+  - R19.2
+  - R33.2
+  - R42.1
+  - R59.1
+  - R65.2
+  - R66.1
+  - R75.1
+  - R80.2
+  - R82.1
+  - R85.1
+  - U1.VCC
+  - U11.IOVDD@15
+  - U11.IOVDD@24
+  - U11.IOVDD@29
+  - U11.IOVDD@41
+  - U11.IOVDD@5
+  - U11.IOVDD@50
+  - U11.IOVDD@60
+  - U11.IOVDD@76
+  - U11.QSPI_IOVDD
+  - U11.USB_OTP_VDD
+  - U11.VREG_VIN
+  - U13.VCC1
+  - U18.VCC1
+  - U2.VCC1
+  - U21.VO@2
+  - U25.VCC1
+  - U27.IOVDD@15
+  - U27.IOVDD@24
+  - U27.IOVDD@29
+  - U27.IOVDD@41
+  - U27.IOVDD@5
+  - U27.IOVDD@50
+  - U27.IOVDD@60
+  - U27.IOVDD@76
+  - U27.QSPI_IOVDD
+  - U27.USB_OTP_VDD
+  - U27.VREG_VIN
+  - U28.G
+  - U28.VDD
+  - U32.VCC
+  - U4.VCC1
+  - U5.4
+  - U7.4
+  - U8.4
+  - U9.4
+- name: +5V
+  pins:
+  - C11.2
+  - C112.1
+  - C132.2
+  - C23.1
+  - C27.2
+  - C3.2
+  - C49.2
+  - C50.2
+  - C52.2
+  - C79.2
+  - C80.2
+  - C9.2
+  - C90.2
+  - C91.2
+  - C98.2
+  - C99.2
+  - FB1.2
+  - FB3.2
+  - FB7.2
+  - L1.2
+  - L2.2
+  - L4.2
+  - L5.2
+  - L8.1
+  - L9.2
+  - R146.1
+  - R56.1
+  - R60.1
+  - U15.VDD
+  - U19.VDD
+  - U21.VI
+  - U5.1
+  - U7.1
+- name: /1/2 Vsense
+  pins:
+  - C10.1
+  - C41.2
+  - C42.1
+  - C43.2
+  - C95.2
+  - R228.2
+  - R229.1
+  - R40.2
+  - R41.1
+  - R45.2
+  - R47.2
+- name: /CAN 5V
+  pins: [FB6.2, R112.1, R120.1, R23.2, R39.2, U13.VCC2]
+- name: /CAN H
+  pins: [C30.2, D16.A2, FL3.2, R18.2]
+- name: /CAN L
+  pins: [C31.1, D17.A1, FL3.3, R18.1]
+- name: /CAN2 H
+  pins: [C102.2, D42.A2, FL1.2, J19.16, J19.4, R128.2]
+- name: /CAN2 L
+  pins: [C103.1, D45.A1, FL1.3, J19.17, J19.5]
+- name: /Contactor_Input
+  pins: [D15.A, D20.A2, D36.A]
+- name: /FC Pos
+  pins: [TH1.2, TH2.2, TH3.2]
+- name: /FC-Neg-Jumper
+  pins:
+  - C44.2
+  - D19.K
+  - D25.A2
+  - D39.A
+  - JP10.A
+  - JP11.A
+  - JP12.A
+  - Q3.D@5
+- name: /GPIO0
+  pins: [R57.2, U27.GPIO0]
+- name: /GPIO25
+  pins: [R119.1, U27.GPIO25]
+- name: /GPIO44_ADC4
+  pins: [GPIO44.1, U27.GPIO44_ADC4]
+- name: /GPIO45_ADC5
+  pins: [GPIO45.1, U27.GPIO45_ADC5]
+- name: /GPIO46_ADC6
+  pins: [GPIO46.1, U27.GPIO46_ADC6]
+- name: /GPIO47_ADC7
+  pins: [GPIO47.1, U27.GPIO47_ADC7]
+- name: /HV Sense 5V
+  pins:
+  - C18.2
+  - C39.2
+  - C56.2
+  - FB5.2
+  - R20.1
+  - R228.1
+  - R44.1
+  - R54.1
+  - R61.1
+  - R81.2
+  - U12.VDD
+  - U2.VCC2
+- name: /Logic_Input
+  pins: [D12.A2, D14.A, R74.1]
+- name: /MCU2_GPIO0
+  pins: [R59.2, U11.GPIO0]
+- name: /MCU2_GPIO1
+  pins: [R63.2, U11.GPIO1]
+- name: /MCU2_GPIO14
+  pins: [R58.1, U11.GPIO14]
+- name: /MCU2_GPIO2
+  pins: [R64.2, U11.GPIO2]
+- name: /MCU2_GPIO25
+  pins: [R48.1, U11.GPIO25]
+- name: /MCU2_GPIO38
+  pins: [R34.2, U11.GPIO38]
+- name: /MCU2_GPIO39
+  pins: [R35.2, U11.GPIO39]
+- name: /MCU2_GPIO6
+  pins: [R118.1, U11.GPIO6]
+- name: /MCU2_GPIO8
+  pins: [R92.1, U11.GPIO8]
+- name: /PH
+  pins: [C54.1, D24.K, L8.2, U17.PH]
+- name: /QSPI2_SS
+  pins: [R49.1, U11.QSPI_SS]
+- name: /QSPI_SS
+  pins: [R170.1, U27.QSPI_SS]
+- name: /RUN
+  pins: [R167.2, SW4.2@2]
+- name: /RUN_2
+  pins: [R43.1, U11.RUN]
+- name: /SX Serial 5V
+  pins:
+  - C96.2
+  - C97.2
+  - R87.1
+  - R89.1
+  - R91.1
+  - U14.+Vout
+  - U18.VCC2
+- name: /SX Serial RX Iso
+  pins: [R88.1, U18.SCL2]
+- name: /SX Serial TX Iso
+  pins: [R87.2, U18.SDA2]
+- name: /Serial API 5V Diode
+  pins: [D21.K, J15.VBUS@A4, J15.VBUS@A9, J15.VBUS@B4, J15.VBUS@B9]
+- name: /Serial API RX
+  pins: [J15.D-@A7, J15.D-@B7, R144.2, R7.1]
+- name: /Serial API TX
+  pins: [J15.D+@A6, J15.D+@B6, R1.1]
+- name: /USB2_D+
+  pins: [J17.D+@A6, J17.D+@B6, R51.1]
+- name: /USB2_D-
+  pins: [J17.D-@A7, J17.D-@B7, R52.1]
+- name: /USB_D+
+  pins: [J18.D+@A6, J18.D+@B6, R21.1]
+- name: /USB_D-
+  pins: [J18.D-@A7, J18.D-@B7, R24.1]
+- name: /VREG2_AVDD
+  pins: [C32.1, R33.1, U11.VREG_AVDD]
+- name: /VREG2_LX
+  pins: [L6.2, U11.VREG_LX]
+- name: /VREG_AVDD
+  pins: [C61.1, R19.1, U27.VREG_AVDD]
+- name: /VREG_LX
+  pins: [L7.2, U27.VREG_LX]
+- name: /V_cont1
+  pins: [C2.2, D15.K, D36.K, L3.2]
+- name: /XIN
+  pins: [C117.1, U27.XIN, Y2.1]
+- name: /XIN_2
+  pins: [C35.1, U11.XIN, Y1.1]
+- name: /XOUT
+  pins: [R168.1, U27.XOUT]
+- name: /XOUT_2
+  pins: [R46.1, U11.XOUT]
+- name: /iso+
+  pins: [C68.2, R90.1, TR10.TD-]
+- name: /iso-
+  pins: [C68.1, R90.2, TR10.TD+]
+- name: 3.3V Sense
+  pins: [C83.2, R66.2, R67.1, U27.GPIO40_ADC0]
+- name: 5V Sense
+  pins: [C84.2, R140.1, R146.2, U27.GPIO41_ADC1]
+- name: BatSPI_MISO
+  pins: [R65.1, U27.GPIO36]
+- name: C FC-Neg (GND)
+  pins: [JP10.B, JP11.B, JP12.B]
+- name: C FC-Pos (GND)
+  pins: [C33.2, D1.A2, D11.A, D4.K, Q2.D@5]
+- name: C Neg (GND)
+  pins: [C15.2, D10.A2, D3.K, D6.A, Q1.D@5]
+- name: C Pos (GND)
+  pins: [C45.2, D7.A2, D8.K, D9.A, Q5.D@5]
+- name: CAN Rx
+  pins: [R83.2, U13.RXD, U27.GPIO20]
+- name: CAN Tx
+  pins: [R84.2, U13.TXD, U27.GPIO19]
+- name: CAN2 Rx
+  pins: [R9.2, U25.RXD, U27.GPIO5]
+- name: CAN2 Tx
+  pins: [R68.2, U25.TXD, U27.GPIO4]
+- name: CTR-FC-NEG
+  pins: [R117.1, U15.INB, U27.GPIO15]
+- name: CTR-FC-Pos
+  pins: [R113.1, U19.INB, U27.GPIO16]
+- name: CTR-LNK-NEG
+  pins: [R96.1, U15.INA, U27.GPIO17]
+- name: CTR-LNK-POS
+  pins: [R95.1, U19.INA, U27.GPIO18]
+- name: CTR_EN
+  pins: [R58.2, R93.1, U15.ENA, U15.ENB, U19.ENA, U19.ENB]
+- name: Drive Unit Pos
+  pins: [TH4.1, TH5.1, TH6.1]
+- name: Emergency Stop
+  pins: [R22.2, U11.GPIO11, U27.GPIO11, U8.3]
+- name: Extra Input
+  pins: [R31.2, U27.GPIO12, U9.3]
+- name: Extra Output 1
+  pins: [R72.1, U27.GPIO13]
+- name: Extra Output 2
+  pins: [R38.1, U27.GPIO14]
+- name: FC-CTR-NEG-AUX
+  pins: [R73.2, U27.GPIO10, U7.3]
+- name: FC-CTR-POS-AUX
+  pins: [R50.2, U27.GPIO9, U5.3]
+- name: GND
+  pins:
+  - C1.1
+  - C11.1
+  - C112.2
+  - C117.2
+  - C118.2
+  - C12.1
+  - C120.2
+  - C123.2
+  - C124.2
+  - C126.2
+  - C127.2
+  - C128.2
+  - C129.2
+  - C130.2
+  - C131.2
+  - C132.1
+  - C14.2
+  - C15.1
+  - C2.1
+  - C21.2
+  - C22.1
+  - C23.2
+  - C25.2
+  - C3.1
+  - C32.2
+  - C33.1
+  - C34.2
+  - C35.2
+  - C36.2
+  - C37.2
+  - C38.1
+  - C4.2
+  - C44.1
+  - C45.1
+  - C46.2
+  - C47.2
+  - C48.2
+  - C49.1
+  - C50.1
+  - C52.1
+  - C53.1
+  - C55.1
+  - C57.1
+  - C58.2
+  - C59.2
+  - C60.2
+  - C61.2
+  - C62.1
+  - C63.2
+  - C64.2
+  - C65.2
+  - C66.2
+  - C67.2
+  - C69.2
+  - C7.1
+  - C70.2
+  - C71.2
+  - C72.2
+  - C73.2
+  - C74.2
+  - C75.2
+  - C77.1
+  - C78.2
+  - C79.1
+  - C80.1
+  - C83.1
+  - C84.1
+  - C85.1
+  - C87.2
+  - C88.1
+  - C89.2
+  - C9.1
+  - C91.1
+  - C92.1
+  - C93.2
+  - C98.1
+  - C99.1
+  - D1.A1
+  - D10.A1
+  - D22.A1
+  - D23.K
+  - D24.A
+  - D25.A1
+  - D26.K
+  - D33.K
+  - D34.K
+  - D35.K
+  - D43.K
+  - D49.A1
+  - D5.K
+  - D51.A1
+  - D7.A1
+  - J15.GND@A1
+  - J15.GND@A12
+  - J15.GND@B1
+  - J15.GND@B12
+  - J15.SHIELD@S1
+  - J17.GND@A1
+  - J17.GND@A12
+  - J17.GND@B1
+  - J17.GND@B12
+  - J17.SHIELD@S1
+  - J18.GND@A1
+  - J18.GND@A12
+  - J18.GND@B1
+  - J18.GND@B12
+  - J18.SHIELD@S1
+  - Q1.S@1
+  - Q1.S@2
+  - Q1.S@3
+  - Q2.S@1
+  - Q2.S@2
+  - Q2.S@3
+  - Q3.S@1
+  - Q3.S@2
+  - Q3.S@3
+  - Q5.S@1
+  - Q5.S@2
+  - Q5.S@3
+  - R113.2
+  - R117.2
+  - R140.2
+  - R148.2
+  - R149.2
+  - R17.1
+  - R174.1
+  - R175.1
+  - R22.1
+  - R25.1
+  - R29.2
+  - R31.1
+  - R4.1
+  - R50.1
+  - R53.1
+  - R55.1
+  - R57.1
+  - R62.1
+  - R67.2
+  - R73.1
+  - R93.2
+  - R95.2
+  - R96.2
+  - R99.1
+  - SW1.1@1
+  - SW2.1@1
+  - SW3.1@1
+  - SW4.1@1
+  - U1.GND
+  - U10.2
+  - U11.GND@81
+  - U11.VREG_PGND
+  - U13.GND1
+  - U14.-Vin
+  - U15.GND
+  - U17.GND
+  - U17.PowerPAD@9
+  - U18.GND1
+  - U19.GND
+  - U2.GND1
+  - U20.2
+  - U21.GND
+  - U22.-Vin
+  - U23.-Vin
+  - U24.-Vin
+  - U25.GND1
+  - U27.GND@81
+  - U27.VREG_PGND
+  - U28.GND
+  - U28.nG
+  - U32.GND
+  - U32.nRE
+  - U4.GND1
+  - U6.-Vin
+  - Y1.2
+  - Y1.4
+  - Y2.2
+  - Y2.4
+- name: GND CAN
+  pins:
+  - C102.1
+  - C103.2
+  - C16.1
+  - C30.1
+  - C31.2
+  - C6.1
+  - D16.A1
+  - D17.A2
+  - D29.K
+  - D42.A1
+  - D45.A2
+  - J3.19
+  - J3.SH
+  - R112.2
+  - U13.GND2
+  - U24.-Vout
+- name: GND Shunt NTC -
+  pins:
+  - C100.1
+  - C28.1
+  - C29.1
+  - C76.1
+  - C94.1
+  - D31.K
+  - R111.2
+  - U22.-Vout
+  - U3.A0
+  - U3.A1
+  - U3.GND
+  - U4.GND2
+- name: GNDCAN2
+  pins:
+  - C101.1
+  - C51.1
+  - D46.K
+  - J19.15
+  - J19.18
+  - J19.3
+  - J19.6
+  - J19.SH
+  - R124.2
+  - U23.-Vout
+  - U25.GND2
+- name: GND_SX
+  pins:
+  - C96.1
+  - C97.1
+  - D44.K
+  - D47.K
+  - R89.2
+  - U14.-Vout
+  - U18.GND2
+- name: GND_VSens
+  pins:
+  - C18.1
+  - C39.1
+  - C56.1
+  - C8.1
+  - C95.1
+  - D32.K
+  - R229.2
+  - R61.2
+  - U12.ADDR
+  - U12.GND
+  - U2.GND2
+  - U6.-Vout
+- name: HMI Serial RX
+  pins: [R35.1, R7.2, U27.GPIO39]
+- name: HMI Serial TX
+  pins: [R1.2, R10.2, R34.1, U27.GPIO38]
+- name: I2C SCL Shunt
+  pins: [R12.2, U27.GPIO21, U4.SCL1]
+- name: I2C SCL Vsense
+  pins: [R82.2, U2.SCL1, U27.GPIO23]
+- name: I2C SDA Shunt
+  pins: [R13.2, U27.GPIO24, U4.SDA1]
+- name: I2C SDA Vsense
+  pins: [R85.2, U2.SDA1, U27.GPIO22]
+- name: IsoSPI RX AND
+  pins: [U1.4, U11.GPIO30, U27.GPIO30]
+- name: IsoSPI RX H
+  pins: [U1.2, U11.GPIO28, U27.GPIO28, U28.2Y]
+- name: IsoSPI RX L
+  pins: [U1.1, U11.GPIO29, U27.GPIO29, U28.1Y]
+- name: IsoSPI TX Data
+  pins: [U27.GPIO27, U32.DI]
+- name: IsoSPI TX En
+  pins: [U27.GPIO26, U32.DE]
+- name: IsoSPI+
+  pins: [J6.Pin_1, TR10.TX+]
+- name: IsoSPI-
+  pins: [J6.Pin_2, TR10.TX-]
+- name: MAIN-SUP TX/RX
+  pins: [R63.1, U27.GPIO2]
+- name: MAX RX
+  pins: [R118.2, U27.GPIO6, U28.4Y]
+- name: Net-(C118-Pad1)
+  pins: [C118.1, R168.2, Y2.3]
+- name: Net-(C26-Pad1)
+  pins: [C26.1, J3.14, J3.23, U9.2]
+- name: Net-(C26-Pad2)
+  pins: [C26.2, R36.1, U9.1]
+- name: Net-(C27-Pad1)
+  pins: [C27.1, R78.2, U5.2]
+- name: Net-(C36-Pad1)
+  pins: [C36.1, R46.2, Y1.3]
+- name: Net-(C40-Pad1)
+  pins: [C40.1, J3.20, J3.21, U8.2]
+- name: Net-(C40-Pad2)
+  pins: [C40.2, R23.1, U8.1]
+- name: Net-(C90-Pad1)
+  pins: [C90.1, R71.2, U7.2]
+- name: Net-(D12-A1)
+  pins: [D12.A1, D13.A2]
+- name: Net-(D13-A1)
+  pins: [D13.A1, D22.A2]
+- name: Net-(D18-A1)
+  pins: [D18.A1, D50.A2]
+- name: Net-(D19-A)
+  pins: [D19.A, R70.2]
+- name: Net-(D2-K)
+  pins: [D2.K, R83.1]
+- name: Net-(D20-A1)
+  pins: [D20.A1, D27.A2]
+- name: Net-(D21-A)
+  pins: [D21.A, FB3.1]
+- name: Net-(D23-A)
+  pins: [D23.A, R56.2]
+- name: Net-(D26-A)
+  pins: [D26.A, R75.2]
+- name: Net-(D27-A1)
+  pins: [D27.A1, D49.A2]
+- name: Net-(D28-K)
+  pins: [D28.K, R84.1]
+- name: Net-(D29-A)
+  pins: [D29.A, R120.2]
+- name: Net-(D3-A)
+  pins: [D3.A, R11.2]
+- name: Net-(D30-A)
+  pins: [D30.A, J17.VBUS@A4, J17.VBUS@A9, J17.VBUS@B4, J17.VBUS@B9]
+- name: Net-(D30-K)
+  pins: [D30.K, FB1.1]
+- name: Net-(D31-A)
+  pins: [D31.A, R79.2]
+- name: Net-(D32-A)
+  pins: [D32.A, R81.1]
+- name: Net-(D33-A)
+  pins: [D33.A, R119.2]
+- name: Net-(D34-A)
+  pins: [D34.A, R48.2]
+- name: Net-(D35-A)
+  pins: [D35.A, R76.2]
+- name: Net-(D37-K)
+  pins: [D37.K, R9.1]
+- name: Net-(D38-K)
+  pins: [D38.K, R144.1]
+- name: Net-(D4-A)
+  pins: [D4.A, R27.2]
+- name: Net-(D40-K)
+  pins: [D40.K, R10.1]
+- name: Net-(D41-K)
+  pins: [D41.K, R68.1]
+- name: Net-(D43-A)
+  pins: [D43.A, R86.2]
+- name: Net-(D44-A)
+  pins: [D44.A, R88.2]
+- name: Net-(D46-A)
+  pins: [D46.A, R125.2]
+- name: Net-(D47-A)
+  pins: [D47.A, R91.2]
+- name: Net-(D5-A)
+  pins: [D5.A, R74.2]
+- name: Net-(D50-A1)
+  pins: [D50.A1, D51.A2]
+- name: Net-(D53-A)
+  pins: [D53.A, J18.VBUS@A4, J18.VBUS@A9, J18.VBUS@B4, J18.VBUS@B9]
+- name: Net-(D53-K)
+  pins: [D53.K, FB7.1]
+- name: Net-(D8-A)
+  pins: [D8.A, R3.2]
+- name: Net-(J17-CC1)
+  pins: [J17.CC1, R53.2]
+- name: Net-(J17-CC2)
+  pins: [J17.CC2, R55.2]
+- name: Net-(J18-CC1)
+  pins: [J18.CC1, R174.2]
+- name: Net-(J18-CC2)
+  pins: [J18.CC2, R175.2]
+- name: Net-(J3-Pad13)
+  pins: [J3.13, R36.2, R37.2]
+- name: Net-(J3-Pad15)
+  pins: [J3.15, U20.4]
+- name: Net-(J3-Pad16)
+  pins: [J3.16, U10.3]
+- name: Net-(J3-Pad17)
+  pins: [J3.17, U10.4]
+- name: Net-(J3-Pad18)
+  pins: [J3.18, U20.3]
+- name: Net-(J3-Pad22)
+  pins: [J3.22, R39.1]
+- name: Net-(J3-Pad24)
+  pins: [J3.24, R37.1]
+- name: Net-(JP7-A)
+  pins: [C20.1, C86.1, R8.2]
+- name: Net-(JP8-A)
+  pins: [C17.1, C19.1, R2.2]
+- name: Net-(Q1-G)
+  pins: [Q1.G, R5.2]
+- name: Net-(Q2-G)
+  pins: [Q2.G, R6.2]
+- name: Net-(Q3-G)
+  pins: [Q3.G, R69.2]
+- name: Net-(Q5-G)
+  pins: [Q5.G, R26.2]
+- name: Net-(R100-Pad2)
+  pins: [R100.2, R104.1]
+- name: Net-(R101-Pad2)
+  pins: [R101.2, R105.1]
+- name: Net-(R102-Pad2)
+  pins: [R102.2, R106.1]
+- name: Net-(R103-Pad2)
+  pins: [R103.2, R107.1]
+- name: Net-(R104-Pad2)
+  pins: [R104.2, R108.1]
+- name: Net-(R105-Pad2)
+  pins: [R105.2, R109.1]
+- name: Net-(R106-Pad2)
+  pins: [R106.2, R110.1]
+- name: Net-(R107-Pad2)
+  pins: [R107.2, R114.1]
+- name: Net-(R108-Pad2)
+  pins: [R108.2, R115.1]
+- name: Net-(R109-Pad2)
+  pins: [R109.2, R116.1]
+- name: Net-(R110-Pad2)
+  pins: [R110.2, R126.1]
+- name: Net-(R114-Pad2)
+  pins: [R114.2, R127.1]
+- name: Net-(R115-Pad2)
+  pins: [R115.2, R130.1]
+- name: Net-(R116-Pad2)
+  pins: [R116.2, R131.1]
+- name: Net-(R126-Pad2)
+  pins: [R126.2, R134.1]
+- name: Net-(R127-Pad2)
+  pins: [R127.2, R135.1]
+- name: Net-(R130-Pad2)
+  pins: [R130.2, R153.1]
+- name: Net-(R131-Pad2)
+  pins: [R131.2, R155.1]
+- name: Net-(R134-Pad2)
+  pins: [R134.2, R193.1]
+- name: Net-(R135-Pad2)
+  pins: [R135.2, R194.1]
+- name: Net-(R153-Pad2)
+  pins: [R153.2, R195.1]
+- name: Net-(R155-Pad2)
+  pins: [R155.2, R196.1]
+- name: Net-(R170-Pad2)
+  pins: [R170.2, SW3.2@2]
+- name: Net-(R193-Pad2)
+  pins: [R193.2, R214.1]
+- name: Net-(R194-Pad2)
+  pins: [R194.2, R215.1]
+- name: Net-(R195-Pad2)
+  pins: [R195.2, R216.1]
+- name: Net-(R196-Pad2)
+  pins: [R196.2, R217.1]
+- name: Net-(R214-Pad2)
+  pins: [R214.2, R218.1]
+- name: Net-(R215-Pad2)
+  pins: [R215.2, R219.1]
+- name: Net-(R216-Pad2)
+  pins: [R216.2, R220.1]
+- name: Net-(R217-Pad2)
+  pins: [R217.2, R221.1]
+- name: Net-(R218-Pad2)
+  pins: [R218.2, R222.1]
+- name: Net-(R219-Pad2)
+  pins: [R219.2, R223.1]
+- name: Net-(R220-Pad2)
+  pins: [R220.2, R224.1]
+- name: Net-(R221-Pad2)
+  pins: [R221.2, R225.1]
+- name: Net-(R222-Pad2)
+  pins: [R222.2, R226.1]
+- name: Net-(R223-Pad2)
+  pins: [R223.2, R227.1]
+- name: Net-(R38-Pad2)
+  pins: [R38.2, U20.1]
+- name: Net-(R43-Pad2)
+  pins: [R43.2, SW2.2@2]
+- name: Net-(R49-Pad2)
+  pins: [R49.2, SW1.2@2]
+- name: Net-(R72-Pad2)
+  pins: [R72.2, U10.1]
+- name: Net-(R98-Pad1)
+  pins: [R98.1, R99.2]
+- name: Net-(TH1-Pad1)
+  pins: [TH1.1, TH2.1, TH3.1, TH4.2, TH5.2, TH6.2]
+- name: Net-(TR10-C_TX)
+  pins: [R98.2, TR10.C_TX]
+- name: Net-(U11-ADC_AVDD)
+  pins: [C47.1, R80.1, U11.ADC_AVDD]
+- name: Net-(U11-USB_DM)
+  pins: [R52.2, U11.USB_DM]
+- name: Net-(U11-USB_DP)
+  pins: [R51.2, U11.USB_DP]
+- name: Net-(U12-AIN0)
+  pins: [C10.2, R100.1, R40.1, U12.AIN0]
+- name: Net-(U12-AIN1)
+  pins: [C41.1, R101.1, R41.2, U12.AIN1]
+- name: Net-(U12-AIN2)
+  pins: [C42.2, R102.1, R45.1, U12.AIN2]
+- name: Net-(U12-AIN3)
+  pins: [C43.1, R103.1, R47.1, U12.AIN3]
+- name: Net-(U12-ALERT/RDY)
+  pins: [R54.2, U12.ALERT/RDY]
+- name: Net-(U12-SCL)
+  pins: [R44.2, U12.SCL, U2.SCL2]
+- name: Net-(U12-SDA)
+  pins: [R20.2, U12.SDA, U2.SDA2]
+- name: Net-(U13-CANH)
+  pins: [FL3.1, U13.CANH]
+- name: Net-(U13-CANL)
+  pins: [FL3.4, U13.CANL]
+- name: Net-(U14-+Vin)
+  pins: [C92.2, L9.1, U14.+Vin]
+- name: Net-(U15-OUTA)
+  pins: [R4.2, R5.1, U15.OUTA]
+- name: Net-(U15-OUTB)
+  pins: [R62.2, R69.1, U15.OUTB]
+- name: Net-(U17-BOOT)
+  pins: [C54.2, U17.BOOT]
+- name: Net-(U17-VSENSE)
+  pins: [R149.1, R60.2, U17.VSENSE]
+- name: Net-(U19-OUTA)
+  pins: [R25.2, R26.1, U19.OUTA]
+- name: Net-(U19-OUTB)
+  pins: [R17.2, R6.1, U19.OUTB]
+- name: Net-(U22-+Vin)
+  pins: [C7.2, L1.1, U22.+Vin]
+- name: Net-(U22-+Vout)
+  pins: [C29.2, FB2.1, U22.+Vout]
+- name: Net-(U23-+Vin)
+  pins: [C12.2, L4.1, U23.+Vin]
+- name: Net-(U23-+Vout)
+  pins: [C101.2, C51.2, FB4.1, U23.+Vout]
+- name: Net-(U24-+Vin)
+  pins: [C62.2, L5.1, U24.+Vin]
+- name: Net-(U24-+Vout)
+  pins: [C16.2, C6.2, FB6.1, U24.+Vout]
+- name: Net-(U25-CANH)
+  pins: [FL1.1, U25.CANH]
+- name: Net-(U25-CANL)
+  pins: [FL1.4, U25.CANL]
+- name: Net-(U25-VCC2)
+  pins: [FB4.2, R124.1, R125.1, U25.VCC2]
+- name: Net-(U27-ADC_AVDD)
+  pins: [C72.1, R171.1, U27.ADC_AVDD]
+- name: Net-(U27-RUN)
+  pins: [R167.1, U27.RUN]
+- name: Net-(U27-USB_DM)
+  pins: [R24.2, U27.USB_DM]
+- name: Net-(U27-USB_DP)
+  pins: [R21.2, U27.USB_DP]
+- name: Net-(U28-1A)
+  pins: [C86.2, U28.1A]
+- name: Net-(U28-1B)
+  pins: [C17.2, U28.1B]
+- name: Net-(U28-2A)
+  pins: [C19.2, U28.2A]
+- name: Net-(U28-2B)
+  pins: [C20.2, U28.2B]
+- name: Net-(U28-4A)
+  pins: [C81.2, U28.4A]
+- name: Net-(U28-4B)
+  pins: [C82.2, U28.4B]
+- name: Net-(U3-SCL)
+  pins: [R15.2, U3.SCL, U4.SCL2]
+- name: Net-(U3-SDA)
+  pins: [R14.2, U3.SDA, U4.SDA2]
+- name: Net-(U32-A)
+  pins: [R8.1, U32.A]
+- name: Net-(U32-B)
+  pins: [R2.1, U32.B]
+- name: Net-(U6-+Vin)
+  pins: [C38.2, L2.1, U6.+Vin]
+- name: Net-(U6-+Vout)
+  pins: [C8.2, FB5.1, U6.+Vout]
+- name: SUP-MAIN TX/RX
+  pins: [R64.1, U27.GPIO1]
+- name: SX Serial RX
+  pins: [R42.2, R92.2, U18.SCL1, U27.GPIO8]
+- name: SX Serial TX
+  pins: [R86.1, U18.SDA1, U27.GPIO7]
+- name: Shunt NTC +
+  pins: [C94.2, R16.1, U3.Vbus]
+- name: Shunt Sense +
+  pins: [C5.2, U3.Vin+]
+- name: Shunt Sense -
+  pins: [C5.1, U3.Vin-]
+- name: Shunt_5V
+  pins:
+  - C100.2
+  - C28.2
+  - C76.2
+  - FB2.2
+  - R111.1
+  - R14.1
+  - R15.1
+  - R16.2
+  - R79.1
+  - U3.VS
+  - U4.VCC2
+- name: VContactor
+  pins:
+  - C1.2
+  - C34.1
+  - D11.K
+  - D18.A2
+  - D39.K
+  - D6.K
+  - D9.K
+  - L3.1
+  - R11.1
+  - R27.1
+  - R28.2
+  - R3.1
+  - R70.1
+  - R76.1
+- name: VContactor Sense
+  pins: [C77.2, R28.1, R29.1, U27.GPIO43_ADC3]
+- name: Vin
+  pins: [C55.2, C57.2, C69.1, D14.K, R150.2, U17.VIN]
+- name: Vin Logic Sense
+  pins: [C88.2, R148.1, R150.1, U27.GPIO42_ADC2]
+positions:
+- ref: C1
+  x: 270.35
+  y: 285.5
+- ref: C10
+  x: 350.23
+  y: 278.3
+  rot: -90.0
+- ref: C100
+  x: 417.5
+  y: 308.6
+  rot: 180.0
+- ref: C101
+  x: 280.1
+  y: 366.04
+- ref: C102
+  x: 280.1
+  y: 368.55
+- ref: C103
+  x: 280.1
+  y: 371.06
+- ref: C11
+  x: 360.0
+  y: 255.2
+  rot: 180.0
+- ref: C112
+  x: 313.39
+  y: 269.96
+  rot: 180.0
+- ref: C117
+  x: 435.9
+  y: 238.7
+  rot: 90.0
+- ref: C118
+  x: 435.9
+  y: 240.6
+  rot: -90.0
+- ref: C12
+  x: 280.76
+  y: 399.21
+- ref: C120
+  x: 438.03
+  y: 240.88
+  rot: 180.0
+- ref: C123
+  x: 445.2
+  y: 233.19
+  rot: 90.0
+- ref: C124
+  x: 450.4
+  y: 246.3
+  rot: -90.0
+- ref: C126
+  x: 444.1
+  y: 247.12
+  rot: -90.0
+- ref: C127
+  x: 451.7
+  y: 237.41
+- ref: C128
+  x: 447.18
+  y: 233.14
+  rot: 90.0
+- ref: C129
+  x: 442.68
+  y: 232.87
+  rot: 90.0
+- ref: C130
+  x: 437.77
+  y: 238.8
+  rot: 180.0
+- ref: C131
+  x: 437.7
+  y: 236.5
+  rot: 180.0
+- ref: C132
+  x: 311.02
+  y: 276.86
+- ref: C14
+  x: 446.49
+  y: 285.36
+  rot: -90.0
+- ref: C15
+  x: 288.5
+  y: 266.5
+  rot: 180.0
+- ref: C16
+  x: 461.46
+  y: 284.56
+  rot: 180.0
+- ref: C17
+  x: 399.0
+  y: 272.4
+  rot: 180.0
+- ref: C18
+  x: 354.2
+  y: 269.0
+  rot: -90.0
+- ref: C19
+  x: 399.0
+  y: 266.2
+  rot: 180.0
+- ref: C2
+  x: 271.6
+  y: 310.6
+  rot: 90.0
+- ref: C20
+  x: 399.0
+  y: 264.7
+  rot: 180.0
+- ref: C21
+  x: 399.0
+  y: 268.6
+- ref: C22
+  x: 407.8
+  y: 263.4
+  rot: -90.0
+- ref: C23
+  x: 419.6
+  y: 256.51
+- ref: C25
+  x: 391.2
+  y: 257.36
+  rot: -90.0
+- ref: C26
+  x: 466.9
+  y: 305.03
+- ref: C27
+  x: 306.05
+  y: 224.55
+  rot: 90.0
+- ref: C28
+  x: 422.62
+  y: 298.24
+  rot: -90.0
+- ref: C29
+  x: 430.4
+  y: 306.9
+  rot: 90.0
+- ref: C3
+  x: 280.76
+  y: 396.2
+- ref: C30
+  x: 463.81
+  y: 285.39
+  rot: -90.0
+- ref: C31
+  x: 463.78
+  y: 291.68
+  rot: -90.0
+- ref: C32
+  x: 376.7
+  y: 245.02
+  rot: -90.0
+- ref: C33
+  x: 288.5
+  y: 251.0
+  rot: 180.0
+- ref: C34
+  x: 274.63
+  y: 289.5
+- ref: C35
+  x: 361.3
+  y: 237.9
+  rot: 90.0
+- ref: C36
+  x: 361.29
+  y: 239.83
+  rot: -90.0
+- ref: C37
+  x: 450.86
+  y: 242.8
+  rot: -90.0
+- ref: C38
+  x: 349.19
+  y: 259.7
+  rot: 90.0
+- ref: C39
+  x: 373.45
+  y: 269.64
+  rot: -90.0
+- ref: C4
+  x: 279.89
+  y: 387.8
+- ref: C40
+  x: 463.25
+  y: 301.72
+  rot: -90.0
+- ref: C41
+  x: 373.88
+  y: 278.64
+  rot: 90.0
+- ref: C42
+  x: 357.68
+  y: 278.54
+  rot: -90.0
+- ref: C43
+  x: 363.91
+  y: 278.55
+  rot: 90.0
+- ref: C44
+  x: 288.9
+  y: 235.5
+  rot: 180.0
+- ref: C45
+  x: 289.0
+  y: 282.0
+  rot: 180.0
+- ref: C46
+  x: 370.9
+  y: 245.75
+  rot: -90.0
+- ref: C47
+  x: 373.3
+  y: 245.5
+  rot: 180.0
+- ref: C48
+  x: 451.7
+  y: 242.8
+  rot: -90.0
+- ref: C49
+  x: 430.19
+  y: 271.14
+  rot: 180.0
+- ref: C5
+  x: 421.0
+  y: 307.0
+- ref: C50
+  x: 320.56
+  y: 252.85
+  rot: -90.0
+- ref: C51
+  x: 297.27
+  y: 369.8
+- ref: C52
+  x: 445.0
+  y: 261.8
+- ref: C53
+  x: 320.87
+  y: 248.7
+  rot: -90.0
+- ref: C54
+  x: 311.62
+  y: 286.26
+  rot: 90.0
+- ref: C55
+  x: 302.64
+  y: 281.74
+  rot: -90.0
+- ref: C56
+  x: 371.8
+  y: 275.1
+  rot: 180.0
+- ref: C57
+  x: 300.27
+  y: 281.77
+  rot: -90.0
+- ref: C58
+  x: 363.14
+  y: 240.37
+  rot: 180.0
+- ref: C59
+  x: 366.48
+  y: 245.85
+  rot: -90.0
+- ref: C6
+  x: 465.99
+  y: 277.11
+  rot: -90.0
+- ref: C60
+  x: 376.65
+  y: 238.27
+  rot: 90.0
+- ref: C61
+  x: 451.4
+  y: 245.7
+  rot: -90.0
+- ref: C62
+  x: 443.01
+  y: 274.73
+- ref: C63
+  x: 368.6
+  y: 232.6
+  rot: 90.0
+- ref: C64
+  x: 374.8
+  y: 245.9
+  rot: -90.0
+- ref: C65
+  x: 369.87
+  y: 245.75
+  rot: -90.0
+- ref: C66
+  x: 377.3
+  y: 236.84
+- ref: C67
+  x: 372.6
+  y: 232.58
+  rot: 90.0
+- ref: C68
+  x: 404.79
+  y: 275.23
+- ref: C69
+  x: 294.93
+  y: 288.86
+- ref: C7
+  x: 430.69
+  y: 282.93
+  rot: 180.0
+- ref: C70
+  x: 370.6
+  y: 232.5
+  rot: 90.0
+- ref: C71
+  x: 445.13
+  y: 246.98
+  rot: -90.0
+- ref: C72
+  x: 449.4
+  y: 246.31
+  rot: -90.0
+- ref: C73
+  x: 440.24
+  y: 246.33
+  rot: -90.0
+- ref: C74
+  x: 363.2
+  y: 238.13
+  rot: 180.0
+- ref: C75
+  x: 451.09
+  y: 239.37
+  rot: 90.0
+- ref: C76
+  x: 417.5
+  y: 307.1
+  rot: 180.0
+- ref: C77
+  x: 286.05
+  y: 285.76
+  rot: 90.0
+- ref: C78
+  x: 363.8
+  y: 236.36
+  rot: 180.0
+- ref: C79
+  x: 297.8
+  y: 243.3
+  rot: 180.0
+- ref: C8
+  x: 349.11
+  y: 269.6
+  rot: -90.0
+- ref: C80
+  x: 297.9
+  y: 258.7
+  rot: 180.0
+- ref: C81
+  x: 401.5
+  y: 282.1
+  rot: 90.0
+- ref: C82
+  x: 398.0
+  y: 282.0
+  rot: 90.0
+- ref: C83
+  x: 445.59
+  y: 252.74
+  rot: 180.0
+- ref: C84
+  x: 448.56
+  y: 253.32
+  rot: 90.0
+- ref: C85
+  x: 440.6
+  y: 303.9
+  rot: -90.0
+- ref: C86
+  x: 399.0
+  y: 270.9
+  rot: 180.0
+- ref: C87
+  x: 377.1
+  y: 242.2
+  rot: -90.0
+- ref: C88
+  x: 284.5
+  y: 289.39
+  rot: 90.0
+- ref: C89
+  x: 376.27
+  y: 242.2
+  rot: -90.0
+- ref: C9
+  x: 463.0
+  y: 251.5
+- ref: C90
+  x: 306.1
+  y: 228.71
+  rot: 90.0
+- ref: C91
+  x: 315.7
+  y: 295.5
+  rot: 90.0
+- ref: C92
+  x: 311.9
+  y: 302.7
+  rot: 90.0
+- ref: C93
+  x: 304.76
+  y: 303.57
+  rot: 90.0
+- ref: C94
+  x: 418.32
+  y: 310.1
+- ref: C95
+  x: 355.41
+  y: 272.49
+  rot: 90.0
+- ref: C96
+  x: 311.8
+  y: 310.6
+  rot: -90.0
+- ref: C97
+  x: 305.46
+  y: 310.38
+  rot: 90.0
+- ref: C98
+  x: 297.87
+  y: 256.74
+  rot: 180.0
+- ref: C99
+  x: 297.84
+  y: 241.5
+  rot: 180.0
+- ref: D1
+  x: 285.5
+  y: 240.5
+  rot: 180.0
+- ref: D10
+  x: 285.1
+  y: 255.9
+  rot: 180.0
+- ref: D11
+  x: 273.5
+  y: 250.0
+  rot: 90.0
+- ref: D12
+  x: 284.5
+  y: 313.9
+- ref: D13
+  x: 281.75
+  y: 309.1
+  rot: 180.0
+- ref: D14
+  x: 286.7
+  y: 297.3
+  rot: -90.0
+- ref: D15
+  x: 262.4
+  y: 305.6
+  rot: 180.0
+- ref: D16
+  x: 467.23
+  y: 284.53
+  rot: -90.0
+- ref: D17
+  x: 467.26
+  y: 292.45
+  rot: -90.0
+- ref: D18
+  x: 255.44
+  y: 297.72
+  rot: 90.0
+- ref: D19
+  x: 273.5
+  y: 230.72
+  rot: 90.0
+- ref: D2
+  x: 442.34
+  y: 283.83
+  rot: 180.0
+- ref: D20
+  x: 261.2
+  y: 312.25
+  rot: 90.0
+- ref: D21
+  x: 472.2
+  y: 251.5
+  rot: 180.0
+- ref: D22
+  x: 281.75
+  y: 304.2
+- ref: D23
+  x: 308.82
+  y: 263.16
+- ref: D24
+  x: 307.02
+  y: 286.66
+- ref: D25
+  x: 279.5
+  y: 228.9
+  rot: -90.0
+- ref: D26
+  x: 315.93
+  y: 248.29
+  rot: 180.0
+- ref: D27
+  x: 261.2
+  y: 319.95
+  rot: 90.0
+- ref: D28
+  x: 442.32
+  y: 286.37
+  rot: 180.0
+- ref: D29
+  x: 475.32
+  y: 276.53
+  rot: 180.0
+- ref: D3
+  x: 279.0
+  y: 265.0
+  rot: -90.0
+- ref: D30
+  x: 469.7
+  y: 232.7
+- ref: D31
+  x: 412.33
+  y: 301.38
+  rot: 90.0
+- ref: D32
+  x: 361.48
+  y: 268.92
+- ref: D33
+  x: 421.7
+  y: 230.8
+  rot: 180.0
+- ref: D34
+  x: 348.0
+  y: 235.9
+- ref: D35
+  x: 274.4
+  y: 318.9
+  rot: 180.0
+- ref: D36
+  x: 262.4
+  y: 301.4
+  rot: 180.0
+- ref: D37
+  x: 276.33
+  y: 396.21
+- ref: D38
+  x: 472.8
+  y: 262.0
+  rot: 180.0
+- ref: D39
+  x: 270.4
+  y: 231.1
+  rot: -90.0
+- ref: D4
+  x: 277.5
+  y: 249.76
+  rot: -90.0
+- ref: D40
+  x: 472.8
+  y: 259.5
+  rot: 180.0
+- ref: D41
+  x: 276.33
+  y: 399.25
+- ref: D42
+  x: 286.32
+  y: 375.76
+- ref: D43
+  x: 296.46
+  y: 299.19
+- ref: D44
+  x: 297.7
+  y: 313.5
+- ref: D45
+  x: 286.32
+  y: 381.31
+- ref: D46
+  x: 302.69
+  y: 380.58
+- ref: D47
+  x: 307.56
+  y: 315.0
+  rot: 180.0
+- ref: D49
+  x: 261.2
+  y: 327.6
+  rot: 90.0
+- ref: D5
+  x: 282.9
+  y: 318.9
+  rot: 180.0
+- ref: D50
+  x: 255.44
+  y: 305.32
+  rot: 90.0
+- ref: D51
+  x: 255.44
+  y: 312.92
+  rot: 90.0
+- ref: D53
+  x: 472.2
+  y: 247.6
+- ref: D6
+  x: 275.1
+  y: 264.5
+  rot: 90.0
+- ref: D7
+  x: 285.3
+  y: 271.5
+  rot: 180.0
+- ref: D8
+  x: 277.5
+  y: 279.0
+  rot: -90.0
+- ref: D9
+  x: 273.0
+  y: 280.0
+  rot: 90.0
+- ref: FB1
+  x: 464.2
+  y: 232.6
+  rot: 180.0
+- ref: FB2
+  x: 427.2
+  y: 305.9
+  rot: 180.0
+- ref: FB3
+  x: 466.9
+  y: 251.5
+  rot: 180.0
+- ref: FB4
+  x: 311.7
+  y: 349.9
+- ref: FB5
+  x: 351.8
+  y: 270.5
+- ref: FB6
+  x: 311.6
+  y: 355.5
+- ref: FB7
+  x: 466.8
+  y: 247.8
+  rot: 180.0
+- ref: FL1
+  x: 304.62
+  y: 351.98
+- ref: FL3
+  x: 462.3
+  y: 288.51
+  rot: -90.0
+- ref: J15
+  x: 492.5
+  y: 261.0
+  rot: 90.0
+- ref: J17
+  x: 492.45
+  y: 229.18
+  rot: 90.0
+- ref: J18
+  x: 492.45
+  y: 244.32
+  rot: 90.0
+- ref: J19
+  x: 281.17
+  y: 353.9
+  rot: 180.0
+- ref: J3
+  x: 486.3
+  y: 288.2
+  rot: -90.0
+- ref: J6
+  x: 477.5
+  y: 329.16
+- ref: JP10
+  x: 270.01
+  y: 235.93
+  rot: 180.0
+- ref: JP11
+  x: 270.01
+  y: 241.09
+  rot: 180.0
+- ref: JP12
+  x: 270.01
+  y: 238.54
+  rot: 180.0
+- ref: L1
+  x: 430.1
+  y: 277.18
+  rot: 90.0
+- ref: L2
+  x: 355.3
+  y: 260.2
+- ref: L3
+  x: 271.8
+  y: 301.5
+  rot: -90.0
+- ref: L4
+  x: 272.92
+  y: 390.62
+- ref: L5
+  x: 444.4
+  y: 267.6
+  rot: 90.0
+- ref: L6
+  x: 378.59
+  y: 242.2
+  rot: -90.0
+- ref: L7
+  x: 453.2
+  y: 242.82
+  rot: -90.0
+- ref: L8
+  x: 318.47
+  y: 283.38
+  rot: -90.0
+- ref: L9
+  x: 309.5
+  y: 296.2
+  rot: 90.0
+- ref: PS1
+  x: 4.26
+  y: 2.08
+- ref: Q1
+  x: 286.98
+  y: 262.55
+  rot: 180.0
+- ref: Q2
+  x: 286.98
+  y: 247.05
+  rot: 180.0
+- ref: Q3
+  x: 286.98
+  y: 231.55
+  rot: 180.0
+- ref: Q5
+  x: 286.98
+  y: 278.05
+  rot: 180.0
+- ref: R1
+  x: 476.73
+  y: 259.6
+  rot: 180.0
+- ref: R10
+  x: 476.7
+  y: 256.5
+- ref: R100
+  x: 350.28
+  y: 285.19
+  rot: 150.0
+- ref: R101
+  x: 382.35
+  y: 285.73
+  rot: -150.0
+- ref: R102
+  x: 358.73
+  y: 282.97
+  rot: 180.0
+- ref: R103
+  x: 372.41
+  y: 282.8
+  rot: 180.0
+- ref: R104
+  x: 348.64
+  y: 288.02
+  rot: -30.0
+- ref: R105
+  x: 383.98
+  y: 288.56
+  rot: 30.0
+- ref: R106
+  x: 358.73
+  y: 286.23
+- ref: R107
+  x: 372.41
+  y: 286.07
+- ref: R108
+  x: 347.01
+  y: 290.85
+  rot: 150.0
+- ref: R109
+  x: 385.62
+  y: 291.39
+  rot: -150.0
+- ref: R11
+  x: 278.63
+  y: 267.58
+- ref: R110
+  x: 358.73
+  y: 289.5
+  rot: 180.0
+- ref: R111
+  x: 422.8
+  y: 302.3
+  rot: 90.0
+- ref: R112
+  x: 467.98
+  y: 277.15
+  rot: 90.0
+- ref: R113
+  x: 301.0
+  y: 258.7
+  rot: 180.0
+- ref: R114
+  x: 372.41
+  y: 289.33
+  rot: 180.0
+- ref: R115
+  x: 345.38
+  y: 293.68
+  rot: -30.0
+- ref: R116
+  x: 387.25
+  y: 294.22
+  rot: 30.0
+- ref: R117
+  x: 300.9
+  y: 243.3
+  rot: 180.0
+- ref: R118
+  x: 386.52
+  y: 223.0
+- ref: R119
+  x: 421.98
+  y: 227.1
+- ref: R12
+  x: 419.5
+  y: 288.7
+  rot: 180.0
+- ref: R120
+  x: 471.9
+  y: 276.4
+- ref: R124
+  x: 280.1
+  y: 378.59
+- ref: R125
+  x: 280.1
+  y: 381.1
+- ref: R126
+  x: 358.73
+  y: 292.77
+- ref: R127
+  x: 372.41
+  y: 292.6
+- ref: R128
+  x: 302.31
+  y: 370.63
+- ref: R13
+  x: 420.7
+  y: 290.2
+  rot: 180.0
+- ref: R130
+  x: 343.74
+  y: 296.51
+  rot: 150.0
+- ref: R131
+  x: 388.88
+  y: 297.05
+  rot: -150.0
+- ref: R134
+  x: 358.73
+  y: 296.03
+  rot: 180.0
+- ref: R135
+  x: 372.41
+  y: 295.87
+  rot: 180.0
+- ref: R14
+  x: 416.05
+  y: 301.93
+- ref: R140
+  x: 450.18
+  y: 253.23
+  rot: -90.0
+- ref: R144
+  x: 476.7
+  y: 264.8
+- ref: R146
+  x: 451.71
+  y: 251.68
+  rot: 90.0
+- ref: R148
+  x: 286.1
+  y: 289.4
+  rot: -90.0
+- ref: R149
+  x: 309.51
+  y: 278.56
+  rot: 180.0
+- ref: R15
+  x: 416.04
+  y: 300.29
+- ref: R150
+  x: 287.7
+  y: 289.39
+  rot: -90.0
+- ref: R153
+  x: 342.11
+  y: 299.34
+  rot: -30.0
+- ref: R155
+  x: 390.52
+  y: 299.88
+  rot: 30.0
+- ref: R16
+  x: 418.4
+  y: 311.6
+  rot: 180.0
+- ref: R167
+  x: 405.7
+  y: 230.9
+  rot: 90.0
+- ref: R168
+  x: 437.8
+  y: 239.9
+  rot: 180.0
+- ref: R17
+  x: 292.8
+  y: 247.57
+  rot: 90.0
+- ref: R170
+  x: 407.6
+  y: 230.9
+  rot: 90.0
+- ref: R171
+  x: 449.89
+  y: 247.72
+- ref: R174
+  x: 484.8
+  y: 245.5
+- ref: R175
+  x: 484.8
+  y: 242.5
+- ref: R18
+  x: 463.24
+  y: 295.75
+  rot: 90.0
+- ref: R19
+  x: 452.88
+  y: 245.28
+- ref: R193
+  x: 358.73
+  y: 299.3
+- ref: R194
+  x: 372.41
+  y: 299.13
+- ref: R195
+  x: 340.48
+  y: 302.17
+  rot: 150.0
+- ref: R196
+  x: 392.15
+  y: 302.71
+  rot: -150.0
+- ref: R2
+  x: 405.4
+  y: 266.0
+  rot: 180.0
+- ref: R20
+  x: 371.19
+  y: 270.84
+  rot: 180.0
+- ref: R21
+  x: 453.69
+  y: 239.2
+  rot: 180.0
+- ref: R214
+  x: 358.73
+  y: 302.57
+  rot: 180.0
+- ref: R215
+  x: 372.41
+  y: 302.4
+  rot: 180.0
+- ref: R216
+  x: 338.84
+  y: 305.0
+  rot: -30.0
+- ref: R217
+  x: 393.78
+  y: 305.54
+  rot: 30.0
+- ref: R218
+  x: 358.73
+  y: 305.83
+- ref: R219
+  x: 372.41
+  y: 305.67
+- ref: R22
+  x: 445.91
+  y: 294.59
+- ref: R220
+  x: 337.21
+  y: 307.83
+  rot: 150.0
+- ref: R221
+  x: 395.42
+  y: 308.37
+  rot: -150.0
+- ref: R222
+  x: 358.73
+  y: 309.1
+  rot: 180.0
+- ref: R223
+  x: 372.41
+  y: 308.93
+  rot: 180.0
+- ref: R224
+  x: 335.58
+  y: 310.66
+  rot: -30.0
+- ref: R225
+  x: 397.05
+  y: 311.19
+  rot: 30.0
+- ref: R226
+  x: 358.73
+  y: 312.37
+- ref: R227
+  x: 372.41
+  y: 312.2
+- ref: R228
+  x: 357.31
+  y: 271.29
+  rot: -90.0
+- ref: R229
+  x: 357.28
+  y: 274.39
+  rot: -90.0
+- ref: R23
+  x: 467.63
+  y: 303.14
+- ref: R24
+  x: 453.7
+  y: 240.2
+  rot: 180.0
+- ref: R25
+  x: 293.0
+  y: 278.4
+  rot: 90.0
+- ref: R26
+  x: 292.2
+  y: 276.1
+  rot: 180.0
+- ref: R27
+  x: 277.0
+  y: 252.5
+- ref: R28
+  x: 284.38
+  y: 285.75
+  rot: -90.0
+- ref: R29
+  x: 287.7
+  y: 285.77
+  rot: -90.0
+- ref: R3
+  x: 277.0
+  y: 282.0
+- ref: R30
+  x: 412.8
+  y: 270.2
+  rot: 90.0
+- ref: R31
+  x: 445.96
+  y: 297.92
+- ref: R33
+  x: 377.74
+  y: 245.04
+  rot: -90.0
+- ref: R34
+  x: 367.61
+  y: 245.88
+  rot: 90.0
+- ref: R35
+  x: 368.75
+  y: 245.88
+  rot: 90.0
+- ref: R36
+  x: 470.2
+  y: 305.05
+- ref: R37
+  x: 473.22
+  y: 305.04
+  rot: 180.0
+- ref: R38
+  x: 443.5
+  y: 301.4
+  rot: -90.0
+- ref: R39
+  x: 470.97
+  y: 303.14
+  rot: 180.0
+- ref: R4
+  x: 292.9
+  y: 263.1
+  rot: 90.0
+- ref: R40
+  x: 348.62
+  y: 278.3
+  rot: 90.0
+- ref: R41
+  x: 375.45
+  y: 278.64
+  rot: -90.0
+- ref: R42
+  x: 301.36
+  y: 301.1
+  rot: 180.0
+- ref: R43
+  x: 333.1
+  y: 229.9
+  rot: 180.0
+- ref: R44
+  x: 368.18
+  y: 270.84
+- ref: R45
+  x: 356.12
+  y: 278.54
+  rot: 90.0
+- ref: R46
+  x: 363.5
+  y: 239.4
+  rot: 180.0
+- ref: R47
+  x: 365.49
+  y: 278.55
+  rot: -90.0
+- ref: R48
+  x: 352.73
+  y: 225.7
+  rot: 180.0
+- ref: R49
+  x: 345.8
+  y: 229.4
+  rot: 180.0
+- ref: R5
+  x: 292.1
+  y: 260.7
+  rot: 180.0
+- ref: R50
+  x: 316.79
+  y: 224.95
+  rot: 90.0
+- ref: R51
+  x: 379.07
+  y: 238.94
+  rot: 180.0
+- ref: R52
+  x: 379.06
+  y: 239.92
+  rot: 180.0
+- ref: R53
+  x: 484.94
+  y: 230.66
+- ref: R54
+  x: 361.61
+  y: 274.6
+- ref: R55
+  x: 484.85
+  y: 227.41
+- ref: R56
+  x: 312.18
+  y: 263.1
+  rot: 180.0
+- ref: R57
+  x: 451.71
+  y: 236.28
+  rot: 180.0
+- ref: R58
+  x: 297.63
+  y: 237.39
+- ref: R59
+  x: 377.05
+  y: 234.19
+  rot: 180.0
+- ref: R6
+  x: 292.2
+  y: 245.2
+  rot: 180.0
+- ref: R60
+  x: 311.42
+  y: 278.56
+  rot: 180.0
+- ref: R61
+  x: 353.0
+  y: 273.0
+  rot: -90.0
+- ref: R62
+  x: 292.9
+  y: 232.0
+  rot: 90.0
+- ref: R63
+  x: 395.01
+  y: 242.76
+  rot: 180.0
+- ref: R64
+  x: 395.03
+  y: 241.63
+  rot: 180.0
+- ref: R65
+  x: 410.5
+  y: 264.9
+  rot: 180.0
+- ref: R66
+  x: 446.41
+  y: 250.38
+  rot: -90.0
+- ref: R67
+  x: 444.81
+  y: 250.38
+  rot: 90.0
+- ref: R68
+  x: 279.89
+  y: 392.82
+- ref: R69
+  x: 292.1
+  y: 229.6
+  rot: 180.0
+- ref: R7
+  x: 476.73
+  y: 262.1
+  rot: 180.0
+- ref: R70
+  x: 273.5
+  y: 227.32
+  rot: -90.0
+- ref: R71
+  x: 302.2
+  y: 226.51
+- ref: R72
+  x: 446.12
+  y: 301.38
+- ref: R73
+  x: 316.78
+  y: 228.45
+  rot: -90.0
+- ref: R74
+  x: 282.8
+  y: 317.0
+  rot: 180.0
+- ref: R75
+  x: 311.27
+  y: 247.4
+  rot: -90.0
+- ref: R76
+  x: 275.1
+  y: 311.2
+  rot: -90.0
+- ref: R78
+  x: 302.32
+  y: 224.45
+- ref: R79
+  x: 414.9
+  y: 298.7
+  rot: 180.0
+- ref: R8
+  x: 402.2
+  y: 266.0
+  rot: 180.0
+- ref: R80
+  x: 373.29
+  y: 246.58
+- ref: R81
+  x: 365.2
+  y: 268.8
+- ref: R82
+  x: 370.66
+  y: 261.42
+  rot: 180.0
+- ref: R83
+  x: 440.3
+  y: 281.7
+- ref: R84
+  x: 440.1
+  y: 288.55
+- ref: R85
+  x: 371.48
+  y: 259.84
+  rot: 180.0
+- ref: R86
+  x: 300.06
+  y: 299.1
+  rot: 180.0
+- ref: R87
+  x: 302.17
+  y: 313.27
+  rot: 180.0
+- ref: R88
+  x: 299.5
+  y: 311.7
+  rot: 180.0
+- ref: R89
+  x: 307.56
+  y: 310.38
+  rot: -90.0
+- ref: R9
+  x: 279.89
+  y: 390.31
+- ref: R90
+  x: 404.78
+  y: 273.6
+  rot: 180.0
+- ref: R91
+  x: 304.0
+  y: 315.0
+- ref: R92
+  x: 379.2
+  y: 230.5
+  rot: -90.0
+- ref: R93
+  x: 297.6
+  y: 239.06
+  rot: 180.0
+- ref: R95
+  x: 300.8
+  y: 265.7
+  rot: 180.0
+- ref: R96
+  x: 300.7
+  y: 250.5
+  rot: 180.0
+- ref: R98
+  x: 459.5
+  y: 321.14
+- ref: R99
+  x: 454.49
+  y: 321.16
+- ref: SW1
+  x: 339.72
+  y: 225.46
+  rot: -90.0
+- ref: SW2
+  x: 332.93
+  y: 225.5
+  rot: -90.0
+- ref: SW3
+  x: 414.29
+  y: 226.06
+  rot: -90.0
+- ref: SW4
+  x: 407.5
+  y: 226.1
+  rot: -90.0
+- ref: TH1
+  x: 503.5
+  y: 248.68
+- ref: TH2
+  x: 503.5
+  y: 259.59
+- ref: TH3
+  x: 503.5
+  y: 270.5
+- ref: TH4
+  x: 503.5
+  y: 281.41
+- ref: TH5
+  x: 503.5
+  y: 292.32
+- ref: TH6
+  x: 503.5
+  y: 303.23
+- ref: TR10
+  x: 447.24
+  y: 313.2
+- ref: U1
+  x: 394.0
+  y: 257.26
+  rot: 90.0
+- ref: U10
+  x: 453.17
+  y: 302.07
+- ref: U11
+  x: 370.37
+  y: 239.2
+  rot: -90.0
+- ref: U12
+  x: 367.06
+  y: 275.24
+- ref: U13
+  x: 453.38
+  y: 288.3
+- ref: U14
+  x: 320.69
+  y: 300.5
+- ref: U15
+  x: 297.9
+  y: 246.8
+  rot: 180.0
+- ref: U17
+  x: 307.78
+  y: 281.88
+  rot: 180.0
+- ref: U18
+  x: 301.06
+  y: 307.18
+  rot: -90.0
+- ref: U19
+  x: 297.9
+  y: 262.2
+  rot: 180.0
+- ref: U2
+  x: 369.89
+  y: 266.08
+  rot: -90.0
+- ref: U20
+  x: 453.17
+  y: 305.5
+- ref: U21
+  x: 326.27
+  y: 249.9
+- ref: U22
+  x: 430.92
+  y: 287.28
+- ref: U23
+  x: 274.62
+  y: 365.05
+- ref: U24
+  x: 447.17
+  y: 276.01
+  rot: 90.0
+- ref: U25
+  x: 290.4
+  y: 390.6
+- ref: U27
+  x: 444.94
+  y: 239.8
+  rot: -90.0
+- ref: U28
+  x: 393.35
+  y: 267.96
+  rot: 180.0
+- ref: U3
+  x: 419.72
+  y: 303.01
+  rot: -90.0
+- ref: U32
+  x: 404.2
+  y: 261.4
+  rot: -90.0
+- ref: U4
+  x: 418.96
+  y: 295.17
+  rot: -90.0
+- ref: U5
+  x: 311.1
+  y: 224.58
+- ref: U6
+  x: 345.11
+  y: 258.22
+- ref: U7
+  x: 311.1
+  y: 228.75
+- ref: U8
+  x: 453.17
+  y: 295.2
+  rot: 180.0
+- ref: U9
+  x: 453.17
+  y: 298.59
+  rot: 180.0
+- ref: Y1
+  x: 358.5
+  y: 239.0
+  rot: 180.0
+- ref: Y2
+  x: 433.07
+  y: 239.6
+  rot: 180.0
+copper_pours:
+- net: +1V1
+  layers: [F.Cu]
+- net: +1V1_2
+  layers: [F.Cu]
+- net: +3.3V
+  layers: [B.Cu, F.Cu]
+- net: +5V
+  layers: [F.Cu]
+- net: /FC Pos
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: /FC-Neg-Jumper
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: /PH
+  layers: [F.Cu]
+- net: /VREG2_LX
+  layers: [F.Cu]
+- net: /VREG_LX
+  layers: [F.Cu]
+- net: C FC-Neg (GND)
+  layers: [F.Cu]
+- net: C FC-Pos (GND)
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: C Neg (GND)
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: C Pos (GND)
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: Drive Unit Pos
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: GND CAN
+  layers: [In1.Cu, In2.Cu]
+- net: GND Shunt NTC -
+  layers: [In1.Cu, In2.Cu]
+- net: GND_SX
+  layers: [In1.Cu, In2.Cu]
+- net: GND_VSens
+  layers: [In1.Cu, In2.Cu]
+- net: V_{Contactor}
+  layers: [In2.Cu]
+- net: ''
+  layers: [F.Cu, In1.Cu, In2.Cu]
+  keepout: true

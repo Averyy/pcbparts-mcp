@@ -1,0 +1,592 @@
+name: SparkFun GPS-RTK2
+slug: sparkfun-gps-rtk2
+source: sparkfun/Qwiic_GPS-RTK2
+format: eagle
+description: u-blox ZED-F9P multi-band L1/L2 RTK GNSS, centimeter-level accuracy
+tags: [gps-gnss]
+key_ics: [ZED-F9P]
+outline:
+  width_mm: 43.18
+  height_mm: 43.18
+design_rules:
+  layers: 4
+  min_trace: 4mil
+  min_clearance: 4mil
+  min_drill: 0.2mm
+  min_via: 6mil
+components:
+- ref: B1
+  value: 6.8MM_COIN_CELL
+  footprint: ML414H_IV01E
+  prod_id: BATT-14267
+  description: SEIKO ML414H-IV01E Reflowable Lithium Battery
+- ref: C1
+  value: 47pF
+  footprint: '0402'
+  prod_id: CAP-15063
+- ref: C2
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+  decouples: U2
+- ref: C3
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+- ref: C4
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+  decouples: U2
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+  decouples: U2
+- ref: C6
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-13930
+  decouples: U2
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-08604
+  decouples: U2
+- ref: D1
+  value: yellow LED
+  footprint: '0603'
+  prod_id: DIO-09003
+  description: Yellow SMD LED
+- ref: D2
+  value: 0.5A/40V/420mV
+  footprint: SOD-323
+  prod_id: DIO-10955
+  description: Schottky diode
+- ref: D3
+  value: green LED
+  footprint: '0603'
+  prod_id: DIO-00821
+  description: Green SMD LED
+- ref: D4
+  value: blue LED
+  footprint: '0603'
+  prod_id: DIO-08575
+  description: Blue SMD LED
+- ref: D6
+  value: PRTR5V0U2
+  footprint: SOT886
+  prod_id: DIO-14084
+  description: A small ESD protection device
+- ref: E1
+  value: SMA
+  footprint: SMA-EDGE
+  prod_id: CONN-08289
+  description: Antenna w/ Ground Connection
+- ref: E2
+  value: SMA
+  footprint: SMA-EDGE
+  prod_id: CONN-08289
+  description: Antenna w/ Ground Connection
+- ref: FB1
+  value: ferrite bead
+  footprint: '0402'
+  prod_id: NDUC-15072
+- ref: J1
+  value: 1x6 header
+  footprint: 1X06
+  description: 6-pin header connection for use with the "FTDI BASIC" pinout - TARGET SIDE.
+- ref: J2
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+- ref: J3
+  value: 1x4 header
+  footprint: 1X04
+- ref: J4
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+- ref: J5
+  value: USB-C
+  footprint: USB-C
+  prod_id: CONN-14122
+  description: USB Type C 16Pin Connector
+- ref: J6
+  value: 1x6 header
+  footprint: 1X06
+  prod_id: CONN-08437
+- ref: J7
+  value: 1x9 header
+  footprint: 1X09
+- ref: JP5
+  value: solder jumper
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+- ref: LED2
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-00819
+  description: Red SMD LED
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R10
+  value: 27ohm
+  footprint: '0603'
+  prod_id: RES-09334
+- ref: R11
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R12
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R13
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R14
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R15
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+- ref: R16
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: CC2
+- ref: R17
+  value: 5.1kohm
+  footprint: '0603'
+  prod_id: RES-12083
+  pulldown: CC1
+- ref: R18
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R19
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R2
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R20
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R21
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R22
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R23
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R24
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R25
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R3
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R4
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R5
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R6
+  value: 33ohm
+  footprint: '0603'
+  prod_id: RES-08270
+- ref: R7
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R8
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R9
+  value: 27ohm
+  footprint: '0603'
+  prod_id: RES-09334
+- ref: U2
+  value: 3.3V
+  footprint: SOT-23-5
+  prod_id: VREG-12457
+  description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
+- ref: U3
+  value: ZED-F9P
+  footprint: ZED-F9P
+nets:
+- name: '!RESET'
+  pins: [J6.4, R19.2]
+- name: '!SAFE'
+  pins: [J6.5, R20.2]
+- name: 3.3V
+  pins:
+  - C2.1
+  - C4.1
+  - C5.2
+  - C7.2
+  - D2.A
+  - J1.VCC
+  - J2.2
+  - J3.VCC
+  - J4.2
+  - J7.7
+  - JP5.2
+  - PWR.2
+  - R15.2
+  - U2.OUT
+  - U3.VCC
+  - U3.V_USB
+- name: 5V
+  pins: [C6.1, D6.5, J5.VBUS, J7.8, U2.EN, U2.IN]
+- name: ANT_VCC
+  pins: [C1.1, FB1.2, R14.1]
+- name: BACKUP
+  pins: [B1.+, C3.1, R5.1, U3.V_BKCP]
+- name: CC1
+  pins: [J5.CC1, R17.2]
+- name: CC2
+  pins: [J5.CC2, R16.2]
+- name: D+
+  pins: [D6.4, R9.1]
+- name: D-
+  pins: [D6.6, R10.1]
+- name: D_SEL
+  pins: [SPI.2, U3.D_SEL]
+- name: EXTINT
+  pins: [R18.1, U3.EXTINT]
+- name: FENCE_STAT
+  pins: [FENCE.2, J6.1, R25.2]
+- name: GEO_STAT
+  pins: [R25.1, U3.GEO_STAT]
+- name: GND
+  pins:
+  - B1.-
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.1
+  - C6.2
+  - C7.1
+  - D1.C
+  - D3.C
+  - D4.C
+  - D6.2
+  - E1.GND
+  - E2.GND
+  - J1.GND
+  - J2.1
+  - J3.GND
+  - J4.1
+  - J5.GND
+  - J5.SHLD
+  - J7.9
+  - LED2.C
+  - R15.1
+  - R16.1
+  - R17.1
+  - SPI.1
+  - U2.GND
+  - U3.GND
+- name: GPS_ANT1
+  pins: [E1.SIGNAL, FB1.1, U3.RF_IN]
+  class: RF
+  trace_width: '0.35'
+- name: INT
+  pins: [J6.6, R18.2]
+- name: N$1
+  pins: [D3.A, R12.1]
+- name: N$10
+  pins: [LED2.A, R1.1]
+- name: N$17
+  pins: [PWR.1, R1.2]
+- name: N$2
+  pins: [D1.A, R11.1]
+- name: N$21
+  pins: [PPS.1, R21.1]
+- name: N$3
+  pins: [R12.2, RTK.1]
+- name: N$4
+  pins: [PPS_LED.1, R11.2]
+- name: N$5
+  pins: [JP5.1, R8.2]
+- name: N$6
+  pins: [D2.C, R5.2]
+- name: N$7
+  pins: [D4.A, R13.1]
+- name: N$8
+  pins: [JP5.3, R7.2]
+- name: N$9
+  pins: [FENCE.1, R13.2]
+- name: PPS
+  pins: [E2.SIGNAL, PPS.2, U3.TIMEPULSE]
+  class: RF
+  trace_width: '0.35'
+- name: PPS_STAT
+  pins: [J6.3, PPS_LED.2, R21.2]
+- name: RESET
+  pins: [R19.1, U3.!RESET!]
+- name: RTK_STAT
+  pins: [J6.2, R24.2, RTK.2]
+- name: RTK_STAT_2
+  pins: [R24.1, U3.RTK_STAT]
+- name: RX2
+  pins: [J1.TXO, J7.5, R22.2]
+- name: RX2_2
+  pins: [R22.1, U3.RX2]
+- name: RXI/MOSI
+  pins: [J7.3, R6.2]
+- name: RXLV
+  pins: [R6.1, U3.RX/MOSI]
+- name: SAFEBOOT
+  pins: [R20.1, U3.!SAFEBOOT!]
+- name: SCL/SCK
+  pins: [J2.4, J3.SCL, J4.4, J7.1, R4.2, R7.1]
+- name: SCL_LV
+  pins: [R4.1, U3.SCL/CLK]
+- name: SDA/!CS
+  pins: [J2.3, J3.SDA, J4.3, J7.4, R2.2, R8.1]
+- name: SDA_LV
+  pins: [R2.1, U3.SDA/!CS!]
+- name: TX2
+  pins: [J1.RXI, J7.6, R23.2]
+- name: TX2_P
+  pins: [R23.1, U3.TX2]
+- name: TXLV
+  pins: [R3.1, U3.TX/MISO]
+- name: TXO/MISO
+  pins: [J7.2, R3.2]
+- name: UNP_D+
+  pins: [D6.3, J5.D+]
+- name: UNP_D-
+  pins: [D6.1, J5.D-]
+- name: USB_D
+  pins: [R9.2, U3.USB_D+]
+- name: USB_D_2
+  pins: [R10.2, U3.USB_D-]
+- name: V_RF
+  pins: [R14.2, U3.V_RF]
+positions:
+- ref: B1
+  x: 11.43
+  y: 29.21
+  rot: 180.0
+- ref: C1
+  x: 35.05
+  y: 23.24
+  rot: 90.0
+- ref: C2
+  x: 13.97
+  y: 19.81
+  rot: 180.0
+- ref: C3
+  x: 11.05
+  y: 16.76
+  rot: 270.0
+- ref: C4
+  x: 15.24
+  y: 26.67
+- ref: C5
+  x: 15.88
+  y: 24.13
+  rot: 270.0
+- ref: C6
+  x: 9.53
+  y: 24.13
+  rot: 90.0
+- ref: C7
+  x: 13.97
+  y: 18.29
+- ref: D1
+  x: 37.47
+  y: 30.48
+  rot: 270.0
+- ref: D2
+  x: 13.97
+  y: 21.34
+- ref: D3
+  x: 39.37
+  y: 30.48
+  rot: 270.0
+- ref: D4
+  x: 41.27
+  y: 30.48
+  rot: 270.0
+- ref: D6
+  x: 10.92
+  y: 13.08
+- ref: E1
+  x: 41.02
+  y: 19.43
+  rot: 270.0
+- ref: E2
+  x: 41.02
+  y: 10.03
+  rot: 270.0
+- ref: FB1
+  x: 35.05
+  y: 16.13
+  rot: 90.0
+- ref: J1
+  x: 1.27
+  y: 34.29
+  rot: 270.0
+- ref: J2
+  x: 8.89
+  y: 5.08
+- ref: J3
+  x: 13.97
+  y: 1.27
+- ref: J4
+  x: 8.89
+  y: 38.1
+  rot: 180.0
+- ref: J5
+  x: 6.35
+  y: 12.7
+  rot: 270.0
+- ref: J6
+  x: 24.13
+  y: 1.27
+- ref: J7
+  x: 34.29
+  y: 41.91
+  rot: 180.0
+- ref: JP5
+  x: 11.43
+  y: 8.89
+- ref: LED2
+  x: 35.56
+  y: 30.48
+  rot: 270.0
+- ref: R1
+  x: 35.56
+  y: 34.29
+  rot: 90.0
+- ref: R10
+  x: 13.97
+  y: 15.24
+- ref: R11
+  x: 37.47
+  y: 34.29
+  rot: 90.0
+- ref: R12
+  x: 39.37
+  y: 34.29
+  rot: 90.0
+- ref: R13
+  x: 41.27
+  y: 34.29
+  rot: 90.0
+- ref: R14
+  x: 35.05
+  y: 19.81
+  rot: 90.0
+- ref: R15
+  x: 13.97
+  y: 16.76
+- ref: R16
+  x: 3.17
+  y: 6.99
+- ref: R17
+  x: 3.17
+  y: 18.41
+- ref: R18
+  x: 29.72
+  y: 7.62
+  rot: 270.0
+- ref: R19
+  x: 26.67
+  y: 7.62
+  rot: 270.0
+- ref: R2
+  x: 21.46
+  y: 7.62
+  rot: 270.0
+- ref: R20
+  x: 28.19
+  y: 7.62
+  rot: 270.0
+- ref: R21
+  x: 31.24
+  y: 7.62
+  rot: 270.0
+- ref: R22
+  x: 20.45
+  y: 35.56
+  rot: 90.0
+- ref: R23
+  x: 18.92
+  y: 35.56
+  rot: 90.0
+- ref: R24
+  x: 26.42
+  y: 35.56
+  rot: 90.0
+- ref: R25
+  x: 27.94
+  y: 35.56
+  rot: 90.0
+- ref: R3
+  x: 18.41
+  y: 7.62
+  rot: 270.0
+- ref: R4
+  x: 22.99
+  y: 7.62
+  rot: 270.0
+- ref: R5
+  x: 10.92
+  y: 20.32
+  rot: 90.0
+- ref: R6
+  x: 19.94
+  y: 7.62
+  rot: 270.0
+- ref: R7
+  x: 13.97
+  y: 8.89
+  rot: 90.0
+- ref: R8
+  x: 8.89
+  y: 8.89
+  rot: 90.0
+- ref: R9
+  x: 13.97
+  y: 13.72
+- ref: U2
+  x: 12.7
+  y: 24.13
+  rot: 270.0
+- ref: U3
+  x: 25.4
+  y: 21.59
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In14.Cu]

@@ -1,0 +1,324 @@
+name: Open Echo SONAR
+slug: open-echo-sonar
+source: Neumi/open_echo
+format: kicad9
+description: 'Open-source SONAR: TUSS4470 ultrasonic transducer driver (40kHz-1MHz), echo signal conditioning'
+tags: [power-supply, signal-conditioning]
+key_ics: [TUSS4470TRTJR]
+outline:
+  width_mm: 69.0
+  height_mm: 53.8
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: C15nF
+  footprint: '0603'
+  lcsc: C1596
+- ref: C10
+  value: 8.2nF
+  footprint: '0603'
+  lcsc: C1322360
+- ref: C2
+  value: C106nF
+  footprint: '0603'
+  lcsc: C14663
+- ref: C3
+  value: C3.2nF
+  footprint: '0603'
+  lcsc: C1613
+- ref: C4
+  value: C21.2nF
+  footprint: '0603'
+  lcsc: C1602
+- ref: C5
+  value: 40V, 330pF
+  footprint: '0603'
+  lcsc: C1664
+- ref: C6
+  value: "40V, 2\xB5F"
+  footprint: '1206'
+  lcsc: C50254
+- ref: C7
+  value: 50V, 100nF
+  footprint: '0603'
+  lcsc: C14663
+- ref: C8
+  value: 10nF
+  footprint: '0603'
+  lcsc: C57112
+  decouples: U1
+- ref: C9
+  value: 1nF
+  footprint: '0603'
+  lcsc: C1588
+- ref: D1
+  value: 1N4001
+  footprint: SMA
+  lcsc: C727079
+  description: 50V 1A General Purpose Rectifier Diode, DO-41
+- ref: D2
+  value: LED
+  footprint: 0805
+  lcsc: C84256
+- ref: D3
+  value: LED
+  footprint: 0805
+  lcsc: C84256
+- ref: D4
+  value: LED
+  footprint: 0805
+  lcsc: C84256
+- ref: J1
+  value: 1x2 header
+  footprint: AMASS_XT30PW-M
+  lcsc: C431092
+- ref: J4
+  value: 1x3 header
+  footprint: 1X3
+  lcsc: C49257
+- ref: JP1
+  value: 40kHz
+  footprint: 1X2
+  lcsc: C2905434
+  description: Solder Jumper, 2-pole, open
+- ref: JP2
+  value: 40kHz
+  footprint: 1X2
+  lcsc: C2905434
+  description: Solder Jumper, 2-pole, open
+- ref: JP3
+  value: 200kHz
+  footprint: 1X2
+  lcsc: C2905434
+  description: Solder Jumper, 2-pole, open
+- ref: JP4
+  value: 200kHz
+  footprint: 1X2
+  lcsc: C2905434
+  description: Solder Jumper, 2-pole, open
+- ref: JP5
+  value: CUSTOM kHz
+  footprint: 1X2
+  lcsc: C2905434
+  description: Solder Jumper, 2-pole, open
+- ref: JP6
+  value: CUSTOM kHz
+  footprint: 1X2
+  lcsc: C2905434
+  description: Solder Jumper, 2-pole, open
+- ref: R1
+  value: R10
+  footprint: '1206'
+  lcsc: C17903
+- ref: R2
+  value: R200
+  footprint: '1206'
+  lcsc: C18002
+- ref: R3
+  value: R330
+  footprint: '0603'
+  lcsc: C23138
+- ref: R4
+  value: R1k
+  footprint: '0603'
+  lcsc: C14676
+- ref: R5
+  value: R2.2k
+  footprint: '0603'
+  lcsc: C4190
+- ref: SW1
+  value: RST
+  footprint: SW_Push_1P1T_NO_CK_KSC7xxJ
+  lcsc: C318884
+- ref: U1
+  value: TUSS4470TRTJR
+  footprint: QFN-20-1EP
+  manufacturer: Texas instruments
+  mpn: TUSS4470TRTJR
+  lcsc: C1855776
+nets:
+- name: +5V
+  pins: [C8.2, R3.2, U1.VDD]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C6.2
+  - C7.2
+  - C8.1
+  - C9.2
+  - D2.K
+  - D3.K
+  - D4.K
+  - J1.Pin_1
+  - SW1.2@2
+  - U1.DGND
+  - U1.EXP@21
+  - U1.GND
+  - U1.SGND
+- name: Net-(A1-VIN)
+  pins: [J4.Pin_3, R4.2]
+- name: Net-(C5-Pad1)
+  pins: [C5.1, R2.1]
+- name: Net-(D1-K)
+  pins: [D1.K, R1.2]
+- name: Net-(D2-A)
+  pins: [D2.A, R3.1]
+- name: Net-(D3-A)
+  pins: [D3.A, R4.1]
+- name: Net-(D4-A)
+  pins: [D4.A, R5.1]
+- name: Net-(J1-Pin_2)
+  pins: [J1.Pin_2, J4.Pin_1, R5.2]
+- name: Net-(J2-Pin_1)
+  pins: [R2.2, U1.OUTA]
+- name: Net-(JP1-A)
+  pins: [C1.1, JP1.A]
+- name: Net-(JP1-B)
+  pins: [JP1.B, JP3.B, JP5.B, U1.FLT]
+- name: Net-(JP2-A)
+  pins: [C2.1, JP2.A]
+- name: Net-(JP2-B)
+  pins: [JP2.B, JP4.B, JP6.B, U1.INN]
+- name: Net-(JP3-A)
+  pins: [C3.1, JP3.A]
+- name: Net-(JP4-A)
+  pins: [C4.1, JP4.A]
+- name: Net-(JP5-A)
+  pins: [C9.1, JP5.A]
+- name: Net-(JP6-A)
+  pins: [C10.1, JP6.A]
+- name: Net-(U1-INP)
+  pins: [C5.2, U1.INP]
+- name: Net-(U1-VDRV)
+  pins: [C6.1, U1.VDRV]
+- name: Net-(U1-VPWR)
+  pins: [C7.1, R1.1, U1.VPWR]
+- name: VCC
+  pins: [D1.A, J4.Pin_2]
+positions:
+- ref: C1
+  x: 121.4
+  y: 45.5
+  rot: 90.0
+- ref: C10
+  x: 121.4
+  y: 62.33
+  rot: 90.0
+- ref: C2
+  x: 121.4
+  y: 66.0
+  rot: 90.0
+- ref: C3
+  x: 121.4
+  y: 49.6
+  rot: 90.0
+- ref: C4
+  x: 121.4
+  y: 69.72
+  rot: 90.0
+- ref: C5
+  x: 116.7
+  y: 58.9
+  rot: 180.0
+- ref: C6
+  x: 113.2
+  y: 52.1
+  rot: 90.0
+- ref: C7
+  x: 108.1
+  y: 53.4
+  rot: 90.0
+- ref: C8
+  x: 113.5
+  y: 61.7
+  rot: 90.0
+- ref: C9
+  x: 121.4
+  y: 53.3
+  rot: 90.0
+- ref: D1
+  x: 109.3
+  y: 46.7
+  rot: 90.0
+- ref: D2
+  x: 102.4
+  y: 75.3
+  rot: 90.0
+- ref: D3
+  x: 86.8
+  y: 73.1
+  rot: -90.0
+- ref: D4
+  x: 81.5
+  y: 73.1
+  rot: -90.0
+- ref: J1
+  x: 77.67
+  y: 64.5
+  rot: 90.0
+- ref: J4
+  x: 81.78
+  y: 69.5
+  rot: 90.0
+- ref: JP1
+  x: 118.74
+  y: 45.6
+  rot: -90.0
+- ref: JP2
+  x: 118.74
+  y: 65.7
+  rot: -90.0
+- ref: JP3
+  x: 118.74
+  y: 49.3
+  rot: -90.0
+- ref: JP4
+  x: 118.74
+  y: 69.4
+  rot: -90.0
+- ref: JP5
+  x: 118.74
+  y: 53.0
+  rot: -90.0
+- ref: JP6
+  x: 118.74
+  y: 62.02
+  rot: -90.0
+- ref: R1
+  x: 110.0
+  y: 52.6
+  rot: 90.0
+- ref: R2
+  x: 117.5
+  y: 57.0
+  rot: 180.0
+- ref: R3
+  x: 102.4
+  y: 72.1
+  rot: 90.0
+- ref: R4
+  x: 85.1
+  y: 73.3
+  rot: 90.0
+- ref: R5
+  x: 79.8
+  y: 73.3
+  rot: 90.0
+- ref: SW1
+  x: 72.2
+  y: 40.2
+- ref: U1
+  x: 112.46
+  y: 57.5
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

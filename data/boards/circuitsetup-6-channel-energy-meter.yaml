@@ -1,0 +1,1182 @@
+name: CircuitSetup 6-Channel Energy Meter
+slug: circuitsetup-6-channel-energy-meter
+source: CircuitSetup/Expandable-6-Channel-ESP32-Energy-Meter
+format: eagle
+description: 2x ATM90E32AS energy metering AFE, ESP32
+tags: [energy-monitoring]
+key_ics: [ESP32]
+outline:
+  width_mm: 60.96
+  height_mm: 62.23
+design_rules:
+  layers: 2
+  min_trace: 5mil
+  min_clearance: 6mil
+  min_drill: 0.3mm
+  min_via: 6mil
+components:
+- ref: BR1
+  value: 50V/2A
+  footprint: SOP270P700X270-4
+  description: COMCHIP TECHNOLOGY CDBHM240L-HF, Bridge Rectifier, 40V, 4-Pin MBS-2
+  height: 2.9mm
+  manufacturer: Comchip Technology
+  mpn: CDBHM240L-HF
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+  decouples: IC1
+- ref: C11
+  value: 100nF
+  footprint: '0603'
+  decouples: IC1
+- ref: C12
+  value: 10uF
+  footprint: '0603'
+- ref: C13
+  value: 100nF
+  footprint: '0603'
+- ref: C14
+  value: 18nF
+  footprint: '0603'
+- ref: C15
+  value: 18nF
+  footprint: '0603'
+- ref: C16
+  value: 100nF
+  footprint: '0603'
+- ref: C17
+  value: 18nF
+  footprint: '0603'
+- ref: C18
+  value: 18nF
+  footprint: '0603'
+- ref: C19
+  value: 18nF
+  footprint: '0603'
+- ref: C2
+  value: 18nF
+  footprint: '0603'
+- ref: C20
+  value: 18nF
+  footprint: '0603'
+- ref: C21
+  value: 18nF
+  footprint: '0603'
+- ref: C22
+  value: 18nF
+  footprint: '0603'
+- ref: C23
+  value: 10uF
+  footprint: '0603'
+  decouples: IC2
+- ref: C24
+  value: 100nF
+  footprint: '0603'
+  decouples: IC2
+- ref: C25
+  value: 100nF
+  footprint: '0603'
+  decouples: IC2
+- ref: C26
+  value: 100nF
+  footprint: '0603'
+  decouples: IC2
+- ref: C27
+  value: 10uF
+  footprint: '0603'
+- ref: C28
+  value: 100nF
+  footprint: '0603'
+- ref: C29
+  value: 18nF
+  footprint: '0603'
+- ref: C3
+  value: 18nF
+  footprint: '0603'
+- ref: C30
+  value: 18nF
+  footprint: '0603'
+- ref: C31
+  value: 100nF
+  footprint: '0603'
+- ref: C32
+  value: 220pF
+  footprint: '0603'
+- ref: C33
+  value: 100uF
+  footprint: UD-6,3X7,7
+  voltage: 25V
+  decouples: IC3
+- ref: C34
+  value: 10uF
+  footprint: 0805
+  voltage: 25V
+  decouples: IC3
+- ref: C35
+  value: 10nF
+  footprint: '0603'
+- ref: C36
+  value: 100uF
+  footprint: '1210'
+  voltage: 6.3V
+- ref: C4
+  value: 18nF
+  footprint: '0603'
+- ref: C5
+  value: 18nF
+  footprint: '0603'
+- ref: C6
+  value: 18nF
+  footprint: '0603'
+- ref: C7
+  value: 18nF
+  footprint: '0603'
+- ref: C8
+  value: 10uF
+  footprint: '0603'
+  decouples: IC1
+- ref: C9
+  value: 100nF
+  footprint: '0603'
+  decouples: IC1
+- ref: CF1
+  value: blue LED
+  footprint: CHIPLED_0603
+- ref: CF1-2
+  value: blue LED
+  footprint: CHIPLED_0603
+- ref: CT1
+  value: CONN_02
+  footprint: SCREWTERMINAL-3.5MM-2
+  prod_id: CONN-08399
+- ref: CT1-2
+  value: SJ2-35813B-SMT-TR
+  footprint: CUI_SJ2-35813B-SMT-TR
+  manufacturer: CUI
+  mpn: SJ2-35813B-SMT-TR
+  description: 3 conductors, 3
+- ref: CT2
+  value: CONN_02
+  footprint: SCREWTERMINAL-3.5MM-2
+  prod_id: CONN-08399
+- ref: CT2-2
+  value: SJ2-35813B-SMT-TR
+  footprint: CUI_SJ2-35813B-SMT-TR
+  manufacturer: CUI
+  mpn: SJ2-35813B-SMT-TR
+  description: 3 conductors, 3
+- ref: CT3
+  value: CONN_02
+  footprint: SCREWTERMINAL-3.5MM-2
+  prod_id: CONN-08399
+- ref: CT3-2
+  value: SJ2-35813B-SMT-TR
+  footprint: CUI_SJ2-35813B-SMT-TR
+  manufacturer: CUI
+  mpn: SJ2-35813B-SMT-TR
+  description: 3 conductors, 3
+- ref: CT4
+  value: CONN_02
+  footprint: SCREWTERMINAL-3.5MM-2
+  prod_id: CONN-08399
+- ref: CT4-2
+  value: SJ2-35813B-SMT-TR
+  footprint: CUI_SJ2-35813B-SMT-TR
+  manufacturer: CUI
+  mpn: SJ2-35813B-SMT-TR
+  description: 3 conductors, 3
+- ref: CT5
+  value: CONN_02
+  footprint: SCREWTERMINAL-3.5MM-2
+  prod_id: CONN-08399
+- ref: CT5-2
+  value: SJ2-35813B-SMT-TR
+  footprint: CUI_SJ2-35813B-SMT-TR
+  manufacturer: CUI
+  mpn: SJ2-35813B-SMT-TR
+  description: 3 conductors, 3
+- ref: CT6
+  value: CONN_02
+  footprint: SCREWTERMINAL-3.5MM-2
+  prod_id: CONN-08399
+- ref: CT6-2
+  value: SJ2-35813B-SMT-TR
+  footprint: CUI_SJ2-35813B-SMT-TR
+  manufacturer: CUI
+  mpn: SJ2-35813B-SMT-TR
+  description: 3 conductors, 3
+- ref: D1
+  value: DIODE-
+  footprint: DO214AC
+- ref: IC1
+  value: ATM90E32AS
+  footprint: QFP50P900X900X120-48
+  description: ATMEL Poly-phase energy metering
+- ref: IC2
+  value: ATM90E32AS
+  footprint: QFP50P900X900X120-48
+  description: ATMEL Poly-phase energy metering
+- ref: IC3
+  value: LMR14020SDDA
+  footprint: SOIC-9
+  description: Voltage Regulators - Switching Regulators 40V 2A 2.2Mhz Simple Switcher
+  height: 1.7mm
+  manufacturer: Texas Instruments
+  mpn: LMR14020SDDA
+- ref: J3
+  value: 1x2 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-2
+  prod_id: CONN-08399
+- ref: J4
+  value: 9-12VAC
+  footprint: CUI_PJ-002AH-SMT-TR
+  description: 24 VDC 5 A Surface Mount Unshielded 2 Conductors 3 Contacts Male Power Jack
+  manufacturer: CUI
+  mpn: PJ-002AH-SMT-TR
+- ref: J9
+  value: micro HDMI
+  footprint: PKS01940110
+  description: HDMI, Displayport & DVI Connectors Type D HDMI SMT Sngl Row Cnt Design
+  height: 3.27mm
+  manufacturer: Yamaichi
+  mpn: PKS019-4011-0
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP12
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP13
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP3
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP4
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP5
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP6
+  value: solder jumper
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: L1
+  value: 3.3uH
+  footprint: INDPM8082X300N
+  description: Inductor Power Shielded Wirewound 3.3uH 30% 100KHz Ferrite 5.4A 19.2mOhm DCR 3131 T/R
+  height: 3mm
+  manufacturer: Murata Electronics
+  mpn: 1273AS-H-3R3N=P3
+- ref: PWR
+  value: green LED
+  footprint: CHIPLED_0603
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  pullup: '!RESET'
+- ref: R10
+  value: 1kohm
+  footprint: '0603'
+  pullup: PWR.A
+- ref: R11
+  value: 1kohm
+  footprint: RA1206-8
+  mpn: Chip-Array-Series-1%
+- ref: R12
+  value: 10kohm
+  footprint: '0603'
+  pullup: '!RESET2'
+- ref: R13
+  value: 10kohm
+  footprint: RA1206-8
+  mpn: Chip-Array-Series-1%
+- ref: R14
+  value: 100ohm
+  footprint: RA1206-8
+  mpn: Chip-Array-Series-1%
+- ref: R15
+  value: 100ohm
+  footprint: '0603'
+- ref: R16
+  value: 100ohm
+  footprint: '0603'
+- ref: R17
+  value: 22ohm
+  footprint: '0603'
+- ref: R18
+  value: 22ohm
+  footprint: '0603'
+- ref: R19
+  value: 22ohm
+  footprint: '0603'
+- ref: R2
+  value: 10kohm
+  footprint: RA1206-8
+  mpn: Chip-Array-Series-1%
+- ref: R20
+  value: 1kohm
+  footprint: '0603'
+- ref: R21
+  value: 20kohm
+  footprint: '0603'
+  pulldown: RT
+- ref: R22
+  value: 34kohm
+  footprint: '0603'
+  pullup: FB
+- ref: R23
+  value: 10kohm
+  footprint: '0603'
+  pulldown: FB
+- ref: R24
+  value: 20kohm
+  footprint: RA1206-8
+  mpn: Chip-Array-Series-1%
+- ref: R26
+  value: 20kohm
+  footprint: '0603'
+  power: 1/4W
+- ref: R28
+  value: 20kohm
+  footprint: '0603'
+  power: 1/4W
+- ref: R3
+  value: 100ohm
+  footprint: RA1206-8
+  mpn: Chip-Array-Series-1%
+- ref: R32
+  value: 20kohm
+  footprint: '0603'
+  power: 1/4W
+- ref: R34
+  value: 20kohm
+  footprint: '0603'
+  power: 1/4W
+- ref: R4
+  value: 100ohm
+  footprint: '0603'
+- ref: R5
+  value: 100ohm
+  footprint: '0603'
+- ref: R6
+  value: 22ohm
+  footprint: '0603'
+- ref: R7
+  value: 22ohm
+  footprint: '0603'
+- ref: R8
+  value: 22ohm
+  footprint: '0603'
+- ref: R9
+  value: 1kohm
+  footprint: '0603'
+- ref: U1
+  value: ESP32-DEVKITC-32D
+  footprint: MODULE_ESP32-DEVKITC-32D
+  description: Eval Board For Esp-Wroom-32
+  manufacturer: Espressif Systems
+  mpn: ESP32-DEVKITC-32D
+- ref: Y1
+  value: 16.384MHz
+  footprint: CRYSTAL-SMD-3.2X2.5MM
+  description: passive
+- ref: Y2
+  value: 16.384MHz
+  footprint: CRYSTAL-SMD-3.2X2.5MM
+  description: passive
+nets:
+- name: '!CS'
+  pins: [IC1.!CS, R2.4, U1.IO5]
+  trace_width: '0.1524'
+- name: '!CS-2'
+  pins: [IC2.!CS, R13.4, U1.IO4]
+  trace_width: '0.1524'
+- name: '!RESET'
+  pins: [C1.2, IC1.!RESET, R1.2]
+  trace_width: '0.1524'
+- name: '!RESET2'
+  pins: [C16.2, IC2.!RESET, R12.2]
+  trace_width: '0.1524'
+- name: BOOT
+  pins: [C31.1, IC3.BOOT]
+  trace_width: '0.1524'
+- name: CF1
+  pins: [IC1.CF1, R9.2]
+  trace_width: '0.1524'
+- name: CF1-2
+  pins: [IC2.CF1, R20.2]
+  trace_width: '0.1524'
+- name: FB
+  pins: [C32.2, IC3.FB, R22.1, R23.2]
+  trace_width: '0.1524'
+- name: GND
+  pins:
+  - BR1.~
+  - C1.1
+  - C10.1
+  - C11.1
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.1
+  - C17.2
+  - C18.1
+  - C19.2
+  - C2.2
+  - C20.1
+  - C21.2
+  - C22.1
+  - C23.1
+  - C24.1
+  - C25.1
+  - C26.1
+  - C27.2
+  - C28.2
+  - C29.2
+  - C3.1
+  - C30.2
+  - C33.-
+  - C34.2
+  - C35.2
+  - C36.2
+  - C4.2
+  - C5.1
+  - C6.2
+  - C7.1
+  - C8.1
+  - C9.1
+  - CF1-2.C
+  - CF1.C
+  - D1.A
+  - IC1.AGND@1
+  - IC1.AGND@2
+  - IC1.DGND@1
+  - IC1.DGND@2
+  - IC1.DGND@3
+  - IC1.DMA_CTRL
+  - IC1.TEST
+  - IC2.AGND@1
+  - IC2.AGND@2
+  - IC2.DGND@1
+  - IC2.DGND@2
+  - IC2.DGND@3
+  - IC2.DMA_CTRL
+  - IC2.TEST
+  - IC3.EP
+  - IC3.GND
+  - J9.1
+  - J9.10
+  - J9.11
+  - J9.14
+  - J9.19
+  - J9.20
+  - J9.21
+  - J9.22
+  - J9.23
+  - J9.4
+  - J9.7
+  - PWR.C
+  - R11.1
+  - R11.2
+  - R11.3
+  - R11.4
+  - R21.1
+  - R23.1
+  - U1.GND1
+  - U1.GND2
+  - U1.GND3
+  - Y1.3
+  - Y2.3
+  trace_width: '0.1524'
+- name: IA+
+  pins: [CT1-2.TIP, CT1.2, J9.2, R3.1, R7.2]
+  class: analog
+  trace_width: '0.2032'
+- name: IA+-2
+  pins: [CT4-2.TIP, CT4.2, J9.12, R14.1, R18.2]
+  class: analog
+  trace_width: '0.2032'
+- name: IA-
+  pins: [CT1-2.SLEEVE, CT1.1, J9.3, JP1.2, R3.2]
+  class: analog
+  trace_width: '0.2032'
+- name: IA--2
+  pins: [CT4-2.SLEEVE, CT4.1, J9.13, JP4.2, R14.2]
+  class: analog
+  trace_width: '0.2032'
+- name: IAN
+  pins: [C3.2, IC1.I1N, R3.7]
+  class: analog
+  trace_width: '0.2032'
+- name: IAN-2
+  pins: [C18.2, IC2.I1N, R14.7]
+  class: analog
+  trace_width: '0.2032'
+- name: IAP
+  pins: [C2.1, IC1.I1P, R3.8]
+  class: analog
+  trace_width: '0.2032'
+- name: IAP-2
+  pins: [C17.1, IC2.I1P, R14.8]
+  class: analog
+  trace_width: '0.2032'
+- name: IB+
+  pins: [CT2-2.TIP, CT2.2, J9.5, R3.3, R8.2]
+  class: analog
+  trace_width: '0.2032'
+- name: IB+-2
+  pins: [CT5-2.TIP, CT5.2, J9.15, R14.3, R19.2]
+  class: analog
+  trace_width: '0.2032'
+- name: IB-
+  pins: [CT2-2.SLEEVE, CT2.1, J9.6, JP2.2, R3.4]
+  class: analog
+  trace_width: '0.2032'
+- name: IB--2
+  pins: [CT5-2.SLEEVE, CT5.1, J9.16, JP5.2, R14.4]
+  class: analog
+  trace_width: '0.2032'
+- name: IBN
+  pins: [C5.2, IC1.I2N, R3.5]
+  trace_width: '0.1524'
+- name: IBN-2
+  pins: [C20.2, IC2.I2N, R14.5]
+  trace_width: '0.1524'
+- name: IBP
+  pins: [C4.1, IC1.I2P, R3.6]
+  trace_width: '0.1524'
+- name: IBP-2
+  pins: [C19.1, IC2.I2P, R14.6]
+  trace_width: '0.1524'
+- name: IC+
+  pins: [CT3-2.TIP, CT3.2, J9.8, R4.2, R6.2]
+  class: analog
+  trace_width: '0.2032'
+- name: IC+-2
+  pins: [CT6-2.TIP, CT6.2, J9.18, R15.2, R17.2]
+  class: analog
+  trace_width: '0.2032'
+- name: IC-
+  pins: [CT3-2.SLEEVE, CT3.1, J9.9, JP3.2, R5.2]
+  class: analog
+  trace_width: '0.2032'
+- name: IC--2
+  pins: [CT6-2.SLEEVE, CT6.1, J9.17, JP6.2, R16.2]
+  class: analog
+  trace_width: '0.2032'
+- name: ICN
+  pins: [C7.2, IC1.I3N, R5.1]
+  class: analog
+  trace_width: '0.2032'
+- name: ICN-2
+  pins: [C22.2, IC2.I3N, R16.1]
+  class: analog
+  trace_width: '0.2032'
+- name: ICP
+  pins: [C6.1, IC1.I3P, R4.1]
+  class: analog
+  trace_width: '0.2032'
+- name: ICP-2
+  pins: [C21.1, IC2.I3P, R15.1]
+  class: analog
+  trace_width: '0.2032'
+- name: IRQ0
+  pins: [IC1.IRQ0, IC2.IRQ0, U1.IO32]
+  trace_width: '0.1524'
+- name: IRQ1
+  pins: [IC1.IRQ1, IC2.IRQ1, U1.IO33]
+  trace_width: '0.1524'
+- name: MISO
+  pins: [IC1.SDO, IC2.SDO, R13.2, R2.2, U1.IO19]
+  trace_width: '0.1524'
+- name: MOSI
+  pins: [IC1.SDI, IC2.SDI, R13.1, R2.1, U1.IO23]
+  trace_width: '0.1524'
+- name: N$1
+  pins: [JP1.1, R7.1]
+  trace_width: '0.1524'
+- name: N$12
+  pins: [PWR.A, R10.1]
+  trace_width: '0.1524'
+- name: N$14
+  pins: [CF1-2.A, R20.1]
+  trace_width: '0.1524'
+- name: N$2
+  pins: [JP2.1, R8.1]
+  trace_width: '0.1524'
+- name: N$3
+  pins: [CF1.A, R9.1]
+  trace_width: '0.1524'
+- name: N$4
+  pins: [JP3.1, R6.1]
+  trace_width: '0.1524'
+- name: N$5
+  pins: [JP4.1, R18.1]
+  trace_width: '0.1524'
+- name: N$6
+  pins: [JP5.1, R19.1]
+  trace_width: '0.1524'
+- name: N$7
+  pins: [JP6.1, R17.1]
+  trace_width: '0.1524'
+- name: OSCI
+  pins: [IC1.OSCI, Y1.1]
+  trace_width: '0.1524'
+- name: OSCI2
+  pins: [IC2.OSCI, Y2.1]
+  trace_width: '0.1524'
+- name: OSCO
+  pins: [IC1.OSCO, Y1.2]
+  trace_width: '0.1524'
+- name: OSCO2
+  pins: [IC2.OSCO, Y2.2]
+  trace_width: '0.1524'
+- name: RT
+  pins: [IC3.RT/SYNC, R21.2]
+  trace_width: '0.1524'
+- name: SCLK
+  pins: [IC1.SCLK, IC2.SCLK, R13.3, R2.3, U1.IO18]
+  trace_width: '0.1524'
+- name: SS
+  pins: [C35.1, IC3.SS]
+  trace_width: '0.1524'
+- name: SW
+  pins: [C31.2, D1.C, IC3.SW, L1.1]
+  trace_width: '0.1524'
+- name: VA+
+  pins: [BR1.-, J4.1, JP12.2, R26.2]
+  trace_width: '0.1524'
+- name: VA-
+  pins: [BR1.+, J4.2, JP13.2, R34.2]
+  trace_width: '0.1524'
+- name: VA2+
+  pins: [J3.2, JP12.1, R28.2]
+  trace_width: '0.1524'
+- name: VA2-
+  pins: [J3.1, JP13.1, R32.2]
+  trace_width: '0.1524'
+- name: VAN
+  pins:
+  - C15.1
+  - IC1.V1N
+  - IC1.V2N
+  - IC1.V3N
+  - R11.6
+  - R24.7
+  - R34.1
+  trace_width: '0.1524'
+- name: VAN2
+  pins:
+  - C30.1
+  - IC2.V1N
+  - IC2.V2N
+  - IC2.V3N
+  - R11.5
+  - R24.8
+  - R32.1
+  trace_width: '0.1524'
+- name: VAP
+  pins:
+  - C14.1
+  - IC1.V1P
+  - IC1.V2P
+  - IC1.V3P
+  - R11.7
+  - R24.6
+  - R26.1
+  class: analog
+  trace_width: '0.2032'
+- name: VAP2
+  pins:
+  - C29.1
+  - IC2.V1P
+  - IC2.V2P
+  - IC2.V3P
+  - R11.8
+  - R24.5
+  - R28.1
+  class: analog
+  trace_width: '0.2032'
+- name: VDD
+  pins:
+  - C10.2
+  - C11.2
+  - C25.2
+  - C26.2
+  - C32.1
+  - C36.1
+  - IC1.AVDD
+  - IC1.DVDD
+  - IC1.PM0
+  - IC1.PM1
+  - IC2.AVDD
+  - IC2.DVDD
+  - IC2.PM0
+  - IC2.PM1
+  - L1.2
+  - R1.1
+  - R10.2
+  - R12.1
+  - R13.5
+  - R13.6
+  - R13.7
+  - R13.8
+  - R2.5
+  - R2.6
+  - R2.7
+  - R2.8
+  - R22.2
+  - R24.1
+  - R24.2
+  - R24.3
+  - R24.4
+  - U1.3V3
+  class: pwr
+  trace_width: '0.3048'
+- name: VDD18
+  pins: [C8.2, C9.2, IC1.VDD18@1, IC1.VDD18@2]
+  class: pwr
+  trace_width: '0.3048'
+- name: VDD2
+  pins: [C23.2, C24.2, IC2.VDD18@1, IC2.VDD18@2]
+  class: pwr
+  trace_width: '0.3048'
+- name: VIN
+  pins: [BR1.~1, C33.+, C34.1, IC3.EN, IC3.VIN]
+  trace_width: '0.1524'
+- name: VREF
+  pins: [C12.1, C13.1, IC1.VREF]
+  trace_width: '0.1524'
+- name: VREF2
+  pins: [C27.1, C28.1, IC2.VREF]
+  trace_width: '0.1524'
+- name: WARN
+  pins: [IC1.WARNOUT, IC2.WARNOUT, U1.IO34]
+  trace_width: '0.1524'
+- name: ZX0
+  pins: [IC1.ZX0, ZX0.P]
+  trace_width: '0.1524'
+- name: ZX0-2
+  pins: [IC2.ZX0, ZX0-2.P]
+  trace_width: '0.1524'
+- name: ZX1
+  pins: [IC1.ZX1, ZX1.P]
+  trace_width: '0.1524'
+- name: ZX1-2
+  pins: [IC2.ZX1, ZX1-2.P]
+  trace_width: '0.1524'
+- name: ZX2
+  pins: [IC1.ZX2, ZX2.P]
+  trace_width: '0.1524'
+- name: ZX2-2
+  pins: [IC2.ZX2, ZX2-2.P]
+  trace_width: '0.1524'
+positions:
+- ref: BR1
+  x: 37.74
+  y: 2.44
+- ref: C1
+  x: 25.4
+  y: 52.51
+  rot: 90.0
+- ref: C10
+  x: 31.75
+  y: 55.98
+  rot: 90.0
+- ref: C11
+  x: 27.97
+  y: 52.55
+  rot: 90.0
+- ref: C12
+  x: 25.4
+  y: 46.53
+  rot: 270.0
+- ref: C13
+  x: 27.97
+  y: 46.56
+  rot: 270.0
+- ref: C14
+  x: 27.94
+  y: 43.18
+  rot: 270.0
+- ref: C15
+  x: 34.92
+  y: 40.64
+  rot: 270.0
+- ref: C16
+  x: 39.37
+  y: 23.62
+  rot: 270.0
+- ref: C17
+  x: 54.61
+  y: 16.89
+  rot: 90.0
+- ref: C18
+  x: 52.07
+  y: 16.89
+  rot: 270.0
+- ref: C19
+  x: 54.61
+  y: 30.86
+  rot: 90.0
+- ref: C2
+  x: 6.35
+  y: 58.42
+  rot: 270.0
+- ref: C20
+  x: 52.07
+  y: 30.86
+  rot: 270.0
+- ref: C21
+  x: 54.61
+  y: 44.83
+  rot: 90.0
+- ref: C22
+  x: 52.07
+  y: 44.83
+  rot: 270.0
+- ref: C23
+  x: 39.37
+  y: 20.32
+  rot: 270.0
+- ref: C24
+  x: 36.83
+  y: 20.32
+  rot: 270.0
+- ref: C25
+  x: 33.02
+  y: 20.35
+  rot: 270.0
+- ref: C26
+  x: 36.88
+  y: 23.62
+  rot: 270.0
+- ref: C27
+  x: 39.37
+  y: 29.72
+  rot: 90.0
+- ref: C28
+  x: 36.83
+  y: 29.72
+  rot: 90.0
+- ref: C29
+  x: 36.83
+  y: 33.02
+  rot: 90.0
+- ref: C3
+  x: 8.89
+  y: 58.42
+  rot: 90.0
+- ref: C30
+  x: 30.48
+  y: 35.56
+  rot: 90.0
+- ref: C31
+  x: 26.67
+  y: 13.97
+  rot: 270.0
+- ref: C32
+  x: 38.1
+  y: 13.97
+  rot: 90.0
+- ref: C33
+  x: 35.05
+  y: 8.36
+  rot: 180.0
+- ref: C34
+  x: 25.25
+  y: 1.57
+  rot: 180.0
+- ref: C35
+  x: 29.21
+  y: 13.97
+  rot: 90.0
+- ref: C36
+  x: 9.45
+  y: 6.65
+- ref: C4
+  x: 6.35
+  y: 44.45
+  rot: 270.0
+- ref: C5
+  x: 8.89
+  y: 44.45
+  rot: 90.0
+- ref: C6
+  x: 6.35
+  y: 30.48
+  rot: 270.0
+- ref: C7
+  x: 8.89
+  y: 30.48
+  rot: 90.0
+- ref: C8
+  x: 25.4
+  y: 55.95
+  rot: 90.0
+- ref: C9
+  x: 27.97
+  y: 55.95
+  rot: 90.0
+- ref: CF1
+  x: 1.32
+  y: 9.55
+  rot: 180.0
+- ref: CF1-2
+  x: 3.76
+  y: 9.55
+  rot: 180.0
+- ref: CT1
+  x: 5.08
+  y: 53.34
+  rot: 270.0
+- ref: CT1-2
+  x: 5.77
+  y: 51.61
+- ref: CT2
+  x: 5.08
+  y: 39.37
+  rot: 270.0
+- ref: CT2-2
+  x: 5.77
+  y: 37.66
+- ref: CT3
+  x: 5.08
+  y: 25.4
+  rot: 270.0
+- ref: CT3-2
+  x: 5.77
+  y: 23.7
+- ref: CT4
+  x: 55.88
+  y: 21.97
+  rot: 90.0
+- ref: CT4-2
+  x: 55.19
+  y: 23.7
+  rot: 180.0
+- ref: CT5
+  x: 55.88
+  y: 35.94
+  rot: 90.0
+- ref: CT5-2
+  x: 55.19
+  y: 37.66
+  rot: 180.0
+- ref: CT6
+  x: 55.88
+  y: 49.78
+  rot: 90.0
+- ref: CT6-2
+  x: 55.19
+  y: 51.61
+  rot: 180.0
+- ref: D1
+  x: 20.95
+  y: 6.99
+  rot: 270.0
+- ref: IC1
+  x: 35.75
+  y: 49.03
+- ref: IC2
+  x: 29.02
+  y: 27.17
+  rot: 180.0
+- ref: IC3
+  x: 26.31
+  y: 7.11
+  rot: 90.0
+- ref: J3
+  x: 59.05
+  y: 5.71
+  rot: 270.0
+- ref: J4
+  x: 43.81
+  y: 8.13
+  rot: 90.0
+- ref: J9
+  x: 49.25
+  y: 63.45
+  rot: 180.0
+- ref: JP1
+  x: 13.97
+  y: 58.42
+- ref: JP12
+  x: 39.37
+  y: 5.08
+  rot: 180.0
+- ref: JP13
+  x: 43.18
+  y: 5.08
+- ref: JP2
+  x: 13.97
+  y: 44.45
+- ref: JP3
+  x: 13.97
+  y: 30.48
+- ref: JP4
+  x: 46.99
+  y: 16.51
+  rot: 180.0
+- ref: JP5
+  x: 46.99
+  y: 30.48
+  rot: 180.0
+- ref: JP6
+  x: 46.99
+  y: 44.45
+  rot: 180.0
+- ref: L1
+  x: 10.74
+  y: 12.65
+  rot: 180.0
+- ref: PWR
+  x: 59.69
+  y: 9.53
+  rot: 180.0
+- ref: R1
+  x: 34.29
+  y: 55.95
+  rot: 270.0
+- ref: R10
+  x: 58.42
+  y: 12.06
+  rot: 180.0
+- ref: R11
+  x: 37.47
+  y: 36.83
+  rot: 90.0
+- ref: R12
+  x: 30.48
+  y: 20.32
+  rot: 90.0
+- ref: R13
+  x: 27.3
+  y: 20.24
+  rot: 180.0
+- ref: R14
+  x: 46.61
+  y: 23.24
+  rot: 90.0
+- ref: R15
+  x: 47.24
+  y: 50.29
+  rot: 90.0
+- ref: R16
+  x: 47.24
+  y: 53.59
+  rot: 90.0
+- ref: R17
+  x: 49.53
+  y: 44.83
+  rot: 90.0
+- ref: R18
+  x: 49.53
+  y: 16.89
+  rot: 90.0
+- ref: R19
+  x: 49.53
+  y: 30.86
+  rot: 90.0
+- ref: R2
+  x: 37.47
+  y: 55.95
+- ref: R20
+  x: 2.54
+  y: 12.09
+  rot: 180.0
+- ref: R21
+  x: 30.48
+  y: 5.08
+  rot: 270.0
+- ref: R22
+  x: 35.56
+  y: 13.97
+  rot: 270.0
+- ref: R23
+  x: 33.02
+  y: 13.97
+  rot: 90.0
+- ref: R24
+  x: 27.3
+  y: 39.37
+  rot: 270.0
+- ref: R26
+  x: 25.4
+  y: 43.18
+  rot: 270.0
+- ref: R28
+  x: 39.37
+  y: 33.02
+  rot: 90.0
+- ref: R3
+  x: 14.48
+  y: 52.07
+  rot: 270.0
+- ref: R32
+  x: 33.02
+  y: 35.56
+  rot: 90.0
+- ref: R34
+  x: 32.38
+  y: 40.64
+  rot: 270.0
+- ref: R4
+  x: 13.72
+  y: 25.4
+  rot: 270.0
+- ref: R5
+  x: 13.72
+  y: 21.46
+  rot: 270.0
+- ref: R6
+  x: 11.43
+  y: 30.48
+  rot: 270.0
+- ref: R7
+  x: 11.43
+  y: 58.42
+  rot: 270.0
+- ref: R8
+  x: 11.43
+  y: 44.45
+  rot: 270.0
+- ref: R9
+  x: 2.54
+  y: 6.81
+- ref: U1
+  x: 30.48
+  y: 39.37
+- ref: Y1
+  x: 38.1
+  y: 40.64
+- ref: Y2
+  x: 26.67
+  y: 35.56
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: SW
+  layers: [F.Cu]
+- net: VDD
+  layers: [F.Cu]
+- net: VIN
+  layers: [F.Cu]

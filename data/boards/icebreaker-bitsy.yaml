@@ -1,0 +1,902 @@
+name: iCEBreaker-Bitsy
+slug: icebreaker-bitsy
+source: icebreaker-fpga/icebreaker
+format: kicad7
+description: Ultra-compact iCE40UP5K FPGA in Feather-like form factor, SPI flash
+tags: [fpga]
+key_ics: [iCE40UP5K]
+outline:
+  width_mm: 36.0
+  height_mm: 18.0
+design_rules:
+  layers: 4
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.25mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0402'
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+  decouples: U4
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+- ref: C13
+  value: 10nF
+  footprint: '0402'
+  decouples: U6
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+  decouples: U6
+- ref: C15
+  value: 1uF
+  footprint: '0402'
+  decouples: U6
+- ref: C16
+  value: 10nF
+  footprint: '0402'
+  decouples: U6
+- ref: C17
+  value: 100nF
+  footprint: '0402'
+  decouples: U6
+- ref: C18
+  value: 1uF
+  footprint: '0402'
+  decouples: U6
+- ref: C19
+  value: 10uF
+  footprint: '0603'
+- ref: C2
+  value: 4.7uF
+  footprint: '0603'
+  decouples: U2
+- ref: C3
+  value: 4.7uF
+  footprint: '0603'
+  decouples: U2
+- ref: C4
+  value: 4.7uF
+  footprint: '0603'
+  decouples: U3
+- ref: C5
+  value: 4.7uF
+  footprint: '0603'
+  decouples: U3
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  decouples: U2
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  decouples: U4
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+- ref: D1
+  value: red LED
+  footprint: '0603'
+- ref: D2
+  value: green LED
+  footprint: '0603'
+- ref: D3
+  value: blue LED
+  footprint: '0603'
+- ref: D4
+  value: FM-B2020RGBA-HG
+  footprint: LED_TRI_2020
+- ref: J1
+  value: USB-C
+  footprint: USB-C
+- ref: JP1
+  value: VIN-VBUS
+  footprint: '0603'
+- ref: JP2
+  value: RAM_CS-LEDG
+  footprint: '0402'
+- ref: JP3
+  value: Flash_CS-SPI_CS
+  footprint: '0402'
+- ref: JP4
+  value: Vpp2v5
+  footprint: '0402'
+- ref: JP5
+  value: VccIO0
+  footprint: '0603'
+- ref: JP6
+  value: VccIO2
+  footprint: '0603'
+- ref: P0
+  value: 1x1 header
+  footprint: 1X1
+- ref: P1
+  value: 1x1 header
+  footprint: 1X1
+- ref: P10
+  value: 1x1 header
+  footprint: 1X1
+- ref: P11
+  value: 1x1 header
+  footprint: 1X1
+- ref: P12
+  value: 1x1 header
+  footprint: 1X1
+- ref: P13
+  value: 1x1 header
+  footprint: 1X1
+- ref: P14
+  value: 1x1 header
+  footprint: 1X1
+- ref: P15
+  value: 1x1 header
+  footprint: 1X1
+- ref: P16
+  value: 1x1 header
+  footprint: 1X1
+- ref: P17
+  value: 1x1 header
+  footprint: 1X1
+- ref: P18
+  value: 1x1 header
+  footprint: 1X1
+- ref: P19
+  value: 1x1 header
+  footprint: 1X1
+- ref: P2
+  value: 1x1 header
+  footprint: 1X1
+- ref: P20
+  value: 1x1 header
+  footprint: 1X1
+- ref: P21
+  value: 1x1 header
+  footprint: 1X1
+- ref: P22
+  value: 1x1 header
+  footprint: 1X1
+- ref: P23
+  value: 1x1 header
+  footprint: 1X1
+- ref: P24
+  value: 1x1 header
+  footprint: 1X1
+- ref: P25
+  value: 1x1 header
+  footprint: 1X1
+- ref: P26
+  value: 1x1 header
+  footprint: 1X1
+- ref: P27
+  value: 1x1 header
+  footprint: 1X1
+- ref: P28
+  value: 1x1 header
+  footprint: 1X1
+- ref: P29
+  value: 1x1 header
+  footprint: 1X1
+- ref: P3
+  value: 1x1 header
+  footprint: 1X1
+- ref: P30
+  value: 1x1 header
+  footprint: 1X1
+- ref: P31
+  value: 1x1 header
+  footprint: 1X1
+- ref: P32
+  value: 1x2 header
+  footprint: PAD_SMD
+- ref: P33
+  value: 1x2 header
+  footprint: PAD_SMD
+- ref: P34
+  value: 1x2 header
+  footprint: PAD_SMD
+- ref: P35
+  value: 1x2 header
+  footprint: PAD_SMD
+- ref: P36
+  value: 1x1 header
+  footprint: 1X1
+- ref: P37
+  value: 1x1 header
+  footprint: 1X1
+- ref: P38
+  value: 1x1 header
+  footprint: 1X1
+- ref: P39
+  value: 1x1 header
+  footprint: 1X1
+- ref: P4
+  value: 1x1 header
+  footprint: 1X1
+- ref: P40
+  value: 1x1 header
+  footprint: PAD_SMD_R
+- ref: P41
+  value: 1x1 header
+  footprint: PAD_SMD_R
+- ref: P5
+  value: 1x1 header
+  footprint: 1X1
+- ref: P6
+  value: 1x1 header
+  footprint: 1X1
+- ref: P7
+  value: 1x1 header
+  footprint: 1X1
+- ref: P8
+  value: 1x1 header
+  footprint: 1X1
+- ref: P9
+  value: 1x1 header
+  footprint: 1X1
+- ref: R1
+  value: 1Mohm
+  footprint: '0402'
+- ref: R10
+  value: 10kohm
+  footprint: '0402'
+- ref: R11
+  value: 2.2kohm
+  footprint: '0402'
+  pullup: D1.A
+- ref: R12
+  value: 2.2kohm
+  footprint: '0402'
+  pullup: D2.A
+- ref: R13
+  value: 2.2kohm
+  footprint: '0402'
+  pullup: /CDONE
+- ref: R14
+  value: 100ohm
+  footprint: '0402'
+- ref: R2
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: /CC1
+- ref: R3
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: /CC2
+- ref: R4
+  value: 22ohm
+  footprint: '0402'
+- ref: R5
+  value: 22ohm
+  footprint: '0402'
+- ref: R6
+  value: 1.5kohm
+  footprint: '0402'
+- ref: R7
+  value: 10kohm
+  footprint: '0402'
+  pullup: /3V3_EN
+- ref: R8
+  value: 10kohm
+  footprint: '0402'
+  pullup: /CLK_EN
+- ref: R9
+  value: 10kohm
+  footprint: R_Array_Convex
+  pullup: /SPI_SCK
+- ref: SW1
+  value: TACT
+  footprint: SW_SPST
+- ref: U1
+  value: USBLC6-2
+  footprint: SOT-666
+- ref: U2
+  value: TLV75533PDRV
+  footprint: WSON-6-1EP
+- ref: U3
+  value: TLV73312PDRV
+  footprint: WSON-6-1EP
+- ref: U4
+  value: LY68L6400
+  footprint: SOIC-8
+  description: 64Mb (8M x 8)
+- ref: U5
+  value: W25Q128JVxxM
+  footprint: WSON-8-1EP
+- ref: U6
+  value: ICE40UP5K
+  footprint: QFN-48-1EP
+- ref: X1
+  value: 12MHz
+  footprint: Oscillator_SMD_SCTF_S2DXX-4Pin
+nets:
+- name: +1V2
+  pins:
+  - C13.1
+  - C14.1
+  - C15.1
+  - C16.1
+  - C17.1
+  - C18.1
+  - C5.1
+  - R14.2
+  - U3.OUT
+  - U6.VCC@30
+  - U6.VCC@5
+- name: +3V3
+  pins:
+  - C11.1
+  - C3.1
+  - C6.1
+  - C7.1
+  - D4.A
+  - JP4.1
+  - JP5.2
+  - JP6.2
+  - P27.Pin_1@1
+  - P28.Pin_1@1
+  - R11.2
+  - R12.2
+  - R13.2
+  - R8.1
+  - R9.1
+  - R9.3
+  - R9.6
+  - R9.8
+  - U2.OUT
+  - U4.VCC
+  - U5.VCC
+  - U6.SPI_VCCIO1
+  - X1.Vdd
+- name: /3V3_EN
+  pins: [C1.1, R7.2, U2.EN]
+- name: /CC1
+  pins: [J1.CC1, R2.2]
+- name: /CC2
+  pins: [J1.CC2, R3.2]
+- name: /CDONE
+  pins: [D3.A, P30.Pin_1@1, R13.1, U6.CDONE]
+- name: /CLK
+  pins: [U6.IOT_46B_G0, X1.OUT]
+- name: /CLK_EN
+  pins: [R8.2, X1.EN]
+- name: /FLASH_nCS
+  pins: [JP3.1, R9.4, U5.nCS]
+- name: /IOB_0a
+  pins: [P23.Pin_1@1, U6.IOB_0A]
+- name: /IOB_13b-nLEDG
+  pins: [D2.C, JP2.2, U6.IOB_13B]
+- name: /IOB_16a
+  pins: [P6.Pin_1@1, U6.IOB_16A]
+- name: /IOB_18a
+  pins: [P7.Pin_1@1, U6.IOB_18A]
+- name: /IOB_20a
+  pins: [P8.Pin_1@1, U6.IOB_20A]
+- name: /IOB_22a
+  pins: [P9.Pin_1@1, U6.IOB_22A]
+- name: /IOB_23b
+  pins: [P10.Pin_1@1, U6.IOB_23B]
+- name: /IOB_24a
+  pins: [P11.Pin_1@1, U6.IOB_24A]
+- name: /IOB_25b_G3
+  pins: [P12.Pin_1@1, U6.IOB_25B_G3]
+- name: /IOB_2a
+  pins: [P0.Pin_1@1, U6.IOB_2A]
+- name: /IOB_3b_G6
+  pins: [P1.Pin_1@1, U6.IOB_3B_G6]
+- name: /IOB_4a
+  pins: [P2.Pin_1@1, U6.IOB_4A]
+- name: /IOB_5b
+  pins: [P3.Pin_1@1, U6.IOB_5B]
+- name: /IOB_8a
+  pins: [P4.Pin_1@1, U6.IOB_8A]
+- name: /IOB_9b
+  pins: [P5.Pin_1@1, U6.IOB_9B]
+- name: /IOT_36b-nLEDR
+  pins: [D1.C, P13.Pin_1@1, U6.IOT_36B]
+- name: /IOT_37a
+  pins: [P14.Pin_1@1, U6.IOT_37A]
+- name: /IOT_38b
+  pins: [P15.Pin_1@1, U6.IOT_38B]
+- name: /IOT_39a
+  pins: [P16.Pin_1@1, U6.IOT_39A]
+- name: /IOT_41a
+  pins: [P17.Pin_1@1, U6.IOT_41A]
+- name: /IOT_42b
+  pins: [P18.Pin_1@1, U6.IOT_42B]
+- name: /IOT_43a
+  pins: [P19.Pin_1@1, U6.IOT_43A]
+- name: /IOT_44b
+  pins: [P20.Pin_1@1, U6.IOT_44B]
+- name: /IOT_48b
+  pins: [P21.Pin_1@1, U6.IOT_48B]
+- name: /IOT_49a
+  pins: [P22.Pin_1@1, U6.IOT_49A]
+- name: /RAM_nCS
+  pins: [JP2.1, R9.7, U4.nCE]
+- name: /SHIELD
+  pins: [J1.SHIELD@S1, R1.2]
+- name: /SPI_CIPO-IO1
+  pins: [P38.Pin_1, U4.SO/SIO1, U5.DO/IO1, U6.IOB_33b_SPI_SI]
+- name: /SPI_COPI-IO0
+  pins: [P39.Pin_1, U4.SI/SIO0, U5.DI/IO0, U6.IOB_32a_SPI_SO]
+- name: /SPI_SCK
+  pins: [P37.Pin_1, R9.2, U4.SCLK, U5.CLK, U6.IOB_34a_SPI_SCK]
+- name: /SPI_nCS
+  pins: [JP3.2, P36.Pin_1, U6.IOB_35b_SPI_CSN]
+- name: /SPI_nHLD-IO3
+  pins: [P40.Pin_1, U4.SIO3, U5.nHLD/nRST/IO3, U6.IOB_29B]
+- name: /SPI_nWP-IO2
+  pins: [P41.Pin_1, U4.SIO2, U5.nWP/IO2, U6.IOB_31B]
+- name: /USB_DET
+  pins: [R6.1, U6.IOT_45A_G1]
+- name: /USB_N
+  pins: [R4.1, U6.IOT_50B]
+- name: /USB_P
+  pins: [R5.1, U6.IOT_51A]
+- name: /VCCIO_0
+  pins: [C10.1, JP5.1, U6.VCCIO_0]
+- name: /VCCIO_2
+  pins: [C12.1, JP6.1, R10.2, U6.VCCIO_2]
+- name: /VCCPLL
+  pins: [C19.1, C9.1, R14.1, U6.VCCPLL]
+- name: /VPP_2V5
+  pins: [C8.1, JP4.2, U6.VPP_2V5]
+- name: /iD+
+  pins: [R5.2, R6.2, U1.IO2@4]
+- name: /iD-
+  pins: [R4.2, U1.IO1@6]
+- name: /nBTN
+  pins: [R10.1, SW1.2, U6.IOB_6A]
+- name: /nCRESET
+  pins: [P31.Pin_1@1, R9.5, U6.CRESET_B]
+- name: /nRGB0
+  pins: [D4.RK, U6.RGB0]
+- name: /nRGB1
+  pins: [D4.GK, U6.RGB1]
+- name: /nRGB2
+  pins: [D4.BK, U6.RGB2]
+- name: /xD+
+  pins: [J1.D+@A6, J1.D+@B6, P34.PAD, U1.IO2@3]
+- name: /xD-
+  pins: [J1.D-@A7, J1.D-@B7, P33.PAD, U1.IO1@1]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D3.C
+  - J1.GND@A1
+  - J1.GND@A12
+  - J1.GND@B1
+  - J1.GND@B12
+  - P24.Pin_1@1
+  - P25.Pin_1@1
+  - P26.Pin_1@1
+  - P35.PAD
+  - R1.1
+  - R2.1
+  - R3.1
+  - SW1.1
+  - U1.GND
+  - U2.GND@3
+  - U2.GND@7
+  - U3.GND@3
+  - U3.GND@7
+  - U4.GND
+  - U5.GND
+  - U6.PAD/GND@49
+  - X1.GND
+- name: Net-(D1-PadA)
+  pins: [D1.A, R11.1]
+- name: Net-(R12-Pad1)
+  pins: [D2.A, R12.1]
+- name: VBUS
+  pins:
+  - J1.VBUS@A4
+  - J1.VBUS@A9
+  - J1.VBUS@B4
+  - J1.VBUS@B9
+  - JP1.1
+  - P32.PAD
+  - U1.VBUS
+- name: VIN
+  pins:
+  - C2.1
+  - C4.1
+  - JP1.2
+  - P29.Pin_1@1
+  - R7.1
+  - U2.IN
+  - U3.EN
+  - U3.IN
+positions:
+- ref: C1
+  x: 41.5
+  y: 44.2
+- ref: C10
+  x: 48.8
+  y: 44.6
+  rot: 90.0
+- ref: C11
+  x: 57.0
+  y: 48.8
+  rot: -90.0
+- ref: C12
+  x: 49.2
+  y: 55.4
+  rot: -90.0
+- ref: C13
+  x: 50.9
+  y: 55.4
+  rot: -90.0
+- ref: C14
+  x: 51.9
+  y: 55.4
+  rot: -90.0
+- ref: C15
+  x: 52.9
+  y: 55.4
+  rot: -90.0
+- ref: C16
+  x: 52.2
+  y: 44.6
+  rot: 90.0
+- ref: C17
+  x: 51.2
+  y: 44.6
+  rot: 90.0
+- ref: C18
+  x: 50.2
+  y: 44.6
+  rot: 90.0
+- ref: C19
+  x: 55.4
+  y: 44.8
+  rot: 90.0
+- ref: C2
+  x: 41.2
+  y: 48.0
+- ref: C3
+  x: 43.3
+  y: 45.9
+  rot: 90.0
+- ref: C4
+  x: 43.6
+  y: 51.8
+  rot: 180.0
+- ref: C5
+  x: 46.8
+  y: 53.9
+  rot: -90.0
+- ref: C6
+  x: 44.5
+  y: 45.7
+  rot: -90.0
+- ref: C7
+  x: 57.0
+  y: 44.6
+  rot: -90.0
+- ref: C8
+  x: 57.0
+  y: 46.7
+  rot: 90.0
+- ref: C9
+  x: 54.2
+  y: 44.6
+  rot: 90.0
+- ref: D1
+  x: 35.6
+  y: 44.4
+- ref: D2
+  x: 35.6
+  y: 55.6
+- ref: D3
+  x: 65.7
+  y: 55.6
+  rot: 180.0
+- ref: D4
+  x: 45.9
+  y: 48.6
+  rot: -90.0
+- ref: J1
+  x: 34.7
+  y: 50.0
+  rot: -90.0
+- ref: JP1
+  x: 39.0
+  y: 50.0
+  side: back
+- ref: JP2
+  x: 57.5
+  y: 54.9
+  rot: 180.0
+  side: back
+- ref: JP3
+  x: 57.5
+  y: 51.9
+  rot: 180.0
+  side: back
+- ref: JP4
+  x: 56.8
+  y: 45.5
+  rot: 180.0
+  side: back
+- ref: JP5
+  x: 46.3
+  y: 45.3
+  rot: 180.0
+  side: back
+- ref: JP6
+  x: 46.3
+  y: 54.7
+  rot: 180.0
+  side: back
+- ref: P0
+  x: 36.14
+  y: 57.62
+- ref: P1
+  x: 38.68
+  y: 57.62
+- ref: P10
+  x: 61.54
+  y: 57.62
+- ref: P11
+  x: 64.08
+  y: 57.62
+- ref: P12
+  x: 66.62
+  y: 57.62
+- ref: P13
+  x: 66.62
+  y: 42.38
+  rot: 180.0
+- ref: P14
+  x: 64.08
+  y: 42.38
+  rot: 180.0
+- ref: P15
+  x: 61.54
+  y: 42.38
+  rot: 180.0
+- ref: P16
+  x: 59.0
+  y: 42.38
+  rot: 180.0
+- ref: P17
+  x: 56.46
+  y: 42.38
+  rot: 180.0
+- ref: P18
+  x: 53.92
+  y: 42.38
+  rot: 180.0
+- ref: P19
+  x: 51.38
+  y: 42.38
+  rot: 180.0
+- ref: P2
+  x: 41.22
+  y: 57.62
+- ref: P20
+  x: 48.84
+  y: 42.38
+  rot: 180.0
+- ref: P21
+  x: 46.3
+  y: 42.38
+  rot: 180.0
+- ref: P22
+  x: 43.76
+  y: 42.38
+  rot: 180.0
+- ref: P23
+  x: 41.22
+  y: 42.38
+  rot: 180.0
+- ref: P24
+  x: 33.6
+  y: 57.62
+- ref: P25
+  x: 66.62
+  y: 50.0
+  rot: 90.0
+- ref: P26
+  x: 36.14
+  y: 42.38
+  rot: 180.0
+- ref: P27
+  x: 38.68
+  y: 42.38
+  rot: 180.0
+- ref: P28
+  x: 66.62
+  y: 52.54
+  rot: 90.0
+- ref: P29
+  x: 33.6
+  y: 42.38
+  rot: 180.0
+- ref: P3
+  x: 43.76
+  y: 57.62
+- ref: P30
+  x: 66.62
+  y: 44.92
+  rot: 90.0
+- ref: P31
+  x: 66.62
+  y: 47.46
+  rot: 90.0
+- ref: P32
+  x: 33.75
+  y: 47.0
+  side: back
+- ref: P33
+  x: 33.75
+  y: 49.0
+  side: back
+- ref: P34
+  x: 33.75
+  y: 51.0
+  side: back
+- ref: P35
+  x: 33.75
+  y: 53.0
+  side: back
+- ref: P36
+  x: 64.08
+  y: 44.92
+- ref: P37
+  x: 64.08
+  y: 47.46
+- ref: P38
+  x: 64.08
+  y: 50.0
+- ref: P39
+  x: 64.08
+  y: 52.54
+- ref: P4
+  x: 46.3
+  y: 57.62
+- ref: P40
+  x: 64.05
+  y: 55.08
+  side: back
+- ref: P41
+  x: 66.59
+  y: 55.08
+  side: back
+- ref: P5
+  x: 48.84
+  y: 57.62
+- ref: P6
+  x: 51.38
+  y: 57.62
+- ref: P7
+  x: 53.92
+  y: 57.62
+- ref: P8
+  x: 56.46
+  y: 57.62
+- ref: P9
+  x: 59.0
+  y: 57.62
+- ref: R1
+  x: 39.4
+  y: 55.4
+  rot: 90.0
+- ref: R10
+  x: 47.0
+  y: 55.8
+- ref: R11
+  x: 37.7
+  y: 44.2
+- ref: R12
+  x: 37.7
+  y: 55.8
+- ref: R13
+  x: 66.0
+  y: 54.0
+- ref: R14
+  x: 53.2
+  y: 44.6
+  rot: 90.0
+- ref: R2
+  x: 43.1
+  y: 48.0
+  rot: -90.0
+- ref: R3
+  x: 41.0
+  y: 51.8
+  rot: 180.0
+- ref: R4
+  x: 43.8
+  y: 49.5
+  rot: 180.0
+- ref: R5
+  x: 43.8
+  y: 50.5
+  rot: 180.0
+- ref: R6
+  x: 44.1
+  y: 48.0
+  rot: -90.0
+- ref: R7
+  x: 39.6
+  y: 44.2
+- ref: R8
+  x: 44.0
+  y: 44.2
+- ref: R9
+  x: 63.5
+  y: 55.0
+  rot: 180.0
+- ref: SW1
+  x: 43.0
+  y: 54.5
+- ref: U1
+  x: 41.4
+  y: 50.0
+- ref: U2
+  x: 41.3
+  y: 46.0
+  rot: 180.0
+- ref: U3
+  x: 46.1
+  y: 51.4
+  rot: 180.0
+- ref: U4
+  x: 60.2
+  y: 47.3
+  rot: 90.0
+- ref: U5
+  x: 59.2
+  y: 53.7
+  rot: 180.0
+- ref: U6
+  x: 51.8
+  y: 50.0
+  rot: 90.0
+- ref: X1
+  x: 46.4
+  y: 45.1
+  rot: -90.0
+copper_pours:
+- net: +1V2
+  layers: [In2.Cu]
+- net: +3V3
+  layers: [In2.Cu]
+- net: /SHIELD
+  layers: [F.Cu]
+- net: GND
+  layers: [In1.Cu]
+- net: ''
+  layers: [In1.Cu, In2.Cu]
+  keepout: true

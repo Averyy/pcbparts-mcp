@@ -1,0 +1,575 @@
+name: Soldered W5500 Ethernet
+slug: soldered-w5500-ethernet
+source: SolderedElectronics/Ethernet-controller-W5500-board-hardware-design
+format: kicad7
+description: SPI Ethernet (W5500)
+tags: [ethernet]
+key_ics: [W5500]
+outline:
+  width_mm: 38.0
+  height_mm: 54.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: ELECTROLITIC_CAP_4mm
+- ref: C10
+  value: 6.8nF
+  footprint: '0603'
+- ref: C11
+  value: 22nF
+  footprint: '0603'
+- ref: C12
+  value: 4.7uF
+  footprint: '0603'
+- ref: C13
+  value: 10nF
+  footprint: '0603'
+- ref: C14
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C15
+  value: 10uF
+  footprint: ELECTROLITIC_CAP_4mm
+  decouples: U2
+- ref: C16
+  value: 18pF
+  footprint: '0603'
+- ref: C17
+  value: 18pF
+  footprint: '0603'
+- ref: C18
+  value: 2.2uF
+  footprint: '0603'
+  decouples: U2
+- ref: C19
+  value: 2.2uF
+  footprint: '0603'
+  decouples: U2
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+- ref: C20
+  value: 100nF
+  footprint: '0603'
+  decouples: U5
+- ref: C21
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+- ref: C6
+  value: 100nF
+  footprint: '0603'
+- ref: C7
+  value: 10nF
+  footprint: '0603'
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+- ref: C9
+  value: 6.8nF
+  footprint: '0603'
+- ref: D1
+  value: purple LED
+  footprint: '0402'
+- ref: FB1
+  value: 600ohm
+  footprint: '0603'
+- ref: JP1
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-2
+- ref: JP3
+  value: solder jumper
+  footprint: SJ-2
+- ref: JP4
+  value: solder jumper
+  footprint: SJ-2
+- ref: K1
+  value: HR_913550A
+  footprint: HR913550A
+- ref: K2
+  value: 1x9 header
+  footprint: HEADER_MALE
+- ref: R1
+  value: 33ohm
+  footprint: '0603'
+- ref: R10
+  value: 10ohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R11
+  value: 330ohm
+  footprint: '0603'
+- ref: R12
+  value: 330ohm
+  footprint: '0603'
+- ref: R13
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R14
+  value: 1Mohm
+  footprint: '0603'
+- ref: R15
+  value: 0ohm
+  footprint: '0603'
+- ref: R16
+  value: 0ohm
+  footprint: '0603'
+- ref: R17
+  value: 10kohm
+  footprint: '0603'
+  pullup: OE
+- ref: R2
+  value: 33ohm
+  footprint: '0603'
+- ref: R21
+  value: 10kohm
+  footprint: '0603'
+  pullup: RSTn_L
+- ref: R22
+  value: 10kohm
+  footprint: '0603'
+  pullup: INTn_H
+- ref: R27
+  value: 10kohm
+  footprint: '0603'
+  pullup: RSTn_H
+- ref: R28
+  value: 10kohm
+  footprint: '0603'
+  pullup: INTn_L
+- ref: R3
+  value: 33ohm
+  footprint: '0603'
+- ref: R4
+  value: 33ohm
+  footprint: '0603'
+- ref: R5
+  value: 12k4_1%
+  footprint: '0603'
+- ref: R6
+  value: 49.9ohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R7
+  value: 49.9ohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R8
+  value: 49.9ohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: R9
+  value: 49.9ohm
+  footprint: '0603'
+  tolerance: 1%
+- ref: U1
+  value: W5500
+  footprint: WIZnet W5500
+- ref: U2
+  value: SE5218
+  footprint: SOT-23-5
+- ref: U3
+  value: TXB0104PWR
+  footprint: TXB0104QPWRQ1
+- ref: U5
+  value: dual NMOS
+  footprint: SOT-363
+- ref: X1
+  value: TSX-3225 25.0000MF10P-C3
+  footprint: '3225'
+nets:
+- name: /RXN
+  pins: [C9.1, K1.RD-P6]
+- name: /RXP
+  pins: [C10.1, K1.RD+P3]
+- name: /TXN
+  pins: [K1.TD-P2, R1.2, R6.1]
+- name: /TXP
+  pins: [K1.TD+P1, R2.2, R8.1]
+- name: 1V20
+  pins: [C13.2, U1.1V20]
+- name: 3V3
+  pins:
+  - C14.2
+  - C15.+
+  - C19.2
+  - C20.2
+  - FB1.1
+  - JP1.1
+  - K1.GREEN_A
+  - K1.YELLOW_A
+  - R17.1
+  - R21.2
+  - R28.1
+  - U1.VDD
+  - U2.VOUT
+  - U3.VCCA
+  - U5.G1
+  - U5.G2
+- name: 3V3_A
+  pins:
+  - C1.+
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C8.2
+  - FB1.2
+  - R10.2
+  - R6.2
+  - R8.2
+  - U1.AVDD@11
+  - U1.AVDD@15
+  - U1.AVDD@17
+  - U1.AVDD@21
+  - U1.AVDD@4
+  - U1.AVDD@8
+- name: ACTLED
+  pins: [R12.2, U1.ACTLED]
+- name: CGND
+  pins: [K1.CHS_GND_P8, R16.2]
+- name: EXRES1
+  pins: [R5.2, U1.EXRES1]
+- name: GND
+  pins:
+  - C1.-
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C15.-
+  - C16.1
+  - C17.1
+  - C18.1
+  - C19.1
+  - C2.1
+  - C20.1
+  - C21.2
+  - C3.1
+  - C4.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - D1.K
+  - JP2.1
+  - JP3.1
+  - JP4.1
+  - K2.1
+  - R16.1
+  - R5.1
+  - U1.AGND@14
+  - U1.AGND@16
+  - U1.AGND@19
+  - U1.AGND@3
+  - U1.AGND@48
+  - U1.AGND@9
+  - U1.GND
+  - U2.GND
+  - U3.GND
+  - X1.2
+  - X1.4
+- name: INTn_H
+  pins: [K2.3, R22.2, U5.D1]
+- name: INTn_L
+  pins: [R28.2, U1.INTn, U5.S1]
+- name: LINKLED
+  pins: [R11.2, U1.LINKLED]
+- name: MISO_H
+  pins: [K2.5, U3.B3]
+- name: MISO_L
+  pins: [U1.MISO, U3.A3]
+- name: MOSI_H
+  pins: [K2.6, U3.B2]
+- name: MOSI_L
+  pins: [U1.MOSI, U3.A2]
+- name: Net-(C10-Pad2)
+  pins: [C10.2, R4.2, R7.2]
+- name: Net-(C11-Pad2)
+  pins: [C11.2, K1.P4, R10.1]
+- name: Net-(C17-Pad2)
+  pins: [C17.2, R15.1, X1.3]
+- name: Net-(C7-Pad2)
+  pins: [C7.2, K1.P5, R7.1, R9.1]
+- name: Net-(C9-Pad2)
+  pins: [C9.2, R3.2, R9.2]
+- name: Net-(D1-Pad1)
+  pins: [D1.A, R13.2]
+- name: Net-(JP1-Pad2)
+  pins: [JP1.2, R13.1]
+- name: Net-(K1-Pad10)
+  pins: [K1.GREEN_C, R12.1]
+- name: Net-(K1-Pad11)
+  pins: [K1.YELLOW_C, R11.1]
+- name: OE
+  pins: [K2.9, R17.2, U3.OE]
+- name: PMODE0
+  pins: [JP2.2, U1.PMODE0]
+- name: PMODE1
+  pins: [JP3.2, U1.PMODE1]
+- name: PMODE2
+  pins: [JP4.2, U1.PMODE2]
+- name: RSTn_H
+  pins: [K2.4, R27.1, U5.D2]
+- name: RSTn_L
+  pins: [R21.1, U1.RSTn, U5.S2]
+- name: RX+
+  pins: [R4.1, U1.RXP]
+  class: RX
+  trace_width: '0.254'
+- name: RX-
+  pins: [R3.1, U1.RXN]
+  class: RX
+  trace_width: '0.254'
+- name: SCLK_H
+  pins: [K2.7, U3.B1]
+- name: SCLK_L
+  pins: [U1.SCLK, U3.A1]
+- name: SCSn_H
+  pins: [K2.8, U3.B4]
+- name: SCSn_L
+  pins: [U1.SCSn, U3.A4]
+- name: TOCAP
+  pins: [C12.2, U1.TOCAP]
+- name: TX+
+  pins: [R2.1, U1.TXP]
+  class: TX
+  trace_width: '0.254'
+- name: TX-
+  pins: [R1.1, U1.TXN]
+  class: TX
+  trace_width: '0.254'
+- name: VCC
+  pins:
+  - C18.2
+  - C21.1
+  - K2.2
+  - R22.1
+  - R27.2
+  - U2.EN
+  - U2.VIN
+  - U3.VCCB
+- name: XI_CLKIN
+  pins: [C16.2, R14.1, U1.XI/CLKIN, X1.1]
+- name: XO
+  pins: [R14.2, R15.2, U1.XO]
+positions:
+- ref: C1
+  x: 129.0
+  y: 103.5
+  rot: 90.0
+- ref: C10
+  x: 113.0
+  y: 100.0
+  rot: -90.0
+- ref: C11
+  x: 122.0
+  y: 99.2
+- ref: C12
+  x: 111.8
+  y: 113.0
+- ref: C13
+  x: 111.8
+  y: 114.6
+- ref: C14
+  x: 115.1
+  y: 116.8
+- ref: C15
+  x: 110.9
+  y: 119.0
+  rot: -90.0
+- ref: C16
+  x: 116.1
+  y: 120.1
+  rot: -90.0
+- ref: C17
+  x: 122.1
+  y: 120.0
+  rot: 90.0
+- ref: C18
+  x: 104.0
+  y: 119.5
+  rot: 180.0
+- ref: C19
+  x: 107.0
+  y: 117.0
+  rot: 90.0
+- ref: C2
+  x: 125.2
+  y: 106.8
+  rot: 90.0
+- ref: C20
+  x: 129.0
+  y: 115.3
+  rot: 180.0
+- ref: C21
+  x: 133.0
+  y: 115.3
+  rot: 180.0
+- ref: C3
+  x: 126.6
+  y: 106.8
+  rot: 90.0
+- ref: C4
+  x: 111.8
+  y: 107.2
+- ref: C5
+  x: 111.8
+  y: 108.6
+- ref: C6
+  x: 111.8
+  y: 110.0
+- ref: C7
+  x: 115.3
+  y: 99.3
+- ref: C8
+  x: 111.8
+  y: 111.4
+- ref: C9
+  x: 117.5
+  y: 100.0
+  rot: -90.0
+- ref: D1
+  x: 102.5
+  y: 111.0
+  rot: 90.0
+- ref: FB1
+  x: 106.1
+  y: 114.5
+- ref: JP1
+  x: 105.3
+  y: 111.0
+  rot: 90.0
+- ref: JP2
+  x: 130.5
+  y: 108.2
+  rot: -90.0
+- ref: JP3
+  x: 133.0
+  y: 108.2
+  rot: -90.0
+- ref: JP4
+  x: 135.5
+  y: 108.2
+  rot: -90.0
+- ref: K1
+  x: 119.0
+  y: 87.0
+- ref: K2
+  x: 119.0
+  y: 128.5
+- ref: R1
+  x: 122.0
+  y: 102.8
+  rot: 180.0
+- ref: R10
+  x: 124.8
+  y: 99.2
+- ref: R11
+  x: 108.0
+  y: 87.0
+  rot: -90.0
+- ref: R12
+  x: 130.0
+  y: 87.0
+  rot: -90.0
+- ref: R13
+  x: 103.8
+  y: 111.0
+  rot: -90.0
+- ref: R14
+  x: 118.7
+  y: 117.5
+- ref: R15
+  x: 121.3
+  y: 117.5
+  rot: 180.0
+- ref: R16
+  x: 108.0
+  y: 95.9
+- ref: R17
+  x: 133.0
+  y: 122.7
+- ref: R2
+  x: 124.8
+  y: 102.8
+- ref: R21
+  x: 127.5
+  y: 111.0
+  rot: 180.0
+- ref: R22
+  x: 127.5
+  y: 113.0
+- ref: R27
+  x: 134.5
+  y: 111.0
+- ref: R28
+  x: 134.5
+  y: 113.0
+  rot: 180.0
+- ref: R3
+  x: 116.6
+  y: 103.6
+- ref: R4
+  x: 113.8
+  y: 103.6
+  rot: 180.0
+- ref: R5
+  x: 111.8
+  y: 105.6
+- ref: R6
+  x: 122.0
+  y: 101.2
+- ref: R7
+  x: 113.8
+  y: 102.0
+  rot: 180.0
+- ref: R8
+  x: 124.8
+  y: 101.2
+  rot: 180.0
+- ref: R9
+  x: 116.6
+  y: 102.0
+- ref: U1
+  x: 119.0
+  y: 111.0
+  rot: -90.0
+- ref: U2
+  x: 104.0
+  y: 117.0
+- ref: U3
+  x: 131.0
+  y: 119.0
+- ref: U5
+  x: 131.0
+  y: 112.0
+- ref: X1
+  x: 119.1
+  y: 120.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]
+- net: ''
+  layers: [F&B.Cu]
+  keepout: true

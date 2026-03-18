@@ -1,0 +1,235 @@
+name: SparkFun LSM6DSO
+slug: sparkfun-lsm6dso
+source: sparkfun/SparkFun_Qwiic_6DoF_LSM6DSO
+format: eagle
+description: LSM6DSO 6-axis IMU, ferrite bead power filter
+tags: [sensors]
+key_ics: [LSM6DSO]
+outline:
+  width_mm: 25.4
+  height_mm: 25.4
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 7mil
+  min_drill: 0.3mm
+  min_via: 7mil
+components:
+- ref: ADDR
+  value: solder jumper (NC)
+  footprint: SJ-3
+  description: Normally closed trace jumper (1 of 2 connections)
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U1
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U1
+- ref: D1
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-00819
+  description: Red SMD LED
+- ref: I2C_PU
+  value: solder jumper
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+- ref: J1
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J2
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: JP1
+  value: 1x6 header
+  footprint: 1X06
+- ref: JP3
+  value: 1x6 header
+  footprint: 1X06
+- ref: L1
+  value: ferrite bead
+  footprint: '0603'
+  prod_id: NDUC-07859
+- ref: LED
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: R1
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+- ref: R2
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  pullup: '!CS!'
+- ref: R4
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+  pullup: D1.A
+- ref: R5
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: ADDR.3
+- ref: SCX
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: SDX
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: U1
+  value: LSM6DSO
+  footprint: LGA14L
+  prod_id: IC-15837
+  description: The LSM6DSO is a system-in-package featuring a high-performance 3-axis digital
+nets:
+- name: '!CS!'
+  pins: [JP1.1, R3.1, U1.!CS!]
+- name: 3.3V
+  pins:
+  - C4.1
+  - I2C_PU.2
+  - J1.2
+  - J2.2
+  - JP1.5
+  - L1.1
+  - R3.2
+  - R4.2
+  - R5.2
+  - U1.VDDIO
+- name: GND
+  pins:
+  - ADDR.1
+  - C3.2
+  - C4.2
+  - J1.1
+  - J2.1
+  - JP1.6
+  - LED.1
+  - SCX.1
+  - SDX.1
+  - U1.GND@6
+  - U1.GND@7
+- name: INT1
+  pins: [JP3.2, U1.INT1]
+- name: INT2
+  pins: [JP3.1, U1.INT2]
+- name: N$1
+  pins: [ADDR.3, R5.1]
+- name: N$2
+  pins: [D1.A, R4.1]
+- name: N$3
+  pins: [D1.C, LED.2]
+- name: N$5
+  pins: [I2C_PU.1, R1.2]
+- name: N$6
+  pins: [I2C_PU.3, R2.2]
+- name: OCS
+  pins: [JP3.3, U1.OCSX]
+- name: SCL
+  pins: [J1.4, J2.4, JP1.3, R1.1, U1.SCL]
+- name: SCX
+  pins: [JP3.4, SCX.2, U1.SCX]
+- name: SDA
+  pins: [J1.3, J2.3, JP1.4, R2.1, U1.SDA]
+- name: SDI_AUX
+  pins: [JP3.5, SDX.2, U1.SDIX]
+- name: SDO/SA0
+  pins: [ADDR.2, JP1.2, U1.SDO/SA0]
+- name: SDO_AUX
+  pins: [JP3.6, U1.SDOX]
+- name: VDD
+  pins: [C3.1, L1.2, U1.VDD]
+positions:
+- ref: ADDR
+  x: 17.43
+  y: 12.7
+  rot: 90.0
+- ref: C3
+  x: 9.66
+  y: 14.99
+  rot: 90.0
+- ref: C4
+  x: 13.16
+  y: 16.85
+  rot: 90.0
+- ref: D1
+  x: 24.41
+  y: 17.93
+  rot: 90.0
+- ref: I2C_PU
+  x: 12.8
+  y: 10.01
+  rot: 180.0
+- ref: J1
+  x: 20.29
+  y: 12.7
+  rot: 90.0
+- ref: J2
+  x: 5.08
+  y: 12.7
+  rot: 270.0
+- ref: JP1
+  x: 19.05
+  y: 1.27
+  rot: 180.0
+- ref: JP3
+  x: 6.35
+  y: 24.13
+- ref: L1
+  x: 8.2
+  y: 14.99
+  rot: 270.0
+- ref: LED
+  x: 23.67
+  y: 18.54
+- ref: R1
+  x: 12.24
+  y: 9.14
+  rot: 270.0
+- ref: R2
+  x: 13.72
+  y: 9.14
+  rot: 270.0
+- ref: R3
+  x: 10.74
+  y: 9.16
+  rot: 270.0
+- ref: R4
+  x: 22.81
+  y: 17.98
+  rot: 90.0
+- ref: R5
+  x: 20.32
+  y: 17.93
+  rot: 90.0
+- ref: SCX
+  x: 13.97
+  y: 21.95
+- ref: SDX
+  x: 16.48
+  y: 21.92
+  rot: 180.0
+- ref: U1
+  x: 12.7
+  y: 12.7
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

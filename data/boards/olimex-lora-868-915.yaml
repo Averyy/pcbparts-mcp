@@ -1,0 +1,276 @@
+name: Olimex LoRa-868-915
+slug: olimex-lora-868-915
+source: OLIMEX/LoRa-868-915
+format: kicad_legacy
+description: SX1276 LoRa transceiver, RF matching network
+tags: [lora]
+key_ics: [SX1276]
+outline:
+  width_mm: 23.11
+  height_mm: 26.04
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 15pF
+  footprint: '0402'
+- ref: C10
+  value: 22uF
+  footprint: '0603'
+- ref: C11
+  value: 4.7pF
+  footprint: '0402'
+- ref: C12
+  value: n.a.
+  footprint: '0402'
+- ref: C13
+  value: see table
+  footprint: '0402'
+- ref: C19
+  value: 2.2pF
+  footprint: '0402'
+- ref: C2
+  value: 15pF
+  footprint: '0402'
+- ref: C20
+  value: 100nF
+  footprint: '0402'
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+- ref: C7
+  value: 10nF
+  footprint: '0402'
+- ref: C8
+  value: 47pF
+  footprint: '0402'
+- ref: C9
+  value: 33pF
+  footprint: '0402'
+- ref: CON1
+  value: 1x8 header
+  footprint: HN1x8_EDGE
+- ref: CON2
+  value: 1x8 header
+  footprint: HN1x8_EDGE
+- ref: EXT_ANT1
+  value: U.FL
+  footprint: U.FL-R-SMT-1
+- ref: JANT1
+  value: TESTPAD
+  footprint: TP_SMD
+- ref: L2
+  value: 33nH
+  footprint: '0402'
+- ref: L3
+  value: 6.8nH
+  footprint: '0402'
+- ref: L4
+  value: 10nH
+  footprint: '0402'
+- ref: L5
+  value: see table
+  footprint: '0402'
+- ref: SHIELD1
+  value: TESTPAD
+  footprint: Shield1620
+- ref: U1
+  value: SX1276
+  footprint: QFN-28_EP
+- ref: X1
+  value: 32.000MHz_10ppm
+  footprint: SMD2016_4p
+nets:
+- name: /DIO0
+  pins: [CON2.6, U1.8]
+- name: /DIO1
+  pins: [CON2.5, U1.9]
+- name: /DIO2
+  pins: [CON2.4, U1.10]
+- name: /DIO3
+  pins: [CON2.3, U1.11]
+- name: /DIO4
+  pins: [CON2.2, U1.12]
+- name: /DIO5
+  pins: [CON1.7, U1.13]
+- name: /MISO
+  pins: [CON1.5, U1.17]
+- name: /MOSI
+  pins: [CON1.4, U1.18]
+- name: /NSS
+  pins: [CON1.3, U1.19]
+- name: /RESET
+  pins: [CON2.7, U1.7]
+- name: /SCK
+  pins: [CON1.6, U1.16]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C13.2
+  - C2.2
+  - C20.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.1
+  - C8.1
+  - CON1.1
+  - CON1.8
+  - CON2.1
+  - CON2.8
+  - EXT_ANT1.2
+  - L3.1
+  - SHIELD1.1
+  - U1.15
+  - U1.23
+  - U1.26
+  - U1.29
+  - X1.2
+  - X1.4
+- name: Net-(C1-Pad1)
+  pins: [C1.1, U1.6, X1.1]
+- name: Net-(C11-Pad1)
+  pins: [C11.1, C12.2, L4.2, L5.1]
+- name: Net-(C12-Pad1)
+  pins: [C12.1, C13.1, EXT_ANT1.1, JANT1.1, L5.2]
+- name: Net-(C19-Pad1)
+  pins: [C19.1, L3.2, U1.21]
+- name: Net-(C19-Pad2)
+  pins: [C19.2, C9.2, L2.1, U1.22]
+- name: Net-(C2-Pad1)
+  pins: [C2.1, U1.5, X1.3]
+- name: Net-(C4-Pad1)
+  pins: [C4.1, U1.2]
+- name: Net-(C5-Pad1)
+  pins: [C5.1, U1.4]
+- name: Net-(C7-Pad2)
+  pins: [C7.2, C8.2, L2.2, U1.25]
+- name: Net-(C9-Pad1)
+  pins: [C9.1, L4.1]
+- name: VAA
+  pins:
+  - C10.1
+  - C20.1
+  - C3.1
+  - C6.1
+  - CON1.2
+  - U1.14
+  - U1.24
+  - U1.3
+positions:
+- ref: C1
+  x: 90.47
+  y: 56.15
+- ref: C10
+  x: 79.47
+  y: 70.14
+  rot: 270.0
+- ref: C11
+  x: 84.3
+  y: 70.26
+- ref: C12
+  x: 83.8
+  y: 71.76
+  rot: 90.0
+- ref: C13
+  x: 81.2
+  y: 72.26
+  rot: 180.0
+- ref: C19
+  x: 82.04
+  y: 66.04
+- ref: C2
+  x: 90.93
+  y: 60.6
+- ref: C20
+  x: 84.05
+  y: 65.58
+  rot: 270.0
+- ref: C3
+  x: 90.93
+  y: 63.12
+- ref: C4
+  x: 90.93
+  y: 64.39
+- ref: C5
+  x: 90.93
+  y: 61.85
+- ref: C6
+  x: 82.25
+  y: 56.24
+  rot: 180.0
+- ref: C7
+  x: 86.7
+  y: 66.0
+  rot: 180.0
+- ref: C8
+  x: 86.7
+  y: 67.2
+  rot: 180.0
+- ref: C9
+  x: 82.73
+  y: 67.76
+  rot: 90.0
+- ref: CON1
+  x: 73.66
+  y: 64.77
+  rot: 90.0
+- ref: CON2
+  x: 96.52
+  y: 64.77
+  rot: 270.0
+- ref: EXT_ANT1
+  x: 81.83
+  y: 77.98
+  rot: 180.0
+- ref: JANT1
+  x: 81.83
+  y: 73.55
+- ref: L2
+  x: 84.35
+  y: 67.23
+- ref: L3
+  x: 80.26
+  y: 65.02
+- ref: L4
+  x: 82.7
+  y: 69.76
+  rot: 270.0
+- ref: L5
+  x: 82.7
+  y: 71.76
+  rot: 270.0
+- ref: SHIELD1
+  x: 85.09
+  y: 64.77
+  rot: 90.0
+- ref: U1
+  x: 84.7
+  y: 60.6
+  rot: 180.0
+- ref: X1
+  x: 90.55
+  y: 58.4
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [F.Cu]
+  keepout: true

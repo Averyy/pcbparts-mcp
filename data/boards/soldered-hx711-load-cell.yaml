@@ -1,0 +1,174 @@
+name: Soldered HX711 Load Cell
+slug: soldered-hx711-load-cell
+source: SolderedElectronics/Load-cell-ampfilier-HX711-board-hardware-design
+format: kicad7
+description: Load cell ADC (HX711)
+tags: [adc-dac]
+key_ics: [HX711]
+outline:
+  width_mm: 22.0
+  height_mm: 22.0
+design_rules:
+  layers: 2
+  min_trace: 0.127mm
+  min_clearance: 0.127mm
+  min_drill: 0.3mm
+  min_via: 0.45mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+- ref: C2
+  value: 10uF
+  footprint: '1206'
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C6
+  value: 10uF
+  footprint: '1206'
+  decouples: U1
+- ref: K1
+  value: 1x5 header
+  footprint: HEADER_MALE
+- ref: K2
+  value: 1x2 header
+  footprint: HEADER_MALE
+- ref: K3
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: Q1
+  value: MMBT4403
+  footprint: SOT-23-3
+- ref: R1
+  value: 100ohm
+  footprint: '0603'
+- ref: R2
+  value: 100ohm
+  footprint: '0603'
+- ref: R3
+  value: 20kohm
+  footprint: '0603'
+- ref: R4
+  value: 8.2kohm
+  footprint: '0603'
+  pulldown: U1.VFB
+- ref: R5
+  value: 10ohm
+  footprint: '0603'
+- ref: U1
+  value: HX711
+  footprint: SOP-16
+nets:
+- name: AVDD
+  pins: [Q1.C, R3.2, R5.1, U1.AVDD]
+- name: BASE
+  pins: [Q1.B, U1.BASE]
+- name: DOUT
+  pins: [K3.2, U1.DOUT]
+- name: GND
+  pins:
+  - C1.1
+  - C2.1
+  - C3.1
+  - C5.1
+  - C6.1
+  - K1.1
+  - K1.4
+  - K3.4
+  - R4.1
+  - U1.AGND
+  - U1.RATE
+  - U1.XI
+- name: INNA
+  pins: [C4.2, R1.1, U1.INNA-]
+- name: INNB
+  pins: [K2.1, U1.INNB-]
+- name: INPA
+  pins: [C4.1, R2.1, U1.INPA+]
+- name: INPB
+  pins: [K2.2, U1.INPB+]
+- name: Net-(C1-Pad2)
+  pins: [C1.2, C2.2, K1.5, R5.2]
+- name: Net-(K1-Pad2)
+  pins: [K1.2, R2.2]
+- name: Net-(K1-Pad3)
+  pins: [K1.3, R1.2]
+- name: PD_SCK
+  pins: [K3.1, U1.PD_SCK]
+- name: VBG
+  pins: [C3.2, U1.VBG]
+- name: VCC
+  pins: [C5.2, C6.2, K3.3, Q1.E, U1.DVDD, U1.VSUP]
+- name: VFB
+  pins: [R3.1, R4.2, U1.VFB]
+positions:
+- ref: C1
+  x: 74.0
+  y: 139.2
+  rot: 180.0
+- ref: C2
+  x: 72.5
+  y: 137.4
+- ref: C3
+  x: 58.3
+  y: 142.15
+- ref: C4
+  x: 58.3
+  y: 139.15
+  rot: 180.0
+- ref: C5
+  x: 71.0
+  y: 145.7
+  rot: 180.0
+- ref: C6
+  x: 72.5
+  y: 143.9
+  rot: 180.0
+- ref: K1
+  x: 68.81
+  y: 132.51
+  side: back
+- ref: K2
+  x: 59.92
+  y: 132.51
+  side: back
+- ref: K3
+  x: 65.0
+  y: 150.29
+  side: back
+- ref: Q1
+  x: 72.0
+  y: 140.9
+  rot: 90.0
+- ref: R1
+  x: 58.3
+  y: 140.65
+- ref: R2
+  x: 58.3
+  y: 137.65
+  rot: 180.0
+- ref: R3
+  x: 58.3
+  y: 145.15
+- ref: R4
+  x: 58.3
+  y: 143.65
+- ref: R5
+  x: 74.5
+  y: 141.4
+  rot: 90.0
+- ref: U1
+  x: 65.0
+  y: 141.4
+  rot: -90.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]

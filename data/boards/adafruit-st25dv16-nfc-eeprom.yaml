@@ -1,0 +1,124 @@
+name: Adafruit ST25DV16 NFC EEPROM
+slug: adafruit-st25dv16-nfc-eeprom
+source: adafruit/Adafruit-ST25DV16-PCB
+format: eagle
+description: Dual-interface NFC + I2C EEPROM (ST25DV16K), NFC energy harvesting
+tags: [energy-harvesting, nfc-rfid]
+key_ics: [ST25DV16K]
+outline:
+  width_mm: 25.4
+  height_mm: 31.75
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: ANT1
+  value: NFC_ANTENNA
+  footprint: NFCANT
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+- ref: C3
+  value: 10uF
+  footprint: 0805
+- ref: CONN3
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: CONN4
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: D1
+  value: green LED
+  footprint: '0603'
+- ref: JP1
+  value: 1x6 header
+  footprint: 1X06
+- ref: R3
+  value: 10kohm
+  footprint: RESPACK
+- ref: RF1
+  value: ST25DVXX
+  footprint: TSSOP8-4.4MM
+nets:
+- name: GND
+  pins:
+  - C1.2
+  - C3.2
+  - CONN3.G$1.GND
+  - CONN3.G$2.MT
+  - CONN3.G$3.MT
+  - CONN4.G$1.GND
+  - CONN4.G$2.MT
+  - CONN4.G$3.MT
+  - D1.C
+  - JP1.2
+  - RF1.GND
+  class: highpower
+  trace_width: '0.3048'
+- name: GPO
+  pins: [JP1.5, RF1.GPO]
+- name: N$1
+  pins: [D1.A, R3.G$1.2]
+- name: N$2
+  pins: [ANT1.2, RF1.AC0]
+- name: N$3
+  pins: [ANT1.1, RF1.AC1]
+- name: SCL
+  pins: [CONN3.G$1.SCL, CONN4.G$1.SCL, JP1.3, R3.G$3.2, RF1.SCL]
+- name: SDA
+  pins: [CONN3.G$1.SDA, CONN4.G$1.SDA, JP1.4, R3.G$2.2, RF1.SDA]
+- name: VCC
+  pins:
+  - C1.1
+  - C3.1
+  - CONN3.G$1.V+
+  - CONN4.G$1.V+
+  - JP1.1
+  - R3.G$1.1
+  - R3.G$2.1
+  - R3.G$3.1
+  - RF1.VCC
+  class: highpower
+  trace_width: '0.3048'
+- name: VEH
+  pins: [JP1.6, RF1.V_EH]
+positions:
+- ref: ANT1
+  x: 12.7
+  y: 20.19
+- ref: C1
+  x: 14.99
+  y: 7.49
+  rot: 180.0
+- ref: C3
+  x: 7.24
+  y: 7.49
+  rot: 270.0
+- ref: CONN3
+  x: 22.86
+  y: 8.26
+  rot: 90.0
+- ref: CONN4
+  x: 2.54
+  y: 8.26
+  rot: 270.0
+- ref: D1
+  x: 14.99
+  y: 5.84
+  rot: 270.0
+- ref: JP1
+  x: 12.7
+  y: 2.54
+- ref: R3
+  x: 10.92
+  y: 6.48
+  rot: 180.0
+- ref: RF1
+  x: 14.99
+  y: 9.78
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

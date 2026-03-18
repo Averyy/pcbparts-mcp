@@ -1,0 +1,407 @@
+name: Adafruit PowerBoost 1000C
+slug: adafruit-powerboost-1000c
+source: adafruit/Adafruit-PowerBoost-1000C
+format: eagle
+description: TPS61090 boost converter, MCP73831 charger
+tags: [battery-charging, power-supply]
+key_ics: [MCP73871, TPS61090]
+outline:
+  width_mm: 39.97
+  height_mm: 25.31
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: B1
+  value: JST 2-PH
+  footprint: JSTPH2
+  description: CR1220 SMT
+- ref: C1
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C2
+  value: 2.2uF
+  footprint: 0805
+  decouples: U1
+- ref: C4
+  value: 100nF
+  footprint: 0805_10MGAP
+  decouples: U1
+- ref: C6
+  value: 100uF
+  footprint: '1210'
+  decouples: U1
+- ref: C7
+  value: 10uF
+  footprint: 0805
+- ref: C8
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: CHRG/LBO
+  value: orange LED
+  footprint: 0805
+- ref: CN1
+  value: USBA_FEMALE
+  footprint: USB_HOST-PTH
+  description: USB - Type A Connectors
+- ref: CN4
+  value: MicroUSB
+  footprint: 4UCONN_20329
+  description: USB Connectors
+- ref: DONE
+  value: green LED
+  footprint: 0805
+- ref: JP2
+  value: 1x8 header
+  footprint: 1X08
+- ref: L1
+  value: 6.8uH
+  footprint: INDUCTOR
+- ref: LED1
+  value: red LED
+  footprint: 0805
+- ref: LED2
+  value: blue LED
+  footprint: 0805
+- ref: R1
+  value: 1.87Mohm
+  footprint: 0805
+- ref: R10
+  value: 49.9kohm
+  footprint: 0805
+  pulldown: D-
+- ref: R11
+  value: 75kohm
+  footprint: 0805
+  tolerance: 1%
+  pullup: D+
+- ref: R12
+  value: 49.9kohm
+  footprint: 0805
+  tolerance: 1%
+  pulldown: D+
+- ref: R13
+  value: 200kohm
+  footprint: 0805
+  pullup: ENABLE
+- ref: R14
+  value: 1kohm
+  footprint: 0805
+- ref: R16
+  value: 1kohm
+  footprint: 0805
+  pulldown: U2.PROG1
+- ref: R17
+  value: 100kohm
+  footprint: 0805
+  pulldown: U2.PROG3
+- ref: R2
+  value: 340kohm
+  footprint: 0805
+  pulldown: U1.LBI
+- ref: R20
+  value: 1kohm
+  footprint: 0805
+- ref: R3
+  value: 1.87Mohm
+  footprint: 0805
+- ref: R4
+  value: 200kohm
+  footprint: 0805
+  pulldown: U1.FB
+- ref: R5
+  value: 1kohm
+  footprint: 0805
+  pullup: LED2.A
+- ref: R6
+  value: 270kohm
+  footprint: 0805
+  pullup: U2.VPCC
+- ref: R7
+  value: 100kohm
+  footprint: 0805
+  pulldown: U2.VPCC
+- ref: R8
+  value: 1kohm
+  footprint: 0805
+- ref: R9
+  value: 43kohm
+  footprint: 0805
+  pullup: D-
+- ref: T1
+  value: MMUN2133LT1G
+  footprint: SC59-BEC
+  description: PNP Bias Resistor Transistor
+- ref: THERM
+  value: 15K
+  footprint: 0805
+- ref: U1
+  value: TPS61090RSAR
+  footprint: PVQFN-16
+  description: TPS6103x 4A Boost
+- ref: U2
+  value: MCP73871
+  footprint: QFN20_4MM
+  description: USB/solar charger with LiPo power management
+- ref: X1
+  value: 1x2 header
+  footprint: TERMBLOCK
+nets:
+- name: 5.0V
+  pins:
+  - C2.1
+  - C6.1
+  - CN1.VBUS
+  - JP2.8
+  - R11.2
+  - R3.2
+  - R5.1
+  - R9.2
+  - U1.VOUT
+  - X1.2
+- name: D+
+  pins: [CN1.D+, R11.1, R12.1]
+- name: D-
+  pins: [CN1.D-, R10.1, R9.1]
+- name: ENABLE
+  pins: [JP2.4, R13.2, U1.EN]
+- name: FB
+  pins: [R3.1, R4.2, U1.FB]
+- name: GND
+  pins:
+  - B1.-
+  - C1.2
+  - C2.2
+  - C4.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - CN1.GND
+  - CN4.GND
+  - JP2.5
+  - JP2.7
+  - LED1.C
+  - LED2.C
+  - R10.2
+  - R12.2
+  - R16.1
+  - R17.1
+  - R2.1
+  - R4.1
+  - R7.2
+  - THERM.1
+  - U1.GND
+  - U1.PGND
+  - U1.SYNC
+  - U2.THERMAL
+  - U2.VSS1
+  - U2.VSS2
+  - X1.1
+- name: LBI
+  pins: [R1.1, R2.2, U1.LBI]
+- name: LBO
+  pins: [JP2.6, T1.B, U1.LBO]
+- name: N$12
+  pins: [CHRG/LBO.C, R8.2]
+- name: N$2
+  pins: [LED1.A, R20.1]
+- name: N$4
+  pins: [LED2.A, R5.2]
+- name: N$6
+  pins: [R20.2, T1.C]
+- name: N$8
+  pins: [DONE.C, R14.2]
+- name: PROG1
+  pins: [R16.2, U2.PROG1]
+- name: PROG3
+  pins: [R17.2, U2.PROG3]
+- name: STAT1_LBO
+  pins: [R8.1, U2.STAT1/LBO]
+- name: STAT2
+  pins: [R14.1, U2.STAT2]
+- name: SW
+  pins: [L1.2, U1.SW]
+- name: THERM
+  pins: [THERM.2, U2.THERM]
+- name: VBAT
+  pins:
+  - C1.1
+  - C4.1
+  - JP2.3
+  - L1.1
+  - R1.2
+  - R13.1
+  - T1.E
+  - U1.VBAT
+  - U2.VOUT1
+  - U2.VOUT2
+- name: VBUS
+  pins:
+  - C8.1
+  - CHRG/LBO.A
+  - CN4.VBUS
+  - DONE.A
+  - JP2.1
+  - R6.2
+  - U2./TE
+  - U2.CE
+  - U2.PROG2
+  - U2.SEL
+  - U2.VIN1
+  - U2.VIN2
+- name: VLIPO
+  pins: [B1.+, C7.1, JP2.2, U2.VBAT1, U2.VBAT2, U2.VBATSENS]
+- name: VPCC
+  pins: [R6.1, R7.1, U2.VPCC]
+positions:
+- ref: B1
+  x: 10.67
+  y: 19.3
+- ref: C1
+  x: 19.56
+  y: 16.51
+  rot: 180.0
+- ref: C2
+  x: 28.45
+  y: 17.14
+  rot: 270.0
+- ref: C4
+  x: 19.05
+  y: 4.45
+- ref: C6
+  x: 26.16
+  y: 5.08
+  rot: 270.0
+- ref: C7
+  x: 14.22
+  y: 13.84
+- ref: C8
+  x: 7.11
+  y: 12.95
+  rot: 90.0
+- ref: CHRG/LBO
+  x: 9.78
+  y: 1.14
+  rot: 270.0
+- ref: CN1
+  x: 37.72
+  y: 11.75
+  rot: 90.0
+- ref: CN4
+  x: 4.32
+  y: 11.43
+  rot: 270.0
+- ref: DONE
+  x: 6.22
+  y: 1.14
+  rot: 90.0
+- ref: JP2
+  x: 21.72
+  y: 1.27
+- ref: L1
+  x: 24.4
+  y: 15.9
+- ref: LED1
+  x: 5.43
+  y: 20.86
+- ref: LED2
+  x: 33.72
+  y: 1.56
+  rot: 270.0
+- ref: R1
+  x: 19.56
+  y: 14.61
+  rot: 180.0
+- ref: R10
+  x: 28.48
+  y: 13.52
+  rot: 90.0
+- ref: R11
+  x: 29.97
+  y: 20.57
+  rot: 180.0
+- ref: R12
+  x: 33.4
+  y: 21.21
+- ref: R13
+  x: 19.14
+  y: 8.89
+  rot: 90.0
+- ref: R14
+  x: 5.59
+  y: 4.32
+  rot: 270.0
+- ref: R16
+  x: 12.57
+  y: 5.08
+  rot: 90.0
+- ref: R17
+  x: 10.67
+  y: 5.08
+  rot: 90.0
+- ref: R2
+  x: 19.56
+  y: 12.7
+- ref: R20
+  x: 15.84
+  y: 16.62
+  rot: 270.0
+- ref: R3
+  x: 23.5
+  y: 5.59
+  rot: 270.0
+- ref: R4
+  x: 21.72
+  y: 6.1
+  rot: 90.0
+- ref: R5
+  x: 28.7
+  y: 6.1
+  rot: 270.0
+- ref: R6
+  x: 15.37
+  y: 9.65
+  rot: 270.0
+- ref: R7
+  x: 17.27
+  y: 9.65
+  rot: 270.0
+- ref: R8
+  x: 7.49
+  y: 5.08
+  rot: 270.0
+- ref: R9
+  x: 28.5
+  y: 9.91
+  rot: 270.0
+- ref: T1
+  x: 15.7
+  y: 5.33
+- ref: THERM
+  x: 6.99
+  y: 9.4
+  rot: 90.0
+- ref: U1
+  x: 24.27
+  y: 10.21
+  rot: 180.0
+- ref: U2
+  x: 11.81
+  y: 9.4
+  rot: 270.0
+- ref: X1
+  x: 33.91
+  y: 11.75
+  rot: 90.0
+copper_pours:
+- net: 5.0V
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: VBAT
+  layers: [F.Cu]

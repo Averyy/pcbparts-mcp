@@ -1,0 +1,151 @@
+name: ADS-B Filter+LNA
+slug: ads-b-filter-lna
+source: Reid-n0rc/ADS-B_LNA_Project
+format: eagle
+description: '1090MHz ADS-B frontend: BFP420 RF transistor LNA, passive matching network (0402/0603/0805)'
+tags: [rf-sdr]
+key_ics: [BFP420]
+outline:
+  width_mm: 105.25
+  height_mm: 45.71
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 13mil
+  min_via: 7mil
+components:
+- ref: C1
+  value: 100pF
+  footprint: 0805
+- ref: C2
+  value: 100pF
+  footprint: 0805
+- ref: R1
+  value: 22kohm
+  footprint: 0805
+- ref: R2
+  value: 600ohm
+  footprint: 0805
+- ref: U1
+  value: BFP420
+  footprint: SOT343_INFINEON
+- ref: X1
+  value: SMA-
+  footprint: J502-ND-142-0701-801
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0701-801
+  description: SMA 50 Ohm
+- ref: X2
+  value: SMA-
+  footprint: J502-ND-142-0701-801
+  manufacturer: JOHNSON COMPONENTS
+  mpn: 142-0701-801
+  description: SMA 50 Ohm
+nets:
+- name: '1'
+  pins: [TP3.MP, X1.1]
+- name: '10'
+  pins: [C1.1, TP4.MP]
+- name: GND
+  pins: [TP2.MP, U1.E1, U1.E2, X1.GND, X2.GND]
+- name: N$2
+  pins: [C1.2, R1.1, U1.B]
+- name: N$4
+  pins: [C2.1, R1.2, R2.2, U1.C]
+- name: N$5
+  pins: [R2.1, TP1.MP]
+- name: N$6
+  pins: [C2.2, X2.1]
+positions:
+- ref: C1
+  x: 5.87
+  y: 4.39
+  rot: 33.7
+- ref: C2
+  x: 12.54
+  y: 2.54
+- ref: R1
+  x: 8.26
+  y: 1.27
+  rot: 315.0
+- ref: R2
+  x: 12.22
+  y: 7.62
+  rot: 270.0
+- ref: U1
+  x: 9.84
+  y: 4.76
+  rot: 315.0
+- ref: X1
+  x: -85.72
+  y: 2.38
+- ref: X2
+  x: 19.53
+  y: 2.38
+  rot: 180.0
+copper_pours:
+- net: '1'
+  layers: [F.Cu]
+- net: '10'
+  layers: [F.Cu]
+- net: '11'
+  layers: [F.Cu]
+- net: '12'
+  layers: [F.Cu]
+- net: '13'
+  layers: [F.Cu]
+- net: '14'
+  layers: [F.Cu]
+- net: '15'
+  layers: [F.Cu]
+- net: '16'
+  layers: [F.Cu]
+- net: '17'
+  layers: [F.Cu]
+- net: '18'
+  layers: [F.Cu]
+- net: '19'
+  layers: [F.Cu]
+- net: '2'
+  layers: [F.Cu]
+- net: '20'
+  layers: [F.Cu]
+- net: '21'
+  layers: [F.Cu]
+- net: '22'
+  layers: [F.Cu]
+- net: '23'
+  layers: [F.Cu]
+- net: '24'
+  layers: [F.Cu]
+- net: '25'
+  layers: [F.Cu]
+- net: '26'
+  layers: [F.Cu]
+- net: '27'
+  layers: [F.Cu]
+- net: '28'
+  layers: [F.Cu]
+- net: '29'
+  layers: [F.Cu]
+- net: '3'
+  layers: [F.Cu]
+- net: '30'
+  layers: [F.Cu]
+- net: '31'
+  layers: [F.Cu]
+- net: '4'
+  layers: [F.Cu]
+- net: '5'
+  layers: [F.Cu]
+- net: '6'
+  layers: [F.Cu]
+- net: '7'
+  layers: [F.Cu]
+- net: '8'
+  layers: [F.Cu]
+- net: '9'
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]

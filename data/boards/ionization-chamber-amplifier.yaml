@@ -1,0 +1,316 @@
+name: Ionization Chamber Amplifier
+slug: ionization-chamber-amplifier
+source: RobertGawron/IonizationChamber
+format: kicad8
+description: 'Ionization chamber radiation detector: precision op-amp signal chain (LM358 + LMC6062) for ion current measurement'
+tags: [signal-conditioning]
+key_ics: [LMC6062, LM358]
+outline:
+  width_mm: 79.75
+  height_mm: 55.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.254mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: BT1
+  value: Battery
+  footprint: AAAAPCBHolder
+  description: Multiple-cell battery
+- ref: BT2
+  value: Battery
+  footprint: AAAAPCBHolder
+  description: Multiple-cell battery
+- ref: BT3
+  value: Battery
+  footprint: AAAAPCBHolder
+  description: Multiple-cell battery
+- ref: C1
+  value: 100nF
+  footprint: 0805
+- ref: C10
+  value: 1uF
+  footprint: 0805
+- ref: C2
+  value: 10nF
+  footprint: 0805
+- ref: C3
+  value: 1uF
+  footprint: 0805
+- ref: C4
+  value: 10nF
+  footprint: 0805
+- ref: C40
+  value: 100nF
+  footprint: 0805
+- ref: C42
+  value: 100nF
+  footprint: 0805
+- ref: C44
+  value: 100nF
+  footprint: 0805
+- ref: C45
+  value: 100nF
+  footprint: 0805
+- ref: C46
+  value: not mounted
+  footprint: 0805
+- ref: C47
+  value: 0R resistor
+  footprint: 0805
+- ref: C48
+  value: 0R resistor
+  footprint: 0805
+- ref: C5
+  value: 10nF
+  footprint: 0805
+- ref: C6
+  value: 100uF
+  footprint: EIA-3528
+  voltage: 6.3V
+- ref: C7
+  value: 1uF
+  footprint: 0805
+- ref: C8
+  value: 100uF
+  footprint: EIA-3528
+  voltage: 6.3V
+- ref: C9
+  value: 1uF
+  footprint: 0805
+- ref: J1
+  value: RFShield_TwoPieces
+  footprint: IonizationChamberShield
+  description: Two-piece EMI RF shielding cabinet
+- ref: L1
+  value: 22uH
+  footprint: L
+- ref: L2
+  value: 22uH
+  footprint: L
+- ref: R38
+  value: 2*50G
+  footprint: 0805
+- ref: R39
+  value: 10kohm
+  footprint: 0805
+- ref: R40
+  value: 120kohm
+  footprint: 0805
+- ref: R41
+  value: 10kohm
+  footprint: 0805
+- ref: R42
+  value: 120kohm
+  footprint: 0805
+- ref: U1
+  value: LMC6062
+  footprint: DIP-8
+  description: Precision CMOS Dual Micropower Operational Amplifier, DIP-8/SOIC-8
+- ref: U2
+  value: LM358
+  footprint: SO-8
+  description: Low-Power, Dual Operational Amplifiers, DIP-8/SOIC-8/TO-99-8
+- ref: V31
+  value: Nuclear-Radiation_Detector
+  footprint: IonizationChamberSensor
+  description: Generic radiation detector
+nets:
+- name: GND
+  pins:
+  - BT3.-@2
+  - C1.2
+  - C10.2
+  - C2.2
+  - C3.2
+  - C40.2
+  - C42.2
+  - C44.2
+  - C45.1
+  - C47.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - J1.Shield
+  - U1.+@3
+  - U2.+@3
+- name: Net-(BT1-+)
+  pins: [BT1.+@1, C1.1, C2.1, V31.1]
+- name: Net-(BT1--)
+  pins: [BT1.-@2, BT2.+@1]
+- name: Net-(BT2--)
+  pins: [BT2.-@2, BT3.+@1]
+- name: Net-(C3-Pad1)
+  pins: [C3.1, C6.1, L1.2]
+- name: Net-(C4-Pad2)
+  pins: [C4.2, C48.1, R40.1, U1.7]
+- name: Net-(C47-Pad1)
+  pins: [C47.1, R39.2]
+- name: Net-(C48-Pad2)
+  pins: [C48.2, R41.2]
+- name: Net-(C8-Pad1)
+  pins: [C8.1, C9.1, L2.2]
+- name: Net-(U1A--)
+  pins: [C46.2, R38.2, U1.-@2, V31.2]
+- name: Net-(U1B-+)
+  pins: [C46.1, R38.1, U1.+@5, U1.1]
+- name: Net-(U1B--)
+  pins: [C4.1, R39.1, R40.2, U1.-@6]
+- name: Net-(U1C-V+)
+  pins: [C10.1, C40.1, C45.2, L2.1, U1.V+, U2.V+]
+- name: Net-(U1C-V-)
+  pins: [C42.1, C44.1, C7.1, L1.1, U1.V-, U2.V-]
+- name: Net-(U2A--)
+  pins: [C5.1, R41.1, R42.2, U2.-@2]
+- name: Net-(U2B-+)
+  pins: [C5.2, R42.1, U2.+@5, U2.1]
+- name: Net-(U2B--)
+  pins: [U2.-@6, U2.7]
+positions:
+- ref: BT1
+  x: 148.25
+  y: 78.5
+  rot: 180.0
+  side: back
+- ref: BT2
+  x: 120.25
+  y: 67.0
+  side: back
+- ref: BT3
+  x: 148.25
+  y: 55.75
+  rot: 180.0
+  side: back
+- ref: C1
+  x: 150.5
+  y: 85.75
+  rot: -90.0
+  side: back
+- ref: C10
+  x: 175.0
+  y: 57.0
+  rot: -90.0
+  side: back
+- ref: C2
+  x: 148.25
+  y: 85.75
+  rot: -90.0
+  side: back
+- ref: C3
+  x: 181.5
+  y: 48.5
+  rot: -90.0
+  side: back
+- ref: C4
+  x: 174.0
+  y: 69.59
+  rot: -90.0
+  side: back
+- ref: C40
+  x: 166.12
+  y: 71.88
+  rot: 90.0
+- ref: C42
+  x: 165.22
+  y: 67.82
+  rot: -90.0
+- ref: C44
+  x: 175.85
+  y: 76.53
+  rot: 180.0
+  side: back
+- ref: C45
+  x: 181.35
+  y: 82.3
+  side: back
+- ref: C46
+  x: 157.5
+  y: 72.65
+  rot: 90.0
+  side: back
+- ref: C47
+  x: 169.2
+  y: 63.25
+  rot: 180.0
+  side: back
+- ref: C48
+  x: 172.0
+  y: 73.25
+  rot: -90.0
+  side: back
+- ref: C5
+  x: 184.35
+  y: 72.3
+  side: back
+- ref: C6
+  x: 184.25
+  y: 49.25
+  rot: -90.0
+  side: back
+- ref: C7
+  x: 170.5
+  y: 47.0
+  rot: -90.0
+  side: back
+- ref: C8
+  x: 189.0
+  y: 56.45
+  rot: 90.0
+  side: back
+- ref: C9
+  x: 186.0
+  y: 57.25
+  rot: -90.0
+  side: back
+- ref: J1
+  x: 194.0
+  y: 41.0
+  rot: 180.0
+  side: back
+- ref: L1
+  x: 176.09
+  y: 46.95
+  side: back
+- ref: L2
+  x: 180.45
+  y: 56.55
+  side: back
+- ref: R38
+  x: 159.54
+  y: 72.65
+  rot: 90.0
+  side: back
+- ref: R39
+  x: 172.0
+  y: 66.0
+  rot: 90.0
+  side: back
+- ref: R40
+  x: 172.0
+  y: 69.59
+  rot: 90.0
+  side: back
+- ref: R41
+  x: 180.6
+  y: 74.55
+  rot: 180.0
+  side: back
+- ref: R42
+  x: 184.29
+  y: 74.5
+  rot: 180.0
+  side: back
+- ref: U1
+  x: 162.0
+  y: 73.54
+  side: back
+- ref: U2
+  x: 181.75
+  y: 78.5
+  side: back
+- ref: V31
+  x: 154.7
+  y: 68.07

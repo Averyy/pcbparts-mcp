@@ -1,0 +1,2980 @@
+name: ULX3S
+slug: ulx3s
+source: emard/ulx3s
+format: kicad_legacy
+description: ECP5 FPGA with GPDI (DVI) output, SerDes
+tags: [fpga, rf-sdr, video, wifi]
+key_ics: [ESP32, ECP5]
+outline:
+  width_mm: 93.98
+  height_mm: 50.8
+design_rules:
+  layers: 4
+components:
+- ref: AE1
+  value: 433MHz
+  footprint: TestPoint_Pad_D1.0mm
+- ref: AUDIO1
+  value: JACK_TRS_6PINS
+  footprint: CUI_SJ-43516-SMT
+  mpn: SJ-43516-SMT-TR
+  mouser: 490-SJ43515TS-SMT-TR
+  digikey: CP-43516SJCT-ND
+- ref: B0
+  value: PTS645
+  footprint: SW_SPST_PTS645
+  mpn: PTS645SL50SMTR92 LFS
+  mouser: 611-PTS645SL50SMTR92
+  digikey: CKN9088CT-ND
+  lcsc: C285463
+- ref: B1
+  value: PTS645
+  footprint: SW_SPST_PTS645
+  mpn: PTS645SL50SMTR92 LFS
+- ref: B2
+  value: PTS645
+  footprint: SW_SPST_PTS645
+  mpn: PTS645SL50SMTR92 LFS
+- ref: B3
+  value: PTS645
+  footprint: SW_SPST_PTS645
+  mpn: PTS645SL50SMTR92 LFS
+- ref: B4
+  value: PTS645
+  footprint: SW_SPST_PTS645
+  mpn: PTS645SL50SMTR92 LFS
+- ref: B5
+  value: PTS645
+  footprint: SW_SPST_PTS645
+  mpn: PTS645SL50SMTR92 LFS
+- ref: B6
+  value: PTS645
+  footprint: SW_SPST_PTS645
+  mpn: PTS645SL50SMTR92 LFS
+- ref: BAT1
+  value: CR1225
+  footprint: Keystone_3000
+  mpn: 3000TR
+  mouser: 614-SMTM1225.TR
+  digikey: 952-1662-1-ND
+  lcsc: C238097
+- ref: C1
+  value: 22uF
+  footprint: 0805
+  mpn: CC0805ZKY5V5BB226
+  mouser: 81-GRM21BR61A226ME1L
+  digikey: 1276-2413-1-ND
+  lcsc: C29277
+  decouples: U4
+- ref: C10
+  value: 100pF
+  footprint: '0603'
+- ref: C11
+  value: 22uF
+  footprint: 0805
+- ref: C12
+  value: 22uF
+  footprint: 0805
+- ref: C13
+  value: 2.2uF
+  footprint: 0805
+  mpn: CC0805MRX5R6BB225
+  mouser: 187-CL21B225KOFNNNG
+  digikey: 587-5918-1-ND
+  lcsc: C87995
+- ref: C14
+  value: 220nF
+  footprint: '0603'
+  mpn: CC0603KRX7R8BB224
+  mouser: 603-CC603KRX7R6BB224
+  digikey: 1276-1112-1-ND
+  lcsc: C326805
+- ref: C15
+  value: 22uF
+  footprint: 0805
+  mpn: CC0805ZKY5V5BB226
+- ref: C16
+  value: 2.2uF
+  footprint: 0805
+  decouples: U2
+- ref: C17
+  value: 2.2uF
+  footprint: 0805
+  decouples: U1
+- ref: C18
+  value: 100pF
+  footprint: '0603'
+- ref: C19
+  value: 2.2uF
+  footprint: 0805
+  decouples: U1
+- ref: C2
+  value: 100pF
+  footprint: '0603'
+  mpn: CS0603KRX7R9BB471
+  mouser: 581-06035A101JAT4A
+  digikey: 311-4078-1-ND
+  lcsc: C14665
+- ref: C20
+  value: 2.2uF
+  footprint: 0805
+  decouples: U1
+- ref: C21
+  value: 22uF
+  footprint: 0805
+  mpn: CC0805ZKY5V5BB226
+- ref: C22
+  value: 2.2uF
+  footprint: 0805
+- ref: C23
+  value: 2.2uF
+  footprint: 0805
+- ref: C24
+  value: 2.2uF
+  footprint: 0805
+- ref: C25
+  value: 22nF
+  footprint: '0603'
+  mpn: CC0603JRX7R8BB223
+  mouser: 603-CC603KRX7R7BB223
+  digikey: 587-1238-1-ND
+  lcsc: C107137
+  decouples: U1
+- ref: C26
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+- ref: C27
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+  decouples: U1
+- ref: C28
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+  decouples: U1
+- ref: C29
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+  decouples: U1
+- ref: C3
+  value: 22uF
+  footprint: 0805
+- ref: C30
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+  decouples: U1
+- ref: C31
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+  decouples: U1
+- ref: C32
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+  decouples: U1
+- ref: C33
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+  decouples: U2
+- ref: C34
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+  decouples: U2
+- ref: C35
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+  decouples: U2
+- ref: C38
+  value: 22nF
+  footprint: '0603'
+- ref: C39
+  value: 22nF
+  footprint: '0603'
+- ref: C4
+  value: 22uF
+  footprint: 0805
+- ref: C40
+  value: 22nF
+  footprint: '0603'
+- ref: C41
+  value: 22nF
+  footprint: '0603'
+- ref: C42
+  value: 22nF
+  footprint: '0603'
+- ref: C43
+  value: 22nF
+  footprint: '0603'
+- ref: C44
+  value: 22nF
+  footprint: '0603'
+- ref: C45
+  value: 22nF
+  footprint: '0603'
+- ref: C46
+  value: 2.2uF
+  footprint: 0805
+  mpn: CC0805MRX5R6BB225
+- ref: C47
+  value: 2.2uF
+  footprint: 0805
+  mpn: CC0805MRX5R6BB225
+- ref: C48
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+- ref: C49
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+- ref: C5
+  value: 22uF
+  footprint: 0805
+  mpn: CC0805ZKY5V5BB226
+  decouples: U3
+- ref: C50
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+  decouples: U2
+- ref: C51
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+- ref: C52
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+  decouples: U2
+- ref: C53
+  value: 22nF
+  footprint: '0603'
+  mpn: CX0603MRX7R8BB223
+- ref: C54
+  value: 22uF
+  footprint: 0805
+  mpn: CC0805ZKY5V5BB226
+- ref: C55
+  value: 22uF
+  footprint: 0805
+  mpn: CC0805ZKY5V5BB226
+- ref: C56
+  value: 4.7pF
+  footprint: '0603'
+  mpn: CC0603CRNPO9BN3R3
+  mouser: 603-CC603CPNPO9BN4R7
+  digikey: 1276-1792-1-ND
+  lcsc: C314302
+- ref: C57
+  value: 4.7pF
+  footprint: '0603'
+- ref: C58
+  value: 22uF
+  footprint: 0805
+- ref: C59
+  value: 220nF
+  footprint: '0603'
+- ref: C6
+  value: 100pF
+  footprint: '0603'
+- ref: C60
+  value: 220nF
+  footprint: '0603'
+- ref: C61
+  value: 22uF
+  footprint: 0805
+- ref: C62
+  value: 220nF
+  footprint: '0603'
+- ref: C63
+  value: 22nF
+  footprint: '0603'
+- ref: C64
+  value: 22nF
+  footprint: '0603'
+- ref: C65
+  value: 22nF
+  footprint: '0603'
+- ref: C66
+  value: 22nF
+  footprint: '0603'
+- ref: C67
+  value: 22nF
+  footprint: '0603'
+- ref: C68
+  value: 22nF
+  footprint: '0603'
+- ref: C69
+  value: 22nF
+  footprint: '0603'
+- ref: C7
+  value: 22uF
+  footprint: 0805
+- ref: C70
+  value: 22nF
+  footprint: '0603'
+- ref: C71
+  value: 22nF
+  footprint: '0603'
+- ref: C72
+  value: 22nF
+  footprint: '0603'
+- ref: C8
+  value: 22uF
+  footprint: 0805
+- ref: C9
+  value: 22uF
+  footprint: 0805
+  mpn: CC0805ZKY5V5BB226
+  decouples: U5
+- ref: D0
+  value: red LED
+  footprint: 0805
+  mpn: LTST-C170KRKT
+  mouser: 859-LTST-C170KRKT
+  digikey: 160-1415-1-ND
+  lcsc: C94868
+- ref: D1
+  value: orange LED
+  footprint: 0805
+  mpn: LTST-C170KFKT
+  mouser: 859-LTST-C170KFKT
+  digikey: 160-1413-1-ND
+  lcsc: C284931
+- ref: D10
+  value: 1N914
+  footprint: SOD-323
+- ref: D11
+  value: red LED
+  footprint: 0805
+- ref: D12
+  value: BAT54W
+  footprint: SOD-323
+- ref: D13
+  value: 1N914
+  footprint: SOD-323
+- ref: D14
+  value: 1N914
+  footprint: SOD-323
+- ref: D15
+  value: BAT54W
+  footprint: SOD-323
+  mpn: NSR0530HT1G
+  mouser: 771-BAT54J115
+  digikey: NSR0530HT1GOSCT-ND
+  lcsc: C12744
+- ref: D16
+  value: 1N914
+  footprint: SOD-323
+  mpn: 1N4148WS
+  mouser: 241-1N4148WSR100001
+  digikey: 1N914BWSCT-ND
+  lcsc: C258181
+- ref: D17
+  value: 1N914
+  footprint: SOD-323
+- ref: D18
+  value: green LED
+  footprint: 0805
+  mpn: LTST-C170TGKT
+  mouser: 859-LTST-C170TGKT
+  digikey: 160-1887-1-ND
+  lcsc: C364562
+- ref: D19
+  value: red LED
+  footprint: 0805
+  mpn: LTST-C170KRKT
+- ref: D2
+  value: green LED
+  footprint: 0805
+  mpn: LTST-C170TGKT
+  mouser: 859-LTST-C170TGKT
+  digikey: 160-1887-1-ND
+  lcsc: C364562
+- ref: D20
+  value: 3.6V
+  footprint: SOD-323
+  mpn: BZT52C3V6S
+  mouser: 833-BZT52C3V6S-TP
+  digikey: BZT52C3V6S-TPMSCT-ND
+  lcsc: C353525
+- ref: D21
+  value: 3.6V
+  footprint: SOD-323
+  mpn: BZT52C3V6S
+  mouser: 833-BZT52C3V6S-TP
+- ref: D22
+  value: blue LED
+  footprint: 0805
+  mpn: LTST-C170TBKT
+  mouser: 859-LTST-C170TBKT
+  digikey: 160-1579-1-ND
+  lcsc: C375453
+- ref: D23
+  value: 1N914
+  footprint: SOD-323
+- ref: D24
+  value: 1N914
+  footprint: SOD-323
+- ref: D25
+  value: 1N914
+  footprint: SOD-323
+- ref: D26
+  value: 1N914
+  footprint: SOD-323
+  mpn: 1N4148WS
+- ref: D27
+  value: 1N914
+  footprint: SOD-323
+- ref: D28
+  value: 1N914
+  footprint: SOD-323
+- ref: D29
+  value: 1N914
+  footprint: SOD-323
+- ref: D3
+  value: blue LED
+  footprint: 0805
+  mpn: LTST-C170TBKT
+  mouser: 859-LTST-C170TBKT
+  digikey: 160-1579-1-ND
+  lcsc: C375453
+- ref: D30
+  value: 3.6V
+  footprint: SOD-323
+- ref: D4
+  value: red LED
+  footprint: 0805
+- ref: D5
+  value: orange LED
+  footprint: 0805
+- ref: D51
+  value: '0'
+  footprint: SMA_Jumper_NC
+- ref: D52
+  value: '0'
+  footprint: SMA_Jumper_NC
+- ref: D6
+  value: green LED
+  footprint: 0805
+- ref: D7
+  value: blue LED
+  footprint: 0805
+- ref: D8
+  value: STPS2L40AF
+  footprint: SMA
+  mpn: STPS2L30AF
+  mouser: 511-STPS2L40AF
+  digikey: 497-12310-1-ND
+  lcsc: C111630
+- ref: D9
+  value: '0'
+  footprint: SMA_Jumper_NC
+- ref: GPDI1
+  value: GPDI-D
+  footprint: CONN-10029449-111RLF
+  mpn: 10029449-111RLF
+  mouser: 649-10029449-111RLF
+  digikey: 609-4614-1-ND
+  lcsc: C427307
+- ref: J1
+  value: 2x20 header
+  footprint: Socket_Strip_Angled
+- ref: J2
+  value: 2x20 header
+  footprint: Socket_Strip_Angled
+- ref: J3
+  value: 1x2 header
+  footprint: 1X2
+- ref: J4
+  value: 2x3 header
+  footprint: Socket_Strip_Straight
+- ref: J5
+  value: 1x3 header
+  footprint: 1X3
+- ref: L1
+  value: 2.2uH
+  footprint: '1008'
+  mpn: DFE322512F-2R2M=P2
+  mouser: 81-DFE322512F-2R2MP2
+  digikey: 445-TFM322512ALMA2R2MTAACT-ND
+  lcsc: C285758
+- ref: L2
+  value: 2.2uH
+  footprint: '1008'
+- ref: L3
+  value: 2.2uH
+  footprint: '1008'
+- ref: L4
+  value: 33uH
+  footprint: 0805
+  mpn: CV201210-330K
+  mouser: 652-CV201210-330K
+  digikey: CV201210-330KCT-ND
+  lcsc: C412010
+- ref: L5
+  value: 33uH
+  footprint: 0805
+  mpn: CV201210-330K
+  mouser: 652-CV201210-330K
+  digikey: CV201210-330KCT-ND
+- ref: LCD1
+  value: ST7789
+  footprint: st7789
+  mpn: DM-OLEDC095-626
+- ref: Q1
+  value: BC857
+  footprint: SOT-23
+  mpn: BC857
+  mouser: 583-BC856A-T
+  digikey: TBC857BLMCT-ND
+  lcsc: C181146
+- ref: Q2
+  value: 2N7002
+  footprint: SOT-23
+  mpn: 2N7002P,215
+  mouser: 512-2N7002L
+  digikey: 2N7002K-TPMSCT-ND
+  lcsc: C179727
+- ref: R1
+  value: 4.7kohm
+  footprint: '0603'
+  mpn: AC0603FR-104K7L
+  mouser: 755-SFR03EZPF4701
+  digikey: YAG3613CT-ND
+  lcsc: C218056
+- ref: R10
+  value: 130ohm
+  footprint: '0603'
+- ref: R11
+  value: 10kohm
+  footprint: '0603'
+  mpn: RC0603FR-0710KL
+  mouser: 603-RC0603FR-0710KL
+  digikey: 311-10KLMCT-ND
+  lcsc: C15401
+  pullup: /flash/FLASH_nWP
+- ref: R12
+  value: 10kohm
+  footprint: '0603'
+  pullup: /flash/FLASH_nHOLD
+- ref: R13
+  value: 15kohm
+  footprint: '0603'
+  pulldown: SHUTDOWN
+- ref: R14
+  value: 1.1kohm
+  footprint: '0603'
+  mpn: RC0603FR-071K1L
+  mouser: 603-RC0603FR-071K1L
+  digikey: P1.10KHCT-ND
+  lcsc: C269415
+- ref: R15
+  value: 549ohm
+  footprint: '0603'
+  mpn: RC0603FR-07549RL
+  mouser: 603-RC0603FR-07549RL
+  digikey: 311-549HRCT-ND
+  lcsc: C308281
+- ref: R16
+  value: 270ohm
+  footprint: '0603'
+  mpn: RC0603FR-07270RL
+  mouser: 603-AC0603FR-07270RL
+  digikey: 311-270HRCT-ND
+  lcsc: C325609
+- ref: R17
+  value: 130ohm
+  footprint: '0603'
+  mpn: RC0603FR-07130RL
+  mouser: 603-RC0603FR-07130RL
+  digikey: 311-130HRCT-ND
+  lcsc: C269457
+- ref: R18
+  value: 1.1kohm
+  footprint: '0603'
+- ref: R19
+  value: 549ohm
+  footprint: '0603'
+- ref: R2
+  value: 18kohm
+  footprint: '0603'
+  pulldown: /power/PWREN
+- ref: R20
+  value: 270ohm
+  footprint: '0603'
+- ref: R21
+  value: 130ohm
+  footprint: '0603'
+- ref: R22
+  value: 3.3kohm
+  footprint: '0603'
+  pullup: FPDI_SDA
+- ref: R23
+  value: 3.3kohm
+  footprint: '0603'
+  pullup: FPDI_SCL
+- ref: R24
+  value: 100kohm
+  footprint: '0603'
+  mpn: AC0603FR-10100KL
+  mouser: 71-RCA0603100KJNEC
+  digikey: 311-100KHRCT-ND
+  lcsc: C73806
+  pullup: /gpdi/VREF2
+- ref: R25
+  value: 4.7kohm
+  footprint: '0603'
+  pullup: GPDI_SCL
+- ref: R26
+  value: 4.7kohm
+  footprint: '0603'
+  pullup: GPDI_SDA
+- ref: R27
+  value: 10kohm
+  footprint: '0603'
+  pullup: /flash/FLASH_MOSI
+- ref: R28
+  value: 10kohm
+  footprint: '0603'
+  pullup: /flash/FLASH_MISO
+- ref: R29
+  value: 1.1kohm
+  footprint: '0603'
+  pullup: /flash/FLASH_SCK
+- ref: R3
+  value: 4.7kohm
+  footprint: '0603'
+  mpn: AC0603FR-104K7L
+  pullup: PWRBTn
+- ref: R30
+  value: 4.7kohm
+  footprint: '0603'
+  mpn: AC0603FR-104K7L
+  pullup: /flash/FLASH_nCS
+- ref: R31
+  value: 15kohm
+  footprint: '0603'
+  pullup: /flash/FPGA_PROGRAMN
+- ref: R32
+  value: 15kohm
+  footprint: '0603'
+  pullup: /flash/FPGA_DONE
+- ref: R33
+  value: 15kohm
+  footprint: '0603'
+  pullup: /flash/FPGA_INITN
+- ref: R34
+  value: 15kohm
+  footprint: '0603'
+  pullup: WIFI_EN
+- ref: R35
+  value: 549ohm
+  footprint: '0603'
+- ref: R36
+  value: 549ohm
+  footprint: '0603'
+- ref: R37
+  value: 549ohm
+  footprint: '0603'
+- ref: R38
+  value: 470mohm
+  footprint: '0603'
+  mpn: 73L2R47J
+  mouser: 774-73L2R47J
+  digikey: 73L2R47JCT-ND
+  lcsc: C158884
+- ref: R39
+  value: 130ohm
+  footprint: '0603'
+- ref: R4
+  value: 4.7kohm
+  footprint: '0603'
+  mpn: AC0603FR-104K7L
+- ref: R40
+  value: 1.1kohm
+  footprint: '0603'
+- ref: R41
+  value: 549ohm
+  footprint: '0603'
+- ref: R42
+  value: 549ohm
+  footprint: '0603'
+- ref: R43
+  value: 549ohm
+  footprint: '0603'
+- ref: R44
+  value: 549ohm
+  footprint: '0603'
+- ref: R45
+  value: 549ohm
+  footprint: '0603'
+- ref: R46
+  value: 549ohm
+  footprint: '0603'
+- ref: R47
+  value: 549ohm
+  footprint: '0603'
+- ref: R48
+  value: 549ohm
+  footprint: '0603'
+- ref: R49
+  value: 27ohm
+  footprint: '0603'
+  mpn: AC0603JR-0727RL
+  mouser: 603-AC0603JR-0727RL
+  digikey: 311-27.0HRCT-ND
+  lcsc: C325726
+- ref: R5
+  value: 2.2Mohm
+  footprint: '0603'
+  mpn: RC0603FR-132M2L
+  mouser: 603-AC0603FR-072M2L
+  digikey: P2.20MHCT-ND
+  lcsc: C18679
+- ref: R50
+  value: 27ohm
+  footprint: '0603'
+  mpn: AC0603JR-0727RL
+- ref: R51
+  value: 130ohm
+  footprint: '0603'
+- ref: R52
+  value: 27ohm
+  footprint: '0603'
+  mpn: AC0603JR-0727RL
+- ref: R53
+  value: 27ohm
+  footprint: '0603'
+  mpn: AC0603JR-0727RL
+- ref: R54
+  value: 1.1kohm
+  footprint: '0603'
+- ref: R55
+  value: 10kohm
+  footprint: '0603'
+- ref: R56
+  value: 15kohm
+  footprint: '0603'
+  pullup: WIFI_GPIO0
+- ref: R57
+  value: 1.1kohm
+  footprint: '0603'
+- ref: R58
+  value: 549ohm
+  footprint: '0603'
+- ref: R59
+  value: 270ohm
+  footprint: '0603'
+- ref: R6
+  value: 1.1kohm
+  footprint: '0603'
+- ref: R60
+  value: 130ohm
+  footprint: '0603'
+- ref: R61
+  value: 549ohm
+  footprint: '0603'
+- ref: R62
+  value: 549ohm
+  footprint: '0603'
+- ref: R63
+  value: 15kohm
+  footprint: '0603'
+- ref: R64
+  value: 15kohm
+  footprint: '0603'
+- ref: R65
+  value: 549ohm
+  footprint: '0603'
+- ref: R66
+  value: 1.1kohm
+  footprint: '0603'
+- ref: R67
+  value: 549ohm
+  footprint: '0603'
+- ref: R7
+  value: 130ohm
+  footprint: '0603'
+- ref: R8
+  value: 1.1kohm
+  footprint: '0603'
+- ref: R9
+  value: 15kohm
+  footprint: '0603'
+  mpn: RC0603FR-0715KL
+  mouser: 603-AC0603FR-1015KL
+  digikey: YAG3569CT-ND
+  lcsc: C217750
+- ref: RA1
+  value: 15k
+  footprint: '0603'
+  mpn: RC0603FR-1015KL
+- ref: RA2
+  value: 15k
+  footprint: '0603'
+- ref: RA3
+  value: 15k
+  footprint: '0603'
+- ref: RB1
+  value: 18k
+  footprint: '0603'
+  mpn: RC0603FR-1018KL
+  mouser: 71-CRCW060318K0FKEAC
+  digikey: 311-18.0KHRCT-ND
+  lcsc: C425614
+- ref: RB2
+  value: 4.7k
+  footprint: '0603'
+  mpn: AC0603FR-104K7L
+- ref: RB3
+  value: 3.3k
+  footprint: '0603'
+  mpn: RT0603FRE073K3L
+  mouser: 603-RC0603FR-073K3L
+  digikey: YAG3605CT-ND
+  lcsc: C425629
+- ref: RP1
+  value: '0'
+  footprint: 0805
+- ref: RP2
+  value: '0'
+  footprint: 0805
+- ref: RP3
+  value: '0'
+  footprint: 0805
+- ref: RV2
+  value: '0'
+  footprint: 0805
+- ref: RV3
+  value: '0'
+  footprint: 0805
+  mpn: RC0805JR-070RL
+  mouser: 71-RCG08050000Z0EA
+  digikey: YAG1327CT-ND
+  lcsc: C112378
+- ref: SD1
+  value: 104031-0811
+  footprint: SCHD3A100-104031-0811
+  mpn: 104031-0811
+  mouser: 538-104031-0811
+  digikey: WM6357CT-ND
+  lcsc: C585350
+- ref: SW1
+  value: switch
+  footprint: SW_DIP_x4_W8.61mm_Slide_LowProfile
+  mpn: 219-4MST
+  mouser: 774-2194MST
+  digikey: CT2194MST-ND
+  lcsc: C319050
+- ref: U1
+  value: LFE5U-85F-6BG381C
+  footprint: BGA-381_pitch0.8mm_dia0.4mm
+  mpn: LFE5U-85F-6BG381C
+- ref: U10
+  value: IS25LP128F
+  footprint: SOA008-150-208mil
+  mpn: IS25LP128F-JBLE
+  mouser: 454-W25Q128JVSIMTR
+  digikey: W25Q128JVSIQCT-ND
+  lcsc: C113767
+- ref: U11
+  value: PCA9306D
+  footprint: SM8
+  mpn: PCA9306D
+  mouser: 771-PCA9306D-T
+  digikey: 568-4215-1-ND
+- ref: U2
+  value: MT48LC16M16A2TG
+  footprint: TSOP54
+  mpn: MT48LC16M16A2TG-6A
+  mouser: 870-IS42S16160G7TLTR
+  digikey: 1450-1385-1-ND
+  lcsc: C492195
+- ref: U3
+  value: TLV62569DBV
+  footprint: TSOT-25
+  mpn: TLV62569DBVR
+  mouser: 453-DIO6015BCST5
+  digikey: 296-47360-1-ND
+  lcsc: C141836
+- ref: U4
+  value: TLV62569DBV
+  footprint: TSOT-25
+  mpn: TLV62569DBVR
+  mouser: 595-TLV62569DBVR
+- ref: U5
+  value: TLV62569DBV
+  footprint: TSOT-25
+  mpn: TLV62569DBVR
+  mouser: 595-TLV62569DBVR
+- ref: U6
+  value: FT231XQ
+  footprint: FT231X-QFN-20-1EP
+  mpn: FT231XQ
+  mouser: 895-FT231XQ-R
+  digikey: 768-1128-1-ND
+  lcsc: C132159
+- ref: U7
+  value: MCP7940NT
+  footprint: SOT96-1
+  mpn: MCP7940NT-I/SN
+  mouser: 579-MCP7940NT-I/SN
+  digikey: MCP7940NT-I/SNCT-ND
+  lcsc: C148052
+- ref: U8
+  value: MAX11125
+  footprint: MAX1112x-TQFN-28-1EP
+  mpn: MAX11125ATI+
+  mouser: 700-MAX11125ATI+
+  digikey: MAX11125ATI+-ND
+  lcsc: C490299
+- ref: U9
+  value: ESP32
+  footprint: ESP32
+  mpn: ESP32-WROVER-E
+  mouser: 356-ESP32WRVE22864PC
+  digikey: 1965-ESP32-WROVER-B(16MB)CT-ND
+  lcsc: C529589
+- ref: US1
+  value: USB Micro-B
+  footprint: USB-MICRO-B-FCI-10118192-0001LF
+  mpn: 10118192-0001LF
+  mouser: 649-10118192-0001LF
+  digikey: 609-4613-1-ND
+  lcsc: C132564
+- ref: US2
+  value: USB Micro-B
+  footprint: USB-MICRO-B-FCI-10118192-0001LF
+- ref: Y1
+  value: FNETHE025
+  footprint: SMD7050
+  mpn: FNETHE025
+  mouser: 729-FNETHE025
+  digikey: 3305-7050XOM2500BMD13CCC-CT-ND
+  lcsc: C390569
+- ref: Y2
+  value: 32768Hz
+  footprint: Crystal_SMD_ABS07
+  mpn: LFXTAL016178REEL
+  mouser: 520-.327-6-34BT
+  digikey: 535-11937-1-ND
+  lcsc: C252402
+nets:
+- name: +1V1
+  pins:
+  - C17.1
+  - C27.1
+  - C28.1
+  - RP1.2
+  - U1.H10
+  - U1.H11
+  - U1.H12
+  - U1.H13
+  - U1.H8
+  - U1.H9
+  - U1.J13
+  - U1.J8
+  - U1.K13
+  - U1.K8
+  - U1.L13
+  - U1.L8
+  - U1.M13
+  - U1.M8
+  - U1.N10
+  - U1.N11
+  - U1.N12
+  - U1.N13
+  - U1.N8
+  - U1.N9
+  - U1.T10
+  - U1.T11
+  - U1.T12
+  - U1.T13
+  - U1.T14
+  - U1.T15
+  - U1.T6
+  - U1.T7
+  - U1.T8
+  - U1.T9
+  - U1.U15
+  - U1.U6
+- name: +2V5
+  pins:
+  - C19.1
+  - C29.1
+  - C30.1
+  - J5.1
+  - R22.1
+  - R23.1
+  - RP2.2
+  - RV2.1
+  - U1.F15
+  - U1.F6
+  - U1.P15
+  - U1.P6
+  - U1.V10
+  - U1.V11
+  - U1.V17
+  - U1.V18
+  - U11.2
+- name: +3V3
+  pins:
+  - C16.1
+  - C20.1
+  - C21.1
+  - C25.1
+  - C31.1
+  - C32.1
+  - C33.1
+  - C34.1
+  - C35.1
+  - C46.1
+  - C50.1
+  - C51.1
+  - C52.1
+  - D11.2
+  - D14.1
+  - J2.1
+  - J2.19
+  - J2.2
+  - J2.20
+  - J4.2
+  - J5.3
+  - L4.1
+  - L5.1
+  - LCD1.2
+  - R11.1
+  - R12.1
+  - R27.1
+  - R28.1
+  - R29.1
+  - R30.1
+  - R31.1
+  - R32.1
+  - R33.1
+  - R34.1
+  - R38.2
+  - R39.1
+  - R56.1
+  - R62.2
+  - R65.1
+  - R7.1
+  - RP3.2
+  - RV3.2
+  - U1.F11
+  - U1.F12
+  - U1.H14
+  - U1.H15
+  - U1.J15
+  - U1.L14
+  - U1.L15
+  - U1.L6
+  - U1.L7
+  - U1.M15
+  - U1.M6
+  - U1.P10
+  - U1.P9
+  - U1.T2
+  - U1.T3
+  - U1.T4
+  - U1.U2
+  - U10.8
+  - U11.8
+  - U2.1
+  - U2.14
+  - U2.27
+  - U2.3
+  - U2.43
+  - U2.49
+  - U2.9
+  - U9.2
+  - Y1.1
+  - Y1.4
+- name: +5V
+  pins:
+  - C1.1
+  - C13.1
+  - C5.1
+  - C9.1
+  - D51.1
+  - D52.2
+  - D8.1
+  - D9.2
+  - GPDI1.18
+  - Q1.2
+  - R24.1
+  - R25.1
+  - R26.1
+  - R3.1
+  - U3.4
+  - U4.4
+  - U5.4
+- name: /analog/ADC3V3
+  pins: [C58.1, C59.1, L4.2, U8.15, U8.17, U8.18]
+- name: /analog/ADCD3V3
+  pins: [C61.1, C62.1, L5.2, U8.23]
+- name: /analog/AUDIO_L
+  pins: [AUDIO1.2, R14.2, R15.2, R16.2, R17.2]
+- name: /analog/AUDIO_R
+  pins: [AUDIO1.3, R18.2, R19.2, R20.2, R21.2]
+- name: /analog/AUDIO_V
+  pins: [AUDIO1.4, R57.2, R58.2, R59.2, R60.2]
+- name: /blinkey/ALED0
+  pins: [D0.2, R41.2]
+- name: /blinkey/ALED1
+  pins: [D1.2, R42.2]
+- name: /blinkey/ALED2
+  pins: [D2.2, R43.2]
+- name: /blinkey/ALED3
+  pins: [D3.2, R44.2]
+- name: /blinkey/ALED4
+  pins: [D4.2, R45.2]
+- name: /blinkey/ALED5
+  pins: [D5.2, R46.2]
+- name: /blinkey/ALED6
+  pins: [D6.2, R47.2]
+- name: /blinkey/ALED7
+  pins: [D7.2, R48.2]
+- name: /blinkey/BTNPUL
+  pins: [B1.1, B2.1, R7.2]
+- name: /blinkey/BTNPUR
+  pins: [B3.1, B4.1, B5.1, B6.1, R39.2]
+- name: /blinkey/LED_PWREN
+  pins: [D18.1, R36.1]
+- name: /blinkey/LED_TXLED
+  pins: [D19.1, R37.2]
+- name: /blinkey/LED_WIFI
+  pins: [D22.2, R62.1]
+- name: /blinkey/SWPU
+  pins: [R51.2, SW1.1, SW1.2, SW1.3, SW1.4]
+- name: /flash/FLASH_MISO
+  pins: [R28.2, U1.V2, U10.2]
+- name: /flash/FLASH_MOSI
+  pins: [R27.2, U1.W2, U10.5]
+- name: /flash/FLASH_SCK
+  pins: [R29.2, U1.U3, U10.6]
+- name: /flash/FLASH_nCS
+  pins: [R30.2, U1.R2, U10.1]
+- name: /flash/FLASH_nHOLD
+  pins: [R12.2, U1.W1, U10.7]
+- name: /flash/FLASH_nWP
+  pins: [R11.2, U1.Y2, U10.3]
+- name: /flash/FPGA_DONE
+  pins: [R32.2, U1.Y3]
+- name: /flash/FPGA_INITN
+  pins: [R33.2, U1.V3]
+- name: /flash/FPGA_PROGRAMN
+  pins: [D28.2, D29.2, R31.2, U1.W3]
+- name: /gpdi/GPDI_CEC
+  pins: [GPDI1.13, R61.1]
+- name: /gpdi/GPDI_CLK+
+  pins: [C44.2, GPDI1.10]
+- name: /gpdi/GPDI_CLK-
+  pins: [C45.2, GPDI1.12]
+- name: /gpdi/GPDI_D0+
+  pins: [C42.2, GPDI1.7]
+- name: /gpdi/GPDI_D0-
+  pins: [C43.2, GPDI1.9]
+- name: /gpdi/GPDI_D1+
+  pins: [C40.2, GPDI1.4]
+- name: /gpdi/GPDI_D1-
+  pins: [C41.2, GPDI1.6]
+- name: /gpdi/GPDI_D2+
+  pins: [C38.2, GPDI1.1]
+- name: /gpdi/GPDI_D2-
+  pins: [C39.2, GPDI1.3]
+- name: /gpdi/GPDI_HPD
+  pins: [GPDI1.19, R67.2]
+- name: /gpdi/GPDI_UTIL
+  pins: [GPDI1.14, R55.2]
+- name: /gpdi/VREF2
+  pins: [C18.1, R24.2, U11.7]
+- name: /gpio/IN5V
+  pins: [D51.2, J2.39]
+- name: /gpio/OUT5V
+  pins: [D52.1, J2.40]
+- name: /power/FB1
+  pins: [C2.2, RA1.2, RB1.2, U3.5]
+- name: /power/FB2
+  pins: [C10.2, RA2.2, RB2.2, U4.5]
+- name: /power/FB3
+  pins: [C6.2, RA3.2, RB3.2, U5.5]
+- name: /power/FTDI_nSUSPEND
+  pins: [D12.2, R10.1]
+- name: /power/HOLD
+  pins: [D11.1, R4.1]
+- name: /power/L1
+  pins: [L1.1, U3.3]
+- name: /power/L2
+  pins: [L2.1, U4.3]
+- name: /power/L3
+  pins: [L3.1, U5.3]
+- name: /power/OSCI_32k
+  pins: [C56.2, U7.1, Y2.4]
+- name: /power/OSCO_32k
+  pins: [C57.2, U7.2, Y2.1]
+- name: /power/P1V1
+  pins:
+  - C2.1
+  - C22.1
+  - C3.1
+  - C4.1
+  - L1.2
+  - RA1.1
+  - RP1.1
+- name: /power/P2V5
+  pins:
+  - C10.1
+  - C11.1
+  - C12.1
+  - C23.1
+  - L2.2
+  - RA2.1
+  - RP2.1
+- name: /power/P3V3
+  pins:
+  - C24.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - L3.2
+  - RA3.1
+  - RP3.1
+- name: /power/PWREN
+  pins:
+  - D12.1
+  - R1.2
+  - R2.1
+  - R4.2
+  - R8.1
+  - U3.1
+  - U4.1
+  - U5.1
+- name: /power/RTCVDD
+  pins: [C55.1, R65.2, U7.8]
+- name: /power/SHD
+  pins: [Q2.3, R8.2]
+- name: /power/SHUT
+  pins: [C14.1, D14.2, D15.1, Q2.1, R5.1]
+- name: /power/VBAT
+  pins: [BAT1.1, C54.1, U7.3]
+- name: /power/WAKE
+  pins: [D10.1, R1.1]
+- name: /power/WAKEUPn
+  pins: [D16.2, D27.1, R6.2, U7.7]
+- name: /power/WKUP
+  pins: [C13.2, D10.2, D13.1, Q1.3]
+- name: /power/WKn
+  pins: [Q1.1, R6.1]
+- name: /serdes/SRCLKN
+  pins: [C68.1, U1.Y12]
+- name: /serdes/SRCLKP
+  pins: [C67.2, U1.Y11]
+- name: /serdes/SRXN00
+  pins: [C64.1, U1.Y6]
+- name: /serdes/SRXN01
+  pins: [C66.1, U1.Y8]
+- name: /serdes/SRXN10
+  pins: [C70.1, U1.Y15]
+- name: /serdes/SRXP00
+  pins: [C63.2, U1.Y5]
+- name: /serdes/SRXP01
+  pins: [C65.2, U1.Y7]
+- name: /serdes/SRXP10
+  pins: [C69.2, U1.Y14]
+- name: /serdes/STXN11
+  pins: [C72.1, U1.W18]
+- name: /serdes/STXP11
+  pins: [C71.2, U1.W17]
+- name: /usb/ANT_433MHz
+  pins: [AE1.1, U1.G1]
+- name: /usb/FPD+
+  pins: [R53.2, US2.3]
+- name: /usb/FPD-
+  pins: [R52.2, US2.2]
+- name: /usb/FTD+
+  pins: [R50.2, US1.3]
+- name: /usb/FTD-
+  pins: [R49.2, US1.2]
+- name: /usb/US2VBUS
+  pins: [D9.1, US2.1]
+- name: /wifi/SD3V3
+  pins: [C15.1, R38.1, SD1.4]
+- name: /wifi/WIFIEN
+  pins: [J3.2, R35.2, U9.3]
+- name: 2V5_3V3
+  pins:
+  - C26.1
+  - C47.1
+  - C48.1
+  - C49.1
+  - C53.1
+  - J1.1
+  - J1.19
+  - J1.2
+  - J1.20
+  - J1.39
+  - J1.40
+  - J5.2
+  - R51.1
+  - RV2.2
+  - RV3.1
+  - U1.F10
+  - U1.F9
+  - U1.H6
+  - U1.H7
+  - U1.J6
+- name: ADC_CSn
+  pins: [U1.R17, U8.20]
+- name: ADC_MISO
+  pins: [U1.U16, U8.24]
+- name: ADC_MOSI
+  pins: [U1.R16, U8.21]
+- name: ADC_SCLK
+  pins: [U1.P17, U8.19]
+- name: AUDIO_L0
+  pins: [R14.1, U1.E4]
+- name: AUDIO_L1
+  pins: [R15.1, U1.D3]
+- name: AUDIO_L2
+  pins: [R16.1, U1.C3]
+- name: AUDIO_L3
+  pins: [R17.1, U1.B3]
+- name: AUDIO_R0
+  pins: [R18.1, U1.A3]
+- name: AUDIO_R1
+  pins: [R19.1, U1.B5]
+- name: AUDIO_R2
+  pins: [R20.1, U1.D5]
+- name: AUDIO_R3
+  pins: [R21.1, U1.C5]
+- name: AUDIO_V0
+  pins: [R57.1, U1.H5]
+- name: AUDIO_V1
+  pins: [R58.1, U1.F2]
+- name: AUDIO_V2
+  pins: [R59.1, U1.F5]
+- name: AUDIO_V3
+  pins: [R60.1, U1.E5]
+- name: BTN_D
+  pins: [B4.2, U1.V1]
+- name: BTN_F1
+  pins: [B1.2, U1.R1]
+- name: BTN_F2
+  pins: [B2.2, U1.T1]
+- name: BTN_L
+  pins: [B5.2, U1.U1]
+- name: BTN_PWRn
+  pins: [D17.2, U1.D6]
+- name: BTN_R
+  pins: [B6.2, U1.H16]
+- name: BTN_U
+  pins: [B3.2, U1.R18]
+- name: CLK_25MHz
+  pins: [U1.G2, Y1.3]
+- name: FPDI_CEC
+  pins: [R61.2, U1.A18]
+- name: FPDI_CLK+
+  pins: [C44.1, U1.A17]
+- name: FPDI_CLK-
+  pins: [C45.1, U1.B18]
+- name: FPDI_D0+
+  pins: [C42.1, U1.A16]
+- name: FPDI_D0-
+  pins: [C43.1, U1.B16]
+- name: FPDI_D1+
+  pins: [C40.1, U1.A14]
+- name: FPDI_D1-
+  pins: [C41.1, U1.C14]
+- name: FPDI_D2+
+  pins: [C38.1, U1.A12]
+- name: FPDI_D2-
+  pins: [C39.1, U1.A13]
+- name: FPDI_HPD
+  pins: [D30.1, R67.1, U1.B20]
+- name: FPDI_SCL
+  pins: [R23.2, U1.E12, U11.3, U7.6]
+- name: FPDI_SDA
+  pins: [R22.2, U1.B19, U11.4, U7.5]
+- name: FPDI_UTIL
+  pins: [R55.1, U1.A19]
+- name: FT2V5
+  pins: [D19.2, R9.2, U6.10, U6.20]
+- name: FTDI_RXD
+  pins: [U1.L4, U6.1]
+- name: FTDI_TXD
+  pins: [U1.M1, U6.17]
+- name: FTDI_TXDEN
+  pins: [U1.L3, U6.15]
+- name: FTDI_nDTR
+  pins: [U1.N1, U6.18]
+- name: FTDI_nRTS
+  pins: [U1.M3, U6.19]
+- name: FTDI_nRXLED
+  pins: [U1.L5, U6.14]
+- name: FTDI_nSLEEP
+  pins: [D18.2, R10.2, U6.16]
+- name: FTDI_nTXLED
+  pins: [R37.1, U6.7]
+- name: GN0
+  pins: [J1.5, U1.C11]
+- name: GN1
+  pins: [J1.7, U1.A11]
+- name: GN10
+  pins: [J1.29, U1.B4]
+- name: GN11
+  pins: [J1.31, U1.E3]
+- name: GN12
+  pins: [J1.33, U1.F3, U9.8]
+- name: GN13
+  pins: [J1.35, U1.G5, U9.5]
+- name: GN14
+  pins: [J2.5, U1.U17, U8.26]
+- name: GN15
+  pins: [J2.7, U1.P16, U8.28]
+- name: GN16
+  pins: [J2.9, U1.M17, U8.2]
+- name: GN17
+  pins: [J2.11, U1.L17, U8.4]
+- name: GN18
+  pins: [J2.13, U1.H17]
+- name: GN19
+  pins: [J2.15, U1.G18]
+- name: GN2
+  pins: [J1.9, U1.B10]
+- name: GN20
+  pins: [J2.17, U1.E17]
+- name: GN21
+  pins: [J2.23, U1.D17]
+- name: GN22
+  pins: [J2.25, U1.C15]
+- name: GN23
+  pins: [J2.27, U1.C17]
+- name: GN24
+  pins: [J2.29, U1.D16]
+- name: GN25
+  pins: [J2.31, U1.E14]
+- name: GN26
+  pins: [J2.33, U1.C13]
+- name: GN27
+  pins: [J2.35, U1.E13]
+- name: GN3
+  pins: [J1.11, U1.C10]
+- name: GN4
+  pins: [J1.13, U1.A8]
+- name: GN5
+  pins: [J1.15, U1.B8]
+- name: GN6
+  pins: [J1.17, U1.C7]
+- name: GN7
+  pins: [J1.23, U1.B6]
+- name: GN8
+  pins: [J1.25, U1.A5]
+- name: GN9
+  pins: [J1.27, U1.B1]
+- name: GND
+  pins:
+  - AUDIO1.1
+  - B0.2
+  - BAT1.2
+  - C1.2
+  - C11.2
+  - C12.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.2
+  - C27.2
+  - C28.2
+  - C29.2
+  - C3.2
+  - C30.2
+  - C31.2
+  - C32.2
+  - C33.2
+  - C34.2
+  - C35.2
+  - C4.2
+  - C46.2
+  - C47.2
+  - C48.2
+  - C49.2
+  - C5.2
+  - C50.2
+  - C51.2
+  - C52.2
+  - C53.2
+  - C54.2
+  - C55.2
+  - C56.1
+  - C57.1
+  - C58.2
+  - C59.2
+  - C60.2
+  - C61.2
+  - C62.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D0.1
+  - D1.1
+  - D13.2
+  - D2.1
+  - D20.2
+  - D21.2
+  - D3.1
+  - D30.2
+  - D4.1
+  - D5.1
+  - D6.1
+  - D7.1
+  - GPDI1.0
+  - GPDI1.11
+  - GPDI1.17
+  - GPDI1.2
+  - GPDI1.5
+  - GPDI1.8
+  - J1.21
+  - J1.22
+  - J1.3
+  - J1.37
+  - J1.38
+  - J1.4
+  - J2.21
+  - J2.22
+  - J2.3
+  - J2.37
+  - J2.38
+  - J2.4
+  - J3.1
+  - J4.1
+  - LCD1.1
+  - Q2.2
+  - R13.2
+  - R2.2
+  - R36.2
+  - R5.2
+  - RB1.1
+  - RB2.1
+  - RB3.1
+  - SD1.6
+  - SD1.GM1
+  - SD1.GM2
+  - SD1.GM3
+  - SD1.GM4
+  - SD1.GS1
+  - SD1.GS2
+  - SD1.GS3
+  - SD1.GS4
+  - U1.B14
+  - U1.B7
+  - U1.C19
+  - U1.D4
+  - U1.F13
+  - U1.F14
+  - U1.F7
+  - U1.F8
+  - U1.G10
+  - U1.G11
+  - U1.G12
+  - U1.G13
+  - U1.G14
+  - U1.G15
+  - U1.G17
+  - U1.G4
+  - U1.G6
+  - U1.G7
+  - U1.G8
+  - U1.G9
+  - U1.H19
+  - U1.J10
+  - U1.J11
+  - U1.J12
+  - U1.J14
+  - U1.J2
+  - U1.J7
+  - U1.J9
+  - U1.K10
+  - U1.K11
+  - U1.K12
+  - U1.K14
+  - U1.K15
+  - U1.K6
+  - U1.K7
+  - U1.K9
+  - U1.L10
+  - U1.L11
+  - U1.L12
+  - U1.L9
+  - U1.M10
+  - U1.M11
+  - U1.M12
+  - U1.M14
+  - U1.M16
+  - U1.M2
+  - U1.M7
+  - U1.M9
+  - U1.N14
+  - U1.N15
+  - U1.N6
+  - U1.N7
+  - U1.P11
+  - U1.P12
+  - U1.P13
+  - U1.P14
+  - U1.P7
+  - U1.P8
+  - U1.R19
+  - U1.R4
+  - U1.U10
+  - U1.U11
+  - U1.U12
+  - U1.U13
+  - U1.U14
+  - U1.U4
+  - U1.U7
+  - U1.U8
+  - U1.U9
+  - U1.V12
+  - U1.V13
+  - U1.V14
+  - U1.V15
+  - U1.V16
+  - U1.V19
+  - U1.V20
+  - U1.V5
+  - U1.V6
+  - U1.V7
+  - U1.V8
+  - U1.V9
+  - U1.W12
+  - U1.W15
+  - U1.W16
+  - U1.W19
+  - U1.W6
+  - U1.W7
+  - U10.4
+  - U11.1
+  - U2.12
+  - U2.28
+  - U2.41
+  - U2.46
+  - U2.52
+  - U2.54
+  - U2.6
+  - U3.2
+  - U4.2
+  - U5.2
+  - U6.13
+  - U6.21
+  - U6.3
+  - U7.4
+  - U8.10
+  - U8.11
+  - U8.13
+  - U8.14
+  - U8.16
+  - U8.22
+  - U8.29
+  - U8.6
+  - U8.7
+  - U8.8
+  - U8.9
+  - U9.1
+  - U9.15
+  - U9.38
+  - US1.5
+  - US1.6
+  - US2.5
+  - US2.6
+  - Y1.2
+- name: GP0
+  pins: [J1.6, U1.B11]
+- name: GP1
+  pins: [J1.8, U1.A10]
+- name: GP10
+  pins: [J1.30, U1.C4]
+- name: GP11
+  pins: [J1.32, U1.F4]
+- name: GP12
+  pins: [J1.34, U1.G3, U9.9]
+- name: GP13
+  pins: [J1.36, U1.H4, U9.4]
+- name: GP14
+  pins: [J2.6, U1.U18, U8.27]
+- name: GP15
+  pins: [J2.8, U1.N17, U8.1]
+- name: GP16
+  pins: [J2.10, U1.N16, U8.3]
+- name: GP17
+  pins: [J2.12, U1.L16, U8.5]
+- name: GP18
+  pins: [J2.14, U1.H18]
+- name: GP19
+  pins: [J2.16, U1.F17]
+- name: GP2
+  pins: [J1.10, U1.A9]
+- name: GP20
+  pins: [J2.18, U1.D18]
+- name: GP21
+  pins: [J2.24, U1.C18]
+- name: GP22
+  pins: [J2.26, U1.B15]
+- name: GP23
+  pins: [J2.28, U1.B17]
+- name: GP24
+  pins: [J2.30, U1.C16]
+- name: GP25
+  pins: [J2.32, U1.D14]
+- name: GP26
+  pins: [J2.34, U1.B13]
+- name: GP27
+  pins: [J2.36, U1.D13]
+- name: GP3
+  pins: [J1.12, U1.B9]
+- name: GP4
+  pins: [J1.14, U1.A7]
+- name: GP5
+  pins: [J1.16, U1.C8]
+- name: GP6
+  pins: [J1.18, U1.C6]
+- name: GP7
+  pins: [J1.24, U1.A6]
+- name: GP8
+  pins: [J1.26, U1.A4]
+- name: GP9
+  pins: [J1.28, U1.A2]
+- name: GPDI_SCL
+  pins: [GPDI1.15, R25.2, U11.6]
+- name: GPDI_SDA
+  pins: [GPDI1.16, R26.2, U11.5]
+- name: JTAG_TCK
+  pins: [J4.4, U1.T5, U6.4, U9.30]
+- name: JTAG_TDI
+  pins: [J4.3, U1.R5, U6.2, U9.37]
+- name: JTAG_TDO
+  pins: [J4.6, U1.V4, U6.6, U9.6]
+- name: JTAG_TMS
+  pins: [D22.1, J4.5, U1.U5, U6.5, U9.29]
+- name: LED0
+  pins: [R41.1, U1.B2]
+- name: LED1
+  pins: [R42.1, U1.C2]
+- name: LED2
+  pins: [R43.1, U1.C1]
+- name: LED3
+  pins: [R44.1, U1.D2]
+- name: LED4
+  pins: [R45.1, U1.D1]
+- name: LED5
+  pins: [R46.1, U1.E2]
+- name: LED6
+  pins: [R47.1, U1.E1]
+- name: LED7
+  pins: [R48.1, U1.H3]
+- name: Net-(D23-Pad2)
+  pins: [D23.2, R63.1]
+- name: Net-(D24-Pad1)
+  pins: [D24.1, R40.1]
+- name: Net-(D25-Pad2)
+  pins: [D25.2, R64.1]
+- name: Net-(D26-Pad1)
+  pins: [D26.1, R54.2]
+- name: Net-(D27-Pad2)
+  pins: [D27.2, R66.2]
+- name: OLED_BL
+  pins: [C63.1, LCD1.8, U1.J4]
+- name: OLED_CLK
+  pins: [C68.2, LCD1.3, U1.P4]
+- name: OLED_CS
+  pins: [C64.2, LCD1.7, U1.N2]
+- name: OLED_DC
+  pins: [C65.1, LCD1.6, U1.P1]
+- name: OLED_MOSI
+  pins: [C67.1, LCD1.4, U1.P3]
+- name: OLED_RES
+  pins: [C66.2, LCD1.5, U1.P2]
+- name: PWRBTn
+  pins: [B0.1, C60.1, D16.1, D17.1, D28.1, R3.2]
+- name: SDRAM_A0
+  pins: [U1.M20, U2.23]
+- name: SDRAM_A1
+  pins: [U1.M19, U2.24]
+- name: SDRAM_A10
+  pins: [U1.N19, U2.22]
+- name: SDRAM_A11
+  pins: [U1.G20, U2.35]
+- name: SDRAM_A12
+  pins: [U1.G19, U2.36]
+- name: SDRAM_A2
+  pins: [U1.L20, U2.25]
+- name: SDRAM_A3
+  pins: [U1.L19, U2.26]
+- name: SDRAM_A4
+  pins: [U1.K20, U2.29]
+- name: SDRAM_A5
+  pins: [U1.K19, U2.30]
+- name: SDRAM_A6
+  pins: [U1.K18, U2.31]
+- name: SDRAM_A7
+  pins: [U1.J20, U2.32]
+- name: SDRAM_A8
+  pins: [U1.J19, U2.33]
+- name: SDRAM_A9
+  pins: [U1.H20, U2.34]
+- name: SDRAM_BA0
+  pins: [U1.P19, U2.20]
+- name: SDRAM_BA1
+  pins: [U1.N20, U2.21]
+- name: SDRAM_CKE
+  pins: [U1.F20, U2.37]
+- name: SDRAM_CLK
+  pins: [U1.F19, U2.38]
+- name: SDRAM_D0
+  pins: [U1.J16, U2.2]
+- name: SDRAM_D1
+  pins: [U1.L18, U2.4]
+- name: SDRAM_D10
+  pins: [U1.D19, U2.45]
+- name: SDRAM_D11
+  pins: [U1.C20, U2.47]
+- name: SDRAM_D12
+  pins: [U1.E18, U2.48]
+- name: SDRAM_D13
+  pins: [U1.F18, U2.50]
+- name: SDRAM_D14
+  pins: [U1.J18, U2.51]
+- name: SDRAM_D15
+  pins: [U1.J17, U2.53]
+- name: SDRAM_D2
+  pins: [U1.M18, U2.5]
+- name: SDRAM_D3
+  pins: [U1.N18, U2.7]
+- name: SDRAM_D4
+  pins: [U1.P18, U2.8]
+- name: SDRAM_D5
+  pins: [U1.T18, U2.10]
+- name: SDRAM_D6
+  pins: [U1.T17, U2.11]
+- name: SDRAM_D7
+  pins: [U1.U20, U2.13]
+- name: SDRAM_D8
+  pins: [U1.E19, U2.42]
+- name: SDRAM_D9
+  pins: [U1.D20, U2.44]
+- name: SDRAM_DQM0
+  pins: [U1.U19, U2.15]
+- name: SDRAM_DQM1
+  pins: [U1.E20, U2.39]
+- name: SDRAM_nCAS
+  pins: [U1.T19, U2.17]
+- name: SDRAM_nCS
+  pins: [U1.P20, U2.19]
+- name: SDRAM_nRAS
+  pins: [U1.R20, U2.18]
+- name: SDRAM_nWE
+  pins: [U1.T20, U2.16]
+- name: SD_CLK
+  pins: [SD1.5, U1.H2, U9.13]
+- name: SD_CMD
+  pins: [SD1.3, U1.J1, U9.23]
+- name: SD_D0
+  pins: [SD1.7, U1.J3, U9.24]
+- name: SD_D1
+  pins: [SD1.8, U1.H1, U9.26]
+- name: SD_D2
+  pins: [SD1.1, U1.K1, U9.14]
+- name: SD_D3
+  pins: [SD1.2, U1.K2, U9.16]
+- name: SHUTDOWN
+  pins: [D15.2, R13.1, U1.G16]
+- name: SW1
+  pins: [SW1.8, U1.E8]
+- name: SW2
+  pins: [SW1.7, U1.D8]
+- name: SW3
+  pins: [SW1.6, U1.D7]
+- name: SW4
+  pins: [SW1.5, U1.E7]
+- name: US2_ID
+  pins: [R66.1, US2.4]
+- name: USB5V
+  pins: [D8.2, U6.12, US1.1]
+- name: USB_FPGA_D+
+  pins: [D20.1, R40.2, R53.1, R63.2, U1.D15, U1.E16]
+- name: USB_FPGA_D-
+  pins: [D21.1, R52.1, R54.1, R64.2, U1.E15, U1.F16]
+- name: USB_FPGA_PULL_D+
+  pins: [D23.1, D24.2, U1.B12]
+- name: USB_FPGA_PULL_D-
+  pins: [D25.1, D26.2, U1.C12]
+- name: USB_FTDI_D+
+  pins: [R50.1, U6.8]
+- name: USB_FTDI_D-
+  pins: [R49.1, U6.9]
+- name: USER_PROGRAMN
+  pins: [D29.1, U1.M4]
+- name: WIFI_EN
+  pins: [R34.2, R35.1, U1.J5]
+- name: WIFI_GPIO0
+  pins: [R56.2, U1.F1, U9.25]
+- name: WIFI_GPIO19
+  pins: [U1.N4, U9.31]
+- name: WIFI_GPIO21
+  pins: [U1.K5, U9.33]
+- name: WIFI_GPIO22
+  pins: [U1.L2, U9.36]
+- name: WIFI_GPIO25
+  pins: [U1.E9, U9.10]
+- name: WIFI_GPIO26
+  pins: [U1.L1, U9.11]
+- name: WIFI_GPIO27
+  pins: [U1.N3, U9.12]
+- name: WIFI_GPIO35
+  pins: [U1.E6, U9.7]
+- name: WIFI_RXD
+  pins: [U1.K3, U9.34]
+- name: WIFI_TXD
+  pins: [U1.K4, U9.35]
+- name: nRESET
+  pins: [R9.1, U6.11]
+positions:
+- ref: AE1
+  x: 181.87
+  y: 111.6
+  side: back
+- ref: AUDIO1
+  x: 124.47
+  y: 69.6
+- ref: B0
+  x: 171.57
+  y: 74.12
+  rot: 180.0
+- ref: B1
+  x: 105.53
+  y: 89.36
+- ref: B2
+  x: 116.96
+  y: 89.36
+- ref: B3
+  x: 160.14
+  y: 99.52
+- ref: B4
+  x: 160.14
+  y: 108.41
+  rot: 180.0
+- ref: B5
+  x: 148.71
+  y: 108.41
+  rot: 180.0
+- ref: B6
+  x: 171.57
+  y: 108.41
+  rot: 180.0
+- ref: BAT1
+  x: 164.59
+  y: 105.87
+  rot: 90.0
+  side: back
+- ref: C1
+  x: 103.9
+  y: 72.78
+  side: back
+- ref: C10
+  x: 109.54
+  y: 72.0
+  rot: 180.0
+  side: back
+- ref: C11
+  x: 109.54
+  y: 75.18
+  rot: 180.0
+  side: back
+- ref: C12
+  x: 109.54
+  y: 77.08
+  rot: 180.0
+  side: back
+- ref: C13
+  x: 173.22
+  y: 84.79
+  rot: 90.0
+  side: back
+- ref: C14
+  x: 175.38
+  y: 76.03
+  rot: -90.0
+  side: back
+- ref: C15
+  x: 105.28
+  y: 99.01
+  rot: 90.0
+  side: back
+- ref: C16
+  x: 174.38
+  y: 87.47
+  side: back
+- ref: C17
+  x: 138.5
+  y: 91.62
+  rot: -90.0
+  side: back
+- ref: C18
+  x: 149.98
+  y: 64.9
+  rot: 90.0
+  side: back
+- ref: C19
+  x: 138.5
+  y: 81.42
+  rot: 90.0
+  side: back
+- ref: C2
+  x: 154.86
+  y: 96.91
+  side: back
+- ref: C20
+  x: 138.5
+  y: 86.62
+  rot: -90.0
+  side: back
+- ref: C21
+  x: 103.12
+  y: 93.06
+  side: back
+- ref: C22
+  x: 155.31
+  y: 98.5
+  side: back
+- ref: C23
+  x: 106.75
+  y: 82.29
+  rot: 180.0
+  side: back
+- ref: C24
+  x: 150.23
+  y: 74.88
+  rot: 180.0
+  side: back
+- ref: C25
+  x: 140.9
+  y: 86.22
+  rot: -90.0
+  side: back
+- ref: C26
+  x: 136.1
+  y: 86.22
+  rot: -90.0
+  side: back
+- ref: C27
+  x: 136.9
+  y: 91.22
+  rot: -90.0
+  side: back
+- ref: C28
+  x: 140.1
+  y: 91.22
+  rot: -90.0
+  side: back
+- ref: C29
+  x: 142.0
+  y: 91.12
+  rot: -90.0
+  side: back
+- ref: C3
+  x: 155.06
+  y: 90.63
+  side: back
+- ref: C30
+  x: 134.9
+  y: 91.02
+  rot: -90.0
+  side: back
+- ref: C31
+  x: 136.1
+  y: 88.42
+  side: back
+- ref: C32
+  x: 140.9
+  y: 88.42
+  rot: 180.0
+  side: back
+- ref: C33
+  x: 164.3
+  y: 82.22
+  side: back
+- ref: C34
+  x: 157.5
+  y: 82.22
+  rot: 180.0
+  side: back
+- ref: C35
+  x: 177.3
+  y: 94.9
+  rot: -90.0
+  side: back
+- ref: C38
+  x: 138.74
+  y: 75.76
+  rot: 90.0
+- ref: C39
+  x: 140.2
+  y: 75.77
+  rot: 90.0
+- ref: C4
+  x: 155.06
+  y: 92.53
+  side: back
+- ref: C40
+  x: 141.6
+  y: 75.77
+  rot: 90.0
+- ref: C41
+  x: 143.0
+  y: 75.77
+  rot: 90.0
+- ref: C42
+  x: 144.39
+  y: 75.77
+  rot: 90.0
+- ref: C43
+  x: 145.79
+  y: 75.77
+  rot: 90.0
+- ref: C44
+  x: 147.57
+  y: 75.76
+  rot: 90.0
+- ref: C45
+  x: 148.96
+  y: 75.77
+  rot: 90.0
+- ref: C46
+  x: 146.88
+  y: 105.2
+  side: back
+- ref: C47
+  x: 134.5
+  y: 68.55
+  side: back
+- ref: C48
+  x: 103.6
+  y: 70.02
+  side: back
+- ref: C49
+  x: 102.74
+  y: 86.44
+  rot: -90.0
+  side: back
+- ref: C5
+  x: 163.31
+  y: 91.9
+  rot: 90.0
+  side: back
+- ref: C50
+  x: 179.06
+  y: 87.98
+  rot: 90.0
+  side: back
+- ref: C51
+  x: 179.6
+  y: 103.71
+  rot: 180.0
+  side: back
+- ref: C52
+  x: 159.52
+  y: 96.49
+  rot: 180.0
+  side: back
+- ref: C53
+  x: 125.6
+  y: 81.77
+  rot: 180.0
+  side: back
+- ref: C54
+  x: 169.17
+  y: 96.24
+  rot: 90.0
+  side: back
+- ref: C55
+  x: 179.08
+  y: 91.92
+  rot: -90.0
+  side: back
+- ref: C56
+  x: 179.08
+  y: 95.47
+  rot: -90.0
+  side: back
+- ref: C57
+  x: 176.28
+  y: 103.71
+  rot: 180.0
+  side: back
+- ref: C58
+  x: 169.16
+  y: 92.92
+  rot: -90.0
+  side: back
+- ref: C59
+  x: 172.97
+  y: 97.11
+  rot: 90.0
+- ref: C6
+  x: 152.52
+  y: 82.38
+  side: back
+- ref: C60
+  x: 167.0
+  y: 70.31
+  side: back
+- ref: C61
+  x: 165.98
+  y: 88.47
+  rot: 90.0
+  side: back
+- ref: C62
+  x: 172.97
+  y: 103.33
+  rot: -90.0
+- ref: C63
+  x: 132.08
+  y: 98.0
+  rot: 90.0
+  side: back
+- ref: C64
+  x: 133.58
+  y: 98.0
+  rot: -90.0
+  side: back
+- ref: C65
+  x: 136.18
+  y: 98.0
+  rot: 90.0
+  side: back
+- ref: C66
+  x: 137.68
+  y: 98.0
+  rot: -90.0
+  side: back
+- ref: C67
+  x: 139.18
+  y: 98.0
+  rot: 90.0
+  side: back
+- ref: C68
+  x: 140.68
+  y: 98.0
+  rot: -90.0
+  side: back
+- ref: C69
+  x: 142.18
+  y: 98.0
+  rot: 90.0
+  side: back
+- ref: C7
+  x: 152.52
+  y: 79.2
+  side: back
+- ref: C70
+  x: 143.68
+  y: 98.0
+  rot: -90.0
+  side: back
+- ref: C71
+  x: 145.18
+  y: 98.0
+  rot: 90.0
+  side: back
+- ref: C72
+  x: 146.68
+  y: 98.0
+  rot: -90.0
+  side: back
+- ref: C8
+  x: 152.52
+  y: 77.3
+  side: back
+- ref: C9
+  x: 160.78
+  y: 78.56
+  rot: 90.0
+  side: back
+- ref: D0
+  x: 120.77
+  y: 79.6
+  rot: -90.0
+- ref: D1
+  x: 118.23
+  y: 79.6
+  rot: -90.0
+- ref: D10
+  x: 170.3
+  y: 84.06
+  side: back
+- ref: D11
+  x: 179.19
+  y: 79.83
+  rot: 90.0
+  side: back
+- ref: D12
+  x: 169.03
+  y: 79.83
+  rot: 90.0
+  side: back
+- ref: D13
+  x: 170.3
+  y: 85.84
+  rot: 180.0
+  side: back
+- ref: D14
+  x: 179.19
+  y: 76.03
+  rot: 90.0
+  side: back
+- ref: D15
+  x: 177.28
+  y: 76.03
+  rot: -90.0
+  side: back
+- ref: D16
+  x: 174.24
+  y: 73.5
+  side: back
+- ref: D17
+  x: 164.59
+  y: 70.31
+  rot: -90.0
+  side: back
+- ref: D18
+  x: 128.3
+  y: 105.5
+  rot: 90.0
+- ref: D19
+  x: 130.8
+  y: 105.5
+  rot: 90.0
+- ref: D2
+  x: 115.69
+  y: 79.6
+  rot: -90.0
+- ref: D20
+  x: 167.51
+  y: 68.66
+  rot: 180.0
+  side: back
+- ref: D21
+  x: 173.73
+  y: 68.55
+  side: back
+- ref: D22
+  x: 125.8
+  y: 105.5
+  rot: -90.0
+- ref: D23
+  x: 163.95
+  y: 67.26
+  side: back
+- ref: D24
+  x: 163.95
+  y: 65.36
+  rot: 180.0
+  side: back
+- ref: D25
+  x: 177.28
+  y: 71.34
+  rot: 90.0
+  side: back
+- ref: D26
+  x: 179.19
+  y: 71.34
+  rot: -90.0
+  side: back
+- ref: D27
+  x: 174.25
+  y: 71.74
+  rot: 180.0
+  side: back
+- ref: D28
+  x: 155.39
+  y: 84.19
+  side: back
+- ref: D29
+  x: 155.37
+  y: 85.96
+  side: back
+- ref: D3
+  x: 113.15
+  y: 79.6
+  rot: -90.0
+- ref: D30
+  x: 152.93
+  y: 72.6
+  rot: 90.0
+  side: back
+- ref: D4
+  x: 110.61
+  y: 79.6
+  rot: -90.0
+- ref: D5
+  x: 108.07
+  y: 79.6
+  rot: -90.0
+- ref: D51
+  x: 155.68
+  y: 67.1
+  rot: 90.0
+  side: back
+- ref: D52
+  x: 160.16
+  y: 67.1
+  rot: -90.0
+  side: back
+- ref: D6
+  x: 105.55
+  y: 79.6
+  rot: -90.0
+- ref: D7
+  x: 102.99
+  y: 79.6
+  rot: -90.0
+- ref: D8
+  x: 111.98
+  y: 65.2
+  side: back
+- ref: D9
+  x: 164.85
+  y: 73.9
+  rot: 180.0
+  side: back
+- ref: GPDI1
+  x: 145.3
+  y: 69.31
+  rot: 180.0
+- ref: J1
+  x: 97.91
+  y: 62.69
+  rot: -90.0
+- ref: J2
+  x: 184.27
+  y: 110.95
+  rot: 90.0
+- ref: J3
+  x: 105.53
+  y: 95.71
+  rot: -90.0
+- ref: J4
+  x: 140.3
+  y: 104.6
+  rot: -90.0
+- ref: J5
+  x: 130.06
+  y: 71.72
+  rot: 90.0
+- ref: L1
+  x: 158.87
+  y: 88.09
+  rot: 180.0
+  side: back
+- ref: L2
+  x: 105.09
+  y: 79.62
+  side: back
+- ref: L3
+  x: 156.33
+  y: 74.75
+  rot: 180.0
+  side: back
+- ref: L4
+  x: 169.79
+  y: 88.47
+  rot: -90.0
+  side: back
+- ref: L5
+  x: 167.89
+  y: 88.47
+  rot: -90.0
+  side: back
+- ref: LCD1
+  x: 140.3
+  y: 100.79
+  rot: 180.0
+- ref: Q1
+  x: 176.01
+  y: 84.28
+  rot: 90.0
+  side: back
+- ref: Q2
+  x: 170.94
+  y: 76.03
+  rot: 180.0
+  side: back
+- ref: R1
+  x: 170.3
+  y: 82.38
+  side: back
+- ref: R10
+  x: 152.14
+  y: 103.08
+  rot: 180.0
+  side: back
+- ref: R11
+  x: 119.2
+  y: 73.12
+  rot: -90.0
+  side: back
+- ref: R12
+  x: 114.8
+  y: 81.72
+  rot: 90.0
+  side: back
+- ref: R13
+  x: 176.01
+  y: 78.56
+  rot: 180.0
+  side: back
+- ref: R14
+  x: 125.6
+  y: 80.26
+  rot: 180.0
+  side: back
+- ref: R15
+  x: 125.6
+  y: 78.74
+  rot: 180.0
+  side: back
+- ref: R16
+  x: 125.6
+  y: 77.21
+  rot: 180.0
+  side: back
+- ref: R17
+  x: 125.6
+  y: 75.67
+  rot: 180.0
+  side: back
+- ref: R18
+  x: 130.42
+  y: 74.77
+  rot: 90.0
+  side: back
+- ref: R19
+  x: 131.96
+  y: 74.77
+  rot: 90.0
+  side: back
+- ref: R2
+  x: 172.84
+  y: 79.83
+  rot: 90.0
+  side: back
+- ref: R20
+  x: 133.49
+  y: 74.77
+  rot: 90.0
+  side: back
+- ref: R21
+  x: 135.01
+  y: 74.77
+  rot: 90.0
+  side: back
+- ref: R22
+  x: 140.03
+  y: 65.23
+  rot: 90.0
+  side: back
+- ref: R23
+  x: 140.6
+  y: 70.2
+  rot: -90.0
+  side: back
+- ref: R24
+  x: 149.98
+  y: 67.9
+  rot: 90.0
+  side: back
+- ref: R25
+  x: 149.18
+  y: 72.49
+  rot: 180.0
+  side: back
+- ref: R26
+  x: 149.18
+  y: 70.2
+  rot: 180.0
+  side: back
+- ref: R27
+  x: 117.77
+  y: 84.7
+  side: back
+- ref: R28
+  x: 117.69
+  y: 73.12
+  rot: -90.0
+  side: back
+- ref: R29
+  x: 113.3
+  y: 81.72
+  rot: 90.0
+  side: back
+- ref: R3
+  x: 162.48
+  y: 70.31
+  rot: 90.0
+  side: back
+- ref: R30
+  x: 116.2
+  y: 73.12
+  rot: -90.0
+  side: back
+- ref: R31
+  x: 158.31
+  y: 84.31
+  rot: -90.0
+  side: back
+- ref: R32
+  x: 130.58
+  y: 98.0
+  rot: 90.0
+  side: back
+- ref: R33
+  x: 129.08
+  y: 97.99
+  rot: 90.0
+  side: back
+- ref: R34
+  x: 103.75
+  y: 103.6
+  side: back
+- ref: R35
+  x: 103.75
+  y: 102.06
+  rot: 180.0
+  side: back
+- ref: R36
+  x: 128.3
+  y: 108.7
+  rot: -90.0
+- ref: R37
+  x: 130.8
+  y: 108.7
+  rot: 90.0
+- ref: R38
+  x: 103.58
+  y: 99.03
+  rot: 90.0
+  side: back
+- ref: R39
+  x: 163.31
+  y: 96.34
+  rot: 180.0
+  side: back
+- ref: R4
+  x: 176.01
+  y: 80.47
+  rot: 180.0
+  side: back
+- ref: R40
+  x: 167.51
+  y: 65.74
+  side: back
+- ref: R41
+  x: 120.77
+  y: 82.5
+  rot: 90.0
+- ref: R42
+  x: 118.23
+  y: 82.5
+  rot: 90.0
+- ref: R43
+  x: 115.69
+  y: 82.5
+  rot: 90.0
+- ref: R44
+  x: 113.15
+  y: 82.5
+  rot: 90.0
+- ref: R45
+  x: 110.61
+  y: 82.5
+  rot: 90.0
+- ref: R46
+  x: 108.07
+  y: 82.5
+  rot: 90.0
+- ref: R47
+  x: 105.53
+  y: 82.5
+  rot: 90.0
+- ref: R48
+  x: 102.99
+  y: 82.5
+  rot: 90.0
+- ref: R49
+  x: 113.0
+  y: 69.58
+  rot: 90.0
+  side: back
+- ref: R5
+  x: 174.11
+  y: 76.03
+  rot: -90.0
+  side: back
+- ref: R50
+  x: 111.5
+  y: 69.58
+  rot: 90.0
+  side: back
+- ref: R51
+  x: 156.33
+  y: 72.49
+  rot: 180.0
+  side: back
+- ref: R52
+  x: 171.33
+  y: 67.15
+  rot: 90.0
+  side: back
+- ref: R53
+  x: 169.92
+  y: 67.15
+  rot: 90.0
+  side: back
+- ref: R54
+  x: 173.6
+  y: 65.5
+  side: back
+- ref: R55
+  x: 150.36
+  y: 75.77
+  rot: 90.0
+- ref: R56
+  x: 114.04
+  y: 83.93
+  side: back
+- ref: R57
+  x: 120.01
+  y: 69.08
+  rot: 90.0
+  side: back
+- ref: R58
+  x: 121.53
+  y: 69.08
+  rot: 90.0
+  side: back
+- ref: R59
+  x: 123.06
+  y: 69.08
+  rot: 90.0
+  side: back
+- ref: R6
+  x: 178.56
+  y: 84.92
+  rot: -90.0
+  side: back
+- ref: R60
+  x: 124.58
+  y: 69.08
+  rot: 90.0
+  side: back
+- ref: R61
+  x: 144.78
+  y: 69.9
+  rot: 180.0
+  side: back
+- ref: R62
+  x: 125.8
+  y: 108.7
+  rot: -90.0
+- ref: R63
+  x: 167.51
+  y: 67.14
+  side: back
+- ref: R64
+  x: 173.6
+  y: 66.9
+  rot: 180.0
+  side: back
+- ref: R65
+  x: 177.3
+  y: 91.92
+  rot: 90.0
+  side: back
+- ref: R66
+  x: 174.0
+  y: 70.2
+  side: back
+- ref: R67
+  x: 151.76
+  y: 75.77
+  rot: 90.0
+- ref: R7
+  x: 102.23
+  y: 90.5
+  rot: 90.0
+  side: back
+- ref: R8
+  x: 170.94
+  y: 79.83
+  rot: 90.0
+  side: back
+- ref: R9
+  x: 128.98
+  y: 108.8
+  rot: -90.0
+  side: back
+- ref: RA1
+  x: 154.86
+  y: 95.64
+  side: back
+- ref: RA2
+  x: 109.54
+  y: 73.28
+  rot: 180.0
+  side: back
+- ref: RA3
+  x: 152.52
+  y: 81.11
+  side: back
+- ref: RB1
+  x: 158.24
+  y: 91.9
+  rot: -90.0
+  side: back
+- ref: RB2
+  x: 106.36
+  y: 75.81
+  rot: 90.0
+  side: back
+- ref: RB3
+  x: 155.69
+  y: 78.56
+  rot: -90.0
+  side: back
+- ref: RP1
+  x: 152.28
+  y: 97.36
+  rot: -90.0
+  side: back
+- ref: RP2
+  x: 109.81
+  y: 80.53
+  rot: -90.0
+  side: back
+- ref: RP3
+  x: 149.47
+  y: 78.31
+  rot: -90.0
+  side: back
+- ref: RV2
+  x: 130.56
+  y: 69.57
+- ref: RV3
+  x: 134.25
+  y: 69.57
+- ref: SD1
+  x: 115.13
+  y: 103.5
+  rot: -90.0
+- ref: SW1
+  x: 160.14
+  y: 74.12
+  rot: 90.0
+- ref: U1
+  x: 138.48
+  y: 87.8
+- ref: U10
+  x: 118.34
+  y: 79.22
+  rot: -90.0
+  side: back
+- ref: U11
+  x: 144.68
+  y: 65.8
+  rot: 90.0
+  side: back
+- ref: U2
+  x: 165.09
+  y: 87.8
+  rot: 90.0
+- ref: U3
+  x: 160.78
+  y: 91.9
+  side: back
+- ref: U4
+  x: 103.83
+  y: 75.81
+  rot: 180.0
+  side: back
+- ref: U5
+  x: 158.24
+  y: 78.69
+  side: back
+- ref: U6
+  x: 132.84
+  y: 106.6
+  rot: 180.0
+  side: back
+- ref: U7
+  x: 173.49
+  y: 93.31
+  rot: 90.0
+  side: back
+- ref: U8
+  x: 177.28
+  y: 100.16
+  rot: 180.0
+- ref: U9
+  x: 117.3
+  y: 102.72
+  rot: 180.0
+  side: back
+- ref: US1
+  x: 111.88
+  y: 63.33
+  rot: 180.0
+- ref: US2
+  x: 170.3
+  y: 63.33
+  rot: 180.0
+- ref: Y1
+  x: 105.67
+  y: 72.36
+  rot: 180.0
+- ref: Y2
+  x: 178.57
+  y: 99.92
+  rot: 90.0
+  side: back
+copper_pours:
+- net: +1V1
+  layers: [In1.Cu]
+- net: +2V5
+  layers: [In1.Cu]
+- net: +3V3
+  layers: [In1.Cu]
+- net: 2V5_3V3
+  layers: [In1.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+  keepout: true

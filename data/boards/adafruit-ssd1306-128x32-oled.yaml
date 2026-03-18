@@ -1,0 +1,244 @@
+name: Adafruit SSD1306 128x32 OLED
+slug: adafruit-ssd1306-128x32-oled
+source: adafruit/Adafruit-128x32-I2C-OLED-Breakout-PCB
+format: eagle
+description: I2C OLED display (SSD1306), canonical IoT display
+tags: [display, level-shifting]
+key_ics: [SSD1306]
+outline:
+  width_mm: 33.02
+  height_mm: 21.59
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  decouples: IC5
+- ref: C2
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C3
+  value: 10uF
+  footprint: 0805
+  decouples: IC5
+- ref: C4
+  value: 1uF
+  footprint: 0805
+- ref: C5
+  value: 1uF
+  footprint: 0805
+- ref: C6
+  value: 1uF
+  footprint: 0805
+  decouples: U2
+- ref: C7
+  value: 1uF
+  footprint: 0805
+  decouples: U2
+- ref: C8
+  value: 10uF
+  footprint: 0805
+- ref: C9
+  value: 10uF
+  footprint: 0805
+- ref: CONN4
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: D1
+  value: green LED
+  footprint: '0603'
+- ref: D2
+  value: 1N4148
+  footprint: SOD-323F
+- ref: IC5
+  value: APX803
+  footprint: SOT23
+- ref: JP1
+  value: 1x6 header
+  footprint: 1X06
+- ref: LCD1
+  value: OLED display
+  footprint: UG-2832HSWEG02_WRAPUNDER
+  description: 128x32 I2C 0
+- ref: Q2
+  value: BSS138
+  footprint: SOT363
+  description: Dual N-Channel MOSFET
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  pulldown: D1.C
+- ref: R2
+  value: 390kohm
+  footprint: '0603'
+  pulldown: LCD1.IREF
+- ref: R3
+  value: 10kohm
+  footprint: RESPACK
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  pullup: RES_3V
+- ref: U2
+  value: AP2112K-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+nets:
+- name: 3.3V
+  pins:
+  - C1.1
+  - C3.1
+  - C6.2
+  - C7.2
+  - D1.A
+  - IC5.VCC
+  - JP1.2
+  - LCD1.VBAT
+  - LCD1.VDD
+  - Q2.1.G
+  - Q2.2.G
+  - R3.G$2.1
+  - R3.G$4.1
+  - R5.2
+  - U2.OUT
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - CONN4.GND
+  - IC5.GND
+  - JP1.3
+  - LCD1.VSS
+  - R1.2
+  - R2.1
+  - U2.GND
+- name: N$1
+  pins: [C4.2, LCD1.C2+]
+- name: N$2
+  pins: [D1.C, R1.1]
+- name: N$3
+  pins: [C4.1, LCD1.C2-]
+- name: N$4
+  pins: [C5.2, LCD1.C1+]
+- name: N$5
+  pins: [C5.1, LCD1.C1-]
+- name: N$6
+  pins: [C9.2, LCD1.VCOMH]
+- name: N$7
+  pins: [LCD1.IREF, R2.2]
+- name: N$8
+  pins: [C8.2, LCD1.VCC]
+- name: RESET
+  pins: [D2.C, JP1.4]
+- name: RES_3V
+  pins: [D2.A, IC5./RESET, LCD1.RES#, R5.1]
+- name: SCL
+  pins: [CONN4.SCL, JP1.5, Q2.1.D, R3.G$1.2]
+- name: SCL_3V
+  pins: [LCD1.SCL, Q2.1.S, R3.G$2.2]
+- name: SDA
+  pins: [CONN4.SDA, JP1.6, Q2.2.D, R3.G$3.2]
+- name: SDA_3V
+  pins: [LCD1.SDA, Q2.2.S, R3.G$4.2]
+- name: VCC
+  pins:
+  - C2.1
+  - CONN4.V+
+  - JP1.1
+  - R3.G$1.1
+  - R3.G$3.1
+  - U2.EN
+  - U2.IN
+positions:
+- ref: C1
+  x: 19.94
+  y: 6.86
+  rot: 270.0
+- ref: C2
+  x: 12.95
+  y: 15.49
+- ref: C3
+  x: 14.86
+  y: 8.89
+- ref: C4
+  x: 9.27
+  y: 5.21
+- ref: C5
+  x: 9.27
+  y: 7.11
+  rot: 180.0
+- ref: C6
+  x: 9.27
+  y: 9.4
+  rot: 180.0
+- ref: C7
+  x: 9.27
+  y: 11.3
+  rot: 180.0
+- ref: C8
+  x: 9.27
+  y: 16.64
+  rot: 180.0
+- ref: C9
+  x: 9.27
+  y: 14.73
+  rot: 180.0
+- ref: CONN4
+  x: 30.35
+  y: 10.92
+  rot: 90.0
+- ref: D1
+  x: 31.37
+  y: 6.35
+  rot: 90.0
+- ref: D2
+  x: 17.4
+  y: 15.49
+- ref: IC5
+  x: 17.4
+  y: 11.18
+  rot: 180.0
+- ref: JP1
+  x: 16.51
+  y: 2.54
+  rot: 180.0
+- ref: LCD1
+  x: 2.29
+  y: 10.8
+- ref: Q2
+  x: 22.35
+  y: 7.75
+  rot: 90.0
+- ref: R1
+  x: 28.45
+  y: 6.35
+  rot: 180.0
+- ref: R2
+  x: 9.27
+  y: 13.08
+  rot: 180.0
+- ref: R3
+  x: 22.35
+  y: 11.94
+  rot: 270.0
+- ref: R5
+  x: 17.4
+  y: 13.97
+- ref: U2
+  x: 12.95
+  y: 12.06
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [F.Cu]

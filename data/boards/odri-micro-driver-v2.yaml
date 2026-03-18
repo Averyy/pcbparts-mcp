@@ -1,0 +1,806 @@
+name: ODRI Micro Driver v2
+slug: odri-micro-driver-v2
+source: open-dynamic-robot-initiative/open_robot_actuator_hardware
+format: eagle
+description: Dual BLDC motor driver (51x50mm, 13g)
+tags: [inverter, motor-control]
+key_ics: [DRV8305]
+outline:
+  width_mm: 51.0
+  height_mm: 50.0
+design_rules:
+  layers: 6
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 6mil
+  min_via: 4mil
+components:
+- ref: B1
+  value: B3U
+  footprint: B3U
+- ref: C45
+  value: 4.7uF
+  footprint: 0805
+  decouples: U5
+- ref: C68
+  value: 1uF
+  footprint: '0603'
+  decouples: U7
+- ref: C7
+  value: 4.7uF
+  footprint: 0805
+  decouples: U7
+- ref: D1
+  value: PWR
+  footprint: CHIP-LED0603
+- ref: D2
+  value: ERROR
+  footprint: CHIP-LED0603
+- ref: D3
+  value: ERROR
+  footprint: CHIP-LED0603
+- ref: D4
+  value: LED
+  footprint: CHIP-LED0603
+- ref: D5
+  value: LED
+  footprint: CHIP-LED0603
+- ref: I1
+  value: NR4018
+  footprint: 4X4
+- ref: M1
+  value: AMP-8
+  footprint: AMP-MINITEK-8
+- ref: Q1
+  value: CSD18540
+  footprint: Q5B
+- ref: Q10
+  value: CSD18540
+  footprint: Q5B
+- ref: Q11
+  value: CSD18540
+  footprint: Q5B
+- ref: Q12
+  value: CSD18540
+  footprint: Q5B
+- ref: Q2
+  value: CSD18540
+  footprint: Q5B
+- ref: Q3
+  value: CSD18540
+  footprint: Q5B
+- ref: Q4
+  value: CSD18540
+  footprint: Q5B
+- ref: Q5
+  value: CSD18540
+  footprint: Q5B
+- ref: Q6
+  value: CSD18540
+  footprint: Q5B
+- ref: Q7
+  value: CSD18540
+  footprint: Q5B
+- ref: Q8
+  value: CSD18540
+  footprint: Q5B
+- ref: Q9
+  value: CSD18540
+  footprint: Q5B
+- ref: QEP_A
+  value: DF13-5P-1.25
+  footprint: DF13-5P-1.25DSA
+  description: DF13-5P 1
+- ref: QEP_B
+  value: DF13-5P-1.25
+  footprint: DF13-5P-1.25DSA
+  description: DF13-5P 1
+- ref: R11
+  value: 7mohm
+  footprint: '2512'
+- ref: R15
+  value: 7mohm
+  footprint: '2512'
+- ref: R27
+  value: 7mohm
+  footprint: '2512'
+- ref: R31
+  value: 7mohm
+  footprint: '2512'
+- ref: R36
+  value: 7mohm
+  footprint: '2512'
+- ref: R7
+  value: 7mohm
+  footprint: '2512'
+- ref: T1
+  value: 7343-CAP
+  footprint: M7343-CAP
+- ref: T2
+  value: 7343-CAP
+  footprint: M7343-CAP
+- ref: T3
+  value: 7343-CAP
+  footprint: M7343-CAP
+- ref: T4
+  value: 7343-CAP
+  footprint: M7343-CAP
+- ref: T5
+  value: 7343-CAP
+  footprint: M7343-CAP
+- ref: T6
+  value: 7343-CAP
+  footprint: M7343-CAP
+- ref: U$1
+  value: DF13-2P-1.25
+  footprint: DF13-2P-1.25DSA
+  description: DF13-2P 1
+- ref: U$10
+  value: BLDC_PAD
+  footprint: BLDC_PAD
+- ref: U$11
+  value: DF13-5P-1.25
+  footprint: DF13-5P-1.25DSA
+  description: DF13-5P 1
+- ref: U$12
+  value: DF13-4P-1.25
+  footprint: DF13-4P-1.25DSA
+  description: DF13-4P 1
+- ref: U$13
+  value: DF13-8P-1.25
+  footprint: DF13-8P-1.25DSA
+  description: DF13-8P 1
+- ref: U$2
+  value: GND-AGND
+  footprint: GND-AGND
+- ref: U$3
+  value: BLDC_PAD
+  footprint: BLDC_PAD
+- ref: U$4
+  value: BLDC_PAD
+  footprint: BLDC_PAD
+- ref: U$5
+  value: BLDC_PAD
+  footprint: BLDC_PAD
+- ref: U$6
+  value: BLDC_PAD
+  footprint: BLDC_PAD
+- ref: U$7
+  value: BLDC_PAD
+  footprint: BLDC_PAD
+- ref: U$8
+  value: BLDC_PAD
+  footprint: BLDC_PAD
+- ref: U$9
+  value: BLDC_PAD
+  footprint: BLDC_PAD
+- ref: U1
+  value: TMS320F28069MPZT
+  footprint: PQFP100
+- ref: U2
+  value: SN74LVC2G07
+  footprint: SOT23-6-DBV
+- ref: U3
+  value: SN65HVD234D
+  footprint: SOIC8-PDSO
+- ref: U4
+  value: TXB0106
+  footprint: VQFN-N16
+- ref: U5
+  value: DRV8305
+  footprint: HTQFP-48
+- ref: U6
+  value: DRV8305
+  footprint: HTQFP-48
+- ref: U7
+  value: MAX15062
+  footprint: TDFN-8
+- ref: U8
+  value: TLV70033DSER
+  footprint: SON-6
+  mpn: TLV70033DSER
+  description: 200-mA, Low-IQ, Low-Dropout Regulator for Portable Devices
+nets:
+- name: +3V3
+  pins:
+  - D1.A
+  - D2.A
+  - D3.A
+  - D4.A
+  - D5.A
+  - M1.P$2
+  - U$12.1
+  - U$13.1
+  - U1.G$1.VDD_FL
+  - U2.VCC
+  - U3.VCC
+  - U4.VCCA
+  - U8.OUT
+  trace_width: '0.1524'
+- name: +5V
+  pins:
+  - I1.P$2
+  - QEP_A.4
+  - QEP_B.4
+  - U4.VCCB
+  - U7.VOUT
+  - U8.EN
+  - U8.IN
+  trace_width: '0.1524'
+- name: A.DC_CAL
+  pins: [U1.G$2.GPIO51/EQEP1B/MDRA/TZ2, U6.WAKE]
+  trace_width: '0.1524'
+- name: A.ENC_A
+  pins: [U1.G$2.GPIO20/EQEP1A/MDXA/COMP1OUT, U4.A1]
+  trace_width: '0.1524'
+- name: A.ENC_B
+  pins: [U1.G$2.GPIO21/EQEP1B/MDRA/COMP2OUT, U4.A2]
+  trace_width: '0.1524'
+- name: A.ENC_I
+  pins: [U1.G$2.GPIO23/EQEP1I/MFSXA/SCIRXDB, U4.A3]
+  trace_width: '0.1524'
+- name: A.EN_GATE
+  pins: [U1.G$2.GPIO50/EQEP1A/MDXA/TZ1, U6.EN_GATE]
+  trace_width: '0.1524'
+- name: A.FAULT
+  pins: [U1.G$2.GPIO28/SCI_RXDA/SDAA/TZ2, U6./FAULT]
+  trace_width: '0.1524'
+- name: A.GH_A
+  pins: [Q1.G, U6.GH_A]
+  trace_width: '0.1524'
+- name: A.GH_B
+  pins: [Q2.G, U6.GH_B]
+  trace_width: '0.1524'
+- name: A.GH_C
+  pins: [Q3.G, U6.GH_C]
+  trace_width: '0.1524'
+- name: A.GL_A
+  pins: [Q4.G, U6.GL_A]
+  trace_width: '0.1524'
+- name: A.GL_B
+  pins: [Q5.G, U6.GL_B]
+  trace_width: '0.1524'
+- name: A.GL_C
+  pins: [Q6.G, U6.GL_C]
+  trace_width: '0.1524'
+- name: A.PWM_AH
+  pins: [U1.G$2.GPIO0/EPWM1A, U6.INH_A]
+  trace_width: '0.1524'
+- name: A.PWM_AL
+  pins: [U1.G$2.GPIO1/EPWM1B/COMP1OUT, U6.INL_A]
+  trace_width: '0.1524'
+- name: A.PWM_BH
+  pins: [U1.G$2.GPIO2/EPWM2A, U6.INH_B]
+  trace_width: '0.1524'
+- name: A.PWM_BL
+  pins: [U1.G$2.GPIO3/EPWM2B/SPISOMIA/COMP2OUT, U6.INL_B]
+  trace_width: '0.1524'
+- name: A.PWM_CH
+  pins: [U1.G$2.GPIO4/EPWM3A, U6.INH_C]
+  trace_width: '0.1524'
+- name: A.PWM_CL
+  pins: [U1.G$2.GPIO5/EPWM3B/SPISIMOA/ECAP1, U6.INL_C]
+  trace_width: '0.1524'
+- name: A.SH_A
+  pins: [Q1.S, Q4.D, U$6.P$1, U6.SH_A]
+  trace_width: '0.1524'
+- name: A.SH_B
+  pins: [Q2.S, Q5.D, U$7.P$1, U6.SH_B]
+  trace_width: '0.1524'
+- name: A.SH_C
+  pins: [Q3.S, Q6.D, U$8.P$1, U6.SH_C]
+  trace_width: '0.1524'
+- name: A.SN1
+  pins: [Q4.S, R7.1, U6.SL_A, U6.SN1]
+  trace_width: '0.1524'
+- name: A.SN2
+  pins: [Q5.S, R11.1, U6.SL_B, U6.SN2]
+  trace_width: '0.1524'
+- name: A.SN3
+  pins: [Q6.S, R15.1, U6.SL_C, U6.SN3]
+  trace_width: '0.1524'
+- name: A.SPI_CLK
+  pins: [U$13.7, U1.G$1.XCLK_O/GPIO18, U5.SCLK, U6.SCLK]
+  trace_width: '0.1524'
+- name: A.SPI_CS
+  pins: [U1.G$1.XCLK_I/GPIO19, U6./SCS]
+  trace_width: '0.1524'
+- name: A.SPI_SI
+  pins: [U$13.5, U1.G$2.GPIO16/SPI_SIMO_A/TZ2, U5.SDI, U6.SDI]
+  trace_width: '0.1524'
+- name: A.SPI_SO
+  pins: [U$13.6, U1.G$2.GPIO17/SPI_SOMI_A/TZ3, U5.SDO, U6.SDO]
+  trace_width: '0.1524'
+- name: ADCINA6
+  pins: [U$12.2, U1.G$1.ADC_INA6/COMP3A/AIO6]
+  trace_width: '0.1524'
+- name: AGND
+  pins:
+  - R11.2
+  - R15.2
+  - R27.2
+  - R31.2
+  - R36.2
+  - R7.2
+  - T2.P$2
+  - T4.P$2
+  - T6.P$2
+  - U$10.P$1
+  - U$2.P$1
+  - U5.SP1
+  - U5.SP2
+  - U5.SP3
+  - U6.SP1
+  - U6.SP2
+  - U6.SP3
+  trace_width: '0.1524'
+- name: B.DC_CAL
+  pins: [U1.G$2.GPIO53/EQEP1I/MFSXA, U5.WAKE]
+  trace_width: '0.1524'
+- name: B.ENC_A
+  pins: [U1.G$2.GPIO54/SPISIMOA/EQEP2A/HRCAP1, U4.A4]
+  trace_width: '0.1524'
+- name: B.ENC_B
+  pins: [U1.G$2.GPIO55/SPISOMIA/EQEP2B/HRCAP2, U4.A5]
+  trace_width: '0.1524'
+- name: B.ENC_I
+  pins: [U1.G$2.GPIO56/SPICLKA/EQEP2I/HRCAP3, U4.A6]
+  trace_width: '0.1524'
+- name: B.EN_GATE
+  pins: [U1.G$2.GPIO52/EQEP1S/MCLKXA/TZ3, U5.EN_GATE]
+  trace_width: '0.1524'
+- name: B.FAULT
+  pins: [U1.G$2.GPIO15/ECAP2/SCI_RXDB/SPISTEB, U5./FAULT]
+  trace_width: '0.1524'
+- name: B.GH_A
+  pins: [Q7.G, U5.GH_A]
+  trace_width: '0.1524'
+- name: B.GH_B
+  pins: [Q9.G, U5.GH_B]
+  trace_width: '0.1524'
+- name: B.GH_C
+  pins: [Q11.G, U5.GH_C]
+  trace_width: '0.1524'
+- name: B.GL_A
+  pins: [Q8.G, U5.GL_A]
+  trace_width: '0.1524'
+- name: B.GL_B
+  pins: [Q10.G, U5.GL_B]
+  trace_width: '0.1524'
+- name: B.GL_C
+  pins: [Q12.G, U5.GL_C]
+  trace_width: '0.1524'
+- name: B.PWM_AH
+  pins: [U1.G$2.GPIO6/EPWM4A/EPWMSYNCI/EPWMSYNCO, U5.INH_A]
+  trace_width: '0.1524'
+- name: B.PWM_AL
+  pins: [U1.G$2.GPIO7/EPWM4B/SCIRXDA/ECAP2, U5.INL_A]
+  trace_width: '0.1524'
+- name: B.PWM_BH
+  pins: [U1.G$2.GPIO8/EPWM5A/ADCSOCAO, U5.INH_B]
+  trace_width: '0.1524'
+- name: B.PWM_BL
+  pins: [U1.G$2.GPIO9/EPWM5B/SCI_TXDB/ECAP, U5.INL_B]
+  trace_width: '0.1524'
+- name: B.PWM_CH
+  pins: [U1.G$2.GPIO10/EPWM6A/ADCSOCBO, U5.INH_C]
+  trace_width: '0.1524'
+- name: B.PWM_CL
+  pins: [U1.G$2.GPIO11/EPWM6B/SCI_RXDB/ECAP1, U5.INL_C]
+  trace_width: '0.1524'
+- name: B.SH_A
+  pins: [Q7.S, Q8.D, U$3.P$1, U5.SH_A]
+  trace_width: '0.1524'
+- name: B.SH_B
+  pins: [Q10.D, Q9.S, U$4.P$1, U5.SH_B]
+  trace_width: '0.1524'
+- name: B.SH_C
+  pins: [Q11.S, Q12.D, U$5.P$1, U5.SH_C]
+  trace_width: '0.1524'
+- name: B.SN1
+  pins: [Q8.S, R27.1, U5.SL_A, U5.SN1]
+  trace_width: '0.1524'
+- name: B.SN2
+  pins: [Q10.S, R31.1, U5.SL_B, U5.SN2]
+  trace_width: '0.1524'
+- name: B.SN3
+  pins: [Q12.S, R36.1, U5.SL_C, U5.SN3]
+  trace_width: '0.1524'
+- name: B.SPI_CS
+  pins: [U1.G$2.GPIO29/SCI_TXDA/SCLA/TZ3, U5./SCS]
+  trace_width: '0.1524'
+- name: B.V_C
+  pins: [U1.G$1.ADC_INB2/COMP1B/AIO10, U1.G$1.ADC_INB5]
+  trace_width: '0.1524'
+- name: CANH
+  pins: [U$1.1, U3.CANH]
+  trace_width: '0.1524'
+- name: CANL
+  pins: [U$1.2, U3.CANL]
+  trace_width: '0.1524'
+- name: EQEP1A
+  pins: [QEP_A.1, U4.B1]
+  trace_width: '0.1524'
+- name: EQEP1B
+  pins: [QEP_A.2, U4.B2]
+  trace_width: '0.1524'
+- name: EQEP1I
+  pins: [QEP_A.3, U4.B3]
+  trace_width: '0.1524'
+- name: EQEP2A
+  pins: [QEP_B.1, U4.B4]
+  trace_width: '0.1524'
+- name: EQEP2B
+  pins: [QEP_B.2, U4.B5]
+  trace_width: '0.1524'
+- name: EQEP2I
+  pins: [QEP_B.3, U4.B6]
+  trace_width: '0.1524'
+- name: GND
+  pins:
+  - B1.P$1
+  - C45.1
+  - C68.2
+  - C7.1
+  - M1.P$4
+  - QEP_A.5
+  - QEP_B.5
+  - U$11.1
+  - U$12.3
+  - U$13.2
+  - U$2.P$2
+  - U1.G$1.!VREGENZ
+  - U1.G$1.VREFLO
+  - U1.G$3.VSS1
+  - U1.G$3.VSS2
+  - U1.G$3.VSS3
+  - U1.G$3.VSS4
+  - U1.G$3.VSS5
+  - U1.G$3.VSS6
+  - U1.G$3.VSS7
+  - U1.G$3.VSSA
+  - U2.GND
+  - U3.GND
+  - U4.GND
+  - U5.GND14
+  - U5.GND45
+  - U5.PAD
+  - U6.GND14
+  - U6.GND45
+  - U6.PAD
+  - U7.GND
+  - U8.GND
+  trace_width: '0.1524'
+- name: GPIO32
+  pins: [U$13.4, U1.G$2.GPIO32/SDA_A/EPWMSYNCI/ADCSOCAO]
+  trace_width: '0.1524'
+- name: GPIO33
+  pins: [U$13.3, U1.G$2.GPIO33/SCL_A/EPWMSYNCO/ADCSOCBO]
+  trace_width: '0.1524'
+- name: GPIO34
+  pins: [U1.G$2.GPIO34/COMP2OUT/COMP3OUT, U2.1A]
+  trace_width: '0.1524'
+- name: GPIO39
+  pins: [U1.G$2.GPIO39, U2.2A]
+  trace_width: '0.1524'
+- name: GPIO43
+  pins: [U$13.8, U1.G$2.GPIO43/EPWM8B/!TZ2!/COMP2OUT]
+  trace_width: '0.1524'
+- name: G_1_ADC_INB6_COMP3B_AIO14
+  pins: [U$12.4, U1.G$1.ADC_INB6/COMP3B/AIO14]
+  trace_width: '0.1524'
+- name: LX
+  pins: [I1.P$1, U7.LX]
+  trace_width: '0.1524'
+- name: P_2
+  pins: [T1.P$2, T2.P$1]
+  trace_width: '0.1524'
+- name: P_2_2
+  pins: [T3.P$2, T4.P$1]
+  trace_width: '0.1524'
+- name: P_2_3
+  pins: [T5.P$2, T6.P$1]
+  trace_width: '0.1524'
+- name: RESET#
+  pins: [B1.P$2, U1.G$1.!XRS, U5.PWRGD, U6.PWRGD]
+  trace_width: '0.1524'
+- name: SPICLKB
+  pins: [U$11.3, U1.G$2.GPIO26/ECAP3/EQEP2I/SPICLKB/USB0DP]
+  trace_width: '0.1524'
+- name: SPISIMOB
+  pins: [U$11.5, U1.G$2.GPIO12/TZ1/SCITXDA/SPISIMOB]
+  trace_width: '0.1524'
+- name: SPISOMIB
+  pins: [U$11.2, U1.G$2.GPIO13/TZ2/SPISOMIB]
+  trace_width: '0.1524'
+- name: SPISTEB
+  pins: [U$11.4, U1.G$2.GPIO27/HRCAP2/EQEP2S/SPISTEB/USB0DM]
+  trace_width: '0.1524'
+- name: TCK
+  pins: [M1.P$3, U1.G$1.TCK/GPIO38]
+  trace_width: '0.1524'
+- name: TDI
+  pins: [M1.P$7, U1.G$1.TDI/GPIO35]
+  trace_width: '0.1524'
+- name: TDO
+  pins: [M1.P$8, U1.G$1.TDO/GPIO37]
+  trace_width: '0.1524'
+- name: TMS
+  pins: [M1.P$5, U1.G$1.TMS/GPIO36]
+  trace_width: '0.1524'
+- name: TRST
+  pins: [M1.P$1, U1.G$1.!TRST]
+  trace_width: '0.1524'
+- name: VDD
+  pins:
+  - C45.2
+  - C68.1
+  - C7.2
+  - Q1.D
+  - Q11.D
+  - Q2.D
+  - Q3.D
+  - Q7.D
+  - Q9.D
+  - T1.P$1
+  - T3.P$1
+  - T5.P$1
+  - U$9.P$1
+  - U5.PVDD
+  - U6.PVDD
+  - U7.EN
+  - U7.VIN
+  trace_width: '0.1524'
+- name: VDDIO
+  pins: [U1.G$3.VDDIO1, U1.G$3.VDDIO2, U1.G$3.VDDIO3, U1.G$3.VDDIO4, U1.G$3.VDDIO5, U1.G$3.VDDIO6]
+  trace_width: '0.1524'
+positions:
+- ref: B1
+  x: 5.55
+  y: 42.27
+  rot: 90.0
+- ref: C45
+  x: 37.98
+  y: 13.95
+- ref: C68
+  x: 44.24
+  y: 28.74
+  rot: 270.0
+- ref: C7
+  x: 41.53
+  y: 36.73
+- ref: D1
+  x: 20.12
+  y: 14.99
+  rot: 90.0
+- ref: D2
+  x: 38.26
+  y: 31.06
+- ref: D3
+  x: 39.58
+  y: 19.13
+  rot: 180.0
+- ref: D4
+  x: 3.46
+  y: 35.64
+  rot: 180.0
+- ref: D5
+  x: 4.71
+  y: 37.59
+- ref: I1
+  x: 41.77
+  y: 33.3
+- ref: M1
+  x: 5.35
+  y: 48.67
+- ref: Q1
+  x: 13.21
+  y: 43.03
+  rot: 90.0
+- ref: Q10
+  x: 24.64
+  y: 6.97
+  rot: 90.0
+- ref: Q11
+  x: 18.93
+  y: 6.97
+  rot: 270.0
+- ref: Q12
+  x: 13.21
+  y: 6.97
+  rot: 90.0
+- ref: Q2
+  x: 24.64
+  y: 43.03
+  rot: 90.0
+- ref: Q3
+  x: 36.07
+  y: 43.03
+  rot: 90.0
+- ref: Q4
+  x: 18.93
+  y: 43.03
+  rot: 270.0
+- ref: Q5
+  x: 30.36
+  y: 43.03
+  rot: 270.0
+- ref: Q6
+  x: 41.79
+  y: 43.03
+  rot: 270.0
+- ref: Q7
+  x: 41.79
+  y: 6.97
+  rot: 270.0
+- ref: Q8
+  x: 36.07
+  y: 6.97
+  rot: 90.0
+- ref: Q9
+  x: 30.36
+  y: 6.97
+  rot: 270.0
+- ref: QEP_A
+  x: 48.6
+  y: 40.24
+  rot: 270.0
+- ref: QEP_B
+  x: 48.6
+  y: 9.76
+  rot: 270.0
+- ref: R11
+  x: 29.72
+  y: 34.52
+  rot: 270.0
+- ref: R15
+  x: 41.15
+  y: 34.52
+  rot: 270.0
+- ref: R27
+  x: 36.71
+  y: 15.47
+  rot: 90.0
+- ref: R31
+  x: 25.28
+  y: 15.47
+  rot: 90.0
+- ref: R36
+  x: 13.85
+  y: 15.47
+  rot: 90.0
+- ref: R7
+  x: 18.29
+  y: 34.52
+  rot: 270.0
+- ref: T1
+  x: 39.12
+  y: 42.78
+- ref: T2
+  x: 28.96
+  y: 42.78
+- ref: T3
+  x: 39.12
+  y: 7.22
+- ref: T4
+  x: 28.96
+  y: 7.22
+- ref: T5
+  x: 47.25
+  y: 29.75
+  rot: 270.0
+- ref: T6
+  x: 47.25
+  y: 20.25
+  rot: 270.0
+- ref: U$1
+  x: 6.45
+  y: 2.35
+- ref: U$10
+  x: 1.9
+  y: 44.2
+- ref: U$11
+  x: 0.4
+  y: 34.7
+  rot: 90.0
+- ref: U$12
+  x: 0.4
+  y: 27.0
+  rot: 90.0
+- ref: U$13
+  x: 0.4
+  y: 17.4
+  rot: 90.0
+- ref: U$2
+  x: 47.32
+  y: 19.1
+  rot: 90.0
+- ref: U$3
+  x: 38.36
+  y: 1.9
+- ref: U$4
+  x: 26.93
+  y: 1.9
+- ref: U$5
+  x: 15.5
+  y: 1.9
+- ref: U$6
+  x: 16.77
+  y: 48.1
+- ref: U$7
+  x: 28.2
+  y: 48.1
+- ref: U$8
+  x: 39.63
+  y: 48.1
+- ref: U$9
+  x: 1.9
+  y: 41.0
+- ref: U1
+  x: 12.58
+  y: 25.0
+- ref: U2
+  x: 7.5
+  y: 37.57
+  rot: 90.0
+- ref: U3
+  x: 5.94
+  y: 10.41
+  rot: 180.0
+- ref: U4
+  x: 39.12
+  y: 25.0
+  rot: 270.0
+- ref: U5
+  x: 30.74
+  y: 19.16
+  rot: 270.0
+- ref: U6
+  x: 30.74
+  y: 30.84
+  rot: 90.0
+- ref: U7
+  x: 41.85
+  y: 29.96
+  rot: 180.0
+- ref: U8
+  x: 41.94
+  y: 18.99
+  rot: 270.0
+copper_pours:
+- net: +3V3
+  layers: [In2.Cu]
+- net: +5V
+  layers: [F.Cu]
+- net: A.SH_A
+  layers: [F.Cu]
+- net: A.SH_B
+  layers: [F.Cu]
+- net: A.SH_C
+  layers: [F.Cu]
+- net: A.SN1
+  layers: [B.Cu, F.Cu]
+- net: A.SN2
+  layers: [B.Cu, F.Cu]
+- net: A.SN3
+  layers: [B.Cu, F.Cu]
+- net: AGND
+  layers: [B.Cu, F.Cu, In4.Cu]
+- net: B.SH_A
+  layers: [F.Cu]
+- net: B.SH_B
+  layers: [F.Cu]
+- net: B.SH_C
+  layers: [F.Cu]
+- net: B.SN1
+  layers: [B.Cu, F.Cu]
+- net: B.SN2
+  layers: [B.Cu, F.Cu]
+- net: B.SN3
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [B.Cu, In3.Cu]
+- net: VDD
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: VDDIO
+  layers: [In2.Cu]

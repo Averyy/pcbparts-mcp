@@ -1,0 +1,1302 @@
+name: Seeed reCamera B4 CAN
+slug: seeed-recamera-b4-can
+source: Seeed-Studio/OSHW-reCamera-Series
+format: kicad7
+description: SPI CAN FD controller (MCP2518FD+MCP2558FD), common mode choke
+tags: [can-bus]
+key_ics: [MCP2518FD, MCP2558FD]
+outline:
+  width_mm: 30.0
+  height_mm: 30.0
+design_rules:
+  layers: 2
+  min_trace: 0.127mm
+  min_clearance: 0.114mm
+  min_drill: 0.203mm
+  min_via: 0.406mm
+components:
+- ref: ANT1
+  value: U.FL-R-SMT-1
+  footprint: U-FL3P-SMD-2.6X2.6X1.0MM
+  manufacturer: HRS
+  mpn: U.FL-R-SMT-1
+  description: SMD U-FL Female CONN-Gold;3P-L2.6*W2.6*H1.25mm
+- ref: ANT2
+  value: ANT Connect
+  footprint: ANTENNA-5P-13.5X6.5X6.5MM
+  manufacturer: BOANTONG
+  description: DIP SMA-K ;5P-16.5*6.5mm
+- ref: C1
+  value: 22uF
+  footprint: '1210'
+  manufacturer: Taiyo Yuden
+  mpn: GMK325BJ226MM-P
+  description: SMD CAP Ceramic 22uF-35V-20%-X5R;1210
+- ref: C11
+  value: 33pF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402JRNPO9BN330
+  description: SMD CAP Ceramic 33pF-50V-5%-NPO;0402
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+- ref: C13
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A475KP8NNNC
+  description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
+- ref: C14
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A475KP8NNNC
+  description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+- ref: C16
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+- ref: C17
+  value: 100nF
+  footprint: '0603'
+  manufacturer: YAGEO
+  mpn: CC0603KRX7R9BB104
+  description: SMD CAP Ceramic 100nF-50V-10%-X7R;0603
+- ref: C18
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+- ref: C19
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A475KP8NNNC
+  description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+  manufacturer: YAGEO
+  mpn: CC0603KRX7R9BB104
+  description: SMD CAP Ceramic 100nF-50V-10%-X7R;0603
+- ref: C21
+  value: 15pF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM1555C1H150JA01D
+  description: SMD CAP Ceramic 15pF-50V-5%-NPO;0402
+- ref: C22
+  value: 15pF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM1555C1H150JA01D
+  description: SMD CAP Ceramic 15pF-50V-5%-NPO;0402
+- ref: C23
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A475KP8NNNC
+  description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
+- ref: C24
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+- ref: C25
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A475KP8NNNC
+  description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
+  decouples: U4
+- ref: C26
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+  decouples: U6
+- ref: C27
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A475KP8NNNC
+  description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
+- ref: C28
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+- ref: C29
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A475KP8NNNC
+  description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+- ref: C30
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+- ref: C31
+  value: 4.7nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R9BB472
+  description: SMD CAP Ceramic;4.7nF-50V-10%-X7R;0402
+- ref: C32
+  value: 100nF
+  footprint: '0603'
+  manufacturer: YAGEO
+  mpn: CC0603KRX7R9BB104
+  description: SMD CAP Ceramic 100nF-50V-10%-X7R;0603
+- ref: C33
+  value: 1uF
+  footprint: 0805
+  manufacturer: YAGEO
+  mpn: CC0805KKX7R9BB105
+  description: SMD CAP Ceramic 1uF-50V-10%-X7R;0805
+- ref: C35
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Samsung
+  mpn: CL10A475KP8NNNC
+  description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
+- ref: C36
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+- ref: C4
+  value: 1nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R9BB102
+  description: SMD CAP Ceramic 1nF-50V-10%-X7R;0402
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+- ref: C6
+  value: 22uF
+  footprint: 0805
+  manufacturer: Samsung
+  mpn: CL21A226MAYNNNE
+  description: SMD CAP Ceramic 22uF-25V-20%-X5R;0805
+- ref: C7
+  value: 22uF
+  footprint: 0805
+  manufacturer: Samsung
+  mpn: CL21A226MAYNNNE
+  description: SMD CAP Ceramic 22uF-25V-20%-X5R;0805
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402KRX7R8BB104
+  description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
+- ref: C9
+  value: 33pF
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: CC0402JRNPO9BN330
+  description: SMD CAP Ceramic 33pF-50V-5%-NPO;0402
+- ref: D1
+  value: ESDPSA0402V05
+  footprint: '0402'
+  manufacturer: SEMITEL
+  mpn: ESDPSA0402V05
+  description: SMD Diode ESD 0.05pF;0402
+- ref: D2
+  value: ESDPSA0402V05
+  footprint: '0402'
+  manufacturer: SEMITEL
+  mpn: ESDPSA0402V05
+  description: SMD Diode ESD 0.05pF;0402
+- ref: D3
+  value: TPD1E10B06DPYR
+  footprint: '0402'
+  manufacturer: TI
+  mpn: TPD1E10B06DPYR
+  description: SMD Diode ESD 5.5V-6V-12pF-30KV-30KV;X1SON(2)
+- ref: D4
+  value: SMBJ24CA
+  footprint: DO-214AA_SMB
+  manufacturer: Brightking
+  mpn: SMBJ24CA
+  description: SMD Diode TVS 24VWM 29.5V;SMB
+- ref: D5
+  value: SM05-7
+  footprint: SOT-23
+  manufacturer: Diodes
+  mpn: SM05-7
+  description: SMD Diode TVS;5V-20.6V-SOT-23-3
+- ref: D6
+  value: TPD1E10B06DPYR
+  footprint: '0402'
+  manufacturer: TI
+  mpn: TPD1E10B06DPYR
+  description: SMD Diode ESD 5.5V-6V-12pF-30KV-30KV;X1SON(2)
+- ref: FB1
+  value: 120ohm
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: BLM15PD121SN1D
+  description: SMD Ferrite Bead 120R-1.3A;0402
+- ref: FB2
+  value: 0ohm
+  footprint: 0805
+  manufacturer: TDK
+  mpn: MPZ2012S101AT000
+  description: SMD Ferrite Bead 100R-4A;0805
+- ref: FB3
+  value: 0ohm
+  footprint: 0805
+  manufacturer: TDK
+  mpn: MPZ2012S101AT000
+  description: SMD Ferrite Bead 100R-4A;0805
+- ref: FB4
+  value: 0ohm
+  footprint: 0805
+  manufacturer: TDK
+  mpn: MPZ2012S101AT000
+  description: SMD Ferrite Bead 100R-4A;0805
+- ref: FB5
+  value: 0ohm
+  footprint: 0805
+  manufacturer: TDK
+  mpn: MPZ2012S101AT000
+  description: SMD Ferrite Bead 100R-4A;0805
+- ref: J1
+  value: ST-BTB-058060-A
+  footprint: BTB60-Male-Female-0.5-17.7x4.4mm
+  manufacturer: SUNGTECH
+  mpn: ST-BTB-058060-A
+  description: SMD BTB Male CONN;2*30P-0.5mm-17.7*4.4*4mm
+- ref: J2
+  value: JST SH 6-pin
+  footprint: SMD-SH1.0-6P-90D
+  manufacturer: JST
+  mpn: SM06B-SRSS-TB(LF)(SN)
+  description: SMD Male SH-Narutal R/A;6P-1.0-90D
+- ref: J3
+  value: FF-1025
+  footprint: H4-2.54-65_35MIL
+  manufacturer: SiTuoZhan
+  mpn: FF-1025
+  description: DIP Black Female Header VERT;1*4P-2.54-8.5mm
+- ref: K1
+  value: TD-1100AP-A4N-D1R
+  footprint: SW5-SMD-4.56X2.3X1.9MM
+  manufacturer: DeYiLong
+  mpn: TD-1100AP-A4N-D1R
+  description: SMD Switch;5P+2-L4.56*W1.90*H2.3mm
+- ref: K2
+  value: TD-1100AP-A4N-D1R
+  footprint: SW5-SMD-4.56X2.3X1.9MM
+  manufacturer: DeYiLong
+  mpn: TD-1100AP-A4N-D1R
+  description: SMD Switch;5P+2-L4.56*W1.90*H2.3mm
+- ref: L1
+  value: 5.6uH
+  footprint: INT2-SMD-4.2X4.4X1.8MM
+  manufacturer: CODACA
+  mpn: CSHB0430R-5R6M
+  description: SMD Inductor 5.6uH-20%-4.4A;2P-L4.2*W4.4*H2.8mm
+- ref: L3
+  value: common mode choke
+  footprint: INT4-1.5-4.75X4.5X2MM
+  manufacturer: PROD
+  mpn: PCAQ4520MB-142
+  description: SMD Common Mode Chokes 1.4k@100MHz 1.9A-50V;4P-L4.75*W4.5*H2mm
+- ref: Q3
+  value: RQ3E120ATTB
+  footprint: DFN8P-0.65-3X3X0.8MM
+  manufacturer: Rohm
+  mpn: RQ3E120ATTB
+  description: SMD MOSFET P-CH 30V-12A;HSMT8
+- ref: Q4
+  value: RQ3E120ATTB
+  footprint: DFN8P-0.65-3X3X0.8MM
+  manufacturer: Rohm
+  mpn: RQ3E120ATTB
+  description: SMD MOSFET P-CH 30V-12A;HSMT8
+- ref: R1
+  value: 5.1kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-075K1L
+  description: SMD RES;5.1K-1%-1/16W;0402
+  pulldown: USB1.A5/CC1
+- ref: R10
+  value: 7.5kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-077K5L
+  description: SMD RES 7.5K-1%-1/16W;0402
+  pulldown: R11.1
+- ref: R11
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-070RL
+  description: SMD RES 0R-5%-1/16W;0402
+- ref: R12
+  value: 20ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-0720RL
+  description: SMD RES 20R-5%-1/16W;0402
+- ref: R13
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-070RL
+  description: SMD RES 0R-5%-1/16W;0402
+- ref: R14
+  value: 11kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-0711KL
+  description: SMD RES 11K-1%-1/16W-0402
+  pulldown: USB_DET
+- ref: R15
+  value: 20kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-0720KL
+  description: SMD RES 20K-1%-1/16W;0402
+- ref: R16
+  value: 33kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-0733KL
+  description: SMD RES 33K-1%-1/16W;0402
+  pullup: R17.1
+- ref: R17
+  value: 47kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-0747KL
+  description: SMD RES 47K-5%-1/16W;0402
+- ref: R18
+  value: 1kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-071KL
+  description: SMD RES 1K-1%-1/16W;0402
+- ref: R19
+  value: 100kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-07100KL
+  description: SMD RES 100K-1%-1/16W;0402
+  pulldown: SD0_PWR_3V3
+- ref: R2
+  value: 5.1kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-075K1L
+  description: SMD RES;5.1K-1%-1/16W;0402
+  pulldown: USB1.B5/CC2
+- ref: R20
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-070RL
+  description: SMD RES 0R-5%-1/16W;0402
+- ref: R21
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-070RL
+  description: SMD RES 0R-5%-1/16W;0402
+- ref: R22
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-070RL
+  description: SMD RES 0R-5%-1/16W;0402
+- ref: R23
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-070RL
+  description: SMD RES 0R-5%-1/16W;0402
+- ref: R24
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-070RL
+  description: SMD RES 0R-5%-1/16W;0402
+- ref: R25
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-070RL
+  description: SMD RES 0R-5%-1/16W;0402
+- ref: R26
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-070RL
+  description: SMD RES 0R-5%-1/16W;0402
+- ref: R3
+  value: 5.1ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-075R1L
+  description: SMD RES 5.1R-5%-1/16W;0402
+- ref: R32
+  value: 0ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-070RL
+  description: SMD RES 0R-5%-1/16W;0402
+- ref: R33
+  value: 62ohm
+  footprint: 0805
+  manufacturer: YAGEO
+  mpn: RC0805FR-0762RL
+  description: SMD RES 62R-1%-1/8W;0805
+- ref: R34
+  value: 62ohm
+  footprint: 0805
+  manufacturer: YAGEO
+  mpn: RC0805FR-0762RL
+  description: SMD RES 62R-1%-1/8W;0805
+- ref: R35
+  value: 100kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-07100KL
+  description: SMD RES 100K-1%-1/16W;0402
+  pulldown: U5.2
+- ref: R36
+  value: 100kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-07100KL
+  description: SMD RES 100K-1%-1/16W;0402
+  pulldown: U5.6
+- ref: R37
+  value: 100kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-07100KL
+  description: SMD RES 100K-1%-1/16W;0402
+  pulldown: U6.2
+- ref: R38
+  value: 100kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-07100KL
+  description: SMD RES 100K-1%-1/16W;0402
+  pulldown: U6.6
+- ref: R4
+  value: 5.1ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-075R1L
+  description: SMD RES 5.1R-5%-1/16W;0402
+- ref: R5
+  value: 75kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-0775KL
+  description: SMD RES 75K-1%-1/16W;0402
+  pulldown: U1.AAM
+- ref: R6
+  value: 100kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-07100KL
+  description: SMD RES 100K-1%-1/16W;0402
+- ref: R7
+  value: 20kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-0720KL
+  description: SMD RES 20K-1%-1/16W;0402
+- ref: R8
+  value: 20ohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402JR-0720RL
+  description: SMD RES 20R-5%-1/16W;0402
+- ref: R9
+  value: 40.2kohm
+  footprint: '0402'
+  manufacturer: YAGEO
+  mpn: RC0402FR-0740K2L
+  description: SMD RES 40.2K-1%-1/16W;0402
+- ref: U1
+  value: MP2315GJ
+  footprint: TSOT23-8
+  manufacturer: MPS
+  mpn: MP2315GJ
+  description: SMD IC PMIC;DCDC Buck-ADJ-3A;TSOT23-8
+- ref: U2
+  value: MCP2518FDT-E
+  footprint: VDFN14-0.65-4.5X3X0.85MM
+  manufacturer: Microchip
+  mpn: MCP2518FDT-E/QBB
+  description: SMD IC Interface CAN Controller;VDFN-14
+- ref: U3
+  value: MCP2558FD-H
+  footprint: SOIC8-1.27-5X4MM
+  manufacturer: Microchip
+  mpn: MCP2558FD-H/SN
+  description: SMD IC Interface;CAN FD Transceiver;SOIC-8
+- ref: U4
+  value: TPS22916C
+  footprint: WLCSP4-0.4-0.77X0.77X0.33MM
+  manufacturer: TI
+  mpn: TPS22916CYFPR
+  description: SMD IC LOW RON LOAD SWITCH;5.5V-2A;4-DSBGA
+- ref: U5
+  value: BC856S
+  footprint: SOT-363
+  manufacturer: CJ
+  mpn: BC856S
+  description: SMD Transistor Array 2 PNP -65V-100mA
+- ref: U6
+  value: BC856S
+  footprint: SOT-363
+  manufacturer: CJ
+  mpn: BC856S
+  description: SMD Transistor Array 2 PNP -65V-100mA
+- ref: USB1
+  value: USB-31C-F-16P-L7.35
+  footprint: USB2.0-TYPE-C
+  manufacturer: "\u91D1\u500D\u5229"
+  mpn: USB-31C-F-16P-L7.35
+  description: SMD USB TYPE C-W/P;12+4P-8.94*7.35*3.26mm
+- ref: X1
+  value: 40MHz
+  footprint: X4-SMD-2.0X1.6MM
+  manufacturer: "\u4E1C\u6676\u7535\u5B50"
+  mpn: Y4000Fc001
+  description: SMD Crystal 40MHz-9pF-10ppm-40R;4P-L2.0*W1.6*H0.5mm
+nets:
+- name: +3V3
+  pins: [C12.1, FB4.1, R16.2, R20.1]
+- name: /03 Power/5V_DC_EN
+  pins: [R6.2, U1.EN/SYNC]
+- name: /03 Power/DCDC_VCC
+  pins: [C3.1, U1.VCC]
+- name: /03 Power/USBC_D_N
+  pins: [D1.2, R3.1, USB1.A7/DN1, USB1.B7/DN2]
+- name: /03 Power/USBC_D_P
+  pins: [D2.2, R4.1, USB1.A6/DP1, USB1.B6/DP2]
+- name: /04 CAN/CANH
+  pins: [L3.1, R33.2, U3.CAN_H]
+- name: /04 CAN/CANL
+  pins: [L3.4, R34.1, U3.CAN_L]
+- name: /04 CAN/CAN_H
+  pins: [D5.1, J2.5, J3.P$2, L3.2]
+- name: /04 CAN/CAN_L
+  pins: [D5.2, J2.6, J3.P$3, L3.3]
+- name: /04 CAN/RF_LINE
+  pins: [ANT1.D, ANT2.ANT]
+- name: CAN_3V3
+  pins:
+  - C18.1
+  - C19.1
+  - C23.1
+  - C24.1
+  - C35.1
+  - C36.1
+  - FB1.2
+  - R32.1
+  - U2.VDD
+  - U3.VIO
+- name: CAN_5V
+  pins:
+  - C17.1
+  - C27.1
+  - C28.1
+  - C29.1
+  - C30.1
+  - D6.2
+  - J3.P$1
+  - U3.VDD
+  - U4.VOUT
+- name: DCDC_5V
+  pins:
+  - C6.1
+  - C7.1
+  - C8.1
+  - L1.2
+  - Q3.D1
+  - Q3.D2
+  - Q3.D3
+  - Q3.D4
+  - Q3.D5
+  - R8.2
+  - U5.4
+- name: DC_IN
+  pins: [C1.1, C2.1, FB5.1, R6.1, U1.IN]
+- name: GND
+  pins:
+  - ANT1.GND1
+  - ANT1.GND2
+  - ANT2.2
+  - ANT2.3
+  - ANT2.4
+  - ANT2.5
+  - C1.2
+  - C11.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.2
+  - C27.2
+  - C28.2
+  - C29.2
+  - C3.2
+  - C30.2
+  - C31.2
+  - C32.2
+  - C33.2
+  - C35.2
+  - C36.2
+  - C4.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - D1.1
+  - D2.1
+  - D3.1
+  - D4.+
+  - D5.3
+  - D6.1
+  - J1.12
+  - J1.13
+  - J1.25
+  - J1.28
+  - J1.30
+  - J1.5
+  - J1.50
+  - J1.54
+  - J1.6
+  - J2.3
+  - J2.4
+  - J2.7
+  - J2.8
+  - J3.P$4
+  - K1.2
+  - K1.S1
+  - K1.S2
+  - K1.S3
+  - K2.2
+  - K2.S1
+  - K2.S2
+  - K2.S3
+  - R1.1
+  - R10.1
+  - R13.1
+  - R14.1
+  - R19.1
+  - R2.2
+  - R35.1
+  - R36.1
+  - R37.1
+  - R38.1
+  - R5.1
+  - U1.GND
+  - U2.EP
+  - U2.VSS
+  - U3.VSS
+  - U4.GND
+  - USB1.A1/B12/GND
+  - USB1.B1/A12/GND
+  - USB1.S1
+  - USB1.S2
+  - USB1.S3
+  - USB1.S4
+  - USB1.S5
+  - USB1.S6
+  - X1.2
+  - X1.4
+- name: GPIO12
+  pins: [J1.24, R26.1]
+- name: Net-(C31-Pad1)
+  pins: [C31.1, R33.1, R34.2]
+- name: Net-(C5-Pad1)
+  pins: [C5.1, R12.2]
+- name: Net-(C9-Pad1)
+  pins: [C9.1, R11.2]
+- name: Net-(C9-Pad2)
+  pins: [C9.2, R8.1, R9.2]
+- name: Net-(D4--)
+  pins: [C32.1, C33.1, D4.-, FB5.2, J2.1, J2.2]
+- name: Net-(FB3-Pad2)
+  pins: [FB3.2, J1.29, J1.31, J1.33, J1.35]
+- name: Net-(FB4-Pad2)
+  pins: [FB4.2, J1.27]
+- name: Net-(J1-Pad52)
+  pins: [J1.52, R21.1]
+- name: Net-(Q1-C)
+  pins: [R16.1, R17.1, R18.1]
+- name: Net-(Q2-G)
+  pins: [C12.2, R17.2]
+- name: Net-(Q3-G)
+  pins: [Q3.G, R36.2, U5.6]
+- name: Net-(Q4-G)
+  pins: [Q4.G, R38.2, U6.6]
+- name: Net-(R10-Pad2)
+  pins: [R10.2, R11.1, R7.2, R9.1]
+- name: Net-(R35-Pad2)
+  pins: [R35.2, U5.2, U5.3, U5.5]
+- name: Net-(R37-Pad2)
+  pins: [R37.2, U6.2, U6.3, U6.5]
+- name: Net-(U1-AAM)
+  pins: [C4.1, R5.2, U1.AAM]
+- name: Net-(U1-BST)
+  pins: [R12.1, U1.BST]
+- name: Net-(U1-FB)
+  pins: [R7.1, U1.FB]
+- name: Net-(U1-SW)
+  pins: [C5.2, L1.1, U1.SW]
+- name: Net-(U2-OSC1)
+  pins: [C22.1, U2.OSC1, X1.3]
+- name: Net-(U2-OSC2)
+  pins: [C21.1, U2.OSC2, X1.1]
+- name: Net-(U2-RXCAN)
+  pins: [U2.RXCAN, U3.RXD]
+- name: Net-(U2-SCK)
+  pins: [R22.2, U2.SCK]
+- name: Net-(U2-SDI)
+  pins: [R24.2, U2.SDI]
+- name: Net-(U2-SDO)
+  pins: [R25.2, U2.SDO]
+- name: Net-(U2-TXCAN)
+  pins: [U2.TXCAN, U3.TXD]
+- name: Net-(U2-nCS)
+  pins: [R23.2, U2.nCS]
+- name: Net-(U2-nINT)
+  pins: [R26.2, U2.nINT]
+- name: Net-(U3-S)
+  pins: [R13.2, U3.S]
+- name: Net-(U4-EN)
+  pins: [R32.2, U4.EN]
+- name: Net-(USB1-A4/B9/VBUS)
+  pins: [D3.2, FB2.1, USB1.A4/B9/VBUS, USB1.B4/A9/VBUS]
+- name: Net-(USB1-A5/CC1)
+  pins: [R1.2, USB1.A5/CC1]
+- name: Net-(USB1-B5/CC2)
+  pins: [R2.1, USB1.B5/CC2]
+- name: SD0_PWR_3V3
+  pins: [C13.1, C16.1, FB1.1, R19.2, R20.2]
+- name: SD0_PWR_EN
+  pins: [J1.38, R18.2]
+- name: SDIO_CLK/3V3
+  pins: [R21.2, R22.1]
+- name: SDIO_CMD/3V3
+  pins: [J1.48, R24.1]
+- name: SDIO_D0/3V3
+  pins: [J1.46, R25.1]
+- name: SDIO_D3/3V3
+  pins: [J1.40, R23.1]
+- name: UPGRAD_KEY/WL_BT_EN
+  pins: [C11.1, J1.36, K2.1]
+- name: USB_5V
+  pins:
+  - C14.1
+  - C15.1
+  - FB2.2
+  - Q4.D1
+  - Q4.D2
+  - Q4.D3
+  - Q4.D4
+  - Q4.D5
+  - R15.2
+  - U6.4
+- name: USB_DET
+  pins: [J1.14, R14.2, R15.1]
+- name: USB_D_N
+  pins: [J1.1, R3.2]
+- name: USB_D_P
+  pins: [J1.3, R4.2]
+- name: VIN
+  pins:
+  - C25.1
+  - C26.1
+  - FB3.1
+  - Q3.S1
+  - Q3.S2
+  - Q3.S3
+  - Q4.S1
+  - Q4.S2
+  - Q4.S3
+  - U4.VIN
+  - U5.1
+  - U6.1
+- name: nRESET
+  pins: [J1.34, K1.1]
+positions:
+- ref: ANT1
+  x: 53.1
+  y: 53.6
+  rot: 90.0
+  side: back
+- ref: ANT2
+  x: 49.16
+  y: 59.5
+  rot: -90.0
+  side: back
+- ref: C1
+  x: 57.1
+  y: 64.4
+- ref: C11
+  x: 49.85
+  y: 71.05
+  rot: -90.0
+  side: back
+- ref: C12
+  x: 71.2
+  y: 70.1
+  rot: -90.0
+  side: back
+- ref: C13
+  x: 74.2
+  y: 72.6
+  rot: -90.0
+  side: back
+- ref: C14
+  x: 68.0
+  y: 56.7
+  side: back
+- ref: C15
+  x: 67.8
+  y: 58.0
+  side: back
+- ref: C16
+  x: 72.0
+  y: 72.6
+  rot: -90.0
+  side: back
+- ref: C17
+  x: 54.8
+  y: 57.5
+  rot: 180.0
+  side: back
+- ref: C18
+  x: 63.8
+  y: 71.1
+  rot: 180.0
+- ref: C19
+  x: 63.6
+  y: 70.0
+  rot: 180.0
+- ref: C2
+  x: 56.1
+  y: 62.2
+  side: back
+- ref: C21
+  x: 58.2
+  y: 73.6
+- ref: C22
+  x: 58.2
+  y: 77.25
+  rot: 180.0
+- ref: C23
+  x: 58.8
+  y: 70.0
+  rot: 90.0
+- ref: C24
+  x: 57.6
+  y: 70.0
+  rot: 90.0
+- ref: C25
+  x: 66.4
+  y: 65.5
+- ref: C26
+  x: 66.1
+  y: 64.3
+- ref: C27
+  x: 62.1
+  y: 66.2
+  rot: -90.0
+- ref: C28
+  x: 63.3
+  y: 66.2
+  rot: -90.0
+- ref: C29
+  x: 53.45
+  y: 78.1
+  rot: 180.0
+- ref: C3
+  x: 53.6
+  y: 69.8
+  rot: -90.0
+  side: back
+- ref: C30
+  x: 55.6
+  y: 78.1
+- ref: C31
+  x: 57.0
+  y: 68.09
+  rot: -90.0
+- ref: C32
+  x: 49.3
+  y: 69.6
+  rot: 180.0
+- ref: C33
+  x: 49.3
+  y: 67.95
+  rot: 180.0
+- ref: C35
+  x: 67.9
+  y: 71.7
+  rot: 90.0
+  side: back
+- ref: C36
+  x: 69.1
+  y: 71.7
+  rot: 90.0
+  side: back
+- ref: C4
+  x: 53.6
+  y: 62.3
+  rot: 180.0
+  side: back
+- ref: C5
+  x: 60.6
+  y: 68.0
+  side: back
+- ref: C6
+  x: 63.4
+  y: 68.3
+  rot: -90.0
+  side: back
+- ref: C7
+  x: 65.4
+  y: 68.3
+  rot: -90.0
+  side: back
+- ref: C8
+  x: 66.9
+  y: 68.4
+  rot: -90.0
+  side: back
+- ref: C9
+  x: 58.4
+  y: 69.8
+  rot: -90.0
+  side: back
+- ref: D1
+  x: 60.6
+  y: 57.5
+  rot: 90.0
+  side: back
+- ref: D2
+  x: 59.4
+  y: 57.5
+  rot: 90.0
+  side: back
+- ref: D3
+  x: 62.6
+  y: 57.5
+  rot: 90.0
+  side: back
+- ref: D4
+  x: 48.31
+  y: 72.29
+  rot: 180.0
+- ref: D5
+  x: 53.0
+  y: 78.1
+  rot: 90.0
+  side: back
+- ref: D6
+  x: 56.6
+  y: 57.5
+  rot: -90.0
+  side: back
+- ref: FB1
+  x: 70.5
+  y: 72.1
+  rot: 180.0
+  side: back
+- ref: FB2
+  x: 64.9
+  y: 57.5
+  side: back
+- ref: FB3
+  x: 71.4
+  y: 62.0
+  side: back
+- ref: FB4
+  x: 73.79
+  y: 65.5
+  rot: 90.0
+  side: back
+- ref: FB5
+  x: 52.55
+  y: 65.05
+  rot: 180.0
+- ref: J1
+  x: 71.8
+  y: 65.0
+  rot: -90.0
+- ref: J2
+  x: 60.05
+  y: 76.95
+  side: back
+- ref: J3
+  x: 60.01
+  y: 60.0
+  rot: -90.0
+  side: back
+- ref: K1
+  x: 46.95
+  y: 66.72
+  rot: -90.0
+  side: back
+- ref: K2
+  x: 46.95
+  y: 72.28
+  rot: -90.0
+  side: back
+- ref: L1
+  x: 59.85
+  y: 65.2
+  side: back
+- ref: L3
+  x: 53.0
+  y: 73.6
+  rot: -90.0
+  side: back
+- ref: Q3
+  x: 67.7
+  y: 64.8
+  rot: -90.0
+  side: back
+- ref: Q4
+  x: 67.7
+  y: 60.6
+  rot: 90.0
+  side: back
+- ref: R1
+  x: 58.4
+  y: 57.5
+  rot: 90.0
+  side: back
+- ref: R10
+  x: 55.1
+  y: 70.3
+  side: back
+- ref: R11
+  x: 57.0
+  y: 69.3
+  side: back
+- ref: R12
+  x: 58.7
+  y: 68.0
+  side: back
+- ref: R13
+  x: 51.6
+  y: 69.0
+  rot: -90.0
+- ref: R14
+  x: 70.9
+  y: 59.8
+  rot: -90.0
+  side: back
+- ref: R15
+  x: 69.9
+  y: 59.8
+  rot: 90.0
+  side: back
+- ref: R16
+  x: 71.8
+  y: 68.3
+  side: back
+- ref: R17
+  x: 70.2
+  y: 70.5
+  rot: -90.0
+  side: back
+- ref: R18
+  x: 68.8
+  y: 70.0
+  rot: 180.0
+  side: back
+- ref: R19
+  x: 73.0
+  y: 72.6
+  rot: 90.0
+  side: back
+- ref: R2
+  x: 61.6
+  y: 57.5
+  rot: -90.0
+  side: back
+- ref: R20
+  x: 73.7
+  y: 68.3
+  side: back
+- ref: R21
+  x: 66.0
+  y: 77.4
+  rot: 180.0
+- ref: R22
+  x: 66.0
+  y: 75.6
+  rot: 180.0
+- ref: R23
+  x: 66.0
+  y: 71.1
+  rot: 180.0
+- ref: R24
+  x: 66.0
+  y: 74.7
+  rot: 180.0
+- ref: R25
+  x: 66.0
+  y: 72.9
+  rot: 180.0
+- ref: R26
+  x: 59.7
+  y: 73.1
+  rot: -90.0
+- ref: R3
+  x: 68.1
+  y: 54.2
+- ref: R32
+  x: 65.65
+  y: 68.15
+  rot: 90.0
+- ref: R33
+  x: 53.2
+  y: 68.09
+  rot: -90.0
+- ref: R34
+  x: 55.4
+  y: 68.1
+  rot: 90.0
+- ref: R35
+  x: 71.0
+  y: 67.1
+  rot: 180.0
+  side: back
+- ref: R36
+  x: 71.0
+  y: 63.6
+  rot: 180.0
+  side: back
+- ref: R37
+  x: 64.4
+  y: 65.8
+  side: back
+- ref: R38
+  x: 64.4
+  y: 62.3
+  rot: 180.0
+  side: back
+- ref: R4
+  x: 68.1
+  y: 55.2
+- ref: R5
+  x: 53.6
+  y: 63.4
+  side: back
+- ref: R6
+  x: 55.8
+  y: 63.4
+  side: back
+- ref: R7
+  x: 55.1
+  y: 69.3
+  side: back
+- ref: R8
+  x: 59.4
+  y: 69.8
+  rot: 90.0
+  side: back
+- ref: R9
+  x: 57.0
+  y: 70.3
+  side: back
+- ref: U1
+  x: 55.5
+  y: 66.2
+  side: back
+- ref: U2
+  x: 62.6
+  y: 74.2
+  rot: -90.0
+- ref: U3
+  x: 54.3
+  y: 73.7
+- ref: U4
+  x: 64.5
+  y: 66.5
+- ref: U5
+  x: 71.0
+  y: 65.4
+  rot: 90.0
+  side: back
+- ref: U6
+  x: 64.4
+  y: 64.1
+  rot: 90.0
+  side: back
+- ref: USB1
+  x: 60.0
+  y: 55.35
+  rot: -90.0
+  side: back
+- ref: X1
+  x: 58.2
+  y: 75.45
+  rot: -90.0
+copper_pours:
+- net: DC_IN
+  layers: [B.Cu]
+- net: GND
+  layers: [F&B.Cu]
+- net: USB_5V
+  layers: [B.Cu]
+- net: VIN
+  layers: [B.Cu]
+- net: ''
+  layers: [B.Cu]
+  keepout: true

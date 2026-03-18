@@ -1,0 +1,98 @@
+name: EEGFrontier
+slug: eegfrontier
+source: TheusHen/EEGFrontier
+format: kicad9
+description: 4-channel EEG frontend (ADS1299-4), XIAO RP2040 host
+key_ics: [ADS1299-4, RP2040]
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+- ref: C10
+  value: 10uF
+  footprint: '1206'
+- ref: C11
+  value: 10uF
+  footprint: '1206'
+- ref: C12
+  value: 10uF
+  footprint: '1206'
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+- ref: C5
+  value: 10uF
+  footprint: '1206'
+- ref: C6
+  value: 10uF
+  footprint: '1206'
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+- ref: C8
+  value: 1uF
+  footprint: '0603'
+- ref: C9
+  value: 10uF
+  footprint: '1206'
+- ref: D1
+  value: LED
+  footprint: 0805
+- ref: D2
+  value: LED
+  footprint: 0805
+- ref: J1
+  value: 1x8 header
+  footprint: 1X8
+- ref: R1
+  value: 10kohm
+  footprint: 0805
+- ref: R10
+  value: 100kohm
+  footprint: 0805
+- ref: R11
+  value: 100kohm
+  footprint: 0805
+- ref: R2
+  value: 1kohm
+  footprint: 0805
+- ref: R3
+  value: 1kohm
+  footprint: 0805
+- ref: R4
+  value: 100kohm
+  footprint: 0805
+- ref: R5
+  value: 100kohm
+  footprint: 0805
+- ref: R6
+  value: 100kohm
+  footprint: 0805
+- ref: R7
+  value: 100kohm
+  footprint: 0805
+- ref: R8
+  value: 100kohm
+  footprint: 0805
+- ref: R9
+  value: 100kohm
+  footprint: 0805
+- ref: SW1
+  value: tactile switch
+  footprint: SW_Push_SPST_NO_Alps_SKRK
+- ref: U1
+  value: '102010428'
+  footprint: MODULE_102010428
+  manufacturer: Seeed Technology Co., Ltd
+  mpn: '102010428'
+- ref: U2
+  value: ADS1299
+  footprint: QFP-64
+  manufacturer: Texas Instruments
+  mpn: ADS1299-4PAGR

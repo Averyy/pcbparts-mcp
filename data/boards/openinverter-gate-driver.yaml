@@ -1,0 +1,231 @@
+name: OpenInverter Gate Driver
+slug: openinverter-gate-driver
+source: jsphuebner/inverter-hardware
+format: eagle
+description: 'Isolated IGBT gate driver: HCPL3120 optocoupler gate drive, high-side/low-side 3-phase bridge'
+tags: [inverter, isolation]
+key_ics: [HCPL3120]
+outline:
+  width_mm: 49.2
+  height_mm: 55.87
+design_rules:
+  layers: 2
+  min_trace: 10mil
+  min_clearance: 8mil
+  min_drill: 24mil
+  min_via: 8mil
+components:
+- ref: -_BT_TP_+
+  value: 1x4 header
+  footprint: 1X04
+- ref: C1
+  value: 100nF
+  footprint: C050-025X075
+- ref: C2
+  value: 100nF
+  footprint: C050-025X075
+- ref: C3
+  value: 100uF
+  footprint: E2,5-6E
+- ref: C4
+  value: 100uF
+  footprint: E2,5-6E
+- ref: C5
+  value: 100uF
+  footprint: E2,5-6E
+- ref: C6
+  value: 100uF
+  footprint: E2,5-6E
+- ref: C7
+  value: 100uF
+  footprint: E2,5-5
+- ref: C8
+  value: 100uF
+  footprint: E2,5-5
+- ref: D1
+  value: P6KEXXC
+  footprint: CB417-15
+- ref: D2
+  value: P6KEXXC
+  footprint: CB417-15
+- ref: DC1
+  value: NMA
+  footprint: NMA
+  description: DC-DC CONVERTER
+- ref: DC2
+  value: NMA
+  footprint: NMA
+  description: DC-DC CONVERTER
+- ref: EBOT
+  value: 1x1 header
+  footprint: 1X01
+- ref: ETOP
+  value: 1x1 header
+  footprint: 1X01
+- ref: GBOT
+  value: 1x1 header
+  footprint: 1X01
+- ref: GTOP
+  value: 1x1 header
+  footprint: 1X01
+- ref: IC1
+  value: HCPL3120
+  footprint: DIL08
+- ref: IC2
+  value: HCPL3120
+  footprint: DIL08
+- ref: R1
+  value: 220ohm
+  footprint: '0207'
+- ref: R2
+  value: 220ohm
+  footprint: '0207'
+- ref: R3
+  value: 4.7ohm
+  footprint: 0309
+- ref: R4
+  value: 10kohm
+  footprint: '0207'
+- ref: R5
+  value: 10kohm
+  footprint: '0207'
+- ref: R6
+  value: 4.7ohm
+  footprint: 0309
+nets:
+- name: ANODE
+  pins: [IC2.ANODE, R1.2]
+- name: ANODE_2
+  pins: [IC1.ANODE, R2.2]
+- name: EBOT
+  pins: [C5.+, C6.-, D2.1, DC2.COM, EBOT.1, R5.1]
+- name: ETOP
+  pins: [C3.-, C4.+, D1.2, DC1.COM, ETOP.1, R4.2]
+- name: GBOT
+  pins: [D2.2, GBOT.1, R5.2, R6.1]
+- name: GND
+  pins: [C7.-, C8.-, DC1.-VIN, DC2.-VIN, IC1.CATHODE, IC2.CATHODE]
+- name: GTOP
+  pins: [D1.1, GTOP.1, R3.2, R4.1]
+- name: N$15
+  pins: [C7.+, C8.+, DC1.+VIN, DC2.+VIN]
+- name: N$6
+  pins: [C1.1, C3.+, DC1.+VOUT, IC1.VCC]
+- name: N$7
+  pins: [C2.1, C6.+, DC2.+VOUT, IC2.VCC]
+- name: VEE
+  pins: [C1.2, C4.-, DC1.-VOUT, IC1.VEE]
+- name: VEE_2
+  pins: [C2.2, C5.-, DC2.-VOUT, IC2.VEE]
+- name: VO
+  pins: [IC1.VO, IC1.VO2, R3.1]
+- name: VO_2
+  pins: [IC2.VO, IC2.VO2, R6.2]
+positions:
+- ref: -_BT_TP_+
+  x: 3.81
+  y: 34.29
+  rot: 90.0
+- ref: C1
+  x: 25.4
+  y: 46.99
+  rot: 270.0
+- ref: C2
+  x: 25.4
+  y: 21.59
+  rot: 270.0
+- ref: C3
+  x: 29.21
+  y: 30.48
+  rot: 180.0
+- ref: C4
+  x: 22.86
+  y: 30.48
+  rot: 180.0
+- ref: C5
+  x: 22.86
+  y: 2.54
+  rot: 180.0
+- ref: C6
+  x: 29.21
+  y: 2.54
+  rot: 180.0
+- ref: C7
+  x: 12.7
+  y: 30.48
+  rot: 180.0
+- ref: C8
+  x: 12.7
+  y: 2.54
+  rot: 180.0
+- ref: D1
+  x: 39.37
+  y: 43.18
+  rot: 90.0
+- ref: D2
+  x: 39.37
+  y: 15.24
+  rot: 90.0
+- ref: DC1
+  x: 17.78
+  y: 40.64
+  rot: 90.0
+- ref: DC2
+  x: 17.78
+  y: 12.7
+  rot: 90.0
+- ref: EBOT
+  x: 45.72
+  y: 19.05
+- ref: ETOP
+  x: 45.72
+  y: 34.29
+- ref: GBOT
+  x: 45.72
+  y: 11.43
+- ref: GTOP
+  x: 45.72
+  y: 41.91
+- ref: IC1
+  x: 17.78
+  y: 48.26
+  rot: 270.0
+- ref: IC2
+  x: 17.78
+  y: 20.32
+  rot: 270.0
+- ref: R1
+  x: 7.62
+  y: 27.94
+  rot: 270.0
+- ref: R2
+  x: 7.62
+  y: 40.64
+  rot: 90.0
+- ref: R3
+  x: 30.48
+  y: 46.99
+  rot: 90.0
+- ref: R4
+  x: 35.56
+  y: 48.26
+  rot: 270.0
+- ref: R5
+  x: 35.56
+  y: 17.78
+  rot: 270.0
+- ref: R6
+  x: 31.75
+  y: 15.24
+  rot: 90.0
+copper_pours:
+- net: EBOT
+  layers: [B.Cu]
+- net: ETOP
+  layers: [B.Cu]
+- net: GBOT
+  layers: [B.Cu]
+- net: GND
+  layers: [B.Cu]
+- net: GTOP
+  layers: [B.Cu]

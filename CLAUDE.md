@@ -13,13 +13,7 @@
 
 ## Critical Rules
 
-- **NEVER blame external services** (Claude, Anthropic, Google, Reddit, etc.) for issues. If something isn't working, the problem is in THIS codebase. Investigate our code first, add logging, and find the real cause. Blaming external parties wastes time.
 - **NEVER test changes using the live MCP** undeployed code changes NEEDS to be tested locally via the database
-- **NEVER create mock data** unless explicitly told to
-- **NEVER replace existing code with simplified versions** - fix the actual problem
-- **ALWAYS find root cause** - don't create workarounds
-- **ALWAYS fix or note pre-existing issues** - if you discover failing tests or bugs unrelated to your current task, fix them or flag them to the user. Never dismiss them as "pre-existing"
-- **Update existing files** - don't create new ones unless necessary
 - **ALWAYS use wafer** when testing JLCPCB API - use `wafer.AsyncSession` with embed="xhr" and proper config (see `client.py` or `scrape_components.py`). Don't write quick test scripts with raw httpx/aiohttp - you'll get 403 blocked.
 
 ## Library Types (Quick Reference)
@@ -46,18 +40,6 @@ The JLCPCB API has backwards field names:
 - `secondSortName` = **category** (the primary category)
 
 This is counterintuitive but verified. The client handles this mapping correctly.
-
-## Web Fetching
-
-**CRITICAL: NEVER use WebFetch directly. ALWAYS use fetchaller first.**
-Load via `ToolSearch("fetchaller")` then use `mcp__fetchaller__fetch`. It has no domain restrictions.
-Add `raw: true` for raw HTML instead of markdown. If raw:true fails, use `curl` via Bash as fallback.
-Only fall back to WebFetch if fetchaller fails entirely.
-If a dedicated MCP exists (GitHub, Slack, etc.), use that instead.
-
-## Reddit Searching and Browsing
-
-Load via `ToolSearch("fetchaller")` first. Use `mcp__fetchaller__browse_reddit` to browse subreddits, `mcp__fetchaller__search_reddit` to find posts, and `mcp__fetchaller__fetch` to read full discussions.
 
 ## Development
 

@@ -1,0 +1,397 @@
+name: CH32V203 Pro Micro
+slug: ch32v203-pro-micro
+source: 74th/ch32v-dev-boards
+format: kicad8
+description: CH32V203C8T6 in Arduino Pro Micro footprint, AMS1117-3.3
+key_ics: [ATmega32U4]
+outline:
+  width_mm: 17.76
+  height_mm: 33.0
+design_rules:
+  layers: 2
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: 0805
+- ref: C10
+  value: 22pF
+  footprint: 0805
+- ref: C2
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C3
+  value: 1uF
+  footprint: 0805
+  decouples: U2
+- ref: C4
+  value: 100nF
+  footprint: 0805
+  decouples: U2
+- ref: C5
+  value: 100nF
+  footprint: 0805
+  decouples: U2
+- ref: C6
+  value: 100nF
+  footprint: 0805
+  decouples: U2
+- ref: C7
+  value: 100nF
+  footprint: 0805
+  decouples: U2
+- ref: C8
+  value: 100nF
+  footprint: 0805
+- ref: C9
+  value: 22pF
+  footprint: 0805
+- ref: D1
+  value: blue LED
+  footprint: 0805
+- ref: J1
+  value: USB2.0_C_v3
+  footprint: Connector_USB-C-Receptacle_SMT_12-Pin_Simple
+  description: USB 2.0-only Type-C Plug connector
+- ref: J2
+  value: ProMicro-LeftPin-NoGND
+  footprint: PinOut_ProMicro-LIKE_LEFT_NO-GND
+- ref: J3
+  value: ProMicro-RightPin
+  footprint: PinOut_ProMicro-LIKE_RIGHT
+- ref: R1
+  value: 5.1kohm
+  footprint: 0805
+  pulldown: J1.CC1
+- ref: R2
+  value: 5.1kohm
+  footprint: 0805
+  pulldown: J1.CC2
+- ref: R3
+  value: 10kohm
+  footprint: 0805
+  pullup: D1.A
+- ref: R4
+  value: 27.4ohm
+  footprint: 0805
+- ref: R5
+  value: 27.4ohm
+  footprint: 0805
+- ref: R6
+  value: 10kohm
+  footprint: 0805
+  pulldown: U2.BOOT1/PB2/UART4_CK
+- ref: R7
+  value: 10kohm
+  footprint: 0805
+  pulldown: U2.BOOT0
+- ref: SW1
+  value: tactile switch
+  footprint: Switch_SKRPABE010
+- ref: SW2
+  value: tactile switch
+  footprint: Switch_SKRPABE010
+- ref: U1
+  value: AMS1117-3.3
+  footprint: Package_SOT-89-3
+  description: 1A Low Dropout regulator, positive, 3.3V fixed output, SOT-223
+- ref: U2
+  value: CH32V203C8T6
+  footprint: Package_LQFP-48
+- ref: U3
+  value: CH213K
+  footprint: Package_SOT-23
+- ref: Y1
+  value: 8MHz
+  footprint: SMD3225
+  description: Four pin crystal, GND on pins 2 and 4
+nets:
+- name: +3V3
+  pins:
+  - C2.1
+  - C3.1
+  - C4.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - J3.3V3
+  - R3.1
+  - SW1.1@1
+  - U1.VO
+  - U2.VBAT
+  - U2.VDDA
+  - U2.VDD_2
+  - U2.VDD_VIO_1
+  - U2.VDD_VIO_3
+- name: +5V
+  pins: [J1.VBUS@1, J3.RAW, U3.VI+]
+- name: /0/UART_RX
+  pins: [J2.0/RX, U2.PA10/UART1_RX]
+- name: /1/UART_TX
+  pins: [J2.1/TX, U2.PA9/UART1_TX]
+- name: /10/A10
+  pins: [J3.10/A10, U2.PA4/ADC4/SPI1_NSS/UART2_CK]
+- name: /14/SPI_MISO
+  pins: [J3.14/SPI_MISO, U2.PA6/ADC6/SPI1_MISO]
+- name: /15/SPI_SCK
+  pins: [J3.15/SPI_SCK, U2.PA5/ADC5/SPI1_SCK]
+- name: /16/SPI_MOSI
+  pins: [J3.16/SPI_MOSI, U2.PA7/ADC7/SPI1_MOSI]
+- name: /18/A0
+  pins: [J3.18/A0, U2.PA0/WKUP/ADC0/UART2_CTS]
+- name: /19/A1
+  pins: [J3.19/A1, U2.PA1/ADC1/UART2_RTS]
+- name: /2/ISC_SDA
+  pins: [J2.2/SDA, U2.PB7/USB2DP/I2C1_SDA]
+- name: /20/A2
+  pins: [J3.20/A2, U2.PA2/ADC2/UART2_TX]
+- name: /21/A3
+  pins: [J3.21/A3, U2.PA3/ADC3/UART2_RX]
+- name: /3/ISC_SCL
+  pins: [J2.3/SCL, U2.PB6/USB2DM/I2C1_SCL]
+- name: /4/A6
+  pins: [J2.4/A6, U2.PB1/ADC9/UART4_RX]
+- name: /5
+  pins: [J2.5, U2.PB3/UART4_CTS]
+- name: /6/A7
+  pins: [J2.6/A7, U2.PB0/ADC8/UART4_TX]
+- name: /7
+  pins: [J2.7, U2.PB4/UART4_RTS]
+- name: /8/A8
+  pins: [J2.8/A8, U2.PB8]
+- name: /9/A9
+  pins: [J2.9/A9, U2.PB9]
+- name: /SWCLK
+  pins: [J2.Alt2, U2.SWCLK/PA14]
+- name: /SWDIO
+  pins: [J2.Alt1, U2.SWDIO/PA13]
+- name: /USB_DM
+  pins: [R4.2, U2.PA11/USB1DM/UART1_CTS]
+- name: /USB_DP
+  pins: [R5.2, U2.PA12/USB1DP/UART1_RTS]
+- name: /nRESET
+  pins: [C8.1, J3.nRESET, SW2.1@1, U2.NRST]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.K
+  - J1.GND@4
+  - J3.GND
+  - R1.2
+  - R2.2
+  - R6.2
+  - R7.2
+  - SW2.2@2
+  - U1.GND
+  - U2.VSSA
+  - U2.VSS_1
+  - U2.VSS_2
+  - U2.VSS_3
+  - U3.GND
+  - Y1.2
+  - Y1.4
+- name: Net-(D1-A)
+  pins: [D1.A, R3.2]
+- name: Net-(J1-CC1)
+  pins: [J1.CC1, R1.1]
+- name: Net-(J1-CC2)
+  pins: [J1.CC2, R2.1]
+- name: Net-(J1-D+)
+  pins: [J1.D+@3, R5.1]
+- name: Net-(J1-D-)
+  pins: [J1.D-@2, R4.1]
+- name: Net-(U1-VI)
+  pins: [C1.1, U1.VI, U3.VO-]
+- name: Net-(U2-BOOT0)
+  pins: [R7.1, SW1.2@2, U2.BOOT0]
+- name: Net-(U2-BOOT1/PB2/UART4_CK)
+  pins: [R6.1, U2.BOOT1/PB2/UART4_CK]
+- name: Net-(U2-OSC_IN/PD0)
+  pins: [C9.1, U2.OSC_IN/PD0, Y1.3]
+- name: Net-(U2-OSC_OUT/PD1)
+  pins: [C10.1, U2.OSC_OUT/PD1, Y1.1]
+positions:
+- ref: C1
+  x: 104.39
+  y: 109.78
+  rot: -90.0
+- ref: C10
+  x: 113.4
+  y: 131.9
+  side: back
+- ref: C2
+  x: 113.51
+  y: 112.17
+  side: back
+- ref: C3
+  x: 110.39
+  y: 115.11
+  rot: 180.0
+  side: back
+- ref: C4
+  x: 107.57
+  y: 117.4
+  side: back
+- ref: C5
+  x: 111.3
+  y: 118.01
+  rot: -90.0
+  side: back
+- ref: C6
+  x: 107.59
+  y: 121.11
+  rot: 90.0
+  side: back
+- ref: C7
+  x: 111.61
+  y: 121.41
+  side: back
+- ref: C8
+  x: 113.51
+  y: 129.79
+  side: back
+- ref: C9
+  x: 105.5
+  y: 131.0
+  rot: -90.0
+  side: back
+- ref: D1
+  x: 113.59
+  y: 109.02
+  rot: 90.0
+- ref: J1
+  x: 109.22
+  y: 101.6
+  rot: 180.0
+- ref: J2
+  x: 101.6
+  y: 118.11
+- ref: J3
+  x: 116.84
+  y: 119.38
+- ref: R1
+  x: 111.81
+  y: 102.97
+  rot: 90.0
+  side: back
+- ref: R2
+  x: 109.8
+  y: 102.99
+  rot: 90.0
+  side: back
+- ref: R3
+  x: 113.59
+  y: 109.02
+  rot: 90.0
+  side: back
+- ref: R4
+  x: 110.64
+  y: 109.81
+  rot: -90.0
+  side: back
+- ref: R5
+  x: 108.66
+  y: 109.81
+  rot: -90.0
+  side: back
+- ref: R6
+  x: 113.39
+  y: 118.11
+  rot: 90.0
+  side: back
+- ref: R7
+  x: 103.53
+  y: 131.0
+  rot: -90.0
+  side: back
+- ref: SW1
+  x: 105.61
+  y: 130.05
+  rot: -90.0
+- ref: SW2
+  x: 112.33
+  y: 130.05
+  rot: 90.0
+- ref: U1
+  x: 109.0
+  y: 110.7
+- ref: U2
+  x: 109.22
+  y: 119.38
+  rot: 90.0
+- ref: U3
+  x: 107.09
+  y: 102.46
+  rot: 90.0
+  side: back
+- ref: Y1
+  x: 109.0
+  y: 130.82
+  rot: 180.0
+  side: back
+copper_pours:
+- net: +3V3
+  layers: [B.Cu, F.Cu]
+- net: +5V
+  layers: [B.Cu, F.Cu]
+- net: /0{slash}UART_RX
+  layers: [B.Cu, F.Cu]
+- net: /10{slash}A10
+  layers: [F.Cu]
+- net: /14{slash}SPI_MISO
+  layers: [B.Cu, F.Cu]
+- net: /15{slash}SPI_SCK
+  layers: [F.Cu]
+- net: /16{slash}SPI_MOSI
+  layers: [B.Cu, F.Cu]
+- net: /18{slash}A0
+  layers: [B.Cu, F.Cu]
+- net: /19{slash}A1
+  layers: [B.Cu, F.Cu]
+- net: /1{slash}UART_TX
+  layers: [B.Cu, F.Cu]
+- net: /20{slash}A2
+  layers: [B.Cu, F.Cu]
+- net: /21{slash}A3
+  layers: [B.Cu, F.Cu]
+- net: /2{slash}ISC_SDA
+  layers: [B.Cu, F.Cu]
+- net: /3{slash}ISC_SCL
+  layers: [F.Cu]
+- net: /4{slash}A6
+  layers: [B.Cu, F.Cu]
+- net: /5
+  layers: [B.Cu, F.Cu]
+- net: /6{slash}A7
+  layers: [B.Cu, F.Cu]
+- net: /7
+  layers: [B.Cu, F.Cu]
+- net: /8{slash}A8
+  layers: [F.Cu]
+- net: /9{slash}A9
+  layers: [F.Cu]
+- net: /SWCLK
+  layers: [B.Cu, F.Cu]
+- net: /SWDIO
+  layers: [B.Cu, F.Cu]
+- net: /USB_DM
+  layers: [B.Cu, F.Cu]
+- net: /USB_DP
+  layers: [B.Cu, F.Cu]
+- net: /~{RESET}
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [B.Cu, F&B.Cu, F.Cu]

@@ -1,0 +1,171 @@
+name: Adafruit RFM95W LoRa Breakout
+slug: adafruit-rfm95w-lora-breakout
+source: adafruit/Adafruit-RFM-LoRa-Radio-Breakout-PCB
+format: eagle
+description: Standalone LoRa radio (RFM95W/96W), antenna matching network
+tags: [lora]
+key_ics: [RFM95W]
+outline:
+  width_mm: 25.4
+  height_mm: 29.21
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: C2
+  value: 100nF
+  footprint: 0805
+  decouples: U1
+- ref: C3
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: JP1
+  value: 1x5 header
+  footprint: 1X05
+- ref: JP2
+  value: 1x1 header
+  footprint: 1X01
+- ref: JP3
+  value: 1x9 header
+  footprint: 1X09
+- ref: R1
+  value: 100kohm
+  footprint: 0805
+  pullup: EN
+- ref: R2
+  value: 100kohm
+  footprint: 0805
+  pullup: CS_5V
+- ref: R3
+  value: 100kohm
+  footprint: 0805
+  pullup: RST_5V
+- ref: U1
+  value: RFM95W
+  footprint: RFMHCW_SMT
+  description: SX1276 LoRa Radio Transceiver
+- ref: U2
+  value: 74HC4050D
+  footprint: TSSOP16
+  description: SOIC16
+- ref: U3
+  value: AP2112K-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: X1
+  value: uFL/SMA
+  footprint: SMA_EDGELAUNCH_UFL
+  description: SMA Connector
+nets:
+- name: 3.3V
+  pins: [C1.1, C2.1, U1.VDD, U2.VCC, U3.OUT]
+- name: ANT
+  pins: [JP2.1, U1.ANT, X1.ANT]
+- name: CS_3V
+  pins: [U1.NSS, U2.4Y]
+- name: CS_5V
+  pins: [JP3.8, R2.1, U2.4A]
+- name: DIO0
+  pins: [JP3.4, U1.DIO0]
+- name: DIO1
+  pins: [JP1.1, U1.DIO1]
+- name: DIO2
+  pins: [JP1.2, U1.DIO2]
+- name: DIO3
+  pins: [JP1.3, U1.DIO3]
+- name: DIO4
+  pins: [JP1.4, U1.DIO4]
+- name: DIO5
+  pins: [JP1.5, U1.DIO5]
+- name: EN
+  pins: [JP3.3, R1.2, U3.EN]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - JP3.2
+  - U1.GND@1
+  - U1.GND@2
+  - U1.GND@3
+  - U2.GND
+  - U3.GND
+  - X1.GND1
+  - X1.GND2
+  - X1.GND3
+  - X1.GND4
+- name: MISO_3V
+  pins: [JP3.6, U1.MISO]
+- name: MOSI_3V
+  pins: [U1.MOSI, U2.1Y]
+- name: MOSI_5V
+  pins: [JP3.7, U2.1A]
+- name: RST_3V
+  pins: [U1.RESET, U2.3Y]
+- name: RST_5V
+  pins: [JP3.9, R3.1, U2.3A]
+- name: SCK_3V
+  pins: [U1.SCK, U2.2Y]
+- name: SCK_5V
+  pins: [JP3.5, U2.2A]
+- name: VIN
+  pins: [C3.1, JP3.1, R1.1, R2.2, R3.2, U3.IN]
+positions:
+- ref: C1
+  x: 2.03
+  y: 13.21
+  rot: 270.0
+- ref: C2
+  x: 15.49
+  y: 26.92
+  rot: 90.0
+- ref: C3
+  x: 2.41
+  y: 5.59
+- ref: JP1
+  x: 7.62
+  y: 27.94
+- ref: JP2
+  x: 21.59
+  y: 24.51
+- ref: JP3
+  x: 12.7
+  y: 2.54
+- ref: R1
+  x: 5.33
+  y: 6.6
+  rot: 270.0
+- ref: R2
+  x: 5.33
+  y: 10.03
+  rot: 270.0
+- ref: R3
+  x: 4.7
+  y: 12.57
+  rot: 180.0
+- ref: U1
+  x: 14.73
+  y: 14.73
+  rot: 90.0
+- ref: U2
+  x: 3.3
+  y: 18.54
+  rot: 180.0
+- ref: U3
+  x: 2.54
+  y: 9.02
+- ref: X1
+  x: 21.59
+  y: 29.08
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

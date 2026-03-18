@@ -1,0 +1,3312 @@
+name: PX4 FMUv2 (Pixhawk)
+slug: px4-fmuv2-pixhawk
+source: PX4/Hardware
+format: eagle
+description: STM32F427 + STM32F103 I/O co-proc, triple-redundant IMU (MPU6000
+tags: [drone-uav, sensors]
+key_ics: [STM32F427, STM32F103, MPU6000]
+outline:
+  width_mm: 70.0
+  height_mm: 40.5
+design_rules:
+  layers: 6
+  min_trace: 0.15mm
+  min_clearance: 5mil
+  min_drill: 0.2mm
+  min_via: 0.125mm
+components:
+- ref: B601
+  value: MS621FE
+  footprint: MS621FE
+  description: SEIKO 6
+- ref: C1001
+  value: 10uF
+  footprint: 0805
+  voltage: 25V
+- ref: C1002
+  value: 10nF
+  footprint: '0402'
+- ref: C1003
+  value: 1uF
+  footprint: '0603'
+- ref: C1004
+  value: 10uF
+  footprint: '0603'
+- ref: C1005
+  value: 100nF
+  footprint: '0402'
+- ref: C1008
+  value: 2.2uF
+  footprint: '0402'
+  decouples: U1002
+- ref: C101
+  value: 100nF
+  footprint: '0402'
+- ref: C102
+  value: 8pF
+  footprint: '0402'
+- ref: C103
+  value: 8pF
+  footprint: '0402'
+- ref: C1101
+  value: 22uF
+  footprint: 0805
+  voltage: 25V
+  decouples: U1102
+- ref: C1102
+  value: 22uF
+  footprint: 0805
+  voltage: 25V
+  decouples: U1103
+- ref: C1103
+  value: 22uF
+  footprint: 0805
+  voltage: 25V
+  decouples: U1104
+- ref: C1104
+  value: 100uF
+  footprint: '1206'
+  decouples: U1104
+- ref: C1105
+  value: 100nF
+  footprint: '0402'
+- ref: C1106
+  value: 100nF
+  footprint: '0402'
+- ref: C1107
+  value: 100nF
+  footprint: '0402'
+- ref: C1108
+  value: 10pF
+  footprint: '0402'
+  voltage: 25V
+- ref: C1109
+  value: 10pF
+  footprint: '0402'
+  voltage: 25V
+- ref: C1110
+  value: 10pF
+  footprint: '0402'
+  voltage: 25V
+- ref: C201
+  value: 100nF
+  footprint: '0402'
+- ref: C202
+  value: 100nF
+  footprint: '0402'
+- ref: C401
+  value: 100nF
+  footprint: '0402'
+- ref: C402
+  value: 100nF
+  footprint: '0402'
+- ref: C501
+  value: 10uF
+  footprint: 0805
+  voltage: 10V
+  decouples: U603
+- ref: C502
+  value: 100nF
+  footprint: '0402'
+  decouples: U501
+- ref: C503
+  value: 100nF
+  footprint: '0402'
+  decouples: U502
+- ref: C504
+  value: 10nF
+  footprint: '0402'
+- ref: C505
+  value: 10nF
+  footprint: '0402'
+- ref: C506
+  value: 10uF
+  footprint: 0805
+  voltage: 10V
+  decouples: U504
+- ref: C507
+  value: 100nF
+  footprint: '0402'
+  decouples: U504
+- ref: C508
+  value: 100nF
+  footprint: '0402'
+  decouples: U501
+- ref: C509
+  value: 10uF
+  footprint: 0805
+  voltage: 10V
+- ref: C510
+  value: 470nF
+  footprint: '0402'
+- ref: C511
+  value: 10uF
+  footprint: 0805
+  voltage: 10V
+  decouples: U505
+- ref: C512
+  value: 2.2uF
+  footprint: '0603'
+- ref: C513
+  value: 2.2uF
+  footprint: '0603'
+  decouples: U505
+- ref: C514
+  value: 100nF
+  footprint: '0402'
+  decouples: U501
+- ref: C515
+  value: 10nF
+  footprint: '0603'
+- ref: C601
+  value: 10uF
+  footprint: 0805
+  voltage: 25V
+- ref: C602
+  value: 10nF
+  footprint: '0402'
+- ref: C603
+  value: 1uF
+  footprint: '0603'
+- ref: C604
+  value: 22uF
+  footprint: 0805
+  voltage: 25V
+- ref: C605
+  value: 22uF
+  footprint: 0805
+  voltage: 25V
+  decouples: U603
+- ref: C606
+  value: 100nF
+  footprint: '0402'
+- ref: C607
+  value: 100nF
+  footprint: '0402'
+- ref: C608
+  value: 100nF
+  footprint: '0402'
+- ref: C609
+  value: 100nF
+  footprint: '0402'
+- ref: C610
+  value: 100nF
+  footprint: '0402'
+- ref: C611
+  value: 2.2uF
+  footprint: '0603'
+- ref: C612
+  value: 100nF
+  footprint: '0402'
+- ref: C613
+  value: 2.2uF
+  footprint: '0603'
+- ref: C614
+  value: 100uF
+  footprint: '1206'
+  decouples: U601
+- ref: C615
+  value: 100nF
+  footprint: '0402'
+- ref: C616
+  value: 100nF
+  footprint: '0402'
+- ref: C617
+  value: 100nF
+  footprint: '0402'
+  decouples: U603
+- ref: C618
+  value: 100uF
+  footprint: '1206'
+  decouples: U602
+- ref: C701
+  value: 100nF
+  footprint: '0402'
+- ref: C702
+  value: 1uF
+  footprint: '0603'
+  decouples: U702
+- ref: C703
+  value: 5.6nF
+  footprint: '0402'
+- ref: C704
+  value: 470nF
+  footprint: '0402'
+- ref: C801
+  value: 100nF
+  footprint: '0402'
+- ref: C802
+  value: 100nF
+  footprint: '0402'
+- ref: C803
+  value: 100nF
+  footprint: '0402'
+- ref: C804
+  value: 100nF
+  footprint: '0402'
+- ref: C805
+  value: 8pF
+  footprint: '0402'
+- ref: C806
+  value: 8pF
+  footprint: '0402'
+- ref: C901
+  value: 100nF
+  footprint: '0402'
+- ref: C902
+  value: 100nF
+  footprint: '0402'
+- ref: C903
+  value: 100nF
+  footprint: '0402'
+- ref: D1001
+  value: PMEG2005CT
+  footprint: SOT-23-3
+  description: 500 mA low VF dual MEGA Schottky barrier rectifier
+- ref: D201
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D202
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D203
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D401
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D402
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D403
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D404
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D602
+  value: RB751V40T1G
+  footprint: SOD323
+  description: Schottky barrier diode in DO214AC, e
+- ref: D701
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D801
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D901
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D902
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D903
+  value: PESD0402-140
+  footprint: '0402'
+- ref: D904
+  value: MSS1P4-M3
+  footprint: MICROSMP
+  description: Schottky barrier diode in DO214AC, e
+- ref: F1001
+  value: 0ZCA0035FF2G
+  footprint: '1206'
+  description: Resettable Fuse PTC
+- ref: J201
+  value: DF13C-6P-1.25V
+  footprint: DF13C-6P-1.25V
+  description: DF13-6P 1
+- ref: J202
+  value: DF13C-6P-1.25V
+  footprint: DF13C-6P-1.25V
+  description: DF13-6P 1
+- ref: J203
+  value: DF13C-6P-1.25V
+  footprint: DF13C-6P-1.25V
+  description: DF13-6P 1
+- ref: J204
+  value: DF13C-6P-1.25V
+  footprint: DF13C-6P-1.25V
+  description: DF13-6P 1
+- ref: J301
+  value: 47346-0001
+  footprint: MOLEX-47346-0001
+  description: MICRO USB B, BOTTOM MOUNT
+- ref: J302
+  value: DF13C-4P-1.25V
+  footprint: DF13C-4P-1.25V
+  description: DF13-4P 1
+- ref: J401
+  value: DF13C-4P-1.25V
+  footprint: DF13C-4P-1.25V
+  description: DF13-4P 1
+- ref: J402
+  value: DF13C-3P-1.25V
+  footprint: DF13C-3P-1.25V
+  description: DF13-3P 1
+- ref: J403
+  value: DF13C-7P-1.25V
+  footprint: DF13C-7P-1.25V
+  description: DF13-7P 1
+- ref: J404
+  value: DF13C-5P-1.25V
+  footprint: DF13C-5P-1.25V
+  description: DF13-5P 1
+- ref: J405
+  value: DF13C-4P-1.25V
+  footprint: DF13C-4P-1.25V
+  description: DF13-4P 1
+- ref: J601
+  value: DF13C-6P-1.25V
+  footprint: DF13C-6P-1.25V
+  description: DF13-6P 1
+- ref: J701
+  value: DF13C-2P-1.25V
+  footprint: DF13C-2P-1.25V
+  description: DF13-2P 1
+- ref: J702
+  value: DF13C-3P-1.25V
+  footprint: DF13C-3P-1.25V
+  description: DF13-3P 1
+- ref: J801
+  value: JST ZH-
+  footprint: JST-ZH-SMT-VERTICAL
+- ref: J901
+  value: 3x16 header
+  footprint: 3X16RA
+  description: 3x16 servo header
+- ref: JX301
+  value: ARM JTAG
+  footprint: FTSH-105-01-XXX-DV-K
+- ref: JX801
+  value: 3x1 header
+  footprint: HEADER
+  description: Single row 0.1" servo header
+- ref: JX802
+  value: ARM JTAG
+  footprint: FTSH-105-01-XXX-DV-K
+- ref: L1101
+  value: KNH16C104DA5TS
+  footprint: KYOCERA-KNH16-DA
+- ref: L1102
+  value: KNH16C104DA5TS
+  footprint: KYOCERA-KNH16-DA
+- ref: L201
+  value: KNH16C104DA5TS
+  footprint: KYOCERA-KNH16-DA
+- ref: L202
+  value: KNH16C104DA5TS
+  footprint: KYOCERA-KNH16-DA
+- ref: L203
+  value: KNH16C104DA5TS
+  footprint: KYOCERA-KNH16-DA
+- ref: L401
+  value: KNH16C104DA5TS
+  footprint: KYOCERA-KNH16-DA
+- ref: L402
+  value: KNH16C104DA5TS
+  footprint: KYOCERA-KNH16-DA
+- ref: L403
+  value: KNH16C104DA5TS
+  footprint: KYOCERA-KNH16-DA
+- ref: L404
+  value: KNH16C104DA5TS
+  footprint: KYOCERA-KNH16-DA
+- ref: L603
+  value: KNH16C104DA5TS
+  footprint: KYOCERA-KNH16-DA
+- ref: L701
+  value: 47uH
+  footprint: 0805
+- ref: L901
+  value: KNH16C104DA5TS
+  footprint: KYOCERA-KNH16-DA
+- ref: LED701
+  value: amber LED
+  footprint: '0603'
+- ref: LED702
+  value: green LED
+  footprint: '0603'
+- ref: LED703
+  value: amber LED
+  footprint: '0603'
+- ref: LED704
+  value: green LED
+  footprint: '0603'
+- ref: LED705
+  value: blue LED
+  footprint: '0603'
+- ref: Q601
+  value: MMBT3906*
+  footprint: SOT23-BEC
+  description: PNP Transistror
+- ref: R1001
+  value: 100kohm
+  footprint: '0402'
+  pulldown: U1001.ILIM
+- ref: R1002
+  value: 10kohm
+  footprint: '0402'
+- ref: R101
+  value: 470ohm
+  footprint: '0402'
+- ref: R102
+  value: 10kohm
+  footprint: '0402'
+  pulldown: PB2-BOOT1
+- ref: R1101
+  value: 10kohm
+  footprint: '0402'
+- ref: R1102
+  value: 10kohm
+  footprint: '0402'
+- ref: R1103
+  value: 1Mohm
+  footprint: '0402'
+- ref: R1104
+  value: 1Mohm
+  footprint: '0402'
+- ref: R1105
+  value: 453kohm
+  footprint: '0402'
+  pullup: U1101.UV1
+- ref: R1106
+  value: 56kohm
+  footprint: '0402'
+- ref: R1107
+  value: 105kohm
+  footprint: '0402'
+  pulldown: U1101.OV1
+- ref: R1109
+  value: 453kohm
+  footprint: '0402'
+  pullup: U1101.UV2
+- ref: R1110
+  value: 56kohm
+  footprint: '0402'
+- ref: R1111
+  value: 105kohm
+  footprint: '0402'
+  pulldown: U1101.OV2
+- ref: R1112
+  value: 453kohm
+  footprint: '0402'
+  pullup: U1101.UV3
+- ref: R1113
+  value: 56kohm
+  footprint: '0402'
+- ref: R1114
+  value: 105kohm
+  footprint: '0402'
+  pulldown: U1101.OV3
+- ref: R1115
+  value: 0ohm
+  footprint: '0402'
+- ref: R201
+  value: 120ohm
+  footprint: '0402'
+- ref: R202
+  value: 120ohm
+  footprint: '0402'
+- ref: R203
+  value: 120ohm
+  footprint: '0402'
+- ref: R204
+  value: 120ohm
+  footprint: '0402'
+- ref: R205
+  value: 120ohm
+  footprint: '0402'
+- ref: R206
+  value: 120ohm
+  footprint: '0402'
+- ref: R207
+  value: 120ohm
+  footprint: '0402'
+- ref: R208
+  value: 120ohm
+  footprint: '0402'
+- ref: R209
+  value: 120ohm
+  footprint: '0402'
+- ref: R210
+  value: 120ohm
+  footprint: '0402'
+- ref: R211
+  value: 120ohm
+  footprint: '0402'
+- ref: R212
+  value: 120ohm
+  footprint: '0402'
+- ref: R213
+  value: 120ohm
+  footprint: '0402'
+- ref: R214
+  value: 120ohm
+  footprint: '0402'
+- ref: R215
+  value: 120ohm
+  footprint: '0402'
+- ref: R216
+  value: 120ohm
+  footprint: '0402'
+- ref: R301
+  value: 100kohm
+  footprint: '0402'
+- ref: R302
+  value: 100kohm
+  footprint: '0402'
+- ref: R303
+  value: 100kohm
+  footprint: '0402'
+- ref: R304
+  value: 100kohm
+  footprint: '0402'
+- ref: R305
+  value: 100kohm
+  footprint: '0402'
+- ref: R306
+  value: 1.5kohm
+  footprint: '0402'
+- ref: R307
+  value: 1.5kohm
+  footprint: '0402'
+- ref: R401
+  value: 1.5kohm
+  footprint: '0402'
+- ref: R402
+  value: 1.5kohm
+  footprint: '0402'
+- ref: R403
+  value: 10kohm
+  footprint: '0402'
+  pulldown: PRESSURE_SENS
+- ref: R404
+  value: 120ohm
+  footprint: '0402'
+- ref: R405
+  value: 120ohm
+  footprint: '0402'
+- ref: R406
+  value: 10kohm
+  footprint: '0402'
+- ref: R407
+  value: 10kohm
+  footprint: '0402'
+- ref: R408
+  value: 10kohm
+  footprint: '0402'
+- ref: R409
+  value: 120ohm
+  footprint: '0402'
+- ref: R602
+  value: 1Mohm
+  footprint: '0402'
+- ref: R603
+  value: 10kohm
+  footprint: '0402'
+  pullup: FMU-VDD_5V5
+- ref: R604
+  value: 1Mohm
+  footprint: '0402'
+- ref: R608
+  value: 1kohm
+  footprint: '0402'
+  pullup: D602.C
+- ref: R609
+  value: 10kohm
+  footprint: '0402'
+- ref: R610
+  value: 10kohm
+  footprint: '0402'
+- ref: R611
+  value: 10kohm
+  footprint: '0402'
+  pulldown: FMU-BOOT0
+- ref: R615
+  value: 10kohm
+  footprint: '0402'
+  pulldown: '!VDD_5V_PERIPH_EN'
+- ref: R616
+  value: 25.5kohm
+  footprint: '0402'
+  pulldown: U602.ILIM
+- ref: R617
+  value: 16.5kohm
+  footprint: '0402'
+  pulldown: U601.ILIM
+- ref: R620
+  value: 1.8kohm
+  footprint: '0402'
+  pullup: Q601.B
+- ref: R621
+  value: 10ohm
+  footprint: '0603'
+- ref: R635
+  value: 10kohm
+  footprint: '0402'
+  pullup: FMU-!RESET
+- ref: R701
+  value: 9.09kohm
+  footprint: '0402'
+- ref: R702
+  value: 10kohm
+  footprint: '0402'
+  pulldown: U702.-IN
+- ref: R703
+  value: 100kohm
+  footprint: '0402'
+- ref: R704
+  value: 10kohm
+  footprint: '0402'
+  pulldown: U701.REXT
+- ref: R705
+  value: 453kohm
+  footprint: '0402'
+- ref: R706
+  value: 16.5kohm
+  footprint: '0402'
+  pulldown: U702.FB
+- ref: R707
+  value: 220ohm
+  footprint: '0402'
+- ref: R708
+  value: 220ohm
+  footprint: '0402'
+- ref: R709
+  value: 220ohm
+  footprint: '0402'
+- ref: R710
+  value: 68ohm
+  footprint: '0402'
+- ref: R711
+  value: 220ohm
+  footprint: '0402'
+- ref: R712
+  value: 220ohm
+  footprint: '0402'
+- ref: R713
+  value: 1.5kohm
+  footprint: '0402'
+  pulldown: SAFETY
+- ref: R735
+  value: 220ohm
+  footprint: '0402'
+- ref: R736
+  value: 220ohm
+  footprint: '0402'
+- ref: R801
+  value: 10kohm
+  footprint: '0402'
+  pulldown: IO-BOOT0
+- ref: R802
+  value: 10kohm
+  footprint: '0402'
+  pulldown: IO-BOOT1
+- ref: R803
+  value: 220ohm
+  footprint: '0402'
+- ref: R804
+  value: 220ohm
+  footprint: '0402'
+- ref: R901
+  value: 10kohm
+  footprint: '0402'
+- ref: R902
+  value: 220ohm
+  footprint: '0402'
+- ref: R903
+  value: 220ohm
+  footprint: '0402'
+- ref: R904
+  value: 220ohm
+  footprint: '0402'
+- ref: R905
+  value: 220ohm
+  footprint: '0402'
+- ref: R906
+  value: 220ohm
+  footprint: '0402'
+- ref: R907
+  value: 220ohm
+  footprint: '0402'
+- ref: R908
+  value: 220ohm
+  footprint: '0402'
+- ref: R909
+  value: 220ohm
+  footprint: '0402'
+- ref: R910
+  value: 220ohm
+  footprint: '0402'
+- ref: R911
+  value: 220ohm
+  footprint: '0402'
+- ref: R912
+  value: 220ohm
+  footprint: '0402'
+- ref: R913
+  value: 220ohm
+  footprint: '0402'
+- ref: R914
+  value: 220ohm
+  footprint: '0402'
+- ref: R915
+  value: 220ohm
+  footprint: '0402'
+- ref: R916
+  value: 220ohm
+  footprint: '0402'
+- ref: R917
+  value: 220ohm
+  footprint: '0402'
+- ref: R918
+  value: 10kohm
+  footprint: '0402'
+  pullup: R922.1
+- ref: R919
+  value: 10kohm
+  footprint: '0402'
+- ref: R922
+  value: 10kohm
+  footprint: '0402'
+  pullup: R918.2
+- ref: RN1101
+  value: 1Mohm
+  footprint: EXB28V
+  description: Array Chip Resistor
+- ref: S601
+  value: RESET
+  footprint: EVQP7J01K
+- ref: S801
+  value: RESET
+  footprint: EVQP7J01K
+- ref: U1001
+  value: BQ24313
+  footprint: QFN8-DSG
+- ref: U1002
+  value: MIC5332
+  footprint: MLF-8-EPAD
+- ref: U101
+  value: STM32F4X7VX
+  footprint: TQFP100
+  description: STM32F4X7VX 100 pin LQFP STM32F407VE - 512 KB flash, no crypto STM32F407VG - 1
+- ref: U102
+  value: FM25V01
+  footprint: SOIC-8
+  description: FM25V01 128Kb Serial 3V F-RAM Memory
+- ref: U1101
+  value: LTC4417
+  footprint: MO-220
+- ref: U1102
+  value: NTHD4102PT1G
+  footprint: '1206'
+- ref: U1103
+  value: NTHD4102PT1G
+  footprint: '1206'
+- ref: U1104
+  value: NTHD4102PT1G
+  footprint: '1206'
+- ref: U201
+  value: TXS0108
+  footprint: QFN20-RGY
+- ref: U202
+  value: TXS0108
+  footprint: QFN20-RGY
+- ref: U301
+  value: 2908-05WB-MG
+  footprint: MICROSD
+- ref: U302
+  value: NUF2042XV6
+  footprint: SOT563-6
+- ref: U401
+  value: MAX3051
+  footprint: SOT-23-8
+- ref: U501
+  value: L3GD20
+  footprint: L3G4200DH-MAN
+  description: L3G4200DH - Digital 3-axis Gyroscope
+- ref: U502
+  value: L3GD20H
+  footprint: LGA-16L
+  description: 'L3GD20H MEMS motion sensor: 3-axis digital output gyroscope'
+- ref: U504
+  value: LSM303D
+  footprint: LGA-16L
+  description: 'LSM303D Ultra compact high performance e-compass: 3D accelerometer and 3D'
+- ref: U505
+  value: MPU-6000
+  footprint: QFN-24
+  description: 'Invensense MPU-6000: 3-axis gyro, 3-axis accel & 9-axis MotionFusion'
+- ref: U506
+  value: MS5611-01
+  footprint: MS5611-01BA
+  description: MS5611-01BA
+- ref: U601
+  value: BQ24315
+  footprint: QFN8-DSG
+- ref: U602
+  value: BQ24315
+  footprint: QFN8-DSG
+- ref: U603
+  value: MIC5332
+  footprint: MLF-8-EPAD
+- ref: U701
+  value: TCA62724FMG
+  footprint: SON10
+  description: Toshiba TCA62724FMG I2C RGB LED driver
+- ref: U702
+  value: LT3469
+  footprint: SOT-23-8
+  description: LT3469 Piezo microactuator driver with boost regulator
+- ref: U703
+  value: LRTB GFTG-T7AW-1+V7A7-29+R5T9-49-L
+  footprint: 6-PLCC
+  description: RGB LED with separate anode/cathode terminals
+- ref: U801
+  value: STM32F10XCXT6
+  footprint: TQFP48
+  description: ST STM32F101/103 48pin LQFP
+- ref: U901
+  value: TXS0108
+  footprint: QFN20-RGY
+- ref: U902
+  value: TXS0108
+  footprint: QFN20-RGY
+- ref: U903
+  value: 74LVC2G240
+  footprint: TSSOP8_SOT505-2
+  description: Dual inverter tri-state, 3
+- ref: X101
+  value: 3.2x2.5 mm / 24 MHz / 15 ppm
+  footprint: OSCILLATOR-3.2X2.5
+- ref: X503
+  value: 0512811094
+  footprint: 51281-1094
+  description: 10-pin FPC connector for PX4 sensor board
+- ref: X801
+  value: 3.2x2.5 mm / 24 MHz / 15 ppm
+  footprint: OSCILLATOR-3.2X2.5
+nets:
+- name: '!ACCEL_MAG_CS'
+  pins: [U101.PORTC_H.PC15, U504.CS, X503.G$6.S]
+  class: signal
+  trace_width: '0.15'
+- name: '!BARO_CS'
+  pins: [U101.PORTD_L.PD7, U506.CSB2]
+  class: signal
+  trace_width: '0.15'
+- name: '!FMU-LED_AMBER'
+  pins: [R707.1, U101.PORTE_H.PE12]
+  class: signal
+  trace_width: '0.15'
+- name: '!FRAM_CS'
+  pins: [U101.PORTD_H.PD10, U102.!S]
+  class: signal
+  trace_width: '0.15'
+- name: '!GYRO_CS'
+  pins: [U101.PORTC_H.PC13, U501.CS, U502.CS, X503.G$7.S]
+  class: signal
+  trace_width: '0.15'
+- name: '!IO-LED_AMBER'
+  pins: [R709.1, U801.PORTB_H.PB15]
+  class: signal
+  trace_width: '0.15'
+- name: '!IO-LED_BLUE'
+  pins: [R712.1, U801.PORTB_H.PB14]
+  class: signal
+  trace_width: '0.15'
+- name: '!IO-LED_SAFETY'
+  pins: [R710.2, U801.PORTB_H.PB13]
+  class: signal
+  trace_width: '0.15'
+- name: '!MPU_CS'
+  pins: [U101.PORTC_L.PC2, U505./CS]
+  class: signal
+  trace_width: '0.15'
+- name: '!SBUS_OUTPUT_EN'
+  pins: [U801.PORTB_L.PB4, U903.!2OE]
+  class: signal
+  trace_width: '0.15'
+- name: '!SPI_EXT_NSS'
+  pins: [J403.5, U101.PORTE_L.PE4]
+  class: signal
+  trace_width: '0.15'
+- name: '!VBUS_VALID'
+  pins: [RN1101.B.1, U101.PORTC_L.PC0, U1101.!VALID3]
+  class: signal
+  trace_width: '0.15'
+- name: '!VDD_5V_HIPOWER_OC'
+  pins: [R602.1, U101.PORTE_H.PE10, U601.!FAULT]
+  class: signal
+  trace_width: '0.15'
+- name: '!VDD_5V_PERIPH_EN'
+  pins: [R615.1, U101.PORTA_H.PA8, U601.!CE, U602.!CE]
+  class: signal
+  trace_width: '0.15'
+- name: '!VDD_5V_PERIPH_OC'
+  pins: [R604.1, U101.PORTE_H.PE15, U602.!FAULT]
+  class: signal
+  trace_width: '0.15'
+- name: '!VDD_BRICK_VALID'
+  pins: [RN1101.D.1, U101.PORTB_L.PB5, U1101.!VALID1]
+  class: signal
+  trace_width: '0.15'
+- name: '!VDD_SERVO_VALID'
+  pins: [RN1101.C.1, U101.PORTB_L.PB7, U1101.!VALID2]
+  class: signal
+  trace_width: '0.15'
+- name: 2Y
+  pins: [D902.C, R901.2, R910.1, U903.2Y]
+  class: signal
+  trace_width: '0.15'
+- name: ACCEL_DRDY
+  pins: [U101.PORTB_L.PB4, U504.INT1, X503.G$3.S]
+  class: signal
+  trace_width: '0.15'
+- name: ALARM
+  pins: [R701.2, U101.PORTA_H.PA15]
+  class: signal
+  trace_width: '0.15'
+- name: B1
+  pins: [R201.1, U201.B1]
+  class: signal
+  trace_width: '0.15'
+- name: B1_2
+  pins: [R905.1, U902.B1]
+  class: signal
+  trace_width: '0.15'
+- name: B1_3
+  pins: [R902.1, U901.B1]
+  class: signal
+  trace_width: '0.15'
+- name: B2
+  pins: [R208.1, U201.B2]
+  class: signal
+  trace_width: '0.15'
+- name: B2_2
+  pins: [R914.1, U902.B2]
+  class: signal
+  trace_width: '0.15'
+- name: B2_3
+  pins: [R911.1, U901.B2]
+  class: signal
+  trace_width: '0.15'
+- name: B3
+  pins: [R202.1, U201.B3]
+  class: signal
+  trace_width: '0.15'
+- name: B3_2
+  pins: [R205.1, U202.B3]
+  class: signal
+  trace_width: '0.15'
+- name: B3_3
+  pins: [R906.1, U902.B3]
+  class: signal
+  trace_width: '0.15'
+- name: B3_4
+  pins: [R903.1, U901.B3]
+  class: signal
+  trace_width: '0.15'
+- name: B4
+  pins: [R209.1, U201.B4]
+  class: signal
+  trace_width: '0.15'
+- name: B4_2
+  pins: [R212.1, U202.B4]
+  class: signal
+  trace_width: '0.15'
+- name: B4_3
+  pins: [R915.1, U902.B4]
+  class: signal
+  trace_width: '0.15'
+- name: B4_4
+  pins: [R912.1, U901.B4]
+  class: signal
+  trace_width: '0.15'
+- name: B5
+  pins: [R203.1, U201.B5]
+  class: signal
+  trace_width: '0.15'
+- name: B5_2
+  pins: [R206.1, U202.B5]
+  class: signal
+  trace_width: '0.15'
+- name: B5_3
+  pins: [R907.1, U902.B5]
+  class: signal
+  trace_width: '0.15'
+- name: B5_4
+  pins: [R904.1, U901.B5]
+  class: signal
+  trace_width: '0.15'
+- name: B6
+  pins: [R210.1, U201.B6]
+  class: signal
+  trace_width: '0.15'
+- name: B6_2
+  pins: [R213.1, U202.B6]
+  class: signal
+  trace_width: '0.15'
+- name: B6_3
+  pins: [R916.1, U902.B6]
+  class: signal
+  trace_width: '0.15'
+- name: B6_4
+  pins: [R913.1, U901.B6]
+  class: signal
+  trace_width: '0.15'
+- name: B7
+  pins: [R204.1, U201.B7]
+  class: signal
+  trace_width: '0.15'
+- name: B7_2
+  pins: [R207.1, U202.B7]
+  class: signal
+  trace_width: '0.15'
+- name: B7_3
+  pins: [R908.1, U902.B7]
+  class: signal
+  trace_width: '0.15'
+- name: B8
+  pins: [R211.1, U201.B8]
+  class: signal
+  trace_width: '0.15'
+- name: B8_2
+  pins: [R214.1, U202.B8]
+  class: signal
+  trace_width: '0.15'
+- name: B8_3
+  pins: [R917.1, U902.B8]
+  class: signal
+  trace_width: '0.15'
+- name: BATT_CURRENT_SENS
+  pins: [R1101.1, U101.PORTA_L.PA3]
+  class: signal
+  trace_width: '0.15'
+- name: BATT_CURRENT_SENS_PROT
+  pins: [J601.3, L1101.P$1, R1104.1]
+  class: signal
+  trace_width: '0.15'
+- name: BATT_VOLTAGE_SENS
+  pins: [R1102.1, U101.PORTA_L.PA2]
+  class: signal
+  trace_width: '0.15'
+- name: BATT_VOLTAGE_SENS_PROT
+  pins: [J601.4, L1102.P$1, R1103.1]
+  class: signal
+  trace_width: '0.15'
+- name: C1
+  pins: [C509.1, U504.C1]
+  class: signal
+  trace_width: '0.15'
+- name: CAN1_RX
+  pins: [U101.PORTD_L.PD0, U401.DOUT]
+  class: signal
+  trace_width: '0.15'
+- name: CAN1_TX
+  pins: [U101.PORTD_L.PD1, U401.DIN]
+  class: signal
+  trace_width: '0.15'
+- name: CAN2_RX
+  pins: [R216.1, U101.PORTB_H.PB12]
+  class: signal
+  trace_width: '0.15'
+- name: CAN2_TX
+  pins: [R215.1, U101.PORTB_L.PB6]
+  class: signal
+  trace_width: '0.15'
+- name: CAN_H
+  pins: [J405.2, R409.1, U401.CANH]
+  class: signal
+  trace_width: '0.15'
+- name: CAN_L
+  pins: [J405.3, R409.2, U401.CANL]
+  class: signal
+  trace_width: '0.15'
+- name: CAP
+  pins: [C505.1, U502.CAP]
+  class: signal
+  trace_width: '0.15'
+- name: CPOUT
+  pins: [C515.1, U505.CPOUT]
+  class: signal
+  trace_width: '0.15'
+- name: CSET
+  pins: [C602.2, U603.CSET]
+  class: signal
+  trace_width: '0.15'
+- name: CSET_2
+  pins: [C1002.1, U1002.CSET]
+  class: signal
+  trace_width: '0.15'
+- name: FB
+  pins: [R705.2, R706.1, U702.FB]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-!RESET
+  pins: [C609.2, R635.1, S601.1, U101.RESET.NRST, U603.POR2, U701.!RESET]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-BOOT0
+  pins: [R611.2, U101.RESET.BOOT0]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-CH1
+  pins: [U101.PORTE_H.PE14, U901.A6]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-CH1-PROT
+  pins: [J901.-46.S, R913.2]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-CH2
+  pins: [U101.PORTE_H.PE13, U901.A5]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-CH3
+  pins: [U101.PORTE_H.PE11, U901.A4]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-CH4
+  pins: [U101.PORTE_H.PE9, U901.A3]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-CH5
+  pins: [U101.PORTD_H.PD13, U901.A2]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-CH6
+  pins: [U101.PORTD_H.PD14, U901.A1]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-CH6-PROT
+  pins: [J901.-31.S, R902.2]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-I2C1_SCL
+  pins: [R401.1, R404.1, U101.PORTB_H.PB8]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-I2C1_SDA
+  pins: [R402.1, R405.1, U101.PORTB_H.PB9]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-I2C2_SCL
+  pins: [R306.1, U101.PORTB_H.PB10, U701.SCL]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-I2C2_SDA
+  pins: [R307.1, U101.PORTB_H.PB11, U701.SDA]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-SWCLK
+  pins: [JX301.-TCK/SWCLK.S, U101.PORTA_H.PA14]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-SWDIO
+  pins: [JX301.-TMS/SWDIO.S, U101.PORTA_H.PA13]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-SWO
+  pins: [JX301.-TDO/SWO.S, U101.PORTB_L.PB3]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-UART4_RX
+  pins: [U101.PORTA_L.PA1, U202.A7]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-UART4_TX
+  pins: [U101.PORTA_L.PA0, U202.A8]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-UART7_RX
+  pins: [U101.PORTE_L.PE7, U202.A3]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-UART7_TX
+  pins: [U101.PORTE_H.PE8, U202.A4]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-UART8_RX
+  pins: [U101.PORTE_L.PE0, U202.A5]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-UART8_TX
+  pins: [U101.PORTE_L.PE1, U202.A6]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-USART2_CTS
+  pins: [U101.PORTD_L.PD3, U201.A8]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-USART2_RTS
+  pins: [U101.PORTD_L.PD4, U201.A7]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-USART2_RX
+  pins: [U101.PORTD_L.PD6, U201.A5]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-USART2_TX
+  pins: [U101.PORTD_L.PD5, U201.A6]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-USART3_CTS
+  pins: [U101.PORTD_H.PD11, U201.A2]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-USART3_RTS
+  pins: [U101.PORTD_H.PD12, U201.A1]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-USART3_RX
+  pins: [U101.PORTD_H.PD9, U201.A3]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-USART3_TX
+  pins: [U101.PORTD_H.PD8, U201.A4]
+  class: signal
+  trace_width: '0.15'
+- name: FMU-VDD_3V3
+  pins:
+  - C101.1
+  - C201.1
+  - C202.1
+  - C402.1
+  - C603.1
+  - C604.1
+  - C606.1
+  - C607.1
+  - C608.1
+  - C610.1
+  - C612.1
+  - C616.1
+  - C701.1
+  - C902.1
+  - D602.A
+  - JX301.-VTREF.S
+  - R301.2
+  - R302.2
+  - R303.2
+  - R304.2
+  - R305.2
+  - R306.2
+  - R307.2
+  - R401.2
+  - R402.2
+  - R602.2
+  - R604.2
+  - U101.BAT.VDDA
+  - U101.BAT.VREF+
+  - U101.G$2.VDD
+  - U102.!HOLD
+  - U102.!W
+  - U102.VDD
+  - U201.OE
+  - U201.VCCA
+  - U201.VCCB
+  - U202.OE
+  - U202.VCCA
+  - U202.VCCB
+  - U301.VCC
+  - U401.VCC
+  - U603.VOUT2
+  - U701.!SHDN
+  - U701.VIN
+  - U901.OE
+  - U901.VCCA
+  - U901.VCCB
+  class: power
+  trace_width: '0.15'
+- name: FMU-VDD_5V5
+  pins: [C601.1, C615.1, L603.P$2, R603.1, U603.EN2, U603.VIN]
+  class: power
+  trace_width: '0.15'
+- name: FMU_AUX_ADC1
+  pins: [R408.1, U101.PORTC_L.PC3]
+  class: signal
+  trace_width: '0.15'
+- name: FMU_AUX_ADC1_PROT
+  pins: [J404.4, R408.2]
+  class: signal
+  trace_width: '0.15'
+- name: FMU_AUX_ADC2
+  pins: [R407.1, U101.PORTC_L.PC4]
+  class: signal
+  trace_width: '0.15'
+- name: FMU_AUX_ADC2_PROT
+  pins: [J404.2, R407.2]
+  class: signal
+  trace_width: '0.15'
+- name: FRAM_MISO
+  pins: [U101.PORTB_H.PB14, U102.Q]
+  class: signal
+  trace_width: '0.15'
+- name: FRAM_MOSI
+  pins: [U101.PORTB_H.PB15, U102.D]
+  class: signal
+  trace_width: '0.15'
+- name: FRAM_SCK
+  pins: [U101.PORTB_H.PB13, U102.C]
+  class: signal
+  trace_width: '0.15'
+- name: G1
+  pins: [U1101.G1, U1102.-PMOS1.G, U1102.-PMOS2.G]
+  class: signal
+  trace_width: '0.15'
+- name: G2
+  pins: [U1101.G2, U1103.-PMOS1.G, U1103.-PMOS2.G]
+  class: signal
+  trace_width: '0.15'
+- name: G3
+  pins: [U1101.G3, U1104.-PMOS1.G, U1104.-PMOS2.G]
+  class: signal
+  trace_width: '0.15'
+- name: GND
+  pins:
+  - B601.NEG
+  - C1001.2
+  - C1002.2
+  - C1003.2
+  - C1004.2
+  - C1005.2
+  - C1008.2
+  - C101.2
+  - C102.2
+  - C103.1
+  - C1101.2
+  - C1102.2
+  - C1103.2
+  - C1104.2
+  - C1105.2
+  - C1106.2
+  - C1107.2
+  - C1108.2
+  - C1109.2
+  - C1110.2
+  - C201.2
+  - C202.2
+  - C401.2
+  - C402.2
+  - C501.2
+  - C502.2
+  - C503.2
+  - C504.2
+  - C505.2
+  - C506.2
+  - C507.2
+  - C508.2
+  - C509.2
+  - C511.2
+  - C512.2
+  - C513.2
+  - C514.2
+  - C515.2
+  - C601.2
+  - C602.1
+  - C603.2
+  - C604.2
+  - C605.2
+  - C606.2
+  - C607.2
+  - C608.2
+  - C609.1
+  - C610.2
+  - C611.2
+  - C612.2
+  - C613.2
+  - C614.2
+  - C615.2
+  - C616.2
+  - C617.2
+  - C618.2
+  - C701.2
+  - C702.2
+  - C703.2
+  - C704.2
+  - C801.1
+  - C802.2
+  - C803.2
+  - C804.2
+  - C805.2
+  - C806.1
+  - C901.2
+  - C902.2
+  - C903.2
+  - D201.A
+  - D202.A
+  - D203.A
+  - D401.A
+  - D402.A
+  - D403.A
+  - D404.A
+  - D701.A
+  - D801.A
+  - D901.A
+  - D902.A
+  - D903.A
+  - J201.6
+  - J202.6
+  - J203.6
+  - J204.6
+  - J301.5
+  - J301.GND1
+  - J301.GND2
+  - J301.GND3
+  - J301.GND4
+  - J302.4
+  - J401.4
+  - J402.3
+  - J403.7
+  - J404.3
+  - J404.5
+  - J405.4
+  - J601.5
+  - J601.6
+  - J701.2
+  - J801.P$2
+  - J901.-GND.S
+  - JX301.-GND1.S
+  - JX301.-GND2.S
+  - JX301.-GND3.S
+  - JX801.GND
+  - JX802.-GND1.S
+  - JX802.-GND2.S
+  - JX802.-GND3.S
+  - L1101.P$3
+  - L1102.P$3
+  - L201.P$3
+  - L202.P$3
+  - L203.P$3
+  - L401.P$3
+  - L402.P$3
+  - L403.P$3
+  - L404.P$3
+  - L603.P$3
+  - L901.P$3
+  - R1001.1
+  - R1002.1
+  - R102.2
+  - R1103.2
+  - R1104.2
+  - R1107.2
+  - R1111.2
+  - R1114.2
+  - R1115.1
+  - R403.1
+  - R610.2
+  - R611.1
+  - R615.2
+  - R616.2
+  - R617.2
+  - R621.1
+  - R702.2
+  - R704.1
+  - R706.2
+  - R708.1
+  - R711.1
+  - R713.2
+  - R801.2
+  - R802.2
+  - R919.1
+  - S601.2
+  - S801.2
+  - U1001.!CE
+  - U1001.VBAT
+  - U1001.VSS
+  - U1002.GND
+  - U101.BAT.VSSA
+  - U101.G$2.VSS
+  - U102.VSS
+  - U1101.GND
+  - U201.GND
+  - U202.GND
+  - U301.GND
+  - U302.GND
+  - U401.GND
+  - U401.RS
+  - U401.SHDN
+  - U501.GND
+  - U501.RES_P10_GND
+  - U501.RES_P11_GND
+  - U501.RES_P12_GND
+  - U501.RES_P8_GND
+  - U501.RES_P9_GND
+  - U502.GND
+  - U504.GND@1
+  - U504.GND@2
+  - U504.GND@3
+  - U504.GND@4
+  - U504.RSRV
+  - U505.CLKIN
+  - U505.GND
+  - U506.GND
+  - U506.PS
+  - U601.VBAT
+  - U601.VSS
+  - U602.VBAT
+  - U602.VSS
+  - U603.GND
+  - U701.GND
+  - U702.GND
+  - U801.AN_POWER.VSSA
+  - U801.POWER.VSS_1
+  - U801.POWER.VSS_2
+  - U801.POWER.VSS_3
+  - U901.GND
+  - U902.GND
+  - U903.!1OE
+  - U903.GND
+  - X101.NC_2
+  - X101.NC_4
+  - X503.G$2.S
+  - X801.NC_2
+  - X801.NC_4
+  class: power
+  trace_width: '0.15'
+- name: GPIO_EXT_1
+  pins: [J403.6, U101.PORTC_H.PC14]
+  class: signal
+  trace_width: '0.15'
+- name: GYRO_DRDY
+  pins: [U101.PORTB_L.PB0, U501.DRDY/INT2, U502.DRDY/INT2, X503.G$5.S]
+  class: signal
+  trace_width: '0.15'
+- name: G_2_VCAP_1
+  pins: [C611.1, U101.G$2.VCAP_1]
+  class: signal
+  trace_width: '0.15'
+- name: G_2_VCAP_2
+  pins: [C613.1, U101.G$2.VCAP_2]
+  class: signal
+  trace_width: '0.15'
+- name: HYS
+  pins: [R1115.2, U1101.HYS]
+  class: signal
+  trace_width: '0.15'
+- name: ILIM
+  pins: [R616.1, U602.ILIM]
+  class: signal
+  trace_width: '0.15'
+- name: ILIM_2
+  pins: [R617.1, U601.ILIM]
+  class: signal
+  trace_width: '0.15'
+- name: ILIM_3
+  pins: [R1001.2, U1001.ILIM]
+  class: signal
+  trace_width: '0.15'
+- name: IN
+  pins: [R702.1, R703.2, U702.-IN]
+  class: signal
+  trace_width: '0.15'
+- name: IN_2
+  pins: [R701.1, U702.+IN]
+  class: signal
+  trace_width: '0.15'
+- name: IO-!RESET
+  pins: [C801.2, S801.1, U1002.POR2, U801.RESET.NRST]
+  class: signal
+  trace_width: '0.15'
+- name: IO-!VDD_SERVO_IN_FAULT
+  pins: [U1001.!FAULT, U801.PORTA_H.PA15]
+  class: signal
+  trace_width: '0.15'
+- name: IO-BOOT0
+  pins: [R801.1, U801.RESET.BOOT0]
+  class: signal
+  trace_width: '0.15'
+- name: IO-BOOT1
+  pins: [R802.1, U801.PORTB_L.PB2]
+  class: signal
+  trace_width: '0.15'
+- name: IO-CH1
+  pins: [U801.PORTA_L.PA0, U902.A8]
+  class: signal
+  trace_width: '0.15'
+- name: IO-CH1-PROT
+  pins: [J901.-28.S, R917.2]
+  class: signal
+  trace_width: '0.15'
+- name: IO-CH2
+  pins: [U801.PORTA_L.PA1, U902.A7]
+  class: signal
+  trace_width: '0.15'
+- name: IO-CH3
+  pins: [U801.PORTB_H.PB8, U902.A6]
+  class: signal
+  trace_width: '0.15'
+- name: IO-CH4
+  pins: [U801.PORTB_H.PB9, U902.A5]
+  class: signal
+  trace_width: '0.15'
+- name: IO-CH5
+  pins: [U801.PORTA_L.PA6, U902.A4]
+  class: signal
+  trace_width: '0.15'
+- name: IO-CH6
+  pins: [U801.PORTA_L.PA7, U902.A3]
+  class: signal
+  trace_width: '0.15'
+- name: IO-CH7
+  pins: [U801.PORTB_L.PB0, U902.A2]
+  class: signal
+  trace_width: '0.15'
+- name: IO-CH8
+  pins: [U801.PORTB_L.PB1, U902.A1]
+  class: signal
+  trace_width: '0.15'
+- name: IO-CH8-PROT
+  pins: [J901.-7.S, R905.2]
+  class: signal
+  trace_width: '0.15'
+- name: IO-SWCLK
+  pins: [JX802.-TCK/SWCLK.S, U801.PORTA_H.PA14]
+  class: signal
+  trace_width: '0.15'
+- name: IO-SWDIO
+  pins: [JX802.-TMS/SWDIO.S, U801.PORTA_H.PA13]
+  class: signal
+  trace_width: '0.15'
+- name: IO-SWO
+  pins: [JX802.-TDO/SWO.S, U801.PORTB_L.PB3]
+  class: signal
+  trace_width: '0.15'
+- name: IO-USART1_RX
+  pins: [J801.P$3, JX801.+5V, U801.PORTA_H.PA10]
+  class: signal
+  trace_width: '0.15'
+- name: IO-USART1_TX
+  pins: [JX801.PPM, R101.2, U801.PORTA_H.PA9]
+  class: signal
+  trace_width: '0.15'
+- name: IO-VDD_3V3
+  pins:
+  - C1003.1
+  - C1004.1
+  - C802.1
+  - C803.1
+  - C804.1
+  - C901.1
+  - C903.1
+  - D701.C
+  - J702.1
+  - JX802.-VTREF.S
+  - U1002.VOUT2
+  - U801.AN_POWER.VDDA
+  - U801.POWER.VDD_1
+  - U801.POWER.VDD_2
+  - U801.POWER.VDD_3
+  - U902.OE
+  - U902.VCCA
+  - U902.VCCB
+  - U903.VCC
+  class: power
+  trace_width: '0.15'
+- name: IO-VDD_5V5
+  pins:
+  - C1001.1
+  - C1005.1
+  - D1001.CC
+  - J901.-2.S
+  - LED702.A
+  - LED703.A
+  - LED705.A
+  - U1002.EN2
+  - U1002.VIN
+  class: power
+  trace_width: '0.15'
+- name: MAG_DRDY
+  pins: [U101.PORTB_L.PB1, U504.INT2, X503.G$4.S]
+  class: signal
+  trace_width: '0.15'
+- name: MPU_DRDY
+  pins: [U101.PORTD_H.PD15, U505.INT]
+  class: power
+  trace_width: '0.15'
+- name: N$100
+  pins: [D203.C, J203.1, J204.1, L203.P$2]
+  class: power
+  trace_width: '0.15'
+- name: N$101
+  pins: [D202.C, J202.1, L202.P$2]
+  class: power
+  trace_width: '0.15'
+- name: N$102
+  pins: [L1102.P$2, R1102.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$103
+  pins: [L1101.P$2, R1101.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$110
+  pins: [D903.C, D904.C, L901.P$1]
+  class: power
+  trace_width: '0.15'
+- name: N$13
+  pins: [R707.2, R735.1]
+  class: signal
+  trace_width: '0.15'
+- name: N$14
+  pins: [J203.4, R215.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$19
+  pins: [J203.5, R216.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$21
+  pins: [D602.C, R608.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$26
+  pins: [LED701.C, R735.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$29
+  pins: [LED702.C, R708.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$3
+  pins: [R918.2, R922.1]
+  class: signal
+  trace_width: '0.15'
+- name: N$31
+  pins: [J901.-10.S, R914.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$33
+  pins: [J401.2, R404.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$36
+  pins: [C704.1, R705.1, U702.VCC]
+  class: signal
+  trace_width: '0.15'
+- name: N$37
+  pins: [J401.3, R405.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$39
+  pins: [R709.2, R736.1]
+  class: signal
+  trace_width: '0.15'
+- name: N$40
+  pins: [LED703.C, R736.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$41
+  pins: [D402.C, J403.1, L402.P$2]
+  class: power
+  trace_width: '0.15'
+- name: N$42
+  pins: [D401.C, J401.1, J402.1, L401.P$2]
+  class: power
+  trace_width: '0.15'
+- name: N$46
+  pins: [D1001.A1, F1001.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$48
+  pins: [D404.C, J405.1, L403.P$2]
+  class: power
+  trace_width: '0.15'
+- name: N$5
+  pins: [D201.C, J201.1, L201.P$2]
+  class: power
+  trace_width: '0.15'
+- name: N$57
+  pins: [J702.2, R710.1]
+  class: signal
+  trace_width: '0.15'
+- name: N$68
+  pins: [J901.-34.S, R911.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$7
+  pins: [LED704.C, R711.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$71
+  pins: [J901.-13.S, R906.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$72
+  pins: [J901.-16.S, R915.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$73
+  pins: [J901.-19.S, R907.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$74
+  pins: [J901.-22.S, R916.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$75
+  pins: [J901.-25.S, R908.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$77
+  pins: [J901.-37.S, R903.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$78
+  pins: [J901.-40.S, R912.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$79
+  pins: [J901.-43.S, R904.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$80
+  pins: [Q601.C, R621.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$81
+  pins: [Q601.B, R620.1]
+  class: signal
+  trace_width: '0.15'
+- name: N$9
+  pins: [LED705.C, R712.2]
+  class: signal
+  trace_width: '0.15'
+- name: N$98
+  pins: [D403.C, J404.1, L404.P$2]
+  class: power
+  trace_width: '0.15'
+- name: N$99
+  pins: [J901.-4.S, R910.2]
+  class: signal
+  trace_width: '0.15'
+- name: OSC_OSC_IN
+  pins: [C102.1, U101.OSC.OSC_IN, X101.3]
+  class: signal
+  trace_width: '0.15'
+- name: OSC_OSC_OUT
+  pins: [C103.2, U101.OSC.OSC_OUT, X101.1]
+  class: signal
+  trace_width: '0.15'
+- name: OTG_DM1
+  pins: [J301.2, J302.3, U302.D1I]
+  class: signal
+  trace_width: '0.15'
+- name: OTG_DP1
+  pins: [J301.3, J302.2, U302.D2I]
+  class: signal
+  trace_width: '0.15'
+- name: OTG_FS_DM
+  pins: [U101.PORTA_H.PA11, U302.D1O]
+  class: signal
+  trace_width: '0.15'
+- name: OTG_FS_DP
+  pins: [U101.PORTA_H.PA12, U302.D2O]
+  class: signal
+  trace_width: '0.15'
+- name: OUT
+  pins: [C703.1, J701.1, R703.1, U702.OUT]
+  class: signal
+  trace_width: '0.15'
+- name: OUT_2
+  pins: [D1001.A2, U1001.OUT]
+  class: power
+  trace_width: '0.15'
+- name: OV1
+  pins: [R1106.2, R1107.1, U1101.OV1]
+  class: signal
+  trace_width: '0.15'
+- name: OV2
+  pins: [R1110.2, R1111.1, U1101.OV2]
+  class: signal
+  trace_width: '0.15'
+- name: OV3
+  pins: [R1113.2, R1114.1, U1101.OV3]
+  class: signal
+  trace_width: '0.15'
+- name: PB2-BOOT1
+  pins: [R102.1, U101.PORTB_L.PB2]
+  class: signal
+  trace_width: '0.15'
+- name: PLLFILT
+  pins: [C504.1, U501.PLLFILT]
+  class: signal
+  trace_width: '0.15'
+- name: PORTA_H_PA10
+  pins: [R101.1, U101.PORTA_H.PA10]
+  class: signal
+  trace_width: '0.15'
+- name: PORTA_L_PA2
+  pins: [R803.1, U801.PORTA_L.PA2]
+  class: signal
+  trace_width: '0.15'
+- name: PORTA_L_PA3
+  pins: [R804.1, U801.PORTA_L.PA3]
+  class: signal
+  trace_width: '0.15'
+- name: PORTD_OSC_PD0_OSC
+  pins: [C805.1, U801.PORTD/OSC.PD0/OSC<=, X801.3]
+  class: signal
+  trace_width: '0.15'
+- name: PORTD_OSC_PD1_OSC
+  pins: [C806.2, U801.PORTD/OSC.PD1/OSC=>, X801.1]
+  class: signal
+  trace_width: '0.15'
+- name: PPM-SBUS-PROT
+  pins: [J901.-1.S, R909.2]
+  class: signal
+  trace_width: '0.15'
+- name: PPM_INPUT
+  pins: [D901.C, R909.1, U801.PORTA_H.PA8, U903.1A]
+  class: signal
+  trace_width: '0.15'
+- name: PRESSURE_SENS
+  pins: [C401.1, R403.2, R406.1, U101.PORTC_L.PC5]
+  class: signal
+  trace_width: '0.15'
+- name: PRESSURE_SENS_IN
+  pins: [J402.2, R406.2]
+  class: signal
+  trace_width: '0.15'
+- name: REGOUT
+  pins: [C512.1, U505.REGOUT]
+  class: signal
+  trace_width: '0.15'
+- name: REXT
+  pins: [R704.2, U701.REXT]
+  class: signal
+  trace_width: '0.15'
+- name: RGB_LED_14
+  pins: [U701.OUT2, U703.RED.C]
+  class: signal
+  trace_width: '0.15'
+- name: RGB_LED_3
+  pins: [U701.OUT0, U703.BLUE.C]
+  class: signal
+  trace_width: '0.15'
+- name: RGB_LED_4
+  pins: [U701.OUT1, U703.GREEN.C]
+  class: signal
+  trace_width: '0.15'
+- name: RSSI_IN
+  pins: [R901.1, U801.PORTA_H.PA12, U801.PORTA_L.PA5]
+  class: signal
+  trace_width: '0.15'
+- name: SAFETY
+  pins: [J702.3, R713.1, U801.PORTB_L.PB5]
+  class: signal
+  trace_width: '0.15'
+- name: SBUS_INPUT
+  pins: [U801.PORTB_H.PB11, U903.1Y]
+  class: signal
+  trace_width: '0.15'
+- name: SBUS_OUTPUT
+  pins: [U801.PORTB_H.PB10, U903.2A]
+  class: signal
+  trace_width: '0.15'
+- name: SDIO_CK
+  pins: [U101.PORTC_H.PC12, U301.CLK]
+  class: signal
+  trace_width: '0.15'
+- name: SDIO_CMD
+  pins: [R303.1, U101.PORTD_L.PD2, U301.CMD]
+  class: signal
+  trace_width: '0.15'
+- name: SDIO_D0
+  pins: [R304.1, U101.PORTC_H.PC8, U301.D0]
+  class: signal
+  trace_width: '0.15'
+- name: SDIO_D1
+  pins: [R305.1, U101.PORTC_H.PC9, U301.D1]
+  class: signal
+  trace_width: '0.15'
+- name: SDIO_D2
+  pins: [R301.1, U101.PORTC_H.PC10, U301.D2]
+  class: signal
+  trace_width: '0.15'
+- name: SDIO_D3
+  pins: [R302.1, U101.PORTC_H.PC11, U301.D3]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL1_CTS
+  pins: [J201.4, R211.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL1_RTS
+  pins: [J201.5, R204.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL1_RX
+  pins: [J201.3, R203.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL1_TX
+  pins: [J201.2, R210.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL2_CTS
+  pins: [J202.4, R208.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL2_RTS
+  pins: [J202.5, R201.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL2_RX
+  pins: [J202.3, R202.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL2_TX
+  pins: [J202.2, R209.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL3_RX
+  pins: [J203.3, R207.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL3_TX
+  pins: [J203.2, R214.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL4_RX
+  pins: [J204.3, R206.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL4_TX
+  pins: [J204.2, R213.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL5_RX
+  pins: [J204.5, R205.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL5_TX
+  pins: [J204.4, R212.2]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL_FMU_TO_IO
+  pins: [R804.2, U101.PORTC_L.PC6]
+  class: signal
+  trace_width: '0.15'
+- name: SERIAL_IO_TO_FMU
+  pins: [R803.2, U101.PORTC_L.PC7]
+  class: signal
+  trace_width: '0.15'
+- name: SETC
+  pins: [C510.1, U504.SETC]
+  class: signal
+  trace_width: '0.15'
+- name: SETP
+  pins: [C510.2, U504.SETP]
+  class: signal
+  trace_width: '0.15'
+- name: SPI_EXT_MISO
+  pins: [J403.3, U101.PORTE_L.PE5]
+  class: signal
+  trace_width: '0.15'
+- name: SPI_EXT_MOSI
+  pins: [J403.4, U101.PORTE_L.PE6]
+  class: signal
+  trace_width: '0.15'
+- name: SPI_EXT_SCK
+  pins: [J403.2, U101.PORTE_L.PE2]
+  class: signal
+  trace_width: '0.15'
+- name: SPI_INT_MISO
+  pins:
+  - U101.PORTA_L.PA6
+  - U501.SDO/SA0
+  - U502.SDO/SA0
+  - U504.SDO/SA0
+  - U505.AD0/SDO
+  - U506.SDO
+  - X503.G$9.S
+  class: signal
+  trace_width: '0.15'
+- name: SPI_INT_MOSI
+  pins:
+  - U101.PORTA_L.PA7
+  - U501.SDA/SDI/SDO
+  - U502.SDA/SDI/SDO
+  - U504.SDA/SDI/SDO
+  - U505.SDA/SDI
+  - U506.SDI/SDA
+  - X503.G$8.S
+  class: signal
+  trace_width: '0.15'
+- name: SPI_INT_SCK
+  pins:
+  - U101.PORTA_L.PA5
+  - U501.SCL/SPC
+  - U502.SCL/SPC
+  - U504.SCL/SPC
+  - U505.SCL/SCLK
+  - U506.SCLK
+  - X503.G$10.S
+  class: signal
+  trace_width: '0.15'
+- name: SW
+  pins: [L701.2, U702.SW]
+  class: signal
+  trace_width: '0.15'
+- name: UV1
+  pins: [C1108.1, R1105.2, R1106.1, U1101.UV1]
+  class: signal
+  trace_width: '0.15'
+- name: UV2
+  pins: [C1109.1, R1109.2, R1110.1, U1101.UV2]
+  class: signal
+  trace_width: '0.15'
+- name: UV3
+  pins: [C1110.1, R1112.2, R1113.1, U1101.UV3]
+  class: signal
+  trace_width: '0.15'
+- name: VBAT
+  pins: [B601.POS, R608.1, U101.BAT.VBAT, U801.AN_POWER.VBAT]
+  class: signal
+  trace_width: '0.15'
+- name: VBUS
+  pins:
+  - C1103.1
+  - J301.1
+  - J302.1
+  - R1112.1
+  - U101.PORTA_H.PA9
+  - U1101.V3
+  - U1104.-PMOS1.D
+  - U302.VBUS
+  class: power
+  trace_width: '0.15'
+- name: VDD_3V3_SENSORS
+  pins:
+  - C501.1
+  - C502.1
+  - C503.1
+  - C506.1
+  - C507.1
+  - C508.1
+  - C511.1
+  - C513.1
+  - C514.1
+  - C605.1
+  - C617.1
+  - Q601.E
+  - U501.RES_P15_VDD
+  - U501.VDD
+  - U501.VDD_IO
+  - U502.VDD
+  - U502.VDD_IO
+  - U504.VDD
+  - U504.VDD_IO
+  - U505.VDD
+  - U506.VDD
+  - U603.VOUT1
+  - X503.G$1.S
+  class: power
+  trace_width: '0.15'
+- name: VDD_3V3_SENSORS_EN
+  pins: [R603.2, R620.2, R635.2, U101.PORTE_L.PE3, U603.EN1]
+  class: signal
+  trace_width: '0.15'
+- name: VDD_3V3_SPEKTRUM
+  pins: [C1008.1, D801.C, J801.P$1, U1002.VOUT1]
+  class: power
+  trace_width: '0.15'
+- name: VDD_3V3_SPEKTRUM_EN
+  pins: [R1002.2, U1002.EN1, U801.PORTC.PC13]
+  class: signal
+  trace_width: '0.15'
+- name: VDD_5V_BRICK
+  pins: [C1101.1, J601.1, J601.2, R1105.1, U1101.V1, U1102.-PMOS1.D]
+  class: power
+  trace_width: '0.15'
+- name: VDD_5V_HIPOWER
+  pins: [C614.1, L201.P$1, U601.OUT]
+  class: power
+  trace_width: '0.15'
+- name: VDD_5V_IN
+  pins:
+  - C1104.1
+  - C702.1
+  - F1001.1
+  - L603.P$1
+  - L701.1
+  - LED701.A
+  - LED704.A
+  - R609.2
+  - RN1101.B.2
+  - RN1101.C.2
+  - RN1101.D.2
+  - U1101.VOUT
+  - U1102.-PMOS2.D
+  - U1103.-PMOS2.D
+  - U1104.-PMOS2.D
+  - U601.IN
+  - U602.IN
+  - U702.VIN
+  - U703.BLUE.A
+  - U703.GREEN.A
+  - U703.RED.A
+  class: power
+  trace_width: '0.15'
+- name: VDD_5V_PERIPH
+  pins:
+  - C618.1
+  - L202.P$1
+  - L203.P$1
+  - L401.P$1
+  - L402.P$1
+  - L403.P$1
+  - L404.P$1
+  - U602.OUT
+  class: power
+  trace_width: '0.15'
+- name: VDD_5V_SENS
+  pins: [R609.1, R610.1, U101.PORTA_L.PA4]
+  class: signal
+  trace_width: '0.15'
+- name: VDD_SERVO
+  pins:
+  - C1102.1
+  - D904.A
+  - J901.-VCC.S
+  - R1109.1
+  - R922.2
+  - U1101.V2
+  - U1103.-PMOS1.D
+  class: power
+  trace_width: '0.15'
+- name: VDD_SERVO_IN
+  pins: [L901.P$2, U1001.IN]
+  class: power
+  trace_width: '0.15'
+- name: VDD_SERVO_SENS
+  pins: [R918.1, R919.2, U801.PORTA_L.PA4]
+  class: signal
+  trace_width: '0.15'
+- name: VS1
+  pins: [C1105.1, U1101.VS1, U1102.-PMOS1.S, U1102.-PMOS2.S]
+  class: power
+  trace_width: '0.15'
+- name: VS2
+  pins: [C1106.1, U1101.VS2, U1103.-PMOS1.S, U1103.-PMOS2.S]
+  class: power
+  trace_width: '0.15'
+- name: VS3
+  pins: [C1107.1, U1101.VS3, U1104.-PMOS1.S, U1104.-PMOS2.S]
+  class: power
+  trace_width: '0.15'
+positions:
+- ref: B601
+  x: 18.89
+  y: 28.27
+- ref: C1001
+  x: 16.15
+  y: 7.32
+- ref: C1002
+  x: 14.12
+  y: 10.77
+  rot: 90.0
+- ref: C1003
+  x: 11.28
+  y: 9.14
+  rot: 270.0
+- ref: C1004
+  x: 11.99
+  y: 11.18
+- ref: C1005
+  x: 15.54
+  y: 4.06
+  rot: 45.0
+- ref: C1008
+  x: 9.55
+  y: 9.45
+  rot: 180.0
+- ref: C101
+  x: 41.86
+  y: 9.35
+  rot: 315.0
+- ref: C102
+  x: 30.89
+  y: 13.0
+  rot: 225.0
+- ref: C103
+  x: 32.51
+  y: 11.38
+  rot: 45.0
+- ref: C1101
+  x: 68.99
+  y: 38.3
+  rot: 90.0
+- ref: C1102
+  x: 68.88
+  y: 32.41
+  rot: 270.0
+- ref: C1103
+  x: 68.88
+  y: 29.46
+  rot: 90.0
+- ref: C1104
+  x: 68.68
+  y: 25.7
+  rot: 270.0
+- ref: C1105
+  x: 65.74
+  y: 39.73
+  rot: 180.0
+- ref: C1106
+  x: 65.74
+  y: 35.46
+  rot: 180.0
+- ref: C1107
+  x: 65.74
+  y: 31.19
+  rot: 180.0
+- ref: C1108
+  x: 58.32
+  y: 35.76
+  rot: 270.0
+- ref: C1109
+  x: 58.32
+  y: 33.22
+  rot: 270.0
+- ref: C1110
+  x: 58.32
+  y: 30.58
+  rot: 270.0
+- ref: C201
+  x: 32.11
+  y: 30.07
+  rot: 90.0
+- ref: C202
+  x: 34.54
+  y: 6.91
+  rot: 180.0
+- ref: C401
+  x: 69.09
+  y: 7.42
+  rot: 90.0
+- ref: C402
+  x: 40.23
+  y: 1.22
+  rot: 180.0
+- ref: C501
+  x: 60.15
+  y: 18.39
+- ref: C502
+  x: 68.68
+  y: 13.82
+- ref: C503
+  x: 61.37
+  y: 9.86
+  rot: 270.0
+- ref: C504
+  x: 68.68
+  y: 12.6
+- ref: C505
+  x: 61.37
+  y: 7.82
+  rot: 90.0
+- ref: C506
+  x: 68.28
+  y: 1.12
+- ref: C507
+  x: 68.68
+  y: 2.64
+- ref: C508
+  x: 68.68
+  y: 10.97
+- ref: C509
+  x: 65.33
+  y: 1.12
+- ref: C510
+  x: 68.68
+  y: 3.76
+- ref: C511
+  x: 68.88
+  y: 15.85
+  rot: 90.0
+- ref: C512
+  x: 62.38
+  y: 18.29
+  rot: 270.0
+- ref: C513
+  x: 66.65
+  y: 16.15
+- ref: C514
+  x: 64.21
+  y: 16.15
+  rot: 180.0
+- ref: C515
+  x: 69.29
+  y: 19.41
+  rot: 90.0
+- ref: C601
+  x: 53.64
+  y: 15.85
+  rot: 90.0
+- ref: C602
+  x: 56.49
+  y: 11.18
+- ref: C603
+  x: 59.84
+  y: 13.51
+- ref: C604
+  x: 60.05
+  y: 11.68
+- ref: C605
+  x: 60.15
+  y: 16.36
+- ref: C606
+  x: 40.94
+  y: 31.39
+  rot: 45.0
+- ref: C607
+  x: 51.21
+  y: 20.52
+  rot: 90.0
+- ref: C608
+  x: 26.42
+  y: 22.76
+  rot: 90.0
+- ref: C609
+  x: 28.85
+  y: 38.2
+  rot: 270.0
+- ref: C610
+  x: 29.26
+  y: 14.63
+  rot: 90.0
+- ref: C611
+  x: 49.78
+  y: 20.32
+  rot: 90.0
+- ref: C612
+  x: 34.14
+  y: 9.75
+  rot: 225.0
+- ref: C613
+  x: 41.96
+  y: 30.38
+  rot: 45.0
+- ref: C614
+  x: 34.85
+  y: 39.32
+  rot: 180.0
+- ref: C615
+  x: 53.64
+  y: 13.82
+  rot: 180.0
+- ref: C616
+  x: 59.64
+  y: 14.83
+- ref: C617
+  x: 57.1
+  y: 16.05
+  rot: 180.0
+- ref: C618
+  x: 65.33
+  y: 23.88
+- ref: C701
+  x: 51.71
+  y: 15.14
+  rot: 270.0
+- ref: C702
+  x: 14.53
+  y: 30.99
+  rot: 90.0
+- ref: C703
+  x: 9.35
+  y: 24.79
+  rot: 180.0
+- ref: C704
+  x: 11.07
+  y: 30.89
+  rot: 90.0
+- ref: C801
+  x: 24.38
+  y: 4.88
+  rot: 90.0
+- ref: C802
+  x: 21.95
+  y: 8.53
+- ref: C803
+  x: 21.95
+  y: 20.73
+  rot: 180.0
+- ref: C804
+  x: 28.04
+  y: 14.63
+  rot: 90.0
+- ref: C805
+  x: 18.8
+  y: 20.02
+  rot: 45.0
+- ref: C806
+  x: 17.37
+  y: 18.59
+  rot: 45.0
+- ref: C901
+  x: 13.41
+  y: 3.96
+- ref: C902
+  x: 13.41
+  y: 39.32
+  rot: 180.0
+- ref: C903
+  x: 13.82
+  y: 18.29
+  rot: 180.0
+- ref: D1001
+  x: 9.65
+  y: 7.32
+  rot: 270.0
+- ref: D201
+  x: 34.54
+  y: 35.97
+- ref: D202
+  x: 24.38
+  y: 34.14
+  rot: 180.0
+- ref: D203
+  x: 33.22
+  y: 7.72
+  rot: 225.0
+- ref: D401
+  x: 62.69
+  y: 2.74
+  rot: 270.0
+- ref: D402
+  x: 53.44
+  y: 35.46
+  rot: 270.0
+- ref: D403
+  x: 45.92
+  y: 13.82
+  rot: 270.0
+- ref: D404
+  x: 36.98
+  y: 7.72
+  rot: 270.0
+- ref: D602
+  x: 23.06
+  y: 32.21
+- ref: D701
+  x: 21.13
+  y: 21.95
+  rot: 180.0
+- ref: D801
+  x: 21.13
+  y: 23.16
+  rot: 180.0
+- ref: D901
+  x: 10.97
+  y: 4.06
+- ref: D902
+  x: 10.97
+  y: 5.18
+- ref: D903
+  x: 10.46
+  y: 22.45
+- ref: D904
+  x: 9.86
+  y: 21.13
+  rot: 180.0
+- ref: F1001
+  x: 13.61
+  y: 25.4
+  rot: 180.0
+- ref: J201
+  x: 35.04
+  y: 33.74
+  rot: 270.0
+- ref: J202
+  x: 27.17
+  y: 33.74
+  rot: 270.0
+- ref: J203
+  x: 34.95
+  y: 6.91
+  rot: 270.0
+- ref: J204
+  x: 27.23
+  y: 6.91
+  rot: 270.0
+- ref: J301
+  x: 43.48
+  y: 39.01
+  rot: 270.0
+- ref: J302
+  x: 42.67
+  y: 34.75
+  rot: 270.0
+- ref: J401
+  x: 57.71
+  y: 5.69
+  rot: 270.0
+- ref: J402
+  x: 65.43
+  y: 5.28
+  rot: 270.0
+- ref: J403
+  x: 57.71
+  y: 32.92
+  rot: 270.0
+- ref: J404
+  x: 42.67
+  y: 20.32
+  rot: 270.0
+- ref: J405
+  x: 42.67
+  y: 5.69
+  rot: 270.0
+- ref: J601
+  x: 65.43
+  y: 33.53
+  rot: 270.0
+- ref: J701
+  x: 18.29
+  y: 15.65
+  rot: 270.0
+- ref: J702
+  x: 27.23
+  y: 20.32
+  rot: 270.0
+- ref: J801
+  x: 19.91
+  y: 25.81
+  rot: 90.0
+- ref: J901
+  x: 3.76
+  y: 20.19
+  rot: 180.0
+- ref: JX301
+  x: 36.58
+  y: 19.3
+  rot: 270.0
+- ref: JX801
+  x: 20.32
+  y: 1.22
+- ref: JX802
+  x: 12.19
+  y: 20.12
+  rot: 90.0
+- ref: L1101
+  x: 62.18
+  y: 28.35
+  rot: 180.0
+- ref: L1102
+  x: 62.18
+  y: 29.77
+  rot: 180.0
+- ref: L201
+  x: 35.46
+  y: 37.59
+  rot: 180.0
+- ref: L202
+  x: 23.98
+  y: 35.36
+- ref: L203
+  x: 32.0
+  y: 8.43
+  rot: 45.0
+- ref: L401
+  x: 61.37
+  y: 2.64
+  rot: 90.0
+- ref: L402
+  x: 53.44
+  y: 37.59
+  rot: 270.0
+- ref: L403
+  x: 38.2
+  y: 7.32
+  rot: 90.0
+- ref: L404
+  x: 47.14
+  y: 13.82
+  rot: 90.0
+- ref: L603
+  x: 55.17
+  y: 15.75
+  rot: 270.0
+- ref: L701
+  x: 12.8
+  y: 31.19
+  rot: 90.0
+- ref: L901
+  x: 10.57
+  y: 23.57
+- ref: LED701
+  x: 12.4
+  y: 38.3
+  rot: 270.0
+- ref: LED702
+  x: 8.33
+  y: 2.24
+  rot: 90.0
+- ref: LED703
+  x: 12.4
+  y: 2.24
+  rot: 90.0
+- ref: LED704
+  x: 8.33
+  y: 38.3
+  rot: 270.0
+- ref: LED705
+  x: 16.46
+  y: 2.24
+  rot: 90.0
+- ref: Q601
+  x: 57.1
+  y: 18.69
+- ref: R1001
+  x: 15.65
+  y: 5.49
+  rot: 180.0
+- ref: R1002
+  x: 15.24
+  y: 9.04
+  rot: 90.0
+- ref: R101
+  x: 24.18
+  y: 24.38
+  rot: 270.0
+- ref: R102
+  x: 45.11
+  y: 12.19
+  rot: 315.0
+- ref: R1101
+  x: 59.94
+  y: 28.35
+- ref: R1102
+  x: 59.94
+  y: 29.46
+- ref: R1103
+  x: 65.84
+  y: 25.6
+- ref: R1104
+  x: 65.84
+  y: 26.72
+- ref: R1105
+  x: 55.68
+  y: 36.27
+- ref: R1106
+  x: 57.2
+  y: 35.76
+  rot: 270.0
+- ref: R1107
+  x: 55.68
+  y: 35.15
+  rot: 180.0
+- ref: R1109
+  x: 55.68
+  y: 33.73
+- ref: R1110
+  x: 57.2
+  y: 33.22
+  rot: 270.0
+- ref: R1111
+  x: 55.68
+  y: 32.61
+  rot: 180.0
+- ref: R1112
+  x: 55.68
+  y: 31.19
+- ref: R1113
+  x: 57.2
+  y: 30.58
+  rot: 270.0
+- ref: R1114
+  x: 55.68
+  y: 30.07
+  rot: 180.0
+- ref: R1115
+  x: 60.55
+  y: 36.58
+  rot: 180.0
+- ref: R201
+  x: 25.1
+  y: 30.89
+  rot: 180.0
+- ref: R202
+  x: 27.33
+  y: 34.14
+  rot: 90.0
+- ref: R203
+  x: 31.29
+  y: 36.98
+- ref: R204
+  x: 31.29
+  y: 34.54
+- ref: R205
+  x: 26.42
+  y: 5.28
+  rot: 180.0
+- ref: R206
+  x: 26.42
+  y: 7.72
+  rot: 180.0
+- ref: R207
+  x: 30.48
+  y: 5.28
+  rot: 90.0
+- ref: R208
+  x: 25.6
+  y: 33.12
+  rot: 180.0
+- ref: R209
+  x: 28.45
+  y: 34.14
+  rot: 90.0
+- ref: R210
+  x: 31.29
+  y: 35.76
+- ref: R211
+  x: 31.29
+  y: 33.32
+- ref: R212
+  x: 26.42
+  y: 6.5
+  rot: 180.0
+- ref: R213
+  x: 26.42
+  y: 8.94
+  rot: 180.0
+- ref: R214
+  x: 31.7
+  y: 5.69
+  rot: 90.0
+- ref: R215
+  x: 29.06
+  y: 25.1
+  rot: 180.0
+- ref: R216
+  x: 49.48
+  y: 22.86
+  rot: 90.0
+- ref: R301
+  x: 35.36
+  y: 31.7
+  rot: 135.0
+- ref: R302
+  x: 34.54
+  y: 30.89
+  rot: 135.0
+- ref: R303
+  x: 33.73
+  y: 30.07
+  rot: 135.0
+- ref: R304
+  x: 45.42
+  y: 28.24
+  rot: 45.0
+- ref: R305
+  x: 44.6
+  y: 29.06
+  rot: 45.0
+- ref: R306
+  x: 49.58
+  y: 17.48
+  rot: 90.0
+- ref: R307
+  x: 50.8
+  y: 17.48
+  rot: 90.0
+- ref: R401
+  x: 43.48
+  y: 2.03
+  rot: 180.0
+- ref: R402
+  x: 43.48
+  y: 0.91
+  rot: 180.0
+- ref: R403
+  x: 69.09
+  y: 9.45
+  rot: 270.0
+- ref: R404
+  x: 45.52
+  y: 2.03
+- ref: R405
+  x: 45.52
+  y: 0.91
+- ref: R406
+  x: 69.09
+  y: 5.38
+  rot: 270.0
+- ref: R407
+  x: 43.89
+  y: 10.97
+  rot: 315.0
+- ref: R408
+  x: 38.2
+  y: 9.45
+- ref: R409
+  x: 40.03
+  y: 7.01
+- ref: R602
+  x: 40.03
+  y: 32.31
+  rot: 225.0
+- ref: R603
+  x: 54.25
+  y: 12.29
+  rot: 270.0
+- ref: R604
+  x: 56.59
+  y: 26.42
+  rot: 180.0
+- ref: R608
+  x: 23.06
+  y: 30.89
+  rot: 180.0
+- ref: R609
+  x: 51.1
+  y: 23.37
+  rot: 180.0
+- ref: R610
+  x: 51.1
+  y: 22.25
+  rot: 180.0
+- ref: R611
+  x: 26.92
+  y: 24.38
+- ref: R615
+  x: 59.94
+  y: 27.23
+  rot: 180.0
+- ref: R616
+  x: 59.94
+  y: 26.11
+  rot: 180.0
+- ref: R617
+  x: 38.0
+  y: 38.51
+- ref: R620
+  x: 55.47
+  y: 19.91
+  rot: 180.0
+- ref: R621
+  x: 57.1
+  y: 22.05
+  rot: 270.0
+- ref: R635
+  x: 53.14
+  y: 12.29
+  rot: 270.0
+- ref: R701
+  x: 9.35
+  y: 28.45
+  rot: 180.0
+- ref: R702
+  x: 9.35
+  y: 27.23
+  rot: 180.0
+- ref: R703
+  x: 9.35
+  y: 26.01
+  rot: 180.0
+- ref: R704
+  x: 50.8
+  y: 12.19
+  rot: 180.0
+- ref: R705
+  x: 9.35
+  y: 29.67
+  rot: 180.0
+- ref: R706
+  x: 9.35
+  y: 30.89
+- ref: R707
+  x: 17.48
+  y: 39.32
+  rot: 180.0
+- ref: R708
+  x: 20.62
+  y: 1.63
+  rot: 270.0
+- ref: R709
+  x: 23.16
+  y: 4.88
+  rot: 270.0
+- ref: R710
+  x: 23.16
+  y: 6.91
+  rot: 90.0
+- ref: R711
+  x: 9.35
+  y: 39.32
+  rot: 180.0
+- ref: R712
+  x: 24.28
+  y: 7.72
+  rot: 270.0
+- ref: R713
+  x: 27.23
+  y: 19.51
+  rot: 90.0
+- ref: R735
+  x: 15.44
+  y: 39.32
+  rot: 180.0
+- ref: R736
+  x: 17.98
+  y: 1.63
+  rot: 270.0
+- ref: R801
+  x: 26.11
+  y: 19.51
+  rot: 90.0
+- ref: R802
+  x: 17.48
+  y: 9.04
+  rot: 270.0
+- ref: R803
+  x: 23.06
+  y: 24.38
+  rot: 90.0
+- ref: R804
+  x: 25.3
+  y: 24.38
+  rot: 90.0
+- ref: R901
+  x: 16.36
+  y: 9.04
+  rot: 270.0
+- ref: R902
+  x: 9.35
+  y: 32.11
+  rot: 180.0
+- ref: R903
+  x: 9.35
+  y: 34.54
+  rot: 180.0
+- ref: R904
+  x: 9.35
+  y: 36.98
+  rot: 180.0
+- ref: R905
+  x: 8.94
+  y: 10.57
+  rot: 180.0
+- ref: R906
+  x: 8.94
+  y: 13.0
+  rot: 180.0
+- ref: R907
+  x: 8.94
+  y: 15.44
+  rot: 180.0
+- ref: R908
+  x: 8.94
+  y: 17.88
+  rot: 180.0
+- ref: R909
+  x: 8.94
+  y: 4.06
+  rot: 180.0
+- ref: R910
+  x: 8.94
+  y: 5.18
+  rot: 180.0
+- ref: R911
+  x: 9.35
+  y: 33.32
+  rot: 180.0
+- ref: R912
+  x: 9.35
+  y: 35.76
+  rot: 180.0
+- ref: R913
+  x: 9.35
+  y: 38.2
+  rot: 180.0
+- ref: R914
+  x: 8.94
+  y: 11.79
+  rot: 180.0
+- ref: R915
+  x: 8.94
+  y: 14.22
+  rot: 180.0
+- ref: R916
+  x: 8.94
+  y: 16.66
+  rot: 180.0
+- ref: R917
+  x: 8.94
+  y: 19.1
+  rot: 180.0
+- ref: R918
+  x: 13.0
+  y: 21.34
+  rot: 270.0
+- ref: R919
+  x: 13.0
+  y: 23.37
+  rot: 270.0
+- ref: R922
+  x: 11.07
+  y: 19.71
+  rot: 180.0
+- ref: RN1101
+  x: 56.9
+  y: 28.04
+  rot: 90.0
+- ref: S601
+  x: 25.6
+  y: 38.2
+  rot: 180.0
+- ref: S801
+  x: 25.6
+  y: 2.34
+- ref: U1001
+  x: 13.41
+  y: 5.59
+  rot: 270.0
+- ref: U1002
+  x: 13.41
+  y: 8.53
+  rot: 90.0
+- ref: U101
+  x: 38.2
+  y: 19.91
+  rot: 45.0
+- ref: U102
+  x: 49.78
+  y: 28.45
+  rot: 180.0
+- ref: U1101
+  x: 61.87
+  y: 33.32
+- ref: U1102
+  x: 66.45
+  y: 37.59
+  rot: 270.0
+- ref: U1103
+  x: 66.45
+  y: 33.32
+  rot: 270.0
+- ref: U1104
+  x: 66.45
+  y: 29.06
+  rot: 270.0
+- ref: U201
+  x: 28.85
+  y: 30.07
+  rot: 90.0
+- ref: U202
+  x: 34.54
+  y: 3.25
+  rot: 180.0
+- ref: U301
+  x: 62.18
+  y: 18.8
+  rot: 90.0
+- ref: U302
+  x: 43.89
+  y: 32.51
+  rot: 180.0
+- ref: U401
+  x: 40.23
+  y: 3.66
+- ref: U501
+  x: 64.82
+  y: 12.8
+  rot: 270.0
+- ref: U502
+  x: 58.52
+  y: 7.82
+  rot: 270.0
+- ref: U504
+  x: 65.13
+  y: 3.86
+  rot: 180.0
+- ref: U505
+  x: 65.74
+  y: 19.3
+  rot: 270.0
+- ref: U506
+  x: 65.13
+  y: 8.03
+  rot: 270.0
+- ref: U601
+  x: 37.69
+  y: 36.47
+- ref: U602
+  x: 62.59
+  y: 26.42
+  rot: 90.0
+- ref: U603
+  x: 56.79
+  y: 14.12
+- ref: U701
+  x: 49.58
+  y: 14.63
+  rot: 180.0
+- ref: U702
+  x: 13.0
+  y: 28.04
+  rot: 90.0
+- ref: U703
+  x: 51.61
+  y: 20.32
+  rot: 90.0
+- ref: U801
+  x: 21.95
+  y: 14.63
+  rot: 225.0
+- ref: U901
+  x: 13.41
+  y: 35.76
+  rot: 180.0
+- ref: U902
+  x: 13.0
+  y: 15.04
+  rot: 180.0
+- ref: U903
+  x: 11.38
+  y: 1.73
+  rot: 270.0
+- ref: X101
+  x: 29.29
+  y: 10.18
+  rot: 135.0
+- ref: X503
+  x: 59.13
+  y: 1.22
+  rot: 180.0
+- ref: X801
+  x: 16.46
+  y: 21.54
+  rot: 45.0
+copper_pours:
+- net: FMU-VDD_3V3
+  layers: [F.Cu, In14.Cu]
+- net: FMU-VDD_5V5
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: IO-VDD_3V3
+  layers: [F.Cu, In14.Cu]
+- net: RGB_LED_14
+  layers: [B.Cu]
+- net: RGB_LED_3
+  layers: [B.Cu]
+- net: RGB_LED_4
+  layers: [B.Cu]
+- net: VBUS
+  layers: [F.Cu, In2.Cu]
+- net: VDD_3V3_SENSORS
+  layers: [F.Cu, In14.Cu]
+- net: VDD_5V_BRICK
+  layers: [B.Cu, F.Cu]
+- net: VDD_5V_HIPOWER
+  layers: [F.Cu]
+- net: VDD_5V_IN
+  layers: [B.Cu, F.Cu, In14.Cu, In2.Cu]
+- net: VDD_5V_PERIPH
+  layers: [F.Cu, In14.Cu]
+- net: VDD_SERVO
+  layers: [B.Cu, F.Cu, In13.Cu]

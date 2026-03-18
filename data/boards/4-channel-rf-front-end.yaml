@@ -1,0 +1,1513 @@
+name: 4-Channel RF Front End
+slug: 4-channel-rf-front-end
+source: JohnnyGOX17/4ch-RF-FE
+format: kicad_legacy
+description: '4-channel MIMO/radar RF frontend: I2C-controlled per-channel attenuation, T/R switches'
+tags: [power-supply, rf-sdr]
+key_ics: [MCP1755ST-5002E_DB, SN74HCU04PWR, ADL5611ARKZ-R7, PE43711, HMC544AETR]
+outline:
+  width_mm: 249.94
+  height_mm: 94.74
+design_rules:
+  layers: 4
+  min_trace: 0.127mm
+  min_clearance: 0.127mm
+  min_drill: 0.254mm
+  min_via: 0.457mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+- ref: C10
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C11
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C112
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C113
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C114
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C115
+  value: 68pF
+  footprint: '0402'
+  description: "68pF \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+- ref: C116
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+  decouples: U36
+- ref: C117
+  value: 1.2nF
+  footprint: '0603'
+  description: "1200pF \xB110% 50V Ceramic Capacitor X7R 0603 (1608 Metric)"
+- ref: C118
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C119
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+  decouples: U5
+- ref: C120
+  value: 1uF
+  footprint: '0603'
+  description: "1\xB5F \xB110% 25V Ceramic Capacitor X7R 0603 (1608 Metric)"
+- ref: C121
+  value: 68pF
+  footprint: '0402'
+  description: "68pF \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+- ref: C122
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+  decouples: U39
+- ref: C123
+  value: 1.2nF
+  footprint: '0603'
+  description: "1200pF \xB110% 50V Ceramic Capacitor X7R 0603 (1608 Metric)"
+- ref: C124
+  value: 1uF
+  footprint: '0603'
+  description: "1\xB5F \xB110% 25V Ceramic Capacitor X7R 0603 (1608 Metric)"
+- ref: C125
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C126
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C127
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C128
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C129
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C13
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C130
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C131
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C132
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C133
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+  decouples: U42
+- ref: C134
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C135
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C136
+  value: 330pF
+  footprint: '0402'
+  description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
+- ref: C137
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+  decouples: U42
+- ref: C14
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C15
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C16
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C17
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C18
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C19
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C20
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C21
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C22
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C23
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C24
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C25
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C26
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+- ref: C27
+  value: 22uF
+  footprint: '1206'
+  description: "22\xB5F \xB110% 6.3V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C28
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+  decouples: U8
+- ref: C29
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+- ref: C3
+  value: 1uF
+  footprint: '0603'
+  description: "1\xB5F \xB110% 25V Ceramic Capacitor X7R 0603 (1608 Metric)"
+- ref: C30
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C31
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+  decouples: U7
+- ref: C32
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+  decouples: U10
+- ref: C33
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+  decouples: U10
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+  description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
+- ref: C5
+  value: 1uF
+  footprint: '0603'
+  description: "1\xB5F \xB110% 25V Ceramic Capacitor X7R 0603 (1608 Metric)"
+- ref: C6
+  value: 1uF
+  footprint: '0603'
+  description: "1\xB5F \xB110% 25V Ceramic Capacitor X7R 0603 (1608 Metric)"
+- ref: C7
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C8
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: C9
+  value: 10uF
+  footprint: '1206'
+  description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
+- ref: DS1
+  value: LTST-C190KGKT
+  footprint: LED_0603
+  mpn: LTST-C190KGKT
+  description: LED GREEN CLEAR CHIP SMD
+  manufacturer: Lite-On Inc.
+- ref: DS2
+  value: LTST-C190KGKT
+  footprint: LED_0603
+  mpn: LTST-C190KGKT
+  description: LED GREEN CLEAR CHIP SMD
+  manufacturer: Lite-On Inc.
+- ref: F1
+  value: ERB-RE5R00V
+  footprint: '0603'
+  description: 5A 32VDC 0603
+  manufacturer: Panasonic
+- ref: F14
+  value: LPF04023600L
+  footprint: '0402'
+  manufacturer: ATC
+- ref: F15
+  value: LPF04023600L
+  footprint: '0402'
+  manufacturer: ATC
+- ref: F16
+  value: LP0603A2140ANTR
+  footprint: '0603'
+  manufacturer: AVX
+- ref: F17
+  value: DEA162300HT-8047A1
+  footprint: F_DEA16_LGA
+  manufacturer: TDK
+- ref: FB1
+  value: BLM18HE152SN1D
+  footprint: '0603'
+  mpn: BLM18HE152SN1D
+  description: FERRITE BEAD 1.5 KOHM 0603 1LN
+  manufacturer: Murata Electronics North America
+- ref: J1
+  value: PJ1-021-SMT-TR
+  footprint: CUI_PJ1-021-SMT-TR
+  description: CONN PWR JACK 1.75X4.75MM SOLDER
+- ref: J18
+  value: 5-1814832-1
+  footprint: RF_SMA_Vertical_5-1814832-1
+  mpn: 5-1814832-1
+  description: CONN SMA JACK STR 50 OHM PCB
+  manufacturer: TE Connectivity AMP Connectors
+- ref: J19
+  value: 5-1814832-1
+  footprint: RF_SMA_Vertical_5-1814832-1
+  mpn: 5-1814832-1
+  description: CONN SMA JACK STR 50 OHM PCB
+  manufacturer: TE Connectivity AMP Connectors
+- ref: J2
+  value: 2x6 header
+  footprint: 2X6
+  description: CONN HDR 12POS 0.1 TIN PCB R/A
+  manufacturer: Sullins Connector Solutions
+- ref: J20
+  value: 5-1814832-1
+  footprint: RF_SMA_Vertical_5-1814832-1
+  mpn: 5-1814832-1
+  description: CONN SMA JACK STR 50 OHM PCB
+  manufacturer: TE Connectivity AMP Connectors
+- ref: J21
+  value: 5-1814832-1
+  footprint: RF_SMA_Vertical_5-1814832-1
+  mpn: 5-1814832-1
+  description: CONN SMA JACK STR 50 OHM PCB
+  manufacturer: TE Connectivity AMP Connectors
+- ref: J22
+  value: 5-1814832-1
+  footprint: RF_SMA_Vertical_5-1814832-1
+  mpn: 5-1814832-1
+  description: CONN SMA JACK STR 50 OHM PCB
+  manufacturer: TE Connectivity AMP Connectors
+- ref: L1
+  value: ACP3225
+  footprint: '3225'
+  description: CMC 500 Ohms @ 100MHz 2A DCR 40 mOhm
+- ref: L10
+  value: 43nH
+  footprint: '0603'
+  description: FIXED IND 43NH 380MA 290 MOHM
+- ref: L2
+  value: 3.3uH
+  footprint: SRR6038-3R3Y
+  description: FIXED IND 3.3UH 3.5A 20 MOHM SMD
+- ref: L9
+  value: 43nH
+  footprint: '0603'
+  description: FIXED IND 43NH 380MA 290 MOHM
+- ref: R10
+  value: 10kohm
+  footprint: '0402'
+  description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pullup: U7.3
+- ref: R11
+  value: 10kohm
+  footprint: '0402'
+  description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pulldown: /Digitial I/O via PMOD/~1ST~_2ND_NYQ_BAND_SEL
+- ref: R12
+  value: 10kohm
+  footprint: '0402'
+  description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pullup: /Digitial I/O via PMOD/I2C_SCL_PMOD
+- ref: R14
+  value: 10kohm
+  footprint: '0402'
+  description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pullup: /Digitial I/O via PMOD/I2C_SDA_PMOD
+- ref: R16
+  value: 33ohm
+  footprint: '0402'
+  description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R17
+  value: 33ohm
+  footprint: '0402'
+  description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R18
+  value: 33ohm
+  footprint: '0402'
+  description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R19
+  value: 33ohm
+  footprint: '0402'
+  description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R2
+  value: 10ohm
+  footprint: '0402'
+  description: "10 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R20
+  value: 33ohm
+  footprint: '0402'
+  description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R21
+  value: 33ohm
+  footprint: '0402'
+  description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R22
+  value: 33ohm
+  footprint: '0402'
+  description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R23
+  value: 100ohm
+  footprint: '0402'
+  description: "100 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R24
+  value: 33ohm
+  footprint: '0402'
+  description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R25
+  value: 100ohm
+  footprint: '0402'
+  description: "100 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R29
+  value: 10kohm
+  footprint: '0402'
+  description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pullup: U42.3
+- ref: R3
+  value: 10ohm
+  footprint: '0402'
+  description: "10 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R30
+  value: 10kohm
+  footprint: '0402'
+  description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R31
+  value: 75ohm
+  footprint: '0603'
+  description: "75 Ohms \xB11% 0.1W, 1/10W Chip Resistor 0603 (1608 Metric) Moisture Resistant Thick Film"
+- ref: R4
+  value: 100kohm
+  footprint: '0402'
+  description: "100 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pulldown: /Power Input & Regulation/PWR_IN_CMC
+- ref: R5
+  value: CSR1206-0R002F1
+  footprint: '1206'
+  description: RES 0.002 OHM 1% 1W 1206
+- ref: R6
+  value: 180ohm
+  footprint: '0603'
+  description: "180 Ohms \xB15% 0.1W, 1/10W Chip Resistor 0603 (1608 Metric) Moisture Resistant Thick Film"
+- ref: R7
+  value: 61.9kohm
+  footprint: '0402'
+  description: "61.9 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+- ref: R8
+  value: 10kohm
+  footprint: '0402'
+  description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pulldown: /Power Input & Regulation/V_FB
+- ref: RN1
+  value: EXB-28V103JX
+  footprint: R_Array_Convex
+  description: 4x 10K +/- 5%
+- ref: RN2
+  value: EXB-28V103JX
+  footprint: R_Array_Convex
+  description: 4x 10K +/- 5%
+- ref: RN3
+  value: EXB-28V103JX
+  footprint: R_Array_Convex
+  description: 4x 10K +/- 5%
+- ref: RN4
+  value: EXB-28V103JX
+  footprint: R_Array_Convex
+  description: 4x 10K +/- 5%
+- ref: T7
+  value: MABA-011082
+  footprint: T_6pin_23_balun
+  description: 1:1 Transformer Balun 5 - 8000 MHz
+- ref: T8
+  value: MABA-011082
+  footprint: T_6pin_23_balun
+  description: 1:1 Transformer Balun 5 - 8000 MHz
+- ref: U1
+  value: MCP1755ST-5002E_DB
+  footprint: MCP1755ST-5002E_DB
+  description: IC REG LINEAR 5V 300MA SOT223-3
+- ref: U10
+  value: SN74HCU04PWR
+  footprint: SN74HCU04PWR
+  description: IC INVERTER 6CH 6-INP 14TSSOP
+- ref: U2
+  value: MCP1755ST-5002E_DB
+  footprint: MCP1755ST-5002E_DB
+  description: IC REG LINEAR 5V 300MA SOT223-3
+- ref: U3
+  value: MCP1755ST-5002E_DB
+  footprint: MCP1755ST-5002E_DB
+  description: IC REG LINEAR 5V 300MA SOT223-3
+- ref: U35
+  value: ADL5611ARKZ-R7
+  footprint: ADL5611ARKZ-R7
+  description: IC AMP W-CDMA 30MHZ-6GHZ SOT89-3
+- ref: U36
+  value: PE43711
+  footprint: QFN-24-1EP
+  description: RF ATTENUATOR 31.5DB 50OHM 24QFN
+- ref: U37
+  value: HMC544AETR
+  footprint: SOT-23-6
+  description: IC RF SWITCH SPDT 4GHZ SOT26
+- ref: U38
+  value: ADL5611ARKZ-R7
+  footprint: ADL5611ARKZ-R7
+  description: IC AMP W-CDMA 30MHZ-6GHZ SOT89-3
+- ref: U39
+  value: PE43711
+  footprint: QFN-24-1EP
+  description: RF ATTENUATOR 31.5DB 50OHM 24QFN
+- ref: U4
+  value: MCP1755ST-5002E_DB
+  footprint: MCP1755ST-5002E_DB
+  description: IC REG LINEAR 5V 300MA SOT223-3
+- ref: U40
+  value: HMC544AETR
+  footprint: SOT-23-6
+  description: IC RF SWITCH SPDT 4GHZ SOT26
+- ref: U41
+  value: HMC544AETR
+  footprint: SOT-23-6
+  description: IC RF SWITCH SPDT 4GHZ SOT26
+- ref: U42
+  value: PCAL6416APW
+  footprint: TSSOP-24_W4.40mm
+  description: IC I/O EXPANDER 16BIT 24TSSOP
+- ref: U5
+  value: INA219AIDCNR
+  footprint: SOT-23-8
+  mpn: INA219AIDCNR
+  description: IC CURRENT MONITOR 1% SOT23-8
+  manufacturer: Texas Instruments
+- ref: U6
+  value: TPS562208DDCT
+  footprint: TPS562208DDCT
+  description: IC REG BUCK ADJ 2A TSOT23-6
+- ref: U7
+  value: PCA9548APW
+  footprint: TSSOP-24
+- ref: U8
+  value: M24C02
+  footprint: TSSOP-8
+- ref: U9
+  value: SN74LVC125APWR
+  footprint: SN74LVC125APWR
+  description: IC BUF NON-INVERT 3.6V 14TSSOP
+nets:
+- name: +3V3
+  pins:
+  - C116.1
+  - C12.1
+  - C122.1
+  - C133.1
+  - C137.1
+  - C28.1
+  - C30.1
+  - C31.1
+  - C32.2
+  - C33.2
+  - DS2.2
+  - FB1.2
+  - R10.2
+  - R12.1
+  - R14.1
+  - R29.1
+  - R9.1
+  - RN1.5
+  - RN1.6
+  - RN1.7
+  - RN1.8
+  - RN2.5
+  - RN2.6
+  - RN2.7
+  - RN2.8
+  - RN3.5
+  - RN3.6
+  - RN3.7
+  - RN3.8
+  - RN5.5
+  - RN5.6
+  - RN5.7
+  - RN5.8
+  - U10.14
+  - U36.2
+  - U39.2
+  - U42.2
+  - U42.24
+  - U5.4
+  - U7.24
+  - U8.8
+  - U9.14
+- name: /Digitial I/O via PMOD/3V3_IN
+  pins: [C29.1, FB1.1, J2.11, J2.12]
+- name: /Digitial I/O via PMOD/EEPROM_SCL
+  pins: [RN3.1, U7.16, U8.6]
+- name: /Digitial I/O via PMOD/EEPROM_SDA
+  pins: [RN3.2, U7.15, U8.5]
+- name: /Digitial I/O via PMOD/I2C_SCL_PMOD
+  pins: [J2.3, R12.2, R13.1, U7.22]
+- name: /Digitial I/O via PMOD/I2C_SDA_PMOD
+  pins: [J2.1, R14.2, R15.1, U7.23]
+- name: /Digitial I/O via PMOD/INA219_PWR_MON_SCL
+  pins: [RN3.3, U5.5, U7.14]
+- name: /Digitial I/O via PMOD/INA219_PWR_MON_SDA
+  pins: [RN3.4, U5.6, U7.13]
+- name: /Digitial I/O via PMOD/~1ST~_2ND_NYQ_BAND_SEL
+  pins: [J2.5, R11.1, R9.2, U10.13]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW0_BUF
+  pins: [R18.1, U9.3]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW0_INV_BUF
+  pins: [R19.1, U10.2]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW0_PMOD
+  pins: [J2.2, RN4.8, RN5.1, U10.1, U9.2]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW1_BUF
+  pins: [R16.1, U9.6]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW1_INV_BUF
+  pins: [R17.1, U10.4]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW1_PMOD
+  pins: [J2.4, RN4.7, RN5.2, U10.3, U9.5]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW2_BUF
+  pins: [R24.2, U9.8]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW2_INV
+  pins: [R20.2, U37.4]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW2_INV_BUF
+  pins: [R20.1, U10.6]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW2_PMOD
+  pins: [J2.6, RN4.6, RN5.3, U10.5, U9.9]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW3_BUF
+  pins: [R22.2, U9.11]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW3_INV_BUF
+  pins: [R21.2, U10.8]
+- name: /Digitial I/O via PMOD/~RX~_TX_SW3_PMOD
+  pins: [J2.8, RN4.5, RN5.4, U10.9, U9.12]
+- name: /Power Input & Regulation/+5V_CH0
+  pins: [C13.1, C17.1, C21.1, U1.3]
+- name: /Power Input & Regulation/+5V_CH1
+  pins: [C14.1, C18.1, C22.1, U2.3]
+- name: /Power Input & Regulation/+5V_CH2
+  pins:
+  - C115.1
+  - C117.1
+  - C120.1
+  - C121.1
+  - C123.1
+  - C124.1
+  - C15.1
+  - C19.1
+  - C23.1
+  - L10.1
+  - L9.1
+  - U3.3
+- name: /Power Input & Regulation/+5V_CH3
+  pins: [C16.1, C20.1, C24.1, U4.3]
+- name: /Power Input & Regulation/5V5_SW
+  pins:
+  - C10.1
+  - C27.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - DS1.2
+  - L2.1
+  - R7.1
+  - U1.1
+  - U2.1
+  - U3.1
+  - U4.1
+- name: /Power Input & Regulation/PWR_IN
+  pins: [F1.1, J1.1]
+- name: /Power Input & Regulation/PWR_IN_CMC
+  pins: [C11.1, C5.1, L1.4, R4.1, R5.1]
+- name: /Power Input & Regulation/PWR_IN_FUSED
+  pins: [C3.1, C4.2, F1.2, L1.1]
+- name: /Power Input & Regulation/PWR_RETURN
+  pins:
+  - C1.1
+  - C2.2
+  - C3.2
+  - C4.1
+  - J1.2
+  - J1.3
+  - L1.2
+  - R1.2
+- name: /Power Input & Regulation/V_FB
+  pins: [R7.2, R8.1, U6.4]
+- name: /Power Input & Regulation/V_SW_NODE
+  pins: [C26.2, L2.2, U6.2]
+- name: /Power Input & Regulation/Vin_unreg
+  pins: [C25.1, R30.2, R5.3, U6.3]
+- name: /Power Input & Regulation/sense12V_N
+  pins: [R3.2, R5.4]
+- name: /Power Input & Regulation/sense12V_P
+  pins: [R2.2, R5.2]
+- name: /RF_ch0/I2C_SCL_ATTN
+  pins: [RN2.1, U7.11]
+- name: /RF_ch0/I2C_SDA_ATTN
+  pins: [RN2.2, U7.10]
+- name: /RF_ch0/~1ST_NYQ~_2ND_NYQ_SW
+  pins: [R25.1, U40.4, U41.6]
+- name: /RF_ch0/~1ST_NYQ~_2ND_NYQ_SW_INV
+  pins: [R23.1, U40.6, U41.4]
+- name: /RF_ch1/I2C_SCL_ATTN
+  pins: [RN2.3, U7.9]
+- name: /RF_ch1/I2C_SDA_ATTN
+  pins: [RN2.4, U7.8]
+- name: /RF_ch2/C0.25_RX
+  pins: [U39.1, U42.5]
+- name: /RF_ch2/C0.25_TX
+  pins: [U36.1, U42.14]
+- name: /RF_ch2/C0.5_RX
+  pins: [U39.24, U42.6]
+- name: /RF_ch2/C0.5_TX
+  pins: [U36.24, U42.15]
+- name: /RF_ch2/C16_RX
+  pins: [U39.19, U42.11]
+- name: /RF_ch2/C16_TX
+  pins: [U36.19, U42.20]
+- name: /RF_ch2/C1_RX
+  pins: [U39.23, U42.7]
+- name: /RF_ch2/C1_TX
+  pins: [U36.23, U42.16]
+- name: /RF_ch2/C2_RX
+  pins: [U39.22, U42.8]
+- name: /RF_ch2/C2_TX
+  pins: [U36.22, U42.17]
+- name: /RF_ch2/C4_RX
+  pins: [U39.21, U42.9]
+- name: /RF_ch2/C4_TX
+  pins: [U36.21, U42.18]
+- name: /RF_ch2/C8_RX
+  pins: [U39.20, U42.10]
+- name: /RF_ch2/C8_TX
+  pins: [U36.20, U42.19]
+- name: /RF_ch2/I2C_SCL_ATTN
+  pins: [RN1.1, U42.22, U7.7]
+- name: /RF_ch2/I2C_SDA_ATTN
+  pins: [RN1.2, U42.23, U7.6]
+- name: /RF_ch2/LE_RX
+  pins: [U39.16, U42.4]
+- name: /RF_ch2/LE_TX
+  pins: [U36.16, U42.13]
+- name: /RF_ch2/RX_FILTER_OUT
+  pins: [C134.1, T8.1]
+- name: /RF_ch2/RX_IN
+  pins: [C112.2, U37.3]
+- name: /RF_ch2/TX_OUT
+  pins: [C113.2, U37.1]
+- name: /RF_ch2/~RX~_TX_SW
+  pins: [R24.1, U37.6]
+- name: /RF_ch3/I2C_SCL_ATTN
+  pins: [RN1.3, U7.5]
+- name: /RF_ch3/I2C_SDA_ATTN
+  pins: [RN1.4, U7.4]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C115.2
+  - C116.2
+  - C117.2
+  - C12.2
+  - C120.2
+  - C121.2
+  - C122.2
+  - C123.2
+  - C124.2
+  - C13.2
+  - C133.2
+  - C137.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.1
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C27.2
+  - C28.2
+  - C29.2
+  - C30.2
+  - C31.2
+  - C32.1
+  - C33.1
+  - C5.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - F14.2
+  - F14.4
+  - F15.2
+  - F15.4
+  - F16.2
+  - F16.4
+  - F17.2
+  - F17.4
+  - J18.1
+  - J19.1
+  - J2.10
+  - J2.7
+  - J2.9
+  - J20.1
+  - J21.1
+  - J22.1
+  - L1.3
+  - R1.1
+  - R11.2
+  - R13.2
+  - R15.2
+  - R31.2
+  - R4.2
+  - R6.2
+  - R8.2
+  - RN4.1
+  - RN4.2
+  - RN4.3
+  - RN4.4
+  - T7.2
+  - T7.3
+  - T7.4
+  - T8.2
+  - T8.3
+  - T8.4
+  - U1.2
+  - U10.7
+  - U2.2
+  - U3.2
+  - U35.2
+  - U36.10
+  - U36.11
+  - U36.12
+  - U36.13
+  - U36.15
+  - U36.17
+  - U36.18
+  - U36.3
+  - U36.4
+  - U36.6
+  - U36.7
+  - U36.8
+  - U36.9
+  - U37.2
+  - U38.2
+  - U39.10
+  - U39.11
+  - U39.12
+  - U39.13
+  - U39.15
+  - U39.17
+  - U39.18
+  - U39.3
+  - U39.4
+  - U39.6
+  - U39.7
+  - U39.8
+  - U39.9
+  - U4.2
+  - U40.2
+  - U41.2
+  - U42.12
+  - U42.21
+  - U5.3
+  - U5.7
+  - U5.8
+  - U6.1
+  - U7.1
+  - U7.12
+  - U7.17
+  - U7.18
+  - U7.19
+  - U7.2
+  - U7.20
+  - U7.21
+  - U8.1
+  - U8.2
+  - U8.3
+  - U8.4
+  - U8.7
+  - U9.1
+  - U9.10
+  - U9.13
+  - U9.4
+  - U9.7
+- name: Net-(C112-Pad1)
+  pins: [C112.1, U35.1]
+- name: Net-(C113-Pad1)
+  pins: [C113.1, U36.14]
+- name: Net-(C114-Pad1)
+  pins: [C114.1, U37.5]
+- name: Net-(C114-Pad2)
+  pins: [C114.2, J18.2]
+- name: Net-(C118-Pad1)
+  pins: [C118.1, U39.5]
+- name: Net-(C118-Pad2)
+  pins: [C118.2, L9.2, U35.3]
+- name: Net-(C119-Pad1)
+  pins: [C119.1, L10.2, U38.3]
+- name: Net-(C119-Pad2)
+  pins: [C119.2, U36.5]
+- name: Net-(C125-Pad1)
+  pins: [C125.1, F14.3]
+- name: Net-(C125-Pad2)
+  pins: [C125.2, U38.1]
+- name: Net-(C126-Pad1)
+  pins: [C126.1, U40.5]
+- name: Net-(C126-Pad2)
+  pins: [C126.2, U39.14]
+- name: Net-(C127-Pad1)
+  pins: [C127.1, F16.1]
+- name: Net-(C127-Pad2)
+  pins: [C127.2, U40.1]
+- name: Net-(C128-Pad1)
+  pins: [C128.1, F15.1]
+- name: Net-(C128-Pad2)
+  pins: [C128.2, U40.3]
+- name: Net-(C129-Pad1)
+  pins: [C129.1, J19.2]
+- name: Net-(C129-Pad2)
+  pins: [C129.2, T7.6]
+- name: Net-(C130-Pad1)
+  pins: [C130.1, J20.2]
+- name: Net-(C130-Pad2)
+  pins: [C130.2, T7.5]
+- name: Net-(C131-Pad1)
+  pins: [C131.1, U41.3]
+- name: Net-(C131-Pad2)
+  pins: [C131.2, F16.3]
+- name: Net-(C132-Pad1)
+  pins: [C132.1, U41.1]
+- name: Net-(C132-Pad2)
+  pins: [C132.2, F17.3]
+- name: Net-(C134-Pad2)
+  pins: [C134.2, U41.5]
+- name: Net-(C135-Pad1)
+  pins: [C135.1, J21.2]
+- name: Net-(C135-Pad2)
+  pins: [C135.2, T8.6]
+- name: Net-(C136-Pad1)
+  pins: [C136.1, J22.2]
+- name: Net-(C136-Pad2)
+  pins: [C136.2, T8.5]
+- name: Net-(C26-Pad1)
+  pins: [C26.1, U6.6]
+- name: Net-(C6-Pad1)
+  pins: [C6.1, R2.1, U5.1]
+- name: Net-(C6-Pad2)
+  pins: [C6.2, R3.1, U5.2]
+- name: Net-(DS1-Pad1)
+  pins: [DS1.1, R6.1]
+- name: Net-(DS2-Pad1)
+  pins: [DS2.1, R31.1]
+- name: Net-(F14-Pad1)
+  pins: [F14.1, T7.1]
+- name: Net-(F15-Pad3)
+  pins: [F15.3, F17.1]
+- name: Net-(R10-Pad1)
+  pins: [R10.1, U7.3]
+- name: Net-(R23-Pad2)
+  pins: [R23.2, U10.11, U10.12]
+- name: Net-(R25-Pad2)
+  pins: [R25.2, U10.10]
+- name: Net-(R29-Pad2)
+  pins: [R29.2, U42.3]
+- name: Net-(R30-Pad1)
+  pins: [R30.1, U6.5]
+positions:
+- ref: C1
+  x: 52.07
+  y: 143.38
+  rot: 90.0
+- ref: C10
+  x: 64.52
+  y: 125.35
+  rot: 180.0
+  side: back
+- ref: C11
+  x: 63.12
+  y: 151.13
+  rot: 180.0
+- ref: C112
+  x: 206.25
+  y: 118.86
+  rot: 135.0
+- ref: C113
+  x: 196.34
+  y: 123.43
+  rot: 45.0
+- ref: C114
+  x: 203.2
+  y: 108.82
+  rot: 90.0
+- ref: C115
+  x: 210.69
+  y: 127.62
+  rot: 270.0
+- ref: C116
+  x: 187.96
+  y: 139.32
+  rot: 180.0
+- ref: C117
+  x: 208.51
+  y: 123.67
+  rot: 90.0
+- ref: C118
+  x: 212.85
+  y: 128.02
+  rot: 90.0
+- ref: C119
+  x: 191.64
+  y: 142.35
+  rot: 90.0
+- ref: C12
+  x: 60.45
+  y: 140.84
+  side: back
+- ref: C120
+  x: 208.51
+  y: 127.53
+  rot: 270.0
+- ref: C121
+  x: 193.67
+  y: 149.53
+  rot: 270.0
+- ref: C122
+  x: 215.01
+  y: 127.76
+  rot: 90.0
+- ref: C123
+  x: 195.7
+  y: 149.71
+  rot: 270.0
+- ref: C124
+  x: 195.7
+  y: 145.77
+  rot: 90.0
+- ref: C125
+  x: 191.13
+  y: 159.24
+  rot: 90.0
+- ref: C126
+  x: 214.82
+  y: 138.56
+  rot: 135.0
+- ref: C127
+  x: 214.22
+  y: 150.83
+  rot: 90.0
+- ref: C128
+  x: 218.75
+  y: 149.61
+  rot: 90.0
+- ref: C129
+  x: 194.31
+  y: 179.32
+  rot: 135.0
+- ref: C13
+  x: 56.01
+  y: 114.43
+- ref: C130
+  x: 186.69
+  y: 179.32
+  rot: 45.0
+- ref: C131
+  x: 214.18
+  y: 157.48
+  rot: 90.0
+- ref: C132
+  x: 218.88
+  y: 157.48
+  rot: 90.0
+- ref: C133
+  x: 197.28
+  y: 130.56
+  rot: 90.0
+  side: back
+- ref: C134
+  x: 216.53
+  y: 166.24
+  rot: 90.0
+- ref: C135
+  x: 219.71
+  y: 179.32
+  rot: 135.0
+- ref: C136
+  x: 212.09
+  y: 179.32
+  rot: 45.0
+- ref: C137
+  x: 206.71
+  y: 131.39
+  rot: 90.0
+  side: back
+- ref: C14
+  x: 66.55
+  y: 108.2
+  rot: 180.0
+- ref: C15
+  x: 51.05
+  y: 108.2
+  side: back
+- ref: C16
+  x: 64.52
+  y: 114.43
+  rot: 180.0
+  side: back
+- ref: C17
+  x: 56.01
+  y: 111.38
+- ref: C18
+  x: 66.55
+  y: 111.38
+  rot: 180.0
+- ref: C19
+  x: 51.05
+  y: 111.38
+  side: back
+- ref: C20
+  x: 64.52
+  y: 111.38
+  rot: 180.0
+  side: back
+- ref: C21
+  x: 56.01
+  y: 108.2
+- ref: C22
+  x: 66.55
+  y: 114.43
+  rot: 180.0
+- ref: C23
+  x: 51.05
+  y: 114.43
+  side: back
+- ref: C24
+  x: 64.52
+  y: 108.2
+  rot: 180.0
+  side: back
+- ref: C25
+  x: 57.15
+  y: 142.37
+  rot: 180.0
+- ref: C26
+  x: 55.63
+  y: 133.99
+  rot: 180.0
+- ref: C27
+  x: 42.67
+  y: 134.37
+  rot: 270.0
+- ref: C28
+  x: 64.14
+  y: 184.78
+  rot: 180.0
+- ref: C29
+  x: 49.28
+  y: 161.42
+  rot: 90.0
+- ref: C3
+  x: 54.86
+  y: 147.7
+  rot: 90.0
+- ref: C30
+  x: 51.44
+  y: 158.37
+  rot: 180.0
+- ref: C31
+  x: 71.12
+  y: 178.69
+  rot: 180.0
+  side: back
+- ref: C32
+  x: 65.41
+  y: 162.18
+  side: back
+- ref: C33
+  x: 68.33
+  y: 164.34
+  rot: 270.0
+- ref: C4
+  x: 56.9
+  y: 147.45
+  rot: 270.0
+- ref: C5
+  x: 63.37
+  y: 153.54
+  rot: 180.0
+- ref: C6
+  x: 61.85
+  y: 144.16
+  rot: 90.0
+  side: back
+- ref: C7
+  x: 45.97
+  y: 125.98
+  rot: 90.0
+- ref: C8
+  x: 62.1
+  y: 125.35
+  rot: 180.0
+- ref: C9
+  x: 57.66
+  y: 125.35
+  rot: 180.0
+  side: back
+- ref: DS1
+  x: 42.29
+  y: 129.16
+  rot: 270.0
+- ref: DS2
+  x: 58.67
+  y: 182.12
+  rot: 90.0
+- ref: F1
+  x: 54.86
+  y: 151.89
+  rot: 90.0
+- ref: F14
+  x: 190.88
+  y: 164.83
+  rot: 90.0
+- ref: F15
+  x: 219.01
+  y: 152.27
+  rot: 270.0
+- ref: F16
+  x: 214.56
+  y: 154.56
+  rot: 270.0
+- ref: F17
+  x: 218.88
+  y: 154.81
+  rot: 270.0
+- ref: FB1
+  x: 51.82
+  y: 162.18
+- ref: J1
+  x: 46.1
+  y: 150.88
+- ref: J18
+  x: 203.2
+  y: 102.36
+  rot: 270.0
+- ref: J19
+  x: 196.85
+  y: 186.94
+  rot: 270.0
+- ref: J2
+  x: 53.09
+  y: 178.69
+  rot: 180.0
+- ref: J20
+  x: 184.15
+  y: 186.94
+  rot: 270.0
+- ref: J21
+  x: 222.25
+  y: 186.94
+  rot: 270.0
+- ref: J22
+  x: 209.55
+  y: 186.94
+  rot: 270.0
+- ref: L1
+  x: 60.2
+  y: 148.59
+- ref: L10
+  x: 192.48
+  y: 146.74
+  rot: 180.0
+- ref: L2
+  x: 49.53
+  y: 134.37
+  rot: 270.0
+- ref: L9
+  x: 211.71
+  y: 125.46
+- ref: R10
+  x: 76.07
+  y: 183.51
+- ref: R11
+  x: 56.64
+  y: 170.69
+  rot: 90.0
+  side: back
+- ref: R12
+  x: 56.77
+  y: 175.77
+  rot: 270.0
+  side: back
+- ref: R14
+  x: 55.12
+  y: 182.88
+  rot: 90.0
+  side: back
+- ref: R16
+  x: 67.18
+  y: 174.5
+- ref: R17
+  x: 57.02
+  y: 165.99
+  rot: 90.0
+- ref: R18
+  x: 67.18
+  y: 173.23
+- ref: R19
+  x: 58.42
+  y: 164.97
+  rot: 90.0
+- ref: R2
+  x: 64.39
+  y: 145.16
+  side: back
+- ref: R20
+  x: 55.88
+  y: 162.18
+  rot: 90.0
+- ref: R21
+  x: 70.23
+  y: 170.31
+  rot: 180.0
+  side: back
+- ref: R22
+  x: 63.37
+  y: 161.16
+  rot: 270.0
+- ref: R23
+  x: 71.25
+  y: 167.26
+  rot: 180.0
+- ref: R24
+  x: 61.47
+  y: 161.16
+  rot: 270.0
+- ref: R25
+  x: 72.14
+  y: 168.53
+  rot: 180.0
+- ref: R29
+  x: 209.04
+  y: 132.46
+  rot: 270.0
+  side: back
+- ref: R3
+  x: 64.39
+  y: 143.13
+  side: back
+- ref: R30
+  x: 57.66
+  y: 137.29
+  side: back
+- ref: R31
+  x: 58.67
+  y: 186.56
+  rot: 270.0
+- ref: R4
+  x: 63.63
+  y: 155.19
+  rot: 180.0
+- ref: R5
+  x: 64.39
+  y: 144.15
+  rot: 90.0
+- ref: R6
+  x: 42.29
+  y: 125.22
+  rot: 90.0
+- ref: R7
+  x: 56.77
+  y: 131.83
+- ref: R8
+  x: 59.44
+  y: 131.83
+- ref: RN1
+  x: 79.38
+  y: 178.18
+  rot: 90.0
+- ref: RN2
+  x: 76.2
+  y: 176.15
+  rot: 90.0
+- ref: RN3
+  x: 63.88
+  y: 178.94
+  rot: 180.0
+- ref: RN4
+  x: 61.21
+  y: 176.02
+  rot: 180.0
+- ref: T7
+  x: 189.87
+  y: 171.7
+  rot: 180.0
+- ref: T8
+  x: 215.26
+  y: 171.7
+  rot: 180.0
+- ref: U1
+  x: 50.93
+  y: 119.76
+  rot: 90.0
+- ref: U10
+  x: 63.37
+  y: 167.89
+- ref: U2
+  x: 64.77
+  y: 119.89
+  rot: 90.0
+- ref: U3
+  x: 52.96
+  y: 119.89
+  rot: 90.0
+  side: back
+- ref: U35
+  x: 216.66
+  y: 121.14
+  rot: 270.0
+- ref: U36
+  x: 190.92
+  y: 135.48
+  rot: 90.0
+- ref: U37
+  x: 203.2
+  y: 113.27
+  rot: 90.0
+- ref: U38
+  x: 186.94
+  y: 151.62
+  rot: 90.0
+- ref: U39
+  x: 213.61
+  y: 133.1
+  rot: 270.0
+- ref: U4
+  x: 69.22
+  y: 119.89
+  rot: 90.0
+  side: back
+- ref: U40
+  x: 216.51
+  y: 144.15
+  rot: 90.0
+- ref: U41
+  x: 216.51
+  y: 161.77
+  rot: 270.0
+- ref: U42
+  x: 201.93
+  y: 135.69
+  rot: 270.0
+  side: back
+- ref: U5
+  x: 58.29
+  y: 143.51
+  rot: 90.0
+  side: back
+- ref: U6
+  x: 57.15
+  y: 137.29
+  rot: 90.0
+- ref: U7
+  x: 69.98
+  y: 180.59
+  rot: 180.0
+- ref: U8
+  x: 69.98
+  y: 183.77
+  rot: 90.0
+  side: back
+- ref: U9
+  x: 63.37
+  y: 167.89
+  rot: 90.0
+  side: back
+copper_pours:
+- net: +3V3
+  layers: [B.Cu, F.Cu, PWR.Cu]
+- net: /Digitial I/O via PMOD/3V3_IN
+  layers: [F.Cu]
+- net: /Power Input & Regulation/+5V_CH0
+  layers: [F.Cu, PWR.Cu]
+- net: /Power Input & Regulation/+5V_CH1
+  layers: [F.Cu, PWR.Cu]
+- net: /Power Input & Regulation/+5V_CH2
+  layers: [B.Cu, F.Cu, PWR.Cu]
+- net: /Power Input & Regulation/+5V_CH3
+  layers: [B.Cu, F.Cu, PWR.Cu]
+- net: /Power Input & Regulation/5V5_SW
+  layers: [B.Cu, F.Cu]
+- net: /Power Input & Regulation/PWR_IN
+  layers: [F.Cu]
+- net: /Power Input & Regulation/PWR_IN_CMC
+  layers: [F.Cu]
+- net: /Power Input & Regulation/PWR_IN_FUSED
+  layers: [F.Cu]
+- net: /Power Input & Regulation/PWR_RETURN
+  layers: [F.Cu, GND.Cu]
+- net: /Power Input & Regulation/V_SW_NODE
+  layers: [B.Cu, F.Cu]
+- net: /Power Input & Regulation/Vin_unreg
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, GND.Cu]

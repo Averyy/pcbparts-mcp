@@ -1,0 +1,544 @@
+name: TechStudio SIM7080G
+slug: techstudio-sim7080g
+source: techstudio-design/sim7080_dev_board
+format: kicad_legacy
+description: Cellular modem (SIM7080G), eSIM (ST4SIM-200M)
+tags: [level-shifting]
+key_ics: [SIM7080G, ST4SIM-200M]
+outline:
+  width_mm: 38.5
+  height_mm: 47.0
+design_rules:
+  layers: 4
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 22pF
+  footprint: '0603'
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+- ref: C11
+  value: 100nF
+  footprint: '0603'
+  decouples: U4
+- ref: C12
+  value: 100uF
+  footprint: EIA-3528
+  decouples: U5
+- ref: C13
+  value: 10uF
+  footprint: '0603'
+  decouples: U5
+- ref: C14
+  value: 47uF
+  footprint: EIA-3216
+  decouples: U5
+- ref: C15
+  value: 1uF
+  footprint: '0603'
+  decouples: U5
+- ref: C16
+  value: 4.7uF
+  footprint: '0603'
+- ref: C17
+  value: 4.7uF
+  footprint: '0603'
+- ref: C4
+  value: 100uF
+  footprint: EIA-3528
+- ref: C5
+  value: 100uF
+  footprint: '1206'
+- ref: C6
+  value: 1uF
+  footprint: '0603'
+  decouples: U2
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+  decouples: U2
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C9
+  value: 100nF
+  footprint: '0603'
+- ref: D1
+  value: SD103AWS
+  footprint: SOD-323
+- ref: D2
+  value: ESDA6V1W5
+  footprint: SOT-353_SC-70-5
+- ref: D3
+  value: NETLIGHT
+  footprint: '0603'
+- ref: D4
+  value: STATUS
+  footprint: '0603'
+- ref: D5
+  value: SS12
+  footprint: SMA
+- ref: D6
+  value: ES1AF
+  footprint: SMA
+- ref: D7
+  value: CHARGING
+  footprint: '0603'
+- ref: J1
+  value: LTE Antenna
+  footprint: U.FL_Hirose_U.FL-R-SMT-1_Vertical
+- ref: J2
+  value: GNSS Antenna
+  footprint: U.FL_Hirose_U.FL-R-SMT-1_Vertical
+- ref: J3
+  value: USB Micro-B
+  footprint: U254-051T-4BH83
+- ref: J4
+  value: SIM_Card
+  footprint: HOAUC-HYC240-SIM-06-150_C645501
+- ref: J5
+  value: JST PH
+  footprint: JST_PH_S2B-PH-K
+- ref: J6
+  value: 1x10 header
+  footprint: 1X10
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-2
+- ref: L1
+  value: BLM18BA121SN1D
+  footprint: '0603'
+- ref: Q1
+  value: FDN340P
+  footprint: SOT-23
+- ref: Q2
+  value: DTC143Z
+  footprint: SOT523
+- ref: Q3
+  value: DTC143Z
+  footprint: SOT523
+- ref: Q4
+  value: DTC143Z
+  footprint: SOT523
+- ref: Q5
+  value: FDN340P
+  footprint: SOT-23
+- ref: R1
+  value: 0ohm
+  footprint: '0603'
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+  pullup: JP1.2
+- ref: R3
+  value: 1kohm
+  footprint: '0603'
+  pullup: D3.2
+- ref: R4
+  value: 1kohm
+  footprint: '0603'
+  pullup: D4.2
+- ref: R5
+  value: 200kohm
+  footprint: '0603'
+  pullup: Q1.1
+- ref: R6
+  value: 2kohm
+  footprint: '0603'
+- ref: R7
+  value: 100kohm
+  footprint: '0603'
+  pulldown: U6.4
+- ref: R8
+  value: 2kohm
+  footprint: '0603'
+  pulldown: U6.5
+- ref: SW1
+  value: PWRKEY
+  footprint: SW_TS-1101-X-X
+- ref: U1
+  value: USBLC6-2
+  footprint: SOT-23-6
+- ref: U2
+  value: SIM7080G
+  footprint: SIM7080G
+- ref: U3
+  value: ST4SIM-200M
+  footprint: ST4SIM-200M
+- ref: U4
+  value: TXB0104PW
+  footprint: TSSOP-14
+- ref: U5
+  value: ME6211A33M3G-N
+  footprint: SOT-23
+- ref: U6
+  value: MCP73831-2-OT
+  footprint: SOT-23-5
+nets:
+- name: 1.8V
+  pins: [C11.2, R2.1, U2.40, U4.1, U4.8]
+- name: 3.3V
+  pins: [C14.1, C15.1, J6.8, Q1.2, R5.1, U5.2]
+- name: ANT_CTRL
+  pins: [J6.9, Q4.1]
+- name: DTR
+  pins: [J6.4, U4.12]
+- name: GND
+  pins:
+  - C10.2
+  - C11.1
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D2.2
+  - J1.2
+  - J2.2
+  - J3.5
+  - J4.5
+  - J5.2
+  - J6.10
+  - Q2.2
+  - Q3.2
+  - Q4.2
+  - R7.2
+  - R8.2
+  - SW1.1
+  - U1.2
+  - U2.13
+  - U2.19
+  - U2.21
+  - U2.27
+  - U2.30
+  - U2.31
+  - U2.33
+  - U2.36
+  - U2.37
+  - U2.45
+  - U2.63
+  - U2.66
+  - U2.67
+  - U2.69
+  - U2.70
+  - U2.71
+  - U2.72
+  - U2.73
+  - U2.74
+  - U2.75
+  - U2.76
+  - U2.77
+  - U2.8
+  - U3.1
+  - U3.9
+  - U4.7
+  - U5.1
+  - U6.2
+- name: NB_DTR
+  pins: [U2.6, U4.3]
+- name: NB_RI
+  pins: [U2.7, U4.2]
+- name: NB_RXD
+  pins: [U2.2, U4.4]
+- name: NB_TXD
+  pins: [U2.1, U4.5]
+- name: NETLIGHT
+  pins: [Q2.1, U2.41]
+- name: Net-(C1-Pad1)
+  pins: [C1.1, U2.68]
+- name: Net-(C16-Pad1)
+  pins:
+  - C16.1
+  - D5.1
+  - D6.2
+  - Q5.1
+  - R6.2
+  - R7.1
+  - U6.4
+- name: Net-(C17-Pad1)
+  pins: [C17.1, J5.1, Q5.3, U6.3]
+- name: Net-(C2-Pad1)
+  pins: [C2.1, J1.1, R1.2]
+- name: Net-(C3-Pad1)
+  pins: [C3.1, R1.1, U2.32]
+- name: Net-(C9-Pad1)
+  pins: [C9.1, D2.5, J4.1, U2.18, U3.8]
+- name: Net-(D1-Pad2)
+  pins: [D1.2, SW1.2, U2.39]
+- name: Net-(D2-Pad1)
+  pins: [D2.1, J4.7, U2.15, U3.3]
+- name: Net-(D2-Pad3)
+  pins: [D2.3, J4.3, U2.16, U3.6]
+- name: Net-(D2-Pad4)
+  pins: [D2.4, J4.2, U2.17, U3.7]
+- name: Net-(D3-Pad1)
+  pins: [D3.1, Q2.3]
+- name: Net-(D3-Pad2)
+  pins: [D3.2, R3.2]
+- name: Net-(D4-Pad1)
+  pins: [D4.1, Q3.3]
+- name: Net-(D4-Pad2)
+  pins: [D4.2, R4.2]
+- name: Net-(D7-Pad1)
+  pins: [D7.1, U6.1]
+- name: Net-(D7-Pad2)
+  pins: [D7.2, R6.1]
+- name: Net-(J3-Pad2)
+  pins: [J3.2, U1.4]
+- name: Net-(J3-Pad3)
+  pins: [J3.3, U1.6]
+- name: Net-(JP1-Pad1)
+  pins: [JP1.1, U2.20]
+- name: Net-(JP1-Pad2)
+  pins: [JP1.2, R2.2]
+- name: Net-(L1-Pad2)
+  pins: [L1.2, Q1.3]
+- name: Net-(Q1-Pad1)
+  pins: [Q1.1, Q4.3, R5.2]
+- name: Net-(R8-Pad1)
+  pins: [R8.1, U6.5]
+- name: Net-(U1-Pad1)
+  pins: [U1.1, U2.25]
+- name: Net-(U1-Pad3)
+  pins: [U1.3, U2.26]
+- name: PWRKEY
+  pins: [D1.1, J6.7]
+- name: RI
+  pins: [J6.3, U4.13]
+- name: RXD
+  pins: [J6.5, U4.11]
+- name: STAT
+  pins: [Q3.1, U2.42]
+- name: TXD
+  pins: [J6.6, U4.10]
+- name: VANT
+  pins: [C1.2, J2.1, L1.1]
+- name: VBAT
+  pins:
+  - C12.1
+  - C13.1
+  - C4.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - D6.1
+  - J6.1
+  - Q5.2
+  - R3.1
+  - R4.1
+  - U2.34
+  - U2.35
+  - U5.3
+- name: VBUS
+  pins: [C8.1, D5.2, J3.1, U1.5, U2.24]
+- name: VIO
+  pins: [C10.1, J6.2, U4.14]
+positions:
+- ref: C1
+  x: 144.15
+  y: 98.4
+  rot: 180.0
+- ref: C10
+  x: 158.5
+  y: 103.6
+- ref: C11
+  x: 158.5
+  y: 102.0
+  rot: 180.0
+- ref: C12
+  x: 163.7
+  y: 102.0
+  rot: 270.0
+- ref: C13
+  x: 161.1
+  y: 101.1
+  rot: 270.0
+- ref: C14
+  x: 159.7
+  y: 107.2
+  rot: 90.0
+- ref: C15
+  x: 157.6
+  y: 106.4
+  rot: 90.0
+- ref: C16
+  x: 171.7
+  y: 84.3
+  rot: 180.0
+- ref: C17
+  x: 162.7
+  y: 109.3
+  rot: 180.0
+- ref: C4
+  x: 138.0
+  y: 85.8
+  rot: 270.0
+- ref: C5
+  x: 141.0
+  y: 85.8
+  rot: 270.0
+- ref: C6
+  x: 144.1
+  y: 84.3
+- ref: C7
+  x: 144.1
+  y: 85.85
+- ref: C8
+  x: 164.5
+  y: 76.0
+  rot: 180.0
+- ref: C9
+  x: 142.5
+  y: 108.8
+- ref: D1
+  x: 144.85
+  y: 92.4
+  rot: 90.0
+- ref: D2
+  x: 142.0
+  y: 106.5
+  rot: 180.0
+- ref: D3
+  x: 138.0
+  y: 91.2
+- ref: D4
+  x: 138.0
+  y: 94.6
+- ref: D5
+  x: 166.3
+  y: 72.8
+  rot: 180.0
+- ref: D6
+  x: 169.65
+  y: 100.35
+- ref: D7
+  x: 171.6
+  y: 93.7
+- ref: J1
+  x: 152.0
+  y: 72.3
+  rot: 90.0
+- ref: J2
+  x: 138.4
+  y: 98.4
+  rot: 180.0
+- ref: J3
+  x: 172.0
+  y: 79.0
+  rot: 90.0
+- ref: J4
+  x: 155.1
+  y: 90.8
+  side: back
+- ref: J5
+  x: 167.3
+  y: 106.8
+  rot: 90.0
+- ref: J6
+  x: 166.25
+  y: 112.5
+  rot: 270.0
+- ref: JP1
+  x: 164.5
+  y: 83.5
+  rot: 90.0
+  side: back
+- ref: L1
+  x: 143.25
+  y: 101.0
+  rot: 270.0
+- ref: Q1
+  x: 138.9
+  y: 103.05
+- ref: Q2
+  x: 141.7
+  y: 91.0
+  rot: 180.0
+- ref: Q3
+  x: 141.7
+  y: 93.3
+  rot: 180.0
+- ref: Q4
+  x: 137.7
+  y: 108.3
+  rot: 180.0
+- ref: Q5
+  x: 170.7
+  y: 96.4
+- ref: R1
+  x: 152.0
+  y: 77.5
+  rot: 90.0
+- ref: R2
+  x: 167.4
+  y: 82.4
+  rot: 90.0
+- ref: R3
+  x: 138.0
+  y: 89.5
+- ref: R4
+  x: 138.0
+  y: 92.9
+- ref: R5
+  x: 137.85
+  y: 105.9
+  rot: 180.0
+- ref: R6
+  x: 171.6
+  y: 91.9
+  rot: 180.0
+- ref: R7
+  x: 168.75
+  y: 89.35
+  rot: 90.0
+- ref: R8
+  x: 168.75
+  y: 85.85
+  rot: 90.0
+- ref: SW1
+  x: 140.6
+  y: 80.8
+- ref: U1
+  x: 165.2
+  y: 78.7
+- ref: U2
+  x: 156.9
+  y: 89.9
+  rot: 90.0
+- ref: U3
+  x: 147.5
+  y: 105.8
+  rot: 90.0
+- ref: U4
+  x: 153.5
+  y: 105.8
+  rot: 270.0
+- ref: U5
+  x: 162.8
+  y: 106.6
+- ref: U6
+  x: 171.7
+  y: 87.6
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: VBAT
+  layers: [In2.Cu]
+- net: ''
+  layers: [F.Cu]
+  keepout: true

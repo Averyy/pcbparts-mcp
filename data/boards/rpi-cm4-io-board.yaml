@@ -1,0 +1,1890 @@
+name: RPi CM4 IO Board
+slug: rpi-cm4-io-board
+source: rpi-cm4io
+format: kicad7
+description: 'CM4 reference design: dual HDMI 2.0, PCIe Gen 2 x1, Gigabit Ethernet + PoE'
+tags: [ethernet, usb, video]
+key_ics: []
+outline:
+  width_mm: 160.0
+  height_mm: 90.0
+design_rules:
+  layers: 4
+  min_trace: 0.1mm
+  min_drill: 0.25mm
+  min_via: 0.45mm
+components:
+- ref: BT1
+  value: coin cell holder
+  footprint: '3034'
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+- ref: C10
+  value: 10uF
+  footprint: 0805
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+- ref: C16
+  value: 100uF
+  footprint: EIA-7343
+- ref: C17
+  value: 10uF
+  footprint: 0805
+- ref: C18
+  value: 100uF
+  footprint: EIA-7343
+- ref: C19
+  value: 10uF
+  footprint: 0805
+- ref: C2
+  value: 10uF
+  footprint: 0805
+- ref: C20
+  value: 10uF
+  footprint: 0805
+- ref: C21
+  value: 10uF
+  footprint: 0805
+- ref: C22
+  value: 100nF
+  footprint: '0402'
+- ref: C23
+  value: 100nF
+  footprint: '0402'
+- ref: C24
+  value: 100nF
+  footprint: '0402'
+- ref: C25
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C26
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C27
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C28
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C29
+  value: 100nF
+  footprint: '0402'
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+- ref: C30
+  value: 10uF
+  footprint: 0805
+- ref: C31
+  value: 10uF
+  footprint: 0805
+- ref: C32
+  value: 10uF
+  footprint: 0805
+- ref: C33
+  value: 10uF
+  footprint: 0805
+- ref: C34
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C35
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C36
+  value: 100nF
+  footprint: '0402'
+  voltage: 100V
+- ref: C37
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C38
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C39
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+- ref: C40
+  value: 100nF
+  footprint: '0402'
+- ref: C41
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C42
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C43
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C44
+  value: 10uF
+  footprint: 0805
+  voltage: 35V
+- ref: C45
+  value: 100uF
+  footprint: EIA-7343
+- ref: C46
+  value: 100nF
+  footprint: '0402'
+- ref: C47
+  value: 10uF
+  footprint: 0805
+- ref: C49
+  value: 10uF
+  footprint: 0805
+- ref: C5
+  value: 10uF
+  footprint: 0805
+- ref: C51
+  value: 10uF
+  footprint: 0805
+- ref: C52
+  value: 10uF
+  footprint: 0805
+- ref: C57
+  value: 100nF
+  footprint: '0402'
+- ref: C58
+  value: 100nF
+  footprint: '0402'
+- ref: C59
+  value: nf
+  footprint: '0402'
+- ref: C6
+  value: 10uF
+  footprint: 0805
+- ref: C60
+  value: 1.2nF
+  footprint: '0402'
+- ref: C61
+  value: nf
+  footprint: '0402'
+- ref: C62
+  value: 100nF
+  footprint: '0402'
+- ref: C63
+  value: nf
+  footprint: '0402'
+- ref: C64
+  value: 1.2nF
+  footprint: '0402'
+- ref: C65
+  value: nf
+  footprint: '0402'
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+- ref: C8
+  value: 27pF
+  footprint: '0402'
+- ref: C9
+  value: 27pF
+  footprint: '0402'
+- ref: D1
+  value: LED Red
+  footprint: '0603'
+- ref: D2
+  value: LED Green
+  footprint: '0603'
+- ref: D3
+  value: BAT54C-7-F
+  footprint: SOT-23
+- ref: D4
+  value: MMBZ5242BLT3G
+  footprint: SOT-23_ANK
+- ref: J1
+  value: 1x3 header
+  footprint: PinHeader
+- ref: J10
+  value: 690-019-298-412
+  footprint: EDAC 690-019-298-412
+- ref: J11
+  value: USB_OTG
+  footprint: USB_Micro-B_EDAC_UCON00686
+- ref: J12
+  value: 10018783-11200TLF
+  footprint: PCIex1-36
+- ref: J13
+  value: 690-008-221-904
+  footprint: '4090'
+- ref: J14
+  value: 2x5 header
+  footprint: PinHeader
+- ref: J15
+  value: 1x22 header
+  footprint: Hirose_FH12-22S-0.5SH
+- ref: J16
+  value: 1x22 header
+  footprint: Hirose_FH12-22S-0.5SH
+- ref: J17
+  value: Molex 470531000
+  footprint: FanPinHeader
+- ref: J19
+  value: Barrel_Jack
+  footprint: BarrelJack_Horizontal
+- ref: J2
+  value: 2x7 header
+  footprint: PinHeader
+- ref: J20
+  value: AMP171826-4
+  footprint: TE_171826-4
+- ref: J22
+  value: 690-019-298-412
+  footprint: EDAC 690-019-298-412
+- ref: J3
+  value: 1x3 header
+  footprint: PinHeader
+- ref: J4
+  value: 1x22 header
+  footprint: Hirose_FH12-22S-0.5SH
+- ref: J5
+  value: 1x22 header
+  footprint: Hirose_FH12-22S-0.5SH
+- ref: J6
+  value: 2x2 header
+  footprint: PinHeader
+- ref: J7
+  value: Micro_SD_Card_Det
+  footprint: '1892'
+- ref: J8
+  value: 2x20 header
+  footprint: PinHeader
+- ref: J9
+  value: 2x2 header
+  footprint: PinHeader
+- ref: L3
+  value: 3.3uH
+  footprint: L_Bourns_SRN6045TA
+- ref: L5
+  value: 3.3uH
+  footprint: L_Bourns_SRN6045TA
+- ref: Module1
+  value: ComputeModule4
+  footprint: Raspberry-Pi-4-Compute-Module
+- ref: Q1
+  value: DMP3013SFV-7
+  footprint: Diodes_PowerDI3333-8
+- ref: R1
+  value: 1kohm
+  footprint: '0402'
+- ref: R10
+  value: 1kohm
+  footprint: '0402'
+- ref: R11
+  value: 2.2kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: /CM4_HighSpeed/USBOTG_ID
+- ref: R12
+  value: 36kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: Net-(R12-Pad1)
+- ref: R13
+  value: 36kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: Net-(R13-Pad1)
+- ref: R14
+  value: 36kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: Net-(R14-Pad1)
+- ref: R15
+  value: 12kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: Net-(R15-Pad2)
+- ref: R16
+  value: 36kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: Net-(R16-Pad1)
+- ref: R17
+  value: nf
+  footprint: '0402'
+- ref: R18
+  value: nf
+  footprint: '0402'
+- ref: R19
+  value: 510kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R2
+  value: 470ohm
+  footprint: '0402'
+- ref: R20
+  value: 510kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R21
+  value: 36kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R22
+  value: 10ohm
+  footprint: '0402'
+- ref: R23
+  value: 12kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R24
+  value: 47kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R25
+  value: 20kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R26
+  value: 12kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: Net-(C40-Pad2)
+- ref: R27
+  value: 12kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R28
+  value: 2.2kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: Net-(C61-Pad2)
+- ref: R29
+  value: 12kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R3
+  value: 470ohm
+  footprint: '0402'
+- ref: R30
+  value: 15kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: Net-(C65-Pad2)
+- ref: R36
+  value: 15kohm
+  footprint: '0402'
+  tolerance: 1%
+  pulldown: Net-(R36-Pad1)
+- ref: R4
+  value: nf
+  footprint: 0805
+- ref: R5
+  value: 0ohm
+  footprint: 0805
+- ref: R6
+  value: 2.2kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R7
+  value: 2.2kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R8
+  value: 2.2kohm
+  footprint: '0402'
+  tolerance: 1%
+- ref: R9
+  value: 10ohm
+  footprint: '0402'
+- ref: U1
+  value: TPD4EUSB30
+  footprint: USON-10
+- ref: U11
+  value: EMC2301-1-ACZL
+  footprint: MSOP-8
+- ref: U12
+  value: RT9742SNGV
+  footprint: SOT-23
+- ref: U13
+  value: FSUSB42MUX
+  footprint: MSOP-10
+- ref: U14
+  value: 74LVC1G07SE-7
+  footprint: SOT-353_SC-70-5
+- ref: U15
+  value: AP64501SP-13
+  footprint: SOIC-8
+- ref: U16
+  value: AP64501SP-13
+  footprint: SOIC-8
+- ref: U18
+  value: RT9742GGJ5
+  footprint: SOT-23-5
+- ref: U2
+  value: TPD4EUSB30
+  footprint: USON-10
+- ref: U3
+  value: MagJack-A70-112-331N126
+  footprint: TRJG0926HENL
+- ref: U4
+  value: TPD4EUSB30
+  footprint: USON-10
+- ref: U5
+  value: 74LVC1G07SE-7
+  footprint: SOT-353_SC-70-5
+- ref: U6
+  value: USB2514B-I/M2
+  footprint: QFN-36
+- ref: U7
+  value: AP22653W6
+  footprint: SOT-23-6
+- ref: U8
+  value: PCF85063AT
+  footprint: SOIC-8
+- ref: U9
+  value: 74LVC1G07SE-7
+  footprint: SOT-353_SC-70-5
+- ref: Y1
+  value: 24MHz
+  footprint: Crystal_SMD_HC49-SD
+- ref: Y2
+  value: X32K768S301
+  footprint: SMD3215
+nets:
+- name: /+12v
+  pins:
+  - C25.1
+  - C26.1
+  - C27.1
+  - C28.1
+  - C34.1
+  - C35.1
+  - C37.1
+  - C38.1
+  - C39.1
+  - C40.1
+  - C41.1
+  - C42.1
+  - C43.1
+  - C44.1
+  - D4.1
+  - J12.A2
+  - J12.A3
+  - J12.B1
+  - J12.B2
+  - J12.B3
+  - J17.2
+  - J20.1
+  - Q1.1
+  - Q1.2
+  - Q1.3
+  - TP2.1
+  - U15.2
+  - U15.3
+  - U16.2
+  - U16.3
+- name: /+3.3v
+  pins:
+  - C10.1
+  - C11.1
+  - C14.1
+  - C15.1
+  - C23.1
+  - C3.1
+  - C4.1
+  - C6.1
+  - C7.1
+  - D1.2
+  - D2.2
+  - D3.2
+  - J15.22
+  - J16.22
+  - J4.22
+  - J5.22
+  - J8.1
+  - J8.17
+  - Module1.84
+  - Module1.86
+  - R17.1
+  - R21.2
+  - R29.1
+  - R5.1
+  - U11.3
+  - U13.1
+  - U18.5
+  - U3.15
+  - U3.17
+  - U5.5
+  - U6.10
+  - U6.15
+  - U6.23
+  - U6.27
+  - U6.29
+  - U6.36
+  - U6.5
+- name: /+5v
+  pins:
+  - C12.1
+  - C18.1
+  - C2.1
+  - C22.1
+  - C47.1
+  - C49.1
+  - C51.1
+  - C52.1
+  - C61.1
+  - J20.4
+  - J8.2
+  - J8.4
+  - L5.2
+  - Module1.77
+  - Module1.79
+  - Module1.81
+  - Module1.83
+  - Module1.85
+  - Module1.87
+  - R19.2
+  - R20.2
+  - R27.1
+  - TP4.1
+  - U12.1
+  - U14.5
+  - U7.1
+  - U9.5
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/+1.8v
+  pins: [Module1.88, Module1.90, R4.1]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/AIN0
+  pins: [J2.5, Module1.96]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/AIN1
+  pins: [J2.6, Module1.94]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/BT_nDis
+  pins: [J3.3, Module1.91]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/EEPROM_nWP
+  pins: [J2.4, Module1.20]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/ETH_LEDG
+  pins: [Module1.17, R2.2]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/ETH_LEDY
+  pins: [Module1.15, R3.2]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GLOBAL_EN
+  pins: [J1.1, J2.14, Module1.99, U14.4]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO10
+  pins: [J8.19, Module1.44]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO11
+  pins: [J8.23, Module1.38]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO12
+  pins: [J8.32, Module1.31]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO13
+  pins: [J8.33, Module1.28]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO14
+  pins: [J8.8, Module1.55]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO15
+  pins: [J8.10, Module1.51]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO16
+  pins: [J8.36, Module1.29]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO17
+  pins: [J8.11, Module1.50]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO18
+  pins: [J8.12, Module1.49]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO19
+  pins: [J8.35, Module1.26]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO2
+  pins: [J8.3, Module1.58]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO20
+  pins: [J8.38, Module1.27]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO21
+  pins: [J8.40, Module1.25]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO22
+  pins: [J8.15, Module1.46]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO23
+  pins: [J8.16, Module1.47]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO24
+  pins: [J8.18, Module1.45]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO25
+  pins: [J8.22, Module1.41]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO26
+  pins: [J8.37, Module1.24]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO27
+  pins: [J8.13, Module1.48]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO3
+  pins: [J8.5, Module1.56]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO4
+  pins: [J8.7, Module1.54]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO5
+  pins: [J8.29, Module1.34]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO6
+  pins: [J8.31, Module1.30]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO7
+  pins: [J8.26, Module1.37]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO8
+  pins: [J8.24, Module1.39]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO9
+  pins: [J8.21, Module1.40]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/GPIO_VREF
+  pins: [Module1.78, R4.2, R5.2, R6.1, R7.1]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/ID_SC
+  pins: [J6.1, J8.28, Module1.35]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/ID_SD
+  pins: [J6.3, J8.27, Module1.36]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/RUN_PG
+  pins: [J1.3, Module1.92, U9.2]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/Reserved
+  pins: [Module1.76, R18.1]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/SD_CLK
+  pins: [J7.5, Module1.57]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/SD_CMD
+  pins: [J7.3, Module1.62]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT0
+  pins: [J7.7, Module1.63]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT1
+  pins: [J7.8, Module1.67]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT2
+  pins: [J7.1, Module1.69]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT3
+  pins: [J7.2, Module1.61]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/SD_PWR
+  pins: [C5.1, J7.4, U18.1]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/SD_PWR_ON
+  pins: [Module1.75, R29.2, U18.4]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/SYNC_IN
+  pins: [J2.8, Module1.16]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/SYNC_OUT
+  pins: [J2.9, Module1.18]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TR0_TAP
+  pins: [J9.3, U3.11]
+  class: POE TAPS
+  trace_width: '0.13'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TR1_TAP
+  pins: [J9.1, U3.12]
+  class: POE TAPS
+  trace_width: '0.13'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TR2_TAP
+  pins: [J9.2, U3.13]
+  class: POE TAPS
+  trace_width: '0.13'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TR3_TAP
+  pins: [J9.4, U3.14]
+  class: POE TAPS
+  trace_width: '0.13'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TRD0_N
+  pins: [Module1.10, U2.4, U2.7, U3.2]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TRD0_P
+  pins: [Module1.12, U2.5, U2.6, U3.1]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TRD1_N
+  pins: [Module1.6, U2.2, U2.9, U3.6]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TRD1_P
+  pins: [Module1.4, U2.1, U2.10, U3.3]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TRD2_N
+  pins: [Module1.9, U1.4, U1.7, U3.8]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TRD2_P
+  pins: [Module1.11, U1.5, U1.6, U3.7]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TRD3_N
+  pins: [Module1.5, U1.2, U1.9, U3.10]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TRD3_P
+  pins: [Module1.3, U1.1, U1.10, U3.9]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/TV_OUT
+  pins: [J2.11, Module1.111]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/WL_nDis
+  pins: [J3.1, Module1.89]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/nPWR_LED
+  pins: [Module1.95, U5.2]
+- name: /CM4_GPIO ( Ethernet, GPIO, SDCARD)/nRPIBOOT
+  pins: [J2.2, Module1.93]
+- name: /CM4_HighSpeed/CAM0_C_N
+  pins: [J4.8, Module1.140]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM0_C_P
+  pins: [J4.9, Module1.142]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM0_D0_N
+  pins: [J4.2, Module1.128]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM0_D0_P
+  pins: [J4.3, Module1.130]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM0_D1_N
+  pins: [J4.5, Module1.134]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM0_D1_P
+  pins: [J4.6, Module1.136]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM1_C_N
+  pins: [J5.8, Module1.127]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM1_C_P
+  pins: [J5.9, Module1.129]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM1_D0_N
+  pins: [J5.2, Module1.115]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM1_D0_P
+  pins: [J5.3, Module1.117]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM1_D1_N
+  pins: [J5.5, Module1.121]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM1_D1_P
+  pins: [J5.6, Module1.123]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM1_D2_N
+  pins: [J5.11, Module1.133]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM1_D2_P
+  pins: [J5.12, Module1.135]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM1_D3_N
+  pins: [J5.14, Module1.139]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM1_D3_P
+  pins: [J5.15, Module1.141]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/CAM_GPIO
+  pins: [J4.17, J5.17, Module1.97]
+- name: /CM4_HighSpeed/DSI0_C_N
+  pins: [J15.8, Module1.169]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI0_C_P
+  pins: [J15.9, Module1.171]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI0_D0_N
+  pins: [J15.2, Module1.157]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI0_D0_P
+  pins: [J15.3, Module1.159]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI0_D1_N
+  pins: [J15.5, Module1.163]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI0_D1_P
+  pins: [J15.6, Module1.165]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI1_C_N
+  pins: [J16.8, Module1.187]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI1_C_P
+  pins: [J16.9, Module1.189]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI1_D0_N
+  pins: [J16.2, Module1.175]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI1_D0_P
+  pins: [J16.3, Module1.177]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI1_D1_N
+  pins: [J16.5, Module1.181]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI1_D1_P
+  pins: [J16.6, Module1.183]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI1_D2_N
+  pins: [J16.11, Module1.193]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI1_D2_P
+  pins: [J16.12, Module1.195]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI1_D3_N
+  pins: [J16.14, Module1.194]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/DSI1_D3_P
+  pins: [J16.15, Module1.196]
+  class: 100R
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI0_CEC
+  pins: [J22.13, Module1.151]
+- name: /CM4_HighSpeed/HDMI0_CK_N
+  pins: [J22.12, Module1.190]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI0_CK_P
+  pins: [J22.10, Module1.188]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI0_D0_N
+  pins: [J22.9, Module1.184]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI0_D0_P
+  pins: [J22.7, Module1.182]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI0_D1_N
+  pins: [J22.6, Module1.178]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI0_D1_P
+  pins: [J22.4, Module1.176]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI0_D2_N
+  pins: [J22.3, Module1.172]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI0_D2_P
+  pins: [J22.1, Module1.170]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI0_HOTPLUG
+  pins: [J22.19, Module1.153]
+- name: /CM4_HighSpeed/HDMI0_SCL
+  pins: [J22.15, Module1.200]
+- name: /CM4_HighSpeed/HDMI0_SDA
+  pins: [J22.16, Module1.199]
+- name: /CM4_HighSpeed/HDMI1_CEC
+  pins: [J10.13, Module1.149]
+- name: /CM4_HighSpeed/HDMI1_CK_N
+  pins: [J10.12, Module1.166]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI1_CK_P
+  pins: [J10.10, Module1.164]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI1_D0_N
+  pins: [J10.9, Module1.160]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI1_D0_P
+  pins: [J10.7, Module1.158]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI1_D1_N
+  pins: [J10.6, Module1.154]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI1_D1_P
+  pins: [J10.4, Module1.152]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI1_D2_N
+  pins: [J10.3, Module1.148]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI1_D2_P
+  pins: [J10.1, Module1.146]
+  class: HDMI
+  trace_width: '0.127'
+- name: /CM4_HighSpeed/HDMI1_HOTPLUG
+  pins: [J10.19, Module1.143]
+- name: /CM4_HighSpeed/HDMI1_SCL
+  pins: [J10.15, Module1.147]
+- name: /CM4_HighSpeed/HDMI1_SDA
+  pins: [J10.16, Module1.145]
+- name: /CM4_HighSpeed/HDMI_5v
+  pins: [C13.1, J10.18, J22.18, U12.2]
+- name: /CM4_HighSpeed/PCIE_CLK_N
+  pins: [J12.A14, Module1.112]
+- name: /CM4_HighSpeed/PCIE_CLK_P
+  pins: [J12.A13, Module1.110]
+- name: /CM4_HighSpeed/PCIE_CLK_nREQ
+  pins: [J12.B12, Module1.102]
+- name: /CM4_HighSpeed/PCIE_RX_N
+  pins: [J12.A16, Module1.118]
+- name: /CM4_HighSpeed/PCIE_RX_P
+  pins: [J12.A17, Module1.116]
+- name: /CM4_HighSpeed/PCIE_TX_N
+  pins: [J12.B14, Module1.124]
+- name: /CM4_HighSpeed/PCIE_TX_P
+  pins: [J12.B15, Module1.122]
+- name: /CM4_HighSpeed/PCIE_nRST
+  pins: [J12.A11, Module1.109]
+- name: /CM4_HighSpeed/SCL0
+  pins: [J16.20, J5.20, Module1.80, U11.2, U8.6]
+- name: /CM4_HighSpeed/SCL1
+  pins: [J15.20, J4.20, J6.2, R7.2]
+- name: /CM4_HighSpeed/SDA0
+  pins: [J16.21, J5.21, Module1.82, U11.1, U8.5]
+- name: /CM4_HighSpeed/SDA1
+  pins: [J15.21, J4.21, J6.4, R6.2]
+- name: /CM4_HighSpeed/USB2_N
+  pins: [Module1.103, U13.4]
+- name: /CM4_HighSpeed/USB2_P
+  pins: [Module1.105, U13.3]
+- name: /CM4_HighSpeed/USBOTG_ID
+  pins: [Module1.101, R11.1, R8.2, U13.2]
+- name: /PCIe-connector/+3.3v
+  pins:
+  - C30.1
+  - C31.1
+  - C32.1
+  - C33.1
+  - C45.1
+  - C65.1
+  - J12.A10
+  - J12.A5
+  - J12.A6
+  - J12.A8
+  - J12.A9
+  - J12.B10
+  - J12.B8
+  - J12.B9
+  - L3.2
+  - R24.1
+  - TP1.1
+- name: /RTC , Wakeup, FAN/nRTC_INT
+  pins: [C24.2, R19.1, U8.3]
+- name: /USB2-HUB/HD1_N
+  pins: [J13.2, U6.1]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/HD1_P
+  pins: [J13.3, U6.2]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/HD2_N
+  pins: [J13.6, U6.3]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/HD2_P
+  pins: [J13.7, U6.4]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/HD3_N
+  pins: [J14.3, U6.6]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/HD3_P
+  pins: [J14.5, U6.7]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/HD4_N
+  pins: [J14.4, U6.8]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/HD4_P
+  pins: [J14.6, U6.9]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/PWR1
+  pins: [U6.12, U7.3]
+- name: /USB2-HUB/USBD_N
+  pins: [J11.2, U13.8, U4.4, U4.7]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/USBD_P
+  pins: [J11.3, U13.9, U4.5, U4.6]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/USBH_N
+  pins: [U13.6, U6.30]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/USBH_P
+  pins: [U13.7, U6.31]
+  class: 90R
+  trace_width: '0.147'
+- name: /USB2-HUB/VBUS
+  pins:
+  - C16.1
+  - C17.1
+  - C19.1
+  - C20.1
+  - C21.1
+  - J13.1
+  - J13.5
+  - J14.1
+  - J14.2
+  - U7.6
+- name: /USB2-HUB/nOCS1
+  pins: [U6.13, U6.17, U6.19, U6.21, U7.4]
+- name: /nEXTRST
+  pins: [Module1.100, U6.26]
+- name: GND
+  pins:
+  - BT1.2
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C25.2
+  - C26.2
+  - C27.2
+  - C28.2
+  - C3.2
+  - C30.2
+  - C31.2
+  - C32.2
+  - C33.2
+  - C34.2
+  - C35.2
+  - C36.2
+  - C37.2
+  - C38.2
+  - C39.2
+  - C4.2
+  - C41.2
+  - C42.2
+  - C43.2
+  - C44.2
+  - C45.2
+  - C46.2
+  - C47.2
+  - C49.2
+  - C5.2
+  - C51.2
+  - C52.2
+  - C58.2
+  - C59.2
+  - C6.2
+  - C60.2
+  - C62.2
+  - C63.2
+  - C64.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - J1.2
+  - J10.11
+  - J10.17
+  - J10.2
+  - J10.5
+  - J10.8
+  - J10.SH1
+  - J10.SH2
+  - J10.SH3
+  - J10.SH4
+  - J11.5
+  - J11.6
+  - J12.A12
+  - J12.A15
+  - J12.A18
+  - J12.A4
+  - J12.B13
+  - J12.B16
+  - J12.B18
+  - J12.B4
+  - J12.B7
+  - J13.4
+  - J13.8
+  - J13.MT1
+  - J13.MT2
+  - J13.MT3
+  - J13.MT4
+  - J14.7
+  - J14.8
+  - J15.1
+  - J15.10
+  - J15.13
+  - J15.16
+  - J15.19
+  - J15.4
+  - J15.7
+  - J16.1
+  - J16.10
+  - J16.13
+  - J16.16
+  - J16.19
+  - J16.4
+  - J16.7
+  - J17.1
+  - J19.2
+  - J19.3
+  - J2.1
+  - J2.10
+  - J2.12
+  - J2.3
+  - J2.7
+  - J20.2
+  - J20.3
+  - J22.11
+  - J22.17
+  - J22.2
+  - J22.5
+  - J22.8
+  - J22.SH1
+  - J22.SH2
+  - J22.SH3
+  - J22.SH4
+  - J3.2
+  - J4.1
+  - J4.10
+  - J4.13
+  - J4.16
+  - J4.19
+  - J4.4
+  - J4.7
+  - J5.1
+  - J5.10
+  - J5.13
+  - J5.16
+  - J5.19
+  - J5.4
+  - J5.7
+  - J7.11
+  - J7.6
+  - J8.14
+  - J8.20
+  - J8.25
+  - J8.30
+  - J8.34
+  - J8.39
+  - J8.6
+  - J8.9
+  - Module1.1
+  - Module1.107
+  - Module1.108
+  - Module1.113
+  - Module1.114
+  - Module1.119
+  - Module1.120
+  - Module1.125
+  - Module1.126
+  - Module1.13
+  - Module1.131
+  - Module1.132
+  - Module1.137
+  - Module1.138
+  - Module1.14
+  - Module1.144
+  - Module1.150
+  - Module1.155
+  - Module1.156
+  - Module1.161
+  - Module1.162
+  - Module1.167
+  - Module1.168
+  - Module1.173
+  - Module1.174
+  - Module1.179
+  - Module1.180
+  - Module1.185
+  - Module1.186
+  - Module1.191
+  - Module1.192
+  - Module1.197
+  - Module1.198
+  - Module1.2
+  - Module1.22
+  - Module1.23
+  - Module1.32
+  - Module1.33
+  - Module1.42
+  - Module1.43
+  - Module1.52
+  - Module1.53
+  - Module1.59
+  - Module1.60
+  - Module1.65
+  - Module1.66
+  - Module1.7
+  - Module1.71
+  - Module1.74
+  - Module1.8
+  - Module1.98
+  - R11.2
+  - R12.2
+  - R13.2
+  - R14.2
+  - R15.1
+  - R16.2
+  - R26.2
+  - R28.2
+  - R30.2
+  - R36.2
+  - TP6.1
+  - U1.3
+  - U1.8
+  - U11.4
+  - U12.3
+  - U13.10
+  - U13.5
+  - U14.3
+  - U15.7
+  - U15.9
+  - U16.7
+  - U16.9
+  - U18.2
+  - U2.3
+  - U2.8
+  - U3.19
+  - U3.20
+  - U4.3
+  - U4.8
+  - U5.3
+  - U6.37
+  - U7.2
+  - U8.4
+  - U9.3
+- name: Net-(BT1-Pad1)
+  pins: [BT1.1, D3.1]
+- name: Net-(C1-Pad1)
+  pins: [C1.1, U3.4, U3.5]
+- name: Net-(C24-Pad1)
+  pins: [C24.1, R20.1, U14.2]
+- name: Net-(C29-Pad1)
+  pins: [C29.1, R22.2]
+- name: Net-(C29-Pad2)
+  pins: [C29.2, U15.1]
+- name: Net-(C36-Pad1)
+  pins: [C36.1, J19.1, Q1.5]
+- name: Net-(C40-Pad2)
+  pins: [C40.2, D4.2, Q1.4, R26.1]
+- name: Net-(C46-Pad1)
+  pins: [C46.1, D3.3, U8.8]
+- name: Net-(C57-Pad1)
+  pins: [C57.1, R9.2]
+- name: Net-(C57-Pad2)
+  pins: [C57.2, U16.1]
+- name: Net-(C58-Pad1)
+  pins: [C58.1, U16.4]
+- name: Net-(C59-Pad1)
+  pins: [C59.1, R25.1, U16.6]
+- name: Net-(C60-Pad1)
+  pins: [C60.1, R25.2]
+- name: Net-(C61-Pad2)
+  pins: [C61.2, R27.2, R28.1, U16.5]
+- name: Net-(C62-Pad1)
+  pins: [C62.1, U15.4]
+- name: Net-(C63-Pad1)
+  pins: [C63.1, R23.1, U15.6]
+- name: Net-(C64-Pad1)
+  pins: [C64.1, R23.2]
+- name: Net-(C65-Pad2)
+  pins: [C65.2, R24.2, R30.1, U15.5]
+- name: Net-(C8-Pad1)
+  pins: [C8.1, U6.33, Y1.1]
+- name: Net-(C9-Pad1)
+  pins: [C9.1, U6.32, Y1.2]
+- name: Net-(D1-Pad1)
+  pins: [D1.1, R10.1, TP5.1]
+- name: Net-(D2-Pad1)
+  pins: [D2.1, R1.1, TP3.1]
+- name: Net-(J11-Pad1)
+  pins: [J11.1, R8.1]
+- name: Net-(J17-Pad3)
+  pins: [J17.3, R21.1, U11.6]
+- name: Net-(J17-Pad4)
+  pins: [J17.4, U11.5]
+- name: Net-(J2-Pad13)
+  pins: [J2.13, U9.4]
+- name: Net-(J7-Pad10)
+  pins: [J7.10, R17.2]
+- name: Net-(J7-Pad9)
+  pins: [J7.9, R18.2]
+- name: Net-(L3-Pad1)
+  pins: [L3.1, R22.1, U15.8]
+- name: Net-(L5-Pad1)
+  pins: [L5.1, R9.1, U16.8]
+- name: Net-(Module1-Pad21)
+  pins: [Module1.21, R1.2]
+- name: Net-(R10-Pad2)
+  pins: [R10.2, U5.4]
+- name: Net-(R12-Pad1)
+  pins: [R12.1, U6.24]
+- name: Net-(R13-Pad1)
+  pins: [R13.1, U6.22]
+- name: Net-(R14-Pad1)
+  pins: [R14.1, U6.28]
+- name: Net-(R15-Pad2)
+  pins: [R15.2, U6.35]
+- name: Net-(R16-Pad1)
+  pins: [R16.1, U6.25]
+- name: Net-(R2-Pad1)
+  pins: [R2.1, U3.16]
+- name: Net-(R3-Pad1)
+  pins: [R3.1, U3.18]
+- name: Net-(R36-Pad1)
+  pins: [R36.1, U7.5]
+- name: Net-(U4-Pad1)
+  pins: [U4.1, U4.10]
+- name: Net-(U4-Pad2)
+  pins: [U4.2, U4.9]
+- name: Net-(U8-Pad1)
+  pins: [U8.1, Y2.2]
+- name: Net-(U8-Pad2)
+  pins: [U8.2, Y2.1]
+positions:
+- ref: BT1
+  x: 90.0
+  y: 122.5
+  rot: -90.0
+- ref: C1
+  x: 152.3
+  y: 138.3
+  rot: 90.0
+- ref: C10
+  x: 175.58
+  y: 132.24
+  rot: 180.0
+- ref: C11
+  x: 183.96
+  y: 140.37
+  rot: -90.0
+- ref: C12
+  x: 111.55
+  y: 149.5
+  rot: 90.0
+- ref: C13
+  x: 117.0
+  y: 149.6
+  rot: 90.0
+- ref: C14
+  x: 175.2
+  y: 135.77
+  rot: 90.0
+- ref: C15
+  x: 180.1
+  y: 142.8
+  rot: -45.0
+- ref: C16
+  x: 194.2
+  y: 131.0
+- ref: C17
+  x: 166.45
+  y: 141.97
+  rot: 180.0
+- ref: C18
+  x: 204.7
+  y: 86.0
+  rot: 90.0
+- ref: C19
+  x: 190.76
+  y: 137.4
+- ref: C2
+  x: 187.5
+  y: 128.3
+  rot: 180.0
+- ref: C20
+  x: 170.2
+  y: 142.6
+- ref: C21
+  x: 186.7
+  y: 137.4
+  rot: 180.0
+- ref: C22
+  x: 127.87
+  y: 116.44
+  rot: 180.0
+- ref: C23
+  x: 201.7
+  y: 76.9
+  rot: -90.0
+- ref: C24
+  x: 123.54
+  y: 118.46
+  rot: 180.0
+- ref: C25
+  x: 226.6
+  y: 130.7
+  rot: 180.0
+- ref: C26
+  x: 230.15
+  y: 130.7
+- ref: C27
+  x: 226.6
+  y: 132.6
+  rot: 180.0
+- ref: C28
+  x: 230.15
+  y: 132.6
+- ref: C29
+  x: 226.35
+  y: 119.06
+  rot: 90.0
+- ref: C3
+  x: 175.05
+  y: 140.93
+  rot: -90.0
+- ref: C30
+  x: 221.1
+  y: 126.11
+- ref: C31
+  x: 221.1
+  y: 128.21
+- ref: C32
+  x: 218.3
+  y: 129.36
+  rot: -90.0
+- ref: C33
+  x: 216.2
+  y: 129.36
+  rot: -90.0
+- ref: C34
+  x: 226.65
+  y: 100.05
+  rot: 180.0
+- ref: C35
+  x: 230.2
+  y: 100.05
+- ref: C36
+  x: 233.6
+  y: 144.8
+- ref: C37
+  x: 230.2
+  y: 101.9
+- ref: C38
+  x: 226.65
+  y: 101.9
+  rot: 180.0
+- ref: C39
+  x: 230.2
+  y: 103.75
+- ref: C4
+  x: 183.97
+  y: 137.32
+  rot: -90.0
+- ref: C40
+  x: 225.6
+  y: 139.15
+  rot: -90.0
+- ref: C41
+  x: 226.65
+  y: 103.75
+  rot: 180.0
+- ref: C42
+  x: 234.4
+  y: 138.2
+- ref: C43
+  x: 226.6
+  y: 134.5
+  rot: 180.0
+- ref: C44
+  x: 230.15
+  y: 134.5
+- ref: C45
+  x: 219.35
+  y: 112.85
+- ref: C46
+  x: 106.8
+  y: 124.1
+- ref: C47
+  x: 221.2
+  y: 95.4
+- ref: C49
+  x: 221.2
+  y: 97.55
+- ref: C5
+  x: 199.45
+  y: 143.75
+  rot: 180.0
+- ref: C51
+  x: 216.25
+  y: 98.59
+  rot: -90.0
+- ref: C52
+  x: 218.4
+  y: 98.6
+  rot: -90.0
+- ref: C57
+  x: 226.45
+  y: 88.15
+  rot: 90.0
+- ref: C58
+  x: 231.9
+  y: 97.25
+  rot: 90.0
+- ref: C59
+  x: 228.34
+  y: 90.7
+  rot: 180.0
+- ref: C6
+  x: 183.0
+  y: 131.6
+  rot: 90.0
+- ref: C60
+  x: 227.8
+  y: 88.95
+  rot: -90.0
+- ref: C61
+  x: 231.75
+  y: 90.35
+  rot: -90.0
+- ref: C62
+  x: 231.85
+  y: 127.66
+  rot: 90.0
+- ref: C63
+  x: 228.3
+  y: 121.51
+  rot: 180.0
+- ref: C64
+  x: 227.8
+  y: 119.81
+  rot: -90.0
+- ref: C65
+  x: 231.65
+  y: 120.81
+  rot: -90.0
+- ref: C7
+  x: 173.1
+  y: 126.2
+  rot: -90.0
+- ref: C8
+  x: 173.0
+  y: 138.8
+  rot: 90.0
+- ref: C9
+  x: 173.0
+  y: 136.6
+  rot: -90.0
+- ref: D1
+  x: 112.7
+  y: 158.9
+  rot: 180.0
+- ref: D2
+  x: 116.35
+  y: 158.9
+  rot: 180.0
+- ref: D3
+  x: 105.9
+  y: 114.9
+- ref: D4
+  x: 228.2
+  y: 138.95
+  rot: 90.0
+- ref: J1
+  x: 97.04
+  y: 136.0
+  rot: -90.0
+- ref: J10
+  x: 127.0
+  y: 150.45
+- ref: J11
+  x: 187.0
+  y: 158.3
+- ref: J12
+  x: 207.75
+  y: 114.15
+  rot: 90.0
+- ref: J13
+  x: 172.0
+  y: 150.7
+- ref: J14
+  x: 187.0
+  y: 141.4
+- ref: J15
+  x: 108.5
+  y: 75.0
+  rot: 180.0
+- ref: J16
+  x: 126.5
+  y: 75.0
+  rot: 180.0
+- ref: J17
+  x: 226.3
+  y: 73.5
+- ref: J19
+  x: 232.25
+  y: 147.7
+  rot: 90.0
+- ref: J2
+  x: 139.0
+  y: 74.5
+  rot: 90.0
+- ref: J20
+  x: 215.5
+  y: 77.2
+  rot: 180.0
+- ref: J22
+  x: 102.0
+  y: 150.45
+- ref: J3
+  x: 207.5
+  y: 72.5
+  rot: -90.0
+- ref: J4
+  x: 84.0
+  y: 93.5
+  rot: -90.0
+- ref: J5
+  x: 90.5
+  y: 75.0
+  rot: 180.0
+- ref: J6
+  x: 120.4
+  y: 103.2
+  rot: 90.0
+- ref: J7
+  x: 201.08
+  y: 152.45
+  rot: 180.0
+- ref: J8
+  x: 87.37
+  y: 108.82
+  rot: 90.0
+- ref: J9
+  x: 139.23
+  y: 112.37
+- ref: L3
+  x: 222.0
+  y: 121.71
+  rot: 180.0
+- ref: L5
+  x: 221.85
+  y: 90.95
+  rot: 180.0
+- ref: Module1
+  x: 195.5
+  y: 73.5
+  rot: 180.0
+- ref: Q1
+  x: 232.5
+  y: 141.5
+  rot: -90.0
+- ref: R1
+  x: 115.8
+  y: 156.4
+  rot: 90.0
+- ref: R10
+  x: 113.6
+  y: 156.4
+  rot: 90.0
+- ref: R11
+  x: 171.8
+  y: 126.2
+  rot: -90.0
+- ref: R12
+  x: 179.39
+  y: 132.33
+  rot: 90.0
+- ref: R13
+  x: 180.91
+  y: 132.24
+  rot: 90.0
+- ref: R14
+  x: 174.82
+  y: 134.02
+  rot: 180.0
+- ref: R15
+  x: 173.72
+  y: 140.93
+  rot: 90.0
+- ref: R16
+  x: 178.12
+  y: 132.33
+  rot: 90.0
+- ref: R17
+  x: 202.7
+  y: 130.94
+  rot: -90.0
+- ref: R18
+  x: 202.65
+  y: 133.99
+  rot: -90.0
+- ref: R19
+  x: 122.01
+  y: 117.95
+  rot: 90.0
+- ref: R2
+  x: 160.2
+  y: 138.4
+  rot: 90.0
+- ref: R20
+  x: 125.06
+  y: 117.95
+  rot: 90.0
+- ref: R21
+  x: 205.9
+  y: 78.7
+  rot: 180.0
+- ref: R22
+  x: 226.35
+  y: 121.18
+  rot: 90.0
+- ref: R23
+  x: 228.95
+  y: 119.81
+  rot: 90.0
+- ref: R24
+  x: 230.35
+  y: 120.81
+  rot: -90.0
+- ref: R25
+  x: 229.0
+  y: 88.95
+  rot: 90.0
+- ref: R26
+  x: 227.25
+  y: 142.25
+  rot: -90.0
+- ref: R27
+  x: 230.5
+  y: 90.35
+  rot: -90.0
+- ref: R28
+  x: 231.9
+  y: 93.4
+  rot: -90.0
+- ref: R29
+  x: 202.8
+  y: 124.2
+  rot: 180.0
+- ref: R3
+  x: 161.9
+  y: 138.49
+  rot: 90.0
+- ref: R30
+  x: 231.85
+  y: 124.46
+  rot: -90.0
+- ref: R36
+  x: 187.05
+  y: 134.05
+  rot: 180.0
+- ref: R4
+  x: 196.0
+  y: 79.0
+- ref: R5
+  x: 196.0
+  y: 81.5
+- ref: R6
+  x: 115.7
+  y: 78.7
+  rot: 180.0
+- ref: R7
+  x: 115.7
+  y: 80.1
+  rot: 180.0
+- ref: R8
+  x: 173.37
+  y: 128.55
+  rot: 180.0
+- ref: R9
+  x: 226.45
+  y: 90.25
+  rot: 90.0
+- ref: U1
+  x: 155.4
+  y: 138.28
+  rot: -90.0
+- ref: U11
+  x: 206.0
+  y: 76.0
+- ref: U12
+  x: 114.1
+  y: 149.3
+  rot: 90.0
+- ref: U13
+  x: 177.3
+  y: 126.5
+- ref: U14
+  x: 127.62
+  y: 118.47
+- ref: U15
+  x: 228.35
+  y: 126.06
+  rot: 90.0
+- ref: U16
+  x: 228.4
+  y: 95.35
+  rot: 90.0
+- ref: U18
+  x: 203.8
+  y: 127.56
+  rot: 180.0
+- ref: U2
+  x: 149.4
+  y: 138.28
+  rot: -90.0
+- ref: U3
+  x: 153.0
+  y: 150.5
+- ref: U4
+  x: 193.25
+  y: 134.8
+  rot: 90.0
+- ref: U5
+  x: 115.6
+  y: 153.3
+  rot: -90.0
+- ref: U6
+  x: 179.6
+  y: 137.77
+  rot: 90.0
+- ref: U7
+  x: 187.5
+  y: 131.5
+  rot: -90.0
+- ref: U8
+  x: 109.0
+  y: 120.25
+  rot: 180.0
+- ref: U9
+  x: 200.7
+  y: 83.7
+  rot: 180.0
+- ref: Y1
+  x: 169.3
+  y: 134.2
+  rot: 90.0
+- ref: Y2
+  x: 114.85
+  y: 121.8
+  rot: 90.0

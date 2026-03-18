@@ -1,0 +1,361 @@
+name: RP2040 Radar Presence
+slug: rp2040-radar-presence
+source: miekush/rp2040-radar-presence
+format: kicad7
+description: '24GHz mmWave carrier board: HLK-LD2410 module, RP2040'
+tags: [radar-presence, microcontroller]
+key_ics: [RP2040]
+outline:
+  width_mm: 58.0
+  height_mm: 13.0
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 27pF
+  footprint: '0603'
+- ref: C10
+  value: 1uF
+  footprint: '0603'
+  decouples: U3
+- ref: C11
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: C12
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: C13
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: C14
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: C15
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: C2
+  value: 27pF
+  footprint: '0603'
+- ref: C3
+  value: 1uF
+  footprint: '0603'
+  decouples: U2
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  decouples: U2
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: C6
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: C7
+  value: 1uF
+  footprint: '0603'
+  decouples: U3
+- ref: C8
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C9
+  value: 100nF
+  footprint: '0603'
+  decouples: U3
+- ref: D1
+  value: B5819
+  footprint: SOD-323
+- ref: D2
+  value: WS2812B
+  footprint: LED_WS2812B_PLCC4
+- ref: J1
+  value: 1x5 header
+  footprint: 1X5
+- ref: J2
+  value: USB4145-03-0170-C_REVA2
+  footprint: GCT_USB4145-03-0170-C_REVA2
+  manufacturer: GCT
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+  pullup: QSPI_SS
+- ref: R3
+  value: 1kohm
+  footprint: '0603'
+- ref: R4
+  value: 27ohm
+  footprint: '0603'
+- ref: R5
+  value: 27ohm
+  footprint: '0603'
+- ref: R6
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: J2.CC1
+- ref: R7
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: J2.CC2
+- ref: SW1
+  value: BOOT
+  footprint: SW_Push_1P1T_NO_CK_KMR2
+- ref: SW2
+  value: RESET
+  footprint: SW_Push_1P1T_NO_CK_KMR2
+- ref: U1
+  value: W25Q128JVS
+  footprint: SOIC-8
+- ref: U2
+  value: AP2112K-3.3
+  footprint: SOT-23-5
+- ref: U3
+  value: RP2040
+  footprint: RP2040-QFN-56
+- ref: Y1
+  value: 12MHz
+  footprint: Crystal_SMD_Abracon_ABM8G-4Pin
+nets:
+- name: +1V1
+  pins: [C5.1, C6.1, C7.1, U3.DVDD@23, U3.DVDD@50, U3.VREG_VOUT]
+- name: +3V3
+  pins:
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C14.1
+  - C15.1
+  - C4.1
+  - C8.1
+  - C9.1
+  - D2.VDD
+  - R2.1
+  - U1.VCC
+  - U2.VOUT
+  - U3.ADC_AVDD
+  - U3.IOVDD@1
+  - U3.IOVDD@10
+  - U3.IOVDD@22
+  - U3.IOVDD@33
+  - U3.IOVDD@42
+  - U3.IOVDD@49
+  - U3.USB_VDD
+  - U3.VREG_IN
+- name: /QSPI_SD0
+  pins: [U1.DI(IO0), U3.QSPI_SD0]
+- name: /QSPI_SD1
+  pins: [U1.DO(IO1), U3.QSPI_SD1]
+- name: /QSPI_SD2
+  pins: [U1.IO2, U3.QSPI_SD2]
+- name: /QSPI_SD3
+  pins: [U1.IO3, U3.QSPI_SD3]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D2.VSS
+  - J1.Pin_4
+  - J2.GND_A@A1
+  - J2.GND_A@A12
+  - J2.GND_B@B1
+  - J2.GND_B@B12
+  - J2.SHIELD@S1
+  - J2.SHIELD@S2
+  - J2.SHIELD@S3
+  - J2.SHIELD@S4
+  - R6.2
+  - R7.1
+  - SW1.1@1
+  - SW2.1@1
+  - U1.GND
+  - U2.GND
+  - U3.GND@57
+  - U3.TESTEN
+  - Y1.2
+  - Y1.4
+- name: Net-(C2-Pad1)
+  pins: [C2.1, R3.2, Y1.1]
+- name: Net-(D1-A)
+  pins: [D1.A, J2.VBUS_A@A4, J2.VBUS_A@A9, J2.VBUS_B@B4, J2.VBUS_B@B9]
+- name: Net-(J2-CC1)
+  pins: [J2.CC1, R6.1]
+- name: Net-(J2-CC2)
+  pins: [J2.CC2, R7.2]
+- name: Net-(R1-Pad2)
+  pins: [R1.2, SW1.2@2]
+- name: Net-(U3-RUN)
+  pins: [SW2.2@2, U3.RUN]
+- name: Net-(U3-USB_DM)
+  pins: [R5.2, U3.USB_DM]
+- name: Net-(U3-USB_DP)
+  pins: [R4.2, U3.USB_DP]
+- name: Net-(U3-XIN)
+  pins: [C1.1, U3.XIN, Y1.3]
+- name: Net-(U3-XOUT)
+  pins: [R3.1, U3.XOUT]
+- name: PRS_OUT
+  pins: [J1.Pin_1, U3.GPIO7]
+- name: QSPI_SCLK
+  pins: [U1.CLK, U3.QSPI_SCLK]
+- name: QSPI_SS
+  pins: [R1.1, R2.2, U1.nCS, U3.QSPI_SS]
+- name: RGB_DIN
+  pins: [D2.DIN, U3.GPIO16]
+- name: UART_RX
+  pins: [J1.Pin_2, U3.GPIO5]
+- name: UART_TX
+  pins: [J1.Pin_3, U3.GPIO4]
+- name: USB_D+
+  pins: [J2.DP1, J2.DP2, R4.1]
+- name: USB_D-
+  pins: [J2.DN1, J2.DN2, R5.1]
+- name: VBUS
+  pins: [C3.1, D1.K, J1.Pin_5, U2.EN, U2.VIN]
+positions:
+- ref: C1
+  x: 120.5
+  y: 104.9
+- ref: C10
+  x: 107.03
+  y: 95.1
+  rot: 180.0
+- ref: C11
+  x: 107.03
+  y: 98.91
+  rot: 180.0
+- ref: C12
+  x: 110.84
+  y: 95.1
+- ref: C13
+  x: 111.04
+  y: 104.9
+  rot: 180.0
+- ref: C14
+  x: 116.12
+  y: 95.1
+- ref: C15
+  x: 115.92
+  y: 104.9
+- ref: C2
+  x: 120.5
+  y: 99.67
+  rot: 180.0
+- ref: C3
+  x: 94.08
+  y: 96.47
+  rot: 90.0
+- ref: C4
+  x: 92.56
+  y: 96.47
+  rot: -90.0
+- ref: C5
+  x: 120.5
+  y: 95.1
+- ref: C6
+  x: 107.03
+  y: 100.43
+  rot: 180.0
+- ref: C7
+  x: 107.03
+  y: 96.62
+  rot: 180.0
+- ref: C8
+  x: 86.36
+  y: 96.44
+  rot: 90.0
+- ref: C9
+  x: 120.5
+  y: 96.62
+- ref: D1
+  x: 96.67
+  y: 96.47
+- ref: D2
+  x: 120.6
+  y: 100.0
+  rot: 90.0
+  side: back
+- ref: J1
+  x: 83.6
+  y: 102.54
+  side: back
+- ref: J2
+  x: 100.0
+  y: 100.0
+- ref: R1
+  x: 83.6
+  y: 105.05
+  rot: 180.0
+- ref: R2
+  x: 83.6
+  y: 94.95
+  rot: 180.0
+- ref: R3
+  x: 120.5
+  y: 98.15
+- ref: R4
+  x: 103.17
+  y: 95.1
+- ref: R5
+  x: 103.17
+  y: 96.62
+- ref: R6
+  x: 96.47
+  y: 103.07
+  rot: 180.0
+- ref: R7
+  x: 103.17
+  y: 103.07
+  rot: 180.0
+- ref: SW1
+  x: 80.0
+  y: 103.0
+  rot: 90.0
+- ref: SW2
+  x: 80.0
+  y: 97.0
+  rot: 90.0
+- ref: U1
+  x: 89.71
+  y: 102.01
+- ref: U2
+  x: 89.58
+  y: 96.43
+  rot: 180.0
+- ref: U3
+  x: 113.5
+  y: 100.0
+  rot: 90.0
+- ref: Y1
+  x: 120.4
+  y: 102.26
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu]

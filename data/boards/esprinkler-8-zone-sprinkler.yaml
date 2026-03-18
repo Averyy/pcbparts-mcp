@@ -1,0 +1,1386 @@
+name: ESPrinkler 8-Zone Sprinkler
+slug: esprinkler-8-zone-sprinkler
+source: slippery-carrot/ESPrinkler-Retic-Controller
+format: kicad9
+description: ESPHome 8-zone irrigation controller, 24VAC solenoid outputs via TRIAC
+tags: [power-supply]
+key_ics: [TPS5430]
+outline:
+  width_mm: 120.4
+  height_mm: 85.72
+design_rules:
+  layers: 2
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.2mm
+  min_via: 0.25mm
+components:
+- ref: C1
+  value: 680uF
+  footprint: CP_Radial_D13.0mm_P5.00mm
+  manufacturer: CX(Dongguan Chengxing Elec)
+  decouples: U1
+- ref: C2
+  value: 10uF
+  footprint: '1206'
+  manufacturer: Samsung Electro-Mechanics
+  decouples: U1
+- ref: C3
+  value: 10nF
+  footprint: 0805
+  manufacturer: Samsung Electro-Mechanics
+- ref: C4
+  value: 220uF
+  footprint: CP_Radial_D6.3mm_P2.50mm
+  manufacturer: CX(Dongguan Chengxing Elec)
+- ref: D1
+  value: MB10S
+  footprint: OnSemi_751EP_SOIC-4
+  manufacturer: MDD(Microdiode Semiconductor)
+- ref: D10
+  value: red LED
+  footprint: '0603'
+  manufacturer: Hubei KENTO Elec
+- ref: D11
+  value: red LED
+  footprint: '0603'
+  manufacturer: Hubei KENTO Elec
+- ref: D12
+  value: red LED
+  footprint: '0603'
+  manufacturer: Hubei KENTO Elec
+- ref: D13
+  value: red LED
+  footprint: '0603'
+  manufacturer: Hubei KENTO Elec
+- ref: D14
+  value: Generic_Triac_A1A2G
+  footprint: TO-220
+  manufacturer: STMicroelectronics
+  description: Triode for alternating current, anode1/anode2/gate
+- ref: D15
+  value: Generic_Triac_A1A2G
+  footprint: TO-220
+  manufacturer: STMicroelectronics
+  description: Triode for alternating current, anode1/anode2/gate
+- ref: D16
+  value: Generic_Triac_A1A2G
+  footprint: TO-220
+  manufacturer: STMicroelectronics
+  description: Triode for alternating current, anode1/anode2/gate
+- ref: D17
+  value: Generic_Triac_A1A2G
+  footprint: TO-220
+  manufacturer: STMicroelectronics
+  description: Triode for alternating current, anode1/anode2/gate
+- ref: D18
+  value: red LED
+  footprint: '0603'
+  manufacturer: Hubei KENTO Elec
+- ref: D19
+  value: red LED
+  footprint: '0603'
+  manufacturer: Hubei KENTO Elec
+- ref: D2
+  value: SS34
+  footprint: SMA
+  manufacturer: MDD(Microdiode Semiconductor)
+  description: Schottky diode
+- ref: D20
+  value: red LED
+  footprint: '0603'
+  manufacturer: Hubei KENTO Elec
+- ref: D21
+  value: red LED
+  footprint: '0603'
+  manufacturer: Hubei KENTO Elec
+- ref: D3
+  value: red LED
+  footprint: '0603'
+  manufacturer: Hubei KENTO Elec
+- ref: D4
+  value: Generic_Triac_A1A2G
+  footprint: TO-220
+  manufacturer: STMicroelectronics
+  description: Triode for alternating current, anode1/anode2/gate
+- ref: D5
+  value: Generic_Triac_A1A2G
+  footprint: TO-220
+  manufacturer: STMicroelectronics
+  description: Triode for alternating current, anode1/anode2/gate
+- ref: D6
+  value: Generic_Triac_A1A2G
+  footprint: TO-220
+  manufacturer: STMicroelectronics
+  description: Triode for alternating current, anode1/anode2/gate
+- ref: D7
+  value: Generic_Triac_A1A2G
+  footprint: TO-220
+  manufacturer: STMicroelectronics
+  description: Triode for alternating current, anode1/anode2/gate
+- ref: D8
+  value: Generic_Triac_A1A2G
+  footprint: TO-220
+  manufacturer: STMicroelectronics
+  description: Triode for alternating current, anode1/anode2/gate
+- ref: D9
+  value: red LED
+  footprint: '0603'
+  manufacturer: Hubei KENTO Elec
+- ref: F1
+  value: M205 2A
+  footprint: Fuseholder_Cylinder-5x20mm_Schurter_0031_8201_Horizontal_Open
+  manufacturer: XFCN
+- ref: F2
+  value: 250mA
+  footprint: BelFuse_0ZRE0033FF_L11.4mm_W3.8mm
+  manufacturer: RUILON(Shenzhen Ruilongyuan Elec)
+  description: Resettable fuse, polymeric positive temperature coefficient
+- ref: J4
+  value: 1x19 header
+  footprint: 1X19
+  manufacturer: Shenzhen Kinghelm Elec
+- ref: J5
+  value: 1x19 header
+  footprint: 1X19
+  manufacturer: Shenzhen Kinghelm Elec
+- ref: J6
+  value: 1x4 screw terminal
+  footprint: TerminalBlock_Phoenix_PT-1,5-4-5.0-H
+  manufacturer: DORABO
+- ref: L1
+  value: 33uH
+  footprint: L_APV_ANR5045
+  manufacturer: SXN(Shun Xiang Nuo Elec)
+- ref: L2
+  value: 33uH
+  footprint: L_APV_ANR5045
+  manufacturer: SXN(Shun Xiang Nuo Elec)
+- ref: Q1
+  value: AO3400A
+  footprint: SOT-23
+  manufacturer: Alpha & Omega Semicon
+  description: N-MOSFET transistor, gate/source/drain
+- ref: Q10
+  value: AO3400A
+  footprint: SOT-23
+  manufacturer: Alpha & Omega Semicon
+  description: N-MOSFET transistor, gate/source/drain
+- ref: Q11
+  value: AO3400A
+  footprint: SOT-23
+  manufacturer: Alpha & Omega Semicon
+  description: N-MOSFET transistor, gate/source/drain
+- ref: Q2
+  value: AO3400A
+  footprint: SOT-23
+  manufacturer: Alpha & Omega Semicon
+  description: N-MOSFET transistor, gate/source/drain
+- ref: Q3
+  value: AO3400A
+  footprint: SOT-23
+  manufacturer: Alpha & Omega Semicon
+  description: N-MOSFET transistor, gate/source/drain
+- ref: Q4
+  value: AO3400A
+  footprint: SOT-23
+  manufacturer: Alpha & Omega Semicon
+  description: N-MOSFET transistor, gate/source/drain
+- ref: Q5
+  value: AO3400A
+  footprint: SOT-23
+  manufacturer: Alpha & Omega Semicon
+  description: N-MOSFET transistor, gate/source/drain
+- ref: Q6
+  value: AO3400A
+  footprint: SOT-23
+  manufacturer: Alpha & Omega Semicon
+  description: N-MOSFET transistor, gate/source/drain
+- ref: Q7
+  value: AO3400A
+  footprint: SOT-23
+  manufacturer: Alpha & Omega Semicon
+  description: N-MOSFET transistor, gate/source/drain
+- ref: Q8
+  value: AO3400A
+  footprint: SOT-23
+  manufacturer: Alpha & Omega Semicon
+  description: N-MOSFET transistor, gate/source/drain
+- ref: Q9
+  value: AO3400A
+  footprint: SOT-23
+  manufacturer: Alpha & Omega Semicon
+  description: N-MOSFET transistor, gate/source/drain
+- ref: R1
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R10
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R11
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R12
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R13
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R14
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R15
+  value: 300ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R16
+  value: 300ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R17
+  value: 300ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R18
+  value: 300ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R19
+  value: 300ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R2
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: Q1.G
+- ref: R20
+  value: 22ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R21
+  value: 22ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R22
+  value: 22ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R23
+  value: 22ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R24
+  value: 22ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R25
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R26
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R27
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R28
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R29
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R3
+  value: 1kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R30
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R31
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R32
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R33
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R34
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R35
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: Q3.G
+- ref: R36
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: Q4.G
+- ref: R37
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: Q5.G
+- ref: R38
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: Q6.G
+- ref: R39
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: Q7.G
+- ref: R4
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R40
+  value: 1kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R41
+  value: 1kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R42
+  value: 1kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R43
+  value: 1kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R44
+  value: 1kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R45
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R46
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R47
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R48
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R49
+  value: 300ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R5
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pullup: U1.VSENSE
+- ref: R50
+  value: 300ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R51
+  value: 300ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R52
+  value: 300ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R53
+  value: 22ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R54
+  value: 22ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R55
+  value: 22ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R56
+  value: 22ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: Resistor, small symbol
+- ref: R57
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R58
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R59
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R6
+  value: 3.24kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  description: "125mW Thick Film Resistor 150V \xB1100ppm/\u2103 \xB11% 3.24k\u03A9 0805 Chip Resistor"
+  pulldown: U1.VSENSE
+- ref: R60
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R61
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R62
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R63
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R64
+  value: 120ohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R65
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: Q8.G
+- ref: R66
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: Q9.G
+- ref: R67
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: Q10.G
+- ref: R68
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: Q11.G
+- ref: R69
+  value: 1kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R7
+  value: 10kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: Q2.G
+- ref: R70
+  value: 1kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R71
+  value: 1kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R72
+  value: 1kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R8
+  value: 1kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+- ref: R9
+  value: 1.2kohm
+  footprint: 0805
+  manufacturer: UNI-ROYAL(Uniroyal Elec)
+  pulldown: D3.K
+- ref: U1
+  value: TPS5430DDA
+  footprint: TI_SO-PowerPAD-8_ThermalVias
+  manufacturer: Texas Instruments
+  description: 3A, Step Down Swift Converter, Adjustable Output Voltage, 5.5-36V Input
+- ref: U10
+  value: MOC3063S
+  footprint: MOC306XS_LTO
+  manufacturer: Lite-On
+  description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+- ref: U2
+  value: MOC3063S
+  footprint: MOC306XS_LTO
+  manufacturer: Lite-On
+  description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+- ref: U3
+  value: MOC3063S
+  footprint: MOC306XS_LTO
+  manufacturer: Lite-On
+  description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+- ref: U4
+  value: MOC3063S
+  footprint: MOC306XS_LTO
+  manufacturer: Lite-On
+  description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+- ref: U5
+  value: MOC3063S
+  footprint: MOC306XS_LTO
+  manufacturer: Lite-On
+  description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+- ref: U6
+  value: MOC3063S
+  footprint: MOC306XS_LTO
+  manufacturer: Lite-On
+  description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+- ref: U7
+  value: MOC3063S
+  footprint: MOC306XS_LTO
+  manufacturer: Lite-On
+  description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+- ref: U8
+  value: MOC3063S
+  footprint: MOC306XS_LTO
+  manufacturer: Lite-On
+  description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+- ref: U9
+  value: MOC3063S
+  footprint: MOC306XS_LTO
+  manufacturer: Lite-On
+  description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+nets:
+- name: +5V
+  pins:
+  - C4.1
+  - D3.A
+  - J4.Pin_19
+  - J6.Pin_1
+  - J6.Pin_3
+  - L2.2
+  - R26.1
+  - R28.1
+  - R30.1
+  - R32.1
+  - R34.1
+  - R5.1
+  - R58.1
+  - R60.1
+  - R62.1
+  - R64.1
+- name: /ESP32/Pump
+  pins: [J5.Pin_11, R40.1]
+- name: /ESP32/Status LED
+  pins: [J4.Pin_11, R3.1]
+- name: /ESP32/WIFI LED
+  pins: [J4.Pin_12, R8.1]
+- name: /ESP32/Zone 1
+  pins: [J5.Pin_10, R41.1]
+- name: /ESP32/Zone 2
+  pins: [J5.Pin_9, R42.1]
+- name: /ESP32/Zone 3
+  pins: [J5.Pin_8, R43.1]
+- name: /ESP32/Zone 4
+  pins: [J5.Pin_6, R44.1]
+- name: /ESP32/Zone 5
+  pins: [J5.Pin_5, R69.1]
+- name: /ESP32/Zone 6
+  pins: [J5.Pin_4, R70.1]
+- name: /ESP32/Zone 7
+  pins: [J5.Pin_3, R71.1]
+- name: /ESP32/Zone 8
+  pins: [J5.Pin_2, R72.1]
+- name: /Power & IO/To Pump
+  pins: [D4.A1, J1.Pin_4, R10.1, R25.1]
+- name: /Power & IO/To Zone 1
+  pins: [D5.A1, J1.Pin_5, R11.1, R27.1]
+- name: /Power & IO/To Zone 2
+  pins: [D6.A1, J1.Pin_6, R12.1, R29.1]
+- name: /Power & IO/To Zone 3
+  pins: [D7.A1, J1.Pin_7, R13.1, R31.1]
+- name: /Power & IO/To Zone 4
+  pins: [D8.A1, J1.Pin_8, R14.1, R33.1]
+- name: /Power & IO/To Zone 5
+  pins: [D14.A1, J1.Pin_9, R45.1, R57.1]
+- name: /Power & IO/To Zone 6
+  pins: [D15.A1, J1.Pin_10, R46.1, R59.2]
+- name: /Power & IO/To Zone 7
+  pins: [D16.A1, J1.Pin_11, R47.1, R61.1]
+- name: /Power & IO/To Zone 8
+  pins: [D17.A1, J1.Pin_12, R48.1, R63.1]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C4.2
+  - D1.-
+  - D2.A
+  - J4.Pin_14
+  - J5.Pin_1
+  - J5.Pin_7
+  - Q1.S
+  - Q10.S
+  - Q11.S
+  - Q2.S
+  - Q3.S
+  - Q4.S
+  - Q5.S
+  - Q6.S
+  - Q7.S
+  - Q8.S
+  - Q9.S
+  - R2.1
+  - R35.1
+  - R36.1
+  - R37.1
+  - R38.1
+  - R39.1
+  - R6.2
+  - R65.1
+  - R66.1
+  - R67.1
+  - R68.1
+  - R7.1
+  - R9.2
+  - U1.GND
+  - U1.GNDPAD@9
+- name: LIVE
+  pins: [D1.3, F2.2]
+- name: LIVE_SOLENOID
+  pins:
+  - D14.A2
+  - D15.A2
+  - D16.A2
+  - D17.A2
+  - D4.A2
+  - D5.A2
+  - D6.A2
+  - D7.A2
+  - D8.A2
+  - F1.2
+  - F2.1
+  - R15.1
+  - R16.1
+  - R17.1
+  - R18.1
+  - R19.1
+  - R49.1
+  - R50.1
+  - R51.1
+  - R52.1
+- name: NEUT
+  pins:
+  - D1.4
+  - D10.K
+  - D11.K
+  - D12.K
+  - D13.K
+  - D18.K
+  - D19.K
+  - D20.K
+  - D21.K
+  - D9.K
+  - J1.Pin_2
+  - J1.Pin_3
+- name: Net-(C10-Pad1)
+  pins: [R49.2, R53.1]
+- name: Net-(C11-Pad1)
+  pins: [R50.2, R54.1]
+- name: Net-(C12-Pad1)
+  pins: [R51.2, R55.1]
+- name: Net-(C13-Pad1)
+  pins: [R52.2, R56.1]
+- name: Net-(C5-Pad1)
+  pins: [R15.2, R20.1]
+- name: Net-(C6-Pad1)
+  pins: [R16.2, R21.1]
+- name: Net-(C7-Pad1)
+  pins: [R17.2, R22.1]
+- name: Net-(C8-Pad1)
+  pins: [R18.2, R23.1]
+- name: Net-(C9-Pad1)
+  pins: [R19.2, R24.1]
+- name: Net-(D1-+)
+  pins: [D1.+, L1.1]
+- name: Net-(D10-A)
+  pins: [D10.A, R27.2]
+- name: Net-(D11-A)
+  pins: [D11.A, R29.2]
+- name: Net-(D12-A)
+  pins: [D12.A, R31.2]
+- name: Net-(D13-A)
+  pins: [D13.A, R33.2]
+- name: Net-(D14-G)
+  pins: [D14.G, R45.2, U7.4]
+- name: Net-(D15-G)
+  pins: [D15.G, R46.2, U8.4]
+- name: Net-(D16-G)
+  pins: [D16.G, R47.2, U9.4]
+- name: Net-(D17-G)
+  pins: [D17.G, R48.2, U10.4]
+- name: Net-(D18-A)
+  pins: [D18.A, R57.2]
+- name: Net-(D19-A)
+  pins: [D19.A, R59.1]
+- name: Net-(D2-K)
+  pins: [C3.2, D2.K, L2.1, U1.PH]
+- name: Net-(D20-A)
+  pins: [D20.A, R61.2]
+- name: Net-(D21-A)
+  pins: [D21.A, R63.2]
+- name: Net-(D3-K)
+  pins: [D3.K, R9.1]
+- name: Net-(D4-G)
+  pins: [D4.G, R10.2, U2.4]
+- name: Net-(D5-G)
+  pins: [D5.G, R11.2, U3.4]
+- name: Net-(D6-G)
+  pins: [D6.G, R12.2, U4.4]
+- name: Net-(D7-G)
+  pins: [D7.G, R13.2, U5.4]
+- name: Net-(D8-G)
+  pins: [D8.G, R14.2, U6.4]
+- name: Net-(D9-A)
+  pins: [D9.A, R25.2]
+- name: Net-(J1-Pin_1)
+  pins: [F1.1, J1.Pin_1]
+- name: Net-(J6-Pin_2)
+  pins: [J6.Pin_2, R4.2]
+- name: Net-(J6-Pin_4)
+  pins: [J6.Pin_4, R1.2]
+- name: Net-(Q1-D)
+  pins: [Q1.D, R1.1]
+- name: Net-(Q1-G)
+  pins: [Q1.G, R2.2, R3.2]
+- name: Net-(Q10-D)
+  pins: [Q10.D, U9.2]
+- name: Net-(Q10-G)
+  pins: [Q10.G, R67.2, R71.2]
+- name: Net-(Q11-D)
+  pins: [Q11.D, U10.2]
+- name: Net-(Q11-G)
+  pins: [Q11.G, R68.2, R72.2]
+- name: Net-(Q2-D)
+  pins: [Q2.D, R4.1]
+- name: Net-(Q2-G)
+  pins: [Q2.G, R7.2, R8.2]
+- name: Net-(Q3-D)
+  pins: [Q3.D, U2.2]
+- name: Net-(Q3-G)
+  pins: [Q3.G, R35.2, R40.2]
+- name: Net-(Q4-D)
+  pins: [Q4.D, U3.2]
+- name: Net-(Q4-G)
+  pins: [Q4.G, R36.2, R41.2]
+- name: Net-(Q5-D)
+  pins: [Q5.D, U4.2]
+- name: Net-(Q5-G)
+  pins: [Q5.G, R37.2, R42.2]
+- name: Net-(Q6-D)
+  pins: [Q6.D, U5.2]
+- name: Net-(Q6-G)
+  pins: [Q6.G, R38.2, R43.2]
+- name: Net-(Q7-D)
+  pins: [Q7.D, U6.2]
+- name: Net-(Q7-G)
+  pins: [Q7.G, R39.2, R44.2]
+- name: Net-(Q8-D)
+  pins: [Q8.D, U7.2]
+- name: Net-(Q8-G)
+  pins: [Q8.G, R65.2, R69.2]
+- name: Net-(Q9-D)
+  pins: [Q9.D, U8.2]
+- name: Net-(Q9-G)
+  pins: [Q9.G, R66.2, R70.2]
+- name: Net-(R20-Pad2)
+  pins: [R20.2, U2.6]
+- name: Net-(R21-Pad2)
+  pins: [R21.2, U3.6]
+- name: Net-(R22-Pad2)
+  pins: [R22.2, U4.6]
+- name: Net-(R23-Pad2)
+  pins: [R23.2, U5.6]
+- name: Net-(R24-Pad2)
+  pins: [R24.2, U6.6]
+- name: Net-(R26-Pad2)
+  pins: [R26.2, U2.1]
+- name: Net-(R28-Pad2)
+  pins: [R28.2, U3.1]
+- name: Net-(R30-Pad2)
+  pins: [R30.2, U4.1]
+- name: Net-(R32-Pad2)
+  pins: [R32.2, U5.1]
+- name: Net-(R34-Pad2)
+  pins: [R34.2, U6.1]
+- name: Net-(R53-Pad2)
+  pins: [R53.2, U7.6]
+- name: Net-(R54-Pad2)
+  pins: [R54.2, U8.6]
+- name: Net-(R55-Pad2)
+  pins: [R55.2, U9.6]
+- name: Net-(R56-Pad2)
+  pins: [R56.2, U10.6]
+- name: Net-(R58-Pad2)
+  pins: [R58.2, U7.1]
+- name: Net-(R60-Pad2)
+  pins: [R60.2, U8.1]
+- name: Net-(R62-Pad2)
+  pins: [R62.2, U9.1]
+- name: Net-(R64-Pad2)
+  pins: [R64.2, U10.1]
+- name: Net-(U1-BOOT)
+  pins: [C3.1, U1.BOOT]
+- name: Net-(U1-VSENSE)
+  pins: [R5.2, R6.1, U1.VSENSE]
+- name: VCC
+  pins: [C1.1, C2.1, L1.2, U1.VIN]
+positions:
+- ref: C1
+  x: 140.72
+  y: 83.63
+  rot: 90.0
+- ref: C2
+  x: 137.41
+  y: 90.71
+  rot: 180.0
+- ref: C3
+  x: 154.68
+  y: 91.32
+  rot: -90.0
+- ref: C4
+  x: 158.97
+  y: 84.17
+  rot: 90.0
+- ref: D1
+  x: 143.13
+  y: 101.85
+  rot: -90.0
+- ref: D10
+  x: 181.1
+  y: 145.03
+- ref: D11
+  x: 188.72
+  y: 145.03
+- ref: D12
+  x: 196.34
+  y: 145.03
+- ref: D13
+  x: 203.96
+  y: 145.03
+- ref: D14
+  x: 208.79
+  y: 127.09
+  rot: 180.0
+  side: back
+- ref: D15
+  x: 219.71
+  y: 127.09
+  rot: 180.0
+  side: back
+- ref: D16
+  x: 230.63
+  y: 127.09
+  rot: 180.0
+  side: back
+- ref: D17
+  x: 241.55
+  y: 127.09
+  rot: 180.0
+  side: back
+- ref: D18
+  x: 211.58
+  y: 145.03
+- ref: D19
+  x: 219.2
+  y: 145.03
+- ref: D2
+  x: 151.13
+  y: 93.25
+  rot: -90.0
+- ref: D20
+  x: 226.82
+  y: 145.03
+- ref: D21
+  x: 234.44
+  y: 145.03
+- ref: D3
+  x: 163.03
+  y: 91.35
+  rot: -90.0
+- ref: D4
+  x: 154.18
+  y: 127.09
+  rot: 180.0
+  side: back
+- ref: D5
+  x: 165.1
+  y: 127.09
+  rot: 180.0
+  side: back
+- ref: D6
+  x: 176.02
+  y: 127.09
+  rot: 180.0
+  side: back
+- ref: D7
+  x: 186.94
+  y: 127.09
+  rot: 180.0
+  side: back
+- ref: D8
+  x: 197.87
+  y: 127.09
+  rot: 180.0
+  side: back
+- ref: D9
+  x: 173.48
+  y: 145.03
+- ref: F1
+  x: 138.43
+  y: 138.94
+  rot: 90.0
+- ref: F2
+  x: 136.65
+  y: 109.6
+- ref: J4
+  x: 240.03
+  y: 68.07
+  rot: -90.0
+- ref: J5
+  x: 240.03
+  y: 93.47
+  rot: -90.0
+- ref: J6
+  x: 186.25
+  y: 72.64
+  rot: 180.0
+- ref: L1
+  x: 142.75
+  y: 93.0
+  rot: 90.0
+- ref: L2
+  x: 158.75
+  y: 90.31
+  rot: 90.0
+- ref: Q1
+  x: 173.1
+  y: 79.12
+  rot: 180.0
+- ref: Q10
+  x: 228.09
+  y: 105.18
+  rot: -90.0
+- ref: Q11
+  x: 239.01
+  y: 105.16
+  rot: -90.0
+- ref: Q2
+  x: 186.54
+  y: 79.12
+  rot: 180.0
+- ref: Q3
+  x: 151.64
+  y: 105.16
+  rot: -90.0
+- ref: Q4
+  x: 162.56
+  y: 105.16
+  rot: -90.0
+- ref: Q5
+  x: 173.48
+  y: 105.16
+  rot: -90.0
+- ref: Q6
+  x: 184.43
+  y: 105.16
+  rot: -90.0
+- ref: Q7
+  x: 195.33
+  y: 105.18
+  rot: -90.0
+- ref: Q8
+  x: 206.25
+  y: 105.16
+  rot: -90.0
+- ref: Q9
+  x: 217.17
+  y: 105.16
+  rot: -90.0
+- ref: R1
+  x: 169.16
+  y: 79.12
+  rot: 90.0
+- ref: R10
+  x: 150.01
+  y: 124.71
+  rot: 180.0
+- ref: R11
+  x: 160.93
+  y: 124.71
+  rot: 180.0
+- ref: R12
+  x: 171.85
+  y: 124.71
+  rot: 180.0
+- ref: R13
+  x: 182.78
+  y: 124.71
+  rot: 180.0
+- ref: R14
+  x: 193.7
+  y: 124.71
+  rot: 180.0
+- ref: R15
+  x: 152.15
+  y: 121.92
+  rot: -90.0
+- ref: R16
+  x: 163.07
+  y: 121.92
+  rot: -90.0
+- ref: R17
+  x: 173.99
+  y: 121.92
+  rot: -90.0
+- ref: R18
+  x: 184.91
+  y: 121.92
+  rot: -90.0
+- ref: R19
+  x: 195.83
+  y: 121.92
+  rot: -90.0
+- ref: R2
+  x: 170.56
+  y: 82.17
+- ref: R20
+  x: 154.18
+  y: 121.92
+  rot: 90.0
+- ref: R21
+  x: 165.1
+  y: 121.92
+  rot: 90.0
+- ref: R22
+  x: 176.02
+  y: 121.92
+  rot: 90.0
+- ref: R23
+  x: 186.94
+  y: 121.92
+  rot: 90.0
+- ref: R24
+  x: 197.87
+  y: 121.92
+  rot: 90.0
+- ref: R25
+  x: 146.81
+  y: 125.98
+  rot: -90.0
+- ref: R26
+  x: 154.69
+  y: 106.17
+  rot: -90.0
+- ref: R27
+  x: 157.73
+  y: 125.98
+  rot: -90.0
+- ref: R28
+  x: 165.61
+  y: 106.17
+  rot: -90.0
+- ref: R29
+  x: 168.66
+  y: 125.98
+  rot: -90.0
+- ref: R3
+  x: 174.24
+  y: 82.17
+  rot: 180.0
+- ref: R30
+  x: 176.53
+  y: 106.17
+  rot: -90.0
+- ref: R31
+  x: 179.58
+  y: 125.98
+  rot: -90.0
+- ref: R32
+  x: 187.45
+  y: 106.17
+  rot: -90.0
+- ref: R33
+  x: 190.5
+  y: 125.98
+  rot: -90.0
+- ref: R34
+  x: 198.37
+  y: 106.17
+  rot: -90.0
+- ref: R35
+  x: 148.84
+  y: 104.14
+  rot: 90.0
+- ref: R36
+  x: 159.77
+  y: 104.14
+  rot: 90.0
+- ref: R37
+  x: 170.69
+  y: 104.14
+  rot: 90.0
+- ref: R38
+  x: 181.61
+  y: 104.14
+  rot: 90.0
+- ref: R39
+  x: 192.53
+  y: 104.14
+  rot: 90.0
+- ref: R4
+  x: 182.6
+  y: 79.12
+  rot: 90.0
+- ref: R40
+  x: 154.69
+  y: 102.62
+  rot: -90.0
+- ref: R41
+  x: 165.61
+  y: 102.62
+  rot: -90.0
+- ref: R42
+  x: 176.53
+  y: 102.62
+  rot: -90.0
+- ref: R43
+  x: 187.45
+  y: 102.62
+  rot: -90.0
+- ref: R44
+  x: 198.37
+  y: 102.62
+  rot: -90.0
+- ref: R45
+  x: 204.62
+  y: 124.71
+  rot: 180.0
+- ref: R46
+  x: 215.54
+  y: 124.71
+  rot: 180.0
+- ref: R47
+  x: 226.46
+  y: 124.71
+  rot: 180.0
+- ref: R48
+  x: 237.39
+  y: 124.71
+  rot: 180.0
+- ref: R49
+  x: 206.76
+  y: 121.92
+  rot: -90.0
+- ref: R5
+  x: 153.41
+  y: 79.89
+  rot: 180.0
+- ref: R50
+  x: 217.68
+  y: 121.92
+  rot: -90.0
+- ref: R51
+  x: 228.6
+  y: 121.92
+  rot: -90.0
+- ref: R52
+  x: 239.52
+  y: 121.92
+  rot: -90.0
+- ref: R53
+  x: 208.79
+  y: 121.92
+  rot: 90.0
+- ref: R54
+  x: 219.71
+  y: 121.92
+  rot: 90.0
+- ref: R55
+  x: 230.63
+  y: 121.92
+  rot: 90.0
+- ref: R56
+  x: 241.55
+  y: 121.92
+  rot: 90.0
+- ref: R57
+  x: 201.42
+  y: 125.98
+  rot: -90.0
+- ref: R58
+  x: 209.3
+  y: 106.17
+  rot: -90.0
+- ref: R59
+  x: 212.34
+  y: 125.98
+  rot: 90.0
+- ref: R6
+  x: 153.41
+  y: 82.18
+  rot: 180.0
+- ref: R60
+  x: 220.22
+  y: 106.17
+  rot: -90.0
+- ref: R61
+  x: 223.27
+  y: 125.98
+  rot: -90.0
+- ref: R62
+  x: 231.14
+  y: 106.17
+  rot: -90.0
+- ref: R63
+  x: 234.19
+  y: 125.98
+  rot: -90.0
+- ref: R64
+  x: 242.06
+  y: 106.17
+  rot: -90.0
+- ref: R65
+  x: 203.45
+  y: 104.14
+  rot: 90.0
+- ref: R66
+  x: 214.38
+  y: 104.14
+  rot: 90.0
+- ref: R67
+  x: 225.3
+  y: 104.14
+  rot: 90.0
+- ref: R68
+  x: 236.22
+  y: 104.14
+  rot: 90.0
+- ref: R69
+  x: 209.3
+  y: 102.62
+  rot: -90.0
+- ref: R7
+  x: 184.0
+  y: 82.17
+- ref: R70
+  x: 220.22
+  y: 102.62
+  rot: -90.0
+- ref: R71
+  x: 231.14
+  y: 102.62
+  rot: -90.0
+- ref: R72
+  x: 242.06
+  y: 102.62
+  rot: -90.0
+- ref: R8
+  x: 187.68
+  y: 82.17
+  rot: 180.0
+- ref: R9
+  x: 163.03
+  y: 87.79
+  rot: 90.0
+- ref: U1
+  x: 151.48
+  y: 86.12
+  rot: 180.0
+- ref: U10
+  x: 239.01
+  y: 114.3
+  rot: -90.0
+- ref: U2
+  x: 151.64
+  y: 114.3
+  rot: -90.0
+- ref: U3
+  x: 162.56
+  y: 114.3
+  rot: -90.0
+- ref: U4
+  x: 173.48
+  y: 114.3
+  rot: -90.0
+- ref: U5
+  x: 184.4
+  y: 114.3
+  rot: -90.0
+- ref: U6
+  x: 195.33
+  y: 114.3
+  rot: -90.0
+- ref: U7
+  x: 206.25
+  y: 114.3
+  rot: -90.0
+- ref: U8
+  x: 217.17
+  y: 114.3
+  rot: -90.0
+- ref: U9
+  x: 228.09
+  y: 114.3
+  rot: -90.0
+copper_pours:
+- net: +5V
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: VCC
+  layers: [F.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu]
+  keepout: true

@@ -1,0 +1,1563 @@
+name: Pipad CM4 Logic Board
+slug: pipad-cm4-logic-board
+source: EvanKrall/pipad
+format: kicad6
+description: CM4 tablet motherboard with MIPI DSI to LVDS bridge (SN65DSI83), capacitive touchscreen controller (GT9113)
+tags: [video]
+key_ics: [SN65DSI83, GT9113]
+outline:
+  width_mm: 102.71
+  height_mm: 100.0
+design_rules:
+  layers: 4
+  min_trace: 0.127mm
+  min_clearance: 0.15mm
+  min_drill: 0.2mm
+  min_via: 0.45mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0402'
+- ref: C10
+  value: 10uF
+  footprint: '0402'
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+- ref: C13
+  value: 10uF
+  footprint: '0402'
+- ref: C14
+  value: 10uF
+  footprint: '0402'
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+- ref: C19
+  value: 4.7nF
+  footprint: '0402'
+- ref: C2
+  value: 1uF
+  footprint: '0402'
+- ref: C20
+  value: 100nF
+  footprint: '0402'
+- ref: C21
+  value: 100nF
+  footprint: '0402'
+- ref: C22
+  value: 100nF
+  footprint: '0402'
+- ref: C23
+  value: 10uF
+  footprint: '0402'
+- ref: C24
+  value: 100nF
+  footprint: '0402'
+- ref: C25
+  value: 2.2uF
+  footprint: '0402'
+- ref: C26
+  value: 2.2uF
+  footprint: '0402'
+- ref: C27
+  value: 2.2uF
+  footprint: '0402'
+- ref: C28
+  value: 10uF
+  footprint: '0402'
+- ref: C29
+  value: 100nF
+  footprint: '0402'
+- ref: C3
+  value: 2.2uF
+  footprint: '0402'
+- ref: C30
+  value: 100nF
+  footprint: '0402'
+- ref: C31
+  value: 100nF
+  footprint: '0402'
+- ref: C32
+  value: 100nF
+  footprint: '0402'
+- ref: C33
+  value: 100nF
+  footprint: '0402'
+- ref: C34
+  value: 1uF
+  footprint: '0402'
+- ref: C35
+  value: 100nF
+  footprint: '0402'
+- ref: C36
+  value: 100nF
+  footprint: '0402'
+- ref: C37
+  value: 100nF
+  footprint: '0402'
+- ref: C38
+  value: 100nF
+  footprint: '0402'
+- ref: C39
+  value: 100nF
+  footprint: '0402'
+- ref: C4
+  value: 10uF
+  footprint: '0402'
+- ref: C40
+  value: 100nF
+  footprint: '0402'
+- ref: C41
+  value: 100nF
+  footprint: '0402'
+- ref: C42
+  value: 1uF
+  footprint: '0402'
+- ref: C43
+  value: 470nF
+  footprint: '0402'
+- ref: C44
+  value: 4.7uF
+  footprint: '0603'
+- ref: C45
+  value: 10uF
+  footprint: '0402'
+- ref: C46
+  value: 2.2uF
+  footprint: '0402'
+- ref: C47
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Murata Electronics
+- ref: C48
+  value: 4.7uF
+  footprint: '0603'
+- ref: C49
+  value: 47nF
+  footprint: '0402'
+  manufacturer: Murata
+- ref: C5
+  value: 2.2uF
+  footprint: '0402'
+- ref: C50
+  value: 10uF
+  footprint: '0402'
+- ref: C51
+  value: 100uF
+  footprint: '1206'
+- ref: C52
+  value: 1uF
+  footprint: '0402'
+  manufacturer: Murata Electronics
+- ref: C53
+  value: 22uF
+  footprint: 0805
+  manufacturer: Samsung
+- ref: C54
+  value: 10uF
+  footprint: '0402'
+- ref: C7
+  value: 1uF
+  footprint: '0402'
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+- ref: D1
+  value: schottky
+  footprint: PMEG4010EPK_315
+- ref: D2
+  value: schottky
+  footprint: NSR10F20NXT5G
+- ref: J1
+  value: 1x8 header
+  footprint: FF18-8A-R11AD-B-3H
+- ref: J10
+  value: 2x35 header
+  footprint: Panasonic-AXK770147G-MFG
+- ref: J11
+  value: 2x12 header
+  footprint: AA03-S024VA1
+- ref: J12
+  value: 10118194-0001LF
+  footprint: 10118194-0001LF
+- ref: J2
+  value: 1x6 header
+  footprint: 78171-0004
+- ref: J3
+  value: 2x20 header
+  footprint: 2X20
+- ref: J4
+  value: 1x15 header
+  footprint: SFW15R-2STE1LF
+- ref: J5
+  value: 1x3 header
+  footprint: 1X3
+- ref: J6
+  value: 504740-5100
+  footprint: 504740-5100
+- ref: J7
+  value: 504740-5100
+  footprint: 504740-5100
+- ref: J8
+  value: 1x4 header
+  footprint: ipad battery connector
+- ref: J9
+  value: 1x34 header
+  footprint: 20474-030E-11
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-2
+- ref: JP3
+  value: solder jumper
+  footprint: SJ-2
+- ref: JP4
+  value: solder jumper
+  footprint: SJ-2
+- ref: L1
+  value: 4.7uH
+  footprint: 0805
+- ref: L2
+  value: 2.2uH
+  footprint: '1008'
+- ref: R1
+  value: 2.7kohm
+  footprint: '0402'
+- ref: R10
+  value: 27ohm
+  footprint: '0402'
+- ref: R11
+  value: 0R DNF
+  footprint: '0402'
+- ref: R12
+  value: 0R DNF
+  footprint: '0402'
+- ref: R13
+  value: 300kohm
+  footprint: '0402'
+  pulldown: U9.Sensor_OPT1
+- ref: R14
+  value: 10kohm
+  footprint: '0402'
+  pulldown: U5.REFCLK
+- ref: R15
+  value: 53.6kohm
+  footprint: '0402'
+  pulldown: U10.ISET
+- ref: R16
+  value: 1.3Mohm
+  footprint: '0402'
+- ref: R17
+  value: 1Mohm
+  footprint: '0402'
+- ref: R18
+  value: 82kohm
+  footprint: '0402'
+  pulldown: U10.OVP
+- ref: R19
+  value: 220ohm
+  footprint: '0402'
+- ref: R2
+  value: 1kohm
+  footprint: '0402'
+- ref: R20
+  value: 5.23kohm
+  footprint: '0402'
+- ref: R21
+  value: 30.1kohm
+  footprint: '0402'
+  pulldown: /Battery charger/BATT_NTC_CONN_R
+- ref: R3
+  value: 1kohm
+  footprint: '0402'
+  pulldown: U1.IN1_L
+- ref: R5
+  value: 1kohm
+  footprint: '0402'
+- ref: R6
+  value: 1kohm
+  footprint: '0402'
+  pulldown: U4.MUTE
+- ref: R7
+  value: 27ohm
+  footprint: '0402'
+- ref: R8
+  value: 27ohm
+  footprint: '0402'
+- ref: R9
+  value: 27ohm
+  footprint: '0402'
+- ref: U1
+  value: TLV320AIC3206IRSBR
+  footprint: TLV320AIC3206IRSBR
+- ref: U10
+  value: TPS61176RTER
+  footprint: TPS61176RTER
+- ref: U11
+  value: TCA9802
+  footprint: VSSOP-8
+- ref: U12
+  value: NTB0102
+  footprint: SOT833-1
+- ref: U13
+  value: MIC5504-1.8
+  footprint: SOT-23-5
+- ref: U14
+  value: TCA9802
+  footprint: VSSOP-8
+- ref: U15
+  value: BQ25895RTW
+  footprint: Texas_S-PWQFN-N24_EP2.7x2.7mm_ThermalVias
+  manufacturer: Texas Instruments
+- ref: U16
+  value: MIC5365-3.0
+  footprint: SOT-23-5
+- ref: U3
+  value: TPA2006D1DRBR
+  footprint: TPA2006D1DRBR
+- ref: U4
+  value: FSA2275UMX
+  footprint: FSA2275
+- ref: U5
+  value: SN65DSI83TPAPRQ1
+  footprint: SN65DSI83TPAPRQ1
+- ref: U6
+  value: MIC5504-1.8
+  footprint: SOT-23-5
+- ref: U7
+  value: TPD4E02B04DQAR
+  footprint: TPD4E02B04DQAR
+- ref: U8
+  value: TPD4E02B04DQAR
+  footprint: TPD4E02B04DQAR
+- ref: U9
+  value: GT9113
+  footprint: GT9113
+nets:
+- name: /ACC_TO_POD_CONN
+  pins: [J10.Pin_54, J3.Pin_10]
+- name: /ALS_INT_L
+  pins: [J11.Pin_2, J3.Pin_28]
+- name: /Ambient light sensor/SCL_3.0
+  pins: [J11.Pin_1, U14.SCLB]
+- name: /Ambient light sensor/SDA_3.0
+  pins: [J11.Pin_3, U14.SDAB]
+- name: /Ambient light sensor/VCC_3.0
+  pins: [J11.Pin_4, U14.VCCB, U16.VOUT]
+- name: /BCLK
+  pins: [J3.Pin_12, R7.1]
+- name: /BQ25895_INT
+  pins: [J3.Pin_7, U15.INT]
+- name: /Battery charger/BATT_NTC_CONN_R
+  pins: [J8.Pin_3, R20.1, R21.2, U15.TS]
+- name: /Battery charger/BATT_POS_F
+  pins: [C50.1, J8.Pin_1, U15.BAT@13, U15.BAT@14]
+- name: /Battery charger/D+
+  pins: [J10.Pin_3, J12.D-, U15.D+]
+- name: /Battery charger/D-
+  pins: [J10.Pin_5, J12.D+, U15.D-]
+- name: /Battery charger/IMEAS
+  pins: [R19.2, U15.ILIM]
+- name: /Battery charger/PMID
+  pins: [C51.1, D2.K, JP3.A, U15.PMID]
+- name: /Battery charger/REGN
+  pins: [C48.1, R20.2, U15.REGN]
+- name: /Battery charger/SW
+  pins: [C49.1, L2.1, U15.SW@19, U15.SW@20]
+- name: /Battery charger/Vin_USB
+  pins: [C47.1, J12.VCC, JP1.B, U15.VBUS]
+- name: /CODEC_LDO_EN
+  pins: [J3.Pin_15, U6.EN]
+- name: /CODEC_RESET
+  pins: [J3.Pin_13, U1.RESET_N]
+- name: /COMPASS_INT_L
+  pins: [J11.Pin_8, J3.Pin_24]
+- name: /COMPASS_RST_L
+  pins: [J11.Pin_6, J3.Pin_26]
+- name: /DIN
+  pins: [J3.Pin_40, R9.1]
+- name: /DOUT
+  pins: [J3.Pin_38, R10.1]
+- name: /GT9113_ARM_RST
+  pins: [J3.Pin_22, U9./ARM_RST]
+- name: /GT9113_RSTB
+  pins: [J3.Pin_16, U9./RSTB]
+- name: /GT9113_WAKE
+  pins: [J3.Pin_18, U9.Wake]
+- name: /HOME_CONN_L
+  pins: [J10.Pin_38, J3.Pin_27]
+- name: /LOL
+  pins: [J10.Pin_65, J5.Pin_3, U4.R2]
+- name: /LOR
+  pins: [J10.Pin_63, J5.Pin_2, U4.L2]
+- name: /LVDS/CLKIN+
+  pins: [J9.Pin_18, U5.A_CLKP]
+  class: LVDS/DSI
+  trace_width: '0.19'
+- name: /LVDS/CLKIN-
+  pins: [J9.Pin_17, U5.A_CLKN]
+  class: LVDS/DSI
+  trace_width: '0.19'
+- name: /LVDS/DSI0_C_N
+  pins: [J4.Pin_8, U5.DACN]
+  class: LVDS/DSI
+  trace_width: '0.19'
+- name: /LVDS/DSI0_C_P
+  pins: [J4.Pin_9, U5.DACP]
+  class: LVDS/DSI
+  trace_width: '0.19'
+- name: /LVDS/DSI0_D0_N
+  pins: [J4.Pin_2, U5.DA0N]
+  class: LVDS/DSI
+  trace_width: '0.19'
+- name: /LVDS/DSI0_D0_P
+  pins: [J4.Pin_3, U5.DA0P]
+  class: LVDS/DSI
+  trace_width: '0.19'
+- name: /LVDS/DSI0_D1_N
+  pins: [J4.Pin_5, U5.DA1N]
+  class: LVDS/DSI
+  trace_width: '0.19'
+- name: /LVDS/DSI0_D1_P
+  pins: [J4.Pin_6, U5.DA1P]
+  class: LVDS/DSI
+  trace_width: '0.19'
+- name: /LVDS/IRQ_1.8
+  pins: [U12.B1, U5.IRQ]
+- name: /LVDS/LED_ANODE
+  pins: [C44.1, D1.1, J9.Pin_21, J9.Pin_22, R17.1]
+- name: /LVDS/LED_CATHODE1
+  pins: [J9.Pin_24, U10.IFB6]
+- name: /LVDS/LED_CATHODE2
+  pins: [J9.Pin_25, U10.IFB5]
+- name: /LVDS/LED_CATHODE3
+  pins: [J9.Pin_26, U10.IFB4]
+- name: /LVDS/LED_CATHODE4
+  pins: [J9.Pin_27, U10.IFB3]
+- name: /LVDS/LED_CATHODE5
+  pins: [J9.Pin_28, U10.IFB2]
+- name: /LVDS/LED_CATHODE6
+  pins: [J9.Pin_29, U10.IFB1]
+- name: /LVDS/RIN0+
+  pins: [J9.Pin_9, U5.A_Y0P]
+- name: /LVDS/RIN0-
+  pins: [J9.Pin_8, U5.A_Y0N]
+- name: /LVDS/RIN1+
+  pins: [J9.Pin_12, U5.A_Y1P]
+- name: /LVDS/RIN1-
+  pins: [J9.Pin_11, U5.A_Y1N]
+- name: /LVDS/RIN2+
+  pins: [J9.Pin_15, U5.A_Y2P]
+- name: /LVDS/RIN2-
+  pins: [J9.Pin_14, U5.A_Y2N]
+- name: /LVDS/SCL1.8
+  pins: [U11.SCLB, U5.SCL]
+- name: /LVDS/SCL3.3
+  pins: [J4.Pin_13, U11.SCLA]
+- name: /LVDS/SDA1.8
+  pins: [U11.SDAB, U5.SDA]
+- name: /LVDS/SDA3.3
+  pins: [J4.Pin_14, U11.SDAA]
+- name: /LVDS/SN65DSI83_EN_1.8
+  pins: [U12.B2, U5.EN]
+- name: /LVDS/VCC_1.8
+  pins:
+  - C28.1
+  - C29.1
+  - C30.1
+  - C31.1
+  - C32.1
+  - C33.1
+  - C35.1
+  - C36.1
+  - C37.1
+  - C38.1
+  - C39.1
+  - C40.1
+  - C41.1
+  - U11.VCCB
+  - U12.VCCB
+  - U13.VOUT
+  - U5.ADDR
+  - U5.VCC@14
+  - U5.VCC@18
+  - U5.VCC@3
+  - U5.VCC@32
+  - U5.VCC@35
+  - U5.VCC@40
+  - U5.VCC@43
+  - U5.VCC@48
+  - U5.VCC@49
+  - U5.VCC@55
+  - U5.VCC@58
+  - U5.VCC@63
+- name: /LVDS_EN
+  pins: [J3.Pin_29, U12.A2]
+- name: /LVDS_IRQ
+  pins: [J3.Pin_31, U12.A1]
+- name: /LVDS_LDO_EN
+  pins: [J3.Pin_37, U13.EN]
+- name: /LVDS_PWM
+  pins: [J3.Pin_33, U10.PWM/EN]
+- name: /POD_TO_ACC_CONN
+  pins: [J10.Pin_50, J3.Pin_8]
+- name: /SCL
+  pins: [J3.Pin_5, U1.SCL_SS_N, U14.SCLA, U15.SCL, U9.I2C_SCL]
+- name: /SDA
+  pins: [J3.Pin_3, U1.SDA_MOSI, U14.SDAA, U15.SDA, U9.I2C_SDA]
+- name: /VCC_3.3
+  pins:
+  - C10.2
+  - C11.2
+  - C27.1
+  - J10.Pin_34
+  - J3.Pin_1
+  - J3.Pin_17
+  - J4.Pin_15
+  - J9.Pin_2
+  - J9.Pin_3
+  - J9.Pin_4
+  - R11.2
+  - U1.IOVDD
+  - U11.VCCA
+  - U12.OE
+  - U12.VCCA
+  - U14.VCCA
+  - U16.EN
+  - U16.VIN
+  - U9.AVDD28
+  - U9.VDDIO
+- name: /VCC_3.7
+  pins:
+  - C13.2
+  - C23.2
+  - C24.2
+  - C45.1
+  - C46.1
+  - C54.1
+  - C7.1
+  - JP4.B
+  - L1.1
+  - U1.VSYS
+  - U10.VIN
+  - U13.VIN
+  - U3.VDD
+  - U4.VDD
+  - U6.VIN
+- name: /VCC_5.0
+  pins: [J3.Pin_2, J3.Pin_4, JP3.B]
+- name: /WCLK
+  pins: [J3.Pin_35, R8.1]
+- name: /codec and amp/CODEC_LOL
+  pins: [U1.LOL, U4.RSPKR]
+- name: /codec and amp/CODEC_LOR
+  pins: [U1.LOR, U4.LSPKR]
+- name: /codec and amp/DETECT?
+  pins: [J1.Pin_7, U8.D2+, U8.NC@7]
+- name: /codec and amp/INTMIC_N
+  pins: [C12.2, J1.Pin_2, U7.D1-, U7.NC@9]
+- name: /codec and amp/INTMIC_P
+  pins: [C9.2, J1.Pin_1, U7.D1+, U7.NC@10]
+- name: /codec and amp/RING1
+  pins: [J1.Pin_8, U1.HPR, U8.D2-, U8.NC@6]
+- name: /codec and amp/RING2
+  pins: [J1.Pin_4, U1.GND_SENSE, U7.D2-, U7.NC@6]
+- name: /codec and amp/RING2_AGAIN
+  pins: [J1.Pin_6, U8.D1-, U8.NC@9]
+- name: /codec and amp/SLEEVE
+  pins: [C1.2, J1.Pin_5, R1.2, U1.MICDET, U8.D1+, U8.NC@10]
+- name: /codec and amp/SPKR_L
+  pins: [R5.1, U4.L1]
+- name: /codec and amp/SPKR_LO_SEL
+  pins: [U1.MISO_MFP4, U4.SEL]
+- name: /codec and amp/TIP
+  pins: [J1.Pin_3, U1.HPL, U7.D2+, U7.NC@7]
+- name: /codec and amp/VCC1.8
+  pins:
+  - C14.2
+  - C15.2
+  - C4.2
+  - C8.2
+  - U1.AVDD
+  - U1.DRVDD_HP
+  - U1.DVDD
+  - U1.DVDD_CP
+  - U6.VOUT
+- name: /codec and amp/spkr_amp_right/SPKR+
+  pins: [J2.Pin_3, U3.VO-]
+- name: /codec and amp/spkr_amp_right/SPKR-
+  pins: [J2.Pin_4, U3.VO+]
+- name: /gt9113_breakout/X0
+  pins: [J7.38, U9.DRV39]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X1
+  pins: [J7.39, U9.DRV38]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X10
+  pins: [J7.48, U9.DRV29]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X11
+  pins: [J7.49, U9.DRV28]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X12
+  pins: [J7.50, U9.DRV27]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X13
+  pins: [J7.51, U9.DRV26]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X14
+  pins: [J6.1, U9.DRV25]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X15
+  pins: [J6.2, U9.DRV24]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X16
+  pins: [J6.3, U9.DRV23]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X17
+  pins: [J6.4, U9.DRV22]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X18
+  pins: [J6.5, U9.DRV21]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X19
+  pins: [J6.6, U9.DRV20]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X2
+  pins: [J7.40, U9.DRV37]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X20
+  pins: [J6.7, U9.DRV19]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X21
+  pins: [J6.8, U9.DRV18]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X22
+  pins: [J6.9, U9.DRV17]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X23
+  pins: [J6.10, U9.DRV16]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X24
+  pins: [J6.11, U9.DRV15]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X25
+  pins: [J6.12, U9.DRV14]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X26
+  pins: [J6.13, U9.DRV13]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X27
+  pins: [J6.14, U9.DRV12]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X28
+  pins: [J6.15, U9.DRV11]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X29
+  pins: [J6.16, U9.DRV10]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X3
+  pins: [J7.41, U9.DRV36]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X30
+  pins: [J6.17, U9.DRV9]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X31
+  pins: [J6.18, U9.DRV8]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X32
+  pins: [J6.19, U9.DRV7]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X33
+  pins: [J6.20, U9.DRV6]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X34
+  pins: [J6.21, U9.DRV5]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X35
+  pins: [J6.22, U9.DRV4]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X36
+  pins: [J6.23, U9.DRV3]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X37
+  pins: [J6.24, U9.DRV2]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X38
+  pins: [J6.25, U9.DRV1]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X39
+  pins: [J6.26, U9.DRV0]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X4
+  pins: [J7.42, U9.DRV35]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X5
+  pins: [J7.43, U9.DRV34]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X6
+  pins: [J7.44, U9.DRV33]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X7
+  pins: [J7.45, U9.DRV32]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X8
+  pins: [J7.46, U9.DRV31]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/X9
+  pins: [J7.47, U9.DRV30]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y0
+  pins: [J6.51, J7.2, U9.SENS29]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y1
+  pins: [J6.50, J7.3, U9.SENS28]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y10
+  pins: [J6.41, J7.12, U9.SENS19]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y11
+  pins: [J6.40, J7.13, U9.SENS18]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y12
+  pins: [J6.39, J7.14, U9.SENS17]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y13
+  pins: [J6.38, J7.15, U9.SENS16]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y14
+  pins: [J6.37, J7.16, U9.SENS15]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y15
+  pins: [J6.36, J7.17, U9.SENS14]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y16
+  pins: [J6.35, J7.18, U9.SENS13]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y17
+  pins: [J6.34, J7.19, U9.SENS12]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y18
+  pins: [J6.33, J7.20, U9.SENS11]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y19
+  pins: [J6.32, J7.21, U9.SENS10]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y2
+  pins: [J6.49, J7.4, U9.SENS27]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y20
+  pins: [J6.31, J7.22, U9.SENS9]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y21
+  pins: [J6.30, J7.23, U9.SENS8]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y22
+  pins: [J6.29, J7.24, U9.SEN7]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y23
+  pins: [J6.28, J7.25, U9.SEN6]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y24
+  pins: [J7.26, J7.36, U9.SEN5]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y25
+  pins: [J7.27, J7.35, U9.SEN4]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y26
+  pins: [J7.28, J7.34, U9.SEN3]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y27
+  pins: [J7.29, J7.33, U9.SEN2]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y28
+  pins: [J7.30, J7.32, U9.SEN1]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y29
+  pins: [J7.31, U9.SEN0]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y3
+  pins: [J6.48, J7.5, U9.SENS26]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y4
+  pins: [J6.47, J7.6, U9.SENS25]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y5
+  pins: [J6.46, J7.7, U9.SENS24]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y6
+  pins: [J6.45, J7.8, U9.SENS23]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y7
+  pins: [J6.44, J7.9, U9.SENS22]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y8
+  pins: [J6.43, J7.10, U9.SENS21]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /gt9113_breakout/Y9
+  pins: [J6.42, J7.11, U9.SENS20]
+  class: Touchscreen
+  trace_width: '0.127'
+- name: /~AMP_SHUTDOWN
+  pins: [J3.Pin_11, U3.~SHUTDOWN]
+- name: AVDD18
+  pins: [C26.1, U9.AVDD18]
+- name: BCLK
+  pins: [R7.2, U1.BCLK]
+- name: BTST
+  pins: [C49.2, U15.BTST]
+- name: CE
+  pins: [JP2.2, U15.~CE]
+- name: COMP
+  pins: [C43.1, U10.COMP]
+- name: C_EXT
+  pins: [C22.1, U4.C_EXT]
+- name: DIN_MFP1
+  pins: [R9.2, U1.DIN_MFP1]
+- name: DOUT_MFP2
+  pins: [R10.2, U1.DOUT_MFP2]
+- name: DVDD12
+  pins: [C25.1, U9.DVDD12]
+- name: FLY_N
+  pins: [C5.1, U1.FLY_N]
+- name: FLY_P
+  pins: [C5.2, U1.FLY_P]
+- name: GND
+  pins:
+  - C10.1
+  - C11.1
+  - C13.1
+  - C14.1
+  - C15.1
+  - C19.2
+  - C2.2
+  - C21.1
+  - C22.2
+  - C23.1
+  - C24.1
+  - C25.2
+  - C26.2
+  - C27.2
+  - C28.2
+  - C29.2
+  - C3.2
+  - C30.2
+  - C31.2
+  - C32.2
+  - C33.2
+  - C34.2
+  - C35.2
+  - C36.2
+  - C37.2
+  - C38.2
+  - C39.2
+  - C4.1
+  - C40.2
+  - C41.2
+  - C42.2
+  - C43.2
+  - C44.2
+  - C45.2
+  - C46.2
+  - C47.2
+  - C48.2
+  - C50.2
+  - C51.2
+  - C52.2
+  - C53.2
+  - C54.2
+  - C7.2
+  - C8.1
+  - J10.Pin_1
+  - J10.Pin_13
+  - J10.Pin_18
+  - J10.Pin_19
+  - J10.Pin_2
+  - J10.Pin_25
+  - J10.Pin_4
+  - J10.Pin_40
+  - J10.Pin_43
+  - J10.Pin_58
+  - J10.Pin_60
+  - J10.Pin_61
+  - J10.Pin_62
+  - J10.Pin_67
+  - J10.Pin_69
+  - J10.Pin_7
+  - J10.Pin_70
+  - J11.Pin_10
+  - J11.Pin_11
+  - J11.Pin_12
+  - J11.Pin_13
+  - J11.Pin_14
+  - J11.Pin_15
+  - J11.Pin_16
+  - J11.Pin_17
+  - J11.Pin_18
+  - J11.Pin_19
+  - J11.Pin_20
+  - J11.Pin_21
+  - J11.Pin_22
+  - J11.Pin_23
+  - J11.Pin_24
+  - J11.Pin_5
+  - J11.Pin_7
+  - J11.Pin_9
+  - J12.GND
+  - J12.S_1
+  - J12.S_2
+  - J12.S_3
+  - J12.S_4
+  - J12.case@10
+  - J12.case@11
+  - J2.Pin_5
+  - J2.Pin_6
+  - J3.Pin_14
+  - J3.Pin_20
+  - J3.Pin_25
+  - J3.Pin_30
+  - J3.Pin_34
+  - J3.Pin_39
+  - J3.Pin_6
+  - J3.Pin_9
+  - J4.Pin_1
+  - J4.Pin_10
+  - J4.Pin_16
+  - J4.Pin_17
+  - J4.Pin_4
+  - J4.Pin_7
+  - J5.Pin_1
+  - J6.27
+  - J7.1
+  - J7.37
+  - J8.Pin_4
+  - J9.Pin_1
+  - J9.Pin_10
+  - J9.Pin_13
+  - J9.Pin_16
+  - J9.Pin_19
+  - J9.Pin_31@31
+  - J9.Pin_32@32
+  - JP2.1
+  - R12.1
+  - R13.1
+  - R14.2
+  - R15.2
+  - R16.2
+  - R18.2
+  - R19.1
+  - R21.1
+  - R3.2
+  - R6.2
+  - U1.AVSS
+  - U1.DVSS@1
+  - U1.DVSS@2
+  - U1.DVSS_CP
+  - U1.IOVSS
+  - U1.PAD@41
+  - U1.SPI_SELECT
+  - U10.EPAD@17
+  - U10.GND
+  - U10.PGND
+  - U11.GND
+  - U12.GND
+  - U13.GND
+  - U14.GND
+  - U15.PGND@17
+  - U15.PGND@18
+  - U15.PGND@25
+  - U16.EPAD
+  - U16.GND
+  - U3.EPAD@9
+  - U3.GND
+  - U4.GND@3
+  - U4.GND@8
+  - U5.GND@23
+  - U5.GND@26
+  - U5.GND@52
+  - U5.PAD@65
+  - U6.GND
+  - U7.GND@3
+  - U7.GND@8
+  - U8.GND@3
+  - U8.GND@8
+  - U9.AGND
+  - U9.DGND
+- name: IN
+  pins: [C20.2, U3.IN+]
+- name: IN1_L
+  pins: [C9.1, R3.1, U1.IN1_L]
+- name: IN1_R
+  pins: [C12.1, R2.1, U1.IN1_R]
+- name: IN3_L
+  pins: [C1.1, U1.IN3_L]
+- name: IN_2
+  pins: [C21.2, U3.IN-]
+- name: ISET
+  pins: [R15.1, U10.ISET]
+- name: MICBIAS
+  pins: [R1.1, R2.2, U1.MICBIAS]
+- name: MODE_FAULT
+  pins: [R16.1, U10.MODE/FAULT]
+- name: MUTE
+  pins: [R6.1, U4.MUTE]
+- name: Net-(C19-Pad1)
+  pins: [C19.1, C20.1, R5.2]
+- name: Net-(J10-Pad20)
+  pins:
+  - J10.Pin_20
+  - J10.Pin_22
+  - J10.Pin_24
+  - J10.Pin_26
+  - J10.Pin_28
+  - J10.Pin_30
+  - J10.Pin_32
+  - JP1.A
+- name: Net-(J10-Pad29)
+  pins: [J10.Pin_29, J10.Pin_31, J10.Pin_33]
+- name: OVP
+  pins: [R17.2, R18.1, U10.OVP]
+- name: REF
+  pins: [C2.1, U1.REF]
+- name: REFCLK
+  pins: [R14.1, U5.REFCLK]
+- name: SW
+  pins: [D1.2, L1.2, U10.SW]
+- name: SYS
+  pins:
+  - C52.1
+  - C53.1
+  - D2.A
+  - JP4.A
+  - L2.2
+  - U15.SYS@15
+  - U15.SYS@16
+- name: Sensor_OPT1
+  pins: [R13.2, U9.Sensor_OPT1]
+- name: Sensor_OPT2
+  pins: [R11.1, R12.2, U9.Sensor_OPT2]
+- name: VCORE
+  pins: [C34.1, U5.VCORE]
+- name: VLDO
+  pins: [C42.1, U10.VLDO]
+- name: VNEG
+  pins: [C3.1, U1.VNEG]
+- name: WCLK
+  pins: [R8.2, U1.WCLK]
+positions:
+- ref: C1
+  x: 163.1
+  y: 87.62
+  rot: 90.0
+- ref: C10
+  x: 165.2
+  y: 97.1
+  rot: 180.0
+- ref: C11
+  x: 165.2
+  y: 96.1
+  rot: 180.0
+- ref: C12
+  x: 166.6
+  y: 90.3
+- ref: C13
+  x: 159.2
+  y: 88.8
+  rot: -90.0
+- ref: C14
+  x: 157.7
+  y: 89.3
+- ref: C15
+  x: 158.72
+  y: 90.3
+- ref: C19
+  x: 163.4
+  y: 81.9
+  rot: -135.0
+  side: back
+- ref: C2
+  x: 164.82
+  y: 89.1
+- ref: C20
+  x: 164.1
+  y: 79.8
+  rot: 45.0
+  side: back
+- ref: C21
+  x: 164.7
+  y: 80.6
+  rot: 45.0
+  side: back
+- ref: C22
+  x: 160.4
+  y: 86.9
+  rot: 180.0
+- ref: C23
+  x: 158.4
+  y: 86.8
+  rot: 180.0
+- ref: C24
+  x: 157.7
+  y: 87.9
+- ref: C25
+  x: 135.2
+  y: 90.95
+  rot: -90.0
+- ref: C26
+  x: 134.05
+  y: 90.95
+  rot: -90.0
+- ref: C27
+  x: 132.4
+  y: 89.1
+  rot: 180.0
+- ref: C28
+  x: 153.2
+  y: 147.0
+  side: back
+- ref: C29
+  x: 154.4
+  y: 139.6
+  side: back
+- ref: C3
+  x: 157.8
+  y: 91.9
+  rot: 180.0
+- ref: C30
+  x: 145.1
+  y: 135.0
+  rot: 180.0
+  side: back
+- ref: C31
+  x: 142.1
+  y: 140.4
+  rot: 90.0
+- ref: C32
+  x: 148.1
+  y: 134.9
+  side: back
+- ref: C33
+  x: 142.1
+  y: 143.3
+  rot: -90.0
+- ref: C34
+  x: 143.4
+  y: 150.2
+  rot: -90.0
+  side: back
+- ref: C35
+  x: 152.0
+  y: 136.4
+  side: back
+- ref: C36
+  x: 141.1
+  y: 148.4
+  rot: 180.0
+  side: back
+- ref: C37
+  x: 150.9
+  y: 146.0
+  rot: 90.0
+- ref: C38
+  x: 139.3
+  y: 145.7
+  rot: -90.0
+  side: back
+- ref: C39
+  x: 154.63
+  y: 145.0
+  side: back
+- ref: C4
+  x: 160.3
+  y: 88.6
+  rot: -90.0
+- ref: C40
+  x: 141.8
+  y: 135.7
+  rot: 90.0
+  side: back
+- ref: C41
+  x: 140.0
+  y: 137.5
+  rot: 180.0
+  side: back
+- ref: C42
+  x: 140.5
+  y: 128.6
+  rot: 90.0
+- ref: C43
+  x: 138.4
+  y: 128.9
+  rot: 90.0
+- ref: C44
+  x: 147.0
+  y: 132.7
+  rot: 90.0
+- ref: C45
+  x: 155.7
+  y: 152.4
+  rot: 180.0
+  side: back
+- ref: C46
+  x: 145.0
+  y: 130.3
+  rot: 90.0
+- ref: C47
+  x: 133.71
+  y: 109.22
+  side: back
+- ref: C48
+  x: 138.0
+  y: 105.42
+  side: back
+- ref: C49
+  x: 135.03
+  y: 104.12
+  rot: -90.0
+  side: back
+- ref: C5
+  x: 158.2
+  y: 93.3
+  rot: -90.0
+- ref: C50
+  x: 129.23
+  y: 102.32
+  rot: 180.0
+  side: back
+- ref: C51
+  x: 137.13
+  y: 107.52
+  side: back
+- ref: C52
+  x: 135.03
+  y: 101.52
+  rot: -90.0
+  side: back
+- ref: C53
+  x: 132.63
+  y: 102.02
+  side: back
+- ref: C54
+  x: 157.9
+  y: 100.4
+- ref: C7
+  x: 99.6
+  y: 65.8
+  rot: 180.0
+- ref: C8
+  x: 159.2
+  y: 94.72
+  rot: 90.0
+- ref: C9
+  x: 167.1
+  y: 91.3
+- ref: D1
+  x: 145.3
+  y: 132.9
+  rot: 90.0
+- ref: D2
+  x: 136.93
+  y: 99.82
+  rot: 180.0
+  side: back
+- ref: J1
+  x: 166.4
+  y: 77.45
+  rot: 180.0
+- ref: J10
+  x: 131.3
+  y: 126.83
+  rot: 90.0
+- ref: J11
+  x: 165.3
+  y: 126.8
+  rot: 90.0
+- ref: J12
+  x: 123.87
+  y: 109.84
+  rot: 90.0
+  side: back
+- ref: J2
+  x: 90.58
+  y: 60.6
+- ref: J3
+  x: 161.6
+  y: 130.2
+  rot: 180.0
+  side: back
+- ref: J4
+  x: 146.3
+  y: 157.31
+  side: back
+- ref: J5
+  x: 154.92
+  y: 91.41
+- ref: J6
+  x: 137.1
+  y: 75.3
+- ref: J7
+  x: 154.8
+  y: 75.3
+- ref: J8
+  x: 127.9
+  y: 137.2
+  rot: 90.0
+  side: back
+- ref: J9
+  x: 132.4
+  y: 151.9
+- ref: JP1
+  x: 134.1
+  y: 113.0
+  rot: 90.0
+  side: back
+- ref: JP3
+  x: 138.33
+  y: 110.57
+  rot: -90.0
+  side: back
+- ref: JP4
+  x: 133.63
+  y: 99.02
+  rot: 180.0
+  side: back
+- ref: L1
+  x: 143.6
+  y: 132.1
+  rot: -90.0
+- ref: L2
+  x: 136.93
+  y: 102.52
+  rot: 90.0
+  side: back
+- ref: R1
+  x: 164.1
+  y: 87.62
+  rot: 90.0
+- ref: R10
+  x: 164.9
+  y: 99.4
+  rot: 135.0
+- ref: R11
+  x: 135.3
+  y: 93.5
+  rot: -90.0
+- ref: R12
+  x: 134.2
+  y: 93.5
+  rot: 90.0
+- ref: R13
+  x: 133.1
+  y: 93.5
+  rot: 90.0
+- ref: R14
+  x: 152.1
+  y: 148.4
+  side: back
+- ref: R15
+  x: 139.4
+  y: 128.4
+  rot: 90.0
+- ref: R16
+  x: 143.3
+  y: 129.8
+- ref: R17
+  x: 144.6
+  y: 134.4
+  rot: 180.0
+- ref: R18
+  x: 142.0
+  y: 134.7
+  rot: 180.0
+- ref: R19
+  x: 128.0
+  y: 105.0
+  rot: -90.0
+  side: back
+- ref: R2
+  x: 165.59
+  y: 88.1
+  rot: 180.0
+- ref: R20
+  x: 138.93
+  y: 103.62
+  rot: -90.0
+  side: back
+- ref: R21
+  x: 138.93
+  y: 101.62
+  rot: -90.0
+  side: back
+- ref: R3
+  x: 167.1
+  y: 92.3
+- ref: R5
+  x: 162.7
+  y: 81.2
+  rot: 45.0
+  side: back
+- ref: R6
+  x: 164.1
+  y: 84.5
+  rot: 90.0
+- ref: R7
+  x: 162.7
+  y: 117.7
+  rot: 180.0
+- ref: R8
+  x: 160.8
+  y: 148.8
+- ref: R9
+  x: 166.7
+  y: 153.6
+  rot: 90.0
+  side: back
+- ref: U1
+  x: 162.7
+  y: 92.6
+  rot: 90.0
+- ref: U10
+  x: 139.6
+  y: 132.2
+  rot: -90.0
+- ref: U11
+  x: 146.3
+  y: 148.6
+- ref: U12
+  x: 155.0
+  y: 143.1
+  side: back
+- ref: U13
+  x: 155.2
+  y: 149.7
+  rot: 90.0
+  side: back
+- ref: U14
+  x: 162.5
+  y: 132.6
+- ref: U15
+  x: 131.73
+  y: 105.92
+  rot: 90.0
+  side: back
+- ref: U16
+  x: 164.25
+  y: 141.7
+  rot: -90.0
+- ref: U3
+  x: 103.6
+  y: 61.3
+  rot: 180.0
+- ref: U4
+  x: 162.3
+  y: 84.8
+- ref: U5
+  x: 146.6
+  y: 142.3
+  rot: 180.0
+  side: back
+- ref: U6
+  x: 158.5
+  y: 97.8
+  rot: 90.0
+- ref: U7
+  x: 166.4
+  y: 82.9
+  rot: -90.0
+- ref: U8
+  x: 165.6
+  y: 80.4
+  rot: -90.0
+- ref: U9
+  x: 138.8
+  y: 84.3
+copper_pours:
+- net: /Battery charger/BATT_POS_F
+  layers: [In2.Cu]
+- net: /LVDS/VCC_1.8
+  layers: [In2.Cu]
+- net: /VCC_3.3
+  layers: [In2.Cu]
+- net: /VCC_3.7
+  layers: [In2.Cu]
+- net: /VCC_5.0
+  layers: [B.Cu]
+- net: /codec and amp/VCC1.8
+  layers: [In2.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]

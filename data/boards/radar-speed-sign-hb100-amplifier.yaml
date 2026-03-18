@@ -1,0 +1,318 @@
+name: Radar Speed Sign HB100 Amplifier
+slug: radar-speed-sign-hb100-amplifier
+source: CoolNamesAllTaken/radar-speed-sign
+format: kicad7
+description: 'HB100 10.525 GHz Doppler preamp: op-amp signal conditioning for microwave module, analog filter chain'
+tags: [rf-sdr, signal-conditioning]
+key_ics: [LMV358, LM1117IMPX-3.3]
+outline:
+  width_mm: 60.0
+  height_mm: 55.4
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  mpn: CL10B104KB8NNNC
+  decouples: U1
+- ref: C11
+  value: 4.7uF
+  footprint: 0805
+  mpn: CL21A475KAQNNNE
+- ref: C2
+  value: 10uF
+  footprint: 0805
+  mpn: CL21B106KOQNNNE
+  decouples: U2
+- ref: C3
+  value: 10uF
+  footprint: 0805
+  mpn: CL21B106KOQNNNE
+  decouples: U2
+- ref: C4
+  value: 10uF
+  footprint: 0805
+  mpn: CL21B106KOQNNNE
+  decouples: U2
+- ref: C5
+  value: 2.2nF
+  footprint: '0603'
+  mpn: CL10B222KB8NNNC
+- ref: C6
+  value: 4.7uF
+  footprint: 0805
+  mpn: CL21A475KAQNNNE
+- ref: C7
+  value: 10uF
+  footprint: 0805
+  mpn: CL21B106KOQNNNE
+- ref: C8
+  value: 4.7uF
+  footprint: 0805
+  mpn: CL21A475KAQNNNE
+- ref: C9
+  value: 2.2nF
+  footprint: '0603'
+  mpn: CL10B222KB8NNNC
+- ref: D1
+  value: 1N5819
+  footprint: SOD-123
+  mpn: 1N5819W
+- ref: D2
+  value: red LED
+  footprint: '0603'
+  mpn: SML-D12U8WT86
+- ref: J1
+  value: 1x2 header
+  footprint: 1X2
+  mpn: C49661
+- ref: J2
+  value: 1x2 header
+  footprint: 1X2
+  mpn: C49661
+- ref: J3
+  value: 1x2 header
+  footprint: 1X2
+  mpn: C49661
+- ref: J4
+  value: 1x2 header
+  footprint: 1X2
+  mpn: C49661
+- ref: J5
+  value: 1x3 header
+  footprint: 1X3
+  mpn: P125-1103A0BR138A1
+- ref: R1
+  value: 1Mohm
+  footprint: '0603'
+  mpn: RC0603FR-071ML
+- ref: R10
+  value: 287ohm
+  footprint: '0603'
+  mpn: AC0603FR-07287RL
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+  mpn: RC0603FR-0710KL
+- ref: R3
+  value: 100kohm
+  footprint: '0603'
+  mpn: RC0603FR-07100KL
+  pullup: /BIAS_1V65
+- ref: R4
+  value: 100kohm
+  footprint: '0603'
+  mpn: RC0603FR-07100KL
+  pulldown: /BIAS_1V65
+- ref: R5
+  value: 330kohm
+  footprint: '0603'
+  mpn: RC0603FR-07330KL
+- ref: R6
+  value: 8.2kohm
+  footprint: '0603'
+  mpn: RC0603FR-078K2L
+- ref: R7
+  value: 1Mohm
+  footprint: '0603'
+  mpn: RC0603FR-071ML
+- ref: R8
+  value: 0ohm
+  footprint: 0805
+  mpn: RC0603JR-070RL
+- ref: R9
+  value: 12kohm
+  footprint: '0603'
+  mpn: RC0603FR-0712KL
+  pulldown: /HB100_OUT
+- ref: U1
+  value: LMV358
+  footprint: SOIC-8
+  mpn: LMV358IDR
+- ref: U2
+  value: LM1117IMPX-3.3
+  footprint: SOT-223-3_TabPin2
+  mpn: LM1117IMPX-3.3/NOPB
+nets:
+- name: +3V3
+  pins:
+  - C1.1
+  - C3.1
+  - C4.1
+  - D2.A
+  - R3.1
+  - U1.V+
+  - U2.VO@2
+- name: +5V
+  pins: [C2.1, D1.K, J4.Pin_1, J4.Pin_2, U2.VI]
+- name: /BIAS_1V65
+  pins: [C7.1, R3.2, R4.1, R5.1, U1.+@5]
+- name: /HB100_OUT
+  pins: [C6.1, J3.Pin_1, J3.Pin_2, R9.1]
+- name: /OP1_IN
+  pins: [C6.2, R5.2, U1.+@3]
+- name: /OP1_OUT
+  pins: [C5.2, C8.1, R1.2, U1.1]
+- name: /OP2_IN
+  pins: [C9.1, R6.2, R7.1, U1.-@6]
+- name: /OP2_OUT
+  pins: [C9.2, R7.2, R8.1, U1.7]
+- name: /PWM_OUT
+  pins: [J5.Pin_3, R8.2]
+- name: GND
+  pins:
+  - C1.2
+  - C11.1
+  - C2.2
+  - C3.2
+  - C4.2
+  - C7.2
+  - J1.Pin_1
+  - J1.Pin_2
+  - J2.Pin_1
+  - J2.Pin_2
+  - J5.Pin_1
+  - R10.2
+  - R4.2
+  - R9.2
+  - U1.V-
+  - U2.GND
+- name: Net-(C11-Pad2)
+  pins: [C11.2, R2.2]
+- name: Net-(C8-Pad2)
+  pins: [C8.2, R6.1]
+- name: Net-(D2-K)
+  pins: [D2.K, R10.1]
+- name: Net-(U1A--)
+  pins: [C5.1, R1.1, R2.1, U1.-@2]
+- name: VDD
+  pins: [D1.A, J5.Pin_2]
+positions:
+- ref: C1
+  x: 89.0
+  y: 48.0
+  rot: 180.0
+- ref: C11
+  x: 76.0
+  y: 50.0
+  rot: 90.0
+- ref: C2
+  x: 95.0
+  y: 35.0
+  rot: -90.0
+- ref: C3
+  x: 90.0
+  y: 41.0
+- ref: C4
+  x: 90.0
+  y: 39.0
+- ref: C5
+  x: 82.0
+  y: 50.0
+  rot: 90.0
+- ref: C6
+  x: 87.0
+  y: 59.5
+  rot: 90.0
+- ref: C7
+  x: 92.35
+  y: 57.5
+  rot: -90.0
+- ref: C8
+  x: 82.05
+  y: 46.05
+  rot: 90.0
+- ref: C9
+  x: 94.0
+  y: 52.0
+  rot: 90.0
+- ref: D1
+  x: 99.0
+  y: 38.0
+  rot: -90.0
+- ref: D2
+  x: 90.0
+  y: 43.0
+  rot: 180.0
+- ref: J1
+  x: 70.0
+  y: 30.0
+  rot: -90.0
+  side: back
+- ref: J2
+  x: 67.46
+  y: 64.2
+  rot: -90.0
+  side: back
+- ref: J3
+  x: 105.62
+  y: 64.2
+  rot: -90.0
+  side: back
+- ref: J4
+  x: 105.62
+  y: 30.0
+  rot: -90.0
+  side: back
+- ref: J5
+  x: 102.0
+  y: 43.0
+- ref: R1
+  x: 80.0
+  y: 50.0
+  rot: 90.0
+- ref: R10
+  x: 93.5
+  y: 43.0
+- ref: R2
+  x: 78.0
+  y: 50.0
+  rot: 90.0
+- ref: R3
+  x: 95.0
+  y: 56.5
+  rot: 180.0
+- ref: R4
+  x: 90.35
+  y: 57.5
+  rot: -90.0
+- ref: R5
+  x: 88.0
+  y: 56.5
+  rot: 180.0
+- ref: R6
+  x: 84.0
+  y: 46.0
+  rot: -90.0
+- ref: R7
+  x: 92.0
+  y: 52.0
+  rot: 90.0
+- ref: R8
+  x: 97.0
+  y: 51.0
+- ref: R9
+  x: 95.0
+  y: 61.5
+  rot: 90.0
+- ref: U1
+  x: 87.0
+  y: 52.0
+- ref: U2
+  x: 88.5
+  y: 34.0
+  rot: 180.0
+copper_pours:
+- net: +3V3
+  layers: [F.Cu]
+- net: +5V
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: VDD
+  layers: [F.Cu]

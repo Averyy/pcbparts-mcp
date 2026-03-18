@@ -1,0 +1,247 @@
+name: ANAVI Light Controller
+slug: anavi-light-controller
+source: AnaviTechnology/anavi-light-controller
+format: kicad_legacy
+description: ESP8266, IRF8721 power MOSFETs x3 for 12V RGB LED strips
+tags: [wifi]
+outline:
+  width_mm: 74.93
+  height_mm: 40.64
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.254mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+- ref: C2
+  value: 10uF
+  footprint: 0805
+- ref: D1
+  value: LED
+  footprint: LED_1206
+- ref: DC1
+  value: dc_jack
+  footprint: dc_socket
+- ref: ESP-12
+  value: ESP-12E
+  footprint: ESP-12E_SMD
+- ref: J1
+  value: 1x4 screw terminal
+  footprint: TerminalBlock_Pheonix_MKDS1.5-4pol
+- ref: P1
+  value: 1x3 header
+  footprint: 1X3
+- ref: Q1
+  value: IRF8721PBF-1
+  footprint: SO-8
+- ref: Q2
+  value: IRF8721PBF-1
+  footprint: SO-8
+- ref: Q3
+  value: IRF8721PBF-1
+  footprint: SO-8
+- ref: R1
+  value: 68ohm
+  footprint: '0603'
+- ref: R2
+  value: 4,7K
+  footprint: '0603'
+- ref: R3
+  value: 4,7K
+  footprint: '0603'
+- ref: R4
+  value: 220ohm
+  footprint: '0603'
+- ref: R5
+  value: 220ohm
+  footprint: '0603'
+- ref: R6
+  value: 220ohm
+  footprint: '0603'
+- ref: R7
+  value: 2kohm
+  footprint: '0603'
+  pullup: SW1.2
+- ref: SW1
+  value: switch
+  footprint: SW_PUSH_6mm_h4.3mm
+- ref: U1
+  value: I2C_SENS_1
+  footprint: 1X4
+- ref: U2
+  value: I2C_SENS_1
+  footprint: 1X4
+- ref: U3
+  value: I2C_SENS_1
+  footprint: 1X4
+- ref: V1
+  value: LD1117S33TR
+  footprint: SOT-223
+nets:
+- name: +12V
+  pins: [C1.1, DC1.3, J1.1, V1.3]
+- name: +3V3
+  pins:
+  - C2.1
+  - ESP-12.3
+  - ESP-12.8
+  - R2.1
+  - R3.1
+  - R7.2
+  - U1.1
+  - U2.1
+  - U3.1
+  - V1.2
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - D1.1
+  - DC1.1
+  - DC1.2
+  - ESP-12.10
+  - ESP-12.9
+  - P1.1
+  - Q1.1
+  - Q1.2
+  - Q1.3
+  - Q2.1
+  - Q2.2
+  - Q2.3
+  - Q3.1
+  - Q3.2
+  - Q3.3
+  - SW1.1
+  - U1.2
+  - U2.2
+  - U3.2
+  - V1.1
+- name: Net-(D1-Pad2)
+  pins: [D1.2, R1.2]
+- name: Net-(ESP-12-Pad12)
+  pins: [ESP-12.12, R7.1, SW1.2]
+- name: Net-(ESP-12-Pad13)
+  pins: [ESP-12.13, R2.2, U1.4, U2.4, U3.4]
+- name: Net-(ESP-12-Pad14)
+  pins: [ESP-12.14, R3.2, U1.3, U2.3, U3.3]
+- name: Net-(ESP-12-Pad15)
+  pins: [ESP-12.15, P1.3]
+- name: Net-(ESP-12-Pad16)
+  pins: [ESP-12.16, P1.2]
+- name: Net-(ESP-12-Pad4)
+  pins: [ESP-12.4, R1.1]
+- name: Net-(ESP-12-Pad5)
+  pins: [ESP-12.5, R4.2]
+- name: Net-(ESP-12-Pad6)
+  pins: [ESP-12.6, R5.2]
+- name: Net-(ESP-12-Pad7)
+  pins: [ESP-12.7, R6.2]
+- name: Net-(J1-Pad2)
+  pins: [J1.2, Q1.5, Q1.6, Q1.7, Q1.8]
+- name: Net-(J1-Pad3)
+  pins: [J1.3, Q2.5, Q2.6, Q2.7, Q2.8]
+- name: Net-(J1-Pad4)
+  pins: [J1.4, Q3.5, Q3.6, Q3.7, Q3.8]
+- name: Net-(Q1-Pad4)
+  pins: [Q1.4, R6.1]
+- name: Net-(Q2-Pad4)
+  pins: [Q2.4, R5.1]
+- name: Net-(Q3-Pad4)
+  pins: [Q3.4, R4.1]
+positions:
+- ref: C1
+  x: 69.72
+  y: 83.44
+  rot: 180.0
+- ref: C2
+  x: 76.71
+  y: 77.72
+  rot: 180.0
+- ref: D1
+  x: 104.14
+  y: 100.58
+  rot: 180.0
+- ref: DC1
+  x: 67.69
+  y: 95.38
+  rot: 270.0
+- ref: ESP-12
+  x: 85.09
+  y: 80.01
+- ref: J1
+  x: 136.65
+  y: 98.93
+  rot: 90.0
+- ref: P1
+  x: 116.78
+  y: 99.06
+  rot: 270.0
+- ref: Q1
+  x: 125.73
+  y: 100.97
+  rot: 180.0
+- ref: Q2
+  x: 125.73
+  y: 91.44
+  rot: 180.0
+- ref: Q3
+  x: 125.73
+  y: 81.92
+  rot: 180.0
+- ref: R1
+  x: 96.52
+  y: 100.58
+- ref: R2
+  x: 112.01
+  y: 78.23
+  rot: 180.0
+- ref: R3
+  x: 117.09
+  y: 78.23
+  rot: 180.0
+- ref: R4
+  x: 108.46
+  y: 79.5
+  rot: 270.0
+- ref: R5
+  x: 108.46
+  y: 84.07
+  rot: 90.0
+- ref: R6
+  x: 108.46
+  y: 89.15
+  rot: 90.0
+- ref: R7
+  x: 80.77
+  y: 96.27
+  rot: 90.0
+- ref: SW1
+  x: 88.77
+  y: 105.03
+  rot: 180.0
+- ref: U1
+  x: 119.32
+  y: 93.98
+  rot: 270.0
+- ref: U2
+  x: 119.32
+  y: 88.9
+  rot: 270.0
+- ref: U3
+  x: 119.32
+  y: 83.82
+  rot: 270.0
+- ref: V1
+  x: 75.44
+  y: 83.57
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu]
+  keepout: true

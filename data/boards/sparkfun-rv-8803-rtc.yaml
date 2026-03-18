@@ -1,0 +1,208 @@
+name: SparkFun RV-8803 RTC
+slug: sparkfun-rv-8803-rtc
+source: sparkfun/SparkFun_Real_Time_Clock_Module_RV-8803
+format: eagle
+description: I2C real-time clock with battery backup circuit, alarm/interrupt
+tags: [rtc]
+key_ics: [RV-8803]
+outline:
+  width_mm: 25.4
+  height_mm: 25.4
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 7mil
+  min_drill: 15mil
+  min_via: 7mil
+components:
+- ref: BT2
+  value: BATTERY
+  footprint: BATTCON_12MM
+  prod_id: BATT-08044
+  description: Battery - Single Cell
+- ref: C1
+  value: 10nF
+  footprint: '0603'
+  prod_id: CAP-00867
+- ref: D1
+  value: BAS70-05
+  footprint: SOT-23-3
+  prod_id: DIO-14829
+- ref: D2
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-00819
+  description: Red SMD LED
+- ref: I2C
+  value: solder jumper (NC)
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+- ref: J1
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J2
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J3
+  value: 1x8 header
+  footprint: 1X08
+  prod_id: CONN-08438
+- ref: LED
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: R1
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: '!EVI'
+- ref: R2
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pullup: '!INT'
+- ref: R3
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+- ref: R4
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+- ref: R5
+  value: 4.7kohm
+  footprint: '0603'
+  prod_id: RES-07857
+- ref: R6
+  value: 100kohm
+  footprint: '0603'
+  prod_id: RES-07828
+  pulldown: CLKOE
+- ref: S1
+  value: tactile switch
+  footprint: TACTILE_SWITCH_SMD_5.2MM
+  prod_id: SWCH-14139
+  description: Momentary Switch (Pushbutton) - SPST
+- ref: U1
+  value: RV-8803
+  footprint: '3028'
+  prod_id: IC-14828
+  description: Micro Crystal RV-8803 - Temperature compensated RTC
+nets:
+- name: '!EVI'
+  pins: [J3.5, R1.1, S1.1, U1.EVI]
+- name: '!INT'
+  pins: [J3.6, R2.1, U1.!INT]
+- name: 3.3V
+  pins:
+  - D1.A
+  - I2C.2
+  - J1.2
+  - J2.2
+  - J3.2
+  - LED.2
+  - R1.2
+  - R2.2
+- name: CLKOE
+  pins: [J3.8, R6.2, U1.CLKOE]
+- name: CLKOUT
+  pins: [J3.7, U1.CLKOUT]
+- name: GND
+  pins:
+  - BT2.-
+  - C1.1
+  - D2.C
+  - J1.1
+  - J2.1
+  - J3.1
+  - R6.1
+  - S1.2
+  - U1.GND
+- name: N$1
+  pins: [C1.2, D1.C, U1.VDD]
+- name: N$2
+  pins: [D2.A, R3.1]
+- name: N$3
+  pins: [BT2.+, D1.A1]
+- name: N$5
+  pins: [LED.1, R3.2]
+- name: N$6
+  pins: [I2C.3, R5.1]
+- name: N$7
+  pins: [I2C.1, R4.1]
+- name: SCL
+  pins: [J1.4, J2.4, J3.4, R4.2, U1.SCL]
+- name: SDA
+  pins: [J1.3, J2.3, J3.3, R5.2, U1.SDA]
+positions:
+- ref: BT2
+  x: 12.7
+  y: 19.94
+- ref: C1
+  x: 16.51
+  y: 11.43
+  rot: 180.0
+- ref: D1
+  x: 8.89
+  y: 11.43
+  rot: 90.0
+- ref: D2
+  x: 1.27
+  y: 2.54
+  rot: 270.0
+- ref: I2C
+  x: 12.7
+  y: 6.99
+  rot: 180.0
+- ref: J1
+  x: 5.08
+  y: 12.7
+  rot: 270.0
+- ref: J2
+  x: 20.32
+  y: 12.7
+  rot: 90.0
+- ref: J3
+  x: 3.81
+  y: 1.27
+- ref: LED
+  x: 4.45
+  y: 8.26
+  rot: 180.0
+- ref: R1
+  x: 8.26
+  y: 8.26
+  rot: 90.0
+- ref: R2
+  x: 17.14
+  y: 8.26
+  rot: 90.0
+- ref: R3
+  x: 1.91
+  y: 8.26
+- ref: R4
+  x: 15.24
+  y: 8.26
+  rot: 90.0
+- ref: R5
+  x: 10.16
+  y: 8.26
+  rot: 90.0
+- ref: R6
+  x: 24.13
+  y: 3.81
+  rot: 270.0
+- ref: S1
+  x: 12.7
+  y: 19.05
+  rot: 180.0
+- ref: U1
+  x: 12.7
+  y: 11.43
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

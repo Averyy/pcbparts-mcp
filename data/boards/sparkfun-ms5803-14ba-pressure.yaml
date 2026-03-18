@@ -1,0 +1,124 @@
+name: SparkFun MS5803-14BA Pressure
+slug: sparkfun-ms5803-14ba-pressure
+source: sparkfun/MS5803-14BA_Breakout
+format: eagle
+description: Waterproof barometric pressure (gel-filled), SPI+I2C
+tags: [pressure-sensor]
+key_ics: [MS5803-14]
+outline:
+  width_mm: 20.32
+  height_mm: 17.78
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 8mil
+  min_drill: 15mil
+  min_via: 10mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  voltage: 25V
+  tolerance: 20%
+  decouples: U1
+- ref: JP1
+  value: 1x7 header
+  footprint: 1X07
+- ref: R1
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+  tolerance: 1%
+- ref: R2
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+  tolerance: 1%
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+  pullup: PS
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+  pullup: AD/CS
+- ref: SJ1
+  value: solder jumper
+  footprint: SJ-3
+- ref: SJ2
+  value: solder jumper
+  footprint: SJ-2
+- ref: SJ3
+  value: solder jumper
+  footprint: SJ-2
+- ref: U1
+  value: MS5803-14
+  footprint: MS5803
+  prod_id: IC-12111
+nets:
+- name: 3.3V
+  pins: [C1.1, JP1.2, R3.2, R4.2, SJ1.2, U1.VDD]
+- name: AD/CS
+  pins: [JP1.6, R4.1, SJ2.2, U1.AD/CS]
+- name: GND
+  pins: [C1.2, JP1.1, SJ2.1, SJ3.1, U1.GND]
+- name: N$1
+  pins: [R1.2, SJ1.3]
+- name: N$2
+  pins: [R2.2, SJ1.1]
+- name: PS
+  pins: [JP1.7, R3.1, SJ3.2, U1.PS]
+- name: SCL/SCLK
+  pins: [JP1.4, R1.1, U1.SCL/SCLK]
+- name: SDA/SDI
+  pins: [JP1.3, R2.1, U1.SDA/SDI]
+- name: SDO
+  pins: [JP1.5, U1.SDO]
+positions:
+- ref: C1
+  x: 7.37
+  y: 6.35
+  rot: 180.0
+- ref: JP1
+  x: 2.54
+  y: 1.27
+- ref: R1
+  x: 5.08
+  y: 12.95
+  rot: 180.0
+- ref: R2
+  x: 5.08
+  y: 11.18
+  rot: 180.0
+- ref: R3
+  x: 15.75
+  y: 5.59
+  rot: 180.0
+- ref: R4
+  x: 15.75
+  y: 9.65
+  rot: 180.0
+- ref: SJ1
+  x: 2.03
+  y: 12.19
+  rot: 90.0
+- ref: SJ2
+  x: 18.8
+  y: 9.65
+  rot: 180.0
+- ref: SJ3
+  x: 18.8
+  y: 5.59
+  rot: 180.0
+- ref: U1
+  x: 10.16
+  y: 11.43
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

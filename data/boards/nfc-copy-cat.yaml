@@ -1,0 +1,414 @@
+name: NFC Copy Cat
+slug: nfc-copy-cat
+source: ElectronicCats/NFC-Copy-Cat
+format: kicad7
+description: PN532 NFC reader + MagSpoof magnetic stripe emulation coil driver
+tags: [nfc-rfid]
+key_ics: [ATSAMD21E18A, AP2112K-3.3, MCP73831-2-OT, TC4424, GD25Q16C]
+outline:
+  width_mm: 40.4
+  height_mm: 43.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.15mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C2
+  value: 100nF
+  footprint: 0805
+  decouples: U3
+- ref: C3
+  value: 10uF
+  footprint: 0805
+- ref: C4
+  value: 1uF
+  footprint: 0805
+  decouples: U4
+- ref: C5
+  value: 1uF
+  footprint: 0805
+- ref: C6
+  value: 10uF
+  footprint: 0805
+- ref: C7
+  value: 100nF
+  footprint: 0805
+  decouples: U6
+- ref: C8
+  value: 10uF
+  footprint: 0805
+- ref: D1
+  value: MBR120
+  footprint: SOD-123
+- ref: D2
+  value: LED
+  footprint: 0805
+- ref: D3
+  value: LED
+  footprint: 0805
+- ref: D4
+  value: LED
+  footprint: 0805
+- ref: D5
+  value: LED
+  footprint: 0805
+- ref: D6
+  value: LED
+  footprint: 0805
+- ref: F1
+  value: PTC fuse
+  footprint: 0805
+- ref: J1
+  value: USB Micro-B
+  footprint: U254051N4BH806
+- ref: J2
+  value: 1x2 header
+  footprint: 1X2
+- ref: J3
+  value: 1x8 header
+  footprint: 1X8
+- ref: J4
+  value: 1x9 header
+  footprint: 1X9
+- ref: J5
+  value: 1x2 header
+  footprint: 1X2
+- ref: J6
+  value: SWD
+  footprint: 1X4
+- ref: R1
+  value: 1kohm
+  footprint: 0805
+  pullup: D2.2
+- ref: R2
+  value: 2.2kohm
+  footprint: 0805
+  pulldown: U4.5
+- ref: R3
+  value: 10kohm
+  footprint: 0805
+  pullup: /SS1
+- ref: R4
+  value: 330ohm
+  footprint: 0805
+- ref: R5
+  value: 330ohm
+  footprint: 0805
+- ref: R6
+  value: 330ohm
+  footprint: 0805
+- ref: R7
+  value: 330ohm
+  footprint: 0805
+- ref: SW1
+  value: ON/OFF
+  footprint: Micro_interruptor_SPDT
+- ref: SW2
+  value: RST
+  footprint: SW_SPST_TL3342
+- ref: SW3
+  value: Magspoof
+  footprint: SW_SPST_TL3342
+- ref: SW4
+  value: NFC
+  footprint: SW_SPST_TL3342
+- ref: U1
+  value: AP2112K-3.3
+  footprint: SOT-23-5
+- ref: U2
+  value: ATSAMD21E18A
+  footprint: QFN-32-1EP
+- ref: U3
+  value: ATSAMD21E18A
+  footprint: TQFP-32
+- ref: U4
+  value: MCP73831-2-OT
+  footprint: SOT-23-5
+- ref: U5
+  value: TC4424
+  footprint: SOIC-8
+- ref: U6
+  value: GD25Q16C
+  footprint: SOIC-8
+nets:
+- name: +3V3
+  pins:
+  - C1.1
+  - C2.1
+  - C7.1
+  - J3.5
+  - J4.9
+  - J6.4
+  - R3.1
+  - U1.5
+  - U2.30
+  - U2.9
+  - U3.30
+  - U3.9
+  - U6.3
+  - U6.7
+  - U6.8
+- name: +BATT
+  pins: [C6.1, C8.1, D1.2, J2.2, U4.3, U5.6]
+- name: /10(SS)
+  pins: [J3.4, J4.5, U2.19, U3.19]
+- name: /11(MOSI)
+  pins: [J3.3, J4.6, U2.17, U3.17]
+- name: /12(MISO)
+  pins: [J3.2, J4.7, U2.20, U3.20]
+- name: /13(SCK)
+  pins: [J3.1, J4.8, U2.18, U3.18]
+- name: /D+
+  pins: [J1.3, U2.24, U3.24]
+- name: /D-
+  pins: [J1.2, U2.23, U3.23]
+- name: /IN_A
+  pins: [U2.7, U3.7, U5.2]
+- name: /IN_B
+  pins: [U2.8, U3.8, U5.4]
+- name: /IRQ
+  pins: [J3.7, J4.3, U2.3, U3.3]
+- name: /LED1
+  pins: [D4.2, U2.15, U3.15]
+- name: /LED2
+  pins: [D5.2, U2.6, U3.6]
+- name: /LED3
+  pins: [D6.2, U2.5, U3.5]
+- name: /MISO1
+  pins: [U2.14, U3.14, U6.2]
+- name: /MOSI1
+  pins: [U2.11, U3.11, U6.5]
+- name: /OUTA
+  pins: [J5.1, U5.7]
+- name: /OUTB
+  pins: [J5.2, U5.5]
+- name: /RESET
+  pins: [SW2.2, U2.26, U3.26]
+- name: /SCK1
+  pins: [U2.12, U3.12, U6.6]
+- name: /SS1
+  pins: [R3.2, U2.13, U3.13, U6.1]
+- name: /SW1
+  pins: [SW3.2, U2.25, U3.25]
+- name: /SW2
+  pins: [SW4.2, U2.27, U3.27]
+- name: /SWCLK
+  pins: [J6.2, U2.31, U3.31]
+- name: /SWDIO
+  pins: [J6.3, U2.32, U3.32]
+- name: /VDDCORE
+  pins: [C5.1, U2.29, U3.29]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - J1.5
+  - J1.6
+  - J2.1
+  - J3.6
+  - J4.2
+  - J6.1
+  - R2.1
+  - R4.2
+  - R5.2
+  - R6.2
+  - R7.2
+  - SW2.1
+  - SW3.1
+  - SW4.1
+  - U1.2
+  - U2.10
+  - U2.28
+  - U3.10
+  - U3.28
+  - U4.2
+  - U5.3
+  - U6.4
+- name: Net-(C3-Pad1)
+  pins: [C3.1, SW1.1, U1.1, U1.3]
+- name: Net-(D2-Pad1)
+  pins: [D2.1, U4.1]
+- name: Net-(D2-Pad2)
+  pins: [D2.2, R1.2]
+- name: Net-(D3-Pad1)
+  pins: [D3.1, R4.1]
+- name: Net-(D4-Pad1)
+  pins: [D4.1, R5.1]
+- name: Net-(D5-Pad1)
+  pins: [D5.1, R6.1]
+- name: Net-(D6-Pad1)
+  pins: [D6.1, R7.1]
+- name: Net-(F1-Pad2)
+  pins: [F1.2, J1.1]
+- name: Net-(R2-Pad2)
+  pins: [R2.2, U4.5]
+- name: VCC
+  pins:
+  - C4.1
+  - D1.1
+  - D3.2
+  - F1.1
+  - R1.1
+  - SW1.2
+  - U4.4
+positions:
+- ref: C1
+  x: 139.43
+  y: 60.98
+  rot: -90.0
+- ref: C2
+  x: 153.72
+  y: 83.42
+  rot: -90.0
+- ref: C3
+  x: 132.59
+  y: 60.99
+  rot: 90.0
+- ref: C4
+  x: 136.42
+  y: 70.74
+  rot: -90.0
+- ref: C5
+  x: 151.83
+  y: 83.44
+  rot: -90.0
+- ref: C6
+  x: 130.79
+  y: 87.09
+- ref: C7
+  x: 147.81
+  y: 59.25
+  rot: 180.0
+- ref: C8
+  x: 153.06
+  y: 89.76
+  rot: 90.0
+- ref: D1
+  x: 134.3
+  y: 71.23
+  rot: -90.0
+- ref: D2
+  x: 131.16
+  y: 73.7
+- ref: D3
+  x: 141.77
+  y: 50.53
+  rot: 180.0
+- ref: D4
+  x: 143.49
+  y: 62.79
+  rot: -90.0
+  side: back
+- ref: D5
+  x: 143.37
+  y: 70.77
+  rot: -90.0
+  side: back
+- ref: D6
+  x: 143.34
+  y: 78.06
+  rot: -90.0
+  side: back
+- ref: F1
+  x: 138.36
+  y: 70.74
+  rot: -90.0
+- ref: J1
+  x: 144.42
+  y: 88.24
+- ref: J2
+  x: 133.4
+  y: 89.92
+  rot: -90.0
+- ref: J3
+  x: 162.17
+  y: 64.83
+- ref: J4
+  x: 165.84
+  y: 82.6
+  rot: 180.0
+- ref: J5
+  x: 163.86
+  y: 87.52
+- ref: J6
+  x: 130.05
+  y: 77.98
+  rot: 180.0
+  side: back
+- ref: R1
+  x: 131.24
+  y: 75.62
+- ref: R2
+  x: 131.25
+  y: 67.86
+  rot: 180.0
+- ref: R3
+  x: 147.81
+  y: 61.26
+- ref: R4
+  x: 145.36
+  y: 50.53
+- ref: R5
+  x: 142.56
+  y: 61.86
+  rot: 180.0
+- ref: R6
+  x: 142.41
+  y: 69.51
+  rot: 180.0
+- ref: R7
+  x: 142.44
+  y: 77.16
+  rot: 180.0
+- ref: SW1
+  x: 138.65
+  y: 49.55
+  rot: -90.0
+- ref: SW2
+  x: 152.7
+  y: 77.24
+  side: back
+- ref: SW3
+  x: 152.64
+  y: 69.83
+  side: back
+- ref: SW4
+  x: 152.67
+  y: 62.64
+  side: back
+- ref: U1
+  x: 136.01
+  y: 60.93
+- ref: U2
+  x: 152.07
+  y: 75.99
+  rot: 180.0
+- ref: U3
+  x: 152.07
+  y: 76.02
+  rot: 180.0
+- ref: U4
+  x: 131.23
+  y: 70.76
+  rot: 90.0
+- ref: U5
+  x: 157.92
+  y: 88.92
+- ref: U6
+  x: 152.91
+  y: 65.17
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

@@ -1,0 +1,312 @@
+name: Radar Speed Sign Controller
+slug: radar-speed-sign-controller
+source: CoolNamesAllTaken/radar-speed-sign
+format: kicad7
+description: 'Doppler speed display controller: Pi Pico, 7-segment LED display driving'
+tags: [rf-sdr]
+key_ics: [LM2596S-ADJ]
+outline:
+  width_mm: 68.0
+  height_mm: 79.0
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: 0805
+  mpn: CC0805KRX7R9BB104
+  decouples: U3
+- ref: C2
+  value: 100nF
+  footprint: 0805
+  mpn: CC0805KRX7R9BB104
+  decouples: U2
+- ref: C3
+  value: 680uF
+  footprint: CP_Radial_D10.0mm_P5.00mm
+  mpn: 35PX680MEFC10X16
+  voltage: 25V
+- ref: C4
+  value: 220uF
+  footprint: CP_Radial_D6.3mm_P2.50mm
+  mpn: 25YXJ220M6.3X11
+  voltage: 25V
+- ref: D1
+  value: 40V 3A
+  footprint: SMA
+  mpn: SK34A
+- ref: D2
+  value: 40V 3A
+  footprint: SMA
+  mpn: SK34A
+- ref: J1
+  value: 2x8 header
+  footprint: 2X8
+  mpn: PZ254R-12-16P
+- ref: J2
+  value: 2x8 header
+  footprint: 2X8
+  mpn: PZ254R-12-16P
+- ref: J3
+  value: 5.08mm Terminal Block 01x02
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08
+  mpn: WJ500V-5.08-2P
+- ref: J4
+  value: 1x3 header
+  footprint: 1X3
+  mpn: PZ254R-11-03P
+- ref: J5
+  value: 2.54mm Terminal Block 01x04
+  footprint: TerminalBlock_Phoenix_MPT-0,5-4-2.54
+  mpn: XY308-2.54-4P
+- ref: L1
+  value: 47uH
+  footprint: L_SunItechTech_SLO1040H470MTT
+  mpn: SLO1040H470MTT
+  current: 3A
+- ref: R1
+  value: 10kohm
+  footprint: 0805
+  mpn: RC0805FR-0710KL
+  pulldown: /DIGITS_SPI_CS
+- ref: R2
+  value: 10kohm
+  footprint: 0805
+  mpn: RC0805FR-0710KL
+  pulldown: /DIGITS_RCLK
+- ref: R3
+  value: 10kohm
+  footprint: 0805
+  mpn: RC0805FR-0710KL
+  pullup: /nDIGITS_OE
+- ref: R4
+  value: 30kohm
+  footprint: 0805
+  mpn: RC0805FR-0730KL
+  tolerance: 1%
+  pullup: U5.FB
+- ref: R5
+  value: 10kohm
+  footprint: 0805
+  mpn: RC0805FR-0710KL
+  tolerance: 1%
+  pulldown: U5.FB
+- ref: U1
+  value: Pico_H
+  footprint: RPi_Pico_TH_Socket
+  mpn: SC0917
+- ref: U2
+  value: 74HC595
+  footprint: SOIC-16
+  mpn: 74HC595D,118
+- ref: U3
+  value: 74HC595
+  footprint: SOIC-16
+  mpn: 74HC595D,118
+- ref: U5
+  value: LM2596S-ADJ
+  footprint: TO-263
+  mpn: LM2596S-ADJ
+nets:
+- name: +12V
+  pins: [D1.A, J3.Pin_1]
+- name: +3V3
+  pins: [R3.1, U1.3V3]
+- name: +5V
+  pins:
+  - C1.1
+  - C2.1
+  - C4.1
+  - J4.Pin_2
+  - J5.Pin_1
+  - J5.Pin_2
+  - L1.2
+  - R4.1
+  - U1.VSYS
+  - U2.VCC
+  - U3.VCC
+- name: /DIGITS_RCLK
+  pins: [R2.1, U1.GPIO16, U2.RCLK, U3.RCLK]
+- name: /DIGITS_SPI_CS
+  pins: [R1.1, U1.GPIO17, U2.nSRCLR, U3.nSRCLR]
+- name: /DIGITS_SPI_MOSI
+  pins: [U1.GPIO19, U2.SER]
+- name: /DIGITS_SPI_SCK
+  pins: [U1.GPIO18, U2.SRCLK, U3.SRCLK]
+- name: /DOPPLER_RADAR_IN
+  pins: [J4.Pin_3, U1.GPIO28_ADC2]
+- name: /SEG_1A
+  pins: [J1.Pin_16, U2.QA]
+- name: /SEG_1B
+  pins: [J1.Pin_14, U2.QB]
+- name: /SEG_1C
+  pins: [J1.Pin_12, U2.QC]
+- name: /SEG_1D
+  pins: [J1.Pin_10, U2.QD]
+- name: /SEG_1E
+  pins: [J1.Pin_8, U2.QE]
+- name: /SEG_1F
+  pins: [J1.Pin_6, U2.QF]
+- name: /SEG_1G
+  pins: [J1.Pin_4, U2.QG]
+- name: /SEG_1H
+  pins: [J1.Pin_2, U2.QH]
+- name: /SEG_2A
+  pins: [J2.Pin_16, U3.QA]
+- name: /SEG_2B
+  pins: [J2.Pin_14, U3.QB]
+- name: /SEG_2C
+  pins: [J2.Pin_12, U3.QC]
+- name: /SEG_2D
+  pins: [J2.Pin_10, U3.QD]
+- name: /SEG_2E
+  pins: [J2.Pin_8, U3.QE]
+- name: /SEG_2F
+  pins: [J2.Pin_6, U3.QF]
+- name: /SEG_2G
+  pins: [J2.Pin_4, U3.QG]
+- name: /SEG_2H
+  pins: [J2.Pin_2, U3.QH]
+- name: /nDIGITS_OE
+  pins: [R3.2, U1.GPIO21, U2.nOE, U3.nOE]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - D2.A
+  - J1.Pin_1
+  - J1.Pin_11
+  - J1.Pin_13
+  - J1.Pin_15
+  - J1.Pin_3
+  - J1.Pin_5
+  - J1.Pin_7
+  - J1.Pin_9
+  - J2.Pin_1
+  - J2.Pin_11
+  - J2.Pin_13
+  - J2.Pin_15
+  - J2.Pin_3
+  - J2.Pin_5
+  - J2.Pin_7
+  - J2.Pin_9
+  - J3.Pin_2
+  - J4.Pin_1
+  - J5.Pin_3
+  - J5.Pin_4
+  - R1.2
+  - R2.2
+  - R5.2
+  - U1.AGND
+  - U1.GND@13
+  - U1.GND@18
+  - U1.GND@23
+  - U1.GND@28
+  - U1.GND@3
+  - U1.GND@38
+  - U1.GND@8
+  - U2.GND
+  - U3.GND
+  - U5.GND@3
+  - U5.nON/OFF
+- name: Net-(D1-K)
+  pins: [C3.1, D1.K, U5.VIN]
+- name: Net-(D2-K)
+  pins: [D2.K, L1.1, U5.OUT]
+- name: Net-(U2-QH')
+  pins: [U2.QH', U3.SER]
+- name: Net-(U5-FB)
+  pins: [R4.2, R5.1, U5.FB]
+positions:
+- ref: C1
+  x: 54.46
+  y: 85.0
+  rot: 180.0
+- ref: C2
+  x: 54.5
+  y: 101.5
+  rot: 180.0
+- ref: C3
+  x: 62.7
+  y: 78.84
+  rot: -90.0
+- ref: C4
+  x: 80.69
+  y: 69.45
+  rot: 90.0
+- ref: D1
+  x: 53.0
+  y: 78.0
+  rot: 180.0
+- ref: D2
+  x: 73.7
+  y: 67.45
+  rot: 90.0
+- ref: J1
+  x: 37.0
+  y: 122.0
+  rot: 180.0
+- ref: J2
+  x: 37.0
+  y: 97.78
+  rot: 180.0
+- ref: J3
+  x: 36.0
+  y: 66.92
+  rot: -90.0
+- ref: J4
+  x: 34.5
+  y: 134.08
+  rot: 180.0
+- ref: J5
+  x: 94.0
+  y: 78.5
+  rot: 90.0
+- ref: L1
+  x: 76.69
+  y: 77.45
+- ref: R1
+  x: 59.41
+  y: 112.5
+- ref: R2
+  x: 59.5
+  y: 109.5
+- ref: R3
+  x: 59.5
+  y: 107.5
+  rot: 180.0
+- ref: R4
+  x: 68.5
+  y: 69.0
+  rot: 90.0
+- ref: R5
+  x: 69.69
+  y: 65.45
+  rot: 90.0
+- ref: U1
+  x: 76.89
+  y: 112.11
+  rot: 180.0
+- ref: U2
+  x: 53.0
+  y: 108.5
+- ref: U3
+  x: 52.94
+  y: 92.0
+- ref: U5
+  x: 56.82
+  y: 69.45
+  rot: 180.0
+copper_pours:
+- net: +12V
+  layers: [F.Cu]
+- net: +5V
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]

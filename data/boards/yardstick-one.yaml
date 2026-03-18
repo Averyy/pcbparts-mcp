@@ -1,0 +1,1009 @@
+name: Yardstick One
+slug: yardstick-one
+source: greatscottgadgets/yardstick
+format: kicad7
+description: Sub-GHz RF (CC1111 transceiver), 300-928 MHz matching
+tags: [sub-ghz]
+key_ics: [CC1111]
+outline:
+  width_mm: 61.47
+  height_mm: 18.69
+design_rules:
+  layers: 4
+  min_trace: 0.203mm
+  min_clearance: 0.152mm
+  min_drill: 0.254mm
+  min_via: 0.686mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107B7105KA-T
+  description: CAP CER 1UF 10V 10% X7R 0603
+- ref: C10
+  value: 27pF
+  footprint: '0402'
+  manufacturer: KEMET
+  mpn: C0402C270J5GACAUTO
+  description: CAP CER 27PF 50V C0G/NP0 0402
+- ref: C11
+  value: 27pF
+  footprint: '0402'
+  manufacturer: KEMET
+  mpn: C0402C270J5GACAUTO
+  description: CAP CER 27PF 50V C0G/NP0 0402
+- ref: C12
+  value: 47pF
+  footprint: '0603'
+  manufacturer: Murata
+  mpn: GRM1885C1H470JA01D
+  description: CAP CER 47PF 50V 5% NP0 0603
+- ref: C13
+  value: 47pF
+  footprint: '0603'
+  manufacturer: Murata
+  mpn: GRM1885C1H470JA01D
+  description: CAP CER 47PF 50V 5% NP0 0603
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R61A104KA01D
+  description: CAP CER 0.1UF 10V 10% X5R 0402
+  decouples: U1
+- ref: C15
+  value: 1uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107B7105KA-T
+  description: CAP CER 1UF 10V 10% X7R 0603
+  decouples: U2
+- ref: C16
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: JMK107BJ475KA-T
+  description: CAP CER 4.7UF 6.3V 10% X5R 0603
+  decouples: U2
+- ref: C17
+  value: 1uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107B7105KA-T
+  description: CAP CER 1UF 10V 10% X7R 0603
+  decouples: U3
+- ref: C18
+  value: 22nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: EMK105B7223KV-F
+  description: CAP CER 0.022UF 16V 10% X7R 0402
+- ref: C19
+  value: 220pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX7R9BB221
+  description: CAP CER 220PF 50V 10% X7R 0402
+- ref: C2
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R61A104KA01D
+  description: CAP CER 0.1UF 10V 10% X5R 0402
+  decouples: U1
+- ref: C20
+  value: 220pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX7R9BB221
+  description: CAP CER 220PF 50V 10% X7R 0402
+- ref: C21
+  value: 220pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX7R9BB221
+  description: CAP CER 220PF 50V 10% X7R 0402
+- ref: C22
+  value: 220pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX7R9BB221
+  description: CAP CER 220PF 50V 10% X7R 0402
+- ref: C23
+  value: 220pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX7R9BB221
+  description: CAP CER 220PF 50V 10% X7R 0402
+- ref: C24
+  value: 1uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107B7105KA-T
+  description: CAP CER 1UF 10V 10% X7R 0603
+  decouples: U8
+- ref: C25
+  value: 22nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: EMK105B7223KV-F
+  description: CAP CER 0.022UF 16V 10% X7R 0402
+- ref: C26
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R71E103KA01D
+  description: CAP CER 10000PF 25V 10% X7R 0402
+- ref: C27
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05C470JB5NNNC
+  description: CAP CER 47PF 50V C0G/NP0 0402
+- ref: C28
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05C470JB5NNNC
+  description: CAP CER 47PF 50V C0G/NP0 0402
+- ref: C29
+  value: 220pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX7R9BB221
+  description: CAP CER 220PF 50V 10% X7R 0402
+- ref: C3
+  value: 220pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX7R9BB221
+  description: CAP CER 220PF 50V 10% X7R 0402
+  decouples: U1
+- ref: C30
+  value: 1uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107B7105KA-T
+  description: CAP CER 1UF 10V 10% X7R 0603
+- ref: C31
+  value: 220pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX7R9BB221
+  description: CAP CER 220PF 50V 10% X7R 0402
+- ref: C32
+  value: 100pF
+  footprint: '0402'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05C470JB5NNNC
+  description: CAP CER 47PF 50V C0G/NP0 0402
+- ref: C33
+  value: 47pF
+  footprint: '0402'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05C470JB5NNNC
+  description: CAP CER 47PF 50V C0G/NP0 0402
+- ref: C34
+  value: 47pF
+  footprint: '0402'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05C470JB5NNNC
+  description: CAP CER 47PF 50V C0G/NP0 0402
+- ref: C35
+  value: 47pF
+  footprint: '0402'
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05C470JB5NNNC
+  description: CAP CER 47PF 50V C0G/NP0 0402
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R61A104KA01D
+  description: CAP CER 0.1UF 10V 10% X5R 0402
+  decouples: U1
+- ref: C5
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R71E103KA01D
+  description: CAP CER 10000PF 25V 10% X7R 0402
+  decouples: U1
+- ref: C6
+  value: 220pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX7R9BB221
+  description: CAP CER 220PF 50V 10% X7R 0402
+- ref: C7
+  value: 220pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: CC0402KRX7R9BB221
+  description: CAP CER 220PF 50V 10% X7R 0402
+- ref: C8
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R71E103KA01D
+  description: CAP CER 10000PF 25V 10% X7R 0402
+  decouples: U1
+- ref: C9
+  value: 2.2pF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: UMK105CG2R2CV-F
+  description: CAP CER 2.2PF 50V NP0 0402
+  decouples: U1
+- ref: D1
+  value: LED1
+  footprint: '0603'
+  manufacturer: Kingbright
+  mpn: APT1608SGC
+- ref: D2
+  value: LED2
+  footprint: '0603'
+  manufacturer: Kingbright
+  mpn: APT1608EC
+- ref: D3
+  value: LED3
+  footprint: '0603'
+  manufacturer: Kingbright
+  mpn: APT1608YC
+- ref: D4
+  value: TVS_DIODE
+  footprint: '0402'
+  manufacturer: KYOCERA AVX
+  mpn: GG0402060R3C2P
+  description: TVS DIODE 6.5VWM 15.5VC 0402
+- ref: FB1
+  value: FILTER
+  footprint: 0805
+  manufacturer: Murata
+  mpn: BLM21PG221SN1D
+  description: FERRITE CHIP 220 OHM 2000MA 0805
+- ref: J1
+  value: USB-DEVICE
+  footprint: '1001'
+  manufacturer: CNC Tech
+  mpn: 1001-010-01001
+  description: CONN USB A TYPE ULTRA FLAT T/H
+- ref: L1
+  value: 1uH
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: BRL1608T1R0M
+  description: INDUCTR 1.0UH 650MA 20% 0603 SMD
+- ref: L2
+  value: 1uH
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: BRL1608T1R0M
+  description: INDUCTR 1.0UH 650MA 20% 0603 SMD
+- ref: P1
+  value: 2x7 header
+  footprint: HEADER-2x7
+- ref: P2
+  value: SMA-EDGE
+  footprint: SMA-EDGE
+  manufacturer: Linx Technologies
+  mpn: CONSMA003.062
+  description: CONN SMA JACK 50 OHM EDGE MNT
+- ref: P3
+  value: RESET_N
+  footprint: TestPoint_Pad_D2.5mm
+- ref: P4
+  value: DD
+  footprint: TestPoint_Pad_D2.5mm
+- ref: P5
+  value: DC
+  footprint: TestPoint_Pad_D2.5mm
+- ref: P6
+  value: 3V3
+  footprint: TestPoint_Pad_D2.5mm
+- ref: P7
+  value: GND
+  footprint: TestPoint_Pad_D2.5mm
+- ref: Q1
+  value: MOSFET
+  footprint: SOT-23
+  manufacturer: onsemi
+  mpn: BSS84
+- ref: R1
+  value: 4.7kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT4K70
+  description: RES 4.7K OHM 1/16W 5% 0402 SMD
+  pullup: U3.D1
+- ref: R10
+  value: 33ohm
+  footprint: '0603'
+  manufacturer: Rohm
+  mpn: MCR03ERTF33R0
+  description: RES 33.0 OHM 1/10W 1% 0603 SMD
+- ref: R11
+  value: 1.5kohm
+  footprint: '0603'
+  manufacturer: Rohm
+  mpn: MCR03ERTF1501
+  description: RES 1.50K OHM 1/10W 1% 0603 SMD
+- ref: R12
+  value: 330ohm
+  footprint: '0603'
+  manufacturer: Stackpole
+  mpn: RMCF0603JT330R
+  description: RES 330 OHM 1/10W 5% 0603 SMD
+- ref: R13
+  value: net tie
+  footprint: '0603'
+- ref: R14
+  value: 1kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT1K00
+  description: RES 1K OHM 1/16W 5% 0402 SMD
+  pulldown: /TX_AMP_EN
+- ref: R15
+  value: 4.7kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT4K70
+  description: RES 4.7K OHM 1/16W 5% 0402 SMD
+  pullup: /DC
+- ref: R16
+  value: net tie
+  footprint: '0603'
+- ref: R17
+  value: 4.7kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT4K70
+  description: RES 4.7K OHM 1/16W 5% 0402 SMD
+  pullup: /ANT_BIAS_EN_N
+- ref: R2
+  value: 4.7kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT4K70
+  description: RES 4.7K OHM 1/16W 5% 0402 SMD
+  pullup: /RESET_N
+- ref: R3
+  value: 1kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT1K00
+  description: RES 1K OHM 1/16W 5% 0402 SMD
+  pulldown: /RX_AMP_EN
+- ref: R4
+  value: 56kohm
+  footprint: '0402'
+  manufacturer: Rohm
+  mpn: MCR01MRTF5602
+  description: RES 56.0K OHM 1/16W 1% 0402 SMD
+  pulldown: U1.RBIAS
+- ref: R5
+  value: 330ohm
+  footprint: '0603'
+  manufacturer: Stackpole
+  mpn: RMCF0603JT330R
+  description: RES 330 OHM 1/10W 5% 0603 SMD
+- ref: R6
+  value: 4.7kohm
+  footprint: '0402'
+  manufacturer: Stackpole
+  mpn: RMCF0402JT4K70
+  description: RES 4.7K OHM 1/16W 5% 0402 SMD
+  pullup: U8.D1
+- ref: R7
+  value: net tie
+  footprint: '0603'
+- ref: R8
+  value: 1.5kohm
+  footprint: '0603'
+  manufacturer: Rohm
+  mpn: MCR03ERTF1501
+  description: RES 1.50K OHM 1/10W 1% 0603 SMD
+- ref: R9
+  value: 33ohm
+  footprint: '0603'
+  manufacturer: Rohm
+  mpn: MCR03ERTF33R0
+  description: RES 33.0 OHM 1/10W 1% 0603 SMD
+- ref: T1
+  value: BALUN
+  footprint: B0310J50100AHF
+  manufacturer: Anaren
+  mpn: B0310J50100AHF
+  description: Ultra Low Profile 0805 Balun 50 to 100 ohm Balanced
+- ref: U1
+  value: CC1111
+  footprint: CC1111-QFN36
+  manufacturer: Texas Instruments
+  mpn: CC1111F32RSPR
+  description: IC SUB1GHZ W/MCU USB 32KB 36-QFN
+- ref: U2
+  value: AP7313
+  footprint: SOT-23
+  manufacturer: Diodes Inc.
+  mpn: AP7313-33SAG-7
+  description: IC REG LDO 3.3V .15A SOT23
+- ref: U3
+  value: SSM6L36FE
+  footprint: SOT-563
+  manufacturer: Toshiba
+  mpn: SSM6L36FE,LM
+- ref: U4
+  value: RX amplifier
+  footprint: SOT343-WP
+  manufacturer: Infineon
+  mpn: BGA 420 H6327
+  description: IC AMP SI-MMIC 6V 15MA SOT343
+- ref: U5
+  value: SKY13251
+  footprint: QFN-8-1EP
+  manufacturer: Skyworks Solutions Inc.
+  mpn: SKY13251-349LF
+  description: IC RF SWITCH SP3T 3GHZ 8QFN
+- ref: U6
+  value: SKY13251
+  footprint: QFN-8-1EP
+  manufacturer: Skyworks Solutions Inc.
+  mpn: SKY13251-349LF
+  description: IC RF SWITCH SP3T 3GHZ 8QFN
+- ref: U7
+  value: TX amplifier
+  footprint: SOT343-WP
+  manufacturer: RFMD
+  mpn: SPF5043Z
+  description: IC MMIC AMP LN 50-4000MHZ SOT343
+- ref: U8
+  value: SSM6L36FE
+  footprint: SOT-563
+  manufacturer: Toshiba
+  mpn: SSM6L36FE,LM
+- ref: U9
+  value: LPF
+  footprint: 0915LP15B026
+  manufacturer: Johanson Technology
+  mpn: 0915LP15B026
+  description: FILTER LOWPASS GSM/CDMA 915MHZ
+- ref: X1
+  value: 48 MHz clock
+  footprint: SMD3225
+  manufacturer: Raltron Electronics
+  mpn: RH100-48.000-18-F-3030-TR
+  description: "48 MHz \xB130ppm Crystal 18pF 50 Ohms 4-SMD, No Lead"
+nets:
+- name: +3V3
+  pins:
+  - C14.2
+  - C16.1
+  - C2.1
+  - C3.2
+  - C30.1
+  - C4.2
+  - C5.2
+  - C8.2
+  - C9.2
+  - P1.Pin_2
+  - P1.Pin_4
+  - Q1.S
+  - R13.1@1
+  - R15.1
+  - R17.2
+  - R2.2
+  - U1.AVDD@19
+  - U1.AVDD@22
+  - U1.AVDD@25
+  - U1.AVDD@26
+  - U1.AVDD_DREG
+  - U1.DVDD@12
+  - U1.DVDD@2
+  - U1.GUARD
+  - U2.OUT
+- name: /AMP_BYPASS_EN
+  pins: [C27.2, C35.2, U1.P2_3, U5.V1, U6.V1]
+- name: /ANT_BIAS_EN_N
+  pins: [Q1.G, R16.1@1, R17.1]
+- name: /DC
+  pins: [P1.Pin_7, P5.1, R15.2, U1.P2_2]
+- name: /DD
+  pins: [P1.Pin_1, P4.1, U1.P2_1]
+- name: /P0_0
+  pins: [P1.Pin_12, R16.2@2, U1.P0_0]
+- name: /P0_1
+  pins: [P1.Pin_11, U1.P0_1]
+- name: /P0_2
+  pins: [P1.Pin_10, U1.P0_2]
+- name: /P0_3
+  pins: [P1.Pin_8, U1.P0_3]
+- name: /P0_4
+  pins: [P1.Pin_6, U1.P0_4]
+- name: /P0_5
+  pins: [P1.Pin_3, U1.P0_5]
+- name: /P1_1
+  pins: [R5.2, U1.P1_1]
+- name: /P1_2
+  pins: [R11.2, U1.P1_2]
+- name: /P1_3
+  pins: [R12.2, U1.P1_3]
+- name: /P1_6
+  pins: [P1.Pin_14, U1.P1_6]
+- name: /P1_7
+  pins: [P1.Pin_13, U1.P1_7]
+- name: /RESET_N
+  pins: [P1.Pin_5, P3.1, R2.1, U1.RESET_N]
+- name: /RX_AMP_EN
+  pins:
+  - C28.2
+  - C33.2
+  - R3.1
+  - U1.P2_4
+  - U3.G1
+  - U5.V3
+  - U6.V2
+- name: /TX_AMP_EN
+  pins:
+  - C32.2
+  - C34.2
+  - R14.1
+  - U1.P2_0
+  - U5.V2
+  - U6.V3
+  - U8.G1
+- name: D1
+  pins: [R1.2, U3.D1, U3.G2]
+- name: D1_2
+  pins: [R6.2, U8.D1, U8.G2]
+- name: D2
+  pins: [C18.1, C29.1, U3.D2, U4.VDD]
+- name: D2_2
+  pins: [C25.1, R7.1@1, U8.D2]
+- name: DCOUPL
+  pins: [C1.2, U1.DCOUPL]
+- name: DM
+  pins: [C13.2, R10.2, U1.DM]
+- name: DP
+  pins: [C12.2, R9.2, U1.DP]
+- name: GND
+  pins:
+  - C1.1
+  - C10.2
+  - C11.2
+  - C12.1
+  - C13.1
+  - C14.1
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C2.2
+  - C24.2
+  - C25.2
+  - C26.2
+  - C27.1
+  - C28.1
+  - C29.2
+  - C3.1
+  - C30.2
+  - C32.1
+  - C33.1
+  - C34.1
+  - C35.1
+  - C4.1
+  - C5.1
+  - C7.2
+  - C8.1
+  - C9.1
+  - D1.K
+  - D2.K
+  - D3.K
+  - D4.A
+  - J1.GND
+  - P1.Pin_9
+  - P2.GND@2
+  - P7.1
+  - R14.2
+  - R3.2
+  - R4.2
+  - U1.AGND@0
+  - U2.GND
+  - U3.S1
+  - U4.GND
+  - U5.GND@0
+  - U6.GND@0
+  - U7.GND@2
+  - U7.GND@4
+  - U8.S1
+  - U9.GND@1
+  - U9.GND@3
+  - U9.GND@5
+  - U9.GND@7
+  - X1.2
+  - X1.4
+- name: IN
+  pins: [C19.1, U4.IN]
+- name: IN_2
+  pins: [C22.2, U7.IN]
+- name: IN_3
+  pins: [C21.1, U9.IN]
+- name: Net-(C21-Pad2)
+  pins: [C21.2, D4.K, L2.2, P2.RF]
+- name: Net-(C26-Pad1)
+  pins: [C26.1, L1.2, R7.2@2]
+- name: Net-(D1-Pad2)
+  pins: [D1.A, R5.1]
+- name: Net-(D2-Pad2)
+  pins: [D2.A, R11.1]
+- name: Net-(D3-Pad2)
+  pins: [D3.A, R12.1]
+- name: Net-(FB1-Pad2)
+  pins: [FB1.2, J1.VBUS]
+- name: Net-(J1-Pad2)
+  pins: [J1.D-, R10.1]
+- name: Net-(J1-Pad3)
+  pins: [J1.D+, R8.1, R9.1]
+- name: Net-(L2-Pad1)
+  pins: [L2.1, Q1.D]
+- name: Net-(P6-Pad1)
+  pins: [P6.1, R13.2@2]
+- name: OUT
+  pins: [C20.2, U4.OUT]
+- name: OUT_2
+  pins: [C23.1, L1.1, U7.OUT]
+- name: P1_0
+  pins: [R8.2, U1.P1_0]
+- name: RBIAS
+  pins: [R4.1, U1.RBIAS]
+- name: RF1
+  pins: [C19.2, U6.RF1]
+- name: RF1_2
+  pins: [C22.1, U5.RF1]
+- name: RF2
+  pins: [C31.1, U5.RF2]
+- name: RF2_2
+  pins: [C31.2, U6.RF2]
+- name: RF3
+  pins: [C20.1, U5.RF3]
+- name: RF3_2
+  pins: [C23.2, U6.RF3]
+- name: RFC
+  pins: [C6.2, U5.RFC]
+- name: RFC_2
+  pins: [U6.RFC, U9.OUT]
+- name: RF_N
+  pins: [T1.PR1, U1.RF_N]
+- name: RF_P
+  pins: [T1.PR2, U1.RF_P]
+- name: S1
+  pins: [C6.1, T1.S1]
+- name: S2
+  pins: [C7.1, T1.S2]
+- name: VBUS
+  pins:
+  - C15.1
+  - C17.1
+  - C24.1
+  - FB1.1
+  - R1.1
+  - R6.1
+  - U2.IN
+  - U3.S2
+  - U8.S2
+- name: XOSC_Q1
+  pins: [C11.1, U1.XOSC_Q1, X1.1]
+- name: XOSC_Q2
+  pins: [C10.1, U1.XOSC_Q2, X1.3]
+positions:
+- ref: C1
+  x: 83.57
+  y: 53.85
+  rot: 180.0
+- ref: C10
+  x: 77.07
+  y: 40.53
+- ref: C11
+  x: 77.78
+  y: 45.75
+  rot: 180.0
+- ref: C12
+  x: 89.41
+  y: 46.74
+  rot: 90.0
+- ref: C13
+  x: 89.41
+  y: 43.69
+  rot: -90.0
+- ref: C14
+  x: 85.72
+  y: 43.69
+  rot: 180.0
+- ref: C15
+  x: 98.55
+  y: 52.83
+  rot: -90.0
+- ref: C16
+  x: 92.96
+  y: 52.83
+  rot: -90.0
+- ref: C17
+  x: 62.99
+  y: 53.59
+  rot: 180.0
+- ref: C18
+  x: 65.28
+  y: 51.05
+- ref: C19
+  x: 60.95
+  y: 48.7
+  rot: 90.0
+- ref: C2
+  x: 80.52
+  y: 53.59
+  rot: -90.0
+- ref: C20
+  x: 65.5
+  y: 49.65
+  rot: 180.0
+- ref: C21
+  x: 53.59
+  y: 45.72
+  rot: 180.0
+- ref: C22
+  x: 66.8
+  y: 41.91
+  rot: 180.0
+- ref: C23
+  x: 58.92
+  y: 41.1
+  rot: -90.0
+- ref: C24
+  x: 70.61
+  y: 41.91
+  rot: 180.0
+- ref: C25
+  x: 70.14
+  y: 38.61
+  rot: -90.0
+- ref: C26
+  x: 66.06
+  y: 38.63
+  rot: -90.0
+- ref: C27
+  x: 70.21
+  y: 45.19
+  rot: -90.0
+- ref: C28
+  x: 65.88
+  y: 46.5
+  rot: 90.0
+- ref: C29
+  x: 62.74
+  y: 48.26
+- ref: C3
+  x: 77.85
+  y: 51.03
+- ref: C30
+  x: 53.73
+  y: 39.26
+  rot: 180.0
+- ref: C31
+  x: 63.85
+  y: 44.45
+  rot: 180.0
+- ref: C32
+  x: 64.28
+  y: 46.1
+  rot: 90.0
+- ref: C33
+  x: 61.1
+  y: 42.45
+  rot: -90.0
+- ref: C34
+  x: 60.05
+  y: 41.55
+  rot: -90.0
+- ref: C35
+  x: 59.75
+  y: 47.55
+  rot: 90.0
+- ref: C4
+  x: 89.15
+  y: 50.8
+  rot: 180.0
+- ref: C5
+  x: 78.16
+  y: 49.98
+- ref: C6
+  x: 71.25
+  y: 47.37
+  rot: 90.0
+- ref: C7
+  x: 75.84
+  y: 50.06
+  rot: 180.0
+- ref: C8
+  x: 80.01
+  y: 43.43
+  rot: -90.0
+- ref: C9
+  x: 77.47
+  y: 46.99
+- ref: D1
+  x: 93.47
+  y: 49.53
+  rot: -90.0
+- ref: D2
+  x: 96.52
+  y: 49.53
+  rot: -90.0
+- ref: D3
+  x: 99.57
+  y: 49.53
+  rot: -90.0
+- ref: D4
+  x: 50.66
+  y: 46.26
+  rot: 90.0
+- ref: FB1
+  x: 98.55
+  y: 43.18
+- ref: J1
+  x: 106.93
+  y: 45.72
+  rot: 90.0
+- ref: L1
+  x: 64.01
+  y: 38.1
+- ref: L2
+  x: 51.87
+  y: 44.96
+  rot: -90.0
+- ref: P1
+  x: 90.42
+  y: 39.5
+- ref: P2
+  x: 45.49
+  y: 45.72
+- ref: P3
+  x: 89.0
+  y: 53.0
+  side: back
+- ref: P4
+  x: 83.0
+  y: 53.0
+  side: back
+- ref: P5
+  x: 77.0
+  y: 53.0
+  side: back
+- ref: P6
+  x: 71.0
+  y: 53.0
+  side: back
+- ref: P7
+  x: 65.0
+  y: 53.0
+  side: back
+- ref: Q1
+  x: 53.73
+  y: 42.55
+  rot: 180.0
+- ref: R1
+  x: 68.33
+  y: 53.85
+  rot: 180.0
+- ref: R10
+  x: 91.95
+  y: 44.2
+  rot: 180.0
+- ref: R11
+  x: 95.0
+  y: 49.53
+  rot: 90.0
+- ref: R12
+  x: 98.04
+  y: 49.53
+  rot: 90.0
+- ref: R13
+  x: 70.97
+  y: 50.0
+  rot: -90.0
+  side: back
+- ref: R14
+  x: 74.42
+  y: 38.1
+  rot: -90.0
+- ref: R15
+  x: 76.71
+  y: 53.09
+  rot: -90.0
+- ref: R16
+  x: 57.57
+  y: 39.4
+- ref: R17
+  x: 56.11
+  y: 41.47
+  rot: 90.0
+- ref: R2
+  x: 89.41
+  y: 53.85
+- ref: R3
+  x: 71.12
+  y: 51.05
+- ref: R4
+  x: 78.49
+  y: 53.59
+  rot: -90.0
+- ref: R5
+  x: 91.95
+  y: 49.53
+  rot: 90.0
+- ref: R6
+  x: 73.66
+  y: 40.89
+  rot: 90.0
+- ref: R7
+  x: 68.12
+  y: 38.1
+  rot: 180.0
+- ref: R8
+  x: 92.46
+  y: 47.24
+  rot: 180.0
+- ref: R9
+  x: 91.95
+  y: 45.72
+  rot: 180.0
+- ref: T1
+  x: 77.27
+  y: 48.67
+  rot: 180.0
+- ref: U1
+  x: 83.06
+  y: 48.51
+  rot: 180.0
+- ref: U2
+  x: 95.76
+  y: 52.96
+  rot: -90.0
+- ref: U3
+  x: 66.04
+  y: 53.09
+  rot: -90.0
+- ref: U4
+  x: 62.61
+  y: 50.29
+- ref: U5
+  x: 68.03
+  y: 45.62
+  rot: 180.0
+- ref: U6
+  x: 60.23
+  y: 44.98
+  rot: 90.0
+- ref: U7
+  x: 63.25
+  y: 40.89
+  rot: -90.0
+- ref: U8
+  x: 71.88
+  y: 38.86
+  rot: -90.0
+- ref: U9
+  x: 56.64
+  y: 45.72
+  rot: 180.0
+- ref: X1
+  x: 77.45
+  y: 43.18
+  rot: 90.0
+copper_pours:
+- net: +3V3
+  layers: [In2.Cu]
+- net: GND
+  layers: [In1.Cu]
+- net: VBUS
+  layers: [In2.Cu]

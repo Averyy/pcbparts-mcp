@@ -1,0 +1,490 @@
+name: SMPS 19V 3A
+slug: smps-19v-3a
+source: sailor-elite/SMPS-19V-3A
+format: kicad8
+description: "AC-DC offline flyback power supply (230VAC\u219219V/60W), LM5023 current-mode controller"
+key_ics: [C3M0065090D, LM5023]
+outline:
+  width_mm: 107.92
+  height_mm: 73.07
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 0.01uF 275VAC
+  footprint: C_Rect_L10.0mm_W4.0mm_P7.50mm_MKS4
+- ref: C10
+  value: 100nF
+  footprint: '1206'
+  voltage: 50V
+- ref: C11
+  value: 16pF
+  footprint: '1206'
+  voltage: 100V
+- ref: C12
+  value: 10uF
+  footprint: CP_Radial_D12.5mm_P7.50mm
+  voltage: 50V
+- ref: C13
+  value: 50uF
+  footprint: CP_Radial_D12.5mm_P7.50mm
+  voltage: 120V
+- ref: C14
+  value: 50uF
+  footprint: CP_Radial_D12.5mm_P7.50mm
+  voltage: 120V
+- ref: C15
+  value: 100nF
+  footprint: CP_Radial_D4.0mm_P2.00mm
+  voltage: 50V
+- ref: C16
+  value: 2.2nF
+  footprint: C_Disc_D4.3mm_W1.9mm_P5.00mm
+  voltage: 100V
+- ref: C2
+  value: 68uF
+  footprint: CP_Radial_D12.5mm_P7.50mm
+  voltage: 450V
+- ref: C3
+  value: 68uF
+  footprint: CP_Radial_D12.5mm_P7.50mm
+  voltage: 450V
+- ref: C4
+  value: 470pF
+  footprint: '1206'
+  voltage: 630V
+- ref: C5
+  value: 22uF
+  footprint: CP_Radial_D4.0mm_P2.00mm
+  voltage: 50V
+- ref: C6
+  value: 100nF
+  footprint: CP_Radial_D4.0mm_P2.00mm
+  voltage: 50V
+- ref: C7
+  value: 4.7uF
+  footprint: '1206'
+  voltage: 50V
+- ref: C8
+  value: 10nF
+  footprint: '1206'
+  voltage: 100V
+- ref: C9
+  value: 100nF
+  footprint: '1206'
+  voltage: 50V
+- ref: D1
+  value: DF06M
+  footprint: Diode_Bridge_DIP-4_W7.62mm_P5.08mm
+  description: Miniature Glass Passivated Single-Phase Bridge Rectifiers, 420V Vrms, 1.0A If
+- ref: D2
+  value: 1N4148W
+  footprint: SOD-123
+  description: 75V 0.15A Fast Switching Diode, SOD-123
+- ref: D3
+  value: UF5406
+  footprint: DO-201AD_P15.24mm_Horizontal
+  description: 600V 3A Soft Recovery Ultrafast Rectifier Diode, DO-201AD
+- ref: D4
+  value: ESD5Zxx
+  footprint: SOD-523
+  description: ESD Protection Diode, SOD-523
+- ref: D5
+  value: SS310
+  footprint: SMA
+  description: 100V 3A Schottky Diode, SMA
+- ref: D6
+  value: SS310
+  footprint: SMA
+  description: 100V 3A Schottky Diode, SMA
+- ref: F1
+  value: 1000mA
+  footprint: Littelfuse-NANO2-462
+- ref: J1
+  value: '6160.0159'
+  footprint: '61600159'
+  height: '16'
+  manufacturer: SCHURTER
+  mpn: '6160.0159'
+  description: SCHURTER - 6160.0159 - POWER ENTRY, PLUG, 2.5A, PANEL
+- ref: L1
+  value: L_Coupled_1342
+  footprint: WE-SL5_HC
+  description: Coupled inductor
+- ref: Q1
+  value: BSP135H6433XTMA1
+  footprint: SOT-4
+  height: '1.8'
+  manufacturer: Infineon
+  mpn: BSP135H6433XTMA1
+- ref: Q2
+  value: C3M0065090D
+  footprint: TO-247
+  description: 36A Id, 900V Vds, 65mOhm, N-Channel SiC MOSFET, TO-247
+- ref: R1
+  value: 499kohm
+  footprint: '1206'
+- ref: R10
+  value: 4.42kohm
+  footprint: 0805
+  pulldown: U1.QR
+- ref: R11
+  value: 4.75ohm
+  footprint: 0805
+- ref: R12
+  value: 150mohm
+  footprint: Axial
+- ref: R13
+  value: 150kohm
+  footprint: 0805
+- ref: R14
+  value: 10.2kohm
+  footprint: 0805
+  pulldown: U5.IN
+- ref: R15
+  value: 10kohm
+  footprint: 0805
+- ref: R2
+  value: 499kohm
+  footprint: '1206'
+  pulldown: R1.2
+- ref: R3
+  value: 20kohm
+  footprint: 0805
+- ref: R4
+  value: 20kohm
+  footprint: 0805
+- ref: R5
+  value: 100ohm
+  footprint: 0805
+- ref: R6
+  value: 2Mohm
+  footprint: 0805
+- ref: R7
+  value: 10kohm
+  footprint: 0805
+- ref: R8
+  value: 499ohm
+  footprint: 0805
+- ref: R9
+  value: 14.7kohm
+  footprint: 0805
+- ref: RV1
+  value: 10D561K
+  footprint: RV_Disc_D7mm_W3.6mm_P5mm
+  description: Voltage dependent resistor
+- ref: U1
+  value: LM5023
+  footprint: VSSOP-8
+  description: Quasi-Resonant Current-Mode PWM Controller for Off-Line Supplies, OVP/OTP
+- ref: U2
+  value: PC817
+  footprint: DIP-4
+  description: DC Optocoupler, Vce 35V, CTR 50-300%, DIP-4
+- ref: U3
+  value: '750313417'
+  footprint: SMD_13417_WRE
+- ref: U5
+  value: MAX6101
+  footprint: SOT-23
+  description: "Low-dropout high current voltage reference, 1.250V, \xB10.4% accuracy, SOT-23"
+nets:
+- name: GND
+  pins:
+  - C10.2
+  - C11.2
+  - C16.1
+  - C2.2
+  - C3.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.-
+  - D4.A
+  - R10.2
+  - R12.1
+  - R2.2
+  - U1.GND
+  - U2.3
+  - U3.GND
+- name: GND1
+  pins:
+  - C12.2
+  - C13.2
+  - C14.2
+  - C16.2
+  - R14.1
+  - U3.SGND@7
+  - U3.SGND@8
+  - U3.SGND@9
+  - U5.GND
+- name: Net-(C1-Pad1)
+  pins: [C1.1, F1.1, L1.1, RV1.1]
+- name: Net-(C1-Pad2)
+  pins: [C1.2, J1.1, L1.4, RV1.2]
+- name: Net-(D1-Pad3)
+  pins: [D1.3, L1.3]
+- name: Net-(D1-Pad4)
+  pins: [D1.4, L1.2]
+- name: Net-(D2-A)
+  pins: [D2.A, R9.1, U3.AUX_19.2V]
+- name: Net-(D2-K)
+  pins: [C5.1, D2.K, R5.2]
+- name: Net-(D3-A)
+  pins: [D3.A, Q2.D, U3.PR1]
+- name: Net-(D3-K)
+  pins: [C4.2, D3.K, R3.2, R4.2]
+- name: Net-(D4-K)
+  pins:
+  - C6.1
+  - C7.1
+  - D4.K
+  - Q1.S
+  - R5.1
+  - R6.2
+  - U1.VCC
+- name: Net-(D5-A)
+  pins: [D5.A, D6.A, U3.SEC@10, U3.SEC@11, U3.SEC@12]
+- name: Net-(F1-Pad2)
+  pins: [F1.2, J1.2]
+- name: Net-(Q1-D_2)
+  pins: [Q1.D_2, R7.2]
+- name: Net-(Q1-G)
+  pins: [Q1.G, R6.1, U1.VSD]
+- name: Net-(Q2-G)
+  pins: [Q2.G, R11.2]
+- name: Net-(Q2-S)
+  pins: [Q2.S, R12.2, R8.2]
+- name: Net-(R1-Pad2)
+  pins: [R1.2, R2.1]
+- name: Net-(R15-Pad2)
+  pins: [R15.2, U2.1]
+- name: Net-(U1-COMP)
+  pins: [C9.1, U1.COMP, U2.4]
+- name: Net-(U1-CS)
+  pins: [C10.1, R8.1, U1.CS]
+- name: Net-(U1-OUT)
+  pins: [R11.1, U1.OUT]
+- name: Net-(U1-QR)
+  pins: [C11.1, R10.1, R9.2, U1.QR]
+- name: Net-(U1-SS)
+  pins: [C8.1, U1.SS]
+- name: Net-(U5-IN)
+  pins: [C15.2, R13.1, R14.2, U5.IN]
+- name: Net-(U5-OUT)
+  pins: [C15.1, U2.2, U5.OUT]
+- name: Opto_signal
+  pins:
+  - C12.1
+  - C13.1
+  - C14.1
+  - D5.K
+  - D6.K
+  - R13.2
+  - R15.1
+- name: Vs
+  pins:
+  - C2.1
+  - C3.1
+  - C4.1
+  - D1.+
+  - R1.1
+  - R3.1
+  - R4.1
+  - R7.1
+  - U3.PR13
+positions:
+- ref: C1
+  x: 154.72
+  y: 42.55
+  rot: 90.0
+- ref: C10
+  x: 185.56
+  y: 91.03
+  rot: -90.0
+- ref: C11
+  x: 201.06
+  y: 69.94
+  rot: -90.0
+- ref: C12
+  x: 236.51
+  y: 72.04
+  rot: 180.0
+- ref: C13
+  x: 239.39
+  y: 58.27
+  rot: 180.0
+- ref: C14
+  x: 245.87
+  y: 42.61
+  rot: 180.0
+- ref: C15
+  x: 236.27
+  y: 90.94
+  rot: 90.0
+- ref: C16
+  x: 213.79
+  y: 66.13
+- ref: C2
+  x: 177.9
+  y: 73.16
+  rot: 180.0
+- ref: C3
+  x: 164.22
+  y: 73.07
+  rot: 180.0
+- ref: C4
+  x: 181.42
+  y: 63.22
+  rot: -90.0
+- ref: C5
+  x: 187.56
+  y: 77.42
+  rot: -90.0
+- ref: C6
+  x: 198.18
+  y: 76.73
+  rot: 90.0
+- ref: C7
+  x: 188.82
+  y: 83.1
+  rot: 180.0
+- ref: C8
+  x: 199.44
+  y: 97.82
+  rot: 180.0
+- ref: C9
+  x: 207.71
+  y: 93.33
+  rot: 90.0
+- ref: D1
+  x: 184.35
+  y: 41.46
+  rot: 180.0
+- ref: D2
+  x: 192.85
+  y: 73.57
+  rot: 90.0
+- ref: D3
+  x: 172.64
+  y: 84.49
+  rot: 180.0
+- ref: D4
+  x: 191.51
+  y: 94.29
+  rot: 90.0
+- ref: D5
+  x: 231.83
+  y: 41.05
+  rot: 180.0
+- ref: D6
+  x: 231.9
+  y: 37.19
+  rot: 180.0
+- ref: F1
+  x: 164.26
+  y: 54.89
+  rot: 180.0
+- ref: J1
+  x: 145.73
+  y: 43.23
+  rot: -90.0
+- ref: L1
+  x: 167.89
+  y: 38.57
+  rot: 90.0
+- ref: Q1
+  x: 199.98
+  y: 84.61
+  rot: 180.0
+- ref: Q2
+  x: 148.41
+  y: 81.24
+  rot: 90.0
+- ref: R1
+  x: 188.51
+  y: 43.03
+- ref: R10
+  x: 192.81
+  y: 67.55
+  rot: -90.0
+- ref: R11
+  x: 147.68
+  y: 88.95
+  rot: 90.0
+- ref: R12
+  x: 183.91
+  y: 98.82
+  rot: 180.0
+- ref: R13
+  x: 243.03
+  y: 83.81
+  rot: 90.0
+- ref: R14
+  x: 244.14
+  y: 90.49
+  rot: 180.0
+- ref: R15
+  x: 228.37
+  y: 94.91
+  rot: 180.0
+- ref: R2
+  x: 188.5
+  y: 46.53
+  rot: 180.0
+- ref: R3
+  x: 181.36
+  y: 68.23
+  rot: 90.0
+- ref: R4
+  x: 183.66
+  y: 68.24
+  rot: 90.0
+- ref: R5
+  x: 192.85
+  y: 78.45
+  rot: -90.0
+- ref: R6
+  x: 192.52
+  y: 97.26
+  rot: 180.0
+- ref: R7
+  x: 179.61
+  y: 80.5
+- ref: R8
+  x: 160.1
+  y: 90.82
+  rot: 180.0
+- ref: R9
+  x: 192.77
+  y: 63.57
+  rot: -90.0
+- ref: RV1
+  x: 155.47
+  y: 47.15
+  rot: 180.0
+- ref: U1
+  x: 199.65
+  y: 91.97
+  rot: 180.0
+- ref: U2
+  x: 219.93
+  y: 94.94
+  rot: 180.0
+- ref: U3
+  x: 209.98
+  y: 48.03
+- ref: U5
+  x: 228.26
+  y: 90.02
+copper_pours:
+- net: GND
+  layers: [F.Cu]
+- net: GND1
+  layers: [F.Cu]

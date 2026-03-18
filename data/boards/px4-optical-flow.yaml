@@ -1,0 +1,1084 @@
+name: PX4 Optical Flow
+slug: px4-optical-flow
+source: PX4/Hardware
+format: eagle
+description: Optical flow camera sensor for drone position hold, sonar interface
+tags: [drone-uav, sensors]
+key_ics: [STM32F407, MT9V034, L3GD20]
+outline:
+  width_mm: 35.0
+  height_mm: 45.4
+design_rules:
+  layers: 4
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.3mm
+  min_via: 0.125mm
+components:
+- ref: ADDR0
+  value: solder jumper
+  footprint: SJ-2
+- ref: ADDR1
+  value: solder jumper
+  footprint: SJ-2
+- ref: ADDR2
+  value: solder jumper
+  footprint: SJ-2
+- ref: C1
+  value: 10nF
+  footprint: '0402'
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C11
+  value: 2.2uF
+  footprint: '0402'
+- ref: C12
+  value: 2.2uF
+  footprint: '0402'
+- ref: C13
+  value: 470pF
+  footprint: '0402'
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C16
+  value: 100nF
+  footprint: '0402'
+  decouples: U$5
+- ref: C17
+  value: 100nF
+  footprint: '0402'
+- ref: C18
+  value: 100nF
+  footprint: '0402'
+  decouples: U12
+- ref: C19
+  value: 100nF
+  footprint: '0402'
+  decouples: U$5
+- ref: C2
+  value: 100nF
+  footprint: '0402'
+  decouples: U$5
+- ref: C20
+  value: 100nF
+  footprint: '0402'
+  decouples: U$5
+- ref: C21
+  value: 100nF
+  footprint: '0402'
+  decouples: U12
+- ref: C22
+  value: 100nF
+  footprint: '0402'
+  decouples: U$5
+- ref: C23
+  value: 100nF
+  footprint: '0402'
+  decouples: U12
+- ref: C24
+  value: 10nF
+  footprint: '0402'
+  decouples: U$5
+- ref: C25
+  value: 10nF
+  footprint: '0402'
+- ref: C26
+  value: 1nF
+  footprint: '0402'
+  decouples: U$5
+- ref: C27
+  value: 10uF
+  footprint: EIA3216
+  decouples: U1
+- ref: C28
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C29
+  value: 100nF
+  footprint: '0402'
+  decouples: U12
+- ref: C3
+  value: 8pF
+  footprint: '0402'
+- ref: C30
+  value: 100nF
+  footprint: '0402'
+  decouples: U12
+- ref: C31
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C32
+  value: 100nF
+  footprint: '0402'
+  decouples: U$5
+- ref: C4
+  value: 8pF
+  footprint: '0402'
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C6
+  value: 10uF
+  footprint: EIA3216
+  decouples: U1
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  decouples: IC1
+- ref: D1
+  value: MSS1P4-M3
+  footprint: MICROSMP
+  description: Schottky barrier diode in DO214AC, e
+- ref: IC1
+  value: STM32F4X7VX
+  footprint: TQFP100
+  description: STM32F4X7VX 100 pin LQFP STM32F407VE - 512 KB flash, no crypto STM32F407VG - 1
+- ref: J1
+  value: DF13-4P-1.25
+  footprint: DF13A-4P-1.25H
+- ref: J2
+  value: DF13-6P-1.25
+  footprint: DF13A-6P-1.25H
+- ref: J3
+  value: DF13-6P-1.25
+  footprint: DF13A-6P-1.25H
+- ref: J4
+  value: MB1040
+  footprint: MAXSONAR
+- ref: J5
+  value: 47346-0001
+  footprint: MOLEX-47346-0001
+  description: MICRO USB B, BOTTOM MOUNT
+- ref: J6
+  value: ARM JTAG
+  footprint: FTSH-105-01-XXX-DV-K
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-3
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-2
+- ref: L1
+  value: ferrite bead
+  footprint: '0402'
+- ref: L11
+  value: ferrite bead
+  footprint: '0402'
+- ref: L2
+  value: ferrite bead
+  footprint: '0402'
+- ref: L8
+  value: ferrite bead
+  footprint: '0402'
+- ref: LED1
+  value: green LED
+  footprint: '0603'
+- ref: LED2
+  value: amber LED
+  footprint: '0603'
+- ref: LED3
+  value: blue LED
+  footprint: '0603'
+- ref: LED4
+  value: red LED
+  footprint: '0603'
+- ref: Q1
+  value: NTGS4111P
+  footprint: TSOP-6
+- ref: R1
+  value: 1.5kohm
+  footprint: '0402'
+  pullup: I2C2_SCL
+- ref: R10
+  value: 1kohm
+  footprint: '0402'
+  pullup: UART4_RX
+- ref: R11
+  value: 0ohm
+  footprint: '0402'
+- ref: R13
+  value: 270ohm
+  footprint: '0402'
+- ref: R14
+  value: 270ohm
+  footprint: '0402'
+- ref: R15
+  value: 270ohm
+  footprint: '0402'
+- ref: R16
+  value: 10kohm
+  footprint: '0402'
+  pullup: '!RESET'
+- ref: R17
+  value: 270ohm
+  footprint: '0402'
+- ref: R18
+  value: 10kohm
+  footprint: '0402'
+  pulldown: BOOT0
+- ref: R19
+  value: 1kohm
+  footprint: '0402'
+  pullup: U$5.BYPASS_CLKIN_N
+- ref: R2
+  value: 1.5kohm
+  footprint: '0402'
+  pullup: I2C2_SDA
+- ref: R20
+  value: 1kohm
+  footprint: '0402'
+  pullup: U$5.SER_DATAIN_N
+- ref: R3
+  value: 100ohm
+  footprint: '0402'
+- ref: R4
+  value: 100ohm
+  footprint: '0402'
+- ref: R5
+  value: 10kohm
+  footprint: '0402'
+  pulldown: PB2-BOOT1
+- ref: R6
+  value: 22ohm
+  footprint: '0402'
+- ref: R7
+  value: 10kohm
+  footprint: '0402'
+- ref: R8
+  value: 22ohm
+  footprint: '0402'
+- ref: R9
+  value: 10kohm
+  footprint: '0402'
+  pullup: CAM_NRESET
+- ref: S1
+  value: RESET
+  footprint: EVQP7J01K
+- ref: U$5
+  value: MT9V034
+  footprint: CLCC-48
+- ref: U$8
+  value: M12 lens mount
+  footprint: LENSMOUNT_LARGE_M12
+  description: Point Grey compatible M12 lens mount
+- ref: U1
+  value: LDO regulator
+  footprint: SOT-23-5
+  description: Voltage Regulator LDO
+- ref: U12
+  value: L3GD20
+  footprint: L3G4200DH-MAN
+  description: L3G4200DH - Digital 3-axis Gyroscope
+- ref: U8
+  value: 128KB EEPROM
+  footprint: MSOP-8
+  description: I2C EEPROM
+- ref: X1
+  value: 24.000 KHz
+  footprint: OSCILLATOR-3.2X2.5
+nets:
+- name: '!JTRST'
+  pins: [IC1.PORTB_L.PB4, J6.-!RESET.S]
+  class: signal
+  trace_width: '0.2'
+- name: '!RESET'
+  pins: [C17.2, IC1.RESET.NRST, R16.1, S1.1]
+  class: power
+  trace_width: '0.25'
+- name: ADC123_IN10
+  pins: [IC1.PORTC_L.PC0, J4.-AN.S]
+  class: signal
+  trace_width: '0.2'
+- name: ADDR0
+  pins: [ADDR0.2, IC1.PORTC_H.PC13]
+  class: signal
+  trace_width: '0.2'
+- name: ADDR1
+  pins: [ADDR1.2, IC1.PORTC_H.PC14]
+  class: signal
+  trace_width: '0.2'
+- name: ADDR2
+  pins: [ADDR2.2, IC1.PORTC_H.PC15]
+  class: signal
+  trace_width: '0.2'
+- name: BOOT0
+  pins: [IC1.RESET.BOOT0, R18.2]
+  class: signal
+  trace_width: '0.2'
+- name: BP
+  pins: [C13.1, U1.BP]
+  class: signal
+  trace_width: '0.2'
+- name: BYPASS_CLKIN_N
+  pins: [R19.1, U$5.BYPASS_CLKIN_N]
+  class: signal
+  trace_width: '0.2'
+- name: CAM_NRESET
+  pins: [C1.1, IC1.PORTA_L.PA5, R9.1, U$5.!RESET]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_D0
+  pins: [IC1.PORTC_L.PC6, U$5.DOUT2]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_D1
+  pins: [IC1.PORTC_L.PC7, U$5.DOUT3]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_D2
+  pins: [IC1.PORTE_L.PE0, U$5.DOUT4]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_D3
+  pins: [IC1.PORTE_L.PE1, U$5.DOUT5]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_D4
+  pins: [IC1.PORTE_L.PE4, U$5.DOUT6]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_D5
+  pins: [IC1.PORTB_L.PB6, U$5.DOUT7]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_D6
+  pins: [IC1.PORTE_L.PE5, U$5.DOUT8]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_D7
+  pins: [IC1.PORTE_L.PE6, U$5.DOUT9]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_D8
+  pins: [IC1.PORTC_H.PC10, U$5.DOUT0]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_D9
+  pins: [IC1.PORTC_H.PC12, U$5.DOUT1]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_HSYNC
+  pins: [IC1.PORTA_L.PA4, U$5.LINE_VALID]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_PIXCK
+  pins: [IC1.PORTA_L.PA6, U$5.PIXCLK]
+  class: signal
+  trace_width: '0.2'
+- name: DCMI_VSYNC
+  pins: [IC1.PORTB_L.PB7, U$5.FRAME_VALID]
+  class: signal
+  trace_width: '0.2'
+- name: GND
+  pins:
+  - ADDR0.1
+  - ADDR1.1
+  - ADDR2.1
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C15.2
+  - C16.2
+  - C17.1
+  - C18.2
+  - C19.2
+  - C2.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.2
+  - C27.-
+  - C28.2
+  - C29.2
+  - C3.2
+  - C30.2
+  - C31.2
+  - C32.2
+  - C4.1
+  - C5.2
+  - C6.-
+  - C7.2
+  - C8.2
+  - C9.2
+  - IC1.BAT.VSS
+  - IC1.BAT.VSSA
+  - IC1.G$2.VSS@1
+  - IC1.G$2.VSS@3
+  - IC1.G$2.VSS_4
+  - IC1.PORTE_H.PE13
+  - IC1.PORTE_H.PE14
+  - IC1.PORTE_H.PE15
+  - J1.-4.S
+  - J2.-6.S
+  - J3.-6.S
+  - J4.-GND.S
+  - J5.5
+  - J5.GND1
+  - J5.GND2
+  - J5.GND3
+  - J5.GND4
+  - J6.-GND1.S
+  - J6.-GND2.S
+  - J6.-GND3.S
+  - Q1.G
+  - R13.1
+  - R18.1
+  - R5.2
+  - S1.2
+  - U$5.AGND@34
+  - U$5.AGND@38
+  - U$5.BYPASS_CLKIN_P
+  - U$5.DGND@13
+  - U$5.DGND@48
+  - U$5.LVDS_GND@12
+  - U$5.LVDS_GND@7
+  - U$5.RSVD
+  - U$5.SER_DATAIN_P
+  - U1.GND
+  - U12.GND
+  - U12.RES_P10_GND
+  - U12.RES_P11_VDD
+  - U12.RES_P12_GND
+  - U12.RES_P8_GND
+  - U12.RES_P9_GND
+  - U8.A0
+  - U8.A1
+  - U8.A2
+  - U8.VSS
+  - X1.NC_2
+  - X1.NC_4
+  class: power
+  trace_width: '0.25'
+- name: I2C1_SCL
+  pins: [IC1.PORTB_H.PB8, R3.1]
+  class: signal
+  trace_width: '0.2'
+- name: I2C1_SCL_EXT
+  pins: [J1.-2.S, R3.2]
+  class: signal
+  trace_width: '0.2'
+- name: I2C1_SDA
+  pins: [IC1.PORTB_H.PB9, R4.1]
+  class: signal
+  trace_width: '0.2'
+- name: I2C1_SDA_EXT
+  pins: [J1.-3.S, R4.2]
+  class: signal
+  trace_width: '0.2'
+- name: I2C2_SCL
+  pins: [IC1.PORTB_H.PB10, R1.1, U$5.SCLK, U8.SCL]
+  class: signal
+  trace_width: '0.2'
+- name: I2C2_SDA
+  pins: [IC1.PORTB_H.PB11, R2.1, U$5.SDATA, U8.SDA]
+  class: signal
+  trace_width: '0.2'
+- name: JTCK-SWCLK
+  pins: [IC1.PORTA_H.PA14, J6.-TCK/SWCLK.S]
+  class: signal
+  trace_width: '0.2'
+- name: JTDI
+  pins: [IC1.PORTA_H.PA15, J6.-TDI/EXTB.S]
+  class: signal
+  trace_width: '0.2'
+- name: JTDO
+  pins: [IC1.PORTB_L.PB3, J6.-TDO/SWO.S]
+  class: signal
+  trace_width: '0.2'
+- name: JTMS-SWDIO
+  pins: [IC1.PORTA_H.PA13, J6.-TMS/SWDIO.S]
+  class: signal
+  trace_width: '0.2'
+- name: LED_AMBER
+  pins: [IC1.PORTE_L.PE2, R14.1]
+  class: signal
+  trace_width: '0.2'
+- name: LED_BLUE
+  pins: [IC1.PORTE_L.PE3, R15.1]
+  class: signal
+  trace_width: '0.2'
+- name: LED_RED
+  pins: [IC1.PORTE_L.PE7, R17.1]
+  class: signal
+  trace_width: '0.2'
+- name: N$13
+  pins: [J2.-1.S, JP2.2]
+  class: signal
+  trace_width: '0.2'
+- name: N$23
+  pins: [D1.A, L8.1]
+  class: power
+  trace_width: '0.25'
+- name: N$28
+  pins: [LED3.C, R15.2]
+  class: signal
+  trace_width: '0.2'
+- name: N$29
+  pins: [LED1.C, R13.2]
+  class: signal
+  trace_width: '0.2'
+- name: N$3
+  pins: [J1.-1.S, L2.2]
+  class: signal
+  trace_width: '0.2'
+- name: N$30
+  pins: [LED2.C, R14.2]
+  class: signal
+  trace_width: '0.2'
+- name: N$8
+  pins: [LED4.C, R17.2]
+  class: signal
+  trace_width: '0.2'
+- name: OSC_OSC_IN
+  pins: [C3.1, IC1.OSC.OSC_IN, X1.3]
+  class: signal
+  trace_width: '0.2'
+- name: OSC_OSC_OUT
+  pins: [C4.2, IC1.OSC.OSC_OUT, X1.1]
+  class: signal
+  trace_width: '0.2'
+- name: OTG_FS_ID
+  pins: [IC1.PORTA_H.PA10, R7.2]
+  class: signal
+  trace_width: '0.2'
+- name: OTG_FS_N
+  pins: [IC1.PORTA_H.PA11, R6.2]
+  class: signal
+  trace_width: '0.2'
+- name: OTG_FS_P
+  pins: [IC1.PORTA_H.PA12, R8.2]
+  class: signal
+  trace_width: '0.2'
+- name: OTG_ID
+  pins: [J5.4, R7.1]
+  class: signal
+  trace_width: '0.2'
+- name: OTG_N
+  pins: [J5.2, R6.1]
+  class: signal
+  trace_width: '0.2'
+- name: OTG_P
+  pins: [J5.3, R8.1]
+  class: signal
+  trace_width: '0.2'
+- name: PB2-BOOT1
+  pins: [IC1.PORTB_L.PB2, R5.1]
+  class: signal
+  trace_width: '0.2'
+- name: PLLFILT
+  pins: [C25.1, U12.PLLFILT]
+  class: signal
+  trace_width: '0.2'
+- name: SER_DATAIN_N
+  pins: [R20.1, U$5.SER_DATAIN_N]
+  class: signal
+  trace_width: '0.2'
+- name: SONAR_TX
+  pins: [J4.-TX.S, R11.1]
+  class: signal
+  trace_width: '0.2'
+- name: SPI2_MISO
+  pins: [IC1.PORTB_H.PB14, U12.SDO/SA0]
+  class: signal
+  trace_width: '0.2'
+- name: SPI2_MOSI
+  pins: [IC1.PORTB_H.PB15, U12.SDA/SDI/SDO]
+  class: signal
+  trace_width: '0.2'
+- name: SPI2_NSS
+  pins: [IC1.PORTB_H.PB12, U12.CS]
+  class: signal
+  trace_width: '0.2'
+- name: SPI2_SCK
+  pins: [IC1.PORTB_H.PB13, U12.SCL/SPC]
+  class: signal
+  trace_width: '0.2'
+- name: TIM4_CH2
+  pins: [IC1.PORTD_H.PD13, J4.-PW.S]
+  class: signal
+  trace_width: '0.2'
+- name: TIM5_CH3_EXPOSURE
+  pins: [IC1.PORTA_L.PA2, U$5.EXPOSURE]
+  class: signal
+  trace_width: '0.2'
+- name: TIM5_CH4_STANDBY
+  pins: [IC1.PORTA_L.PA3, U$5.STANDBY]
+  class: signal
+  trace_width: '0.2'
+- name: TIM8_CH3_MASTERCLOCK
+  pins: [IC1.PORTC_H.PC8, U$5.SYSCLK]
+  class: signal
+  trace_width: '0.2'
+- name: TIM8_CH4_LED_OUT
+  pins: [IC1.PORTC_H.PC9, U$5.LED_OUT]
+  class: signal
+  trace_width: '0.2'
+- name: UART4_RX
+  pins: [IC1.PORTC_H.PC11, R10.2, R11.2]
+  class: signal
+  trace_width: '0.2'
+- name: USART2_CTS
+  pins: [IC1.PORTD_L.PD3, J2.-4.S]
+  class: signal
+  trace_width: '0.2'
+- name: USART2_RTS
+  pins: [IC1.PORTD_L.PD4, J2.-5.S]
+  class: signal
+  trace_width: '0.2'
+- name: USART2_RX
+  pins: [IC1.PORTD_L.PD6, J2.-3.S]
+  class: signal
+  trace_width: '0.2'
+- name: USART2_TX
+  pins: [IC1.PORTD_L.PD5, J2.-2.S]
+  class: signal
+  trace_width: '0.2'
+- name: USART3_CTS
+  pins: [IC1.PORTD_H.PD11, J3.-5.S]
+  class: signal
+  trace_width: '0.2'
+- name: USART3_RTS
+  pins: [IC1.PORTD_H.PD12, J3.-4.S]
+  class: signal
+  trace_width: '0.2'
+- name: USART3_RX
+  pins: [IC1.PORTD_H.PD9, J3.-2.S]
+  class: signal
+  trace_width: '0.2'
+- name: USART3_TX
+  pins: [IC1.PORTD_H.PD8, J3.-3.S]
+  class: signal
+  trace_width: '0.2'
+- name: US_EN1
+  pins: [IC1.PORTE_H.PE8, J4.-RX.S]
+  class: signal
+  trace_width: '0.2'
+- name: VBUS
+  pins: [IC1.PORTA_H.PA9, J5.1, L8.2]
+  class: power
+  trace_width: '0.25'
+- name: VCAP_1
+  pins: [C11.1, IC1.G$2.VCAP_1]
+  class: signal
+  trace_width: '0.2'
+- name: VCAP_2
+  pins: [C12.1, IC1.G$2.VCAP_2]
+  class: signal
+  trace_width: '0.2'
+- name: VDD_3V3
+  pins:
+  - C10.1
+  - C16.1
+  - C18.1
+  - C2.1
+  - C28.1
+  - C29.1
+  - C30.1
+  - C31.1
+  - C32.1
+  - C5.1
+  - C6.+
+  - C8.1
+  - C9.1
+  - IC1.BAT.VBAT
+  - IC1.G$2.VDD@1
+  - IC1.G$2.VDD@2
+  - IC1.G$2.VDD@3
+  - IC1.G$2.VDD@4
+  - IC1.G$2.VDD@5
+  - IC1.G$2.VDD@6
+  - IC1.PORTE_H.PE12
+  - J6.-VTREF.S
+  - JP1.3
+  - L11.1
+  - LED1.A
+  - LED2.A
+  - LED3.A
+  - LED4.A
+  - R1.2
+  - R16.2
+  - R19.2
+  - R2.2
+  - R20.2
+  - R9.2
+  - U$5.OE
+  - U$5.SCTRL_ADR0
+  - U$5.SCTRL_ADR1
+  - U$5.VDD@1
+  - U$5.VDD@14
+  - U$5.VDD_LVDS
+  - U1.OUT
+  - U12.VDD_IO
+  - U8.VCC
+  class: power
+  trace_width: '0.25'
+- name: VDD_3V3_ANALOG
+  pins:
+  - C15.1
+  - C19.1
+  - C20.1
+  - C21.1
+  - C22.1
+  - C23.1
+  - C24.1
+  - C26.1
+  - IC1.BAT.VDDA
+  - IC1.BAT.VREF+
+  - L11.2
+  - U$5.VAA@35
+  - U$5.VAA@39
+  - U$5.VAA_PIX
+  - U12.RES_P15_VDD
+  - U12.VDD
+  class: power
+  trace_width: '0.25'
+- name: VDD_5V
+  pins:
+  - C27.+
+  - C7.1
+  - D1.C
+  - JP1.1
+  - JP2.1
+  - Q1.S
+  - R10.1
+  - U1.EN
+  - U1.IN
+  class: power
+  trace_width: '0.25'
+- name: VDD_5V_IN
+  pins: [L1.1, L2.1, Q1.D, Q1.D1, Q1.D2, Q1.D3]
+  class: power
+  trace_width: '0.25'
+- name: VDD_5V_IN_UART3
+  pins: [J3.-1.S, L1.2]
+  class: signal
+  trace_width: '0.2'
+- name: VDD_SONAR
+  pins: [J4.-VDD.S, JP1.2]
+  class: signal
+  trace_width: '0.2'
+positions:
+- ref: ADDR0
+  x: 13.0
+  y: 30.4
+  rot: 180.0
+- ref: ADDR1
+  x: 13.0
+  y: 32.8
+  rot: 180.0
+- ref: ADDR2
+  x: 13.0
+  y: 35.2
+  rot: 180.0
+- ref: C1
+  x: 24.3
+  y: 9.5
+  rot: 45.0
+- ref: C10
+  x: 20.76
+  y: 32.6
+  rot: 45.0
+- ref: C11
+  x: 17.5
+  y: 46.8
+- ref: C12
+  x: 1.99
+  y: 42.18
+  rot: 90.0
+- ref: C13
+  x: 32.0
+  y: 9.45
+  rot: 180.0
+- ref: C15
+  x: 22.4
+  y: 34.3
+  rot: 225.0
+- ref: C16
+  x: 10.9
+  y: 22.7
+  rot: 225.0
+- ref: C17
+  x: 3.79
+  y: 44.28
+  rot: 180.0
+- ref: C18
+  x: 9.5
+  y: 15.8
+  rot: 90.0
+- ref: C19
+  x: 25.55
+  y: 13.15
+  rot: 270.0
+- ref: C2
+  x: 17.7
+  y: 24.5
+- ref: C20
+  x: 25.55
+  y: 20.0
+  rot: 270.0
+- ref: C21
+  x: 5.59
+  y: 11.99
+  rot: 270.0
+- ref: C22
+  x: 25.55
+  y: 16.6
+  rot: 270.0
+- ref: C23
+  x: 12.09
+  y: 5.18
+  rot: 180.0
+- ref: C24
+  x: 16.97
+  y: 5.18
+- ref: C25
+  x: 6.69
+  y: 11.3
+  rot: 270.0
+- ref: C26
+  x: 14.53
+  y: 5.18
+  rot: 180.0
+- ref: C27
+  x: 28.96
+  y: 11.57
+  rot: 90.0
+- ref: C28
+  x: 0.69
+  y: 41.78
+  rot: 90.0
+- ref: C29
+  x: 5.9
+  y: 24.56
+  rot: 180.0
+- ref: C3
+  x: 21.86
+  y: 27.84
+  rot: 45.0
+- ref: C30
+  x: 2.96
+  y: 9.22
+- ref: C31
+  x: 28.5
+  y: 5.46
+  rot: 225.0
+- ref: C32
+  x: 21.84
+  y: 5.18
+- ref: C4
+  x: 21.73
+  y: 30.97
+  rot: 135.0
+- ref: C5
+  x: 22.2
+  y: 40.7
+  rot: 315.0
+- ref: C6
+  x: 27.63
+  y: 6.85
+  rot: 45.0
+- ref: C7
+  x: 32.02
+  y: 13.53
+- ref: C8
+  x: 19.1
+  y: 45.2
+- ref: C9
+  x: 16.9
+  y: 27.8
+  rot: 315.0
+- ref: D1
+  x: 33.12
+  y: 16.09
+- ref: IC1
+  x: 11.5
+  y: 37.4
+  rot: 135.0
+- ref: J1
+  x: 32.1
+  y: 43.6
+  rot: 270.0
+- ref: J2
+  x: 2.9
+  y: 39.5
+  rot: 270.0
+- ref: J3
+  x: 32.1
+  y: 42.4
+  rot: 90.0
+- ref: J4
+  x: 26.69
+  y: 48.49
+- ref: J5
+  x: 32.48
+  y: 22.9
+  rot: 180.0
+- ref: J6
+  x: 3.93
+  y: 22.1
+  rot: 270.0
+- ref: JP1
+  x: 6.97
+  y: 48.39
+- ref: JP2
+  x: 6.8
+  y: 43.7
+  rot: 270.0
+- ref: L1
+  x: 26.3
+  y: 41.1
+- ref: L11
+  x: 19.41
+  y: 5.18
+  rot: 180.0
+- ref: L2
+  x: 26.3
+  y: 46.6
+- ref: L8
+  x: 32.62
+  y: 17.48
+  rot: 180.0
+- ref: LED1
+  x: 3.52
+  y: 19.2
+  rot: 270.0
+- ref: LED2
+  x: 3.52
+  y: 21.59
+  rot: 270.0
+- ref: LED3
+  x: 3.52
+  y: 22.79
+  rot: 270.0
+- ref: LED4
+  x: 3.52
+  y: 20.39
+  rot: 270.0
+- ref: Q1
+  x: 22.6
+  y: 45.2
+  rot: 180.0
+- ref: R1
+  x: 12.0
+  y: 8.2
+  rot: 180.0
+- ref: R10
+  x: 4.08
+  y: 26.79
+  rot: 270.0
+- ref: R11
+  x: 3.5
+  y: 24.6
+- ref: R13
+  x: 5.91
+  y: 19.2
+  rot: 180.0
+- ref: R14
+  x: 5.91
+  y: 21.59
+  rot: 180.0
+- ref: R15
+  x: 5.91
+  y: 22.79
+  rot: 180.0
+- ref: R16
+  x: 1.3
+  y: 44.28
+  rot: 180.0
+- ref: R17
+  x: 5.91
+  y: 20.39
+  rot: 180.0
+- ref: R18
+  x: 5.9
+  y: 25.88
+- ref: R19
+  x: 9.5
+  y: 19.2
+  rot: 270.0
+- ref: R2
+  x: 10.5
+  y: 9.7
+  rot: 180.0
+- ref: R20
+  x: 9.5
+  y: 12.4
+  rot: 270.0
+- ref: R3
+  x: 26.3
+  y: 45.2
+- ref: R4
+  x: 26.3
+  y: 43.8
+- ref: R5
+  x: 26.3
+  y: 42.4
+- ref: R6
+  x: 26.3
+  y: 37.41
+  rot: 180.0
+- ref: R7
+  x: 26.3
+  y: 39.8
+  rot: 180.0
+- ref: R8
+  x: 26.3
+  y: 38.61
+  rot: 180.0
+- ref: R9
+  x: 21.0
+  y: 8.2
+  rot: 180.0
+- ref: S1
+  x: 2.89
+  y: 46.37
+  rot: 180.0
+- ref: U$5
+  x: 17.5
+  y: 16.2
+- ref: U$8
+  x: 17.5
+  y: 16.2
+- ref: U1
+  x: 32.0
+  y: 11.48
+  rot: 270.0
+- ref: U12
+  x: 2.6
+  y: 12.32
+  rot: 270.0
+- ref: U8
+  x: 6.97
+  y: 7.22
+  rot: 45.0
+- ref: X1
+  x: 19.5
+  y: 29.2
+  rot: 225.0
+copper_pours:
+- net: GND
+  layers: [F.Cu, In14.Cu]
+- net: VDD_3V3
+  layers: [F.Cu, In1.Cu]
+- net: VDD_5V
+  layers: [F.Cu]

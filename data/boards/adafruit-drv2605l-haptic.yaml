@@ -1,0 +1,161 @@
+name: Adafruit DRV2605L Haptic
+slug: adafruit-drv2605l-haptic
+source: adafruit/Adafruit-DRV2605-PCB
+format: eagle
+description: I2C haptic motor driver (DRV2605L), LRA/ERM drive circuit
+tags: [haptic, motor-control]
+key_ics: [DRV2605L]
+outline:
+  width_mm: 25.4
+  height_mm: 17.78
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C3
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C4
+  value: 1uF
+  footprint: '0603'
+- ref: C5
+  value: 1uF
+  footprint: '0603'
+  decouples: U1
+- ref: CONN3
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: CONN4
+  value: STEMMA QT
+  footprint: JST_SH4
+- ref: D1
+  value: green LED
+  footprint: '0603'
+- ref: JP1
+  value: 1x1 header
+  footprint: 1X01
+- ref: JP2
+  value: 1x5 header
+  footprint: 1X05
+- ref: JP3
+  value: 1x1 header
+  footprint: 1X01
+- ref: R3
+  value: 10kohm
+  footprint: RESPACK
+- ref: SJ1
+  value: smd solder jumper
+  footprint: SJ-2
+- ref: U1
+  value: DRV2605L
+  footprint: PSOP10
+  description: DRV2605
+nets:
+- name: GND
+  pins:
+  - C1.2
+  - C3.2
+  - C4.1
+  - C5.2
+  - CONN3.G$1.GND
+  - CONN3.G$2.MT
+  - CONN3.G$3.MT
+  - CONN4.G$1.GND
+  - CONN4.G$2.MT
+  - CONN4.G$3.MT
+  - D1.C
+  - JP2.2
+  - U1.GND
+  class: highpower
+  trace_width: '0.3048'
+- name: IN/TRIG
+  pins: [JP2.5, U1.IN/TRIG]
+- name: N$1
+  pins: [R3.G$4.1, SJ1.2]
+- name: N$2
+  pins: [D1.A, SJ1.1]
+- name: OUT+
+  pins: [JP1.1, TP1.P$1, TP3.P$1, U1.OUT+]
+- name: OUT-
+  pins: [JP3.1, TP2.P$1, TP4.P$1, U1.OUT-]
+- name: SCL
+  pins: [CONN3.G$1.SCL, CONN4.G$1.SCL, JP2.3, R3.G$1.2, U1.SCL]
+- name: SDA
+  pins: [CONN3.G$1.SDA, CONN4.G$1.SDA, JP2.4, R3.G$3.2, U1.SDA]
+- name: VCC
+  pins:
+  - C1.1
+  - C3.1
+  - C5.1
+  - CONN3.G$1.V+
+  - CONN4.G$1.V+
+  - JP2.1
+  - R3.G$1.1
+  - R3.G$3.1
+  - R3.G$4.2
+  - U1.EN
+  - U1.VDD
+  class: highpower
+  trace_width: '0.3048'
+- name: VREG
+  pins: [C4.2, U1.VREG]
+positions:
+- ref: C1
+  x: 15.11
+  y: 8.26
+  rot: 270.0
+- ref: C3
+  x: 18.29
+  y: 8.26
+  rot: 270.0
+- ref: C4
+  x: 10.29
+  y: 7.49
+  rot: 270.0
+- ref: C5
+  x: 16.64
+  y: 8.26
+  rot: 270.0
+- ref: CONN3
+  x: 22.73
+  y: 8.89
+  rot: 90.0
+- ref: CONN4
+  x: 2.67
+  y: 8.89
+  rot: 270.0
+- ref: D1
+  x: 3.56
+  y: 12.57
+  rot: 90.0
+- ref: JP1
+  x: 17.78
+  y: 15.24
+- ref: JP2
+  x: 12.7
+  y: 2.54
+- ref: JP3
+  x: 7.62
+  y: 15.24
+- ref: R3
+  x: 7.87
+  y: 8.13
+  rot: 90.0
+- ref: SJ1
+  x: 4.19
+  y: 10.79
+  rot: 270.0
+- ref: U1
+  x: 12.7
+  y: 7.87
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

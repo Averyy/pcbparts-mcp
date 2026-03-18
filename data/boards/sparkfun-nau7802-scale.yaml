@@ -1,0 +1,236 @@
+name: SparkFun NAU7802 Scale
+slug: sparkfun-nau7802-scale
+source: sparkfun/Qwiic_Scale
+format: eagle
+description: 24-bit bridge ADC (NAU7802) for load cells/strain gauges, Wheatstone bridge excitation
+tags: [adc-dac, signal-conditioning]
+key_ics: [NAU7802]
+outline:
+  width_mm: 25.4
+  height_mm: 35.56
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 0.3mm
+  min_via: 6mil
+components:
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: C11
+  value: 330pF
+  footprint: '0603'
+  prod_id: CAP-10108
+- ref: C12
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-00868
+  decouples: U1
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+- ref: C9
+  value: 100nF
+  footprint: '0603'
+  prod_id: CAP-00810
+  decouples: U1
+- ref: D1
+  value: red LED
+  footprint: '0603'
+  prod_id: DIO-00819
+  description: Red SMD LED
+- ref: J1
+  value: CAP
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: J2
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+- ref: J3
+  value: 1x4 header
+  footprint: 1X04
+- ref: J4
+  value: Qwiic connector
+  footprint: JST04_1MM_RA
+  prod_id: CONN-13694
+- ref: J5
+  value: 1x2 header
+  footprint: 1X02
+- ref: J7
+  value: Spring Terminal
+  footprint: 1X04
+- ref: JP1
+  value: 1x5 header
+  footprint: 1X05
+- ref: JP2
+  value: 1x2 header
+  footprint: 1X02
+- ref: JP3
+  value: I2C
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+  prod_id: RES-07856
+  pullup: D1.A
+- ref: R10
+  value: 47ohm
+  footprint: '0603'
+  prod_id: RES-14282
+- ref: R2
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R3
+  value: 2.2kohm
+  footprint: '0603'
+  prod_id: RES-08272
+- ref: R9
+  value: 47ohm
+  footprint: '0603'
+  prod_id: RES-14282
+- ref: U1
+  value: NAU7802
+  footprint: SOIC-16
+  prod_id: IC-14299
+  description: 24-bit load cell conversion IC with I2C interface in SOIC-16 package
+nets:
+- name: 3.3V
+  pins: [J2.2, J3.2, J4.2, JP3.2, R1.2, U1.DVDD]
+  class: 3.3V
+  trace_width: '0.508'
+- name: A+
+  pins: [J7.4, JP1.2, R10.1]
+- name: A-
+  pins: [J7.3, JP1.3, R9.1]
+- name: B+
+  pins: [C11.2, JP2.1, U1.VIN2P]
+- name: B-
+  pins: [J1.2, JP2.2, U1.VIN2N]
+- name: GND
+  pins:
+  - C10.2
+  - C12.2
+  - C9.2
+  - D1.C
+  - J2.1
+  - J3.1
+  - J4.1
+  - J7.2
+  - JP1.1
+  - JP1.4
+  - U1.AVSS
+  - U1.DVSS
+  - U1.REFN
+- name: INT
+  pins: [J5.2, U1.DRDY]
+- name: N$1
+  pins: [C11.1, J1.1]
+- name: N$10
+  pins: [D1.A, R1.1]
+- name: N$2
+  pins: [JP3.1, R3.2]
+- name: N$3
+  pins: [JP3.3, R2.2]
+- name: SCL
+  pins: [J2.4, J3.4, J4.4, R2.1, U1.SCLK]
+- name: SDA
+  pins: [J2.3, J3.3, J4.3, R3.1, U1.SDIO]
+- name: VBG
+  pins: [C10.1, U1.VBG]
+- name: VDDA
+  pins:
+  - C12.1
+  - C9.1
+  - J5.1
+  - J7.1
+  - JP1.5
+  - U1.AVDD
+  - U1.REFP
+- name: VIN1N
+  pins: [C8.1, R9.2, U1.VIN1N]
+- name: VIN1P
+  pins: [C8.2, R10.2, U1.VIN1P]
+positions:
+- ref: C10
+  x: 8.89
+  y: 15.24
+  rot: 180.0
+- ref: C11
+  x: 12.7
+  y: 15.24
+  rot: 180.0
+- ref: C12
+  x: 19.05
+  y: 10.16
+  rot: 90.0
+- ref: C8
+  x: 16.51
+  y: 15.24
+  rot: 180.0
+- ref: C9
+  x: 20.32
+  y: 22.86
+  rot: 90.0
+- ref: D1
+  x: 3.05
+  y: 7.62
+  rot: 90.0
+- ref: J1
+  x: 7.62
+  y: 13.97
+- ref: J2
+  x: 20.32
+  y: 13.97
+  rot: 90.0
+- ref: J3
+  x: 6.35
+  y: 1.27
+- ref: J4
+  x: 5.08
+  y: 13.97
+  rot: 270.0
+- ref: J5
+  x: 19.05
+  y: 1.27
+  rot: 180.0
+- ref: J7
+  x: 7.37
+  y: 25.78
+- ref: JP1
+  x: 10.16
+  y: 19.05
+- ref: JP2
+  x: 5.08
+  y: 19.05
+- ref: JP3
+  x: 22.86
+  y: 6.48
+- ref: R1
+  x: 4.45
+  y: 7.62
+  rot: 90.0
+- ref: R10
+  x: 12.7
+  y: 16.76
+- ref: R2
+  x: 22.86
+  y: 9.78
+- ref: R3
+  x: 22.86
+  y: 8.26
+- ref: R9
+  x: 16.51
+  y: 16.76
+- ref: U1
+  x: 12.7
+  y: 10.16
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

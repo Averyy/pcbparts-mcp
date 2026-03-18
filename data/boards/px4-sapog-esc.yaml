@@ -1,0 +1,1126 @@
+name: PX4 Sapog ESC
+slug: px4-sapog-esc
+source: PX4/Hardware
+format: eagle
+description: Official PX4 ESC reference design, BLDC motor control
+tags: [drone-uav, motor-control]
+key_ics: [STM32F105, CAT24C02, SN65HVD232D, LM75BD, FAN7888]
+outline:
+  width_mm: 27.0
+  height_mm: 40.2
+design_rules:
+  layers: 4
+  min_trace: 6mil
+  min_clearance: 0.2mm
+  min_drill: 0.2mm
+  min_via: 0.125mm
+components:
+- ref: C1
+  value: 18pF
+  footprint: '0402'
+  digikey: 399-8828-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-1%
+  voltage: 50V
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  digikey: 445-5942-2-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+  decouples: IC5
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+  digikey: 445-5942-2-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+  decouples: IC3
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  digikey: 445-5942-2-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+  decouples: IC3
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+  digikey: 445-5942-2-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+  decouples: IC5
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+  digikey: 445-5942-2-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+  decouples: IC6
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+  digikey: 445-5942-2-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+- ref: C16
+  value: 22uF
+  footprint: '1206'
+  digikey: 445-8045-6-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-20%
+  voltage: 35V
+- ref: C17
+  value: 22uF
+  footprint: '1206'
+  digikey: 445-8045-6-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-20%
+  voltage: 35V
+- ref: C18
+  value: 22uF
+  footprint: '1206'
+  digikey: 445-8045-6-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-20%
+  voltage: 35V
+- ref: C19
+  value: 22uF
+  footprint: '1206'
+  digikey: 445-8045-6-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-20%
+  voltage: 35V
+  decouples: IC8
+- ref: C2
+  value: 18pF
+  footprint: '0402'
+  digikey: 399-8828-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-1%
+  voltage: 50V
+- ref: C20
+  value: 22uF
+  footprint: '1206'
+  digikey: 445-8045-6-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-20%
+  voltage: 35V
+- ref: C21
+  value: 22uF
+  footprint: '1206'
+  digikey: 445-8045-6-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-20%
+  voltage: 35V
+- ref: C22
+  value: 22uF
+  footprint: '1206'
+  digikey: 445-8045-6-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-20%
+  voltage: 35V
+- ref: C23
+  value: 22uF
+  footprint: '1206'
+  digikey: 445-8045-6-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-20%
+  voltage: 35V
+  decouples: IC8
+- ref: C24
+  value: 2.2nF
+  footprint: '0402'
+  digikey: 478-1105-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+- ref: C25
+  value: 22uF
+  footprint: '1206'
+  digikey: 445-8045-6-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-20%
+  voltage: 35V
+- ref: C26
+  value: 22uF
+  footprint: '1206'
+  digikey: 445-8045-6-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-20%
+  voltage: 35V
+- ref: C27
+  value: 22uF
+  footprint: '1206'
+  digikey: 445-8045-6-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-20%
+  voltage: 35V
+  decouples: IC8
+- ref: C28
+  value: 1uF
+  footprint: '0603'
+  digikey: 587-1242-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-10%
+  voltage: 10V
+- ref: C29
+  value: 4.7uF
+  footprint: '0603'
+  digikey: 1276-2087-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-10%
+  voltage: 6.3V
+  decouples: IC8
+- ref: C3
+  value: 10nF
+  footprint: '0402'
+  digikey: 490-1312-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-10%
+  voltage: 25V
+  decouples: IC1
+- ref: C30
+  value: 2.2nF
+  footprint: '0402'
+  digikey: 478-1105-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+- ref: C31
+  value: 1uF
+  footprint: '0603'
+  digikey: 587-1242-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-10%
+  voltage: 10V
+- ref: C32
+  value: 2.2nF
+  footprint: '0402'
+  digikey: 478-1105-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+- ref: C33
+  value: 1uF
+  footprint: '0603'
+  digikey: 587-1242-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-10%
+  voltage: 10V
+- ref: C34
+  value: 1uF
+  footprint: '0603'
+  digikey: 587-1242-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-10%
+  voltage: 10V
+- ref: C35
+  value: 100uF
+  footprint: '3024'
+  digikey: 718-1942-1-ND
+  voltage: 35V
+- ref: C4
+  value: 1uF
+  footprint: '0603'
+  digikey: 587-1242-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-10%
+  voltage: 10V
+  decouples: IC1
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  digikey: 445-5942-2-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+  decouples: IC5
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  digikey: 445-5942-2-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+  decouples: IC1
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  digikey: 445-5942-2-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+  decouples: IC8
+- ref: C8
+  value: 4.7uF
+  footprint: '0603'
+  digikey: 1276-2087-1-ND
+  temp_range: "-55\xB0C ~ 125\xB0C"
+  tolerance: +-10%
+  voltage: 6.3V
+  decouples: IC8
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  digikey: 445-5942-2-ND
+  temp_range: "-55\xB0C ~ 85\xB0C"
+  tolerance: +-10%
+  voltage: 50V
+  decouples: IC7
+- ref: CON1
+  value: JST SH 6-pin
+  footprint: SM06B
+  digikey: 455-1806-1-ND
+  description: CONN HEADER SH 6POS SIDE 1MM TIN
+- ref: CON2
+  value: 4-pin connector
+  footprint: JST_GH-4P-RA
+  digikey: 455-1566-1-ND
+- ref: CON3
+  value: 4-pin connector
+  footprint: JST_GH-4P-RA
+  digikey: 455-1566-1-ND
+- ref: CON4
+  value: 4-pin connector
+  footprint: JST_GH-4P-RA
+  digikey: 455-1566-1-ND
+- ref: CON5
+  value: 4-pin connector
+  footprint: JST_GH-4P-RA
+  digikey: 455-1566-1-ND
+- ref: D3
+  value: BAS21AHT1G
+  footprint: SOD323
+  digikey: BAS21AHT1GOSCT-ND
+- ref: D4
+  value: BAS21AHT1G
+  footprint: SOD323
+  digikey: BAS21AHT1GOSCT-ND
+- ref: D5
+  value: BAS21AHT1G
+  footprint: SOD323
+  digikey: BAS21AHT1GOSCT-ND
+- ref: D6
+  value: 1KSMB20A
+  footprint: SMB
+  digikey: 1KSMB20ACT-ND
+  description: TVS DIODE 17
+- ref: IC1
+  value: STM32F105
+  footprint: TQFP64-10X10
+  digikey: 497-8918-ND
+  description: MCU ARM 256KB FLASH MEM 64-LQFP
+- ref: IC2
+  value: CAT24C02
+  footprint: SOT-23-5
+  digikey: CAT24C02TDI-GT3AOSCT-ND
+  description: IC EEPROM 2KBIT 400KHZ TSOT23-5
+- ref: IC3
+  value: SN65HVD232D
+  footprint: SOIC8
+  digikey: 296-26344-1-ND
+  description: IC CAN TRANSCEIVER 3
+- ref: IC4
+  value: SN65HVD232D
+  footprint: SOIC8
+  digikey: 296-26344-1-ND
+  description: IC CAN TRANSCEIVER 3
+- ref: IC5
+  value: LM75BD
+  footprint: TSSOP8
+  digikey: 568-4768-1-ND
+  description: SENSOR TEMPERATURE I2C 8TSSOP
+- ref: IC6
+  value: FAN7888
+  footprint: SOIC20
+  digikey: FAN7888MXTR-ND
+  description: IC GATE DRIVER HALF BRIDG 20SOIC
+- ref: IC7
+  value: ZXCT1051
+  footprint: SOT-23-5
+  digikey: ZXCT1051E5CT-ND
+  description: IC CURRENT MONITOR 1% SOT23-5
+- ref: IC8
+  value: 3.3V
+  footprint: SOT-223
+  digikey: NCV1117ST33T3GOSCT-ND
+  description: IC REG LDO 3
+- ref: LED1
+  value: LTST-C19HE1WT
+  footprint: LITE_ON_RGB_LED
+  digikey: 160-2162-1-ND
+- ref: Q1
+  value: BSC019N04NS
+  footprint: DFN5X6
+  digikey: BSC019N04NS GTR-ND
+- ref: Q2
+  value: BSC019N04NS
+  footprint: DFN5X6
+  digikey: BSC019N04NS GTR-ND
+- ref: Q3
+  value: BSC019N04NS
+  footprint: DFN5X6
+  digikey: BSC019N04NS GTR-ND
+- ref: Q4
+  value: BSC019N04NS
+  footprint: DFN5X6
+  digikey: BSC019N04NS GTR-ND
+- ref: Q5
+  value: BSC019N04NS
+  footprint: DFN5X6
+  digikey: BSC019N04NS GTR-ND
+- ref: Q6
+  value: BSC019N04NS
+  footprint: DFN5X6
+  digikey: BSC019N04NS GTR-ND
+- ref: R1
+  value: 200ohm
+  footprint: '0402'
+  digikey: 311-200JRCT-ND
+  tolerance: 5%
+- ref: R10
+  value: 560ohm
+  footprint: '0402'
+  digikey: 541-560LCT-ND
+  tolerance: 1%
+- ref: R11
+  value: 3ohm
+  footprint: '0402'
+  digikey: P3.0JCT-ND
+  tolerance: 5%
+- ref: R12
+  value: 3ohm
+  footprint: '0402'
+  digikey: P3.0JCT-ND
+  tolerance: 5%
+- ref: R13
+  value: 3.9kohm
+  footprint: '0402'
+  digikey: 311-3.90KLRCT-ND
+  tolerance: 1%
+- ref: R14
+  value: 5mohm
+  footprint: 2010_CURRENT_SHUNT
+  digikey: 985-1563-1-ND
+  tolerance: 1%
+- ref: R15
+  value: 560ohm
+  footprint: '0402'
+  digikey: 541-560LCT-ND
+  tolerance: 1%
+- ref: R16
+  value: 3ohm
+  footprint: '0402'
+  digikey: P3.0JCT-ND
+  tolerance: 5%
+- ref: R17
+  value: 3ohm
+  footprint: '0402'
+  digikey: P3.0JCT-ND
+  tolerance: 5%
+- ref: R18
+  value: 3.9kohm
+  footprint: '0402'
+  digikey: 311-3.90KLRCT-ND
+  tolerance: 1%
+- ref: R19
+  value: 560ohm
+  footprint: '0402'
+  digikey: 541-560LCT-ND
+  tolerance: 1%
+- ref: R2
+  value: 3.9kohm
+  footprint: '0402'
+  digikey: 311-3.90KLRCT-ND
+  tolerance: 1%
+  pullup: I2C_SDA
+- ref: R20
+  value: 3ohm
+  footprint: '0402'
+  digikey: P3.0JCT-ND
+  tolerance: 5%
+- ref: R21
+  value: 3ohm
+  footprint: '0402'
+  digikey: P3.0JCT-ND
+  tolerance: 5%
+- ref: R22
+  value: 3.9kohm
+  footprint: '0402'
+  digikey: 311-3.90KLRCT-ND
+  tolerance: 1%
+- ref: R23
+  value: 200ohm
+  footprint: '0402'
+  digikey: 311-200JRCT-ND
+  tolerance: 5%
+- ref: R24
+  value: 200ohm
+  footprint: '0402'
+  digikey: 311-200JRCT-ND
+  tolerance: 5%
+- ref: R25
+  value: 200ohm
+  footprint: '0402'
+  digikey: 311-200JRCT-ND
+  tolerance: 5%
+- ref: R26
+  value: 200ohm
+  footprint: '0402'
+  digikey: 311-200JRCT-ND
+  tolerance: 5%
+- ref: R3
+  value: 3.9kohm
+  footprint: '0402'
+  digikey: 311-3.90KLRCT-ND
+  tolerance: 1%
+  pullup: I2C_SCL
+- ref: R4
+  value: 3.9kohm
+  footprint: '0402'
+  digikey: 311-3.90KLRCT-ND
+  tolerance: 1%
+  pulldown: BOOT0
+- ref: R5
+  value: 200ohm
+  footprint: '0402'
+  digikey: 311-200JRCT-ND
+  tolerance: 5%
+- ref: R6
+  value: 200ohm
+  footprint: '0402'
+  digikey: 311-200JRCT-ND
+  tolerance: 5%
+- ref: R7
+  value: 3.9kohm
+  footprint: '0402'
+  digikey: 311-3.90KLRCT-ND
+  tolerance: 1%
+- ref: R8
+  value: 1.3kohm
+  footprint: '0402'
+  digikey: P1.3KDCCT-ND
+  tolerance: 5%
+  pulldown: SENSE_VIN
+- ref: R9
+  value: 10kohm
+  footprint: '0402'
+  digikey: 311-10KJRCT-ND
+  tolerance: 5%
+  pullup: SENSE_VIN
+- ref: X1
+  value: 24MHz
+  footprint: OSCILLATOR-3.2X2.5
+  digikey: 1253-1182-1-ND
+  description: Smd Crystal
+nets:
+- name: BLABLA
+  pins: [IC7.VOUT, R7.1]
+- name: BOOT0
+  pins: [IC1.BOOT0, R4.2]
+- name: CAN1_RX
+  pins: [IC1.PA11, IC3.R]
+- name: CAN1_TX
+  pins: [IC1.PA12, IC3.D]
+- name: CAN2_RX
+  pins: [IC1.PB12, IC4.R]
+- name: CAN2_TX
+  pins: [IC1.PB13, IC4.D]
+- name: CANH
+  pins: [CON4.2, CON5.2, IC4.CANH]
+- name: CANH_2
+  pins: [CON2.2, CON3.2, IC3.CANH]
+- name: CANL
+  pins: [CON4.3, CON5.3, IC4.CANL]
+- name: CANL_2
+  pins: [CON2.3, CON3.3, IC3.CANL]
+- name: CURRENT_SHUNT
+  pins:
+  - C16.1
+  - C17.1
+  - C18.1
+  - C20.1
+  - C21.1
+  - C22.1
+  - C25.1
+  - C26.1
+  - C35.-
+  - D6.A
+  - Q2.S
+  - Q4.S
+  - Q6.S
+  - R14.C1
+- name: FET_A_H
+  pins: [IC1.PA8, IC6.HIN1]
+- name: FET_A_HO
+  pins: [IC6.HO1, R11.2]
+- name: FET_A_L
+  pins: [IC1.PA7, IC6.LIN1]
+- name: FET_A_LO
+  pins: [IC6.LO1, R12.2]
+- name: FET_A_VB
+  pins: [C31.1, D3.C, IC6.VB1]
+- name: FET_A_VS
+  pins: [A.P, C31.2, IC6.VS1, Q1.S, Q2.D, R13.1]
+- name: FET_B_H
+  pins: [IC1.PA9, IC6.HIN2]
+- name: FET_B_HO
+  pins: [IC6.HO2, R16.2]
+- name: FET_B_L
+  pins: [IC1.PB0, IC6.LIN2]
+- name: FET_B_LO
+  pins: [IC6.LO2, R17.2]
+- name: FET_B_VB
+  pins: [C33.1, D4.C, IC6.VB2]
+- name: FET_B_VS
+  pins: [B.P, C33.2, IC6.VS2, Q3.S, Q4.D, R18.1]
+- name: FET_C_H
+  pins: [IC1.PA10, IC6.HIN3]
+- name: FET_C_HO
+  pins: [IC6.HO3, R20.2]
+- name: FET_C_L
+  pins: [IC1.PB1, IC6.LIN3]
+- name: FET_C_LO
+  pins: [IC6.LO3, R21.2]
+- name: FET_C_VB
+  pins: [C34.1, D5.C, IC6.VB3]
+- name: FET_C_VS
+  pins: [C.P, C34.2, IC6.VS3, Q5.S, Q6.D, R22.1]
+- name: GND
+  pins:
+  - B-.P
+  - C1.1
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.1
+  - C19.1
+  - C2.1
+  - C23.1
+  - C24.1
+  - C27.2
+  - C28.1
+  - C29.1
+  - C3.1
+  - C30.1
+  - C32.1
+  - C4.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.2
+  - C9.2
+  - CON1.6
+  - CON1.G1
+  - CON1.G2
+  - IC1.PC1
+  - IC1.PC2
+  - IC1.PC3
+  - IC1.VSS@1
+  - IC1.VSS@2
+  - IC1.VSS@3
+  - IC1.VSS@4
+  - IC1.VSSA
+  - IC2.VSS
+  - IC3.GND
+  - IC4.GND
+  - IC5.A0
+  - IC5.A1
+  - IC5.A2
+  - IC5.GND
+  - IC6.GND
+  - IC7.GND
+  - IC8.GND
+  - R1.2
+  - R10.1
+  - R14.C2
+  - R15.1
+  - R19.1
+  - R4.1
+  - R8.2
+  - X1.GND
+- name: GNDD
+  pins:
+  - CON2.4
+  - CON2.GND
+  - CON3.4
+  - CON3.GND
+  - CON4.4
+  - CON4.GND
+  - CON5.4
+  - CON5.GND
+- name: I2C_SCL
+  pins: [IC1.PB8, IC2.SCL, IC5.SCL, R3.2]
+- name: I2C_SDA
+  pins: [IC1.PB9, IC2.SDA, IC5.SDA, R2.2]
+- name: N$1
+  pins: [CON1.2, R5.1]
+- name: N$11
+  pins: [Q5.G, R20.1]
+- name: N$12
+  pins: [IC1.PC7, R24.2]
+- name: N$14
+  pins: [Q1.G, R11.1]
+- name: N$16
+  pins: [C1.2, IC1.PD0, X1.2]
+- name: N$17
+  pins: [Q6.G, R21.1]
+- name: N$18
+  pins: [IC1.PC8, R23.2]
+- name: N$19
+  pins: [CON4.1, CON5.1]
+- name: N$2
+  pins: [CON1.3, R6.1]
+- name: N$21
+  pins: [C2.2, IC1.PD1, X1.1]
+- name: N$22
+  pins: [CON2.1, CON3.1]
+- name: N$26
+  pins: [LED1.G, R24.1]
+- name: N$3
+  pins: [IC1.PC6, R25.2]
+- name: N$4
+  pins: [Q2.G, R12.1]
+- name: N$5
+  pins: [Q3.G, R16.1]
+- name: N$6
+  pins: [LED1.B, R23.1]
+- name: N$7
+  pins: [LED1.R, R25.1]
+- name: N$8
+  pins: [Q4.G, R17.1]
+- name: N$9
+  pins: [IC1.PC0, R1.1]
+- name: SENSE_A
+  pins: [C24.2, IC1.PA1, R10.2, R13.2]
+- name: SENSE_B
+  pins: [C30.2, IC1.PA2, R15.2, R18.2]
+- name: SENSE_C
+  pins: [C32.2, IC1.PA3, R19.2, R22.2]
+- name: SENSE_CURRENT
+  pins: [C28.2, IC1.PA5, R7.2]
+- name: SENSE_VIN
+  pins: [C15.2, IC1.PA4, R8.1, R9.1]
+- name: SWCLK
+  pins: [CON1.5, IC1.PA14]
+- name: SWDIO
+  pins: [CON1.4, IC1.PA13]
+- name: TSENS_OS
+  pins: [IC1.PB4, IC5.OS]
+- name: USART1_RX/PWM
+  pins: [IC1.PA0-WKUP, IC1.PB7, R6.2]
+- name: USART1_TX
+  pins: [IC1.PB6, R5.2]
+- name: VBAT
+  pins:
+  - B+.P
+  - C14.1
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C25.2
+  - C26.2
+  - C27.1
+  - C35.+
+  - D3.A
+  - D4.A
+  - D5.A
+  - D6.C
+  - IC6.VDD
+  - IC8.IN
+  - Q1.D
+  - Q3.D
+  - Q5.D
+  - R9.2
+- name: VDD_3V3
+  pins:
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C29.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.1
+  - C9.1
+  - CON1.1
+  - IC1.VBAT
+  - IC1.VDD@1
+  - IC1.VDD@2
+  - IC1.VDD@3
+  - IC1.VDD@4
+  - IC1.VDDA
+  - IC2.VCC
+  - IC3.VCC
+  - IC4.VCC
+  - IC5.VCC
+  - IC7.VCC
+  - IC8.OUT
+  - LED1.A
+  - R2.1
+  - R26.1
+  - R3.1
+- name: VSENSE
+  pins: [IC7.VSENSE-, R14.S2]
+- name: VSENSE_2
+  pins: [IC7.VSENSE+, R14.S1]
+- name: WP
+  pins: [IC2.WP, R26.2]
+positions:
+- ref: C1
+  x: 25.85
+  y: 22.95
+  rot: 270.0
+- ref: C10
+  x: 24.35
+  y: 19.0
+- ref: C11
+  x: 5.45
+  y: 39.25
+  rot: 180.0
+- ref: C12
+  x: 2.1
+  y: 39.25
+  rot: 180.0
+- ref: C13
+  x: 25.24
+  y: 19.29
+  rot: 180.0
+- ref: C14
+  x: 24.45
+  y: 20.55
+  rot: 180.0
+- ref: C15
+  x: 3.95
+  y: 22.4
+  rot: 90.0
+- ref: C16
+  x: 14.78
+  y: 10.28
+  rot: 90.0
+- ref: C17
+  x: 19.57
+  y: 10.28
+  rot: 90.0
+- ref: C18
+  x: 9.38
+  y: 10.28
+  rot: 90.0
+- ref: C19
+  x: 4.9
+  y: 18.4
+  rot: 90.0
+- ref: C2
+  x: 25.85
+  y: 25.4
+  rot: 270.0
+- ref: C20
+  x: 25.68
+  y: 10.28
+  rot: 90.0
+- ref: C21
+  x: 21.98
+  y: 10.28
+  rot: 90.0
+- ref: C22
+  x: 12.38
+  y: 10.28
+  rot: 90.0
+- ref: C23
+  x: 4.9
+  y: 18.4
+  rot: 90.0
+- ref: C24
+  x: 10.55
+  y: 21.15
+  rot: 90.0
+- ref: C25
+  x: 17.18
+  y: 10.28
+  rot: 90.0
+- ref: C26
+  x: 17.5
+  y: 10.28
+  rot: 90.0
+- ref: C27
+  x: 3.1
+  y: 23.1
+- ref: C28
+  x: 7.05
+  y: 15.5
+  rot: 90.0
+- ref: C29
+  x: 2.12
+  y: 24.98
+  rot: 180.0
+- ref: C3
+  x: 22.75
+  y: 28.68
+  rot: 180.0
+- ref: C30
+  x: 8.85
+  y: 21.15
+  rot: 90.0
+- ref: C31
+  x: 13.85
+  y: 20.25
+  rot: 180.0
+- ref: C32
+  x: 11.6
+  y: 30.95
+  rot: 180.0
+- ref: C33
+  x: 18.3
+  y: 20.25
+  rot: 180.0
+- ref: C34
+  x: 25.2
+  y: 28.3
+  rot: 270.0
+- ref: C35
+  x: 7.6
+  y: 6.15
+  rot: 270.0
+- ref: C4
+  x: 22.98
+  y: 30.43
+  rot: 180.0
+- ref: C5
+  x: 20.95
+  y: 20.1
+  rot: 180.0
+- ref: C6
+  x: 19.25
+  y: 32.88
+- ref: C7
+  x: 10.1
+  y: 32.1
+  rot: 270.0
+- ref: C8
+  x: 8.2
+  y: 20.9
+  rot: 180.0
+- ref: C9
+  x: 8.4
+  y: 19.45
+  rot: 180.0
+- ref: CON1
+  x: 2.86
+  y: 30.1
+  rot: 270.0
+- ref: CON2
+  x: 22.25
+  y: 37.45
+- ref: CON3
+  x: 13.35
+  y: 37.45
+- ref: CON4
+  x: 22.25
+  y: 37.45
+- ref: CON5
+  x: 13.35
+  y: 37.45
+- ref: D3
+  x: 14.6
+  y: 15.4
+  rot: 270.0
+- ref: D4
+  x: 16.15
+  y: 15.4
+  rot: 270.0
+- ref: D5
+  x: 17.75
+  y: 15.4
+  rot: 270.0
+- ref: D6
+  x: 25.02
+  y: 10.57
+  rot: 90.0
+- ref: IC1
+  x: 14.95
+  y: 25.85
+  rot: 180.0
+- ref: IC2
+  x: 22.9
+  y: 16.85
+  rot: 90.0
+- ref: IC3
+  x: 4.55
+  y: 37.39
+- ref: IC4
+  x: 4.55
+  y: 35.95
+  rot: 180.0
+- ref: IC5
+  x: 22.9
+  y: 17.05
+- ref: IC6
+  x: 19.5
+  y: 26.7
+  rot: 270.0
+- ref: IC7
+  x: 6.4
+  y: 12.5
+  rot: 270.0
+- ref: IC8
+  x: 5.35
+  y: 28.0
+  rot: 270.0
+- ref: LED1
+  x: 1.7
+  y: 31.6
+  rot: 90.0
+- ref: Q1
+  x: 5.47
+  y: 11.8
+  rot: 90.0
+- ref: Q2
+  x: 5.47
+  y: 4.9
+  rot: 90.0
+- ref: Q3
+  x: 13.5
+  y: 11.8
+  rot: 90.0
+- ref: Q4
+  x: 13.5
+  y: 4.9
+  rot: 90.0
+- ref: Q5
+  x: 21.52
+  y: 11.8
+  rot: 90.0
+- ref: Q6
+  x: 21.52
+  y: 4.9
+  rot: 90.0
+- ref: R1
+  x: 22.75
+  y: 27.48
+- ref: R10
+  x: 11.75
+  y: 21.15
+  rot: 90.0
+- ref: R11
+  x: 9.15
+  y: 5.85
+- ref: R12
+  x: 9.15
+  y: 4.65
+- ref: R13
+  x: 11.75
+  y: 23.25
+  rot: 270.0
+- ref: R14
+  x: 2.1
+  y: 11.0
+  rot: 90.0
+- ref: R15
+  x: 8.85
+  y: 23.25
+  rot: 270.0
+- ref: R16
+  x: 17.2
+  y: 6.0
+- ref: R17
+  x: 17.2
+  y: 4.8
+- ref: R18
+  x: 10.05
+  y: 23.25
+  rot: 90.0
+- ref: R19
+  x: 11.6
+  y: 29.7
+  rot: 180.0
+- ref: R2
+  x: 20.45
+  y: 18.45
+  rot: 270.0
+- ref: R20
+  x: 25.2
+  y: 5.8
+- ref: R21
+  x: 25.2
+  y: 4.6
+- ref: R22
+  x: 12.05
+  y: 28.0
+  rot: 90.0
+- ref: R23
+  x: 7.3
+  y: 25.9
+- ref: R24
+  x: 7.3
+  y: 27.1
+- ref: R25
+  x: 7.3
+  y: 28.3
+- ref: R26
+  x: 25.55
+  y: 16.95
+  rot: 270.0
+- ref: R3
+  x: 19.25
+  y: 18.45
+  rot: 270.0
+- ref: R4
+  x: 16.7
+  y: 18.0
+  rot: 90.0
+- ref: R5
+  x: 7.4
+  y: 31.6
+- ref: R6
+  x: 7.4
+  y: 32.8
+- ref: R7
+  x: 7.1
+  y: 17.5
+  rot: 180.0
+- ref: R8
+  x: 5.1
+  y: 22.4
+  rot: 270.0
+- ref: R9
+  x: 6.25
+  y: 22.4
+  rot: 270.0
+- ref: X1
+  x: 23.38
+  y: 23.5
+  rot: 270.0
+copper_pours:
+- net: CURRENT_SHUNT
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: FET_A_VS
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: FET_B_VS
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: FET_C_VS
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: GNDD
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: VBAT
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: VDD_3V3
+  layers: [B.Cu, F.Cu, In2.Cu]

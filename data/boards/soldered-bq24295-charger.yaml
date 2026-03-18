@@ -1,0 +1,517 @@
+name: Soldered BQ24295 Charger
+slug: soldered-bq24295-charger
+source: SolderedElectronics/Li-ion-charger-BQ24295-with-5V-USB-output-board-hardware-design
+format: kicad7
+description: PMIC charger + boost output (BQ24295 I2C-programmable), load switch
+tags: [battery-charging, power-supply]
+key_ics: [BQ24295]
+outline:
+  width_mm: 38.0
+  height_mm: 54.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0603'
+  decouples: U2
+- ref: C2
+  value: 22uF
+  footprint: '1206'
+- ref: C3
+  value: 4.7uF
+  footprint: 0805
+- ref: C4
+  value: 47nF
+  footprint: '0603'
+- ref: C5
+  value: 10uF
+  footprint: '1206'
+- ref: C6
+  value: 10uF
+  footprint: '1206'
+- ref: C7
+  value: 10uF
+  footprint: '1206'
+- ref: C8
+  value: 2.2uF
+  footprint: '0603'
+- ref: C9
+  value: 2.2uF
+  footprint: '0603'
+  decouples: U3
+- ref: D1
+  value: red LED
+  footprint: '0402'
+- ref: D2
+  value: purple LED
+  footprint: '0402'
+- ref: JP1
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP2
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP3
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP4
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP5
+  value: solder jumper
+  footprint: SJ-2
+- ref: JP6
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: K1
+  value: 1x2 header
+  footprint: HEADER_MALE
+- ref: K10
+  value: 1x2 header
+  footprint: HEADER_MALE
+- ref: K11
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K12
+  value: USB-A
+  footprint: USB_A_FEMALE_CONECTOR
+- ref: K2
+  value: 1x1 header
+  footprint: HEADER_MALE
+- ref: K3
+  value: 1x1 header
+  footprint: HEADER_MALE
+- ref: K4
+  value: U262-161N-4BVC11
+  footprint: U262-161N-4BVC11
+- ref: K5
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K6
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: K7
+  value: JST-2pin-SMD
+  footprint: JST-2pin-SMD
+- ref: K8
+  value: 1x1 header
+  footprint: HEADER_MALE
+- ref: K9
+  value: 1x1 header
+  footprint: HEADER_MALE
+- ref: L1
+  value: 2.2uH
+  footprint: SRN5020TA-2R2M
+- ref: R1
+  value: 5.1kohm
+  footprint: '0603'
+- ref: R10
+  value: 10kohm
+  footprint: '0603'
+- ref: R11
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R12
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: K4.CC2
+- ref: R13
+  value: 150ohm
+  footprint: '0603'
+- ref: R14
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: K4.CC1
+- ref: R15
+  value: 1kohm
+  footprint: '0603'
+  pulldown: JP5.1
+- ref: R16
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+- ref: R4
+  value: 33kohm
+  footprint: '0603'
+  pulldown: TS
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  pulldown: JP2.2
+- ref: R6
+  value: 10kohm
+  footprint: '0603'
+- ref: R7
+  value: 10kohm
+  footprint: '0603'
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  pulldown: nCE
+- ref: R9
+  value: 10kohm
+  footprint: '0603'
+  pullup: INT
+- ref: U1
+  value: dual NMOS
+  footprint: SOT-363
+- ref: U2
+  value: BQ24295
+  footprint: BQ24295RGET
+- ref: U3
+  value: SE5218
+  footprint: SOT-23-5
+nets:
+- name: 3V3
+  pins:
+  - C9.2
+  - JP3.2
+  - JP6.1
+  - K11.3V3
+  - K5.3V3
+  - R9.1
+  - U1.G1
+  - U1.G2
+  - U3.VOUT
+- name: BAT
+  pins: [C5.2, K7.+, K8.1, U2.BAT@13, U2.BAT@14]
+- name: BTST
+  pins: [C4.1, U2.BTST]
+- name: D+
+  pins: [K4.DP1, K4.DP2, U2.D+]
+- name: D-
+  pins: [K4.DN1, K4.DN2, U2.D-]
+- name: GND
+  pins:
+  - C1.1
+  - C2.1
+  - C3.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - D2.K
+  - K1.2
+  - K11.GND
+  - K11.SHIELD@5
+  - K12.5@5
+  - K12.GND
+  - K3.1
+  - K4.GND@A1
+  - K4.GND@A12
+  - K4.GND@B1
+  - K4.GND@B12
+  - K4.SHIELD@SH
+  - K5.GND
+  - K5.SHIELD@5
+  - K6.1
+  - K7.-
+  - K9.1
+  - R12.2
+  - R13.2
+  - R14.2
+  - R15.2
+  - R4.2
+  - R5.2
+  - R8.2
+  - U2.PGND@17
+  - U2.PGND@18
+  - U3.GND
+- name: ILIM
+  pins: [JP4.2, JP5.2, U2.ILIM]
+- name: INT
+  pins: [K10.2, R9.2, U2.INT]
+- name: Net-(D1-Pad2)
+  pins: [D1.K, R11.1]
+- name: Net-(D2-Pad1)
+  pins: [D2.A, R16.2]
+- name: Net-(JP2-Pad2)
+  pins: [JP2.2, R5.1]
+- name: Net-(JP4-Pad1)
+  pins: [JP4.1, R13.1]
+- name: Net-(JP5-Pad1)
+  pins: [JP5.1, R15.1]
+- name: Net-(JP6-Pad2)
+  pins: [JP6.2, R16.1]
+- name: Net-(K12-Pad2)
+  pins: [K12.D+, K12.D-]
+- name: Net-(K4-PadA5)
+  pins: [K4.CC1, R14.1]
+- name: Net-(K4-PadB5)
+  pins: [K4.CC2, R12.1]
+- name: OTG
+  pins: [R10.2, U2.OTG]
+- name: PMID
+  pins:
+  - C2.2
+  - C8.2
+  - JP1.2
+  - K12.VBUS
+  - K6.2
+  - U2.PMID
+  - U3.EN
+  - U3.VIN
+- name: REGN
+  pins: [C3.2, R1.1, U2.REGN]
+- name: SCL3,3
+  pins: [K11.SCL, K5.SCL, R7.1, U1.S1]
+- name: SCL5
+  pins: [K6.4, R3.2, U1.D1, U2.SCL]
+- name: SCL_PULL3,3
+  pins: [JP3.1, R7.2]
+- name: SCL_PULL5
+  pins: [JP1.1, R3.1]
+- name: SDA3,3
+  pins: [K11.SDA, K5.SDA, R2.2, U1.S2]
+- name: SDA5
+  pins: [K6.3, R6.1, U1.D2, U2.SDA]
+- name: SDA_PULL3,3
+  pins: [JP3.3, R2.1]
+- name: SDA_PULL5
+  pins: [JP1.3, R6.2]
+- name: STAT
+  pins: [R11.2, U2.STAT]
+- name: SW
+  pins: [C4.2, L1.1, U2.SW@19, U2.SW@20]
+- name: SYS
+  pins:
+  - C6.2
+  - C7.2
+  - D1.A
+  - L1.2
+  - R10.1
+  - U2.SYS@15
+  - U2.SYS@16
+- name: TS
+  pins: [JP2.1, K1.1, R1.2, R4.1, U2.TS]
+- name: VCC
+  pins:
+  - C1.2
+  - K2.1
+  - K4.VBUS@A4
+  - K4.VBUS@A9
+  - K4.VBUS@B4
+  - K4.VBUS@B9
+  - U2.VBUS@1
+  - U2.VBUS@24
+- name: nCE
+  pins: [K10.1, R8.1, U2.nCE]
+positions:
+- ref: C1
+  x: 102.7
+  y: 115.9
+  rot: 90.0
+- ref: C2
+  x: 104.0
+  y: 110.0
+  rot: -90.0
+- ref: C3
+  x: 107.4
+  y: 110.4
+  rot: -90.0
+- ref: C4
+  x: 109.4
+  y: 110.4
+  rot: 90.0
+- ref: C5
+  x: 113.9
+  y: 119.2
+  rot: 180.0
+- ref: C6
+  x: 113.9
+  y: 114.6
+  rot: 180.0
+- ref: C7
+  x: 113.9
+  y: 116.9
+  rot: 180.0
+- ref: C8
+  x: 97.6
+  y: 136.6
+  rot: -90.0
+- ref: C9
+  x: 100.0
+  y: 133.5
+  rot: 180.0
+- ref: D1
+  x: 122.0
+  y: 94.0
+- ref: D2
+  x: 98.9
+  y: 115.6
+- ref: JP1
+  x: 102.0
+  y: 128.0
+- ref: JP2
+  x: 121.5
+  y: 127.2
+  rot: 180.0
+- ref: JP3
+  x: 112.0
+  y: 128.0
+- ref: JP4
+  x: 117.0
+  y: 138.5
+  rot: -90.0
+- ref: JP5
+  x: 120.0
+  y: 138.5
+  rot: -90.0
+- ref: JP6
+  x: 98.9
+  y: 118.5
+- ref: K1
+  x: 126.5
+  y: 130.0
+  rot: -90.0
+  side: back
+- ref: K10
+  x: 91.5
+  y: 130.0
+  rot: -90.0
+  side: back
+- ref: K11
+  x: 93.3
+  y: 120.0
+  rot: 90.0
+- ref: K12
+  x: 109.0
+  y: 99.5
+  rot: 180.0
+- ref: K2
+  x: 91.5
+  y: 98.5
+  rot: 180.0
+  side: back
+- ref: K3
+  x: 91.5
+  y: 113.5
+  rot: 180.0
+  side: back
+- ref: K4
+  x: 95.1
+  y: 106.0
+  rot: -90.0
+- ref: K5
+  x: 124.7
+  y: 120.0
+  rot: -90.0
+- ref: K6
+  x: 109.0
+  y: 138.5
+  rot: 180.0
+  side: back
+- ref: K7
+  x: 123.0
+  y: 106.0
+  rot: -90.0
+- ref: K8
+  x: 126.5
+  y: 113.5
+  rot: 180.0
+  side: back
+- ref: K9
+  x: 126.5
+  y: 98.5
+  rot: 180.0
+  side: back
+- ref: L1
+  x: 113.2
+  y: 110.3
+- ref: R1
+  x: 118.4
+  y: 130.5
+- ref: R10
+  x: 106.2
+  y: 122.0
+  rot: 180.0
+- ref: R11
+  x: 122.0
+  y: 95.5
+  rot: 180.0
+- ref: R12
+  x: 100.0
+  y: 107.4
+  rot: 90.0
+- ref: R13
+  x: 118.4
+  y: 132.0
+- ref: R14
+  x: 100.0
+  y: 104.75
+  rot: -90.0
+- ref: R15
+  x: 118.4
+  y: 133.5
+  rot: 180.0
+- ref: R16
+  x: 98.9
+  y: 116.9
+  rot: 180.0
+- ref: R2
+  x: 112.8
+  y: 125.8
+  rot: 90.0
+- ref: R3
+  x: 101.2
+  y: 125.8
+  rot: 90.0
+- ref: R4
+  x: 118.4
+  y: 129.0
+  rot: 180.0
+- ref: R5
+  x: 118.4
+  y: 127.5
+  rot: 180.0
+- ref: R6
+  x: 102.8
+  y: 125.8
+  rot: -90.0
+- ref: R7
+  x: 111.2
+  y: 125.8
+  rot: -90.0
+- ref: R8
+  x: 95.9
+  y: 127.0
+  rot: 180.0
+- ref: R9
+  x: 95.8
+  y: 133.4
+  rot: 180.0
+- ref: U1
+  x: 107.0
+  y: 128.0
+- ref: U2
+  x: 107.6
+  y: 116.7
+- ref: U3
+  x: 100.0
+  y: 136.6
+  rot: 90.0
+copper_pours:
+- net: BAT
+  layers: [F.Cu]
+- net: GND
+  layers: [F&B.Cu]
+- net: PMID
+  layers: [F.Cu]
+- net: SYS
+  layers: [F.Cu]
+- net: VCC
+  layers: [F.Cu]
+- net: ''
+  layers: [F.Cu]
+  keepout: true

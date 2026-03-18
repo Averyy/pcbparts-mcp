@@ -1,0 +1,1443 @@
+name: OpenMD GaN Motor Driver
+slug: openmd-gan-motor-driver
+source: CrabLabsLLC/OpenMD
+format: kicad8
+description: GaN 3-phase half-bridge motor driver (80V/70A), EPC2361 GaN FETs
+tags: [inverter, motor-control]
+key_ics: [LM1205, LM5164DDA, OPA310xDCK, INA241A2]
+outline:
+  width_mm: 72.0
+  height_mm: 50.0
+design_rules:
+  layers: 8
+  min_trace: 0.127mm
+  min_clearance: 0.127mm
+  min_drill: 0.2mm
+  min_via: 0.406mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C100
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C101
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C102
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C103
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C104
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C105
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C106
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C107
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C108
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C111
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C114
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C117
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C12
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C120
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C123
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C13
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C15
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C17
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C18
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C19
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C2
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C21
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C23
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C24
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C26
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C27
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C3
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C31
+  value: 10uF
+  footprint: '1210'
+- ref: C35
+  value: 10uF
+  footprint: '1210'
+- ref: C36
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C40
+  value: 4.7uF
+  footprint: '0402'
+  mpn: V475M0603X5R6R3NDT
+- ref: C41
+  value: 100nF
+  footprint: '0402'
+  mpn: CGA0603X7R104K500JT
+- ref: C42
+  value: 100nF
+  footprint: '0402'
+  mpn: CGA0603X7R104K500JT
+- ref: C47
+  value: 100nF
+  footprint: '0402'
+  mpn: CGA0603X7R104K500JT
+  description: Unpolarized capacitor, small symbol
+- ref: C49
+  value: 10nF
+  footprint: '0402'
+  mpn: CSA0603X7R103K500JT
+  description: Unpolarized capacitor, small symbol
+- ref: C55
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C58
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C6
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C60
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C62
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C63
+  value: 100nF
+  footprint: '0402'
+- ref: C64
+  value: 4.7uF
+  footprint: '0402'
+  mpn: V475M0603X5R6R3NDT
+- ref: C65
+  value: 4.7uF
+  footprint: '0402'
+  mpn: V475M0603X5R6R3NDT
+- ref: C67
+  value: 10nF
+  footprint: '0402'
+  mpn: CSA0603X7R103K500JT
+  description: Unpolarized capacitor, small symbol
+- ref: C68
+  value: 10nF
+  footprint: '0402'
+  mpn: CSA0603X7R103K500JT
+  description: Unpolarized capacitor, small symbol
+- ref: C69
+  value: 10nF
+  footprint: '0402'
+  mpn: CSA0603X7R103K500JT
+  description: Unpolarized capacitor, small symbol
+- ref: C7
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C71
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C72
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C75
+  value: 100nF
+  footprint: '0603'
+  mpn: CGA0603X7R104K101JT
+- ref: C76
+  value: 2.2nF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C77
+  value: 100nF
+  footprint: '0402'
+- ref: C78
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C79
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C8
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C80
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C81
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C82
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C86
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C87
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C88
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C89
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C9
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C90
+  value: 4.7uF
+  footprint: '0402'
+  mpn: V475M0603X5R6R3NDT
+- ref: C91
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C92
+  value: 20pF
+  footprint: '0402'
+  description: Unpolarized capacitor, small symbol
+- ref: C93
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C94
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C95
+  value: 10nF
+  footprint: '0402'
+  mpn: CSA0603X7R103K500JT
+  description: Unpolarized capacitor, small symbol
+- ref: C96
+  value: 10nF
+  footprint: '0402'
+  mpn: CSA0603X7R103K500JT
+  description: Unpolarized capacitor, small symbol
+- ref: C97
+  value: 10nF
+  footprint: '0402'
+  mpn: CSA0603X7R103K500JT
+  description: Unpolarized capacitor, small symbol
+- ref: C98
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: C99
+  value: 10uF
+  footprint: '1210'
+  mpn: FS32X475K101EGG
+- ref: D13
+  value: 5V
+  footprint: '0402'
+  mpn: 0603ESDA-05N
+  description: Bidirectional transient-voltage-suppression diode, small symbol
+- ref: D16
+  value: 5V
+  footprint: '0402'
+  mpn: 0603ESDA-05N
+  description: Bidirectional transient-voltage-suppression diode, small symbol
+- ref: D18
+  value: 6V
+  footprint: SOD-882
+  mpn: MMSZ5233BS-7-F
+  description: Zener diode, filled shape
+- ref: D19
+  value: 100V
+  footprint: SOD-123F
+  mpn: SZ4582
+  description: Zener diode, filled shape
+- ref: D29
+  value: 6V
+  footprint: SOD-882
+  mpn: MMSZ5233BS-7-F
+  description: Zener diode, small symbol, filled shape
+- ref: D32
+  value: 6V
+  footprint: SOD-882
+  mpn: MMSZ5233BS-7-F
+  description: Zener diode, small symbol, filled shape
+- ref: D7
+  value: 100V
+  footprint: SOD-123F
+  description: Zener diode, small symbol, filled shape
+- ref: J1
+  value: GND
+  footprint: DIP-4
+  mpn: AMT0440005TH0000G
+- ref: J2
+  value: 1x8 header
+  footprint: JST_SH_SM08B-SRSS-TB
+  mpn: SM08B-SRSS-TB(LF)(SN)
+  description: Generic connectable mounting pin connector, single row, 01x08, script generated
+- ref: J3
+  value: 1x12 header
+  footprint: JST_SH_SM12B-SRSS-TB
+  mpn: SM12B-SRSS-TB(LF)(SN)
+  description: Generic connectable mounting pin connector, single row, 01x12, script generated
+- ref: J5
+  value: A
+  footprint: DIP-4
+  mpn: AMT0440005TH0000G
+- ref: J6
+  value: B
+  footprint: DIP-4
+  mpn: AMT0440005TH0000G
+- ref: J7
+  value: C
+  footprint: DIP-4
+  mpn: AMT0440005TH0000G
+- ref: J8
+  value: VMOTOR
+  footprint: DIP-4
+  mpn: AMT0440005TH0000G
+- ref: L1
+  value: 68uH
+  footprint: L_Abracon_ASPI-4030S
+  mpn: HPC 3012BMV-220M
+- ref: Q3
+  value: EPC2361
+  footprint: D0606F_100V
+  mpn: EPC2302
+  description: 100V 101A 1.0mE
+- ref: Q6
+  value: EPC2361
+  footprint: D0606F_100V
+  mpn: EPC2361
+  description: 100V 101A 1.0mE
+- ref: R10
+  value: 72kohm
+  footprint: '0402'
+  description: Resistor, small US symbol
+  mpn: FRC0603J1R0 TS
+  pulldown: /Predriver Voltage Supply/FB
+- ref: R15
+  value: 27kohm
+  footprint: '0402'
+  description: Resistor, small US symbol
+  mpn: FRC0603J1R0 TS
+  pulldown: U4.RON
+- ref: R16
+  value: 240kohm
+  footprint: '0402'
+  mpn: RTT03304JTP
+  description: Resistor, US symbol
+- ref: R17
+  value: 10kohm
+  footprint: '0402'
+  mpn: SCR0603J10K
+  description: Resistor, US symbol
+  pulldown: U5.+
+- ref: R18
+  value: 240kohm
+  footprint: '0402'
+  mpn: RTT03304JTP
+  description: Resistor, US symbol
+- ref: R19
+  value: 10kohm
+  footprint: '0402'
+  mpn: SCR0603J10K
+  description: Resistor, US symbol
+  pulldown: U6.+
+- ref: R20
+  value: 240kohm
+  footprint: '0402'
+  mpn: RTT03304JTP
+  description: Resistor, US symbol
+- ref: R21
+  value: 10kohm
+  footprint: '0402'
+  mpn: SCR0603J10K
+  description: Resistor, US symbol
+  pulldown: U7.+
+- ref: R22
+  value: 10ohm
+  footprint: '0402'
+  mpn: RTT0310R0FTP
+  description: Resistor, small US symbol
+- ref: R23
+  value: 0.5mohm
+  footprint: '2512'
+  mpn: ASR-M-3-0.5F
+  description: Resistor, US symbol
+- ref: R24
+  value: 10ohm
+  footprint: '0402'
+  mpn: RTT0310R0FTP
+  description: Resistor, small US symbol
+- ref: R31
+  value: 10kohm
+  footprint: '0402'
+  mpn: SCR0603J10K
+  description: Resistor, US symbol
+  pulldown: /V_SENSE
+- ref: R32
+  value: 240kohm
+  footprint: '0402'
+  mpn: RTT03304JTP
+  description: Resistor, US symbol
+- ref: R34
+  value: 10kohm
+  footprint: '0402'
+  mpn: SCR0603J10K
+  description: Resistor, US symbol
+- ref: R5
+  value: 240kohm
+  footprint: '0402'
+  description: Resistor, small US symbol
+  mpn: FRC0603J1R0 TS
+- ref: R6
+  value: 1ohm
+  footprint: '0402'
+  mpn: FRC0603J1R0 TS
+  description: Resistor, US symbol
+- ref: R7
+  value: 0ohm
+  footprint: '0402'
+  mpn: SCR0603J0R
+  description: Resistor, US symbol
+- ref: R8
+  value: 0ohm
+  footprint: '0402'
+  mpn: SCR0603J0R
+  description: Resistor, US symbol
+- ref: R9
+  value: 1ohm
+  footprint: '0402'
+  mpn: FRC0603J1R0 TS
+  description: Resistor, US symbol
+- ref: TH1
+  value: 10k NTC
+  footprint: '0402'
+  mpn: KNTC0603/10KJ3950
+  description: Temperature dependent resistor, negative temperature coefficient, US symbol
+- ref: U2
+  value: LM1205
+  footprint: WLCSP1.6x1.6-12B_ECC
+  mpn: UP1966E
+- ref: U4
+  value: LM5164DDA
+  footprint: HSOP-8-1EP
+  description: 1A synchronous buck converter with ultra-low IQ, 6V - 100V input, adjustable
+- ref: U5
+  value: OPA310xDCK
+  footprint: SOT-353_SC-70-5
+  description: High output current, Rail-to-Rail Input/Output, 3MHz GBW, Operational
+- ref: U6
+  value: OPA310xDCK
+  footprint: SOT-353_SC-70-5
+  description: High output current, Rail-to-Rail Input/Output, 3MHz GBW, Operational
+- ref: U7
+  value: OPA310xDCK
+  footprint: SOT-353_SC-70-5
+  description: High output current, Rail-to-Rail Input/Output, 3MHz GBW, Operational
+- ref: U8
+  value: INA241A2
+  footprint: SOT-23-8
+  mpn: INA241A2DDFR
+  description: High- and Low-Side, Bidirectional, Zero-Drift, Current-Sense Amplifier With
+nets:
+- name: /A
+  pins: [D7.K, J5.Pin_1@1, R16.1, R23.2, R24.1]
+- name: /B
+  pins: [J6.Pin_1@1, R18.1]
+- name: /BH
+  pins: [R8.2, R9.2]
+- name: /BL
+  pins: [R6.2, R7.1]
+- name: /C
+  pins: [J7.Pin_1@1, R20.1]
+- name: /CH
+  pins: [D29.K, Q6.G]
+- name: /CL
+  pins: [D32.K, Q3.G]
+- name: /DRV_TEMP_SENSE
+  pins: [C77.1, J3.Pin_6, R34.2, TH1.1]
+- name: /ENABLE
+  pins: [J2.Pin_1, U4.EN/UVLO]
+- name: /GND
+  pins:
+  - C1.2
+  - C100.2
+  - C101.2
+  - C102.2
+  - C103.2
+  - C104.2
+  - C105.2
+  - C106.2
+  - C107.2
+  - C108.2
+  - C11.2
+  - C111.2
+  - C114.2
+  - C117.2
+  - C12.2
+  - C120.2
+  - C123.2
+  - C13.2
+  - C15.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C21.2
+  - C23.2
+  - C24.2
+  - C26.2
+  - C27.2
+  - C3.2
+  - C31.2
+  - C35.2
+  - C36.2
+  - C40.2
+  - C41.2
+  - C47.2
+  - C55.2
+  - C58.2
+  - C6.2
+  - C60.2
+  - C62.2
+  - C63.2
+  - C64.2
+  - C65.2
+  - C67.2
+  - C68.2
+  - C69.2
+  - C7.2
+  - C71.2
+  - C72.2
+  - C75.2
+  - C77.2
+  - C78.2
+  - C79.2
+  - C8.2
+  - C80.2
+  - C81.2
+  - C82.2
+  - C86.2
+  - C87.2
+  - C88.2
+  - C89.2
+  - C9.2
+  - C90.2
+  - C91.2
+  - C93.2
+  - C94.2
+  - C95.2
+  - C96.2
+  - C97.2
+  - C98.2
+  - C99.2
+  - D13.A1
+  - D16.A1
+  - D18.A
+  - D19.A
+  - D32.A
+  - D7.A
+  - J1.Pin_1@1
+  - J2.MountPin@MP
+  - J2.Pin_8
+  - J3.MountPin@MP
+  - J3.Pin_12
+  - J3.Pin_7
+  - Q3.S@2
+  - Q3.S@4
+  - Q3.S@6
+  - R10.2
+  - R15.2
+  - R17.2
+  - R19.2
+  - R21.2
+  - R31.2
+  - TH1.2
+  - U2.GND
+  - U4.EP@9
+  - U4.GND
+  - U5.V-
+  - U6.V-
+  - U7.V-
+  - U8.GND@2
+  - U8.GND@4
+  - U8.REF2
+- name: /INPUT.BH
+  pins: [D13.A2, J2.Pin_5, U2.HI]
+- name: /INPUT.BL
+  pins: [D16.A2, J2.Pin_4, U2.LI]
+- name: /I_SENSE.A
+  pins: [J3.Pin_3, U8.5]
+- name: /Phase Current Sensors/Current Sense A/V+
+  pins: [C49.1, R22.2, U8.+]
+- name: /Phase Current Sensors/Current Sense A/V-
+  pins: [C49.2, R24.2, U8.-]
+- name: /Predriver Voltage Supply/FB
+  pins: [C92.2, R10.1, R5.2, U4.FB]
+- name: /Predriver Voltage Supply/SW
+  pins: [C76.2, L1.1, U4.SW]
+- name: /Predrivers/Gate Driver B/BOOT
+  pins: [C42.1, U2.BOOT]
+- name: /Predrivers/Gate Driver B/LGH
+  pins: [R6.1, U2.LGH]
+- name: /Predrivers/Gate Driver B/LGL
+  pins: [R7.2, U2.LGL]
+- name: /Predrivers/Gate Driver B/UGH
+  pins: [R9.1, U2.UGH]
+- name: /Predrivers/Gate Driver B/UGL
+  pins: [R8.1, U2.UGL]
+- name: /SW.A
+  pins: [R22.1, R23.1]
+- name: /SW.B
+  pins: [C42.2, U2.PHASE@C1, U2.PHASE@D4]
+- name: /SW.C
+  pins:
+  - D29.A
+  - Q3.D@3
+  - Q3.D@5
+  - Q3.D@7
+  - Q6.S@2
+  - Q6.S@4
+  - Q6.S@6
+- name: /VANA
+  pins:
+  - C47.1
+  - C95.1
+  - C96.1
+  - C97.1
+  - J3.Pin_1
+  - R34.1
+  - U5.V+
+  - U6.V+
+  - U7.V+
+  - U8.REF1
+  - U8.V+
+- name: /VDRV
+  pins:
+  - C11.1
+  - C40.1
+  - C41.1
+  - C64.1
+  - C65.1
+  - C90.1
+  - C92.1
+  - D18.K
+  - L1.2
+  - R5.1
+  - U2.VCC
+- name: /VMOTOR
+  pins:
+  - C1.1
+  - C100.1
+  - C101.1
+  - C102.1
+  - C103.1
+  - C104.1
+  - C105.1
+  - C106.1
+  - C107.1
+  - C108.1
+  - C111.1
+  - C114.1
+  - C117.1
+  - C12.1
+  - C120.1
+  - C123.1
+  - C13.1
+  - C15.1
+  - C17.1
+  - C18.1
+  - C19.1
+  - C2.1
+  - C21.1
+  - C23.1
+  - C24.1
+  - C26.1
+  - C27.1
+  - C3.1
+  - C31.1
+  - C35.1
+  - C36.1
+  - C55.1
+  - C58.1
+  - C6.1
+  - C60.1
+  - C62.1
+  - C7.1
+  - C71.1
+  - C72.1
+  - C75.1
+  - C78.1
+  - C79.1
+  - C8.1
+  - C80.1
+  - C81.1
+  - C82.1
+  - C86.1
+  - C87.1
+  - C88.1
+  - C89.1
+  - C9.1
+  - C91.1
+  - C93.1
+  - C94.1
+  - C98.1
+  - C99.1
+  - D19.K
+  - J8.Pin_1@1
+  - Q6.D@3
+  - Q6.D@5
+  - Q6.D@7
+  - R32.1
+  - U4.VIN
+- name: /V_SENSE
+  pins: [C63.1, J3.Pin_2, R31.1, R32.2]
+- name: /V_SENSE.A
+  pins: [J3.Pin_8, U5.-, U5.4]
+- name: /V_SENSE.B
+  pins: [J3.Pin_9, U6.-, U6.4]
+- name: /V_SENSE.C
+  pins: [J3.Pin_10, U7.-, U7.4]
+- name: Net-(U4-BST)
+  pins: [C76.1, U4.BST]
+- name: Net-(U4-RON)
+  pins: [R15.1, U4.RON]
+- name: Net-(U5-+)
+  pins: [C67.1, R16.2, R17.1, U5.+]
+- name: Net-(U6-+)
+  pins: [C68.1, R18.2, R19.1, U6.+]
+- name: Net-(U7-+)
+  pins: [C69.1, R20.2, R21.1, U7.+]
+positions:
+- ref: C1
+  x: 118.15
+  y: 97.57
+  rot: -90.0
+  side: back
+- ref: C100
+  x: 111.65
+  y: 97.57
+  rot: -90.0
+  side: back
+- ref: C101
+  x: 134.6
+  y: 96.82
+  rot: 90.0
+  side: back
+- ref: C102
+  x: 146.2
+  y: 96.82
+  rot: 90.0
+  side: back
+- ref: C103
+  x: 114.9
+  y: 97.57
+  rot: -90.0
+  side: back
+- ref: C104
+  x: 128.8
+  y: 111.32
+  rot: 90.0
+  side: back
+- ref: C105
+  x: 124.0
+  y: 123.42
+  rot: 180.0
+  side: back
+- ref: C106
+  x: 124.0
+  y: 120.52
+  rot: 180.0
+  side: back
+- ref: C107
+  x: 128.7
+  y: 81.32
+  rot: 90.0
+  side: back
+- ref: C108
+  x: 128.5
+  y: 96.84
+  rot: 90.0
+  side: back
+- ref: C11
+  x: 107.15
+  y: 107.32
+  rot: 180.0
+  side: back
+- ref: C111
+  x: 131.5
+  y: 110.72
+  rot: 90.0
+- ref: C114
+  x: 133.9
+  y: 110.75
+  rot: 90.0
+- ref: C117
+  x: 132.7
+  y: 110.72
+  rot: 90.0
+- ref: C12
+  x: 124.0
+  y: 108.92
+  rot: 180.0
+  side: back
+- ref: C120
+  x: 135.1
+  y: 110.75
+  rot: 90.0
+- ref: C123
+  x: 136.3
+  y: 110.72
+  rot: 90.0
+- ref: C13
+  x: 138.7
+  y: 110.72
+  rot: 90.0
+- ref: C15
+  x: 123.93
+  y: 85.72
+  rot: 180.0
+  side: back
+- ref: C17
+  x: 139.9
+  y: 110.72
+  rot: 90.0
+- ref: C18
+  x: 124.0
+  y: 103.12
+  rot: 180.0
+  side: back
+- ref: C19
+  x: 146.2
+  y: 111.3
+  rot: 90.0
+  side: back
+- ref: C2
+  x: 146.1
+  y: 81.32
+  rot: 90.0
+  side: back
+- ref: C21
+  x: 124.0
+  y: 91.52
+  rot: 180.0
+  side: back
+- ref: C23
+  x: 124.0
+  y: 94.42
+  rot: 180.0
+  side: back
+- ref: C24
+  x: 123.98
+  y: 88.62
+  rot: 180.0
+  side: back
+- ref: C26
+  x: 123.98
+  y: 117.62
+  rot: 180.0
+  side: back
+- ref: C27
+  x: 124.0
+  y: 100.22
+  rot: 180.0
+  side: back
+- ref: C3
+  x: 124.0
+  y: 114.72
+  rot: 180.0
+  side: back
+- ref: C31
+  x: 129.3
+  y: 118.09
+  rot: -90.0
+  side: back
+- ref: C35
+  x: 132.2
+  y: 118.07
+  rot: -90.0
+  side: back
+- ref: C36
+  x: 137.5
+  y: 110.72
+  rot: 90.0
+- ref: C40
+  x: 130.7
+  y: 105.21
+- ref: C41
+  x: 130.7
+  y: 104.21
+- ref: C42
+  x: 130.5
+  y: 100.81
+  rot: 180.0
+- ref: C47
+  x: 149.5
+  y: 92.92
+  side: back
+- ref: C49
+  x: 148.9
+  y: 88.52
+  side: back
+- ref: C55
+  x: 141.1
+  y: 110.72
+  rot: 90.0
+- ref: C58
+  x: 142.3
+  y: 110.72
+  rot: 90.0
+- ref: C6
+  x: 123.93
+  y: 82.82
+  rot: 180.0
+  side: back
+- ref: C60
+  x: 147.1
+  y: 110.72
+  rot: 90.0
+- ref: C62
+  x: 115.0
+  y: 100.72
+  rot: 180.0
+  side: back
+- ref: C63
+  x: 106.5
+  y: 99.32
+  side: back
+- ref: C64
+  x: 107.15
+  y: 108.27
+  rot: 180.0
+  side: back
+- ref: C65
+  x: 107.15
+  y: 106.32
+  rot: 180.0
+  side: back
+- ref: C67
+  x: 148.0
+  y: 85.52
+  rot: 180.0
+  side: back
+- ref: C68
+  x: 148.1
+  y: 100.82
+  rot: 180.0
+  side: back
+- ref: C69
+  x: 148.0
+  y: 115.52
+  rot: 180.0
+  side: back
+- ref: C7
+  x: 131.7
+  y: 111.32
+  rot: 90.0
+  side: back
+- ref: C71
+  x: 145.9
+  y: 110.72
+  rot: 90.0
+- ref: C72
+  x: 143.5
+  y: 110.72
+  rot: 90.0
+- ref: C75
+  x: 144.7
+  y: 110.72
+  rot: 90.0
+- ref: C76
+  x: 115.19
+  y: 109.42
+  rot: 180.0
+  side: back
+- ref: C77
+  x: 104.0
+  y: 93.17
+- ref: C78
+  x: 134.6
+  y: 111.32
+  rot: 90.0
+  side: back
+- ref: C79
+  x: 137.5
+  y: 96.82
+  rot: 90.0
+  side: back
+- ref: C8
+  x: 124.0
+  y: 111.82
+  rot: 180.0
+  side: back
+- ref: C80
+  x: 123.98
+  y: 97.32
+  rot: 180.0
+  side: back
+- ref: C81
+  x: 131.6
+  y: 81.32
+  rot: 90.0
+  side: back
+- ref: C82
+  x: 134.5
+  y: 81.32
+  rot: 90.0
+  side: back
+- ref: C86
+  x: 143.3
+  y: 111.32
+  rot: 90.0
+  side: back
+- ref: C87
+  x: 137.4
+  y: 81.32
+  rot: 90.0
+  side: back
+- ref: C88
+  x: 129.3
+  y: 87.92
+  rot: -90.0
+  side: back
+- ref: C89
+  x: 140.4
+  y: 111.3
+  rot: 90.0
+  side: back
+- ref: C9
+  x: 124.0
+  y: 106.02
+  rot: 180.0
+  side: back
+- ref: C90
+  x: 107.13
+  y: 109.22
+  rot: 180.0
+  side: back
+- ref: C91
+  x: 137.5
+  y: 111.32
+  rot: 90.0
+  side: back
+- ref: C92
+  x: 107.03
+  y: 103.82
+  rot: 180.0
+  side: back
+- ref: C93
+  x: 143.2
+  y: 81.32
+  rot: 90.0
+  side: back
+- ref: C94
+  x: 140.4
+  y: 96.82
+  rot: 90.0
+  side: back
+- ref: C95
+  x: 150.0
+  y: 100.82
+  side: back
+- ref: C96
+  x: 149.9
+  y: 85.52
+  side: back
+- ref: C97
+  x: 149.9
+  y: 115.52
+  side: back
+- ref: C98
+  x: 143.3
+  y: 96.82
+  rot: 90.0
+  side: back
+- ref: C99
+  x: 131.7
+  y: 96.82
+  rot: 90.0
+  side: back
+- ref: D13
+  x: 128.0
+  y: 102.62
+- ref: D16
+  x: 128.0
+  y: 103.62
+- ref: D18
+  x: 107.05
+  y: 105.07
+  rot: 180.0
+  side: back
+- ref: D19
+  x: 108.7
+  y: 97.57
+  rot: -90.0
+  side: back
+- ref: D29
+  x: 132.6
+  y: 112.92
+  rot: 180.0
+- ref: D32
+  x: 132.55
+  y: 120.62
+  rot: 180.0
+- ref: D7
+  x: 166.65
+  y: 94.07
+- ref: J1
+  x: 112.89
+  y: 117.62
+  rot: 90.0
+  side: back
+- ref: J2
+  x: 102.3
+  y: 111.82
+  rot: 90.0
+  side: back
+- ref: J3
+  x: 102.15
+  y: 93.77
+  rot: 90.0
+  side: back
+- ref: J5
+  x: 157.9
+  y: 87.82
+  rot: 90.0
+  side: back
+- ref: J6
+  x: 157.9
+  y: 102.82
+  rot: -90.0
+  side: back
+- ref: J7
+  x: 157.9
+  y: 117.82
+  rot: -90.0
+  side: back
+- ref: J8
+  x: 112.89
+  y: 87.87
+  rot: 90.0
+  side: back
+- ref: L1
+  x: 110.65
+  y: 107.57
+  rot: 180.0
+  side: back
+- ref: Q3
+  x: 136.92
+  y: 120.72
+- ref: Q6
+  x: 136.92
+  y: 115.32
+- ref: R10
+  x: 119.04
+  y: 109.42
+  side: back
+- ref: R15
+  x: 119.9
+  y: 102.32
+  rot: 90.0
+  side: back
+- ref: R16
+  x: 149.9
+  y: 86.52
+  rot: 180.0
+  side: back
+- ref: R17
+  x: 148.0
+  y: 86.52
+  rot: 180.0
+  side: back
+- ref: R18
+  x: 150.0
+  y: 101.82
+  rot: 180.0
+  side: back
+- ref: R19
+  x: 148.1
+  y: 101.82
+  rot: 180.0
+  side: back
+- ref: R20
+  x: 149.9
+  y: 116.52
+  rot: 180.0
+  side: back
+- ref: R21
+  x: 148.0
+  y: 116.52
+  rot: 180.0
+  side: back
+- ref: R22
+  x: 148.0
+  y: 87.52
+  side: back
+- ref: R23
+  x: 149.0
+  y: 87.7
+- ref: R24
+  x: 149.9
+  y: 87.52
+  rot: 180.0
+  side: back
+- ref: R31
+  x: 106.5
+  y: 98.32
+  side: back
+- ref: R32
+  x: 106.5
+  y: 97.32
+  rot: 180.0
+  side: back
+- ref: R34
+  x: 104.0
+  y: 94.12
+  rot: 180.0
+- ref: R5
+  x: 117.14
+  y: 109.42
+  side: back
+- ref: R6
+  x: 133.09
+  y: 103.41
+  rot: -90.0
+- ref: R7
+  x: 132.6
+  y: 104.91
+  rot: 180.0
+- ref: R8
+  x: 133.1
+  y: 100.91
+  rot: 90.0
+- ref: R9
+  x: 132.6
+  y: 99.41
+- ref: TH1
+  x: 130.7
+  y: 106.17
+- ref: U2
+  x: 131.4
+  y: 102.52
+  rot: 180.0
+- ref: U4
+  x: 116.6
+  y: 105.22
+  rot: -90.0
+  side: back
+- ref: U5
+  x: 149.2
+  y: 83.57
+  side: back
+- ref: U6
+  x: 149.3
+  y: 98.82
+  side: back
+- ref: U7
+  x: 149.4
+  y: 113.52
+  side: back
+- ref: U8
+  x: 149.0
+  y: 90.72
+  rot: 180.0
+  side: back
+copper_pours:
+- net: /A
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+- net: /AH
+  layers: [F.Cu]
+- net: /AL
+  layers: [F.Cu]
+- net: /B
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+- net: /BH
+  layers: [F.Cu]
+- net: /BL
+  layers: [F.Cu]
+- net: /C
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+- net: /CH
+  layers: [F.Cu]
+- net: /CL
+  layers: [F.Cu]
+- net: /DRV_TEMP_SENSE
+  layers: [B.Cu, F.Cu, In6.Cu]
+- net: /ENABLE
+  layers: [B.Cu, In1.Cu]
+- net: /GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In6.Cu]
+- net: /INPUT.AH
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /INPUT.AL
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /INPUT.BH
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /INPUT.BL
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /INPUT.CH
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /INPUT.CL
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /I_SENSE.A
+  layers: [B.Cu, In6.Cu]
+- net: /I_SENSE.B
+  layers: [B.Cu, In6.Cu]
+- net: /I_SENSE.C
+  layers: [B.Cu, In6.Cu]
+- net: /Phase Current Sensors/Current Sense A/V+
+  layers: [B.Cu]
+- net: /Phase Current Sensors/Current Sense A/V-
+  layers: [B.Cu]
+- net: /Phase Current Sensors/Current Sense C/V-
+  layers: [B.Cu]
+- net: /Predriver Voltage Supply/FB
+  layers: [B.Cu, In1.Cu]
+- net: /Predriver Voltage Supply/SW
+  layers: [B.Cu]
+- net: /Predrivers/Gate Driver A/BOOT
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver A/LGH
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver A/LGL
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver A/UGH
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver A/UGL
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver B/BOOT
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver B/LGH
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver B/LGL
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver B/UGH
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver B/UGL
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver C/BOOT
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver C/LGH
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver C/LGL
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver C/UGH
+  layers: [F.Cu]
+- net: /Predrivers/Gate Driver C/UGL
+  layers: [F.Cu]
+- net: /SW.A
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+- net: /SW.B
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+- net: /SW.C
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+- net: /V_SENSE
+  layers: [B.Cu]
+- net: /V_SENSE.A
+  layers: [B.Cu, In2.Cu]
+- net: /V_SENSE.B
+  layers: [B.Cu, In2.Cu]
+- net: /V_SENSE.C
+  layers: [B.Cu, In2.Cu]
+- net: /V_{ANA}
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /V_{DRV}
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: /V_{MOTOR}
+  layers:
+  - B.Cu
+  - F.Cu
+  - In1.Cu
+  - In2.Cu
+  - In3.Cu
+  - In4.Cu
+  - In5.Cu

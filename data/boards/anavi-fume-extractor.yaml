@@ -1,0 +1,246 @@
+name: ANAVI Fume Extractor
+slug: anavi-fume-extractor
+source: AnaviTechnology/anavi-fume-extractor
+format: kicad_legacy
+description: ESP8266, relay-controlled fan
+tags: [relay, sensors, wifi]
+outline:
+  width_mm: 74.93
+  height_mm: 40.64
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.254mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: 0805
+- ref: C2
+  value: 10uF
+  footprint: 0805
+- ref: D1
+  value: LED
+  footprint: '1206'
+- ref: D2
+  value: 1N4148W
+  footprint: SOD-123
+- ref: ESP-12
+  value: ESP-12E
+  footprint: ESP-12E_SMD
+- ref: FAN1
+  value: 1x2 header
+  footprint: JST_XH_B02B-XH-A
+- ref: J1
+  value: USB Micro-B
+  footprint: USB_Micro-B_Molex-105017-0001
+- ref: JP1
+  value: 1x3 header
+  footprint: 1X3
+- ref: K1
+  value: SANYOU_SRD_Form_C
+  footprint: Relay_SPDT_SANYOU_SRD_Series_Form_C
+- ref: P1
+  value: 1x3 header
+  footprint: 1X3
+- ref: Q1
+  value: NPN transistor
+  footprint: SOT-23
+- ref: R1
+  value: 68ohm
+  footprint: '0603'
+- ref: R2
+  value: 4,7K
+  footprint: '0603'
+- ref: R3
+  value: 4,7K
+  footprint: '0603'
+- ref: R4
+  value: 2kohm
+  footprint: '0603'
+  pullup: ESP-12.12
+- ref: R5
+  value: 2,7K
+  footprint: '0603'
+- ref: R6
+  value: 27kohm
+  footprint: '0603'
+  pulldown: Q1.1
+- ref: R7
+  value: 2kohm
+  footprint: '0603'
+  pullup: ESP-12.7
+- ref: R8
+  value: 220kohm
+  footprint: '0603'
+- ref: R9
+  value: 56kohm
+  footprint: '0603'
+  pulldown: ESP-12.2
+- ref: SW1
+  value: switch
+  footprint: SW_PUSH_6mm_h4.3mm
+- ref: SW2
+  value: switch
+  footprint: SW_PUSH_6mm_h4.3mm
+- ref: U1
+  value: I2C_SENS_1
+  footprint: 1X4
+- ref: U2
+  value: I2C_SENS_1
+  footprint: 1X4
+- ref: U3
+  value: I2C_SENS_1
+  footprint: 1X4
+- ref: U4
+  value: 1x4 header
+  footprint: 1X4
+- ref: U5
+  value: 1x4 header
+  footprint: 1X4
+- ref: U6
+  value: 1x4 header
+  footprint: 1X4
+- ref: V1
+  value: LD1117S33TR
+  footprint: SOT-223
+nets:
+- name: +3V3
+  pins:
+  - C2.1
+  - ESP-12.3
+  - ESP-12.8
+  - R2.1
+  - R3.1
+  - R4.2
+  - R7.1
+  - U1.1
+  - U2.1
+  - U3.1
+  - V1.2
+- name: +5V
+  pins: [C1.1, D2.1, K1.1, K1.2, V1.3]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - D1.1
+  - ESP-12.10
+  - ESP-12.9
+  - P1.1
+  - Q1.2
+  - R6.2
+  - R9.2
+  - U1.2
+  - U2.2
+  - U3.2
+  - V1.1
+- name: Net-(D1-Pad2)
+  pins: [D1.2, R1.2]
+- name: Net-(D2-Pad2)
+  pins: [D2.2, K1.5, Q1.3]
+- name: Net-(ESP-12-Pad12)
+  pins: [ESP-12.12, R4.1]
+- name: Net-(ESP-12-Pad13)
+  pins: [ESP-12.13, R2.2, U1.4, U2.4, U3.4]
+- name: Net-(ESP-12-Pad14)
+  pins: [ESP-12.14, R3.2, U1.3, U2.3, U3.3]
+- name: Net-(ESP-12-Pad15)
+  pins: [ESP-12.15, P1.3]
+- name: Net-(ESP-12-Pad16)
+  pins: [ESP-12.16, P1.2]
+- name: Net-(ESP-12-Pad2)
+  pins: [ESP-12.2, R8.2, R9.1]
+- name: Net-(ESP-12-Pad4)
+  pins: [ESP-12.4, R1.1]
+- name: Net-(ESP-12-Pad6)
+  pins: [ESP-12.6, R5.1]
+- name: Net-(ESP-12-Pad7)
+  pins: [ESP-12.7, R7.2]
+- name: Net-(Q1-Pad1)
+  pins: [Q1.1, R5.2, R6.1]
+positions:
+- ref: C1
+  x: 72.63
+  y: 96.43
+  rot: 270.0
+- ref: C2
+  x: 75.18
+  y: 78.56
+  rot: 90.0
+- ref: D1
+  x: 88.39
+  y: 107.7
+- ref: D2
+  x: 124.65
+  y: 78.88
+- ref: ESP-12
+  x: 80.9
+  y: 80.01
+- ref: K1
+  x: 121.0
+  y: 82.4
+  rot: 270.0
+- ref: P1
+  x: 100.71
+  y: 75.18
+  rot: 90.0
+- ref: Q1
+  x: 106.86
+  y: 101.56
+- ref: R1
+  x: 88.31
+  y: 102.62
+- ref: R2
+  x: 101.85
+  y: 100.83
+  rot: 180.0
+- ref: R3
+  x: 101.88
+  y: 103.8
+  rot: 180.0
+- ref: R4
+  x: 77.5
+  y: 99.57
+- ref: R5
+  x: 100.65
+  y: 108.72
+  rot: 90.0
+- ref: R6
+  x: 104.88
+  y: 108.71
+  rot: 270.0
+- ref: R7
+  x: 129.24
+  y: 78.83
+- ref: R8
+  x: 128.32
+  y: 103.74
+  rot: 90.0
+- ref: R9
+  x: 130.78
+  y: 103.74
+  rot: 90.0
+- ref: U1
+  x: 108.39
+  y: 95.38
+  rot: 270.0
+- ref: U2
+  x: 108.39
+  y: 90.3
+  rot: 270.0
+- ref: U3
+  x: 108.39
+  y: 85.22
+  rot: 270.0
+- ref: V1
+  x: 72.64
+  y: 85.85
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu]
+  keepout: true

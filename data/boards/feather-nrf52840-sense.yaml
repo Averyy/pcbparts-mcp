@@ -1,0 +1,541 @@
+name: Feather nRF52840 Sense
+slug: feather-nrf52840-sense
+source: adafruit/Adafruit-Feather-nRF52840-Sense-PCB
+format: eagle
+description: BLE 5 sensor board (nRF52840) with onboard IMU, gesture/proximity/color sensor
+tags: [sensors]
+key_ics: [nRF52840]
+outline:
+  width_mm: 50.8
+  height_mm: 22.86
+design_rules:
+  layers: 2
+  min_trace: 7mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  decouples: IC1
+- ref: C10
+  value: 100nF
+  footprint: '0603'
+- ref: C12
+  value: 100nF
+  footprint: '0603'
+- ref: C13
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: C3
+  value: 100nF
+  footprint: '0603'
+  decouples: U4
+- ref: C4
+  value: 1uF
+  footprint: '0603'
+  decouples: U1
+- ref: C5
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: C6
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: C7
+  value: 10uF
+  footprint: 0805
+- ref: C8
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C9
+  value: 10uF
+  footprint: 0805
+  decouples: U3
+- ref: D1
+  value: MBR0540
+  footprint: SOD-123
+- ref: D2
+  value: red LED
+  footprint: '0603'
+- ref: D3
+  value: orange LED
+  footprint: '0603'
+- ref: D4
+  value: blue LED
+  footprint: '0603'
+- ref: IC1
+  value: LSM6DS3
+  footprint: LGA-14L
+- ref: IC2
+  value: GD25Q16
+  footprint: USON8
+  description: SOIC8 SPI Flash
+- ref: IC3
+  value: LIS3MDL
+  footprint: LGA12
+  description: Digital output magnetic sensor
+- ref: IC4
+  value: MIC_PDM
+  footprint: SPK0415HM4H
+- ref: LED1
+  value: WS2812B
+  footprint: LED3535_FULLPADS
+- ref: MDBT1
+  value: MDBT50
+  footprint: MDBT50
+  description: Raytac Corporation
+- ref: MS1
+  value: Featherwing headers
+  footprint: FEATHERWING_NODIM
+- ref: Q3
+  value: AO3401
+  footprint: SOT23-R
+  description: P-Channel Mosfet
+- ref: R1
+  value: 4.7kohm
+  footprint: '0603'
+- ref: R10
+  value: 22ohm
+  footprint: '0603'
+- ref: R11
+  value: 22ohm
+  footprint: '0603'
+- ref: R12
+  value: 100kohm
+  footprint: RESPACK
+- ref: R3
+  value: 4.7kohm
+  footprint: '0603'
+- ref: R4
+  value: 4.7kohm
+  footprint: '0603'
+  pulldown: U3.PROG
+- ref: R7
+  value: 4.7kohm
+  footprint: RESPACK
+  pullup: SDA
+- ref: SW1
+  value: KMR2
+  footprint: BTN_RKB2
+  description: SMT Tact Switches RKB2
+- ref: SW2
+  value: KMR2
+  footprint: BTN_RKB2
+  description: SMT Tact Switches RKB2
+- ref: SWC
+  value: TPTP12R
+  footprint: TP12R
+- ref: SWD
+  value: TPTP12R
+  footprint: TP12R
+- ref: U1
+  value: APDS-9960
+  footprint: '9960'
+  description: APDS-9960 - Digital Proximity Sensor with Ambient Light/RGB/Gesture Detection
+- ref: U2
+  value: RT9080-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: U3
+  value: MCP73831
+  footprint: SOT-23-5
+  lcsc: C424093
+  description: MCP73831/2 LIPO Charger
+- ref: U4
+  value: SHT30
+  footprint: SHT3X
+  description: SHT3x
+- ref: U5
+  value: BMP280
+  footprint: BMP280
+  description: BMP280
+- ref: X1
+  value: MicroUSB
+  footprint: 4UCONN_20329_V2
+  description: USB Connectors
+- ref: X3
+  value: CON_JST_PH_2PIN_MT
+  footprint: JSTPH2_BATT
+  lcsc: C47647
+nets:
+- name: 3.3V
+  pins:
+  - C1.2
+  - C13.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C8.2
+  - IC1.CS
+  - IC1.VDD
+  - IC1.VDDIO
+  - IC2.VCC
+  - IC3.CS
+  - IC3.VDD
+  - IC3.VDDIO
+  - IC4.VDD
+  - L1.1
+  - LED1.VDD
+  - MDBT1.VDD
+  - MDBT1.VDDH
+  - MS1.3V
+  - R7.G$3.2
+  - R7.G$4.2
+  - U1.LEDA
+  - U1.VDD
+  - U2.OUT
+  - U4.NRESET
+  - U4.VDD
+  - U5.CSB
+  - U5.SDO
+  - U5.VDD
+  - U5.VDDIO
+  class: power
+  trace_width: '0.254'
+- name: A0
+  pins: [MDBT1.P0.04/AIN2, MS1.GPIOA0]
+- name: A1
+  pins: [MDBT1.P0.05/AIN3, MS1.GPIOA1]
+- name: A2
+  pins: [MDBT1.P0.30/AIN6, MS1.GPIOA2]
+- name: A3
+  pins: [MDBT1.P0.28/AIN4, MS1.GPIOA3]
+- name: A4
+  pins: [MDBT1.P0.02/AIN0, MS1.GPIOA4]
+- name: A5
+  pins: [MDBT1.P0.03/AIN1, MS1.GPIOA5]
+- name: APDS_IRQ
+  pins: [MDBT1.P1.00, U1.INT]
+- name: AREF
+  pins: [C10.2, MDBT1.P0.31/AIN7, MS1.AREF]
+- name: CAP1
+  pins: [C12.2, IC3.C1]
+- name: D+
+  pins: [D+.TP, R11.1, X1.D+]
+- name: D-
+  pins: [D-.TP, R10.1, X1.D-]
+- name: D10
+  pins: [MDBT1.P0.27, MS1.GPIO10]
+- name: D11
+  pins: [MDBT1.P0.06, MS1.GPIO11]
+- name: D12
+  pins: [MDBT1.P0.08, MS1.GPIO12]
+- name: D13
+  pins: [MDBT1.P1.09, MS1.GPIO13, R1.1]
+- name: D2
+  pins: [MDBT1.P0.10/NFC2, MS1.NC]
+- name: D3
+  pins: [IC1.INT1, MDBT1.P1.11, R7.G$2.1, R7.G$2.2]
+- name: D5
+  pins: [MDBT1.P1.08, MS1.GPIO5]
+- name: D6
+  pins: [MDBT1.P0.07, MS1.GPIO6]
+- name: D9
+  pins: [MDBT1.P0.26, MS1.GPIO9]
+- name: DCCH
+  pins: [L1.2, MDBT1.DCCH]
+- name: EN
+  pins: [MS1.EN, R12.G$2.1, U2.EN]
+- name: GND
+  pins:
+  - C1.1
+  - C10.1
+  - C12.1
+  - C13.1
+  - C3.1
+  - C4.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - D2.C
+  - D4.C
+  - IC1.GND
+  - IC1.SDO
+  - IC1.SDX
+  - IC2.VSS
+  - IC3.GND
+  - IC3.SDO
+  - IC4.GND
+  - IC4.L/R
+  - LED1.GND
+  - MDBT1.GND@1
+  - MDBT1.GND@15
+  - MDBT1.GND@2
+  - MDBT1.GND@33
+  - MDBT1.GND@55
+  - MS1.GND
+  - R12.G$1.2
+  - R12.G$3.1
+  - R4.2
+  - SW1.P
+  - SW1.P1
+  - SW2.P
+  - SW2.P1
+  - U1.GND
+  - U2.GND
+  - U3.VSS
+  - U4.ADDR
+  - U4.R(VSS)
+  - U4.VSS
+  - U5.GND
+  - X1.GND
+  - X3.G$1.1
+  - X3.MT1.P$1
+  - X3.MT2.P$1
+- name: LDR
+  pins: [U1.LDR, U1.LEDK]
+- name: LED2
+  pins: [MDBT1.P1.10, R7.G$1.2]
+- name: MISO
+  pins: [MDBT1.P0.15, MS1.GPIOMISO]
+- name: MOSI
+  pins: [MDBT1.P0.13, MS1.GPIOMOSI]
+- name: N$1
+  pins: [D3.C, R3.1]
+- name: N$3
+  pins: [D4.A, R7.G$1.1]
+- name: N$5
+  pins: [D2.A, R1.2]
+- name: NEOPIX
+  pins: [LED1.DI, MDBT1.P0.16]
+- name: NFC2
+  pins: [MDBT1.P0.09/NFC1, TP1.TP]
+- name: PDM_CLK
+  pins: [IC4.CLK, MDBT1.P0.01/XL2]
+- name: PDM_DAT
+  pins: [IC4.DATA, MDBT1.P0.00/XL1]
+- name: PROG
+  pins: [R4.1, U3.PROG]
+- name: QSPI_CS
+  pins: [IC2.SSEL, MDBT1.P0.20]
+- name: QSPI_DATA0
+  pins: [IC2.MOSI, MDBT1.P0.17]
+- name: QSPI_DATA1
+  pins: [IC2.MISO, MDBT1.P0.22]
+- name: QSPI_DATA2
+  pins: [IC2.WP#/IO2, MDBT1.P0.23]
+- name: QSPI_DATA3
+  pins: [IC2.HOLD#/IO3, MDBT1.P0.21]
+- name: QSPI_SCK
+  pins: [IC2.SCK, MDBT1.P0.19]
+- name: RESET
+  pins: [MDBT1.P0.18/RESET, MS1.!RESET, SW1.S, SW1.S1]
+- name: RXD
+  pins: [MDBT1.P0.24, MS1.GPIORX]
+- name: SCK
+  pins: [MDBT1.P0.14, MS1.GPIOSCK]
+- name: SCL
+  pins:
+  - IC1.SCL
+  - IC3.SCL
+  - MDBT1.P0.11
+  - MS1.GPIOSCL
+  - R7.G$4.1
+  - U1.SCL
+  - U4.SCL
+  - U5.SCK
+- name: SDA
+  pins:
+  - IC1.SDA
+  - IC3.SDA
+  - MDBT1.P0.12
+  - MS1.GPIOSDA
+  - R7.G$3.1
+  - U1.SDA
+  - U4.SDA
+  - U5.SDI
+- name: STAT
+  pins: [R3.2, U3.STAT]
+- name: SWCLK
+  pins: [MDBT1.SWDCLK, SWC.TP]
+- name: SWDIO
+  pins: [MDBT1.SWDIO, SWD.TP]
+- name: SWITCH
+  pins: [MDBT1.P1.02, SW2.S, SW2.S1]
+- name: TXD
+  pins: [MDBT1.P0.25, MS1.GPIOTX]
+- name: USBD+
+  pins: [MDBT1.D+, R11.2]
+- name: USBD-
+  pins: [MDBT1.D-, R10.2]
+- name: VBAT
+  pins: [C9.2, MS1.VBAT, Q3.D, R12.G$4.1, U3.VBAT, X3.G$1.2]
+  class: power
+  trace_width: '0.254'
+- name: VBUS
+  pins:
+  - C6.2
+  - D1.A
+  - D3.A
+  - MDBT1.VBUS
+  - MS1.USB
+  - Q3.G
+  - R12.G$1.1
+  - U3.VDD
+  - X1.VBUS
+  class: power
+  trace_width: '0.254'
+- name: VDIV
+  pins: [MDBT1.P0.29/AIN5, R12.G$3.2, R12.G$4.2]
+- name: VHI
+  pins: [C7.2, D1.C, Q3.S, R12.G$2.2, U2.IN]
+  class: power
+  trace_width: '0.254'
+positions:
+- ref: C1
+  x: 24.64
+  y: 17.14
+  rot: 270.0
+- ref: C10
+  x: 33.27
+  y: 16.64
+  rot: 90.0
+- ref: C12
+  x: 26.16
+  y: 17.14
+  rot: 270.0
+- ref: C13
+  x: 31.31
+  y: 11.49
+- ref: C3
+  x: 19.08
+  y: 8.79
+- ref: C4
+  x: 31.31
+  y: 10.2
+- ref: C5
+  x: 18.67
+  y: 10.38
+- ref: C6
+  x: 21.08
+  y: 17.91
+  rot: 180.0
+- ref: C7
+  x: 12.29
+  y: 9.86
+  rot: 90.0
+- ref: C8
+  x: 31.31
+  y: 8.71
+- ref: C9
+  x: 15.32
+  y: 12.26
+  rot: 180.0
+- ref: D1
+  x: 10.26
+  y: 12.4
+  rot: 180.0
+- ref: D2
+  x: 2.22
+  y: 17.27
+  rot: 90.0
+- ref: D3
+  x: 2.08
+  y: 5.64
+  rot: 270.0
+- ref: D4
+  x: 45.34
+  y: 18.03
+  rot: 180.0
+- ref: IC1
+  x: 23.1
+  y: 14.38
+- ref: IC2
+  x: 40.77
+  y: 4.95
+  rot: 180.0
+- ref: IC3
+  x: 26.23
+  y: 13.4
+  rot: 180.0
+- ref: IC4
+  x: 30.54
+  y: 17.27
+  rot: 90.0
+- ref: LED1
+  x: 19.51
+  y: 6.27
+  rot: 180.0
+- ref: MDBT1
+  x: 42.55
+  y: 11.43
+  rot: 270.0
+- ref: MS1
+  x: 0.0
+  y: 0.0
+- ref: Q3
+  x: 9.82
+  y: 9.55
+- ref: R1
+  x: 5.71
+  y: 19.68
+  rot: 270.0
+- ref: R10
+  x: 35.88
+  y: 5.4
+- ref: R11
+  x: 36.83
+  y: 4.13
+- ref: R12
+  x: 17.37
+  y: 17.5
+  rot: 180.0
+- ref: R3
+  x: 6.76
+  y: 7.38
+  rot: 90.0
+- ref: R4
+  x: 15.32
+  y: 5.07
+- ref: R7
+  x: 42.61
+  y: 18.22
+  rot: 180.0
+- ref: SW1
+  x: 11.1
+  y: 6.22
+- ref: SW2
+  x: 29.93
+  y: 5.85
+- ref: SWC
+  x: 40.2
+  y: 9.78
+- ref: SWD
+  x: 41.81
+  y: 8.71
+- ref: U1
+  x: 26.35
+  y: 10.22
+  rot: 90.0
+- ref: U2
+  x: 18.78
+  y: 13.39
+  rot: 180.0
+- ref: U3
+  x: 15.14
+  y: 9.14
+  rot: 180.0
+- ref: U4
+  x: 22.48
+  y: 10.67
+- ref: U5
+  x: 23.27
+  y: 6.99
+  rot: 180.0
+- ref: X1
+  x: 3.81
+  y: 11.49
+  rot: 270.0
+- ref: X3
+  x: 10.79
+  y: 17.97
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

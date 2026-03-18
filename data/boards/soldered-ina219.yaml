@@ -1,0 +1,159 @@
+name: Soldered INA219
+slug: soldered-ina219
+source: SolderedElectronics/Voltage---current-sensor-INA219-breakout-hardware-design
+format: kicad7
+description: INA219 I2C current/power monitor, 0.1ohm shunt
+tags: [current-sensing]
+key_ics: [INA219]
+outline:
+  width_mm: 38.0
+  height_mm: 22.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  decouples: U1
+- ref: JP1
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-2
+- ref: JP3
+  value: solder jumper
+  footprint: SJ-2
+- ref: K1
+  value: screw terminal
+  footprint: TERMINAL_KF235-5.0-2P
+- ref: K2
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: K3
+  value: 1x4 header
+  footprint: HEADER_MALE
+- ref: K4
+  value: easyC-SMD
+  footprint: easyC-connector
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  pulldown: A0
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+  pulldown: A1
+- ref: R5
+  value: 100mohm
+  footprint: '1210'
+- ref: U1
+  value: INA219
+  footprint: SOT-23-8
+nets:
+- name: A0
+  pins: [JP2.1, R3.2, U1.A0]
+- name: A1
+  pins: [JP3.1, R4.2, U1.A1]
+- name: GND
+  pins:
+  - C1.2
+  - K2.GND
+  - K2.SHIELD@5
+  - K3.1
+  - K4.GND
+  - K4.SHIELD@5
+  - R3.1
+  - R4.1
+  - U1.GND
+- name: IN+
+  pins: [K1.2, R5.2, U1.IN+]
+- name: IN-
+  pins: [K1.1, R5.1, U1.IN-]
+- name: Net-(JP1-Pad1)
+  pins: [JP1.1, R2.2]
+- name: Net-(JP1-Pad3)
+  pins: [JP1.3, R1.1]
+- name: SCL
+  pins: [K2.SCL, K3.4, K4.SCL, R2.1, U1.SCL]
+- name: SDA
+  pins: [K2.SDA, K3.3, K4.SDA, R1.2, U1.SDA]
+- name: VCC
+  pins:
+  - C1.1
+  - JP1.2
+  - JP2.2
+  - JP3.2
+  - K2.3V3
+  - K3.2
+  - K4.3V3
+  - U1.VS
+positions:
+- ref: C1
+  x: 109.4
+  y: 126.9
+  rot: 180.0
+- ref: JP1
+  x: 102.4
+  y: 120.4
+- ref: JP2
+  x: 105.4
+  y: 130.6
+  rot: -90.0
+- ref: JP3
+  x: 103.4
+  y: 130.6
+  rot: -90.0
+- ref: K1
+  x: 121.4
+  y: 129.4
+  rot: 90.0
+- ref: K2
+  x: 109.4
+  y: 121.7
+- ref: K3
+  x: 91.9
+  y: 129.4
+  rot: 90.0
+  side: back
+- ref: K4
+  x: 109.4
+  y: 137.1
+  rot: 180.0
+- ref: R1
+  x: 103.3
+  y: 122.7
+  rot: -90.0
+- ref: R2
+  x: 101.5
+  y: 122.7
+  rot: 90.0
+- ref: R3
+  x: 105.4
+  y: 128.2
+  rot: -90.0
+- ref: R4
+  x: 103.4
+  y: 128.2
+  rot: -90.0
+- ref: R5
+  x: 113.9
+  y: 129.4
+  rot: -90.0
+- ref: U1
+  x: 109.4
+  y: 129.4
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]

@@ -1,0 +1,877 @@
+name: ProtoCentral OpenOx
+slug: protocentral-openox
+source: Protocentral/protocentral_openox
+format: eagle
+description: Wireless pulse oximeter (AFE4490 SpO2 analog frontend), Nellcor probe compatible
+tags: [bluetooth]
+key_ics: [ESP32]
+outline:
+  width_mm: 72.95
+  height_mm: 34.09
+design_rules:
+  layers: 4
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 0.3mm
+  min_via: 10mil
+components:
+- ref: C1
+  value: 22pF
+  footprint: '0402'
+- ref: C10
+  value: 1uF
+  footprint: 0805
+  decouples: U1
+- ref: C11
+  value: 1uF
+  footprint: 0805
+  decouples: U1
+- ref: C12
+  value: 10uF
+  footprint: 0805
+- ref: C13
+  value: 10uF
+  footprint: 0805
+- ref: C14
+  value: 10uF
+  footprint: 0805
+- ref: C15
+  value: 22pF
+  footprint: '0402'
+- ref: C16
+  value: 100nF
+  footprint: '0402'
+  decouples: U3
+- ref: C17
+  value: 4.7uF
+  footprint: '0402'
+  decouples: U3
+- ref: C18
+  value: 2.2uF
+  footprint: '0402'
+- ref: C19
+  value: 2.2uF
+  footprint: '0402'
+- ref: C2
+  value: 2.2uF
+  footprint: '0402'
+- ref: C3
+  value: 4.7uF
+  footprint: '0402'
+  decouples: U3
+- ref: C30
+  value: 100nF
+  footprint: 0805
+  decouples: U4
+- ref: C32
+  value: 10uF
+  footprint: 0805
+  decouples: U4
+- ref: C34
+  value: 4.7uF
+  footprint: 0805
+  decouples: U6
+- ref: C36
+  value: 4.7uF
+  footprint: 0805
+  decouples: U6
+- ref: C39
+  value: 12pF
+  footprint: '0402'
+- ref: C4
+  value: 100nF
+  footprint: 0805
+- ref: C41
+  value: 12pF
+  footprint: '0402'
+- ref: C42
+  value: 1uF
+  footprint: '0402'
+- ref: C43
+  value: 1uF
+  footprint: '0402'
+- ref: C5
+  value: 1uF
+  footprint: 0805
+- ref: C6
+  value: 100nF
+  footprint: 0805
+- ref: C63
+  value: 1uF
+  footprint: '0402'
+  decouples: U1
+- ref: C7
+  value: 100nF
+  footprint: 0805
+- ref: C8
+  value: 2.2uF
+  footprint: '0402'
+- ref: C9
+  value: 10uF
+  footprint: 0805
+- ref: CHG1
+  value: red LED
+  footprint: CHIPLED_0603
+- ref: D1
+  value: D_ACAC
+  footprint: SOT323
+  description: Dual DIODE
+- ref: D11
+  value: BAT20J
+  footprint: SOD-323
+  prod_id: DIO-11623
+- ref: D2
+  value: D_ACAC
+  footprint: SOT323
+  description: Dual DIODE
+- ref: D3
+  value: D_ACAC
+  footprint: SOT323
+  description: Dual DIODE
+- ref: D5
+  value: D_ACAC
+  footprint: SOT323
+  description: Dual DIODE
+- ref: J3
+  value: Qwiic connector
+  footprint: 1X04
+  prod_id: CONN-13694
+  description: SparkFun I2C Standard Qwiic Connector
+- ref: J4
+  value: USB-C
+  footprint: USB-C
+  prod_id: CONN-14122
+  description: USB Type C 16Pin Connector
+- ref: JP1
+  value: JST PH 2-pin
+  footprint: JST-2-SMD
+- ref: L1
+  value: MAKK2520H100M
+  footprint: INDC2520X100N
+  description: "10\xB5H Shielded Wirewound Inductor 750mA 650mOhm Max 1008 (2520 Metric)"
+  manufacturer: Taiyo Yuden
+  mpn: MAKK2520H100M
+- ref: L2
+  value: MAKK2520H100M
+  footprint: INDC2520X100N
+  description: "10\xB5H Shielded Wirewound Inductor 750mA 650mOhm Max 1008 (2520 Metric)"
+  manufacturer: Taiyo Yuden
+  mpn: MAKK2520H100M
+- ref: L3
+  value: MAKK2520H100M
+  footprint: INDC2520X100N
+  description: "10\xB5H Shielded Wirewound Inductor 750mA 650mOhm Max 1008 (2520 Metric)"
+  manufacturer: Taiyo Yuden
+  mpn: MAKK2520H100M
+- ref: L4
+  value: MAKK2520H100M
+  footprint: INDC2520X100N
+  description: "10\xB5H Shielded Wirewound Inductor 750mA 650mOhm Max 1008 (2520 Metric)"
+  manufacturer: Taiyo Yuden
+  mpn: MAKK2520H100M
+- ref: POWER1
+  value: blue LED
+  footprint: CHIPLED_0603
+- ref: Q1
+  value: MBT3904DW1T1
+  footprint: SC70-6
+  prod_id: TRANS-13337
+  description: MBT3904DW1 Dual NPN Transistors
+- ref: Q2
+  value: 2.5A/30V
+  footprint: SOT-23-3
+  prod_id: TRANS-11308
+  description: Generic PMOSFET IRLML2244 - TRANS-11153 (SOT-23 -20V -4
+- ref: R11
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: R13
+  value: 330ohm
+  footprint: '0402'
+- ref: R14
+  value: 1kohm
+  footprint: '0402'
+  pulldown: U6.PROG
+- ref: R17
+  value: 0ohm
+  footprint: '0402'
+- ref: R19
+  value: 0ohm
+  footprint: '0402'
+- ref: R2
+  value: 0ohm
+  footprint: '0402'
+- ref: R23
+  value: 10kohm
+  footprint: '0402'
+- ref: R25
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+  power: 1/10W
+  pullup: '0'
+- ref: R3
+  value: 0ohm
+  footprint: 0805
+- ref: R30
+  value: 10kohm
+  footprint: '0402'
+  pullup: BAT_MON
+- ref: R31
+  value: 10kohm
+  footprint: '0402'
+  pulldown: BAT_MON
+- ref: R36
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+  power: 1/10W
+  pullup: U4.IO5
+- ref: R37
+  value: 330ohm
+  footprint: '0402'
+- ref: R4
+  value: 10kohm
+  footprint: '0402'
+  pullup: SCL
+- ref: R5
+  value: 10kohm
+  footprint: '0402'
+  pullup: SDA
+- ref: R53
+  value: 24ohm
+  footprint: '0402'
+- ref: R54
+  value: 24ohm
+  footprint: '0402'
+- ref: R67
+  value: 24ohm
+  footprint: '0402'
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+  power: 1/10W
+  pullup: CHIP_PU
+- ref: R9
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+- ref: SV1
+  value: MA06-1
+  footprint: MA06-1
+- ref: SW2
+  value: KMR2
+  footprint: BTN_KMR2
+  description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
+- ref: SWIO1
+  value: TPSQTP13R
+  footprint: TP13R
+- ref: SWIO17
+  value: TPSQTP13R
+  footprint: TP13R
+- ref: SWIO2
+  value: TPSQTP13R
+  footprint: TP13R
+- ref: SWIO3
+  value: TPSQTP13R
+  footprint: TP13R
+- ref: U$2
+  value: AFE4400
+  footprint: QFN-40
+- ref: U$24
+  value: JS102011SCQN
+  footprint: JS102011SCQN
+- ref: U$27
+  value: 520-327-12.5-34B
+  footprint: ECX-31B
+- ref: U$3
+  value: ABM3
+  footprint: ABM3
+- ref: U$33
+  value: FUDCIALPOINTS
+  footprint: FIDUCIALPOINTS
+- ref: U$34
+  value: FUDCIALPOINTS
+  footprint: FIDUCIALPOINTS
+- ref: U$35
+  value: FUDCIALPOINTS
+  footprint: FIDUCIALPOINTS
+- ref: U$7
+  value: CERT
+  footprint: CERT-SMALL-SILK
+- ref: U1
+  value: AP2112K-3.3
+  footprint: SOT-23-5
+  description: Voltage Regulator LDO
+- ref: U3
+  value: CP2102N
+  footprint: QFN24
+  prod_id: IC-14020
+- ref: U4
+  value: ESP-WROOM-32
+  footprint: ESP-WROOM-32
+- ref: U6
+  value: MCP73831
+  footprint: SOT-23-5
+  description: Microchip's MCP73831
+- ref: X1
+  value: DB9
+  footprint: DB9
+  description: DB9 Connector
+nets:
+- name: '!ADC_RESET'
+  pins: [R3.2, U$2.!RESET, U4.IO14]
+- name: '!AFE_PDN'
+  pins: [U$2.AFE_!PDN, U4.IO4]
+- name: +3V3
+  pins:
+  - C10.2
+  - C30.1
+  - C32.1
+  - J3.2
+  - L1.2
+  - L2.2
+  - L3.2
+  - L4.2
+  - R25.2
+  - R36.2
+  - R4.2
+  - R5.2
+  - R8.2
+  - SV1.1
+  - SWIO1.TP
+  - U1.OUT
+  - U4.3V3
+- name: +5V
+  pins:
+  - C16.1
+  - C3.1
+  - C34.1
+  - D11.A
+  - J4.VBUS
+  - Q2.G
+  - R13.1
+  - R23.2
+  - SWIO3.TP
+  - U3.VBUS
+  - U3.VREGIN
+  - U6.VIN
+- name: '0'
+  pins: [C43.1, Q1.Q2.C, R25.1, U4.IO0]
+- name: 3.3V
+  pins: [C17.1, R67.2, U3.VDD, U3.VIO]
+- name: ADC_RDY
+  pins: [U$2.ADC_RDY, U4.IO13]
+- name: BAT_MON
+  pins: [R30.1, R31.2, U4.SENSOR_VP]
+- name: BG
+  pins: [C2.1, U$2.BG]
+- name: CHIP_PU
+  pins: [C42.1, Q1.Q1.C, R8.1, U4.EN]
+- name: CLKOUT
+  pins: [TP1.1, U$2.CLKOUT]
+- name: D
+  pins: [R17.2, U3.D+]
+- name: DIAG_END
+  pins: [U$2.DIAG_END, U4.IO35]
+- name: DTR
+  pins: [Q1.Q2.E, R9.1, U3.DTR]
+- name: D_2
+  pins: [R19.2, U3.D-]
+- name: EN
+  pins: [U$24.P2, U1.EN]
+- name: GND
+  pins:
+  - C1.1
+  - C10.1
+  - C11.1
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.1
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C3.2
+  - C30.2
+  - C32.2
+  - C34.2
+  - C36.2
+  - C39.2
+  - C4.2
+  - C41.1
+  - C42.2
+  - C43.2
+  - C5.2
+  - C6.2
+  - C63.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.C
+  - D2.C
+  - D3.C
+  - D5.C
+  - J3.1
+  - J4.GND
+  - J4.SHLD
+  - JP1.1
+  - R14.1
+  - R23.1
+  - R31.1
+  - R37.1
+  - SV1.2
+  - SW2.S
+  - SWIO17.TP
+  - U$2.LED_DRV_GND@1
+  - U$2.LED_DRV_GND@2
+  - U$2.LED_DRV_GND@3
+  - U$2.RX_ANA_GND
+  - U$2.RX_ANA_GND@1
+  - U$2.RX_ANA_GND@2
+  - U$2.RX_DIG_GND
+  - U$2.RX_DIG_GND@1
+  - U$2.THER1
+  - U$2.THER2
+  - U$2.THER3
+  - U$2.THER4
+  - U$2.VSS
+  - U$24.P3
+  - U1.GND
+  - U3.GND
+  - U4.GND
+  - U4.GND@1
+  - U4.GND@15
+  - U4.GND@38
+  - U6.VSS
+  - X1.7
+  - X1.P$1
+  - X1.P$2
+- name: INN
+  pins: [D5.CA, U$2.INN, X1.5]
+- name: INP
+  pins: [D3.CA, U$2.INP, X1.9]
+- name: LED_ALM
+  pins: [U$2.LED_ALM, U4.IO26]
+- name: LED_DRV_SUP
+  pins:
+  - C14.1
+  - C5.1
+  - D1.A
+  - D2.A
+  - L1.1
+  - U$2.LED_DRV_SUP@1
+  - U$2.LED_DRV_SUP@2
+- name: N$100
+  pins: [C39.1, U$27.1, U4.IO33]
+- name: N$101
+  pins: [R36.1, SW2.P, U4.IO5]
+- name: N$103
+  pins: [POWER1.A, U4.IO12]
+- name: N$105
+  pins: [POWER1.C, R37.2]
+- name: N$21
+  pins: [J4.D-, R19.1]
+- name: N$3
+  pins: [C8.1, R2.2]
+- name: N$4
+  pins: [C19.1, J4.CC1]
+- name: N$5
+  pins: [C18.1, J4.CC2]
+- name: N$9
+  pins: [J4.D+, R17.1]
+- name: N$97
+  pins: [CHG1.A, R13.2]
+- name: N$99
+  pins: [C41.2, U$27.2, U4.IO32]
+- name: PD_ALM
+  pins: [U$2.PD_ALM, U4.IO27]
+- name: PROG
+  pins: [R14.2, U6.PROG]
+- name: Q1_B
+  pins: [Q1.Q1.B, R9.2]
+- name: Q2_B
+  pins: [Q1.Q2.B, R11.2]
+- name: RSTB
+  pins: [R67.1, U3.!RSTB]
+- name: RTS
+  pins: [Q1.Q1.E, R11.1, U3.RTS]
+- name: RX
+  pins: [R54.2, U3.RXD]
+- name: RX_ANA_SUP
+  pins:
+  - C6.1
+  - C9.1
+  - D3.A
+  - D5.A
+  - L4.1
+  - U$2.RX_ANA_SUP
+  - U$2.RX_ANA_SUP@1
+- name: RX_DIG_SUP
+  pins: [C12.1, C7.1, L3.1, R3.1, U$2.RX_DIG_SUP@3]
+- name: SCL
+  pins: [J3.4, R4.1, SV1.3, U4.IO22]
+- name: SDA
+  pins: [J3.3, R5.1, SV1.4, U4.IO21]
+- name: SPO2_CS0
+  pins: [U$2.SPISTE, U4.IO25]
+- name: SPO2_MISO
+  pins: [U$2.SPISOMI, U4.IO19]
+- name: SPO2_MOSI
+  pins: [U$2.SPISIMO, U4.IO23]
+- name: SPO2_SCK
+  pins: [U$2.SCLK, U4.IO18]
+- name: STAT
+  pins: [CHG1.C, U6.STAT]
+- name: TX
+  pins: [R53.2, U3.TXD]
+- name: TXN
+  pins: [D2.CA, U$2.TXN, X1.3]
+- name: TXP
+  pins: [D1.CA, U$2.TXP, X1.2]
+- name: TX_CTRL_SUP
+  pins: [C13.1, C4.1, L2.1, U$2.TX_CTRL_SUP]
+- name: U0RXD
+  pins: [R53.1, U4.RXD0]
+- name: U0TXD
+  pins: [R54.1, U4.TXD0]
+- name: UART_RX
+  pins: [SV1.5, U4.IO16]
+- name: UART_TX
+  pins: [SV1.6, U4.IO17]
+- name: VBAT
+  pins: [C36.1, JP1.2, Q2.D, R30.2, U6.VBAT]
+- name: VCM
+  pins: [R2.1, U$2.VCM]
+- name: VIN
+  pins:
+  - C11.2
+  - C63.1
+  - D11.C
+  - Q2.S
+  - SWIO2.TP
+  - U$24.P1
+  - U1.IN
+- name: XIN
+  pins: [C15.2, U$2.XIN, U$3.2]
+- name: XOUT
+  pins: [C1.2, U$2.XOUT, U$3.1]
+positions:
+- ref: C1
+  x: 27.4
+  y: 25.16
+  rot: 180.0
+- ref: C10
+  x: 37.25
+  y: 8.98
+  rot: 90.0
+- ref: C11
+  x: 31.59
+  y: 13.43
+  rot: 270.0
+- ref: C12
+  x: 18.66
+  y: 12.15
+  rot: 90.0
+- ref: C13
+  x: 29.51
+  y: 12.25
+  rot: 90.0
+- ref: C14
+  x: 26.0
+  y: 11.19
+  rot: 180.0
+- ref: C15
+  x: 24.6
+  y: 25.16
+- ref: C16
+  x: 46.5
+  y: 31.3
+  rot: 90.0
+- ref: C17
+  x: 49.2
+  y: 30.3
+  rot: 90.0
+- ref: C18
+  x: 56.16
+  y: 25.85
+- ref: C19
+  x: 59.24
+  y: 25.7
+- ref: C2
+  x: 21.5
+  y: 18.06
+  rot: 180.0
+- ref: C3
+  x: 47.7
+  y: 31.3
+  rot: 90.0
+- ref: C30
+  x: 61.55
+  y: 23.94
+  rot: 180.0
+- ref: C32
+  x: 64.44
+  y: 24.25
+  rot: 180.0
+- ref: C34
+  x: 40.16
+  y: 19.65
+  rot: 90.0
+- ref: C36
+  x: 36.95
+  y: 16.76
+- ref: C39
+  x: 54.45
+  y: 22.24
+  rot: 270.0
+- ref: C4
+  x: 20.9
+  y: 16.06
+  rot: 180.0
+- ref: C41
+  x: 57.05
+  y: 22.24
+  rot: 270.0
+- ref: C42
+  x: 61.07
+  y: 22.44
+  rot: 270.0
+- ref: C43
+  x: 44.63
+  y: 7.26
+  rot: 90.0
+- ref: C5
+  x: 26.05
+  y: 12.99
+  rot: 180.0
+- ref: C6
+  x: 30.7
+  y: 27.66
+  rot: 90.0
+- ref: C63
+  x: 43.91
+  y: 16.6
+  rot: 180.0
+- ref: C7
+  x: 32.9
+  y: 27.71
+  rot: 90.0
+- ref: C8
+  x: 22.2
+  y: 22.61
+- ref: C9
+  x: 22.7
+  y: 11.99
+  rot: 90.0
+- ref: CHG1
+  x: 29.74
+  y: 31.65
+  rot: 270.0
+- ref: D1
+  x: 15.7
+  y: 11.21
+- ref: D11
+  x: 43.95
+  y: 18.16
+  rot: 180.0
+- ref: D2
+  x: 15.75
+  y: 14.61
+  rot: 180.0
+- ref: D3
+  x: 14.45
+  y: 17.81
+- ref: D5
+  x: 16.0
+  y: 26.31
+  rot: 180.0
+- ref: J3
+  x: 41.8
+  y: 5.36
+- ref: J4
+  x: 56.74
+  y: 27.4
+  rot: 180.0
+- ref: JP1
+  x: 38.44
+  y: 30.45
+- ref: L1
+  x: 26.56
+  y: 8.35
+  rot: 270.0
+- ref: L2
+  x: 30.16
+  y: 8.35
+  rot: 270.0
+- ref: L3
+  x: 18.69
+  y: 8.4
+  rot: 270.0
+- ref: L4
+  x: 22.69
+  y: 8.35
+  rot: 270.0
+- ref: POWER1
+  x: 49.96
+  y: 32.25
+  rot: 270.0
+- ref: Q1
+  x: 41.14
+  y: 11.85
+  rot: 90.0
+- ref: Q2
+  x: 44.1
+  y: 20.81
+- ref: R11
+  x: 41.45
+  y: 14.64
+- ref: R13
+  x: 27.06
+  y: 31.73
+- ref: R14
+  x: 39.05
+  y: 22.24
+  rot: 180.0
+- ref: R17
+  x: 49.95
+  y: 26.31
+  rot: 180.0
+- ref: R19
+  x: 49.95
+  y: 27.56
+  rot: 180.0
+- ref: R2
+  x: 21.4
+  y: 19.46
+  rot: 180.0
+- ref: R23
+  x: 42.0
+  y: 21.04
+  rot: 270.0
+- ref: R25
+  x: 38.96
+  y: 9.25
+  rot: 270.0
+- ref: R3
+  x: 32.8
+  y: 24.06
+  rot: 270.0
+- ref: R30
+  x: 36.34
+  y: 14.65
+  rot: 90.0
+- ref: R31
+  x: 37.35
+  y: 14.64
+  rot: 270.0
+- ref: R36
+  x: 64.14
+  y: 26.95
+  rot: 180.0
+- ref: R37
+  x: 50.35
+  y: 30.54
+  rot: 90.0
+- ref: R4
+  x: 42.7
+  y: 7.9
+  rot: 90.0
+- ref: R5
+  x: 41.6
+  y: 7.9
+  rot: 90.0
+- ref: R53
+  x: 46.5
+  y: 22.9
+  rot: 90.0
+- ref: R54
+  x: 45.4
+  y: 22.9
+  rot: 90.0
+- ref: R67
+  x: 45.2
+  y: 31.2
+  rot: 90.0
+- ref: R8
+  x: 44.35
+  y: 12.64
+  rot: 270.0
+- ref: R9
+  x: 41.24
+  y: 9.65
+  rot: 180.0
+- ref: SV1
+  x: 21.0
+  y: 2.3
+- ref: SW2
+  x: 64.05
+  y: 30.66
+  rot: 270.0
+- ref: SWIO1
+  x: 14.4
+  y: 7.8
+- ref: SWIO17
+  x: 22.8
+  y: 30.6
+- ref: SWIO2
+  x: 35.8
+  y: 12.8
+- ref: SWIO3
+  x: 25.6
+  y: 30.6
+- ref: U$2
+  x: 27.0
+  y: 19.26
+- ref: U$24
+  x: 33.5
+  y: 4.3
+- ref: U$27
+  x: 55.85
+  y: 24.04
+  rot: 180.0
+- ref: U$3
+  x: 26.05
+  y: 27.91
+  rot: 180.0
+- ref: U$33
+  x: 4.0
+  y: 30.0
+- ref: U$34
+  x: 69.93
+  y: 26.86
+- ref: U$35
+  x: 4.0
+  y: 4.0
+- ref: U$7
+  x: 57.55
+  y: 9.16
+- ref: U1
+  x: 34.11
+  y: 10.15
+  rot: 270.0
+- ref: U3
+  x: 45.9
+  y: 27.0
+  rot: 180.0
+- ref: U4
+  x: 57.35
+  y: 11.24
+- ref: U6
+  x: 37.05
+  y: 19.54
+  rot: 270.0
+- ref: X1
+  x: 9.7
+  y: 17.01
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

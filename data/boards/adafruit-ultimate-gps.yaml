@@ -1,0 +1,175 @@
+name: Adafruit Ultimate GPS
+slug: adafruit-ultimate-gps
+source: adafruit/Adafruit-Ultimate-GPS
+format: eagle
+description: PA1616S module (MTK3339 chipset), built-in FLASH datalogging
+tags: [data-logging, gps-gnss, rtc]
+key_ics: [FGPMMOPA6H, MIC5225-3.3]
+outline:
+  width_mm: 25.4
+  height_mm: 34.29
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: B1
+  value: CR1220
+  footprint: CR1220
+  description: CR1220 SMT
+- ref: C1
+  value: 100nF
+  footprint: 0805
+  decouples: U1
+- ref: C2
+  value: 10uF
+  footprint: 0805
+  decouples: U1
+- ref: C3
+  value: 10uF
+  footprint: 0805
+  decouples: U2
+- ref: D1
+  value: 1N4148
+  footprint: SOD-323
+- ref: D2
+  value: CUS520
+  footprint: SOD-323
+- ref: FB1
+  value: ferrite bead
+  footprint: 0805
+- ref: JP1
+  value: 1x9 header
+  footprint: 1X09
+- ref: LED1
+  value: red LED
+  footprint: CHIPLED_0805
+- ref: R1
+  value: 1kohm
+  footprint: 0805
+  pulldown: LED1.C
+- ref: R2
+  value: 10kohm
+  footprint: 0805
+  pullup: ENABLE
+- ref: R3
+  value: 10kohm
+  footprint: 0805
+  pullup: RX_3V
+- ref: U$20
+  value: U.FL
+  footprint: U.FL
+- ref: U1
+  value: FGPMMOPA6H
+  footprint: FGPMMOPA6H
+  description: GPS Module
+- ref: U2
+  value: MIC5225-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+nets:
+- name: 1PPS
+  pins: [JP1.1, U1.1PPS]
+- name: 3.3V
+  pins: [C1.1, C2.1, FB1.P$2, JP1.9, R3.1, U1.VCC]
+- name: ENABLE
+  pins: [JP1.8, R2.1, U2.EN]
+- name: FIX
+  pins: [JP1.6, LED1.A, U1.3D-FIX]
+- name: GND
+  pins:
+  - B1.-
+  - C1.2
+  - C2.2
+  - C3.2
+  - JP1.3
+  - R1.1
+  - U$20.GND@0
+  - U$20.GND@1
+  - U1.GND@1
+  - U1.GND@2
+  - U1.GND@3
+  - U1.GND@4
+  - U2.GND
+- name: N$1
+  pins: [B1.+, D2.A]
+- name: N$2
+  pins: [LED1.C, R1.2]
+- name: OUT
+  pins: [FB1.P$1, U2.OUT]
+- name: RX
+  pins: [D1.C, JP1.4]
+- name: RX_3V
+  pins: [D1.A, R3.2, U1.RX]
+- name: SIGNAL
+  pins: [U$20.SIGNAL, U1.EX_ANT]
+- name: TX
+  pins: [JP1.5, U1.TX]
+- name: VBACKUP
+  pins: [D2.C, JP1.7, U1.VBACKUP]
+- name: VIN
+  pins: [C3.1, JP1.2, R2.2, U2.IN]
+positions:
+- ref: B1
+  x: 12.7
+  y: 27.05
+- ref: C1
+  x: 21.97
+  y: 24.92
+  rot: 90.0
+- ref: C2
+  x: 24.0
+  y: 24.87
+  rot: 90.0
+- ref: C3
+  x: 22.99
+  y: 14.33
+- ref: D1
+  x: 21.84
+  y: 10.79
+  rot: 90.0
+- ref: D2
+  x: 2.41
+  y: 12.95
+  rot: 90.0
+- ref: FB1
+  x: 24.0
+  y: 20.8
+  rot: 90.0
+- ref: JP1
+  x: 12.7
+  y: 2.03
+  rot: 180.0
+- ref: LED1
+  x: 2.18
+  y: 21.97
+  rot: 180.0
+- ref: R1
+  x: 2.13
+  y: 17.91
+  rot: 90.0
+- ref: R2
+  x: 21.97
+  y: 20.8
+  rot: 270.0
+- ref: R3
+  x: 23.73
+  y: 10.41
+  rot: 90.0
+- ref: U$20
+  x: 18.92
+  y: 28.96
+  rot: 270.0
+- ref: U1
+  x: 12.19
+  y: 17.53
+  rot: 90.0
+- ref: U2
+  x: 22.99
+  y: 16.99
+  rot: 270.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

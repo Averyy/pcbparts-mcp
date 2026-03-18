@@ -1,0 +1,1649 @@
+name: Scalenode CM4 Baseboard
+slug: scalenode-cm4-baseboard
+source: antmicro/scalenode-cm4-baseboard
+format: kicad7
+description: '1U rack CM4 blade: GbE + PoE, M.2 NVMe'
+tags: [ethernet]
+key_ics: [TS3USB30EDGSR, AP62301, FT234XD-R, PDQE30-Q48-S5-D, TPS2378DDA]
+outline:
+  width_mm: 128.5
+  height_mm: 40.0
+design_rules:
+  layers: 4
+  min_trace: 0.125mm
+  min_clearance: 0.125mm
+  min_drill: 0.15mm
+  min_via: 0.45mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: '0603'
+  manufacturer: Murata
+  mpn: GRM188R61A106KE69D
+- ref: C10
+  value: 1nF
+  footprint: '0603'
+  manufacturer: AVX
+  mpn: 06031C102JAT2A
+- ref: C11
+  value: 1nF
+  footprint: '0603'
+  manufacturer: AVX
+  mpn: 06031C102JAT2A
+- ref: C12
+  value: 1nF
+  footprint: '0603'
+  manufacturer: AVX
+  mpn: 06031C102JAT2A
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R61H104KE14D
+  voltage: 50V
+- ref: C14
+  value: 1uF
+  footprint: '0402'
+  manufacturer: TDK
+  mpn: C1005X6S1A105K050BC
+- ref: C15
+  value: 1uF
+  footprint: '0402'
+  manufacturer: TDK
+  mpn: C1005X6S1A105K050BC
+- ref: C16
+  value: 22uF
+  footprint: 0805
+  manufacturer: AVX
+  mpn: 0805ZD226MAT2A
+  decouples: U2
+- ref: C17
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R61H104KE14D
+  voltage: 50V
+- ref: C18
+  value: 22uF
+  footprint: 0805
+  manufacturer: AVX
+  mpn: 0805ZD226MAT2A
+- ref: C19
+  value: 22uF
+  footprint: 0805
+  manufacturer: AVX
+  mpn: 0805ZD226MAT2A
+- ref: C2
+  value: 10uF
+  footprint: '0603'
+  manufacturer: Murata
+  mpn: GRM188R61A106KE69D
+- ref: C20
+  value: 100nF
+  footprint: 0805
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL21B104KCFNNNE
+  voltage: 100V
+- ref: C25
+  value: 1nF
+  footprint: '1210'
+  manufacturer: KEMET
+  mpn: C1210C102KGRACTU
+  voltage: 2kV
+- ref: C26
+  value: 22uF
+  footprint: '2220'
+  manufacturer: TDK
+  mpn: C5750X7S2A226M280KB
+  voltage: 100V
+- ref: C27
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R71H103KA88D
+  voltage: 50V
+- ref: C28
+  value: 22uF
+  footprint: '2220'
+  manufacturer: TDK
+  mpn: C5750X7S2A226M280KB
+  voltage: 100V
+- ref: C29
+  value: 22uF
+  footprint: '2220'
+  manufacturer: TDK
+  mpn: C5750X7S2A226M280KB
+  voltage: 100V
+- ref: C3
+  value: 10uF
+  footprint: '0603'
+  manufacturer: Murata
+  mpn: GRM188R61A106KE69D
+- ref: C30
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R71H103KA88D
+  voltage: 50V
+- ref: C31
+  value: 1nF
+  footprint: '1210'
+  manufacturer: KEMET
+  mpn: C1210C102KGRACTU
+  voltage: 2kV
+- ref: C32
+  value: 22uF
+  footprint: '2220'
+  manufacturer: TDK
+  mpn: C5750X7S2A226M280KB
+  voltage: 100V
+- ref: C33
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R71H103KA88D
+  voltage: 50V
+- ref: C34
+  value: 10nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R71H103KA88D
+  voltage: 50V
+- ref: C35
+  value: 47uF
+  footprint: '0603'
+  manufacturer: Murata
+  mpn: GRM188R60J476ME15D
+- ref: C36
+  value: 47uF
+  footprint: '0603'
+  manufacturer: Murata
+  mpn: GRM188R60J476ME15D
+- ref: C37
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R61H104KE14D
+  voltage: 50V
+- ref: C4
+  value: 1uF
+  footprint: '0603'
+  manufacturer: Walsin
+  mpn: 0603YD105KAT2A
+- ref: C5
+  value: 1uF
+  footprint: '0603'
+  manufacturer: Walsin
+  mpn: 0603YD105KAT2A
+- ref: C50
+  value: 1nF
+  footprint: '1210'
+  manufacturer: KEMET
+  mpn: C1210C102KGRACTU
+  voltage: 2kV
+- ref: C51
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R61H104KE14D
+  voltage: 50V
+- ref: C52
+  value: 1uF
+  footprint: '0402'
+  manufacturer: TDK
+  mpn: C1005X6S1A105K050BC
+- ref: C53
+  value: 1uF
+  footprint: '0402'
+  manufacturer: TDK
+  mpn: C1005X6S1A105K050BC
+- ref: C54
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R61H104KE14D
+  voltage: 50V
+- ref: C55
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R61H104KE14D
+  voltage: 50V
+- ref: C56
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GRM155R61H104KE14D
+  voltage: 50V
+- ref: C6
+  value: 1uF
+  footprint: '0603'
+  manufacturer: Walsin
+  mpn: 0603YD105KAT2A
+- ref: C7
+  value: 100nF
+  footprint: '0603'
+  manufacturer: AVX
+  mpn: 0603YC104KAZ2A
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+  manufacturer: AVX
+  mpn: 0603YC104KAZ2A
+- ref: C9
+  value: 100nF
+  footprint: '0603'
+  manufacturer: AVX
+  mpn: 0603YC104KAZ2A
+- ref: D1
+  value: green LED
+  footprint: '0603'
+  mpn: 598-8D80-107F
+  manufacturer: Dialight
+- ref: D11
+  value: green LED
+  footprint: '0603'
+  mpn: 598-8D80-107F
+  manufacturer: Dialight
+- ref: D2
+  value: SP3011-06
+  footprint: USON-14
+  mpn: SP3011-06UTG
+  manufacturer: Littelfuse
+- ref: D3
+  value: TPD4S012DRYR
+  footprint: UFDFN-6
+  manufacturer: Texas Instruments
+  mpn: TPD4S012DRYR
+- ref: D4
+  value: MB10S
+  footprint: SOIC-4_W3.9mm
+  mpn: MB10S
+  manufacturer: Multicomp Pro
+- ref: D5
+  value: MB10S
+  footprint: SOIC-4_W3.9mm
+  mpn: MB10S
+  manufacturer: Multicomp Pro
+- ref: D6
+  value: SMAJ58A-13-F
+  footprint: DO-214AC
+  mpn: SMAJ58A-13-F
+  manufacturer: Diodes Incorporated
+- ref: D7
+  value: green LED
+  footprint: '0603'
+  mpn: KP-1608CGCK
+  manufacturer: Kingbright
+- ref: D8
+  value: SMAJ6.5A
+  footprint: DO-214AC
+  mpn: SMAJ6.5A
+  manufacturer: YAGEO
+- ref: F1
+  value: PTC_4.5A_1206
+  footprint: '1206'
+  mpn: 1206L450SLWR
+  manufacturer: Littelfuse
+- ref: FB1
+  value: 220ohm
+  footprint: 0805
+  mpn: BLM21PG221SN1D
+  manufacturer: Murata
+- ref: FB2
+  value: 220ohm
+  footprint: 0805
+  mpn: BLM21PG221SN1D
+  manufacturer: Murata
+- ref: J1
+  value: JST XH 1x2
+  footprint: Conn_JST_XH
+  mpn: B2B-XH-A(LF)(SN)
+  manufacturer: JST Automotive Connectors
+- ref: J10
+  value: 2x30 header
+  footprint: Conn_Hermaphroditic_Samtec_LSHM
+  mpn: LSHM-130-01-L-RH-A-S-K-TR
+  manufacturer: Samtec
+- ref: J3
+  value: M.2
+  footprint: Bus_M.2_Socket_Key_M_Amphenol_MDT580M01001
+  mpn: MDT580M01001
+  manufacturer: Amphenol
+- ref: J4
+  value: microSD
+  footprint: MicroSD_Amphenol_1140084168
+  mpn: '1140084168'
+  manufacturer: Amphenol
+- ref: J5
+  value: USB-Micro-B_Molex_473460001
+  footprint: USB-Micro-B_Receptacle_Molex_473460001
+  mpn: '473460001'
+  manufacturer: Molex
+- ref: J6
+  value: SS-74800-144
+  footprint: Ethernet_Jack_SS-74800-144
+  mpn: SS-74800-144
+  manufacturer: Bel
+- ref: J7
+  value: connector
+  footprint: Conn_Socket_Hirose_DF40
+  manufacturer: Hirose Electric
+  mpn: DF40HC(3.0)-100DS-0.4V(51)
+- ref: J8
+  value: connector
+  footprint: Conn_Socket_Hirose_DF40
+  manufacturer: Hirose Electric
+  mpn: DF40HC(3.0)-100DS-0.4V(51)
+- ref: L1
+  value: 1uH
+  footprint: L_Bourns-SRP3212A
+  manufacturer: Bourns
+  mpn: SRP3212A-1R0M
+- ref: L3
+  value: H6096NL
+  footprint: SOIC-24
+  mpn: H6096NL
+  manufacturer: Pulse Electronics
+  description: Common Mode Chokes / Filters 1000Base-T SMD PoE+ 350uH .3Ohms 1-Port
+- ref: M1
+  value: Compute-Module-4_H1.5mm
+  footprint: Compute-Module-4_H1.5mm
+  manufacturer: Raspberry Pi
+  mpn: SC0294
+- ref: N1
+  value: antmicro_logo
+  footprint: antmicro-logo
+- ref: Q6
+  value: BSS138-7-F
+  footprint: SOT-23-3
+  mpn: BSS138-7-F
+  manufacturer: Diodes Incorporated
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Bourns
+  mpn: CR0603-FX-1002ELF
+  tolerance: 1%
+- ref: R10
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-1002GLF
+  tolerance: 1%
+- ref: R11
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-1002GLF
+  tolerance: 1%
+- ref: R12
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-1002GLF
+  tolerance: 1%
+- ref: R13
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-1002GLF
+  tolerance: 1%
+- ref: R14
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-1002GLF
+  tolerance: 1%
+  pulldown: U1.nOE
+- ref: R15
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-2201GLF
+  tolerance: 1%
+  pulldown: USBOTG_ID
+- ref: R16
+  value: 1.1kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-1101GLF
+  tolerance: 1%
+- ref: R18
+  value: 33.2kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-3322GLF
+  tolerance: 1%
+- ref: R19
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-1002GLF
+  tolerance: 1%
+  pulldown: U2.FB
+- ref: R2
+  value: 270ohm
+  footprint: '0603'
+  manufacturer: Bourns
+  mpn: CR0603-FX-2700ELF
+  tolerance: 1%
+- ref: R21
+  value: 220ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-2200GLF
+  tolerance: 1%
+- ref: R22
+  value: 220ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-2200GLF
+  tolerance: 1%
+- ref: R23
+  value: 63.4ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-63R4GLF
+  tolerance: 1%
+- ref: R24
+  value: 24.9kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-2492GLF
+  tolerance: 1%
+- ref: R25
+  value: 75ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-75R0GLF
+  tolerance: 1%
+- ref: R26
+  value: 75ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-75R0GLF
+  tolerance: 1%
+- ref: R27
+  value: 75ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-75R0GLF
+  tolerance: 1%
+- ref: R28
+  value: 75ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-75R0GLF
+  tolerance: 1%
+- ref: R29
+  value: 75ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-75R0GLF
+  tolerance: 1%
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Bourns
+  mpn: CR0603-FX-1002ELF
+  tolerance: 1%
+- ref: R30
+  value: 75ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-75R0GLF
+  tolerance: 1%
+- ref: R31
+  value: 75ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-75R0GLF
+  tolerance: 1%
+- ref: R32
+  value: 75ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-75R0GLF
+  tolerance: 1%
+- ref: R33
+  value: 32.4kohm
+  footprint: 0805
+  manufacturer: Bourns
+  mpn: CR0805-FX-3242ELF
+  tolerance: 1%
+- ref: R34
+  value: 15kohm
+  footprint: '0603'
+  manufacturer: Bourns
+  mpn: CR0603-FX-1502ELF
+  tolerance: 1%
+  pulldown: /PoE/VDD_POE_IN
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+  manufacturer: Bourns
+  mpn: CR0603-FX-1002ELF
+  tolerance: 1%
+- ref: R42
+  value: 1kohm
+  footprint: '0603'
+  manufacturer: Bourns
+  mpn: CR0603-FX-1001ELF
+  tolerance: 1%
+- ref: R5
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-1002GLF
+  tolerance: 1%
+- ref: R55
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-1002GLF
+  tolerance: 1%
+  pulldown: U5.nOE
+- ref: R56
+  value: 220ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-2200GLF
+  tolerance: 1%
+- ref: R58
+  value: 22ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-22R0GLF
+  tolerance: 1%
+- ref: R59
+  value: 22ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-22R0GLF
+  tolerance: 1%
+- ref: R6
+  value: 330ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-3300GLF
+  tolerance: 1%
+- ref: R60
+  value: 220ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-2200GLF
+  tolerance: 1%
+- ref: R62
+  value: 0ohm
+  footprint: '1206'
+  manufacturer: Multicomp Pro
+  mpn: MCMR12X000_PTL
+- ref: R64
+  value: 470ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-4700GLF
+  tolerance: 1%
+- ref: R65
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-1002GLF
+  tolerance: 1%
+  pulldown: Q6.G
+- ref: R7
+  value: 22ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-22R0GLF
+  tolerance: 1%
+- ref: R8
+  value: 22ohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-22R0GLF
+  tolerance: 1%
+- ref: R9
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Bourns
+  mpn: CR0402-FX-1002GLF
+  tolerance: 1%
+- ref: S1
+  value: CAS-120TA
+  footprint: Switch_Slide_CAS-120TA
+  mpn: CAS-120TA
+  manufacturer: Nidec Components
+- ref: U1
+  value: TS3USB30EDGSR
+  footprint: MSOP-10_W3mm
+  mpn: TS3USB30EDGSR
+  manufacturer: Texas Instruments
+- ref: U2
+  value: AP62301
+  footprint: TSOT23-6
+  mpn: AP62301WU-7
+  manufacturer: Diodes Incorporated
+- ref: U5
+  value: TS3USB30EDGSR
+  footprint: MSOP-10_W3mm
+  mpn: TS3USB30EDGSR
+  manufacturer: Texas Instruments
+- ref: U6
+  value: FT234XD-R
+  footprint: DFN-12-1EP
+  manufacturer: FTDI Chip
+  mpn: FT234XD-R
+- ref: U7
+  value: PDQE30-Q48-S5-D
+  footprint: CONV_PDQE30-Q48-S5-D
+  mpn: PDQE30-Q48-S5-D
+  manufacturer: CUI Inc
+- ref: U8
+  value: TPS2378DDA
+  footprint: SOIC-8-1EP
+  manufacturer: Texas Instruments
+  mpn: TPS2378DDA
+nets:
+- name: /Compute module/nRPi_BOOT
+  pins: [J7.93, Q6.D]
+- name: /Interfaces/CONN_USB_N
+  pins: [D3.D+, J5.D-, U5.D-]
+- name: /Interfaces/CONN_USB_P
+  pins: [D3.D-, J5.D+, U5.D+]
+- name: /Interfaces/FTDI_USB_N
+  pins: [R58.1, U5.D1-]
+- name: /Interfaces/FTDI_USB_P
+  pins: [R59.1, U5.D1+]
+- name: /Interfaces/RPi_USB_N
+  pins: [U1.D2-, U5.D2-]
+- name: /Interfaces/RPi_USB_P
+  pins: [U1.D2+, U5.D2+]
+- name: /Interfaces/VBus_Slave
+  pins:
+  - C53.2
+  - C54.2
+  - C56.1
+  - D3.VBUS
+  - J5.VBUS
+  - S1.1
+  - U6.VCC
+- name: /PoE/PAIR12
+  pins: [C27.2, D4.3, L3.MCT1]
+- name: /PoE/PAIR36
+  pins: [C30.2, D4.4, L3.MCT2]
+- name: /PoE/PAIR45
+  pins: [C33.2, D5.3, L3.MCT3]
+- name: /PoE/PAIR78
+  pins: [C34.2, D5.4, L3.MCT4]
+- name: /PoE/POE_ACTIVE
+  pins: [U7.CTRL, U8.CDB]
+- name: /PoE/T_ETH_D0_N
+  pins: [J6.2, L3.MX1-]
+- name: /PoE/T_ETH_D0_P
+  pins: [J6.1, L3.MX1+]
+- name: /PoE/T_ETH_D1_N
+  pins: [J6.6, L3.MX2-]
+- name: /PoE/T_ETH_D1_P
+  pins: [J6.3, L3.MX2+]
+- name: /PoE/T_ETH_D2_N
+  pins: [J6.5, L3.MX3-]
+- name: /PoE/T_ETH_D2_P
+  pins: [J6.4, L3.MX3+]
+- name: /PoE/T_ETH_D3_N
+  pins: [J6.8, L3.MX4-]
+- name: /PoE/T_ETH_D3_P
+  pins: [J6.7, L3.MX4+]
+- name: /PoE/VDD_POE_IN
+  pins:
+  - C20.2
+  - C26.2
+  - C28.2
+  - C29.2
+  - C32.2
+  - D6.K
+  - FB2.2
+  - R24.1
+  - R33.2
+  - R34.2
+  - U7.VIN
+  - U8.VDD
+- name: /PoE/VO5V
+  pins: [C35.2, C36.2, C37.2, D8.K, F1.1, U7.VO]
+- name: 3V3_OUT
+  pins:
+  - J10.02
+  - J10.04
+  - J10.06
+  - J10.08
+  - J10.10
+  - J10.12
+  - R62.1
+- name: 3V3_RPi
+  pins:
+  - C13.1
+  - C14.1
+  - C15.2
+  - C51.2
+  - C52.2
+  - D11.1
+  - J4.VDD
+  - J7.78
+  - J7.84
+  - J7.86
+  - R10.1
+  - R11.1
+  - R12.1
+  - R13.1
+  - R21.2
+  - R22.2
+  - R5.1
+  - R9.1
+  - U1.VCC
+  - U5.VCC
+- name: 3V3_SSD
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - J3.3V3@12
+  - J3.3V3@14
+  - J3.3V3@16
+  - J3.3V3@18
+  - J3.3V3@2
+  - J3.3V3@4
+  - J3.3V3@70
+  - J3.3V3@72
+  - J3.3V3@74
+  - L1.2
+  - R1.1
+  - R18.2
+  - R2.2
+  - R3.1
+  - R4.1
+  - R62.2
+- name: Adapter_USB_N
+  pins: [J10.34, U1.D1-]
+- name: Adapter_USB_P
+  pins: [J10.36, U1.D1+]
+- name: ETH_LEDG
+  pins: [J6.11, J7.15]
+- name: ETH_LEDY
+  pins: [J6.9, J7.17]
+- name: Earth
+  pins: [C31.2, C50.2, J6.SHIELD@SH]
+- name: GND
+  pins:
+  - C1.1
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.2
+  - C14.2
+  - C15.1
+  - C16.1
+  - C18.1
+  - C19.1
+  - C2.1
+  - C25.1
+  - C3.1
+  - C35.1
+  - C36.1
+  - C37.1
+  - C4.1
+  - C5.1
+  - C50.1
+  - C51.1
+  - C52.1
+  - C53.1
+  - C54.1
+  - C55.2
+  - C56.2
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - D2.10
+  - D2.5
+  - D3.GND
+  - D8.A
+  - J1.2
+  - J10.17
+  - J10.18
+  - J10.19
+  - J10.20
+  - J10.21
+  - J10.22
+  - J10.23
+  - J10.24
+  - J10.25
+  - J10.26
+  - J10.32
+  - J10.35
+  - J10.38
+  - J10.41
+  - J10.44
+  - J10.47
+  - J10.50
+  - J10.53
+  - J10.56
+  - J10.59
+  - J10.SHIELD@S1
+  - J10.SHIELD@S2
+  - J3.GND@1
+  - J3.GND@15
+  - J3.GND@21
+  - J3.GND@27
+  - J3.GND@3
+  - J3.GND@33
+  - J3.GND@39
+  - J3.GND@45
+  - J3.GND@51
+  - J3.GND@57
+  - J3.GND@71
+  - J3.GND@73
+  - J3.GND@75
+  - J3.GND@9
+  - J3.SHIELD@SH1
+  - J3.SHIELD@SH2
+  - J4.CD2
+  - J4.Shell@SH
+  - J4.VSS
+  - J5.GND
+  - J5.SHIELD@SH
+  - J7.1
+  - J7.13
+  - J7.14
+  - J7.2
+  - J7.22
+  - J7.23
+  - J7.32
+  - J7.33
+  - J7.42
+  - J7.43
+  - J7.52
+  - J7.53
+  - J7.59
+  - J7.60
+  - J7.65
+  - J7.66
+  - J7.7
+  - J7.71
+  - J7.74
+  - J7.8
+  - J7.98
+  - J8.13
+  - J8.14
+  - J8.19
+  - J8.20
+  - J8.25
+  - J8.26
+  - J8.31
+  - J8.32
+  - J8.37
+  - J8.38
+  - J8.44
+  - J8.50
+  - J8.55
+  - J8.56
+  - J8.61
+  - J8.62
+  - J8.67
+  - J8.68
+  - J8.7
+  - J8.73
+  - J8.74
+  - J8.79
+  - J8.8
+  - J8.80
+  - J8.85
+  - J8.86
+  - J8.91
+  - J8.92
+  - J8.97
+  - J8.98
+  - Q6.S
+  - R14.2
+  - R15.1
+  - R19.1
+  - R55.2
+  - R65.2
+  - U1.GND
+  - U2.GND
+  - U5.GND
+  - U6.GND@13
+  - U6.GND@5
+  - U7.0V
+- name: GNDD
+  pins:
+  - C26.1
+  - C28.1
+  - C29.1
+  - C32.1
+  - D7.2
+  - R34.1
+  - U7.GND
+  - U8.APD
+  - U8.RTN
+- name: GPIO18
+  pins: [J10.48, J7.49]
+- name: GPIO24
+  pins: [J10.58, J7.45]
+- name: GPIO25
+  pins: [J10.60, J7.41]
+- name: GPIO26
+  pins: [J10.46, J7.24]
+- name: GPIO3
+  pins: [J7.56, R6.1]
+- name: GPIO7
+  pins: [J10.52, J7.37]
+- name: GPIO8
+  pins: [J10.54, J7.39]
+- name: HDMI0_CEC
+  pins: [J10.31, J8.51]
+- name: HDMI0_CK_N
+  pins: [J10.57, J8.90]
+- name: HDMI0_CK_P
+  pins: [J10.55, J8.88]
+- name: HDMI0_D0_N
+  pins: [J10.51, J8.84]
+- name: HDMI0_D0_P
+  pins: [J10.49, J8.82]
+- name: HDMI0_D1_N
+  pins: [J10.45, J8.78]
+- name: HDMI0_D1_P
+  pins: [J10.43, J8.76]
+- name: HDMI0_D2_N
+  pins: [J10.39, J8.72]
+- name: HDMI0_D2_P
+  pins: [J10.37, J8.70]
+- name: HDMI0_HOTPLUG
+  pins: [J10.33, J8.53]
+- name: HDMI0_SCL
+  pins: [J10.27, J8.100]
+- name: HDMI0_SDA
+  pins: [J10.29, J8.99]
+- name: Net-(C25-Pad2)
+  pins: [C25.2, R27.1, R28.1, R29.1, R30.1]
+- name: Net-(C27-Pad1)
+  pins: [C27.1, R25.1]
+- name: Net-(C30-Pad1)
+  pins: [C30.1, R26.1]
+- name: Net-(C31-Pad1)
+  pins: [C31.1, R25.2, R26.2, R31.2, R32.2]
+- name: Net-(C33-Pad1)
+  pins: [C33.1, R31.1]
+- name: Net-(C34-Pad1)
+  pins: [C34.1, R32.1]
+- name: Net-(D1-Pad1)
+  pins: [D1.1, R2.1]
+- name: Net-(D11-Pad2)
+  pins: [D11.2, R42.2]
+- name: Net-(D4-Pad1)
+  pins: [D4.1, D5.1, FB2.1]
+- name: Net-(D4-Pad2)
+  pins: [D4.2, D5.2, FB1.1]
+- name: Net-(D7-Pad1)
+  pins: [D7.1, R33.1]
+- name: Net-(J3-LED)
+  pins: [D1.2, J3.LED]
+- name: Net-(J4-CD1)
+  pins: [J4.CD1, R6.2]
+- name: Net-(J6-Pad10)
+  pins: [J6.10, R21.1]
+- name: Net-(J6-Pad12)
+  pins: [J6.12, R22.1]
+- name: Net-(J7-Pad21)
+  pins: [J7.21, R42.1]
+- name: Net-(L3-TCT1)
+  pins: [L3.TCT1, R27.2]
+- name: Net-(L3-TCT2)
+  pins: [L3.TCT2, R28.2]
+- name: Net-(L3-TCT3)
+  pins: [L3.TCT3, R29.2]
+- name: Net-(L3-TCT4)
+  pins: [L3.TCT4, R30.2]
+- name: Net-(Q6-G)
+  pins: [Q6.G, R64.2, R65.1]
+- name: Net-(U1-D+)
+  pins: [R7.2, U1.D+]
+- name: Net-(U1-D-)
+  pins: [R8.2, U1.D-]
+- name: Net-(U1-nOE)
+  pins: [R14.1, U1.nOE]
+- name: Net-(U2-BST)
+  pins: [C17.2, U2.BST]
+- name: Net-(U2-FB)
+  pins: [R18.1, R19.2, U2.FB]
+- name: Net-(U2-SW)
+  pins: [C17.1, L1.1, U2.SW]
+- name: Net-(U5-nOE)
+  pins: [R55.1, U5.nOE]
+- name: Net-(U6-3.3VOUT)
+  pins: [C55.1, U6.3.3VOUT, U6.VCCIO, U6.nRESET]
+- name: Net-(U6-RXD)
+  pins: [R56.2, U6.RXD]
+- name: Net-(U6-TXD)
+  pins: [R60.1, U6.TXD]
+- name: Net-(U6-USBDM)
+  pins: [R58.2, U6.USBDM]
+- name: Net-(U6-USBDP)
+  pins: [R59.2, U6.USBDP]
+- name: Net-(U8-CLS)
+  pins: [R23.2, U8.CLS]
+- name: Net-(U8-DEN)
+  pins: [R24.2, U8.DEN]
+- name: PCIE_CLK_N
+  pins: [J3.REFCLK_N, J8.12]
+- name: PCIE_CLK_P
+  pins: [J3.REFCLK_P, J8.10]
+- name: PCIE_CLK_nREQ
+  pins: [J3.CLKREQ#, J8.2, R3.2]
+- name: PCIE_RX_N
+  pins: [J3.PER0_N, J8.18]
+- name: PCIE_RX_P
+  pins: [J3.PER0_P, J8.16]
+- name: PCIE_TX_N
+  pins: [J3.PET0_N, J8.24]
+- name: PCIE_TX_P
+  pins: [J3.PET0_P, J8.22]
+- name: PCIE_WAKE
+  pins: [J3.PEWAKE#, R1.2]
+- name: PROG_MODE
+  pins: [R16.2, R64.1, S1.2]
+- name: PSCIE_nRST
+  pins: [J3.PERST#, J8.9, R4.2]
+- name: RPi_RXD
+  pins: [J7.51, R60.2]
+- name: RPi_TXD
+  pins: [J7.55, R56.1]
+- name: SCL0
+  pins: [J10.40, J7.80]
+- name: SDA0
+  pins: [J10.42, J7.82]
+- name: SD_CLK
+  pins: [D2.12, D2.3, J4.CLK, J7.57, R10.2]
+- name: SD_CMD
+  pins: [D2.11, D2.4, J4.CMD, J7.62, R11.2]
+- name: SD_DAT0
+  pins: [D2.13, D2.2, J4.DAT0, J7.63, R9.2]
+- name: SD_DAT1
+  pins: [D2.1, D2.14, J4.DAT1, J7.67, R5.2]
+- name: SD_DAT2
+  pins: [D2.7, D2.8, J4.DAT2, J7.69, R13.2]
+- name: SD_DAT3
+  pins: [D2.6, D2.9, J4.CD/DAT3, J7.61, R12.2]
+- name: TRD0_N
+  pins: [J7.10, L3.TD1-]
+- name: TRD0_P
+  pins: [J7.12, L3.TD1+]
+- name: TRD1_N
+  pins: [J7.6, L3.TD2-]
+- name: TRD1_P
+  pins: [J7.4, L3.TD2+]
+- name: TRD2_N
+  pins: [J7.9, L3.TD3-]
+- name: TRD2_P
+  pins: [J7.11, L3.TD3+]
+- name: TRD3_N
+  pins: [J7.5, L3.TD4-]
+- name: TRD3_P
+  pins: [J7.3, L3.TD4+]
+- name: USB2_N
+  pins: [J8.3, R8.1]
+- name: USB2_P
+  pins: [J8.5, R7.1]
+- name: USBOTG_ID
+  pins: [J8.1, R15.2, R16.1, U1.S, U5.S]
+- name: VCC1V8
+  pins: [J7.88, J7.90]
+- name: VCC5V0
+  pins:
+  - C16.2
+  - F1.2
+  - J1.1
+  - J10.01
+  - J10.03
+  - J10.05
+  - J10.07
+  - J10.09
+  - J10.11
+  - J7.77
+  - J7.79
+  - J7.81
+  - J7.83
+  - J7.85
+  - J7.87
+  - U2.VIN
+- name: VSS
+  pins: [C20.1, D6.A, FB1.2, R23.1, U8.EP, U8.VSS]
+positions:
+- ref: C1
+  x: 173.02
+  y: 67.35
+  rot: -90.0
+  side: back
+- ref: C10
+  x: 177.59
+  y: 67.35
+  rot: -90.0
+  side: back
+- ref: C11
+  x: 177.59
+  y: 81.07
+  rot: -90.0
+  side: back
+- ref: C12
+  x: 177.59
+  y: 86.15
+  rot: 90.0
+  side: back
+- ref: C13
+  x: 174.77
+  y: 82.7
+- ref: C14
+  x: 174.77
+  y: 83.71
+- ref: C15
+  x: 85.75
+  y: 84.5
+  rot: -90.0
+- ref: C16
+  x: 132.2
+  y: 90.2
+  rot: 180.0
+  side: back
+- ref: C17
+  x: 134.5
+  y: 86.25
+  rot: 90.0
+  side: back
+- ref: C18
+  x: 121.6
+  y: 85.6
+  side: back
+- ref: C19
+  x: 121.6
+  y: 87.8
+  side: back
+- ref: C2
+  x: 173.02
+  y: 81.07
+  rot: -90.0
+  side: back
+- ref: C20
+  x: 93.0
+  y: 91.51
+  rot: -90.0
+  side: back
+- ref: C25
+  x: 109.41
+  y: 59.51
+  rot: 180.0
+  side: back
+- ref: C26
+  x: 113.55
+  y: 92.58
+  rot: -90.0
+  side: back
+- ref: C27
+  x: 101.23
+  y: 73.52
+  rot: -90.0
+  side: back
+- ref: C28
+  x: 107.35
+  y: 92.52
+  rot: -90.0
+  side: back
+- ref: C29
+  x: 110.4
+  y: 92.06
+- ref: C3
+  x: 173.02
+  y: 86.15
+  rot: 90.0
+  side: back
+- ref: C30
+  x: 102.8
+  y: 72.21
+  rot: 180.0
+  side: back
+- ref: C31
+  x: 98.0
+  y: 59.51
+  rot: 180.0
+  side: back
+- ref: C32
+  x: 110.4
+  y: 85.96
+- ref: C33
+  x: 102.78
+  y: 67.01
+  rot: 180.0
+  side: back
+- ref: C34
+  x: 102.8
+  y: 64.51
+  rot: 180.0
+  side: back
+- ref: C35
+  x: 133.3
+  y: 93.5
+  rot: -90.0
+  side: back
+- ref: C36
+  x: 134.8
+  y: 93.5
+  rot: -90.0
+  side: back
+- ref: C37
+  x: 132.0
+  y: 93.18
+  rot: -90.0
+  side: back
+- ref: C4
+  x: 174.55
+  y: 67.35
+  rot: -90.0
+  side: back
+- ref: C5
+  x: 174.55
+  y: 81.07
+  rot: -90.0
+  side: back
+- ref: C50
+  x: 106.31
+  y: 63.71
+  rot: -90.0
+  side: back
+- ref: C51
+  x: 152.93
+  y: 73.7
+  rot: -90.0
+  side: back
+- ref: C52
+  x: 151.94
+  y: 73.7
+  rot: -90.0
+  side: back
+- ref: C53
+  x: 168.64
+  y: 71.19
+  rot: 180.0
+- ref: C54
+  x: 168.64
+  y: 70.17
+  rot: 180.0
+- ref: C55
+  x: 168.64
+  y: 72.46
+- ref: C56
+  x: 81.75
+  y: 85.3
+  rot: 90.0
+- ref: C6
+  x: 174.55
+  y: 86.15
+  rot: 90.0
+  side: back
+- ref: C7
+  x: 176.07
+  y: 67.35
+  rot: -90.0
+  side: back
+- ref: C8
+  x: 176.07
+  y: 81.07
+  rot: -90.0
+  side: back
+- ref: C9
+  x: 176.07
+  y: 86.15
+  rot: 90.0
+  side: back
+- ref: D1
+  x: 76.1
+  y: 78.68
+  rot: -90.0
+- ref: D11
+  x: 76.1
+  y: 81.54
+  rot: -90.0
+- ref: D2
+  x: 92.33
+  y: 83.44
+  side: back
+- ref: D3
+  x: 82.22
+  y: 87.31
+  rot: -90.0
+- ref: D4
+  x: 97.47
+  y: 77.14
+  rot: -90.0
+  side: back
+- ref: D5
+  x: 98.45
+  y: 65.75
+  rot: 90.0
+  side: back
+- ref: D6
+  x: 90.5
+  y: 92.01
+  rot: 90.0
+  side: back
+- ref: D7
+  x: 98.9
+  y: 90.85
+- ref: D8
+  x: 127.0
+  y: 94.8
+  rot: 180.0
+  side: back
+- ref: F1
+  x: 127.0
+  y: 91.9
+  rot: 180.0
+  side: back
+- ref: FB1
+  x: 86.1
+  y: 92.5
+  side: back
+- ref: FB2
+  x: 85.2
+  y: 95.3
+  side: back
+- ref: J1
+  x: 130.7
+  y: 60.2
+  rot: 180.0
+- ref: J10
+  x: 199.18
+  y: 76.7
+  rot: -90.0
+  side: back
+- ref: J3
+  x: 183.46
+  y: 76.88
+  rot: 90.0
+  side: back
+- ref: J4
+  x: 81.6
+  y: 85.02
+  rot: 90.0
+  side: back
+- ref: J5
+  x: 77.05
+  y: 87.37
+  rot: -90.0
+- ref: J6
+  x: 88.92
+  y: 71.45
+  rot: 90.0
+- ref: J7
+  x: 167.18
+  y: 59.8
+  rot: 180.0
+- ref: J8
+  x: 167.18
+  y: 93.8
+  rot: 180.0
+- ref: L1
+  x: 127.5
+  y: 86.75
+  rot: 180.0
+  side: back
+- ref: L3
+  x: 105.19
+  y: 66.82
+  rot: 180.0
+- ref: M1
+  x: 164.0
+  y: 56.12
+- ref: N1
+  x: 97.42
+  y: 79.27
+- ref: Q6
+  x: 151.89
+  y: 59.41
+  rot: 90.0
+- ref: R1
+  x: 177.59
+  y: 70.15
+  rot: -90.0
+  side: back
+- ref: R10
+  x: 96.4
+  y: 86.38
+  rot: 90.0
+  side: back
+- ref: R11
+  x: 97.42
+  y: 86.38
+  rot: 90.0
+  side: back
+- ref: R12
+  x: 98.44
+  y: 86.38
+  rot: 90.0
+  side: back
+- ref: R13
+  x: 99.45
+  y: 86.38
+  rot: 90.0
+  side: back
+- ref: R14
+  x: 175.96
+  y: 85.19
+  rot: 90.0
+- ref: R15
+  x: 159.99
+  y: 74.67
+  rot: -90.0
+- ref: R16
+  x: 158.93
+  y: 74.66
+  rot: 90.0
+- ref: R18
+  x: 129.2
+  y: 83.8
+  rot: 180.0
+  side: back
+- ref: R19
+  x: 131.5
+  y: 83.8
+  rot: 180.0
+  side: back
+- ref: R2
+  x: 79.15
+  y: 77.94
+- ref: R21
+  x: 91.25
+  y: 58.11
+- ref: R22
+  x: 93.29
+  y: 58.11
+  rot: 180.0
+- ref: R23
+  x: 94.65
+  y: 90.31
+  rot: -90.0
+  side: back
+- ref: R24
+  x: 94.65
+  y: 92.76
+  rot: 90.0
+  side: back
+- ref: R25
+  x: 102.8
+  y: 73.51
+  side: back
+- ref: R26
+  x: 102.8
+  y: 70.91
+  side: back
+- ref: R27
+  x: 108.3
+  y: 69.66
+  rot: -90.0
+  side: back
+- ref: R28
+  x: 109.34
+  y: 69.66
+  rot: -90.0
+  side: back
+- ref: R29
+  x: 109.39
+  y: 66.5
+  rot: -90.0
+  side: back
+- ref: R3
+  x: 176.07
+  y: 70.15
+  rot: -90.0
+  side: back
+- ref: R30
+  x: 109.39
+  y: 62.64
+  rot: -90.0
+  side: back
+- ref: R31
+  x: 102.8
+  y: 68.21
+  side: back
+- ref: R32
+  x: 102.8
+  y: 65.71
+  side: back
+- ref: R33
+  x: 98.9
+  y: 92.6
+- ref: R34
+  x: 98.92
+  y: 94.38
+  rot: 180.0
+- ref: R4
+  x: 174.55
+  y: 70.15
+  rot: -90.0
+  side: back
+- ref: R42
+  x: 79.22
+  y: 81.76
+  rot: 180.0
+- ref: R5
+  x: 94.37
+  y: 86.38
+  rot: 90.0
+  side: back
+- ref: R55
+  x: 154.48
+  y: 73.63
+  rot: -90.0
+  side: back
+- ref: R56
+  x: 155.7
+  y: 71.07
+- ref: R58
+  x: 166.26
+  y: 74.34
+- ref: R59
+  x: 164.13
+  y: 74.33
+  rot: 180.0
+- ref: R6
+  x: 88.42
+  y: 89.16
+  rot: -90.0
+  side: back
+- ref: R60
+  x: 158.89
+  y: 71.05
+  rot: 180.0
+- ref: R62
+  x: 151.6
+  y: 89.0
+  rot: -90.0
+  side: back
+- ref: R64
+  x: 150.92
+  y: 62.3
+  rot: 90.0
+- ref: R65
+  x: 152.36
+  y: 61.82
+- ref: R7
+  x: 175.81
+  y: 89.38
+  rot: 90.0
+- ref: R8
+  x: 176.95
+  y: 89.38
+  rot: 90.0
+- ref: R9
+  x: 95.39
+  y: 86.38
+  rot: 90.0
+  side: back
+- ref: S1
+  x: 120.6
+  y: 59.4
+  rot: 180.0
+- ref: U1
+  x: 172.15
+  y: 86.33
+  rot: -90.0
+- ref: U2
+  x: 132.0
+  y: 87.0
+  rot: 180.0
+  side: back
+- ref: U5
+  x: 161.4
+  y: 77.8
+  rot: -90.0
+- ref: U6
+  x: 165.2
+  y: 72.02
+  rot: 180.0
+- ref: U7
+  x: 117.09
+  y: 73.05
+- ref: U8
+  x: 99.05
+  y: 91.51
+  side: back
+copper_pours:
+- net: /PoE/VDD_POE_IN
+  layers: [B.Cu, F.Cu]
+- net: /PoE/VO5V
+  layers: [B.Cu]
+- net: 3V3_OUT
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: 3V3_RPi
+  layers: [B.Cu, In2.Cu]
+- net: 3V3_SSD
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: Earth
+  layers: [In1.Cu, In2.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: GNDD
+  layers: [B.Cu, F.Cu]
+- net: VCC5V0
+  layers: [B.Cu, F.Cu, In2.Cu]
+- net: VSS
+  layers: [B.Cu, F.Cu]

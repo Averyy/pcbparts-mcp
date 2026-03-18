@@ -1,0 +1,741 @@
+name: Weather Station
+slug: weather-station
+source: Invactive/Weather-station
+format: kicad6
+description: 'LoRaWAN weather station: temperature/pressure (BMP280), humidity (SHT40)'
+tags: [lora, pressure-sensor, sensors]
+key_ics: [BMP280, SHT40, OPT3001, STM32]
+outline:
+  width_mm: 90.0
+  height_mm: 32.0
+design_rules:
+  layers: 2
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.5mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: 0805
+  decouples: U3
+- ref: C10
+  value: 20pF
+  footprint: 0805
+- ref: C11
+  value: 220nF
+  footprint: 0805
+  decouples: U5
+- ref: C12
+  value: 100nF
+  footprint: 0805
+  decouples: U4
+- ref: C13
+  value: 2.2uF 4.06mR
+  footprint: 0805
+- ref: C14
+  value: 2.2uF 7.77mR
+  footprint: 0805
+  decouples: U7
+- ref: C15
+  value: 2.2uF 7.77mR
+  footprint: 0805
+  decouples: U7
+- ref: C16
+  value: 100nF
+  footprint: 0805
+- ref: C17
+  value: 10uF 3mR
+  footprint: 0805
+- ref: C18
+  value: 2.2uF 7.77mR
+  footprint: 0805
+  decouples: U10
+- ref: C19
+  value: 2.2uF 7.77mR
+  footprint: 0805
+  decouples: U10
+- ref: C2
+  value: 100nF
+  footprint: 0805
+  decouples: U5
+- ref: C3
+  value: 100nF
+  footprint: 0805
+  decouples: U3
+- ref: C4
+  value: 100nF
+  footprint: 0805
+  decouples: U3
+- ref: C5
+  value: 4.7uF
+  footprint: 0805
+  decouples: U3
+- ref: C6
+  value: 1uF
+  footprint: 0805
+  decouples: U3
+- ref: C7
+  value: 10nF
+  footprint: 0805
+  decouples: U3
+- ref: C8
+  value: 100nF
+  footprint: 0805
+- ref: C9
+  value: 20pF
+  footprint: 0805
+- ref: D1
+  value: LED
+  footprint: 0805
+- ref: D2
+  value: BAT54S
+  footprint: SOT-23
+- ref: J1
+  value: JST-XH
+  footprint: JST_XH_B2B-XH-A
+  mpn: B2B-XH-A(LF)(SN)
+  description: Connector Header Through Hole 2 position 0.098 (2.50mm)
+  manufacturer: JST Sales
+- ref: J2
+  value: SMA Antenna Connector
+  footprint: MOLEX_73251-1350
+  manufacturer: Molex
+- ref: J3
+  value: 1x8 header
+  footprint: 1X8
+- ref: L1
+  value: 1uH 17mR
+  footprint: 74404043010A
+- ref: L2
+  value: 1uH 17mR
+  footprint: 74404043010A
+- ref: R1
+  value: 820ohm
+  footprint: 0805
+- ref: R10
+  value: 100kohm
+  footprint: 0805
+- ref: R11
+  value: 453kohm
+  footprint: 0805
+  pullup: /U7_FB
+- ref: R12
+  value: 200ohm
+  footprint: 0805
+- ref: R13
+  value: 4.7kohm
+  footprint: 0805
+  pullup: /I2C1_SDA
+- ref: R14
+  value: 4.7kohm
+  footprint: 0805
+  pullup: /I2C1_SCL
+- ref: R15
+  value: 100kohm
+  footprint: 0805
+  pulldown: /U7_FB
+- ref: R16
+  value: 100kohm
+  footprint: 0805
+  pulldown: U8.+
+- ref: R17
+  value: 10kohm
+  footprint: 0805
+  pulldown: U9.ADDR
+- ref: R18
+  value: 732kohm
+  footprint: 0805
+  pullup: /U10_FB
+- ref: R19
+  value: 100kohm
+  footprint: 0805
+  pulldown: /U10_FB
+- ref: R2
+  value: 27ohm
+  footprint: 0805
+- ref: R3
+  value: 10kohm
+  footprint: 0805
+  pulldown: /BOOT0
+- ref: R4
+  value: 130ohm
+  footprint: 0805
+- ref: R5
+  value: 2.2kohm
+  footprint: 0805
+  pullup: /I2C2_SCL
+- ref: R6
+  value: 2.2kohm
+  footprint: 0805
+  pullup: /I2C2_SDA
+- ref: R7
+  value: 390ohm
+  footprint: 0805
+- ref: R8
+  value: 100ohm
+  footprint: 0805
+- ref: R9
+  value: 1kohm
+  footprint: 0805
+  pullup: U9.DVI
+- ref: SW1
+  value: switch
+  footprint: SW_SPDT_CK-JS102011SAQN
+- ref: U1
+  value: RFM95W-868
+  footprint: HOPERF_RFM69HW
+  manufacturer: RF Solution
+- ref: U10
+  value: TPS61023DRLR
+  footprint: TPS61023DRLR
+- ref: U2
+  value: MICS-6814
+  footprint: '6814'
+  mpn: MICS-6814
+  manufacturer: SGX Sensortech
+  description: Three gas SMD NH3, CO and NO2
+- ref: U3
+  value: STM32F301C8T6TR
+  footprint: LQFP-48
+- ref: U4
+  value: KP254
+  footprint: Infineon-KP254-Manufacturer_Recommended
+  manufacturer: Infineon
+- ref: U5
+  value: HIH6020-021-001
+  footprint: Honeywell-HIH7120-021-001-Recommended_Land_Pattern_
+  height: 5.9mm
+  manufacturer: Honeywell
+- ref: U6
+  value: TMP36GT9Z
+  footprint: TO92127P521H733-3
+  manufacturer: Analog Devices
+- ref: U7
+  value: TPS61023DRLR
+  footprint: TPS61023DRLR
+- ref: U8
+  value: INA180A1
+  footprint: SOT-23-5
+- ref: U9
+  value: BH1750FVI
+  footprint: XDCR_BH1750FVI-TR
+  manufacturer: Rohm
+- ref: Y1
+  value: ABM3-8.000MHZ-D2Y
+  footprint: Crystal_SMD_Abracon_ABM3-2Pin
+  manufacturer: Abracon
+nets:
+- name: +3V3
+  pins:
+  - C1.2
+  - C11.2
+  - C12.1
+  - C14.1
+  - C15.1
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - D2.2
+  - J3.Pin_8
+  - R11.1
+  - R13.2
+  - R14.2
+  - R5.2
+  - R6.2
+  - R9.2
+  - U1.3_3V
+  - U3.VBAT
+  - U3.VDD@24
+  - U3.VDD@36
+  - U3.VDD@48
+  - U3.VDDA
+  - U4.VDD
+  - U5.VDD
+  - U7.VOUT
+  - U8.V+
+  - U9.VCC
+  class: Power
+  trace_width: '0.4'
+- name: +5V
+  pins:
+  - C18.1
+  - C19.1
+  - R1.2
+  - R18.1
+  - R2.2
+  - R4.2
+  - U10.VOUT
+  - U6.+VS
+  class: Power
+  trace_width: '0.4'
+- name: +BATT
+  pins: [J1.1, SW1.C]
+  class: Power
+  trace_width: '0.4'
+- name: /ADC1_IN1_TEMP
+  pins: [U3.PA0, U6.VOUT]
+  class: Signal
+  trace_width: '0.2'
+- name: /ADC1_IN2_CO
+  pins: [U2.H, U3.PA1]
+  class: Signal
+  trace_width: '0.2'
+- name: /ADC1_IN3_NO2
+  pins: [U2.A, U3.PA2]
+  class: Signal
+  trace_width: '0.2'
+- name: /ADC1_IN4_NH3
+  pins: [U2.D, U3.PA3]
+  class: Signal
+  trace_width: '0.2'
+- name: /ADC1_IN5_BATT
+  pins: [R12.1, U3.PA4]
+  class: Signal
+  trace_width: '0.2'
+- name: /ANT
+  pins: [J2.1, U1.ANT]
+  class: Signal
+  trace_width: '0.2'
+- name: /BOOT0
+  pins: [R3.2, U3.BOOT0]
+  class: Signal
+  trace_width: '0.2'
+- name: /HSE_IN
+  pins: [C9.2, U3.PF0, Y1.2]
+  class: Signal
+  trace_width: '0.2'
+- name: /HSE_OUT
+  pins: [R7.2, U3.PF1]
+  class: Signal
+  trace_width: '0.2'
+- name: /I2C1_SCL
+  pins: [R14.1, U3.PB8, U9.SCL]
+  class: Signal
+  trace_width: '0.2'
+- name: /I2C1_SDA
+  pins: [R13.1, U3.PB9, U9.SDA]
+  class: Signal
+  trace_width: '0.2'
+- name: /I2C2_SCL
+  pins: [R5.1, U3.PA9, U5.SCL]
+  class: Signal
+  trace_width: '0.2'
+- name: /I2C2_SDA
+  pins: [R6.1, U3.PA10, U5.SDA]
+  class: Signal
+  trace_width: '0.2'
+- name: /LED
+  pins: [D1.A, U3.PA15]
+  class: Signal
+  trace_width: '0.2'
+- name: /NRST
+  pins: [C8.2, J3.Pin_7, U3.NRST]
+  class: Signal
+  trace_width: '0.2'
+- name: /RFM_DIO0
+  pins: [U1.DIO0, U3.PB5]
+  class: Signal
+  trace_width: '0.2'
+- name: /RFM_DIO1
+  pins: [U1.DIO1, U3.PB6]
+  class: Signal
+  trace_width: '0.2'
+- name: /RFM_RESET
+  pins: [U1.RESET, U3.PB12]
+  class: Signal
+  trace_width: '0.2'
+- name: /SPI2_CS1
+  pins: [U1.NSS, U3.PC14]
+  class: Signal
+  trace_width: '0.2'
+- name: /SPI2_CS2
+  pins: [U3.PC13, U4.NCS]
+  class: Signal
+  trace_width: '0.2'
+- name: /SPI2_MISO
+  pins: [U1.MISO, U3.PB14, U4.SDO]
+  class: Signal
+  trace_width: '0.2'
+- name: /SPI2_MOSI
+  pins: [U1.MOSI, U3.PB15, U4.SDI]
+  class: Signal
+  trace_width: '0.2'
+- name: /SPI2_SCK
+  pins: [U1.SCK, U3.PB13, U4.CLK]
+  class: Signal
+  trace_width: '0.2'
+- name: /SWCLK
+  pins: [J3.Pin_5, U3.PA14]
+  class: Signal
+  trace_width: '0.2'
+- name: /SWDIO
+  pins: [J3.Pin_4, U3.PA13]
+  class: Signal
+  trace_width: '0.2'
+- name: /SWO
+  pins: [J3.Pin_6, U3.PB3]
+  class: Signal
+  trace_width: '0.2'
+- name: /SW_COM
+  pins:
+  - C13.1
+  - C17.1
+  - L1.1
+  - L2.1
+  - R10.1
+  - SW1.B
+  - U10.EN
+  - U10.VIN
+  - U7.EN
+  - U7.VIN
+  class: Power
+  trace_width: '0.4'
+- name: /U10_FB
+  pins: [R18.2, R19.1, U10.FB]
+  class: Signal
+  trace_width: '0.2'
+- name: /U7_FB
+  pins: [R11.2, R15.1, U7.FB]
+  class: Signal
+  trace_width: '0.2'
+- name: /USART3_RX
+  pins: [J3.Pin_2, U3.PB11]
+  class: Signal
+  trace_width: '0.2'
+- name: /USART3_TX
+  pins: [J3.Pin_3, U3.PB10]
+  class: Signal
+  trace_width: '0.2'
+- name: ADDR
+  pins: [R17.2, U9.ADDR]
+  class: Signal
+  trace_width: '0.2'
+- name: DVI
+  pins: [C16.1, R9.1, U9.DVI]
+  class: Signal
+  trace_width: '0.2'
+- name: GND
+  pins:
+  - C1.1
+  - C10.1
+  - C11.1
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.1
+  - C3.1
+  - C4.1
+  - C5.1
+  - C6.1
+  - C7.1
+  - C8.1
+  - C9.1
+  - D2.1
+  - J1.2
+  - J2.S1
+  - J2.S2
+  - J2.S3
+  - J2.S4
+  - J3.Pin_1
+  - R15.2
+  - R16.2
+  - R17.1
+  - R19.2
+  - R3.1
+  - R8.2
+  - SW1.A
+  - U1.GND
+  - U1.GND@1
+  - U1.GND@2
+  - U10.GND
+  - U2.B
+  - U2.F
+  - U2.J
+  - U3.VSS@23
+  - U3.VSS@35
+  - U3.VSS@47
+  - U3.VSSA
+  - U4.GND
+  - U4.VPROG
+  - U5.VSS
+  - U6.GND
+  - U7.GND
+  - U8.GND
+  - U9.GND
+  class: Power
+  trace_width: '0.4'
+- name: K
+  pins: [R4.1, U2.K]
+  class: Signal
+  trace_width: '0.2'
+- name: Net-(C10-Pad2)
+  pins: [C10.2, R7.1, Y1.1]
+  class: Signal
+  trace_width: '0.2'
+- name: Net-(D1-Pad1)
+  pins: [D1.K, R8.1]
+  class: Signal
+  trace_width: '0.2'
+- name: Net-(D2-Pad3)
+  pins: [D2.3, R12.2, U8.-, U8.1]
+  class: Signal
+  trace_width: '0.2'
+- name: Net-(R1-Pad1)
+  pins: [R1.1, U2.E, U2.G]
+  class: Signal
+  trace_width: '0.2'
+- name: Net-(R10-Pad2)
+  pins: [R10.2, R16.1, U8.+]
+  class: Signal
+  trace_width: '0.2'
+- name: Net-(R2-Pad1)
+  pins: [R2.1, U2.C]
+  class: Signal
+  trace_width: '0.2'
+- name: SW
+  pins: [L2.2, U10.SW]
+  class: Signal
+  trace_width: '0.2'
+- name: SW_2
+  pins: [L1.2, U7.SW]
+  class: Signal
+  trace_width: '0.2'
+positions:
+- ref: C1
+  x: 115.32
+  y: 64.01
+  rot: 180.0
+- ref: C10
+  x: 111.47
+  y: 55.33
+- ref: C11
+  x: 108.02
+  y: 82.31
+  rot: 90.0
+- ref: C12
+  x: 132.72
+  y: 56.2
+  rot: 180.0
+- ref: C13
+  x: 77.64
+  y: 79.23
+  rot: 180.0
+- ref: C14
+  x: 86.34
+  y: 79.44
+  rot: -90.0
+- ref: C15
+  x: 88.74
+  y: 79.44
+  rot: -90.0
+- ref: C16
+  x: 130.62
+  y: 82.58
+  rot: 90.0
+- ref: C17
+  x: 77.86
+  y: 62.27
+  rot: 180.0
+- ref: C18
+  x: 86.56
+  y: 62.48
+  rot: -90.0
+- ref: C19
+  x: 88.96
+  y: 62.48
+  rot: -90.0
+- ref: C2
+  x: 110.2
+  y: 76.33
+  rot: -90.0
+- ref: C3
+  x: 120.4
+  y: 79.97
+- ref: C4
+  x: 123.83
+  y: 69.92
+  rot: 90.0
+- ref: C5
+  x: 120.7
+  y: 64.04
+  rot: 180.0
+- ref: C6
+  x: 120.7
+  y: 66.3
+  rot: 180.0
+- ref: C7
+  x: 115.32
+  y: 66.55
+  rot: 180.0
+- ref: C8
+  x: 101.48
+  y: 80.78
+  rot: 90.0
+- ref: C9
+  x: 118.9
+  y: 55.33
+  rot: 180.0
+- ref: D1
+  x: 134.6
+  y: 73.5
+  rot: 180.0
+- ref: D2
+  x: 96.63
+  y: 75.83
+- ref: J1
+  x: 70.22
+  y: 64.6
+  rot: 90.0
+- ref: J2
+  x: 152.5
+  y: 81.25
+- ref: J3
+  x: 104.38
+  y: 81.32
+  rot: 180.0
+- ref: L1
+  x: 80.34
+  y: 82.8
+- ref: L2
+  x: 80.56
+  y: 65.83
+- ref: R1
+  x: 97.99
+  y: 66.06
+  rot: -90.0
+- ref: R10
+  x: 92.71
+  y: 71.46
+- ref: R11
+  x: 82.84
+  y: 76.25
+  rot: -90.0
+- ref: R12
+  x: 100.03
+  y: 72.19
+  rot: -90.0
+- ref: R13
+  x: 125.84
+  y: 72.96
+- ref: R14
+  x: 125.84
+  y: 75.68
+- ref: R15
+  x: 80.54
+  y: 76.25
+  rot: 90.0
+- ref: R16
+  x: 92.71
+  y: 73.61
+  rot: 180.0
+- ref: R17
+  x: 135.72
+  y: 82.56
+  rot: -90.0
+- ref: R18
+  x: 83.06
+  y: 59.28
+  rot: -90.0
+- ref: R19
+  x: 80.76
+  y: 59.28
+  rot: 90.0
+- ref: R2
+  x: 93.28
+  y: 66.06
+  rot: -90.0
+- ref: R3
+  x: 123.5
+  y: 80.67
+  rot: 90.0
+- ref: R4
+  x: 90.32
+  y: 56.19
+  rot: 180.0
+- ref: R5
+  x: 115.12
+  y: 81.68
+  rot: -90.0
+- ref: R6
+  x: 117.44
+  y: 81.68
+  rot: -90.0
+- ref: R7
+  x: 116.33
+  y: 61.62
+- ref: R8
+  x: 134.62
+  y: 77.05
+  rot: 180.0
+- ref: R9
+  x: 127.02
+  y: 82.6
+  rot: 90.0
+- ref: SW1
+  x: 69.22
+  y: 74.8
+  rot: -90.0
+- ref: U1
+  x: 147.65
+  y: 66.03
+  rot: -90.0
+- ref: U10
+  x: 82.3
+  y: 62.31
+- ref: U2
+  x: 95.65
+  y: 59.48
+- ref: U3
+  x: 117.0
+  y: 73.12
+  rot: -90.0
+- ref: U4
+  x: 131.18
+  y: 62.3
+  rot: 90.0
+- ref: U5
+  x: 110.51
+  y: 81.47
+  rot: -90.0
+- ref: U6
+  x: 102.98
+  y: 57.28
+  rot: 90.0
+- ref: U7
+  x: 82.08
+  y: 79.28
+- ref: U8
+  x: 96.76
+  y: 72.21
+- ref: U9
+  x: 133.18
+  y: 82.59
+  rot: 90.0
+- ref: Y1
+  x: 115.19
+  y: 58.5
+copper_pours:
+- net: +3V3
+  layers: [F.Cu]
+- net: +5V
+  layers: [F.Cu]
+- net: /SW_COM
+  layers: [F.Cu]
+- net: /U10_FB
+  layers: [F.Cu]
+- net: /U7_FB
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [B.Cu]
+  keepout: true

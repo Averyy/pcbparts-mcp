@@ -1,0 +1,303 @@
+name: CaniTCam OV5640
+slug: canitcam-ov5640
+source: cnlohr/cnhardware
+format: kicad9
+description: CH32V006 RISC-V driving OV5640 camera over DVP parallel interface, dual LDOs for 1.8V/2.8V sensor rails
+tags: [power-supply, sensors]
+key_ics: [XC6206P182MR, CH32V006F8U6]
+outline:
+  width_mm: 41.0
+  height_mm: 34.0
+design_rules:
+  layers: 2
+  min_trace: 0.19mm
+  min_clearance: 0.19mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 1uF
+  footprint: '0402'
+  lcsc: C52923
+- ref: C2
+  value: 1uF
+  footprint: '0402'
+  lcsc: C52923
+- ref: C3
+  value: 1uF
+  footprint: '0402'
+  lcsc: C52923
+  decouples: U1
+- ref: C4
+  value: 1uF
+  footprint: '0402'
+  lcsc: C52923
+  decouples: U2
+- ref: C5
+  value: 1uF
+  footprint: '0402'
+  lcsc: C52923
+- ref: J1
+  value: CAMERA
+  footprint: XUNPU_FPC-05F-24PH15
+  lcsc: C2856831
+- ref: J2
+  value: 1x3 header
+  footprint: 1X3
+  lcsc: C2937625
+- ref: J3
+  value: 1x3 header
+  footprint: 1X3
+  lcsc: C2937625
+- ref: J4
+  value: 2x5 header
+  footprint: 2X5
+  lcsc: C492422
+- ref: J5
+  value: 2x5 header
+  footprint: 2X5
+  lcsc: C492422
+- ref: J6
+  value: 1x3 header
+  footprint: 1X3
+  lcsc: C2937625
+- ref: J7
+  value: 1x3 header
+  footprint: 1X3
+  lcsc: C2937625
+- ref: U1
+  value: CH32V006F8U6
+  footprint: QFN-20-1EP
+  lcsc: C42431288
+- ref: U2
+  value: XC6206P182MR
+  footprint: SOT-23
+  lcsc: C347373
+  description: 3.0A 20V LDO Linear Regulator, Fixed Output 3.6V, TO-220/TO-263
+- ref: U3
+  value: XC6206P282MR
+  footprint: SOT-23
+  lcsc: C347374
+  description: 3.0A 20V LDO Linear Regulator, Fixed Output 3.6V, TO-220/TO-263
+- ref: Y2
+  value: 24MHz 2520
+  footprint: SMD2520
+  lcsc: C2965580
+  description: Four pin crystal, GND on pins 2 and 4, small symbol
+nets:
+- name: +3.3V
+  pins: [C3.1, C4.1, J7.Pin_2, U1.VDD, U2.VI, U3.VI]
+- name: A1
+  pins: [J5.Pin_1, J5.Pin_2, U1.PA1/OSCI/A1/T1CH2/OPN0, Y2.1]
+- name: A2
+  pins: [J5.Pin_3, J5.Pin_4, U1.PA2/OSCO/A0/T1CH2N/OPP0/AETR2, Y2.3]
+- name: AVDD2.8V
+  pins:
+  - C2.1
+  - C5.1
+  - J1.Pin_11
+  - J1.Pin_4
+  - J2.Pin_2
+  - J7.Pin_3
+  - U3.VO
+- name: D2
+  pins: [J4.Pin_9, U1.PD2/A3/T1CH1/T2CH3/T1CH2N]
+- name: D3
+  pins: [J4.Pin_7, U1.PD3/A4/T2CH2/AETR/UCTS/T1CH4]
+- name: D4
+  pins: [J4.Pin_5, U1.PD4/A7/UCK/T2CH1ETR/OPO/T1CH4ETR]
+- name: D5
+  pins: [J4.Pin_3, U1.PD5/A5/UTX/T2CH4/URX]
+- name: DGND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - J1.Pin_15
+  - J1.Pin_2
+  - J1.Pin_25
+  - J1.Pin_26
+  - J2.Pin_3
+  - J3.Pin_3
+  - J4.Pin_1
+  - J4.Pin_2
+  - J5.Pin_6
+  - J6.Pin_1
+  - U1.GND
+  - U1.VSS
+  - U2.GND
+  - U3.GND
+  - Y2.2
+  - Y2.4
+- name: ETX
+  pins: [J3.Pin_2, U1.PD6/A7/URX/T2CH3/UTX]
+- name: HREF
+  pins: [J1.Pin_9, J4.Pin_4]
+- name: MCLK
+  pins: [J1.Pin_13, J5.Pin_5]
+- name: PCLK
+  pins: [J1.Pin_17, J4.Pin_6]
+- name: PWDN
+  pins: [J1.Pin_8, J5.Pin_7]
+- name: RESET
+  pins: [J1.Pin_6, U1.PD7/NRST/T2CH4/OPP1/UCK]
+- name: STOC
+  pins: [J1.Pin_5, J5.Pin_8, U1.PD0/T1CH1N/OPN1/SDA/UTX]
+- name: STOD
+  pins: [J1.Pin_3, J4.Pin_8]
+- name: STRO
+  pins: [J1.Pin_1, J3.Pin_1]
+- name: SWIO
+  pins: [J2.Pin_1, U1.PD1/SWIO/AETR/T1CH3/SCL/URX]
+- name: VDVDD1.8
+  pins: [C1.1, J1.Pin_10, J7.Pin_1, U2.VO]
+- name: VSYNC
+  pins: [J1.Pin_7, J4.Pin_10]
+- name: Y0
+  pins: [J1.Pin_24, J6.Pin_2]
+- name: Y1
+  pins: [J1.Pin_23, J6.Pin_3]
+- name: Y2
+  pins: [J1.Pin_19, J5.Pin_9, U1.PC0/T2CH3/UTX/NSS/T1CH3]
+- name: Y3
+  pins: [J1.Pin_21, J5.Pin_10, U1.PC1/SDA/NSS/T2CH4/T2CH1ETR/T1BKIN/URX]
+- name: Y4
+  pins: [J1.Pin_22, U1.PC2/SCL/URTS/T1BKIN/AETR/T2CH2/T1ETR]
+- name: Y5
+  pins: [J1.Pin_20, U1.PC3/T1CH3/T1CHIN/UCTS]
+- name: Y6
+  pins: [J1.Pin_18, U1.PC4/A2/T1CH4/MCO/T1CH1CH2N]
+- name: Y7
+  pins: [J1.Pin_16, U1.PC5/SCK/T1ETR/T2CH1ETR/SCL/UCK/T1CH3]
+- name: Y8
+  pins: [J1.Pin_14, U1.PC6/MOSI/T1CH1CH3/UCTS/SDA]
+- name: Y9
+  pins: [J1.Pin_12, U1.PC7/MISO/T1CH2/T2CH2/URTS]
+positions:
+- ref: C1
+  x: 123.95
+  y: 61.63
+  rot: 180.0
+- ref: C2
+  x: 128.76
+  y: 72.97
+  rot: 90.0
+- ref: C3
+  x: 121.66
+  y: 60.81
+  rot: -120.0
+- ref: C4
+  x: 124.68
+  y: 71.63
+- ref: C5
+  x: 124.84
+  y: 65.16
+  rot: -90.0
+- ref: J1
+  x: 128.81
+  y: 60.4
+  rot: 90.0
+- ref: J2
+  x: 120.0
+  y: 44.65
+  rot: 90.0
+- ref: J3
+  x: 102.91
+  y: 61.61
+  rot: 180.0
+- ref: J4
+  x: 111.28
+  y: 57.07
+  rot: 150.0
+- ref: J5
+  x: 107.07
+  y: 64.48
+  rot: 30.0
+- ref: J6
+  x: 121.0
+  y: 49.0
+  rot: 90.0
+- ref: J7
+  x: 120.71
+  y: 74.09
+  rot: 90.0
+- ref: U1
+  x: 119.95
+  y: 58.15
+  rot: 60.0
+- ref: U2
+  x: 122.37
+  y: 68.61
+  rot: -60.0
+- ref: U3
+  x: 131.29
+  y: 72.92
+- ref: Y2
+  x: 115.19
+  y: 60.99
+  rot: 120.0
+copper_pours:
+- net: +3.3V
+  layers: [B.Cu, F.Cu]
+- net: A1
+  layers: [F.Cu]
+- net: A2
+  layers: [B.Cu, F.Cu]
+- net: AVDD2.8V
+  layers: [B.Cu, F.Cu]
+- net: D2
+  layers: [F.Cu]
+- net: D3
+  layers: [F.Cu]
+- net: D4
+  layers: [F.Cu]
+- net: D5
+  layers: [F.Cu]
+- net: DGND
+  layers: [B.Cu, F.Cu]
+- net: ETX
+  layers: [F.Cu]
+- net: HREF
+  layers: [B.Cu, F.Cu]
+- net: MCLK
+  layers: [B.Cu, F.Cu]
+- net: PCLK
+  layers: [B.Cu, F.Cu]
+- net: PWDN
+  layers: [B.Cu, F.Cu]
+- net: RESET
+  layers: [B.Cu, F.Cu]
+- net: STOC
+  layers: [B.Cu, F.Cu]
+- net: STOD
+  layers: [B.Cu, F.Cu]
+- net: STRO
+  layers: [B.Cu, F.Cu]
+- net: SWIO
+  layers: [F.Cu]
+- net: VDVDD1.8
+  layers: [B.Cu, F.Cu]
+- net: VSYNC
+  layers: [B.Cu, F.Cu]
+- net: Y0
+  layers: [F.Cu]
+- net: Y1
+  layers: [F.Cu]
+- net: Y2
+  layers: [B.Cu, F.Cu]
+- net: Y3
+  layers: [B.Cu, F.Cu]
+- net: Y4
+  layers: [F.Cu]
+- net: Y5
+  layers: [B.Cu, F.Cu]
+- net: Y6
+  layers: [B.Cu, F.Cu]
+- net: Y7
+  layers: [B.Cu, F.Cu]
+- net: Y8
+  layers: [B.Cu, F.Cu]
+- net: Y9
+  layers: [B.Cu, F.Cu]

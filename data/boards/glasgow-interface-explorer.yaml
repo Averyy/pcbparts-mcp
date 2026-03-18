@@ -1,0 +1,2167 @@
+name: Glasgow Interface Explorer
+slug: glasgow-interface-explorer
+source: GlasgowEmbedded/glasgow
+format: kicad7
+description: iCE40HX8K FPGA, USB 2.0 FX2LP (CY7C68013A) debug tool
+tags: [fpga]
+key_ics: [CY7C68013A, ICE40HX8K]
+outline:
+  width_mm: 80.0
+  height_mm: 49.0
+design_rules:
+  layers: 4
+  min_trace: 0.15mm
+  min_clearance: 0.15mm
+  min_drill: 0.2mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+  decouples: U1
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U1
+- ref: C11
+  value: 9pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: AC0402CRNPO9BN9R0
+- ref: C12
+  value: 9pF
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: AC0402CRNPO9BN9R0
+- ref: C13
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C14
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+  decouples: U30
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U3
+- ref: C16
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U7
+- ref: C17
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U2
+- ref: C18
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U30
+- ref: C19
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+  decouples: U32
+- ref: C2
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U1
+- ref: C20
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U32
+- ref: C21
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U30
+- ref: C23
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U30
+- ref: C24
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U30
+- ref: C25
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U30
+- ref: C26
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+  decouples: U8
+- ref: C27
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+  decouples: U36
+- ref: C28
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+  decouples: U8
+- ref: C3
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U1
+- ref: C33
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C34
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U4
+- ref: C35
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U6
+- ref: C36
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U9
+- ref: C37
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U10
+- ref: C38
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C39
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U1
+- ref: C40
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C41
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C42
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U11
+- ref: C43
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U16
+- ref: C47
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U17
+- ref: C48
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U18
+- ref: C49
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U1
+- ref: C50
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C51
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C52
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C54
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C55
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U21
+- ref: C56
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U20
+- ref: C57
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C58
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C59
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U31
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U1
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U1
+- ref: C76
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+- ref: C77
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U30
+- ref: C78
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C79
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C80
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+- ref: C81
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U30
+- ref: C82
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+  decouples: U31
+- ref: C83
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+- ref: C84
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U19
+- ref: C85
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U32
+- ref: C86
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+  decouples: U36
+- ref: C87
+  value: 150uF
+  footprint: Electrolytic
+  mpn: A765EB157M1ALAE022
+  manufacturer: KEMET
+  decouples: U36
+- ref: C88
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C89
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ104KV-F
+  decouples: U1
+- ref: C91
+  value: 1nF
+  footprint: '0402'
+  manufacturer: Murata
+  mpn: GCM1555C1H102JA16J
+  voltage: 50V
+  dielectric: C0G
+- ref: C92
+  value: 4.7uF
+  footprint: '0603'
+  manufacturer: Taiyo Yuden
+  mpn: LMK107BJ475KAHT
+- ref: D1
+  value: green LED
+  footprint: '0603'
+  manufacturer: Foshan NationStar Optoelectronics
+  mpn: NCD0603G1
+- ref: D10
+  value: blue LED
+  footprint: '0603'
+  manufacturer: Orient
+  mpn: ORH-B36G
+- ref: D11
+  value: ESD5Z5.0T1G
+  footprint: SOD-523
+  manufacturer: ON Semiconductor
+  mpn: ESD5Z5.0T1G
+- ref: D15
+  value: green LED
+  footprint: '0603'
+  manufacturer: Foshan NationStar Optoelectronics
+  mpn: NCD0603G1
+- ref: D17
+  value: CDSOD323-T36S
+  footprint: SOD-323
+  manufacturer: Bourns
+  mpn: CDSOD323-T36S
+- ref: D19
+  value: BAT54CW
+  footprint: SOT-323_SC-70
+  manufacturer: Diodes Inc.
+  mpn: BAT54CW-7-F
+- ref: D2
+  value: white LED
+  footprint: '0603'
+  manufacturer: Foshan NationStar Optoelectronics
+  mpn: NCD0603W1
+- ref: D22
+  value: SP3012-06
+  footprint: UDFN-14
+  mpn: SP3012-06UTG
+  manufacturer: Littlefuse
+- ref: D23
+  value: SP3012-06
+  footprint: UDFN-14
+  mpn: SP3012-06UTG
+  manufacturer: Littlefuse
+- ref: D24
+  value: BAT54AW
+  footprint: SOT-323_SC-70
+  mpn: BAT54AW-7-F
+  manufacturer: Diodes Inc.
+- ref: D3
+  value: blue LED
+  footprint: '0603'
+  manufacturer: Orient
+  mpn: ORH-B36G
+- ref: D4
+  value: ORA
+  footprint: '0603'
+  manufacturer: Foshan NationStar Optoelectronics
+  mpn: NCD0603O1
+- ref: D5
+  value: red LED
+  footprint: '0603'
+  manufacturer: Foshan NationStar Optoelectronics
+  mpn: NCD0603R1
+- ref: D6
+  value: blue LED
+  footprint: '0603'
+  manufacturer: Orient
+  mpn: ORH-B36G
+- ref: D7
+  value: PNK
+  footprint: '0603'
+  manufacturer: Optosupply
+  mpn: OSK40603C1E
+- ref: D8
+  value: white LED
+  footprint: '0603'
+  manufacturer: Foshan NationStar Optoelectronics
+  mpn: NCD0603W1
+- ref: D9
+  value: PNK
+  footprint: '0603'
+  manufacturer: Optosupply
+  mpn: OSK40603C1E
+- ref: FB1
+  value: 600ohm
+  footprint: '0402'
+  manufacturer: Murata Electronics
+  mpn: BLM15PX601SZ1D
+  current: 0.5A
+- ref: J1
+  value: USB-C
+  footprint: USB-C
+  mpn: TYPE-C-31-M-12
+  manufacturer: Korean Hroparts Elec
+- ref: J2
+  value: 2x10 header
+  footprint: IDC-Header
+  manufacturer: Molex
+  mpn: 87834-2019
+- ref: J4
+  value: 1x2 header
+  footprint: Molex_KK-254
+  manufacturer: Molex
+  mpn: 22-05-3021
+- ref: J5
+  value: 2x22 header
+  footprint: 2X22
+  mpn: FTS-122-01-L-DV
+  manufacturer: Samtec Inc.
+- ref: R1
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+  pullup: /SDA
+- ref: R10
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+  pulldown: U30.IOT_219
+- ref: R11
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+- ref: R12
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1310KL
+  pullup: D1.A
+- ref: R13
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+- ref: R14
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+- ref: R15
+  value: 1kohm
+  footprint: '0402'
+- ref: R16
+  value: 1kohm
+  footprint: '0402'
+- ref: R17
+  value: 100kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-13100KL
+  pullup: /nALERT
+- ref: R18
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1310KL
+  pulldown: /ENVA
+- ref: R19
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1310KL
+  pulldown: /ENVB
+- ref: R2
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+  pullup: /SCL
+- ref: R20
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+- ref: R21
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+- ref: R22
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+- ref: R23
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+- ref: R3
+  value: 100kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-13100KL
+  pulldown: /SHLD
+- ref: R30
+  value: 4.7ohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-074R7L
+- ref: R31
+  value: 100ohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-13100RL
+- ref: R32
+  value: 100ohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-13100RL
+- ref: R33
+  value: 49.9kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1349K9L
+- ref: R34
+  value: 59kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1359KL
+- ref: R35
+  value: 24.3kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1324K3L
+  pulldown: /IO_Banks/IO_Buffer_A/VFB
+- ref: R37
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1310KL
+  pullup: U19.nRESET
+- ref: R38
+  value: 47ohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1347RL
+- ref: R39
+  value: 47ohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1347RL
+- ref: R4
+  value: 100kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-13100KL
+  pullup: R5.1
+- ref: R42
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+  pulldown: /IO_Banks/VIOA
+- ref: R43
+  value: 47ohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1347RL
+- ref: R44
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1310KL
+  pullup: /IO_Banks/nSYNC
+- ref: R45
+  value: 47ohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1347RL
+- ref: R47
+  value: 20kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1320KL
+- ref: R49
+  value: 150mohm
+  footprint: '0603'
+  manufacturer: Ohmite
+  mpn: KDV06FR150ET
+- ref: R5
+  value: 100kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-13100KL
+- ref: R52
+  value: 5.1kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-075K1L
+  pulldown: /CC2
+- ref: R53
+  value: 5.1kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-075K1L
+  pulldown: /CC1
+- ref: R54
+  value: 4.7ohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-074R7L
+- ref: R55
+  value: 10kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-1310KL
+- ref: R56
+  value: 330mohm
+  footprint: '0603'
+  manufacturer: Ohmite
+  mpn: KDV06FR330ET
+- ref: R58
+  value: 2.2kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-132K2L
+  pulldown: /IO_Banks/VIOA
+- ref: R60
+  value: 470ohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-07470RL
+- ref: R9
+  value: 100kohm
+  footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402FR-13100KL
+  pulldown: /nFPGA_RESET
+- ref: RN10
+  value: 33ohm
+  footprint: R_Array_Convex
+  mpn: YC124-JR-1333RL
+  manufacturer: Yageo
+- ref: RN11
+  value: 10kohm
+  footprint: R_Array_Convex
+  mpn: YC124-JR-0710KL
+  manufacturer: Yageo
+- ref: RN12
+  value: 10kohm
+  footprint: R_Array_Convex
+  mpn: YC124-JR-0710KL
+  manufacturer: Yageo
+- ref: RN7
+  value: 33ohm
+  footprint: R_Array_Convex
+  mpn: YC124-JR-1333RL
+  manufacturer: Yageo
+- ref: RN8
+  value: 33ohm
+  footprint: R_Array_Convex
+  mpn: YC124-JR-1333RL
+  manufacturer: Yageo
+- ref: RN9
+  value: 33ohm
+  footprint: R_Array_Convex
+  mpn: YC124-JR-1333RL
+  manufacturer: Yageo
+- ref: SW1
+  value: RST
+  footprint: SW_Tactile_SPST_Angled_TC-1109DE
+  manufacturer: XKB
+  mpn: TC-1109DE-B-F
+- ref: U1
+  value: CY7C68013A
+  footprint: Cypress_QFN-56-1EP
+  manufacturer: Cypress
+  mpn: CY7C68013A-56LTXC
+- ref: U10
+  value: SN74LVC1T45DCKR
+  footprint: SOT-363_SC-70-6
+  manufacturer: Texas Instruments
+  mpn: SN74LVC1T45DCKR
+- ref: U11
+  value: SN74LVC1T45DCKR
+  footprint: SOT-363_SC-70-6
+  manufacturer: Texas Instruments
+  mpn: SN74LVC1T45DCKR
+- ref: U15
+  value: TPD3S014
+  footprint: SOT-23-6
+  mpn: TPD3S014DBVR
+  manufacturer: Texas Instruments
+- ref: U16
+  value: SN74LVC1T45DCKR
+  footprint: SOT-363_SC-70-6
+  manufacturer: Texas Instruments
+  mpn: SN74LVC1T45DCKR
+- ref: U17
+  value: SN74LVC1T45DCKR
+  footprint: SOT-363_SC-70-6
+  manufacturer: Texas Instruments
+  mpn: SN74LVC1T45DCKR
+- ref: U18
+  value: SN74LVC1T45DCKR
+  footprint: SOT-363_SC-70-6
+  manufacturer: Texas Instruments
+  mpn: SN74LVC1T45DCKR
+- ref: U19
+  value: PCA6408APW
+  footprint: TSSOP-16
+  manufacturer: NXP
+  mpn: PCA6408APW
+- ref: U2
+  value: CAT24M01X
+  footprint: TSSOP-8
+  manufacturer: ON Semiconductor
+  mpn: "CAT24M01YI\u2212GT3"
+- ref: U20
+  value: DAC081C081CIMK
+  footprint: SOT-23-6
+  manufacturer: Texas Instruments
+  mpn: DAC081C081CIMK/NOPB
+- ref: U21
+  value: INA233
+  footprint: VSSOP-10
+  manufacturer: Texas Instruments
+  mpn: INA233AIDGSR
+- ref: U3
+  value: BL24C256A
+  footprint: TSSOP-8
+  manufacturer: BL(Shanghai Belling)
+  mpn: BL24C256A-SFRC
+- ref: U30
+  value: ICE40HX8K
+  footprint: BGA-121
+  mpn: ICE40HX8K-BG121
+  manufacturer: Lattice Semiconductor Corporation
+- ref: U31
+  value: TPS73101DBV
+  footprint: SOT-23-5
+  manufacturer: Texas Instruments
+  mpn: TPS73101DBVR
+- ref: U32
+  value: SN74LVC1T45DCKR
+  footprint: SOT-363_SC-70-6
+  manufacturer: Texas Instruments
+  mpn: SN74LVC1T45DCKR
+- ref: U36
+  value: TLV73312PQDRVR
+  footprint: DFN-6-1EP
+  mpn: TLV73312PQDRVRQ1
+  manufacturer: Texas Instruments
+- ref: U4
+  value: SN74LVC1T45DCKR
+  footprint: SOT-363_SC-70-6
+  manufacturer: Texas Instruments
+  mpn: SN74LVC1T45DCKR
+- ref: U6
+  value: SN74LVC1T45DCKR
+  footprint: SOT-363_SC-70-6
+  manufacturer: Texas Instruments
+  mpn: SN74LVC1T45DCKR
+- ref: U7
+  value: APX811-40
+  footprint: SOT-143
+  manufacturer: Diodes Incorporated
+  mpn: APX811-40UG-7
+- ref: U8
+  value: TLV75533PDRVR
+  footprint: DFN-6-1EP
+  mpn: TLV75533PDRVR
+  manufacturer: Texas Instruments
+- ref: U9
+  value: SN74LVC1T45DCKR
+  footprint: SOT-363_SC-70-6
+  manufacturer: Texas Instruments
+  mpn: SN74LVC1T45DCKR
+- ref: Y1
+  value: 24MHz
+  footprint: SMD3225
+  manufacturer: JWT
+  mpn: JF4024M00009T8188070
+nets:
+- name: +1V2
+  pins:
+  - C14.1
+  - C18.1
+  - C24.1
+  - C25.1
+  - C27.1
+  - C77.1
+  - R31.2
+  - R32.2
+  - U30.VCC@D4
+  - U30.VCC@D8
+  - U30.VCC@H4
+  - U30.VCC@H8
+  - U36.NC@2
+  - U36.OUT
+- name: +3V3
+  pins:
+  - C1.1
+  - C10.1
+  - C15.1
+  - C17.1
+  - C19.1
+  - C2.1
+  - C20.1
+  - C21.1
+  - C23.1
+  - C28.1
+  - C3.1
+  - C34.1
+  - C35.1
+  - C36.1
+  - C37.1
+  - C4.1
+  - C42.1
+  - C43.1
+  - C47.1
+  - C48.1
+  - C5.1
+  - C55.1
+  - C56.1
+  - C6.1
+  - C7.1
+  - C81.1
+  - C84.1
+  - C85.1
+  - C9.1
+  - D24.1
+  - J5.Pin_2
+  - R1.2
+  - R12.1
+  - R17.2
+  - R2.2
+  - R37.2
+  - R4.1
+  - R44.2
+  - U1.AVCC@3
+  - U1.AVCC@7
+  - U1.VCC@11
+  - U1.VCC@17
+  - U1.VCC@27
+  - U1.VCC@32
+  - U1.VCC@43
+  - U1.VCC@55
+  - U1.WAKEUP
+  - U10.VCCA
+  - U11.VCCA
+  - U16.VCCA
+  - U17.VCCA
+  - U18.VCCA
+  - U19.VDD_I2C
+  - U2.A1
+  - U2.VCC
+  - U20.ADR0
+  - U20.VA
+  - U21.VS
+  - U3.A0
+  - U3.VCC
+  - U30.VCCIO_0
+  - U30.VCCIO_1
+  - U30.VCCIO_2
+  - U30.VCC_SPI
+  - U30.VPP_2V5
+  - U32.VCCA
+  - U32.VCCB
+  - U4.VCCA
+  - U6.VCCA
+  - U8.NC@2
+  - U8.OUT
+  - U9.VCCA
+- name: +5V
+  pins:
+  - C16.1
+  - C26.2
+  - C59.1
+  - C82.1
+  - C86.2
+  - C87.1
+  - U15.OUT
+  - U31.IN
+  - U36.EN
+  - U36.IN
+  - U36.NC@5
+  - U7.VCC
+  - U8.IN
+  - U8.NC@5
+- name: /A0
+  pins: [U1.PA4/FIOADDR0, U30.IOB_63]
+- name: /A1
+  pins: [U1.PA5/FIOADDR1, U30.IOB_61]
+- name: /CC1
+  pins: [J1.CC1, R53.2]
+- name: /CC2
+  pins: [J1.CC2, R52.2]
+- name: /CLKIF
+  pins: [U1.IFCLK, U30.IOB_82_GBIN4]
+- name: /CLKREF
+  pins: [U1.CLKOUT, U30.IOB_81_GBIN5, U30.IOT_212]
+- name: /D0
+  pins: [U1.PB0/FD0, U30.IOB_87]
+- name: /D1
+  pins: [U1.PB1/FD1, U30.IOB_86]
+- name: /D2
+  pins: [U1.PB2/FD2, U30.IOB_106_SDI]
+- name: /D3
+  pins: [U1.PB3/FD3, U30.IOB_108_SS]
+- name: /D4
+  pins: [U1.PB4/FD4, U30.IOB_107_SCK]
+- name: /D5
+  pins: [U1.PB5/FD5, U30.IOB_105_SDO]
+- name: /D6
+  pins: [U1.PB6/FD6, U30.IOB_103_CBSEL0]
+- name: /D7
+  pins: [U1.PB7/FD7, U30.IOB_89]
+- name: /ENVA
+  pins: [R18.1, R47.1, R55.2, U1.PD0/FD8]
+- name: /ENVB
+  pins: [R19.1, U1.PD6/FD14]
+- name: /FLAGA
+  pins: [U1.CTL0/FLAGA, U30.IOB_94]
+- name: /FLAGB
+  pins: [U1.CTL1/FLAGB, U30.IOB_79]
+- name: /FLAGC
+  pins: [U1.CTL2/FLAGC, U30.IOB_72]
+- name: /FLAGD
+  pins: [U1.PA7/FLAGD/nSLCS, U30.IOB_57]
+- name: /FPGA_DONE
+  pins: [U1.PA3/WU2, U30.CDONE]
+- name: /GNDPLL0
+  pins: [C76.2, C78.2, U30.GNDPLL0]
+- name: /GNDPLL1
+  pins: [C79.2, C80.2, U30.GNDPLL1]
+- name: /IO_Banks/DA0
+  pins: [U30.IOT_191, U4.DIR]
+- name: /IO_Banks/DA1
+  pins: [U11.DIR, U30.IOT_179]
+- name: /IO_Banks/DA2
+  pins: [U30.IOT_181, U6.DIR]
+- name: /IO_Banks/DA3
+  pins: [U16.DIR, U30.IOT_192]
+- name: /IO_Banks/DA4
+  pins: [U30.IOT_177, U9.DIR]
+- name: /IO_Banks/DA5
+  pins: [U17.DIR, U30.IOT_190]
+- name: /IO_Banks/DA6
+  pins: [U10.DIR, U30.IOT_174]
+- name: /IO_Banks/DA7
+  pins: [U18.DIR, U30.IOT_178]
+- name: /IO_Banks/IO_Buffer_A/ISNS_H
+  pins: [R30.1, R49.1, R56.2]
+- name: /IO_Banks/IO_Buffer_A/P0
+  pins: [RN11.R4.2, U19.P0]
+- name: /IO_Banks/IO_Buffer_A/P1
+  pins: [RN11.R3.2, U19.P1]
+- name: /IO_Banks/IO_Buffer_A/P2
+  pins: [RN11.R2.2, U19.P2]
+- name: /IO_Banks/IO_Buffer_A/P3
+  pins: [RN11.R1.2, U19.P3]
+- name: /IO_Banks/IO_Buffer_A/P4
+  pins: [RN12.R4.2, U19.P4]
+- name: /IO_Banks/IO_Buffer_A/P5
+  pins: [RN12.R3.2, U19.P5]
+- name: /IO_Banks/IO_Buffer_A/P6
+  pins: [RN12.R2.2, U19.P6]
+- name: /IO_Banks/IO_Buffer_A/P7
+  pins: [RN12.R1.2, U19.P7]
+- name: /IO_Banks/IO_Buffer_A/VDAC
+  pins: [R33.1, U20.VOUT]
+- name: /IO_Banks/IO_Buffer_A/VFB
+  pins: [R33.2, R34.1, R35.2, U31.FB]
+- name: /IO_Banks/IO_Buffer_A/VIO_EN
+  pins: [D19.2, R55.1, U31.EN]
+- name: /IO_Banks/IO_Buffer_A/VSENSE
+  pins: [D17.K, J2.Pin_1, R60.2]
+- name: /IO_Banks/IO_Buffer_A/X0
+  pins: [RN7.R1.2, U4.A]
+- name: /IO_Banks/IO_Buffer_A/X1
+  pins: [RN7.R2.2, U11.A]
+- name: /IO_Banks/IO_Buffer_A/X2
+  pins: [RN7.R3.2, U6.A]
+- name: /IO_Banks/IO_Buffer_A/X3
+  pins: [RN7.R4.2, U16.A]
+- name: /IO_Banks/IO_Buffer_A/X4
+  pins: [RN8.R1.2, U9.A]
+- name: /IO_Banks/IO_Buffer_A/X5
+  pins: [RN8.R2.2, U17.A]
+- name: /IO_Banks/IO_Buffer_A/X6
+  pins: [RN8.R3.2, U10.A]
+- name: /IO_Banks/IO_Buffer_A/X7
+  pins: [RN8.R4.2, U18.A]
+- name: /IO_Banks/IO_Buffer_A/Y0
+  pins: [RN9.R1.1, U4.B]
+- name: /IO_Banks/IO_Buffer_A/Y1
+  pins: [RN9.R2.1, U11.B]
+- name: /IO_Banks/IO_Buffer_A/Y2
+  pins: [RN9.R3.1, U6.B]
+- name: /IO_Banks/IO_Buffer_A/Y3
+  pins: [RN9.R4.1, U16.B]
+- name: /IO_Banks/IO_Buffer_A/Y4
+  pins: [RN10.R1.1, U9.B]
+- name: /IO_Banks/IO_Buffer_A/Y5
+  pins: [RN10.R2.1, U17.B]
+- name: /IO_Banks/IO_Buffer_A/Y6
+  pins: [RN10.R3.1, U10.B]
+- name: /IO_Banks/IO_Buffer_A/Y7
+  pins: [RN10.R4.1, U18.B]
+- name: /IO_Banks/IO_Buffer_A/Z0
+  pins: [D22.Ch4, D22.N/C@4, J2.Pin_3, RN11.R4.1, RN9.R1.2]
+- name: /IO_Banks/IO_Buffer_A/Z1
+  pins: [D22.Ch3, D22.N/C@3, J2.Pin_5, RN11.R3.1, RN9.R2.2]
+- name: /IO_Banks/IO_Buffer_A/Z2
+  pins: [D22.Ch2, D22.N/C@2, J2.Pin_7, RN11.R2.1, RN9.R3.2]
+- name: /IO_Banks/IO_Buffer_A/Z3
+  pins: [D22.Ch1, D22.N/C@1, J2.Pin_9, RN11.R1.1, RN9.R4.2]
+- name: /IO_Banks/IO_Buffer_A/Z4
+  pins: [D23.Ch4, D23.N/C@4, J2.Pin_11, RN10.R1.2, RN12.R4.1]
+- name: /IO_Banks/IO_Buffer_A/Z5
+  pins: [D23.Ch3, D23.N/C@3, J2.Pin_13, RN10.R2.2, RN12.R3.1]
+- name: /IO_Banks/IO_Buffer_A/Z6
+  pins: [D23.Ch2, D23.N/C@2, J2.Pin_15, RN10.R3.2, RN12.R2.1]
+- name: /IO_Banks/IO_Buffer_A/Z7
+  pins: [D23.Ch1, D23.N/C@1, J2.Pin_17, RN10.R4.2, RN12.R1.1]
+- name: /IO_Banks/QA0
+  pins: [RN7.R1.1, U30.IOT_225]
+- name: /IO_Banks/QA1
+  pins: [RN7.R2.1, U30.IOT_222]
+- name: /IO_Banks/QA2
+  pins: [RN7.R3.1, U30.IOT_221]
+- name: /IO_Banks/QA3
+  pins: [RN7.R4.1, U30.IOT_223]
+- name: /IO_Banks/QA4
+  pins: [RN8.R1.1, U30.IOT_198_GBIN0, U30.IOT_208]
+- name: /IO_Banks/QA5
+  pins: [RN8.R2.1, U30.IOT_211]
+- name: /IO_Banks/QA6
+  pins: [RN8.R3.1, U30.IOT_197_GBIN1, U30.IOT_206]
+- name: /IO_Banks/QA7
+  pins: [RN8.R4.1, U30.IOT_207]
+- name: /IO_Banks/U1
+  pins: [R11.1, U30.IOR_128]
+- name: /IO_Banks/U2
+  pins: [R20.1, U30.IOR_118]
+- name: /IO_Banks/U3
+  pins: [R21.1, U30.IOR_144]
+- name: /IO_Banks/U4
+  pins: [R22.1, U30.IOR_147]
+- name: /IO_Banks/U5
+  pins: [R23.1, U30.IOR_146]
+- name: /IO_Banks/VIOA
+  pins:
+  - C38.1
+  - C39.1
+  - C40.1
+  - C41.1
+  - C49.1
+  - C50.1
+  - C51.1
+  - C52.1
+  - C54.1
+  - C57.1
+  - C83.1
+  - D22.Ch5
+  - D22.Ch6
+  - D22.N/C@6
+  - D22.N/C@7
+  - J2.Pin_2
+  - R34.2
+  - R42.2
+  - R49.2
+  - R54.1
+  - R58.2
+  - U10.VCCB
+  - U11.VCCB
+  - U16.VCCB
+  - U17.VCCB
+  - U18.VCCB
+  - U19.VDD_P
+  - U4.VCCB
+  - U6.VCCB
+  - U9.VCCB
+- name: /IO_Banks/VIO_AUX
+  pins: [C33.1, C92.1, J5.Pin_44, U30.VCCIO_3@E4, U30.VCCIO_3@G4]
+- name: /IO_Banks/Z0_N
+  pins: [J5.Pin_41, U30.IOL_2B]
+- name: /IO_Banks/Z0_P
+  pins: [J5.Pin_39, U30.IOL_2A]
+- name: /IO_Banks/Z10_N
+  pins: [J5.Pin_11, U30.IOL_18B]
+- name: /IO_Banks/Z10_P
+  pins: [J5.Pin_9, U30.IOL_18A]
+- name: /IO_Banks/Z11_N
+  pins: [J5.Pin_3, U30.IOL_23B]
+- name: /IO_Banks/Z11_P
+  pins: [J5.Pin_5, U30.IOL_23A]
+- name: /IO_Banks/Z12_N
+  pins: [J5.Pin_10, U30.IOL_25B]
+- name: /IO_Banks/Z12_P
+  pins: [J5.Pin_8, U30.IOL_25A]
+- name: /IO_Banks/Z1_N
+  pins: [J5.Pin_38, U30.IOL_4B]
+- name: /IO_Banks/Z1_P
+  pins: [J5.Pin_40, U30.IOL_4A]
+- name: /IO_Banks/Z2_N
+  pins: [J5.Pin_33, U30.IOL_5B]
+- name: /IO_Banks/Z2_P
+  pins: [J5.Pin_35, U30.IOL_5A]
+- name: /IO_Banks/Z3_N
+  pins: [J5.Pin_29, U30.IOL_8B]
+- name: /IO_Banks/Z3_P
+  pins: [J5.Pin_27, U30.IOL_8A]
+- name: /IO_Banks/Z4_N
+  pins: [J5.Pin_34, U30.IOL_9B]
+- name: /IO_Banks/Z4_P
+  pins: [J5.Pin_32, U30.IOL_9A]
+- name: /IO_Banks/Z5_N
+  pins: [J5.Pin_26, U30.IOL_10B]
+- name: /IO_Banks/Z5_P
+  pins: [J5.Pin_28, U30.IOL_10A]
+- name: /IO_Banks/Z6_N
+  pins: [J5.Pin_23, U30.IOL_12B]
+- name: /IO_Banks/Z6_P
+  pins: [J5.Pin_21, U30.IOL_12A]
+- name: /IO_Banks/Z7_N
+  pins: [J5.Pin_20, U30.IOL_13B_GBIN7]
+- name: /IO_Banks/Z7_P
+  pins: [J5.Pin_22, U30.IOL_13A]
+- name: /IO_Banks/Z8_N
+  pins: [J5.Pin_17, U30.IOL_14B]
+- name: /IO_Banks/Z8_P
+  pins: [J5.Pin_15, U30.IOL_14A_GBIN6]
+- name: /IO_Banks/Z9_N
+  pins: [J5.Pin_14, U30.IOL_17B]
+- name: /IO_Banks/Z9_P
+  pins: [J5.Pin_16, U30.IOL_17A]
+- name: /IO_Banks/nSYNC
+  pins: [D11.K, J4.Pin_2, R38.1, R44.1]
+- name: /LED_ACT
+  pins: [R15.1, U1.PD4/FD12]
+- name: /LED_CY
+  pins: [R13.1, U1.PD2/FD10]
+- name: /LED_ERR
+  pins: [R16.1, U1.PD5/FD13]
+- name: /LED_FPGA
+  pins: [R14.1, U1.PD3/FD11]
+- name: /OE
+  pins: [U1.PA2/SLOE, U30.IOB_71]
+- name: /PKTEND
+  pins: [U1.PA6/PKTEND, U30.IOB_56]
+- name: /RD
+  pins: [U1.RDY0/SLRD, U30.IOB_78]
+- name: /SCL
+  pins:
+  - R2.1
+  - U1.SCL
+  - U19.SCL
+  - U2.SCL
+  - U20.SCL
+  - U21.SCL
+  - U3.SCL
+  - U30.IOB_104_CBSEL1
+- name: /SDA
+  pins:
+  - R1.1
+  - U1.SDA
+  - U19.SDA
+  - U2.SDA
+  - U20.SDA
+  - U21.SDA
+  - U3.SDA
+  - U30.IOB_91
+- name: /SHLD
+  pins: [C13.1, J1.SHIELD@S1, R3.1]
+- name: /USB_N
+  pins: [J1.D-@A7, J1.D-@B7, U1.D-, U15.D1]
+- name: /USB_P
+  pins: [J1.D+@A6, J1.D+@B6, U1.D+, U15.D2]
+- name: /VCCPLL0
+  pins: [C76.1, C78.1, R31.1, U30.VCCPLL0]
+- name: /VCCPLL1
+  pins: [C79.1, C80.1, R32.1, U30.VCCPLL1]
+- name: /VUSB
+  pins: [C8.1, FB1.2, U15.EN, U15.IN]
+- name: /WR
+  pins: [U1.RDY1/SLWR, U30.IOB_64]
+- name: /XTALIN
+  pins: [C12.1, U1.XTALIN, Y1.1]
+- name: /XTALOUT
+  pins: [C11.1, U1.XTALOUT, Y1.3]
+- name: /nALERT
+  pins: [D19.1, R17.1, U1.PA0/nINT0, U30.IOB_73]
+- name: /nCY_RESET
+  pins: [C88.1, D24.3, R5.2, U1.nRESET]
+- name: /nFPGA_RESET
+  pins: [R9.2, U1.PA1/nINT1, U30.nCRESET]
+- name: /nMR
+  pins: [C89.1, SW1.2, U7.nMR]
+- name: /xVBUS
+  pins: [FB1.1, J1.VBUS@A4, J1.VBUS@A9, J1.VBUS@B4, J1.VBUS@B9]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C20.2
+  - C21.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.1
+  - C27.2
+  - C28.2
+  - C3.2
+  - C33.2
+  - C34.2
+  - C35.2
+  - C36.2
+  - C37.2
+  - C38.2
+  - C39.2
+  - C4.2
+  - C40.2
+  - C41.2
+  - C42.2
+  - C43.2
+  - C47.2
+  - C48.2
+  - C49.2
+  - C5.2
+  - C50.2
+  - C51.2
+  - C52.2
+  - C54.2
+  - C55.2
+  - C56.2
+  - C57.2
+  - C59.2
+  - C6.2
+  - C7.2
+  - C77.2
+  - C8.2
+  - C81.2
+  - C82.2
+  - C83.2
+  - C84.2
+  - C85.2
+  - C86.1
+  - C87.2
+  - C88.2
+  - C89.2
+  - C9.2
+  - C91.1
+  - C92.2
+  - D1.K
+  - D10.K
+  - D11.A
+  - D15.K
+  - D17.A
+  - D2.K
+  - D22.GND
+  - D22.N/C@5
+  - D23.GND
+  - D23.N/C@5
+  - D3.K
+  - D4.K
+  - D5.K
+  - D6.K
+  - D7.K
+  - D8.K
+  - D9.K
+  - J1.GND@A1
+  - J1.GND@A12
+  - J1.GND@B1
+  - J1.GND@B12
+  - J2.Pin_10
+  - J2.Pin_12
+  - J2.Pin_14
+  - J2.Pin_16
+  - J2.Pin_18
+  - J2.Pin_4
+  - J2.Pin_6
+  - J2.Pin_8
+  - J4.Pin_1
+  - J5.Pin_1
+  - J5.Pin_12
+  - J5.Pin_13
+  - J5.Pin_18
+  - J5.Pin_19
+  - J5.Pin_24
+  - J5.Pin_25
+  - J5.Pin_30
+  - J5.Pin_31
+  - J5.Pin_36
+  - J5.Pin_37
+  - J5.Pin_4
+  - J5.Pin_42
+  - J5.Pin_43
+  - J5.Pin_6
+  - J5.Pin_7
+  - R10.2
+  - R18.2
+  - R19.2
+  - R3.2
+  - R35.1
+  - R42.1
+  - R52.1
+  - R53.1
+  - R58.1
+  - R9.1
+  - SW1.1
+  - U1.AGND@10
+  - U1.AGND@6
+  - U1.EP@57
+  - U1.GND@12
+  - U1.GND@26
+  - U1.GND@28
+  - U1.GND@41
+  - U1.GND@53
+  - U1.GND@56
+  - U1.RESERVED
+  - U10.GND
+  - U11.GND
+  - U15.GND
+  - U16.GND
+  - U17.GND
+  - U18.GND
+  - U19.ADDR
+  - U19.GND
+  - U2.GND
+  - U20.GND
+  - U21.A0
+  - U21.A1
+  - U21.GND
+  - U3.GND
+  - U30.GND@E5
+  - U30.GND@E6
+  - U30.GND@E7
+  - U30.GND@F5
+  - U30.GND@F6
+  - U30.GND@F7
+  - U30.GND@G5
+  - U30.GND@G6
+  - U30.GND@G7
+  - U30.GND@H5
+  - U31.GND
+  - U32.GND
+  - U36.GND@3
+  - U36.GND@7
+  - U4.GND
+  - U6.GND
+  - U7.GND
+  - U8.GND@3
+  - U8.GND@7
+  - U9.GND
+  - Y1.2
+  - Y1.4
+- name: Net-(D1-A)
+  pins: [D1.A, R12.2]
+- name: Net-(D10-A)
+  pins: [D10.A, R23.2]
+- name: Net-(D15-A)
+  pins: [D15.A, R47.2]
+- name: Net-(D2-A)
+  pins: [D2.A, R13.2]
+- name: Net-(D3-A)
+  pins: [D3.A, R14.2]
+- name: Net-(D4-A)
+  pins: [D4.A, R15.2]
+- name: Net-(D5-A)
+  pins: [D5.A, R16.2]
+- name: Net-(D6-A)
+  pins: [D6.A, R11.2]
+- name: Net-(D7-A)
+  pins: [D7.A, R20.2]
+- name: Net-(D8-A)
+  pins: [D8.A, R21.2]
+- name: Net-(D9-A)
+  pins: [D9.A, R22.2]
+- name: Net-(R4-Pad2)
+  pins: [R4.2, R5.1]
+- name: Net-(U19-nRESET)
+  pins: [R37.1, U19.nRESET]
+- name: Net-(U21-Vbus)
+  pins: [C91.2, R60.1, U21.Vbus]
+- name: Net-(U21-Vin+)
+  pins: [C58.2, R30.2, U21.Vin+]
+- name: Net-(U21-Vin-)
+  pins: [C58.1, R54.2, U21.Vin-]
+- name: Net-(U21-nAlert)
+  pins: [D19.3, U21.nAlert]
+- name: Net-(U30A-IOT_168)
+  pins: [R45.2, U30.IOT_168]
+- name: Net-(U30A-IOT_170)
+  pins: [R39.2, U30.IOT_170]
+- name: Net-(U30A-IOT_172)
+  pins: [R43.2, U30.IOT_172]
+- name: Net-(U30A-IOT_219)
+  pins: [R10.1, U30.IOT_219, U32.DIR]
+- name: Net-(U31-OUT)
+  pins: [R56.1, U31.OUT]
+- name: Net-(U32-A)
+  pins: [R45.1, U32.A]
+- name: Net-(U32-B)
+  pins: [R38.2, U32.B]
+- name: Net-(U7-nRESET)
+  pins: [D24.2, U7.nRESET, U8.EN]
+positions:
+- ref: C1
+  x: 65.4
+  y: 99.5
+  side: back
+- ref: C10
+  x: 68.1
+  y: 99.45
+  side: back
+- ref: C11
+  x: 61.9
+  y: 90.2
+  rot: 180.0
+- ref: C12
+  x: 59.35
+  y: 93.15
+  rot: 90.0
+- ref: C13
+  x: 58.85
+  y: 91.7
+  rot: 180.0
+- ref: C14
+  x: 78.15
+  y: 101.33
+  rot: -90.0
+  side: back
+- ref: C15
+  x: 72.4
+  y: 110.1
+  side: back
+- ref: C16
+  x: 62.4
+  y: 110.6
+  rot: 180.0
+- ref: C17
+  x: 75.9
+  y: 110.1
+  side: back
+- ref: C18
+  x: 82.1
+  y: 97.5
+  side: back
+- ref: C19
+  x: 85.9
+  y: 100.0
+  side: back
+- ref: C2
+  x: 65.9
+  y: 97.75
+  rot: -90.0
+  side: back
+- ref: C20
+  x: 87.65
+  y: 98.8
+  side: back
+- ref: C21
+  x: 85.7
+  y: 94.8
+  rot: 90.0
+  side: back
+- ref: C23
+  x: 83.7
+  y: 96.7
+  rot: 180.0
+  side: back
+- ref: C24
+  x: 85.3
+  y: 93.5
+  side: back
+- ref: C25
+  x: 81.7
+  y: 94.7
+  rot: -90.0
+  side: back
+- ref: C26
+  x: 65.9
+  y: 117.0
+  rot: 180.0
+- ref: C27
+  x: 68.5
+  y: 110.3
+  rot: 90.0
+- ref: C28
+  x: 68.5
+  y: 115.4
+  rot: 90.0
+- ref: C3
+  x: 65.9
+  y: 95.75
+  rot: -90.0
+  side: back
+- ref: C33
+  x: 83.7
+  y: 94.3
+  rot: 180.0
+  side: back
+- ref: C34
+  x: 95.15
+  y: 85.35
+  rot: -90.0
+  side: back
+- ref: C35
+  x: 95.15
+  y: 88.15
+  rot: -90.0
+  side: back
+- ref: C36
+  x: 95.15
+  y: 90.95
+  rot: -90.0
+  side: back
+- ref: C37
+  x: 95.15
+  y: 93.75
+  rot: -90.0
+  side: back
+- ref: C38
+  x: 97.05
+  y: 85.35
+  rot: -90.0
+  side: back
+- ref: C39
+  x: 97.05
+  y: 88.15
+  rot: -90.0
+  side: back
+- ref: C4
+  x: 73.8
+  y: 97.77
+  rot: -90.0
+  side: back
+- ref: C40
+  x: 97.05
+  y: 90.95
+  rot: -90.0
+  side: back
+- ref: C41
+  x: 97.05
+  y: 93.75
+  rot: -90.0
+  side: back
+- ref: C42
+  x: 99.15
+  y: 85.35
+  rot: -90.0
+  side: back
+- ref: C43
+  x: 99.15
+  y: 88.15
+  rot: -90.0
+  side: back
+- ref: C47
+  x: 99.15
+  y: 90.95
+  rot: -90.0
+  side: back
+- ref: C48
+  x: 99.15
+  y: 93.75
+  rot: -90.0
+  side: back
+- ref: C49
+  x: 101.05
+  y: 85.35
+  rot: -90.0
+  side: back
+- ref: C5
+  x: 72.5
+  y: 91.55
+  rot: 180.0
+  side: back
+- ref: C50
+  x: 101.05
+  y: 88.15
+  rot: -90.0
+  side: back
+- ref: C51
+  x: 101.05
+  y: 90.95
+  rot: -90.0
+  side: back
+- ref: C52
+  x: 101.05
+  y: 93.75
+  rot: -90.0
+  side: back
+- ref: C54
+  x: 117.5
+  y: 89.6
+- ref: C55
+  x: 119.6
+  y: 83.4
+  rot: -90.0
+- ref: C56
+  x: 120.9
+  y: 94.1
+  rot: -90.0
+- ref: C57
+  x: 120.4
+  y: 87.4
+  rot: 180.0
+- ref: C58
+  x: 123.3
+  y: 83.2
+  side: back
+- ref: C59
+  x: 125.7
+  y: 90.3
+  rot: 90.0
+- ref: C6
+  x: 72.1
+  y: 99.45
+  rot: 180.0
+  side: back
+- ref: C7
+  x: 67.3
+  y: 91.55
+  side: back
+- ref: C76
+  x: 78.6
+  y: 96.4
+  rot: 180.0
+  side: back
+- ref: C77
+  x: 84.9
+  y: 95.5
+  rot: 90.0
+  side: back
+- ref: C78
+  x: 79.81
+  y: 94.9
+  rot: 180.0
+  side: back
+- ref: C79
+  x: 87.2
+  y: 95.5
+  rot: 90.0
+  side: back
+- ref: C8
+  x: 59.05
+  y: 96.3
+  rot: 180.0
+- ref: C80
+  x: 88.4
+  y: 95.5
+  rot: 90.0
+  side: back
+- ref: C81
+  x: 80.05
+  y: 99.5
+  rot: 90.0
+  side: back
+- ref: C82
+  x: 126.9
+  y: 90.3
+  rot: 90.0
+- ref: C83
+  x: 123.3
+  y: 87.3
+- ref: C84
+  x: 108.35
+  y: 90.35
+  rot: -90.0
+- ref: C85
+  x: 89.8
+  y: 99.25
+  rot: -90.0
+  side: back
+- ref: C86
+  x: 65.9
+  y: 111.9
+  rot: 180.0
+- ref: C87
+  x: 67.6
+  y: 104.2
+- ref: C88
+  x: 74.9
+  y: 90.98
+  rot: 90.0
+- ref: C89
+  x: 72.25
+  y: 115.55
+  rot: 180.0
+- ref: C9
+  x: 65.9
+  y: 93.77
+  rot: -90.0
+  side: back
+- ref: C91
+  x: 119.6
+  y: 85.3
+  rot: 90.0
+- ref: C92
+  x: 92.22
+  y: 86.25
+- ref: D1
+  x: 57.0
+  y: 81.0
+- ref: D10
+  x: 57.0
+  y: 110.0
+- ref: D11
+  x: 86.4
+  y: 110.1
+  rot: -90.0
+- ref: D15
+  x: 122.6
+  y: 80.5
+  rot: 180.0
+- ref: D17
+  x: 95.65
+  y: 82.7
+- ref: D19
+  x: 126.5
+  y: 87.7
+- ref: D2
+  x: 57.0
+  y: 83.0
+- ref: D22
+  x: 100.95
+  y: 82.35
+  rot: -90.0
+- ref: D23
+  x: 104.95
+  y: 82.35
+  rot: -90.0
+- ref: D24
+  x: 60.7
+  y: 115.85
+  rot: 180.0
+- ref: D3
+  x: 57.0
+  y: 85.0
+- ref: D4
+  x: 57.0
+  y: 87.0
+- ref: D5
+  x: 57.0
+  y: 89.0
+- ref: D6
+  x: 57.0
+  y: 102.0
+- ref: D7
+  x: 57.0
+  y: 104.0
+- ref: D8
+  x: 57.0
+  y: 106.0
+- ref: D9
+  x: 57.0
+  y: 108.0
+- ref: FB1
+  x: 59.05
+  y: 98.2
+- ref: J1
+  x: 52.65
+  y: 95.5
+  rot: -90.0
+- ref: J2
+  x: 92.57
+  y: 77.72
+  rot: 90.0
+- ref: J4
+  x: 84.1
+  y: 108.4
+- ref: J5
+  x: 72.5
+  y: 76.5
+  rot: 90.0
+- ref: R1
+  x: 74.9
+  y: 103.8
+  rot: -90.0
+- ref: R10
+  x: 92.0
+  y: 97.7
+  rot: 180.0
+- ref: R11
+  x: 59.0
+  y: 102.0
+  rot: -90.0
+- ref: R12
+  x: 59.0
+  y: 81.0
+  rot: 90.0
+- ref: R13
+  x: 59.0
+  y: 83.0
+  rot: 90.0
+- ref: R14
+  x: 59.0
+  y: 85.0
+  rot: 90.0
+- ref: R15
+  x: 59.0
+  y: 87.0
+  rot: 90.0
+- ref: R16
+  x: 59.0
+  y: 89.0
+  rot: 90.0
+- ref: R17
+  x: 76.4
+  y: 90.3
+- ref: R18
+  x: 125.3
+  y: 81.4
+  rot: 90.0
+- ref: R19
+  x: 125.1
+  y: 109.6
+  rot: -90.0
+- ref: R2
+  x: 74.9
+  y: 105.9
+  rot: 90.0
+- ref: R20
+  x: 59.0
+  y: 104.0
+  rot: -90.0
+- ref: R21
+  x: 59.0
+  y: 106.0
+  rot: -90.0
+- ref: R22
+  x: 59.0
+  y: 108.0
+  rot: -90.0
+- ref: R23
+  x: 59.0
+  y: 110.0
+  rot: -90.0
+- ref: R3
+  x: 59.05
+  y: 99.15
+  rot: 180.0
+- ref: R30
+  x: 123.8
+  y: 85.1
+  rot: 90.0
+  side: back
+- ref: R31
+  x: 77.9
+  y: 97.6
+  rot: 180.0
+  side: back
+- ref: R32
+  x: 89.85
+  y: 95.75
+  rot: 90.0
+  side: back
+- ref: R33
+  x: 120.9
+  y: 90.7
+  rot: 90.0
+- ref: R34
+  x: 120.9
+  y: 88.8
+  rot: 90.0
+- ref: R35
+  x: 119.9
+  y: 88.8
+  rot: -90.0
+- ref: R37
+  x: 108.35
+  y: 92.25
+  rot: -90.0
+- ref: R38
+  x: 87.3
+  y: 107.65
+  rot: 90.0
+- ref: R39
+  x: 103.0
+  y: 96.75
+  rot: 90.0
+- ref: R4
+  x: 62.8
+  y: 117.48
+  rot: 90.0
+- ref: R42
+  x: 117.5
+  y: 90.5
+  rot: 180.0
+- ref: R43
+  x: 103.0
+  y: 94.9
+  rot: -90.0
+- ref: R44
+  x: 86.35
+  y: 107.65
+  rot: 90.0
+- ref: R45
+  x: 88.55
+  y: 101.5
+  rot: 180.0
+- ref: R47
+  x: 122.6
+  y: 81.8
+  rot: 180.0
+- ref: R49
+  x: 122.55
+  y: 87.6
+  rot: 90.0
+  side: back
+- ref: R5
+  x: 62.8
+  y: 115.58
+  rot: 90.0
+- ref: R52
+  x: 59.05
+  y: 97.25
+  rot: 180.0
+- ref: R53
+  x: 58.4
+  y: 93.15
+  rot: -90.0
+- ref: R54
+  x: 122.8
+  y: 85.1
+  rot: 90.0
+  side: back
+- ref: R55
+  x: 119.9
+  y: 90.7
+  rot: 90.0
+- ref: R56
+  x: 122.55
+  y: 90.4
+  rot: 90.0
+  side: back
+- ref: R58
+  x: 118.0
+  y: 88.2
+  rot: 90.0
+- ref: R60
+  x: 120.8
+  y: 85.1
+  rot: -90.0
+  side: back
+- ref: R9
+  x: 75.55
+  y: 100.5
+  rot: 45.0
+- ref: RN10
+  x: 105.7
+  y: 86.0
+  rot: 90.0
+- ref: RN11
+  x: 110.9
+  y: 85.0
+  rot: -90.0
+- ref: RN12
+  x: 113.4
+  y: 85.0
+  rot: -90.0
+- ref: RN7
+  x: 90.8
+  y: 90.3
+- ref: RN8
+  x: 90.8
+  y: 92.8
+- ref: RN9
+  x: 103.2
+  y: 86.0
+  rot: 90.0
+- ref: SW1
+  x: 74.65
+  y: 117.38
+  rot: 180.0
+- ref: U1
+  x: 69.85
+  y: 95.5
+- ref: U10
+  x: 96.1
+  y: 94.1
+- ref: U11
+  x: 100.1
+  y: 85.7
+- ref: U15
+  x: 61.9
+  y: 97.3
+- ref: U16
+  x: 100.1
+  y: 88.5
+- ref: U17
+  x: 100.1
+  y: 91.3
+- ref: U18
+  x: 100.1
+  y: 94.1
+- ref: U19
+  x: 112.7
+  y: 92.2
+- ref: U2
+  x: 76.4
+  y: 110.9
+  rot: 90.0
+- ref: U20
+  x: 123.3
+  y: 93.6
+- ref: U21
+  x: 123.3
+  y: 84.4
+  rot: 180.0
+- ref: U3
+  x: 72.9
+  y: 110.9
+  rot: 90.0
+- ref: U30
+  x: 83.7
+  y: 95.5
+  rot: -90.0
+- ref: U31
+  x: 123.3
+  y: 89.8
+  rot: 180.0
+- ref: U32
+  x: 90.8
+  y: 99.6
+- ref: U36
+  x: 65.9
+  y: 109.9
+  rot: 180.0
+- ref: U4
+  x: 96.1
+  y: 85.7
+- ref: U6
+  x: 96.1
+  y: 88.5
+- ref: U7
+  x: 61.2
+  y: 112.8
+- ref: U8
+  x: 65.9
+  y: 115.0
+  rot: 180.0
+- ref: U9
+  x: 96.1
+  y: 91.3
+- ref: Y1
+  x: 61.9
+  y: 92.4
+copper_pours:
+- net: +1V2
+  layers: [F.Cu, In2.Cu]
+- net: +3V3
+  layers: [F.Cu, In2.Cu]
+- net: +5V
+  layers: [F.Cu]
+- net: /IO_Banks/IO_Buffer_A/ISNS_H
+  layers: [B.Cu]
+- net: /IO_Banks/IO_Buffer_B/ISNS_H
+  layers: [B.Cu]
+- net: /IO_Banks/VIOA
+  layers: [B.Cu, F.Cu]
+- net: /IO_Banks/VIOB
+  layers: [B.Cu, F.Cu]
+- net: /SHLD
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]
+- net: /SWSH
+  layers: [B.Cu, F.Cu, In1.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]

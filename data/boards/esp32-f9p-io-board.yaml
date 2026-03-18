@@ -1,0 +1,1473 @@
+name: ESP32 F9P IO Board
+slug: esp32-f9p-io-board
+source: doppelgrau/esp32-f9p-io-board
+format: kicad_legacy
+description: 'Full GNSS RTK rover controller: ESP32 + u-blox ZED-F9P connector, ADS1115 ADC'
+tags:
+- adc-dac
+- can-bus
+- ethernet
+- gps-gnss
+- motor-control
+- power-supply
+- relay
+- robotics
+- rs232
+- sensors
+key_ics: [ESP32]
+outline:
+  width_mm: 160.02
+  height_mm: 73.15
+design_rules:
+  layers: 4
+  min_trace: 0.15mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: 0805
+- ref: C10
+  value: 22uF
+  footprint: 0805
+  decouples: U2
+- ref: C11
+  value: 22uF
+  footprint: 0805
+  decouples: U2
+- ref: C16
+  value: 1nF
+  footprint: 0805
+- ref: C17
+  value: 1nF
+  footprint: 0805
+- ref: C18
+  value: 1nF
+  footprint: 0805
+- ref: C19
+  value: 100nF
+  footprint: 0805
+- ref: C2
+  value: 100nF
+  footprint: 0805
+  decouples: IC1
+- ref: C20
+  value: 22uF
+  footprint: 0805
+- ref: C23
+  value: 1nF
+  footprint: 0805
+- ref: C24
+  value: 1nF
+  footprint: 0805
+- ref: C25
+  value: 22uF
+  footprint: 0805
+  decouples: IC2
+- ref: C26
+  value: 100nF
+  footprint: 0805
+  decouples: IC2
+- ref: C27
+  value: 100nF
+  footprint: 0805
+  decouples: IC2
+- ref: C28
+  value: 100nF
+  footprint: 0805
+- ref: C29
+  value: 100nF
+  footprint: 0805
+  decouples: U8
+- ref: C3
+  value: 100nF
+  footprint: 0805
+- ref: C30
+  value: 100nF
+  footprint: 0805
+  decouples: U8
+- ref: C31
+  value: 2.2uF
+  footprint: 0805
+  decouples: U8
+- ref: C32
+  value: 100nF
+  footprint: 0805
+  decouples: U9
+- ref: C33
+  value: 560uF
+  footprint: Electrolytic-10x10
+- ref: C34
+  value: 1nF
+  footprint: '1206'
+  voltage: 2000V
+- ref: C35
+  value: 100nF
+  footprint: 0805
+  voltage: 16V
+- ref: C36
+  value: 100nF
+  footprint: 0805
+- ref: C37
+  value: 22uF
+  footprint: 0805
+- ref: C38
+  value: 100nF
+  footprint: 0805
+- ref: C39
+  value: 100nF
+  footprint: 0805
+- ref: C4
+  value: 100nF
+  footprint: 0805
+  decouples: U1
+- ref: C40
+  value: 2.2uF
+  footprint: 0805
+- ref: C41
+  value: 100nF
+  footprint: 0805
+  decouples: U11
+- ref: C42
+  value: 100nF
+  footprint: 0805
+- ref: C43
+  value: 100nF
+  footprint: 0805
+- ref: C44
+  value: 100nF
+  footprint: 0805
+- ref: C45
+  value: 100nF
+  footprint: 0805
+- ref: C46
+  value: 100nF
+  footprint: 0805
+  decouples: IC3
+- ref: C47
+  value: 10nF
+  footprint: 0805
+- ref: C48
+  value: 100nF
+  footprint: 0805
+- ref: C49
+  value: 100nF
+  footprint: 0805
+  decouples: U12
+- ref: C5
+  value: 22uF
+  footprint: 0805
+- ref: C50
+  value: 10uF
+  footprint: 0805
+- ref: C51
+  value: 100nF
+  footprint: 0805
+- ref: C6
+  value: 560uF
+  footprint: Electrolytic-10x10
+- ref: C7
+  value: 10uF
+  footprint: 0805
+- ref: C8
+  value: 100nF
+  footprint: 0805
+- ref: C9
+  value: 22uF
+  footprint: 0805
+- ref: D10
+  value: BAT54C
+  footprint: SOT-23
+- ref: D11
+  value: SD0805S020S1R0
+  footprint: 0805
+- ref: D2
+  value: LED/blue
+  footprint: 0805
+- ref: D5
+  value: LED/red
+  footprint: 0805
+- ref: D7
+  value: SD0805S020S1R0
+  footprint: 0805
+- ref: D8
+  value: SD0805S020S1R0
+  footprint: 0805
+- ref: D9
+  value: LED/green
+  footprint: 0805
+- ref: F1
+  value: 12A/slow
+  footprint: '1206'
+- ref: FB1
+  value: 600ohm
+  footprint: 0805
+  current: 2A
+- ref: IC1
+  value: FXL6408UMX
+  footprint: QFN-16
+  description: Fully Configurable 8-Bit I2C-Controlled GPIO Expander
+  height: '0.55'
+  manufacturer: ON Semiconductor
+  mpn: FXL6408UMX
+- ref: IC2
+  value: ATA6561
+  footprint: SOIC-8
+  description: MICROCHIP - ATA6561-GAQW-N - CAN TRANSCEIVER, 5MBPS, -40 TO 150DEG C
+  height: '1.75'
+  manufacturer: Microchip
+  mpn: ATA6561-GAQW-N
+- ref: IC3
+  value: ICL3221EIVZ
+  footprint: SOP-16
+  description: Intersil ICL3221EIVZ, Line Transceiver, EIA/TIA-232/ RS-232/ V.24/ V.28, 3.3 V, 5 V, 16-Pin TSSOP
+  height: '1.2'
+  manufacturer: Intersil
+  mpn: ICL3221EIVZ
+- ref: J1
+  value: PTSM-Header-Horizontal-6
+  footprint: '1814883'
+  description: Phoenix Contact PTSM Series, 2.5mm Pitch 6 Way 1 Row Right Angle PCB Terminal Block, Solder Termination, 6A
+  height: '5'
+  manufacturer: Phoenix Contact
+  mpn: '1814883'
+- ref: J10
+  value: 1x8 header
+  footprint: 1X8
+- ref: J11
+  value: 1x8 header
+  footprint: 1X8
+- ref: J12
+  value: 2x2 header
+  footprint: 2X2
+- ref: J13
+  value: JST SH 4-pin
+  footprint: JST_SH_SM04B-SRSS-TB
+  description: JST (JAPAN SOLDERLESS TERMINALS) - SM04B-SRSS-TB(LF)(SN) - CONNECTOR, HEADER, SMT, R/A, 1MM, 4WAY
+  manufacturer: JST (JAPAN SOLDERLESS TERMINALS)
+  mpn: SM04B-SRSS-TB(LF)(SN)
+- ref: J14
+  value: USB Micro-B
+  footprint: USB_Micro-B_Molex-105017-0001
+- ref: J15
+  value: RJ45_Amphenol_RJMG1BD3B8K1ANR
+  footprint: RJ45_Amphenol_RJMG1BD3B8K1ANR
+- ref: J16
+  value: DB9_Male_MountingHoles
+  footprint: LD09P33E4GV00LF
+- ref: J17
+  value: JST SH 4-pin
+  footprint: JST_SH_SM04B-SRSS-TB
+  description: JST (JAPAN SOLDERLESS TERMINALS) - SM04B-SRSS-TB(LF)(SN) - CONNECTOR, HEADER, SMT, R/A, 1MM, 4WAY
+  manufacturer: JST (JAPAN SOLDERLESS TERMINALS)
+  mpn: SM04B-SRSS-TB(LF)(SN)
+- ref: J18
+  value: PTSM-Header-Horizontal-2
+  footprint: '1814841'
+  description: Phoenix Contact PTSM Series, 2.5mm Pitch 2 Way 1 Row Right Angle PCB Terminal Block, Solder Termination, 6A
+  height: '5'
+  manufacturer: Phoenix Contact
+  mpn: '1814841'
+- ref: J2
+  value: 1x2 header
+  footprint: 1X2
+- ref: J3
+  value: PTSM-Header-Horizontal-7
+  footprint: '1814896'
+  description: Pluggable Terminal Blocks PTSM 0,5/ 7-HH-2,5- THR WH R44
+  height: '5'
+  manufacturer: Phoenix Contact
+  mpn: '1814896'
+- ref: J4
+  value: CCA-Header-Horizontal-4
+  footprint: '1836366'
+  description: Pluggable Terminal Blocks CCA 2,5/ 4-G P20 THR
+  height: '8.72'
+  manufacturer: Phoenix Contact
+  mpn: '1836366'
+- ref: J5
+  value: PTSM-Header-Horizontal-5
+  footprint: '1814870'
+  description: Phoenix Contact PTSM Series, 2.5mm Pitch 5 Way 1 Row Right Angle PCB Terminal Block, Solder Termination, 6A
+  height: '5'
+  manufacturer: Phoenix Contact
+  mpn: '1814870'
+- ref: J7
+  value: 1x4 header
+  footprint: 1X4
+- ref: J8
+  value: 1x4 header
+  footprint: 1X4
+- ref: J9
+  value: 1x8 header
+  footprint: 1X8
+- ref: K1
+  value: CP1SA-12V-Z
+  footprint: CP1SA12VZ
+  description: PANASONIC ELECTRIC WORKS - CP1SA-12V-Z - RELAY, AUTOMOTIVE, SPDT, 14VDC, 20A
+  height: '10.5'
+  manufacturer: Panasonic
+  mpn: CP1SA-12V-Z
+- ref: K2
+  value: CP1SA-12V-Z
+  footprint: CP1SA12VZ
+  description: PANASONIC ELECTRIC WORKS - CP1SA-12V-Z - RELAY, AUTOMOTIVE, SPDT, 14VDC, 20A
+  height: '10.5'
+  manufacturer: Panasonic
+  mpn: CP1SA-12V-Z
+- ref: PS1
+  value: V78E05-1000-SMT
+  footprint: SOP-10
+- ref: Q1
+  value: BC817-40,215
+  footprint: SOT-3
+  description: BC817; BC817W; BC337 - 45 V, 500 mA NPN general-purpose transistors
+  height: '1.1'
+  manufacturer: Nexperia
+  mpn: BC817-40,215
+- ref: Q2
+  value: BC817-40,215
+  footprint: SOT-3
+  description: BC817; BC817W; BC337 - 45 V, 500 mA NPN general-purpose transistors
+  height: '1.1'
+  manufacturer: Nexperia
+  mpn: BC817-40,215
+- ref: R1
+  value: 120ohm
+  footprint: 0805
+- ref: R10
+  value: 47kohm
+  footprint: 0805
+  pullup: /ESP_EN
+- ref: R11
+  value: 1kohm
+  footprint: 0805
+- ref: R12
+  value: 1kohm
+  footprint: 0805
+- ref: R13
+  value: 1kohm
+  footprint: 0805
+- ref: R14
+  value: 2.4kohm
+  footprint: 0805
+  pulldown: D5.2
+- ref: R15
+  value: 24ohm
+  footprint: 0805
+- ref: R16
+  value: 24ohm
+  footprint: 0805
+- ref: R17
+  value: 620ohm
+  footprint: 0805
+- ref: R2
+  value: 24ohm
+  footprint: 0805
+- ref: R22
+  value: 47kohm
+  footprint: 0805
+- ref: R23
+  value: 47kohm
+  footprint: 0805
+- ref: R24
+  value: 47kohm
+  footprint: 0805
+- ref: R25
+  value: 120ohm
+  footprint: 0805
+- ref: R26
+  value: 2.4kohm
+  footprint: 0805
+  pullup: /I2C_5_SCL
+- ref: R27
+  value: 2.4kohm
+  footprint: 0805
+  pullup: /I2C_5_SDA
+- ref: R28
+  value: 220kohm
+  footprint: 0805
+  pullup: U6.7
+- ref: R29
+  value: 2.4kohm
+  footprint: 0805
+  pullup: /I2C_3_SCL
+- ref: R3
+  value: 620ohm
+  footprint: 0805
+- ref: R30
+  value: 2.4kohm
+  footprint: 0805
+  pullup: /I2C_3_SDA
+- ref: R31
+  value: 47kohm
+  footprint: 0805
+- ref: R32
+  value: 12.1kohm
+  footprint: 0805
+  pulldown: /Input_3/output
+- ref: R33
+  value: 120ohm
+  footprint: 0805
+- ref: R34
+  value: 22.1kohm
+  footprint: 0805
+- ref: R35
+  value: 47kohm
+  footprint: 0805
+  pulldown: U8.8
+- ref: R36
+  value: 1kohm
+  footprint: 0805
+  pullup: U8.9
+- ref: R37
+  value: 1kohm
+  footprint: 0805
+- ref: R38
+  value: 120ohm
+  footprint: 0805
+- ref: R39
+  value: 120ohm
+  footprint: 0805
+- ref: R40
+  value: 1kohm
+  footprint: 0805
+- ref: R41
+  value: 120ohm
+  footprint: 0805
+- ref: R42
+  value: 0ohm
+  footprint: 0805
+- ref: R43
+  value: 2.4kohm
+  footprint: 0805
+  pulldown: J15.L2
+- ref: R44
+  value: 0ohm
+  footprint: 0805
+- ref: R45
+  value: 49.9ohm
+  footprint: 0805
+- ref: R46
+  value: 49.9ohm
+  footprint: 0805
+- ref: R47
+  value: 49.9ohm
+  footprint: 0805
+- ref: R48
+  value: 12.1kohm
+  footprint: 0805
+  pulldown: U11.24
+- ref: R49
+  value: 49.9ohm
+  footprint: 0805
+- ref: R50
+  value: 2.4kohm
+  footprint: 0805
+- ref: R51
+  value: 2.4kohm
+  footprint: 0805
+- ref: R52
+  value: 2.4kohm
+  footprint: 0805
+- ref: R53
+  value: 2.4kohm
+  footprint: 0805
+- ref: R54
+  value: 24ohm
+  footprint: 0805
+- ref: R6
+  value: 47kohm
+  footprint: 0805
+  pullup: IC1.10
+- ref: R7
+  value: 1kohm
+  footprint: 0805
+- ref: R8
+  value: 1kohm
+  footprint: 0805
+- ref: R9
+  value: 1kohm
+  footprint: 0805
+- ref: SW1
+  value: tactile switch
+  footprint: SW_SPST_PTS645
+- ref: U1
+  value: ESP32-WROOM-32
+  footprint: ESP32-WROOM-32
+- ref: U10
+  value: NUD3124LT1G
+  footprint: SOT-3
+  description: ON Semiconductor NUD3124LT1G, MOSFET Power Driver, 150mA, 3-Pin SOT-23
+  height: '1'
+  manufacturer: ON Semiconductor
+  mpn: NUD3124LT1G
+- ref: U11
+  value: LAN8720A
+  footprint: QFN-24-1EP
+- ref: U12
+  value: LSM9DS1
+  footprint: LGA-24L
+- ref: U2
+  value: AZ1117-3.3
+  footprint: SOT-223-3_TabPin2
+- ref: U4
+  value: ADS1115I
+  footprint: MSOP-10
+- ref: U6
+  value: PCA9306DCTR
+  footprint: SSOP-8
+- ref: U7
+  value: TPD3E001DRLR
+  footprint: SOT-553
+- ref: U8
+  value: CP2102N-A01-GQFN24
+  footprint: QFN-24-1EP
+- ref: U9
+  value: VNH7070AS
+  footprint: SOIC-16
+nets:
+- name: +12V
+  pins:
+  - C32.1
+  - C33.1
+  - D7.1
+  - D8.2
+  - K1.1
+  - K1.3
+  - K2.3
+  - R1.1
+  - U9.12
+  - U9.4
+  - U9.5
+- name: +3V3
+  pins:
+  - C11.1
+  - C2.1
+  - C27.2
+  - C29.2
+  - C30.2
+  - C31.2
+  - C4.1
+  - C41.2
+  - C46.1
+  - C49.2
+  - C5.1
+  - FB1.1
+  - IC1.15
+  - IC1.2
+  - IC2.5
+  - IC3.12
+  - IC3.15
+  - IC3.16
+  - J11.7
+  - J13.2
+  - J17.2
+  - J8.1
+  - R10.1
+  - R17.1
+  - R29.1
+  - R30.1
+  - R36.1
+  - R54.1
+  - R6.1
+  - U1.2
+  - U11.9
+  - U12.1
+  - U12.3
+  - U12.7
+  - U12.8
+  - U2.2
+  - U6.2
+  - U8.5
+  - U8.6
+  - U8.7
+- name: +5V
+  pins:
+  - C10.1
+  - C25.1
+  - C26.1
+  - C9.1
+  - D11.1
+  - IC2.3
+  - J11.4
+  - J7.1
+  - PS1.4
+  - PS1.5
+  - R2.2
+  - R26.1
+  - R27.1
+  - R28.1
+  - U2.3
+- name: /CAN_RXD
+  pins: [IC2.4, U1.7]
+- name: /CAN_TXD
+  pins: [J12.2, U1.29]
+- name: /ESP_EN
+  pins: [C3.1, Q2.3, R10.2, U1.3]
+- name: /I2C_3_SCL
+  pins:
+  - IC1.13
+  - J13.3
+  - J17.3
+  - J8.4
+  - R29.2
+  - U1.9
+  - U12.2
+  - U6.4
+- name: /I2C_3_SDA
+  pins:
+  - IC1.14
+  - J13.4
+  - J17.4
+  - J8.3
+  - R30.2
+  - U1.8
+  - U12.4
+  - U6.3
+- name: /I2C_5_SCL
+  pins: [J7.4, R26.2, U4.10, U6.5]
+- name: /I2C_5_SDA
+  pins: [J7.3, R27.2, U4.9, U6.6]
+- name: /Input_3/input
+  pins: [J1.6, R31.2]
+- name: /Input_3/output
+  pins: [C24.1, R31.1, R32.1, U1.6]
+- name: /LAN8720/+3V3LAN
+  pins:
+  - C36.1
+  - C37.1
+  - C38.1
+  - FB1.2
+  - R44.2
+  - R45.2
+  - R46.2
+  - R47.2
+  - R49.2
+  - R50.2
+  - R51.2
+  - R52.2
+  - R53.2
+  - U11.1
+  - U11.19
+- name: /LAN8720/EMAC_CLK_OUT_180:GPIO17
+  pins: [U1.28, U11.5]
+- name: /LAN8720/EMAC_RXD0:GPIO25
+  pins: [R51.1, U1.10, U11.8]
+- name: /LAN8720/EMAC_RXD1:GPIO26
+  pins: [R52.1, U1.11, U11.7]
+- name: /LAN8720/EMAC_RX_CRS_DV:GPIO27
+  pins: [R53.1, U1.12, U11.11]
+- name: /LAN8720/EMAC_TXD0:GPIO19
+  pins: [U1.31, U11.17]
+- name: /LAN8720/EMAC_TXD1:GPIO22
+  pins: [U1.36, U11.18]
+- name: /LAN8720/EMAC_TX_EN:GPIO21
+  pins: [U1.33, U11.16]
+- name: /LAN8720/MDC:GPIO23
+  pins: [U1.37, U11.13]
+- name: /LAN8720/MDIO
+  pins: [U1.30, U11.12]
+- name: /LAN8720/RD+
+  pins: [J15.R3, R46.1, U11.23]
+- name: /LAN8720/RD-
+  pins: [J15.R6, R49.1, U11.22]
+- name: /LAN8720/TD-
+  pins: [J15.R2, R47.1, U11.20]
+- name: /M1_INA
+  pins: [IC1.4, R11.2]
+- name: /M1_INB
+  pins: [IC1.3, R12.2]
+- name: /M1_PWM
+  pins: [R13.2, U1.26]
+- name: /M2_INA
+  pins: [IC1.6, R7.2]
+- name: /M2_INB
+  pins: [IC1.5, R8.2]
+- name: /M2_PWM
+  pins: [R9.2, U1.14]
+- name: /PHY_RST
+  pins: [IC1.11, U11.15]
+- name: /RXD01
+  pins: [J9.1, U1.13]
+- name: /RXD02
+  pins: [IC3.9, U1.27]
+- name: /RXD03
+  pins: [D10.2, J2.2, U1.24]
+- name: /Relais/COM
+  pins: [J3.1, K2.1]
+- name: /Relais/Enable
+  pins: [IC1.7, U10.1]
+- name: /Relais/NC
+  pins: [J3.2, K2.5]
+- name: /Relais/NO
+  pins: [J3.3, K2.2]
+- name: /TXD01
+  pins: [J9.2, U1.16]
+- name: /TXD02
+  pins: [IC3.11, U1.23]
+- name: /TXD03
+  pins: [D10.1, J2.1, U1.25]
+- name: /powerSupply/V_In_12V
+  pins: [F1.2, J4.2]
+- name: /sheet5C9DA53F/INA
+  pins: [R7.1, U9.3]
+- name: /sheet5C9DA53F/InB
+  pins: [R8.1, U9.6]
+- name: /sheet5C9DA53F/PWM
+  pins: [R9.1, U9.11]
+- name: /sheet5C9DA53F/outA
+  pins: [J3.6, U9.15, U9.2]
+- name: /sheet5C9DA53F/outB
+  pins: [J3.4, U9.10, U9.7]
+- name: /usbUart/RX
+  pins: [R39.1, U1.35]
+- name: /usbUart/TX
+  pins: [R38.1, U1.34]
+- name: GND
+  pins:
+  - C1.1
+  - C10.2
+  - C11.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C20.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.2
+  - C27.1
+  - C28.2
+  - C29.1
+  - C3.2
+  - C30.1
+  - C31.1
+  - C32.2
+  - C33.2
+  - C35.1
+  - C36.2
+  - C37.2
+  - C38.2
+  - C39.1
+  - C4.2
+  - C40.1
+  - C41.1
+  - C42.2
+  - C45.2
+  - C46.2
+  - C47.1
+  - C48.1
+  - C49.1
+  - C5.2
+  - C50.1
+  - C51.1
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D2.1
+  - D9.1
+  - IC1.16
+  - IC1.9
+  - IC2.2
+  - IC2.8
+  - IC3.1
+  - IC3.14
+  - J10.7
+  - J11.2
+  - J11.3
+  - J13.1
+  - J14.5
+  - J14.6
+  - J16.0
+  - J16.5
+  - J17.1
+  - J3.5
+  - J3.7
+  - J4.1
+  - J5.3
+  - J7.2
+  - J8.2
+  - K1.4
+  - PS1.3
+  - PS1.7
+  - R14.1
+  - R32.2
+  - R35.1
+  - R42.1
+  - R43.2
+  - R48.1
+  - SW1.2
+  - U1.1
+  - U1.15
+  - U1.38
+  - U10.2
+  - U11.10
+  - U11.25
+  - U12.14
+  - U12.15
+  - U12.16
+  - U12.17
+  - U12.18
+  - U12.19
+  - U12.20
+  - U12.5
+  - U12.6
+  - U2.1
+  - U4.1
+  - U4.3
+  - U6.1
+  - U7.3
+  - U8.2
+  - U8.25
+  - U9.1
+  - U9.14
+  - U9.16
+  - U9.8
+  - U9.9
+- name: Net-(C1-Pad2)
+  pins: [C1.2, J1.1, J1.3, J1.5, R1.2]
+- name: Net-(C16-Pad1)
+  pins: [C16.1, R22.1, U4.6]
+- name: Net-(C17-Pad1)
+  pins: [C17.1, R23.1, U4.5]
+- name: Net-(C18-Pad1)
+  pins: [C18.1, R24.1, U4.4]
+- name: Net-(C19-Pad1)
+  pins: [C19.1, C20.1, R2.1, R25.1, U4.8]
+- name: Net-(C23-Pad1)
+  pins: [C23.1, R28.2, U6.7, U6.8]
+- name: Net-(C28-Pad1)
+  pins: [C28.1, D11.2, J14.1, R34.2, U7.5]
+- name: Net-(C34-Pad1)
+  pins: [C34.1, J15.R8, R42.2]
+- name: Net-(C34-Pad2)
+  pins: [C34.2, J15.13]
+- name: Net-(C35-Pad2)
+  pins: [C35.2, J15.R4, J15.R5, R44.1]
+- name: Net-(C39-Pad2)
+  pins: [C39.2, C40.2, U11.6]
+- name: Net-(C42-Pad1)
+  pins: [C42.1, IC3.7]
+- name: Net-(C43-Pad1)
+  pins: [C43.1, IC3.6]
+- name: Net-(C43-Pad2)
+  pins: [C43.2, IC3.5]
+- name: Net-(C44-Pad1)
+  pins: [C44.1, IC3.4]
+- name: Net-(C44-Pad2)
+  pins: [C44.2, IC3.2]
+- name: Net-(C45-Pad1)
+  pins: [C45.1, IC3.3]
+- name: Net-(C47-Pad2)
+  pins: [C47.2, U12.21]
+- name: Net-(C48-Pad2)
+  pins: [C48.2, U12.24]
+- name: Net-(C50-Pad2)
+  pins: [C50.2, C51.2, R54.2, U12.22, U12.23]
+- name: Net-(C6-Pad1)
+  pins: [C6.1, C7.1, D8.1, PS1.1, PS1.2]
+- name: Net-(C8-Pad1)
+  pins: [C8.1, PS1.10]
+- name: Net-(D10-Pad3)
+  pins: [D10.3, R41.1]
+- name: Net-(D2-Pad2)
+  pins: [D2.2, R3.1]
+- name: Net-(D5-Pad1)
+  pins: [D5.1, F1.1, K1.2, R15.2, R16.2]
+- name: Net-(D5-Pad2)
+  pins: [D5.2, R14.2]
+- name: Net-(D7-Pad2)
+  pins: [D7.2, R15.1, R16.1]
+- name: Net-(D9-Pad2)
+  pins: [D9.2, R17.2]
+- name: Net-(IC1-Pad10)
+  pins: [IC1.10, R6.2]
+- name: Net-(IC1-Pad12)
+  pins: [IC1.12, SW1.1]
+- name: Net-(IC1-Pad8)
+  pins: [IC1.8, R3.2]
+- name: Net-(IC2-Pad1)
+  pins: [IC2.1, J12.1]
+- name: Net-(IC2-Pad6)
+  pins: [IC2.6, J12.3, J18.2]
+- name: Net-(IC2-Pad7)
+  pins: [IC2.7, J18.1, R33.2]
+- name: Net-(IC3-Pad13)
+  pins: [IC3.13, J16.3]
+- name: Net-(IC3-Pad8)
+  pins: [IC3.8, J16.2]
+- name: Net-(J12-Pad4)
+  pins: [J12.4, R33.1]
+- name: Net-(J14-Pad2)
+  pins: [J14.2, U7.4, U8.4]
+- name: Net-(J14-Pad3)
+  pins: [J14.3, U7.2, U8.3]
+- name: Net-(J14-Pad4)
+  pins: [J14.4, U7.1]
+- name: Net-(J15-PadL1)
+  pins: [J15.L1, U11.3]
+- name: Net-(J15-PadL2)
+  pins: [J15.L2, R43.1]
+- name: Net-(J15-PadL3)
+  pins: [J15.L3, U11.2]
+- name: Net-(J15-PadL4)
+  pins: [J15.L4, R50.1]
+- name: Net-(J15-PadR1)
+  pins: [J15.R1, R45.1, U11.21]
+- name: Net-(J5-Pad1)
+  pins: [J5.1, R24.2]
+- name: Net-(J5-Pad2)
+  pins: [J5.2, R23.2]
+- name: Net-(J5-Pad4)
+  pins: [J5.4, R25.2, U4.7]
+- name: Net-(J5-Pad5)
+  pins: [J5.5, R22.2]
+- name: Net-(K2-Pad4)
+  pins: [K2.4, U10.3]
+- name: Net-(Q1-Pad1)
+  pins: [Q1.1, R37.1]
+- name: Net-(Q1-Pad2)
+  pins: [Q1.2, R40.2, U8.23]
+- name: Net-(Q1-Pad3)
+  pins: [Q1.3, R41.2]
+- name: Net-(Q2-Pad1)
+  pins: [Q2.1, R40.1]
+- name: Net-(Q2-Pad2)
+  pins: [Q2.2, R37.2, U8.19]
+- name: Net-(R34-Pad1)
+  pins: [R34.1, R35.2, U8.8]
+- name: Net-(R36-Pad2)
+  pins: [R36.2, U8.9]
+- name: Net-(R38-Pad2)
+  pins: [R38.2, U8.21]
+- name: Net-(R39-Pad2)
+  pins: [R39.2, U8.20]
+- name: Net-(R48-Pad2)
+  pins: [R48.2, U11.24]
+positions:
+- ref: C1
+  x: 143.13
+  y: 50.23
+  rot: 180.0
+- ref: C10
+  x: 81.98
+  y: 77.55
+  rot: 270.0
+- ref: C11
+  x: 81.98
+  y: 73.93
+  rot: 90.0
+- ref: C16
+  x: 149.35
+  y: 49.86
+  rot: 90.0
+- ref: C17
+  x: 155.0
+  y: 49.86
+  rot: 90.0
+- ref: C18
+  x: 160.46
+  y: 49.85
+  rot: 90.0
+- ref: C19
+  x: 137.21
+  y: 51.6
+  rot: 90.0
+- ref: C2
+  x: 74.25
+  y: 94.49
+- ref: C20
+  x: 134.94
+  y: 51.61
+  rot: 90.0
+- ref: C23
+  x: 133.75
+  y: 82.1
+- ref: C24
+  x: 130.47
+  y: 74.12
+  rot: 180.0
+- ref: C25
+  x: 130.24
+  y: 51.58
+  rot: 270.0
+- ref: C26
+  x: 128.08
+  y: 51.58
+  rot: 270.0
+- ref: C27
+  x: 122.97
+  y: 47.71
+  rot: 180.0
+- ref: C28
+  x: 169.91
+  y: 56.33
+- ref: C29
+  x: 159.77
+  y: 60.39
+  rot: 180.0
+- ref: C3
+  x: 110.49
+  y: 108.16
+  rot: 270.0
+- ref: C30
+  x: 159.78
+  y: 62.48
+  rot: 180.0
+- ref: C31
+  x: 159.75
+  y: 64.64
+  rot: 180.0
+- ref: C32
+  x: 33.91
+  y: 90.63
+  rot: 90.0
+- ref: C33
+  x: 44.07
+  y: 87.5
+  rot: 270.0
+- ref: C34
+  x: 91.69
+  y: 51.69
+  rot: 90.0
+- ref: C35
+  x: 114.75
+  y: 58.51
+- ref: C36
+  x: 97.79
+  y: 68.71
+  rot: 180.0
+- ref: C37
+  x: 109.65
+  y: 67.31
+- ref: C38
+  x: 109.65
+  y: 69.47
+- ref: C39
+  x: 97.87
+  y: 72.14
+- ref: C4
+  x: 105.92
+  y: 108.2
+  rot: 270.0
+- ref: C40
+  x: 97.87
+  y: 74.3
+- ref: C41
+  x: 103.65
+  y: 74.61
+  rot: 180.0
+- ref: C42
+  x: 151.13
+  y: 92.41
+  rot: 270.0
+- ref: C43
+  x: 153.37
+  y: 89.47
+- ref: C44
+  x: 156.89
+  y: 89.47
+- ref: C45
+  x: 159.38
+  y: 92.41
+  rot: 90.0
+- ref: C46
+  x: 157.78
+  y: 100.74
+- ref: C47
+  x: 152.43
+  y: 85.99
+  rot: 180.0
+- ref: C48
+  x: 152.45
+  y: 83.77
+  rot: 180.0
+- ref: C49
+  x: 149.21
+  y: 80.04
+  rot: 270.0
+- ref: C5
+  x: 108.2
+  y: 108.2
+  rot: 270.0
+- ref: C50
+  x: 153.46
+  y: 80.0
+  rot: 270.0
+- ref: C51
+  x: 151.31
+  y: 80.02
+  rot: 270.0
+- ref: C6
+  x: 44.07
+  y: 101.86
+  rot: 90.0
+- ref: C7
+  x: 58.55
+  y: 94.61
+- ref: C8
+  x: 59.1
+  y: 79.25
+- ref: C9
+  x: 63.55
+  y: 94.61
+  rot: 180.0
+- ref: D10
+  x: 149.19
+  y: 73.74
+- ref: D11
+  x: 165.57
+  y: 50.49
+- ref: D2
+  x: 75.9
+  y: 106.78
+  rot: 90.0
+- ref: D5
+  x: 63.8
+  y: 48.51
+- ref: D7
+  x: 67.64
+  y: 55.37
+  rot: 180.0
+- ref: D8
+  x: 53.77
+  y: 94.74
+  rot: 180.0
+- ref: D9
+  x: 79.24
+  y: 106.76
+  rot: 90.0
+- ref: F1
+  x: 53.08
+  y: 53.21
+  rot: 180.0
+- ref: FB1
+  x: 109.6
+  y: 71.63
+  rot: 180.0
+- ref: IC1
+  x: 73.53
+  y: 97.92
+- ref: IC2
+  x: 123.06
+  y: 51.5
+  rot: 180.0
+- ref: IC3
+  x: 155.26
+  y: 95.06
+  rot: 270.0
+- ref: J1
+  x: 136.26
+  y: 41.03
+  rot: 180.0
+- ref: J10
+  x: 163.45
+  y: 81.41
+  rot: 180.0
+- ref: J11
+  x: 115.19
+  y: 85.47
+  rot: 180.0
+- ref: J12
+  x: 124.14
+  y: 58.86
+  rot: 270.0
+- ref: J13
+  x: 126.43
+  y: 106.81
+- ref: J14
+  x: 174.35
+  y: 53.79
+  rot: 90.0
+- ref: J15
+  x: 106.93
+  y: 54.86
+  rot: 180.0
+- ref: J16
+  x: 179.1
+  y: 79.73
+  rot: 90.0
+- ref: J17
+  x: 156.46
+  y: 106.87
+- ref: J18
+  x: 118.09
+  y: 41.26
+- ref: J2
+  x: 167.66
+  y: 60.56
+  rot: 90.0
+- ref: J3
+  x: 78.87
+  y: 41.98
+  rot: 180.0
+- ref: J4
+  x: 49.06
+  y: 43.08
+  rot: 180.0
+- ref: J5
+  x: 157.74
+  y: 41.66
+  rot: 180.0
+- ref: J7
+  x: 142.18
+  y: 99.69
+  rot: 270.0
+- ref: J8
+  x: 71.2
+  y: 75.02
+  rot: 90.0
+- ref: J9
+  x: 163.45
+  y: 103.25
+  rot: 180.0
+- ref: K1
+  x: 58.93
+  y: 66.34
+  rot: 90.0
+- ref: K2
+  x: 82.04
+  y: 61.59
+  rot: 180.0
+- ref: PS1
+  x: 59.94
+  y: 86.61
+  rot: 90.0
+- ref: Q1
+  x: 154.43
+  y: 68.69
+  rot: 270.0
+- ref: Q2
+  x: 149.03
+  y: 68.69
+  rot: 270.0
+- ref: R1
+  x: 143.14
+  y: 52.32
+  rot: 180.0
+- ref: R10
+  x: 112.78
+  y: 108.16
+  rot: 90.0
+- ref: R11
+  x: 58.02
+  y: 104.14
+- ref: R12
+  x: 58.02
+  y: 101.98
+- ref: R13
+  x: 58.02
+  y: 97.61
+- ref: R14
+  x: 68.07
+  y: 51.82
+  rot: 180.0
+- ref: R15
+  x: 63.65
+  y: 55.3
+  rot: 180.0
+- ref: R16
+  x: 63.71
+  y: 51.86
+  rot: 180.0
+- ref: R17
+  x: 79.24
+  y: 103.01
+  rot: 270.0
+- ref: R2
+  x: 132.66
+  y: 51.62
+  rot: 90.0
+- ref: R22
+  x: 151.64
+  y: 49.85
+  rot: 90.0
+- ref: R23
+  x: 157.23
+  y: 49.83
+  rot: 90.0
+- ref: R24
+  x: 162.69
+  y: 49.83
+  rot: 90.0
+- ref: R25
+  x: 139.76
+  y: 51.61
+  rot: 270.0
+- ref: R26
+  x: 139.0
+  y: 92.46
+  rot: 180.0
+- ref: R27
+  x: 139.06
+  y: 90.17
+  rot: 180.0
+- ref: R28
+  x: 133.75
+  y: 79.82
+  rot: 180.0
+- ref: R29
+  x: 122.67
+  y: 90.17
+- ref: R3
+  x: 75.9
+  y: 103.15
+  rot: 90.0
+- ref: R30
+  x: 122.68
+  y: 92.2
+- ref: R31
+  x: 130.48
+  y: 69.66
+  rot: 180.0
+- ref: R32
+  x: 130.48
+  y: 71.88
+  rot: 180.0
+- ref: R33
+  x: 119.72
+  y: 55.85
+  rot: 180.0
+- ref: R34
+  x: 165.73
+  y: 56.33
+- ref: R35
+  x: 165.7
+  y: 54.17
+  rot: 180.0
+- ref: R36
+  x: 160.46
+  y: 57.29
+  rot: 90.0
+- ref: R37
+  x: 151.81
+  y: 62.09
+  rot: 180.0
+- ref: R38
+  x: 143.26
+  y: 58.02
+  rot: 90.0
+- ref: R39
+  x: 140.97
+  y: 58.02
+  rot: 90.0
+- ref: R40
+  x: 151.76
+  y: 64.44
+- ref: R41
+  x: 153.65
+  y: 73.74
+- ref: R42
+  x: 91.69
+  y: 56.18
+  rot: 90.0
+- ref: R43
+  x: 91.69
+  y: 46.75
+  rot: 270.0
+- ref: R44
+  x: 114.8
+  y: 61.69
+  rot: 180.0
+- ref: R45
+  x: 107.87
+  y: 61.72
+- ref: R46
+  x: 97.79
+  y: 64.26
+  rot: 180.0
+- ref: R47
+  x: 107.82
+  y: 65.02
+- ref: R48
+  x: 97.71
+  y: 66.42
+- ref: R49
+  x: 97.74
+  y: 61.09
+  rot: 180.0
+- ref: R50
+  x: 113.45
+  y: 48.5
+  rot: 270.0
+- ref: R51
+  x: 111.0
+  y: 76.64
+- ref: R52
+  x: 111.05
+  y: 78.87
+- ref: R53
+  x: 111.0
+  y: 74.49
+- ref: R54
+  x: 155.56
+  y: 79.97
+  rot: 270.0
+- ref: R6
+  x: 77.85
+  y: 97.23
+  rot: 270.0
+- ref: R7
+  x: 58.04
+  y: 108.46
+- ref: R8
+  x: 57.99
+  y: 106.3
+- ref: R9
+  x: 58.02
+  y: 99.77
+- ref: SW1
+  x: 73.72
+  y: 85.36
+  rot: 180.0
+- ref: U1
+  x: 94.61
+  y: 101.22
+  rot: 180.0
+- ref: U10
+  x: 72.26
+  y: 70.23
+- ref: U11
+  x: 102.76
+  y: 70.72
+- ref: U12
+  x: 148.64
+  y: 84.91
+  rot: 270.0
+- ref: U2
+  x: 87.66
+  y: 75.6
+- ref: U4
+  x: 132.78
+  y: 59.94
+  rot: 90.0
+- ref: U6
+  x: 128.76
+  y: 83.29
+- ref: U7
+  x: 169.34
+  y: 53.92
+  rot: 270.0
+- ref: U8
+  x: 156.53
+  y: 56.58
+  rot: 90.0
+- ref: U9
+  x: 28.45
+  y: 91.19
+copper_pours:
+- net: +12V
+  layers: [F.Cu, In2.Cu]
+- net: +3V3
+  layers: [F.Cu, In2.Cu]
+- net: +5V
+  layers: [F.Cu, In2.Cu]
+- net: /powerSupply/V_In_12V
+  layers: [B.Cu, F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]

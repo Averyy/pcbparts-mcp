@@ -1,0 +1,426 @@
+name: Adafruit 2.4" TFT FeatherWing V2
+slug: adafruit-2-4-tft-featherwing-v2
+source: adafruit/Adafruit-2.4-TFT-FeatherWing-PCB
+format: eagle
+description: SPI TFT display (ILI9341), TSC2007 I2C resistive touch controller
+tags: [display]
+key_ics: [ILI9341, TSC2007]
+outline:
+  width_mm: 52.58
+  height_mm: 64.77
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  decouples: IC5
+- ref: C2
+  value: 100nF
+  footprint: '0603'
+- ref: C3
+  value: 10uF
+  footprint: 0805
+- ref: C4
+  value: 100nF
+  footprint: '0603'
+  decouples: IC5
+- ref: C5
+  value: 10uF
+  footprint: 0805
+- ref: C6
+  value: 10uF
+  footprint: 0805
+- ref: CONN1
+  value: STEMMA QT
+  footprint: JST_SH4
+  lcsc: C2845363
+- ref: D1
+  value: 1N4148
+  footprint: SOD-323
+- ref: IC1
+  value: TSC2007
+  footprint: TSSOP16
+- ref: IC5
+  value: APX803
+  footprint: SOT23
+- ref: MS2
+  value: Featherwing headers
+  footprint: FEATHERWING_SMT2
+- ref: Q4
+  value: BSS138
+  footprint: SOT23-WIDE
+  description: N-Channel Mosfet
+- ref: R1
+  value: 10ohm
+  footprint: '0603'
+- ref: R10
+  value: 100kohm
+  footprint: '0603'
+  pullup: AUX
+- ref: R11
+  value: 100kohm
+  footprint: '0603'
+  pulldown: AUX
+- ref: R12
+  value: 10kohm
+  footprint: '0603'
+  pullup: LCD_LITE
+- ref: R13
+  value: 10kohm
+  footprint: '0603'
+  pulldown: ADDR1
+- ref: R14
+  value: 10kohm
+  footprint: '0603'
+  pulldown: ADDR0
+- ref: R2
+  value: 10ohm
+  footprint: '0603'
+- ref: R3
+  value: 10ohm
+  footprint: '0603'
+- ref: R4
+  value: 10ohm
+  footprint: '0603'
+- ref: R5
+  value: 100kohm
+  footprint: '0603'
+  pullup: TFT_CS
+- ref: R6
+  value: 100kohm
+  footprint: '0603'
+  pullup: SD_CS
+- ref: R7
+  value: 10kohm
+  footprint: '0603'
+  pullup: TFT_RST
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  pullup: SCL
+- ref: R9
+  value: 10kohm
+  footprint: '0603'
+  pullup: SDA
+- ref: SJ1
+  value: solder jumper - closed
+  footprint: SJ-2
+- ref: SJ2
+  value: solder jumper - closed
+  footprint: SJ-2
+- ref: SJ3
+  value: solder jumper - closed
+  footprint: SJ-2
+- ref: SJ4
+  value: solder jumper - closed
+  footprint: SJ-2
+- ref: SW2
+  value: Slide Switch
+  footprint: EG1390
+  lcsc: C2837066
+- ref: SW3
+  value: RA TACT
+  footprint: SPST_TACTILE_RA
+  lcsc: C778159
+- ref: U$10
+  value: TFT LCD
+  footprint: TFT_2.4IN
+- ref: U2
+  value: AP2127K-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: X2
+  value: microSD
+  footprint: MICROSD
+  lcsc: C125617
+  description: MicroSD/Transflash Card Holder with SPI pinout
+nets:
+- name: '!RESET'
+  pins: [D1.C, MS2.!RESET, SW3.G$1.P, TP4.P$1]
+- name: 3.3V
+  pins:
+  - C1.1
+  - C3.1
+  - C4.1
+  - C6.1
+  - CONN1.G$1.V+
+  - IC5.VCC
+  - MS2.3V
+  - R1.1
+  - R12.1
+  - R2.1
+  - R3.1
+  - R4.1
+  - R5.2
+  - R6.2
+  - R7.2
+  - R8.1
+  - R9.1
+  - TP5.P$1
+  - U$10.IM1
+  - U$10.IM2
+  - U$10.IM3
+  - U$10.IOVCC@1
+  - U$10.IOVCC@2
+  - U$10.VCI
+  - U2.IN
+  - X2.SD_VDD
+- name: A
+  pins: [MS2.GPIOA0, TP8.P$1]
+- name: ADDR0
+  pins: [IC1.ADDR0, R14.2]
+- name: ADDR1
+  pins: [IC1.ADDR1, R13.2]
+- name: AREF
+  pins: [MS2.AREF, TP6.P$1]
+- name: AUX
+  pins: [IC1.AUX, R10.1, R11.2]
+- name: B
+  pins: [MS2.GPIOA1, TP9.P$1]
+- name: C
+  pins: [MS2.GPIOA2, TP11.P$1]
+- name: CARDDET
+  pins: [TP3.P$1, X2.CARD_DETECT]
+- name: D
+  pins: [MS2.GPIOA3, TP12.P$1]
+- name: E
+  pins: [MS2.GPIOA4, TP13.P$1]
+- name: EN
+  pins: [MS2.EN, SW2.P1, SW2.P2, TP10.P$1]
+- name: F
+  pins: [MS2.GPIOA5, TP14.P$1]
+- name: G
+  pins: [MS2.NC, TP20.P$1]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - CONN1.G$1.GND
+  - CONN1.G$2.MT
+  - CONN1.G$3.MT
+  - IC1.GND
+  - IC5.GND
+  - MS2.GND
+  - Q4.S
+  - R11.1
+  - R13.1
+  - R14.1
+  - SW2.O1
+  - SW2.O2
+  - SW3.G$1.S
+  - SW3.G$2.MT
+  - TP7.P$1
+  - U$10.GND@1
+  - U$10.GND@2
+  - U$10.GND@3
+  - U$10.GND@4
+  - U$10.IM0
+  - U2.GND
+  - X2.MOUNTING
+  - X2.SD_VSS
+- name: H
+  pins: [MS2.GPIO5, SJ3.1]
+- name: I
+  pins: [MS2.GPIO6, SJ2.1]
+- name: J
+  pins: [MS2.GPIO9, SJ1.1]
+- name: K
+  pins: [MS2.GPIO10, SJ4.1]
+- name: L
+  pins: [MS2.GPIO11, TP25.P$1]
+- name: LCD_LITE
+  pins: [Q4.G, R12.2, TP2.P$1]
+- name: LEDA
+  pins: [R4.2, U$10.LEDA@4]
+- name: LEDA_2
+  pins: [R1.2, U$10.LEDA@1]
+- name: LEDA_3
+  pins: [R2.2, U$10.LEDA@2]
+- name: LEDA_4
+  pins: [R3.2, U$10.LEDA@3]
+- name: LEDK
+  pins: [Q4.D, U$10.LEDK]
+- name: M
+  pins: [MS2.GPIO12, TP24.P$1]
+- name: MISO
+  pins: [MS2.GPIOMISO, TP17.P$1, U$10.SDO, X2.DATA_OUT]
+- name: MOSI
+  pins: [MS2.GPIOMOSI, TP16.P$1, U$10.SDI, X2.DATA_IN]
+- name: N
+  pins: [MS2.GPIO13, TP23.P$1]
+- name: RT_INT
+  pins: [IC1.!PENIRQ, SJ2.2]
+- name: RX
+  pins: [MS2.GPIORX, TP18.P$1]
+- name: SCL
+  pins: [CONN1.G$1.SCL, IC1.SCL, MS2.GPIOSCL, R8.2, TP26.P$1]
+- name: SCLK
+  pins: [MS2.GPIOSCK, TP15.P$1, U$10.RS, X2.SCLK]
+- name: SDA
+  pins: [CONN1.G$1.SDA, IC1.SDA, MS2.GPIOSDA, R9.2, TP27.P$1]
+- name: SD_CS
+  pins: [R6.1, SJ3.2, X2.CS]
+- name: TFT_CS
+  pins: [R5.1, SJ1.2, U$10.#CS]
+- name: TFT_DC
+  pins: [SJ4.2, U$10.#WR]
+- name: TFT_RST
+  pins: [D1.A, IC5./RESET, R7.1, U$10.RESET, U2.EN]
+- name: TSC_PWR
+  pins: [C2.1, C5.1, IC1.VDD, U2.OUT]
+- name: TX
+  pins: [MS2.GPIOTX, TP19.P$1]
+- name: USB
+  pins: [MS2.USB, TP22.P$1]
+- name: VBAT
+  pins: [MS2.VBAT, R10.2, TP21.P$1]
+- name: XL
+  pins: [IC1.X-, U$10.XL]
+- name: XR
+  pins: [IC1.X+, U$10.XR]
+- name: YD
+  pins: [IC1.Y+, U$10.YD]
+- name: YU
+  pins: [IC1.Y-, U$10.YU]
+positions:
+- ref: C1
+  x: 5.84
+  y: 11.68
+  rot: 180.0
+- ref: C2
+  x: 48.51
+  y: 31.37
+  rot: 270.0
+- ref: C3
+  x: 28.19
+  y: 3.05
+  rot: 270.0
+- ref: C4
+  x: 6.6
+  y: 27.18
+- ref: C5
+  x: 48.51
+  y: 26.92
+  rot: 90.0
+- ref: C6
+  x: 3.94
+  y: 33.4
+  rot: 90.0
+- ref: CONN1
+  x: 49.53
+  y: 49.15
+  rot: 90.0
+- ref: D1
+  x: 8.64
+  y: 11.3
+  rot: 90.0
+- ref: IC1
+  x: 44.83
+  y: 28.57
+  rot: 180.0
+- ref: IC5
+  x: 5.71
+  y: 16.13
+- ref: MS2
+  x: 0.0
+  y: 37.72
+- ref: Q4
+  x: 6.86
+  y: 30.48
+  rot: 270.0
+- ref: R1
+  x: 6.6
+  y: 25.15
+- ref: R10
+  x: 15.62
+  y: 52.96
+- ref: R11
+  x: 12.32
+  y: 52.96
+- ref: R12
+  x: 4.19
+  y: 30.1
+  rot: 90.0
+- ref: R13
+  x: 47.5
+  y: 15.75
+  rot: 180.0
+- ref: R14
+  x: 47.5
+  y: 19.05
+  rot: 180.0
+- ref: R2
+  x: 6.6
+  y: 23.11
+- ref: R3
+  x: 6.6
+  y: 21.08
+- ref: R4
+  x: 6.6
+  y: 19.05
+- ref: R5
+  x: 33.02
+  y: 49.28
+  rot: 270.0
+- ref: R6
+  x: 40.51
+  y: 49.15
+  rot: 270.0
+- ref: R7
+  x: 8.26
+  y: 16.26
+  rot: 90.0
+- ref: R8
+  x: 41.91
+  y: 52.2
+  rot: 90.0
+- ref: R9
+  x: 43.56
+  y: 50.93
+  rot: 90.0
+- ref: SJ1
+  x: 34.29
+  y: 53.59
+  rot: 270.0
+- ref: SJ2
+  x: 36.83
+  y: 53.59
+  rot: 270.0
+- ref: SJ3
+  x: 39.37
+  y: 53.59
+  rot: 270.0
+- ref: SJ4
+  x: 31.75
+  y: 53.59
+  rot: 270.0
+- ref: SW2
+  x: 20.83
+  y: 4.06
+  rot: 180.0
+- ref: SW3
+  x: 10.16
+  y: 1.78
+  rot: 180.0
+- ref: U$10
+  x: 26.29
+  y: 30.73
+  rot: 180.0
+- ref: U2
+  x: 47.88
+  y: 22.99
+- ref: X2
+  x: 37.21
+  y: 8.38
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

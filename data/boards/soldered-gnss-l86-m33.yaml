@@ -1,0 +1,293 @@
+name: Soldered GNSS L86-M33
+slug: soldered-gnss-l86-m33
+source: SolderedElectronics/GNSS-GPS-L86-M33-breakout-hardware-design
+format: kicad7
+description: Quectel L86-M33 GNSS, battery backup
+tags: [gps-gnss]
+key_ics: [SE5218]
+outline:
+  width_mm: 38.0
+  height_mm: 54.0
+design_rules:
+  layers: 2
+  min_trace: 0.127mm
+  min_clearance: 0.3mm
+  min_drill: 0.2mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: '0603'
+  decouples: U2
+- ref: C2
+  value: 10uF
+  footprint: '1206'
+  decouples: U3
+- ref: C3
+  value: 2.2uF
+  footprint: '0603'
+- ref: C4
+  value: 2.2uF
+  footprint: '0603'
+  decouples: U3
+- ref: D1
+  value: diode
+  footprint: M4_DIODA
+- ref: D2
+  value: diode
+  footprint: M4_DIODA
+- ref: D3
+  value: purple LED
+  footprint: '0402'
+- ref: D4
+  value: blue LED
+  footprint: '0402'
+- ref: JP1
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-2
+- ref: JP3
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP4
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: K1
+  value: IPX connector with SMA
+  footprint: IPX connector with SMA
+- ref: K2
+  value: CR1220 battery holder
+  footprint: CR1220_HOLDER
+- ref: K3
+  value: 1x8 header
+  footprint: HEADER_MALE
+- ref: Q1
+  value: NPN transistor
+  footprint: SOT-23-3
+- ref: R1
+  value: 5.1kohm
+  footprint: '0603'
+- ref: R10
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R2
+  value: 4.7kohm
+  footprint: '0603'
+- ref: R3
+  value: 10kohm
+  footprint: '0603'
+  pullup: TX3V3
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+  pullup: RX5
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  pulldown: U2.FORCE_ON
+- ref: R6
+  value: 47kohm
+  footprint: '0603'
+  pulldown: Q1.B
+- ref: R7
+  value: 10kohm
+  footprint: '0603'
+  pullup: TX5
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  pullup: RX3V3
+- ref: R9
+  value: 2.2kohm
+  footprint: '0402'
+- ref: U1
+  value: dual NMOS
+  footprint: SOT-363
+- ref: U2
+  value: L86-M33
+  footprint: L86-M33
+- ref: U3
+  value: SE5218
+  footprint: SOT-23-5
+nets:
+- name: 3V3
+  pins:
+  - C1.2
+  - C2.2
+  - C4.2
+  - D1.A
+  - JP2.2
+  - JP3.1
+  - R3.1
+  - R8.2
+  - U1.G1
+  - U1.G2
+  - U2.VCC
+  - U3.VOUT
+- name: 5V
+  pins: [JP1.2, JP2.1, K3.8, R4.1, R7.2]
+- name: ANT
+  pins: [K1.RF, U2.EX_ANT]
+- name: ANT_DET
+  pins: [K3.1, U2.AADET_N]
+- name: EN
+  pins: [C3.2, JP1.1, U3.EN, U3.VIN]
+- name: FORCE_ON
+  pins: [K3.3, R1.1]
+- name: FORCE_ON_2
+  pins: [R1.2, R5.1, U2.FORCE_ON]
+- name: GND
+  pins:
+  - C1.1
+  - C2.1
+  - C3.1
+  - C4.1
+  - D3.K
+  - D4.K
+  - K1.GND@2
+  - K2.2-
+  - K3.7
+  - Q1.E
+  - R5.2
+  - R6.2
+  - U2.GND@12
+  - U2.GND@3
+  - U3.GND
+- name: Net-(D2-Pad1)
+  pins: [D2.A, K2.1+]
+- name: Net-(D3-Pad1)
+  pins: [D3.A, R9.2]
+- name: Net-(D4-Pad1)
+  pins: [D4.A, R10.2]
+- name: Net-(JP3-Pad2)
+  pins: [JP3.2, R9.1]
+- name: Net-(JP4-Pad2)
+  pins: [JP4.2, R10.1]
+- name: Net-(Q1-Pad1)
+  pins: [Q1.B, R2.2, R6.1]
+- name: PPS
+  pins: [JP4.1, K3.2, U2.1PPS]
+- name: RESET
+  pins: [K3.4, R2.1]
+- name: RESET_2
+  pins: [Q1.C, U2.RESET]
+- name: RX3V3
+  pins: [R8.1, U1.S1, U2.RXD]
+- name: RX5
+  pins: [K3.6, R4.2, U1.D1]
+- name: TX3V3
+  pins: [R3.2, U1.S2, U2.TXD1]
+- name: TX5
+  pins: [K3.5, R7.1, U1.D2]
+- name: V_BCKP
+  pins: [D1.K, D2.K, U2.V_BCKP]
+positions:
+- ref: C1
+  x: 107.9
+  y: 113.5
+  rot: -90.0
+- ref: C2
+  x: 106.9
+  y: 109.8
+  rot: -90.0
+- ref: C3
+  x: 103.7
+  y: 98.0
+  rot: 90.0
+- ref: C4
+  x: 110.2
+  y: 98.0
+  rot: 90.0
+- ref: D1
+  x: 109.0
+  y: 137.97
+- ref: D2
+  x: 108.9
+  y: 134.63
+  rot: 180.0
+- ref: D3
+  x: 134.3
+  y: 97.0
+  rot: -90.0
+- ref: D4
+  x: 134.3
+  y: 129.0
+  rot: -90.0
+- ref: JP1
+  x: 105.0
+  y: 95.5
+- ref: JP2
+  x: 109.0
+  y: 95.5
+- ref: JP3
+  x: 131.3
+  y: 97.0
+- ref: JP4
+  x: 131.3
+  y: 129.0
+- ref: K1
+  x: 135.0
+  y: 112.0
+  rot: 90.0
+- ref: K2
+  x: 119.7
+  y: 131.0
+  rot: -90.0
+- ref: K3
+  x: 101.5
+  y: 113.0
+  rot: 90.0
+- ref: Q1
+  x: 125.0
+  y: 97.0
+  rot: -90.0
+- ref: R1
+  x: 133.0
+  y: 123.0
+  rot: 90.0
+- ref: R10
+  x: 133.0
+  y: 129.0
+  rot: 90.0
+- ref: R2
+  x: 125.0
+  y: 92.8
+- ref: R3
+  x: 117.3
+  y: 93.0
+- ref: R4
+  x: 117.3
+  y: 97.0
+- ref: R5
+  x: 134.5
+  y: 123.0
+  rot: -90.0
+- ref: R6
+  x: 125.0
+  y: 94.3
+  rot: 180.0
+- ref: R7
+  x: 120.7
+  y: 93.0
+- ref: R8
+  x: 120.7
+  y: 97.0
+- ref: R9
+  x: 133.0
+  y: 97.0
+  rot: 90.0
+- ref: U1
+  x: 119.0
+  y: 95.0
+- ref: U2
+  x: 119.0
+  y: 113.0
+  rot: 180.0
+- ref: U3
+  x: 107.0
+  y: 98.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]

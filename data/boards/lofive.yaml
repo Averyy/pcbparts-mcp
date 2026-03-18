@@ -1,0 +1,405 @@
+name: LoFive
+slug: lofive
+source: mwelling/lofive
+format: kicad7
+description: SiFive FE310 RISC-V MCU (RV32IMAC 320MHz), IS25LP128 128Mbit QSPI flash
+tags: [level-shifting, power-supply]
+key_ics: [IS25LP128, SPX3819M5-L-3-3, SN74LVC1G07]
+outline:
+  width_mm: 35.56
+  height_mm: 17.78
+design_rules:
+  layers: 4
+  min_trace: 0.152mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 12pF
+  footprint: '0402'
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+  decouples: U3
+- ref: C13
+  value: 10uF
+  footprint: '0402'
+  decouples: U3
+- ref: C14
+  value: 10uF
+  footprint: '0402'
+  decouples: U4
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+  decouples: U5
+- ref: C16
+  value: 10nF
+  footprint: '0402'
+- ref: C17
+  value: 10uF
+  footprint: '0402'
+- ref: C2
+  value: 12pF
+  footprint: '0402'
+- ref: C3
+  value: 10uF
+  footprint: '0402'
+  decouples: U1
+- ref: C4
+  value: 10uF
+  footprint: '0402'
+  decouples: U1
+- ref: C5
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C6
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C7
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C8
+  value: 100nF
+  footprint: '0402'
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  decouples: U5
+- ref: J1
+  value: 1x14 header
+  footprint: 1X14
+- ref: J2
+  value: 1x14 header
+  footprint: 1X14
+- ref: R1
+  value: 100ohm
+  footprint: '0402'
+- ref: R2
+  value: 100kohm
+  footprint: '0402'
+  pullup: U1.AON_ERST_N
+- ref: R3
+  value: 100kohm
+  footprint: '0402'
+  pullup: U1.AON_PMU_DWAKEUP_N
+- ref: R4
+  value: 150kohm
+  footprint: '0402'
+  pullup: U4.EN
+- ref: R5
+  value: 100kohm
+  footprint: '0402'
+  pullup: QSPI_DQ3
+- ref: R6
+  value: 100kohm
+  footprint: '0402'
+  pullup: QSPI_CS
+- ref: R7
+  value: 100kohm
+  footprint: '0402'
+  pullup: JTAG_TRST_N
+- ref: SW1
+  value: tactile switch
+  footprint: SW_SPST_EVQP2
+- ref: U1
+  value: E310
+  footprint: UQFN-48-1EP
+- ref: U2
+  value: IS25LP128
+  footprint: SOIJ-8
+- ref: U3
+  value: SPX3819M5-L-3-3
+  footprint: SOT-23-5
+- ref: U4
+  value: SPX3819M5-L-1-8
+  footprint: SOT-23-5
+- ref: U5
+  value: SN74LVC1G07
+  footprint: SOT-23-5
+- ref: Y1
+  value: 16MHz
+  footprint: crystal_FA238-TSX3225
+nets:
+- name: +1V8
+  pins:
+  - C14.1
+  - C3.1
+  - C5.1
+  - C7.1
+  - R1.2
+  - U1.VDD@30
+  - U1.VDD@46
+  - U1.VDD@6
+  - U4.OUT
+- name: +3V3
+  pins:
+  - C10.1
+  - C12.1
+  - C13.1
+  - C15.1
+  - C4.1
+  - C6.1
+  - C9.1
+  - J1.P3@3
+  - R2.2
+  - R3.2
+  - R5.2
+  - R6.2
+  - R7.2
+  - U1.AON_IVDD
+  - U1.AON_VDD
+  - U1.IVDD@11
+  - U1.IVDD@32
+  - U1.IVDD@47
+  - U1.OTP_AIVDD
+  - U2.VCC
+  - U3.OUT
+  - U5.VCC
+- name: +5V
+  pins: [J1.P1@1, U3.EN, U3.IN, U4.IN]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C9.2
+  - J1.P2@2
+  - J2.P1@1
+  - SW1.1@1
+  - U1.GND
+  - U2.VSS
+  - U3.GND
+  - U4.GND
+  - U5.GND
+  - Y1.3@3
+- name: GPIO_0/PWM0.0
+  pins: [J1.P9@9, U1.GPIO_0/PWM0.0]
+- name: GPIO_1/PWM0.1
+  pins: [J1.P10@10, U1.GPIO_1/PWM0.1]
+- name: GPIO_10/SPI1.SS3/PWM2.0
+  pins: [J2.P13@13, U1.GPIO_10/SPI1.SS3/PWM2.0]
+- name: GPIO_11/PWM2.1
+  pins: [J2.P12@12, U1.GPIO_11/PWM2.1]
+- name: GPIO_12/PWM2.2
+  pins: [J2.P11@11, U1.GPIO_12/PWM2.2/I2C0.SDA]
+- name: GPIO_13/PWM2.3
+  pins: [J2.P10@10, U1.GPIO_13/PWM2.3/I2C0.SCL]
+- name: GPIO_16/UART0.RX
+  pins: [J2.P9@9, U1.GPIO_16/UART0.RX]
+- name: GPIO_17/UART0.TX
+  pins: [J2.P8@8, U1.GPIO_17/UART0.TX]
+- name: GPIO_18
+  pins: [J2.P7@7, U1.GPIO_18/UART1.TX]
+- name: GPIO_19/PWM1.1
+  pins: [J2.P6@6, U1.GPIO_19/PWM1.1]
+- name: GPIO_2/SPI1.SS0/PWM0.2
+  pins: [J1.P11@11, U1.GPIO_2/SPI1.SS0/PWM0.2]
+- name: GPIO_20/PWM1.0
+  pins: [J2.P5@5, U1.GPIO_20/PWM1.0]
+- name: GPIO_21/PWM1.2
+  pins: [J2.P4@4, U1.GPIO_21/PWM1.2]
+- name: GPIO_22/PWM1.3
+  pins: [J2.P3@3, U1.GPIO_22/PWM1.3]
+- name: GPIO_23
+  pins: [J2.P2@2, U1.GPIO_23/UART1.RX]
+- name: GPIO_3/SPI1.MOSI/PWM0.3
+  pins: [J1.P12@12, U1.GPIO_3/SPI1.MOSI/PWM0.3]
+- name: GPIO_4/SPI1.MISO
+  pins: [J1.P13@13, U1.GPIO_4/SPI1.MISO]
+- name: GPIO_5/SPI1.SCK
+  pins: [J1.P14@14, U1.GPIO_5/SPI1.SCK]
+- name: GPIO_9/SPI1.SS2
+  pins: [J2.P14@14, U1.GPIO_9/SPI1.SS2]
+- name: JTAG_TCK
+  pins: [J1.P5@5, U1.JTAG_TCK]
+- name: JTAG_TDI
+  pins: [J1.P8@8, U1.JTAG_TDI]
+- name: JTAG_TDO
+  pins: [J1.P6@6, U1.JTAG_TDO]
+- name: JTAG_TMS
+  pins: [J1.P7@7, U1.JTAG_TMS]
+- name: JTAG_TRST_N
+  pins: [J1.P4@4, R7.1, U5.A]
+- name: Net-(U1-16M_XTAL_XI)
+  pins: [C1.1, U1.16M_XTAL_XI, Y1.1]
+- name: Net-(U1-16M_XTAL_XO)
+  pins: [C2.1, U1.16M_XTAL_XO, Y1.2]
+- name: Net-(U1-AON_ERST_N)
+  pins: [C16.1, R2.1, SW1.2@2, U1.AON_ERST_N, U5.Y]
+- name: Net-(U1-AON_PMU_DWAKEUP_N)
+  pins: [R3.1, U1.AON_PMU_DWAKEUP_N]
+- name: Net-(U1-PLL_AVDD)
+  pins: [C11.1, C8.1, R1.1, U1.PLL_AVDD]
+- name: Net-(U1-PLL_AVSS)
+  pins: [C11.2, C8.2, U1.PLL_AVSS]
+- name: Net-(U4-EN)
+  pins: [C17.1, R4.1, U4.EN]
+- name: QSPI_CLK
+  pins: [U1.QSPI_CLK, U2.SCK]
+- name: QSPI_CS
+  pins: [R6.1, U1.QSPI_CS, U2.S#]
+- name: QSPI_DQ0
+  pins: [U1.QSPI_DQ_0, U2.MOSI/IO0]
+- name: QSPI_DQ1
+  pins: [U1.QSPI_DQ_1, U2.MISO/IO1]
+- name: QSPI_DQ2
+  pins: [U1.QSPI_DQ_2, U2.WP#/IO2]
+- name: QSPI_DQ3
+  pins: [R5.1, U1.QSPI_DQ_3, U2.HOLD#/IO3]
+- name: VDD_CORE_EN
+  pins: [R4.2, U1.AON_PMU_OUT_0]
+positions:
+- ref: C1
+  x: 115.55
+  y: 118.6
+  rot: 90.0
+- ref: C10
+  x: 126.62
+  y: 122.53
+  rot: -90.0
+- ref: C11
+  x: 118.28
+  y: 118.6
+  rot: -90.0
+- ref: C12
+  x: 108.41
+  y: 113.1
+  rot: 180.0
+- ref: C13
+  x: 106.81
+  y: 115.7
+  rot: -90.0
+- ref: C14
+  x: 106.79
+  y: 119.96
+  rot: -90.0
+- ref: C15
+  x: 134.11
+  y: 112.9
+  rot: 180.0
+- ref: C16
+  x: 136.03
+  y: 119.57
+  rot: -90.0
+- ref: C17
+  x: 103.71
+  y: 122.43
+- ref: C2
+  x: 119.34
+  y: 123.03
+- ref: C3
+  x: 116.64
+  y: 114.32
+  rot: 90.0
+- ref: C4
+  x: 119.33
+  y: 120.85
+  rot: 180.0
+- ref: C5
+  x: 119.46
+  y: 113.83
+  rot: 180.0
+- ref: C6
+  x: 119.46
+  y: 114.92
+  rot: 180.0
+- ref: C7
+  x: 129.61
+  y: 118.34
+- ref: C8
+  x: 119.54
+  y: 118.6
+  rot: -90.0
+- ref: C9
+  x: 129.61
+  y: 117.08
+- ref: J1
+  x: 102.87
+  y: 125.73
+  rot: -90.0
+  side: back
+- ref: J2
+  x: 102.87
+  y: 110.49
+  rot: -90.0
+  side: back
+- ref: R1
+  x: 116.89
+  y: 118.62
+  rot: -90.0
+- ref: R2
+  x: 136.02
+  y: 117.47
+  rot: 90.0
+- ref: R3
+  x: 123.7
+  y: 122.55
+  rot: -90.0
+- ref: R4
+  x: 103.71
+  y: 123.44
+- ref: R5
+  x: 110.49
+  y: 113.1
+  rot: 180.0
+- ref: R6
+  x: 107.37
+  y: 122.96
+  rot: -90.0
+- ref: R7
+  x: 130.85
+  y: 114.94
+  rot: -90.0
+- ref: SW1
+  x: 133.35
+  y: 120.52
+  rot: 90.0
+- ref: U1
+  x: 124.3
+  y: 117.93
+- ref: U2
+  x: 110.87
+  y: 118.77
+  rot: 90.0
+- ref: U3
+  x: 104.14
+  y: 115.7
+- ref: U4
+  x: 104.12
+  y: 120.09
+- ref: U5
+  x: 133.32
+  y: 115.36
+- ref: Y1
+  x: 116.39
+  y: 121.77
+  rot: -90.0
+copper_pours:
+- net: +1V8
+  layers: [B.Cu]
+- net: +3V3
+  layers: [In2.Cu]
+- net: GND
+  layers: [F.Cu, In1.Cu]

@@ -1,0 +1,135 @@
+name: Soldered RS-485
+slug: soldered-rs-485
+source: SolderedElectronics/RS-485-Transceiver-breakout-hardware-design
+format: kicad7
+description: RS-485 transceiver (SN65176BDR)
+tags: [rs485]
+key_ics: [SN65176BDR]
+outline:
+  width_mm: 38.0
+  height_mm: 22.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: 10uF
+  footprint: '1206'
+  decouples: U1
+- ref: C2
+  value: 1uF
+  footprint: '0603'
+  decouples: U1
+- ref: D1
+  value: purple LED
+  footprint: '0402'
+- ref: JP1
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: JP2
+  value: solder jumper (NC)
+  footprint: SJ-2
+- ref: K1
+  value: screw terminal
+  footprint: TERMINAL_KF235-5.0-3P
+- ref: K2
+  value: 1x6 header
+  footprint: HEADER_MALE
+- ref: R1
+  value: 20kohm
+  footprint: '0603'
+  pulldown: B
+- ref: R2
+  value: 120ohm
+  footprint: '0603'
+- ref: R3
+  value: 2.2kohm
+  footprint: '0402'
+- ref: R4
+  value: 20kohm
+  footprint: '0603'
+  pullup: A
+- ref: U1
+  value: SN65176BDR
+  footprint: SOIC-8-SWB
+nets:
+- name: 5V
+  pins: [C1.2, C2.2, JP1.1, K2.5, R4.2, U1.VCC]
+- name: A
+  pins: [JP2.2, K1.3, R4.1, U1.A]
+- name: B
+  pins: [K1.1, R1.2, R2.1, U1.B]
+- name: D
+  pins: [K2.1, U1.D]
+- name: DE
+  pins: [K2.2, U1.DE]
+- name: GND
+  pins:
+  - C1.1
+  - C2.1
+  - D1.K
+  - K1.2
+  - K2.6
+  - R1.1
+  - U1.GND
+- name: Net-(D1-Pad1)
+  pins: [D1.A, R3.2]
+- name: Net-(JP1-Pad2)
+  pins: [JP1.2, R3.1]
+- name: Net-(JP2-Pad1)
+  pins: [JP2.1, R2.2]
+- name: R
+  pins: [K2.4, U1.R]
+- name: REn
+  pins: [K2.3, U1.REn]
+positions:
+- ref: C1
+  x: 114.72
+  y: 134.47
+  rot: -90.0
+- ref: C2
+  x: 112.83
+  y: 135.28
+  rot: -90.0
+- ref: D1
+  x: 105.22
+  y: 125.67
+- ref: JP1
+  x: 105.22
+  y: 128.97
+- ref: JP2
+  x: 107.72
+  y: 142.47
+  rot: 180.0
+- ref: K1
+  x: 126.83
+  y: 138.07
+- ref: K2
+  x: 98.72
+  y: 137.47
+  rot: -90.0
+  side: back
+- ref: R1
+  x: 111.22
+  y: 140.47
+- ref: R2
+  x: 110.72
+  y: 142.47
+  rot: 180.0
+- ref: R3
+  x: 105.22
+  y: 126.97
+  rot: 180.0
+- ref: R4
+  x: 107.22
+  y: 140.47
+- ref: U1
+  x: 109.22
+  y: 134.47
+  rot: -90.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]

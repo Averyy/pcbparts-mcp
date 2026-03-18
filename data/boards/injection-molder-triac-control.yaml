@@ -1,0 +1,303 @@
+name: Injection Molder Triac Control
+slug: injection-molder-triac-control
+source: Park-Hyung-Joo/automatic-molding-system
+format: kicad_legacy
+description: "AC mains triac control: MOC3021 optocoupler gate drive, triac switching \u2014 broadly applicable to thermal\
+  \ process control"
+tags: [isolation]
+key_ics: [MOC3021M]
+outline:
+  width_mm: 186.69
+  height_mm: 92.71
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: J1
+  value: 1x6 header
+  footprint: Molex_SPOX_5267-06A
+- ref: J2
+  value: 1x2 header
+  footprint: Molex_SPOX_5267-02A
+- ref: J3
+  value: 1x6 screw terminal
+  footprint: BR_762K_6pin
+- ref: J4
+  value: 1x6 screw terminal
+  footprint: BR_762K_6pin
+- ref: J5
+  value: 1x6 screw terminal
+  footprint: BR_762K_6pin
+- ref: Q1
+  value: BTA16-800BW
+  footprint: TO-220
+- ref: Q2
+  value: BTA16-800BW
+  footprint: TO-220
+- ref: Q3
+  value: BTA16-800BW
+  footprint: TO-220
+- ref: Q4
+  value: BTA16-800BW
+  footprint: TO-220
+- ref: Q5
+  value: BTA16-800BW
+  footprint: TO-220
+- ref: Q6
+  value: BTA16-800BW
+  footprint: TO-220
+- ref: R1
+  value: 100ohm
+  footprint: Axial
+- ref: R10
+  value: 100ohm
+  footprint: Axial
+- ref: R11
+  value: 200ohm
+  footprint: Axial
+- ref: R12
+  value: 200ohm
+  footprint: Axial
+- ref: R2
+  value: 100ohm
+  footprint: Axial
+- ref: R3
+  value: 100ohm
+  footprint: Axial
+- ref: R4
+  value: 100ohm
+  footprint: Axial
+- ref: R5
+  value: 200ohm
+  footprint: Axial
+- ref: R6
+  value: 200ohm
+  footprint: Axial
+- ref: R7
+  value: 200ohm
+  footprint: Axial
+- ref: R8
+  value: 200ohm
+  footprint: Axial
+- ref: R9
+  value: 100ohm
+  footprint: Axial
+- ref: U1
+  value: MOC3021M
+  footprint: DIP-6
+- ref: U2
+  value: MOC3021M
+  footprint: DIP-6
+- ref: U3
+  value: MOC3021M
+  footprint: DIP-6
+- ref: U4
+  value: MOC3021M
+  footprint: DIP-6
+- ref: U5
+  value: MOC3021M
+  footprint: DIP-6
+- ref: U6
+  value: MOC3021M
+  footprint: DIP-6
+nets:
+- name: /tr1
+  pins: [J1.1, R1.2]
+- name: /tr2
+  pins: [J1.2, R2.2]
+- name: /tr3
+  pins: [J1.3, R3.2]
+- name: /tr4
+  pins: [J1.4, R4.2]
+- name: /tr5
+  pins: [J1.5, R9.2]
+- name: /tr6
+  pins: [J1.6, R10.2]
+- name: GND
+  pins:
+  - J2.1
+  - J2.2
+  - U1.2
+  - U2.2
+  - U3.2
+  - U4.2
+  - U5.2
+  - U6.2
+- name: Net-(J3-Pad1)
+  pins: [J3.1, Q1.2, R5.1]
+- name: Net-(J3-Pad2)
+  pins: [J3.2, J3.3, Q2.2, R6.1]
+- name: Net-(J3-Pad4)
+  pins: [J3.4, J3.5, Q1.1]
+- name: Net-(J3-Pad6)
+  pins: [J3.6, Q2.1]
+- name: Net-(J4-Pad1)
+  pins: [J4.1, Q3.2, R7.1]
+- name: Net-(J4-Pad2)
+  pins: [J4.2, J4.3, Q4.2, R8.1]
+- name: Net-(J4-Pad4)
+  pins: [J4.4, J4.5, Q3.1]
+- name: Net-(J4-Pad6)
+  pins: [J4.6, Q4.1]
+- name: Net-(J5-Pad1)
+  pins: [J5.1, Q5.2, R11.1]
+- name: Net-(J5-Pad2)
+  pins: [J5.2, J5.3, Q6.2, R12.1]
+- name: Net-(J5-Pad4)
+  pins: [J5.4, J5.5, Q5.1]
+- name: Net-(J5-Pad6)
+  pins: [J5.6, Q6.1]
+- name: Net-(Q1-Pad3)
+  pins: [Q1.3, U1.4]
+- name: Net-(Q2-Pad3)
+  pins: [Q2.3, U2.4]
+- name: Net-(Q3-Pad3)
+  pins: [Q3.3, U3.4]
+- name: Net-(Q4-Pad3)
+  pins: [Q4.3, U4.4]
+- name: Net-(Q5-Pad3)
+  pins: [Q5.3, U5.4]
+- name: Net-(Q6-Pad3)
+  pins: [Q6.3, U6.4]
+- name: Net-(R1-Pad1)
+  pins: [R1.1, U1.1]
+- name: Net-(R10-Pad1)
+  pins: [R10.1, U6.1]
+- name: Net-(R11-Pad2)
+  pins: [R11.2, U5.6]
+- name: Net-(R12-Pad2)
+  pins: [R12.2, U6.6]
+- name: Net-(R2-Pad1)
+  pins: [R2.1, U2.1]
+- name: Net-(R3-Pad1)
+  pins: [R3.1, U3.1]
+- name: Net-(R4-Pad1)
+  pins: [R4.1, U4.1]
+- name: Net-(R5-Pad2)
+  pins: [R5.2, U1.6]
+- name: Net-(R6-Pad2)
+  pins: [R6.2, U2.6]
+- name: Net-(R7-Pad2)
+  pins: [R7.2, U3.6]
+- name: Net-(R8-Pad2)
+  pins: [R8.2, U4.6]
+- name: Net-(R9-Pad1)
+  pins: [R9.1, U5.1]
+positions:
+- ref: J1
+  x: 132.84
+  y: 144.02
+- ref: J2
+  x: 157.23
+  y: 144.02
+- ref: J3
+  x: 66.67
+  y: 66.07
+- ref: J4
+  x: 127.61
+  y: 65.93
+- ref: J5
+  x: 188.55
+  y: 65.93
+- ref: Q1
+  x: 70.61
+  y: 85.09
+  rot: 270.0
+- ref: Q2
+  x: 97.28
+  y: 86.36
+  rot: 270.0
+- ref: Q3
+  x: 131.52
+  y: 84.95
+  rot: 270.0
+- ref: Q4
+  x: 158.2
+  y: 86.22
+  rot: 270.0
+- ref: Q5
+  x: 192.49
+  y: 84.95
+  rot: 270.0
+- ref: Q6
+  x: 219.16
+  y: 86.22
+  rot: 270.0
+- ref: R1
+  x: 75.69
+  y: 124.46
+  rot: 270.0
+- ref: R10
+  x: 215.34
+  y: 124.36
+  rot: 270.0
+- ref: R11
+  x: 182.33
+  y: 107.81
+  rot: 270.0
+- ref: R12
+  x: 209.0
+  y: 107.81
+  rot: 270.0
+- ref: R2
+  x: 99.06
+  y: 127.0
+  rot: 270.0
+- ref: R3
+  x: 130.81
+  y: 127.0
+  rot: 270.0
+- ref: R4
+  x: 154.39
+  y: 127.0
+  rot: 270.0
+- ref: R5
+  x: 60.45
+  y: 107.95
+  rot: 270.0
+- ref: R6
+  x: 87.12
+  y: 107.95
+  rot: 270.0
+- ref: R7
+  x: 121.37
+  y: 107.81
+  rot: 270.0
+- ref: R8
+  x: 148.04
+  y: 107.81
+  rot: 270.0
+- ref: R9
+  x: 188.68
+  y: 127.0
+  rot: 270.0
+- ref: U1
+  x: 66.8
+  y: 118.11
+  rot: 90.0
+- ref: U2
+  x: 93.47
+  y: 118.11
+  rot: 90.0
+- ref: U3
+  x: 127.72
+  y: 117.97
+  rot: 90.0
+- ref: U4
+  x: 154.39
+  y: 117.97
+  rot: 90.0
+- ref: U5
+  x: 188.68
+  y: 117.97
+  rot: 90.0
+- ref: U6
+  x: 215.35
+  y: 117.97
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

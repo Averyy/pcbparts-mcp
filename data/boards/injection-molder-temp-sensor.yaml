@@ -1,0 +1,302 @@
+name: Injection Molder Temp Sensor
+slug: injection-molder-temp-sensor
+source: Park-Hyung-Joo/automatic-molding-system
+format: kicad_legacy
+description: K-type thermocouple multiplexer for multi-zone thermal process monitoring
+tags: [sensors]
+outline:
+  width_mm: 134.62
+  height_mm: 101.6
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.4mm
+components:
+- ref: C1
+  value: CP1
+  footprint: CP_Radial_D8.0mm_P5.00mm
+- ref: C2
+  value: C
+  footprint: Axial
+- ref: C3
+  value: C
+  footprint: Axial
+- ref: J1
+  value: 1x2 header
+  footprint: Molex_SPOX_5267-02A
+- ref: J10
+  value: 1x5 header
+  footprint: 1X5
+- ref: J11
+  value: 1x5 header
+  footprint: 1X5
+- ref: J12
+  value: 1x5 header
+  footprint: 1X5
+- ref: J13
+  value: 1x5 header
+  footprint: 1X5
+- ref: J14
+  value: 1x5 header
+  footprint: 1X5
+- ref: J15
+  value: 1x5 header
+  footprint: 1X5
+- ref: J16
+  value: 1x5 header
+  footprint: 1X5
+- ref: J17
+  value: 1x5 header
+  footprint: 1X5
+- ref: J18
+  value: 1x5 header
+  footprint: 1X5
+- ref: J19
+  value: 1x5 header
+  footprint: 1X5
+- ref: J2
+  value: 1x2 header
+  footprint: Molex_SPOX_5267-02A
+- ref: J20
+  value: 1x5 header
+  footprint: 1X5
+- ref: J21
+  value: 1x5 header
+  footprint: 1X5
+- ref: J22
+  value: 1x5 header
+  footprint: 1X5
+- ref: J3
+  value: 1x9 header
+  footprint: Molex_SPOX_5267-09A
+- ref: J4
+  value: 1x9 header
+  footprint: Molex_SPOX_5267-09A
+- ref: J5
+  value: 1x5 header
+  footprint: 1X5
+- ref: J6
+  value: 1x5 header
+  footprint: 1X5
+- ref: J7
+  value: 1x5 header
+  footprint: 1X5
+- ref: J8
+  value: 1x5 header
+  footprint: 1X5
+- ref: J9
+  value: 1x5 header
+  footprint: 1X5
+nets:
+- name: +3V3
+  pins:
+  - C1.1
+  - C2.1
+  - C3.1
+  - J1.1
+  - J10.2
+  - J11.2
+  - J12.2
+  - J13.2
+  - J14.2
+  - J15.2
+  - J16.2
+  - J17.2
+  - J18.2
+  - J19.2
+  - J20.2
+  - J21.2
+  - J22.2
+  - J5.2
+  - J6.2
+  - J7.2
+  - J8.2
+  - J9.2
+- name: /CS0
+  pins: [J3.1, J5.4]
+- name: /CS1
+  pins: [J3.2, J6.4]
+- name: /CS10
+  pins: [J15.4, J4.2]
+- name: /CS11
+  pins: [J16.4, J4.3]
+- name: /CS12
+  pins: [J17.4, J4.4]
+- name: /CS13
+  pins: [J18.4, J4.5]
+- name: /CS14
+  pins: [J19.4, J4.6]
+- name: /CS15
+  pins: [J20.4, J4.7]
+- name: /CS16
+  pins: [J21.4, J4.8]
+- name: /CS17
+  pins: [J22.4, J4.9]
+- name: /CS2
+  pins: [J3.3, J7.4]
+- name: /CS3
+  pins: [J3.4, J8.4]
+- name: /CS4
+  pins: [J3.5, J9.4]
+- name: /CS5
+  pins: [J10.4, J3.6]
+- name: /CS6
+  pins: [J11.4, J3.7]
+- name: /CS7
+  pins: [J12.4, J3.8]
+- name: /CS8
+  pins: [J13.4, J3.9]
+- name: /CS9
+  pins: [J14.4, J4.1]
+- name: /SCK
+  pins:
+  - J10.3
+  - J11.3
+  - J12.3
+  - J13.3
+  - J14.3
+  - J15.3
+  - J16.3
+  - J17.3
+  - J18.3
+  - J19.3
+  - J2.1
+  - J20.3
+  - J21.3
+  - J22.3
+  - J5.3
+  - J6.3
+  - J7.3
+  - J8.3
+  - J9.3
+- name: /SO
+  pins:
+  - J10.5
+  - J11.5
+  - J12.5
+  - J13.5
+  - J14.5
+  - J15.5
+  - J16.5
+  - J17.5
+  - J18.5
+  - J19.5
+  - J2.2
+  - J20.5
+  - J21.5
+  - J22.5
+  - J5.5
+  - J6.5
+  - J7.5
+  - J8.5
+  - J9.5
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.2
+  - J1.2
+  - J10.1
+  - J11.1
+  - J12.1
+  - J13.1
+  - J14.1
+  - J15.1
+  - J16.1
+  - J17.1
+  - J18.1
+  - J19.1
+  - J20.1
+  - J21.1
+  - J22.1
+  - J5.1
+  - J6.1
+  - J7.1
+  - J8.1
+  - J9.1
+positions:
+- ref: C1
+  x: 84.1
+  y: 131.34
+  rot: 180.0
+- ref: C2
+  x: 85.33
+  y: 66.77
+  rot: 180.0
+- ref: C3
+  x: 85.32
+  y: 74.27
+  rot: 180.0
+- ref: J1
+  x: 79.76
+  y: 86.66
+  rot: 270.0
+- ref: J10
+  x: 198.81
+  y: 56.62
+- ref: J11
+  x: 97.94
+  y: 95.83
+- ref: J12
+  x: 118.39
+  y: 95.83
+- ref: J13
+  x: 138.3
+  y: 95.83
+- ref: J14
+  x: 158.75
+  y: 95.81
+- ref: J15
+  x: 178.93
+  y: 95.79
+- ref: J16
+  x: 198.72
+  y: 95.79
+- ref: J17
+  x: 97.24
+  y: 131.46
+- ref: J18
+  x: 117.62
+  y: 131.54
+- ref: J19
+  x: 138.05
+  y: 131.47
+- ref: J2
+  x: 80.52
+  y: 110.24
+  rot: 270.0
+- ref: J20
+  x: 158.32
+  y: 131.52
+- ref: J21
+  x: 178.87
+  y: 131.57
+- ref: J22
+  x: 198.75
+  y: 131.55
+- ref: J3
+  x: 138.73
+  y: 82.4
+- ref: J4
+  x: 133.88
+  y: 119.71
+- ref: J5
+  x: 97.26
+  y: 56.57
+- ref: J6
+  x: 117.63
+  y: 56.52
+- ref: J7
+  x: 137.9
+  y: 56.51
+- ref: J8
+  x: 158.07
+  y: 56.61
+- ref: J9
+  x: 178.5
+  y: 56.61
+copper_pours:
+- net: GND
+  layers: [B.Cu]

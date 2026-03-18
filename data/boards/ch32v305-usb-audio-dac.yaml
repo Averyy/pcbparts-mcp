@@ -1,0 +1,796 @@
+name: CH32V305 USB Audio DAC
+slug: ch32v305-usb-audio-dac
+source: a5632645/CH32V305-UAC2
+format: kicad9
+description: CH32V305 RISC-V implementing USB Audio Class 2.0, ES9018K2M stereo DAC
+tags: [adc-dac, audio, signal-conditioning]
+key_ics: [ES9018K2M, CH32V305FBP6, ME6210A33M3G, OPA1678]
+outline:
+  width_mm: 70.0
+  height_mm: 24.6
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 12pF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C10
+  value: 10uF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C11
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C12
+  value: 10uF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C13
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+  decouples: U1
+- ref: C14
+  value: 4.7uF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C15
+  value: 4.7uF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C16
+  value: 4.7uF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C17
+  value: 2.7nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C18
+  value: 2.7nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C19
+  value: 2.7nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C2
+  value: 12pF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C20
+  value: 2.7nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C22
+  value: '?'
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C23
+  value: '?'
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C24
+  value: '?'
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C25
+  value: '?'
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C26
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C27
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C28
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+  decouples: U4
+- ref: C29
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C3
+  value: 10uF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+  decouples: U2
+- ref: C30
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+  decouples: U5
+- ref: C31
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C32
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+  decouples: U5
+- ref: C33
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C4
+  value: 10uF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+  decouples: U2
+- ref: C5
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C6
+  value: 2.2uF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C7
+  value: 10uF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C8
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: C9
+  value: 100nF
+  footprint: '0603'
+  description: Unpolarized capacitor, small symbol
+- ref: D3
+  value: Power
+  footprint: 0805
+  description: Light emitting diode, small symbol
+- ref: F1
+  value: 500mA
+  footprint: '0603'
+  description: Fuse, small symbol
+- ref: FB1
+  value: 120ohm
+  footprint: '0603'
+  description: Ferrite bead, small symbol
+- ref: FB2
+  value: 120ohm
+  footprint: '0603'
+  description: Ferrite bead, small symbol
+- ref: FB3
+  value: 120ohm
+  footprint: '0603'
+  description: Ferrite bead, small symbol
+- ref: IC1
+  value: ES9018K2M
+  footprint: QFN50P500X500X90-29N-D
+  height: '0.9'
+  manufacturer: ESS Technology
+  mpn: ES9018K2M
+  description: Digital to Analog Converters - DAC Sabre 32 Reference Stereo low power
+- ref: J1
+  value: JST SH 7-pin
+  footprint: SM07B-SRSS-TB
+  manufacturer: JST (JAPAN SOLDERLESS TERMINALS)
+  mpn: SM07B-SRSS-TB (LF)(SN)
+  description: JST SH Series, 1mm Pitch 7 Way 1 Row Right Angle PCB Header, Solder
+- ref: J3
+  value: USB-C
+  footprint: USB-C
+  description: USB 2.0-only 16P Type-C Receptacle connector
+- ref: PS1
+  value: SGM3204YN6G
+  footprint: SOT-6
+  height: '1.25'
+  manufacturer: SGMICRO
+  mpn: SGM3204YN6G/TR
+  description: EasyEDA Model Description Charge Pump Negative Adjustable 1 Up to 200mA 950kHz
+- ref: R1
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: /NRST
+- ref: R10
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R11
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R12
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R13
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R14
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R15
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: U5.+@5
+- ref: R16
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R18
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: D3.A
+- ref: R2
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: J3.CC2
+- ref: R20
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R21
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: U5.+@3
+- ref: R22
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R23
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R24
+  value: 51ohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R25
+  value: 51ohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R26
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: IC1.ADDR
+- ref: R27
+  value: 4.7kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: /SCL
+- ref: R28
+  value: 4.7kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: /SDA
+- ref: R3
+  value: 5.1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pulldown: J3.CC1
+- ref: R4
+  value: 470ohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R5
+  value: 470ohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R6
+  value: 470ohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R7
+  value: 51ohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+  pullup: PS1.EN
+- ref: R9
+  value: 1kohm
+  footprint: '0603'
+  description: Resistor, small symbol
+- ref: SW1
+  value: RST
+  footprint: SW-SMD_L4.0-W3.0-LS4.8-1
+- ref: U1
+  value: CH32V305FBP6
+  footprint: TSSOP-20
+  description: The CH32V303/5/7 is an connectivity MCUs based on 32-bit RISC-V core.
+- ref: U2
+  value: ME6210A33M3G
+  footprint: SOT-23
+- ref: U3
+  value: OPA1678
+  footprint: SOIC-8
+  description: Low-Distortion Audio Operational Amplifiers, SOIC-8/VSSOP-8
+- ref: U4
+  value: OPA1678
+  footprint: SOIC-8
+  description: Low-Distortion Audio Operational Amplifiers, SOIC-8/VSSOP-8
+- ref: U5
+  value: OPA1678
+  footprint: SOIC-8
+  description: Low-Distortion Audio Operational Amplifiers, SOIC-8/VSSOP-8
+- ref: X1
+  value: 8M
+  footprint: SMD3225
+  description: SMD Quartz crystal, 4 terminals, 3.2mm x 2.5mm, Alternate KiCad Library
+nets:
+- name: +3.3V
+  pins:
+  - C13.2
+  - C4.1
+  - FB1.1
+  - FB2.1
+  - FB3.1
+  - R1.2
+  - R18.1
+  - R27.2
+  - R28.2
+  - U1.VDD33
+  - U2.Vout
+- name: +5V
+  pins:
+  - C15.1
+  - C28.2
+  - C3.1
+  - C30.2
+  - C32.2
+  - F1.2
+  - PS1.IN
+  - R8.2
+  - U2.VIN
+  - U3.V+
+  - U4.V+
+  - U5.V+
+- name: -5V
+  pins:
+  - C16.1
+  - C29.1
+  - C31.1
+  - C33.1
+  - PS1.OUT
+  - U3.V-
+  - U4.V-
+  - U5.V-
+- name: /BCK
+  pins: [R6.1, U1.I2S2_CK]
+- name: /D+
+  pins: [J3.D+@A6, J3.D+@B6, U1.USBHS_DP]
+- name: /D-
+  pins: [J3.D-@A7, J3.D-@B7, U1.USBHS_DM]
+- name: /DACL
+  pins: [C18.1, IC1.DACL, R12.1, U3.-@6]
+- name: /DACLB
+  pins: [C17.1, IC1.DACLB, R10.1, U3.-@2]
+- name: /DACR
+  pins: [C20.1, IC1.DACR, R16.1, U4.-@6]
+- name: /DACRB
+  pins: [C19.1, IC1.DACRB, R14.1, U4.-@2]
+- name: /DIN
+  pins: [R4.1, U1.I2S2_SD]
+- name: /LRCK
+  pins: [R5.1, U1.I2S2_WS]
+- name: /NRST
+  pins: [C5.1, R1.1, SW1.1, U1.nRST]
+- name: /OSC_IN
+  pins: [C2.1, U1.OSC_IN, X1.3]
+- name: /OSC_OUT
+  pins: [C1.1, U1.OSC_OUT, X1.1]
+- name: /RESETB
+  pins: [IC1.RESETB, U1.PA1/PA5]
+- name: /SCK
+  pins: [R7.1, U1.I2S2_MCK]
+- name: /SCL
+  pins: [IC1.SCL, R27.1, U1.I2C2_SCL]
+- name: /SDA
+  pins: [IC1.SDA, R28.1, U1.I2C2_SDA]
+- name: /SWCLK
+  pins: [J1.4, U1.SWCLK]
+- name: /SWDIO
+  pins: [J1.3, U1.SWDIO]
+- name: GND
+  pins:
+  - C1.2
+  - C10.1
+  - C11.1
+  - C12.1
+  - C13.1
+  - C15.2
+  - C16.2
+  - C2.2
+  - C23.1
+  - C25.1
+  - C26.1
+  - C27.1
+  - C28.1
+  - C29.2
+  - C3.2
+  - C30.1
+  - C31.2
+  - C32.1
+  - C33.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.1
+  - C8.1
+  - C9.1
+  - D3.K
+  - IC1.AGND
+  - IC1.AGND_L
+  - IC1.AGND_R
+  - IC1.DGND_1
+  - IC1.DGND_2
+  - IC1.EP
+  - J1.5
+  - J3.GND@A1
+  - J3.GND@A12
+  - J3.GND@B1
+  - J3.GND@B12
+  - J3.SHIELD@S1
+  - PJ1.1
+  - PJ1.5
+  - PS1.GND
+  - R15.1
+  - R2.2
+  - R21.1
+  - R26.1
+  - R3.2
+  - SW1.2
+  - U1.VSS
+  - U2.GND
+  - U3.+@3
+  - U3.+@5
+  - U4.+@3
+  - U4.+@5
+  - X1.2
+  - X1.4
+- name: Net-(C17-Pad2)
+  pins: [C17.2, R10.2, R22.1, U3.1]
+- name: Net-(C18-Pad2)
+  pins: [C18.2, R12.2, R20.1, U3.7]
+- name: Net-(C19-Pad2)
+  pins: [C19.2, R11.1, R14.2, U4.1]
+- name: Net-(C20-Pad2)
+  pins: [C20.2, R13.1, R16.2, U4.7]
+- name: Net-(C22-Pad2)
+  pins: [C22.2, R23.2, R25.2, U5.1]
+- name: Net-(C24-Pad2)
+  pins: [C24.2, R24.2, R9.2, U5.7]
+- name: Net-(C26-Pad2)
+  pins: [C26.2, PJ1.2, R24.1]
+- name: Net-(C27-Pad2)
+  pins: [C27.2, PJ1.3, R25.1]
+- name: Net-(D3-A)
+  pins: [D3.A, R18.2]
+- name: Net-(F1-Pad1)
+  pins: [F1.1, J3.VBUS@A4, J3.VBUS@A9, J3.VBUS@B4, J3.VBUS@B9]
+- name: Net-(IC1-ADDR)
+  pins: [IC1.ADDR, R26.2]
+- name: Net-(IC1-AVCC_L)
+  pins: [C7.2, C8.2, FB3.2, IC1.AVCC_L, IC1.AVCC_R]
+- name: Net-(IC1-DATA1)
+  pins: [IC1.DATA1, R5.2]
+- name: Net-(IC1-DATA2)
+  pins: [IC1.DATA2, R4.2]
+- name: Net-(IC1-DATA_CLK)
+  pins: [IC1.DATA_CLK, R6.2]
+- name: Net-(IC1-DVCC)
+  pins: [C11.2, C12.2, FB1.2, IC1.DVCC]
+- name: Net-(IC1-DVDD)
+  pins: [C6.1, IC1.DVDD]
+- name: Net-(IC1-VCCA)
+  pins: [C10.2, C9.2, FB2.2, IC1.VCCA]
+- name: Net-(IC1-XI(MCLK))
+  pins: [IC1.XI(MCLK), R7.2]
+- name: Net-(J3-CC1)
+  pins: [J3.CC1, R3.1]
+- name: Net-(J3-CC2)
+  pins: [J3.CC2, R2.1]
+- name: Net-(PS1-CFLY+)
+  pins: [C14.1, PS1.CFLY+]
+- name: Net-(PS1-CFLY-)
+  pins: [C14.2, PS1.CFLY-]
+- name: Net-(PS1-EN)
+  pins: [PS1.EN, R8.1]
+- name: Net-(U5A-+)
+  pins: [C23.2, R20.2, R21.2, U5.+@3]
+- name: Net-(U5A--)
+  pins: [C22.1, R22.2, R23.1, U5.-@2]
+- name: Net-(U5B-+)
+  pins: [C25.2, R13.2, R15.2, U5.+@5]
+- name: Net-(U5B--)
+  pins: [C24.1, R11.2, R9.1, U5.-@6]
+positions:
+- ref: C1
+  x: 93.51
+  y: 34.16
+  rot: 180.0
+- ref: C10
+  x: 112.92
+  y: 23.41
+- ref: C11
+  x: 109.4
+  y: 21.92
+- ref: C12
+  x: 109.33
+  y: 23.45
+- ref: C13
+  x: 95.93
+  y: 24.91
+- ref: C14
+  x: 105.53
+  y: 38.63
+  rot: 90.0
+- ref: C15
+  x: 104.74
+  y: 36.07
+  rot: 180.0
+- ref: C16
+  x: 110.93
+  y: 38.26
+  rot: -90.0
+- ref: C17
+  x: 119.8
+  y: 22.45
+  rot: -90.0
+- ref: C18
+  x: 121.27
+  y: 25.9
+  rot: 90.0
+- ref: C19
+  x: 121.28
+  y: 33.03
+  rot: -90.0
+- ref: C2
+  x: 96.91
+  y: 34.16
+- ref: C20
+  x: 119.56
+  y: 36.48
+  rot: 90.0
+- ref: C22
+  x: 135.16
+  y: 23.71
+- ref: C23
+  x: 139.56
+  y: 28.89
+  rot: 180.0
+- ref: C24
+  x: 136.16
+  y: 36.74
+- ref: C25
+  x: 139.56
+  y: 31.92
+  rot: 180.0
+- ref: C26
+  x: 142.77
+  y: 37.8
+  rot: 90.0
+- ref: C27
+  x: 141.8
+  y: 22.8
+  rot: -90.0
+- ref: C28
+  x: 132.78
+  y: 38.36
+  rot: 180.0
+- ref: C29
+  x: 120.38
+  y: 30.48
+  rot: 180.0
+- ref: C3
+  x: 95.51
+  y: 20.39
+  rot: -90.0
+- ref: C30
+  x: 130.19
+  y: 30.62
+  rot: 90.0
+- ref: C31
+  x: 120.5
+  y: 19.91
+  rot: 180.0
+- ref: C32
+  x: 139.58
+  y: 33.43
+  rot: 180.0
+- ref: C33
+  x: 130.18
+  y: 27.14
+  rot: 90.0
+- ref: C4
+  x: 100.71
+  y: 20.51
+  rot: -90.0
+- ref: C5
+  x: 102.71
+  y: 23.03
+- ref: C6
+  x: 106.91
+  y: 26.14
+  rot: 180.0
+- ref: C7
+  x: 116.49
+  y: 21.94
+  rot: 180.0
+- ref: C8
+  x: 116.49
+  y: 23.42
+  rot: 180.0
+- ref: C9
+  x: 112.97
+  y: 21.76
+- ref: D3
+  x: 95.89
+  y: 23.19
+- ref: F1
+  x: 100.48
+  y: 37.71
+- ref: FB1
+  x: 109.28
+  y: 20.43
+- ref: FB2
+  x: 113.08
+  y: 20.15
+- ref: FB3
+  x: 116.48
+  y: 20.27
+  rot: 180.0
+- ref: IC1
+  x: 112.92
+  y: 28.98
+  rot: 90.0
+- ref: J1
+  x: 93.73
+  y: 17.58
+  rot: 180.0
+- ref: J3
+  x: 86.8
+  y: 30.32
+  rot: -90.0
+- ref: PS1
+  x: 108.28
+  y: 38.3
+  rot: -90.0
+- ref: R1
+  x: 102.78
+  y: 24.66
+- ref: R10
+  x: 121.32
+  y: 22.51
+  rot: -90.0
+- ref: R11
+  x: 132.8
+  y: 35.18
+- ref: R12
+  x: 119.67
+  y: 25.96
+  rot: 90.0
+- ref: R13
+  x: 132.82
+  y: 36.76
+- ref: R14
+  x: 119.6
+  y: 32.96
+  rot: -90.0
+- ref: R15
+  x: 139.49
+  y: 30.39
+  rot: 180.0
+- ref: R16
+  x: 121.22
+  y: 36.51
+  rot: 90.0
+- ref: R18
+  x: 99.34
+  y: 22.98
+  rot: 180.0
+- ref: R2
+  x: 89.98
+  y: 36.87
+- ref: R20
+  x: 131.62
+  y: 23.78
+- ref: R21
+  x: 139.49
+  y: 27.22
+  rot: 180.0
+- ref: R22
+  x: 131.64
+  y: 22.16
+- ref: R23
+  x: 135.24
+  y: 22.08
+- ref: R24
+  x: 139.64
+  y: 36.79
+  rot: 180.0
+- ref: R25
+  x: 138.84
+  y: 23.71
+  rot: 180.0
+- ref: R26
+  x: 106.97
+  y: 32.64
+- ref: R27
+  x: 105.26
+  y: 23.53
+  rot: 90.0
+- ref: R28
+  x: 106.77
+  y: 23.53
+  rot: 90.0
+- ref: R3
+  x: 89.98
+  y: 38.39
+- ref: R4
+  x: 107.0
+  y: 27.76
+- ref: R5
+  x: 107.0
+  y: 29.39
+- ref: R6
+  x: 107.0
+  y: 31.08
+- ref: R7
+  x: 107.0
+  y: 34.11
+- ref: R8
+  x: 103.83
+  y: 38.6
+  rot: 90.0
+- ref: R9
+  x: 136.2
+  y: 35.14
+- ref: SW1
+  x: 104.5
+  y: 19.78
+- ref: U1
+  x: 98.59
+  y: 29.18
+  rot: 180.0
+- ref: U2
+  x: 98.13
+  y: 20.23
+  rot: 90.0
+- ref: U3
+  x: 125.53
+  y: 23.62
+  rot: -90.0
+- ref: U4
+  x: 125.53
+  y: 34.98
+  rot: -90.0
+- ref: U5
+  x: 134.32
+  y: 29.52
+  rot: -90.0
+- ref: X1
+  x: 95.21
+  y: 36.66
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: ''
+  layers: [B.Cu, F.Cu]
+  keepout: true

@@ -1,0 +1,178 @@
+name: Irrigation Controller
+slug: irrigation-controller
+source: LorandBiro/irrigation-controller
+format: kicad8
+description: Z-Wave 4-zone solenoid valve irrigation controller, RAC05 AC-DC module
+outline:
+  width_mm: 56.0
+  height_mm: 65.0
+design_rules:
+  layers: 2
+  min_trace: 0.2mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 330nF
+  footprint: 0805
+- ref: D5
+  value: EVL-BHC-AN1P2
+  footprint: 0805
+- ref: D6
+  value: SD103AW
+  footprint: SOD-123
+- ref: F1
+  value: RKP-SMDB050
+  footprint: '1206'
+  description: Resettable fuse, polymeric positive temperature coefficient
+- ref: J1
+  value: 2x20 header
+  footprint: 2X20
+- ref: J2
+  value: 1x2 screw terminal
+  footprint: MX5-2P-BK
+- ref: J3
+  value: 1x2 screw terminal
+  footprint: MX5-2P-BK
+- ref: J4
+  value: 1x3 screw terminal
+  footprint: MX5-3P-BK
+- ref: J5
+  value: 1x3 screw terminal
+  footprint: MX5-3P-BK
+- ref: Q5
+  value: PMBT3904
+  footprint: TSOT-23
+  description: NPN transistor, base/emitter/collector
+- ref: Q6
+  value: SS8550-H
+  footprint: TSOT-23
+  description: PNP transistor, base/emitter/collector
+- ref: R11
+  value: 3.9kohm
+  footprint: 0805
+- ref: R12
+  value: 1.1kohm
+  footprint: 0805
+  pulldown: /SHORT
+- ref: R13
+  value: 1.1kohm
+  footprint: 0805
+- ref: R14
+  value: 3.9kohm
+  footprint: 0805
+  pullup: J3.Pin_1
+- ref: R5
+  value: 3.9kohm
+  footprint: 0805
+- ref: R6
+  value: 620ohm
+  footprint: 0805
+- ref: X1
+  value: 5V
+  footprint: STDN-3A24-ADJ
+nets:
+- name: +12V
+  pins: [J2.Pin_1, Q6.E, X1.IN]
+- name: +3V3
+  pins: [J1.3.3V@1, R14.1]
+- name: +5V
+  pins: [J1.5V@2, J1.5V@4, X1.OUT]
+- name: /C3
+  pins: [J1.GPIO23, R5.1]
+- name: /RAIN
+  pins: [J1.GPIO4, R13.1]
+- name: /SHORT
+  pins: [J1.GPIO17, R11.2, R12.1]
+- name: '/Valve #3/OUT'
+  pins: [D6.K, J5.Pin_1, Q6.C]
+- name: COM
+  pins: [D6.A, F1.1, J4.Pin_1, R11.1]
+- name: GND
+  pins:
+  - C1.2
+  - F1.2
+  - J1.GND@6
+  - J2.Pin_2
+  - J3.Pin_2
+  - Q5.E
+  - R12.2
+  - X1.GND
+- name: Net-(D5-A)
+  pins: [D5.A, R6.1]
+- name: Net-(D5-K)
+  pins: [D5.K, Q5.C]
+- name: Net-(J3-Pin_1)
+  pins: [C1.1, J3.Pin_1, R13.2, R14.2]
+- name: Net-(Q5-B)
+  pins: [Q5.B, R5.2]
+- name: Net-(Q6-B)
+  pins: [Q6.B, R6.2]
+positions:
+- ref: C1
+  x: 158.0
+  y: 116.5
+  rot: 180.0
+- ref: D5
+  x: 180.5
+  y: 110.5
+- ref: D6
+  x: 180.5
+  y: 121.45
+  rot: 90.0
+- ref: F1
+  x: 165.5
+  y: 121.5
+  rot: 180.0
+- ref: J1
+  x: 149.79
+  y: 130.6
+  side: back
+- ref: J2
+  x: 160.5
+  y: 77.8
+  rot: 180.0
+- ref: J3
+  x: 155.5
+  y: 135.5
+- ref: J4
+  x: 165.5
+  y: 135.5
+- ref: J5
+  x: 180.5
+  y: 135.5
+- ref: Q5
+  x: 180.5
+  y: 106.5
+  rot: -90.0
+- ref: Q6
+  x: 180.5
+  y: 116.5
+  rot: -90.0
+- ref: R11
+  x: 165.5
+  y: 119.0
+  rot: 180.0
+- ref: R12
+  x: 165.5
+  y: 116.5
+- ref: R13
+  x: 158.0
+  y: 119.0
+- ref: R14
+  x: 158.0
+  y: 121.5
+- ref: R5
+  x: 180.5
+  y: 102.5
+- ref: R6
+  x: 180.5
+  y: 113.0
+- ref: X1
+  x: 162.58
+  y: 90.5
+  rot: -90.0
+copper_pours:
+- net: GND
+  layers: [F&B.Cu]
