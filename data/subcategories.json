@@ -1919,6 +1919,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "1038": {
+    "name": "Transformer/Electromagnetic inducer",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "3444": {
     "name": "Transmitter",
     "category_id": 46,
@@ -3636,6 +3641,11 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3539": {
+    "name": "Mounting hammer",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
