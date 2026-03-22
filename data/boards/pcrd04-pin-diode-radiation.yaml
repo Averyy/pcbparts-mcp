@@ -2,9 +2,9 @@ name: PCRD04 PIN Diode Radiation
 slug: pcrd04-pin-diode-radiation
 source: mlab-modules/PCRD04
 format: kicad6
-description: 'Cosmic ray detector: silicon PIN diode with op-amp frontend (OP179GRT), battery-biased'
+description: 'Cosmic ray detector: silicon PIN diode with op-amp frontend (OPA2314), battery-biased'
 tags: [signal-conditioning]
-key_ics: [OP179GRT]
+key_ics: [OPA2314]
 outline:
   width_mm: 60.45
   height_mm: 40.13

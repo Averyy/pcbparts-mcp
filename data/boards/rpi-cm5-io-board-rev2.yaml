@@ -4,7 +4,7 @@ source: rpi-cm5io
 format: kicad7
 description: 'CM5 reference design: dual HDMI 2.1, M.2 PCIe Gen 3 x4, USB 3.0, USB-C PD input'
 tags: [ethernet, usb, usb-pd, video]
-key_ics: []
+key_ics: [TPD4EUSB30, RT9742]
 outline:
   width_mm: 160.0
   height_mm: 90.0

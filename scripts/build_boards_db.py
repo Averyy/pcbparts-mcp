@@ -52,14 +52,23 @@ ORG_DISPLAY_NAMES = {
 }
 
 # Patterns to exclude from all_ics (passive values, power symbols, etc.)
+# NOTE: this matches against component VALUES on U/IC refs only.
+# Be careful not to filter real ICs: TPS/TPD/TPA (TI), NCP/NCV (ON Semi),
+# 74xx logic, 24xx/93xx EEPROMs, TP4056 (charger) etc.
 _PASSIVE_RE = re.compile(
     r"^("
-    r"\d|"                     # starts with digit (resistor/cap/inductor values)
-    r"GND|VCC|VDD|V\d|NC|DNP|NM|"
-    r"MOUNT|FIDUCIAL|TP|"
+    r"GND|VCC|VDD|V\d|NC\b|DNP|NM\b|"
+    r"MOUNT|FIDUCIAL|"
     r"LED|DIODE|FUSE|"
     r"[A-Z]?CONN|HEADER|"
-    r"TEST"
+    r"TEST|"
+    r"\d+\.?\d*\s*V\b|"          # voltage labels: 3.3V, 2.5V LDO
+    r"\d+V\d|"                    # voltage reg names: 1V8, 3V3, 2V5
+    r"\d+\.?\d*\s*mm\b|"          # physical sizes: 3.5mm audio jack
+    r"\d+x\d+|"                   # header sizes: 1x4, 2x10
+    r"\d+\.?\d*\s*[kMG]?B\b|"     # memory sizes: 8MB, 128KB
+    r"\d+\.?\d*\s*[mkM]?Hz\b|"    # frequencies: 16MHz, 25MHz
+    r"\d+\s"                      # digit then space: "8 megabytes"
     r")",
     re.IGNORECASE,
 )

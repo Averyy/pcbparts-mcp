@@ -2,9 +2,9 @@ name: Weather Station
 slug: weather-station
 source: Invactive/Weather-station
 format: kicad6
-description: 'LoRaWAN weather station: temperature/pressure (BMP280), humidity (SHT40)'
+description: 'LoRaWAN weather station: humidity (HIH6020), temperature (TMP36), light (BH1750)'
 tags: [lora, pressure-sensor, sensors]
-key_ics: [BMP280, SHT40, OPT3001, STM32]
+key_ics: [HIH6020, TMP36, BH1750, STM32F301]
 outline:
   width_mm: 90.0
   height_mm: 32.0

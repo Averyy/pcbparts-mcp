@@ -2,9 +2,9 @@ name: Soldered BQ27441 Fuel Gauge
 slug: soldered-bq27441-fuel-gauge
 source: SolderedElectronics/Fuel-gauge-BQ27441-breakout-hardware-design
 format: kicad7
-description: "Coulomb-counting fuel gauge (BQ27441) \u2014 different from voltage-based MAX17048"
+description: Coulomb-counting fuel gauge (BQ27441DRZR)
 tags: [battery-management]
-key_ics: [BQ27441, MAX17048]
+key_ics: [BQ27441]
 outline:
   width_mm: 38.0
   height_mm: 22.0

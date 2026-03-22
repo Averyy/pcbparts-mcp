@@ -4,7 +4,7 @@ source: victorhook/asac-fc
 format: kicad7
 description: 'RP2040 flight controller: BMI270 IMU (SPI), USB-C'
 tags: [drone-uav, motor-control, sensors]
-key_ics: [DShot, RP2040, STM32, BMI270]
+key_ics: [RP2040, BMI270]
 outline:
   width_mm: 36.0
   height_mm: 43.0

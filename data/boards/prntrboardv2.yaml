@@ -4,7 +4,7 @@ source: ghent360/PrntrBoardV2
 format: kicad6
 description: 'Modern 32-bit 3D printer controller: STM32F407VETx, 6x replaceable StepStick sockets (TMC2660/TMC2209/TMC2130)'
 tags: [3d-printer, level-shifting, motor-control]
-key_ics: [ATMEGA2560, FT232RL]
+key_ics: [STM32F407VETx]
 outline:
   width_mm: 148.72
   height_mm: 104.27

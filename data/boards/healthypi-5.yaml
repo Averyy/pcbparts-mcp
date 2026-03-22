@@ -4,7 +4,7 @@ source: Protocentral/protocentral_healthypi_5
 format: eagle
 description: 'Multi-AFE vital signs monitor: MAX30001 ECG, AFE4400 PPG/SpO2'
 tags: [battery-charging, battery-management, sensors]
-key_ics: [ESP32-C3, RP2040, MAX30001, MAX30205, MAX17048, MCP73831]
+key_ics: [ESP32-C3, RP2040, MAX30001, MAX30205, MAX17048, MCP73831, AFE4400]
 outline:
   width_mm: 75.5
   height_mm: 56.0

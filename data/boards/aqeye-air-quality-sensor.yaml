@@ -3,7 +3,7 @@ slug: aqeye-air-quality-sensor
 source: CIRCUITSTATE/AQEYE-SB-D1
 format: kicad9
 description: 'Indoor air quality monitor: VOC (SGP40), particulate matter (PM2.5)'
-key_ics: [SGP40, PM2.5]
+key_ics: [SGP40]
 outline:
   width_mm: 80.0
   height_mm: 30.0

@@ -2,9 +2,9 @@ name: Olimex ESP32-S2-DevKit-LiPo
 slug: olimex-esp32-s2-devkit-lipo
 source: OLIMEX/ESP32-S2-DevKit-LiPo
 format: kicad_legacy
-description: ESP32-S2 native USB, MCP73831 LiPo charger
+description: ESP32-S2 native USB, BL4054B LiPo charger
 tags: [battery-charging, led-driver]
-key_ics: [ESP32-S2, MCP73831]
+key_ics: [ESP32-S2, BL4054B]
 outline:
   width_mm: 27.94
   height_mm: 53.34

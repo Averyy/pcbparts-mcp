@@ -4,7 +4,7 @@ source: EnnoidMe/ENNOID-BMS
 format: kicad_legacy
 description: 'High-voltage modular BMS (48-400V, 500A): STM32F303'
 tags: [battery-management, isolation, power-supply]
-key_ics: [STM32F303, BQ76200, LM5165]
+key_ics: [STM32F303, LM5165]
 components:
 - ref: BZ1
   value: AI-1027-TWT-5V

@@ -2,9 +2,9 @@ name: candleLight USB-CAN
 slug: candlelight-usb-can
 source: HubertD/candleLight
 format: kicad_legacy
-description: Native CAN (STM32F072 built-in CAN peripheral + MCP2551 transceiver), USB device-class CAN adapter
+description: Native CAN (STM32F072 built-in CAN peripheral + TJA1051 transceiver), USB device-class CAN adapter
 tags: [can-bus]
-key_ics: [STM32F072, MCP2551]
+key_ics: [STM32F072, TJA1051]
 outline:
   width_mm: 37.7
   height_mm: 20.0

@@ -48,7 +48,7 @@ GOLDEN_QUERIES: list[GoldenQuery] = [
         description="Exact battery charger IC — common, should find all boards using it",
         component="MCP73831",
         must_include=["adafruit-esp32-s3-feather", "blues-notecarrier-b",
-                       "olimex-esp32-s2-devkit-lipo", "esp32-c3-devkit-rust-1"],
+                       "esp32-c3-devkit-rust-1"],
         expected_total_range=(15, 25),
     ),
     GoldenQuery(

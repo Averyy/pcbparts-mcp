@@ -3,7 +3,7 @@ slug: ch32v203-pro-micro
 source: 74th/ch32v-dev-boards
 format: kicad8
 description: CH32V203C8T6 in Arduino Pro Micro footprint, AMS1117-3.3
-key_ics: [ATmega32U4]
+key_ics: [CH32V203C8T6]
 outline:
   width_mm: 17.76
   height_mm: 33.0

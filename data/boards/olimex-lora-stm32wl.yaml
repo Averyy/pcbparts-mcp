@@ -2,9 +2,9 @@ name: Olimex LoRa-STM32WL
 slug: olimex-lora-stm32wl
 source: OLIMEX/LoRa-STM32WL-DevKIT
 format: kicad_legacy
-description: Integrated LoRa SoC (STM32WL), magnetometer (IIS2MDCTR)
+description: STM32L052K8U3 MCU, magnetometer (IIS2MDCTR), BME280/AHT20 sensors
 tags: [lora]
-key_ics: [STM32WL, IIS2MDCTR]
+key_ics: [STM32L052K8U3, IIS2MDCTR]
 outline:
   width_mm: 58.42
   height_mm: 55.88
