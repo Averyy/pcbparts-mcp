@@ -15,7 +15,8 @@ RUN pip install --no-cache-dir \
     "httpx>=0.27.0" \
     "uvicorn[standard]" \
     "starlette" \
-    "pydantic>=2.0"
+    "pydantic>=2.0" \
+    "pyyaml"
 
 # Copy application code (preserve src/ structure for path resolution)
 COPY src/ /app/src/
@@ -44,6 +45,11 @@ RUN python scripts/build_history_db.py --data-dir /app/data --output /app/data/s
 COPY data/sensors/ /app/data/sensors/
 COPY scripts/build_sensor_db.py /app/scripts/
 RUN python scripts/build_sensor_db.py --data-dir /app/data --output /app/data/sensor.db --quiet
+
+# Build boards database from parsed OSHW YAML schematics
+COPY data/boards/ /app/data/boards/
+COPY scripts/build_boards_db.py /app/scripts/
+RUN python scripts/build_boards_db.py --data-dir /app/data --output /app/data/boards.db --quiet
 
 # Copy design rules (served markdown only, not raw sources)
 COPY data/design-rules/rules/ /app/data/design-rules/rules/

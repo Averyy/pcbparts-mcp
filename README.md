@@ -14,8 +14,9 @@ MCP server for searching electronic components across JLCPCB, Mouser, and DigiKe
 - **Pinout data:** Component pin information from EasyEDA symbols
 - **MPN lookup:** Find JLCPCB equivalents by manufacturer part number
 - **Sensor recommendation:** Find sensor ICs by what they measure, protocol, or platform (1,500+ sensors, 56 measure types)
+- **Reference boards:** Search ~285 OSHW board schematics, IC neighborhoods, cross-board consensus for design patterns
 - **Design rules:** 41 curated PCB design reference files covering power, protection, interfaces, MCUs, layout, and EMC
-- **12 MCP tools** across 6 data sources
+- **14 MCP tools** across 7 data sources
 - No API key required for JLCPCB (Mouser/DigiKey optional)
 
 ## Quick Start
@@ -127,6 +128,13 @@ Add to Extensions config:
 |------|-------------|
 | `sensor_recommend` | Find sensor ICs/modules by measurement need, protocol, or platform (1,500+ sensors, 56 measure types) |
 
+### Reference Boards (no key required)
+
+| Tool | Description |
+|------|-------------|
+| `board_search` | Search ~285 OSHW reference board schematics by IC, tag, org, or free text. Cross-board consensus shows how ICs are typically used. |
+| `board_get` | Get full board details — BOM, design rules, dimensions. Use `focus` param for pin-grouped IC neighborhoods (decoupling, bias, connections). |
+
 ### Design Rules (no key required)
 
 | Tool | Description |
@@ -220,6 +228,9 @@ Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diode
 "Get KiCad footprint for ESP32-S3-WROOM-1"
 "What sensor should I use to measure CO2 on ESPHome?"
 "Recommend an IMU sensor with I2C interface"
+"Show me boards that use the MCP73831 charger"
+"How is the RP2040 typically used? What decoupling and crystal do real boards use?"
+"Get the ESP32-S3 neighborhood on the Adafruit Feather"
 "What are the design rules for USB-C?"
 "Show me LDO design best practices"
 ```

@@ -27,6 +27,7 @@ from .digikey import DigiKeyClient
 from .cse import CSEClient
 from .db import get_db, close_db
 from .sensor_db import get_sensor_db, close_sensor_db
+from .boards_db import get_boards_db, close_boards_db
 from .search import SpecFilter
 from .smart_parser import parse_smart_query, merge_spec_filters
 from .pinout import parse_easyeda_pins
@@ -68,6 +69,15 @@ async def lifespan(app):
     except Exception as e:
         logger.warning(f"Sensor database not available: {e}")
 
+    # Initialize boards database (non-fatal if unavailable)
+    try:
+        boards_db = get_boards_db()
+        boards_db._ensure_db()
+        boards_stats = boards_db.get_stats()
+        logger.info(f"Boards database: {boards_stats.get('total_boards', 0)} boards")
+    except Exception as e:
+        logger.warning(f"Boards database not available: {e}")
+
     # Validate design rules directory (non-fatal if unavailable)
     if _RULES_DIR.is_dir():
         from . import design_rules
@@ -104,12 +114,13 @@ async def lifespan(app):
         await _client.close()
     close_db()
     close_sensor_db()
+    close_boards_db()
 
 
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB parts component search for PCB assembly. No auth required. Use jlc_search (local DB) as the primary search tool — it's fast, free, and supports parametric filters. Only use jlc_stock_check for real-time stock verification or out-of-stock parts. Use mouser_get_part/digikey_get_part only to cross-reference a specific MPN (daily quota applies). Use sensor_recommend to find sensor ICs/modules by what they measure, protocol, or platform. It answers \"what sensor should I use?\" — not for buying parts (use jlc_search for that). Use get_design_rules for PCB design best practices and reference material (power, protection, interfaces, MCUs, layout, EMC, etc.).",
+    instructions="PCB design assistant — component search, reference boards, sensor recommendation, and design rules. No auth required. Use jlc_search (local DB) as the primary search tool — it's fast, free, and supports parametric filters. Only use jlc_stock_check for real-time stock verification or out-of-stock parts. Use mouser_get_part/digikey_get_part only to cross-reference a specific MPN (daily quota applies). Use sensor_recommend to find sensor ICs/modules by what they measure, protocol, or platform — not for buying parts (use jlc_search for that). Use board_search to find reference board schematics by IC, tag, or text. Use board_get with focus param to see how a specific IC is used (pin-grouped neighborhood). Use get_design_rules for PCB design best practices (power, protection, interfaces, MCUs, layout, EMC).",
     lifespan=lifespan,
 )
 
@@ -1079,6 +1090,178 @@ async def get_design_rules(topic: str = "") -> dict:
         get_design_rules("") → Full index of all available rule files
     """
     return _get_design_rules(topic)
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Search Reference Boards",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=False,
+    )
+)
+async def board_search(
+    query: str | None = None,
+    component: str | None = None,
+    tag: str | list[str] | None = None,
+    org: str | None = None,
+    layers: int | None = None,
+    limit: int = 10,
+) -> dict:
+    """Search ~285 open-source hardware reference board schematics. Find real-world circuit designs
+    to learn from — see how ICs are connected, what passives surround them, decoupling strategy,
+    pull-up/pull-down networks, power topology, and net connectivity.
+
+    NOT for buying parts — use jlc_search. NOT for sensors — use sensor_recommend.
+    This answers: "Show me boards that use X" or "How do real designs handle Y?"
+
+    Two-step workflow: board_search → board_get.
+    1. Search here to find relevant boards
+    2. Use board_get(slug=..., focus="IC_NAME") to see that IC's pin-by-pin neighborhood
+
+    Choosing params:
+    - Use component= when you know the IC name (e.g., "MCP73831", "STM32F405", "ESP32-S3").
+      This is the most precise — it searches the actual BOM. When 2+ boards share the IC,
+      a cross-board consensus is auto-included (aggregated decoupling values, pin connections).
+    - Use query= for functional/conceptual searches (e.g., "motor driver", "battery charger",
+      "USB power delivery", "flight controller"). Searches name, description, key_coverage, ICs.
+    - Use tag= for category browsing. Combine with query= or component= to narrow.
+    - Combine filters: component="STM32" + tag="motor-control" finds STM32 motor boards.
+
+    Args:
+        query: Free-text search across name, description, key coverage, ICs, tags, org.
+            Examples: "ESP32 battery", "USB power delivery", "motor driver", "Adafruit".
+        component: Find boards using a specific IC or part (e.g., "DRV8825", "TMC2209", "STM32F4",
+            "MAX17048", "MCP73831"). Searches key ICs first, then all U/IC component values.
+            Auto-includes cross-board consensus when 2+ boards match.
+        tag: Filter by tag. Single string or list for AND.
+            Available: power-supply, sensors, motor-control, adc-dac, audio, rf-sdr, isolation,
+            battery-charging, can-bus, display, inverter, led-driver, level-shifting,
+            signal-conditioning, usb, battery-management, drone-uav, bluetooth, fpga, ethernet, lora.
+        org: Filter by organization: "Adafruit", "SparkFun", "Olimex", "Seeed Studio", etc.
+        layers: Filter by PCB layer count (2, 4, 6).
+        limit: Max results (default 10, max 50).
+
+    Returns:
+        Boards sorted by relevance (BM25 for text queries) then component count.
+        Each result includes: slug, name, org, source, source_url, format, description,
+        key_coverage (rich functional summary), tags, key_ics, layers, dimensions, component_count,
+        matched_by (why this result appeared: key IC, component, text match, tag, etc.).
+        When searching by component with 2+ results, includes cross-board consensus.
+        When browsing by tag only (no query= or component=), includes tag_consensus showing
+        what ICs boards in that category commonly use with board counts and percentages.
+        Use board_get with the slug + focus for IC-specific pin neighborhood.
+    """
+    # Handle JSON-string tag param from some MCP clients
+    if isinstance(tag, str):
+        try:
+            parsed = json.loads(tag)
+            if isinstance(parsed, list):
+                tag = parsed
+        except json.JSONDecodeError:
+            pass
+
+    # Validate tag list items
+    if isinstance(tag, list):
+        tag = [t for t in tag if isinstance(t, str) and len(t) <= 200][:10]
+
+    if query and len(query) > 500:
+        return {"error": "Query too long (max 500 characters)", "results": [], "total": 0}
+    if component and len(component) > 200:
+        return {"error": "Component too long (max 200 characters)", "results": [], "total": 0}
+    if org and len(org) > 200:
+        return {"error": "Org too long (max 200 characters)", "results": [], "total": 0}
+
+    try:
+        boards_db = get_boards_db()
+        result = boards_db.search(
+            query=query,
+            component=component,
+            tag=tag,
+            org=org,
+            layers=layers,
+            limit=max(1, min(limit, 50)),
+        )
+
+        # Add cross-board consensus when searching by component and multiple boards match
+        if component and result.get("total", 0) >= 2:
+            consensus = boards_db.get_consensus(component)
+            if consensus:
+                result["consensus"] = consensus
+
+        # Add tag consensus for tag-only queries (no query=, no component=)
+        if tag and not query and not component:
+            tag_str = tag if isinstance(tag, str) else (tag[0] if len(tag) == 1 else None)
+            if tag_str:
+                tag_consensus = boards_db.get_tag_consensus(tag_str)
+                if tag_consensus:
+                    result["tag_consensus"] = tag_consensus
+
+        return result
+    except Exception as e:
+        logger.error(f"Board search failed: {type(e).__name__}: {e}")
+        return {"error": "Board search failed", "results": [], "total": 0}
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Get Reference Board",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=False,
+    )
+)
+async def board_get(
+    slug: str,
+    focus: str | None = None,
+    include_bom: bool = False,
+    include_nets: bool = False,
+) -> dict:
+    """Get details of a reference board by slug. Use board_search first to find boards.
+
+    When focus is used, cross-board consensus is auto-included if 2+ boards share the IC.
+    This means a single board_get(slug=..., focus="MCP73831") gives you:
+    - This board's pin neighborhood for MCP73831
+    - How other boards wire MCP73831 (consensus decoupling values, common pin connections)
+
+    Args:
+        slug: Board slug from board_search results (e.g., "adafruit-esp32-s3-feather", "crazyflie").
+        focus: Focus on a specific IC — returns only that IC's pin-grouped neighborhood instead
+            of the component list. Accepts IC name (e.g., "MCP73831", "ESP32-S3") or ref
+            (e.g., "U3"). Shows what's connected to each pin: decoupling caps, pull-up/down
+            resistors, bias networks, filter components, and connected ICs.
+            Partial match works (e.g., "ESP32" matches "ESP32-S3").
+        include_bom: If True, include every component including plain passives (R/C/L).
+            Default False — returns only ICs, connectors, and annotated passives
+            (decouples/pullup/pulldown). Omitted passives count shown in passives_omitted.
+        include_nets: If True, include full netlist, component positions, and copper pours.
+            Warning: can be very large (100KB+) for complex boards. Default False.
+
+    Returns:
+        Default: ICs + connectors + annotated passives + neighborhood summary (ref/value per IC).
+        With focus: focused IC's pin-grouped neighborhood + cross-board consensus +
+            focus_match_type ("exact", "partial", or "ref") indicating how the focus was matched.
+        With include_bom: adds all plain passives to component list.
+        With include_nets: adds nets (name + pin list), positions (x/y/rotation), copper pours.
+    """
+    if not slug or len(slug) > 200:
+        return {"error": "Invalid slug"}
+    if focus and len(focus) > 200:
+        return {"error": "Focus too long (max 200 characters)"}
+
+    try:
+        boards_db = get_boards_db()
+        result = boards_db.get_board(slug, include_raw=include_nets, include_bom=include_bom, focus=focus)
+
+        if result is None:
+            return {"error": f"Board '{slug[:50]}' not found"}
+
+        return result
+    except Exception as e:
+        logger.error(f"Board get failed: {type(e).__name__}: {e}")
+        return {"error": "Board retrieval failed"}
 
 
 # Health check endpoint

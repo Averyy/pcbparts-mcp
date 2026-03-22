@@ -69,6 +69,8 @@
             "KiCad symbol and footprint downloads via SamacSys",
             "MPN lookup across distributors",
             "Sensor IC recommendation across 1500+ sensors and 56 measure types",
+            "Reference board schematics: ~285 OSHW boards with IC neighborhoods and cross-board consensus",
+            "PCB design rules: 41 curated reference files for power, protection, interfaces, MCUs, layout, EMC",
             "No API key required"
         ],
         "sameAs": [
@@ -1910,6 +1912,8 @@
       <span class="str">"mcp__pcbparts__cse_search"</span>,
       <span class="str">"mcp__pcbparts__cse_get_kicad"</span>,
       <span class="str">"mcp__pcbparts__sensor_recommend"</span>,
+      <span class="str">"mcp__pcbparts__board_search"</span>,
+      <span class="str">"mcp__pcbparts__board_get"</span>,
       <span class="str">"mcp__pcbparts__get_design_rules"</span>
     ]
   }
@@ -2030,14 +2034,14 @@
             <div class="container">
                 <div class="section-header">
                     <h2 data-text="Tools">Tools</h2>
-                    <p>Search parts across JLCPCB, Mouser, and DigiKey with 12 MCP tools. Compare stock and pricing, find alternatives, recommend sensors, and download KiCad footprints.</p>
+                    <p>Search parts across JLCPCB, Mouser, and DigiKey with 14 MCP tools. Compare stock and pricing, find alternatives, recommend sensors, and download KiCad footprints.</p>
                 </div>
 
                 <div class="bento-grid">
                     <div class="bento-left">
                         <div class="bento-card bento-large" data-ref="U1">
                             <span class="card-icon">🛠️</span>
-                            <h3>12 MCP Tools</h3>
+                            <h3>14 MCP Tools</h3>
                             <div class="tools-list">
                                 <div class="tool-item"><code>jlc_search</code> <span>Parametric search with spec filters</span></div>
                                 <div class="tool-item"><code>jlc_stock_check</code> <span>Real-time stock verification</span></div>
@@ -2046,6 +2050,8 @@
                                 <div class="tool-item"><code>jlc_find_alternatives</code> <span>Spec-compatible alternative parts</span></div>
                                 <div class="tool-item"><code>jlc_search_help</code> <span>Browse categories & filterable specs</span></div>
                                 <div class="tool-item"><code>sensor_recommend</code> <span>Sensor ICs by measure, protocol, platform</span></div>
+                                <div class="tool-item"><code>board_search</code> <span>Search ~285 OSHW reference schematics</span></div>
+                                <div class="tool-item"><code>board_get</code> <span>Board BOM, neighborhoods, design rules</span></div>
                                 <div class="tool-item"><code>mouser_get_part</code> <span>Cross-reference MPN on Mouser</span></div>
                                 <div class="tool-item"><code>digikey_get_part</code> <span>Cross-reference MPN on DigiKey</span></div>
                                 <div class="tool-item"><code>cse_search</code> <span>ECAD models and datasheets</span></div>
