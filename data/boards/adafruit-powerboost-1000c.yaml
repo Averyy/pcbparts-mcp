@@ -2,7 +2,7 @@ name: Adafruit PowerBoost 1000C
 slug: adafruit-powerboost-1000c
 source: adafruit/Adafruit-PowerBoost-1000C
 format: eagle
-description: TPS61090 boost converter, MCP73831 charger
+description: TPS61090 boost converter, MCP73871 charger
 tags: [battery-charging, power-supply]
 key_ics: [MCP73871, TPS61090]
 outline:

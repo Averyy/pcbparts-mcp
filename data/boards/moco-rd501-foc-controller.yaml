@@ -2,9 +2,9 @@ name: moco-rd501 FOC Controller
 slug: moco-rd501-foc-controller
 source: ziteh/moco
 format: kicad7
-description: 'PMSM/BLDC FOC controller: DRV8316 gate driver, STM32-based'
+description: 'PMSM/BLDC FOC controller: DRV8301 gate driver, STM32G431-based'
 tags: [can-bus, inverter, motor-control]
-key_ics: [STM32, DRV8316]
+key_ics: [STM32G431CBT6, DRV8301]
 outline:
   width_mm: 50.0
   height_mm: 50.0

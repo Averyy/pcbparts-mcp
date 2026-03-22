@@ -2,9 +2,9 @@ name: Cynthion
 slug: cynthion
 source: greatscottgadgets/cynthion-hardware
 format: kicad7
-description: USB 2.0 HS PHY (TUSB1310A), Lattice FPGA (LFE5U-12F)
+description: USB 2.0 HS PHY (USB3343-CP), Lattice FPGA (LFE5U-12F)
 tags: [fpga]
-key_ics: [TUSB1310A, LFE5U-12F]
+key_ics: [USB3343-CP, LFE5U-12F]
 outline:
   width_mm: 56.0
   height_mm: 56.0

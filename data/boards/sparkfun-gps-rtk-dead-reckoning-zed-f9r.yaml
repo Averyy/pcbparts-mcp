@@ -4,6 +4,7 @@ source: sparkfun/SparkFun_GPS_Dead_Reckoning_ZED-F9R
 format: eagle
 description: u-blox ZED-F9R multi-band L1/L2 RTK GNSS with internal 3D IMU for dead reckoning, 30Hz sensor fusion
 tags: [gps-gnss, sensors]
+key_ics: [ZED-F9R]
 outline:
   width_mm: 43.18
   height_mm: 50.8

@@ -4,7 +4,7 @@ source: antmicro/cm4-baseboard-lvds-adapter
 format: kicad9
 description: MIPI DSI to dual-channel LVDS display bridge (SN65DSI84), level shifting
 tags: [level-shifting, power-supply, video]
-key_ics: [SN65DSI84, TPS61176]
+key_ics: [SN65DSI84, TPS65150]
 outline:
   width_mm: 52.0
   height_mm: 43.0

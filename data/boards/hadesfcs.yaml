@@ -4,7 +4,7 @@ source: pms67/HadesFCS
 format: kicad_legacy
 description: 'Drone flight controller: STM32H753 + STM32F405 dual MCU, BMI088 IMU'
 tags: [current-sensing, drone-uav, pwm-servo, sensors]
-key_ics: [STM32H753, STM32F405, INA219, BMP388, BMI088, PCA9685]
+key_ics: [STM32H753, STM32F405, INA219, BMI088, MPRLS0025, PCA9685]
 outline:
   width_mm: 100.08
   height_mm: 60.2

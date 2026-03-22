@@ -2,9 +2,9 @@ name: Corevus-G v0.6
 slug: corevus-g-v0-6
 source: calithameridi/corevus
 format: kicad7
-description: 'High-performance 3D printer mainboard: STM32H723 (Cortex-M7, 550MHz)'
+description: 'High-performance 3D printer mainboard: STM32F407ZETx, TMC2160/TMC2209 stepper drivers'
 tags: [3d-printer, can-bus, motor-control]
-key_ics: [STM32H723, TMC2160, TMC2209]
+key_ics: [STM32F407ZETx, TMC2160, TMC2209]
 outline:
   width_mm: 135.0
   height_mm: 75.0

@@ -4,7 +4,7 @@ source: rpi-cm4io
 format: kicad7
 description: 'CM4 reference design: dual HDMI 2.0, PCIe Gen 2 x1, Gigabit Ethernet + PoE'
 tags: [ethernet, usb, video]
-key_ics: []
+key_ics: [TPD4EUSB30, EMC2301, RT9742]
 outline:
   width_mm: 160.0
   height_mm: 90.0

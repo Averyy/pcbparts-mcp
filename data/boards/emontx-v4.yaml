@@ -2,9 +2,9 @@ name: emonTx v4
 slug: emontx-v4
 source: openenergymonitor/emontx4
 format: eagle
-description: AVR128DB48 direct-ADC energy monitoring (no metering IC), RFM69CW 433MHz radio
+description: AVR128DB48 direct-ADC energy monitoring (no metering IC), RFM12B 433MHz radio
 tags: [adc-dac, energy-monitoring, sub-ghz]
-key_ics: [RFM69CW]
+key_ics: [RFM12B]
 outline:
   width_mm: 99.9
   height_mm: 64.91

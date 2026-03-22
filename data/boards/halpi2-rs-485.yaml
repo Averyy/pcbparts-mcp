@@ -2,9 +2,9 @@ name: HALPI2 RS-485
 slug: halpi2-rs-485
 source: hatlabs/HALPI2-hardware
 format: kicad9
-description: 'Isolated RS-485: ISO7741 digital isolator + isolated DC-DC (IB0303S), SP3485EN transceiver'
+description: 'Isolated RS-485: ISO7741 digital isolator + isolated DC-DC (B0505S), SP3485EN transceiver'
 tags: [isolation, power-supply, rs485]
-key_ics: [IB0303S]
+key_ics: [B0505S]
 components:
 - ref: C154
   value: 4.7uF

@@ -4,7 +4,7 @@ source: CoolNamesAllTaken/adsbee
 format: kicad8
 description: 'Complete 1090MHz ADS-B RF frontend: SAW-6 bandpass filter, BGA2818 wideband LNA'
 tags: [rf-sdr]
-key_ics: [SE4150L, MAX2112]
+key_ics: [BGA2818]
 outline:
   width_mm: 44.0
   height_mm: 28.0

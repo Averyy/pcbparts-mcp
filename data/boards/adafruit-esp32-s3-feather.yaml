@@ -2,7 +2,7 @@ name: Adafruit ESP32-S3 Feather
 slug: adafruit-esp32-s3-feather
 source: adafruit/Adafruit-Feather-ESP32-S3-PCB
 format: eagle
-description: ESP32-S3-MINI-1, MAX17048 fuel gauge
+description: ESP32-S3-MINI-1, LC709203F fuel gauge
 tags: [battery-charging, battery-management, led-driver]
 key_ics: [ESP32-S3-MINI-1, LC709203F, MCP73831]
 outline:

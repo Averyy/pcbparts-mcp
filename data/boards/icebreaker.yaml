@@ -2,9 +2,9 @@ name: iCEBreaker
 slug: icebreaker
 source: icebreaker-fpga/icebreaker
 format: kicad7
-description: iCE40UP5K FPGA (open toolchain), FT2232H programming
+description: ICE5LP4K FPGA (open toolchain), FT2232H programming
 tags: [fpga, usb]
-key_ics: [iCE40UP5K, FT2232H]
+key_ics: [ICE5LP4K, FT2232H]
 outline:
   width_mm: 73.0
   height_mm: 37.0

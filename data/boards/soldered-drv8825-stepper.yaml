@@ -4,7 +4,7 @@ source: SolderedElectronics/Stepper-motor-driver-DRV8825-board-hardware-design
 format: kicad7
 description: 32-microstep stepper driver (DRV8825), current limiting
 tags: [3d-printer, motor-control]
-key_ics: [DRV8825, A4988]
+key_ics: [DRV8825]
 outline:
   width_mm: 38.0
   height_mm: 22.0

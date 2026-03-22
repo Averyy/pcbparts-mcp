@@ -2,9 +2,9 @@ name: Olimex ESP32-EVB
 slug: olimex-esp32-evb
 source: OLIMEX/ESP32-EVB
 format: kicad7
-description: CAN 2.0 (MCP2562), IR receiver/transmitter (VS1838B)
+description: CAN 2.0 (SIT1050T), IR receiver/transmitter (VS1838B)
 tags: [ham-radio]
-key_ics: [MCP2562, VS1838B]
+key_ics: [SIT1050T, VS1838B]
 outline:
   width_mm: 75.18
   height_mm: 74.68

@@ -2,7 +2,7 @@ name: ProtoCentral OpenOx
 slug: protocentral-openox
 source: Protocentral/protocentral_openox
 format: eagle
-description: Wireless pulse oximeter (AFE4490 SpO2 analog frontend), Nellcor probe compatible
+description: Wireless pulse oximeter (AFE4400 SpO2 analog frontend), Nellcor probe compatible
 tags: [bluetooth]
 key_ics: [ESP32]
 outline:

@@ -4,6 +4,7 @@ source: AnaviTechnology/anavi-fume-extractor
 format: kicad_legacy
 description: ESP8266, relay-controlled fan
 tags: [relay, sensors, wifi]
+key_ics: [ESP8266]
 outline:
   width_mm: 74.93
   height_mm: 40.64

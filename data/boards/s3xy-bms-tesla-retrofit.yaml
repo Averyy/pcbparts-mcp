@@ -2,9 +2,9 @@ name: S3XY-BMS Tesla Retrofit
 slug: s3xy-bms-tesla-retrofit
 source: clowrey/S3XY-BMS-PCB
 format: kicad8
-description: 'Tesla Model 3/Y 400V battery pack retrofit BMS: RP2350B, TI INA228 20-bit current sensor'
+description: 'Tesla Model 3/Y 400V battery pack retrofit BMS: RP2354B, TI INA228 20-bit current sensor'
 tags: [battery-management, current-sensing, isolation, sensors]
-key_ics: [RP2350B, INA228]
+key_ics: [RP2354B, INA228]
 outline:
   width_mm: 280.0
   height_mm: 113.0

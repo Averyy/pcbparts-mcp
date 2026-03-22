@@ -2,7 +2,7 @@ name: Duet3 6HC v1.02
 slug: duet3-6hc-v1-02
 source: Duet3D/Duet3-Mainboard-6HC
 format: kicad6
-description: 'Professional-grade mainboard: ATSAME51N19A-AU (Cortex-M4, 120MHz)'
+description: 'Professional-grade mainboard: ATSAME70Q20B (Cortex-M7, 300MHz)'
 tags: [3d-printer, can-bus, motor-control]
 key_ics: [TMC2160A]
 outline:
