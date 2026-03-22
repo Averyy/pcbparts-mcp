@@ -45,6 +45,8 @@ Claude Desktop / Cursor / VSCode MCP config:
 | `sensor_recommend` | Find sensor ICs/modules by measurement need, protocol, or platform (1,500+ sensors, 56 measure types) |
 | `cse_search` | Search SamacSys for ECAD models and datasheets |
 | `cse_get_kicad` | Download KiCad symbols and footprints |
+| `board_search` | Search ~285 open-source reference board schematics by IC, tag, org, or free text. Cross-board consensus shows how ICs are typically used. |
+| `board_get` | Get full board details — BOM, design rules, dimensions. Use `focus` param for pin-grouped IC neighborhoods (decoupling, bias, connections). |
 | `get_design_rules` | PCB design rules & best practices (41 curated reference files: power, protection, interfaces, MCUs, layout, EMC) |
 
 ## search vs stock_check
@@ -126,6 +128,9 @@ Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diode
 - "Recommend an IMU sensor with I2C interface"
 - "What are the design rules for USB-C?"
 - "Show me LDO design best practices"
+- "Show me boards that use the MCP73831 charger"
+- "How is the RP2040 typically used? What decoupling and crystal do real boards use?"
+- "Get the ESP32-S3 neighborhood on the Adafruit Feather"
 
 ## Self-Hosting
 

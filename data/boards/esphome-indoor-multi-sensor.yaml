@@ -4,7 +4,7 @@ source: mikelawrence/esphome-indoor-multi-sensor-hardware
 format: kicad9
 description: 'Comprehensive multi-sensor: ESP32-S3-WROOM-1, supports 5 radar modules (HLK-LD2410/2450'
 tags: [audio, rf-sdr, robotics, sensors]
-key_ics: [ESP32-S3-WROOM-1, BME280, SCD40, SHT40]
+key_ics: [ESP32-S3-WROOM-2, BMP581, SCD41, SHT45, SGP41, ADS1115]
 outline:
   width_mm: 52.5
   height_mm: 59.7

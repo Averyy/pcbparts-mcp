@@ -41,5 +41,6 @@ asyncio_mode = "auto"
 testpaths = ["tests"]
 markers = [
     "integration: hits live APIs (JLCPCB, EasyEDA) — run with pytest -m integration",
+    "quality: board search quality evaluation — run with pytest -m quality",
 ]
-addopts = "-m 'not integration'"
+addopts = "-m 'not integration and not quality'"
