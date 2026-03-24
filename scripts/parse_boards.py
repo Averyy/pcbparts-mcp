@@ -2661,7 +2661,7 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
         else:
             log.info("No .brd file found, skipping positions")
 
-    elif fmt in ("kicad6", "kicad7", "kicad8", "kicad9"):
+    elif fmt in ("kicad6", "kicad7", "kicad8", "kicad9", "kicad10"):
         from parsers.kicad import parse_schematic as kicad_parse_sch
         from parsers.kicad import parse_pcb, enrich_from_project
 

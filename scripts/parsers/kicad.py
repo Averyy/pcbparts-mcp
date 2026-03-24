@@ -1,6 +1,6 @@
 """KiCad S-expression schematic + PCB file parser.
 
-Supports KiCad 6/7/8/9 (all use S-expression format).
+Supports KiCad 6/7/8/9/10 (all use S-expression format).
 Parses .kicad_sch for components/nets and .kicad_pcb for positions/outline/design rules.
 Also parses .kicad_pro (JSON) for net classes and design rule constraints.
 
@@ -385,13 +385,6 @@ def _extract_nets(root: list, part_names: set[str]) -> list[Net]:
     """
     net_pins: dict[str, set[str]] = {}
 
-    # Also build net_id → net_name lookup from (net N "name") declarations
-    # to handle boards where pad net IDs differ but names are the same
-    net_id_to_name: dict[str, str] = {}
-    for net_decl in _find_all(root, "net"):
-        if len(net_decl) >= 3 and isinstance(net_decl[1], str) and isinstance(net_decl[2], str):
-            net_id_to_name[net_decl[1]] = net_decl[2]
-
     for fp_node in _iter_footprints(root):
         ref = _get_fp_ref(fp_node)
         if not ref or ref not in part_names:
@@ -404,8 +397,15 @@ def _extract_nets(root: list, part_names: set[str]) -> list[Net]:
                 continue
             pad_num = pad[1]
             net_node = _find(pad, "net")
-            if net_node and len(net_node) >= 3:
-                net_name = net_node[2]
+            if net_node:
+                # KiCad <=9: (net 42 "VCC") — index 2 is the name
+                # KiCad 10+: (net "VCC")    — index 1 is the name (netcodes removed)
+                if len(net_node) >= 3:
+                    net_name = net_node[2]
+                elif len(net_node) == 2:
+                    net_name = net_node[1]
+                else:
+                    continue
                 if net_name:
                     pinfunc = _get_str(pad, "pinfunction")
                     pad_info.append((pad_num, pinfunc, net_name))
