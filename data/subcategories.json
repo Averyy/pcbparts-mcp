@@ -1959,6 +1959,11 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
+  "1680": {
+    "name": "Frequency Meter",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
   "3703": {
     "name": "Microscope Accessories",
     "category_id": 26,
@@ -1966,6 +1971,11 @@
   },
   "3638": {
     "name": "Ohmmeter",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
+  "1679": {
+    "name": "Power Factor Meter",
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
@@ -1991,6 +2001,11 @@
   },
   "1478": {
     "name": "Ultrasonic level gauge",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
+  "1676": {
+    "name": "Volt Meter",
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
@@ -2606,6 +2621,11 @@
   },
   "164": {
     "name": "Converter",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3531": {
+    "name": "Network Switch",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3651,11 +3671,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "3660": {
-    "name": "torque screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
