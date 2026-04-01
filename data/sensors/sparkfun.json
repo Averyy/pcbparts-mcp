@@ -2,13 +2,13 @@
   "source": "sparkfun",
   "source_url": "https://www.sparkfun.com/graphql",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-03-01T17:29:29.607117+00:00",
+  "scraped_at": "2026-04-01T07:04:05.672047+00:00",
   "stats": {
     "sensor_count": 119,
-    "total_products": 391,
-    "skipped_sku_prefix": 50,
+    "total_products": 396,
+    "skipped_sku_prefix": 51,
     "skipped_pattern": 62,
-    "skipped_no_ic": 109
+    "skipped_no_ic": 113
   },
   "sensors": [
     {
@@ -1028,7 +1028,7 @@
       "urls": [
         "https://www.sparkfun.com/hydrogen-sulfide-gas-sensor-mq-136.html"
       ],
-      "description": "The MQ-136 is a Hydrogen Sulfide detection sensor with a sensing range of 1 - 200ppm. The sensing element is SnO2 which has lower conductivity in clean air"
+      "description": "The MQ-136 is a Hydrogen Sulfide detection sensor with a sensing range of 1 - 200ppm. The sensing element is SnO 2 , which has lower conductivity in clean air"
     },
     {
       "id": "mq137",
@@ -1041,7 +1041,7 @@
       "urls": [
         "https://www.sparkfun.com/ammonia-gas-sensor-mq-137.html"
       ],
-      "description": "The MQ-137 is an Ammonia (NH₃) gas sensor from Winsen. The sensing element is SnO2, which has lower conductivity in clean air."
+      "description": "The MQ-137 is an Ammonia (NH₃) gas sensor from Winsen. The sensing element is SnO 2 , which has lower conductivity in clean air."
     },
     {
       "id": "mq2",
@@ -1125,7 +1125,7 @@
       "urls": [
         "https://www.sparkfun.com/dual-gas-co-and-ch4-detection-sensor-mq-9b.html"
       ],
-      "description": "The MQ-9B is a CO and CH₄ gas detection sensor form Winsen. The sensing material of the MQ-9B is SnO2, which has a low conductivity in clean air."
+      "description": "The MQ-9B is a CO and CH₄ gas detection sensor from Winsen. The sensing material of the MQ-9B is SnO 2 , which has a low conductivity in clean air."
     },
     {
       "id": "ms580314ba",
@@ -1168,7 +1168,7 @@
       "urls": [
         "https://www.sparkfun.com/sparkfun-qwiic-scale-nau7802.html"
       ],
-      "description": "The SparkFun Qwiic Scale - NAU7802 is a small breakout board for the NAU7802 that enables easy reading of load cells to measure weight.",
+      "description": "Accurately measure weight, force, or presence with this solderless load cell amplifier and ADC breakout board.",
       "protocol": [
         "i2c"
       ]

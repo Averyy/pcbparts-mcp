@@ -2,10 +2,10 @@
   "source": "bestmodules",
   "source_url": "https://www.bestmodulescorp.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-03-02T15:29:44.396798+00:00",
+  "scraped_at": "2026-04-01T07:04:00.149771+00:00",
   "stats": {
-    "sensor_count": 81,
-    "total_pages_checked": 85,
+    "sensor_count": 80,
+    "total_pages_checked": 84,
     "skipped": 1,
     "errors": 0
   },
@@ -646,29 +646,6 @@
       "type": "ultrasonic"
     },
     {
-      "id": "bm62s5602",
-      "name": "BM62S5602",
-      "measures": [
-        "distance",
-        "flow",
-        "oxygen",
-        "temperature",
-        "ultrasonic"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.bestmodulescorp.com/en/bm62s5602-1.html"
-      ],
-      "description": "Ultrasonic Oxygen Concentration & Flow Detection Module BM62S5602-1. Oxygen concentration measurement range: 21%–95.6% - Resolution: 0.1% - Accuracy: ±1.8% @ 5°C–45°C. Flow rate measurement range: ...",
-      "protocol": [
-        "uart"
-      ],
-      "manufacturer": "Holtek",
-      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
-      "voltage": "4.75-13.20",
-      "type": "ultrasonic"
-    },
-    {
       "id": "bm92d3021",
       "name": "BM92D3021",
       "measures": [
@@ -1185,13 +1162,14 @@
       "name": "BMH06206",
       "measures": [
         "ir_temperature",
+        "particulate",
         "temperature"
       ],
       "platforms": [],
       "urls": [
         "https://www.bestmodulescorp.com/en/bmh06206-42.html"
       ],
-      "description": "Infrared Thermometer Module BMH06206-42. Measures ambient temperature, object surface temperature, and human body temperature. Measurement resolution of 0.1°C",
+      "description": "Industrial Infrared Thermometer Module BMH06206-42. Measures ambient temperature, object surface temperature, and human body temperature. Measurement resolution of 0.1°C",
       "protocol": [
         "analog",
         "i2c",

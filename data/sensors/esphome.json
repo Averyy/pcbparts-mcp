@@ -2,10 +2,10 @@
   "source": "esphome",
   "source_url": "https://github.com/esphome/esphome",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-03-01T17:29:33.735891+00:00",
+  "scraped_at": "2026-04-01T06:37:52.643075+00:00",
   "stats": {
-    "sensor_count": 173,
-    "total_components_checked": 282,
+    "sensor_count": 176,
+    "total_components_checked": 287,
     "skipped_non_sensor": 91,
     "skipped_no_measures": 1
   },
@@ -611,7 +611,8 @@
         "https://esphome.io/components/sensor/bmp581.html"
       ],
       "protocol": [
-        "i2c"
+        "i2c",
+        "spi"
       ],
       "i2c_address": [
         "0x46"
@@ -751,6 +752,20 @@
       ],
       "i2c_address": [
         "0x80"
+      ]
+    },
+    {
+      "id": "dewpoint",
+      "name": "dew_point",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/dew_point.html"
       ]
     },
     {
@@ -2210,6 +2225,31 @@
       ]
     },
     {
+      "id": "number",
+      "name": "number",
+      "measures": [
+        "co",
+        "co2",
+        "current",
+        "distance",
+        "gas",
+        "humidity",
+        "light",
+        "particulate",
+        "pressure",
+        "sound",
+        "temperature",
+        "voltage",
+        "wind"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/number.html"
+      ]
+    },
+    {
       "id": "opt3001",
       "name": "opt3001",
       "measures": [
@@ -2723,6 +2763,27 @@
       ],
       "urls": [
         "https://esphome.io/components/sensor/sound_level.html"
+      ]
+    },
+    {
+      "id": "spa06",
+      "name": "spa06",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/spa06.html"
+      ],
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "i2c_address": [
+        "0x77"
       ]
     },
     {
