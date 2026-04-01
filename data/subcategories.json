@@ -1014,11 +1014,6 @@
     "category_id": 3333,
     "category_name": "Global Sourcing Parts"
   },
-  "3323": {
-    "name": "kraft paper tape",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -3851,6 +3846,11 @@
   },
   "1321": {
     "name": "Power line/brake line/extension line",
+    "category_id": 61,
+    "category_name": "Wires and cables"
+  },
+  "1459": {
+    "name": "Protective Hoses, Solid Tubes, Sleeves",
     "category_id": 61,
     "category_name": "Wires and cables"
   },
