@@ -2,10 +2,10 @@
   "source": "winsen",
   "source_url": "https://www.winsen-sensor.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-03-02T14:28:51.577620+00:00",
+  "scraped_at": "2026-04-01T06:59:51.896612+00:00",
   "stats": {
-    "sensor_count": 377,
-    "total_product_pages": 385,
+    "sensor_count": 379,
+    "total_product_pages": 387,
     "skipped": 4,
     "errors": 0
   },
@@ -3369,6 +3369,23 @@
       "type": "thermopile"
     },
     {
+      "id": "smx100",
+      "name": "SMX100",
+      "measures": [
+        "gas",
+        "h2s",
+        "oxygen"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/smx100.html"
+      ],
+      "description": "SMX100 Series Miniature Industrial Intelligent Gas Sensor. Target: CO, H2S, O2, CH4. Range: 0.5~1000ppm",
+      "manufacturer": "Winsen",
+      "voltage": "3.0-5.0",
+      "type": "electrochemical"
+    },
+    {
       "id": "uenh3",
       "name": "UE-NH3",
       "measures": [
@@ -5818,6 +5835,21 @@
       "description": "ZRT512C-R454B-4-TI Refrigerant Sensor Module",
       "manufacturer": "Winsen",
       "voltage": "5-25",
+      "type": "ndir"
+    },
+    {
+      "id": "zrt512er454br324as",
+      "name": "ZRT512E-R454B&R32-4-A-S",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/zrt512e.html"
+      ],
+      "description": "ZRT512E-R454B & R32 Series refrigerant detection module. Target: R454B&R32",
+      "manufacturer": "Winsen",
+      "voltage": "5",
       "type": "ndir"
     },
     {

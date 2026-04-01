@@ -2,11 +2,11 @@
   "source": "circuitpython",
   "source_url": "https://docs.circuitpython.org/projects/bundle/en/latest/drivers.html",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-03-01T17:29:34.592481+00:00",
+  "scraped_at": "2026-04-01T06:37:53.214926+00:00",
   "stats": {
-    "sensor_count": 115,
-    "total_entries_checked": 544,
-    "skipped_no_measures": 0
+    "sensor_count": 121,
+    "total_entries_checked": 561,
+    "skipped_no_measures": 1
   },
   "sensors": [
     {
@@ -125,6 +125,20 @@
       "description": "APDS9960 Proximity, Light, RGB, and Gesture"
     },
     {
+      "id": "apds9999",
+      "name": "apds9999",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/apds9999/en/latest/"
+      ],
+      "description": "APDS9999 Proximity, Light, RGB, and IR"
+    },
+    {
       "id": "as5600",
       "name": "as5600",
       "measures": [
@@ -152,6 +166,20 @@
         "https://docs.circuitpython.org/projects/as726x/en/latest/"
       ],
       "description": "AS726x Color Spectrum Sensor"
+    },
+    {
+      "id": "as7331",
+      "name": "as7331",
+      "measures": [
+        "uv"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/as7331/en/latest/"
+      ],
+      "description": "AS7331 UV / UVA / UVB / UVC Sensor"
     },
     {
       "id": "as7341",
@@ -1338,6 +1366,22 @@
       "description": "SPA06-003 Temperature and Pressure"
     },
     {
+      "id": "stcc4",
+      "name": "stcc4",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/stcc4/en/latest/"
+      ],
+      "description": "STCC4 and SHT41 CO2, Temperature and Humidity Sensor"
+    },
+    {
       "id": "sths34pf80",
       "name": "sths34pf80",
       "measures": [
@@ -1380,6 +1424,20 @@
       "description": "TC74 Digital Temperature Sensor"
     },
     {
+      "id": "tcs3430",
+      "name": "tcs3430",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tcs3430/en/latest/"
+      ],
+      "description": "TCS3430/TCS34303 Tri-Stimulus XYZ Color Sensor"
+    },
+    {
       "id": "tcs34725",
       "name": "tcs34725",
       "measures": [
@@ -1406,6 +1464,20 @@
         "https://docs.circuitpython.org/projects/tlv493d/en/latest/"
       ],
       "description": "TLV493D 3 Axis Magnetometer"
+    },
+    {
+      "id": "tmag5273",
+      "name": "tmag5273",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tmag5273/en/latest/"
+      ],
+      "description": "TMAG5273 3D Hall Effect Magnetometer"
     },
     {
       "id": "tmp006",
@@ -1547,6 +1619,20 @@
         "https://docs.circuitpython.org/projects/vcnl4020/en/latest/"
       ],
       "description": "VCNL4020 Proximity and Light"
+    },
+    {
+      "id": "vcnl4030",
+      "name": "vcnl4030",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/vcnl4030/en/latest/"
+      ],
+      "description": "VCNL4030 Proximity and Light"
     },
     {
       "id": "vcnl4040",

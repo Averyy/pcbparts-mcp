@@ -2,13 +2,13 @@
   "source": "zephyr",
   "source_url": "https://github.com/zephyrproject-rtos/zephyr",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-03-01T17:29:31.370355+00:00",
+  "scraped_at": "2026-04-01T06:37:55.888882+00:00",
   "stats": {
-    "sensor_count": 214,
-    "total_bindings": 435,
-    "skipped_internal": 41,
-    "skipped_bus_variant": 63,
-    "skipped_no_measures": 28
+    "sensor_count": 221,
+    "total_bindings": 447,
+    "skipped_internal": 42,
+    "skipped_bus_variant": 67,
+    "skipped_no_measures": 29
   },
   "sensors": [
     {
@@ -120,6 +120,24 @@
       "manufacturer": "Analog Devices"
     },
     {
+      "id": "adt7410",
+      "name": "ADT7410",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adt7410.html"
+      ],
+      "description": "ADT7410 16-Bit digital I2C temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
       "id": "adt7420",
       "name": "ADT7420",
       "measures": [
@@ -138,6 +156,24 @@
       "manufacturer": "Analog Devices"
     },
     {
+      "id": "adt7422",
+      "name": "ADT7422",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adt7422.html"
+      ],
+      "description": "ADT7422 16-Bit digital I2C temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
       "id": "adxl345",
       "name": "ADXL345",
       "measures": [
@@ -150,6 +186,25 @@
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adxl345.html"
       ],
       "description": "ADXL345 3-axis accelerometer with SPI connection",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adxl355",
+      "name": "ADXL355",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adxl355.html"
+      ],
+      "description": "ADXL355 3-axis accelerometer with I2C connection",
       "protocol": [
         "i2c",
         "spi"
@@ -1370,6 +1425,23 @@
         "spi"
       ],
       "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "hx711",
+      "name": "HX711",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/avia,hx711-spi.html"
+      ],
+      "description": "Avia Semiconductor HX711 24-bit ADC Specialized for Load Cells / Strain Gauges on SPI bus This driver implements the sensor interface. A trigger can be configured for data ready events (i.e. when t...",
+      "protocol": [
+        "spi"
+      ]
     },
     {
       "id": "iaqcore",
@@ -3079,6 +3151,24 @@
       "manufacturer": "PixArt"
     },
     {
+      "id": "qmi8658a",
+      "name": "QMI8658A",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/qst,qmi8658a.html"
+      ],
+      "description": "QST QMI8658A 6-axis IMU",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
       "id": "rm3100",
       "name": "RM3100",
       "measures": [
@@ -3129,6 +3219,23 @@
         "i2c"
       ],
       "manufacturer": "Hamamatsu"
+    },
+    {
+      "id": "s3km1110",
+      "name": "S3KM1110",
+      "measures": [
+        "radar"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/iclegend,s3km1110.html"
+      ],
+      "description": "Iclegend S3KM1110 24 GHz mmWave presence radar.",
+      "protocol": [
+        "uart"
+      ]
     },
     {
       "id": "scd40",
@@ -3338,6 +3445,26 @@
         "i2c"
       ],
       "manufacturer": "Silicon Labs"
+    },
+    {
+      "id": "stcc4",
+      "name": "STCC4",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,stcc4.html"
+      ],
+      "description": "Sensirion STCC4 miniature CO2 sensor based on thermal conductivity. Provides CO2, temperature, and humidity readings via I2C.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Sensirion"
     },
     {
       "id": "sts4x",

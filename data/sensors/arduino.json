@@ -2,13 +2,13 @@
   "source": "arduino",
   "source_url": "https://downloads.arduino.cc/libraries/library_index.json",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-03-01T17:29:25.838178+00:00",
+  "scraped_at": "2026-04-01T06:37:49.724063+00:00",
   "stats": {
-    "sensor_count": 642,
-    "total_libs_checked": 1758,
-    "skipped_no_ic": 427,
+    "sensor_count": 647,
+    "total_libs_checked": 1789,
+    "skipped_no_ic": 433,
     "skipped_nonsensor": 137,
-    "skipped_no_measures": 104
+    "skipped_no_measures": 108
   },
   "sensors": [
     {
@@ -380,6 +380,23 @@
       "description": "Library for the ProtoCentral ADS1220 breakout board"
     },
     {
+      "id": "ads122c04",
+      "name": "Adafruit ADS122C04",
+      "measures": [
+        "sound"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 2,
+      "urls": [
+        "https://github.com/sparkfun/SparkFun_ADS122C04_ADC_Arduino_Library.git",
+        "https://github.com/adafruit/Adafruit_ADS122C04.git"
+      ],
+      "description": "Arduino library for ADS122C04 24-bit ADC",
+      "manufacturer": "Texas Instruments"
+    },
+    {
       "id": "ads1258",
       "name": "ADS1X58",
       "measures": [
@@ -737,11 +754,12 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/hasenradball/AM2302-Sensor.git"
+        "https://github.com/hasenradball/AM2302-Sensor.git",
+        "https://github.com/hasenradball/AM2302-Sensor-Pi-Pico.git"
       ],
-      "description": "This library read temperature and humidity from the AM2302 (aka DHT22) senor."
+      "description": "This library read temperature and humidity from the AM2302 (aka DHT22) senor on Pi Pico."
     },
     {
       "id": "am2315",
@@ -808,6 +826,21 @@
         "https://github.com/yasir-shahzad/AM4096.git"
       ],
       "description": "An Arduino library for interfacing with the AM4096 rotary magnetic encoder."
+    },
+    {
+      "id": "amc1302",
+      "name": "AMC1302",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/RobTillaart/AMC1302.git"
+      ],
+      "description": "Arduino library for AMC1302 current sensor."
     },
     {
       "id": "amg88",
@@ -1127,15 +1160,17 @@
       "id": "as7331",
       "name": "AS7331",
       "measures": [
+        "color",
         "uv"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/sparkfun/SparkFun_AS7331_Arduino_Library.git",
-        "https://github.com/RobTillaart/AS7331.git"
+        "https://github.com/RobTillaart/AS7331.git",
+        "https://github.com/adafruit/Adafruit_AS7331.git"
       ],
       "description": "An Arduino library to make use of the Qwiic and Qwiic Mini AS7331 Spectral UV Sensor"
     },
@@ -1743,7 +1778,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 23,
+      "popularity": 24,
       "urls": [
         "https://github.com/adafruit/Adafruit_BME280_Library.git",
         "https://github.com/sparkfun/SparkFun_BME280_Arduino_Library.git",
@@ -2833,13 +2868,14 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 3,
+      "popularity": 4,
       "urls": [
         "https://github.com/dvarrel/DHT22.git",
         "https://github.com/fadhil-1911/MyDHT22.git",
-        "https://github.com/IlliaZenistu/DHT22_Clone_ESP32.git"
+        "https://github.com/IlliaZenistu/DHT22_Clone_ESP32.git",
+        "https://github.com/angeloINTJ/DHT22PIO_RP2040.git"
       ],
-      "description": "DHT22 library for ESP32 with clone/counterfeit sensor support"
+      "description": "Hardware-accelerated DHT22 library using the RP2040 PIO coprocessor."
     },
     {
       "id": "dnmsi2c",
@@ -2912,7 +2948,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 11,
+      "popularity": 12,
       "urls": [
         "https://github.com/IharYakimush/arduino-temperature-control-events.git",
         "https://github.com/matmunk/DS18B20.git",
@@ -4732,20 +4768,21 @@
     },
     {
       "id": "lis3dh",
-      "name": "Adafruit LIS3DH",
+      "name": "7Semi LIS3DH",
       "measures": [
         "acceleration"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 3,
+      "popularity": 4,
       "urls": [
         "https://github.com/adafruit/Adafruit_LIS3DH.git",
         "https://github.com/ldab/lis3dh-motion-detection.git",
-        "https://github.com/sparkfun/SparkFun_LIS3DH_Arduino_Library.git"
+        "https://github.com/sparkfun/SparkFun_LIS3DH_Arduino_Library.git",
+        "https://github.com/7semi-solutions/7Semi-LIS3DH-3-axis-acceleromet-Arduino-Library.git"
       ],
-      "description": "Motion detection without bells and whistles, simply works, low power."
+      "description": "Arduino library for LIS3DH 3-axis accelerometer with I2C and SPI support."
     },
     {
       "id": "lis3dhtr",
@@ -5281,6 +5318,22 @@
       "description": "Ultra Low Power inertial measurement unit."
     },
     {
+      "id": "lsm6dso32",
+      "name": "STM32duino LSM6DSO32",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/stm32duino/LSM6DSO32.git"
+      ],
+      "description": "Ultra Low Power inertial measurement unit."
+    },
+    {
       "id": "lsm6dsox",
       "name": "Arduino_LSM6DSOX",
       "measures": [
@@ -5563,16 +5616,17 @@
     },
     {
       "id": "max30001",
-      "name": "ProtoCentral MAX30001",
+      "name": "MAX30001",
       "measures": [
         "biometric"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/Protocentral/protocentral_max30001_arduino_library.git"
+        "https://github.com/Protocentral/protocentral_max30001_arduino_library.git",
+        "https://github.com/uutzinger/Arduino_MAX30001G.git"
       ],
       "description": "Arduino library for MAX30001 single-lead ECG and bio-impedance breakout board."
     },
@@ -5801,12 +5855,13 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/dantudose/MAX44009.git",
-        "https://github.com/RobTillaart/Max44009.git"
+        "https://github.com/RobTillaart/Max44009.git",
+        "https://github.com/adafruit/Adafruit_MAX44009.git"
       ],
-      "description": "Library for the MAX44009 Ambient Light Sensor."
+      "description": "Arduino library for MAX44009 ambient light sensor"
     },
     {
       "id": "max471",
@@ -7134,6 +7189,22 @@
       "manufacturer": "Texas Instruments"
     },
     {
+      "id": "opt3004",
+      "name": "7Semi-OPT3004-Digital-Ambient-Light-Sensor-Arduino-Library",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/7semi-solutions/7Semi-OPT3004-Digital-Ambient-Light-Sensor-Arduino-Library.git"
+      ],
+      "description": "Arduino library for the OPT3004 ambient light sensor with lux output.",
+      "manufacturer": "Texas Instruments"
+    },
+    {
       "id": "opt300x",
       "name": "OPT300x",
       "measures": [
@@ -7170,16 +7241,18 @@
       "id": "opt4048",
       "name": "OPT4048",
       "measures": [
+        "color",
         "light"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 3,
+      "popularity": 4,
       "urls": [
         "https://github.com/retrospy/OPT4048.git",
         "https://github.com/sparkfun/SparkFun_OPT4048_Arduino_Library.git",
-        "https://github.com/adafruit/Adafruit_OPT4048.git"
+        "https://github.com/adafruit/Adafruit_OPT4048.git",
+        "https://github.com/7semi-solutions/7Semi-OPT4048-Color-Sensor-Arduino-Library.git"
       ],
       "description": "Arduino library for the OPT4048 High Speed High Precision Tristimulus XYZ Color Sensor",
       "manufacturer": "Texas Instruments"
@@ -8688,12 +8761,13 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 4,
+      "popularity": 5,
       "urls": [
         "https://github.com/adafruit/Adafruit_SHT4X.git",
         "https://github.com/Sensirion/arduino-i2c-sht4x.git",
         "https://github.com/deneyapkart/deneyap-sicaklik-nem-basinc-olcer-arduino-library.git",
-        "https://github.com/RobTillaart/SHT4x.git"
+        "https://github.com/RobTillaart/SHT4x.git",
+        "https://github.com/Xorlent/Async_SHT4x.git"
       ],
       "description": "Arduino library for Deneyap Temperature&Humidity, Barometer Sensor SHT4X",
       "manufacturer": "Sensirion"
@@ -8990,7 +9064,7 @@
     },
     {
       "id": "sr04",
-      "name": "HCSR04",
+      "name": "Sonic",
       "measures": [
         "distance",
         "ultrasonic"
@@ -8998,7 +9072,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 18,
+      "popularity": 20,
       "urls": [
         "https://github.com/Martinsos/arduino-lib-hc-sr04.git",
         "https://github.com/Spaguetron/ST_HW_HC_SR04.git",
@@ -9190,21 +9264,6 @@
         "https://github.com/sparkfun/SparkFun_T5403_Barometric_Sensor_Arduino_Library.git"
       ],
       "description": "Arduino Library for interfacing with the T5403 Barometric sensor."
-    },
-    {
-      "id": "tad2144",
-      "name": "TAD2144",
-      "measures": [
-        "temperature"
-      ],
-      "platforms": [
-        "arduino"
-      ],
-      "popularity": 1,
-      "urls": [
-        "https://github.com/tdk-invn-oss/motion.arduino.TAD2144.git"
-      ],
-      "description": "Allows to read angle and temperature sensors from an TAD2144 Invensence TMR device."
     },
     {
       "id": "tc1046",
@@ -9505,6 +9564,23 @@
       "description": "This library provides an Interface for Infineons TLI4971 Current Sensor"
     },
     {
+      "id": "tmag5273",
+      "name": "Adafruit TMAG5273",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 2,
+      "urls": [
+        "https://github.com/sparkfun/SparkFun_TMAG5273_Arduino_Library.git",
+        "https://github.com/adafruit/Adafruit_TMAG5273.git"
+      ],
+      "description": "A library to drive the Texas Instruments hall-effect sensor TMAG5273.",
+      "manufacturer": "Texas Instruments"
+    },
+    {
       "id": "tmd3725",
       "name": "TMD3725",
       "measures": [
@@ -9517,7 +9593,7 @@
       "urls": [
         "https://github.com/vasya-zh/TMD3725.git"
       ],
-      "description": "Arduino library to control the TMD3725 RGB color sensor"
+      "description": "Arduino library for TMD3725 RGB color sensor"
     },
     {
       "id": "tmf8801",
@@ -10004,6 +10080,22 @@
       "manufacturer": "Vishay"
     },
     {
+      "id": "vcnl4030x01",
+      "name": "Adafruit VCNL4030",
+      "measures": [
+        "light",
+        "proximity"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/adafruit/Adafruit_VCNL4030.git"
+      ],
+      "description": "Arduino library for VCNL4030X01 proximity and ambient light sensor"
+    },
+    {
       "id": "vcnl4040",
       "name": "Adafruit VCNL4040",
       "measures": [
@@ -10278,9 +10370,10 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/CodeyNacke/WF100DPZ.git"
+        "https://github.com/CodeyNacke/WF100DPZ.git",
+        "https://github.com/adafruit/Adafruit_WF100DPZ.git"
       ],
       "description": "Arduino library for the WF100DPZ pressure sensor."
     },
