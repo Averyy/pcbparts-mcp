@@ -194,6 +194,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1259,11 +1264,6 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
-  "2008": {
-    "name": "Metal Products * SMT Copper Sheet",
-    "category_id": 47,
-    "category_name": "Hardware Fasteners"
-  },
   "2037": {
     "name": "Non-metal Gasket",
     "category_id": 47,
@@ -1426,6 +1426,11 @@
   },
   "1674": {
     "name": "Studs & Screws",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "3725": {
+    "name": "Surface Mount Jumper",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -1636,6 +1641,11 @@
   },
   "1106": {
     "name": "DC contactor",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "916": {
+    "name": "Distribution frame",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
