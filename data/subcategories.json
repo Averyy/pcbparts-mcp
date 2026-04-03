@@ -264,6 +264,11 @@
     "category_id": 11,
     "category_name": "Circuit Protection"
   },
+  "3506": {
+    "name": "air purifier",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
