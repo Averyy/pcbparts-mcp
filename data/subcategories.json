@@ -2634,6 +2634,11 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
+  "3726": {
+    "name": "PDU Socket",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "3275": {
     "name": "Power cord",
     "category_id": 49,
@@ -3661,11 +3666,6 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "159": {
-    "name": "Crimping pliers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
