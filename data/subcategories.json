@@ -589,11 +589,6 @@
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
-  "440": {
-    "name": "Thermal conductive sheet/thermal conductive cap",
-    "category_id": 59,
-    "category_name": "Consumables and auxiliary materials"
-  },
   "3038": {
     "name": "Ceramic Resonators",
     "category_id": 7,
@@ -1594,11 +1589,6 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
-  "166": {
-    "name": "Coin cell batteries",
-    "category_id": 46,
-    "category_name": "Industrial control electrical"
-  },
   "1199": {
     "name": "Cold press terminals/Terminal blocks",
     "category_id": 46,
@@ -2204,6 +2194,11 @@
     "category_id": 31,
     "category_name": "IoT/Communication Modules"
   },
+  "1709": {
+    "name": "Protective cap",
+    "category_id": 42,
+    "category_name": "Labor protection supplies"
+  },
   "3688": {
     "name": "Block",
     "category_id": 54,
@@ -2281,11 +2276,6 @@
   },
   "3693": {
     "name": "Magnetic Tapping Attachment",
-    "category_id": 54,
-    "category_name": "Lathes and accessories"
-  },
-  "2729": {
-    "name": "Mechanical parts",
     "category_id": 54,
     "category_name": "Lathes and accessories"
   },
@@ -2623,11 +2613,6 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
-  },
-  "164": {
-    "name": "Converter",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
@@ -3199,6 +3184,11 @@
     "category_id": 33,
     "category_name": "RF and Wireless"
   },
+  "500": {
+    "name": "Safety warning labels",
+    "category_id": 56,
+    "category_name": "Safety/fire protection"
+  },
   "3079": {
     "name": "Accelerometers",
     "category_id": 22,
@@ -3671,11 +3661,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "921": {
-    "name": "welding accessories",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
