@@ -194,11 +194,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1534,6 +1529,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "3353": {
+    "name": "AmorphousCores",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "539": {
     "name": "Antenna spring",
     "category_id": 46,
@@ -2193,11 +2193,6 @@
     "name": "ZigBee Modules",
     "category_id": 31,
     "category_name": "IoT/Communication Modules"
-  },
-  "1709": {
-    "name": "Protective cap",
-    "category_id": 42,
-    "category_name": "Labor protection supplies"
   },
   "3688": {
     "name": "Block",
@@ -3183,11 +3178,6 @@
     "name": "Tunable Filters",
     "category_id": 33,
     "category_name": "RF and Wireless"
-  },
-  "500": {
-    "name": "Safety warning labels",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
   },
   "3079": {
     "name": "Accelerometers",
