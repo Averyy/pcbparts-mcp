@@ -709,11 +709,6 @@
     "category_id": 32,
     "category_name": "Development Boards & Tools"
   },
-  "2200": {
-    "name": "Programmers, Emulators, and Debuggers",
-    "category_id": 32,
-    "category_name": "Development Boards & Tools"
-  },
   "2215": {
     "name": "Raspberry Pi",
     "category_id": 32,
@@ -1031,6 +1026,21 @@
   },
   "2043": {
     "name": "Bolt",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "3723": {
+    "name": "Brass Heat-Set Threaded Insert",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "3722": {
+    "name": "Brass Knurled Insert Nut",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "3724": {
+    "name": "Brass Straight Knurled Insert Nut",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -1961,11 +1971,6 @@
   },
   "1680": {
     "name": "Frequency Meter",
-    "category_id": 26,
-    "category_name": "Instrumentation and meters"
-  },
-  "2259": {
-    "name": "Logic Analyzers",
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
@@ -3188,11 +3193,6 @@
     "name": "Tunable Filters",
     "category_id": 33,
     "category_name": "RF and Wireless"
-  },
-  "853": {
-    "name": "Flashlight/emergency light",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
   },
   "3079": {
     "name": "Accelerometers",
