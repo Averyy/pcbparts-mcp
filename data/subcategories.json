@@ -194,6 +194,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1601,6 +1606,11 @@
   },
   "956": {
     "name": "Ceramic plugin capacitor",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "166": {
+    "name": "Coin cell batteries",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
