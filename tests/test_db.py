@@ -1032,6 +1032,44 @@ class TestListAttributes:
 
         assert "error" in result
 
+    def test_list_attributes_numeric_sort_for_height(self):
+        """Numeric-typed Height values must be sorted numerically, not lexicographically."""
+        from pcbparts_mcp.parsers import parse_length_mm
+
+        db = get_db()
+        result = db.list_attributes(subcategory_id=2965)
+        height = next(
+            (a for a in result["attributes"] if a["name"] == "Height - Seated (Max)"),
+            None,
+        )
+        assert height is not None, "Height attribute should be present in subcat 2965"
+        assert height["type"] == "numeric"
+
+        values = height["values"]
+        assert values, "Height values should not be empty"
+        first_parsed = parse_length_mm(values[0])
+        assert first_parsed is not None and first_parsed < 10.0, (
+            f"first value should be under 10mm, got {values[0]!r}"
+        )
+        if "-" in values:
+            assert values.index("-") > 0
+
+    def test_list_attributes_numeric_min_max(self):
+        """Numeric attributes should expose min/max from parsed floats."""
+        db = get_db()
+        result = db.list_attributes(subcategory_id=2965)
+        height = next(
+            (a for a in result["attributes"] if a["name"] == "Height - Seated (Max)"),
+            None,
+        )
+        assert height is not None
+        assert "min" in height and "max" in height
+        assert isinstance(height["min"], (int, float))
+        assert isinstance(height["max"], (int, float))
+        assert height["min"] < height["max"]
+        assert 2.0 <= height["min"] <= 6.0
+        assert 15.0 <= height["max"] <= 40.0
+
     def test_list_capacitor_attributes(self):
         """List attributes for MLCC capacitors."""
         db = get_db()
