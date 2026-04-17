@@ -1,6 +1,6 @@
 [project]
 name = "pcbparts-mcp"
-version = "0.5.0"
+version = "0.5.1"
 description = "MCP server for searching electronic components for PCB design and assembly"
 requires-python = ">=3.12"
 # Dependencies are pinned to exact versions so a rebuild never silently pulls a new major/minor
