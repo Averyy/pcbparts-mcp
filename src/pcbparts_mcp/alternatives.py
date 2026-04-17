@@ -23,6 +23,7 @@ from pcbparts_mcp.parsers import (
     parse_frequency,
     parse_decibels,
     parse_impedance_at_freq,
+    parse_length_mm,
     impedance_at_freq_match,
 )
 
@@ -107,6 +108,10 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Inductance": parse_inductance,
     # Frequency
     "Frequency": parse_frequency,
+    # Physical dimensions (aluminum electrolytics, discrete caps, etc.)
+    "Height - Seated (Max)": parse_length_mm,
+    "Height": parse_length_mm,
+    "Diameter": parse_length_mm,
     # Special handling
     "Impedance @ Frequency": "special",  # Uses impedance_at_freq_match()
     # String-match specs (no parser - use exact match)

@@ -11,6 +11,7 @@ from pcbparts_mcp.parsers import (
     parse_power,
     parse_inductance,
     parse_frequency,
+    parse_length_mm,
     parse_memory_size,
 )
 
@@ -180,6 +181,26 @@ class TestParsePower:
         """Test power parsing in watts."""
         result = parse_power(input_val)
         assert result == pytest.approx(expected), f"{input_val} should parse to {expected}"
+
+
+class TestParseLengthMm:
+    """Tests for parse_length_mm — used for Height/Diameter filters."""
+
+    @pytest.mark.parametrize("input_val,expected", [
+        ("5.4mm", 5.4),
+        ("4mm", 4.0),
+        ("10.2mm", 10.2),
+        ("21.5mm", 21.5),
+        ("6.3 mm", 6.3),
+        ("5.4MM", 5.4),
+    ])
+    def test_length_parsing(self, input_val: str, expected: float):
+        assert parse_length_mm(input_val) == pytest.approx(expected)
+
+    @pytest.mark.parametrize("input_val", ["-", "", "SMD", "N/A", "unknown"])
+    def test_null_sentinels_return_none(self, input_val: str):
+        """JLC uses '-' for null; other non-length strings must not coerce to a number."""
+        assert parse_length_mm(input_val) is None
 
 
 class TestParseMemorySize:
