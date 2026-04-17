@@ -14,6 +14,8 @@ from ..subcategory_aliases import (
 
 logger = logging.getLogger(__name__)
 
+_VALUE_LIMIT = 50
+
 
 def list_attributes(
     conn: sqlite3.Connection,
@@ -118,22 +120,32 @@ def list_attributes(
             if any(fn in SPEC_PARSERS for fn in ATTRIBUTE_ALIASES.get(alias_lookup.get(name, ""), [name]))
         )
 
-        # Simpler check: see if any value parses as numeric
         values = list(attr_values.get(name, []))
         parser = SPEC_PARSERS.get(name)
-        if not parser:
-            # Check aliases
+        if not callable(parser):
+            parser = None
+        if parser is None:
             alias = alias_lookup.get(name)
             if alias and alias in ATTRIBUTE_ALIASES:
                 for alias_target in ATTRIBUTE_ALIASES[alias]:
-                    if alias_target in SPEC_PARSERS:
-                        parser = SPEC_PARSERS[alias_target]
+                    candidate = SPEC_PARSERS.get(alias_target)
+                    if callable(candidate):
+                        parser = candidate
                         break
 
-        # Test if values are numeric
-        if parser and values:
-            numeric_count = sum(1 for v in values[:10] if parser(v) is not None)
-            is_numeric = numeric_count >= len(values[:10]) * 0.5
+        # Parse once: reuse for the numeric-type heuristic, sort key, and min/max.
+        # Unparseable values (e.g. "-" sentinels) sort last so useful entries are visible.
+        parsed_values: list[tuple[str, float | None]] = (
+            [(v, parser(v)) for v in values] if parser else [(v, None) for v in values]
+        )
+
+        if parser and parsed_values:
+            sampled = parsed_values[:10]
+            numeric_count = sum(1 for _, pv in sampled if pv is not None)
+            is_numeric = numeric_count >= len(sampled) * 0.5
+
+        parsed_values.sort(key=lambda pair: (pair[1] is None, pair[1] if pair[1] is not None else pair[0]))
+        sorted_values = [v for v, _ in parsed_values]
 
         attr_info: dict[str, Any] = {
             "name": name,
@@ -143,11 +155,17 @@ def list_attributes(
         }
 
         if is_numeric:
-            # For numeric, show example values
-            attr_info["example_values"] = values[:5]
+            attr_info["example_values"] = sorted_values[:5]
+            attr_info["values"] = sorted_values[:_VALUE_LIMIT]
+            parsed_floats = [pv for _, pv in parsed_values if pv is not None]
+            if parsed_floats:
+                attr_info["min"] = min(parsed_floats)
+                attr_info["max"] = max(parsed_floats)
         else:
-            # For string, show all distinct values (up to limit)
-            attr_info["values"] = sorted(values)[:20]
+            attr_info["values"] = sorted_values[:_VALUE_LIMIT]
+
+        if len(values) > _VALUE_LIMIT:
+            attr_info["total_unique"] = len(values)
 
         attributes.append(attr_info)
 
