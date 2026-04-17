@@ -435,6 +435,10 @@ async def jlc_search(
             - op: Operator: "=", ">=", "<=", ">", "<"
             - value: Value with units (e.g., "2.5V", "10uF", "20mΩ")
             Example: [{"name": "Vgs(th)", "op": "<", "value": "2.5V"}]
+            Note: range ops (<, <=, >, >=) only work on fields with a registered
+            numeric parser — call jlc_search_help(subcategory=...) and use fields
+            typed "numeric". Parts whose spec value is "-" (null) are excluded
+            from dimension filters.
 
         min_stock: Minimum stock (default 10). Database only indexes stock >= 10.
         library_type: "basic", "preferred", "no_fee", "extended", or None (all)
