@@ -12,6 +12,7 @@ from pcbparts_mcp.parsers import (
     parse_inductance,
     parse_frequency,
     parse_length_mm,
+    parse_dimensions_from_package,
     parse_memory_size,
 )
 
@@ -201,6 +202,27 @@ class TestParseLengthMm:
     def test_null_sentinels_return_none(self, input_val: str):
         """JLC uses '-' for null; other non-length strings must not coerce to a number."""
         assert parse_length_mm(input_val) is None
+
+
+class TestParseDimensionsFromPackage:
+    """Tests for parse_dimensions_from_package — canned-cap D×L encoding."""
+
+    @pytest.mark.parametrize("pkg,expected", [
+        ("SMD,D6.3xL5.7mm", (6.3, 5.7)),
+        ("SMD,D10xL10.2mm", (10.0, 10.2)),
+        ("D8xL12.5mm", (8.0, 12.5)),
+        ("SMD, D5 x L5.4 mm", (5.0, 5.4)),
+        ("D6.3×L7.7mm", (6.3, 7.7)),
+        ("SMD,d6.3xl5.8MM", (6.3, 5.8)),
+    ])
+    def test_dim_extraction(self, pkg: str, expected: tuple[float, float]):
+        got = parse_dimensions_from_package(pkg)
+        assert got[0] == pytest.approx(expected[0])
+        assert got[1] == pytest.approx(expected[1])
+
+    @pytest.mark.parametrize("pkg", ["SMD", "", "TO-220", "0805", "SOT-23-3", "radial"])
+    def test_no_dims_returns_none_pair(self, pkg: str):
+        assert parse_dimensions_from_package(pkg) == (None, None)
 
 
 class TestParseMemorySize:
