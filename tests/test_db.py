@@ -154,6 +154,71 @@ class TestSpecFilters:
         # May have fewer results with multiple filters
         assert result["total"] >= 0
 
+    def test_height_le_filter_excludes_taller(self):
+        """Height filter '<= 5.4mm' must not return parts taller than 5.4mm."""
+        from pcbparts_mcp.parsers import parse_length_mm
+
+        db = get_db()
+        result = db.search(
+            subcategory_id=2965,
+            spec_filters=[SpecFilter("Height - Seated (Max)", "<=", "5.4mm")],
+            limit=25,
+        )
+
+        assert "error" not in result
+        assert len(result["results"]) > 0, "should find at least one <=5.4mm part"
+        for part in result["results"]:
+            height = part.get("specs", {}).get("Height - Seated (Max)")
+            parsed = parse_length_mm(height) if height else None
+            assert parsed is not None and parsed <= 5.4 + 1e-6, (
+                f"Part {part['lcsc']} leaked with Height={height!r}"
+            )
+
+    def test_diameter_ge_filter_excludes_smaller(self):
+        """Diameter filter '>= 10mm' must not return parts under 10mm."""
+        from pcbparts_mcp.parsers import parse_length_mm
+
+        db = get_db()
+        result = db.search(
+            subcategory_id=2965,
+            spec_filters=[SpecFilter("Diameter", ">=", "10mm")],
+            limit=25,
+        )
+
+        assert "error" not in result
+        assert len(result["results"]) > 0
+        for part in result["results"]:
+            diameter = part.get("specs", {}).get("Diameter")
+            parsed = parse_length_mm(diameter) if diameter else None
+            assert parsed is not None and parsed >= 10.0 - 1e-6, (
+                f"Part {part['lcsc']} leaked with Diameter={diameter!r}"
+            )
+
+    def test_height_and_diameter_combined(self):
+        """Combined Height/Diameter/Capacitance/Voltage filters must AND correctly."""
+        from pcbparts_mcp.parsers import parse_length_mm, parse_capacitance
+
+        db = get_db()
+        result = db.search(
+            subcategory_id=2965,
+            spec_filters=[
+                SpecFilter("Height - Seated (Max)", "<=", "5.4mm"),
+                SpecFilter("Diameter", "<=", "6.3mm"),
+                SpecFilter("Capacitance", ">=", "220uF"),
+                SpecFilter("Voltage", ">=", "16V"),
+            ],
+            limit=25,
+        )
+
+        assert "error" not in result
+        for part in result["results"]:
+            h = parse_length_mm(part["specs"].get("Height - Seated (Max)", ""))
+            d = parse_length_mm(part["specs"].get("Diameter", ""))
+            c = parse_capacitance(part["specs"].get("Capacitance", ""))
+            assert h is not None and h <= 5.4 + 1e-6, f"{part['lcsc']}: height {h}"
+            assert d is not None and d <= 6.3 + 1e-6, f"{part['lcsc']}: diameter {d}"
+            assert c is not None and c >= 220e-6 * (1 - 1e-6), f"{part['lcsc']}: capacitance {c}"
+
     def test_multiple_interface_values_use_or_logic(self):
         """Multiple Interface filters should match components with EITHER value (OR logic)."""
         from pcbparts_mcp.smart_parser import parse_smart_query
