@@ -5,7 +5,8 @@ import sqlite3
 from typing import Any, Literal
 
 from ..config import DEFAULT_MIN_STOCK
-from ..alternatives import SPEC_PARSERS
+from ..alternatives import SPEC_PARSERS, DIMENSION_SPEC_FIELDS
+from ..parsers import parse_dimensions_from_package
 from ..subcategory_aliases import (
     resolve_subcategory_name as _resolve_subcategory_name,
     find_similar_subcategories as _find_similar_subcategories,
@@ -301,6 +302,12 @@ class SearchEngine:
                                 part_value = parser(attr_value)
                                 if part_value is not None:
                                     break
+
+                        if part_value is None and spec_filter.name in DIMENSION_SPEC_FIELDS:
+                            # Recover from package string when the spec field is "-" (null);
+                            # ~70% of null-height aluminum electrolytics encode dims here.
+                            diameter_mm, height_mm = parse_dimensions_from_package(part.get("package") or "")
+                            part_value = diameter_mm if spec_filter.name == "Diameter" else height_mm
 
                         if part_value is None:
                             passes = False

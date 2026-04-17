@@ -171,6 +171,12 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Output Power": parse_power,
 }
 
+
+# Dimension spec fields that can fall back to the package string when the spec value is null.
+DIMENSION_SPEC_FIELDS: frozenset[str] = frozenset({
+    "Height - Seated (Max)", "Height", "Diameter",
+})
+
 # Specs that use exact string matching (case-insensitive)
 STRING_MATCH_SPECS = {
     "Temperature Coefficient",
