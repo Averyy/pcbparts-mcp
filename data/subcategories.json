@@ -94,11 +94,6 @@
     "category_id": 10,
     "category_name": "Audio Products / Vibration Motors"
   },
-  "1949": {
-    "name": "Handle",
-    "category_id": 62,
-    "category_name": "Building materials / Building hardware"
-  },
   "1621": {
     "name": "Partition board",
     "category_id": 62,
@@ -196,11 +191,6 @@
   },
   "2252": {
     "name": "Silicon Capacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
-  "3232": {
-    "name": "Supercapacitors",
     "category_id": 2,
     "category_name": "Capacitors"
   },
