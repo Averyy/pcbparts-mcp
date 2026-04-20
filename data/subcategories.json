@@ -194,11 +194,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -828,6 +823,11 @@
     "name": "V-Audio Modules",
     "category_id": 43,
     "category_name": "Educational Kits"
+  },
+  "2231": {
+    "name": "Pre-ordered Products",
+    "category_id": 15,
+    "category_name": "Electronic Tools/Instruments/Consumables"
   },
   "3063": {
     "name": "ADI",
