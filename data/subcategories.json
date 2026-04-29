@@ -1959,6 +1959,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "448": {
+    "name": "Accelerator/primer",
+    "category_id": 58,
+    "category_name": "Industrial reagents/lubrication/rust removal"
+  },
   "3510": {
     "name": "Body Worn Camera",
     "category_id": 26,
@@ -3664,8 +3669,18 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "117": {
+    "name": "Desoldering pump/desoldering wire",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "3727": {
     "name": "Electric Soldering Iron",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "882": {
+    "name": "Grease gun",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
