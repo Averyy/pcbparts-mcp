@@ -584,6 +584,11 @@
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
+  "440": {
+    "name": "Thermal conductive sheet/thermal conductive cap",
+    "category_id": 59,
+    "category_name": "Consumables and auxiliary materials"
+  },
   "3038": {
     "name": "Ceramic Resonators",
     "category_id": 7,
@@ -2654,6 +2659,11 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
+  "3517": {
+    "name": "Rice Cooker",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "198": {
     "name": "RJ sheath",
     "category_id": 49,
@@ -3666,11 +3676,6 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "117": {
-    "name": "Desoldering pump/desoldering wire",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
