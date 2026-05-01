@@ -2,10 +2,10 @@
   "source": "circuitpython",
   "source_url": "https://docs.circuitpython.org/projects/bundle/en/latest/drivers.html",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-04-01T06:37:53.214926+00:00",
+  "scraped_at": "2026-05-01T06:57:44.000212+00:00",
   "stats": {
-    "sensor_count": 121,
-    "total_entries_checked": 561,
+    "sensor_count": 122,
+    "total_entries_checked": 563,
     "skipped_no_measures": 1
   },
   "sensors": [
@@ -909,6 +909,20 @@
         "https://docs.circuitpython.org/projects/max31865/en/latest/"
       ],
       "description": "MAX31865 Thermocouple Amplifier, Temperature"
+    },
+    {
+      "id": "max44009",
+      "name": "max44009",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/max44009/en/latest/"
+      ],
+      "description": "MAX44009 Wide-range Lux Light Sensor"
     },
     {
       "id": "mcp9600",

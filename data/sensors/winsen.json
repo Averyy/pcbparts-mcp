@@ -2,10 +2,10 @@
   "source": "winsen",
   "source_url": "https://www.winsen-sensor.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-04-01T06:59:51.896612+00:00",
+  "scraped_at": "2026-05-01T07:20:03.236423+00:00",
   "stats": {
-    "sensor_count": 379,
-    "total_product_pages": 387,
+    "sensor_count": 382,
+    "total_product_pages": 390,
     "skipped": 4,
     "errors": 0
   },
@@ -857,21 +857,6 @@
       "description": "ME2-CO-Ф14x50-C Carbon Monoxide Sensor",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/me2-co-ф14x50-c.pdf",
-      "type": "electrochemical"
-    },
-    {
-      "id": "me2o220",
-      "name": "ME2-O2-Ф20",
-      "measures": [
-        "oxygen"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/me2-o2-%D1%8420.html"
-      ],
-      "description": "ME2-O2-Ф20 Oxygen Sensor",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/me2-o2-ф20.pdf",
       "type": "electrochemical"
     },
     {
@@ -1825,7 +1810,6 @@
         "uart"
       ],
       "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/mh-z1311a.pdf",
       "voltage": "5.0",
       "type": "ndir"
     },
@@ -2889,6 +2873,76 @@
       "type": "ndir"
     },
     {
+      "id": "pt1000c",
+      "name": "pt1000-c",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/pt1000-c.html"
+      ],
+      "description": "Pt1000-C Thin-Film Platinum Resistance Temperature Sensor",
+      "manufacturer": "Winsen",
+      "voltage": "2.2"
+    },
+    {
+      "id": "pt1000csmd",
+      "name": "Pt1000-CSMD",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/pt1000-csmd.html"
+      ],
+      "description": "Pt1000-CSMD Thin-Film Platinum Resistance Temperature Sensor",
+      "manufacturer": "Winsen",
+      "voltage": "2.2"
+    },
+    {
+      "id": "pt100c",
+      "name": "Pt100-C",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/pt100-c.html"
+      ],
+      "description": "Pt100-C Thin-Film Platinum Resistance Temperature Sensor",
+      "manufacturer": "Winsen",
+      "voltage": "2.2"
+    },
+    {
+      "id": "pt100csmd",
+      "name": "Pt100-CSMD",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/pt100-csmd.html"
+      ],
+      "description": "Pt100-CSMD Thin-Film Platinum Resistance Temperature Sensor",
+      "manufacturer": "Winsen",
+      "voltage": "2.2"
+    },
+    {
+      "id": "pt200",
+      "name": "Pt200",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/pt200.html"
+      ],
+      "description": "Pt200 Thin-Film Platinum Resistance Temperature Sensor",
+      "manufacturer": "Winsen",
+      "voltage": "2.2"
+    },
+    {
       "id": "rd623",
       "name": "RD-623",
       "measures": [
@@ -3584,9 +3638,8 @@
       "urls": [
         "https://www.winsen-sensor.com/product/wpah01.html"
       ],
-      "description": "WPAH01 Ceramic Pressure Sensor. Range: 2bar、5bar、10bar、20bar、50bar、100bar",
+      "description": "WPAH01 Ceramic Pressure Sensor. Range: 2bar—400bar",
       "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpah01.pdf",
       "voltage": "2-20"
     },
     {
@@ -3614,8 +3667,7 @@
         "https://www.winsen-sensor.com/product/wpak63.html"
       ],
       "description": "WPAK63 General Type Isolation-Film Pressure Sensor. Range: -100kPa～0～10kPa…100MPa",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpak63.pdf"
+      "manufacturer": "Winsen"
     },
     {
       "id": "wpak63j",
@@ -3628,8 +3680,7 @@
         "https://www.winsen-sensor.com/product/wpak63j.html"
       ],
       "description": "WPAK63J General Type Isolation-Film Pressure Sensor. Range: -100kPa～0～10kPa…100MPa",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpak63j.pdf"
+      "manufacturer": "Winsen"
     },
     {
       "id": "wpak64",
@@ -3642,36 +3693,7 @@
         "https://www.winsen-sensor.com/product/wpak64.html"
       ],
       "description": "WPAK64 Mini-Size Diffused Silicon Pressure Sensor. Range: -100kPa～0～10kPa…25MPa",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpak64.pdf"
-    },
-    {
-      "id": "wpak65",
-      "name": "WPAK65",
-      "measures": [
-        "pressure"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/wpak65.html"
-      ],
-      "description": "WPAK65 General Type Isolation-Film Pressure Sensor. Range: -100kPa～0～10kPa…16MPa",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpak65.pdf"
-    },
-    {
-      "id": "wpak66",
-      "name": "WPAK66",
-      "measures": [
-        "pressure"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/wpak66.html"
-      ],
-      "description": "WPAK66 General Type Isolation-Film Pressure Sensor. Range: 6MPa…60MPa",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpak66.pdf"
+      "manufacturer": "Winsen"
     },
     {
       "id": "wpak67",
@@ -3683,23 +3705,9 @@
       "urls": [
         "https://www.winsen-sensor.com/product/wpak67.html"
       ],
-      "description": "WPAK67 General Type Isolation-Film Pressure Sensor. Range: 0～10kPa…2.5MPa",
+      "description": "WPAK67 General Type Isolation-Film Pressure Sensor",
       "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpak67.pdf"
-    },
-    {
-      "id": "wpak68",
-      "name": "WPAK68",
-      "measures": [
-        "pressure"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/wpak68.html"
-      ],
-      "description": "WPAK68 General Type Isolation-Film Pressure Sensor. Range: -100kPa～0～10kPa…100MPa",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpak68.pdf"
+      "voltage": "1.5"
     },
     {
       "id": "wpak69",
@@ -3716,20 +3724,6 @@
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpak69.pdf"
     },
     {
-      "id": "wpak70",
-      "name": "WPAK70",
-      "measures": [
-        "pressure"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/wpak70.html"
-      ],
-      "description": "WPAK70 General Type Isolation-Film Pressure Sensor. Range: -100kPa～0～10kPa…10MPa",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpak70.pdf"
-    },
-    {
       "id": "wpas01",
       "name": "WPAS01",
       "measures": [
@@ -3739,7 +3733,7 @@
       "urls": [
         "https://www.winsen-sensor.com/product/wpas01.html"
       ],
-      "description": "WPAS01 Plastic Package Pressure Sensor",
+      "description": "WPAS01 Plastic Package Pressure Sensor. Range: -100kPa～0～200kPa…1.7MPa",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpas01.pdf",
       "type": "mems"
@@ -3754,7 +3748,7 @@
       "urls": [
         "https://www.winsen-sensor.com/product/wpas02.html"
       ],
-      "description": "WPAS02 Plastic Package Pressure Sensor",
+      "description": "WPAS02 Plastic Package Pressure Sensor. Range: -100kPa～0kPa…10kPa…200kPa",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpas02.pdf",
       "type": "mems"
@@ -3785,8 +3779,7 @@
         "https://www.winsen-sensor.com/product/wpbh01.html"
       ],
       "description": "WPBH01 Ceramic pressure sensor module",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpbh01.pdf"
+      "manufacturer": "Winsen"
     },
     {
       "id": "wpch01",
@@ -3798,9 +3791,8 @@
       "urls": [
         "https://www.winsen-sensor.com/product/wpch01.html"
       ],
-      "description": "WPCH01 General Type Ceramic Pressure Transmitter. Range: 0.2 MPa、0.5MPa、1 MPa、2 MPa、5MPa",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpch01.pdf"
+      "description": "WPCH01 General Type Ceramic Pressure Transmitter. Range: 0-0.2MPa-……-40MPa",
+      "manufacturer": "Winsen"
     },
     {
       "id": "wpch04",
@@ -3813,8 +3805,7 @@
         "https://www.winsen-sensor.com/product/wpch04.html"
       ],
       "description": "WPCH04 General Type Ceramic Pressure Transmitter. Range: 0-0.2MPa-……-40MPa",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpch04.pdf"
+      "manufacturer": "Winsen"
     },
     {
       "id": "wpck03",
@@ -3827,8 +3818,7 @@
         "https://www.winsen-sensor.com/product/wpck03.html"
       ],
       "description": "WPCK03 Diffused Silicon Pressure Transmitter",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpck03.pdf"
+      "manufacturer": "Winsen"
     },
     {
       "id": "wpck05",
@@ -3870,20 +3860,6 @@
       ],
       "description": "WPCK08 Level Transmitter. Target: Liquid. Range: 0-200mH2O",
       "manufacturer": "Winsen"
-    },
-    {
-      "id": "wpck62",
-      "name": "WPCK62",
-      "measures": [
-        "pressure"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/wpck62.html"
-      ],
-      "description": "WPCK62 Diffussed Silicon Pressure Transmitter",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpck62.pdf"
     },
     {
       "id": "wpck81",
@@ -4096,6 +4072,25 @@
       "type": "catalytic"
     },
     {
+      "id": "zc101",
+      "name": "ZC101",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/zc101.html"
+      ],
+      "description": "ZC101 Combustible Gas Module for Industrial Use. Target: Methane, propane, isobutane. Range: Unit LEL: 0-100%LEL Unit ppm: CH₄: 0-50000ppm, C₃H₈: 0-22000ppm",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Winsen",
+      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zc101.pdf",
+      "voltage": "5",
+      "type": "catalytic"
+    },
+    {
       "id": "zc13",
       "name": "ZC13",
       "measures": [
@@ -4178,6 +4173,23 @@
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zce04b.pdf",
       "voltage": "3.5-5",
       "type": "electrochemical"
+    },
+    {
+      "id": "zd100",
+      "name": "ZD100",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/zd100.html"
+      ],
+      "description": "Radon Gas Detection Module ZD100",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Winsen",
+      "voltage": "5"
     },
     {
       "id": "ze03",
@@ -5038,6 +5050,20 @@
       "voltage": "9"
     },
     {
+      "id": "zi121",
+      "name": "ZI121",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/zi121.html"
+      ],
+      "description": "ZI121 Nano Water Ion Generator",
+      "manufacturer": "Winsen",
+      "voltage": "9-16"
+    },
+    {
       "id": "zl940v3c",
       "name": "ZL-940-V3C",
       "measures": [
@@ -5084,6 +5110,20 @@
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zm03.pdf",
       "voltage": "2.5",
       "type": "semiconductor"
+    },
+    {
+      "id": "zm101a",
+      "name": "ZM101-A",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/zm101-a.html"
+      ],
+      "description": "ZM101-A AI-Nose",
+      "manufacturer": "Winsen",
+      "voltage": "3.3"
     },
     {
       "id": "zm102",
