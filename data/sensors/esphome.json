@@ -2,12 +2,12 @@
   "source": "esphome",
   "source_url": "https://github.com/esphome/esphome",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-04-01T06:37:52.643075+00:00",
+  "scraped_at": "2026-05-01T06:57:43.420741+00:00",
   "stats": {
-    "sensor_count": 176,
-    "total_components_checked": 287,
+    "sensor_count": 178,
+    "total_components_checked": 290,
     "skipped_non_sensor": 91,
-    "skipped_no_measures": 1
+    "skipped_no_measures": 2
   },
   "sensors": [
     {
@@ -879,6 +879,24 @@
       ]
     },
     {
+      "id": "emontx",
+      "name": "emontx",
+      "measures": [
+        "current",
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/emontx.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
       "id": "ens160",
       "name": "ens160",
       "measures": [
@@ -1111,6 +1129,26 @@
       ],
       "urls": [
         "https://esphome.io/components/sensor/hdc2010.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x40"
+      ]
+    },
+    {
+      "id": "hdc2080",
+      "name": "hdc2080",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/hdc2080.html"
       ],
       "protocol": [
         "i2c"

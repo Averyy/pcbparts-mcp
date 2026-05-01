@@ -2,10 +2,10 @@
   "source": "bestmodules",
   "source_url": "https://www.bestmodulescorp.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-04-01T07:04:00.149771+00:00",
+  "scraped_at": "2026-05-01T07:24:23.782904+00:00",
   "stats": {
-    "sensor_count": 80,
-    "total_pages_checked": 84,
+    "sensor_count": 81,
+    "total_pages_checked": 85,
     "skipped": 1,
     "errors": 0
   },
@@ -81,6 +81,25 @@
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
       "voltage": "6.0-28.0"
+    },
+    {
+      "id": "bm22s2302",
+      "name": "BM22S2302",
+      "measures": [
+        "gas",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bm22s2302-1.html"
+      ],
+      "description": "Mini Digital Smoke and Temperature Dual Detector Module BM22S2302-1. Detection Range: 0.1dB/m ~ 1.0dB/m",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "5.0"
     },
     {
       "id": "bm22s3021",

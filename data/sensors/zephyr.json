@@ -2,11 +2,11 @@
   "source": "zephyr",
   "source_url": "https://github.com/zephyrproject-rtos/zephyr",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-04-01T06:37:55.888882+00:00",
+  "scraped_at": "2026-05-01T06:57:45.796748+00:00",
   "stats": {
-    "sensor_count": 221,
-    "total_bindings": 447,
-    "skipped_internal": 42,
+    "sensor_count": 225,
+    "total_bindings": 455,
+    "skipped_internal": 43,
     "skipped_bus_variant": 67,
     "skipped_no_measures": 29
   },
@@ -945,6 +945,24 @@
       "manufacturer": "ams-OSRAM"
     },
     {
+      "id": "cht8315",
+      "name": "CHT8315",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensylink,cht8315.html"
+      ],
+      "description": "Sensylink CHT8315 Temperature and Humidity Sensor",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
       "id": "dht",
       "name": "DHT",
       "measures": [
@@ -1425,6 +1443,25 @@
         "spi"
       ],
       "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "htu21d",
+      "name": "HTU21D",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/meas,htu21d.html"
+      ],
+      "description": "TE Connectivity (Measurement Specialties) HTU21D digital humidity and temperature sensor. This is compatible with the Sensirion SHT21.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "TE Connectivity"
     },
     {
       "id": "hx711",
@@ -3115,6 +3152,24 @@
       "manufacturer": "PixArt"
     },
     {
+      "id": "pac194x",
+      "name": "PAC194X",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/microchip,pac194x.html"
+      ],
+      "description": "Microchip PAC194X/PAC195X Power Monitor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Microchip"
+    },
+    {
       "id": "paj7620",
       "name": "PAJ7620",
       "measures": [
@@ -3773,6 +3828,20 @@
         "i2c"
       ],
       "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tsen",
+      "name": "TSEN",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bflb,tsen.html"
+      ],
+      "description": "TSEN is an internal input of the GPADC. It has no external pins: the analog front-end is shared with the general-purpose ADC and is switched into temperature-sense mode by the BFLB ADC driver when ..."
     },
     {
       "id": "tsicxx6",

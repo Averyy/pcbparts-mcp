@@ -2,13 +2,13 @@
   "source": "arduino",
   "source_url": "https://downloads.arduino.cc/libraries/library_index.json",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-04-01T06:37:49.724063+00:00",
+  "scraped_at": "2026-05-01T06:57:40.676324+00:00",
   "stats": {
-    "sensor_count": 647,
-    "total_libs_checked": 1789,
-    "skipped_no_ic": 433,
-    "skipped_nonsensor": 137,
-    "skipped_no_measures": 108
+    "sensor_count": 673,
+    "total_libs_checked": 1848,
+    "skipped_no_ic": 438,
+    "skipped_nonsensor": 138,
+    "skipped_no_measures": 112
   },
   "sensors": [
     {
@@ -44,6 +44,40 @@
       "description": "An extensible library for interfacing with 24GHz Radar Sensor devices"
     },
     {
+      "id": "7semibme68x",
+      "name": "7Semi_BME68x",
+      "measures": [
+        "humidity",
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/7semi-solutions/7Semi-BME68x.git"
+      ],
+      "description": "Arduino library for Bosch BME68x environmental sensor with I2C and SPI support.",
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "7semibmp58x",
+      "name": "7Semi BMP58x",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/7semi-solutions/7Semi-BMP58x-Pressure-Sensor.git"
+      ],
+      "description": "Lightweight BMP58x driver for Arduino (I2C/SPI) with beginner-friendly defaults.",
+      "manufacturer": "Bosch"
+    },
+    {
       "id": "7semibno08x",
       "name": "7Semi BNO08x",
       "measures": [
@@ -73,6 +107,54 @@
         "https://github.com/7semi-solutions/7Semi_CO2_Temperature_Humidity_I2C_Probe_Arduino_Library.git"
       ],
       "description": "I2C driver for the 7Semi CO₂TH sensor with RHT compensation."
+    },
+    {
+      "id": "7semists3x",
+      "name": "7Semi STS3x",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/7semi-solutions/7Semi-STS3x.git"
+      ],
+      "description": "Arduino library for the Sensirion STS3x digital temperature sensor.",
+      "manufacturer": "Sensirion"
+    },
+    {
+      "id": "7semists4x",
+      "name": "7Semi STS4x",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/7semi-solutions/7Semi-STS4x.git"
+      ],
+      "description": "Arduino library for Sensirion STS4x digital temperature sensors over I2C.",
+      "manufacturer": "Sensirion"
+    },
+    {
+      "id": "7semitmp23x",
+      "name": "7Semi TMP23x",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/7semi-solutions/7Semi-TMP23x.git"
+      ],
+      "description": "Arduino library for Texas Instruments TMP23x analog temperature sensors.",
+      "manufacturer": "Texas Instruments"
     },
     {
       "id": "9dof",
@@ -312,6 +394,21 @@
       "description": "Arduino library for the AD8494, AD8495, AD8496 and AD8497 thermocouple.."
     },
     {
+      "id": "adc128d818",
+      "name": "ADC128D818",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/joseluu/adc128d818_driver.git"
+      ],
+      "description": "Use ADC128D818 8-channel I2C ADC for various temperature sensors"
+    },
+    {
       "id": "adis16470",
       "name": "Grove 6Axis_Digital_Accelerometer_Gyroscope4_ADIS16470",
       "measures": [
@@ -356,12 +453,13 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/alkonosst/ADS1115.git",
-        "https://github.com/DFRobot/DFRobot_ADS1115_0_10V.git"
+        "https://github.com/DFRobot/DFRobot_ADS1115_0_10V.git",
+        "https://github.com/apadevices/APAPHX2_ADS1115.git"
       ],
-      "description": "ADS1115 library for Arduino. Easy to use."
+      "description": "pH and ORP/RX measurement library for APADevices PHX v2 board using ADS1115 16-bit ADC."
     },
     {
       "id": "ads1220",
@@ -711,6 +809,21 @@
         "https://github.com/PTSolns/PTSolns_AHTx.git"
       ],
       "description": "library to drive AHT20 temperature and humidity IC. Forked from https://github.com/sparkfun/SparkFun_Qwiic_Humidity_AHT20_Arduino_Library"
+    },
+    {
+      "id": "ak09918",
+      "name": "Soldered Compass AK09918",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/SolderedElectronics/Soldered-Compass-AK09918-Arduino-Library.git"
+      ],
+      "description": "Library for the Soldered 3-Axis digital compass breakout"
     },
     {
       "id": "ak9750",
@@ -1778,7 +1891,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 24,
+      "popularity": 25,
       "urls": [
         "https://github.com/adafruit/Adafruit_BME280_Library.git",
         "https://github.com/sparkfun/SparkFun_BME280_Arduino_Library.git",
@@ -2030,7 +2143,7 @@
     },
     {
       "id": "bmi270",
-      "name": "SparkFun BMI270 Arduino Library",
+      "name": "7Semi BMI270",
       "measures": [
         "acceleration",
         "gyroscope"
@@ -2038,11 +2151,12 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/sparkfun/SparkFun_BMI270_Arduino_Library.git"
+        "https://github.com/sparkfun/SparkFun_BMI270_Arduino_Library.git",
+        "https://github.com/7semi-solutions/7Semi-BMI270.git"
       ],
-      "description": "A library to drive the Bosch BMI270 6-DoF IMU.",
+      "description": "Arduino library for the Bosch BMI270 IMU (7Semi wrapper)",
       "manufacturer": "Bosch"
     },
     {
@@ -2061,6 +2175,40 @@
         "https://github.com/arduino-libraries/Arduino_BMI270_BMM150.git"
       ],
       "description": "Allows you to read the accelerometer, magnetometer and gyroscope values from the IMU on your Arduino Nano 33 BLE Sense Rev2"
+    },
+    {
+      "id": "bmi323",
+      "name": "7Semi BMI323",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/7semi-solutions/7Semi-BMI323.git"
+      ],
+      "description": "Lightweight and efficient BMI323 IMU sensor library.",
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmi330",
+      "name": "7Semi_BMI330",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/7semi-solutions/7Semi_BMI330.git"
+      ],
+      "description": "Lightweight BMI330 IMU driver for Arduino (I2C/SPI) with beginner-friendly defaults.",
+      "manufacturer": "Bosch"
     },
     {
       "id": "bmk52t016",
@@ -2199,18 +2347,20 @@
     },
     {
       "id": "bmp384",
-      "name": "SparkFun BMP384 Arduino Library",
+      "name": "7Semi BMP384",
       "measures": [
-        "pressure"
+        "pressure",
+        "temperature"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/sparkfun/SparkFun_BMP384_Arduino_Library.git"
+        "https://github.com/sparkfun/SparkFun_BMP384_Arduino_Library.git",
+        "https://github.com/7semi-solutions/7Semi-BMP348.git"
       ],
-      "description": "A library to drive the Bosch BMP384 pressure sensor.",
+      "description": "Lightweight and efficient BMP384 pressure and temperature sensor library.",
       "manufacturer": "Bosch"
     },
     {
@@ -2295,6 +2445,22 @@
         "https://github.com/sparkfun/SparkFun_BMP581_Arduino_Library.git"
       ],
       "description": "A library to drive the Bosch BMP581 pressure sensor.",
+      "manufacturer": "Bosch"
+    },
+    {
+      "id": "bmp585",
+      "name": "7Semi_BMP585",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/7semi-solutions/7Semi-BMP585.git"
+      ],
+      "description": "Lightweight BMP585 driver for Arduino (I2C/SPI) with beginner-friendly defaults.",
       "manufacturer": "Bosch"
     },
     {
@@ -2388,6 +2554,22 @@
         "https://github.com/BestModules-Libraries/BMS81M001.git"
       ],
       "description": "Arduino library for IIC access to the BMS81M001 that Wake On Shake Module"
+    },
+    {
+      "id": "bmv080",
+      "name": "7Semi BMV080",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/7semi-solutions/7Semi-BMV080-Particulate-Matter-Sensor.git"
+      ],
+      "description": "Arduino library for accurate particulate matter sensing using Bosch Sensortec BMV080",
+      "manufacturer": "Bosch"
     },
     {
       "id": "bmv23m001",
@@ -2630,7 +2812,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 13,
+      "popularity": 14,
       "urls": [
         "https://github.com/tobiasschuerg/MH-Z-CO2-Sensors.git",
         "https://github.com/mhorimoto/ELT_S300_HOLLY.git",
@@ -3043,6 +3225,22 @@
       "manufacturer": "ScioSense"
     },
     {
+      "id": "ens210",
+      "name": "7Semi ENS210",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/7semi-solutions/7Semi-ENS210.git"
+      ],
+      "description": "ENS210 temperature and humidity sensor library for Arduino."
+    },
+    {
       "id": "ens220",
       "name": "ScioSense_ENS220",
       "measures": [
@@ -3150,6 +3348,21 @@
         "https://github.com/Bina-Lee/FSR16x16_BNL.git"
       ],
       "description": "A library for 16x16 FSR array sensor"
+    },
+    {
+      "id": "fsr40x",
+      "name": "FSR40X",
+      "measures": [
+        "force"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/RobTillaart/FSR40X.git"
+      ],
+      "description": "Arduino library for FSR40X Force Sensing Resistors."
     },
     {
       "id": "fxas210002c",
@@ -3277,6 +3490,22 @@
       "description": "A simple library for GP2Y0A21YK sensor."
     },
     {
+      "id": "gp2y0a21yk0f",
+      "name": "ESP32_SharpIR",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/newbiei/ESP32_SharpIR.git"
+      ],
+      "description": "Sharp IR GP2Y0A21YK0F library with regression models and filtering",
+      "manufacturer": "Sharp"
+    },
+    {
       "id": "gp2y1010au0f",
       "name": "PMsensor",
       "measures": [
@@ -3321,6 +3550,21 @@
         "https://github.com/BeanieBob/GY26Compass.git"
       ],
       "description": "Library for interfacing with GY-26 Compass Module"
+    },
+    {
+      "id": "gy33",
+      "name": "GY33_Colour_Sensor",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/You-010/GY33_Arduino.git"
+      ],
+      "description": "A library for the GY-33 (TCS34725) colour sensor module (I2C and UART)."
     },
     {
       "id": "gy512",
@@ -3990,6 +4234,23 @@
       "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM45605 Invensence IMU device."
     },
     {
+      "id": "icm45606",
+      "name": "ICM45606",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/tdk-invn-oss/motion.arduino.ICM45606.git"
+      ],
+      "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM45606 Invensence IMU device."
+    },
+    {
       "id": "icm45608",
       "name": "ICM45608",
       "measures": [
@@ -4005,6 +4266,23 @@
         "https://github.com/tdk-invn-oss/motion.arduino.ICM45608.git"
       ],
       "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM45608 Invensence IMU device."
+    },
+    {
+      "id": "icm45685",
+      "name": "ICM45685",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/tdk-invn-oss/motion.arduino.ICM45685.git"
+      ],
+      "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM45685 Invensence IMU device."
     },
     {
       "id": "icm45686",
@@ -4024,6 +4302,23 @@
       "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM45686 Invensence IMU device."
     },
     {
+      "id": "icm45687",
+      "name": "ICM45687",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/tdk-invn-oss/motion.arduino.ICM45687.git"
+      ],
+      "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM45687 Invensence IMU device."
+    },
+    {
       "id": "icm45689",
       "name": "ICM45689",
       "measures": [
@@ -4039,6 +4334,40 @@
         "https://github.com/tdk-invn-oss/motion.arduino.ICM45689.git"
       ],
       "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM45689 Invensence IMU device."
+    },
+    {
+      "id": "icm56622",
+      "name": "ICM56622",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/tdk-invn-oss/motion.arduino.ICM56622.git"
+      ],
+      "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM56622 Invensence IMU device."
+    },
+    {
+      "id": "icm56686",
+      "name": "ICM56686",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/tdk-invn-oss/motion.arduino.ICM56686.git"
+      ],
+      "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM56686 Invensence IMU device."
     },
     {
       "id": "icp10100",
@@ -4377,7 +4706,7 @@
     },
     {
       "id": "ism330dhcx",
-      "name": "STM32duino ISM330DHCX",
+      "name": "7Semi_ISM330DHCX",
       "measures": [
         "acceleration",
         "gyroscope"
@@ -4385,12 +4714,14 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/stm32duino/ISM330DHCX.git",
-        "https://github.com/sparkfun/SparkFun_6DoF_ISM330DHCX_Arduino_Library.git"
+        "https://github.com/sparkfun/SparkFun_6DoF_ISM330DHCX_Arduino_Library.git",
+        "https://github.com/7semi-solutions/7Semi-ISM330DHCX.git"
       ],
-      "description": "This library is for the SparkFun Qwiic and Qwiic Micro, 6DoF ISM330DHCX breakout board."
+      "description": "Arduino library for the STMicroelectronics ISM330DHCX 6-axis IMU (accelerometer + gyroscope) over I2C.",
+      "manufacturer": "STMicroelectronics"
     },
     {
       "id": "ism330dlc",
@@ -4641,6 +4972,22 @@
         "https://github.com/Fiooodooor/HLK-LD245X.git"
       ],
       "description": "A library for the HLK-LD2450 LD2450 24Ghz Human body Motion Inductive Radar Sensor"
+    },
+    {
+      "id": "ld6004",
+      "name": "HLK-LD6004",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/swherdman/HLK-LD6004.git"
+      ],
+      "description": "Arduino library for HLK-LD6004 60GHz 3D presence radar sensor."
     },
     {
       "id": "lg290p",
@@ -5080,16 +5427,17 @@
     },
     {
       "id": "lps28dfw",
-      "name": "SparkFun LPS28DFW Arduino Library",
+      "name": "7Semi_LPS28DFW",
       "measures": [
         "pressure"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/sparkfun/SparkFun_LPS28DFW_Arduino_Library.git"
+        "https://github.com/sparkfun/SparkFun_LPS28DFW_Arduino_Library.git",
+        "https://github.com/7semi-solutions/7Semi-LPS28DFW.git"
       ],
       "description": "A library to drive the STMicroelectronics LPS28DFW barometer.",
       "manufacturer": "STMicroelectronics"
@@ -5225,14 +5573,15 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 6,
+      "popularity": 7,
       "urls": [
         "https://github.com/sparkfun/SparkFun_LSM6DS3_Arduino_Library.git",
         "https://github.com/axelelettronica/sme-lsm6ds3-library.git",
         "https://github.com/stm32duino/LSM6DS3.git",
         "https://github.com/arduino-libraries/Arduino_LSM6DS3.git",
         "https://github.com/Seeed-Studio/Seeed_Arduino_LSM6DS3.git",
-        "https://github.com/Amethyste-PCB/Amethyste_LSM6DS3.git"
+        "https://github.com/Amethyste-PCB/Amethyste_LSM6DS3.git",
+        "https://github.com/SolderedElectronics/Soldered-LSM6DS3-Arduino-Library.git"
       ],
       "description": "Allows you to read the accelerometer, gyroscope, and temperature values from the LSM6DS3 IMU on your Arduino Nano 33 IoT or Arduino Uno WiFi Rev2 boards."
     },
@@ -5295,11 +5644,12 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/stm32duino/LSM6DSO.git"
+        "https://github.com/stm32duino/LSM6DSO.git",
+        "https://github.com/SolderedElectronics/Soldered-LSM6DSO-Arduino-Library.git"
       ],
-      "description": "Ultra Low Power inertial measurement unit."
+      "description": "Arduino library for Soldered LSM6DSO Accelerometer and Gyroscope Breakout Board"
     },
     {
       "id": "lsm6dso16is",
@@ -5688,9 +6038,10 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library.git",
+        "https://github.com/Protocentral/protocentral-pulse-express.git",
         "https://github.com/jaikulk14/Advanced-Oximeter.git"
       ],
       "description": "Advanced library for MAX30102 pulse oximeter and heart rate monitoring with register-level control."
@@ -5754,10 +6105,11 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/RobTillaart/MAX31855_RT.git",
-        "https://github.com/sitronlabs/SitronLabs_Analog_MAX31855_Arduino_Library.git"
+        "https://github.com/sitronlabs/SitronLabs_Analog_MAX31855_Arduino_Library.git",
+        "https://github.com/7semi-solutions/7Semi-MAX31855-Thermocouple-Amplifier.git"
       ],
       "description": "Arduino library for the Analog Devices MAX31855 thermocouple-to-digital converter.",
       "manufacturer": "Analog Devices"
@@ -5781,17 +6133,18 @@
     },
     {
       "id": "max31856",
-      "name": "PWFusion_MAX31856",
+      "name": "7Semi_MAX31856",
       "measures": [
         "temperature"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/adafruit/Adafruit_MAX31856.git",
-        "https://github.com/PlayingWithFusion/PWFusion_MAX31856.git"
+        "https://github.com/PlayingWithFusion/PWFusion_MAX31856.git",
+        "https://github.com/7semi-solutions/7Semi_MAX31856.git"
       ],
       "description": "Library for the Adafruit Thermocouple Amplifier breakout with MAX31856",
       "manufacturer": "Maxim"
@@ -6289,10 +6642,11 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/udoklein/MLX90393_raw.git",
-        "https://github.com/adafruit/Adafruit_MLX90393_Library.git"
+        "https://github.com/adafruit/Adafruit_MLX90393_Library.git",
+        "https://github.com/7semi-solutions/7Semi-MLX90393.git"
       ],
       "description": "Driver for the MLX90393 magenetic field sensor"
     },
@@ -6525,18 +6879,20 @@
     },
     {
       "id": "mmc5983ma",
-      "name": "SparkFun MMC5983MA Magnetometer Arduino Library",
+      "name": "7Semi_MMC5983MA",
       "measures": [
-        "magnetic_field"
+        "magnetic_field",
+        "temperature"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/sparkfun/SparkFun_MMC5983MA_Magnetometer_Arduino_Library.git"
+        "https://github.com/sparkfun/SparkFun_MMC5983MA_Magnetometer_Arduino_Library.git",
+        "https://github.com/7semi-solutions/7Semi-MMC5983MA-3-axis-Magnetic-Sensor-Arduino-Library.git"
       ],
-      "description": "A I2C/SPI library for the MMC5983MA magnetic compass sensor."
+      "description": "Arduino library for the MMC5983MA 3-axis magnetometer with I2C support, temperature readout, and heading helpers."
     },
     {
       "id": "mp23db01hp",
@@ -6878,10 +7234,11 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/RobTillaart/MS5611.git",
-        "https://github.com/RobTillaart/MS5611_SPI.git"
+        "https://github.com/RobTillaart/MS5611_SPI.git",
+        "https://github.com/foodini/arduino_ms5611_spi.git"
       ],
       "description": "Arduino library (SPI) for MS5611 temperature and pressure sensor"
     },
@@ -7757,6 +8114,21 @@
       "description": "The RG15 Arduino Library (RG15-Arduino) provides robust communication with the RG15 Rain Gauge Sensor over a serial interface."
     },
     {
+      "id": "rm3100",
+      "name": "RM3100-Arduino",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/EvdokimovVladimir/RM3100.git"
+      ],
+      "description": "A library for RM3100 and RM2100 magneto-inductive magnetometers over SPI and I2C."
+    },
+    {
       "id": "rp2040",
       "name": "PicoEncoder",
       "measures": [
@@ -7995,6 +8367,21 @@
       ],
       "description": "Arduino library for the ENS16x digital four channel MOX gas sensor family with I2C interface from ScioSense",
       "manufacturer": "ScioSense"
+    },
+    {
+      "id": "sciosenseens17x",
+      "name": "ScioSense_ENS17x",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/sciosense/ens17x-arduino.git"
+      ],
+      "description": "Arduino library for the ENS17x digital four channel MOX gas sensor family with I2C/SPI interface."
     },
     {
       "id": "sciosenseens21x",
@@ -8569,20 +8956,21 @@
     },
     {
       "id": "sgp40",
-      "name": "DFRobot_SGP40",
+      "name": "7Semi_SGP4x",
       "measures": [
         "gas"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 5,
+      "popularity": 6,
       "urls": [
         "https://github.com/sparkfun/SparkFun_SGP40_Arduino_Library.git",
         "https://github.com/adafruit/Adafruit_SGP40.git",
         "https://github.com/DFRobot/DFRobot_SGP40.git",
         "https://github.com/sensirion/arduino-i2c-sgp40.git",
-        "https://github.com/BlueDot-Arduino/BlueDot-SGP40_SHT40.git"
+        "https://github.com/BlueDot-Arduino/BlueDot-SGP40_SHT40.git",
+        "https://github.com/7semi-solutions/7Semi-SGP4x.git"
       ],
       "description": "This is an Arduino library for the Adafruit SGP40 Gas / Air Quality Sensor",
       "manufacturer": "Sensirion"
@@ -9072,7 +9460,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 20,
+      "popularity": 22,
       "urls": [
         "https://github.com/Martinsos/arduino-lib-hc-sr04.git",
         "https://github.com/Spaguetron/ST_HW_HC_SR04.git",
@@ -9264,6 +9652,21 @@
         "https://github.com/sparkfun/SparkFun_T5403_Barometric_Sensor_Arduino_Library.git"
       ],
       "description": "Arduino Library for interfacing with the T5403 Barometric sensor."
+    },
+    {
+      "id": "tad2144",
+      "name": "TAD2144",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/tdk-invn-oss/motion.arduino.TAD2144.git"
+      ],
+      "description": "Allows to read angle and temperature sensors from an TAD2144 Invensence TMR device."
     },
     {
       "id": "tc1046",
@@ -9565,19 +9968,20 @@
     },
     {
       "id": "tmag5273",
-      "name": "Adafruit TMAG5273",
+      "name": "7Semi_TMAG5273",
       "measures": [
         "magnetic_field"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/sparkfun/SparkFun_TMAG5273_Arduino_Library.git",
-        "https://github.com/adafruit/Adafruit_TMAG5273.git"
+        "https://github.com/adafruit/Adafruit_TMAG5273.git",
+        "https://github.com/7semi-solutions/7Semi_TMAG5273-3D-Hall-Effect-Sensor.git"
       ],
-      "description": "A library to drive the Texas Instruments hall-effect sensor TMAG5273.",
+      "description": "Arduino driver for Texas Instruments TMAG5273 3-axis Hall-effect magnetic sensor.",
       "manufacturer": "Texas Instruments"
     },
     {
@@ -9662,16 +10066,17 @@
     },
     {
       "id": "tmp102",
-      "name": "SparkFun TMP102 Breakout",
+      "name": "7Semi-TMP102",
       "measures": [
         "temperature"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/sparkfun/SparkFun_TMP102_Arduino_Library.git"
+        "https://github.com/sparkfun/SparkFun_TMP102_Arduino_Library.git",
+        "https://github.com/7semi-solutions/7Semi-TMP102.git"
       ],
       "description": "A library to drive the Texas Instruments TMP102 using I2C.",
       "manufacturer": "Texas Instruments"
@@ -9921,6 +10326,7 @@
       "id": "tx07k",
       "name": "TX07K-TXC",
       "measures": [
+        "humidity",
         "temperature"
       ],
       "platforms": [
@@ -9930,7 +10336,7 @@
       "urls": [
         "https://github.com/Zefek/TX07K-TXC.git"
       ],
-      "description": "Library to work with TX07K-TXC temperature sensor"
+      "description": "Arduino library for reading TX07K-TXC wireless temperature and humidity sensors."
     },
     {
       "id": "ubloxgnssv3",
@@ -9946,6 +10352,24 @@
         "https://github.com/sparkfun/SparkFun_u-blox_GNSS_v3.git"
       ],
       "description": "Library for I2C, Serial and SPI Communication with u-blox GNSS modules"
+    },
+    {
+      "id": "ufc23",
+      "name": "ScioSense_UFC23",
+      "measures": [
+        "distance",
+        "flow",
+        "ultrasonic"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/sciosense/ufc23-arduino.git"
+      ],
+      "description": "Library for the UFC23 ultrasonic flow sensor by ScioSense",
+      "manufacturer": "ScioSense"
     },
     {
       "id": "ufm01",
@@ -10012,6 +10436,21 @@
         "https://github.com/DFRobot/DFRobot_URM13.git"
       ],
       "description": "URM13 driver library(SKU: SEN0352)."
+    },
+    {
+      "id": "us500",
+      "name": "US500",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/RobTillaart/US500.git"
+      ],
+      "description": "Arduino library for US500 underwater distance sensor."
     },
     {
       "id": "usd1",
@@ -10228,21 +10667,23 @@
     },
     {
       "id": "veml7700",
-      "name": "DFRobot_VEML7700",
+      "name": "7Semi VEML7700",
       "measures": [
         "light"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 4,
+      "popularity": 5,
       "urls": [
         "https://github.com/adafruit/Adafruit_VEML7700.git",
         "https://github.com/sparkfun/SparkFun_VEML7700_Arduino_Library.git",
         "https://github.com/DFRobot/DFRobot_VEML7700.git",
-        "https://github.com/PTSolns/PTSolns_VEML7700.git"
+        "https://github.com/PTSolns/PTSolns_VEML7700.git",
+        "https://github.com/7semi-solutions/7Semi-VEML7700.git"
       ],
-      "description": "This is a Library for VEML7700, the function is to read High Accuracy Ambient Light data(SKU: SEN0228)."
+      "description": "This is a Library for VEML7700, the function is to read High Accuracy Ambient Light data(SKU: SEN0228).",
+      "manufacturer": "Vishay"
     },
     {
       "id": "vl53l0x",
@@ -10293,7 +10734,7 @@
     },
     {
       "id": "vl53l5cx",
-      "name": "SparkFun VL53L5CX Arduino Library",
+      "name": "Adafruit VL53L5CX",
       "measures": [
         "distance",
         "tof"
@@ -10301,9 +10742,10 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/sparkfun/SparkFun_VL53L5CX_Arduino_Library.git"
+        "https://github.com/sparkfun/SparkFun_VL53L5CX_Arduino_Library.git",
+        "https://github.com/adafruit/Adafruit_VL53L5.git"
       ],
       "description": "Distance sensing (VL53L5CX) with 64 pixels up to 4 meters at 15Hz.",
       "manufacturer": "STMicroelectronics"

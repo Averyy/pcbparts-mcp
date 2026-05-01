@@ -2,11 +2,11 @@
   "source": "sparkfun",
   "source_url": "https://www.sparkfun.com/graphql",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-04-01T07:04:05.672047+00:00",
+  "scraped_at": "2026-05-01T07:24:28.774210+00:00",
   "stats": {
-    "sensor_count": 119,
-    "total_products": 396,
-    "skipped_sku_prefix": 51,
+    "sensor_count": 121,
+    "total_products": 402,
+    "skipped_sku_prefix": 55,
     "skipped_pattern": 62,
     "skipped_no_ic": 113
   },
@@ -448,6 +448,23 @@
       ]
     },
     {
+      "id": "bno086",
+      "name": "SparkFun VR IMU Breakout - BNO086 (Qwiic)",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-vr-imu-breakout-bno086-qwiic.html"
+      ],
+      "description": "An incredibly precise 9DoF orientation sensor featuring 14-bit accelerometer fusion, Interactive Calibration, and flexible I 2 C, SPI, or UART communication options.",
+      "protocol": [
+        "i2c",
+        "spi"
+      ]
+    },
+    {
       "id": "cap1203",
       "name": "SparkFun Capacitive Touch Slider - CAP1203 (Qwiic)",
       "measures": [
@@ -708,10 +725,23 @@
       "urls": [
         "https://www.sparkfun.com/sparkfun-9dof-imu-breakout-icm-20948-qwiic.html"
       ],
-      "description": "The SparkFun 9DoF IMU Breakout incorporates all the amazing features of the ICM-20948 into a Qwiic-enabled breakout board.",
+      "description": "This Qwiic-enabled IMU Breakout utilizes the ICM-20948's Digital Motion Processor to deliver optimal 9-axis tracking for IoT and wearables projects.",
       "protocol": [
         "i2c"
       ]
+    },
+    {
+      "id": "im19",
+      "name": "SparkFun 9DoF IMU Breakout - IM19",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-9dof-imu-breakout-im19.html"
+      ],
+      "description": "A high-precision IMU breakout featuring the Feyman IM19, designed exclusively for RTK receivers, for precise tilt compensation and PNT sensor fusion."
     },
     {
       "id": "ina169",
