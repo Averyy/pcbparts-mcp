@@ -104,6 +104,11 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
+  "1936": {
+    "name": "Sealing strip",
+    "category_id": 62,
+    "category_name": "Building materials / Building hardware"
+  },
   "3396": {
     "name": "Water heater",
     "category_id": 62,
@@ -581,6 +586,11 @@
   },
   "3456": {
     "name": "Silicone pad",
+    "category_id": 59,
+    "category_name": "Consumables and auxiliary materials"
+  },
+  "450": {
+    "name": "Thermal conductive adhesive",
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
@@ -2629,6 +2639,11 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "3520": {
+    "name": "Cabinet / Disinfection Cabinet",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3686,11 +3701,6 @@
   },
   "3728": {
     "name": "Soldering Tip",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1749": {
-    "name": "Star-shaped screwdrivers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
