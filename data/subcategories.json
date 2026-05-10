@@ -589,11 +589,6 @@
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
-  "450": {
-    "name": "Thermal conductive adhesive",
-    "category_id": 59,
-    "category_name": "Consumables and auxiliary materials"
-  },
   "3038": {
     "name": "Ceramic Resonators",
     "category_id": 7,
@@ -1979,6 +1974,11 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
+  "3219": {
+    "name": "Conductive Silver Paste",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
   "3701": {
     "name": "DAQ",
     "category_id": 26,
@@ -2638,11 +2638,6 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
-  },
-  "3520": {
-    "name": "Cabinet / Disinfection Cabinet",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
