@@ -709,6 +709,11 @@
     "category_id": 32,
     "category_name": "Development Boards & Tools"
   },
+  "2200": {
+    "name": "Programmers, Emulators, and Debuggers",
+    "category_id": 32,
+    "category_name": "Development Boards & Tools"
+  },
   "2215": {
     "name": "Raspberry Pi",
     "category_id": 32,
@@ -2638,6 +2643,11 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
+  },
+  "3531": {
+    "name": "Network Switch",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
