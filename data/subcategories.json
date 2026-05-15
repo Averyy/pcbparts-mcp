@@ -584,11 +584,6 @@
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
-  "440": {
-    "name": "Thermal conductive sheet/thermal conductive cap",
-    "category_id": 59,
-    "category_name": "Consumables and auxiliary materials"
-  },
   "3038": {
     "name": "Ceramic Resonators",
     "category_id": 7,
@@ -1559,6 +1554,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "3738": {
+    "name": "AC Cooling Fan",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "3353": {
     "name": "AmorphousCores",
     "category_id": 46,
@@ -1941,6 +1941,11 @@
   },
   "1216": {
     "name": "Terminal strips",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "3736": {
+    "name": "Thermoelectric Cooler",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
