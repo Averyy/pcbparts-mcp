@@ -194,6 +194,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -258,6 +263,11 @@
     "name": "Varistors",
     "category_id": 11,
     "category_name": "Circuit Protection"
+  },
+  "3398": {
+    "name": "Cleaner",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
   },
   "2101": {
     "name": "555 Timers / Counters",
@@ -2528,6 +2538,11 @@
     "name": "Reed Switches",
     "category_id": 70,
     "category_name": "Magnetic Sensors"
+  },
+  "3683": {
+    "name": "Sine Bar",
+    "category_id": 51,
+    "category_name": "Measuring tools"
   },
   "3167": {
     "name": "DDR SDRAM",
