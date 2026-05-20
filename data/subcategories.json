@@ -264,11 +264,6 @@
     "category_id": 11,
     "category_name": "Circuit Protection"
   },
-  "3398": {
-    "name": "Cleaner",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -1029,6 +1024,16 @@
     "category_id": 3333,
     "category_name": "Global Sourcing Parts"
   },
+  "3323": {
+    "name": "kraft paper tape",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
+  "2522": {
+    "name": "Packing tape",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -1726,6 +1731,11 @@
   },
   "1174": {
     "name": "Industrial terminal blocks",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "438": {
+    "name": "Insulation tape/ adhesive tape",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
@@ -2538,11 +2548,6 @@
     "name": "Reed Switches",
     "category_id": 70,
     "category_name": "Magnetic Sensors"
-  },
-  "3683": {
-    "name": "Sine Bar",
-    "category_id": 51,
-    "category_name": "Measuring tools"
   },
   "3167": {
     "name": "DDR SDRAM",
@@ -3719,8 +3724,18 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "3547": {
+    "name": "Hammerhead",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3539": {
+    "name": "Mounting hammer",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
