@@ -1024,16 +1024,6 @@
     "category_id": 3333,
     "category_name": "Global Sourcing Parts"
   },
-  "3323": {
-    "name": "kraft paper tape",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
-  "2522": {
-    "name": "Packing tape",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -3724,23 +3714,23 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "3547": {
-    "name": "Hammerhead",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "1754": {
     "name": "Hex driver sleeve",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "3539": {
-    "name": "Mounting hammer",
+  "3706": {
+    "name": "Phone Disassembly Tool",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
   "3728": {
     "name": "Soldering Tip",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3710": {
+    "name": "Spot Welder",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
