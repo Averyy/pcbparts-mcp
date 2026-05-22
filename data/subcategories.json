@@ -194,11 +194,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -583,6 +578,11 @@
     "name": "XLR (Cannon) Connectors",
     "category_id": 8,
     "category_name": "Connectors"
+  },
+  "439": {
+    "name": "Fixed seat/fixed clamp",
+    "category_id": 59,
+    "category_name": "Consumables and auxiliary materials"
   },
   "3456": {
     "name": "Silicone pad",
@@ -2664,6 +2664,16 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "586": {
+    "name": "Computer bag/T-shirt",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3531": {
+    "name": "Network Switch",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3699,6 +3709,11 @@
     "category_id": 3357,
     "category_name": "Terminal"
   },
+  "3711": {
+    "name": "aminating & Bubble Removing Machine",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "3715": {
     "name": "Charging Port Test Board",
     "category_id": 50,
@@ -3714,6 +3729,11 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "3705": {
+    "name": "Heat Insulation Pad",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "1754": {
     "name": "Hex driver sleeve",
     "category_id": 50,
@@ -3721,6 +3741,11 @@
   },
   "3706": {
     "name": "Phone Disassembly Tool",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3707": {
+    "name": "Screen Separator Heating Platform",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -3796,6 +3821,11 @@
   },
   "1698": {
     "name": "Adapter cable",
+    "category_id": 61,
+    "category_name": "Wires and cables"
+  },
+  "3731": {
+    "name": "Audio & Video Cables",
     "category_id": 61,
     "category_name": "Wires and cables"
   },
