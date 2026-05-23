@@ -579,11 +579,6 @@
     "category_id": 8,
     "category_name": "Connectors"
   },
-  "439": {
-    "name": "Fixed seat/fixed clamp",
-    "category_id": 59,
-    "category_name": "Consumables and auxiliary materials"
-  },
   "3456": {
     "name": "Silicone pad",
     "category_id": 59,
@@ -2664,16 +2659,6 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "586": {
-    "name": "Computer bag/T-shirt",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3531": {
-    "name": "Network Switch",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -2701,6 +2686,11 @@
   },
   "198": {
     "name": "RJ sheath",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3589": {
+    "name": "Smartwatch",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -2913,6 +2903,11 @@
     "name": "Uncategorized",
     "category_id": 35,
     "category_name": "Others"
+  },
+  "3622": {
+    "name": "Air Curtain",
+    "category_id": 55,
+    "category_name": "Pneumatic/hydraulic/valves/pumps"
   },
   "3627": {
     "name": "Air Pump",
@@ -3709,13 +3704,13 @@
     "category_id": 3357,
     "category_name": "Terminal"
   },
-  "3711": {
-    "name": "aminating & Bubble Removing Machine",
+  "3715": {
+    "name": "Charging Port Test Board",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "3715": {
-    "name": "Charging Port Test Board",
+  "934": {
+    "name": "Electric screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -3729,33 +3724,13 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "3705": {
-    "name": "Heat Insulation Pad",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "1754": {
     "name": "Hex driver sleeve",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "3706": {
-    "name": "Phone Disassembly Tool",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "3707": {
-    "name": "Screen Separator Heating Platform",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "3728": {
     "name": "Soldering Tip",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "3710": {
-    "name": "Spot Welder",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
