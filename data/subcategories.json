@@ -2689,11 +2689,6 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
-  "3589": {
-    "name": "Smartwatch",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "3716": {
     "name": "SSD",
     "category_id": 49,
@@ -2903,11 +2898,6 @@
     "name": "Uncategorized",
     "category_id": 35,
     "category_name": "Others"
-  },
-  "3622": {
-    "name": "Air Curtain",
-    "category_id": 55,
-    "category_name": "Pneumatic/hydraulic/valves/pumps"
   },
   "3627": {
     "name": "Air Pump",
@@ -3706,11 +3696,6 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "934": {
-    "name": "Electric screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
