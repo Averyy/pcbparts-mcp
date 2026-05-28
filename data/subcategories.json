@@ -1019,6 +1019,11 @@
     "category_id": 3333,
     "category_name": "Global Sourcing Parts"
   },
+  "3331": {
+    "name": "other tapes",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -2026,6 +2031,11 @@
   },
   "3624": {
     "name": "Refrigerant Gauge Set",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
+  "1482": {
+    "name": "Resistance measuring instrument",
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
