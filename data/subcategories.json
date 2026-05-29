@@ -194,6 +194,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1018,11 +1023,6 @@
     "name": "Global Sourcing Parts",
     "category_id": 3333,
     "category_name": "Global Sourcing Parts"
-  },
-  "3331": {
-    "name": "other tapes",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
   },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
@@ -2034,11 +2034,6 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
-  "1482": {
-    "name": "Resistance measuring instrument",
-    "category_id": 26,
-    "category_name": "Instrumentation and meters"
-  },
   "81": {
     "name": "Resistance-capacitance inductance measurement/RLC bridge",
     "category_id": 26,
@@ -2668,6 +2663,11 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
+  },
+  "3320": {
+    "name": "Data cable",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
