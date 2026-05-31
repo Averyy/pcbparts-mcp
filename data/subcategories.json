@@ -194,6 +194,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -258,11 +263,6 @@
     "name": "Varistors",
     "category_id": 11,
     "category_name": "Circuit Protection"
-  },
-  "568": {
-    "name": "Razor",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
   },
   "2101": {
     "name": "555 Timers / Counters",
@@ -2669,16 +2669,6 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3512": {
-    "name": "Electric Toothbrush",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3655": {
-    "name": "massager",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3736,11 +3726,6 @@
   },
   "3728": {
     "name": "Soldering Tip",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "3660": {
-    "name": "torque screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
