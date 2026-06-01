@@ -2,10 +2,10 @@
   "source": "hilink",
   "source_url": "https://www.hlktech.net/index.php?id=product",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-05-01T07:00:35.961452+00:00",
+  "scraped_at": "2026-06-01T07:53:17.435371+00:00",
   "stats": {
-    "sensor_count": 34,
-    "total_products": 60,
+    "sensor_count": 37,
+    "total_products": 68,
     "skipped_non_sensor": 21,
     "errors": 0
   },
@@ -213,9 +213,11 @@
       ],
       "platforms": [],
       "urls": [
-        "https://www.hlktech.net/index.php?id=988"
+        "https://www.hlktech.net/index.php?id=1490",
+        "https://www.hlktech.net/index.php?id=1489",
+        "https://www.hlktech.net/index.php?id=1488"
       ],
-      "description": "24GHz HLK-LD2410 24Ghz Human Presence Body Induction Distance Detection Radar Sensor Module support GPIO and UART ports",
+      "description": "24GHz Hi-link 24G Human Presence Sensor LD2410-AA Radar Module Kit with Bluetooth 9M Detection Distance/Support Height 6M Hanging",
       "protocol": [
         "gpio",
         "uart"
@@ -519,6 +521,66 @@
         "https://www.hlktech.net/index.php?id=1311"
       ],
       "description": "60GHz Hi-link 60GHz millimeter wave radar entrance and exit counting people up to 8 radar sensing module HLK-LD6001C testboard kit",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6002",
+      "name": "LD6002",
+      "measures": [
+        "biometric",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1180",
+        "https://www.hlktech.net/index.php?id=1179"
+      ],
+      "description": "60GHz 60G Millimeter Wave Respiratory and Heartbeat Detection Radar Module HLK-LD6002 Non-contact Intelligent Monitoring with 2T2R",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6002c",
+      "name": "LD6002C",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1178",
+        "https://www.hlktech.net/index.php?id=1177"
+      ],
+      "description": "60GHz 60G Millimeter Wave Fall Detection Radar Module HLK-LD6002C Non-contact Intelligent Monitoring with 2T2R",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6002h",
+      "name": "LD6002H",
+      "measures": [
+        "biometric",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1293"
+      ],
+      "description": "60GHz HLK-LD6002H 60G infant respiratory and heartbeat detection radar module non-contact intelligent monitoring young child",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },

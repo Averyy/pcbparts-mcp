@@ -2,7 +2,7 @@
   "source": "sparkfun",
   "source_url": "https://www.sparkfun.com/graphql",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-05-01T07:24:28.774210+00:00",
+  "scraped_at": "2026-06-01T08:18:27.884796+00:00",
   "stats": {
     "sensor_count": 121,
     "total_products": 402,
@@ -1303,7 +1303,7 @@
         "https://www.sparkfun.com/sparkfun-indoor-air-quality-combo-sensor-scd41-sen55-qwiic.html",
         "https://www.sparkfun.com/sparkfun-co2-humidity-and-temperature-sensor-scd41-qwiic.html"
       ],
-      "description": "The SparkFun Indoor Air Quality Sensor - SCD41 SEN55 (Qwiic) combines two excellent indoor air quality sensors in the SCD41 and SEN55 from Sensirion™.",
+      "description": "Simplify environmental monitoring with this all-in-one combo sensor to track CO 2 , particulate matter, VOCs, NO x , temperature, and humidity over I 2 C communication via Qwiic.",
       "protocol": [
         "i2c"
       ]
@@ -1391,7 +1391,8 @@
       "platforms": [],
       "urls": [
         "https://www.sparkfun.com/particulate-matter-sensor-sps30.html"
-      ]
+      ],
+      "description": "Particulate Matter Sensor for Air Quality Monitoring and Control."
     },
     {
       "id": "stc31",
