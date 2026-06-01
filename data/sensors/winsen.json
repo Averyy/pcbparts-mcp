@@ -2,10 +2,10 @@
   "source": "winsen",
   "source_url": "https://www.winsen-sensor.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-05-01T07:20:03.236423+00:00",
+  "scraped_at": "2026-06-01T08:13:52.669381+00:00",
   "stats": {
-    "sensor_count": 382,
-    "total_product_pages": 390,
+    "sensor_count": 387,
+    "total_product_pages": 395,
     "skipped": 4,
     "errors": 0
   },
@@ -224,10 +224,22 @@
         "https://www.winsen-sensor.com/product/frn06.html"
       ],
       "description": "FRn06 Flow Sensor",
-      "protocol": [
-        "analog"
+      "manufacturer": "Winsen",
+      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/frn06.pdf"
+    },
+    {
+      "id": "frn08",
+      "name": "FRn08",
+      "measures": [
+        "flow"
       ],
-      "manufacturer": "Winsen"
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/frn08.html"
+      ],
+      "description": "FRn08 Flow Sensor",
+      "manufacturer": "Winsen",
+      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/frn08.pdf"
     },
     {
       "id": "frn20",
@@ -240,11 +252,8 @@
         "https://www.winsen-sensor.com/product/frn20.html"
       ],
       "description": "FRn20 Flow Sensor",
-      "protocol": [
-        "analog"
-      ],
       "manufacturer": "Winsen",
-      "voltage": "5-15"
+      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/frn20.pdf"
     },
     {
       "id": "gm102b",
@@ -1710,22 +1719,6 @@
       "type": "ndir"
     },
     {
-      "id": "mhl1141au100l",
-      "name": "MH-L1141A-U-100L",
-      "measures": [
-        "gas"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/mh-l1141a-u-100l.html"
-      ],
-      "description": "MH-L1141A-U-100L Laser Sensor. Target: Methane（CH4）. Range: 0~100%LEL",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/mh-l1141a-u-100l.pdf",
-      "voltage": "3.3-5.0",
-      "type": "laser"
-    },
-    {
       "id": "mht4041a",
       "name": "MH-T4041A",
       "measures": [
@@ -1779,6 +1772,36 @@
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/mh-t7042a.pdf",
       "voltage": "4.5-5.5",
       "type": "ndir"
+    },
+    {
+      "id": "mht8041a",
+      "name": "MH-T8041A",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/mh-t8041a.html"
+      ],
+      "description": "Industrial laser CH4 gas sensors MH-T8041A. Target: Methane (CH4)",
+      "manufacturer": "Winsen",
+      "voltage": "3.3",
+      "type": "laser"
+    },
+    {
+      "id": "mht8141a",
+      "name": "MH-T8141A",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/mh-t8141a.html"
+      ],
+      "description": "Industrial laser CH4 gas sensors MH-T8141A. Target: Methane CH4. Range: 0-5.00%VOL",
+      "manufacturer": "Winsen",
+      "voltage": "4.5",
+      "type": "laser"
     },
     {
       "id": "mhv1512algc",
@@ -2647,7 +2670,6 @@
       "description": "MR513 Hot-wire Alcohol Gas sensor. Target: C2H5OH, alcohol, ethanol",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/mr513.pdf",
-      "voltage": "2.5",
       "type": "semiconductor"
     },
     {
@@ -2883,8 +2905,7 @@
         "https://www.winsen-sensor.com/product/pt1000-c.html"
       ],
       "description": "Pt1000-C Thin-Film Platinum Resistance Temperature Sensor",
-      "manufacturer": "Winsen",
-      "voltage": "2.2"
+      "manufacturer": "Winsen"
     },
     {
       "id": "pt1000csmd",
@@ -2897,8 +2918,7 @@
         "https://www.winsen-sensor.com/product/pt1000-csmd.html"
       ],
       "description": "Pt1000-CSMD Thin-Film Platinum Resistance Temperature Sensor",
-      "manufacturer": "Winsen",
-      "voltage": "2.2"
+      "manufacturer": "Winsen"
     },
     {
       "id": "pt100c",
@@ -2911,8 +2931,7 @@
         "https://www.winsen-sensor.com/product/pt100-c.html"
       ],
       "description": "Pt100-C Thin-Film Platinum Resistance Temperature Sensor",
-      "manufacturer": "Winsen",
-      "voltage": "2.2"
+      "manufacturer": "Winsen"
     },
     {
       "id": "pt100csmd",
@@ -2925,8 +2944,7 @@
         "https://www.winsen-sensor.com/product/pt100-csmd.html"
       ],
       "description": "Pt100-CSMD Thin-Film Platinum Resistance Temperature Sensor",
-      "manufacturer": "Winsen",
-      "voltage": "2.2"
+      "manufacturer": "Winsen"
     },
     {
       "id": "pt200",
@@ -2939,8 +2957,7 @@
         "https://www.winsen-sensor.com/product/pt200.html"
       ],
       "description": "Pt200 Thin-Film Platinum Resistance Temperature Sensor",
-      "manufacturer": "Winsen",
-      "voltage": "2.2"
+      "manufacturer": "Winsen"
     },
     {
       "id": "rd623",
@@ -3254,8 +3271,8 @@
       "type": "pyroelectric"
     },
     {
-      "id": "rpfa913cc",
-      "name": "RPFA913CC",
+      "id": "rp911",
+      "name": "RP911",
       "measures": [
         "flame",
         "motion",
@@ -3263,79 +3280,11 @@
       ],
       "platforms": [],
       "urls": [
-        "https://www.winsen-sensor.com/product/rpfa913cc.html"
+        "https://www.winsen-sensor.com/product/rp911.html"
       ],
-      "description": "RPFA913CC Pyro-electric Flame sensor",
+      "description": "RP911 Series Pyroelectric Flame Sensor. Range: >50",
       "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/rpfa913cc.pdf",
-      "type": "pyroelectric"
-    },
-    {
-      "id": "rpfa913cd",
-      "name": "RPFA913CD",
-      "measures": [
-        "flame",
-        "motion",
-        "pir"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/rpfa913cd.html"
-      ],
-      "description": "RPFA913CD Pyro-electric Flame sensor",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/rpfa913cd.pdf",
-      "type": "pyroelectric"
-    },
-    {
-      "id": "rpfa913ce",
-      "name": "RPFA913CE",
-      "measures": [
-        "flame",
-        "motion",
-        "pir"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/rpfa913ce.html"
-      ],
-      "description": "RPFA913CE Pyro-electric Flame sensor",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/rpfa913ce.pdf",
-      "type": "pyroelectric"
-    },
-    {
-      "id": "rpfa913cf",
-      "name": "RPFA913CF",
-      "measures": [
-        "flame",
-        "motion",
-        "pir"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/rpfa913cf.html"
-      ],
-      "description": "RPFA913CF Pyro-electric Flame sensor",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/rpfa913cf.pdf",
-      "type": "pyroelectric"
-    },
-    {
-      "id": "rpfa913cg",
-      "name": "RPFA913CG",
-      "measures": [
-        "flame",
-        "motion",
-        "pir"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/rpfa913cg.html"
-      ],
-      "description": "RPFA913CG Pyro-electric Flame sensor",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/rpfa913cg.pdf",
+      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/rp911.pdf",
       "type": "pyroelectric"
     },
     {
@@ -3356,8 +3305,8 @@
       "type": "pir"
     },
     {
-      "id": "rpta646",
-      "name": "RPTA-646",
+      "id": "rpta6464",
+      "name": "RPTA-646-4",
       "measures": [
         "motion",
         "pir"
@@ -3366,7 +3315,7 @@
       "urls": [
         "https://www.winsen-sensor.com/product/rpta-646.html"
       ],
-      "description": "RPTA-646 Quad-element Pyroelectric Infrared Sensor. Target: human body induction",
+      "description": "RPTA-646-4 Pyroelectric Infrared Sensor. Target: human body induction",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/rpta-646.pdf",
       "voltage": "3-15",
@@ -3683,6 +3632,19 @@
       "manufacturer": "Winsen"
     },
     {
+      "id": "wpak63t",
+      "name": "WPAK63T",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/wpak63t.html"
+      ],
+      "description": "WPAK63T General Type Isolation-Film Pressure Sensor. Range: -100kPa～0～10kPa…4MPa",
+      "manufacturer": "Winsen"
+    },
+    {
       "id": "wpak64",
       "name": "WPAK64",
       "measures": [
@@ -3724,6 +3686,19 @@
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpak69.pdf"
     },
     {
+      "id": "wpak77",
+      "name": "WPAK77",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/wpak77.html"
+      ],
+      "description": "WPAK77 Flush Diaphragm Pressure Sensor with Clamp. Range: 0~10kPa...6MPa",
+      "manufacturer": "Winsen"
+    },
+    {
       "id": "wpas01",
       "name": "WPAS01",
       "measures": [
@@ -3754,6 +3729,20 @@
       "type": "mems"
     },
     {
+      "id": "wpas08",
+      "name": "WPAS08",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/wpas08.html"
+      ],
+      "description": "WPAS08 Plastic Package Pressure Sensor",
+      "manufacturer": "Winsen",
+      "voltage": "1.8"
+    },
+    {
       "id": "wpas12",
       "name": "WPAS12",
       "measures": [
@@ -3767,6 +3756,20 @@
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpas12.pdf",
       "voltage": "4.5"
+    },
+    {
+      "id": "wpas13",
+      "name": "WPAS13",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/wpas13.html"
+      ],
+      "description": "WPAS13 Digital Micro Differential Pressure Sensor",
+      "manufacturer": "Winsen",
+      "voltage": "1.8"
     },
     {
       "id": "wpbh01",
@@ -3791,7 +3794,20 @@
       "urls": [
         "https://www.winsen-sensor.com/product/wpch01.html"
       ],
-      "description": "WPCH01 General Type Ceramic Pressure Transmitter. Range: 0-0.2MPa-……-40MPa",
+      "description": "WPCH01 General Type Ceramic Pressure Transmitter. Range: 0.2MPa-……-40MPa",
+      "manufacturer": "Winsen"
+    },
+    {
+      "id": "wpch03",
+      "name": "WPCH03",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/wpch03.html"
+      ],
+      "description": "WPCH03 Pressure Transmitter. Range: 0-0.2MPa-……-40MPa",
       "manufacturer": "Winsen"
     },
     {
@@ -3821,18 +3837,17 @@
       "manufacturer": "Winsen"
     },
     {
-      "id": "wpck05",
-      "name": "WPCK05",
+      "id": "wpck04",
+      "name": "WPCK04",
       "measures": [
         "pressure"
       ],
       "platforms": [],
       "urls": [
-        "https://www.winsen-sensor.com/product/wpck05.html"
+        "https://www.winsen-sensor.com/product/wpck04.html"
       ],
-      "description": "WPCK05 Diffused Silicon Pressure Transmitter",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpck05.pdf"
+      "description": "WPCK04 Diffussed Silicon Pressure Transmitter",
+      "manufacturer": "Winsen"
     },
     {
       "id": "wpck07",
@@ -3849,6 +3864,19 @@
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/wpck07.pdf"
     },
     {
+      "id": "wpck07dy",
+      "name": "WPCK07DY",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/wpck07dy.html"
+      ],
+      "description": "WPCK07 Diffussed Silicon Pressure Transmitter Digital Display Version",
+      "manufacturer": "Winsen"
+    },
+    {
       "id": "wpck08",
       "name": "WPCK08",
       "measures": [
@@ -3859,6 +3887,19 @@
         "https://www.winsen-sensor.com/product/wpck08.html"
       ],
       "description": "WPCK08 Level Transmitter. Target: Liquid. Range: 0-200mH2O",
+      "manufacturer": "Winsen"
+    },
+    {
+      "id": "wpck16",
+      "name": "WPCK16",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/wpck16.html"
+      ],
+      "description": "WPCK16 Diffussed Silicon Pressure Transmitter. Target: Gauge Pressure/Absolute Pressure/ Sealed Gauge Pressure",
       "manufacturer": "Winsen"
     },
     {
@@ -4168,10 +4209,9 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zce04b.html"
       ],
-      "description": "4-in-1 Industrial Gas Detection Module  ZCE04B. Target: CO: 0-1000ppm H2S: 0-100ppm O2: 0-30%vol CH4: 0-100%LEL",
+      "description": "4-in-1 Industrial Gas Detection Module  ZCE04B. Target: CH4（1%LEL）, CO（1ppm）, H2S（1ppm）, O2（0.1%LEL）. Range: 0-100%LEL ,0-1000ppm ,0-100ppm ,0-30%LEL",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zce04b.pdf",
-      "voltage": "3.5-5",
       "type": "electrochemical"
     },
     {
@@ -4449,10 +4489,9 @@
       "urls": [
         "https://www.winsen-sensor.com/product/ze21-cs.html"
       ],
-      "description": "Battery Leak Detection Module ZE21-CS/CO for Electric Vehicle. Target: Battery leakage integrated gas. Range: 0～1000ppm",
+      "description": "Battery Leak Detection Module ZE21-CS/CO for Electric Vehicle. Target: CO, Battery leakage comprehensive gas. Range: 0～1000ppm",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/ze21-cs.pdf",
-      "voltage": "5-10",
       "type": "electrochemical"
     },
     {
@@ -4744,7 +4783,6 @@
       "description": "ZEH100 Multi-in-One Energy Storage Sensor Module. Target: CO, H2, VOC, Smoke, Temperature",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zeh100.pdf",
-      "voltage": "12-30",
       "type": "electrochemical"
     },
     {
@@ -4761,13 +4799,9 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zehs04.html"
       ],
-      "description": "Atmospheric Monitoring Sensor Module ZEHS04. Target: CO, SO2, NO2, O3 (PM2.5, PM10, temperature and humidity expansion compatible)",
-      "protocol": [
-        "uart"
-      ],
+      "description": "Atmospheric Monitoring Sensor Module ZEHS04. Target: CO, SO2, NO2, O3 (Scalable PM2.5, PM10, Temperature, Humidity). Range: See manual",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zehs04.pdf",
-      "voltage": "9-24",
       "type": "electrochemical"
     },
     {
@@ -4988,7 +5022,6 @@
       "description": "ZH10-VHT Compact 4-in-1 Air Quality Sensor Module. Target: PM2.5,VOC,Temperature,Humidity",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zh10-vht.pdf",
-      "voltage": "5",
       "type": "laser"
     },
     {
@@ -5089,10 +5122,9 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zm01.html"
       ],
-      "description": "ZM01 MEMS VOC Gas Sensor Module",
+      "description": "ZM01 MEMS VOC Gas Sensor Module. Range: 0-5ppm",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zm01.pdf",
-      "voltage": "2.5",
       "type": "semiconductor"
     },
     {
@@ -5105,10 +5137,9 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zm03.html"
       ],
-      "description": "ZM03 Digital MEMS Digital alcohol module",
+      "description": "ZM03 Digital MEMS Digital alcohol module. Range: 0-50ppm",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zm03.pdf",
-      "voltage": "2.5",
       "type": "semiconductor"
     },
     {
@@ -5567,8 +5598,7 @@
         "https://www.winsen-sensor.com/product/zph07.html"
       ],
       "description": "ZPH07- Lithium Battery Aerosol Monitoring Sensor. Range: 0～10000μg/m³",
-      "manufacturer": "Winsen",
-      "voltage": "9"
+      "manufacturer": "Winsen"
     },
     {
       "id": "zphs01",
@@ -5586,13 +5616,12 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zphs01.html"
       ],
-      "description": "ZPHS01 Multi-in-One Sensor Module (HCHO version). Target: CO2、PM2.5、CH2O、TVOC、Temperature、Humidity",
+      "description": "ZPHS01 Multi-in-One Sensor Module (HCHO version). Target: CO2, PM2.5, CH2O, VOC, Temperature, Humidity. Range: CO2: 0-5000ppm; PM2.5: 0-1000μg/m³; CH2O: 0-1.6ppm; VOC: 4 level; Temperature: 0-65℃ (...",
       "protocol": [
         "uart"
       ],
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zphs01.pdf",
-      "voltage": "5",
       "type": "ndir"
     },
     {
@@ -5637,13 +5666,12 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zphs01c.html"
       ],
-      "description": "Multi-in-One Sensor Module ZPHS01C. Target: PM2.5, CO2, CH2O, TVOC,Temperature&Humidity",
+      "description": "Multi-in-One Sensor Module ZPHS01C. Target: PM2.5, CO2, CH2O, TVOC,Temperature&Humidity. Range: CO2: 400~5000ppm; PM2.5: 0-1000μg/m³; CH2O: 0-1.6ppm; VOC: 4 level; Temperature: 0-65℃ (Accuracy±0.5℃...",
       "protocol": [
         "uart"
       ],
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zphs01c.pdf",
-      "voltage": "5",
       "type": "ndir"
     },
     {
@@ -6251,7 +6279,6 @@
       ],
       "description": "ZW-TUR102 Turbidity Water Quality Sensor Module",
       "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zw-tur102.pdf",
       "voltage": "5"
     },
     {

@@ -2,12 +2,12 @@
   "source": "atlas_scientific",
   "source_url": "https://atlas-scientific.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-05-01T07:01:58.335844+00:00",
+  "scraped_at": "2026-06-01T07:55:32.274001+00:00",
   "stats": {
     "sensor_count": 28,
-    "total_products": 92,
-    "skipped": 23,
-    "errors": 0
+    "total_products": 87,
+    "skipped": 22,
+    "errors": 8
   },
   "sensors": [
     {
@@ -38,7 +38,6 @@
         "https://atlas-scientific.com/probes/industrial-dissolved-oxygen-probe/",
         "https://atlas-scientific.com/probes/mini-d-o-probe/"
       ],
-      "description": "The Atlas Scientific Lab Grade Dissolved Oxygen probe is a durable little probe that can work in almost any environment.",
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -102,11 +101,6 @@
       "urls": [
         "https://atlas-scientific.com/probes/co2-sensor/"
       ],
-      "description": "The Atlas Scientific EZO-CO2 Research Grade CO2 Sensor is a compact Non-Dispersive Infrared sensor that gets right to the point, giving you the Co2 readings in ppm.",
-      "protocol": [
-        "i2c",
-        "uart"
-      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -117,7 +111,6 @@
       ],
       "platforms": [],
       "urls": [
-        "https://atlas-scientific.com/dissolved-oxygen/ezo-complete-do/",
         "https://atlas-scientific.com/embedded-solutions/ezo-dissolved-oxygen-circuit/"
       ],
       "description": "The Atlas Scientific EZO-DO Circuit gives you accurate D.O. readings in Mg/L and percent saturation.",
@@ -135,13 +128,7 @@
       ],
       "platforms": [],
       "urls": [
-        "https://atlas-scientific.com/conductivity/ezo-complete-ec/",
         "https://atlas-scientific.com/embedded-solutions/ezo-conductivity-circuit/"
-      ],
-      "description": "The Atlas Scientific EZO-EC Circuit reads conductivity, salinity, and TDS (PPM) which are fundamental measurements of water chemistry.",
-      "protocol": [
-        "i2c",
-        "uart"
       ],
       "manufacturer": "Atlas Scientific"
     },
@@ -174,11 +161,6 @@
         "https://atlas-scientific.com/probes/humidity-probe/",
         "https://atlas-scientific.com/product/ezo-humidity-circuit/"
       ],
-      "description": "Designed for a wide range of applications, from industrial processes to environmental monitoring, this Humidity Probe features a photosensitive resin body, ensuring the probes durability and adapta...",
-      "protocol": [
-        "i2c",
-        "uart"
-      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -207,8 +189,7 @@
       ],
       "platforms": [],
       "urls": [
-        "https://atlas-scientific.com/embedded-solutions/ezo-orp-circuit/",
-        "https://atlas-scientific.com/orp/ezo-complete-orp/"
+        "https://atlas-scientific.com/embedded-solutions/ezo-orp-circuit/"
       ],
       "description": "Atlas Scientific’s EZO-ORP circuit makes taking high accuracy ORP readings easy - from calibration to timed readings, this circuit is a drop-in solution to a complex measurement.",
       "protocol": [
@@ -225,8 +206,7 @@
       ],
       "platforms": [],
       "urls": [
-        "https://atlas-scientific.com/embedded-solutions/ezo-ph-circuit/",
-        "https://atlas-scientific.com/ph/ezo-complete-ph/"
+        "https://atlas-scientific.com/embedded-solutions/ezo-ph-circuit/"
       ],
       "description": "Atlas Scientific’s EZO-pH circuit gives engineers the ability to read pH with the same accuracy and capabilities that were traditionally only found in expensive bench-top meters.",
       "protocol": [
@@ -280,11 +260,6 @@
       "urls": [
         "https://atlas-scientific.com/embedded-solutions/ezo-rtd-temperature-circuit/"
       ],
-      "description": "The Atlas Scientific EZO-RTD Circuit makes taking high accuracy readings from a platinum RTD probes easy.",
-      "protocol": [
-        "i2c",
-        "uart"
-      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -333,7 +308,6 @@
         "https://atlas-scientific.com/probes/lab-grade-gold-orp-probe/",
         "https://atlas-scientific.com/probes/micro-orp-probe/"
       ],
-      "description": "The Atlas Scientific consumer-grade ORP probe is the perfect choice for testing water samples, environmental monitoring, basic lab work, and early-stage prototypes.",
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -366,7 +340,6 @@
         "https://atlas-scientific.com/probes/micro-ph-probe/",
         "https://atlas-scientific.com/probes/mini-ph-probe/"
       ],
-      "description": "The Atlas Scientific Consumer Grade pH probe gives accurate readings over a wide pH range. This probe has been designed to work will in common pH reading application.",
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -453,7 +426,6 @@
       "urls": [
         "https://atlas-scientific.com/embedded-solutions/surveryor-analog-ph-sensor-meter/"
       ],
-      "description": "If you are building a machine that requires pH measuring capabilities, but you only need the accuracy found in a low-cost handheld pH meter, the Atlas Scientific Surveyor pH meter might be for you.",
       "manufacturer": "Atlas Scientific"
     },
     {

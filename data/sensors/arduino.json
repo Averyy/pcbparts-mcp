@@ -2,13 +2,13 @@
   "source": "arduino",
   "source_url": "https://downloads.arduino.cc/libraries/library_index.json",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-05-01T06:57:40.676324+00:00",
+  "scraped_at": "2026-06-01T07:50:00.879452+00:00",
   "stats": {
-    "sensor_count": 673,
-    "total_libs_checked": 1848,
-    "skipped_no_ic": 438,
-    "skipped_nonsensor": 138,
-    "skipped_no_measures": 112
+    "sensor_count": 689,
+    "total_libs_checked": 1877,
+    "skipped_no_ic": 445,
+    "skipped_nonsensor": 139,
+    "skipped_no_measures": 111
   },
   "sensors": [
     {
@@ -171,6 +171,37 @@
         "https://github.com/adafruit/Adafruit_9DOF.git"
       ],
       "description": "Library for the Adafruit 9DOF Breakout."
+    },
+    {
+      "id": "a02yyuw",
+      "name": "A02YYUW",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/RobTillaart/A02YYUW.git"
+      ],
+      "description": "Arduino library for A02YYUW serial distance sensor"
+    },
+    {
+      "id": "abp2",
+      "name": "I2C_ABP2",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/RobTillaart/I2C_ABP2.git"
+      ],
+      "description": "Arduino library for the Honeywell I2C ABP2 pressure sensors.",
+      "manufacturer": "Honeywell"
     },
     {
       "id": "acd10",
@@ -1864,6 +1895,22 @@
       "description": "Arduino library for 9-bit UART access to the BM92S2021-A/BMA92K202 that Color Sensor Module"
     },
     {
+      "id": "bma250",
+      "name": "UBMA250",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/UNIT-Electronics-MX/unit_bma250_library.git"
+      ],
+      "description": "Arduino library for the Bosch BMA250 Accelerometer",
+      "manufacturer": "Bosch"
+    },
+    {
       "id": "bma400",
       "name": "BlueDot BMA400 Library",
       "measures": [
@@ -2186,11 +2233,12 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/7semi-solutions/7Semi-BMI323.git"
+        "https://github.com/7semi-solutions/7Semi-BMI323.git",
+        "https://github.com/UNIT-Electronics-MX/unit_library_devlab_bmi323.git"
       ],
-      "description": "Lightweight and efficient BMI323 IMU sensor library.",
+      "description": "Arduino library for Bosch BMI323 IMU using direct I2C register access.",
       "manufacturer": "Bosch"
     },
     {
@@ -2390,9 +2438,10 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/faisalill/BMP390.git"
+        "https://github.com/faisalill/BMP390.git",
+        "https://github.com/gavinlyonsrepo/BMP390_LTSM.git"
       ],
       "description": "A library for the Bosch BMP390 (Waveshare) barometric pressure and temperature sensor.",
       "manufacturer": "Bosch"
@@ -2842,6 +2891,21 @@
         "https://github.com/n0m1/Comp6DOF_n0m1.git"
       ],
       "description": "An Arduino Library for compass tilt compensation and hard iron offset"
+    },
+    {
+      "id": "cq01",
+      "name": "CQ01",
+      "measures": [
+        "co2"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/emakefun-arduino-library/cq01.git"
+      ],
+      "description": "Lightweight Arduino library for the CQ01 CO2 sensor."
     },
     {
       "id": "cs5464",
@@ -3319,8 +3383,28 @@
     },
     {
       "id": "fdc1004",
-      "name": "slight_FDC1004",
+      "name": "FDCxCapSense",
       "measures": [
+        "proximity",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 3,
+      "urls": [
+        "https://github.com/Protocentral/ProtoCentral_fdc1004_breakout.git",
+        "https://github.com/s-light/slight_FDC1004.git",
+        "https://github.com/Parvaz-Jamei/FDCxCapSense.git"
+      ],
+      "description": "Arduino library for TI FDC1004 and FDC2x1x capacitive sensing ICs.",
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "fdc2214",
+      "name": "FDC2214",
+      "measures": [
+        "gesture",
         "proximity"
       ],
       "platforms": [
@@ -3328,10 +3412,10 @@
       ],
       "popularity": 2,
       "urls": [
-        "https://github.com/Protocentral/ProtoCentral_fdc1004_breakout.git",
-        "https://github.com/s-light/slight_FDC1004.git"
+        "https://github.com/zharijs/FDC2214.git",
+        "https://github.com/Protocentral/protocentral_fdc2214_arduino.git"
       ],
-      "description": "A library to interface to an TI FDC1004 Capacitiv sensor.",
+      "description": "Arduino library for the ProtoCentral FDC2214 4-channel capacitance-to-digital converter breakout.",
       "manufacturer": "Texas Instruments"
     },
     {
@@ -3848,17 +3932,18 @@
     },
     {
       "id": "hmc5883l",
-      "name": "Adafruit HMC5883 Unified",
+      "name": "GyverMag",
       "measures": [
         "magnetic_field"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/adafruit/Adafruit_HMC5883_Unified.git",
-        "https://github.com/Seeed-Studio/Grove_3Axis_Digital_Compass_HMC5883L.git"
+        "https://github.com/Seeed-Studio/Grove_3Axis_Digital_Compass_HMC5883L.git",
+        "https://github.com/GyverLibs/GyverMag.git"
       ],
       "description": "Adafruit HMC5883L 3-Axis Magnetometer Breakout library using Adafruit's Unified Sensor Library.",
       "manufacturer": "Honeywell"
@@ -4334,6 +4419,74 @@
         "https://github.com/tdk-invn-oss/motion.arduino.ICM45689.git"
       ],
       "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM45689 Invensence IMU device."
+    },
+    {
+      "id": "icm53607",
+      "name": "ICM53607",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/tdk-invn-oss/motion.arduino.ICM53607.git"
+      ],
+      "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM53607 Invensence IMU device."
+    },
+    {
+      "id": "icm53611",
+      "name": "ICM53611",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/tdk-invn-oss/motion.arduino.ICM53611.git"
+      ],
+      "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM53611 Invensence IMU device."
+    },
+    {
+      "id": "icm53621",
+      "name": "ICM53621",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/tdk-invn-oss/motion.arduino.ICM53621.git"
+      ],
+      "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM53621 Invensence IMU device."
+    },
+    {
+      "id": "icm53622",
+      "name": "ICM53622",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/tdk-invn-oss/motion.arduino.ICM53622.git"
+      ],
+      "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM53622 Invensence IMU device."
     },
     {
       "id": "icm56622",
@@ -5962,7 +6115,7 @@
       "urls": [
         "https://github.com/akkoyun/MAX17055.git"
       ],
-      "description": "Lithium based battery fuel gauge and measurement IC library."
+      "description": "Lithium battery fuel gauge IC library with ultra-low RAM usage and 100% error handling."
     },
     {
       "id": "max30001",
@@ -6330,6 +6483,21 @@
         "https://github.com/shunceyb/MultiMAX6675.git"
       ],
       "description": "The Library implements a set of methods for working with a thermocouple based on the MAX6675 driver."
+    },
+    {
+      "id": "max78630",
+      "name": "MAX78630",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/akkoyun/MAX78630.git"
+      ],
+      "description": "Arduino library for the MAX78630+PPM three-phase energy metering processor."
     },
     {
       "id": "max86150",
@@ -7208,6 +7376,21 @@
       "description": "MQ7 carbon monoxide detector library."
     },
     {
+      "id": "mr60bha2",
+      "name": "mmWaveKit",
+      "measures": [
+        "radar"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/LennartHennigs/mmWaveKit.git"
+      ],
+      "description": "Arduino library wrapping the Seeed MR60BHA2 mmWave sensor with a Button2-style callback API."
+    },
+    {
       "id": "ms4525do",
       "name": "MS4525DO_RT",
       "measures": [
@@ -7373,6 +7556,21 @@
         "https://github.com/I-AM-ENGINEER/MT6701-arduino.git"
       ],
       "description": "Use the MT6701 magnet rotary encoder with ESP."
+    },
+    {
+      "id": "mt6826s",
+      "name": "MT6826S SPI",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/mynameisbrozu/MT6826S-SPI.git"
+      ],
+      "description": "Arduino SPI library for MagnTek’s magnetic angle encoder MT6826S."
     },
     {
       "id": "mtp40",
@@ -7706,6 +7904,21 @@
         "https://github.com/Aquatwix/PD-10LX-Library.git"
       ],
       "description": "A simple and easy library for the Keller PD-10LX (X-Line) pressure/temp sensors"
+    },
+    {
+      "id": "pid5sensors",
+      "name": "PID_5_Sensors",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/birmanish/PID_5_Sensors.git"
+      ],
+      "description": "PID line follower library for multi-sensor arc configurations with dynamic Y-correction."
     },
     {
       "id": "pm1",
@@ -8316,6 +8529,24 @@
         "https://github.com/7semi-solutions/7Semi-SCD4x-Arduino-Library.git"
       ],
       "description": "Arduino library for SCD40/SCD41 CO₂ sensors with I2C interface.",
+      "manufacturer": "Sensirion"
+    },
+    {
+      "id": "scd43",
+      "name": "Soldered-SCD43",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/SolderedElectronics/Soldered-SCD43-Arduino-Library.git"
+      ],
+      "description": "Arduino library for the Soldered SCD43 CO2, temperature, and humidity sensor breakout.",
       "manufacturer": "Sensirion"
     },
     {
@@ -9460,7 +9691,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 22,
+      "popularity": 23,
       "urls": [
         "https://github.com/Martinsos/arduino-lib-hc-sr04.git",
         "https://github.com/Spaguetron/ST_HW_HC_SR04.git",
@@ -9506,6 +9737,21 @@
         "https://gitlab.com/devgiants/embedded/arduino/libraries/jsn-sr-04t.git"
       ],
       "description": "A library that provides a simple to use object for using JSN-SR-04T ultrasonic measure board."
+    },
+    {
+      "id": "st1vafe3bx",
+      "name": "ProtoCentral ST1VAFE3BX",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/Protocentral/protocentral_st1vafe3bx_arduino.git"
+      ],
+      "description": "Arduino library for ST1VAFE3BX biosensor with vAFE and accelerometer"
     },
     {
       "id": "sths34pf80",
@@ -10306,6 +10552,21 @@
       "manufacturer": "ams-OSRAM"
     },
     {
+      "id": "tsw10",
+      "name": "TSW10",
+      "measures": [
+        "water_quality"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/RobTillaart/TSW10.git"
+      ],
+      "description": "Arduino library for TSW10 analog turbidity sensor."
+    },
+    {
       "id": "tsys01",
       "name": "ClosedCube TSYS01",
       "measures": [
@@ -10450,7 +10711,7 @@
       "urls": [
         "https://github.com/RobTillaart/US500.git"
       ],
-      "description": "Arduino library for US500 underwater distance sensor."
+      "description": "Arduino library for US500 and US4000 underwater distance sensor."
     },
     {
       "id": "usd1",

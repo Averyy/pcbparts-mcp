@@ -2,13 +2,13 @@
   "source": "zephyr",
   "source_url": "https://github.com/zephyrproject-rtos/zephyr",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-05-01T06:57:45.796748+00:00",
+  "scraped_at": "2026-06-01T07:50:06.359020+00:00",
   "stats": {
-    "sensor_count": 225,
-    "total_bindings": 455,
-    "skipped_internal": 43,
-    "skipped_bus_variant": 67,
-    "skipped_no_measures": 29
+    "sensor_count": 230,
+    "total_bindings": 470,
+    "skipped_internal": 44,
+    "skipped_bus_variant": 70,
+    "skipped_no_measures": 30
   },
   "sensors": [
     {
@@ -806,6 +806,7 @@
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmi323.html"
       ],
       "protocol": [
+        "i2c",
         "spi"
       ],
       "manufacturer": "Bosch"
@@ -919,9 +920,10 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmp581.html"
       ],
-      "description": "The BMP581 is a Barometric pressure sensor. See more info at: https://www.bosch-sensortec.com/products/environmental-sensors/pressure-sensors/bmp581/ When setting the sensor DTS properties, make su...",
+      "description": "The BMP581 is a Barometric pressure sensor on I2C. See more info at: https://www.bosch-sensortec.com/products/environmental-sensors/pressure-sensors/bmp581/ When setting the sensor DTS properties, ...",
       "protocol": [
-        "i2c"
+        "i2c",
+        "spi"
       ],
       "manufacturer": "Bosch"
     },
@@ -1458,6 +1460,25 @@
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/meas,htu21d.html"
       ],
       "description": "TE Connectivity (Measurement Specialties) HTU21D digital humidity and temperature sensor. This is compatible with the Sensirion SHT21.",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "TE Connectivity"
+    },
+    {
+      "id": "htu31d",
+      "name": "HTU31D",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/meas,htu31d.html"
+      ],
+      "description": "TE Connectivity HTU31D digital humidity and temperature sensor. Communicates via I2C at address 0x40 (ADDR pin to GND) or 0x41 (ADDR pin to VDD).",
       "protocol": [
         "i2c"
       ],
@@ -2727,7 +2748,25 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,max30101.html"
       ],
-      "description": "MAX30101 heart rate sensor",
+      "description": "MAX30101 heart rate and pulse oximeter sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Maxim"
+    },
+    {
+      "id": "max30102",
+      "name": "MAX30102",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,max30102.html"
+      ],
+      "description": "MAX30102 heart rate and pulse oximeter sensor. The MAX30102 has two LED channels (Red + IR) and is register-compatible with the MAX30101 except that the Green LED (LED3) is not present.",
       "protocol": [
         "i2c"
       ],
@@ -3040,6 +3079,25 @@
       "protocol": [
         "i2c",
         "spi"
+      ],
+      "manufacturer": "TE Connectivity"
+    },
+    {
+      "id": "ms5637",
+      "name": "MS5637",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/meas,ms5637.html"
+      ],
+      "description": "TE Connectivity MS5637 digital pressure and temperature sensor. Communicates via I2C at fixed address 0x76.",
+      "protocol": [
+        "i2c"
       ],
       "manufacturer": "TE Connectivity"
     },
@@ -3594,6 +3652,25 @@
       "manufacturer": "Semtech"
     },
     {
+      "id": "tad2144",
+      "name": "TAD2144",
+      "measures": [
+        "rotation"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,tad2144.html"
+      ],
+      "description": "TAD2144 TMR Angle Sensor IC",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
       "id": "tcn75a",
       "name": "TCN75A",
       "measures": [
@@ -3824,6 +3901,24 @@
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,tmp435.html"
       ],
       "description": "Texas Instruments TMP435 temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tmp451",
+      "name": "TMP451",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,tmp451.html"
+      ],
+      "description": "Texas Instruments TMP451 remote and local temperature sensor. See https://www.ti.com/product/TMP451",
       "protocol": [
         "i2c"
       ],
