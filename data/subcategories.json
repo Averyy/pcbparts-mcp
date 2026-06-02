@@ -194,11 +194,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -583,6 +578,11 @@
     "name": "XLR (Cannon) Connectors",
     "category_id": 8,
     "category_name": "Connectors"
+  },
+  "439": {
+    "name": "Fixed seat/fixed clamp",
+    "category_id": 59,
+    "category_name": "Consumables and auxiliary materials"
   },
   "3456": {
     "name": "Silicone pad",
@@ -1591,6 +1591,11 @@
   },
   "1651": {
     "name": "Battery connector",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "3739": {
+    "name": "Battery holder base",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
@@ -3704,6 +3709,11 @@
     "category_id": 3357,
     "category_name": "Terminal"
   },
+  "3704": {
+    "name": "Adhesive Remover Machine",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "3715": {
     "name": "Charging Port Test Board",
     "category_id": 50,
@@ -3721,6 +3731,16 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3706": {
+    "name": "Phone Disassembly Tool",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3730": {
+    "name": "Soldering Iron Handle",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
