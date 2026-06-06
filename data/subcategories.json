@@ -194,11 +194,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -2918,11 +2913,6 @@
     "name": "Uncategorized",
     "category_id": 35,
     "category_name": "Others"
-  },
-  "3622": {
-    "name": "Air Curtain",
-    "category_id": 55,
-    "category_name": "Pneumatic/hydraulic/valves/pumps"
   },
   "3627": {
     "name": "Air Pump",
