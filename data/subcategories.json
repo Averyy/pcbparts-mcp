@@ -1019,6 +1019,11 @@
     "category_id": 3333,
     "category_name": "Global Sourcing Parts"
   },
+  "2621": {
+    "name": "Cable Tie",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -1291,6 +1296,11 @@
   },
   "1662": {
     "name": "Nut",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "2041": {
+    "name": "Oil seal",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -3736,6 +3746,11 @@
   },
   "3728": {
     "name": "Soldering Tip",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3397": {
+    "name": "Tripod",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
