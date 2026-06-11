@@ -1909,6 +1909,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "1272": {
+    "name": "Safety switch",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "1221": {
     "name": "Selector Switch",
     "category_id": 46,
@@ -2051,6 +2056,11 @@
   },
   "3624": {
     "name": "Refrigerant Gauge Set",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
+  "1482": {
+    "name": "Resistance measuring instrument",
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
@@ -2559,6 +2569,11 @@
     "category_id": 70,
     "category_name": "Magnetic Sensors"
   },
+  "1885": {
+    "name": "Vernier caliper",
+    "category_id": 51,
+    "category_name": "Measuring tools"
+  },
   "3167": {
     "name": "DDR SDRAM",
     "category_id": 21,
@@ -2923,6 +2938,11 @@
     "name": "Uncategorized",
     "category_id": 35,
     "category_name": "Others"
+  },
+  "3622": {
+    "name": "Air Curtain",
+    "category_id": 55,
+    "category_name": "Pneumatic/hydraulic/valves/pumps"
   },
   "3627": {
     "name": "Air Pump",
@@ -3746,11 +3766,6 @@
   },
   "3728": {
     "name": "Soldering Tip",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "3397": {
-    "name": "Tripod",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
