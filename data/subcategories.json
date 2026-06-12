@@ -1619,16 +1619,6 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
-  "430": {
-    "name": "Button head",
-    "category_id": 46,
-    "category_name": "Industrial control electrical"
-  },
-  "427": {
-    "name": "Button indicator light accessories",
-    "category_id": 46,
-    "category_name": "Industrial control electrical"
-  },
   "1193": {
     "name": "Button switch accessories",
     "category_id": 46,
@@ -2056,11 +2046,6 @@
   },
   "3624": {
     "name": "Refrigerant Gauge Set",
-    "category_id": 26,
-    "category_name": "Instrumentation and meters"
-  },
-  "1482": {
-    "name": "Resistance measuring instrument",
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
@@ -2569,11 +2554,6 @@
     "category_id": 70,
     "category_name": "Magnetic Sensors"
   },
-  "1885": {
-    "name": "Vernier caliper",
-    "category_id": 51,
-    "category_name": "Measuring tools"
-  },
   "3167": {
     "name": "DDR SDRAM",
     "category_id": 21,
@@ -2938,11 +2918,6 @@
     "name": "Uncategorized",
     "category_id": 35,
     "category_name": "Others"
-  },
-  "3622": {
-    "name": "Air Curtain",
-    "category_id": 55,
-    "category_name": "Pneumatic/hydraulic/valves/pumps"
   },
   "3627": {
     "name": "Air Pump",
