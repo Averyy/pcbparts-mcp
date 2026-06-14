@@ -829,11 +829,6 @@
     "category_id": 43,
     "category_name": "Educational Kits"
   },
-  "2231": {
-    "name": "Pre-ordered Products",
-    "category_id": 15,
-    "category_name": "Electronic Tools/Instruments/Consumables"
-  },
   "3063": {
     "name": "ADI",
     "category_id": 18,
@@ -2923,11 +2918,6 @@
     "name": "Uncategorized",
     "category_id": 35,
     "category_name": "Others"
-  },
-  "3622": {
-    "name": "Air Curtain",
-    "category_id": 55,
-    "category_name": "Pneumatic/hydraulic/valves/pumps"
   },
   "3627": {
     "name": "Air Pump",
