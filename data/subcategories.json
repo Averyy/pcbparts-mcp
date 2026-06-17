@@ -94,6 +94,11 @@
     "category_id": 10,
     "category_name": "Audio Products / Vibration Motors"
   },
+  "1582": {
+    "name": "Decorative panel",
+    "category_id": 62,
+    "category_name": "Building materials / Building hardware"
+  },
   "1621": {
     "name": "Partition board",
     "category_id": 62,
@@ -1061,6 +1066,11 @@
   },
   "683": {
     "name": "Carriage bolt",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "635": {
+    "name": "Cassette nuts",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -2049,8 +2059,18 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
+  "3546": {
+    "name": "Pressure Controllers",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
   "3624": {
     "name": "Refrigerant Gauge Set",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
+  "1482": {
+    "name": "Resistance measuring instrument",
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
@@ -2273,6 +2293,11 @@
     "name": "ZigBee Modules",
     "category_id": 31,
     "category_name": "IoT/Communication Modules"
+  },
+  "1709": {
+    "name": "Protective cap",
+    "category_id": 42,
+    "category_name": "Labor protection supplies"
   },
   "3688": {
     "name": "Block",
@@ -2719,6 +2744,11 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
+  "2515": {
+    "name": "Speaker",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "3716": {
     "name": "SSD",
     "category_id": 49,
@@ -2931,6 +2961,11 @@
   },
   "3627": {
     "name": "Air Pump",
+    "category_id": 55,
+    "category_name": "Pneumatic/hydraulic/valves/pumps"
+  },
+  "2750": {
+    "name": "Hydraulic control valves",
     "category_id": 55,
     "category_name": "Pneumatic/hydraulic/valves/pumps"
   },
@@ -3729,8 +3764,23 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "117": {
+    "name": "Desoldering pump/desoldering wire",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "934": {
+    "name": "Electric screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "3727": {
     "name": "Electric Soldering Iron",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "156": {
+    "name": "Flat head screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -3739,8 +3789,28 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "3705": {
+    "name": "Heat Insulation Pad",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "1758": {
+    "name": "Hex screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "157": {
+    "name": "Phillips screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "2336": {
+    "name": "Putty knife",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -3756,6 +3826,16 @@
   },
   "3728": {
     "name": "Soldering Tip",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "1749": {
+    "name": "Star-shaped screwdrivers",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3660": {
+    "name": "torque screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
