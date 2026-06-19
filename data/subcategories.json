@@ -199,11 +199,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -268,6 +263,11 @@
     "name": "Varistors",
     "category_id": 11,
     "category_name": "Circuit Protection"
+  },
+  "3393": {
+    "name": "Cotton swabs",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
   },
   "2101": {
     "name": "555 Timers / Counters",
