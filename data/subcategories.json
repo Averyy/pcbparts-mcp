@@ -199,6 +199,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -3273,6 +3278,11 @@
     "name": "Tunable Filters",
     "category_id": 33,
     "category_name": "RF and Wireless"
+  },
+  "3578": {
+    "name": "slope pad",
+    "category_id": 56,
+    "category_name": "Safety/fire protection"
   },
   "3079": {
     "name": "Accelerometers",
