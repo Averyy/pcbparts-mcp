@@ -1034,6 +1034,11 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
+  "3532": {
+    "name": "Pearl cotton",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -2714,6 +2719,11 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
+  "535": {
+    "name": "Paper cup",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "3726": {
     "name": "PDU Socket",
     "category_id": 49,
@@ -3278,11 +3288,6 @@
     "name": "Tunable Filters",
     "category_id": 33,
     "category_name": "RF and Wireless"
-  },
-  "3578": {
-    "name": "slope pad",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
   },
   "3079": {
     "name": "Accelerometers",
