@@ -1034,11 +1034,6 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
-  "3532": {
-    "name": "Pearl cotton",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -2716,11 +2711,6 @@
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "535": {
-    "name": "Paper cup",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
