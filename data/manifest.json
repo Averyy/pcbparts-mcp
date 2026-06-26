@@ -1,19 +1,19 @@
 {
   "version": "1.0",
-  "scraped_at": "2026-06-25T13:23:50.902189+00:00",
+  "scraped_at": "2026-06-26T13:20:02.163550+00:00",
   "stock_threshold": 10,
-  "total_parts": 601690,
+  "total_parts": 601540,
   "categories": {
     "amplifiers-comparators": {
       "id": 23,
       "name": "Amplifiers/Comparators",
-      "count": 10833,
+      "count": 10831,
       "status": "complete"
     },
     "audio-products-vibration-motors": {
       "id": 10,
       "name": "Audio Products / Vibration Motors",
-      "count": 2277,
+      "count": 2280,
       "status": "complete"
     },
     "building-materials-building-hardware": {
@@ -25,25 +25,25 @@
     "capacitors": {
       "id": 2,
       "name": "Capacitors",
-      "count": 53593,
+      "count": 53543,
       "status": "complete"
     },
     "circuit-protection": {
       "id": 11,
       "name": "Circuit Protection",
-      "count": 38617,
+      "count": 38624,
       "status": "complete"
     },
     "clock-timing": {
       "id": 20,
       "name": "Clock/Timing",
-      "count": 1284,
+      "count": 1279,
       "status": "complete"
     },
     "connectors": {
       "id": 8,
       "name": "Connectors",
-      "count": 115448,
+      "count": 115326,
       "status": "complete"
     },
     "consumables-and-auxiliary-materials": {
@@ -55,7 +55,7 @@
     "crystals-oscillators-resonators": {
       "id": 7,
       "name": "Crystals, Oscillators, Resonators",
-      "count": 16272,
+      "count": 16278,
       "status": "complete"
     },
     "data-acquisition": {
@@ -73,13 +73,13 @@
     "diodes": {
       "id": 4,
       "name": "Diodes",
-      "count": 35751,
+      "count": 35770,
       "status": "complete"
     },
     "displays": {
       "id": 65,
       "name": "Displays",
-      "count": 479,
+      "count": 477,
       "status": "complete"
     },
     "educational-kits": {
@@ -91,7 +91,7 @@
     "embedded-processors-controllers": {
       "id": 18,
       "name": "Embedded Processors & Controllers",
-      "count": 7499,
+      "count": 7491,
       "status": "complete"
     },
     "evaluation-boards": {
@@ -109,7 +109,7 @@
     "gallium-nitride-gan-devices": {
       "id": 67,
       "name": "Gallium Nitride (GaN) Devices",
-      "count": 131,
+      "count": 130,
       "status": "complete"
     },
     "global-sourcing-parts": {
@@ -127,19 +127,19 @@
     "hardware-fasteners": {
       "id": 47,
       "name": "Hardware Fasteners",
-      "count": 1270,
+      "count": 1272,
       "status": "complete"
     },
     "inductors-coils-chokes": {
       "id": 3,
       "name": "Inductors, Coils, Chokes",
-      "count": 40920,
+      "count": 41023,
       "status": "complete"
     },
     "industrial-control-electrical": {
       "id": 46,
       "name": "Industrial control electrical",
-      "count": 1183,
+      "count": 1191,
       "status": "complete"
     },
     "industrial-reagents-lubrication-rust-removal": {
@@ -157,13 +157,13 @@
     "interface": {
       "id": 27,
       "name": "Interface",
-      "count": 8007,
+      "count": 7987,
       "status": "complete"
     },
     "iot-communication-modules": {
       "id": 31,
       "name": "IoT/Communication Modules",
-      "count": 1350,
+      "count": 1356,
       "status": "complete"
     },
     "lathes-and-accessories": {
@@ -175,31 +175,31 @@
     "led-drivers": {
       "id": 28,
       "name": "LED Drivers",
-      "count": 2187,
+      "count": 2183,
       "status": "complete"
     },
     "logic": {
       "id": 19,
       "name": "Logic",
-      "count": 9809,
+      "count": 9805,
       "status": "complete"
     },
     "magnetic-sensors": {
       "id": 70,
       "name": "Magnetic Sensors",
-      "count": 2171,
+      "count": 2164,
       "status": "complete"
     },
     "memory": {
       "id": 21,
       "name": "Memory",
-      "count": 3227,
+      "count": 3226,
       "status": "complete"
     },
     "motor-driver-ics": {
       "id": 69,
       "name": "Motor Driver ICs",
-      "count": 3464,
+      "count": 3467,
       "status": "complete"
     },
     "office-daily-use": {
@@ -217,13 +217,13 @@
     "optoelectronics": {
       "id": 16,
       "name": "Optoelectronics",
-      "count": 8078,
+      "count": 8074,
       "status": "complete"
     },
     "optoisolators": {
       "id": 64,
       "name": "Optoisolators",
-      "count": 3923,
+      "count": 3933,
       "status": "complete"
     },
     "other": {
@@ -247,37 +247,37 @@
     "power-management-pmic": {
       "id": 9,
       "name": "Power Management (PMIC)",
-      "count": 32137,
+      "count": 32110,
       "status": "complete"
     },
     "power-modules": {
       "id": 68,
       "name": "Power Modules",
-      "count": 6207,
+      "count": 6219,
       "status": "complete"
     },
     "relays": {
       "id": 45,
       "name": "Relays",
-      "count": 1897,
+      "count": 1900,
       "status": "complete"
     },
     "resistors": {
       "id": 1,
       "name": "Resistors",
-      "count": 104097,
+      "count": 104026,
       "status": "complete"
     },
     "rf-and-wireless": {
       "id": 33,
       "name": "RF and Wireless",
-      "count": 3484,
+      "count": 3469,
       "status": "complete"
     },
     "sensors": {
       "id": 22,
       "name": "Sensors",
-      "count": 4460,
+      "count": 4453,
       "status": "complete"
     },
     "signal-isolation-devices": {
@@ -301,13 +301,13 @@
     "switches": {
       "id": 14,
       "name": "Switches",
-      "count": 18979,
+      "count": 18982,
       "status": "complete"
     },
     "terminal": {
       "id": 3357,
       "name": "Terminal",
-      "count": 1706,
+      "count": 1702,
       "status": "complete"
     },
     "tool-equipment": {
@@ -319,13 +319,13 @@
     "transistors-thyristors": {
       "id": 5,
       "name": "Transistors/Thyristors",
-      "count": 44530,
+      "count": 44551,
       "status": "complete"
     },
     "wires-and-cables": {
       "id": 61,
       "name": "Wires and cables",
-      "count": 734,
+      "count": 732,
       "status": "complete"
     }
   }
