@@ -199,11 +199,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1028,11 +1023,6 @@
     "name": "Global Sourcing Parts",
     "category_id": 3333,
     "category_name": "Global Sourcing Parts"
-  },
-  "3317": {
-    "name": "Anti-static workbench",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
   },
   "2621": {
     "name": "Cable Tie",
