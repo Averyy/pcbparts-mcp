@@ -1644,6 +1644,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "166": {
+    "name": "Coin cell batteries",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "1199": {
     "name": "Cold press terminals/Terminal blocks",
     "category_id": 46,
@@ -3971,6 +3976,11 @@
   },
   "885": {
     "name": "Rubber plug / rubber cap / protective cover",
+    "category_id": 61,
+    "category_name": "Wires and cables"
+  },
+  "422": {
+    "name": "Servo power line",
     "category_id": 61,
     "category_name": "Wires and cables"
   },
