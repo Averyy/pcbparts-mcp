@@ -2,10 +2,10 @@
   "source": "winsen",
   "source_url": "https://www.winsen-sensor.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-06-01T08:13:52.669381+00:00",
+  "scraped_at": "2026-07-01T07:55:38.653289+00:00",
   "stats": {
-    "sensor_count": 387,
-    "total_product_pages": 395,
+    "sensor_count": 388,
+    "total_product_pages": 396,
     "skipped": 4,
     "errors": 0
   },
@@ -1755,25 +1755,6 @@
       "voltage": "5.0"
     },
     {
-      "id": "mht7042a",
-      "name": "MH-T7042A",
-      "measures": [
-        "gas"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/mh-t7042a.html"
-      ],
-      "description": "MH-T7042A Infrared CH4 Gas Sensor. Target: Combustible gas(CH4)",
-      "protocol": [
-        "uart"
-      ],
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/mh-t7042a.pdf",
-      "voltage": "4.5-5.5",
-      "type": "ndir"
-    },
-    {
       "id": "mht8041a",
       "name": "MH-T8041A",
       "measures": [
@@ -1801,6 +1782,21 @@
       "description": "Industrial laser CH4 gas sensors MH-T8141A. Target: Methane CH4. Range: 0-5.00%VOL",
       "manufacturer": "Winsen",
       "voltage": "4.5",
+      "type": "laser"
+    },
+    {
+      "id": "mhtd11",
+      "name": "MH-TD11",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/mh-td11.html"
+      ],
+      "description": "CH4 Industrial Laser Methane Gas Sensor MH-TD11. Target: Methane (CH₄)",
+      "manufacturer": "Winsen",
+      "voltage": "3.6-5.0",
       "type": "laser"
     },
     {
@@ -2670,6 +2666,7 @@
       "description": "MR513 Hot-wire Alcohol Gas sensor. Target: C2H5OH, alcohol, ethanol",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/mr513.pdf",
+      "voltage": "2.5",
       "type": "semiconductor"
     },
     {
@@ -3369,6 +3366,20 @@
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/rtta71.pdf",
       "voltage": "38",
+      "type": "thermopile"
+    },
+    {
+      "id": "rttd721155",
+      "name": "RTT-D7211-5.5",
+      "measures": [
+        "ir_temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/rtt-d7211.html"
+      ],
+      "description": "RTT-D7211 Digital Thermopile Sensor",
+      "manufacturer": "Winsen",
       "type": "thermopile"
     },
     {
@@ -4209,9 +4220,10 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zce04b.html"
       ],
-      "description": "4-in-1 Industrial Gas Detection Module  ZCE04B. Target: CH4（1%LEL）, CO（1ppm）, H2S（1ppm）, O2（0.1%LEL）. Range: 0-100%LEL ,0-1000ppm ,0-100ppm ,0-30%LEL",
+      "description": "4-in-1 Industrial Gas Detection Module  ZCE04B. Target: CO: 0-1000ppm H2S: 0-100ppm O2: 0-30%vol CH4: 0-100%LEL",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zce04b.pdf",
+      "voltage": "3.5-5",
       "type": "electrochemical"
     },
     {
@@ -4489,9 +4501,10 @@
       "urls": [
         "https://www.winsen-sensor.com/product/ze21-cs.html"
       ],
-      "description": "Battery Leak Detection Module ZE21-CS/CO for Electric Vehicle. Target: CO, Battery leakage comprehensive gas. Range: 0～1000ppm",
+      "description": "Battery Leak Detection Module ZE21-CS/CO for Electric Vehicle. Target: Battery leakage integrated gas. Range: 0～1000ppm",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/ze21-cs.pdf",
+      "voltage": "5-10",
       "type": "electrochemical"
     },
     {
@@ -4783,6 +4796,7 @@
       "description": "ZEH100 Multi-in-One Energy Storage Sensor Module. Target: CO, H2, VOC, Smoke, Temperature",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zeh100.pdf",
+      "voltage": "12-30",
       "type": "electrochemical"
     },
     {
@@ -4799,9 +4813,13 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zehs04.html"
       ],
-      "description": "Atmospheric Monitoring Sensor Module ZEHS04. Target: CO, SO2, NO2, O3 (Scalable PM2.5, PM10, Temperature, Humidity). Range: See manual",
+      "description": "Atmospheric Monitoring Sensor Module ZEHS04. Target: CO, SO2, NO2, O3 (PM2.5, PM10, temperature and humidity expansion compatible)",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zehs04.pdf",
+      "voltage": "9-24",
       "type": "electrochemical"
     },
     {
@@ -5022,6 +5040,7 @@
       "description": "ZH10-VHT Compact 4-in-1 Air Quality Sensor Module. Target: PM2.5,VOC,Temperature,Humidity",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zh10-vht.pdf",
+      "voltage": "5",
       "type": "laser"
     },
     {
@@ -5122,9 +5141,10 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zm01.html"
       ],
-      "description": "ZM01 MEMS VOC Gas Sensor Module. Range: 0-5ppm",
+      "description": "ZM01 MEMS VOC Gas Sensor Module",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zm01.pdf",
+      "voltage": "2.5",
       "type": "semiconductor"
     },
     {
@@ -5137,9 +5157,10 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zm03.html"
       ],
-      "description": "ZM03 Digital MEMS Digital alcohol module. Range: 0-50ppm",
+      "description": "ZM03 Digital MEMS Digital alcohol module",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zm03.pdf",
+      "voltage": "2.5",
       "type": "semiconductor"
     },
     {
@@ -5231,21 +5252,17 @@
       "type": "ndir"
     },
     {
-      "id": "zmt500a",
-      "name": "ZMT500-A",
+      "id": "zmt510a",
+      "name": "ZMT510-A",
       "measures": [
-        "ir_temperature",
-        "temperature"
+        "gas"
       ],
       "platforms": [],
       "urls": [
-        "https://www.winsen-sensor.com/product/zmt500-a.html"
+        "https://www.winsen-sensor.com/product/zmt510-a.html"
       ],
-      "description": "ZMT500-A Non-contact anti-dry probe",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zmt500-a.pdf",
-      "voltage": "2.7",
-      "type": "thermopile"
+      "description": "ZMT510-A non-contact boil-dry protection sensor",
+      "manufacturer": "Winsen"
     },
     {
       "id": "zp01mp503",
@@ -5598,7 +5615,8 @@
         "https://www.winsen-sensor.com/product/zph07.html"
       ],
       "description": "ZPH07- Lithium Battery Aerosol Monitoring Sensor. Range: 0～10000μg/m³",
-      "manufacturer": "Winsen"
+      "manufacturer": "Winsen",
+      "voltage": "9"
     },
     {
       "id": "zphs01",
@@ -5616,12 +5634,13 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zphs01.html"
       ],
-      "description": "ZPHS01 Multi-in-One Sensor Module (HCHO version). Target: CO2, PM2.5, CH2O, VOC, Temperature, Humidity. Range: CO2: 0-5000ppm; PM2.5: 0-1000μg/m³; CH2O: 0-1.6ppm; VOC: 4 level; Temperature: 0-65℃ (...",
+      "description": "ZPHS01 Multi-in-One Sensor Module (HCHO version). Target: CO2、PM2.5、CH2O、TVOC、Temperature、Humidity",
       "protocol": [
         "uart"
       ],
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zphs01.pdf",
+      "voltage": "5",
       "type": "ndir"
     },
     {
@@ -5666,12 +5685,13 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zphs01c.html"
       ],
-      "description": "Multi-in-One Sensor Module ZPHS01C. Target: PM2.5, CO2, CH2O, TVOC,Temperature&Humidity. Range: CO2: 400~5000ppm; PM2.5: 0-1000μg/m³; CH2O: 0-1.6ppm; VOC: 4 level; Temperature: 0-65℃ (Accuracy±0.5℃...",
+      "description": "Multi-in-One Sensor Module ZPHS01C. Target: PM2.5, CO2, CH2O, TVOC,Temperature&Humidity",
       "protocol": [
         "uart"
       ],
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zphs01c.pdf",
+      "voltage": "5",
       "type": "ndir"
     },
     {

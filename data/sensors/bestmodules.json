@@ -2,10 +2,10 @@
   "source": "bestmodules",
   "source_url": "https://www.bestmodulescorp.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-06-01T08:18:20.223235+00:00",
+  "scraped_at": "2026-07-01T08:00:05.020274+00:00",
   "stats": {
-    "sensor_count": 82,
-    "total_pages_checked": 86,
+    "sensor_count": 83,
+    "total_pages_checked": 89,
     "skipped": 1,
     "errors": 0
   },
@@ -1009,6 +1009,28 @@
       "voltage": "2.7-5.5"
     },
     {
+      "id": "bme34k262a",
+      "name": "BME34K262A",
+      "measures": [
+        "moisture",
+        "soil_moisture",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bme34k262a.html"
+      ],
+      "description": "Soil Temperature and Moisture Detection Module(with Adapter Board) BME34K262A. Soil Moisture Detection Characteristics - Measurement Range: 0%RH ~ 75%RH - Resolution: 1%RH - Accuracy: ±8%",
+      "protocol": [
+        "rs485",
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "3.3-5.5",
+      "type": "capacitive"
+    },
+    {
       "id": "bme34m101",
       "name": "BME34M101",
       "measures": [
@@ -1199,16 +1221,14 @@
       "name": "BMH06206",
       "measures": [
         "ir_temperature",
-        "particulate",
         "temperature"
       ],
       "platforms": [],
       "urls": [
-        "https://www.bestmodulescorp.com/en/bmh06206-42.html"
+        "https://www.bestmodulescorp.com/en/bmh06206-21.html"
       ],
-      "description": "Industrial Infrared Thermometer Module BMH06206-42. Measures ambient temperature, object surface temperature, and human body temperature. Measurement resolution of 0.1°C",
+      "description": "Infrared Thermometer Module BMH06206-21. Measures ambient temperature, object surface temperature, and human body temperature. Measurement resolution of 0.1°C",
       "protocol": [
-        "analog",
         "i2c",
         "pwm"
       ],
