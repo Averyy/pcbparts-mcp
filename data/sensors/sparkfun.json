@@ -2,7 +2,7 @@
   "source": "sparkfun",
   "source_url": "https://www.sparkfun.com/graphql",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-06-01T08:18:27.884796+00:00",
+  "scraped_at": "2026-07-01T08:00:11.376745+00:00",
   "stats": {
     "sensor_count": 121,
     "total_products": 402,
@@ -184,7 +184,10 @@
       "urls": [
         "https://www.sparkfun.com/sparkfun-lightning-detector-as3935.html"
       ],
-      "description": "The SparkFun Lightning Detector adds lightning detection to your next weather station to make sure you are aware of any bad weather heading your way."
+      "description": "Add advanced environmental tracking to your weather station with this SPI-based weather sensor, which detects lightning up to 40km away.",
+      "protocol": [
+        "spi"
+      ]
     },
     {
       "id": "as6212",
@@ -259,7 +262,7 @@
         "https://www.sparkfun.com/sparkfun-mini-spectral-uv-sensor-as7331-qwiic.html",
         "https://www.sparkfun.com/sparkfun-spectral-uv-sensor-as7331-qwiic.html"
       ],
-      "description": "The SparkFun Mini AS7331 Qwiic Spectral UV Sensor measures UV radiation on three channels: UVA, UVB, and UVC, with high sensitivity and accuracy.",
+      "description": "Measure UVA, UVB, and UVC radiation accurately in tight spaces with this mini 1\" x 0.5\" AS7331 sensor breakout, featuring four low-power operating modes and Qwiic communication.",
       "protocol": [
         "i2c"
       ]
@@ -598,7 +601,7 @@
       "urls": [
         "https://www.sparkfun.com/sparkfun-air-velocity-sensor-breakout-fs3000-1005-qwiic.html"
       ],
-      "description": "The SparkFun FS3000-1005 Qwiic Air Velocity Sensor Breakout can help you accurately determine the speed and consistency of air moving around you.",
+      "description": "Easily monitor airflow up to 7.23m/s in an enclosed area using this Qwiic-enabled, MEMS thermopile-based air velocity sensor.",
       "protocol": [
         "i2c"
       ]
@@ -739,7 +742,7 @@
       ],
       "platforms": [],
       "urls": [
-        "https://www.sparkfun.com/sparkfun-9dof-imu-breakout-im19.html"
+        "https://www.sparkfun.com/sparkfun-9dof-imu-breakout.html"
       ],
       "description": "A high-precision IMU breakout featuring the Feyman IM19, designed exclusively for RTK receivers, for precise tilt compensation and PNT sensor fusion."
     },
@@ -1656,7 +1659,7 @@
       "urls": [
         "https://www.sparkfun.com/sparkfun-ambient-light-sensor-veml6030-qwiic.html"
       ],
-      "description": "The VEML6030 is a high-accuracy ambient light sensor with a 16-bit resolution. Even more impressive is that it can detect light, similar to the human eye.",
+      "description": "Add highly accurate, human-eye responsive ambient light sensing to your project with this low-power, Qwiic-enabled VEML6030 breakout.",
       "protocol": [
         "i2c"
       ]

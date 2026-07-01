@@ -2,13 +2,13 @@
   "source": "arduino",
   "source_url": "https://downloads.arduino.cc/libraries/library_index.json",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-06-01T07:50:00.879452+00:00",
+  "scraped_at": "2026-07-01T07:33:13.852484+00:00",
   "stats": {
-    "sensor_count": 689,
-    "total_libs_checked": 1877,
+    "sensor_count": 698,
+    "total_libs_checked": 1900,
     "skipped_no_ic": 445,
-    "skipped_nonsensor": 139,
-    "skipped_no_measures": 111
+    "skipped_nonsensor": 140,
+    "skipped_no_measures": 113
   },
   "sensors": [
     {
@@ -1153,6 +1153,21 @@
       "description": "Arduino library for the APDS-9999 sensor."
     },
     {
+      "id": "aq01",
+      "name": "AQ01",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/emakefun-arduino-library/aq01.git"
+      ],
+      "description": "Arduino library for the AQ01 air quality sensor."
+    },
+    {
       "id": "as3935",
       "name": "AS3935",
       "measures": [
@@ -1262,11 +1277,13 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/DFRobot/DFRobot_AS6221.git"
+        "https://github.com/DFRobot/DFRobot_AS6221.git",
+        "https://github.com/Protocentral/protocentral_as6221_arduino.git"
       ],
-      "description": "Easy to use AS6221."
+      "description": "Arduino library for the ProtoCentral AS6221 wearable body temperature sensor (QWIIC).",
+      "manufacturer": "ams-OSRAM"
     },
     {
       "id": "as7265x",
@@ -3194,7 +3211,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 12,
+      "popularity": 13,
       "urls": [
         "https://github.com/IharYakimush/arduino-temperature-control-events.git",
         "https://github.com/matmunk/DS18B20.git",
@@ -4085,6 +4102,21 @@
       "manufacturer": "TE Connectivity"
     },
     {
+      "id": "hw827",
+      "name": "HW827_PPG",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/gevindug/HW827_PPG.git"
+      ],
+      "description": "PPG filtering and heart-rate detection for HW-827 pulse sensor."
+    },
+    {
       "id": "hx710a",
       "name": "HX710AB",
       "measures": [
@@ -4228,10 +4260,11 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/wollewald/ICM20948_WE.git",
-        "https://github.com/7semi-solutions/7Semi_ICM20948_Arduino-Library.git"
+        "https://github.com/7semi-solutions/7Semi_ICM20948_Arduino-Library.git",
+        "https://github.com/UNIT-Electronics-MX/unit_devlab_icm20948_library.git"
       ],
       "description": "Arduino library for the 7Semi ICM-20948 9-axis IMU (Accel, Gyro, Mag, Temp)."
     },
@@ -6184,18 +6217,19 @@
     },
     {
       "id": "max30102",
-      "name": "AdvancedOximeter",
+      "name": "DevLab_MAX30102",
       "measures": [
         "biometric"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 3,
+      "popularity": 4,
       "urls": [
         "https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library.git",
         "https://github.com/Protocentral/protocentral-pulse-express.git",
-        "https://github.com/jaikulk14/Advanced-Oximeter.git"
+        "https://github.com/jaikulk14/Advanced-Oximeter.git",
+        "https://github.com/UNIT-Electronics-MX/unit_devlab_max30102_library.git"
       ],
       "description": "Advanced library for MAX30102 pulse oximeter and heart rate monitoring with register-level control."
     },
@@ -6708,6 +6742,21 @@
         "https://github.com/DFRobot/DFRobot_MGC3130.git"
       ],
       "description": "DFRobot_MGC3130 is the Gesture library of DFRobot"
+    },
+    {
+      "id": "mht7042a",
+      "name": "MH-T7042A Library",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/acapovilla/MH-T7042A_Library.git"
+      ],
+      "description": "Arduino library for MH-T7042A sensors."
     },
     {
       "id": "mhz19",
@@ -8043,7 +8092,7 @@
         "https://github.com/mandulaj/PZEM-004T-v30.git",
         "https://github.com/bharanidharanrangaraj/PZEM004Tv40_R4.git"
       ],
-      "description": "Library for PZEM-004T V4.0 Energy Monitor on Arduino UNO R4"
+      "description": "Library for PZEM-004T V4.0 Energy Monitor. Compatible with Arduino UNO R3, R4, Nano, and Mega."
     },
     {
       "id": "qmc5583l",
@@ -8074,6 +8123,21 @@
         "https://github.com/adafruit/Adafruit_QMC5883P.git"
       ],
       "description": "Arduino library for QMC5883P 3-axis magnetometer"
+    },
+    {
+      "id": "qmc6309",
+      "name": "PCBCUPID QMC6309",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/pcbcupid/PCBCUPID-QMC6309.git"
+      ],
+      "description": "Arduino library for the PCBCUPID QMC6309 3-Axis Magnetometer."
     },
     {
       "id": "qmi8658",
@@ -8735,14 +8799,15 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 4,
+      "popularity": 5,
       "urls": [
         "https://github.com/ricki-z/SDS011.git",
         "https://github.com/jo-seph/SDS011_vers.git",
         "https://github.com/dok-net/esp_sds011.git",
-        "https://github.com/Silvan85/Nova_SDS011.git"
+        "https://github.com/Silvan85/Nova_SDS011.git",
+        "https://github.com/boeserfrosch/GuL_NovaFitness.git"
       ],
-      "description": "ESP8266/ESP32 library for the SDS011 particulate matter sensor."
+      "description": "This is an (not-just) Arduino-Framework library to work with nova fitness particulate matter sensors. Due to the used communication interface it should be possible to use this library on other plat..."
     },
     {
       "id": "sen0032",
@@ -9418,12 +9483,13 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 4,
+      "popularity": 5,
       "urls": [
         "https://github.com/sparkfun/SparkFun_SHTC3_Arduino_Library.git",
         "https://github.com/closedcube/ClosedCube_SHTC3_Arduino.git",
         "https://github.com/adafruit/Adafruit_SHTC3.git",
-        "https://github.com/deneyapkart/deneyap-sicaklik-nem-olcer-arduino-library.git"
+        "https://github.com/deneyapkart/deneyap-sicaklik-nem-olcer-arduino-library.git",
+        "https://github.com/SolderedElectronics/Soldered-SHTC3-Temperature-Humidity-Sensor-Arduino-Library.git"
       ],
       "description": "Arduino library for Arduino library for Sensirion SHTC3 Digital Humidity and Temperature Sensor",
       "manufacturer": "Sensirion"
@@ -9691,7 +9757,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 23,
+      "popularity": 24,
       "urls": [
         "https://github.com/Martinsos/arduino-lib-hc-sr04.git",
         "https://github.com/Spaguetron/ST_HW_HC_SR04.git",
@@ -10182,6 +10248,22 @@
       "description": "Arduino library for Deneyap Soil Moisture Sensor TL555Q"
     },
     {
+      "id": "tla2021",
+      "name": "ProtoCentral TLA20xx",
+      "measures": [
+        "force"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/Protocentral/protocentral_tla20XX_arduino.git"
+      ],
+      "description": "Library for the ProtoCentral tinyADC TLA2021/TLA2022/TLA2024 12-bit delta-sigma ADC breakout board.",
+      "manufacturer": "Texas Instruments"
+    },
+    {
       "id": "tli4970",
       "name": "TLI4970",
       "measures": [
@@ -10261,6 +10343,22 @@
         "https://github.com/sparkfun/SparkFun_TMF8801_Arduino_Library.git"
       ],
       "description": "Configures and communicates with the SparkFun Qwiic TMF-8801 Time-of-flight sensor."
+    },
+    {
+      "id": "tmf8829",
+      "name": "ProtoCentral_TMF8829_dToF_Sensor_Library",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/Protocentral/protocentral_tmf8829_arduino.git"
+      ],
+      "description": "Library for the ProtoCentral TMF8829 multi-zone time-of-flight sensor breakout board.",
+      "manufacturer": "ams-OSRAM"
     },
     {
       "id": "tmf882x",
@@ -10360,6 +10458,22 @@
         "https://github.com/adafruit/Adafruit_TMP117.git"
       ],
       "description": "Arduino library for the TMP117 and TMP119 sensors in the Adafruit shop",
+      "manufacturer": "Texas Instruments"
+    },
+    {
+      "id": "tmp119",
+      "name": "TMP119",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/bluerobotics/BlueRobotics_TMP119_Library.git"
+      ],
+      "description": "A simple and easy library for the TMP119 temperature sensor",
       "manufacturer": "Texas Instruments"
     },
     {
@@ -10543,12 +10657,13 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/adafruit/Adafruit_TSL2591_Library.git",
-        "https://bitbucket.org/christandlg/tsl2591mi.git"
+        "https://bitbucket.org/christandlg/tsl2591mi.git",
+        "https://github.com/UNIT-Electronics-MX/unit_devlab_tsl2591_library.git"
       ],
-      "description": "Library for the TSL2591 digital luminosity (light) sensors.",
+      "description": "Library for Devlab TSL2591 digital luminosity (light) sensor modules.",
       "manufacturer": "ams-OSRAM"
     },
     {
@@ -10582,6 +10697,22 @@
       ],
       "description": "Arduino library for Arduino library for TE CONNECTIVITY +/-0.1C 24-bit Digital Temperature Sensor",
       "manufacturer": "TE Connectivity"
+    },
+    {
+      "id": "ttp223",
+      "name": "TTP223Row",
+      "measures": [
+        "gesture",
+        "touch"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/ardunia/TTP223Row.git"
+      ],
+      "description": "A gesture processing library for linear TTP223 capacitive touch sensors."
     },
     {
       "id": "tx07k",
@@ -10831,16 +10962,17 @@
     },
     {
       "id": "veml3328",
-      "name": "AVR-IoT VEML3328",
+      "name": "DevLab_VEML3328",
       "measures": [
         "color"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/microchip-pic-avr-solutions/veml3328_arduino_driver.git"
+        "https://github.com/microchip-pic-avr-solutions/veml3328_arduino_driver.git",
+        "https://github.com/UNIT-Electronics-MX/unit_devlab_veml3328_library.git"
       ],
       "description": "Low-level Arduino driver for the VEML3328 RGBCIR Color Sensor [1], which is mainly focused on the AVR-IoT Cellular Mini development kit."
     },
@@ -10935,13 +11067,14 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 5,
+      "popularity": 6,
       "urls": [
         "https://github.com/adafruit/Adafruit_VEML7700.git",
         "https://github.com/sparkfun/SparkFun_VEML7700_Arduino_Library.git",
         "https://github.com/DFRobot/DFRobot_VEML7700.git",
         "https://github.com/PTSolns/PTSolns_VEML7700.git",
-        "https://github.com/7semi-solutions/7Semi-VEML7700.git"
+        "https://github.com/7semi-solutions/7Semi-VEML7700.git",
+        "https://github.com/UNIT-Electronics-MX/unit_devlab_veml7700_library.git"
       ],
       "description": "This is a Library for VEML7700, the function is to read High Accuracy Ambient Light data(SKU: SEN0228).",
       "manufacturer": "Vishay"
@@ -10991,6 +11124,23 @@
         "https://github.com/adafruit/Adafruit_VL53L1X.git"
       ],
       "description": "Library for interaction with the time of flight sensor VL53L1X",
+      "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "vl53l4cd",
+      "name": "VL53L4CD",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/pololu/vl53l4cd-arduino.git"
+      ],
+      "description": "VL53L4CD distance sensor library",
       "manufacturer": "STMicroelectronics"
     },
     {
