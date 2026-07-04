@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1588,6 +1583,11 @@
     "name": "Timers / Counters",
     "category_id": 20,
     "category_name": "Clock/Timing"
+  },
+  "87": {
+    "name": "Plastic shell",
+    "category_id": 59,
+    "category_name": "Consumables and auxiliary materials"
   },
   "3456": {
     "name": "Silicone pad",
@@ -3801,11 +3801,6 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "934": {
-    "name": "Electric screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
