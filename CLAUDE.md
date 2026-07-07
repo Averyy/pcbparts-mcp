@@ -14,7 +14,7 @@
 ## Critical Rules
 
 - **NEVER test changes using the live MCP** undeployed code changes NEEDS to be tested locally via the database
-- **ALWAYS use wafer** when testing JLCPCB API - use `wafer.AsyncSession` with embed="xhr" and proper config (see `client.py` or `scrape_components.py`). Don't write quick test scripts with raw httpx/aiohttp - you'll get 403 blocked.
+- **ALWAYS use wafer** when testing JLCPCB API - use `wafer.AsyncSession` with proper config (see `client.py` or `scrape_components.py`). Don't write quick test scripts with raw httpx/aiohttp - you'll get 403 blocked.
 
 ## Library Types (Quick Reference)
 

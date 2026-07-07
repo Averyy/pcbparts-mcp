@@ -1,0 +1,27 @@
+# Keep the Docker build context small (the Dockerfile only COPYs src/, scripts/build_*.py,
+# and specific data/ subdirs — everything below is build-irrelevant).
+.git
+.venv
+venv
+.codex-dobby
+.pytest_cache
+.playwright-mcp
+.cache
+**/__pycache__
+*.pyc
+
+# Built databases (regenerated inside the image from the committed JSONL)
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/*.db.tmp
+data/wafer
+data/sensors/_scrape_status.json
+
+# Not needed at runtime / build
+tests
+docs
+landing
+.env
+.env.example
+*.md

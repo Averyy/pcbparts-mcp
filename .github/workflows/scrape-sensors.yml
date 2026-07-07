@@ -32,9 +32,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install wafer-py
+          pip install "wafer-py==0.3.0"
 
       - name: Run sensor scrapers
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # DFRobot scraper uses `gh api`; without this it fails silently
         run: |
           echo "Running sensor scrapers..."
           python scripts/scrape_sensors.py
@@ -50,28 +52,6 @@ jobs:
             COUNT=$(python -c "import json; d=json.load(open('$f')); print(d.get('stats',{}).get('sensor_count','?'))" 2>/dev/null || echo "?")
             echo "  $NAME: $COUNT sensors"
           done
-
-      - name: Check for regressions
-        run: |
-          python -c "
-          import json, glob, sys
-          warnings = []
-          for f in glob.glob('data/sensors/*.json'):
-              try:
-                  d = json.load(open(f))
-                  stats = d.get('stats', {})
-                  count = stats.get('sensor_count', 0)
-                  source = d.get('source', f)
-                  errors = stats.get('errors', 0)
-                  if errors > 5:
-                      warnings.append(f'WARNING: {source} had {errors} errors')
-              except Exception as e:
-                  warnings.append(f'WARNING: Failed to read {f}: {e}')
-          if warnings:
-              print('\n'.join(warnings))
-          else:
-              print('No regressions detected')
-          "
 
       - name: Commit and push data files
         id: commit
@@ -102,6 +82,12 @@ jobs:
             echo "Data committed and pushed"
             echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
+
+      # Runs after the commit so fresh data from good sources still lands,
+      # but before the deploy — a failed/stale/empty source blocks the deploy.
+      - name: Check scrape status (gate deploy)
+        run: |
+          python scripts/check_scrape_status.py
 
       - name: Trigger deploy
         if: steps.commit.outputs.has_changes == 'true'

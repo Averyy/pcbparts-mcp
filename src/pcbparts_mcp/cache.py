@@ -48,6 +48,11 @@ class TTLCache:
         return len(self._data)
 
 
+def _utc_today() -> datetime.date:
+    """Current date in UTC (not local time)."""
+    return datetime.datetime.now(datetime.timezone.utc).date()
+
+
 class DailyQuota:
     """Daily request quota counter that resets at UTC midnight.
 
@@ -58,10 +63,10 @@ class DailyQuota:
         self._name = name
         self._limit = daily_limit
         self._count = 0
-        self._date = datetime.date.today()
+        self._date = _utc_today()
 
     def _maybe_reset(self) -> None:
-        today = datetime.date.today()
+        today = _utc_today()
         if today != self._date:
             self._count = 0
             self._date = today

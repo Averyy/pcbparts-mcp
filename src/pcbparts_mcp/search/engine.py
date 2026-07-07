@@ -1,5 +1,6 @@
 """Search engine for parametric component search."""
 
+import logging
 import sqlite3
 from typing import Any, Literal
 
@@ -25,6 +26,8 @@ from .query_builder import (
     needs_numeric_post_filter,
 )
 from .result import row_to_dict
+
+logger = logging.getLogger(__name__)
 
 
 class SearchEngine:
@@ -244,9 +247,6 @@ class SearchEngine:
         sql = " ".join(sql_parts)
         count_sql = " ".join(count_parts)
 
-        cursor = self._conn.execute(sql, params)
-        rows = cursor.fetchall()
-
         # Combined count + library type distribution query
         lib_count_sql = count_sql.replace("SELECT COUNT(*)", "SELECT library_type, COUNT(*)")
         lib_count_sql_clean = lib_count_sql
@@ -254,11 +254,27 @@ class SearchEngine:
             lib_count_sql_clean = lib_count_sql_clean.replace(pattern, "")
         lib_count_sql_clean += " GROUP BY library_type"
 
-        lib_cursor = self._conn.execute(lib_count_sql_clean, count_params)
+        # Defense-in-depth: list-param caps at the tool boundary keep real queries far from
+        # SQLite's limits, but if a statement is still rejected (e.g. too many bound
+        # variables), return a clean error dict rather than leak an unhandled exception.
+        try:
+            cursor = self._conn.execute(sql, params)
+            rows = cursor.fetchall()
+            lib_rows = self._conn.execute(lib_count_sql_clean, count_params).fetchall()
+        except sqlite3.OperationalError:
+            logger.error("Search SQL execution failed", exc_info=True)
+            return {
+                "error": "Search failed: query too complex. Reduce the number of filters.",
+                "results": [],
+                "total": 0,
+                "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
+                "no_fee_available": False,
+            }
+
         lib_type_map = {"b": "basic", "p": "preferred", "e": "extended"}
         library_type_counts = {"basic": 0, "preferred": 0, "extended": 0}
         total = 0
-        for row in lib_cursor:
+        for row in lib_rows:
             lib_name = lib_type_map.get(row[0], row[0])
             count = row[1]
             if lib_name in library_type_counts:

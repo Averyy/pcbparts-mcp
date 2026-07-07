@@ -51,11 +51,18 @@ docs/todo-*.md
 # Claude
 .claude/
 
+# Codex/Dobby run artifacts
+.codex-dobby/
+
 # Playwright
 .playwright-mcp/
 
 # Wafer cookie cache (created by scraper)
 data/wafer/
+
+# Sensor scrape run status (written by scrape_sensors.py, consumed by
+# check_scrape_status.py in CI; never committed to avoid no-op deploys)
+data/sensors/_scrape_status.json
 
 # Built databases (generated from JSONL at build time)
 data/components.db

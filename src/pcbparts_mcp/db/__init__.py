@@ -79,6 +79,7 @@ class ComponentDatabase:
                 build_database(self.data_dir, self.db_path)
 
             self._conn = sqlite3.connect(self.db_path, check_same_thread=False)
+            self._conn.execute("PRAGMA journal_mode=WAL")  # match sensor_db/boards_db; docstring guarantee
             self._conn.row_factory = sqlite3.Row
 
             # Load caches

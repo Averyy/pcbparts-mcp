@@ -19,7 +19,9 @@ from .cache import DailyQuota
 from .config import (
     RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
-    DISTRIBUTOR_DAILY_LIMIT,
+    DISTRIBUTOR_DAILY_LIMIT, MAX_ALTERNATIVES,
+    clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
+    ALLOWED_HOSTS, ALLOWED_ORIGINS,
 )
 from .client import JLCPCBClient
 from .mouser import MouserClient
@@ -122,6 +124,9 @@ mcp = FastMCP(
     name="pcbparts",
     instructions="PCB design assistant — component search, reference boards, sensor recommendation, and design rules. No auth required. Use jlc_search (local DB) as the primary search tool — it's fast, free, and supports parametric filters. Only use jlc_stock_check for real-time stock verification or out-of-stock parts. Use mouser_get_part/digikey_get_part only to cross-reference a specific MPN (daily quota applies). Use sensor_recommend to find sensor ICs/modules by what they measure, protocol, or platform — not for buying parts (use jlc_search for that). Use board_search to find reference board schematics by IC, tag, or text. Use board_get with focus param to see how a specific IC is used (pin-grouped neighborhood). Use get_design_rules for PCB design best practices (power, protection, interfaces, MCUs, layout, EMC).",
     lifespan=lifespan,
+    # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
+    # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
+    mask_error_details=True,
 )
 
 
@@ -226,9 +231,22 @@ def _parse_list_param(value: list[str] | str | None) -> list[str] | None:
         try:
             parsed = json.loads(value)
             if isinstance(parsed, list):
-                return parsed
+                # JSON-string payloads bypass Pydantic's list[str] validation, so filter
+                # non-string elements here (they get .lower()'d / string-processed downstream)
+                return [v for v in parsed if isinstance(v, str)] or None
         except json.JSONDecodeError:
             logger.debug(f"Failed to parse list parameter as JSON: {value[:100]!r}")
+    return None
+
+
+def _check_list_cap(name: str, value: list | None, cap: int = MAX_LIST_PARAM_ITEMS) -> dict | None:
+    """Return an error dict if a list-valued param exceeds its cap, else None.
+
+    Caps are well above realistic use — this only rejects abusive payloads that would
+    build a huge SQL statement / exceed SQLite's bound-variable limit.
+    """
+    if value is not None and len(value) > cap:
+        return {"error": f"Too many {name} (max {cap}, got {len(value)})", "results": [], "total": 0}
     return None
 
 
@@ -294,11 +312,17 @@ async def jlc_stock_check(
         return {"error": "Query too long (max 500 characters)"}
     effective_min_stock = max(0, min_stock)
     effective_page = max(1, page)
-    effective_limit = max(1, min(limit, MAX_PAGE_SIZE))
+    effective_limit = clamp_limit(limit, MAX_PAGE_SIZE)
 
     # Parse list parameters (handles JSON strings from some MCP clients)
     parsed_packages = _parse_list_param(packages)
     parsed_manufacturers = _parse_list_param(manufacturers)
+
+    # Reject abusive oversized list params
+    for _name, _val in (("packages", parsed_packages), ("manufacturers", parsed_manufacturers)):
+        _cap_err = _check_list_cap(_name, _val)
+        if _cap_err:
+            return _cap_err
 
     # Resolve category_name to category_id if provided (ID takes precedence)
     resolved_category_id = category_id
@@ -320,20 +344,25 @@ async def jlc_stock_check(
         if resolved_subcategory_id is None:
             return {"error": f"Subcategory not found: '{subcategory_name}'", "hint": "Use search_help(category=...) to see available subcategories"}
 
-    return await _client.search(
-        query=query,
-        category_id=resolved_category_id,
-        subcategory_id=resolved_subcategory_id,
-        min_stock=effective_min_stock,
-        library_type=library_type if library_type != "all" else None,
-        package=package,
-        manufacturer=manufacturer,
-        packages=parsed_packages,
-        manufacturers=parsed_manufacturers,
-        sort_by=sort_by,
-        page=effective_page,
-        limit=effective_limit,
-    )
+    try:
+        return await _client.search(
+            query=query,
+            category_id=resolved_category_id,
+            subcategory_id=resolved_subcategory_id,
+            min_stock=effective_min_stock,
+            library_type=library_type if library_type != "all" else None,
+            package=package,
+            manufacturer=manufacturer,
+            packages=parsed_packages,
+            manufacturers=parsed_manufacturers,
+            sort_by=sort_by,
+            page=effective_page,
+            limit=effective_limit,
+        )
+    except ValueError as e:
+        # Client raises ValueError with actionable messages (rate limited / WAF / timeout).
+        # Return them as a dict so they survive mask_error_details=True.
+        return {"error": str(e)}
 
 
 def _parse_spec_filters(filters: list[dict[str, str]] | str | None) -> list[SpecFilter] | None:
@@ -354,10 +383,15 @@ def _parse_spec_filters(filters: list[dict[str, str]] | str | None) -> list[Spec
 
     result = []
     for f in filters:
-        if isinstance(f, dict) and "name" in f and "op" in f and "value" in f:
-            op = f["op"]
-            if op in ("=", ">=", "<=", ">", "<"):
-                result.append(SpecFilter(f["name"], op, f["value"]))
+        if not isinstance(f, dict):
+            continue
+        name, op, value = f.get("name"), f.get("op"), f.get("value")
+        # name/value must be strings (they get .lower()'d / bound as SQL text downstream);
+        # a JSON-string spec_filters payload bypasses Pydantic, so guard the types here.
+        if not isinstance(name, str) or not isinstance(value, str):
+            continue
+        if op in ("=", ">=", "<=", ">", "<"):
+            result.append(SpecFilter(name, op, value))
     return result if result else None
 
 
@@ -436,6 +470,12 @@ async def jlc_search(
     # Parse packages array (handles JSON strings from some MCP clients)
     parsed_packages = _parse_list_param(packages)
 
+    # Reject abusive oversized list params before building a large SQL statement
+    for _name, _val in (("spec_filters", parsed_filters), ("packages", parsed_packages)):
+        _cap_err = _check_list_cap(_name, _val)
+        if _cap_err:
+            return _cap_err
+
     # Smart parsing: always parse query to clean up text and extract structured info
     # This handles cases like "lipo charger" where terms don't exist in FTS index
     parsed_query_info = None
@@ -489,7 +529,7 @@ async def jlc_search(
         mounting_type=effective_mounting_type,
         match_all_terms=match_all_terms,
         sort_by=sort_by,
-        limit=min(limit, 100),
+        limit=clamp_limit(limit, MAX_PAGE_SIZE),
     )
 
     # Add parsing info if natural language was used
@@ -639,7 +679,10 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     if not _client:
         raise RuntimeError("Client not initialized")
 
-    result = await _client.get_part(lcsc)
+    try:
+        result = await _client.get_part(lcsc)
+    except ValueError as e:  # actionable JLCPCB messages (rate limited / WAF / timeout)
+        return {"error": str(e)}
     if not result:
         return {"error": f"Part {lcsc} not found"}
     return result
@@ -694,14 +737,17 @@ async def jlc_find_alternatives(
     if not _client:
         raise RuntimeError("Client not initialized")
 
-    return await _client.find_alternatives(
-        lcsc=lcsc,
-        min_stock=min_stock,
-        same_package=same_package,
-        library_type=library_type if library_type != "all" else None,
-        has_easyeda_footprint=has_easyeda_footprint,
-        limit=limit,
-    )
+    try:
+        return await _client.find_alternatives(
+            lcsc=lcsc,
+            min_stock=min_stock,
+            same_package=same_package,
+            library_type=library_type if library_type != "all" else None,
+            has_easyeda_footprint=has_easyeda_footprint,
+            limit=clamp_limit(limit, MAX_ALTERNATIVES),
+        )
+    except ValueError as e:  # actionable JLCPCB messages (rate limited / WAF / timeout)
+        return {"error": str(e)}
 
 
 @mcp.tool(
@@ -780,7 +826,10 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> di
         lcsc = lcsc.strip().upper()
 
         # Get UUID and part details from LCSC code
-        part = await _client.get_part(lcsc)
+        try:
+            part = await _client.get_part(lcsc)
+        except ValueError as e:  # actionable JLCPCB messages (rate limited / WAF / timeout)
+            return {"error": str(e)}
         if not part:
             return {"error": f"Part not found: {lcsc}"}
 
@@ -796,8 +845,9 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> di
         easyeda_data = await _client.get_easyeda_component(symbol_uuid)
     except ValueError as e:
         return {"error": str(e)}
-    except Exception as e:
-        return {"error": f"Failed to fetch EasyEDA data: {e}"}
+    except Exception:
+        logger.error(f"EasyEDA fetch failed for {lcsc or symbol_uuid}", exc_info=True)
+        return {"error": "Failed to fetch EasyEDA data. Check server logs for details."}
 
     # Check for valid response
     if not easyeda_data or not isinstance(easyeda_data, dict):
@@ -927,7 +977,7 @@ async def cse_search(
     if query and len(query) > 500:
         return {"error": "Query too long (max 500 characters)"}
 
-    limit = max(1, min(limit, 10))
+    limit = clamp_limit(limit, 10)
 
     try:
         result = await _cse_client.search(query)
@@ -1035,17 +1085,23 @@ async def sensor_recommend(
         Each result includes: name, manufacturer, measures, type, protocol,
         voltage, platforms, platform_count, description, urls, datasheet_url (when available).
     """
-    # Handle JSON-string measure param from some MCP clients
+    # Handle JSON-string measure param from some MCP clients (filter non-string
+    # elements — they bypass Pydantic and get .lower()'d in sensor_db.search)
     if isinstance(measure, str):
         try:
             parsed = json.loads(measure)
             if isinstance(parsed, list):
-                measure = parsed
+                measure = [m for m in parsed if isinstance(m, str)] or None
         except json.JSONDecodeError:
             pass
 
     if query and len(query) > 500:
         return {"error": "Query too long (max 500 characters)", "results": [], "total": 0}
+
+    if isinstance(measure, list):
+        cap_err = _check_list_cap("measure", measure, MAX_MEASURE_ITEMS)
+        if cap_err:
+            return cap_err
 
     sensor_db = get_sensor_db()
     return sensor_db.search(
@@ -1054,7 +1110,7 @@ async def sensor_recommend(
         type=type,
         protocol=protocol,
         platform=platform,
-        limit=min(limit, 100),
+        limit=clamp_limit(limit, MAX_PAGE_SIZE),
     )
 
 
@@ -1181,7 +1237,7 @@ async def board_search(
             tag=tag,
             org=org,
             layers=layers,
-            limit=max(1, min(limit, 50)),
+            limit=clamp_limit(limit, 50),
         )
 
         # Add cross-board consensus when searching by component and multiple boards match
@@ -1273,20 +1329,46 @@ async def health(request):
     })
 
 
+class BodySizeLimitMiddleware(BaseHTTPMiddleware):
+    """Reject requests whose declared body exceeds max_bytes (memory-amplification guard).
+
+    MCP JSON-RPC calls are a few KB; the limit is far above any legitimate request.
+    Requests without a Content-Length (chunked) are passed through.
+    """
+
+    def __init__(self, app, max_bytes: int = MAX_REQUEST_BODY_BYTES):
+        super().__init__(app)
+        self.max_bytes = max_bytes
+
+    async def dispatch(self, request, call_next):
+        content_length = request.headers.get("content-length")
+        if content_length and content_length.isdigit() and int(content_length) > self.max_bytes:
+            return JSONResponse({"error": "Request body too large"}, status_code=413)
+        return await call_next(request)
+
+
 # Create ASGI app
 def create_app():
     """Create the ASGI application."""
-    # Middleware list - rate limiting only (FastMCP handles CORS for MCP endpoints)
+    # Body-size guard runs first (outermost), then rate limiting.
+    # FastMCP handles CORS for MCP endpoints.
     middleware = [
+        Middleware(BodySizeLimitMiddleware, max_bytes=MAX_REQUEST_BODY_BYTES),
         Middleware(RateLimitMiddleware, requests_per_minute=RATE_LIMIT_REQUESTS),
     ]
 
-    # stateless_http=True required because Claude Code doesn't forward session cookies
+    # stateless_http=True required because Claude Code doesn't forward session cookies.
+    # allowed_hosts: fastmcp 3.x rejects any Host header not in a localhost-only default with a
+    # 421, so the public domain must be allowlisted or all proxied traffic breaks (see config).
     app = mcp.http_app(
         path="/mcp",
         middleware=middleware,
         transport="streamable-http",
         stateless_http=True,
+        allowed_hosts=ALLOWED_HOSTS,
+        # Browser clients send Origin; behind the TLS-terminating proxy the app sees http://,
+        # so the https public origin must be allowlisted or those requests 403 (see config).
+        allowed_origins=ALLOWED_ORIGINS,
     )
 
     # Add health check route

@@ -265,6 +265,7 @@ docker compose -f docker-compose.local.yml up --build   # local dev (builds from
 |----------|---------|-------------|
 | `HTTP_PORT` | `8080` | Server port |
 | `RATE_LIMIT_REQUESTS` | `100` | Requests per minute per IP |
+| `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Comma-separated Host headers accepted by the server (DNS-rebinding protection; localhost is always allowed) |
 | `DISTRIBUTOR_DAILY_LIMIT` | `1000` | Daily API request quota per distributor (Mouser/DigiKey) |
 | `MOUSER_API_KEY` | — | Mouser API key (optional, enables Mouser tools) |
 | `DIGIKEY_CLIENT_ID` | — | DigiKey OAuth2 client ID (optional, enables DigiKey tools) |

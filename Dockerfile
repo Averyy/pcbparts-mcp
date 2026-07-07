@@ -7,16 +7,18 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies only (not the package itself)
+# Install dependencies only (not the package itself).
+# Pinned exact so a rebuild (this layer is GHA-cached; a cache miss re-resolves) can't pull a new
+# fastmcp/wafer/starlette that silently changes behavior. Keep in sync with pyproject.toml.
 RUN pip install --no-cache-dir \
-    "mcp>=1.3.0" \
-    "fastmcp>=3.0.0" \
-    "wafer-py>=0.1.2" \
-    "httpx>=0.27.0" \
-    "uvicorn[standard]" \
-    "starlette" \
-    "pydantic>=2.0" \
-    "pyyaml"
+    "mcp==1.25.0" \
+    "fastmcp==3.4.3" \
+    "wafer-py==0.3.0" \
+    "httpx==0.28.1" \
+    "uvicorn[standard]==0.40.0" \
+    "starlette==1.3.1" \
+    "pydantic==2.12.5" \
+    "pyyaml==6.0.3"
 
 # Copy application code (preserve src/ structure for path resolution)
 COPY src/ /app/src/
