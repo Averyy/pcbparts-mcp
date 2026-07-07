@@ -2,10 +2,10 @@
   "source": "winsen",
   "source_url": "https://www.winsen-sensor.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-01T07:55:38.653289+00:00",
+  "scraped_at": "2026-07-07T19:23:00.327691+00:00",
   "stats": {
-    "sensor_count": 388,
-    "total_product_pages": 396,
+    "sensor_count": 389,
+    "total_product_pages": 397,
     "skipped": 4,
     "errors": 0
   },
@@ -2038,6 +2038,23 @@
         "uart"
       ],
       "manufacturer": "Winsen"
+    },
+    {
+      "id": "mhz9043p",
+      "name": "MH-Z9043P",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/mh-z9043p.html"
+      ],
+      "description": "MH-Z9043P TDLAS Laser Methane(CH4) Sensor. Target: Methane (CH₄)",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Winsen",
+      "voltage": "4.5"
     },
     {
       "id": "mp135",

@@ -2,10 +2,10 @@
   "source": "hilink",
   "source_url": "https://www.hlktech.net/index.php?id=product",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-01T07:36:25.109451+00:00",
+  "scraped_at": "2026-07-07T19:03:26.846793+00:00",
   "stats": {
-    "sensor_count": 37,
-    "total_products": 68,
+    "sensor_count": 34,
+    "total_products": 64,
     "skipped_non_sensor": 21,
     "errors": 0
   },
@@ -84,51 +84,6 @@
         "https://www.hlktech.net/index.php?id=1375"
       ],
       "description": "5.8GHz 5.8G radar sensing module human movement sensor HLK-LD021 low-power intelligent sensing switch",
-      "manufacturer": "Hi-Link",
-      "type": "radar"
-    },
-    {
-      "id": "ld101",
-      "name": "LD101",
-      "measures": [
-        "motion",
-        "radar"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.hlktech.net/index.php?id=968"
-      ],
-      "description": "10GHz 10G radar module intelligent microwave sensor switch Doppler human motion detection sensor LD101",
-      "manufacturer": "Hi-Link",
-      "type": "radar"
-    },
-    {
-      "id": "ld101l",
-      "name": "LD101L",
-      "measures": [
-        "motion",
-        "radar"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.hlktech.net/index.php?id=1039"
-      ],
-      "description": "10GHz 10GHz Doppler X-band 1T1R Sensing Range 3-5m Micro/motion Radar Sensing Sensor Module HLK-LD101L Widely Using in Smart Lighting",
-      "manufacturer": "Hi-Link",
-      "type": "radar"
-    },
-    {
-      "id": "ld101v",
-      "name": "LD101V",
-      "measures": [
-        "motion",
-        "radar"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.hlktech.net/index.php?id=1037"
-      ],
-      "description": "10GHz 10GHz Doppler X-band 1T1R Sensing Range 7m Micro/motion Radar Sensing Sensor Module HLK-LD101V Widely Using in Smart Switch",
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -213,9 +168,9 @@
       ],
       "platforms": [],
       "urls": [
-        "https://www.hlktech.net/index.php?id=1490",
         "https://www.hlktech.net/index.php?id=1489",
-        "https://www.hlktech.net/index.php?id=1488"
+        "https://www.hlktech.net/index.php?id=1488",
+        "https://www.hlktech.net/index.php?id=988"
       ],
       "description": "24GHz Hi-link 24G Human Presence Sensor LD2410-AA Radar Module Kit with Bluetooth 9M Detection Distance/Support Height 6M Hanging",
       "protocol": [

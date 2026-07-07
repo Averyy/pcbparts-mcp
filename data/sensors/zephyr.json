@@ -2,11 +2,11 @@
   "source": "zephyr",
   "source_url": "https://github.com/zephyrproject-rtos/zephyr",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-01T07:33:19.933641+00:00",
+  "scraped_at": "2026-07-07T19:00:36.926806+00:00",
   "stats": {
-    "sensor_count": 231,
-    "total_bindings": 470,
-    "skipped_internal": 43,
+    "sensor_count": 232,
+    "total_bindings": 473,
+    "skipped_internal": 45,
     "skipped_bus_variant": 70,
     "skipped_no_measures": 30
   },
@@ -2789,6 +2789,24 @@
         "i2c"
       ],
       "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "max31826",
+      "name": "MAX31826",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,max31826.html"
+      ],
+      "description": "Maxim MAX31826 1-Wire temperature sensor",
+      "protocol": [
+        "one_wire"
+      ],
+      "manufacturer": "Maxim"
     },
     {
       "id": "max31855",

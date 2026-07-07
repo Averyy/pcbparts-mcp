@@ -2,7 +2,7 @@
   "source": "esphome",
   "source_url": "https://github.com/esphome/esphome",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-01T07:33:16.307843+00:00",
+  "scraped_at": "2026-07-07T19:00:33.967799+00:00",
   "stats": {
     "sensor_count": 185,
     "total_components_checked": 297,

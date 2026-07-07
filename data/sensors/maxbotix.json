@@ -2,12 +2,12 @@
   "source": "maxbotix",
   "source_url": "https://www.maxbotix.com/products.json?limit=250",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-01T07:33:20.736810+00:00",
+  "scraped_at": "2026-07-07T19:00:37.635282+00:00",
   "stats": {
     "sensor_count": 125,
-    "total_products": 145,
+    "total_products": 146,
     "skipped_retired": 2,
-    "skipped_non_sensor": 16,
+    "skipped_non_sensor": 17,
     "skipped_no_model": 1
   },
   "sensors": [

@@ -2,13 +2,13 @@
   "source": "arduino",
   "source_url": "https://downloads.arduino.cc/libraries/library_index.json",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-01T07:33:13.852484+00:00",
+  "scraped_at": "2026-07-07T19:00:30.680130+00:00",
   "stats": {
-    "sensor_count": 698,
-    "total_libs_checked": 1900,
-    "skipped_no_ic": 445,
+    "sensor_count": 699,
+    "total_libs_checked": 1906,
+    "skipped_no_ic": 446,
     "skipped_nonsensor": 140,
-    "skipped_no_measures": 113
+    "skipped_no_measures": 115
   },
   "sensors": [
     {
@@ -761,6 +761,21 @@
       "description": "AFE4950 library for interfacing the AFE4950 biomedical sensor with Arduino compatible MCU."
     },
     {
+      "id": "afs01",
+      "name": "AFS01Sensor",
+      "measures": [
+        "flow"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/lildev1979/AFS01Sensor.git"
+      ],
+      "description": "An Arduino library for the AFS01 Gas Micro Flow Sensor over I2C."
+    },
+    {
       "id": "ags02ma",
       "name": "AGS02MA",
       "measures": [
@@ -832,12 +847,13 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 4,
+      "popularity": 5,
       "urls": [
         "https://github.com/sparkfun/SparkFun_Qwiic_Humidity_AHT20_Arduino_Library.git",
         "https://github.com/dvarrel/AHT20.git",
         "https://github.com/Seeed-Studio/Seeed_Arduino_AHT20.git",
-        "https://github.com/PTSolns/PTSolns_AHTx.git"
+        "https://github.com/PTSolns/PTSolns_AHTx.git",
+        "https://github.com/PTSolns/I2Connect_AHT20.git"
       ],
       "description": "library to drive AHT20 temperature and humidity IC. Forked from https://github.com/sparkfun/SparkFun_Qwiic_Humidity_AHT20_Arduino_Library"
     },
@@ -9770,7 +9786,7 @@
         "https://github.com/mobergmann/Simple_HCSR04.git",
         "https://github.com/Mirco04/Simple_HC-SR04_Control.git"
       ],
-      "description": "High-level movement detection and state tracking using ultrasonic distance sensors like HC-SR04."
+      "description": "Lightweight library for HC-SR04-compatible and single-pin ultrasonic sensors on Arduino and ESP32."
     },
     {
       "id": "sr04m",
@@ -10110,20 +10126,21 @@
     },
     {
       "id": "tcs34725",
-      "name": "TCS34725 async",
+      "name": "SensorRoxoOBR",
       "measures": [
         "color"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 3,
+      "popularity": 4,
       "urls": [
         "https://github.com/adafruit/Adafruit_TCS34725.git",
         "https://github.com/ysard/TCS34725.git",
-        "https://github.com/DFRobot/DFRobot_TCS34725.git"
+        "https://github.com/DFRobot/DFRobot_TCS34725.git",
+        "https://github.com/maker-wesley/SensorRoxoOBR.git"
       ],
-      "description": "An improved version of Adafruit TCS34725 wrapper given in their examples."
+      "description": "Facilita o uso do sensor de cor TCS34725 via multiplexador I2C para robôs da OBR."
     },
     {
       "id": "tel0157",
