@@ -275,6 +275,11 @@ docker compose -f docker-compose.local.yml up --build   # local dev (builds from
 
 An [`llms.txt`](https://pcbparts.dev/llms.txt) file is available for LLMs and AI agents to quickly understand this service. See [llmstxt.org](https://llmstxt.org/) for the spec.
 
+## Contributing
+
+Issues and PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for development setup,
+testing, and project conventions.
+
 ## License
 
 MIT
