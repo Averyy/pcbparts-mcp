@@ -154,6 +154,121 @@ class TestSpecFilters:
         # May have fewer results with multiple filters
         assert result["total"] >= 0
 
+    def test_height_le_filter_excludes_taller(self):
+        """Height filter '<= 5.4mm' must not return parts taller than 5.4mm."""
+        from pcbparts_mcp.parsers import parse_length_mm, parse_dimensions_from_package
+
+        db = get_db()
+        result = db.search(
+            subcategory_id=2965,
+            spec_filters=[SpecFilter("Height - Seated (Max)", "<=", "5.4mm")],
+            limit=25,
+        )
+
+        assert "error" not in result
+        assert len(result["results"]) > 0, "should find at least one <=5.4mm part"
+        for part in result["results"]:
+            height = part.get("specs", {}).get("Height - Seated (Max)")
+            parsed = parse_length_mm(height) if height else None
+            if parsed is None:
+                _, parsed = parse_dimensions_from_package(part.get("package") or "")
+            assert parsed is not None and parsed <= 5.4 + 1e-6, (
+                f"Part {part['lcsc']} leaked with Height={height!r} pkg={part.get('package')!r}"
+            )
+
+    def test_diameter_ge_filter_excludes_smaller(self):
+        """Diameter filter '>= 10mm' must not return parts under 10mm."""
+        from pcbparts_mcp.parsers import parse_length_mm, parse_dimensions_from_package
+
+        db = get_db()
+        result = db.search(
+            subcategory_id=2965,
+            spec_filters=[SpecFilter("Diameter", ">=", "10mm")],
+            limit=25,
+        )
+
+        assert "error" not in result
+        assert len(result["results"]) > 0
+        for part in result["results"]:
+            diameter = part.get("specs", {}).get("Diameter")
+            parsed = parse_length_mm(diameter) if diameter else None
+            if parsed is None:
+                parsed, _ = parse_dimensions_from_package(part.get("package") or "")
+            assert parsed is not None and parsed >= 10.0 - 1e-6, (
+                f"Part {part['lcsc']} leaked with Diameter={diameter!r} pkg={part.get('package')!r}"
+            )
+
+    def test_height_and_diameter_combined(self):
+        """Combined Height/Diameter/Capacitance/Voltage filters must AND correctly."""
+        from pcbparts_mcp.parsers import (
+            parse_length_mm,
+            parse_capacitance,
+            parse_dimensions_from_package,
+        )
+
+        db = get_db()
+        result = db.search(
+            subcategory_id=2965,
+            spec_filters=[
+                SpecFilter("Height - Seated (Max)", "<=", "5.4mm"),
+                SpecFilter("Diameter", "<=", "6.3mm"),
+                SpecFilter("Capacitance", ">=", "220uF"),
+                SpecFilter("Voltage", ">=", "16V"),
+            ],
+            limit=25,
+        )
+
+        assert "error" not in result
+        for part in result["results"]:
+            h = parse_length_mm(part["specs"].get("Height - Seated (Max)", ""))
+            d = parse_length_mm(part["specs"].get("Diameter", ""))
+            if h is None or d is None:
+                pkg_d, pkg_h = parse_dimensions_from_package(part.get("package") or "")
+                h = h if h is not None else pkg_h
+                d = d if d is not None else pkg_d
+            c = parse_capacitance(part["specs"].get("Capacitance", ""))
+            assert h is not None and h <= 5.4 + 1e-6, f"{part['lcsc']}: height {h}"
+            assert d is not None and d <= 6.3 + 1e-6, f"{part['lcsc']}: diameter {d}"
+            assert c is not None and c >= 220e-6 * (1 - 1e-6), f"{part['lcsc']}: capacitance {c}"
+
+    def test_height_rescued_from_package_string(self):
+        """Null Height ('-') is rescued from a package string like 'SMD,D6.3xL5.8mm'."""
+        db = get_db()
+        result = db.search(
+            subcategory_id=2965,
+            package="SMD,D6.3xL5.8mm",
+            spec_filters=[SpecFilter("Height - Seated (Max)", "<=", "6mm")],
+            limit=50,
+            min_stock=0,
+        )
+
+        assert "error" not in result
+        lcscs = {p["lcsc"] for p in result["results"]}
+        assert "C729678" in lcscs, (
+            "C729678 (Height='-', package='SMD,D6.3xL5.8mm') should be rescued "
+            "by the package-string fallback"
+        )
+        rescued = [p for p in result["results"] if p["specs"].get("Height - Seated (Max)") == "-"]
+        assert rescued, "expected at least one null-spec part rescued via package"
+
+    def test_null_height_not_rescued_when_package_lacks_dims(self):
+        """Parts with null Height AND bare 'SMD' package (no dims) are still dropped."""
+        db = get_db()
+        result = db.search(
+            subcategory_id=2965,
+            package="SMD",
+            spec_filters=[SpecFilter("Height - Seated (Max)", "<=", "100mm")],
+            limit=100,
+            min_stock=0,
+        )
+
+        assert "error" not in result
+        lcscs = {p["lcsc"] for p in result["results"]}
+        assert "C18214363" not in lcscs, (
+            "C18214363 (Height='-', package='SMD') has no recoverable dims "
+            "and must be dropped"
+        )
+
     def test_multiple_interface_values_use_or_logic(self):
         """Multiple Interface filters should match components with EITHER value (OR logic)."""
         from pcbparts_mcp.smart_parser import parse_smart_query
@@ -916,6 +1031,44 @@ class TestListAttributes:
         result = db.list_attributes(subcategory_name="NonExistent12345")
 
         assert "error" in result
+
+    def test_list_attributes_numeric_sort_for_height(self):
+        """Numeric-typed Height values must be sorted numerically, not lexicographically."""
+        from pcbparts_mcp.parsers import parse_length_mm
+
+        db = get_db()
+        result = db.list_attributes(subcategory_id=2965)
+        height = next(
+            (a for a in result["attributes"] if a["name"] == "Height - Seated (Max)"),
+            None,
+        )
+        assert height is not None, "Height attribute should be present in subcat 2965"
+        assert height["type"] == "numeric"
+
+        values = height["values"]
+        assert values, "Height values should not be empty"
+        first_parsed = parse_length_mm(values[0])
+        assert first_parsed is not None and first_parsed < 10.0, (
+            f"first value should be under 10mm, got {values[0]!r}"
+        )
+        if "-" in values:
+            assert values.index("-") > 0
+
+    def test_list_attributes_numeric_min_max(self):
+        """Numeric attributes should expose min/max from parsed floats."""
+        db = get_db()
+        result = db.list_attributes(subcategory_id=2965)
+        height = next(
+            (a for a in result["attributes"] if a["name"] == "Height - Seated (Max)"),
+            None,
+        )
+        assert height is not None
+        assert "min" in height and "max" in height
+        assert isinstance(height["min"], (int, float))
+        assert isinstance(height["max"], (int, float))
+        assert height["min"] < height["max"]
+        assert 2.0 <= height["min"] <= 6.0
+        assert 15.0 <= height["max"] <= 40.0
 
     def test_list_capacitor_attributes(self):
         """List attributes for MLCC capacitors."""

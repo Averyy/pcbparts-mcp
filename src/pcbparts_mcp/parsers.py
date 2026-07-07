@@ -383,6 +383,30 @@ def parse_length_mm(s: str) -> float | None:
     return float(match.group(1)) if match else None
 
 
+# Matches canned-aluminum / electrolytic dimension encoding in package strings:
+# "SMD,D6.3xL5.7mm", "D10xL10.2mm", "D8 x L12.5mm". Group 1 = diameter, group 2 = height/length.
+_PACKAGE_DIMENSIONS_PATTERN = re.compile(
+    r"D\s*(\d+(?:\.\d+)?)\s*[x×X]\s*L?\s*(\d+(?:\.\d+)?)\s*mm",
+    re.IGNORECASE,
+)
+
+
+def parse_dimensions_from_package(pkg: str) -> tuple[float | None, float | None]:
+    """Extract (diameter_mm, height_mm) from a package string.
+
+    JLCPCB often leaves the Height/Diameter spec fields as "-" for canned aluminum
+    electrolytics and similar through-hole-style SMD parts, but the package column
+    encodes the same info (e.g. "SMD,D6.3xL5.7mm"). This fallback recovers those
+    dimensions so size-based filters don't silently exclude otherwise valid parts.
+    """
+    if not pkg:
+        return None, None
+    match = _PACKAGE_DIMENSIONS_PATTERN.search(pkg)
+    if not match:
+        return None, None
+    return float(match.group(1)), float(match.group(2))
+
+
 def parse_integer(s: str) -> int | None:
     """Parse integer: '8' -> 8, '16bit' -> 16"""
     if not s:
