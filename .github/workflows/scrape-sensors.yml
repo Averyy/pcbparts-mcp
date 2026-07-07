@@ -78,6 +78,8 @@ jobs:
           print(total)
           ")
             git commit -m "Update sensor data: ${TOTAL} sensors ($(date +%Y-%m-%d))"
+            # Main may have moved during the ~20-min scrape; data-only commits rebase cleanly
+            git pull --rebase origin main
             git push
             echo "Data committed and pushed"
             echo "has_changes=true" >> $GITHUB_OUTPUT
