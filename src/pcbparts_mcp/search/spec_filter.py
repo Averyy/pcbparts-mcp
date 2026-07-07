@@ -136,7 +136,9 @@ class SpecFilter:
     value: str
 
     def __post_init__(self) -> None:
-        """Validate operator is one of the allowed values."""
+        """Validate name/value are strings and operator is one of the allowed values."""
+        if not isinstance(self.name, str) or not isinstance(self.value, str):
+            raise ValueError("SpecFilter name and value must be strings")
         if self.operator not in _VALID_OPERATORS:
             raise ValueError(
                 f"Invalid operator '{self.operator}'. "

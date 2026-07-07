@@ -4248,15 +4248,46 @@ def merge_sensors(data_dir: Path, aliases: dict[str, str], quiet: bool = False) 
     return merged
 
 
-def build_db(merged: dict[str, dict], output_path: Path, quiet: bool = False):
-    """Create SQLite database from merged sensor data."""
-    # Delete existing DB
-    for suffix in ("", "-wal", "-shm"):
-        p = Path(str(output_path) + suffix)
-        if p.exists():
-            p.unlink()
+# Deploy-path guard floor. build_sensor_db runs inside the Docker image build on EVERY deploy
+# (triggered by either the sensor OR the daily components workflow), so a grossly-truncated
+# committed sensor dataset can't silently ship even if the sensor workflow's CI gate is bypassed.
+# Well below the normal ~1.5-2.4k; a single small source dying is caught by the loud CI gate instead.
+MIN_SENSOR_COUNT = 1200
 
-    conn = sqlite3.connect(str(output_path))
+
+def build_db(merged: dict[str, dict], output_path: Path, quiet: bool = False):
+    """Create SQLite database from merged sensor data.
+
+    Builds into a temp file and atomically replaces output_path on success; on any
+    failure (Ctrl-C included) the temp is removed and the old DB is left intact.
+    """
+    if len(merged) < MIN_SENSOR_COUNT:
+        raise ValueError(
+            f"Only {len(merged)} sensors merged (< floor {MIN_SENSOR_COUNT}) — refusing to build a "
+            f"truncated sensor.db. Check data/sensors/*.json for a collapsed source."
+        )
+
+    # Build to a temp path and atomically replace on success — an interrupted build never
+    # leaves a missing/corrupt sensor.db (mirrors build_history_db.py / build_boards_db.py).
+    tmp_path = output_path.with_suffix(".db.tmp")
+    for suffix in ("", "-wal", "-shm"):
+        Path(str(tmp_path) + suffix).unlink(missing_ok=True)  # clear stale tmp from a prior crash
+
+    try:
+        _build_into_tmp(merged, output_path, tmp_path)
+    except BaseException:
+        # BaseException so Ctrl-C/SystemExit clean up too; the old DB stays intact.
+        for suffix in ("", "-wal", "-shm"):
+            Path(str(tmp_path) + suffix).unlink(missing_ok=True)
+        raise
+
+    if not quiet:
+        print_stats(output_path)
+
+
+def _build_into_tmp(merged: dict[str, dict], output_path: Path, tmp_path: Path):
+    """Build the sensor DB into tmp_path, then atomically move it to output_path."""
+    conn = sqlite3.connect(str(tmp_path))
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
 
@@ -4314,8 +4345,10 @@ def build_db(merged: dict[str, dict], output_path: Path, quiet: bool = False):
     conn.execute("VACUUM")
     conn.close()
 
-    if not quiet:
-        print_stats(output_path)
+    # Drop stale sidecars of the OLD db first, then atomically move the new build into place.
+    for suffix in ("-wal", "-shm"):
+        Path(str(output_path) + suffix).unlink(missing_ok=True)
+    tmp_path.replace(output_path)
 
 
 def print_stats(db_path: Path):

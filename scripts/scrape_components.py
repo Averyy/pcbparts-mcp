@@ -42,7 +42,8 @@ logger = logging.getLogger(__name__)
 JLCPCB_SEARCH_URL = "https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList"
 STOCK_THRESHOLD = DEFAULT_MIN_STOCK  # Minimum stock to include in database
 PAGE_SIZE = 100
-REQUEST_TIMEOUT = 15.0
+REQUEST_TIMEOUT = 30.0   # Total budget per call (wafer>=0.2 counts retries+rotations against it).
+ATTEMPT_TIMEOUT = 10.0   # Per-attempt cap so the 10-rotation budget can actually fire under 403 storms.
 MAX_RETRIES = 3
 WORKER_STAGGER = 0.1
 GZIP_LEVEL = 9
@@ -52,6 +53,7 @@ def create_scraper_session() -> wafer.AsyncSession:
     """Create a wafer session configured for JLCPCB scraping."""
     return wafer.AsyncSession(
         timeout=REQUEST_TIMEOUT,
+        attempt_timeout=ATTEMPT_TIMEOUT,
         max_retries=MAX_RETRIES,
         max_rotations=10,
         max_failures=None,  # Disable session retirement — 403s during rotation are expected
@@ -120,8 +122,9 @@ def slugify(name: str) -> str:
 
 def transform_part(item: dict[str, Any], subcategory_id: int) -> dict[str, Any]:
     """Transform API response to our compact schema."""
-    # Get price from first tier
-    prices = item.get("componentPrices", [])
+    # Get price from first tier (`or []` guards against componentPrices being null;
+    # bracket access on the tier is deliberate — a malformed tier should fail loud)
+    prices = item.get("componentPrices") or []
     price = prices[0]["productPrice"] if prices else None
 
     # Determine library type: b=basic, p=preferred (no fee), e=extended ($3)
@@ -151,7 +154,7 @@ def transform_part(item: dict[str, Any], subcategory_id: int) -> dict[str, Any]:
         "s": item.get("stockCount"),  # stock
         "t": t,  # type (b/p/e)
         "c": subcategory_id,  # subcategory_id (passed from scrape context)
-        "$": round(price, 4) if price else None,  # price
+        "$": round(price, 4) if price is not None else None,  # price
         "d": item.get("describe"),  # description
         "a": attributes,  # attributes
     }
@@ -647,12 +650,15 @@ async def run_scraper(
             except Exception:
                 logger.warning("Stock history generation failed (non-fatal):", exc_info=True)
 
-        # Write category files (deduplicated by LCSC)
+        # Write category files, deduplicated by LCSC *globally* across categories, so a
+        # cross-category duplicate can't reach build_database.py's lcsc PRIMARY KEY twice
+        # (which would raise IntegrityError and fail the image build). Iterate sorted so the
+        # first-alphabetical file wins — matches build_database.py's sorted(glob) order.
         logger.info("")
         logger.info("Writing category files...")
-        for cat_slug, parts in results.items():
-            # Deduplicate by LCSC part number
-            seen_lcsc: set[str] = set()
+        seen_lcsc: set[str] = set()
+        total_dupes = 0
+        for cat_slug, parts in sorted(results.items()):
             unique_parts = []
             duplicates = 0
             for part in parts:
@@ -668,10 +674,14 @@ async def run_scraper(
                 for part in unique_parts:
                     f.write(json.dumps(part, separators=(",", ":")) + "\n")
 
+            total_dupes += duplicates
             if duplicates > 0:
                 logger.info(f"  {cat_slug}: {len(unique_parts)} parts ({duplicates} duplicates removed)")
             else:
                 logger.info(f"  {cat_slug}: {len(unique_parts)} parts")
+
+        if total_dupes:
+            logger.info(f"Deduplicated {total_dupes} LCSCs total (within + cross-category)")
 
         # Create empty files for categories with no parts
         all_cat_slugs = {slugify(cat["name"]) for cat in categories}

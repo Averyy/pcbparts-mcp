@@ -36,6 +36,7 @@ from .config import (
     JLCPCB_MAX_ROTATIONS,
     MAX_RETRIES,
     REQUEST_TIMEOUT,
+    JLCPCB_ATTEMPT_TIMEOUT,
     DEFAULT_PAGE_SIZE,
     MAX_PAGE_SIZE,
     DEFAULT_MIN_STOCK,
@@ -194,6 +195,7 @@ class JLCPCBClient:
         if self._jlcpcb_session is None:
             self._jlcpcb_session = wafer.AsyncSession(
                 timeout=REQUEST_TIMEOUT,
+                attempt_timeout=JLCPCB_ATTEMPT_TIMEOUT,  # cap each try so rotations can fire within the budget
                 max_retries=MAX_RETRIES,
                 max_rotations=JLCPCB_MAX_ROTATIONS,
                 rate_limit=JLCPCB_RATE_LIMIT,
@@ -745,8 +747,11 @@ class JLCPCBClient:
 
     def _transform_part(self, item: dict[str, Any], slim: bool = True) -> dict[str, Any]:
         """Transform API response to our format."""
-        # Get price from first tier and volume price (10+) from second tier
-        prices = item.get("componentPrices", [])
+        # Get price from first tier and volume price (10+) from second tier.
+        # `or []` guards against componentPrices being present-but-null (API returns null
+        # for some parts) — otherwise len()/indexing raises on None. Tier dicts keep
+        # bracket access on purpose: a malformed tier should fail loud, not degrade silently.
+        prices = item.get("componentPrices") or []
         price = prices[0]["productPrice"] if prices else None
         price_10 = prices[1]["productPrice"] if len(prices) > 1 else None
 
@@ -778,8 +783,8 @@ class JLCPCBClient:
             "manufacturer": item.get("componentBrandEn"),
             "package": package,
             "stock": stock,
-            "price": round(price, 4) if price else None,
-            "price_10": round(price_10, 4) if price_10 else None,
+            "price": round(price, 4) if price is not None else None,
+            "price_10": round(price_10, 4) if price_10 is not None else None,
             "library_type": library_type,
             "preferred": item.get("preferredComponentFlag", False),
             "category": category,

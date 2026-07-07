@@ -330,27 +330,48 @@ NUMERIC_COLUMNS = [
 # Column names only (for INSERT)
 NUMERIC_COLUMN_NAMES = [col.split()[0] for col in NUMERIC_COLUMNS]
 
+# Max rows INSERT OR IGNORE may drop before the build is treated as corrupt and aborted.
+# Benign cross-category duplicate LCSCs are rare (0 today); a large drop means a constraint
+# violation / scraper regression, not duplicates.
+MAX_IGNORED_ROWS = 100
+
 
 def build_database(data_dir: Path, db_path: Path, verbose: bool = True) -> dict:
     """
     Build SQLite database from compressed JSON files.
 
+    Builds into a temp file and atomically replaces db_path on success; on any failure
+    (Ctrl-C included) the temp is removed and the old DB is left intact.
     Returns stats dict with counts and timing.
     """
+    # Build to a temp path and atomically replace on success — an interrupted build then
+    # never leaves a missing/corrupt db_path; the old DB keeps serving until the new one is
+    # complete. (Mirrors build_history_db.py / build_boards_db.py.)
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = db_path.with_suffix(".db.tmp")
+    for suffix in ("", "-wal", "-shm"):
+        Path(str(tmp_path) + suffix).unlink(missing_ok=True)  # clear stale tmp from a prior crash
+
+    try:
+        return _build_into_tmp(data_dir, db_path, tmp_path, verbose)
+    except BaseException:
+        # BaseException so Ctrl-C/SystemExit clean up too — never leave a half-written
+        # tmp (or its sidecars) on disk; the next run would clear it anyway, but a failed
+        # build shouldn't strand a multi-hundred-MB file.
+        for suffix in ("", "-wal", "-shm"):
+            Path(str(tmp_path) + suffix).unlink(missing_ok=True)
+        raise
+
+
+def _build_into_tmp(data_dir: Path, db_path: Path, tmp_path: Path, verbose: bool) -> dict:
+    """Build the database into tmp_path, then atomically move it to db_path."""
     start_time = time.time()
 
     if verbose:
         print(f"Building database from {data_dir}")
         print(f"Output: {db_path}")
 
-    # Remove existing database
-    if db_path.exists():
-        db_path.unlink()
-
-    # Ensure parent directory exists
-    db_path.parent.mkdir(parents=True, exist_ok=True)
-
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(tmp_path)
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
 
@@ -442,7 +463,10 @@ def build_database(data_dir: Path, db_path: Path, verbose: bool = True) -> dict:
                      "subcategory_id", "price", "description", "attributes"]
         all_cols = base_cols + NUMERIC_COLUMN_NAMES
         placeholders = ", ".join(["?"] * len(all_cols))
-        insert_sql = f"INSERT INTO components ({', '.join(all_cols)}) VALUES ({placeholders})"
+        # OR IGNORE: a cross-category duplicate LCSC (same part under two categories) would
+        # otherwise raise IntegrityError on the lcsc PRIMARY KEY and abort the whole build.
+        # First-inserted wins (deterministic under sorted(glob)); count-check below logs any.
+        insert_sql = f"INSERT OR IGNORE INTO components ({', '.join(all_cols)}) VALUES ({placeholders})"
 
         with gzip.open(gz_file, "rt") as f:
             for line in f:
@@ -573,10 +597,32 @@ def build_database(data_dir: Path, db_path: Path, verbose: bool = True) -> dict:
     cursor = conn.execute("SELECT COUNT(*) FROM components")
     final_count = cursor.fetchone()[0]
 
+    # OR IGNORE drops PK-duplicate rows (expected: a handful of cross-category duplicate LCSCs)
+    # but ALSO silently drops any row violating a constraint (e.g. a bad library_type from a
+    # scraper regression). A small gap is benign; a large gap is real data loss — fail loudly
+    # rather than ship a truncated DB.
+    if final_count != total_parts:
+        ignored = total_parts - final_count
+        if ignored > MAX_IGNORED_ROWS:
+            conn.close()
+            raise ValueError(
+                f"{ignored} rows dropped by INSERT OR IGNORE (> {MAX_IGNORED_ROWS}) — likely a "
+                f"constraint violation or scraper bug, not benign cross-category duplicates. "
+                f"Aborting build (old DB left intact)."
+            )
+        print(f"WARNING: {ignored} row(s) dropped by INSERT OR IGNORE — cross-category duplicate "
+              f"LCSC (first file alphabetically wins) or a constraint violation")
+
     cursor = conn.execute("SELECT page_count * page_size FROM pragma_page_count(), pragma_page_size()")
     db_size = cursor.fetchone()[0]
 
     conn.close()
+
+    # Drop any stale sidecars of the OLD db first, then atomically move the new build into place —
+    # a reader can then never see the new file alongside a stale -wal/-shm from a prior crash.
+    for suffix in ("-wal", "-shm"):
+        Path(str(db_path) + suffix).unlink(missing_ok=True)
+    tmp_path.replace(db_path)
 
     elapsed = time.time() - start_time
 

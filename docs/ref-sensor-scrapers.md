@@ -142,6 +142,15 @@ wind (7), soil_moisture (5), moisture (5), tilt (5), rain (4), dissolved_oxygen 
 # Winsen is slow (~10 min, crawls ~400 pages)
 ```
 
+Each run writes `data/sensors/_scrape_status.json` (gitignored) recording per-source
+success/failure — a scraper that raises, or returns without (re)writing its output file,
+is marked failed. In CI, `scripts/check_scrape_status.py` reads it after the data commit
+and fails the workflow if any registered source failed, left stale data, produced zero
+sensors, or logged more than 5 errors. Note this blocks only the sensor workflow's own
+deploy trigger (a loud alarm to fix the source): the committed data still ships on the
+next deploy from the daily components workflow, where the only backstop is
+`build_sensor_db.py`'s `MIN_SENSOR_COUNT` floor.
+
 ## Adding a New Scraper
 
 1. Create `scripts/scrapers/{name}.py` with a `scrape_{name}(output_dir: Path)` function
@@ -150,6 +159,9 @@ wind (7), soil_moisture (5), moisture (5), tilt (5), rain (4), dissolved_oxygen 
 4. Use `wafer` for all HTTP (per CLAUDE.md rules)
 5. For known ICs, add `KNOWN_IC_MEASURES` dict to override text inference
 6. IDs must be `[a-z0-9]+` only, max ~15 chars for IC-based sources
+7. The scraper must write `{key}.json` on every successful run (even if content is
+   unchanged) — `scrape_sensors.py` treats a run that leaves the file untouched as a
+   failure, and the CI gate checks `scraped_at` freshness and `stats.sensor_count > 0`
 
 ## Build Pipeline
 
@@ -160,5 +172,9 @@ Scraped JSONs are merged into `data/sensor.db` by `scripts/build_sensor_db.py`:
 ```
 
 Merge pipeline: load sources in priority order → alias resolution → union multi-value fields → enrich manufacturers/types/voltages/protocols → build SQLite with FTS5.
+
+The build refuses to produce a `sensor.db` with fewer than `MIN_SENSOR_COUNT` (1200)
+sensors (guards the deploy path against a truncated dataset) and builds atomically via
+`.db.tmp` + rename — a failed or interrupted build leaves the old DB in place.
 
 Runtime module: `src/pcbparts_mcp/sensor_db/` exposes `sensor_recommend` MCP tool.
