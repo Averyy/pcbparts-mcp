@@ -2,14 +2,14 @@
   "source": "dfrobot",
   "source_url": "https://github.com/DFRobot",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-03-01T17:30:01.159510+00:00",
+  "scraped_at": "2026-07-07T19:28:03.400870+00:00",
   "stats": {
-    "sensor_count": 82,
-    "total_repos": 476,
-    "dfrobot_repos": 235,
+    "sensor_count": 84,
+    "total_repos": 485,
+    "dfrobot_repos": 240,
     "skipped_non_sensor": 102,
-    "skipped_no_ic": 46,
-    "library_properties_fetched": 74
+    "skipped_no_ic": 49,
+    "library_properties_fetched": 76
   },
   "sensors": [
     {
@@ -267,6 +267,19 @@
         "https://github.com/DFRobot/DFRobot_BMI160"
       ],
       "description": "DFRobot Standard library(SKU:SEN0250)."
+    },
+    {
+      "id": "bmi323",
+      "name": "BMI323",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BMI323"
+      ],
+      "description": "DFRobot Standard library for BMI323 6-axis IMU sensor (SKU: SEN0693)."
     },
     {
       "id": "bmm150",
@@ -1023,6 +1036,16 @@
         "https://github.com/DFRobot/DFRobot_SHT"
       ],
       "description": "DFRobot Standard library."
+    },
+    {
+      "id": "stcc4",
+      "name": "STCC4",
+      "measures": [],
+      "platforms": [],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_STCC4"
+      ],
+      "description": "Sensors"
     },
     {
       "id": "sts3x",

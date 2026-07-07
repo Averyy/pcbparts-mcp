@@ -2,12 +2,12 @@
   "source": "sparkfun",
   "source_url": "https://www.sparkfun.com/graphql",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-01T08:00:11.376745+00:00",
+  "scraped_at": "2026-07-07T19:27:40.840214+00:00",
   "stats": {
     "sensor_count": 121,
-    "total_products": 402,
+    "total_products": 403,
     "skipped_sku_prefix": 55,
-    "skipped_pattern": 62,
+    "skipped_pattern": 63,
     "skipped_no_ic": 113
   },
   "sensors": [
