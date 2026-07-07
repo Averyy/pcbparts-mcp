@@ -77,6 +77,8 @@ jobs:
             # Get part count from manifest
             PARTS=$(python -c "import json; print(json.load(open('data/manifest.json'))['total_parts'])")
             git commit -m "Update component data: ${PARTS} parts ($(date +%Y-%m-%d))"
+            # Main may have moved during the ~15-min scrape; data-only commits rebase cleanly
+            git pull --rebase origin main
             git push
             echo "Data committed and pushed"
             echo "has_changes=true" >> $GITHUB_OUTPUT
