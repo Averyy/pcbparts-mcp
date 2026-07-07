@@ -31,7 +31,7 @@ PCB Parts MCP server for electronic component search and sensor recommendation. 
 
 - **Website:** https://pcbparts.dev
 - **Endpoint:** https://pcbparts.dev/mcp
-- **Status:** Beta - breaking changes acceptable (no external users yet)
+- **Status:** Beta with real external users (self-hosters + hosted MCP + outside contributors) — breaking changes must be deliberate: semver bump, changelog note in the commit, and keep exact dependency pins
 
 ## API Gotcha
 
