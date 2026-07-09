@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1514,11 +1519,6 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
-  "3566": {
-    "name": "Door Curtain",
-    "category_id": 62,
-    "category_name": "Building materials / Building hardware"
-  },
   "1621": {
     "name": "Partition board",
     "category_id": 62,
@@ -1533,11 +1533,6 @@
     "name": "Water heater",
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
-  },
-  "3565": {
-    "name": "Dehumidifiers",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
   },
   "2101": {
     "name": "555 Timers / Counters",
@@ -1601,11 +1596,6 @@
   },
   "3456": {
     "name": "Silicone pad",
-    "category_id": 59,
-    "category_name": "Consumables and auxiliary materials"
-  },
-  "440": {
-    "name": "Thermal conductive sheet/thermal conductive cap",
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
@@ -3824,11 +3814,6 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "1828": {
-    "name": "Electric wood mill/carving machine",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "882": {
     "name": "Grease gun",
     "category_id": 50,
@@ -3836,11 +3821,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1785": {
-    "name": "Other non-standard sockets",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
