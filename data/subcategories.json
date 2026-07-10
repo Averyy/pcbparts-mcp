@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1534,6 +1529,11 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
+  "568": {
+    "name": "Razor",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -1986,6 +1986,11 @@
   },
   "2621": {
     "name": "Cable Tie",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
+  "3532": {
+    "name": "Pearl cotton",
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
