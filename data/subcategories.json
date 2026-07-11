@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1529,11 +1534,6 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
-  "568": {
-    "name": "Razor",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -1989,11 +1989,6 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
-  "3532": {
-    "name": "Pearl cotton",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -2186,6 +2181,11 @@
   },
   "2981": {
     "name": "Heat sink / cooling fin",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "3606": {
+    "name": "Hex socket screw with flat washer & spring washer assembly",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -3299,6 +3299,11 @@
     "category_id": 70,
     "category_name": "Magnetic Sensors"
   },
+  "1885": {
+    "name": "Vernier caliper",
+    "category_id": 51,
+    "category_name": "Measuring tools"
+  },
   "1628": {
     "name": "Brushed DC Motor Drivers",
     "category_id": 69,
@@ -3323,6 +3328,16 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
+  },
+  "584": {
+    "name": "Computer",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3513": {
+    "name": "Mite Remover",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
@@ -3819,13 +3834,33 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "156": {
+    "name": "Flat head screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "882": {
     "name": "Grease gun",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "3547": {
+    "name": "Hammerhead",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "157": {
+    "name": "Phillips screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3707": {
+    "name": "Screen Separator Heating Platform",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
