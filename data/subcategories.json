@@ -1514,6 +1514,11 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
+  "1955": {
+    "name": "Iron wire",
+    "category_id": 62,
+    "category_name": "Building materials / Building hardware"
+  },
   "1621": {
     "name": "Partition board",
     "category_id": 62,
@@ -1896,6 +1901,16 @@
   },
   "2289": {
     "name": "Evaluation Boards - Power Supply",
+    "category_id": 44,
+    "category_name": "Evaluation Boards"
+  },
+  "2291": {
+    "name": "Evaluation Boards - Sensors",
+    "category_id": 44,
+    "category_name": "Evaluation Boards"
+  },
+  "2292": {
+    "name": "Evaluation Boards - Specialized ICs",
     "category_id": 44,
     "category_name": "Evaluation Boards"
   },
@@ -2619,6 +2634,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "1109": {
+    "name": "Fuse",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "2214": {
     "name": "Fuse/Current Protector",
     "category_id": 46,
@@ -2854,6 +2874,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "574": {
+    "name": "Stepper motor",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "1178": {
     "name": "Surge protectors/Lightning protectors",
     "category_id": 46,
@@ -2874,6 +2899,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "1280": {
+    "name": "Temperature Controller",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "1294": {
     "name": "terminal  accessories",
     "category_id": 46,
@@ -2881,6 +2911,11 @@
   },
   "1216": {
     "name": "Terminal strips",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "3575": {
+    "name": "Thermal Sensor",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
