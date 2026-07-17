@@ -1514,11 +1514,6 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
-  "3566": {
-    "name": "Door Curtain",
-    "category_id": 62,
-    "category_name": "Building materials / Building hardware"
-  },
   "1955": {
     "name": "Iron wire",
     "category_id": 62,
@@ -1538,16 +1533,6 @@
     "name": "Water heater",
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
-  },
-  "3565": {
-    "name": "Dehumidifiers",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
-  "568": {
-    "name": "Razor",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
   },
   "2101": {
     "name": "555 Timers / Counters",
@@ -2011,6 +1996,11 @@
   },
   "2621": {
     "name": "Cable Tie",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
+  "3384": {
+    "name": "Sandbag/Absorbent expansion bag",
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
@@ -2669,6 +2659,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "912": {
+    "name": "Guide rail switching power supply",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "3227": {
     "name": "Heat shrink tubing",
     "category_id": 46,
@@ -3064,11 +3059,6 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
-  "3634": {
-    "name": "Sun Protection Arm Sleeves",
-    "category_id": 42,
-    "category_name": "Labor protection supplies"
-  },
   "3688": {
     "name": "Block",
     "category_id": 54,
@@ -3389,23 +3379,13 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
-  "3515": {
-    "name": "Blender",
+  "3511": {
+    "name": "Microwave Oven",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
-  "3524": {
-    "name": "Garment Steamer",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3527": {
-    "name": "Health Pot",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3530": {
-    "name": "High-Speed Blender",
+  "3518": {
+    "name": "Mosquito Killer Lamp",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3431,11 +3411,6 @@
   },
   "3719": {
     "name": "RF Antennas",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3517": {
-    "name": "Rice Cooker",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
