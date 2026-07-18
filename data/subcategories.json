@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -3024,6 +3029,11 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
+  "1482": {
+    "name": "Resistance measuring instrument",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
   "81": {
     "name": "Resistance-capacitance inductance measurement/RLC bridge",
     "category_id": 26,
@@ -3374,18 +3384,18 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3528": {
-    "name": "Air Fryer",
+  "3527": {
+    "name": "Health Pot",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
-  "3511": {
-    "name": "Microwave Oven",
+  "3655": {
+    "name": "massager",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
-  "3518": {
-    "name": "Mosquito Killer Lamp",
+  "3531": {
+    "name": "Network Switch",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3401,6 +3411,11 @@
   },
   "3275": {
     "name": "Power cord",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3591": {
+    "name": "Projector",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3426,6 +3441,11 @@
   },
   "3717": {
     "name": "TF card",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3500": {
+    "name": "Webcam",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3674,6 +3694,11 @@
     "category_id": 68,
     "category_name": "Power Modules"
   },
+  "3412": {
+    "name": "Anti-riot Stick",
+    "category_id": 56,
+    "category_name": "Safety/fire protection"
+  },
   "2029": {
     "name": "SiC Diodes",
     "category_id": 66,
@@ -3911,6 +3936,11 @@
   },
   "3734": {
     "name": "Specialty Screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3710": {
+    "name": "Spot Welder",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
