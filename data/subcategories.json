@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -3379,11 +3374,6 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3518": {
-    "name": "Mosquito Killer Lamp",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3409,13 +3399,13 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
-  "3517": {
-    "name": "Rice Cooker",
+  "198": {
+    "name": "RJ sheath",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
-  "198": {
-    "name": "RJ sheath",
+  "3589": {
+    "name": "Smartwatch",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3884,11 +3874,6 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "156": {
-    "name": "Flat head screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "882": {
     "name": "Grease gun",
     "category_id": 50,
@@ -3916,6 +3901,11 @@
   },
   "3734": {
     "name": "Specialty Screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "2362": {
+    "name": "Tile drill bits",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
