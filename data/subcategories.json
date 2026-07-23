@@ -1999,6 +1999,11 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
+  "3331": {
+    "name": "other tapes",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -3024,6 +3029,11 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
+  "1482": {
+    "name": "Resistance measuring instrument",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
   "81": {
     "name": "Resistance-capacitance inductance measurement/RLC bridge",
     "category_id": 26,
@@ -3401,11 +3411,6 @@
   },
   "198": {
     "name": "RJ sheath",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3589": {
-    "name": "Smartwatch",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
