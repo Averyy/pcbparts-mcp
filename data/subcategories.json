@@ -1999,11 +1999,6 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
-  "3384": {
-    "name": "Sandbag/Absorbent expansion bag",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -3064,31 +3059,6 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
-  "3641": {
-    "name": "Insulating Gloves",
-    "category_id": 42,
-    "category_name": "Labor protection supplies"
-  },
-  "3629": {
-    "name": "Lab Coats",
-    "category_id": 42,
-    "category_name": "Labor protection supplies"
-  },
-  "241": {
-    "name": "Labor protective gloves",
-    "category_id": 42,
-    "category_name": "Labor protection supplies"
-  },
-  "3632": {
-    "name": "Socks",
-    "category_id": 42,
-    "category_name": "Labor protection supplies"
-  },
-  "3636": {
-    "name": "Waterproof Arm Sleeves",
-    "category_id": 42,
-    "category_name": "Labor protection supplies"
-  },
   "3688": {
     "name": "Block",
     "category_id": 54,
@@ -3694,26 +3664,6 @@
     "category_id": 68,
     "category_name": "Power Modules"
   },
-  "3412": {
-    "name": "Anti-riot Stick",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
-  "989": {
-    "name": "Fire protection cover",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
-  "3643": {
-    "name": "megaphone",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
-  "500": {
-    "name": "Safety warning labels",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
   "2029": {
     "name": "SiC Diodes",
     "category_id": 66,
@@ -3916,11 +3866,6 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "934": {
-    "name": "Electric screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
