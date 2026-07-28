@@ -1534,6 +1534,11 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
+  "3506": {
+    "name": "air purifier",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -2616,6 +2621,11 @@
   },
   "1677": {
     "name": "Electric Energy Meter",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "3391": {
+    "name": "Electrode plug",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
