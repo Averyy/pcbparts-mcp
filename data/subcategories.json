@@ -1534,11 +1534,6 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
-  "3506": {
-    "name": "air purifier",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -1601,6 +1596,11 @@
   },
   "3456": {
     "name": "Silicone pad",
+    "category_id": 59,
+    "category_name": "Consumables and auxiliary materials"
+  },
+  "450": {
+    "name": "Thermal conductive adhesive",
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
@@ -3879,6 +3879,16 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "117": {
+    "name": "Desoldering pump/desoldering wire",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "934": {
+    "name": "Electric screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "3727": {
     "name": "Electric Soldering Iron",
     "category_id": 50,
@@ -3891,6 +3901,11 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3707": {
+    "name": "Screen Separator Heating Platform",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
