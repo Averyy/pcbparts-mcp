@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -2004,6 +2009,11 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
+  "2522": {
+    "name": "Packing tape",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -2276,6 +2286,11 @@
   },
   "2036": {
     "name": "Metal gasket",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "2008": {
+    "name": "Metal Products SMT Copper Sheet",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -3004,6 +3019,11 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
+  "1430": {
+    "name": "Industrial Tablet Computer",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
   "3639": {
     "name": "Infrared Thermal Imager Accessories",
     "category_id": 26,
@@ -3384,6 +3404,16 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "3571": {
+    "name": "Car Mount",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "2474": {
+    "name": "File section/file frame/file tray/file rack",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3411,6 +3441,11 @@
   },
   "198": {
     "name": "RJ sheath",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3589": {
+    "name": "Smartwatch",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3879,16 +3914,6 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "117": {
-    "name": "Desoldering pump/desoldering wire",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "934": {
-    "name": "Electric screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "3727": {
     "name": "Electric Soldering Iron",
     "category_id": 50,
@@ -3901,11 +3926,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "3707": {
-    "name": "Screen Separator Heating Platform",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
