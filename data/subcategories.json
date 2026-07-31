@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -2009,11 +2004,6 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
-  "2522": {
-    "name": "Packing tape",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -3019,11 +3009,6 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
-  "1430": {
-    "name": "Industrial Tablet Computer",
-    "category_id": 26,
-    "category_name": "Instrumentation and meters"
-  },
   "3639": {
     "name": "Infrared Thermal Imager Accessories",
     "category_id": 26,
@@ -3404,13 +3389,8 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3571": {
-    "name": "Car Mount",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "2474": {
-    "name": "File section/file frame/file tray/file rack",
+  "3418": {
+    "name": "Laser Printer",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3429,6 +3409,11 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
+  "1663": {
+    "name": "Printer",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1207": {
     "name": "Reel",
     "category_id": 49,
@@ -3444,8 +3429,8 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
-  "3589": {
-    "name": "Smartwatch",
+  "1317": {
+    "name": "Socket panel box",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
