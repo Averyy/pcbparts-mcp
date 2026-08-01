@@ -2,10 +2,10 @@
   "source": "bestmodules",
   "source_url": "https://www.bestmodulescorp.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-07T19:27:35.960565+00:00",
+  "scraped_at": "2026-08-01T07:19:38.884603+00:00",
   "stats": {
-    "sensor_count": 83,
-    "total_pages_checked": 89,
+    "sensor_count": 85,
+    "total_pages_checked": 91,
     "skipped": 1,
     "errors": 0
   },
@@ -1195,6 +1195,24 @@
       "voltage": "3.3-5.5"
     },
     {
+      "id": "bmh05109",
+      "name": "BMH05109",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh05109.html"
+      ],
+      "description": "Multi-Frequency 8-Electrode Body Composition Module BMH05109. Weighing Range: 3 to 300 kg - Accuracy: 10g / 50g. Impedance Range: 5Ω to 800Ω - Accuracy: ±1Ω / 1%. Body Composition Accuracy: 0.98 co...",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "5-12"
+    },
+    {
       "id": "bmh06203",
       "name": "BMH06203",
       "measures": [
@@ -1355,6 +1373,24 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf"
+    },
+    {
+      "id": "bmh83m101a",
+      "name": "BMH83M101A",
+      "measures": [
+        "light"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/bmh83m101a.html"
+      ],
+      "description": "Pulse Oximetry Module BMH83M101A. Place the fingertip flat and ensure it fully covers the measurement zone to minimize ambient room light interference.",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "type": "optical"
     },
     {
       "id": "bml36m001",

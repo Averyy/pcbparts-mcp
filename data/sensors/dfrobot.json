@@ -2,13 +2,13 @@
   "source": "dfrobot",
   "source_url": "https://github.com/DFRobot",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-07T19:28:03.400870+00:00",
+  "scraped_at": "2026-08-01T07:20:14.110130+00:00",
   "stats": {
     "sensor_count": 84,
-    "total_repos": 485,
-    "dfrobot_repos": 240,
+    "total_repos": 487,
+    "dfrobot_repos": 241,
     "skipped_non_sensor": 102,
-    "skipped_no_ic": 49,
+    "skipped_no_ic": 50,
     "library_properties_fetched": 76
   },
   "sensors": [

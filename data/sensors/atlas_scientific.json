@@ -2,10 +2,10 @@
   "source": "atlas_scientific",
   "source_url": "https://atlas-scientific.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-07T19:04:46.059799+00:00",
+  "scraped_at": "2026-08-01T06:56:37.384830+00:00",
   "stats": {
     "sensor_count": 28,
-    "total_products": 92,
+    "total_products": 91,
     "skipped": 23,
     "errors": 0
   },
@@ -393,9 +393,9 @@
       "urls": [
         "https://atlas-scientific.com/probes/industrial-pt-1000-temperature-probe/",
         "https://atlas-scientific.com/probes/micro-pt-1000-temperature-probe/",
-        "https://atlas-scientific.com/probes/pt-1000-temperature-probe/",
         "https://atlas-scientific.com/probes/spike-tip-temp-probe/",
-        "https://atlas-scientific.com/probes/standard-temp-probe/"
+        "https://atlas-scientific.com/probes/standard-temp-probe/",
+        "https://atlas-scientific.com/probes/threaded-temp-probe/"
       ],
       "description": "The Industrial PT-1000 Temperature Probe is a high-accuracy 4-wire temperature sensor.",
       "manufacturer": "Atlas Scientific"

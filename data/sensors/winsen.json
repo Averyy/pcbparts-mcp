@@ -2,10 +2,10 @@
   "source": "winsen",
   "source_url": "https://www.winsen-sensor.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-07T19:23:00.327691+00:00",
+  "scraped_at": "2026-08-01T07:14:54.994115+00:00",
   "stats": {
-    "sensor_count": 389,
-    "total_product_pages": 397,
+    "sensor_count": 391,
+    "total_product_pages": 399,
     "skipped": 4,
     "errors": 0
   },
@@ -2391,7 +2391,6 @@
       ],
       "description": "MQ135 Semiconductor Sensor for Air Quality. Target: ammonia gas, sulfide, benzene series steam. Range: 10～1000ppm( ammonia gas, toluene, hydrogen, smoke)",
       "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/mq135.pdf",
       "voltage": "5.0",
       "type": "semiconductor"
     },
@@ -3931,6 +3930,22 @@
       "manufacturer": "Winsen"
     },
     {
+      "id": "wpck63",
+      "name": "WPCK63",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/wpck63.html"
+      ],
+      "description": "WPCK63 Diffused Silicon Pressure Transmitter",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Winsen"
+    },
+    {
       "id": "wpck81",
       "name": "WPCK81",
       "measures": [
@@ -4954,25 +4969,6 @@
       "type": "laser"
     },
     {
-      "id": "zh07",
-      "name": "ZH07",
-      "measures": [
-        "particulate"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/zh07.html"
-      ],
-      "description": "ZH07 Laser dust sensor. Target: particulate matters PM1.0, PM2.5, PM4.25, PM10",
-      "protocol": [
-        "uart"
-      ],
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zh07.pdf",
-      "voltage": "4.8-5.5",
-      "type": "laser"
-    },
-    {
       "id": "zh08",
       "name": "ZH08",
       "measures": [
@@ -5865,6 +5861,20 @@
       "type": "pyroelectric"
     },
     {
+      "id": "zrt510er290",
+      "name": "ZRT510E-R290",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/zrt510e-r290.html"
+      ],
+      "description": "ZRT510E-R290 Refrigerant Sensor Module. Range: 0-100%LFL",
+      "manufacturer": "Winsen",
+      "type": "ndir"
+    },
+    {
       "id": "zrt510r290",
       "name": "ZRT510-R290",
       "measures": [
@@ -5909,6 +5919,20 @@
       "description": "ZRT510 Refrigerant R454B Sensor Module. Range: 0-50%LFL",
       "manufacturer": "Winsen",
       "voltage": "5",
+      "type": "ndir"
+    },
+    {
+      "id": "zrt512",
+      "name": "ZRT512",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/zrt512.html"
+      ],
+      "description": "ZRT512 Series Refrigerant Detection Module. Target: R290",
+      "manufacturer": "Winsen",
       "type": "ndir"
     },
     {
