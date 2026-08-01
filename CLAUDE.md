@@ -15,6 +15,7 @@
 
 - **NEVER test changes using the live MCP** undeployed code changes NEEDS to be tested locally via the database
 - **ALWAYS use wafer** when testing JLCPCB API - use `wafer.AsyncSession` with proper config (see `client.py` or `scrape_components.py`). Don't write quick test scripts with raw httpx/aiohttp - you'll get 403 blocked.
+- **ALWAYS pair wafer `timeout=` with `attempt_timeout=`** - `timeout` is a TOTAL budget across all retries/rotations, not a per-attempt cap. Unpaired, one hanging request eats the whole budget and retries never fire (this failed a sensor scrape and blocked a deploy on 2026-08-01). Sensor scrapers: use `make_session()`/`attempt_cap()` from `scripts/scrapers/common.py`.
 
 ## Library Types (Quick Reference)
 

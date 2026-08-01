@@ -65,6 +65,10 @@ Run the server locally:
 - Plain `httpx` is fine for clean REST APIs (Mouser, DigiKey).
 - Note wafer's timeout semantics: session-level `timeout=` is a **total budget** across
   retries and rotations; pair it with `attempt_timeout=` to cap individual attempts.
+  Unpaired, one hanging request eats the whole budget and the retries never fire — this
+  failed a sensor scrape and blocked a deploy on 2026-08-01. Sensor scrapers get this
+  from `scripts/scrapers/common.py`: use `make_session(request_timeout)` for sessions and
+  `attempt_cap(total)` on one-shot `wafer.get`/`wafer.post` calls rather than hand-rolling.
 
 **Behavior and errors**
 - **Never change the semantics of a successful response** without discussing it in an

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import wafer
 
-from .common import make_sensor_entry, write_source_json
+from .common import make_sensor_entry, make_session, write_source_json
 
 # Keywords in Hi-Link titles/descriptions that indicate additional measures
 HILINK_EXTRA_MEASURES = {
@@ -143,7 +143,7 @@ def scrape_hilink(output_dir: Path) -> None:
     source_url = BASE_URL + "/index.php?id=product"
     logger.info("Discovering Hi-Link sensor products...")
 
-    session = wafer.SyncSession(rate_limit=2.0, rate_jitter=1.0)
+    session = make_session(15)
 
     # Discover products across all categories
     all_products = []

@@ -15,7 +15,10 @@ concurrency:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 30  # Sensor scraping is lighter than components
+    # Sensor scraping is now the slower of the two workflows (~28 min on
+    # 2026-08-01, against a 30 min cap). A job kill happens BEFORE the commit
+    # step, so every source's fresh data is lost — keep generous headroom.
+    timeout-minutes: 60
 
     permissions:
       contents: write
@@ -32,7 +35,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install "wafer-py==0.3.0"
+          pip install "wafer-py==0.4.6"
 
       - name: Run sensor scrapers
         env:

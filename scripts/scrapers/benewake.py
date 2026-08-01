@@ -6,7 +6,7 @@ from pathlib import Path
 
 import wafer
 
-from .common import make_sensor_entry, write_source_json
+from .common import attempt_cap, make_sensor_entry, make_session, write_source_json
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ def _make_sensor_id(model_name: str) -> str:
 
 def _discover_product_urls() -> list[str]:
     """Discover product page URLs from the Benewake homepage."""
-    resp = wafer.get(BASE_URL + "/", timeout=15)
+    resp = wafer.get(BASE_URL + "/", timeout=15, attempt_timeout=attempt_cap(15))
     resp.raise_for_status()
     html = resp.text
 
@@ -89,7 +89,7 @@ def scrape_benewake(output_dir: Path) -> None:
     product_paths = _discover_product_urls()
     logger.info(f"Found {len(product_paths)} product pages")
 
-    session = wafer.SyncSession(rate_limit=2.0, rate_jitter=1.0)
+    session = make_session(15)
     sensors = []
     errors = 0
 

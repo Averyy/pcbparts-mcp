@@ -11,6 +11,7 @@ from pathlib import Path
 import wafer
 
 from .common import (
+    attempt_cap,
     has_ic_pattern,
     infer_measures,
     make_sensor_entry,
@@ -175,7 +176,7 @@ def _extract_ic_ids(name_cell: str) -> list[str]:
 def scrape_tasmota(output_dir: Path) -> None:
     """Scrape Tasmota Supported Peripherals page for sensor ICs."""
     logger.info("Downloading Tasmota Supported Peripherals page...")
-    resp = wafer.get(SOURCE_URL, timeout=30)
+    resp = wafer.get(SOURCE_URL, timeout=30, attempt_timeout=attempt_cap(30))
     resp.raise_for_status()
     html = resp.text
 

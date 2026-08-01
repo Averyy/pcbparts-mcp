@@ -7,6 +7,7 @@ from pathlib import Path
 import wafer
 
 from .common import (
+    attempt_cap,
     has_ic_pattern,
     infer_measures,
     make_sensor_entry,
@@ -78,7 +79,7 @@ def scrape_micropython(output_dir: Path) -> None:
     """Scrape awesome-micropython for sensor entries with category-inferred measures."""
     source_url = "https://raw.githubusercontent.com/mcauser/awesome-micropython/master/readme.md"
     logger.info("Downloading awesome-micropython readme...")
-    resp = wafer.get(source_url, timeout=30)
+    resp = wafer.get(source_url, timeout=30, attempt_timeout=attempt_cap(30))
     resp.raise_for_status()
     md_text = resp.text
 

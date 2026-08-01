@@ -6,7 +6,7 @@ from pathlib import Path
 
 import wafer
 
-from .common import make_sensor_entry, write_source_json
+from .common import make_sensor_entry, make_session, write_source_json
 
 logger = logging.getLogger(__name__)
 
@@ -121,7 +121,7 @@ def scrape_atlas_scientific(output_dir: Path) -> None:
     source_url = BASE_URL
     logger.info("Discovering Atlas Scientific products...")
 
-    session = wafer.SyncSession(rate_limit=2.0, rate_jitter=1.0)
+    session = make_session(15)
     products = _discover_products(session)
     logger.info(f"Found {len(products)} products")
 
