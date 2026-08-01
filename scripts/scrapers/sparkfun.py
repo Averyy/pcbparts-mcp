@@ -9,6 +9,7 @@ from pathlib import Path
 import wafer
 
 from .common import (
+    attempt_cap,
     has_ic_pattern,
     infer_measures,
     make_sensor_entry,
@@ -205,6 +206,7 @@ def _fetch_all_products() -> list[dict]:
             json={"query": q},
             headers={"Content-Type": "application/json"},
             timeout=30,
+            attempt_timeout=attempt_cap(30),
         )
         resp.raise_for_status()
         data = resp.json()

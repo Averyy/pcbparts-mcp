@@ -7,6 +7,7 @@ from pathlib import Path
 import wafer
 
 from .common import (
+    attempt_cap,
     has_ic_pattern,
     infer_measures,
     make_sensor_entry,
@@ -49,7 +50,7 @@ def scrape_circuitpython(output_dir: Path) -> None:
     """Scrape CircuitPython driver list with per-section category awareness."""
     url = "https://docs.circuitpython.org/projects/bundle/en/latest/drivers.html"
     logger.info("Downloading CircuitPython driver list...")
-    resp = wafer.get(url, timeout=30)
+    resp = wafer.get(url, timeout=30, attempt_timeout=attempt_cap(30))
     resp.raise_for_status()
     html = resp.text
 

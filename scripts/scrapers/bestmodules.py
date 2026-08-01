@@ -13,7 +13,7 @@ from pathlib import Path
 
 import wafer
 
-from .common import infer_measures, make_sensor_entry, write_source_json
+from .common import infer_measures, make_sensor_entry, make_session, write_source_json
 
 logger = logging.getLogger(__name__)
 
@@ -308,7 +308,7 @@ def scrape_bestmodules(output_dir: Path) -> None:
     source_url = BASE_URL
     logger.info("Scraping Best Modules Corp sensors...")
 
-    session = wafer.SyncSession(rate_limit=2.0, rate_jitter=1.0)
+    session = make_session(20)
 
     logger.info("Discovering products from sensor module listing...")
     product_urls = _discover_product_urls(session)

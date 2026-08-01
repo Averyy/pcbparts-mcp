@@ -6,9 +6,40 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+import wafer
+
 logger = logging.getLogger(__name__)
 
 SCRAPER_VERSION = "1.0.0"
+
+
+# ── HTTP timeouts ───────────────────────────────────────────────────────────
+# wafer's `timeout` is a TOTAL budget covering every retry, rotation and backoff
+# — not a per-attempt cap like requests/httpx. Without an `attempt_timeout` a
+# single hanging request eats the whole budget, so `max_retries`/`max_rotations`
+# never fire and the source hard-fails. That is exactly how maxbotix.com killed
+# the 2026-08-01 scrape: one tarpitted request burned all 30s on a single try,
+# failed the source, and gated the deploy for all 14 sources.
+
+def attempt_cap(total: float) -> float:
+    """Per-attempt cap fitting ~3 bounded tries inside a `total` wafer budget.
+
+    Costs no extra worst-case wall time — the total budget is unchanged — but
+    turns one long hang into several bounded tries on rotated TLS identities.
+    """
+    return round(total / 3, 1)
+
+
+def make_session(request_timeout: float, **kwargs) -> wafer.SyncSession:
+    """Build a SyncSession for product-page scraping whose retries can fire.
+
+    `request_timeout` is the per-request total the caller passes to session.get();
+    each attempt is capped at a third of it (see `attempt_cap`).
+    """
+    kwargs.setdefault("rate_limit", 2.0)
+    kwargs.setdefault("rate_jitter", 1.0)
+    kwargs.setdefault("attempt_timeout", attempt_cap(request_timeout))
+    return wafer.SyncSession(**kwargs)
 
 # ── Skip words: normalized results that are NOT sensor ICs ──────────────────
 

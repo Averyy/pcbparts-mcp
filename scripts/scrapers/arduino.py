@@ -7,6 +7,7 @@ from pathlib import Path
 import wafer
 
 from .common import (
+    attempt_cap,
     extract_manufacturer,
     has_ic_pattern,
     infer_measures,
@@ -53,7 +54,7 @@ def scrape_arduino(output_dir: Path) -> None:
     """Scrape Arduino Library Index for sensor ICs."""
     url = "https://downloads.arduino.cc/libraries/library_index.json"
     logger.info(f"Downloading Arduino Library Index...")
-    resp = wafer.get(url, timeout=120)
+    resp = wafer.get(url, timeout=120, attempt_timeout=attempt_cap(120))
     resp.raise_for_status()
     data = resp.json()
 

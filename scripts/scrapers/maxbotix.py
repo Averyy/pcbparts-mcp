@@ -7,7 +7,7 @@ from pathlib import Path
 
 import wafer
 
-from .common import make_sensor_entry, normalize_sensor_id, write_source_json
+from .common import attempt_cap, make_sensor_entry, normalize_sensor_id, write_source_json
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ def scrape_maxbotix(output_dir: Path) -> None:
     """Scrape Maxbotix Shopify store for ultrasonic/LiDAR distance sensors."""
     url = "https://www.maxbotix.com/products.json?limit=250"
     logger.info("Downloading Maxbotix product catalog...")
-    resp = wafer.get(url, timeout=30)
+    resp = wafer.get(url, timeout=30, attempt_timeout=attempt_cap(30))
     resp.raise_for_status()
     data = resp.json()
     products = data.get("products", [])

@@ -707,6 +707,21 @@ def extract_ti_docid(url: str) -> str | None:
     return None
 
 
+def _attempt_cap(total: float) -> float:
+    """Per-attempt cap fitting ~3 bounded tries inside a `total` wafer budget.
+
+    wafer's `timeout` is a TOTAL budget across all retries and rotations, not a
+    per-attempt cap like requests/httpx. Without this, one hanging request eats
+    the whole budget and max_retries/max_rotations never fire — a single
+    tarpitting host then stalls the extraction for the full timeout with no
+    retry at all. Costs no extra worst-case wall time; the total is unchanged.
+
+    Mirrors `attempt_cap` in scripts/scrapers/common.py — duplicated rather than
+    imported to keep this script standalone (it has no sibling-script imports).
+    """
+    return round(total / 3, 1)
+
+
 def _fetch_ti_section(docid: str, slug: str) -> str | None:
     """Fetch a single TI HTML section. Used by ThreadPoolExecutor.
 
@@ -718,7 +733,7 @@ def _fetch_ti_section(docid: str, slug: str) -> str | None:
 
     section_url = f"https://www.ti.com/document-viewer/lit/html/{docid}/{slug}?raw=1"
     try:
-        resp = wafer.get(section_url, timeout=10)
+        resp = wafer.get(section_url, timeout=10, attempt_timeout=_attempt_cap(10))
     except WaferError:
         return None
     if resp.status_code != 200:
@@ -915,10 +930,15 @@ def _fetch_pdf(
     from wafer import WaferError
 
     try:
+        pdf_timeout = max(timeout, 120)
         if session:
-            response = session.get(url, timeout=max(timeout, 120))
+            response = session.get(
+                url, timeout=pdf_timeout, attempt_timeout=_attempt_cap(pdf_timeout)
+            )
         else:
-            response = wafer.get(url, timeout=max(timeout, 120))
+            response = wafer.get(
+                url, timeout=pdf_timeout, attempt_timeout=_attempt_cap(pdf_timeout)
+            )
     except WaferError as e:
         print(f"  → wafer error: {e}", file=sys.stderr)
         return None
@@ -1064,9 +1084,9 @@ def _cffi_get(
 
     try:
         if session:
-            resp = session.get(url, timeout=timeout)
+            resp = session.get(url, timeout=timeout, attempt_timeout=_attempt_cap(timeout))
         else:
-            resp = wafer.get(url, timeout=timeout)
+            resp = wafer.get(url, timeout=timeout, attempt_timeout=_attempt_cap(timeout))
     except WaferError:
         return None
     if resp.status_code != 200:
@@ -1105,9 +1125,9 @@ def _fetch_html_or_pdf(
 
     try:
         if session:
-            resp = session.get(url, timeout=timeout)
+            resp = session.get(url, timeout=timeout, attempt_timeout=_attempt_cap(timeout))
         else:
-            resp = wafer.get(url, timeout=timeout)
+            resp = wafer.get(url, timeout=timeout, attempt_timeout=_attempt_cap(timeout))
     except WaferError:
         return None, "unknown"
     if resp.status_code != 200:

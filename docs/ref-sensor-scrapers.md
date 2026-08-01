@@ -4,7 +4,7 @@
 
 14 scrapers in `scripts/scrapers/` produce per-source JSON files in `data/sensors/`. Each scraper extracts sensor IC metadata from a different source. Orchestrated by `scripts/scrape_sensors.py`.
 
-**Stats:** 1,517 sensors in DB | 56 measure types | 7 platforms | 136 IC aliases
+**Stats:** 1,607 sensors in DB | 56 measure types | 7 platforms | 136 IC aliases
 
 ## Architecture
 
@@ -156,7 +156,12 @@ next deploy from the daily components workflow, where the only backstop is
 1. Create `scripts/scrapers/{name}.py` with a `scrape_{name}(output_dir: Path)` function
 2. Use `common.py` utilities: `normalize_sensor_id`, `has_ic_pattern`, `infer_measures`, `make_sensor_entry`, `write_source_json`
 3. Register in `scripts/scrapers/__init__.py` (import + add to `SCRAPERS` dict)
-4. Use `wafer` for all HTTP (per CLAUDE.md rules)
+4. Use `wafer` for all HTTP (per CLAUDE.md rules). Always pair a `timeout=` with an
+   `attempt_timeout=` — pass `attempt_cap(total)` on one-shot `wafer.get`/`wafer.post`
+   calls, or build the session with `make_session(request_timeout)`. wafer's `timeout`
+   is a TOTAL budget across all retries and rotations, not a per-attempt cap, so
+   without this one hanging request burns the whole budget, `max_retries` never fires,
+   and the source hard-fails and gates the deploy (maxbotix, 2026-08-01)
 5. For known ICs, add `KNOWN_IC_MEASURES` dict to override text inference
 6. IDs must be `[a-z0-9]+` only, max ~15 chars for IC-based sources
 7. The scraper must write `{key}.json` on every successful run (even if content is

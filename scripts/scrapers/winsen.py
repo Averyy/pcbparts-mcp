@@ -12,7 +12,7 @@ from urllib.parse import unquote
 
 import wafer
 
-from .common import make_sensor_entry, write_source_json
+from .common import make_sensor_entry, make_session, write_source_json
 
 logger = logging.getLogger(__name__)
 
@@ -527,7 +527,7 @@ def scrape_winsen(output_dir: Path) -> None:
     source_url = BASE_URL
     logger.info("Discovering Winsen products from sitemap...")
 
-    session = wafer.SyncSession(rate_limit=2.0, rate_jitter=1.0)
+    session = make_session(15)
     product_urls = _discover_product_urls(session)
     logger.info(f"Found {len(product_urls)} product pages")
 
