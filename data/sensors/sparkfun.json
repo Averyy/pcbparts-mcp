@@ -2,12 +2,12 @@
   "source": "sparkfun",
   "source_url": "https://www.sparkfun.com/graphql",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-07T19:27:40.840214+00:00",
+  "scraped_at": "2026-08-01T07:19:43.750370+00:00",
   "stats": {
-    "sensor_count": 121,
-    "total_products": 403,
+    "sensor_count": 123,
+    "total_products": 406,
     "skipped_sku_prefix": 55,
-    "skipped_pattern": 63,
+    "skipped_pattern": 64,
     "skipped_no_ic": 113
   },
   "sensors": [
@@ -757,6 +757,36 @@
         "https://www.sparkfun.com/sparkfun-current-sensor-breakout-ina169.html"
       ],
       "description": "The INA169 is a “high-side current monitor,” which means that you place a resistor (a “shunt resistor”) on the positive power rail."
+    },
+    {
+      "id": "ina228",
+      "name": "SparkFun Current Sensor - INA228 (Qwiic)",
+      "measures": [
+        "current"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-current-sensor-ina228-qwiic.html"
+      ],
+      "description": "Monitor DC current, bus voltage, and accumulated charge more accurately with this Qwiic-enabled INA228 breakout featuring a 20-bit ADC.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "ina237",
+      "name": "SparkFun Current Sensor - INA237 (Qwiic)",
+      "measures": [
+        "current"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-current-sensor-ina237-qwiic.html"
+      ],
+      "description": "Monitor DC current, bus voltage, and power precisely with this Qwiic-enabled INA237 breakout featuring a 16-bit ADC.",
+      "protocol": [
+        "i2c"
+      ]
     },
     {
       "id": "isl29125",

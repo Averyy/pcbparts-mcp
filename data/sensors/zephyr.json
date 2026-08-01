@@ -2,12 +2,12 @@
   "source": "zephyr",
   "source_url": "https://github.com/zephyrproject-rtos/zephyr",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-07T19:00:36.926806+00:00",
+  "scraped_at": "2026-08-01T06:51:51.105329+00:00",
   "stats": {
-    "sensor_count": 232,
-    "total_bindings": 473,
-    "skipped_internal": 45,
-    "skipped_bus_variant": 70,
+    "sensor_count": 235,
+    "total_bindings": 479,
+    "skipped_internal": 46,
+    "skipped_bus_variant": 71,
     "skipped_no_measures": 30
   },
   "sensors": [
@@ -78,6 +78,25 @@
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,ade7978.html"
       ],
       "description": "ADE7978 Isolated energy metering chipset for polyphase shunt meters",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adis1647x",
+      "name": "ADIS1647X",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adis1647x.html"
+      ],
+      "description": "ADIS1647x 6-DoF MEMS IMU with SPI connection",
       "protocol": [
         "spi"
       ],
@@ -2737,6 +2756,25 @@
       "manufacturer": "Lite-On"
     },
     {
+      "id": "max30009",
+      "name": "MAX30009",
+      "measures": [
+        "biometric"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,max30009.html"
+      ],
+      "description": "MAX30009 Bio-Impedance AFE with I2C connection",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
       "id": "max30101",
       "name": "MAX30101",
       "measures": [
@@ -3382,6 +3420,21 @@
       "protocol": [
         "uart"
       ]
+    },
+    {
+      "id": "s9706",
+      "name": "S9706",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/hamamatsu,s9706.html"
+      ],
+      "description": "Hamamatsu S9706 Digital Color Sensor. See datasheet at https://www.hamamatsu.com/content/dam/hamamatsu-photonics/sites/documents/99_SALES_LIBRARY/ssd/s9706_kpic1060e.pdf",
+      "manufacturer": "Hamamatsu"
     },
     {
       "id": "scd40",

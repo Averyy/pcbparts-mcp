@@ -2,10 +2,10 @@
   "source": "hilink",
   "source_url": "https://www.hlktech.net/index.php?id=product",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-07T19:03:26.846793+00:00",
+  "scraped_at": "2026-08-01T06:55:19.519264+00:00",
   "stats": {
-    "sensor_count": 34,
-    "total_products": 64,
+    "sensor_count": 35,
+    "total_products": 66,
     "skipped_non_sensor": 21,
     "errors": 0
   },
@@ -364,6 +364,21 @@
       "type": "radar"
     },
     {
+      "id": "ld2423",
+      "name": "LD2423",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1518"
+      ],
+      "description": "24GHz Hi-link 24G millimeter wave high-precision 3-4 multi-target human body state LD2423 trajectory tracking radar module",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
       "id": "ld2450",
       "name": "LD2450",
       "measures": [
@@ -410,6 +425,22 @@
         "https://www.hlktech.net/index.php?id=1389"
       ],
       "description": "24GHz 24Ghz one-transmitter-two-receiver human motion tracking trajectory radar module Wall mounted installation special for air-condition HLK-LD2452",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2453",
+      "name": "LD2453",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1517",
+        "https://www.hlktech.net/index.php?id=1516"
+      ],
+      "description": "24GHz HI-LINK 24G Human Movement Tracking Trajectory Radar Module LD2453 One Transmitter Two Receivers Multi Target Tracking HLK-LD2453 Kits",
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -553,26 +584,6 @@
       "description": "60GHz Hi-link 60G high-precision millimeter wave radar LD6004 multi-target 3D human presence induction serial communication radae sensor module",
       "protocol": [
         "gpio",
-        "uart"
-      ],
-      "manufacturer": "Hi-Link",
-      "type": "radar"
-    },
-    {
-      "id": "ld8001",
-      "name": "LD8001",
-      "measures": [
-        "distance",
-        "motion",
-        "radar"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.hlktech.net/index.php?id=1211"
-      ],
-      "description": "79GHz 79G millimeter wave liquid level detection sensor HLK-LD8001 radar module non-contact high-precision ranging up to 15m",
-      "protocol": [
-        "i2c",
         "uart"
       ],
       "manufacturer": "Hi-Link",

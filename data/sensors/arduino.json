@@ -2,13 +2,13 @@
   "source": "arduino",
   "source_url": "https://downloads.arduino.cc/libraries/library_index.json",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-07-07T19:00:30.680130+00:00",
+  "scraped_at": "2026-08-01T06:51:45.340404+00:00",
   "stats": {
-    "sensor_count": 699,
-    "total_libs_checked": 1906,
-    "skipped_no_ic": 446,
-    "skipped_nonsensor": 140,
-    "skipped_no_measures": 115
+    "sensor_count": 708,
+    "total_libs_checked": 1938,
+    "skipped_no_ic": 451,
+    "skipped_nonsensor": 144,
+    "skipped_no_measures": 117
   },
   "sensors": [
     {
@@ -425,6 +425,21 @@
       "description": "Arduino library for the AD8494, AD8495, AD8496 and AD8497 thermocouple.."
     },
     {
+      "id": "ad8495",
+      "name": "Soldered Thermocouple Sensor AD8495 Library",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/SolderedElectronics/Soldered-Thermocouple-Sensor-AD8495-Library.git"
+      ],
+      "description": "Library for the AD8495 thermocouple amplifier"
+    },
+    {
       "id": "adc128d818",
       "name": "ADC128D818",
       "measures": [
@@ -454,6 +469,22 @@
         "https://github.com/Seeed-Studio/Seeed_ADIS16470.git"
       ],
       "description": "Arduino library to control Grove 6-Axis Digital Accelerometer&Gyroscope(ADIS16470)."
+    },
+    {
+      "id": "adpd188bi",
+      "name": "ADPD188BI",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/juarendra/ADPD188BI-Arduino.git"
+      ],
+      "description": "Arduino smoke-detection driver for the Analog Devices ADPD188BI.",
+      "manufacturer": "Analog Devices"
     },
     {
       "id": "ads1015",
@@ -1140,14 +1171,15 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 6,
+      "popularity": 7,
       "urls": [
         "https://github.com/sparkfun/SparkFun_APDS-9960_Sensor_Arduino_Library.git",
         "https://github.com/adafruit/Adafruit_APDS9960.git",
         "https://github.com/arduino-libraries/Arduino_APDS9960.git",
         "https://github.com/melopero/Melopero_APDS-9960_Arduino_Library.git",
         "https://github.com/deneyapkart/deneyap-hareket-isik-renk-algilayici-mesafe-olcer-arduino-library.git",
-        "https://github.com/styropyr0/APDS9960.git"
+        "https://github.com/styropyr0/APDS9960.git",
+        "https://github.com/SolderedElectronics/Soldered-APDS9960-Light-Gesture-Color-Sensor-Arduino-Library.git"
       ],
       "description": "A feature packed driver for the APDS9960 sensor, supporting ambient light, color, proximity, and gesture sensing."
     },
@@ -1572,6 +1604,23 @@
         "https://github.com/claws/BH1750.git"
       ],
       "description": "Arduino library for the digital light sensor breakout boards containing the BH1750FVI IC"
+    },
+    {
+      "id": "bhi385",
+      "name": "Soldered BHI385 IMU",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/SolderedElectronics/Soldered-BHI385-Arduino-Library.git"
+      ],
+      "description": "Arduino library for the Bosch BHI385 Smart IMU sensor.",
+      "manufacturer": "Bosch"
     },
     {
       "id": "bl0940",
@@ -2054,11 +2103,12 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/styropyr0/BME688.git"
+        "https://github.com/styropyr0/BME688.git",
+        "https://github.com/SolderedElectronics/Soldered-BME688-Sensor-Arduino-Library.git"
       ],
-      "description": "Arduino library for the Bosch BME688 environmental sensor.",
+      "description": "Arduino Library for the BME688 Environmental and Air sensor",
       "manufacturer": "Bosch"
     },
     {
@@ -2413,7 +2463,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 7,
+      "popularity": 8,
       "urls": [
         "https://github.com/adafruit/Adafruit_BMP280_Library.git",
         "https://github.com/Seeed-Studio/Grove_BMP280.git",
@@ -2421,7 +2471,8 @@
         "https://github.com/dvarrel/BMP280.git",
         "https://github.com/SolderedElectronics/Soldered-BMP280-Arduino-Library.git",
         "https://github.com/gavinlyonsrepo/BMP280_LTSM.git",
-        "https://github.com/PTSolns/BMx280.git"
+        "https://github.com/PTSolns/BMx280.git",
+        "https://github.com/angeloINTJ/BMx280PIO_RP2040.git"
       ],
       "description": "Library for BMP280 and BME280 sensor modules with emphasis on efficient single-burst reading to minimize I2C/SPI bus usage, while maintaining full compatibility with both continuous and forced-mode...",
       "manufacturer": "Bosch"
@@ -2453,10 +2504,11 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/MartinL1/BMP388_DEV.git",
-        "https://github.com/107-systems/107-Arduino-BMP388.git"
+        "https://github.com/107-systems/107-Arduino-BMP388.git",
+        "https://github.com/SolderedElectronics/Soldered-BMP388-Arduino-Library.git"
       ],
       "description": "Arduino library for interfacing with the BMP388 barometric pressure sensor which can be used for inferring altitude information.",
       "manufacturer": "Bosch"
@@ -3017,6 +3069,22 @@
       "description": "An Arduino library to make use of the Qwiic Capacitive Soil Moisture Sensor CY8CMBR3102"
     },
     {
+      "id": "d6fw04a1",
+      "name": "D6F-W04A1",
+      "measures": [
+        "flow"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/juarendra/D6F-W04A1-Arduino.git"
+      ],
+      "description": "Arduino analog driver for the Omron D6F-W04A1 air-flow sensor.",
+      "manufacturer": "Omron"
+    },
+    {
       "id": "dct532",
       "name": "DCT532",
       "measures": [
@@ -3545,6 +3613,21 @@
         "https://github.com/iotdevicesdev/GGreg20_V3.git"
       ],
       "description": "IoT-devices GGreg20_V3 ionizing radiation detector pulse output driver library."
+    },
+    {
+      "id": "gl5516",
+      "name": "GL55xxSensor",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/KarlEffinger/GL55xxSensor.git"
+      ],
+      "description": "Read illuminance (lux) from a GL55xx photoresistor (GL5516/5528/5537/5539/5549) voltage divider."
     },
     {
       "id": "gl5528",
@@ -4118,6 +4201,22 @@
       "manufacturer": "TE Connectivity"
     },
     {
+      "id": "hw290",
+      "name": "HW290",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/supratikd/HW290.git"
+      ],
+      "description": "Arduino library for HW290 10DOF sensor board (MPU6050 + BMP180 + HP5883)."
+    },
+    {
       "id": "hw827",
       "name": "HW827_PPG",
       "measures": [
@@ -4250,6 +4349,22 @@
       "manufacturer": "ams-OSRAM"
     },
     {
+      "id": "i2cmprls",
+      "name": "I2C_MPRLS",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/RobTillaart/I2C_MPRLS.git"
+      ],
+      "description": "Arduino library for MPRLS pressure sensors. (Honeywell).",
+      "manufacturer": "Honeywell"
+    },
+    {
       "id": "icm20689",
       "name": "ICM20689",
       "measures": [
@@ -4276,11 +4391,12 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 3,
+      "popularity": 4,
       "urls": [
         "https://github.com/wollewald/ICM20948_WE.git",
         "https://github.com/7semi-solutions/7Semi_ICM20948_Arduino-Library.git",
-        "https://github.com/UNIT-Electronics-MX/unit_devlab_icm20948_library.git"
+        "https://github.com/UNIT-Electronics-MX/unit_devlab_icm20948_library.git",
+        "https://github.com/LZQS1/VQF-for-Arduino.git"
       ],
       "description": "Arduino library for the 7Semi ICM-20948 9-axis IMU (Accel, Gyro, Mag, Temp)."
     },
@@ -4661,11 +4777,12 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/stm32duino/IIS2DULPX.git"
+        "https://github.com/stm32duino/IIS2DULPX.git",
+        "https://github.com/SolderedElectronics/Soldered-IIS2DULPXTR-Accelerometer-Arduino-Library.git"
       ],
-      "description": "Ultra Low Power inertial measurement unit."
+      "description": "Library for the Soldered IIS2DULPX Accelerometer breakout board"
     },
     {
       "id": "iis2mdc",
@@ -7230,7 +7347,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 15,
+      "popularity": 18,
       "urls": [
         "https://github.com/Tockn/MPU6050_tockn.git",
         "https://github.com/ElectronicCats/mpu6050.git",
@@ -8422,6 +8539,21 @@
       "description": "A library for RM3100 and RM2100 magneto-inductive magnetometers over SPI and I2C."
     },
     {
+      "id": "rn8209d",
+      "name": "RN8209D",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/juarendra/RN8209D-Arduino.git"
+      ],
+      "description": "Arduino driver for the RN8209D single-phase energy metering IC."
+    },
+    {
       "id": "rp2040",
       "name": "PicoEncoder",
       "measures": [
@@ -8430,11 +8562,12 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/pmarques-dev/PicoEncoder.git"
+        "https://github.com/pmarques-dev/PicoEncoder.git",
+        "https://github.com/Protocentral/protocentral_healthypi_5_firmware.git"
       ],
-      "description": "High resolution quadrature encoder using the PIO on the RP2040"
+      "description": "Dual-core NEXT runtime and board support for the ProtoCentral HealthyPi 5 (RP2040)."
     },
     {
       "id": "rs232",
@@ -10468,11 +10601,12 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 3,
+      "popularity": 4,
       "urls": [
         "https://github.com/NilsMinor/TMP117-Arduino.git",
         "https://github.com/sparkfun/SparkFun_TMP117_Arduino_Library.git",
-        "https://github.com/adafruit/Adafruit_TMP117.git"
+        "https://github.com/adafruit/Adafruit_TMP117.git",
+        "https://github.com/SolderedElectronics/Soldered-Temperature-Sensor-TMP117-Arduino-Library.git"
       ],
       "description": "Arduino library for the TMP117 and TMP119 sensors in the Adafruit shop",
       "manufacturer": "Texas Instruments"
@@ -11162,7 +11296,7 @@
     },
     {
       "id": "vl53l5cx",
-      "name": "Adafruit VL53L5CX",
+      "name": "VL53L5CX",
       "measures": [
         "distance",
         "tof"
@@ -11170,12 +11304,13 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/sparkfun/SparkFun_VL53L5CX_Arduino_Library.git",
-        "https://github.com/adafruit/Adafruit_VL53L5.git"
+        "https://github.com/adafruit/Adafruit_VL53L5.git",
+        "https://github.com/amitxgit/VL53L5CX-Arduino.git"
       ],
-      "description": "Distance sensing (VL53L5CX) with 64 pixels up to 4 meters at 15Hz.",
+      "description": "Plug-and-play Arduino driver for the VL53L5CX 8x8 multizone Time-of-Flight sensor.",
       "manufacturer": "STMicroelectronics"
     },
     {
@@ -11354,6 +11489,23 @@
         "https://github.com/4211421036/YFS201.git"
       ],
       "description": "A library to interface with the YF-S201 water flow sensor for Arduino."
+    },
+    {
+      "id": "ze40b",
+      "name": "ZE40B-TVOC",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/juarendra/ZE40B-TVOC-Arduino.git"
+      ],
+      "description": "Arduino driver for Winsen ZE40B-TVOC UART TVOC sensors.",
+      "manufacturer": "Winsen"
     },
     {
       "id": "zh06",
