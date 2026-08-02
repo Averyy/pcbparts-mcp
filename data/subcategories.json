@@ -1514,11 +1514,6 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
-  "3458": {
-    "name": "heater",
-    "category_id": 62,
-    "category_name": "Building materials / Building hardware"
-  },
   "1955": {
     "name": "Iron wire",
     "category_id": 62,
@@ -1538,31 +1533,6 @@
     "name": "Water heater",
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
-  },
-  "3506": {
-    "name": "air purifier",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
-  "3656": {
-    "name": "cutting board",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
-  "3565": {
-    "name": "Dehumidifiers",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
-  "3561": {
-    "name": "electric hair dryer",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
-  "568": {
-    "name": "Razor",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
   },
   "2101": {
     "name": "555 Timers / Counters",
@@ -2031,11 +2001,6 @@
   },
   "2621": {
     "name": "Cable Tie",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
-  "2522": {
-    "name": "Packing tape",
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
@@ -3194,11 +3159,6 @@
     "category_id": 54,
     "category_name": "Lathes and accessories"
   },
-  "2744": {
-    "name": "Motors and reducers",
-    "category_id": 54,
-    "category_name": "Lathes and accessories"
-  },
   "3663": {
     "name": "permanent-magnetic chuck",
     "category_id": 54,
@@ -3429,81 +3389,6 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3528": {
-    "name": "Air Fryer",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3587": {
-    "name": "Aromatherapy",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "1666": {
-    "name": "Automatic cutting machine",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3520": {
-    "name": "Cabinet / Disinfection Cabinet",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "586": {
-    "name": "Computer bag/T-shirt",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3230": {
-    "name": "Double-sided tape",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3512": {
-    "name": "Electric Toothbrush",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3524": {
-    "name": "Garment Steamer",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3527": {
-    "name": "Health Pot",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3530": {
-    "name": "High-Speed Blender",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3418": {
-    "name": "Laser Printer",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3655": {
-    "name": "massager",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3511": {
-    "name": "Microwave Oven",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3513": {
-    "name": "Mite Remover",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3531": {
-    "name": "Network Switch",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3519,11 +3404,6 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
-  "3503": {
-    "name": "Pressure Cooker",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1207": {
     "name": "Reel",
     "category_id": 49,
@@ -3531,11 +3411,6 @@
   },
   "3719": {
     "name": "RF Antennas",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3517": {
-    "name": "Rice Cooker",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -4014,16 +3889,6 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "117": {
-    "name": "Desoldering pump/desoldering wire",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "934": {
-    "name": "Electric screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "3727": {
     "name": "Electric Soldering Iron",
     "category_id": 50,
@@ -4036,11 +3901,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1785": {
-    "name": "Other non-standard sockets",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
