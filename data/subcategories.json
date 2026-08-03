@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1596,11 +1601,6 @@
   },
   "3456": {
     "name": "Silicone pad",
-    "category_id": 59,
-    "category_name": "Consumables and auxiliary materials"
-  },
-  "450": {
-    "name": "Thermal conductive adhesive",
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
