@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -791,6 +786,11 @@
   },
   "2936": {
     "name": "Inductors (SMD)",
+    "category_id": 3,
+    "category_name": "Inductors, Coils, Chokes"
+  },
+  "3741": {
+    "name": "Molding Power Inductors",
     "category_id": 3,
     "category_name": "Inductors, Coils, Chokes"
   },
@@ -3901,6 +3901,11 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3650": {
+    "name": "Rotary file",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
