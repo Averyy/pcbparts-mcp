@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1544,6 +1539,16 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
+  "3506": {
+    "name": "air purifier",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
+  "3656": {
+    "name": "cutting board",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -2004,8 +2009,18 @@
     "category_id": 3333,
     "category_name": "Global Sourcing Parts"
   },
+  "3317": {
+    "name": "Anti-static workbench",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
   "2621": {
     "name": "Cable Tie",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
+  "3676": {
+    "name": "Permanent Magnet Lifter",
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
@@ -3054,6 +3069,11 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
+  "1393": {
+    "name": "Torque plate calibration instrument",
+    "category_id": 26,
+    "category_name": "Instrumentation and meters"
+  },
   "903": {
     "name": "Torsion tester",
     "category_id": 26,
@@ -3079,6 +3099,11 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
+  "241": {
+    "name": "Labor protective gloves",
+    "category_id": 42,
+    "category_name": "Labor protection supplies"
+  },
   "3688": {
     "name": "Block",
     "category_id": 54,
@@ -3091,6 +3116,11 @@
   },
   "3699": {
     "name": "Chuck",
+    "category_id": 54,
+    "category_name": "Lathes and accessories"
+  },
+  "3651": {
+    "name": "clamping auxiliary",
     "category_id": 54,
     "category_name": "Lathes and accessories"
   },
@@ -3111,6 +3141,11 @@
   },
   "3694": {
     "name": "Drive Clamp",
+    "category_id": 54,
+    "category_name": "Lathes and accessories"
+  },
+  "3666": {
+    "name": "Extension Fixture",
     "category_id": 54,
     "category_name": "Lathes and accessories"
   },
@@ -3174,6 +3209,11 @@
     "category_id": 54,
     "category_name": "Lathes and accessories"
   },
+  "3657": {
+    "name": "punch former",
+    "category_id": 54,
+    "category_name": "Lathes and accessories"
+  },
   "3687": {
     "name": "Right Angle Attachment",
     "category_id": 54,
@@ -3216,6 +3256,11 @@
   },
   "3664": {
     "name": "vacuum chuck",
+    "category_id": 54,
+    "category_name": "Lathes and accessories"
+  },
+  "3654": {
+    "name": "Wire EDM Clamp Plate",
     "category_id": 54,
     "category_name": "Lathes and accessories"
   },
@@ -3369,6 +3414,11 @@
     "category_id": 70,
     "category_name": "Magnetic Sensors"
   },
+  "3683": {
+    "name": "Sine Bar",
+    "category_id": 51,
+    "category_name": "Measuring tools"
+  },
   "1628": {
     "name": "Brushed DC Motor Drivers",
     "category_id": 69,
@@ -3396,6 +3446,16 @@
   },
   "184": {
     "name": "Coupler",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3512": {
+    "name": "Electric Toothbrush",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3655": {
+    "name": "massager",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3431,6 +3491,11 @@
   },
   "1317": {
     "name": "Socket panel box",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3702": {
+    "name": "soy milk maker",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3899,6 +3964,11 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "934": {
+    "name": "Electric screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "3727": {
     "name": "Electric Soldering Iron",
     "category_id": 50,
@@ -3911,6 +3981,11 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3550": {
+    "name": "Scraper",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -3934,8 +4009,18 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "3661": {
+    "name": "Tensile pressure testing machine",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "2362": {
     "name": "Tile drill bits",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3660": {
+    "name": "torque screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
