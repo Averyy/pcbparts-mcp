@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -3409,11 +3414,6 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "184": {
-    "name": "Coupler",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3951,11 +3951,6 @@
   },
   "2362": {
     "name": "Tile drill bits",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "2788": {
-    "name": "Tweezers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
