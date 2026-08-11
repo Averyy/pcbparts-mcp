@@ -1,91 +1,91 @@
 {
   "version": "1.0",
-  "scraped_at": "2026-08-10T14:05:20.645464+00:00",
+  "scraped_at": "2026-08-11T14:01:39.872132+00:00",
   "stock_threshold": 10,
-  "total_parts": 612896,
+  "total_parts": 612802,
   "categories": {
     "capacitors": {
       "id": 2,
       "name": "Capacitors",
-      "count": 53538,
+      "count": 53449,
       "status": "complete"
     },
     "power-management-pmic": {
       "id": 9,
       "name": "Power Management (PMIC)",
-      "count": 32790,
+      "count": 32728,
       "status": "complete"
     },
     "iot-communication-modules": {
       "id": 31,
       "name": "IoT/Communication Modules",
-      "count": 1385,
+      "count": 1383,
       "status": "complete"
     },
     "transistors-thyristors": {
       "id": 5,
       "name": "Transistors/Thyristors",
-      "count": 44137,
+      "count": 44130,
       "status": "complete"
     },
     "connectors": {
       "id": 8,
       "name": "Connectors",
-      "count": 121005,
+      "count": 121226,
       "status": "complete"
     },
     "sensors": {
       "id": 22,
       "name": "Sensors",
-      "count": 4502,
+      "count": 4499,
       "status": "complete"
     },
     "inductors-coils-chokes": {
       "id": 3,
       "name": "Inductors, Coils, Chokes",
-      "count": 41811,
+      "count": 41796,
       "status": "complete"
     },
     "circuit-protection": {
       "id": 11,
       "name": "Circuit Protection",
-      "count": 39768,
+      "count": 39759,
       "status": "complete"
     },
     "interface": {
       "id": 27,
       "name": "Interface",
-      "count": 8221,
+      "count": 8205,
       "status": "complete"
     },
     "rf-and-wireless": {
       "id": 33,
       "name": "RF and Wireless",
-      "count": 3457,
+      "count": 3451,
       "status": "complete"
     },
     "data-acquisition": {
       "id": 29,
       "name": "Data Acquisition",
-      "count": 3383,
+      "count": 3370,
       "status": "complete"
     },
     "memory": {
       "id": 21,
       "name": "Memory",
-      "count": 3369,
+      "count": 3383,
       "status": "complete"
     },
     "resistors": {
       "id": 1,
       "name": "Resistors",
-      "count": 102852,
+      "count": 102872,
       "status": "complete"
     },
     "signal-isolation-devices": {
       "id": 63,
       "name": "Signal Isolation Devices",
-      "count": 1402,
+      "count": 1396,
       "status": "complete"
     },
     "relays": {
@@ -97,13 +97,13 @@
     "amplifiers-comparators": {
       "id": 23,
       "name": "Amplifiers/Comparators",
-      "count": 11149,
+      "count": 11125,
       "status": "complete"
     },
     "audio-products-vibration-motors": {
       "id": 10,
       "name": "Audio Products / Vibration Motors",
-      "count": 2262,
+      "count": 2261,
       "status": "complete"
     },
     "building-materials-building-hardware": {
@@ -115,7 +115,7 @@
     "clock-timing": {
       "id": 20,
       "name": "Clock/Timing",
-      "count": 1349,
+      "count": 1342,
       "status": "complete"
     },
     "consumables-and-auxiliary-materials": {
@@ -127,7 +127,7 @@
     "crystals-oscillators-resonators": {
       "id": 7,
       "name": "Crystals, Oscillators, Resonators",
-      "count": 16642,
+      "count": 16628,
       "status": "complete"
     },
     "development-boards-tools": {
@@ -145,7 +145,7 @@
     "displays": {
       "id": 65,
       "name": "Displays",
-      "count": 613,
+      "count": 608,
       "status": "complete"
     },
     "educational-kits": {
@@ -157,7 +157,7 @@
     "embedded-processors-controllers": {
       "id": 18,
       "name": "Embedded Processors & Controllers",
-      "count": 7709,
+      "count": 7702,
       "status": "complete"
     },
     "evaluation-boards": {
@@ -169,7 +169,7 @@
     "filters": {
       "id": 34,
       "name": "Filters",
-      "count": 9197,
+      "count": 9179,
       "status": "complete"
     },
     "gallium-nitride-gan-devices": {
@@ -193,7 +193,7 @@
     "hardware-fasteners": {
       "id": 47,
       "name": "Hardware Fasteners",
-      "count": 1580,
+      "count": 1579,
       "status": "complete"
     },
     "industrial-control-electrical": {
@@ -223,25 +223,25 @@
     "led-drivers": {
       "id": 28,
       "name": "LED Drivers",
-      "count": 2260,
+      "count": 2259,
       "status": "complete"
     },
     "logic": {
       "id": 19,
       "name": "Logic",
-      "count": 10129,
+      "count": 10115,
       "status": "complete"
     },
     "magnetic-sensors": {
       "id": 70,
       "name": "Magnetic Sensors",
-      "count": 2189,
+      "count": 2180,
       "status": "complete"
     },
     "motor-driver-ics": {
       "id": 69,
       "name": "Motor Driver ICs",
-      "count": 3487,
+      "count": 3481,
       "status": "complete"
     },
     "office-daily-use": {
@@ -259,13 +259,13 @@
     "optoelectronics": {
       "id": 16,
       "name": "Optoelectronics",
-      "count": 8470,
+      "count": 8463,
       "status": "complete"
     },
     "optoisolators": {
       "id": 64,
       "name": "Optoisolators",
-      "count": 4026,
+      "count": 4024,
       "status": "complete"
     },
     "other": {
@@ -289,13 +289,13 @@
     "power-modules": {
       "id": 68,
       "name": "Power Modules",
-      "count": 6208,
+      "count": 6201,
       "status": "complete"
     },
     "silicon-carbide-sic-devices": {
       "id": 66,
       "name": "Silicon Carbide (SiC) Devices",
-      "count": 1393,
+      "count": 1394,
       "status": "complete"
     },
     "sourcing-parts": {
@@ -307,7 +307,7 @@
     "switches": {
       "id": 14,
       "name": "Switches",
-      "count": 19669,
+      "count": 19668,
       "status": "complete"
     },
     "terminal": {
@@ -325,7 +325,7 @@
     "wires-and-cables": {
       "id": 61,
       "name": "Wires and cables",
-      "count": 929,
+      "count": 931,
       "status": "complete"
     }
   }

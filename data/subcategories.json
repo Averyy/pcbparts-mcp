@@ -2539,6 +2539,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "3742": {
+    "name": "Batter Holder",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "1303": {
     "name": "Battery accessories",
     "category_id": 46,
@@ -2551,6 +2556,11 @@
   },
   "3739": {
     "name": "Battery holder base",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "3743": {
+    "name": "Battery Snap",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
