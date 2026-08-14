@@ -1544,6 +1544,11 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
+  "3398": {
+    "name": "Cleaner",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -3624,6 +3629,11 @@
     "category_id": 35,
     "category_name": "Others"
   },
+  "1728": {
+    "name": "Developed by Channel Personnel",
+    "category_id": 35,
+    "category_name": "Others"
+  },
   "1724": {
     "name": "HWDG",
     "category_id": 35,
@@ -3921,11 +3931,6 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "159": {
-    "name": "Crimping pliers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
