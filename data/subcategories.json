@@ -1544,8 +1544,13 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
-  "3398": {
-    "name": "Cleaner",
+  "3561": {
+    "name": "electric hair dryer",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
+  "3647": {
+    "name": "ice pack",
     "category_id": 53,
     "category_name": "Cleaning/daily necessities"
   },
@@ -2359,6 +2364,11 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
+  "3604": {
+    "name": "Phillips hex washer head machine screw with recess",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
   "3607": {
     "name": "Phillips pan head washer self-drilling screw",
     "category_id": 47,
@@ -2501,6 +2511,16 @@
   },
   "758": {
     "name": "Torsion spring",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "3608": {
+    "name": "Torx Flat Head Machine Screw",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "3600": {
+    "name": "Torx Machine Screw with Plain & Spring Washer Combo",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -3429,6 +3449,11 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "3531": {
+    "name": "Network Switch",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3441,6 +3466,11 @@
   },
   "3275": {
     "name": "Power cord",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3591": {
+    "name": "Projector",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3459,6 +3489,11 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
+  "3589": {
+    "name": "Smartwatch",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1317": {
     "name": "Socket panel box",
     "category_id": 49,
@@ -3471,6 +3506,11 @@
   },
   "3717": {
     "name": "TF card",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3500": {
+    "name": "Webcam",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3621,6 +3661,11 @@
   },
   "2244": {
     "name": "Abolished Device",
+    "category_id": 35,
+    "category_name": "Others"
+  },
+  "1716": {
+    "name": "BOM allocation",
     "category_id": 35,
     "category_name": "Others"
   },
@@ -3946,6 +3991,11 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "157": {
+    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
