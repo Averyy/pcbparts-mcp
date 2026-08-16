@@ -1544,16 +1544,6 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
-  "3561": {
-    "name": "electric hair dryer",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
-  "3647": {
-    "name": "ice pack",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -2769,6 +2759,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "3748": {
+    "name": "Micro blower",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "1218": {
     "name": "Micro switch",
     "category_id": 46,
@@ -3449,11 +3444,6 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3531": {
-    "name": "Network Switch",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3466,11 +3456,6 @@
   },
   "3275": {
     "name": "Power cord",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3591": {
-    "name": "Projector",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3489,11 +3474,6 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
-  "3589": {
-    "name": "Smartwatch",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1317": {
     "name": "Socket panel box",
     "category_id": 49,
@@ -3506,11 +3486,6 @@
   },
   "3717": {
     "name": "TF card",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3500": {
-    "name": "Webcam",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3991,11 +3966,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "157": {
-    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
