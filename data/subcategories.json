@@ -2464,6 +2464,11 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
+  "884": {
+    "name": "Straight pipe/straight connector",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
   "1674": {
     "name": "Studs & Screws",
     "category_id": 47,
@@ -3959,6 +3964,11 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "156": {
+    "name": "Flat head screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "882": {
     "name": "Grease gun",
     "category_id": 50,
@@ -3966,6 +3976,11 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "157": {
+    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
