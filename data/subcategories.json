@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -3729,6 +3724,11 @@
     "category_id": 55,
     "category_name": "Pneumatic/hydraulic/valves/pumps"
   },
+  "3695": {
+    "name": "water meter",
+    "category_id": 55,
+    "category_name": "Pneumatic/hydraulic/valves/pumps"
+  },
   "3426": {
     "name": "Welded Elbow",
     "category_id": 55,
@@ -3964,11 +3964,6 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "156": {
-    "name": "Flat head screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "882": {
     "name": "Grease gun",
     "category_id": 50,
@@ -3976,11 +3971,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "157": {
-    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
