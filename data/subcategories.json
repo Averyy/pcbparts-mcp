@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1539,6 +1544,11 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
+  "3398": {
+    "name": "Cleaner",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -2576,6 +2586,11 @@
   },
   "3743": {
     "name": "Battery Snap",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "3744": {
+    "name": "Battery Spring Contact",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
