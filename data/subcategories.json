@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1544,11 +1539,6 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
-  "3398": {
-    "name": "Cleaner",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -1611,6 +1601,11 @@
   },
   "3456": {
     "name": "Silicone pad",
+    "category_id": 59,
+    "category_name": "Consumables and auxiliary materials"
+  },
+  "440": {
+    "name": "Thermal conductive sheet/thermal conductive cap",
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
@@ -3951,6 +3946,11 @@
   },
   "3377": {
     "name": "SMD Quick Terminal",
+    "category_id": 3357,
+    "category_name": "Terminal"
+  },
+  "3370": {
+    "name": "Solder Ring Terminal",
     "category_id": 3357,
     "category_name": "Terminal"
   },
