@@ -1539,11 +1539,6 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
-  "3489": {
-    "name": "blanket",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -3459,11 +3454,6 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "586": {
-    "name": "Computer bag/T-shirt",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3981,16 +3971,6 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "159": {
-    "name": "Crimping pliers",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "934": {
-    "name": "Electric screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
