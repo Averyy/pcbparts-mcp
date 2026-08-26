@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -2009,6 +2004,11 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
+  "3671": {
+    "name": "Electronic Dry Cabinet",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -3459,6 +3459,11 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "3587": {
+    "name": "Aromatherapy",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3991,6 +3996,11 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "1757": {
+    "name": "Palm screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
