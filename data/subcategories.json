@@ -1514,6 +1514,11 @@
     "category_id": 10,
     "category_name": "Audio Products / Vibration Motors"
   },
+  "1935": {
+    "name": "Corner guard",
+    "category_id": 62,
+    "category_name": "Building materials / Building hardware"
+  },
   "1582": {
     "name": "Decorative panel",
     "category_id": 62,
@@ -2001,11 +2006,6 @@
   },
   "2621": {
     "name": "Cable Tie",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
-  "3671": {
-    "name": "Electronic Dry Cabinet",
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
@@ -3459,11 +3459,6 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3587": {
-    "name": "Aromatherapy",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3999,11 +3994,6 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "1757": {
-    "name": "Palm screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "3730": {
     "name": "Soldering Iron Handle",
     "category_id": 50,
@@ -4026,6 +4016,11 @@
   },
   "2362": {
     "name": "Tile drill bits",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "2788": {
+    "name": "Tweezers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
