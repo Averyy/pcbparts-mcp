@@ -1514,11 +1514,6 @@
     "category_id": 10,
     "category_name": "Audio Products / Vibration Motors"
   },
-  "1935": {
-    "name": "Corner guard",
-    "category_id": 62,
-    "category_name": "Building materials / Building hardware"
-  },
   "1582": {
     "name": "Decorative panel",
     "category_id": 62,
@@ -1598,6 +1593,16 @@
     "name": "Timers / Counters",
     "category_id": 20,
     "category_name": "Clock/Timing"
+  },
+  "110": {
+    "name": "Chip test socket",
+    "category_id": 59,
+    "category_name": "Consumables and auxiliary materials"
+  },
+  "915": {
+    "name": "Other auxiliary materials",
+    "category_id": 59,
+    "category_name": "Consumables and auxiliary materials"
   },
   "87": {
     "name": "Plastic shell",
@@ -4016,11 +4021,6 @@
   },
   "2362": {
     "name": "Tile drill bits",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "2788": {
-    "name": "Tweezers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
