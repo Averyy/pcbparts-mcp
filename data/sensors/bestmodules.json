@@ -2,10 +2,10 @@
   "source": "bestmodules",
   "source_url": "https://www.bestmodulescorp.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-08-01T07:19:38.884603+00:00",
+  "scraped_at": "2026-09-01T11:31:19.174319+00:00",
   "stats": {
-    "sensor_count": 85,
-    "total_pages_checked": 91,
+    "sensor_count": 84,
+    "total_pages_checked": 90,
     "skipped": 1,
     "errors": 0
   },
@@ -545,24 +545,6 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf"
-    },
-    {
-      "id": "bm42s2022",
-      "name": "BM42S2022",
-      "measures": [
-        "temperature"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.bestmodulescorp.com/en/bm42s2022-1.html"
-      ],
-      "description": "Thermopile Digital Sensor BM42S2022-1. Temperature measurement range: -20~380℃. Temperature: Resolution: 0.1℃; Accuracy: ±2℃ or ±2%",
-      "protocol": [
-        "i2c"
-      ],
-      "manufacturer": "Holtek",
-      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
-      "type": "thermopile"
     },
     {
       "id": "bm42s3021",

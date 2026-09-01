@@ -2,14 +2,14 @@
   "source": "dfrobot",
   "source_url": "https://github.com/DFRobot",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-08-01T07:20:14.110130+00:00",
+  "scraped_at": "2026-09-01T11:31:59.480873+00:00",
   "stats": {
-    "sensor_count": 84,
-    "total_repos": 487,
-    "dfrobot_repos": 241,
-    "skipped_non_sensor": 102,
+    "sensor_count": 86,
+    "total_repos": 492,
+    "dfrobot_repos": 245,
+    "skipped_non_sensor": 104,
     "skipped_no_ic": 50,
-    "library_properties_fetched": 76
+    "library_properties_fetched": 77
   },
   "sensors": [
     {
@@ -355,6 +355,18 @@
         "https://github.com/DFRobot/DFRobot_BMV080"
       ],
       "description": "Sensors"
+    },
+    {
+      "id": "bmv080gravity",
+      "name": "BMV080_Gravity",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_BMV080_Gravity"
+      ],
+      "description": "Read PM1.0, PM2.5 and PM10 data from DFRobot BMV080 Gravity module firmware."
     },
     {
       "id": "bmx160",
@@ -942,6 +954,15 @@
         "https://github.com/DFRobot/DFRobot_QMC5883"
       ],
       "description": "Electronic compass drive library(SKU:SEN0140)."
+    },
+    {
+      "id": "rk182xexamples",
+      "name": "RK182x_Examples",
+      "measures": [],
+      "platforms": [],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_RK182x_Examples"
+      ]
     },
     {
       "id": "scd4x",

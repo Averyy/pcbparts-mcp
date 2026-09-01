@@ -2,13 +2,13 @@
   "source": "sparkfun",
   "source_url": "https://www.sparkfun.com/graphql",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-08-01T07:19:43.750370+00:00",
+  "scraped_at": "2026-09-01T11:31:22.574708+00:00",
   "stats": {
-    "sensor_count": 123,
-    "total_products": 406,
-    "skipped_sku_prefix": 55,
+    "sensor_count": 125,
+    "total_products": 411,
+    "skipped_sku_prefix": 56,
     "skipped_pattern": 64,
-    "skipped_no_ic": 113
+    "skipped_no_ic": 115
   },
   "sensors": [
     {
@@ -64,6 +64,21 @@
         "https://www.sparkfun.com/sparkfun-single-lead-heart-rate-monitor-ad8232.html"
       ],
       "description": "The AD8232 SparkFun Single Lead Heart Rate Monitor is a cost-effective board used to measure the electrical activity of the heart."
+    },
+    {
+      "id": "ade7953",
+      "name": "SparkFun Non-Invasive Current Sensor - ADE7953 (Qwiic)",
+      "measures": [
+        "current"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-non-invasive-current-sensor-ade7953-qwiic.html"
+      ],
+      "description": "Measure AC power consumption without cutting wires using this highly accurate, non-invasive Qwiic current sensor.",
+      "protocol": [
+        "i2c"
+      ]
     },
     {
       "id": "adxl313",
@@ -1567,6 +1582,17 @@
         "https://www.sparkfun.com/sparkfun-ambient-light-sensor-breakout-temt6000.html"
       ],
       "description": "Get a near-human-eye perspective with the TEMT6000 sensor, offering a simple analog output with a peak spectral sensitivity of 570nm."
+    },
+    {
+      "id": "temt6000x01",
+      "name": "Ambient Light Sensor - TEMT6000x01",
+      "measures": [
+        "light"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/ambient-light-sensor-temt6000x01.html"
+      ]
     },
     {
       "id": "tmag5273",

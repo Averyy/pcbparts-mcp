@@ -2,12 +2,12 @@
   "source": "arduino",
   "source_url": "https://downloads.arduino.cc/libraries/library_index.json",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-08-01T06:51:45.340404+00:00",
+  "scraped_at": "2026-09-01T11:04:33.805571+00:00",
   "stats": {
-    "sensor_count": 708,
-    "total_libs_checked": 1938,
-    "skipped_no_ic": 451,
-    "skipped_nonsensor": 144,
+    "sensor_count": 718,
+    "total_libs_checked": 1960,
+    "skipped_no_ic": 455,
+    "skipped_nonsensor": 146,
     "skipped_no_measures": 117
   },
   "sensors": [
@@ -2993,6 +2993,21 @@
       "description": "Lightweight Arduino library for the CQ01 CO2 sensor."
     },
     {
+      "id": "cs1237",
+      "name": "CS123x",
+      "measures": [
+        "weight"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/FMazz97/CS123x.git"
+      ],
+      "description": "Arduino library for Chipsea CS1237 and CS1238 24-bit differential ADCs (load cells, weight scales, bridge sensors)."
+    },
+    {
       "id": "cs5464",
       "name": "CS5464 Arduino",
       "measures": [
@@ -3310,6 +3325,21 @@
       ],
       "description": "Minimal, non-blocking, DS18B20 sensor library for ESP32 using RMT pheripheral, supports multiple sensors, lightweight, no dependencies, will need Arduino esp32 3.x based on IDF 5.X",
       "manufacturer": "Maxim"
+    },
+    {
+      "id": "ds3501",
+      "name": "DS3501",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/RobTillaart/DS3501.git"
+      ],
+      "description": "Arduino library for the DS3501, I2C, 7-bit, non-volatile, digital potentiometer. Temperature control."
     },
     {
       "id": "ds7505",
@@ -4714,9 +4744,10 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/tdk-invn-oss/pressure.arduino.ICP201XX.git"
+        "https://github.com/tdk-invn-oss/pressure.arduino.ICP201XX.git",
+        "https://github.com/PTSolns/I2Connect_ICP-20100.git"
       ],
       "description": "Allows to read pressure and temperature data from an ICP201xx Invensense pressure sensor (ICP20100,...) and estimates altitude or depth.",
       "manufacturer": "InvenSense"
@@ -4843,6 +4874,22 @@
         "https://github.com/stm32duino/X-NUCLEO-IKS02A1-Audio.git"
       ],
       "description": "Digital microphone IMP34DT05."
+    },
+    {
+      "id": "imu406",
+      "name": "IMU406",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/StrayerSQH/IMU406.git"
+      ],
+      "description": "Driver for the IMU406 serial (UART TTL) attitude sensor: BCD roll/pitch/yaw plus 3-axis accel & gyro."
     },
     {
       "id": "imu9dof",
@@ -5107,6 +5154,21 @@
       "description": "Arduino library for InnoSenT iSYS4001 radar sensor."
     },
     {
+      "id": "it7259",
+      "name": "IT7259_Touch",
+      "measures": [
+        "pressure"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/FT-tele/IT7259_Touch_driver.git"
+      ],
+      "description": "Stable IT7259 driver (12-bit coords per datasheet, STOP-only I2C)."
+    },
+    {
       "id": "jobatsl2561",
       "name": "Joba Tsl2561 Library",
       "measures": [
@@ -5176,9 +5238,10 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/ldab/KXTJ3-1057.git"
+        "https://github.com/ldab/KXTJ3-1057.git",
+        "https://github.com/PTSolns/I2Connect_KXTJ3-1057.git"
       ],
       "description": "Motion detection without bells and whistles, simply works, low power."
     },
@@ -5243,6 +5306,21 @@
       "description": "Arduino library for TF-LC02 distance sensor."
     },
     {
+      "id": "ld2402",
+      "name": "LD2402",
+      "measures": [
+        "proximity"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/wedsamuel1230/LD2402.git"
+      ],
+      "description": "A library for the HLK-LD2402 presence sensor."
+    },
+    {
       "id": "ld2410",
       "name": "ld2410",
       "measures": [
@@ -5274,6 +5352,22 @@
         "https://github.com/tobiastl/LD2412.git"
       ],
       "description": "A library for the HLK-LD2412 human presence sensor."
+    },
+    {
+      "id": "ld2420",
+      "name": "LD2420HumanMotion",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/viniciusczanini/LD2420HumanMotion.git"
+      ],
+      "description": "Reliable human motion detection and complete configuration for HLK-LD2420 radar sensors."
     },
     {
       "id": "ld2450",
@@ -6954,6 +7048,21 @@
       "description": "ML8511 - UV sensor - library for Arduino"
     },
     {
+      "id": "mlx90316",
+      "name": "MLX90316",
+      "measures": [
+        "rotation"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/RobTillaart/MLX90316.git"
+      ],
+      "description": "Arduino library for SPI based MLX90316 rotary encoder."
+    },
+    {
       "id": "mlx90377",
       "name": "MLX90377_SENT",
       "measures": [
@@ -7347,7 +7456,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 18,
+      "popularity": 19,
       "urls": [
         "https://github.com/Tockn/MPU6050_tockn.git",
         "https://github.com/ElectronicCats/mpu6050.git",
@@ -8011,6 +8120,22 @@
       "manufacturer": "Bosch"
     },
     {
+      "id": "pac1711",
+      "name": "PAC1xxx",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/jobitjoseph/PAC1xxx.git"
+      ],
+      "description": "Arduino library for Microchip PAC1711, PAC1721, PAC1761, PAC1811, PAC1821 and PAC1861 power monitors.",
+      "manufacturer": "Microchip"
+    },
+    {
       "id": "paj7620",
       "name": "RevEng PAJ7620",
       "measures": [
@@ -8555,17 +8680,18 @@
     },
     {
       "id": "rp2040",
-      "name": "PicoEncoder",
+      "name": "PicoCamera",
       "measures": [
         "rotation"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/pmarques-dev/PicoEncoder.git",
-        "https://github.com/Protocentral/protocentral_healthypi_5_firmware.git"
+        "https://github.com/Protocentral/protocentral_healthypi_5_firmware.git",
+        "https://github.com/umeiko/PicoCamera.git"
       ],
       "description": "Dual-core NEXT runtime and board support for the ProtoCentral HealthyPi 5 (RP2040)."
     },
@@ -10314,11 +10440,12 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/RobTillaart/TEMT6000.git"
+        "https://github.com/RobTillaart/TEMT6000.git",
+        "https://github.com/UNIT-Electronics-MX/unit_devlab_temt6000_library.git"
       ],
-      "description": "Arduino library for analog TEMT6000 light / LUX sensor."
+      "description": "Arduino library for TEMT6000 using direct I2C register access."
     },
     {
       "id": "tfa433receiver",
@@ -10479,7 +10606,7 @@
     },
     {
       "id": "tmf8801",
-      "name": "107-Arduino-TMF8801",
+      "name": "Adafruit TMF8801",
       "measures": [
         "distance",
         "tof"
@@ -10487,10 +10614,11 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/107-systems/107-Arduino-TMF8801.git",
-        "https://github.com/sparkfun/SparkFun_TMF8801_Arduino_Library.git"
+        "https://github.com/sparkfun/SparkFun_TMF8801_Arduino_Library.git",
+        "https://github.com/adafruit/Adafruit_TMF8801.git"
       ],
       "description": "Configures and communicates with the SparkFun Qwiic TMF-8801 Time-of-flight sensor."
     },
@@ -10692,6 +10820,21 @@
       "manufacturer": "Texas Instruments"
     },
     {
+      "id": "ts20",
+      "name": "TS20",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/todbot/TS20_Arduino.git"
+      ],
+      "description": "Arduino library for the TS20 20-channel capacitive touch sensor"
+    },
+    {
       "id": "ts4231",
       "name": "TS4231 Library",
       "measures": [
@@ -10798,6 +10941,21 @@
         "https://github.com/Seeed-Studio/Grove_Digital_Light_Sensor.git"
       ],
       "description": "An Arduino Library for the TSL2561 Luminosity Sensor Breakout from SparkFun Electronics."
+    },
+    {
+      "id": "tsl2585",
+      "name": "Adafruit TSL2585",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/adafruit/Adafruit_TSL2585.git"
+      ],
+      "description": "Arduino library for the TSL2585 ambient light, infrared, and UVA sensor."
     },
     {
       "id": "tsl2591",
