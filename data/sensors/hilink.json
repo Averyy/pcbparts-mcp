@@ -2,10 +2,10 @@
   "source": "hilink",
   "source_url": "https://www.hlktech.net/index.php?id=product",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-08-01T06:55:19.519264+00:00",
+  "scraped_at": "2026-09-01T11:07:52.121949+00:00",
   "stats": {
-    "sensor_count": 35,
-    "total_products": 66,
+    "sensor_count": 39,
+    "total_products": 74,
     "skipped_non_sensor": 21,
     "errors": 0
   },
@@ -364,6 +364,23 @@
       "type": "radar"
     },
     {
+      "id": "ld2417",
+      "name": "LD2417",
+      "measures": [
+        "distance",
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1524",
+        "https://www.hlktech.net/index.php?id=1523"
+      ],
+      "description": "24GHz Hi-link 24G vehicle status sensing radar module LD2417 vehicle ranging and speed measurement millimeter wave sensor module kit/testboard",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
       "id": "ld2423",
       "name": "LD2423",
       "measures": [
@@ -441,6 +458,25 @@
         "https://www.hlktech.net/index.php?id=1516"
       ],
       "description": "24GHz HI-LINK 24G Human Movement Tracking Trajectory Radar Module LD2453 One Transmitter Two Receivers Multi Target Tracking HLK-LD2453 Kits",
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld2454",
+      "name": "LD2454",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1541",
+        "https://www.hlktech.net/index.php?id=1540"
+      ],
+      "description": "24GHz Hi-link 24G one transmitter two receivers multi-target human movement trajectory tracking LD2454 radar sensor module with testboard",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -564,6 +600,45 @@
         "https://www.hlktech.net/index.php?id=1293"
       ],
       "description": "60GHz HLK-LD6002H 60G infant respiratory and heartbeat detection radar module non-contact intelligent monitoring young child",
+      "protocol": [
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6003b",
+      "name": "LD6003B",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1553",
+        "https://www.hlktech.net/index.php?id=1552"
+      ],
+      "description": "60GHz Hi-link 60G millimeter wave radar multi-target human presence induction LD6003B high-precision serial communication testboard+module kits",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
+      "manufacturer": "Hi-Link",
+      "type": "radar"
+    },
+    {
+      "id": "ld6003d",
+      "name": "LD6003D",
+      "measures": [
+        "motion",
+        "radar"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.hlktech.net/index.php?id=1555",
+        "https://www.hlktech.net/index.php?id=1554"
+      ],
+      "description": "60GHz Hilink 60G millimeter wave radar 2D multi-target human trajectory tracking induction LD6003D two transmitter two receiver testboard+module",
       "protocol": [
         "uart"
       ],

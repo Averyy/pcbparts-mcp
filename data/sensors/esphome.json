@@ -2,12 +2,12 @@
   "source": "esphome",
   "source_url": "https://github.com/esphome/esphome",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-08-01T06:51:48.401978+00:00",
+  "scraped_at": "2026-09-01T11:04:37.593282+00:00",
   "stats": {
-    "sensor_count": 185,
-    "total_components_checked": 298,
+    "sensor_count": 187,
+    "total_components_checked": 301,
     "skipped_non_sensor": 91,
-    "skipped_no_measures": 3
+    "skipped_no_measures": 4
   },
   "sensors": [
     {
@@ -1710,6 +1710,22 @@
       ]
     },
     {
+      "id": "ld6002b",
+      "name": "ld6002b",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ld6002b.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
       "id": "lm75b",
       "name": "lm75b",
       "measures": [
@@ -2706,6 +2722,27 @@
       ],
       "urls": [
         "https://esphome.io/components/sensor/sfa30.html"
+      ],
+      "protocol": [
+        "i2c"
+      ],
+      "i2c_address": [
+        "0x5d"
+      ]
+    },
+    {
+      "id": "sfa40",
+      "name": "sfa40",
+      "measures": [
+        "gas",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/sfa40.html"
       ],
       "protocol": [
         "i2c"

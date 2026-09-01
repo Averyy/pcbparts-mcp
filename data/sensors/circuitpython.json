@@ -2,10 +2,10 @@
   "source": "circuitpython",
   "source_url": "https://docs.circuitpython.org/projects/bundle/en/latest/drivers.html",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-08-01T06:51:49.123240+00:00",
+  "scraped_at": "2026-09-01T11:04:38.299963+00:00",
   "stats": {
     "sensor_count": 122,
-    "total_entries_checked": 565,
+    "total_entries_checked": 568,
     "skipped_no_measures": 1
   },
   "sensors": [

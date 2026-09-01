@@ -2,12 +2,12 @@
   "source": "zephyr",
   "source_url": "https://github.com/zephyrproject-rtos/zephyr",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-08-01T06:51:51.105329+00:00",
+  "scraped_at": "2026-09-01T11:04:41.642378+00:00",
   "stats": {
-    "sensor_count": 235,
-    "total_bindings": 479,
+    "sensor_count": 240,
+    "total_bindings": 489,
     "skipped_internal": 46,
-    "skipped_bus_variant": 71,
+    "skipped_bus_variant": 72,
     "skipped_no_measures": 30
   },
   "sensors": [
@@ -187,6 +187,24 @@
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adt7422.html"
       ],
       "description": "ADT7422 16-Bit digital I2C temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adxl313",
+      "name": "ADXL313",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adxl313.html"
+      ],
+      "description": "ADXL313 3-axis I2C accelerometer. When setting the accelerometer DTS properties, include adxl313.h and use the macros defined there. SENSOR_ATTR_FULL_SCALE uses integer g via sensor_ms2_to_g(). Bec...",
       "protocol": [
         "i2c"
       ],
@@ -578,6 +596,20 @@
         "i2c"
       ],
       "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "bcm283xvcthermal",
+      "name": "BCM283XVCTHERMAL",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/raspberrypi,bcm283x-vc-thermal.html"
+      ],
+      "description": "Raspberry Pi BCM283x SoC die-temperature sensor. The SoC temperature is read through the VideoCore firmware GET_TEMPERATURE property tag -- the same source as `vcgencmd measure_temp`. The sensor ow..."
     },
     {
       "id": "bh1730",
@@ -1696,6 +1728,46 @@
       "manufacturer": "InvenSense"
     },
     {
+      "id": "icm56622",
+      "name": "ICM56622",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm56622.html"
+      ],
+      "description": "ICM56622 High-precision 6-axis motion tracking device. When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in devicetree, you may include icm566xx.h and use ...",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
+      "id": "icm56686",
+      "name": "ICM56686",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm56686.html"
+      ],
+      "description": "ICM56686 High-precision 6-axis motion tracking device. When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in devicetree, you may include icm566xx.h and use ...",
+      "protocol": [
+        "i2c",
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
       "id": "icp101xx",
       "name": "ICP101XX",
       "measures": [
@@ -2699,6 +2771,24 @@
         "i2c"
       ],
       "manufacturer": "STMicroelectronics"
+    },
+    {
+      "id": "ltc4286",
+      "name": "LTC4286",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,ltc4286.html"
+      ],
+      "description": "LTC4286 High Power Positive Hot-Swap Controller with Power Monitoring Telemetry",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Analog Devices"
     },
     {
       "id": "ltr329",

@@ -2,10 +2,10 @@
   "source": "tasmota",
   "source_url": "https://tasmota.github.io/docs/Supported-Peripherals/",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-08-01T06:51:49.425759+00:00",
+  "scraped_at": "2026-09-01T11:04:38.826923+00:00",
   "stats": {
     "sensor_count": 103,
-    "total_rows_checked": 146,
+    "total_rows_checked": 147,
     "skipped_non_sensor": 35,
     "skipped_no_measures": 0
   },
