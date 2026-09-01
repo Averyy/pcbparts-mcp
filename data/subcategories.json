@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1544,6 +1539,21 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
+  "1571": {
+    "name": "waterproof membrane",
+    "category_id": 62,
+    "category_name": "Building materials / Building hardware"
+  },
+  "3506": {
+    "name": "air purifier",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
+  "3380": {
+    "name": "Deworming agent",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -2804,6 +2814,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "572": {
+    "name": "Motor starter",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "3356": {
     "name": "NanocrystallineMagneticRing",
     "category_id": 46,
@@ -3469,6 +3484,11 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "3462": {
+    "name": "folding bed",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3739,6 +3759,11 @@
     "category_id": 55,
     "category_name": "Pneumatic/hydraulic/valves/pumps"
   },
+  "3434": {
+    "name": "Pipe Elbow",
+    "category_id": 55,
+    "category_name": "Pneumatic/hydraulic/valves/pumps"
+  },
   "1247": {
     "name": "Sewage pump",
     "category_id": 55,
@@ -3778,6 +3803,16 @@
     "name": "Isolated Power Modules",
     "category_id": 68,
     "category_name": "Power Modules"
+  },
+  "3643": {
+    "name": "megaphone",
+    "category_id": 56,
+    "category_name": "Safety/fire protection"
+  },
+  "2772": {
+    "name": "Security Equipment",
+    "category_id": 56,
+    "category_name": "Safety/fire protection"
   },
   "2029": {
     "name": "SiC Diodes",
@@ -3994,6 +4029,11 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "156": {
+    "name": "Flat head screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "882": {
     "name": "Grease gun",
     "category_id": 50,
@@ -4001,6 +4041,26 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "1785": {
+    "name": "Other non-standard sockets",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "1757": {
+    "name": "Palm screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "157": {
+    "name": "Phillips screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3550": {
+    "name": "Scraper",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -4024,8 +4084,18 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "1749": {
+    "name": "Star-shaped screwdrivers",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "2362": {
     "name": "Tile drill bits",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3660": {
+    "name": "torque screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
