@@ -1539,21 +1539,6 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
-  "1571": {
-    "name": "waterproof membrane",
-    "category_id": 62,
-    "category_name": "Building materials / Building hardware"
-  },
-  "3506": {
-    "name": "air purifier",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
-  "3380": {
-    "name": "Deworming agent",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -3484,8 +3469,8 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3462": {
-    "name": "folding bed",
+  "2474": {
+    "name": "File section/file frame/file tray/file rack",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3804,16 +3789,6 @@
     "category_id": 68,
     "category_name": "Power Modules"
   },
-  "3643": {
-    "name": "megaphone",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
-  "2772": {
-    "name": "Security Equipment",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
   "2029": {
     "name": "SiC Diodes",
     "category_id": 66,
@@ -4024,13 +3999,13 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "3727": {
-    "name": "Electric Soldering Iron",
+  "117": {
+    "name": "Desoldering pump/desoldering wire",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "156": {
-    "name": "Flat head screwdriver",
+  "3727": {
+    "name": "Electric Soldering Iron",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -4041,26 +4016,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1785": {
-    "name": "Other non-standard sockets",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1757": {
-    "name": "Palm screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "157": {
-    "name": "Phillips screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "3550": {
-    "name": "Scraper",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -4084,18 +4039,8 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "1749": {
-    "name": "Star-shaped screwdrivers",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "2362": {
     "name": "Tile drill bits",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "3660": {
-    "name": "torque screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
