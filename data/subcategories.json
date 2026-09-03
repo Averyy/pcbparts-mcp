@@ -3469,11 +3469,6 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "2474": {
-    "name": "File section/file frame/file tray/file rack",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3996,11 +3991,6 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "117": {
-    "name": "Desoldering pump/desoldering wire",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
