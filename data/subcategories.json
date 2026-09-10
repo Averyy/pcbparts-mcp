@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -2104,6 +2109,11 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
+  "654": {
+    "name": "Cross slot countersunk self-tapping screw",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
   "660": {
     "name": "Cross slot half round head self-tapping screw",
     "category_id": 47,
@@ -2159,6 +2169,11 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
+  "665": {
+    "name": "Cylindrical pins",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
   "817": {
     "name": "Cylindrical roller bearings",
     "category_id": 47,
@@ -2166,6 +2181,11 @@
   },
   "812": {
     "name": "Deep groove ball bearing",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "677": {
+    "name": "Elastic cylindrical pin",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -2196,6 +2216,11 @@
   },
   "3740": {
     "name": "Fields",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "667": {
+    "name": "Flat key",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -2409,6 +2434,11 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
+  "717": {
+    "name": "Self-Clinching Studs",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
   "785": {
     "name": "Shielding clip",
     "category_id": 47,
@@ -2446,6 +2476,11 @@
   },
   "3574": {
     "name": "Solder Terminal",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "664": {
+    "name": "split pin",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -2536,6 +2571,11 @@
   },
   "3598": {
     "name": "Weld Screw",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "726": {
+    "name": "Welding studs",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -3994,6 +4034,11 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "934": {
+    "name": "Electric screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "3727": {
     "name": "Electric Soldering Iron",
     "category_id": 50,
@@ -4006,6 +4051,11 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "157": {
+    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -4056,11 +4106,6 @@
   },
   "3235": {
     "name": "Banana Connectors / Alligator Clips",
-    "category_id": 61,
-    "category_name": "Wires and cables"
-  },
-  "2401": {
-    "name": "Cable passer",
     "category_id": 61,
     "category_name": "Wires and cables"
   },
