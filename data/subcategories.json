@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -4034,11 +4029,6 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "934": {
-    "name": "Electric screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "3727": {
     "name": "Electric Soldering Iron",
     "category_id": 50,
@@ -4051,11 +4041,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "157": {
-    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
