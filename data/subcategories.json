@@ -1689,6 +1689,11 @@
     "category_id": 32,
     "category_name": "Development Boards & Tools"
   },
+  "2203": {
+    "name": "PCBs & Breadboards",
+    "category_id": 32,
+    "category_name": "Development Boards & Tools"
+  },
   "2200": {
     "name": "Programmers, Emulators, and Debuggers",
     "category_id": 32,
@@ -3504,6 +3509,11 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "3418": {
+    "name": "Laser Printer",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -4029,6 +4039,11 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "159": {
+    "name": "Crimping pliers",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "3727": {
     "name": "Electric Soldering Iron",
     "category_id": 50,
@@ -4061,6 +4076,11 @@
   },
   "3734": {
     "name": "Specialty Screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3710": {
+    "name": "Spot Welder",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
