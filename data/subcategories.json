@@ -1599,11 +1599,6 @@
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
-  "915": {
-    "name": "Other auxiliary materials",
-    "category_id": 59,
-    "category_name": "Consumables and auxiliary materials"
-  },
   "87": {
     "name": "Plastic shell",
     "category_id": 59,
@@ -2156,11 +2151,6 @@
   },
   "661": {
     "name": "Cross slot washer head self-drilling self-tapping screw",
-    "category_id": 47,
-    "category_name": "Hardware Fasteners"
-  },
-  "2011": {
-    "name": "Cross Slotted Head Screws",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
