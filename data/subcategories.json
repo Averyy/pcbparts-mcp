@@ -2009,6 +2009,11 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
+  "3671": {
+    "name": "Electronic Dry Cabinet",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -3494,6 +3499,21 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "3571": {
+    "name": "Car Mount",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3230": {
+    "name": "Double-sided tape",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3518": {
+    "name": "Mosquito Killer Lamp",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3531,6 +3551,11 @@
   },
   "3716": {
     "name": "SSD",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "1027": {
+    "name": "Storage products",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
