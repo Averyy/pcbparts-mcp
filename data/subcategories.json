@@ -2694,6 +2694,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "3737": {
+    "name": "Data Collector",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "1106": {
     "name": "DC contactor",
     "category_id": 46,
@@ -3813,6 +3818,11 @@
     "name": "Isolated Power Modules",
     "category_id": 68,
     "category_name": "Power Modules"
+  },
+  "500": {
+    "name": "Safety warning labels",
+    "category_id": 56,
+    "category_name": "Safety/fire protection"
   },
   "2029": {
     "name": "SiC Diodes",
