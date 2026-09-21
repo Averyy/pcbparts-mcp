@@ -2609,6 +2609,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "3745": {
+    "name": "Battery Contact",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "3739": {
     "name": "Battery holder base",
     "category_id": 46,
@@ -3473,6 +3478,11 @@
     "name": "Reed Switches",
     "category_id": 70,
     "category_name": "Magnetic Sensors"
+  },
+  "2690": {
+    "name": "Feeler Gauge",
+    "category_id": 51,
+    "category_name": "Measuring tools"
   },
   "1628": {
     "name": "Brushed DC Motor Drivers",
