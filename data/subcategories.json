@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1596,11 +1601,6 @@
   },
   "110": {
     "name": "Chip test socket",
-    "category_id": 59,
-    "category_name": "Consumables and auxiliary materials"
-  },
-  "439": {
-    "name": "Fixed seat/fixed clamp",
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
@@ -4181,6 +4181,11 @@
   },
   "1473": {
     "name": "Labels, tags",
+    "category_id": 61,
+    "category_name": "Wires and cables"
+  },
+  "3749": {
+    "name": "M8 Cable",
     "category_id": 61,
     "category_name": "Wires and cables"
   },
