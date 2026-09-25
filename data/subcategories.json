@@ -1914,6 +1914,11 @@
     "category_id": 18,
     "category_name": "Embedded Processors & Controllers"
   },
+  "2290": {
+    "name": "Evaluation Boards - MCU",
+    "category_id": 44,
+    "category_name": "Evaluation Boards"
+  },
   "2289": {
     "name": "Evaluation Boards - Power Supply",
     "category_id": 44,
@@ -3173,6 +3178,11 @@
     "name": "Water Quality Analyzer",
     "category_id": 26,
     "category_name": "Instrumentation and meters"
+  },
+  "241": {
+    "name": "Labor protective gloves",
+    "category_id": 42,
+    "category_name": "Labor protection supplies"
   },
   "3688": {
     "name": "Block",
