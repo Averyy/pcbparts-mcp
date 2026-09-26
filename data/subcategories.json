@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -3179,11 +3174,6 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
-  "241": {
-    "name": "Labor protective gloves",
-    "category_id": 42,
-    "category_name": "Labor protection supplies"
-  },
   "3688": {
     "name": "Block",
     "category_id": 54,
@@ -3523,6 +3513,11 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
+  },
+  "3230": {
+    "name": "Double-sided tape",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
