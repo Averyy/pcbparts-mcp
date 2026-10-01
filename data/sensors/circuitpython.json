@@ -2,10 +2,10 @@
   "source": "circuitpython",
   "source_url": "https://docs.circuitpython.org/projects/bundle/en/latest/drivers.html",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-09-01T11:04:38.299963+00:00",
+  "scraped_at": "2026-10-01T12:25:35.816981+00:00",
   "stats": {
-    "sensor_count": 122,
-    "total_entries_checked": 568,
+    "sensor_count": 126,
+    "total_entries_checked": 578,
     "skipped_no_measures": 1
   },
   "sensors": [
@@ -1452,6 +1452,20 @@
       "description": "TCS3430/TCS34303 Tri-Stimulus XYZ Color Sensor"
     },
     {
+      "id": "tcs3448",
+      "name": "tcs3448",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tcs3448/en/latest/"
+      ],
+      "description": "TCS3448 14-Channel Light / Color Sensor"
+    },
+    {
       "id": "tcs34725",
       "name": "tcs34725",
       "measures": [
@@ -1492,6 +1506,36 @@
         "https://docs.circuitpython.org/projects/tmag5273/en/latest/"
       ],
       "description": "TMAG5273 3D Hall Effect Magnetometer"
+    },
+    {
+      "id": "tmf8801",
+      "name": "tmf8801",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tmf8801/en/latest/"
+      ],
+      "description": "TMF8801 Time of Flight Distance Sensor - 20mm to 2.5m"
+    },
+    {
+      "id": "tmf8806",
+      "name": "tmf8806",
+      "measures": [
+        "distance",
+        "tof"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tmf8806/en/latest/"
+      ],
+      "description": "TMF8806 Time of Flight Distance Sensor - 10mm to 5m"
     },
     {
       "id": "tmp006",
@@ -1562,6 +1606,20 @@
         "https://docs.circuitpython.org/projects/tsl2561/en/latest/"
       ],
       "description": "TSL2561 Light Sensor"
+    },
+    {
+      "id": "tsl2585",
+      "name": "tsl2585",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/tsl2585/en/latest/"
+      ],
+      "description": "TSL2585 Digital UVA and Ambient Light Sensor"
     },
     {
       "id": "tsl2591",

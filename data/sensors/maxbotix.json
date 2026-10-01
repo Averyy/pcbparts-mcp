@@ -2,7 +2,7 @@
   "source": "maxbotix",
   "source_url": "https://www.maxbotix.com/products.json?limit=250",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-09-01T11:04:42.092115+00:00",
+  "scraped_at": "2026-10-01T12:25:41.016369+00:00",
   "stats": {
     "sensor_count": 125,
     "total_products": 146,
@@ -322,7 +322,7 @@
       "urls": [
         "https://www.maxbotix.com/products/mb7853-tanksensor"
       ],
-      "description": "NEW! This ultrasonic tank level sensor features a 1mm resolution with a minimum range of 300mm and a 16.5-meter maximum range and operates from 2.5V to 5V. The sensor has the following outputs: RS2...",
+      "description": "This ultrasonic tank level sensor features a 1mm resolution with a minimum range of 300mm and a 16.5-meter maximum range and operates from 2.5V to 5V. The sensor has the following outputs: RS232 & ...",
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -337,7 +337,7 @@
       "urls": [
         "https://www.maxbotix.com/products/mb7854-tanksensor"
       ],
-      "description": "NEW! This ultrasonic tank level sensor features a 1mm resolution with a minimum range of 300mm and a 16.5-meter maximum range and operates from 5.5V to 40V. The sensor has the following outputs: RS...",
+      "description": "This ultrasonic tank level sensor features a 1mm resolution with a minimum range of 300mm and a 16.5-meter maximum range and operates from 5.5V to 40V. The sensor has the following outputs: RS232 &...",
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },

@@ -2,11 +2,11 @@
   "source": "atlas_scientific",
   "source_url": "https://atlas-scientific.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-09-01T11:09:10.004543+00:00",
+  "scraped_at": "2026-10-01T12:30:15.298410+00:00",
   "stats": {
     "sensor_count": 28,
-    "total_products": 94,
-    "skipped": 24,
+    "total_products": 92,
+    "skipped": 23,
     "errors": 0
   },
   "sensors": [
@@ -451,8 +451,7 @@
       ],
       "platforms": [],
       "urls": [
-        "https://atlas-scientific.com/embedded-solutions/surveryor-analog-ph-sensor-meter/",
-        "https://atlas-scientific.com/kits/surveyor-analog-ph-kit/"
+        "https://atlas-scientific.com/embedded-solutions/surveryor-analog-ph-sensor-meter/"
       ],
       "description": "If you are building a machine that requires pH measuring capabilities, but you only need the accuracy found in a low-cost handheld pH meter, the Atlas Scientific Surveyor pH meter might be for you.",
       "manufacturer": "Atlas Scientific"

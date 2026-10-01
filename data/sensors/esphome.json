@@ -2,10 +2,10 @@
   "source": "esphome",
   "source_url": "https://github.com/esphome/esphome",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-09-01T11:04:37.593282+00:00",
+  "scraped_at": "2026-10-01T12:25:35.254122+00:00",
   "stats": {
-    "sensor_count": 187,
-    "total_components_checked": 301,
+    "sensor_count": 194,
+    "total_components_checked": 308,
     "skipped_non_sensor": 91,
     "skipped_no_measures": 4
   },
@@ -750,6 +750,22 @@
       ]
     },
     {
+      "id": "d01",
+      "name": "d01",
+      "measures": [
+        "particulate"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/d01.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
       "id": "dalybms",
       "name": "daly_bms",
       "measures": [
@@ -836,6 +852,22 @@
       ],
       "i2c_address": [
         "0x77"
+      ]
+    },
+    {
+      "id": "ds1603l",
+      "name": "ds1603l",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/ds1603l.html"
+      ],
+      "protocol": [
+        "uart"
       ]
     },
     {
@@ -2038,6 +2070,23 @@
       ]
     },
     {
+      "id": "mk2pvrouter",
+      "name": "mk2pvrouter",
+      "measures": [
+        "temperature",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/mk2pvrouter.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
       "id": "mlx90393",
       "name": "mlx90393",
       "measures": [
@@ -2459,6 +2508,23 @@
       ],
       "i2c_address": [
         "0x63"
+      ]
+    },
+    {
+      "id": "pzem6l24",
+      "name": "pzem6l24",
+      "measures": [
+        "current",
+        "voltage"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/pzem6l24.html"
+      ],
+      "i2c_address": [
+        "0x01"
       ]
     },
     {
@@ -2997,6 +3063,22 @@
       ]
     },
     {
+      "id": "systabus",
+      "name": "systa_bus",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/systa_bus.html"
+      ],
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
       "id": "t6615",
       "name": "t6615",
       "measures": [
@@ -3087,6 +3169,23 @@
       ],
       "i2c_address": [
         "0x28"
+      ]
+    },
+    {
+      "id": "tfluna",
+      "name": "tfluna",
+      "measures": [
+        "distance",
+        "temperature"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/tfluna.html"
+      ],
+      "protocol": [
+        "i2c"
       ]
     },
     {
@@ -3413,6 +3512,20 @@
       ],
       "i2c_address": [
         "0x6d"
+      ]
+    },
+    {
+      "id": "xiaomibodyscale",
+      "name": "xiaomi_body_scale",
+      "measures": [
+        "biometric",
+        "weight"
+      ],
+      "platforms": [
+        "esphome"
+      ],
+      "urls": [
+        "https://esphome.io/components/sensor/xiaomi_body_scale.html"
       ]
     },
     {
