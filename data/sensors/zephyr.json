@@ -2,13 +2,13 @@
   "source": "zephyr",
   "source_url": "https://github.com/zephyrproject-rtos/zephyr",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-09-01T11:04:41.642378+00:00",
+  "scraped_at": "2026-10-01T12:25:40.642694+00:00",
   "stats": {
-    "sensor_count": 240,
-    "total_bindings": 489,
-    "skipped_internal": 46,
+    "sensor_count": 244,
+    "total_bindings": 496,
+    "skipped_internal": 47,
     "skipped_bus_variant": 72,
-    "skipped_no_measures": 30
+    "skipped_no_measures": 31
   },
   "sensors": [
     {
@@ -893,7 +893,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmm350.html"
       ],
-      "description": "Bosch BMM350 Geomagnetic sensor.  See more info at: https://www.bosch-sensortec.com/products/motion-sensors/magnetometers/bmm350/",
+      "description": "Bosch BMM350 Geomagnetic sensor on I3C.  See more info at: https://www.bosch-sensortec.com/products/motion-sensors/magnetometers/bmm350/",
       "protocol": [
         "i2c"
       ],
@@ -1119,6 +1119,21 @@
       ],
       "description": "Maxim DS3231 I2C temperature sensor",
       "manufacturer": "Maxim"
+    },
+    {
+      "id": "emu",
+      "name": "EMU",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/silabs,emu-temp.html"
+      ],
+      "description": "Silicon Labs Series 2 EMU internal die temperature sensor. The Energy Management Unit (EMU) periodically samples the die temperature (every ~250 ms) and stores the result in EMU_TEMP. The value is ...",
+      "manufacturer": "Silicon Labs"
     },
     {
       "id": "ens160",
@@ -3884,6 +3899,24 @@
       "manufacturer": "ams-OSRAM"
     },
     {
+      "id": "tcs34725",
+      "name": "TCS34725",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,tcs34725.html"
+      ],
+      "description": "TCS34725 color sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
       "id": "th02",
       "name": "TH02",
       "measures": [
@@ -4313,6 +4346,24 @@
       "manufacturer": "STMicroelectronics"
     },
     {
+      "id": "vl53l5cx",
+      "name": "VL53L5CX",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,vl53l5cx.html"
+      ],
+      "description": "The VL53L5CX is a Time-of-Flight (TOF), multizone ranging sensor, ranging up to 400 cm and can work at speed up to 60Hz. Multizone distance measurements are possible up to 8x8 zones with a wide 65°...",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "STMicroelectronics"
+    },
+    {
       "id": "wsenhids",
       "name": "WSENHIDS",
       "measures": [
@@ -4462,6 +4513,24 @@
         "i2c"
       ],
       "manufacturer": "Phosense"
+    },
+    {
+      "id": "xgzp68xxd",
+      "name": "XGZP68XXD",
+      "measures": [
+        "pressure",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/cfsensor,xgzp68xxd.html"
+      ],
+      "description": "The XGZP68XXD family of pressure sensors provide digital calibrated pressure and temperature readings over I2C. Sensors exist in ranges from -100kPa to 1500kPa. Both absolute and differential versi...",
+      "protocol": [
+        "i2c"
+      ]
     }
   ]
 }

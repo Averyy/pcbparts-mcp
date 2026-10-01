@@ -2,13 +2,13 @@
   "source": "arduino",
   "source_url": "https://downloads.arduino.cc/libraries/library_index.json",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-09-01T11:04:33.805571+00:00",
+  "scraped_at": "2026-10-01T12:25:31.829089+00:00",
   "stats": {
-    "sensor_count": 718,
-    "total_libs_checked": 1960,
-    "skipped_no_ic": 455,
-    "skipped_nonsensor": 146,
-    "skipped_no_measures": 117
+    "sensor_count": 726,
+    "total_libs_checked": 1990,
+    "skipped_no_ic": 460,
+    "skipped_nonsensor": 148,
+    "skipped_no_measures": 118
   },
   "sensors": [
     {
@@ -455,6 +455,21 @@
       "description": "Use ADC128D818 8-channel I2C ADC for various temperature sensors"
     },
     {
+      "id": "ade7953",
+      "name": "SparkFun ADE7953 Arduino Library",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/sparkfun/SparkFun_ADE7953_Arduino_Library.git"
+      ],
+      "description": "An Arduino library to make use of the Qwiic Current Sensor ADE7953"
+    },
+    {
       "id": "adis16470",
       "name": "Grove 6Axis_Digital_Accelerometer_Gyroscope4_ADIS16470",
       "measures": [
@@ -822,6 +837,22 @@
         "https://github.com/adafruit/Adafruit_AGS02MA.git"
       ],
       "description": "Arduino library for the AGS02MA gas / TVOC sensors in the Adafruit shop"
+    },
+    {
+      "id": "ags10",
+      "name": "MKE_S17_AGS10",
+      "measures": [
+        "gas",
+        "voc"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/Khuuxuanngoc/MKE_S17_AGS10_lib.git"
+      ],
+      "description": "A robust library for the MKE-S17 AGS10 I2C TVOC IAQ sensor."
     },
     {
       "id": "ags2616",
@@ -1375,11 +1406,12 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 3,
+      "popularity": 4,
       "urls": [
         "https://github.com/sparkfun/SparkFun_AS7331_Arduino_Library.git",
         "https://github.com/RobTillaart/AS7331.git",
-        "https://github.com/adafruit/Adafruit_AS7331.git"
+        "https://github.com/adafruit/Adafruit_AS7331.git",
+        "https://github.com/mumanchu/AS7331UVSensor.git"
       ],
       "description": "An Arduino library to make use of the Qwiic and Qwiic Mini AS7331 Spectral UV Sensor"
     },
@@ -2001,12 +2033,13 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/BlueDot-Arduino/BlueDot_BMA400.git",
-        "https://github.com/sparkfun/SparkFun_BMA400_Arduino_Library.git"
+        "https://github.com/sparkfun/SparkFun_BMA400_Arduino_Library.git",
+        "https://github.com/SolderedElectronics/Soldered-BMA400-Arduino-Library.git"
       ],
-      "description": "A library to drive the Bosch BMA400 accelerometer.",
+      "description": "Library for the Soldered BMA400 Accelerometer breakout board",
       "manufacturer": "Bosch"
     },
     {
@@ -2020,7 +2053,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 25,
+      "popularity": 26,
       "urls": [
         "https://github.com/adafruit/Adafruit_BME280_Library.git",
         "https://github.com/sparkfun/SparkFun_BME280_Arduino_Library.git",
@@ -2115,6 +2148,7 @@
       "id": "bme690",
       "name": "7Semi BME690",
       "measures": [
+        "gas",
         "humidity",
         "pressure",
         "temperature"
@@ -2122,11 +2156,13 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/7semi-solutions/7Semi-BME690-Arduino-Library.git"
+        "https://github.com/7semi-solutions/7Semi-BME690-Arduino-Library.git",
+        "https://github.com/SolderedElectronics/Soldered-BME690-Arduino-Library.git"
       ],
-      "description": "Arduino library for the 7Semi BME690 sensor module (gas, pressure, temperature, humidity)."
+      "description": "Arduino library for the Soldered BME690 temperature, humidity, pressure and gas sensor breakout board.",
+      "manufacturer": "Bosch"
     },
     {
       "id": "bme82m131",
@@ -2418,6 +2454,21 @@
       "description": "Arduino library to control Grove 3-Axis Digitial Compass v2.0."
     },
     {
+      "id": "bmm350",
+      "name": "Soldered BMM350 Geomagnetic Sensor",
+      "measures": [
+        "magnetic_field"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/SolderedElectronics/Soldered-BMM350-Arduino-Library.git"
+      ],
+      "description": "Library for the Soldered BMM350 Geomagnetic Sensor breakout board"
+    },
+    {
       "id": "bmp085",
       "name": "BMP180MI",
       "measures": [
@@ -2590,9 +2641,10 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/7semi-solutions/7Semi-BMP585.git"
+        "https://github.com/7semi-solutions/7Semi-BMP585.git",
+        "https://github.com/SolderedElectronics/Soldered-BMP585-Arduino-Library.git"
       ],
       "description": "Lightweight BMP585 driver for Arduino (I2C/SPI) with beginner-friendly defaults.",
       "manufacturer": "Bosch"
@@ -2946,7 +2998,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 14,
+      "popularity": 15,
       "urls": [
         "https://github.com/tobiasschuerg/MH-Z-CO2-Sensors.git",
         "https://github.com/mhorimoto/ELT_S300_HOLLY.git",
@@ -3116,6 +3168,21 @@
       "description": "Arduino library for the DCT532, an I2C industrial pressure and temperature sensor."
     },
     {
+      "id": "devlabgt365xx",
+      "name": "DevLab_GT365xx",
+      "measures": [
+        "light"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/UNIT-Electronics-MX/unit_devlab_gt365xx_library.git"
+      ],
+      "description": "Arduino library for the GT365xx light sensor (LDR) using DDP over I2C."
+    },
+    {
       "id": "dfr0067",
       "name": "DFRobot_DHT11",
       "measures": [
@@ -3213,10 +3280,11 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 2,
+      "popularity": 3,
       "urls": [
         "https://github.com/DFRobot/DFRobot_DHT20.git",
-        "https://github.com/RobTillaart/DHT20.git"
+        "https://github.com/RobTillaart/DHT20.git",
+        "https://github.com/Khuuxuanngoc/MKE_I2C_DHT20_lib.git"
       ],
       "description": "Provide an Arduino library to get Humidity and Temperature by reading data from dht20."
     },
@@ -3310,7 +3378,7 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 13,
+      "popularity": 15,
       "urls": [
         "https://github.com/IharYakimush/arduino-temperature-control-events.git",
         "https://github.com/matmunk/DS18B20.git",
@@ -4701,23 +4769,6 @@
       "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM56622 Invensence IMU device."
     },
     {
-      "id": "icm56686",
-      "name": "ICM56686",
-      "measures": [
-        "acceleration",
-        "gyroscope",
-        "temperature"
-      ],
-      "platforms": [
-        "arduino"
-      ],
-      "popularity": 1,
-      "urls": [
-        "https://github.com/tdk-invn-oss/motion.arduino.ICM56686.git"
-      ],
-      "description": "Allows to read accelerometer, gyroscope and temperature sensors from an ICM56686 Invensence IMU device."
-    },
-    {
       "id": "icp10100",
       "name": "ICP101xx",
       "measures": [
@@ -4843,7 +4894,7 @@
       "urls": [
         "https://github.com/stm32duino/ILPS22QS.git"
       ],
-      "description": "Nano pressure sensor."
+      "description": "Nano pressure sensor with I3C support."
     },
     {
       "id": "im19",
@@ -4963,6 +5014,23 @@
         "https://github.com/wollewald/INA226_WE.git"
       ],
       "description": "Enables reading from INA226 current sensors to measure current and power."
+    },
+    {
+      "id": "ina228",
+      "name": "Adafruit INA228 Library",
+      "measures": [
+        "current"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 2,
+      "urls": [
+        "https://github.com/adafruit/Adafruit_INA228.git",
+        "https://github.com/sparkfun/SparkFun_INA2XX_Arduino_Library.git"
+      ],
+      "description": "An Arduino library for the INA228 and INA237 Qwiic Power Monitor boards",
+      "manufacturer": "Texas Instruments"
     },
     {
       "id": "ina237",
@@ -5135,7 +5203,7 @@
       "urls": [
         "https://github.com/stm32duino/ISM6HG256X.git"
       ],
-      "description": "Intelligent IMU with simultaneous low-g and high-g acceleration detection."
+      "description": "Intelligent IMU with simultaneous low-g and high-g acceleration detection and I3C support."
     },
     {
       "id": "isys4001",
@@ -7482,13 +7550,14 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 5,
+      "popularity": 6,
       "urls": [
         "https://github.com/FaBoPlatform/FaBo9AXIS-MPU9250-Library.git",
         "https://github.com/sparkfun/SparkFun_MPU-9250_Breakout_Arduino_Library.git",
         "https://github.com/asukiaaa/MPU9250_asukiaaa.git",
         "https://github.com/bolderflight/MPU9250.git",
-        "https://github.com/wollewald/MPU9250_WE.git"
+        "https://github.com/wollewald/MPU9250_WE.git",
+        "https://github.com/xreef/MPU-9250-DMP_Library.git"
       ],
       "description": "Driver for InvenSense's MPU-9250 9-DOF IMU (3-axis gyroscope, 3-axis accelerometer & 3-axis magnetometer)",
       "manufacturer": "InvenSense"
@@ -9477,18 +9546,18 @@
       "name": "DFRobot_SFA40",
       "measures": [
         "formaldehyde",
-        "gas",
-        "humidity",
-        "temperature"
+        "gas"
       ],
       "platforms": [
         "arduino"
       ],
-      "popularity": 1,
+      "popularity": 2,
       "urls": [
-        "https://github.com/DFRobot/DFRobot_SFA40.git"
+        "https://github.com/DFRobot/DFRobot_SFA40.git",
+        "https://github.com/sparkfun/SparkFun_SFA40_Arduino_Library.git"
       ],
-      "description": "Easy to use SFA40."
+      "description": "An Arduino library for the SparkFun Qwiic Formaldehyde Sensor (SFA40)",
+      "manufacturer": "Sensirion"
     },
     {
       "id": "sfm3200",
@@ -9685,13 +9754,15 @@
       "platforms": [
         "arduino"
       ],
-      "popularity": 3,
+      "popularity": 4,
       "urls": [
         "https://github.com/stm32duino/SHT40-AD1B.git",
         "https://github.com/7semi-solutions/7Semi-SHT4x-Arduino-Library.git",
-        "https://github.com/MR01Right/SHT40.git"
+        "https://github.com/MR01Right/SHT40.git",
+        "https://github.com/KacperTora/KT_SHT40.git"
       ],
-      "description": "Arduino library for the 7Semi SHT4x (SHT40/SHT41/SHT45) temperature and humidity sensor."
+      "description": "Arduino library for the 7Semi SHT4x (SHT40/SHT41/SHT45) temperature and humidity sensor.",
+      "manufacturer": "Sensirion"
     },
     {
       "id": "sht45",
@@ -9988,6 +10059,21 @@
         "https://github.com/adafruit/Adafruit_SPA06_003.git"
       ],
       "description": "Arduino library for SPA06_003 digital pressure sensor"
+    },
+    {
+      "id": "spd1200",
+      "name": "ErdiLRF",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/yu911517778-a11y/ErdiLRF.git"
+      ],
+      "description": "Driver for ERDI 905 nm laser rangefinder modules (LR/LRF-A1/SPD1200/LRF-H/LRF-VB series) over UART."
     },
     {
       "id": "spl06",
@@ -10369,6 +10455,21 @@
       "description": "DFRobot_TCS3430 is the sensor library of DFRobot"
     },
     {
+      "id": "tcs3448",
+      "name": "Adafruit TCS3448",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/adafruit/Adafruit_TCS3448.git"
+      ],
+      "description": "Arduino library for the TCS3448 14-channel multi-spectral sensor"
+    },
+    {
       "id": "tcs3472",
       "name": "107-Arduino-TCS3472",
       "measures": [
@@ -10445,7 +10546,7 @@
         "https://github.com/RobTillaart/TEMT6000.git",
         "https://github.com/UNIT-Electronics-MX/unit_devlab_temt6000_library.git"
       ],
-      "description": "Arduino library for TEMT6000 using direct I2C register access."
+      "description": "Arduino library for the TEMT6000 ambient light sensor using the DevLab Device Protocol over I2C."
     },
     {
       "id": "tfa433receiver",
@@ -10621,6 +10722,22 @@
         "https://github.com/adafruit/Adafruit_TMF8801.git"
       ],
       "description": "Configures and communicates with the SparkFun Qwiic TMF-8801 Time-of-flight sensor."
+    },
+    {
+      "id": "tmf8806",
+      "name": "Adafruit TMF8806",
+      "measures": [
+        "distance"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/adafruit/Adafruit_TMF8806.git"
+      ],
+      "description": "Arduino library for the TMF8806 Time-of-Flight distance sensor.",
+      "manufacturer": "ams-OSRAM"
     },
     {
       "id": "tmf8829",
@@ -11021,7 +11138,7 @@
       "urls": [
         "https://github.com/ardunia/TTP223Row.git"
       ],
-      "description": "A gesture processing library for linear TTP223 capacitive touch sensors."
+      "description": "A non-blocking gesture library for linear TTP223 capacitive touch sensor rows."
     },
     {
       "id": "tx07k",
@@ -11051,6 +11168,21 @@
       "popularity": 1,
       "urls": [
         "https://github.com/sparkfun/SparkFun_u-blox_GNSS_v3.git"
+      ],
+      "description": "Library for I2C, Serial and SPI Communication with u-blox GNSS modules"
+    },
+    {
+      "id": "ubloxgnssv4",
+      "name": "SparkFun u-blox GNSS v4",
+      "measures": [
+        "gps"
+      ],
+      "platforms": [
+        "arduino"
+      ],
+      "popularity": 1,
+      "urls": [
+        "https://github.com/sparkfun/SparkFun_u-blox_GNSS_v4.git"
       ],
       "description": "Library for I2C, Serial and SPI Communication with u-blox GNSS modules"
     },

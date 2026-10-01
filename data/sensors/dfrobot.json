@@ -2,10 +2,10 @@
   "source": "dfrobot",
   "source_url": "https://github.com/DFRobot",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-09-01T11:31:59.480873+00:00",
+  "scraped_at": "2026-10-01T12:53:06.576666+00:00",
   "stats": {
     "sensor_count": 86,
-    "total_repos": 492,
+    "total_repos": 497,
     "dfrobot_repos": 245,
     "skipped_non_sensor": 104,
     "skipped_no_ic": 50,

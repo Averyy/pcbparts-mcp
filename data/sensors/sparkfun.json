@@ -2,13 +2,13 @@
   "source": "sparkfun",
   "source_url": "https://www.sparkfun.com/graphql",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-09-01T11:31:22.574708+00:00",
+  "scraped_at": "2026-10-01T12:52:18.004481+00:00",
   "stats": {
-    "sensor_count": 125,
-    "total_products": 411,
-    "skipped_sku_prefix": 56,
+    "sensor_count": 128,
+    "total_products": 412,
+    "skipped_sku_prefix": 57,
     "skipped_pattern": 64,
-    "skipped_no_ic": 115
+    "skipped_no_ic": 112
   },
   "sensors": [
     {
@@ -106,7 +106,7 @@
         "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-adxl335.html",
         "https://www.sparkfun.com/lilypad-accelerometer-adxl335.html"
       ],
-      "description": "Breakout board for the 3 axis ADXL335 from Analog Devices. This is the latest in a long, proven line of analog sensors - the holy grail of accelerometers."
+      "description": "Add motion and tilt sensing to your e-textile projects with this sewable LilyPad 3-axis accelerometer featuring the ADXL335."
     },
     {
       "id": "adxl345",
@@ -379,7 +379,7 @@
       "urls": [
         "https://www.sparkfun.com/sparkfun-environmental-sensor-breakout-bme680-qwiic.html"
       ],
-      "description": "This SparkFun Environmental Sensor is a breakout for the 4-in-1 BME680 gas sensor from Bosch.",
+      "description": "Track temperature, humidity, pressure, and VOC levels with this Qwiic-enabled BME680 environmental sensor.",
       "protocol": [
         "i2c"
       ]
@@ -388,16 +388,18 @@
       "id": "bme688",
       "name": "Bosch BME688 Development Kit",
       "measures": [
+        "gas",
         "humidity",
         "pressure",
-        "temperature"
+        "temperature",
+        "voc"
       ],
       "platforms": [],
       "urls": [
-        "https://www.sparkfun.com/bosch-bme688-development-kit.html",
-        "https://www.sparkfun.com/sparkfun-environmental-sensor-bme688-qwiic.html"
+        "https://www.sparkfun.com/sparkfun-environmental-sensor-bme688-qwiic.html",
+        "https://www.sparkfun.com/bosch-bme688-development-kit.html"
       ],
-      "description": "The SparkFun BME688 Environmental Sensor combines a gas scanning sensor with temperature, humidity, & barometric pressure sensing for a complete AI sensor.",
+      "description": "Bosch BME688 Development Kit is a platform for testing and developing use cases based on temperature, barometric pressure, humidity, and gas sensing.",
       "protocol": [
         "i2c"
       ]
@@ -695,9 +697,9 @@
       "platforms": [],
       "urls": [
         "https://www.sparkfun.com/ultrasonic-distance-sensor-3-3v-hc-sr04-180-red.html",
-        "https://www.sparkfun.com/sparkfun-qwiic-ultrasonic-distance-sensor-hc-sr04.html",
         "https://www.sparkfun.com/ultrasonic-distance-sensor-3-3v-hc-sr04.html",
-        "https://www.sparkfun.com/ultrasonic-distance-sensor-hc-sr04.html"
+        "https://www.sparkfun.com/ultrasonic-distance-sensor-hc-sr04.html",
+        "https://www.sparkfun.com/sparkfun-qwiic-ultrasonic-distance-sensor-hc-sr04.html"
       ],
       "description": "The HC-SR04 ultrasonic sensor offers economical, non-contact distance measurements from 2cm to 400cm with up to 3mm accuracy, integrating a transmitter, receiver, and control circuit.",
       "protocol": [
@@ -712,8 +714,8 @@
       ],
       "platforms": [],
       "urls": [
-        "https://www.sparkfun.com/sparkfun-digital-compass-hmc6343-qwiic.html",
-        "https://www.sparkfun.com/sparkfun-hmc6343-breakout.html"
+        "https://www.sparkfun.com/sparkfun-hmc6343-breakout.html",
+        "https://www.sparkfun.com/sparkfun-digital-compass-hmc6343-qwiic.html"
       ],
       "description": "Get professional-grade, tilt-compensated heading data instantly with this solder-free Qwiic update to our most capable compass module.",
       "protocol": [
@@ -1025,8 +1027,8 @@
       "urls": [
         "https://www.sparkfun.com/ir-array-sensor-55-degree-fov-mlx90640.html",
         "https://www.sparkfun.com/ir-array-sensor-110-degree-fov-mlx90640.html",
-        "https://www.sparkfun.com/sparkfun-ir-array-breakout-55-degree-fov-mlx90640-qwiic.html",
-        "https://www.sparkfun.com/sparkfun-ir-array-breakout-110-degree-fov-mlx90640-qwiic.html"
+        "https://www.sparkfun.com/sparkfun-ir-array-breakout-110-degree-fov-mlx90640-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-ir-array-breakout-55-degree-fov-mlx90640-qwiic.html"
       ],
       "description": "The MLX90640 is a fully calibrated 32x24 pixels thermal IR array in an industry standard 4-lead TO39 package with digital interface. The MLX90640 contains 768 FIR pixels. An ambient sensor is integ...",
       "protocol": [
@@ -1295,6 +1297,18 @@
       "description": "It is suitable for applications in the temperature range of -200°C to 600°C but are more commonly used in the range -50°C to +250°C."
     },
     {
+      "id": "pt19",
+      "name": "Ambient Light Sensor - SMD (ALS-PT19)",
+      "measures": [
+        "light"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/als-pt19-light-sensor.html"
+      ],
+      "description": "The ALS-PT19 is a low-cost ambient light sensor with a phototransistor in a miniature SMD IC form factor."
+    },
+    {
       "id": "rcwl0516",
       "name": "Doppler Radar Sensor Module - RCWL-0516 (with Headers)",
       "measures": [
@@ -1388,6 +1402,22 @@
       "description": "The SEN55 environmental node is a straightforward, all-in-one sensor solution platform for the accurate measurement of various environmental parameters."
     },
     {
+      "id": "sfa40",
+      "name": "SparkFun Formaldehyde Sensor - SFA40 (Qwiic)",
+      "measures": [
+        "formaldehyde",
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-formaldehyde-sensor-sfa40.html"
+      ],
+      "description": "Accurately measure indoor formaldehyde (CH 2 O/HCHO) levels with this low-power, Qwiic-enabled SFA40 sensor from Sensirion.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
       "id": "sgp40",
       "name": "SparkFun Air Quality Sensor - SGP40 (Qwiic)",
       "measures": [
@@ -1456,6 +1486,23 @@
         "https://www.sparkfun.com/co-sensor-stc31-qwiic.html"
       ],
       "description": "Measure concentrations up to 100% with high repeatability and long-term stability, adds humidity and temperature compensation via a built-in SHTC3, and connects easily over I2C using the Qwiic ecos...",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "stcc4",
+      "name": "SparkFun CO2 Sensor - STCC4/SHT40 (Qwiic)",
+      "measures": [
+        "co2",
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-co2-sensor-stcc4-sht40-qwiic.html"
+      ],
+      "description": "Accurately measure indoor CO 2 concentrations, with supported temperature and humidity readings, with this Qwiic-enabled breakout featuring the Sensirion STCC4 and SHT40 sensors.",
       "protocol": [
         "i2c"
       ]
@@ -1585,14 +1632,15 @@
     },
     {
       "id": "temt6000x01",
-      "name": "Ambient Light Sensor - TEMT6000x01",
+      "name": "Ambient Light Sensor - SMD (TEMT6000x01)",
       "measures": [
         "light"
       ],
       "platforms": [],
       "urls": [
         "https://www.sparkfun.com/ambient-light-sensor-temt6000x01.html"
-      ]
+      ],
+      "description": "The TEMT6000x01 ambient light sensor is a silicon NPN epitaxial planar phototransistor in a miniature transparent 1206 package for surface mounting."
     },
     {
       "id": "tmag5273",

@@ -2,10 +2,10 @@
   "source": "winsen",
   "source_url": "https://www.winsen-sensor.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-09-01T11:27:14.420389+00:00",
+  "scraped_at": "2026-10-01T12:48:07.351674+00:00",
   "stats": {
-    "sensor_count": 392,
-    "total_product_pages": 400,
+    "sensor_count": 390,
+    "total_product_pages": 398,
     "skipped": 3,
     "errors": 0
   },
@@ -1544,7 +1544,7 @@
       "urls": [
         "https://www.winsen-sensor.com/product/mh-711a.html"
       ],
-      "description": "MH-711A Infrared CO2 Gas Sensor",
+      "description": "(Discontinued) MH-711A Infrared CO2 Gas Sensor",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/mh-711a.pdf",
       "voltage": "4.5-5.5",
@@ -1561,7 +1561,7 @@
       "urls": [
         "https://www.winsen-sensor.com/product/mh-712b.html"
       ],
-      "description": "MH-712B Infrared CO2 Gas Sensor",
+      "description": "(Discontinued) MH-712B Infrared CO2 Gas Sensor",
       "protocol": [
         "uart"
       ],
@@ -1828,7 +1828,7 @@
       "urls": [
         "https://www.winsen-sensor.com/product/mh-z19b.html"
       ],
-      "description": "MH-Z19B NDIR CO2 Module. Range: 400~2000/5000/10000ppm(optional)",
+      "description": "(Discontinued)MH-Z19B NDIR CO2 Module. Range: 400~2000/5000/10000ppm(optional)",
       "protocol": [
         "uart"
       ],
@@ -2555,6 +2555,7 @@
       "description": "MR513 Hot-wire Alcohol Gas sensor. Target: C2H5OH, alcohol, ethanol",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/mr513.pdf",
+      "voltage": "2.5",
       "type": "semiconductor"
     },
     {
@@ -2858,23 +2859,6 @@
       "description": "RD-623 Pyroelectric Infrared Sensor. Target: human body induction",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/rd-623.pdf",
-      "voltage": "3-15",
-      "type": "pir"
-    },
-    {
-      "id": "rd624",
-      "name": "RD-624",
-      "measures": [
-        "motion",
-        "pir"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/rd-624.html"
-      ],
-      "description": "RD-624 PIR Pyroelectric Infrared Sensor. Target: human body induction",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/rd-624.pdf",
       "voltage": "3-15",
       "type": "pir"
     },
@@ -4248,9 +4232,10 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zce04b.html"
       ],
-      "description": "4-in-1 Industrial Gas Detection Module  ZCE04B. Target: CH4（1%LEL）, CO（1ppm）, H2S（1ppm）, O2（0.1%LEL）. Range: 0-100%LEL ,0-1000ppm ,0-100ppm ,0-30%LEL",
+      "description": "4-in-1 Industrial Gas Detection Module  ZCE04B. Target: CO: 0-1000ppm H2S: 0-100ppm O2: 0-30%vol CH4: 0-100%LEL",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zce04b.pdf",
+      "voltage": "3.5-5",
       "type": "electrochemical"
     },
     {
@@ -4528,9 +4513,10 @@
       "urls": [
         "https://www.winsen-sensor.com/product/ze21-cs.html"
       ],
-      "description": "Battery Leak Detection Module ZE21-CS/CO for Electric Vehicle. Target: CO, Battery leakage comprehensive gas. Range: 0～1000ppm",
+      "description": "Battery Leak Detection Module ZE21-CS/CO for Electric Vehicle. Target: Battery leakage integrated gas. Range: 0～1000ppm",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/ze21-cs.pdf",
+      "voltage": "5-10",
       "type": "electrochemical"
     },
     {
@@ -4778,7 +4764,7 @@
       "urls": [
         "https://www.winsen-sensor.com/product/ze801-nh3.html"
       ],
-      "description": "ZE801-NH3 Malodorous Gases Odor Sensor Module. Target: NH₃. Range: 0～50 PPM",
+      "description": "(Discontinued) ZE801-NH3 Malodorous Gases Odor Sensor Module. Target: NH₃. Range: 0～50 PPM",
       "protocol": [
         "analog",
         "uart"
@@ -4819,6 +4805,7 @@
       "description": "ZEH100 Multi-in-One Energy Storage Sensor Module. Target: CO, H2, VOC, Smoke, Temperature",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zeh100.pdf",
+      "voltage": "12-30",
       "type": "electrochemical"
     },
     {
@@ -4835,9 +4822,13 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zehs04.html"
       ],
-      "description": "Atmospheric Monitoring Sensor Module ZEHS04. Target: CO, SO2, NO2, O3 (Scalable PM2.5, PM10, Temperature, Humidity). Range: See manual",
+      "description": "Atmospheric Monitoring Sensor Module ZEHS04. Target: CO, SO2, NO2, O3 (PM2.5, PM10, temperature and humidity expansion compatible)",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zehs04.pdf",
+      "voltage": "9-24",
       "type": "electrochemical"
     },
     {
@@ -5039,6 +5030,7 @@
       "description": "ZH10-VHT Compact 4-in-1 Air Quality Sensor Module. Target: PM2.5,VOC,Temperature,Humidity",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zh10-vht.pdf",
+      "voltage": "5",
       "type": "laser"
     },
     {
@@ -5124,9 +5116,10 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zm01.html"
       ],
-      "description": "ZM01 MEMS VOC Gas Sensor Module. Range: 0-5ppm",
+      "description": "ZM01 MEMS VOC Gas Sensor Module",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zm01.pdf",
+      "voltage": "2.5",
       "type": "semiconductor"
     },
     {
@@ -5139,9 +5132,10 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zm03.html"
       ],
-      "description": "ZM03 Digital MEMS Digital alcohol module. Range: 0-50ppm",
+      "description": "ZM03 Digital MEMS Digital alcohol module",
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zm03.pdf",
+      "voltage": "2.5",
       "type": "semiconductor"
     },
     {
@@ -5598,7 +5592,8 @@
         "https://www.winsen-sensor.com/product/zph07.html"
       ],
       "description": "ZPH07- Lithium Battery Aerosol Monitoring Sensor. Range: 0～10000μg/m³",
-      "manufacturer": "Winsen"
+      "manufacturer": "Winsen",
+      "voltage": "9"
     },
     {
       "id": "zphs01",
@@ -5616,12 +5611,13 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zphs01.html"
       ],
-      "description": "ZPHS01 Multi-in-One Sensor Module (HCHO version). Target: CO2, PM2.5, CH2O, VOC, Temperature, Humidity. Range: CO2: 0-5000ppm; PM2.5: 0-1000μg/m³; CH2O: 0-1.6ppm; VOC: 4 level; Temperature: 0-65℃ (...",
+      "description": "ZPHS01 Multi-in-One Sensor Module (HCHO version). Target: CO2、PM2.5、CH2O、TVOC、Temperature、Humidity",
       "protocol": [
         "uart"
       ],
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zphs01.pdf",
+      "voltage": "5",
       "type": "ndir"
     },
     {
@@ -5666,12 +5662,13 @@
       "urls": [
         "https://www.winsen-sensor.com/product/zphs01c.html"
       ],
-      "description": "Multi-in-One Sensor Module ZPHS01C. Target: PM2.5, CO2, CH2O, TVOC,Temperature&Humidity. Range: CO2: 400~5000ppm; PM2.5: 0-1000μg/m³; CH2O: 0-1.6ppm; VOC: 4 level; Temperature: 0-65℃ (Accuracy±0.5℃...",
+      "description": "Multi-in-One Sensor Module ZPHS01C. Target: PM2.5, CO2, CH2O, TVOC,Temperature&Humidity",
       "protocol": [
         "uart"
       ],
       "manufacturer": "Winsen",
       "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zphs01c.pdf",
+      "voltage": "5",
       "type": "ndir"
     },
     {
@@ -6008,22 +6005,6 @@
       "description": "ZS0301 Temperature and Humidity Module",
       "manufacturer": "Winsen",
       "voltage": "3.3"
-    },
-    {
-      "id": "zs05",
-      "name": "ZS05",
-      "measures": [
-        "humidity",
-        "temperature"
-      ],
-      "platforms": [],
-      "urls": [
-        "https://www.winsen-sensor.com/product/zs05.html"
-      ],
-      "description": "ZS05 Temperature and Humidity Module. Target: Environment relative humidity,temperature. Range: 20～90%RH",
-      "manufacturer": "Winsen",
-      "datasheet_url": "https://www.winsen-sensor.com/d/files/manual/zs05.pdf",
-      "voltage": "3.3-5.5"
     },
     {
       "id": "zs11",
