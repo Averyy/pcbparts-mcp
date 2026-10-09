@@ -1,6 +1,6 @@
 [project]
 name = "pcbparts-mcp"
-version = "0.5.4"
+version = "0.5.5"
 description = "MCP server for searching electronic components for PCB design and assembly"
 requires-python = ">=3.12"
 # Dependencies are pinned to exact versions so a rebuild never silently pulls a new major/minor
@@ -14,6 +14,9 @@ dependencies = [
     "fastmcp==3.4.3",
     # Anti-detection HTTP client (TLS fingerprinting, WAF solving, rotation)
     "wafer-py==0.4.6",
+    # wafer's HTTP/TLS backend. wafer allows any 0.12.x, so it's pinned here too: unpinned, a
+    # rebuild pulled 0.12.3 into prod with nobody choosing it. Bump it together with wafer-py.
+    "wreq==0.12.3",
     # HTTP client for Mouser/DigiKey APIs
     "httpx==0.28.1",
     # ASGI server and middleware

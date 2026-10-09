@@ -47,6 +47,10 @@ Run the server locally:
 ```
 
 - **The full unit suite must pass before you open a PR.**
+- CI (`.github/workflows/tests.yml`) builds the databases and runs the unit suite on
+  Linux and Windows for every PR. Windows catches what Linux/macOS hide, so pass
+  `encoding="utf-8"` to every text-mode `open()`/`read_text()`/`write_text()` (Windows
+  defaults to cp1252) and use `as_posix()` when a path becomes a string key.
 - Integration tests hit live JLCPCB/EasyEDA/distributor APIs. They can flake from
   residential IPs (WAF challenges) and burn API quotas — they are *not* required for
   PRs; maintainers run them before releases.
