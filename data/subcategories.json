@@ -1539,6 +1539,11 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
+  "3506": {
+    "name": "air purifier",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -3546,6 +3551,11 @@
   },
   "3716": {
     "name": "SSD",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "1027": {
+    "name": "Storage products",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
