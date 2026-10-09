@@ -263,6 +263,22 @@ class TestMouserNormalizePart:
 
 # --- DigiKey helper tests ---
 
+class TestMouserUnitWeight:
+    def test_weight_in_grams(self):
+        result = _normalize_part({"UnitWeightKg": {"UnitWeight": 0.000203}})
+        assert result["unit_weight_g"] == 0.203
+
+    def test_missing_weight(self):
+        assert _normalize_part({})["unit_weight_g"] is None
+        assert _normalize_part({"UnitWeightKg": None})["unit_weight_g"] is None
+        assert _normalize_part({"UnitWeightKg": {}})["unit_weight_g"] is None
+
+    def test_invalid_weight(self):
+        assert _normalize_part({"UnitWeightKg": {"UnitWeight": "n/a"}})["unit_weight_g"] is None
+        assert _normalize_part({"UnitWeightKg": {"UnitWeight": 0}})["unit_weight_g"] is None
+        assert _normalize_part({"UnitWeightKg": {"UnitWeight": -1}})["unit_weight_g"] is None
+
+
 class TestDigiKeyNormalizeProduct:
     def test_full_product(self):
         raw = {

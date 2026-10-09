@@ -55,6 +55,17 @@ def _parse_price(price_str: str | None) -> float | None:
         return None
 
 
+def _parse_unit_weight_g(part: dict[str, Any]) -> float | None:
+    """Mouser's UnitWeightKg.UnitWeight (kg) as grams; None when absent or not a positive number."""
+    weight = part.get("UnitWeightKg")
+    value = weight.get("UnitWeight") if isinstance(weight, dict) else None
+    try:
+        kg = float(value)
+    except (TypeError, ValueError):
+        return None
+    return round(kg * 1000, 6) if kg > 0 else None
+
+
 def _normalize_part(part: dict[str, Any]) -> dict[str, Any]:
     """Normalize a Mouser Part object into our standard format."""
     # Parse price breaks
@@ -111,6 +122,7 @@ def _normalize_part(part: dict[str, Any]) -> dict[str, Any]:
         "lifecycle": lifecycle,
         "parameters": parameters,
         "min_qty": int(part.get("Min", 1) or 1),
+        "unit_weight_g": _parse_unit_weight_g(part),
         "currency": price_breaks[0]["currency"] if price_breaks else "USD",
     }
 
