@@ -43,7 +43,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install "wafer-py==0.4.6"
+          pip install "wafer-py==0.4.6" "wreq==0.12.3"
 
       - name: Run scraper
         run: |

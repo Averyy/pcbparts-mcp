@@ -12,7 +12,6 @@ Usage:
 import argparse
 import gzip
 import json
-import os
 import sqlite3
 import time
 from pathlib import Path
@@ -25,7 +24,8 @@ def build_history_db(data_dir: Path, db_path: Path, verbose: bool = True) -> dic
     """
     Build stock history SQLite database from compressed JSONL event files.
 
-    Builds to a temp file and atomically renames on success.
+    Builds to a temp file and atomically replaces db_path on success; on any failure
+    (Ctrl-C included) the temp is removed and the old DB is left intact.
     Returns stats dict with counts and timing.
     """
     start_time = time.time()
@@ -34,15 +34,29 @@ def build_history_db(data_dir: Path, db_path: Path, verbose: bool = True) -> dic
         print(f"Building stock history database from {data_dir}")
         print(f"Output: {db_path}")
 
-    # Build to temp path, rename on success (atomic replacement)
+    # Build to temp path, atomically replace on success (same as build_database.py)
     tmp_path = db_path.with_suffix(".db.tmp")
-    if tmp_path.exists():
-        tmp_path.unlink()
+    for suffix in ("", "-wal", "-shm"):
+        Path(str(tmp_path) + suffix).unlink(missing_ok=True)  # clear stale tmp from a prior crash
 
     # Ensure parent directory exists
     db_path.parent.mkdir(parents=True, exist_ok=True)
 
     conn = sqlite3.connect(tmp_path)
+    try:
+        return _fill_tmp_and_swap(conn, data_dir, db_path, tmp_path, verbose, start_time)
+    except BaseException:
+        # BaseException so Ctrl-C/SystemExit clean up too; the old DB stays intact. Close first:
+        # Windows can't delete an open file (WinError 32) and that error would mask the real one.
+        conn.close()
+        for suffix in ("", "-wal", "-shm"):
+            Path(str(tmp_path) + suffix).unlink(missing_ok=True)
+        raise
+
+
+def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, tmp_path: Path,
+                       verbose: bool, start_time: float) -> dict:
+    """Load every history file into the open tmp DB, then atomically move it to db_path."""
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
 
@@ -188,10 +202,11 @@ def build_history_db(data_dir: Path, db_path: Path, verbose: bool = True) -> dic
 
     conn.close()
 
-    # Atomic rename: only replace old DB after successful build
-    if db_path.exists():
-        db_path.unlink()
-    os.rename(tmp_path, db_path)
+    # Drop stale sidecars of the OLD db first, then atomically move the new build into place: a
+    # reader never sees a missing DB, or the new file next to an old -wal/-shm.
+    for suffix in ("-wal", "-shm"):
+        Path(str(db_path) + suffix).unlink(missing_ok=True)
+    tmp_path.replace(db_path)
 
     elapsed = time.time() - start_time
 

@@ -772,7 +772,7 @@ wheels = [
 
 [[package]]
 name = "pcbparts-mcp"
-version = "0.5.4"
+version = "0.5.5"
 source = { editable = "." }
 dependencies = [
     { name = "fastmcp" },
@@ -782,6 +782,7 @@ dependencies = [
     { name = "starlette" },
     { name = "uvicorn", extra = ["standard"] },
     { name = "wafer-py" },
+    { name = "wreq" },
 ]
 
 [package.optional-dependencies]
@@ -805,6 +806,7 @@ requires-dist = [
     { name = "starlette", specifier = "==1.3.1" },
     { name = "uvicorn", extras = ["standard"], specifier = "==0.40.0" },
     { name = "wafer-py", specifier = "==0.4.6" },
+    { name = "wreq", specifier = "==0.12.3" },
 ]
 provides-extras = ["dev"]
 
