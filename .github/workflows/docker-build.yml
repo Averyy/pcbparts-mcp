@@ -39,7 +39,9 @@ jobs:
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-,suffix=-{{date 'YYYYMMDD'}},format=short
+            # {{branch}} is empty on pull_request events, which made this tag "-<sha>-<date>" (an
+            # invalid reference) and failed every PR build. PRs still get pr-N from type=ref above.
+            type=sha,prefix={{branch}}-,suffix=-{{date 'YYYYMMDD'}},format=short,enable=${{ github.event_name != 'pull_request' }}
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Set up Docker Buildx
