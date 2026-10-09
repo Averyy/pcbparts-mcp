@@ -61,7 +61,7 @@ def check_status(status: dict, sensors_dir: Path, keys=None) -> list[str]:
             failures.append(f"{key}: {source_file.name} is missing")
             continue
         try:
-            data = json.loads(source_file.read_text())
+            data = json.loads(source_file.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError, UnicodeDecodeError) as e:
             failures.append(f"{key}: cannot read {source_file.name}: {e}")
             continue
@@ -97,7 +97,7 @@ def main() -> int:
         print(f"FAIL: {status_path} not found — did scrape_sensors.py run?")
         return 1
     try:
-        status = json.loads(status_path.read_text())
+        status = json.loads(status_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as e:
         print(f"FAIL: cannot read {status_path}: {e}")
         return 1

@@ -261,8 +261,6 @@ class TestMouserNormalizePart:
         assert result["parameters"] == {}
 
 
-# --- DigiKey helper tests ---
-
 class TestMouserUnitWeight:
     def test_weight_in_grams(self):
         result = _normalize_part({"UnitWeightKg": {"UnitWeight": 0.000203}})
@@ -278,6 +276,8 @@ class TestMouserUnitWeight:
         assert _normalize_part({"UnitWeightKg": {"UnitWeight": 0}})["unit_weight_g"] is None
         assert _normalize_part({"UnitWeightKg": {"UnitWeight": -1}})["unit_weight_g"] is None
 
+
+# --- DigiKey helper tests ---
 
 class TestDigiKeyNormalizeProduct:
     def test_full_product(self):

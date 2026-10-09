@@ -120,7 +120,7 @@ def _parse_boards_md(boards_md_path: Path) -> dict[str, str]:
         return {}
 
     coverage = {}
-    text = boards_md_path.read_text()
+    text = boards_md_path.read_text(encoding="utf-8")
     for line in text.splitlines():
         if not line.startswith("|") or line.startswith("| Board") or line.startswith("|---"):
             continue
@@ -333,7 +333,7 @@ def build(data_dir: Path | str, output: Path | str, verbose: bool = True) -> Non
     boards_data = []
     for yf in yaml_files:
         try:
-            data = yaml.safe_load(yf.read_text())
+            data = yaml.safe_load(yf.read_text(encoding="utf-8"))
             if data and isinstance(data, dict) and "name" in data:
                 boards_data.append(data)
         except Exception as e:
@@ -365,7 +365,7 @@ def build(data_dir: Path | str, output: Path | str, verbose: bool = True) -> Non
         raise
 
     conn.close()
-    tmp_output.rename(output)
+    tmp_output.replace(output)  # rename() raises FileExistsError on Windows when output exists
 
 
 def _build_tables(

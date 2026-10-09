@@ -291,7 +291,7 @@ def scrape_esphome(output_dir: Path) -> None:
                 continue
 
             # Read sensor.py content
-            content = sensor_py.read_text(errors="ignore")
+            content = sensor_py.read_text(encoding="utf-8", errors="ignore")
 
             # Skip fully deprecated components (CONFIG_SCHEMA = cv.invalid(...))
             # but NOT components that only deprecate individual options
@@ -300,7 +300,7 @@ def scrape_esphome(output_dir: Path) -> None:
 
             # Also read __init__.py if exists
             init_py = comp_dir / "__init__.py"
-            init_content = init_py.read_text(errors="ignore") if init_py.exists() else ""
+            init_content = init_py.read_text(encoding="utf-8", errors="ignore") if init_py.exists() else ""
             all_content = content + "\n" + init_content
 
             # Check for base component and read its __init__.py too
@@ -308,11 +308,11 @@ def scrape_esphome(output_dir: Path) -> None:
             if base_name != comp_name:
                 base_init = components_dir / base_name / "__init__.py"
                 if base_init.exists():
-                    all_content += "\n" + base_init.read_text(errors="ignore")
+                    all_content += "\n" + base_init.read_text(encoding="utf-8", errors="ignore")
                 # Also read the base's sensor.py if it exists
                 base_sensor = components_dir / base_name / "sensor.py"
                 if base_sensor.exists():
-                    all_content += "\n" + base_sensor.read_text(errors="ignore")
+                    all_content += "\n" + base_sensor.read_text(encoding="utf-8", errors="ignore")
 
             # Strip variant suffix to get base IC name
             base_ic = re.sub(r'_(i2c|spi|uart)$', '', comp_name)

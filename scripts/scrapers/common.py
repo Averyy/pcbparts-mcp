@@ -331,5 +331,5 @@ def write_source_json(source: str, source_url: str, sensors: list[dict], stats: 
         "sensors": sensors,
     }
     path = output_dir / f"{source}.json"
-    path.write_text(json.dumps(output, indent=2, ensure_ascii=False))
+    path.write_text(json.dumps(output, indent=2, ensure_ascii=False), encoding="utf-8")
     logger.info(f"Wrote {len(sensors)} sensors to {path}")

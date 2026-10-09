@@ -388,7 +388,7 @@ def generate_stock_history(
     # Load old data from existing JSONL files: {lcsc: (stock, price, lib_type)}
     old_data: dict[str, tuple[int, float | None, str | None]] = {}
     for gz_file in categories_dir.glob("*.jsonl.gz"):
-        with gzip.open(gz_file, "rt") as f:
+        with gzip.open(gz_file, "rt", encoding="utf-8") as f:
             for line in f:
                 if not line or line == "\n":
                     continue
@@ -526,7 +526,7 @@ async def run_scraper(
     # Load or create progress
     progress_file = output_dir / "progress.json"
     if resume and progress_file.exists():
-        with open(progress_file) as f:
+        with open(progress_file, encoding="utf-8") as f:
             progress = ScrapeProgress.from_dict(json.load(f))
         logger.info(f"Resuming from {len(progress.completed_subcategories)} completed subcategories")
     else:
@@ -565,7 +565,7 @@ async def run_scraper(
     logger.info(f"Found {len(subcategories)} subcategories")
 
     # Save subcategory map
-    with open(output_dir / "subcategories.json", "w") as f:
+    with open(output_dir / "subcategories.json", "w", encoding="utf-8") as f:
         json.dump(subcategory_map, f, indent=2)
 
     # Filter out already completed subcategories
@@ -596,7 +596,7 @@ async def run_scraper(
             for gz_file in categories_dir.glob("*.jsonl.gz"):
                 cat_slug = gz_file.stem.replace(".jsonl", "")
                 results[cat_slug] = []
-                with gzip.open(gz_file, "rt") as f:
+                with gzip.open(gz_file, "rt", encoding="utf-8") as f:
                     for line in f:
                         results[cat_slug].append(json.loads(line))
 
@@ -629,14 +629,14 @@ async def run_scraper(
             logger.error(f"Parts scraped before abort: {progress.total_parts:,}")
 
             # Save progress for resume
-            with open(progress_file, "w") as f:
+            with open(progress_file, "w", encoding="utf-8") as f:
                 json.dump(progress.to_dict(), f, indent=2)
             logger.info(f"\nProgress saved to {progress_file}")
             logger.info("Run with --resume to continue from where we left off.")
             return
 
         # Save progress periodically during scrape would be nice, but for now save at end
-        with open(progress_file, "w") as f:
+        with open(progress_file, "w", encoding="utf-8") as f:
             json.dump(progress.to_dict(), f, indent=2)
 
         # Generate stock history (compare old JSONL with new results)
@@ -670,7 +670,7 @@ async def run_scraper(
                     duplicates += 1
 
             output_file = categories_dir / f"{cat_slug}.jsonl.gz"
-            with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL) as f:
+            with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL, encoding="utf-8") as f:
                 for part in unique_parts:
                     f.write(json.dumps(part, separators=(",", ":")) + "\n")
 
@@ -688,7 +688,7 @@ async def run_scraper(
         for cat_slug in all_cat_slugs:
             output_file = categories_dir / f"{cat_slug}.jsonl.gz"
             if not output_file.exists():
-                with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL) as f:
+                with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL, encoding="utf-8") as f:
                     pass  # Empty file
                 logger.info(f"  {cat_slug}: 0 parts (empty)")
 
@@ -710,7 +710,7 @@ async def run_scraper(
                 existing = []
                 seen_lcsc: set[str] = set()
                 if output_file.exists():
-                    with gzip.open(output_file, "rt") as f:
+                    with gzip.open(output_file, "rt", encoding="utf-8") as f:
                         for line in f:
                             part = json.loads(line)
                             existing.append(part)
@@ -727,7 +727,7 @@ async def run_scraper(
                         new_count += 1
 
                 # Write back
-                with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL) as f:
+                with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL, encoding="utf-8") as f:
                     for part in existing:
                         f.write(json.dumps(part, separators=(",", ":")) + "\n")
 
@@ -771,7 +771,7 @@ async def run_scraper(
     if progress.failed_subcategories:
         manifest["failed_subcategories"] = list(progress.failed_subcategories)
 
-    with open(output_dir / "manifest.json", "w") as f:
+    with open(output_dir / "manifest.json", "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
 
     # Cleanup progress file on successful completion

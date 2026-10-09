@@ -4140,7 +4140,7 @@ def load_aliases(data_dir: Path) -> dict[str, str]:
     alias_file = data_dir / "sensors" / "ic_aliases.json"
     if not alias_file.exists():
         return {}
-    with open(alias_file) as f:
+    with open(alias_file, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -4155,7 +4155,7 @@ def load_source(data_dir: Path, source_name: str) -> list[dict]:
     if not path.exists():
         print(f"  Warning: {path} not found, skipping", file=sys.stderr)
         return []
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         data = json.load(f)
     return data.get("sensors", [])
 
@@ -4288,6 +4288,18 @@ def build_db(merged: dict[str, dict], output_path: Path, quiet: bool = False):
 def _build_into_tmp(merged: dict[str, dict], output_path: Path, tmp_path: Path):
     """Build the sensor DB into tmp_path, then atomically move it to output_path."""
     conn = sqlite3.connect(str(tmp_path))
+    try:
+        _fill_tmp_and_swap(conn, merged, output_path, tmp_path)
+    finally:
+        # Already closed on success. On failure it must close before build_db() deletes the
+        # tmp: Windows can't delete an open file (WinError 32) and that error would mask the
+        # real one.
+        conn.close()
+
+
+def _fill_tmp_and_swap(conn: sqlite3.Connection, merged: dict[str, dict], output_path: Path,
+                       tmp_path: Path):
+    """Load the merged sensors into the open tmp DB, then atomically move it to output_path."""
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
 

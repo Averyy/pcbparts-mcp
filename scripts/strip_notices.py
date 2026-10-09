@@ -63,7 +63,7 @@ def find_notice_block(lines: list[str]) -> tuple[int, int] | None:
 
 def process_file(path: Path, dry_run: bool = False) -> dict:
     """Process a single file. Returns info dict."""
-    text = path.read_text()
+    text = path.read_text(encoding="utf-8")
     lines = text.split('\n')
 
     result = find_notice_block(lines)
@@ -116,7 +116,7 @@ def process_file(path: Path, dry_run: bool = False) -> dict:
     removed_lines = len(notice_block)
 
     if not dry_run:
-        path.write_text(new_text)
+        path.write_text(new_text, encoding="utf-8")
 
     return {
         "file": path.name,
@@ -134,7 +134,7 @@ def main():
     # Find all files with IMPORTANT NOTICE
     files = []
     for md in sorted(RAW_SOURCES.rglob('*.md')):
-        text = md.read_text()
+        text = md.read_text(encoding="utf-8")
         if 'IMPORTANT NOTICE' in text:
             files.append(md)
 
