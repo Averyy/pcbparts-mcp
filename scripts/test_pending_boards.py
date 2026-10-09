@@ -34,7 +34,7 @@ log = logging.getLogger(__name__)
 def parse_pending_md(path: Path) -> list[dict]:
     """Parse BOARDS-pending.md table rows into board info dicts."""
     boards = []
-    text = path.read_text()
+    text = path.read_text(encoding="utf-8")
 
     for line in text.splitlines():
         line = line.strip()

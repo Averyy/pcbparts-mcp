@@ -3,7 +3,7 @@
 import logging
 import os
 import re
-from pathlib import Path
+from pathlib import Path, PurePath
 
 logger = logging.getLogger(__name__)
 
@@ -54,15 +54,22 @@ _ALIASES: dict[str, list[str]] = {
 _MAX_FULL_CONTENT = 3  # Return file list instead of content when more matches
 
 
+def _rule_key(path: PurePath, rules_dir: PurePath) -> str:
+    """Relative path without .md, e.g. "power/ldo".
+
+    Always "/"-separated: str() would give "power\\ldo" on Windows, which
+    _match_word and the _ALIASES keys don't recognize.
+    """
+    return path.relative_to(rules_dir).with_suffix("").as_posix()
+
+
 def _build_index(rules_dir: Path) -> dict[str, Path]:
     """Glob all .md files, map category/stem to path, exclude non-rule files."""
     idx: dict[str, Path] = {}
     for p in sorted(rules_dir.rglob("*.md")):
         if p.name.upper() in _EXCLUDED_FILES:
             continue
-        # key = relative path without .md, e.g. "power/ldo"
-        rel = p.relative_to(rules_dir).with_suffix("")
-        idx[str(rel)] = p
+        idx[_rule_key(p, rules_dir)] = p
     return idx
 
 

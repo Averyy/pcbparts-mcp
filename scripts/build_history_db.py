@@ -73,7 +73,7 @@ def build_history_db(data_dir: Path, db_path: Path, verbose: bool = True) -> dic
             # Wrap entire file in a single transaction for performance
             conn.execute("BEGIN")
             try:
-                with gzip.open(gz_file, "rt") as f:
+                with gzip.open(gz_file, "rt", encoding="utf-8") as f:
                     for line in f:
                         if not line or line == "\n":
                             continue

@@ -145,7 +145,7 @@ def parse_schematic(sch_path: Path, *, repo_root: Path | None = None) -> tuple[l
     seen_refs: set[str] = set()
 
     # Read root schematic to get project UUID for instance remapping
-    text = sch_path.read_text(errors="replace")
+    text = sch_path.read_text(encoding="utf-8", errors="replace")
     if "\ufffd" in text:
         log.warning("Replacement characters in %s — possible encoding issue", sch_path.name)
     tree = _parse_sexpr(text)
@@ -170,7 +170,7 @@ def _parse_schematic_recursive(sch_path: Path, components: list[Component],
     if _cached:
         root, text = _cached
     else:
-        text = sch_path.read_text(errors="replace")
+        text = sch_path.read_text(encoding="utf-8", errors="replace")
         tree = _parse_sexpr(text)
         root = tree[0] if tree and isinstance(tree[0], list) and tree[0] and tree[0][0] == "kicad_sch" else tree
 
@@ -335,7 +335,7 @@ def parse_pcb(pcb_path: Path, part_names: set[str], components: list[Component] 
 
     Returns (positions, outline, design_rules, nets, copper_pours).
     """
-    text = pcb_path.read_text(errors="replace")
+    text = pcb_path.read_text(encoding="utf-8", errors="replace")
     if "\ufffd" in text:
         log.warning("Replacement characters in %s — possible encoding issue", pcb_path.name)
     tree = _parse_sexpr(text)
@@ -775,7 +775,7 @@ def enrich_from_project(pro_path: Path, design_rules: DesignRules | None,
     - board.design_settings.via_dimensions: available via presets
     """
     try:
-        pro = json.loads(pro_path.read_text(errors="replace"))
+        pro = json.loads(pro_path.read_text(encoding="utf-8", errors="replace"))
     except (json.JSONDecodeError, OSError) as e:
         log.debug("Could not parse %s: %s", pro_path, e)
         return design_rules or DesignRules()

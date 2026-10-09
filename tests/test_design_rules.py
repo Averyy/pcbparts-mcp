@@ -1,9 +1,9 @@
 """Tests for the design_rules module."""
 
 import pytest
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
-from pcbparts_mcp.design_rules import get_design_rules
+from pcbparts_mcp.design_rules import _rule_key, get_design_rules
 
 
 @pytest.fixture
@@ -136,3 +136,10 @@ def test_hyphenated_topic(tmp_path):
     result = get_design_rules("op-amp", rules_dir=tmp_path)
     assert result["matched_files"] == ["misc/op-amp-basics"]
     assert "Op-Amp Basics" in result["content"]
+
+
+def test_rule_key_uses_forward_slashes_on_windows():
+    """Keys must be "category/stem" on Windows too; "power\\ldo" breaks matching and aliases."""
+    root = PureWindowsPath(r"C:\pcbparts\data\design-rules\rules")
+    assert _rule_key(root / "power" / "ldo.md", root) == "power/ldo"
+    assert _rule_key(root / "misc" / "op-amp-basics.md", root) == "misc/op-amp-basics"

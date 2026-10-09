@@ -166,7 +166,7 @@ def update_char_count(text: str) -> str:
 
 def process_file(path: Path, dry_run: bool = False) -> dict:
     """Process a single file. Returns dict of changes made."""
-    text = path.read_text()
+    text = path.read_text(encoding="utf-8")
     original_len = len(text)
     changes = {}
 
@@ -195,7 +195,7 @@ def process_file(path: Path, dry_run: bool = False) -> dict:
     if new_len != original_len:
         changes['chars_removed'] = original_len - new_len
         if not dry_run:
-            path.write_text(text)
+            path.write_text(text, encoding="utf-8")
 
     return changes
 
@@ -206,7 +206,7 @@ def main():
     # Process all readability-extracted files
     total_changes = 0
     for path in sorted(RAW_SOURCES.rglob("*.md")):
-        text = path.read_text()
+        text = path.read_text(encoding="utf-8")
         if 'method: "readability"' not in text[:500]:
             continue
 

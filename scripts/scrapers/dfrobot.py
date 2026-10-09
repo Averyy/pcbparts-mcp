@@ -152,7 +152,7 @@ def _run_gh_api(endpoint: str) -> list[dict]:
     """Run gh api command and return parsed JSON."""
     result = subprocess.run(
         ["gh", "api", endpoint, "--paginate"],
-        capture_output=True, text=True, timeout=120,
+        capture_output=True, text=True, encoding="utf-8", timeout=120,
     )
     if result.returncode != 0:
         raise RuntimeError(f"gh api failed: {result.stderr}")

@@ -48,7 +48,7 @@ def _parse_schematic_recursive(
     visited_paths.add(resolved)
 
     try:
-        text = sch_path.read_text(errors="replace")
+        text = sch_path.read_text(encoding="utf-8", errors="replace")
     except OSError as e:
         log.warning("Could not read %s: %s", sch_path, e)
         return

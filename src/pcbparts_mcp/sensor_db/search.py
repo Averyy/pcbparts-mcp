@@ -10,7 +10,7 @@ from typing import Any
 _IC_ALIASES: dict[str, str] = {}
 _aliases_path = Path(__file__).parent.parent.parent.parent / "data" / "sensors" / "ic_aliases.json"
 if _aliases_path.exists():
-    _IC_ALIASES = json.loads(_aliases_path.read_text())
+    _IC_ALIASES = json.loads(_aliases_path.read_text(encoding="utf-8"))
 
 
 # Query-time measure expansions (OR logic — any match)

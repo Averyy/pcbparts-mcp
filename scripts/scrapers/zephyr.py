@@ -407,7 +407,7 @@ def scrape_zephyr(output_dir: Path) -> None:
         # Pre-parse all YAML files so we can resolve include chains
         all_parsed: dict[str, dict] = {}
         for yaml_file in yaml_files:
-            text = yaml_file.read_text(errors="replace")
+            text = yaml_file.read_text(encoding="utf-8", errors="replace")
             all_parsed[yaml_file.name] = _parse_yaml_simple(text)
 
         ic_data: dict[str, dict] = {}

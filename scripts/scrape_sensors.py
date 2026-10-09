@@ -63,7 +63,8 @@ def main():
 
     status_path = args.output / "_scrape_status.json"
     status_path.write_text(
-        json.dumps({"run_at": run_at, "sources": statuses}, indent=2) + "\n"
+        json.dumps({"run_at": run_at, "sources": statuses}, indent=2) + "\n",
+        encoding="utf-8",
     )
     logger.info(f"Wrote scrape status to {status_path}")
 

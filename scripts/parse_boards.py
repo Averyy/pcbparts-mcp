@@ -130,7 +130,7 @@ def parse_boards_md(path: Path | None = None) -> dict[str, dict]:
     boards: dict[str, dict] = {}
     in_table = False
 
-    for line in path.read_text().splitlines():
+    for line in path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         # Detect table rows (skip header separator)
         if line.startswith("|") and not line.startswith("|---"):

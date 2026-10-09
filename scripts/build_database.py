@@ -372,6 +372,18 @@ def _build_into_tmp(data_dir: Path, db_path: Path, tmp_path: Path, verbose: bool
         print(f"Output: {db_path}")
 
     conn = sqlite3.connect(tmp_path)
+    try:
+        return _fill_tmp_and_swap(conn, data_dir, db_path, tmp_path, verbose, start_time)
+    finally:
+        # Already closed on success. On failure it must close before build_database() deletes
+        # the tmp: Windows can't delete an open file (WinError 32) and that error would mask
+        # the real one.
+        conn.close()
+
+
+def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, tmp_path: Path,
+                       verbose: bool, start_time: float) -> dict:
+    """Load every category into the open tmp DB, then atomically move it to db_path."""
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
 
@@ -415,7 +427,7 @@ def _build_into_tmp(data_dir: Path, db_path: Path, tmp_path: Path, verbose: bool
     # Load subcategories
     subcategories_file = data_dir / "subcategories.json"
     if subcategories_file.exists():
-        with open(subcategories_file) as f:
+        with open(subcategories_file, encoding="utf-8") as f:
             subcats = json.load(f)
 
         # Track unique categories
@@ -438,7 +450,7 @@ def _build_into_tmp(data_dir: Path, db_path: Path, tmp_path: Path, verbose: bool
     # Load manifest for category slugs
     manifest_file = data_dir / "manifest.json"
     if manifest_file.exists():
-        with open(manifest_file) as f:
+        with open(manifest_file, encoding="utf-8") as f:
             manifest = json.load(f)
 
         for slug, cat_info in manifest.get("categories", {}).items():
@@ -468,7 +480,7 @@ def _build_into_tmp(data_dir: Path, db_path: Path, tmp_path: Path, verbose: bool
         # First-inserted wins (deterministic under sorted(glob)); count-check below logs any.
         insert_sql = f"INSERT OR IGNORE INTO components ({', '.join(all_cols)}) VALUES ({placeholders})"
 
-        with gzip.open(gz_file, "rt") as f:
+        with gzip.open(gz_file, "rt", encoding="utf-8") as f:
             for line in f:
                 if not line.strip():
                     continue
