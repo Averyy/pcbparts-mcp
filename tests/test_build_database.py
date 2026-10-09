@@ -1,4 +1,4 @@
-"""Tests for scripts/build_database.py and build_sensor_db.py build safety.
+"""Tests for scripts/build_database.py, build_sensor_db.py and build_history_db.py build safety.
 
 Covers audit #5 (cross-category duplicate LCSC: INSERT OR IGNORE first-wins +
 count-check abort) and #13 (atomic temp+rename builds, tmp cleanup on failure,
@@ -16,6 +16,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 from build_database import build_database, MAX_IGNORED_ROWS  # noqa: E402
 from build_sensor_db import build_db as build_sensor_db, MIN_SENSOR_COUNT  # noqa: E402
+from build_history_db import build_history_db  # noqa: E402
 
 
 def _part(lcsc: str, **over) -> dict:
@@ -195,4 +196,63 @@ class TestBuildSensorDb:
         with pytest.raises(ValueError, match="refusing to build"):
             build_sensor_db(_merged(MIN_SENSOR_COUNT - 1), db_path, quiet=True)
         assert _sensor_count(db_path) == MIN_SENSOR_COUNT
+        assert _no_tmp_left(db_path)
+
+
+# --- build_history_db.py -------------------------------------------------------
+
+
+def _write_history(data_dir: Path, month: str, n: int) -> None:
+    hist = data_dir / "history"
+    hist.mkdir(parents=True, exist_ok=True)
+    with gzip.open(hist / f"{month}.jsonl.gz", "wt", encoding="utf-8") as f:
+        for i in range(n):
+            f.write(json.dumps({"l": f"C{i}", "d": f"{month}-01", "s": i, "$": 0.1, "t": "e"}) + "\n")
+
+
+def _event_count(db_path: Path) -> int:
+    conn = sqlite3.connect(db_path)
+    try:
+        return conn.execute("SELECT COUNT(*) FROM stock_events").fetchone()[0]
+    finally:
+        conn.close()
+
+
+class TestBuildHistoryDb:
+    def test_atomic_build_replaces_old_db(self, tmp_path):
+        db_path = tmp_path / "stock_history.db"
+        _write_history(tmp_path, "2026-01", 3)
+        build_history_db(tmp_path, db_path, verbose=False)
+        _write_history(tmp_path, "2026-02", 2)
+        build_history_db(tmp_path, db_path, verbose=False)
+        assert _event_count(db_path) == 5
+        assert _no_tmp_left(db_path)
+
+    def test_failed_build_keeps_old_db_and_cleans_tmp(self, tmp_path):
+        """Invalid UTF-8 raises past the gzip/JSON handlers: the old DB must survive."""
+        db_path = tmp_path / "stock_history.db"
+        _write_history(tmp_path, "2026-01", 3)
+        build_history_db(tmp_path, db_path, verbose=False)
+
+        with gzip.open(tmp_path / "history" / "2026-02.jsonl.gz", "wb") as f:
+            f.write(b'{"l": "C9", "d": "2026-02-01", "s": 1, "t": "e"}\n\xff\xfe\n')
+        with pytest.raises(UnicodeDecodeError):
+            build_history_db(tmp_path, db_path, verbose=False)
+
+        assert _event_count(db_path) == 3  # old DB untouched
+        assert _no_tmp_left(db_path)
+
+    def test_interrupt_cleans_tmp(self, tmp_path, monkeypatch):
+        db_path = tmp_path / "stock_history.db"
+        _write_history(tmp_path, "2026-01", 3)
+        build_history_db(tmp_path, db_path, verbose=False)
+
+        import build_history_db as bh
+        monkeypatch.setattr(
+            bh, "_fill_tmp_and_swap",
+            lambda *a, **kw: (_ for _ in ()).throw(KeyboardInterrupt()),
+        )
+        with pytest.raises(KeyboardInterrupt):
+            bh.build_history_db(tmp_path, db_path, verbose=False)
+        assert _event_count(db_path) == 3
         assert _no_tmp_left(db_path)
