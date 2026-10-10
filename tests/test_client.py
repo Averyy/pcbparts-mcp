@@ -665,12 +665,14 @@ class TestClientIntegration:
         categories = await client.fetch_categories()
         client.set_categories(categories)
 
-        # Find alternatives with EasyEDA footprints only
+        # Find alternatives with EasyEDA footprints only. limit=2 keeps this to 4 /api/products checks
+        # (2 x limit): EasyEDA blocks an IP after ~24, and the whole integration run shares that
+        # (docs/ref-easyeda-api.md). With limit=5 a full run sent ~26 and tripped the block.
         result = await client.find_alternatives(
             "C25531",  # Common 10k resistor
             min_stock=100,
             has_easyeda_footprint=True,
-            limit=5,
+            limit=2,
         )
 
         assert "error" not in result

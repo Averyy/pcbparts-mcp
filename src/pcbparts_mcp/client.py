@@ -24,12 +24,19 @@ from .config import (
     EASYEDA_COMPONENT_URL,
     EASYEDA_SYMBOL_URL,
     EASYEDA_CACHE_TTL,
+    EASYEDA_FOOTPRINT_CACHE_TTL,
     EASYEDA_ERROR_CACHE_TTL,
     EASYEDA_REQUEST_TIMEOUT,
+    EASYEDA_ATTEMPT_TIMEOUT,
     EASYEDA_CACHE_MAX_SIZE,
     EASYEDA_CONCURRENT_LIMIT,
     EASYEDA_RATE_LIMIT,
     EASYEDA_RATE_JITTER,
+    EASYEDA_PRODUCTS_BUDGET,
+    EASYEDA_PRODUCTS_WINDOW,
+    EASYEDA_COOLDOWN_BASE,
+    EASYEDA_COOLDOWN_MAX,
+    EASYEDA_MAX_FOOTPRINT_CHECKS,
     JLCPCB_CONCURRENT_LIMIT,
     JLCPCB_RATE_LIMIT,
     JLCPCB_RATE_JITTER,
@@ -44,6 +51,7 @@ from .config import (
     PART_CACHE_TTL,
     PART_CACHE_MAX_SIZE,
 )
+from .cache import Cooldown, SlidingWindowBudget
 from .subcategory_aliases import SUBCATEGORY_ALIASES, resolve_subcategory_name as _resolve_subcategory_name
 from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
 from .mounting import detect_mounting_type
@@ -105,6 +113,11 @@ class JLCPCBClient:
     def __init__(self):
         self._jlcpcb_session: wafer.AsyncSession | None = None
         self._easyeda_session: wafer.AsyncSession | None = None
+        self._easyeda_products_session: wafer.AsyncSession | None = None
+        # EasyEDA /api/products blocks an IP after ~24 requests (docs/ref-easyeda-api.md): budget every
+        # request and pause all of them after a block. Per client; the server has one, so process-wide.
+        self._easyeda_products_budget = SlidingWindowBudget(EASYEDA_PRODUCTS_BUDGET, EASYEDA_PRODUCTS_WINDOW)
+        self._easyeda_products_cooldown = Cooldown(EASYEDA_COOLDOWN_BASE, EASYEDA_COOLDOWN_MAX)
         # Category cache - lazily populated from API or set externally
         self._categories: list[dict[str, Any]] = []
         self._category_map: dict[int, dict[str, Any]] = {}  # id -> category
@@ -211,20 +224,39 @@ class JLCPCBClient:
         return self._jlcpcb_session
 
     def _get_easyeda_session(self) -> wafer.AsyncSession:
-        """Get or create persistent EasyEDA session."""
+        """Get or create persistent EasyEDA session (symbol data, /api/components)."""
         if self._easyeda_session is None:
             self._easyeda_session = wafer.AsyncSession(
                 timeout=EASYEDA_REQUEST_TIMEOUT,
+                attempt_timeout=EASYEDA_ATTEMPT_TIMEOUT,  # cap each try so retries can fire within the budget
                 max_retries=MAX_RETRIES,
                 rate_limit=EASYEDA_RATE_LIMIT,
                 rate_jitter=EASYEDA_RATE_JITTER,
             )
         return self._easyeda_session
 
+    def _get_easyeda_products_session(self) -> wafer.AsyncSession:
+        """Get or create the EasyEDA session for footprint checks (/api/products).
+
+        Exactly one request per call: that endpoint answers a rate-limit block with a bare 403, and
+        wafer would otherwise retry and rotate it (2-3 requests), which keeps the block going.
+        """
+        if self._easyeda_products_session is None:
+            self._easyeda_products_session = wafer.AsyncSession(
+                timeout=EASYEDA_REQUEST_TIMEOUT,
+                attempt_timeout=EASYEDA_REQUEST_TIMEOUT,  # single attempt gets the whole budget
+                max_retries=0,
+                max_rotations=0,  # 403/429 come back as responses instead of being retried
+                rate_limit=EASYEDA_RATE_LIMIT,
+                rate_jitter=EASYEDA_RATE_JITTER,
+            )
+        return self._easyeda_products_session
+
     async def close(self):
         """Release persistent HTTP sessions."""
         self._jlcpcb_session = None
         self._easyeda_session = None
+        self._easyeda_products_session = None
 
     async def _ensure_categories(self) -> None:
         """Ensure categories are loaded (lazy initialization)."""
@@ -437,7 +469,7 @@ class JLCPCBClient:
         # Remove expired entries
         expired = [
             k for k, (ts, _, is_error) in self._easyeda_cache.items()
-            if now - ts >= (EASYEDA_ERROR_CACHE_TTL if is_error else EASYEDA_CACHE_TTL)
+            if now - ts >= (EASYEDA_ERROR_CACHE_TTL if is_error else EASYEDA_FOOTPRINT_CACHE_TTL)
         ]
         for k in expired:
             del self._easyeda_cache[k]
@@ -466,44 +498,85 @@ class JLCPCBClient:
 
         Returns:
             Dict with:
-            - has_easyeda_footprint: True/False/None (None = unknown/error)
+            - has_easyeda_footprint: True/False/None (None = unknown: error, or EasyEDA
+              rate-limiting this server, see _check_easyeda_footprint)
             - easyeda_symbol_uuid: UUID string or None
             - easyeda_footprint_uuid: UUID string or None
         """
+        result, _ = await self._check_easyeda_footprint(lcsc)
+        return result
+
+    async def _check_easyeda_footprint(self, lcsc: str) -> tuple[dict[str, Any], str]:
+        """check_easyeda_footprint() plus how the answer was reached.
+
+        Status is one of:
+        - "cached" / "checked": a real answer (from cache / from one /api/products request)
+        - "invalid": not an LCSC code, no request made
+        - "error": the request failed; cached as unknown for EASYEDA_ERROR_CACHE_TTL
+        - "blocked": this request got EasyEDA's rate-limit 403/429 and started a cooldown
+        - "cooldown" / "budget": skipped without a request (a cooldown is running, or the
+          rolling request budget is spent)
+        Every status except "cached" and "checked" comes with has_easyeda_footprint=None.
+        """
         lcsc = lcsc.strip().upper()
 
-        # Validate LCSC format (C followed by digits)
-        if not lcsc or not lcsc.startswith("C") or not lcsc[1:].isdigit():
-            return {
-                "has_easyeda_footprint": None,
-                "easyeda_symbol_uuid": None,
-                "easyeda_footprint_uuid": None,
-            }
-
-        # Check cache first (with TTL awareness for errors vs successes)
-        now = time.time()
-        async with self._get_easyeda_cache_lock():
-            if lcsc in self._easyeda_cache:
-                timestamp, result, is_error = self._easyeda_cache[lcsc]
-                ttl = EASYEDA_ERROR_CACHE_TTL if is_error else EASYEDA_CACHE_TTL
-                if now - timestamp < ttl:
-                    return result
-
-        # Default result for errors/timeouts
+        # Default result for errors/timeouts/skips
         unknown_result: dict[str, Any] = {
             "has_easyeda_footprint": None,
             "easyeda_symbol_uuid": None,
             "easyeda_footprint_uuid": None,
         }
 
+        # Validate LCSC format (C followed by digits)
+        if not lcsc or not lcsc.startswith("C") or not lcsc[1:].isdigit():
+            return unknown_result, "invalid"
+
+        # Check cache first (with TTL awareness for errors vs successes)
+        now = time.time()
+        async with self._get_easyeda_cache_lock():
+            if lcsc in self._easyeda_cache:
+                timestamp, result, is_error = self._easyeda_cache[lcsc]
+                ttl = EASYEDA_ERROR_CACHE_TTL if is_error else EASYEDA_FOOTPRINT_CACHE_TTL
+                if now - timestamp < ttl:
+                    return result, "error" if is_error else "cached"
+
+        cooldown = self._easyeda_products_cooldown
+        if cooldown.active:
+            return unknown_result, "cooldown"
+
         # Use semaphore to limit concurrent requests
         async with self._get_easyeda_semaphore():
-            session = self._get_easyeda_session()
+            # Check again after waiting: a block may have started while this call was queued
+            if cooldown.active:
+                return unknown_result, "cooldown"
+            if not self._easyeda_products_budget.try_acquire():
+                # Warn once per window so prod logs show when real traffic outgrows the budget
+                if self._easyeda_products_budget.report_due():
+                    logger.warning(
+                        f"EasyEDA footprint request budget spent ({EASYEDA_PRODUCTS_BUDGET} per "
+                        f"{EASYEDA_PRODUCTS_WINDOW:.0f}s); skipping checks (footprint unknown) until it frees up. "
+                        f"Logged at most once per {EASYEDA_PRODUCTS_WINDOW:.0f}s."
+                    )
+                logger.debug(f"EasyEDA footprint check for {lcsc} skipped: request budget spent")
+                return unknown_result, "budget"
+            session = self._get_easyeda_products_session()
             try:
                 # URL-encode the LCSC code for safety
                 url = EASYEDA_COMPONENT_URL.format(lcsc=quote(lcsc, safe=''))
 
                 response = await session.get(url)
+
+                # EasyEDA's rate-limit block is a bare CloudFront 403 (429 also counts). Retrying keeps
+                # it going, so pause every footprint check instead. Not cached per part: the cooldown
+                # covers it, and the part gets checked normally once it ends.
+                if response.status_code in (403, 429):
+                    pause = cooldown.trip()
+                    challenge = response.challenge_type
+                    logger.warning(
+                        f"EasyEDA footprint check for {lcsc} got HTTP {response.status_code}"
+                        f"{f' ({challenge})' if challenge else ''}; pausing footprint checks for {pause:.0f}s"
+                    )
+                    return unknown_result, "blocked"
 
                 # 404 means no footprint exists
                 if response.status_code == 404:
@@ -512,8 +585,9 @@ class JLCPCBClient:
                         "easyeda_symbol_uuid": None,
                         "easyeda_footprint_uuid": None,
                     }
+                    cooldown.record_success()
                     await self._cache_easyeda_result(lcsc, result, False)
-                    return result
+                    return result, "checked"
 
                 response.raise_for_status()
                 data = response.json()
@@ -536,14 +610,15 @@ class JLCPCBClient:
                         "easyeda_footprint_uuid": None,
                     }
 
+                cooldown.record_success()
                 await self._cache_easyeda_result(lcsc, result, False)
-                return result
+                return result, "checked"
 
             except Exception as e:
                 # Log the error for debugging, cache with shorter TTL to avoid hammering
                 logger.warning(f"EasyEDA footprint check failed for {lcsc}: {type(e).__name__}: {e}")
                 await self._cache_easyeda_result(lcsc, unknown_result, True)
-                return unknown_result
+                return unknown_result, "error"
 
     def _cleanup_easyeda_component_cache_unlocked(self) -> None:
         """Clean up expired entries if cache is too large. Must hold lock."""
@@ -949,11 +1024,24 @@ class JLCPCBClient:
 
         # Check cache first
         now = time.time()
+        cached: tuple[float, dict[str, Any] | None] | None = None
         async with self._get_part_cache_lock():
-            if lcsc in self._part_cache:
-                timestamp, cached_result = self._part_cache[lcsc]
-                if now - timestamp < PART_CACHE_TTL:
-                    return cached_result
+            entry = self._part_cache.get(lcsc)
+            if entry is not None and now - entry[0] < PART_CACHE_TTL:
+                cached = entry
+        if cached is not None:
+            timestamp, cached_result = cached
+            if cached_result is not None and cached_result.get("has_easyeda_footprint") is None:
+                # The footprint was unknown when this part was cached (EasyEDA error or rate limit).
+                # Re-check it through the footprint cache rather than serving the unknown for the
+                # rest of the part's TTL; the part keeps its timestamp so stock/price age as before.
+                easyeda_info = await self.check_easyeda_footprint(lcsc)
+                if easyeda_info["has_easyeda_footprint"] is not None:
+                    cached_result = {**cached_result, **easyeda_info}
+                    async with self._get_part_cache_lock():
+                        if self._part_cache.get(lcsc, (None,))[0] == timestamp:
+                            self._part_cache[lcsc] = (timestamp, cached_result)
+            return cached_result
 
         # Search for the exact part code
         params = {
@@ -1124,15 +1212,23 @@ class JLCPCBClient:
 
         # Filter by EasyEDA footprint availability if requested
         # Pre-filter to limit EasyEDA API calls (2x limit provides buffer for filtering)
+        footprint_filter: dict[str, Any] | None = None
         if has_easyeda_footprint is not None:
-            # Only check top candidates to avoid excessive API calls
-            max_easyeda_checks = effective_limit * 2
+            # Only check top candidates: each uncached check is one /api/products request, and EasyEDA
+            # blocks an IP after ~24 of them (docs/ref-easyeda-api.md)
+            max_easyeda_checks = min(effective_limit * 2, EASYEDA_MAX_FOOTPRINT_CHECKS)
             candidates_to_check = compatible[:max_easyeda_checks]
             candidate_codes = [p.get("lcsc", "") for p in candidates_to_check if p.get("lcsc")]
-            easyeda_results = await asyncio.gather(
-                *[self.check_easyeda_footprint(code) for code in candidate_codes]
+            checks = await asyncio.gather(
+                *[self._check_easyeda_footprint(code) for code in candidate_codes]
             )
-            easyeda_map = dict(zip(candidate_codes, easyeda_results))
+            easyeda_map = {code: info for code, (info, _) in zip(candidate_codes, checks)}
+            footprint_filter = self._footprint_filter_note(
+                candidates=len(compatible),
+                checked=len(candidate_codes),
+                capped=effective_limit * 2 > EASYEDA_MAX_FOOTPRINT_CHECKS and len(compatible) > max_easyeda_checks,
+                statuses=[status for _, status in checks],
+            )
 
             filtered_compatible = []
             for part in candidates_to_check:
@@ -1172,13 +1268,51 @@ class JLCPCBClient:
 
         # Build response (different structure for supported vs unsupported)
         if is_supported:
-            return build_response(
+            response = build_response(
                 original, top_scored, subcategory_name or "", primary_attr, primary_value, effective_limit
             )
         else:
-            return build_unsupported_response(
+            response = build_unsupported_response(
                 original, top_scored, subcategory_name or "", primary_attr, effective_limit
             )
+        if footprint_filter:
+            response["summary"]["footprint_filter"] = footprint_filter
+        return response
+
+    def _footprint_filter_note(
+        self, candidates: int, checked: int, capped: bool, statuses: list[str]
+    ) -> dict[str, Any] | None:
+        """Explain how the has_easyeda_footprint filter was limited, or None if it wasn't."""
+        blocked = sum(1 for s in statuses if s in ("blocked", "cooldown"))
+        over_budget = sum(1 for s in statuses if s == "budget")
+        failed = sum(1 for s in statuses if s == "error")
+        if not capped and not blocked and not over_budget and not failed:
+            return None
+        notes = []
+        if capped:
+            notes.append(
+                f"Checked EasyEDA footprints for the top {checked} of {candidates} candidates "
+                f"(at most {EASYEDA_MAX_FOOTPRINT_CHECKS} per call), so more matching parts may exist."
+            )
+        if blocked:
+            wait = max(1, round(self._easyeda_products_cooldown.remaining / 60))
+            notes.append(
+                f"{blocked} candidate(s) skipped: EasyEDA is rate-limiting footprint lookups "
+                f"from this server. Try again in about {wait} min."
+            )
+        if over_budget:
+            notes.append(
+                f"{over_budget} candidate(s) skipped to stay under EasyEDA's rate limit. "
+                f"Try again in about {round(EASYEDA_PRODUCTS_WINDOW / 60)} min."
+            )
+        if failed:
+            notes.append(f"{failed} candidate(s) skipped: their EasyEDA footprint lookup failed.")
+        return {
+            "candidates": candidates,
+            "checked": checked,
+            "unknown": blocked + over_budget + failed,
+            "note": " ".join(notes),
+        }
 
     async def fetch_categories(self) -> list[dict[str, Any]]:
         """Fetch current categories and subcategories from JLCPCB API.

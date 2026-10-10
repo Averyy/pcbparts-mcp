@@ -26,12 +26,23 @@ JLCPCB_DETAIL_URL = "https://cart.jlcpcb.com/shoppingCart/smtGood/getComponentDe
 # EasyEDA API endpoints
 EASYEDA_COMPONENT_URL = "https://easyeda.com/api/products/{lcsc}/components"
 EASYEDA_SYMBOL_URL = "https://easyeda.com/api/components/{uuid}"
-EASYEDA_CACHE_TTL = 3600  # Cache footprint availability for 1 hour
+EASYEDA_CACHE_TTL = 3600  # Cache symbol data (/api/components) for 1 hour
+EASYEDA_FOOTPRINT_CACHE_TTL = 86400  # Footprint availability (/api/products) rarely changes: 24 hours
 EASYEDA_ERROR_CACHE_TTL = 300  # Cache errors for 5 minutes to avoid hammering failing API
 EASYEDA_REQUEST_TIMEOUT = 15.0  # Total budget for EasyEDA (non-critical). wafer>=0.2 enforces
 # a session-level timeout= as the TOTAL budget across all retries+rotations (not per-attempt). 5s
-# was too tight to work through an EasyEDA WAF challenge, causing intermittent 403s on the footprint call.
+# was too tight to work through an EasyEDA WAF challenge. Since 0.5.6 the footprint check
+# (/api/products) makes a single attempt, because its 403s are rate-limit blocks that retries prolong;
+# symbol fetches (/api/components) still retry within this budget.
+EASYEDA_ATTEMPT_TIMEOUT = 5.0  # Per-attempt cap for /api/components so retries can fire inside the budget
 EASYEDA_CACHE_MAX_SIZE = 10000  # Max cached entries to prevent unbounded memory growth
+# /api/products is rate-limited per IP: measured at 24 requests, then a bare CloudFront 403 that clears
+# in about 2 minutes (docs/ref-easyeda-api.md). Stay under it process-wide and back off on the first 403.
+EASYEDA_PRODUCTS_BUDGET = 20  # Max /api/products requests...
+EASYEDA_PRODUCTS_WINDOW = 120.0  # ...per rolling window (seconds)
+EASYEDA_COOLDOWN_BASE = 120.0  # Pause after a 403; doubles on each repeat block
+EASYEDA_COOLDOWN_MAX = 1800.0  # Cap for the doubling pause (30 minutes)
+EASYEDA_MAX_FOOTPRINT_CHECKS = 15  # Footprint checks per find_alternatives(has_easyeda_footprint=...) call
 EASYEDA_CONCURRENT_LIMIT = 5  # Max concurrent EasyEDA requests to avoid rate limiting
 EASYEDA_RATE_LIMIT = 0.1  # Min seconds between requests to EasyEDA
 EASYEDA_RATE_JITTER = 0.05  # Random jitter added to rate limit
