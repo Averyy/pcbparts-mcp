@@ -15,6 +15,7 @@
 
 - **NEVER test changes using the live MCP** undeployed code changes NEEDS to be tested locally via the database
 - **ALWAYS use wafer** when testing JLCPCB API - use `wafer.AsyncSession` with proper config (see `client.py` or `scrape_components.py`). Don't write quick test scripts with raw httpx/aiohttp - you'll get 403 blocked.
+- **EasyEDA `/api/products` is rate-limited per IP**: measured at 24 requests, then a bare CloudFront 403 with no `Retry-After` that clears in about 2 minutes (2026-10-09). Stay under 20 requests per 2 minutes. Since 0.5.6 the client enforces that per process (budget and cooldown in `_check_easyeda_footprint()`), but the budget is per client instance (the server has one; each integration test class has its own), so test runs and anything else running at the same time add up. On the first EasyEDA 403, STOP sending. Don't re-run tests or retry by hand: heavy traffic during a block appears to stretch it from ~2 minutes to over 30. Check prod with one `jlc_get_part` instead. Details and numbers: `docs/ref-easyeda-api.md`.
 - **ALWAYS pair wafer `timeout=` with `attempt_timeout=`** - `timeout` is a TOTAL budget across all retries/rotations, not a per-attempt cap. Unpaired, one hanging request eats the whole budget and retries never fire (this failed a sensor scrape and blocked a deploy on 2026-08-01). Sensor scrapers: use `make_session()`/`attempt_cap()` from `scripts/scrapers/common.py`.
 
 ## Library Types (Quick Reference)

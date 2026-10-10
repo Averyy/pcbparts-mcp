@@ -54,6 +54,11 @@ Run the server locally:
 - Integration tests hit live JLCPCB/EasyEDA/distributor APIs. They can flake from
   residential IPs (WAF challenges) and burn API quotas — they are *not* required for
   PRs; maintainers run them before releases.
+- EasyEDA blocks an IP from `/api/products` after about 24 requests in a short window, and
+  one integration run sends about 20. Don't send other EasyEDA traffic for 3 minutes before or
+  after a run. If the EasyEDA tests start failing with 403, stop and wait instead of
+  re-running them: heavy traffic during a block appears to make it last much longer. See
+  `docs/ref-easyeda-api.md`.
 - Bug-fix PRs should include a regression test that fails on the code before your fix.
 - **Never test changes against the live server** (`pcbparts.dev`) — it runs the deployed
   code, not yours. Test locally against your built databases.

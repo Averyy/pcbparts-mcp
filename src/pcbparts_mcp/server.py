@@ -730,7 +730,9 @@ async def jlc_find_alternatives(
             - True: Only return parts WITH EasyEDA footprints (for Atopile/KiCad users)
             - False: Only return parts WITHOUT footprints
             - None (default): Don't filter by footprint (fastest)
-            Note: Filtering by footprint is slower as it checks each alternative.
+            Note: Filtering by footprint is slower as it checks EasyEDA for each candidate, at
+            most 15 per call. Candidates it couldn't check are left out. When the check was
+            limited, summary.footprint_filter says how many were checked and why.
         limit: Maximum alternatives to return (default: 10, max: 50)
 
     Returns:
@@ -837,6 +839,10 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> di
         if not part:
             return {"error": f"Part not found: {lcsc}"}
 
+        if part.get("has_easyeda_footprint") is None:
+            # Unknown, not absent: the EasyEDA lookup failed or is paused by its rate limit
+            return {"error": f"Couldn't check EasyEDA for {lcsc}'s symbol right now (lookup failed or "
+                             "EasyEDA is rate-limiting). Try again in a few minutes."}
         if not part.get("has_easyeda_footprint"):
             return {"error": f"No EasyEDA symbol available for {lcsc}"}
 
