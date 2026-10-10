@@ -1,8 +1,9 @@
-"""Shared TTL cache with LRU eviction for distributor API clients."""
+"""Shared TTL cache with LRU eviction for distributor API clients, plus request budgets."""
 
+import collections
 import datetime
 import time
-from typing import Any
+from typing import Any, Callable
 
 
 class TTLCache:
@@ -85,3 +86,84 @@ class DailyQuota:
     def remaining(self) -> int:
         self._maybe_reset()
         return max(0, self._limit - self._count)
+
+
+class SlidingWindowBudget:
+    """At most ``limit`` requests in any rolling ``window`` seconds.
+
+    Synchronous — safe for single-threaded asyncio (no await between check and record).
+    """
+
+    def __init__(self, limit: int, window: float, clock: Callable[[], float] = time.monotonic):
+        self._limit = limit
+        self._window = window
+        self._clock = clock
+        self._sent: collections.deque[float] = collections.deque()
+        self._next_report = float("-inf")
+
+    def _prune(self, now: float) -> None:
+        while self._sent and now - self._sent[0] >= self._window:
+            self._sent.popleft()
+
+    def try_acquire(self) -> bool:
+        """Record one request and return True, or return False (recording nothing) if over budget."""
+        now = self._clock()
+        self._prune(now)
+        if len(self._sent) >= self._limit:
+            return False
+        self._sent.append(now)
+        return True
+
+    @property
+    def used(self) -> int:
+        self._prune(self._clock())
+        return len(self._sent)
+
+    def report_due(self) -> bool:
+        """True at most once per window, so running out can be logged without flooding the log."""
+        now = self._clock()
+        if now < self._next_report:
+            return False
+        self._next_report = now + self._window
+        return True
+
+
+class Cooldown:
+    """Escalating pause after a block: ``base`` seconds, doubling per consecutive block, capped at ``cap``.
+
+    A block reported while a pause is already running doesn't escalate it, so concurrent requests
+    that were in flight when the block started count once. A success only clears the strike count
+    when no pause is running, so a request from before the block that comes back 200 can't reset
+    the escalation (the next block still doubles).
+
+    Synchronous — safe for single-threaded asyncio.
+    """
+
+    def __init__(self, base: float, cap: float, clock: Callable[[], float] = time.monotonic):
+        self._base = base
+        self._cap = cap
+        self._clock = clock
+        self._until = 0.0
+        self._strikes = 0
+
+    @property
+    def remaining(self) -> float:
+        """Seconds left in the current pause (0 when not paused)."""
+        return max(0.0, self._until - self._clock())
+
+    @property
+    def active(self) -> bool:
+        return self.remaining > 0
+
+    def trip(self) -> float:
+        """Start a pause (or keep the running one) and return its remaining seconds."""
+        if self.active:
+            return self.remaining
+        self._strikes += 1
+        duration = min(self._base * 2 ** (self._strikes - 1), self._cap)
+        self._until = self._clock() + duration
+        return duration
+
+    def record_success(self) -> None:
+        if not self.active:
+            self._strikes = 0
