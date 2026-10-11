@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -3518,11 +3513,6 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
-  },
-  "2474": {
-    "name": "File section/file frame/file tray/file rack",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
