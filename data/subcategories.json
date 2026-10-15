@@ -2974,6 +2974,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "965": {
+    "name": "Sensor accessories",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "1279": {
     "name": "Servo Motor",
     "category_id": 46,
@@ -3051,6 +3056,11 @@
   },
   "3736": {
     "name": "Thermoelectric Cooler",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "1121": {
+    "name": "Time relay",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
@@ -3829,6 +3839,11 @@
     "category_id": 68,
     "category_name": "Power Modules"
   },
+  "3490": {
+    "name": "anti - skid chain",
+    "category_id": 56,
+    "category_name": "Safety/fire protection"
+  },
   "2029": {
     "name": "SiC Diodes",
     "category_id": 66,
@@ -4051,6 +4066,11 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "1756": {
+    "name": "Screwdriver handle/bit holder",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
