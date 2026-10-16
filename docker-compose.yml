@@ -11,6 +11,9 @@ services:
       - "8080:8080"
     networks:
       - web
+    volumes:
+      # EasyEDA footprint answers (EASYEDA_STORE_PATH); `docker compose down` keeps named volumes
+      - pcbparts-cache:/app/cache
     env_file:
       - path: .env
         required: false
@@ -38,3 +41,6 @@ services:
 networks:
   web:
     external: true
+
+volumes:
+  pcbparts-cache:
