@@ -21,45 +21,60 @@ RUN pip install --no-cache-dir \
     "pydantic==2.12.5" \
     "pyyaml==6.0.3"
 
+# Non-root runtime user, created before anything is put in /app so every file gets its owner in the
+# layer that creates it. Never `chown -R /app` after the DB builds: that rewrites every file into a
+# new layer and stored the ~1.1 GB of DBs twice. /app holds only these empty dirs at this point.
+# /app/data must stay writable by appuser: SQLite creates -wal/-shm files next to each DB on open.
+# /app/cache: docker-compose mounts a named volume here, and a new volume copies this dir's owner.
+RUN adduser --disabled-password --gecos "" appuser \
+    && mkdir -p /app/data/history /app/data/wafer/cookies /app/cache \
+    && chown -R appuser:appuser /app
+
 # Copy application code (preserve src/ structure for path resolution)
-COPY src/ /app/src/
+COPY --chown=appuser:appuser src/ /app/src/
 
 # Copy pyproject.toml for version info
-COPY pyproject.toml /app/
+COPY --chown=appuser:appuser pyproject.toml /app/
 
 # Copy scraped component data
-COPY data/categories/ /app/data/categories/
-COPY data/manifest.json /app/data/
-COPY data/subcategories.json /app/data/
+COPY --chown=appuser:appuser data/categories/ /app/data/categories/
+COPY --chown=appuser:appuser data/manifest.json /app/data/
+COPY --chown=appuser:appuser data/subcategories.json /app/data/
 
 # Copy database build script and parsers module
-COPY scripts/build_database.py /app/scripts/
+COPY --chown=appuser:appuser scripts/build_database.py /app/scripts/
 
 # Build the SQLite databases at image build time. The EasyEDA footprint seed CSV (built by
 # scripts/build_easyeda_seed.py) is mounted for this step only: it's loaded into components.db,
 # so the 40 MB CSV doesn't need to ship in the image. --mount needs BuildKit (the default builder
 # since Docker 23, and what Compose v2 and buildx use).
+# The builds run as root because a bind mount keeps the checkout's file mode (a umask 027/077
+# checkout makes the seed unreadable to appuser); each RUN hands its DB to appuser itself, which
+# costs nothing because the file is new in that layer. -B: no root-owned .pyc in /app/src.
 RUN --mount=type=bind,source=data/easyeda/footprints.csv,target=/app/data/easyeda/footprints.csv \
-    python scripts/build_database.py --data-dir /app/data --output /app/data/components.db
+    python -B scripts/build_database.py --data-dir /app/data --output /app/data/components.db \
+    && chown appuser:appuser /app/data/components.db
 
 # Build stock history database (data/history/ kept by .gitkeep; populated by daily scraper)
-RUN mkdir -p /app/data/history
-COPY data/history/ /app/data/history/
-COPY scripts/build_history_db.py /app/scripts/
-RUN python scripts/build_history_db.py --data-dir /app/data --output /app/data/stock_history.db
+COPY --chown=appuser:appuser data/history/ /app/data/history/
+COPY --chown=appuser:appuser scripts/build_history_db.py /app/scripts/
+RUN python scripts/build_history_db.py --data-dir /app/data --output /app/data/stock_history.db \
+    && chown appuser:appuser /app/data/stock_history.db
 
 # Build sensor database from scraped sensor JSON data
-COPY data/sensors/ /app/data/sensors/
-COPY scripts/build_sensor_db.py /app/scripts/
-RUN python scripts/build_sensor_db.py --data-dir /app/data --output /app/data/sensor.db --quiet
+COPY --chown=appuser:appuser data/sensors/ /app/data/sensors/
+COPY --chown=appuser:appuser scripts/build_sensor_db.py /app/scripts/
+RUN python scripts/build_sensor_db.py --data-dir /app/data --output /app/data/sensor.db --quiet \
+    && chown appuser:appuser /app/data/sensor.db
 
 # Build boards database from parsed OSHW YAML schematics
-COPY data/boards/ /app/data/boards/
-COPY scripts/build_boards_db.py /app/scripts/
-RUN python scripts/build_boards_db.py --data-dir /app/data --output /app/data/boards.db --quiet
+COPY --chown=appuser:appuser data/boards/ /app/data/boards/
+COPY --chown=appuser:appuser scripts/build_boards_db.py /app/scripts/
+RUN python scripts/build_boards_db.py --data-dir /app/data --output /app/data/boards.db --quiet \
+    && chown appuser:appuser /app/data/boards.db
 
 # Copy design rules (served markdown only, not raw sources)
-COPY data/design-rules/rules/ /app/data/design-rules/rules/
+COPY --chown=appuser:appuser data/design-rules/rules/ /app/data/design-rules/rules/
 
 # Add src to Python path
 ENV PYTHONPATH=/app/src
@@ -67,17 +82,10 @@ ENV PYTHONUNBUFFERED=1
 ENV HTTP_PORT=8080
 ENV RATE_LIMIT_REQUESTS=100
 
-# Create wafer cookie cache dir (writable at runtime) and the EasyEDA footprint store dir. It must
-# exist before the chown below: docker-compose mounts a named volume at /app/cache, and a new
-# volume copies this dir's owner (a root-owned one would leave the store memory-only).
-RUN mkdir -p /app/data/wafer/cookies /app/cache
-
-# EasyEDA footprint answers that survive restarts
+# EasyEDA footprint answers that survive restarts (dir created and owned by appuser above).
 ENV EASYEDA_STORE_PATH=/app/cache/easyeda.db
 
 # Run as non-root user
-RUN adduser --disabled-password --gecos "" appuser
-RUN chown -R appuser:appuser /app
 USER appuser
 
 EXPOSE 8080
