@@ -202,7 +202,9 @@ class DailyQuota:
         self._count = 0
         self._date = self._today()
         self._paused_until = 0.0  # unix time; the API said its own limit is used up until then
-        self._pause_reason = ""  # "daily" (until its reset), "burst" (its per-minute limit) or "refused" (403)
+        # "daily" (until the reset the API named), "daily_unknown" (it didn't name one), "burst"
+        # (its per-minute limit) or "refused" (403)
+        self._pause_reason = ""
         self._api_remaining: int | None = None  # the API's own count of requests left today
         self._api_limit: int | None = None
         self.callers = CallerTally(name, clock)  # who sent them, logged hourly
@@ -282,6 +284,9 @@ class DailyQuota:
             limit = f"{self._api_limit} requests/day, counted by {self._name}" if self._api_limit else f"counted by {self._name}"
             return {"error": f"{self._name} daily quota exceeded ({limit}). "
                              f"It resets at {_utc_text(self._paused_until)}.{self._advice()}"}
+        if self._pause_reason == "daily_unknown":
+            return {"error": f"{self._name} daily quota exceeded (counted by {self._name}). {self._name} doesn't say when "
+                             f"its count resets, so this server tries again at {_utc_text(self._paused_until)}.{self._advice()}"}
         wait = math.ceil(self._paused_until - now)
         if self._pause_reason == "refused":
             return {"error": f"{self._name} refused this server's requests (HTTP 403). Try again in {wait} s.{self._advice()}"}
@@ -289,17 +294,33 @@ class DailyQuota:
 
     def pause(self, until: float, reason: str) -> None:
         """Send nothing until `until` (unix time): the API said its own limit is used up.
-        reason is "daily" (until its reset), "burst" (its per-minute limit) or "refused" (403)."""
+        reason is "daily", "daily_unknown", "burst" or "refused" (see __init__)."""
         if until > self._paused_until:
             self._paused_until, self._pause_reason = until, reason
             self._save()
 
+    def pause_daily_unknown_reset(self) -> None:
+        """The API refused for its daily limit without saying when it resets (Mouser): wait for the
+        next UTC midnight. Refused again on the first try after a daily pause, it retries hourly,
+        so a reset at another time of day (or a rolling 24 hours) costs at most an hour."""
+        now = self._clock()
+        retried = self._pause_reason in ("daily", "daily_unknown") and now >= self._paused_until
+        self.pause(now + 3600 if retried else _next_utc_midnight(now), "daily_unknown")
+
+    def clear_expired_pause(self) -> None:
+        """After a request went through: forget an ended pause, so the next daily refusal waits
+        for midnight again instead of retrying hourly."""
+        if self._pause_reason and self._clock() >= self._paused_until:
+            self._pause_reason = ""
+            self._save()
+
     def note_response(self, status_code: int, headers: Any, refused_pause: float | None = None) -> None:
-        """Follow the API's own limits from a response. DigiKey (and, by one client library's
-        account, Mouser) put X-RateLimit-Limit/-Remaining (per day) on responses: record them and
-        pause until the reset once none are left. A 429 without that is the per-minute limit:
-        pause for Retry-After, else a minute. refused_pause: seconds to pause on a 403 (DigiKey
-        suspends an app for 10 minutes for going over its per-second threshold)."""
+        """Follow the API's own limits from its response headers. DigiKey puts
+        X-RateLimit-Limit/-Remaining (per day) on every response: record them and pause until the
+        reset once none are left. A 429 without that is the per-minute limit: pause for
+        Retry-After, else a minute. refused_pause: seconds to pause on a 403 (DigiKey suspends an
+        app for 10 minutes for going over its per-second threshold). Mouser sends no such headers
+        and reports its limits in the body (MouserClient)."""
         remaining = _header_int(headers, "x-ratelimit-remaining")
         if remaining is not None:
             self.note_api_usage(remaining, _header_int(headers, "x-ratelimit-limit"))
