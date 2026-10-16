@@ -21,6 +21,14 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+class MouserError(ValueError):
+    """A Mouser request failed. The message is ours (no API key), so the tool can show it."""
+
+
+class MouserRateLimited(MouserError):
+    """Mouser answered 429: its own daily or per-minute limit (30 a minute, 1,000 a day) is used up."""
+
+
 class MouserAPIError(Exception):
     """Mouser API returned an error with a code and message."""
 
@@ -151,10 +159,15 @@ class MouserClient:
             response = await self._get_client().post(url, json=body)
         except httpx.HTTPError:
             # Sanitize: httpx exceptions may include the full URL with API key
-            raise ValueError("Mouser API request failed (network/connection error)")
+            raise MouserError("Mouser API request failed (network/connection error)")
+        if self._quota is not None:
+            self._quota.note_response(response.status_code, response.headers)
+        if response.status_code == 429:
+            paused = self._quota.paused_error() if self._quota else None
+            raise MouserRateLimited(paused["error"] if paused else "Mouser is limiting requests (HTTP 429). Try again later.")
         # Catch HTTP errors to avoid leaking the API key (embedded in URL) into logs
         if response.status_code >= 400:
-            raise ValueError(f"Mouser API returned HTTP {response.status_code}")
+            raise MouserError(f"Mouser API returned HTTP {response.status_code}")
         data = response.json()
 
         # Check for API errors
@@ -167,11 +180,12 @@ class MouserClient:
 
         return data
 
-    async def get_part(self, part_number: str) -> dict[str, Any]:
+    async def get_part(self, part_number: str, caller: str | None = None) -> dict[str, Any]:
         """Look up part(s) by Mouser part number or MPN.
 
         Args:
             part_number: Mouser PN or MPN. Pipe-delimited for batch (up to 10).
+            caller: the caller's IP, for the hourly log of who sent requests
 
         Returns:
             Dict with results list
@@ -185,7 +199,7 @@ class MouserClient:
 
         # Check daily quota (after cache so cache hits don't count)
         if self._quota:
-            quota_error = self._quota.check()
+            quota_error = self._quota.check(caller)
             if quota_error:
                 return quota_error
 
@@ -196,7 +210,10 @@ class MouserClient:
             }
         }
 
-        data = await self._post("/search/partnumber", body)
+        try:
+            data = await self._post("/search/partnumber", body)
+        except MouserRateLimited as e:
+            return {"error": str(e)}
         search_results = data.get("SearchResults", {})
         parts = search_results.get("Parts", [])
 

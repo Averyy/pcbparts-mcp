@@ -114,6 +114,14 @@ DIGIKEY_LOCALE_CURRENCY = os.getenv("DIGIKEY_LOCALE_CURRENCY", "USD")
 # Search: rs.componentsearchengine.com alligator JSON API (no auth required)
 # Downloads: rs.componentsearchengine.com/ga/model.php (requires CSEARCH_USER/CSEARCH_PASS)
 DISTRIBUTOR_DAILY_LIMIT = int(os.getenv("DISTRIBUTOR_DAILY_LIMIT", "1000"))
+# Our caps per rolling minute, below each API's own: Mouser allows 30 a minute, DigiKey 120 (and
+# suspends an app for ten minutes for going over its per-second threshold).
+MOUSER_PER_MINUTE = 25
+DIGIKEY_PER_MINUTE = 100
+# Mouser/DigiKey daily request counts, and a pause DigiKey asked for, kept across restarts. The
+# Docker image sets /app/cache/distributor_quota.json (the pcbparts-cache volume). Unset means
+# memory only: every restart starts the day's count from 0, while DigiKey keeps counting.
+DISTRIBUTOR_QUOTA_PATH = os.getenv("DISTRIBUTOR_QUOTA_PATH", "")
 
 CSE_CONCURRENT_LIMIT = 3
 CSE_RATE_LIMIT = 0.15

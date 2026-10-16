@@ -1,5 +1,7 @@
 """PCB Parts MCP Server - Search electronic components for PCB assembly."""
 
+import asyncio
+import contextlib
 import json
 import logging
 import time
@@ -8,6 +10,7 @@ from contextlib import asynccontextmanager
 from typing import Any, Literal
 
 from fastmcp import FastMCP
+from fastmcp.server.dependencies import get_http_request
 from mcp.types import ToolAnnotations
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -15,17 +18,17 @@ from starlette.responses import JSONResponse
 from starlette.routing import Route
 
 from . import __version__
-from .cache import DailyQuota
+from .cache import DailyQuota, QuotaStore
 from .config import (
     RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
-    DISTRIBUTOR_DAILY_LIMIT, MAX_ALTERNATIVES,
+    DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
-    ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH,
+    ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH,
 )
 from .client import EasyEDAComponentNotFound, JLCPCBClient
-from .mouser import MouserClient
-from .digikey import DigiKeyClient
+from .mouser import MouserAPIError, MouserClient, MouserError
+from .digikey import DigiKeyClient, DigiKeyError
 from .cse import CSEClient
 from .db import get_db, close_db
 from .sensor_db import get_sensor_db, close_sensor_db
@@ -43,6 +46,7 @@ _mouser_client: MouserClient | None = None
 _digikey_client: DigiKeyClient | None = None
 _cse_client: CSEClient | None = None
 _categories: list[dict[str, Any]] = []  # Live category cache
+_distributor_quotas: dict[str, DailyQuota] = {}  # "mouser"/"digikey" when configured, for /health
 _easyeda_seeded = 0  # rows in the seed table, counted at startup (components.db doesn't change)
 _easyeda_stored: tuple[float, int | None] = (float("-inf"), None)  # (time.monotonic(), store size)
 
@@ -102,17 +106,29 @@ async def lifespan(app):
     else:
         logger.warning(f"Design rules directory not found: {_RULES_DIR}")
 
+    # Mouser/DigiKey daily request counts, kept across restarts when DISTRIBUTOR_QUOTA_PATH is set
+    quota_store = QuotaStore(DISTRIBUTOR_QUOTA_PATH) if DISTRIBUTOR_QUOTA_PATH else None
+    _distributor_quotas.clear()
+
     # Initialize Mouser client if API key is configured
     if MOUSER_API_KEY:
-        mouser_quota = DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT)
+        mouser_quota = DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT, store=quota_store, per_minute=MOUSER_PER_MINUTE,
+                                  own_key="Mouser API key (free at https://www.mouser.com/api-hub/)")
+        _distributor_quotas["mouser"] = mouser_quota
         _mouser_client = MouserClient(MOUSER_API_KEY, quota=mouser_quota)
-        logger.info("Mouser client initialized")
+        logger.info(f"Mouser client initialized (requests today: {mouser_quota.status()['used_today']})")
 
     # Initialize DigiKey client if credentials are configured
     if DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET:
-        digikey_quota = DailyQuota("DigiKey", DISTRIBUTOR_DAILY_LIMIT)
+        digikey_quota = DailyQuota("DigiKey", DISTRIBUTOR_DAILY_LIMIT, store=quota_store, per_minute=DIGIKEY_PER_MINUTE,
+                                   own_key="DigiKey API credentials (free at https://developer.digikey.com)")
+        _distributor_quotas["digikey"] = digikey_quota
         _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, quota=digikey_quota)
-        logger.info("DigiKey client initialized")
+        logger.info(f"DigiKey client initialized (requests today: {digikey_quota.status()['used_today']})")
+
+    if _distributor_quotas:
+        logger.info(f"Distributor request counts: {f'kept in {quota_store.path}' if quota_store else 'memory only'}")
+    tally_flusher = asyncio.create_task(_flush_caller_tallies()) if _distributor_quotas else None
 
     # CSE client always available (no API key needed)
     _cse_client = CSEClient()
@@ -120,6 +136,12 @@ async def lifespan(app):
 
     yield
 
+    if tally_flusher:
+        tally_flusher.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await tally_flusher
+    for quota in _distributor_quotas.values():
+        quota.callers.flush()  # the hour so far, so a deploy doesn't lose it
     if _cse_client:
         await _cse_client.close()
     if _mouser_client:
@@ -131,6 +153,14 @@ async def lifespan(app):
     close_db()
     close_sensor_db()
     close_boards_db()
+
+
+async def _flush_caller_tallies() -> None:
+    """Every minute, log the finished hour's per-IP Mouser/DigiKey request counts (one line each)."""
+    while True:
+        await asyncio.sleep(60)
+        for quota in _distributor_quotas.values():
+            quota.callers.flush_if_due()
 
 
 # Create MCP server
@@ -161,16 +191,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self._last_cleanup = time.time()
 
     def _get_client_ip(self, request) -> str:
-        """Extract client IP, preferring rightmost X-Forwarded-For entry.
-
-        Rightmost is harder to spoof as it's set by the last trusted proxy.
-        """
-        forwarded = request.headers.get("x-forwarded-for")
-        if forwarded:
-            # Use rightmost IP (set by our reverse proxy, harder to spoof)
-            ips = [ip.strip() for ip in forwarded.split(",")]
-            return ips[-1] if ips else "unknown"
-        return request.client.host if request.client else "unknown"
+        return _client_ip(request)
 
     def _cleanup_stale_ips(self, now: float) -> None:
         """Remove IPs with no recent requests. Called periodically."""
@@ -228,6 +249,28 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 headers={"Retry-After": "60"},
             )
         return await call_next(request)
+
+
+def _client_ip(request) -> str:
+    """Extract client IP, preferring rightmost X-Forwarded-For entry.
+
+    Rightmost is harder to spoof as it's set by the last trusted proxy.
+    """
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        # Use rightmost IP (set by our reverse proxy, harder to spoof)
+        ips = [ip.strip() for ip in forwarded.split(",")]
+        return ips[-1] if ips else "unknown"
+    return request.client.host if request.client else "unknown"
+
+
+def _caller_ip() -> str | None:
+    """The calling client's IP inside a tool, for the hourly distributor log. None outside an HTTP
+    request (tests, stdio)."""
+    try:
+        return _client_ip(get_http_request())
+    except RuntimeError:
+        return None
 
 
 # Helpers to handle JSON string arrays from MCP clients
@@ -926,6 +969,15 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> di
 
 
 
+def _redact(message: str, *secrets: str) -> str:
+    """Distributor error text goes back to anonymous callers: blank out our credentials in case the
+    API ever echoes them."""
+    for secret in secrets:
+        if secret:
+            message = message.replace(secret, "[redacted]")
+    return message
+
+
 @mcp.tool(
     annotations=ToolAnnotations(
         title="Mouser Part Lookup",
@@ -952,7 +1004,10 @@ async def mouser_get_part(part_number: str) -> dict:
         return {"error": "Part number too long (max 500 characters)"}
 
     try:
-        return await _mouser_client.get_part(part_number)
+        return await _mouser_client.get_part(part_number, caller=_caller_ip())
+    except (MouserError, MouserAPIError) as e:  # our own message or Mouser's
+        logger.error(f"Mouser part lookup failed: {type(e).__name__}: {e}")
+        return {"error": f"Mouser part lookup failed: {_redact(str(e), MOUSER_API_KEY)}"}
     except Exception as e:
         logger.error(f"Mouser part lookup failed: {type(e).__name__}: {e}")
         return {"error": "Mouser part lookup failed. Check server logs for details."}
@@ -982,7 +1037,10 @@ async def digikey_get_part(product_number: str) -> dict:
         return {"error": "Product number too long (max 500 characters)"}
 
     try:
-        return await _digikey_client.get_part(product_number)
+        return await _digikey_client.get_part(product_number, caller=_caller_ip())
+    except DigiKeyError as e:  # our own message (HTTP status) or DigiKey's OAuth error
+        logger.error(f"DigiKey part lookup failed: {type(e).__name__}: {e}")
+        return {"error": f"DigiKey part lookup failed: {_redact(str(e), DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET)}"}
     except Exception as e:
         logger.error(f"DigiKey part lookup failed: {type(e).__name__}: {e}")
         return {"error": "DigiKey part lookup failed. Check server logs for details."}
@@ -1390,6 +1448,7 @@ async def health(request):
         "service": "pcbparts-mcp",
         "version": __version__,
         "easyeda_footprints": _easyeda_footprint_counts(),
+        "distributor_quota": {name: quota.status() for name, quota in _distributor_quotas.items()},
     })
 
 
