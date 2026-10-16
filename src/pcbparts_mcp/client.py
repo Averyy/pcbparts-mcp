@@ -5,7 +5,7 @@ import heapq
 import logging
 import re
 import time
-from typing import Any, Literal
+from typing import Any, Callable, Literal
 from urllib.parse import quote
 
 import wafer
@@ -34,6 +34,8 @@ from .config import (
     EASYEDA_RATE_JITTER,
     EASYEDA_PRODUCTS_BUDGET,
     EASYEDA_PRODUCTS_WINDOW,
+    EASYEDA_NOT_FOUND_TTL,
+    EASYEDA_RECHECK_INTERVAL,
     EASYEDA_COOLDOWN_BASE,
     EASYEDA_COOLDOWN_MAX,
     EASYEDA_MAX_FOOTPRINT_CHECKS,
@@ -53,6 +55,7 @@ from .config import (
 )
 from .cache import Cooldown, SlidingWindowBudget
 from .subcategory_aliases import SUBCATEGORY_ALIASES, resolve_subcategory_name as _resolve_subcategory_name
+from .easyeda_store import EasyEDAStore, FootprintAnswer, answer_problem, pick_answer
 from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
 from .mounting import detect_mounting_type
 from .alternatives import (
@@ -68,6 +71,10 @@ logger = logging.getLogger(__name__)
 
 # UUID format pattern for EasyEDA symbols (32-char hex)
 _UUID_PATTERN = re.compile(r'^[0-9a-f]{32}$', re.IGNORECASE)
+
+
+class EasyEDAComponentNotFound(ValueError):
+    """EasyEDA has no symbol with this UUID (it answers {"success": false, "code": 404})."""
 
 
 def _normalize_manufacturer_name(name: str) -> str:
@@ -110,7 +117,7 @@ _MANUFACTURER_EXACT_NORMALIZED: dict[str, str] = {
 class JLCPCBClient:
     """Async client for JLCPCB component search API with anti-detection via wafer."""
 
-    def __init__(self):
+    def __init__(self, easyeda_store_path: str | None = None):
         self._jlcpcb_session: wafer.AsyncSession | None = None
         self._easyeda_session: wafer.AsyncSession | None = None
         self._easyeda_products_session: wafer.AsyncSession | None = None
@@ -118,6 +125,16 @@ class JLCPCBClient:
         # request and pause all of them after a block. Per client; the server has one, so process-wide.
         self._easyeda_products_budget = SlidingWindowBudget(EASYEDA_PRODUCTS_BUDGET, EASYEDA_PRODUCTS_WINDOW)
         self._easyeda_products_cooldown = Cooldown(EASYEDA_COOLDOWN_BASE, EASYEDA_COOLDOWN_MAX)
+        # Footprint answers that outlive this process: the store (live answers, on a volume in
+        # Docker) and the seed (data/easyeda/footprints.csv via components.db, set by the server).
+        # Both sit behind the in-memory footprint cache; see easyeda_store.pick_answer(). Only the
+        # server passes a store path, so tests and scripts never write to a real store.
+        self._easyeda_store = EasyEDAStore(easyeda_store_path) if easyeda_store_path else None
+        self._easyeda_seed: Callable[[str], FootprintAnswer | None] | None = None
+        # lcsc -> answer that replaces an older store or seed answer in this process: a re-check
+        # marker once the part's symbol UUID stopped working, then the live answer if the store
+        # couldn't take it. Only parts whose UUID stopped working, so it stays small.
+        self._easyeda_overrides: dict[str, FootprintAnswer] = {}
         # Category cache - lazily populated from API or set externally
         self._categories: list[dict[str, Any]] = []
         self._category_map: dict[int, dict[str, Any]] = {}  # id -> category
@@ -253,10 +270,21 @@ class JLCPCBClient:
         return self._easyeda_products_session
 
     async def close(self):
-        """Release persistent HTTP sessions."""
+        """Release persistent HTTP sessions and the footprint store."""
         self._jlcpcb_session = None
         self._easyeda_session = None
         self._easyeda_products_session = None
+        if self._easyeda_store is not None:
+            self._easyeda_store.close()
+
+    def set_easyeda_seed(self, lookup: Callable[[str], FootprintAnswer | None]) -> None:
+        """Use seeded footprint answers (ComponentDatabase.get_easyeda_seed)."""
+        self._easyeda_seed = lookup
+
+    def easyeda_store_size(self) -> int | None:
+        """Answers in the footprint store, or None when there's no usable store (memory only)."""
+        store = self._easyeda_store
+        return len(store) if store is not None and store.enabled else None
 
     async def _ensure_categories(self) -> None:
         """Ensure categories are loaded (lazy initialization)."""
@@ -490,6 +518,67 @@ class JLCPCBClient:
             if len(self._easyeda_cache) >= int(EASYEDA_CACHE_MAX_SIZE * 0.9):
                 self._cleanup_easyeda_cache_unlocked()
 
+    def _stored_footprint(self, lcsc: str, now: float) -> dict[str, Any] | None:
+        """A footprint answer from the store or seed that can be served without asking EasyEDA."""
+        candidates: list[FootprintAnswer | None] = [self._easyeda_overrides.get(lcsc)]
+        if self._easyeda_store is not None:
+            candidates.append(self._easyeda_store.get(lcsc))
+        if self._easyeda_seed is not None:
+            try:
+                candidates.append(self._easyeda_seed(lcsc))
+            except Exception as e:  # the seed is an optimization; a broken one must not break lookups
+                logger.warning(f"EasyEDA footprint seed lookup failed for {lcsc}: {type(e).__name__}: {e}")
+        answer = pick_answer(candidates, now, EASYEDA_NOT_FOUND_TTL)
+        return answer.as_result() if answer is not None else None
+
+    async def _record_live_footprint(self, lcsc: str, result: dict[str, Any]) -> None:
+        """Keep a real /api/products answer in memory and in the store."""
+        now = time.time()
+        await self._cache_easyeda_result(lcsc, result, False)
+        has, symbol_uuid, footprint_uuid = (
+            result["has_easyeda_footprint"], result["easyeda_symbol_uuid"], result["easyeda_footprint_uuid"])
+        if self._easyeda_store is not None and self._easyeda_store.put(lcsc, result, checked_at=now):
+            self._easyeda_overrides.pop(lcsc, None)  # the store holds the newer answer
+        elif lcsc in self._easyeda_overrides and answer_problem(has, symbol_uuid, footprint_uuid) is None:
+            # No store to hold it: keep the answer here, or the older seed answer it replaced
+            # would come back once the memory cache expires. An answer that can't be kept (no
+            # symbol UUID) leaves the re-check marker, so the part is asked again then.
+            self._easyeda_overrides[lcsc] = FootprintAnswer(has, symbol_uuid, footprint_uuid, now)
+
+    async def invalidate_easyeda_footprint(self, lcsc: str) -> None:
+        """Forget a part's footprint answer so the next check asks EasyEDA.
+
+        For when its symbol UUID stopped working (EasyEDA re-linked or removed the part). Overrides
+        the store and the seed; the part's cached details go too, since they carry the old UUIDs.
+        """
+        now = time.time()
+        async with self._get_easyeda_cache_lock():
+            self._easyeda_cache.pop(lcsc, None)
+        async with self._get_part_cache_lock():
+            self._part_cache.pop(lcsc, None)
+        self._easyeda_overrides[lcsc] = FootprintAnswer(None, None, None, now)
+        if self._easyeda_store is not None:
+            self._easyeda_store.mark_stale(lcsc, checked_at=now)
+
+    def footprint_confirmed_recently(self, lcsc: str, symbol_uuid: str) -> bool:
+        """Whether /api/products named `symbol_uuid` for this part within EASYEDA_RECHECK_INTERVAL.
+
+        If that UUID is dead, re-checking the part would get the same answer and spend the
+        request budget, so the caller shouldn't invalidate it again yet.
+        """
+        lcsc = lcsc.strip().upper()
+        now = time.time()
+        live: list[tuple[float, str | None]] = []  # (checked at, symbol UUID) of live answers only
+        cached = self._easyeda_cache.get(lcsc)
+        if cached is not None and not cached[2]:
+            live.append((cached[0], cached[1].get("easyeda_symbol_uuid")))
+        override = self._easyeda_overrides.get(lcsc)
+        if override is not None and override.has_footprint is not None:
+            live.append((override.checked_at, override.symbol_uuid))
+        if self._easyeda_store is not None and (stored := self._easyeda_store.get(lcsc)) is not None:
+            live.append((stored.checked_at, stored.symbol_uuid))
+        return any(uuid == symbol_uuid and now - at < EASYEDA_RECHECK_INTERVAL for at, uuid in live)
+
     async def check_easyeda_footprint(self, lcsc: str) -> dict[str, Any]:
         """Check if a part has an EasyEDA footprint/symbol available.
 
@@ -510,13 +599,14 @@ class JLCPCBClient:
         """check_easyeda_footprint() plus how the answer was reached.
 
         Status is one of:
-        - "cached" / "checked": a real answer (from cache / from one /api/products request)
+        - "cached" / "stored" / "checked": a real answer (from the memory cache / from the store or
+          seed / from one /api/products request)
         - "invalid": not an LCSC code, no request made
         - "error": the request failed; cached as unknown for EASYEDA_ERROR_CACHE_TTL
         - "blocked": this request got EasyEDA's rate-limit 403/429 and started a cooldown
         - "cooldown" / "budget": skipped without a request (a cooldown is running, or the
           rolling request budget is spent)
-        Every status except "cached" and "checked" comes with has_easyeda_footprint=None.
+        Every status except "cached", "stored" and "checked" comes with has_easyeda_footprint=None.
         """
         lcsc = lcsc.strip().upper()
 
@@ -539,6 +629,10 @@ class JLCPCBClient:
                 ttl = EASYEDA_ERROR_CACHE_TTL if is_error else EASYEDA_FOOTPRINT_CACHE_TTL
                 if now - timestamp < ttl:
                     return result, "error" if is_error else "cached"
+
+        stored = self._stored_footprint(lcsc, now)
+        if stored is not None:
+            return stored, "stored"
 
         cooldown = self._easyeda_products_cooldown
         if cooldown.active:
@@ -586,7 +680,7 @@ class JLCPCBClient:
                         "easyeda_footprint_uuid": None,
                     }
                     cooldown.record_success()
-                    await self._cache_easyeda_result(lcsc, result, False)
+                    await self._record_live_footprint(lcsc, result)
                     return result, "checked"
 
                 response.raise_for_status()
@@ -611,7 +705,7 @@ class JLCPCBClient:
                     }
 
                 cooldown.record_success()
-                await self._cache_easyeda_result(lcsc, result, False)
+                await self._record_live_footprint(lcsc, result)
                 return result, "checked"
 
             except Exception as e:
@@ -704,8 +798,14 @@ class JLCPCBClient:
                 url = EASYEDA_SYMBOL_URL.format(uuid=quote(uuid, safe=''))
 
                 response = await session.get(url)
+                data = response.json() if response.status_code == 200 else None
+
+                # EasyEDA answers a missing symbol with HTTP 200 and {"success": false, "code": 404}
+                if response.status_code == 404 or (isinstance(data, dict) and data.get("code") == 404):
+                    error = EasyEDAComponentNotFound(f"EasyEDA has no symbol {uuid}")
+                    await self._cache_easyeda_component_result(uuid, error, True)
+                    raise error
                 response.raise_for_status()
-                data = response.json()
 
                 # Check response structure
                 if not data.get("success"):

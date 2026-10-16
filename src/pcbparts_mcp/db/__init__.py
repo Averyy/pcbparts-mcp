@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 from ..config import DEFAULT_MIN_STOCK
+from ..easyeda_store import FootprintAnswer
 from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
 from .connection import build_database, load_caches
 from .lookup import get_by_lcsc, get_by_lcsc_batch, get_by_mpn
@@ -242,6 +243,32 @@ class ComponentDatabase:
         if not self._conn:
             return None
         return get_by_lcsc(self._conn, lcsc, self._subcategories)
+
+    def get_easyeda_seed(self, lcsc: str) -> FootprintAnswer | None:
+        """Seeded EasyEDA footprint answer for a part (data/easyeda/footprints.csv), or None."""
+        self._ensure_db()
+        if not self._conn:
+            return None
+        try:
+            row = self._conn.execute(
+                "SELECT has_footprint, symbol_uuid, footprint_uuid, checked_at FROM easyeda_footprints WHERE lcsc = ?",
+                (lcsc,),
+            ).fetchone()
+        except sqlite3.OperationalError:  # a DB built before 0.6.0 has no seed table
+            return None
+        if row is None:
+            return None
+        return FootprintAnswer(bool(row["has_footprint"]), row["symbol_uuid"], row["footprint_uuid"], row["checked_at"])
+
+    def easyeda_seed_size(self) -> int:
+        """Rows in the seeded EasyEDA footprint table (0 for a DB built before 0.6.0)."""
+        self._ensure_db()
+        if not self._conn:
+            return 0
+        try:
+            return self._conn.execute("SELECT COUNT(*) FROM easyeda_footprints").fetchone()[0]
+        except sqlite3.OperationalError:
+            return 0
 
     def get_by_mpn(self, mpn: str) -> list[dict[str, Any]]:
         """Find components by manufacturer part number.

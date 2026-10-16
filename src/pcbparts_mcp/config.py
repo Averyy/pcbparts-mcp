@@ -43,6 +43,16 @@ EASYEDA_PRODUCTS_WINDOW = 120.0  # ...per rolling window (seconds)
 EASYEDA_COOLDOWN_BASE = 120.0  # Pause after a 403; doubles on each repeat block
 EASYEDA_COOLDOWN_MAX = 1800.0  # Cap for the doubling pause (30 minutes)
 EASYEDA_MAX_FOOTPRINT_CHECKS = 15  # Footprint checks per find_alternatives(has_easyeda_footprint=...) call
+# Persistent footprint answers (docs/ref-easyeda-api.md). The store is a SQLite file that survives
+# restarts and redeploys when it sits on a volume (the Docker image sets /app/cache/easyeda.db);
+# unset means memory only. Only the server opens it (JLCPCBClient takes the path as an argument).
+# "Has a footprint" answers are kept for good (EasyEDA edits records in place and keeps their
+# UUIDs); "no footprint" answers are re-checked after EASYEDA_NOT_FOUND_TTL.
+EASYEDA_STORE_PATH = os.getenv("EASYEDA_STORE_PATH", "")
+EASYEDA_NOT_FOUND_TTL = 7 * 86400  # EasyEDA draws footprints for parts after they go on sale
+# jlc_get_pinout re-checks a part whose symbol UUID stopped working, unless /api/products named that
+# same UUID this recently (asking again would get the same answer)
+EASYEDA_RECHECK_INTERVAL = 3600
 EASYEDA_CONCURRENT_LIMIT = 5  # Max concurrent EasyEDA requests to avoid rate limiting
 EASYEDA_RATE_LIMIT = 0.1  # Min seconds between requests to EasyEDA
 EASYEDA_RATE_JITTER = 0.05  # Random jitter added to rate limit

@@ -1,6 +1,7 @@
 """Tests for EasyEDA pinout parsing."""
 
 import pytest
+from pcbparts_mcp.client import EasyEDAComponentNotFound
 from pcbparts_mcp.pinout import parse_easyeda_pins
 
 
@@ -264,6 +265,7 @@ class TestPinoutIntegration:
 
     @pytest.mark.asyncio
     async def test_get_easyeda_component_nonexistent_uuid(self, client):
-        """Test fetching with nonexistent but valid-format UUID raises ValueError."""
-        with pytest.raises(ValueError, match="Failed to fetch component data"):
+        """A nonexistent but valid-format UUID raises EasyEDAComponentNotFound (a ValueError): what
+        EasyEDA really answers for a missing symbol, which the pinout self-heal relies on (0.6.0)."""
+        with pytest.raises(EasyEDAComponentNotFound, match="EasyEDA has no symbol 0{32}"):
             await client.get_easyeda_component("00000000000000000000000000000000")
