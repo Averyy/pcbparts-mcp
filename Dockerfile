@@ -82,8 +82,10 @@ ENV PYTHONUNBUFFERED=1
 ENV HTTP_PORT=8080
 ENV RATE_LIMIT_REQUESTS=100
 
-# EasyEDA footprint answers that survive restarts (dir created and owned by appuser above).
+# EasyEDA footprint answers and Mouser/DigiKey daily request counts that survive restarts (dir
+# created and owned by appuser above).
 ENV EASYEDA_STORE_PATH=/app/cache/easyeda.db
+ENV DISTRIBUTOR_QUOTA_PATH=/app/cache/distributor_quota.json
 
 # Run as non-root user
 USER appuser
