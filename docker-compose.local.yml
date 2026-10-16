@@ -8,6 +8,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "18080:8080"
+    volumes:
+      # EasyEDA footprint answers (EASYEDA_STORE_PATH), kept across rebuilds
+      - pcbparts-cache:/app/cache
     env_file:
       - path: .env
         required: false
@@ -23,3 +26,6 @@ services:
     # Resource limits for local testing (mirrors VPS constraints)
     mem_limit: 1024m
     cpus: 1.0
+
+volumes:
+  pcbparts-cache:

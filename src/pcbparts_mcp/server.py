@@ -21,9 +21,9 @@ from .config import (
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
     DISTRIBUTOR_DAILY_LIMIT, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
-    ALLOWED_HOSTS, ALLOWED_ORIGINS,
+    ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH,
 )
-from .client import JLCPCBClient
+from .client import EasyEDAComponentNotFound, JLCPCBClient
 from .mouser import MouserClient
 from .digikey import DigiKeyClient
 from .cse import CSEClient
@@ -43,13 +43,19 @@ _mouser_client: MouserClient | None = None
 _digikey_client: DigiKeyClient | None = None
 _cse_client: CSEClient | None = None
 _categories: list[dict[str, Any]] = []  # Live category cache
+_easyeda_seeded = 0  # rows in the seed table, counted at startup (components.db doesn't change)
+_easyeda_stored: tuple[float, int | None] = (float("-inf"), None)  # (time.monotonic(), store size)
+
+# /health is public, isn't rate limited and is fetched by every landing page visit, so the store
+# count it shows is refreshed at most this often (seconds) instead of on every request.
+HEALTH_STORE_COUNT_TTL = 60
 
 
 @asynccontextmanager
 async def lifespan(app):
     """Manage client lifecycle, build DB, and load categories on startup."""
-    global _client, _mouser_client, _digikey_client, _cse_client, _categories
-    _client = JLCPCBClient()
+    global _client, _mouser_client, _digikey_client, _cse_client, _categories, _easyeda_seeded, _easyeda_stored
+    _client = JLCPCBClient(easyeda_store_path=EASYEDA_STORE_PATH or None)
 
     # Build/load DB on startup (not on first request)
     db = get_db()
@@ -61,6 +67,14 @@ async def lifespan(app):
     _categories = db.get_categories_for_client()
     _client.set_categories(_categories)
     logger.info(f"Loaded {len(_categories)} categories from database")
+
+    # Seeded EasyEDA footprint answers (data/easyeda/footprints.csv, built into the DB)
+    _client.set_easyeda_seed(db.get_easyeda_seed)
+    _easyeda_seeded = db.easyeda_seed_size()
+    store_size = _client.easyeda_store_size()
+    _easyeda_stored = (time.monotonic(), store_size)
+    logger.info(f"EasyEDA footprints: {_easyeda_seeded:,} seeded, " + (
+        f"{store_size:,} stored in {EASYEDA_STORE_PATH}" if store_size is not None else "no store (memory only)"))
 
     # Initialize sensor database (non-fatal if unavailable)
     try:
@@ -730,9 +744,10 @@ async def jlc_find_alternatives(
             - True: Only return parts WITH EasyEDA footprints (for Atopile/KiCad users)
             - False: Only return parts WITHOUT footprints
             - None (default): Don't filter by footprint (fastest)
-            Note: Filtering by footprint is slower as it checks EasyEDA for each candidate, at
-            most 15 per call. Candidates it couldn't check are left out. When the check was
-            limited, summary.footprint_filter says how many were checked and why.
+            Note: Filtering by footprint checks each candidate, at most 15 per call. Most
+            answers are stored; the rest ask EasyEDA live, which is slower. Candidates it
+            couldn't check are left out. When the check was limited, summary.footprint_filter
+            says how many were checked and why.
         limit: Maximum alternatives to return (default: 10, max: 50)
 
     Returns:
@@ -754,6 +769,12 @@ async def jlc_find_alternatives(
         )
     except ValueError as e:  # actionable JLCPCB messages (rate limited / WAF / timeout)
         return {"error": str(e)}
+
+
+def _easyeda_unknown_error(lcsc: str) -> dict[str, str]:
+    """Footprint status unknown, not absent: the EasyEDA lookup failed or is paused by its rate limit."""
+    return {"error": f"Couldn't check EasyEDA for {lcsc}'s symbol right now (lookup failed or "
+                     "EasyEDA is rate-limiting). Try again in a few minutes."}
 
 
 @mcp.tool(
@@ -840,9 +861,7 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> di
             return {"error": f"Part not found: {lcsc}"}
 
         if part.get("has_easyeda_footprint") is None:
-            # Unknown, not absent: the EasyEDA lookup failed or is paused by its rate limit
-            return {"error": f"Couldn't check EasyEDA for {lcsc}'s symbol right now (lookup failed or "
-                             "EasyEDA is rate-limiting). Try again in a few minutes."}
+            return _easyeda_unknown_error(lcsc)
         if not part.get("has_easyeda_footprint"):
             return {"error": f"No EasyEDA symbol available for {lcsc}"}
 
@@ -853,6 +872,26 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> di
     try:
         # Fetch EasyEDA component data
         easyeda_data = await _client.get_easyeda_component(symbol_uuid)
+    except EasyEDAComponentNotFound as e:
+        # No part to re-check, or /api/products named this dead UUID for it within the last hour
+        if not lcsc or _client.footprint_confirmed_recently(lcsc, symbol_uuid):
+            return {"error": str(e)}
+        # The stored symbol UUID stopped working (EasyEDA re-linked or removed the part): re-check
+        # the part once and follow its new UUID.
+        await _client.invalidate_easyeda_footprint(lcsc)
+        info = await _client.check_easyeda_footprint(lcsc)
+        if info.get("has_easyeda_footprint") is None:
+            return _easyeda_unknown_error(lcsc)
+        new_uuid = info.get("easyeda_symbol_uuid")
+        if not info.get("has_easyeda_footprint") or not new_uuid:
+            return {"error": f"No EasyEDA symbol available for {lcsc}"}
+        if new_uuid == symbol_uuid:
+            return {"error": str(e)}
+        symbol_uuid = new_uuid
+        try:
+            easyeda_data = await _client.get_easyeda_component(symbol_uuid)
+        except ValueError as e2:
+            return {"error": str(e2)}
     except ValueError as e:
         return {"error": str(e)}
     except Exception:
@@ -1330,12 +1369,27 @@ async def board_get(
         return {"error": "Board retrieval failed"}
 
 
+def _easyeda_footprint_counts() -> dict[str, int | None] | None:
+    """Seeded and stored footprint answers, so a deploy can be checked without the server's logs.
+    stored is None when there's no usable store (memory only). None before startup."""
+    global _easyeda_stored
+    if _client is None:
+        return None
+    counted_at, stored = _easyeda_stored
+    now = time.monotonic()
+    if now - counted_at >= HEALTH_STORE_COUNT_TTL:
+        stored = _client.easyeda_store_size()
+        _easyeda_stored = (now, stored)
+    return {"seeded": _easyeda_seeded, "stored": stored}
+
+
 # Health check endpoint
 async def health(request):
     return JSONResponse({
         "status": "healthy",
         "service": "pcbparts-mcp",
         "version": __version__,
+        "easyeda_footprints": _easyeda_footprint_counts(),
     })
 
 
@@ -1402,7 +1456,7 @@ def main():
     """Run the server."""
     import uvicorn
 
-    # Our startup lines (DB sizes and the like) at INFO; everything else stays at WARNING.
+    # Our startup lines (DB sizes, footprint store) at INFO; everything else stays at WARNING.
     # Without this the root logger had no handler until mcp's first module-level logging call
     # (mcp/shared/session.py) set one up at WARNING, so INFO never printed. uvicorn's and
     # fastmcp's loggers keep their own handlers and don't propagate here.

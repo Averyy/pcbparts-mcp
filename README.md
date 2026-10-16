@@ -239,7 +239,7 @@ Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diode
 
 - **Endpoint:** `https://pcbparts.dev/mcp`
 - **Transport:** Streamable HTTP (stateless)
-- **Health:** `https://pcbparts.dev/health`
+- **Health:** `https://pcbparts.dev/health` (status, version, and EasyEDA footprint answers seeded and stored)
 - **Rate limit:** 100 requests/minute per IP
 - **Auth:** None required
 
@@ -252,12 +252,18 @@ uv venv && uv pip install -e .
 .venv/bin/python -m pcbparts_mcp.server  # http://localhost:8080/mcp
 ```
 
+The server builds `data/components.db` only when it's missing. If yours is from before 0.6.0,
+rebuild it (`.venv/bin/python scripts/build_database.py`) to get the EasyEDA footprint seed;
+without it, footprint checks still work but each one asks EasyEDA.
+
 Or with Docker:
 
 ```bash
 docker compose up -d                                    # production (GHCR image)
 docker compose -f docker-compose.local.yml up --build   # local dev (builds from source)
 ```
+
+Building the image needs BuildKit, the default builder since Docker 23 and the one Compose v2 uses.
 
 ### Environment Variables
 
@@ -270,6 +276,7 @@ docker compose -f docker-compose.local.yml up --build   # local dev (builds from
 | `MOUSER_API_KEY` | — | Mouser API key (optional, enables Mouser tools) |
 | `DIGIKEY_CLIENT_ID` | — | DigiKey OAuth2 client ID (optional, enables DigiKey tools) |
 | `DIGIKEY_CLIENT_SECRET` | — | DigiKey OAuth2 client secret |
+| `EASYEDA_STORE_PATH` | `/app/cache/easyeda.db` in Docker, unset otherwise | SQLite file that keeps EasyEDA footprint answers across restarts. The compose files mount a named volume at `/app/cache`. Unset means memory only |
 
 ## LLM-Readable Documentation
 

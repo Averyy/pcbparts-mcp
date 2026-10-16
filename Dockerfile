@@ -35,8 +35,12 @@ COPY data/subcategories.json /app/data/
 # Copy database build script and parsers module
 COPY scripts/build_database.py /app/scripts/
 
-# Build the SQLite databases at image build time
-RUN python scripts/build_database.py --data-dir /app/data --output /app/data/components.db
+# Build the SQLite databases at image build time. The EasyEDA footprint seed CSV (built by
+# scripts/build_easyeda_seed.py) is mounted for this step only: it's loaded into components.db,
+# so the 40 MB CSV doesn't need to ship in the image. --mount needs BuildKit (the default builder
+# since Docker 23, and what Compose v2 and buildx use).
+RUN --mount=type=bind,source=data/easyeda/footprints.csv,target=/app/data/easyeda/footprints.csv \
+    python scripts/build_database.py --data-dir /app/data --output /app/data/components.db
 
 # Build stock history database (data/history/ kept by .gitkeep; populated by daily scraper)
 RUN mkdir -p /app/data/history
@@ -63,8 +67,13 @@ ENV PYTHONUNBUFFERED=1
 ENV HTTP_PORT=8080
 ENV RATE_LIMIT_REQUESTS=100
 
-# Create wafer cookie cache dir (writable at runtime)
-RUN mkdir -p /app/data/wafer/cookies
+# Create wafer cookie cache dir (writable at runtime) and the EasyEDA footprint store dir. It must
+# exist before the chown below: docker-compose mounts a named volume at /app/cache, and a new
+# volume copies this dir's owner (a root-owned one would leave the store memory-only).
+RUN mkdir -p /app/data/wafer/cookies /app/cache
+
+# EasyEDA footprint answers that survive restarts
+ENV EASYEDA_STORE_PATH=/app/cache/easyeda.db
 
 # Run as non-root user
 RUN adduser --disabled-password --gecos "" appuser

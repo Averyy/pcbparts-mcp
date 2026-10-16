@@ -46,6 +46,7 @@ from pcbparts_mcp.parsers import (
     parse_voltage,
     parse_wavelength,
 )
+from pcbparts_mcp.easyeda_store import SEED_FILE, SeedRow, read_seed_csv, seed_checked_at
 
 
 # Attribute name -> (column_name, parser_function) mapping
@@ -336,6 +337,38 @@ NUMERIC_COLUMN_NAMES = [col.split()[0] for col in NUMERIC_COLUMNS]
 MAX_IGNORED_ROWS = 100
 
 
+def read_easyeda_seed(data_dir: Path) -> dict[str, SeedRow]:
+    """data/easyeda/footprints.csv (scripts/build_easyeda_seed.py), validated; {} if it's missing.
+
+    Read before the components load, so a malformed file fails the build in about a second
+    instead of after the whole load.
+    """
+    seed_path = data_dir / SEED_FILE
+    return read_seed_csv(seed_path) if seed_path.exists() else {}
+
+
+def load_easyeda_seed(conn: sqlite3.Connection, rows: dict[str, SeedRow]) -> int:
+    """Load the seed rows into easyeda_footprints. The server reads them through
+    ComponentDatabase.get_easyeda_seed() so footprint answers for seeded parts need no EasyEDA
+    request. The table is always created, empty without a seed. Returns the row count.
+    """
+    conn.execute("""
+        CREATE TABLE easyeda_footprints (
+            lcsc TEXT PRIMARY KEY,
+            has_footprint INTEGER NOT NULL,
+            symbol_uuid TEXT,
+            footprint_uuid TEXT,
+            checked_at INTEGER NOT NULL
+        )
+    """)
+    conn.executemany(
+        "INSERT INTO easyeda_footprints VALUES (?, ?, ?, ?, ?)",
+        ((r.lcsc, int(r.has_footprint), r.symbol_uuid, r.footprint_uuid, seed_checked_at(r.checked))
+         for r in rows.values()),
+    )
+    return len(rows)
+
+
 def build_database(data_dir: Path, db_path: Path, verbose: bool = True) -> dict:
     """
     Build SQLite database from compressed JSON files.
@@ -384,6 +417,7 @@ def _build_into_tmp(data_dir: Path, db_path: Path, tmp_path: Path, verbose: bool
 def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, tmp_path: Path,
                        verbose: bool, start_time: float) -> dict:
     """Load every category into the open tmp DB, then atomically move it to db_path."""
+    seed = read_easyeda_seed(data_dir)
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
 
@@ -593,7 +627,9 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
         SELECT lcsc, mpn, manufacturer, description FROM components
     """)
 
+    seed_rows = load_easyeda_seed(conn, seed)
     if verbose:
+        print(f"EasyEDA footprint seed: {seed_rows:,} rows")
         print("Optimizing database...")
 
     # Commit all changes first
@@ -640,6 +676,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
 
     stats = {
         "total_parts": final_count,
+        "easyeda_seed_rows": seed_rows,
         "categories": len(category_counts),
         "category_counts": category_counts,
         "db_size_bytes": db_size,

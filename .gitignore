@@ -78,3 +78,7 @@ data/boards.db
 data/*.db-wal
 data/*.db-shm
 data/*.db.tmp
+
+# EasyEDA seed builder progress (scripts/build_easyeda_seed.py)
+data/easyeda/seed_state.json
+data/easyeda/*.tmp

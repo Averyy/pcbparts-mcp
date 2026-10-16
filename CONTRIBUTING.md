@@ -59,6 +59,9 @@ Run the server locally:
   after a run. If the EasyEDA tests start failing with 403, stop and wait instead of
   re-running them: heavy traffic during a block appears to make it last much longer. See
   `docs/ref-easyeda-api.md`.
+- `scripts/build_easyeda_seed.py` builds the EasyEDA footprint seed (`data/easyeda/footprints.csv`).
+  Maintainers run it at home; don't run it alongside integration tests, and don't send a PR that
+  regenerates the CSV unless asked.
 - Bug-fix PRs should include a regression test that fails on the code before your fix.
 - **Never test changes against the live server** (`pcbparts.dev`) — it runs the deployed
   code, not yours. Test locally against your built databases.
