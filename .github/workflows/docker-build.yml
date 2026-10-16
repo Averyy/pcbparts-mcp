@@ -7,6 +7,13 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# One run per ref at a time. Deploys from main queue instead of overlapping: two overlapping runs
+# (a revert and a daily data deploy, say) could push `latest` out of order and leave prod on the
+# older image. A newer push to a PR cancels that PR's running build.
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
