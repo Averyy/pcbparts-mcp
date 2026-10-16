@@ -28,6 +28,14 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+class DigiKeyError(ValueError):
+    """A DigiKey request failed. The message is ours (no secrets), so the tool can show it."""
+
+
+class DigiKeyRateLimited(DigiKeyError):
+    """DigiKey answered 429: its own daily or per-minute limit is used up."""
+
+
 def _normalize_product(product: dict[str, Any]) -> dict[str, Any]:
     """Normalize a DigiKey Product object into our standard format."""
     desc = product.get("Description", {})
@@ -144,15 +152,15 @@ class DigiKeyClient:
                     headers={"Content-Type": "application/x-www-form-urlencoded"},
                 )
             except httpx.HTTPError:
-                raise ValueError("DigiKey token request failed (network/connection error)")
+                raise DigiKeyError("DigiKey token request failed (network/connection error)")
             if response.status_code >= 400:
-                raise ValueError(f"DigiKey token request failed (HTTP {response.status_code})")
+                raise DigiKeyError(f"DigiKey token request failed (HTTP {response.status_code})")
             data = response.json()
 
             # Check for OAuth error responses (some providers return 200 with error)
             if "error" in data:
                 error_desc = data.get("error_description", data["error"])
-                raise ValueError(f"DigiKey OAuth error: {error_desc}")
+                raise DigiKeyError(f"DigiKey OAuth error: {error_desc}")
 
             self._access_token = data["access_token"]
             expires_in = data.get("expires_in", 599)
@@ -172,6 +180,14 @@ class DigiKeyClient:
             "Content-Type": "application/json",
         }
 
+    def _note_limits(self, response: httpx.Response) -> None:
+        """DigiKey reports its own count on every response (per day and per DigiKey app, so other
+        users of the same credentials count too); see DailyQuota.note_response(). Its API User
+        Agreement (section 6) suspends an app for ten minutes, with 403s, for going over its
+        per-second threshold, and can end the agreement after three suspensions."""
+        if self._quota is not None:
+            self._quota.note_response(response.status_code, response.headers, refused_pause=600)
+
     async def _request(self, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
         """Make an authenticated request to DigiKey API."""
         token = await self._ensure_token()
@@ -180,6 +196,7 @@ class DigiKeyClient:
 
         try:
             response = await self._get_http().request(method, url, headers=headers, **kwargs)
+            self._note_limits(response)
 
             # Handle token expiration mid-flight
             if response.status_code == 401:
@@ -187,18 +204,24 @@ class DigiKeyClient:
                 token = await self._ensure_token()
                 headers = self._auth_headers(token)
                 response = await self._get_http().request(method, url, headers=headers, **kwargs)
+                self._note_limits(response)
         except httpx.HTTPError:
-            raise ValueError("DigiKey API request failed (network/connection error)")
+            raise DigiKeyError("DigiKey API request failed (network/connection error)")
 
+        if response.status_code in (403, 429):
+            paused = self._quota.paused_error() if self._quota else None
+            if paused or response.status_code == 429:
+                raise DigiKeyRateLimited(paused["error"] if paused else "DigiKey is limiting requests (HTTP 429). Try again later.")
         if response.status_code >= 400:
-            raise ValueError(f"DigiKey API returned HTTP {response.status_code}")
+            raise DigiKeyError(f"DigiKey API returned HTTP {response.status_code}")
         return response.json()
 
-    async def get_part(self, product_number: str) -> dict[str, Any]:
+    async def get_part(self, product_number: str, caller: str | None = None) -> dict[str, Any]:
         """Look up a part by DigiKey PN or manufacturer PN.
 
         Args:
             product_number: DigiKey part number or manufacturer part number
+            caller: the caller's IP, for the hourly log of who sent requests
 
         Returns:
             Dict with results list and total (consistent with Mouser format)
@@ -210,13 +233,16 @@ class DigiKeyClient:
 
         # Check daily quota (after cache so cache hits don't count)
         if self._quota:
-            quota_error = self._quota.check()
+            quota_error = self._quota.check(caller)
             if quota_error:
                 return quota_error
 
         # URL-encode to prevent path traversal or special chars altering the URL
         safe_pn = quote(product_number, safe='')
-        data = await self._request("GET", f"/search/{safe_pn}/productdetails")
+        try:
+            data = await self._request("GET", f"/search/{safe_pn}/productdetails")
+        except DigiKeyRateLimited as e:
+            return {"error": str(e)}
         product = data.get("Product", {})
 
         if not product:
