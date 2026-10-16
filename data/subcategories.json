@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -3838,11 +3833,6 @@
     "name": "Isolated Power Modules",
     "category_id": 68,
     "category_name": "Power Modules"
-  },
-  "3490": {
-    "name": "anti - skid chain",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
   },
   "2029": {
     "name": "SiC Diodes",
