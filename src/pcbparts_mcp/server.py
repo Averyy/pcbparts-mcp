@@ -1402,6 +1402,13 @@ def main():
     """Run the server."""
     import uvicorn
 
+    # Our startup lines (DB sizes and the like) at INFO; everything else stays at WARNING.
+    # Without this the root logger had no handler until mcp's first module-level logging call
+    # (mcp/shared/session.py) set one up at WARNING, so INFO never printed. uvicorn's and
+    # fastmcp's loggers keep their own handlers and don't propagate here.
+    logging.basicConfig(level=logging.WARNING)
+    logging.getLogger("pcbparts_mcp").setLevel(logging.INFO)
+
     # Suppress /health access log spam (Docker healthchecks every 10-30s)
     logging.getLogger("uvicorn.access").addFilter(_HealthFilterLog())
 
