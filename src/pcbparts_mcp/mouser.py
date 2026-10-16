@@ -26,7 +26,7 @@ class MouserError(ValueError):
 
 
 class MouserRateLimited(MouserError):
-    """Mouser answered 429: its own daily or per-minute limit (30 a minute, 1,000 a day) is used up."""
+    """Mouser refused for its own daily or per-minute limit (1,000 a day, 30 a minute)."""
 
 
 class MouserAPIError(Exception):
@@ -162,23 +162,46 @@ class MouserClient:
             raise MouserError("Mouser API request failed (network/connection error)")
         if self._quota is not None:
             self._quota.note_response(response.status_code, response.headers)
-        if response.status_code == 429:
-            paused = self._quota.paused_error() if self._quota else None
-            raise MouserRateLimited(paused["error"] if paused else "Mouser is limiting requests (HTTP 429). Try again later.")
+        try:
+            data = response.json()
+        except ValueError:
+            data = None
+        errors = data.get("Errors") if isinstance(data, dict) else None
+        errors = [e for e in errors if isinstance(e, dict)] if isinstance(errors, list) else []
+
+        # Mouser reports its limits in the body, with HTTP 403 (seen by other projects in 2026):
+        # {"Errors":[{"Code":"TooManyRequests","Message":"Maximum calls per day exceeded.",
+        # "ResourceKey":"MaxCallPerDay"}]}, or "Maximum calls per minute exceeded." It sends no
+        # rate-limit headers and doesn't say when the daily count resets.
+        limit = next((e for e in errors if e.get("Code") == "TooManyRequests"), None)
+        if limit is not None or response.status_code == 429:
+            raise MouserRateLimited(self._refused_for_limit(limit))
+        if errors:
+            err = errors[0]
+            raise MouserAPIError(err.get("Code") or "", err.get("Message") or "Unknown Mouser API error")
         # Catch HTTP errors to avoid leaking the API key (embedded in URL) into logs
         if response.status_code >= 400:
             raise MouserError(f"Mouser API returned HTTP {response.status_code}")
-        data = response.json()
-
-        # Check for API errors
-        errors = data.get("Errors", [])
-        if errors:
-            err = errors[0]
-            code = err.get("Code", "")
-            msg = err.get("Message", "Unknown Mouser API error")
-            raise MouserAPIError(code, msg)
-
+        if not isinstance(data, dict):
+            raise MouserError("Mouser API returned an unreadable response")
+        if self._quota is not None:
+            self._quota.clear_expired_pause()
         return data
+
+    def _refused_for_limit(self, err: dict | None) -> str:
+        """Pause for the limit Mouser named and return the error to show."""
+        text = " ".join(str(err.get(key) or "") for key in ("Message", "ResourceKey")).lower() if err else ""
+        if self._quota is not None:
+            if "day" in text:
+                self._quota.pause_daily_unknown_reset()
+            elif err is not None:  # a TooManyRequests that isn't the daily limit: its per-minute one
+                self._quota.pause(self._quota.now() + 60, "burst")
+            # a bare 429 already paused for its Retry-After (note_response)
+            paused = self._quota.paused_error()
+            if paused:
+                return paused["error"]
+        detail = (err.get("Message") if err else None) or "HTTP 429"
+        return f"Mouser is limiting requests ({detail}). Try again later."
 
     async def get_part(self, part_number: str, caller: str | None = None) -> dict[str, Any]:
         """Look up part(s) by Mouser part number or MPN.

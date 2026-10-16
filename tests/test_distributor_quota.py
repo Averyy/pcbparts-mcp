@@ -13,7 +13,7 @@ import pytest
 
 from pcbparts_mcp.cache import SELF_HOSTING_URL, CallerTally, DailyQuota, QuotaStore
 from pcbparts_mcp.digikey import DigiKeyClient, DigiKeyError
-from pcbparts_mcp.mouser import MouserClient
+from pcbparts_mcp.mouser import MouserAPIError, MouserClient
 
 UTC = datetime.timezone.utc
 NOW = datetime.datetime(2026, 10, 16, 21, 15, tzinfo=UTC).timestamp()
@@ -550,3 +550,86 @@ class TestCallerIp:
                 server._distributor_quotas["digikey"].callers.record("203.0.113.7")
         assert any(m.startswith("DigiKey requests sent ") and m.endswith("1 from 1 IPs; top: 203.0.113.7 1")
                    for m in caplog.messages)
+
+
+# Mouser's real refusals (reported by other projects in 2026): HTTP 403 with the limit in the body
+MOUSER_DAILY_403 = {"Errors": [{"Code": "TooManyRequests", "Message": "Maximum calls per day exceeded.",
+                                "ResourceKey": "MaxCallPerDay"}]}
+MOUSER_MINUTE_403 = {"Errors": [{"Code": "TooManyRequests", "Message": "Maximum calls per minute exceeded."}]}
+
+
+class TestMouserRefusals:
+    async def test_daily_403_pauses_until_utc_midnight(self, tmp_path, clock):
+        path = tmp_path / "quota.json"
+        fake = FakeMouser(httpx.Response(403, json=MOUSER_DAILY_403))
+        client = mouser(fake, quota(clock, path, name="Mouser"))
+        error = (await client.get_part("595-LM358P"))["error"]
+        assert error.startswith("Mouser daily quota exceeded (counted by Mouser). Mouser doesn't say when its count "
+                                "resets, so this server tries again at 2026-10-17 00:00 UTC.")
+        assert "your own" not in error  # no own_key text in this quota; the server passes one
+        assert (await client.get_part("511-LM358P"))["error"] == error
+        assert fake.requests == 1
+        # a restart keeps the pause
+        restarted = FakeMouser()
+        assert "daily quota exceeded" in (await mouser(restarted, quota(clock, path, name="Mouser")).get_part("595-LM358P"))["error"]
+        assert restarted.requests == 0
+
+    async def test_refused_again_after_midnight_retries_hourly(self, clock):
+        q = quota(clock, name="Mouser")
+        fake = FakeMouser(httpx.Response(403, json=MOUSER_DAILY_403), httpx.Response(403, json=MOUSER_DAILY_403),
+                          httpx.Response(200, json=MOUSER_OK), httpx.Response(403, json=MOUSER_DAILY_403))
+        client = mouser(fake, q)
+        await client.get_part("595-LM358P")
+        clock.now = MIDNIGHT  # Mouser hasn't reset yet (its day may end later, or roll)
+        assert "tries again at 2026-10-17 01:00 UTC" in (await client.get_part("595-LM358P"))["error"]
+        clock.now = MIDNIGHT + 3600
+        assert (await client.get_part("595-LM358P"))["total"] == 1
+        # after a request went through, the next daily refusal waits for midnight again
+        clock.now = MIDNIGHT + 20 * 3600
+        assert "tries again at 2026-10-18 00:00 UTC" in (await client.get_part("511-LM358P"))["error"]
+        assert fake.requests == 4
+
+    async def test_per_minute_403_pauses_a_minute(self, clock):
+        q = quota(clock, name="Mouser")
+        fake = FakeMouser(httpx.Response(403, json=MOUSER_MINUTE_403), httpx.Response(200, json=MOUSER_OK))
+        client = mouser(fake, q)
+        assert (await client.get_part("595-LM358P"))["error"].startswith(
+            "Mouser is limiting requests per minute. Try again in 60 s.")
+        clock.advance(60)
+        assert (await client.get_part("595-LM358P"))["total"] == 1
+
+    async def test_refusal_inside_a_200(self, clock):
+        """A 2024 report saw TooManyRequests with "Message": null; the status wasn't recorded."""
+        body = {"Errors": [{"Id": 0, "Code": "TooManyRequests", "Message": None, "ResourceKey": "MaxCallPerDay"}],
+                "SearchResults": None}
+        client = mouser(FakeMouser(httpx.Response(200, json=body)), quota(clock, name="Mouser"))
+        assert "daily quota exceeded" in (await client.get_part("595-LM358P"))["error"]
+
+    async def test_other_403s_show_mousers_message_and_dont_pause(self, clock, monkeypatch):
+        from pcbparts_mcp import server
+        q = quota(clock, name="Mouser")
+        body = {"Errors": [{"Code": "Invalid", "Message": "Invalid unique identifier."}]}
+        client = mouser(FakeMouser(httpx.Response(403, json=body), httpx.Response(403)), q)
+        monkeypatch.setattr(server, "_mouser_client", client)
+        assert (await server.mouser_get_part(part_number="595-LM358P")) == {
+            "error": "Mouser part lookup failed: Mouser API error [Invalid]: Invalid unique identifier."}
+        assert (await server.mouser_get_part(part_number="511-LM358P")) == {
+            "error": "Mouser part lookup failed: Mouser API returned HTTP 403"}
+        assert q.status()["paused_until"] is None
+
+    async def test_null_message(self):
+        body = {"Errors": [{"Code": "Oops", "Message": None}], "SearchResults": None}
+        client = mouser(FakeMouser(httpx.Response(200, json=body)), None)
+        with pytest.raises(MouserAPIError, match=r"\[Oops\]: Unknown Mouser API error"):
+            await client.get_part("595-LM358P")
+
+    async def test_daily_403_without_a_quota(self):
+        client = mouser(FakeMouser(httpx.Response(403, json=MOUSER_DAILY_403)), None)
+        assert (await client.get_part("595-LM358P"))["error"] == \
+            "Mouser is limiting requests (Maximum calls per day exceeded.). Try again later."
+
+    async def test_server_message_names_your_own_key(self, clock):
+        q = DailyQuota("Mouser", 1000, clock=clock, own_key="Mouser API key (free at https://www.mouser.com/api-hub/)")
+        client = mouser(FakeMouser(httpx.Response(403, json=MOUSER_DAILY_403)), q)
+        error = (await client.get_part("595-LM358P"))["error"]
+        assert f"run pcbparts-mcp with your own Mouser API key (free at https://www.mouser.com/api-hub/): {SELF_HOSTING_URL}" in error
