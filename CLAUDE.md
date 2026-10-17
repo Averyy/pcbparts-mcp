@@ -37,6 +37,10 @@ PCB Parts MCP server for electronic component search and sensor recommendation. 
 - **Endpoint:** https://pcbparts.dev/mcp
 - **Status:** Beta with real external users (self-hosters + hosted MCP + outside contributors) — breaking changes must be deliberate: semver bump, changelog note in the commit, and keep exact dependency pins
 
+## Usage Stats
+
+`/mcp/stats` (under `/mcp` because Caddy forwards only `/mcp*` and `/health`) serves anonymous daily counts from `stats.py`: per-tool calls = ok + not_found + bad_request + rate_limited + failed, calls per UTC hour, apps, distinct callers, Mouser/DigiKey lookups. The file (`USAGE_STATS_PATH` on the cache volume) keeps 365 days; the page shows 30. Error replies are sorted by `_ERROR_KINDS` in `server.py`; every error message must be listed in `ERROR_REPLIES` in `tests/test_usage_stats.py` (the test enforces it). Keep it same-origin: if another site ever needs it, allow that domain only, never `*`.
+
 ## API Gotcha
 
 The JLCPCB API has backwards field names:

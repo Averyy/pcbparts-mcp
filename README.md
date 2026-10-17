@@ -242,7 +242,7 @@ Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diode
 - **Endpoint:** `https://pcbparts.dev/mcp`
 - **Transport:** Streamable HTTP (stateless)
 - **Health:** `https://pcbparts.dev/health` (status, version, EasyEDA footprint answers seeded and stored, and each distributor's requests today)
-- **Usage stats:** `https://pcbparts.dev/mcp/stats` (anonymous counts per UTC day: calls to each tool, errors, empty answers and average time, which MCP apps connect, the number of distinct callers, and Mouser/DigiKey lookups sent, cached or turned away by the limits; the stats keep no IPs, queries or part numbers; the last 30 days, `?days=N` for fewer)
+- **Usage stats:** `https://pcbparts.dev/mcp/stats` (anonymous counts per UTC day, with totals for the days shown: calls per UTC hour, calls to each tool split into ok, not_found, bad_request, rate_limited and failed, with the average time, which MCP apps connect, the number of distinct callers, and Mouser/DigiKey lookups sent, cached or turned away by the limits; the stats keep no IPs, queries or part numbers; the last 30 days, `?days=N` for fewer)
 - **Rate limit:** 100 requests/minute per IP
 - **Auth:** None required
 

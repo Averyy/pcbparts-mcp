@@ -1,7 +1,7 @@
 """Anonymous usage counts per UTC day, served at /mcp/stats.
 
-Per day: calls to each tool (with error replies, failures, empty answers and the average time), the
-MCP apps that connected (by the name each app reports when it connects), the number of distinct
+Per day: calls to each tool, split by outcome (see OUTCOMES), with the average time; calls in each UTC
+hour; the MCP apps that connected (by the name each app reports when it connects), the number of distinct
 callers, and what happened to Mouser/DigiKey lookups (sent, answered from the cache, or turned away
 by the shared limits). No IPs, queries or part numbers are kept: callers are counted through salted
 hashes held in memory for the current day only, with a new random salt each day. A restart starts
@@ -31,12 +31,16 @@ MAX_CALLERS = 100_000  # distinct callers counted a day (bounds memory); later o
 MAX_APPS = 50  # distinct app names a day; later ones count as "other"
 APP_NAME_LENGTH = 40
 _NOT_IN_APP_NAME = re.compile(r"[^A-Za-z0-9 ._()/+-]")  # app names are self-reported and shown publicly
-TOOL_COUNTS = ("calls", "errors", "failed", "empty", "ms")
-DISTRIBUTOR_EVENTS = ("sent", "cached", "limited")
+# Each tool call counts under exactly one outcome, so a tool's outcomes add up to its calls:
+# ok (found something), not_found (worked, found nothing), bad_request (the request was invalid),
+# rate_limited (a limit turned it away) and failed (something broke here or in a service we call)
+OUTCOMES = ("ok", "not_found", "bad_request", "rate_limited", "failed")
+TOOL_COUNTS = ("calls", *OUTCOMES, "ms")
+DISTRIBUTOR_EVENTS = ("sent", "cached", "rate_limited")
 
 
 def _new_day() -> dict[str, Any]:
-    return {"tools": {}, "apps": {}, "callers": 0, "distributors": {}}
+    return {"tools": {}, "hours": [0] * 24, "apps": {}, "callers": 0, "distributors": {}}
 
 
 def _int(value: Any) -> int:
@@ -52,13 +56,31 @@ def _clean_day(day: dict) -> dict[str, Any]:
     clean = _new_day()
     for name, counts in _dict(day.get("tools")).items():
         if isinstance(counts, dict):
-            clean["tools"][str(name)] = {key: _int(counts.get(key)) for key in TOOL_COUNTS}
+            clean["tools"][str(name)] = _clean_tool_counts(counts)
     for name, counts in _dict(day.get("distributors")).items():
         if isinstance(counts, dict):
+            counts = {"rate_limited": counts.get("limited"), **counts}  # 0.6.3 called it "limited"
             clean["distributors"][str(name)] = {key: _int(counts.get(key)) for key in DISTRIBUTOR_EVENTS}
     for name, count in _dict(day.get("apps")).items():
         clean["apps"][str(name)] = _int(count)
     clean["callers"] = _int(day.get("callers"))
+    hours = day.get("hours")
+    # None: not recorded (0.6.3 had no hours), so record_call() marks the hours before it as unknown
+    clean["hours"] = ([None if h is None else _int(h) for h in hours]
+                      if isinstance(hours, list) and len(hours) == 24 else None)
+    return clean
+
+
+def _clean_tool_counts(counts: dict) -> dict[str, int]:
+    if "errors" in counts or "empty" in counts:
+        # 0.6.3's columns: errors (any error reply), failed (raised: so far bad arguments) and empty.
+        # Error replies can't be sorted after the fact, so they stay as "unsorted".
+        calls, errors, raised, empty = (_int(counts.get(key)) for key in ("calls", "errors", "failed", "empty"))
+        return {"calls": calls, "ok": max(0, calls - errors - raised - empty), "not_found": empty,
+                "bad_request": raised, "rate_limited": 0, "failed": 0, "ms": _int(counts.get("ms")), "unsorted": errors}
+    clean = {key: _int(counts.get(key)) for key in TOOL_COUNTS}
+    if "unsorted" in counts:
+        clean["unsorted"] = _int(counts["unsorted"])
     return clean
 
 
@@ -109,18 +131,20 @@ class UsageStats:
         return day
 
     def record_call(self, tool: str, outcome: str, ms: float, caller: str | None = None) -> None:
-        """One tool call. outcome: "ok", "error" (it replied with an error), "failed" (it raised,
-        e.g. bad arguments) or "empty" (no results). caller is an IP, counted but not kept."""
+        """One tool call. outcome is one of OUTCOMES (anything else counts as "failed"). caller is
+        an IP, counted but not kept."""
         if self.tools is not None and tool not in self.tools:
             tool = "unknown"
-        date = self._today()
+        now = datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc)  # one reading for date and hour
+        date, hour = now.date().isoformat(), now.hour
         day = self._day(date)
         counts = day["tools"].setdefault(tool, dict.fromkeys(TOOL_COUNTS, 0))
         counts["calls"] += 1
-        key = {"error": "errors", "failed": "failed", "empty": "empty"}.get(outcome)
-        if key:
-            counts[key] += 1
+        counts[outcome if outcome in OUTCOMES else "failed"] += 1
         counts["ms"] += round(ms)
+        if day["hours"] is None:  # a day saved without hours: the ones before now are unknown
+            day["hours"] = [None] * hour + [0] * (24 - hour)
+        day["hours"][hour] = (day["hours"][hour] or 0) + 1
         if caller:
             self._count_caller(date, day, caller)
 
@@ -142,7 +166,7 @@ class UsageStats:
 
     def record_distributor(self, name: str, event: str) -> None:
         """A Mouser/DigiKey lookup: "sent" to the API, "cached" (answered from the cache) or
-        "limited" (turned away by our limits or a pause the API asked for)."""
+        "rate_limited" (turned away by our limits or a pause the API asked for)."""
         counts = self._day()["distributors"].setdefault(name, dict.fromkeys(DISTRIBUTOR_EVENTS, 0))
         counts[event] = counts.get(event, 0) + 1
 
@@ -164,30 +188,77 @@ class UsageStats:
         self._dirty = False
 
     def summary(self, days: int = 30) -> dict[str, Any]:
-        """For /mcp/stats: the newest `days` days that had any use, newest first."""
+        """For /mcp/stats: totals over the newest `days` days that had any use, then each of those
+        days, newest first."""
+        dates = sorted(self._days, reverse=True)[:days]
         out = []
-        for date in sorted(self._days, reverse=True)[:days]:
+        total_tools: dict[str, dict[str, int]] = {}
+        total_apps: dict[str, int] = {}
+        total_distributors: dict[str, dict[str, int]] = {}
+        total_hours = [0] * 24
+        for date in dates:
             day = self._days[date]
-            tools = {
-                name: {"calls": c["calls"], "errors": c["errors"], "failed": c["failed"], "empty": c["empty"],
-                       "avg_ms": round(c["ms"] / c["calls"]) if c["calls"] else 0}
-                for name, c in sorted(day["tools"].items(), key=lambda item: (-item[1]["calls"], item[0]))
-            }
+            for hour, count in enumerate(day["hours"] or ()):
+                total_hours[hour] += count or 0
+            for name, c in day["tools"].items():
+                total = total_tools.setdefault(name, {})
+                for key, value in c.items():
+                    total[key] = total.get(key, 0) + value
+            for name, count in day["apps"].items():
+                total_apps[name] = total_apps.get(name, 0) + count
+            for name, c in day["distributors"].items():
+                total = total_distributors.setdefault(name, dict.fromkeys(DISTRIBUTOR_EVENTS, 0))
+                for key in DISTRIBUTOR_EVENTS:
+                    total[key] += c.get(key, 0)
+            tools = _tools_view(day["tools"])
             out.append({
                 "date": date,
                 "calls": sum(c["calls"] for c in tools.values()),
+                "hours": day["hours"],
                 "callers": day["callers"],
                 "tools": tools,
-                "apps": dict(sorted(day["apps"].items(), key=lambda item: (-item[1], item[0]))),
+                "apps": _by_count(day["apps"]),
                 "distributors": day["distributors"],
             })
+        totals_tools = _tools_view(total_tools)
         return {
-            "about": ("Anonymous counts per UTC day, the last 30 days at most. callers counts distinct IPs (hosted apps such as claude.ai "
-                      "call from shared IPs, and a caller seen before and after a restart counts twice); apps are "
-                      "the names MCP apps send when they connect. The stats keep no IPs, queries or part numbers."),
+            "about": ("Anonymous counts per UTC day, the last 30 days at most, newest first; totals adds up "
+                      "the days listed (without callers, which can't be added across days). hours: calls in each UTC hour, "
+                      "00 to 23 (null: not recorded); in totals, each hour added up across the days. Each tool's calls = ok (found "
+                      "something) + not_found (worked, found nothing) + bad_request (the request was invalid) + "
+                      "rate_limited (a limit turned it away) + failed (something broke on this server or a service "
+                      "it calls), plus unsorted where shown (error replies from before 0.6.4, which weren't "
+                      "sorted). callers counts distinct IPs, which isn't the number of people: hosted apps such "
+                      "as claude.ai call from their own servers' IPs, and a caller seen before and after a restart "
+                      "counts twice. apps are the names MCP apps send when they connect. The stats keep no IPs, "
+                      "queries or part numbers."),
             "kept_across_restarts": self.path is not None and self.ok,
+            "totals": {
+                "from": dates[-1] if dates else None,
+                "to": dates[0] if dates else None,
+                "days": len(dates),
+                "calls": sum(c["calls"] for c in totals_tools.values()),
+                "hours": total_hours,
+                "tools": totals_tools,
+                "apps": _by_count(total_apps),
+                "distributors": total_distributors,
+            },
             "days": out,
         }
+
+
+def _tools_view(tools: dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
+    """Tool counts as shown: the outcomes, unsorted when there is any, and the average time; busiest first."""
+    return {
+        name: {"calls": c["calls"], **{key: c.get(key, 0) for key in OUTCOMES},
+               **({"unsorted": c["unsorted"]} if c.get("unsorted") else {}),
+               "avg_ms": round(c["ms"] / c["calls"]) if c["calls"] else 0}
+        for name, c in sorted(tools.items(), key=lambda item: (-item[1]["calls"], item[0]))
+    }
+
+
+def _by_count(counts: dict[str, int]) -> dict[str, int]:
+    return dict(sorted(counts.items(), key=lambda item: (-item[1], item[0])))
 
 
 # The server's counts. Modules use stats.usage (not `from .stats import usage`) so tests can swap it.
