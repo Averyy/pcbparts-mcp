@@ -106,6 +106,9 @@ DIGIKEY_CLIENT_SECRET = os.getenv("DIGIKEY_CLIENT_SECRET", "")
 DIGIKEY_BASE_URL = "https://api.digikey.com/products/v4"
 DIGIKEY_TOKEN_URL = "https://api.digikey.com/v1/oauth2/token"
 DIGIKEY_CACHE_TTL = 3600
+# "Part not found" answers are kept for less time: a 404 that wasn't really about the part
+# (an API glitch) hides that part for at most this long
+DIGIKEY_NOT_FOUND_TTL = 600
 DIGIKEY_LOCALE_SITE = os.getenv("DIGIKEY_LOCALE_SITE", "US")
 DIGIKEY_LOCALE_LANGUAGE = os.getenv("DIGIKEY_LOCALE_LANGUAGE", "en")
 DIGIKEY_LOCALE_CURRENCY = os.getenv("DIGIKEY_LOCALE_CURRENCY", "USD")
@@ -118,10 +121,15 @@ DISTRIBUTOR_DAILY_LIMIT = int(os.getenv("DISTRIBUTOR_DAILY_LIMIT", "1000"))
 # suspends an app for ten minutes for going over its per-second threshold).
 MOUSER_PER_MINUTE = 25
 DIGIKEY_PER_MINUTE = 100
+# DigiKey requests go out at most this many a second; a burst waits its turn (DigiKeyClient)
+DIGIKEY_PER_SECOND = 5
 # Mouser/DigiKey daily request counts, and a pause DigiKey asked for, kept across restarts. The
 # Docker image sets /app/cache/distributor_quota.json (the pcbparts-cache volume). Unset means
 # memory only: every restart starts the day's count from 0, while DigiKey keeps counting.
 DISTRIBUTOR_QUOTA_PATH = os.getenv("DISTRIBUTOR_QUOTA_PATH", "")
+# Anonymous daily usage counts served at /mcp/stats (stats.py), kept across restarts. The Docker image
+# sets /app/cache/usage_stats.json (the pcbparts-cache volume). Unset means memory only.
+USAGE_STATS_PATH = os.getenv("USAGE_STATS_PATH", "")
 
 CSE_CONCURRENT_LIMIT = 3
 CSE_RATE_LIMIT = 0.15

@@ -86,6 +86,7 @@ ENV RATE_LIMIT_REQUESTS=100
 # created and owned by appuser above).
 ENV EASYEDA_STORE_PATH=/app/cache/easyeda.db
 ENV DISTRIBUTOR_QUOTA_PATH=/app/cache/distributor_quota.json
+ENV USAGE_STATS_PATH=/app/cache/usage_stats.json
 
 # Run as non-root user
 USER appuser

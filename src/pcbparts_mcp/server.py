@@ -11,20 +11,21 @@ from typing import Any, Literal
 
 from fastmcp import FastMCP
 from fastmcp.server.dependencies import get_http_request
+from fastmcp.server.middleware import Middleware as FastMCPMiddleware
 from mcp.types import ToolAnnotations
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 from starlette.routing import Route
 
-from . import __version__
+from . import __version__, stats
 from .cache import DailyQuota, QuotaStore
 from .config import (
     RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
     DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
-    ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH,
+    ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
 )
 from .client import EasyEDAComponentNotFound, JLCPCBClient
 from .mouser import MouserAPIError, MouserClient, MouserError
@@ -64,8 +65,8 @@ async def lifespan(app):
     # Build/load DB on startup (not on first request)
     db = get_db()
     db._ensure_db()
-    stats = db.get_stats()
-    logger.info(f"Database ready: {stats.get('total_parts', 0)} parts")
+    db_stats = db.get_stats()
+    logger.info(f"Database ready: {db_stats.get('total_parts', 0)} parts")
 
     # Load categories from DB (updated daily by scraper, no API call needed)
     _categories = db.get_categories_for_client()
@@ -128,7 +129,13 @@ async def lifespan(app):
 
     if _distributor_quotas:
         logger.info(f"Distributor request counts: {f'kept in {quota_store.path}' if quota_store else 'memory only'}")
-    tally_flusher = asyncio.create_task(_flush_caller_tallies()) if _distributor_quotas else None
+
+    # Anonymous daily usage counts for /mcp/stats
+    if USAGE_STATS_PATH:
+        stats.usage.open(USAGE_STATS_PATH)
+    stats.usage.tools = {tool.name for tool in await mcp.list_tools(run_middleware=False)}
+    logger.info(f"Usage stats: {f'kept in {USAGE_STATS_PATH}' if USAGE_STATS_PATH else 'memory only'}")
+    minute_task = asyncio.create_task(_every_minute())
 
     # CSE client always available (no API key needed)
     _cse_client = CSEClient()
@@ -136,12 +143,12 @@ async def lifespan(app):
 
     yield
 
-    if tally_flusher:
-        tally_flusher.cancel()
-        with contextlib.suppress(asyncio.CancelledError):
-            await tally_flusher
+    minute_task.cancel()
+    with contextlib.suppress(asyncio.CancelledError):
+        await minute_task
     for quota in _distributor_quotas.values():
         quota.callers.flush()  # the hour so far, so a deploy doesn't lose it
+    stats.usage.save()
     if _cse_client:
         await _cse_client.close()
     if _mouser_client:
@@ -155,12 +162,17 @@ async def lifespan(app):
     close_boards_db()
 
 
-async def _flush_caller_tallies() -> None:
-    """Every minute, log the finished hour's per-IP Mouser/DigiKey request counts (one line each)."""
+async def _every_minute() -> None:
+    """Every minute, log the finished hour's per-IP Mouser/DigiKey request counts (one line each)
+    and save the usage counts."""
     while True:
         await asyncio.sleep(60)
-        for quota in _distributor_quotas.values():
-            quota.callers.flush_if_due()
+        try:
+            for quota in _distributor_quotas.values():
+                quota.callers.flush_if_due()
+            stats.usage.save()
+        except Exception:
+            logger.exception("Minute task failed; trying again in a minute")
 
 
 # Create MCP server
@@ -172,6 +184,52 @@ mcp = FastMCP(
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
     mask_error_details=True,
 )
+
+
+def _call_outcome(result: Any) -> str:
+    """For the usage counts: "error" if the tool replied with an error, "empty" if it found nothing."""
+    content = getattr(result, "structured_content", None)
+    if not isinstance(content, dict):
+        return "ok"
+    if content.get("error"):
+        return "error"
+    if any(key in content and not content[key] for key in ("results", "alternatives", "matched_files")):
+        return "empty"
+    return "ok"
+
+
+class UsageStatsMiddleware(FastMCPMiddleware):
+    """Counts tool calls and connecting apps for /mcp/stats (stats.py). Counting never breaks a call."""
+
+    async def on_initialize(self, context, call_next):
+        try:
+            client_info = context.message.params.clientInfo
+            stats.usage.record_app(client_info.name if client_info else None)
+        except Exception:
+            logger.exception("Usage stats: couldn't count an app")
+        return await call_next(context)
+
+    async def on_call_tool(self, context, call_next):
+        start = time.monotonic()
+        try:
+            result = await call_next(context)
+        except Exception:
+            self._record(context, None, start)
+            raise
+        self._record(context, result, start)
+        return result
+
+    @staticmethod
+    def _record(context, result: Any, start: float) -> None:
+        """result is None when the call raised."""
+        try:
+            outcome = "failed" if result is None else _call_outcome(result)
+            stats.usage.record_call(context.message.name, outcome, (time.monotonic() - start) * 1000, _caller_ip())
+        except Exception:
+            logger.exception("Usage stats: couldn't count a tool call")
+
+
+mcp.add_middleware(UsageStatsMiddleware())
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
@@ -1384,6 +1442,16 @@ async def health(request):
     })
 
 
+async def usage_stats(request):
+    """Anonymous usage counts per UTC day (stats.py), newest first. ?days=N (1-30, default 30); the
+    file at USAGE_STATS_PATH keeps a year."""
+    try:
+        days = int(request.query_params.get("days", "30"))
+    except ValueError:
+        days = 30
+    return JSONResponse(stats.usage.summary(max(1, min(days, stats.PUBLIC_DAYS))))
+
+
 class BodySizeLimitMiddleware(BaseHTTPMiddleware):
     """Reject requests whose declared body exceeds max_bytes (memory-amplification guard).
 
@@ -1428,6 +1496,8 @@ def create_app():
 
     # Add health check route
     app.routes.append(Route("/health", health))
+    # Under /mcp because the pcbparts.dev proxy forwards only /mcp* and /health to this app
+    app.routes.append(Route("/mcp/stats", usage_stats))
 
     return app
 

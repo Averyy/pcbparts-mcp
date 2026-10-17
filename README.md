@@ -242,6 +242,7 @@ Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diode
 - **Endpoint:** `https://pcbparts.dev/mcp`
 - **Transport:** Streamable HTTP (stateless)
 - **Health:** `https://pcbparts.dev/health` (status, version, EasyEDA footprint answers seeded and stored, and each distributor's requests today)
+- **Usage stats:** `https://pcbparts.dev/mcp/stats` (anonymous counts per UTC day: calls to each tool, errors, empty answers and average time, which MCP apps connect, the number of distinct callers, and Mouser/DigiKey lookups sent, cached or turned away by the limits; the stats keep no IPs, queries or part numbers; the last 30 days, `?days=N` for fewer)
 - **Rate limit:** 100 requests/minute per IP
 - **Auth:** None required
 
@@ -278,6 +279,7 @@ Building the image needs BuildKit, the default builder since Docker 23 and the o
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Comma-separated Host headers accepted by the server (DNS-rebinding protection; localhost is always allowed) |
 | `DISTRIBUTOR_DAILY_LIMIT` | `1000` | Daily API request quota per distributor (Mouser/DigiKey) |
 | `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker, unset otherwise | JSON file that keeps each distributor's request count for the day, and any pause Mouser or DigiKey asked for, across restarts. Unset means memory only, so every restart starts the count from 0 |
+| `USAGE_STATS_PATH` | `/app/cache/usage_stats.json` in Docker, unset otherwise | JSON file that keeps the `/mcp/stats` counts for a year (about 650 KB) across restarts; `/mcp/stats` shows the last 30 days. Unset means memory only |
 | `MOUSER_API_KEY` | — | Mouser API key (optional, enables Mouser tools) |
 | `DIGIKEY_CLIENT_ID` | — | DigiKey OAuth2 client ID (optional, enables DigiKey tools) |
 | `DIGIKEY_CLIENT_SECRET` | — | DigiKey OAuth2 client secret |

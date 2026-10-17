@@ -1,5 +1,6 @@
 """Shared TTL cache with LRU eviction for distributor API clients, plus request budgets."""
 
+import asyncio
 import collections
 import datetime
 import json
@@ -25,28 +26,29 @@ class TTLCache:
     def __init__(self, ttl: float, max_size: int = 5000):
         self._ttl = ttl
         self._max_size = max_size
-        self._data: dict[str, tuple[float, Any]] = {}
+        self._data: dict[str, tuple[float, Any]] = {}  # key -> (expiry time, value)
 
     def get(self, key: str) -> Any | None:
         """Get a cached value, or None if missing/expired."""
         if key in self._data:
-            ts, result = self._data[key]
-            if time.time() - ts < self._ttl:
+            expires, result = self._data[key]
+            if time.time() < expires:
                 return result
             del self._data[key]
         return None
 
-    def set(self, key: str, value: Any) -> None:
-        """Cache a value. Evicts expired entries first, then oldest if still over max_size."""
-        self._data[key] = (time.time(), value)
+    def set(self, key: str, value: Any, ttl: float | None = None) -> None:
+        """Cache a value for ttl seconds (default: the cache's ttl). Evicts expired entries first,
+        then the ones expiring soonest if still over max_size."""
+        self._data[key] = (time.time() + (self._ttl if ttl is None else ttl), value)
         if len(self._data) > self._max_size:
             self._evict()
 
     def _evict(self) -> None:
-        """Remove expired entries, then oldest entries if still over max_size."""
+        """Remove expired entries, then the ones expiring soonest if still over max_size."""
         now = time.time()
         # First pass: remove expired
-        expired = [k for k, (ts, _) in self._data.items() if now - ts >= self._ttl]
+        expired = [k for k, (expires, _) in self._data.items() if now >= expires]
         for k in expired:
             del self._data[k]
         # Second pass: LRU eviction if still over limit
@@ -405,6 +407,26 @@ class SlidingWindowBudget:
             return False
         self._next_report = now + self._window
         return True
+
+
+class Pacer:
+    """Spaces requests at least 1/per_second apart: a burst waits its turn instead of going out at
+    once. Each caller takes the next free slot before it awaits, so it's safe for single-threaded
+    asyncio without a lock."""
+
+    def __init__(self, per_second: float, clock: Callable[[], float] = time.monotonic,
+                 sleep: Callable[[float], Any] = asyncio.sleep):
+        self._interval = 1 / per_second
+        self._clock = clock
+        self._sleep = sleep
+        self._next = float("-inf")
+
+    async def wait(self) -> None:
+        now = self._clock()
+        slot = max(now, self._next)
+        self._next = slot + self._interval
+        if slot > now:
+            await self._sleep(slot - now)
 
 
 class Cooldown:

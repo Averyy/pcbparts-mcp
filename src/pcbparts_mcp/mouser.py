@@ -8,6 +8,7 @@ from typing import Any, TYPE_CHECKING
 
 import httpx
 
+from . import stats
 from .cache import TTLCache
 from .config import (
     MOUSER_API_KEY,
@@ -236,13 +237,16 @@ class MouserClient:
         cache_key = f"mouser:{query}"
         cached = self._cache.get(cache_key)
         if cached is not None:
+            stats.usage.record_distributor("mouser", "cached")
             return cached
 
         # Check daily quota (after cache so cache hits don't count)
         if self._quota:
             quota_error = self._quota.check(caller)
             if quota_error:
+                stats.usage.record_distributor("mouser", "limited")
                 return quota_error
+        stats.usage.record_distributor("mouser", "sent")
 
         body = {
             "SearchByPartRequest": {
