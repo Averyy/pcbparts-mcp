@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -3519,6 +3524,16 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "2474": {
+    "name": "File section/file frame/file tray/file rack",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3531": {
+    "name": "Network Switch",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -4049,6 +4064,11 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "156": {
+    "name": "Flat head screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "882": {
     "name": "Grease gun",
     "category_id": 50,
@@ -4056,11 +4076,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1756": {
-    "name": "Screwdriver handle/bit holder",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
