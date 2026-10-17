@@ -101,6 +101,25 @@ Run the server locally:
   numeric parser registered in `SPEC_PARSERS` (`src/pcbparts_mcp/alternatives.py`).
   Parsers live in `src/pcbparts_mcp/parsers.py` and need unit tests
   (see `tests/test_parsers.py`).
+- A new unit in a parser must leave every value that already parsed unchanged (main's
+  parsers vs yours over every attribute value in `components.db`): the database columns,
+  search filters and alternatives all use them.
+
+**Smart query parsing** (`src/pcbparts_mcp/smart_parser/`)
+- A value in a query goes to the spec its part type lists (`CATEGORY_ATTRIBUTE_MAP`, keyed by
+  keyword or subcategory name; give an operator when `>=` is wrong, as for a zener's voltage).
+  `jlc_search` checks that at least 10% of the searched parts list the spec, tries a fallback
+  (`_PARSED_FILTER_FALLBACKS` in `server.py`), or leaves the value out and says so in
+  `parsed.adjusted_filters`. "5V relay" used to filter on Voltage Rating and find nothing.
+- Alias targets and `SUBCATEGORY_GROUPS` members must be real subcategory names; a test checks.
+- Check a parser change against a set of real queries before and after (`tests/test_search_queries.py`
+  has the ones that broke).
+
+**Alternatives rules** (`COMPATIBILITY_RULES` in `alternatives.py`)
+- Keys and spec names must be JLCPCB's exactly ("Peak Pulse Power Dissipation (Ppp)",
+  not "Peak Pulse Power"). A misspelled spec is never compared, and nothing fails: the
+  check just lands in `specs_unparseable`. Copy names from `jlc_search_help(subcategory=...)`.
+  A test checks every key against `data/subcategories.json`.
 
 **Dependencies**
 - All dependencies are pinned to exact versions (pyproject.toml, Dockerfile, and the

@@ -7,11 +7,13 @@ This module provides intelligent alternative finding that:
 4. Returns verified alternatives for supported categories, similar_parts for unsupported
 """
 
+import re
 from typing import Any, Callable
 
 # Import shared parsers from the unified parsers module
 from pcbparts_mcp.parsers import (
     parse_voltage,
+    parse_isolation_voltage,
     parse_tolerance,
     parse_ppm,
     parse_forward_voltage,
@@ -41,7 +43,7 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Collector - Emitter Voltage VCEO": parse_voltage,
     "Reverse Stand-Off Voltage (Vrwm)": parse_voltage,
     "Clamping Voltage": parse_voltage,
-    "Isolation Voltage(Vrms)": parse_voltage,
+    "Isolation Voltage(Vrms)": parse_isolation_voltage,
     "Voltage - Max": parse_voltage,
     "Output Voltage": parse_voltage,
     "Voltage Dropout": parse_voltage,
@@ -62,8 +64,10 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Collector-Emitter Breakdown Voltage (Vces)": parse_voltage,
     "Vce Saturation(VCE(sat))": parse_voltage,
     "Voltage - Forward(Vf@If)": parse_forward_voltage,
-    "Voltage - DC Spark Over": parse_voltage,
+    "Voltage - DC Spark Over (Nom)": parse_voltage,
     "Voltage - Supply": parse_voltage,  # For buzzers, etc.
+    "Voltage - Supply(VCCA)": parse_voltage,  # Level shifters: each side's range
+    "Voltage - Supply(VCCB)": parse_voltage,
     "Gate Threshold Voltage (Vgs(th))": parse_voltage,  # MOSFETs: "4V", "4V@250uA"
     "Gate Threshold Voltage": parse_voltage,  # Alternate name
     # Tolerances (percentage-based)
@@ -72,7 +76,7 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     # Power
     "Power(Watts)": parse_power,
     "Pd - Power Dissipation": parse_power,
-    "Peak Pulse Power": parse_power,
+    "Peak Pulse Power Dissipation (Ppp)": parse_power,
     "Rated Power": parse_power,
     # Currents
     "Current - Continuous Drain(Id)": parse_current,
@@ -95,6 +99,9 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Peak Pulse Current-Ipp (10/1000us)": parse_current,
     "Current Rating (Max)": parse_current,
     "Average Rectified Current": parse_current,
+    "Output Current(It(rms))": parse_current,
+    "Peak Current": parse_current,
+    "Maximum Continuous Current": parse_current,  # Power distribution (high-side) switches
     # Resistance
     "DC Resistance(DCR)": parse_resistance,
     "RDS(on)": parse_resistance,
@@ -112,6 +119,8 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Height - Seated (Max)": parse_length_mm,
     "Height": parse_length_mm,
     "Diameter": parse_length_mm,
+    "Length": parse_length_mm,
+    "Width": parse_length_mm,
     # Special handling
     "Impedance @ Frequency": "special",  # Uses impedance_at_freq_match()
     # String-match specs (no parser - use exact match)
@@ -121,7 +130,9 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Type": None,
     "Output Type": None,
     "Peak Wavelength": None,
+    "Wavelength": None,
     "FET Type": None,
+    "Number": None,  # Transistors: "1 N-channel", "2 NPN" (read by the polarity check)
     "B Constant (25℃/100℃)": None,
     "Number of Positions": None,
     "Number of Pins": None,
@@ -156,19 +167,30 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Direction": None,
     "Encoder Type": None,
     "Energy": None,
-    "Sound Pressure Level": parse_decibels,
+    "Sound Pressure Level(SPL)": parse_decibels,
     # Battery Management
     "Type of Battery": None,
     "Number of Cells": None,
     "Charge Current - Max": parse_current,
     # Level Shifters
     "Channel Type": None,
+    # TVS/ESD
+    "Polarity": None,
+    "Number of Channels": None,
+    # Diodes: "1 Independent" = "Standalone"; "1 Pair Common Cathode"; normalized by _compare_values
+    "Diode Configuration": None,
+    # Coax connectors: "SMA", "IPEX"; "Inner hole" (jack) vs "Inner pin" (plug)
+    "RF Series": None,
+    "Interface": None,
+    # Wireless modules: the chip ("ESP32-S3R8")
+    "Utilized IC / Part": None,
     # Motor Drivers
     "Number of H-bridges": None,
     # Audio Amplifiers
     "Class": None,  # Class D, Class AB, etc.
     # Wireless Modules
     "Output Power": parse_power,
+    "Output Power(Max)": parse_power,
 }
 
 
@@ -185,7 +207,9 @@ STRING_MATCH_SPECS = {
     "Type",
     "Output Type",
     "Peak Wavelength",
+    "Wavelength",
     "FET Type",
+    "Number",
     "B Constant (25℃/100℃)",
     # Connectors
     "Number of Positions",
@@ -232,6 +256,13 @@ STRING_MATCH_SPECS = {
     "Number of Cells",
     # Level Shifters
     "Channel Type",
+    # TVS/ESD
+    "Polarity",
+    "Number of Channels",
+    "Diode Configuration",
+    "RF Series",
+    "Interface",
+    "Utilized IC / Part",
     # Motor Drivers
     "Number of H-bridges",
     # Audio Amplifiers
@@ -246,6 +277,8 @@ STRING_MATCH_SPECS = {
 # - primary: The main spec to search by
 # - must_match: Specs that must be exactly equal
 # - same_or_better: Specs where candidate must be >= or <= original
+# - polarity: Transistor specs that give N/P (or NPN/PNP) and how many: the candidate must state its
+#   polarity and match the original's (see _polarity)
 
 COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # ============== RESISTORS ==============
@@ -447,14 +480,17 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # ============== MOSFETs ==============
     "MOSFETs": {
         "primary": "Drain to Source Voltage",
+        "polarity": ["Type", "Number"],  # N-channel can't replace P-channel; single can't replace dual
         "same_or_better": {
             "Drain to Source Voltage": "higher",
             "Current - Continuous Drain(Id)": "higher",
             "RDS(on)": "lower",
+            "Gate Threshold Voltage (Vgs(th))": "lower",  # a 4V part won't switch on from a 3.3V GPIO
         },
     },
     "Silicon Carbide Field Effect Transistor (MOSFET)": {
         "primary": "Drain to Source Voltage",
+        "polarity": ["Type", "Number"],
         "same_or_better": {
             "Drain to Source Voltage": "higher",
             "Current - Continuous Drain(Id)": "higher",
@@ -465,6 +501,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     "JFETs": {
         "primary": "FET Type",
         "must_match": ["FET Type"],
+        "polarity": ["FET Type", "Number"],
         "same_or_better": {
             "Drain Current (Idss)": "higher",
             "RDS(on)": "lower",
@@ -474,6 +511,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     "Bipolar (BJT)": {
         "primary": "type",
         "must_match": ["type"],
+        "polarity": ["type", "Number"],
         "same_or_better": {
             "Collector - Emitter Voltage VCEO": "higher",
             "Current - Collector(Ic)": "higher",
@@ -482,6 +520,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     "Darlington Transistors": {
         "primary": "Type",
         "must_match": ["Type"],
+        "polarity": ["Type", "Number"],
         "same_or_better": {
             "Collector - Emitter Voltage VCEO": "higher",
             "Current - Collector(Ic)": "higher",
@@ -490,6 +529,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     "Digital Transistors": {
         "primary": "type",
         "must_match": ["type"],
+        "polarity": ["type", "Number"],
         "same_or_better": {
             "Collector - Emitter Voltage VCEO": "higher",
         },
@@ -514,6 +554,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # ============== DIODES ==============
     "Schottky Diodes": {
         "primary": "Voltage - DC Reverse(Vr)",
+        "must_match": ["Diode Configuration"],  # single, series pair, common cathode/anode
         "same_or_better": {
             "Voltage - DC Reverse(Vr)": "higher",
             "Current - Rectified": "higher",
@@ -522,6 +563,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Switching Diodes": {
         "primary": "Voltage - DC Reverse(Vr)",
+        "must_match": ["Diode Configuration"],  # single, series pair, common cathode/anode
         "same_or_better": {
             "Voltage - DC Reverse(Vr)": "higher",
             "Current - Rectified": "higher",
@@ -529,13 +571,14 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Zener Diodes": {
         "primary": "Zener Voltage(Nom)",
-        "must_match": ["Zener Voltage(Nom)"],
+        "must_match": ["Zener Voltage(Nom)", "Diode Configuration"],
         "same_or_better": {
             "Pd - Power Dissipation": "higher",
         },
     },
     "Diodes - General Purpose": {
         "primary": "Voltage - DC Reverse(Vr)",
+        "must_match": ["Diode Configuration"],  # single, series pair, common cathode/anode
         "same_or_better": {
             "Voltage - DC Reverse(Vr)": "higher",
             "Current - Rectified": "higher",
@@ -543,6 +586,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Diodes - Rectifiers - Fast Recovery": {
         "primary": "Voltage - DC Reverse(Vr)",
+        "must_match": ["Diode Configuration"],  # single, series pair, common cathode/anode
         "same_or_better": {
             "Voltage - DC Reverse(Vr)": "higher",
             "Current - Average Rectified": "higher",
@@ -550,6 +594,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Fast Recovery / High Efficiency Diodes": {
         "primary": "Voltage - DC Reverse(Vr)",
+        "must_match": ["Diode Configuration"],  # single, series pair, common cathode/anode
         "same_or_better": {
             "Voltage - DC Reverse(Vr)": "higher",
             "Current - Rectified": "higher",
@@ -565,6 +610,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Super Barrier Rectifiers (SBR)": {
         "primary": "Voltage - DC Reverse(Vr)",
+        "must_match": ["Diode Configuration"],  # single, series pair, common cathode/anode
         "same_or_better": {
             "Voltage - DC Reverse(Vr)": "higher",
             "Current - Rectified": "higher",
@@ -573,6 +619,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Avalanche Diodes": {
         "primary": "Voltage - DC Reverse(Vr)",
+        "must_match": ["Diode Configuration"],  # single, series pair, common cathode/anode
         "same_or_better": {
             "Voltage - DC Reverse(Vr)": "higher",
             "Current - Rectified": "higher",
@@ -587,6 +634,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "SiC Diodes": {
         "primary": "Voltage - DC Reverse(Vr)",
+        "must_match": ["Diode Configuration"],  # single, series pair, common cathode/anode
         "same_or_better": {
             "Voltage - DC Reverse(Vr)": "higher",
             "Current - Rectified": "higher",
@@ -595,9 +643,11 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # ============== ESD/TVS PROTECTION ==============
     "ESD and Surge Protection (TVS/ESD)": {
         "primary": "Reverse Stand-Off Voltage (Vrwm)",
+        # A unidirectional part can't replace a bidirectional one; TVS (surge) vs ESD; channel count
+        "must_match": ["Polarity", "Type", "Number of Channels"],
         "same_or_better": {
             "Clamping Voltage": "lower",
-            "Peak Pulse Power": "higher",
+            "Peak Pulse Power Dissipation (Ppp)": "higher",
         },
     },
     "Varistors": {
@@ -609,7 +659,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
         },
     },
     "Gas Discharge Tube Arresters (GDT)": {
-        "primary": "Voltage - DC Spark Over",
+        "primary": "Voltage - DC Spark Over (Nom)",
         "must_match": ["Number of Poles"],
         "same_or_better": {
             "Impulse Discharge Current": "higher",
@@ -656,6 +706,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
         "must_match": ["Current Rating", "Type"],
         "same_or_better": {
             "Voltage Rating (AC)": "higher",
+            "Voltage Rating (DC)": "higher",
         },
     },
     # ============== THERMISTORS ==============
@@ -672,21 +723,13 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
         "primary": "Illumination Color",
         "must_match": ["Illumination Color"],
     },
-    "LED - High Brightness": {
-        "primary": "Illumination Color",
-        "must_match": ["Illumination Color"],
-    },
-    "Infrared (IR) LEDs": {
-        "primary": "Peak Wavelength",
-        "must_match": ["Peak Wavelength"],
+    "Infrared LED Emitters": {
+        "primary": "Wavelength",
+        "must_match": ["Wavelength"],
     },
     "Ultraviolet LEDs (UVLED)": {
         "primary": "Peak Wavelength",
         "must_match": ["Peak Wavelength"],
-    },
-    "Light Bars, Arrays": {
-        "primary": "Color",
-        "must_match": ["Color", "Number of Segments"],
     },
     # ============== OPTOCOUPLERS ==============
     "Transistor, Photovoltaic Output Optoisolators": {
@@ -706,7 +749,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
         "primary": "Load Voltage",
         "same_or_better": {
             "Load Voltage": "higher",
-            "Load Current": "higher",
+            "Output Current(It(rms))": "higher",
             "Isolation Voltage(Vrms)": "higher",
         },
     },
@@ -976,13 +1019,13 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
         "primary": "Connector Type",
         "must_match": ["Connector Type"],
         "same_or_better": {
-            "Voltage Rating": "higher",
+            "Voltage Rating (Max)": "higher",
             "Current Rating": "higher",
         },
     },
     "Coaxial Connectors (RF)": {
         "primary": "Connector Type",
-        "must_match": ["Connector Type", "Impedance"],
+        "must_match": ["Connector Type", "Impedance", "RF Series", "Interface"],  # SMA vs IPEX; jack vs plug
     },
     "IDC Connectors": {
         "primary": "Number of Positions or Pins",
@@ -1024,7 +1067,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Shunts, Jumpers": {
         "primary": "Pitch",
-        "must_match": ["Pitch", "Number of Positions"],
+        "must_match": ["Pitch", "Number of Positions or Pins"],
         "same_or_better": {
             "Current Rating": "higher",
         },
@@ -1041,7 +1084,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
         "primary": "Voltage - Supply",
         "must_match": ["Driver Circuitry"],
         "same_or_better": {
-            "Sound Pressure Level": "higher",
+            "Sound Pressure Level(SPL)": "higher",
         },
     },
     "Microphones": {
@@ -1084,16 +1127,16 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # ============== WIRELESS MODULES ==============
     "WiFi Modules": {
         "primary": "Voltage - Supply",
-        "must_match": ["Voltage - Supply"],
+        "must_match": ["Voltage - Supply", "Utilized IC / Part"],  # an ESP32-C3 module can't replace an ESP32-S3 one
         "same_or_better": {
             "Output Power": "higher",
         },
     },
     "Bluetooth Modules": {
         "primary": "Voltage - Supply",
-        "must_match": ["Voltage - Supply"],
+        "must_match": ["Voltage - Supply", "Utilized IC / Part"],
         "same_or_better": {
-            "Output Power": "higher",
+            "Output Power(Max)": "higher",
         },
     },
     "LoRa Modules": {
@@ -1107,9 +1150,8 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # Note: Many Motor Driver ICs have sparse specs in JLCPCB data.
     # These rules apply when specs are available.
     "Motor Driver ICs": {
-        "primary": "Output Current(Max)",
+        "primary": "Output Current",
         "same_or_better": {
-            "Output Current(Max)": "higher",
             "Output Current": "higher",
             "Voltage - Supply": "higher",
         },
@@ -1147,6 +1189,35 @@ PIN_COUNT_SPECS = {
 }
 
 
+def _lower(value: str) -> str:
+    return " ".join(value.lower().split())
+
+
+def _same_as(synonyms: dict[str, str]) -> Callable[[str], str]:
+    """Normalizer that maps synonyms (lowercase) to one name and lowercases everything else."""
+    return lambda value: synonyms.get(_lower(value), _lower(value))
+
+
+def _chip_names(value: str) -> str:
+    """A module's chips: "ESP32-DOWD-V3、ESP32-DOWDR2-V3" (letter O, as some listings have it) =
+    "ESP32-D0WD-V3、ESP32-D0WDR2-V3"; "ESP8266 Chip" = "ESP8266"."""
+    names = {re.sub(r"\s+chip$", "", name).replace("o", "0") for name in _lower(value).split("、") if name.strip()}
+    return "、".join(sorted(names))
+
+
+# String specs whose values have synonyms, compared after normalizing
+_MATCH_NORMALIZERS: dict[str, Callable[[str], str]] = {
+    "Diode Configuration": _same_as({"standalone": "1 independent", "independent": "1 independent"}),
+    "Temperature Coefficient": _same_as({"np0": "c0g", "npo": "c0g", "cog": "c0g"}),  # one dielectric
+    "Interface": _same_as({"inner bore": "inner hole", "male pin": "inner pin"}),  # coax jack vs plug
+    "Utilized IC / Part": _chip_names,
+}
+
+# Compared after normalizing ("8P" = "1x8P", "NP0" = "C0G"), so an exact string match in SQL would
+# miss equal values
+NORMALIZED_MATCH_SPECS = frozenset({*PIN_COUNT_SPECS, *_MATCH_NORMALIZERS})
+
+
 def _normalize_pin_count(value: str) -> str:
     """Normalize pin count values for comparison.
 
@@ -1156,8 +1227,6 @@ def _normalize_pin_count(value: str) -> str:
         '8' -> '8'
         '2x10P' -> '20' (2 rows x 10 = 20 total pins)
     """
-    import re
-
     value = value.strip()
 
     # Handle "NxMP" format (rows x pins per row) -> total
@@ -1190,8 +1259,18 @@ def _normalize_pin_count(value: str) -> str:
 # =============================================================================
 
 
-def _values_match(orig_val: str, cand_val: str, spec: str) -> bool:
-    """Check if two spec values match (for must_match rules)."""
+# A value that says nothing: empty, "-", or "-、-" in multi-value fields
+_PLACEHOLDER_PATTERN = re.compile(r"[\s\-、,/]*")
+
+
+def is_stated(value: str | None) -> bool:
+    """True if a spec value says something (not missing, empty or "-")."""
+    return value is not None and not _PLACEHOLDER_PATTERN.fullmatch(value)
+
+
+def _compare_values(orig_val: str, cand_val: str, spec: str) -> bool | None:
+    """Check if two spec values match (for must_match rules). None if they can't be compared
+    (a numeric spec whose value doesn't parse)."""
     # Special handler for complex formats
     if spec == "Impedance @ Frequency":
         return impedance_at_freq_match(orig_val, cand_val)
@@ -1199,6 +1278,10 @@ def _values_match(orig_val: str, cand_val: str, spec: str) -> bool:
     # Pin count specs: normalize before comparing (handles "8P" vs "1x8P" vs "8")
     if spec in PIN_COUNT_SPECS:
         return _normalize_pin_count(orig_val) == _normalize_pin_count(cand_val)
+
+    normalize = _MATCH_NORMALIZERS.get(spec)
+    if normalize:
+        return normalize(orig_val) == normalize(cand_val)
 
     # String-based specs: exact match (case-insensitive)
     if spec in STRING_MATCH_SPECS:
@@ -1210,7 +1293,7 @@ def _values_match(orig_val: str, cand_val: str, spec: str) -> bool:
         orig_parsed = parser(orig_val)
         cand_parsed = parser(cand_val)
         if orig_parsed is None or cand_parsed is None:
-            return True  # Can't parse, allow through
+            return None
         # 2% tolerance for matching (handles rounding differences in display)
         if orig_parsed == 0:
             return cand_parsed == 0
@@ -1218,6 +1301,11 @@ def _values_match(orig_val: str, cand_val: str, spec: str) -> bool:
 
     # Fallback: string match
     return orig_val.strip().lower() == cand_val.strip().lower()
+
+
+def _values_match(orig_val: str, cand_val: str, spec: str) -> bool:
+    """Check if two spec values match (for must_match rules). Values that can't be compared pass."""
+    return _compare_values(orig_val, cand_val, spec) is not False
 
 
 def _spec_ok(orig_val: str, cand_val: str, spec: str, direction: str) -> bool:
@@ -1240,13 +1328,90 @@ def _spec_ok(orig_val: str, cand_val: str, spec: str, direction: str) -> bool:
         return True
 
 
+# value@condition specs where lower is better and the value rises as the condition gets harder:
+# spec -> (value parser, condition parser, which way the condition gets harder)
+_CONDITIONAL_SPECS: dict[str, tuple[Callable[[str], float | None], Callable[[str], float | None], str]] = {
+    "Voltage Dropout": (parse_voltage, parse_current, "higher"),  # "240mV@(50mA)": rises with load
+    "Voltage - Forward(Vf@If)": (parse_voltage, parse_current, "higher"),  # "550mV@3A"
+    "RDS(on)": (parse_resistance, parse_voltage, "lower"),  # "12mΩ@10V、15mΩ@4.5V": rises as Vgs falls
+}
+
+
+def _conditional_pairs(value: str, spec: str) -> list[tuple[float, float | None]]:
+    """(value, condition) pairs: "47mΩ@10V、60mΩ@4.5V" -> [(0.047, 10.0), (0.06, 4.5)]."""
+    value_parser, condition_parser, _ = _CONDITIONAL_SPECS[spec]
+    pairs = []
+    for item in value.split("、"):
+        number, _, condition = item.partition("@")
+        parsed = value_parser(number)
+        if parsed is not None:
+            pairs.append((parsed, condition_parser(condition) if condition else None))
+    return pairs
+
+
+def _conditional_ok(orig_val: str, cand_val: str, spec: str) -> bool | None:
+    """same_or_better ("lower") for a value@condition spec. Compares at a condition both list; otherwise
+    the first values, as other specs do, except that a lower value at an easier condition (Vf at a lower
+    current, RDS(on) at a higher Vgs) proves nothing: None. None also when either doesn't parse."""
+    orig, cand = _conditional_pairs(orig_val, spec), _conditional_pairs(cand_val, spec)
+    if not orig or not cand:
+        return None
+    for orig_value, orig_cond in orig:
+        for cand_value, cand_cond in cand:
+            if orig_cond is not None and cand_cond is not None and abs(cand_cond - orig_cond) <= abs(orig_cond) * 0.02:
+                return cand_value <= orig_value * 1.02
+    (orig_value, orig_cond), (cand_value, cand_cond) = orig[0], cand[0]
+    if cand_value > orig_value * 1.02:
+        return False
+    if orig_cond is not None and cand_cond is not None:
+        easier = cand_cond < orig_cond if _CONDITIONAL_SPECS[spec][2] == "higher" else cand_cond > orig_cond
+        if easier:
+            return None
+    return True
+
+
+# "2 N-Channel", "1 NPN (Pre-Biased)", "3 n-channels": a count per polarity
+_POLARITY_COUNT_PATTERN = re.compile(r"(\d+)\s*(N-?channels?|P-?channels?|NPN|PNP)\b", re.IGNORECASE)
+# "N-Channel + P-Channel", "NPN+PNP", "NPN、PNP": polarity only
+_POLARITY_PATTERN = re.compile(r"\b(N-?channel|P-?channel|NPN|PNP)\b", re.IGNORECASE)
+
+
+def _polarity(specs: dict[str, str], names: list[str]) -> tuple[frozenset[str], dict[str, int] | None] | None:
+    """A transistor's polarity from the specs that state it, as (letters, counts per letter):
+    "1 N-channel" -> ({"N"}, {"N": 1}), "2 NPN" -> ({"N"}, {"N": 2}),
+    "N-Channel + P-Channel" -> ({"N", "P"}, None). None if no spec states it or two disagree.
+    """
+    letters: frozenset[str] | None = None
+    counts: dict[str, int] | None = None
+    for name in names:
+        value = specs.get(name)
+        if not value or not is_stated(value):
+            continue
+        found_counts: dict[str, int] = {}
+        for number, kind in _POLARITY_COUNT_PATTERN.findall(value):
+            found_counts[kind[0].upper()] = found_counts.get(kind[0].upper(), 0) + int(number)
+        found = frozenset(found_counts) or frozenset(m[0].upper() for m in _POLARITY_PATTERN.findall(value))
+        if not found:
+            continue  # e.g. MOSFET Type "ESD"
+        if letters is not None and found != letters:
+            return None
+        letters = found
+        if found_counts:
+            if counts is not None and found_counts != counts:
+                return None
+            counts = found_counts
+    return (letters, counts) if letters is not None else None
+
+
 def is_compatible_alternative(
     original: dict[str, Any], candidate: dict[str, Any], subcategory: str
 ) -> tuple[bool, dict[str, Any]]:
     """Check if candidate is a compatible alternative for original.
 
     Returns (is_compatible, verification_info) tuple.
-    verification_info contains specs_verified and specs_unparseable lists.
+    verification_info contains specs_verified and specs_unparseable lists. A spec that can't be
+    checked (missing on either side, "-" on the original, or a value that doesn't parse) passes and
+    is listed as unparseable, except polarity: the candidate must state it.
     """
     rules = COMPATIBILITY_RULES.get(subcategory)
     if not rules:
@@ -1258,55 +1423,73 @@ def is_compatible_alternative(
     specs_verified: list[str] = []
     specs_unparseable: list[str] = []
 
-    # Check must_match specs (exact equality required)
-    for spec in rules.get("must_match", []):
+    def result(is_compat: bool) -> tuple[bool, dict[str, Any]]:
+        return is_compat, {"specs_verified": specs_verified, "specs_unparseable": specs_unparseable}
+
+    # The primary spec and must_match specs must be equal
+    for spec in dict.fromkeys([rules["primary"], *rules.get("must_match", [])]):
         orig_val = orig_specs.get(spec)
         cand_val = cand_specs.get(spec)
-        if orig_val and cand_val:
-            if not _values_match(orig_val, cand_val, spec):
-                return False, {
-                    "specs_verified": specs_verified,
-                    "specs_unparseable": specs_unparseable,
-                }
-            specs_verified.append(spec)
+        if is_stated(orig_val) and cand_val:
+            matched = _compare_values(orig_val, cand_val, spec)
+            if matched is False:
+                return result(False)
+            (specs_verified if matched else specs_unparseable).append(spec)
         elif orig_val or cand_val:
-            specs_unparseable.append(spec)  # One side missing
+            specs_unparseable.append(spec)  # One side missing, or the original's is "-"
+
+    # N/P (or NPN/PNP) and how many: a candidate that doesn't say can't be used
+    polarity_specs = rules.get("polarity")
+    if polarity_specs:
+        orig_polarity = _polarity(orig_specs, polarity_specs)
+        if orig_polarity is None:
+            specs_unparseable.append("polarity")
+        else:
+            cand_polarity = _polarity(cand_specs, polarity_specs)
+            if cand_polarity is None or cand_polarity[0] != orig_polarity[0]:
+                return result(False)
+            if orig_polarity[1] is not None and cand_polarity[1] is not None and cand_polarity[1] != orig_polarity[1]:
+                return result(False)
+            specs_verified.append("polarity")
 
     # Check same_or_better specs
     for spec, direction in rules.get("same_or_better", {}).items():
         orig_val = orig_specs.get(spec)
         cand_val = cand_specs.get(spec)
-        if orig_val and cand_val:
-            parser = SPEC_PARSERS.get(spec)
-            if parser and parser != "special" and callable(parser):
-                if parser(orig_val) is not None and parser(cand_val) is not None:
-                    if not _spec_ok(orig_val, cand_val, spec, direction):
-                        return False, {
-                            "specs_verified": specs_verified,
-                            "specs_unparseable": specs_unparseable,
-                        }
-                    specs_verified.append(spec)
-                else:
-                    specs_unparseable.append(spec)  # Couldn't parse
-            else:
-                specs_unparseable.append(spec)  # No parser
+        parser = SPEC_PARSERS.get(spec)
+        if spec in _CONDITIONAL_SPECS and direction == "lower" and orig_val and cand_val:
+            better = _conditional_ok(orig_val, cand_val, spec)
+            if better is False:
+                return result(False)
+            outcome = specs_verified if better else specs_unparseable
+        elif (
+            orig_val and cand_val and callable(parser)
+            and parser(orig_val) is not None and parser(cand_val) is not None
+        ):
+            if not _spec_ok(orig_val, cand_val, spec, direction):
+                return result(False)
+            outcome = specs_verified
         elif orig_val or cand_val:
-            specs_unparseable.append(spec)  # One side missing
+            outcome = specs_unparseable  # One side missing, no parser, or couldn't parse
+        else:
+            continue
+        if spec not in specs_verified and spec not in specs_unparseable:  # primary is often also here
+            outcome.append(spec)
 
-    return True, {"specs_verified": specs_verified, "specs_unparseable": specs_unparseable}
+    return result(True)
 
 
 def verify_primary_spec_match(
     original: dict[str, Any], candidate: dict[str, Any], primary_attr: str
 ) -> bool:
-    """Verify candidate has same primary spec value as original."""
+    """Verify candidate has same primary spec value as original. Passes when that can't be checked
+    (is_compatible_alternative lists it as unparseable)."""
     orig_value = original.get("specs", {}).get(primary_attr)
     cand_value = candidate.get("specs", {}).get(primary_attr)
 
-    if not orig_value or not cand_value:
+    if not is_stated(orig_value) or not cand_value:
         return True  # Can't verify, allow through
 
-    # Use _values_match for consistent comparison
     return _values_match(orig_value, cand_value, primary_attr)
 
 
@@ -1418,7 +1601,12 @@ def build_response(
                 "Original part is already basic/preferred - no assembly fee savings possible"
             )
         else:
-            message = f"No compatible alternatives found matching {primary_value}"
+            message = (
+                f"No compatible alternatives found matching {primary_value}"
+                if is_stated(primary_value) else "No compatible alternatives found"
+            )
+    elif no_fee_count > 0 and original.get("library_type") in ("basic", "preferred"):
+        message = f"Found {no_fee_count} basic/preferred alternative(s)"
     elif no_fee_count > 0:
         message = (
             f"Found {no_fee_count} basic/preferred alternative(s) that save $3 assembly fee"

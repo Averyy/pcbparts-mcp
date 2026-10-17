@@ -131,6 +131,9 @@ class JLCPCBClient:
         # server passes a store path, so tests and scripts never write to a real store.
         self._easyeda_store = EasyEDAStore(easyeda_store_path) if easyeda_store_path else None
         self._easyeda_seed: Callable[[str], FootprintAnswer | None] | None = None
+        # Database parts that can meet a part's compatibility rules (set by the server); find_alternatives
+        # adds them to its live search, which only sees the best-stocked parts with the same primary value
+        self._alternative_candidates: Callable[..., list[dict[str, Any]]] | None = None
         # lcsc -> answer that replaces an older store or seed answer in this process: a re-check
         # marker once the part's symbol UUID stopped working, then the live answer if the store
         # couldn't take it. Only parts whose UUID stopped working, so it stays small.
@@ -280,6 +283,10 @@ class JLCPCBClient:
     def set_easyeda_seed(self, lookup: Callable[[str], FootprintAnswer | None]) -> None:
         """Use seeded footprint answers (ComponentDatabase.get_easyeda_seed)."""
         self._easyeda_seed = lookup
+
+    def set_alternative_candidates(self, lookup: Callable[..., list[dict[str, Any]]]) -> None:
+        """Use database candidates in find_alternatives (ComponentDatabase.find_alternative_candidates)."""
+        self._alternative_candidates = lookup
 
     def easyeda_store_size(self) -> int | None:
         """Answers in the footprint store, or None when there's no usable store (memory only)."""
@@ -1279,11 +1286,39 @@ class JLCPCBClient:
         ]
 
         # Filter by same package if requested (using fuzzy matching)
-        if same_package and original.get("package"):
-            orig_pkg_normalized = _normalize_package_for_matching(original["package"])
+        package_filter = bool(same_package and original.get("package"))
+        orig_pkg_normalized = _normalize_package_for_matching(original.get("package") or "")
+        if package_filter:
             candidates = [
                 p for p in candidates
                 if _normalize_package_for_matching(p.get("package", "")) == orig_pkg_normalized
+            ]
+
+        # The live search sees only the best-stocked parts with the primary value; for a part like a
+        # 60V 83A MOSFET those are small-signal 60V parts that fail every check. Add database parts that
+        # pass, picked in score order (no-fee first, then stock). Their stock is from the daily data.
+        if is_supported and subcategory_id and self._alternative_candidates is not None:
+            def passes(part: dict[str, Any]) -> bool:
+                if part.get("lcsc", "").upper() == original_lcsc:
+                    return False
+                if package_filter and _normalize_package_for_matching(part.get("package", "")) != orig_pkg_normalized:
+                    return False
+                if primary_attr and not verify_primary_spec_match(original, part, primary_attr):
+                    return False
+                return is_compatible_alternative(original, part, subcategory_name or "")[0]
+
+            live_codes = {p.get("lcsc") for p in candidates}
+            candidates += [
+                p for p in self._alternative_candidates(
+                    original=original,
+                    subcategory=subcategory_name,
+                    subcategory_id=subcategory_id,
+                    min_stock=effective_min_stock,
+                    library_type=library_type,
+                    accept=passes,
+                    limit=search_params["limit"],
+                )
+                if p.get("lcsc") not in live_codes
             ]
 
         # For SUPPORTED categories: verify primary spec matches and compatibility
@@ -1351,7 +1386,7 @@ class JLCPCBClient:
             elif library_type == "basic":
                 compatible = [p for p in compatible if p.get("library_type") == "basic"]
             elif library_type == "preferred":
-                compatible = [p for p in compatible if p.get("preferred", False)]
+                compatible = [p for p in compatible if p.get("library_type") == "preferred"]
             elif library_type == "extended":
                 compatible = [p for p in compatible if p.get("library_type") == "extended"]
 

@@ -12,18 +12,19 @@ import os
 import sqlite3
 import threading
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Callable, Literal
 
 from ..config import DEFAULT_MIN_STOCK
 from ..easyeda_store import FootprintAnswer
 from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
+from ..search.spec_filter import like_text
 from .connection import build_database, load_caches
 from .lookup import get_by_lcsc, get_by_lcsc_batch, get_by_mpn
 from .categories import (
     get_subcategory_name,
     get_category_for_subcategory,
     get_categories_for_client,
-    find_by_subcategory,
+    find_alternative_candidates,
 )
 from .attributes import list_attributes
 from .stats import get_stats
@@ -62,6 +63,7 @@ class ComponentDatabase:
         self._category_name_to_id: dict[str, int] = {}  # lowercase name -> id
         self._category_to_subcategories: dict[int, list[int]] = {}  # category_id -> [subcategory_ids]
         self._search_engine: SearchEngine | None = None
+        self._attribute_shares: dict[tuple[tuple[int, ...], tuple[str, ...]], float] = {}
 
     def _ensure_db(self) -> None:
         """Ensure database exists, build if missing. Thread-safe."""
@@ -172,6 +174,7 @@ class ComponentDatabase:
         sort_by: Literal["stock", "price", "relevance"] = "stock",
         limit: int = 50,
         offset: int = 0,
+        subcategory_ids: list[int] | None = None,
     ) -> dict[str, Any]:
         """
         Search components with parametric filtering.
@@ -194,6 +197,8 @@ class ComponentDatabase:
             sort_by: "stock" (default), "price", or "relevance" (requires query)
             limit: Max results (default 50)
             offset: Pagination offset
+            subcategory_ids: Several subcategories (OR), when neither subcategory_id nor
+                subcategory_name is given (the smart parser's "inductor" covers four)
 
         Returns:
             Search results with metadata
@@ -225,6 +230,7 @@ class ComponentDatabase:
             sort_by=sort_by,
             limit=limit,
             offset=offset,
+            subcategory_ids=subcategory_ids,
         )
 
         # Add warning if min_stock was clamped
@@ -236,6 +242,26 @@ class ComponentDatabase:
             )
 
         return result
+
+    def attribute_share(self, subcategory_ids: list[int], names: list[str]) -> float:
+        """Share of the parts in these subcategories (0-1) that state one of these attributes
+        (not "-"). Cached: the data only changes with a new database."""
+        self._ensure_db()
+        key = (tuple(sorted(subcategory_ids)), tuple(sorted(names)))
+        if key not in self._attribute_shares:
+            if not self._conn or not subcategory_ids or not names:
+                return 0.0
+            stated = " OR ".join("(attributes LIKE ? ESCAPE '\\' AND attributes NOT LIKE ? ESCAPE '\\')" for _ in names)
+            params: list[Any] = []
+            for name in names:
+                params += [f'%"{like_text(name)}", "%', f'%"{like_text(name)}", "-"]%']
+            row = self._conn.execute(
+                f"SELECT COUNT(*), SUM(CASE WHEN {stated} THEN 1 ELSE 0 END) FROM components "
+                f"WHERE subcategory_id IN ({','.join('?' * len(subcategory_ids))})",
+                [*params, *subcategory_ids],
+            ).fetchone()
+            self._attribute_shares[key] = (row[1] or 0) / row[0] if row[0] else 0.0
+        return self._attribute_shares[key]
 
     def get_by_lcsc(self, lcsc: str) -> dict[str, Any] | None:
         """Get a single component by LCSC code."""
@@ -287,33 +313,38 @@ class ComponentDatabase:
             return {}
         return get_by_lcsc_batch(self._conn, lcsc_codes, self._subcategories)
 
-    def find_by_subcategory(
+    def find_alternative_candidates(
         self,
+        original: dict[str, Any],
+        subcategory: str,
         subcategory_id: int,
-        primary_spec: str | None = None,
-        primary_value: Any = None,
         min_stock: int = DEFAULT_MIN_STOCK,
         library_type: str | None = None,
-        prefer_no_fee: bool = True,
-        limit: int = 100,
+        accept: Callable[[dict[str, Any]], bool] | None = None,
+        limit: int = 50,
     ) -> list[dict[str, Any]]:
-        """Find components in a subcategory, optionally matching a primary spec value."""
+        """Parts that can meet the original's compatibility rules, no-fee first, then by stock.
+
+        find_alternatives adds these to its live search; on a database error it gets none.
+        """
         self._ensure_db()
         if not self._conn:
             return []
-        # Clamp min_stock to database minimum
-        min_stock = max(min_stock, DEFAULT_MIN_STOCK)
-        return find_by_subcategory(
-            conn=self._conn,
-            subcategories=self._subcategories,
-            subcategory_id=subcategory_id,
-            primary_spec=primary_spec,
-            primary_value=primary_value,
-            min_stock=min_stock,
-            library_type=library_type,
-            prefer_no_fee=prefer_no_fee,
-            limit=limit,
-        )
+        try:
+            return find_alternative_candidates(
+                conn=self._conn,
+                subcategories=self._subcategories,
+                original=original,
+                subcategory=subcategory,
+                subcategory_id=subcategory_id,
+                min_stock=min_stock,
+                library_type=library_type,
+                accept=accept,
+                limit=limit,
+            )
+        except sqlite3.Error:
+            logger.warning("Alternative candidates query failed for %s", original.get("lcsc"), exc_info=True)
+            return []
 
     def _row_to_dict(self, row: sqlite3.Row) -> dict[str, Any]:
         """Convert a database row to a component dict."""
