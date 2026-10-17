@@ -136,6 +136,12 @@ CSE_RATE_LIMIT = 0.15
 CSE_REQUEST_TIMEOUT = float(os.getenv("CSE_REQUEST_TIMEOUT", "45"))
 CSE_CACHE_TTL = 3600
 CSE_KICAD_CACHE_TTL = 60 * 60 * 24  # Cache extracted KiCad files for 24 hours
+# SQLite file of CSE searches and KiCad files (cse_store.py), kept across restarts; empty = memory only.
+# A search where every part has a model, and a part's KiCad files, are kept a year; a search with a
+# part that has no model yet (CSE builds them on request), or with no parts, a week.
+CSE_STORE_PATH = os.getenv("CSE_STORE_PATH", "")
+CSE_FOUND_TTL = 365 * 86400
+CSE_NOT_FOUND_TTL = 7 * 86400
 CSE_KICAD_CACHE_MAX_SIZE = 2000  # Max cached parts (each is a few KB of text)
 CSE_USER = os.getenv("CSEARCH_USER", "")
 CSE_PASS = os.getenv("CSEARCH_PASS", "")

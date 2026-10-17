@@ -28,6 +28,7 @@ from .config import (
     DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
+    CSE_STORE_PATH,
 )
 from .client import EasyEDAComponentNotFound, JLCPCBClient
 from .mouser import MouserAPIError, MouserClient, MouserError
@@ -52,6 +53,7 @@ _categories: list[dict[str, Any]] = []  # Live category cache
 _distributor_quotas: dict[str, DailyQuota] = {}  # "mouser"/"digikey" when configured, for /health
 _easyeda_seeded = 0  # rows in the seed table, counted at startup (components.db doesn't change)
 _easyeda_stored: tuple[float, int | None] = (float("-inf"), None)  # (time.monotonic(), store size)
+_cse_stored: tuple[float, dict[str, int] | None] = (float("-inf"), None)  # (time.monotonic(), store counts)
 
 # /health is public, isn't rate limited and is fetched by every landing page visit, so the store
 # count it shows is refreshed at most this often (seconds) instead of on every request.
@@ -142,8 +144,11 @@ async def lifespan(app):
     minute_task = asyncio.create_task(_every_minute())
 
     # CSE client always available (no API key needed)
-    _cse_client = CSEClient()
-    logger.info("CSE client initialized")
+    _cse_client = CSEClient(store_path=CSE_STORE_PATH or None)
+    cse_counts = _cse_client.store_counts()
+    logger.info("CSE client initialized: " + (
+        f"{cse_counts['searches']:,} searches and {cse_counts['kicad']:,} KiCad parts stored in {CSE_STORE_PATH}"
+        if cse_counts is not None else "no store (memory only)"))
 
     yield
 
@@ -1567,6 +1572,20 @@ def _easyeda_footprint_counts() -> dict[str, int | None] | None:
     return {"seeded": _easyeda_seeded, "stored": stored}
 
 
+def _cse_store_counts() -> dict[str, int] | None:
+    """Stored CSE searches and KiCad parts, refreshed at most every HEALTH_STORE_COUNT_TTL. None
+    with no usable store (memory only) or before startup."""
+    global _cse_stored
+    if _cse_client is None:
+        return None
+    counted_at, counts = _cse_stored
+    now = time.monotonic()
+    if now - counted_at >= HEALTH_STORE_COUNT_TTL:
+        counts = _cse_client.store_counts()
+        _cse_stored = (now, counts)
+    return counts
+
+
 # Health check endpoint
 async def health(request):
     return JSONResponse({
@@ -1574,6 +1593,7 @@ async def health(request):
         "service": "pcbparts-mcp",
         "version": __version__,
         "easyeda_footprints": _easyeda_footprint_counts(),
+        "cse_stored": _cse_store_counts(),
         "distributor_quota": {name: quota.status() for name, quota in _distributor_quotas.items()},
     })
 
