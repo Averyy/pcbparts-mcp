@@ -336,10 +336,29 @@ class TestSearchProtocol:
 
     def test_gpio_expansion(self, test_db):
         result = search_sensors(test_db, protocol="gpio")
-        # Should expand to analog, digital, pwm, one_wire
+        # Should expand to gpio, analog, pwm, one_wire
         ids = {r["id"] for r in result["results"]}
         assert "ds18b20" in ids  # one_wire
         assert "breakout1" in ids  # analog
+
+    def test_gpio_and_digital_match_gpio_sensors(self):
+        """The DB stores plain digital pins as "gpio". Before 0.6.3 protocol="gpio" left gpio itself
+        out of its expansion and "digital" matched nothing."""
+        conn = sqlite3.connect(":memory:")
+        conn.executescript(SCHEMA)
+        for sid, proto in (("pir1", "gpio"), ("servo1", "pwm"), ("temp1", "one_wire"), ("ldr1", "analog")):
+            conn.execute("INSERT INTO sensors (id, name, manufacturer, type, voltage, datasheet_url, platform_count, "
+                         "description, source_tier, sources) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                         (sid, sid.upper(), None, None, None, None, 0, sid, "primary", json.dumps(["test"])))
+            conn.execute("INSERT INTO sensors_fts (id, name, manufacturer, description) VALUES (?, ?, ?, ?)",
+                         (sid, sid.upper(), "", sid))
+            conn.execute("INSERT INTO sensor_protocols VALUES (?, ?)", (sid, proto))
+        conn.commit()
+        gpio = {r["id"] for r in search_sensors(conn, protocol="gpio")["results"]}
+        digital = {r["id"] for r in search_sensors(conn, protocol="digital")["results"]}
+        assert gpio == {"pir1", "servo1", "temp1", "ldr1"}
+        assert digital == {"pir1", "servo1", "temp1"}
+        conn.close()
 
 
 class TestSearchPlatform:

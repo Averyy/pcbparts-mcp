@@ -633,3 +633,54 @@ class TestMouserRefusals:
         client = mouser(FakeMouser(httpx.Response(403, json=MOUSER_DAILY_403)), q)
         error = (await client.get_part("595-LM358P"))["error"]
         assert f"run pcbparts-mcp with your own Mouser API key (free at https://www.mouser.com/api-hub/): {SELF_HOSTING_URL}" in error
+
+
+class TestMouserBatches:
+    """Mouser's SearchByPartRequest takes up to 10 part numbers, 3-40 characters each (its API docs)."""
+
+    def recording(self):
+        sent = []
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            sent.append(json.loads(request.content)["SearchByPartRequest"]["mouserPartNumber"])
+            return httpx.Response(200, json=MOUSER_OK)
+        return sent, handler
+
+    async def test_more_than_ten_is_refused_without_a_request(self, clock):
+        q = quota(clock, name="Mouser")
+        sent, handler = self.recording()
+        client = MouserClient(api_key="k", quota=q)
+        client._client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+        result = await client.get_part("|".join(f"PART{i:03}" for i in range(11)))
+        assert result["error"].startswith("Mouser takes up to 10 part numbers per call, separated by |; got 11.")
+        assert sent == [] and q.status()["used_today"] == 0
+
+    async def test_bad_lengths_are_refused_without_a_request(self, clock):
+        q = quota(clock, name="Mouser")
+        sent, handler = self.recording()
+        client = MouserClient(api_key="k", quota=q)
+        client._client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+        for bad in ("AB", "LM358P|AB", "X" * 41):
+            assert "must be 3-40 characters" in (await client.get_part(bad))["error"]
+        for empty in ("", " | "):
+            assert (await client.get_part(empty))["error"] == "Give at least one Mouser or manufacturer part number."
+        assert sent == [] and q.status()["used_today"] == 0
+
+    async def test_spaces_are_trimmed_and_identical_batches_cached(self, clock):
+        q = quota(clock, name="Mouser")
+        sent, handler = self.recording()
+        client = MouserClient(api_key="k", quota=q)
+        client._client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+        first = await client.get_part(" 595-LM358P | NE555P |")  # spaces and a stray "|" are dropped
+        assert sent == ["595-LM358P|NE555P"]
+        assert await client.get_part("595-LM358P|NE555P") == first  # same batch: from the cache
+        assert sent == ["595-LM358P|NE555P"] and q.status()["used_today"] == 1
+        await client.get_part("NE555P|595-LM358P")  # a different batch is a new request
+        assert len(sent) == 2
+
+    async def test_ten_is_fine(self, clock):
+        sent, handler = self.recording()
+        client = MouserClient(api_key="k", quota=quota(clock, name="Mouser"))
+        client._client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+        assert "error" not in await client.get_part("|".join(f"PART{i:03}" for i in range(10)))
+        assert len(sent) == 1
