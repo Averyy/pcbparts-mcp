@@ -166,7 +166,7 @@ async def _flush_caller_tallies() -> None:
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB design assistant — component search, reference boards, sensor recommendation, and design rules. No auth required. Use jlc_search (local DB) as the primary search tool — it's fast, free, and supports parametric filters. Only use jlc_stock_check for real-time stock verification or out-of-stock parts. Use mouser_get_part/digikey_get_part only to cross-reference a specific MPN (daily quota applies). Use sensor_recommend to find sensor ICs/modules by what they measure, protocol, or platform — not for buying parts (use jlc_search for that). Use board_search to find reference board schematics by IC, tag, or text. Use board_get with focus param to see how a specific IC is used (pin-grouped neighborhood). Use get_design_rules for PCB design best practices (power, protection, interfaces, MCUs, layout, EMC).",
+    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only to cross-reference specific part numbers (shared daily limit; batch Mouser lookups). sensor_recommend picks sensors by measurement, protocol or platform. board_search, then board_get(focus=IC), shows how real boards wire an IC. get_design_rules gives PCB best practices (power, protection, interfaces, MCUs, layout, EMC).",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -335,28 +335,25 @@ async def jlc_stock_check(
     page: int = 1,
     limit: int = 20,
 ) -> dict:
-    """Real-time stock verification via live JLCPCB API. Use jlc_search first for most queries — it's faster and supports parametric filters.
-
-    Only use this when you need:
-    - Real-time stock verification before placing an order
-    - Parts with stock < 10 or out-of-stock parts
-    - Pagination through large result sets
+    """Live JLCPCB stock and price search. Use jlc_search first (faster, parametric filters); use this
+    only to confirm stock before ordering, find parts with stock under 10 or out of stock, or page
+    through large result sets.
 
     Args:
-        query: Search keywords (e.g., "ESP32", "10uF 25V", "STM32F103")
-        category_id: Category ID from search_help
-        subcategory_id: Subcategory ID from search_help
-        category_name: Category name (e.g., "Resistors", "Capacitors")
+        query: Keywords (e.g., "ESP32", "10uF 25V", "STM32F103")
+        category_id: Category ID from jlc_search_help
+        subcategory_id: Subcategory ID from jlc_search_help
+        category_name: Category name (e.g., "Resistors")
         subcategory_name: Subcategory name (e.g., "Tactile Switches")
-        min_stock: Min stock (default 10). Set 0 for out-of-stock parts
-        library_type: "basic", "preferred", "no_fee", "extended", or "all"
-        package: Package filter (e.g., "0402", "LQFP48")
-        manufacturer: Manufacturer filter
-        packages: Multiple packages (OR filter)
-        manufacturers: Multiple manufacturers (OR filter)
+        min_stock: Set 0 to include out-of-stock parts
+        library_type: "basic", "preferred", "no_fee", "extended" or "all"
+        package: Package (e.g., "0402", "LQFP48")
+        manufacturer: Manufacturer
+        packages: Several packages (OR)
+        manufacturers: Several manufacturers (OR)
         sort_by: "quantity" or "price"
-        page: Page number (default 1)
-        limit: Results per page (default 20, max 100)
+        page: Page number
+        limit: Results per page (max 100)
 
     Returns:
         Results with pagination. Use get_part(lcsc) for full details.
@@ -476,41 +473,29 @@ async def jlc_search(
     sort_by: Literal["stock", "price"] = "stock",
     limit: int = 50,
 ) -> dict:
-    """Fast DB search with natural language parsing and parametric filters. In-stock parts only (stock >= 10).
+    """Search in-stock JLCPCB parts (stock >= 10) in the local database, with natural-language
+    parsing and parametric filters. Start here to find parts.
 
     Args:
-        query: Search query - supports natural language like:
-            - "10k resistor 0603 1%" (auto-detects type, value, package, tolerance)
-            - "100nF 25V capacitor" (auto-applies voltage >= 25V filter)
-            - "n-channel mosfet SOT-23" (auto-filters to MOSFETs subcategory)
-            Or use with explicit filters for text search within results.
-
+        query: Natural language, e.g. "10k resistor 0603 1%", "100nF 25V capacitor" (adds
+            Voltage >= 25V), "n-channel mosfet SOT-23" (picks the subcategory). With explicit
+            filters it's a text search within the results.
         subcategory_id: Subcategory ID (e.g., 2954 for MOSFETs)
         subcategory_name: Subcategory name (e.g., "MOSFETs", "Schottky Diodes")
-        spec_filters: Parametric filters for precise searches. Each filter is a dict:
-            - name: Attribute name (Vgs(th), Capacitance, Voltage, etc.)
-            - op: Operator: "=", ">=", "<=", ">", "<"
-            - value: Value with units (e.g., "2.5V", "10uF", "20mΩ")
-            Example: [{"name": "Vgs(th)", "op": "<", "value": "2.5V"}]
-            Note: range ops (<, <=, >, >=) only work on fields with a registered
-            numeric parser — call jlc_search_help(subcategory=...) and use fields
-            typed "numeric". Parts whose spec value is "-" (null) are excluded
-            from dimension filters.
-
-        min_stock: Minimum stock (default 10). Database only indexes stock >= 10.
-        library_type: "basic", "preferred", "no_fee", "extended", or None (all)
-        prefer_no_fee: Sort basic/preferred first (default True)
-        package: Single package filter (e.g., "0603", "SOT-23")
-        packages: Multiple packages (OR logic): ["0402", "0603", "0805"]
-        manufacturer: Manufacturer filter
-        match_all_terms: AND logic for query terms (default True)
-        sort_by: "stock" (highest) or "price" (cheapest)
-        limit: Max results (default 50, max 100)
-
-    Attribute aliases:
-        MOSFETs: Vgs(th), Vds, Id, Rds(on)
-        Diodes: Vr, If, Vf
-        Passives: Capacitance, Resistance, Inductance, Voltage, Tolerance
+        spec_filters: List of {"name", "op", "value"}, e.g. [{"name": "Vgs(th)", "op": "<",
+            "value": "2.5V"}]. op: =, >=, <=, >, <. Short names: Vgs(th), Vds, Id, Rds(on), Vr,
+            If, Vf, Vceo, Ic, Vout, Iout, Capacitance, Resistance, Inductance, Voltage, Tolerance,
+            Power, DCR, Isat, Frequency; others by the name jlc_search_help shows. Range ops only
+            work on attributes it lists as "numeric"; parts with no value ("-") don't match them.
+        min_stock: Minimum stock (the database only has stock >= 10)
+        library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", or omit for all
+        prefer_no_fee: Sort basic/preferred first
+        package: One package (e.g., "0603", "SOT-23")
+        packages: Several packages (OR), e.g. ["0402", "0603"]
+        manufacturer: Manufacturer
+        match_all_terms: Require every query term (AND)
+        sort_by: "stock" (most first) or "price" (cheapest first)
+        limit: Max results (max 100)
 
     Returns:
         results: Matching components with specs
@@ -613,16 +598,12 @@ async def jlc_search_help(
     category: str | int | None = None,
     subcategory: str | int | None = None,
 ) -> dict:
-    """Browse categories, subcategories, and filterable attributes to help build searches.
-
-    Call with no args to list all categories. Pass a category to see its subcategories.
-    Pass a subcategory to discover filterable attributes for use with jlc_search spec_filters.
+    """List categories, a category's subcategories, or a subcategory's filterable attributes (with
+    type and example values) for jlc_search spec_filters. No args lists all categories.
 
     Args:
-        category: Category name (e.g., "Connectors") or ID (e.g., 13). Lists subcategories.
-        subcategory: Subcategory name (e.g., "MOSFETs") or ID (e.g., 2954). Lists filterable attributes.
-
-    If both provided, subcategory takes precedence (more specific).
+        category: Category name (e.g., "Connectors") or ID: lists its subcategories
+        subcategory: Subcategory name (e.g., "MOSFETs") or ID: lists its filterable attributes
 
     Returns:
         No args: List of all categories with id, name, part count, subcategory count
@@ -695,16 +676,14 @@ async def jlc_search_help(
     )
 )
 async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
-    """Get full details for a specific JLCPCB part.
+    """Full details for one JLCPCB part (all price tiers, datasheet, attributes, EasyEDA footprint
+    availability), or the JLCPCB parts matching a manufacturer part number.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
-        mpn: Manufacturer part number (e.g., "LM358P", "STM32F103C8T6").
-             Searches local DB by exact MPN match, then normalized variants,
-             then full-text search. Useful for finding the JLCPCB equivalent
-             of a part from another distributor or reference design.
-
-    One of lcsc or mpn must be provided. If both are provided, lcsc takes precedence.
+        mpn: Manufacturer part number (e.g., "LM358P"): exact match, then normalized variants,
+            then full-text search, over in-stock parts (stock >= 10). Finds the JLCPCB equivalent
+            of a part from another distributor or a reference design.
 
     Returns:
         For lcsc: Full part details including description, all pricing tiers, datasheet URL,
@@ -767,31 +746,20 @@ async def jlc_find_alternatives(
     has_easyeda_footprint: bool | None = None,
     limit: int = 10,
 ) -> dict:
-    """Find alternative parts similar to a given component.
-
-    Searches the same subcategory for parts with better availability.
-    Useful when a part has low stock or you want to compare options.
+    """Find similar parts in the same subcategory, checked against the original's key specs and
+    ranked mainly by library type (no-fee first), then stock. Use it to replace a low-stock part
+    or swap an extended part for a no-fee one.
 
     Args:
-        lcsc: LCSC part code to find alternatives for (e.g., "C2557")
-        min_stock: Minimum stock for alternatives (default: 10)
-        same_package: If True, only return parts with the same package size
-        library_type: Filter alternatives by library type:
-            - "basic": Only basic parts (no assembly fee)
-            - "preferred": Only preferred parts (no assembly fee)
-            - "no_fee": Basic or preferred (no assembly fee) - best for cost optimization
-            - "extended": Only extended parts ($3 assembly fee each)
-            - "all" or None (default): All library types
-            Use "no_fee" to find cheaper alternatives for an extended part.
-        has_easyeda_footprint: Filter by EasyEDA footprint availability:
-            - True: Only return parts WITH EasyEDA footprints (for Atopile/KiCad users)
-            - False: Only return parts WITHOUT footprints
-            - None (default): Don't filter by footprint (fastest)
-            Note: Filtering by footprint checks each candidate, at most 15 per call. Most
-            answers are stored; the rest ask EasyEDA live, which is slower. Candidates it
-            couldn't check are left out. When the check was limited, summary.footprint_filter
-            says how many were checked and why.
-        limit: Maximum alternatives to return (default: 10, max: 50)
+        lcsc: LCSC code of the original part (e.g., "C2557")
+        min_stock: Minimum stock
+        same_package: Only parts with the same package
+        library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", or omit
+            for all
+        has_easyeda_footprint: True: only parts with an EasyEDA footprint (for Atopile/KiCad);
+            False: only parts without; omit: no filter (fastest). Checks at most 15 candidates
+            per call and leaves out any it couldn't check; summary.footprint_filter says when.
+        limit: Max alternatives (max 50)
 
     Returns:
         Original part info (with library_type and has_easyeda_footprint) and list of alternatives
@@ -830,17 +798,12 @@ def _easyeda_unknown_error(lcsc: str) -> dict[str, str]:
     )
 )
 async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> dict:
-    """Get pin information for a component from EasyEDA symbol data.
-
-    Returns raw pin data exactly as EasyEDA provides it, with no interpretation
-    or guessing. Pin names are descriptive (VCC, GND, PA0, etc.) and can be
-    read directly by LLMs and users.
+    """Pin numbers and names from a part's EasyEDA symbol, exactly as EasyEDA has them (e.g., VCC,
+    GND, PA0).
 
     Args:
-        lcsc: LCSC part code (e.g., "C8304"). If provided, fetches UUID automatically.
-        uuid: EasyEDA symbol UUID directly (alternative to lcsc)
-
-    One of lcsc or uuid must be provided.
+        lcsc: LCSC part code (e.g., "C8304"); finds the symbol for you
+        uuid: EasyEDA symbol UUID, instead of lcsc
 
     Returns:
         Pin mapping with:
@@ -988,11 +951,14 @@ def _redact(message: str, *secrets: str) -> str:
     )
 )
 async def mouser_get_part(part_number: str) -> dict:
-    """Cross-reference a specific MPN on Mouser. Use jlc_search first for general component searches. Daily quota applies.
+    """Mouser price, stock and datasheet for specific parts. Use only when the user wants Mouser data;
+    find parts with jlc_search first. Shared daily limit: batch up to 10 parts per call (one
+    request). Don't retry a quota error.
 
     Args:
-        part_number: Mouser part number or manufacturer PN (e.g., "595-LM358P" or "LM358P").
-                     For batch lookup, pipe-delimit up to 10 numbers: "595-LM358P|511-LM358P"
+        part_number: Mouser PN or MPN, or up to 10 joined by "|" ("595-LM358P|NE555P"),
+            3-40 chars each. Loose match, max 50 results per call: use full PNs when batching;
+            match results by mfr_part_number.
 
     Returns:
         results: Full part details including all attributes, pricing tiers, availability, datasheet
@@ -1023,10 +989,13 @@ async def mouser_get_part(part_number: str) -> dict:
     )
 )
 async def digikey_get_part(product_number: str) -> dict:
-    """Cross-reference a specific MPN on DigiKey. Use jlc_search first for general component searches. Daily quota applies.
+    """DigiKey price, stock and datasheet for one part. Use only when the user wants DigiKey data;
+    find parts with jlc_search first. Shared daily limit, one part per call: don't check whole
+    BOMs. Don't retry a quota error.
 
     Args:
-        product_number: DigiKey part number or manufacturer PN (e.g., "296-1395-5-ND" or "LM358P")
+        product_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a
+            partial one can find nothing and still uses a request.
 
     Returns:
         Full product details including all parameters, pricing variations, availability, datasheet
@@ -1059,18 +1028,13 @@ async def cse_search(
     query: str,
     limit: int = 5,
 ) -> dict:
-    """Search SamacSys ComponentSearchEngine for ECAD model availability and datasheets.
-
-    Use this to check if KiCad/Eagle/Altium symbols, footprints, and 3D models exist for a part.
-    No API key required.
-
-    WARNING: This tool is slow (up to 45s response time). Only use when you specifically need
-    ECAD model availability or datasheets from ComponentSearchEngine. For general part search,
-    use jlc_search instead. For EasyEDA footprint availability, use jlc_get_part.
+    """Check whether KiCad, Eagle or Altium symbols, footprints and 3D models exist for a part on
+    SamacSys ComponentSearchEngine, with its datasheet. Slow (up to 45 s): only when you need
+    ECAD models. For part search use jlc_search; for EasyEDA footprints, jlc_get_part.
 
     Args:
-        query: MPN or keyword (e.g., "LM358P", "STM32F103", "ESP32")
-        limit: Max results to return (1-10, default 5)
+        query: MPN or keyword (e.g., "LM358P", "STM32F103")
+        limit: Max results (1-10)
 
     Returns:
         results: List of parts with mfr_part_number, manufacturer, description,
@@ -1111,22 +1075,13 @@ async def cse_get_kicad(
     query: str | None = None,
     part_id: int | None = None,
 ) -> dict:
-    """Get KiCad schematic symbol and PCB footprint for any component.
-
-    Downloads from SamacSys ComponentSearchEngine. Works for any manufacturer's part,
-    not limited to JLCPCB. Returns the raw .kicad_sym and .kicad_mod file contents
-    as text that can be read directly or saved to a KiCad project.
-
-    WARNING: This tool is slow (up to 45s response time). Only use when you specifically need
-    KiCad symbol/footprint files. For checking if an EasyEDA footprint exists, use jlc_get_part instead.
+    """Download a part's KiCad symbol (.kicad_sym) and footprint (.kicad_mod) as text from SamacSys
+    ComponentSearchEngine; works for any manufacturer. Slow (up to 45 s): only when you need the
+    KiCad files. For EasyEDA footprints use jlc_get_part.
 
     Args:
-        query: MPN to search for (e.g., "LM358P", "STM32F103CBT6", "ESP32-WROOM-32E").
-               Finds the best matching part with an available model.
-        part_id: CSE part ID from a previous cse_search result (skips search step).
-               Use this if you already know the exact part.
-
-    One of query or part_id must be provided.
+        query: MPN (e.g., "LM358P", "ESP32-WROOM-32E"); picks the best match that has a model
+        part_id: cse_part_id from cse_search, to skip the search
 
     Returns:
         kicad_symbol: Raw .kicad_sym file content (pin names, types, graphical symbol)
@@ -1167,25 +1122,25 @@ async def sensor_recommend(
     platform: str | None = None,
     limit: int = 15,
 ) -> dict:
-    """Recommend sensor ICs and modules for a measurement need. Returns popular, well-supported options
-    with platform compatibility info.
-
-    NOT for buying parts — use jlc_search to find JLCPCB stock and pricing.
-    This answers: "What sensor should I use to measure X on my platform?"
+    """Recommend sensor ICs and modules for what you want to measure, with protocol and platform
+    support. Not for buying parts: use jlc_search.
 
     Args:
-        query: Search by name, description, or manufacturer (e.g., "BME280", "waterproof temperature")
-        measure: What to measure. Single or AND multiple: "temperature", ["temperature", "pressure"].
-            Types: temperature, humidity, pressure, distance, co2, gas, particulate, light, color, uv,
-            acceleration, gyroscope, magnetic_field, current, voltage, motion, rotation, proximity,
-            gesture, radar, sound, flow, touch, weight, ph, dissolved_oxygen, conductivity, orp,
-            ir_temperature, biometric, radiation, gps, co, soil_moisture.
-            Aliases: "imu" → acceleration OR gyroscope OR magnetic_field. "barometric" → pressure.
-            Sub-measures (search directly): voc, pir, ultrasonic, lidar, tof, radar.
-        type: Sensing technology: "tof", "ultrasonic", "radar", "ndir", "electrochemical", "mems", etc.
-        protocol: Interface: "i2c", "spi", "uart", "one_wire", "analog", "digital", "pwm"
-        platform: Filter by support: "arduino", "esphome", "micropython", "circuitpython", "tasmota", "zephyr"
-        limit: Max results (default 15)
+        query: Name, description or manufacturer (e.g., "BME280", "waterproof temperature")
+        measure: One, or a list that must all match: temperature, humidity, pressure, distance,
+            tof, lidar, ultrasonic, radar, co2, co, gas, voc, formaldehyde, h2s, nh3, ozone,
+            oxygen, particulate, light, color, uv, optical, acceleration, gyroscope,
+            magnetic_field, tilt, vibration, rotation, motion, pir, proximity, gesture,
+            face_recognition, current, voltage, sound, flow, level, force, weight, touch, ph,
+            dissolved_oxygen, conductivity, orp, water_quality, moisture, soil_moisture, rain,
+            wind, weather, ir_temperature, flame, biometric, radiation, gps. "imu" means
+            acceleration, gyroscope or magnetic_field; everyday words (barometric, lux, dust,
+            compass) are mapped too.
+        type: Sensing technology (e.g., "tof", "ultrasonic", "ndir", "electrochemical", "mems")
+        protocol: "i2c", "spi", "uart", "analog", "pwm", "gpio", "one_wire", "rs485", "can" or "i2s"
+        platform: "arduino", "esphome", "micropython", "circuitpython", "tasmota", "zephyr" or
+            "raspberry_pi"
+        limit: Max results (max 100)
 
     Returns:
         Sensors sorted by platform support (how many platforms have drivers for this sensor).
@@ -1231,14 +1186,11 @@ async def sensor_recommend(
     )
 )
 async def get_design_rules(topic: str = "") -> dict:
-    """Look up curated PCB design rules and best practices.
-
-    41 reference files covering power, protection, interfaces, MCUs, layout, EMC, and more.
-    Call with no topic to see the full index. Use a keyword to find matching rules.
+    """Curated PCB design rules for power, protection, interfaces, MCUs, layout and EMC. An empty
+    topic lists every rule file.
 
     Args:
-        topic: Keyword to match against rule files (e.g. "ldo", "usb", "power", "esd", "esp32").
-               Matches against category/filename. Empty string returns the full index.
+        topic: Keyword matched against category/filename (e.g., "ldo", "usb", "esd", "esp32")
 
     Returns:
         content: The matched rule file(s) concatenated with --- separators
@@ -1272,39 +1224,27 @@ async def board_search(
     layers: int | None = None,
     limit: int = 10,
 ) -> dict:
-    """Search ~285 open-source hardware reference board schematics. Find real-world circuit designs
-    to learn from — see how ICs are connected, what passives surround them, decoupling strategy,
-    pull-up/pull-down networks, power topology, and net connectivity.
+    """Search ~285 open-source reference board schematics to see how real designs use an IC: its
+    passives, decoupling, pull-ups and power topology. Not for buying parts (jlc_search) or
+    choosing sensors (sensor_recommend). Then call board_get(slug, focus=IC) for that IC's
+    pin-by-pin neighborhood.
 
-    NOT for buying parts — use jlc_search. NOT for sensors — use sensor_recommend.
-    This answers: "Show me boards that use X" or "How do real designs handle Y?"
-
-    Two-step workflow: board_search → board_get.
-    1. Search here to find relevant boards
-    2. Use board_get(slug=..., focus="IC_NAME") to see that IC's pin-by-pin neighborhood
-
-    Choosing params:
-    - Use component= when you know the IC name (e.g., "MCP73831", "STM32F405", "ESP32-S3").
-      This is the most precise — it searches the actual BOM. When 2+ boards share the IC,
-      a cross-board consensus is auto-included (aggregated decoupling values, pin connections).
-    - Use query= for functional/conceptual searches (e.g., "motor driver", "battery charger",
-      "USB power delivery", "flight controller"). Searches name, description, key_coverage, ICs.
-    - Use tag= for category browsing. Combine with query= or component= to narrow.
-    - Combine filters: component="STM32" + tag="motor-control" finds STM32 motor boards.
+    Use component= for an IC name (searches the BOMs; when 2+ boards match it adds a cross-board
+    consensus), query= for a function ("motor driver", "USB power delivery"), tag= to browse.
+    Combine them to narrow.
 
     Args:
-        query: Free-text search across name, description, key coverage, ICs, tags, org.
-            Examples: "ESP32 battery", "USB power delivery", "motor driver", "Adafruit".
-        component: Find boards using a specific IC or part (e.g., "DRV8825", "TMC2209", "STM32F4",
-            "MAX17048", "MCP73831"). Searches key ICs first, then all U/IC component values.
-            Auto-includes cross-board consensus when 2+ boards match.
-        tag: Filter by tag. Single string or list for AND.
-            Available: power-supply, sensors, motor-control, adc-dac, audio, rf-sdr, isolation,
-            battery-charging, can-bus, display, inverter, led-driver, level-shifting,
-            signal-conditioning, usb, battery-management, drone-uav, bluetooth, fpga, ethernet, lora.
-        org: Filter by organization: "Adafruit", "SparkFun", "Olimex", "Seeed Studio", etc.
-        layers: Filter by PCB layer count (2, 4, 6).
-        limit: Max results (default 10, max 50).
+        query: Free text over name, description, key coverage, ICs, tags and org (e.g., "ESP32
+            battery", "motor driver")
+        component: IC or part (e.g., "DRV8825", "STM32F4", "MCP73831")
+        tag: One tag or a list (AND), exact names, e.g. power-supply, sensors, motor-control,
+            adc-dac, audio, rf-sdr, isolation, battery-charging, can-bus, display, inverter,
+            led-driver, level-shifting, signal-conditioning, usb, usb-pd, ethernet, wifi, bluetooth,
+            lora, gps-gnss, video, drone-uav, esd-protection, fpga, battery-management,
+            current-sensing, energy-harvesting, relay, robotics, rs485, 3d-printer
+        org: Organization (e.g., "Adafruit", "SparkFun", "Olimex", "Seeed Studio")
+        layers: PCB layer count (e.g., 2, 4, 6, 8)
+        limit: Max results (max 50)
 
     Returns:
         Boards sorted by relevance (BM25 for text queries) then component count.
@@ -1382,25 +1322,17 @@ async def board_get(
     include_bom: bool = False,
     include_nets: bool = False,
 ) -> dict:
-    """Get details of a reference board by slug. Use board_search first to find boards.
-
-    When focus is used, cross-board consensus is auto-included if 2+ boards share the IC.
-    This means a single board_get(slug=..., focus="MCP73831") gives you:
-    - This board's pin neighborhood for MCP73831
-    - How other boards wire MCP73831 (consensus decoupling values, common pin connections)
+    """A reference board from board_search. With focus=IC it returns that IC's pin-by-pin
+    neighborhood (decoupling, pull-ups, connected parts) and, when 2+ boards use the IC, how the
+    others wire it.
 
     Args:
-        slug: Board slug from board_search results (e.g., "adafruit-esp32-s3-feather", "crazyflie").
-        focus: Focus on a specific IC — returns only that IC's pin-grouped neighborhood instead
-            of the component list. Accepts IC name (e.g., "MCP73831", "ESP32-S3") or ref
-            (e.g., "U3"). Shows what's connected to each pin: decoupling caps, pull-up/down
-            resistors, bias networks, filter components, and connected ICs.
-            Partial match works (e.g., "ESP32" matches "ESP32-S3").
-        include_bom: If True, include every component including plain passives (R/C/L).
-            Default False — returns only ICs, connectors, and annotated passives
-            (decouples/pullup/pulldown). Omitted passives count shown in passives_omitted.
-        include_nets: If True, include full netlist, component positions, and copper pours.
-            Warning: can be very large (100KB+) for complex boards. Default False.
+        slug: Board slug from board_search (e.g., "adafruit-esp32-s3-feather")
+        focus: IC name (e.g., "MCP73831"; partial match: "ESP32" finds "ESP32-S3") or ref ("U3"):
+            returns its pin neighborhood instead of the component list
+        include_bom: Also list plain passives (R/C/L); by default only ICs, connectors and
+            annotated passives (the rest are counted in passives_omitted)
+        include_nets: Add the full netlist, positions and copper pours (can be 100 KB+)
 
     Returns:
         Default: ICs + connectors + annotated passives + neighborhood summary (ref/value per IC).
