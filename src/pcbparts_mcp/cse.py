@@ -16,6 +16,7 @@ from typing import Any
 import httpx
 
 from .cache import TTLCache
+from .cse_store import CSEStore, query_key
 from .config import (
     CSE_CONCURRENT_LIMIT,
     CSE_RATE_LIMIT,
@@ -91,9 +92,14 @@ class CSEClient:
     No API key or authentication required.
     """
 
-    def __init__(self):
+    def __init__(self, store_path: str | None = None):
         self._cache = TTLCache(ttl=CSE_CACHE_TTL)
         self._kicad_cache = TTLCache(ttl=CSE_KICAD_CACHE_TTL, max_size=CSE_KICAD_CACHE_MAX_SIZE)
+        # Answers that outlive this process (cse_store.py), behind the memory caches. Only the server
+        # passes a path, so tests and scripts never write to a real store.
+        self._store = CSEStore(store_path) if store_path else None
+        if self._store is not None:
+            self._store.prune()
         self._semaphore: asyncio.Semaphore | None = None
         self._http: httpx.AsyncClient | None = None
 
@@ -118,10 +124,14 @@ class CSEClient:
         Returns:
             Dict with results list and total count
         """
-        cache_key = f"cse:{query.strip()}:{offset}"
+        cache_key = f"cse:{query_key(query)}:{offset}"
         cached = self._cache.get(cache_key)
         if cached is not None:
             return cached
+        stored = self._store.get_search(query, offset) if self._store else None
+        if stored is not None:
+            self._cache.set(cache_key, stored)
+            return stored
 
         params = {
             "searchString": query,
@@ -169,6 +179,8 @@ class CSEClient:
         }
 
         self._cache.set(cache_key, result)
+        if self._store:
+            self._store.put_search(query, offset, result)
         return result
 
     async def get_kicad(self, query: str | None = None, part_id: int | None = None) -> dict[str, Any]:
@@ -210,6 +222,10 @@ class CSEClient:
         # Check kicad cache
         cache_key = f"kicad:{resolved_part_id}"
         cached = self._kicad_cache.get(cache_key)
+        if cached is None and self._store:
+            cached = self._store.get_kicad(resolved_part_id)
+            if cached is not None:
+                self._kicad_cache.set(cache_key, cached)
         if cached is not None:
             return {
                 "part_id": resolved_part_id,
@@ -269,6 +285,8 @@ class CSEClient:
 
         # Cache the extracted text (zip is discarded)
         self._kicad_cache.set(cache_key, kicad_files)
+        if self._store:
+            self._store.put_kicad(resolved_part_id, kicad_files)
 
         return {
             "part_id": resolved_part_id,
@@ -277,8 +295,14 @@ class CSEClient:
             "kicad_footprint": kicad_files.get("kicad_footprint"),
         }
 
+    def store_counts(self) -> dict[str, int] | None:
+        """Stored searches and KiCad parts, or None when there's no usable store (memory only)."""
+        return self._store.counts() if self._store is not None and self._store.enabled else None
+
     async def close(self) -> None:
-        """Close the HTTP client."""
+        """Close the HTTP client and the store."""
         if self._http:
             await self._http.aclose()
             self._http = None
+        if self._store is not None:
+            self._store.close()

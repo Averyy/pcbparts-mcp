@@ -254,7 +254,7 @@ Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diode
 
 - **Endpoint:** `https://pcbparts.dev/mcp`
 - **Transport:** Streamable HTTP (stateless)
-- **Health:** `https://pcbparts.dev/health` (status, version, EasyEDA footprint answers seeded and stored, and each distributor's requests today)
+- **Health:** `https://pcbparts.dev/health` (status, version, EasyEDA footprint answers seeded and stored, CSE searches and KiCad parts stored, and each distributor's requests today)
 - **Usage stats:** `https://pcbparts.dev/mcp/stats` (anonymous counts per UTC day, with totals for the days shown: calls per UTC hour, calls to each tool split into ok, not_found, bad_request, rate_limited and failed, with the average time, which MCP apps connect, the number of distinct callers, and Mouser/DigiKey lookups sent, cached or turned away by the limits; the stats keep no IPs, queries or part numbers; the last 30 days, `?days=N` for fewer)
 - **Rate limit:** 100 requests/minute per IP
 - **Auth:** None required
@@ -297,6 +297,7 @@ Building the image needs BuildKit, the default builder since Docker 23 and the o
 | `DIGIKEY_CLIENT_ID` | — | DigiKey OAuth2 client ID (optional, enables DigiKey tools) |
 | `DIGIKEY_CLIENT_SECRET` | — | DigiKey OAuth2 client secret |
 | `EASYEDA_STORE_PATH` | `/app/cache/easyeda.db` in Docker, unset otherwise | SQLite file that keeps EasyEDA footprint answers across restarts. The compose files mount a named volume at `/app/cache`. Unset means memory only |
+| `CSE_STORE_PATH` | `/app/cache/cse.db` in Docker, unset otherwise | SQLite file that keeps CSE searches and KiCad files across restarts (an uncached CSE search takes 11-15 s). A search where every part has a model, and KiCad files, are kept a year; a search with a part that has no model yet, or no parts, a week. Unset means memory only |
 
 ## LLM-Readable Documentation
 

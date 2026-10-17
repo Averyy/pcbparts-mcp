@@ -9,7 +9,8 @@ services:
     ports:
       - "18080:8080"
     volumes:
-      # EasyEDA footprint answers (EASYEDA_STORE_PATH), kept across rebuilds
+      # EasyEDA footprint answers and CSE searches/KiCad files (EASYEDA_STORE_PATH, CSE_STORE_PATH),
+      # kept across rebuilds
       - pcbparts-cache:/app/cache
     env_file:
       - path: .env

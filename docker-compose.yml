@@ -12,7 +12,8 @@ services:
     networks:
       - web
     volumes:
-      # EasyEDA footprint answers (EASYEDA_STORE_PATH); `docker compose down` keeps named volumes
+      # EasyEDA footprint answers and CSE searches/KiCad files (EASYEDA_STORE_PATH, CSE_STORE_PATH),
+      # request counts, usage stats; `docker compose down` keeps named volumes
       - pcbparts-cache:/app/cache
     env_file:
       - path: .env

@@ -85,6 +85,7 @@ ENV RATE_LIMIT_REQUESTS=100
 # EasyEDA footprint answers and Mouser/DigiKey daily request counts that survive restarts (dir
 # created and owned by appuser above).
 ENV EASYEDA_STORE_PATH=/app/cache/easyeda.db
+ENV CSE_STORE_PATH=/app/cache/cse.db
 ENV DISTRIBUTOR_QUOTA_PATH=/app/cache/distributor_quota.json
 ENV USAGE_STATS_PATH=/app/cache/usage_stats.json
 
