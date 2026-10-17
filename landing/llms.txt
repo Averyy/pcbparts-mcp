@@ -86,6 +86,13 @@ Natural language names that map to JLCPCB subcategories (220+ aliases supported)
 | Connectors | `usb-c`, `pin header`, `jst`, `terminal block`, `qwiic` |
 | LEDs | `led`, `rgb led`, `ws2812`, `neopixel` |
 | MCUs | `mcu`, `microcontroller` |
+| Relays | `relay` |
+| Interface ICs | `level shifter`, `rs485 transceiver`, `can transceiver` |
+| Drivers, switches | `gate driver`, `mosfet driver`, `high side switch` |
+
+`inductor`, `relay` and `diode` each cover several subcategories (SMD, power, molded and through-hole inductors; signal, power, automotive, reed and latching relays; switching, general-purpose, Schottky, fast-recovery and SBR diodes).
+
+A value in the query goes to the spec that part type lists: "5V relay" is the coil voltage, "3.3V LDO" the exact output, "12V buck converter" an output range covering 12V (with Topology Buck), "3.3V level shifter" a supply range covering 3.3V. "24V input 3.3V output" and "12V to 5V" set both sides of a regulator. If the part type lists no such spec, the value is left out and `parsed.adjusted_filters` says so; words that match no part together with the rest of the query are left out and `relaxed` says so; filters that can't be applied are listed in `ignored_filters`.
 
 ## Attribute Aliases
 
@@ -97,8 +104,11 @@ Short names for parametric spec filters:
 | Diodes | `Vr`, `If`, `Vf` |
 | BJTs | `Vceo`, `Ic` |
 | Regulators | `Vout`, `Iout` |
+| ICs | `Supply Voltage` (`Voltage - Supply`, or a level shifter's VCCA/VCCB) |
 | Passives | `Capacitance`, `Resistance`, `Inductance`, `Voltage`, `Tolerance`, `Power`, `DCR`, `Isat` |
 | Crystals, oscillators | `Frequency` |
+
+Supply and output voltages are often ranges ("2.7V~5.5V"): `=` matches a range that includes the value, `>=` one that reaches it, `<=` one that goes down to it.
 
 Use `jlc_search_help(subcategory=...)` to discover all filterable specs for any subcategory.
 
@@ -113,9 +123,12 @@ Package filters auto-expand to include variants:
 
 Finds verified-compatible alternatives using spec-aware rules:
 1. Matches primary spec (resistance, capacitance, etc.)
-2. Verifies `must_match` specs (dielectric, LED color, relay coil voltage)
-3. Verifies `same_or_better` specs (higher voltage OK, lower tolerance OK)
-4. Ranks by library type (basic/preferred saves $3), stock, EasyEDA availability
+2. Verifies `must_match` specs (dielectric, LED color, relay coil voltage, TVS polarity, diode configuration, the chip on a WiFi/BT module)
+3. Keeps transistor polarity: N-channel vs P-channel, NPN vs PNP, single vs dual
+4. Verifies `same_or_better` specs (higher voltage OK, lower tolerance OK, MOSFET gate threshold no higher). Dropout, Vf and RDS(on) are compared at the same test condition when both parts list one
+5. Ranks by library type (basic/preferred saves $3), stock, EasyEDA availability
+
+Candidates come from the live JLCPCB search and from the parts database, which supplies parts that already meet the numbers (a 60V 83A MOSFET gets other power MOSFETs, not the best-stocked 60V small-signal ones). A spec that can't be checked (missing, "-", or a value that doesn't parse) is listed in `specs_unparseable` and drops confidence to medium.
 
 Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diodes (all types), LEDs, optocouplers, crystals, oscillators, LDOs, DC-DC converters, voltage references, WiFi/BT/LoRa modules, switches, relays, connectors, and more (120+ subcategories).
 

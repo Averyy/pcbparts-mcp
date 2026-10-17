@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from ..search.spec_filter import SpecFilter
+from ..subcategory_aliases import SUBCATEGORY_GROUPS
 from .packages import extract_package
 from .values import ExtractedValue, extract_values
 from .models import extract_model_number
@@ -20,6 +21,7 @@ class ParsedQuery:
     original: str
     remaining_text: str  # For FTS search
     subcategory: str | None = None
+    subcategories: list[str] | None = None  # a generic word's group ("inductor": four subcategories)
     spec_filters: list[Any] = field(default_factory=list)  # List of SpecFilter
     package: str | None = None
     model_number: str | None = None
@@ -101,6 +103,10 @@ def parse_smart_query(query: str) -> ParsedQuery:
         result.subcategory = subcategory
         detected["component_type"] = matched_keyword
         detected["subcategory"] = subcategory
+        group = SUBCATEGORY_GROUPS.get((matched_keyword or "").lower())
+        if group:
+            result.subcategories = list(group)
+            detected["subcategories"] = result.subcategories
 
         # Special case: if keyword contains type info, add the Type filter
         # e.g., "n-channel mosfet" should add Type=N-Channel
@@ -133,6 +139,17 @@ def parse_smart_query(query: str) -> ParsedQuery:
         # Use package-suggested subcategory (e.g., USB-C -> USB connectors)
         result.subcategory = pkg_suggested_subcat
         detected["subcategory_from_package"] = pkg_suggested_subcat
+
+    # Step 3b: Regulator specifics: buck/boost, and voltages marked input or output
+    subcat_now = (result.subcategory or "").lower()
+    if subcat_now == "dc-dc converters":
+        remaining = _add_topology(f"{matched_keyword or ''} {remaining}", remaining, result, detected)
+    if subcat_now in ("dc-dc converters", _LDO):
+        remaining = _add_input_output_voltages(remaining, subcat_now, result, detected)
+    if subcat_now == "usb connectors":
+        _add_usb_type(query, result, detected)
+    if subcat_now == "coaxial connectors (rf)":
+        _add_rf_series(query, result, detected)
 
     # Step 4: Extract numeric values
     values, remaining = extract_values(remaining)
@@ -318,11 +335,15 @@ def parse_smart_query(query: str) -> ParsedQuery:
         remaining = re.sub(r'\s+', ' ', remaining).strip()
 
     # Step 7: Clean up remaining text
-    # Step 7a: Replace connector-specific synonyms
-    # "magnetics" is a common term for RJ45 connectors with integrated magnetics (transformers)
-    # JLCPCB lists these as "Filtered" in descriptions
-    if subcategory and 'connector' in subcategory.lower():
-        remaining = re.sub(r'\bmagnetics?\b', 'filtered', remaining, flags=re.IGNORECASE)
+    # Step 7a: "magnetics" (an RJ45 jack with built-in transformers). JLCPCB marks only 23 jacks
+    # "Filtered" and records magnetics nowhere else, so searching for that word hid the usual
+    # magjacks (HR913550A, HR911130A, J1B1211CCD). Leave it out and say so.
+    if subcategory and 'connector' in subcategory.lower() and re.search(r'\bmagnetics?\b', remaining, re.IGNORECASE):
+        remaining = re.sub(r'\b(?:integrated\s+)?magnetics?\b', '', remaining, flags=re.IGNORECASE)
+        remaining = re.sub(r'\s+', ' ', remaining).strip()
+        detected["not_searched"] = [
+            "magnetics: JLCPCB doesn't record it for most RJ45 jacks; check the datasheet"
+        ]
 
     remaining = remove_noise_words(remaining)
 
@@ -365,6 +386,102 @@ def parse_smart_query(query: str) -> ParsedQuery:
     result.detected = detected
 
     return result
+
+
+_LDO = "voltage regulators - linear, low drop out (ldo) regulators"
+_VOLTAGE = r"(\d+(?:\.\d+)?\s*[mk]?V)\b"
+# "24V input", "input 24V", "vin 24V"; "3.3V output", "5V out", "vout 3.3V"; "12V to 5V"
+_INPUT_VOLTAGE = re.compile(rf"(?:\b(?:input|vin)\s*(?:voltage\s*)?(?:of\s*)?{_VOLTAGE})|(?:{_VOLTAGE}\s*(?:input|vin)\b)", re.IGNORECASE)
+_OUTPUT_VOLTAGE = re.compile(rf"(?:\b(?:output|vout|out)\s*(?:voltage\s*)?(?:of\s*)?{_VOLTAGE})|(?:{_VOLTAGE}\s*(?:output|out|vout)\b)", re.IGNORECASE)
+_VOLTAGE_TO_VOLTAGE = re.compile(rf"{_VOLTAGE}\s*(?:to|->|→)\s*{_VOLTAGE}", re.IGNORECASE)
+
+
+def _add_topology(text: str, remaining: str, result: ParsedQuery, detected: dict[str, Any]) -> str:
+    """"buck converter" and "boost" picked DC-DC converters but not the topology, so "boost
+    converter" listed buck converters first. Topology is listed per part ("Boost、Buck")."""
+    lowered = text.lower()
+    if re.search(r"\bbuck[- ]?boost\b", lowered):
+        topology = "Buck-Boost"
+    elif re.search(r"\b(buck|step[- ]?down)\b", lowered):
+        topology = "Buck"
+    elif re.search(r"\b(boost|step[- ]?up)\b", lowered):
+        topology = "Boost"
+    else:
+        return remaining
+    result.spec_filters.append(SpecFilter("Topology", "=", topology))
+    detected.setdefault("semantic", []).append(f"{topology.lower()} (-> Topology={topology})")
+    remaining = re.sub(r"\b(buck[- ]?boost|buck|boost|step[- ]?(?:down|up))\b", "", remaining, flags=re.IGNORECASE)
+    return re.sub(r"\s+", " ", remaining).strip()
+
+
+def _add_input_output_voltages(remaining: str, subcategory: str, result: ParsedQuery, detected: dict[str, Any]) -> str:
+    """Voltages marked input or output, or "12V to 5V". Input is inside a DC-DC converter's
+    supply range; an LDO lists only its maximum input, so that must reach it. Output is inside
+    the output range (an adjustable part covers it)."""
+    input_filter = ("Supply Voltage", ">=" if subcategory == _LDO else "=")
+    output_filter = ("Vout", "=") if subcategory == _LDO else _EXACT_OUTPUT
+    found: list[tuple[tuple[str, str], str]] = []
+
+    def take(match: re.Match[str], spec: tuple[str, str]) -> str:
+        found.append((spec, next(g for g in match.groups() if g)))
+        return " "
+
+    pair = _VOLTAGE_TO_VOLTAGE.search(remaining)
+    if pair:
+        found.append((input_filter, pair.group(1)))
+        found.append((output_filter, pair.group(2)))
+        remaining = remaining[:pair.start()] + " " + remaining[pair.end():]
+    remaining = _INPUT_VOLTAGE.sub(lambda m: take(m, input_filter), remaining)
+    remaining = _OUTPUT_VOLTAGE.sub(lambda m: take(m, output_filter), remaining)
+    for (spec_name, operator), raw in found:
+        value = re.sub(r"\s+", "", raw)
+        result.spec_filters.append(SpecFilter(spec_name, operator, value))
+        detected.setdefault("semantic", []).append(f"{raw} (-> {spec_name} {operator} {value})")
+    return re.sub(r"\s+", " ", remaining).strip()
+
+
+_EXACT_OUTPUT = ("Output Voltage", "=")
+
+# USB connectors list "Connector Type": Type-C, Type-A, Micro-B, Type-B, Mini-B
+_USB_TYPES = [
+    (re.compile(r"\b(?:micro[- ]?usb|micro[- ]?b|usb[- ]?micro)\b", re.IGNORECASE), "Micro-B"),
+    (re.compile(r"\b(?:mini[- ]?usb|mini[- ]?b|usb[- ]?mini)\b", re.IGNORECASE), "Mini-B"),
+    (re.compile(r"\b(?:usb[- ]?(?:type[- ]?)?c|type[- ]?c)\b", re.IGNORECASE), "Type-C"),
+    (re.compile(r"\b(?:usb[- ]?(?:type[- ]?)?a|type[- ]?a)\b", re.IGNORECASE), "Type-A"),
+    (re.compile(r"\b(?:usb[- ]?(?:type[- ]?)?b|type[- ]?b)\b", re.IGNORECASE), "Type-B"),
+]
+
+
+def _add_usb_type(query: str, result: ParsedQuery, detected: dict[str, Any]) -> None:
+    """"USB-A receptacle" searched every USB connector (USB-C ones first, by stock)."""
+    for pattern, connector_type in _USB_TYPES:
+        if pattern.search(query):
+            result.spec_filters.append(SpecFilter("Connector Type", "=", connector_type))
+            detected.setdefault("semantic", []).append(f"usb {connector_type.lower()} (-> Connector Type={connector_type})")
+            return
+
+
+# Coax connectors list "RF Series": SMA, RP-SMA, BNC, IPEX (U.FL), MCX, MMCX, N Type, F Type, FAKRA
+_RF_SERIES = [
+    (re.compile(r"\brp[- ]?sma\b", re.IGNORECASE), "RP-SMA"),
+    (re.compile(r"\bsma\b", re.IGNORECASE), "SMA"),
+    (re.compile(r"\b(?:u\.?fl|ipex|ipx)\b", re.IGNORECASE), "IPEX"),
+    (re.compile(r"\bmmcx\b", re.IGNORECASE), "MMCX"),
+    (re.compile(r"\bmcx\b", re.IGNORECASE), "MCX"),
+    (re.compile(r"\bbnc\b", re.IGNORECASE), "BNC"),
+    (re.compile(r"\bfakra\b", re.IGNORECASE), "FAKRA"),
+    (re.compile(r"\bn[- ]?type\b", re.IGNORECASE), "N Type"),
+    (re.compile(r"\bf[- ]?type\b", re.IGNORECASE), "F Type"),
+]
+
+
+def _add_rf_series(query: str, result: ParsedQuery, detected: dict[str, Any]) -> None:
+    """"SMA connector ..." picked coax connectors but not the series, so U.FL ones came first."""
+    for pattern, series in _RF_SERIES:
+        if pattern.search(query):
+            result.spec_filters.append(SpecFilter("RF Series", "=", series))
+            detected.setdefault("semantic", []).append(f"{series} (-> RF Series={series})")
+            return
 
 
 def merge_spec_filters(

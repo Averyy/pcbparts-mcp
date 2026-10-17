@@ -1,5 +1,6 @@
 """Search engine for parametric component search."""
 
+import json
 import logging
 import sqlite3
 from typing import Any, Literal
@@ -11,7 +12,7 @@ from ..subcategory_aliases import (
     resolve_subcategory_name as _resolve_subcategory_name,
     find_similar_subcategories as _find_similar_subcategories,
 )
-from .spec_filter import SpecFilter, get_attribute_names
+from .spec_filter import RANGE_SPECS, SpecFilter, get_attribute_names
 from .resolvers import expand_query_synonyms, expand_package, resolve_manufacturer
 from .mpn import normalize_mpn, looks_like_mpn
 from .query_builder import (
@@ -24,11 +25,99 @@ from .query_builder import (
     build_mounting_type_clause,
     build_spec_filter_clauses,
     build_sort_clause,
-    needs_numeric_post_filter,
 )
 from .result import row_to_dict
 
 logger = logging.getLogger(__name__)
+
+
+# Post-filtered searches check at most this many SQL matches (MOSFETs with a Vgs(th): ~29k, ~0.2s)
+POST_FILTER_SCAN_ROWS = 50_000
+
+
+def _passes_post_filters(
+    part_specs: dict[str, str],
+    package: str | None,
+    post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]],
+) -> bool:
+    """Whether a part's specs meet every filter SQL couldn't apply."""
+    for spec_filter, attr_names_set, parser, target_value in post_filter_metadata:
+        if not parser or spec_filter.operator not in (">=", "<=", ">", "<", "=") or target_value is None:
+            continue
+
+        if attr_names_set & RANGE_SPECS:
+            values = [v for name, v in part_specs.items() if name in attr_names_set]
+            if not any(_range_passes(v, parser, spec_filter.operator, target_value) for v in values):
+                return False
+            continue
+
+        part_value = None
+        for attr_name, attr_value in part_specs.items():
+            if attr_name in attr_names_set:
+                part_value = parser(attr_value)
+                if part_value is not None:
+                    break
+
+        if part_value is None and spec_filter.name in DIMENSION_SPEC_FIELDS:
+            # Recover from package string when the spec field is "-" (null);
+            # ~70% of null-height aluminum electrolytics encode dims here.
+            diameter_mm, height_mm = parse_dimensions_from_package(package or "")
+            part_value = diameter_mm if spec_filter.name == "Diameter" else height_mm
+
+        if part_value is None:
+            return False
+
+        epsilon = abs(target_value) * 1e-9 if target_value != 0 else 1e-15
+
+        # Frequency matching needs wider tolerance for RF components
+        # Common bands like "2.4GHz WiFi" spans 2.4-2.5GHz, and databases
+        # often store "2.45GHz" when users search "2.4GHz"
+        is_frequency = any("frequency" in name.lower() for name in attr_names_set)
+        if is_frequency:
+            # Use 5% tolerance for frequency (allows 2.4GHz to match 2.45GHz)
+            eq_epsilon = abs(target_value) * 0.05 if target_value != 0 else 1e-9
+        else:
+            # Use 1% tolerance for other specs
+            eq_epsilon = abs(target_value) * 0.01 if target_value != 0 else 1e-9
+
+        if spec_filter.operator == "=" and abs(part_value - target_value) > eq_epsilon:
+            return False
+        elif spec_filter.operator == ">=" and part_value < target_value - epsilon:
+            return False
+        elif spec_filter.operator == "<=" and part_value > target_value + epsilon:
+            return False
+        elif spec_filter.operator == ">" and part_value <= target_value + epsilon:
+            return False
+        elif spec_filter.operator == "<" and part_value >= target_value - epsilon:
+            return False
+    return True
+
+
+def _signed(parser: Any, text: str) -> float | None:
+    """parse_voltage("-15V") is 15; ranges need the sign ("-15V~-5V")."""
+    value = parser(text)
+    if value is not None and text.strip().startswith("-"):
+        return -abs(value)
+    return value
+
+
+def _range_passes(value: str, parser: Any, operator: str, target: float) -> bool:
+    """A range-valued spec ("2.7V~5.5V", "1.71V~1.89V、2.25V~5.5V", "3.3V") against a filter:
+    = : the target is inside one range; >= / > : one range reaches it; <= / < : one goes down to it.
+    1% slack, as other "=" filters have."""
+    slack = abs(target) * 0.01 if target else 1e-9
+    for item in value.split("、"):
+        low_text, sep, high_text = item.partition("~")
+        low = _signed(parser, low_text)
+        high = _signed(parser, high_text) if sep else low
+        if low is None or high is None:
+            continue
+        low, high = min(low, high), max(low, high)
+        if ((operator == "=" and low - slack <= target <= high + slack)
+                or (operator == ">=" and high >= target - slack) or (operator == ">" and high > target)
+                or (operator == "<=" and low <= target + slack) or (operator == "<" and low < target)):
+            return True
+    return False
 
 
 class SearchEngine:
@@ -128,6 +217,7 @@ class SearchEngine:
         prefer_no_fee: bool,
         limit: int,
         offset: int,
+        subcategory_ids: list[int] | None = None,
     ) -> dict[str, Any]:
         """Execute a search query with pre-resolved parameters.
 
@@ -171,7 +261,7 @@ class SearchEngine:
         # Subcategory/category filter
         subcat_sql, subcat_params = build_subcategory_clause(
             subcategory_id, category_id, self._subcategories,
-            self._category_to_subcategories
+            self._category_to_subcategories, subcategory_ids,
         )
         if subcat_sql:
             sql_parts.append(subcat_sql)
@@ -221,8 +311,9 @@ class SearchEngine:
 
         # Spec filters
         post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]] = []
+        ignored_filters: list[dict[str, str]] = []
         if spec_filters:
-            spec_sqls, spec_params_list, post_filter_metadata = build_spec_filter_clauses(spec_filters)
+            spec_sqls, spec_params_list, post_filter_metadata, ignored_filters = build_spec_filter_clauses(spec_filters)
             for spec_sql in spec_sqls:
                 sql_parts.append(spec_sql)
                 count_parts.append(spec_sql)
@@ -233,19 +324,11 @@ class SearchEngine:
         sort_clause = build_sort_clause(sort_by, prefer_no_fee, bool(query))
         sql_parts.append(sort_clause)
 
-        # Determine fetch limit (over-fetch if post-filtering needed)
-        has_numeric_filters = spec_filters and any(
-            needs_numeric_post_filter(sf) for sf in spec_filters
-        )
-        fetch_limit = limit * 10 if has_numeric_filters else limit
-        fetch_limit = min(fetch_limit, 500)
+        base_params = list(params)
 
-        # Pagination
-        sql_parts.append("LIMIT ? OFFSET ?")
-        params.extend([fetch_limit, offset])
-
-        # Execute queries
-        sql = " ".join(sql_parts)
+        # Execute queries (post-filtered searches fetch their page in _post_filtered_page)
+        sql = " ".join(sql_parts) + " LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
         count_sql = " ".join(count_parts)
 
         # Combined count + library type distribution query
@@ -259,8 +342,7 @@ class SearchEngine:
         # SQLite's limits, but if a statement is still rejected (e.g. too many bound
         # variables), return a clean error dict rather than leak an unhandled exception.
         try:
-            cursor = self._conn.execute(sql, params)
-            rows = cursor.fetchall()
+            rows = [] if post_filter_metadata else self._conn.execute(sql, params).fetchall()
             lib_rows = self._conn.execute(lib_count_sql_clean, count_params).fetchall()
         except sqlite3.OperationalError:
             logger.error("Search SQL execution failed", exc_info=True)
@@ -281,76 +363,21 @@ class SearchEngine:
             if lib_name in library_type_counts:
                 library_type_counts[lib_name] = count
             total += count
+        # The counts leave out the library_type filter (they show every type), so a basic-only
+        # search reported all MOSFETs as its total
+        if library_type in ("basic", "preferred", "extended"):
+            total = library_type_counts[library_type]
 
-        # Post-filter for numeric spec comparisons
-        results = []
-        for row in rows:
-            part = row_to_dict(row, self._subcategories)
-
-            if post_filter_metadata:
-                passes = True
-                part_specs = part.get("specs", {})
-
-                for spec_filter, attr_names_set, parser, target_value in post_filter_metadata:
-                    if parser and spec_filter.operator in (">=", "<=", ">", "<", "="):
-                        if target_value is None:
-                            continue
-
-                        part_value = None
-                        for attr_name, attr_value in part_specs.items():
-                            if attr_name in attr_names_set:
-                                part_value = parser(attr_value)
-                                if part_value is not None:
-                                    break
-
-                        if part_value is None and spec_filter.name in DIMENSION_SPEC_FIELDS:
-                            # Recover from package string when the spec field is "-" (null);
-                            # ~70% of null-height aluminum electrolytics encode dims here.
-                            diameter_mm, height_mm = parse_dimensions_from_package(part.get("package") or "")
-                            part_value = diameter_mm if spec_filter.name == "Diameter" else height_mm
-
-                        if part_value is None:
-                            passes = False
-                            break
-
-                        epsilon = abs(target_value) * 1e-9 if target_value != 0 else 1e-15
-
-                        # Frequency matching needs wider tolerance for RF components
-                        # Common bands like "2.4GHz WiFi" spans 2.4-2.5GHz, and databases
-                        # often store "2.45GHz" when users search "2.4GHz"
-                        is_frequency = any(
-                            "frequency" in name.lower()
-                            for name in attr_names_set
-                        )
-                        if is_frequency:
-                            # Use 5% tolerance for frequency (allows 2.4GHz to match 2.45GHz)
-                            eq_epsilon = abs(target_value) * 0.05 if target_value != 0 else 1e-9
-                        else:
-                            # Use 1% tolerance for other specs
-                            eq_epsilon = abs(target_value) * 0.01 if target_value != 0 else 1e-9
-
-                        if spec_filter.operator == "=" and abs(part_value - target_value) > eq_epsilon:
-                            passes = False
-                            break
-                        elif spec_filter.operator == ">=" and part_value < target_value - epsilon:
-                            passes = False
-                            break
-                        elif spec_filter.operator == "<=" and part_value > target_value + epsilon:
-                            passes = False
-                            break
-                        elif spec_filter.operator == ">" and part_value <= target_value + epsilon:
-                            passes = False
-                            break
-                        elif spec_filter.operator == "<" and part_value >= target_value - epsilon:
-                            passes = False
-                            break
-
-                if not passes:
-                    continue
-
-            results.append(part)
-            if len(results) >= limit:
-                break
+        if post_filter_metadata:
+            # SQL can't apply these, so every candidate is checked: the page comes from the parts
+            # that pass, and total counts them (the SQL count also had the ones that fail)
+            results, passed, complete = self._post_filtered_page(
+                sql_parts, base_params, post_filter_metadata, limit, offset
+            )
+            if complete:
+                total = passed
+        else:
+            results = [row_to_dict(row, self._subcategories) for row in rows]
 
         no_fee_available = library_type_counts["basic"] > 0 or library_type_counts["preferred"] > 0
 
@@ -359,7 +386,44 @@ class SearchEngine:
             "total": total,
             "library_type_counts": library_type_counts,
             "no_fee_available": no_fee_available,
+            "ignored_filters": ignored_filters,
         }
+
+    def _post_filtered_page(
+        self,
+        sql_parts: list[str],
+        params: list[Any],
+        post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]],
+        limit: int,
+        offset: int,
+    ) -> tuple[list[dict[str, Any]], int, bool]:
+        """Check the SQL matches in sort order against the post-filters. Returns the page, how many
+        passed, and whether every match was checked (at most POST_FILTER_SCAN_ROWS are)."""
+        scan_sql = " ".join(sql_parts).replace(
+            "SELECT * FROM components", "SELECT rowid, attributes, package FROM components", 1
+        ) + " LIMIT ?"
+        passed = 0
+        scanned = 0
+        page_ids: list[int] = []
+        for rowid, attributes, package in self._conn.execute(scan_sql, [*params, POST_FILTER_SCAN_ROWS]):
+            scanned += 1
+            try:
+                specs = {name: value for name, value in json.loads(attributes)} if attributes else {}
+            except (json.JSONDecodeError, TypeError, ValueError):
+                specs = {}
+            if _passes_post_filters(specs, package, post_filter_metadata):
+                passed += 1
+                if offset < passed <= offset + limit:
+                    page_ids.append(rowid)
+        results: list[dict[str, Any]] = []
+        if page_ids:
+            by_id = {
+                row["rowid"]: row for row in self._conn.execute(
+                    f"SELECT rowid, * FROM components WHERE rowid IN ({','.join('?' * len(page_ids))})", page_ids
+                )
+            }
+            results = [row_to_dict(by_id[i], self._subcategories) for i in page_ids if i in by_id]
+        return results, passed, scanned < POST_FILTER_SCAN_ROWS
 
     def search(
         self,
@@ -380,6 +444,7 @@ class SearchEngine:
         sort_by: Literal["stock", "price", "relevance"] = "stock",
         limit: int = 50,
         offset: int = 0,
+        subcategory_ids: list[int] | None = None,
     ) -> dict[str, Any]:
         """Search components with parametric filtering.
 
@@ -401,6 +466,7 @@ class SearchEngine:
             sort_by: Sort order
             limit: Max results
             offset: Pagination offset
+            subcategory_ids: Several subcategories (OR), used when no subcategory_id is given
 
         Returns:
             Search results with metadata
@@ -497,6 +563,7 @@ class SearchEngine:
             prefer_no_fee=prefer_no_fee,
             limit=limit,
             offset=offset,
+            subcategory_ids=None if resolved_subcategory_id else subcategory_ids,
         )
 
         results = search_result["results"]
@@ -525,6 +592,7 @@ class SearchEngine:
                     prefer_no_fee=prefer_no_fee,
                     limit=limit,
                     offset=offset,
+                    subcategory_ids=None if resolved_subcategory_id else subcategory_ids,
                 )
                 if retry_result["total"] > 0:
                     # Found results with normalized query
@@ -548,6 +616,7 @@ class SearchEngine:
                 "subcategory_id": resolved_subcategory_id,
                 "subcategory_name": subcategory_name,
                 "subcategory_resolved": resolved_subcategory_display_name,
+                "subcategory_ids": None if resolved_subcategory_id else subcategory_ids,
                 "category_id": resolved_category_id,
                 "category_name": category_name,
                 "category_resolved": resolved_category_display_name,
@@ -563,6 +632,8 @@ class SearchEngine:
             "library_type_counts": library_type_counts,
             "no_fee_available": no_fee_available,
         }
+        if search_result["ignored_filters"]:
+            response["ignored_filters"] = search_result["ignored_filters"]
 
         # Add MPN retry info if we found results via normalization
         if mpn_retry_query:

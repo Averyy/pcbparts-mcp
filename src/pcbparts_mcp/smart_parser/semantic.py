@@ -66,8 +66,10 @@ SEMANTIC_DESCRIPTORS: dict[str, list[SemanticFilter]] = {
     # Note: "ir"/"infrared" removed - IR LEDs are a separate subcategory, not a Type value
 
     # Capacitor temperature coefficients / dielectrics
-    "c0g": [SemanticFilter("Temperature Coefficient", "=", "C0G", "c0g")],
-    "np0": [SemanticFilter("Temperature Coefficient", "=", "NP0", "np0")],
+    # C0G, NP0 and COG are one dielectric; JLCPCB lists all three (5,834 / 2,651 / 139 MLCCs).
+    # Several "=" filters on one spec are OR'd.
+    **{word: [SemanticFilter("Temperature Coefficient", "=", name, word) for name in ("C0G", "NP0", "COG")]
+       for word in ("c0g", "np0", "cog", "npo")},
     "x5r": [SemanticFilter("Temperature Coefficient", "=", "X5R", "x5r")],
     "x7r": [SemanticFilter("Temperature Coefficient", "=", "X7R", "x7r")],
     "x5s": [SemanticFilter("Temperature Coefficient", "=", "X5S", "x5s")],

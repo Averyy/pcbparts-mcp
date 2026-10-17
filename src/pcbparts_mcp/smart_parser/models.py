@@ -49,6 +49,10 @@ def extract_model_number(query: str) -> tuple[str | None, str]:
             if model_upper in ('LED', 'LCD', 'USB', 'SPI', 'I2C', 'ADC', 'DAC', 'MCU', 'CPU', 'GPU',
                               'RJ45', 'RJ11', 'RJ12', 'RJ9', 'RJ22', 'RJ25'):  # Connector type codes
                 continue
+            # "RS485 transceiver" names a part type (SUBCATEGORY_ALIASES), not a part number
+            if model_upper in ('RS485', 'RS422', 'RS232') and re.search(
+                    re.escape(model) + r'\s*(?:transceiver|ic)\b', query, re.IGNORECASE):
+                continue
             # Verify it's not a package name without hyphen (e.g., SOT23, SOD323, QFN32)
             # Check if model starts with a known package prefix followed by digits
             for pkg_prefix in PACKAGE_LIKE_PATTERNS:

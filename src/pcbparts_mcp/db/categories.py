@@ -1,12 +1,16 @@
 """Category and subcategory related functions for the database."""
 
+import json
 import sqlite3
-from typing import Any
+from typing import Any, Callable
 
 from ..config import DEFAULT_MIN_STOCK
-from ..alternatives import SPEC_PARSERS
+from ..alternatives import COMPATIBILITY_RULES, NORMALIZED_MATCH_SPECS, SPEC_PARSERS, STRING_MATCH_SPECS, is_stated
 from ..search.result import row_to_dict
-from ..search.spec_filter import escape_like
+from ..search.spec_filter import SPEC_TO_COLUMN, escape_like
+
+# Rows find_alternative_candidates reads at most per call (the SQL already applies every numeric rule)
+ALTERNATIVE_SCAN_ROWS = 2000
 
 
 def get_subcategory_name(
@@ -98,103 +102,82 @@ def get_categories_for_client(
     return list(categories_dict.values())
 
 
-def find_by_subcategory(
+def find_alternative_candidates(
     conn: sqlite3.Connection,
     subcategories: dict[int, dict[str, Any]],
+    original: dict[str, Any],
+    subcategory: str,
     subcategory_id: int,
-    primary_spec: str | None = None,
-    primary_value: Any = None,
     min_stock: int = DEFAULT_MIN_STOCK,
     library_type: str | None = None,
-    prefer_no_fee: bool = True,
-    limit: int = 100,
+    accept: Callable[[dict[str, Any]], bool] | None = None,
+    limit: int = 50,
+    max_rows: int = ALTERNATIVE_SCAN_ROWS,
 ) -> list[dict[str, Any]]:
-    """Find components in a subcategory, optionally matching a primary spec value.
+    """Parts in a subcategory that can meet the original's compatibility rules (alternatives.py),
+    no-fee parts first, then by stock. Used by find_alternatives.
 
-    Used by find_alternatives to get candidates.
-
-    Args:
-        conn: SQLite connection
-        subcategories: Dict mapping subcategory IDs to info
-        subcategory_id: Subcategory to search in
-        primary_spec: Primary spec name to match (e.g., "Resistance")
-        primary_value: Value to match for primary spec
-        min_stock: Minimum stock (default DEFAULT_MIN_STOCK)
-        library_type: Filter by library type - "basic", "preferred", or "extended"
-        prefer_no_fee: Sort preference (default True)
-        limit: Max results to return
-
-    Returns:
-        List of component dicts
+    SQL narrows by the rules' numeric columns, with the same 2% slack as the checks: the primary and
+    numeric must_match specs within 2%, same_or_better specs at least as good. String must_match specs
+    must be equal, unless they're normalized first. Specs without a column, and polarity, are left to
+    `accept` (the full check), which picks from at most `max_rows` rows in order until it has `limit`
+    parts.
     """
-    sql_parts = ["SELECT * FROM components WHERE subcategory_id = ?"]
-    params: list[Any] = [subcategory_id]
+    rules = COMPATIBILITY_RULES.get(subcategory)
+    if not rules:
+        return []
+    specs = original.get("specs", {})
 
-    if min_stock > 0:
-        sql_parts.append("AND stock >= ?")
-        params.append(min_stock)
+    sql = ["SELECT * FROM components WHERE subcategory_id = ? AND stock >= ?"]
+    params: list[Any] = [subcategory_id, max(min_stock, DEFAULT_MIN_STOCK)]
+    library_codes = {"basic": "('b')", "preferred": "('p')", "no_fee": "('b', 'p')", "extended": "('e')"}
+    if library_type in library_codes:
+        sql.append(f"AND library_type IN {library_codes[library_type]}")
 
-    # Library type filter
-    if library_type:
-        if library_type == "basic":
-            sql_parts.append("AND library_type = 'b'")
-        elif library_type == "preferred":
-            sql_parts.append("AND library_type = 'p'")
-        elif library_type == "extended":
-            sql_parts.append("AND library_type = 'e'")
-        elif library_type == "no_fee":
-            sql_parts.append("AND library_type IN ('b', 'p')")
+    def column_value(spec: str) -> tuple[str, float] | None:
+        """The spec's column and the original's value, when the column holds that spec's parse."""
+        column = SPEC_TO_COLUMN.get(spec)
+        parser = SPEC_PARSERS.get(spec)
+        value = specs.get(spec)
+        if column is None or column[1] is not parser or not callable(parser) or not is_stated(value):
+            return None
+        parsed = parser(value)
+        return (column[0], parsed) if parsed is not None else None
 
-    # If primary spec value provided, filter by it
-    if primary_spec and primary_value:
-        parser = SPEC_PARSERS.get(primary_spec)
-        if parser:
-            # Numeric spec - will post-filter
-            pass
-        else:
-            # String match
-            sql_parts.append("AND attributes LIKE ? ESCAPE '\\'")
-            pattern = f'%"{escape_like(primary_spec)}","{escape_like(primary_value)}"%'
-            params.append(pattern)
+    for spec in dict.fromkeys([rules["primary"], *rules.get("must_match", [])]):
+        value = specs.get(spec)
+        if not is_stated(value):
+            continue
+        numeric = column_value(spec)
+        if numeric:
+            column, target = numeric
+            sql.append(f"AND {column} BETWEEN ? AND ?")
+            params.extend([target - abs(target) * 0.02, target + abs(target) * 0.02])
+        elif spec in STRING_MATCH_SPECS and spec not in NORMALIZED_MATCH_SPECS:
+            # Attributes are stored as JSON pairs: [["Type", "N-Channel"], ...]
+            sql.append("AND attributes LIKE ? ESCAPE '\\'")
+            params.append("%" + escape_like(json.dumps([spec, value])) + "%")
 
-    # Sorting: prefer_no_fee sorts basic/preferred first
-    if prefer_no_fee:
-        lib_type_order = "CASE library_type WHEN 'b' THEN 1 WHEN 'p' THEN 2 ELSE 3 END"
-        sql_parts.append(f"ORDER BY {lib_type_order}, stock DESC")
-    else:
-        sql_parts.append("ORDER BY stock DESC")
-    sql_parts.append("LIMIT ?")
-    params.append(limit * 2)  # Fetch more for post-filtering
+    for spec, direction in rules.get("same_or_better", {}).items():
+        numeric = column_value(spec)
+        if not numeric:
+            continue
+        column, target = numeric
+        if direction == "higher":
+            sql.append(f"AND {column} >= ?")
+            params.append(target * 0.98)
+        elif direction == "lower":
+            sql.append(f"AND {column} <= ?")
+            params.append(target * 1.02)
 
-    sql = " ".join(sql_parts)
-    cursor = conn.execute(sql, params)
+    sql.append("ORDER BY CASE WHEN library_type IN ('b', 'p') THEN 0 ELSE 1 END, stock DESC LIMIT ?")
+    params.append(max_rows)
 
-    results = []
-    for row in cursor.fetchall():
+    results: list[dict[str, Any]] = []
+    for row in conn.execute(" ".join(sql), params):
         part = row_to_dict(row, subcategories)
-
-        # Post-filter for numeric primary spec
-        if primary_spec and primary_value:
-            parser = SPEC_PARSERS.get(primary_spec)
-            if parser:
-                target = parser(str(primary_value))
-                if target is not None:
-                    part_value = part.get("specs", {}).get(primary_spec)
-                    if part_value:
-                        parsed = parser(part_value)
-                        if parsed is None:
-                            continue
-                        # Allow 2% tolerance
-                        if target == 0:
-                            if parsed != 0:
-                                continue
-                        elif abs(parsed - target) / abs(target) > 0.02:
-                            continue
-                    else:
-                        continue  # No matching attribute
-
-        results.append(part)
-        if len(results) >= limit:
-            break
-
+        if accept is None or accept(part):
+            results.append(part)
+            if len(results) >= limit:
+                break
     return results

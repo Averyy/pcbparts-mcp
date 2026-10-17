@@ -4,11 +4,15 @@ import re
 from typing import Any
 
 from ..alternatives import SPEC_PARSERS
+from ..parsers import parse_resistance
 from .spec_filter import (
+    LIST_SPECS,
+    RANGE_SPECS,
     SpecFilter,
     SPEC_TO_COLUMN,
     _escape_like,
     generate_value_patterns,
+    like_text,
     get_attribute_names,
 )
 
@@ -63,6 +67,7 @@ def build_subcategory_clause(
     category_id: int | None,
     subcategories: dict[int, dict[str, Any]],
     category_to_subcategories: dict[int, list[int]] | None = None,
+    subcategory_ids: list[int] | None = None,
 ) -> tuple[str, list[Any]]:
     """Build subcategory/category filter clause.
 
@@ -77,6 +82,8 @@ def build_subcategory_clause(
     """
     if subcategory_id:
         return "AND subcategory_id = ?", [subcategory_id]
+    elif subcategory_ids:
+        return f"AND subcategory_id IN ({','.join('?' * len(subcategory_ids))})", list(subcategory_ids)
     elif category_id:
         # Get all subcategory IDs for this category
         # Use pre-built mapping if available (O(1)), otherwise iterate (O(n))
@@ -306,9 +313,70 @@ def _group_multi_value_filters(spec_filters: list[SpecFilter]) -> list[SpecFilte
     return result
 
 
+# Type = N-Channel / P-Channel / NPN / PNP: the polarity wanted and the one to leave out
+_POLARITY_VALUES: dict[str, tuple[str, str]] = {
+    "n-channel": ("n-channel", "p-channel"), "p-channel": ("p-channel", "n-channel"),
+    "npn": ("npn", "pnp"), "pnp": ("pnp", "npn"),
+}
+
+
+def _polarity_clause(values: list[str]) -> tuple[str, list[Any]]:
+    """Transistors whose Type (or type) is the polarity, or whose Number states it ("1 P-Channel",
+    "2 NPN Pre-Biased") without the other one. 5,703 MOSFETs state it only in Number (AO3401A's
+    Type is "-")."""
+    conditions: list[str] = []
+    params: list[Any] = []
+    for value in values:
+        want, other = _POLARITY_VALUES[value.lower()]
+        conditions.append("(lower(json_extract(j.value, '$[0]')) = 'type' AND lower(json_extract(j.value, '$[1]')) = ?)")
+        conditions.append(
+            "(json_extract(j.value, '$[0]') = 'Number' AND lower(json_extract(j.value, '$[1]')) LIKE ? ESCAPE '\\'"
+            " AND lower(json_extract(j.value, '$[1]')) NOT LIKE ? ESCAPE '\\')"
+        )
+        params.extend([want, f"_ {_escape_like(want)}%", f"%{_escape_like(other)}%"])
+    sql = f"AND EXISTS (SELECT 1 FROM json_each(components.attributes) j WHERE {' OR '.join(conditions)})"
+    return sql, params
+
+
+def _list_item_clause(attr_names: list[str], values: list[str]) -> tuple[str, list[Any]]:
+    """One of the attributes lists one of the values as an item ("Boost、Buck" has Buck)."""
+    names = sorted({name.lower() for name in attr_names})  # BJTs call it "type", MOSFETs "Type"
+    items = " OR ".join(
+        "('、' || lower(json_extract(j.value, '$[1]')) || '、') LIKE ? ESCAPE '\\'" for _ in values
+    )
+    sql = (
+        "AND EXISTS (SELECT 1 FROM json_each(components.attributes) j "
+        f"WHERE lower(json_extract(j.value, '$[0]')) IN ({','.join('?' * len(names))}) AND ({items}))"
+    )
+    return sql, [*names, *(f"%、{_escape_like(v.strip().lower())}、%" for v in values)]
+
+
+def _parse_impedance_ohms(value: str) -> float | None:
+    """Ferrite bead impedance in ohms: "600Ω@100MHz" -> 600, a filter's "600Ohm" -> 600."""
+    return parse_resistance(value.split("@")[0])
+
+
+def _numeric_parser(spec_name: str, attr_names: list[str]) -> Any:
+    """The parser for a spec's values, or None. "Impedance @ Frequency" is registered as "special"."""
+    if spec_name.lower() == "impedance @ frequency":
+        return _parse_impedance_ohms
+    for name in attr_names:
+        parser = SPEC_PARSERS.get(name)
+        if callable(parser):
+            return parser
+    return None
+
+
+def _is_range_spec(spec_name: str, attr_names: list[str]) -> bool:
+    """Compared range by range. A short name with its own column (Vout) keeps the column: exact."""
+    if spec_name in RANGE_SPECS:
+        return True
+    return spec_name not in SPEC_TO_COLUMN and any(name in RANGE_SPECS for name in attr_names)
+
+
 def build_spec_filter_clauses(
     spec_filters: list[SpecFilter],
-) -> tuple[list[str], list[Any], list[tuple[SpecFilter, set[str], Any, float | None]]]:
+) -> tuple[list[str], list[Any], list[tuple[SpecFilter, set[str], Any, float | None]], list[dict[str, str]]]:
     """Build spec filter clauses for SQL and collect post-filter metadata.
 
     Args:
@@ -320,10 +388,13 @@ def build_spec_filter_clauses(
         - params: List of SQL parameters
         - post_filter_metadata: List of (spec_filter, attr_names_set, parser, target_value)
           for filters that need Python post-filtering
+        - ignored: filters that couldn't be applied, as {"filter", "reason"} (a range op on a
+          spec with no numeric parser, or a value that doesn't parse); the search runs without them
     """
     sql_clauses: list[str] = []
     params: list[Any] = []
     post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]] = []
+    ignored: list[dict[str, str]] = []
 
     # Group multi-value "=" filters (like multiple Interface values) for OR logic
     grouped_filters = _group_multi_value_filters(spec_filters)
@@ -334,6 +405,17 @@ def build_spec_filter_clauses(
             spec_name, values = item
             attr_names = get_attribute_names(spec_name)
 
+            if spec_name.lower() == "type" and all(v.lower() in _POLARITY_VALUES for v in values):
+                clause, clause_params = _polarity_clause(values)
+                sql_clauses.append(clause)
+                params.extend(clause_params)
+                continue
+            if spec_name in LIST_SPECS:
+                clause, clause_params = _list_item_clause(attr_names, values)
+                sql_clauses.append(clause)
+                params.extend(clause_params)
+                continue
+
             # Build OR clause for all values: (Interface LIKE '%I2C%' OR Interface LIKE '%SPI%')
             use_substring_match = spec_name.lower() == "interface"
             is_impedance_at_freq = spec_name.lower() == "impedance @ frequency"
@@ -342,16 +424,16 @@ def build_spec_filter_clauses(
             for value in values:
                 for name in attr_names:
                     if use_substring_match:
-                        pattern = f'%"{_escape_like(name)}"%{_escape_like(value)}%'
+                        pattern = f'%"{like_text(name)}"%{like_text(value)}%'
                     elif is_impedance_at_freq:
                         numeric_match = re.match(r'^(\d+(?:\.\d+)?)', value)
                         if numeric_match:
                             numeric_part = numeric_match.group(1)
-                            pattern = f'%"{_escape_like(name)}", "{numeric_part}%'
+                            pattern = f'%"{like_text(name)}", "{numeric_part}%'
                         else:
-                            pattern = f'%"{_escape_like(name)}", "{_escape_like(value)}%'
+                            pattern = f'%"{like_text(name)}", "{like_text(value)}%'
                     else:
-                        pattern = f'%"{_escape_like(name)}", "{_escape_like(value)}"%'
+                        pattern = f'%"{like_text(name)}", "{like_text(value)}"%'
                     or_conditions.append("attributes LIKE ? ESCAPE '\\'")
                     params.append(pattern)
 
@@ -365,22 +447,29 @@ def build_spec_filter_clauses(
         spec_filter = item
         # Get all possible attribute names (including aliases)
         attr_names = get_attribute_names(spec_filter.name)
+        is_range = _is_range_spec(spec_filter.name, attr_names)
 
-        # Check if we have a pre-computed column for this spec
+        if (spec_filter.operator == "=" and spec_filter.name.lower() == "type"
+                and spec_filter.value.lower() in _POLARITY_VALUES):
+            clause, clause_params = _polarity_clause([spec_filter.value])
+            sql_clauses.append(clause)
+            params.extend(clause_params)
+            continue
+
+        # Check if we have a pre-computed column for this spec (not for range specs: the column
+        # holds the first number of "2.7V~5.5V")
         column_info = None
-        for name in [spec_filter.name] + attr_names:
-            if name in SPEC_TO_COLUMN:
-                column_info = SPEC_TO_COLUMN[name]
-                break
+        if not is_range:
+            for name in [spec_filter.name] + attr_names:
+                if name in SPEC_TO_COLUMN:
+                    column_info = SPEC_TO_COLUMN[name]
+                    break
 
         if column_info and spec_filter.operator in (">=", "<=", ">", "<", "="):
             column_name, parser = column_info
             # Use the parser if available, otherwise try SPEC_PARSERS
             if parser is None:
-                for name in attr_names:
-                    parser = SPEC_PARSERS.get(name)
-                    if parser:
-                        break
+                parser = _numeric_parser(spec_filter.name, attr_names)
 
             if parser:
                 parsed_value = parser(spec_filter.value)
@@ -405,11 +494,8 @@ def build_spec_filter_clauses(
                     continue
 
         # Fall back to LIKE patterns for specs without pre-computed columns
-        parser = None
-        for name in attr_names:
-            parser = SPEC_PARSERS.get(name)
-            if parser:
-                break
+        parser = _numeric_parser(spec_filter.name, attr_names)
+        is_impedance_at_freq = spec_filter.name.lower() == "impedance @ frequency"
 
         parsed_value = None
         if parser:
@@ -417,7 +503,14 @@ def build_spec_filter_clauses(
 
         if parsed_value is not None and spec_filter.operator in (">=", "<=", ">", "<", "="):
             # Numeric comparison - still need post-filtering for these
-            if spec_filter.operator == "=":
+            if spec_filter.operator == "=" and is_impedance_at_freq:
+                # "600Ohm" -> values starting "600" ("600Ω@100MHz"); the post-filter drops "6000Ω"
+                numeric_part = re.match(r'^(\d+(?:\.\d+)?)', spec_filter.value.strip())
+                prefix = numeric_part.group(1) if numeric_part else like_text(spec_filter.value)
+                or_conditions = ["attributes LIKE ? ESCAPE '\\'" for _ in attr_names]
+                params.extend(f'%"{like_text(name)}", "{prefix}%' for name in attr_names)
+                sql_clauses.append(f"AND ({' OR '.join(or_conditions)})")
+            elif spec_filter.operator == "=" and not is_range:
                 or_conditions = []
                 for name in attr_names:
                     value_patterns = generate_value_patterns(name, spec_filter.value, parsed_value)
@@ -428,11 +521,11 @@ def build_spec_filter_clauses(
                     combined = " OR ".join(or_conditions)
                     sql_clauses.append(f"AND ({combined})")
             else:
-                # For range comparisons, check attribute exists
+                # Range comparisons, and every comparison on a range spec: check the attribute exists
                 or_conditions = []
                 for name in attr_names:
                     or_conditions.append("attributes LIKE ? ESCAPE '\\'")
-                    pattern = f'%"{_escape_like(name)}"%'
+                    pattern = f'%"{like_text(name)}"%'
                     params.append(pattern)
                 if or_conditions:
                     combined = " OR ".join(or_conditions)
@@ -440,37 +533,44 @@ def build_spec_filter_clauses(
 
             # Add to post-filter metadata (needs Python post-filtering)
             attr_names_set = set(attr_names)
-            target_value = parser(spec_filter.value) if parser else None
-            post_filter_metadata.append((spec_filter, attr_names_set, parser, target_value))
+            post_filter_metadata.append((spec_filter, attr_names_set, parser, parsed_value))
 
         elif spec_filter.operator == "=":
             # String exact value match (non-numeric)
             use_substring_match = spec_filter.name.lower() == "interface"
-            # For "Impedance @ Frequency", use prefix match to match "100Ω@100MHz" from "100Ohm"
-            is_impedance_at_freq = spec_filter.name.lower() == "impedance @ frequency"
+
+            if spec_filter.name in LIST_SPECS:
+                clause, clause_params = _list_item_clause(attr_names, [spec_filter.value])
+                sql_clauses.append(clause)
+                params.extend(clause_params)
+                continue
 
             or_conditions = []
             for name in attr_names:
                 if use_substring_match:
-                    pattern = f'%"{_escape_like(name)}"%{_escape_like(spec_filter.value)}%'
+                    pattern = f'%"{like_text(name)}"%{like_text(spec_filter.value)}%'
                 elif is_impedance_at_freq:
-                    # Extract numeric part from value like "100Ohm" -> "100"
-                    # to match database format "100Ω@100MHz"
-                    numeric_match = re.match(r'^(\d+(?:\.\d+)?)', spec_filter.value)
-                    if numeric_match:
-                        numeric_part = numeric_match.group(1)
-                        pattern = f'%"{_escape_like(name)}", "{numeric_part}%'
-                    else:
-                        pattern = f'%"{_escape_like(name)}", "{_escape_like(spec_filter.value)}%'
+                    pattern = f'%"{like_text(name)}", "{like_text(spec_filter.value)}%'
                 else:
-                    pattern = f'%"{_escape_like(name)}", "{_escape_like(spec_filter.value)}"%'
+                    pattern = f'%"{like_text(name)}", "{like_text(spec_filter.value)}"%'
                 or_conditions.append("attributes LIKE ? ESCAPE '\\'")
                 params.append(pattern)
             if or_conditions:
                 combined = " OR ".join(or_conditions)
                 sql_clauses.append(f"AND ({combined})")
+        elif parser is None:
+            ignored.append({
+                "filter": f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}",
+                "reason": f"{spec_filter.name} isn't numeric, so only = works on it "
+                          "(jlc_search_help lists which attributes are numeric)",
+            })
+        else:
+            ignored.append({
+                "filter": f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}",
+                "reason": f"couldn't read {spec_filter.value!r} as a value for {spec_filter.name}",
+            })
 
-    return sql_clauses, params, post_filter_metadata
+    return sql_clauses, params, post_filter_metadata, ignored
 
 
 def build_sort_clause(
@@ -514,6 +614,8 @@ def needs_numeric_post_filter(spec_filter: SpecFilter) -> bool:
     and requires Python post-processing.
     """
     attr_names = get_attribute_names(spec_filter.name)
+    if _is_range_spec(spec_filter.name, attr_names) or spec_filter.name.lower() == "impedance @ frequency":
+        return _numeric_parser(spec_filter.name, attr_names) is not None
 
     # Check if this spec has a pre-computed column
     for name in [spec_filter.name] + attr_names:
@@ -525,6 +627,6 @@ def needs_numeric_post_filter(spec_filter: SpecFilter) -> bool:
         return True
     if spec_filter.operator == "=":
         for name in attr_names:
-            if SPEC_PARSERS.get(name):
+            if callable(SPEC_PARSERS.get(name)):
                 return True
     return False

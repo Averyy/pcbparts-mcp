@@ -27,14 +27,18 @@ from typing import Any
 
 _VOLTAGE_KV_PATTERN = re.compile(r"([\d.]+)\s*kV", re.IGNORECASE)
 _VOLTAGE_PATTERN = re.compile(r"([\d.]+)\s*V", re.IGNORECASE)
+_VOLTAGE_MV_PATTERN = re.compile(r"([\d.]+)\s*mV")
 _TOLERANCE_PATTERN = re.compile(r"([\d.]+)\s*%")
-_PPM_PATTERN = re.compile(r"[±]?([\d.]+)\s*ppm", re.IGNORECASE)
+_PPM_PATTERN = re.compile(r"[±]?([\d.]+)\s*pp([mb])", re.IGNORECASE)
 _VF_AT_IF_PATTERN = re.compile(r"([\d.]+)\s*mV\s*@", re.IGNORECASE)
 _POWER_FRACTION_PATTERN = re.compile(r"(\d+)/(\d+)\s*W", re.IGNORECASE)
+_POWER_KW_PATTERN = re.compile(r"([\d.]+)\s*kW", re.IGNORECASE)
 _POWER_MW_PATTERN = re.compile(r"([\d.]+)\s*mW", re.IGNORECASE)
+_POWER_DBM_PATTERN = re.compile(r"([+-]?[\d.]+)\s*dBm", re.IGNORECASE)
 _POWER_W_PATTERN = re.compile(r"([\d.]+)\s*W", re.IGNORECASE)
 _CURRENT_UA_PATTERN = re.compile(r"([\d.]+)\s*[uµ]A", re.IGNORECASE)
 _CURRENT_MA_PATTERN = re.compile(r"([\d.]+)\s*mA", re.IGNORECASE)
+_CURRENT_KA_PATTERN = re.compile(r"([\d.]+)\s*kA", re.IGNORECASE)
 _CURRENT_A_PATTERN = re.compile(r"([\d.]+)\s*A", re.IGNORECASE)
 _RESISTANCE_PATTERN = re.compile(r"([\d.]+)\s*([kKmM])?")
 # European notation: 4k7 = 4.7k, 4R7 = 4.7Ω, 1M5 = 1.5M (suffix replaces decimal point)
@@ -58,6 +62,7 @@ _LUMINOSITY_PATTERN = re.compile(r"([\d.]+)\s*mcd", re.IGNORECASE)
 _CAPACITANCE_PF_PATTERN = re.compile(r"([\d.]+)\s*([pn])?", re.IGNORECASE)
 _LENGTH_MM_PATTERN = re.compile(r"([\d.]+)\s*mm", re.IGNORECASE)
 _INTEGER_PATTERN = re.compile(r"(\d+)")
+_BARE_NUMBER_PATTERN = re.compile(r"\s*\d+(?:\.\d+)?\s*")
 _VGS_RANGE_PATTERN = re.compile(r"([\d.]+)\s*V?\s*~\s*([\d.]+)\s*V?", re.IGNORECASE)
 _FREQ_RANGE_PATTERN = re.compile(
     r"([\d.]+)\s*([kKmMgG])?Hz?\s*~\s*([\d.]+)\s*([kKmMgG])?Hz?", re.IGNORECASE
@@ -71,7 +76,7 @@ _FREQ_RANGE_PATTERN = re.compile(
 
 
 def parse_voltage(s: str) -> float | None:
-    """Parse voltage: '25V' -> 25, '6.3V' -> 6.3, '5kV' -> 5000"""
+    """Parse voltage: '25V' -> 25, '6.3V' -> 6.3, '5kV' -> 5000, '350mV@(100mA)' -> 0.35"""
     if not s:
         return None
     # Check kV first (must come before V check)
@@ -79,7 +84,20 @@ def parse_voltage(s: str) -> float | None:
     if match:
         return float(match.group(1)) * 1000
     match = _VOLTAGE_PATTERN.search(s)
-    return float(match.group(1)) if match else None
+    if match:
+        return float(match.group(1))
+    # mV only when there's no V value, so "800mV~3.6V" still reads 3.6
+    match = _VOLTAGE_MV_PATTERN.search(s)
+    return float(match.group(1)) / 1000 if match else None
+
+
+def parse_isolation_voltage(s: str) -> float | None:
+    """Parse isolation voltage: '5000Vrms' -> 5000, '3.75kVrms' -> 3750, and the bare numbers
+    Digital Isolators list ('5000' -> 5000)"""
+    value = parse_voltage(s)
+    if value is None and s and _BARE_NUMBER_PATTERN.fullmatch(s):
+        return float(s)
+    return value
 
 
 def parse_tolerance(s: str) -> float | None:
@@ -91,11 +109,13 @@ def parse_tolerance(s: str) -> float | None:
 
 
 def parse_ppm(s: str) -> float | None:
-    """Parse frequency stability in ppm: '±20ppm' -> 20, '30ppm' -> 30"""
+    """Parse frequency stability in ppm: '±20ppm' -> 20, '30ppm' -> 30, '±500ppb' -> 0.5"""
     if not s:
         return None
     match = _PPM_PATTERN.search(s)
-    return float(match.group(1)) if match else None
+    if not match:
+        return None
+    return float(match.group(1)) / 1000 if match.group(2).lower() == "b" else float(match.group(1))
 
 
 def parse_forward_voltage(s: str) -> float | None:
@@ -112,7 +132,8 @@ def parse_forward_voltage(s: str) -> float | None:
 
 
 def parse_power(s: str) -> float | None:
-    """Parse power in watts: '100mW' -> 0.1, '1/4W' -> 0.25, '0.25W' -> 0.25"""
+    """Parse power in watts: '100mW' -> 0.1, '1/4W' -> 0.25, '0.25W' -> 0.25, '1.5kW' -> 1500,
+    '20dBm' -> 0.1 (RF output power)"""
     if not s:
         return None
     # Handle fraction format: 1/4W, 1/10W
@@ -127,11 +148,18 @@ def parse_power(s: str) -> float | None:
     match = _POWER_W_PATTERN.search(s)
     if match:
         return float(match.group(1))
+    # kW and dBm only when there's no W/mW value, so "600W@10/1000us、4kW@8/20us" still reads 600
+    match = _POWER_KW_PATTERN.search(s)
+    if match:
+        return float(match.group(1)) * 1000
+    match = _POWER_DBM_PATTERN.search(s)
+    if match:
+        return 10 ** (float(match.group(1)) / 10) / 1000
     return None
 
 
 def parse_current(s: str) -> float | None:
-    """Parse current in amps: '2A' -> 2, '500mA' -> 0.5, '100uA' -> 0.0001"""
+    """Parse current in amps: '2A' -> 2, '500mA' -> 0.5, '100uA' -> 0.0001, '5kA' -> 5000"""
     if not s:
         return None
     match = _CURRENT_UA_PATTERN.search(s)
@@ -143,7 +171,9 @@ def parse_current(s: str) -> float | None:
     match = _CURRENT_A_PATTERN.search(s)
     if match:
         return float(match.group(1))
-    return None
+    # kA only when there's no A value, so "750A、10kA" still reads 750
+    match = _CURRENT_KA_PATTERN.search(s)
+    return float(match.group(1)) * 1000 if match else None
 
 
 def parse_resistance(s: str) -> float | None:
