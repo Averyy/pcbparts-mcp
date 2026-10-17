@@ -10,13 +10,16 @@ from urllib.parse import quote
 
 import httpx
 
-from .cache import TTLCache
+from . import stats
+from .cache import Pacer, TTLCache
 from .config import (
     DIGIKEY_CLIENT_ID,
     DIGIKEY_CLIENT_SECRET,
     DIGIKEY_BASE_URL,
     DIGIKEY_TOKEN_URL,
     DIGIKEY_CACHE_TTL,
+    DIGIKEY_NOT_FOUND_TTL,
+    DIGIKEY_PER_SECOND,
     DIGIKEY_LOCALE_SITE,
     DIGIKEY_LOCALE_LANGUAGE,
     DIGIKEY_LOCALE_CURRENCY,
@@ -34,6 +37,10 @@ class DigiKeyError(ValueError):
 
 class DigiKeyRateLimited(DigiKeyError):
     """DigiKey answered 429: its own daily or per-minute limit is used up."""
+
+
+class DigiKeyNotFound(DigiKeyError):
+    """DigiKey answered 404: it has no product with that number."""
 
 
 def _normalize_product(product: dict[str, Any]) -> dict[str, Any]:
@@ -108,6 +115,7 @@ class DigiKeyClient:
         client_id: str = DIGIKEY_CLIENT_ID,
         client_secret: str = DIGIKEY_CLIENT_SECRET,
         quota: DailyQuota | None = None,
+        per_second: float = DIGIKEY_PER_SECOND,
     ):
         self._client_id = client_id
         self._client_secret = client_secret
@@ -118,6 +126,8 @@ class DigiKeyClient:
         self._token_lock: asyncio.Lock | None = None
         self._cache = TTLCache(ttl=DIGIKEY_CACHE_TTL)
         self._quota = quota
+        # DigiKey suspends an app for ten minutes for going over its per-second threshold
+        self._pacer = Pacer(per_second)
 
     def _get_http(self) -> httpx.AsyncClient:
         if self._http is None:
@@ -195,6 +205,7 @@ class DigiKeyClient:
         url = f"{DIGIKEY_BASE_URL}{path}"
 
         try:
+            await self._pacer.wait()
             response = await self._get_http().request(method, url, headers=headers, **kwargs)
             self._note_limits(response)
 
@@ -203,6 +214,7 @@ class DigiKeyClient:
                 self._access_token = None
                 token = await self._ensure_token()
                 headers = self._auth_headers(token)
+                await self._pacer.wait()
                 response = await self._get_http().request(method, url, headers=headers, **kwargs)
                 self._note_limits(response)
         except httpx.HTTPError:
@@ -212,6 +224,8 @@ class DigiKeyClient:
             paused = self._quota.paused_error() if self._quota else None
             if paused or response.status_code == 429:
                 raise DigiKeyRateLimited(paused["error"] if paused else "DigiKey is limiting requests (HTTP 429). Try again later.")
+        if response.status_code == 404:
+            raise DigiKeyNotFound("DigiKey has no product with that number")
         if response.status_code >= 400:
             raise DigiKeyError(f"DigiKey API returned HTTP {response.status_code}")
         return response.json()
@@ -226,16 +240,22 @@ class DigiKeyClient:
         Returns:
             Dict with results list and total (consistent with Mouser format)
         """
-        cache_key = f"digikey:{product_number.strip()}"
+        product_number = product_number.strip()
+        if not product_number:
+            return {"error": "Give a DigiKey or manufacturer part number."}
+        cache_key = f"digikey:{product_number}"
         cached = self._cache.get(cache_key)
         if cached is not None:
+            stats.usage.record_distributor("digikey", "cached")
             return cached
 
         # Check daily quota (after cache so cache hits don't count)
         if self._quota:
             quota_error = self._quota.check(caller)
             if quota_error:
+                stats.usage.record_distributor("digikey", "limited")
                 return quota_error
+        stats.usage.record_distributor("digikey", "sent")
 
         # URL-encode to prevent path traversal or special chars altering the URL
         safe_pn = quote(product_number, safe='')
@@ -243,10 +263,15 @@ class DigiKeyClient:
             data = await self._request("GET", f"/search/{safe_pn}/productdetails")
         except DigiKeyRateLimited as e:
             return {"error": str(e)}
+        except DigiKeyNotFound:
+            data = {}
         product = data.get("Product", {})
 
         if not product:
-            return {"error": f"Part not found: {product_number}"}
+            # Cached too, so asking again for a wrong or partial number costs no request
+            not_found = {"error": f"Part not found: {product_number}"}
+            self._cache.set(cache_key, not_found, ttl=DIGIKEY_NOT_FOUND_TTL)
+            return not_found
 
         result = {
             "results": [_normalize_product(product)],
