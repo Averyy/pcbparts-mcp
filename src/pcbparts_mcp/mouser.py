@@ -21,6 +21,9 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+MOUSER_MAX_BATCH = 10  # part numbers per SearchByPartRequest (Mouser's API docs)
+
+
 class MouserError(ValueError):
     """A Mouser request failed. The message is ours (no API key), so the tool can show it."""
 
@@ -213,12 +216,27 @@ class MouserClient:
         Returns:
             Dict with results list
         """
-        # Check cache for single lookups
-        cache_key = f"mouser:{part_number.strip()}"
-        if "|" not in part_number:
-            cached = self._cache.get(cache_key)
-            if cached is not None:
-                return cached
+        # Mouser's SearchByPartRequest takes up to 10 part numbers, each 3-40 characters. Checked
+        # here so a malformed batch doesn't spend a request.
+        numbers = [n.strip() for n in part_number.split("|") if n.strip()]  # a stray "|" is a join slip
+        if not numbers:
+            return {"error": "Give at least one Mouser or manufacturer part number."}
+        if len(numbers) > MOUSER_MAX_BATCH:
+            return {"error": f"Mouser takes up to {MOUSER_MAX_BATCH} part numbers per call, separated by |; "
+                             f"got {len(numbers)}. Split the batch."}
+        bad = [n for n in numbers if not 3 <= len(n) <= 40]
+        if bad:
+            return {"error": "Each Mouser part number must be 3-40 characters: "
+                             + ", ".join(repr(n[:50]) for n in bad[:3])}
+        query = "|".join(numbers)
+
+        # Batches are cached too: an identical batch within the hour costs no request. Each part of a
+        # batch can't be cached on its own, since Mouser matches loosely and doesn't say which input
+        # each result came from.
+        cache_key = f"mouser:{query}"
+        cached = self._cache.get(cache_key)
+        if cached is not None:
+            return cached
 
         # Check daily quota (after cache so cache hits don't count)
         if self._quota:
@@ -228,7 +246,7 @@ class MouserClient:
 
         body = {
             "SearchByPartRequest": {
-                "mouserPartNumber": part_number,
+                "mouserPartNumber": query,
                 "partSearchOptions": "None",
             }
         }
@@ -245,9 +263,7 @@ class MouserClient:
             "total": len(parts),
         }
 
-        # Cache single lookups
-        if "|" not in part_number:
-            self._cache.set(cache_key, result)
+        self._cache.set(cache_key, result)
 
         return result
 

@@ -45,9 +45,12 @@ MEASURE_QUERY_ALIASES: dict[str, str] = {
     "sonar": "ultrasonic",
 }
 
-# Protocol aliases (expand to multiple values — OR logic)
+# Protocol aliases (expand to multiple values — OR logic). The DB stores plain digital pins as
+# "gpio" (54 sensors on 2026-10-16) and has no "digital" value; "gpio" used to leave itself out, so
+# those sensors never matched it, and "digital" (offered in the tool description) matched nothing.
 PROTOCOL_ALIASES: dict[str, list[str]] = {
-    "gpio": ["analog", "digital", "pwm", "one_wire"],
+    "gpio": ["gpio", "analog", "pwm", "one_wire"],
+    "digital": ["gpio", "pwm", "one_wire"],
 }
 
 

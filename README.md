@@ -1,22 +1,22 @@
 # PCB Parts MCP Server
 
-MCP server for searching electronic components across JLCPCB, Mouser, and DigiKey directly from Claude, Cursor, and other AI coding assistants. 1.5M+ parts with parametric filtering and KiCad footprints. No API key required.
+MCP server that gives Claude, Cursor, and other AI coding assistants electronic component data from JLCPCB, Mouser, and DigiKey: parametric search over 630K+ in-stock JLCPCB parts, live stock and pricing on all three, KiCad footprints, reference boards, sensor picks, and design rules. No API key required.
 
 **Website:** [pcbparts.dev](https://pcbparts.dev)
 
 ## Features
 
-- **Cross-distributor search:** JLCPCB, Mouser, and DigiKey from one MCP server
+- **Three distributors:** search JLCPCB, and look up live price and stock for specific parts on Mouser and DigiKey
 - **Parametric search:** Filter by electrical specs (Vgs(th) < 2V, Rds(on) < 10mΩ, etc.)
 - **Smart query parsing:** "10k 0603 1%" auto-parses into structured filters
 - **Find alternatives:** Spec-aware compatibility checking for 120+ component types
 - **KiCad footprints:** Download symbols and footprints via SamacSys
 - **Pinout data:** Component pin information from EasyEDA symbols
 - **MPN lookup:** Find JLCPCB equivalents by manufacturer part number
-- **Sensor recommendation:** Find sensor ICs by what they measure, protocol, or platform (1,500+ sensors, 56 measure types)
+- **Sensor recommendation:** Find sensor ICs by what they measure, protocol, or platform (1,600+ sensors, 56 measure types)
 - **Reference boards:** Search ~285 OSHW board schematics, IC neighborhoods, cross-board consensus for design patterns
 - **Design rules:** 41 curated PCB design reference files covering power, protection, interfaces, MCUs, layout, and EMC
-- **14 MCP tools** across 7 data sources
+- **14 MCP tools**
 - No API key required for JLCPCB (Mouser/DigiKey optional)
 
 ## Quick Start
@@ -103,7 +103,7 @@ Add to Extensions config:
 
 | Tool | Description |
 |------|-------------|
-| `jlc_search` | **Primary search** — smart query parsing + parametric spec filters (local DB, 575K+ in-stock parts) |
+| `jlc_search` | **Primary search** — smart query parsing + parametric spec filters (local DB, 630K+ in-stock parts, updated daily) |
 | `jlc_stock_check` | Real-time stock verification via live JLCPCB API (use `jlc_search` first) |
 | `jlc_get_part` | Full details for a specific LCSC part code or MPN lookup |
 | `jlc_get_pinout` | Component pin information from EasyEDA symbols |
@@ -114,19 +114,19 @@ Add to Extensions config:
 
 | Tool | Description |
 |------|-------------|
-| `mouser_get_part` | Cross-reference a specific MPN on Mouser (daily quota applies) |
+| `mouser_get_part` | Price, stock, and datasheet for specific parts on Mouser; batch up to 10 per call (shared daily limit on pcbparts.dev) |
 
 ### DigiKey (requires `DIGIKEY_CLIENT_ID` + `DIGIKEY_CLIENT_SECRET`)
 
 | Tool | Description |
 |------|-------------|
-| `digikey_get_part` | Cross-reference a specific MPN on DigiKey (daily quota applies) |
+| `digikey_get_part` | Price, stock, and datasheet for one part on DigiKey (shared daily limit on pcbparts.dev) |
 
 ### Sensor Recommendation (no key required)
 
 | Tool | Description |
 |------|-------------|
-| `sensor_recommend` | Find sensor ICs/modules by measurement need, protocol, or platform (1,500+ sensors, 56 measure types) |
+| `sensor_recommend` | Find sensor ICs/modules by measurement need, protocol, or platform (1,600+ sensors, 56 measure types) |
 
 ### Reference Boards (no key required)
 
@@ -158,7 +158,7 @@ Use **`jlc_search`** (default) for:
 Use **`jlc_stock_check`** only when you need:
 - Real-time stock verification before ordering
 - Out-of-stock or low-stock parts (stock < 10)
-- Full 1.5M catalog (search indexes 575K+ with stock >= 10)
+- The full catalog (7M+ parts; `jlc_search` covers the 630K+ with stock >= 10)
 
 ## Library Types
 
@@ -195,7 +195,9 @@ Short names for parametric spec filters:
 | MOSFETs | `Vgs(th)`, `Vds`, `Id`, `Rds(on)` |
 | Diodes | `Vr`, `If`, `Vf` |
 | BJTs | `Vceo`, `Ic` |
-| Passives | `Capacitance`, `Resistance`, `Inductance`, `Voltage`, `Tolerance`, `Power` |
+| Regulators | `Vout`, `Iout` |
+| Passives | `Capacitance`, `Resistance`, `Inductance`, `Voltage`, `Tolerance`, `Power`, `DCR`, `Isat` |
+| Crystals, oscillators | `Frequency` |
 
 Use `jlc_search_help(subcategory=...)` to discover all filterable specs for any subcategory.
 
@@ -224,7 +226,7 @@ Supported: Resistors, capacitors, inductors, ferrite beads, MOSFETs, BJTs, diode
 "100nF 25V capacitors in 0402 or 0603"
 "Find alternatives for C82899 in basic library"
 "STM32 microcontrollers with 10000+ stock"
-"Cross-reference TPS63020 on Mouser and compare with JLCPCB pricing"
+"Look up TPS63020 stock and pricing on Mouser"
 "Get KiCad footprint for ESP32-S3-WROOM-1"
 "What sensor should I use to measure CO2 on ESPHome?"
 "Recommend an IMU sensor with I2C interface"
@@ -275,7 +277,7 @@ Building the image needs BuildKit, the default builder since Docker 23 and the o
 | `RATE_LIMIT_REQUESTS` | `100` | Requests per minute per IP |
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Comma-separated Host headers accepted by the server (DNS-rebinding protection; localhost is always allowed) |
 | `DISTRIBUTOR_DAILY_LIMIT` | `1000` | Daily API request quota per distributor (Mouser/DigiKey) |
-| `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker, unset otherwise | JSON file that keeps each distributor's request count for the day, and a pause DigiKey asked for, across restarts. Unset means memory only, so every restart starts the count from 0 |
+| `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker, unset otherwise | JSON file that keeps each distributor's request count for the day, and any pause Mouser or DigiKey asked for, across restarts. Unset means memory only, so every restart starts the count from 0 |
 | `MOUSER_API_KEY` | — | Mouser API key (optional, enables Mouser tools) |
 | `DIGIKEY_CLIENT_ID` | — | DigiKey OAuth2 client ID (optional, enables DigiKey tools) |
 | `DIGIKEY_CLIENT_SECRET` | — | DigiKey OAuth2 client secret |
