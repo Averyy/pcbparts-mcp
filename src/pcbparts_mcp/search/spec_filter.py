@@ -1,5 +1,6 @@
 """Spec filter definitions and attribute mappings for parametric search."""
 
+import json
 from dataclasses import dataclass
 from typing import Any, Literal
 
@@ -13,6 +14,7 @@ from ..parsers import (
     parse_power,
     parse_frequency,
     parse_ppm,
+    parse_memory_size,
 )
 
 
@@ -95,17 +97,17 @@ SPEC_TO_COLUMN: dict[str, tuple[str, Any]] = {
     "Equivalent Series Resistance(ESR)": ("esr_ohms", parse_resistance),
     "ESR": ("esr_ohms", parse_resistance),
 
-    # MCU
-    "Flash": ("flash_size_bytes", None),  # Special: memory size parser
-    "Program Memory Size": ("flash_size_bytes", None),
-    "SRAM": ("ram_size_bytes", None),
-    "RAM Size": ("ram_size_bytes", None),
+    # MCU (the build fills these columns with parse_memory_size; filters must parse the same way)
+    "Flash": ("flash_size_bytes", parse_memory_size),
+    "Program Memory Size": ("flash_size_bytes", parse_memory_size),
+    "SRAM": ("ram_size_bytes", parse_memory_size),
+    "RAM Size": ("ram_size_bytes", parse_memory_size),
     "Speed": ("clock_speed_hz", parse_frequency),
     "CPU Maximum Speed": ("clock_speed_hz", parse_frequency),
 
     # Memory ICs
-    "Capacity": ("memory_capacity_bits", None),
-    "Memory Size": ("memory_capacity_bits", None),
+    "Capacity": ("memory_capacity_bits", parse_memory_size),
+    "Memory Size": ("memory_capacity_bits", parse_memory_size),
 
     # Battery Chargers
     "Charging Current": ("charge_current_a", parse_current),
@@ -119,6 +121,17 @@ SPEC_TO_COLUMN: dict[str, tuple[str, Any]] = {
 
 
 _VALID_OPERATORS = frozenset({"=", ">=", "<=", ">", "<"})
+
+# Specs whose values are often ranges or lists ("2.7V~5.5V", "1.71V~1.89V、2.25V~5.5V", an
+# adjustable regulator's "0.8V~5V"). Filters on them are compared in Python against each range
+# (= : inside one; >= : one reaches it; <= : one goes down to it), never on a column, which holds
+# only the first number.
+RANGE_SPECS: frozenset[str] = frozenset({
+    "Voltage - Supply", "Voltage - Supply(VCCA)", "Voltage - Supply(VCCB)", "Output Voltage",
+})
+
+# String specs whose values list several items ("Boost、Buck"): "=" matches any one item
+LIST_SPECS: frozenset[str] = frozenset({"Topology", "Type", "type"})
 
 
 @dataclass
@@ -183,6 +196,9 @@ ATTRIBUTE_ALIASES: dict[str, list[str]] = {
     # LDOs/Regulators
     "Vout": ["Output Voltage"],
     "Iout": ["Output Current"],
+
+    # Supply range of an IC, whichever name it's under (level shifters list each side)
+    "Supply Voltage": ["Voltage - Supply", "Voltage - Supply(VCCA)", "Voltage - Supply(VCCB)"],
 }
 
 # Reverse lookup: full attribute name -> list of aliases
@@ -206,6 +222,12 @@ def escape_like(value: str) -> str:
 
 # Keep private alias for backward compatibility within this module
 _escape_like = escape_like
+
+
+def like_text(value: str) -> str:
+    """Text as the attributes JSON stores it (non-ASCII as \\uXXXX: "Resistance @ 25\\u2103",
+    "50\\u03a9"), escaped for LIKE. Plain text never matched names or values like those."""
+    return escape_like(json.dumps(value)[1:-1])
 
 
 def _is_integer(value: float, tol: float = 1e-9) -> bool:
@@ -243,11 +265,11 @@ def generate_value_patterns(spec_name: str, value: str, parsed_value: float | No
     if parsed_value is None:
         return []
 
-    name_escaped = _escape_like(spec_name)
+    name_escaped = like_text(spec_name)
 
     # Generate only the most likely patterns (limit to 3 for SQL efficiency)
     # Post-filtering will handle edge cases
-    value_escaped = _escape_like(value.rstrip("OhmOHMohm"))
+    value_escaped = like_text(value.rstrip("OhmOHMohm"))
 
     # Primary pattern: user's input as-is
     patterns = [f'%"{name_escaped}", "{value_escaped}%']

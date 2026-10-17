@@ -14,6 +14,8 @@ from pcbparts_mcp.parsers import (
     parse_length_mm,
     parse_dimensions_from_package,
     parse_memory_size,
+    parse_ppm,
+    parse_isolation_voltage,
 )
 
 
@@ -458,3 +460,34 @@ class TestConnectorParserIntegration:
         assert result.connector_spec.series == "SH"
         assert result.connector_spec.pitch == 1.0
         assert result.connector_spec.pins == 4
+
+
+class TestNewUnits:
+    """mV, kA, kW, dBm and ppb didn't parse before 0.6.5 (LDO dropout, diode Vf, GDT surge current,
+    TVS surge power, radio output power, TCXO stability). Each is read only when the old units are
+    absent, so every value that parsed before reads the same."""
+
+    @pytest.mark.parametrize("parser,value,expected", [
+        (parse_voltage, "350mV@(100mA)", 0.35),
+        (parse_voltage, "550mV@3A", 0.55),
+        (parse_voltage, "800mV~3.6V", 3.6),  # V present: unchanged
+        (parse_voltage, "500mV@100uA,5V", 5.0),
+        (parse_current, "5kA", 5000),
+        (parse_current, "750A、10kA", 750),
+        (parse_power, "1.5kW@10/1000us", 1500),
+        (parse_power, "600W@10/1000us、4kW@8/20us", 600),
+        (parse_power, "20dBm", 0.1),
+        (parse_power, "0dBm", 0.001),
+        (parse_ppm, "±500ppb", 0.5),
+        (parse_ppm, "±2.5ppm", 2.5),
+        (parse_isolation_voltage, "5000", 5000),
+        (parse_isolation_voltage, "3.75kVrms", 3750),
+    ])
+    def test_value(self, parser, value, expected):
+        assert parser(value) == pytest.approx(expected)
+
+    @pytest.mark.parametrize("parser,value", [
+        (parse_voltage, "5000"), (parse_voltage, "-"), (parse_isolation_voltage, "-"), (parse_power, "-"),
+    ])
+    def test_still_none(self, parser, value):
+        assert parser(value) is None

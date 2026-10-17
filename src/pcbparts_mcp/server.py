@@ -36,7 +36,7 @@ from .cse import CSEClient
 from .db import get_db, close_db
 from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
-from .search import SpecFilter
+from .search import SpecFilter, get_attribute_names
 from .smart_parser import parse_smart_query, merge_spec_filters
 from .pinout import parse_easyeda_pins
 from .design_rules import get_design_rules as _get_design_rules, _RULES_DIR, _build_index
@@ -77,6 +77,8 @@ async def lifespan(app):
 
     # Seeded EasyEDA footprint answers (data/easyeda/footprints.csv, built into the DB)
     _client.set_easyeda_seed(db.get_easyeda_seed)
+    # jlc_find_alternatives also looks in the database for parts that meet the rules
+    _client.set_alternative_candidates(db.find_alternative_candidates)
     _easyeda_seeded = db.easyeda_seed_size()
     store_size = _client.easyeda_store_size()
     _easyeda_stored = (time.monotonic(), store_size)
@@ -588,9 +590,11 @@ async def jlc_search(
         subcategory_name: Subcategory name (e.g., "MOSFETs", "Schottky Diodes")
         spec_filters: List of {"name", "op", "value"}, e.g. [{"name": "Vgs(th)", "op": "<",
             "value": "2.5V"}]. op: =, >=, <=, >, <. Short names: Vgs(th), Vds, Id, Rds(on), Vr,
-            If, Vf, Vceo, Ic, Vout, Iout, Capacitance, Resistance, Inductance, Voltage, Tolerance,
-            Power, DCR, Isat, Frequency; others by the name jlc_search_help shows. Range ops only
-            work on attributes it lists as "numeric"; parts with no value ("-") don't match them.
+            If, Vf, Vceo, Ic, Vout, Iout, Supply Voltage, Capacitance, Resistance, Inductance,
+            Voltage, Tolerance, Power, DCR, Isat, Frequency; others by the name jlc_search_help
+            shows. Range ops only work on attributes it lists as "numeric"; parts with no value
+            ("-") don't match them. On ranges ("2.7V~5.5V": supply, output voltage) = means the
+            range includes the value.
         min_stock: Minimum stock (the database only has stock >= 10)
         library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", or omit for all
         prefer_no_fee: Sort basic/preferred first
@@ -605,7 +609,10 @@ async def jlc_search(
         results: Matching components with specs
         total: Total count (before limit)
         filters_applied: Applied filters (useful for debugging)
-        parsed: (when using natural language) What was extracted from query
+        parsed: (when using natural language) What was extracted from query; adjusted_filters
+            lists values the part type has no spec for (left out or moved)
+        relaxed: (when present) query words left out because no part matched them
+        ignored_filters: (when present) filters that couldn't be applied, and why
     """
     # Validate query length to prevent abuse
     MAX_QUERY_LENGTH = 500
@@ -629,7 +636,9 @@ async def jlc_search(
     # Smart parsing: always parse query to clean up text and extract structured info
     # This handles cases like "lipo charger" where terms don't exist in FTS index
     parsed_query_info = None
+    parsed = None
     effective_subcategory_name = subcategory_name
+    effective_subcategory_ids: list[int] | None = None
     effective_package = package
     effective_mounting_type: str | None = None
     effective_query = query
@@ -649,11 +658,27 @@ async def jlc_search(
 
         # Apply parsed values only if user didn't provide explicit ones
         if parsed.subcategory and not subcategory_name and not subcategory_id:
-            effective_subcategory_name = parsed.subcategory
+            if parsed.subcategories:
+                ids = [db.resolve_subcategory_name(name) for name in parsed.subcategories]
+                effective_subcategory_ids = [i for i in ids if i]
+                parsed_query_info["subcategories"] = parsed.subcategories
+            if not effective_subcategory_ids:
+                effective_subcategory_name = parsed.subcategory
         if parsed.package and not package:
             effective_package = parsed.package
+
+        # Filters the parser made up must fit the part type: "5V relay" asked for Voltage Rating,
+        # which no relay lists, and found nothing
+        searched_ids = effective_subcategory_ids or (
+            [i for i in [subcategory_id or db.resolve_subcategory_name(effective_subcategory_name)] if i]
+            if (subcategory_id or effective_subcategory_name) else []
+        )
+        auto_filters, adjusted = _fit_parsed_filters(db, parsed.spec_filters, searched_ids)
+        if adjusted:
+            parsed_query_info["adjusted_filters"] = adjusted
+            parsed_query_info["spec_filters"] = [f.to_dict() for f in auto_filters]
         # Merge auto-detected spec filters with manual ones (manual takes precedence)
-        parsed_filters = merge_spec_filters(parsed_filters, parsed.spec_filters)
+        parsed_filters = merge_spec_filters(parsed_filters, auto_filters)
         if parsed.mounting_type:
             effective_mounting_type = parsed.mounting_type
 
@@ -664,11 +689,10 @@ async def jlc_search(
             # Query was fully parsed into structured filters, no text needed
             effective_query = None
 
-    # Perform search - db.search() handles name resolution internally
-    result = db.search(
-        query=effective_query,
+    search_args: dict[str, Any] = dict(
         subcategory_id=subcategory_id,
-        subcategory_name=effective_subcategory_name,
+        subcategory_name=None if effective_subcategory_ids else effective_subcategory_name,
+        subcategory_ids=effective_subcategory_ids,
         spec_filters=parsed_filters,
         library_type=library_type if library_type != "all" else None,
         prefer_no_fee=prefer_no_fee,
@@ -681,12 +705,77 @@ async def jlc_search(
         sort_by=sort_by,
         limit=clamp_limit(limit, MAX_PAGE_SIZE),
     )
+    # Perform search - db.search() handles name resolution internally
+    result = db.search(query=effective_query, **search_args)
+
+    # Words the parser couldn't place ("dual", "edge mount") are required in the description and
+    # can zero a search the part type and filters would answer. Only for words left from a
+    # natural-language query, never a part number or the caller's own subcategory or filters.
+    if (result.get("total") == 0 and not result.get("error") and parsed and effective_query
+            and not parsed.model_number and (parsed.subcategory or parsed.spec_filters)
+            and not (subcategory_id or subcategory_name or spec_filters)):
+        retry = db.search(query=None, **search_args)
+        if retry.get("total"):
+            retry["relaxed"] = {
+                "dropped_text": effective_query,
+                "reason": "no part matched these words together with the part type and filters, "
+                          "so they were left out",
+            }
+            result = retry
 
     # Add parsing info if natural language was used
     if parsed_query_info:
         result["parsed"] = parsed_query_info
 
     return result
+
+
+# A filter the parser made from a value, but whose spec the part type doesn't list: what to try
+# instead, in order. A "3.3V level shifter" runs at 3.3V; a "4A high side switch" carries 4A.
+_PARSED_FILTER_FALLBACKS: dict[str, list[tuple[str, str]]] = {
+    "Voltage Rating": [("Supply Voltage", "="), ("Coil Voltage", "=")],
+    "Current Rating": [("Output Current", ">="), ("Maximum Continuous Current", ">=")],
+}
+# A spec counts as listed by a part type when at least this share of its parts state it: op amps
+# have "Voltage - Supply" on 14 of 4,900 parts, and a filter on it would hide the rest
+_LISTED_SHARE = 0.1
+_DIMENSIONS = re.compile(r"(\d+(?:\.\d+)?)\s*[x×*]\s*(\d+(?:\.\d+)?)\s*mm", re.IGNORECASE)
+
+
+def _fit_parsed_filters(
+    db: Any, filters: list[SpecFilter], subcategory_ids: list[int]
+) -> tuple[list[SpecFilter], list[dict[str, str | None]]]:
+    """Keep each parsed filter whose spec the searched part types list; otherwise use a fallback
+    spec they do list, or leave it out. Returns the filters and what was changed and why. With no
+    part type known, filters are kept as they are."""
+    if not subcategory_ids:
+        return list(filters), []
+    def listed(name: str) -> bool:
+        return db.attribute_share(subcategory_ids, get_attribute_names(name)) >= _LISTED_SHARE
+
+    kept: list[SpecFilter] = []
+    adjusted: list[dict[str, str | None]] = []
+    for spec_filter in filters:
+        if listed(spec_filter.name):
+            kept.append(spec_filter)
+            continue
+        label = f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}"
+        replacement: list[SpecFilter] = []
+        for name, operator in _PARSED_FILTER_FALLBACKS.get(spec_filter.name, []):
+            if listed(name):
+                replacement = [SpecFilter(name, operator, spec_filter.value)]
+                break
+        size = _DIMENSIONS.fullmatch(spec_filter.value.strip()) if spec_filter.name == "Dimensions" else None
+        if size and listed("Length") and listed("Width"):
+            replacement = [SpecFilter("Length", "=", f"{size.group(1)}mm"), SpecFilter("Width", "=", f"{size.group(2)}mm")]
+        kept.extend(replacement)
+        adjusted.append({
+            "filter": label,
+            "now": ", ".join(f"{f.name} {f.operator} {f.value}" for f in replacement) or None,
+            "reason": f"few or none of these parts list {spec_filter.name}"
+                      + ("" if replacement else ", so the value was left out"),
+        })
+    return kept, adjusted
 
 
 @mcp.tool(
@@ -866,8 +955,9 @@ async def jlc_find_alternatives(
         limit: Max alternatives (max 50)
 
     Returns:
-        Original part info (with library_type and has_easyeda_footprint) and list of alternatives
-        sorted by stock. Alternatives include library_type and specs for easy comparison.
+        Original part info (with library_type and has_easyeda_footprint) and list of alternatives,
+        best first. Alternatives include library_type, specs, and specs_verified/specs_unparseable
+        (what was checked). Stock comes from the live search or the daily database.
         When filtering by footprint, alternatives also include EasyEDA UUIDs.
     """
     if not _client:

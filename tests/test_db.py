@@ -748,7 +748,8 @@ class TestStringSpecFilter:
         )
         assert result["total"] > 0  # Should find N-channel MOSFETs
         for part in result["results"]:
-            assert part["specs"].get("Type") == "N-Channel"
+            specs = part["specs"]
+            assert specs.get("Type") == "N-Channel" or specs.get("Number", "").lower().endswith(" n-channel")
 
     def test_type_filter_p_channel(self):
         """Type=P-Channel should find P-channel MOSFETs."""
@@ -760,7 +761,23 @@ class TestStringSpecFilter:
         )
         assert result["total"] > 0  # Should find P-channel MOSFETs
         for part in result["results"]:
-            assert part["specs"].get("Type") == "P-Channel"
+            specs = part["specs"]
+            assert specs.get("Type") == "P-Channel" or specs.get("Number", "").lower().endswith(" p-channel")
+
+    def test_polarity_stated_only_in_number(self):
+        """AO3401A (C15127, basic) has Type "-" and Number "1 P-Channel"; Type=P-Channel missed it."""
+        db = get_db()
+        result = db.search(
+            subcategory_name="MOSFETs", package="SOT-23", library_type="basic",
+            spec_filters=[SpecFilter("Type", "=", "P-Channel")], limit=50,
+        )
+        codes = [p["lcsc"] for p in result["results"]]
+        assert "C15127" in codes
+        n_channel = db.search(
+            subcategory_name="MOSFETs", package="SOT-23", library_type="basic",
+            spec_filters=[SpecFilter("Type", "=", "N-Channel")], limit=50,
+        )
+        assert "C15127" not in [p["lcsc"] for p in n_channel["results"]]
 
 
 class TestExtendedAliases:
@@ -945,8 +962,9 @@ class TestSmartQueryParsing:
             result = parse_smart_query(f"{code} connector")
             assert result.model_number is None, f"{code} should not be detected as model number"
 
-    def test_magnetics_synonym_for_filtered_connectors(self):
-        """'magnetics' should be replaced with 'filtered' for connector searches."""
+    def test_magnetics_left_out_for_connectors(self):
+        """'magnetics' used to become a required "filtered": JLCPCB marks only 23 RJ45 jacks that
+        way, so the usual magjacks (HR913550A) never came back. It's left out, with a note."""
         from pcbparts_mcp.smart_parser import parse_smart_query
 
         result = parse_smart_query("RJ45 magnetics THT")
@@ -954,13 +972,12 @@ class TestSmartQueryParsing:
         # Should detect as ethernet connector
         assert result.subcategory == "ethernet connectors / modular connectors (rj45 rj11)"
         assert result.mounting_type == "Through Hole"
+        assert result.remaining_text == ""
+        assert "magnetics" in result.detected["not_searched"][0]
 
-        # "magnetics" should be replaced with "filtered" in remaining text
-        assert result.remaining_text == "filtered"
-
-        # Test that "magnetics" -> "filtered" replacement only happens for connectors
+        # Only in connector context
         result_non_connector = parse_smart_query("magnetics sensor")
-        assert "filtered" not in result_non_connector.remaining_text.lower()
+        assert "not_searched" not in result_non_connector.detected
 
     def test_csp_package_detection(self):
         """CSP package variants (WLCSP, LFCSP, UCSP, etc.) should be detected correctly."""
@@ -1011,6 +1028,14 @@ class TestListAttributes:
             assert "type" in attr
             assert attr["type"] in ("numeric", "string")
             assert "count" in attr
+
+    def test_string_specs_arent_numeric(self):
+        """MOSFET Type ("N-Channel") was listed as numeric because SPEC_PARSERS names it (as None)."""
+        db = get_db()
+        types = {a["name"]: a["type"] for a in db.list_attributes(subcategory_name="MOSFETs")["attributes"]}
+        assert types["Type"] == "string"
+        assert types["Number"] == "string"
+        assert types["Drain to Source Voltage"] == "numeric"
 
     def test_list_attributes_includes_aliases(self):
         """Numeric attributes should show their short aliases."""

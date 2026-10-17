@@ -6,7 +6,7 @@ import sqlite3
 from typing import Any
 
 from ..alternatives import SPEC_PARSERS
-from ..search.spec_filter import ATTRIBUTE_ALIASES, _ATTR_FULL_TO_ALIASES
+from ..search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN, _ATTR_FULL_TO_ALIASES
 from ..subcategory_aliases import (
     resolve_subcategory_name as _resolve_subcategory_name,
     find_similar_subcategories as _find_similar_subcategories,
@@ -114,12 +114,6 @@ def list_attributes(
     # Build attribute list
     attributes = []
     for name, count in sorted(attr_counts.items(), key=lambda x: -x[1]):
-        # Determine if this is a numeric attribute
-        is_numeric = name in SPEC_PARSERS or any(
-            name in full_names for full_names in ATTRIBUTE_ALIASES.values()
-            if any(fn in SPEC_PARSERS for fn in ATTRIBUTE_ALIASES.get(alias_lookup.get(name, ""), [name]))
-        )
-
         values = list(attr_values.get(name, []))
         parser = SPEC_PARSERS.get(name)
         if not callable(parser):
@@ -132,6 +126,11 @@ def list_attributes(
                     if callable(candidate):
                         parser = candidate
                         break
+        if parser is None and name in SPEC_TO_COLUMN and callable(SPEC_TO_COLUMN[name][1]):
+            parser = SPEC_TO_COLUMN[name][1]  # e.g. ESR: range filters use its column
+        # Numeric only with a parser: names listed in SPEC_PARSERS as None ("Type", "Temperature
+        # Coefficient") are compared as strings, and range filters on them do nothing
+        is_numeric = parser is not None
 
         # Parse once: reuse for the numeric-type heuristic, sort key, and min/max.
         # Unparseable values (e.g. "-" sentinels) sort last so useful entries are visible.

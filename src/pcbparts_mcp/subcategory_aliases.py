@@ -144,6 +144,13 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # ==========================================================================
     "usb connector": "usb connectors",
     "usb-c": "usb connectors",
+    "usb-a": "usb connectors",
+    "usb a": "usb connectors",
+    "usb-b": "usb connectors",
+    "micro usb": "usb connectors",
+    "micro-usb": "usb connectors",
+    "mini usb": "usb connectors",
+    "mini-usb": "usb connectors",
     "usb type-c": "usb connectors",
     "type-c": "usb connectors",
     "type-c connector": "usb connectors",
@@ -444,6 +451,7 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # RELAYS
     # ==========================================================================
     "relay": "signal relays",
+    "relays": "signal relays",
     "solid state relay": "solid state relays",
     "ssr": "solid state relays",
     # ==========================================================================
@@ -490,6 +498,20 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # INTERFACE ICs (actual DB: "Translators, Level Shifters", "UART")
     # ==========================================================================
     "level shifter": "translators, level shifters",
+    "rs485 transceiver": "rs-485 / rs-422 ics",
+    "rs-485 transceiver": "rs-485 / rs-422 ics",
+    "rs485 ic": "rs-485 / rs-422 ics",
+    "rs-485 ic": "rs-485 / rs-422 ics",
+    "can transceiver": "can transceivers",
+    "can bus transceiver": "can transceivers",
+    "can-bus transceiver": "can transceivers",
+    "canbus transceiver": "can transceivers",
+    "mosfet driver": "gate drivers",
+    "mosfet gate driver": "gate drivers",
+    "gate driver": "gate drivers",
+    "igbt driver": "gate drivers",
+    "high side switch": "power distribution switches",
+    "high-side switch": "power distribution switches",
     "voltage translator": "translators, level shifters",
     "uart": "uart",
     # USB-to-UART converters (CH340, CP2102, FT232) are in "USB Converters", not "UART"
@@ -609,3 +631,22 @@ def find_similar_subcategories(
                 break
 
     return unique
+
+
+# Generic words that cover several subcategories. The smart parser searches all of them; an
+# explicit subcategory_name still resolves through SUBCATEGORY_ALIASES. "inductor" alone used to
+# search only Inductors (SMD): 8.4k of 41k inductors ("22uH inductor 3A": 5 results, 255 in Power
+# Inductors). "relay" missed the 1.3k power relays (the SRD-05VDC), "diode" the rectifiers.
+SUBCATEGORY_GROUPS: dict[str, tuple[str, ...]] = {
+    **dict.fromkeys(("inductor", "inductors", "coil"), (
+        "inductors (smd)", "power inductors", "molding power inductors",
+        "color ring inductors / through hole inductors",
+    )),
+    **dict.fromkeys(("relay", "relays"), (
+        "signal relays", "power relays", "automotive relays", "reed relays", "magnetic latching relays",
+    )),
+    **dict.fromkeys(("diode", "diodes"), (
+        "switching diodes", "diodes - general purpose", "schottky diodes",
+        "fast recovery / high efficiency diodes", "super barrier rectifiers (sbr)",
+    )),
+}

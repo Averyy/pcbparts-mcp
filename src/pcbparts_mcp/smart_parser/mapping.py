@@ -3,9 +3,19 @@
 from .values import ExtractedValue
 
 
-# Maps (category_keyword, value_type) -> spec_name
+# Maps (category_keyword, value_type) -> spec_name, or (spec_name, operator) where the default
+# operator is wrong (a 5.1V zener is 5.1V, not >= 5.1V). Keys are keywords or subcategory names.
 # This allows voltage to map to Vds for MOSFETs, Vr for diodes, etc.
-CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
+# A 3.3V LDO outputs exactly 3.3V (Vout: the column, so adjustable LDOs don't match); a 5V DC-DC
+# converter's output range covers 5V (most are adjustable: "0.8V~5.5V")
+_LDO = {"voltage": ("Vout", "="), "current": "Output Current"}
+_REGULATOR = {"voltage": ("Output Voltage", "="), "current": "Output Current"}
+_ZENER = {"voltage": ("Zener Voltage(Nom)", "=")}
+_RELAY = {"voltage": ("Coil Voltage", "=")}
+_THERMISTOR = {"resistance": ("Resistance @ 25℃", "=")}
+_SUPPLY = {"voltage": ("Supply Voltage", "=")}  # runs at that voltage: inside the supply range
+
+CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str | tuple[str, str]]] = {
     # MOSFETs
     "mosfet": {
         "voltage": "Vds",
@@ -45,12 +55,9 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
         "voltage": "Vr",
         "current": "If",
     },
-    "zener": {
-        "voltage": "Zener Voltage(Nom)",
-    },
-    "zener diode": {
-        "voltage": "Zener Voltage(Nom)",
-    },
+    "zener": _ZENER,
+    "zener diode": _ZENER,
+    "zener diodes": _ZENER,
     "rectifier": {
         "voltage": "Vr",
         "current": "If",
@@ -164,30 +171,31 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str]] = {
     },
 
     # Voltage Regulators
-    "ldo": {
-        "voltage": "Output Voltage",
-        "current": "Output Current",
-    },
-    "regulator": {
-        "voltage": "Output Voltage",
-        "current": "Output Current",
-    },
-    "linear regulator": {
-        "voltage": "Output Voltage",
-        "current": "Output Current",
-    },
-    "buck": {
-        "voltage": "Output Voltage",
-        "current": "Output Current",
-    },
-    "boost": {
-        "voltage": "Output Voltage",
-        "current": "Output Current",
-    },
-    "dc-dc": {
-        "voltage": "Output Voltage",
-        "current": "Output Current",
-    },
+    "ldo": _LDO,
+    "regulator": _LDO,
+    "linear regulator": _LDO,
+    "buck": _REGULATOR,
+    "boost": _REGULATOR,
+    "dc-dc": _REGULATOR,
+    "dc-dc converters": _REGULATOR,
+    "voltage regulators - linear, low drop out (ldo) regulators": _LDO,
+
+    # Relays: "5V relay" is the coil voltage
+    "relay": _RELAY,
+    "relays": _RELAY,
+    "signal relays": _RELAY,
+    "power relays": _RELAY,
+
+    # Thermistors list "Resistance @ 25℃", not Resistance
+    "ntc": _THERMISTOR,
+    "thermistor": _THERMISTOR,
+    "ptc thermistor": _THERMISTOR,
+    "ntc thermistors": _THERMISTOR,
+    "ptc thermistors": _THERMISTOR,
+
+    # A "5V buzzer" runs at 5V (its Voltage Rating is a list, "3V、5V、12V")
+    "buzzer": _SUPPLY,
+    "buzzers": _SUPPLY,
 
     # LEDs
     "led": {
@@ -358,27 +366,22 @@ def map_value_to_spec(
         "pitch": ("Pitch", "="),
     }
 
-    # Try to get category-specific mapping from matched keyword
-    if matched_keyword and matched_keyword.lower() in CATEGORY_ATTRIBUTE_MAP:
-        cat_map = CATEGORY_ATTRIBUTE_MAP[matched_keyword.lower()]
-        if value.unit_type in cat_map:
-            spec_name = cat_map[value.unit_type]
-            # Determine operator based on spec type
-            if value.unit_type in ("resistance", "capacitance", "inductance", "frequency", "tolerance", "pin_count", "position_count", "pin_structure", "pitch"):
-                return spec_name, "="
-            else:
-                return spec_name, ">="
-
-    # Try to get category-specific mapping from component_type (subcategory)
-    # This handles cases like USB connectors where subcategory is set from package pattern
-    if component_type and component_type.lower() in CATEGORY_ATTRIBUTE_MAP:
-        cat_map = CATEGORY_ATTRIBUTE_MAP[component_type.lower()]
-        if value.unit_type in cat_map:
-            spec_name = cat_map[value.unit_type]
-            if value.unit_type in ("resistance", "capacitance", "inductance", "frequency", "tolerance", "pin_count", "position_count", "pin_structure", "pitch"):
-                return spec_name, "="
-            else:
-                return spec_name, ">="
+    # Category-specific mapping: from the matched keyword, then from the subcategory (this handles
+    # keywords without an entry, like "buck converter", and USB connectors whose subcategory is
+    # set from the package pattern)
+    for key in (matched_keyword, component_type):
+        if not key or key.lower() not in CATEGORY_ATTRIBUTE_MAP:
+            continue
+        cat_map = CATEGORY_ATTRIBUTE_MAP[key.lower()]
+        if value.unit_type not in cat_map:
+            continue
+        mapped = cat_map[value.unit_type]
+        if isinstance(mapped, tuple):
+            return mapped
+        # Determine operator based on spec type
+        if value.unit_type in ("resistance", "capacitance", "inductance", "frequency", "tolerance", "pin_count", "position_count", "pin_structure", "pitch"):
+            return mapped, "="
+        return mapped, ">="
 
     # Fall back to defaults
     if value.unit_type in default_specs:
