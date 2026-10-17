@@ -1,10 +1,12 @@
 """Anonymous usage counts for /mcp/stats, DigiKey request spacing, and cached DigiKey "not found" answers
-(0.6.3). No network: httpx.MockTransport and fake clocks."""
+(0.6.3); outcome columns and error sorting (0.6.4). No network: httpx.MockTransport and fake clocks."""
 
+import ast
 import asyncio
 import datetime
 import json
 import time
+from pathlib import Path
 
 import httpx
 import pytest
@@ -151,15 +153,94 @@ class TestTTLCacheTtl:
 class TestUsageStats:
     def test_counts_calls_by_outcome(self):
         usage = UsageStats(clock=Clock())
-        usage.record_call("jlc_search", "ok", 40)
-        usage.record_call("jlc_search", "empty", 20)
-        usage.record_call("jlc_search", "error", 30)
-        usage.record_call("board_get", "failed", 5)
+        for outcome, ms in (("ok", 40), ("not_found", 20), ("bad_request", 30), ("rate_limited", 10), ("failed", 50)):
+            usage.record_call("jlc_search", outcome, ms)
+        usage.record_call("board_get", "something new", 5)  # not an outcome: counts as failed
         day = usage.summary()["days"][0]
-        assert day["date"] == "2026-10-17" and day["calls"] == 4
-        assert day["tools"]["jlc_search"] == {"calls": 3, "errors": 1, "failed": 0, "empty": 1, "avg_ms": 30}
+        assert day["date"] == "2026-10-17" and day["calls"] == 6
+        assert day["tools"]["jlc_search"] == {"calls": 5, "ok": 1, "not_found": 1, "bad_request": 1,
+                                              "rate_limited": 1, "failed": 1, "avg_ms": 30}
         assert day["tools"]["board_get"]["failed"] == 1
         assert list(day["tools"]) == ["jlc_search", "board_get"]  # busiest first
+        for counts in day["tools"].values():  # the outcomes add up to the calls
+            assert sum(counts[key] for key in stats.OUTCOMES) == counts["calls"]
+
+    def test_0_6_3_counts_are_converted(self, tmp_path):
+        """0.6.3 saved errors/failed/empty and distributor "limited"; error replies can't be sorted
+        after the fact, so they stay as unsorted on those days."""
+        path = tmp_path / "usage.json"
+        path.write_text(json.dumps({"days": {"2026-10-17": {
+            "tools": {"jlc_search": {"calls": 9, "errors": 1, "failed": 0, "empty": 4, "ms": 900},
+                      "board_get": {"calls": 2, "errors": 0, "failed": 2, "empty": 0, "ms": 4}},
+            "apps": {"cursor": 1}, "callers": 3,
+            "distributors": {"mouser": {"sent": 1, "cached": 0, "limited": 2}}}}}), encoding="utf-8")
+        usage = UsageStats(clock=Clock())
+        usage.open(path)
+        usage.record_call("jlc_search", "ok", 100)
+        day = usage.summary()["days"][0]
+        assert day["tools"]["jlc_search"] == {"calls": 10, "ok": 5, "not_found": 4, "bad_request": 0,
+                                              "rate_limited": 0, "failed": 0, "unsorted": 1, "avg_ms": 100}
+        assert day["tools"]["board_get"]["bad_request"] == 2 and "unsorted" not in day["tools"]["board_get"]
+        assert "plus unsorted where shown" in usage.summary()["about"]
+        assert day["distributors"]["mouser"] == {"sent": 1, "cached": 0, "rate_limited": 2}
+        usage.save()  # saved in the new form, and read back the same
+        again = UsageStats(clock=Clock())
+        again.open(path)
+        assert again.summary()["days"][0]["tools"] == day["tools"]
+
+    def test_totals_add_up_the_days_shown(self):
+        clock = Clock()
+        usage = UsageStats(clock=clock)
+        for day, (calls, app) in enumerate(((2, "cursor"), (3, "claude-code"), (4, "cursor"))):
+            for _ in range(calls):
+                usage.record_call("jlc_search", "ok", 10 * (day + 1), caller=f"203.0.113.{day}")
+            usage.record_call("board_get", "not_found", 1)
+            usage.record_app(app)
+            usage.record_distributor("mouser", "sent")
+            clock.advance(86400)
+        summary = usage.summary()
+        totals = summary["totals"]
+        assert (totals["from"], totals["to"], totals["days"]) == ("2026-10-17", "2026-10-19", 3)
+        assert totals["calls"] == 12 == sum(d["calls"] for d in summary["days"])
+        assert totals["tools"]["jlc_search"] == {"calls": 9, "ok": 9, "not_found": 0, "bad_request": 0,
+                                                 "rate_limited": 0, "failed": 0, "avg_ms": 22}  # (20+60+120)/9
+        assert totals["tools"]["board_get"]["not_found"] == 3
+        assert totals["apps"] == {"cursor": 2, "claude-code": 1}
+        assert totals["distributors"] == {"mouser": {"sent": 3, "cached": 0, "rate_limited": 0}}
+        assert "callers" not in totals
+        assert usage.summary(days=1)["totals"]["calls"] == 5  # only the newest day
+        assert totals["hours"][21] == 12 and sum(totals["hours"]) == 12  # all at 21:xx UTC
+        assert UsageStats(clock=clock).summary()["totals"] == {
+            "from": None, "to": None, "days": 0, "calls": 0, "hours": [0] * 24, "tools": {}, "apps": {},
+            "distributors": {}}
+
+    def test_calls_per_utc_hour(self, tmp_path):
+        clock = Clock(datetime.datetime(2026, 10, 18, 0, 30, tzinfo=UTC).timestamp())
+        usage = UsageStats(clock=clock)
+        usage.open(tmp_path / "usage.json")
+        for hours_later in (0, 0, 1, 23):
+            clock.now = datetime.datetime(2026, 10, 18, 0, 30, tzinfo=UTC).timestamp() + hours_later * 3600
+            usage.record_call("jlc_search", "ok", 1)
+        day = usage.summary()["days"][0]
+        assert day["hours"][:2] == [2, 1] and day["hours"][23] == 1 and sum(day["hours"]) == day["calls"] == 4
+        usage.save()
+        again = UsageStats(clock=clock)
+        again.open(tmp_path / "usage.json")
+        assert again.summary()["days"][0]["hours"] == day["hours"]
+
+    def test_hours_before_the_upgrade_are_unknown(self, tmp_path):
+        """A day saved by 0.6.3 has no hours: the ones before the first call after the upgrade are
+        null, not 0, so a graph doesn't show a false dip."""
+        path = tmp_path / "usage.json"
+        path.write_text(json.dumps({"days": {"2026-10-17": {
+            "tools": {"jlc_search": {"calls": 9, "errors": 1, "failed": 0, "empty": 4, "ms": 900}}}}}), encoding="utf-8")
+        usage = UsageStats(clock=Clock())  # 21:15 UTC
+        usage.open(path)
+        assert usage.summary()["days"][0]["hours"] is None
+        usage.record_call("jlc_search", "ok", 1)
+        hours = usage.summary()["days"][0]["hours"]
+        assert hours[:21] == [None] * 21 and hours[21] == 1 and hours[22:] == [0, 0]
+        assert usage.summary()["totals"]["hours"][21] == 1 and sum(usage.summary()["totals"]["hours"]) == 1
 
     def test_names_that_arent_tools_count_as_unknown(self):
         usage = UsageStats(clock=Clock())
@@ -198,9 +279,9 @@ class TestUsageStats:
 
     def test_distributor_events(self):
         usage = UsageStats(clock=Clock())
-        for event in ("sent", "sent", "cached", "limited"):
+        for event in ("sent", "sent", "cached", "rate_limited"):
             usage.record_distributor("digikey", event)
-        assert usage.summary()["days"][0]["distributors"] == {"digikey": {"sent": 2, "cached": 1, "limited": 1}}
+        assert usage.summary()["days"][0]["distributors"] == {"digikey": {"sent": 2, "cached": 1, "rate_limited": 1}}
 
     def test_counts_survive_a_restart(self, tmp_path):
         path, clock = tmp_path / "usage.json", Clock()
@@ -256,14 +337,14 @@ class TestUsageStats:
 
 
 class TestDistributorEvents:
-    async def test_digikey_sent_cached_limited(self):
+    async def test_digikey_sent_cached_rate_limited(self):
         usage = stats.usage
         fake = FakeDigiKey(httpx.Response(200, json=PRODUCT))
         client = digikey(fake, DailyQuota("DigiKey", 1))
         await client.get_part("LM358P")
         await client.get_part("LM358P")
         await client.get_part("NE555P")  # over the daily limit of 1
-        assert usage.summary()["days"][0]["distributors"]["digikey"] == {"sent": 1, "cached": 1, "limited": 1}
+        assert usage.summary()["days"][0]["distributors"]["digikey"] == {"sent": 1, "cached": 1, "rate_limited": 1}
 
     async def test_mouser_sent_and_cached(self):
         body = {"Errors": [], "SearchResults": {"NumberOfResult": 0, "Parts": []}}
@@ -271,7 +352,7 @@ class TestDistributorEvents:
         client._client = httpx.AsyncClient(transport=httpx.MockTransport(lambda request: httpx.Response(200, json=body)))
         await client.get_part("LM358P")
         await client.get_part("LM358P")
-        assert stats.usage.summary()["days"][0]["distributors"]["mouser"] == {"sent": 1, "cached": 1, "limited": 0}
+        assert stats.usage.summary()["days"][0]["distributors"]["mouser"] == {"sent": 1, "cached": 1, "rate_limited": 0}
 
 
 class TestServerWiring:
@@ -288,18 +369,32 @@ class TestServerWiring:
                 await client.call_tool("not_a_tool", {})
             assert len(stats.usage.tools) == 14
         day = stats.usage.summary()["days"][0]
-        assert day["tools"]["get_design_rules"]["calls"] == 1
-        assert day["tools"]["digikey_get_part"]["errors"] == 1
-        assert day["tools"]["board_get"]["failed"] == 1
-        assert day["tools"]["unknown"]["failed"] == 1
+        assert day["tools"]["get_design_rules"]["ok"] == 1
+        assert day["tools"]["digikey_get_part"]["failed"] == 1  # not configured: this server can't do it
+        assert day["tools"]["board_get"]["bad_request"] == 1  # bad arguments
+        assert day["tools"]["unknown"]["bad_request"] == 1  # no such tool
         assert sum(day["apps"].values()) == 1
 
-    async def test_empty_results_are_counted(self):
+    async def test_outcomes_through_the_server(self, monkeypatch):
         from fastmcp import Client
+        from fastmcp.exceptions import ToolError
         from pcbparts_mcp import server
         async with Client(server.mcp) as client:
-            await client.call_tool("sensor_recommend", {"query": "zzzzqqqq nonexistent"})
-        assert stats.usage.summary()["days"][0]["tools"]["sensor_recommend"]["empty"] == 1
+            await client.call_tool("sensor_recommend", {"query": "zzzzqqqq nonexistent"})  # nothing found
+            await client.call_tool("jlc_search", {"subcategory_name": "Flux Capacitors"})  # invalid filter
+            await client.call_tool("board_get", {"slug": "no-such-board"})  # valid request, no such board
+
+            def crash(*args, **kwargs):
+                raise RuntimeError("boom")
+
+            monkeypatch.setattr(server, "_get_design_rules", crash)
+            with pytest.raises(ToolError):
+                await client.call_tool("get_design_rules", {"topic": "ldo"})
+        tools = stats.usage.summary()["days"][0]["tools"]
+        assert tools["sensor_recommend"]["not_found"] == 1
+        assert tools["jlc_search"]["bad_request"] == 1
+        assert tools["board_get"]["not_found"] == 1
+        assert tools["get_design_rules"]["failed"] == 1  # a crash in our code
 
     async def test_over_http(self):
         """The real ASGI app: callers come from the rightmost X-Forwarded-For, apps from initialize,
@@ -319,7 +414,9 @@ class TestServerWiring:
                 call = {"name": "get_design_rules", "arguments": {"topic": "usb"}}
                 for ip in ("203.0.113.9", "198.51.100.1, 203.0.113.9", "198.51.100.1"):
                     assert (await rpc(c, "tools/call", call, ip)).status_code == 200
-                body = (await c.get("/mcp/stats?days=abc")).json()
+                response = await c.get("/mcp/stats?days=abc")
+                assert response.headers["cache-control"] == "public, max-age=60"
+                body = response.json()
                 assert len((await c.get("/mcp/stats?days=0")).json()["days"]) == 1
                 assert (await c.get("/mcp/stats?days=1000")).status_code == 200
         day = body["days"][0]
@@ -353,3 +450,171 @@ class TestServerWiring:
             await client.call_tool("get_design_rules", {"topic": "usb"})
         saved = json.loads(path.read_text(encoding="utf-8"))["days"]
         assert next(iter(saved.values()))["tools"]["get_design_rules"]["calls"] == 1
+
+
+# --- Error sorting: every error message in the code, and the kind it counts as ---
+
+SRC = Path(__file__).parent.parent / "src" / "pcbparts_mcp"
+
+# {"error": ...} replies, by their text with formatted parts as {}
+ERROR_REPLIES = {
+    "Boards database not available": "failed",
+    "Sensor database not available": "failed",
+    "Database not available": "failed",
+    "Design rules are not available.": "failed",
+    "Categories not loaded": "failed",
+    "Categories not loaded. Server may still be starting up.": "failed",
+    "CSE client not initialized": "failed",
+    "CSE credentials not configured. Set CSEARCH_USER and CSEARCH_PASS in environment.": "failed",
+    "CSE authentication failed. Check CSEARCH_USER and CSEARCH_PASS.": "failed",
+    "CSE model download failed (HTTP {})": "failed",
+    "CSE model download failed (network/connection error)": "failed",
+    "CSE model download too large ({} bytes, max {})": "failed",
+    "CSE returned invalid zip file": "failed",
+    "CSE search failed. Check server logs for details.": "failed",
+    "CSE get_kicad failed. Check server logs for details.": "failed",
+    "Mouser API key not configured. Set MOUSER_API_KEY in environment.": "failed",
+    "DigiKey API credentials not configured. Set DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET in environment.": "failed",
+    "Mouser part lookup failed: {}": "failed",
+    "Mouser part lookup failed. Check server logs for details.": "failed",
+    "DigiKey part lookup failed: {}": "failed",
+    "DigiKey part lookup failed. Check server logs for details.": "failed",
+    "Failed to fetch EasyEDA data. Check server logs for details.": "failed",
+    "Invalid EasyEDA response for {}": "failed",
+    "Invalid EasyEDA response - missing pin data": "failed",
+    "Search failed: query too complex. Reduce the number of filters.": "failed",
+    "Board search failed": "failed",
+    "Board retrieval failed": "failed",
+    "{} daily quota exceeded ({} requests/day on this shared server). It resets at {}.{}": "rate_limited",
+    "{} daily quota exceeded ({}). It resets at {}.{}": "rate_limited",
+    "{} daily quota exceeded (counted by {}). {} doesn't say when its count resets, so this server tries again at {}.{}": "rate_limited",
+    "{} lookups are limited to {} a minute on this shared server. Try again in {} s.{}": "rate_limited",
+    "{} is limiting requests per minute. Try again in {} s.{}": "rate_limited",
+    "{} refused this server's requests (HTTP 403). Try again in {} s.{}": "rate_limited",
+    "Couldn't check EasyEDA for {}'s symbol right now (lookup failed or EasyEDA is rate-limiting). Try again in a few minutes.": "rate_limited",
+    "Subcategory not found: '{}'": "bad_request",
+    "Category not found: '{}'": "bad_request",
+    "Subcategory ID {} not found": "bad_request",
+    "Must provide subcategory_id or subcategory_name": "bad_request",
+    "Must provide either query or part_id": "bad_request",
+    "Must provide either lcsc or mpn": "bad_request",
+    "Must provide either lcsc or uuid": "bad_request",
+    "Query too long (max 500 characters)": "bad_request",
+    "Query too long (max {} characters)": "bad_request",
+    "Component too long (max 200 characters)": "bad_request",
+    "Org too long (max 200 characters)": "bad_request",
+    "Focus too long (max 200 characters)": "bad_request",
+    "MPN too long (max 100 characters)": "bad_request",
+    "Part number too long (max 500 characters)": "bad_request",
+    "Product number too long (max 500 characters)": "bad_request",
+    "Too many {} (max {}, got {})": "bad_request",
+    "Query contains invalid characters": "bad_request",
+    "Query contains no searchable terms": "bad_request",
+    "Invalid slug": "bad_request",
+    "Give a DigiKey or manufacturer part number.": "bad_request",
+    "Give at least one Mouser or manufacturer part number.": "bad_request",
+    "Mouser takes up to {} part numbers per call, separated by |; got {}. Split the batch.": "bad_request",
+    "Each Mouser part number must be 3-40 characters: {}": "bad_request",
+    "Part not found: {}": "not_found",
+    "Part {} not found": "not_found",
+    "Board '{}' not found": "not_found",
+    "No JLCPCB parts found for MPN '{}'": "not_found",
+    "No parts found for '{}'": "not_found",
+    "No ECAD model available for '{}'": "not_found",
+    "No KiCad files found in model archive for part {}": "not_found",
+    "No EasyEDA symbol available for {}": "not_found",
+    "No EasyEDA symbol UUID for {}": "not_found",
+}
+NOT_TOOL_REPLIES = {"Rate limit exceeded", "Request body too large"}  # HTTP middleware answers
+
+# Exception messages the tools pass on as {"error": str(e)}
+EXCEPTION_MESSAGES = {
+    "JLCPCB blocked request with WAF challenge — try again later": "failed",
+    "JLCPCB rate limited — try again later": "rate_limited",
+    "JLCPCB returned empty response — try again later": "failed",
+    "JLCPCB connection failed — try again later": "failed",
+    "JLCPCB request timed out — try again later": "failed",
+    "JLCPCB returned HTTP {} — try again later": "failed",
+    "JLCPCB API error: {}": "failed",
+    "UUID is required": "bad_request",
+    "Invalid UUID format": "bad_request",
+    "EasyEDA has no symbol {}": "not_found",
+    "Failed to fetch component data from EasyEDA": "failed",
+    "Invalid EasyEDA response - missing dataStr": "failed",
+    "DigiKey is limiting requests (HTTP 429). Try again later.": "rate_limited",
+    "Mouser is limiting requests ({}). Try again later.": "rate_limited",
+}
+
+
+def _text(node) -> str:
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    if isinstance(node, ast.JoinedStr):
+        return "".join(v.value if isinstance(v, ast.Constant) else "{}" for v in node.values)
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        return _text(node.left) + _text(node.right)
+    return "{}"
+
+
+def _render(template: str) -> str:
+    return template.replace("{}", "7")
+
+
+class TestErrorSorting:
+    def test_every_error_reply_in_the_code_is_sorted(self):
+        """A new or reworded error message must be added to ERROR_REPLIES with its kind, so it can't
+        count as "failed" by accident."""
+        from pcbparts_mcp.server import _error_kind
+        found = set()
+        for path in SRC.rglob("*.py"):
+            for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+                if isinstance(node, ast.Dict):
+                    for key, value in zip(node.keys, node.values):
+                        if isinstance(key, ast.Constant) and key.value == "error":
+                            text = _text(value)
+                            if text != "{}" and text not in NOT_TOOL_REPLIES:  # "{}": str(e), below
+                                found.add(text)
+        assert found - set(ERROR_REPLIES) == set(), "classify these in ERROR_REPLIES"
+        assert set(ERROR_REPLIES) - found == set(), "no longer in the code: remove from ERROR_REPLIES"
+        wrong = {t: (_error_kind(_render(t)), kind) for t, kind in ERROR_REPLIES.items() if _error_kind(_render(t)) != kind}
+        assert wrong == {}
+
+    def test_exception_messages_passed_on(self):
+        from pcbparts_mcp.server import _error_kind
+        client = (SRC / "client.py").read_text(encoding="utf-8")
+        raised = {_text(node.args[0]) for node in ast.walk(ast.parse(client))
+                  if isinstance(node, ast.Call) and getattr(node.func, "id", "") in ("ValueError", "EasyEDAComponentNotFound")
+                  and node.args}
+        assert raised - set(EXCEPTION_MESSAGES) == set(), "classify these in EXCEPTION_MESSAGES"
+        wrong = {t: _error_kind(_render(t)) for t, kind in EXCEPTION_MESSAGES.items() if _error_kind(_render(t)) != kind}
+        assert wrong == {}
+
+    def test_real_limit_messages(self):
+        """The messages DailyQuota really produces, in each state."""
+        from pcbparts_mcp.server import _error_kind
+        clock = Clock()
+        quota = DailyQuota("DigiKey", 1, clock=clock, per_minute=1, own_key="DigiKey API credentials")
+        assert quota.check() is None
+        messages = [quota.check()["error"]]  # daily limit
+        for reason in ("daily", "daily_unknown", "refused", "burst"):
+            quota.pause(clock() + 1000 * (len(messages) + 1), reason)
+            messages.append(quota.paused_error()["error"])
+        minute = DailyQuota("Mouser", 10, clock=clock, per_minute=1)
+        minute.check()
+        messages.append(minute.check()["error"])  # per-minute cap
+        assert {_error_kind(m) for m in messages} == {"rate_limited"}, messages
+
+    def test_user_text_cant_change_the_kind(self):
+        """Messages are matched from their start, so what a user typed can't move them."""
+        from pcbparts_mcp.server import _error_kind
+        assert _error_kind("Part not found: Query too long (max 5 characters)") == "not_found"
+        assert _error_kind("No JLCPCB parts found for MPN 'daily quota exceeded '") == "not_found"
+        assert _error_kind("Something nobody expected") == "failed"
+
+    def test_exceptions(self):
+        from fastmcp.exceptions import NotFoundError, ToolError, ValidationError
+        from pcbparts_mcp.server import _exception_outcome
+        assert _exception_outcome(ValidationError("bad args")) == "bad_request"
+        assert _exception_outcome(NotFoundError("Unknown tool")) == "bad_request"
+        assert _exception_outcome(ToolError("Error calling tool")) == "failed"
+        assert _exception_outcome(RuntimeError("boom")) == "failed"

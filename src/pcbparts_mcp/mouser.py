@@ -244,7 +244,7 @@ class MouserClient:
         if self._quota:
             quota_error = self._quota.check(caller)
             if quota_error:
-                stats.usage.record_distributor("mouser", "limited")
+                stats.usage.record_distributor("mouser", "rate_limited")
                 return quota_error
         stats.usage.record_distributor("mouser", "sent")
 

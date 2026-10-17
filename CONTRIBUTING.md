@@ -87,6 +87,10 @@ Run the server locally:
   issue first. Fixing a bug ≠ removing or redefining behavior.
 - MCP tools return errors as dicts (`{"error": "..."}`), never raise user-facing
   exceptions — raised exceptions are masked to a generic message in production.
+- A new or reworded error message also needs sorting for the usage stats
+  (`/mcp/stats`): list it in `ERROR_REPLIES` in `tests/test_usage_stats.py` as
+  `not_found`, `bad_request`, `rate_limited` or `failed`, and add a pattern to
+  `_ERROR_KINDS` in `server.py` if none matches. The test names any message you missed.
 - Library types are domain-critical: `basic`/`preferred` = no assembly fee,
   `extended` = $3 per unique part. Don't conflate them.
 - JLCPCB API gotcha: `firstSortName` is the **subcategory** and `secondSortName` is the
