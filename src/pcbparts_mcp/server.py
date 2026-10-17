@@ -4,12 +4,14 @@ import asyncio
 import contextlib
 import json
 import logging
+import re
 import time
 from collections import defaultdict
 from contextlib import asynccontextmanager
 from typing import Any, Literal
 
 from fastmcp import FastMCP
+from fastmcp.exceptions import NotFoundError, ValidationError
 from fastmcp.server.dependencies import get_http_request
 from fastmcp.server.middleware import Middleware as FastMCPMiddleware
 from mcp.types import ToolAnnotations
@@ -186,16 +188,61 @@ mcp = FastMCP(
 )
 
 
+# Our error replies, sorted for the usage counts by the start of their text (stats.OUTCOMES). Anchored
+# at the start because many messages end with what the user typed. A message that matches none of
+# these counts as "failed", so an unexpected failure shows up. tests/test_usage_stats.py checks every
+# error message in the code against this list.
+_ERROR_KINDS = [(kind, re.compile(pattern)) for kind, pattern in (
+    # a limit turned the request away: ours, Mouser's, DigiKey's, JLCPCB's or EasyEDA's
+    ("rate_limited", r"\w+ daily quota exceeded "),
+    ("rate_limited", r"\w+ lookups are limited to "),
+    ("rate_limited", r"\w+ is limiting requests"),
+    ("rate_limited", r"\w+ refused this server's requests"),
+    ("rate_limited", r"JLCPCB rate limited"),
+    ("rate_limited", r"Couldn't check EasyEDA for .* right now"),
+    # the request was invalid
+    ("bad_request", r"(Subcategory|Category) not found: "),
+    ("bad_request", r"Subcategory ID \S+ not found$"),
+    ("bad_request", r"[\w ]+ too long \(max \d+ characters\)$"),
+    ("bad_request", r"Too many "),
+    ("bad_request", r"Must provide "),
+    ("bad_request", r"Give (a|at least one) "),
+    ("bad_request", r"Mouser takes up to "),
+    ("bad_request", r"Each Mouser part number must be "),
+    ("bad_request", r"Query contains (invalid characters|no searchable terms)$"),
+    ("bad_request", r"(Invalid slug|Invalid UUID format|UUID is required)$"),
+    # it worked and found nothing
+    ("not_found", r"Part not found: "),
+    ("not_found", r"Part .* not found$"),
+    ("not_found", r"Board '.*' not found$"),
+    ("not_found", r"No (JLCPCB parts|parts) found for "),
+    ("not_found", r"No ECAD model available for "),
+    ("not_found", r"No KiCad files found in model archive "),
+    ("not_found", r"No EasyEDA symbol (available|UUID) for "),
+    ("not_found", r"EasyEDA has no symbol "),
+)]
+
+
+def _error_kind(message: str) -> str:
+    return next((kind for kind, pattern in _ERROR_KINDS if pattern.match(message)), "failed")
+
+
 def _call_outcome(result: Any) -> str:
-    """For the usage counts: "error" if the tool replied with an error, "empty" if it found nothing."""
+    """For the usage counts, how a tool call that returned went (stats.OUTCOMES)."""
     content = getattr(result, "structured_content", None)
     if not isinstance(content, dict):
         return "ok"
     if content.get("error"):
-        return "error"
+        return _error_kind(str(content["error"]))
     if any(key in content and not content[key] for key in ("results", "alternatives", "matched_files")):
-        return "empty"
+        return "not_found"
     return "ok"
+
+
+def _exception_outcome(error: Exception) -> str:
+    """For the usage counts, how a tool call that raised went: bad arguments or an unknown tool are
+    the caller's mistake; anything else broke here."""
+    return "bad_request" if isinstance(error, (ValidationError, NotFoundError)) else "failed"
 
 
 class UsageStatsMiddleware(FastMCPMiddleware):
@@ -213,17 +260,16 @@ class UsageStatsMiddleware(FastMCPMiddleware):
         start = time.monotonic()
         try:
             result = await call_next(context)
-        except Exception:
-            self._record(context, None, start)
+        except Exception as e:
+            self._record(context, start, error=e)
             raise
-        self._record(context, result, start)
+        self._record(context, start, result=result)
         return result
 
     @staticmethod
-    def _record(context, result: Any, start: float) -> None:
-        """result is None when the call raised."""
+    def _record(context, start: float, result: Any = None, error: Exception | None = None) -> None:
         try:
-            outcome = "failed" if result is None else _call_outcome(result)
+            outcome = _exception_outcome(error) if error is not None else _call_outcome(result)
             stats.usage.record_call(context.message.name, outcome, (time.monotonic() - start) * 1000, _caller_ip())
         except Exception:
             logger.exception("Usage stats: couldn't count a tool call")
@@ -1449,7 +1495,9 @@ async def usage_stats(request):
         days = int(request.query_params.get("days", "30"))
     except ValueError:
         days = 30
-    return JSONResponse(stats.usage.summary(max(1, min(days, stats.PUBLIC_DAYS))))
+    # The counts change all the time, but a minute old is fine for a page that graphs them
+    return JSONResponse(stats.usage.summary(max(1, min(days, stats.PUBLIC_DAYS))),
+                        headers={"Cache-Control": "public, max-age=60"})
 
 
 class BodySizeLimitMiddleware(BaseHTTPMiddleware):
