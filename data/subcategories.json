@@ -2809,6 +2809,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "1187": {
+    "name": "Level relays",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "1185": {
     "name": "Lighting transformers",
     "category_id": 46,
@@ -2876,6 +2881,11 @@
   },
   "953": {
     "name": "Other sensors",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "1118": {
+    "name": "Overload relay",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
@@ -2951,11 +2961,6 @@
   },
   "1302": {
     "name": "Relay base",
-    "category_id": 46,
-    "category_name": "Industrial control electrical"
-  },
-  "1320": {
-    "name": "Relay module",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
@@ -3529,11 +3534,6 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3531": {
-    "name": "Network Switch",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3849,11 +3849,6 @@
     "category_id": 68,
     "category_name": "Power Modules"
   },
-  "3551": {
-    "name": "Fire axe",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
   "2029": {
     "name": "SiC Diodes",
     "category_id": 66,
@@ -4064,18 +4059,8 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "1746": {
-    "name": "Double-headed screwdrivers",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "3727": {
     "name": "Electric Soldering Iron",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "156": {
-    "name": "Flat head screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -4086,21 +4071,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1785": {
-    "name": "Other non-standard sockets",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1757": {
-    "name": "Palm screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "157": {
-    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -4121,11 +4091,6 @@
   },
   "3734": {
     "name": "Specialty Screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1915": {
-    "name": "Spray gun",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
