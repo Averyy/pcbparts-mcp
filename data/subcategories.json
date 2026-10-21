@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -4064,6 +4059,11 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "156": {
+    "name": "Flat head screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "882": {
     "name": "Grease gun",
     "category_id": 50,
@@ -4071,6 +4071,21 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "1758": {
+    "name": "Hex screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "1757": {
+    "name": "Palm screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "157": {
+    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -4094,8 +4109,23 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
+  "1749": {
+    "name": "Star-shaped screwdrivers",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
   "2362": {
     "name": "Tile drill bits",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "3660": {
+    "name": "torque screwdriver",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "2788": {
+    "name": "Tweezers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -4201,6 +4231,11 @@
   },
   "1473": {
     "name": "Labels, tags",
+    "category_id": 61,
+    "category_name": "Wires and cables"
+  },
+  "3751": {
+    "name": "M12 Cable",
     "category_id": 61,
     "category_name": "Wires and cables"
   },
