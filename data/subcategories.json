@@ -1609,6 +1609,11 @@
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
+  "440": {
+    "name": "Thermal conductive sheet/thermal conductive cap",
+    "category_id": 59,
+    "category_name": "Consumables and auxiliary materials"
+  },
   "3038": {
     "name": "Ceramic Resonators",
     "category_id": 7,
@@ -3529,6 +3534,11 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "3498": {
+    "name": "flag",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -4059,11 +4069,6 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "156": {
-    "name": "Flat head screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "882": {
     "name": "Grease gun",
     "category_id": 50,
@@ -4071,21 +4076,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1758": {
-    "name": "Hex screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1757": {
-    "name": "Palm screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "157": {
-    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -4109,23 +4099,8 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "1749": {
-    "name": "Star-shaped screwdrivers",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "2362": {
     "name": "Tile drill bits",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "3660": {
-    "name": "torque screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "2788": {
-    "name": "Tweezers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
