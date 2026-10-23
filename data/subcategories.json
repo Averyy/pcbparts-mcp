@@ -1609,11 +1609,6 @@
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
-  "440": {
-    "name": "Thermal conductive sheet/thermal conductive cap",
-    "category_id": 59,
-    "category_name": "Consumables and auxiliary materials"
-  },
   "3038": {
     "name": "Ceramic Resonators",
     "category_id": 7,
@@ -2106,11 +2101,6 @@
   },
   "654": {
     "name": "Cross slot countersunk self-tapping screw",
-    "category_id": 47,
-    "category_name": "Hardware Fasteners"
-  },
-  "660": {
-    "name": "Cross slot half round head self-tapping screw",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -2734,6 +2724,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "1300": {
+    "name": "Equipment circuit breaker",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "964": {
     "name": "Fiber optic sensor",
     "category_id": 46,
@@ -2846,6 +2841,11 @@
   },
   "1205": {
     "name": "Miniature leakage protection circuit breaker",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "1112": {
+    "name": "Motor Protective Circuit Breaker",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
@@ -3534,11 +3534,6 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3498": {
-    "name": "flag",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3854,6 +3849,11 @@
     "category_id": 68,
     "category_name": "Power Modules"
   },
+  "3474": {
+    "name": "Firefighting blower",
+    "category_id": 56,
+    "category_name": "Safety/fire protection"
+  },
   "2029": {
     "name": "SiC Diodes",
     "category_id": 66,
@@ -4061,6 +4061,11 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "159": {
+    "name": "Crimping pliers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
