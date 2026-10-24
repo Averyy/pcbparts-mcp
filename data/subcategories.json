@@ -2009,6 +2009,11 @@
     "category_id": 3333,
     "category_name": "Global Sourcing Parts"
   },
+  "3750": {
+    "name": "Anti-Static CPP Resealable Bag",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
   "2621": {
     "name": "Cable Tie",
     "category_id": 52,
@@ -3849,11 +3854,6 @@
     "category_id": 68,
     "category_name": "Power Modules"
   },
-  "3474": {
-    "name": "Firefighting blower",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
   "2029": {
     "name": "SiC Diodes",
     "category_id": 66,
@@ -4061,11 +4061,6 @@
   },
   "3715": {
     "name": "Charging Port Test Board",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "159": {
-    "name": "Crimping pliers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
