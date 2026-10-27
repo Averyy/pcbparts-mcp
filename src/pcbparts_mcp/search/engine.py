@@ -2,12 +2,15 @@
 
 import json
 import logging
+import re
 import sqlite3
 from typing import Any, Literal
 
 from ..config import DEFAULT_MIN_STOCK
 from ..alternatives import SPEC_PARSERS, DIMENSION_SPEC_FIELDS
-from ..parsers import parse_dimensions_from_package
+from ..parsers import (
+    RESISTANCE_MATCH_TOLERANCE, parse_dimensions_from_package, parse_esp32_module_memory, parse_resistance,
+)
 from ..subcategory_aliases import (
     resolve_subcategory_name as _resolve_subcategory_name,
     find_similar_subcategories as _find_similar_subcategories,
@@ -76,6 +79,8 @@ def _passes_post_filters(
         if is_frequency:
             # Use 5% tolerance for frequency (allows 2.4GHz to match 2.45GHz)
             eq_epsilon = abs(target_value) * 0.05 if target_value != 0 else 1e-9
+        elif parser is parse_resistance:
+            eq_epsilon = abs(target_value) * RESISTANCE_MATCH_TOLERANCE if target_value != 0 else 1e-9
         else:
             # Use 1% tolerance for other specs
             eq_epsilon = abs(target_value) * 0.01 if target_value != 0 else 1e-9
@@ -333,17 +338,14 @@ class SearchEngine:
 
         # Combined count + library type distribution query
         lib_count_sql = count_sql.replace("SELECT COUNT(*)", "SELECT library_type, COUNT(*)")
-        lib_count_sql_clean = lib_count_sql
-        for pattern in ["AND library_type = 'b'", "AND library_type = 'p'", "AND library_type = 'e'"]:
-            lib_count_sql_clean = lib_count_sql_clean.replace(pattern, "")
-        lib_count_sql_clean += " GROUP BY library_type"
+        lib_count_sql += " GROUP BY library_type"
 
         # Defense-in-depth: list-param caps at the tool boundary keep real queries far from
         # SQLite's limits, but if a statement is still rejected (e.g. too many bound
         # variables), return a clean error dict rather than leak an unhandled exception.
         try:
             rows = [] if post_filter_metadata else self._conn.execute(sql, params).fetchall()
-            lib_rows = self._conn.execute(lib_count_sql_clean, count_params).fetchall()
+            lib_rows = self._conn.execute(lib_count_sql, count_params).fetchall()
         except sqlite3.OperationalError:
             logger.error("Search SQL execution failed", exc_info=True)
             return {
@@ -363,31 +365,29 @@ class SearchEngine:
             if lib_name in library_type_counts:
                 library_type_counts[lib_name] = count
             total += count
-        # The counts leave out the library_type filter (they show every type), so a basic-only
-        # search reported all MOSFETs as its total
-        if library_type in ("basic", "preferred", "extended"):
-            total = library_type_counts[library_type]
 
         if post_filter_metadata:
             # SQL can't apply these, so every candidate is checked: the page comes from the parts
             # that pass, and total counts them (the SQL count also had the ones that fail)
-            results, passed, complete = self._post_filtered_page(
+            results, library_type_counts, complete = self._post_filtered_page(
                 sql_parts, base_params, post_filter_metadata, limit, offset
             )
-            if complete:
-                total = passed
+            total = sum(library_type_counts.values())
         else:
             results = [row_to_dict(row, self._subcategories) for row in rows]
 
         no_fee_available = library_type_counts["basic"] > 0 or library_type_counts["preferred"] > 0
 
-        return {
+        result = {
             "results": results,
             "total": total,
             "library_type_counts": library_type_counts,
             "no_fee_available": no_fee_available,
             "ignored_filters": ignored_filters,
         }
+        if post_filter_metadata and not complete:
+            result["counts_complete"] = False
+        return result
 
     def _post_filtered_page(
         self,
@@ -396,23 +396,36 @@ class SearchEngine:
         post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]],
         limit: int,
         offset: int,
-    ) -> tuple[list[dict[str, Any]], int, bool]:
-        """Check the SQL matches in sort order against the post-filters. Returns the page, how many
-        passed, and whether every match was checked (at most POST_FILTER_SCAN_ROWS are)."""
+    ) -> tuple[list[dict[str, Any]], dict[str, int], bool]:
+        """Check SQL matches against post-filters. Returns the page, library counts of passing
+        matches, and whether every match was checked (at most POST_FILTER_SCAN_ROWS are)."""
         scan_sql = " ".join(sql_parts).replace(
-            "SELECT * FROM components", "SELECT rowid, attributes, package FROM components", 1
+            "SELECT * FROM components", "SELECT rowid, attributes, package, mpn, library_type FROM components", 1
         ) + " LIMIT ?"
         passed = 0
+        library_counts = {"basic": 0, "preferred": 0, "extended": 0}
+        library_names = {"b": "basic", "p": "preferred", "e": "extended"}
         scanned = 0
         page_ids: list[int] = []
-        for rowid, attributes, package in self._conn.execute(scan_sql, [*params, POST_FILTER_SCAN_ROWS]):
+        for rowid, attributes, package, mpn, library in self._conn.execute(scan_sql, [*params, POST_FILTER_SCAN_ROWS]):
             scanned += 1
             try:
                 specs = {name: value for name, value in json.loads(attributes)} if attributes else {}
             except (json.JSONDecodeError, TypeError, ValueError):
                 specs = {}
+            # ESP32 module memory is encoded in ordering codes, not catalog attributes.
+            # Only derive it for a requested module-memory filter; unknown codes cannot pass.
+            if any(f.name in ("Module Flash", "Module PSRAM") for f, *_ in post_filter_metadata):
+                flash, psram = parse_esp32_module_memory(mpn)
+                if flash is not None:
+                    specs["Module Flash"] = f"{flash}MB"
+                if psram is not None:
+                    specs["Module PSRAM"] = f"{psram}MB"
             if _passes_post_filters(specs, package, post_filter_metadata):
                 passed += 1
+                name = library_names.get(library, library)
+                if name in library_counts:
+                    library_counts[name] += 1
                 if offset < passed <= offset + limit:
                     page_ids.append(rowid)
         results: list[dict[str, Any]] = []
@@ -423,7 +436,7 @@ class SearchEngine:
                 )
             }
             results = [row_to_dict(by_id[i], self._subcategories) for i in page_ids if i in by_id]
-        return results, passed, scanned < POST_FILTER_SCAN_ROWS
+        return results, library_counts, scanned < POST_FILTER_SCAN_ROWS
 
     def search(
         self,
@@ -484,7 +497,7 @@ class SearchEngine:
                 similar = self._find_similar_subcategories(subcategory_name, limit=5)
                 return {
                     "error": f"Subcategory not found: '{subcategory_name}'",
-                    "hint": "Use list_categories and get_subcategories to see available options",
+                    "hint": "Use jlc_search_help() to browse categories, then jlc_search_help(category='Power Management (PMIC)') for subcategories",
                     "similar_subcategories": similar,
                     "results": [],
                     "total": 0,
@@ -501,7 +514,7 @@ class SearchEngine:
             if resolved_category_id is None:
                 return {
                     "error": f"Category not found: '{category_name}'",
-                    "hint": "Use list_categories to see available categories",
+                    "hint": "Use jlc_search_help() to see available categories",
                     "results": [],
                     "total": 0,
                     "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
@@ -601,6 +614,7 @@ class SearchEngine:
                     total = retry_result["total"]
                     library_type_counts = retry_result["library_type_counts"]
                     no_fee_available = retry_result["no_fee_available"]
+                    search_result = retry_result
                     break
 
         response: dict[str, Any] = {
@@ -632,6 +646,8 @@ class SearchEngine:
             "library_type_counts": library_type_counts,
             "no_fee_available": no_fee_available,
         }
+        if "counts_complete" in search_result:
+            response["counts_complete"] = search_result["counts_complete"]
         if search_result["ignored_filters"]:
             response["ignored_filters"] = search_result["ignored_filters"]
 

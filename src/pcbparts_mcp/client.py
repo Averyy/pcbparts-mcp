@@ -55,6 +55,7 @@ from .config import (
 )
 from .cache import Cooldown, SlidingWindowBudget
 from .subcategory_aliases import SUBCATEGORY_ALIASES, resolve_subcategory_name as _resolve_subcategory_name
+from .db_worker import COMPONENT_POOL, run_db
 from .easyeda_store import EasyEDAStore, FootprintAnswer, answer_problem, pick_answer
 from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
 from .mounting import detect_mounting_type
@@ -63,6 +64,7 @@ from .alternatives import (
     is_compatible_alternative,
     verify_primary_spec_match,
     score_alternative,
+    prefer_same_package,
     build_response,
     build_unsupported_response,
 )
@@ -525,16 +527,20 @@ class JLCPCBClient:
             if len(self._easyeda_cache) >= int(EASYEDA_CACHE_MAX_SIZE * 0.9):
                 self._cleanup_easyeda_cache_unlocked()
 
-    def _stored_footprint(self, lcsc: str, now: float) -> dict[str, Any] | None:
+    async def _stored_footprint(self, lcsc: str, now: float) -> dict[str, Any] | None:
         """A footprint answer from the store or seed that can be served without asking EasyEDA."""
+        seed = None
+        if self._easyeda_seed is not None:
+            try:
+                seed = await run_db(COMPONENT_POOL, self._easyeda_seed, lcsc)
+            except Exception as e:  # the seed is an optimization; a broken one must not break lookups
+                logger.warning(f"EasyEDA footprint seed lookup failed for {lcsc}: {type(e).__name__}: {e}")
+        # Read mutable answers after the await: an invalidation/live answer may have
+        # arrived while the catalog lookup waited. Writable stores stay on this thread.
         candidates: list[FootprintAnswer | None] = [self._easyeda_overrides.get(lcsc)]
         if self._easyeda_store is not None:
             candidates.append(self._easyeda_store.get(lcsc))
-        if self._easyeda_seed is not None:
-            try:
-                candidates.append(self._easyeda_seed(lcsc))
-            except Exception as e:  # the seed is an optimization; a broken one must not break lookups
-                logger.warning(f"EasyEDA footprint seed lookup failed for {lcsc}: {type(e).__name__}: {e}")
+        candidates.append(seed)
         answer = pick_answer(candidates, now, EASYEDA_NOT_FOUND_TTL)
         return answer.as_result() if answer is not None else None
 
@@ -637,7 +643,7 @@ class JLCPCBClient:
                 if now - timestamp < ttl:
                     return result, "error" if is_error else "cached"
 
-        stored = self._stored_footprint(lcsc, now)
+        stored = await self._stored_footprint(lcsc, now)
         if stored is not None:
             return stored, "stored"
 
@@ -929,13 +935,12 @@ class JLCPCBClient:
 
     def _transform_part(self, item: dict[str, Any], slim: bool = True) -> dict[str, Any]:
         """Transform API response to our format."""
-        # Get price from first tier and volume price (10+) from second tier.
+        # Get price from the first tier; full details retain every stated price tier.
         # `or []` guards against componentPrices being present-but-null (API returns null
         # for some parts) — otherwise len()/indexing raises on None. Tier dicts keep
         # bracket access on purpose: a malformed tier should fail loud, not degrade silently.
         prices = item.get("componentPrices") or []
         price = prices[0]["productPrice"] if prices else None
-        price_10 = prices[1]["productPrice"] if len(prices) > 1 else None
 
         # Map library type: preferred parts have componentLibraryType=expand but
         # preferredComponentFlag=True — they have no assembly fee (same as basic)
@@ -966,7 +971,6 @@ class JLCPCBClient:
             "package": package,
             "stock": stock,
             "price": round(price, 4) if price is not None else None,
-            "price_10": round(price_10, 4) if price_10 is not None else None,
             "library_type": library_type,
             "preferred": item.get("preferredComponentFlag", False),
             "category": category,
@@ -986,7 +990,8 @@ class JLCPCBClient:
 
         if not slim:
             # Full details
-            result["description"] = item.get("describe")
+            if not result["specs"]:
+                result["description"] = item.get("describe")
             result["min_order"] = item.get("minPurchaseNum")
             result["reel_qty"] = item.get("encapsulationNumber")
             result["datasheet"] = item.get("dataManualUrl")
@@ -1186,11 +1191,13 @@ class JLCPCBClient:
         library_type: str | None = None,
         has_easyeda_footprint: bool | None = None,
         limit: int = 10,
+        board_quantity: int = 1,
+        placements_per_board: int = 1,
     ) -> dict[str, Any]:
         """Find alternative parts similar to a given component.
 
-        Uses spec-aware compatibility checking to ensure alternatives are safe to use.
-        For supported subcategories, verifies primary spec matches and same_or_better rules.
+        Checks catalog primary, must-match and same-or-better rules. Missing required matches
+        are listed separately as unverified_alternatives; unchecked requirements need manual review.
         For unsupported subcategories, returns similar_parts for manual comparison.
 
         Args:
@@ -1203,12 +1210,19 @@ class JLCPCBClient:
                                    If False, only parts without footprints.
                                    If None (default), don't filter by footprint.
                                    Note: filtering is slower as it checks each part.
-            limit: Maximum alternatives to return (default: 10, max: 50)
+            limit: Maximum entries per verified/unverified list (default: 10, max: 50)
+            board_quantity: Boards in the order for savings (default: 1)
+            placements_per_board: Placements of the original per board (default: 1)
 
         Returns:
             Dict with original part info, alternatives (verified compatible), and
             similar_parts (for unsupported categories requiring manual verification).
         """
+        if not re.fullmatch(r"C\d+", lcsc.strip(), re.IGNORECASE):
+            return {"error": "lcsc must be an LCSC C-code (e.g., C6186); use jlc_get_part(mpn=...) to find the code for an MPN"}
+        if board_quantity < 1 or placements_per_board < 1:
+            return {"error": "board_quantity and placements_per_board must be positive integers"}
+
         # Validate and cap limit
         effective_limit = max(1, min(limit, MAX_ALTERNATIVES))
         effective_min_stock = max(0, min_stock)
@@ -1309,12 +1323,14 @@ class JLCPCBClient:
 
             live_codes = {p.get("lcsc") for p in candidates}
             candidates += [
-                p for p in self._alternative_candidates(
+                p for p in await run_db(
+                    COMPONENT_POOL,
+                    self._alternative_candidates,
                     original=original,
                     subcategory=subcategory_name,
                     subcategory_id=subcategory_id,
                     min_stock=effective_min_stock,
-                    library_type=library_type,
+                    library_type=None if library_type == "no_fee" else library_type,
                     accept=passes,
                     limit=search_params["limit"],
                 )
@@ -1379,6 +1395,13 @@ class JLCPCBClient:
                     filtered_compatible.append(part)
             compatible = filtered_compatible
 
+        # Count verified extended matches before a no-fee filter, including footprint requirements.
+        extended_count = sum(
+            p.get("library_type") == "extended"
+            and not verification_info_map[p.get("lcsc", "")].get("unverified_requirements")
+            for p in compatible
+        )
+
         # Filter by library_type if specified (after compatibility check)
         if library_type and library_type != "all":
             if library_type == "no_fee":
@@ -1398,13 +1421,28 @@ class JLCPCBClient:
             verify_info = verification_info_map.get(part.get("lcsc", ""), {"specs_verified": [], "specs_unparseable": []})
             scored.append((score, part, breakdown, verify_info))
 
-        # Use heapq for efficient top-k selection instead of full sort
-        top_scored = heapq.nlargest(effective_limit, scored, key=lambda x: x[0])
+        # Within each fee tier, prefer the original footprint for passives and crystals.
+        def rank(item):
+            score, part, _, _ = item
+            if prefer_same_package(subcategory_name or ""):
+                return (
+                    part.get("library_type") in ("basic", "preferred"),
+                    _normalize_package_for_matching(part.get("package") or "") == orig_pkg_normalized,
+                    score,
+                )
+            return (score,)
+
+        unverified = [item for item in scored if item[3].get("unverified_requirements")]
+        verified_scored = [item for item in scored if not item[3].get("unverified_requirements")]
+        top_scored = heapq.nlargest(effective_limit, verified_scored, key=rank)
+        top_unverified = heapq.nlargest(effective_limit, unverified, key=rank)
 
         # Build response (different structure for supported vs unsupported)
         if is_supported:
             response = build_response(
-                original, top_scored, subcategory_name or "", primary_attr, primary_value, effective_limit
+                original, top_scored, subcategory_name or "", primary_attr, primary_value, effective_limit,
+                unverified_alternatives=top_unverified, library_type=library_type,
+                extended_count=extended_count, board_quantity=board_quantity, placements_per_board=placements_per_board,
             )
         else:
             response = build_unsupported_response(

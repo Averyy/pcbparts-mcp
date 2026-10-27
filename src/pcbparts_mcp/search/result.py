@@ -45,14 +45,13 @@ def row_to_dict(
     category = subcat_info.get("category_name")
     subcategory = subcat_info.get("name")
 
-    return {
+    result = {
         "lcsc": row["lcsc"],
         "model": row["mpn"],
         "manufacturer": row["manufacturer"],
         "package": package,
         "stock": row["stock"],
         "price": row["price"],
-        "price_10": None,  # Volume pricing not available in DB
         "library_type": library_type,
         "preferred": library_type in ("basic", "preferred"),
         "category": category,
@@ -62,3 +61,6 @@ def row_to_dict(
         "description": row["description"],
         "specs": specs,
     }
+    if specs:
+        result.pop("description")
+    return result

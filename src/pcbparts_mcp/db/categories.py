@@ -5,6 +5,7 @@ import sqlite3
 from typing import Any, Callable
 
 from ..config import DEFAULT_MIN_STOCK
+from ..parsers import RESISTANCE_MATCH_TOLERANCE, parse_resistance
 from ..alternatives import COMPATIBILITY_RULES, NORMALIZED_MATCH_SPECS, SPEC_PARSERS, STRING_MATCH_SPECS, is_stated
 from ..search.result import row_to_dict
 from ..search.spec_filter import SPEC_TO_COLUMN, escape_like
@@ -118,7 +119,7 @@ def find_alternative_candidates(
     no-fee parts first, then by stock. Used by find_alternatives.
 
     SQL narrows by the rules' numeric columns, with the same 2% slack as the checks: the primary and
-    numeric must_match specs within 2%, same_or_better specs at least as good. String must_match specs
+    numeric must_match specs within 2% (resistances 0.1%), same_or_better specs at least as good. String must_match specs
     must be equal, unless they're normalized first. Specs without a column, and polarity, are left to
     `accept` (the full check), which picks from at most `max_rows` rows in order until it has `limit`
     parts.
@@ -151,8 +152,9 @@ def find_alternative_candidates(
         numeric = column_value(spec)
         if numeric:
             column, target = numeric
+            share = RESISTANCE_MATCH_TOLERANCE if SPEC_PARSERS.get(spec) is parse_resistance else 0.02
             sql.append(f"AND {column} BETWEEN ? AND ?")
-            params.extend([target - abs(target) * 0.02, target + abs(target) * 0.02])
+            params.extend([target - abs(target) * share, target + abs(target) * share])
         elif spec in STRING_MATCH_SPECS and spec not in NORMALIZED_MATCH_SPECS:
             # Attributes are stored as JSON pairs: [["Type", "N-Channel"], ...]
             sql.append("AND attributes LIKE ? ESCAPE '\\'")

@@ -6,8 +6,8 @@ from typing import Any
 
 from ..search.spec_filter import SpecFilter
 from ..subcategory_aliases import SUBCATEGORY_GROUPS
-from .packages import extract_package
-from .values import ExtractedValue, extract_values
+from .packages import extract_package, extract_package_choices
+from .values import ExtractedValue, extract_values, normalize_value_notation
 from .models import extract_model_number
 from .types import extract_component_type, extract_mounting_type
 from .semantic import extract_semantic_descriptors, remove_noise_words, CONNECTOR_NOISE_WORDS
@@ -24,13 +24,14 @@ class ParsedQuery:
     subcategories: list[str] | None = None  # a generic word's group ("inductor": four subcategories)
     spec_filters: list[Any] = field(default_factory=list)  # List of SpecFilter
     package: str | None = None
+    packages: list[str] = field(default_factory=list)
     model_number: str | None = None
     mounting_type: str | None = None  # "SMD" or "Through Hole"
     connector_spec: ConnectorSpec | None = None  # Extracted connector series/brand
     detected: dict[str, Any] = field(default_factory=dict)
 
 
-def parse_smart_query(query: str) -> ParsedQuery:
+def parse_smart_query(query: str, *, strict: bool = False) -> ParsedQuery:
     """Parse a natural language query into structured filters.
 
     This is a complete rewrite of the original parser with:
@@ -54,7 +55,7 @@ def parse_smart_query(query: str) -> ParsedQuery:
     """
     result = ParsedQuery(original=query, remaining_text=query)
     detected: dict[str, Any] = {}
-    remaining = query
+    remaining = query.replace("µ", "u").replace("μ", "u").replace("Ω", "ohm")
 
     # Step 1: Extract model number (if present, it becomes the primary search term)
     model, remaining = extract_model_number(remaining)
@@ -62,8 +63,24 @@ def parse_smart_query(query: str) -> ParsedQuery:
         result.model_number = model
         detected["model_number"] = model
 
+    remaining = normalize_value_notation(remaining)
+    for pattern, key, value in (
+        (r"\b(?:no assembly fee|no fee)\b", "library_type", "no_fee"),
+        (r"\bbasic(?: part)?\b", "library_type", "basic"),
+        (r"\bpreferred\b", "library_type", "preferred"),
+        (r"\b(?:cheapest|lowest price)\b", "sort_by", "price"),
+    ):
+        if re.search(pattern, remaining, re.IGNORECASE):
+            detected[key] = value
+            remaining = re.sub(pattern, " ", remaining, flags=re.IGNORECASE)
+
     # Step 2: Extract package
-    package, remaining, pkg_suggested_subcat = extract_package(remaining)
+    result.packages, remaining = extract_package_choices(remaining)
+    if result.packages:
+        detected["packages"] = result.packages
+        package, pkg_suggested_subcat = None, None
+    else:
+        package, remaining, pkg_suggested_subcat = extract_package(remaining)
     if package:
         result.package = package
         detected["package"] = package
@@ -98,7 +115,12 @@ def parse_smart_query(query: str) -> ParsedQuery:
         #     detected.setdefault("semantic", []).append(f"pins={connector_spec.pins} (from brand)")
 
     # Step 3: Extract component type (subcategory)
-    subcategory, remaining, matched_keyword = extract_component_type(remaining)
+    memory_is_spec = bool(model) or bool(re.search(r"\b(module|microcontroller|mcu)\b", remaining, re.IGNORECASE))
+    subcategory, remaining, matched_keyword = extract_component_type(remaining, memory_is_spec=memory_is_spec)
+    if (model and model.upper().startswith("ESP32") and not subcategory
+            and re.search(r"\b(?:flash|psram)\b", remaining, re.IGNORECASE)):
+        subcategory = "wifi modules"
+        remaining = re.sub(r"\bmodule\b", " ", remaining, flags=re.IGNORECASE)
     if subcategory:
         result.subcategory = subcategory
         detected["component_type"] = matched_keyword
@@ -140,16 +162,40 @@ def parse_smart_query(query: str) -> ParsedQuery:
         result.subcategory = pkg_suggested_subcat
         detected["subcategory_from_package"] = pkg_suggested_subcat
 
+    # Mounting can change an SMD-only default, but must not replace a compatible category.
+    if mounting_type == "Through Hole":
+        through_hole = {
+            "chip resistor - surface mount": "through hole resistors",
+            "aluminum electrolytic capacitors - smd": "aluminum electrolytic capacitors - leaded",
+        }.get((result.subcategory or "").lower())
+        if through_hole:
+            result.subcategory = through_hole
+            detected["subcategory"] = through_hole
+
     # Step 3b: Regulator specifics: buck/boost, and voltages marked input or output
     subcat_now = (result.subcategory or "").lower()
     if subcat_now == "dc-dc converters":
-        remaining = _add_topology(f"{matched_keyword or ''} {remaining}", remaining, result, detected)
+        remaining = _add_topology(query, remaining, result, detected)
     if subcat_now in ("dc-dc converters", _LDO):
         remaining = _add_input_output_voltages(remaining, subcat_now, result, detected)
+    if subcat_now == "translators, level shifters":
+        pair = _VOLTAGE_TO_VOLTAGE.search(remaining)
+        if pair:
+            for side, value in zip(("VCCA", "VCCB"), pair.groups()):
+                result.spec_filters.append(SpecFilter(f"Voltage - Supply({side})", "=", value.replace(" ", "")))
+            remaining = remaining[:pair.start()] + " " + remaining[pair.end():]
+    if matched_keyword == "fuel gauge":
+        result.spec_filters.append(SpecFilter("The Chip Type", "=", "Monitoring IC"))
+    if subcat_now in ("wifi modules", "microcontrollers (mcu/mpu/soc)", "nor flash", "nand flash"):
+        remaining = _add_memory_sizes(remaining, subcat_now, result, detected)
     if subcat_now == "usb connectors":
         _add_usb_type(query, result, detected)
     if subcat_now == "coaxial connectors (rf)":
         _add_rf_series(query, result, detected)
+
+    # Named comparisons must be consumed before a bare current/voltage gets its default
+    # quantity and >= operator (Iq is not load current; Vf is not reverse voltage).
+    remaining = _add_named_comparisons(remaining, result, detected)
 
     # Step 4: Extract numeric values
     values, remaining = extract_values(remaining)
@@ -159,6 +205,8 @@ def parse_smart_query(query: str) -> ParsedQuery:
     # Step 4a-pre: Filter out dimension values for display components
     # Display resolutions like "128x64" look like dimensions but should not be treated as such
     if result.subcategory and 'display' in result.subcategory.lower():
+        if strict:
+            detected.setdefault("unsupported_constraints", []).extend(v.raw for v in values if v.unit_type == "dimensions")
         values = [v for v in values if v.unit_type != "dimensions"]
         if values:
             detected["values"] = [{"raw": v.raw, "type": v.unit_type, "normalized": v.normalized} for v in values]
@@ -265,12 +313,16 @@ def parse_smart_query(query: str) -> ParsedQuery:
                 if not result.package:
                     result.package = f"SMD,{value.normalized}"
                     detected["package_from_dimensions"] = result.package
+                elif strict:
+                    detected.setdefault("unsupported_constraints", []).append(value.raw)
                 continue  # Don't add as spec filter
 
         # Special handling: skip spec filters for connectors
         # Most connectors in the database have empty attributes dicts, so spec filters fail
         # Pin count, pitch, etc. should be used in FTS search instead
         if result.subcategory and 'connector' in result.subcategory.lower():
+            if strict:
+                detected.setdefault("unsupported_constraints", []).append(value.raw)
             continue  # Don't add spec filters for connectors
 
         spec_name, operator = map_value_to_spec(value, subcategory, matched_keyword)
@@ -278,7 +330,8 @@ def parse_smart_query(query: str) -> ParsedQuery:
 
     # Add semantic filters
     for sf in semantic_filters:
-        result.spec_filters.append(SpecFilter(sf.spec_name, sf.operator, sf.value))
+        name = "Channel Type" if subcat_now == "translators, level shifters" and sf.spec_name == "Polarity" else sf.spec_name
+        result.spec_filters.append(SpecFilter(name, sf.operator, sf.value))
 
     # Step 6b: Handle "dual" for MOSFETs
     # "dual" is too common a word to add to NOISE_WORDS, but in MOSFET context
@@ -338,32 +391,41 @@ def parse_smart_query(query: str) -> ParsedQuery:
     # Step 7a: "magnetics" (an RJ45 jack with built-in transformers). JLCPCB marks only 23 jacks
     # "Filtered" and records magnetics nowhere else, so searching for that word hid the usual
     # magjacks (HR913550A, HR911130A, J1B1211CCD). Leave it out and say so.
-    if subcategory and 'connector' in subcategory.lower() and re.search(r'\bmagnetics?\b', remaining, re.IGNORECASE):
+    if not strict and subcategory and 'connector' in subcategory.lower() and re.search(r'\bmagnetics?\b', remaining, re.IGNORECASE):
         remaining = re.sub(r'\b(?:integrated\s+)?magnetics?\b', '', remaining, flags=re.IGNORECASE)
         remaining = re.sub(r'\s+', ' ', remaining).strip()
         detected["not_searched"] = [
             "magnetics: JLCPCB doesn't record it for most RJ45 jacks; check the datasheet"
         ]
 
-    remaining = remove_noise_words(remaining)
+    if not strict:
+        remaining = remove_noise_words(remaining)
 
     # Step 7b: Remove connector-specific noise words when in connector context
     # Words like "power", "data", "signal" describe USB-C functionality but aren't searchable
     # Also applies to pin headers (male/female not indexed in descriptions)
-    if subcategory and ('connector' in subcategory.lower() or 'header' in subcategory.lower()):
+    if not strict and subcategory and ('connector' in subcategory.lower() or 'header' in subcategory.lower()):
         words = remaining.split()
         remaining = ' '.join(w for w in words if w.lower() not in CONNECTOR_NOISE_WORDS)
 
     # Remove orphaned hyphens and single characters (e.g., "- -F" -> "")
-    remaining = re.sub(r'\b[A-Za-z]\b', '', remaining)  # Single letters
+    if not strict:
+        remaining = re.sub(r'\b[A-Za-z]\b', '', remaining)  # Single letters
     remaining = re.sub(r'\s*-\s*', ' ', remaining)  # Orphaned hyphens
     remaining = re.sub(r'\s+', ' ', remaining).strip()
+
+    unsupported = re.findall(
+        r"\b\d+(?:\.\d+)?(?:[a-zA-Z]+|\s+(?:[a-zA-Z]*[FHAVW]|[a-zA-Z]*ohm))\b",
+        remaining,
+    )
+    if unsupported and not model:
+        detected.setdefault("unsupported_constraints", []).extend(unsupported)
 
     # Step 8: Determine what to use for FTS search
     # If we have a model number, use ONLY that for FTS (high precision)
     # If we have structured filters, we may not need FTS at all
     if model:
-        result.remaining_text = model  # Search only for the model number
+        result.remaining_text = f"{model} {remaining}".strip() if strict else model
     elif remaining and len(remaining) >= 2:
         result.remaining_text = remaining
     elif result.spec_filters or subcategory:
@@ -391,7 +453,7 @@ def parse_smart_query(query: str) -> ParsedQuery:
 _LDO = "voltage regulators - linear, low drop out (ldo) regulators"
 _VOLTAGE = r"(\d+(?:\.\d+)?\s*[mk]?V)\b"
 # "24V input", "input 24V", "vin 24V"; "3.3V output", "5V out", "vout 3.3V"; "12V to 5V"
-_INPUT_VOLTAGE = re.compile(rf"(?:\b(?:input|vin)\s*(?:voltage\s*)?(?:of\s*)?{_VOLTAGE})|(?:{_VOLTAGE}\s*(?:input|vin)\b)", re.IGNORECASE)
+_INPUT_VOLTAGE = re.compile(rf"(?:\b(?:input|vin|from)\s*(?:voltage\s*)?(?:of\s*)?(?:up\s+to\s*)?{_VOLTAGE})|(?:{_VOLTAGE}\s*(?:max\s+)?(?:input|vin)\b)|(?:\bup\s+to\s*{_VOLTAGE}\s*in\b)", re.IGNORECASE)
 _OUTPUT_VOLTAGE = re.compile(rf"(?:\b(?:output|vout|out)\s*(?:voltage\s*)?(?:of\s*)?{_VOLTAGE})|(?:{_VOLTAGE}\s*(?:output|out|vout)\b)", re.IGNORECASE)
 _VOLTAGE_TO_VOLTAGE = re.compile(rf"{_VOLTAGE}\s*(?:to|->|→)\s*{_VOLTAGE}", re.IGNORECASE)
 
@@ -440,7 +502,59 @@ def _add_input_output_voltages(remaining: str, subcategory: str, result: ParsedQ
     return re.sub(r"\s+", " ", remaining).strip()
 
 
+def _add_memory_sizes(remaining: str, subcategory: str, result: ParsedQuery, detected: dict[str, Any]) -> str:
+    """Memory belongs to the selected MCU/module; bare flash still selects a memory IC.
+
+    ESP32 module N/R codes are checked at search time; no database build change is needed.
+    """
+    size = r"(\d+(?:\.\d+)?\s*(?:[KM]B|[KM]bit))"
+    pattern = re.compile(rf"\b{size}\s*(flash|psram)\b|\b(flash|psram)\s*{size}\b", re.IGNORECASE)
+
+    def take(match: re.Match[str]) -> str:
+        raw, kind = (match[1], match[2]) if match[1] else (match[4], match[3])
+        if subcategory == "wifi modules":
+            name = "Module PSRAM" if kind.lower() == "psram" else "Module Flash"
+        elif subcategory == "microcontrollers (mcu/mpu/soc)":
+            name = "SRAM" if kind.lower() == "psram" else "Program Storage Size"
+        else:
+            name = "Memory Size"
+        value = raw.replace(" ", "")
+        result.spec_filters.append(SpecFilter(name, ">=", value))
+        detected.setdefault("semantic", []).append(f"{match[0]} (-> {name} >= {value})")
+        return " "
+
+    def take_size(match: re.Match[str]) -> str:
+        result.spec_filters.append(SpecFilter("Memory Size", ">=", match[1].replace(" ", "")))
+        return " "
+
+    remaining = pattern.sub(take, remaining)
+    if subcategory in ("nor flash", "nand flash"):
+        # Component extraction already consumed "flash" in "SPI flash 16MB".
+        remaining = re.sub(rf"\b{size}\b", take_size, remaining, flags=re.IGNORECASE)
+    return remaining
+
+
 _EXACT_OUTPUT = ("Output Voltage", "=")
+
+
+_NAMED_COMPARISONS = [
+    (re.compile(r"\b(?:quiescent\s+current(?:\s*\(Iq\))?|standby\s+current|Supply\s+Current\s*\(Iq\)|Iq)\s*(<=|>=|<|>|=)\s*(\d+(?:\.\d+)?\s*[um]?A)\b", re.IGNORECASE), "Quiescent Current"),
+    (re.compile(r"\bVf\s*(<=|>=|<|>|=)\s*(\d+(?:\.\d+)?\s*[mk]?V)\b", re.IGNORECASE), "Vf"),
+]
+
+
+def _add_named_comparisons(remaining: str, result: ParsedQuery, detected: dict[str, Any]) -> str:
+    """Keep the quantity and direction of explicit idle-current and forward-voltage limits."""
+    for pattern, name in _NAMED_COMPARISONS:
+        def take(match: re.Match[str]) -> str:
+            operator, raw = match.groups()
+            value = re.sub(r"\s+", "", raw)
+            result.spec_filters.append(SpecFilter(name, operator, value))
+            detected.setdefault("semantic", []).append(f"{match.group(0)} (-> {name} {operator} {value})")
+            return " "
+        remaining = pattern.sub(take, remaining)
+    return re.sub(r"\s+", " ", remaining).strip()
+
 
 # USB connectors list "Connector Type": Type-C, Type-A, Micro-B, Type-B, Mini-B
 _USB_TYPES = [

@@ -2,14 +2,14 @@
 
 import re
 
-from ..subcategory_aliases import SUBCATEGORY_ALIASES
+from ..subcategory_aliases import SUBCATEGORY_ALIASES, UNAVAILABLE_SUBCATEGORY_ALIASES
 
 
 # Pre-sorted by length (longest first) for correct matching
-_SUBCATEGORY_KEYWORDS_BY_LENGTH = sorted(SUBCATEGORY_ALIASES.keys(), key=len, reverse=True)
+_SUBCATEGORY_KEYWORDS_BY_LENGTH = sorted([*SUBCATEGORY_ALIASES, *UNAVAILABLE_SUBCATEGORY_ALIASES], key=len, reverse=True)
 
 
-def extract_component_type(query: str) -> tuple[str | None, str, str | None]:
+def extract_component_type(query: str, *, memory_is_spec: bool = False) -> tuple[str | None, str, str | None]:
     """Extract component type from query.
 
     Args:
@@ -21,13 +21,15 @@ def extract_component_type(query: str) -> tuple[str | None, str, str | None]:
     query_lower = query.lower()
 
     for keyword in _SUBCATEGORY_KEYWORDS_BY_LENGTH:
+        if memory_is_spec and keyword in ("flash", "nor flash", "nand", "nand flash", "sram", "psram"):
+            continue
         # Use word boundaries to avoid "sram" matching inside "PSRAM"
         pattern = re.compile(r'\b' + re.escape(keyword) + r'\b', re.IGNORECASE)
         if pattern.search(query_lower):
             # Remove the keyword from query
             remaining = pattern.sub('', query).strip()
             remaining = re.sub(r'\s+', ' ', remaining)
-            return SUBCATEGORY_ALIASES[keyword], remaining, keyword
+            return (SUBCATEGORY_ALIASES.get(keyword) or UNAVAILABLE_SUBCATEGORY_ALIASES[keyword]), remaining, keyword
 
     return None, query, None
 

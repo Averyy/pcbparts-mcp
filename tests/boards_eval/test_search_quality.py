@@ -1,6 +1,6 @@
 """Pytest integration for board search quality evaluation.
 
-Runs against the production boards.db — skips if not available.
+Runs against the built boards.db — fails if not available.
 Run with: pytest tests/boards_eval/ -m quality -v
 """
 
@@ -15,17 +15,16 @@ from .golden_queries import GOLDEN_BOARD_GETS, GOLDEN_QUERIES
 from .metrics import BoardGetReport, evaluate_board_get
 from .runner import run_evaluation
 
-# Skip entire module if boards.db doesn't exist
 _DB_PATH = Path(__file__).parent.parent.parent / "data" / "boards.db"
-pytestmark = [
-    pytest.mark.quality,
-    pytest.mark.skipif(not _DB_PATH.exists(), reason="boards.db not found"),
-]
+pytestmark = pytest.mark.quality
 
 
 @pytest.fixture(scope="module")
 def boards_db():
+    if not _DB_PATH.is_file():
+        pytest.fail("boards.db not found; run python scripts/build_boards_db.py --quiet")
     db = BoardsDatabase(db_path=_DB_PATH)
+    assert db.get_stats()["total_boards"] > 0, "boards.db contains no boards"
     yield db
     db.close()
 

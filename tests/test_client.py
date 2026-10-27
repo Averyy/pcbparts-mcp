@@ -189,7 +189,7 @@ class TestClient:
         assert result["stock"] == 11117
         assert result["library_type"] == "extended"
         assert result["price"] == 4.2016
-        assert result["price_10"] == 3.7052  # Volume pricing
+        assert "price_10" not in result
         assert result["category"] == "WiFi Modules"
         assert result["subcategory"] == "IoT Modules"  # Now included in slim
         assert result["specs"] == {"Voltage": "3.3V", "Frequency": "2.4GHz"}
@@ -197,7 +197,7 @@ class TestClient:
         assert "attributes" not in result  # Full list not in slim
 
     def test_transform_part_slim_single_price_tier(self, client):
-        """Parts with only one price tier should have price_10=None."""
+        """Parts with one price tier omit the removed price_10 field."""
         item = {
             "componentCode": "C12345",
             "componentModelEn": "TEST",
@@ -211,10 +211,10 @@ class TestClient:
             "componentPrices": [{"startNumber": 1, "endNumber": 9, "productPrice": 0.01}],
         }
         result = client._transform_part(item, slim=True)
-        assert result["price_10"] is None  # Only one price tier
+        assert "price_10" not in result
 
     def test_transform_part_no_prices(self, client):
-        """Parts with no price tiers should have price=None and price_10=None."""
+        """Parts with no price tiers have price=None and omit price_10."""
         item = {
             "componentCode": "C12345",
             "componentModelEn": "TEST",
@@ -229,7 +229,7 @@ class TestClient:
         }
         result = client._transform_part(item, slim=True)
         assert result["price"] is None
-        assert result["price_10"] is None
+        assert "price_10" not in result
 
     def test_transform_part_no_attributes(self, client):
         """Parts with no attributes should have specs as empty dict."""
@@ -296,7 +296,7 @@ class TestClient:
         assert result["lcsc"] == "C82899"
         assert result["library_type"] == "preferred"
         assert result["price"] == 4.2016
-        assert result["price_10"] == 3.7052
+        assert "price_10" not in result
         assert result["category"] == "WiFi Modules"
         assert result["subcategory"] == "IoT Modules"
         assert result["specs"] == {"Voltage": "3.3V"}  # Also in full mode

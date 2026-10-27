@@ -12,7 +12,9 @@ from typing import Any, Callable
 
 # Import shared parsers from the unified parsers module
 from pcbparts_mcp.parsers import (
+    RESISTANCE_MATCH_TOLERANCE,
     parse_voltage,
+    parse_esp32_module_memory,
     parse_isolation_voltage,
     parse_tolerance,
     parse_ppm,
@@ -79,6 +81,10 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Peak Pulse Power Dissipation (Ppp)": parse_power,
     "Rated Power": parse_power,
     # Currents
+    "Quiescent Current": parse_current,
+    "Quiescent Current(Iq)": parse_current,
+    "standby current": parse_current,
+    "Supply Current (Iq)": parse_current,
     "Current - Continuous Drain(Id)": parse_current,
     "Current - Collector(Ic)": parse_current,
     "Current - Rectified": parse_current,
@@ -134,6 +140,9 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "FET Type": None,
     "Number": None,  # Transistors: "1 N-channel", "2 NPN" (read by the polarity check)
     "B Constant (25℃/100℃)": None,
+    "Number of Contacts": None,
+    "Reference Series": None,
+    "The Chip Type": None,
     "Number of Positions": None,
     "Number of Pins": None,
     "Number of Positions or Pins": None,
@@ -212,6 +221,9 @@ STRING_MATCH_SPECS = {
     "Number",
     "B Constant (25℃/100℃)",
     # Connectors
+    "Number of Contacts",
+    "Reference Series",
+    "The Chip Type",
     "Number of Positions",
     "Number of Pins",
     "Number of Positions or Pins",
@@ -828,7 +840,8 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # ============== VOLTAGE REGULATORS ==============
     "Voltage Regulators - Linear, Low Drop Out (LDO) Regulators": {
         "primary": "Output Voltage",
-        "must_match": ["Output Voltage"],
+        "must_match": ["Output Voltage", "Output Type"],
+        "ranges": {"Output Voltage": False, "Voltage - Supply": True},
         "same_or_better": {
             "Output Current": "higher",
             "Voltage Dropout": "lower",
@@ -836,7 +849,8 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "DC-DC Converters": {
         "primary": "Output Voltage",
-        "must_match": ["Topology", "Output Voltage"],  # Buck, Boost, Buck-Boost must match
+        "must_match": ["Topology", "Output Voltage", "Output Type"],  # Buck, Boost, Buck-Boost must match
+        "ranges": {"Output Voltage": False, "Voltage - Supply": True},
         "same_or_better": {
             "Output Current": "higher",
         },
@@ -967,21 +981,21 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # ============== CONNECTORS ==============
     "Pin Headers": {
         "primary": "Pitch",
-        "must_match": ["Pitch", "Number of Pins", "Number of Rows"],
+        "must_match": ["Pitch", "Number of Pins", "Number of Rows", "Mounting Type"],
         "same_or_better": {
             "Current Rating": "higher",
         },
     },
     "Female Headers": {
         "primary": "Pitch",
-        "must_match": ["Pitch", "Number of Positions", "Number of Rows"],
+        "must_match": ["Pitch", "Number of Positions", "Number of Rows", "Mounting Type"],
         "same_or_better": {
             "Current Rating": "higher",
         },
     },
     "Screw Terminal Blocks": {
         "primary": "Number of Positions or Pins",
-        "must_match": ["Number of Positions or Pins"],
+        "must_match": ["Number of Positions or Pins", "Mounting Type"],
         "same_or_better": {
             "Voltage Rating (Max)": "higher",
             "Current Rating": "higher",
@@ -989,7 +1003,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Barrier Terminal Blocks": {
         "primary": "Number of Positions or Pins",
-        "must_match": ["Pitch", "Number of Positions or Pins"],
+        "must_match": ["Pitch", "Number of Positions or Pins", "Mounting Type"],
         "same_or_better": {
             "Voltage Rating (Max)": "higher",
             "Current Rating": "higher",
@@ -997,7 +1011,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Pluggable System Terminal Block": {
         "primary": "Number of Positions or Pins",
-        "must_match": ["Pitch", "Number of Positions or Pins"],
+        "must_match": ["Pitch", "Number of Positions or Pins", "Mounting Type"],
         "same_or_better": {
             "Voltage Rating (Max)": "higher",
             "Current Rating": "higher",
@@ -1005,19 +1019,19 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "USB Connectors": {
         "primary": "Connector Type",
-        "must_match": ["Connector Type", "Gender"],
+        "must_match": ["Connector Type", "Gender", "Number of Contacts", "Mounting Type"],
     },
     "HDMI Connectors": {
         "primary": "Connector Type",
-        "must_match": ["Connector Type", "Gender"],
+        "must_match": ["Connector Type", "Gender", "Mounting Type"],
     },
     "DisplayPort (DP) Connector": {
         "primary": "Connector Type",
-        "must_match": ["Connector Type"],
+        "must_match": ["Connector Type", "Mounting Type"],
     },
     "Audio Connectors": {
         "primary": "Connector Type",
-        "must_match": ["Connector Type"],
+        "must_match": ["Connector Type", "Mounting Type"],
         "same_or_better": {
             "Voltage Rating (Max)": "higher",
             "Current Rating": "higher",
@@ -1025,18 +1039,18 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Coaxial Connectors (RF)": {
         "primary": "Connector Type",
-        "must_match": ["Connector Type", "Impedance", "RF Series", "Interface"],  # SMA vs IPEX; jack vs plug
+        "must_match": ["Connector Type", "Impedance", "RF Series", "Interface", "Mounting Type"],  # SMA vs IPEX; jack vs plug
     },
     "IDC Connectors": {
         "primary": "Number of Positions or Pins",
-        "must_match": ["Number of Positions or Pins", "Pitch"],
+        "must_match": ["Number of Positions or Pins", "Pitch", "Mounting Type"],
         "same_or_better": {
             "Current Rating": "higher",
         },
     },
     "Wire To Board Connector": {
         "primary": "Pitch",
-        "must_match": ["Pitch", "Pins Structure"],
+        "must_match": ["Pitch", "Pins Structure", "Reference Series", "Mounting Type"],
         "same_or_better": {
             "Current Rating": "higher",
             "Voltage Rating": "higher",
@@ -1044,7 +1058,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Circular Connectors & Cable Connectors": {
         "primary": "Number of Pins",
-        "must_match": ["Number of Pins", "Gender"],
+        "must_match": ["Number of Pins", "Gender", "Mounting Type"],
         "same_or_better": {
             "Voltage Rating": "higher",
             "Current Rating": "higher",
@@ -1052,7 +1066,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "XLR (Cannon) Connectors": {
         "primary": "Number of Pins",
-        "must_match": ["Number of Pins", "Gender"],
+        "must_match": ["Number of Pins", "Gender", "Mounting Type"],
         "same_or_better": {
             "Voltage Rating": "higher",
             "Current Rating": "higher",
@@ -1060,14 +1074,14 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "DIN41612 Connectors": {
         "primary": "Number of Pins",
-        "must_match": ["Pitch", "Number of Pins", "Number of Rows"],
+        "must_match": ["Pitch", "Number of Pins", "Number of Rows", "Mounting Type"],
         "same_or_better": {
             "Current Rating": "higher",
         },
     },
     "Shunts, Jumpers": {
         "primary": "Pitch",
-        "must_match": ["Pitch", "Number of Positions or Pins"],
+        "must_match": ["Pitch", "Number of Positions or Pins", "Mounting Type"],
         "same_or_better": {
             "Current Rating": "higher",
         },
@@ -1114,7 +1128,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # ============== BATTERY MANAGEMENT ==============
     "Battery Management": {
         "primary": "Type of Battery",
-        "must_match": ["Type of Battery", "Number of Cells"],
+        "must_match": ["Type of Battery", "Number of Cells", "The Chip Type"],
         "same_or_better": {
             "Charge Current - Max": "higher",
         },
@@ -1181,6 +1195,7 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
 # =============================================================================
 # Specs that represent pin/position counts needing normalization
 PIN_COUNT_SPECS = {
+    "Number of Contacts",
     "Number of Pins",
     "Number of Positions",
     "Number of Positions or Pins",
@@ -1202,6 +1217,7 @@ def _chip_names(value: str) -> str:
     """A module's chips: "ESP32-DOWD-V3、ESP32-DOWDR2-V3" (letter O, as some listings have it) =
     "ESP32-D0WD-V3、ESP32-D0WDR2-V3"; "ESP8266 Chip" = "ESP8266"."""
     names = {re.sub(r"\s+chip$", "", name).replace("o", "0") for name in _lower(value).split("、") if name.strip()}
+    names = {re.sub(r"^(esp32-[schp]\d+)r\d+$", r"\1", name) for name in names}
     return "、".join(sorted(names))
 
 
@@ -1294,10 +1310,11 @@ def _compare_values(orig_val: str, cand_val: str, spec: str) -> bool | None:
         cand_parsed = parser(cand_val)
         if orig_parsed is None or cand_parsed is None:
             return None
-        # 2% tolerance for matching (handles rounding differences in display)
+        # 2% tolerance for matching (handles rounding differences in display); resistors closer
         if orig_parsed == 0:
             return cand_parsed == 0
-        return abs(orig_parsed - cand_parsed) / abs(orig_parsed) < 0.02
+        share = RESISTANCE_MATCH_TOLERANCE if parser is parse_resistance else 0.02
+        return abs(orig_parsed - cand_parsed) / abs(orig_parsed) < share
 
     # Fallback: string match
     return orig_val.strip().lower() == cand_val.strip().lower()
@@ -1403,15 +1420,77 @@ def _polarity(specs: dict[str, str], names: list[str]) -> tuple[frozenset[str], 
     return (letters, counts) if letters is not None else None
 
 
+def _voltage_ranges(value: str | None) -> list[tuple[float, float]] | None:
+    """Parse every interval; a partly understood range cannot establish coverage."""
+    if not is_stated(value):
+        return None
+    ranges = []
+    for interval in value.split("、"):
+        endpoints = re.split(r"[~～–]", interval)
+        if len(endpoints) not in (1, 2):
+            return None
+        parsed = []
+        for endpoint in endpoints:
+            if not re.fullmatch(r"\s*[+-]?\d+(?:\.\d+)?\s*[mk]?V?\s*", endpoint, re.IGNORECASE):
+                return None
+            number = parse_voltage(endpoint)
+            if number is None:
+                return None
+            parsed.append(-number if endpoint.strip().startswith("-") else number)
+        ranges.append((min(parsed), max(parsed)))
+    return ranges
+
+
+def voltage_range_covers(original: str | None, candidate: str | None, maximum_only: bool = False) -> bool | None:
+    """Candidate covers every original interval; narrower operating ranges cannot pass.
+
+    A scalar supply rating states only a maximum; it cannot prove the minimum of a range.
+    """
+    orig, cand = _voltage_ranges(original), _voltage_ranges(candidate)
+    if orig is None or cand is None:
+        return None
+    for low, high in orig:
+        if maximum_only and low == high:
+            if not any(c_high >= high and (c_low == c_high or c_low <= high) for c_low, c_high in cand):
+                return False
+        elif maximum_only and all(c_low == c_high for c_low, c_high in cand):
+            return None
+        elif not any(c_low <= low and c_high >= high
+                     for c_low, c_high in cand):
+            return False
+    return True
+
+
+def _esp32_family(value: str | None) -> str | None:
+    """Recognize ESP32 families in module ordering codes and stated chip variants."""
+    match = re.match(r"^ESP32(?:-([SCHP]\d+)[A-Z0-9]*)?(?:[-\s]|$)", value or "", re.IGNORECASE)
+    return ("ESP32" + (f"-{match[1].upper()}" if match[1] else "")) if match else None
+
+
+def _module_chip(part: dict[str, Any]) -> str | None:
+    """Use a stated chip, or infer the ESP32 family from the module's ordering code."""
+    chip = part.get("specs", {}).get("Utilized IC / Part")
+    if is_stated(chip):
+        return chip
+    return _esp32_family(part.get("model"))
+
+
+def prefer_same_package(subcategory: str) -> bool:
+    """Package is the footprint for passives and crystals; keep other packages visible."""
+    primary = COMPATIBILITY_RULES.get(subcategory, {}).get("primary")
+    return primary in {
+        "Resistance", "Resistance @ 25℃", "Cell Resistance @ Illuminance",
+        "Capacitance", "Inductance", "Impedance @ Frequency",
+    } or "crystal" in subcategory.lower()
+
+
 def is_compatible_alternative(
     original: dict[str, Any], candidate: dict[str, Any], subcategory: str
 ) -> tuple[bool, dict[str, Any]]:
     """Check if candidate is a compatible alternative for original.
 
-    Returns (is_compatible, verification_info) tuple.
-    verification_info contains specs_verified and specs_unparseable lists. A spec that can't be
-    checked (missing on either side, "-" on the original, or a value that doesn't parse) passes and
-    is listed as unparseable, except polarity: the candidate must state it.
+    Returns (is_compatible, verification_info). Known mismatches fail. Missing required matches
+    stay eligible only for the caller's unverified list; other unchecked specs lower confidence.
     """
     rules = COMPATIBILITY_RULES.get(subcategory)
     if not rules:
@@ -1422,21 +1501,71 @@ def is_compatible_alternative(
 
     specs_verified: list[str] = []
     specs_unparseable: list[str] = []
+    unverified_requirements: list[str] = []
+    unchecked_requirements: list[str] = []
 
     def result(is_compat: bool) -> tuple[bool, dict[str, Any]]:
-        return is_compat, {"specs_verified": specs_verified, "specs_unparseable": specs_unparseable}
+        return is_compat, {
+            "specs_verified": specs_verified, "specs_unparseable": specs_unparseable,
+            "unverified_requirements": unverified_requirements,
+            "unchecked_requirements": list(dict.fromkeys([*specs_unparseable, *unchecked_requirements])),
+        }
 
-    # The primary spec and must_match specs must be equal
+    # A required match needs both values. Reference series applies only when the original states it.
     for spec in dict.fromkeys([rules["primary"], *rules.get("must_match", [])]):
         orig_val = orig_specs.get(spec)
         cand_val = cand_specs.get(spec)
-        if is_stated(orig_val) and cand_val:
+        if spec == "Utilized IC / Part":
+            inferred = not (is_stated(orig_val) and is_stated(cand_val))
+            orig_val, cand_val = _module_chip(original), _module_chip(candidate)
+            orig_family, cand_family = _esp32_family(orig_val), _esp32_family(cand_val)
+            if inferred and orig_family and cand_family:
+                if orig_family != cand_family:
+                    return result(False)
+                specs_unparseable.append(spec)
+                unverified_requirements.append(spec)
+                continue  # A family match cannot verify the exact chip.
+        if spec == "Reference Series" and not is_stated(orig_val):
+            continue
+        if spec in rules.get("ranges", {}):
+            continue  # Compare both endpoints below, rather than the first number.
+        if is_stated(orig_val) and is_stated(cand_val):
             matched = _compare_values(orig_val, cand_val, spec)
             if matched is False:
                 return result(False)
             (specs_verified if matched else specs_unparseable).append(spec)
-        elif orig_val or cand_val:
-            specs_unparseable.append(spec)  # One side missing, or the original's is "-"
+            if matched is None:
+                unverified_requirements.append(spec)
+        else:
+            specs_unparseable.append(spec)
+            unverified_requirements.append(spec)
+
+    for spec, maximum_only in rules.get("ranges", {}).items():
+        orig_val, cand_val = orig_specs.get(spec), cand_specs.get(spec)
+        covers = voltage_range_covers(orig_val, cand_val, maximum_only)
+        if covers is False:
+            return result(False)
+        (specs_verified if covers else specs_unparseable).append(spec)
+        if covers is None:
+            unverified_requirements.append(spec)
+        if maximum_only and (not is_stated(orig_val) or not any(mark in orig_val for mark in ("~", "～", "–"))):
+            unchecked_requirements.append("minimum input voltage")
+    if rules.get("ranges"):
+        unchecked_requirements.extend(["pinout", "external circuit requirements"])
+
+    if "Utilized IC / Part" in rules.get("must_match", []):
+        orig_memory = parse_esp32_module_memory(original.get("model"))
+        cand_memory = parse_esp32_module_memory(candidate.get("model"))
+        for spec, required, available in zip(("Module Flash", "Module PSRAM"), orig_memory, cand_memory):
+            if required is None:
+                continue
+            if available is None:
+                specs_unparseable.append(spec)
+                unverified_requirements.append(spec)
+            elif available < required:
+                return result(False)
+            else:
+                specs_verified.append(spec)
 
     # N/P (or NPN/PNP) and how many: a candidate that doesn't say can't be used
     polarity_specs = rules.get("polarity")
@@ -1444,6 +1573,7 @@ def is_compatible_alternative(
         orig_polarity = _polarity(orig_specs, polarity_specs)
         if orig_polarity is None:
             specs_unparseable.append("polarity")
+            unverified_requirements.append("polarity")
         else:
             cand_polarity = _polarity(cand_specs, polarity_specs)
             if cand_polarity is None or cand_polarity[0] != orig_polarity[0]:
@@ -1487,7 +1617,7 @@ def verify_primary_spec_match(
     orig_value = original.get("specs", {}).get(primary_attr)
     cand_value = candidate.get("specs", {}).get(primary_attr)
 
-    if not is_stated(orig_value) or not cand_value:
+    if not is_stated(orig_value) or not is_stated(cand_value):
         return True  # Can't verify, allow through
 
     return _values_match(orig_value, cand_value, primary_attr)
@@ -1570,9 +1700,16 @@ def build_response(
     primary_attr: str | None,
     primary_value: str | None,
     limit: int,
+    *,
+    unverified_alternatives: list[tuple[int, dict[str, Any], dict[str, int], dict[str, Any]]] | None = None,
+    library_type: str | None = None,
+    extended_count: int = 0,
+    board_quantity: int = 1,
+    placements_per_board: int = 1,
 ) -> dict[str, Any]:
     """Build the find_alternatives response for a supported subcategory."""
     alternatives = scored_alternatives[:limit]
+    unverified = (unverified_alternatives or [])[:limit]
 
     # Count basic/preferred alternatives
     no_fee_count = sum(
@@ -1581,25 +1718,24 @@ def build_response(
         if p.get("library_type") in ("basic", "preferred")
     )
 
-    # Determine confidence based on verification coverage
-    all_specs_verified = (
-        all(len(v["specs_unparseable"]) == 0 for _, _, _, v in alternatives)
-        if alternatives
-        else True
-    )
-    confidence = "high" if all_specs_verified else "medium"
+    # Unchecked ranges and replacement requirements must never imply a verified drop-in pinout.
+    unchecked = list(dict.fromkeys(
+        spec for _, _, _, info in alternatives
+        for spec in info.get("unchecked_requirements", info["specs_unparseable"])
+    ))
+    all_specs_verified = bool(alternatives) and not unchecked
+    confidence = "high" if all_specs_verified else "medium" if alternatives else "low"
     confidence_reason = (
-        "All critical specs verified compatible"
-        if all_specs_verified
-        else "Some specs could not be parsed - verify manually"
+        "All catalog rule checks passed; review datasheets for replacement suitability"
+        if all_specs_verified else
+        "Some requirements remain unchecked - verify manually" if alternatives else
+        "No verified alternatives found; any unverified candidates require manual comparison"
     )
 
     # Build human-readable summary
     if not alternatives:
-        if original.get("library_type") in ("basic", "preferred"):
-            message = (
-                "Original part is already basic/preferred - no assembly fee savings possible"
-            )
+        if library_type == "no_fee":
+            message = f"No basic/preferred part meets the checked specs; {extended_count} extended alternative(s) do in the evaluated candidates"
         else:
             message = (
                 f"No compatible alternatives found matching {primary_value}"
@@ -1618,21 +1754,21 @@ def build_response(
     best_part = alternatives[0][1] if alternatives else None
     savings = None
     if best_part:
-        assembly_savings = (
-            3.0
-            if (
-                original.get("library_type") == "extended"
-                and best_part.get("library_type") in ("basic", "preferred")
-            )
-            else 0.0
-        )
-        orig_price = original.get("price") or 0
-        best_price = best_part.get("price") or 0
-        price_diff = orig_price - best_price
+        original_fee = 3.0 if original.get("library_type") == "extended" else 0.0
+        replacement_fee = 3.0 if best_part.get("library_type") == "extended" else 0.0
+        assembly_savings = original_fee - replacement_fee
+        orig_price = original.get("price")
+        best_price = best_part.get("price")
+        price_diff = round(orig_price - best_price, 8) if orig_price is not None and best_price is not None else None
+        component_quantity = board_quantity * placements_per_board
         savings = {
             "assembly_fee": assembly_savings,
-            "unit_price_diff": round(price_diff, 4),
-            "total_per_unit": round(assembly_savings + price_diff, 4),
+            "unit_price_diff": price_diff,
+            "board_quantity": board_quantity,
+            "placements_per_board": placements_per_board,
+            "component_quantity": component_quantity,
+            "order_total": round(assembly_savings + price_diff * component_quantity, 4) if price_diff is not None else None,
+            "note": "Assembly fees are per unique part type per order, assuming the original type is removed and the replacement type is newly added. Unit prices use qty 1 tiers, not order quotes.",
         }
 
     # Comparison helper
@@ -1657,13 +1793,15 @@ def build_response(
     # Build alternatives list with verification info, MOQ warnings, and package warnings
     original_pkg = original.get("package", "")
     alternatives_output = []
-    for score, part, breakdown, verify_info in alternatives:
+    unverified_output = []
+    for score, part, breakdown, verify_info in [*alternatives, *unverified]:
         alt: dict[str, Any] = {
             **part,
             "score": score,
             "score_breakdown": breakdown,
             "specs_verified": verify_info["specs_verified"],
             "specs_unparseable": verify_info["specs_unparseable"],
+            "unchecked_requirements": verify_info.get("unchecked_requirements", verify_info["specs_unparseable"]),
         }
         # Add MOQ warning if high
         moq = part.get("min_order", 1)
@@ -1673,13 +1811,21 @@ def build_response(
         part_pkg = part.get("package", "")
         if original_pkg and part_pkg and original_pkg != part_pkg:
             alt["package_warning"] = f"Different package: {part_pkg} vs original {original_pkg}"
-        alternatives_output.append(alt)
+        if verify_info.get("unverified_requirements"):
+            alt["verification_status"] = "unverified - required specs could not be checked"
+            alt["unverified_requirements"] = verify_info["unverified_requirements"]
+            unverified_output.append(alt)
+        else:
+            alternatives_output.append(alt)
 
     return {
         "original": original,
         "alternatives": alternatives_output,
+        "unverified_alternatives": unverified_output,
         "summary": {
             "found": len(alternatives),
+            "unverified_count": len(unverified_output),
+            "extended_count": extended_count,
             "basic_preferred_count": no_fee_count,
             "message": message,
             "is_supported_category": True,
@@ -1689,12 +1835,13 @@ def build_response(
         "confidence": {
             "level": confidence,
             "reason": confidence_reason,
+            "unchecked_requirements": unchecked,
         },
         "search_criteria": {
             "primary_attribute": primary_attr,
             "matched_value": primary_value,
             "subcategory": subcategory,
-            "compatibility_verified": True,
+            "compatibility_verified": bool(alternatives),
         },
     }
 
@@ -1738,7 +1885,8 @@ def build_unsupported_response(
         "alternatives": [],  # Empty - we can't verify compatibility
         "similar_parts": similar_parts_output,
         "summary": {
-            "found": len(similar),
+            "found": 0,
+            "similar_count": len(similar),
             "message": "No compatibility rules for this category. Showing similar parts for manual comparison.",
             "is_supported_category": False,
             "price_note": "Prices shown are unit price at qty 1 tier",

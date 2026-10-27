@@ -14,6 +14,9 @@ PACKAGE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     # These expand to SMD{dim} variants like SMD3215-2P
     (re.compile(r'\b(1610|1612|2012|2016|2520|2835|3014|3020|3030|3215|3225|3528|3535|5032|5050|5730|6035|7050|7060|8045|8080|9070)\b'), 'smd_metric'),
 
+    # Unambiguous metric chip size: 1.0 x 0.5 mm = imperial 0402.
+    (re.compile(r"\b(1005)\b"), "metric_1005"),
+
     # Metric chip sizes (with M suffix)
     (re.compile(r'\b(0402M|0603M|0805M|1206M)\b', re.IGNORECASE), 'metric'),
 
@@ -65,6 +68,31 @@ PACKAGE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
 ]
 
 
+def extract_package_choices(query: str) -> tuple[list[str], str]:
+    """Extract an explicit 'package or package' chain, preserving its OR semantics."""
+    hits = []
+    for pattern, kind in PACKAGE_PATTERNS:
+        if kind == "usb":
+            continue
+        for match in pattern.finditer(query):
+            package, _, _ = extract_package(match.group(1))
+            if package:
+                hits.append((match.start(), match.end(), package))
+    hits.sort(key=lambda hit: (hit[0], -hit[1]))
+    for index, first in enumerate(hits):
+        chain = [first]
+        for hit in hits[index + 1:]:
+            if hit[0] < chain[-1][1]:
+                continue
+            if re.fullmatch(r"\s+or\s+", query[chain[-1][1]:hit[0]], re.IGNORECASE):
+                chain.append(hit)
+            else:
+                break
+        if len(chain) > 1:
+            return list(dict.fromkeys(hit[2] for hit in chain)), query[:first[0]] + " " + query[chain[-1][1]:]
+    return [], query
+
+
 def extract_package(query: str) -> tuple[str | None, str, str | None]:
     """Extract package from query and return (package, remaining_query, suggested_subcategory).
 
@@ -86,6 +114,9 @@ def extract_package(query: str) -> tuple[str | None, str, str | None]:
             package = re.sub(r'TO(\d)', r'TO-\1', package)
             remaining = query[:match.start()] + query[match.end():]
             remaining = remaining.strip()
+
+            if pkg_type == "metric_1005":
+                package = "0402"
 
             # Map Mxx diode packages to SMA/SMB (M4/M7=SMA, M8=SMB)
             if pkg_type == 'mxx_diode_pkg':

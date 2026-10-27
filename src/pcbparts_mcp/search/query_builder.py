@@ -4,7 +4,7 @@ import re
 from typing import Any
 
 from ..alternatives import SPEC_PARSERS
-from ..parsers import parse_resistance
+from ..parsers import RESISTANCE_MATCH_TOLERANCE, parse_memory_size, parse_resistance
 from .spec_filter import (
     LIST_SPECS,
     RANGE_SPECS,
@@ -374,6 +374,13 @@ def _is_range_spec(spec_name: str, attr_names: list[str]) -> bool:
     return spec_name not in SPEC_TO_COLUMN and any(name in RANGE_SPECS for name in attr_names)
 
 
+def _filter_value(parser: Any, value: str) -> float | None:
+    """Unitless explicit numeric values use the attribute parser's base unit."""
+    if re.fullmatch(r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?", value.strip()):
+        return float(value)
+    return parser(value)
+
+
 def build_spec_filter_clauses(
     spec_filters: list[SpecFilter],
 ) -> tuple[list[str], list[Any], list[tuple[SpecFilter, set[str], Any, float | None]], list[dict[str, str]]]:
@@ -445,6 +452,14 @@ def build_spec_filter_clauses(
 
         # Handle individual filter
         spec_filter = item
+        if spec_filter.name in ("Module Flash", "Module PSRAM"):
+            target = _filter_value(parse_memory_size, spec_filter.value)
+            if target is not None:
+                post_filter_metadata.append((spec_filter, {spec_filter.name}, parse_memory_size, target))
+            else:
+                ignored.append({"filter": f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}",
+                                "reason": "memory size could not be parsed"})
+            continue
         # Get all possible attribute names (including aliases)
         attr_names = get_attribute_names(spec_filter.name)
         is_range = _is_range_spec(spec_filter.name, attr_names)
@@ -472,11 +487,12 @@ def build_spec_filter_clauses(
                 parser = _numeric_parser(spec_filter.name, attr_names)
 
             if parser:
-                parsed_value = parser(spec_filter.value)
+                parsed_value = _filter_value(parser, spec_filter.value)
                 if parsed_value is not None:
                     # Use SQL numeric comparison on pre-computed column
                     if spec_filter.operator == "=":
-                        tolerance = abs(parsed_value) * 0.01 if parsed_value != 0 else 1e-9
+                        share = RESISTANCE_MATCH_TOLERANCE if parser is parse_resistance else 0.01
+                        tolerance = abs(parsed_value) * share if parsed_value != 0 else 1e-9
                         sql_clauses.append(f"AND {column_name} BETWEEN ? AND ?")
                         params.extend([parsed_value - tolerance, parsed_value + tolerance])
                     elif spec_filter.operator == ">=":
@@ -499,7 +515,7 @@ def build_spec_filter_clauses(
 
         parsed_value = None
         if parser:
-            parsed_value = parser(spec_filter.value)
+            parsed_value = _filter_value(parser, spec_filter.value)
 
         if parsed_value is not None and spec_filter.operator in (">=", "<=", ">", "<", "="):
             # Numeric comparison - still need post-filtering for these

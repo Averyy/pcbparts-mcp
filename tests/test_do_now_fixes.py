@@ -100,18 +100,21 @@ class TestClientErrorsSurviveMasking:
 # --- #10: spec_filters type validation ----------------------------------------------
 
 class TestSpecFilterValidation:
-    def test_non_string_name_skipped(self):
-        assert server._parse_spec_filters('[{"name":123,"op":"=","value":{}}]') is None
+    def test_non_string_name_rejected(self):
+        with pytest.raises(ValueError):
+            server._parse_spec_filters('[{"name":123,"op":"=","value":{}}]')
 
-    def test_non_string_value_skipped(self):
-        assert server._parse_spec_filters('[{"name":"Resistance","op":"=","value":{}}]') is None
+    def test_non_string_value_rejected(self):
+        with pytest.raises(ValueError):
+            server._parse_spec_filters('[{"name":"Resistance","op":"=","value":{}}]')
 
     def test_valid_filter_kept(self):
         result = server._parse_spec_filters('[{"name":"Resistance","op":">=","value":"10k"}]')
         assert result and result[0].name == "Resistance" and result[0].value == "10k"
 
-    def test_bad_operator_skipped(self):
-        assert server._parse_spec_filters('[{"name":"R","op":"!!","value":"1"}]') is None
+    def test_bad_operator_rejected(self):
+        with pytest.raises(ValueError):
+            server._parse_spec_filters('[{"name":"R","op":"!!","value":"1"}]')
 
     def test_specfilter_rejects_non_string(self):
         with pytest.raises(ValueError):
@@ -160,7 +163,7 @@ class TestPriceHandling:
         # API returns componentPrices: null for some parts -> was len(None) crash.
         c = JLCPCBClient()
         result = c._transform_part(self._base_item(componentPrices=None), slim=True)
-        assert result["price"] is None and result["price_10"] is None
+        assert result["price"] is None and "price_10" not in result
 
     def test_client_zero_price_preserved(self):
         c = JLCPCBClient()
@@ -196,14 +199,15 @@ class TestDailyQuotaUTC:
 # --- review fixes: JSON-string list params with non-string elements -----------------
 
 class TestListParamElementTypes:
-    """JSON-string list payloads bypass Pydantic — non-string elements must be
-    filtered, not crash downstream .lower()/.replace() calls."""
+    """JSON-string list payloads must reject invalid constraints without crashing."""
 
-    def test_parse_list_param_filters_non_strings(self):
-        assert server._parse_list_param('["0402", 1]') == ["0402"]
+    def test_parse_list_param_rejects_non_strings(self):
+        with pytest.raises(ValueError):
+            server._parse_list_param('["0402", 1]')
 
-    def test_parse_list_param_all_non_strings_is_none(self):
-        assert server._parse_list_param('[1, 2]') is None
+    def test_parse_list_param_all_non_strings_rejected(self):
+        with pytest.raises(ValueError):
+            server._parse_list_param('[1, 2]')
 
     async def test_sensor_recommend_int_measures_no_crash(self):
         # Previously: AttributeError 'int' object has no attribute 'lower' in sensor_db

@@ -36,14 +36,13 @@ _POWER_KW_PATTERN = re.compile(r"([\d.]+)\s*kW", re.IGNORECASE)
 _POWER_MW_PATTERN = re.compile(r"([\d.]+)\s*mW", re.IGNORECASE)
 _POWER_DBM_PATTERN = re.compile(r"([+-]?[\d.]+)\s*dBm", re.IGNORECASE)
 _POWER_W_PATTERN = re.compile(r"([\d.]+)\s*W", re.IGNORECASE)
-_CURRENT_UA_PATTERN = re.compile(r"([\d.]+)\s*[uµ]A", re.IGNORECASE)
+_CURRENT_UA_PATTERN = re.compile(r"([\d.]+)\s*[uµμ]A", re.IGNORECASE)
 _CURRENT_MA_PATTERN = re.compile(r"([\d.]+)\s*mA", re.IGNORECASE)
 _CURRENT_KA_PATTERN = re.compile(r"([\d.]+)\s*kA", re.IGNORECASE)
 _CURRENT_A_PATTERN = re.compile(r"([\d.]+)\s*A", re.IGNORECASE)
 _RESISTANCE_PATTERN = re.compile(r"([\d.]+)\s*([kKmM])?")
 # European notation: 4k7 = 4.7k, 4R7 = 4.7Ω, 1M5 = 1.5M (suffix replaces decimal point)
-# Note: Does NOT match milliohm European notation (e.g., "10m5") - check is_milliohm first
-_RESISTANCE_EURO_PATTERN = re.compile(r"(\d+)([kKrR])(\d+)|(\d+)(M)(\d+)", re.IGNORECASE)
+_RESISTANCE_EURO_PATTERN = re.compile(r"(\d+)([kKmMrR])(\d+)")
 _CAPACITANCE_PATTERN = re.compile(r"([\d.]+)\s*([pnuµm])?", re.IGNORECASE)
 _INDUCTANCE_PATTERN = re.compile(r"([\d.]+)\s*([nuµm])?", re.IGNORECASE)
 _FREQUENCY_PATTERN = re.compile(r"([\d.]+)\s*([kKmMgG])?")
@@ -56,6 +55,7 @@ _TEMP_RANGE_PATTERN = re.compile(
     r"([+-]?\d+)\s*[°℃]?C?\s*~\s*[+]?([+-]?\d+)\s*[°℃]?C?", re.IGNORECASE
 )
 _MEMORY_BIT_PATTERN = re.compile(r"([\d.]+)\s*([KMG])?BIT", re.IGNORECASE)
+_MEMORY_SHORT_BIT_PATTERN = re.compile(r"([\d.]+)\s*([KMG])b\b")
 _MEMORY_BYTE_PATTERN = re.compile(r"([\d.]+)\s*([KMG])?B", re.IGNORECASE)
 _WAVELENGTH_PATTERN = re.compile(r"([\d.]+)\s*nm", re.IGNORECASE)
 _LUMINOSITY_PATTERN = re.compile(r"([\d.]+)\s*mcd", re.IGNORECASE)
@@ -193,57 +193,35 @@ def parse_resistance(s: str) -> float | None:
     if not s:
         return None
 
-    # Check for milliohm (mΩ, mohm) BEFORE removing Ω symbol
-    # This distinguishes mΩ (milli) from MΩ (mega)
-    is_milliohm = "mΩ" in s or "mohm" in s.lower()
+    # Unit names are case-insensitive, but the SI prefix is not: M = mega, m = milli.
+    s_clean = s.replace("Ω", "").replace("\\u03a9", "")
+    s_clean = re.sub(r"milliohms?", "m", s_clean, flags=re.IGNORECASE)
+    s_clean = re.sub(r"meg", "M", s_clean, flags=re.IGNORECASE)
+    s_clean = re.sub(r"ohms?", "", s_clean, flags=re.IGNORECASE).strip()
 
-    # Normalize: remove Ω/ohm and escaped Unicode
-    s_clean = s.replace("Ω", "").replace("\\u03a9", "").replace("ohm", "").strip()
+    euro_match = _RESISTANCE_EURO_PATTERN.search(s_clean)
+    if euro_match:
+        int_part, suffix, frac_part = euro_match.groups()
+        value = float(f"{int_part}.{frac_part}")
+    else:
+        match = _RESISTANCE_PATTERN.search(s_clean)
+        if not match:
+            return None
+        value = float(match.group(1))
+        suffix = match.group(2) or ""
 
-    # Don't try European notation for milliohms - "10m5" should be milliohms, not megaohms
-    if not is_milliohm:
-        # Try European notation (e.g., "4k7", "4R7", "1M5")
-        euro_match = _RESISTANCE_EURO_PATTERN.search(s_clean)
-        if euro_match:
-            # Pattern has two alternatives: (\d+)([kKrR])(\d+) or (\d+)(M)(\d+)
-            if euro_match.group(1) is not None:
-                int_part = euro_match.group(1)
-                suffix = euro_match.group(2).upper()
-                frac_part = euro_match.group(3)
-            else:
-                int_part = euro_match.group(4)
-                suffix = euro_match.group(5).upper()
-                frac_part = euro_match.group(6)
-
-            value = float(f"{int_part}.{frac_part}")
-
-            if suffix == "R":
-                return value  # R = ohms
-            elif suffix == "K":
-                return value * 1000
-            elif suffix == "M":
-                return value * 1_000_000
-            return value
-
-    # Handle "0R" special case (jumper resistor)
-    if s_clean.upper() == "0R" or s_clean == "0":
-        return 0.0
-
-    # Try standard notation (e.g., "10k", "4.7k", "470")
-    match = _RESISTANCE_PATTERN.search(s_clean)
-    if not match:
-        return None
-    value = float(match.group(1))
-
-    if is_milliohm:
-        return value / 1000  # mΩ = milliohm
-
-    suffix = (match.group(2) or "").upper()
-    if suffix == "K":
+    if suffix in ("k", "K"):
         return value * 1000
-    elif suffix == "M":
+    if suffix == "M":
         return value * 1_000_000
+    if suffix == "m":
+        return value / 1000
     return value
+
+
+# Resistors come in E96/E192 steps about 1% apart (990kΩ, 1MΩ, 1.01MΩ), so equal resistances
+# must match closer than the 1-2% slack other values get.
+RESISTANCE_MATCH_TOLERANCE = 0.001
 
 
 def parse_capacitance(s: str) -> float | None:
@@ -337,8 +315,8 @@ def parse_memory_size(s: str) -> float | None:
         return None
     s_upper = s.upper()
 
-    # Handle bits (Mbit, Kbit, Gbit)
-    match = _MEMORY_BIT_PATTERN.search(s_upper)
+    # Handle bits (Mbit, Kbit, Gbit, or case-sensitive Mb/Kb/Gb)
+    match = _MEMORY_BIT_PATTERN.search(s_upper) or _MEMORY_SHORT_BIT_PATTERN.search(s)
     if match:
         value = float(match.group(1))
         suffix = match.group(2) or ""
@@ -545,3 +523,16 @@ def impedance_at_freq_match(orig: str, cand: str) -> bool:
     freq_ok = abs(orig_freq - cand_freq) / orig_freq < 0.02
 
     return imp_ok and freq_ok
+
+
+_ESP32_MEMORY_PATTERN = re.compile(
+    r"^ESP32(?:-[A-Z0-9]+)*-N(\d+)(?:R(\d+))?(?:[A-Z0-9]*)(?:$|-)", re.IGNORECASE
+)
+
+
+def parse_esp32_module_memory(mpn: str | None) -> tuple[int | None, int | None]:
+    """Flash/PSRAM in MB from ESP32 N/R codes; N without R means zero PSRAM, no N stays unknown."""
+    match = _ESP32_MEMORY_PATTERN.search(mpn or "")
+    if not match:
+        return None, None
+    return int(match[1]), int(match[2]) if match[2] else 0

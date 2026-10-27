@@ -7,6 +7,7 @@ Provides SQL-based search with attribute filtering that's impossible with the AP
 The database is built from scraped JSONL data on first use.
 """
 
+import json
 import logging
 import os
 import sqlite3
@@ -14,6 +15,7 @@ import threading
 from pathlib import Path
 from typing import Any, Callable, Literal
 
+from ..db_worker import serialized
 from ..config import DEFAULT_MIN_STOCK
 from ..easyeda_store import FootprintAnswer
 from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
@@ -46,16 +48,16 @@ DEFAULT_DB_PATH = Path(os.environ.get("JLCPCB_DB_PATH", str(DEFAULT_DATA_DIR / "
 class ComponentDatabase:
     """SQLite database for parametric component search.
 
-    Thread safety: Uses WAL mode + check_same_thread=False.
-    Concurrent reads are safe; writes are serialized by SQLite.
-    The _conn_lock protects lazy initialization of the connection.
+    Thread safety: One connection, serialized by a reentrant lock for the full
+    operation, initialization and close. Runtime queries are read-only; WAL is
+    configured at initialization, after the optional build of a missing database.
     """
 
     def __init__(self, db_path: Path | None = None, data_dir: Path | None = None):
         self.db_path = db_path or DEFAULT_DB_PATH
         self.data_dir = data_dir or DEFAULT_DATA_DIR
         self._conn: sqlite3.Connection | None = None
-        self._conn_lock = threading.Lock()  # Protects _conn initialization
+        self._conn_lock = threading.RLock()  # Protects connection use, initialization and close
         self._subcategories: dict[int, dict[str, Any]] = {}  # id -> {name, category_id, category_name}
         self._categories: dict[int, dict[str, Any]] = {}  # id -> {name, slug}
         # Reverse lookups for name -> id resolution
@@ -64,7 +66,9 @@ class ComponentDatabase:
         self._category_to_subcategories: dict[int, list[int]] = {}  # category_id -> [subcategory_ids]
         self._search_engine: SearchEngine | None = None
         self._attribute_shares: dict[tuple[tuple[int, ...], tuple[str, ...]], float] = {}
+        self._attribute_names: dict[int, set[str]] = {}
 
+    @serialized
     def _ensure_db(self) -> None:
         """Ensure database exists, build if missing. Thread-safe."""
         if self._conn is not None:
@@ -83,7 +87,15 @@ class ComponentDatabase:
 
             self._conn = sqlite3.connect(self.db_path, check_same_thread=False)
             self._conn.execute("PRAGMA journal_mode=WAL")  # match sensor_db/boards_db; docstring guarantee
+            self._conn.execute("PRAGMA query_only=ON")
             self._conn.row_factory = sqlite3.Row
+
+            if not self._conn.execute("SELECT 1 FROM sqlite_master WHERE type = 'index' AND name = 'idx_mpn_lower'").fetchone():
+                logger.warning(
+                    "Component database %s predates this version: some quiescent-current filters miss parts "
+                    "and MPN lookups are slow. Rebuild with .venv/bin/python scripts/build_database.py",
+                    self.db_path,
+                )
 
             # Load caches
             (
@@ -104,6 +116,7 @@ class ComponentDatabase:
                 category_to_subcategories=self._category_to_subcategories,
             )
 
+    @serialized
     def close(self) -> None:
         """Close database connection. Thread-safe."""
         with self._conn_lock:
@@ -116,16 +129,19 @@ class ComponentDatabase:
         """Get all possible attribute names for a given name (including aliases)."""
         return get_attribute_names(name)
 
+    @serialized
     def get_subcategory_name(self, subcategory_id: int) -> str | None:
         """Get subcategory name by ID."""
         self._ensure_db()
         return get_subcategory_name(subcategory_id, self._subcategories)
 
+    @serialized
     def get_category_for_subcategory(self, subcategory_id: int) -> tuple[int, str] | None:
         """Get category (id, name) for a subcategory."""
         self._ensure_db()
         return get_category_for_subcategory(subcategory_id, self._subcategories)
 
+    @serialized
     def resolve_subcategory_name(self, name: str) -> int | None:
         """Resolve subcategory name to ID. Case-insensitive, supports partial match."""
         self._ensure_db()
@@ -133,6 +149,7 @@ class ComponentDatabase:
             return self._search_engine.resolve_subcategory_name(name)
         return None
 
+    @serialized
     def resolve_category_name(self, name: str) -> int | None:
         """Resolve category name to ID. Case-insensitive, supports partial match."""
         self._ensure_db()
@@ -140,6 +157,7 @@ class ComponentDatabase:
             return self._search_engine.resolve_category_name(name)
         return None
 
+    @serialized
     def _find_similar_subcategories(self, name: str, limit: int = 5) -> list[dict[str, Any]]:
         """Find subcategories similar to the given name (for error suggestions)."""
         self._ensure_db()
@@ -155,6 +173,7 @@ class ComponentDatabase:
         """Resolve manufacturer alias to canonical name."""
         return resolve_manufacturer(name)
 
+    @serialized
     def search(
         self,
         query: str | None = None,
@@ -243,6 +262,7 @@ class ComponentDatabase:
 
         return result
 
+    @serialized
     def attribute_share(self, subcategory_ids: list[int], names: list[str]) -> float:
         """Share of the parts in these subcategories (0-1) that state one of these attributes
         (not "-"). Cached: the data only changes with a new database."""
@@ -250,6 +270,17 @@ class ComponentDatabase:
         key = (tuple(sorted(subcategory_ids)), tuple(sorted(names)))
         if key not in self._attribute_shares:
             if not self._conn or not subcategory_ids or not names:
+                return 0.0
+            for subcategory_id in subcategory_ids:
+                if subcategory_id not in self._attribute_names:
+                    self._attribute_names[subcategory_id] = {
+                        name.casefold()
+                        for row in self._conn.execute(
+                            "SELECT attributes FROM components WHERE subcategory_id = ?", (subcategory_id,),
+                        )
+                        for name, value in json.loads(row[0] or "[]") if value != "-"
+                    }
+            if not any(name.casefold() in self._attribute_names[i] for i in subcategory_ids for name in names):
                 return 0.0
             stated = " OR ".join("(attributes LIKE ? ESCAPE '\\' AND attributes NOT LIKE ? ESCAPE '\\')" for _ in names)
             params: list[Any] = []
@@ -263,6 +294,7 @@ class ComponentDatabase:
             self._attribute_shares[key] = (row[1] or 0) / row[0] if row[0] else 0.0
         return self._attribute_shares[key]
 
+    @serialized
     def get_by_lcsc(self, lcsc: str) -> dict[str, Any] | None:
         """Get a single component by LCSC code."""
         self._ensure_db()
@@ -270,6 +302,7 @@ class ComponentDatabase:
             return None
         return get_by_lcsc(self._conn, lcsc, self._subcategories)
 
+    @serialized
     def get_easyeda_seed(self, lcsc: str) -> FootprintAnswer | None:
         """Seeded EasyEDA footprint answer for a part (data/easyeda/footprints.csv), or None."""
         self._ensure_db()
@@ -286,6 +319,7 @@ class ComponentDatabase:
             return None
         return FootprintAnswer(bool(row["has_footprint"]), row["symbol_uuid"], row["footprint_uuid"], row["checked_at"])
 
+    @serialized
     def easyeda_seed_size(self) -> int:
         """Rows in the seeded EasyEDA footprint table (0 for a DB built before 0.6.0)."""
         self._ensure_db()
@@ -296,6 +330,7 @@ class ComponentDatabase:
         except sqlite3.OperationalError:
             return 0
 
+    @serialized
     def get_by_mpn(self, mpn: str) -> list[dict[str, Any]]:
         """Find components by manufacturer part number.
 
@@ -306,6 +341,7 @@ class ComponentDatabase:
             return []
         return get_by_mpn(self._conn, mpn, self._subcategories)
 
+    @serialized
     def get_by_lcsc_batch(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
         """Get multiple components by LCSC codes in a single query."""
         self._ensure_db()
@@ -313,6 +349,7 @@ class ComponentDatabase:
             return {}
         return get_by_lcsc_batch(self._conn, lcsc_codes, self._subcategories)
 
+    @serialized
     def find_alternative_candidates(
         self,
         original: dict[str, Any],
@@ -350,6 +387,7 @@ class ComponentDatabase:
         """Convert a database row to a component dict."""
         return row_to_dict(row, self._subcategories)
 
+    @serialized
     def get_categories_for_client(self) -> list[dict[str, Any]]:
         """Export categories in format expected by JLCPCBClient.set_categories()."""
         self._ensure_db()
@@ -357,6 +395,7 @@ class ComponentDatabase:
             return []
         return get_categories_for_client(self._conn, self._subcategories)
 
+    @serialized
     def list_attributes(
         self,
         subcategory_id: int | None = None,
@@ -376,6 +415,7 @@ class ComponentDatabase:
             sample_size=sample_size,
         )
 
+    @serialized
     def get_stats(self) -> dict[str, Any]:
         """Get database statistics."""
         self._ensure_db()

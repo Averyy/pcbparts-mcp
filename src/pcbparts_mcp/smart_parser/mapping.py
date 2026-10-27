@@ -121,12 +121,15 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str | tuple[str, str]]] = {
 
     # Crystals
     "crystal": {
+        "capacitance": "Load Capacitance",
         "frequency": "Frequency",
     },
     "crystals": {
+        "capacitance": "Load Capacitance",
         "frequency": "Frequency",
     },
     "oscillator": {
+        "capacitance": "Load Capacitance",
         "frequency": "Frequency",
     },
 

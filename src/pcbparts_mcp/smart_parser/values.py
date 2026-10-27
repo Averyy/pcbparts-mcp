@@ -17,10 +17,10 @@ class ExtractedValue:
 
 # Resistance: 10k, 100R, 4.7k, 1M, 100ohm, 4k7 (European notation)
 _RES_EURO = re.compile(r'\b(\d+)([kKmMrR])(\d+)\b')
-_RES_STD = re.compile(r'\b(\d+(?:\.\d+)?)\s*([kKmMrROhm]|ohm|kohm|mohm)\b', re.IGNORECASE)
+_RES_STD = re.compile(r'\b(\d+(?:\.\d+)?)\s*((?:meg|milliohm|[kKmM]ohm|ohm|[kKmMrR]))\b', re.IGNORECASE)
 
 # Capacitance: 10uF, 100nF, 1pF, 4.7uF
-_CAP = re.compile(r'\b(\d+(?:\.\d+)?)\s*(u[fF]|n[fF]|p[fF]|[u]F|nF|pF)\b')
+_CAP = re.compile(r'\b(\d+(?:\.\d+)?)\s*(u[fF]|n[fF]|p[fF]|F)\b')
 
 # Inductance: 10uH, 100nH, 1mH
 _IND = re.compile(r'\b(\d+(?:\.\d+)?)\s*(u[hH]|n[hH]|m[hH]|[u]H|nH|mH)\b')
@@ -66,28 +66,28 @@ _PIN_STRUCTURE = re.compile(r'\b([12])\s*[xX]\s*(\d+)\b')
 def _parse_resistance_value(match: re.Match) -> tuple[float, str]:
     """Parse resistance match to (ohms, normalized_string)."""
     groups = match.groups()
-    if len(groups) == 3 and groups[2]:  # European notation: 4k7
-        int_part, suffix, frac_part = groups
-        value = float(f"{int_part}.{frac_part}")
-        suffix = suffix.upper()
-        if suffix == 'R':
-            return value, f"{int_part}R{frac_part}"
-        elif suffix == 'K':
-            return value * 1000, f"{int_part}k{frac_part}"
-        elif suffix == 'M':
-            return value * 1_000_000, f"{int_part}M{frac_part}"
-    else:  # Standard: 10k, 100R
-        value_str = groups[0]
-        suffix = (groups[1] or '').upper()
-        value = float(value_str)
-        if suffix in ('R', 'OHM'):
-            return value, f"{value_str}Ohm"
-        elif suffix in ('K', 'KOHM'):
-            return value * 1000, f"{value_str}kOhm"
-        elif suffix in ('M', 'MOHM'):
-            return value * 1_000_000, f"{value_str}MOhm"
-        return value, f"{value_str}Ohm"
-    return 0, ""
+    suffix = groups[1]
+    value_str = f"{groups[0]}.{groups[2]}" if len(groups) == 3 else groups[0]
+    value = float(value_str)
+    if len(groups) == 3:
+        scale = {"k": 1e3, "K": 1e3, "M": 1e6, "m": 1e-3, "r": 1, "R": 1}[suffix]
+        normalized_suffix = "k" if suffix in ("k", "K") else "R" if suffix in ("r", "R") else suffix
+        return value * scale, f"{groups[0]}{normalized_suffix}{groups[2]}"
+    if suffix.lower() == "milliohm" or suffix.startswith("m") and suffix.lower() != "meg":
+        return value * 1e-3, f"{value_str}mOhm"
+    if suffix.lower() == "meg" or suffix.startswith("M"):
+        return value * 1e6, f"{value_str}MOhm"
+    if suffix.lower().startswith("k"):
+        return value * 1e3, f"{value_str}kOhm"
+    return value, f"{value_str}Ohm"
+
+
+def normalize_value_notation(query: str) -> str:
+    """Normalize electrical notation before extraction; callers retain the original query."""
+    query = query.replace("µ", "u").replace("μ", "u").replace("Ω", "ohm")
+    unit = "uH" if re.search(r"\b(inductor|inductors|coil|choke)\b", query, re.IGNORECASE) else "uF"
+    query = re.sub(r"(?<![\w-])(\d+)u(\d+)(?![\w-])", rf"\1.\2{unit}", query)
+    return re.sub(r"(?<![\w-])(\d+)[vV](\d+)(?![\w-])", r"\1.\2V", query)
 
 
 def extract_values(query: str) -> tuple[list[ExtractedValue], str]:
@@ -99,6 +99,7 @@ def extract_values(query: str) -> tuple[list[ExtractedValue], str]:
     Returns:
         Tuple of (list of ExtractedValue, remaining_query with values removed)
     """
+    query = normalize_value_notation(query)
     values = []
     remaining = query
 
@@ -162,9 +163,12 @@ def extract_values(query: str) -> tuple[list[ExtractedValue], str]:
 
     # Capacitance
     for match in _CAP.finditer(query):
+        # Bare farads must not consume a hyphenated model suffix such as ESP-12F.
+        if match.group(2) == "F" and match.start() and query[match.start() - 1] == "-":
+            continue
         value = float(match.group(1))
         suffix = match.group(2).lower()
-        if suffix in ('uf', 'f'):
+        if suffix == 'uf':
             farads = value * 1e-6
             norm = f"{match.group(1)}uF"
         elif suffix == 'nf':
