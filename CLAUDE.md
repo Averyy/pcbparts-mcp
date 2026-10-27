@@ -4,10 +4,10 @@
 
 **Always run `git pull` first** - Your local repo may be out of date.
 
-**Check GitHub issues and PRs in every session, at least once a day.** Run `gh issue list --repo Averyy/pcbparts-mcp --state open` and `gh pr list --repo Averyy/pcbparts-mcp --state open` before starting work and again on any day the session continues. Mention anything new to Avery, even when the task is unrelated: users and contributors report real bugs there, and an issue may touch what you're changing.
+**Check GitHub issues and PRs in every session, at least once a day.** Run `gh issue list --repo Averyy/pcbparts-mcp --state open` and `gh pr list --repo Averyy/pcbparts-mcp --state open` before starting work and again on any day the session continues. Mention anything new to the user, even when the task is unrelated: users and contributors report real bugs there, and an issue may touch what you're changing.
 - Reproduce a reported bug locally before fixing it, and test the fix with the reporter's own inputs.
 - Reference the issue in the commit and `CHANGELOG.md` (`Fixes #17`), so merging closes it.
-- Don't comment on, label or close issues or PRs without Avery's go-ahead; draft the reply for Avery instead.
+- Don't comment on, label or close issues or PRs without the user's go-ahead; draft the reply instead.
 
 ## Git Commit Rules
 
