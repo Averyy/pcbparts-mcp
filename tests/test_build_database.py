@@ -57,6 +57,36 @@ class TestBuildDatabase:
         assert stats["total_parts"] == 2
         assert _row_count(tmp_path / "components.db") == 2
 
+    def test_case_insensitive_mpn_lookup_uses_built_index(self, tmp_path):
+        from pcbparts_mcp.db.lookup import get_by_mpn
+
+        _write_category(tmp_path, "ics", [
+            _part("C1", m="LM358", s=100), _part("C2", m="lm358", s=200),
+            _part("C3", m="ÄBC"), _part("C4", m="äbc"),
+        ])
+        db_path = tmp_path / "components.db"
+        build_database(tmp_path, db_path, verbose=False)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        try:
+            indexes = {row[1] for row in conn.execute("PRAGMA index_list(components)")}
+            assert "idx_mpn_lower" in indexes
+            queries = []
+            conn.set_trace_callback(queries.append)
+            assert [p["lcsc"] for p in get_by_mpn(conn, "lM358", {})] == ["C2", "C1"]
+            assert [p["lcsc"] for p in get_by_mpn(conn, "Äbc", {})] == ["C3"]
+            # Include the normalized-variant path, using the actual queries from lookup.py.
+            assert [p["lcsc"] for p in get_by_mpn(conn, "LM358-TR", {})] == ["C2", "C1"]
+            conn.set_trace_callback(None)
+            for query in queries:
+                if "LOWER(mpn)" in query:
+                    plan = [row[3] for row in conn.execute("EXPLAIN QUERY PLAN " + query)]
+                    assert any("SEARCH components USING INDEX idx_mpn_lower" in row for row in plan)
+            conn.execute("DROP INDEX idx_mpn_lower")
+            assert [p["lcsc"] for p in get_by_mpn(conn, "lM358", {})] == ["C2", "C1"]
+        finally:
+            conn.close()
+
     # --- #5: cross-category duplicate LCSC ---------------------------------------
 
     def test_cross_category_duplicate_does_not_crash(self, tmp_path):
@@ -256,3 +286,39 @@ class TestBuildHistoryDb:
             bh.build_history_db(tmp_path, db_path, verbose=False)
         assert _event_count(db_path) == 3
         assert _no_tmp_left(db_path)
+
+
+@pytest.mark.parametrize("attribute,value,expected", [
+    ("standby current", "1uA", 1e-6),
+    ("Supply Current (Iq)", "5mA", .005),
+    ("Supply Current (Iq)", "10μA", 1e-5),
+])
+def test_idle_current_columns(attribute, value, expected):
+    from build_database import extract_numeric_columns
+
+    assert extract_numeric_columns([[attribute, value]])["iq_ua"] == pytest.approx(expected)
+
+
+@pytest.mark.parametrize("old_database", [False, True])
+def test_database_age_warning(tmp_path, caplog, old_database):
+    from pcbparts_mcp.db import ComponentDatabase
+
+    _write_category(tmp_path, "ics", [_part("C1")])
+    db_path = tmp_path / "components.db"
+    build_database(tmp_path, db_path, verbose=False)
+    if old_database:
+        with sqlite3.connect(db_path) as conn:
+            conn.execute("DROP INDEX idx_mpn_lower")
+    database = ComponentDatabase(db_path=db_path)
+    try:
+        database._ensure_db()
+        database._ensure_db()
+        warnings = [r.message for r in caplog.records if r.name == "pcbparts_mcp.db" and r.levelname == "WARNING"]
+        assert len(warnings) == int(old_database)
+        if old_database:
+            assert "predates this version" in warnings[0]
+            assert "quiescent-current filters miss parts" in warnings[0]
+            assert "MPN lookups are slow" in warnings[0]
+            assert ".venv/bin/python scripts/build_database.py" in warnings[0]
+    finally:
+        database.close()

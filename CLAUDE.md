@@ -4,12 +4,17 @@
 
 **Always run `git pull` first** - Your local repo may be out of date.
 
+**Check GitHub issues and PRs in every session, at least once a day.** Run `gh issue list --repo Averyy/pcbparts-mcp --state open` and `gh pr list --repo Averyy/pcbparts-mcp --state open` before starting work and again on any day the session continues. Mention anything new to the user, even when the task is unrelated: users and contributors report real bugs there, and an issue may touch what you're changing.
+- Reproduce a reported bug locally before fixing it, and test the fix with the reporter's own inputs.
+- Reference the issue in the commit and `CHANGELOG.md` (`Fixes #17`), so merging closes it.
+- Don't comment on, label or close issues or PRs without the user's go-ahead; draft the reply instead.
+
 ## Git Commit Rules
 
 - **GET LATEST FIRST** github actions runs automatically to commit new parts
 - **NEVER commit without explicit permission** only commit when user explicitly asks ("commit this", "push these changes")
 - **NEVER add Claude attribution** - No "Co-Authored-By: Claude" or similar
-- **Always bump version** in `pyproject.toml` (PATCH/MINOR/MAJOR per semver, ask permission before bumping major/minor, patch is the default)
+- **Always bump version** in `pyproject.toml` and `uv.lock` (PATCH/MINOR/MAJOR per semver, ask permission before bumping major/minor, patch is the default), and add an entry to `CHANGELOG.md` with client-visible changes under **Breaking**
 
 ## Critical Rules
 
@@ -39,7 +44,7 @@ PCB Parts MCP server for electronic component search and sensor recommendation. 
 
 ## Usage Stats
 
-`/mcp/stats` (under `/mcp` because Caddy forwards only `/mcp*` and `/health`) serves anonymous daily counts from `stats.py`: per-tool calls = ok + not_found + bad_request + rate_limited + failed, calls per UTC hour, apps, distinct callers, Mouser/DigiKey lookups. The file (`USAGE_STATS_PATH` on the cache volume) keeps 365 days; the page shows 30. Error replies are sorted by `_ERROR_KINDS` in `server.py`; every error message must be listed in `ERROR_REPLIES` in `tests/test_usage_stats.py` (the test enforces it). Keep it same-origin: if another site ever needs it, allow that domain only, never `*`.
+`/mcp/stats` (under `/mcp` because Caddy forwards only `/mcp*` and `/health`) serves anonymous daily counts from `stats.py`: per-tool calls = ok + similar_only + not_found + bad_request + rate_limited + failed (alternatives: ok means verified alternatives found; similar_only means manual comparison candidates without verified replacements), calls per UTC hour, apps, distinct callers, Mouser/DigiKey lookups. The file (`USAGE_STATS_PATH` on the cache volume) keeps 365 days; the page shows 30. Error replies are sorted by `_ERROR_KINDS` in `server.py`; every error message must be listed in `ERROR_REPLIES` in `tests/test_usage_stats.py` (the test enforces it). Keep it same-origin: if another site ever needs it, allow that domain only, never `*`.
 
 ## API Gotcha
 

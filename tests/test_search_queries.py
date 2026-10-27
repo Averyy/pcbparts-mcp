@@ -241,3 +241,396 @@ class TestTotals:
         first = await search("12V buck converter 2A", limit=5)
         second = await server.jlc_search(query="12V buck converter 2A", limit=10)
         assert [p["lcsc"] for p in second["results"][:5]] == [p["lcsc"] for p in first["results"]]
+
+
+class TestIssue17MegohmMilliohm:
+    """github.com/Averyy/pcbparts-mcp/issues/17: a 1MΩ resistor came back as 1mΩ."""
+
+    CHIP = "Chip Resistor - Surface Mount"
+
+    @pytest.mark.parametrize("args,target", [
+        ({"query": "1M resistor"}, 1e6),
+        ({"query": "1M resistor 2512"}, 1e6),
+        ({"query": "1Mohm resistor"}, 1e6),
+        ({"query": "1M ohm resistor 0805"}, 1e6),
+        ({"query": "1MOhm 1% 0603"}, 1e6),
+        ({"query": "R1 1MΩ 0603 1%"}, 1e6),
+        ({"query": "1 MΩ 0402 resistor"}, 1e6),
+        ({"query": "1meg resistor"}, 1e6),
+        ({"query": "4.99k resistor 0603"}, 4990),
+        ({"subcategory_name": CHIP, "spec_filters": [{"name": "Resistance", "op": "=", "value": "1MOhm"}]}, 1e6),
+        ({"subcategory_name": CHIP, "spec_filters": [{"name": "Resistance", "op": "=", "value": "1Mohm"}]}, 1e6),
+        ({"subcategory_name": CHIP, "spec_filters": [{"name": "Resistance", "op": "=", "value": 1000000}]}, 1e6),
+        ({"query": "1mΩ resistor 2512"}, 1e-3),
+        ({"query": "1 mOhm current sense resistor"}, 1e-3),
+        ({"query": "1milliohm shunt resistor"}, 1e-3),
+        ({"subcategory_name": CHIP, "spec_filters": [{"name": "Resistance", "op": "=", "value": "1mOhm"}]}, 1e-3),
+    ])
+    async def test_every_result_has_the_requested_resistance(self, args, target):
+        result = await server.jlc_search(**args, limit=100)
+        assert result["total"] > 0  # "R1" (a BOM reference) may be relaxed away; the value never is
+        assert any(f["name"] == "Resistance" for f in result["filters_applied"]["spec_filters"])
+        # Exact: resistors come in ~1% steps, so 990kΩ or 1.01MΩ is a different part than 1MΩ
+        assert all(parse_resistance(p["specs"]["Resistance"]) == pytest.approx(target) for p in result["results"])
+
+    def test_alternatives_need_the_same_resistance(self):
+        from pcbparts_mcp.alternatives import _compare_values
+
+        assert _compare_values("1MΩ", "1MΩ", "Resistance")
+        for other in ("1mΩ", "990kΩ", "1.01MΩ"):
+            assert not _compare_values("1MΩ", other, "Resistance")
+        assert not _compare_values("4.99kΩ", "5kΩ", "Resistance")
+        assert _compare_values("100nF", "101nF", "Capacitance")  # other values keep their 2% slack
+
+
+class TestBatch2Values:
+    @pytest.mark.parametrize("value,target", [
+        ("1M", 1e6), ("4.7M", 4.7e6), ("10M", 1e7), ("10Meg", 1e7),
+        ("10MEG", 1e7), ("10m", .01), ("10mΩ", .01), ("10mOhm", .01),
+        ("10 milliohm", .01),
+    ])
+    async def test_resistance_prefix_case(self, value, target):
+        for args in (
+            {"query": f"{value} resistor 0603"},
+            {"subcategory_name": "Chip Resistor - Surface Mount", "package": "0603",
+             "spec_filters": [{"name": "Resistance", "op": "=", "value": value}]},
+        ):
+            result = await search(**args)
+            assert result["total"] > 0
+            assert all(parse_resistance(p["specs"]["Resistance"]) == pytest.approx(target)
+                       for p in result["results"])
+
+    @pytest.mark.parametrize("ascii_query,unicode_query,spec,parser,target", [
+        ("2.2uF capacitor 0603", "2.2µF capacitor 0603", "Capacitance", "capacitance", 2.2e-6),
+        ("2.2uF capacitor 0603", "2.2μF capacitor 0603", "Capacitance", "capacitance", 2.2e-6),
+        ("10uH inductor 1A", "10µH inductor 1A", "Inductance", "inductance", 1e-5),
+        ("10uH inductor 1A", "10μH inductor 1A", "Inductance", "inductance", 1e-5),
+    ])
+    async def test_unicode_units(self, ascii_query, unicode_query, spec, parser, target):
+        from pcbparts_mcp.parsers import parse_capacitance, parse_inductance
+
+        parse = {"capacitance": parse_capacitance, "inductance": parse_inductance}[parser]
+        expected = await search(ascii_query)
+        result = await search(unicode_query)
+        assert result["parsed"]["original_query"] == unicode_query
+        assert result["total"] == expected["total"] > 0
+        assert result["results"] == expected["results"]
+        assert all(parse(p["specs"][spec]) == pytest.approx(target) for p in result["results"])
+
+    @pytest.mark.parametrize("query,spec,target", [
+        ("10 kΩ 0402 resistor", "Resistance", 10000),
+        ("4u7 0805 capacitor", "Capacitance", 4.7e-6),
+        ("22uF 6V3 0805", "Voltage Rating", 6.3),
+        ("10k resistor 1005", "Resistance", 10000),
+    ])
+    async def test_common_value_forms(self, query, spec, target):
+        from pcbparts_mcp.parsers import parse_capacitance
+
+        result = await search(query)
+        assert result["total"] > 0
+        parse = {"Resistance": parse_resistance, "Capacitance": parse_capacitance,
+                 "Voltage Rating": parse_voltage}[spec]
+        for part in result["results"]:
+            actual = parse(part["specs"][spec])
+            assert actual >= target if spec == "Voltage Rating" else actual == pytest.approx(target)
+            if "1005" in query:
+                assert part["package"] == "0402"
+        if "6V3" in query:
+            assert any(f["name"] == "Voltage Rating" and parse_voltage(f["value"]) == 6.3
+                       for f in result["filters_applied"]["spec_filters"])
+
+    @pytest.mark.parametrize("value", ["2.2qF", "2.2qf", "2.2uX", "2.2 qF"])
+    async def test_unknown_electrical_unit_is_reported_when_relaxed(self, value):
+        result = await search(f"{value} capacitor 0603")
+        assert result["total"] > 0
+        unsupported = result["parsed"]["detected"]["unsupported_constraints"]
+        assert unsupported
+        assert all(value in result["relaxed"]["reason"] for value in unsupported)
+
+    @pytest.mark.parametrize("query,frequency,capacitance", [
+        ("32.768kHz crystal 12.5pF", "32.768kHz", "12.5pF"),
+        ("16MHz crystal 12pF", "16MHz", "12pF"),
+        ("8MHz crystal 3225 20pF", "8MHz", "20pF"),
+    ])
+    async def test_crystal_load_capacitance(self, query, frequency, capacitance):
+        from pcbparts_mcp.parsers import parse_capacitance
+
+        result = await search(query)
+        explicit = await search(subcategory_name="Crystals", package="3225" if "3225" in query else None,
+                                spec_filters=[{"name": "Frequency", "op": "=", "value": frequency},
+                                              {"name": "Load Capacitance", "op": "=", "value": capacitance}])
+        assert result["total"] == explicit["total"] > 0
+        assert result["results"] == explicit["results"]
+        assert all(parse_capacitance(p["specs"]["Load Capacitance"]) == pytest.approx(parse_capacitance(capacitance))
+                   for p in result["results"])
+
+    @pytest.mark.parametrize("name", ["Quiescent Current", "standby current", "Supply Current (Iq)"])
+    async def test_explicit_idle_current(self, name):
+        result = await search(subcategory_name="Voltage Regulators - Linear, Low Drop Out (LDO) Regulators",
+                              spec_filters=[{"name": name, "op": "<", "value": "10uA"}])
+        assert result["total"] > 0
+        assert not result.get("ignored_filters")
+        for part in result["results"]:
+            idle = next(part["specs"][k] for k in ("standby current", "Quiescent Current", "Quiescent Current(Iq)", "Supply Current (Iq)")
+                        if k in part["specs"])
+            assert parse_current(idle) < 1e-5
+
+    @pytest.mark.parametrize("unit", ["uA", "µA", "μA"])
+    async def test_named_idle_current(self, unit):
+        result = await search(f"3.3V LDO quiescent current < 10{unit}")
+        assert result["total"] > 0
+        assert {"name": "Quiescent Current", "op": "<", "value": "10uA"} in result["filters_applied"]["spec_filters"]
+        for part in result["results"]:
+            assert parse_current(part["specs"]["standby current"]) < 1e-5
+            assert covers(part["specs"]["Output Voltage"], 3.3)
+
+    async def test_named_forward_voltage(self):
+        result = await search("schottky diode 1A Vf < 0.3V")
+        assert result["total"] > 0
+        assert {"name": "Vf", "op": "<", "value": "0.3V"} in result["filters_applied"]["spec_filters"]
+        for part in result["results"]:
+            assert parse_voltage(part["specs"]["Voltage - Forward(Vf@If)"]) < .3
+            assert parse_current(part["specs"]["Current - Rectified"]) >= 1
+
+    def test_bare_farads_and_oscillator_mapping(self):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+
+        parsed = parse_smart_query("1F 5.5V supercapacitor")
+        assert any(f.name == "Capacitance" and f.value == "1F" for f in parsed.spec_filters)
+        parsed = parse_smart_query("16MHz oscillator 12pF")
+        assert any(f.name == "Load Capacitance" and f.value == "12pF" for f in parsed.spec_filters)
+
+
+class TestBatch2ReviewFixes:
+    async def test_adc_relaxation_names_unsupported_resolution(self):
+        result = await search("24bit ADC I2C")
+        assert result["total"] > 0
+        assert "24bit" in result["relaxed"]["reason"]
+        assert all(p["subcategory"] == "Analog to Digital Converters (ADC)" for p in result["results"])
+
+    @pytest.mark.parametrize("query,model", [("AMS1117-3V3", "AMS1117"), ("LM2596S-5V0", "LM2596S-5V0")])
+    async def test_model_notation_is_not_rewritten(self, query, model):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+
+        parsed = parse_smart_query(query)
+        assert parsed.model_number == model
+        result = await search(query)
+        control = await search(model)
+        assert result["total"] == control["total"]
+        if query.startswith("AMS"):
+            assert result["total"] > 0
+        assert all(model.lower() in p["model"].lower() for p in result["results"])
+
+    async def test_inductor_shorthand(self):
+        from pcbparts_mcp.parsers import parse_inductance
+
+        result = await search("4u7 inductor 0805")
+        assert result["total"] > 0
+        assert all(parse_inductance(p["specs"]["Inductance"]) == pytest.approx(4.7e-6) for p in result["results"])
+
+
+class TestBatch2B:
+    @pytest.mark.parametrize("topology", ["buck-boost", "buck boost"])
+    async def test_compound_topology(self, topology):
+        result = await search(f"3.7V to 3.3V {topology} converter")
+        control = await search(subcategory_name="DC-DC Converters", spec_filters=[
+            {"name": "Topology", "op": "=", "value": "Buck-Boost"},
+            {"name": "Supply Voltage", "op": "=", "value": "3.7V"},
+            {"name": "Output Voltage", "op": "=", "value": "3.3V"}])
+        assert result["total"] == control["total"] > 0
+        for part in result["results"]:
+            assert "Buck-Boost" in part["specs"]["Topology"].split("、")
+            assert covers(part["specs"]["Voltage - Supply"], 3.7)
+            assert covers(part["specs"]["Output Voltage"], 3.3)
+
+    async def test_translator_sides_and_direction(self):
+        result = await search("3.3V to 5V bidirectional level shifter")
+        assert result["total"] > 0
+        for part in result["results"]:
+            assert part["specs"]["Channel Type"] == "Bidirectional"
+            assert covers(part["specs"]["Voltage - Supply(VCCA)"], 3.3)
+            assert covers(part["specs"]["Voltage - Supply(VCCB)"], 5)
+
+    @pytest.mark.parametrize("query,allowed", [
+        ("motor driver", {"Motor Driver ICs", "Brushed DC Motor Drivers", "Stepper Motor Driver", "Brushless DC (BLDC) Motor Driver"}),
+        ("dc motor driver h-bridge", {"Brushed DC Motor Drivers"}),
+        ("stepper driver", {"Stepper Motor Driver"}),
+        ("bldc driver", {"Brushless DC (BLDC) Motor Driver"}),
+    ])
+    async def test_motor_categories(self, query, allowed):
+        result = await search(query)
+        assert result["total"] > (10 if query == "motor driver" else 0)
+        assert all(p["subcategory"] in allowed for p in result["results"])
+
+    @pytest.mark.parametrize("query", ["10k resistor through hole", "through hole resistor 10k"])
+    async def test_through_hole_resistor(self, query):
+        result = await search(query)
+        assert result["total"] > 0
+        for part in result["results"]:
+            assert part["subcategory"] == "Through Hole Resistors"
+            assert parse_resistance(part["specs"]["Resistance"]) == 10000
+
+    async def test_module_memory(self):
+        import re
+
+        result = await search("ESP32-S3 module 16MB flash 8MB PSRAM")
+        assert result["total"] > 0
+        for part in result["results"]:
+            assert part["subcategory"] == "WiFi Modules"
+            assert part["model"].startswith("ESP32-S3-")
+            memory = re.search(r"-N(\d+)R(\d+)", part["model"])
+            assert memory and int(memory[1]) >= 16 and int(memory[2]) >= 8
+
+    @pytest.mark.parametrize("query,category,spec,target", [
+        ("microcontroller 128KB flash", "Microcontrollers (MCU/MPU/SOC)", "Program Storage Size", 128*1024),
+        ("SPI flash 16MB", "NOR FLASH", "Memory Size", 16*1024*1024),
+    ])
+    async def test_flash_capacity(self, query, category, spec, target):
+        result = await search(query)
+        assert result["total"] > 0
+        for part in result["results"]:
+            assert part["subcategory"] == category
+            raw = next(part["specs"][k] for k in (spec, "Flash", "Program Memory Size") if k in part["specs"])
+            assert parse_memory_size(raw) >= target
+
+    @pytest.mark.parametrize("phrase", ["input up to 24V", "Vin 24V", "24V max input", "from 24V", "up to 24V in"])
+    async def test_input_voltage_phrases(self, phrase):
+        result = await search(f"LDO 3.3V output {phrase}")
+        assert result["total"] > 0
+        assert {"name": "Supply Voltage", "op": ">=", "value": "24V"} in result["filters_applied"]["spec_filters"]
+        for part in result["results"]:
+            assert parse_voltage(part["specs"]["Voltage - Supply"]) >= 24
+            assert covers(part["specs"]["Output Voltage"], 3.3)
+
+    @pytest.mark.parametrize("phrase,library", [("basic", "basic"), ("basic part", "basic"), ("no assembly fee", "no_fee"), ("no fee", "no_fee"), ("preferred", "preferred")])
+    async def test_library_words(self, phrase, library):
+        result = await search(f"{phrase} resistor" if library == "preferred" else f"{phrase} 10k resistor 0603")
+        assert result["total"] > 0
+        assert result["parsed"]["detected"]["library_type"] == library
+        allowed = {"basic", "preferred"} if library == "no_fee" else {library}
+        assert all(p["library_type"] in allowed for p in result["results"])
+
+    async def test_cheapest_and_explicit_override(self):
+        result = await search("cheapest 3.3V LDO")
+        explicit = await search("3.3V LDO", sort_by="price")
+        assert result["results"] == explicit["results"]
+        assert result["parsed"]["detected"]["sort_by"] == "price"
+        override = await search("basic cheapest 10k resistor 0603", library_type="extended", sort_by="stock")
+        control = await search("10k resistor 0603", library_type="extended", sort_by="stock")
+        assert override["results"] == control["results"]
+        assert all(p["library_type"] == "extended" for p in override["results"])
+
+    @pytest.mark.parametrize("query,category", [
+        ("USB PD sink trigger 12V", "USB PD"), ("eFuse 5V 2A", "Surge Protection Devices (SPDs)"),
+        ("lipo fuel gauge I2C", "Battery Management"), ("MEMS microphone", "MEMS Microphones"),
+        ("polymer capacitor", "Polymer Aluminum Capacitors"),
+    ])
+    async def test_hobby_aliases(self, query, category):
+        result = await search(query)
+        assert result["total"] > 0
+        assert all(p["subcategory"] == category for p in result["results"])
+        if "fuel gauge" in query:
+            assert all(p["specs"]["The Chip Type"] == "Monitoring IC" for p in result["results"])
+
+    @pytest.mark.parametrize("args", [{"protocol": "1-wire"}, {"measure": "heart rate"}, {"measure": "blood oxygen"}])
+    async def test_sensor_aliases(self, args):
+        result = await server.sensor_recommend(**args)
+        assert result["total"] > 0
+        for part in result["results"]:
+            if "protocol" in args:
+                assert "one_wire" in part["protocols"]
+            else:
+                assert "biometric" in part["measures"]
+
+    async def test_overlapping_sensor_measure_aliases(self):
+        single = await server.sensor_recommend(measure="heart rate", limit=100)
+        combined = await server.sensor_recommend(measure=["heart rate", "blood oxygen"], limit=100)
+        assert single["total"] > 0
+        assert combined["total"] == single["total"]
+        assert combined["results"] == single["results"]
+
+    async def test_distinct_sensor_measures_still_require_both(self):
+        result = await server.sensor_recommend(measure=["temperature", "humidity"], limit=100)
+        assert result["total"] > 0
+        assert all({"temperature", "humidity"} <= set(p["measures"]) for p in result["results"])
+
+    async def test_board_tag_alias(self):
+        result = await server.board_search(tag="USB-C")
+        assert result["total"] > 0
+        assert all("usb" in p["tags"] for p in result["results"])
+
+    @pytest.mark.parametrize("args", [{"platform": "esp-idf"}, {"protocol": "nonsense"}, {"measure": "nonsense"}])
+    async def test_unknown_sensor_enum(self, args):
+        result = await server.sensor_recommend(**args)
+        assert "error" in result and result["valid_values"]
+
+    async def test_library_case_and_unknowns(self):
+        result = await search("10k resistor 0603", library_type="Basic")
+        assert all(p["library_type"] == "basic" for p in result["results"])
+        invalid = await server.jlc_search(library_type="nonsense")
+        assert "error" in invalid and invalid["valid_values"]
+        invalid = await server.board_search(tag="nonsense")
+        assert "error" in invalid and invalid["valid_values"]
+
+    async def test_known_unavailable_supercapacitor(self):
+        result = await search("1F 5.5V supercapacitor")
+        assert result["total"] == 0 and result["results"] == []
+        assert result["parsed"]["subcategory"] == "supercapacitors"
+        assert "Mouser" in result["hint"] and "DigiKey" in result["hint"]
+
+    @pytest.mark.parametrize("query,model", [
+        ("supercapacitor charging IC", None), ("supercapacitor balancing", "CN3125"), ("CN3125 supercapacitor", "CN3125"),
+    ])
+    async def test_supercapacitor_word_still_finds_other_parts(self, query, model):
+        result = await search(query)
+        assert result["total"] > 0 and "hint" not in result
+        assert not any("capacitor" in p["subcategory"].lower() for p in result["results"])
+        if model:
+            assert any(p["model"] == model for p in result["results"])
+
+    async def test_library_schema_allows_alias_normalization(self):
+        from fastmcp import Client
+
+        async with Client(server.mcp) as client:
+            tools = await client.list_tools()
+            schema = next(t.inputSchema for t in tools if t.name == "jlc_search")
+            choices = schema["properties"]["library_type"]["anyOf"][0]["enum"]
+            assert choices == ["basic", "preferred", "no_fee", "extended", "all"]
+            for alias, allowed in [("Basic", {"basic"}), ("no-fee", {"basic", "preferred"})]:
+                response = await client.call_tool("jlc_search", {"query": "10k resistor 0603", "library_type": alias})
+                result = response.data
+                assert result["total"] > 0
+                assert all(p["library_type"] in allowed for p in result["results"])
+
+
+class TestAdditionalReviewFixes:
+    @pytest.mark.parametrize("query", ["ESP8266 ESP-12F module", "ESP-12F", "ESP8266 ESP-12F SMD"])
+    async def test_esp12f_is_not_capacitance(self, query):
+        result = await search(query)
+        assert result["total"] > 0
+        assert any("ESP-12F" in p["model"].upper() for p in result["results"])
+        assert not any(f["name"] == "Capacitance" for f in result["parsed"]["spec_filters"])
+        assert not any(f["name"] == "Capacitance" for f in result["filters_applied"]["spec_filters"])
+
+    @pytest.mark.parametrize("query,model", [("FUSB302B USB PD", "FUSB302B"), ("STUSB4500 USB PD controller", "STUSB4500")])
+    async def test_model_can_relax_query_part_type(self, query, model):
+        result = await search(query)
+        assert result["total"] > 0
+        assert all(p["model"].upper().startswith(model) for p in result["results"])
+        assert result["relaxed"] == {
+            "dropped_part_type": "USB PD",
+            "reason": f"no part matching {model} is listed under USB PD, so every part type was searched",
+        }
+
+    @pytest.mark.parametrize("constraint", ["strict", "subcategory_name", "subcategory_id"])
+    async def test_model_part_type_retry_keeps_explicit_constraints(self, constraint):
+        values = {"strict": True, "subcategory_name": "USB PD",
+                  "subcategory_id": server.get_db().resolve_subcategory_name("USB PD")}
+        kwargs = {constraint: values[constraint]}
+        result = await search("FUSB302B USB PD", **kwargs)
+        assert result["total"] == 0
+        assert "relaxed" not in result
+
+    async def test_model_part_type_retry_requires_no_parsed_specs(self):
+        result = await search("FUSB302B USB PD 5V")
+        assert "dropped_part_type" not in result.get("relaxed", {})

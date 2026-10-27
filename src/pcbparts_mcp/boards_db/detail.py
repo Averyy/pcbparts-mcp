@@ -322,11 +322,12 @@ def get_consensus(
                 continue
 
             if pin_name not in pin_consensus:
-                pin_consensus[pin_name] = {"count": 0, "components": Counter()}
+                pin_consensus[pin_name] = {"count": 0, "components": Counter(), "quantities": {}}
             pin_consensus[pin_name]["count"] += 1
-            for c in components:
-                key = f"{c['value']} [{c['role']}]"
+            quantities = Counter(f"{c['value']} [{c['role']}]" for c in components)
+            for key, quantity in quantities.items():
                 pin_consensus[pin_name]["components"][key] += 1
+                pin_consensus[pin_name]["quantities"].setdefault(key, {})[board_slugs[i]] = quantity
 
     # Build result — sort by board count descending, cap at 30 pins
     _MAX_CONSENSUS_PINS = 30
@@ -342,7 +343,9 @@ def get_consensus(
     pins_result = {}
     for pin_name, data in eligible_pins:
         top_choices = [
-            {"value_role": vr, "count": cnt, "pct": round(cnt * 100 / total)}
+            {"value_role": vr, "count": cnt, "pct": round(cnt * 100 / total),
+             "boards": sorted(data["quantities"][vr]),
+             "quantities": data["quantities"][vr]}
             for vr, cnt in data["components"].most_common(5)
         ]
         pins_result[pin_name] = {

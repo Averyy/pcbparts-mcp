@@ -52,21 +52,21 @@ def list_attributes(
             )
             return {
                 "error": f"Subcategory not found: '{subcategory_name}'",
-                "hint": "Use search_help() to browse categories and subcategories",
+                "hint": "Use jlc_search_help() to browse categories and subcategories",
                 "similar_subcategories": similar,
             }
 
     if not resolved_id:
         return {
             "error": "Must provide subcategory_id or subcategory_name",
-            "hint": "Use search_help() to browse categories and subcategories",
+            "hint": "Use jlc_search_help() to browse categories and subcategories",
         }
 
     subcat_info = subcategories.get(resolved_id)
     if not subcat_info:
         return {
             "error": f"Subcategory ID {resolved_id} not found",
-            "hint": "Use search_help(category=...) to see valid subcategory IDs",
+            "hint": "Use jlc_search_help(category='Connectors') to see valid subcategory IDs",
         }
 
     # Sample components from this subcategory

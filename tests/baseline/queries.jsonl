@@ -1,0 +1,289 @@
+{"tool": "jlc_search", "args": {"query": "ESP32-C3 module", "limit": 8}, "expect_change": "#50"}
+{"tool": "jlc_search", "args": {"query": "ESP32-C3-MINI-1", "limit": 8}}
+{"tool": "jlc_search", "args": {"query": "USB-C receptacle 16 pin SMD", "limit": 8}, "expect_change": "#23"}
+{"tool": "jlc_search", "args": {"query": "usb-c", "library_type": "no_fee", "limit": 8}}
+{"tool": "jlc_search", "args": {"query": "lipo charger", "limit": 8}}
+{"tool": "jlc_search", "args": {"query": "single cell li-ion charger SOT-23-5", "limit": 8}, "expect_change": "#50"}
+{"tool": "jlc_search", "args": {"query": "3.3V LDO 500mA SOT-23-5", "limit": 8}}
+{"tool": "jlc_search", "args": {"query": "3.3V LDO low quiescent current", "limit": 8}, "expect_change": "#28"}
+{"tool": "jlc_search", "args": {"query": "5.1k resistor 0402", "library_type": "basic", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "10uF 25V 0805 X5R", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "100nF 0402", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "USBLC6-2SC6", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "USB ESD protection SOT-23-6", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "ws2812b", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "tactile switch SMD 3x4mm", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "32.768kHz crystal 12.5pF", "limit": 5}, "expect_change": "#24"}
+{"tool": "jlc_search", "args": {"query": "JST PH 2 pin right angle", "limit": 5}, "expect_change": "#23"}
+{"tool": "jlc_search", "args": {"query": "p-channel mosfet SOT-23 -30V", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "schottky diode SOD-123 40V 1A", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "10k resistor", "packages": "0402", "limit": 3}, "expect_change": "#5"}
+{"tool": "jlc_search", "args": {"query": "10k resistor 0402", "library_type": "Basic", "limit": 3}, "expect_change": "#5"}
+{"tool": "jlc_search", "args": {"subcategory_name": "Wire To Board Connector", "spec_filters": [{"name": "Number of Pins", "op": "=", "value": "2"}, {"name": "Pitch", "op": "=", "value": "2mm"}, {"name": "Reference Series", "op": "=", "value": "PH"}], "limit": 5}, "expect_change": "#5"}
+{"tool": "jlc_search", "args": {"subcategory_name": "USB Connectors", "spec_filters": [{"name": "Number of Contacts", "op": "=", "value": "16P"}], "limit": 5}}
+{"tool": "jlc_search_help", "args": {"subcategory": "Wire To Board Connector"}}
+{"tool": "jlc_search_help", "args": {"subcategory": "Crystals"}}
+{"tool": "jlc_search_help", "args": {"subcategory": "ldo"}}
+{"tool": "jlc_search", "args": {"query": "qwiic connector", "limit": 5}, "expect_change": "#23"}
+{"tool": "jlc_search", "args": {"query": "2x5 pin header 1.27mm", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "4 pin header 2.54mm", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "2 pin screw terminal 5.08mm", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "dc motor driver h-bridge", "limit": 5}, "expect_change": "#42"}
+{"tool": "jlc_search", "args": {"query": "DRV8833", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "n-channel mosfet SOT-23", "spec_filters": [{"name": "Vgs(th)", "op": "<", "value": "1.5V"}, {"name": "Id", "op": ">=", "value": "3A"}], "library_type": "no_fee", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "12V to 5V buck converter 2A", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "buck converter", "spec_filters": [{"name": "Output Current", "op": ">=", "value": "3A"}], "sort_by": "price", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "4.7uH power inductor 3A", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "red LED 0603", "library_type": "basic", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "rail-to-rail op amp SOT-23-5", "limit": 5}, "expect_change": "#50"}
+{"tool": "jlc_search", "args": {"query": "rs485 transceiver 3.3V", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "can transceiver", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "i2c level shifter", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "i2c eeprom 256kbit", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "RP2040", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "W25Q128JVSIQ", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "500mA resettable fuse 1206", "limit": 5}}
+{"tool": "jlc_search", "args": {"query": "5V TVS diode SOD-323 unidirectional", "limit": 5}}
+{"tool": "jlc_search", "args": {"subcategory_name": "MOSFETs", "spec_filters": [{"name": "Rds(on)", "op": "<", "value": "10mOhm"}, {"name": "Vds", "op": ">=", "value": "30V"}], "package": "SOT-23", "limit": 5}}
+{"tool": "jlc_search", "args": {"subcategory_name": "MOSFETs", "spec_filters": [{"name": "Vgs(th)", "op": "<", "value": "1.5"}], "limit": 3}, "expect_change": "#5"}
+{"tool": "jlc_search", "args": {"subcategory_name": "MOSFETs", "spec_filters": [{"name": "Gate Threshold", "op": "<", "value": "1.5V"}], "limit": 3}, "expect_change": "#44"}
+{"tool": "jlc_search", "args": {"subcategory_name": "MOSFETs", "spec_filters": [{"name": "Vgs(th)", "op": "<=", "value": "1.5V"}, {"name": "Id", "op": "=>", "value": "3A"}], "limit": 3}, "expect_change": "#5"}
+{"tool": "sensor_recommend", "args": {"measure": "co2", "platform": "esphome", "limit": 5}}
+{"tool": "sensor_recommend", "args": {"measure": ["temperature", "humidity"], "protocol": "i2c", "limit": 5}}
+{"tool": "sensor_recommend", "args": {"query": "capacitive soil moisture", "limit": 5}}
+{"tool": "sensor_recommend", "args": {"measure": "imu", "protocol": "spi", "limit": 5}}
+{"tool": "sensor_recommend", "args": {"query": "distance sensor 4 meters", "limit": 5}}
+{"tool": "sensor_recommend", "args": {"measure": "current", "protocol": "i2c", "limit": 5}}
+{"tool": "sensor_recommend", "args": {"measure": "air quality", "limit": 5}}
+{"tool": "sensor_recommend", "args": {"query": "load cell amplifier", "limit": 5}}
+{"tool": "board_search", "args": {"component": "MCP73831", "limit": 3}, "expect_change": "#4"}
+{"tool": "board_search", "args": {"component": "ESP32-C3", "limit": 3}}
+{"tool": "board_search", "args": {"query": "USB-C power delivery sink", "limit": 3}}
+{"tool": "board_search", "args": {"tag": "lora", "limit": 3}}
+{"tool": "board_search", "args": {"component": "RP2040", "limit": 3}, "expect_change": "#4"}
+{"tool": "board_search", "args": {"component": "TP4056", "limit": 3}}
+{"tool": "board_search", "args": {"component": "AMS1117", "limit": 3}}
+{"tool": "get_design_rules", "args": {"topic": ""}}
+{"tool": "get_design_rules", "args": {"topic": "usb-c"}}
+{"tool": "get_design_rules", "args": {"topic": "lipo"}, "expect_change": "#48"}
+{"tool": "get_design_rules", "args": {"topic": "battery"}}
+{"tool": "get_design_rules", "args": {"topic": "decoupling"}}
+{"tool": "get_design_rules", "args": {"topic": "i2c"}}
+{"tool": "get_design_rules", "args": {"topic": "rp2040"}}
+{"tool": "get_design_rules", "args": {"topic": "crystal"}}
+{"tool": "get_design_rules", "args": {"topic": "mosfet"}}
+{"tool": "get_design_rules", "args": {"topic": "motor"}}
+{"tool": "get_design_rules", "args": {"topic": "antenna"}}
+{"tool": "get_design_rules", "args": {"topic": "jlcpcb"}, "expect_change": "#57"}
+{"tool": "jlc_search", "args": {"query": "n-channel mosfet"}}
+{"tool": "jlc_search", "args": {"subcategory_name": "MOSFETs", "library_type": "basic", "limit": 100}}
+{"tool": "jlc_search", "args": {"subcategory_name": "Tactile Switches", "spec_filters": [{"name": "Height", "op": "<=", "value": "2mm"}], "limit": 5}, "expect_change": "#44"}
+{"tool": "jlc_search", "args": {"subcategory_name": "MOSFETs", "spec_filters": [{"name": "Id", "op": ">=", "value": 3}], "limit": 3}, "expect_change": "#5", "note": "validation error today (number as value)"}
+{"tool": "jlc_search", "args": {"subcategory_name": "MOSFETs", "spec_filters": "[{\"name\":\"Id\",\"op\":\">=\",\"value\":3}]", "limit": 3}, "expect_change": "#5"}
+{"tool": "jlc_search", "args": {"subcategory_name": "Mosfet", "limit": 3}}
+{"tool": "jlc_search", "args": {"subcategory_name": "Buck Converters", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "flux capacitor 1.21GW", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "100nF 0402", "manufacturer": "Samsung", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "100nF 0402", "manufacturer": "Samsung Electro-Mechanics", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "10k resistor through hole 1/4W", "limit": 3}, "expect_change": "#25"}
+{"tool": "jlc_search", "args": {"query": "100uF 16V electrolytic capacitor", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "10k NTC thermistor 0402 3950", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "3.3V passive buzzer SMD", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "0.96 inch OLED 128x64 I2C", "limit": 3}, "expect_change": "#50"}
+{"tool": "jlc_search", "args": {"query": "u.fl connector", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "micro sd card socket", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "CR2032 battery holder", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "low side gate driver SOT-23-5", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "10mOhm current sense resistor 1206 1%", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "ideal diode controller", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "load switch 2A", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "ESP32-S3-WROOM-1 N16R8", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "STM32G0 QFN-32", "limit": 3}, "expect_change": "#43"}
+{"tool": "jlc_search", "args": {"subcategory_name": "Microcontrollers (MCU/MPU/SOC)", "spec_filters": [{"name": "Flash", "op": ">=", "value": "64KB"}, {"name": "CPU Core", "op": "=", "value": "ARM Cortex-M0+"}], "sort_by": "price", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "10M resistor 0603", "limit": 3}, "expect_change": "#40"}
+{"tool": "jlc_search", "args": {"query": "1M resistor 0603", "limit": 3}, "expect_change": "#40"}
+{"tool": "jlc_search", "args": {"query": "10Meg resistor 0603", "limit": 3}, "expect_change": "#40"}
+{"tool": "jlc_search", "args": {"subcategory_name": "Chip Resistor - Surface Mount", "spec_filters": [{"name": "Resistance", "op": "=", "value": "10MΩ"}], "package": "0603", "limit": 3}}
+{"tool": "jlc_search", "args": {"subcategory_name": "ORing Controllers", "limit": 3}}
+{"tool": "board_search", "args": {"component": "CH340C", "limit": 3}}
+{"tool": "board_search", "args": {"component": "TP4054", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "100 nF 0603 capacitor", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "0.1uF 0603 capacitor", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "100n 0603 capacitor", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "2.2µF 0603 capacitor", "limit": 3}, "expect_change": "#60"}
+{"tool": "jlc_search", "args": {"query": "2.2μF 0603 capacitor", "limit": 3}, "expect_change": "#60"}
+{"tool": "jlc_search", "args": {"query": "4u7 0805 capacitor", "limit": 3}, "expect_change": "#60"}
+{"tool": "jlc_search", "args": {"query": "10K 0402 resistor", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "10 kΩ 0402 resistor", "limit": 3}, "expect_change": "#60"}
+{"tool": "jlc_search", "args": {"query": "4k7 0603 resistor", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "330 ohm 0603 resistor", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "0 ohm jumper 0603", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "1R 1206 resistor", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "4.7k 0402", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "10µH inductor 1A", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "600 ohm ferrite bead 0603", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "1uF 50V X7R 0805", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "22uF 6.3V 0805", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "22uF 6V3 0805", "limit": 3}, "expect_change": "#60"}
+{"tool": "jlc_search", "args": {"query": "22pF C0G 0402", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "22pF NP0 0402", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "basic 10k resistor 0603", "limit": 3}, "expect_change": "#78"}
+{"tool": "jlc_search", "args": {"query": "cheapest 3.3V LDO", "limit": 3}, "expect_change": "#78"}
+{"tool": "jlc_search", "args": {"query": "no assembly fee 100nF capacitor", "limit": 3}, "expect_change": "#78"}
+{"tool": "jlc_search", "args": {"query": "10k resistor 1005", "limit": 3}, "expect_change": "#60"}
+{"tool": "jlc_search", "args": {"query": "1k resistor 0805 0.25W", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "10k 0.1% 0603 resistor", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "47uF 10V tantalum capacitor", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "1F 5.5V supercapacitor", "limit": 3}, "expect_change": "#70"}
+{"tool": "jlc_search", "args": {"query": "100uF 16V polymer capacitor", "limit": 3}, "expect_change": "#70"}
+{"tool": "jlc_search", "args": {"query": "I2S class D amplifier 3W", "limit": 4}, "expect_change": "#50"}
+{"tool": "jlc_search", "args": {"query": "MAX98357A", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "I2S MEMS microphone", "limit": 4}, "expect_change": "#70"}
+{"tool": "jlc_search", "args": {"query": "3.5mm headphone jack SMD", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "USB PD sink trigger 12V", "limit": 4}, "expect_change": "#70"}
+{"tool": "jlc_search", "args": {"query": "CH224K", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "boost converter 3.7V to 5V 1A", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "buck-boost converter 3.3V", "limit": 4}, "expect_change": "#62"}
+{"tool": "jlc_search", "args": {"query": "lithium battery protection IC", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "lipo fuel gauge I2C", "limit": 4}, "expect_change": "#70"}
+{"tool": "jlc_search", "args": {"query": "eFuse 5V 2A", "limit": 4}, "expect_change": "#70"}
+{"tool": "jlc_search", "args": {"query": "24V bidirectional TVS SMBJ", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "USB to UART bridge", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "ethernet PHY RMII", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "RJ45 with magnetics", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "SX1262 LoRa module", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "GPS module UART", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "nRF52840 module", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "RP2350", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "CH32V003", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "ATtiny85", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "STM32 microcontroller LQFP-48 128KB flash", "limit": 4}, "expect_change": "#66"}
+{"tool": "jlc_search", "args": {"query": "microcontroller with USB", "sort_by": "price", "limit": 4}, "expect_change": "#81"}
+{"tool": "jlc_search", "args": {"query": "dual n-channel mosfet SOT-23-6", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "NPN transistor SOT-23", "library_type": "basic", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "3.3V zener diode SOD-323", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "bridge rectifier 1A", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "I2C temperature sensor", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "hall effect sensor SOT-23", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "current sense amplifier SOT-23-5", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "RTC I2C", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "5V relay SPDT 10A", "limit": 4}, "expect_change": "#50"}
+{"tool": "jlc_search", "args": {"query": "PC817 optocoupler SMD", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "SPDT slide switch SMD", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "rotary encoder with switch", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "DC barrel jack 5.5x2.1mm", "limit": 4}, "expect_change": "#50"}
+{"tool": "jlc_search", "args": {"query": "1x8 female header 2.54mm", "limit": 4}, "expect_change": "#50"}
+{"tool": "jlc_search", "args": {"query": "FPC connector 0.5mm 24 pin", "limit": 4}, "expect_change": "#23"}
+{"tool": "jlc_search", "args": {"query": "SMA edge mount connector", "limit": 4}, "expect_change": "#77"}
+{"tool": "jlc_search", "args": {"query": "6x6mm tactile switch through hole", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "micro USB connector", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "8MHz crystal 3225 20pF", "limit": 4}, "expect_change": "#24"}
+{"tool": "jlc_search", "args": {"query": "25MHz oscillator 3.3V", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "940nm IR LED", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "SK6812 mini-e", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "white LED 0805", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "AEC-Q100 CAN transceiver", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "LDO 3.3V output input up to 24V", "limit": 4}, "expect_change": "#76"}
+{"tool": "jlc_search", "args": {"query": "7805", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "logic level mosfet 30V 10A", "limit": 4}}
+{"tool": "jlc_search", "args": {"query": "ESP32 with 8MB flash", "limit": 4}, "expect_change": "#71"}
+{"tool": "jlc_search", "args": {"query": "ESP32-S3 module 16MB flash 8MB PSRAM", "limit": 4}, "expect_change": "#71"}
+{"tool": "jlc_search", "args": {"subcategory_name": "MEMS Microphones", "limit": 4}}
+{"tool": "jlc_search_help", "args": {"subcategory": "WiFi Modules"}}
+{"tool": "jlc_search", "args": {"query": "supercapacitor", "limit": 3}}
+{"tool": "jlc_search", "args": {"query": "10k resistor", "page": 2, "limit": 3}, "expect_change": "#37", "note": "validation error today (no page argument)"}
+{"tool": "jlc_search", "args": {"query": "10k resistor", "offset": 20, "limit": 3}, "expect_change": "#37", "note": "validation error today (no offset argument)"}
+{"tool": "jlc_search", "args": {"query": "10k resistor", "limit": 0}}
+{"tool": "jlc_search", "args": {"subcategory_id": "2954", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "C2040", "limit": 3}}
+{"tool": "jlc_search_help", "args": {"category": "Connectors"}}
+{"tool": "jlc_search_help", "args": {"subcategory": "buck converter"}}
+{"tool": "jlc_search_help", "args": {"subcategory": "n-channel mosfet"}}
+{"tool": "board_get", "args": {"slug": "adafruit-esp32-s3-feather", "include_bom": true}}
+{"tool": "board_get", "args": {"slug": "adafruit-esp32-s3-feather", "focus": "MCP73831"}, "expect_change": "#7"}
+{"tool": "board_get", "args": {"slug": "adafruit-esp32-s3-feather", "focus": "ESP32"}}
+{"tool": "board_get", "args": {"slug": "corne-v4"}}
+{"tool": "board_get", "args": {"slug": "adafruit-feather-esp32s3"}, "expect_change": "#75"}
+{"tool": "jlc_search", "args": {"query": "10uF 0805 capacitor", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "1uF 0603 capacitor", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "orange LED 0603", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "JST SH", "limit": 2}, "expect_change": "#23"}
+{"tool": "jlc_search", "args": {"query": "red LED 0603 diode", "limit": 2}, "expect_change": "#72"}
+{"tool": "jlc_search", "args": {"query": "MBR540 SOD-123 diode", "limit": 2}, "expect_change": "#53"}
+{"tool": "jlc_search", "args": {"query": "LC709203F", "limit": 2}, "expect_change": "#53"}
+{"tool": "jlc_search", "args": {"query": "1x16 header", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "1x12 header", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "WS2812B", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "DMG3415U mosfet", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "5.1kohm 0603 resistor", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "100kohm 0603 resistor", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "1Mohm 0603 resistor", "limit": 2}, "expect_change": "#40"}
+{"tool": "jlc_search", "args": {"query": "10kohm resistor", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "KMR2", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "ESP32-S3-MINI-1", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "AP2112/RT9080-3.3 SOT-23-5", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "MCP73831 SOT-23-5", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "BME280", "limit": 2}}
+{"tool": "jlc_search", "args": {"query": "JSTPH", "limit": 2}, "expect_change": "#72"}
+{"tool": "jlc_search", "args": {"query": "USB C", "limit": 2}, "expect_change": "#72"}
+{"tool": "sensor_recommend", "args": {"measure": "pressure", "protocol": "I2C", "limit": 3}}
+{"tool": "sensor_recommend", "args": {"measure": "temperature", "platform": "esp-idf", "limit": 3}, "expect_change": "#74"}
+{"tool": "sensor_recommend", "args": {"measure": "temperature", "platform": "Arduino", "limit": 3}}
+{"tool": "sensor_recommend", "args": {"measure": "heart rate", "limit": 3}, "expect_change": "#74"}
+{"tool": "sensor_recommend", "args": {"measure": "lux", "protocol": "i2c", "limit": 3}}
+{"tool": "sensor_recommend", "args": {"query": "air pressure sensor", "limit": 3}}
+{"tool": "sensor_recommend", "args": {"query": "waterproof temperature", "limit": 3}, "expect_change": "#74"}
+{"tool": "sensor_recommend", "args": {"query": "DS18B20", "limit": 3}}
+{"tool": "sensor_recommend", "args": {"measure": "co2", "type": "ndir", "limit": 5}}
+{"tool": "sensor_recommend", "args": {"protocol": "1-wire", "limit": 3}, "expect_change": "#74"}
+{"tool": "sensor_recommend", "args": {"protocol": "one_wire", "limit": 3}}
+{"tool": "sensor_recommend", "args": {"measure": "blood oxygen", "limit": 3}, "expect_change": "#74"}
+{"tool": "sensor_recommend", "args": {}}
+{"tool": "sensor_recommend", "args": {"measure": "vibration", "limit": 3}}
+{"tool": "sensor_recommend", "args": {"measure": "lidar", "protocol": "uart", "limit": 3}}
+{"tool": "get_design_rules", "args": {"topic": "power/ldo"}, "expect_change": "#6"}
+{"tool": "get_design_rules", "args": {"topic": "usb esd"}}
+{"tool": "get_design_rules", "args": {"topic": "strapping pins"}, "expect_change": "#48"}
+{"tool": "get_design_rules", "args": {"topic": "checklist"}}
+{"tool": "board_search", "args": {"query": "mechanical keyboard", "limit": 3}, "expect_change": "#75"}
+{"tool": "board_search", "args": {"query": "stepper motor driver", "limit": 3}}
+{"tool": "board_search", "args": {"tag": "usb-c", "limit": 3}, "expect_change": "#74"}
+{"tool": "board_search", "args": {"org": "adafruit", "limit": 3}}
+{"tool": "board_search", "args": {"component": "esp32-s3", "limit": 3}}
+{"tool": "board_search", "args": {"layers": 4, "tag": "usb", "limit": 3}}
+{"tool": "jlc_get_part", "args": {"mpn": "AP2112K-3.3TRG1"}}
+{"tool": "jlc_get_part", "args": {"mpn": "mcp73831t-2aci/ot"}}
+{"tool": "jlc_get_part", "args": {"mpn": "TPS7A0233PDBVR"}}
+{"tool": "jlc_get_part", "args": {"mpn": "LM358"}}
+{"tool": "jlc_get_part", "args": {"mpn": "ESP32-S3-WROOM-1-N8R8"}}
+{"tool": "jlc_get_part", "args": {"mpn": "BSS138"}}
+{"tool": "jlc_get_part", "args": {"mpn": "SN74LVC1G14DBVR"}}
+{"tool": "jlc_get_part", "args": {"mpn": "STM32F103C8T6"}}
+{"tool": "jlc_get_part", "args": {"mpn": "ATMEGA328P-AU"}}
+{"tool": "jlc_get_part", "args": {"mpn": "CH340C"}}
+{"tool": "jlc_get_part", "args": {"mpn": "TP4056"}}
+{"tool": "jlc_get_part", "args": {"mpn": "USB4105-GF-A"}}
+{"tool": "jlc_get_part", "args": {"mpn": "LIS3DH"}}
+{"tool": "jlc_get_part", "args": {"mpn": "NE555"}}
+{"tool": "jlc_get_part", "args": {"mpn": "1N4148W"}}
+{"tool": "jlc_get_part", "args": {"mpn": "GRM155R71C104KA88D"}}
+{"tool": "jlc_get_part", "args": {"mpn": "RC0402FR-0710KL"}}
+{"tool": "jlc_get_part", "args": {"mpn": "SS34"}}
+{"tool": "jlc_get_part", "args": {"mpn": "LM1117-3.3"}}
+{"tool": "jlc_get_part", "args": {"mpn": "AMS1117-3.3"}}
+{"tool": "jlc_get_part", "args": {"mpn": "C2040"}, "expect_change": "#33"}
+{"tool": "jlc_get_part", "args": {"mpn": "MBR540"}, "expect_change": "#53"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C2765186"}, "expect_change": "#41"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C424093"}, "expect_change": "#41"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C173752"}, "expect_change": "#41"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C2913202"}, "expect_change": "#73"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C9864", "same_package": true, "limit": 3}, "expect_change": "#1"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C82942"}, "expect_change": "#1"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C20917"}, "expect_change": "#73"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C25744"}, "expect_change": "#47"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C25804"}, "expect_change": "#47"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C1525"}, "expect_change": "#47"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C9002"}, "expect_change": "#47"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C6186", "library_type": "no_fee"}, "expect_change": "#46"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "AMS1117-3.3"}, "expect_change": "#80"}
+{"tool": "jlc_find_alternatives", "args": {"lcsc": "C5137636", "board_quantity": 100, "placements_per_board": 4}, "expect_change": "#9"}

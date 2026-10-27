@@ -37,13 +37,22 @@ class TestParseResistance:
         ("0r", 0.0),
         # European notation - mega
         ("1M5", 1500000),
-        ("1m5", 1500000),
+        ("1m5", .0015),  # Prefix case distinguishes milli from mega
         ("2M2", 2200000),
     ])
     def test_european_notation(self, input_val: str, expected: float):
         """Test European notation parsing (4k7 = 4.7kΩ)."""
         result = parse_resistance(input_val)
         assert result == pytest.approx(expected), f"{input_val} should parse to {expected}"
+
+    @pytest.mark.parametrize("input_val,expected", [
+        # Issue #17: "1MOhm".lower() contains "mohm", which used to read as 1 milliohm
+        ("1MOhm", 1e6), ("1Mohm", 1e6), ("1MOHM", 1e6), ("1M ohm", 1e6), ("1 MΩ", 1e6),
+        ("1MΩ", 1e6), ("1M", 1e6), ("1meg", 1e6), ("1MEG", 1e6),
+        ("1mOhm", 1e-3), ("1mohm", 1e-3), ("1 mΩ", 1e-3), ("1mΩ", 1e-3), ("1m", 1e-3), ("1 milliohm", 1e-3),
+    ])
+    def test_mega_and_milli_prefix_case(self, input_val: str, expected: float):
+        assert parse_resistance(input_val) == pytest.approx(expected)
 
     @pytest.mark.parametrize("input_val,expected", [
         # Milliohm with explicit indicator
@@ -53,6 +62,11 @@ class TestParseResistance:
         ("100mohm", 0.1),
         ("1mΩ", 0.001),
         ("50mOhm", 0.05),
+        ("10m", .01),
+        ("10 milliohm", .01),
+        ("10MOhm", 1e7),
+        ("10Meg", 1e7),
+        ("10MEG", 1e7),
     ])
     def test_milliohm(self, input_val: str, expected: float):
         """Test milliohm parsing."""
@@ -237,6 +251,19 @@ class TestParseMemorySize:
         ("2MB", 2097152),
         ("128Mbit", 16777216),  # 128Mbit = 16MB
         ("64Kbit", 8192),      # 64Kbit = 8KB
+        ("64Mb", 8 * 1024 * 1024),
+        ("64 Mb", 8 * 1024 * 1024),
+        ("256Kb", 32 * 1024),
+        ("1Gb", 128 * 1024 * 1024),
+        ("64MB", 64 * 1024 * 1024),
+        ("256KB", 256 * 1024),
+        ("1GB", 1024 * 1024 * 1024),
+        ("8mb flash", 8 * 1024 * 1024),
+        ("256kb", 256 * 1024),
+        ("1gb", 1024 * 1024 * 1024),
+        ("64Mbit", 8 * 1024 * 1024),
+        ("1Gbit", 128 * 1024 * 1024),
+        ("64Mbytes", 64 * 1024 * 1024),
     ])
     def test_memory_size_parsing(self, input_val: str, expected: float):
         """Test memory size parsing in bytes."""

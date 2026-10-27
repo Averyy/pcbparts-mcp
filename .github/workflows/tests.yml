@@ -52,3 +52,6 @@ jobs:
       # Integration tests hit live APIs and stay local-only (pytest -m integration).
       - name: Unit tests
         run: python -m pytest tests/ -q -p no:cacheprovider
+
+      - name: Board search quality gate
+        run: python -m pytest tests/ -m quality -q -p no:cacheprovider

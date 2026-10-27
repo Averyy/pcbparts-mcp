@@ -100,6 +100,8 @@ ATTRIBUTE_TO_COLUMN: dict[str, tuple[str, Any]] = {
     "Input Voltage": ("_vin_range", parse_vin_range),
     "Quiescent Current(Iq)": ("iq_ua", parse_current),
     "Quiescent Current": ("iq_ua", parse_current),
+    "standby current": ("iq_ua", parse_current),
+    "Supply Current (Iq)": ("iq_ua", parse_current),
 
     # Frequency
     "Frequency": ("_freq_range", parse_freq_range),
@@ -571,6 +573,8 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
     conn.execute("CREATE INDEX idx_package ON components(package)")
     conn.execute("CREATE INDEX idx_manufacturer ON components(manufacturer)")
     conn.execute("CREATE INDEX idx_mpn ON components(mpn)")
+    # Match lookup.py's ASCII-only case-insensitive exact and normalized MPN queries.
+    conn.execute("CREATE INDEX idx_mpn_lower ON components(LOWER(mpn))")
     conn.execute("CREATE INDEX idx_price ON components(price)")
 
     # Composite indexes for common filter combinations
