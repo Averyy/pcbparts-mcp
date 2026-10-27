@@ -19,7 +19,8 @@ from search_baseline import offline
 
 
 @pytest.fixture(autouse=True)
-def no_network():
+async def no_network():
+    # Async so the event loop exists first: on Windows its socket pair is built with connect()
     with offline():
         yield
 
@@ -239,13 +240,20 @@ def test_scrape_part_count_guard(monkeypatch, tmp_path, total, allow, success):
     steps = workflow["jobs"]["scrape"]["steps"]
     guard = next(s for s in steps if s["name"] == "Check part count")
     assert steps.index(guard) < next(i for i, s in enumerate(steps) if s["name"] == "Commit and push data files")
+    # Run the heredoc's Python directly: Windows runners have no usable bash on PATH
+    assert guard["run"].startswith("python - <<'PY'\n") and guard["run"].rstrip().endswith("\nPY")
+    script = guard["run"].split("\n", 1)[1].rstrip().removesuffix("PY")
     (tmp_path / "data").mkdir()
-    (tmp_path / "data/manifest.json").write_text(json.dumps({"total_parts": total}))
-    (tmp_path / "git").write_text('#!/bin/sh\necho \'{"total_parts": 100}\'\n')
-    (tmp_path / "git").chmod(0o755)
-    monkeypatch.setenv("PATH", f"{tmp_path}:" + str(Path(sys.executable).parent) + ":/usr/bin:/bin")
+    manifest = tmp_path / "data/manifest.json"
+    manifest.write_text(json.dumps({"total_parts": 100}))
+    git = ["git", "-C", str(tmp_path), "-c", "user.name=test", "-c", "user.email=test@example.com",
+           "-c", "commit.gpgsign=false"]
+    subprocess.run([*git, "init", "-q"], check=True)
+    subprocess.run([*git, "add", "data/manifest.json"], check=True)
+    subprocess.run([*git, "commit", "-q", "--no-verify", "-m", "previous scrape"], check=True)
+    manifest.write_text(json.dumps({"total_parts": total}))
     monkeypatch.setenv("ALLOW_PART_DROP", str(allow).lower())
-    result = subprocess.run(["bash", "-e", "-c", guard["run"]], cwd=tmp_path, capture_output=True, text=True)
+    result = subprocess.run([sys.executable, "-c", script], cwd=tmp_path, capture_output=True, text=True)
     assert (result.returncode == 0) is success, result.stderr
     assert "100" in result.stdout and str(total) in result.stdout
 
