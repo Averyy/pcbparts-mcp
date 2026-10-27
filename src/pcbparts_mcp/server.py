@@ -42,7 +42,8 @@ from .db import get_db, close_db
 from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
 from .search import SpecFilter, get_attribute_names
-from .smart_parser import parse_smart_query, merge_spec_filters
+from .search.mpn import looks_like_mpn
+from .smart_parser import ParsedQuery, parse_smart_query, merge_spec_filters
 from .alternatives import SPEC_PARSERS
 from .search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN
 from .pinout import parse_easyeda_pins
@@ -610,6 +611,69 @@ def _parse_spec_filters(filters: list[dict[str, Any]] | str | None) -> list[Spec
     return result or None
 
 
+_REFERENCE_DESIGNATOR = re.compile(
+    r"(?:R|C|LED|U|SW|J|Q|D|TP|FB|IC|CN|JP|RN|K|F|Y|X|L|P|VR|RV|BZ|BT|LS|T)\d{1,3}", re.IGNORECASE
+)
+# Package names and standards look like part numbers but describe the part ("8MHz SOT-416
+# crystal", "AEC-Q100 CAN transceiver"). SC/SIP/TO/DO need the dash: SC16IS752 is a part.
+_PACKAGE_OR_STANDARD = re.compile(
+    r"(?:SOT|SOD|SOIC|SOP|SSOP|TSSOP|HTSSOP|MSOP|ESOP|QFN|VQFN|WQFN|UQFN|DFN|UDFN|WDFN|LQFP|TQFP|QFP"
+    r"|BGA|WLCSP|SON|TSOT|DIP|PLCC|LGA)-?\d.*|(?:SC|SIP|TO|DO)-\d.*|AEC-?Q\d+|(?:IEC|IEEE|JESD|IPC)-?\d.*",
+    re.IGNORECASE,
+)
+
+
+def _keep_part_number_matches(retry: dict, part_number_text: str, limit: int) -> dict:
+    """A part-number retry keeps only parts whose MPN contains a requested part number, or is
+    contained in it (JK-nSMD005/60V for nSMD005/60V, IR333-A for LED/IR333-A/5mm): the engine's
+    MPN fallback shortens part numbers down to prefixes like "YS" that match unrelated parts.
+    Counts follow the kept parts; a retry with more matches than one page is marked incomplete."""
+    keys = [re.sub(r"[^0-9a-z]", "", t.casefold()) for t in part_number_text.split()]
+    def matches(part: dict) -> bool:
+        mpn = re.sub(r"[^0-9a-z]", "", (part.get("model") or "").casefold())
+        return any(key in mpn or (len(mpn) >= 5 and mpn in key) for key in keys if key)
+    kept = [p for p in retry.get("results", []) if matches(p)]
+    complete = (retry.get("total") or 0) <= len(retry.get("results", []))
+    counts = {tier: sum(p.get("library_type") == tier for p in kept) for tier in ("basic", "preferred", "extended")}
+    retry.update(results=kept[:limit], total=len(kept), library_type_counts=counts,
+                 no_fee_available=bool(counts["basic"] or counts["preferred"]))
+    if "page_info" in retry:
+        retry["page_info"].update(limit=limit, returned=len(retry["results"]))
+    if not complete:
+        retry["counts_complete"] = False
+    return retry
+
+
+def _protected_mpn_tokens(query: str, parsed: ParsedQuery) -> list[str]:
+    """Keep original MPN tokens that survived parsing, including hyphen-split tokens. Only tokens
+    with 6+ letters and digits: shorter part numbers (LM358, BAV99) come from parsed.model_number,
+    and short words like M205 (a fuse size) or CL10 stay droppable."""
+    remaining = re.sub(r"[-\s]+", " ", parsed.remaining_text).casefold()
+    tokens = []
+    for token in query.split():
+        if _REFERENCE_DESIGNATOR.fullmatch(token) or _PACKAGE_OR_STANDARD.fullmatch(token):
+            continue
+        # The value parser can take a hyphenated suffix ("BC817-40W" as 40W): search the longest
+        # leading part that survived (BC817 finds BC817-40), if it is still a part number
+        segments = re.split(r"[-\s]+", token)
+        part_number = None
+        for n in range(len(segments), 0, -1):
+            if re.search(r"(?<!\w)" + re.escape(" ".join(segments[:n]).casefold()) + r"(?!\w)", remaining):
+                part_number = token if n == len(segments) else "-".join(segments[:n])
+                break
+        if part_number is None:
+            continue
+        short = re.sub(r"[^0-9A-Za-z]", "", part_number)
+        if part_number != token and not (len(short) >= 5 and sum(c.isdigit() for c in short) >= 2
+                                         and any(c.isalpha() for c in short)):
+            continue
+        letters = sum(c.isalpha() for c in token)
+        digits = sum(c.isdigit() for c in token)
+        if letters + digits >= 6 and (looks_like_mpn(token) or (letters >= 2 and digits >= 2)):
+            tokens.append(part_number)
+    return tokens
+
+
 @mcp.tool(
     annotations=ToolAnnotations(
         title="Search Components",
@@ -683,10 +747,13 @@ def jlc_search(
         parsed: (when using natural language) What was extracted from query; adjusted_filters
             lists values the part type has no spec for (left out or moved)
         relaxed: (when present) query words, query-only library preference or part type left out because no
-            part matched them; explicit library_type is never relaxed
+            part matched them; dropped_filters lists parsed spec filters left out by a part-number
+            retry. Explicit arguments are retained, and part-number tokens are never dropped.
         ignored_filters: (when present) unsupported/rare attributes, suggested real names and
             coverage, or filters that could not be applied. Reasons distinguish unapplied filters
             from applied constraints with incomplete attribute coverage.
+        hint: (on empty replies without an error) a next step using search help, fewer explicit
+            constraints or jlc_stock_check for low-stock parts
     """
     # Validate query length to prevent abuse
     MAX_QUERY_LENGTH = 500
@@ -733,10 +800,16 @@ def jlc_search(
     effective_package = package
     effective_mounting_type: str | None = None
     effective_query = query
+    part_number_text = None
+    protected_tokens: list[str] = []
 
     if query:
         # Parse natural language query to extract structured info and clean text
         parsed = parse_smart_query(query, strict=strict)
+        protected_tokens = _protected_mpn_tokens(query, parsed)
+        part_number_text = " ".join(protected_tokens) or (
+            parsed.model_number if parsed.model_number and not _REFERENCE_DESIGNATOR.fullmatch(parsed.model_number) else None
+        )
         parsed_query_info = {
             "original_query": parsed.original,
             "detected": parsed.detected,
@@ -867,7 +940,7 @@ def jlc_search(
     # can zero a search the part type and filters would answer. Only for words left from a
     # natural-language query, never a part number or the caller's own subcategory or filters.
     if (not strict and result.get("total") == 0 and not result.get("error") and parsed and effective_query
-            and not parsed.model_number and (parsed.subcategory or parsed.spec_filters)
+            and not part_number_text and (parsed.subcategory or parsed.spec_filters)
             and not (subcategory_id or subcategory_name or spec_filters)):
         retry = db.search(query=None, **search_args)
         if retry.get("total"):
@@ -886,18 +959,32 @@ def jlc_search(
 
     # A model can be listed under a different part type than the query's alias suggests.
     if (not strict and result.get("total") == 0 and not result.get("error") and parsed
-            and parsed.model_number and parsed.subcategory and not parsed.spec_filters
+            and part_number_text and parsed.subcategory
             and not (subcategory_id or subcategory_name)):
-        retry_args = {**search_args, "subcategory_name": None, "subcategory_ids": None}
-        retry = db.search(query=effective_query, **retry_args)
+        retry_args = {**search_args, "subcategory_name": None, "subcategory_ids": None, "limit": MAX_PAGE_SIZE}
+        page = search_args["limit"]
+        retry = _keep_part_number_matches(db.search(query=part_number_text, **retry_args), part_number_text, page)
+        dropped_filters = []
+        # Only a full part number may cost the parsed values; "CL10 10uH inductor" keeps its 10uH.
+        if not retry.get("total") and not retry.get("error") and protected_tokens:
+            dropped_filters = [f.to_dict() for f in (parsed_filters or []) if f not in explicit_filters]
+            if dropped_filters:
+                retry_args["spec_filters"] = explicit_filters or None
+                retry = _keep_part_number_matches(db.search(query=part_number_text, **retry_args),
+                                                  part_number_text, page)
         if retry.get("total"):
             part_type = (result.get("filters_applied", {}).get("subcategory_resolved")
                          or effective_subcategory_name or parsed.subcategory)
             retry["relaxed"] = {
                 "dropped_part_type": part_type,
-                "reason": f"no part matching {parsed.model_number} is listed under {part_type}, "
+                "reason": f"no part matching {part_number_text} is listed under {part_type}, "
                           "so every part type was searched",
             }
+            if dropped_filters:
+                retry["relaxed"]["dropped_filters"] = dropped_filters
+                retry["relaxed"]["reason"] += "; parsed spec filters were left out"
+            if dropped_library:
+                retry["relaxed"]["reason"] += "; the library preference was left out"
             effective_subcategory_name = None
             effective_subcategory_ids = None
             result = retry
@@ -928,6 +1015,26 @@ def jlc_search(
     # Add parsing info if natural language was used
     if parsed_query_info:
         result["parsed"] = parsed_query_info
+
+    if result.get("total") == 0 and not result.get("error") and "hint" not in result:
+        hints = []
+        if result.get("ignored_filters"):
+            hints.append("See ignored_filters for unapplied or sparse attributes.")
+        resolved_name = (result.get("filters_applied", {}).get("subcategory_resolved")
+                         or (db.get_subcategory_name(searched_ids[0]) if searched_ids else None))
+        if resolved_name:
+            hints.append(f"Try jlc_search_help(subcategory={json.dumps(resolved_name)}) for attribute names and values.")
+        explicit = [name for name, value in (("library_type", None if query_library else library_type),
+                    ("package/packages", package or packages), ("manufacturer", manufacturer)) if value]
+        if explicit:
+            hints.append("Try without " + ", ".join(explicit) + ".")
+        if part_number_text:
+            hints.insert(0, f"No in-stock part matches {part_number_text}; try "
+                            f"jlc_stock_check(query={json.dumps(part_number_text)}) for low or zero stock, "
+                            "or search by part type and specs without the part number.")
+        else:
+            hints.append("Use jlc_stock_check for low-stock parts.")
+        result["hint"] = " ".join(hints)
 
     return result
 
@@ -1145,7 +1252,10 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
         db = get_db()
         results = await run_db(COMPONENT_POOL, db.get_by_mpn, mpn)
         if not results:
-            return {"error": f"No JLCPCB parts found for MPN '{mpn}'", "mpn": mpn, "results": []}
+            return {"error": f"No JLCPCB parts found for MPN '{mpn}'", "mpn": mpn, "results": [],
+                    "hint": "The local catalog only lists in-stock parts (stock >= 10). "
+                            f"Try jlc_stock_check(query={json.dumps(mpn)}) for low or zero stock, "
+                            "or mouser_get_part / digikey_get_part for other distributors."}
         return {
             "mpn": mpn,
             "total": len(results),

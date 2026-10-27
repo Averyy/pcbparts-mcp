@@ -3,7 +3,7 @@
 import re
 from typing import Any
 
-from ..alternatives import SPEC_PARSERS
+from ..alternatives import DIMENSION_SPEC_FIELDS, SPEC_PARSERS
 from ..parsers import RESISTANCE_MATCH_TOLERANCE, parse_memory_size, parse_resistance
 from .spec_filter import (
     LIST_SPECS,
@@ -536,7 +536,7 @@ def build_spec_filter_clauses(
                 if or_conditions:
                     combined = " OR ".join(or_conditions)
                     sql_clauses.append(f"AND ({combined})")
-            else:
+            elif spec_filter.name not in DIMENSION_SPEC_FIELDS:
                 # Range comparisons, and every comparison on a range spec: check the attribute exists
                 or_conditions = []
                 for name in attr_names:
