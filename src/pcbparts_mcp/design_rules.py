@@ -118,12 +118,15 @@ def get_design_rules(topic: str = "", rules_dir: Path | None = None) -> dict:
     index_path = rd / "INDEX.md"
 
     # Empty topic → return INDEX
-    if not topic.strip():
+    if not topic.strip() or topic.strip().casefold() == "index.md":
         content = index_path.read_text(encoding="utf-8") if index_path.exists() else "No INDEX.md found."
-        return {"content": content, "matched_files": ["INDEX.md"], "topic": ""}
+        return {"content": content, "matched_files": ["INDEX.md"], "topic": topic if topic.strip() else ""}
 
     # Cap input length (consistent with other tools)
     topic = topic[:500]
+
+    # Keys returned by discovery are directly usable, including their category prefix.
+    exact_key = next((key for key in idx if key.casefold() == topic.strip().casefold()), None)
 
     # Resolve aliases first, then fall back to word matching
     # Split on whitespace and hyphens so "op-amp" matches "op-amp-basics"
@@ -140,7 +143,10 @@ def get_design_rules(topic: str = "", rules_dir: Path | None = None) -> dict:
     # Collect matches: alias hits + word-boundary matches for remaining words
     matched_set: dict[str, Path] = {}
     for k, p in idx.items():
-        if k in alias_keys:
+        if exact_key is not None:
+            if k == exact_key:
+                matched_set[k] = p
+        elif k in alias_keys:
             matched_set[k] = p
         elif unresolved_words and any(_match_word(w, k.lower()) for w in unresolved_words):
             matched_set[k] = p

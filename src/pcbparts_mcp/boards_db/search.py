@@ -180,6 +180,15 @@ def search_boards(
     Returns:
         {"total": N, "results": [...]}
     """
+    if tag is not None:
+        valid_tags = sorted(row[0] for row in conn.execute("SELECT DISTINCT tag FROM board_tags"))
+        tags = [tag] if isinstance(tag, str) else tag[:10]
+        tags = ["usb" if t.strip().lower() == "usb-c" else t.strip().lower() for t in tags]
+        for value in tags:
+            if value not in valid_tags:
+                return {"error": f"Unsupported tag: '{value}'", "valid_values": valid_tags, "results": [], "total": 0}
+        tag = tags
+
     # Normalize empty strings to None
     if query is not None and not query.strip():
         query = None

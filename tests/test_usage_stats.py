@@ -158,7 +158,7 @@ class TestUsageStats:
         usage.record_call("board_get", "something new", 5)  # not an outcome: counts as failed
         day = usage.summary()["days"][0]
         assert day["date"] == "2026-10-17" and day["calls"] == 6
-        assert day["tools"]["jlc_search"] == {"calls": 5, "ok": 1, "not_found": 1, "bad_request": 1,
+        assert day["tools"]["jlc_search"] == {"calls": 5, "ok": 1, "similar_only": 0, "not_found": 1, "bad_request": 1,
                                               "rate_limited": 1, "failed": 1, "avg_ms": 30}
         assert day["tools"]["board_get"]["failed"] == 1
         assert list(day["tools"]) == ["jlc_search", "board_get"]  # busiest first
@@ -178,7 +178,7 @@ class TestUsageStats:
         usage.open(path)
         usage.record_call("jlc_search", "ok", 100)
         day = usage.summary()["days"][0]
-        assert day["tools"]["jlc_search"] == {"calls": 10, "ok": 5, "not_found": 4, "bad_request": 0,
+        assert day["tools"]["jlc_search"] == {"calls": 10, "ok": 5, "similar_only": 0, "not_found": 4, "bad_request": 0,
                                               "rate_limited": 0, "failed": 0, "unsorted": 1, "avg_ms": 100}
         assert day["tools"]["board_get"]["bad_request"] == 2 and "unsorted" not in day["tools"]["board_get"]
         assert "plus unsorted where shown" in usage.summary()["about"]
@@ -202,7 +202,7 @@ class TestUsageStats:
         totals = summary["totals"]
         assert (totals["from"], totals["to"], totals["days"]) == ("2026-10-17", "2026-10-19", 3)
         assert totals["calls"] == 12 == sum(d["calls"] for d in summary["days"])
-        assert totals["tools"]["jlc_search"] == {"calls": 9, "ok": 9, "not_found": 0, "bad_request": 0,
+        assert totals["tools"]["jlc_search"] == {"calls": 9, "ok": 9, "similar_only": 0, "not_found": 0, "bad_request": 0,
                                                  "rate_limited": 0, "failed": 0, "avg_ms": 22}  # (20+60+120)/9
         assert totals["tools"]["board_get"]["not_found"] == 3
         assert totals["apps"] == {"cursor": 2, "claude-code": 1}
@@ -396,6 +396,40 @@ class TestServerWiring:
         assert tools["board_get"]["not_found"] == 1
         assert tools["get_design_rules"]["failed"] == 1  # a crash in our code
 
+    @pytest.mark.parametrize(("content", "outcome"), [
+        ({"alternatives": [{"lcsc": "C1"}], "similar_parts": []}, "ok"),
+        ({"alternatives": [], "similar_parts": [{"lcsc": "C1"}]}, "similar_only"),
+        ({"alternatives": [], "similar_parts": []}, "not_found"),
+        ({"alternatives": [], "unverified_alternatives": [{"lcsc": "C1"}]}, "similar_only"),
+        ({"alternatives": [{"lcsc": "C2"}], "unverified_alternatives": [{"lcsc": "C1"}]}, "ok"),
+        ({"alternatives": [], "similar_parts": [{"lcsc": "C1"}],
+          "error": "Board retrieval failed"}, "failed"),
+    ])
+    def test_alternatives_outcomes(self, content, outcome):
+        from fastmcp.tools.tool import ToolResult
+        from pcbparts_mcp.server import _call_outcome
+
+        assert _call_outcome(ToolResult(structured_content=content)) == outcome
+
+    def test_similar_only_counts_survive_restart_without_reclassifying_history(self, tmp_path):
+        path = tmp_path / "usage.json"
+        path.write_text(json.dumps({"days": {"2026-10-17": {
+            "tools": {"jlc_find_alternatives": {"calls": 3, "not_found": 3, "ms": 30}},
+        }}}), encoding="utf-8")
+        usage = UsageStats(clock=Clock())
+        usage.open(path)
+        usage.record_call("jlc_find_alternatives", "similar_only", 10)
+        usage.save()
+        again = UsageStats(clock=Clock())
+        again.open(path)
+        counts = again.summary()["totals"]["tools"]["jlc_find_alternatives"]
+        assert counts["calls"] == 4
+        assert counts["not_found"] == 3
+        assert counts["similar_only"] == 1
+        assert sum(counts[key] for key in stats.OUTCOMES) == counts["calls"]
+        assert "2026-10-26" in again.summary()["about"]
+        assert "similar-parts-only replies as not found" in again.summary()["about"]
+
     async def test_over_http(self):
         """The real ASGI app: callers come from the rightmost X-Forwarded-For, apps from initialize,
         and the counts are served at /mcp/stats (the proxy forwards only /mcp* and /health)."""
@@ -424,6 +458,8 @@ class TestServerWiring:
         assert day["callers"] == 2
         assert day["apps"] == {"probe bapp/b": 1}
         assert "keep no IPs" in body["about"]
+        assert "similar_only" in body["about"]
+        assert "Cutover 2026-10-26" in body["about"]
 
     async def test_public_page_shows_30_days_of_the_year_kept(self, tmp_path, monkeypatch):
         from starlette.requests import Request
@@ -458,6 +494,13 @@ SRC = Path(__file__).parent.parent / "src" / "pcbparts_mcp"
 
 # {"error": ...} replies, by their text with formatted parts as {}
 ERROR_REPLIES = {
+    "Invalid {}: {}": "bad_request",
+    "Strict search cannot apply every constraint; see ignored_filters and parsed.adjusted_filters and use jlc_search_help(subcategory=...) for supported attributes": "bad_request",
+    "lcsc must be an LCSC C-code (e.g., C6186); use jlc_get_part(mpn=...) to find the code for an MPN": "bad_request",
+    "board_quantity and placements_per_board must be positive integers": "bad_request",
+    "Unsupported library_type: '{}'": "bad_request",
+    "Unsupported value for {}: '{}'": "bad_request",
+    "Unsupported tag: '{}'": "bad_request",
     "Boards database not available": "failed",
     "Sensor database not available": "failed",
     "Database not available": "failed",

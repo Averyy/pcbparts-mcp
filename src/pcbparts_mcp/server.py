@@ -4,17 +4,20 @@ import asyncio
 import contextlib
 import json
 import logging
+import math
 import re
 import time
 from collections import defaultdict
 from contextlib import asynccontextmanager
-from typing import Any, Literal
+from difflib import get_close_matches
+from typing import Annotated, Any, Literal
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import NotFoundError, ValidationError
 from fastmcp.server.dependencies import get_http_request
 from fastmcp.server.middleware import Middleware as FastMCPMiddleware
 from mcp.types import ToolAnnotations
+from pydantic import BeforeValidator
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
@@ -34,11 +37,14 @@ from .client import EasyEDAComponentNotFound, JLCPCBClient
 from .mouser import MouserAPIError, MouserClient, MouserError
 from .digikey import DigiKeyClient, DigiKeyError
 from .cse import CSEClient
+from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, offload, run_db
 from .db import get_db, close_db
 from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
 from .search import SpecFilter, get_attribute_names
 from .smart_parser import parse_smart_query, merge_spec_filters
+from .alternatives import SPEC_PARSERS
+from .search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN
 from .pinout import parse_easyeda_pins
 from .design_rules import get_design_rules as _get_design_rules, _RULES_DIR, _build_index
 
@@ -166,9 +172,9 @@ async def lifespan(app):
         await _digikey_client.close()
     if _client:
         await _client.close()
-    close_db()
-    close_sensor_db()
-    close_boards_db()
+    await run_db(COMPONENT_POOL, close_db)
+    await run_db(SENSOR_POOL, close_sensor_db)
+    await run_db(BOARD_POOL, close_boards_db)
 
 
 async def _every_minute() -> None:
@@ -187,7 +193,7 @@ async def _every_minute() -> None:
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only to cross-reference specific part numbers (shared daily limit; batch Mouser lookups). sensor_recommend picks sensors by measurement, protocol or platform. board_search, then board_get(focus=IC), shows how real boards wire an IC. get_design_rules gives PCB best practices (power, protection, interfaces, MCUs, layout, EMC).",
+    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only to cross-reference specific part numbers (shared daily limit; batch Mouser lookups). sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files).",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -212,7 +218,12 @@ _ERROR_KINDS = [(kind, re.compile(pattern)) for kind, pattern in (
     ("bad_request", r"Subcategory ID \S+ not found$"),
     ("bad_request", r"[\w ]+ too long \(max \d+ characters\)$"),
     ("bad_request", r"Too many "),
+    ("bad_request", r"Invalid [\w ]+: "),
+    ("bad_request", r"Strict search cannot apply every constraint; "),
+    ("bad_request", r"Unsupported (library_type|tag|value for \w+): "),
     ("bad_request", r"Must provide "),
+    ("bad_request", r"lcsc must be "),
+    ("bad_request", r"board_quantity and placements_per_board must be "),
     ("bad_request", r"Give (a|at least one) "),
     ("bad_request", r"Mouser takes up to "),
     ("bad_request", r"Each Mouser part number must be "),
@@ -241,7 +252,11 @@ def _call_outcome(result: Any) -> str:
         return "ok"
     if content.get("error"):
         return _error_kind(str(content["error"]))
-    if any(key in content and not content[key] for key in ("results", "alternatives", "matched_files")):
+    if "alternatives" in content:
+        if content["alternatives"]:
+            return "ok"
+        return "similar_only" if (content.get("similar_parts") or content.get("unverified_alternatives")) else "not_found"
+    if any(key in content and not content[key] for key in ("results", "matched_files")):
         return "not_found"
     return "ok"
 
@@ -386,25 +401,27 @@ def _caller_ip() -> str | None:
 
 # Helpers to handle JSON string arrays from MCP clients
 def _parse_list_param(value: list[str] | str | None) -> list[str] | None:
-    """Parse a list parameter that may come as a JSON string from some MCP clients.
-
-    Claude Code's MCP client sometimes serializes list parameters as JSON strings
-    like '["a", "b"]' instead of actual arrays. This handles both cases.
-    """
+    """Accept a list, JSON array, or one literal value; never discard an element."""
     if value is None:
         return None
-    if isinstance(value, list):
-        return value
     if isinstance(value, str):
-        try:
-            parsed = json.loads(value)
-            if isinstance(parsed, list):
-                # JSON-string payloads bypass Pydantic's list[str] validation, so filter
-                # non-string elements here (they get .lower()'d / string-processed downstream)
-                return [v for v in parsed if isinstance(v, str)] or None
-        except json.JSONDecodeError:
-            logger.debug(f"Failed to parse list parameter as JSON: {value[:100]!r}")
-    return None
+        if value.lstrip().startswith(("[", "{", '"')):
+            try:
+                value = json.loads(value)
+            except json.JSONDecodeError as exc:
+                raise ValueError("expected a string or JSON array of strings") from exc
+        else:
+            value = [value]
+    if isinstance(value, str):
+        value = [value]
+    if not isinstance(value, list) or any(not isinstance(v, str) or not v.strip() for v in value):
+        raise ValueError("expected a string or array of nonempty strings")
+    return value or None
+
+
+def _argument_error(name: str, error: ValueError, valid_values: list[str]) -> dict:
+    return {"error": f"Invalid {name}: {error}", "valid_values": valid_values,
+            "results": [], "total": 0}
 
 
 def _check_list_cap(name: str, value: list | None, cap: int = MAX_LIST_PARAM_ITEMS) -> dict | None:
@@ -420,6 +437,20 @@ def _check_list_cap(name: str, value: list | None, cap: int = MAX_LIST_PARAM_ITE
 
 
 # Tools
+
+def _normalize_library_type(value: Any) -> Any:
+    return value.strip().lower().replace("-", "_") if isinstance(value, str) else value
+
+
+LibraryType = Annotated[
+    Literal["basic", "preferred", "no_fee", "extended", "all"] | None,
+    BeforeValidator(_normalize_library_type),
+]
+
+
+SearchSort = Annotated[Literal["stock", "price"] | None, BeforeValidator(_normalize_library_type)]
+StockSort = Annotated[Literal["quantity", "price"] | None, BeforeValidator(_normalize_library_type)]
+
 
 @mcp.tool(
     annotations=ToolAnnotations(
@@ -437,12 +468,12 @@ async def jlc_stock_check(
     category_name: str | None = None,
     subcategory_name: str | None = None,
     min_stock: int = DEFAULT_MIN_STOCK,
-    library_type: str | None = None,
+    library_type: LibraryType = None,
     package: str | None = None,
     manufacturer: str | None = None,
     packages: list[str] | str | None = None,
     manufacturers: list[str] | str | None = None,
-    sort_by: Literal["quantity", "price"] | None = None,
+    sort_by: StockSort = None,
     page: int = 1,
     limit: int = 20,
 ) -> dict:
@@ -457,17 +488,18 @@ async def jlc_stock_check(
         category_name: Category name (e.g., "Resistors")
         subcategory_name: Subcategory name (e.g., "Tactile Switches")
         min_stock: Set 0 to include out-of-stock parts
-        library_type: "basic", "preferred", "no_fee", "extended" or "all"
+        library_type: "basic", "preferred", "no_fee", "extended" or "all"; ignores case,
+            accepts no-fee; invalid values list valid choices
         package: Package (e.g., "0402", "LQFP48")
         manufacturer: Manufacturer
-        packages: Several packages (OR)
-        manufacturers: Several manufacturers (OR)
-        sort_by: "quantity" or "price"
+        packages: Several packages (OR); accepts a list, JSON array string, or one bare string
+        manufacturers: Several manufacturers (OR); same formats as packages, never comma-split
+        sort_by: "quantity" or "price" (case-insensitive)
         page: Page number
         limit: Results per page (max 100)
 
     Returns:
-        Results with pagination. Use get_part(lcsc) for full details.
+        Results with pagination. Use jlc_get_part(lcsc=...) for full details.
     """
     if not _client:
         raise RuntimeError("Client not initialized")
@@ -480,8 +512,23 @@ async def jlc_stock_check(
     effective_limit = clamp_limit(limit, MAX_PAGE_SIZE)
 
     # Parse list parameters (handles JSON strings from some MCP clients)
-    parsed_packages = _parse_list_param(packages)
-    parsed_manufacturers = _parse_list_param(manufacturers)
+    parsed_lists = {}
+    for name, value in (("packages", packages), ("manufacturers", manufacturers)):
+        try:
+            parsed_lists[name] = _parse_list_param(value)
+        except ValueError as exc:
+            return _argument_error(name, exc, ["string", "array of strings", "JSON array of strings"])
+    parsed_packages = parsed_lists["packages"]
+    parsed_manufacturers = parsed_lists["manufacturers"]
+    if library_type is not None:
+        library_type = _normalize_library_type(library_type)
+        if library_type not in ("basic", "preferred", "no_fee", "extended", "all"):
+            return {"error": f"Unsupported library_type: '{library_type}'",
+                    "valid_values": ["basic", "preferred", "no_fee", "extended", "all"]}
+    if sort_by is not None:
+        sort_by = _normalize_library_type(sort_by)
+        if sort_by not in ("quantity", "price"):
+            return _argument_error("sort_by", ValueError("expected quantity or price"), ["quantity", "price"])
 
     # Reject abusive oversized list params
     for _name, _val in (("packages", parsed_packages), ("manufacturers", parsed_manufacturers)):
@@ -497,7 +544,7 @@ async def jlc_stock_check(
             return {"error": "Categories not loaded. Server may still be starting up.", "hint": "Try again in a moment"}
         resolved_category_id = _client.match_category_by_name(category_name)
         if resolved_category_id is None:
-            return {"error": f"Category not found: '{category_name}'", "hint": "Use search_help() to see available categories"}
+            return {"error": f"Category not found: '{category_name}'", "hint": "Use jlc_search_help() to see available categories"}
 
     # Resolve subcategory_name to subcategory_id if provided (ID takes precedence)
     resolved_subcategory_id = subcategory_id
@@ -507,7 +554,7 @@ async def jlc_stock_check(
             return {"error": "Categories not loaded. Server may still be starting up.", "hint": "Try again in a moment"}
         resolved_subcategory_id = _client.get_subcategory_id_by_name(subcategory_name)
         if resolved_subcategory_id is None:
-            return {"error": f"Subcategory not found: '{subcategory_name}'", "hint": "Use search_help(category=...) to see available subcategories"}
+            return {"error": f"Subcategory not found: '{subcategory_name}'", "hint": "Use jlc_search_help(category='Connectors') to see available subcategories"}
 
     try:
         return await _client.search(
@@ -530,34 +577,37 @@ async def jlc_stock_check(
         return {"error": str(e)}
 
 
-def _parse_spec_filters(filters: list[dict[str, str]] | str | None) -> list[SpecFilter] | None:
-    """Parse spec filters from various input formats."""
+def _parse_spec_filters(filters: list[dict[str, Any]] | str | None) -> list[SpecFilter] | None:
+    """Validate every explicit constraint, including JSON-string client payloads."""
     if filters is None:
         return None
-
-    # Handle JSON string input from some MCP clients
     if isinstance(filters, str):
         try:
             filters = json.loads(filters)
-        except json.JSONDecodeError:
-            logger.debug(f"Failed to parse spec_filters as JSON: {filters[:100]!r}")
-            return None
-
+        except json.JSONDecodeError as exc:
+            raise ValueError("expected a JSON array of {name, op, value} objects") from exc
     if not isinstance(filters, list):
-        return None
-
+        raise ValueError("expected an array of {name, op, value} objects")
     result = []
     for f in filters:
         if not isinstance(f, dict):
-            continue
+            raise ValueError("each filter must be a {name, op, value} object")
         name, op, value = f.get("name"), f.get("op"), f.get("value")
-        # name/value must be strings (they get .lower()'d / bound as SQL text downstream);
-        # a JSON-string spec_filters payload bypasses Pydantic, so guard the types here.
-        if not isinstance(name, str) or not isinstance(value, str):
-            continue
-        if op in ("=", ">=", "<=", ">", "<"):
-            result.append(SpecFilter(name, op, value))
-    return result if result else None
+        if (not isinstance(name, str) or not name.strip() or isinstance(value, bool)
+                or not isinstance(value, (str, int, float)) or not str(value).strip()
+                or (isinstance(value, float) and not math.isfinite(value))):
+            raise ValueError("name must be nonempty text; value must be text or a number")
+        op = op.strip() if isinstance(op, str) else op
+        if op == "=>":
+            op = ">="
+        if op not in ("=", ">=", "<=", ">", "<"):
+            raise ValueError("valid operators: =, >=, <=, >, < (=> also accepted)")
+        # Attribute names are case-insensitive; retain the catalog/alias spelling for parsers.
+        known_names = [*ATTRIBUTE_ALIASES, *(n for names in ATTRIBUTE_ALIASES.values() for n in names),
+                       *SPEC_PARSERS, "Module Flash", "Module PSRAM"]
+        name = next((n for n in known_names if n.casefold() == name.strip().casefold()), name.strip())
+        result.append(SpecFilter(name, op, str(value)))
+    return result or None
 
 
 @mcp.tool(
@@ -569,23 +619,28 @@ def _parse_spec_filters(filters: list[dict[str, str]] | str | None) -> list[Spec
         openWorldHint=False,
     )
 )
-async def jlc_search(
+@offload(COMPONENT_POOL)
+def jlc_search(
     query: str | None = None,
     subcategory_id: int | None = None,
     subcategory_name: str | None = None,
-    spec_filters: list[dict[str, str]] | str | None = None,
+    spec_filters: list[dict[str, Any]] | str | None = None,
     min_stock: int = DEFAULT_MIN_STOCK,
-    library_type: str | None = None,
+    library_type: LibraryType = None,
     prefer_no_fee: bool = True,
     package: str | None = None,
     packages: list[str] | str | None = None,
     manufacturer: str | None = None,
     match_all_terms: bool = True,
-    sort_by: Literal["stock", "price"] = "stock",
-    limit: int = 50,
+    sort_by: SearchSort = None,
+    limit: int = 20,
+    strict: bool = False,
 ) -> dict:
-    """Search in-stock JLCPCB parts (stock >= 10) in the local database, with natural-language
-    parsing and parametric filters. Start here to find parts.
+    """Search in-stock JLCPCB parts locally with natural-language parsing and spec filters.
+    Default 20 results; strict=true disables relaxation. Reply: relaxed names query words, a
+    query-only library preference or part type left out; ignored_filters explains unapplied/rare filters,
+    parsed.adjusted_filters explains moved/omitted specs; counts_complete=false means partial counts;
+    valid_values lists accepted inputs on errors.
 
     Args:
         query: Natural language, e.g. "10k resistor 0603 1%", "100nF 25V capacitor" (adds
@@ -594,43 +649,74 @@ async def jlc_search(
         subcategory_id: Subcategory ID (e.g., 2954 for MOSFETs)
         subcategory_name: Subcategory name (e.g., "MOSFETs", "Schottky Diodes")
         spec_filters: List of {"name", "op", "value"}, e.g. [{"name": "Vgs(th)", "op": "<",
-            "value": "2.5V"}]. op: =, >=, <=, >, <. Short names: Vgs(th), Vds, Id, Rds(on), Vr,
+            "value": "2.5V"}]. Values accept text or numbers (unitless uses base units: V, A,
+            ohms, F, H, Hz, W, mm, bytes); names ignore case. JSON arrays as strings also work.
+            op: =, >=, <=, >, < (=> normalizes to >=); invalid inputs return valid_values. Short names: Vgs(th), Vds, Id, Rds(on), Vr,
             If, Vf, Vceo, Ic, Vout, Iout, Supply Voltage, Capacitance, Resistance, Inductance,
             Voltage, Tolerance, Power, DCR, Isat, Frequency; others by the name jlc_search_help
             shows. Range ops only work on attributes it lists as "numeric"; parts with no value
             ("-") don't match them. On ranges ("2.7V~5.5V": supply, output voltage) = means the
             range includes the value.
         min_stock: Minimum stock (the database only has stock >= 10)
-        library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", or omit for all
+        library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", "all", or omit;
+            case-insensitive, with "no-fee" accepted. Unknown values list the valid choices.
         prefer_no_fee: Sort basic/preferred first
         package: One package (e.g., "0603", "SOT-23")
-        packages: Several packages (OR), e.g. ["0402", "0603"]
+        packages: Several packages (OR), e.g. ["0402", "0603"]; a bare string is one package,
+            or pass a JSON array string. Commas within a package stay literal. Explicit package
+            arguments override query packages; "0402 or 0603" in a query also means OR.
         manufacturer: Manufacturer
         match_all_terms: Require every query term (AND)
-        sort_by: "stock" (most first) or "price" (cheapest first)
-        limit: Max results (max 100)
+        sort_by: "stock" (most first) or "price" (cheapest within library tiers when prefer_no_fee);
+            omitted defaults to stock unless the query says "cheapest"/"lowest price".
+        limit: Max results (default 20, max 100)
+        strict: If true, keep query words and parsed requirements; no relaxed retry. Unsupported
+            constraints return an error with ignored_filters/parsed.adjusted_filters and no results.
+            Default false allows relaxation, reporting omitted requirements.
 
     Returns:
-        results: Matching components with specs
-        total: Total count (before limit)
+        results: Matching components with specs; description is omitted when specs are nonempty
+        total: Matching population before limit. library_type_counts and no_fee_available use
+            the same constraints, including library_type and Python spec checks. If a post-filter
+            scan reaches its cap, counts_complete=false marks these as counts of checked matches.
         filters_applied: Applied filters (useful for debugging)
         parsed: (when using natural language) What was extracted from query; adjusted_filters
             lists values the part type has no spec for (left out or moved)
-        relaxed: (when present) query words left out because no part matched them
-        ignored_filters: (when present) filters that couldn't be applied, and why
+        relaxed: (when present) query words, query-only library preference or part type left out because no
+            part matched them; explicit library_type is never relaxed
+        ignored_filters: (when present) unsupported/rare attributes, suggested real names and
+            coverage, or filters that could not be applied. Reasons distinguish unapplied filters
+            from applied constraints with incomplete attribute coverage.
     """
     # Validate query length to prevent abuse
     MAX_QUERY_LENGTH = 500
     if query and len(query) > MAX_QUERY_LENGTH:
         return {"error": f"Query too long (max {MAX_QUERY_LENGTH} characters)", "results": [], "total": 0}
 
+    if library_type is not None:
+        library_type = _normalize_library_type(library_type)
+        valid_libraries = ["basic", "preferred", "no_fee", "extended", "all"]
+        if library_type not in valid_libraries:
+            return {"error": f"Unsupported library_type: '{library_type}'", "valid_values": valid_libraries,
+                    "results": [], "total": 0}
+
     db = get_db()
 
     # Parse explicit spec filters
-    parsed_filters = _parse_spec_filters(spec_filters)
-
-    # Parse packages array (handles JSON strings from some MCP clients)
-    parsed_packages = _parse_list_param(packages)
+    try:
+        parsed_filters = _parse_spec_filters(spec_filters)
+    except ValueError as exc:
+        return _argument_error("spec_filters", exc, ["{name: text, op: =|>=|<=|>|<, value: text or number}"])
+    try:
+        parsed_packages = _parse_list_param(packages)
+    except ValueError as exc:
+        return _argument_error("packages", exc, ["string", "array of strings", "JSON array of strings"])
+    if sort_by is not None:
+        sort_by = _normalize_library_type(sort_by)
+        if sort_by not in ("stock", "price"):
+            return _argument_error("sort_by", ValueError("expected stock or price"), ["stock", "price"])
+    explicit_filters = list(parsed_filters or [])
+    query_library = library_type is None
 
     # Reject abusive oversized list params before building a large SQL statement
     for _name, _val in (("spec_filters", parsed_filters), ("packages", parsed_packages)):
@@ -650,7 +736,7 @@ async def jlc_search(
 
     if query:
         # Parse natural language query to extract structured info and clean text
-        parsed = parse_smart_query(query)
+        parsed = parse_smart_query(query, strict=strict)
         parsed_query_info = {
             "original_query": parsed.original,
             "detected": parsed.detected,
@@ -661,6 +747,21 @@ async def jlc_search(
             "remaining_text": parsed.remaining_text,
         }
 
+        if parsed.subcategory == "supercapacitors" and not (subcategory_name or subcategory_id):
+            if not (parsed.model_number or parsed.remaining_text.strip()):
+                return {"results": [], "total": 0, "parsed": parsed_query_info,
+                        "hint": "JLCPCB has no supercapacitor subcategory in this catalog; try Mouser or DigiKey."}
+            # "supercapacitor charging IC", "CN3125 supercapacitor": the word describes another part.
+            parsed.subcategory = None
+            parsed.detected.pop("subcategory", None)
+            parsed.remaining_text = f"{parsed.remaining_text} supercapacitor".strip()
+            parsed_query_info.update(subcategory=None, remaining_text=parsed.remaining_text)
+
+        if library_type is None:
+            library_type = parsed.detected.get("library_type")
+        if sort_by is None:
+            sort_by = parsed.detected.get("sort_by")
+
         # Apply parsed values only if user didn't provide explicit ones
         if parsed.subcategory and not subcategory_name and not subcategory_id:
             if parsed.subcategories:
@@ -669,8 +770,29 @@ async def jlc_search(
                 parsed_query_info["subcategories"] = parsed.subcategories
             if not effective_subcategory_ids:
                 effective_subcategory_name = parsed.subcategory
-        if parsed.package and not package:
-            effective_package = parsed.package
+        if not package and not parsed_packages:
+            if parsed.packages:
+                parsed_packages = parsed.packages
+                parsed_query_info["packages"] = parsed.packages
+            elif parsed.package:
+                effective_package = parsed.package
+
+        if strict:
+            query_packages = parsed.packages or ([parsed.package] if parsed.package else [])
+            if query_packages and (package or packages):
+                explicit_packages = ([package] if package else []) + (_parse_list_param(packages) or [])
+                if {p.casefold() for p in explicit_packages} != {p.casefold() for p in query_packages}:
+                    parsed_query_info.setdefault("adjusted_filters", []).append({
+                        "filter": "packages: " + ", ".join(query_packages), "now": None,
+                        "reason": "explicit package arguments override query packages; strict mode cannot omit them",
+                    })
+            detected_library = parsed.detected.get("library_type")
+            if (not query_library and detected_library and library_type != detected_library
+                    and not (detected_library == "no_fee" and library_type in ("basic", "preferred"))):
+                parsed_query_info.setdefault("adjusted_filters", []).append({
+                    "filter": "library_type: " + detected_library, "now": None,
+                    "reason": "explicit library_type overrides the query library requirement; strict mode cannot omit it",
+                })
 
         # Filters the parser made up must fit the part type: "5V relay" asked for Voltage Rating,
         # which no relay lists, and found nothing
@@ -679,10 +801,24 @@ async def jlc_search(
             if (subcategory_id or effective_subcategory_name) else []
         )
         auto_filters, adjusted = _fit_parsed_filters(db, parsed.spec_filters, searched_ids)
+        if strict and adjusted:
+            auto_filters = parsed.spec_filters
+            adjusted = [{**a, "now": a["filter"], "reason": a["reason"].split(", so")[0]
+                         + "; strict mode retained the requirement"} for a in adjusted]
         if adjusted:
-            parsed_query_info["adjusted_filters"] = adjusted
+            parsed_query_info.setdefault("adjusted_filters", []).extend(adjusted)
             parsed_query_info["spec_filters"] = [f.to_dict() for f in auto_filters]
         # Merge auto-detected spec filters with manual ones (manual takes precedence)
+        if strict and parsed_filters:
+            manual_names = {f.name.casefold() for f in parsed_filters}
+            conflicts = [f for f in auto_filters if f.name.casefold() in manual_names
+                         and f not in parsed_filters]
+            if conflicts:
+                parsed_query_info.setdefault("adjusted_filters", []).extend(
+                    {"filter": f"{f.name} {f.operator} {f.value}", "now": None,
+                     "reason": "explicit filter overrides this parsed requirement; strict mode cannot omit it"}
+                    for f in conflicts
+                )
         parsed_filters = merge_spec_filters(parsed_filters, auto_filters)
         if parsed.mounting_type:
             effective_mounting_type = parsed.mounting_type
@@ -707,16 +843,30 @@ async def jlc_search(
         manufacturer=manufacturer,
         mounting_type=effective_mounting_type,
         match_all_terms=match_all_terms,
-        sort_by=sort_by,
+        sort_by=sort_by or "stock",
         limit=clamp_limit(limit, MAX_PAGE_SIZE),
     )
     # Perform search - db.search() handles name resolution internally
     result = db.search(query=effective_query, **search_args)
 
+    # A library phrase in the query is a preference; an explicit argument is a constraint.
+    dropped_library = None
+    if (not strict and query_library and library_type not in (None, "all")
+            and result.get("total") == 0 and not result.get("error")):
+        search_args["library_type"] = None
+        dropped_library = library_type
+        retry = db.search(query=effective_query, **search_args)
+        if retry.get("total"):
+            retry["relaxed"] = {
+                "dropped_text": library_type,
+                "reason": "no part matched the query library tier, so the library preference was left out",
+            }
+            result = retry
+
     # Words the parser couldn't place ("dual", "edge mount") are required in the description and
     # can zero a search the part type and filters would answer. Only for words left from a
     # natural-language query, never a part number or the caller's own subcategory or filters.
-    if (result.get("total") == 0 and not result.get("error") and parsed and effective_query
+    if (not strict and result.get("total") == 0 and not result.get("error") and parsed and effective_query
             and not parsed.model_number and (parsed.subcategory or parsed.spec_filters)
             and not (subcategory_id or subcategory_name or spec_filters)):
         retry = db.search(query=None, **search_args)
@@ -726,7 +876,54 @@ async def jlc_search(
                 "reason": "no part matched these words together with the part type and filters, "
                           "so they were left out",
             }
+            if dropped_library:
+                retry["relaxed"]["dropped_text"] = dropped_library + " " + effective_query
+                retry["relaxed"]["reason"] += "; the library preference was left out"
+            unsupported = parsed.detected.get("unsupported_constraints", [])
+            if unsupported:
+                retry["relaxed"]["reason"] += "; unsupported constraints left out: " + ", ".join(unsupported)
             result = retry
+
+    # A model can be listed under a different part type than the query's alias suggests.
+    if (not strict and result.get("total") == 0 and not result.get("error") and parsed
+            and parsed.model_number and parsed.subcategory and not parsed.spec_filters
+            and not (subcategory_id or subcategory_name)):
+        retry_args = {**search_args, "subcategory_name": None, "subcategory_ids": None}
+        retry = db.search(query=effective_query, **retry_args)
+        if retry.get("total"):
+            part_type = (result.get("filters_applied", {}).get("subcategory_resolved")
+                         or effective_subcategory_name or parsed.subcategory)
+            retry["relaxed"] = {
+                "dropped_part_type": part_type,
+                "reason": f"no part matching {parsed.model_number} is listed under {part_type}, "
+                          "so every part type was searched",
+            }
+            effective_subcategory_name = None
+            effective_subcategory_ids = None
+            result = retry
+
+    searched_ids = effective_subcategory_ids or (
+        [i for i in [subcategory_id or db.resolve_subcategory_name(effective_subcategory_name)] if i]
+        if (subcategory_id or effective_subcategory_name) else []
+    )
+    unapplied_filters = result.get("ignored_filters", [])
+    explicit_issues = _explicit_filter_issues(db, explicit_filters, searched_ids, unapplied_filters)
+    if explicit_issues:
+        # Report only: do not remove or remap the caller's explicit constraints.
+        labels = {f["filter"] for f in explicit_issues}
+        result["ignored_filters"] = [f for f in result.get("ignored_filters", []) if f["filter"] not in labels] + explicit_issues
+    unsupported = parsed.detected.get("unsupported_constraints", []) if parsed else []
+    if strict:
+        if unsupported:
+            result.setdefault("ignored_filters", []).extend(
+                {"filter": value, "reason": "unsupported query constraint"} for value in unsupported
+            )
+        if unapplied_filters or unsupported or (parsed_query_info and parsed_query_info.get("adjusted_filters")):
+            result.update({"error": "Strict search cannot apply every constraint; see ignored_filters and parsed.adjusted_filters and use jlc_search_help(subcategory=...) for supported attributes",
+                           "results": [], "total": 0, "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
+                           "no_fee_available": False})
+            if "page_info" in result:
+                result["page_info"]["returned"] = 0
 
     # Add parsing info if natural language was used
     if parsed_query_info:
@@ -761,7 +958,7 @@ def _fit_parsed_filters(
     kept: list[SpecFilter] = []
     adjusted: list[dict[str, str | None]] = []
     for spec_filter in filters:
-        if listed(spec_filter.name):
+        if spec_filter.name in ("Module Flash", "Module PSRAM") or listed(spec_filter.name):
             kept.append(spec_filter)
             continue
         label = f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}"
@@ -783,6 +980,44 @@ def _fit_parsed_filters(
     return kept, adjusted
 
 
+def _explicit_filter_issues(
+    db: Any, filters: list[SpecFilter], ids: list[int], ignored_filters: list[dict]
+) -> list[dict]:
+    """Disclose unsupported/rare explicit attributes without changing matching."""
+    if not ids:
+        return []
+    # These reasons come from the actual SQL/post-filter builder, not attribute coverage.
+    unapplied = {f["filter"]: f["reason"] for f in ignored_filters}
+    issues = []
+    available = None
+    for f in filters:
+        if f.name in ("Module Flash", "Module PSRAM"):
+            continue
+        names = get_attribute_names(f.name)
+        column = next((SPEC_TO_COLUMN[n][0] for n in [f.name, *names] if n in SPEC_TO_COLUMN), None)
+        if column:
+            # The numeric column also covers synonymous stored attributes (e.g. Iq/standby).
+            names = list(set(names) | {n for n, info in SPEC_TO_COLUMN.items() if info[0] == column})
+        share = db.attribute_share(ids, names)
+        if share >= _LISTED_SHARE:
+            continue
+        if available is None:
+            available = sorted({a["name"] for i in ids
+                                for a in db.list_attributes(subcategory_id=i).get("attributes", [])})
+        # Substrings help with omitted prefixes (Height -> Switch Height), fuzzy matching with typos.
+        suggestions = [n for n in available if f.name.casefold() in n.casefold()]
+        suggestions += [n for n in get_close_matches(f.name.casefold(), [n.casefold() for n in available], n=3, cutoff=0.3)]
+        by_lower = {n.casefold(): n for n in available}
+        suggestions = list(dict.fromkeys(by_lower.get(n.casefold(), n) for n in suggestions))[:3]
+        label = f"{f.name} {f.operator} {f.value}"
+        reason = (f"not applied ({unapplied[label]}); few or none of these parts list {f.name}"
+                  if label in unapplied else
+                  f"applied, but few or none of these parts list {f.name}, so results may be incomplete or empty")
+        issues.append({"filter": label, "reason": reason,
+                       "attribute_share": share, "suggestions": suggestions})
+    return issues
+
+
 @mcp.tool(
     annotations=ToolAnnotations(
         title="Search Help & Browse",
@@ -792,7 +1027,8 @@ def _fit_parsed_filters(
         openWorldHint=False,
     )
 )
-async def jlc_search_help(
+@offload(COMPONENT_POOL)
+def jlc_search_help(
     category: str | int | None = None,
     subcategory: str | int | None = None,
 ) -> dict:
@@ -809,9 +1045,9 @@ async def jlc_search_help(
         subcategory: Filterable attributes with name, alias, type, example values
 
     Example:
-        1. search_help() → see all categories sorted by part count
-        2. search_help(category="Transistors") → see MOSFETs, BJTs, etc.
-        3. search_help(subcategory="MOSFETs") → see Vgs(th), Vds, Id, Rds(on) filters
+        1. jlc_search_help() → see all categories sorted by part count
+        2. jlc_search_help(category="Transistors") → see MOSFETs, BJTs, etc.
+        3. jlc_search_help(subcategory="MOSFETs") → see Vgs(th), Vds, Id, Rds(on) filters
         4. jlc_search(query="n-channel", spec_filters=[{"name": "Vgs(th)", "op": "<", "value": "2.5V"}])
     """
     # Subcategory mode: list filterable attributes
@@ -834,7 +1070,7 @@ async def jlc_search_help(
             matched = next((c for c in _categories if c["name"].lower() == cat_lower), None)
 
         if not matched:
-            return {"error": f"Category not found: '{category}'", "hint": "Call search_help() with no args to see all categories"}
+            return {"error": f"Category not found: '{category}'", "hint": "Call jlc_search_help() with no args to see all categories"}
 
         subcats = sorted(matched.get("subcategories", []), key=lambda s: -s["count"])
         return {
@@ -876,6 +1112,8 @@ async def jlc_search_help(
 async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     """Full details for one JLCPCB part (all price tiers, datasheet, attributes, EasyEDA footprint
     availability), or the JLCPCB parts matching a manufacturer part number.
+    Reply: prices lists quantity tiers, datasheet links the datasheet; has_easyeda_footprint=null
+    means unknown, false means absent; MPN lookups return results and total.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
@@ -884,7 +1122,8 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
             of a part from another distributor or a reference design.
 
     Returns:
-        For lcsc: Full part details including description, all pricing tiers, datasheet URL,
+        For lcsc: Full part details including specs (description only when specs are empty),
+        all pricing tiers in prices, datasheet URL,
         component attributes, and EasyEDA footprint availability:
         - has_easyeda_footprint: True if EasyEDA has footprint/symbol, False if not, null if unknown
         - easyeda_symbol_uuid: UUID for direct EasyEDA editor link (null if no footprint)
@@ -904,7 +1143,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
         if len(mpn) > 100:
             return {"error": "MPN too long (max 100 characters)"}
         db = get_db()
-        results = db.get_by_mpn(mpn)
+        results = await run_db(COMPONENT_POOL, db.get_by_mpn, mpn)
         if not results:
             return {"error": f"No JLCPCB parts found for MPN '{mpn}'", "mpn": mpn, "results": []}
         return {
@@ -940,24 +1179,29 @@ async def jlc_find_alternatives(
     lcsc: str,
     min_stock: int = DEFAULT_MIN_STOCK,
     same_package: bool = False,
-    library_type: str | None = None,
+    library_type: LibraryType = None,
     has_easyeda_footprint: bool | None = None,
     limit: int = 10,
+    board_quantity: int = 1,
+    placements_per_board: int = 1,
 ) -> dict:
-    """Find similar parts in the same subcategory, checked against the original's key specs and
-    ranked mainly by library type (no-fee first), then stock. Use it to replace a low-stock part
-    or swap an extended part for a no-fee one.
+    """Find catalog-checked alternatives, ranked no-fee first (same-package passives/crystals first
+    within each tier). Reply: summary.found counts verified alternatives; unverified_alternatives
+    need manual comparison for missing required matches; specs_unparseable lists specs not verified;
+    unchecked_requirements includes pinout/circuit checks still needed; has_easyeda_footprint=null means unknown.
 
     Args:
         lcsc: LCSC code of the original part (e.g., "C2557")
         min_stock: Minimum stock
         same_package: Only parts with the same package
         library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", or omit
-            for all
+            for all; case-insensitive, accepts no-fee. Invalid values list valid choices.
         has_easyeda_footprint: True: only parts with an EasyEDA footprint (for Atopile/KiCad);
             False: only parts without; omit: no filter (fastest). Checks at most 15 candidates
             per call and leaves out any it couldn't check; summary.footprint_filter says when.
-        limit: Max alternatives (max 50)
+        limit: Max entries per verified/unverified list (max 50)
+        board_quantity: Number of boards for project savings (default 1)
+        placements_per_board: Original part placements per board (default 1)
 
     Returns:
         Original part info (with library_type and has_easyeda_footprint) and list of alternatives,
@@ -968,6 +1212,12 @@ async def jlc_find_alternatives(
     if not _client:
         raise RuntimeError("Client not initialized")
 
+    if library_type is not None:
+        library_type = _normalize_library_type(library_type)
+        if library_type not in ("basic", "preferred", "no_fee", "extended", "all"):
+            return {"error": f"Unsupported library_type: '{library_type}'",
+                    "valid_values": ["basic", "preferred", "no_fee", "extended", "all"]}
+
     try:
         return await _client.find_alternatives(
             lcsc=lcsc,
@@ -976,6 +1226,8 @@ async def jlc_find_alternatives(
             library_type=library_type if library_type != "all" else None,
             has_easyeda_footprint=has_easyeda_footprint,
             limit=clamp_limit(limit, MAX_ALTERNATIVES),
+            board_quantity=board_quantity,
+            placements_per_board=placements_per_board,
         )
     except ValueError as e:  # actionable JLCPCB messages (rate limited / WAF / timeout)
         return {"error": str(e)}
@@ -1313,7 +1565,8 @@ async def cse_get_kicad(
         openWorldHint=False,
     )
 )
-async def sensor_recommend(
+@offload(SENSOR_POOL)
+def sensor_recommend(
     query: str | None = None,
     measure: str | list[str] | None = None,
     type: str | None = None,
@@ -1322,10 +1575,11 @@ async def sensor_recommend(
     limit: int = 15,
 ) -> dict:
     """Recommend sensor ICs and modules for what you want to measure, with protocol and platform
-    support. Not for buying parts: use jlc_search.
+    support. Filter choices come from the catalog; unknown values list valid choices.
+    Accepts 1-wire/one-wire and heart rate/blood oxygen aliases. Not for buying parts: use jlc_search.
 
     Args:
-        query: Name, description or manufacturer (e.g., "BME280", "waterproof temperature")
+        query: Name, description or manufacturer (e.g., "BME280", "waterproof")
         measure: One, or a list that must all match: temperature, humidity, pressure, distance,
             tof, lidar, ultrasonic, radar, co2, co, gas, voc, formaldehyde, h2s, nh3, ozone,
             oxygen, particulate, light, color, uv, optical, acceleration, gyroscope,
@@ -1338,7 +1592,7 @@ async def sensor_recommend(
         type: Sensing technology (e.g., "tof", "ultrasonic", "ndir", "electrochemical", "mems")
         protocol: "i2c", "spi", "uart", "analog", "pwm", "gpio", "one_wire", "rs485", "can" or "i2s"
         platform: "arduino", "esphome", "micropython", "circuitpython", "tasmota", "zephyr" or
-            "raspberry_pi"
+            "raspberry_pi". ESP-IDF has no support records; unknown platforms return valid_values.
         limit: Max results (max 100)
 
     Returns:
@@ -1384,12 +1638,14 @@ async def sensor_recommend(
         openWorldHint=False,
     )
 )
-async def get_design_rules(topic: str = "") -> dict:
+@offload(RULES_POOL)
+def get_design_rules(topic: str = "") -> dict:
     """Curated PCB design rules for power, protection, interfaces, MCUs, layout and EMC. An empty
     topic lists every rule file.
 
     Args:
-        topic: Keyword matched against category/filename (e.g., "ldo", "usb", "esd", "esp32")
+        topic: Exact returned key (e.g., "power/ldo", "INDEX.md") or keyword matched against
+            category/filename (e.g., "ldo", "usb", "esd", "esp32")
 
     Returns:
         content: The matched rule file(s) concatenated with --- separators
@@ -1415,7 +1671,8 @@ async def get_design_rules(topic: str = "") -> dict:
         openWorldHint=False,
     )
 )
-async def board_search(
+@offload(BOARD_POOL)
+def board_search(
     query: str | None = None,
     component: str | None = None,
     tag: str | list[str] | None = None,
@@ -1430,6 +1687,7 @@ async def board_search(
 
     Use component= for an IC name (searches the BOMs; when 2+ boards match it adds a cross-board
     consensus), query= for a function ("motor driver", "USB power delivery"), tag= to browse.
+    Tags ignore case/whitespace; usb-c means usb. Unknown tags return valid_values from the catalog.
     Combine them to narrow.
 
     Args:
@@ -1450,7 +1708,9 @@ async def board_search(
         Each result includes: slug, name, org, source, source_url, format, description,
         key_coverage (rich functional summary), tags, key_ics, layers, dimensions, component_count,
         matched_by (why this result appeared: key IC, component, text match, tag, etc.).
-        When searching by component with 2+ results, includes cross-board consensus.
+        When searching by component with 2+ results, includes cross-board consensus. Each
+        pin choice count is distinct boards, pct divides by consensus.board_count, boards lists
+        supporting slugs, and quantities maps each supporting board to component occurrences.
         When browsing by tag only (no query= or component=), includes tag_consensus showing
         what ICs boards in that category commonly use with board counts and percentages.
         Use board_get with the slug + focus for IC-specific pin neighborhood.
@@ -1463,6 +1723,11 @@ async def board_search(
                 tag = parsed
         except json.JSONDecodeError:
             pass
+
+    if isinstance(tag, str):
+        tag = "usb" if tag.strip().lower() == "usb-c" else tag.strip().lower()
+    elif isinstance(tag, list):
+        tag = ["usb" if t.strip().lower() == "usb-c" else t.strip().lower() for t in tag if isinstance(t, str)]
 
     # Validate tag list items
     if isinstance(tag, list):
@@ -1515,7 +1780,8 @@ async def board_search(
         openWorldHint=False,
     )
 )
-async def board_get(
+@offload(BOARD_POOL)
+def board_get(
     slug: str,
     focus: str | None = None,
     include_bom: bool = False,
@@ -1523,7 +1789,8 @@ async def board_get(
 ) -> dict:
     """A reference board from board_search. With focus=IC it returns that IC's pin-by-pin
     neighborhood (decoupling, pull-ups, connected parts) and, when 2+ boards use the IC, how the
-    others wire it.
+    others wire it. Reply: focus_match_type says exact, partial or ref matching; consensus
+    compares wiring across consensus.board_count boards; passives_omitted counts hidden plain passives.
 
     Args:
         slug: Board slug from board_search (e.g., "adafruit-esp32-s3-feather")

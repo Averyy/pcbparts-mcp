@@ -32,9 +32,10 @@ MAX_APPS = 50  # distinct app names a day; later ones count as "other"
 APP_NAME_LENGTH = 40
 _NOT_IN_APP_NAME = re.compile(r"[^A-Za-z0-9 ._()/+-]")  # app names are self-reported and shown publicly
 # Each tool call counts under exactly one outcome, so a tool's outcomes add up to its calls:
-# ok (found something), not_found (worked, found nothing), bad_request (the request was invalid),
+# ok (found something), similar_only (manual comparison candidates, no verified alternatives),
+# not_found (worked, found nothing), bad_request (the request was invalid),
 # rate_limited (a limit turned it away) and failed (something broke here or in a service we call)
-OUTCOMES = ("ok", "not_found", "bad_request", "rate_limited", "failed")
+OUTCOMES = ("ok", "similar_only", "not_found", "bad_request", "rate_limited", "failed")
 TOOL_COUNTS = ("calls", *OUTCOMES, "ms")
 DISTRIBUTOR_EVENTS = ("sent", "cached", "rate_limited")
 
@@ -76,7 +77,7 @@ def _clean_tool_counts(counts: dict) -> dict[str, int]:
         # 0.6.3's columns: errors (any error reply), failed (raised: so far bad arguments) and empty.
         # Error replies can't be sorted after the fact, so they stay as "unsorted".
         calls, errors, raised, empty = (_int(counts.get(key)) for key in ("calls", "errors", "failed", "empty"))
-        return {"calls": calls, "ok": max(0, calls - errors - raised - empty), "not_found": empty,
+        return {"calls": calls, "ok": max(0, calls - errors - raised - empty), "similar_only": 0, "not_found": empty,
                 "bad_request": raised, "rate_limited": 0, "failed": 0, "ms": _int(counts.get("ms")), "unsorted": errors}
     clean = {key: _int(counts.get(key)) for key in TOOL_COUNTS}
     if "unsorted" in counts:
@@ -225,13 +226,15 @@ class UsageStats:
             "about": ("Anonymous counts per UTC day, the last 30 days at most, newest first; totals adds up "
                       "the days listed (without callers, which can't be added across days). hours: calls in each UTC hour, "
                       "00 to 23 (null: not recorded); in totals, each hour added up across the days. Each tool's calls = ok (found "
-                      "something) + not_found (worked, found nothing) + bad_request (the request was invalid) + "
+                      "something; for alternatives, verified replacements) + similar_only (only similar parts for manual "
+                      "comparison, no verified replacements) + not_found (worked, found nothing) + bad_request (the request was invalid) + "
                       "rate_limited (a limit turned it away) + failed (something broke on this server or a service "
                       "it calls), plus unsorted where shown (error replies from before 0.6.4, which weren't "
                       "sorted). callers counts distinct IPs, which isn't the number of people: hosted apps such "
                       "as claude.ai call from their own servers' IPs, and a caller seen before and after a restart "
                       "counts twice. apps are the names MCP apps send when they connect. The stats keep no IPs, "
-                      "queries or part numbers."),
+                      "queries or part numbers. Cutover 2026-10-26: alternatives replies before that date counted "
+                      "similar-parts-only replies as not found; historical counts have not been reclassified."),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {
                 "from": dates[-1] if dates else None,

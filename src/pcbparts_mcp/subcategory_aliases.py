@@ -295,6 +295,9 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "buck converter": "dc-dc converters",
     "boost": "dc-dc converters",
     "boost converter": "dc-dc converters",
+    "buck-boost converter": "dc-dc converters",
+    "buck boost converter": "dc-dc converters",
+    "buck boost": "dc-dc converters",
     "buck-boost": "dc-dc converters",
     # ==========================================================================
     # ICs - OP AMPS
@@ -444,9 +447,13 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # ==========================================================================
     # MOTOR DRIVERS
     # ==========================================================================
+    "dc motor driver h-bridge": "brushed dc motor drivers",
+    "dc motor driver": "brushed dc motor drivers",
+    "bldc driver": "brushless dc (bldc) motor driver",
+    "esc": "brushless dc (bldc) motor driver",
     "motor driver": "motor driver ics",
-    "h-bridge": "motor driver ics",
-    "stepper driver": "motor driver ics",
+    "h-bridge": "brushed dc motor drivers",
+    "stepper driver": "stepper motor driver",
     # ==========================================================================
     # RELAYS
     # ==========================================================================
@@ -481,6 +488,14 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "audio codec": "audio interface ics",
     "buzzer": "buzzers",
     "speaker": "speakers",
+    "usb-pd": "usb pd",
+    "usb pd": "usb pd",
+    "efuse": "surge protection devices (spds)",
+    "fuel gauge": "battery management",
+    "mems microphones": "mems microphones",
+    "mems microphone": "mems microphones",
+    "polymer capacitors": "polymer aluminum capacitors",
+    "polymer capacitor": "polymer aluminum capacitors",
     "microphone": "microphones",
     # ==========================================================================
     # DISPLAYS (actual DB: "LED Segment Displays", "LCD Screen", "OLED Display")
@@ -633,11 +648,20 @@ def find_similar_subcategories(
     return unique
 
 
+# Known part types with no JLCPCB catalog bucket. Keep these separate from real targets.
+UNAVAILABLE_SUBCATEGORY_ALIASES: dict[str, str] = {
+    "supercap": "supercapacitors",
+    "supercapacitor": "supercapacitors",
+    "supercapacitors": "supercapacitors",
+}
+
+
 # Generic words that cover several subcategories. The smart parser searches all of them; an
 # explicit subcategory_name still resolves through SUBCATEGORY_ALIASES. "inductor" alone used to
 # search only Inductors (SMD): 8.4k of 41k inductors ("22uH inductor 3A": 5 results, 255 in Power
 # Inductors). "relay" missed the 1.3k power relays (the SRD-05VDC), "diode" the rectifiers.
 SUBCATEGORY_GROUPS: dict[str, tuple[str, ...]] = {
+    "motor driver": ("motor driver ics", "brushed dc motor drivers", "stepper motor driver", "brushless dc (bldc) motor driver"),
     **dict.fromkeys(("inductor", "inductors", "coil"), (
         "inductors (smd)", "power inductors", "molding power inductors",
         "color ring inductors / through hole inductors",

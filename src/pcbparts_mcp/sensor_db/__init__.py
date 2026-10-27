@@ -15,6 +15,7 @@ import threading
 from pathlib import Path
 from typing import Any
 
+from ..db_worker import serialized
 from .connection import build_sensor_database
 from .search import search_sensors
 
@@ -35,17 +36,18 @@ DEFAULT_DB_PATH = Path(os.environ.get("SENSOR_DB_PATH", str(DEFAULT_DATA_DIR / "
 class SensorDatabase:
     """SQLite database for sensor IC/module recommendation.
 
-    Thread safety: Uses WAL mode + check_same_thread=False.
-    Concurrent reads are safe; writes are serialized by SQLite.
-    The _conn_lock protects lazy initialization of the connection.
+    Thread safety: One connection, serialized by a reentrant lock for the full
+    operation, initialization and close. Runtime queries are read-only; WAL is
+    configured at initialization, after the optional build of a missing database.
     """
 
     def __init__(self, db_path: Path | None = None, data_dir: Path | None = None):
         self.db_path = db_path or DEFAULT_DB_PATH
         self.data_dir = data_dir or DEFAULT_DATA_DIR
         self._conn: sqlite3.Connection | None = None
-        self._conn_lock = threading.Lock()
+        self._conn_lock = threading.RLock()
 
+    @serialized
     def _ensure_db(self) -> None:
         """Ensure database exists, build if missing. Thread-safe."""
         if self._conn is not None:
@@ -63,7 +65,9 @@ class SensorDatabase:
 
             self._conn = sqlite3.connect(self.db_path, check_same_thread=False)
             self._conn.execute("PRAGMA journal_mode=WAL")
+            self._conn.execute("PRAGMA query_only=ON")
 
+    @serialized
     def close(self) -> None:
         """Close database connection. Thread-safe."""
         with self._conn_lock:
@@ -71,6 +75,7 @@ class SensorDatabase:
                 self._conn.close()
                 self._conn = None
 
+    @serialized
     def search(
         self,
         query: str | None = None,
@@ -107,6 +112,7 @@ class SensorDatabase:
             limit=limit,
         )
 
+    @serialized
     def get_stats(self) -> dict[str, Any]:
         """Get database statistics."""
         self._ensure_db()

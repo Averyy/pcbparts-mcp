@@ -65,6 +65,7 @@ data/wafer/
 data/sensors/_scrape_status.json
 
 # Built databases (generated from JSONL at build time)
+data/baseline/
 data/components.db
 data/components.db-wal
 data/components.db-shm

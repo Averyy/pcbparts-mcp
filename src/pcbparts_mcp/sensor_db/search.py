@@ -23,6 +23,8 @@ MEASURE_EXPANSIONS: dict[str, list[str]] = {
 # Sub-measures like pir, voc, lidar, tof, ultrasonic, radar exist in the DB
 # and should NOT be aliased to their parent — that loses specificity.
 MEASURE_QUERY_ALIASES: dict[str, str] = {
+    "heart rate": "biometric",
+    "blood oxygen": "biometric",
     "barometric": "pressure",
     "altimeter": "pressure",
     "barometer": "pressure",
@@ -49,6 +51,8 @@ MEASURE_QUERY_ALIASES: dict[str, str] = {
 # "gpio" (54 sensors on 2026-10-16) and has no "digital" value; "gpio" used to leave itself out, so
 # those sensors never matched it, and "digital" (offered in the tool description) matched nothing.
 PROTOCOL_ALIASES: dict[str, list[str]] = {
+    "1-wire": ["one_wire"],
+    "one-wire": ["one_wire"],
     "gpio": ["gpio", "analog", "pwm", "one_wire"],
     "digital": ["gpio", "pwm", "one_wire"],
 }
@@ -127,6 +131,20 @@ def search_sensors(
     Returns:
         {"total": N, "results": [...]}
     """
+    # Validate against this catalog so new measures/protocols/platforms need no code release.
+    for name, value, table, column, aliases in (
+        ("platform", platform, "sensor_platforms", "platform", {}),
+        ("protocol", protocol, "sensor_protocols", "protocol", PROTOCOL_ALIASES),
+        ("measure", measure, "sensor_measures", "measure", {**MEASURE_QUERY_ALIASES, **MEASURE_EXPANSIONS}),
+    ):
+        if value is None:
+            continue
+        valid = sorted({row[0] for row in conn.execute(f"SELECT DISTINCT {column} FROM {table}")} | aliases.keys())
+        values = value if isinstance(value, list) else [value]
+        for item in values:
+            if item.strip().lower() not in valid:
+                return {"error": f"Unsupported value for {name}: '{item}'", "valid_values": valid, "results": [], "total": 0}
+
     # Build query dynamically
     select_cols = "s.id, s.name, s.manufacturer, s.type, s.voltage, s.datasheet_url, s.platform_count, s.description, s.source_tier"
     from_clause = "sensors s"
@@ -168,6 +186,7 @@ def search_sensors(
             for m in measure:
                 resolved, _ = _resolve_measure(m)
                 resolved_all.extend(resolved)
+            resolved_all = list(dict.fromkeys(resolved_all))
             n = len(resolved_all)
             placeholders = ", ".join("?" for _ in resolved_all)
             joins.append(
@@ -267,7 +286,7 @@ def search_sensors(
                 HAVING COUNT(DISTINCT sm.measure) = ?
             )
         """
-        count_params = params + [len(measure)]
+        count_params = params + [_having_count]
 
         data_sql = f"""
             SELECT {select_cols}
@@ -279,7 +298,7 @@ def search_sensors(
             {order_by}
             LIMIT ?
         """
-        data_params = params + [len(measure)] + order_boost_params + [limit]
+        data_params = params + [_having_count] + order_boost_params + [limit]
     else:
         count_sql = f"""
             SELECT COUNT(DISTINCT s.id)

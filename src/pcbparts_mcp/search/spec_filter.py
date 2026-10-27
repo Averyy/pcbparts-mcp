@@ -81,6 +81,8 @@ SPEC_TO_COLUMN: dict[str, tuple[str, Any]] = {
     "Voltage Dropout": ("vdropout_v", parse_voltage),
     "Quiescent Current(Iq)": ("iq_ua", parse_current),
     "Quiescent Current": ("iq_ua", parse_current),
+    "standby current": ("iq_ua", parse_current),
+    "Supply Current (Iq)": ("iq_ua", parse_current),
 
     # ADC/DAC
     "Sampling Rate": ("sample_rate_hz", parse_frequency),
@@ -100,6 +102,7 @@ SPEC_TO_COLUMN: dict[str, tuple[str, Any]] = {
     # MCU (the build fills these columns with parse_memory_size; filters must parse the same way)
     "Flash": ("flash_size_bytes", parse_memory_size),
     "Program Memory Size": ("flash_size_bytes", parse_memory_size),
+    "Program Storage Size": ("flash_size_bytes", parse_memory_size),
     "SRAM": ("ram_size_bytes", parse_memory_size),
     "RAM Size": ("ram_size_bytes", parse_memory_size),
     "Speed": ("clock_speed_hz", parse_frequency),
@@ -167,6 +170,7 @@ class SpecFilter:
 ATTRIBUTE_ALIASES: dict[str, list[str]] = {
     # MOSFETs
     "Vgs(th)": ["Gate Threshold Voltage (Vgs(th))", "Gate Threshold Voltage"],
+    "Gate Threshold": ["Gate Threshold Voltage (Vgs(th))", "Gate Threshold Voltage"],
     "Vds": ["Drain to Source Voltage"],
     "Id": ["Current - Continuous Drain(Id)"],
     "Rds(on)": ["RDS(on)"],
@@ -186,6 +190,8 @@ ATTRIBUTE_ALIASES: dict[str, list[str]] = {
     "DCR": ["DC Resistance(DCR)"],
     "Isat": ["Current - Saturation(Isat)", "Current - Saturation (Isat)"],
 
+    "Program Storage Size": ["Program Storage Size", "Program Memory Size", "Flash"],
+
     # Timing
     "Frequency": ["Frequency"],
 
@@ -194,6 +200,7 @@ ATTRIBUTE_ALIASES: dict[str, list[str]] = {
     "Ic": ["Current - Collector(Ic)"],
 
     # LDOs/Regulators
+    "Quiescent Current": ["Quiescent Current", "Quiescent Current(Iq)", "standby current", "Supply Current (Iq)"],
     "Vout": ["Output Voltage"],
     "Iout": ["Output Current"],
 
