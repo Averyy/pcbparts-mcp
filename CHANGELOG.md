@@ -23,6 +23,7 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 ### CI
 
 - Daily component scrapes stop before commit and deploy if the part count drops more than 5%. A manual `allow_part_drop` input permits deliberate drops.
+- Workflows use the Node 24 releases of their actions: checkout and setup-python v7, and the Docker login, metadata, Buildx and build-push actions.
 
 ## 0.7.0 (2026-10-27)
 

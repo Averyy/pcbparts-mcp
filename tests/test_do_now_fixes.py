@@ -261,46 +261,50 @@ def test_sensor_db_floor_rejects_truncated():
 
 # --- fastmcp 3.x Host-header (DNS-rebinding) protection ------------------------------
 
-def test_host_header_protection():
+def _app_client(**transport_options):
+    """In-process client for server.app. ASGITransport skips the lifespan, so app state isn't set up."""
+    import httpx
+    return httpx.AsyncClient(transport=httpx.ASGITransport(app=server.app, **transport_options),
+                             base_url="http://localhost")
+
+
+async def test_host_header_protection():
     """The configured public host must be allowed; unknown hosts get 421 (protection intact)."""
-    from starlette.testclient import TestClient
     from pcbparts_mcp.config import ALLOWED_HOSTS
-    client = TestClient(server.app)  # no `with` -> skip lifespan; /health needs no app state
-    assert client.get("/health", headers={"host": "localhost"}).status_code == 200
-    assert client.get("/health", headers={"host": ALLOWED_HOSTS[0]}).status_code == 200
-    assert client.get("/health", headers={"host": "rebind.attacker.example"}).status_code == 421
+    async with _app_client() as client:  # /health needs no app state
+        assert (await client.get("/health", headers={"host": "localhost"})).status_code == 200
+        assert (await client.get("/health", headers={"host": ALLOWED_HOSTS[0]})).status_code == 200
+        assert (await client.get("/health", headers={"host": "rebind.attacker.example"})).status_code == 421
 
 
-def test_origin_header_protection():
+async def test_origin_header_protection():
     """Browser Origin for the public https origin must pass even though TLS terminates at the
     proxy (the app sees scheme http, so same-origin matching alone would 403 it); foreign
     origins stay blocked."""
-    from starlette.testclient import TestClient
     from pcbparts_mcp.config import ALLOWED_HOSTS
     host = ALLOWED_HOSTS[0]
-    client = TestClient(server.app)  # requests arrive as http://, mirroring the proxied app
-    ok = client.get("/health", headers={"host": host, "origin": f"https://{host}"})
-    assert ok.status_code == 200
-    evil = client.get("/health", headers={"host": host, "origin": "https://evil.example"})
-    assert evil.status_code == 403
+    async with _app_client() as client:  # requests arrive as http://, mirroring the proxied app
+        ok = await client.get("/health", headers={"host": host, "origin": f"https://{host}"})
+        assert ok.status_code == 200
+        evil = await client.get("/health", headers={"host": host, "origin": "https://evil.example"})
+        assert evil.status_code == 403
 
 
 # --- #11: request body size cap ------------------------------------------------------
 
-def test_oversized_body_rejected_413():
+async def test_oversized_body_rejected_413():
     """Bodies over MAX_REQUEST_BODY_BYTES are refused before any parsing."""
-    from starlette.testclient import TestClient
     from pcbparts_mcp.config import MAX_REQUEST_BODY_BYTES
-    # No `with` -> skip lifespan (middleware needs no app state); without the lifespan the
-    # MCP session manager isn't running, so let downstream 500s through instead of raising —
-    # the middleware verdict (413 or not) is all this test reads.
-    client = TestClient(server.app, raise_server_exceptions=False)
-    big = b"x" * (MAX_REQUEST_BODY_BYTES + 1)
-    response = client.post("/mcp", content=big, headers={"content-type": "application/json"})
-    assert response.status_code == 413
-    # Control: a normal-sized request must not trip the middleware (any status but 413)
-    response = client.post("/mcp", content=b"{}", headers={"content-type": "application/json"})
-    assert response.status_code != 413
+    # The middleware needs no app state; without the lifespan the MCP session manager isn't
+    # running, so let downstream 500s through instead of raising — the middleware verdict
+    # (413 or not) is all this test reads.
+    async with _app_client(raise_app_exceptions=False) as client:
+        big = b"x" * (MAX_REQUEST_BODY_BYTES + 1)
+        response = await client.post("/mcp", content=big, headers={"content-type": "application/json"})
+        assert response.status_code == 413
+        # Control: a normal-sized request must not trip the middleware (any status but 413)
+        response = await client.post("/mcp", content=b"{}", headers={"content-type": "application/json"})
+        assert response.status_code != 413
 
 
 # --- #19: ComponentDatabase WAL -----------------------------------------------------
