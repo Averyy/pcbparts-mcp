@@ -17,6 +17,11 @@ on:
           - '6'
           - '8'
           - '10'
+      allow_part_drop:
+        description: 'Allow a deliberate part count drop greater than 5%'
+        required: false
+        default: false
+        type: boolean
 
 # Prevent multiple scrape runs from overlapping
 concurrency:
@@ -34,10 +39,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
@@ -59,6 +64,26 @@ jobs:
           echo "=== File sizes ==="
           du -sh data/
           du -sh data/categories/
+
+      - name: Check part count
+        env:
+          ALLOW_PART_DROP: ${{ github.event_name == 'workflow_dispatch' && inputs.allow_part_drop || false }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+
+          previous = json.loads(subprocess.check_output(["git", "show", "HEAD:data/manifest.json"]))["total_parts"]
+          with open("data/manifest.json") as stream:
+              current = json.load(stream)["total_parts"]
+          print(f"Part count: previous={previous}, current={current}", flush=True)
+          if current * 100 < previous * 95:
+              if os.environ.get("ALLOW_PART_DROP", "false").lower() == "true":
+                  print("Part count drop allowed for this manual run.")
+              else:
+                  raise SystemExit("Part count dropped more than 5%; stopping before commit and deploy.")
+          PY
 
       - name: Commit and push data files
         id: commit

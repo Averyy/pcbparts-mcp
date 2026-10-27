@@ -631,6 +631,9 @@ class TestAdditionalReviewFixes:
         assert result["total"] == 0
         assert "relaxed" not in result
 
-    async def test_model_part_type_retry_requires_no_parsed_specs(self):
+    async def test_model_part_type_retry_allows_parsed_specs(self):
         result = await search("FUSB302B USB PD 5V")
-        assert "dropped_part_type" not in result.get("relaxed", {})
+        assert result["results"]
+        assert all(p["model"].upper().startswith("FUSB302B") for p in result["results"])
+        assert result["relaxed"]["dropped_part_type"] == "USB PD"
+        assert result["parsed"]["adjusted_filters"]

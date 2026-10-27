@@ -27,7 +27,7 @@ The SQLite databases are build artifacts (gitignored) generated from the committ
 data files. They build automatically on first use, or explicitly:
 
 ```bash
-.venv/bin/python scripts/build_database.py     # components.db (~620 MB, ~20s)
+.venv/bin/python scripts/build_database.py     # components.db (~730 MB, ~20s)
 .venv/bin/python scripts/build_sensor_db.py    # sensor.db
 .venv/bin/python scripts/build_boards_db.py    # boards.db
 ```
