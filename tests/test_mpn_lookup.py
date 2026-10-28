@@ -9,7 +9,7 @@ import pytest
 
 from pcbparts_mcp import server
 from pcbparts_mcp.db.lookup import get_by_mpn
-from pcbparts_mcp.search.mpn import MPN_KEY_SQL, annotated_mpn_candidates, mpn_key
+from pcbparts_mcp.search.mpn import MPN_KEY_SQL, annotated_mpn_candidates, is_maker_suffixed, mpn_key
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 from search_baseline import offline
@@ -203,3 +203,82 @@ def test_normalized_variant_also_uses_separator_key(catalog):
     info = {}
     assert get_by_mpn(conn, "MCP73831-2ACI/MC", {}, match_info=info)[0]["model"] == "MCP73831T2ACIMC"
     assert info["match"] == "packing"
+
+
+@pytest.mark.parametrize("mpn", ["N/A", "n/a", "NA", "NC", "NF", "NP", "TBD", "DNF", "DNP", " n.a. "])
+async def test_placeholder_finds_nothing(mpn):
+    # N/A used to list JST ...-N-A connectors; NC, LEDs whose part numbers start with NC.
+    reply = await server.jlc_get_part(mpn=mpn)
+    assert reply["results"] == []
+    assert reply["error"] == f"No JLCPCB parts found for MPN '{mpn}'"
+    assert "placeholder" in reply["hint"] and "match" not in reply
+
+
+async def test_lcsc_code_as_mpn_finds_only_that_part():
+    # C2040 also listed resistors whose LCSC codes start with C2040.
+    reply = await server.jlc_get_part(mpn="c2040")
+    assert [(p["lcsc"], p["model"]) for p in reply["results"]] == [("C2040", "RP2040")]
+    assert reply["match"] == "lcsc" and reply["matched_mpn"] == "RP2040"
+    assert 'jlc_get_part(lcsc="C2040")' in reply["note"]
+
+
+@pytest.mark.parametrize("mpn", ["C1815", "C945"])
+async def test_part_number_beats_lcsc_code(mpn):
+    # 2SC1815's short name is also LCSC C1815, a capacitor: the part number wins.
+    reply = await server.jlc_get_part(mpn=mpn)
+    assert reply["results"] and all(p["model"] == mpn for p in reply["results"])
+    assert "match" not in reply
+
+
+async def test_missing_lcsc_code_points_to_live_lookup():
+    reply = await server.jlc_get_part(mpn="C3198")
+    assert reply["results"] == []
+    assert reply["hint"].startswith("'C3198' looks like an LCSC code: jlc_get_part(lcsc=\"C3198\")")
+
+
+def test_lcsc_code_precedence(catalog):
+    conn = catalog([("RP2040", "Raspberry Pi"), ("C1", "Vendor"), *[(f"PART{n}", "Vendor") for n in range(3, 13)]])
+    info = {}
+    assert [p["lcsc"] for p in get_by_mpn(conn, "C1", {}, match_info=info)] == ["C2"]
+    assert info == {}
+    assert [p["lcsc"] for p in get_by_mpn(conn, "C10", {}, match_info=info)] == ["C10"]
+    assert info["match"] == "lcsc"
+    # Not in the catalog: full-text search skips other parts' LCSC codes.
+    assert get_by_mpn(conn, "C99", {}) == []
+
+
+@pytest.mark.parametrize("mpn,copy", [
+    ("ICM-42688-P", "ICM-42688-P(TOKMAS) (Tokmas)"),
+    ("MAX16171ATA/VY+T", "MAX16171ATA/VY(TOKMAS) (Tokmas)"),
+])
+async def test_other_manufacturers_copy_is_named(mpn, copy):
+    reply = await server.jlc_get_part(mpn=mpn)
+    assert reply["match"] == "related"
+    assert reply["note"].endswith(f" {copy} is numbered after the original part but made by another "
+                                  "manufacturer; check its datasheet before substituting.")
+
+
+@pytest.mark.parametrize("model,manufacturer,copy", [
+    ("ICM-42688-P(TOKMAS)", "Tokmas", True),
+    ("SP3485EEN(UMW)", "UMW(Youtai Semiconductor Co., Ltd.)", True),
+    ("TP4054(LX)", "lingxingic", True),
+    ("AO4407A(ES)", "ElecSuper", True),
+    ("SN74LVC1G08DBVR(AT)", "AOTE", True),
+    ("B2B-PH-K-S(LF)(SN)", "JST", False),
+    ("ABC123(LF)", "Littelfuse", False),
+    ("ABC123(BJ)", "TOSHIBA", False),
+    ("DF40C-30DP-0.4V(51)", "HRS(Hirose)", False),
+    ("ABC123(H)", "DEGSON", False),
+    ("ICM-42688-P", "TDK InvenSense", False),
+])
+def test_maker_suffix_is_the_makers_name_or_initials(model, manufacturer, copy):
+    assert is_maker_suffixed({"model": model, "manufacturer": manufacturer}) is copy
+
+
+def test_maker_suffix_needs_its_own_manufacturer(catalog):
+    conn = catalog([("ABC123(TOKMAS)", "Tokmas"), ("ABC123(LF)", "Vendor"), ("ABC123(XBLW)", "XBLW")])
+    info = {}
+    get_by_mpn(conn, "ABC123", {}, match_info=info)
+    assert info["note"].endswith(" ABC123(TOKMAS) (Tokmas), ABC123(XBLW) (XBLW) are numbered after the "
+                                 "original part but made by another manufacturer; check their datasheets "
+                                 "before substituting.")

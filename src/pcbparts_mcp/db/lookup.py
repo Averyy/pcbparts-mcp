@@ -5,8 +5,8 @@ from typing import Any
 
 from ..search.result import row_to_dict
 from ..search.mpn import (
-    ALTERNATIVE_MANUFACTURERS, MPN_ALIASES, MPN_KEY_SQL, PACKING_RULES,
-    annotated_mpn_candidates, mpn_key, normalize_mpn,
+    ALTERNATIVE_MANUFACTURERS, LCSC_CODE, MPN_ALIASES, MPN_KEY_SQL, PACKING_RULES,
+    annotated_mpn_candidates, is_maker_suffixed, is_placeholder_mpn, mpn_key, normalize_mpn,
 )
 
 
@@ -48,6 +48,13 @@ def get_by_mpn(
         info = {"match": kind, "matched_mpn": results[0]["model"]}
         return results, info
 
+    # A placeholder names no part: only a part actually numbered that way, never
+    # full-text matches or alternatives.
+    if is_placeholder_mpn(mpn):
+        return parts(conn.execute(
+            "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC", [mpn],
+        ))
+
     def find(candidate):
         # 1. Keep the existing exact query and stock ordering unchanged.
         results = parts(conn.execute(
@@ -80,24 +87,41 @@ def get_by_mpn(
             results = keyed(target, vendors)
             return matched(results, "alias") if results else ([], {})
 
-        # 4. Existing FTS queries, variants, stock order and limit are unchanged.
+        # An LCSC code passed as an MPN finds that part, not parts whose codes start with it.
+        lcsc_code = LCSC_CODE.fullmatch(candidate) is not None
+        if lcsc_code:
+            results = parts(conn.execute("SELECT * FROM components WHERE lcsc = ?", [candidate.upper()]))
+            if results:
+                info = matched(results, "lcsc")[1]
+                info["note"] = (f"'{candidate}' is an LCSC code, not a part number; this is that part. "
+                                f"jlc_get_part(lcsc=\"{candidate.upper()}\") adds every price tier, "
+                                "the datasheet and EasyEDA footprint status.")
+                return results, info
+
+        # 4. Existing FTS queries, variants, stock order and limit are unchanged,
+        # except that an LCSC-shaped input doesn't match other parts' LCSC codes.
         for variant in variants:
             escaped = variant.replace('"', '""')
+            columns = "{mpn manufacturer description} : " if lcsc_code else ""
             results = parts(conn.execute(
                 """SELECT c.* FROM components c
                    JOIN components_fts f ON c.lcsc = f.lcsc
                    WHERE f.components_fts MATCH ?
                    ORDER BY c.stock DESC
-                   LIMIT 10""", [f'"{escaped}"*'],
+                   LIMIT 10""", [f'{columns}"{escaped}"*'],
             ))
             if results:
                 categories = list(dict.fromkeys(p['subcategory'] or 'Uncategorized' for p in results))
-                return results, {
-                    "match": "related",
-                    "note": (f"No exact match for '{candidate}'. These parts' part numbers start with it "
-                             "or their text mentions it, so check the package and manufacturer. "
-                             f"Part types: {', '.join(categories)}."),
-                }
+                note = (f"No exact match for '{candidate}'. These parts' part numbers start with it "
+                        "or their text mentions it, so check the package and manufacturer. "
+                        f"Part types: {', '.join(categories)}.")
+                if copies := [p for p in results if is_maker_suffixed(p)]:
+                    names = ", ".join(f"{p['model']} ({p['manufacturer']})" for p in copies[:3])
+                    note += (f" {names} {'is' if len(copies) == 1 else 'are'} numbered after the "
+                             "original part but made by another manufacturer; check "
+                             f"{'its datasheet' if len(copies) == 1 else 'their datasheets'} "
+                             "before substituting.")
+                return results, {"match": "related", "note": note}
 
         # 5. Only the named vendor may supply a packing variant. The indexed
         # prefix narrows retrieval; the full rule must preserve device identity.

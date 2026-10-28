@@ -137,8 +137,7 @@
     "word": "resistor",
     "subcategories": [
       "Resistor Networks, Arrays"
-    ],
-    "known_gap": "RESPACK footprint does not infer a resistor network; outside #72"
+    ]
   },
   {
     "ref": "SW1",
@@ -147,8 +146,7 @@
     "word": "switch",
     "subcategories": [
       "Tactile Switches"
-    ],
-    "known_gap": "KMR2 BTN_KMR2 footprint text has no match; outside #72"
+    ]
   },
   {
     "ref": "U1",
