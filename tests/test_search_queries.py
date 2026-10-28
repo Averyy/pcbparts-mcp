@@ -767,7 +767,8 @@ class TestPackageConstraints:
         result = await search(package="SOIC-8-EP", strict=True, limit=100)
         assert result["results"]
         for part in result["results"]:
-            assert re.match(r"(?:SOIC|SOP|SO)-8(?:\D|$)", part["package"], re.IGNORECASE)
+            # The family rule takes the dash as optional: SOP8-EP (XL4301E1) is an SOP-8 with a pad.
+            assert re.match(r"(?:SOIC|SOP|SO)-?8(?:\D|$)", part["package"], re.IGNORECASE)
             assert re.search(r"-EP(?=[(-]|$)", part["package"], re.IGNORECASE)
 
     @pytest.mark.parametrize("package,remaining", [("SOIC-8(3.9x4.9)", None), ("SO-8-1", "mosfet")])

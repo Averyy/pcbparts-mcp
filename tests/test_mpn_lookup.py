@@ -8,6 +8,7 @@ import sys
 import pytest
 
 from pcbparts_mcp import server
+from pcbparts_mcp.db import get_db
 from pcbparts_mcp.db.lookup import get_by_mpn
 from pcbparts_mcp.search.mpn import MPN_KEY_SQL, annotated_mpn_candidates, is_maker_suffixed, mpn_key
 
@@ -27,6 +28,14 @@ async def no_network():
 @pytest.mark.parametrize("case", RECOVERIES, ids=lambda case: case["input"])
 async def test_recorded_recovery(case):
     reply = await server.jlc_get_part(mpn=case["input"])
+    # The daily catalog changes: an input that is stocked now must come back as the exact match
+    # (TLV76701DRVT wasn't when recorded), and a target no longer stocked can't be recovered.
+    if reply.get("results") and "match" not in reply:
+        assert all(p["model"].casefold() == case["input"].casefold() for p in reply["results"])
+        return
+    stocked = get_db().get_by_lcsc_batch([p["lcsc"] for p in case["expected"]])
+    if not any(stocked.values()):
+        pytest.skip(f"no recorded target is stocked any more ({', '.join(stocked)})")
     assert "error" not in reply
     expected = {(p["lcsc"], p["mpn"]) for p in case["expected"]}
     assert expected.intersection((p["lcsc"], p["model"]) for p in reply["results"])
@@ -231,9 +240,11 @@ async def test_part_number_beats_lcsc_code(mpn):
 
 
 async def test_missing_lcsc_code_points_to_live_lookup():
-    reply = await server.jlc_get_part(mpn="C3198")
+    # C3198 listed ten resistors with codes C3198xx; this code is past any assigned one.
+    reply = await server.jlc_get_part(mpn="c9999999999")
     assert reply["results"] == []
-    assert reply["hint"].startswith("'C3198' looks like an LCSC code: jlc_get_part(lcsc=\"C3198\")")
+    assert reply["hint"].startswith("'c9999999999' looks like an LCSC code: "
+                                    "jlc_get_part(lcsc=\"C9999999999\")")
 
 
 def test_lcsc_code_precedence(catalog):
@@ -253,6 +264,8 @@ def test_lcsc_code_precedence(catalog):
 ])
 async def test_other_manufacturers_copy_is_named(mpn, copy):
     reply = await server.jlc_get_part(mpn=mpn)
+    if reply.get("results") and "match" not in reply:
+        pytest.skip(f"{mpn} itself is stocked now")
     assert reply["match"] == "related"
     assert reply["note"].endswith(f" {copy} is numbered after the original part but made by another "
                                   "manufacturer; check its datasheet before substituting.")
