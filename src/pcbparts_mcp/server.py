@@ -42,7 +42,7 @@ from .db import get_db, close_db
 from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
 from .search import SpecFilter, get_attribute_names
-from .search.mpn import looks_like_mpn, mpn_key
+from .search.mpn import LCSC_CODE, is_placeholder_mpn, looks_like_mpn, mpn_key
 from .search.query_builder import package_family_adjustments
 from .smart_parser import ParsedQuery, parse_smart_query, merge_spec_filters
 from .alternatives import SPEC_PARSERS
@@ -622,6 +622,12 @@ _PACKAGE_OR_STANDARD = re.compile(
     r"|BGA|WLCSP|SON|TSOT|DIP|PLCC|LGA)-?\d.*|(?:SC|SIP|TO|DO)-\d.*|AEC-?Q\d+|(?:IEC|IEEE|JESD|IPC)-?\d.*",
     re.IGNORECASE,
 )
+# CAD footprint names copied from a BOM ("BTN_KMR2", "R_0603_1608Metric", "SW_SPST_PTS645")
+# name the footprint, not the part. No stocked MPN starts with one of these prefixes.
+_FOOTPRINT_NAME = re.compile(
+    r"(?:BTN|SW|R|C|CP|L|D|LED|FB|F|FUSE|Y|X|XTAL|CRYSTAL|J|CONN|TP|BZ|BUZZER|BT|RN|RESPACK|U|Q)_\S+",
+    re.IGNORECASE,
+)
 
 
 def _keep_part_number_matches(retry: dict, part_number_text: str, limit: int) -> dict:
@@ -655,7 +661,8 @@ def _protected_mpn_tokens(query: str, parsed: ParsedQuery, *, remaining_text: st
     remaining = re.sub(r"[-\s]+", " ", parsed.remaining_text if remaining_text is None else remaining_text).casefold()
     tokens = []
     for token in query.split():
-        if _REFERENCE_DESIGNATOR.fullmatch(token) or _PACKAGE_OR_STANDARD.fullmatch(token):
+        if (_REFERENCE_DESIGNATOR.fullmatch(token) or _PACKAGE_OR_STANDARD.fullmatch(token)
+                or _FOOTPRINT_NAME.fullmatch(token)):
             continue
         # The value parser can take a hyphenated suffix ("BC817-40W" as 40W): search the longest
         # leading part that survived (BC817 finds BC817-40), if it is still a part number
@@ -1014,6 +1021,24 @@ def jlc_search(
             }
             result = retry
 
+    # A CAD footprint name copied from a BOM ("KMR2 BTN_KMR2 switch") is in no part's text and
+    # zeroes a search its other words would answer.
+    footprint_names = [t for t in (effective_query or "").split() if _FOOTPRINT_NAME.fullmatch(t)]
+    if (not strict and footprint_names and result.get("total") == 0 and not result.get("error") and parsed
+            and not part_number_text):
+        other_words = " ".join(t for t in effective_query.split() if not _FOOTPRINT_NAME.fullmatch(t))
+        if other_words or parsed.subcategory or parsed.spec_filters:
+            retry = db.search(query=other_words or None, **search_args)
+            if retry.get("total"):
+                retry["relaxed"] = {
+                    "dropped_text": " ".join(footprint_names),
+                    "reason": "CAD footprint names aren't in part descriptions, so they were left out",
+                }
+                if dropped_library:
+                    retry["relaxed"]["dropped_text"] = dropped_library + " " + retry["relaxed"]["dropped_text"]
+                    retry["relaxed"]["reason"] += "; the library preference was left out"
+                result = retry
+
     # Words the parser couldn't place ("dual", "edge mount") are required in the description and
     # can zero a search the part type and filters would answer. Only for words left from a
     # natural-language query, never a part number or the caller's own subcategory or filters.
@@ -1358,8 +1383,10 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
 
     Reply: prices lists quantity tiers, datasheet links the datasheet; has_easyeda_footprint=null
     means unknown, false means absent; MPN lookups return results and total. Non-exact replies
-    add match (separators, packing, alias, alternative or related), matched_mpn where applicable,
-    and a note naming the part types for related full-text results.
+    add match (separators, packing, alias, alternative, lcsc or related), matched_mpn where
+    applicable, and a note naming the part types for related full-text results (and parts another
+    manufacturer numbered after the original). An LCSC code given as mpn finds that part
+    (match=lcsc); BOM placeholders such as N/A or DNP find nothing.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
@@ -1393,10 +1420,19 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
         match_info: dict[str, Any] = {}
         results = await run_db(COMPONENT_POOL, db.get_by_mpn, mpn, match_info=match_info)
         if not results:
+            if is_placeholder_mpn(mpn):
+                hint = (f"'{mpn.strip()}' is a BOM placeholder (part not fitted or not chosen), not a "
+                        "part number. Search by value and package with jlc_search instead.")
+            else:
+                hint = ("The local catalog only lists in-stock parts (stock >= 10). "
+                        f"Try jlc_stock_check(query={json.dumps(mpn)}) for low or zero stock, "
+                        "or mouser_get_part / digikey_get_part for other distributors.")
+                if LCSC_CODE.fullmatch(mpn.strip()):
+                    hint = (f"'{mpn.strip()}' looks like an LCSC code: "
+                            f"jlc_get_part(lcsc=\"{mpn.strip().upper()}\") looks it up live, "
+                            "including low or zero stock. " + hint)
             return {"error": f"No JLCPCB parts found for MPN '{mpn}'", "mpn": mpn, "results": [],
-                    "hint": "The local catalog only lists in-stock parts (stock >= 10). "
-                            f"Try jlc_stock_check(query={json.dumps(mpn)}) for low or zero stock, "
-                            "or mouser_get_part / digikey_get_part for other distributors."}
+                    "hint": hint}
         return {
             "mpn": mpn,
             "total": len(results),

@@ -14,6 +14,37 @@ from functools import lru_cache
 # particular, decimal points and +/#/,/: carry ordering-code information.
 MPN_KEY_SQL = "REPLACE(REPLACE(REPLACE(REPLACE(UPPER(mpn), '-', ''), ' ', ''), '_', ''), '/', '')"
 
+LCSC_CODE = re.compile(r"C\d+", re.IGNORECASE)
+
+# BOM entries for a part that isn't fitted or isn't chosen yet, compared without
+# punctuation or case. Full-text search found JST ...-N-A connectors for "N/A".
+_PLACEHOLDER_MPNS = frozenset({
+    "", "na", "nc", "nf", "np", "dnp", "dnf", "dni", "dnl", "dns", "nofit", "notfitted",
+    "nopop", "notpopulated", "donotpopulate", "donotfit", "notused", "tbd", "tba", "none", "null",
+})
+
+
+def is_placeholder_mpn(mpn: str) -> bool:
+    """True for BOM placeholders such as N/A, DNP or TBD, which name no part."""
+    return re.sub(r"[^0-9a-z]", "", mpn.casefold()) in _PLACEHOLDER_MPNS
+
+
+_MAKER_SUFFIX = re.compile(r".+\(([A-Za-z]{2,})\)")
+# Lead-free, tin plating and reel codes, which could otherwise spell a maker's initials.
+_PACKING_TAGS = frozenset({"lf", "sn", "tr", "pbf", "rl"})
+
+
+def is_maker_suffixed(part: dict) -> bool:
+    """True when the MPN ends in its maker's name or initials, in order from the first letter:
+    ICM-42688-P(TOKMAS) is Tokmas's, SP3485EEN(UMW) UMW's and TP4054(LX) lingxingic's part
+    numbered after another maker's original."""
+    suffix = _MAKER_SUFFIX.fullmatch(part.get("model") or "")
+    maker = re.sub(r"[^a-z]", "", (part.get("manufacturer") or "").casefold())
+    if not suffix or (tag := suffix[1].casefold()) in _PACKING_TAGS or not maker.startswith(tag[0]):
+        return False
+    letters = iter(maker)
+    return all(letter in letters for letter in tag)
+
 
 def mpn_key(mpn: str) -> str:
     """SQLite-compatible ASCII case folding and separator removal."""

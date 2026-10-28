@@ -4,6 +4,16 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.7.3 (2026-10-28)
+
+### Fixed
+
+- **LCSC codes passed as `mpn`:** `jlc_get_part(mpn="C2040")` returned RP2040 plus resistors whose LCSC codes start with C2040. An LCSC code that's in the catalog now returns only that part, with `match: "lcsc"` and a note pointing to `jlc_get_part(lcsc=...)`. A part number that looks like a code still wins: `C1815` returns 2SC1815 transistors, not the capacitor LCSC C1815. A code that isn't in the catalog no longer matches other parts' codes, and the hint suggests the live `lcsc` lookup.
+- **BOM placeholders:** `jlc_get_part(mpn="N/A")` returned JST connectors whose part numbers end in -N-A, and `NC`, `NF`, `NP`, `TBD` and `DNF` returned other unrelated parts. Placeholders now find nothing, with a hint to search by value and package.
+- **Parts numbered after another maker's part:** when `ICM-42688-P` finds only `ICM-42688-P(TOKMAS)`, the note now says that part is made by another manufacturer (Tokmas) and to check its datasheet before substituting. This applies to any part whose number ends in its maker's name or initials, such as UMW's `MAX3485ESA(UMW)`, lingxingic's `INA180A1IDBVR(LX)` and XBLW's; packing codes such as `(LF)(SN)` don't count.
+- **CAD footprint names in a search:** `KMR2 BTN_KMR2 switch` found nothing because `BTN_KMR2` was treated as a part number and required text. Footprint names (`BTN_`, `SW_`, `R_`, `LED_` and similar prefixes) are no longer part numbers, and a search they leave empty is retried without them (`relaxed.dropped_text` names them): it now finds the 12 KMR2 tactile switches. `strict=true` doesn't retry.
+- **Resistor packs:** `10kohm RESPACK resistor` returned single chip resistors. `respack` and `resistor pack` now mean resistor networks, as `resistor array` already did.
+
 ## 0.7.2 (2026-10-28)
 
 ### Fixed

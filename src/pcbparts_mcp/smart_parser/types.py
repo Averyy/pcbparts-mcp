@@ -32,6 +32,9 @@ def extract_component_type(query: str, *, memory_is_spec: bool = False) -> tuple
     # LED keyword (including RGB/IR variants) instead of letting the longer word win.
     if re.search(r'\bleds?\b', query, re.IGNORECASE) and re.search(r'\bdiodes?\b', query, re.IGNORECASE):
         query = re.sub(r'\bdiodes?\b', ' ', query, flags=re.IGNORECASE)
+    # Likewise a RESPACK footprint is a resistor network, more specific than the R's "resistor".
+    if re.search(r'\brespacks?\b', query, re.IGNORECASE):
+        query = re.sub(r'\bresistors?\b', ' ', query, flags=re.IGNORECASE)
     query_lower = query.lower()
 
     # Resettable modifiers can be separated from "fuse" by ratings or packages.
