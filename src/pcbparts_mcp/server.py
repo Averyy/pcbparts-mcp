@@ -42,10 +42,11 @@ from .db import get_db, close_db
 from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
 from .search import SpecFilter, get_attribute_names
-from .search.mpn import looks_like_mpn
+from .search.mpn import looks_like_mpn, mpn_key
+from .search.query_builder import package_family_adjustments
 from .smart_parser import ParsedQuery, parse_smart_query, merge_spec_filters
 from .alternatives import SPEC_PARSERS
-from .search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN
+from .search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN, ConnectorFilter, FuseFilter
 from .pinout import parse_easyeda_pins
 from .design_rules import get_design_rules as _get_design_rules, _RULES_DIR, _build_index
 
@@ -637,6 +638,9 @@ def _keep_part_number_matches(retry: dict, part_number_text: str, limit: int) ->
     counts = {tier: sum(p.get("library_type") == tier for p in kept) for tier in ("basic", "preferred", "extended")}
     retry.update(results=kept[:limit], total=len(kept), library_type_counts=counts,
                  no_fee_available=bool(counts["basic"] or counts["preferred"]))
+    if "mpn_matches" in retry:
+        retry["mpn_matches"].update({name: sum(p.get("mpn_match") == name for p in kept)
+                                     for name in ("full", "same_suffix", "family")})
     if "page_info" in retry:
         retry["page_info"].update(limit=limit, returned=len(retry["results"]))
     if not complete:
@@ -644,11 +648,11 @@ def _keep_part_number_matches(retry: dict, part_number_text: str, limit: int) ->
     return retry
 
 
-def _protected_mpn_tokens(query: str, parsed: ParsedQuery) -> list[str]:
+def _protected_mpn_tokens(query: str, parsed: ParsedQuery, *, remaining_text: str | None = None) -> list[str]:
     """Keep original MPN tokens that survived parsing, including hyphen-split tokens. Only tokens
     with 6+ letters and digits: shorter part numbers (LM358, BAV99) come from parsed.model_number,
     and short words like M205 (a fuse size) or CL10 stay droppable."""
-    remaining = re.sub(r"[-\s]+", " ", parsed.remaining_text).casefold()
+    remaining = re.sub(r"[-\s]+", " ", parsed.remaining_text if remaining_text is None else remaining_text).casefold()
     tokens = []
     for token in query.split():
         if _REFERENCE_DESIGNATOR.fullmatch(token) or _PACKAGE_OR_STANDARD.fullmatch(token):
@@ -705,11 +709,24 @@ def jlc_search(
     query-only library preference or part type left out; ignored_filters explains unapplied/rare filters,
     parsed.adjusted_filters explains moved/omitted specs; counts_complete=false means partial counts;
     valid_values lists accepted inputs on errors.
+    When the search shortens a full part number (LM1117-3.3 searches LM1117), parts matching it
+    come first: mpn_match is full, same_suffix or family, and mpn_matches counts each.
+    A full package (QFN-24-EP(4x4)) keeps its body size and exposed pad; a bare family (QFN-24)
+    matches any body, and parsed.adjusted_filters says so.
 
     Args:
         query: Natural language, e.g. "10k resistor 0603 1%", "100nF 25V capacitor" (adds
             Voltage >= 25V), "n-channel mosfet SOT-23" (picks the subcategory). With explicit
             filters it's a text search within the results.
+            PD controller/sink/source/trigger roles take precedence over USB-C connector words.
+            Sink/trigger/receiver and source rank listed Receiver/Supply controllers first;
+            sink voltage ranks negotiated Output Voltage matches within the role. Missing
+            attributes stay in results; strict=true requires listed matches instead.
+            Strict sink-and-source requirements are reported as unsupported.
+            MOSFET gate/logic-drive voltage is separate from Vds. Listed RDS(on) at or
+            below that drive ranks first; other parts remain eligible. rds_on_at_drive
+            is the entry at the highest listed gate voltage <= drive, or null without
+            such evidence; this does not establish load-current or thermal suitability.
         subcategory_id: Subcategory ID (e.g., 2954 for MOSFETs)
         subcategory_name: Subcategory name (e.g., "MOSFETs", "Schottky Diodes")
         spec_filters: List of {"name", "op", "value"}, e.g. [{"name": "Vgs(th)", "op": "<",
@@ -725,7 +742,10 @@ def jlc_search(
         library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", "all", or omit;
             case-insensitive, with "no-fee" accepted. Unknown values list the valid choices.
         prefer_no_fee: Sort basic/preferred first
-        package: One package (e.g., "0603", "SOT-23")
+        package: One package (e.g., "0603", "SOT-23"). Bare QFN/QFP/SOIC families include
+            vendor variants of any body size. Give e.g. "QFN-24-EP(4x4)" to require that body
+            and exposed pad. AxB/BxA, decimal zeros and mm spellings of the body are equivalent.
+            A suffix absent from the entire catalog falls back to the bare family unless strict=true.
         packages: Several packages (OR), e.g. ["0402", "0603"]; a bare string is one package,
             or pass a JSON array string. Commas within a package stay literal. Explicit package
             arguments override query packages; "0402 or 0603" in a query also means OR.
@@ -744,8 +764,8 @@ def jlc_search(
             the same constraints, including library_type and Python spec checks. If a post-filter
             scan reaches its cap, counts_complete=false marks these as counts of checked matches.
         filters_applied: Applied filters (useful for debugging)
-        parsed: (when using natural language) What was extracted from query; adjusted_filters
-            lists values the part type has no spec for (left out or moved)
+        parsed: What was extracted from query; adjusted_filters lists values the part type has
+            no spec for (left out or moved), and any bare package family widened to variants
         relaxed: (when present) query words, query-only library preference or part type left out because no
             part matched them; dropped_filters lists parsed spec filters left out by a part-number
             retry. Explicit arguments are retained, and part-number tokens are never dropped.
@@ -802,10 +822,17 @@ def jlc_search(
     effective_query = query
     part_number_text = None
     protected_tokens: list[str] = []
+    fuse_adjustment = None
 
     if query:
         # Parse natural language query to extract structured info and clean text
-        parsed = parse_smart_query(query, strict=strict)
+        explicit_subcategory_id = subcategory_id
+        if not explicit_subcategory_id and subcategory_name:
+            explicit_subcategory_id = db.resolve_subcategory_name(subcategory_name)
+        parsed = parse_smart_query(
+            query, strict=strict,
+            subcategory_hint=db.get_subcategory_name(explicit_subcategory_id) if explicit_subcategory_id else None,
+        )
         protected_tokens = _protected_mpn_tokens(query, parsed)
         part_number_text = " ".join(protected_tokens) or (
             parsed.model_number if parsed.model_number and not _REFERENCE_DESIGNATOR.fullmatch(parsed.model_number) else None
@@ -849,6 +876,21 @@ def jlc_search(
                 parsed_query_info["packages"] = parsed.packages
             elif parsed.package:
                 effective_package = parsed.package
+
+        fuse_packages = parsed_packages or ([effective_package] if effective_package else [])
+        if (not (subcategory_name or subcategory_id)
+                and parsed.detected.get("component_type") in ("fuse", "fuses")
+                and db.packages_are_resettable_fuses(fuse_packages)):
+            effective_subcategory_name = parsed.subcategory = "resettable fuses"
+            parsed.detected["subcategory"] = parsed.subcategory
+            parsed.spec_filters = [f.for_subcategory(parsed.subcategory) if isinstance(f, FuseFilter) else f
+                                   for f in parsed.spec_filters]
+            parsed_query_info.update(subcategory=parsed.subcategory,
+                                     spec_filters=[f.to_dict() for f in parsed.spec_filters])
+            fuse_adjustment = {
+                "filter": "subcategory: disposable fuses", "now": parsed.subcategory,
+                "reason": f"{', '.join(fuse_packages)} fuses in the catalog are all resettable",
+            }
 
         if strict:
             query_packages = parsed.packages or ([parsed.package] if parsed.package else [])
@@ -899,7 +941,8 @@ def jlc_search(
         # Always use cleaned remaining_text for FTS (removes subcategory keywords, etc.)
         if parsed.remaining_text and len(parsed.remaining_text) >= 2:
             effective_query = parsed.remaining_text
-        elif parsed.spec_filters or parsed.subcategory:
+        elif (parsed.spec_filters or parsed.subcategory or parsed.package or parsed.packages
+              or parsed.gate_drive_v is not None):
             # Query was fully parsed into structured filters, no text needed
             effective_query = None
 
@@ -919,7 +962,42 @@ def jlc_search(
         sort_by=sort_by or "stock",
         limit=clamp_limit(limit, MAX_PAGE_SIZE),
     )
+    requested_packages = parsed_packages or ([effective_package] if effective_package else [])
+    package_adjustments = package_family_adjustments(requested_packages)
+    if not strict and requested_packages:
+        matched_packages, fallback_adjustments = db.resolve_package_constraints(requested_packages)
+        if fallback_adjustments:
+            if parsed_packages:
+                search_args["packages"] = matched_packages
+            else:
+                search_args["package"] = matched_packages[0]
+            package_adjustments.extend(fallback_adjustments)
+    if parsed and parsed.connector_spec:
+        connector = parsed.connector_spec
+        search_args["connector_manufacturer"] = connector.manufacturer
+        if not strict:
+            search_args["connector_series"] = connector.series or ("HY" if connector.fts_term == "HY2.0" else None)
+    if (parsed and parsed.gate_drive_v is not None and searched_ids
+            and all(db.get_subcategory_name(i).lower() == "mosfets" for i in searched_ids)):
+        search_args["gate_drive_v"] = parsed.gate_drive_v
+    if (parsed and parsed.preferred_specs and searched_ids
+            and all(db.get_subcategory_name(i).lower() == "usb pd" for i in searched_ids)):
+        search_args["preferred_specs"] = parsed.preferred_specs
+        parsed_query_info.setdefault("adjusted_filters", []).extend({
+            "filter": f"{f.name} = {f.value}", "now": f"rank {f.name} = {f.value} first",
+            "reason": "many USB PD parts don't list this attribute; ranking keeps unlisted parts"
+                      + ("; this is the negotiated output, not the supply voltage" if f.name == "Output Voltage" else ""),
+        } for f in parsed.preferred_specs)
     # Perform search - db.search() handles name resolution internally
+    if parsed and effective_query:
+        # Step 8 and the model patterns can discard ordering-code suffixes. Reuse
+        # #90's token guards, examining the original text before that truncation.
+        searched_key = mpn_key(effective_query)
+        for token in _protected_mpn_tokens(query, parsed, remaining_text=query):
+            token_key = mpn_key(token)
+            if len(token_key) > len(searched_key) and token_key.startswith(searched_key):
+                search_args["part_number"] = token
+                break
     result = db.search(query=effective_query, **search_args)
 
     # A library phrase in the query is a preference; an explicit argument is a constraint.
@@ -1011,8 +1089,28 @@ def jlc_search(
                            "no_fee_available": False})
             if "page_info" in result:
                 result["page_info"]["returned"] = 0
+            if "mpn_matches" in result:
+                result["mpn_matches"].update(full=0, same_suffix=0, family=0)
 
-    # Add parsing info if natural language was used
+    # Family matching fulfills a bare request, including in strict mode. Report this
+    # after checking unapplied requirements so informational adjustments aren't errors.
+    if package_adjustments:
+        if parsed_query_info is None:
+            parsed_query_info = {}
+        parsed_query_info.setdefault("adjusted_filters", []).extend(package_adjustments)
+
+    if fuse_adjustment:
+        parsed_query_info.setdefault("adjusted_filters", []).append(fuse_adjustment)
+
+    if parsed and search_args.get("gate_drive_v") is not None:
+        drive = f"{parsed.gate_drive_v:g}V"
+        parsed_query_info.setdefault("adjusted_filters", []).append({
+            "filter": drive, "now": f"rank RDS(on) listed at or below {drive} first",
+            "reason": f"voltage read as gate drive, not Vds; parts without listed RDS(on) "
+                      f"at or below {drive} remain eligible with null rds_on_at_drive",
+        })
+
+    # Add parsing info, including explicit package-family adjustments.
     if parsed_query_info:
         result["parsed"] = parsed_query_info
 
@@ -1065,6 +1163,44 @@ def _fit_parsed_filters(
     kept: list[SpecFilter] = []
     adjusted: list[dict[str, str | None]] = []
     for spec_filter in filters:
+        if isinstance(spec_filter, ConnectorFilter):
+            candidates = ["Pitch"] if spec_filter.name == "Pitch" else [
+                "Number of Pins", "Number of Contacts", "Number of Positions", "Number of Positions or Pins",
+            ]
+            # Check each searched subcategory separately; a well-filled large category must
+            # not conceal a sparse one. Select the attribute these parts actually use.
+            shares = {name: min(db.attribute_share([i], [name]) for i in subcategory_ids) for name in candidates}
+            name = max(shares, key=shares.get)
+            share = shares[name]
+            threshold = .9
+            # USB contacts are 86% filled overall (99% for typed Type-C parts), close to
+            # the decision's "about 90%". Keep this exception specific to USB contacts.
+            if name == "Number of Contacts" and all(db.get_subcategory_name(i).lower() == "usb connectors"
+                                                    for i in subcategory_ids):
+                threshold = .85
+            if share >= threshold:
+                kept.append(ConnectorFilter(name, spec_filter.operator, spec_filter.value))
+                if name != spec_filter.name:
+                    adjusted.append({
+                        "filter": f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}",
+                        "now": f"{name} {spec_filter.operator} {spec_filter.value}",
+                        "reason": f"these connector parts record contact count as {name}",
+                    })
+            elif all("connector" not in db.get_subcategory_name(i).lower() for i in subcategory_ids):
+                # Headers/terminal blocks already had exact string filters before #23.
+                # Below the coverage gate, preserve that behavior instead of broadening.
+                legacy_filters, legacy_adjusted = _fit_parsed_filters(
+                    db, [SpecFilter(spec_filter.name, spec_filter.operator, spec_filter.value)], subcategory_ids,
+                )
+                kept.extend(legacy_filters)
+                adjusted.extend(legacy_adjusted)
+            else:
+                adjusted.append({
+                    "filter": f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}", "now": None,
+                    "reason": f"connector attribute coverage is {share:.1%}, below {threshold:.0%}; "
+                              "the value was left out and is unverified",
+                })
+            continue
         if spec_filter.name in ("Module Flash", "Module PSRAM") or listed(spec_filter.name):
             kept.append(spec_filter)
             continue
@@ -1219,14 +1355,18 @@ def jlc_search_help(
 async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     """Full details for one JLCPCB part (all price tiers, datasheet, attributes, EasyEDA footprint
     availability), or the JLCPCB parts matching a manufacturer part number.
+
     Reply: prices lists quantity tiers, datasheet links the datasheet; has_easyeda_footprint=null
-    means unknown, false means absent; MPN lookups return results and total.
+    means unknown, false means absent; MPN lookups return results and total. Non-exact replies
+    add match (separators, packing, alias, alternative or related), matched_mpn where applicable,
+    and a note naming the part types for related full-text results.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
-        mpn: Manufacturer part number (e.g., "LM358P"): exact match, then normalized variants,
-            then full-text search, over in-stock parts (stock >= 10). Finds the JLCPCB equivalent
-            of a part from another distributor or a reference design.
+        mpn: Manufacturer part number (e.g., "LM358P"), over in-stock parts (stock >= 10). Also
+            finds other dash/space spellings, the same manufacturer's other packing codes, and BOM
+            entries with notes or alternatives; never a different grade. Finds the JLCPCB
+            equivalent of a part from another distributor or a reference design.
 
     Returns:
         For lcsc: Full part details including specs (description only when specs are empty),
@@ -1250,7 +1390,8 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
         if len(mpn) > 100:
             return {"error": "MPN too long (max 100 characters)"}
         db = get_db()
-        results = await run_db(COMPONENT_POOL, db.get_by_mpn, mpn)
+        match_info: dict[str, Any] = {}
+        results = await run_db(COMPONENT_POOL, db.get_by_mpn, mpn, match_info=match_info)
         if not results:
             return {"error": f"No JLCPCB parts found for MPN '{mpn}'", "mpn": mpn, "results": [],
                     "hint": "The local catalog only lists in-stock parts (stock >= 10). "
@@ -1260,6 +1401,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
             "mpn": mpn,
             "total": len(results),
             "results": results,
+            **match_info,
         }
 
     # LCSC lookup via live API (existing behavior)

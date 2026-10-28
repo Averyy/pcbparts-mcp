@@ -57,12 +57,99 @@ class TestBuildDatabase:
         assert stats["total_parts"] == 2
         assert _row_count(tmp_path / "components.db") == 2
 
+    def test_connector_columns_and_migration(self, tmp_path):
+        from build_database import migrate_connector_columns
+        from pcbparts_mcp.search.spec_filter import CONNECTOR_FILTER_COLUMNS
+
+        _write_category(tmp_path, "connectors", [
+            _part("C1", a=[[name, "2-pin"] for name in CONNECTOR_FILTER_COLUMNS if name != "Pitch"]
+                  + [["Pitch", "2.00mm"], ["Reference Series", " sh "]]),
+            _part("C2", a=[[name, "2x20P"] for name in CONNECTOR_FILTER_COLUMNS if name != "Pitch"]
+                  + [["Pitch", "2.19mm、2.54mm"]]),
+            _part("C3", a=[["Number of Contacts", "16 contacts"], ["Number of Positions", "4.0"],
+                           ["Number of Positions or Pins", "2P+2P"], ["Pitch", "0.5mm"]]),
+            _part("C4"),
+        ])
+        db_path = tmp_path / "components.db"
+        build_database(tmp_path, db_path, verbose=False)
+        with sqlite3.connect(db_path) as conn:
+            sql = ("SELECT num_pins, pitch_mm, num_contacts, num_positions, num_positions_or_pins, "
+                   "reference_series FROM components ORDER BY lcsc")
+            expected = [(2, 2, 2, 2, 2, " sh "), (None,) * 6,
+                        (None, .5, 16, 4, None, None), (None,) * 6]
+            assert conn.execute(sql).fetchall() == expected
+            indexes = {row[1] for row in conn.execute("PRAGMA index_list(components)")}
+            assert {"idx_connector_pitch", "idx_connector_contacts", "idx_connector_positions",
+                    "idx_connector_positions_or_pins"} <= indexes
+            # Recreate the old schema and its permissive pin/pitch values. The
+            # migration must use exactly the same extraction as a fresh build.
+            for name in indexes:
+                if name.startswith("idx_connector_"):
+                    conn.execute(f"DROP INDEX {name}")
+            for name in ("num_contacts", "num_positions", "num_positions_or_pins", "reference_series"):
+                conn.execute(f"ALTER TABLE components DROP COLUMN {name}")
+            conn.execute("UPDATE components SET num_pins=2, pitch_mm=2.19 WHERE lcsc='C2'")
+            assert migrate_connector_columns(conn) == 4
+            assert conn.execute(sql).fetchall() == expected
+            assert migrate_connector_columns(conn) == 4
+            assert conn.execute(sql).fetchall() == expected
+
+    def test_mosfet_gate_column_migration_and_fallback(self, tmp_path):
+        from build_database import migrate_mosfet_gate_column
+        from pcbparts_mcp.db import ComponentDatabase
+
+        values = ["21mΩ@10V、25mΩ@4.5V、33mΩ@2.5V", "48mΩ@2.5V", "35mΩ@10V",
+                  "19mΩ@3.3V", "14mΩ", "-", "30Ω@0V", "14Ω@350mV", "50mΩ@-4.5V",
+                  "180mΩ@4.V", "30mΩ@VGS=4.5V", "34mΩ@V", "60mΩ@4.5"]
+        _write_category(tmp_path, "mosfets", [
+            _part(f"C{i}", a=[["RDS(on)", value]], s=1000 - i) for i, value in enumerate(values)
+        ])
+        db_path = tmp_path / "components.db"
+        build_database(tmp_path, db_path, verbose=False)
+        sql = "SELECT rds_gate_min_v FROM components ORDER BY stock DESC"
+        expected = [(v,) for v in (2.5, 2.5, 10, 3.3, None, None, 0, .35, 4.5, 4, 4.5, None, None)]
+        with sqlite3.connect(db_path) as conn:
+            assert conn.execute(sql).fetchall() == expected
+            assert any("idx_mosfet_gate" in row[3] for row in conn.execute(
+                "EXPLAIN QUERY PLAN SELECT lcsc FROM components "
+                "WHERE subcategory_id=1 AND rds_gate_min_v<=3.3"))
+        database = ComponentDatabase(db_path=db_path)
+        try:
+            indexed = database.search(gate_drive_v=3.3, limit=100)
+            assert [p["lcsc"] for p in indexed["results"][:5]] == ["C0", "C1", "C3", "C6", "C7"]
+            assert indexed["results"][0]["rds_on_at_drive"] == "33mΩ@2.5V"
+            at_five = database.search(gate_drive_v=5, limit=100)
+            assert at_five["results"][0]["rds_on_at_drive"] == "25mΩ@4.5V"
+            # Prove the indexed path never calls the JSON fallback.
+            database._conn.create_function("rds_gate_min", 1, lambda _: 1 / 0)
+            assert database.search(gate_drive_v=3.3, limit=100) == indexed
+        finally:
+            database.close()
+        with sqlite3.connect(db_path) as conn:
+            conn.execute("DROP INDEX idx_mosfet_gate")
+            conn.execute("ALTER TABLE components DROP COLUMN rds_gate_min_v")
+        database = ComponentDatabase(db_path=db_path)
+        try:
+            assert database.search(gate_drive_v=3.3, limit=100) == indexed
+            assert database.search(gate_drive_v=5, limit=100) == at_five
+            page = database.search(gate_drive_v=3.3, limit=4, offset=3)
+            assert page["results"] == indexed["results"][3:7]
+            assert page["total"] == len(values)
+        finally:
+            database.close()
+        with sqlite3.connect(db_path) as conn:
+            assert migrate_mosfet_gate_column(conn) == len(values)
+            assert conn.execute(sql).fetchall() == expected
+            assert migrate_mosfet_gate_column(conn) == len(values)
+            assert conn.execute(sql).fetchall() == expected
+
     def test_case_insensitive_mpn_lookup_uses_built_index(self, tmp_path):
         from pcbparts_mcp.db.lookup import get_by_mpn
 
         _write_category(tmp_path, "ics", [
             _part("C1", m="LM358", s=100), _part("C2", m="lm358", s=200),
             _part("C3", m="ÄBC"), _part("C4", m="äbc"),
+            _part("C5", m="ERJ-2RKF2702X"),
         ])
         db_path = tmp_path / "components.db"
         build_database(tmp_path, db_path, verbose=False)
@@ -71,19 +158,26 @@ class TestBuildDatabase:
         try:
             indexes = {row[1] for row in conn.execute("PRAGMA index_list(components)")}
             assert "idx_mpn_lower" in indexes
+            assert "idx_mpn_key" in indexes
             queries = []
             conn.set_trace_callback(queries.append)
             assert [p["lcsc"] for p in get_by_mpn(conn, "lM358", {})] == ["C2", "C1"]
             assert [p["lcsc"] for p in get_by_mpn(conn, "Äbc", {})] == ["C3"]
             # Include the normalized-variant path, using the actual queries from lookup.py.
             assert [p["lcsc"] for p in get_by_mpn(conn, "LM358-TR", {})] == ["C2", "C1"]
+            assert [p["lcsc"] for p in get_by_mpn(conn, "erj2rkf2702x", {})] == ["C5"]
             conn.set_trace_callback(None)
             for query in queries:
                 if "LOWER(mpn)" in query:
                     plan = [row[3] for row in conn.execute("EXPLAIN QUERY PLAN " + query)]
                     assert any("SEARCH components USING INDEX idx_mpn_lower" in row for row in plan)
+                if "REPLACE(" in query:
+                    plan = [row[3] for row in conn.execute("EXPLAIN QUERY PLAN " + query)]
+                    assert any("SEARCH components USING INDEX idx_mpn_key" in row for row in plan)
             conn.execute("DROP INDEX idx_mpn_lower")
             assert [p["lcsc"] for p in get_by_mpn(conn, "lM358", {})] == ["C2", "C1"]
+            conn.execute("DROP INDEX idx_mpn_key")
+            assert [p["lcsc"] for p in get_by_mpn(conn, "erj2rkf2702x", {})] == ["C5"]
         finally:
             conn.close()
 
@@ -299,26 +393,40 @@ def test_idle_current_columns(attribute, value, expected):
     assert extract_numeric_columns([[attribute, value]])["iq_ua"] == pytest.approx(expected)
 
 
-@pytest.mark.parametrize("old_database", [False, True])
-def test_database_age_warning(tmp_path, caplog, old_database):
+@pytest.mark.parametrize("missing_schema", [None, "idx_mpn_lower", "idx_mpn_key", "reference_series", "rds_gate_min_v"])
+def test_database_age_warning(tmp_path, caplog, missing_schema):
     from pcbparts_mcp.db import ComponentDatabase
 
     _write_category(tmp_path, "ics", [_part("C1")])
     db_path = tmp_path / "components.db"
     build_database(tmp_path, db_path, verbose=False)
-    if old_database:
+    if missing_schema:
         with sqlite3.connect(db_path) as conn:
-            conn.execute("DROP INDEX idx_mpn_lower")
+            if missing_schema.startswith("idx_"):
+                conn.execute(f"DROP INDEX {missing_schema}")
+            else:
+                if missing_schema == "rds_gate_min_v":
+                    conn.execute("DROP INDEX idx_mosfet_gate")
+                conn.execute(f"ALTER TABLE components DROP COLUMN {missing_schema}")
     database = ComponentDatabase(db_path=db_path)
     try:
         database._ensure_db()
         database._ensure_db()
         warnings = [r.message for r in caplog.records if r.name == "pcbparts_mcp.db" and r.levelname == "WARNING"]
-        assert len(warnings) == int(old_database)
-        if old_database:
+        assert len(warnings) == int(missing_schema is not None)
+        if missing_schema:
             assert "predates this version" in warnings[0]
-            assert "quiescent-current filters miss parts" in warnings[0]
-            assert "MPN lookups are slow" in warnings[0]
+            if missing_schema == "idx_mpn_lower":
+                assert "quiescent-current filters miss parts" in warnings[0]
+            elif missing_schema == "idx_mpn_key":
+                assert "separator-insensitive" in warnings[0]
+                assert "quiescent-current" not in warnings[0]
+            elif missing_schema == "rds_gate_min_v":
+                assert "MOSFET gate-drive ranking is slow" in warnings[0]
+            else:
+                assert "connector filters and series ranking are slow" in warnings[0]
+            if missing_schema.startswith("idx_"):
+                assert "MPN lookups are slow" in warnings[0]
             assert ".venv/bin/python scripts/build_database.py" in warnings[0]
     finally:
         database.close()

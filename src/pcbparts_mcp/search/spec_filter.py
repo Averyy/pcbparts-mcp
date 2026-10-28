@@ -1,6 +1,7 @@
 """Spec filter definitions and attribute mappings for parametric search."""
 
 import json
+import re
 from dataclasses import dataclass
 from typing import Any, Literal
 
@@ -163,6 +164,61 @@ class SpecFilter:
 
     def to_dict(self) -> dict[str, str]:
         return {"name": self.name, "op": self.operator, "value": self.value}
+
+
+class ConnectorFilter(SpecFilter):
+    """A parsed connector count/pitch, compared numerically without changing explicit filters."""
+
+
+FUSE_ATTRIBUTE_MAP = {
+    "disposable fuses": {"current": ("Current Rating", "="), "voltage": "Voltage Rating (DC)"},
+    "automotive fuses": {"current": ("Current Rating", "="), "voltage": "Voltage Rating (DC)"},
+    "thermal fuses (tco)": {"current": ("Current Rating", "="), "voltage": "Voltage Rating"},
+    "fuse/current protector": {"current": ("Current Rating", "="), "voltage": "Rated voltage"},
+    "resettable fuses": {"current": "Hold Current", "voltage": "Voltage - Max"},
+}
+
+
+@dataclass
+class FuseFilter(SpecFilter):
+    """An automatic fuse rating, optionally scoped to one family in a broader search."""
+    subcategory_id: int | None = None
+    subcategory: str | None = None
+
+    def for_subcategory(self, name: str, scope: int | None = None) -> "FuseFilter":
+        quantity = "current" if self.name in ("Current Rating", "Hold Current") else "voltage"
+        mapped = FUSE_ATTRIBUTE_MAP[name.lower()][quantity]
+        attribute, operator = mapped if isinstance(mapped, tuple) else (mapped, ">=")
+        return FuseFilter(attribute, operator, self.value, scope, name if scope is not None else None)
+
+    def to_dict(self) -> dict[str, Any]:
+        result = super().to_dict()
+        # Name the family a scoped filter applies to; an ID means nothing to the caller
+        if self.subcategory_id is not None:
+            result["subcategory"] = self.subcategory or str(self.subcategory_id)
+        return result
+
+
+CONNECTOR_FILTER_COLUMNS = {
+    "Number of Pins": "num_pins",
+    "Pitch": "pitch_mm",
+    "Number of Contacts": "num_contacts",
+    "Number of Positions": "num_positions",
+    "Number of Positions or Pins": "num_positions_or_pins",
+}
+# The new columns also identify databases whose existing pin/pitch columns use
+# connector_value, rather than the older permissive build parsers.
+CONNECTOR_COLUMN_NAMES = frozenset({*CONNECTOR_FILTER_COLUMNS.values(), "reference_series"})
+
+
+def connector_value(name: str, value: str | None) -> float | None:
+    """Read a whole connector value: 2/2P/2-pin or 2/2.0mm/2.00mm; reject composites."""
+    suffix = r"(?:mm)?" if name == "Pitch" else r"(?:p|[- ]?pins?|[- ]?contacts?|[- ]?positions?)?"
+    match = re.fullmatch(rf"\s*(\d+(?:\.\d+)?)\s*{suffix}\s*", str(value or ""), re.IGNORECASE)
+    if not match:
+        return None
+    number = float(match.group(1))
+    return number if name == "Pitch" or number.is_integer() else None
 
 
 # Attribute name aliases - maps user-friendly names to actual DB attribute names

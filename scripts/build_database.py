@@ -32,7 +32,6 @@ from pcbparts_mcp.parsers import (
     parse_frequency,
     parse_inductance,
     parse_integer,
-    parse_length_mm,
     parse_luminosity,
     parse_memory_size,
     parse_percentage,
@@ -47,6 +46,9 @@ from pcbparts_mcp.parsers import (
     parse_wavelength,
 )
 from pcbparts_mcp.easyeda_store import SEED_FILE, SeedRow, read_seed_csv, seed_checked_at
+from pcbparts_mcp.mosfet import rds_gate_min
+from pcbparts_mcp.search.mpn import MPN_KEY_SQL
+from pcbparts_mcp.search.spec_filter import CONNECTOR_FILTER_COLUMNS, connector_value
 
 
 # Attribute name -> (column_name, parser_function) mapping
@@ -117,8 +119,6 @@ ATTRIBUTE_TO_COLUMN: dict[str, tuple[str, Any]] = {
     "Frequency Stability": ("freq_tolerance_ppm", parse_ppm),
 
     # Connectors
-    "Number of Pins": ("num_pins", parse_integer),
-    "Pitch": ("pitch_mm", parse_length_mm),
     "Number of Rows": ("num_rows", parse_integer),
 
     # Op-Amps
@@ -190,8 +190,28 @@ ATTRIBUTE_TO_COLUMN: dict[str, tuple[str, Any]] = {
 }
 
 
+def extract_connector_columns(attributes: list) -> dict[str, Any]:
+    """Precompute the same whole-value counts/pitch used by automatic filters.
+
+    Keep series text verbatim: runtime uses SQLite upper/trim just as the old
+    JSON expression did (Python's Unicode case/whitespace rules differ).
+    """
+    result: dict[str, Any] = {}
+    for attr in attributes:
+        if not isinstance(attr, (list, tuple)) or len(attr) != 2:
+            continue
+        name, value = attr
+        if not isinstance(name, str):
+            continue
+        if name in CONNECTOR_FILTER_COLUMNS:
+            result[CONNECTOR_FILTER_COLUMNS[name]] = connector_value(name, value)
+        elif name == "Reference Series":
+            result["reference_series"] = value
+    return result
+
+
 def extract_numeric_columns(attributes: list) -> dict[str, Any]:
-    """Extract numeric values from attributes list.
+    """Extract precomputed attribute values, including connector series text.
 
     Args:
         attributes: List of [name, value] pairs
@@ -247,6 +267,8 @@ def extract_numeric_columns(attributes: list) -> dict[str, Any]:
             # Skip malformed or unparseable attributes
             continue
 
+    result.update(extract_connector_columns(attributes))
+    result["rds_gate_min_v"] = rds_gate_min(attributes)
     return result
 
 
@@ -268,6 +290,7 @@ NUMERIC_COLUMNS = [
     "vgs_th_max_v REAL",
     "id_max_a REAL",
     "rds_on_ohms REAL",
+    "rds_gate_min_v REAL",
     "qg_nc REAL",
     # Diodes
     "vf_v REAL",
@@ -292,6 +315,9 @@ NUMERIC_COLUMNS = [
     # Connectors
     "num_pins INTEGER",
     "pitch_mm REAL",
+    "num_contacts INTEGER",
+    "num_positions INTEGER",
+    "num_positions_or_pins INTEGER",
     "num_rows INTEGER",
     # Op-Amps
     "gbw_hz REAL",
@@ -332,6 +358,74 @@ NUMERIC_COLUMNS = [
 
 # Column names only (for INSERT)
 NUMERIC_COLUMN_NAMES = [col.split()[0] for col in NUMERIC_COLUMNS]
+ATTRIBUTE_COLUMNS = NUMERIC_COLUMNS + ["reference_series TEXT"]
+ATTRIBUTE_COLUMN_NAMES = NUMERIC_COLUMN_NAMES + ["reference_series"]
+
+
+def create_connector_indexes(conn: sqlite3.Connection) -> None:
+    """Index count/pitch combinations without changing unfiltered attribute samples."""
+    for name, columns in (
+        ("pitch", "pitch_mm, num_pins"),
+        ("contacts", "num_contacts, pitch_mm"),
+        ("positions", "num_positions, pitch_mm"),
+        ("positions_or_pins", "num_positions_or_pins, pitch_mm"),
+    ):
+        conn.execute(
+            f"CREATE INDEX IF NOT EXISTS idx_connector_{name} "
+            f"ON components(subcategory_id, {columns}) WHERE {columns.split(',')[0]} IS NOT NULL"
+        )
+
+
+def create_mosfet_gate_index(conn: sqlite3.Connection) -> None:
+    """Keep the evidence index partial so unrelated attribute sampling is unchanged."""
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_mosfet_gate ON components(subcategory_id, rds_gate_min_v) "
+        "WHERE rds_gate_min_v IS NOT NULL"
+    )
+
+
+def migrate_mosfet_gate_column(conn: sqlite3.Connection) -> int:
+    """Backfill gate evidence with the fresh-build parser; caller owns the transaction."""
+    columns = {row[1] for row in conn.execute("PRAGMA table_info(components)")}
+    if "rds_gate_min_v" not in columns:
+        conn.execute("ALTER TABLE components ADD COLUMN rds_gate_min_v REAL")
+    rows = conn.execute("SELECT rowid, attributes FROM components")
+    count = 0
+    while batch := rows.fetchmany(1000):
+        conn.executemany(
+            "UPDATE components SET rds_gate_min_v = ? WHERE rowid = ?",
+            [(rds_gate_min(json.loads(attributes or "[]")), rowid) for rowid, attributes in batch],
+        )
+        count += len(batch)
+    create_mosfet_gate_index(conn)
+    return count
+
+
+def migrate_connector_columns(conn: sqlite3.Connection) -> int:
+    """Backfill an existing DB with the build's connector parser and indexes.
+
+    The caller owns the transaction. Re-running is safe; old num_pins/pitch_mm
+    must also be reparsed because their former parsers accepted composites.
+    """
+    columns = {row[1] for row in conn.execute("PRAGMA table_info(components)")}
+    definitions = {definition.split()[0]: definition for definition in ATTRIBUTE_COLUMNS}
+    names = [*CONNECTOR_FILTER_COLUMNS.values(), "reference_series"]
+    for name in names:
+        if name not in columns:
+            conn.execute(f"ALTER TABLE components ADD COLUMN {definitions[name]}")
+    update = f"UPDATE components SET {', '.join(name + ' = ?' for name in names)} WHERE rowid = ?"
+    rows = conn.execute("SELECT rowid, attributes FROM components")
+    count = 0
+    while batch := rows.fetchmany(1000):
+        values = []
+        for rowid, attributes in batch:
+            parsed = extract_connector_columns(json.loads(attributes or "[]"))
+            values.append((*[parsed.get(name) for name in names], rowid))
+        conn.executemany(update, values)
+        count += len(batch)
+    create_connector_indexes(conn)
+    return count
+
 
 # Max rows INSERT OR IGNORE may drop before the build is treated as corrupt and aborted.
 # Benign cross-category duplicate LCSCs are rare (0 today); a large drop means a constraint
@@ -423,8 +517,8 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
 
-    # Build CREATE TABLE with numeric columns
-    numeric_cols_sql = ",\n            ".join(NUMERIC_COLUMNS)
+    # Build CREATE TABLE with precomputed attribute columns
+    numeric_cols_sql = ",\n            ".join(ATTRIBUTE_COLUMNS)
     conn.execute(f"""
         CREATE TABLE components (
             lcsc TEXT PRIMARY KEY,
@@ -509,7 +603,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
         # Build column names for INSERT
         base_cols = ["lcsc", "mpn", "manufacturer", "package", "stock", "library_type",
                      "subcategory_id", "price", "description", "attributes"]
-        all_cols = base_cols + NUMERIC_COLUMN_NAMES
+        all_cols = base_cols + ATTRIBUTE_COLUMN_NAMES
         placeholders = ", ".join(["?"] * len(all_cols))
         # OR IGNORE: a cross-category duplicate LCSC (same part under two categories) would
         # otherwise raise IntegrityError on the lcsc PRIMARY KEY and abort the whole build.
@@ -540,8 +634,8 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
                     part.get("d"),
                     json.dumps(attrs),
                 ]
-                # Add numeric column values (None if not parsed)
-                for col_name in NUMERIC_COLUMN_NAMES:
+                # Add precomputed attribute values (None if not parsed)
+                for col_name in ATTRIBUTE_COLUMN_NAMES:
                     row.append(numeric_values.get(col_name))
 
                 batch.append(tuple(row))
@@ -575,6 +669,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
     conn.execute("CREATE INDEX idx_mpn ON components(mpn)")
     # Match lookup.py's ASCII-only case-insensitive exact and normalized MPN queries.
     conn.execute("CREATE INDEX idx_mpn_lower ON components(LOWER(mpn))")
+    conn.execute(f"CREATE INDEX idx_mpn_key ON components({MPN_KEY_SQL})")
     conn.execute("CREATE INDEX idx_price ON components(price)")
 
     # Composite indexes for common filter combinations
@@ -591,9 +686,11 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
     conn.execute("CREATE INDEX idx_current_max ON components(current_max_a) WHERE current_max_a IS NOT NULL")
     conn.execute("CREATE INDEX idx_vds ON components(vds_max_v) WHERE vds_max_v IS NOT NULL")
     conn.execute("CREATE INDEX idx_rds_on ON components(rds_on_ohms) WHERE rds_on_ohms IS NOT NULL")
+    create_mosfet_gate_index(conn)
     conn.execute("CREATE INDEX idx_freq_max ON components(freq_max_hz) WHERE freq_max_hz IS NOT NULL")
     conn.execute("CREATE INDEX idx_resolution ON components(resolution_bits) WHERE resolution_bits IS NOT NULL")
     conn.execute("CREATE INDEX idx_num_pins ON components(num_pins) WHERE num_pins IS NOT NULL")
+    create_connector_indexes(conn)
     conn.execute("CREATE INDEX idx_vout ON components(vout_v) WHERE vout_v IS NOT NULL")
     conn.execute("CREATE INDEX idx_iq ON components(iq_ua) WHERE iq_ua IS NOT NULL")
     # MCU indexes
