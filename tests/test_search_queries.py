@@ -175,6 +175,33 @@ class TestBOMWords:
         from pcbparts_mcp.smart_parser import parse_smart_query
         assert parse_smart_query(query).subcategory == subcategory
 
+    @pytest.mark.parametrize("query", ["10kohm RESPACK resistor", "10k respack", "10k resistor pack"])
+    def test_respack_is_a_resistor_network(self, query):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+        parsed = parse_smart_query(query)
+        assert parsed.subcategory == "resistor networks, arrays"
+        assert parsed.remaining_text == ""
+
+    async def test_footprint_name_is_left_out_of_an_empty_search(self):
+        # The footprint name was required text, so this found nothing while "KMR2 switch" finds 12.
+        result = await search("KMR2 BTN_KMR2 switch")
+        control = await search("KMR2 switch")
+        assert result["results"] == control["results"] and result["total"] == control["total"] > 0
+        assert result["relaxed"]["dropped_text"] == "BTN_KMR2"
+        assert (await search("KMR2 BTN_KMR2 switch", strict=True))["total"] == 0
+        assert (await search("BTN_KMR2"))["total"] == 0
+
+    @pytest.mark.parametrize("token,footprint", [
+        ("BTN_KMR2", True), ("R_0603_1608Metric", True), ("SW_SPST_PTS645", True),
+        # Stocked part numbers with a letters-and-underscore prefix stay part numbers.
+        ("SMPC_105K0250DB2315", False), ("BV_SD03C", False), ("RTN_250", False), ("NTC_5D-07", False),
+    ])
+    def test_footprint_names_are_not_part_numbers(self, token, footprint):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+        assert bool(server._FOOTPRINT_NAME.fullmatch(token)) is footprint
+        query = f"{token} switch"
+        assert (token in server._protected_mpn_tokens(query, parse_smart_query(query))) is not footprint
+
     @pytest.mark.parametrize("interface", ["USB-C", "USB C", "USBC", "Type C"])
     def test_pd_controller_role_wins(self, interface):
         from pcbparts_mcp.smart_parser import parse_smart_query
@@ -740,7 +767,8 @@ class TestPackageConstraints:
         result = await search(package="SOIC-8-EP", strict=True, limit=100)
         assert result["results"]
         for part in result["results"]:
-            assert re.match(r"(?:SOIC|SOP|SO)-8(?:\D|$)", part["package"], re.IGNORECASE)
+            # The family rule takes the dash as optional: SOP8-EP (XL4301E1) is an SOP-8 with a pad.
+            assert re.match(r"(?:SOIC|SOP|SO)-?8(?:\D|$)", part["package"], re.IGNORECASE)
             assert re.search(r"-EP(?=[(-]|$)", part["package"], re.IGNORECASE)
 
     @pytest.mark.parametrize("package,remaining", [("SOIC-8(3.9x4.9)", None), ("SO-8-1", "mosfet")])

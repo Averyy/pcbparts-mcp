@@ -52,6 +52,8 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "shunt resistor": "current sense resistors / shunt resistors",
     "resistor array": "resistor networks, arrays",
     "resistor network": "resistor networks, arrays",
+    "resistor pack": "resistor networks, arrays",
+    "respack": "resistor networks, arrays",
     # Potentiometers / Trimmers / Variable Resistors
     "potentiometer": "potentiometers, variable resistors",
     "potentiometers": "potentiometers, variable resistors",
