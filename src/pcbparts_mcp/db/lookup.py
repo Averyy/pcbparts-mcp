@@ -4,83 +4,140 @@ import sqlite3
 from typing import Any
 
 from ..search.result import row_to_dict
-from ..search.mpn import normalize_mpn
+from ..search.mpn import (
+    ALTERNATIVE_MANUFACTURERS, MPN_ALIASES, MPN_KEY_SQL, PACKING_RULES,
+    annotated_mpn_candidates, mpn_key, normalize_mpn,
+)
 
 
 def get_by_mpn(
     conn: sqlite3.Connection,
     mpn: str,
     subcategories: dict[int, dict[str, Any]],
+    *,
+    match_info: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    """Find components by manufacturer part number.
+    """Find an MPN, preserving exact/normalized/FTS precedence within a candidate.
 
-    Tries exact match first (case-insensitive), then falls back to
-    FTS search with MPN normalization for variant matching.
-
-    Args:
-        conn: SQLite connection
-        mpn: Manufacturer part number (e.g., "LM358P", "STM32F103C8T6-TR")
-        subcategories: Dict mapping subcategory IDs to info
-
-    Returns:
-        List of matching component dicts, best matches first.
-        Empty list if no matches found.
+    Additional recoveries compare separator keys and curated vendor packing or
+    ordering aliases. Only after the full input misses are annotations and
+    alternatives tried. Optional reply metadata leaves list callers unchanged.
     """
+    if match_info is not None:
+        match_info.clear()
     mpn = mpn.strip()
     if not mpn:
         return []
 
-    results: list[dict[str, Any]] = []
-    seen_lcsc: set[str] = set()
+    def parts(rows):
+        unique = {}
+        for row in rows:
+            if row["lcsc"] not in unique:
+                unique[row["lcsc"]] = row_to_dict(row, subcategories)
+        return list(unique.values())
 
-    # 1. Exact match on mpn column (case-insensitive)
-    cursor = conn.execute(
-        "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC",
-        [mpn],
-    )
-    for row in cursor:
-        part = row_to_dict(row, subcategories)
-        results.append(part)
-        seen_lcsc.add(part["lcsc"])
+    def keyed(candidate, vendors=()):
+        sql = f"SELECT * FROM components WHERE {MPN_KEY_SQL} = ?"
+        params = [mpn_key(candidate)]
+        if vendors:
+            sql += f" AND manufacturer COLLATE NOCASE IN ({','.join('?' * len(vendors))})"
+            params.extend(vendors)
+        return parts(conn.execute(sql + " ORDER BY stock DESC", params))
 
-    # 2. Try normalized MPN variants (strip -TR, insert T, etc.)
-    if not results:
-        variants = normalize_mpn(mpn)
-        for variant in variants:
-            cursor = conn.execute(
-                "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC",
-                [variant],
-            )
-            for row in cursor:
-                part = row_to_dict(row, subcategories)
-                if part["lcsc"] not in seen_lcsc:
-                    results.append(part)
-                    seen_lcsc.add(part["lcsc"])
+    def matched(results, kind):
+        info = {"match": kind, "matched_mpn": results[0]["model"]}
+        return results, info
+
+    def find(candidate):
+        # 1. Keep the existing exact query and stock ordering unchanged.
+        results = parts(conn.execute(
+            "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC", [candidate],
+        ))
+        if results:
+            return results, {}
+
+        # 2. Same expression as idx_mpn_key, also correct on older databases.
+        results = keyed(candidate)
+        if results:
+            return matched(results, "separators")
+
+        # 3. Preserve normalize_mpn's existing variant order and exact queries.
+        variants = normalize_mpn(candidate)
+        for variant in variants[1:]:
+            results = parts(conn.execute(
+                "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC", [variant],
+            ))
+            if not results:
+                results = keyed(variant)
             if results:
-                break
+                return matched(results, "packing")
 
-    # 3. Fall back to FTS if no exact matches
-    if not results:
-        for variant in normalize_mpn(mpn):
-            # Quote and add prefix match for FTS
+        # The plus names a different radio. FTS tokenization loses it, so this
+        # alias must win (or return nothing) before FTS can find the non-plus chip.
+        key = mpn_key(candidate)
+        if key == "NRF24L01+":
+            target, vendors = MPN_ALIASES[key]
+            results = keyed(target, vendors)
+            return matched(results, "alias") if results else ([], {})
+
+        # 4. Existing FTS queries, variants, stock order and limit are unchanged.
+        for variant in variants:
             escaped = variant.replace('"', '""')
-            fts_query = f'"{escaped}"*'
-            cursor = conn.execute(
+            results = parts(conn.execute(
                 """SELECT c.* FROM components c
                    JOIN components_fts f ON c.lcsc = f.lcsc
                    WHERE f.components_fts MATCH ?
                    ORDER BY c.stock DESC
-                   LIMIT 10""",
-                [fts_query],
-            )
-            for row in cursor:
-                part = row_to_dict(row, subcategories)
-                if part["lcsc"] not in seen_lcsc:
-                    results.append(part)
-                    seen_lcsc.add(part["lcsc"])
+                   LIMIT 10""", [f'"{escaped}"*'],
+            ))
             if results:
-                break
+                categories = list(dict.fromkeys(p['subcategory'] or 'Uncategorized' for p in results))
+                return results, {
+                    "match": "related",
+                    "note": (f"No exact match for '{candidate}'. These parts' part numbers start with it "
+                             "or their text mentions it, so check the package and manufacturer. "
+                             f"Part types: {', '.join(categories)}."),
+                }
 
+        # 5. Only the named vendor may supply a packing variant. The indexed
+        # prefix narrows retrieval; the full rule must preserve device identity.
+        for rule in PACKING_RULES:
+            source = rule.pattern.fullmatch(key)
+            if source is None:
+                continue
+            prefix = source['base']
+            rows = conn.execute(
+                f"SELECT * FROM components WHERE {MPN_KEY_SQL} >= ? AND {MPN_KEY_SQL} < ? "
+                f"AND manufacturer COLLATE NOCASE IN ({','.join('?' * len(rule.manufacturers))}) "
+                "ORDER BY stock DESC",
+                [prefix, prefix + "\uffff", *rule.manufacturers],
+            )
+            results = parts(row for row in rows
+                            if (target := rule.pattern.fullmatch(mpn_key(row['mpn']))) is not None
+                            and rule.identity(source) == rule.identity(target))
+            if results:
+                return matched(results, "packing")
+
+        # 6. Other ordering aliases recover only candidates that also miss FTS.
+        if alias := MPN_ALIASES.get(key):
+            target, vendors = alias
+            results = keyed(target, vendors)
+            if results:
+                return matched(results, "alias")
+        return [], {}
+
+    results, info = find(mpn)
+    if not results:
+        # 7. First explicitly supplied alternative that matches wins.
+        for candidate in annotated_mpn_candidates(mpn):
+            results, info = find(candidate)
+            if vendors := ALTERNATIVE_MANUFACTURERS.get(mpn_key(candidate)):
+                results = [part for part in results if part['manufacturer'] in vendors]
+            if results:
+                info.update(match="alternative", matched_mpn=candidate)
+                break
+    if match_info is not None and results:
+        match_info.update(info)
     return results
 
 

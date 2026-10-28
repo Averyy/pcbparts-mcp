@@ -19,7 +19,7 @@ from ..db_worker import serialized
 from ..config import DEFAULT_MIN_STOCK
 from ..easyeda_store import FootprintAnswer
 from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
-from ..search.spec_filter import like_text
+from ..search.spec_filter import CONNECTOR_COLUMN_NAMES, like_text
 from .connection import build_database, load_caches
 from .lookup import get_by_lcsc, get_by_lcsc_batch, get_by_mpn
 from .categories import (
@@ -90,11 +90,26 @@ class ComponentDatabase:
             self._conn.execute("PRAGMA query_only=ON")
             self._conn.row_factory = sqlite3.Row
 
-            if not self._conn.execute("SELECT 1 FROM sqlite_master WHERE type = 'index' AND name = 'idx_mpn_lower'").fetchone():
+            indexes = {row[0] for row in self._conn.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'index' AND name IN ('idx_mpn_lower', 'idx_mpn_key')"
+            )}
+            limitations = []
+            if len(indexes) < 2:
+                limitations.append(
+                    "some quiescent-current filters miss parts and MPN lookups are slow"
+                    if "idx_mpn_lower" not in indexes
+                    else "separator-insensitive MPN lookups are slow"
+                )
+            columns = {row[1] for row in self._conn.execute("PRAGMA table_info(components)")}
+            if not CONNECTOR_COLUMN_NAMES <= columns:
+                limitations.append("connector filters and series ranking are slow")
+            if "rds_gate_min_v" not in columns:
+                limitations.append("MOSFET gate-drive ranking is slow")
+            if limitations:
                 logger.warning(
-                    "Component database %s predates this version: some quiescent-current filters miss parts "
-                    "and MPN lookups are slow. Rebuild with .venv/bin/python scripts/build_database.py",
-                    self.db_path,
+                    "Component database %s predates this version: %s. "
+                    "Rebuild with .venv/bin/python scripts/build_database.py",
+                    self.db_path, "; ".join(limitations),
                 )
 
             # Load caches
@@ -169,6 +184,20 @@ class ComponentDatabase:
         """Expand package name to include family variants."""
         return expand_package(package)
 
+    @serialized
+    def resolve_package_constraints(self, packages: list[str]) -> tuple[list[str], list[dict[str, str]]]:
+        """Resolve package suffixes absent from the complete cached catalog."""
+        self._ensure_db()
+        if not self._search_engine:
+            return packages, []
+        return self._search_engine.resolve_package_constraints(packages)
+
+    @serialized
+    def packages_are_resettable_fuses(self, packages: list[str]) -> bool:
+        """Check the cached fuse-package catalog without applying search ratings."""
+        self._ensure_db()
+        return bool(self._search_engine and self._search_engine.packages_are_resettable_fuses(packages))
+
     def _resolve_manufacturer(self, name: str) -> str:
         """Resolve manufacturer alias to canonical name."""
         return resolve_manufacturer(name)
@@ -194,6 +223,11 @@ class ComponentDatabase:
         limit: int = 50,
         offset: int = 0,
         subcategory_ids: list[int] | None = None,
+        part_number: str | None = None,
+        connector_series: str | None = None,
+        connector_manufacturer: str | None = None,
+        preferred_specs: list[SpecFilter] | None = None,
+        gate_drive_v: float | None = None,
     ) -> dict[str, Any]:
         """
         Search components with parametric filtering.
@@ -218,6 +252,11 @@ class ComponentDatabase:
             offset: Pagination offset
             subcategory_ids: Several subcategories (OR), when neither subcategory_id nor
                 subcategory_name is given (the smart parser's "inductor" covers four)
+            part_number: Full token shortened by the smart parser; rank and label MPN matches
+            connector_series: Prefer an exact Reference Series match without excluding other parts
+            connector_manufacturer: Prefer this connector maker without excluding other parts
+            preferred_specs: Ordered equality preferences for sparse PD role/output attributes
+            gate_drive_v: Rank listed RDS(on) at or below this gate drive first; retain unknowns
 
         Returns:
             Search results with metadata
@@ -250,6 +289,11 @@ class ComponentDatabase:
             limit=limit,
             offset=offset,
             subcategory_ids=subcategory_ids,
+            part_number=part_number,
+            connector_series=connector_series,
+            connector_manufacturer=connector_manufacturer,
+            preferred_specs=preferred_specs,
+            gate_drive_v=gate_drive_v,
         )
 
         # Add warning if min_stock was clamped
@@ -331,15 +375,15 @@ class ComponentDatabase:
             return 0
 
     @serialized
-    def get_by_mpn(self, mpn: str) -> list[dict[str, Any]]:
+    def get_by_mpn(self, mpn: str, *, match_info: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """Find components by manufacturer part number.
 
-        Tries exact match, then normalized variants, then FTS fallback.
+        Tries exact/separator/packing/alias matches, FTS, then annotated alternatives.
         """
         self._ensure_db()
         if not self._conn:
             return []
-        return get_by_mpn(self._conn, mpn, self._subcategories)
+        return get_by_mpn(self._conn, mpn, self._subcategories, match_info=match_info)
 
     @serialized
     def get_by_lcsc_batch(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:

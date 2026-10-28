@@ -3,6 +3,7 @@ before 0.6.5. Each runs the tool on the real database and checks every result, n
 number, so the daily data can change under it."""
 
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -22,6 +23,1011 @@ async def search(query: str | None = None, **kwargs):
     result = await server.jlc_search(query=query, limit=kwargs.pop("limit", 50), **kwargs)
     assert "error" not in result, result.get("error")
     return result
+
+
+class TestMosfetGateDrive:
+    @pytest.mark.parametrize("cue", ["logic level 3.3V", "logic-level 3.3V", "gate drive 3.3V",
+                                    "3.3V gate", "3.3V gate voltage", "Vgs 3.3V", "3.3V GPIO", "3.3V MCU",
+                                    "3.3V microcontroller",
+                                    "driven by 3.3V", "driven from 3.3V", "3.3V drive", "3.3V logic"])
+    def test_gate_cues(self, cue):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+
+        parsed = parse_smart_query(f"n-channel mosfet {cue} SOT-23")
+        assert parsed.gate_drive_v == 3.3
+        assert not any(f.name == "Vds" for f in parsed.spec_filters)
+        assert not parsed.remaining_text
+        if "logic level" in cue or "logic-level" in cue:
+            assert any(f.name == "Vgs(th)" and f.operator == "<" and f.value == "2.5V"
+                       for f in parsed.spec_filters)
+
+    @pytest.mark.parametrize("query", ["logic level mosfet 3.3V 30V", "mosfet 3.3V gate drive 30V",
+                                       "mosfet 30V gate drive 3.3V", "mosfet 30V Vgs 3.3V"])
+    def test_second_voltage_keeps_drain_meaning(self, query):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+
+        parsed = parse_smart_query(query)
+        assert parsed.gate_drive_v == 3.3
+        assert any(f.name == "Vds" and f.value == "30V" for f in parsed.spec_filters)
+
+    @pytest.mark.parametrize("query,drive,drain", [
+        ("logic level mosfet 30V 10A", None, "30V"),
+        ("logic level mosfet 30V 3.3V gate drive", 3.3, "30V"),
+        ("12V motor drive mosfet", None, "12V"),
+        ("mosfet 10V gate drive", 10, None),
+        ("logic level n-channel mosfet 5V", 5, None),
+        ("mosfet 20V gate voltage", 20, None),
+        ("mosfet 21V gate drive", None, "21V"),
+        ("mosfet 12V drive", None, "12V"),
+        *[(f"n-channel mosfet 5.1V {cue}", None, "5.1V") for cue in
+          ("logic level", "logic-level", "logic", "GPIO", "MCU", "microcontroller", "driven by", "driven from")],
+    ])
+    async def test_drive_cue_voltage_limits(self, query, drive, drain):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+
+        parsed = parse_smart_query(query)
+        assert parsed.gate_drive_v == drive
+        result = await search(query)
+        assert result.get("parsed", {}).get("detected", {}).get("gate_drive_v") == drive
+        filters = result["filters_applied"].get("spec_filters", [])
+        if drain:
+            assert {"name": "Vds", "op": ">=", "value": drain} in filters
+        else:
+            assert not any(f["name"] == "Vds" for f in filters)
+        assert all(("rds_on_at_drive" in part) == (drive is not None) for part in result["results"])
+        if "logic level" in query or "logic-level" in query:
+            assert {"name": "Vgs(th)", "op": "<", "value": "2.5V"} in filters
+
+    @pytest.mark.parametrize("query,drive,drain", [
+        ("logic level n-channel mosfet 3.3V 5A SOT-23", 3.3, None),
+        ("n-channel mosfet 3.3V gate drive SOT-23", 3.3, None),
+        ("n-channel mosfet 5V gate drive SOT-23", 5, None),
+        ("logic level mosfet 30V 3.3V gate drive", 3.3, "30V"),
+    ])
+    @pytest.mark.parametrize("sort_by,prefer_no_fee", [("stock", True), ("price", False)])
+    async def test_evidence_and_sql_paging(self, query, drive, drain, sort_by, prefer_no_fee):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+
+        result = await search(query, limit=100, sort_by=sort_by, prefer_no_fee=prefer_no_fee)
+        filters = result["filters_applied"]["spec_filters"]
+        assert not any(f["name"] == "Vds" and f["value"] in ("3.3V", "5V") for f in filters)
+        if drain:
+            assert {"name": "Vds", "op": ">=", "value": drain} in filters
+        parsed = parse_smart_query(query)
+        args = dict(subcategory_name=parsed.subcategory, package=parsed.package,
+                    spec_filters=parsed.spec_filters, sort_by=sort_by, prefer_no_fee=prefer_no_fee)
+        db = server.get_db()
+        ranked = db.search(**args, gate_drive_v=drive, limit=40000)
+        control = db.search(**args, limit=40000)
+        assert ranked["total"] == control["total"] > 0
+        assert ranked["library_type_counts"] == control["library_type_counts"]
+        assert {p["lcsc"] for p in ranked["results"]} == {p["lcsc"] for p in control["results"]}
+        groups = []
+        for part in ranked["results"]:
+            # Independently read the catalog's condition/value pairs for every part.
+            conditions = []
+            for entry in re.split(r'[、,;]', part["specs"].get("RDS(on)", "")):
+                _, sep, gate = entry.partition("@")
+                match = re.fullmatch(r'(?:VGS=)?([+-]?\d+(?:\.\d*)?)(m?)V', gate) if sep else None
+                voltage = abs(float(match[1])) / (1000 if match[2] else 1) if match else None
+                if voltage is not None and voltage <= drive:
+                    conditions.append((voltage, entry))
+            expected = max(conditions, key=lambda pair: pair[0])[1] if conditions else None
+            assert part["rds_on_at_drive"] == expected
+            groups.append(expected is None)
+        assert groups == sorted(groups) and not groups[0] and groups[-1]
+        boundary = groups.index(True)
+        offset = max(0, boundary - 2)
+        page = db.search(**args, gate_drive_v=drive, limit=5, offset=offset)
+        assert page["results"] == ranked["results"][offset:offset + 5]
+        assert page["total"] == ranked["total"]
+        assert result["results"] == ranked["results"][:100]
+        adjustments = result["parsed"]["adjusted_filters"]
+        assert any("gate drive" in a["reason"] and "rank" in a["now"] for a in adjustments)
+        assert not result.get("relaxed")
+
+    async def test_drain_control_and_explicit_filters(self):
+        control = await search("n-channel mosfet 30V 5A SOT-23")
+        assert {"name": "Vds", "op": ">=", "value": "30V"} in control["filters_applied"]["spec_filters"]
+        assert all(parse_voltage(p["specs"]["Drain to Source Voltage"]) >= 30 for p in control["results"])
+        assert all("rds_on_at_drive" not in p for p in control["results"])
+        explicit = await search("n-channel mosfet 3.3V gate drive SOT-23", spec_filters=[
+            {"name": "Vds", "op": ">=", "value": "30V"}])
+        assert all(parse_voltage(p["specs"]["Drain to Source Voltage"]) >= 30 for p in explicit["results"])
+
+    async def test_strict_keeps_requirements_and_never_relaxes(self):
+        result = await search("n-channel mosfet 3.3V gate drive SOT-23", strict=True)
+        assert result["total"] > 0 and not result.get("relaxed")
+        assert all("rds_on_at_drive" in p for p in result["results"])
+        empty = await server.jlc_search(query="n-channel mosfet 3.3V gate drive impossibleword SOT-23", strict=True)
+        assert empty["total"] == 0 and not empty.get("relaxed")
+
+    async def test_explicit_mosfet_context(self):
+        result = await search("3.3V gate drive", subcategory_name="MOSFETs", strict=True)
+        assert result["total"] > 0 and not result.get("relaxed")
+        assert all("rds_on_at_drive" in p for p in result["results"])
+        assert not result["filters_applied"].get("spec_filters")
+
+
+class TestBOMWords:
+    @pytest.mark.parametrize("line", [
+        pytest.param(line, id=line["ref"], marks=pytest.mark.xfail(reason=line["known_gap"]))
+        if "known_gap" in line else pytest.param(line, id=line["ref"])
+        for line in json.loads((Path(__file__).parent / "baseline" / "feather_bom.json").read_text())
+    ])
+    async def test_feather_bom(self, line):
+        result = await search(f'{line["value"]} {line["footprint"]} {line["word"]}', limit=100)
+        assert result["total"] > 0
+        for part in result["results"]:
+            assert part["subcategory"] in line["subcategories"]
+            if "pins" in line:
+                assert re.fullmatch(rf'{line["pins"]}(?:P|[- ]?pins?)?', part["specs"]["Number of Pins"], re.I)
+                assert parse_length_mm(part["specs"]["Pitch"]) == pytest.approx(line["pitch"])
+
+    @pytest.mark.parametrize("query,subcategory", [
+        ("RGB LED diode", "rgb leds"),
+        ("infrared LED diode", "infrared led emitters"),
+        ("red LED 0603", "led indication - discrete"),
+        ("JSTPH", "wire to board connector"),
+        ("JST SH", "wire to board connector"),
+    ])
+    def test_specific_led_types_and_existing_aliases(self, query, subcategory):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+        assert parse_smart_query(query).subcategory == subcategory
+
+    @pytest.mark.parametrize("interface", ["USB-C", "USB C", "USBC", "Type C"])
+    def test_pd_controller_role_wins(self, interface):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+        result = parse_smart_query(f"{interface} PD controller 20V")
+        assert result.subcategory == "usb pd"
+        assert result.remaining_text == ""
+
+    def test_decimal_pitch_is_not_a_footprint_pin_count(self):
+        from pcbparts_mcp.smart_parser.connectors import extract_connector_series
+        assert extract_connector_series("JSTPH2.0") == (None, "JSTPH2.0")
+
+    async def test_explicit_pins_override_footprint_default(self):
+        result = await search("JST_SH4_RA 6 pin", limit=100)
+        assert result["total"] > 0
+        for part in result["results"]:
+            assert part["specs"]["Number of Pins"] == "6P"
+            assert parse_length_mm(part["specs"]["Pitch"]) == 1
+
+    @pytest.mark.parametrize("query", [
+        "red LED 0603 diode", "LED1 0603 diode", "LED12 0603 diode", "LED123 0603 diode",
+        "red LED12 0603 diode", "red LED 0603 diodes",
+    ])
+    @pytest.mark.parametrize("strict", [False, True])
+    async def test_led_wins_over_diode(self, query, strict):
+        result = await search(query, strict=strict, limit=100)
+        assert result["total"] > 0
+        assert result["parsed"]["remaining_text"] == ""
+        for part in result["results"]:
+            assert part["subcategory"] == "LED Indication - Discrete"
+            assert part["package"] == "0603"
+            if "red" in query:
+                assert part["specs"]["Illumination Color"] == "Red"
+        if "red" in query:
+            assert {"name": "Illumination Color", "op": "=", "value": "Red"} in result["filters_applied"]["spec_filters"]
+
+    @pytest.mark.parametrize("name", ["USB C", "USBC", "Type C", "Type-C", "typec"])
+    @pytest.mark.parametrize("suffix", ["", " connector", " receptacle", " socket", " plug"])
+    async def test_usb_c_spellings(self, name, suffix):
+        result = await search(name + suffix, limit=100)
+        control = await search("USB-C connector", limit=100)
+        assert result["total"] == control["total"] > 0
+        assert result["results"] == control["results"]
+        assert {"name": "Connector Type", "op": "=", "value": "Type-C"} in result["filters_applied"]["spec_filters"]
+        for part in result["results"]:
+            assert part["subcategory"] == "USB Connectors"
+            assert part["specs"]["Connector Type"] == "Type-C"
+
+
+class TestUSBPowerDelivery:
+    @pytest.mark.parametrize("query", [
+        "USB-C PD controller sink 20V 3A", "USB-C PD sink controller",
+        "USB PD controller", "USB PD sink trigger 12V",
+        "Type-C power delivery receiver", "USB C power-delivery negotiator",
+        "USB-C PD negotiation controller", "USB-C PD negotiating",
+    ])
+    async def test_controller_category(self, query):
+        result = await search(query, limit=100)
+        control = await search(subcategory_name="USB PD", limit=100)
+        assert result["total"] == control["total"] > 0
+        assert {p["lcsc"] for p in result["results"]} == {p["lcsc"] for p in control["results"]}
+        assert "relaxed" not in result
+        for part in result["results"]:
+            assert part["subcategory"] == "USB PD"
+        if "sink" in query:
+            assert not any(f["name"] in ("Supply Voltage", "Voltage - Supply", "Connector Type")
+                           for f in result["filters_applied"]["spec_filters"])
+
+    @pytest.mark.parametrize("prefix", ["", "USB ", "USB-C ", "USB C ", "Type-C ", "USBC "])
+    @pytest.mark.parametrize("role,kind", [
+        ("sink", "Power Receiver Controller"), ("trigger", "Power Receiver Controller"),
+        ("receiver", "Power Receiver Controller"), ("source", "Power Supply Controller"),
+    ])
+    async def test_role_ranks_without_hiding_unlisted_parts(self, prefix, role, kind):
+        result = await search(f"{prefix}PD {role}", limit=100)
+        control = await search(subcategory_name="USB PD", limit=100)
+        assert result["total"] == control["total"] > 0
+        assert result["library_type_counts"] == control["library_type_counts"]
+        assert {p["lcsc"] for p in result["results"]} == {p["lcsc"] for p in control["results"]}
+        groups = []
+        for part in result["results"]:
+            assert part["subcategory"] == "USB PD"
+            groups.append(kind not in part["specs"].get("Type", "").split("、"))
+        assert groups == sorted(groups) and not groups[0] and groups[-1]
+        assert any(p["specs"].get("Type", "-") == "-" for p in result["results"])
+        assert any("rank" in a["now"] and "many" in a["reason"]
+                   for a in result["parsed"]["adjusted_filters"])
+
+    @pytest.mark.parametrize("voltage", [12, 20])
+    @pytest.mark.parametrize("sort_by,prefer_no_fee", [("stock", True), ("price", False)])
+    async def test_negotiated_voltage_and_sql_paging(self, voltage, sort_by, prefer_no_fee):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+        query = f"USB-C PD sink trigger {voltage}V"
+        result = await search(query, sort_by=sort_by, prefer_no_fee=prefer_no_fee, limit=100)
+        control = await search(subcategory_name="USB PD", limit=100)
+        assert result["total"] == control["total"]
+        assert not result["filters_applied"]["spec_filters"]
+        # Role first, negotiated output voltage within each role; missing values stay.
+        groups = []
+        for part in result["results"]:
+            assert part["subcategory"] == "USB PD"
+            receiver = "Power Receiver Controller" in part["specs"].get("Type", "").split("、")
+            output = any(parse_voltage(v) == voltage for v in part["specs"].get("Output Voltage", "").split("、"))
+            groups.append((not receiver, not output))
+        assert groups == sorted(groups) and groups[0] == (False, False)
+        preferences = parse_smart_query(query).preferred_specs
+        args = dict(subcategory_name="USB PD", preferred_specs=preferences,
+                    sort_by=sort_by, prefer_no_fee=prefer_no_fee)
+        for offset in (0, 5, 10, len(result["results"]) - 3):
+            page = server.get_db().search(**args, limit=5, offset=offset)
+            assert page["results"] == result["results"][offset:offset + 5]
+            assert page["total"] == result["total"]
+        assert any("Output Voltage" in a["filter"] and "rank" in a["now"]
+                   for a in result["parsed"]["adjusted_filters"])
+
+    async def test_unsupported_current_is_disclosed(self):
+        result = await search("USB-C PD controller sink 20V 3A")
+        assert any("3A" in a["filter"] and a["now"] is None
+                   for a in result["parsed"]["adjusted_filters"])
+
+    @pytest.mark.parametrize("role", ["dual-role controller", "sink source controller"])
+    async def test_both_roles_rank_dual_controllers_first(self, role):
+        result = await search(f"USB-C PD {role}", limit=100)
+        groups = []
+        for part in result["results"]:
+            assert part["subcategory"] == "USB PD"
+            kinds = part["specs"].get("Type", "").split("、")
+            groups.append(("Power Receiver Controller" not in kinds, "Power Supply Controller" not in kinds))
+        assert groups == sorted(groups) and groups[0] == (False, False)
+
+    @pytest.mark.parametrize("role,kind", [("sink", "Power Receiver Controller"), ("source", "Power Supply Controller")])
+    async def test_strict_role_requires_listed_matches(self, role, kind):
+        result = await search(f"USB-C PD {role}", strict=True, limit=100)
+        assert result["total"] > 0
+        for part in result["results"]:
+            assert part["subcategory"] == "USB PD"
+            assert kind in part["specs"]["Type"].split("、")
+
+    @pytest.mark.parametrize("suffix", ["sink 20V 3A", "sink source controller"])
+    async def test_strict_unsupported_constraints_are_not_silently_ranked(self, suffix):
+        result = await server.jlc_search(query=f"USB-C PD {suffix}", strict=True, limit=100)
+        assert result["error"].startswith("Strict search cannot apply every constraint")
+        assert result["total"] == 0 and not result["results"]
+
+    async def test_strict_sink_voltage_requires_output_instead_of_supply(self):
+        result = await search("USB-C PD sink 20V", strict=True, limit=100)
+        assert result["total"] > 0
+        for part in result["results"]:
+            assert part["subcategory"] == "USB PD"
+            assert "Power Receiver Controller" in part["specs"]["Type"].split("、")
+            assert covers(part["specs"]["Output Voltage"], 20)
+        assert all(f["name"] not in ("Supply Voltage", "Voltage - Supply")
+                   for f in result["filters_applied"]["spec_filters"])
+
+    @pytest.mark.parametrize("query,pins", [
+        ("USB-C connector", None), ("USB C", None), ("USB-C 16 pin connector", 16),
+    ])
+    async def test_connector_controls(self, query, pins):
+        result = await search(query, limit=100)
+        assert result["total"] > 0
+        for part in result["results"]:
+            assert part["subcategory"] == "USB Connectors"
+            assert part["specs"]["Connector Type"] == "Type-C"
+            if pins:
+                assert part["specs"]["Number of Contacts"] == f"{pins}P"
+
+
+class TestFuseRatings:
+    @pytest.mark.parametrize("query,package,current", [
+        ("1812 fuse", "1812", None),
+        ("1A 1812 fuse", "1812", 1),
+        ("500mA 1210 fuse", "1210", .5),
+        ("1.85A 2920 fuse", "2920", 1.85),
+        ("2A 2920 fuse", "2920", 2),
+        ("fuse 2920", "2920", None),
+        ("1812 fuses", "1812", None),
+    ])
+    @pytest.mark.parametrize("strict", [False, True])
+    async def test_generic_fuse_package_routing(self, query, package, current, strict):
+        result = await search(query, strict=strict, limit=100)
+        filters = [{"name": "Hold Current", "op": ">=", "value": f"{current}A"}] if current else []
+        expected = await search(subcategory_name="Resettable Fuses", package=package,
+                                spec_filters=filters, limit=100)
+        assert result["total"] == expected["total"] > 0
+        assert result["results"] == expected["results"]
+        assert result["parsed"]["subcategory"] == "resettable fuses"
+        assert not result.get("relaxed")
+        assert {"filter": "subcategory: disposable fuses", "now": "resettable fuses",
+                "reason": f"{package} fuses in the catalog are all resettable"} in result["parsed"]["adjusted_filters"]
+        for part in result["results"]:
+            assert part["subcategory"] == "Resettable Fuses"
+            assert part["package"] == package
+            if current:
+                assert parse_current(part["specs"]["Hold Current"]) >= current
+
+    @pytest.mark.parametrize("package", ["1812", "2920", "1210", "2018", "2512", "2016", "3425"])
+    @pytest.mark.parametrize("via", ["package", "packages"])
+    async def test_explicit_package_routes_and_remaps_ratings(self, package, via):
+        args = {via: package if via == "package" else [package]}
+        result = await search("1A fuse 6V", strict=True, **args)
+        assert result["total"] > 0 and not result.get("relaxed")
+        assert result["filters_applied"]["spec_filters"] == [
+            {"name": "Hold Current", "op": ">=", "value": "1A"},
+            {"name": "Voltage - Max", "op": ">=", "value": "6V"},
+        ]
+        for part in result["results"]:
+            assert part["subcategory"] == "Resettable Fuses" and part["package"] == package
+            assert parse_current(part["specs"]["Hold Current"]) >= 1
+            assert parse_voltage(part["specs"]["Voltage - Max"]) >= 6
+
+    @pytest.mark.parametrize("query", ["1A fuse", "1A fuses"])
+    @pytest.mark.parametrize("strict", [False, True])
+    async def test_generic_fuse_with_explicit_package(self, query, strict):
+        result = await search(query, package="1812", strict=strict)
+        expected = await search(subcategory_name="Resettable Fuses", package="1812", spec_filters=[
+            {"name": "Hold Current", "op": ">=", "value": "1A"}])
+        assert result["total"] == expected["total"] > 0
+        assert result["results"] == expected["results"]
+        assert result["parsed"]["subcategory"] == "resettable fuses"
+        assert not result.get("relaxed")
+
+    @pytest.mark.parametrize("args,packages", [
+        ({"query": "1A fuse 1812 or 2920"}, ["1812", "2920"]),
+        ({"query": "1A fuse", "packages": ["1812", "1210"]}, ["1812", "1210"]),
+    ])
+    async def test_resettable_package_alternatives(self, args, packages):
+        result = await search(**args, strict=True, limit=100)
+        expected = await search(subcategory_name="Resettable Fuses", packages=packages, spec_filters=[
+            {"name": "Hold Current", "op": ">=", "value": "1A"}], limit=100)
+        assert result["total"] == expected["total"] > 0
+        assert result["results"] == expected["results"]
+        assert not result.get("relaxed")
+
+    @pytest.mark.parametrize("package", [None, "0402", "0603", "0805", "1206"])
+    @pytest.mark.parametrize("strict", [False, True])
+    async def test_generic_fuse_routing_unchanged(self, package, strict):
+        result = await search("fuse", package=package, strict=strict)
+        expected = await search(subcategory_name="Disposable fuses", package=package)
+        assert result["total"] == expected["total"] > 0
+        assert result["results"] == expected["results"]
+        assert not result.get("parsed", {}).get("adjusted_filters")
+        assert not result.get("relaxed")
+
+    @pytest.mark.parametrize("query", ["fuses", "1A fuses", "500mA fuses 6V"])
+    @pytest.mark.parametrize("package", [None, "0603", "1206"])
+    async def test_plural_fuse_matches_singular(self, query, package):
+        # "1A 1812 fuses" used to return ferrite beads: the plural wasn't a part-type word.
+        result = await search(query, package=package, strict=True)
+        expected = await search(re.sub(r"fuses\b", "fuse", query), package=package, strict=True)
+        assert result["total"] == expected["total"] > 0
+        assert result["results"] == expected["results"]
+        assert result["parsed"]["subcategory"] == "disposable fuses"
+
+    async def test_ptc_package_routing_unchanged(self):
+        result = await search("PTC 1812 fuse 1A", strict=True)
+        expected = await search(subcategory_name="Resettable Fuses", package="1812", spec_filters=[
+            {"name": "Hold Current", "op": ">=", "value": "1A"}])
+        assert result["total"] == expected["total"] > 0
+        assert result["results"] == expected["results"]
+        assert not result.get("parsed", {}).get("adjusted_filters")
+        assert not result.get("relaxed")
+
+    @pytest.mark.parametrize("via", ["name", "id"])
+    @pytest.mark.parametrize("strict", [False, True])
+    async def test_explicit_disposable_package_is_not_rerouted(self, via, strict):
+        args = {"subcategory_name": "Disposable fuses"} if via == "name" else {
+            "subcategory_id": server.get_db().resolve_subcategory_name("Disposable fuses")}
+        result = await search("1812 fuse", strict=strict, **args)
+        assert result["total"] == 0
+        assert not result.get("parsed", {}).get("adjusted_filters")
+        assert not result.get("relaxed")
+
+    async def test_package_routing_does_not_remap_explicit_filters(self):
+        filters = [{"name": "Voltage Rating (DC)", "op": ">=", "value": "6V"}]
+        result = await search("1A fuse", package="1812", spec_filters=filters)
+        assert result["total"] == 0
+        assert filters[0] in result["filters_applied"]["spec_filters"]
+        assert not any(f["name"] == "Voltage - Max" for f in result["filters_applied"]["spec_filters"])
+
+    @pytest.mark.parametrize("packages", [["1812", "1206"], ["1812", "unknown-package"]])
+    async def test_package_alternatives_must_all_be_resettable_only(self, packages):
+        result = await search("fuse", packages=packages, strict=True)
+        expected = await search(subcategory_name="Disposable fuses", packages=packages)
+        assert result["total"] == expected["total"]
+        assert result["results"] == expected["results"]
+        assert not result.get("parsed", {}).get("adjusted_filters")
+
+    @pytest.mark.parametrize("query,package,subcategory", [
+        ("1812 fuse", "1206", "Disposable fuses"),
+        ("1206 fuse", "1812", "Resettable Fuses"),
+    ])
+    async def test_explicit_package_controls_routing(self, query, package, subcategory):
+        result = await search(query, package=package)
+        expected = await search(subcategory_name=subcategory, package=package)
+        assert result["total"] == expected["total"] > 0
+        assert result["results"] == expected["results"]
+        assert not result.get("relaxed")
+
+    def test_package_routing_uses_cached_catalog_data(self):
+        import sqlite3
+        from pcbparts_mcp.search.engine import SearchEngine
+
+        with sqlite3.connect(":memory:") as conn:
+            conn.execute("CREATE TABLE components (package TEXT, subcategory_id INTEGER, stock INTEGER)")
+            conn.executemany("INSERT INTO components VALUES (?, ?, ?)", [
+                ("9001", 1, 10), ("9001", 2, 9), ("9002", 1, 10), ("9002", 2, 10), ("9003", 1, 9),
+            ])
+            engine = SearchEngine(conn, {1: {"name": "Resettable Fuses"}, 2: {"name": "Disposable fuses"}},
+                                  {}, {"resettable fuses": 1, "disposable fuses": 2}, {})
+            assert engine.packages_are_resettable_fuses(["9001"])
+            assert not engine.packages_are_resettable_fuses(["9002"])
+            assert not engine.packages_are_resettable_fuses(["9003"])
+            assert not engine.packages_are_resettable_fuses(["9001", "unknown"])
+            statements = []
+            conn.set_trace_callback(statements.append)
+            assert engine.packages_are_resettable_fuses(["9001"])
+            assert not engine.packages_are_resettable_fuses(["9002"])
+            assert not statements
+
+    @pytest.mark.parametrize("query,current,package,voltage", [
+        ("15A fuse", 15, None, None),
+        ("15.0A fuse", 15, None, None),
+        ("500mA fuse 1206", .5, "1206", None),
+        ("0.5A fuse 1206", .5, "1206", None),
+        ("fuse 2A 250V", 2, None, 250),
+        ("M205 2A fuse", 2, None, None),
+    ])
+    @pytest.mark.parametrize("strict", [False, True])
+    async def test_disposable_ratings(self, query, current, package, voltage, strict):
+        if strict and query == "M205 2A fuse":
+            # Strict mode continues to require the unrecognized M205 text.
+            result = await search(query, strict=True)
+            assert result["total"] == 0
+            return
+        result = await search(query, strict=strict, limit=100)
+        assert result["total"] > 0
+        current_filters = [f for f in result["filters_applied"]["spec_filters"] if f["name"] == "Current Rating"]
+        assert len(current_filters) == 1
+        assert current_filters[0]["op"] == "="
+        assert parse_current(current_filters[0]["value"]) == pytest.approx(current)
+        for part in result["results"]:
+            assert part["subcategory"] == "Disposable fuses"
+            assert parse_current(part["specs"]["Current Rating"]) == pytest.approx(current)
+            if package:
+                assert part["package"] == package
+            if voltage:
+                assert parse_voltage(part["specs"]["Voltage Rating (DC)"]) >= voltage
+
+    @pytest.mark.parametrize("subcategory,current,voltage_name,voltage", [
+        ("Disposable fuses", 2, "Voltage Rating (DC)", 250),
+        ("Automotive Fuses", 15, "Voltage Rating (DC)", 32),
+        ("Thermal Fuses (TCO)", 15, "Voltage Rating", 250),
+        ("Fuse/Current Protector", 2, "Rated voltage", 250),
+    ])
+    @pytest.mark.parametrize("strict", [False, True])
+    @pytest.mark.parametrize("via", ["name", "id"])
+    async def test_explicit_subcategory(self, subcategory, current, voltage_name, voltage, strict, via):
+        from pcbparts_mcp.db import get_db
+        args = {"subcategory_name": subcategory} if via == "name" else {
+            "subcategory_id": get_db().resolve_subcategory_name(subcategory),
+        }
+        result = await search(f"fuse {current}A {voltage}V", strict=strict, limit=100, **args)
+        assert result["total"] > 0
+        assert {"name": "Current Rating", "op": "=", "value": f"{current}A"} in result["filters_applied"]["spec_filters"]
+        assert {"name": voltage_name, "op": ">=", "value": f"{voltage}V"} in result["filters_applied"]["spec_filters"]
+        for part in result["results"]:
+            assert part["subcategory"] == subcategory
+            assert parse_current(part["specs"]["Current Rating"]) == pytest.approx(current)
+            assert parse_voltage(part["specs"][voltage_name]) >= voltage
+
+    async def test_resettable_modifiers_are_consumed(self):
+        result = await search("PTC resettable fuse 500mA", limit=100)
+        expected = await search(subcategory_name="Resettable Fuses", spec_filters=[
+            {"name": "Hold Current", "op": ">=", "value": "500mA"},
+        ], limit=100)
+        assert result["total"] == expected["total"] > 0
+        assert result["results"] == expected["results"]
+        assert result["filters_applied"]["spec_filters"] == expected["filters_applied"]["spec_filters"]
+        for part in result["results"]:
+            assert parse_current(part["specs"]["Hold Current"]) >= .5
+
+    @pytest.mark.parametrize("query,current", [
+        ("120mA PTC 0603 fuse", .12),
+        ("350mA PTC 1206 fuse", .35),
+        ("3A PTC 1206 fuse", 3),
+        ("50mA PTC 0603 fuse", .05),
+        ("PTC 4.5A 1206 1206 fuse", 4.5),
+        ("fuse 1206 500mA polyfuse", .5),
+        ("poly fuse 500mA 1206", .5),
+        ("500mA polyswitch 1206 fuse", .5),
+        ("fuse 500mA 1206 resettable", .5),
+    ])
+    @pytest.mark.parametrize("strict", [False, True])
+    @pytest.mark.parametrize("voltage", [None, 6])
+    async def test_resettable_wording(self, query, current, strict, voltage):
+        result = await search(query + (f" {voltage}V" if voltage else ""), strict=strict, limit=100)
+        assert result["total"] > 0
+        assert result["parsed"]["subcategory"] == "resettable fuses"
+        filters = result["filters_applied"]["spec_filters"]
+        assert any(f["name"] == "Hold Current" and f["op"] == ">="
+                   and parse_current(f["value"]) == current for f in filters)
+        if voltage:
+            assert {"name": "Voltage - Max", "op": ">=", "value": f"{voltage}V"} in filters
+        for part in result["results"]:
+            assert part["subcategory"] == "Resettable Fuses"
+            assert parse_current(part["specs"]["Hold Current"]) >= current
+            if voltage:
+                assert parse_voltage(part["specs"]["Voltage - Max"]) >= voltage
+
+    async def test_cross_family_retry_remaps_voltage(self):
+        result = await search("nSMD005/60V 1206 fuse", limit=100)
+        assert result["total"] == 5
+        assert {p["lcsc"] for p in result["results"]} == {
+            "C2830235", "C70064", "C22435712", "C3035892", "C2924934",
+        }
+        assert result["relaxed"]["dropped_part_type"] == "Disposable fuses"
+        assert {"name": "Voltage - Max", "op": ">=", "value": "60V", "subcategory": "Resettable Fuses"} in result["filters_applied"]["spec_filters"]
+        for part in result["results"]:
+            assert part["subcategory"] == "Resettable Fuses"
+            assert parse_voltage(part["specs"]["Voltage - Max"]) >= 60
+
+    async def test_explicit_cross_family_voltage_is_not_remapped(self):
+        filters = [{"name": "Voltage Rating (DC)", "op": ">=", "value": "60V"}]
+        result = await search("nSMD005/60V 1206 fuse", spec_filters=filters)
+        assert result["total"] == 0
+        assert result["filters_applied"]["spec_filters"] == filters
+
+    @pytest.mark.parametrize("query", ["fuse 500mA 30V", "resettable fuse 500mA 30V"])
+    @pytest.mark.parametrize("scoped", [False, True])
+    def test_mixed_families_map_current_and_voltage_per_subcategory(self, query, scoped):
+        from pcbparts_mcp.db import get_db
+        from pcbparts_mcp.search.spec_filter import FUSE_ATTRIBUTE_MAP
+        from pcbparts_mcp.smart_parser import parse_smart_query
+
+        db = get_db()
+        families = ["Disposable fuses", "Resettable Fuses"]
+        ids = [db.resolve_subcategory_name(name) for name in families]
+        result = db.search(spec_filters=parse_smart_query(query).spec_filters,
+                           subcategory_ids=ids if scoped else None, limit=10000)
+        assert result["total"] == len(result["results"]) > 0
+        assert set(families) <= {p["subcategory"] for p in result["results"]}
+        for part in result["results"]:
+            mapping = FUSE_ATTRIBUTE_MAP[part["subcategory"].lower()]
+            current = parse_current(part["specs"]["Hold Current" if part["subcategory"] == "Resettable Fuses" else "Current Rating"])
+            assert current >= .5 if part["subcategory"] == "Resettable Fuses" else current == .5
+            assert parse_voltage(part["specs"][mapping["voltage"]]) >= 30
+
+    async def test_explicit_current_operator_kept(self):
+        filters = [{"name": "Current Rating", "op": ">=", "value": "15A"}]
+        result = await search("15A fuse", spec_filters=filters, limit=100)
+        expected = await search(subcategory_name="Disposable fuses", spec_filters=filters, limit=100)
+        assert result["total"] == expected["total"] > 0
+        assert result["results"] == expected["results"]
+        assert any(parse_current(p["specs"]["Current Rating"]) > 15 for p in result["results"])
+
+    @pytest.mark.parametrize("query,wanted", [("15A fuse", 15), ("500mA fuse", .5)])
+    def test_current_equality_does_not_admit_nearby_ratings(self, query, wanted):
+        import sqlite3
+        from pcbparts_mcp.smart_parser import parse_smart_query
+        from pcbparts_mcp.search.query_builder import build_spec_filter_clauses
+
+        clauses, params, post_filters, ignored = build_spec_filter_clauses(parse_smart_query(query).spec_filters)
+        assert not post_filters and not ignored
+        with sqlite3.connect(":memory:") as conn:
+            conn.execute("CREATE TABLE components (current_max_a REAL)")
+            conn.executemany("INSERT INTO components VALUES (?)", [(wanted,), (wanted * .995,), (wanted * 1.005,)])
+            assert conn.execute("SELECT current_max_a FROM components WHERE 1=1 " + " ".join(clauses), params).fetchall() == [(wanted,)]
+
+
+class TestPackageConstraints:
+    @staticmethod
+    def body(package):
+        dimensions = re.search(
+            r"\((\d+(?:\.\d+)?)\s*(?:mm)?\s*[x×]\s*(\d+(?:\.\d+)?)\s*(?:mm)?\)",
+            package, re.IGNORECASE,
+        )
+        assert dimensions, package
+        return tuple(sorted(map(float, dimensions.groups())))
+
+    @pytest.mark.parametrize("family", ["QFN", "VQFN", "WQFN", "TQFN", "LQFN", "UQFN",
+                                        "UFQFPN", "VFQFPN", "HVQFN", "LQFP", "TQFP", "PQFP",
+                                        "SOIC", "SOP", "SO", "BGA", "WLCSP", "DIP"])
+    def test_parser_retains_whole_package(self, family):
+        from pcbparts_mcp.smart_parser.packages import extract_package
+        package = f"{family}-24-EP(4x4mm)" if family not in {"BGA", "DIP"} else f"{family}-24(4x4mm)"
+        parsed, remaining, _ = extract_package(f"STM32G0 {package}")
+        assert parsed == package.upper()
+        assert remaining == "STM32G0"
+
+    @pytest.mark.parametrize("requested,wanted", [
+        ("QFN-24-EP(4x4)", {"QFN-24-EP(4x4)", "VQFN-24-EP(4.0x4.0mm)"}),
+        ("QFN-24(4x4)", {"QFN-24-EP(4x4)", "VQFN-24-EP(4.0x4.0mm)", "QFN-24(4x4)"}),
+        ("QFN-24(3.5x5.5)", {"WQFN-24(5.5x3.5)"}),
+        ("SOIC-8-150mil", {"SOIC-8-150mil", "SOP-8-150mil"}),
+        ("QFN-24-EP", {"QFN-24-EP(4x4)", "VQFN-24-EP(4.0x4.0mm)"}),
+    ])
+    def test_sql_checks_whole_catalog_packages(self, requested, wanted):
+        import sqlite3
+        from pcbparts_mcp.search.query_builder import build_package_clause, index_package_names
+        names = ["QFN-24-EP(4x4)", "VQFN-24-EP(4.0x4.0mm)", "QFN-24(4x4)",
+                 "QFN-24-EP(4.000001x4)", "VQFN-240-EP(4x4)", "WQFN-24(5.5x3.5)",
+                 "SOIC-8-150mil", "SOP-8-150mil", "SOIC-8-300mil", "SOIC-80-150mil", "SOIC-8"]
+        if requested == "QFN-24-EP":
+            wanted = wanted | {"QFN-24-EP(4.000001x4)"}
+        with sqlite3.connect(":memory:") as conn:
+            conn.execute("CREATE TABLE components (package TEXT)")
+            conn.executemany("INSERT INTO components VALUES (?)", [(name,) for name in names])
+            sql, params = build_package_clause([requested], index_package_names(names))
+            assert {row[0] for row in conn.execute("SELECT package FROM components WHERE 1=1 " + sql, params)} == wanted
+
+    @pytest.mark.parametrize("via", ["package", "packages", "query"])
+    @pytest.mark.parametrize("strict", [False, True])
+    async def test_exact_qfn_body_and_pad(self, via, strict):
+        package = "QFN-24-EP(4x4)"
+        args = {"query": f"DC-DC converter {package}"} if via == "query" else {
+            "subcategory_name": "DC-DC Converters", via: [package] if via == "packages" else package,
+        }
+        result = await search(**args, strict=strict, limit=100)
+        assert result["results"]
+        for part in result["results"]:
+            assert re.match(r"(?:[LWVTU]?QFN|[UV]FQFPN|HVQFN)-24-EP\(", part["package"], re.IGNORECASE)
+            assert self.body(part["package"]) == (4, 4)
+
+    @pytest.mark.parametrize("via", ["package", "packages", "query"])
+    @pytest.mark.parametrize("strict", [False, True])
+    async def test_bare_qfn_family_and_disclosure(self, via, strict):
+        args = {"query": "STM32G0 QFN-32"} if via == "query" else {
+            "query": "STM32G0", via: ["QFN-32"] if via == "packages" else "QFN-32",
+        }
+        result = await search(**args, strict=strict, limit=100)
+        assert result["results"]
+        for part in result["results"]:
+            assert part["model"].upper().startswith("STM32G0")
+            assert re.match(r"(?:[LWVTU]?QFN|[UV]FQFPN|HVQFN)-32(?:\D|$)", part["package"])
+        assert any("QFN-32" in f["filter"] and "any body size" in f["reason"]
+                   and "QFN-32-EP(5x5)" in f["reason"]
+                   for f in result["parsed"]["adjusted_filters"])
+
+    async def test_bare_qfn_keeps_other_bodies(self):
+        result = await search(subcategory_name="DC-DC Converters", package="QFN-24", limit=100)
+        packages = {part["package"] for part in result["results"]}
+        assert any("(4x4)" in pkg for pkg in packages)
+        assert any("(3.5x5.5)" in pkg or "(5.5x3.5)" in pkg for pkg in packages)
+
+    @pytest.mark.parametrize("package,body,pad", [
+        ("QFN-24-EP(4x4mm)", (4, 4), True),
+        ("QFN-24-EP(4.0x4.0)", (4, 4), True),
+        ("VQFN-24(3.5x5.5)", (3.5, 5.5), False),
+        ("VQFN-24(5.5x3.5)", (3.5, 5.5), False),
+        ("LQFP-48(7x7)", (7, 7), False),
+        ("SOIC-8(5x6)", (5, 6), False),
+    ])
+    @pytest.mark.parametrize("via", ["package", "query"])
+    async def test_normalized_body_matches(self, package, body, pad, via):
+        args = {via: package}
+        result = await search(**args, limit=100, strict=True)
+        assert result["results"]
+        for part in result["results"]:
+            assert self.body(part["package"]) == body
+            if pad:
+                assert "-EP" in part["package"]
+
+    async def test_soic_pad_without_body(self):
+        result = await search(package="SOIC-8-EP", strict=True, limit=100)
+        assert result["results"]
+        for part in result["results"]:
+            assert re.match(r"(?:SOIC|SOP|SO)-8(?:\D|$)", part["package"], re.IGNORECASE)
+            assert re.search(r"-EP(?=[(-]|$)", part["package"], re.IGNORECASE)
+
+    @pytest.mark.parametrize("package,remaining", [("SOIC-8(3.9x4.9)", None), ("SO-8-1", "mosfet")])
+    @pytest.mark.parametrize("via", ["package", "packages", "query"])
+    @pytest.mark.parametrize("strict", [False, True])
+    async def test_suffix_absent_from_catalog(self, package, remaining, via, strict):
+        args = {"query": f"{package} {remaining or ''}".strip()} if via == "query" else {
+            "query": remaining, via: [package] if via == "packages" else package,
+        }
+        result = await search(**args, strict=strict)
+        adjustments = result.get("parsed", {}).get("adjusted_filters", [])
+        if strict:
+            assert result["total"] == 0
+            assert not adjustments
+        else:
+            bare = package.split("(")[0] if "(" in package else "SO-8"
+            expected = await search(query=remaining, package=bare)
+            assert result["total"] == expected["total"] > 0
+            assert result["results"] == expected["results"]
+            assert len(adjustments) == 1
+            assert adjustments[0]["filter"].casefold() == f"package: {package}".casefold()
+            assert adjustments[0]["now"] == bare
+            assert f"no catalog package is {package}".casefold() in adjustments[0]["reason"].casefold()
+            assert "any body size" in adjustments[0]["reason"]
+            assert "check the body in each part's package" in adjustments[0]["reason"]
+
+    @pytest.mark.parametrize("package", ["QFN-24-EP(4x4)", "LQFP-48(7x7)", "SOIC-8(5x6)"])
+    async def test_catalog_match_in_another_subcategory_stays_exact(self, package):
+        expected = await search(package=package, strict=True)
+        assert expected["total"] > 0
+        normal = await search(subcategory_name="MOSFETs", package=package)
+        strict = await search(subcategory_name="MOSFETs", package=package, strict=True)
+        assert normal == strict
+        assert not normal.get("parsed", {}).get("adjusted_filters")
+
+    async def test_package_alternatives_only_fall_back_for_absent_suffix(self):
+        packages = ["SOIC-8(3.9x4.9)", "LQFP-48(7x7)"]
+        result = await search(packages=packages)
+        expected = await search(packages=["SOIC-8", "LQFP-48(7x7)"])
+        assert result["total"] == expected["total"]
+        assert result["results"] == expected["results"]
+        adjustments = result["parsed"]["adjusted_filters"]
+        assert len(adjustments) == 1
+        assert adjustments[0]["filter"] == f"package: {packages[0]}"
+
+
+class TestConnectorManufacturer:
+    queries = ["JST SH", "jst-ph 2 pin", "JST_SH4_RA", "JSTPH2_BATT",
+               "JST 2mm male connector", "JST XH 3p connector"]
+
+    @pytest.mark.parametrize("query", queries)
+    @pytest.mark.parametrize("sort_by,prefer_no_fee", [("stock", True), ("price", False)])
+    async def test_maker_ranking_keeps_population_and_pages(self, query, sort_by, prefer_no_fee, monkeypatch):
+        db = server.get_db()
+        original = db.search
+        calls = []
+
+        def capture(**kwargs):
+            calls.append(kwargs)
+            return original(**kwargs)
+
+        with monkeypatch.context() as m:
+            m.setattr(db, "search", capture)
+            result = await search(query, sort_by=sort_by, prefer_no_fee=prefer_no_fee, limit=100)
+        assert result["results"][0]["manufacturer"] == "JST"
+        args = {**calls[-1], "limit": 20000}
+        assert args["connector_manufacturer"] == "JST"
+        ranked = original(**args)
+        control = original(**{**args, "connector_manufacturer": None})
+        assert len(ranked["results"]) == ranked["total"] == control["total"] > 0
+        assert ranked["library_type_counts"] == control["library_type_counts"]
+        assert ranked["no_fee_available"] == control["no_fee_available"]
+        assert {p["lcsc"] for p in ranked["results"]} == {p["lcsc"] for p in control["results"]}
+        groups = [p["manufacturer"] != "JST" for p in ranked["results"]]
+        assert groups == sorted(groups) and not groups[0] and groups[-1]
+        series = args.get("connector_series")
+        if series:
+            for maker in (False, True):
+                series_groups = [p["specs"].get("Reference Series", "").strip().upper() != series
+                                 for p, group in zip(ranked["results"], groups) if group == maker]
+                assert series_groups == sorted(series_groups)
+        boundary = groups.index(True)
+        for limit in (1, 5, 20):
+            for offset in (0, max(0, boundary - 2), boundary, len(groups) - 3):
+                page = original(**{**args, "limit": limit, "offset": offset})
+                assert page["results"] == ranked["results"][offset:offset + limit]
+                assert page["total"] == ranked["total"]
+        assert result["results"] == ranked["results"][:100]
+
+        def unranked(**kwargs):
+            kwargs.pop("connector_manufacturer", None)
+            return original(**kwargs)
+
+        with monkeypatch.context() as m:
+            m.setattr(db, "search", unranked)
+            reply = await search(query, sort_by=sort_by, prefer_no_fee=prefer_no_fee, limit=100)
+        assert {k: v for k, v in result.items() if k != "results"} == {
+            k: v for k, v in reply.items() if k != "results"
+        }
+
+    @pytest.mark.parametrize("query", queries)
+    async def test_strict_retains_every_constraint(self, query, monkeypatch):
+        db = server.get_db()
+        original = db.search
+        makers = []
+
+        def unranked(**kwargs):
+            makers.append(kwargs.pop("connector_manufacturer", None))
+            return original(**kwargs)
+
+        ranked = await server.jlc_search(query=query, strict=True, limit=100)
+        with monkeypatch.context() as m:
+            m.setattr(db, "search", unranked)
+            control = await server.jlc_search(query=query, strict=True, limit=100)
+        assert makers == ["JST"]
+        assert {k: v for k, v in ranked.items() if k != "results"} == {
+            k: v for k, v in control.items() if k != "results"
+        }
+        assert {p["lcsc"] for p in ranked["results"]} == {p["lcsc"] for p in control["results"]}
+        assert not ranked.get("relaxed")
+
+    @pytest.mark.parametrize("query", ["Qwiic", "STEMMA QT", "easyC", "Grove", "adjustable connector"])
+    async def test_aliases_without_jst_get_no_maker_rank(self, query, monkeypatch):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+
+        # Brand specs are shared defaults; a preceding JST query must not mutate them.
+        parse_smart_query("JST " + query)
+        parsed = parse_smart_query(query)
+        assert parsed.connector_spec is None or parsed.connector_spec.manufacturer is None
+        db = server.get_db()
+        original = db.search
+        makers = []
+
+        def capture(**kwargs):
+            makers.append(kwargs.get("connector_manufacturer"))
+            return original(**kwargs)
+
+        with monkeypatch.context() as m:
+            m.setattr(db, "search", capture)
+            await search(query)
+        assert makers and not any(makers)
+
+    @pytest.mark.parametrize("manufacturer", ["JST", "DEALON"])
+    async def test_explicit_manufacturer_still_filters(self, manufacturer):
+        result = await search("JST SH", manufacturer=manufacturer)
+        assert result["total"] > 0
+        assert all(p["manufacturer"] == manufacturer for p in result["results"])
+        assert result["filters_applied"]["manufacturer"] == manufacturer
+
+
+class TestConnectorRequirements:
+    @pytest.mark.parametrize("query,attribute,pins,pitch,series", [
+        ("USB-C 16 pin connector", "Number of Contacts", 16, None, None),
+        ("USB-C 16 contacts connector", "Number of Contacts", 16, None, None),
+        ("JST PH 2 pin connector", "Number of Pins", 2, 2, "PH"),
+        ("qwiic connector", "Number of Pins", 4, 1, "SH"),
+        ("stemma qt connector", "Number of Pins", 4, 1, "SH"),
+        ("grove connector", "Number of Pins", 4, 2, "HY"),
+        ("FPC connector 0.5mm 24 pin", "Number of Contacts", 24, .5, None),
+        ("JST PH 2P connector", "Number of Pins", 2, 2, "PH"),
+        ("JST_SH4_RA", "Number of Pins", 4, 1, "SH"),
+        ("JST SH JST_SH4_RA connector", "Number of Pins", 4, 1, "SH"),
+        ("JST_PH2", "Number of Pins", 2, 2, "PH"),
+        ("JSTPH JSTPH2_BATT connector", "Number of Pins", 2, 2, "PH"),
+        ("JST_XH3", "Number of Pins", 3, 2.5, "XH"),
+        ("JST_SH_SM04B-SRSS-TB_1x04_P1.00mm_Horizontal", "Number of Pins", 4, 1, "SH"),
+        ("JST_SH_SM04B_1x04", "Number of Pins", 4, 1, "SH"),
+        ("JST-PH 2 pin", "Number of Pins", 2, 2, "PH"),
+        ("wire to board connector 2.5mm 2-pin", "Number of Pins", 2, 2.5, None),
+        ("pin header 2.54mm 8 pin", "Number of Pins", 8, 2.54, None),
+    ])
+    async def test_every_part_meets_pins_and_pitch(self, query, attribute, pins, pitch, series):
+        result = await search(query, limit=100)
+        assert result["total"] > 0
+        applied = {f["name"] for f in result["filters_applied"]["spec_filters"]}
+        assert attribute in applied
+        assert attribute in {f["name"] for f in result["parsed"]["spec_filters"]}
+        if pitch is not None:
+            assert "Pitch" in applied
+        for part in result["results"]:
+            assert re.fullmatch(rf"{pins}(?:P|[- ]?pins?)?", part["specs"][attribute], re.I), part
+            if pitch is not None:
+                assert parse_length_mm(part["specs"]["Pitch"]) == pytest.approx(pitch), part
+        if series:
+            from pcbparts_mcp.smart_parser import parse_smart_query
+            maker = parse_smart_query(query).connector_spec.manufacturer
+            groups = [(bool(maker) and p["manufacturer"] != maker,
+                       p["specs"].get("Reference Series", "").upper() != series) for p in result["results"]]
+            assert groups[0] == (False, False)
+            assert groups == sorted(groups)
+
+    async def test_pitch_spellings_are_equivalent(self):
+        results = [await search(f"wire to board connector {pitch} 2 pin")
+                   for pitch in ("2mm", "2.0mm", "2.00mm")]
+        assert all(r["total"] == results[0]["total"] > 0 for r in results)
+        assert all(r["results"] == results[0]["results"] for r in results)
+
+    async def test_explicit_filter_overrides_query_count(self):
+        result = await search("JST PH 2 pin connector", spec_filters=[
+            {"name": "Number of Pins", "op": "=", "value": "3P"},
+        ])
+        assert result["total"] > 0
+        for part in result["results"]:
+            assert part["specs"]["Number of Pins"] == "3P"
+            assert parse_length_mm(part["specs"]["Pitch"]) == 2
+
+    @pytest.mark.parametrize("series,pitch", [("PH", "2mm"), ("SH", "1mm")])
+    @pytest.mark.parametrize("sort_by,prefer_no_fee", [("stock", True), ("price", False)])
+    async def test_series_ranking_keeps_other_parts_and_pages_in_sql(self, series, pitch, sort_by, prefer_no_fee):
+        result = await search(f"{series} connector 4 pin", sort_by=sort_by, prefer_no_fee=prefer_no_fee)
+        db = server.get_db()
+        from pcbparts_mcp.search.spec_filter import ConnectorFilter
+        args = dict(subcategory_name="wire to board connector", spec_filters=[
+            ConnectorFilter("Number of Pins", "=", "4P"), ConnectorFilter("Pitch", "=", pitch),
+        ], sort_by=sort_by, prefer_no_fee=prefer_no_fee)
+        control = db.search(**args, limit=10000)
+        ranked = db.search(**args, connector_series=series, limit=10000)
+        assert result["total"] == ranked["total"] == control["total"] > 0
+        assert ranked["library_type_counts"] == control["library_type_counts"]
+        assert {p["lcsc"] for p in control["results"]} == {p["lcsc"] for p in ranked["results"]}
+        groups = [p["specs"].get("Reference Series", "").upper() != series for p in ranked["results"]]
+        assert groups == sorted(groups) and not groups[0] and groups[-1]
+        assert any(p["specs"].get("Reference Series", "-") == "-" for p in ranked["results"])
+        boundary = groups.index(True)
+        offset = max(0, boundary - 2)
+        page = db.search(**args, connector_series=series, limit=5, offset=offset)
+        assert page["results"] == ranked["results"][offset:offset + 5]
+        assert page["total"] == ranked["total"]
+        assert result["results"] == ranked["results"][:50]
+
+    async def test_sparse_attribute_is_disclosed(self):
+        result = await search("USB-C 16 pin connector 0.5mm")
+        assert result["total"] > 0
+        assert "Pitch" not in {f["name"] for f in result["filters_applied"]["spec_filters"]}
+        assert any("Pitch" in f["filter"] and f["now"] is None
+                   for f in result["parsed"]["adjusted_filters"])
+
+    @pytest.mark.parametrize("connector_columns", [False, True])
+    @pytest.mark.parametrize("name,values,wanted", [
+        ("Number of Pins", ["2", "2P", "2-pin", "20P", "2x20P", "2P+2P", "-"], {"2", "2P", "2-pin"}),
+        ("Number of Contacts", ["2", "2 contacts", "20", "2+2", "-"], {"2", "2 contacts"}),
+        ("Number of Positions", ["2", "2 positions", "2x20P", "-"], {"2", "2 positions"}),
+        ("Number of Positions or Pins", ["2", "2P", "2x20P", "-"], {"2", "2P"}),
+        ("Pitch", ["2", "2mm", "2.0mm", "2.00mm", "2.54mm", "20mm", "2mm~3mm", "-"],
+         {"2", "2mm", "2.0mm", "2.00mm"}),
+    ])
+    def test_numeric_sql_normalizes_whole_values_only(self, name, values, wanted, connector_columns):
+        import sqlite3
+        from pcbparts_mcp.search.query_builder import build_spec_filter_clauses
+        from pcbparts_mcp.search.spec_filter import CONNECTOR_FILTER_COLUMNS, ConnectorFilter, SpecFilter, connector_value
+        with sqlite3.connect(":memory:") as conn:
+            conn.create_function("connector_value", 2, connector_value)
+            column = CONNECTOR_FILTER_COLUMNS[name]
+            conn.execute(f"CREATE TABLE components (attributes TEXT, {column} REAL)")
+            conn.executemany("INSERT INTO components VALUES (?, ?)", [
+                (json.dumps([[name, v]]), connector_value(name, v)) for v in values
+            ])
+            clauses, params, post, ignored = build_spec_filter_clauses(
+                [ConnectorFilter(name, "=", "2")], connector_columns=connector_columns,
+            )
+            assert not post and not ignored
+            assert ("json_each" in " ".join(clauses)) is not connector_columns
+            rows = conn.execute("SELECT attributes FROM components WHERE 1=1 " + " ".join(clauses), params)
+            assert {json.loads(row[0])[0][1] for row in rows} == wanted
+            # Explicit values continue using their existing exact string comparison.
+            clauses, params, _, _ = build_spec_filter_clauses([SpecFilter(name, "=", "2")])
+            rows = conn.execute("SELECT attributes FROM components WHERE 1=1 " + " ".join(clauses), params)
+            assert [json.loads(row[0])[0][1] for row in rows] == ["2"]
+
+    @pytest.mark.parametrize("subcategory,name,share,applied", [
+        ("Wire To Board Connector", "Number of Pins", .899, False),
+        ("Wire To Board Connector", "Number of Pins", .9, True),
+        ("FFC, FPC (Flat Flexible) Connector Assemblies", "Number of Contacts", .91, True),
+        ("USB Connectors", "Number of Contacts", .849, False),
+        ("USB Connectors", "Number of Contacts", .85, True),
+    ])
+    def test_coverage_gate_and_real_attribute(self, subcategory, name, share, applied):
+        from types import SimpleNamespace
+        from pcbparts_mcp.search.spec_filter import ConnectorFilter
+        db = SimpleNamespace(attribute_share=lambda ids, names: share if name in names else 0,
+                             get_subcategory_name=lambda sid: subcategory)
+        filters, adjusted = server._fit_parsed_filters(db, [ConnectorFilter("Number of Pins", "=", "2P")], [1])
+        assert bool(filters) == applied
+        if applied:
+            assert filters[0].name == name
+        else:
+            assert adjusted[0]["now"] is None and "unverified" in adjusted[0]["reason"]
 
 
 def covers(value: str | None, target: float) -> bool:
@@ -637,3 +1643,113 @@ class TestAdditionalReviewFixes:
         assert all(p["model"].upper().startswith("FUSB302B") for p in result["results"])
         assert result["relaxed"]["dropped_part_type"] == "USB PD"
         assert result["parsed"]["adjusted_filters"]
+
+
+class TestShortenedOrderingCodes:
+    """#66: retain family hits, but identify and rank the complete requested code."""
+
+    @pytest.mark.parametrize("query,forbidden", [
+        ("LM1117-3.3", ("ADJ", "5.0")),
+        ("AMS1117-3.3", ("5.0",)),
+        ("MCP73831T-2ACI/OT", ("/MC",)),
+        ("ATMEGA328P-AU", ("ATMEGA328PB",)),
+        ("WS2812B-2020-V6", ("5050",)),
+    ])
+    async def test_every_result_has_the_right_match_group(self, query, forbidden):
+        result = await search(query, limit=100)
+        counts = result["mpn_matches"]
+        assert counts["part_number"] == query
+        assert sum(counts[t] for t in ("full", "same_suffix", "family")) == result["total"]
+        assert counts["full"] > 0 and counts["family"] > 0
+        ranks = {"full": 0, "same_suffix": 1, "family": 2}
+        groups = [ranks[p["mpn_match"]] for p in result["results"]]
+        assert groups == sorted(groups)
+        for part in result["results"]:
+            if any(text in part["model"].upper() for text in forbidden):
+                assert part["mpn_match"] == "family", part
+            if part["mpn_match"] == "full":
+                from pcbparts_mcp.search.mpn import mpn_key
+                assert mpn_key(part["model"]).startswith(mpn_key(query)), part
+            elif part["mpn_match"] == "same_suffix":
+                requested = re.split(r"[-/_\s]+", query.upper())
+                actual = re.split(r"[-/_\s]+", part["model"].upper())
+                assert actual[0] == requested[0] or (requested[0][-1].isdigit()
+                    and re.fullmatch(re.escape(requested[0]) + r"[A-Z]+", actual[0])), part
+                assert all(segment in actual[1:] for segment in requested[1:]), part
+        # The first page may not contain all the precise matches; counts cover the population.
+        small = await search(query, limit=1)
+        assert small["mpn_matches"] == counts
+        assert small["results"] == result["results"][:1]
+
+    @pytest.mark.parametrize("sort_by,prefer_no_fee", [("stock", True), ("price", True), ("price", False)])
+    def test_paging_and_existing_order_within_every_group(self, sort_by, prefer_no_fee):
+        db = server.get_db()
+        args = dict(query="LM1117", sort_by=sort_by, prefer_no_fee=prefer_no_fee)
+        control = db.search(**args, limit=1000)
+        ranked = db.search(**args, part_number="LM1117-3.3", limit=1000)
+        assert ranked["total"] == control["total"] > 0
+        assert ranked["library_type_counts"] == control["library_type_counts"]
+        assert {p["lcsc"] for p in ranked["results"]} == {p["lcsc"] for p in control["results"]}
+        groups = {p["lcsc"]: p["mpn_match"] for p in ranked["results"]}
+        expected = []
+        for group in ("full", "same_suffix", "family"):
+            expected.extend(p["lcsc"] for p in control["results"] if groups[p["lcsc"]] == group)
+        assert [p["lcsc"] for p in ranked["results"]] == expected
+        pages = []
+        for offset in range(0, ranked["total"], 7):
+            page = db.search(**args, part_number="LM1117-3.3", limit=7, offset=offset)
+            assert page["mpn_matches"] == ranked["mpn_matches"]
+            pages.extend(page["results"])
+        assert pages == ranked["results"]
+
+    @pytest.mark.parametrize("query", ["ESP32-S3-WROOM-1-N16R8", "LM358",
+                                      "STM32 microcontroller LQFP-48 128KB flash",
+                                      "8MHz SOT-416 crystal", "AEC-Q100 CAN transceiver", "M205 2A fuse"])
+    async def test_unshortened_and_descriptive_queries_have_no_match_metadata(self, query):
+        result = await search(query)
+        assert "mpn_matches" not in result
+        assert all("mpn_match" not in p for p in result["results"])
+
+    @pytest.mark.parametrize("mpn,token,group", [
+        ("LM1117IMPX-3.3/NOPB", "LM1117-3.3", "same_suffix"),
+        ("LM1117S-3.3", "LM1117-3.3", "same_suffix"),
+        ("LM1117S-3.30", "LM1117-3.3", "family"),
+        ("LM1117S-3.3V", "LM1117-3.3", "family"),
+        ("LM1117MPX-ADJ/NOPB", "LM1117-3.3", "family"),
+        ("ATMEGA328PB-AU", "ATMEGA328P-AU", "family"),
+        ("ATMEGA328P-AUR", "ATMEGA328P-AU", "full"),
+        ("MCP73831T-2ACI/OT-HXY", "MCP73831T-2ACI/OT", "full"),
+        ("MCP73831T-2ACI/MC", "MCP73831T-2ACI/OT", "family"),
+        ("mcp73831t_2aci ot-hxy", "MCP73831T-2ACI/OT", "full"),
+        ("WS2812B-V6-2020", "WS2812B-2020-V6", "same_suffix"),
+        ("WS2812B-5050-V6", "WS2812B-2020-V6", "family"),
+        ("LM1117S-3#3", "LM1117-3.3", "family"),
+    ])
+    def test_ordering_segments_are_preserved(self, mpn, token, group):
+        from pcbparts_mcp.search.mpn import MPN_MATCH_NAMES, mpn_match_rank
+        assert MPN_MATCH_NAMES[mpn_match_rank(mpn, token)] == group
+
+    def test_post_filtered_counts_and_paging(self, monkeypatch):
+        from pcbparts_mcp.search import engine
+        from pcbparts_mcp.search.spec_filter import SpecFilter
+        db = server.get_db()
+        args = dict(query="LM1117", spec_filters=[SpecFilter("Output Voltage", "=", "3.3V")])
+        control = db.search(**args, limit=1000)
+        ranked = db.search(**args, part_number="LM1117-3.3", limit=1000)
+        assert ranked["total"] == control["total"] > 0
+        for group in ("full", "same_suffix", "family"):
+            assert ranked["mpn_matches"][group] == sum(p["mpn_match"] == group for p in ranked["results"])
+        page = db.search(**args, part_number="LM1117-3.3", limit=3, offset=2)
+        assert page["results"] == ranked["results"][2:5]
+        assert page["mpn_matches"] == ranked["mpn_matches"]
+        monkeypatch.setattr(engine, "POST_FILTER_SCAN_ROWS", 2)
+        partial = db.search(**args, part_number="LM1117-3.3", limit=100)
+        assert partial["counts_complete"] is False
+        assert sum(partial["mpn_matches"][g] for g in ("full", "same_suffix", "family")) == partial["total"]
+
+    async def test_public_price_sort_uses_match_groups_first(self):
+        result = await search("LM1117-3.3", sort_by="price", prefer_no_fee=False, limit=100)
+        control = server.get_db().search(query="LM1117", part_number="LM1117-3.3",
+                                         sort_by="price", prefer_no_fee=False, limit=100)
+        assert result["results"] == control["results"]
+        assert result["mpn_matches"] == control["mpn_matches"]

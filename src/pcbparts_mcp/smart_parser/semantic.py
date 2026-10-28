@@ -5,6 +5,49 @@ from dataclasses import dataclass
 from typing import Literal
 
 
+_GATE_CUE = re.compile(
+    r'\b(?:gate(?:[-\s]+(?:drive|voltage))?|vgs(?!\s*\(\s*th\s*\)))\b',
+    re.IGNORECASE,
+)
+_LOGIC_DRIVE_CUE = re.compile(r'\b(?:gpio|mcu|microcontroller|driven\s+(?:by|from))\b', re.IGNORECASE)
+_LOGIC_CUE = re.compile(r'\blogic(?:[-\s]+level)?\b', re.IGNORECASE)
+_DRIVE_VOLTAGE = re.compile(r'(?<![\w.])\d+(?:\.\d+)?\s*V\b', re.IGNORECASE)
+_VOLTAGE_DRIVE_CUE = re.compile(r'(?<![\w.])\d+(?:\.\d+)?\s*V\s+(drive)\b', re.IGNORECASE)
+
+
+def extract_gate_drive(query: str) -> tuple[float | None, str]:
+    """Consume one MOSFET gate-drive voltage, preserving other voltages as Vds.
+
+    Explicit gate cues allow up to 20V; logic-type cues allow up to 5V.
+    Prefer explicit/nearby drive cues over general logic wording. The caller
+    establishes MOSFET context before invoking this.
+    """
+    voltages = list(_DRIVE_VOLTAGE.finditer(query))
+    gate_cues = [match.span() for match in _GATE_CUE.finditer(query)]
+    logic_drive_cues = [match.span() for match in _LOGIC_DRIVE_CUE.finditer(query)]
+    logic_drive_cues += [match.span(1) for match in _VOLTAGE_DRIVE_CUE.finditer(query)]
+    cues = gate_cues or logic_drive_cues or [match.span() for match in _LOGIC_CUE.finditer(query)]
+    ceiling = 20 if gate_cues else 5
+    voltages = [match for match in voltages if 0 < float(re.sub(r'\s*[vV]$', '', match[0])) <= ceiling]
+    if not voltages or not cues:
+        return None, query
+
+    def distance(voltage: re.Match) -> int:
+        return min(max(start - voltage.end(), voltage.start() - end, 0) for start, end in cues)
+
+    # If a cue lies directly between two voltages, the lower one is the drive.
+    voltage = min(voltages, key=lambda match: (distance(match), float(re.sub(r'\s*[vV]$', '', match[0]))))
+    drive = float(re.sub(r'\s*[vV]$', '', voltage[0]))
+    remaining = query
+    for start, end in sorted([voltage.span(), *gate_cues, *logic_drive_cues], reverse=True):
+        remaining = remaining[:start] + ' ' + remaining[end:]
+    # Keep "logic level" for the existing Vgs(th) semantic filter. Bare logic
+    # and the gate-drive wording have already been represented explicitly.
+    remaining = re.sub(r'\blogic\b(?![-\s]+level\b)', ' ', remaining, flags=re.IGNORECASE)
+    remaining = re.sub(r'\s+', ' ', remaining).strip()
+    return drive, remaining
+
+
 @dataclass
 class SemanticFilter:
     """A filter derived from semantic interpretation."""

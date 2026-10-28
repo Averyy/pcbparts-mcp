@@ -15,6 +15,7 @@ class ConnectorSpec:
     pitch: float | None = None  # in mm, e.g., 1.0, 2.0, 2.54
     pins: int | None = None  # number of pins
     fts_term: str | None = None  # term to add to FTS search
+    manufacturer: str | None = None  # ordering preference, not a filter
 
 
 # JST connector series with their pitch values (in mm)
@@ -46,6 +47,16 @@ _JST_SERIES_PATTERN = re.compile(
 
 # Standalone series pattern - matches series codes that appear with JST context
 _STANDALONE_SERIES = re.compile(r'\b(sh|gh|zh|ph|xh|vh|eh|pa)\b', re.IGNORECASE)
+
+# Footprint tokens: JST_SH4_RA, JSTPH2_BATT, and KiCad's
+# JST_SH_SM04B-SRSS-TB_1x04_P1.00mm_Horizontal. The suffix is footprint metadata,
+# not searchable text. Orientation has no existing structured parser/filter.
+_JST_FOOTPRINT_PATTERN = re.compile(
+    r'\bjst[\s_-]*(sh|sr|gh|zh|pa|ph|eh|xh|vh|vl|bm)'
+    r'(?:(\d{1,3})(?=_|\b)(?!\.)|_(?:SM|BM)(\d{2})B(?=[_-]|\b))'
+    r'(?:[_-][^\s]+)*',
+    re.IGNORECASE,
+)
 
 
 # Brand aliases that map to specific JST connector specs
@@ -86,6 +97,22 @@ def extract_connector_series(query: str) -> tuple[ConnectorSpec | None, str]:
     query_lower = query.lower()
     remaining = query
 
+    # Prefer footprint pin counts even when the value already names the series.
+    footprint = _JST_FOOTPRINT_PATTERN.search(query)
+    if footprint:
+        series = footprint[1].upper()
+        pins = int(footprint[2] or footprint[3])
+        if 1 <= pins <= 200:
+            remaining = _JST_FOOTPRINT_PATTERN.sub(
+                lambda m: ' ' if m[1].upper() == series else m[0], query,
+            )
+            remaining = _JST_SERIES_PATTERN.sub(
+                lambda m: ' ' if (m[1] or m[2]).upper() == series else m[0], remaining,
+            )
+            remaining = re.sub(r'\s+', ' ', remaining).strip()
+            return ConnectorSpec(series=series, pitch=JST_SERIES_PITCH[series.lower()],
+                                 pins=pins, fts_term=series), remaining
+
     # Check brand aliases first (Qwiic, STEMMA QT, easyC)
     for brand, spec in BRAND_CONNECTOR_SPECS.items():
         if brand in query_lower:
@@ -123,6 +150,13 @@ def extract_connector_series(query: str) -> tuple[ConnectorSpec | None, str]:
             return ConnectorSpec(series=series, pitch=pitch, fts_term=series), remaining
 
     return None, query
+
+
+def extract_connector_manufacturer(query: str) -> str | None:
+    """Prefer JST only when named explicitly, including footprint tokens."""
+    if re.search(r'\bjst\b', query, re.IGNORECASE) or _JST_FOOTPRINT_PATTERN.search(query):
+        return "JST"
+    return None
 
 
 def get_pitch_for_series(series: str) -> float | None:

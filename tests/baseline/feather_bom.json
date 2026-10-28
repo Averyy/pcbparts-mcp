@@ -1,0 +1,209 @@
+[
+  {
+    "ref": "C1",
+    "value": "10uF",
+    "footprint": "0805",
+    "word": "capacitor",
+    "subcategories": [
+      "Multilayer Ceramic Capacitors MLCC - SMD/SMT"
+    ]
+  },
+  {
+    "ref": "C10",
+    "value": "1uF",
+    "footprint": "0603",
+    "word": "capacitor",
+    "subcategories": [
+      "Multilayer Ceramic Capacitors MLCC - SMD/SMT"
+    ]
+  },
+  {
+    "ref": "CHG",
+    "value": "orange LED",
+    "footprint": "0603",
+    "word": "LED",
+    "subcategories": [
+      "LED Indication - Discrete"
+    ]
+  },
+  {
+    "ref": "CONN1",
+    "value": "JST SH",
+    "footprint": "JST_SH4_RA",
+    "word": "connector",
+    "subcategories": [
+      "Wire To Board Connector"
+    ],
+    "pins": 4,
+    "pitch": 1
+  },
+  {
+    "ref": "D3",
+    "value": "red LED",
+    "footprint": "0603",
+    "word": "diode",
+    "subcategories": [
+      "LED Indication - Discrete"
+    ]
+  },
+  {
+    "ref": "D4",
+    "value": "MBR540",
+    "footprint": "SOD-123",
+    "word": "diode",
+    "subcategories": [
+      "Schottky Diodes"
+    ],
+    "known_gap": "MBR540 SOD-123 query has no catalog match; outside #72"
+  },
+  {
+    "ref": "IC1",
+    "value": "LC709203F",
+    "footprint": "WLCSP9",
+    "word": "IC",
+    "subcategories": [
+      "Battery Management"
+    ],
+    "known_gap": "LC709203F query has no catalog match; outside #72"
+  },
+  {
+    "ref": "JP1",
+    "value": "1x16 header",
+    "footprint": "1X16",
+    "word": "header",
+    "subcategories": [
+      "Pin Headers"
+    ]
+  },
+  {
+    "ref": "JP3",
+    "value": "1x12 header",
+    "footprint": "1X12",
+    "word": "header",
+    "subcategories": [
+      "Pin Headers"
+    ]
+  },
+  {
+    "ref": "LED1",
+    "value": "WS2812B",
+    "footprint": "SK6805_1515",
+    "word": "LED",
+    "subcategories": [
+      "LED Indication - Discrete",
+      "RGB LEDs(Built-in IC)"
+    ]
+  },
+  {
+    "ref": "Q3",
+    "value": "DMG3415U",
+    "footprint": "SOT23-R",
+    "word": "mosfet",
+    "subcategories": [
+      "MOSFETs"
+    ]
+  },
+  {
+    "ref": "R1",
+    "value": "5.1kohm",
+    "footprint": "0603",
+    "word": "resistor",
+    "subcategories": [
+      "Chip Resistor - Surface Mount"
+    ]
+  },
+  {
+    "ref": "R12",
+    "value": "100kohm",
+    "footprint": "0603",
+    "word": "resistor",
+    "subcategories": [
+      "Chip Resistor - Surface Mount"
+    ]
+  },
+  {
+    "ref": "R17",
+    "value": "1Mohm",
+    "footprint": "0603",
+    "word": "resistor",
+    "subcategories": [
+      "Chip Resistor - Surface Mount"
+    ]
+  },
+  {
+    "ref": "R3",
+    "value": "10kohm",
+    "footprint": "RESPACK",
+    "word": "resistor",
+    "subcategories": [
+      "Resistor Networks, Arrays"
+    ],
+    "known_gap": "RESPACK footprint does not infer a resistor network; outside #72"
+  },
+  {
+    "ref": "SW1",
+    "value": "KMR2",
+    "footprint": "BTN_KMR2",
+    "word": "switch",
+    "subcategories": [
+      "Tactile Switches"
+    ],
+    "known_gap": "KMR2 BTN_KMR2 footprint text has no match; outside #72"
+  },
+  {
+    "ref": "U1",
+    "value": "ESP32-S3-MINI-1",
+    "footprint": "QFN60_ESP32-S2-MINI-1_EXP",
+    "word": "IC",
+    "subcategories": [
+      "WiFi Modules"
+    ]
+  },
+  {
+    "ref": "U2",
+    "value": "AP2112/RT9080-3.3",
+    "footprint": "SOT-23-5",
+    "word": "IC",
+    "subcategories": [
+      "Voltage Regulators - Linear, Low Drop Out (LDO) Regulators"
+    ]
+  },
+  {
+    "ref": "U3",
+    "value": "MCP73831",
+    "footprint": "SOT-23-5",
+    "word": "IC",
+    "subcategories": [
+      "Battery Management"
+    ]
+  },
+  {
+    "ref": "U4",
+    "value": "BME280",
+    "footprint": "BME280",
+    "word": "IC",
+    "subcategories": [
+      "Temperature and Humidity Sensor"
+    ]
+  },
+  {
+    "ref": "X1",
+    "value": "JSTPH",
+    "footprint": "JSTPH2_BATT",
+    "word": "connector",
+    "subcategories": [
+      "Wire To Board Connector"
+    ],
+    "pins": 2,
+    "pitch": 2
+  },
+  {
+    "ref": "X3",
+    "value": "USB C",
+    "footprint": "USB-C",
+    "word": "connector",
+    "subcategories": [
+      "USB Connectors"
+    ]
+  }
+]

@@ -452,19 +452,19 @@ class TestConnectorParserIntegration:
     """Tests for connector series integration in the main parser.
 
     Connector info is stored in connector_spec (not spec_filters) and the
-    series name is injected into remaining_text for FTS search.
+    series supplies a ranking preference, while pitch and count become structured filters.
     """
 
     def test_jst_sh_4pin_adds_connector_spec(self):
-        """JST SH 4-pin should populate connector_spec and inject SH into FTS."""
+        """JST SH supplies pitch/count filters and a series preference, without restrictive FTS."""
         from pcbparts_mcp.smart_parser.parser import parse_smart_query
         result = parse_smart_query("jst sh 4-pin")
         assert result.subcategory == "wire to board connector"
         assert result.connector_spec is not None
         assert result.connector_spec.series == "SH"
         assert result.connector_spec.pitch == 1.0
-        # FTS includes SH (case-insensitive — already present in "jst sh 4-pin")
-        assert "sh" in result.remaining_text.lower()
+        assert result.remaining_text == ""
+        assert {f.name: f.value for f in result.spec_filters} == {"Pitch": "1mm", "Number of Pins": "4P"}
 
     def test_qwiic_expands_to_jst_sh(self):
         """Qwiic should expand to JST SH with pitch and pin info."""
@@ -475,8 +475,8 @@ class TestConnectorParserIntegration:
         assert result.connector_spec.series == "SH"
         assert result.connector_spec.pitch == 1.0
         assert result.connector_spec.pins == 4
-        # FTS includes SH (injected by parser since "qwiic" doesn't contain "sh")
-        assert "sh" in result.remaining_text.lower()
+        assert result.remaining_text == ""
+        assert {f.name: f.value for f in result.spec_filters} == {"Pitch": "1mm", "Number of Pins": "4P"}
 
     def test_easyc_same_as_qwiic(self):
         """easyC should expand the same as Qwiic."""

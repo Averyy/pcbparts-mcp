@@ -144,6 +144,8 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # ==========================================================================
     "usb connector": "usb connectors",
     "usb-c": "usb connectors",
+    "usb c": "usb connectors",
+    "usbc": "usb connectors",
     "usb-a": "usb connectors",
     "usb a": "usb connectors",
     "usb-b": "usb connectors",
@@ -153,6 +155,8 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "mini-usb": "usb connectors",
     "usb type-c": "usb connectors",
     "type-c": "usb connectors",
+    "type c": "usb connectors",
+    "typec": "usb connectors",
     "type-c connector": "usb connectors",
     # Pin headers (DB: "Pin Headers", "Female Headers")
     "pin header": "pin headers",
@@ -435,6 +439,7 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # FUSES
     # ==========================================================================
     "fuse": "disposable fuses",
+    "fuses": "disposable fuses",
     "resettable fuse": "resettable fuses",
     "ptc fuse": "resettable fuses",
     "polyfuse": "resettable fuses",

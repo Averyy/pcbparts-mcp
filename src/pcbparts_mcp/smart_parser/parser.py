@@ -1,18 +1,18 @@
 """Main parser for smart natural language queries."""
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
-from ..search.spec_filter import SpecFilter
+from ..search.spec_filter import ConnectorFilter, FuseFilter, SpecFilter
 from ..subcategory_aliases import SUBCATEGORY_GROUPS
 from .packages import extract_package, extract_package_choices
 from .values import ExtractedValue, extract_values, normalize_value_notation
 from .models import extract_model_number
-from .types import extract_component_type, extract_mounting_type
-from .semantic import extract_semantic_descriptors, remove_noise_words, CONNECTOR_NOISE_WORDS
-from .mapping import map_value_to_spec, infer_subcategory_from_values
-from .connectors import extract_connector_series, ConnectorSpec
+from .types import PD_ROLE_PATTERN, extract_component_type, extract_mounting_type
+from .semantic import extract_gate_drive, extract_semantic_descriptors, remove_noise_words, CONNECTOR_NOISE_WORDS
+from .mapping import FUSE_ATTRIBUTE_MAP, map_value_to_spec, infer_subcategory_from_values
+from .connectors import extract_connector_series, extract_connector_manufacturer, ConnectorSpec
 
 
 @dataclass
@@ -23,6 +23,8 @@ class ParsedQuery:
     subcategory: str | None = None
     subcategories: list[str] | None = None  # a generic word's group ("inductor": four subcategories)
     spec_filters: list[Any] = field(default_factory=list)  # List of SpecFilter
+    preferred_specs: list[SpecFilter] = field(default_factory=list)  # Sparse PD attributes rank in SQL
+    gate_drive_v: float | None = None
     package: str | None = None
     packages: list[str] = field(default_factory=list)
     model_number: str | None = None
@@ -31,7 +33,7 @@ class ParsedQuery:
     detected: dict[str, Any] = field(default_factory=dict)
 
 
-def parse_smart_query(query: str, *, strict: bool = False) -> ParsedQuery:
+def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str | None = None) -> ParsedQuery:
     """Parse a natural language query into structured filters.
 
     This is a complete rewrite of the original parser with:
@@ -49,6 +51,7 @@ def parse_smart_query(query: str, *, strict: bool = False) -> ParsedQuery:
 
     Args:
         query: The natural language search query
+        subcategory_hint: Explicit searched subcategory, used for fuse ratings and gate drive
 
     Returns:
         ParsedQuery with structured filters
@@ -56,6 +59,11 @@ def parse_smart_query(query: str, *, strict: bool = False) -> ParsedQuery:
     result = ParsedQuery(original=query, remaining_text=query)
     detected: dict[str, Any] = {}
     remaining = query.replace("µ", "u").replace("μ", "u").replace("Ω", "ohm")
+
+    # LED12 is a BOM reference here, not an IC model. Normalize before model
+    # extraction, but only in the LED/diode conflict covered by this rule.
+    if re.search(r'\bdiodes?\b', remaining, re.IGNORECASE):
+        remaining = re.sub(r'\bLED\d+\b', 'LED', remaining, flags=re.IGNORECASE)
 
     # Step 1: Extract model number (if present, it becomes the primary search term)
     model, remaining = extract_model_number(remaining)
@@ -104,15 +112,6 @@ def parse_smart_query(query: str, *, strict: bool = False) -> ParsedQuery:
             "pins": connector_spec.pins,
         }
         detected["subcategory"] = result.subcategory
-        # NOTE: Don't add pitch/pins as spec filters for connectors - most connectors in the
-        # database have empty attributes dicts, so spec filters will match nothing. The pitch
-        # and pin info is stored in connector_spec and used for FTS search instead.
-        # if connector_spec.pitch:
-        #     result.spec_filters.append(SpecFilter("Pitch", "=", f"{connector_spec.pitch}mm"))
-        #     detected.setdefault("semantic", []).append(f"pitch={connector_spec.pitch}mm (from series)")
-        # if connector_spec.pins:
-        #     result.spec_filters.append(SpecFilter("Number of Pins", "=", f"{connector_spec.pins}P"))
-        #     detected.setdefault("semantic", []).append(f"pins={connector_spec.pins} (from brand)")
 
     # Step 3: Extract component type (subcategory)
     memory_is_spec = bool(model) or bool(re.search(r"\b(module|microcontroller|mcu)\b", remaining, re.IGNORECASE))
@@ -174,6 +173,23 @@ def parse_smart_query(query: str, *, strict: bool = False) -> ParsedQuery:
 
     # Step 3b: Regulator specifics: buck/boost, and voltages marked input or output
     subcat_now = (result.subcategory or "").lower()
+    pd_sink = False
+    if subcat_now == "usb pd":
+        pd_sink = bool(re.search(r'\b(?:sinks?|triggers?|receivers?)\b', remaining, re.IGNORECASE))
+        pd_source = bool(re.search(r'\bsources?\b', remaining, re.IGNORECASE))
+        dual_role = re.compile(r'\b(?:dual[-\s]+role|drp)\b', re.IGNORECASE)
+        if dual_role.search(remaining):
+            pd_sink = pd_source = True
+            remaining = dual_role.sub(' ', remaining)
+        if strict and pd_sink and pd_source:
+            # Repeated Type filters are ORed by the search builder, so they cannot
+            # honestly enforce both roles. Report this unsupported strict constraint.
+            detected.setdefault("unsupported_constraints", []).append("PD sink and source together")
+        for requested, kind in ((pd_sink, "Power Receiver Controller"), (pd_source, "Power Supply Controller")):
+            if requested:
+                target = result.spec_filters if strict else result.preferred_specs
+                target.append(SpecFilter("Type", "=", kind))
+        remaining = PD_ROLE_PATTERN.sub(' ', remaining)
     if subcat_now == "dc-dc converters":
         remaining = _add_topology(query, remaining, result, detected)
     if subcat_now in ("dc-dc converters", _LDO):
@@ -197,8 +213,16 @@ def parse_smart_query(query: str, *, strict: bool = False) -> ParsedQuery:
     # quantity and >= operator (Iq is not load current; Vf is not reverse voltage).
     remaining = _add_named_comparisons(remaining, result, detected)
 
+    if (subcategory_hint or result.subcategory or "").lower() == "mosfets":
+        result.gate_drive_v, remaining = extract_gate_drive(remaining)
+        if result.gate_drive_v is not None:
+            detected["gate_drive_v"] = result.gate_drive_v
+
     # Step 4: Extract numeric values
-    values, remaining = extract_values(remaining)
+    connector_context = bool(result.connector_spec) or any(
+        word in subcat_now for word in ("connector", "header", "terminal block", "ffc cable")
+    )
+    values, remaining = extract_values(remaining, connector_context=connector_context and not strict)
     if values:
         detected["values"] = [{"raw": v.raw, "type": v.unit_type, "normalized": v.normalized} for v in values]
 
@@ -303,8 +327,19 @@ def parse_smart_query(query: str, *, strict: bool = False) -> ParsedQuery:
         "led", "leds", "light emitting diodes",
     }
     subcat_lower = (result.subcategory or "").lower()
+    if connector_context and not strict and result.connector_spec:
+        # Explicit query values take precedence over the series/ecosystem defaults.
+        if result.connector_spec.pitch and not any(v.unit_type == "pitch" for v in values):
+            result.spec_filters.append(ConnectorFilter("Pitch", "=", f"{result.connector_spec.pitch:g}mm"))
+        if result.connector_spec.pins and not any(v.unit_type in ("pin_count", "position_count") for v in values):
+            result.spec_filters.append(ConnectorFilter("Number of Pins", "=", f"{result.connector_spec.pins}P"))
 
     for value in values:
+        if pd_sink and value.unit_type == "voltage":
+            # This is the negotiated PD output, not the IC's own supply rail.
+            target = result.spec_filters if strict else result.preferred_specs
+            target.append(SpecFilter("Output Voltage", "=", value.normalized))
+            continue
         # Special handling: dimensions become package filter for inductors/LEDs
         # e.g., "4x4mm" -> package="SMD,4x4mm" instead of Dimensions="4x4mm"
         if value.unit_type == "dimensions":
@@ -317,16 +352,23 @@ def parse_smart_query(query: str, *, strict: bool = False) -> ParsedQuery:
                     detected.setdefault("unsupported_constraints", []).append(value.raw)
                 continue  # Don't add as spec filter
 
-        # Special handling: skip spec filters for connectors
-        # Most connectors in the database have empty attributes dicts, so spec filters fail
-        # Pin count, pitch, etc. should be used in FTS search instead
-        if result.subcategory and 'connector' in result.subcategory.lower():
+        # Count/pitch constraints are fitted to the searched subcategory's populated attributes
+        # by jlc_search. Keep strict mode and other connector specs on their existing path.
+        if connector_context and not strict and value.unit_type in ("pin_count", "position_count", "pitch"):
+            spec_name, _ = map_value_to_spec(value, result.subcategory, matched_keyword)
+            result.spec_filters.append(ConnectorFilter(spec_name, "=", value.normalized))
+            continue
+        if 'connector' in subcat_lower:
             if strict:
                 detected.setdefault("unsupported_constraints", []).append(value.raw)
-            continue  # Don't add spec filters for connectors
+            continue
 
-        spec_name, operator = map_value_to_spec(value, subcategory, matched_keyword)
-        result.spec_filters.append(SpecFilter(spec_name, operator, value.normalized))
+        # Explicit fuse subcategories override the generic keyword's electrical fields.
+        fuse_subcategory = (subcategory_hint or result.subcategory or "").lower()
+        is_fuse_rating = fuse_subcategory in FUSE_ATTRIBUTE_MAP and value.unit_type in ("current", "voltage")
+        spec_name, operator = map_value_to_spec(value, fuse_subcategory if is_fuse_rating else subcategory, matched_keyword)
+        filter_type = FuseFilter if is_fuse_rating else SpecFilter
+        result.spec_filters.append(filter_type(spec_name, operator, value.normalized))
 
     # Add semantic filters
     for sf in semantic_filters:
@@ -428,15 +470,15 @@ def parse_smart_query(query: str, *, strict: bool = False) -> ParsedQuery:
         result.remaining_text = f"{model} {remaining}".strip() if strict else model
     elif remaining and len(remaining) >= 2:
         result.remaining_text = remaining
-    elif result.spec_filters or subcategory:
+    elif result.spec_filters or subcategory or result.package or result.packages or result.gate_drive_v is not None:
         # Structured filters exist, FTS may not be needed
         result.remaining_text = ""
     else:
         result.remaining_text = query  # Fall back to original
 
-    # Step 8b: Add connector series term to FTS for better filtering
-    # This helps filter by series name in part descriptions/model numbers
-    if result.connector_spec and result.connector_spec.fts_term:
+    # Strict mode retains its existing text constraints. Otherwise the series ranks in SQL
+    # instead of excluding compatible parts that have no recorded Reference Series.
+    if strict and result.connector_spec and result.connector_spec.fts_term:
         fts_term = result.connector_spec.fts_term
         if result.remaining_text:
             # Add series term if not already present
@@ -444,6 +486,15 @@ def parse_smart_query(query: str, *, strict: bool = False) -> ParsedQuery:
                 result.remaining_text = f"{fts_term} {result.remaining_text}"
         else:
             result.remaining_text = fts_term
+
+    if not strict and result.connector_spec:
+        result.remaining_text = re.sub(r"\b(?:jst|connectors?)\b", " ", result.remaining_text, flags=re.IGNORECASE)
+        result.remaining_text = re.sub(r"\s+", " ", result.remaining_text).strip()
+
+    # Attach ordering after parsing so a maker alone changes no text or filters.
+    manufacturer = extract_connector_manufacturer(query)
+    if manufacturer:
+        result.connector_spec = replace(result.connector_spec or ConnectorSpec(), manufacturer=manufacturer)
 
     result.detected = detected
 

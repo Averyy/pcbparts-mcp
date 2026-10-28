@@ -7,7 +7,7 @@ import re
 PACKAGE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     # Imperial chip sizes (passives) - EIA standard format LLWW in 0.01"
     # e.g., 0603 = 0.06" x 0.03" = 1.6mm x 0.8mm
-    (re.compile(r'\b(01005|0201|0402|0603|0805|1206|1210|1812|2010|2512)\b'), 'imperial'),
+    (re.compile(r'\b(01005|0201|0402|0603|0805|1206|1210|1812|2010|2512|2920)\b'), 'imperial'),
 
     # SMD metric dimensions (crystals, oscillators, LEDs) - format LLWW in 0.1mm
     # e.g., 3215 = 3.2mm x 1.5mm, 5032 = 5.0mm x 3.2mm
@@ -33,26 +33,26 @@ PACKAGE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r'\b(TO-?92(?:S|L)?|TO-?220(?:F|FP|AB)?(?:-\d+)?|TO-?252(?:-\d+)?|TO-?263(?:-\d+)?|TO-?247(?:-\d+)?|TO-?251|TO-?3P(?:F)?|DPAK|D2PAK|D3PAK)\b', re.IGNORECASE), 'to'),
 
     # QFN/DFN packages with optional size
-    (re.compile(r'\b((?:V)?QFN-?\d+(?:-EP)?(?:\([^)]+\))?|DFN-?\d+(?:-EP)?(?:\([^)]+\))?|WQFN-?\d+|TQFN-?\d+|UQFN-?\d+)\b', re.IGNORECASE), 'qfn'),
+    (re.compile(r'\b((?:[LWVTU]?QFN|[UV]FQFPN|HVQFN|DFN)-?\d+(?:-EP)?\b(?:\([^)]+\))?)', re.IGNORECASE), 'qfn'),
 
     # QFP/LQFP/TQFP packages
-    (re.compile(r'\b((?:L|T|H|PQ)?QFP-?\d+(?:\([^)]+\))?)\b', re.IGNORECASE), 'qfp'),
+    (re.compile(r'\b([LTHP]?QFP-?\d+(?:-EP)?\b(?:\([^)]+\))?)', re.IGNORECASE), 'qfp'),
 
     # BGA packages
-    (re.compile(r'\b((?:FC|W|T|M|U|P|F)?BGA-?\d+(?:\([^)]+\))?)\b', re.IGNORECASE), 'bga'),
+    (re.compile(r'\b((?:FC|W|T|M|U|P|F)?BGA-?\d+\b(?:\([^)]+\))?)', re.IGNORECASE), 'bga'),
 
     # CSP packages (Chip Scale Package)
     # Includes WLCSP (Wafer-Level CSP), LFCSP (Lead Frame CSP), UCSP (Ultra CSP), bare CSP, etc.
-    (re.compile(r'\b((?:WL|LF|U|FC|V)?CSP-?\d+(?:-EP)?(?:\([^)]+\))?)\b', re.IGNORECASE), 'csp'),
+    (re.compile(r'\b((?:WL|LF|U|FC|V)?CSP-?\d+(?:-EP)?\b(?:\([^)]+\))?)', re.IGNORECASE), 'csp'),
 
     # DIP/SIP packages
-    (re.compile(r'\b((?:P|S|SK|C)?DIP-?\d+(?:\([^)]+\))?|SIP-?\d+)\b', re.IGNORECASE), 'dip'),
+    (re.compile(r'\b((?:P|S|SK|C)?DIP-?\d+\b(?:\([^)]+\))?|SIP-?\d+\b)', re.IGNORECASE), 'dip'),
 
     # SOP/SOIC/SO/SSOP/TSSOP/MSOP packages (order matters - TSSOP before SOP, SO last)
     (re.compile(r'\b(TSSOP-?\d+|SSOP-?\d+|MSOP-?\d+|QSOP-?\d+|HTSSOP-?\d+|VSSOP-?\d+)\b', re.IGNORECASE), 'tssop'),
-    (re.compile(r'\b(SOP-?\d+(?:-\d+)?(?:\([^)]+\))?|SOIC-?\d+(?:-\d+)?(?:\([^)]+\))?)\b', re.IGNORECASE), 'sop'),
+    (re.compile(r'\b((?:SOP|SOIC)-?\d+(?:-EP|-\d+(?:\.\d+)?(?:mil|mm)?)?\b(?:\([^)]+\))?)', re.IGNORECASE), 'sop'),
     # SO-8 without P/IC suffix (must come after SOP/SOIC to avoid partial matches)
-    (re.compile(r'\b(SO-?\d+)\b', re.IGNORECASE), 'so'),
+    (re.compile(r'\b(SO-?\d+(?:-EP|-\d+(?:\.\d+)?(?:mil|mm)?)?\b(?:\([^)]+\))?)', re.IGNORECASE), 'so'),
 
     # Module packages (SMD-XX, LGA-XX) - NOT bare "MODULE" which is a common word
     # SMA/SMB/SMC are diode packages, but SMA is also a connector type

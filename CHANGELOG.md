@@ -4,6 +4,38 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.7.2 (2026-10-28)
+
+### Fixed
+
+- **Part numbers spelled differently**: `jlc_get_part(mpn=...)` finds the part when the spelling differs from JLCPCB's. Of 971 part numbers from the reference boards that found nothing, about 150 now find the part:
+  - dashes, spaces, underscores or slashes: `ERJ-2RKF2702X` → `ERJ2RKF2702X`, `104031-0811` → `1040310811`
+  - another reel or packing code from the same manufacturer: `AD8630ARZ-REEL7` → `AD8630ARZ`, `TPS562208DDCT` → `TPS562208DDCR`, `RC0603FR-1015KL` → `RC0603FR-0715KL`
+  - ordering names: `VL53L0X` → `VL53L0CXV0DH/1`, `SCD-41` → `SCD41-D-R2`
+  - BOM notes and alternatives: `TL074 OP AMP`, `AMC1301 or AMC1302`, `MCU-STM32F407VGT6`
+
+  Packing codes match only within the same manufacturer, and a different temperature or performance grade is never substituted. Lookups that already found parts return the same parts.
+- `NRF24L01+` no longer includes the non-plus NRF24L01.
+- **Full part numbers in a search:** `jlc_search` used to search only the family of a part number it shortened, by stock, so `LM1117-3.3` listed adjustable and 5V parts in its top five, `AMS1117-3.3` put AMS1117-5.0 second, and `BC817-40` came back with BC817-16 and -25. Now the parts with that full part number come first, then parts that keep all of its suffixes (`LM1117IMPX-3.3/NOPB`), then the rest of the family. The total and the family results are unchanged.
+- **Connectors:** pin or contact count and pitch in a query are now filters. `USB-C 16 pin connector` returned 6-contact parts, `JST PH 2 pin` returned 1.25mm 4-pin parts, and `qwiic connector` returned a 3.96mm VH part; now every result has the requested count and pitch. Qwiic, STEMMA QT, easyC and Grove supply their pitch and pin count. A series (PH, SH, XH) ranks matching parts first instead of hiding the half of connectors that don't list a series, and a query that says JST ranks JST's own parts first, with compatible parts from other makers after them. Where a part type rarely lists the count or pitch, the value is left out and reported in `parsed.adjusted_filters`.
+- **Packages:** a full package keeps its body size and exposed pad. `package="QFN-24-EP(4x4)"` returned 3.5x5.5mm bodies first, because only `QFN-24` reached the VQFN/WQFN/TQFN spellings; now every result is a 4x4 body with an exposed pad. `4x4mm`, `4.0x4.0` and a rotated `5.5x3.5` spell the same body. If no part in the catalog uses the requested body, the family is matched and `parsed.adjusted_filters` says so. A bare family name (`QFN-32`) matches any body, also covers ST's UFQFPN and NXP's HVQFN spellings, and says so in `parsed.adjusted_filters`; `STM32G0 QFN-32` found nothing and now finds the UFQFPN-32 parts.
+- **Fuses:** the current in a fuse search was dropped: fuses were matched on `Hold Current`, which only resettable fuses list, so `15A fuse` returned 3.15A and 500mA fuses first. One-time fuses now match the exact current rating (a 20A fuse doesn't protect a 15A circuit; `500mA` matches 0.5A) and a voltage rating at least the one asked for, using each fuse type's own attribute names. PTC, polyfuse, polyswitch or resettable anywhere in the query selects resettable fuses, which keep matching Hold Current at or above the value. A part-number search that moves to another fuse type uses that type's attributes, and `filters_applied` names the type each filter applies to.
+  - A fuse search in a package that only resettable fuses come in (1812, 1210, 2920) searches resettable fuses, and `parsed.adjusted_filters` says so. `1812 fuse` and `1A 1812 fuse` found nothing; `2920` is now read as a package.
+  - `fuses` means the same as `fuse`. `1A 1812 fuses` returned ferrite beads.
+- **Words copied from a BOM line:** `red LED 0603 diode` and `LED1 0603 diode` returned 1N4148 switching diodes; LED now wins over diode, and the red color filter applies. `USB C`, `USBC`, `Type C` and `typec` select Type-C connectors (`USB C` returned a USB-UART chip first, `Type C receptacle` nothing). JST footprint names such as `JST_SH4_RA` and `JSTPH2_BATT` supply the series, pitch and pin count.
+- **USB PD controllers:** `USB-C PD controller sink 20V 3A` returned USB-C connectors, and `PD sink` found nothing. PD with controller, sink, source or trigger now means a USB PD controller, even next to USB-C. Sink and trigger queries rank receiver controllers first and source queries supply controllers; a sink voltage ranks parts that can negotiate it (`20V` matches `5V、9V、12V、15V、20V`) instead of filtering the chip's supply voltage. Most PD parts don't list their role, so these rank rather than filter, and `parsed.adjusted_filters` says so.
+- **Logic-level MOSFETs:** in `logic level n-channel mosfet 3.3V 5A`, the 3.3V became a `Vds >= 3.3V` filter, and nothing checked how the parts behave at a 3.3V gate drive. A voltage next to a gate cue is now the gate drive: up to 5V with logic level, GPIO or MCU, up to 20V with gate or Vgs. Other voltages stay drain voltage, so `logic level mosfet 30V` still means Vds >= 30V. Parts that list RDS(on) at or below that gate voltage come first; the rest stay in the results, since many good parts list RDS(on) only at 4.5V or 10V.
+
+### Added
+
+- `mpn_match` on each result and `mpn_matches` counts on `jlc_search` replies whose part number was shortened.
+- `rds_on_at_drive` on MOSFET results when the query gives a gate drive: the listed RDS(on) at the highest gate voltage at or below it, or null when RDS(on) is only listed at higher gate voltages.
+- `match` and `matched_mpn` on MPN replies that aren't exact matches. `related` replies (full-text matches) add a `note` naming the part types returned: `SSD1306` returns an OLED display and power inductors.
+
+### Self-hosting
+
+Rebuild `data/components.db` (`.venv/bin/python scripts/build_database.py`) for fast separator-insensitive MPN lookups, connector filters and MOSFET gate-drive ranking. An older database gives the same answers more slowly and logs a warning.
+
 ## 0.7.1 (2026-10-27)
 
 ### Fixed

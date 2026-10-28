@@ -90,7 +90,7 @@ def normalize_value_notation(query: str) -> str:
     return re.sub(r"(?<![\w-])(\d+)[vV](\d+)(?![\w-])", r"\1.\2V", query)
 
 
-def extract_values(query: str) -> tuple[list[ExtractedValue], str]:
+def extract_values(query: str, *, connector_context: bool = False) -> tuple[list[ExtractedValue], str]:
     """Extract all numeric values from query, return (values, remaining_query).
 
     Args:
@@ -279,7 +279,10 @@ def extract_values(query: str) -> tuple[list[ExtractedValue], str]:
         )))
 
     # Pin count (normalize to "XP" format to match database values like "8P", "16P")
-    for match in _PINS.finditer(query):
+    pin_matches = list(_PINS.finditer(query))
+    if connector_context:
+        pin_matches.extend(re.finditer(r'\b(\d+)\s*-?\s*contacts?\b', query, re.IGNORECASE))
+    for match in pin_matches:
         pins = int(match.group(1))
         extractions.append((match.start(), match.end(), ExtractedValue(
             raw=match.group(0),
@@ -326,7 +329,7 @@ def extract_values(query: str) -> tuple[list[ExtractedValue], str]:
             continue
         pitch_val = float(match.group(1))
         # Only extract if it's a known connector pitch value
-        if pitch_val in COMMON_PITCHES:
+        if pitch_val in COMMON_PITCHES or (connector_context and pitch_val > 0):
             extractions.append((match.start(), match.end(), ExtractedValue(
                 raw=match.group(0),
                 value=pitch_val,
