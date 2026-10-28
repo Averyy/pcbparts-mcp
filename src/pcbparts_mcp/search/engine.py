@@ -2,28 +2,37 @@
 
 import json
 import logging
+import math
 import re
 import sqlite3
 from typing import Any, Literal
 
 from ..config import DEFAULT_MIN_STOCK
+from ..mosfet import rds_gate_min_json, rds_on_at_drive
 from ..alternatives import SPEC_PARSERS, DIMENSION_SPEC_FIELDS
 from ..parsers import (
-    RESISTANCE_MATCH_TOLERANCE, parse_dimensions_from_package, parse_esp32_module_memory, parse_resistance,
+    RESISTANCE_MATCH_TOLERANCE, parse_dimensions_from_package, parse_esp32_module_memory, parse_resistance, parse_voltage,
 )
 from ..subcategory_aliases import (
     resolve_subcategory_name as _resolve_subcategory_name,
     find_similar_subcategories as _find_similar_subcategories,
 )
-from .spec_filter import RANGE_SPECS, SpecFilter, get_attribute_names
+from .spec_filter import (
+    CONNECTOR_COLUMN_NAMES, FUSE_ATTRIBUTE_MAP, RANGE_SPECS, FuseFilter, SpecFilter,
+    connector_value, get_attribute_names,
+)
 from .resolvers import expand_query_synonyms, expand_package, resolve_manufacturer
-from .mpn import normalize_mpn, looks_like_mpn
+from .mpn import MPN_MATCH_NAMES, mpn_match_rank, normalize_mpn, looks_like_mpn
 from .query_builder import (
     build_fts_clause,
     build_subcategory_clause,
     build_library_type_clause,
     build_stock_clause,
     build_package_clause,
+    index_package_names,
+    package_needs_catalog,
+    package_has_constraints,
+    resolve_package_constraints,
     build_manufacturer_clause,
     build_mounting_type_clause,
     build_spec_filter_clauses,
@@ -42,9 +51,13 @@ def _passes_post_filters(
     part_specs: dict[str, str],
     package: str | None,
     post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]],
+    subcategory_id: int | None = None,
 ) -> bool:
     """Whether a part's specs meet every filter SQL couldn't apply."""
     for spec_filter, attr_names_set, parser, target_value in post_filter_metadata:
+        if (isinstance(spec_filter, FuseFilter) and spec_filter.subcategory_id is not None
+                and spec_filter.subcategory_id != subcategory_id):
+            continue
         if not parser or spec_filter.operator not in (">=", "<=", ">", "<", "=") or target_value is None:
             continue
 
@@ -125,6 +138,23 @@ def _range_passes(value: str, parser: Any, operator: str, target: float) -> bool
     return False
 
 
+def _spec_preference_rank(attributes: str | None, name: str, target: str) -> int:
+    """Rank listed PD role/output matches first, keeping parts with missing attributes."""
+    for attr_name, value in json.loads(attributes or "[]"):
+        if attr_name != name:
+            continue
+        if name == "Output Voltage":
+            voltage = parse_voltage(target)
+            if voltage is not None:
+                for item in value.split("、"):
+                    output = parse_voltage(item) if "~" not in item else None
+                    if output is not None and math.isclose(output, voltage, rel_tol=1e-9, abs_tol=1e-12):
+                        return 0
+        elif target.casefold() in (item.strip().casefold() for item in value.split("、")):
+            return 0
+    return 1
+
+
 class SearchEngine:
     """Search engine for parametric component queries.
 
@@ -152,11 +182,58 @@ class SearchEngine:
             category_to_subcategories: Pre-built category_id -> [subcategory_ids] mapping
         """
         self._conn = conn
+        self._conn.create_function("mpn_match_rank", 2, mpn_match_rank, deterministic=True)
+        self._conn.create_function("connector_value", 2, connector_value, deterministic=True)
+        self._conn.create_function("spec_preference_rank", 3, _spec_preference_rank, deterministic=True)
+        self._conn.create_function("rds_gate_min", 1, rds_gate_min_json, deterministic=True)
+        self._package_names: dict[str, list[str]] | None = None
+        self._fuse_package_types: dict[str, set[int]] = {}
+        columns = {
+            row[1] for row in conn.execute("PRAGMA table_info(components)")
+        }
+        self._connector_columns = CONNECTOR_COLUMN_NAMES <= columns
+        self._mosfet_gate_column = "rds_gate_min_v" in columns
         self._subcategories = subcategories
         self._categories = categories
         self._subcategory_name_to_id = subcategory_name_to_id
         self._category_name_to_id = category_name_to_id
         self._category_to_subcategories = category_to_subcategories or {}
+
+    def _get_package_names(self) -> dict[str, list[str]]:
+        if self._package_names is None:
+            self._package_names = index_package_names([
+                row[0] for row in self._conn.execute("SELECT DISTINCT package FROM components WHERE package IS NOT NULL")
+            ])
+        return self._package_names
+
+    def resolve_package_constraints(self, packages: list[str]) -> tuple[list[str], list[dict[str, str]]]:
+        """Resolve unavailable suffixes using the catalog across all subcategories."""
+        if not any(package_has_constraints(pkg) for pkg in packages):
+            return packages, []
+        return resolve_package_constraints(packages, self._get_package_names())
+
+    def packages_are_resettable_fuses(self, packages: list[str]) -> bool:
+        """Whether every requested package has resettable but no disposable fuses."""
+        resettable = self.resolve_subcategory_name("Resettable Fuses")
+        disposable = self.resolve_subcategory_name("Disposable fuses")
+        if not packages or not resettable or not disposable:
+            return False
+        for package in packages:
+            key = package.upper()
+            if key not in self._fuse_package_types:
+                expanded = [package, *expand_package(package)]
+                catalog = self._get_package_names() if any(package_needs_catalog(p) for p in expanded) else None
+                clause, params = build_package_clause(expanded, catalog)
+                self._fuse_package_types[key] = {
+                    row[0] for row in self._conn.execute(
+                        "SELECT DISTINCT subcategory_id FROM components "
+                        "WHERE subcategory_id IN (?, ?) AND stock >= ? " + clause,
+                        [resettable, disposable, DEFAULT_MIN_STOCK, *params],
+                    )
+                }
+            if self._fuse_package_types[key] != {resettable}:
+                return False
+        return True
 
     def resolve_subcategory_name(self, name: str) -> int | None:
         """Resolve subcategory name to ID. Case-insensitive, supports partial match.
@@ -223,6 +300,11 @@ class SearchEngine:
         limit: int,
         offset: int,
         subcategory_ids: list[int] | None = None,
+        part_number: str | None = None,
+        connector_series: str | None = None,
+        connector_manufacturer: str | None = None,
+        preferred_specs: list[SpecFilter] | None = None,
+        gate_drive_v: float | None = None,
     ) -> dict[str, Any]:
         """Execute a search query with pre-resolved parameters.
 
@@ -289,7 +371,9 @@ class SearchEngine:
             count_params.extend(stock_params)
 
         # Package filter
-        pkg_sql, pkg_params = build_package_clause(expanded_packages)
+        if self._package_names is None and any(package_needs_catalog(pkg) for pkg in expanded_packages):
+            self._get_package_names()
+        pkg_sql, pkg_params = build_package_clause(expanded_packages, self._package_names)
         if pkg_sql:
             sql_parts.append(pkg_sql)
             count_parts.append(pkg_sql)
@@ -318,7 +402,9 @@ class SearchEngine:
         post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]] = []
         ignored_filters: list[dict[str, str]] = []
         if spec_filters:
-            spec_sqls, spec_params_list, post_filter_metadata, ignored_filters = build_spec_filter_clauses(spec_filters)
+            spec_sqls, spec_params_list, post_filter_metadata, ignored_filters = build_spec_filter_clauses(
+                spec_filters, connector_columns=self._connector_columns,
+            )
             for spec_sql in spec_sqls:
                 sql_parts.append(spec_sql)
                 count_parts.append(spec_sql)
@@ -327,6 +413,37 @@ class SearchEngine:
 
         # Sorting
         sort_clause = build_sort_clause(sort_by, prefer_no_fee, bool(query))
+        ranks = []
+        if part_number:
+            ranks.append("mpn_match_rank(mpn, ?)")
+            params.append(part_number)
+        if gate_drive_v is not None:
+            gate = "rds_gate_min_v" if self._mosfet_gate_column else "rds_gate_min(components.attributes)"
+            ranks.append(f"CASE WHEN {gate} <= ? THEN 0 ELSE 1 END")
+            params.append(gate_drive_v)
+            sort_clause += ", lcsc"
+        if connector_manufacturer:
+            ranks.append("CASE WHEN manufacturer = ? THEN 0 ELSE 1 END")
+            params.append(connector_manufacturer)
+            sort_clause += ", lcsc"
+        if connector_series:
+            if self._connector_columns:
+                ranks.append("CASE WHEN upper(trim(reference_series)) = upper(?) THEN 0 ELSE 1 END")
+            else:
+                ranks.append(
+                    "CASE WHEN EXISTS (SELECT 1 FROM json_each(components.attributes) j "
+                    "WHERE json_extract(j.value, '$[0]') = 'Reference Series' "
+                    "AND upper(trim(json_extract(j.value, '$[1]'))) = upper(?)) THEN 0 ELSE 1 END"
+                )
+            params.append(connector_series)
+            sort_clause += ", lcsc"  # Stable page boundaries when stock/price ties.
+        for preference in preferred_specs or []:
+            ranks.append("spec_preference_rank(components.attributes, ?, ?)")
+            params.extend([preference.name, preference.value])
+        if preferred_specs:
+            sort_clause += ", lcsc"  # Keep ranked pages stable across stock/price ties.
+        if ranks:
+            sort_clause = sort_clause.replace("ORDER BY ", "ORDER BY " + ", ".join(ranks) + ", ", 1)
         sql_parts.append(sort_clause)
 
         base_params = list(params)
@@ -339,6 +456,12 @@ class SearchEngine:
         # Combined count + library type distribution query
         lib_count_sql = count_sql.replace("SELECT COUNT(*)", "SELECT library_type, COUNT(*)")
         lib_count_sql += " GROUP BY library_type"
+        mpn_counts = {"part_number": part_number, **dict.fromkeys(MPN_MATCH_NAMES, 0)} if part_number else None
+        if part_number and not post_filter_metadata:
+            lib_count_sql = count_sql.replace(
+                "SELECT COUNT(*)", "SELECT library_type, COUNT(*), mpn_match_rank(mpn, ?) AS mpn_rank"
+            ) + " GROUP BY library_type, mpn_rank"
+            count_params.insert(0, part_number)
 
         # Defense-in-depth: list-param caps at the tool boundary keep real queries far from
         # SQLite's limits, but if a statement is still rejected (e.g. too many bound
@@ -363,18 +486,27 @@ class SearchEngine:
             lib_name = lib_type_map.get(row[0], row[0])
             count = row[1]
             if lib_name in library_type_counts:
-                library_type_counts[lib_name] = count
+                library_type_counts[lib_name] += count
+            if mpn_counts is not None and not post_filter_metadata:
+                mpn_counts[MPN_MATCH_NAMES[row[2]]] += count
             total += count
 
         if post_filter_metadata:
             # SQL can't apply these, so every candidate is checked: the page comes from the parts
             # that pass, and total counts them (the SQL count also had the ones that fail)
             results, library_type_counts, complete = self._post_filtered_page(
-                sql_parts, base_params, post_filter_metadata, limit, offset
+                sql_parts, base_params, post_filter_metadata, limit, offset, mpn_counts
             )
             total = sum(library_type_counts.values())
         else:
             results = [row_to_dict(row, self._subcategories) for row in rows]
+
+        if part_number:
+            for part in results:
+                part["mpn_match"] = MPN_MATCH_NAMES[mpn_match_rank(part["model"], part_number)]
+        if gate_drive_v is not None:
+            for part in results:
+                part["rds_on_at_drive"] = rds_on_at_drive(part["specs"].get("RDS(on)", ""), gate_drive_v)
 
         no_fee_available = library_type_counts["basic"] > 0 or library_type_counts["preferred"] > 0
 
@@ -387,6 +519,8 @@ class SearchEngine:
         }
         if post_filter_metadata and not complete:
             result["counts_complete"] = False
+        if mpn_counts is not None:
+            result["mpn_matches"] = mpn_counts
         return result
 
     def _post_filtered_page(
@@ -396,18 +530,19 @@ class SearchEngine:
         post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]],
         limit: int,
         offset: int,
+        mpn_counts: dict[str, Any] | None = None,
     ) -> tuple[list[dict[str, Any]], dict[str, int], bool]:
         """Check SQL matches against post-filters. Returns the page, library counts of passing
         matches, and whether every match was checked (at most POST_FILTER_SCAN_ROWS are)."""
         scan_sql = " ".join(sql_parts).replace(
-            "SELECT * FROM components", "SELECT rowid, attributes, package, mpn, library_type FROM components", 1
+            "SELECT * FROM components", "SELECT rowid, attributes, package, mpn, library_type, subcategory_id FROM components", 1
         ) + " LIMIT ?"
         passed = 0
         library_counts = {"basic": 0, "preferred": 0, "extended": 0}
         library_names = {"b": "basic", "p": "preferred", "e": "extended"}
         scanned = 0
         page_ids: list[int] = []
-        for rowid, attributes, package, mpn, library in self._conn.execute(scan_sql, [*params, POST_FILTER_SCAN_ROWS]):
+        for rowid, attributes, package, mpn, library, subcategory in self._conn.execute(scan_sql, [*params, POST_FILTER_SCAN_ROWS]):
             scanned += 1
             try:
                 specs = {name: value for name, value in json.loads(attributes)} if attributes else {}
@@ -421,8 +556,10 @@ class SearchEngine:
                     specs["Module Flash"] = f"{flash}MB"
                 if psram is not None:
                     specs["Module PSRAM"] = f"{psram}MB"
-            if _passes_post_filters(specs, package, post_filter_metadata):
+            if _passes_post_filters(specs, package, post_filter_metadata, subcategory):
                 passed += 1
+                if mpn_counts is not None:
+                    mpn_counts[MPN_MATCH_NAMES[mpn_match_rank(mpn, mpn_counts["part_number"])]] += 1
                 name = library_names.get(library, library)
                 if name in library_counts:
                     library_counts[name] += 1
@@ -458,6 +595,11 @@ class SearchEngine:
         limit: int = 50,
         offset: int = 0,
         subcategory_ids: list[int] | None = None,
+        part_number: str | None = None,
+        connector_series: str | None = None,
+        connector_manufacturer: str | None = None,
+        preferred_specs: list[SpecFilter] | None = None,
+        gate_drive_v: float | None = None,
     ) -> dict[str, Any]:
         """Search components with parametric filtering.
 
@@ -480,6 +622,9 @@ class SearchEngine:
             limit: Max results
             offset: Pagination offset
             subcategory_ids: Several subcategories (OR), used when no subcategory_id is given
+            part_number: Full token shortened by the parser; rank and label MPN matches
+            preferred_specs: Ordered equality preferences for sparse PD role/output attributes
+            gate_drive_v: Rank listed RDS(on) at or below this gate drive first; retain unknowns
 
         Returns:
             Search results with metadata
@@ -560,6 +705,27 @@ class SearchEngine:
         elif package:
             expanded_packages = expand_package(package)
 
+        searched = [resolved_subcategory_id] if resolved_subcategory_id else subcategory_ids
+        if searched and all(self._subcategories.get(i, {}).get("name", "").lower() in FUSE_ATTRIBUTE_MAP for i in searched):
+            # A fuse's literal 2016 package must survive the crystal SMD2016 expansion.
+            expanded_packages = list(dict.fromkeys([*expanded_packages, *(packages or ([package] if package else []))]))
+
+        # Automatic fuse ratings follow the searched family, including cross-family retries.
+        # In a broad search each mapping applies only to its own subcategory.
+        if spec_filters and any(isinstance(f, FuseFilter) for f in spec_filters):
+            fuse_ids = [i for i in (searched or self._subcategories)
+                        if self._subcategories[i]["name"].lower() in FUSE_ATTRIBUTE_MAP]
+            mapped_filters = []
+            for f in spec_filters:
+                if not isinstance(f, FuseFilter) or not fuse_ids:
+                    mapped_filters.append(f)
+                    continue
+                for i in fuse_ids:
+                    mapped_filters.append(f.for_subcategory(
+                        self._subcategories[i]["name"], None if searched and len(searched) == 1 else i,
+                    ))
+            spec_filters = mapped_filters
+
         # Execute the search
         search_result = self._execute_search(
             query=query,
@@ -577,6 +743,11 @@ class SearchEngine:
             limit=limit,
             offset=offset,
             subcategory_ids=None if resolved_subcategory_id else subcategory_ids,
+            part_number=part_number,
+            connector_series=connector_series,
+            connector_manufacturer=connector_manufacturer,
+            preferred_specs=preferred_specs,
+            gate_drive_v=gate_drive_v,
         )
 
         results = search_result["results"]
@@ -606,6 +777,11 @@ class SearchEngine:
                     limit=limit,
                     offset=offset,
                     subcategory_ids=None if resolved_subcategory_id else subcategory_ids,
+                    part_number=part_number,
+                    connector_series=connector_series,
+                    connector_manufacturer=connector_manufacturer,
+                    preferred_specs=preferred_specs,
+                    gate_drive_v=gate_drive_v,
                 )
                 if retry_result["total"] > 0:
                     # Found results with normalized query
@@ -648,6 +824,8 @@ class SearchEngine:
         }
         if "counts_complete" in search_result:
             response["counts_complete"] = search_result["counts_complete"]
+        if "mpn_matches" in search_result:
+            response["mpn_matches"] = search_result["mpn_matches"]
         if search_result["ignored_filters"]:
             response["ignored_filters"] = search_result["ignored_filters"]
 

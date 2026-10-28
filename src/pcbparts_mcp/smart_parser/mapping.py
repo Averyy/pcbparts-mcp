@@ -1,6 +1,7 @@
 """Category-aware attribute mapping for smart query parsing."""
 
 from .values import ExtractedValue
+from ..search.spec_filter import FUSE_ATTRIBUTE_MAP
 
 
 # Maps (category_keyword, value_type) -> spec_name, or (spec_name, operator) where the default
@@ -211,10 +212,8 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str | tuple[str, str]]] = {
     },
 
     # Fuses/PTCs
-    "fuse": {
-        "voltage": "Voltage - Max",
-        "current": "Hold Current",
-    },
+    "fuse": FUSE_ATTRIBUTE_MAP["disposable fuses"],
+    **FUSE_ATTRIBUTE_MAP,
     "ptc": {
         "voltage": "Voltage - Max",
         "current": "Hold Current",
@@ -372,7 +371,11 @@ def map_value_to_spec(
     # Category-specific mapping: from the matched keyword, then from the subcategory (this handles
     # keywords without an entry, like "buck converter", and USB connectors whose subcategory is
     # set from the package pattern)
-    for key in (matched_keyword, component_type):
+    # A known fuse subcategory takes precedence over the generic "fuse" keyword.
+    keys = (matched_keyword, component_type)
+    if (component_type or "").lower() in FUSE_ATTRIBUTE_MAP:
+        keys = (component_type, matched_keyword)
+    for key in keys:
         if not key or key.lower() not in CATEGORY_ATTRIBUTE_MAP:
             continue
         cat_map = CATEGORY_ATTRIBUTE_MAP[key.lower()]

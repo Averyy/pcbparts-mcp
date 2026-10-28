@@ -1,19 +1,25 @@
 """SQL query building functions for component search."""
 
 import re
+from decimal import Decimal
+from functools import lru_cache
 from typing import Any
 
 from ..alternatives import DIMENSION_SPEC_FIELDS, SPEC_PARSERS
-from ..parsers import RESISTANCE_MATCH_TOLERANCE, parse_memory_size, parse_resistance
+from ..parsers import RESISTANCE_MATCH_TOLERANCE, parse_current, parse_memory_size, parse_resistance, parse_voltage
 from .spec_filter import (
+    CONNECTOR_FILTER_COLUMNS,
     LIST_SPECS,
     RANGE_SPECS,
+    ConnectorFilter,
+    FuseFilter,
     SpecFilter,
     SPEC_TO_COLUMN,
     _escape_like,
     generate_value_patterns,
     like_text,
     get_attribute_names,
+    connector_value,
 )
 
 
@@ -134,91 +140,191 @@ def build_stock_clause(min_stock: int) -> tuple[str, list[int]]:
     return "", []
 
 
+_PACKAGE_ALIAS_FAMILIES = (
+    (re.compile(r'^([TLPH]?QFP)-?(\d+)(.*)$'), ('QFP', 'TQFP', 'LQFP', 'PQFP', 'HQFP')),
+    # Catalog spellings for quad flat no-lead packages, including ST's QFPN names.
+    (re.compile(r'^([LWVTU]?QFN|[UV]FQFPN|HVQFN)-?(\d+)(.*)$'),
+     ('QFN', 'LQFN', 'WQFN', 'VQFN', 'TQFN', 'UQFN', 'UFQFPN', 'VFQFPN', 'HVQFN')),
+    (re.compile(r'^(SOIC|SO|SOP)-?(\d+)(.*)$'), ('SOIC', 'SOP', 'SO')),
+)
+_PACKAGE_PARTS = re.compile(r'^([A-Z]+)-?(\d+)(.*)$')
+_BODY_SIZE = re.compile(r'(\d+(?:\.\d+)?)\s*(?:MM)?\s*[X×]\s*(\d+(?:\.\d+)?)\s*(?:MM)?')
+_EXPOSED_PAD = re.compile(r'-EP(?=[(-]|$)')
+
+
 def _expand_package_aliases(pkg: str) -> list[str]:
-    """Expand a package name to include common JLCPCB variations.
-
-    JLCPCB uses specific naming conventions that differ from common names:
-    - TQFP-44 → QFP-44 (JLCPCB doesn't use "T" prefix)
-    - QFN-56 → LQFN-56, WQFN-56, VQFN-56 (various QFN prefixes)
-    - UFQFPN-48 → UFQFPN-48 (same)
-
-    Returns list of package patterns to search for.
-    """
+    """Expand family spellings while retaining every requested suffix constraint."""
     pkg_upper = pkg.upper()
-    variants = [pkg_upper]
-
-    # QFP variants: TQFP/LQFP/PQFP → also try bare QFP
-    qfp_match = re.match(r'^([TLP])?QFP-?(\d+)(.*)$', pkg_upper)
-    if qfp_match:
-        prefix, pins, suffix = qfp_match.groups()
-        # Add bare QFP-XX for TQFP/LQFP/PQFP
-        if prefix:
-            variants.append(f"QFP-{pins}{suffix or ''}")
-        # Also try with other prefixes
-        for p in ['', 'T', 'L', 'P', 'H']:
-            var = f"{p}QFP-{pins}" if p else f"QFP-{pins}"
-            if var not in variants:
-                variants.append(var)
-
-    # QFN variants: try LQFN, WQFN, VQFN, TQFN, bare QFN
-    qfn_match = re.match(r'^([LWVTU])?QFN-?(\d+)(.*)$', pkg_upper)
-    if qfn_match:
-        prefix, pins, suffix = qfn_match.groups()
-        # Try all common QFN prefixes
-        for p in ['', 'L', 'W', 'V', 'T', 'U']:
-            var = f"{p}QFN-{pins}" if p else f"QFN-{pins}"
-            if var not in variants:
-                variants.append(var)
-
-    # UFQFPN is its own thing, keep as-is
-    # SOIC/SOP/SO variants
-    soic_match = re.match(r'^(SOIC|SO|SOP)-?(\d+)(.*)$', pkg_upper)
-    if soic_match:
-        _, pins, suffix = soic_match.groups()
-        for p in ['SOIC-', 'SOP-', 'SO-']:
-            var = f"{p}{pins}"
-            if var not in variants:
-                variants.append(var)
-
-    return variants
+    for pattern, names in _PACKAGE_ALIAS_FAMILIES:
+        if match := pattern.fullmatch(pkg_upper):
+            _, pins, suffix = match.groups()
+            return list(dict.fromkeys([pkg_upper, *(f'{name}-{pins}{suffix}' for name in names)]))
+    return [pkg_upper]
 
 
-def build_package_clause(packages: list[str]) -> tuple[str, list[str]]:
+def package_family_adjustments(packages: list[str]) -> list[dict[str, str]]:
+    """Explain the intentional widening of bare alias families, including explicit args."""
+    adjustments = []
+    for pkg in dict.fromkeys(packages):
+        for pattern, _ in _PACKAGE_ALIAS_FAMILIES:
+            match = pattern.fullmatch(pkg.upper())
+            if match and not match[3]:
+                adjustments.append({
+                    'filter': f'package: {pkg}',
+                    'now': ', '.join(_expand_package_aliases(pkg)),
+                    'reason': 'bare package family includes variants with any body size; '
+                              f'give the full package (e.g. {match[1]}-{match[2]}-EP(5x5)) for an exact match',
+                })
+                break
+    return adjustments
+
+
+@lru_cache(maxsize=4096)
+def _normalized_package_suffix(package: str) -> tuple[str, str] | None:
+    match = _PACKAGE_PARTS.fullmatch(package.upper())
+    if not match:
+        return None
+
+    def body(match: re.Match) -> str:
+        a, b = sorted(Decimal(value) for value in match.groups())
+        return f'{a.normalize():f}X{b.normalize():f}'
+
+    return match[2], _BODY_SIZE.sub(body, match[3]).strip()
+
+
+def package_suffix_matches(candidate: str | None, requested: str) -> bool:
+    """Compare size/pad/other suffix constraints on catalog spellings of one family."""
+    actual = _normalized_package_suffix(candidate or '')
+    wanted = _normalized_package_suffix(requested)
+    if actual is None or wanted is None or actual[0] != wanted[0]:
+        return False
+    actual_suffix, wanted_suffix = actual[1], wanted[1]
+    if _EXPOSED_PAD.search(wanted_suffix):
+        if not _EXPOSED_PAD.search(actual_suffix):
+            return False
+        # An EP-only request permits any body size, but still requires the pad.
+        if wanted_suffix == '-EP':
+            return True
+    else:
+        # An unrequested pad is allowed; an explicitly requested pad is mandatory.
+        actual_suffix = _EXPOSED_PAD.sub('', actual_suffix)
+    return actual_suffix == wanted_suffix
+
+
+def package_has_constraints(pkg: str) -> bool:
+    parts = _PACKAGE_PARTS.fullmatch(pkg.upper())
+    return bool(parts and parts[3] and (
+        len(_expand_package_aliases(pkg)) > 1 or _BODY_SIZE.search(parts[3]) or _EXPOSED_PAD.search(parts[3])
+    ))
+
+
+def package_needs_catalog(pkg: str) -> bool:
+    return package_has_constraints(pkg) or len(_expand_package_aliases(pkg)) > 1
+
+
+def index_package_names(names: list[str]) -> dict[str, list[str]]:
+    """Index the catalog's spellings by family and pin count for exact SQL lookups."""
+    indexed: dict[str, list[str]] = {}
+    for name in names:
+        if match := _PACKAGE_PARTS.fullmatch(name.upper()):
+            indexed.setdefault(f'{match[1]}-{match[2]}', []).append(name)
+    return indexed
+
+
+def matching_package_names(pkg: str, package_names: dict[str, list[str]]) -> list[str]:
+    """Find exact suffix matches across every catalog spelling of a family and pin count."""
+    prefixes = [f'{m[1]}-{m[2]}' for alias in _expand_package_aliases(pkg)
+                if (m := _PACKAGE_PARTS.fullmatch(alias))]
+    return list(dict.fromkeys(
+        name for prefix in prefixes for name in package_names.get(prefix, [])
+        if package_suffix_matches(name, pkg)
+    ))
+
+
+def resolve_package_constraints(
+    packages: list[str], package_names: dict[str, list[str]],
+) -> tuple[list[str], list[dict[str, str]]]:
+    """Fall back only when the requested suffix has no spelling anywhere in the catalog."""
+    resolved = []
+    adjustments = []
+    for pkg in dict.fromkeys(packages):
+        if package_has_constraints(pkg) and not matching_package_names(pkg, package_names):
+            parts = _PACKAGE_PARTS.fullmatch(pkg.upper())
+            bare = f'{parts[1]}-{parts[2]}'
+            resolved.append(bare)
+            adjustments.append({
+                'filter': f'package: {pkg}',
+                'now': bare,
+                'reason': f'no catalog package is {pkg}, so the {bare} family of any body size '
+                          "was matched; check the body in each part's package",
+            })
+        else:
+            resolved.append(pkg)
+    return resolved, adjustments
+
+
+def build_package_clause(
+    packages: list[str], package_names: dict[str, list[str]] | None = None,
+) -> tuple[str, list[str]]:
     """Build package filter clause.
 
     Args:
         packages: List of package names to match (OR logic)
+        package_names: Catalog spellings indexed by family and pins, for constrained packages
 
     Returns:
         Tuple of (sql_clause, params)
 
     Notes:
-        Uses prefix matching (LIKE 'pkg%') to handle parenthetical variations.
+        Bare packages use prefix matching (LIKE 'pkg%') for parenthetical variations.
         E.g., "DO-214AC" matches both "DO-214AC" and "DO-214AC(SMA)".
         Also expands package aliases (TQFP-44 → QFP-44, QFN-56 → LQFN-56, etc.)
     """
     if packages:
-        # Expand packages to include common variations
-        expanded_packages = []
-        for pkg in packages:
-            expanded_packages.extend(_expand_package_aliases(pkg))
-        # Dedupe while preserving order
-        seen = set()
-        unique_packages = []
-        for pkg in expanded_packages:
-            if pkg not in seen:
-                seen.add(pkg)
-                unique_packages.append(pkg)
-
-        # Use LIKE with prefix matching to handle parenthetical variations
-        # e.g., "DO-214AC" should match "DO-214AC(SMA)"
         or_conditions = []
         params = []
-        for pkg in unique_packages:
-            # Escape LIKE special characters
-            escaped_pkg = pkg.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
-            or_conditions.append("package LIKE ? ESCAPE '\\'")
-            params.append(f"{escaped_pkg}%")
+        unconstrained_aliases = []
+        family_aliases = []
+        constrained_packages = []
+        for pkg in dict.fromkeys(packages):
+            aliases = _expand_package_aliases(pkg)
+            if package_has_constraints(pkg):
+                constrained_packages.append((pkg, aliases))
+            elif len(aliases) > 1:
+                family_aliases.extend(aliases)
+            else:
+                unconstrained_aliases.extend(aliases)
+
+        def prefix_clause(prefixes: list[str]) -> str:
+            conditions = []
+            for prefix in dict.fromkeys(prefixes):
+                conditions.append("package LIKE ? ESCAPE '\\'")
+                params.append(_escape_like(prefix) + '%')
+            return '(' + ' OR '.join(conditions) + ')'
+
+        if unconstrained_aliases:
+            or_conditions.append(prefix_clause(unconstrained_aliases))
+        if family_aliases:
+            # Preserve the existing bare-family prefix population while avoiding
+            # an additional full-table LIKE scan for every vendor spelling.
+            prefixes = tuple(dict.fromkeys(family_aliases))
+            matches = [name for names in (package_names or {}).values() for name in names
+                       if name.upper().startswith(prefixes)]
+            or_conditions.append('package IN (' + ','.join('?' for _ in matches) + ')' if matches else '0')
+            params.extend(matches)
+        for pkg, aliases in constrained_packages:
+            # Resolver mappings can include both a family and its specific variants.
+            # The family already covers them; avoid redundant suffix checks in SQL.
+            if any(alias.startswith(bare) for alias in aliases for bare in [*unconstrained_aliases, *family_aliases]):
+                continue
+            # Compare the small package catalog once, then let SQLite use idx_package.
+            # This also keeps counts/paging exact without per-component Python callbacks.
+            matches = matching_package_names(pkg, package_names or {})
+            if matches:
+                or_conditions.append('package IN (' + ','.join('?' for _ in matches) + ')')
+                params.extend(matches)
+            else:
+                or_conditions.append('0')
         combined = " OR ".join(or_conditions)
         return f"AND ({combined})", params
     return "", []
@@ -383,11 +489,14 @@ def _filter_value(parser: Any, value: str) -> float | None:
 
 def build_spec_filter_clauses(
     spec_filters: list[SpecFilter],
+    *,
+    connector_columns: bool = False,
 ) -> tuple[list[str], list[Any], list[tuple[SpecFilter, set[str], Any, float | None]], list[dict[str, str]]]:
     """Build spec filter clauses for SQL and collect post-filter metadata.
 
     Args:
         spec_filters: List of SpecFilter objects
+        connector_columns: Database has the strictly parsed connector columns
 
     Returns:
         Tuple of:
@@ -403,8 +512,45 @@ def build_spec_filter_clauses(
     post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]] = []
     ignored: list[dict[str, str]] = []
 
+    # Automatic fuse/connector constraints have scoped numeric semantics. Caller-supplied
+    # SpecFilters keep their existing string/operator semantics.
+    for f in spec_filters:
+        if isinstance(f, FuseFilter):
+            scope = "subcategory_id != ? OR " if f.subcategory_id is not None else ""
+            if scope:
+                params.append(f.subcategory_id)
+            if f.name == "Current Rating":
+                sql_clauses.append(f"AND ({scope}current_max_a = ?)")
+                params.append(parse_current(f.value))
+            else:
+                sql_clauses.append(
+                    f"AND ({scope}EXISTS (SELECT 1 FROM json_each(components.attributes) j "
+                    "WHERE json_extract(j.value, '$[0]') = ?))"
+                )
+                params.append(f.name)
+                parser = parse_current if f.name == "Hold Current" else parse_voltage
+                post_filter_metadata.append((f, {f.name}, parser, parser(f.value)))
+    fuse_scopes = sorted({f.subcategory_id for f in spec_filters
+                          if isinstance(f, FuseFilter) and f.subcategory_id is not None})
+    if fuse_scopes:
+        sql_clauses.append(f"AND subcategory_id IN ({','.join('?' * len(fuse_scopes))})")
+        params.extend(fuse_scopes)
+
+    for f in spec_filters:
+        if isinstance(f, ConnectorFilter):
+            if connector_columns and f.name in CONNECTOR_FILTER_COLUMNS:
+                sql_clauses.append(f"AND {CONNECTOR_FILTER_COLUMNS[f.name]} = ?")
+                params.append(connector_value(f.name, f.value))
+            else:
+                sql_clauses.append(
+                    "AND EXISTS (SELECT 1 FROM json_each(components.attributes) j "
+                    "WHERE json_extract(j.value, '$[0]') = ? "
+                    "AND connector_value(?, json_extract(j.value, '$[1]')) = ?)"
+                )
+                params.extend([f.name, f.name, connector_value(f.name, f.value)])
+
     # Group multi-value "=" filters (like multiple Interface values) for OR logic
-    grouped_filters = _group_multi_value_filters(spec_filters)
+    grouped_filters = _group_multi_value_filters([f for f in spec_filters if not isinstance(f, (ConnectorFilter, FuseFilter))])
 
     for item in grouped_filters:
         # Handle grouped filters (spec_name, [values])

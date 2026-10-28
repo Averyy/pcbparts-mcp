@@ -1,0 +1,145 @@
+{"input": "104031-0811", "pattern": "separator_spelling", "expected": [{"lcsc": "C585350", "mpn": "1040310811", "manufacturer": "MOLEX"}]}
+{"input": "105430-1202", "pattern": "separator_spelling", "expected": [{"lcsc": "C7436819", "mpn": "1054301202", "manufacturer": "MOLEX"}]}
+{"input": "1140084168", "pattern": "separator_spelling", "expected": [{"lcsc": "C3195424", "mpn": "114-00841-68", "manufacturer": "Amphenol ICC"}]}
+{"input": "150060AS75000 or equivalent Amber", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C6976659", "mpn": "150060AS75000", "manufacturer": "Wurth Elektronik"}]}
+{"input": "150060BS75000  or equivalent Blue", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C5197644", "mpn": "150060BS75000", "manufacturer": "Wurth Elektronik"}]}
+{"input": "150060RS75000 or equivalent Red", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C3030991", "mpn": "150060RS75000", "manufacturer": "Wurth Elektronik"}]}
+{"input": "150060VS75000  or equivalent Green", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C6848499", "mpn": "150060VS75000", "manufacturer": "Wurth Elektronik"}]}
+{"input": "22-05-3021", "pattern": "separator_spelling", "expected": [{"lcsc": "C505003", "mpn": "22053021", "manufacturer": "MOLEX"}]}
+{"input": "22-23-2021", "pattern": "separator_spelling", "expected": [{"lcsc": "C234180", "mpn": "22232021", "manufacturer": "MOLEX"}]}
+{"input": "22-23-2031", "pattern": "separator_spelling", "expected": [{"lcsc": "C234181", "mpn": "22232031", "manufacturer": "MOLEX"}]}
+{"input": "24AA025UIDT EEPROM", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C615603", "mpn": "24AA025UIDT-I/SN", "manufacturer": "Microchip Tech"}]}
+{"input": "43650-0215", "pattern": "separator_spelling", "expected": [{"lcsc": "C293740", "mpn": "436500215", "manufacturer": "MOLEX"}]}
+{"input": "43650-0315", "pattern": "separator_spelling", "expected": [{"lcsc": "C293546", "mpn": "436500315", "manufacturer": "MOLEX"}]}
+{"input": "45586-0005", "pattern": "separator_spelling", "expected": [{"lcsc": "C17693884", "mpn": "455860005", "manufacturer": "MOLEX"}]}
+{"input": "47346-0001", "pattern": "separator_spelling", "expected": [{"lcsc": "C132560", "mpn": "473460001", "manufacturer": "MOLEX"}]}
+{"input": "53398-0571", "pattern": "separator_spelling", "expected": [{"lcsc": "C504986", "mpn": "533980571", "manufacturer": "MOLEX"}]}
+{"input": "70543-0001", "pattern": "separator_spelling", "expected": [{"lcsc": "C127361", "mpn": "705430001", "manufacturer": "MOLEX"}]}
+{"input": "70543-0004", "pattern": "separator_spelling", "expected": [{"lcsc": "C293664", "mpn": "705430004", "manufacturer": "MOLEX"}]}
+{"input": "742792025, MPZ2012S101A or similar", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C15957", "mpn": "MPZ2012S101AT000", "manufacturer": "TDK"}]}
+{"input": "742792662 or BK1608HS102-T, PE-0603FB102ST or similar", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C2649307", "mpn": "742792662", "manufacturer": "Wurth Elektronik"}]}
+{"input": "79109-1003", "pattern": "separator_spelling", "expected": [{"lcsc": "C6062408", "mpn": "791091003", "manufacturer": "MOLEX"}]}
+{"input": "865080545012 (16V version can be used)", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C5145169", "mpn": "865080545012", "manufacturer": "Wurth Elektronik"}]}
+{"input": "87834-2019", "pattern": "separator_spelling", "expected": [{"lcsc": "C17463886", "mpn": "878342019", "manufacturer": "MOLEX"}]}
+{"input": "ABM3B-8.0-10-1UT", "pattern": "vendor_ordering_alias", "expected": [{"lcsc": "C276420", "mpn": "ABM3B-8.000MHZ-10-1-U-T", "manufacturer": "Abracon LLC"}]}
+{"input": "ABM3B-8.000MHZ-10-1UT", "pattern": "separator_spelling", "expected": [{"lcsc": "C276420", "mpn": "ABM3B-8.000MHZ-10-1-U-T", "manufacturer": "Abracon LLC"}]}
+{"input": "AC0603FR-10100KL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C116674", "mpn": "AC0603FR-07100KL", "manufacturer": "YAGEO"}]}
+{"input": "AC0603FR-104K7L", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C116697", "mpn": "AC0603FR-074K7L", "manufacturer": "YAGEO"}]}
+{"input": "AD8630ARZ-REEL7", "pattern": "packing_or_finish", "expected": [{"lcsc": "C578797", "mpn": "AD8630ARZ", "manufacturer": "Analog Devices"}]}
+{"input": "AMC1301 or AMC1302", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C190273", "mpn": "AMC1301DWVR", "manufacturer": "Texas Instruments"}]}
+{"input": "AMS1117-33", "pattern": "vendor_ordering_alias", "expected": [{"lcsc": "C6186", "mpn": "AMS1117-3.3", "manufacturer": "Advanced Monolithic Systems"}, {"lcsc": "C347222", "mpn": "AMS1117-3.3", "manufacturer": "UMW(Youtai Semiconductor Co., Ltd.)"}, {"lcsc": "C5250992", "mpn": "AMS1117-3.3", "manufacturer": "TWGMC"}, {"lcsc": "C18212698", "mpn": "AMS1117-3.3", "manufacturer": "TECH PUBLIC"}, {"lcsc": "C6067465", "mpn": "AMS1117-3.3", "manufacturer": "GOODWORK"}, {"lcsc": "C6068481", "mpn": "AMS1117-3.3", "manufacturer": "GOODWORK"}, {"lcsc": "C369933", "mpn": "AMS1117-3.3", "manufacturer": "KEXIN"}, {"lcsc": "C20628883", "mpn": "AMS1117-3.3", "manufacturer": "FOSAN"}, {"lcsc": "C18164485", "mpn": "AMS1117-3.3", "manufacturer": "GR"}, {"lcsc": "C880752", "mpn": "AMS1117-3.3", "manufacturer": "Slkor(SLKORMICRO Elec.)"}, {"lcsc": "C917183", "mpn": "AMS1117-3.3", "manufacturer": "JSMSEMI"}, {"lcsc": "C2992570", "mpn": "AMS1117-3.3", "manufacturer": "GUOXIN JIAPIN SEMICONDUCTOR"}, {"lcsc": "C2904742", "mpn": "AMS1117-3.3", "manufacturer": "YONGYUTAI"}, {"lcsc": "C351784", "mpn": "AMS1117-3.3", "manufacturer": "PUOLOP"}, {"lcsc": "C5199435", "mpn": "AMS1117-3.3", "manufacturer": "HEERMICR"}, {"lcsc": "C22459274", "mpn": "AMS1117-3.3", "manufacturer": "Shenzhen JingYang"}, {"lcsc": "C41414107", "mpn": "AMS1117-3.3", "manufacturer": "YONGYUTAI"}, {"lcsc": "C22466222", "mpn": "AMS1117-3.3", "manufacturer": "TDSEMIC"}]}
+{"input": "AO3400A or similar (PMV20XNER, PMV40UN2)", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C20917", "mpn": "AO3400A", "manufacturer": "Alpha & Omega Semicon"}, {"lcsc": "C347475", "mpn": "AO3400A", "manufacturer": "UMW(Youtai Semiconductor Co., Ltd.)"}, {"lcsc": "C5224194", "mpn": "AO3400A", "manufacturer": "ElecSuper"}, {"lcsc": "C700953", "mpn": "AO3400A", "manufacturer": "HUASHUO"}, {"lcsc": "C21713968", "mpn": "AO3400A", "manufacturer": "GOODWORK"}, {"lcsc": "C344010", "mpn": "AO3400A", "manufacturer": "BORN"}, {"lcsc": "C49195711", "mpn": "AO3400A", "manufacturer": "YONGYUTAI"}, {"lcsc": "C5296724", "mpn": "AO3400A", "manufacturer": "JSMSEMI"}, {"lcsc": "C5380685", "mpn": "AO3400A", "manufacturer": "FUXINSEMI"}, {"lcsc": "C48678023", "mpn": "AO3400A", "manufacturer": "baocheng(Shandong Baocheng Elec)"}, {"lcsc": "C5122000", "mpn": "AO3400A", "manufacturer": "TECH PUBLIC"}, {"lcsc": "C5379092", "mpn": "AO3400A", "manufacturer": "MSKSEMI"}]}
+{"input": "AP2112K-3.3V/AP2127K-3.3V", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C23380830", "mpn": "AP2112K-3.3TRG1", "manufacturer": "TECH PUBLIC"}, {"lcsc": "C51118", "mpn": "AP2112K-3.3TRG1", "manufacturer": "Diodes Incorporated"}]}
+{"input": "AP22816AKEWT or AP2151WG-7 if APP22816KEWT unavailable", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C110464", "mpn": "AP2151WG-7", "manufacturer": "Diodes Incorporated"}]}
+{"input": "ASEK-32.768KHZ-L-R-T", "pattern": "separator_spelling", "expected": [{"lcsc": "C2650753", "mpn": "ASEK-32.768KHZ-LRT", "manufacturer": "Abracon LLC"}]}
+{"input": "ATSAMD21E18A-AFT", "pattern": "packing_or_finish", "expected": [{"lcsc": "C618770", "mpn": "ATSAMD21E18A-AF", "manufacturer": "Microchip Tech"}]}
+{"input": "B6B-ZR(LF)(SN) or 64800611622", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C157984", "mpn": "B6B-ZR(LF)(SN)", "manufacturer": "JST"}]}
+{"input": "BDCD002520121R0MS1 preferred (alternative: SRN2512-1R0M)", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C2838379", "mpn": "BDCD002520121R0MS1", "manufacturer": "Chilisin Elec"}]}
+{"input": "BGA622H6820XTSA1", "pattern": "packing_or_finish", "expected": [{"lcsc": "C132318", "mpn": "BGA622H6820", "manufacturer": "Infineon Technologies"}]}
+{"input": "BGA725L6E6327FTSA1", "pattern": "packing_or_finish", "expected": [{"lcsc": "C534168", "mpn": "BGA 725L6 E6327", "manufacturer": "Infineon Technologies"}]}
+{"input": "BGS12PN10", "pattern": "vendor_ordering_alias", "expected": [{"lcsc": "C534200", "mpn": "BGS 12PN10 E6327", "manufacturer": "Infineon Technologies"}]}
+{"input": "BGS12PN10E6327XTSA1", "pattern": "packing_or_finish", "expected": [{"lcsc": "C534200", "mpn": "BGS 12PN10 E6327", "manufacturer": "Infineon Technologies"}]}
+{"input": "BSC014N04LSATMA1", "pattern": "packing_or_finish", "expected": [{"lcsc": "C2760081", "mpn": "BSC014N04LS", "manufacturer": "Infineon Technologies"}]}
+{"input": "BSC340N08NS3GATMA1", "pattern": "packing_or_finish", "expected": [{"lcsc": "C83511", "mpn": "BSC340N08NS3 G", "manufacturer": "Infineon Technologies"}]}
+{"input": "BSH103,235", "pattern": "packing_or_finish", "expected": [{"lcsc": "C329197", "mpn": "BSH103,215", "manufacturer": "Nexperia"}]}
+{"input": "BSP135H6433XTMA1", "pattern": "packing_or_finish", "expected": [{"lcsc": "C3278599", "mpn": "BSP135H6327", "manufacturer": "Infineon Technologies"}]}
+{"input": "BSS123N H6327", "pattern": "separator_spelling", "expected": [{"lcsc": "C5205497", "mpn": "BSS123NH6327", "manufacturer": "Infineon Technologies"}]}
+{"input": "C0402C103K8RAC7867", "pattern": "packing_or_finish", "expected": [{"lcsc": "C2168261", "mpn": "C0402C103K8RACTU", "manufacturer": "KEMET"}]}
+{"input": "C0603C104J5RACTU", "pattern": "packing_or_finish", "expected": [{"lcsc": "C23789409", "mpn": "C0603C104J5RACTM", "manufacturer": "KEMET"}]}
+{"input": "C1210C102KGRACTU", "pattern": "packing_or_finish", "expected": [{"lcsc": "C600103", "mpn": "C1210C102KGRAC7800", "manufacturer": "KEMET"}]}
+{"input": "CDBA360-HF, VSSA310SHM3_A/H", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C2885991", "mpn": "CDBA360-HF", "manufacturer": "Comchip"}]}
+{"input": "DAC8552IDGKTG4", "pattern": "packing_or_finish", "expected": [{"lcsc": "C98755", "mpn": "DAC8552IDGKT", "manufacturer": "Texas Instruments"}]}
+{"input": "DSS14UTR or RB162MM-40TR or similar (can also use DSS16UTR )", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C3020461", "mpn": "DSS16U", "manufacturer": "SMC(Sangdest Microelectronicstronic (Nanjing))"}]}
+{"input": "DSS16UTR", "pattern": "packing_or_finish", "expected": [{"lcsc": "C3020461", "mpn": "DSS16U", "manufacturer": "SMC(Sangdest Microelectronicstronic (Nanjing))"}]}
+{"input": "DUAL-OPTO_HCPL-073L", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C17450545", "mpn": "HCPL-073L", "manufacturer": "Broadcom Limited"}]}
+{"input": "EEE-FP1E101AP", "pattern": "separator_spelling", "expected": [{"lcsc": "C178578", "mpn": "EEEFP1E101AP", "manufacturer": "PANASONIC"}]}
+{"input": "EEE-FP1V221AP", "pattern": "separator_spelling", "expected": [{"lcsc": "C278406", "mpn": "EEEFP1V221AP", "manufacturer": "PANASONIC"}]}
+{"input": "EEE-FT1V470AR", "pattern": "separator_spelling", "expected": [{"lcsc": "C193627", "mpn": "EEEFT1V470AR", "manufacturer": "PANASONIC"}]}
+{"input": "ERA-6AEB102V", "pattern": "separator_spelling", "expected": [{"lcsc": "C192073", "mpn": "ERA6AEB102V", "manufacturer": "PANASONIC"}]}
+{"input": "ERA-6AEB104V", "pattern": "separator_spelling", "expected": [{"lcsc": "C192074", "mpn": "ERA6AEB104V", "manufacturer": "PANASONIC"}]}
+{"input": "ERA-6AEB183V", "pattern": "separator_spelling", "expected": [{"lcsc": "C473303", "mpn": "ERA6AEB183V", "manufacturer": "PANASONIC"}]}
+{"input": "ERA-6AEB202V", "pattern": "separator_spelling", "expected": [{"lcsc": "C417117", "mpn": "ERA6AEB202V", "manufacturer": "PANASONIC"}]}
+{"input": "ERA-6AEB753V", "pattern": "separator_spelling", "expected": [{"lcsc": "C473313", "mpn": "ERA6AEB753V", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-2GEJ104X", "pattern": "separator_spelling", "expected": [{"lcsc": "C413017", "mpn": "ERJ2GEJ104X", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-2GEJ333X", "pattern": "separator_spelling", "expected": [{"lcsc": "C278581", "mpn": "ERJ2GEJ333X", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-2RKF1872X", "pattern": "separator_spelling", "expected": [{"lcsc": "C3025695", "mpn": "ERJ2RKF1872X", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-2RKF2702X", "pattern": "separator_spelling", "expected": [{"lcsc": "C413101", "mpn": "ERJ2RKF2702X", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-2RKF27R0X", "pattern": "separator_spelling", "expected": [{"lcsc": "C413051", "mpn": "ERJ2RKF27R0X", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-2RKF4700X", "pattern": "separator_spelling", "expected": [{"lcsc": "C413076", "mpn": "ERJ2RKF4700X", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-2RKF8061X", "pattern": "separator_spelling", "expected": [{"lcsc": "C2076955", "mpn": "ERJ2RKF8061X", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-3GEYJ103V", "pattern": "separator_spelling", "expected": [{"lcsc": "C169849", "mpn": "ERJ3GEYJ103V", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-3RBD4701V", "pattern": "separator_spelling", "expected": [{"lcsc": "C191778", "mpn": "ERJ3RBD4701V", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-6GEYJ105V", "pattern": "separator_spelling", "expected": [{"lcsc": "C230655", "mpn": "ERJ6GEYJ105V", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-P03F1000V", "pattern": "separator_spelling", "expected": [{"lcsc": "C427297", "mpn": "ERJP03F1000V", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-P06J334V", "pattern": "separator_spelling", "expected": [{"lcsc": "C441962", "mpn": "ERJP06J334V", "manufacturer": "PANASONIC"}]}
+{"input": "ERJ-PA3J100V", "pattern": "separator_spelling", "expected": [{"lcsc": "C441879", "mpn": "ERJPA3J100V", "manufacturer": "PANASONIC"}]}
+{"input": "FL1200112TR-ND or ECS-120-10-33B-CKM-TR,", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C1985665", "mpn": "FL1200112", "manufacturer": "Diodes Incorporated"}]}
+{"input": "GCM188R71H473KA55D", "pattern": "packing_or_finish", "expected": [{"lcsc": "C3853032", "mpn": "GCM188R71H473KA55J", "manufacturer": "Murata Electronics"}]}
+{"input": "GRJ31CC72A475KE01K", "pattern": "packing_or_finish", "expected": [{"lcsc": "C3881858", "mpn": "GRJ31CC72A475KE01L", "manufacturer": "Murata Electronics"}]}
+{"input": "GRM1555C1H390FA01J", "pattern": "packing_or_finish", "expected": [{"lcsc": "C3847304", "mpn": "GRM1555C1H390FA01D", "manufacturer": "Murata Electronics"}]}
+{"input": "GRM155R61A104KA01D", "pattern": "packing_or_finish", "expected": [{"lcsc": "C3830971", "mpn": "GRM155R61A104KA01J", "manufacturer": "Murata Electronics"}]}
+{"input": "GRM155R61E105KE11J", "pattern": "packing_or_finish", "expected": [{"lcsc": "C426636", "mpn": "GRM155R61E105KE11D", "manufacturer": "Murata Electronics"}]}
+{"input": "GRM155R61J334KE01J", "pattern": "packing_or_finish", "expected": [{"lcsc": "C20044526", "mpn": "GRM155R61J334KE01D", "manufacturer": "Murata Electronics"}]}
+{"input": "GRM155Z71A105KE01J", "pattern": "packing_or_finish", "expected": [{"lcsc": "C528974", "mpn": "GRM155Z71A105KE01D", "manufacturer": "Murata Electronics"}]}
+{"input": "GRT21BC71E106KE13K", "pattern": "packing_or_finish", "expected": [{"lcsc": "C882505", "mpn": "GRT21BC71E106KE13L", "manufacturer": "Murata Electronics"}]}
+{"input": "GSG-XC2C64A-7VQG100C", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C78576", "mpn": "XC2C64A-7VQG100C", "manufacturer": "AMD/XILINX"}]}
+{"input": "HMK107B7104MA-T or similar", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C2174047", "mpn": "HMK107B7104MA-T", "manufacturer": "Taiyo Yuden"}]}
+{"input": "ICE40UP5K-SG48ITR", "pattern": "packing_or_finish", "expected": [{"lcsc": "C2678152", "mpn": "ICE40UP5K-SG48I", "manufacturer": "Lattice"}]}
+{"input": "ISL28022FUZ-T7A", "pattern": "packing_or_finish", "expected": [{"lcsc": "C1529908", "mpn": "ISL28022FUZ", "manufacturer": "RENESAS"}]}
+{"input": "ISO_ISO7741FQDWWQ1", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C5216481", "mpn": "ISO7741FQDWWRQ1", "manufacturer": "Texas Instruments"}]}
+{"input": "KSZ8081RNACA (same as on the v0.6)", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C633270", "mpn": "KSZ8081RNACA", "manufacturer": "Microchip Tech"}]}
+{"input": "LAN8710A-EZC-ABC", "pattern": "packing_or_finish", "expected": [{"lcsc": "C621416", "mpn": "LAN8710A-EZC-TR-ABC", "manufacturer": "Microchip Tech"}]}
+{"input": "LD1117/3.3v", "pattern": "vendor_ordering_alias", "expected": [{"lcsc": "C347229", "mpn": "LD1117-3.3", "manufacturer": "UMW(Youtai Semiconductor Co., Ltd.)"}, {"lcsc": "C18212699", "mpn": "LD1117-3.3", "manufacturer": "TECH PUBLIC"}, {"lcsc": "C55376115", "mpn": "LD1117-3.3", "manufacturer": "hongjiacheng"}, {"lcsc": "C19627006", "mpn": "LD1117-3.3", "manufacturer": "HXY MOSFET"}, {"lcsc": "C42445392", "mpn": "LD1117-3.3", "manufacturer": "KTP"}]}
+{"input": "LG L29K-G2J1-24-Z", "pattern": "packing_or_finish", "expected": [{"lcsc": "C22396111", "mpn": "LG L29K-G2J1-24", "manufacturer": "OSRAM Opto Semicon"}]}
+{"input": "LL4148 L1", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C435829", "mpn": "LL4148", "manufacturer": "MDD(Microdiode Semiconductor)"}, {"lcsc": "C3015531", "mpn": "LL4148", "manufacturer": "YONGYUTAI"}, {"lcsc": "C402260", "mpn": "LL4148", "manufacturer": "LGE"}, {"lcsc": "C181117", "mpn": "LL4148", "manufacturer": "Guangdong Hottech"}, {"lcsc": "C2891733", "mpn": "LL4148", "manufacturer": "YONGYUTAI"}, {"lcsc": "C5345986", "mpn": "LL4148", "manufacturer": "HXY MOSFET"}, {"lcsc": "C49284670", "mpn": "LL4148", "manufacturer": "KUU"}, {"lcsc": "C2857181", "mpn": "LL4148", "manufacturer": "JSMSEMI"}, {"lcsc": "C211750", "mpn": "LL4148", "manufacturer": "Yangzhou Yangjie Elec Tech"}, {"lcsc": "C5381438", "mpn": "LL4148", "manufacturer": "FOSAN"}, {"lcsc": "C84062", "mpn": "LL4148", "manufacturer": "Changzhou Starsea Elec"}, {"lcsc": "C111267", "mpn": "LL4148", "manufacturer": "Shikues"}, {"lcsc": "C84135", "mpn": "LL4148", "manufacturer": "onsemi"}, {"lcsc": "C2826469", "mpn": "LL4148", "manufacturer": "Slkor(SLKORMICRO Elec.)"}, {"lcsc": "C3011166", "mpn": "LL4148", "manufacturer": "JUXING"}, {"lcsc": "C55269750", "mpn": "LL4148", "manufacturer": "hongjiacheng"}, {"lcsc": "C55086922", "mpn": "LL4148", "manufacturer": "TDD"}, {"lcsc": "C54898709", "mpn": "LL4148", "manufacturer": "Zhengxin"}, {"lcsc": "C571356", "mpn": "LL4148", "manufacturer": "High Diode"}, {"lcsc": "C2844162", "mpn": "LL4148", "manufacturer": "FUXINSEMI"}, {"lcsc": "C179533", "mpn": "LL4148", "manufacturer": "Suzhou Good-Ark Elec"}, {"lcsc": "C53058794", "mpn": "LL4148", "manufacturer": "luJing"}, {"lcsc": "C7544981", "mpn": "LL4148", "manufacturer": "LangJie"}, {"lcsc": "C37331479", "mpn": "LL4148", "manufacturer": "GOODWORK"}, {"lcsc": "C9808", "mpn": "LL4148", "manufacturer": "ST(Semtech)"}]}
+{"input": "LM5155QDSSRQ1", "pattern": "packing_or_finish", "expected": [{"lcsc": "C2658064", "mpn": "LM5155QDSSTQ1", "manufacturer": "Texas Instruments"}]}
+{"input": "LR1121 PIN OUT", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C7498014", "mpn": "LR1121IMLTRT", "manufacturer": "SEMTECH"}]}
+{"input": "LT8361EMSE/LT8362EMSE", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C673758", "mpn": "LT8361EMSE#PBF", "manufacturer": "Analog Devices"}]}
+{"input": "LT8364EMSE#TRPBF", "pattern": "packing_or_finish", "expected": [{"lcsc": "C673775", "mpn": "LT8364EMSE#PBF", "manufacturer": "Analog Devices"}]}
+{"input": "MC14043BDR2G", "pattern": "packing_or_finish", "expected": [{"lcsc": "C233501", "mpn": "MC14043BDG", "manufacturer": "onsemi"}]}
+{"input": "MCU-STM32F407VGT6", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C12345", "mpn": "STM32F407VGT6", "manufacturer": "STMicroelectronics"}]}
+{"input": "MPU6000", "pattern": "separator_spelling", "expected": [{"lcsc": "C92401", "mpn": "MPU-6000", "manufacturer": "TDK InvenSense"}]}
+{"input": "MS5611-01BA03", "pattern": "vendor_ordering_alias", "expected": [{"lcsc": "C15639", "mpn": "MS561101BA03-50", "manufacturer": "TE Connectivity"}]}
+{"input": "MS8607-02BA01", "pattern": "vendor_ordering_alias", "expected": [{"lcsc": "C5334082", "mpn": "MS860702BA01-50", "manufacturer": "TE Connectivity"}]}
+{"input": "MT41K64M16TW-107:J TR", "pattern": "packing_or_finish", "expected": [{"lcsc": "C75475", "mpn": "MT41K64M16TW-107:J", "manufacturer": "Micron Tech"}]}
+{"input": "PCA9557PW IO EXPANDER", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C141380", "mpn": "PCA9557PW,118", "manufacturer": "NXP Semicon"}]}
+{"input": "PCA9635 LED DRIVER", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C110795", "mpn": "PCA9635PW,118", "manufacturer": "NXP Semicon"}]}
+{"input": "PTS645SL50SMTR92 LFS", "pattern": "separator_spelling", "expected": [{"lcsc": "C221877", "mpn": "PTS645SL50SMTR92LFS", "manufacturer": "C&K"}]}
+{"input": "PTS840 GK SMTR LFS", "pattern": "separator_spelling", "expected": [{"lcsc": "C221907", "mpn": "PTS840GKSMTRLFS", "manufacturer": "C&K"}]}
+{"input": "RC0402FR-13100KL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C60491", "mpn": "RC0402FR-07100KL", "manufacturer": "YAGEO"}]}
+{"input": "RC0402FR-13100RL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C106232", "mpn": "RC0402FR-07100RL", "manufacturer": "YAGEO"}]}
+{"input": "RC0402FR-1310KL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C60490", "mpn": "RC0402FR-0710KL", "manufacturer": "YAGEO"}]}
+{"input": "RC0402FR-1320KL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C93942", "mpn": "RC0402FR-0720KL", "manufacturer": "YAGEO"}]}
+{"input": "RC0402FR-1321KL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C185441", "mpn": "RC0402FR-0721KL", "manufacturer": "YAGEO"}]}
+{"input": "RC0402FR-1324K3L", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C276264", "mpn": "RC0402FR-0724K3L", "manufacturer": "YAGEO"}]}
+{"input": "RC0402FR-132K2L", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C114762", "mpn": "RC0402FR-072K2L", "manufacturer": "YAGEO"}]}
+{"input": "RC0402FR-13330RL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C105875", "mpn": "RC0402FR-07330RL", "manufacturer": "YAGEO"}]}
+{"input": "RC0402FR-1347KL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C93943", "mpn": "RC0402FR-0747KL", "manufacturer": "YAGEO"}]}
+{"input": "RC0402FR-1347RL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C137973", "mpn": "RC0402FR-0747RL", "manufacturer": "YAGEO"}]}
+{"input": "RC0402FR-1349K9L", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C137969", "mpn": "RC0402FR-0749K9L", "manufacturer": "YAGEO"}]}
+{"input": "RC0402FR-1359KL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C163459", "mpn": "RC0402FR-0759KL", "manufacturer": "YAGEO"}]}
+{"input": "RC0603FR-1015KL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C114661", "mpn": "RC0603FR-0715KL", "manufacturer": "YAGEO"}]}
+{"input": "RC0603FR-1018KL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C114610", "mpn": "RC0603FR-0718KL", "manufacturer": "YAGEO"}]}
+{"input": "RC0603FR-132M2L", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C137747", "mpn": "RC0603FR-072M2L", "manufacturer": "YAGEO"}]}
+{"input": "RFFC5072TR7", "pattern": "packing_or_finish", "expected": [{"lcsc": "C3034742", "mpn": "RFFC5072TR13", "manufacturer": "Qorvo"}]}
+{"input": "SCD-41", "pattern": "vendor_ordering_alias", "expected": [{"lcsc": "C3659294", "mpn": "SCD41-D-R2", "manufacturer": "Sensirion"}]}
+{"input": "SMBJ48D-M3/I", "pattern": "packing_or_finish", "expected": [{"lcsc": "C1976319", "mpn": "SMBJ48D-M3/H", "manufacturer": "Vishay Intertech"}]}
+{"input": "SN74LVC1G07QDCKTQ1", "pattern": "packing_or_finish", "expected": [{"lcsc": "C2675518", "mpn": "SN74LVC1G07QDCKRQ1", "manufacturer": "Texas Instruments"}]}
+{"input": "SOFNG USB-05", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C112454", "mpn": "USB-05", "manufacturer": "SOFNG"}]}
+{"input": "TLV3201AIDBVT", "pattern": "packing_or_finish", "expected": [{"lcsc": "C105188", "mpn": "TLV3201AIDBVR", "manufacturer": "Texas Instruments"}]}
+{"input": "TLV70033DSER", "pattern": "packing_or_finish", "expected": [{"lcsc": "C2867018", "mpn": "TLV70033DSET", "manufacturer": "Texas Instruments"}]}
+{"input": "TLV76701DRVT", "pattern": "packing_or_finish", "expected": [{"lcsc": "C2863998", "mpn": "TLV76701DRVR", "manufacturer": "Texas Instruments"}]}
+{"input": "TP4054-42-SOT25-R", "pattern": "separator_spelling", "expected": [{"lcsc": "C32574", "mpn": "TP4054-42-SOT25R", "manufacturer": "TOPPOWER(Nanjing Extension Microelectronics)"}]}
+{"input": "TPS562208DDCT", "pattern": "packing_or_finish", "expected": [{"lcsc": "C91301", "mpn": "TPS562208DDCR", "manufacturer": "Texas Instruments"}]}
+{"input": "TPS65186RGZR", "pattern": "packing_or_finish", "expected": [{"lcsc": "C2863185", "mpn": "TPS65186RGZT", "manufacturer": "Texas Instruments"}]}
+{"input": "TPS72325DBVT", "pattern": "packing_or_finish", "expected": [{"lcsc": "C69932", "mpn": "TPS72325DBVR", "manufacturer": "Texas Instruments"}]}
+{"input": "TPS73225DBVT", "pattern": "packing_or_finish", "expected": [{"lcsc": "C2758473", "mpn": "TPS73225DBVR", "manufacturer": "Texas Instruments"}]}
+{"input": "URZ1J221MHD1TO", "pattern": "packing_or_finish", "expected": [{"lcsc": "C433278", "mpn": "URZ1J221MHD", "manufacturer": "Nichicon"}]}
+{"input": "VL53L0X", "pattern": "vendor_ordering_alias", "expected": [{"lcsc": "C91199", "mpn": "VL53L0CXV0DH/1", "manufacturer": "STMicroelectronics"}]}
+{"input": "VL53L1X", "pattern": "vendor_ordering_alias", "expected": [{"lcsc": "C190004", "mpn": "VL53L1CXV0FY/1", "manufacturer": "STMicroelectronics"}]}
+{"input": "VS-1EFH02HM3/I or equivalent", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C143738", "mpn": "VS-1EFH02HM3/I", "manufacturer": "Vishay Intertech"}]}
+{"input": "W25N01GVZEIG TR", "pattern": "packing_or_finish", "expected": [{"lcsc": "C88868", "mpn": "W25N01GVZEIG", "manufacturer": "Winbond Elec"}, {"lcsc": "C907680", "mpn": "W25N01GVZEIG", "manufacturer": "Winbond Elec"}]}
+{"input": "W25Q16JVUXIQ TR", "pattern": "packing_or_finish", "expected": [{"lcsc": "C2843335", "mpn": "W25Q16JVUXIQ", "manufacturer": "Winbond Elec"}]}
+{"input": "YC124-JR-1333RL", "pattern": "embedded_reel_code", "expected": [{"lcsc": "C125323", "mpn": "YC124-JR-0733RL", "manufacturer": "YAGEO"}]}
+{"input": "can use GCM155R71H222KA37D", "pattern": "alternatives_or_annotations", "expected": [{"lcsc": "C126534", "mpn": "GCM155R71H222KA37D", "manufacturer": "Murata Electronics"}]}
+{"input": "ua78l05acpke6", "pattern": "packing_or_finish", "expected": [{"lcsc": "C353038", "mpn": "UA78L05ACPK", "manufacturer": "Texas Instruments"}]}

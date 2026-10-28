@@ -90,7 +90,7 @@ async def test_part_numbers_are_never_dropped(query, mpn):
         assert "jlc_stock_check" in result["hint"]
 
 
-@pytest.mark.parametrize("query", ["R1 1MΩ 0603 1%", "LED1 0603 diode", "LED123 0603 diode"])
+@pytest.mark.parametrize("query", ["R1 1MΩ 0603 1%", "LED1 0603 LED", "LED123 0603 LED"])
 async def test_bom_designators_still_relax(query):
     result = await server.jlc_search(query=query, limit=100)
     control = await server.jlc_search(query=query.split(maxsplit=1)[1], limit=100)
