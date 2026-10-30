@@ -228,6 +228,7 @@ class ComponentDatabase:
         connector_manufacturer: str | None = None,
         preferred_specs: list[SpecFilter] | None = None,
         gate_drive_v: float | None = None,
+        lcsc_codes: bool = False,
     ) -> dict[str, Any]:
         """
         Search components with parametric filtering.
@@ -257,6 +258,7 @@ class ComponentDatabase:
             connector_manufacturer: Prefer this connector maker without excluding other parts
             preferred_specs: Ordered equality preferences for sparse PD role/output attributes
             gate_drive_v: Rank listed RDS(on) at or below this gate drive first; retain unknowns
+            lcsc_codes: The caller's whole query is LCSC codes; match each exactly, not as a prefix
 
         Returns:
             Search results with metadata
@@ -294,6 +296,7 @@ class ComponentDatabase:
             connector_manufacturer=connector_manufacturer,
             preferred_specs=preferred_specs,
             gate_drive_v=gate_drive_v,
+            lcsc_codes=lcsc_codes,
         )
 
         # Add warning if min_stock was clamped

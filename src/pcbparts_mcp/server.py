@@ -45,8 +45,10 @@ from .search import SpecFilter, get_attribute_names
 from .search.mpn import LCSC_CODE, is_placeholder_mpn, looks_like_mpn, mpn_key
 from .search.query_builder import package_family_adjustments
 from .smart_parser import ParsedQuery, parse_smart_query, merge_spec_filters
+from .smart_parser.mapping import DEFAULT_SPECS
 from .alternatives import SPEC_PARSERS
 from .search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN, ConnectorFilter, FuseFilter
+from .parsers import parse_resistance
 from .pinout import parse_easyeda_pins
 from .design_rules import get_design_rules as _get_design_rules, _RULES_DIR, _build_index
 
@@ -922,7 +924,9 @@ def jlc_search(
             [i for i in [subcategory_id or db.resolve_subcategory_name(effective_subcategory_name)] if i]
             if (subcategory_id or effective_subcategory_name) else []
         )
-        auto_filters, adjusted = _fit_parsed_filters(db, parsed.spec_filters, searched_ids)
+        ohms = {v["normalized"] for v in parsed.detected.get("values", [])
+                if v["type"] == "resistance" and "ohm" in v["raw"].lower()}
+        auto_filters, adjusted = _fit_parsed_filters(db, parsed.spec_filters, searched_ids, ohms)
         if strict and adjusted:
             auto_filters = parsed.spec_filters
             adjusted = [{**a, "now": a["filter"], "reason": a["reason"].split(", so")[0]
@@ -968,6 +972,8 @@ def jlc_search(
         match_all_terms=match_all_terms,
         sort_by=sort_by or "stock",
         limit=clamp_limit(limit, MAX_PAGE_SIZE),
+        # A pasted LCSC code (C2040) finds that part, not every code it starts.
+        lcsc_codes=bool(query and query.split()) and all(LCSC_CODE.fullmatch(t) for t in query.split()),
     )
     requested_packages = parsed_packages or ([effective_package] if effective_package else [])
     package_adjustments = package_family_adjustments(requested_packages)
@@ -1167,7 +1173,16 @@ def jlc_search(
 _PARSED_FILTER_FALLBACKS: dict[str, list[tuple[str, str]]] = {
     "Voltage Rating": [("Supply Voltage", "="), ("Coil Voltage", "=")],
     "Current Rating": [("Output Current", ">="), ("Maximum Continuous Current", ">=")],
+    # digital potentiometers; a ferrite bead's "600ohm" is its impedance, though beads list DCR too;
+    # "mosfet 10mohm" and "inductor 10uH 100mohm" name a maximum
+    "Resistance": [("Resistance Value (Ohms)", "="), ("Impedance @ Frequency", "="), ("RDS(on)", "<="),
+                   ("DC Resistance(DCR)", "<=")],
+    "Pin Structure": [("Holes Structure", "=")],  # female headers: 1x8P
 }
+# Only for a value written with an ohm unit: in an inductor query "1m" may be 1mH and "1R0" 1.0uH
+_OHM_UNIT_FALLBACKS = {"RDS(on)", "DC Resistance(DCR)"}
+# The parser's operator when the query writes no sign; any other operator was written and is kept
+_DEFAULT_OPERATORS = {name: operator for name, operator in DEFAULT_SPECS.values()}
 # A spec counts as listed by a part type when at least this share of its parts state it: op amps
 # have "Voltage - Supply" on 14 of 4,900 parts, and a filter on it would hide the rest
 _LISTED_SHARE = 0.1
@@ -1175,11 +1190,12 @@ _DIMENSIONS = re.compile(r"(\d+(?:\.\d+)?)\s*[x×*]\s*(\d+(?:\.\d+)?)\s*mm", re.
 
 
 def _fit_parsed_filters(
-    db: Any, filters: list[SpecFilter], subcategory_ids: list[int]
+    db: Any, filters: list[SpecFilter], subcategory_ids: list[int], ohms: set[str] = frozenset()
 ) -> tuple[list[SpecFilter], list[dict[str, str | None]]]:
     """Keep each parsed filter whose spec the searched part types list; otherwise use a fallback
     spec they do list, or leave it out. Returns the filters and what was changed and why. With no
-    part type known, filters are kept as they are."""
+    part type known, filters are kept as they are. ohms holds the resistance values the query
+    wrote with an ohm unit."""
     if not subcategory_ids:
         return list(filters), []
     def listed(name: str) -> bool:
@@ -1232,7 +1248,16 @@ def _fit_parsed_filters(
         label = f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}"
         replacement: list[SpecFilter] = []
         for name, operator in _PARSED_FILTER_FALLBACKS.get(spec_filter.name, []):
+            if name in _OHM_UNIT_FALLBACKS and spec_filter.value not in ohms:
+                continue
+            if name == "Impedance @ Frequency" and 0 < (parse_resistance(spec_filter.value) or 0) < 1:
+                # Under 1 ohm it's a bead's DCR: 45 of 6,400 beads and common mode filters list an
+                # impedance that low, and 43 of those are "0Ω@100MHz"
+                continue
             if listed(name):
+                # "mosfet > 10mohm" became RDS(on) <= 10mOhm
+                if spec_filter.operator != _DEFAULT_OPERATORS.get(spec_filter.name, operator):
+                    operator = spec_filter.operator
                 replacement = [SpecFilter(name, operator, spec_filter.value)]
                 break
         size = _DIMENSIONS.fullmatch(spec_filter.value.strip()) if spec_filter.name == "Dimensions" else None

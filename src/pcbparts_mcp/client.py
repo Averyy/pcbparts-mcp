@@ -914,7 +914,7 @@ class JLCPCBClient:
             elif library_type == "preferred":
                 params["preferredComponentFlag"] = True
             elif library_type == "no_fee":
-                # Handled in search() with two parallel API calls (basic + preferred)
+                # Handled in search() with two sequential API calls (basic + preferred)
                 pass
 
         # Package filtering (single or multi-select)
@@ -1050,26 +1050,37 @@ class JLCPCBClient:
                 query = None  # Use category filter instead of keyword
 
         # no_fee = basic + preferred, but the JLCPCB API can't OR these in one call.
-        # Make two parallel requests and merge results.
+        # Make two sequential requests and merge results.
         if library_type == "no_fee":
             shared = dict(
                 query=query, category_id=category_id, subcategory_id=subcategory_id,
                 min_stock=min_stock, package=package, manufacturer=manufacturer,
                 packages=packages, manufacturers=manufacturers,
-                sort_by=sort_by, page=page, limit=limit,
+                sort_by=sort_by, page=page,
             )
-            basic_params = self._build_search_params(**shared, library_type="basic")
-            preferred_params = self._build_search_params(**shared, library_type="preferred")
+            basic_limit = max(1, (limit + 1) // 2)
+            pref_limit = max(1, limit // 2)
+            basic_params = self._build_search_params(
+                **shared, library_type="basic", limit=basic_limit,
+            )
 
             # Sequential to respect rate limits (same hostname)
             basic_data = await self._request(JLCPCB_SEARCH_URL, basic_params)
-            preferred_data = await self._request(JLCPCB_SEARCH_URL, preferred_params)
-
             basic_info = (basic_data.get("data") or {}).get("componentPageInfo") or {}
+            basic_total = basic_info.get("total") or 0
+            if limit == 1:
+                shared["page"] = max(1, page - basic_total)
+            preferred_params = self._build_search_params(
+                **shared, library_type="preferred", limit=pref_limit,
+            )
+            preferred_data = await self._request(JLCPCB_SEARCH_URL, preferred_params)
             pref_info = (preferred_data.get("data") or {}).get("componentPageInfo") or {}
 
             basic_items = basic_info.get("list") or []
             pref_items = pref_info.get("list") or []
+            if limit == 1 and page <= basic_total:
+                # The preferred response supplies its total; basic items come first.
+                pref_items = []
 
             # Interleave basic and preferred so both types get fair representation
             seen: set[str] = set()
@@ -1089,7 +1100,17 @@ class JLCPCBClient:
                         items.append(pref_items[pi])
                     pi += 1
 
-            total = (basic_info.get("total") or 0) + (pref_info.get("total") or 0)
+            pref_total = pref_info.get("total") or 0
+            total = basic_total + pref_total
+            if limit == 1:
+                total_pages = total
+                has_more = page < total
+            else:
+                total_pages = max(
+                    (basic_total + basic_limit - 1) // basic_limit,
+                    (pref_total + pref_limit - 1) // pref_limit,
+                )
+                has_more = page * basic_limit < basic_total or page * pref_limit < pref_total
             results = [self._transform_part(item, slim=True) for item in items]
         else:
             # Standard single-call path
@@ -1109,8 +1130,8 @@ class JLCPCBClient:
 
             results = [self._transform_part(item, slim=True) for item in items]
 
-        # Calculate total pages
-        total_pages = (total + limit - 1) // limit if limit > 0 else 0
+            total_pages = (total + limit - 1) // limit if limit > 0 else 0
+            has_more = page * limit < total
 
         return {
             "results": results,
@@ -1118,7 +1139,7 @@ class JLCPCBClient:
             "per_page": limit,
             "total": total,
             "total_pages": total_pages,
-            "has_more": page * limit < total,
+            "has_more": has_more,
         }
 
     async def get_part(self, lcsc: str) -> dict[str, Any] | None:
