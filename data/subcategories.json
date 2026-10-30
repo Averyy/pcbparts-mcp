@@ -1514,11 +1514,6 @@
     "category_id": 10,
     "category_name": "Audio Products / Vibration Motors"
   },
-  "1528": {
-    "name": "Aluminosilicate insulation board",
-    "category_id": 62,
-    "category_name": "Building materials / Building hardware"
-  },
   "1582": {
     "name": "Decorative panel",
     "category_id": 62,
@@ -3219,11 +3214,6 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
-  "3632": {
-    "name": "Socks",
-    "category_id": 42,
-    "category_name": "Labor protection supplies"
-  },
   "3688": {
     "name": "Block",
     "category_id": 54,
@@ -3563,21 +3553,6 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
-  },
-  "3344": {
-    "name": "Acrylic card slot",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "127": {
-    "name": "Charger",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3320": {
-    "name": "Data cable",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
