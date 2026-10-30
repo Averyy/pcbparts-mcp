@@ -63,6 +63,10 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "trim pot": "potentiometers, variable resistors",
     "variable resistor": "potentiometers, variable resistors",
     "adjustable resistor": "potentiometers, variable resistors",
+    "digital potentiometer": "digital potentiometers",
+    "digital potentiometers": "digital potentiometers",
+    "digital pot": "digital potentiometers",
+    "digipot": "digital potentiometers",
     # ==========================================================================
     # INDUCTORS
     # ==========================================================================
@@ -437,6 +441,9 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "power switch": "power distribution switches",
     "load switch": "power distribution switches",
     "hot swap": "power distribution switches",
+    # Ideal diode controllers drive a MOSFET as a low-loss diode; longer than "diode", so it wins
+    "ideal diode": "oring controllers",
+    "oring controller": "oring controllers",
     # ==========================================================================
     # FUSES
     # ==========================================================================

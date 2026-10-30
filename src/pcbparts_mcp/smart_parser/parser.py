@@ -361,12 +361,21 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         if 'connector' in subcat_lower:
             if strict:
                 detected.setdefault("unsupported_constraints", []).append(value.raw)
+            elif value.unit_type == "dimensions" and subcat_lower == "dc power connectors":
+                # 5.5x2.1mm is the plug size; jacks list contact diameters instead (a jack
+                # for that plug lists a 6.4mm outside contact and a 2mm center pin).
+                detected.setdefault("not_searched", []).append(
+                    f"{value.raw}: JLCPCB lists DC jacks' contact diameters, not the plug size; "
+                    "check the datasheet")
             continue
 
         # Explicit fuse subcategories override the generic keyword's electrical fields.
         fuse_subcategory = (subcategory_hint or result.subcategory or "").lower()
         is_fuse_rating = fuse_subcategory in FUSE_ATTRIBUTE_MAP and value.unit_type in ("current", "voltage")
         spec_name, operator = map_value_to_spec(value, fuse_subcategory if is_fuse_rating else subcategory, matched_keyword)
+        if written := _written_comparison(query, value.raw, operator):
+            operator = written
+            remaining = re.sub(r'(?<!\S)(?:<=|>=|<|>)(?!\S)', ' ', remaining).strip()
         filter_type = FuseFilter if is_fuse_rating else SpecFilter
         result.spec_filters.append(filter_type(spec_name, operator, value.normalized))
 
@@ -436,9 +445,8 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
     if not strict and subcategory and 'connector' in subcategory.lower() and re.search(r'\bmagnetics?\b', remaining, re.IGNORECASE):
         remaining = re.sub(r'\b(?:integrated\s+)?magnetics?\b', '', remaining, flags=re.IGNORECASE)
         remaining = re.sub(r'\s+', ' ', remaining).strip()
-        detected["not_searched"] = [
-            "magnetics: JLCPCB doesn't record it for most RJ45 jacks; check the datasheet"
-        ]
+        detected.setdefault("not_searched", []).append(
+            "magnetics: JLCPCB doesn't record it for most RJ45 jacks; check the datasheet")
 
     if not strict:
         remaining = remove_noise_words(remaining)
@@ -586,6 +594,16 @@ def _add_memory_sizes(remaining: str, subcategory: str, result: ParsedQuery, det
 
 
 _EXACT_OUTPUT = ("Output Voltage", "=")
+
+
+def _written_comparison(query: str, raw: str, default: str) -> str | None:
+    """A sign written before a value ("< 25V") when it points against the default operator, which
+    made "capacitor 10uF < 25V" a Voltage >= 25V filter. ">50V" keeps the default >=. The raw value
+    is spelled as extract_values read it ("< 10mΩ" holds 10mohm)."""
+    match = re.search(rf"(<=|>=|<|>)\s*{re.escape(raw)}(?![\w.])", normalize_value_notation(query))
+    if not match or (default != "=" and match[1][0] == default[0]):
+        return None
+    return match[1]
 
 
 _NAMED_COMPARISONS = [

@@ -4,6 +4,21 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.7.4 (2026-10-30)
+
+### Fixed
+
+- **LCSC codes in a search:** `jlc_search(query="C2040")` returned RP2040 plus resistors whose LCSC codes start with C2040 (C20400 to C20409). A query of LCSC codes alone now matches those codes exactly. A part number that looks like a code still matches (`C1815` returns 2SC1815 transistors as well as the capacitor C1815), and a reference designator in a BOM line (`C1 100nF 0402`) searches as before.
+- **Height on electrolytics:** `Height` filters also read `Height - Seated (Max)`, which some electrolytics list instead. `Height <= 5.4mm` on SMD electrolytics found 1,421 of the 1,429 parts, with a warning that few parts list Height; it now finds all of them without the warning.
+- **Digital potentiometers and ideal diode controllers:** `digital potentiometer 10k I2C` returned mechanical trimpots, and `ideal diode controller 12V` returned 1N4148-type switching diodes. `digital potentiometer`, `digipot`, `ideal diode` and `ORing controller` now search Digital Potentiometers and ORing Controllers, and a digital potentiometer's resistance is matched.
+- **Female headers:** `1x8 female header` ranked 1x4 and 1x6 headers first, because the layout was matched against the pin headers' Pin Structure. Female headers list it as Holes Structure, which `1x8` and `2x20` now filter.
+- **Barrel jacks:** the plug size in `5.5x2.1mm barrel jack` was dropped without a word. JLCPCB lists a jack's contact diameters, not the plug it takes (a jack for a 5.5x2.1mm plug lists a 6.4mm outside contact and a 2mm pin), so the size can't be searched, and `parsed.detected.not_searched` now says so.
+- **Comparison signs:** `10uF capacitor < 25V` searched Voltage Rating >= 25V, and `mosfet Vds < 30V` Vds >= 30V. A sign written before a value now keeps its direction when it points against the default, also before a value written with µ or Ω (`< 10µF`). That includes values matched exactly before: `zener < 5.1V` now means under 5.1V, not exactly 5.1V, and `resistor 10k < 1%` a tolerance under 1%. The sign also carries over when a value moves to the spec a part type lists: `high side switch < 4A` searched Maximum Continuous Current >= 4A. `>50V` still means >= 50V.
+- **Microamps on a regulator:** `LDO 3.3V 1uA` and `LDO 3.3V < 1uA` searched Output Current >= 1µA, which every LDO passes, so AMS1117 came first. No LDO or DC-DC converter lists an output current under 1mA, so a current under 1mA in an LDO or DC-DC query now means quiescent current at most that value (`LDO 3.3V 1uA` returns XC6206-type parts). `LDO 3.3V 500mA` is still output current.
+- **Milliohms on MOSFETs, load switches and inductors:** `mosfet 10mohm`, `load switch 50mohm` and `inductor 10uH 100mohm` left the value out, because these parts don't list Resistance. On a part type that lists RDS(on) or DCR instead, a resistance written with an ohm unit (`10mohm`, `10mΩ`, `0.1ohm`) now means RDS(on) or DCR at most that value, or the written comparison (`mosfet < 10mΩ`). Without the unit it's still left out: in an inductor query, `1m` may be 1mH and `1R0` 1.0µH. On ferrite beads and common mode filters, which list DCR too, a value of 1Ω or more is the impedance, as `ferrite bead 600ohm` already searched; that now also applies when the part type is passed as `subcategory_name`.
+- **`jlc_stock_check(library_type="no_fee")` paging:** from page 2 on, about half the basic and half the preferred parts were never returned. Each page now continues both lists where the previous page stopped, and `total_pages` and `has_more` follow both lists. A page can be shorter than `limit` once one list runs out.
+- A search whose database query failed returned a generic internal error instead of "Search failed: query too complex. Reduce the number of filters."
+
 ## 0.7.3 (2026-10-28)
 
 ### Fixed

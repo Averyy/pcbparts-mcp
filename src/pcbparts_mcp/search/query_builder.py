@@ -7,6 +7,7 @@ from typing import Any
 
 from ..alternatives import DIMENSION_SPEC_FIELDS, SPEC_PARSERS
 from ..parsers import RESISTANCE_MATCH_TOLERANCE, parse_current, parse_memory_size, parse_resistance, parse_voltage
+from .mpn import LCSC_CODE
 from .spec_filter import (
     CONNECTOR_FILTER_COLUMNS,
     LIST_SPECS,
@@ -23,12 +24,13 @@ from .spec_filter import (
 )
 
 
-def build_fts_clause(query: str, match_all_terms: bool) -> tuple[str, list[str]]:
+def build_fts_clause(query: str, match_all_terms: bool, lcsc_codes: bool = False) -> tuple[str, list[str]]:
     """Build FTS (full-text search) WHERE clause.
 
     Args:
         query: The search query string
         match_all_terms: True for AND logic, False for OR logic
+        lcsc_codes: the caller's whole query is LCSC codes, matched exactly in the lcsc column
 
     Returns:
         Tuple of (sql_clause, params) or (None, []) if invalid query
@@ -43,19 +45,26 @@ def build_fts_clause(query: str, match_all_terms: bool) -> tuple[str, list[str]]
 
     # Build FTS5 query: tokenize, quote each term, add prefix matching
     tokens = query.split()
+    # A pasted LCSC code names one part: "C2040"* would also match C20400-C20409. The caller
+    # decides from the whole query: in "C1 100nF 0402" the C1 is a reference designator.
+    codes_only = lcsc_codes and all(LCSC_CODE.fullmatch(token) for token in tokens)
     fts_parts = []
     for token in tokens:
         if not token:
             continue
         escaped = token.replace('"', '""')
-        fts_parts.append(f'"{escaped}"*')
+        if codes_only:
+            fts_parts.append(f'(lcsc : "{escaped}" OR {{mpn manufacturer description}} : "{escaped}"*)')
+        else:
+            fts_parts.append(f'"{escaped}"*')
 
     if not fts_parts:
         return "", []
 
     # Join with space (AND) or OR based on match_all_terms
     if match_all_terms:
-        fts_query = " ".join(fts_parts)
+        # FTS5 needs an explicit AND before a parenthesized group.
+        fts_query = (" AND " if codes_only else " ").join(fts_parts)
     else:
         fts_query = " OR ".join(fts_parts)
 
