@@ -113,6 +113,7 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "RDS(on)": parse_resistance,
     "Resistance": parse_resistance,
     "Resistance @ 25℃": parse_resistance,
+    "Resistance Value (Ohms)": parse_resistance,  # digital potentiometers
     "Cell Resistance @ Illuminance": parse_resistance,
     # Capacitance
     "Capacitance": parse_capacitance,

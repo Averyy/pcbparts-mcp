@@ -34,8 +34,10 @@ async def test_electrolytic_dimensions(kind, field, maximum):
     assert result["results"]
     assert result.get("counts_complete", True)
     assert sum(result["library_type_counts"].values()) == result["total"]
+    # Height also reads the seated height, which some electrolytics list instead (0.7.4).
+    names = [field, "Height - Seated (Max)"] if field == "Height" else [field]
     for part in result["results"]:
-        value = parse_length_mm(part["specs"].get(field, ""))
+        value = next((v for n in names if (v := parse_length_mm(part["specs"].get(n, ""))) is not None), None)
         if value is None:
             dimensions = parse_dimensions_from_package(part["package"])
             value = dimensions[0 if field == "Diameter" else 1]
@@ -46,7 +48,8 @@ async def test_electrolytic_dimensions(kind, field, maximum):
                             [db.resolve_subcategory_name(category)])
     expected = 0
     for attributes, package in rows:
-        value = parse_length_mm(dict(json.loads(attributes)).get(field, ""))
+        specs = dict(json.loads(attributes))
+        value = next((v for n in names if (v := parse_length_mm(specs.get(n, ""))) is not None), None)
         if value is None:
             value = parse_dimensions_from_package(package or "")[0 if field == "Diameter" else 1]
         expected += value is not None and value <= maximum

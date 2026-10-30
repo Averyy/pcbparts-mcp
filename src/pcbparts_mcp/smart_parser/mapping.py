@@ -337,6 +337,23 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str | tuple[str, str]]] = {
 }
 
 
+# A value's spec and operator when no category mapping applies
+DEFAULT_SPECS: dict[str, tuple[str, str]] = {
+    "voltage": ("Voltage Rating", ">="),
+    "current": ("Current Rating", ">="),
+    "resistance": ("Resistance", "="),
+    "capacitance": ("Capacitance", "="),
+    "inductance": ("Inductance", "="),
+    "frequency": ("Frequency", "="),
+    "tolerance": ("Tolerance", "="),
+    "power": ("Power", ">="),
+    "pin_count": ("Number of Pins", "="),
+    "position_count": ("Number of Pins", "="),  # Positions map to pin count
+    "pin_structure": ("Pin Structure", "="),  # 1x16, 2x20, etc. for headers
+    "pitch": ("Pitch", "="),
+}
+
+
 def map_value_to_spec(
     value: ExtractedValue,
     component_type: str | None,
@@ -352,22 +369,6 @@ def map_value_to_spec(
     Returns:
         Tuple of (spec_name, operator)
     """
-    # Default mappings by value type
-    default_specs = {
-        "voltage": ("Voltage Rating", ">="),
-        "current": ("Current Rating", ">="),
-        "resistance": ("Resistance", "="),
-        "capacitance": ("Capacitance", "="),
-        "inductance": ("Inductance", "="),
-        "frequency": ("Frequency", "="),
-        "tolerance": ("Tolerance", "="),
-        "power": ("Power", ">="),
-        "pin_count": ("Number of Pins", "="),
-        "position_count": ("Number of Pins", "="),  # Positions map to pin count
-        "pin_structure": ("Pin Structure", "="),  # 1x16, 2x20, etc. for headers
-        "pitch": ("Pitch", "="),
-    }
-
     # Category-specific mapping: from the matched keyword, then from the subcategory (this handles
     # keywords without an entry, like "buck converter", and USB connectors whose subcategory is
     # set from the package pattern)
@@ -382,6 +383,9 @@ def map_value_to_spec(
         if value.unit_type not in cat_map:
             continue
         mapped = cat_map[value.unit_type]
+        if mapped == "Output Current" and value.value < 1e-3:
+            # No LDO or DC-DC converter lists an output current under 1mA: "LDO 1uA" is its idle current
+            return "Quiescent Current", "<="
         if isinstance(mapped, tuple):
             return mapped
         # Determine operator based on spec type
@@ -390,8 +394,8 @@ def map_value_to_spec(
         return mapped, ">="
 
     # Fall back to defaults
-    if value.unit_type in default_specs:
-        return default_specs[value.unit_type]
+    if value.unit_type in DEFAULT_SPECS:
+        return DEFAULT_SPECS[value.unit_type]
 
     return value.unit_type.title(), "="
 

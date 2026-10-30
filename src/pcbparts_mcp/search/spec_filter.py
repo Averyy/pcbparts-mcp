@@ -245,6 +245,9 @@ ATTRIBUTE_ALIASES: dict[str, list[str]] = {
     "Inductance": ["Inductance"],
     "DCR": ["DC Resistance(DCR)"],
     "Isat": ["Current - Saturation(Isat)", "Current - Saturation (Isat)"],
+    # Some electrolytics list only the seated height (no part lists both); others have it only
+    # in the package string (DIMENSION_SPEC_FIELDS)
+    "Height": ["Height", "Height - Seated (Max)"],
 
     "Program Storage Size": ["Program Storage Size", "Program Memory Size", "Flash"],
 

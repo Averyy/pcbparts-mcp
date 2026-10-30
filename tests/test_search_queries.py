@@ -1781,3 +1781,191 @@ class TestShortenedOrderingCodes:
                                          sort_by="price", prefer_no_fee=False, limit=100)
         assert result["results"] == control["results"]
         assert result["mpn_matches"] == control["mpn_matches"]
+
+
+class TestRelease074:
+    """LCSC codes in a search, Height on electrolytics, digital pots and ideal diodes, female header
+    layouts, barrel jack sizes and comparison signs (0.7.4)."""
+
+    async def test_pasted_lcsc_code_finds_only_that_part(self):
+        # "C1525"* also matched every LCSC code starting with C1525 (C15250-C15259...).
+        if not server.get_db().get_by_lcsc_batch(["C1525"])["C1525"]:
+            pytest.skip("C1525 is no longer stocked")
+        for query in ("C1525", "c1525"):
+            result = await search(query)
+            assert [p["lcsc"] for p in result["results"]] == ["C1525"]
+
+    async def test_lcsc_shaped_part_number_still_matches(self):
+        # C1815 is also the 2SC1815's common part number.
+        result = await search("C1815")
+        assert any(p["lcsc"] != "C1815" and "C1815" in p["model"].upper() for p in result["results"])
+        assert all(p["lcsc"] == "C1815" or "C1815" in p["model"].upper() for p in result["results"])
+
+    async def test_several_lcsc_codes(self):
+        assert (await search("C1525 C25804"))["total"] == 0  # every term, like any other query
+        either = await search("C1525 C25804", match_all_terms=False)
+        assert {p["lcsc"] for p in either["results"]} <= {"C1525", "C25804"} and either["total"]
+
+    async def test_reference_designator_is_not_an_lcsc_code(self):
+        # The C1 in a BOM line keeps its old prefix match; as an exact code it kept only
+        # TDK's C1005... part numbers.
+        result = await search("C1 100nF 0402")
+        assert result["total"] > 20
+        assert any(not p["model"].upper().startswith("C1") for p in result["results"])
+
+    async def test_failed_search_sql_returns_its_error(self, monkeypatch):
+        import sqlite3
+
+        db = server.get_db()
+        db.search(query="10k resistor", limit=1)
+        conn = db._search_engine._conn
+
+        class FailingFTS:
+            def execute(self, sql, params=()):
+                if "components_fts" in sql:
+                    raise sqlite3.OperationalError("fts5: syntax error")
+                return conn.execute(sql, params)
+
+            def __getattr__(self, name):
+                return getattr(conn, name)
+
+        monkeypatch.setattr(db._search_engine, "_conn", FailingFTS())
+        result = await server.jlc_search(query="LM358")  # a text search, so the FTS query runs
+        assert result["error"] == "Search failed: query too complex. Reduce the number of filters."
+
+    @pytest.mark.parametrize("subcategory", ["Aluminum Electrolytic Capacitors - SMD",
+                                             "Aluminum Electrolytic Capacitors - Leaded"])
+    async def test_height_reads_seated_height(self, subcategory):
+        # Electrolytics that list only "Height - Seated (Max)" were missing, with a warning that
+        # few parts list Height.
+        def args(name):
+            return dict(subcategory_name=subcategory, spec_filters=[{"name": name, "op": "<=", "value": "7mm"}])
+        height = await search(**args("Height"))
+        seated = await search(**args("Height - Seated (Max)"))
+        assert height["total"] == seated["total"] > 0
+        assert "ignored_filters" not in height
+
+    async def test_digital_potentiometer(self):
+        # Returned mechanical trimpots: "digital" was left out and "potentiometer" won.
+        result = await search("digital potentiometer 10k I2C")
+        assert result["total"] > 0
+        for part in result["results"]:
+            assert part["subcategory"] == "Digital Potentiometers"
+            assert parse_resistance(part["specs"]["Resistance Value (Ohms)"]) == 10_000
+            assert "I2C" in part["specs"]["Interface"]
+        assert (await search("10k potentiometer"))["results"][0]["subcategory"] == "Potentiometers, Variable Resistors"
+
+    @pytest.mark.parametrize("query", ["ideal diode controller 12V", "ideal diode", "oring controller"])
+    async def test_ideal_diode_controller(self, query):
+        # Returned 1N4148-type switching diodes rated 12V and up.
+        result = await search(query)
+        assert result["total"] > 0
+        assert all(p["subcategory"] == "ORing Controllers" for p in result["results"])
+
+    @pytest.mark.parametrize("query,layout", [("1x8 female header", "1x8P"),
+                                              ("2x20 female header 2.54mm", "2x20P")])
+    async def test_female_header_layout(self, query, layout):
+        # Female headers list Holes Structure, not the pin headers' Pin Structure, so 1x4 and
+        # 1x6 headers came first.
+        result = await search(query)
+        assert result["total"] > 0
+        assert all(p["specs"]["Holes Structure"] == layout for p in result["results"])
+        pin_headers = await search(query.replace("female", "pin"))
+        assert all(p["specs"]["Pin Structure"] == layout for p in pin_headers["results"])
+
+    async def test_barrel_jack_plug_size_is_reported(self):
+        # Jacks list contact diameters (a 5.5x2.1mm jack: 6.4mm and a 2mm pin), not the plug size,
+        # and the size was dropped without a word.
+        result = await search("5.5x2.1mm barrel jack")
+        assert any(note.startswith("5.5x2.1mm:") for note in result["parsed"]["detected"]["not_searched"])
+
+    async def test_comparison_sign_keeps_its_direction(self):
+        # "< 25V" became Voltage Rating >= 25V.
+        result = await search("capacitor 10uF > 10V < 25V")
+        filters = {(f["name"], f["op"], f["value"]) for f in result["filters_applied"]["spec_filters"]}
+        assert {("Voltage Rating", ">=", "10V"), ("Voltage Rating", "<", "25V")} <= filters
+        assert result["total"] > 0
+        assert all(10 <= parse_voltage(p["specs"]["Voltage Rating"]) < 25 for p in result["results"])
+        assert "relaxed" not in result
+        mosfets = await search("mosfet Vds < 30V")
+        assert all(parse_voltage(p["specs"]["Drain to Source Voltage"]) < 30 for p in mosfets["results"])
+
+    @pytest.mark.parametrize("query", ["1n >50V 50V 0603 capacitor", "100nF 50V 0603 capacitor",
+                                       "schottky diode 1A Vf < 0.3V"])
+    def test_comparison_sign_in_the_default_direction(self, query):
+        from pcbparts_mcp.smart_parser import parse_smart_query
+        before = {(f.name, f.operator) for f in parse_smart_query(query).spec_filters}
+        assert ("Voltage Rating", ">") not in before and ("If", "<") not in before
+
+    @pytest.mark.parametrize("query", ["mosfet < 10mΩ SOT-23", "capacitor < 10µF 0603"])
+    def test_comparison_sign_before_unicode_units(self, query):
+        # The sign was looked up next to the value as read (10mohm), so "< 10mΩ" lost it.
+        from pcbparts_mcp.smart_parser import parse_smart_query
+        assert any(f.operator == "<" for f in parse_smart_query(query).spec_filters)
+
+    @pytest.mark.parametrize("query,spec,limit", [("LDO 3.3V < 1uA", "standby current", 1e-6),
+                                                  ("LDO 3.3V 1µA", "standby current", 1e-6),
+                                                  ("buck converter 10uA", "Quiescent Current", 1e-5)])
+    async def test_microamps_on_a_regulator_are_quiescent_current(self, query, spec, limit):
+        # No LDO or DC-DC converter lists an output current under 1mA: "< 1uA" found none, and
+        # "1uA" (Output Current >= 1uA) passed every LDO.
+        result = await search(query)
+        assert ("Quiescent Current", "<=") in {(f["name"], f["op"]) for f in result["filters_applied"]["spec_filters"]}
+        assert result["total"] > 0
+        assert all(parse_current(p["specs"][spec]) <= limit for p in result["results"])
+        output = await search("LDO 3.3V 500mA")
+        assert ("Output Current", ">=", "500mA") in {
+            (f["name"], f["op"], f["value"]) for f in output["filters_applied"]["spec_filters"]}
+
+    @pytest.mark.parametrize("query,spec,op,limit", [("mosfet 10mohm", "RDS(on)", "<=", 0.010),
+                                                     ("mosfet < 10mΩ SOT-23", "RDS(on)", "<", 0.010),
+                                                     ("mosfet > 10mohm", "RDS(on)", ">", 0.010),
+                                                     ("load switch 50mohm", "RDS(on)", "<=", 0.050),
+                                                     ("inductor 10uH 100mohm", "DC Resistance(DCR)", "<=", 0.100),
+                                                     ("inductor 10uH > 100mohm", "DC Resistance(DCR)", ">", 0.100)])
+    async def test_milliohms_are_on_resistance_or_dcr(self, query, spec, op, limit):
+        # These parts don't list Resistance, so the value was left out. A written sign keeps its
+        # direction on the spec the value moves to.
+        result = await search(query)
+        assert (spec, op) in {(f["name"], f["op"]) for f in result["filters_applied"]["spec_filters"]}
+        assert result["total"] > 0
+        passes = {"<=": lambda v: v <= limit * (1 + 1e-9), "<": lambda v: v < limit, ">": lambda v: v > limit}[op]
+        assert all(passes(parse_resistance(p["specs"][spec])) for p in result["results"])
+
+    @pytest.mark.parametrize("query,spec,op", [("digital potentiometer < 10k", "Resistance Value (Ohms)", "<"),
+                                               ("high side switch < 4A", "Maximum Continuous Current", "<"),
+                                               ("high side switch 4A", "Maximum Continuous Current", ">="),
+                                               ("level shifter 3.3V", "Supply Voltage", "=")])
+    async def test_comparison_sign_survives_a_fallback_spec(self, query, spec, op):
+        # The fallback spec took its own operator: "high side switch < 4A" searched >= 4A.
+        result = await search(query)
+        assert (spec, op) in {(f["name"], f["op"]) for f in result["filters_applied"]["spec_filters"]}
+        assert result["total"] > 0
+
+    @pytest.mark.parametrize("query,subcategory,ohms", [("600ohm 0603", "Ferrite Beads", 600),
+                                                        ("90ohm", "Common Mode Filters", 90)])
+    async def test_ohms_on_a_bead_or_common_mode_filter_are_impedance(self, query, subcategory, ohms):
+        # Beads and common mode filters list DCR too, so the DCR fallback read "600ohm" as DCR <= 600Ohm
+        # when the part type was passed as subcategory_name. "ferrite bead 600ohm" already meant impedance.
+        result = await search(query, subcategory_name=subcategory)
+        filters = {(f["name"], f["op"]) for f in result["filters_applied"]["spec_filters"]}
+        assert ("Impedance @ Frequency", "=") in filters
+        assert ("DC Resistance(DCR)", "<=") not in filters
+        assert result["total"] > 0
+        assert all(parse_resistance(p["specs"]["Impedance @ Frequency"].split("@")[0]) == ohms for p in result["results"])
+
+    async def test_milliohms_on_a_bead_are_dcr(self):
+        # No bead lists an impedance under 1 ohm (apart from "0Ω@100MHz"), so "100mohm" is its DCR
+        result = await search("100mohm", subcategory_name="Ferrite Beads")
+        assert ("DC Resistance(DCR)", "<=") in {(f["name"], f["op"]) for f in result["filters_applied"]["spec_filters"]}
+        assert result["total"] > 0
+        assert all(parse_resistance(p["specs"]["DC Resistance(DCR)"]) <= 0.1 * (1 + 1e-9) for p in result["results"])
+
+    @pytest.mark.parametrize("query", ["1m 250mA inductor", "inductor 1R0", "mosfet 10m"])
+    async def test_resistance_without_an_ohm_unit_is_not_on_resistance_or_dcr(self, query):
+        # In an inductor query "1m" may be 1mH and "1R0" 1.0uH, so a value without an ohm unit
+        # is left out as before.
+        result = await search(query)
+        names = {f["name"] for f in result["filters_applied"]["spec_filters"]}
+        assert not names & {"RDS(on)", "DC Resistance(DCR)"}
+        assert any(a["filter"].startswith("Resistance") and a["now"] is None for a in result["parsed"]["adjusted_filters"])

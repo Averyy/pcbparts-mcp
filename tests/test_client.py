@@ -84,7 +84,7 @@ class TestClient:
         assert params["preferredComponentFlag"] is True
 
     def test_build_search_params_library_type_no_fee(self, client):
-        """no_fee sets no API params; search() handles it with two parallel calls."""
+        """no_fee sets no API params; search() handles the two libraries."""
         params = client._build_search_params(library_type="no_fee")
         assert "componentLibraryType" not in params
         assert "preferredComponentFlag" not in params
@@ -375,6 +375,60 @@ class TestClient:
         """Subcategory lookup with empty cache should return None."""
         empty_client = JLCPCBClient()
         assert empty_client.get_subcategory_id_by_name("Anything") is None
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("limit", [1, 2, 3, 4, 20])
+    @pytest.mark.parametrize("basic_count, preferred_count", [(7, 5), (10, 1)])
+    async def test_search_no_fee_pagination(
+        self, client, monkeypatch, limit, basic_count, preferred_count,
+    ):
+        basic = [{"componentCode": f"C{i}"} for i in range(basic_count)]
+        preferred = [
+            {"componentCode": f"C{basic_count + i}"}
+            for i in range(preferred_count)
+        ]
+        requests = []
+
+        async def request(url, params):
+            requests.append(params)
+            source = preferred if params.get("preferredComponentFlag") else basic
+            size = params["pageSize"]
+            assert size > 0
+            start = (params["currentPage"] - 1) * size
+            return {"data": {"componentPageInfo": {
+                "list": source[start:start + size], "total": len(source),
+            }}}
+
+        monkeypatch.setattr(client, "_request", request)
+        pages = []
+        for page in range(1, basic_count + preferred_count + 2):
+            result = await client.search(library_type="no_fee", page=page, limit=limit)
+            pages.append(result)
+            assert result["page"] == page
+            assert result["per_page"] == limit
+            assert result["total"] == basic_count + preferred_count
+            assert len(result["results"]) <= limit
+            if not result["has_more"]:
+                break
+        else:
+            pytest.fail("no_fee pagination did not finish")
+
+        codes = [item["lcsc"] for result in pages for item in result["results"]]
+        expected = [item["componentCode"] for item in basic + preferred]
+        assert sorted(codes) == sorted(expected)
+        assert len(codes) == len(set(codes))
+        assert all(result["has_more"] for result in pages[:-1])
+        assert pages[-1]["has_more"] is False
+        assert all(result["total_pages"] == len(pages) for result in pages)
+        if limit == 1:
+            assert codes == expected
+            assert all(params["pageSize"] == 1 for params in requests)
+        else:
+            assert len(requests) == 2 * len(pages)
+            for index, params in enumerate(requests):
+                assert params["currentPage"] == index // 2 + 1
+                expected_size = (limit + 1) // 2 if index % 2 == 0 else limit // 2
+                assert params["pageSize"] == expected_size
 
     # Tests for LCSC code validation
 

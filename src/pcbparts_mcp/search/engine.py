@@ -305,6 +305,7 @@ class SearchEngine:
         connector_manufacturer: str | None = None,
         preferred_specs: list[SpecFilter] | None = None,
         gate_drive_v: float | None = None,
+        lcsc_codes: bool = False,
     ) -> dict[str, Any]:
         """Execute a search query with pre-resolved parameters.
 
@@ -338,7 +339,7 @@ class SearchEngine:
 
         # FTS clause
         if query:
-            fts_sql, fts_params = build_fts_clause(query, match_all_terms)
+            fts_sql, fts_params = build_fts_clause(query, match_all_terms, lcsc_codes)
             if fts_sql:
                 sql_parts.append(fts_sql)
                 count_parts.append(fts_sql)
@@ -600,6 +601,7 @@ class SearchEngine:
         connector_manufacturer: str | None = None,
         preferred_specs: list[SpecFilter] | None = None,
         gate_drive_v: float | None = None,
+        lcsc_codes: bool = False,
     ) -> dict[str, Any]:
         """Search components with parametric filtering.
 
@@ -625,6 +627,7 @@ class SearchEngine:
             part_number: Full token shortened by the parser; rank and label MPN matches
             preferred_specs: Ordered equality preferences for sparse PD role/output attributes
             gate_drive_v: Rank listed RDS(on) at or below this gate drive first; retain unknowns
+            lcsc_codes: The caller's whole query is LCSC codes; match each exactly, not as a prefix
 
         Returns:
             Search results with metadata
@@ -748,6 +751,7 @@ class SearchEngine:
             connector_manufacturer=connector_manufacturer,
             preferred_specs=preferred_specs,
             gate_drive_v=gate_drive_v,
+            lcsc_codes=lcsc_codes,
         )
 
         results = search_result["results"]
@@ -782,6 +786,7 @@ class SearchEngine:
                     connector_manufacturer=connector_manufacturer,
                     preferred_specs=preferred_specs,
                     gate_drive_v=gate_drive_v,
+                    lcsc_codes=lcsc_codes,
                 )
                 if retry_result["total"] > 0:
                     # Found results with normalized query
@@ -826,8 +831,11 @@ class SearchEngine:
             response["counts_complete"] = search_result["counts_complete"]
         if "mpn_matches" in search_result:
             response["mpn_matches"] = search_result["mpn_matches"]
-        if search_result["ignored_filters"]:
+        if search_result.get("ignored_filters"):
             response["ignored_filters"] = search_result["ignored_filters"]
+        # A failed SQL execution returns only the error and empty counts.
+        if search_result.get("error"):
+            response["error"] = search_result["error"]
 
         # Add MPN retry info if we found results via normalization
         if mpn_retry_query:
