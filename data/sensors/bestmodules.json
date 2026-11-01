@@ -7,7 +7,15 @@
     "sensor_count": 80,
     "total_pages_checked": 86,
     "skipped": 1,
-    "errors": 0
+    "errors": 0,
+    "kept_missing": 5
+  },
+  "missed_scrapes": {
+    "ht7m2126": 1,
+    "ht7m2127": 1,
+    "ht7m2136": 1,
+    "ht7m2156": 1,
+    "ht7m2176": 1
   },
   "sensors": [
     {
@@ -1557,6 +1565,105 @@
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
       "voltage": "3.3-6"
+    },
+    {
+      "id": "ht7m2126",
+      "name": "HT7M2126",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/ht7m2126.html"
+      ],
+      "description": "Miniaturized PIR Module HT7M2126. Low power consumption: Operating mode (Moving objects to be detected) Standby with detecting mode < 50&mu;A (Operating voltage 3.3V)",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "ht7m2127",
+      "name": "HT7M2127",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/ht7m2127.html"
+      ],
+      "description": "Miniaturized PIR Module HT7M2127. Low power consumption: Operating mode (Moving objects to be detected) Standby with detecting mode < 50&mu;A (Operating voltage 3.3V)",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "ht7m2136",
+      "name": "HT7M2136",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/ht7m2136.html"
+      ],
+      "description": "Miniaturized PIR Module HT7M2136. Low power consumption: Operating mode (Moving objects to be detected) Standby with detecting mode < 50&mu;A (Operating voltage 3.3V)",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "ht7m2156",
+      "name": "HT7M2156",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/ht7m2156.html"
+      ],
+      "description": "Miniaturized PIR Module HT7M2156. Low power consumption: Operating mode (Moving objects to be detected) Standby with detecting mode < 50&mu;A (Operating voltage 3.3V)",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
+    },
+    {
+      "id": "ht7m2176",
+      "name": "HT7M2176",
+      "measures": [
+        "motion",
+        "pir",
+        "temperature"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.bestmodulescorp.com/en/ht7m2176.html"
+      ],
+      "description": "Miniaturized PIR Module HT7M2176. Low power consumption: Operating mode (Moving objects to be detected) Standby with detecting mode < 50&mu;A (Operating voltage 3.3V)",
+      "manufacturer": "Holtek",
+      "datasheet_url": "https://www.bestmodulescorp.com/pub/media/amasty/amfile/attach/BMduino_SG_EN_V4.pdf",
+      "voltage": "2.7-5.5",
+      "type": "pir"
     }
   ]
 }

@@ -320,16 +320,70 @@ def make_sensor_entry(
     return entry
 
 
+# A sensor that drops out of a scrape is kept until this many scrapes in a row
+# miss it. Sources flicker: on 2026-11-01 the Best Modules listing left out its
+# five HT7M21xx PIR modules for one run, though their pages were still up.
+REMOVE_AFTER_MISSED_SCRAPES = 3
+
+
+def _previous_source(path: Path) -> tuple[list[dict], dict[str, int]]:
+    """Sensors and miss counts from the last run's file, or nothing if unreadable."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        sensors = [s for s in data.get("sensors", []) if isinstance(s, dict) and s.get("id")]
+        missed = {k: v for k, v in data.get("missed_scrapes", {}).items() if isinstance(v, int)}
+    except (OSError, ValueError, AttributeError):
+        return [], {}
+    return sensors, missed
+
+
 def write_source_json(source: str, source_url: str, sensors: list[dict], stats: dict, output_dir: Path) -> None:
-    """Write per-source JSON with metadata."""
+    """Write per-source JSON with metadata.
+
+    Sensors in the previous file but not in `sensors` are carried over, and
+    `missed_scrapes` counts how many scrapes in a row have missed each one; the
+    REMOVE_AFTER_MISSED_SCRAPES-th miss drops it. A sensor that comes back is
+    written as scraped and its count cleared. `stats.sensor_count` stays the
+    number this scrape found (the deploy gate fails a source on 0), and
+    `stats.kept_missing` counts the carried ones.
+    """
+    path = output_dir / f"{source}.json"
+    previous, previous_missed = _previous_source(path)
+    found = {s["id"] for s in sensors}
+
+    kept: list[dict] = []
+    missed: dict[str, int] = {}
+    dropped: list[str] = []
+    for sensor in previous:
+        sensor_id = sensor["id"]
+        if sensor_id in found or sensor_id in missed:
+            continue
+        count = previous_missed.get(sensor_id, 0) + 1
+        if count >= REMOVE_AFTER_MISSED_SCRAPES:
+            dropped.append(sensor_id)
+            continue
+        missed[sensor_id] = count
+        kept.append(sensor)
+
+    if kept:
+        logger.warning(
+            f"{source}: kept {len(kept)} sensors this scrape didn't find: "
+            + ", ".join(f"{sensor_id} ({count}/{REMOVE_AFTER_MISSED_SCRAPES})" for sensor_id, count in missed.items())
+        )
+    if dropped:
+        logger.warning(
+            f"{source}: dropped {len(dropped)} sensors missing from {REMOVE_AFTER_MISSED_SCRAPES} "
+            f"scrapes in a row: {', '.join(dropped)}"
+        )
+
     output = {
         "source": source,
         "source_url": source_url,
         "scraper_version": SCRAPER_VERSION,
         "scraped_at": datetime.now(timezone.utc).isoformat(),
-        "stats": stats,
-        "sensors": sensors,
+        "stats": {**stats, "kept_missing": len(kept)},
+        "missed_scrapes": missed,
+        "sensors": sensors + kept,
     }
-    path = output_dir / f"{source}.json"
     path.write_text(json.dumps(output, indent=2, ensure_ascii=False), encoding="utf-8")
-    logger.info(f"Wrote {len(sensors)} sensors to {path}")
+    logger.info(f"Wrote {len(sensors)} sensors to {path}" + (f" (+{len(kept)} kept)" if kept else ""))
