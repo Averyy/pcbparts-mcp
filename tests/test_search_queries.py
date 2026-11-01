@@ -9,7 +9,10 @@ from pathlib import Path
 import pytest
 
 import pcbparts_mcp.server as server
-from pcbparts_mcp.parsers import parse_current, parse_length_mm, parse_memory_size, parse_resistance, parse_voltage
+from pcbparts_mcp.parsers import (
+    parse_capacitance_max, parse_current, parse_frequency, parse_length_mm, parse_memory_size, parse_q_factor,
+    parse_resistance, parse_voltage,
+)
 from pcbparts_mcp.search.engine import _range_passes
 from pcbparts_mcp.subcategory_aliases import SUBCATEGORY_ALIASES, SUBCATEGORY_GROUPS
 
@@ -1192,7 +1195,8 @@ class TestWrongResults:
     async def test_sma_series(self):
         result = await search("SMA connector right angle edge mount")
         assert result["total"] > 0
-        assert all(p["specs"]["RF Series"] == "SMA" for p in result["results"])
+        # Parts that list several series ("SMA、FAKRA") count too
+        assert all("SMA" in p["specs"]["RF Series"].split("、") for p in result["results"])
 
     async def test_magjacks_not_limited_to_filtered(self):
         """"RJ45 with magnetics" returned only the 19 jacks described "Filtered"."""
@@ -1969,3 +1973,105 @@ class TestRelease074:
         names = {f["name"] for f in result["filters_applied"]["spec_filters"]}
         assert not names & {"RDS(on)", "DC Resistance(DCR)"}
         assert any(a["filter"].startswith("Resistance") and a["now"] is None for a in result["parsed"]["adjusted_filters"])
+
+
+class TestRelease078:
+    """Feedback from a GNSS splitter design session (2026-10-31): ESD capacitance (#67), RF inductor
+    SRF and Q, and SMA read as the diode package (#77)."""
+
+    async def test_esd_capacitance_is_a_numeric_budget(self):
+        # Junction Capacitance <= 0.5pF was ignored as non-numeric
+        result = await search("ESD", spec_filters=[
+            {"name": "Junction Capacitance", "op": "<=", "value": "0.5pF"},
+            {"name": "Reverse Stand-Off Voltage (Vrwm)", "op": ">=", "value": "6V"},
+        ])
+        assert not result.get("ignored_filters")
+        assert result["total"] > 0
+        for p in result["results"]:
+            assert parse_capacitance_max(p["specs"]["Junction Capacitance"]) <= 0.5e-12 * (1 + 1e-9)
+            assert parse_voltage(p["specs"]["Reverse Stand-Off Voltage (Vrwm)"]) >= 6
+
+    @pytest.mark.parametrize("query", ["0.2pF ESD", "ESD diode 5V 0.2pF", "TVS diode 0.2pF"])
+    async def test_esd_query_capacitance_is_junction_capacitance(self, query):
+        # "0.2pF ESD" filtered on Capacitance, which no ESD part lists, so the value was dropped
+        result = await search(query)
+        filters = {(f["name"], f["op"]) for f in result["filters_applied"]["spec_filters"]}
+        assert ("Junction Capacitance", "<=") in filters
+        assert ("Capacitance", "=") not in filters
+        assert result["total"] > 0
+        assert all(parse_capacitance_max(p["specs"]["Junction Capacitance"]) <= 0.2e-12 * (1 + 1e-9)
+                   for p in result["results"])
+
+    async def test_bare_values_with_an_explicit_esd_subcategory(self):
+        result = await search("5V 0.2pF", subcategory_name="ESD and Surge Protection (TVS/ESD)")
+        filters = {(f["name"], f["op"]) for f in result["filters_applied"]["spec_filters"]}
+        assert filters == {("Reverse Stand-Off Voltage (Vrwm)", ">="), ("Junction Capacitance", "<=")}
+        assert result["total"] > 0
+
+    async def test_esd_query_voltage_is_vrwm(self):
+        result = await search("ESD diode 5V")
+        filters = {(f["name"], f["op"]) for f in result["filters_applied"]["spec_filters"]}
+        assert ("Reverse Stand-Off Voltage (Vrwm)", ">=") in filters
+        assert ("Voltage Rating", ">=") not in filters
+
+    async def test_two_junction_capacitances_compare_by_the_larger(self):
+        result = await search(None, subcategory_name="ESD and Surge Protection (TVS/ESD)", limit=100,
+                              spec_filters=[{"name": "Junction Capacitance", "op": "<=", "value": "0.4pF"}])
+        assert result["total"] > 0
+        assert not any(p["specs"]["Junction Capacitance"] == "0.3pF、0.6pF" for p in result["results"])
+
+    async def test_self_resonant_frequency_filter(self):
+        result = await search("68nH", subcategory_name="Inductors (SMD)",
+                              spec_filters=[{"name": "Frequency - Self Resonant", "op": ">=", "value": "2GHz"}])
+        assert not result.get("ignored_filters")
+        assert result["total"] > 0
+        assert all(parse_frequency(p["specs"]["Frequency - Self Resonant"]) >= 2e9 for p in result["results"])
+
+    async def test_q_filter(self):
+        result = await search("68nH", subcategory_name="Inductors (SMD)",
+                              spec_filters=[{"name": "Q @ Frequency", "op": ">=", "value": "30"}])
+        assert not result.get("ignored_filters")
+        assert result["total"] > 0
+        assert all(parse_q_factor(p["specs"]["Q @ Frequency"]) >= 30 for p in result["results"])
+
+    @pytest.mark.parametrize("query, series", [("SMA edge mount connector", "SMA"), ("SMA jack PCB mount", "SMA"),
+                                               ("SMB connector", "SMB"), ("SMA female", "SMA")])
+    async def test_sma_with_connector_words_is_the_rf_series(self, query, series):
+        # "SMA edge mount connector" searched the DO-214AC diode package and found nothing
+        result = await search(query)
+        assert result["filters_applied"]["package"] is None
+        assert result["filters_applied"]["subcategory_resolved"] == "Coaxial Connectors (RF)"
+        assert result["total"] > 0
+        assert all(series in p["specs"]["RF Series"].split("、") for p in result["results"])
+
+    async def test_sma_in_an_explicit_coax_subcategory(self):
+        # The explicit subcategory didn't stop the package reading; "50 ohm" also implied chip resistors
+        result = await server.jlc_search(query="SMA female right angle through hole 50 ohm",
+                                         subcategory_name="Coaxial Connectors (RF)", limit=20)
+        assert result["filters_applied"]["package"] is None
+        assert ("RF Series", "=", "SMA") in {(f["name"], f["op"], f["value"])
+                                             for f in result["filters_applied"]["spec_filters"]}
+        if result["total"] == 0:
+            # Words aren't left out with an explicit subcategory; the hint says which found nothing
+            assert "without them" in result["hint"]
+
+    @pytest.mark.parametrize("query", ["SMA schottky diode 40V", "TVS SMA 24V", "SS34 SMA", "SMB rectifier"])
+    async def test_sma_without_connector_words_is_still_the_package(self, query):
+        result = await search(query)
+        assert result["filters_applied"]["package"] in ("SMA", "SMB")
+
+    async def test_explicit_diode_subcategory_keeps_the_package(self):
+        result = await search("SMA female", subcategory_name="Schottky Diodes")
+        assert result["filters_applied"]["package"] == "SMA"
+
+    async def test_hint_names_words_that_zero_a_search_with_filters(self):
+        result = await search("ESD purple elephant",
+                              spec_filters=[{"name": "Junction Capacitance", "op": "<=", "value": "0.5pF"}])
+        assert result["total"] == 0
+        assert '"purple elephant"' in result["hint"]
+        assert "without them" in result["hint"]
+
+    async def test_no_hint_when_the_words_are_not_the_problem(self):
+        result = await search("ESD purple elephant", strict=True,
+                              spec_filters=[{"name": "Junction Capacitance", "op": "<=", "value": "0.5pF"}])
+        assert "without them" not in (result.get("hint") or "")

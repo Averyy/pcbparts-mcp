@@ -5,8 +5,9 @@ import heapq
 import logging
 import re
 import time
+from datetime import datetime, timezone
 from typing import Any, Callable, Literal
-from urllib.parse import quote
+from urllib.parse import parse_qs, quote, urlparse
 
 import wafer
 from wafer import (
@@ -59,6 +60,7 @@ from .db_worker import COMPONENT_POOL, run_db
 from .easyeda_store import EasyEDAStore, FootprintAnswer, answer_problem, pick_answer
 from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
 from .mounting import detect_mounting_type
+from .rf_coverage import COVERAGE_ORDER, RF_BAND_SUBCATEGORIES, check_candidates
 from .alternatives import (
     COMPATIBILITY_RULES,
     is_compatible_alternative,
@@ -116,6 +118,55 @@ _MANUFACTURER_EXACT_NORMALIZED: dict[str, str] = {
     _normalize_manufacturer_name(name): name for name in KNOWN_MANUFACTURERS
 }
 
+# A datasheet_pdf link closer than this to expiring isn't served: the caller needs time to fetch it
+PDF_LINK_MIN_REMAINING = 300
+
+
+def _signed_url_expiry(url: str) -> float | None:
+    """Expiry (epoch seconds) of a presigned object-storage URL, or None if it doesn't say.
+
+    JLCPCB signs with OSS v4 (x-oss-date=20261101T151700Z&x-oss-expires=1800); v1 links carry
+    Expires=<epoch>.
+    """
+    params = parse_qs(urlparse(url).query)
+    try:
+        if "x-oss-date" in params and "x-oss-expires" in params:
+            issued = datetime.strptime(params["x-oss-date"][0], "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
+            return issued.timestamp() + int(params["x-oss-expires"][0])
+        if "Expires" in params:
+            return float(params["Expires"][0])
+    except (ValueError, IndexError):
+        return None
+    return None
+
+
+def datasheet_pdf_link(url: str | None, now: float | None = None) -> tuple[str | None, str | None]:
+    """JLCPCB's direct datasheet PDF link and its expiry (ISO 8601 UTC), or (None, None).
+
+    The API item's dataManualFileAccessIdUrl is the datasheet as a PDF on JLCPCB's storage, also
+    for parts whose LCSC datasheet link is empty (GP2S+, C3155018). It is signed for about 30
+    minutes, so a link without a readable expiry, or one about to expire, isn't returned.
+    """
+    if not url or not url.startswith("https://"):
+        return None, None
+    expires = _signed_url_expiry(url)
+    if expires is None or expires - (time.time() if now is None else now) < PDF_LINK_MIN_REMAINING:
+        return None, None
+    return url, datetime.fromtimestamp(expires, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _pdf_link_expiring(result: dict[str, Any] | None, now: float) -> bool:
+    """True if a cached part's datasheet_pdf link is about to expire (refetch the part)."""
+    expires = (result or {}).get("datasheet_pdf_expires")
+    if not expires:
+        return False
+    try:
+        at = datetime.strptime(expires, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp()
+    except ValueError:
+        return True
+    return at - now < PDF_LINK_MIN_REMAINING
+
+
 class JLCPCBClient:
     """Async client for JLCPCB component search API with anti-detection via wafer."""
 
@@ -136,6 +187,7 @@ class JLCPCBClient:
         # Database parts that can meet a part's compatibility rules (set by the server); find_alternatives
         # adds them to its live search, which only sees the best-stocked parts with the same primary value
         self._alternative_candidates: Callable[..., list[dict[str, Any]]] | None = None
+        self._subcategory_parts: Callable[..., list[dict[str, Any]]] | None = None
         # lcsc -> answer that replaces an older store or seed answer in this process: a re-check
         # marker once the part's symbol UUID stopped working, then the live answer if the store
         # couldn't take it. Only parts whose UUID stopped working, so it stays small.
@@ -289,6 +341,10 @@ class JLCPCBClient:
     def set_alternative_candidates(self, lookup: Callable[..., list[dict[str, Any]]]) -> None:
         """Use database candidates in find_alternatives (ComponentDatabase.find_alternative_candidates)."""
         self._alternative_candidates = lookup
+
+    def set_subcategory_parts(self, lookup: Callable[..., list[dict[str, Any]]]) -> None:
+        """Use every maker's parts for RF similar parts (ComponentDatabase.subcategory_parts)."""
+        self._subcategory_parts = lookup
 
     def easyeda_store_size(self) -> int | None:
         """Answers in the footprint store, or None when there's no usable store (memory only)."""
@@ -994,8 +1050,18 @@ class JLCPCBClient:
                 result["description"] = item.get("describe")
             result["min_order"] = item.get("minPurchaseNum")
             result["reel_qty"] = item.get("encapsulationNumber")
-            result["datasheet"] = item.get("dataManualUrl")
-            result["lcsc_url"] = item.get("lcscGoodsUrl")
+            # LCSC's datasheet link is a viewer page, and some parts have none (empty or null);
+            # JLCPCB's own copy is a direct PDF behind a link that expires (see datasheet_pdf_link)
+            result["datasheet"] = item.get("dataManualUrl") or None
+            pdf_url, pdf_expires = datasheet_pdf_link(item.get("dataManualFileAccessIdUrl"))
+            if pdf_url:
+                result["datasheet_pdf"] = pdf_url
+                result["datasheet_pdf_expires"] = pdf_expires
+            # Null for some parts LCSC does list (C52139901); the product-detail URL works from the code
+            code = item.get("componentCode")
+            result["lcsc_url"] = item.get("lcscGoodsUrl") or (
+                f"https://www.lcsc.com/product-detail/{code}.html" if code else None
+            )
 
             # Transform all prices
             if prices:
@@ -1160,7 +1226,8 @@ class JLCPCBClient:
         cached: tuple[float, dict[str, Any] | None] | None = None
         async with self._get_part_cache_lock():
             entry = self._part_cache.get(lcsc)
-            if entry is not None and now - entry[0] < PART_CACHE_TTL:
+            # A cached part whose datasheet_pdf link is about to expire is fetched again for a new link
+            if entry is not None and now - entry[0] < PART_CACHE_TTL and not _pdf_link_expiring(entry[1], now):
                 cached = entry
         if cached is not None:
             timestamp, cached_result = cached
@@ -1358,6 +1425,27 @@ class JLCPCBClient:
                 if p.get("lcsc") not in live_codes
             ]
 
+        # RF parts: the live search above only saw the original maker's best-stocked parts, so add every
+        # maker's parts in the subcategory and check them against the original's frequency band
+        frequency_check = None
+        if not is_supported and subcategory_name in RF_BAND_SUBCATEGORIES:
+            if subcategory_id and self._subcategory_parts is not None:
+                live_codes = {p.get("lcsc") for p in candidates}
+                candidates += [
+                    p for p in await run_db(
+                        COMPONENT_POOL,
+                        self._subcategory_parts,
+                        subcategory_id=subcategory_id,
+                        min_stock=effective_min_stock,
+                        library_type=None if library_type == "no_fee" else library_type,
+                    )
+                    if p.get("lcsc") not in live_codes and p.get("lcsc", "").upper() != original_lcsc
+                    and not (package_filter
+                             and _normalize_package_for_matching(p.get("package", "")) != orig_pkg_normalized)
+                ]
+            # Before the footprint checks and the limit, so both see the best-covering parts first
+            frequency_check = check_candidates(original, candidates)
+
         # For SUPPORTED categories: verify primary spec matches and compatibility
         # For UNSUPPORTED categories: skip verification, just return similar_parts
         compatible: list[dict[str, Any]] = []
@@ -1445,6 +1533,10 @@ class JLCPCBClient:
         # Within each fee tier, prefer the original footprint for passives and crystals.
         def rank(item):
             score, part, _, _ = item
+            coverage = part.get("frequency_coverage")
+            if coverage:
+                # RF: how much of the original's band a part covers comes before fee, stock and price
+                return (COVERAGE_ORDER[coverage["status"]], coverage.get("share") or 0.0, score)
             if prefer_same_package(subcategory_name or ""):
                 return (
                     part.get("library_type") in ("basic", "preferred"),
@@ -1467,7 +1559,8 @@ class JLCPCBClient:
             )
         else:
             response = build_unsupported_response(
-                original, top_scored, subcategory_name or "", primary_attr, effective_limit
+                original, top_scored, subcategory_name or "", primary_attr, effective_limit,
+                frequency_check=frequency_check,
             )
         if footprint_filter:
             response["summary"]["footprint_filter"] = footprint_filter

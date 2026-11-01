@@ -23,8 +23,10 @@ from pcbparts_mcp.parsers import (
     parse_current,
     parse_resistance,
     parse_capacitance,
+    parse_capacitance_max,
     parse_inductance,
     parse_frequency,
+    parse_q_factor,
     parse_decibels,
     parse_impedance_at_freq,
     parse_length_mm,
@@ -118,8 +120,13 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     # Capacitance
     "Capacitance": parse_capacitance,
     "Load Capacitance": parse_capacitance,
+    # ESD/TVS: "0.3pF、0.6pF" is compared by its larger value
+    "Junction Capacitance": parse_capacitance_max,
     # Inductance
     "Inductance": parse_inductance,
+    # RF inductors (Inductors (SMD) lists both for ~90% of its parts): "6GHz"; "8@100MHz" -> 8
+    "Frequency - Self Resonant": parse_frequency,
+    "Q @ Frequency": parse_q_factor,
     # Frequency
     "Frequency": parse_frequency,
     # Physical dimensions (aluminum electrolytics, discrete caps, etc.)
@@ -1853,8 +1860,12 @@ def build_unsupported_response(
     subcategory: str,
     primary_attr: str | None,
     limit: int,
+    frequency_check: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Build response for unsupported subcategories - similar parts, not alternatives."""
+    """Build response for unsupported subcategories - similar parts, not alternatives.
+
+    frequency_check (RF subcategories, rf_coverage.check_candidates) goes in the summary.
+    """
     similar = scored_parts[:limit]
 
     # Use attribute names from original part for verification guidance
@@ -1881,17 +1892,20 @@ def build_unsupported_response(
     if primary_attr:
         primary_value = original.get("specs", {}).get(primary_attr)
 
+    summary: dict[str, Any] = {
+        "found": 0,
+        "similar_count": len(similar),
+        "message": "No compatibility rules for this category. Showing similar parts for manual comparison.",
+        "is_supported_category": False,
+        "price_note": "Prices shown are unit price at qty 1 tier",
+    }
+    if frequency_check:
+        summary["frequency_check"] = frequency_check
     return {
         "original": original,
         "alternatives": [],  # Empty - we can't verify compatibility
         "similar_parts": similar_parts_output,
-        "summary": {
-            "found": 0,
-            "similar_count": len(similar),
-            "message": "No compatibility rules for this category. Showing similar parts for manual comparison.",
-            "is_supported_category": False,
-            "price_note": "Prices shown are unit price at qty 1 tier",
-        },
+        "summary": summary,
         "manual_comparison": {
             "original_specs": original.get("specs", {}),
             "specs_to_verify": specs_to_verify[:5],

@@ -245,6 +245,30 @@ def parse_capacitance(s: str) -> float | None:
     return value  # Assume farads if no suffix
 
 
+def parse_capacitance_max(s: str) -> float | None:
+    """Largest of the capacitances listed: '0.3pF、0.6pF' -> 6e-13.
+
+    ESD arrays can list two junction capacitances (line to ground, line to line); a capacitance
+    budget has to hold for the larger one.
+    """
+    if not s:
+        return None
+    values = [parse_capacitance(part) for part in re.split(r"[、,;/]", s)]
+    values = [v for v in values if v is not None]
+    return max(values) if values else None
+
+
+_Q_FACTOR_PATTERN = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*(?:@|$)")
+
+
+def parse_q_factor(s: str) -> float | None:
+    """Q of an inductor, at whatever frequency it's listed: '8@100MHz' -> 8, '12' -> 12."""
+    if not s:
+        return None
+    match = _Q_FACTOR_PATTERN.match(s)
+    return float(match.group(1)) if match else None
+
+
 def parse_inductance(s: str) -> float | None:
     """Parse inductance in henries: '10uH' -> 1e-5, '100nH' -> 1e-7, '1mH' -> 1e-3"""
     if not s:
@@ -458,6 +482,42 @@ def parse_freq_range(s: str) -> tuple[float | None, float | None]:
     # Single value
     single = parse_frequency(s)
     return single, single
+
+
+_FREQ_UNIT = {"": 1.0, "K": 1e3, "M": 1e6, "G": 1e9}
+_FREQ_BAND_PATTERN = re.compile(
+    r"^\s*(\d+(?:\.\d+)?)\s*([kKmMgG]?)(Hz)?\s*(?:~|-|–|to)\s*(\d+(?:\.\d+)?)\s*([kKmMgG]?)Hz\s*$"
+)
+_FREQ_POINT_PATTERN = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*([kKmMgG]?)Hz\s*$")
+
+
+def parse_freq_bands(s: str, points: bool = True) -> list[tuple[float, float]] | None:
+    """Frequency bands in Hz, one per '、'-separated item, or None if any item isn't one.
+
+    '1.2GHz~2GHz' -> [(1.2e9, 2e9)]; '869MHz~960MHz、1.805GHz~1.99GHz' keeps both bands and the gap
+    between them; '1164~1610MHz' gives the lower bound the upper's unit. With points=True a single
+    frequency ('2.4GHz') is a band of zero width; with points=False ('Bandwidth: 7.5kHz', a width)
+    it makes the value unreadable.
+    """
+    if not s or not s.strip():
+        return None
+    bands = []
+    for item in re.split(r"[、,;]", s):
+        match = _FREQ_BAND_PATTERN.match(item)
+        if match:
+            low_unit = match.group(2).upper() if (match.group(2) or match.group(3)) else match.group(5).upper()
+            low = float(match.group(1)) * _FREQ_UNIT[low_unit]
+            high = float(match.group(4)) * _FREQ_UNIT[match.group(5).upper()]
+            if high < low:
+                return None
+            bands.append((low, high))
+            continue
+        point = _FREQ_POINT_PATTERN.match(item) if points else None
+        if not point:
+            return None
+        value = float(point.group(1)) * _FREQ_UNIT[point.group(2).upper()]
+        bands.append((value, value))
+    return bands or None
 
 
 def parse_vin_range(s: str) -> tuple[float | None, float | None]:

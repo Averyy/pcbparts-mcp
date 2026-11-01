@@ -91,6 +91,8 @@ async def lifespan(app):
     _client.set_easyeda_seed(db.get_easyeda_seed)
     # jlc_find_alternatives also looks in the database for parts that meet the rules
     _client.set_alternative_candidates(db.find_alternative_candidates)
+    # and, for RF parts, at every maker's parts in the subcategory to check against the original's band
+    _client.set_subcategory_parts(db.subcategory_parts)
     _easyeda_seeded = db.easyeda_seed_size()
     store_size = _client.easyeda_store_size()
     _easyeda_stored = (time.monotonic(), store_size)
@@ -1157,6 +1159,17 @@ def jlc_search(
                     ("package/packages", package or packages), ("manufacturer", manufacturer)) if value]
         if explicit:
             hints.append("Try without " + ", ".join(explicit) + ".")
+        # The words-left-out retry above never runs with the caller's own subcategory or filters,
+        # so say when the words alone are what found nothing ("ESD diode RF low capacitance" with
+        # a Junction Capacitance filter)
+        if (not strict and effective_query and not part_number_text
+                and (subcategory_id or subcategory_name or spec_filters)):
+            without_words = db.search(query=None, **{**search_args, "limit": 1}).get("total")
+            if without_words:
+                hints.insert(0, f"No part's description has all of the words {json.dumps(effective_query)}; "
+                                f"without them {without_words} parts match the part type and filters. Words "
+                                "aren't left out when you give subcategory_name or spec_filters, so drop "
+                                "them or put them in a filter.")
         if part_number_text:
             hints.insert(0, f"No in-stock part matches {part_number_text}; try "
                             f"jlc_stock_check(query={json.dumps(part_number_text)}) for low or zero stock, "
@@ -1406,8 +1419,10 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     """Full details for one JLCPCB part (all price tiers, datasheet, attributes, EasyEDA footprint
     availability), or the JLCPCB parts matching a manufacturer part number.
 
-    Reply: prices lists quantity tiers, datasheet links the datasheet; has_easyeda_footprint=null
-    means unknown, false means absent; MPN lookups return results and total. Non-exact replies
+    Reply: prices lists quantity tiers; datasheet is LCSC's datasheet page (a viewer, null when LCSC
+    has none) and datasheet_pdf the datasheet itself, a PDF link valid until datasheet_pdf_expires
+    (about 30 minutes; fetch it then, don't store it); lcsc_url is the LCSC product page;
+    has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results and total. Non-exact replies
     add match (separators, packing, alias, alternative, lcsc or related), matched_mpn where
     applicable, and a note naming the part types for related full-text results (and parts another
     manufacturer numbered after the original). An LCSC code given as mpn finds that part
@@ -1422,7 +1437,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
 
     Returns:
         For lcsc: Full part details including specs (description only when specs are empty),
-        all pricing tiers in prices, datasheet URL,
+        all pricing tiers in prices, datasheet, datasheet_pdf and datasheet_pdf_expires, lcsc_url,
         component attributes, and EasyEDA footprint availability:
         - has_easyeda_footprint: True if EasyEDA has footprint/symbol, False if not, null if unknown
         - easyeda_symbol_uuid: UUID for direct EasyEDA editor link (null if no footprint)
@@ -1502,6 +1517,10 @@ async def jlc_find_alternatives(
     within each tier). Reply: summary.found counts verified alternatives; unverified_alternatives
     need manual comparison for missing required matches; specs_unparseable lists specs not verified;
     unchecked_requirements includes pinout/circuit checks still needed; has_easyeda_footprint=null means unknown.
+    RF parts (splitters, baluns, couplers, amplifiers, filters, transceivers) have no rules, so they come
+    back as similar_parts from every maker, ordered by how much of the original's frequency range
+    each covers (frequency_coverage: full, partial with share, or unknown); parts that don't overlap it
+    are left out and counted in summary.frequency_check.
 
     Args:
         lcsc: LCSC code of the original part (e.g., "C2557")

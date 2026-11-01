@@ -306,6 +306,82 @@ class TestClient:
         assert len(result["attributes"]) == 1
         assert result["attributes"][0]["name"] == "Voltage"
 
+    @staticmethod
+    def _signed_pdf(issued: str = "20261101T151700Z", seconds: int = 1800) -> str:
+        return ("https://jlc-prod-smt.oss-eu-central-1.aliyuncs.com/smtDataManualFile/1-C52139901.pdf"
+                f"?response-content-disposition=attachment&x-oss-date={issued}&x-oss-expires={seconds}"
+                "&x-oss-signature=abc")
+
+    def test_transform_part_full_without_lcsc_links(self, client, monkeypatch):
+        """C52139901: the API gives no LCSC page or datasheet, but LCSC lists the part and
+        JLCPCB has the PDF (2026-10-31 report)."""
+        import pcbparts_mcp.client as client_module
+
+        issued = 1793546220.0  # 2026-11-01T15:17:00Z
+        monkeypatch.setattr(client_module.time, "time", lambda: issued + 60)
+        item = {
+            "componentCode": "C52139901", "componentModelEn": "MPD1020W2D21",
+            "componentLibraryType": "expand", "dataManualUrl": None, "lcscGoodsUrl": None,
+            "dataManualFileAccessIdUrl": self._signed_pdf(),
+        }
+        result = client._transform_part(item, slim=False)
+        assert result["lcsc_url"] == "https://www.lcsc.com/product-detail/C52139901.html"
+        assert result["datasheet"] is None
+        assert result["datasheet_pdf"] == self._signed_pdf()
+        assert result["datasheet_pdf_expires"] == "2026-11-01T15:47:00Z"
+
+    def test_transform_part_full_empty_datasheet_is_null(self, client):
+        # GP2S+ (C3155018) has dataManualUrl "" and no PDF link here
+        item = {"componentCode": "C3155018", "dataManualUrl": "", "lcscGoodsUrl": "https://www.lcsc.com/x.html"}
+        result = client._transform_part(item, slim=False)
+        assert result["datasheet"] is None
+        assert result["lcsc_url"] == "https://www.lcsc.com/x.html"
+        assert "datasheet_pdf" not in result
+
+    def test_datasheet_pdf_link_expiry(self):
+        from pcbparts_mcp.client import datasheet_pdf_link
+
+        issued = 1793546220.0  # 2026-11-01T15:17:00Z
+        url = self._signed_pdf()
+        assert datasheet_pdf_link(url, now=issued) == (url, "2026-11-01T15:47:00Z")
+        # Under five minutes left, or no readable expiry: not served
+        assert datasheet_pdf_link(url, now=issued + 1600) == (None, None)
+        assert datasheet_pdf_link("https://jlc-prod-smt.oss.example/a.pdf?x-oss-signature=abc", now=issued) == (None, None)
+        assert datasheet_pdf_link(self._signed_pdf(issued="garbage"), now=issued) == (None, None)
+        assert datasheet_pdf_link(None) == (None, None)
+        assert datasheet_pdf_link("http://insecure.example/a.pdf?Expires=1893456000", now=issued) == (None, None)
+
+    async def test_get_part_refetches_before_pdf_link_expires(self, client, monkeypatch):
+        """A cached part is served for an hour, but its PDF link lasts 30 minutes."""
+        import pcbparts_mcp.client as client_module
+
+        clock = [1793546220.0]
+        monkeypatch.setattr(client_module.time, "time", lambda: clock[0])
+        calls = []
+
+        async def request(url, params):
+            calls.append(clock[0])
+            issued = client_module.datetime.fromtimestamp(clock[0], client_module.timezone.utc)
+            return {"data": {"componentPageInfo": {"list": [{
+                "componentCode": "C52139901", "componentLibraryType": "expand",
+                "dataManualFileAccessIdUrl": self._signed_pdf(issued.strftime("%Y%m%dT%H%M%SZ")),
+            }]}}}
+
+        async def footprint(lcsc):
+            return {"has_easyeda_footprint": False}
+
+        monkeypatch.setattr(client, "_request", request)
+        monkeypatch.setattr(client, "check_easyeda_footprint", footprint)
+
+        first = await client.get_part("C52139901")
+        clock[0] += 600  # 10 minutes: cached, link still good
+        assert await client.get_part("C52139901") == first
+        assert len(calls) == 1
+        clock[0] += 1300  # 31m40s: link expires in under five minutes, so the part is fetched again
+        third = await client.get_part("C52139901")
+        assert len(calls) == 2
+        assert third["datasheet_pdf_expires"] > first["datasheet_pdf_expires"]
+
     # Tests for abbreviation matching
 
     def test_match_category_abbreviation_led(self, client):

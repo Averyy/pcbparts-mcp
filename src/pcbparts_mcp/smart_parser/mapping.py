@@ -75,6 +75,13 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str | tuple[str, str]]] = {
         "voltage": "Reverse Stand-Off Voltage (Vrwm)",
         "current": "Peak Pulse Current (Ipp)",
     },
+    # ESD keywords ("esd", "esd protection", "esd diode") and TVS ones without a capacitance: the
+    # subcategory lists Vrwm and Junction Capacitance, never Voltage Rating or Capacitance. A
+    # capacitance there is a signal line's budget, so at most that much.
+    "esd and surge protection (tvs/esd)": {
+        "voltage": "Reverse Stand-Off Voltage (Vrwm)",
+        "capacitance": ("Junction Capacitance", "<="),
+    },
 
     # Inductors
     "inductor": {

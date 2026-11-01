@@ -183,3 +183,26 @@ def find_alternative_candidates(
             if len(results) >= limit:
                 break
     return results
+
+
+def subcategory_parts(
+    conn: sqlite3.Connection,
+    subcategories: dict[int, dict[str, Any]],
+    subcategory_id: int,
+    min_stock: int = DEFAULT_MIN_STOCK,
+    library_type: str | None = None,
+    limit: int = 500,
+) -> list[dict[str, Any]]:
+    """In-stock parts in a subcategory from any manufacturer, no-fee parts first, then by stock.
+
+    find_alternatives checks RF parts against the original's frequency band; its live search only
+    sees the original maker's best-stocked parts. RF subcategories hold at most a few hundred parts.
+    """
+    sql = ["SELECT * FROM components WHERE subcategory_id = ? AND stock >= ?"]
+    params: list[Any] = [subcategory_id, max(min_stock, DEFAULT_MIN_STOCK)]
+    library_codes = {"basic": "('b')", "preferred": "('p')", "no_fee": "('b', 'p')", "extended": "('e')"}
+    if library_type in library_codes:
+        sql.append(f"AND library_type IN {library_codes[library_type]}")
+    sql.append("ORDER BY CASE WHEN library_type IN ('b', 'p') THEN 0 ELSE 1 END, stock DESC, lcsc LIMIT ?")
+    params.append(limit)
+    return [row_to_dict(row, subcategories) for row in conn.execute(" ".join(sql), params)]

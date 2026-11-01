@@ -135,7 +135,7 @@ RANGE_SPECS: frozenset[str] = frozenset({
 })
 
 # String specs whose values list several items ("Boost、Buck"): "=" matches any one item
-LIST_SPECS: frozenset[str] = frozenset({"Topology", "Type", "type"})
+LIST_SPECS: frozenset[str] = frozenset({"Topology", "Type", "type", "RF Series"})  # "SMA、FAKRA" has SMA
 
 
 @dataclass
