@@ -1,11 +1,11 @@
 {
   "source": "circuitpython",
-  "source_url": "https://docs.circuitpython.org/projects/bundle/en/latest/drivers.html",
+  "source_url": "https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_Bundle/main/docs/drivers.rst",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-10-01T12:25:35.816981+00:00",
+  "scraped_at": "2026-11-01T13:25:07.204151+00:00",
   "stats": {
     "sensor_count": 126,
-    "total_entries_checked": 578,
+    "total_entries_checked": 405,
     "skipped_no_measures": 1
   },
   "sensors": [

@@ -2,7 +2,7 @@
   "source": "arduino",
   "source_url": "https://downloads.arduino.cc/libraries/library_index.json",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-11-01T12:39:46.882292+00:00",
+  "scraped_at": "2026-11-01T13:25:02.949793+00:00",
   "stats": {
     "sensor_count": 742,
     "total_libs_checked": 2041,
