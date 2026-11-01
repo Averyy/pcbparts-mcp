@@ -16,7 +16,7 @@ scripts/
     common.py                # Shared: normalize_sensor_id, infer_measures, MEASURE_KEYWORDS, etc.
     arduino.py               # Arduino Library Index (JSON API)
     esphome.py               # ESPHome components (git clone + Python AST)
-    circuitpython.py         # CircuitPython drivers (HTML)
+    circuitpython.py         # CircuitPython drivers (drivers.rst from GitHub)
     micropython.py           # Awesome-MicroPython readme (Markdown)
     tasmota.py               # Tasmota Supported Peripherals (HTML table)
     zephyr.py                # Zephyr RTOS devicetree bindings (YAML, sparse git clone)
@@ -42,7 +42,7 @@ data/sensors/
 |---|---|---|---|
 | Arduino Library Index | 642 | `arduino` | IC names, popularity, descriptions, manufacturer, GitHub URLs |
 | ESPHome | 173 | `esphome` | Protocol (i2c/spi/uart), I2C addresses |
-| CircuitPython | 115 | `circuitpython` | Adafruit driver URLs |
+| CircuitPython | 126 | `circuitpython` | Adafruit driver URLs. Reads `docs/drivers.rst` from the Adafruit bundle on GitHub, not docs.circuitpython.org: Read the Docs gives GitHub Actions runners a Cloudflare challenge (HTTP 429) |
 | MicroPython | 165 | `micropython` | GitHub URLs, category-based measures |
 | Tasmota | 103 | `tasmota` | Protocol, similar to ESPHome |
 | Zephyr RTOS | 214 | `zephyr` | Protocol, manufacturer (from devicetree vendor prefixes) |
