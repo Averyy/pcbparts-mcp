@@ -2024,11 +2024,6 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
-  "3384": {
-    "name": "Sandbag/Absorbent expansion bag",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -3534,11 +3529,6 @@
     "category_id": 51,
     "category_name": "Measuring tools"
   },
-  "1885": {
-    "name": "Vernier caliper",
-    "category_id": 51,
-    "category_name": "Measuring tools"
-  },
   "1628": {
     "name": "Brushed DC Motor Drivers",
     "category_id": 69,
@@ -3601,11 +3591,6 @@
   },
   "3716": {
     "name": "SSD",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "3592": {
-    "name": "telescope",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3884,11 +3869,6 @@
     "category_id": 68,
     "category_name": "Power Modules"
   },
-  "3412": {
-    "name": "Anti-riot Stick",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
   "2029": {
     "name": "SiC Diodes",
     "category_id": 66,
@@ -4104,33 +4084,13 @@
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "156": {
-    "name": "Flat head screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "882": {
     "name": "Grease gun",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
-  "3547": {
-    "name": "Hammerhead",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1758": {
-    "name": "Hex screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "157": {
-    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
@@ -4151,11 +4111,6 @@
   },
   "3734": {
     "name": "Specialty Screwdriver",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1749": {
-    "name": "Star-shaped screwdrivers",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
