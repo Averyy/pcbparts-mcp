@@ -42,7 +42,7 @@ def get_by_mpn(
         if vendors:
             sql += f" AND manufacturer COLLATE NOCASE IN ({','.join('?' * len(vendors))})"
             params.extend(vendors)
-        return parts(conn.execute(sql + " ORDER BY stock DESC", params))
+        return parts(conn.execute(sql + " ORDER BY stock DESC, lcsc", params))
 
     def matched(results, kind):
         info = {"match": kind, "matched_mpn": results[0]["model"]}
@@ -52,13 +52,13 @@ def get_by_mpn(
     # full-text matches or alternatives.
     if is_placeholder_mpn(mpn):
         return parts(conn.execute(
-            "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC", [mpn],
+            "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC, lcsc", [mpn],
         ))
 
     def find(candidate):
         # 1. Keep the existing exact query and stock ordering unchanged.
         results = parts(conn.execute(
-            "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC", [candidate],
+            "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC, lcsc", [candidate],
         ))
         if results:
             return results, {}
@@ -72,7 +72,7 @@ def get_by_mpn(
         variants = normalize_mpn(candidate)
         for variant in variants[1:]:
             results = parts(conn.execute(
-                "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC", [variant],
+                "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC, lcsc", [variant],
             ))
             if not results:
                 results = keyed(variant)
@@ -107,7 +107,7 @@ def get_by_mpn(
                 """SELECT c.* FROM components c
                    JOIN components_fts f ON c.lcsc = f.lcsc
                    WHERE f.components_fts MATCH ?
-                   ORDER BY c.stock DESC
+                   ORDER BY c.stock DESC, c.lcsc
                    LIMIT 10""", [f'{columns}"{escaped}"*'],
             ))
             if results:
@@ -133,7 +133,7 @@ def get_by_mpn(
             rows = conn.execute(
                 f"SELECT * FROM components WHERE {MPN_KEY_SQL} >= ? AND {MPN_KEY_SQL} < ? "
                 f"AND manufacturer COLLATE NOCASE IN ({','.join('?' * len(rule.manufacturers))}) "
-                "ORDER BY stock DESC",
+                "ORDER BY stock DESC, lcsc",
                 [prefix, prefix + "\uffff", *rule.manufacturers],
             )
             results = parts(row for row in rows

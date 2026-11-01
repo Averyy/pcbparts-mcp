@@ -4,11 +4,17 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.7.6 (2026-11-01)
+
+### Fixed
+
+- **Parts tied on stock or price:** parts with the same stock (or the same price, with `sort_by="price"`) came back in no fixed order. `USB C` and `USB-C connector` listed the same 3,587 connectors in a different order, and which tied parts made the `limit` could change from one spelling to the next. Ties are now ordered by LCSC code in `jlc_search`, in `jlc_get_part(mpn=...)` matches, and in the candidates `jlc_find_alternatives` checks.
+
 ## 0.7.5 (2026-11-01)
 
 ### Fixed
 
-- **CircuitPython sensor refresh:** the monthly sensor scrape on 2026-11-01 couldn't read the CircuitPython driver list. docs.circuitpython.org answered GitHub's build server with a Cloudflare challenge, so that source kept October's data and the deploy waited for the next day. The list now comes from the Adafruit bundle's `docs/drivers.rst` on GitHub, the file the docs page is built from, and gives the same 126 sensors. Sensors CircuitPython lists outside its sensor sections, such as MPR121 under IO Expansion and EMC2101 under Motor Helpers, are kept on purpose now; before, a parsing accident kept them.
+- **CircuitPython sensor refresh:** the monthly sensor scrape on 2026-11-01 couldn't read the CircuitPython driver list. docs.circuitpython.org answered GitHub's build server with a Cloudflare challenge, so that source kept October's data and the scrape's deploy was held back. The list now comes from the Adafruit bundle's `docs/drivers.rst` on GitHub, the file the docs page is built from, and gives the same 126 sensors. Sensors CircuitPython lists outside its sensor sections, such as MPR121 under IO Expansion and EMC2101 under Motor Helpers, are kept on purpose now; before, a parsing accident kept them.
 
 ## 0.7.4 (2026-10-30)
 

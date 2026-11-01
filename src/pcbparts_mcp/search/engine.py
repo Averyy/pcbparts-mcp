@@ -422,11 +422,9 @@ class SearchEngine:
             gate = "rds_gate_min_v" if self._mosfet_gate_column else "rds_gate_min(components.attributes)"
             ranks.append(f"CASE WHEN {gate} <= ? THEN 0 ELSE 1 END")
             params.append(gate_drive_v)
-            sort_clause += ", lcsc"
         if connector_manufacturer:
             ranks.append("CASE WHEN manufacturer = ? THEN 0 ELSE 1 END")
             params.append(connector_manufacturer)
-            sort_clause += ", lcsc"
         if connector_series:
             if self._connector_columns:
                 ranks.append("CASE WHEN upper(trim(reference_series)) = upper(?) THEN 0 ELSE 1 END")
@@ -437,12 +435,9 @@ class SearchEngine:
                     "AND upper(trim(json_extract(j.value, '$[1]'))) = upper(?)) THEN 0 ELSE 1 END"
                 )
             params.append(connector_series)
-            sort_clause += ", lcsc"  # Stable page boundaries when stock/price ties.
         for preference in preferred_specs or []:
             ranks.append("spec_preference_rank(components.attributes, ?, ?)")
             params.extend([preference.name, preference.value])
-        if preferred_specs:
-            sort_clause += ", lcsc"  # Keep ranked pages stable across stock/price ties.
         if ranks:
             sort_clause = sort_clause.replace("ORDER BY ", "ORDER BY " + ", ".join(ranks) + ", ", 1)
         sql_parts.append(sort_clause)
