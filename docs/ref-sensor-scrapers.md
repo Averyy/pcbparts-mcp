@@ -75,7 +75,8 @@ Each `{source}.json` has this structure:
   "source_url": "https://...",
   "scraper_version": "1.0.0",
   "scraped_at": "2026-03-01T...",
-  "stats": { "sensor_count": 642, ... },
+  "stats": { "sensor_count": 642, "kept_missing": 1, ... },
+  "missed_scrapes": { "bmp085": 1 },  // carried-over sensors: scrapes in a row that missed each
   "sensors": [
     {
       "id": "bme280",           // required, [a-z0-9]+ only
@@ -97,6 +98,10 @@ Each `{source}.json` has this structure:
 ```
 
 Fields are sparse — only included when the source provides them. Different sources contribute different fields.
+
+`write_source_json()` (common.py) keeps sensors that drop out of a scrape. A sensor in the previous `{source}.json` that this scrape didn't find is written again, unchanged, after the fresh ones, and `missed_scrapes` counts how many scrapes in a row have missed it. The third miss in a row (`REMOVE_AFTER_MISSED_SCRAPES`) drops it, and a sensor that comes back is written as scraped with its count cleared. New sensors are added straight away. The reason is that sources flicker: on 2026-11-01 the Best Modules listing left out its five HT7M21xx modules for one run while their product pages were still up.
+
+`stats.sensor_count` is still the number the scrape found, so the deploy gate still fails a source that finds nothing, while its last data stays in place. `stats.kept_missing` counts the carried sensors, and the scrape log names each one. If a scraper's ID scheme changes, the old IDs are carried for two more scrapes, so delete `{source}.json` before that run.
 
 ## Measure Types (56)
 

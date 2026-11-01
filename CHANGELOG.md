@@ -4,6 +4,12 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.7.7 (2026-11-01)
+
+### Fixed
+
+- **Sensors that drop out of one scrape:** a sensor missing from a source's latest scrape now stays in `sensor_recommend` until three scrapes in a row miss it; new sensors are still added at once. A rerun of the sensor scrape on 2026-11-01 lost Holtek's HT7M2126, HT7M2127, HT7M2136, HT7M2156 and HT7M2176 PIR modules, because the Best Modules listing left them out for that run while their product pages were still up. They're back. A source whose scrape finds nothing also keeps its last data now, instead of an empty list going out with the next deploy.
+
 ## 0.7.6 (2026-11-01)
 
 ### Fixed

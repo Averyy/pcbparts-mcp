@@ -52,8 +52,8 @@ jobs:
           echo "=== Per-source stats ==="
           for f in data/sensors/*.json; do
             NAME=$(basename "$f" .json)
-            COUNT=$(python -c "import json; d=json.load(open('$f')); print(d.get('stats',{}).get('sensor_count','?'))" 2>/dev/null || echo "?")
-            echo "  $NAME: $COUNT sensors"
+            COUNT=$(python -c "import json; s=json.load(open('$f')).get('stats',{}); k=s.get('kept_missing',0); print(s.get('sensor_count','?'), 'sensors', *([f'(+{k} kept from earlier scrapes)'] if k else []))" 2>/dev/null || echo "?")
+            echo "  $NAME: $COUNT"
           done
 
       - name: Commit and push data files
@@ -76,7 +76,8 @@ jobs:
           total = 0
           for f in glob.glob('data/sensors/*.json'):
               try:
-                  total += json.load(open(f)).get('stats',{}).get('sensor_count',0)
+                  stats = json.load(open(f)).get('stats',{})
+                  total += stats.get('sensor_count',0) + stats.get('kept_missing',0)
               except: pass
           print(total)
           ")
