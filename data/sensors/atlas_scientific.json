@@ -2,10 +2,10 @@
   "source": "atlas_scientific",
   "source_url": "https://atlas-scientific.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-10-01T12:30:15.298410+00:00",
+  "scraped_at": "2026-11-01T12:44:17.506949+00:00",
   "stats": {
     "sensor_count": 28,
-    "total_products": 92,
+    "total_products": 93,
     "skipped": 23,
     "errors": 0
   },
@@ -364,7 +364,7 @@
         "https://atlas-scientific.com/probes/industrial-gen3-ph-probe-nt/",
         "https://atlas-scientific.com/probes/industrial-ph-probe/",
         "https://atlas-scientific.com/probes/micro-ph-probe/",
-        "https://atlas-scientific.com/probes/mini-ph-probe/"
+        "https://atlas-scientific.com/probes/micro-ph-probe/?attribute_half-cell-sma-adapter=Yes%2C+I+need+an+adapter+%28%2B%245.99%29&#038;attribute_ph-flow-cell=Yes%2C+I+would+like+one+%28%2B%2474.99%29"
       ],
       "description": "The Atlas Scientific Consumer Grade pH probe gives accurate readings over a wide pH range. This probe has been designed to work will in common pH reading application.",
       "manufacturer": "Atlas Scientific"

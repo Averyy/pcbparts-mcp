@@ -2,10 +2,10 @@
   "source": "winsen",
   "source_url": "https://www.winsen-sensor.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-10-01T12:48:07.351674+00:00",
+  "scraped_at": "2026-11-01T13:02:46.573994+00:00",
   "stats": {
-    "sensor_count": 390,
-    "total_product_pages": 398,
+    "sensor_count": 392,
+    "total_product_pages": 399,
     "skipped": 3,
     "errors": 0
   },
@@ -2209,13 +2209,26 @@
       ],
       "platforms": [],
       "urls": [
-        "https://www.winsen-sensor.com/product/mpn-5.html",
-        "https://www.winsen-sensor.com/product/mpn-5d.html"
+        "https://www.winsen-sensor.com/product/mpn-5.html"
       ],
       "description": "MPn-5 Semiconductor Propane Sensor | UL 2075 Certified. Target: Liquefied Gas / C3H8. Range: 0～5250ppm",
       "manufacturer": "Winsen",
       "voltage": "5",
       "type": "semiconductor"
+    },
+    {
+      "id": "mpn5d",
+      "name": "MPn-5D",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/mpn-5d.html"
+      ],
+      "description": "MPn-5D Liquefied Gas Sensor. Target: LPG. Range: 300～5250ppm (LPG)",
+      "manufacturer": "Winsen",
+      "voltage": "5"
     },
     {
       "id": "mpv820",
@@ -5958,6 +5971,21 @@
       "description": "ZRT512J Refrigerant Detection Module. Target: R32/R454B/R290. Range: 0 - 50%LFL",
       "manufacturer": "Winsen",
       "voltage": "24",
+      "type": "ndir"
+    },
+    {
+      "id": "zrt513r1234yf",
+      "name": "ZRT513-R1234YF",
+      "measures": [
+        "gas"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.winsen-sensor.com/product/zrt513-r1234yf.html"
+      ],
+      "description": "ZRT513-R1234YF R1234yf Infrared Refrigerant Sensor | Winsen. Target: R1234YF (Tetrafluoropropene). Range: 0～25% LFL",
+      "manufacturer": "Winsen",
+      "voltage": "5",
       "type": "ndir"
     },
     {

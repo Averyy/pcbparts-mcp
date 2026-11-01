@@ -2,7 +2,7 @@
   "source": "hilink",
   "source_url": "https://www.hlktech.net/index.php?id=product",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-10-01T12:29:00.255887+00:00",
+  "scraped_at": "2026-11-01T12:43:03.476813+00:00",
   "stats": {
     "sensor_count": 39,
     "total_products": 74,
@@ -23,6 +23,9 @@
         "https://www.hlktech.net/index.php?id=1383"
       ],
       "description": "6-axis Attitude Sensor Gyroscope Module AS201 3-axis acceleration  3-axis gyroscope with BLE 5.1",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "imu"
     },
@@ -39,6 +42,9 @@
         "https://www.hlktech.net/index.php?id=1380"
       ],
       "description": "9-axis Attitude Sensor Gyroscope Module AS201-9  Accelerometer Magnetic Field Attitude Angle Motion/posture Module",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "imu"
     },
@@ -54,6 +60,9 @@
         "https://www.hlktech.net/index.php?id=451"
       ],
       "description": "5.8GHz Ultra-low Power 5.8G Radar Sensor Module Radar Induction Switch Sensor Module HLK-LD012-5G",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -69,6 +78,9 @@
         "https://www.hlktech.net/index.php?id=1283"
       ],
       "description": "5.8GHz Hi-link 5.8G X-band moving induction/detection sensor radar module LD020 widely used in fluorescent lamps, bulb lamps, tube lamps, ceiling lamps",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -84,6 +96,9 @@
         "https://www.hlktech.net/index.php?id=1375"
       ],
       "description": "5.8GHz 5.8G radar sensing module human movement sensor HLK-LD021 low-power intelligent sensing switch",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -117,6 +132,9 @@
         "https://www.hlktech.net/index.php?id=1346"
       ],
       "description": "10GHz Hi-link 10G radar sensing module HLK-LD1040C low-power micro motion intelligent sensing sensor IFC output",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -232,6 +250,9 @@
         "https://www.hlktech.net/index.php?id=1376"
       ],
       "description": "24GHz 24G Human Presence Sensing Module LD2410D Mmwave Radar Sensing Switch Intelligent Sensor Radar Module 10 Millimeter Detection",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -267,7 +288,8 @@
       ],
       "description": "24GHz HLK-LD2411 24Ghz intelligent toilet radar sensor module gesture recognition induction automatic flipping and flushing",
       "protocol": [
-        "gpio"
+        "gpio",
+        "uart"
       ],
       "manufacturer": "Hi-Link",
       "type": "radar"
@@ -285,6 +307,9 @@
         "https://www.hlktech.net/index.php?id=1152"
       ],
       "description": "24GHz HLK-LD2411S 24Ghz accurate distance detection radar sensor module support upper computer software to adjust paraments",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -340,6 +365,9 @@
         "https://www.hlktech.net/index.php?id=1219"
       ],
       "description": "24GHz 24G millimeter wave vehicle speed measurement radar sensor module HLK-LD2415H remote speed measurement serial communication",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -377,6 +405,9 @@
         "https://www.hlktech.net/index.php?id=1523"
       ],
       "description": "24GHz Hi-link 24G vehicle status sensing radar module LD2417 vehicle ranging and speed measurement millimeter wave sensor module kit/testboard",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -392,6 +423,9 @@
         "https://www.hlktech.net/index.php?id=1518"
       ],
       "description": "24GHz Hi-link 24G millimeter wave high-precision 3-4 multi-target human body state LD2423 trajectory tracking radar module",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -407,6 +441,9 @@
         "https://www.hlktech.net/index.php?id=1157"
       ],
       "description": "24GHz 24Ghz one-transmitter-two-receiver human motion tracking trajectory radar module Wall mounted installation HLK-LD2450",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -442,6 +479,9 @@
         "https://www.hlktech.net/index.php?id=1389"
       ],
       "description": "24GHz 24Ghz one-transmitter-two-receiver human motion tracking trajectory radar module Wall mounted installation special for air-condition HLK-LD2452",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -458,6 +498,9 @@
         "https://www.hlktech.net/index.php?id=1516"
       ],
       "description": "24GHz HI-LINK 24G Human Movement Tracking Trajectory Radar Module LD2453 One Transmitter Two Receivers Multi Target Tracking HLK-LD2453 Kits",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -511,6 +554,9 @@
         "https://www.hlktech.net/index.php?id=1313"
       ],
       "description": "60GHz Hi-link 60G radar sensor module LD6001 intelligent sensing detection of human body area position, quantity statistics, and walking trajectory",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -527,6 +573,9 @@
         "https://www.hlktech.net/index.php?id=1309"
       ],
       "description": "60GHz Hi-link 60G 4T4R high-precision multi-target up to 10 human movement trajectory sensing radar module HLK-LD6001A testboard/development board kit",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },
@@ -543,6 +592,9 @@
         "https://www.hlktech.net/index.php?id=1311"
       ],
       "description": "60GHz Hi-link 60GHz millimeter wave radar entrance and exit counting people up to 8 radar sensing module HLK-LD6001C testboard kit",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "Hi-Link",
       "type": "radar"
     },

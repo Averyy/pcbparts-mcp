@@ -2,12 +2,12 @@
   "source": "zephyr",
   "source_url": "https://github.com/zephyrproject-rtos/zephyr",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-10-01T12:25:40.642694+00:00",
+  "scraped_at": "2026-11-01T12:39:53.237584+00:00",
   "stats": {
-    "sensor_count": 244,
-    "total_bindings": 496,
+    "sensor_count": 247,
+    "total_bindings": 501,
     "skipped_internal": 47,
-    "skipped_bus_variant": 72,
+    "skipped_bus_variant": 73,
     "skipped_no_measures": 31
   },
   "sensors": [
@@ -598,6 +598,24 @@
       "manufacturer": "ams-OSRAM"
     },
     {
+      "id": "as7341",
+      "name": "AS7341",
+      "measures": [
+        "color"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,as7341.html"
+      ],
+      "description": "AMS AS7341 11-channel spectral color sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "ams-OSRAM"
+    },
+    {
       "id": "bcm283xvcthermal",
       "name": "BCM283XVCTHERMAL",
       "measures": [
@@ -996,6 +1014,24 @@
         "i2c"
       ],
       "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "cht8305",
+      "name": "CHT8305",
+      "measures": [
+        "humidity",
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensylink,cht8305.html"
+      ],
+      "description": "The Sensylink CHT8305 is a Digital Humidity and Temperature Sensor with ±3.0%RH Accuracy for humidity and ±0.5°C Accuracy for temperature. Its possible addresses are 0x40, 0x41, 0x42 and 0x43.",
+      "protocol": [
+        "i2c"
+      ]
     },
     {
       "id": "cht8315",
@@ -1586,6 +1622,26 @@
       "manufacturer": "ams-OSRAM"
     },
     {
+      "id": "icm20948",
+      "name": "ICM20948",
+      "measures": [
+        "acceleration",
+        "gyroscope",
+        "magnetic_field"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm20948.html"
+      ],
+      "description": "InvenSense ICM-20948 Nine-Axis Motion Tracking device. The accelerometer and the gyroscope sit behind the primary interface, the AK09916 magnetometer behind an auxiliary I2C bus the device masters ...",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
+    },
+    {
       "id": "icm42605",
       "name": "ICM42605",
       "measures": [
@@ -1598,8 +1654,9 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm42605.html"
       ],
-      "description": "ICM-42605 motion tracking device",
+      "description": "ICM-42605 motion tracking device in I2C mode",
       "protocol": [
+        "i2c",
         "spi"
       ],
       "manufacturer": "InvenSense"
