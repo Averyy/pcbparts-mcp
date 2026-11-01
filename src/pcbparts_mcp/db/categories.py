@@ -172,7 +172,7 @@ def find_alternative_candidates(
             sql.append(f"AND {column} <= ?")
             params.append(target * 1.02)
 
-    sql.append("ORDER BY CASE WHEN library_type IN ('b', 'p') THEN 0 ELSE 1 END, stock DESC LIMIT ?")
+    sql.append("ORDER BY CASE WHEN library_type IN ('b', 'p') THEN 0 ELSE 1 END, stock DESC, lcsc LIMIT ?")
     params.append(max_rows)
 
     results: list[dict[str, Any]] = []

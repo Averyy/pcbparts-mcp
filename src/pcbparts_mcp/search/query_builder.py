@@ -757,25 +757,26 @@ def build_sort_clause(
         has_query: Whether there's a text query (affects relevance sort)
 
     Returns:
-        SQL ORDER BY clause
+        SQL ORDER BY clause, ending in lcsc so parts tied on stock or price
+        always come back in the same order (and the same ones make the limit)
     """
     lib_type_order = "CASE library_type WHEN 'b' THEN 1 WHEN 'p' THEN 2 ELSE 3 END"
 
     if sort_by == "price":
         if prefer_no_fee:
-            return f"ORDER BY {lib_type_order}, price ASC NULLS LAST"
+            return f"ORDER BY {lib_type_order}, price ASC NULLS LAST, lcsc"
         else:
-            return "ORDER BY price ASC NULLS LAST"
+            return "ORDER BY price ASC NULLS LAST, lcsc"
     elif sort_by == "relevance" and has_query:
         if prefer_no_fee:
-            return f"ORDER BY {lib_type_order}, stock DESC"
+            return f"ORDER BY {lib_type_order}, stock DESC, lcsc"
         else:
-            return "ORDER BY stock DESC"
+            return "ORDER BY stock DESC, lcsc"
     else:
         if prefer_no_fee:
-            return f"ORDER BY {lib_type_order}, stock DESC"
+            return f"ORDER BY {lib_type_order}, stock DESC, lcsc"
         else:
-            return "ORDER BY stock DESC"
+            return "ORDER BY stock DESC, lcsc"
 
 
 def needs_numeric_post_filter(spec_filter: SpecFilter) -> bool:
