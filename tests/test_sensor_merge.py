@@ -326,3 +326,27 @@ class TestEnrichProtocols:
         enrich_protocols(merged, quiet=True)
         assert len(merged["bme280"]["protocols"]) > 0
         assert "i2c" in merged["bme280"]["protocols"]
+
+
+def test_build_tables_have_no_duplicate_keys():
+    """A repeated key in a dict literal silently replaces the earlier entry.
+
+    bm42s3021 was listed twice in IC_PROTOCOLS: ["i2c"], as its page and
+    datasheet give, then ["uart"], which won.
+    """
+    import ast
+
+    source = (Path(__file__).parent.parent / "scripts" / "build_sensor_db.py").read_text(encoding="utf-8")
+    duplicates = []
+    for node in ast.parse(source).body:
+        value = node.value if isinstance(node, (ast.Assign, ast.AnnAssign)) else None
+        if not isinstance(value, (ast.Dict, ast.Set)):
+            continue
+        keys = value.keys if isinstance(value, ast.Dict) else value.elts
+        seen: set = set()
+        for key in keys:
+            if isinstance(key, ast.Constant):
+                if key.value in seen:
+                    duplicates.append(f"line {key.lineno}: {key.value!r}")
+                seen.add(key.value)
+    assert duplicates == []

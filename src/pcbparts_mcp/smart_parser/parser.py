@@ -82,13 +82,15 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
             detected[key] = value
             remaining = re.sub(pattern, " ", remaining, flags=re.IGNORECASE)
 
-    # Step 2: Extract package
-    result.packages, remaining = extract_package_choices(remaining)
+    # Step 2: Extract package. SMA/SMB/SMC are diode packages (DO-214) and coax connector series.
+    coax_series = _sm_series_is_connector(remaining, subcategory_hint)
+    skip_packages = ("diode_pkg",) if coax_series else ()
+    result.packages, remaining = extract_package_choices(remaining, skip=skip_packages)
     if result.packages:
         detected["packages"] = result.packages
         package, pkg_suggested_subcat = None, None
     else:
-        package, remaining, pkg_suggested_subcat = extract_package(remaining)
+        package, remaining, pkg_suggested_subcat = extract_package(remaining, skip=skip_packages)
     if package:
         result.package = package
         detected["package"] = package
@@ -171,6 +173,12 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
             result.subcategory = through_hole
             detected["subcategory"] = through_hole
 
+    # "SMA edge mount connector": the words around the series name a coax connector
+    if coax_series and not result.subcategory and not subcategory_hint:
+        result.subcategory = _COAX
+        detected["subcategory"] = _COAX
+        detected.setdefault("semantic", []).append(f"SMA/SMB/SMC with connector words (-> {_COAX})")
+
     # Step 3b: Regulator specifics: buck/boost, and voltages marked input or output
     subcat_now = (result.subcategory or "").lower()
     pd_sink = False
@@ -206,8 +214,8 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         remaining = _add_memory_sizes(remaining, subcat_now, result, detected)
     if subcat_now == "usb connectors":
         _add_usb_type(query, result, detected)
-    if subcat_now == "coaxial connectors (rf)":
-        _add_rf_series(query, result, detected)
+    if _COAX in (subcat_now, (subcategory_hint or "").lower()):
+        remaining = _add_rf_series(query, remaining, result, detected)
 
     # Named comparisons must be consumed before a bare current/voltage gets its default
     # quantity and >= operator (Iq is not load current; Vf is not reverse voltage).
@@ -372,7 +380,11 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         # Explicit fuse subcategories override the generic keyword's electrical fields.
         fuse_subcategory = (subcategory_hint or result.subcategory or "").lower()
         is_fuse_rating = fuse_subcategory in FUSE_ATTRIBUTE_MAP and value.unit_type in ("current", "voltage")
-        spec_name, operator = map_value_to_spec(value, fuse_subcategory if is_fuse_rating else subcategory, matched_keyword)
+        # A query naming no part type ("0.2pF" with subcategory_name ESD) maps by the caller's subcategory.
+        # Only where that is the whole rule: beads and regulators read bare values in jlc_search.
+        hinted = subcategory_hint if (subcategory_hint or "").lower() in _VALUES_BY_HINT else None
+        spec_name, operator = map_value_to_spec(
+            value, fuse_subcategory if is_fuse_rating else (subcategory or hinted), matched_keyword)
         if written := _written_comparison(query, value.raw, operator):
             operator = written
             remaining = re.sub(r'(?<!\S)(?:<=|>=|<|>)(?!\S)', ' ', remaining).strip()
@@ -648,6 +660,10 @@ def _add_usb_type(query: str, result: ParsedQuery, detected: dict[str, Any]) -> 
 _RF_SERIES = [
     (re.compile(r"\brp[- ]?sma\b", re.IGNORECASE), "RP-SMA"),
     (re.compile(r"\bsma\b", re.IGNORECASE), "SMA"),
+    (re.compile(r"\bsmb\b", re.IGNORECASE), "SMB"),
+    (re.compile(r"\bsmc\b", re.IGNORECASE), "SMC"),
+    (re.compile(r"\bsmp\b", re.IGNORECASE), "SMP"),
+    (re.compile(r"\btnc\b", re.IGNORECASE), "TNC"),
     (re.compile(r"\b(?:u\.?fl|ipex|ipx)\b", re.IGNORECASE), "IPEX"),
     (re.compile(r"\bmmcx\b", re.IGNORECASE), "MMCX"),
     (re.compile(r"\bmcx\b", re.IGNORECASE), "MCX"),
@@ -658,13 +674,42 @@ _RF_SERIES = [
 ]
 
 
-def _add_rf_series(query: str, result: ParsedQuery, detected: dict[str, Any]) -> None:
-    """"SMA connector ..." picked coax connectors but not the series, so U.FL ones came first."""
+def _add_rf_series(query: str, remaining: str, result: ParsedQuery, detected: dict[str, Any]) -> str:
+    """"SMA connector ..." picked coax connectors but not the series, so U.FL ones came first.
+
+    The series becomes a filter, so it leaves the text the description must contain.
+    """
     for pattern, series in _RF_SERIES:
         if pattern.search(query):
             result.spec_filters.append(SpecFilter("RF Series", "=", series))
             detected.setdefault("semantic", []).append(f"{series} (-> RF Series={series})")
-            return
+            return re.sub(r"\s+", " ", pattern.sub(" ", remaining)).strip()
+    return remaining
+
+
+_COAX = "coaxial connectors (rf)"
+
+# Explicit subcategories whose CATEGORY_ATTRIBUTE_MAP entry reads a bare value in the query
+_VALUES_BY_HINT = frozenset({"esd and surge protection (tvs/esd)"})
+_SM_SERIES = re.compile(r"\bsm[abc]\b", re.IGNORECASE)
+_CONNECTOR_WORDS = re.compile(
+    r"\b(?:connectors?|jacks?|plugs?|receptacles?|female|male|coax(?:ial)?|antenna|edge[- ]?mount|bulkhead|pigtail)\b",
+    re.IGNORECASE,
+)
+_DIODE_WORDS = re.compile(r"\b(?:diodes?|rectifiers?|schottky|tvs|zener|esd|suppressors?)\b", re.IGNORECASE)
+
+
+def _sm_series_is_connector(query: str, subcategory_hint: str | None) -> bool:
+    """Whether SMA/SMB/SMC in the query is a coax connector series rather than a diode package.
+
+    The caller's own subcategory decides; otherwise connector words without diode words do.
+    "SMA edge mount connector" read SMA as the DO-214AC package and found nothing.
+    """
+    if not _SM_SERIES.search(query):
+        return False
+    if subcategory_hint:
+        return "connector" in subcategory_hint.lower()
+    return bool(_CONNECTOR_WORDS.search(query)) and not _DIODE_WORDS.search(query)
 
 
 def merge_spec_filters(

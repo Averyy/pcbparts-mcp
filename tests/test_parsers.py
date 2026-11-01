@@ -518,3 +518,30 @@ class TestNewUnits:
     ])
     def test_still_none(self, parser, value):
         assert parser(value) is None
+
+
+class TestParseCapacitanceMax:
+    """ESD arrays can list two junction capacitances; a budget must hold for the larger."""
+
+    @pytest.mark.parametrize("value, farads", [("0.3pF、0.6pF", 0.6e-12), ("390pF", 390e-12),
+                                               ("0.25pF、0.5pF", 0.5e-12), ("1pF/2pF", 2e-12)])
+    def test_values(self, value, farads):
+        from pcbparts_mcp.parsers import parse_capacitance_max
+        assert parse_capacitance_max(value) == pytest.approx(farads)
+
+    @pytest.mark.parametrize("value", ["-", "", None])
+    def test_none(self, value):
+        from pcbparts_mcp.parsers import parse_capacitance_max
+        assert parse_capacitance_max(value) is None
+
+
+class TestParseQFactor:
+    @pytest.mark.parametrize("value, q", [("8@100MHz", 8), ("36@200MHz", 36), ("12", 12), ("12.5@7.9MHz", 12.5)])
+    def test_values(self, value, q):
+        from pcbparts_mcp.parsers import parse_q_factor
+        assert parse_q_factor(value) == q
+
+    @pytest.mark.parametrize("value", ["-", "", None, "@100MHz"])
+    def test_none(self, value):
+        from pcbparts_mcp.parsers import parse_q_factor
+        assert parse_q_factor(value) is None

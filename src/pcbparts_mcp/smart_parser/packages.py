@@ -68,14 +68,14 @@ PACKAGE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
 ]
 
 
-def extract_package_choices(query: str) -> tuple[list[str], str]:
+def extract_package_choices(query: str, skip: tuple[str, ...] = ()) -> tuple[list[str], str]:
     """Extract an explicit 'package or package' chain, preserving its OR semantics."""
     hits = []
     for pattern, kind in PACKAGE_PATTERNS:
-        if kind == "usb":
+        if kind == "usb" or kind in skip:
             continue
         for match in pattern.finditer(query):
-            package, _, _ = extract_package(match.group(1))
+            package, _, _ = extract_package(match.group(1), skip=skip)
             if package:
                 hits.append((match.start(), match.end(), package))
     hits.sort(key=lambda hit: (hit[0], -hit[1]))
@@ -93,18 +93,21 @@ def extract_package_choices(query: str) -> tuple[list[str], str]:
     return [], query
 
 
-def extract_package(query: str) -> tuple[str | None, str, str | None]:
+def extract_package(query: str, skip: tuple[str, ...] = ()) -> tuple[str | None, str, str | None]:
     """Extract package from query and return (package, remaining_query, suggested_subcategory).
 
     The suggested_subcategory is used for USB-C etc. where the package implies a component type.
 
     Args:
         query: The search query string
+        skip: Pattern kinds not to read as packages ("diode_pkg" when SMA names a coax connector)
 
     Returns:
         Tuple of (package, remaining_query, suggested_subcategory)
     """
     for pattern, pkg_type in PACKAGE_PATTERNS:
+        if pkg_type in skip:
+            continue
         match = pattern.search(query)
         if match:
             package = match.group(1).upper()

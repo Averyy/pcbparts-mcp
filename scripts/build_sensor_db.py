@@ -1214,9 +1214,7 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "gm1602": "semiconductor",
     "sm300d2": "semiconductor",
     "sen6x": "semiconductor",
-    "bm22s2021": "semiconductor",
     "bm22s3021": "semiconductor",
-    "bm22s3221": "semiconductor",
     "bm22s3421": "semiconductor",
     "bm25s3421": "semiconductor",
     # ── Semiconductor temperature sensors (bandgap / CMOS) ────────────
@@ -1322,7 +1320,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "yds13": "semiconductor",
     "wsentids": "semiconductor",
     "pmwcs3": "semiconductor",
-    "bm42s3021": "semiconductor",
     "ad8232": "semiconductor",
     "gdk101": "semiconductor",
     "ggreg20v3": "semiconductor",
@@ -1387,8 +1384,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "hih61xx": "capacitive",
     "honeywellhih": "capacitive",
     "sciosenseens21x": "capacitive",
-    "bm25s2021": "capacitive",
-    "bm25s2621": "capacitive",
     "ms8607": "capacitive",
     "wsenhids": "capacitive",
     "msz202": "capacitive",
@@ -1465,7 +1460,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "bmi08x": "mems",
     "bmi270bmm150": "mems",
     "bms56m206a": "mems",
-    "bms56m605": "mems",
     "bmx055": "mems",
     "bno080": "mems",
     "fxas210002c": "mems",
@@ -1541,7 +1535,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "rak12034": "mems",
     "7semibno08x": "mems",
     "max32664c": "mems",
-    "bms81m001": "mems",
     "im19": "mems",
     "at407": "mems",
     # ── MEMS barometric pressure sensors ──────────────────────────────
@@ -1581,7 +1574,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "bmp585": "mems",
     "bmp5xx": "mems",
     "bme690": "mems",
-    "bme34m101": "mems",
     "icp10100": "mems",
     "icp10125": "mems",
     "icp101xx": "mems",
@@ -1613,7 +1605,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "omrond6fph": "mems",
     "sm9000": "mems",
     "sen0343": "mems",
-    "bm62s2201": "mems",
     "wf100dpz": "mems",
     "lwlp5000": "mems",
     "honeywellabp": "mems",
@@ -1663,7 +1654,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "mp23db01hp": "mems",
     "msm261": "mems",
     "icu10201": "mems",
-    "bmv23m001": "mems",
     "i2s": "mems",
     "dnmsi2c": "mems",
     "ch101": "mems",
@@ -1720,7 +1710,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "lsm303dlhmag": "hall_effect",
     "lsm9ds1mag": "hall_effect",
     "bm32s2031": "hall_effect",
-    "bms33m332": "hall_effect",
     "bms36t001": "hall_effect",
     "ad2s1210": "hall_effect",
     "amt25": "hall_effect",
@@ -1794,7 +1783,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "hx710b": "strain_gauge",
     "tal220": "strain_gauge",
     "bmh12m105": "strain_gauge",
-    "bmh12m205": "strain_gauge",
     "tas501": "strain_gauge",
     "tas606": "strain_gauge",
     # ── Photodiode light / color / UV / spectral sensors ──────────────
@@ -1884,7 +1872,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "rak12019": "photodiode",
     "rak12021": "photodiode",
     "sen0390": "photodiode",
-    "bme82m131": "photodiode",
     "bm62s6021": "photodiode",
     "bm92s2021": "photodiode",
     # ── Biometric / PPG / ECG (photodiode-based) ──────────────────────
@@ -1898,7 +1885,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "afe4490": "photodiode",
     "afe44xx": "photodiode",
     "afe4950": "photodiode",
-    "bmh08002": "photodiode",
     "bmh08101": "photodiode",
     "son1303": "photodiode",
     # ── Optical distance / gesture / flow (photodiode array) ──────────
@@ -1938,8 +1924,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "rak12023": "capacitive",
     "tl555q": "capacitive",
     "ms01": "capacitive",
-    "bme63m001": "capacitive",
-    "bm25s4021": "capacitive",
     "fc37": "resistive",
     "hrg15": "capacitive",
     "rg15": "capacitive",
@@ -2031,12 +2015,11 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "bm25s2621": "capacitive",       # Soil moisture (capacitive)
     "bm25s4021": "electrochemical",  # TDS water quality
     "bm25s4421": "electrochemical",  # pH sensor module
-    "bm32s2021": "capacitive",       # Proximity sensing module
+    "bm32s2021": "photodiode",       # Infrared proximity (datasheet: reflected IR)
     "bm42p782n1": "strain_gauge",    # Weighing scale module
-    "bm42s3021": "thermopile",       # Thermocouple temperature
+    "bm42s3021": "thermocouple",     # Thermocouple module
     "bm62s2201": "mems",             # Air pressure sensor (MEMS)
     "bm62s3202": "mems",             # Water level sensor (pressure-based)
-    "bm92d3021": "shunt",            # Motor obstruction detection (current sensing)
     "bme21m621": "mems",             # Air pressure sensor (MEMS)
     "bme33m251": "resistive",        # Temp/humidity
     "bme33m251a": "resistive",       # Temp/humidity
@@ -2049,8 +2032,8 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "bmh08002": "photodiode",        # Oximeter (optical PPG)
     "bmh83m002": "photodiode",       # Oximeter (optical PPG)
     "bmh12m205": "strain_gauge",     # Weighing kit (load cell)
-    "bmh23m001": "semiconductor",    # 24-bit ADC module
-    "bmh23m002": "semiconductor",    # 24-bit ADC module
+    "bmh23m001": "adc",              # 24-bit ADC module
+    "bmh23m002": "adc",              # 24-bit ADC module
     "bms26m833": "thermopile",       # AMG8833 IR array
     "bms56m605": "mems",             # MPU-6050 IMU
     "bms81m001": "mems",             # MPU-6050 shake detection
@@ -2058,6 +2041,10 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "gtm5210f32": "optical",         # Fingerprint sensor
     "gtm5210f52": "optical",         # Fingerprint sensor
     "bme26m301": "mems",             # Air velocity sensor
+    "bm25s4221": "photodiode",       # Turbidity (optical, like the ZW-TUR probes)
+    "bme34k262a": "capacitive",      # Soil moisture kit built on the BM25S2621-1
+    "bmh83m101a": "photodiode",      # Pulse oximetry (transmissive PPG)
+    "bms33m332": "photodiode",       # STK3337 ambient light + IR proximity
 }
 
 
@@ -2240,7 +2227,6 @@ VOLTAGE_TABLE: dict[str, str] = {
     "vl53l0x": "2.6-3.5",       # ST VL53L0X datasheet
     "vl53l1x": "2.6-3.5",       # ST VL53L1X datasheet
     "vl6180x": "2.6-3.0",       # ST VL6180X datasheet
-    "hcsr04": "4.5-5.5",        # Generic HC-SR04 datasheet
 
     # --- Load cell ---
     "hx711": "2.6-5.5",         # Avia HX711 datasheet
@@ -2474,10 +2460,10 @@ VOLTAGE_TABLE: dict[str, str] = {
     "ina2xx": "2.7-5.5", "ina780x": "2.7-5.5",
     # --- Bosch ---
     "bma220": "2.0-3.6", "bma280": "1.62-3.6", "bma423": "1.2-3.6",
-    "bma4xx": "1.2-3.6", "bmc150": "1.62-3.6", "bme34m101": "1.71-3.6",
-    "bme63m001": "1.71-3.6", "bme680bsec": "1.71-3.6",
+    "bma4xx": "1.2-3.6", "bmc150": "1.62-3.6",
+    "bme680bsec": "1.71-3.6",
     "bme68xbsec2": "1.71-3.6", "bme690": "1.71-3.6",
-    "bme82m131": "1.71-3.6", "bmg160": "2.4-3.6",
+    "bmg160": "2.4-3.6",
     "bmi085": "1.71-3.6", "bmi088": "1.71-3.6", "bmi08x": "1.71-3.6",
     "bmi270bmm150": "1.71-3.6", "bmx055": "2.4-3.6", "bno080": "2.4-3.6",
     "bmp384": "1.65-3.6", "bmp580": "1.71-3.6", "bmp585": "1.71-3.6",
@@ -2649,7 +2635,7 @@ VOLTAGE_TABLE: dict[str, str] = {
     "hx710": "2.4-5.5", "hx710a": "2.4-5.5", "hx710b": "2.4-5.5",
     # --- DFRobot/Ultrasonic ---
     "a01nyub": "3.3-5.0", "urm07": "3.3-5.5", "urm09": "3.3-5.5",
-    "urm13": "3.3-5.5", "us100": "2.4-5.5",
+    "urm13": "3.3-5.5",
     # --- TI misc ---
     "bq27220": "2.4-4.5", "cd74hc4067": "2.0-6.0",
     "lmp91000": "2.7-5.25", "tsc2007": "1.5-3.6", "opt4001": "1.6-3.6",
@@ -2687,7 +2673,7 @@ VOLTAGE_TABLE: dict[str, str] = {
     "mr24hpc1": "5.0-5.0", "mr60bha2": "5.0-5.0",
     "mtp40": "3.6-5.5", "mg811": "5.0-6.0",
     "rd03": "5.0-5.0", "rd03d": "5.0-5.0",
-    "a02yyuw": "3.0-5.5", "jsnsr04t": "3.0-5.5", "dypme007": "3.0-5.5",
+    "a02yyuw": "3.0-5.5", "dypme007": "3.0-5.5",
     "ggreg20v3": "3.3-5.0", "gr1030": "3.0-3.6",
     "tx20": "3.0-3.6", "isys4001": "3.0-3.6",
 
@@ -2832,7 +2818,6 @@ VOLTAGE_TABLE: dict[str, str] = {
     "hornx2pro": "9.0-28.0",       # Benewake Horn-X2-Pro (industrial)
 
     # --- Senseair CO2 ---
-    "k30": "4.5-14.0",             # Senseair K30
     "k70": "4.5-5.25",             # Senseair K70
     "senseair": "4.5-5.25",        # Senseair S8
 
@@ -2924,7 +2909,6 @@ VOLTAGE_TABLE: dict[str, str] = {
     # (TCRT5000 already added above in generic)
 
     # --- Bosch ---
-    "bmv23m001": "1.71-3.6",       # BMV23M001 motion sensor
     "7semibno08x": "2.4-3.6",      # BNO08x 9-DoF IMU
     "7semico2th": "1.8-3.6",       # BME688 variant (Bosch 7semi)
     "rak12034": "1.71-3.6",        # RAK12034 uses BME680
@@ -3005,8 +2989,6 @@ def _enrich_voltages(merged: dict[str, dict], quiet: bool = False) -> int:
 IC_PROTOCOLS: dict[str, list[str]] = {
     # ===== Temperature / Humidity / Pressure =====
     "bme280": ["i2c", "spi"],
-    "bme34m101": ["i2c", "spi"],
-    "bme63m001": ["i2c"],
     "bme68x": ["i2c", "spi"],
     "bme68xbsec2": ["i2c", "spi"],
     "bme690": ["i2c", "spi"],
@@ -3253,7 +3235,6 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "ml8511": ["analog"],
     "alspt19": ["analog"],
     "temt6000": ["analog"],
-    "gl5528": ["analog"],
     "as7262x": ["i2c"],
     "as726x": ["i2c"],
     "as7341l": ["i2c"],
@@ -3308,10 +3289,8 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "gp2y0a21yk": ["analog"],
     "gp2y0e03": ["i2c"],
     "gp2y0a41sk0f": ["analog"],
-    "us100": ["uart"],
     "nhcsr04": ["gpio"],
     "sr04": ["gpio"],
-    "sr04m": ["gpio"],
     "sr04t": ["uart"],
     "rfd77402": ["i2c"],
     "lidar07": ["i2c", "uart"],
@@ -3383,7 +3362,6 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "mlx90377": ["spi"],
     "mlx90392": ["i2c"],
     "mlx90395": ["i2c", "spi"],
-    "gy26": ["i2c", "uart"],
     "gy33": ["uart"],
     "as5040": ["spi"],
     "as5047p": ["spi"],
@@ -3406,7 +3384,6 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "amg88xx": ["i2c"],
     "ad8494": ["analog"],
     "tsd305": ["i2c"],
-    "pt100": ["spi"],
     "pt1000probe": ["spi"],
 
     # ===== Touch =====
@@ -3471,7 +3448,6 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "as3935": ["i2c", "spi"],
     "rg15": ["uart"],
     "cd74hc4067": ["gpio"],
-    "ky040": ["gpio"],
     "dht": ["gpio"],
     "us1881": ["gpio"],
     "ah1815": ["gpio"],
@@ -3480,8 +3456,6 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "tlv493d": ["i2c"],
     "ak9750": ["i2c"],
     "tcrt5000": ["analog"],
-    "fc28": ["analog"],
-    "fc37": ["analog"],
     "sct013": ["analog"],
     "zmpt101b": ["analog"],
     "lmp91000": ["i2c"],
@@ -3517,7 +3491,6 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "esp32thermistor": ["analog"],
     "rtd10k": ["analog"],
     "tfa433receiver": ["gpio"],
-    "yfs201waterflow": ["gpio"],
     "mprls": ["i2c", "spi"],
     "dnmsi2c": ["i2c"],
     "sb041": ["i2c"],
@@ -3542,7 +3515,6 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "bm22s3421": ["uart"],
     "bm22s4221": ["uart"],
     "bm25s2021": ["i2c", "one_wire"],
-    "bm25s2621": ["uart"],
     "bm25s3221": ["uart"],
     "bm25s3321": ["uart"],
     "bm25s3421": ["uart"],
@@ -3842,16 +3814,14 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "msz302": ["uart"],           # Winsen MS-Z302 humidity — UART
     "sp3s": ["analog"],           # Winsen SP3S gas — analog
     # --- Best Modules Corp (Holtek) sensor modules ---
-    "bce22s4421": ["gpio"],         # BCE-22S4421 microwave radar — digital output
-    "bm42s3021": ["uart"],          # BM42S3021 thermocouple — UART
-    "bme26m301": ["uart"],          # BME26M301 air velocity — UART
-    "bme33m251": ["uart"],          # BME33M251 temp/humidity — UART
-    "bme82m131": ["i2c"],           # BME82M131 VEML7700 light — I2C
     "bme82m131a": ["i2c"],          # BME82M131A VEML7700 light — I2C
-    "bmh05102": ["uart"],           # BMH05102 body fat scale — UART
-    "bml36m001": ["i2c"],           # BML36M001 VL53L1X ToF — I2C
-    "ht7m2126": ["gpio"],           # HT7M2126 PIR module — digital output
-    "ht7m2176": ["gpio"],           # HT7M2176 PIR module — digital output
+    "bmh05102": ["uart"],           # BMH05102 body fat scale: page lists none, datasheet V1.0.1 "UART interface"
+    # HT7M21xx PIR modules: "Optional communication interfaces: I2C or I/O" (datasheet V1.50)
+    "ht7m2126": ["gpio", "i2c"],
+    "ht7m2127": ["gpio", "i2c"],
+    "ht7m2136": ["gpio", "i2c"],
+    "ht7m2156": ["gpio", "i2c"],
+    "ht7m2176": ["gpio", "i2c"],
 }
 
 # Winsen sensor type -> protocol mapping.

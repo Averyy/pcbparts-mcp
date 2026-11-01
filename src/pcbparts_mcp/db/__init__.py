@@ -27,6 +27,7 @@ from .categories import (
     get_category_for_subcategory,
     get_categories_for_client,
     find_alternative_candidates,
+    subcategory_parts,
 )
 from .attributes import list_attributes
 from .stats import get_stats
@@ -428,6 +429,32 @@ class ComponentDatabase:
             )
         except sqlite3.Error:
             logger.warning("Alternative candidates query failed for %s", original.get("lcsc"), exc_info=True)
+            return []
+
+    @serialized
+    def subcategory_parts(
+        self,
+        subcategory_id: int,
+        min_stock: int = DEFAULT_MIN_STOCK,
+        library_type: str | None = None,
+        limit: int = 500,
+    ) -> list[dict[str, Any]]:
+        """In-stock parts of a subcategory from any maker, no-fee first, then by stock (RF similar
+        parts). On a database error, none."""
+        self._ensure_db()
+        if not self._conn:
+            return []
+        try:
+            return subcategory_parts(
+                conn=self._conn,
+                subcategories=self._subcategories,
+                subcategory_id=subcategory_id,
+                min_stock=min_stock,
+                library_type=library_type,
+                limit=limit,
+            )
+        except sqlite3.Error:
+            logger.warning("Subcategory parts query failed for %s", subcategory_id, exc_info=True)
             return []
 
     def _row_to_dict(self, row: sqlite3.Row) -> dict[str, Any]:

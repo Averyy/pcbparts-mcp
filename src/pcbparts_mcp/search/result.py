@@ -53,7 +53,8 @@ def row_to_dict(
         "stock": row["stock"],
         "price": row["price"],
         "library_type": library_type,
-        "preferred": library_type in ("basic", "preferred"),
+        # JLCPCB's Preferred flag, as jlc_get_part gives it; library_type says whether there is a fee
+        "preferred": library_type == "preferred",
         "category": category,
         "subcategory": subcategory,
         "subcategory_id": row["subcategory_id"],
