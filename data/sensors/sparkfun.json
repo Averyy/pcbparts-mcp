@@ -2,10 +2,10 @@
   "source": "sparkfun",
   "source_url": "https://www.sparkfun.com/graphql",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-10-01T12:52:18.004481+00:00",
+  "scraped_at": "2026-11-01T13:07:29.770648+00:00",
   "stats": {
-    "sensor_count": 128,
-    "total_products": 412,
+    "sensor_count": 131,
+    "total_products": 415,
     "skipped_sku_prefix": 57,
     "skipped_pattern": 64,
     "skipped_no_ic": 112
@@ -347,6 +347,21 @@
       ]
     },
     {
+      "id": "bma456",
+      "name": "SparkFun Triple Axis Accelerometer Breakout - BMA456 (Qwiic)",
+      "measures": [
+        "acceleration"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-bma456-qwiic.html"
+      ],
+      "description": "Measure motion on all three axes with the SparkFun BMA456 Qwiic Accelerometer, featuring an ultra-small profile and an on-chip intelligence engine.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
       "id": "bme280",
       "name": "SparkFun Atmospheric Sensor Breakout - BME280",
       "measures": [
@@ -409,13 +424,30 @@
       "name": "SparkFun 6DoF IMU Breakout - BMI270 (Qwiic)",
       "measures": [
         "acceleration",
+        "gesture",
         "gyroscope"
       ],
       "platforms": [],
       "urls": [
         "https://www.sparkfun.com/sparkfun-6dof-imu-breakout-bmi270-qwiic.html"
       ],
-      "description": "The SparkFun BMI270 6DoF IMU Breakout is a Qwiic-enabled breakout board based on the ultra-low power BMI270 from Bosch.",
+      "description": "This Qwiic-enabled BMI270 IMU Breakout offers ultra-low power consumption and built-in smart features for step counting, wrist gesture detection, and activity recognition.",
+      "protocol": [
+        "i2c"
+      ]
+    },
+    {
+      "id": "bmi330",
+      "name": "SparkFun 6DoF IMU Breakout - BMI330 (Qwiic)",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/sparkfun-6dof-imu-breakout-bmi330-qwiic.html"
+      ],
+      "description": "Accurately measure acceleration and angular rate with the SparkFun BMI330 6DoF IMU, featuring an on-chip motion interrupt engine.",
       "protocol": [
         "i2c"
       ]
@@ -1285,6 +1317,19 @@
       ]
     },
     {
+      "id": "pasco2v01auma3",
+      "name": "CO2 Sensor - PASCO2V01AUMA3",
+      "measures": [
+        "co2",
+        "sound"
+      ],
+      "platforms": [],
+      "urls": [
+        "https://www.sparkfun.com/co2-sensor-pasco2v01auma3.html"
+      ],
+      "description": "The XENSIV™ PAS CO 2 is a real CO 2 sensor combining NDIR technology with Infineon’s high SNR MEMS microphones, allowing for state-of-the-art accuracy in an exceptionally small form factor."
+    },
+    {
       "id": "pt100",
       "name": "Platinum RTD Sensor - PT100",
       "measures": [
@@ -1653,7 +1698,7 @@
         "https://www.sparkfun.com/sparkfun-mini-linear-3d-hall-effect-sensor-tmag5273-qwiic.html",
         "https://www.sparkfun.com/sparkfun-linear-3d-hall-effect-sensor-tmag5273-qwiic.html"
       ],
-      "description": "The TMAG5273 Qwiic Sensor is a low-power 3D hall-effect sensor that is perfect for detecting and measuring changes in a nearby magnetic field.",
+      "description": "Detect magnetic presence, strength, and direction in three dimensions with this low-power TMAG5273 Qwiic Mini Hall-Effect sensor.",
       "protocol": [
         "i2c"
       ]
@@ -1670,7 +1715,7 @@
         "https://www.sparkfun.com/sparkfun-qwiic-mini-dtof-imager-tmf8820.html",
         "https://www.sparkfun.com/sparkfun-qwiic-dtof-imager-tmf8820.html"
       ],
-      "description": "The SparkFun Qwiic Mini dToF TMF8820 Imager is a direct time-of-flight sensor that includes a single modular package with an associated VCSEL.",
+      "description": "Detect multiple objects up to 5000mm (16.4ft.) away in a miniature package with this 3x3 multizone direct time-of-flight TMF8820 sensor.",
       "protocol": [
         "i2c"
       ]
@@ -1687,7 +1732,7 @@
         "https://www.sparkfun.com/sparkfun-qwiic-mini-dtof-imager-tmf8821.html",
         "https://www.sparkfun.com/sparkfun-qwiic-dtof-imager-tmf8821.html"
       ],
-      "description": "The SparkFun Qwiic Mini dToF TMF8821 Imager is a direct time-of-flight sensor that includes a single modular package with an associated VCSEL.",
+      "description": "Detect multiple objects simultaneously up to 5000mm (16.4ft.) away with the TMF8821 mini direct time-of-flight sensor, featuring selectable 3x3, 4x4, and 3x6 multizone configurations.",
       "protocol": [
         "i2c"
       ]

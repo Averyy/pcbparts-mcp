@@ -2,11 +2,11 @@
   "source": "benewake",
   "source_url": "https://en.benewake.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-10-01T12:26:49.111942+00:00",
+  "scraped_at": "2026-11-01T12:40:51.959019+00:00",
   "stats": {
     "sensor_count": 19,
-    "total_pages_checked": 20,
-    "errors": 1
+    "total_pages_checked": 21,
+    "errors": 2
   },
   "sensors": [
     {
