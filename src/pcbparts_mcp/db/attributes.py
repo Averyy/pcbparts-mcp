@@ -17,6 +17,18 @@ logger = logging.getLogger(__name__)
 _VALUE_LIMIT = 50
 
 
+def _range_ends(value: str, parser: Any) -> tuple[float | None, float | None]:
+    """Lowest and highest ends of a value's ranges ("-40℃~+85℃", "1.71V~1.89V、2.25V~5.5V");
+    a plain value is both. Signs are kept ("-15V~-5V")."""
+    ends: list[float] = []
+    for item in value.split("、"):
+        for text in item.split("~"):
+            parsed = parser(text)
+            if parsed is not None:
+                ends.append(-abs(parsed) if text.strip().startswith("-") else parsed)
+    return (min(ends), max(ends)) if ends else (None, None)
+
+
 def list_attributes(
     conn: sqlite3.Connection,
     subcategories: dict[int, dict[str, Any]],
@@ -156,10 +168,10 @@ def list_attributes(
         if is_numeric:
             attr_info["example_values"] = sorted_values[:5]
             attr_info["values"] = sorted_values[:_VALUE_LIMIT]
-            parsed_floats = [pv for _, pv in parsed_values if pv is not None]
-            if parsed_floats:
-                attr_info["min"] = min(parsed_floats)
-                attr_info["max"] = max(parsed_floats)
+            ends = [_range_ends(v, parser) for v, pv in parsed_values if pv is not None]
+            if ends:
+                attr_info["min"] = min(low for low, _ in ends if low is not None)
+                attr_info["max"] = max(high for _, high in ends if high is not None)
         else:
             attr_info["values"] = sorted_values[:_VALUE_LIMIT]
 

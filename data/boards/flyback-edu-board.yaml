@@ -2,7 +2,7 @@ name: Flyback Edu Board
 slug: flyback-edu-board
 source: westonb/flyback-edu-board
 format: kicad6
-description: "Isolated flyback DC-DC converter (12\u201336V\u21925V), UC3842B current-mode control"
+description: "Isolated flyback DC-DC converter (12–36V→5V), UC3843B current-mode control"
 tags: [isolation, power-supply]
 key_ics: [UC3843BD1013TR, LTV-356T-B, TL431, TS555IDTTR]
 outline:

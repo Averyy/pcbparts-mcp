@@ -885,6 +885,23 @@ NAME_OVERRIDES: dict[str, str] = {
     "paj7620u2": "PAJ7620U2",           # was "Gesture PAJ7620"
 }
 
+# Measures a source's wording adds that the sensor doesn't take. The Arduino library calls the
+# BM25S2621 soil probe's moisture reading "soil humidity"; it doesn't measure air humidity.
+# DFRobot's BMM150 library (SEN0419) is listed under sound; the BMM150 is a magnetometer.
+MEASURE_REMOVALS: dict[str, set[str]] = {
+    "bm25s2621": {"humidity"},
+    "bmm150": {"sound"},
+}
+
+# Measures a sensor takes that no source tags. ESPHome lists the PMWCS3 under temperature only;
+# Tinovi's probe reads volumetric water content, conductivity (EC, E25) and soil temperature.
+# The CY8CMBR3102 is the CapSense touch controller on SparkFun's capacitive soil moisture sensor
+# (its library's only product); SparkFun notes it also works as a touch or proximity sensor.
+MEASURE_ADDITIONS: dict[str, set[str]] = {
+    "pmwcs3": {"soil_moisture", "conductivity"},
+    "cy8cmbr3102": {"touch"},
+}
+
 # Description overrides for sensors where no source provides a useful description.
 # Applied post-merge ONLY when the sensor still has no description (or a very short one).
 # Keep descriptions concise, search-friendly, and under 200 chars.
@@ -4298,7 +4315,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, merged: dict[str, dict], output
             json.dumps(s["sources"]),
         ))
 
-        for m in sorted(s["measures"]):
+        for m in sorted((set(s["measures"]) | MEASURE_ADDITIONS.get(sid, set())) - MEASURE_REMOVALS.get(sid, set())):
             measure_rows.append((sid, m))
         for p in sorted(s["protocols"]):
             protocol_rows.append((sid, p))

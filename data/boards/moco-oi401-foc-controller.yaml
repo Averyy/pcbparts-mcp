@@ -2,7 +2,7 @@ name: moco-oi401 FOC Controller
 slug: moco-oi401-foc-controller
 source: ziteh/moco
 format: kicad7
-description: Infineon iMOTION IMC101 dedicated hardware FOC IC, unique approach vs discrete MCU+gate driver
+description: "PMSM/BLDC FOC controller: STM32G431 MCU, DRV8316C integrated motor driver"
 tags: [inverter, motor-control]
 key_ics: [STM32G431CBUx, RT9013-33, DRV8316CR, LM4040A50, AS5047x]
 outline:

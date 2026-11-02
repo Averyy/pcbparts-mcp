@@ -10,8 +10,8 @@ import pytest
 
 import pcbparts_mcp.server as server
 from pcbparts_mcp.parsers import (
-    parse_capacitance_max, parse_current, parse_frequency, parse_length_mm, parse_memory_size, parse_q_factor,
-    parse_resistance, parse_voltage,
+    parse_capacitance_max, parse_current, parse_isolation_voltage, parse_frequency, parse_inductance, parse_length_mm, parse_memory_size,
+    parse_power, parse_q_factor, parse_resistance, parse_voltage,
 )
 from pcbparts_mcp.search.engine import _range_passes
 from pcbparts_mcp.subcategory_aliases import SUBCATEGORY_ALIASES, SUBCATEGORY_GROUPS
@@ -1108,12 +1108,12 @@ class TestZeroResultQueries:
             sides = [part["specs"].get(k) for k in ("Voltage - Supply", "Voltage - Supply(VCCA)", "Voltage - Supply(VCCB)")]
             assert any(covers(v, 3.3) for v in sides), part["specs"]
 
-    async def test_op_amp_voltage_left_out(self):
-        """Op amps don't list a supply voltage (14 of ~4,900), so 5V is left out and said so."""
+    async def test_op_amp_voltage_is_the_single_supply(self):
+        """Op amps list their supply as "Single supply" (83%); 5V was left out before 0.8.0."""
         result = await search("op amp 5V rail to rail")
         assert result["total"] > 0
-        adjusted = result["parsed"]["adjusted_filters"]
-        assert adjusted and adjusted[0]["now"] is None
+        assert {"name": "Supply Voltage", "op": "=", "value": "5V"} in result["filters_applied"]["spec_filters"]
+        assert all(_range_passes(p["specs"]["Single supply"], parse_voltage, "=", 5) for p in result["results"])
 
     async def test_buck_converter(self):
         result = await search("12V buck converter 2A")
@@ -1859,12 +1859,15 @@ class TestRelease074:
             assert "I2C" in part["specs"]["Interface"]
         assert (await search("10k potentiometer"))["results"][0]["subcategory"] == "Potentiometers, Variable Resistors"
 
-    @pytest.mark.parametrize("query", ["ideal diode controller 12V", "ideal diode", "oring controller"])
-    async def test_ideal_diode_controller(self, query):
+    @pytest.mark.parametrize("query, allowed", [
+        ("ideal diode controller 12V", {"ORing Controllers"}), ("oring controller", {"ORing Controllers"}),
+        # Since 0.8.0 also the single-chip ideal diodes filed as Power Distribution Switches
+        ("ideal diode", {"ORing Controllers", "Power Distribution Switches"})])
+    async def test_ideal_diode_controller(self, query, allowed):
         # Returned 1N4148-type switching diodes rated 12V and up.
         result = await search(query)
         assert result["total"] > 0
-        assert all(p["subcategory"] == "ORing Controllers" for p in result["results"])
+        assert all(p["subcategory"] in allowed for p in result["results"])
 
     @pytest.mark.parametrize("query,layout", [("1x8 female header", "1x8P"),
                                               ("2x20 female header 2.54mm", "2x20P")])
@@ -1967,12 +1970,16 @@ class TestRelease074:
 
     @pytest.mark.parametrize("query", ["1m 250mA inductor", "inductor 1R0", "mosfet 10m"])
     async def test_resistance_without_an_ohm_unit_is_not_on_resistance_or_dcr(self, query):
-        # In an inductor query "1m" may be 1mH and "1R0" 1.0uH, so a value without an ohm unit
-        # is left out as before.
+        # A value without an ohm unit isn't an RDS(on)/DCR limit. Since 0.8.0 an inductor query's
+        # "1m" is 1mH and "1R0" 1.0uH; "mosfet 10m" is still left out.
         result = await search(query)
         names = {f["name"] for f in result["filters_applied"]["spec_filters"]}
         assert not names & {"RDS(on)", "DC Resistance(DCR)"}
-        assert any(a["filter"].startswith("Resistance") and a["now"] is None for a in result["parsed"]["adjusted_filters"])
+        if "inductor" in query:
+            assert "Inductance" in names
+        else:
+            assert any(a["filter"].startswith("Resistance") and a["now"] is None
+                       for a in result["parsed"]["adjusted_filters"])
 
 
 class TestRelease078:
@@ -2064,6 +2071,47 @@ class TestRelease078:
         result = await search("SMA female", subcategory_name="Schottky Diodes")
         assert result["filters_applied"]["package"] == "SMA"
 
+    @staticmethod
+    def descriptions(result) -> dict[str, str]:
+        """The text a query word is matched against (the full-text index: part number, maker, description)."""
+        import sqlite3
+        codes = [p["lcsc"] for p in result["results"]]
+        with sqlite3.connect(server.get_db().db_path) as conn:
+            rows = conn.execute("SELECT lcsc, mpn || ' ' || manufacturer || ' ' || description FROM components "
+                                f"WHERE lcsc IN ({','.join('?' * len(codes))})", codes).fetchall()
+        return dict(rows)
+
+    @pytest.mark.parametrize("subcategory, query, words", [
+        ("RF Cables", "IPEX to SMA 10cm", ("IPEX", "SMA", "10CM")),
+        ("RF Cables", "SMA IPEX", ("IPEX", "SMA")),
+        ("Antennas", "SMA 2.4GHz", ("SMA",)),
+        ("RF Antennas", "SMA", ("SMA",)),
+    ])
+    async def test_sma_in_rf_cables_and_antennas_is_the_connector(self, subcategory, query, words):
+        # 2026-11-02 report: "SMA IPEX" in RF Cables searched the SMA diode package and found nothing,
+        # and as an RF Series filter (which these parts don't list) SMA was dropped, matching every part
+        result = await search(query, subcategory_name=subcategory)
+        assert result["filters_applied"]["package"] is None
+        assert result["total"] > 0
+        texts = self.descriptions(result)
+        assert len(texts) == len(result["results"])
+        for lcsc, text in texts.items():
+            assert all(word in text.upper() for word in words), (lcsc, text)
+
+    @pytest.mark.parametrize("query", ["IPEX to SMA cable", "SMA pigtail", "u.fl pigtail", "RF cable 10cm",
+                                       "SMA to IPEX cable 15cm", "coaxial cable"])
+    async def test_rf_cable_queries_search_rf_cables(self, query):
+        # "IPEX to SMA cable" searched coax connectors with the SMA diode package: one result
+        result = await search(query)
+        assert result["filters_applied"]["package"] is None
+        assert result["filters_applied"]["subcategory_resolved"] == "RF Cables"
+        assert result["total"] > 0
+        assert all(p["subcategory"] == "RF Cables" for p in result["results"])
+        series = [w for w in ("IPEX", "SMA", "U.FL") if w.lower() in query.lower()]
+        for lcsc, text in self.descriptions(result).items():
+            text = text.upper().replace("UFL", "U.FL")
+            assert all(w in text or (w == "U.FL" and "IPEX" in text) for w in series) or not series, (lcsc, text)
+
     async def test_hint_names_words_that_zero_a_search_with_filters(self):
         result = await search("ESD purple elephant",
                               spec_filters=[{"name": "Junction Capacitance", "op": "<=", "value": "0.5pF"}])
@@ -2075,3 +2123,580 @@ class TestRelease078:
         result = await search("ESD purple elephant", strict=True,
                               spec_filters=[{"name": "Junction Capacitance", "op": "<=", "value": "0.5pF"}])
         assert "without them" not in (result.get("hint") or "")
+
+
+class TestRelease079:
+    """Feedback from an ESP32 field-node design session (2026-11-01): "addressable RGB LED" searched
+    plain RGB LEDs and dropped the word; "LED driver" searched indicator LEDs."""
+
+    @pytest.mark.parametrize("query", ["addressable RGB LED", "smart RGB LED", "individually addressable LED",
+                                       "addressable RGB LEDs 2020", "WS2812B LED", "SK6812 mini LED"])
+    async def test_addressable_led_is_the_built_in_ic_subcategory(self, query):
+        result = await search(query)
+        assert result["parsed"]["subcategory"] == "rgb leds(built-in ic)"
+        assert result["total"] > 0
+        assert all(p["subcategory"] == "RGB LEDs(Built-in IC)" for p in result["results"])
+        dropped = (result.get("relaxed") or {}).get("dropped_text", "").lower()
+        assert not re.search(r"addressable|smart|ws2812|sk6812", dropped)
+
+    async def test_addressable_led_supply_voltage(self):
+        result = await search("addressable RGB LED 3.3V", match_all_terms=False)
+        assert {"name": "Supply Voltage", "op": "=", "value": "3.3V"} in result["filters_applied"]["spec_filters"]
+        assert result["total"] > 0
+        for p in result["results"]:
+            low, _, high = p["specs"]["Voltage - Supply"].partition("~")
+            assert parse_voltage(low) <= 3.3 <= parse_voltage(high or low)
+
+    @pytest.mark.parametrize("query, subcategory", [("RGB LED", "rgb leds"), ("red LED 0603", "led indication - discrete"),
+                                                    ("WS2812", None)])
+    async def test_plain_leds_unchanged(self, query, subcategory):
+        assert (await search(query, limit=1))["parsed"]["subcategory"] == subcategory
+
+    @pytest.mark.parametrize("query", ["LED driver", "smart LED driver", "constant current LED driver 1A"])
+    async def test_led_driver_is_the_led_drivers_subcategory(self, query):
+        result = await search(query)
+        assert result["parsed"]["subcategory"] == "led drivers"
+        assert result["total"] > 0
+        assert all(p["subcategory"] == "LED Drivers" for p in result["results"])
+
+    @staticmethod
+    def _rated_range(part):
+        from pcbparts_mcp.parsers import parse_temp_range
+        from pcbparts_mcp.search.spec_filter import TEMPERATURE_RANGE_ATTRIBUTES
+        value = next(v for k, v in part["specs"].items() if k in TEMPERATURE_RANGE_ATTRIBUTES)
+        return parse_temp_range(value)
+
+    @pytest.mark.parametrize("name", ["Operating Temperature", "operating temperature", "Operating Temperature Range"])
+    @pytest.mark.parametrize("op, value, check", [
+        ("<=", "-40", lambda lo, hi: lo <= -40), ("<=", "-40°C", lambda lo, hi: lo <= -40),
+        (">=", "105", lambda lo, hi: hi >= 105), ("=", "-40~85", lambda lo, hi: lo <= -40 and hi >= 85),
+        ("=", "25", lambda lo, hi: lo <= 25 <= hi),
+    ])
+    async def test_operating_temperature_filter(self, name, op, value, check):
+        # "Operating Temperature <= -40" was ignored: "isn't numeric, so only = works on it"
+        result = await search("Type-C 16P", subcategory_name="USB Connectors",
+                              spec_filters=[{"name": name, "op": op, "value": value}])
+        assert not result.get("ignored_filters")
+        assert result["total"] > 0
+        assert all(check(*self._rated_range(p)) for p in result["results"])
+
+    async def test_junction_range_counts_for_diodes(self):
+        result = await search("SS34", subcategory_name="Schottky Diodes",
+                              spec_filters=[{"name": "Operating Temperature", "op": ">=", "value": "150"}])
+        assert result["total"] > 0
+        assert all(self._rated_range(p)[1] >= 150 for p in result["results"])
+
+    async def test_temperature_range_needs_equals(self):
+        result = await search(None, subcategory_name="Tactile Switches", limit=1,
+                              spec_filters=[{"name": "Operating Temperature", "op": ">", "value": "-40~85"}])
+        assert result["ignored_filters"][0]["filter"] == "Operating Temperature > -40~85"
+
+    @pytest.mark.parametrize("query, check", [
+        ("tactile switch SMD -40C", lambda lo, hi: lo <= -40),
+        ("USB-C receptacle 16 pin −40 °C", lambda lo, hi: lo <= -40),
+        ("105C electrolytic capacitor 100uF", lambda lo, hi: hi >= 105),
+        ("10k resistor 0603 -55~155℃", lambda lo, hi: lo <= -55 and hi >= 155),
+    ])
+    async def test_query_temperature(self, query, check):
+        # "-40C" was an unsupported constraint ("40C", sign lost) and was left out
+        result = await search(query)
+        assert "unsupported_constraints" not in result["parsed"]["detected"]
+        assert result["total"] > 0
+        assert all(check(*self._rated_range(p)) for p in result["results"])
+
+    @pytest.mark.parametrize("query", ["18650 charger 1C", "BC817-40", "I2C sensor", "-40 surface mount",
+                                       "LM7912 -12V", "40C"])
+    def test_not_temperatures(self, query):
+        from pcbparts_mcp.smart_parser.parser import extract_temperatures
+        assert extract_temperatures(query) == ([], query)
+
+
+class TestBacklogClosure:
+    """The last open items of the October backlog (closed 2026-11-02)."""
+
+    async def test_supervisor_voltage_is_the_threshold(self):
+        result = await search("3.6V supervisor")
+        assert result["parsed"]["subcategory"] == "supervisor and reset ics"
+        assert result["total"] > 0
+        assert all(parse_voltage(p["specs"]["Threshold Voltage"]) == 3.6 for p in result["results"])
+
+    async def test_no_fee_supervisor_says_other_tiers_exist(self):
+        # Fell through to LDOs: "supervisor" wasn't a part type
+        result = await search("voltage supervisor reset 3V", library_type="no_fee", match_all_terms=False)
+        assert result["parsed"]["subcategory"] == "supervisor and reset ics"
+        if result["total"] == 0:
+            assert re.match(r"No no-fee part matches; \d+ parts do in other library tiers", result["hint"])
+
+    @pytest.mark.parametrize("query", ["common mode choke 90ohm", "cmc 90ohm"])
+    async def test_common_mode_choke(self, query):
+        result = await search(query)
+        assert result["total"] > 0
+        assert all(p["subcategory"] == "Common Mode Filters" and p["specs"]["Impedance @ Frequency"].startswith("90Ω")
+                   for p in result["results"])
+
+    async def test_ferrite_sub_ohm_is_dcr(self):
+        result = await search("ferrite bead 100mohm")
+        assert {"name": "DCR", "op": "<=", "value": "100mOhm"} in result["filters_applied"]["spec_filters"]
+        assert result["total"] > 0
+        assert all(parse_resistance(p["specs"]["DC Resistance(DCR)"]) <= 0.1 for p in result["results"])
+
+    async def test_jst_word_order(self):
+        a, b = await search("jst 4 pin sh"), await search("jst sh 4 pin")
+        assert a["total"] == b["total"] > 0 and a["results"] == b["results"]
+
+    @pytest.mark.parametrize("query, op", [("LDO 25nA", "<="), ("LDO Iq < 100nA", "<")])
+    async def test_nanoamp_quiescent_current(self, query, op):
+        result = await search(query)
+        assert "unsupported_constraints" not in result["parsed"]["detected"]
+        assert any(f["name"] == "Quiescent Current" and f["op"] == op for f in result["filters_applied"]["spec_filters"])
+        from pcbparts_mcp.search.spec_filter import ATTRIBUTE_ALIASES
+        names = ATTRIBUTE_ALIASES["Quiescent Current"]
+        assert result["total"] > 0
+        assert all(parse_current(next(v for k, v in p["specs"].items() if k in names)) <= 1e-7
+                   for p in result["results"])
+
+    def test_parse_nanoamps(self):
+        assert parse_current("25nA") == pytest.approx(2.5e-8)
+        assert parse_current("1.5uA") == pytest.approx(1.5e-6)
+
+    @pytest.mark.parametrize("query, henries", [("10u 250mA inductor", 10e-6), ("1m 250mA inductor", 1e-3),
+                                                ("inductor 2R2 0805", 2.2e-6)])
+    async def test_bare_inductance(self, query, henries):
+        result = await search(query)
+        assert result["total"] > 0
+        assert all(p["specs"]["Inductance"] and abs(parse_inductance(p["specs"]["Inductance"]) - henries) < henries * 0.01
+                   for p in result["results"])
+
+    async def test_resistor_milliohm_unchanged(self):
+        result = await search("1m resistor")
+        assert {"name": "Resistance", "op": "=", "value": "1mOhm"} in result["filters_applied"]["spec_filters"]
+
+    async def test_slash_separated_bom_current(self):
+        result = await search("20V/4.2A/52mohm/1.4W SOT-23-3 mosfet")
+        assert {"name": "Id", "op": ">=", "value": "4.2A"} in result["filters_applied"]["spec_filters"]
+        assert not result.get("relaxed")
+
+    async def test_relay_current(self):
+        result = await search("relay 10A 5V")
+        assert result["total"] > 0
+        assert all(parse_current(p["specs"]["Switching Current(Max)"]) >= 10 for p in result["results"])
+
+    @pytest.mark.parametrize("query", ["M2 standoff SMT", "mPCIe card latch standoff mini PCIe nut"])
+    async def test_standoffs(self, query):
+        result = await search(query)
+        assert result["total"] > 0
+        assert all("standoff" in p["subcategory"].lower() or "nut" in p["subcategory"].lower() for p in result["results"])
+
+    async def test_any_word_search_ranks_more_words_first(self):
+        # An op-amp matching one word led on stock
+        result = await search("mPCIe card latch standoff mini PCIe nut", match_all_terms=False, limit=5)
+        assert all("nut" in p["subcategory"].lower() or "standoff" in p["subcategory"].lower()
+                   for p in result["results"])
+
+    async def test_esp32_module(self):
+        result = await search("ESP32-C3 module")
+        assert result["total"] > 0
+        assert all(p["subcategory"] in ("WiFi Modules", "RF Modules", "Bluetooth Modules") for p in result["results"])
+
+    @pytest.mark.parametrize("query", ["3W class D audio amplifier", "class d amplifier 3W"])
+    async def test_class_d_output_power(self, query):
+        result = await search(query)
+        assert result["total"] > 0
+        for p in result["results"]:
+            assert "Class D" in p["specs"]["Class"].split("、")
+            assert max(parse_power(item) or 0 for item in p["specs"]["Output Power"].split("、")) >= 3
+
+    async def test_single_cell_charger(self):
+        result = await search("single cell lipo charger")
+        assert result["total"] > 0
+        for p in result["results"]:
+            low, _, high = p["specs"]["Number of Cells"].partition("~")
+            assert int(low) <= 1 <= int(high or low)
+
+    @pytest.mark.parametrize("query, subcategory, attribute", [
+        ("op amp 5V", "Operational Amplifier", "Single supply"), ("comparator 3.3V", "Comparators", "Single Supply")])
+    async def test_op_amp_and_comparator_supply(self, query, subcategory, attribute):
+        target = parse_voltage(query.split()[-1])
+        result = await search(query)
+        assert result["total"] > 0
+        for p in result["results"]:
+            assert p["subcategory"] == subcategory
+            assert any(_range_passes(v, parse_voltage, "=", target) for k, v in p["specs"].items()
+                       if k in ("Single supply", "Single Supply", "Voltage - Supply"))
+
+    async def test_ideal_diodes_in_both_part_types(self):
+        result = await search("ideal diode", limit=100)
+        kinds = {p["subcategory"] for p in result["results"]}
+        assert kinds == {"ORing Controllers", "Power Distribution Switches"}
+        # Only the Power Distribution Switches that say "ideal diode", not every load switch
+        switches = await search("ideal diode", subcategory_name="Power Distribution Switches", limit=100)
+        assert 0 < switches["total"] < 30
+
+    async def test_unknown_part_type_keeps_its_words(self):
+        # Left out "gizmo" and searched the whole catalog on 3.3V and 2A (XH connectors)
+        result = await search("gizmo 3.3V 2A")
+        assert result["total"] == 0 and not result.get("relaxed")
+        assert result["hint"].startswith('No part type matched "gizmo"')
+
+    async def test_parsed_subcategory_is_the_one_searched(self):
+        result = await search("600ohm 0603", subcategory_name="Ferrite Beads")
+        assert result["parsed"]["subcategory"] == "ferrite beads"
+
+    @pytest.mark.parametrize("query, expected", [
+        ("1.5A/3A 1206 fuse", ("Current Rating", "=", "1.5A")),          # rated/trip: the first only
+        ("6V/2.0A/4.0A 1210 fuse", ("Hold Current", ">=", "2.0A")),        # a PTC's hold/trip
+        ("20V/4.2A/52mohm/1.4W SOT-23-3 mosfet", ("Id", ">=", "4.2A"))])
+    async def test_slash_currents_first_only(self, query, expected):
+        result = await search(query)
+        currents = [(f["name"], f["op"], f["value"]) for f in result["filters_applied"]["spec_filters"]
+                    if f["value"].endswith("A")]
+        assert currents == [expected]
+        assert result["total"] > 0
+
+    async def test_multiplexer(self):
+        result = await search("16 channel analog multiplexer")
+        assert result["total"] > 0
+        assert all(p["subcategory"] in ("Analog Switches, Multiplexers", "Signal Switches, Multiplexers, Decoders")
+                   for p in result["results"])
+
+    async def test_lora(self):
+        # "LoRa transceiver 868MHz" left out "LoRa transceiver" (no part type)
+        result = await search("lora", limit=100)
+        assert {p["subcategory"] for p in result["results"]} <= {"LoRa Modules", "RF Transceiver ICs"}
+        chips = await search(None, subcategory_name="RF Transceiver ICs", limit=1)
+        assert result["total"] < chips["total"]  # only the transceivers whose text says LoRa
+
+    async def test_supervisor_threshold_window(self):
+        # "Threshold Voltage isn't numeric, so only = works on it": a 3.3-3.5V window was dropped
+        result = await search(None, subcategory_name="Supervisor and Reset ICs", limit=100, spec_filters=[
+            {"name": "Threshold Voltage", "op": ">=", "value": "3.3V"},
+            {"name": "Threshold Voltage", "op": "<=", "value": "3.5V"}])
+        assert not result.get("ignored_filters")
+        assert result["total"] > 0
+        assert all(any(3.3 * 0.99 <= parse_voltage(v) <= 3.5 * 1.01 for v in p["specs"]["Threshold Voltage"].split("、"))
+                   for p in result["results"])
+
+
+ISOLATED_POWER = {"Isolated Power Modules", "Isolated DC/DC Converters"}
+
+
+class TestIsolatedParts:
+    """"isolated DC-DC module 5V input 12V output 2W" searched 2,083 non-isolated buck/boost ICs and
+    dropped "isolated module": no "isolated" alias existed for any part type."""
+
+    @pytest.mark.parametrize("query", ["isolated DC-DC module 5V input 12V output 2W",
+                                       "isolated 5V to 12V DC-DC converter 2W"])
+    async def test_isolated_dc_dc(self, query):
+        result = await search(query, limit=100)
+        assert not result.get("relaxed")
+        assert result["total"] > 0
+        for p in result["results"]:
+            assert p["subcategory"] in ISOLATED_POWER
+            assert covers(p["specs"].get("Voltage - Supply") or p["specs"].get("Vin"), 5)
+            assert p["specs"].get("Output Voltage", p["specs"].get("Vout")) == "12V"
+            assert parse_power(p["specs"]["Output Power"]) >= 2
+
+    async def test_isolation_voltage(self):
+        result = await search("isolated DC-DC 5V 3kV", limit=100)
+        assert {"name": "Isolation Voltage", "op": ">=", "value": "3kV"} in result["filters_applied"]["spec_filters"]
+        assert result["total"] > 0
+        assert all(parse_isolation_voltage(p["specs"]["Isolation Voltage(Vrms)"]) >= 3000 for p in result["results"])
+
+    async def test_non_isolated_module(self):
+        result = await search("non-isolated DC-DC module 12V to 5V", limit=100)
+        assert result["total"] > 0
+        assert {p["subcategory"] for p in result["results"]} == {"DC-DC Power Modules"}
+
+    @pytest.mark.parametrize("query, subcategories", [
+        ("isolated RS485 transceiver", {"Isolated RS-485/422 Transceivers", "Isolated RS-485/422 Transceivers with power"}),
+        ("RS485 transceiver isolated", {"Isolated RS-485/422 Transceivers", "Isolated RS-485/422 Transceivers with power"}),
+        ("isolated CAN transceiver", {"Isolated CAN Transceivers", "Isolated CAN Transceivers (with Power)"}),
+        ("I2C isolator", {"I2C Isolators", "Isolated I2C (with Power)"}),
+        ("isolated gate driver", {"Isolators - Gate Drivers"}),
+        ("digital isolator", {"Digital Isolators", "Digital Isolators (with Power)"}),
+        ("isolated power supply 5V", ISOLATED_POWER),  # empty since 0.8.0's "no part type" rule
+        ("buck module 12V to 5V", {"DC-DC Power Modules"}),
+    ])
+    async def test_isolated_part_types(self, query, subcategories):
+        result = await search(query, limit=100)
+        assert not result.get("relaxed")
+        assert result["total"] > 0
+        assert {p["subcategory"] for p in result["results"]} <= subcategories
+
+    async def test_module_output_current(self):
+        # Modules list "Output Current(Max)", which no current filter read
+        result = await search("isolated dc-dc 5V to 12V 0.1A", limit=100)
+        assert not result["parsed"].get("adjusted_filters")
+        assert result["total"] > 0
+        assert all(parse_current(p["specs"]["Output Current(Max)"]) >= 0.1 for p in result["results"])
+
+
+class TestDualRailOutputs:
+    """Output Voltage = 12V also returned ±12V modules: two outputs, 24V across them."""
+
+    async def test_single_output_excludes_dual_rail(self):
+        result = await search(None, subcategory_id=2117, limit=100, spec_filters=[
+            {"name": "Output Voltage", "op": "=", "value": "12V"}, {"name": "Supply Voltage", "op": "=", "value": "5V"},
+            {"name": "Output Current(Max)", "op": ">=", "value": "0.1A"}])
+        assert result["total"] > 0
+        assert all(p["specs"]["Output Voltage"] == "12V" for p in result["results"])
+
+    @pytest.mark.parametrize("query", ["isolated dc-dc 5V to ±12V", "isolated power module +/-12V"])
+    async def test_dual_rail_when_asked(self, query):
+        result = await search(query, limit=100)
+        assert {"name": "Output Voltage", "op": "=", "value": "±12V"} in result["filters_applied"]["spec_filters"]
+        assert result["total"] > 0
+        assert all(p["specs"]["Output Voltage"] == "±12V" for p in result["results"])
+
+
+def _colors(value: str) -> list[str]:
+    """An Illumination Color list: "Red, Emerald Green" -> ["red", "emerald green"]."""
+    return [item.strip().lower() for item in re.split(r"[、,，]", value or "") if item.strip()]
+
+
+GREENS = {"green", "emerald green", "yellow green"}
+
+
+class TestLedColours:
+    """"green LED" with library_type no_fee found nothing: the only Basic green LED is listed as
+    Emerald Green. "bicolor LED red green" returned red LEDs (the colours were OR'd)."""
+
+    async def test_a_colour_word_covers_its_shades(self):
+        result = await search("green LED", limit=100)
+        values = [f["value"] for f in result["filters_applied"]["spec_filters"]]
+        assert values == ["Green", "Emerald Green", "Yellow Green"]
+        found = {p["specs"]["Illumination Color"] for p in result["results"]}
+        assert found <= {"Green", "Emerald Green", "Yellow Green"} and "Emerald Green" in found
+        no_fee = await search("green LED", library_type="no_fee", limit=100)
+        assert no_fee["total"] > 0
+        assert all(_colors(p["specs"]["Illumination Color"])[0] in GREENS for p in no_fee["results"])
+
+    async def test_white_shades_and_named_shades(self):
+        white = await search("white LED 0805", limit=100)
+        assert {p["specs"]["Illumination Color"] for p in white["results"]} <= {"White", "Cold White", "Warm White"}
+        for query, shade in (("yellow green LED", "Yellow Green"), ("emerald green LED", "Emerald Green"),
+                             ("warm white LED", "Warm White")):
+            result = await search(query, limit=50)
+            assert result["total"] > 0
+            assert {p["specs"]["Illumination Color"] for p in result["results"]} == {shade}
+
+    @pytest.mark.parametrize("query, first", [("bicolor LED red green", "red"), ("red green LED", "red"),
+                                              ("green red bi-color LED", "green")])
+    async def test_two_colours_are_one_bicolour_part(self, query, first):
+        result = await search(query, limit=100)
+        assert not result.get("relaxed")
+        assert result["filters_applied"]["spec_filters"] == [
+            {"name": "Illumination Color", "op": "=", "value": "Red + Green" if first == "red" else "Green + Red"}]
+        assert result["total"] > 0
+        for p in result["results"]:
+            colors = _colors(p["specs"]["Illumination Color"])
+            assert len(colors) == 2 and "red" in colors and set(colors) & GREENS, colors
+
+    @pytest.mark.parametrize("query, count", [("bicolor LED", 2), ("tricolor LED", 3)])
+    async def test_colour_count_words(self, query, count):
+        result = await search(query, limit=100)
+        assert not result.get("relaxed")
+        assert result["total"] > 0
+        assert all(len(_colors(p["specs"]["Illumination Color"])) == count for p in result["results"])
+
+    async def test_explicit_filters(self):
+        # Two plain values stay either/or; "Red + Green" asks for the pair
+        either = await search(subcategory_name="LED Indication - Discrete", limit=100, spec_filters=[
+            {"name": "Illumination Color", "op": "=", "value": "Red"},
+            {"name": "Illumination Color", "op": "=", "value": "Green"}])
+        assert {p["specs"]["Illumination Color"] for p in either["results"]} <= {"Red", "Green"}
+        pair = await search(subcategory_name="LED Indication - Discrete", limit=100, spec_filters=[
+            {"name": "Illumination Color", "op": "=", "value": "Red + Blue"}])
+        assert pair["total"] > 0
+        assert all(sorted(_colors(p["specs"]["Illumination Color"])) == ["blue", "red"] for p in pair["results"])
+
+
+async def test_no_fee_hint_for_a_part_number_in_stock_in_other_tiers():
+    # "No in-stock part matches TL431" when 308 extended TL431s were in stock
+    result = await search("TL431", library_type="no_fee")
+    if result["total"]:
+        pytest.skip("a no-fee TL431 is listed now")
+    assert result["hint"].startswith("No no-fee part matches TL431; ")
+    assert "in-stock" not in result["hint"] and "jlc_stock_check" not in result["hint"]
+
+
+async def test_stock_check_lists_highest_stock_first(monkeypatch):
+    # JLCPCB's own order is by LCSC code: SMF18A's Preferred part with the most stock was on page 2
+    from unittest.mock import AsyncMock, Mock
+    live = AsyncMock(return_value={"results": [], "total": 0})
+    monkeypatch.setattr(server, "_client", Mock(search=live))
+    await server.jlc_stock_check(query="SMF18A")
+    assert live.await_args.kwargs["sort_by"] == "quantity"
+    await server.jlc_stock_check(query="SMF18A", sort_by="price")
+    assert live.await_args.kwargs["sort_by"] == "price"
+
+
+class TestAudioJacks:
+    """"2.5mm audio jack" returned 3.5mm jacks and "6.35mm jack" wire-to-board connectors: the size
+    was read as a pin pitch, which no audio jack lists."""
+
+    @pytest.mark.parametrize("query, types", [
+        ("2.5mm audio jack", {"2.5mm Headphone Jack"}),
+        ("6.35mm jack", {"6.35mm Headphone Jack"}),
+        ("3.5mm headphone jack", {"3.5mm Headphone Jack"}),
+        ("4.4mm jack", {"4.4mm Headphone Jack", "4.4mm audio jack"}),
+        ("6.35mm plug", {"6.35mm Headphone Plug"}),
+    ])
+    async def test_size_is_the_connector_type(self, query, types):
+        result = await search(query, limit=100)
+        assert not result.get("relaxed") and not result["parsed"].get("adjusted_filters")
+        assert result["total"] > 0
+        assert {p["specs"]["Connector Type"] for p in result["results"]} <= types
+
+    def test_alternatives_leave_pin_roles_unchecked(self):
+        from pcbparts_mcp.alternatives import is_compatible_alternative
+        jack = {"specs": {"Connector Type": "3.5mm Headphone Jack", "Mounting Type": "SMD"}}
+        compatible, info = is_compatible_alternative(jack, jack, "Audio Connectors")
+        assert compatible
+        assert any("tip, ring and sleeve" in item for item in info["unchecked_requirements"])
+
+    async def test_pinout_note_warns_about_pad_numbering(self, monkeypatch):
+        class Fake:
+            async def get_part(self, lcsc):
+                return {"lcsc": lcsc, "subcategory": "Audio Connectors", "has_easyeda_footprint": True,
+                        "easyeda_symbol_uuid": "u"}
+
+            async def get_easyeda_component(self, uuid):
+                pin = "P~show~0~{n}~0~0~180~g{n}~0^^0~0^^M0,0h10~#000^^1~0~0~0~{n}~start~~~#000^^1~0~0~0~{n}~end~~~#000"
+                return {"dataStr": {"shape": [pin.format(n=n) for n in (1, 2, 3)]}}
+        monkeypatch.setattr(server, "_client", Fake())
+        result = await server.jlc_get_pinout(lcsc="C95463")
+        assert "tip, ring and sleeve pads differently" in result["note"]
+
+
+class TestCellularModules:
+    """"4G module" found ESP32 WiFi modules, "cellular module" and "Cat-M1 module" nothing, and
+    "LTE Cat-M" Cat.1 modules; LCSC's band lists for them are incomplete."""
+
+    @pytest.mark.parametrize("query, network", [
+        ("4G module", None), ("cellular module", None), ("LTE modem", None),
+        ("Cat-M1 module", "cat-m"), ("LTE Cat-M module", "cat-m"), ("NB-IoT module", "nb-iot"),
+        ("GSM module", "gsm"), ("Cat.1 module", "cat.1"),
+    ])
+    async def test_part_type_and_network(self, query, network):
+        result = await search(query, limit=100)
+        assert not result.get("relaxed")
+        assert result["total"] > 0
+        assert {p["subcategory"] for p in result["results"]} == {"2G/3G/4G/5G Modules"}
+        if network:
+            for p in result["results"]:
+                networks = [n.strip().lower() for n in p["specs"]["Communication System"].split("、")]
+                assert network in networks or (network == "nb-iot" and "cat.nb1" in networks) \
+                    or (network == "cat.1" and "lte cat 1" in networks), networks
+        assert "often incomplete" in result["note"]
+
+    async def test_lte_antenna_keeps_its_part_type(self):
+        result = await search("LTE antenna", limit=20)
+        assert {p["subcategory"] for p in result["results"]} == {"Antennas"}
+
+    async def test_note_on_part_lookups(self):
+        result = await server.jlc_get_part(mpn="SIM7080G")
+        if not result.get("results"):
+            pytest.skip("SIM7080G not stocked")
+        assert "datasheet_pdf" in result["note"]
+        assert "note" not in await server.jlc_get_part(mpn="TPS2553DBVR")
+
+
+class TestUnlistedCounts:
+    """A -40°C filter left out AO3401A, one of the most-used Basic P-FETs, without saying so: LCSC
+    lists its operating temperature as "-"."""
+
+    async def test_count_matches_the_parts_left_out(self):
+        args = {"query": "P-channel MOSFET SOT-23", "library_type": "basic", "limit": 100}
+        everything = await search(**args)
+        filtered = await search(**{**args, "query": "P-channel MOSFET SOT-23 -40°C"})
+        kept = {p["lcsc"] for p in filtered["results"]}
+        unlisted = [p for p in everything["results"]
+                    if p["lcsc"] not in kept and p["specs"].get("Operating Temperature", "-") in ("-", "")]
+        entries = filtered.get("unlisted", [])
+        if not unlisted:
+            assert entries == []
+            pytest.skip("every Basic P-FET lists an operating temperature now")
+        assert entries == [{"filter": "Operating Temperature <= -40", "parts": len(unlisted),
+                            "basic_preferred": len(unlisted)}]
+
+    async def test_only_range_filters_are_counted(self):
+        result = await search("10k resistor 0603 1%", limit=5)
+        assert "unlisted" not in result  # exact resistance, tolerance and text filters
+        ldo = await search("LDO 3.3V 500mA", limit=5)
+        assert all(item["filter"].startswith("Output Current >=") for item in ldo.get("unlisted", []))
+
+    async def test_empty_reply_hint_names_them(self):
+        result = await search(subcategory_name="MOSFETs", library_type="basic", spec_filters=[
+            {"name": "Operating Temperature", "op": "<=", "value": "-70"}, {"name": "Type", "op": "=", "value": "P-Channel"}])
+        if result["total"] or not result.get("unlisted"):
+            pytest.skip("catalog changed")
+        assert "list no value for Operating Temperature <= -70" in result["hint"]
+
+
+class TestModuleDropIns:
+    """SIM7080G-M's drop-in SIM7080G (same 17.6x15.7mm package) ranked behind a 24x24mm A7670E."""
+
+    def test_part_family(self):
+        from pcbparts_mcp.alternatives import part_family
+        assert part_family("SIM7080G-M") == part_family("SIM7080G") == "SIM7080G"
+        assert part_family("A7670E-LASE") == "A7670E"
+        assert part_family("ESP-12F") is None and part_family("LED") is None
+
+    def test_likely_drop_in_needs_package_and_family(self):
+        from pcbparts_mcp.alternatives import likely_drop_in
+        original = {"model": "SIM7080G-M"}
+        assert "SIM7080G" in likely_drop_in(original, {"model": "SIM7080G"}, same_package=True)
+        assert likely_drop_in(original, {"model": "SIM800C"}, same_package=True) is None  # 2G, other pinout
+        assert likely_drop_in(original, {"model": "SIM7080G"}, same_package=False) is None
+
+    def test_flag_in_similar_parts(self):
+        from pcbparts_mcp.alternatives import build_unsupported_response
+        original = {"lcsc": "C18548266", "model": "SIM7080G-M", "package": "SMD,17.6x15.7mm", "specs": {}}
+        part = {"lcsc": "C2943992", "model": "SIM7080G", "package": "SMD,17.6x15.7mm", "stock": 1000}
+        reply = build_unsupported_response(original, [(60, part, {}, {})], "2G/3G/4G/5G Modules", None, 10,
+                                           drop_ins={"C2943992": "same package and part family (SIM7080G); verify the pinout"})
+        assert reply["similar_parts"][0]["likely_drop_in"].endswith("verify the pinout")
+
+
+async def test_unlisted_skips_filters_already_reported_sparse():
+    # No tactile switch lists "Height" (they list Switch Height); ignored_filters says so
+    result = await search(subcategory_name="Tactile Switches", limit=5,
+                          spec_filters=[{"name": "Height", "op": "<=", "value": "2mm"}])
+    assert any(f["filter"] == "Height <= 2mm" for f in result.get("ignored_filters", []))
+    assert "unlisted" not in result and "list no value" not in result.get("hint", "")
+
+
+class TestPaging:
+    """jlc_search had no offset: agents copied page= from jlc_stock_check and got a validation error."""
+
+    @pytest.mark.parametrize("query, extra", [
+        ("10k resistor 0603", {}),
+        ("addressable RGB LED 3.3V", {}),  # a Python-checked range filter
+        ("LM1117-3.3", {}),  # part-number ranking
+        ("buck converter", {"spec_filters": [{"name": "Supply Voltage", "op": "=", "value": "24V"}]}),
+    ])
+    async def test_pages_join_up(self, query, extra):
+        first_ten = await search(query, limit=10, **extra)
+        page1 = await search(query, limit=5, **extra)
+        page2 = await search(query, limit=5, offset=5, **extra)
+        assert first_ten["total"] == page1["total"] == page2["total"] >= 10
+        assert [p["lcsc"] for p in page1["results"] + page2["results"]] == [p["lcsc"] for p in first_ten["results"]]
+        assert page2["page_info"] == {"limit": 5, "offset": 5, "returned": 5}
+
+    async def test_offset_past_the_end(self):
+        result = await search("10k resistor 0603", limit=5, offset=9999)
+        assert result["results"] == [] and result["total"] > 0
+        assert "past the last" in result["hint"]
+
+    async def test_offset_is_capped(self):
+        result = await search("10k resistor 0603", limit=5, offset=10**9)
+        assert result["page_info"]["offset"] == 10_000
+
+    def test_part_number_retry_pages_after_filtering(self):
+        retry = {"results": [{"model": m, "library_type": "extended"} for m in
+                             ("ABC123-A", "XYZ", "ABC123-B", "ABC123-C", "QQQ")],
+                 "total": 5, "page_info": {"limit": 100, "offset": 0, "returned": 5}}
+        kept = server._keep_part_number_matches(retry, "ABC123", limit=2, offset=1)
+        assert [p["model"] for p in kept["results"]] == ["ABC123-B", "ABC123-C"]
+        assert kept["total"] == 3 and kept["page_info"]["offset"] == 1

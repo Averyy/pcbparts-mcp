@@ -11,6 +11,41 @@ Run validation script before committing changes to ensure all mappings are valid
 from typing import Any
 
 
+# Power module wording, shared by the aliases, the groups and the smart parser's value mapping
+_DCDC_MODULE_WORDS = (
+    "dc-dc module", "dc-dc modules", "dc dc module", "dc/dc module", "dc-dc power module", "dc-dc power modules",
+    "buck module", "boost module", "step-down module", "step down module", "step-up module", "step up module",
+    "buck converter module", "boost converter module",
+)
+# Isolated power that can be a module (B0505S) or an isolated converter IC (UCC12050)
+_ISOLATED_POWER_WORDS = (
+    "isolated dc-dc", "isolated dc dc", "isolated dc/dc", "isolated dcdc", "isolated dc-dc converter",
+    "isolated dc-dc converters", "isolated dc dc converter", "isolated dc/dc converter", "isolated converter",
+    "isolated converters", "isolated power supply", "isolated power", "isolated psu",
+)
+# Said as a module: modules only
+_ISOLATED_MODULE_WORDS = (
+    "isolated module", "isolated modules", "isolated power module", "isolated power modules",
+    "isolated dc-dc module", "isolated dc dc module", "isolated dc/dc module",
+)
+POWER_MODULE_WORDS = (*_DCDC_MODULE_WORDS, *_ISOLATED_POWER_WORDS, *_ISOLATED_MODULE_WORDS, "power module",
+                      "power modules", "ac-dc module", "ac-dc power module")
+
+# "isolated" picks a sibling part type, but only next to the part word through an alias above.
+# "isolated 5V to 12V DC-DC converter" or "CAN transceiver, isolated" switch through this map
+# (the part type a keyword resolved to -> the isolated keyword).
+ISOLATED_SIBLINGS: dict[str, str] = {
+    "dc-dc converters": "isolated dc-dc",
+    "dc-dc power modules": "isolated power module",
+    "rs-485 / rs-422 ics": "isolated rs-485",
+    "can transceivers": "isolated can",
+    "gate drivers": "isolated gate driver",
+    "analog to digital converters (adc)": "isolated adc",
+    "comparators": "isolated comparator",
+    "operational amplifier": "isolation amplifier",
+}
+
+
 # Common subcategory aliases for frequently searched terms
 # Maps common shorthand to the actual subcategory name (case-insensitive matching)
 # These must match actual subcategory names in the database!
@@ -237,11 +272,22 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "ipex": "coaxial connectors (rf)",
     "ipx": "coaxial connectors (rf)",
     "mhf": "coaxial connectors (rf)",
+    # RF cables and pigtails (DB: "RF Cables"); the parser also reads "IPEX to SMA cable" as one
+    "rf cable": "rf cables",
+    "rf cables": "rf cables",
+    "coax cable": "rf cables",
+    "coaxial cable": "rf cables",
+    "pigtail": "rf cables",
+    "rf pigtail": "rf cables",
+    "antenna cable": "rf cables",
     # Audio connectors (DB: "Audio Connectors")
     "audio jack": "audio connectors",
     "headphone jack": "audio connectors",
     "3.5mm jack": "audio connectors",
     "phone jack": "audio connectors",
+    **dict.fromkeys(("2.5mm jack", "4.4mm jack", "6.35mm jack", "6.3mm jack", "2.5mm plug", "3.5mm plug",
+                     "6.35mm plug", "6.3mm plug", "headphone plug", "audio plug", "audio connector",
+                     "audio connectors"), "audio connectors"),
     # DC power connectors (DB: "DC Power Connectors")
     "dc jack": "dc power connectors",
     "barrel jack": "dc power connectors",
@@ -309,6 +355,13 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "buck boost converter": "dc-dc converters",
     "buck boost": "dc-dc converters",
     "buck-boost": "dc-dc converters",
+    # A "DC-DC module" (K7805) is a module, not a converter IC; "power module" is all three kinds
+    **dict.fromkeys(_DCDC_MODULE_WORDS, "dc-dc power modules"),
+    **dict.fromkeys(("ac-dc module", "ac-dc modules", "ac dc module", "ac/dc module", "ac-dc power module",
+                     "ac-dc power modules"), "ac-dc power modules"),
+    **dict.fromkeys(("power module", "power modules"), "dc-dc power modules"),
+    # An isolated DC-DC is a module (B0505S) or an isolated converter IC (UCC12050), not a buck IC
+    **dict.fromkeys((*_ISOLATED_POWER_WORDS, *_ISOLATED_MODULE_WORDS), "isolated power modules"),
     # ==========================================================================
     # ICs - OP AMPS
     # ==========================================================================
@@ -316,6 +369,7 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "opamp": "operational amplifier",
     "op-amp": "operational amplifier",
     "operational amplifier": "operational amplifier",
+    **dict.fromkeys(("comparator", "comparators", "voltage comparator"), "comparators"),
     # ==========================================================================
     # ICs - DATA CONVERTERS (actual DB names have singular ADC/DAC)
     # ==========================================================================
@@ -340,6 +394,27 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "ir led": "infrared led emitters",
     "infrared led": "infrared led emitters",
     "uv led": "ultraviolet leds (uvled)",
+    "led driver": "led drivers",
+    "led drivers": "led drivers",
+    # ==========================================================================
+    # SUPERVISORS (JLCPCB: "Supervisor and Reset ICs"; bare "reset" is a button)
+    # ==========================================================================
+    **dict.fromkeys(("charger", "chargers", "charger ic", "charge controller"), "battery management"),
+    **dict.fromkeys(("multiplexer", "multiplexers", "mux", "analog switch", "analog multiplexer", "i2c multiplexer",
+                     "i2c mux"), "analog switches, multiplexers"),
+    **dict.fromkeys(("lora", "lora transceiver", "lora chip"), "lora modules"),
+    **dict.fromkeys(("supervisor", "voltage supervisor", "supervisor ic", "reset ic", "reset supervisor",
+                     "voltage detector", "voltage monitor"), "supervisor and reset ics"),
+    # ==========================================================================
+    # COMMON MODE CHOKES
+    # ==========================================================================
+    **dict.fromkeys(("common mode choke", "common mode chokes", "common mode filter", "common mode filters",
+                     "cmc"), "common mode filters"),
+    # ==========================================================================
+    # STANDOFFS AND SMT NUTS (hardware; subcategory names aren't in part text)
+    # ==========================================================================
+    **dict.fromkeys(("standoff", "standoffs", "spacer", "spacers", "pcb standoff"), "female-female hex standoff"),
+    **dict.fromkeys(("smt nut", "smd nut", "smt standoff", "smd standoff"), "patch round nut"),
     # ==========================================================================
     # SWITCHES
     # ==========================================================================
@@ -420,6 +495,17 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # MODULES
     # ==========================================================================
     "wifi module": "wifi modules",
+    # Cellular modems: "4G module" found ESP32 WiFi modules, "cellular module" and "Cat-M1 module"
+    # nothing, and "LTE Cat-M" Cat.1 modules (the parser adds the network: Communication System)
+    **dict.fromkeys((
+        "cellular module", "cellular modules", "cellular modem", "cellular modems", "lte module", "lte modules",
+        "lte modem", "4g module", "4g modules", "4g lte module", "3g module", "2g module", "5g module",
+        "gsm module", "gsm modules", "gprs module", "gsm/gprs module", "nb-iot module", "nb-iot modules",
+        "nbiot module", "nb iot module", "cat-m module", "cat-m1 module", "cat m1 module", "lte-m module",
+        "lte cat-m", "lte cat-m1", "lte cat m1", "lte-m", "cat-m1", "cat.1 module", "cat 1 module", "cat1 module",
+        "lte cat 1", "lte cat.1", "lte cat-m module", "lte cat-m1 module", "lte cat m1 module", "lte cat 1 module",
+        "lte cat.1 module",
+    ), "2g/3g/4g/5g modules"),
     "bluetooth module": "bluetooth modules",
     "ble module": "bluetooth modules",
     "lora module": "lora modules",
@@ -443,6 +529,7 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "hot swap": "power distribution switches",
     # Ideal diode controllers drive a MOSFET as a low-loss diode; longer than "diode", so it wins
     "ideal diode": "oring controllers",
+    "ideal diodes": "oring controllers",
     "oring controller": "oring controllers",
     # ==========================================================================
     # FUSES
@@ -535,6 +622,25 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "can bus transceiver": "can transceivers",
     "can-bus transceiver": "can transceivers",
     "canbus transceiver": "can transceivers",
+    # Isolated interface ICs are separate categories: an "isolated RS485 transceiver" isn't an RS-485 IC
+    **dict.fromkeys(("digital isolator", "digital isolators"), "digital isolators"),
+    **dict.fromkeys(("isolated rs485", "isolated rs-485", "isolated rs422", "isolated rs-422", "isolated rs485 transceiver",
+                     "isolated rs-485 transceiver", "isolated rs485 transceivers", "isolated rs-485 transceivers"),
+                    "isolated rs-485/422 transceivers"),
+    **dict.fromkeys(("isolated can", "isolated can transceiver", "isolated can transceivers", "isolated can bus",
+                     "isolated can bus transceiver"), "isolated can transceivers"),
+    **dict.fromkeys(("i2c isolator", "i2c isolators", "isolated i2c"), "i2c isolators"),
+    **dict.fromkeys(("spi isolator", "spi isolators", "isolated spi"), "spi isolators"),
+    **dict.fromkeys(("usb isolator", "usb isolators", "isolated usb"), "isolated usb ics"),
+    **dict.fromkeys(("isolated adc", "isolated adcs"), "isolated adcs"),
+    **dict.fromkeys(("isolated rs232", "isolated rs-232", "isolated rs232 transceiver", "isolated rs-232 transceiver"),
+                    "isolated rs-232 transceivers"),
+    **dict.fromkeys(("isolated comparator", "isolated comparators"), "isolated comparators"),
+    **dict.fromkeys(("isolation amplifier", "isolation amplifiers", "isolated amplifier", "isolated op amp",
+                     "isolated opamp"), "isolation amplifiers"),
+    **dict.fromkeys(("isolated gate driver", "isolated gate drivers", "isolated mosfet driver", "isolated igbt driver"),
+                    "isolators - gate drivers"),
+    **dict.fromkeys(("transformer driver", "transformer drivers", "isolated transformer driver"), "transformer drivers"),
     "mosfet driver": "gate drivers",
     "mosfet gate driver": "gate drivers",
     "gate driver": "gate drivers",
@@ -683,6 +789,36 @@ SUBCATEGORY_GROUPS: dict[str, tuple[str, ...]] = {
     **dict.fromkeys(("relay", "relays"), (
         "signal relays", "power relays", "automotive relays", "reed relays", "magnetic latching relays",
     )),
+    **dict.fromkeys(("standoff", "standoffs", "spacer", "spacers", "pcb standoff"), (
+        "female-female hex standoff", "female-female round standoff", "male-female round standoff",
+        "smd hex nut columns", "patch round nut", "pc board spacer",
+    )),
+    **dict.fromkeys(("smt nut", "smd nut", "smt standoff", "smd standoff"), ("patch round nut", "smd hex nut columns")),
+    "esp32 module": ("wifi modules", "rf modules", "bluetooth modules"),
+    **dict.fromkeys(("ideal diode", "ideal diodes"), ("oring controllers", "power distribution switches")),
+    **dict.fromkeys(("multiplexer", "multiplexers", "mux", "analog switch", "analog multiplexer", "i2c multiplexer",
+                     "i2c mux"), ("analog switches, multiplexers", "signal switches, multiplexers, decoders")),
+    **dict.fromkeys(("lora", "lora transceiver", "lora chip"), ("lora modules", "rf transceiver ics")),
+    **dict.fromkeys(("power module", "power modules"), ("dc-dc power modules", "isolated power modules", "ac-dc power modules")),
+    **dict.fromkeys(_ISOLATED_POWER_WORDS, ("isolated power modules", "isolated dc/dc converters")),
+    # Each isolated interface comes in a plain and a "with power" (built-in isolated supply) category
+    **dict.fromkeys(("digital isolator", "digital isolators"), ("digital isolators", "digital isolators (with power)")),
+    **{w: ("isolated rs-485/422 transceivers", "isolated rs-485/422 transceivers with power")
+       for w, target in SUBCATEGORY_ALIASES.items() if target == "isolated rs-485/422 transceivers"},
+    **{w: ("isolated can transceivers", "isolated can transceivers (with power)")
+       for w, target in SUBCATEGORY_ALIASES.items() if target == "isolated can transceivers"},
+    **{w: ("i2c isolators", "isolated i2c (with power)")
+       for w, target in SUBCATEGORY_ALIASES.items() if target == "i2c isolators"},
+    **{w: ("spi isolators", "spi isolators with power")
+       for w, target in SUBCATEGORY_ALIASES.items() if target == "spi isolators"},
+    **{w: ("isolated usb ics", "isolated usb ics with power")
+       for w, target in SUBCATEGORY_ALIASES.items() if target == "isolated usb ics"},
+    **{w: ("isolated adcs", "isolated adcs with power")
+       for w, target in SUBCATEGORY_ALIASES.items() if target == "isolated adcs"},
+    **{w: ("isolated rs-232 transceivers", "isolated rs-232 transceivers (with power)")
+       for w, target in SUBCATEGORY_ALIASES.items() if target == "isolated rs-232 transceivers"},
+    **{w: ("isolation amplifiers", "isolation amplifiers with power")
+       for w, target in SUBCATEGORY_ALIASES.items() if target == "isolation amplifiers"},
     **dict.fromkeys(("diode", "diodes"), (
         "switching diodes", "diodes - general purpose", "schottky diodes",
         "fast recovery / high efficiency diodes", "super barrier rectifiers (sbr)",

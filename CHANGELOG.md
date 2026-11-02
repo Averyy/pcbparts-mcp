@@ -4,6 +4,52 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.0 (2026-11-02)
+
+### Breaking
+
+- **`datasheet_pdf` is a short, stable link** (`jlc_get_part`, and `original` in `jlc_find_alternatives`): `https://pcbparts.dev/mcp/datasheet/C15127` redirects to a freshly signed PDF on each visit, so it can be kept in a BOM. It was JLCPCB's 1.2KB signed link, valid for 30 minutes; `datasheet_pdf_expires` is gone.
+- **`attributes` removed** from the same replies: it repeated `specs`. C15127's reply went from 3,272 to 1,395 bytes.
+
+### Added
+
+- **`/mcp/datasheet/<lcsc>`:** redirects to the part's datasheet PDF (404 if JLCPCB has none). Held links are reused; a new one takes one JLCPCB request, never EasyEDA, and the server signs at most 20 a minute for all callers (429 beyond that).
+- **Operating temperature filter:** `Operating Temperature` takes range operators in °C in `spec_filters` (`<= -40` is rated down to -40°C, `= "-40~85"` covers both ends), under every spelling of the attribute. `-40°C`, `105C` and `-40~85℃` in a query do the same.
+- **`unlisted` in `jlc_search`:** per range filter, how many parts meet every other constraint but list no value for it, and an empty reply's hint names them. AO3401A was silently left out of a -40°C MOSFET search because LCSC lists its temperature as "-", as for about 16% of MOSFETs.
+- **`likely_drop_in` in `jlc_find_alternatives`:** for part types without compatibility rules, parts in the original's package and part family come first (the SIM7080G for the SIM7080G-M; it ranked behind a 24x24mm module).
+- **Isolated parts and power modules:** `isolated` picks the isolated part type (DC-DC, RS-485, CAN, I2C, SPI, USB, ADCs, gate drivers, amplifiers), `DC-DC module`, `AC-DC module` and `power module` search the module types, and `3kV` is an isolation rating. `isolated DC-DC module 5V input 12V output 2W` searched 2,083 non-isolated ICs.
+- **More query words:** supervisors (a bare voltage is the threshold), common mode chokes, standoffs and SMT nuts, chargers, comparators, multiplexers, LoRa, cell counts, audio amp class and power, relay current, op amp single supply, ideal diodes, `ESP32-C3 module`, and nA currents (2,843 parts listing an nA quiescent current were missing from every Iq filter).
+- **Seven reference boards:** Adafruit QT Py ESP32-S3, SparkFun Thing Plus ESP32-S3, Seeed XIAO ESP32-S3 Sense, PowerFeather PowerUPS, Botletics SIM7000 shield, Adafruit BQ24074 solar charger and SparkFun Sunny Buddy, with a `cellular` tag.
+- **Part numbers in `board_get`:** components and a focused IC carry the design files' own `mpn`, `manufacturer`, `lcsc`, `mouser` and `digikey` (121 boards), which the build dropped, so agents guessed parts from values like "MBR540 / SOD-123".
+- **`offset` in `jlc_search`:** pages through the rest of a search. Agents copied `page=` from `jlc_stock_check` and got a validation error.
+- **Board search hints:** an empty `board_search` names the words no board matches and what leaving them out finds (`ESP32-S3 battery solar` came back empty with no hint), and an unknown `board_get` slug adds `did_you_mean` (`adafruit-feather-esp32s3` → `adafruit-esp32-s3-feather`).
+
+### Changed
+
+- **`jlc_stock_check`** lists the most stock first unless `sort_by` is given. JLCPCB orders by LCSC code, which put SMF18A's top Preferred part on page 2.
+- **A part type the search doesn't know:** `gizmo 3.3V 2A` dropped "gizmo" and returned XH connectors. Words are now dropped only when the query names a known part type; otherwise the reply is empty, with a hint.
+
+### Fixed
+
+- **`jlc_get_pinout` pin numbers and names:** numbers came from a hidden symbol field, so SIM7080G had 58 of 77 pins numbered `0` and XC6206P332MR had VIN and VOUT swapped; names were lost on RP2040 and on BGA parts. A `note` flags symbols whose pin names are just numbers.
+- **`mounting_type`:** 1,034 SMD parts were `through_hole` or `not_sure` (through-hole patterns matched inside names like `VQFN-HR` and `SMBF`).
+- **LEDs:** `addressable RGB LED` searched plain RGB LEDs, `WS2812B LED` found 1 of 19 parts, and `LED driver` searched indicator LEDs. A colour now covers its shades (`green LED` with `library_type="no_fee"` found nothing: the only Basic green LED is listed as Emerald Green), and two colours or `bicolor`/`tricolor` mean one multi-colour part (`Illumination Color = Red + Green`, also in `spec_filters`).
+- **Audio jack sizes:** 2.5, 3.5, 4.4 and 6.35mm were read as pin pitch; they now filter `Connector Type`. Jacks sharing a footprint can number pads differently, so alternatives list pin roles as unchecked and the pinout note says so.
+- **Cellular modules:** `4G module` returned ESP32 WiFi modules and `Cat-M1 module` nothing. Cellular words search 2G/3G/4G/5G Modules, a network word (Cat-M, NB-IoT, Cat.1, GSM, GPRS) must be in `Communication System`, and replies note that LCSC's band lists are often incomplete.
+- **Any-word searches** rank parts matching more of the words first, not by stock alone.
+- **Empty basic, preferred or no-fee replies** say how many parts match in the other tiers; a part number found only there no longer reads as out of stock.
+- **Two range filters on one listed attribute** must hold for the same item (a dual supervisor listing `2.93V、4.55V` matched a 3.3-3.5V window).
+- **Dual-rail outputs:** `Output Voltage = 12V` no longer matches ±12V modules; `±12V` does.
+- **Battery charger alternatives** must cover the original's input range and interfaces (BQ25622E was offered IP2312U first).
+- **Query values:** bare inductances (`10u`, `2R2`), the current in a slash-separated BOM line, sub-1Ω ferrite and choke values (DCR), and `jst 4 pin sh` matching `jst sh 4 pin`.
+- **`jlc_search_help`:** a range's `max` was the highest low end; operating temperature is now numeric.
+- **`parsed`:** `parsed.subcategory` names the given subcategory, and unsearched words beside a part number are listed in `parsed.detected.not_searched`.
+- **`sensor_recommend` measures:** the BM25S2621 soil probe no longer lists `humidity`, nor the BMM150 magnetometer `sound`; the PMWCS3 soil probe measures `soil_moisture` and `conductivity` (it listed only `temperature`), and the CY8CMBR3102 also `touch`.
+- **`get_design_rules` lookups:** only file names matched, so `lipo`, `type-c`, `pull-up`, `rs485`, `stm32g0` and `strapping pins` found nothing (16% of calls did). Common terms and part-number prefixes now find their file, and other topics return the files that discuss them most, with a `note`.
+- **SMA in RF cables and antennas:** `SMA IPEX` in RF Cables searched the SMA diode package and found nothing, and `IPEX to SMA cable` searched coax connectors. In RF Cables and Antennas, SMA, IPEX and U.FL name the connector, and a cable or pigtail word with an RF connector searches RF Cables.
+- **USB design rule:** the HRO TYPE-C-31-M-12 has 16 contacts on 12 pads, and the Rd and Rp tolerances now follow the spec (Rd ±10%; Rp 56k ±20%, 22k and 10k ±5%).
+- **Reference boards:** 52 boards' `key_coverage` and 25 descriptions or key ICs named parts the boards don't have (the Olimex ESP32-EVB said MCP2562; it has a SIT1050T), and boards sharing a repo got the last one's coverage. Also a misread board outline, cut-off descriptions, a wrong tag, and sub-sheets in git submodules now parsed.
+
 ## 0.7.8 (2026-11-01)
 
 ### Added

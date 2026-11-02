@@ -6,13 +6,21 @@ from functools import lru_cache
 from typing import Any
 
 from ..alternatives import DIMENSION_SPEC_FIELDS, SPEC_PARSERS
-from ..parsers import RESISTANCE_MATCH_TOLERANCE, parse_current, parse_memory_size, parse_resistance, parse_voltage
+from ..parsers import (
+    RESISTANCE_MATCH_TOLERANCE, parse_current, parse_memory_size, parse_resistance, parse_temp_range,
+    parse_temperature, parse_voltage,
+)
 from .mpn import LCSC_CODE
 from .spec_filter import (
+    COLOR_ANY,
+    COLOR_COMBO_SEPARATOR,
+    COLOR_SHADES,
     CONNECTOR_FILTER_COLUMNS,
     LIST_SPECS,
     RANGE_SPECS,
+    TEMPERATURE_RANGE_ATTRIBUTES,
     ConnectorFilter,
+    ScopedTextFilter,
     FuseFilter,
     SpecFilter,
     SPEC_TO_COLUMN,
@@ -20,6 +28,7 @@ from .spec_filter import (
     generate_value_patterns,
     like_text,
     get_attribute_names,
+    is_color_combo,
     connector_value,
 )
 
@@ -466,6 +475,32 @@ def _list_item_clause(attr_names: list[str], values: list[str]) -> tuple[str, li
     return sql, [*names, *(f"%、{_escape_like(v.strip().lower())}、%" for v in values)]
 
 
+# An Illumination Color list as ",red,emerald green," (JLCPCB writes "Red, Emerald Green",
+# "Red,green" and "Green、Red")
+_COLOR_LIST_SQL = ("',' || lower(replace(replace(replace(replace(json_extract(j.value, '$[1]'), "
+                   "'、', ','), '，', ','), ', ', ','), ' ,', ',')) || ','")
+
+
+def _color_combo_clause(values: list[str]) -> tuple[str, list[Any]]:
+    """Multi-colour parts: "Red + Green" lists exactly two colours, a red and a green (any shade
+    of green, by COLOR_SHADES); "any" is any colour. Several values are OR'd."""
+    alternatives, params = [], []
+    for value in values:
+        items = [item.strip().lower() for item in value.split(COLOR_COMBO_SEPARATOR) if item.strip()]
+        conditions = [f"(length({_COLOR_LIST_SQL}) - length(replace({_COLOR_LIST_SQL}, ',', ''))) = ?"]
+        params.append(len(items) + 1)  # n colours are n + 1 commas with the wrapping ones
+        for item in items:
+            if item == COLOR_ANY:
+                continue
+            shades = COLOR_SHADES.get(item, (item,))
+            conditions.append("(" + " OR ".join(f"{_COLOR_LIST_SQL} LIKE ? ESCAPE '\\'" for _ in shades) + ")")
+            params.extend(f"%,{_escape_like(shade.lower())},%" for shade in shades)
+        alternatives.append("(" + " AND ".join(conditions) + ")")
+    sql = ("AND EXISTS (SELECT 1 FROM json_each(components.attributes) j "
+           "WHERE lower(json_extract(j.value, '$[0]')) = 'illumination color' AND (" + " OR ".join(alternatives) + "))")
+    return sql, params
+
+
 def _parse_impedance_ohms(value: str) -> float | None:
     """Ferrite bead impedance in ohms: "600Ω@100MHz" -> 600, a filter's "600Ohm" -> 600."""
     return parse_resistance(value.split("@")[0])
@@ -496,16 +531,71 @@ def _filter_value(parser: Any, value: str) -> float | None:
     return parser(value)
 
 
+def unlisted_clause(spec_filter: SpecFilter, temperature_columns: bool) -> tuple[str, list[Any]] | None:
+    """SQL for parts that don't list a range filter's attribute (absent, "-" or empty), which the
+    filter leaves out unseen: AO3401A lists Operating Temperature "-". None for other filters
+    (text values, exact numbers, connector, fuse and scoped-text filters)."""
+    if type(spec_filter) is not SpecFilter:
+        return None
+    attr_names = get_attribute_names(spec_filter.name)
+    temperature = set(attr_names) == set(TEMPERATURE_RANGE_ATTRIBUTES)
+    if spec_filter.operator not in (">=", "<=", ">", "<") and not (
+            spec_filter.operator == "=" and (temperature or _is_range_spec(spec_filter.name, attr_names))):
+        return None
+    if not temperature and _numeric_parser(spec_filter.name, attr_names) is None:
+        return None
+    if temperature and temperature_columns:
+        columns = {"<=": ["temp_min_c"], "<": ["temp_min_c"], ">=": ["temp_max_c"], ">": ["temp_max_c"]}.get(
+            spec_filter.operator, ["temp_min_c", "temp_max_c"])
+        return "AND (" + " OR ".join(f"{c} IS NULL" for c in columns) + ")", []
+    if not _is_range_spec(spec_filter.name, attr_names):
+        # The filter compares a parsed column, which is null where the part lists none (as above)
+        column = next((SPEC_TO_COLUMN[name][0] for name in [spec_filter.name, *attr_names] if name in SPEC_TO_COLUMN), None)
+        if column:
+            return f"AND {column} IS NULL", []
+    # Text matches on the stored pairs, as "=" filters use: json_each over every candidate row
+    # took ~0.4s on N-channel MOSFETs
+    listed, params = [], []
+    for name in sorted(set(attr_names)):
+        pair = f'%"{like_text(name)}", "'
+        listed.append("(attributes LIKE ? ESCAPE '\\' AND attributes NOT LIKE ? ESCAPE '\\' "
+                      "AND attributes NOT LIKE ? ESCAPE '\\')")
+        params.extend([pair + "%", pair + '-"%', pair + '"%'])
+    return "AND NOT (" + " OR ".join(listed) + ")", params
+
+
+def _temperature_clause(spec_filter: SpecFilter) -> tuple[str, list[float]]:
+    """A rated operating range against a filter, on temp_min_c/temp_max_c: <= -40 means rated down
+    to -40°C, >= 85 up to 85°C, = 25 covers 25°C, = "-40~85" covers both ends. ("", []) if unusable."""
+    low, high = parse_temp_range(spec_filter.value)
+    if low is not None and high is not None:
+        if spec_filter.operator != "=":
+            return "", []
+        return "AND temp_min_c <= ? AND temp_max_c >= ?", [min(low, high), max(low, high)]
+    target = _filter_value(parse_temperature, spec_filter.value)
+    if target is None:
+        return "", []
+    return {
+        "=": ("AND temp_min_c <= ? AND temp_max_c >= ?", [target, target]),
+        "<=": ("AND temp_min_c <= ?", [target]),
+        "<": ("AND temp_min_c < ?", [target]),
+        ">=": ("AND temp_max_c >= ?", [target]),
+        ">": ("AND temp_max_c > ?", [target]),
+    }[spec_filter.operator]
+
+
 def build_spec_filter_clauses(
     spec_filters: list[SpecFilter],
     *,
     connector_columns: bool = False,
+    temperature_columns: bool = True,
 ) -> tuple[list[str], list[Any], list[tuple[SpecFilter, set[str], Any, float | None]], list[dict[str, str]]]:
     """Build spec filter clauses for SQL and collect post-filter metadata.
 
     Args:
         spec_filters: List of SpecFilter objects
         connector_columns: Database has the strictly parsed connector columns
+        temperature_columns: Database has temp_min_c/temp_max_c
 
     Returns:
         Tuple of:
@@ -524,6 +614,13 @@ def build_spec_filter_clauses(
     # Automatic fuse/connector constraints have scoped numeric semantics. Caller-supplied
     # SpecFilters keep their existing string/operator semantics.
     for f in spec_filters:
+        if isinstance(f, ScopedTextFilter):
+            fts, fts_params = build_fts_clause(f.value, True)
+            if fts:
+                sql_clauses.append("AND (subcategory_id NOT IN (SELECT id FROM subcategories WHERE lower(name) = ?) "
+                                   f"OR (1 {fts.strip()}))")
+                params.extend([f.subcategory.lower(), *fts_params])
+            continue
         if isinstance(f, FuseFilter):
             scope = "subcategory_id != ? OR " if f.subcategory_id is not None else ""
             if scope:
@@ -559,7 +656,8 @@ def build_spec_filter_clauses(
                 params.extend([f.name, f.name, connector_value(f.name, f.value)])
 
     # Group multi-value "=" filters (like multiple Interface values) for OR logic
-    grouped_filters = _group_multi_value_filters([f for f in spec_filters if not isinstance(f, (ConnectorFilter, FuseFilter))])
+    grouped_filters = _group_multi_value_filters(
+        [f for f in spec_filters if not isinstance(f, (ConnectorFilter, FuseFilter, ScopedTextFilter))])
 
     for item in grouped_filters:
         # Handle grouped filters (spec_name, [values])
@@ -569,6 +667,18 @@ def build_spec_filter_clauses(
 
             if spec_name.lower() == "type" and all(v.lower() in _POLARITY_VALUES for v in values):
                 clause, clause_params = _polarity_clause(values)
+                sql_clauses.append(clause)
+                params.extend(clause_params)
+                continue
+            if spec_name.lower() == "illumination color" and any(COLOR_COMBO_SEPARATOR in v for v in values):
+                # A multi-colour value with plain ones: each plain value is its exact catalog value
+                combos = [v for v in values if COLOR_COMBO_SEPARATOR in v]
+                clause, clause_params = _color_combo_clause(combos)
+                plain = [v for v in values if COLOR_COMBO_SEPARATOR not in v]
+                if plain:
+                    exact = " OR ".join("attributes LIKE ? ESCAPE '\\'" for _ in plain)
+                    clause = f"AND (({exact}) OR {clause.removeprefix('AND ')})"
+                    clause_params = [*(f'%"Illumination Color", "{like_text(v)}"%' for v in plain), *clause_params]
                 sql_clauses.append(clause)
                 params.extend(clause_params)
                 continue
@@ -617,6 +727,15 @@ def build_spec_filter_clauses(
             continue
         # Get all possible attribute names (including aliases)
         attr_names = get_attribute_names(spec_filter.name)
+        if temperature_columns and set(attr_names) == set(TEMPERATURE_RANGE_ATTRIBUTES):
+            clause, clause_params = _temperature_clause(spec_filter)
+            if clause:
+                sql_clauses.append(clause)
+                params.extend(clause_params)
+            else:
+                ignored.append({"filter": f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}",
+                                "reason": 'use a temperature ("-40", "85°C") or, with =, a range ("-40~85")'})
+            continue
         is_range = _is_range_spec(spec_filter.name, attr_names)
 
         if (spec_filter.operator == "=" and spec_filter.name.lower() == "type"
@@ -710,6 +829,11 @@ def build_spec_filter_clauses(
             # String exact value match (non-numeric)
             use_substring_match = spec_filter.name.lower() == "interface"
 
+            if is_color_combo(spec_filter):
+                clause, clause_params = _color_combo_clause([spec_filter.value])
+                sql_clauses.append(clause)
+                params.extend(clause_params)
+                continue
             if spec_filter.name in LIST_SPECS:
                 clause, clause_params = _list_item_clause(attr_names, [spec_filter.value])
                 sql_clauses.append(clause)

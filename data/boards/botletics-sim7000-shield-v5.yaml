@@ -1,0 +1,498 @@
+name: Botletics SIM7000 Shield v5
+slug: botletics-sim7000-shield-v5
+source: botletics/SIM7000-LTE-Shield
+format: eagle
+description: SIM7000 LTE Cat-M/NB-IoT modem with GNSS on an Arduino shield, BSS138 level shifting
+tags: [battery-charging, cellular, gps-gnss, level-shifting]
+key_ics: [MCP73831, SIM7000]
+outline:
+  width_mm: 58.42
+  height_mm: 53.34
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 13mil
+  min_via: 7mil
+components:
+- ref: C1
+  value: 4.7uF
+  footprint: 0603-CAP-MARKED
+  decouples: IC1
+- ref: C10
+  value: 100uF
+  footprint: '1210'
+  decouples: U1
+- ref: C11
+  value: 100uF
+  footprint: '1210'
+  decouples: U1
+- ref: C12
+  value: 100uF
+  footprint: '1210'
+  decouples: U1
+- ref: C2
+  value: 4.7uF
+  footprint: 0603-CAP-MARKED
+  decouples: IC1
+- ref: C3
+  value: 100nF
+  footprint: 0603-CAP-MARKED
+- ref: C4
+  value: 100nF
+  footprint: 0603-CAP-MARKED
+- ref: C5
+  value: 100nF
+  footprint: 0603-CAP-MARKED
+- ref: C6
+  value: 220nF
+  footprint: 0603-CAP-MARKED
+- ref: C7
+  value: 33pF
+  footprint: 0603-CAP-MARKED
+- ref: C8
+  value: 100nF
+  footprint: 0603-CAP-MARKED
+  decouples: IC1
+- ref: C9
+  value: 1uF
+  footprint: 0603-CAP-MARKED
+  decouples: IC1
+- ref: D1
+  value: 250mA/100V
+  footprint: SOD-323
+  prod_id: DIO-09646
+- ref: D2
+  value: 250mA/100V
+  footprint: SOD-323
+  prod_id: DIO-09646
+- ref: D3
+  value: MSQA6V1W5T2G
+  footprint: SOT-353
+- ref: IC1
+  value: MCP73831
+  footprint: SOT-23-5
+  prod_id: IC-09995
+  description: Miniature single cell, fully integrated Li-Ion, Li-polymer charge management
+- ref: J1
+  value: 1x8 header
+  footprint: 1X08
+  prod_id: CONN-08438
+- ref: J2
+  value: 1x6 header
+  footprint: 1X06
+  prod_id: CONN-08437
+- ref: J3
+  value: 1x4 header
+  footprint: 1X04
+- ref: J4
+  value: 1x10 header
+  footprint: 1X10
+  prod_id: CONN-11563
+- ref: J5
+  value: 1x8 header
+  footprint: 1X08
+  prod_id: CONN-08438
+- ref: J6
+  value: LiPo
+  footprint: JST-2-SMD
+  prod_id: CONN-11443
+- ref: J7
+  value: 1x2 header
+  footprint: 1X02
+- ref: J8
+  value: microUSB
+  footprint: USB-B-MICRO-SMD
+- ref: JP3
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: JP4
+  value: solder jumper (NC)
+  footprint: SJ-3
+  description: Normally closed trace jumper (1 of 2 connections)
+- ref: LED1
+  value: green LED
+  footprint: '0603'
+- ref: LED2
+  value: green LED
+  footprint: '0603'
+- ref: LED3
+  value: blue LED
+  footprint: '0603'
+- ref: Q1
+  value: BSS138L
+  footprint: SOT-23-3
+  description: N-Channel Mosfet
+- ref: Q2
+  value: BSS138L
+  footprint: SOT-23-3
+  description: N-Channel Mosfet
+- ref: R1
+  value: 1kohm
+  footprint: 0603-RES-MARKED
+- ref: R2
+  value: 2kohm
+  footprint: 0603-RES-MARKED
+  pulldown: PROG
+- ref: R3
+  value: 10kohm
+  footprint: 0603-RES-MARKED
+- ref: R4
+  value: 10kohm
+  footprint: 0603-RES-MARKED
+  pullup: SCL
+- ref: R5
+  value: 2kohm
+  footprint: 0603-RES-MARKED
+- ref: R6
+  value: 10kohm
+  footprint: 0603-RES-MARKED
+  pullup: SDA
+- ref: R7
+  value: 10kohm
+  footprint: RES_ARRAY
+- ref: R8
+  value: 470ohm
+  footprint: 0603-RES-MARKED
+- ref: U1
+  value: SIM7000
+  footprint: SIM7000
+- ref: X1
+  value: LTE-uFL
+  footprint: U.FL
+- ref: X2
+  value: GNSS-uFL
+  footprint: U.FL
+- ref: X3
+  value: MICROSIM_SOCKET_PUSH-PULL
+  footprint: MICROSIM_SOCKET_PUSH-PULL
+nets:
+- name: 1.8V
+  pins: [C3.2, U1.VDD_EXT]
+  trace_width: '0.3048'
+- name: 5V
+  pins: [C1.1, IC1.VIN, J1.4, JP4.3]
+  trace_width: '0.3048'
+- name: D+
+  pins: [J8.D+, U1.USB_DP]
+  trace_width: '0.3048'
+- name: D-
+  pins: [J8.D-, U1.USB_DM]
+  trace_width: '0.3048'
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C2.2
+  - C3.1
+  - C4.2
+  - C5.2
+  - C6.2
+  - C8.2
+  - C9.2
+  - D3.COM
+  - IC1.VSS
+  - J1.2
+  - J1.3
+  - J3.3
+  - J4.7
+  - J6.2
+  - J7.1
+  - J8.GND
+  - LED1.C
+  - Q1.S
+  - Q2.S
+  - R2.2
+  - R7.A.1
+  - R7.B.1
+  - R7.C.1
+  - U1.GND@1
+  - U1.GND@10
+  - U1.GND@11
+  - U1.GND@12
+  - U1.GND@13
+  - U1.GND@14
+  - U1.GND@15
+  - U1.GND@2
+  - U1.GND@3
+  - U1.GND@4
+  - U1.GND@5
+  - U1.GND@6
+  - U1.GND@7
+  - U1.GND@8
+  - U1.GND@9
+  - X1.GND@0
+  - X1.GND@1
+  - X2.GND@0
+  - X2.GND@1
+  - X3.C5
+  - X3.GND@4
+  trace_width: '0.3048'
+- name: GNSS_ANT
+  pins: [C7.2, U1.GNSS_ANT]
+  trace_width: '0.3048'
+- name: LTE_PWR
+  pins: [D1.C, J5.7]
+  trace_width: '0.3048'
+- name: LTE_RST
+  pins: [D2.C, J5.8]
+  trace_width: '0.3048'
+- name: N$10
+  pins: [Q2.D, R8.1]
+  trace_width: '0.3048'
+- name: N$11
+  pins: [LED3.C, R8.2]
+  trace_width: '0.3048'
+- name: N$12
+  pins: [JP3.2, LED2.A]
+  trace_width: '0.3048'
+- name: N$14
+  pins: [LED1.A, R1.2]
+  trace_width: '0.3048'
+- name: N$3
+  pins: [C7.1, X2.SIGNAL]
+  trace_width: '0.3048'
+- name: N$4
+  pins: [Q1.D, R5.1]
+  trace_width: '0.3048'
+- name: N$5
+  pins: [LED2.C, R5.2]
+  trace_width: '0.3048'
+- name: NETLIGHT
+  pins: [Q2.G, U1.NETLIGHT]
+  trace_width: '0.3048'
+- name: NRESET
+  pins: [D2.A, U1.NRESET]
+  trace_width: '0.3048'
+- name: PROG
+  pins: [IC1.PROG, R2.1]
+  trace_width: '0.3048'
+- name: PWRKEY
+  pins: [D1.A, U1.PWRKEY]
+  trace_width: '0.3048'
+- name: PWR_STAT
+  pins: [Q1.G, U1.STATUS]
+  trace_width: '0.3048'
+- name: RF_ANT
+  pins: [U1.RF_ANT, X1.SIGNAL]
+  trace_width: '0.3048'
+- name: SCL
+  pins: [J3.1, J4.10, R4.1]
+  trace_width: '0.3048'
+- name: SDA
+  pins: [J3.2, J4.9, R6.1]
+  trace_width: '0.3048'
+- name: SIM_CLK
+  pins: [D3.2, U1.SIM_CLK, X3.C3]
+  trace_width: '0.3048'
+- name: SIM_DATA
+  pins: [D3.4, U1.SIM_DATA, X3.C7]
+  trace_width: '0.3048'
+- name: SIM_RST
+  pins: [D3.3, U1.SIM_RST, X3.C2]
+  trace_width: '0.3048'
+- name: SIM_VCC
+  pins: [C6.1, D3.1, U1.SIM_VDD, X3.C1]
+  trace_width: '0.3048'
+- name: STAT
+  pins: [IC1.STAT, R1.1]
+  trace_width: '0.3048'
+- name: VCC
+  pins:
+  - C4.1
+  - C5.1
+  - J3.4
+  - JP4.2
+  - R3.2
+  - R4.2
+  - R6.2
+  trace_width: '0.3048'
+- name: VIN
+  pins:
+  - C10.1
+  - C11.1
+  - C12.1
+  - C2.1
+  - C8.1
+  - C9.1
+  - IC1.VBAT
+  - J1.8
+  - J6.1
+  - JP3.1
+  - LED3.A
+  - U1.VBAT@1
+  - U1.VBAT@2
+  - U1.VBAT@3
+  trace_width: '0.3048'
+- name: V_LOGIC
+  pins: [J7.2, JP4.1]
+  trace_width: '0.3048'
+- name: V_USB
+  pins: [J8.VBUS, U1.USB_VBUS]
+  trace_width: '0.3048'
+positions:
+- ref: C1
+  x: 26.29
+  y: 9.78
+  rot: 45.0
+- ref: C10
+  x: 41.91
+  y: 25.4
+  rot: 90.0
+- ref: C11
+  x: 37.21
+  y: 25.4
+  rot: 90.0
+- ref: C12
+  x: 41.91
+  y: 17.14
+  rot: 270.0
+- ref: C2
+  x: 33.27
+  y: 10.79
+- ref: C3
+  x: 31.11
+  y: 41.66
+- ref: C4
+  x: 31.11
+  y: 43.69
+  rot: 180.0
+- ref: C5
+  x: 12.19
+  y: 38.48
+  rot: 90.0
+- ref: C6
+  x: 17.78
+  y: 14.99
+- ref: C7
+  x: 51.18
+  y: 18.41
+  rot: 180.0
+- ref: C8
+  x: 41.91
+  y: 10.79
+  rot: 180.0
+- ref: C9
+  x: 41.91
+  y: 8.76
+  rot: 180.0
+- ref: D1
+  x: 41.02
+  y: 43.18
+  rot: 270.0
+- ref: D2
+  x: 26.04
+  y: 43.18
+  rot: 270.0
+- ref: D3
+  x: 17.14
+  y: 19.18
+  rot: 180.0
+- ref: IC1
+  x: 28.83
+  y: 8.51
+  rot: 135.0
+- ref: J1
+  x: 26.67
+  y: 2.54
+  rot: 180.0
+- ref: J2
+  x: 46.99
+  y: 2.54
+  rot: 180.0
+- ref: J3
+  x: 2.54
+  y: 41.91
+  rot: 270.0
+- ref: J4
+  x: 20.07
+  y: 50.8
+  rot: 180.0
+- ref: J5
+  x: 44.45
+  y: 50.8
+  rot: 180.0
+- ref: J6
+  x: 11.43
+  y: 3.81
+  rot: 180.0
+- ref: J7
+  x: 19.05
+  y: 41.91
+- ref: J8
+  x: 2.03
+  y: 30.48
+- ref: JP3
+  x: 45.72
+  y: 42.8
+  rot: 180.0
+- ref: JP4
+  x: 25.4
+  y: 41.91
+  rot: 180.0
+- ref: LED1
+  x: 35.94
+  y: 9.91
+  rot: 90.0
+- ref: LED2
+  x: 47.12
+  y: 40.39
+- ref: LED3
+  x: 47.12
+  y: 10.29
+- ref: Q1
+  x: 47.24
+  y: 36.32
+  rot: 90.0
+- ref: Q2
+  x: 47.12
+  y: 14.35
+  rot: 270.0
+- ref: R1
+  x: 33.27
+  y: 9.02
+- ref: R2
+  x: 32.64
+  y: 7.24
+- ref: R3
+  x: 13.97
+  y: 38.48
+  rot: 270.0
+- ref: R4
+  x: 13.04
+  y: 43.69
+- ref: R5
+  x: 47.12
+  y: 38.73
+- ref: R6
+  x: 13.08
+  y: 42.04
+- ref: R7
+  x: 9.65
+  y: 34.8
+- ref: R8
+  x: 47.12
+  y: 11.94
+  rot: 180.0
+- ref: U1
+  x: 33.02
+  y: 25.4
+  rot: 270.0
+- ref: X1
+  x: 56.52
+  y: 25.4
+  rot: 180.0
+- ref: X2
+  x: 56.52
+  y: 18.41
+  rot: 180.0
+- ref: X3
+  x: 8.26
+  y: 17.78
+  rot: 180.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

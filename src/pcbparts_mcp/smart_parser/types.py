@@ -2,7 +2,7 @@
 
 import re
 
-from ..subcategory_aliases import SUBCATEGORY_ALIASES, UNAVAILABLE_SUBCATEGORY_ALIASES
+from ..subcategory_aliases import ISOLATED_SIBLINGS, SUBCATEGORY_ALIASES, UNAVAILABLE_SUBCATEGORY_ALIASES
 
 
 # Pre-sorted by length (longest first) for correct matching
@@ -12,12 +12,24 @@ PD_ROLE_PATTERN = re.compile(r'\b(?:controllers?|sinks?|sources?|triggers?|recei
 _PD_MARKER = re.compile(r'\b(?:pd|power[-\s]+delivery)\b', re.IGNORECASE)
 _PD_INTERFACE = re.compile(r'\b(?:usb(?:[-\s]*(?:type[-\s]*)?c)?|type[-\s]*c)\b', re.IGNORECASE)
 
+# Words and LED controller families that make an LED an addressable one (RGB LEDs(Built-in IC)).
+_PLAIN_LED_KEYWORDS = frozenset({"led", "leds", "smd led", "indicator led", "rgb led"})
+# The words are taken out of the text; part numbers (YS-SK6812MINI-E) stay in it.
+_ADDRESSABLE_LED_MODEL = re.compile(r'(?:ws28|skc?68|sk98|apa10)\d', re.IGNORECASE)
+_ADDRESSABLE_LED_WORDS = re.compile(
+    r'\b(?:(?:individually\s+)?addressable|smart|intelligent|neo\s*pixels?|built[-\s]*in\s+ic)\b', re.IGNORECASE)
+_ISOLATED_WORD = re.compile(r'\bisolated\b', re.IGNORECASE)
+_NON_ISOLATED = re.compile(r'\bnon[-\s]?isolated\b', re.IGNORECASE)
 
-def extract_component_type(query: str, *, memory_is_spec: bool = False) -> tuple[str | None, str, str | None]:
+
+def extract_component_type(
+    query: str, *, memory_is_spec: bool = False, model: str | None = None,
+) -> tuple[str | None, str, str | None]:
     """Extract component type from query.
 
     Args:
         query: The search query string
+        model: Model number already taken out of the query, if any
 
     Returns:
         Tuple of (subcategory_name, remaining_query, matched_keyword)
@@ -35,6 +47,10 @@ def extract_component_type(query: str, *, memory_is_spec: bool = False) -> tuple
     # Likewise a RESPACK footprint is a resistor network, more specific than the R's "resistor".
     if re.search(r'\brespacks?\b', query, re.IGNORECASE):
         query = re.sub(r'\bresistors?\b', ' ', query, flags=re.IGNORECASE)
+    # "non-isolated DC-DC module" is the plain kind; the isolated keywords would match inside it
+    non_isolated = bool(_NON_ISOLATED.search(query))
+    if non_isolated:
+        query = _NON_ISOLATED.sub(' ', query)
     query_lower = query.lower()
 
     # Resettable modifiers can be separated from "fuse" by ratings or packages.
@@ -53,10 +69,26 @@ def extract_component_type(query: str, *, memory_is_spec: bool = False) -> tuple
         # Use word boundaries to avoid "sram" matching inside "PSRAM"
         pattern = re.compile(r'\b' + re.escape(keyword) + r'\b', re.IGNORECASE)
         if pattern.search(query_lower):
+            # "addressable RGB LED": the modifier can be separated from "led" by "RGB",
+            # which would pick plain RGB LEDs (no controller) and drop the word.
+            # "WS2812B LED" arrives with the model already taken out, so it comes as `model`.
+            if keyword in _PLAIN_LED_KEYWORDS and (
+                    _ADDRESSABLE_LED_WORDS.search(query_lower) or _ADDRESSABLE_LED_MODEL.search(query_lower)
+                    or (model and _ADDRESSABLE_LED_MODEL.match(model))):
+                remaining = _ADDRESSABLE_LED_WORDS.sub(' ', pattern.sub(' ', query))
+                remaining = re.sub(r'\brgb\b', ' ', remaining, flags=re.IGNORECASE)
+                return "rgb leds(built-in ic)", re.sub(r'\s+', ' ', remaining).strip(), "addressable led"
+            target = SUBCATEGORY_ALIASES.get(keyword) or UNAVAILABLE_SUBCATEGORY_ALIASES[keyword]
+            # "isolated 5V to 12V DC-DC converter": the modifier isn't next to the part word, which
+            # would search plain buck ICs and drop "isolated" as text no part matched
+            if not non_isolated and target in ISOLATED_SIBLINGS and _ISOLATED_WORD.search(query_lower):
+                isolated_keyword = ISOLATED_SIBLINGS[target]
+                remaining = _ISOLATED_WORD.sub(' ', pattern.sub(' ', query))
+                return SUBCATEGORY_ALIASES[isolated_keyword], re.sub(r'\s+', ' ', remaining).strip(), isolated_keyword
             # Remove the keyword from query
             remaining = pattern.sub('', query).strip()
             remaining = re.sub(r'\s+', ' ', remaining)
-            return (SUBCATEGORY_ALIASES.get(keyword) or UNAVAILABLE_SUBCATEGORY_ALIASES[keyword]), remaining, keyword
+            return target, remaining, keyword
 
     return None, query, None
 

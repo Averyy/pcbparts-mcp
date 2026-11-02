@@ -2,7 +2,7 @@ name: SolarMeshtasticNode
 slug: solarmeshtasticnode
 source: h0lad/SolarMeshtasticNode
 format: kicad9
-description: 'Solar-powered Meshtastic node: Heltec HT-CT62 LoRa module, BQ25185 MPPT solar charger'
+description: "Solar-powered Meshtastic node: Heltec HT-CT62 LoRa module, BQ25185 solar-input charger (battery-tracking VINDPM)"
 tags: [battery-charging, energy-harvesting, lora]
 key_ics: [BQ25185]
 outline:

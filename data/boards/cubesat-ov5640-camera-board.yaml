@@ -2,7 +2,7 @@ name: CubeSat OV5640 Camera Board
 slug: cubesat-ov5640-camera-board
 source: proveskit/development_boards
 format: kicad8
-description: OV2640 + OV5640 image sensors on shared DVP bus, TLV743xx LDOs for 1.5V/2.8V sensor rails
+description: "FPC interfaces for external OV2640/OV5640 camera modules on shared DVP bus, TLV743xx LDOs for 1.5V/2.8V sensor rails"
 tags: [level-shifting, power-supply, sensors]
 key_ics: [TLV74315, TLV74328]
 outline:

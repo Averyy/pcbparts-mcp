@@ -2,7 +2,7 @@ name: tinyPEPPER
 slug: tinypepper
 source: fishpepper/tinyPEPPER
 format: kicad_legacy
-description: 4-in-1 drone ESC (16mm mounting), EFM8BB10 BLHeli_S
+description: "4-in-1 drone ESC (16mm mounting), EFM8BB21 BLHeli_S"
 tags: [drone-uav, motor-control]
 key_ics: [EFM8BB21]
 outline:

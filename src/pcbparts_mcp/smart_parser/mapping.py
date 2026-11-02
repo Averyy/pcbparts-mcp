@@ -2,6 +2,7 @@
 
 from .values import ExtractedValue
 from ..search.spec_filter import FUSE_ATTRIBUTE_MAP
+from ..subcategory_aliases import POWER_MODULE_WORDS
 
 
 # Maps (category_keyword, value_type) -> spec_name, or (spec_name, operator) where the default
@@ -12,9 +13,13 @@ from ..search.spec_filter import FUSE_ATTRIBUTE_MAP
 _LDO = {"voltage": ("Vout", "="), "current": "Output Current"}
 _REGULATOR = {"voltage": ("Output Voltage", "="), "current": "Output Current"}
 _ZENER = {"voltage": ("Zener Voltage(Nom)", "=")}
-_RELAY = {"voltage": ("Coil Voltage", "=")}
+_RELAY = {"voltage": ("Coil Voltage", "="), "current": "Switching Current(Max)"}
+_SUPERVISOR = {"voltage": ("Threshold Voltage", "=")}  # "3.6V supervisor" trips at 3.6V
+_COMMON_MODE = {"current": "Current Rating", "resistance": "Impedance @ Frequency"}
 _THERMISTOR = {"resistance": ("Resistance @ 25℃", "=")}
 _SUPPLY = {"voltage": ("Supply Voltage", "=")}  # runs at that voltage: inside the supply range
+# A "12V 2W" power module outputs 12V and at least 2W (modules list a fixed output, "12V")
+_POWER_MODULE = {"voltage": ("Output Voltage", "="), "current": "Output Current", "power": "Output Power"}
 
 CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str | tuple[str, str]]] = {
     # MOSFETs
@@ -191,7 +196,22 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str | tuple[str, str]]] = {
     "dc-dc converters": _REGULATOR,
     "voltage regulators - linear, low drop out (ldo) regulators": _LDO,
 
-    # Relays: "5V relay" is the coil voltage
+    # Power modules, isolated or not (B0505S, K7805)
+    **dict.fromkeys((*POWER_MODULE_WORDS, "dc-dc power modules", "isolated power modules", "ac-dc power modules",
+                     "isolated dc/dc converters"), _POWER_MODULE),
+
+    # Supervisors: a bare voltage is the reset threshold, not the supply
+    **dict.fromkeys(("supervisor", "voltage supervisor", "supervisor ic", "reset ic", "reset supervisor",
+                     "voltage detector", "voltage monitor", "supervisor and reset ics"), _SUPERVISOR),
+
+    # Common mode chokes: "90ohm" is the impedance (under 1 ohm it's the DCR, see map_value_to_spec)
+    **dict.fromkeys(("common mode choke", "common mode chokes", "common mode filter", "common mode filters",
+                     "cmc"), _COMMON_MODE),
+
+    # Audio amplifiers: "3W" is the output power (into any listed load)
+    **dict.fromkeys(("audio amplifier", "audio amplifiers", "class d"), {"power": "Output Power"}),
+
+    # Relays: "5V relay" is the coil voltage, "10A relay" the switching current
     "relay": _RELAY,
     "relays": _RELAY,
     "signal relays": _RELAY,
@@ -383,6 +403,9 @@ def map_value_to_spec(
     keys = (matched_keyword, component_type)
     if (component_type or "").lower() in FUSE_ATTRIBUTE_MAP:
         keys = (component_type, matched_keyword)
+    if value.unit_type == "voltage" and value.value >= 500 and any("isolat" in (key or "").lower() for key in keys):
+        # No isolated part runs from 500V or outputs it: "3kV isolated DC-DC" is the isolation rating
+        return "Isolation Voltage", ">="
     for key in keys:
         if not key or key.lower() not in CATEGORY_ATTRIBUTE_MAP:
             continue
@@ -390,6 +413,9 @@ def map_value_to_spec(
         if value.unit_type not in cat_map:
             continue
         mapped = cat_map[value.unit_type]
+        if mapped == "Impedance @ Frequency" and 0 < value.value < 1:
+            # No bead or choke is specified by an impedance under 1 ohm: "ferrite bead 100mohm" is the DCR
+            return "DCR", "<="
         if mapped == "Output Current" and value.value < 1e-3:
             # No LDO or DC-DC converter lists an output current under 1mA: "LDO 1uA" is its idle current
             return "Quiescent Current", "<="

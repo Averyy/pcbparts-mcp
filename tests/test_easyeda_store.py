@@ -719,3 +719,24 @@ class TestPinoutSelfHeal:
         result = await server.jlc_get_pinout(uuid=SYM)
         assert result["error"] == f"EasyEDA has no symbol {SYM}"
         assert fake.calls == ["component a"]
+
+
+class TestPinoutNumbersOnly:
+    """PJ-320B (C18594): pins named 1, 2, 3 say nothing about tip, ring and sleeve."""
+
+    NUMBERS_ONLY = {"dataStr": {"head": {}, "shape": [
+        "P~show~0~1~430~290~~gge6~0^^430~290^^M 430 290 h -20~#880000^^0~408~293~0~1~end~~~#0000FF^^1~415~289~0~1~start~~~#0000FF",
+        "P~show~0~2~430~310~~gge13~0^^430~310^^M 430 310 h -20~#880000^^0~408~313~0~2~end~~~#0000FF^^1~415~309~0~2~start~~~#0000FF",
+    ]}, "verify": True}
+
+    async def test_note_when_names_are_numbers(self, monkeypatch):
+        from pcbparts_mcp import server
+        monkeypatch.setattr(server, "_client", FakePinoutClient({}, {SYM: self.NUMBERS_ONLY}))
+        result = await server.jlc_get_pinout(lcsc="C1")
+        assert "only by number" in result["note"]
+
+    async def test_no_note_with_names(self, monkeypatch):
+        from pcbparts_mcp import server
+        monkeypatch.setattr(server, "_client", FakePinoutClient({}, {SYM: SYMBOL_DATA}))
+        result = await server.jlc_get_pinout(lcsc="C1")
+        assert "note" not in result

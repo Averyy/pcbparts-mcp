@@ -36,6 +36,7 @@ _POWER_KW_PATTERN = re.compile(r"([\d.]+)\s*kW", re.IGNORECASE)
 _POWER_MW_PATTERN = re.compile(r"([\d.]+)\s*mW", re.IGNORECASE)
 _POWER_DBM_PATTERN = re.compile(r"([+-]?[\d.]+)\s*dBm", re.IGNORECASE)
 _POWER_W_PATTERN = re.compile(r"([\d.]+)\s*W", re.IGNORECASE)
+_CURRENT_NA_PATTERN = re.compile(r"([\d.]+)\s*nA")
 _CURRENT_UA_PATTERN = re.compile(r"([\d.]+)\s*[uµμ]A", re.IGNORECASE)
 _CURRENT_MA_PATTERN = re.compile(r"([\d.]+)\s*mA", re.IGNORECASE)
 _CURRENT_KA_PATTERN = re.compile(r"([\d.]+)\s*kA", re.IGNORECASE)
@@ -52,7 +53,7 @@ _IMPEDANCE_AT_FREQ_PATTERN = re.compile(
 _DECIBEL_PATTERN = re.compile(r"([\d.]+)\s*dB", re.IGNORECASE)
 _TEMPERATURE_PATTERN = re.compile(r"([+-]?[\d.]+)\s*[°℃]?C?", re.IGNORECASE)
 _TEMP_RANGE_PATTERN = re.compile(
-    r"([+-]?\d+)\s*[°℃]?C?\s*~\s*[+]?([+-]?\d+)\s*[°℃]?C?", re.IGNORECASE
+    r"([+-]?\d+(?:\.\d+)?)\s*[°℃]?C?\s*(?:~|\bto\b)\s*[+]?([+-]?\d+(?:\.\d+)?)\s*[°℃]?C?", re.IGNORECASE
 )
 _MEMORY_BIT_PATTERN = re.compile(r"([\d.]+)\s*([KMG])?BIT", re.IGNORECASE)
 _MEMORY_SHORT_BIT_PATTERN = re.compile(r"([\d.]+)\s*([KMG])b\b")
@@ -159,9 +160,12 @@ def parse_power(s: str) -> float | None:
 
 
 def parse_current(s: str) -> float | None:
-    """Parse current in amps: '2A' -> 2, '500mA' -> 0.5, '100uA' -> 0.0001, '5kA' -> 5000"""
+    """Parse current in amps: '2A' -> 2, '500mA' -> 0.5, '100uA' -> 0.0001, '25nA' -> 2.5e-8, '5kA' -> 5000"""
     if not s:
         return None
+    match = _CURRENT_NA_PATTERN.search(s)
+    if match:
+        return float(match.group(1)) / 1_000_000_000
     match = _CURRENT_UA_PATTERN.search(s)
     if match:
         return float(match.group(1)) / 1_000_000
@@ -174,6 +178,12 @@ def parse_current(s: str) -> float | None:
     # kA only when there's no A value, so "750A、10kA" still reads 750
     match = _CURRENT_KA_PATTERN.search(s)
     return float(match.group(1)) * 1000 if match else None
+
+
+def parse_count(s: str) -> float | None:
+    """A plain count: '1' -> 1, '2~4' -> 2 (ranges are split by the caller)."""
+    match = re.match(r"\s*(\d+)\s*$", s or "")
+    return float(match.group(1)) if match else None
 
 
 def parse_resistance(s: str) -> float | None:
@@ -320,7 +330,10 @@ def parse_temperature(s: str) -> float | None:
     if not s:
         return None
     match = _TEMPERATURE_PATTERN.search(s)
-    return float(match.group(1)) if match else None
+    try:
+        return float(match.group(1)) if match else None
+    except ValueError:  # "." alone
+        return None
 
 
 def parse_temp_range(s: str) -> tuple[float | None, float | None]:

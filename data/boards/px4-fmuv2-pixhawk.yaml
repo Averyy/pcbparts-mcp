@@ -2,7 +2,7 @@ name: PX4 FMUv2 (Pixhawk)
 slug: px4-fmuv2-pixhawk
 source: PX4/Hardware
 format: eagle
-description: STM32F427 + STM32F103 I/O co-proc, triple-redundant IMU (MPU6000
+description: "STM32F427 + STM32F103 I/O co-proc, triple-redundant IMU (MPU6000, LSM303D, L3GD20H), MS5611 baro, industry-standard autopilot"
 tags: [drone-uav, sensors]
 key_ics: [STM32F427, STM32F103, MPU6000]
 outline:

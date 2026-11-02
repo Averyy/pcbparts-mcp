@@ -30,6 +30,8 @@ from pcbparts_mcp.parsers import (
     parse_decibels,
     parse_impedance_at_freq,
     parse_length_mm,
+    parse_temperature,
+    parse_count,
     impedance_at_freq_match,
 )
 
@@ -48,6 +50,9 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Reverse Stand-Off Voltage (Vrwm)": parse_voltage,
     "Clamping Voltage": parse_voltage,
     "Isolation Voltage(Vrms)": parse_isolation_voltage,
+    "Isolation Voltage": parse_isolation_voltage,
+    "Isolation voltage": parse_isolation_voltage,
+    "Isolation voltage(Vrms)": parse_isolation_voltage,
     "Voltage - Max": parse_voltage,
     "Output Voltage": parse_voltage,
     "Voltage Dropout": parse_voltage,
@@ -187,7 +192,8 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Sound Pressure Level(SPL)": parse_decibels,
     # Battery Management
     "Type of Battery": None,
-    "Number of Cells": None,
+    "Number of Cells": parse_count,
+    "Threshold Voltage": parse_voltage,  # supervisors' reset threshold ("2.93V", dual "2.63V、2.93V")  # "1", "2~4": a range in search; alternatives compare it as text
     "Charge Current - Max": parse_current,
     # Level Shifters
     "Channel Type": None,
@@ -208,6 +214,8 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     # Wireless Modules
     "Output Power": parse_power,
     "Output Power(Max)": parse_power,
+    # Rated range ("-40℃~+85℃"): filters compare it as a range on temp_min_c/temp_max_c
+    "Operating Temperature": parse_temperature,
 }
 
 
@@ -1040,6 +1048,9 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     "Audio Connectors": {
         "primary": "Connector Type",
         "must_match": ["Connector Type", "Mounting Type"],
+        # PJ-313D jacks from SHOU HAN (C668608) and Hroparts (C95463) share a footprint but put
+        # the tip and ring on opposite pads; a swap can short a supply on the tip
+        "unchecked": ["pin roles (which pad is tip, ring and sleeve differs between makers)"],
         "same_or_better": {
             "Voltage Rating (Max)": "higher",
             "Current Rating": "higher",
@@ -1136,7 +1147,8 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # ============== BATTERY MANAGEMENT ==============
     "Battery Management": {
         "primary": "Type of Battery",
-        "must_match": ["Type of Battery", "Number of Cells", "The Chip Type"],
+        "must_match": ["Type of Battery", "Number of Cells", "The Chip Type", "Interface"],
+        "ranges": {"Voltage - Supply": True},
         "same_or_better": {
             "Charge Current - Max": "higher",
         },
@@ -1483,6 +1495,23 @@ def _module_chip(part: dict[str, Any]) -> str | None:
     return _esp32_family(part.get("model"))
 
 
+def part_family(model: str | None) -> str | None:
+    """A part number's family, up to its first separator: SIM7080G-M -> SIM7080G. None when that is
+    too short or has no digit to tell families apart ("ESP-12F", "LED")."""
+    stem = re.split(r"[-\s/_(,]", (model or "").strip().upper(), maxsplit=1)[0]
+    return stem if len(stem) >= 4 and any(c.isdigit() for c in stem) else None
+
+
+def likely_drop_in(original: dict[str, Any], candidate: dict[str, Any], same_package: bool) -> str | None:
+    """For part types without compatibility rules: a part in the original's package and family. The
+    SIM7080G-M's drop-in SIM7080G ranked behind a 24x24mm A7670E on stock; the 2G SIM800C has the
+    same 17.6x15.7mm package but not the pinout, so the package alone isn't enough."""
+    family = part_family(original.get("model"))
+    if not same_package or not family or part_family(candidate.get("model")) != family:
+        return None
+    return f"same package and part family ({family}); verify the pinout"
+
+
 def prefer_same_package(subcategory: str) -> bool:
     """Package is the footprint for passives and crystals; keep other packages visible."""
     primary = COMPATIBILITY_RULES.get(subcategory, {}).get("primary")
@@ -1510,7 +1539,7 @@ def is_compatible_alternative(
     specs_verified: list[str] = []
     specs_unparseable: list[str] = []
     unverified_requirements: list[str] = []
-    unchecked_requirements: list[str] = []
+    unchecked_requirements: list[str] = [*rules.get("unchecked", [])]
 
     def result(is_compat: bool) -> tuple[bool, dict[str, Any]]:
         return is_compat, {
@@ -1519,10 +1548,11 @@ def is_compatible_alternative(
             "unchecked_requirements": list(dict.fromkeys([*specs_unparseable, *unchecked_requirements])),
         }
 
-    # A required match needs both values. Reference series applies only when the original states it.
+    # A required match needs both values. Optional requirements apply only when the original states them.
     for spec in dict.fromkeys([rules["primary"], *rules.get("must_match", [])]):
         orig_val = orig_specs.get(spec)
         cand_val = cand_specs.get(spec)
+        battery_interface = subcategory == "Battery Management" and spec == "Interface"
         if spec == "Utilized IC / Part":
             inferred = not (is_stated(orig_val) and is_stated(cand_val))
             orig_val, cand_val = _module_chip(original), _module_chip(candidate)
@@ -1533,12 +1563,18 @@ def is_compatible_alternative(
                 specs_unparseable.append(spec)
                 unverified_requirements.append(spec)
                 continue  # A family match cannot verify the exact chip.
-        if spec == "Reference Series" and not is_stated(orig_val):
+        if (spec == "Reference Series" or battery_interface) and not is_stated(orig_val):
             continue
         if spec in rules.get("ranges", {}):
             continue  # Compare both endpoints below, rather than the first number.
         if is_stated(orig_val) and is_stated(cand_val):
-            matched = _compare_values(orig_val, cand_val, spec)
+            if battery_interface:
+                # A replacement must support every listed control interface; extra protocols are OK.
+                required = {_lower(v) for v in orig_val.split("、") if is_stated(v)}
+                available = {_lower(v) for v in cand_val.split("、") if is_stated(v)}
+                matched = required <= available
+            else:
+                matched = _compare_values(orig_val, cand_val, spec)
             if matched is False:
                 return result(False)
             (specs_verified if matched else specs_unparseable).append(spec)
@@ -1861,10 +1897,12 @@ def build_unsupported_response(
     primary_attr: str | None,
     limit: int,
     frequency_check: dict[str, Any] | None = None,
+    drop_ins: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Build response for unsupported subcategories - similar parts, not alternatives.
 
-    frequency_check (RF subcategories, rf_coverage.check_candidates) goes in the summary.
+    frequency_check (RF subcategories, rf_coverage.check_candidates) goes in the summary; drop_ins
+    maps LCSC codes to a likely_drop_in note (likely_drop_in).
     """
     similar = scored_parts[:limit]
 
@@ -1886,6 +1924,8 @@ def build_unsupported_response(
         part_pkg = part.get("package", "")
         if original_pkg and part_pkg and original_pkg != part_pkg:
             item["package_warning"] = f"Different package: {part_pkg} vs original {original_pkg}"
+        if note := (drop_ins or {}).get(part.get("lcsc", "")):
+            item["likely_drop_in"] = note
         similar_parts_output.append(item)
 
     primary_value = None

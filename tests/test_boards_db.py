@@ -26,9 +26,11 @@ SAMPLE_BOARDS = [
         "tags": ["sensors", "battery-charging"],
         "key_ics": ["ESP32-S3", "MCP73831"],
         "components": [
-            {"ref": "U1", "value": "ESP32-S3", "footprint": "QFN-48"},
-            {"ref": "U2", "value": "MCP73831", "footprint": "SOT-23-5"},
-            {"ref": "R1", "value": "10kohm", "footprint": "0402"},
+            {"ref": "U1", "value": "ESP32-S3", "footprint": "QFN-48", "mpn": "C2913202"},
+            {"ref": "U2", "value": "MCP73831", "footprint": "SOT-23-5", "mpn": "MCP73831T-2ACI/OT",
+             "manufacturer": "Microchip", "lcsc": "https://jlcpcb.com/partdetail/Microchip-MCP73831T/C424093",
+             "digikey": "MCP73831T-2ACI/OTCT-ND"},
+            {"ref": "R1", "value": "10kohm", "footprint": "0402", "mpn": "Yageo"},
             {"ref": "R2", "value": "4.7kohm", "footprint": "0402"},
             {"ref": "C1", "value": "100nF", "footprint": "0402", "decouples": "U1"},
             {"ref": "C2", "value": "10uF", "footprint": "0805", "decouples": "U2"},
@@ -873,6 +875,73 @@ class TestOrgExtraction:
         assert b is not None
         assert b["org"] == "testorg"
         assert b["org_display"] == "Testorg"  # capitalize fallback
+
+
+# ---------------------------------------------------------------------------
+# Empty searches and wrong slugs (todos #75: 59% of board_search calls found nothing)
+# ---------------------------------------------------------------------------
+
+class TestEmptyReplies:
+    def test_word_no_board_mentions(self, boards_db):
+        result = boards_db.search(query="ESP32 xyzzy")
+        assert result["total"] == 0
+        assert '"xyzzy" matches no board' in result["hint"]
+        assert 'board_search(query="ESP32") finds 1' in result["hint"]
+
+    def test_hint_keeps_the_other_filters(self, boards_db):
+        result = boards_db.search(query="ESP32 xyzzy", tag="sensors")
+        assert "with the other filters" in result["hint"]
+        assert 'board_search(query="ESP32", tag=["sensors"]) finds 1' in result["hint"]
+
+    def test_words_that_match_apart_but_not_together(self, boards_db):
+        result = boards_db.search(query="ESP32 motor")
+        assert result["total"] == 0
+        assert "none matches all" in result["hint"]
+        assert 'board_search(query="ESP32") finds 1' in result["hint"]
+        assert 'board_search(query="motor") finds' in result["hint"]
+
+    def test_nothing_matches(self, boards_db):
+        assert "No board mentions" in boards_db.search(query="xyzzy")["hint"]
+
+    def test_results_have_no_hint(self, boards_db):
+        assert "hint" not in boards_db.search(query="ESP32")
+
+    def test_reordered_slug_is_suggested(self, boards_db):
+        assert boards_db.suggest_slugs("esp32-test-board")[0] == "test-esp32-board"
+        assert boards_db.suggest_slugs("motor-shield")[0] == "adafruit-motor-shield"
+        assert boards_db.suggest_slugs("xyzzy") == []
+
+    async def test_board_get_suggests_slugs(self, boards_db, monkeypatch):
+        import pcbparts_mcp.server as server
+        monkeypatch.setattr(server, "get_boards_db", lambda: boards_db)
+        reply = await server.board_get(slug="esp32-test-board")
+        assert reply["error"] == "Board 'esp32-test-board' not found"
+        assert reply["did_you_mean"][0] == "test-esp32-board"
+        assert "did_you_mean" not in await server.board_get(slug="xyzzy")
+
+
+class TestPartNumbers:
+    """The design files' part numbers (todos #84 quick win): board_get never returned them."""
+
+    def test_components_carry_part_numbers(self, boards_db):
+        comps = {c["ref"]: c for c in boards_db.get_board("test-esp32-board", include_bom=True)["components"]}
+        assert comps["U2"]["mpn"] == "MCP73831T-2ACI/OT"
+        assert comps["U2"]["manufacturer"] == "Microchip"
+        assert comps["U2"]["lcsc"] == "C424093"  # from a JLCPCB URL
+        assert comps["U2"]["digikey"] == "MCP73831T-2ACI/OTCT-ND"
+        assert "mouser" not in comps["U2"]
+
+    def test_lcsc_code_in_the_mpn_field(self, boards_db):
+        comps = {c["ref"]: c for c in boards_db.get_board("test-esp32-board")["components"]}
+        assert comps["U1"]["lcsc"] == "C2913202" and "mpn" not in comps["U1"]
+
+    def test_maker_name_in_the_mpn_field_is_dropped(self, boards_db):
+        comps = {c["ref"]: c for c in boards_db.get_board("test-esp32-board", include_bom=True)["components"]}
+        assert "mpn" not in comps["R1"]
+
+    def test_focus_carries_part_numbers(self, boards_db):
+        focus = boards_db.get_board("test-esp32-board", focus="MCP73831")["focus"]
+        assert focus["mpn"] == "MCP73831T-2ACI/OT" and focus["lcsc"] == "C424093"
 
 
 # ---------------------------------------------------------------------------

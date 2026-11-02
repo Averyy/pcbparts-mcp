@@ -2,9 +2,9 @@ name: BeagleConnect Freedom
 slug: beagleconnect-freedom
 source: beagleboard/beagleconnect-freedom
 format: kicad7
-description: CC1352P7 dual-band wireless MCU, MSP430F5503
+description: "CC1352P dual-band wireless MCU, MSP430F5503"
 tags: [usb, zigbee-thread]
-key_ics: [CC1352P7]
+key_ics: [CC1352P]
 outline:
   width_mm: 35.8
   height_mm: 58.0

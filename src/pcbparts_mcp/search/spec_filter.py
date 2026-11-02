@@ -132,10 +132,39 @@ _VALID_OPERATORS = frozenset({"=", ">=", "<=", ">", "<"})
 # only the first number.
 RANGE_SPECS: frozenset[str] = frozenset({
     "Voltage - Supply", "Voltage - Supply(VCCA)", "Voltage - Supply(VCCB)", "Output Voltage",
+    "Single supply", "Single Supply",
+    "Vin",  # isolated converter ICs: "3.3V、5V"
+    "Output Power",  # audio amps list each load: "1.8W×1@8Ω、2.9W×1@4Ω"
+    "Number of Cells",  # programmable chargers: "1~4"
+    "Threshold Voltage",  # dual supervisors list two: "2.63V、2.93V"
 })
 
+# Names of a part's rated operating temperature range, all parsed into temp_min_c/temp_max_c
+TEMPERATURE_RANGE_ATTRIBUTES: tuple[str, ...] = (
+    "Operating Temperature", "Operating Temperature Range", "Operating temperature",
+    "operating temperature", "Operating Temperature\t-", "Operating Temperature range",
+    "working temperature", "WorkingTemperature", "Operating Junction Temperature Range",
+)
+
 # String specs whose values list several items ("Boost、Buck"): "=" matches any one item
-LIST_SPECS: frozenset[str] = frozenset({"Topology", "Type", "type", "RF Series"})  # "SMA、FAKRA" has SMA
+# "SMA、FAKRA" has SMA; a cellular module's "NB-IoT、CAT-M" has Cat-M
+LIST_SPECS: frozenset[str] = frozenset({"Topology", "Type", "type", "RF Series", "Class", "Communication System"})
+
+# A colour word and the catalog's names for its shades. Discrete LEDs list 198 Green, 470 Emerald
+# Green and 490 Yellow Green parts; the only Basic green LED (C2297) is Emerald Green.
+COLOR_SHADES: dict[str, tuple[str, ...]] = {
+    "green": ("Green", "Emerald Green", "Yellow Green"),
+    "white": ("White", "Cold White", "Warm White"),
+}
+# "Illumination Color = Red + Green": a part with exactly these colours ("Red, Emerald Green");
+# "any" stands for any one colour ("bicolor" alone is "any + any")
+COLOR_COMBO_SEPARATOR = "+"
+COLOR_ANY = "any"
+
+
+def is_color_combo(spec_filter: "SpecFilter") -> bool:
+    return (spec_filter.name.lower() == "illumination color" and spec_filter.operator == "="
+            and COLOR_COMBO_SEPARATOR in spec_filter.value)
 
 
 @dataclass
@@ -197,6 +226,16 @@ class FuseFilter(SpecFilter):
         if self.subcategory_id is not None:
             result["subcategory"] = self.subcategory or str(self.subcategory_id)
         return result
+
+
+@dataclass
+class ScopedTextFilter(SpecFilter):
+    """Words a part's text must have, in one subcategory of a multi-type search only: "ideal diode"
+    is every ORing controller but just the Power Distribution Switches that say so (LM66100)."""
+    subcategory: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"name": "text", "op": "=", "value": self.value, "subcategory": self.subcategory}
 
 
 CONNECTOR_FILTER_COLUMNS = {
@@ -262,9 +301,22 @@ ATTRIBUTE_ALIASES: dict[str, list[str]] = {
     "Quiescent Current": ["Quiescent Current", "Quiescent Current(Iq)", "standby current", "Supply Current (Iq)"],
     "Vout": ["Output Voltage"],
     "Iout": ["Output Current"],
+    # Power modules list "Output Current(Max)", isolated converter ICs "Iout" (all in iout_max_a)
+    "Output Current": ["Output Current", "Output Current(Max)", "Iout"],
 
     # Supply range of an IC, whichever name it's under (level shifters list each side)
-    "Supply Voltage": ["Voltage - Supply", "Voltage - Supply(VCCA)", "Voltage - Supply(VCCB)"],
+    "Supply Voltage": ["Voltage - Supply", "Voltage - Supply(VCCA)", "Voltage - Supply(VCCB)",
+                       "Single supply", "Single Supply",  # op amps: "Single supply" 2V~44V
+                       "Vin"],  # isolated converter ICs (UCC12050)
+
+    # Isolated parts: modules and isolators list "Isolation Voltage(Vrms)", isolated gate drivers and
+    # converter ICs a lower-case spelling
+    "Isolation Voltage": ["Isolation Voltage(Vrms)", "Isolation Voltage", "Isolation voltage",
+                          "Isolation voltage(Vrms)"],
+
+    # Rated operating range ("-40℃~+85℃"), whichever name it's under. Diodes list only the junction
+    # range; no part lists both. Filters on it use the temp_min_c/temp_max_c columns.
+    "Operating Temperature": list(TEMPERATURE_RANGE_ATTRIBUTES),
 }
 
 # Reverse lookup: full attribute name -> list of aliases

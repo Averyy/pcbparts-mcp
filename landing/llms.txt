@@ -34,7 +34,7 @@ Claude Desktop / Cursor / VSCode MCP config:
 
 Typical workflow: `get_design_rules` / `board_search` + `board_get(focus=IC)` → `jlc_search` → `jlc_get_part` (datasheet, footprint) → `jlc_find_alternatives` → `cse_get_kicad` (KiCad files).
 
-Tool descriptions include reply-field guidance: `relaxed` names omitted query words, a query-only library preference or a dropped part type; `relaxed.dropped_filters` lists parsed spec filters omitted by a part-number retry; `parsed.adjusted_filters` lists moved/omitted specs; `ignored_filters` explains unapplied/rare filters; `hint` suggests a next step on empty replies; when a search shortens a full part number (`LM1117-3.3` searches `LM1117`), each result's `mpn_match` says whether it is the `full` part number, keeps its suffixes (`same_suffix`) or is another `family` member, those come in that order, and `mpn_matches` counts each; MOSFET results add `rds_on_at_drive` when the query gives a gate drive (the listed RDS(on) at the highest gate voltage at or below it, or null when RDS(on) is only listed at higher gate voltages); `counts_complete=false` means partial counts; `valid_values` lists accepted inputs on errors. In `jlc_get_part`, `prices` lists quantity tiers, `datasheet` is LCSC's datasheet page (a viewer; null when LCSC has none), `datasheet_pdf` is the datasheet as a PDF, a link valid until `datasheet_pdf_expires` (about 30 minutes, so fetch it rather than store it), `lcsc_url` is the LCSC product page, and `has_easyeda_footprint=null` means unknown (false means absent); MPN lookups return `results` and `total`. MPN replies that aren't exact matches add `match` (`separators`, `packing`, `alias`, `alternative`, `lcsc` or `related`) and `matched_mpn`; `related` replies add a `note` naming the part types returned and any part another manufacturer numbered after the original; an LCSC code given as `mpn` returns that part (`lcsc`), and so does a `jlc_search` query of LCSC codes alone. In alternatives, `summary.found` counts verified alternatives, `unverified_alternatives` need manual comparison, `specs_unparseable` lists specs not verified, and `unchecked_requirements` includes pinout/circuit checks still needed. In `board_get`, `focus_match_type` is exact, partial or ref matching; `consensus.board_count` counts compared boards, and `passives_omitted` counts hidden plain passives.
+Tool descriptions include reply-field guidance: `relaxed` names omitted query words, a query-only library preference or a dropped part type; `relaxed.dropped_filters` lists parsed spec filters omitted by a part-number retry; `parsed.adjusted_filters` lists moved/omitted specs; `ignored_filters` explains unapplied/rare filters; `hint` suggests a next step on empty replies; when a search shortens a full part number (`LM1117-3.3` searches `LM1117`), each result's `mpn_match` says whether it is the `full` part number, keeps its suffixes (`same_suffix`) or is another `family` member, those come in that order, and `mpn_matches` counts each; MOSFET results add `rds_on_at_drive` when the query gives a gate drive (the listed RDS(on) at the highest gate voltage at or below it, or null when RDS(on) is only listed at higher gate voltages); `counts_complete=false` means partial counts; `valid_values` lists accepted inputs on errors. In `jlc_get_part`, `prices` lists quantity tiers, `datasheet` is LCSC's datasheet page (a viewer; null when LCSC has none), `datasheet_pdf` is the datasheet as a PDF: a short link on this server (`https://pcbparts.dev/mcp/datasheet/C15127`) that redirects to a freshly signed copy on JLCPCB's storage, so it can be stored, `lcsc_url` is the LCSC product page, and `has_easyeda_footprint=null` means unknown (false means absent); MPN lookups return `results` and `total`. MPN replies that aren't exact matches add `match` (`separators`, `packing`, `alias`, `alternative`, `lcsc` or `related`) and `matched_mpn`; `related` replies add a `note` naming the part types returned and any part another manufacturer numbered after the original; an LCSC code given as `mpn` returns that part (`lcsc`), and so does a `jlc_search` query of LCSC codes alone. In alternatives, `summary.found` counts verified alternatives, `unverified_alternatives` need manual comparison, `specs_unparseable` lists specs not verified, and `unchecked_requirements` includes pinout/circuit checks still needed. In `board_get`, `focus_match_type` is exact, partial or ref matching; `consensus.board_count` counts compared boards, and `passives_omitted` counts hidden plain passives; components and a focused IC carry the design files' own `mpn`, `manufacturer`, `lcsc`, `mouser` and `digikey` where listed (121 boards); an unknown slug adds `did_you_mean` (boards sharing most of its words). An empty `board_search` reply's `hint` names the query words no board matches and what leaving them out finds.
 
 `jlc_get_part(mpn=...)` also finds a part spelled with different dashes or spaces (`ERJ-2RKF2702X` → `ERJ2RKF2702X`), with another reel or packing code from the same manufacturer (`AD8630ARZ-REEL7` → `AD8630ARZ`), or written as a BOM entry with notes or alternatives (`TL074 OP AMP`, `AMC1301 or AMC1302`). It never substitutes a different temperature or performance grade. `related` results can span different part types (`SSD1306` returns an OLED display and power inductors), so check them before choosing a part.
 
@@ -51,7 +51,7 @@ Tool descriptions include reply-field guidance: `relaxed` names omitted query wo
 | `sensor_recommend` | Find sensor ICs/modules by measurement need, protocol, or platform (1,600+ sensors, 56 measure types) |
 | `cse_search` | Search SamacSys for ECAD models and datasheets |
 | `cse_get_kicad` | Download KiCad symbols and footprints |
-| `board_search` | Search ~285 open-source reference board schematics by IC, tag, org, or free text. Cross-board consensus shows how ICs are typically used. |
+| `board_search` | Search ~290 open-source reference board schematics by IC, tag, org, or free text. Cross-board consensus shows how ICs are typically used. |
 | `board_get` | Get full board details — BOM, design rules, dimensions. Use `focus` param for pin-grouped IC neighborhoods (decoupling, bias, connections). |
 | `get_design_rules` | PCB design rules & best practices (41 curated reference files: power, protection, interfaces, MCUs, layout, EMC) |
 
@@ -66,6 +66,8 @@ Use `jlc_stock_check` only when you need:
 - Real-time stock verification before ordering
 - Out-of-stock or low-stock parts (stock < 10)
 - The full catalog (7M+ parts; `jlc_search` covers the 630K+ with stock >= 10)
+
+Stock-check results list the most stock first unless `sort_by` is given (JLCPCB's own order is by LCSC code).
 
 ## Library Types
 
@@ -89,9 +91,10 @@ Natural language names that map to JLCPCB subcategories (220+ aliases supported)
 | MOSFETs | `mosfet`, `n-channel mosfet`, `p-channel mosfet`, `nmos`, `pmos` |
 | Regulators | `ldo`, `buck`, `boost`, `dc-dc` |
 | Crystals | `crystal`, `oscillator`, `tcxo` |
-| Connectors | `usb-c`, `pin header`, `jst`, `terminal block`, `qwiic` |
+| Connectors | `usb-c`, `pin header`, `jst`, `terminal block`, `qwiic`, `3.5mm jack`, `2.5mm jack` |
 | LEDs | `led`, `rgb led`, `ws2812`, `neopixel` |
 | MCUs | `mcu`, `microcontroller` |
+| Cellular modules | `cellular module`, `4g module`, `lte modem`, `nb-iot module`, `cat-m module`, `gsm module` |
 | Relays | `relay` |
 | Interface ICs | `level shifter`, `rs485 transceiver`, `can transceiver` |
 | Drivers, switches | `gate driver`, `mosfet driver`, `high side switch` |
@@ -100,7 +103,9 @@ Natural language names that map to JLCPCB subcategories (220+ aliases supported)
 
 A value in the query goes to the spec that part type lists: "5V relay" is the coil voltage, "3.3V LDO" the exact output, "12V buck converter" an output range covering 12V (with Topology Buck), "3.3V level shifter" a supply range covering 3.3V. "24V input 3.3V output" and "12V to 5V" set both sides of a regulator. "0.2pF ESD" is a junction capacitance of at most 0.2pF and "5V ESD diode" a stand-off voltage (Vrwm) of at least 5V. "SMA", "SMB" and "SMC" with connector words ("SMA edge mount connector", "SMA female") or a connector subcategory are the coax series; otherwise they are the diode packages. If the part type lists no such spec, the value is left out and `parsed.adjusted_filters` says so; words that match no part together with the rest of the query are left out and `relaxed` says so, except when you give `subcategory_name` or `spec_filters`, where `hint` names the words and how many parts match without them; filters that can't be applied are listed in `ignored_filters`.
 
-`jlc_search` defaults to **20** results; an explicit `limit` can request up to 100. Component replies omit `description` when nonempty `specs` already provide the detail. `price_10` is removed from search, stock-check and part-detail replies; use the stated quantity tiers in `jlc_get_part.prices`.
+Colour words filter `Illumination Color`: `green` covers Green, Emerald Green and Yellow Green, `white` covers White, Cold White and Warm White, and shade words (`emerald green`, `warm white`) search one shade. Two colours (`red green LED`) or `bicolor`/`tricolor` mean one part with exactly those colours: `Illumination Color = Red + Green`, which `spec_filters` also accepts (two separate values there stay either/or). An audio jack's size (2.5, 3.5, 4.4 or 6.35mm) is its `Connector Type`, and a cellular module's network (Cat-M, NB-IoT, Cat.1, GSM, GPRS) must be in its `Communication System`; LCSC's band and network lists for cellular modules are often incomplete, which a `note` says.
+
+`jlc_search` defaults to **20** results; an explicit `limit` can request up to 100, and `offset` pages through the rest of the same search (`offset=20` with `limit=20` is page 2). Component replies omit `description` when nonempty `specs` already provide the detail. `price_10` is removed from search, stock-check and part-detail replies; use the stated quantity tiers in `jlc_get_part.prices`.
 
 `packages` (search/stock check) and `manufacturers` (stock check) accept a list, JSON array string, or one bare string. Values containing commas stay intact. Query package alternatives such as `100nF 25V capacitors in 0402 or 0603` apply an OR constraint, equivalent to `packages=["0402", "0603"]`; explicit package arguments take precedence.
 
@@ -108,7 +113,9 @@ Explicit `spec_filters` accept JSON arrays or JSON array strings, with text or n
 
 `library_type_counts` and `no_fee_available` describe the same matching population as `total`, after every spec and library restriction. Post-filter scans check at most 50,000 SQL candidates; if that cap is reached, `counts_complete=false` labels these counts and availability as applying only to checked matches.
 
-Recovery hints use exposed calls such as `jlc_search_help()` and `jlc_search_help(subcategory="MOSFETs")`. Every returned design-rule key (for example `power/ldo`) can be passed back as `get_design_rules(topic="power/ldo")` for that exact file.
+A part that lists no value for a range filter's attribute (LCSC shows `-`) is left out by that filter. `unlisted` counts those parts per range filter (`parts`, and `basic_preferred` of them) when they meet every other constraint, and an empty reply's `hint` names them: AO3401A lists no operating temperature, so a `-40°C` filter leaves it out though its datasheet rates it to -55°C.
+
+Recovery hints use exposed calls such as `jlc_search_help()` and `jlc_search_help(subcategory="MOSFETs")`. Every returned design-rule key (for example `power/ldo`) can be passed back as `get_design_rules(topic="power/ldo")` for that exact file. A topic also matches common terms (`type-c`, `lipo`, `pull-up`, `stm32g0`); one that names no file returns the files that discuss it most, with a `note`.
 
 Board consensus pin choices use distinct-board votes: `count` is supporting boards and `pct` divides by `consensus.board_count`. Each choice adds `boards` (supporting slugs) and `quantities` (component occurrences per supporting board). Repeated components on a board do not add votes; the denominator includes all matching boards with an IC neighborhood.
 
@@ -121,14 +128,18 @@ Short names for parametric spec filters:
 | MOSFETs | `Vgs(th)`, `Vds`, `Id`, `Rds(on)` |
 | Diodes | `Vr`, `If`, `Vf` |
 | BJTs | `Vceo`, `Ic` |
-| Regulators | `Vout`, `Iout`, `Quiescent Current` (also `standby current`, `Supply Current (Iq)`) |
-| ICs | `Supply Voltage` (`Voltage - Supply`, or a level shifter's VCCA/VCCB) |
+| Regulators | `Vout`, `Iout` (`Output Current`, also a power module's `Output Current(Max)`), `Quiescent Current` (also `standby current`, `Supply Current (Iq)`) |
+| Isolated parts | `Isolation Voltage` (`Isolation Voltage(Vrms)` and the other spellings) |
+| ICs | `Supply Voltage` (`Voltage - Supply`, a level shifter's VCCA/VCCB, an isolated converter's `Vin`) |
 | Passives | `Capacitance`, `Resistance`, `Inductance`, `Voltage`, `Tolerance`, `Power`, `DCR`, `Isat` |
 | Crystals, oscillators | `Frequency`, `Load Capacitance` |
 | RF inductors | `Frequency - Self Resonant`, `Q @ Frequency` (Q at the frequency listed: `>= 30` compares the Q) |
 | ESD/TVS | `Junction Capacitance` (a part listing two, such as `0.3pF、0.6pF`, compares by the larger), `Reverse Stand-Off Voltage (Vrwm)` |
+| Any part | `Operating Temperature` (also `Operating Temperature Range` and the other spellings; a diode's `Operating Junction Temperature Range`), in °C |
 
-Supply and output voltages are often ranges ("2.7V~5.5V"): `=` matches a range that includes the value, `>=` one that reaches it, `<=` one that goes down to it.
+Supply and output voltages are often ranges ("2.7V~5.5V"): `=` matches a range that includes the value, `>=` one that reaches it, `<=` one that goes down to it. A dual-rail output ("±12V") matches only a `±12V` filter.
+
+Operating temperature is a range too ("-40℃~+85℃"): `<= -40` means rated down to -40°C, `>= 85` up to 85°C, `= 25` covers 25°C, and `= "-40~85"` covers both ends. A temperature with a unit in a query does the same: `-40°C` or `-40C` (rated down to it), `105C` (up to it), `-40~85℃` (covers both). A bare `-40` stays text.
 
 Use `jlc_search_help(subcategory=...)` to discover all filterable specs for any subcategory.
 
@@ -172,6 +183,7 @@ Finds alternatives checked against catalog compatibility rules (`summary.found` 
 4. Requires regulator input/output ranges to cover the original's full ranges. A scalar supply rating proves only the maximum; minimum input voltage remains unchecked. Regulator pinout and external-circuit requirements always need manual review, so regulator confidence is never high.
 5. Ranks no-fee parts (basic/preferred) first. Within each fee tier, passives and crystals prefer the original package, then the existing stock/footprint/manufacturer/price score. Other packages remain available; `same_package=true` filters them out. Each verified/unverified list has its own `limit` (default 10, max 50).
 6. RF parts (splitters, baluns, couplers, LNAs and other amplifiers, attenuators, filters, transceivers) have no compatibility rules, so they return `similar_parts`, drawn from every manufacturer in the subcategory and ordered by how much of the original's frequency range each covers: `frequency_coverage` is `full`, `partial` (with `share`) or `unknown` (no range listed). Parts that don't overlap the original's range are left out; `summary.frequency_check` counts each status. Covering the band doesn't make a part a replacement.
+7. Other part types without compatibility rules (cellular, GNSS and other modules among them) list first the parts in the original's package and part family (the part number up to its first `-`), with `likely_drop_in`: the SIM7080G for a SIM7080G-M. The pinout is still unchecked.
 
 Candidates come from live JLCPCB search and the daily local database. Rule checks establish catalog compatibility, not a guaranteed drop-in replacement; review datasheets and `package_warning`. An empty `library_type="no_fee"` result states how many verified extended matches were evaluated (`summary.extended_count`), rather than claiming no savings are possible. Counts are bounded by the candidate search, not catalog totals.
 

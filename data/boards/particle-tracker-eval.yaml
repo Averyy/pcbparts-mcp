@@ -3,7 +3,7 @@ slug: particle-tracker-eval
 source: particle-iot/tracker-hardware
 format: eagle
 description: nRF52840 Tracker SoM, BQ24195 charger
-tags: [battery-charging, gps-gnss]
+tags: [battery-charging, cellular, gps-gnss]
 key_ics: [nRF52840, BQ24195, MCP2542FD]
 outline:
   width_mm: 116.5

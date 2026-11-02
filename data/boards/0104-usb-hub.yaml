@@ -2,7 +2,7 @@ name: 0104 USB Hub
 slug: 0104-usb-hub
 source: TileParts/0104-USB-HUB
 format: kicad6
-description: 3-port USB 2.0 hub (SL2.1A) with per-port mechanical power cutoff switches, ESD9B TVS protection
+description: "3-port USB 2.0 hub (SL2.1A) with per-port mechanical power cutoff switches, LESD5Z5.0CT1G TVS protection"
 tags: [esd-protection]
 key_ics: [SL2.1A]
 outline:

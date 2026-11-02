@@ -48,7 +48,7 @@ from pcbparts_mcp.parsers import (
 from pcbparts_mcp.easyeda_store import SEED_FILE, SeedRow, read_seed_csv, seed_checked_at
 from pcbparts_mcp.mosfet import rds_gate_min
 from pcbparts_mcp.search.mpn import MPN_KEY_SQL
-from pcbparts_mcp.search.spec_filter import CONNECTOR_FILTER_COLUMNS, connector_value
+from pcbparts_mcp.search.spec_filter import CONNECTOR_FILTER_COLUMNS, TEMPERATURE_RANGE_ATTRIBUTES, connector_value
 
 
 # Attribute name -> (column_name, parser_function) mapping
@@ -98,6 +98,8 @@ ATTRIBUTE_TO_COLUMN: dict[str, tuple[str, Any]] = {
     # Voltage Regulators
     "Output Voltage": ("vout_v", parse_voltage),
     "Output Current": ("iout_max_a", parse_current),
+    "Output Current(Max)": ("iout_max_a", parse_current),  # power modules
+    "Iout": ("iout_max_a", parse_current),  # isolated converter ICs
     "Voltage Dropout": ("vdropout_v", parse_voltage),
     "Input Voltage": ("_vin_range", parse_vin_range),
     "Quiescent Current(Iq)": ("iq_ua", parse_current),
@@ -168,8 +170,7 @@ ATTRIBUTE_TO_COLUMN: dict[str, tuple[str, Any]] = {
     "Peak Pulse Power Dissipation (Ppp)": ("surge_power_w", parse_power),
 
     # Temperature Range
-    "Operating Temperature": ("_temp_range", parse_temp_range),
-    "Operating Temperature Range": ("_temp_range", parse_temp_range),
+    **{name: ("_temp_range", parse_temp_range) for name in TEMPERATURE_RANGE_ATTRIBUTES},
 
     # LEDs
     "Dominant Wavelength": ("wavelength_nm", parse_wavelength),

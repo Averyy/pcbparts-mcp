@@ -20,20 +20,20 @@ from mcp.types import ToolAnnotations
 from pydantic import BeforeValidator
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, RedirectResponse
 from starlette.routing import Route
 
 from . import __version__, stats
 from .cache import DailyQuota, QuotaStore
 from .config import (
-    RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE,
+    RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
     DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
     CSE_STORE_PATH,
 )
-from .client import EasyEDAComponentNotFound, JLCPCBClient
+from .client import DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient
 from .mouser import MouserAPIError, MouserClient, MouserError
 from .digikey import DigiKeyClient, DigiKeyError
 from .cse import CSEClient
@@ -47,7 +47,7 @@ from .search.query_builder import package_family_adjustments
 from .smart_parser import ParsedQuery, parse_smart_query, merge_spec_filters
 from .smart_parser.mapping import DEFAULT_SPECS
 from .alternatives import SPEC_PARSERS
-from .search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN, ConnectorFilter, FuseFilter
+from .search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN, ConnectorFilter, FuseFilter, ScopedTextFilter
 from .parsers import parse_resistance
 from .pinout import parse_easyeda_pins
 from .design_rules import get_design_rules as _get_design_rules, _RULES_DIR, _build_index
@@ -500,7 +500,7 @@ async def jlc_stock_check(
         manufacturer: Manufacturer
         packages: Several packages (OR); accepts a list, JSON array string, or one bare string
         manufacturers: Several manufacturers (OR); same formats as packages, never comma-split
-        sort_by: "quantity" or "price" (case-insensitive)
+        sort_by: "quantity" (default; highest stock first) or "price" (cheapest first); case-insensitive
         page: Page number
         limit: Results per page (max 100)
 
@@ -573,7 +573,9 @@ async def jlc_stock_check(
             manufacturer=manufacturer,
             packages=parsed_packages,
             manufacturers=parsed_manufacturers,
-            sort_by=sort_by,
+            # JLCPCB's own order is by LCSC code: SMF18A's Preferred part with the most stock
+            # (C19077512) was on page 2 of 2
+            sort_by=sort_by or "quantity",
             page=effective_page,
             limit=effective_limit,
         )
@@ -634,7 +636,7 @@ _FOOTPRINT_NAME = re.compile(
 )
 
 
-def _keep_part_number_matches(retry: dict, part_number_text: str, limit: int) -> dict:
+def _keep_part_number_matches(retry: dict, part_number_text: str, limit: int, offset: int = 0) -> dict:
     """A part-number retry keeps only parts whose MPN contains a requested part number, or is
     contained in it (JK-nSMD005/60V for nSMD005/60V, IR333-A for LED/IR333-A/5mm): the engine's
     MPN fallback shortens part numbers down to prefixes like "YS" that match unrelated parts.
@@ -646,13 +648,13 @@ def _keep_part_number_matches(retry: dict, part_number_text: str, limit: int) ->
     kept = [p for p in retry.get("results", []) if matches(p)]
     complete = (retry.get("total") or 0) <= len(retry.get("results", []))
     counts = {tier: sum(p.get("library_type") == tier for p in kept) for tier in ("basic", "preferred", "extended")}
-    retry.update(results=kept[:limit], total=len(kept), library_type_counts=counts,
+    retry.update(results=kept[offset:offset + limit], total=len(kept), library_type_counts=counts,
                  no_fee_available=bool(counts["basic"] or counts["preferred"]))
     if "mpn_matches" in retry:
         retry["mpn_matches"].update({name: sum(p.get("mpn_match") == name for p in kept)
                                      for name in ("full", "same_suffix", "family")})
     if "page_info" in retry:
-        retry["page_info"].update(limit=limit, returned=len(retry["results"]))
+        retry["page_info"].update(limit=limit, offset=offset, returned=len(retry["results"]))
     if not complete:
         retry["counts_complete"] = False
     return retry
@@ -713,12 +715,14 @@ def jlc_search(
     match_all_terms: bool = True,
     sort_by: SearchSort = None,
     limit: int = 20,
+    offset: int = 0,
     strict: bool = False,
 ) -> dict:
     """Search in-stock JLCPCB parts locally with natural-language parsing and spec filters.
     Default 20 results; strict=true disables relaxation. Reply: relaxed names query words, a
     query-only library preference or part type left out; ignored_filters explains unapplied/rare filters,
-    parsed.adjusted_filters explains moved/omitted specs; counts_complete=false means partial counts;
+    parsed.adjusted_filters explains moved/omitted specs; unlisted counts, per range filter, parts it
+    left out only because they don't list that attribute ("-"); counts_complete=false means partial counts;
     valid_values lists accepted inputs on errors.
     When the search shortens a full part number (LM1117-3.3 searches LM1117), parts matching it
     come first: mpn_match is full, same_suffix or family, and mpn_matches counts each.
@@ -748,7 +752,9 @@ def jlc_search(
             Voltage, Tolerance, Power, DCR, Isat, Frequency; others by the name jlc_search_help
             shows. Range ops only work on attributes it lists as "numeric"; parts with no value
             ("-") don't match them. On ranges ("2.7V~5.5V": supply, output voltage) = means the
-            range includes the value.
+            range includes the value. Operating Temperature (any name for the rated range,
+            junction range for diodes) in °C: <= -40 means rated down to -40, >= 85 up to 85,
+            = "-40~85" covers both. A query's "-40°C", "105C" or "-40~85℃" does the same.
         min_stock: Minimum stock (the database only has stock >= 10)
         library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", "all", or omit;
             case-insensitive, with "no-fee" accepted. Unknown values list the valid choices.
@@ -765,6 +771,8 @@ def jlc_search(
         sort_by: "stock" (most first) or "price" (cheapest within library tiers when prefer_no_fee);
             omitted defaults to stock unless the query says "cheapest"/"lowest price".
         limit: Max results (default 20, max 100)
+        offset: Results to skip, for the next page of the same search (offset=20 with limit=20 is
+            page 2; max 10000); total stays the whole population
         strict: If true, keep query words and parsed requirements; no relaxed retry. Unsupported
             constraints return an error with ignored_filters/parsed.adjusted_filters and no results.
             Default false allows relaxation, reporting omitted requirements.
@@ -783,6 +791,9 @@ def jlc_search(
         ignored_filters: (when present) unsupported/rare attributes, suggested real names and
             coverage, or filters that could not be applied. Reasons distinguish unapplied filters
             from applied constraints with incomplete attribute coverage.
+        unlisted: (when present) per range filter, parts that meet every other constraint but don't
+            list its attribute ({"filter", "parts", "basic_preferred"}), which the filter leaves out;
+            their datasheets may still qualify them (AO3401A lists no operating temperature)
         hint: (on empty replies without an error) a next step using search help, fewer explicit
             constraints or jlc_stock_check for low-stock parts
     """
@@ -848,10 +859,18 @@ def jlc_search(
         part_number_text = " ".join(protected_tokens) or (
             parsed.model_number if parsed.model_number and not _REFERENCE_DESIGNATOR.fullmatch(parsed.model_number) else None
         )
+        reported_subcategory = parsed.subcategory
+        if (subcategory_id or subcategory_name) and parsed.subcategory:
+            # "600ohm 0603" with subcategory_name="Ferrite Beads" said chip resistor, a type not searched
+            explicit_id = subcategory_id or db.resolve_subcategory_name(subcategory_name)
+            explicit_name = db.get_subcategory_name(explicit_id) if explicit_id else None
+            if explicit_name and explicit_name.lower() != parsed.subcategory.lower():
+                reported_subcategory = explicit_name.lower()
+                parsed.detected.pop("subcategory", None)
         parsed_query_info = {
             "original_query": parsed.original,
             "detected": parsed.detected,
-            "subcategory": parsed.subcategory,
+            "subcategory": reported_subcategory,
             "package": parsed.package,
             "mounting_type": parsed.mounting_type,
             "spec_filters": [f.to_dict() for f in parsed.spec_filters],
@@ -974,8 +993,10 @@ def jlc_search(
         match_all_terms=match_all_terms,
         sort_by=sort_by or "stock",
         limit=clamp_limit(limit, MAX_PAGE_SIZE),
+        offset=min(max(0, offset or 0), MAX_SEARCH_OFFSET),
         # A pasted LCSC code (C2040) finds that part, not every code it starts.
         lcsc_codes=bool(query and query.split()) and all(LCSC_CODE.fullmatch(t) for t in query.split()),
+        count_unlisted=True,
     )
     requested_packages = parsed_packages or ([effective_package] if effective_package else [])
     package_adjustments = package_family_adjustments(requested_packages)
@@ -1050,8 +1071,10 @@ def jlc_search(
     # Words the parser couldn't place ("dual", "edge mount") are required in the description and
     # can zero a search the part type and filters would answer. Only for words left from a
     # natural-language query, never a part number or the caller's own subcategory or filters.
+    # Without a recognized part type the words are what names it ("gizmo 3.3V 2A"): leaving them out
+    # searched the whole catalog on the numbers alone, so the reply stays empty with a hint instead.
     if (not strict and result.get("total") == 0 and not result.get("error") and parsed and effective_query
-            and not part_number_text and (parsed.subcategory or parsed.spec_filters)
+            and not part_number_text and parsed.subcategory
             and not (subcategory_id or subcategory_name or spec_filters)):
         retry = db.search(query=None, **search_args)
         if retry.get("total"):
@@ -1072,9 +1095,11 @@ def jlc_search(
     if (not strict and result.get("total") == 0 and not result.get("error") and parsed
             and part_number_text and parsed.subcategory
             and not (subcategory_id or subcategory_name)):
-        retry_args = {**search_args, "subcategory_name": None, "subcategory_ids": None, "limit": MAX_PAGE_SIZE}
+        retry_args = {**search_args, "subcategory_name": None, "subcategory_ids": None, "limit": MAX_PAGE_SIZE,
+                      "offset": 0}
         page = search_args["limit"]
-        retry = _keep_part_number_matches(db.search(query=part_number_text, **retry_args), part_number_text, page)
+        retry = _keep_part_number_matches(db.search(query=part_number_text, **retry_args), part_number_text, page,
+                                          search_args["offset"])
         dropped_filters = []
         # Only a full part number may cost the parsed values; "CL10 10uH inductor" keeps its 10uH.
         if not retry.get("total") and not retry.get("error") and protected_tokens:
@@ -1082,7 +1107,7 @@ def jlc_search(
             if dropped_filters:
                 retry_args["spec_filters"] = explicit_filters or None
                 retry = _keep_part_number_matches(db.search(query=part_number_text, **retry_args),
-                                                  part_number_text, page)
+                                                  part_number_text, page, search_args["offset"])
         if retry.get("total"):
             part_type = (result.get("filters_applied", {}).get("subcategory_resolved")
                          or effective_subcategory_name or parsed.subcategory)
@@ -1146,9 +1171,27 @@ def jlc_search(
     # Add parsing info, including explicit package-family adjustments.
     if parsed_query_info:
         result["parsed"] = parsed_query_info
+    if note := _subcategory_note(result.get("results")):
+        result["note"] = note
 
+    # A filter on an attribute these parts hardly list is in ignored_filters, with the names they use
+    # (tactile switches list Switch Height, not Height); counting every part as unlisted adds nothing
+    if result.get("unlisted") and result.get("ignored_filters"):
+        flagged = {f.get("filter") for f in result["ignored_filters"]}
+        if not (unlisted := [u for u in result["unlisted"] if u["filter"] not in flagged]):
+            result.pop("unlisted")
+        else:
+            result["unlisted"] = unlisted
+    if search_args["offset"] and result.get("total") and not result.get("results") and not result.get("error"):
+        result["hint"] = (f"offset {search_args['offset']} is past the last of {result['total']} "
+                          f"match{'es' if result['total'] != 1 else ''}; use a smaller offset.")
     if result.get("total") == 0 and not result.get("error") and "hint" not in result:
         hints = []
+        for item in result.get("unlisted") or []:
+            hints.append(f"{item['parts']} part{'s' if item['parts'] != 1 else ''} meet{'' if item['parts'] != 1 else 's'} "
+                         "the other constraints but list no value for "
+                         f"{item['filter']}, which left {'them' if item['parts'] != 1 else 'it'} out "
+                         "(see unlisted); check the datasheets.")
         if result.get("ignored_filters"):
             hints.append("See ignored_filters for unapplied or sparse attributes.")
         resolved_name = (result.get("filters_applied", {}).get("subcategory_resolved")
@@ -1159,22 +1202,36 @@ def jlc_search(
                     ("package/packages", package or packages), ("manufacturer", manufacturer)) if value]
         if explicit:
             hints.append("Try without " + ", ".join(explicit) + ".")
+        other_tier_total = 0
+        if library_type in ("basic", "preferred", "no_fee") and not query_library:
+            other_tier_total = db.search(query=effective_query, **{
+                **search_args, "library_type": None, "limit": 1, "count_unlisted": False}).get("total") or 0
+            if other_tier_total:
+                matched = f" {part_number_text}" if part_number_text else ""
+                hints.insert(0, f"No {library_type.replace('_', '-')} part matches{matched}; {other_tier_total} parts "
+                                "do in other library tiers (extended parts add an assembly fee per unique part).")
+        if (parsed and effective_query and not part_number_text and not parsed.subcategory
+                and not (subcategory_id or subcategory_name)):
+            hints.insert(0, f"No part type matched {json.dumps(effective_query)}, so those words weren't left out. "
+                            "Name the part type in common words, or find it with jlc_search_help() and pass "
+                            "subcategory_name.")
         # The words-left-out retry above never runs with the caller's own subcategory or filters,
         # so say when the words alone are what found nothing ("ESD diode RF low capacitance" with
         # a Junction Capacitance filter)
         if (not strict and effective_query and not part_number_text
                 and (subcategory_id or subcategory_name or spec_filters)):
-            without_words = db.search(query=None, **{**search_args, "limit": 1}).get("total")
+            without_words = db.search(query=None, **{**search_args, "limit": 1, "count_unlisted": False}).get("total")
             if without_words:
                 hints.insert(0, f"No part's description has all of the words {json.dumps(effective_query)}; "
                                 f"without them {without_words} parts match the part type and filters. Words "
                                 "aren't left out when you give subcategory_name or spec_filters, so drop "
                                 "them or put them in a filter.")
-        if part_number_text:
+        # A part number found only in other tiers is in stock (TL431 with no_fee: 308 extended parts)
+        if part_number_text and not other_tier_total:
             hints.insert(0, f"No in-stock part matches {part_number_text}; try "
                             f"jlc_stock_check(query={json.dumps(part_number_text)}) for low or zero stock, "
                             "or search by part type and specs without the part number.")
-        else:
+        elif not part_number_text:
             hints.append("Use jlc_stock_check for low-stock parts.")
         result["hint"] = " ".join(hints)
 
@@ -1217,6 +1274,9 @@ def _fit_parsed_filters(
     kept: list[SpecFilter] = []
     adjusted: list[dict[str, str | None]] = []
     for spec_filter in filters:
+        if isinstance(spec_filter, ScopedTextFilter):
+            kept.append(spec_filter)
+            continue
         if isinstance(spec_filter, ConnectorFilter):
             candidates = ["Pitch"] if spec_filter.name == "Pitch" else [
                 "Number of Pins", "Number of Contacts", "Number of Positions", "Number of Positions or Pins",
@@ -1416,12 +1476,12 @@ def jlc_search_help(
     )
 )
 async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
-    """Full details for one JLCPCB part (all price tiers, datasheet, attributes, EasyEDA footprint
+    """Full details for one JLCPCB part (all price tiers, datasheet, specs, EasyEDA footprint
     availability), or the JLCPCB parts matching a manufacturer part number.
 
     Reply: prices lists quantity tiers; datasheet is LCSC's datasheet page (a viewer, null when LCSC
-    has none) and datasheet_pdf the datasheet itself, a PDF link valid until datasheet_pdf_expires
-    (about 30 minutes; fetch it then, don't store it); lcsc_url is the LCSC product page;
+    has none) and datasheet_pdf the datasheet itself: a short link on this server that redirects to
+    the PDF and stays valid; lcsc_url is the LCSC product page;
     has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results and total. Non-exact replies
     add match (separators, packing, alias, alternative, lcsc or related), matched_mpn where
     applicable, and a note naming the part types for related full-text results (and parts another
@@ -1437,8 +1497,8 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
 
     Returns:
         For lcsc: Full part details including specs (description only when specs are empty),
-        all pricing tiers in prices, datasheet, datasheet_pdf and datasheet_pdf_expires, lcsc_url,
-        component attributes, and EasyEDA footprint availability:
+        all pricing tiers in prices, datasheet, datasheet_pdf, lcsc_url, and EasyEDA footprint
+        availability:
         - has_easyeda_footprint: True if EasyEDA has footprint/symbol, False if not, null if unknown
         - easyeda_symbol_uuid: UUID for direct EasyEDA editor link (null if no footprint)
         - easyeda_footprint_uuid: UUID for footprint (null if no footprint)
@@ -1473,12 +1533,15 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
                             "including low or zero stock. " + hint)
             return {"error": f"No JLCPCB parts found for MPN '{mpn}'", "mpn": mpn, "results": [],
                     "hint": hint}
-        return {
+        reply = {
             "mpn": mpn,
             "total": len(results),
             "results": results,
             **match_info,
         }
+        if note := _subcategory_note(results):
+            reply["note"] = note
+        return reply
 
     # LCSC lookup via live API (existing behavior)
     if not _client:
@@ -1490,7 +1553,51 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
         return {"error": str(e)}
     if not result:
         return {"error": f"Part {lcsc} not found"}
+    result = _short_datasheet_link(result)
+    if note := _subcategory_note([result]):
+        result = {**result, "note": note}
     return result
+
+
+def _datasheet_link_base() -> str | None:
+    """This server's public address inside a tool call, for short datasheet links: https for the
+    allowlisted public hosts (TLS ends at the proxy, as ALLOWED_ORIGINS assumes). None outside an
+    HTTP request (tests)."""
+    try:
+        request = get_http_request()
+    except RuntimeError:
+        return None
+    host = request.headers.get("host")
+    if not host:
+        return None
+    return f"{'https' if host.split(':')[0] in ALLOWED_HOSTS else request.url.scheme}://{host}"
+
+
+def _short_datasheet_link(part: dict[str, Any]) -> dict[str, Any]:
+    """A part reply whose datasheet_pdf is this server's /mcp/datasheet/<lcsc>, which signs a fresh
+    JLCPCB link on each visit. The signed link was ~1.2KB of a 3.3KB reply and expired in 30 minutes.
+    Without an HTTP request (tests) the signed link and datasheet_pdf_expires stay."""
+    if not part.get("datasheet_pdf") or not part.get("lcsc") or not (base := _datasheet_link_base()):
+        return part
+    short = {**part, "datasheet_pdf": f"{base}/mcp/datasheet/{part['lcsc']}"}
+    short.pop("datasheet_pdf_expires", None)
+    return short
+
+
+# Attributes LCSC gets wrong for a whole part type, often enough to warn about
+_SUBCATEGORY_NOTES = {
+    "2G/3G/4G/5G Modules": (
+        "Communication Frequency and Communication System come from LCSC and are often incomplete: both the "
+        "SIM7080G and the Cat-M-only SIM7080G-M list bands B1-B3 and NB-IoT, where SIMCom's datasheet lists 18 "
+        "Cat-M bands. Check bands and network modes in the datasheet (datasheet_pdf in jlc_get_part)."),
+}
+
+
+def _subcategory_note(parts: list[dict[str, Any]] | None) -> str | None:
+    """The warning for the listed parts' part types, if any (cellular modules' band lists)."""
+    notes = dict.fromkeys(_SUBCATEGORY_NOTES[p["subcategory"]] for p in parts or []
+                          if isinstance(p, dict) and p.get("subcategory") in _SUBCATEGORY_NOTES)
+    return " ".join(notes) or None
 
 
 
@@ -1520,7 +1627,8 @@ async def jlc_find_alternatives(
     RF parts (splitters, baluns, couplers, amplifiers, filters, transceivers) have no rules, so they come
     back as similar_parts from every maker, ordered by how much of the original's frequency range
     each covers (frequency_coverage: full, partial with share, or unknown); parts that don't overlap it
-    are left out and counted in summary.frequency_check.
+    are left out and counted in summary.frequency_check. Other part types without rules (modules)
+    list parts in the original's package and part family first, with likely_drop_in (pinout unchecked).
 
     Args:
         lcsc: LCSC code of the original part (e.g., "C2557")
@@ -1551,7 +1659,7 @@ async def jlc_find_alternatives(
                     "valid_values": ["basic", "preferred", "no_fee", "extended", "all"]}
 
     try:
-        return await _client.find_alternatives(
+        result = await _client.find_alternatives(
             lcsc=lcsc,
             min_stock=min_stock,
             same_package=same_package,
@@ -1563,6 +1671,9 @@ async def jlc_find_alternatives(
         )
     except ValueError as e:  # actionable JLCPCB messages (rate limited / WAF / timeout)
         return {"error": str(e)}
+    if isinstance(result.get("original"), dict):
+        result = {**result, "original": _short_datasheet_link(result["original"])}
+    return result
 
 
 def _easyeda_unknown_error(lcsc: str) -> dict[str, str]:
@@ -1596,11 +1707,12 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> di
         - package: Package type
         - pin_count: Total number of pins
         - pins: List of pins, each with:
-            - number: Physical pin number (e.g., "1", "2")
+            - number: Pin number as the symbol shows it, matching the footprint pad (e.g., "1", "A2")
             - name: Pin name exactly as in EasyEDA symbol
             - electrical: (rare) EasyEDA electrical type if set by symbol creator
         - easyeda_symbol_uuid: UUID to view symbol at easyeda.com/component/{uuid}
         - unverified: (only if true) "Symbol not verified by LCSC"
+        - note: (only when every pin's name is its number) the symbol doesn't say what pins do
 
     The electrical field is only included when the symbol creator explicitly
     set it in EasyEDA. Values: "input", "output", "bidirectional", "power".
@@ -1710,6 +1822,13 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> di
     # Flag unverified symbols
     if not easyeda_data.get("verify", True):
         result["unverified"] = "Symbol not verified by LCSC"
+    if all(p["name"] == p["number"] for p in pins):
+        result["note"] = ("The symbol names its pins only by number, so it doesn't say what each pin does "
+                          "(e.g. a jack's tip, ring and sleeve); check the datasheet's pin table.")
+        if (part or {}).get("subcategory") == "Audio Connectors":
+            # PJ-313D from SHOU HAN (C668608) and Hroparts (C95463): same footprint, tip and ring swapped
+            result["note"] += (" Jacks with the same footprint from different makers can number the tip, "
+                               "ring and sleeve pads differently, so check this part's own datasheet.")
 
     return result
 
@@ -1977,12 +2096,14 @@ def get_design_rules(topic: str = "") -> dict:
 
     Args:
         topic: Exact returned key (e.g., "power/ldo", "INDEX.md") or keyword matched against
-            category/filename (e.g., "ldo", "usb", "esd", "esp32")
+            category/filename and common terms (e.g., "ldo", "usb", "type-c", "lipo", "stm32g0");
+            otherwise the files that discuss it most (e.g., "boot mode")
 
     Returns:
         content: The matched rule file(s) concatenated with --- separators
         matched_files: List of matched file keys (e.g. ["power/ldo", "power/switching"])
         topic: The search topic used
+        note: Present when the files were found by their text, not their name or keywords
 
     Examples:
         get_design_rules("ldo") → LDO design rules (dropout, ESR, PSRR, thermal)
@@ -2012,7 +2133,7 @@ def board_search(
     layers: int | None = None,
     limit: int = 10,
 ) -> dict:
-    """Search ~285 open-source reference board schematics to see how real designs use an IC: its
+    """Search ~290 open-source reference board schematics to see how real designs use an IC: its
     passives, decoupling, pull-ups and power topology. Not for buying parts (jlc_search) or
     choosing sensors (sensor_recommend). Then call board_get(slug, focus=IC) for that IC's
     pin-by-pin neighborhood.
@@ -2046,6 +2167,7 @@ def board_search(
         When browsing by tag only (no query= or component=), includes tag_consensus showing
         what ICs boards in that category commonly use with board counts and percentages.
         Use board_get with the slug + focus for IC-specific pin neighborhood.
+        An empty reply's hint names the words no board matches and what leaving them out finds.
     """
     # Handle JSON-string tag param from some MCP clients
     if isinstance(tag, str):
@@ -2138,6 +2260,9 @@ def board_get(
             focus_match_type ("exact", "partial", or "ref") indicating how the focus was matched.
         With include_bom: adds all plain passives to component list.
         With include_nets: adds nets (name + pin list), positions (x/y/rotation), copper pours.
+        Components and a focused IC carry the design files' own part numbers where listed (mpn,
+        manufacturer, lcsc, mouser, digikey): look them up with jlc_get_part or mouser_get_part.
+        An unknown slug's error comes with did_you_mean: boards sharing most of its words.
     """
     if not slug or len(slug) > 200:
         return {"error": "Invalid slug"}
@@ -2149,7 +2274,11 @@ def board_get(
         result = boards_db.get_board(slug, include_raw=include_nets, include_bom=include_bom, focus=focus)
 
         if result is None:
-            return {"error": f"Board '{slug[:50]}' not found"}
+            reply: dict[str, Any] = {"error": f"Board '{slug[:50]}' not found"}
+            suggestions = boards_db.suggest_slugs(slug)
+            if suggestions:
+                reply["did_you_mean"] = suggestions
+            return reply
 
         return result
     except Exception as e:
@@ -2195,6 +2324,23 @@ async def health(request):
         "cse_stored": _cse_store_counts(),
         "distributor_quota": {name: quota.status() for name, quota in _distributor_quotas.items()},
     })
+
+
+async def datasheet_redirect(request):
+    """/mcp/datasheet/<lcsc> (jlc_get_part's datasheet_pdf): a redirect to the part's datasheet PDF
+    on JLCPCB's storage, signed when asked, so the link never goes stale."""
+    lcsc = request.path_params["lcsc"].strip().upper()
+    if not _client:
+        return JSONResponse({"error": "Server is starting; try again in a moment"}, status_code=503)
+    try:
+        url = await _client.datasheet_pdf_url(lcsc)
+    except DatasheetLinkBusy as e:
+        return JSONResponse({"error": str(e)}, status_code=429, headers={"Retry-After": "60"})
+    except ValueError as e:  # JLCPCB rate limit, WAF challenge or timeout
+        return JSONResponse({"error": str(e)}, status_code=502)
+    if not url:
+        return JSONResponse({"error": f"No datasheet PDF found for {lcsc}"}, status_code=404)
+    return RedirectResponse(url, status_code=302, headers={"Cache-Control": "no-store"})
 
 
 async def usage_stats(request):
@@ -2255,6 +2401,7 @@ def create_app():
     app.routes.append(Route("/health", health))
     # Under /mcp because the pcbparts.dev proxy forwards only /mcp* and /health to this app
     app.routes.append(Route("/mcp/stats", usage_stats))
+    app.routes.append(Route("/mcp/datasheet/{lcsc}", datasheet_redirect))
 
     return app
 

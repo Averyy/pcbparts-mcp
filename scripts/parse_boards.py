@@ -226,7 +226,11 @@ _TAG_RULES: dict[str, list[str]] = {
                    "constant-current", "IS31FL"],
     "security": ["fault injection", "EMFI", "glitch", "pentest",
                  "emulator", "sniff"],
-    "ham-radio": ["ham radio", "SDR receiver", "transmitter", "QSD", "QSE"],
+    # Not bare "transmitter": an IR or ultrasonic transmitter isn't a ham radio (Olimex ESP32-EVB)
+    "ham-radio": ["ham radio", "SDR receiver", "HF transmit", "QSD", "QSE"],
+    # Matching is by substring, so no bare "LTE" (it's inside "filter")
+    "cellular": ["LTE-M", "LTE Cat", "4G LTE", "LTE modem", "Cat-M", "NB-IoT", "GPRS", "cellular",
+                 "SIM7000", "SIM7080", "SIM7600", "SIM800", "BG95", "BG96", "SARA-R"],
     "eurorack": ["eurorack", "synth voice", "VCO", "VCF", "VCA", "envelope",
                  "analog synth"],
     "inverter": ["inverter", "3-phase", "gate driver"],
@@ -366,6 +370,11 @@ def extract_key_ics(key_coverage: str) -> list[str]:
         r"\bPCA\d{4}\w*",
         # Qorvo
         r"\bQPE\d{4}\w*",
+        # SIMCom cellular modems (SIM7000, SIM7080G, SIM800L)
+        r"\bSIM[78]\d{2,3}\w*",
+        # SG Micro, GigaDevice flash, Richtek, onsemi, Linear Technology, AVR Dx
+        r"\bSGM\d{4,}\w*", r"\bGD25Q\d+\w*", r"\bRT\d{4}\w*", r"\bFAN\d{4,}\w*",
+        r"\bNC[PV]\d{4,}\w*", r"\bLTC?\d{4}\w*", r"\bAVR\d+D[ABDU]\d+\w*",
     ]
     for pat in _IC_PATTERNS:
         for m in re.finditer(pat, key_coverage):
@@ -381,8 +390,16 @@ def build_description(key_coverage: str) -> str:
     """
     if not key_coverage:
         return ""
-    # Split on comma — first part is usually the best summary
-    parts = key_coverage.split(", ")
+    # Split on commas outside parentheses: the first part is usually the best summary. Splitting
+    # inside "(HLK-LD2410/2450, DFRobot SEN0395, ...)" left descriptions cut off mid-parenthesis.
+    parts: list[str] = []
+    depth, start = 0, 0
+    for i, char in enumerate(key_coverage):
+        depth += {"(": 1, ")": -1}.get(char, 0)
+        if depth == 0 and key_coverage.startswith(", ", i):
+            parts.append(key_coverage[start:i])
+            start = i + 2
+    parts.append(key_coverage[start:])
     # Take first 1-2 parts, up to ~120 chars
     desc = parts[0]
     if len(parts) > 1 and len(desc) + len(parts[1]) < 120:
@@ -1302,8 +1319,11 @@ def normalize_value(value: str, ref: str) -> str:
         # Strip IC ordering/package suffixes: AT25256B-SSHL-B → AT25256B, M24C64-RMN6TP → M24C64
         # IS25LP128-JBLE → IS25LP128, LAN8710A-EZC → LAN8710A, AS5047P-ATSM → AS5047P
         # Suffix must start with a letter and be 3+ chars. Preserve functional suffixes.
+        # Espressif names after the dash are the part, not packaging: ESP32-S3R8 (chip variant) and
+        # ESP32-WROVER (module) both became "ESP32"
         m = re.match(r"^([A-Z]+\d+[A-Z]*\d*[A-Z]?)-([A-Z][A-Z0-9]{2,6})(?:-[A-Z])?$", cleaned)
-        if m and len(m.group(1)) >= 4 and m.group(2) not in _FUNCTIONAL_SUFFIXES:
+        if (m and len(m.group(1)) >= 4 and m.group(2) not in _FUNCTIONAL_SUFFIXES
+                and not cleaned.upper().startswith(("ESP32", "ESP8266"))):
             cleaned = m.group(1)
         # Strip TI ordering: BQ27441DRZR-G1A → BQ27441
         m = re.match(r"^([A-Z]+\d+)[A-Z]{2,4}R?-[A-Z]\d[A-Z]$", cleaned)
@@ -2009,6 +2029,22 @@ def clone_repo(org_repo: str, fmt: str, cache_dir: Path | None = None,
         shutil.rmtree(repo_dir, ignore_errors=True)
         raise
 
+    # Hierarchical sheets can live in a submodule at a pinned commit: PowerFeather PowerUPS keeps its
+    # BQ25622E charger and MAX17260 gauge in powerfeather-kicad-lib/sheets/, which that library's
+    # current head no longer has. Without them the board parsed with neither part.
+    # The sparse checkout has neither .gitmodules nor the submodule folders, so read the paths from git.
+    gitmodules = subprocess.run(["git", "show", "HEAD:.gitmodules"], cwd=repo_dir,
+                                capture_output=True, text=True, timeout=30)
+    submodule_paths = re.findall(r"^\s*path\s*=\s*(.+?)\s*$", gitmodules.stdout, re.MULTILINE)
+    if gitmodules.returncode == 0 and submodule_paths:
+        try:
+            subprocess.run(["git", "sparse-checkout", "add", *submodule_paths], cwd=repo_dir,
+                           check=True, capture_output=True, text=True, timeout=60)
+            subprocess.run(["git", "submodule", "update", "--init", "--recursive", "--depth", "1", "--",
+                            *submodule_paths], cwd=repo_dir, check=True, capture_output=True, text=True, timeout=300)
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+            log.warning("Submodules of %s not fetched (%s); sheets inside them will be missing", org_repo, e)
+
     return repo_dir
 
 
@@ -2508,6 +2544,9 @@ def board_to_dict(board: BoardData) -> dict:
             if c.value and _JUNK_VALUE_PATTERNS.match(c.value):
                 continue
             if c.footprint in _JUNK_FOOTPRINTS:
+                continue
+            # A board-outline symbol (SparkFun's "ThingPlus", "Thing Plus Board Outline") is no part
+            if re.search(r"\bboard outline\b", c.attributes.get("description", ""), re.IGNORECASE):
                 continue
             comp: dict = {"ref": c.ref, "value": c.value, "footprint": c.footprint}
             if c.attributes:

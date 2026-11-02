@@ -568,7 +568,8 @@ ERROR_REPLIES = {
     "No EasyEDA symbol available for {}": "not_found",
     "No EasyEDA symbol UUID for {}": "not_found",
 }
-NOT_TOOL_REPLIES = {"Rate limit exceeded", "Request body too large"}  # HTTP middleware answers
+NOT_TOOL_REPLIES = {"Rate limit exceeded", "Request body too large",  # HTTP middleware answers
+                    "Server is starting; try again in a moment", "No datasheet PDF found for {}"}  # /mcp/datasheet
 
 # Exception messages the tools pass on as {"error": str(e)}
 EXCEPTION_MESSAGES = {

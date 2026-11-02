@@ -1,5 +1,6 @@
 """Boards database search — FTS5 + parametric query builder."""
 
+import json
 import sqlite3
 from typing import Any
 
@@ -165,6 +166,7 @@ def search_boards(
     org: str | None = None,
     layers: int | None = None,
     limit: int = 10,
+    explain_empty: bool = True,
 ) -> dict[str, Any]:
     """Search boards with FTS5 + parametric filters.
 
@@ -176,9 +178,10 @@ def search_boards(
         org: Organization filter (matches org slug or org_display, case-insensitive)
         layers: Layer count filter
         limit: Max results
+        explain_empty: Add a hint to an empty reply naming what found nothing
 
     Returns:
-        {"total": N, "results": [...]}
+        {"total": N, "results": [...]}, plus "hint" when nothing matched
     """
     if tag is not None:
         valid_tags = sorted(row[0] for row in conn.execute("SELECT DISTINCT tag FROM board_tags"))
@@ -313,7 +316,11 @@ def search_boards(
         total = conn.execute(count_sql, params).fetchone()[0]
 
     if not rows:
-        return {"total": total, "results": []}
+        result: dict[str, Any] = {"total": total, "results": []}
+        hint = _empty_hint(conn, query if fts_query else None, component, tag, org, layers) if explain_empty else None
+        if hint:
+            result["hint"] = hint
+        return result
 
     # Batch-fetch tags and key_ics for all result board_ids (avoids N+1)
     board_ids = [row[0] for row in rows]
@@ -396,3 +403,55 @@ def search_boards(
         results.append(entry)
 
     return {"total": total, "results": results}
+
+
+def _empty_hint(conn: sqlite3.Connection, query: str | None, component: str | None,
+                tag: Any, org: str | None, layers: int | None) -> str | None:
+    """Why an empty search found nothing: which query words match no board, and what would match.
+
+    Every query word must match, so one word no board mentions empties the search
+    ("ESP32-S3 battery solar"). Counts keep the other filters; nothing is relaxed in the reply.
+    """
+    others = {"component": component, "tag": tag, "org": org, "layers": layers}
+
+    def count(**changed: Any) -> int:
+        return search_boards(conn, **{"query": query, **others, **changed}, limit=1,
+                             explain_empty=False).get("total", 0)
+
+    def call(**changed: Any) -> str:
+        args = {"query": query, **others, **changed}
+        return "board_search(" + ", ".join(f"{k}={json.dumps(v)}" for k, v in args.items() if v) + ")"
+
+    filtered = " with the other filters" if (tag or org or layers or (component and query)) else ""
+    if query:
+        words = [w for w in query.replace('"', "").split()
+                 if len(w) >= 2 and w.lower() not in _FTS_STOP_WORDS and _sanitize_fts_query(w)]
+        if len(words) >= 2:
+            counts = {w: count(query=w) for w in words}
+            kept = [w for w in words if counts[w]]
+            missing = [w for w in words if not counts[w]]
+            if kept and missing:
+                fewer = " ".join(kept)
+                return (f"{_quoted(missing)} {'matches' if len(missing) == 1 else 'match'} no board{filtered}; "
+                        f"{call(query=fewer)} finds {count(query=fewer)}.")
+            if kept:
+                # Every word matches alone but not together: what leaving each one out finds
+                options = sorted(((count(query=q), q) for q in
+                                  (" ".join(x for x in words if x != w) for w in words)), reverse=True)
+                each = ", ".join(f'"{w}" {n}' for w, n in counts.items())
+                found = "; ".join(f"{call(query=q)} finds {n}" for n, q in options[:3] if n)
+                tail = f" Leaving one out: {found}." if found else " Search fewer words, or browse with tag=."
+                return f"Each word matches some boards{filtered} but none matches all ({each}).{tail}"
+        ic = "" if component else "For an IC use component=; "
+        return (f"No board mentions {_quoted(words or [query.strip()])}{filtered}. {ic}"
+                "to browse use tag= (an unknown tag lists the valid ones).").replace(". to", ". To")
+    if component and not (tag or org or layers):
+        mentioned = count(component=None, query=component)
+        if mentioned:
+            return (f'No parsed BOM lists "{component}", but {mentioned} board(s) mention it in their text: '
+                    f"{call(component=None, query=component)}.")
+    return None
+
+
+def _quoted(words: list[str]) -> str:
+    return ", ".join(f'"{w}"' for w in words)

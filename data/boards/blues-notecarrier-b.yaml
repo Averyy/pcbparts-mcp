@@ -2,7 +2,7 @@ name: Blues Notecarrier-B
 slug: blues-notecarrier-b
 source: blues/note-hardware
 format: kicad7
-description: MCP73831 LiPo charging (simpler alt to BQ24210), MAX17225 energy harvesting
+description: "MCP73831 LiPo charging, MAX17225 energy harvesting"
 tags: [battery-charging, energy-harvesting]
 key_ics: [MCP73831, MAX17225, TPS62748]
 outline:

@@ -2,7 +2,7 @@ name: Irrigation Controller
 slug: irrigation-controller
 source: LorandBiro/irrigation-controller
 format: kicad8
-description: Z-Wave 4-zone solenoid valve irrigation controller, RAC05 AC-DC module
+description: "4-zone solenoid valve irrigation controller, STDN-3A24-ADJ 5V buck module"
 outline:
   width_mm: 56.0
   height_mm: 65.0

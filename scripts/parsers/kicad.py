@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import re
 from pathlib import Path
 
@@ -579,6 +580,25 @@ def _extract_positions(root: list, part_names: set[str]) -> list[Position]:
     return positions
 
 
+def _legacy_arc_extent(start: list | None, end: list | None, sweep: float) -> tuple[list[float], list[float]]:
+    """Points bounding a KiCad 5 / early-6 arc, written (start centre) (end first point) (angle sweep).
+
+    Read as points on the arc, the centre made a round 45 mm board 45 x 1 mm (thingler smart plug).
+    The arc's ends, plus every quadrant point (0/90/180/270 degrees) it sweeps through, bound it.
+    """
+    if not (start and end and len(start) >= 3 and len(end) >= 3):
+        return [], []
+    cx, cy = float(start[1]), float(start[2])
+    ex, ey = float(end[1]), float(end[2])
+    radius = math.hypot(ex - cx, ey - cy)
+    first = math.degrees(math.atan2(ey - cy, ex - cx))
+    low, high = sorted((first, first + sweep))
+    angles = [first, first + sweep]
+    angles += [k * 90.0 for k in range(math.ceil(low / 90), math.floor(high / 90) + 1)]
+    return ([cx + radius * math.cos(math.radians(a)) for a in angles],
+            [cy + radius * math.sin(math.radians(a)) for a in angles])
+
+
 def _extract_outline(root: list) -> BoardOutline | None:
     """Extract board dimensions from Edge.Cuts layer graphics."""
     xs: list[float] = []
@@ -611,7 +631,13 @@ def _extract_outline(root: list) -> BoardOutline | None:
                     ys.append(float(end[2]))
 
             elif tag == "gr_arc":
-                # Arcs have start, mid, end points
+                angle = _find(elem, "angle")
+                if angle and len(angle) >= 2:
+                    arc_xs, arc_ys = _legacy_arc_extent(_find(elem, "start"), _find(elem, "end"), float(angle[1]))
+                    xs.extend(arc_xs)
+                    ys.extend(arc_ys)
+                    continue
+                # KiCad 6+ arcs have start, mid, end points
                 for pt_tag in ("start", "mid", "end"):
                     pt = _find(elem, pt_tag)
                     if pt and len(pt) >= 3:

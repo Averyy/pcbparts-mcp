@@ -37,6 +37,7 @@ from .query_builder import (
     build_mounting_type_clause,
     build_spec_filter_clauses,
     build_sort_clause,
+    unlisted_clause,
 )
 from .result import row_to_dict
 
@@ -46,6 +47,18 @@ logger = logging.getLogger(__name__)
 # Post-filtered searches check at most this many SQL matches (MOSFETs with a Vgs(th): ~29k, ~0.2s)
 POST_FILTER_SCAN_ROWS = 50_000
 
+# A "±12V" output is a dual rail: two outputs with 24V across them, and a different pinout
+_DUAL_RAIL_PREFIXES = ("±", "+/-", "+-")
+_OUTPUT_VOLTAGE_NAMES = frozenset({"Output Voltage", "Vout"})
+
+
+def _dual_rail(spec_filter: SpecFilter, attr_names_set: set[str]) -> bool | None:
+    """For an output voltage filter, whether it asks for a dual rail ("±12V"); None for other specs
+    (op amps list a dual supply as "±2.5V~±18V", which a single-supply filter still matches)."""
+    if not attr_names_set & _OUTPUT_VOLTAGE_NAMES:
+        return None
+    return str(spec_filter.value).strip().startswith(_DUAL_RAIL_PREFIXES)
+
 
 def _passes_post_filters(
     part_specs: dict[str, str],
@@ -54,6 +67,20 @@ def _passes_post_filters(
     subcategory_id: int | None = None,
 ) -> bool:
     """Whether a part's specs meet every filter SQL couldn't apply."""
+    # Several range filters on one attribute must hold for the same listed item: a dual supervisor's
+    # "2.93V、4.55V" has no threshold in a 3.3-3.5V window, though 4.55 >= 3.3 and 2.93 <= 3.5
+    windows: dict[frozenset[str], list[tuple[str, Any, float, bool | None]]] = {}
+    for spec_filter, attr_names_set, parser, target_value in post_filter_metadata:
+        if (attr_names_set & RANGE_SPECS and parser and target_value is not None and not isinstance(spec_filter, FuseFilter)
+                and spec_filter.operator in (">=", "<=", ">", "<", "=")):
+            windows.setdefault(frozenset(attr_names_set), []).append(
+                (spec_filter.operator, parser, target_value, _dual_rail(spec_filter, attr_names_set)))
+    for names, checks in windows.items():
+        if len(checks) > 1 and not any(
+                all(_range_passes(item, parser, op, target, dual) for op, parser, target, dual in checks)
+                for name, value in part_specs.items() if name in names for item in value.split("、")):
+            return False
+
     for spec_filter, attr_names_set, parser, target_value in post_filter_metadata:
         if (isinstance(spec_filter, FuseFilter) and spec_filter.subcategory_id is not None
                 and spec_filter.subcategory_id != subcategory_id):
@@ -63,7 +90,8 @@ def _passes_post_filters(
 
         if attr_names_set & RANGE_SPECS:
             values = [v for name, v in part_specs.items() if name in attr_names_set]
-            if not any(_range_passes(v, parser, spec_filter.operator, target_value) for v in values):
+            dual = _dual_rail(spec_filter, attr_names_set)
+            if not any(_range_passes(v, parser, spec_filter.operator, target_value, dual) for v in values):
                 return False
             continue
 
@@ -119,12 +147,15 @@ def _signed(parser: Any, text: str) -> float | None:
     return value
 
 
-def _range_passes(value: str, parser: Any, operator: str, target: float) -> bool:
+def _range_passes(value: str, parser: Any, operator: str, target: float, dual: bool | None = None) -> bool:
     """A range-valued spec ("2.7V~5.5V", "1.71V~1.89V、2.25V~5.5V", "3.3V") against a filter:
     = : the target is inside one range; >= / > : one range reaches it; <= / < : one goes down to it.
-    1% slack, as other "=" filters have."""
+    1% slack, as other "=" filters have. With `dual` set (output voltages), only items of that kind
+    count: a ±12V module doesn't meet "12V", nor a single 12V output "±12V"."""
     slack = abs(target) * 0.01 if target else 1e-9
     for item in value.split("、"):
+        if dual is not None and item.strip().startswith(_DUAL_RAIL_PREFIXES) != dual:
+            continue
         low_text, sep, high_text = item.partition("~")
         low = _signed(parser, low_text)
         high = _signed(parser, high_text) if sep else low
@@ -193,6 +224,7 @@ class SearchEngine:
         }
         self._connector_columns = CONNECTOR_COLUMN_NAMES <= columns
         self._mosfet_gate_column = "rds_gate_min_v" in columns
+        self._temperature_columns = {"temp_min_c", "temp_max_c"} <= columns
         self._subcategories = subcategories
         self._categories = categories
         self._subcategory_name_to_id = subcategory_name_to_id
@@ -306,6 +338,7 @@ class SearchEngine:
         preferred_specs: list[SpecFilter] | None = None,
         gate_drive_v: float | None = None,
         lcsc_codes: bool = False,
+        count_unlisted: bool = False,
     ) -> dict[str, Any]:
         """Execute a search query with pre-resolved parameters.
 
@@ -399,12 +432,16 @@ class SearchEngine:
                 params.extend(mount_params)
                 count_params.extend(mount_params)
 
+        # Everything but the spec filters, for counting parts a filter leaves out unlisted
+        base_count_parts, base_count_params = list(count_parts), list(count_params)
+
         # Spec filters
         post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]] = []
         ignored_filters: list[dict[str, str]] = []
         if spec_filters:
             spec_sqls, spec_params_list, post_filter_metadata, ignored_filters = build_spec_filter_clauses(
                 spec_filters, connector_columns=self._connector_columns,
+                temperature_columns=self._temperature_columns,
             )
             for spec_sql in spec_sqls:
                 sql_parts.append(spec_sql)
@@ -418,6 +455,13 @@ class SearchEngine:
         if part_number:
             ranks.append("mpn_match_rank(mpn, ?)")
             params.append(part_number)
+        words = [w for w in dict.fromkeys((query or "").lower().split()) if len(w) > 1] if not match_all_terms and sort_by != "price" else []
+        if len(words) > 1:
+            # Any-word searches: parts with more of the words first, then the usual order ("mPCIe card
+            # latch standoff nut" led with an op-amp that matched one word on stock)
+            text = "lower(coalesce(mpn, '') || ' ' || coalesce(manufacturer, '') || ' ' || coalesce(description, ''))"
+            ranks.append("-(" + " + ".join(f"(instr({text}, ?) > 0)" for _ in words) + ")")
+            params.extend(words)
         if gate_drive_v is not None:
             gate = "rds_gate_min_v" if self._mosfet_gate_column else "rds_gate_min(components.attributes)"
             ranks.append(f"CASE WHEN {gate} <= ? THEN 0 ELSE 1 END")
@@ -517,7 +561,45 @@ class SearchEngine:
             result["counts_complete"] = False
         if mpn_counts is not None:
             result["mpn_matches"] = mpn_counts
+        if count_unlisted and spec_filters and not part_number:
+            unlisted = self._unlisted_counts(base_count_parts, base_count_params, spec_filters)
+            if unlisted:
+                result["unlisted"] = unlisted
         return result
+
+    def _unlisted_counts(
+        self, base_parts: list[str], base_params: list[Any], spec_filters: list[SpecFilter],
+    ) -> list[dict[str, Any]]:
+        """Per range filter, the parts that meet every other constraint but don't list its attribute,
+        so the filter leaves them out unseen: a -40°C filter dropped AO3401A, one of the most-used
+        Basic P-FETs, because LCSC lists its operating temperature as "-"."""
+        found = []
+        for spec_filter in spec_filters:
+            clause = unlisted_clause(spec_filter, self._temperature_columns)
+            if clause is None:
+                continue
+            others = [f for f in spec_filters if f is not spec_filter]
+            sqls, other_params, metadata, _ = build_spec_filter_clauses(
+                others, connector_columns=self._connector_columns, temperature_columns=self._temperature_columns,
+            ) if others else ([], [], [], [])
+            parts, params = [*base_parts, *sqls, clause[0]], [*base_params, *other_params, *clause[1]]
+            try:
+                if metadata:
+                    _, counts, _ = self._post_filtered_page(
+                        ["SELECT * FROM components WHERE 1=1", *parts[1:]], params, metadata, 0, 0)
+                else:
+                    sql = " ".join(parts).replace("SELECT COUNT(*)", "SELECT library_type, COUNT(*)", 1)
+                    names = {"b": "basic", "p": "preferred", "e": "extended"}
+                    counts = {names.get(lib, lib): n for lib, n in
+                              self._conn.execute(sql + " GROUP BY library_type", params).fetchall()}
+            except sqlite3.OperationalError:
+                logger.warning("Unlisted count failed", exc_info=True)
+                continue
+            total = sum(counts.values())
+            if total:
+                found.append({"filter": f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}",
+                              "parts": total, "basic_preferred": counts.get("basic", 0) + counts.get("preferred", 0)})
+        return found
 
     def _post_filtered_page(
         self,
@@ -597,6 +679,7 @@ class SearchEngine:
         preferred_specs: list[SpecFilter] | None = None,
         gate_drive_v: float | None = None,
         lcsc_codes: bool = False,
+        count_unlisted: bool = False,
     ) -> dict[str, Any]:
         """Search components with parametric filtering.
 
@@ -747,6 +830,7 @@ class SearchEngine:
             preferred_specs=preferred_specs,
             gate_drive_v=gate_drive_v,
             lcsc_codes=lcsc_codes,
+            count_unlisted=count_unlisted,
         )
 
         results = search_result["results"]
@@ -782,6 +866,7 @@ class SearchEngine:
                     preferred_specs=preferred_specs,
                     gate_drive_v=gate_drive_v,
                     lcsc_codes=lcsc_codes,
+                    count_unlisted=count_unlisted,
                 )
                 if retry_result["total"] > 0:
                     # Found results with normalized query
@@ -828,6 +913,8 @@ class SearchEngine:
             response["mpn_matches"] = search_result["mpn_matches"]
         if search_result.get("ignored_filters"):
             response["ignored_filters"] = search_result["ignored_filters"]
+        if search_result.get("unlisted"):
+            response["unlisted"] = search_result["unlisted"]
         # A failed SQL execution returns only the error and empty counts.
         if search_result.get("error"):
             response["error"] = search_result["error"]

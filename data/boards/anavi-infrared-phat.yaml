@@ -2,7 +2,7 @@ name: ANAVI Infrared pHAT
 slug: anavi-infrared-phat
 source: AnaviTechnology/anavi-infrared
 format: kicad_legacy
-description: 'IR transceiver: TSOP38238 demodulator receiver + IR LED driver circuit, RPi HAT'
+description: "IR transceiver: TSOP34838 demodulator receiver + IR LED driver circuit, RPi HAT"
 tags: [led-driver]
 key_ics: [CAT24C32WI-GT3]
 outline:

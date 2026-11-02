@@ -3,7 +3,7 @@ slug: esp32-uwb-dw3000
 source: Makerfabs/Makerfabs-ESP32-UWB-DW3000
 format: eagle
 description: 'Ultra-wideband indoor positioning: ESP32 + Qorvo DW3000 UWB transceiver, centimeter-level ranging'
-key_ics: [ESP32]
+key_ics: [ESP32-WROVER]
 outline:
   width_mm: 72.0
   height_mm: 32.6
@@ -170,7 +170,7 @@ components:
   value: BUTTON
   footprint: 157SW
 - ref: U1
-  value: ESP32
+  value: ESP32-WROVER
   footprint: ESP32-WROVER
 - ref: U2
   value: ME6217C33M5G

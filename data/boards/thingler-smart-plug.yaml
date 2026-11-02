@@ -7,7 +7,7 @@ tags: [isolation]
 key_ics: [ESP32-PICO, BTA316B]
 outline:
   width_mm: 45.0
-  height_mm: 1.0
+  height_mm: 45.01
 design_rules:
   layers: 2
   min_trace: 0.2mm
