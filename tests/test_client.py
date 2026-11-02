@@ -303,8 +303,7 @@ class TestClient:
         assert result["datasheet"] == "https://example.com/datasheet.pdf"
         assert len(result["prices"]) == 2
         assert result["prices"][0]["qty"] == "1+"
-        assert len(result["attributes"]) == 1
-        assert result["attributes"][0]["name"] == "Voltage"
+        assert "attributes" not in result  # the same pairs as specs (0.8.0)
 
     @staticmethod
     def _signed_pdf(issued: str = "20261101T151700Z", seconds: int = 1800) -> str:

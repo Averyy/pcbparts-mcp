@@ -142,9 +142,9 @@ def extract_connector_series(query: str) -> tuple[ConnectorSpec | None, str]:
             series = series_match.group(1).upper()
             pitch = JST_SERIES_PITCH.get(series.lower())
 
-            # Remove both "jst" and the series code
+            # Remove the series code (offsets are the query's), then "jst"
+            remaining = query[:series_match.start()] + " " + query[series_match.end():]
             remaining = re.sub(r'\bjst\b', '', remaining, flags=re.IGNORECASE)
-            remaining = remaining[:series_match.start()] + remaining[series_match.end():]
             remaining = re.sub(r'\s+', ' ', remaining).strip()
 
             return ConnectorSpec(series=series, pitch=pitch, fts_term=series), remaining

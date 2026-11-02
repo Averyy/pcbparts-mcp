@@ -2,7 +2,7 @@ name: bGeigieScint
 slug: bgeigiescint
 source: Safecast/bGeigieScint
 format: kicad9
-description: 'SiPM radiation detector: AFBR-S4N44P014M SiPM + CsI(Tl) scintillator, OPA357 pulse shaper'
+description: "SiPM radiation detector frontend for external AFBR-S4N44P014M + CsI(Tl) scintillator, OPA357 pulse shaper"
 tags: [audio, power-supply, sbc, signal-conditioning]
 key_ics: [ESP32-C3_SUPERMINI_TH, XC6209F332MR-G, LT3014BHVES5#TRMPBF, TLV7031DBVR, TLR341G]
 outline:

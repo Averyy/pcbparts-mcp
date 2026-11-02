@@ -2,8 +2,8 @@ name: Absmach S0
 slug: absmach-s0
 source: absmach/s0
 format: kicad9
-description: Wireless M-Bus (RC-S2LP-868), multi-radio gateway
-tags: [sub-ghz]
+description: "Wireless M-Bus (RC-S2LP-868), SIM7080G LTE-M/NB-IoT modem"
+tags: [cellular, sub-ghz, wifi, zigbee-thread]
 key_ics: [ESP32-C6-MINI-1/U, SIM7080G, TXB0108RGY, RC-S2LP-868, AMS1117-3.3]
 outline:
   width_mm: 54.63

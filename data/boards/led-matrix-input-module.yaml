@@ -2,7 +2,7 @@ name: LED Matrix Input Module
 slug: led-matrix-input-module
 source: FrameworkComputer/InputModules
 format: kicad6
-description: "Framework Laptop 16 LED matrix module, 297-LED array driven by IS31FL3741A (39\xD79 PWM"
+description: "Framework Laptop 16 LED matrix module, 297-LED array driven by IS31FL3741A (39×9 PWM, I2C), RP2040 controller"
 tags: [display, led-driver]
 key_ics: [RP2040]
 design_rules:

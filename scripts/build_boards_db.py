@@ -109,11 +109,16 @@ def _extract_all_ics(components: list[dict]) -> list[str]:
     return ics
 
 
-def _parse_boards_md(boards_md_path: Path) -> dict[str, str]:
-    """Parse BOARDS.md markdown table to extract key_coverage by repo source.
+def _board_slug(name: str) -> str:
+    """The slug parse_boards.py gives a BOARDS.md row (and writes into the board's YAML)."""
+    return re.sub(r"[^a-z0-9]+", "-", name.lower().strip()).strip("-")
 
-    Returns dict mapping source (e.g. "adafruit/Adafruit-Feather-ESP32-S3-PCB")
-    to key_coverage text.
+
+def _parse_boards_md(boards_md_path: Path) -> dict[str, str]:
+    """Parse BOARDS.md markdown table to extract key_coverage by board slug.
+
+    Keyed by board, not repo: 16 repos hold several boards (the iCEBreaker and iCEBreaker-Bitsy),
+    which all got the last row's text, and ZIP downloads (RPi CM4/CM5 IO) matched no source.
     """
     if not boards_md_path.exists():
         logger.warning(f"BOARDS.md not found at {boards_md_path}")
@@ -125,15 +130,10 @@ def _parse_boards_md(boards_md_path: Path) -> dict[str, str]:
         if not line.startswith("|") or line.startswith("| Board") or line.startswith("|---"):
             continue
         cols = [c.strip() for c in line.split("|")]
-        # cols[0] is empty (before first |), cols = ['', Board, Org, Repo, Format, SchematicPath, KeyCoverage, '']
-        if len(cols) < 7:
+        # cols = ['', Board, Org, Repo, Format, SchematicPath, KeyCoverage, '']
+        if len(cols) < 7 or not cols[1]:
             continue
-        repo_raw = cols[3].strip().strip("`")
-        key_cov = cols[6].strip()
-        # Strip size annotations like "(407 KB)" from schematic path leaking into coverage
-        # Actually key_coverage is cols[6], schematic path is cols[5]
-        if repo_raw:
-            coverage[repo_raw] = key_cov
+        coverage[_board_slug(cols[1])] = cols[6].strip()
     return coverage
 
 
@@ -368,6 +368,35 @@ def build(data_dir: Path | str, output: Path | str, verbose: bool = True) -> Non
     tmp_output.replace(output)  # rename() raises FileExistsError on Windows when output exists
 
 
+
+_LCSC_CODE = re.compile(r"\bC\d{3,}\b", re.IGNORECASE)
+
+
+def part_numbers(comp: dict) -> tuple[str | None, ...]:
+    """The design files' own part numbers: mpn, manufacturer, LCSC, Mouser and DigiKey.
+
+    6,100 lines list an MPN and 2,291 an LCSC code, which board_get never returned, so agents
+    guessed parts from values like "MBR540 / SOD-123". A part number has a digit: some files put
+    the maker in the MPN field ("Yageo", "Murata Electronics North America"). An LCSC field can
+    be a JLCPCB URL ending in the code.
+    """
+    def text(key: str) -> str | None:
+        value = comp.get(key)
+        value = str(value).strip() if value is not None else ""
+        return value if value and value not in ("~", "-", "DNP") else None
+
+    def number(key: str) -> str | None:
+        value = text(key)
+        return value if value and any(ch.isdigit() for ch in value) and len(value) <= 80 else None
+
+    mpn, lcsc = number("mpn"), _LCSC_CODE.search(text("lcsc") or "")
+    lcsc = lcsc.group().upper() if lcsc else None
+    if mpn and _LCSC_CODE.fullmatch(mpn):
+        # The 0104 USB hub lists LCSC codes as MPNs (SL2.1A: "C192893")
+        lcsc, mpn = lcsc or mpn.upper(), None
+    return mpn, text("manufacturer"), lcsc, number("mouser"), number("digikey")
+
+
 def _build_tables(
     conn: sqlite3.Connection,
     boards_data: list[dict],
@@ -433,7 +462,12 @@ def _build_tables(
             dielectric TEXT,
             decouples TEXT,
             pullup TEXT,
-            pulldown TEXT
+            pulldown TEXT,
+            mpn TEXT,
+            manufacturer TEXT,
+            lcsc TEXT,
+            mouser TEXT,
+            digikey TEXT
         );
     """)
 
@@ -459,7 +493,7 @@ def _build_tables(
 
         org, org_display = _extract_org(source)
         all_ics = _extract_all_ics(components)
-        key_coverage = coverage_map.get(source, "")
+        key_coverage = coverage_map.get(slug, "")
         neighborhoods = _extract_neighborhoods(board)
 
         key_ics_text = " ".join(key_ics)
@@ -511,14 +545,16 @@ def _build_tables(
                 comp.get("decouples"),
                 comp.get("pullup"),
                 comp.get("pulldown"),
+                *part_numbers(comp),
             ))
 
     conn.executemany("INSERT INTO board_tags (board_id, tag) VALUES (?, ?)", tag_rows)
     conn.executemany("INSERT INTO board_key_ics (board_id, ic) VALUES (?, ?)", key_ic_rows)
     conn.executemany(
         """INSERT INTO board_components (board_id, ref, value, footprint, description,
-           voltage, tolerance, dielectric, decouples, pullup, pulldown)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+           voltage, tolerance, dielectric, decouples, pullup, pulldown,
+           mpn, manufacturer, lcsc, mouser, digikey)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         comp_rows,
     )
 

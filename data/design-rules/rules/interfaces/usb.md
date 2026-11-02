@@ -7,15 +7,15 @@
 - **USB-C sink: 5.1 kohm 1% Rd on EACH CC pin to GND.** Never short CC1 to CC2 -- e-marked cables put 1 kohm Ra on the second CC, paralleling to 840 ohm total, which the source reads as invalid and provides 0V on VBUS.
 - **ESD TVS array closest to connector, before CMC.** NXP IP4220CZ6 (< 1 pF/line, SOT-457) or Semtech SRV05-4 (~0.85 pF/line, SOT-23-6). Max 1.5 pF external capacitance per D+/D- line total.
 - **D+/D- length match within 1.27 mm (50 mil), 0.5 mm (20 mil) preferred.** Optimal trace length 50 mm, max 75 mm (USB 2.0 HS). Total trace length < 100 mm to preserve eye diagram.
-- **USB-C 2.0-only connector: Korean Hroparts TYPE-C-31-M-12 (LCSC C165948).** 12-pin, single-row SMD, easily hand-solderable. Power-only alternative: TYPE-C-31-M-17 (C283540).
+- **USB-C 2.0-only connector: Korean Hroparts TYPE-C-31-M-12 (LCSC C165948).** 16 contacts on 12 SMD pads in one row (A1/B12, A4/B9, B4/A9 and B1/A12 share pads), easily hand-solderable. Power-only alternative: TYPE-C-31-M-17 (C283540, 6 contacts).
 - **VBUS ferrite bead: 47-1000 ohm at 100 MHz.** 10 nF cap from VBUS to chassis GND after ferrite, before bulk decoupling.
 
 ## Design Rules
 
 ### USB-C CC Configuration
 
-- **Sink: 5.1 kohm 1% on each CC pin to GND.** At 5% tolerance, worst-case Rd = 4.845 kohm approaches the Ra detection boundary -- source may misdetect as e-marker. 1% eliminates this.
-- **Source: Rp pull-up on each CC pin.** 56 kohm = default USB (500/900 mA). 22 kohm = 1.5 A. 10 kohm = 3 A. All 1% tolerance -- current advertisement depends on divider accuracy.
+- **Sink: 5.1 kohm on each CC pin to GND; the spec allows ±10% (±20% if the sink ignores the advertised current).** The sink reads Default / 1.5 A / 3.0 A from the CC voltage across Rd: 0.277-0.612 V, 0.746-1.164 V, 1.369-2.042 V (Type-C R2.4 Table 4-36). A 1% Rd only widens those margins. Ra (0.8-1.2 kohm) is nowhere near: a -5% Rd against Default Rp gives 0.40 V, twice the source's 0.20 V Ra/Rd threshold.
+- **Source: Rp pull-up to 4.75-5.5 V on each CC pin.** 56 kohm = default USB (500/900 mA), 22 kohm = 1.5 A, 10 kohm = 3 A. Spec tolerance: 56 kohm ±20%, but ±5% in legacy A-to-C cables, adapters and captive host cables (allows for VBUS/GND drop); 22 and 10 kohm ±5% (Type-C R2.0 Table 4-24).
 - **USB-C plug (cable-end, not receptacle): only ONE CC pull-down.** Populating both 5.1 kohm pull-downs on a plug makes a debug mode adapter -- Framework laptops expose EC UART on SBU pins when they see dual pull-downs.
 
 > WARNING: The Raspberry Pi 4 shipped with CC1/CC2 shorted through a single Rd. E-marked cables (every MacBook cable since 2016) put Ra (800-1200 ohm) on the unused CC, paralleling with 5.1 kohm to ~840 ohm. Source sees this as invalid attachment and provides 0V. Always use two separate resistors.
@@ -86,7 +86,6 @@
 ## Common Mistakes
 
 - **ESD TVS placed after CMC.** The CMC sees the full ESD transient, saturates, and passes the pulse to the PHY. TI AM335x and TUSB121x guides both specify: ESD device closest to connector, CMC after.
-- **5% CC resistors near Ra/Rd detection boundary.** 5.1 kohm at -5% = 4.845 kohm. The source's Rp/Rd voltage divider produces a voltage near the Ra threshold, causing intermittent misdetection as e-marker cable electronics rather than a valid sink. Use 1%.
 - **VBUS capacitance exceeds 10 uF equivalent without current limiting.** Host overcurrent protection trips on inrush, causing repeated connect/disconnect cycles. The 10 uF limit is charge-equivalent (50 uC at 5V) -- larger caps are fine behind a soft-start switch like AP2162.
 - **Missing D+ pull-up on full-speed device.** FS requires 1.5 kohm pull-up on D+ to 3.3V for host detection. Most MCU USB peripherals handle this internally -- but EFM32 low-speed mode has an internal pull-up of ~2.2 kohm (out of spec), requiring an external 4.7 kohm in parallel to D- via USB_DMPU pin.
 - **Non-standard charger pulls CC high when Rd disabled.** Legacy A-to-C cables have 56 kohm Rp inside the cable. If the charger pushes VBUS above 5V (Quick Charge, etc.) and Rd is not active, CC gets pulled to VBUS voltage. Without a zener/TVS on CC, this can damage the CC controller. V_CC = V_BUS * 0.0835 with Rd enabled (safe at 20V = 1.67V), but with Rd disabled, CC = VBUS.

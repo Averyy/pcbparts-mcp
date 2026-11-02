@@ -26,11 +26,12 @@ _CAP = re.compile(r'\b(\d+(?:\.\d+)?)\s*(u[fF]|n[fF]|p[fF]|F)\b')
 _IND = re.compile(r'\b(\d+(?:\.\d+)?)\s*(u[hH]|n[hH]|m[hH]|[u]H|nH|mH)\b')
 
 # Voltage: 25V, 50V, 3.3V, 5kV (but not in model numbers)
-_VOLT = re.compile(r'\b(\d+(?:\.\d+)?)\s*([kK])?[vV]\b')
+# A sign keeps a dual rail apart from a single voltage: a ±12V module isn't a 12V one
+_VOLT = re.compile(r'(±|\+/-)?\b(\d+(?:\.\d+)?)\s*([kK])?[vV]\b')
 
 # Current: 5A, 10A, 100mA, 500mA, 10uA
 # Require space or start before number to avoid matching model suffixes like "6.0A" in "SMBJ6.0A"
-_CURR = re.compile(r'(?:^|(?<=\s))(\d+(?:\.\d+)?)\s*([u]?[mM]?)[aA]\b')
+_CURR = re.compile(r'(?:^|(?<=[\s/]))(\d+(?:\.\d+)?)\s*(n|[u]?[mM]?)[aA]\b')
 
 # Frequency: 8MHz, 32.768kHz, 2.4GHz
 _FREQ = re.compile(r'\b(\d+(?:\.\d+)?)\s*([kKmMgG])?[hH][zZ]\b')
@@ -87,6 +88,10 @@ def normalize_value_notation(query: str) -> str:
     query = query.replace("µ", "u").replace("μ", "u").replace("Ω", "ohm")
     unit = "uH" if re.search(r"\b(inductor|inductors|coil|choke)\b", query, re.IGNORECASE) else "uF"
     query = re.sub(r"(?<![\w-])(\d+)u(\d+)(?![\w-])", rf"\1.\2{unit}", query)
+    if unit == "uH":
+        # BOM shorthand in an inductor query: "10u" 10µH, "1m" 1mH, "470n" 470nH, "2R2" 2.2µH
+        query = re.sub(r"(?<![\w.-])(\d+(?:\.\d+)?)([unm])(?![\w-])", r"\1\2H", query)
+        query = re.sub(r"(?<![\w.-])(\d+)R(\d+)(?![\w-])", r"\1.\2uH", query)
     return re.sub(r"(?<![\w-])(\d+)[vV](\d+)(?![\w-])", r"\1.\2V", query)
 
 
@@ -215,13 +220,14 @@ def extract_values(query: str, *, connector_context: bool = False) -> tuple[list
         # Skip if preceded by letter (likely model number)
         if match.start() > 0 and query[match.start()-1].isalpha():
             continue
-        value = float(match.group(1))
-        kilo = match.group(2)
+        sign = "±" if match.group(1) else ""
+        value = float(match.group(2))
+        kilo = match.group(3)
         if kilo:
             value *= 1000
-            norm = f"{match.group(1)}kV"
+            norm = f"{sign}{match.group(2)}kV"
         else:
-            norm = f"{match.group(1)}V"
+            norm = f"{sign}{match.group(2)}V"
         extractions.append((match.start(), match.end(), ExtractedValue(
             raw=match.group(0),
             value=value,
@@ -229,11 +235,19 @@ def extract_values(query: str, *, connector_context: bool = False) -> tuple[list
             normalized=norm
         )))
 
-    # Current
+    # Current. After a slash only as the query's first current: "20V/4.2A/52mohm" is the Id, but
+    # in "6V/0.75A/1.5A" or "1.5A/3A" the second is a fuse's trip current, not a second requirement.
+    currents_seen = 0
     for match in _CURR.finditer(query):
+        currents_seen += 1
+        if currents_seen > 1 and query[match.start() - 1:match.start()] == "/":
+            continue
         value = float(match.group(1))
         prefix = (match.group(2) or '').lower()
-        if prefix == 'u':
+        if prefix == 'n':
+            amps = value * 1e-9
+            norm = f"{match.group(1)}nA"
+        elif prefix == 'u':
             amps = value * 1e-6
             norm = f"{match.group(1)}uA"
         elif prefix == 'm':

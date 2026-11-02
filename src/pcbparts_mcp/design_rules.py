@@ -49,6 +49,46 @@ _ALIASES: dict[str, list[str]] = {
     "inrush": ["guides/power-architecture"],
     "aliasing": ["misc/adc-dac"],
     "sampling": ["misc/adc-dac"],
+    # Words the file names don't contain; 16% of lookups found nothing (lipo, type-c, pull-up ...)
+    "lipo": ["power/battery"],
+    "li-po": ["power/battery"],
+    "li-ion": ["power/battery"],
+    "liion": ["power/battery"],
+    "lithium": ["power/battery"],
+    "18650": ["power/battery"],
+    "charger": ["power/battery"],
+    "charging": ["power/battery"],
+    "fuel gauge": ["power/battery"],
+    "ntc": ["power/battery"],
+    "thermistor": ["power/battery"],
+    "lifepo4": ["power/battery-chemistry"],
+    "lfp": ["power/battery-chemistry"],
+    "type-c": ["interfaces/usb"],
+    "typec": ["interfaces/usb"],
+    "pull-up": ["interfaces/i2c"],
+    "pull-ups": ["interfaces/i2c"],
+    "pullup": ["interfaces/i2c"],
+    "pullups": ["interfaces/i2c"],
+    "pull up": ["interfaces/i2c"],
+    "stepper": ["misc/motor-control"],
+    "bldc": ["misc/motor-control"],
+    "rs485": ["interfaces/uart"],
+    "rs-485": ["interfaces/uart"],
+    "solar": ["power/power-path"],
+    "mppt": ["power/power-path"],
+    "layer": ["guides/pcb-layout"],
+    "layers": ["guides/pcb-layout"],
+    "2-layer": ["guides/pcb-layout"],
+    "4-layer": ["guides/pcb-layout"],
+    "6-layer": ["guides/pcb-layout"],
+    "4 layer": ["guides/pcb-layout"],
+    "strapping": ["mcus/esp32"],
+    "strapping pins": ["mcus/esp32"],
+    "jlcpcb": ["guides/dfm"],
+    "pcba": ["guides/dfm"],
+    "assembly": ["guides/dfm"],
+    "dfa": ["guides/dfm"],
+    "manufacturing": ["guides/dfm"],
 }
 
 _MAX_FULL_CONTENT = 3  # Return file list instead of content when more matches
@@ -83,7 +123,47 @@ def _match_word(word: str, key: str) -> bool:
     tokens = []
     for segment in key.split("/"):
         tokens.extend(segment.split("-"))
-    return word in tokens
+    # A part number finds its family's file: "stm32g0" → mcus/stm32, "esp32s3" → mcus/esp32
+    return word in tokens or any(
+        len(t) >= 4 and any(c.isdigit() for c in t) and word.startswith(t) for t in tokens)
+
+
+# A topic no file name or keyword covers is looked up in the text, scored by mentions (a heading
+# counts _HEADING_WEIGHT). A file counts only if a heading names the topic or the text mentions it
+# _MIN_MENTIONS times, and scores at least a third of the best file: "led" is mentioned in passing
+# (Ethernet link LEDs, optocouplers) and finds nothing, rather than those files.
+_HEADING_WEIGHT = 5
+_MIN_MENTIONS = 8
+
+
+def _topic_pattern(topic: str) -> re.Pattern | None:
+    """"rs485" also matches "RS-485" and "pull up" "pull-up": parts joined by optional space or hyphen."""
+    parts = [p for w in re.split(r"[\s\-]+", topic.lower()) for p in re.findall(r"[a-z]+|\d+(?:\.\d+)?|[^\sa-z\d]+", w)]
+    if not parts:
+        return None
+    return re.compile(r"(?<![a-z\d])" + r"[\s\-]*".join(map(re.escape, parts)) + r"s?(?![a-z\d])", re.IGNORECASE)
+
+
+def _mentioned_in(topic: str, idx: dict[str, Path]) -> list[str]:
+    """Rule files that discuss the topic most, best first (at most _MAX_FULL_CONTENT)."""
+    pattern = _topic_pattern(topic)
+    if pattern is None:
+        return []
+    scores: dict[str, int] = {}
+    for key, path in idx.items():
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        mentions = len(pattern.findall(text))
+        headings = sum(len(pattern.findall(line)) for line in text.splitlines() if line.startswith("#"))
+        if headings or mentions >= _MIN_MENTIONS:
+            scores[key] = mentions + headings * (_HEADING_WEIGHT - 1)
+    if not scores:
+        return []
+    floor = max(scores.values()) / 3
+    ranked = sorted((k for k, v in scores.items() if v >= floor), key=lambda k: (-scores[k], k))
+    return ranked[:_MAX_FULL_CONTENT]
 
 
 def get_design_rules(topic: str = "", rules_dir: Path | None = None) -> dict:
@@ -128,17 +208,21 @@ def get_design_rules(topic: str = "", rules_dir: Path | None = None) -> dict:
     # Keys returned by discovery are directly usable, including their category prefix.
     exact_key = next((key for key in idx if key.casefold() == topic.strip().casefold()), None)
 
-    # Resolve aliases first, then fall back to word matching
-    # Split on whitespace and hyphens so "op-amp" matches "op-amp-basics"
-    words = re.split(r'[\s-]+', topic.strip().lower())
-    words = [w for w in words if w]  # drop empty strings
-    alias_keys: set[str] = set()
+    # Resolve aliases first (the whole topic, then each word as written, so "type-c" and
+    # "4 layer" are found), then fall back to word matching. Remaining words are split on
+    # hyphens too, so "op-amp" matches "op-amp-basics"
+    alias_keys: set[str] = set(_ALIASES.get(" ".join(topic.lower().split()), []))
     unresolved_words: list[str] = []
-    for w in words:
-        if w in _ALIASES:
-            alias_keys.update(_ALIASES[w])
-        else:
-            unresolved_words.append(w)
+    if not alias_keys:
+        for word in topic.lower().split():
+            if word in _ALIASES:
+                alias_keys.update(_ALIASES[word])
+                continue
+            for w in (w for w in word.split("-") if w):
+                if w in _ALIASES:
+                    alias_keys.update(_ALIASES[w])
+                else:
+                    unresolved_words.append(w)
 
     # Collect matches: alias hits + word-boundary matches for remaining words
     matched_set: dict[str, Path] = {}
@@ -152,13 +236,23 @@ def get_design_rules(topic: str = "", rules_dir: Path | None = None) -> dict:
             matched_set[k] = p
 
     matches = list(matched_set.items())
+    note = None
+    if not matches:
+        # "strapping pins", "boot mode": no file is named for it, but one discusses it
+        mentioned = _mentioned_in(topic, idx)
+        matches = [(k, idx[k]) for k in mentioned]
+        if mentioned:
+            note = (f"No rule file is named for '{topic}'; these discuss it most. "
+                    "An empty topic lists every rule file.")
 
     if not matches:
         index_content = index_path.read_text(encoding="utf-8") if index_path.exists() else ""
         content = f"No rules found matching '{topic}'. Available rules:\n\n{index_content}"
         return {"content": content, "matched_files": [], "topic": topic}
 
-    matched_keys = [k for k, _ in sorted(matches)]
+    if note is None:
+        matches = sorted(matches)  # text matches stay best first
+    matched_keys = [k for k, _ in matches]
 
     if len(matches) > _MAX_FULL_CONTENT:
         content = (
@@ -170,7 +264,7 @@ def get_design_rules(topic: str = "", rules_dir: Path | None = None) -> dict:
 
     # Read and concatenate matched files
     parts = []
-    for key, path in sorted(matches):
+    for key, path in matches:
         try:
             parts.append(path.read_text(encoding="utf-8"))
         except OSError:
@@ -178,4 +272,7 @@ def get_design_rules(topic: str = "", rules_dir: Path | None = None) -> dict:
             parts.append(f"(File {key} could not be read)")
 
     content = "\n\n---\n\n".join(parts)
-    return {"content": content, "matched_files": matched_keys, "topic": topic}
+    result = {"content": content, "matched_files": matched_keys, "topic": topic}
+    if note:
+        result["note"] = note
+    return result

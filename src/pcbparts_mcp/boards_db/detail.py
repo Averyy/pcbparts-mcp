@@ -69,6 +69,16 @@ def _clean_junk_values(pins: dict[str, list]) -> dict[str, list]:
     return cleaned
 
 
+# Part numbers the design files list per component (null where they don't)
+PART_NUMBER_FIELDS = ("mpn", "manufacturer", "lcsc", "mouser", "digikey")
+
+
+def _part_numbers(conn: sqlite3.Connection, board_id: int, ref: str) -> dict[str, str]:
+    row = conn.execute(f"SELECT {', '.join(PART_NUMBER_FIELDS)} FROM board_components "
+                       "WHERE board_id = ? AND ref = ?", (board_id, ref)).fetchone()
+    return {k: v for k, v in zip(PART_NUMBER_FIELDS, row or ()) if v}
+
+
 def _filter_components(
     conn: sqlite3.Connection,
     board_id: int,
@@ -84,10 +94,11 @@ def _filter_components(
             "ref": r[0], "value": r[1], "footprint": r[2], "description": r[3],
             "voltage": r[4], "tolerance": r[5], "dielectric": r[6],
             "decouples": r[7], "pullup": r[8], "pulldown": r[9],
+            **dict(zip(PART_NUMBER_FIELDS, r[10:])),
         }
         for r in conn.execute(
-            """SELECT ref, value, footprint, description, voltage, tolerance,
-                      dielectric, decouples, pullup, pulldown
+            f"""SELECT ref, value, footprint, description, voltage, tolerance,
+                      dielectric, decouples, pullup, pulldown, {", ".join(PART_NUMBER_FIELDS)}
                FROM board_components WHERE board_id = ? ORDER BY ref""",
             (board_id,),
         )
@@ -211,7 +222,8 @@ def get_board(
         matched, match_type, partial_matches = _match_focus(neighborhoods, focus)
 
         if matched:
-            matched = {**matched, "pins": _clean_junk_values(matched["pins"])}
+            matched = {**matched, **_part_numbers(conn, row["id"], matched["ref"]),
+                       "pins": _clean_junk_values(matched["pins"])}
             result["focus"] = matched
             result["focus_match_type"] = match_type
 
@@ -455,3 +467,26 @@ def get_stats(conn: sqlite3.Connection) -> dict[str, Any]:
         "top_orgs": top_orgs,
         "top_tags": top_tags,
     }
+
+
+def _slug_tokens(text: str) -> set[str]:
+    """"adafruit-feather-esp32s3" and "Adafruit ESP32-S3 Feather" give the same tokens."""
+    return set(re.findall(r"[a-z]+\d*|\d+", text.lower()))
+
+
+def suggest_slugs(conn: sqlite3.Connection, slug: str, limit: int = 3) -> list[str]:
+    """Boards whose slug, name and org share most of a wrong slug's words, best first.
+
+    Raw string similarity misses reordered words: difflib's closest three for
+    "adafruit-feather-esp32s3" left out adafruit-esp32-s3-feather.
+    """
+    wanted = _slug_tokens(slug)
+    if not wanted:
+        return []
+    scored = []
+    for board_slug, name, org in conn.execute("SELECT slug, name, org_display FROM boards"):
+        have = _slug_tokens(f"{board_slug} {name} {org or ''}")
+        shared = len(wanted & have)
+        if shared and shared * 2 >= len(wanted):
+            scored.append((-shared / len(wanted), len(have - wanted), board_slug))
+    return [board_slug for *_, board_slug in sorted(scored)[:limit]]

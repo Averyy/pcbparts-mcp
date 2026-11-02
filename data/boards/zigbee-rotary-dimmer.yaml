@@ -2,7 +2,7 @@ name: Zigbee Rotary Dimmer
 slug: zigbee-rotary-dimmer
 source: dagroe/zigbee-rotary-dimmer-switch
 format: kicad8
-description: Wall-mount Zigbee dimmer (ESP32-C6 native Zigbee), IRM-01-5 mains PSU
+description: "Wall-mount Zigbee dimmer (ESP32-C6 native Zigbee), external IRM-01-5 mains PSU board"
 tags: [zigbee-thread]
 key_ics: [ESP32-C6]
 outline:

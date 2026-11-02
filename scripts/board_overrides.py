@@ -22,6 +22,10 @@ BOARD_OVERRIDES: dict[tuple[str, str], dict[str, str]] = {
     ("adafruit-esp32-s3-feather", "U1"): {
         "mpn": "ESP32-S3-MINI-1",
     },
+    # Adafruit QT Py ESP32-S3: same Eagle library, S2 MPN on the ESP32-S3 chip
+    ("adafruit-qt-py-esp32-s3", "X2"): {
+        "mpn": "ESP32-S3",
+    },
     # HackRF One: crystals have value "2x2 header" from shared footprint
     ("hackrf-one", "X1"): {"value": "25MHz"},
     ("hackrf-one", "X2"): {"value": "12MHz"},
@@ -182,6 +186,8 @@ TAG_OVERRIDES: dict[str, list[str]] = {
     "blueesc": ["motor-control", "underwater"],
     "bioamp-exg-pill": ["biomedical", "analog"],
     "opensipm-tia-v3": ["photonics", "analog"],
+    # Iridium satellite tracker: its "global coverage beyond cellular" isn't a cellular modem
+    "artemis-global-tracker": ["gps-gnss"],
 }
 
 

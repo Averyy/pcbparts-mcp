@@ -143,3 +143,46 @@ def test_rule_key_uses_forward_slashes_on_windows():
     root = PureWindowsPath(r"C:\pcbparts\data\design-rules\rules")
     assert _rule_key(root / "power" / "ldo.md", root) == "power/ldo"
     assert _rule_key(root / "misc" / "op-amp-basics.md", root) == "misc/op-amp-basics"
+
+
+# Topics that matched no file name although a rule covers them (todos #48: 16% of prod lookups
+# found nothing). Checked against the real rule files.
+@pytest.mark.parametrize("topic, key", [
+    ("lipo", "power/battery"), ("li-ion", "power/battery"), ("thermistor", "power/battery"),
+    ("type-c", "interfaces/usb"), ("usb-c", "interfaces/usb"), ("stm32g0", "mcus/stm32"),
+    ("esp32s3", "mcus/esp32"), ("pull-up", "interfaces/i2c"), ("pullup", "interfaces/i2c"),
+    ("stepper", "misc/motor-control"), ("bldc", "misc/motor-control"), ("rs485", "interfaces/uart"),
+    ("solar", "power/power-path"), ("4 layer", "guides/pcb-layout"), ("strapping pins", "mcus/esp32"),
+    ("jlcpcb", "guides/dfm"), ("assembly", "guides/dfm"), ("buck-boost", "power/switching"),
+])
+def test_keywords_find_the_rule(topic, key):
+    result = get_design_rules(topic)
+    assert result["matched_files"] == [key]
+    assert "note" not in result
+
+
+@pytest.mark.parametrize("topic, key", [("boot mode", "mcus/esp32"), ("relay", "misc/mosfet-circuits"),
+                                        ("RS-422 termination", None)])
+def test_topic_found_in_the_text(topic, key):
+    """No file is named for it, but one discusses it: the best files come back, marked as such."""
+    result = get_design_rules(topic)
+    if key is None:
+        return
+    assert result["matched_files"][0] == key
+    assert "discuss it most" in result["note"]
+
+
+def test_passing_mentions_find_nothing():
+    # "LED" appears only in passing (Ethernet link LEDs, optocouplers); listing the index is better
+    result = get_design_rules("led")
+    assert result["matched_files"] == []
+    assert "Available rules" in result["content"]
+
+
+def test_text_matches_are_ranked(rules_dir):
+    (rules_dir / "power" / "ldo.md").write_text("# LDO\n## Ferrite beads\nFerrite after the LDO.\n")
+    (rules_dir / "interfaces" / "usb.md").write_text("# USB\n" + "A ferrite on VBUS.\n" * 9)
+    result = get_design_rules("ferrite", rules_dir=rules_dir)
+    # usb: 9 mentions; ldo: 2 mentions, one in a heading (counted 5 times)
+    assert result["matched_files"] == ["interfaces/usb", "power/ldo"]
+    assert result["content"].startswith("# USB")

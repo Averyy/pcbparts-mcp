@@ -230,6 +230,7 @@ class ComponentDatabase:
         preferred_specs: list[SpecFilter] | None = None,
         gate_drive_v: float | None = None,
         lcsc_codes: bool = False,
+        count_unlisted: bool = False,
     ) -> dict[str, Any]:
         """
         Search components with parametric filtering.
@@ -260,6 +261,8 @@ class ComponentDatabase:
             preferred_specs: Ordered equality preferences for sparse PD role/output attributes
             gate_drive_v: Rank listed RDS(on) at or below this gate drive first; retain unknowns
             lcsc_codes: The caller's whole query is LCSC codes; match each exactly, not as a prefix
+            count_unlisted: Count, per range filter, the parts it leaves out for not listing the
+                attribute (reply key unlisted)
 
         Returns:
             Search results with metadata
@@ -298,6 +301,7 @@ class ComponentDatabase:
             preferred_specs=preferred_specs,
             gate_drive_v=gate_drive_v,
             lcsc_codes=lcsc_codes,
+            count_unlisted=count_unlisted,
         )
 
         # Add warning if min_stock was clamped

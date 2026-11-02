@@ -350,3 +350,37 @@ def test_build_tables_have_no_duplicate_keys():
                     duplicates.append(f"line {key.lineno}: {key.value!r}")
                 seen.add(key.value)
     assert duplicates == []
+
+
+@pytest.fixture(scope="module")
+def measures(tmp_path_factory):
+    """Each sensor's measures in a build of the real data."""
+    import sqlite3
+    from build_sensor_db import build
+    out = tmp_path_factory.mktemp("sensors") / "sensor.db"
+    build(Path(__file__).parent.parent / "data", out, verbose=False)
+    with sqlite3.connect(out) as conn:
+        rows = conn.execute("SELECT sensor_id, measure FROM sensor_measures").fetchall()
+    result: dict[str, set[str]] = {}
+    for sensor_id, measure in rows:
+        result.setdefault(sensor_id, set()).add(measure)
+    return result
+
+
+class TestMeasureCorrections:
+    """Measure tags that sources get wrong (todos #49), checked on a build of the real data."""
+
+    def test_bmm150_is_a_magnetometer_not_a_sound_sensor(self, measures):
+        # DFRobot's BMM150 library (SEN0419) is tagged sound in the Arduino index
+        assert measures["bmm150"] == {"magnetic_field"}
+
+    def test_pmwcs3_measures_soil_moisture(self, measures):
+        # ESPHome lists it under temperature only; it reads VWC, EC and soil temperature
+        assert {"soil_moisture", "conductivity", "temperature"} <= measures["pmwcs3"]
+
+    def test_cy8cmbr3102_is_also_a_touch_controller(self, measures):
+        # The CapSense controller on SparkFun's capacitive soil moisture sensor keeps soil_moisture
+        assert {"soil_moisture", "touch"} <= measures["cy8cmbr3102"]
+
+    def test_bm25s2621_does_not_measure_air_humidity(self, measures):
+        assert "humidity" not in measures["bm25s2621"]

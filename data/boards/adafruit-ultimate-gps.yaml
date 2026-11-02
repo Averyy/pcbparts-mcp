@@ -2,7 +2,7 @@ name: Adafruit Ultimate GPS
 slug: adafruit-ultimate-gps
 source: adafruit/Adafruit-Ultimate-GPS
 format: eagle
-description: PA1616S module (MTK3339 chipset), built-in FLASH datalogging
+description: "FGPMMOPA6H module (MTK3339 chipset), built-in FLASH datalogging"
 tags: [data-logging, gps-gnss, rtc]
 key_ics: [FGPMMOPA6H, MIC5225-3.3]
 outline:

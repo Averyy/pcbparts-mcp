@@ -2,7 +2,7 @@ name: Crazyflie
 slug: crazyflie
 source: bitcraze/crazyflie-electronics
 format: kicad_legacy
-description: STM32F103CB nano quadcopter, NRF24L01+ radio
+description: "Crazyflie 1.0 STM32F103CB nano quadcopter, NRF24L01+ radio"
 tags: [adc-dac, battery-charging, drone-uav, sensors]
 key_ics: [STM32F103CB, BQ24075, MAX16054]
 outline:

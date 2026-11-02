@@ -2,7 +2,7 @@ name: Soldered 1S Battery Protection
 slug: soldered-1s-battery-protection
 source: SolderedElectronics/1S-Li-Ion-battery-protection-hardware-design
 format: kicad7
-description: DW01-P protection IC + FS8205A dual MOSFET, over-charge/discharge/short protection
+description: "DW01+G protection IC + FS8205A dual MOSFET, over-charge/discharge/short protection"
 tags: [power-protection]
 key_ics: [DW01+G, FS8205A]
 outline:

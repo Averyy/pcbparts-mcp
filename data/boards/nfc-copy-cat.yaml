@@ -2,7 +2,7 @@ name: NFC Copy Cat
 slug: nfc-copy-cat
 source: ElectronicCats/NFC-Copy-Cat
 format: kicad7
-description: PN532 NFC reader + MagSpoof magnetic stripe emulation coil driver
+description: "External PN532 NFC module interface + MagSpoof magnetic stripe emulation coil driver"
 tags: [nfc-rfid]
 key_ics: [ATSAMD21E18A, AP2112K-3.3, MCP73831-2-OT, TC4424, GD25Q16C]
 outline:

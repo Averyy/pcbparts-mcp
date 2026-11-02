@@ -1,0 +1,364 @@
+name: Adafruit BQ24074 Solar Charger
+slug: adafruit-bq24074-solar-charger
+source: adafruit/Adafruit-BQ24074-PCB
+format: eagle
+description: USB-C/DC/solar input LiPo charger with power path (BQ24074), SK34A Schottky input OR-ing
+tags: [battery-charging, energy-harvesting]
+key_ics: [BQ24074]
+outline:
+  width_mm: 38.1
+  height_mm: 33.02
+design_rules:
+  layers: 2
+  min_trace: 6mil
+  min_clearance: 8mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: 1A
+  value: solder jumper
+  footprint: SJ-2
+  description: SMD Solder JUMPER
+- ref: BATT
+  value: JST 2PH
+  footprint: JST-PH-2-SMT-RA
+  description: JST 2-Pin Connectors of various flavors
+- ref: C1
+  value: 10uF
+  footprint: 0805
+- ref: C2
+  value: 10uF
+  footprint: 0805
+- ref: C3
+  value: 10uF
+  footprint: 0805
+- ref: C4
+  value: 10uF
+  footprint: 0805
+- ref: C5
+  value: 10uF
+  footprint: 0805
+- ref: C6
+  value: 10uF
+  footprint: 0805
+- ref: C9
+  value: 10uF
+  footprint: 0805
+- ref: D1
+  value: green LED
+  footprint: CHIPLED_0603
+- ref: D2
+  value: SK34A
+  footprint: SMADIODE
+- ref: D3
+  value: red LED
+  footprint: CHIPLED_0603
+- ref: D4
+  value: SK34A
+  footprint: SMADIODE
+- ref: JP1
+  value: 1x2 header
+  footprint: 1X02
+- ref: JP2
+  value: 1x1 header
+  footprint: 1X01
+- ref: JP3
+  value: 1x11 header
+  footprint: 1X11
+- ref: JP4
+  value: 1x1 header
+  footprint: 1X01
+- ref: R1
+  value: 1kohm
+  footprint: '0603'
+  pulldown: ILIM
+- ref: R10
+  value: 10kohm
+  footprint: '0603'
+  pulldown: THERM.1
+- ref: R11
+  value: 10kohm
+  footprint: '0603'
+- ref: R2
+  value: 10kohm
+  footprint: '0603'
+  pulldown: ITERM
+- ref: R3
+  value: 590ohm
+  footprint: '0603'
+- ref: R4
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: CC2
+- ref: R5
+  value: 2kohm
+  footprint: '0603'
+- ref: R6
+  value: 5.1kohm
+  footprint: '0603'
+  pulldown: CC1
+- ref: R7
+  value: 10kohm
+  footprint: '0603'
+- ref: R8
+  value: 10kohm
+  footprint: '0603'
+  pulldown: '!CE'
+- ref: R9
+  value: 1kohm
+  footprint: '0603'
+- ref: SJ1
+  value: 2-way solder jumper
+  footprint: SJ-3
+- ref: SJ2
+  value: 2-way solder jumper
+  footprint: SJ-3
+- ref: SYSOUT
+  value: JST 2PH
+  footprint: JST-PH-2-SMT-RA
+  description: JST 2-Pin Connectors of various flavors
+- ref: THERM
+  value: solder jumper
+  footprint: SJ-2
+  description: SMD Solder JUMPER
+- ref: X2
+  value: USB Type C
+  footprint: USB-C
+  description: USB Type-C USB 2.0
+- ref: X3
+  value: 2.1mm DC
+  footprint: DCJACK_2MM_SMT
+  description: DC Barrel Jack
+- ref: X4
+  value: BQ24074
+  footprint: QFN16_3MM
+nets:
+- name: '!CE'
+  pins: [JP3.7, R8.1, X4.!CE]
+- name: '!CHG'
+  pins: [JP3.5, R7.1, X4.!CHG]
+- name: '!PGOOD'
+  pins: [JP3.6, R11.1, X4.!PGOOD]
+- name: CC1
+  pins: [R6.2, X2.CC1]
+- name: CC2
+  pins: [R4.2, X2.CC2]
+- name: D+
+  pins: [JP1.1, X2.D+]
+- name: D-
+  pins: [JP1.2, X2.D-]
+- name: EN1
+  pins: [SJ2.2, X4.EN1]
+- name: EN2
+  pins: [SJ1.2, X4.EN2]
+- name: GND
+  pins:
+  - 1A.1
+  - BATT.1
+  - C1.2
+  - C2.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C9.2
+  - JP2.1
+  - JP3.1
+  - JP3.10
+  - JP3.3
+  - R1.2
+  - R10.2
+  - R2.2
+  - R4.1
+  - R6.1
+  - R8.2
+  - SJ1.3
+  - SJ2.3
+  - SYSOUT.1
+  - X2.GND
+  - X3.GND
+  - X3.GNDBREAK
+  - X4.TMR
+  - X4.VSS
+- name: ILIM
+  pins: [R1.1, X4.ILIM]
+- name: ISET
+  pins: [JP3.8, R3.1, R5.1, R9.1, X4.ISET]
+- name: ITERM
+  pins: [R2.1, X4.ITERM]
+- name: N$1
+  pins: [D1.C, R11.2]
+- name: N$2
+  pins: [D4.A, X3.PWR]
+- name: N$3
+  pins: [D3.C, R7.2]
+- name: N$7
+  pins: [1A.2, R9.2]
+- name: N$9
+  pins: [R10.1, THERM.1]
+- name: OUT
+  pins:
+  - C2.1
+  - C3.1
+  - C4.1
+  - D1.A
+  - D3.A
+  - JP3.4
+  - SJ1.1
+  - SJ2.1
+  - SYSOUT.2
+  - X4.OUT
+- name: THERM
+  pins: [JP3.9, THERM.2, X4.TS]
+- name: VBUS
+  pins:
+  - C1.1
+  - C9.1
+  - D2.C
+  - D4.C
+  - JP3.11
+  - JP4.1
+  - X4.IN
+- name: VLIPO
+  pins: [BATT.2, C5.1, C6.1, JP3.2, X4.BAT]
+- name: VUSB
+  pins: [D2.A, X2.VBUS]
+positions:
+- ref: 1A
+  x: 20.57
+  y: 8.64
+  rot: 180.0
+- ref: BATT
+  x: 34.54
+  y: 10.79
+  rot: 270.0
+- ref: C1
+  x: 13.72
+  y: 11.05
+  rot: 180.0
+- ref: C2
+  x: 20.83
+  y: 19.18
+  rot: 180.0
+- ref: C3
+  x: 25.53
+  y: 22.35
+  rot: 90.0
+- ref: C4
+  x: 27.43
+  y: 22.35
+  rot: 90.0
+- ref: C5
+  x: 27.3
+  y: 7.24
+  rot: 270.0
+- ref: C6
+  x: 27.3
+  y: 10.79
+  rot: 90.0
+- ref: C9
+  x: 13.97
+  y: 16.13
+  rot: 180.0
+- ref: D1
+  x: 32.38
+  y: 15.75
+  rot: 90.0
+- ref: D2
+  x: 12.19
+  y: 13.59
+  rot: 180.0
+- ref: D3
+  x: 32.38
+  y: 17.27
+  rot: 90.0
+- ref: D4
+  x: 13.84
+  y: 20.57
+  rot: 90.0
+- ref: JP1
+  x: 10.16
+  y: 9.4
+- ref: JP2
+  x: 22.73
+  y: 24.38
+- ref: JP3
+  x: 19.05
+  y: 2.54
+  rot: 180.0
+- ref: JP4
+  x: 17.65
+  y: 24.38
+- ref: R1
+  x: 17.53
+  y: 18.16
+  rot: 180.0
+- ref: R10
+  x: 16.26
+  y: 8.89
+  rot: 90.0
+- ref: R11
+  x: 26.29
+  y: 16.89
+- ref: R2
+  x: 17.78
+  y: 15.11
+  rot: 180.0
+- ref: R3
+  x: 17.91
+  y: 12.32
+  rot: 270.0
+- ref: R4
+  x: 9.91
+  y: 7.62
+  rot: 180.0
+- ref: R5
+  x: 17.91
+  y: 6.22
+  rot: 270.0
+- ref: R6
+  x: 10.16
+  y: 11.43
+  rot: 180.0
+- ref: R7
+  x: 26.29
+  y: 18.54
+- ref: R8
+  x: 26.42
+  y: 13.59
+- ref: R9
+  x: 17.91
+  y: 9.27
+  rot: 90.0
+- ref: SJ1
+  x: 27.3
+  y: 13.97
+- ref: SJ2
+  x: 27.3
+  y: 16.26
+- ref: SYSOUT
+  x: 34.54
+  y: 22.23
+  rot: 270.0
+- ref: THERM
+  x: 15.37
+  y: 6.35
+  rot: 180.0
+- ref: X2
+  x: 2.79
+  y: 10.16
+  rot: 270.0
+- ref: X3
+  x: 1.78
+  y: 21.72
+- ref: X4
+  x: 21.59
+  y: 15.88
+  rot: 90.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]
+- net: OUT
+  layers: [F.Cu]
+- net: VLIPO
+  layers: [F.Cu]

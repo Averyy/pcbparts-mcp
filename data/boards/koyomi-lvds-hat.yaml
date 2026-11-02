@@ -2,8 +2,8 @@ name: Koyomi LVDS Hat
 slug: koyomi-lvds-hat
 source: exentio/koyomi-lvds-hat
 format: kicad8
-description: RPi LVDS transmitter hat (SN75LVDS83B FlatLink) for repurposing laptop panels, I-PEX micro-coax connector
-tags: [ham-radio]
+description: "RPi LVDS transmitter hat (SN75LVDS83B FlatLink) for repurposing laptop LCD panels, I-PEX micro-coax connector"
+tags: [display]
 key_ics: [SN75LVDS83B, AP2114H-2.5]
 outline:
   width_mm: 65.0

@@ -3,7 +3,7 @@ slug: micromod-asset-tracker
 source: sparkfun/MicroMod_Asset_Tracker
 format: eagle
 description: LTE Cat-M1 cellular asset tracker (u-blox SARA-R5), MicroMod processor socket
-tags: [gps-gnss]
+tags: [cellular, gps-gnss]
 key_ics: [SN74AVC4T774PW, SARA-R510M8S, MCP73831, MAX17048, AP7361C-33]
 outline:
   width_mm: 76.2

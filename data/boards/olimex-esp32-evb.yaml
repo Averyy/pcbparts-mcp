@@ -2,9 +2,9 @@ name: Olimex ESP32-EVB
 slug: olimex-esp32-evb
 source: OLIMEX/ESP32-EVB
 format: kicad7
-description: CAN 2.0 (SIT1050T), IR receiver/transmitter (VS1838B)
-tags: [ham-radio]
-key_ics: [SIT1050T, VS1838B]
+description: "ESP32-WROOM-32E WiFi, 100Mb Ethernet (LAN8710A)"
+tags: [can-bus, ethernet, relay, usb, wifi]
+key_ics: [ESP32-WROOM-32E, LAN8710A, SIT1050T, VS1838B, CH340X]
 outline:
   width_mm: 75.18
   height_mm: 74.68

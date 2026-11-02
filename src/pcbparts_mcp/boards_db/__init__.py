@@ -1,6 +1,6 @@
 """Boards database package for reference board search.
 
-Provides search across ~285 OSHW reference board schematics with:
+Provides search across ~290 OSHW reference board schematics with:
 - FTS5 full-text search (name, description, key_coverage, ICs, org)
 - Parametric filters (tag, org, layers, component search)
 - Ranked by component count (more complex boards = more useful references)
@@ -22,6 +22,7 @@ from .detail import (
     get_consensus as _get_consensus,
     get_tag_consensus as _get_tag_consensus,
     get_stats as _get_stats,
+    suggest_slugs as _suggest_slugs,
 )
 from .search import search_boards
 
@@ -124,6 +125,14 @@ class BoardsDatabase:
             include_raw=include_raw, include_bom=include_bom,
             focus=focus, get_consensus_fn=self.get_consensus,
         )
+
+    @serialized
+    def suggest_slugs(self, slug: str, limit: int = 3) -> list[str]:
+        """Slugs of boards sharing most of a wrong slug's words."""
+        self._ensure_db()
+        if not self._conn:
+            return []
+        return _suggest_slugs(self._conn, slug, limit)
 
     @serialized
     def get_consensus(self, ic_name: str) -> dict[str, Any] | None:

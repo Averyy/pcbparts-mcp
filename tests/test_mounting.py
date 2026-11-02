@@ -44,6 +44,28 @@ class TestDetectMountingType:
         """Through-hole packages should return 'through_hole'."""
         assert detect_mounting_type(package) == "through_hole"
 
+    # Through-hole tokens inside SMD package names (C6055599, C485916, C2156025,
+    # C2488 MB10S, C5377 DB107S, C18199154 ES5JBF, C473914 TPS82130SILR)
+    @pytest.mark.parametrize("package", [
+        "WQFN-HR-18", "VQFN-HR-12(2x2.5)", "VQFN-HR-10(3x3)", "VQFN-HR-11",  # "R-1"
+        "UCSPR-6(1.7x1.7)", "SC-74R-6", "PicoStar-6", "PicostAr-10(1.5x3.4)",  # "R-6"/"R-1"
+        "USIP-8", "uSiP-10(2.5x2)", "USIP(SIP)-8",  # "SIP"
+        "MBS", "MBS-1", "TO-269AA(MBS)", "LMBS-1",  # SMD bridges, were through-hole
+        "MBF", "MBF-T", "TMBF", "UMBF", "DBS",
+        "SMBF", "SMBF-1", "SMBFLAT",  # "MBF" inside SMB flat
+        "SC-74", "SC-74A-5", "PICOSTAR-3",
+    ])
+    def test_smd_packages_containing_through_hole_tokens(self, package):
+        assert detect_mounting_type(package) == "smd"
+
+    @pytest.mark.parametrize("package", [
+        "R-1", "R-6", "R-6(P600)", "R-6(P-600)",  # Axial diodes still through-hole
+        "ZSIP-15", "FSIP-12", "EESIP-16G",  # SIP variants
+        "KBL", "GBJ", "6GBJ", "KBPC", "BR-6",  # Through-hole bridges
+    ])
+    def test_through_hole_tokens_still_matched(self, package):
+        assert detect_mounting_type(package, "Diodes", "Bridge Rectifiers") == "through_hole"
+
     def test_empty_package_defaults_to_not_sure(self):
         """Empty or None package defaults to not_sure."""
         assert detect_mounting_type("") == "not_sure"

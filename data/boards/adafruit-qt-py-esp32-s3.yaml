@@ -1,0 +1,449 @@
+name: Adafruit QT Py ESP32-S3
+slug: adafruit-qt-py-esp32-s3
+source: adafruit/Adafruit-QT-Py-ESP32-S3-PCB
+format: eagle
+description: ESP32-S3 WiFi/BLE in QT Py form factor, native USB-C
+tags: [led-driver, power-supply, wifi]
+key_ics: [ESP32-S3, AP2112K]
+outline:
+  width_mm: 17.78
+  height_mm: 20.7
+design_rules:
+  layers: 4
+  min_trace: 6mil
+  min_clearance: 6mil
+  min_drill: 15.5mil
+  min_via: 8mil
+components:
+- ref: C1
+  value: 22uF
+  footprint: 0805
+  decouples: U1
+- ref: C10
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C11
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C12
+  value: 100nF
+  footprint: '0402'
+- ref: C13
+  value: 1uF
+  footprint: '0402'
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C15
+  value: 1uF
+  footprint: '0402'
+  decouples: U1
+- ref: C16
+  value: 100nF
+  footprint: '0402'
+  decouples: U1
+- ref: C17
+  value: 16pF
+  footprint: '0402'
+- ref: C18
+  value: 16pF
+  footprint: '0402'
+- ref: C19
+  value: 1uF
+  footprint: '0402'
+  decouples: U1
+- ref: C2
+  value: 1uF
+  footprint: '0402'
+  decouples: U1
+- ref: C20
+  value: 1uF
+  footprint: '0402'
+- ref: C3
+  value: 1uF
+  footprint: '0402'
+- ref: C4
+  value: 100nF
+  footprint: '0402'
+- ref: C5
+  value: 1uF
+  footprint: '0402'
+  decouples: U1
+- ref: C6
+  value: 22uF
+  footprint: 0805
+  decouples: U1
+- ref: C7
+  value: TBD
+  footprint: '0402'
+- ref: C8
+  value: 22uF
+  footprint: 0805
+  decouples: U1
+- ref: C9
+  value: TBD
+  footprint: '0402'
+- ref: CONN1
+  value: STEMMA QT
+  footprint: JST_SH4_SKINNY
+- ref: D1
+  value: NSR0320
+  footprint: SOD-323_MINI
+- ref: D2
+  value: NSR0320
+  footprint: SOD-323_MINI
+- ref: JP1
+  value: 1x7 header
+  footprint: 1X07
+- ref: JP3
+  value: 1x7 header
+  footprint: 1X07
+- ref: L1
+  value: 2nH
+  footprint: '0402'
+- ref: L2
+  value: 0H
+  footprint: '0402'
+- ref: LED1
+  value: WS2812B
+  footprint: SK6805_1515
+- ref: Q1
+  value: BOOT0
+  footprint: BTN_KMR2
+  description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
+- ref: Q2
+  value: reset
+  footprint: BTN_KMR2
+  description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
+- ref: R1
+  value: 10kohm
+  footprint: '0402'
+  pullup: '!RESET'
+- ref: R17
+  value: 1Mohm
+  footprint: '0402'
+- ref: R3
+  value: 0ohm
+  footprint: '0402'
+- ref: R5
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: CC2
+- ref: R6
+  value: 5.1kohm
+  footprint: '0402'
+  pulldown: CC1
+- ref: U1
+  value: AP2112K-3.3
+  footprint: SOT-23-5
+  description: SOT23-5 Fixed Voltage Regulators
+- ref: X1
+  value: 2.4 GHz Antenna
+  footprint: ANT_2450AT18B100
+  description: Johanson 2
+- ref: X2
+  value: ESP32-S3
+  footprint: QFN56
+  description: WiFi 802.11b/g/n Transceiver Module 2.4GHz Antenna Not Included Surface Mount
+  manufacturer: Espressif Systems
+  mpn: ESP32-S3
+- ref: X6
+  value: USB TYPE C
+  footprint: USB-C
+  description: USB Type-C USB 2.0
+- ref: Y1
+  value: 40MHz
+  footprint: CRYSTAL
+nets:
+- name: '!RESET'
+  pins: [C3.1, Q2.P, Q2.P1, R1.2, SWC1.TP, X2.CHIP_PU]
+- name: +5V
+  pins: [C1.1, D1.C, D2.C, JP3.7, U1.EN, U1.IN]
+  class: power
+  trace_width: '0.254'
+- name: 3.3V
+  pins:
+  - C10.1
+  - C11.1
+  - C14.1
+  - C15.1
+  - C16.1
+  - C19.1
+  - C2.1
+  - C5.1
+  - C6.1
+  - C8.1
+  - CONN1.G$1.V+
+  - JP3.5
+  - L1.1
+  - R1.1
+  - U1.OUT
+  - X2.IO21
+  - X2.VDD3P3_CPU
+  - X2.VDD3P3_RTC
+  - X2.VDDA@0
+  - X2.VDDA@1
+  class: power
+  trace_width: '0.254'
+- name: A0
+  pins: [JP1.1, X2.IO18]
+- name: A1
+  pins: [JP1.2, X2.IO17]
+- name: A2
+  pins: [JP1.3, X2.IO9]
+- name: A3
+  pins: [JP1.4, X2.IO8]
+- name: CC1
+  pins: [R6.2, X6.CC1]
+- name: CC2
+  pins: [R5.2, X6.CC2]
+- name: D+
+  pins: [X2.IO20, X6.D+]
+- name: D-
+  pins: [X2.IO19, X6.D-]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C19.2
+  - C2.2
+  - C20.2
+  - C3.2
+  - C4.2
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - CONN1.G$1.GND
+  - CONN1.G$2.MT
+  - CONN1.G$3.MT
+  - GND.P$1
+  - JP3.6
+  - LED1.GND
+  - Q1.S
+  - Q1.S1
+  - Q2.S
+  - Q2.S1
+  - R17.1
+  - R5.1
+  - R6.1
+  - U1.GND
+  - X2.GND
+  - X6.GND
+  class: power
+  trace_width: '0.254'
+- name: IO0
+  pins: [Q1.P, Q1.P1, SWC2.TP, X2.IO0]
+- name: IO10_DBLTAP
+  pins: [C20.1, R17.2, X2.IO10]
+- name: MISO
+  pins: [JP3.3, X2.IO37]
+- name: MOSI
+  pins: [JP3.4, X2.IO35]
+- name: N$1
+  pins: [R3.2, X2.XTAL_N]
+- name: N$2
+  pins: [C7.1, L2.2, X2.LNA_IN]
+- name: N$3
+  pins: [C9.1, L2.1, X1.P$1]
+- name: N$6
+  pins: [C17.1, X2.XTAL_P, Y1.2]
+- name: N$7
+  pins: [C18.1, R3.1, Y1.1]
+- name: NEOPIX
+  pins: [LED1.DI, X2.MTCK]
+- name: NEOPIX_PWR
+  pins: [LED1.VDD, X2.IO38]
+- name: RX
+  pins: [JP3.1, X2.XTAL_32K_N]
+- name: SCK
+  pins: [JP3.2, X2.IO36]
+- name: SCL
+  pins: [JP1.6, X2.IO6]
+- name: SCL1
+  pins: [CONN1.G$1.SCL, X2.MTD0]
+- name: SDA
+  pins: [JP1.5, X2.IO7]
+- name: SDA1
+  pins: [CONN1.G$1.SDA, X2.MTDI]
+- name: TX
+  pins: [JP1.7, X2.IO5]
+- name: VBAT
+  pins: [D2.A, VBAT.P$1]
+- name: VBUS
+  pins: [D1.A, X6.VBUS]
+  class: power
+  trace_width: '0.254'
+- name: VDD3P3
+  pins: [C4.1, L1.2, X2.VDD3P3@0, X2.VDD3P3@1]
+- name: VDD_SPI
+  pins: [C12.1, C13.1, X2.VDD_SPI]
+  class: power
+  trace_width: '0.254'
+positions:
+- ref: C1
+  x: 1.08
+  y: 11.98
+  rot: 180.0
+- ref: C10
+  x: -2.43
+  y: 13.46
+  rot: 90.0
+- ref: C11
+  x: 3.8
+  y: 14.35
+  rot: 90.0
+- ref: C12
+  x: 3.82
+  y: 10.16
+  rot: 270.0
+- ref: C13
+  x: 3.8
+  y: 12.13
+  rot: 90.0
+- ref: C14
+  x: 2.11
+  y: 1.52
+  rot: 270.0
+- ref: C15
+  x: -2.02
+  y: 2.54
+  rot: 270.0
+- ref: C16
+  x: -2.91
+  y: 2.54
+  rot: 270.0
+- ref: C17
+  x: -2.37
+  y: 1.07
+- ref: C18
+  x: 1.22
+  y: 1.5
+  rot: 270.0
+- ref: C19
+  x: -4.38
+  y: 13.27
+  rot: 90.0
+- ref: C2
+  x: -6.67
+  y: 9.09
+- ref: C20
+  x: -7.75
+  y: 12.13
+  rot: 90.0
+- ref: C3
+  x: 3.43
+  y: 1.33
+- ref: C4
+  x: -7.15
+  y: 7.52
+  rot: 90.0
+- ref: C5
+  x: -3.4
+  y: 13.49
+  rot: 90.0
+- ref: C6
+  x: 2.57
+  y: 9.04
+  rot: 90.0
+- ref: C7
+  x: -6.69
+  y: 5.51
+- ref: C8
+  x: -0.41
+  y: 6.17
+  rot: 180.0
+- ref: C9
+  x: -6.68
+  y: 4.45
+- ref: CONN1
+  x: 0.22
+  y: 1.82
+- ref: D1
+  x: 1.64
+  y: 16.01
+- ref: D2
+  x: 3.56
+  y: 18.16
+  rot: 270.0
+- ref: JP1
+  x: -9.59
+  y: 9.59
+  rot: 270.0
+- ref: JP3
+  x: 5.65
+  y: 9.59
+  rot: 90.0
+- ref: L1
+  x: -6.05
+  y: 7.51
+  rot: 270.0
+- ref: L2
+  x: -5.17
+  y: 4.99
+  rot: 90.0
+- ref: LED1
+  x: 2.24
+  y: 6.24
+- ref: Q1
+  x: -4.76
+  y: 10.29
+  rot: 180.0
+- ref: Q2
+  x: -4.76
+  y: 6.35
+  rot: 180.0
+- ref: R1
+  x: 3.43
+  y: 2.22
+  rot: 180.0
+- ref: R17
+  x: -6.86
+  y: 12.13
+  rot: 270.0
+- ref: R3
+  x: -0.61
+  y: 4.08
+- ref: R5
+  x: -3.56
+  y: 12.34
+- ref: R6
+  x: -1.59
+  y: 12.17
+- ref: U1
+  x: 0.0
+  y: 9.11
+  rot: 180.0
+- ref: X1
+  x: -6.03
+  y: 0.57
+  rot: 180.0
+- ref: X2
+  x: -0.53
+  y: 8.43
+  rot: 180.0
+- ref: X6
+  x: -1.97
+  y: 17.14
+  rot: 180.0
+- ref: Y1
+  x: -0.32
+  y: 2.2
+  rot: 270.0
+copper_pours:
+- net: 3.3V
+  layers: [In14.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu]

@@ -1,5 +1,7 @@
 """Mounting type detection for electronic component packages."""
 
+import re
+
 # Categories that are NOT PCB-mountable components - return "not_applicable" for these
 NON_PCB_CATEGORIES = frozenset({
     "Building materials / Building hardware",
@@ -38,12 +40,21 @@ SMD_PATTERNS = frozenset({
     "LGA", "PLCC",  # Land grid, chip carrier
     "TO-252", "TO-263", "TO-277", "DPAK", "D2PAK", "D3PAK",  # Power SMD
     "DO-214", "DO-218", "SMA", "SMB", "SMC",  # Diode SMD
-    "SC-70", "SC-88", "SC-89",  # Small chip
+    "SC-70", "SC-74", "SC-88", "SC-89",  # Small chip
     "LL-34", "LL-41", "MINIMELF", "MELF",  # Leadless cylindrical (MiniMELF)
     "MC-306", "MC-146", "MC-156", "DT-26", "DT-38",  # SMD crystal packages
     "CASE-",  # Tantalum capacitor SMD packages (CASE-A, CASE-B, CASE-C, etc.)
     "EIA-",  # EIA standard SMD packages (EIA-3216, etc.)
+    "MBS", "MBF", "DBS",  # SMD bridge rectifiers (MBS = TO-269AA; also SMBF, TMBF, LMBS-1)
 })
+
+# Package families that are always surface mount, checked BEFORE the through-hole
+# patterns because a through-hole token can sit inside them: "SIP" in TI's USIP
+# (MicroSiP), "R-1" in "VQFN-HR-12" (TI's HotRod QFN), "R-6" in "UCSPR-6".
+SMD_FIRST_PATTERNS = (
+    "QFN", "DFN", "SON", "BGA", "CSP", "LGA",
+    "USIP", "MICROSIP", "PICOSTAR",
+)
 
 # Through-hole package patterns
 THROUGH_HOLE_PATTERNS = frozenset({
@@ -51,20 +62,23 @@ THROUGH_HOLE_PATTERNS = frozenset({
     "SIP",  # Single in-line
     "TO-92", "TO-126", "TO-220", "TO-247", "TO-264", "TO-3",  # Power through-hole
     "DO-41", "DO-35", "DO-201", "DO-15", "DO-27",  # Diode through-hole (axial)
-    "R-1", "R-6",  # Axial diode packages
     "PIN", "THT", "AXIAL", "RADIAL",  # Generic through-hole
     "PLUGIN",  # JLCPCB uses "Plugin" for through-hole parts
     "P=",  # Pitch specification (e.g., "P=2.54mm") indicates through-hole connectors
     "HC-49", "HC-50", "HC-51", "HC-52",  # Crystal packages (through-hole)
     "THROUGH HOLE", "THROUGH-HOLE",  # Explicit through-hole designation
     "PUSH-PULL",  # Push-pull headers are typically through-hole
-    # Bridge rectifier packages (through-hole)
-    "KBP", "KBL", "KBU", "KBPC", "MBS", "MBF", "GBU", "DBS", "GBJ", "BR-",
+    # Bridge rectifier packages (through-hole). MBS, MBF and DBS are SMD: see SMD_PATTERNS.
+    "KBP", "KBL", "KBU", "KBPC", "GBU", "GBJ", "BR-",
     # Chinese through-hole indicators
     "插件",  # "chājian" = plugin/through-hole
     "弯插",  # "wān chā" = bent pin (through-hole)
     "直插",  # "zhí chā" = straight pin (through-hole)
 })
+
+# Axial diode packages R-1 and R-6 (incl. "R-6(P600)"), matched as whole tokens:
+# as substrings they hit "VQFN-HR-12", "PicoStar-6", "SC-74R-6" and "UCSPR-6".
+_THROUGH_HOLE_TOKEN = re.compile(r"(?<![A-Z0-9])R-[16](?![0-9])")
 
 
 def detect_mounting_type(
@@ -127,10 +141,16 @@ def detect_mounting_type(
     if "SMD" in pkg_upper or "SMT" in pkg_upper:
         return "smd"
 
+    for pattern in SMD_FIRST_PATTERNS:
+        if pattern in pkg_upper:
+            return "smd"
+
     # Check for explicit through-hole patterns
     for pattern in THROUGH_HOLE_PATTERNS:
         if pattern in pkg_upper:
             return "through_hole"
+    if _THROUGH_HOLE_TOKEN.search(pkg_upper):
+        return "through_hole"
 
     # Check for SMD patterns
     for pattern in SMD_PATTERNS:

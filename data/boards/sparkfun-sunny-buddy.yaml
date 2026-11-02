@@ -1,0 +1,312 @@
+name: SparkFun Sunny Buddy
+slug: sparkfun-sunny-buddy
+source: sparkfun/SunnyBuddy
+format: eagle
+description: LT3652 2A solar LiPo charger (MPPT input-voltage regulation), ZLLS500 Schottky diodes
+tags: [battery-charging, energy-harvesting]
+key_ics: [LT3652]
+outline:
+  width_mm: 46.99
+  height_mm: 46.99
+design_rules:
+  layers: 2
+  min_trace: 8mil
+  min_clearance: 8mil
+  min_drill: 20mil
+  min_via: 10mil
+components:
+- ref: C1
+  value: 10uF
+  footprint: '1210'
+  prod_id: CAP-09824
+  tolerance: 20%
+  decouples: U1
+- ref: C2
+  value: 10uF
+  footprint: '1206'
+  prod_id: CAP-10057
+  voltage: 6.3V
+  tolerance: 20%
+- ref: C3
+  value: 47uF
+  footprint: EIA3528
+  prod_id: CAP-08310
+- ref: C4
+  value: 47uF
+  footprint: EIA3528
+  prod_id: CAP-08310
+- ref: C5
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-00868
+  voltage: 16V
+  tolerance: 10%
+- ref: C6
+  value: 1uF
+  footprint: '0603'
+  prod_id: CAP-00868
+  voltage: 16V
+  tolerance: 10%
+- ref: D1
+  value: ZLLS500
+  footprint: SOT23
+  prod_id: DIO-08411
+  description: 700mA 40V SOT-23 Schottky
+- ref: D2
+  value: ZLLS500
+  footprint: SOT23
+  prod_id: DIO-08411
+  description: 700mA 40V SOT-23 Schottky
+- ref: J1
+  value: 5.5x2.1mm Barrel
+  footprint: POWER_JACK_SMD
+  prod_id: CONN-08106
+  description: Power Jack
+- ref: J2
+  value: POWER_JACK
+  footprint: POWER_JACK_PTH
+  description: Power Jack
+- ref: J3
+  value: JST_2MM_MALE
+  footprint: JST-2-SMD
+  prod_id: CONN-08352
+  description: Mates to single-cell LiPo batteries
+- ref: J4
+  value: 1x4 header
+  footprint: 1X04
+- ref: J5
+  value: 1x2 header
+  footprint: 1X02
+- ref: J6
+  value: 1x2 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-2
+- ref: J7
+  value: 1x2 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-2
+- ref: J8
+  value: 1x2 screw terminal
+  footprint: SCREWTERMINAL-3.5MM-2
+- ref: JP1
+  value: solder jumper
+  footprint: SJ-2
+  description: Jumper
+- ref: JP2
+  value: solder jumper
+  footprint: SJ-2
+  description: Jumper
+- ref: JP3
+  value: solder jumper (NC)
+  footprint: PTH-JUMPER-NC_BOTTOM_NO_SILK
+- ref: JP4
+  value: 1x2 header
+  footprint: 1X02
+- ref: L1
+  value: 68uH
+  footprint: CR75
+  prod_id: NDUC-09739
+- ref: R1
+  value: 220mohm
+  footprint: 0805
+  prod_id: RES-09883
+  tolerance: 1%
+- ref: R2
+  value: 47kohm
+  footprint: '0603'
+  prod_id: RES-07871
+  tolerance: 1%
+- ref: R3
+  value: 220kohm
+  footprint: '0603'
+  prod_id: RES-08969
+  tolerance: 1%
+  pulldown: FB
+- ref: R4
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+- ref: R5
+  value: 10kohm
+  footprint: '0603'
+  prod_id: RES-00824
+  tolerance: 1%
+- ref: R6
+  value: 220kohm
+  footprint: '0603'
+  prod_id: RES-08969
+  tolerance: 1%
+- ref: R7
+  value: 10kohm
+  footprint: TRIMPOT-3MM
+  prod_id: RES-09285
+- ref: U1
+  value: LT3652
+  footprint: MSOP-12_GND
+  description: LT3652 MPPT Solar Charge Controller
+nets:
+- name: '!CHRG'
+  pins: [J4.1, R4.2, U1.!CHRG]
+- name: '!FAULT'
+  pins: [J4.2, R5.2, U1.!FAULT]
+- name: BAT
+  pins:
+  - C2.1
+  - C3.+
+  - C4.+
+  - D2.A
+  - JP3.1
+  - JP4.1
+  - R1.2
+  - R2.2
+  - U1.BAT
+- name: BOOST
+  pins: [C5.1, D2.C, U1.BOOST]
+- name: FB
+  pins: [R2.1, R3.2, R6.2]
+- name: GND
+  pins:
+  - C1.2
+  - C2.2
+  - C3.-
+  - C4.-
+  - C6.1
+  - D1.A
+  - J1.GND
+  - J1.GNDBREAK
+  - J3.-
+  - J3.PAD1
+  - J3.PAD2
+  - J4.3
+  - J5.2
+  - J6.2
+  - J8.2
+  - R3.1
+  - R7.CW
+  - U1.GND_PAD
+- name: N$8
+  pins: [J1.PWR, J2.GND, J2.GNDBREAK, J7.2, J8.1, JP1.1]
+- name: SENSE
+  pins: [JP4.2, L1.2, R1.1, U1.SENSE]
+- name: SET
+  pins: [J4.4, R7.WIPER, U1.VIN_REG]
+- name: SFSASDF
+  pins: [J2.PWR, J7.1, JP2.1]
+- name: SW
+  pins: [C5.2, D1.C, L1.1, U1.SW]
+- name: TIMER
+  pins: [C6.2, U1.TIMER]
+- name: VFB
+  pins: [R6.1, U1.VFB]
+- name: VIN
+  pins: [C1.1, JP1.2, JP2.2, R7.CCW, U1.!SHDN, U1.VIN]
+- name: V_BATT
+  pins: [J3.+, J5.1, J6.1, JP3.2, R4.1, R5.1]
+positions:
+- ref: C1
+  x: 17.78
+  y: 19.05
+- ref: C2
+  x: 22.86
+  y: 21.84
+  rot: 180.0
+- ref: C3
+  x: 22.86
+  y: 29.21
+- ref: C4
+  x: 22.86
+  y: 25.4
+- ref: C5
+  x: 26.67
+  y: 16.51
+- ref: C6
+  x: 16.51
+  y: 10.16
+  rot: 90.0
+- ref: D1
+  x: 22.86
+  y: 19.05
+  rot: 270.0
+- ref: D2
+  x: 26.67
+  y: 13.97
+  rot: 90.0
+- ref: J1
+  x: 5.08
+  y: 13.97
+- ref: J2
+  x: 0.0
+  y: 35.56
+  rot: 270.0
+- ref: J3
+  x: 43.18
+  y: 11.43
+  rot: 270.0
+- ref: J4
+  x: 19.05
+  y: 1.27
+  rot: 180.0
+- ref: J5
+  x: 44.45
+  y: 26.67
+  rot: 90.0
+- ref: J6
+  x: 42.55
+  y: 18.92
+  rot: 90.0
+- ref: J7
+  x: 3.81
+  y: 36.83
+  rot: 270.0
+- ref: J8
+  x: 3.81
+  y: 27.94
+  rot: 270.0
+- ref: JP1
+  x: 12.7
+  y: 25.4
+- ref: JP2
+  x: 15.24
+  y: 30.48
+  rot: 270.0
+- ref: JP3
+  x: 36.83
+  y: 26.67
+- ref: JP4
+  x: 27.3
+  y: 30.48
+- ref: L1
+  x: 30.48
+  y: 19.05
+  rot: 90.0
+- ref: R1
+  x: 27.3
+  y: 27.18
+  rot: 180.0
+- ref: R2
+  x: 26.67
+  y: 10.16
+- ref: R3
+  x: 23.5
+  y: 8.38
+- ref: R4
+  x: 31.75
+  y: 10.16
+  rot: 180.0
+- ref: R5
+  x: 31.75
+  y: 8.0
+  rot: 180.0
+- ref: R6
+  x: 23.5
+  y: 10.16
+- ref: R7
+  x: 7.62
+  y: 3.81
+- ref: U1
+  x: 20.32
+  y: 13.97
+copper_pours:
+- net: GND
+  layers: [F.Cu]
+- net: SW
+  layers: [F.Cu]

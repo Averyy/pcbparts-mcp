@@ -2,7 +2,7 @@ name: AtmosFC
 slug: atmosfc
 source: cypamigon/AtmosFC
 format: kicad8
-description: 'STM32G473 flight controller: ICM-42688-P IMU, DPS-386 baro'
+description: "STM32G473 flight controller: ICM-42688-P IMU, DPS368 baro"
 tags: [drone-uav, sensors]
 key_ics: [STM32G473, MAX7456, ICM-42688-P]
 outline:

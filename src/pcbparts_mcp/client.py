@@ -67,6 +67,7 @@ from .alternatives import (
     verify_primary_spec_match,
     score_alternative,
     prefer_same_package,
+    likely_drop_in,
     build_response,
     build_unsupported_response,
 )
@@ -120,6 +121,16 @@ _MANUFACTURER_EXACT_NORMALIZED: dict[str, str] = {
 
 # A datasheet_pdf link closer than this to expiring isn't served: the caller needs time to fetch it
 PDF_LINK_MIN_REMAINING = 300
+# /mcp/datasheet/<lcsc> signs links on request: at most this many JLCPCB lookups a minute for all
+# callers together (links already held are reused), so the short links can't drive JLCPCB traffic
+DATASHEET_SIGNINGS_PER_MINUTE = 20
+DATASHEET_LINK_CACHE_MAX = 5000
+# A part without a datasheet PDF isn't looked up again for this long
+DATASHEET_MISSING_TTL = 600
+
+
+class DatasheetLinkBusy(ValueError):
+    """The minute's budget for signing datasheet links is used up."""
 
 
 def _signed_url_expiry(url: str) -> float | None:
@@ -204,6 +215,10 @@ class JLCPCBClient:
         self._easyeda_component_cache: dict[str, tuple[float, dict[str, Any] | ValueError, bool]] = {}
         # Part details cache: lcsc -> (timestamp, result_dict | None)
         self._part_cache: dict[str, tuple[float, dict[str, Any] | None]] = {}
+        # Signed datasheet links for /mcp/datasheet: lcsc -> (url or None, valid until), and the
+        # times of recent JLCPCB lookups for them
+        self._datasheet_links: dict[str, tuple[str | None, float]] = {}
+        self._datasheet_signings: list[float] = []
         # Locks for thread-safe cache access during concurrent async operations
         self._easyeda_cache_lock: asyncio.Lock | None = None
         self._easyeda_component_cache_lock: asyncio.Lock | None = None
@@ -1073,17 +1088,6 @@ class JLCPCBClient:
                     for p in prices
                 ]
 
-            # Full attributes list (beyond specs)
-            if attrs:
-                result["attributes"] = [
-                    {
-                        "name": a.get("attribute_name_en"),
-                        "value": a.get("attribute_value_name"),
-                    }
-                    for a in attrs
-                    if a.get("attribute_name_en")
-                ]
-
         return result
 
     async def search(
@@ -1270,6 +1274,45 @@ class JLCPCBClient:
         # Cache negative result (part not found)
         await self._cache_part_result(lcsc, None)
         return None
+
+    async def datasheet_pdf_url(self, lcsc: str) -> str | None:
+        """A signed link to a part's datasheet PDF, valid for at least PDF_LINK_MIN_REMAINING, for
+        the /mcp/datasheet/<lcsc> redirect; None if the part or its PDF isn't found.
+
+        Reuses a link from the part cache or an earlier redirect; otherwise makes one JLCPCB search
+        request (never EasyEDA, unlike get_part), within DATASHEET_SIGNINGS_PER_MINUTE for all
+        callers (raises DatasheetLinkBusy beyond it). JLCPCB errors raise ValueError, as elsewhere.
+        """
+        lcsc = lcsc.strip().upper()
+        if not lcsc.startswith("C") or not lcsc[1:].isdigit():
+            return None
+        now = time.time()
+        async with self._get_part_cache_lock():
+            entry = self._part_cache.get(lcsc)
+        part = entry[1] if entry else None
+        if part and part.get("datasheet_pdf") and not _pdf_link_expiring(part, now):
+            return part["datasheet_pdf"]
+        held = self._datasheet_links.get(lcsc)
+        if held and (held[0] is None and now < held[1] or held[0] and held[1] - now >= PDF_LINK_MIN_REMAINING):
+            return held[0]
+
+        self._datasheet_signings = [t for t in self._datasheet_signings if t > now - 60]
+        if len(self._datasheet_signings) >= DATASHEET_SIGNINGS_PER_MINUTE:
+            raise DatasheetLinkBusy("Too many datasheet links requested; try again in a minute")
+        self._datasheet_signings.append(now)
+        response = await self._request(JLCPCB_SEARCH_URL, {
+            "keyword": lcsc, "currentPage": 1, "pageSize": 10, "searchSource": "search",
+        })
+        items = ((response.get("data") or {}).get("componentPageInfo") or {}).get("list") or []
+        item = next((i for i in items if i.get("componentCode") == lcsc), None)
+        url, _ = datasheet_pdf_link((item or {}).get("dataManualFileAccessIdUrl"))
+        valid_until = (_signed_url_expiry(url) or now) if url else now + DATASHEET_MISSING_TTL
+        if len(self._datasheet_links) >= DATASHEET_LINK_CACHE_MAX:
+            self._datasheet_links = {k: v for k, v in self._datasheet_links.items() if v[1] > now}
+            while len(self._datasheet_links) >= DATASHEET_LINK_CACHE_MAX:
+                self._datasheet_links.pop(next(iter(self._datasheet_links)))
+        self._datasheet_links[lcsc] = (url, valid_until)
+        return url
 
     async def find_alternatives(
         self,
@@ -1530,6 +1573,13 @@ class JLCPCBClient:
             verify_info = verification_info_map.get(part.get("lcsc", ""), {"specs_verified": [], "specs_unparseable": []})
             scored.append((score, part, breakdown, verify_info))
 
+        # Part types without rules: parts in the original's package and family come first
+        drop_ins = {} if is_supported else {
+            part.get("lcsc", ""): note for part in compatible
+            if (note := likely_drop_in(original, part, _normalize_package_for_matching(
+                part.get("package") or "") == orig_pkg_normalized))
+        }
+
         # Within each fee tier, prefer the original footprint for passives and crystals.
         def rank(item):
             score, part, _, _ = item
@@ -1537,6 +1587,8 @@ class JLCPCBClient:
             if coverage:
                 # RF: how much of the original's band a part covers comes before fee, stock and price
                 return (COVERAGE_ORDER[coverage["status"]], coverage.get("share") or 0.0, score)
+            if drop_ins:
+                return (part.get("lcsc", "") in drop_ins, score)
             if prefer_same_package(subcategory_name or ""):
                 return (
                     part.get("library_type") in ("basic", "preferred"),
@@ -1560,7 +1612,7 @@ class JLCPCBClient:
         else:
             response = build_unsupported_response(
                 original, top_scored, subcategory_name or "", primary_attr, effective_limit,
-                frequency_check=frequency_check,
+                frequency_check=frequency_check, drop_ins=drop_ins,
             )
         if footprint_filter:
             response["summary"]["footprint_filter"] = footprint_filter

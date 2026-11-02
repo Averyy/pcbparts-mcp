@@ -3,7 +3,7 @@ slug: techstudio-sim7080g
 source: techstudio-design/sim7080_dev_board
 format: kicad_legacy
 description: Cellular modem (SIM7080G), eSIM (ST4SIM-200M)
-tags: [level-shifting]
+tags: [cellular, level-shifting]
 key_ics: [SIM7080G, ST4SIM-200M]
 outline:
   width_mm: 38.5

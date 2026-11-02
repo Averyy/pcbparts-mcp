@@ -137,6 +137,28 @@ class TestParsePins:
         assert [p["number"] for p in pins] == ["1", "2", "3"]
         assert [p["name"] for p in pins] == ["A", "B", "C"]
 
+    def test_number_is_the_number_text_not_the_spice_pin(self):
+        """SIM7080G (C2943992): 58 of 77 pins have SPICE pin 0 and 4 reuse low numbers."""
+        data = {"dataStr": {"shape": [
+            # VBAT: spice 0, pin 35
+            "P~show~0~0~430~360~180~gge892~0^^430~360^^M 430 360 h 20~#880000^^1~452~363~0~VBAT~start~~~#0000FF^^1~445~359~0~35~end~~~#0000FF^^0~447~360^^0~M 450 363 L 453 360 L 450 357",
+            # GNSS_ANT, right side (name anchored at end): spice 0, pin 68
+            "P~show~0~0~650~230~0~gge283~0^^650~230^^M 650 230 h -20~#880000^^1~628~233~0~GNSS_ANT~end~~~#0000FF^^1~635~229~0~68~start~~~#0000FF^^0~633~230^^0~M 630 227 L 627 230 L 630 233",
+            # UART3_TXD: spice 5, pin 61
+            "P~show~0~5~430~570~180~gge409~0^^430~570^^M 430 570 h 20~#880000^^1~452~573~0~UART3_TXD~start~~~#0000FF^^1~445~569~0~61~end~~~#0000FF^^0~447~570^^0~M 450 573 L 453 570 L 450 567",
+            "P~show~0~1~430~540~180~gge1606~0^^430~540^^M 430 540 h 20~#880000^^1~452~543~0~UART1_TXD~start~~~#0000FF^^1~445~539~0~1~end~~~#0000FF^^0~447~540^^0~M 450 543 L 453 540 L 450 537",
+        ]}}
+        pins = parse_easyeda_pins(data)
+        assert [(p["number"], p["name"]) for p in pins] == [
+            ("1", "UART1_TXD"), ("35", "VBAT"), ("61", "UART3_TXD"), ("68", "GNSS_ANT")]
+
+    def test_hidden_numeric_name(self):
+        """PJ-320B (C18594): name text hidden and equal to the number."""
+        data = {"dataStr": {"shape": [
+            "P~show~0~1~430~290~~gge6~0^^430~290^^M 430 290 h -20~#880000^^0~408~293~0~1~end~~~#0000FF^^1~415~289~0~1~start~~~#0000FF^^0~413~290^^0~M 410 287 L 407 290 L 410 293",
+        ]}}
+        assert parse_easyeda_pins(data) == [{"number": "1", "name": "1"}]
+
 
 @pytest.fixture(scope="module")
 async def client():
@@ -222,7 +244,7 @@ class TestPinoutIntegration:
 
     @pytest.mark.asyncio
     async def test_get_easyeda_component_rp2040(self, client):
-        """Test fetching RP2040 - has electrical types but no names."""
+        """RP2040's labels carry a font (~end~Tahoma~5.8pt~), which hid every pin name before 0.8.0."""
         part = await client.get_part("C2040")  # RP2040
         assert part is not None
 
@@ -234,6 +256,8 @@ class TestPinoutIntegration:
         # RP2040 has electrical types set (mostly bidirectional)
         electrical_types = {p.get("electrical") for p in pins if "electrical" in p}
         assert "bidirectional" in electrical_types
+        by_number = {p["number"]: p["name"] for p in pins}
+        assert by_number["2"] == "GPIO0" and by_number["9"] == "GPIO7"
 
     @pytest.mark.asyncio
     async def test_get_easyeda_component_esp32_s3(self, client):

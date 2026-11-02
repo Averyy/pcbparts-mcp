@@ -620,7 +620,7 @@ components:
   value: TPS65186RGZR
   footprint: VQFN-49
 - ref: U10
-  value: ESP32
+  value: ESP32-WROVER
   footprint: ESP32-WROVER
 - ref: U11
   value: PCAL6416AHF,128

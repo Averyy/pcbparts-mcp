@@ -68,6 +68,7 @@ MAX_RETRIES = 3
 JLCPCB_CONCURRENT_LIMIT = 10  # Max concurrent requests to JLCPCB API (prevents IP blocking)
 DEFAULT_PAGE_SIZE = 20
 MAX_PAGE_SIZE = 100
+MAX_SEARCH_OFFSET = 10_000  # jlc_search offset: 100 pages of 100
 DEFAULT_MIN_STOCK = 10
 MAX_ALTERNATIVES = 50
 

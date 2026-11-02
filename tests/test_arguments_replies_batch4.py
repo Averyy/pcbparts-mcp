@@ -178,8 +178,10 @@ async def test_strict_reports_explicit_unsupported_filters(client):
 
 
 async def test_strict_keeps_applied_sparse_filter_results(client):
+    # 37 of 5,200 op amps list this (Supply Voltage was the example before op amps' "Single supply"
+    # joined it in 0.8.0)
     args = {"subcategory_name": "Operational Amplifier", "limit": 3,
-            "spec_filters": [{"name": "Supply Voltage", "op": "=", "value": "5V"}]}
+            "spec_filters": [{"name": "Maximum Power Supply Range (Vdd-Vss)", "op": "=", "value": "5.5V"}]}
     normal = await call(client, **args)
     strict = await call(client, **args, strict=True)
     assert normal["results"] and strict["results"] == normal["results"]

@@ -2,9 +2,9 @@ name: USB Armory Mk II
 slug: usb-armory-mk-ii
 source: usbarmory/usbarmory
 format: kicad7
-description: i.MX6ULZ SoC, DDR3 SDRAM
+description: "USB armory Mk II LAN: i.MX6ULL SoC, DDR3 SDRAM"
 tags: [security, embedded]
-key_ics: [PF1510, MCIMX6Z0DVM09AB]
+key_ics: [PF1510, MCIMX6Y2DVM09AB]
 components:
 - ref: C1
   value: 4.7uF

@@ -4,6 +4,8 @@ import re
 from dataclasses import dataclass
 from typing import Literal
 
+from ..search.spec_filter import COLOR_ANY, COLOR_COMBO_SEPARATOR, COLOR_SHADES
+
 
 _GATE_CUE = re.compile(
     r'\b(?:gate(?:[-\s]+(?:drive|voltage))?|vgs(?!\s*\(\s*th\s*\)))\b',
@@ -94,18 +96,41 @@ SEMANTIC_DESCRIPTORS: dict[str, list[SemanticFilter]] = {
     "nmos": [SemanticFilter("Type", "=", "N-Channel", "nmos")],
     "pmos": [SemanticFilter("Type", "=", "P-Channel", "pmos")],
 
+    # Battery cell count ("1~4" on multi-cell chargers covers 1)
+    **{word: [SemanticFilter("Number of Cells", "=", "1", word)]
+       for word in ("single cell", "single-cell", "1 cell", "1-cell", "one cell")},
+    **{f"{n}{sep}cell": [SemanticFilter("Number of Cells", "=", str(n), f"{n}{sep}cell")]
+       for n in (2, 3, 4) for sep in (" ", "-")},
+
+    # Audio amplifier class (values are lists: "Class AB、Class D")
+    **{word: [SemanticFilter("Class", "=", "Class D", word)] for word in ("class d", "class-d")},
+    **{word: [SemanticFilter("Class", "=", "Class AB", word)] for word in ("class ab", "class-ab")},
+
     # BJT type
     "npn": [SemanticFilter("Type", "=", "NPN", "npn")],
     "pnp": [SemanticFilter("Type", "=", "PNP", "pnp")],
 
-    # LED colors (DB uses "Illumination Color" not "Color")
+    # LED colors (DB uses "Illumination Color" not "Color"). A colour word covers its shades
+    # (several "=" filters on one spec are OR'd); two colour words are one multi-colour part
+    # (combined in the parser).
     "red": [SemanticFilter("Illumination Color", "=", "Red", "red")],
-    "green": [SemanticFilter("Illumination Color", "=", "Green", "green")],
+    **{word: [SemanticFilter("Illumination Color", "=", shade, word) for shade in COLOR_SHADES[word]]
+       for word in ("green", "white")},
     "blue": [SemanticFilter("Illumination Color", "=", "Blue", "blue")],
     "yellow": [SemanticFilter("Illumination Color", "=", "Yellow", "yellow")],
-    "white": [SemanticFilter("Illumination Color", "=", "White", "white")],
     "orange": [SemanticFilter("Illumination Color", "=", "Orange", "orange")],
     "amber": [SemanticFilter("Illumination Color", "=", "Amber", "amber")],
+    "emerald green": [SemanticFilter("Illumination Color", "=", "Emerald Green", "emerald green")],
+    **{word: [SemanticFilter("Illumination Color", "=", "Yellow Green", word)]
+       for word in ("yellow green", "yellow-green")},
+    **{word: [SemanticFilter("Illumination Color", "=", "Cold White", word)] for word in ("cold white", "cool white")},
+    "warm white": [SemanticFilter("Illumination Color", "=", "Warm White", "warm white")],
+    **{word: [SemanticFilter("Illumination Color", "=", "any + any", word)]
+       for word in ("bicolor", "bi-color", "bi color", "bicolour", "bi-colour", "bi colour", "dual color",
+                    "dual colour", "dual-color", "dual-colour", "two color", "two colour", "2 color", "2-color")},
+    **{word: [SemanticFilter("Illumination Color", "=", "any + any + any", word)]
+       for word in ("tricolor", "tri-color", "tri color", "tricolour", "tri-colour", "three color",
+                    "three colour", "3 color", "3-color")},
     # Note: "ir"/"infrared" removed - IR LEDs are a separate subcategory, not a Type value
 
     # Capacitor temperature coefficients / dielectrics
@@ -167,6 +192,28 @@ def extract_semantic_descriptors(query: str) -> tuple[list[SemanticFilter], str]
             query_lower = remaining.lower()
 
     return filters, remaining
+
+
+def combine_colors(filters: list[SemanticFilter], query: str) -> list[SemanticFilter]:
+    """Two colour words, or "bicolor", ask for one multi-colour part: "bicolor LED red green" is
+    Illumination Color = Red + Green (parts with those two colours), not red parts or green parts.
+    Colours keep the query's order."""
+    colors: dict[str, str] = {}  # colour word -> its first catalog name
+    slots = 0
+    query = query.lower()
+    for f in sorted(filters, key=lambda f: query.find(f.source)):
+        if f.spec_name != "Illumination Color":
+            continue
+        if COLOR_COMBO_SEPARATOR in f.value:
+            slots = max(slots, f.value.count(COLOR_COMBO_SEPARATOR) + 1)
+        else:
+            colors.setdefault(f.source, f.value)
+    if len(colors) < 2 and not slots:
+        return filters
+    items = [*colors.values(), *[COLOR_ANY] * (slots - len(colors))]
+    sources = dict.fromkeys(f.source for f in filters if f.spec_name == "Illumination Color")
+    combined = SemanticFilter("Illumination Color", "=", f" {COLOR_COMBO_SEPARATOR} ".join(items), " ".join(sources))
+    return [*(f for f in filters if f.spec_name != "Illumination Color"), combined]
 
 
 # Noise words to remove from queries
