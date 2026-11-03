@@ -5,7 +5,7 @@ from dataclasses import dataclass, field, replace
 from typing import Any
 
 from ..search.spec_filter import ConnectorFilter, FuseFilter, ScopedTextFilter, SpecFilter, switch_circuit
-from ..subcategory_aliases import SUBCATEGORY_GROUPS
+from ..subcategory_aliases import _POWER_MUX_WORDS, SUBCATEGORY_GROUPS
 from .packages import extract_package, extract_package_choices
 from .values import ExtractedValue, extract_values, normalize_value_notation
 from .models import extract_model_number
@@ -38,7 +38,7 @@ class ParsedQuery:
 
 # Keyword -> (words, subcategory): within that subcategory only parts whose text has the words
 _SCOPED_TEXT = {
-    **dict.fromkeys(("ideal diode", "ideal diodes"), ("ideal diode", ("power distribution switches",))),
+    **dict.fromkeys(("ideal diode", "ideal diodes", *_POWER_MUX_WORDS), ("ideal diode", ("power distribution switches",))),
     **dict.fromkeys(("lora", "lora transceiver", "lora chip"), ("lora", ("rf transceiver ics",))),
 }
 
@@ -190,6 +190,14 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         # RF and Bluetooth Modules (ESP32-C3-MINI-1 is an RF Module).
         subcategory, matched_keyword = "wifi modules", "esp32 module"
         remaining = re.sub(r"\bmodules?\b", " ", remaining, flags=re.IGNORECASE)
+    elif (model and re.fullmatch(r"ESP32(?:-[A-Z0-9]+)?", model, re.IGNORECASE) and not subcategory
+            and not result.package and (chip := _ESP32_CHIP_WORDS.search(remaining))):
+        # "ESP32-S3 chip QFN": the four S3 chips are filed under three part types (one as a WiFi
+        # Module), and the words weren't searched, so modules came back. The chips are all QFN.
+        # Not for module numbers (ESP32-S3-MINI-1) or a BOM's "IC" category word.
+        result.package = detected["package"] = "QFN"
+        detected.setdefault("semantic", []).append(f"{chip.group(0)} (-> QFN package: the chip, not a module)")
+        remaining = re.sub(r"\s+", " ", _ESP32_CHIP_WORDS.sub(" ", remaining)).strip()
     if subcategory:
         result.subcategory = subcategory
         detected["component_type"] = matched_keyword
@@ -329,9 +337,18 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
     # leaving "8" alone which doesn't match the "N pin" pattern
     connector_words = ("header", "connector", "terminal", "socket", "plug", "receptacle")
     is_connector = matched_keyword and any(word in matched_keyword.lower() for word in connector_words)
+    if is_connector and not any(v.unit_type == "pitch" for v in values) and (
+            bare_pitch := re.search(r'(?<![\w.])(\d+\.\d+)(?![\w.])', remaining)) and (
+            float(bare_pitch.group(1)) in _BARE_PITCHES):
+        # "female header 2.54": a pitch without its mm. The "2" was read as a pin count and ".54" dropped
+        values.append(ExtractedValue(raw=bare_pitch.group(0), value=float(bare_pitch.group(1)), unit_type="pitch",
+                                     normalized=f"{bare_pitch.group(1)}mm"))
+        detected.setdefault("values", []).append(
+            {"raw": bare_pitch.group(0), "type": "pitch", "normalized": f"{bare_pitch.group(1)}mm"})
+        remaining = re.sub(r'\s+', ' ', remaining[:bare_pitch.start()] + remaining[bare_pitch.end():]).strip()
     if is_connector:
-        # Look for standalone numbers in remaining text that could be pin counts
-        standalone_num_match = re.search(r'\b(\d+)\b', remaining)
+        # Look for standalone numbers in remaining text that could be pin counts (not inside "2.54")
+        standalone_num_match = re.search(r'(?<![\d.])\b(\d+)\b(?!\.\d)', remaining)
         if standalone_num_match:
             # Check if this number isn't already captured as a value
             num_val = int(standalone_num_match.group(1))
@@ -418,6 +435,14 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
             remaining = re.sub(r"\s+", " ", remaining[:cells.start()] + remaining[cells.end():]).strip()
     if (subcategory_hint or result.subcategory or "").lower() == "logic gates":
         semantic_filters, remaining = _logic_gate_filters(remaining, semantic_filters, detected)
+    # "JST ZH ... right angle": the words narrow the search where descriptions have them, but JST's
+    # don't, so they were dropped and a vertical part came first. Connectors list it in Mounting Type
+    # ("Surface Mount, Right Angle", "Straight"; a third say neither), so it also ranks first.
+    if _CONNECTOR_TYPE.search(subcategory_hint or result.subcategory or "") and (
+            orientation := _ORIENTATION_WORDS.search(remaining)):
+        wanted = "Right Angle" if orientation.group("right") else "Vertical"
+        result.preferred_specs.append(SpecFilter("Mounting Type", "=", wanted))
+        detected.setdefault("semantic", []).append(f"{orientation.group(0)} (-> {wanted.lower()} first)")
     if (subcategory_hint or result.subcategory or "").lower() == "power distribution switches":
         semantic_filters, remaining = _power_switch_features(remaining, matched_keyword, semantic_filters, detected)
     # "slide switch 2P3T": the catalog writes it DP3T, 2P3T or "Double pole triple throw", which the
@@ -934,6 +959,13 @@ def _power_switch_features(remaining: str, matched_keyword: str | None, filters:
     return filters, re.sub(r"\s+", " ", remaining).strip()
 
 
+_ESP32_CHIP_WORDS = re.compile(r"\b(?:bare\s+)?(?:chips?|soc|qfn)\b", re.IGNORECASE)
+# Header and connector pitches written without "mm" (values.py takes these with mm anywhere)
+_BARE_PITCHES = frozenset({0.5, 0.8, 1.0, 1.25, 1.27, 1.5, 2.0, 2.5, 2.54, 3.5, 3.81, 3.96, 5.0, 5.08, 7.62})
+_CONNECTOR_TYPE = re.compile(r"connector|header|terminal block|socket", re.IGNORECASE)
+_ORIENTATION_WORDS = re.compile(
+    r"\b(?:(?P<right>right[\s-]*angled?|horizontal|side[\s-]*(?:entry|mount)|90[\s-]*(?:°|deg(?:rees?)?)(?!\w))"
+    r"|vertical|straight|top[\s-]*entry)\b", re.IGNORECASE)
 # Switch part types that list a Circuit (SPST, DPDT, "Double pole triple throw")
 _CIRCUIT_SUBCATEGORIES = frozenset({
     "tactile switches", "slide switches", "dip switches", "limit switches", "pushbutton switches", "rf switches",

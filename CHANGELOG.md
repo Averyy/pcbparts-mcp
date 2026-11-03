@@ -4,6 +4,19 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.3 (2026-11-02)
+
+### Fixed
+
+- **`power mux`:** returned signal multiplexers. `power mux`, `power multiplexer`, `power path switch` and `power selector` now search like `ideal diode`: ORing controllers (where LCSC files TPS2121 and LM66100) and the ideal diodes among load switches.
+- **Connector orientation:** `JST ZH ... SMD right angle` dropped "right angle" (JST's descriptions don't say it) and listed a vertical header first. In connector searches, `right angle`, `horizontal`, `side entry`, `vertical`, `straight` and `top entry` rank parts whose `Mounting Type` says so first, ahead of the maker and series preferences. Parts that don't state an orientation stay in the results, and the words still narrow the search where descriptions have them.
+- **A pitch without "mm":** `female header 2.54` read the 2 as a pin count and dropped ".54". Common pitches (2.54, 1.27, 2.0 and others) written bare in a connector search are the pitch.
+- **A query naming another part type than the subcategory given:** `addressable RGB LED` with `subcategory_id=71` (discrete LEDs) returned the whole subcategory with no explanation. `parsed.detected.not_searched` now says the words name RGB LEDs(Built-in IC), not the subcategory given. A generic word in the same family (`capacitor` with Tantalum Capacitors) isn't noted.
+- **ESP32 chips:** `ESP32-S3 chip QFN` returned modules, and the four S3 chips are filed under three part types (one as a WiFi Module). `chip`, `SoC`, `IC` or `QFN` beside an ESP32 part number now searches QFN packages in every part type.
+- **`jlc_stock_check` with a part-number fragment:** `2812` found only capacitors in a 2812 case, because JLCPCB matches whole part numbers and their starts. When no result contains the fragment, `hint` names in-stock parts that do (WS2812B-2020-V6, XL-5050RGBC-2812B).
+- **Busy datasheet links:** "try again in a minute" now says how many seconds (also in `Retry-After` and `retry_after`), that the limit is 20 new links a minute for all users, and that a `datasheet_pdf` link `jlc_get_part` returned in the last 25 minutes opens without using one.
+- **`maker_datasheet` for TI part-number links:** 0.8.2 turned TI's `lit/gpn/<part>` links into `lit/ds/symlink/<part>.pdf`, which is a 404 when the datasheet has another name (LM73100's is `lm7310.pdf`). They're now TI's English `lit/gpn/<part>` link, which redirects to the right PDF.
+
 ## 0.8.2 (2026-11-02)
 
 ### Added

@@ -77,9 +77,12 @@ class TestSigning:
         for n in range(DATASHEET_SIGNINGS_PER_MINUTE):
             await client.datasheet_pdf_url(f"C{100 + n}")
         assert await client.datasheet_pdf_url("C100") == signed(ISSUED, "C100")  # held links still work
-        with pytest.raises(DatasheetLinkBusy):
+        clock[0] += 20
+        with pytest.raises(DatasheetLinkBusy) as busy:
             await client.datasheet_pdf_url("C999")
-        clock[0] += 61
+        assert busy.value.retry_after == 40 and "try again in 40s" in str(busy.value)
+        assert f"at most {DATASHEET_SIGNINGS_PER_MINUTE}" in str(busy.value) and "25 minutes" in str(busy.value)
+        clock[0] += 41
         assert await client.datasheet_pdf_url("C999")
 
 
@@ -88,7 +91,7 @@ class TestRoute:
     def http(self, monkeypatch):
         async def datasheet_pdf_url(lcsc):
             if lcsc == "C429":
-                raise DatasheetLinkBusy("Too many datasheet links requested; try again in a minute")
+                raise DatasheetLinkBusy("This server signs at most 20 new datasheet links a minute", retry_after=17)
             if lcsc == "C502":
                 raise ValueError("JLCPCB rate limited — try again later")
             return None if lcsc == "C404" else signed(ISSUED, lcsc)
@@ -108,6 +111,11 @@ class TestRoute:
         async with http:
             reply = await http.get(f"/mcp/datasheet/{lcsc}")
         assert reply.status_code == status and "error" in reply.json()
+
+    async def test_busy_says_when(self, http):
+        async with http:
+            reply = await http.get("/mcp/datasheet/C429")
+        assert reply.headers["retry-after"] == "17" and reply.json()["retry_after"] == 17
 
     def test_route_is_served(self):
         assert any(getattr(r, "path", None) == "/mcp/datasheet/{lcsc}" for r in server.app.routes)

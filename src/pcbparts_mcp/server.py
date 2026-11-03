@@ -505,7 +505,9 @@ async def jlc_stock_check(
         limit: Results per page (max 100)
 
     Returns:
-        Results with pagination. Use jlc_get_part(lcsc=...) for full details.
+        Results with pagination. Use jlc_get_part(lcsc=...) for full details. JLCPCB matches whole part
+        numbers and their starts: when no result contains a part-number fragment ("2812"), hint names
+        in-stock parts that do (WS2812B, XL-5050RGBC-2812B).
     """
     if not _client:
         raise RuntimeError("Client not initialized")
@@ -563,7 +565,7 @@ async def jlc_stock_check(
             return {"error": f"Subcategory not found: '{subcategory_name}'", "hint": "Use jlc_search_help(category='Connectors') to see available subcategories"}
 
     try:
-        return await _client.search(
+        result = await _client.search(
             query=query,
             category_id=resolved_category_id,
             subcategory_id=resolved_subcategory_id,
@@ -583,6 +585,17 @@ async def jlc_stock_check(
         # Client raises ValueError with actionable messages (rate limited / WAF / timeout).
         # Return them as a dict so they survive mask_error_details=True.
         return {"error": str(e)}
+    # "2812" found no part number with it (only 594D capacitors in a 2812 case) though WS2812B and
+    # XL-5050RGBC-2812B contain it: JLCPCB's search matches whole part numbers and their starts.
+    # Name in-stock parts that contain it.
+    fragment = (query or "").strip()
+    if (not result.get("error") and re.fullmatch(r"(?=[\w-]*\d)[\w-]{3,}", fragment)
+            and not any(fragment.upper() in (p.get("model") or "").upper() for p in result.get("results") or [])):
+        if found := await run_db(COMPONENT_POOL, get_db().mpns_containing, fragment):
+            result["hint"] = (f"JLCPCB's search matches whole part numbers and their starts, not text inside "
+                              f"them. In-stock parts with {fragment!r} inside their part number include "
+                              f"{', '.join(found)}: search one of those (jlc_stock_check(query={json.dumps(found[0])})).")
+    return result
 
 
 def _parse_spec_filters(filters: list[dict[str, Any]] | str | None) -> list[SpecFilter] | None:
@@ -868,6 +881,18 @@ def jlc_search(
             if explicit_name and explicit_name.lower() != parsed.subcategory.lower():
                 reported_subcategory = explicit_name.lower()
                 parsed.detected.pop("subcategory", None)
+                # "addressable RGB LED" with subcategory_id=71 (discrete LEDs): the words name another
+                # part type, so they're not searched, and the whole subcategory looked like the answer
+                # A generic word in the same family ("capacitor" with Tantalum Capacitors) isn't noted
+                parsed_id = db.resolve_subcategory_name(parsed.subcategory)
+                parsed_type = db.get_subcategory_name(parsed_id) if parsed_id else None
+                other_family = bool(parsed_id) and (db.get_category_for_subcategory(parsed_id)
+                                                    != db.get_category_for_subcategory(explicit_id))
+                if ((words := parsed.detected.get("component_type")) and (" " in words or other_family)
+                        and explicit_name.lower() not in (name.lower() for name in parsed.subcategories or [])):
+                    parsed.detected.setdefault("not_searched", []).append(
+                        f"{words}: names {parsed_type or parsed.subcategory}, not the subcategory given "
+                        f"({explicit_name}), so it isn't searched; leave out the subcategory to search that type")
         parsed_query_info = {
             "original_query": parsed.original,
             "detected": parsed.detected,
@@ -1028,14 +1053,18 @@ def jlc_search(
     if (parsed and parsed.gate_drive_v is not None and searched_ids
             and all(db.get_subcategory_name(i).lower() == "mosfets" for i in searched_ids)):
         search_args["gate_drive_v"] = parsed.gate_drive_v
-    if (parsed and parsed.preferred_specs and searched_ids
+    orientation = [f for f in (parsed.preferred_specs if parsed else []) if f.name == "Mounting Type"]
+    pd_specs = [f for f in (parsed.preferred_specs if parsed else []) if f.name != "Mounting Type"]
+    if (pd_specs and searched_ids
             and all(db.get_subcategory_name(i).lower() == "usb pd" for i in searched_ids)):
-        search_args["preferred_specs"] = parsed.preferred_specs
+        search_args["preferred_specs"] = pd_specs
         parsed_query_info.setdefault("adjusted_filters", []).extend({
             "filter": f"{f.name} = {f.value}", "now": f"rank {f.name} = {f.value} first",
             "reason": "many USB PD parts don't list this attribute; ranking keeps unlisted parts"
                       + ("; this is the negotiated output, not the supply voltage" if f.name == "Output Voltage" else ""),
-        } for f in parsed.preferred_specs)
+        } for f in pd_specs)
+    if orientation:
+        search_args["preferred_specs"] = [*(search_args.get("preferred_specs") or []), *orientation]
     # Perform search - db.search() handles name resolution internally
     if parsed and effective_query:
         # Step 8 and the model patterns can discard ordering-code suffixes. Reuse
@@ -2403,7 +2432,8 @@ async def datasheet_redirect(request):
     try:
         url = await _client.datasheet_pdf_url(lcsc)
     except DatasheetLinkBusy as e:
-        return JSONResponse({"error": str(e)}, status_code=429, headers={"Retry-After": "60"})
+        return JSONResponse({"error": str(e), "retry_after": e.retry_after}, status_code=429,
+                            headers={"Retry-After": str(e.retry_after)})
     except ValueError as e:  # JLCPCB rate limit, WAF challenge or timeout
         return JSONResponse({"error": str(e)}, status_code=502)
     if not url:
