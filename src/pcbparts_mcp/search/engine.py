@@ -19,7 +19,8 @@ from ..subcategory_aliases import (
 )
 from .spec_filter import (
     CONNECTOR_COLUMN_NAMES, FUSE_ATTRIBUTE_MAP, RANGE_SPECS, FuseFilter, SpecFilter,
-    connector_orientation, connector_value, get_attribute_names, switch_circuit,
+    connector_orientation, connector_value, dropout_at_load, dropout_at_load_json, dropout_loads,
+    get_attribute_names, switch_circuit,
 )
 from .resolvers import expand_query_synonyms, expand_package, resolve_manufacturer
 from .mpn import MPN_MATCH_NAMES, mpn_match_rank, normalize_mpn, looks_like_mpn
@@ -35,6 +36,7 @@ from .query_builder import (
     resolve_package_constraints,
     build_manufacturer_clause,
     build_mounting_type_clause,
+    build_pcba_type_clause,
     build_spec_filter_clauses,
     build_sort_clause,
     unlisted_clause,
@@ -255,6 +257,7 @@ class SearchEngine:
         self._conn.create_function("rds_gate_min", 1, rds_gate_min_json, deterministic=True)
         self._conn.create_function("metric_thread_ok", 2, metric_thread_ok, deterministic=True)
         self._conn.create_function("switch_circuit", 1, switch_circuit, deterministic=True)
+        self._conn.create_function("dropout_at_load", 2, dropout_at_load_json, deterministic=True)
         self._package_names: dict[str, list[str]] | None = None
         self._fuse_package_types: dict[str, set[int]] = {}
         columns = {
@@ -377,6 +380,7 @@ class SearchEngine:
         gate_drive_v: float | None = None,
         lcsc_codes: bool = False,
         count_unlisted: bool = False,
+        pcba_type: str | None = None,
     ) -> dict[str, Any]:
         """Execute a search query with pre-resolved parameters.
 
@@ -433,6 +437,9 @@ class SearchEngine:
         if lib_type_sql:
             sql_parts.append(lib_type_sql)
             count_parts.append(lib_type_sql)
+        if pcba_sql := build_pcba_type_clause(pcba_type):
+            sql_parts.append(pcba_sql)
+            count_parts.append(pcba_sql)
 
         # Stock filter
         stock_sql, stock_params = build_stock_clause(min_stock)
@@ -591,6 +598,12 @@ class SearchEngine:
         if gate_drive_v is not None:
             for part in results:
                 part["rds_on_at_drive"] = rds_on_at_drive(part["specs"].get("RDS(on)", ""), gate_drive_v)
+        if loads := dropout_loads(spec_filters):
+            for part in results:
+                if found := dropout_at_load(part["specs"].get("Voltage Dropout"), loads[0]):
+                    volts, listed, scaled = found
+                    part["dropout_at_load"] = {"load": f"{loads[0] * 1000:g}mA", "dropout": f"{volts * 1000:.0f}mV",
+                                               "from": listed + (", scaled linearly" if scaled else "")}
 
         no_fee_available = library_type_counts["basic"] > 0 or library_type_counts["preferred"] > 0
 
@@ -733,6 +746,7 @@ class SearchEngine:
         gate_drive_v: float | None = None,
         lcsc_codes: bool = False,
         count_unlisted: bool = False,
+        pcba_type: str | None = None,
     ) -> dict[str, Any]:
         """Search components with parametric filtering.
 
@@ -884,6 +898,7 @@ class SearchEngine:
             gate_drive_v=gate_drive_v,
             lcsc_codes=lcsc_codes,
             count_unlisted=count_unlisted,
+            pcba_type=pcba_type,
         )
 
         results = search_result["results"]
@@ -920,6 +935,7 @@ class SearchEngine:
                     gate_drive_v=gate_drive_v,
                     lcsc_codes=lcsc_codes,
                     count_unlisted=count_unlisted,
+                    pcba_type=pcba_type,
                 )
                 if retry_result["total"] > 0:
                     # Found results with normalized query
@@ -950,6 +966,7 @@ class SearchEngine:
                 "category_resolved": resolved_category_display_name,
                 "spec_filters": [f.to_dict() for f in (spec_filters or [])],
                 "library_type": library_type,
+                **({"pcba_type": pcba_type} if pcba_type else {}),
                 "prefer_no_fee": prefer_no_fee,
                 "min_stock": min_stock,
                 "package": package,

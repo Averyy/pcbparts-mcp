@@ -49,7 +49,7 @@ from .smart_parser.mapping import DEFAULT_SPECS
 from .alternatives import SPEC_PARSERS
 from .search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN, ConnectorFilter, FuseFilter, ScopedTextFilter
 from .parsers import parse_resistance
-from .pinout import parse_easyeda_pins
+from .pinout import parse_easyeda_footprint, parse_easyeda_pins
 from .design_rules import get_design_rules as _get_design_rules, _RULES_DIR, _build_index
 
 logger = logging.getLogger(__name__)
@@ -226,7 +226,7 @@ _ERROR_KINDS = [(kind, re.compile(pattern)) for kind, pattern in (
     ("bad_request", r"Too many "),
     ("bad_request", r"Invalid [\w ]+: "),
     ("bad_request", r"Strict search cannot apply every constraint; "),
-    ("bad_request", r"Unsupported (library_type|tag|value for \w+): "),
+    ("bad_request", r"Unsupported (library_type|pcba_type|tag|value for \w+): "),
     ("bad_request", r"Must provide "),
     ("bad_request", r"lcsc must be "),
     ("bad_request", r"board_quantity and placements_per_board must be "),
@@ -730,6 +730,7 @@ def jlc_search(
     limit: int = 20,
     offset: int = 0,
     strict: bool = False,
+    pcba_type: str | None = None,
 ) -> dict:
     """Search in-stock JLCPCB parts locally with natural-language parsing and spec filters.
     Default 20 results; strict=true disables relaxation. Reply: relaxed names query words, a
@@ -768,6 +769,9 @@ def jlc_search(
             range includes the value. Operating Temperature (any name for the rated range,
             junction range for diodes) in °C: <= -40 means rated down to -40, >= 85 up to 85,
             = "-40~85" covers both. A query's "-40°C", "105C" or "-40~85℃" does the same.
+            LDO dropout at a load: {"name": "Dropout", "op": "<=", "value": "0.3V@500mA"} uses each
+            part's listed dropout at or above that load, or scales a lower test current's figure up
+            linearly (dropout_at_load shows which); parts rated below the load are left out.
         min_stock: Minimum stock (the database only has stock >= 10)
         library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", "all", or omit;
             case-insensitive, with "no-fee" accepted. Unknown values list the valid choices.
@@ -789,9 +793,14 @@ def jlc_search(
         strict: If true, keep query words and parsed requirements; no relaxed retry. Unsupported
             constraints return an error with ignored_filters/parsed.adjusted_filters and no results.
             Default false allows relaxation, reporting omitted requirements.
+        pcba_type: "economic" keeps parts JLCPCB's Economic assembly can place (its PCBA Type
+            "Economic and Standard"); "standard_only" keeps the parts that need Standard assembly.
 
     Returns:
-        results: Matching components with specs; description is omitted when specs are nonempty
+        results: Matching components with specs; description is omitted when specs are nonempty.
+            pcba_type is "economic" or "standard_only" (one standard_only part moves the whole order
+            to Standard assembly, with its higher setup and stencil fees); no_datasheet: true when
+            JLCPCB lists no datasheet for the part (find it on the maker's site, or pick another)
         total: Matching population before limit. library_type_counts and no_fee_available use
             the same constraints, including library_type and Python spec checks. If a post-filter
             scan reaches its cap, counts_complete=false marks these as counts of checked matches.
@@ -824,6 +833,16 @@ def jlc_search(
                     "results": [], "total": 0}
 
     db = get_db()
+    if pcba_type is not None:
+        pcba_type = re.sub(r"[\s-]+", "_", pcba_type.strip().lower()) if isinstance(pcba_type, str) else pcba_type
+        pcba_type = {"economic_and_standard": "economic", "standard": "standard_only"}.get(pcba_type, pcba_type)
+        if pcba_type not in ("economic", "standard_only"):
+            return {"error": f"Unsupported pcba_type: '{pcba_type}'", "valid_values": ["economic", "standard_only"],
+                    "results": [], "total": 0}
+        if not db.pcba_type_loaded():
+            return {"error": "This catalog doesn't have PCBA types yet (they come with the next daily parts "
+                             "update); search without pcba_type and check pcba_type with jlc_get_part.",
+                    "results": [], "total": 0}
 
     # Parse explicit spec filters
     try:
@@ -1034,6 +1053,7 @@ def jlc_search(
         # A pasted LCSC code (C2040) finds that part, not every code it starts.
         lcsc_codes=bool(query and query.split()) and all(LCSC_CODE.fullmatch(t) for t in query.split()),
         count_unlisted=True,
+        pcba_type=pcba_type,
     )
     requested_packages = parsed_packages or ([effective_package] if effective_package else [])
     package_adjustments = package_family_adjustments(requested_packages)
@@ -1240,7 +1260,8 @@ def jlc_search(
         if resolved_name:
             hints.append(f"Try jlc_search_help(subcategory={json.dumps(resolved_name)}) for attribute names and values.")
         explicit = [name for name, value in (("library_type", None if query_library else library_type),
-                    ("package/packages", package or packages), ("manufacturer", manufacturer)) if value]
+                    ("package/packages", package or packages), ("manufacturer", manufacturer),
+                    ("pcba_type", pcba_type)) if value]
         if explicit:
             hints.append("Try without " + ", ".join(explicit) + ".")
         other_tier_total = 0
@@ -1575,7 +1596,11 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     has none) and datasheet_pdf the datasheet itself: a short link on this server that redirects to
     the PDF and stays valid; maker_datasheet is the manufacturer's own datasheet link where JLCPCB
     lists one (most TI parts), and datasheet_note says when there is no PDF; specs_note says when LCSC
-    lists no specs; lcsc_url is the LCSC product page;
+    lists no specs, or what the listing leaves out for the part type (Isat's definition, MLCC DC-bias
+    loss, an RF cable's end styles); lcsc_url is the LCSC product page; pcba_type is "economic" or
+    "standard_only" (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard
+    assembly). No lifecycle status (NRND, obsolete): JLCPCB doesn't list it; mouser_get_part and
+    digikey_get_part return lifecycle. jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.
     has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results and total. Non-exact replies
     add match (separators, packing, alias, alternative, lcsc or related), matched_mpn where
     applicable, and a note naming the part types for related full-text results (and parts another
@@ -1724,6 +1749,10 @@ async def jlc_find_alternatives(
     are left out and counted in summary.frequency_check. Other part types without rules (modules,
     load switches, addressable LEDs) list parts in the original's package and part family first, with
     likely_drop_in (pinout unchecked), then other makers' parts in the same package.
+    library_type="no_fee" with no basic/preferred match names the best extended ones in
+    summary.extended_examples. Listed parts carry has_easyeda_footprint where it's already known (no
+    extra request), and pcba_type ("economic" or "standard_only"). Lifecycle (NRND) isn't checked:
+    mouser_get_part or digikey_get_part has it.
 
     Args:
         lcsc: LCSC code of the original part (e.g., "C2557")
@@ -1786,13 +1815,19 @@ def _easyeda_unknown_error(lcsc: str) -> dict[str, str]:
         openWorldHint=False,
     )
 )
-async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> dict:
+async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None, footprint: bool = False) -> dict:
     """Pin numbers and names from a part's EasyEDA symbol, exactly as EasyEDA has them (e.g., VCC,
-    GND, PA0).
+    GND, PA0); with footprint=true also the EasyEDA footprint's pads.
 
     Args:
         lcsc: LCSC part code (e.g., "C8304"); finds the symbol for you
         uuid: EasyEDA symbol UUID, instead of lcsc
+        footprint: Also return the footprint (needs lcsc): its name, source_link (the document it
+            was drawn from), pad_count, numbered_pads, pitch (most common pad spacing, mm),
+            pad_sizes, and pads [{number, x, y (mm from the footprint origin, y down), shape,
+            size [w, h] mm, layer top/bottom/through_hole, hole and slot_length mm}]. Pad positions
+            tell pins with numbers only apart (a switch's common from its throws), and the name and
+            source_link show a footprint drawn for another maker's part or a different model.
 
     Returns:
         Pin mapping with:
@@ -1808,6 +1843,7 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> di
         - easyeda_symbol_uuid: UUID to view symbol at easyeda.com/component/{uuid}
         - unverified: (only if true) "Symbol not verified by LCSC"
         - note: (only when every pin's name is its number) the symbol doesn't say what pins do
+        - footprint: (footprint=true) see above; footprint_error says why it's missing
 
     The electrical field is only included when the symbol creator explicitly
     set it in EasyEDA. Values: "input", "output", "bidirectional", "power".
@@ -1924,7 +1960,24 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None) -> di
             # PJ-313D from SHOU HAN (C668608) and Hroparts (C95463): same footprint, tip and ring swapped
             result["note"] += (" Jacks with the same footprint from different makers can number the tip, "
                                "ring and sleeve pads differently, so check this part's own datasheet.")
+        if not footprint:
+            result["note"] += " footprint=true adds the pad positions to match against its drawing."
 
+    if footprint:
+        footprint_uuid = (part or {}).get("easyeda_footprint_uuid")
+        if not footprint_uuid:
+            result["footprint_error"] = ("Give lcsc to get the footprint" if not lcsc
+                                         else f"No EasyEDA footprint UUID for {lcsc}")
+        else:
+            try:
+                parsed_footprint = parse_easyeda_footprint(await _client.get_easyeda_component(footprint_uuid))
+            except ValueError as e:
+                result["footprint_error"] = str(e)
+            else:
+                if parsed_footprint:
+                    result["footprint"] = parsed_footprint
+                else:
+                    result["footprint_error"] = f"The EasyEDA footprint {footprint_uuid} has no pads"
     return result
 
 

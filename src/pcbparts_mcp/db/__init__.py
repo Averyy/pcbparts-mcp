@@ -69,6 +69,7 @@ class ComponentDatabase:
         self._search_engine: SearchEngine | None = None
         self._attribute_shares: dict[tuple[tuple[int, ...], tuple[str, ...]], float] = {}
         self._attribute_names: dict[int, set[str]] = {}
+        self._pcba_type_loaded: bool | None = None
 
     @serialized
     def _ensure_db(self) -> None:
@@ -141,6 +142,7 @@ class ComponentDatabase:
                 self._conn.close()
                 self._conn = None
                 self._search_engine = None
+                self._pcba_type_loaded = None
 
     def _get_attribute_names(self, name: str) -> list[str]:
         """Get all possible attribute names for a given name (including aliases)."""
@@ -248,6 +250,7 @@ class ComponentDatabase:
         gate_drive_v: float | None = None,
         lcsc_codes: bool = False,
         count_unlisted: bool = False,
+        pcba_type: str | None = None,
     ) -> dict[str, Any]:
         """
         Search components with parametric filtering.
@@ -319,6 +322,7 @@ class ComponentDatabase:
             gate_drive_v=gate_drive_v,
             lcsc_codes=lcsc_codes,
             count_unlisted=count_unlisted,
+            pcba_type=pcba_type,
         )
 
         # Add warning if min_stock was clamped
@@ -400,6 +404,20 @@ class ComponentDatabase:
         if row is None:
             return None
         return FootprintAnswer(bool(row["has_footprint"]), row["symbol_uuid"], row["footprint_uuid"], row["checked_at"])
+
+    @serialized
+    def pcba_type_loaded(self) -> bool:
+        """Whether the catalog has JLCPCB's PCBA types (scraped since 0.8.4; older data has none)."""
+        self._ensure_db()
+        if not self._conn:
+            return False
+        if self._pcba_type_loaded is None:
+            try:
+                self._pcba_type_loaded = self._conn.execute(
+                    "SELECT 1 FROM components WHERE pcba_type IS NOT NULL LIMIT 1").fetchone() is not None
+            except sqlite3.OperationalError:  # a DB built before 0.8.4 has no column
+                self._pcba_type_loaded = False
+        return self._pcba_type_loaded
 
     @serialized
     def easyeda_seed_size(self) -> int:

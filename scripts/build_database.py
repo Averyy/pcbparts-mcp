@@ -363,6 +363,17 @@ ATTRIBUTE_COLUMNS = NUMERIC_COLUMNS + ["reference_series TEXT"]
 ATTRIBUTE_COLUMN_NAMES = NUMERIC_COLUMN_NAMES + ["reference_series"]
 
 
+def pcba_columns(part: dict[str, Any]) -> tuple[str | None, int | None]:
+    """(pcba_type, no_datasheet) from a scraped part: 'e' Economic and Standard, 's' Standard only.
+
+    Both are None for data scraped before they were kept ("x" missing), so nothing is claimed
+    about those parts. Product types other than 0 and 2 haven't been seen and stay unknown.
+    """
+    if "x" not in part:
+        return None, None
+    return {0: "e", 2: "s"}.get(part["x"]), int(bool(part.get("n")))
+
+
 def create_connector_indexes(conn: sqlite3.Connection) -> None:
     """Index count/pitch combinations without changing unfiltered attribute samples."""
     for name, columns in (
@@ -532,6 +543,8 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
             price REAL,
             description TEXT,
             attributes TEXT,
+            pcba_type TEXT CHECK(pcba_type IN ('e', 's')),
+            no_datasheet INTEGER,
             {numeric_cols_sql}
         )
     """)
@@ -603,7 +616,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
 
         # Build column names for INSERT
         base_cols = ["lcsc", "mpn", "manufacturer", "package", "stock", "library_type",
-                     "subcategory_id", "price", "description", "attributes"]
+                     "subcategory_id", "price", "description", "attributes", "pcba_type", "no_datasheet"]
         all_cols = base_cols + ATTRIBUTE_COLUMN_NAMES
         placeholders = ", ".join(["?"] * len(all_cols))
         # OR IGNORE: a cross-category duplicate LCSC (same part under two categories) would
@@ -634,6 +647,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
                     part.get("$"),
                     part.get("d"),
                     json.dumps(attrs),
+                    *pcba_columns(part),
                 ]
                 # Add precomputed attribute values (None if not parsed)
                 for col_name in ATTRIBUTE_COLUMN_NAMES:
@@ -676,6 +690,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
     # Composite indexes for common filter combinations
     conn.execute("CREATE INDEX idx_subcat_stock ON components(subcategory_id, stock)")
     conn.execute("CREATE INDEX idx_subcat_libtype ON components(subcategory_id, library_type)")
+    conn.execute("CREATE INDEX idx_subcat_pcba ON components(subcategory_id, pcba_type) WHERE pcba_type IS NOT NULL")
 
     # Indexes for numeric columns (partial indexes for non-NULL values)
     if verbose:

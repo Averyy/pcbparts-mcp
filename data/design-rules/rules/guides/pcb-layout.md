@@ -18,7 +18,7 @@
 - **When forced to choose #2 vs #3: always choose tight signal-to-plane coupling.** Interplane capacitance is insufficient below ~500 MHz for decoupling -- use discrete caps instead.
 - **8-layer is the minimum to satisfy all five objectives simultaneously.** 4-layer and 6-layer boards require compromises. Above 8 layers, additional layers are for routing density only.
 - **Stackup must be symmetrical** (balanced) to prevent warping during fabrication.
-- **Request your fab's standard stackup table before designing custom layer spacing.** Standard total thicknesses: 1.6 mm (most common), 1.0 mm, 2.0 mm. Fab standard 4-layer: typically 0.2 mm prepreg / 1.0 mm core / 0.2 mm prepreg at 1.6 mm total. Deviating adds cost and lead time.
+- **Request your fab's standard stackup table before designing custom layer spacing.** Standard total thicknesses: 1.6 mm (most common), 1.0 mm, 2.0 mm. Fab standard 4-layer: typically 0.2 mm prepreg / 1.0 mm core / 0.2 mm prepreg at 1.6 mm total. Deviating adds cost and lead time. JLCPCB's (JLC04161H-7628 default, -3313 thin prepreg) with thicknesses and Er -> `guides/dfm.md`.
 
 #### 2-Layer Boards
 

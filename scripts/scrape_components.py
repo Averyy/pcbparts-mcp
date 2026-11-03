@@ -146,7 +146,7 @@ def transform_part(item: dict[str, Any], subcategory_id: int) -> dict[str, Any]:
         if a.get("attribute_name_en")
     ]
 
-    return {
+    part = {
         "l": item.get("componentCode"),  # lcsc
         "m": item.get("componentModelEn"),  # mpn
         "f": item.get("componentBrandEn"),  # manufacturer
@@ -157,7 +157,14 @@ def transform_part(item: dict[str, Any], subcategory_id: int) -> dict[str, Any]:
         "$": round(price, 4) if price is not None else None,  # price
         "d": item.get("describe"),  # description
         "a": attributes,  # attributes
+        # JLCPCB's PCBA type: 0 = Economic and Standard assembly, 2 = Standard only (checked against
+        # 11 part pages and a whole subcategory, 2026-11-03). Its presence also marks data that has "n".
+        "x": item.get("componentProductType"),
     }
+    # No datasheet of any kind on JLCPCB (about 3% of parts): only then, to keep the files small
+    if not any(item.get(k) for k in ("dataManualUrl", "dataManualFileAccessIdUrl", "dataManualOfficialLink")):
+        part["n"] = 1
+    return part
 
 
 # === API Functions ===
