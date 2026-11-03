@@ -124,6 +124,102 @@ def _segment_text(segments: list[str], index: int) -> str | None:
     return fields[4].strip() or None
 
 
+_UNIT_MM = 0.254  # EasyEDA Standard canvas unit: 10 mil
+_PAD_LAYERS = {"1": "top", "2": "bottom", "11": "through_hole"}
+
+
+def parse_easyeda_footprint(data: dict[str, Any]) -> dict[str, Any] | None:
+    """Footprint name, source link, pad summary and pads from an EasyEDA footprint (docType 4).
+
+    A pad is PAD~{shape}~{x}~{y}~{width}~{height}~{layer}~{net}~{number}~{hole radius}~{points}~
+    {rotation}~{id}~{slot length}~... in 10-mil units. Positions are mm from the footprint's
+    origin, y growing downward as EasyEDA draws it; a 90/270 degree rotation swaps width and height.
+    From design-session reports: a slide switch's pins had numbers only, so its common and throws
+    couldn't be told apart without pad positions; a U.FL footprint was another maker's; and a "72P"
+    module footprint had 77 pads.
+    """
+    data_str = data.get("dataStr", {})
+    if isinstance(data_str, str):
+        try:
+            data_str = json.loads(data_str)
+        except (json.JSONDecodeError, TypeError):
+            return None
+    if not isinstance(data_str, dict):
+        return None
+    head = data_str.get("head") or {}
+    try:
+        ox, oy = float(head.get("x") or 0), float(head.get("y") or 0)
+    except (TypeError, ValueError):
+        ox = oy = 0.0
+    pads = []
+    for element in data_str.get("shape") or []:
+        if not isinstance(element, str) or not element.startswith("PAD~"):
+            continue
+        f = element.split("~")
+        try:
+            x, y, w, h = (float(v) for v in f[2:6])
+            hole_r = float(f[9] or 0) if len(f) > 9 else 0.0
+            rotation = float(f[11] or 0) if len(f) > 11 else 0.0
+            slot = float(f[13] or 0) if len(f) > 13 else 0.0
+        except (ValueError, IndexError):
+            continue
+        if round(rotation) % 180 == 90:
+            w, h = h, w
+        pad: dict[str, Any] = {
+            "number": f[8] if len(f) > 8 else "",
+            "x": _mm(x - ox), "y": _mm(y - oy),
+            "shape": f[1].lower(), "size": [_mm(w), _mm(h)],
+            "layer": _PAD_LAYERS.get(f[6], f[6]),
+        }
+        if round(rotation) % 90:
+            pad["rotation"] = rotation
+        if hole_r > 0:
+            pad["hole"] = _mm(2 * hole_r)
+            if slot > 0:
+                pad["slot_length"] = _mm(slot)
+        pads.append(pad)
+    if not pads:
+        return None
+    pads.sort(key=lambda p: _sort_key(p["number"]))
+    sizes: dict[str, int] = {}
+    for pad in pads:
+        small, large = sorted(pad["size"])  # a pad turned 90 degrees is the same size
+        key = f"{small:g}x{large:g} mm {pad['shape']}" + (
+            f", hole {pad['hole']:g} mm" if "hole" in pad else "")
+        sizes[key] = sizes.get(key, 0) + 1
+    para = head.get("c_para") or {}
+    result: dict[str, Any] = {
+        "name": para.get("package") or data.get("title"),
+        "pad_count": len(pads),
+        "numbered_pads": len({p["number"] for p in pads if p["number"]}),
+    }
+    if pitch := _common_pitch(pads):
+        result["pitch"] = pitch
+    result["pad_sizes"] = [{"size": k, "count": n} for k, n in sorted(sizes.items(), key=lambda kv: -kv[1])]
+    if link := para.get("link"):
+        result["source_link"] = link
+    result["pads"] = pads
+    return result
+
+
+def _mm(units: float) -> float:
+    return round(units * _UNIT_MM, 3)
+
+
+def _common_pitch(pads: list[dict[str, Any]]) -> float | None:
+    """Most common distance from a pad to its nearest neighbour, in mm (None under 3 pads)."""
+    if len(pads) < 3 or len(pads) > 2000:
+        return None
+    counts: dict[float, int] = {}
+    for i, a in enumerate(pads):
+        nearest = min(((a["x"] - b["x"]) ** 2 + (a["y"] - b["y"]) ** 2) ** 0.5
+                      for j, b in enumerate(pads) if j != i)
+        if nearest > 0:
+            key = round(nearest, 2)
+            counts[key] = counts.get(key, 0) + 1
+    return max(counts, key=lambda k: (counts[k], -k)) if counts else None
+
+
 def _sort_key(num: str | None) -> tuple:
     """Sort pin numbers numerically, and BGA balls by row then column (A2 before A10)."""
     try:

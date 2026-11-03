@@ -37,6 +37,15 @@ def _logic_part_numbers_only(query: str, model: str | None) -> bool:
                                      and not _NOT_PART_NUMBER.match(t)]
     return all(_LOGIC_FAMILY.match(t) for t in tokens)
 _NON_ISOLATED = re.compile(r'\bnon[-\s]?isolated\b', re.IGNORECASE)
+_SCHMITT_WORDS = re.compile(r'\bschmitt(?:[\s-]+trigger(?:ed)?)?(?:[\s-]+inputs?)?\b', re.IGNORECASE)
+_SCHMITT_PART = re.compile(r'\b(?:inverters?|buffers?)\b', re.IGNORECASE)
+_SCHMITT_GENERIC = re.compile(r'\b(?:logic|ics?|chips?)\b', re.IGNORECASE)
+# Keyword -> subcategory; "schmitt logic" searches all three (SUBCATEGORY_GROUPS)
+SCHMITT_KEYWORDS = {
+    "schmitt logic": "inverters",
+    "schmitt inverter": "inverters",
+    "schmitt buffer": "buffers, drivers, receivers, transceivers",
+}
 
 
 def extract_component_type(
@@ -114,6 +123,17 @@ def extract_component_type(
             remaining = pattern.sub('', query).strip()
             remaining = re.sub(r'\s+', ' ', remaining)
             return target, remaining, keyword
+
+    # "schmitt trigger logic": Schmitt-input logic is filed under Inverters, Logic Gates and Buffers,
+    # and half the Logic Gates don't say it in their descriptions, so as text "logic" found nothing
+    # (no_fee: the basic 74HC14D is an inverter). Gate words went to Logic Gates above; the parser
+    # adds the Input type filter for these keywords.
+    if not model and _SCHMITT_WORDS.search(query):
+        kind = _SCHMITT_PART.search(query)
+        keyword = ("schmitt logic" if not kind else
+                   "schmitt inverter" if kind.group(0).lower().startswith("inv") else "schmitt buffer")
+        remaining = _SCHMITT_GENERIC.sub(' ', _SCHMITT_PART.sub(' ', _SCHMITT_WORDS.sub(' ', query)))
+        return SCHMITT_KEYWORDS[keyword], re.sub(r'\s+', ' ', remaining).strip(), keyword
 
     return None, query, None
 

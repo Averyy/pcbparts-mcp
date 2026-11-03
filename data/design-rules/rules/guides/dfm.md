@@ -6,7 +6,7 @@
 
 - **Standard minimum: 0.15 mm (6 mil) trace/space.** Budget fabs support 0.1 mm (4 mil) but yield drops. 6 mil saves ~15% on fab cost.
 - **Minimum drill: 0.2 mm (8 mil).** Finished hole tolerance: +/-0.08 mm. Via aspect ratio <= 10:1 (board thickness : hole diameter).
-- **Get verified stackup from fab before routing.** Fab dielectric thicknesses define trace widths for impedance control. A 4-layer designed at 0.2/1.0/0.2 mm may ship as 0.18/1.1/0.18 mm.
+- **Get verified stackup from fab before routing.** Fab dielectric thicknesses define trace widths for impedance control. A 4-layer designed at 0.2/1.0/0.2 mm may ship as 0.18/1.1/0.18 mm. JLCPCB's 1.6 mm 4-layer default is JLC04161H-7628 (0.21 mm prepreg); see JLCPCB below.
 - **Three global fiducials per board** for pick-and-place. 1-3 mm bare copper circle, no solder mask, >= 3 mm from board edge. Clearance zone must be bare laminate -- copper pour in the clearance zone causes AOI to misidentify the fiducial.
 - **Tombstoning prevention: equal thermal mass on both pads.** Equal trace width for >= 0.25 mm from pad edge, no vias within 0.25 mm of pad edge, no silkscreen under 0603 or smaller.
 
@@ -29,6 +29,35 @@
 - **Blind/buried vias require sequential lamination** -- not supported by all budget fabs (e.g., OSH Park does not support blind or buried vias on any service). Verify with fab before designing.
 - **Minimum dielectric thickness: 0.065 mm (2.56 mil)** per IPC 6012 Rev F (September 2023). Lowered from previous revision to facilitate laser drilling of HDI microvias.
 - **Drill-to-copper clearance:** finished hole to nearest copper must account for plating thickness and inner layer registration shift. Insufficient clearance causes tangency or breakout on inner layers where registration shift is largest.
+
+### JLCPCB
+
+Published limits in mm, from JLCPCB's capabilities, copper-weight and impedance pages (read 2026-11-03).
+
+| Parameter | JLCPCB minimum | Notes |
+|-----------|----------------|-------|
+| Trace/space, 1 oz outer | 0.10 / 0.10 (1-2 layers), 0.09 / 0.09 (4+) | Inner layers (0.5 or 1 oz): 0.09 / 0.09. 2 oz: 0.15-0.16 |
+| Mechanical drill | 0.15 (2+ layers), 0.30 (1 layer) | 0.10 holes are laser microvias: board <= 1.0 mm, ENIG/OSP only |
+| Via hole / pad | 0.15 / 0.25 | Pad = hole + 0.10 minimum, + 0.15 preferred |
+| PTH annular ring, 1 oz | 0.18 (2 layers), 0.15 (4+) | Recommended >= 0.25 (2 layers), >= 0.20 (4+) |
+| NPTH / castellated hole | 0.50 / 0.50 | Component PTH: >= 0.50 recommended (mask/tin blocks smaller) |
+| Via hole-to-hole / pad hole-to-hole | 0.20 / 0.45 | |
+| Via-to-track / PTH-to-track | 0.20 / 0.28 | PTH-to-track 0.35 recommended. NPTH-to-track 0.20 |
+| Copper to routed edge / V-cut | 0.20 / 0.40 | |
+| Silkscreen stroke / text height | 0.15 / 1.0 | Pad-to-silkscreen 0.15 |
+| Solder mask bridge (pad spacing) | 0.10 | Black/white mask 0.13; 2 oz copper 0.20 |
+
+- **No-surcharge default at JLCPCB: 0.30 mm hole / 0.45 mm pad vias.** 0.10 and 0.15 mm holes always cost extra, and 0.20-0.25 mm holes do with a pad under 0.45 mm. 3.0-3.5 mil trace/space adds 20% on 4-8 layers (30% at 10+).
+- **Solder mask expansion: 0.05 mm per side on 1-2 layer JLCPCB boards.** The capabilities page allows 1:1 openings since its June 2025 LDI upgrade, but JLCPCB's September 2026 mask article still gives +0.05 mm for standard 1-2 layer boards and 1:1 for multilayer. Keep >= 0.09 mm from a mask opening to a neighbouring trace either way.
+
+| 1.6 mm 4-layer, top to bottom | JLC04161H-7628 (default) | JLC04161H-3313 |
+|-------------------------------|--------------------------|----------------|
+| L1, L4 copper | 0.035 mm (1 oz) | 0.035 mm (1 oz) |
+| L1-L2 and L3-L4 prepreg | 7628, 0.2104 mm, Er 4.4 | 3313, 0.0994 mm, Er 4.1 |
+| L2, L3 copper | 0.0152 mm (0.5 oz) | 0.0152 mm (0.5 oz) |
+| Core | 1.065 mm, Er 4.6 | 1.265 mm, Er 4.6 |
+
+- **Pick the stackup before routing controlled-impedance traces.** An order without an impedance requirement gets JLC04161H-7628; 3313's prepreg is half as thick, so the same 50 ohm microstrip or 90 ohm USB pair is much narrower. Size widths with JLCPCB's impedance calculator for the stackup you order. Other prepregs it lists: 1080 (Er 3.91), 2116 (Er 4.16); 3313 replaced 2313 with the same thickness and Er.
 
 ### IPC Classes
 
@@ -117,3 +146,8 @@
 6. Eurocircuits -- Tombstoning: PCB Assembly Guidelines: https://www.eurocircuits.com/technical-guidelines/pcb-assembly-guidelines/tombstoning/
 7. Altium -- Complete Guide to DFM Analysis: https://resources.altium.com/p/complete-guide-dfm-analysis
 8. Sierra Circuits -- Panel Requirements for PCB Assembly: https://www.protoexpress.com/kb/panel-requirements-for-pcb-assembly/
+9. JLCPCB -- PCB Manufacturing Capabilities (read 2026-11-03): https://jlcpcb.com/capabilities/pcb-capabilities
+10. JLCPCB -- Impedance Stackups (read 2026-11-03): https://jlcpcb.com/impedance
+11. JLCPCB -- Copper Weight (inner-layer trace/space): https://jlcpcb.com/help/article/jlcpcb-copper-weight
+12. JLCPCB -- In What Cases Will There Be Charged Extra: https://jlcpcb.com/help/article/in-what-cases-will-there-be-charged-extra
+13. JLCPCB -- Basic Design of Solder Mask: https://jlcpcb.com/blog/basic-design-of-solder-mask

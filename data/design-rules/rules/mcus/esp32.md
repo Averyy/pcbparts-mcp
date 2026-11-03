@@ -6,7 +6,7 @@
 
 - **Strapping pins differ per chip. S3: GPIO0 + GPIO46. C3: GPIO2 + GPIO8 + GPIO9. C6: GPIO8 + GPIO9.** Getting these wrong causes boot into download mode or invalid state. Strapping values are latched 3 ms after CHIP_PU goes high.
 - **Power supply: 3.3V, >= 500 mA. 10 uF on VDD3P3 (analog), LC filter on analog rail.** All power rails must rise together -- VDD3P3_RTC cannot be used as standalone backup supply.
-- **Reset: RC circuit on CHIP_PU (S3/C6) or CHIP_EN (C3). R = 10 kohm, C = 1 uF.** CHIP_PU/CHIP_EN must not float. For battery or unstable supply: add external reset IC with ~3.0V threshold.
+- **Reset: RC circuit on CHIP_PU (S3/C6) or CHIP_EN (C3). R = 10 kohm, C = 1 uF.** CHIP_PU/CHIP_EN must not float. 10 kohm/1 uF only covers a 3V3 rail that rises in under ~7 ms; a soft-started regulator needs a bigger RC (see Formulas) or a reset IC. For battery or unstable supply: add external reset IC with ~3.0V threshold.
 - **RF matching: CLC for S3/C3, CLCCL bandpass for C6.** 0201 packages, placed close to chip. Matching network target: conjugate match to chip impedance (~35+j0 ohm). Tuned S11 < -10 dB (VSWR < 2:1) at 2.4 GHz. S21 < -35 dB at 4.8 GHz and 7.2 GHz.
 - **USB pins: S3 = GPIO19/20, C3 = GPIO18/19, C6 = GPIO12/13.** Reserve series-resistor footprints (22/33 ohm to start) and unpopulated cap-to-ground footprints close to the chip; Espressif asks for footprints, not fitted parts.
 
@@ -27,10 +27,12 @@
 - **S3 VDD_SPI voltage selection: controlled by GPIO45 (default low = 3.3V, high = 1.8V internal LDO, 40 mA max).** Can be overridden by EFUSE_VDD_SPI_FORCE + EFUSE_VDD_SPI_TIEH. When using in-package flash with eFuse-locked voltage, GPIO45 strapping is ignored and R1 pull-down is optional.
 - **10 uF + 100 nF decoupling within 5 mm of each VDD pin.** Field failure case: 68% failure rate on ESP32+LoRa board traced to 420 mV ground bounce from split ground plane during 120 mA TX burst -- dropped 3.3V below 2.97V brownout threshold.
 - **ESD protection diode recommended at power entrance** (before bulk 10 uF cap).
+- **Burn eFuses (secure boot, flash encryption, MAC or user data) with the eFuse supply at <= 3.3 V: VDD3P3_CPU on S3/C3, VDDPST2 on C6.** Each datasheet's Table 5-2 note says the burn circuits are sensitive to higher voltage, though normal operation allows up to 3.6 V. A 3V3 rail trimmed up to ~3.45 V (for a 5 V WS2812's VIH, or a diode drop downstream) must come down to 3.3 V for the eFuse step: a jumper or divider option on the regulator's feedback, or a fixture that supplies 3.3 V.
 
 ### Reset Circuit
 
-- **RC delay: R = 10 kohm, C = 1 uF on CHIP_PU (S3/C6) or CHIP_EN (C3).** Ensures 50 us minimum stabilization time (tSTBL) before chip enable. Reset requires CHIP_PU/EN held below 0.25 * VDD for >= 50 us (tRST).
+- **RC delay: R = 10 kohm, C = 1 uF on CHIP_PU (S3/C6) or CHIP_EN (C3), when 3V3 rises in under ~7 ms.** tSTBL (>= 50 us) counts from the supply crossing 2.8 V, and CHIP_PU must stay below VIL_nRST (0.25 * VDD) until then. The RC voltage follows a slow ramp up, so with tau = 10 ms it crosses 0.25 * VDD about 6 ms into the ramp: an 8.7 ms soft start needs tau >= 12.3 ms. Espressif lists "slow power rise or fall" as a case where the RC alone fails. Reset requires CHIP_PU/EN held below 0.25 * VDD for >= 50 us (tRST).
+- **If the regulator's soft start is slow or unknown: drive CHIP_PU from its power-good output or a supervisor, or size tau with the formula below.** When sizing C, count its DC-bias loss at 3.3 V (a 2.2 uF X5R 0402 can be near half that).
 - **For slow/unstable power sources (battery charging, solar): add external reset IC** with threshold ~3.0V (e.g., voltage supervisor). RC circuit alone may not provide monotonic, clean enable signal.
 - **Auto-reset for programming: DTR -> boot pin, RTS -> EN.** S3: DTR -> GPIO0, RTS -> CHIP_PU. C3/C6: DTR -> GPIO9, RTS -> CHIP_EN/CHIP_PU. Two-transistor circuit prevents simultaneous DTR+RTS assertion from holding chip in reset. Requires 1 uF cap on EN pin for reliable auto-reset -- boards without this cap fail intermittently on Windows.
 
@@ -95,6 +97,14 @@
 - **Auto-reset circuit without EN capacitor.** Third-party boards that connect DTR/RTS to boot pin/EN without the 1 uF cap on EN pin get unreliable auto-reset, especially on Windows. Fix: always include >= 1 uF between EN/CHIP_PU and GND.
 - **Matching network tuned on eval board applied unchanged to custom PCB.** Board parasitics (trace length, ground plane geometry, connector transition) shift impedance -- a CLC network tuned to S11 < -15 dB on the DevKitC measured -6 dB on a 4-layer custom board with different stackup. Fix: treat eval board values as starting point only; always re-measure S11/S21 with VNA on each new layout and iterate component values.
 
+## Formulas
+
+**Rule of thumb:** with a 3.3 V rail, tau = R * C >= 1.4 * T_ramp + 0.1 ms. 10 kohm/1 uF (10 ms) covers ramps up to ~7 ms.
+**Formula:** tau >= 1.65 * ((2.8 V / V_final) * T_ramp + 50 us)
+  - Linear supply ramp of T_ramp from 0 to V_final; during it V_EN / VDD = 1 - (tau / t) * (1 - e^(-t / tau)), which reaches 0.25 at t = 0.606 * tau.
+  - Use the slowest soft-start time in the regulator's datasheet, and the capacitor's effective value at 3.3 V and its tolerance.
+**Example:** 8.7 ms soft start to 3.3 V -> tau >= 1.65 * (0.848 * 8.7 ms + 0.05 ms) = 12.3 ms -> 10 kohm with 2.2 uF (22 ms nominal, still >= 12.3 ms after losing 40% to DC bias and tolerance).
+
 ## Sources
 
 ### Related Rules
@@ -112,4 +122,7 @@
 5. esptool -- Boot Mode Selection (ESP32-C3): https://docs.espressif.com/projects/esptool/en/latest/esp32c3/advanced-topics/boot-mode-selection.html
 6. Deep Blue Embedded -- ESP32 PCB Design in KiCAD (ESP32-C3 + Chip Antenna Hardware Design): https://deepbluembedded.com/esp32-pcb-design-in-kicad-esp32-c3-chip-antenna-hardware-design/
 7. PCBCool -- ESP32 PCB Failure Case Study on Power and RF Layout Design: https://pcbcool.com/case-studies/esp32-pcb-failure-case-study-on-power-and-rf-layout/
+8. Espressif -- ESP32-S3 Series Datasheet v2.2 (Table 2-13 power-up timing, Table 5-2 note 3 eFuse supply): https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf
+9. Espressif -- ESP32-C3 Series Datasheet v2.4 (Table 2-11 power-up timing, Table 5-2 note 2 eFuse supply): https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf
+10. Espressif -- ESP32-C6 Series Datasheet v1.5 (Table 2-15 power-up timing, Table 5-2 note 3 eFuse supply on VDDPST2): https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf
 

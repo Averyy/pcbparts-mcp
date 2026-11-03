@@ -30,6 +30,7 @@ from .spec_filter import (
     get_attribute_names,
     is_color_combo,
     connector_value,
+    dropout_load_filter,
     switch_circuit,
 )
 
@@ -154,6 +155,15 @@ def build_library_type_clause(library_type: str | None) -> str:
         return "AND library_type = 'e'"
     elif library_type == "no_fee":
         return "AND library_type IN ('b', 'p')"
+    return ""
+
+
+def build_pcba_type_clause(pcba_type: str | None) -> str:
+    """JLCPCB PCBA type: "economic" (Economic and Standard assembly) or "standard_only"."""
+    if pcba_type == "economic":
+        return "AND pcba_type = 'e'"
+    if pcba_type == "standard_only":
+        return "AND pcba_type = 's'"
     return ""
 
 
@@ -792,6 +802,16 @@ def build_spec_filter_clauses(
             clause, clause_params = _polarity_clause([spec_filter.value])
             sql_clauses.append(clause)
             params.extend(clause_params)
+            continue
+
+        # "Voltage Dropout <= 0.3V@500mA": LDOs list dropout at their own test current
+        # ("180mV@(300mA)", "1.1V@(800mA)"), so the first number alone compared parts at different loads
+        if (spec_filter.operator in ("<=", "<") and "Voltage Dropout" in [spec_filter.name, *attr_names]
+                and (load := dropout_load_filter(spec_filter.value))):
+            # A 300 mA part has no dropout at 500 mA: where it lists its output current, it must cover the load
+            sql_clauses.append("AND vdropout_v IS NOT NULL AND (iout_max_a IS NULL OR iout_max_a >= ?) "
+                               f"AND dropout_at_load(components.attributes, ?) {spec_filter.operator} ?")
+            params.extend([load[1] * (1 - 1e-9), load[1], load[0] + 1e-9 if spec_filter.operator == "<=" else load[0]])
             continue
 
         # Check if we have a pre-computed column for this spec (not for range specs: the column

@@ -61,6 +61,7 @@ from .db_worker import COMPONENT_POOL, run_db
 from .easyeda_store import EasyEDAStore, FootprintAnswer, answer_problem, pick_answer
 from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
 from .mounting import detect_mounting_type
+from .search.result import pcba_type_from_item
 from .rf_coverage import COVERAGE_ORDER, RF_BAND_SUBCATEGORIES, check_candidates
 from .alternatives import (
     COMPATIBILITY_RULES,
@@ -192,6 +193,36 @@ def maker_datasheet_link(*urls: str | None) -> str | None:
                 return f"https://www.ti.com/lit/gpn/{ti.group(1).lower()}"
             return f"https://www.ti.com/lit/ds/symlink/{ti.group(2).lower()}.pdf"
         return url
+    return None
+
+
+_CLASS_II_DIELECTRIC = re.compile(r"\b(?:X[5-8][RSTPUV]|Y5[PUV]|Z5U)\b", re.IGNORECASE)
+_ISAT_NOTE = ("Isat is each maker's own figure: the inductance drop it's measured at (commonly 10% to 30%) and "
+              "whether it's typical or minimum differ, so compare Isat on the datasheets before treating two "
+              "parts as equal.")
+_MLCC_DC_BIAS_NOTE = ("Capacitance is the nominal value at 0 V. Class II dielectrics (X5R, X7R, Y5V) lose "
+                      "capacitance under DC bias, more in small cases, often half or more near the rated voltage; "
+                      "the maker's DC-bias curve (Murata SimSurfing, Samsung, TDK, KEMET K-SIM) gives the "
+                      "effective value at your voltage.")
+_RF_CABLE_NOTE = ("The listing doesn't say each end's style: bulkhead with nut and washer or PCB-mount (straight or "
+                  "right angle), jack or plug, SMA or RP-SMA. Check the maker's drawing.")
+
+
+def catalog_gap_note(subcategory: str | None, specs: dict[str, str]) -> str | None:
+    """What a part type's listing leaves out that its users need (jlc_get_part's specs_note).
+
+    From design-session reports: an Isat filter treated a 30%-drop figure like a 10%-drop one; a
+    100 uF 6.3 V X5R bank was sized at its nominal value; an IPEX-to-SMA pigtail listed only as
+    "IPEX to SMA" went into a design as a bulkhead when its SMA end is PCB-mount.
+    """
+    sub = (subcategory or "").lower()
+    if any(name.startswith("Current - Saturation") and value not in ("", "-") for name, value in specs.items()):
+        return _ISAT_NOTE
+    if sub.startswith("multilayer ceramic capacitors") and _CLASS_II_DIELECTRIC.search(
+            specs.get("Temperature Coefficient") or ""):
+        return _MLCC_DC_BIAS_NOTE
+    if sub == "rf cables":
+        return _RF_CABLE_NOTE
     return None
 
 
@@ -1078,6 +1109,8 @@ class JLCPCBClient:
             "subcategory_id": subcategory_id,
             "mounting_type": detect_mounting_type(package, category=category, subcategory=subcategory),
         }
+        if pcba := pcba_type_from_item(item):
+            result["pcba_type"] = pcba
 
         # Include key specs in slim mode
         # All attributes as a dict for compatibility checking and display
@@ -1094,6 +1127,8 @@ class JLCPCBClient:
                 result["description"] = item.get("describe")
                 result["specs_note"] = ("LCSC lists no specs for this part, so searches with spec filters "
                                         "leave it out; check it against the datasheet.")
+            elif note := catalog_gap_note(subcategory, result["specs"]):
+                result["specs_note"] = note
             result["min_order"] = item.get("minPurchaseNum")
             result["reel_qty"] = item.get("encapsulationNumber")
             # LCSC's datasheet link is a viewer page, and some parts have none (empty or null);
@@ -1610,11 +1645,12 @@ class JLCPCBClient:
             compatible = filtered_compatible
 
         # Count verified extended matches before a no-fee filter, including footprint requirements.
-        extended_count = sum(
-            p.get("library_type") == "extended"
+        extended_verified = [
+            p for p in compatible
+            if p.get("library_type") == "extended"
             and not verification_info_map[p.get("lcsc", "")].get("unverified_requirements")
-            for p in compatible
-        )
+        ]
+        extended_count = len(extended_verified)
 
         # Filter by library_type if specified (after compatibility check)
         if library_type and library_type != "all":
@@ -1665,6 +1701,17 @@ class JLCPCBClient:
         verified_scored = [item for item in scored if not item[3].get("unverified_requirements")]
         top_scored = heapq.nlargest(effective_limit, verified_scored, key=rank)
         top_unverified = heapq.nlargest(effective_limit, unverified, key=rank)
+        # A no-fee request that leaves nothing named only a count of the extended matches, so a BOM
+        # sweep needed a second call per part to see them (C13564: 0 alternatives, 23 extended)
+        extended_examples: list[dict[str, Any]] = []
+        if library_type == "no_fee" and not top_scored and extended_verified:
+            ext_min_price = min((p.get("price") for p in extended_verified if p.get("price")), default=None)
+            ranked = heapq.nlargest(3, (
+                (score_alternative(p, original, ext_min_price)[0], p, {}, {}) for p in extended_verified), key=rank)
+            extended_examples = [
+                {key: part.get(key) for key in ("lcsc", "model", "manufacturer", "package", "stock", "price")}
+                for _, part, _, _ in ranked
+            ]
 
         # Build response (different structure for supported vs unsupported)
         if is_supported:
@@ -1672,15 +1719,37 @@ class JLCPCBClient:
                 original, top_scored, subcategory_name or "", primary_attr, primary_value, effective_limit,
                 unverified_alternatives=top_unverified, library_type=library_type,
                 extended_count=extended_count, board_quantity=board_quantity, placements_per_board=placements_per_board,
+                extended_examples=extended_examples,
             )
         else:
             response = build_unsupported_response(
                 original, top_scored, subcategory_name or "", primary_attr, effective_limit,
                 frequency_check=frequency_check, drop_ins=drop_ins,
+                extended_count=extended_count if library_type == "no_fee" else 0, extended_examples=extended_examples,
             )
         if footprint_filter:
             response["summary"]["footprint_filter"] = footprint_filter
+        await self._add_known_footprints(response)
         return response
+
+    async def _add_known_footprints(self, response: dict[str, Any]) -> None:
+        """has_easyeda_footprint on the returned parts where the seed or store already knows it.
+
+        No EasyEDA request and no change to the ranking: the alternatives listed footprint
+        availability only when the has_easyeda_footprint filter ran, so it took another call each.
+        Parts the seed doesn't know are left without the field (the seed can't prove "none").
+        """
+        now = time.time()
+        parts = [part for key in ("alternatives", "unverified_alternatives", "similar_parts")
+                 for part in response.get(key) or []]
+        parts += response.get("summary", {}).get("extended_examples") or []
+        for part in parts:
+            lcsc = part.get("lcsc")
+            if not lcsc or "has_easyeda_footprint" in part:
+                continue
+            stored = await self._stored_footprint(lcsc, now)
+            if stored is not None and stored.get("has_easyeda_footprint") is not None:
+                part["has_easyeda_footprint"] = stored["has_easyeda_footprint"]
 
     def _footprint_filter_note(
         self, candidates: int, checked: int, capped: bool, statuses: list[str]

@@ -311,6 +311,66 @@ def connector_orientation(value: str | None) -> str | None:
     return None
 
 
+_DROPOUT_PAIR = re.compile(r"(\d+(?:\.\d+)?\s*[mµu]?V)\s*@\s*\(?\s*(\d+(?:\.\d+)?\s*[mµu]?A)\b", re.IGNORECASE)
+_AT_LOAD = re.compile(r"^\s*(.+?)\s*(?:@|\bat\b)\s*\(?\s*([^()]+?)\s*\)?\s*$", re.IGNORECASE)
+
+
+def dropout_load_filter(value: str) -> tuple[float, float] | None:
+    """(dropout V, load A) from a "Voltage Dropout" filter value naming a load: "0.3V@500mA",
+    "300mV at 0.5A". None for a plain value ("0.3V")."""
+    match = _AT_LOAD.match(str(value))
+    if not match:
+        return None
+    volts, amps = parse_voltage(match.group(1)), parse_current(match.group(2))
+    if volts is None or not amps or amps <= 0:
+        return None
+    return volts, amps
+
+
+def dropout_at_load(value: str | None, load_a: float) -> tuple[float, str, bool] | None:
+    """An LDO's dropout at load_a from its listed "180mV@(300mA)" pairs: (volts, the pair used,
+    scaled). Dropout rises with load, so a pair listed at load_a or above bounds it; below that
+    the highest-current pair is scaled linearly (a PMOS pass element's dropout is current times
+    its on-resistance; a bipolar one's rises less, so scaling overstates it). None when no pair
+    gives a test current ("1.7V")."""
+    pairs = []
+    for v_text, a_text in _DROPOUT_PAIR.findall(str(value or "")):
+        volts, amps = parse_voltage(v_text), parse_current(a_text)
+        if volts is not None and amps:
+            pairs.append((volts, amps, f"{v_text}@({a_text})"))
+    if not pairs:
+        return None
+    at_or_above = [p for p in pairs if p[1] >= load_a * (1 - 1e-9)]
+    if at_or_above:
+        volts, _, text = min(at_or_above, key=lambda p: (p[1], p[0]))
+        return volts, text, False
+    volts, amps, text = max(pairs, key=lambda p: (p[1], -p[0]))
+    return volts * load_a / amps, text, True
+
+
+def dropout_loads(spec_filters: list[Any] | None) -> list[float]:
+    """Load currents named by "Voltage Dropout <= 0.3V@500mA" filters (see dropout_load_filter)."""
+    loads = []
+    for f in spec_filters or []:
+        if (getattr(f, "operator", None) in ("<=", "<")
+                and "Voltage Dropout" in [f.name, *get_attribute_names(f.name)]
+                and (load := dropout_load_filter(f.value))):
+            loads.append(load[1])
+    return loads
+
+
+def dropout_at_load_json(attributes: str | None, load_a: float) -> float | None:
+    """SQLite function dropout_at_load(attributes, load_a): dropout_at_load() of Voltage Dropout."""
+    try:
+        for name, value in json.loads(attributes or "[]"):
+            if name == "Voltage Dropout":
+                found = dropout_at_load(value, load_a)
+                return found[0] if found else None
+    except (TypeError, ValueError):
+        return None
+    return None
+
+
 # Attribute name aliases - maps user-friendly names to actual DB attribute names
 # This allows users to use short names like "Vgs(th)" instead of "Gate Threshold Voltage (Vgs(th))"
 ATTRIBUTE_ALIASES: dict[str, list[str]] = {
@@ -325,6 +385,9 @@ ATTRIBUTE_ALIASES: dict[str, list[str]] = {
     "Vr": ["Voltage - DC Reverse(Vr)"],
     "If": ["Current - Rectified"],
     "Vf": ["Voltage - Forward(Vf@If)"],
+
+    # LDOs
+    "Dropout": ["Voltage Dropout"],
 
     # Passives
     "Capacitance": ["Capacitance"],

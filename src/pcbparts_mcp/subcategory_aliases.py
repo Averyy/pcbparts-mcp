@@ -810,6 +810,8 @@ SUBCATEGORY_GROUPS: dict[str, tuple[str, ...]] = {
     )),
     **dict.fromkeys(("smt nut", "smd nut", "smt standoff", "smd standoff"), ("patch round nut", "smd hex nut columns")),
     "esp32 module": ("wifi modules", "rf modules", "bluetooth modules"),
+    # smart_parser.types.SCHMITT_KEYWORDS: Schmitt-input logic without a gate type or part word
+    "schmitt logic": ("inverters", "logic gates", "buffers, drivers, receivers, transceivers"),
     **dict.fromkeys(("ideal diode", "ideal diodes", *_POWER_MUX_WORDS),
                     ("oring controllers", "power distribution switches")),
     **dict.fromkeys(("multiplexer", "multiplexers", "mux", "analog switch", "analog multiplexer", "i2c multiplexer",

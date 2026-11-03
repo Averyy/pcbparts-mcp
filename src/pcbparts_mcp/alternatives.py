@@ -1775,11 +1775,12 @@ def score_alternative(
     score += avail_score
     breakdown["availability"] = avail_score
 
-    # EasyEDA footprint bonus (easier for users)
+    # EasyEDA footprint bonus (easier for users). Only when it was checked (has_easyeda_footprint
+    # filter): "easyeda: 0" on every unchecked part read as "no footprint".
     if part.get("has_easyeda_footprint"):
         score += 20
         breakdown["easyeda"] = 20
-    else:
+    elif "has_easyeda_footprint" in part:
         breakdown["easyeda"] = 0
 
     # Same manufacturer bonus (consistency)
@@ -1807,6 +1808,13 @@ def score_alternative(
 # =============================================================================
 
 
+def _extended_examples_hint(examples: list[dict[str, Any]], count: int) -> str:
+    """"; the best: C1 (MODEL), ... Rerun with library_type="extended" to list all N." """
+    named = ", ".join(f"{p['lcsc']} ({p['model']})" for p in examples)
+    more = f' to list all {count}' if count > len(examples) else ' for their full checks'
+    return f"; the best are in extended_examples: {named}. Rerun with library_type=\"extended\"{more}"
+
+
 def build_response(
     original: dict[str, Any],
     scored_alternatives: list[tuple[int, dict[str, Any], dict[str, int], dict[str, Any]]],
@@ -1820,8 +1828,12 @@ def build_response(
     extended_count: int = 0,
     board_quantity: int = 1,
     placements_per_board: int = 1,
+    extended_examples: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Build the find_alternatives response for a supported subcategory."""
+    """Build the find_alternatives response for a supported subcategory.
+
+    extended_examples: the best extended matches when a no-fee request found none (summary only).
+    """
     alternatives = scored_alternatives[:limit]
     unverified = (unverified_alternatives or [])[:limit]
 
@@ -1850,6 +1862,8 @@ def build_response(
     if not alternatives:
         if library_type == "no_fee":
             message = f"No basic/preferred part meets the checked specs; {extended_count} extended alternative(s) do in the evaluated candidates"
+            if extended_examples:
+                message += _extended_examples_hint(extended_examples, extended_count)
         else:
             message = (
                 f"No compatible alternatives found matching {primary_value}"
@@ -1931,19 +1945,22 @@ def build_response(
         else:
             alternatives_output.append(alt)
 
+    summary: dict[str, Any] = {
+        "found": len(alternatives),
+        "unverified_count": len(unverified_output),
+        "extended_count": extended_count,
+        "basic_preferred_count": no_fee_count,
+        "message": message,
+        "is_supported_category": True,
+        "price_note": "Prices shown are unit price at qty 1 tier",
+    }
+    if extended_examples and not alternatives:
+        summary["extended_examples"] = extended_examples
     return {
         "original": original,
         "alternatives": alternatives_output,
         "unverified_alternatives": unverified_output,
-        "summary": {
-            "found": len(alternatives),
-            "unverified_count": len(unverified_output),
-            "extended_count": extended_count,
-            "basic_preferred_count": no_fee_count,
-            "message": message,
-            "is_supported_category": True,
-            "price_note": "Prices shown are unit price at qty 1 tier",
-        },
+        "summary": summary,
         "comparison": comparison,
         "confidence": {
             "level": confidence,
@@ -1967,11 +1984,14 @@ def build_unsupported_response(
     limit: int,
     frequency_check: dict[str, Any] | None = None,
     drop_ins: dict[str, str] | None = None,
+    extended_count: int = 0,
+    extended_examples: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Build response for unsupported subcategories - similar parts, not alternatives.
 
     frequency_check (RF subcategories, rf_coverage.check_candidates) goes in the summary; drop_ins
-    maps LCSC codes to a likely_drop_in note (likely_drop_in).
+    maps LCSC codes to a likely_drop_in note (likely_drop_in). extended_count and
+    extended_examples: the extended parts a no-fee request left out, when it left nothing.
     """
     similar = scored_parts[:limit]
 
@@ -2009,6 +2029,11 @@ def build_unsupported_response(
     }
     if frequency_check:
         summary["frequency_check"] = frequency_check
+    if not similar and extended_examples:
+        summary["message"] = ("No compatibility rules for this category, and no basic/preferred part is similar; "
+                              f"{extended_count} extended part(s) are" + _extended_examples_hint(extended_examples, extended_count))
+        summary["extended_count"] = extended_count
+        summary["extended_examples"] = extended_examples
     return {
         "original": original,
         "alternatives": [],  # Empty - we can't verify compatibility

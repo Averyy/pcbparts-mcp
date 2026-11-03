@@ -499,6 +499,8 @@ ERROR_REPLIES = {
     "lcsc must be an LCSC C-code (e.g., C6186); use jlc_get_part(mpn=...) to find the code for an MPN": "bad_request",
     "board_quantity and placements_per_board must be positive integers": "bad_request",
     "Unsupported library_type: '{}'": "bad_request",
+    "Unsupported pcba_type: '{}'": "bad_request",
+    "This catalog doesn't have PCBA types yet (they come with the next daily parts update); search without pcba_type and check pcba_type with jlc_get_part.": "failed",
     "Unsupported value for {}: '{}'": "bad_request",
     "Unsupported tag: '{}'": "bad_request",
     "Boards database not available": "failed",

@@ -9,7 +9,7 @@ from ..subcategory_aliases import _POWER_MUX_WORDS, SUBCATEGORY_GROUPS
 from .packages import extract_package, extract_package_choices
 from .values import ExtractedValue, extract_values, normalize_value_notation
 from .models import extract_model_number
-from .types import PD_ROLE_PATTERN, extract_component_type, extract_mounting_type
+from .types import PD_ROLE_PATTERN, SCHMITT_KEYWORDS, extract_component_type, extract_mounting_type
 from .semantic import (
     SemanticFilter, combine_colors, extract_gate_drive, extract_semantic_descriptors, remove_noise_words,
     CONNECTOR_NOISE_WORDS,
@@ -231,6 +231,11 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
             elif kw_lower.startswith("class d"):
                 result.spec_filters.append(SpecFilter("Class", "=", "Class D"))
                 detected.setdefault("semantic", []).append("class d (from keyword)")
+            elif kw_lower in SCHMITT_KEYWORDS:
+                # Inverters call it "Input Type", the others "Input type" (matched either way);
+                # some list it in Chinese, and several "=" values on one spec are OR'd
+                result.spec_filters.extend(SpecFilter("Input type", "=", value) for value in ("Schmitt trigger", "施密特触发器"))
+                detected.setdefault("semantic", []).append("schmitt (-> Input type=Schmitt trigger)")
 
         # Special case: "radial" or "through hole" with electrolytic -> leaded capacitors
         if subcategory.lower() == "aluminum electrolytic capacitors - smd":

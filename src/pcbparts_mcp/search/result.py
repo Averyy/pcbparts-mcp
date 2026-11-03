@@ -64,4 +64,25 @@ def row_to_dict(
     }
     if specs:
         result.pop("description")
+    keys = row.keys()
+    if "pcba_type" in keys:  # a DB built before 0.8.4 has neither column
+        if pcba := PCBA_TYPE_NAMES.get(row["pcba_type"]):
+            result["pcba_type"] = pcba
+        if row["no_datasheet"]:
+            result["no_datasheet"] = True
     return result
+
+
+# JLCPCB's PCBA type per part: "economic" parts can be placed by Economic and Standard assembly;
+# one "standard_only" part moves the whole order to Standard (higher setup and stencil fees)
+PCBA_TYPE_NAMES = {"e": "economic", "s": "standard_only"}
+
+
+def pcba_type_from_item(item: dict[str, Any]) -> str | None:
+    """pcba_type from a live JLCPCB API item (componentProductType 0 or 2), else None."""
+    product_type = item.get("componentProductType")
+    try:
+        product_type = int(product_type) if product_type is not None else None
+    except (TypeError, ValueError):
+        return None
+    return {0: "economic", 2: "standard_only"}.get(product_type)

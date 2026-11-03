@@ -4,6 +4,29 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.4 (2026-11-03)
+
+New arguments and reply fields, all optional; nothing existing changes shape.
+
+### Added
+
+- **`pcba_type` on parts, and a `jlc_search` filter:** JLCPCB's PCBA Type, `economic` (its Economic and Standard assembly both place the part) or `standard_only`. One Standard-only part moves the whole order to Standard assembly, with its higher setup, stencil and fixture fees, and it can't be predicted from family, maker or MSL: Espressif's ESP32-S3 modules are Standard only, the bare S3 chips and DOIT's ESPS3-32E modules aren't. A design was costed on Economic fees for two days before its MCU module turned out to be Standard only. It's on `jlc_get_part`, stock-check, search and alternatives rows, and `jlc_search(pcba_type="economic")` keeps only parts Economic assembly takes. Search rows get it with the next daily parts update.
+- **`no_datasheet` on search rows:** `true` when JLCPCB lists no datasheet for the part (a fifth of WiFi modules and addressable LEDs, mostly newer listings), so it's seen before a lookup.
+- **`jlc_get_pinout(lcsc, footprint=true)`:** the EasyEDA footprint's name, the document it was drawn from, pad count, pitch, pad sizes and every pad's position, size, layer and hole. A slide switch's pins with numbers only (SK13D07VG4) can then be matched to the datasheet drawing, and a footprint drawn for another part shows: SIM7080G-M's is named for 72 pads, has 77, and links a SIM7020G document. It reads the footprint from the same EasyEDA endpoint as the symbol, not the rate-limited one.
+- **LDO dropout at a load:** `{"name": "Dropout", "op": "<=", "value": "0.3V@500mA"}`. LDOs list dropout at their own test current (`180mV@(300mA)`, `1.1V@(800mA)`), so a plain `<= 0.3V` compared parts at different loads and put a 25 mV at 1 mA part first. The filter uses a figure listed at or above the load, or scales a lower one up linearly, leaves out parts rated below the load, and `dropout_at_load` shows which figure was used.
+- **`summary.extended_examples` in `jlc_find_alternatives`:** with `library_type="no_fee"` and no basic or preferred match, the reply named only a count of extended matches (C13564: 23). It now lists the best three and says to rerun with `library_type="extended"` for the rest. Listed alternatives also carry `has_easyeda_footprint` where the footprint store already knows it, without an EasyEDA request, and the score breakdown no longer shows `easyeda: 0` for parts that weren't checked.
+- **What a listing leaves out, in `specs_note`:** an inductor's Isat is the maker's own definition (the inductance drop it's measured at, typical or minimum); class II MLCC capacitance is the value at 0 V and drops under DC bias; an RF cable's listing doesn't say whether each end is a bulkhead or PCB-mount, jack or plug, SMA or RP-SMA. The tool descriptions also say that lifecycle (NRND, obsolete) comes from `mouser_get_part` or `digikey_get_part`.
+
+### Fixed
+
+- **Schmitt-trigger logic:** `schmitt trigger logic` with `library_type="no_fee"` found nothing, though the basic 74HC14D is a Schmitt inverter. `schmitt trigger`, `schmitt logic` or `schmitt IC` now search Inverters, Logic Gates and Buffers by their Schmitt-trigger input type (half the Logic Gates don't say it in their descriptions); `schmitt inverter` and `schmitt buffer` search their own part type. A gate type still means Logic Gates.
+
+### Design rules
+
+- **ESP32 eFuses:** burn them with the eFuse supply at 3.3 V or less (VDD3P3_CPU on S3/C3, VDDPST2 on C6), per each datasheet's Table 5-2 note, even though the chips run up to 3.6 V.
+- **ESP32 reset RC:** 10 kohm/1 uF on CHIP_PU only covers a 3V3 rail that rises in under about 7 ms; a soft-started regulator needs a bigger RC, its power-good, or a supervisor. The rule had said the RC "ensures" the startup delay. Adds the formula: tau >= 1.65 * ((2.8 V / V_final) * T_ramp + 50 us).
+- **DFM:** JLCPCB's published limits (trace and space, drills, vias, annular rings, clearances, silkscreen, mask), the no-surcharge via size, and the JLC04161H-7628 and -3313 4-layer stackups with layer thicknesses and Er. `jlc stackup` and `efuse` find these.
+
 ## 0.8.3 (2026-11-02)
 
 ### Fixed
