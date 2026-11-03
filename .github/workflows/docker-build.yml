@@ -85,10 +85,11 @@ jobs:
             mkdir -p /var/www/pcbparts
             cp -r landing/* /var/www/pcbparts/
 
-            # Stop old container, pull new image, start fresh
-            docker compose down --remove-orphans
+            # Pull the new image while the old container still serves, then swap containers. Stopping
+            # first (down, then pull) left the site down for the whole download: calls during deploys
+            # got an empty 502 ("Error POSTing to endpoint:" in MCP clients). The app starts in ~1s.
             docker compose pull
-            docker compose up -d
+            docker compose up -d --remove-orphans
 
             # Cleanup
             docker image prune -f

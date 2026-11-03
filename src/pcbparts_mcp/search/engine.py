@@ -19,7 +19,7 @@ from ..subcategory_aliases import (
 )
 from .spec_filter import (
     CONNECTOR_COLUMN_NAMES, FUSE_ATTRIBUTE_MAP, RANGE_SPECS, FuseFilter, SpecFilter,
-    connector_value, get_attribute_names,
+    connector_value, get_attribute_names, switch_circuit,
 )
 from .resolvers import expand_query_synonyms, expand_package, resolve_manufacturer
 from .mpn import MPN_MATCH_NAMES, mpn_match_rank, normalize_mpn, looks_like_mpn
@@ -46,6 +46,8 @@ logger = logging.getLogger(__name__)
 
 # Post-filtered searches check at most this many SQL matches (MOSFETs with a Vgs(th): ~29k, ~0.2s)
 POST_FILTER_SCAN_ROWS = 50_000
+# Parts named in each unlisted entry
+_UNLISTED_EXAMPLES = 3
 
 # A "±12V" output is a dual rail: two outputs with 24V across them, and a different pinout
 _DUAL_RAIL_PREFIXES = ("±", "+/-", "+-")
@@ -247,6 +249,7 @@ class SearchEngine:
         self._conn.create_function("spec_preference_rank", 3, _spec_preference_rank, deterministic=True)
         self._conn.create_function("rds_gate_min", 1, rds_gate_min_json, deterministic=True)
         self._conn.create_function("metric_thread_ok", 2, metric_thread_ok, deterministic=True)
+        self._conn.create_function("switch_circuit", 1, switch_circuit, deterministic=True)
         self._package_names: dict[str, list[str]] | None = None
         self._fuse_package_types: dict[str, set[int]] = {}
         columns = {
@@ -613,22 +616,31 @@ class SearchEngine:
                 others, connector_columns=self._connector_columns, temperature_columns=self._temperature_columns,
             ) if others else ([], [], [], [])
             parts, params = [*base_parts, *sqls, clause[0]], [*base_params, *other_params, *clause[1]]
+            # The best-stocked of them by name, to check by hand: several WS2812 variants list no
+            # specs, and a supply filter left them out with only a count
             try:
                 if metadata:
-                    _, counts, _ = self._post_filtered_page(
-                        ["SELECT * FROM components WHERE 1=1", *parts[1:]], params, metadata, 0, 0)
+                    page, counts, _ = self._post_filtered_page(
+                        ["SELECT * FROM components WHERE 1=1", *parts[1:], "ORDER BY stock DESC, lcsc"],
+                        params, metadata, _UNLISTED_EXAMPLES, 0)
+                    examples = [(p["lcsc"], p["model"]) for p in page]
                 else:
                     sql = " ".join(parts).replace("SELECT COUNT(*)", "SELECT library_type, COUNT(*)", 1)
                     names = {"b": "basic", "p": "preferred", "e": "extended"}
                     counts = {names.get(lib, lib): n for lib, n in
                               self._conn.execute(sql + " GROUP BY library_type", params).fetchall()}
+                    examples = self._conn.execute(
+                        " ".join(parts).replace("SELECT COUNT(*)", "SELECT lcsc, mpn", 1)
+                        + " ORDER BY stock DESC, lcsc LIMIT ?", [*params, _UNLISTED_EXAMPLES]).fetchall() \
+                        if sum(counts.values()) else []
             except sqlite3.OperationalError:
                 logger.warning("Unlisted count failed", exc_info=True)
                 continue
             total = sum(counts.values())
             if total:
                 found.append({"filter": f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}",
-                              "parts": total, "basic_preferred": counts.get("basic", 0) + counts.get("preferred", 0)})
+                              "parts": total, "basic_preferred": counts.get("basic", 0) + counts.get("preferred", 0),
+                              "most_stocked": [f"{lcsc} {model}" for lcsc, model in examples]})
         return found
 
     def _post_filtered_page(

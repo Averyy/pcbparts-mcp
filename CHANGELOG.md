@@ -4,6 +4,28 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.2 (2026-11-02)
+
+### Added
+
+- **`maker_datasheet` in `jlc_get_part`:** the manufacturer's own datasheet where JLCPCB lists one, mostly TI parts. TPS61023DRLR (C919459) had no datasheet link at all; it now gets `https://www.ti.com/lit/ds/symlink/tps61023.pdf`. TI links are rewritten to that stable English form. With no PDF of either kind, `datasheet_note` says so; with no specs, `specs_note` does.
+- **`not_found` in `mouser_get_part`:** the part numbers in a batch that no result matches. Mouser leaves them out without a word, so in a batch of 10 a missing part looked checked. The docstring also says a number can match another maker's part (Mouser's SRV05-4 is onsemi's).
+- **`most_stocked` in `jlc_search`'s `unlisted`:** up to three of the parts a filter left out for listing no value, by LCSC code and model, so they can be checked by hand (several WS2812 variants list no supply voltage).
+
+### Fixed
+
+- **"NAND" in a logic query:** `74HC132 quad NAND schmitt` searched NAND flash, and `quad NAND gate` returned flash chips. With gate words (gate, schmitt, quad, dual, hex, 2-input) or a 74/4000-series part number, NAND, NOR and XOR mean Logic Gates, and the gate type, gate count, inputs per gate and Schmitt inputs become filters. `NAND flash`, `SLC NAND` and `quad SPI NOR flash` are unchanged.
+- **Switch circuits:** `Circuit = DP3T` found 5 slide switches; `Double pole triple throw` found 443. JLCPCB writes the same circuit several ways (SPDT, 1P2T, "Double pole triple throw", "triple-pole/single-throw"), and the filter now compares poles and throws. In switch searches, `2P3T` or `double pole double throw` in the query becomes the filter instead of being dropped. SPST-NO and SPST-NC still match only parts that say so.
+- **OVP load switches:** `OVP load switch` dropped "OVP" and returned high-side USB switches. In load-switch searches, OVP, reverse current blocking, reverse voltage protection, soft-start and output discharge are matched against the parts' Features (WS3222D's description says it only in Chinese), and `OVP switch` finds load switches.
+- **Two values for one supply range:** `OVP switch 28V input ... 5V` matched only parts listing exactly "5V". Two values for a supply range now each have to fall inside it. Fixes a related bug: a second filter of the same name and operator was dropped, so the result depended on their order.
+- **Parts with no specs** (7% of stocked parts) follow documented ones on stock-ordered searches. JMEconn's SK23D07 (C56164084: 5,000 in stock, no specs, datasheet or footprint) led its search. Price-sorted searches are unchanged.
+- **`jlc_find_alternatives` for part types without compatibility rules:** only the original maker's parts were searched. Every maker's parts in the original's package now come next, after part-family matches (Maxinmicro's MX22917 for the TPS22917, TUOZHAN's 2020 RGB LED for the WS2812B-2020); a maker's copy that carries the original's number (XL-2020RGBC-WS2812B) counts as a family match. Packages that only say "SMD" don't count.
+- **The empty-tier hint:** "No basic part matches; 16 parts do in other library tiers (extended parts add an assembly fee)" when one of the 16 was a Preferred part with no fee. The hint now gives the no-fee count apart and points to `library_type="no_fee"`.
+- **Words left out silently:** a hyphenated maker name beside a part number (`ESP32-S3 Ai-Thinker`) was dropped without a `not_searched` note, and a second part number (`WS2812 SK6812`) was reported as a stray word. The note now names it as a part number to search separately.
+- **`get_design_rules` keys:** the keys the index prints (`guides/dfm.md`, with or without backticks) found nothing and returned the whole index.
+- **Design rule text:** ESP32 boot buttons wired through 10 kohm against a 10 kohm pull-up can't enter download mode (the pin sits at VDD/2, above VIL max); the rule now says to wire the button straight to GND. USB series resistors on ESP32s are footprints to reserve, as Espressif's checklist says, not required parts. Semtech's SRV05-4 is 3 pF typical, not 0.85 pF, and the JLC parts sold as SRV05-4 are copies with their own figures.
+- **Downtime during deploys:** the deploy stopped the server before downloading the new image, so calls in that window got an empty 502 (`Error POSTing to endpoint:` in MCP clients, and from `/mcp/datasheet/<lcsc>`). The image is now pulled first and the container swapped after.
+
 ## 0.8.1 (2026-11-02)
 
 ### Fixed

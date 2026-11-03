@@ -1511,7 +1511,11 @@ def likely_drop_in(original: dict[str, Any], candidate: dict[str, Any], same_pac
     SIM7080G-M's drop-in SIM7080G ranked behind a 24x24mm A7670E on stock; the 2G SIM800C has the
     same 17.6x15.7mm package but not the pinout, so the package alone isn't enough."""
     family = part_family(original.get("model"))
-    if not same_package or not family or part_family(candidate.get("model")) != family:
+    if not same_package or not family:
+        return None
+    # Another maker's copy often carries the original's number inside its own: XL-2020RGBC-WS2812B
+    named = re.search(rf"(?<![A-Z0-9]){re.escape(family)}(?![0-9])", (candidate.get("model") or "").upper())
+    if part_family(candidate.get("model")) != family and not named:
         return None
     return f"same package and part family ({family}); verify the pinout"
 

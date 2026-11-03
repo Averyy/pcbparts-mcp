@@ -8,7 +8,7 @@
 - **Power supply: 3.3V, >= 500 mA. 10 uF on VDD3P3 (analog), LC filter on analog rail.** All power rails must rise together -- VDD3P3_RTC cannot be used as standalone backup supply.
 - **Reset: RC circuit on CHIP_PU (S3/C6) or CHIP_EN (C3). R = 10 kohm, C = 1 uF.** CHIP_PU/CHIP_EN must not float. For battery or unstable supply: add external reset IC with ~3.0V threshold.
 - **RF matching: CLC for S3/C3, CLCCL bandpass for C6.** 0201 packages, placed close to chip. Matching network target: conjugate match to chip impedance (~35+j0 ohm). Tuned S11 < -10 dB (VSWR < 2:1) at 2.4 GHz. S21 < -35 dB at 4.8 GHz and 7.2 GHz.
-- **USB pins: S3 = GPIO19/20, C3 = GPIO18/19, C6 = GPIO12/13.** 22-33 ohm series resistors close to chip. Reserve cap-to-ground footprint on each line.
+- **USB pins: S3 = GPIO19/20, C3 = GPIO18/19, C6 = GPIO12/13.** Reserve series-resistor footprints (22/33 ohm to start) and unpopulated cap-to-ground footprints close to the chip; Espressif asks for footprints, not fitted parts.
 
 ## Design Rules
 
@@ -40,7 +40,7 @@
 - **C3 boot mode: GPIO9 (45 kohm internal pull-up) + GPIO8.** GPIO9 low + GPIO8 high = download boot. GPIO9 high = SPI boot (normal). GPIO8 low + GPIO9 low = invalid combination (undefined behavior). **GPIO2 is a strapping pin** that controls boot message printing (high = print, low = suppress) -- not boot mode selection, but must be accounted for in pin planning. Pull-up recommended to avoid power-up glitches.
 - **C6 boot mode: GPIO9 (internal pull-up) + GPIO8.** GPIO9 low + GPIO8 high = download boot. GPIO9 high = SPI boot (normal). GPIO8 low + GPIO9 low = invalid. Additional strapping: GPIO15, MTMS, MTDI.
 - **Do not add high-value capacitors on boot pins (GPIO0 on S3, GPIO9 on C3/C6).** Slow rise time from large cap causes chip to sample wrong value and enter download mode unexpectedly.
-- **Pull-up resistor on boot pin: use 10 kohm (strong enough to override 45 kohm internal pull-up noise).** Boot button pulls to GND through 10 kohm.
+- **Boot pin: 10 kohm external pull-up, boot button straight to GND.** Espressif recommends the pull-up (the internal one is a weak ~45 kohm). A button through 10 kohm against the 10 kohm pull-up holds the pin at VDD/2 (1.65 V), above VIL max 0.25 x VDD (0.825 V), so download mode never latches.
 - **Strapping pin hold time: 3 ms after CHIP_PU/EN goes high.** External circuits connected to strapping pins must not change state during this window.
 
 ### Crystal
@@ -71,7 +71,7 @@
 ### USB
 
 - **S3 USB pins: GPIO19 (D-) / GPIO20 (D+). C3: GPIO18 (D-) / GPIO19 (D+). C6: GPIO12 (D-) / GPIO13 (D+).** S3 has USB OTG (full-speed); C3/C6 have USB Serial/JTAG controller only.
-- **22-33 ohm series resistors between chip USB pins and connector, placed close to chip.** Reserve cap-to-ground footprint on each trace for EMC tuning.
+- **Reserve 22-33 ohm series-resistor footprints between the chip USB pins and the connector, close to the chip, plus a cap-to-ground footprint on each trace, initially unpopulated.** Espressif's checklist says "reserve" (initial value 22/33 ohm); they are EMC tuning options, not required parts.
 - **USB differential pair: 90 ohm impedance.**
 - **USB D+ fluctuates between high and low on power-up.** If stable initial state is needed, add external pull-up on D+ for consistent high level at startup.
 - **S3 USB-OTG download boot mode: drives MTMS, MTDI, MTDO, MTCK, GPIO21, GPIO38 after init.** If USB-OTG download boot is not needed, disable via eFuse bit EFUSE_DIS_USB_OTG_DOWNLOAD_MODE to prevent unexpected IO state changes.

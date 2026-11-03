@@ -19,6 +19,23 @@ _ADDRESSABLE_LED_MODEL = re.compile(r'(?:ws28|skc?68|sk98|apa10)\d', re.IGNORECA
 _ADDRESSABLE_LED_WORDS = re.compile(
     r'\b(?:(?:individually\s+)?addressable|smart|intelligent|neo\s*pixels?|built[-\s]*in\s+ic)\b', re.IGNORECASE)
 _ISOLATED_WORD = re.compile(r'\bisolated\b', re.IGNORECASE)
+# "74HC132 quad NAND schmitt", "quad NAND gate": a NAND or NOR among gate words or with a 74/4000
+# logic part number is a logic gate. Bare "nand" meant NAND FLASH, so these searched memory.
+_GATE_FUNCTION = re.compile(r'\b(?:x?nor|n?and|x?or)[\s-]+gates?\b|\b(?:nand|x?nor|xor)\b', re.IGNORECASE)
+_GATE_CONTEXT = re.compile(
+    r'\b(?:gates?(?![\s-]*driv)|schmitt|single|dual|triple|quad|hex|octal|\d[\s-]*inputs?)\b', re.IGNORECASE)
+_LOGIC_FAMILY = re.compile(r'^(?:[a-z]{0,4}74[a-z]{0,6}\d|(?:cd|hef|mc1)4\d{3})', re.IGNORECASE)
+_MEMORY_CONTEXT = re.compile(r'\b(?:flash|memory|eeprom|q?spi|qpi|\d+\s*[kmg](?:bit|b))\b', re.IGNORECASE)
+_PART_TOKEN = re.compile(r'[a-z0-9]+(?:-[a-z0-9]+)*', re.IGNORECASE)
+_NOT_PART_NUMBER = re.compile(r'^(?:\d+(?:\.\d+)?[a-z]+|\d-inputs?)$', re.IGNORECASE)  # "100mA", "74HC", "2-input"
+
+
+def _logic_part_numbers_only(query: str, model: str | None) -> bool:
+    """The query's part numbers, if any, are 74/4000-series logic ("W25Q128 quad NOR" is flash)."""
+    tokens = [model] if model else [t for t in _PART_TOKEN.findall(query) if len(t) >= 4
+                                     and re.search(r'\d', t) and re.search(r'[a-z]', t, re.IGNORECASE)
+                                     and not _NOT_PART_NUMBER.match(t)]
+    return all(_LOGIC_FAMILY.match(t) for t in tokens)
 _NON_ISOLATED = re.compile(r'\bnon[-\s]?isolated\b', re.IGNORECASE)
 
 
@@ -52,6 +69,14 @@ def extract_component_type(
     if non_isolated:
         query = _NON_ISOLATED.sub(' ', query)
     query_lower = query.lower()
+
+    if (_GATE_FUNCTION.search(query) and not _MEMORY_CONTEXT.search(query)
+            and _logic_part_numbers_only(query, model)
+            and (_GATE_CONTEXT.search(query)
+                 or any(_LOGIC_FAMILY.match(t) for t in [*_PART_TOKEN.findall(query), *([model] if model else [])]))):
+        # The gate words stay in the text: the parser reads them as Logic Gates specs
+        remaining = re.sub(r'\blogic\b', ' ', query, flags=re.IGNORECASE)
+        return "logic gates", re.sub(r'\s+', ' ', remaining).strip(), "logic gate"
 
     # Resettable modifiers can be separated from "fuse" by ratings or packages.
     resettable = re.compile(r'\b(?:ptc|poly\s*fuse|polyswitch|resettable)\b', re.IGNORECASE)

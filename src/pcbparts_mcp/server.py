@@ -792,7 +792,8 @@ def jlc_search(
             coverage, or filters that could not be applied. Reasons distinguish unapplied filters
             from applied constraints with incomplete attribute coverage.
         unlisted: (when present) per range filter, parts that meet every other constraint but don't
-            list its attribute ({"filter", "parts", "basic_preferred"}), which the filter leaves out;
+            list its attribute ({"filter", "parts", "basic_preferred", "most_stocked": up to three
+            "LCSC model"}), which the filter leaves out;
             their datasheets may still qualify them (AO3401A lists no operating temperature)
         hint: (on empty replies without an error) a next step using search help, fewer explicit
             constraints or jlc_stock_check for low-stock parts
@@ -1219,8 +1220,24 @@ def jlc_search(
                 **search_args, "library_type": None, "limit": 1, "count_unlisted": False}).get("total") or 0
             if other_tier_total:
                 matched = f" {part_number_text}" if part_number_text else ""
-                hints.insert(0, f"No {library_type.replace('_', '-')} part matches{matched}; {other_tier_total} parts "
-                                "do in other library tiers (extended parts add an assembly fee per unique part).")
+                # "No basic part matches; 16 parts do in other tiers (extended ... fee)" read as if all 16
+                # had a fee when one was a Preferred part: name the no-fee tier's count apart
+                free_tier = {"basic": "preferred", "preferred": "basic"}.get(library_type)
+                free = db.search(query=effective_query, **{
+                    **search_args, "library_type": free_tier, "limit": 1, "count_unlisted": False}).get("total") or 0 \
+                    if free_tier else 0
+                plural = other_tier_total != 1
+                if free:
+                    tiers = [f"{free} {free_tier} (no assembly fee; library_type=\"no_fee\" searches basic and "
+                             "preferred)"]
+                    if other_tier_total - free:
+                        tiers.append(f"{other_tier_total - free} extended (an assembly fee per unique part)")
+                    found = (f"{other_tier_total} part{'s' if plural else ''} do{'' if plural else 'es'} in other "
+                             f"library tiers: {' and '.join(tiers)}")
+                else:
+                    found = (f"{other_tier_total} extended part{'s' if plural else ''} do{'' if plural else 'es'} "
+                             "(an assembly fee per unique part)")
+                hints.insert(0, f"No {library_type.replace('_', '-')} part matches{matched}; {found}.")
         if (parsed and effective_query and not part_number_text and not parsed.subcategory
                 and not (subcategory_id or subcategory_name)):
             hints.insert(0, f"No part type matched {json.dumps(effective_query)}, so those words weren't left out. "
@@ -1527,7 +1544,9 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
 
     Reply: prices lists quantity tiers; datasheet is LCSC's datasheet page (a viewer, null when LCSC
     has none) and datasheet_pdf the datasheet itself: a short link on this server that redirects to
-    the PDF and stays valid; lcsc_url is the LCSC product page;
+    the PDF and stays valid; maker_datasheet is the manufacturer's own datasheet link where JLCPCB
+    lists one (most TI parts), and datasheet_note says when there is no PDF; specs_note says when LCSC
+    lists no specs; lcsc_url is the LCSC product page;
     has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results and total. Non-exact replies
     add match (separators, packing, alias, alternative, lcsc or related), matched_mpn where
     applicable, and a note naming the part types for related full-text results (and parts another
@@ -1543,7 +1562,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
 
     Returns:
         For lcsc: Full part details including specs (description only when specs are empty),
-        all pricing tiers in prices, datasheet, datasheet_pdf, lcsc_url, and EasyEDA footprint
+        all pricing tiers in prices, datasheet, datasheet_pdf, maker_datasheet, lcsc_url, and EasyEDA footprint
         availability:
         - has_easyeda_footprint: True if EasyEDA has footprint/symbol, False if not, null if unknown
         - easyeda_symbol_uuid: UUID for direct EasyEDA editor link (null if no footprint)
@@ -1673,8 +1692,9 @@ async def jlc_find_alternatives(
     RF parts (splitters, baluns, couplers, amplifiers, filters, transceivers) have no rules, so they come
     back as similar_parts from every maker, ordered by how much of the original's frequency range
     each covers (frequency_coverage: full, partial with share, or unknown); parts that don't overlap it
-    are left out and counted in summary.frequency_check. Other part types without rules (modules)
-    list parts in the original's package and part family first, with likely_drop_in (pinout unchecked).
+    are left out and counted in summary.frequency_check. Other part types without rules (modules,
+    load switches, addressable LEDs) list parts in the original's package and part family first, with
+    likely_drop_in (pinout unchecked), then other makers' parts in the same package.
 
     Args:
         lcsc: LCSC code of the original part (e.g., "C2557")
@@ -1909,8 +1929,10 @@ async def mouser_get_part(part_number: str) -> dict:
             match results by mfr_part_number.
 
     Returns:
-        results: Full part details including all attributes, pricing tiers, availability, datasheet
+        results: Full part details including all attributes, pricing tiers, availability, datasheet.
+            A number can match another maker's part (Mouser's SRV05-4 is onsemi's): check manufacturer
         total: Number of parts found
+        not_found: The given numbers no result matches (Mouser skips them without saying)
     """
     if not _mouser_client:
         return {"error": "Mouser API key not configured. Set MOUSER_API_KEY in environment."}

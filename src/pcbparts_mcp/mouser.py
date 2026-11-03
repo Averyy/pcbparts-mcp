@@ -78,6 +78,19 @@ def _parse_unit_weight_g(part: dict[str, Any]) -> float | None:
     return round(kg * 1000, 6) if kg > 0 else None
 
 
+def _part_key(number: str | None) -> str:
+    return re.sub(r"[^A-Z0-9]", "", (number or "").upper())
+
+
+def _not_found(numbers: list[str], results: list[dict[str, Any]]) -> list[str]:
+    """The asked numbers no result matches: none has it as Mouser PN or starts its MPN with it
+    (Mouser matches loosely: "LM358P" finds LM358P and LM358PE4)."""
+    keys = [(_part_key(r.get("part_number")), _part_key(r.get("mfr_part_number"))) for r in results]
+    return [n for n in numbers if not any(
+        mouser == _part_key(n) or mpn.startswith(_part_key(n)) or _part_key(n).endswith(mpn) and mpn
+        for mouser, mpn in keys)]
+
+
 def _normalize_part(part: dict[str, Any]) -> dict[str, Any]:
     """Normalize a Mouser Part object into our standard format."""
     # Parse price breaks
@@ -262,10 +275,11 @@ class MouserClient:
         search_results = data.get("SearchResults", {})
         parts = search_results.get("Parts", [])
 
-        result = {
-            "results": [_normalize_part(p) for p in parts],
-            "total": len(parts),
-        }
+        results = [_normalize_part(p) for p in parts]
+        result = {"results": results, "total": len(parts)}
+        # Mouser leaves out numbers it doesn't find, so in a batch of 10 a missing part looked checked
+        if missing := _not_found(numbers, results):
+            result["not_found"] = missing
 
         self._cache.set(cache_key, result)
 
