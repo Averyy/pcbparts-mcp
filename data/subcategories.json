@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -1543,6 +1548,11 @@
     "name": "Water heater",
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
+  },
+  "3398": {
+    "name": "Cleaner",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
   },
   "2101": {
     "name": "555 Timers / Counters",
@@ -3868,6 +3878,11 @@
     "name": "Isolated Power Modules",
     "category_id": 68,
     "category_name": "Power Modules"
+  },
+  "500": {
+    "name": "Safety warning labels",
+    "category_id": 56,
+    "category_name": "Safety/fire protection"
   },
   "2029": {
     "name": "SiC Diodes",
