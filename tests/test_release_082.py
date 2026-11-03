@@ -197,7 +197,9 @@ class TestMakerDatasheet:
     @pytest.mark.parametrize("url, expected", [
         ("https://www.ti.com.cn/cn/lit/ds/symlink/tps61023.pdf?ts=1728812468331&ref_url=https%253A%2",
          "https://www.ti.com/lit/ds/symlink/tps61023.pdf"),
-        ("https://www.ti.com/cn/lit/gpn/tps631000", "https://www.ti.com/lit/ds/symlink/tps631000.pdf"),
+        ("https://www.ti.com/cn/lit/gpn/tps631000", "https://www.ti.com/lit/gpn/tps631000"),
+        # LM73100's datasheet is lm7310.pdf; a PDF name made from the part number would be a 404
+        ("https://www.ti.com/cn/lit/ds/symlink/lm7310.pdf", "https://www.ti.com/lit/ds/symlink/lm7310.pdf"),
         ("https://www.ti.com/lit/ds/symlink/lm358.pdf", "https://www.ti.com/lit/ds/symlink/lm358.pdf"),
         ("https://www.infineon.com/dgdl/x.pdf?fileId=5546d", "https://www.infineon.com/dgdl/x.pdf?fileId=5546d"),
         ("https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/x.pdf", None), ("", None), (None, None)])
@@ -211,7 +213,7 @@ class TestMakerDatasheet:
 
     def test_maker_link_when_jlcpcb_has_no_pdf(self):
         part = self._part(dataManualUrl="", dataManualOfficialLink="https://www.ti.com/cn/lit/gpn/tps61023")
-        assert part["maker_datasheet"] == "https://www.ti.com/lit/ds/symlink/tps61023.pdf"
+        assert part["maker_datasheet"] == "https://www.ti.com/lit/gpn/tps61023"
         assert "datasheet_note" not in part
 
     def test_note_when_there_is_none(self):

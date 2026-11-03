@@ -296,6 +296,21 @@ def switch_circuit(value: str | None) -> str | None:
     return f"{poles}P{throws}T" + (f"-{contact}" if contact else "")
 
 
+_RIGHT_ANGLE = re.compile(r"right[\s-]*angle|horizontal|side[\s-]*(?:insertion|view|entry|mount)", re.IGNORECASE)
+_VERTICAL = re.compile(r"vertical|straight|top[\s-]*entry", re.IGNORECASE)
+
+
+def connector_orientation(value: str | None) -> str | None:
+    """A connector's Mounting Type as "right angle" or "vertical" ("Surface Mount, Right Angle",
+    "Side insertion", "Straight"), or None when it doesn't say ("Through Hole")."""
+    text = str(value or "")
+    if _RIGHT_ANGLE.search(text):
+        return "right angle"
+    if _VERTICAL.search(text):
+        return "vertical"
+    return None
+
+
 # Attribute name aliases - maps user-friendly names to actual DB attribute names
 # This allows users to use short names like "Vgs(th)" instead of "Gate Threshold Voltage (Vgs(th))"
 ATTRIBUTE_ALIASES: dict[str, list[str]] = {

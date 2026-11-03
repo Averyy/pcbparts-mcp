@@ -19,7 +19,7 @@ from ..subcategory_aliases import (
 )
 from .spec_filter import (
     CONNECTOR_COLUMN_NAMES, FUSE_ATTRIBUTE_MAP, RANGE_SPECS, FuseFilter, SpecFilter,
-    connector_value, get_attribute_names, switch_circuit,
+    connector_orientation, connector_value, get_attribute_names, switch_circuit,
 )
 from .resolvers import expand_query_synonyms, expand_package, resolve_manufacturer
 from .mpn import MPN_MATCH_NAMES, mpn_match_rank, normalize_mpn, looks_like_mpn
@@ -201,7 +201,8 @@ def _range_passes(value: str, parser: Any, operator: str, target: float, dual: b
 
 
 def _spec_preference_rank(attributes: str | None, name: str, target: str) -> int:
-    """Rank listed PD role/output matches first, keeping parts with missing attributes."""
+    """Rank listed PD role/output matches (or a connector orientation) first, keeping parts with
+    missing attributes."""
     for attr_name, value in json.loads(attributes or "[]"):
         if attr_name != name:
             continue
@@ -212,6 +213,10 @@ def _spec_preference_rank(attributes: str | None, name: str, target: str) -> int
                     output = parse_voltage(item) if "~" not in item else None
                     if output is not None and math.isclose(output, voltage, rel_tol=1e-9, abs_tol=1e-12):
                         return 0
+        elif name == "Mounting Type":
+            # "right angle JST ZH": orientation first; parts that don't say (Through Hole) still come
+            if connector_orientation(value) == connector_orientation(target):
+                return 0
         elif target.casefold() in (item.strip().casefold() for item in value.split("、")):
             return 0
     return 1
@@ -499,6 +504,12 @@ class SearchEngine:
             gate = "rds_gate_min_v" if self._mosfet_gate_column else "rds_gate_min(components.attributes)"
             ranks.append(f"CASE WHEN {gate} <= ? THEN 0 ELSE 1 END")
             params.append(gate_drive_v)
+        # A connector's orientation sets its footprint, so it ranks before the maker and series
+        # preferences ("JST ZH ... right angle" listed JST's vertical ZH before right-angle copies)
+        orientation = [p for p in preferred_specs or [] if p.name == "Mounting Type"]
+        for preference in orientation:
+            ranks.append("spec_preference_rank(components.attributes, ?, ?)")
+            params.extend([preference.name, preference.value])
         if connector_manufacturer:
             ranks.append("CASE WHEN manufacturer = ? THEN 0 ELSE 1 END")
             params.append(connector_manufacturer)
@@ -512,7 +523,7 @@ class SearchEngine:
                     "AND upper(trim(json_extract(j.value, '$[1]'))) = upper(?)) THEN 0 ELSE 1 END"
                 )
             params.append(connector_series)
-        for preference in preferred_specs or []:
+        for preference in (p for p in preferred_specs or [] if p.name != "Mounting Type"):
             ranks.append("spec_preference_rank(components.attributes, ?, ?)")
             params.extend([preference.name, preference.value])
         if ranks:

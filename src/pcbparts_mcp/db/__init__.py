@@ -147,6 +147,22 @@ class ComponentDatabase:
         return get_attribute_names(name)
 
     @serialized
+    def mpns_containing(self, fragment: str, limit: int = 6) -> list[str]:
+        """In-stock part numbers with the text anywhere in them, best-stocked first ("2812" is in
+        WS2812B and XL-5050RGBC-2812B). Walks the stock order, so a few take milliseconds."""
+        self._ensure_db()
+        if not self._conn or not fragment:
+            return []
+        try:
+            rows = self._conn.execute(
+                "SELECT mpn FROM components WHERE stock >= ? AND instr(upper(mpn), ?) > 0 "
+                "ORDER BY stock DESC LIMIT ?", (DEFAULT_MIN_STOCK, fragment.upper(), limit)).fetchall()
+        except sqlite3.Error:
+            logger.warning("Part-number fragment lookup failed", exc_info=True)
+            return []
+        return [mpn for (mpn,) in rows]
+
+    @serialized
     def get_subcategory_name(self, subcategory_id: int) -> str | None:
         """Get subcategory name by ID."""
         self._ensure_db()

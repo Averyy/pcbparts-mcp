@@ -46,6 +46,11 @@ ISOLATED_SIBLINGS: dict[str, str] = {
 }
 
 
+# "power mux" found signal multiplexers; LCSC files power muxes (TPS2121, LM66100) as ORing controllers
+_POWER_MUX_WORDS = ("power mux", "power muxes", "power multiplexer", "power multiplexers", "power-path mux",
+                    "power path mux", "power path switch", "power-path switch", "power selector",
+                    "power source selector", "supply selector", "power supply selector")
+
 # Common subcategory aliases for frequently searched terms
 # Maps common shorthand to the actual subcategory name (case-insensitive matching)
 # These must match actual subcategory names in the database!
@@ -534,6 +539,7 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # Ideal diode controllers drive a MOSFET as a low-loss diode; longer than "diode", so it wins
     "ideal diode": "oring controllers",
     "ideal diodes": "oring controllers",
+    **dict.fromkeys(_POWER_MUX_WORDS, "oring controllers"),
     "oring controller": "oring controllers",
     # ==========================================================================
     # FUSES
@@ -804,7 +810,8 @@ SUBCATEGORY_GROUPS: dict[str, tuple[str, ...]] = {
     )),
     **dict.fromkeys(("smt nut", "smd nut", "smt standoff", "smd standoff"), ("patch round nut", "smd hex nut columns")),
     "esp32 module": ("wifi modules", "rf modules", "bluetooth modules"),
-    **dict.fromkeys(("ideal diode", "ideal diodes"), ("oring controllers", "power distribution switches")),
+    **dict.fromkeys(("ideal diode", "ideal diodes", *_POWER_MUX_WORDS),
+                    ("oring controllers", "power distribution switches")),
     **dict.fromkeys(("multiplexer", "multiplexers", "mux", "analog switch", "analog multiplexer", "i2c multiplexer",
                      "i2c mux"), ("analog switches, multiplexers", "signal switches, multiplexers, decoders")),
     **dict.fromkeys(("lora", "lora transceiver", "lora chip"), ("lora modules", "rf transceiver ics")),

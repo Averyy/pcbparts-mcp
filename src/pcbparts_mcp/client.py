@@ -3,6 +3,7 @@
 import asyncio
 import heapq
 import logging
+import math
 import re
 import time
 from datetime import datetime, timezone
@@ -121,6 +122,7 @@ _MANUFACTURER_EXACT_NORMALIZED: dict[str, str] = {
 
 # A datasheet_pdf link closer than this to expiring isn't served: the caller needs time to fetch it
 PDF_LINK_MIN_REMAINING = 300
+PDF_LINK_SECONDS = 1800  # how long JLCPCB signs a datasheet link for (x-oss-expires)
 # /mcp/datasheet/<lcsc> signs links on request: at most this many JLCPCB lookups a minute for all
 # callers together (links already held are reused), so the short links can't drive JLCPCB traffic
 DATASHEET_SIGNINGS_PER_MINUTE = 20
@@ -130,7 +132,11 @@ DATASHEET_MISSING_TTL = 600
 
 
 class DatasheetLinkBusy(ValueError):
-    """The minute's budget for signing datasheet links is used up."""
+    """The minute's budget for signing datasheet links is used up; retry_after is when a slot frees."""
+
+    def __init__(self, message: str, retry_after: int = 60):
+        super().__init__(message)
+        self.retry_after = retry_after
 
 
 def _signed_url_expiry(url: str) -> float | None:
@@ -173,15 +179,18 @@ _TI_DATASHEET = re.compile(
 
 def maker_datasheet_link(*urls: str | None) -> str | None:
     """The maker's own datasheet from JLCPCB's listing (dataManualOfficialLink, or a maker link LCSC
-    gives as its datasheet). TI's are written several ways (ti.com.cn/cn/lit/ds/symlink/x.pdf?ts=..,
-    ti.com/cn/lit/gpn/x); all become the stable English PDF ti.com/lit/ds/symlink/x.pdf. Other links
-    are kept as listed (some need their query, Infineon's ?fileId=); LCSC's own aren't maker links."""
+    gives as its datasheet). TI's come as ti.com.cn/cn/lit/ds/symlink/x.pdf?ts=.. or ti.com/cn/lit/gpn/x
+    and become the stable English ti.com/lit/ds/symlink/x.pdf or ti.com/lit/gpn/x (which redirects to
+    the PDF). A gpn isn't turned into a PDF name: LM73100's datasheet is lm7310.pdf. Other links are
+    kept as listed (some need their query, Infineon's ?fileId=); LCSC's own aren't maker links."""
     for url in urls:
         url = (url or "").strip()
         if not url.startswith(("https://", "http://")) or "lcsc.com" in urlparse(url).netloc.lower():
             continue
         if ti := _TI_DATASHEET.match(url):
-            return f"https://www.ti.com/lit/ds/symlink/{(ti.group(1) or ti.group(2)).lower()}.pdf"
+            if ti.group(1):
+                return f"https://www.ti.com/lit/gpn/{ti.group(1).lower()}"
+            return f"https://www.ti.com/lit/ds/symlink/{ti.group(2).lower()}.pdf"
         return url
     return None
 
@@ -1326,7 +1335,12 @@ class JLCPCBClient:
 
         self._datasheet_signings = [t for t in self._datasheet_signings if t > now - 60]
         if len(self._datasheet_signings) >= DATASHEET_SIGNINGS_PER_MINUTE:
-            raise DatasheetLinkBusy("Too many datasheet links requested; try again in a minute")
+            # A sweep of LED candidates hit this after ~10 links and only read "try again in a minute"
+            wait = max(1, math.ceil(60 - (now - min(self._datasheet_signings))))
+            raise DatasheetLinkBusy(
+                f"This server signs at most {DATASHEET_SIGNINGS_PER_MINUTE} new datasheet links a minute for all "
+                f"users; try again in {wait}s. A datasheet_pdf link jlc_get_part returned in the last "
+                f"{(PDF_LINK_SECONDS - PDF_LINK_MIN_REMAINING) // 60} minutes opens without one.", retry_after=wait)
         self._datasheet_signings.append(now)
         response = await self._request(JLCPCB_SEARCH_URL, {
             "keyword": lcsc, "currentPage": 1, "pageSize": 10, "searchSource": "search",
