@@ -148,7 +148,9 @@ TEMPERATURE_RANGE_ATTRIBUTES: tuple[str, ...] = (
 
 # String specs whose values list several items ("Boost、Buck"): "=" matches any one item
 # "SMA、FAKRA" has SMA; a cellular module's "NB-IoT、CAT-M" has Cat-M
-LIST_SPECS: frozenset[str] = frozenset({"Topology", "Type", "type", "RF Series", "Class", "Communication System"})
+# Logic gates: "AND Gate、NAND Gate", "TTL Compatible CMOS、Schmitt trigger"; Features: "Soft-start、OVP"
+LIST_SPECS: frozenset[str] = frozenset({"Topology", "Type", "type", "RF Series", "Class", "Communication System",
+                                        "Logic Type", "Input type", "Features"})
 
 # A colour word and the catalog's names for its shades. Discrete LEDs list 198 Green, 470 Emerald
 # Green and 490 Yellow Green parts; the only Basic green LED (C2297) is Emerald Green.
@@ -258,6 +260,40 @@ def connector_value(name: str, value: str | None) -> float | None:
         return None
     number = float(match.group(1))
     return number if name == "Pitch" or number.is_integer() else None
+
+
+_POLE_THROW_WORDS = {"single": 1, "one": 1, "double": 2, "dual": 2, "two": 2, "triple": 3, "three": 3, "four": 4,
+                     "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12}
+_POLE_THROW_LETTERS = {"s": 1, "d": 2, "t": 3}
+_COUNT = r"(\d{1,2}|" + "|".join(_POLE_THROW_WORDS) + ")"
+_CIRCUIT_LONG = re.compile(rf"\b{_COUNT}[\s-]*poles?[\s,/-]*{_COUNT}[\s-]*throws?\b", re.IGNORECASE)
+_CIRCUIT_SHORT = re.compile(r"(?<![a-z0-9])([sdt]|\d{1,2})p([sdt]|\d{1,2})t(?:\s*[-/]?\s*(no|nc))?(?![a-z0-9])",
+                            re.IGNORECASE)
+_CONTACT = re.compile(r"\bnormally[\s-]+(open|closed)\b|(?<![a-z])(no|nc)(?![a-z])", re.IGNORECASE)
+
+
+def _pole_throw_count(word: str) -> int:
+    word = word.lower()
+    return int(word) if word.isdigit() else _POLE_THROW_WORDS.get(word) or _POLE_THROW_LETTERS[word]
+
+
+def switch_circuit(value: str | None) -> str | None:
+    """A switch Circuit as poles and throws: "DP3T", "2P3T" and "Double pole triple throw" are all
+    "2P3T"; "SPST-NO" is "1P1T-NO". JLCPCB writes the same circuit several ways (443 slide switches
+    say "Double pole triple throw", 5 "DP3T"), so an exact match missed most of them."""
+    text = str(value or "")
+    contact = None
+    if match := _CIRCUIT_LONG.search(text):
+        poles, throws = _pole_throw_count(match.group(1)), _pole_throw_count(match.group(2))
+    elif match := _CIRCUIT_SHORT.search(text):
+        poles, throws = _pole_throw_count(match.group(1)), _pole_throw_count(match.group(2))
+        contact = match.group(3)
+    else:
+        return None
+    if contact is None and (found := _CONTACT.search(text[match.end():])):
+        contact = found.group(1) or found.group(2)
+    contact = {"open": "NO", "closed": "NC"}.get((contact or "").lower(), (contact or "").upper())
+    return f"{poles}P{throws}T" + (f"-{contact}" if contact else "")
 
 
 # Attribute name aliases - maps user-friendly names to actual DB attribute names

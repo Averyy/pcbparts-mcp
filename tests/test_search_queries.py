@@ -2227,7 +2227,7 @@ class TestBacklogClosure:
         result = await search("voltage supervisor reset 3V", library_type="no_fee", match_all_terms=False)
         assert result["parsed"]["subcategory"] == "supervisor and reset ics"
         if result["total"] == 0:
-            assert re.match(r"No no-fee part matches; \d+ parts do in other library tiers", result["hint"])
+            assert re.match(r"No no-fee part matches; \d+ extended parts do \(an assembly fee", result["hint"])
 
     @pytest.mark.parametrize("query", ["common mode choke 90ohm", "cmc 90ohm"])
     async def test_common_mode_choke(self, query):
@@ -2621,8 +2621,10 @@ class TestUnlistedCounts:
         if not unlisted:
             assert entries == []
             pytest.skip("every Basic P-FET lists an operating temperature now")
+        best = sorted(unlisted, key=lambda p: (-p["stock"], p["lcsc"]))[:3]
         assert entries == [{"filter": "Operating Temperature <= -40", "parts": len(unlisted),
-                            "basic_preferred": len(unlisted)}]
+                            "basic_preferred": len(unlisted),
+                            "most_stocked": [f"{p['lcsc']} {p['model']}" for p in best]}]
 
     async def test_only_range_filters_are_counted(self):
         result = await search("10k resistor 0603 1%", limit=5)

@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass, field, replace
 from typing import Any
 
-from ..search.spec_filter import ConnectorFilter, FuseFilter, ScopedTextFilter, SpecFilter
+from ..search.spec_filter import ConnectorFilter, FuseFilter, ScopedTextFilter, SpecFilter, switch_circuit
 from ..subcategory_aliases import SUBCATEGORY_GROUPS
 from .packages import extract_package, extract_package_choices
 from .values import ExtractedValue, extract_values, normalize_value_notation
@@ -416,6 +416,17 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
             semantic_filters.append(SemanticFilter("Number of Cells", "=", cells.group(1), cells.group(0)))
             detected.setdefault("semantic", []).append(f"{cells.group(0)} (-> Number of Cells={cells.group(1)})")
             remaining = re.sub(r"\s+", " ", remaining[:cells.start()] + remaining[cells.end():]).strip()
+    if (subcategory_hint or result.subcategory or "").lower() == "logic gates":
+        semantic_filters, remaining = _logic_gate_filters(remaining, semantic_filters, detected)
+    if (subcategory_hint or result.subcategory or "").lower() == "power distribution switches":
+        semantic_filters, remaining = _power_switch_features(remaining, matched_keyword, semantic_filters, detected)
+    # "slide switch 2P3T": the catalog writes it DP3T, 2P3T or "Double pole triple throw", which the
+    # Circuit filter compares as poles and throws; as text "2P3T" was dropped and SPDT parts came back
+    if ((subcategory_hint or result.subcategory or "").lower() in _CIRCUIT_SUBCATEGORIES
+            and (circuit := _CIRCUIT_WORDS.search(remaining)) and switch_circuit(circuit.group(0))):
+        semantic_filters = [*semantic_filters, SemanticFilter("Circuit", "=", circuit.group(0), circuit.group(0))]
+        detected.setdefault("semantic", []).append(f"{circuit.group(0)} (-> Circuit={switch_circuit(circuit.group(0))})")
+        remaining = re.sub(r"\s+", " ", remaining[:circuit.start()] + remaining[circuit.end():]).strip()
     # "op amp single supply 5V": the supply voltage is matched against the Single supply range op amps
     # and comparators list, so the words aren't text to search (they were reported as left out)
     single_supply = re.compile(r"\bsingle[\s-]+suppl(?:y|ies)\b", re.IGNORECASE)
@@ -610,8 +621,17 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         result.remaining_text = f"{model} {remaining}".strip() if strict else model
         # "WS2812B LED 2020": the 2020 vanished without a trace. A part number's own suffix
         # (the 3.3 of AMS1117-3.3) isn't a word beside it: the server ranks by the whole token.
-        standalone = {t.lower() for t in query.split() if model.lower() not in t.lower()}
+        # "Ai-Thinker" reaches here as "Ai Thinker" (hyphens are dropped above), so compare its parts
+        standalone = {w.lower() for t in query.split() if model.lower() not in t.lower()
+                      for w in (t, *re.split(r"-+", t)) if w}
         unused = [*unsearched_colours, *(w for w in remaining.split() if w.lower() in standalone)]
+        # "addressable RGB LED WS2812 SK6812": a second part number is searched only on its own
+        other_parts = [w for w in unused if _PART_NUMBER_WORD.fullmatch(w)]
+        unused = [w for w in unused if w not in other_parts]
+        if not strict and other_parts:
+            detected.setdefault("not_searched", []).append(
+                f"{' '.join(other_parts)}: only the first part number ({model}) is searched; search "
+                f"{'each' if len(other_parts) > 1 else 'it'} separately")
         if not strict and unused:
             detected.setdefault("not_searched", []).append(
                 f"{' '.join(unused)}: words beside a part number aren't searched (strict=true keeps them)")
@@ -879,6 +899,85 @@ _UFL = re.compile(r"\bu\.?fl\b", re.IGNORECASE)
 _RF_SERIES_WORD = re.compile(r"\b(?:sma|u\.?fl|ipex|ipx|mhf\w*)\b", re.IGNORECASE)
 _RF_CABLE_STRIP = re.compile(r"\b(?:cables?|pigtails?|coax(?:ial)?|rf|antennas?)\b", re.IGNORECASE)
 _DIODE_WORDS = re.compile(r"\b(?:diodes?|rectifiers?|schottky|tvs|zener|esd|suppressors?)\b", re.IGNORECASE)
+
+
+# A part number among the words: letters and a run of 3+ digits (SK6812, TLC555), not a value
+# ("100mA", "2020") or an ordering option of the first ("N16R8" of ESP32-S3-WROOM-1)
+_PART_NUMBER_WORD = re.compile(r"(?=[\w-]*[a-z])(?=[\w-]*\d{3})(?![\d.]+[a-z]{1,4}$)[a-z0-9][\w-]{3,}", re.IGNORECASE)
+# Power Distribution Switches list protections only in Features ("Overvoltage Protection、Soft-start"),
+# often not in the description (WS3222D's says 过压保护), so "OVP load switch" dropped "OVP" as text and
+# returned high-side USB switches. Each word: its Features items as JLCPCB spells them.
+_POWER_SWITCH_FEATURES = (
+    (re.compile(r"\b(?:ovp|over[\s-]*voltage(?:[\s-]+protect(?:ion|ed))?)\b", re.IGNORECASE),
+     ("Overvoltage Protection", "Over Voltage Protection", "过压保护")),
+    (re.compile(r"\breverse[\s-]+current(?:[\s-]+(?:block(?:ing)?|protection))?\b", re.IGNORECASE),
+     ("Reverse current blocking",)),
+    (re.compile(r"\breverse[\s-]+(?:voltage|polarity)(?:[\s-]+protection)?\b", re.IGNORECASE),
+     ("Reverse voltage protection", "反向电压保护")),
+    (re.compile(r"\bsoft[\s-]*start\b", re.IGNORECASE), ("Soft-start", "软启动")),
+    (re.compile(r"\b(?:(?:quick[\s-]+)?output[\s-]+discharge|qod)\b", re.IGNORECASE),
+     ("Output discharge function", "输出放电功能")),
+)
+
+
+def _power_switch_features(remaining: str, matched_keyword: str | None, filters: list[SemanticFilter],
+                           detected: dict[str, Any]) -> tuple[list[SemanticFilter], str]:
+    """Protection words as Features filters; one word per call (several "=" on one spec are OR'd)."""
+    for pattern, items in _POWER_SWITCH_FEATURES:
+        match = pattern.search(remaining) or pattern.search(matched_keyword or "")
+        if not match or any(f.spec_name == "Features" for f in filters):
+            continue
+        filters = [*filters, *(SemanticFilter("Features", "=", item, match.group(0)) for item in items)]
+        detected.setdefault("semantic", []).append(f"{match.group(0)} (-> Features has {items[0]})")
+        remaining = re.sub(r"\s+", " ", pattern.sub(" ", remaining)).strip()
+        remaining = re.sub(r"\bprotection\b", " ", remaining, flags=re.IGNORECASE).strip()
+    return filters, re.sub(r"\s+", " ", remaining).strip()
+
+
+# Switch part types that list a Circuit (SPST, DPDT, "Double pole triple throw")
+_CIRCUIT_SUBCATEGORIES = frozenset({
+    "tactile switches", "slide switches", "dip switches", "limit switches", "pushbutton switches", "rf switches",
+    "toggle switches", "rocker switches", "keylock switches", "multi-directional switches"})
+_CIRCUIT_WORDS = re.compile(
+    r"(?<![\w.])(?:[sdt]|\d{1,2})p(?:[sdt]|\d{1,2})t(?:[-/]?n[oc])?(?![\w.])"
+    r"|\b(?:\d{1,2}|single|one|double|dual|two|triple|three|four|five|six|eight|twelve)[\s-]*poles?[\s,/-]*"
+    r"(?:\d{1,2}|single|one|double|two|triple|three|four|five|six|eight|twelve)[\s-]*throws?\b", re.IGNORECASE)
+_GATE_TYPE = re.compile(r'\b(xnor|xor|nand|nor|and|or)(?:[\s-]+gates?)?\b', re.IGNORECASE)
+_GATE_COUNT = re.compile(r'\b(single|dual|triple|quad|hex|octal)\b', re.IGNORECASE)
+_GATE_COUNTS = {"single": "1", "dual": "2", "triple": "3", "quad": "4", "hex": "6", "octal": "8"}
+_GATE_INPUTS = re.compile(r'(?<![\w.])([1-8])[\s-]*inputs?\b', re.IGNORECASE)
+_SCHMITT = re.compile(r'\bschmitt(?:[\s-]+trigger(?:ed)?)?(?:[\s-]+inputs?)?\b', re.IGNORECASE)
+
+
+def _logic_gate_filters(remaining: str, filters: list[SemanticFilter],
+                        detected: dict[str, Any]) -> tuple[list[SemanticFilter], str]:
+    """"74HC132 quad NAND schmitt": Logic Gates list the gate type, gate count, inputs per gate and
+    Schmitt inputs as specs; the words aren't in their descriptions, so as text they were dropped."""
+    found: list[tuple[re.Match, list[SemanticFilter], str]] = []
+    gate = next((m for m in _GATE_TYPE.finditer(remaining)
+                 if m.group(1).lower() not in ("and", "or") or re.search(r'gate', m.group(0), re.I)), None)
+    if gate:
+        kind = gate.group(1).upper()
+        found.append((gate, [SemanticFilter("Logic Type", "=", f"{kind} Gate", gate.group(0))], f"Logic Type={kind} Gate"))
+    if count := _GATE_COUNT.search(remaining):
+        n = _GATE_COUNTS[count.group(1).lower()]
+        found.append((count, [SemanticFilter("Number of Gates", "=", n, count.group(0))], f"Number of Gates={n}"))
+    if inputs := _GATE_INPUTS.search(remaining):
+        n = inputs.group(1)
+        found.append((inputs, [SemanticFilter("Inputs per Gates", "=", n, inputs.group(0))], f"Inputs per Gates={n}"))
+    if schmitt := _SCHMITT.search(remaining):
+        # JLCPCB lists some in Chinese (施密特触发器); several "=" filters on one spec are OR'd
+        found.append((schmitt, [SemanticFilter("Input type", "=", value, schmitt.group(0))
+                                for value in ("Schmitt trigger", "施密特触发器")], "Input type=Schmitt trigger"))
+    taken = {f.spec_name for f in filters}
+    for match, new, note in sorted(found, key=lambda item: -item[0].start()):
+        if new[0].spec_name in taken:
+            continue
+        filters = [*filters, *new]
+        detected.setdefault("semantic", []).append(f"{match.group(0)} (-> {note})")
+        remaining = remaining[:match.start()] + remaining[match.end():]
+    remaining = re.sub(r'\bgates?\b', ' ', remaining, flags=re.IGNORECASE)
+    return filters, re.sub(r'\s+', ' ', remaining).strip()
 
 
 def _sm_series_is_connector(query: str, subcategory_hint: str | None) -> bool:

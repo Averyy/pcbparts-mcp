@@ -166,6 +166,26 @@ def datasheet_pdf_link(url: str | None, now: float | None = None) -> tuple[str |
     return url, datetime.fromtimestamp(expires, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+_TI_DATASHEET = re.compile(
+    r"^https?://(?:www\.)?ti\.com(?:\.cn)?(?:/cn)?/lit/(?:gpn/([\w.-]+?)/?|ds/(?:symlink/)?([\w.-]+?)\.pdf)(?:[?#].*)?$",
+    re.IGNORECASE)
+
+
+def maker_datasheet_link(*urls: str | None) -> str | None:
+    """The maker's own datasheet from JLCPCB's listing (dataManualOfficialLink, or a maker link LCSC
+    gives as its datasheet). TI's are written several ways (ti.com.cn/cn/lit/ds/symlink/x.pdf?ts=..,
+    ti.com/cn/lit/gpn/x); all become the stable English PDF ti.com/lit/ds/symlink/x.pdf. Other links
+    are kept as listed (some need their query, Infineon's ?fileId=); LCSC's own aren't maker links."""
+    for url in urls:
+        url = (url or "").strip()
+        if not url.startswith(("https://", "http://")) or "lcsc.com" in urlparse(url).netloc.lower():
+            continue
+        if ti := _TI_DATASHEET.match(url):
+            return f"https://www.ti.com/lit/ds/symlink/{(ti.group(1) or ti.group(2)).lower()}.pdf"
+        return url
+    return None
+
+
 def _pdf_link_expiring(result: dict[str, Any] | None, now: float) -> bool:
     """True if a cached part's datasheet_pdf link is about to expire (refetch the part)."""
     expires = (result or {}).get("datasheet_pdf_expires")
@@ -1063,6 +1083,8 @@ class JLCPCBClient:
             # Full details
             if not result["specs"]:
                 result["description"] = item.get("describe")
+                result["specs_note"] = ("LCSC lists no specs for this part, so searches with spec filters "
+                                        "leave it out; check it against the datasheet.")
             result["min_order"] = item.get("minPurchaseNum")
             result["reel_qty"] = item.get("encapsulationNumber")
             # LCSC's datasheet link is a viewer page, and some parts have none (empty or null);
@@ -1072,6 +1094,12 @@ class JLCPCBClient:
             if pdf_url:
                 result["datasheet_pdf"] = pdf_url
                 result["datasheet_pdf_expires"] = pdf_expires
+            # JLCPCB has no PDF for some parts (TPS61023DRLR C919459) but lists the maker's link
+            if maker := maker_datasheet_link(item.get("dataManualOfficialLink"), item.get("dataManualUrl")):
+                result["maker_datasheet"] = maker
+            if not pdf_url and not maker:
+                result["datasheet_note"] = ("JLCPCB has no datasheet PDF for this part; find it on the "
+                                            "manufacturer's site by its part number.")
             # Null for some parts LCSC does list (C52139901); the product-detail URL works from the code
             code = item.get("componentCode")
             result["lcsc_url"] = item.get("lcscGoodsUrl") or (
@@ -1433,6 +1461,8 @@ class JLCPCBClient:
         # Filter by same package if requested (using fuzzy matching)
         package_filter = bool(same_package and original.get("package"))
         orig_pkg_normalized = _normalize_package_for_matching(original.get("package") or "")
+        # "SOT-23-6", "SMD2020-4P", "SMD,8x2.8mm" name a footprint; "SMD" or "Plugin" alone doesn't
+        specific_package = bool(re.search(r"\d", original.get("package") or ""))
         if package_filter:
             candidates = [
                 p for p in candidates
@@ -1488,6 +1518,24 @@ class JLCPCBClient:
                 ]
             # Before the footprint checks and the limit, so both see the best-covering parts first
             frequency_check = check_candidates(original, candidates)
+        elif (not is_supported and subcategory_id and specific_package
+              and self._subcategory_parts is not None):
+            # Other part types without rules: the live search above saw only the original maker's parts,
+            # but drop-ins are often another maker's part in the same package (XINGLIGHT's WS2812B-2020,
+            # UMW's TPS22917DBVR); add every maker's parts in the original's package
+            live_codes = {p.get("lcsc") for p in candidates}
+            candidates += [
+                p for p in await run_db(
+                    COMPONENT_POOL,
+                    self._subcategory_parts,
+                    subcategory_id=subcategory_id,
+                    min_stock=effective_min_stock,
+                    library_type=None if library_type == "no_fee" else library_type,
+                    limit=5000,
+                )
+                if p.get("lcsc") not in live_codes and p.get("lcsc", "").upper() != original_lcsc
+                and _normalize_package_for_matching(p.get("package", "")) == orig_pkg_normalized
+            ]
 
         # For SUPPORTED categories: verify primary spec matches and compatibility
         # For UNSUPPORTED categories: skip verification, just return similar_parts
@@ -1587,8 +1635,10 @@ class JLCPCBClient:
             if coverage:
                 # RF: how much of the original's band a part covers comes before fee, stock and price
                 return (COVERAGE_ORDER[coverage["status"]], coverage.get("share") or 0.0, score)
-            if drop_ins:
-                return (part.get("lcsc", "") in drop_ins, score)
+            if not is_supported:
+                # Drop-ins, then parts in the original's package (any maker), then the rest
+                return (part.get("lcsc", "") in drop_ins, specific_package
+                        and _normalize_package_for_matching(part.get("package") or "") == orig_pkg_normalized, score)
             if prefer_same_package(subcategory_name or ""):
                 return (
                     part.get("library_type") in ("basic", "preferred"),

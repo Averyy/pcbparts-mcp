@@ -526,6 +526,10 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # ==========================================================================
     "power switch": "power distribution switches",
     "load switch": "power distribution switches",
+    # OVP load switches (WS3222D, AW32901) are filed here; "OVP" becomes a Features filter (parser)
+    **dict.fromkeys(("ovp switch", "ovp switches", "ovp load switch", "overvoltage switch", "over-voltage switch",
+                     "overvoltage protection switch", "over-voltage protection switch",
+                     "over voltage protection switch"), "power distribution switches"),
     "hot swap": "power distribution switches",
     # Ideal diode controllers drive a MOSFET as a low-loss diode; longer than "diode", so it wins
     "ideal diode": "oring controllers",
@@ -575,10 +579,15 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "eeprom": "eeprom",
     "flash": "nor flash",
     "nor flash": "nor flash",
-    "nand": "nand flash",
+    "nand": "nand flash",  # "quad NAND schmitt", "74HC00 NAND": Logic Gates (smart_parser/types.py)
     "nand flash": "nand flash",
     "sram": "sram",
     "fram": "fram",
+    # ==========================================================================
+    # LOGIC
+    # ==========================================================================
+    "logic gate": "logic gates",
+    "logic gates": "logic gates",
     # ==========================================================================
     # AUDIO (actual DB: "Audio Amplifiers", "Audio Interface ICs")
     # ==========================================================================

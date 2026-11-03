@@ -30,6 +30,7 @@ from .spec_filter import (
     get_attribute_names,
     is_color_combo,
     connector_value,
+    switch_circuit,
 )
 
 
@@ -400,6 +401,10 @@ def build_mounting_type_clause(mounting_type: str | None) -> tuple[str, list[str
     return "", []
 
 
+_SUPPLY_RANGE_NAMES = frozenset({"supply voltage", "voltage - supply", "voltage - supply(vcca)",
+                                 "voltage - supply(vccb)", "single supply", "vin"})
+
+
 def _group_multi_value_filters(spec_filters: list[SpecFilter]) -> list[SpecFilter | tuple[str, list[str]]]:
     """Group filters with same spec_name and operator="=" into OR groups.
 
@@ -435,16 +440,18 @@ def _group_multi_value_filters(spec_filters: list[SpecFilter]) -> list[SpecFilte
         filters_in_group = groups[key]
 
         # If operator is "=" and multiple values exist, create an OR group
-        # This applies to Interface, Type, and other categorical attributes
-        if spec_filter.operator == "=" and len(filters_in_group) > 1:
+        # This applies to Interface, Type, and other categorical attributes. Not to a supply range:
+        # "OVP switch 28V input ... 5V" asks for a part that runs at both, and grouped they were
+        # matched as exact strings ("5V"), leaving out WS3222D's 2.5V~28V
+        if (spec_filter.operator == "=" and len(filters_in_group) > 1
+                and spec_filter.name.lower() not in _SUPPLY_RANGE_NAMES):
             # Create a grouped filter (spec_name, [values])
             values = [f.value for f in filters_in_group]
             result.append((spec_filter.name, values))
             processed_keys.add(key)
         else:
-            # Keep individual filter (will be AND'd with other filters)
+            # Keep individual filter (will be AND'd with other filters, including others of its key)
             result.append(spec_filter)
-            processed_keys.add(key)
 
     return result
 
@@ -485,6 +492,32 @@ def _list_item_clause(attr_names: list[str], values: list[str]) -> tuple[str, li
         f"WHERE lower(json_extract(j.value, '$[0]')) IN ({','.join('?' * len(names))}) AND ({items}))"
     )
     return sql, [*names, *(f"%、{_escape_like(v.strip().lower())}、%" for v in values)]
+
+
+def _circuit_clause(attr_names: list[str], values: list[str]) -> tuple[str, list[Any]] | None:
+    """Switch Circuit by poles and throws, however it's written ("DP3T" finds "Double pole triple
+    throw" and "2P3T"). "SPST" also finds SPST-NO/-NC; "SPST-NO" only parts that say NO."""
+    wanted = [switch_circuit(v) for v in values]
+    if not wanted or None in wanted:
+        return None
+    conditions, params = [], []
+    for circuit in wanted:
+        base, _, contact = circuit.partition("-")
+        if contact:
+            conditions.append("switch_circuit(json_extract(j.value, '$[1]')) = ?")
+            params.append(circuit)
+        else:
+            conditions.append("(switch_circuit(json_extract(j.value, '$[1]')) = ? "
+                              "OR switch_circuit(json_extract(j.value, '$[1]')) LIKE ?)")
+            params.extend([base, f"{base}-%"])
+    names = sorted(set(attr_names))
+    # The LIKE first: json_each on every part took 8s for a Circuit filter without a part type
+    listed = " OR ".join("attributes LIKE ? ESCAPE '\\'" for _ in names)
+    sql = (
+        f"AND ({listed}) AND EXISTS (SELECT 1 FROM json_each(components.attributes) j "
+        f"WHERE json_extract(j.value, '$[0]') IN ({','.join('?' * len(names))}) AND ({' OR '.join(conditions)}))"
+    )
+    return sql, [*(f'%"{like_text(name)}", %' for name in names), *names, *params]
 
 
 # An Illumination Color list as ",red,emerald green," (JLCPCB writes "Red, Emerald Green",
@@ -699,6 +732,10 @@ def build_spec_filter_clauses(
                 sql_clauses.append(clause)
                 params.extend(clause_params)
                 continue
+            if spec_name.lower() == "circuit" and (circuit := _circuit_clause(attr_names, values)):
+                sql_clauses.append(circuit[0])
+                params.extend(circuit[1])
+                continue
 
             # Build OR clause for all values: (Interface LIKE '%I2C%' OR Interface LIKE '%SPI%')
             use_substring_match = spec_name.lower() == "interface"
@@ -851,6 +888,10 @@ def build_spec_filter_clauses(
                 sql_clauses.append(clause)
                 params.extend(clause_params)
                 continue
+            if spec_filter.name.lower() == "circuit" and (circuit := _circuit_clause(attr_names, [spec_filter.value])):
+                sql_clauses.append(circuit[0])
+                params.extend(circuit[1])
+                continue
 
             or_conditions = []
             for name in attr_names:
@@ -897,22 +938,19 @@ def build_sort_clause(
         always come back in the same order (and the same ones make the limit)
     """
     lib_type_order = "CASE library_type WHEN 'b' THEN 1 WHEN 'p' THEN 2 ELSE 3 END"
+    # Listings with no specs at all (7% of stocked parts; JMEconn SK23D07 C56164084: 5,000 in stock, no
+    # specs, datasheet or footprint) can't be checked, so they follow documented parts on stock sorts
+    documented = "coalesce(attributes, '[]') = '[]'"
 
     if sort_by == "price":
         if prefer_no_fee:
             return f"ORDER BY {lib_type_order}, price ASC NULLS LAST, lcsc"
         else:
             return "ORDER BY price ASC NULLS LAST, lcsc"
-    elif sort_by == "relevance" and has_query:
-        if prefer_no_fee:
-            return f"ORDER BY {lib_type_order}, stock DESC, lcsc"
-        else:
-            return "ORDER BY stock DESC, lcsc"
+    elif prefer_no_fee:
+        return f"ORDER BY {lib_type_order}, {documented}, stock DESC, lcsc"
     else:
-        if prefer_no_fee:
-            return f"ORDER BY {lib_type_order}, stock DESC, lcsc"
-        else:
-            return "ORDER BY stock DESC, lcsc"
+        return f"ORDER BY {documented}, stock DESC, lcsc"
 
 
 def needs_numeric_post_filter(spec_filter: SpecFilter) -> bool:

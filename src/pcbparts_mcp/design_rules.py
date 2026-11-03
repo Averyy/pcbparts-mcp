@@ -116,6 +116,13 @@ def _build_index(rules_dir: Path) -> dict[str, Path]:
     return idx
 
 
+def _as_key(topic: str) -> str:
+    """A topic written as the INDEX prints a file ("`guides/dfm.md`") in key form ("guides/dfm")."""
+    key = topic.strip().strip("`'\"").strip().replace("\\", "/").casefold()
+    key = re.sub(r"^(?:\./)?(?:data/design-rules/)?rules/", "", key)
+    return re.sub(r"\.md$", "", key)
+
+
 def _match_word(word: str, key: str) -> bool:
     """Check if a word matches a key, requiring word-boundary alignment.
 
@@ -201,15 +208,16 @@ def get_design_rules(topic: str = "", rules_dir: Path | None = None) -> dict:
     index_path = rd / "INDEX.md"
 
     # Empty topic → return INDEX
-    if not topic.strip() or topic.strip().casefold() == "index.md":
+    if not topic.strip() or _as_key(topic) == "index":
         content = index_path.read_text(encoding="utf-8") if index_path.exists() else "No INDEX.md found."
         return {"content": content, "matched_files": ["INDEX.md"], "topic": topic if topic.strip() else ""}
 
     # Cap input length (consistent with other tools)
     topic = topic[:500]
 
-    # Keys returned by discovery are directly usable, including their category prefix.
-    exact_key = next((key for key in idx if key.casefold() == topic.strip().casefold()), None)
+    # Keys returned by discovery are directly usable, including their category prefix, and so are
+    # the file names the INDEX prints ("`guides/dfm.md`", "rules/mcus/esp32.md").
+    exact_key = next((key for key in idx if key.casefold() == _as_key(topic)), None)
 
     # Resolve aliases first (the whole topic, then each word as written, so "type-c" and
     # "4 layer" are found), then fall back to word matching. Remaining words are split on
