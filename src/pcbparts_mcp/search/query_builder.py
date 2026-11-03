@@ -33,6 +33,10 @@ from .spec_filter import (
 )
 
 
+# A metric screw thread (M2, M3): its prefix match must not take the M2.5 size
+_METRIC_THREAD = re.compile(r"M\d{1,2}", re.IGNORECASE)
+
+
 def build_fts_clause(query: str, match_all_terms: bool, lcsc_codes: bool = False) -> tuple[str, list[str]]:
     """Build FTS (full-text search) WHERE clause.
 
@@ -73,7 +77,7 @@ def build_fts_clause(query: str, match_all_terms: bool, lcsc_codes: bool = False
     # Join with space (AND) or OR based on match_all_terms
     if match_all_terms:
         # FTS5 needs an explicit AND before a parenthesized group.
-        fts_query = (" AND " if codes_only else " ").join(fts_parts)
+        fts_query = (" AND " if any(part.startswith("(") for part in fts_parts) else " ").join(fts_parts)
     else:
         fts_query = " OR ".join(fts_parts)
 
@@ -83,7 +87,15 @@ def build_fts_clause(query: str, match_all_terms: bool, lcsc_codes: bool = False
             WHERE components_fts MATCH ?
         )
     """
-    return sql, [fts_query]
+    params = [fts_query]
+    # "M2 standoff SMT" also found an M2.5 nut: the tokenizer splits "M2.5" into m2 and 5, so the
+    # text match can't tell them apart (and SMTSO-M2-5.56, an M2 nut, has "M2 5" too)
+    if match_all_terms and not codes_only:
+        for token in tokens:
+            if _METRIC_THREAD.fullmatch(token):
+                sql += " AND metric_thread_ok(mpn || ' ' || ifnull(description, ''), ?)"
+                params.append(token)
+    return sql, params
 
 
 def build_subcategory_clause(

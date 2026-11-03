@@ -939,6 +939,17 @@ def jlc_search(
                     "reason": "explicit library_type overrides the query library requirement; strict mode cannot omit it",
                 })
 
+        # "WS2812B LED" found 18 of the 19 WS2812B parts: JLCPCB files WS2812B-V6 (122k in stock) under
+        # LED Indication - Discrete, not RGB LEDs(Built-in IC). The part number's matches in other
+        # part types of the same category join the search.
+        if not strict and part_number_text and parsed.subcategory and not (subcategory_name or subcategory_id):
+            widened = _part_number_siblings(db, part_number_text, effective_subcategory_ids,
+                                            effective_subcategory_name, max(0, min_stock))
+            if widened:
+                effective_subcategory_ids = widened
+                parsed_query_info["subcategories"] = [
+                    (db.get_subcategory_name(i) or "").lower() for i in widened]
+
         # Filters the parser made up must fit the part type: "5V relay" asked for Voltage Rating,
         # which no relay lists, and found nothing
         searched_ids = effective_subcategory_ids or (
@@ -1228,9 +1239,26 @@ def jlc_search(
                                 "them or put them in a filter.")
         # A part number found only in other tiers is in stock (TL431 with no_fee: 308 extended parts)
         if part_number_text and not other_tier_total:
-            hints.insert(0, f"No in-stock part matches {part_number_text}; try "
-                            f"jlc_stock_check(query={json.dumps(part_number_text)}) for low or zero stock, "
-                            "or search by part type and specs without the part number.")
+            # The part number may be in stock and only the filters beside it miss ("NE555 red" said
+            # NE555 wasn't in stock when an LED colour filter emptied the search)
+            narrowed = [name for name, value in (
+                ("spec_filters", search_args.get("spec_filters")),
+                ("package", search_args.get("package") or search_args.get("packages")),
+                ("mounting_type", search_args.get("mounting_type")), ("manufacturer", manufacturer),
+                ("subcategory", search_args.get("subcategory_id") or search_args.get("subcategory_name")
+                 or search_args.get("subcategory_ids"))) if value]
+            unfiltered = db.search(query=effective_query, **{
+                **search_args, "spec_filters": None, "package": None, "packages": None, "mounting_type": None,
+                "manufacturer": None, "subcategory_id": None, "subcategory_name": None, "subcategory_ids": None,
+                "preferred_specs": None, "limit": 1, "count_unlisted": False}).get("total") if narrowed else 0
+            if unfiltered:
+                hints.insert(0, f"{unfiltered} in-stock part{'s' if unfiltered != 1 else ''} match "
+                                f"{part_number_text}, but none with the {', '.join(narrowed)} given or read from "
+                                "the query (see filters_applied); drop them, or check its specs with jlc_get_part.")
+            else:
+                hints.insert(0, f"No in-stock part matches {part_number_text}; try "
+                                f"jlc_stock_check(query={json.dumps(part_number_text)}) for low or zero stock, "
+                                "or search by part type and specs without the part number.")
         elif not part_number_text:
             hints.append("Use jlc_stock_check for low-stock parts.")
         result["hint"] = " ".join(hints)
@@ -1257,6 +1285,24 @@ _DEFAULT_OPERATORS = {name: operator for name, operator in DEFAULT_SPECS.values(
 # have "Voltage - Supply" on 14 of 4,900 parts, and a filter on it would hide the rest
 _LISTED_SHARE = 0.1
 _DIMENSIONS = re.compile(r"(\d+(?:\.\d+)?)\s*[x×*]\s*(\d+(?:\.\d+)?)\s*mm", re.IGNORECASE)
+
+
+def _part_number_siblings(db: Any, part_number: str, ids: list[int] | None,
+                          name: str | None, min_stock: int) -> list[int] | None:
+    """The part type's subcategories plus others in its category that list the part number, or None.
+    Only when the part type itself has some of them: when it has none, the search leaves the part
+    type out instead (UWT1H220MCL "capacitor" is an electrolytic). More than 50 matches isn't a
+    specific part number."""
+    base = list(ids or [i for i in [db.resolve_subcategory_name(name)] if i] if (ids or name) else [])
+    if not base:
+        return None
+    counts = db.subcategories_matching(part_number, min_stock)
+    if not any(counts.get(i) for i in base) or sum(counts.values()) > 50:
+        return None
+    categories = {category[0] for i in base if (category := db.get_category_for_subcategory(i))}
+    extra = sorted(i for i in counts if i not in base
+                   and (category := db.get_category_for_subcategory(i)) and category[0] in categories)
+    return base + extra if extra else None
 
 
 def _fit_parsed_filters(

@@ -46,6 +46,13 @@ SMD_PATTERNS = frozenset({
     "CASE-",  # Tantalum capacitor SMD packages (CASE-A, CASE-B, CASE-C, etc.)
     "EIA-",  # EIA standard SMD packages (EIA-3216, etc.)
     "MBS", "MBF", "DBS",  # SMD bridge rectifiers (MBS = TO-269AA; also SMBF, TMBF, LMBS-1)
+    # Read as not_sure before: about 2,000 stocked parts in these SMD families
+    "LCC",  # Leadless chip carrier modules (A7670E: LCC-124)
+    "TOLL", "HSOF", "POWERPAK", "POWERDI", "POWER-DI", "PRPAK",  # Power SMD (TOLL-8, PowerPAK1212-8)
+    "SC70", "SC-59",  # Small chip without the SC- hyphen, and SC-59 (SOT-346)
+    "WLP",  # Wafer-level packages (WLP-16)
+    "DO-221",  # SMD power diodes (DO-221AC)
+    "UMSB", "ABS",  # SMD bridge rectifiers
 })
 
 # Package families that are always surface mount, checked BEFORE the through-hole
@@ -62,6 +69,8 @@ THROUGH_HOLE_PATTERNS = frozenset({
     "SIP",  # Single in-line
     "TO-92", "TO-126", "TO-220", "TO-247", "TO-264", "TO-3",  # Power through-hole
     "DO-41", "DO-35", "DO-201", "DO-15", "DO-27",  # Diode through-hole (axial)
+    "DO-247", "P600",  # Through-hole power diodes (DO-247-2, axial P600)
+    "TO-18", "TO-39", "TO-46", "TO-56",  # Metal-can photodiodes and laser diodes
     "PIN", "THT", "AXIAL", "RADIAL",  # Generic through-hole
     "PLUGIN",  # JLCPCB uses "Plugin" for through-hole parts
     "P=",  # Pitch specification (e.g., "P=2.54mm") indicates through-hole connectors
@@ -69,7 +78,7 @@ THROUGH_HOLE_PATTERNS = frozenset({
     "THROUGH HOLE", "THROUGH-HOLE",  # Explicit through-hole designation
     "PUSH-PULL",  # Push-pull headers are typically through-hole
     # Bridge rectifier packages (through-hole). MBS, MBF and DBS are SMD: see SMD_PATTERNS.
-    "KBP", "KBL", "KBU", "KBPC", "GBU", "GBJ", "BR-",
+    "KBP", "KBL", "KBU", "KBPC", "GBU", "GBJ", "BR-", "GBL", "GBP", "KBJ",
     # Chinese through-hole indicators
     "插件",  # "chājian" = plugin/through-hole
     "弯插",  # "wān chā" = bent pin (through-hole)

@@ -11,7 +11,8 @@ from .values import ExtractedValue, extract_values, normalize_value_notation
 from .models import extract_model_number
 from .types import PD_ROLE_PATTERN, extract_component_type, extract_mounting_type
 from .semantic import (
-    combine_colors, extract_gate_drive, extract_semantic_descriptors, remove_noise_words, CONNECTOR_NOISE_WORDS,
+    SemanticFilter, combine_colors, extract_gate_drive, extract_semantic_descriptors, remove_noise_words,
+    CONNECTOR_NOISE_WORDS,
 )
 from .mapping import FUSE_ATTRIBUTE_MAP, map_value_to_spec, infer_subcategory_from_values
 from .connectors import extract_connector_series, extract_connector_manufacturer, ConnectorSpec
@@ -135,6 +136,11 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
     # Step 2: Extract package. SMA/SMB/SMC are diode packages (DO-214) and coax connector series.
     coax_series = _sm_series_is_connector(remaining, subcategory_hint)
     skip_packages = ("diode_pkg",) if coax_series else ()
+    # M4/M7/M8 are diode package names (SMA, SMB) only beside a diode: "ARM Cortex M4 microcontroller"
+    # searched SMA microcontrollers and found nothing, and "M4 screw" SMA parts
+    if not re.search(r"diode|rectifier|schottky|zener|\btvs\b|\besd\b|1n400\d",
+                     f"{remaining} {subcategory_hint or ''}", re.IGNORECASE):
+        skip_packages = (*skip_packages, "mxx_diode_pkg")
     result.packages, remaining = extract_package_choices(remaining, skip=skip_packages)
     if result.packages:
         detected["packages"] = result.packages
@@ -402,6 +408,37 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         semantic = detected.setdefault("semantic", [])
         semantic.extend(source for source in dict.fromkeys(f.source for f in semantic_filters) if source not in semantic)
         semantic_filters = combine_colors(semantic_filters, before_semantic)
+    # "2S lithium battery charger": the usual way to write a pack's cell count. It was left out, and
+    # single-cell TP4056 chargers came first. Only for battery parts: elsewhere "2S" isn't a cell count.
+    if (subcategory_hint or result.subcategory or "").lower() == "battery management":
+        cells = re.search(r"(?<![\w.])([1-8])s(?!\w)", remaining, re.IGNORECASE)
+        if cells and not any(f.spec_name == "Number of Cells" for f in semantic_filters):
+            semantic_filters.append(SemanticFilter("Number of Cells", "=", cells.group(1), cells.group(0)))
+            detected.setdefault("semantic", []).append(f"{cells.group(0)} (-> Number of Cells={cells.group(1)})")
+            remaining = re.sub(r"\s+", " ", remaining[:cells.start()] + remaining[cells.end():]).strip()
+    # "op amp single supply 5V": the supply voltage is matched against the Single supply range op amps
+    # and comparators list, so the words aren't text to search (they were reported as left out)
+    single_supply = re.compile(r"\bsingle[\s-]+suppl(?:y|ies)\b", re.IGNORECASE)
+    wants_single_supply = bool(
+        (subcategory_hint or result.subcategory or "").lower() in ("operational amplifier", "comparators")
+        and single_supply.search(remaining))
+    if wants_single_supply:
+        remaining = re.sub(r"\s+", " ", single_supply.sub(" ", remaining)).strip()
+        detected.setdefault("semantic", []).append("single supply (a supply voltage is matched against Single supply)")
+    # "NE555 red", "STM32F103C8T6 blue pill": beside a part number with no part type, a colour isn't
+    # an LED's. As an Illumination Color filter on every part it emptied the search, and the reply
+    # said the part wasn't in stock. "KT-0603R red LED" names the part type and keeps it.
+    unsearched_colours: list[str] = []
+    if model and not result.subcategory and not subcategory_hint:
+        unsearched_colours = list(dict.fromkeys(
+            f.source for f in semantic_filters if f.spec_name == "Illumination Color"))
+        if unsearched_colours:
+            semantic_filters = [f for f in semantic_filters if f.spec_name != "Illumination Color"]
+            detected["semantic"] = [s for s in detected["semantic"] if s not in unsearched_colours]
+            if not detected["semantic"]:
+                del detected["semantic"]
+            if strict:
+                remaining = f"{remaining} {' '.join(unsearched_colours)}".strip()
 
     # Step 6: Build spec filters from extracted values (category-aware)
     # Note: result.spec_filters may already have filters from Step 3 (keyword-based type filters)
@@ -468,6 +505,10 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
             remaining = re.sub(r'(?<!\S)(?:<=|>=|<|>)(?!\S)', ' ', remaining).strip()
         filter_type = FuseFilter if is_fuse_rating else SpecFilter
         result.spec_filters.append(filter_type(spec_name, operator, value.normalized))
+
+    # "op amp single supply" with no voltage: parts listing a single-supply range (NE5532 lists none)
+    if wants_single_supply and not any(v.unit_type == "voltage" for v in values):
+        result.spec_filters.append(SpecFilter("Supply Voltage", ">", "0V"))
 
     # Add semantic filters
     for sf in semantic_filters:
@@ -570,7 +611,7 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         # "WS2812B LED 2020": the 2020 vanished without a trace. A part number's own suffix
         # (the 3.3 of AMS1117-3.3) isn't a word beside it: the server ranks by the whole token.
         standalone = {t.lower() for t in query.split() if model.lower() not in t.lower()}
-        unused = [w for w in remaining.split() if w.lower() in standalone]
+        unused = [*unsearched_colours, *(w for w in remaining.split() if w.lower() in standalone)]
         if not strict and unused:
             detected.setdefault("not_searched", []).append(
                 f"{' '.join(unused)}: words beside a part number aren't searched (strict=true keeps them)")

@@ -167,6 +167,7 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Circuit": None,
     "Contact Form": None,
     "Mounting Type": None,
+    "Rank Number": None,  # Audio jacks: TS, TRS, TRRS, TRRRS (number of contacts on the plug)
     "Self Lock / No Lock": None,
     "Positions": None,
     "Number of Poles Per Deck": None,
@@ -252,6 +253,7 @@ STRING_MATCH_SPECS = {
     "Circuit",
     "Contact Form",
     "Mounting Type",
+    "Rank Number",
     "Self Lock / No Lock",
     "Positions",
     "Number of Poles Per Deck",
@@ -740,7 +742,8 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # ============== THERMISTORS ==============
     "NTC Thermistors": {
         "primary": "Resistance @ 25℃",
-        "must_match": ["Resistance @ 25℃", "B Constant (25℃/100℃)"],
+        # B Constant: the first temperature pair both parts list (B_CONSTANT_PAIRS)
+        "must_match": ["Resistance @ 25℃", "B Constant"],
     },
     "PTC Thermistors": {
         "primary": "Resistance @ 25℃",
@@ -1047,7 +1050,8 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     },
     "Audio Connectors": {
         "primary": "Connector Type",
-        "must_match": ["Connector Type", "Mounting Type"],
+        # A TRS jack takes a stereo plug but not a headset's TRRS one (the mic ring goes nowhere)
+        "must_match": ["Connector Type", "Mounting Type", "Rank Number"],
         # PJ-313D jacks from SHOU HAN (C668608) and Hroparts (C95463) share a footprint but put
         # the tip and ring on opposite pads; a swap can short a supply on the tip
         "unchecked": ["pin roles (which pad is tip, ring and sleeve differs between makers)"],
@@ -1521,6 +1525,47 @@ def prefer_same_package(subcategory: str) -> bool:
     } or "crystal" in subcategory.lower()
 
 
+# NTC B constants are listed per temperature pair, most often 25/50 (1,114 stocked NTCs) and 25/85;
+# only 190 state 25/100, which was the one compared, so a 10k B3950 (MF52A103F3950, 25/50 only) had
+# no verified alternative and B3435 parts ranked beside B3950 ones
+B_CONSTANT_PAIRS = ("B Constant (25℃/50℃)", "B Constant (25℃/85℃)", "B Constant (25℃/100℃)",
+                    "B Constant (25℃/75℃)")
+
+
+def _b_constant(orig_specs: dict[str, Any], cand_specs: dict[str, Any]) -> tuple[str | None, str | None, str | None]:
+    """(pair name, original value, candidate value) for the first B constant pair both list."""
+    for name in B_CONSTANT_PAIRS:
+        if is_stated(orig_specs.get(name)) and is_stated(cand_specs.get(name)):
+            return name, orig_specs[name], cand_specs[name]
+    return None, None, None
+
+
+def _same_b_constant(orig_val: str, cand_val: str) -> bool | None:
+    """B constants in kelvin ("3950K", "3380K"): equal, or None if either doesn't parse."""
+    numbers = [re.search(r"\d+(?:\.\d+)?", value) for value in (orig_val, cand_val)]
+    if not all(numbers):
+        return None
+    orig, cand = (float(n.group()) for n in numbers)
+    return abs(orig - cand) <= orig * 0.001
+
+
+def package_warning(part_pkg: str | None, original_pkg: str | None) -> str | None:
+    """Why a candidate's package may not fit the original's footprint, or None when it's the same.
+    BQ25620RYKR ("WQFN-18") was "Different package" from BQ25622ERYKR ("WQFN-18(3x2.5)"): the same
+    RYK package, listed without its body size."""
+    if not (part_pkg and original_pkg):
+        return None
+    def key(pkg: str) -> str:
+        return re.sub(r"\s+", "", pkg).casefold()
+    if key(part_pkg) == key(original_pkg):
+        return None
+    part_base, original_base = (key(pkg).split("(")[0] for pkg in (part_pkg, original_pkg))
+    if part_base == original_base and ("(" in part_pkg) != ("(" in original_pkg):
+        return (f"Package {part_pkg} vs original {original_pkg}: same package type, but one listing "
+                "has no body size; check the dimensions match")
+    return f"Different package: {part_pkg} vs original {original_pkg}"
+
+
 def is_compatible_alternative(
     original: dict[str, Any], candidate: dict[str, Any], subcategory: str
 ) -> tuple[bool, dict[str, Any]]:
@@ -1567,6 +1612,27 @@ def is_compatible_alternative(
             continue
         if spec in rules.get("ranges", {}):
             continue  # Compare both endpoints below, rather than the first number.
+        if spec == "Mounting Type" and not is_stated(orig_val):
+            # Audio, RF coax, IDC and circular connectors and jumpers don't list Mounting Type, so it
+            # was never checked: the SMD PJ-320D jack was offered the through-hole PJ-320A-4P first.
+            # Compare the mounting read from the package (SMD vs Plugin). A stated one ("Surface
+            # Mount, Right Angle") also gives the orientation, which the package doesn't.
+            mountings = (original.get("mounting_type"), candidate.get("mounting_type"))
+            if all(m in ("smd", "through_hole") for m in mountings):
+                orig_val, cand_val = mountings
+        if spec == "B Constant":
+            pair, orig_val, cand_val = _b_constant(orig_specs, cand_specs)
+            if pair is None:
+                specs_unparseable.append(spec)
+                unverified_requirements.append(spec)
+                continue
+            matched = _same_b_constant(orig_val, cand_val)
+            if matched is False:
+                return result(False)
+            (specs_verified if matched else specs_unparseable).append(pair)
+            if matched is None:
+                unverified_requirements.append(pair)
+            continue
         if is_stated(orig_val) and is_stated(cand_val):
             if battery_interface:
                 # A replacement must support every listed control interface; extra protocols are OK.
@@ -1852,9 +1918,8 @@ def build_response(
         if moq and moq > 100:
             alt["moq_warning"] = f"High MOQ: {moq} units minimum"
         # Add package warning if different from original
-        part_pkg = part.get("package", "")
-        if original_pkg and part_pkg and original_pkg != part_pkg:
-            alt["package_warning"] = f"Different package: {part_pkg} vs original {original_pkg}"
+        if warning := package_warning(part.get("package", ""), original_pkg):
+            alt["package_warning"] = warning
         if verify_info.get("unverified_requirements"):
             alt["verification_status"] = "unverified - required specs could not be checked"
             alt["unverified_requirements"] = verify_info["unverified_requirements"]
@@ -1921,9 +1986,8 @@ def build_unsupported_response(
         if moq and moq > 100:
             item["moq_warning"] = f"High MOQ: {moq} units minimum"
         # Add package warning if different from original
-        part_pkg = part.get("package", "")
-        if original_pkg and part_pkg and original_pkg != part_pkg:
-            item["package_warning"] = f"Different package: {part_pkg} vs original {original_pkg}"
+        if warning := package_warning(part.get("package", ""), original_pkg):
+            item["package_warning"] = warning
         if note := (drop_ins or {}).get(part.get("lcsc", "")):
             item["likely_drop_in"] = note
         similar_parts_output.append(item)

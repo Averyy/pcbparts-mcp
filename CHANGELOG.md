@@ -4,6 +4,25 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.1 (2026-11-02)
+
+### Fixed
+
+- **A colour beside a part number:** `NE555 red`, `TP4056 blue module` and `STM32F103C8T6 blue pill` found nothing. The colour became an LED colour filter (`Illumination Color`) on every part, and the hint said the part wasn't in stock. Without an LED part type the colour is now listed in `parsed.detected.not_searched`; `KT-0603R red LED` keeps it. When a part number is in stock but the filters beside it match nothing (`NE555 0201`), the hint says so rather than pointing to `jlc_stock_check`.
+- **`jlc_get_pinout` on multi-unit symbols:** MIMXRT1052CVL5B (BGA-196) returned "missing pin data", because EasyEDA keeps such a symbol's pins in its units. All 196 pins come back now, with BGA balls in order (A1, A2 ... A10, B1).
+- **Connector alternatives and mounting:** audio jacks, RF coax, IDC and circular connectors and jumpers don't list `Mounting Type`, so it was never checked and every candidate was unverified. The SMD PJ-320D jack was offered the through-hole PJ-320A-4P first. When the original lists no mounting type, the one read from the package (SMD or Plugin) is compared. Audio jacks must also have the same contacts (`Rank Number`: TS, TRS, TRRS), so a 3-contact jack isn't offered for a headset (TRRS) one.
+- **NTC thermistor alternatives:** only the 25/100°C B constant was compared, and only 190 stocked NTCs list it (1,114 list 25/50°C). A 10k B3950 thermistor (MF52A103F3950, 25/50°C only) had no verified alternative, and B3435 parts ranked beside B3950 ones. The first temperature pair both parts list is compared now; C13879 gets five B3950 parts.
+- **A part number filed under another part type:** `WS2812B LED` found 18 of the 19 WS2812B parts. It left out WS2812B-V6 (C52917433, 122k in stock), which JLCPCB files as an indicator LED. When a part number is found under the named part type, its parts in other subcategories of the same category join the search, and `parsed.subcategories` lists them.
+- **Cell counts:** `2S lithium battery charger` left out `2S` and listed single-cell TP4056 chargers first. `1S` to `8S` are cell counts in battery part searches.
+- **`board_get` part numbers on PowerFeather PowerUPS:** its design files put Mouser order numbers in the MPN field (`187-CL21A226MAYNNNE`, `595-BQ25622RYKR`), and they came back as `mpn`. They're `mouser` now, and the one DigiKey number `digikey`.
+- **`M4` in a query:** M4, M7 and M8 were read as diode packages (SMA, SMB) in every query, so `ARM Cortex M4 microcontroller` searched SMA microcontrollers and found nothing. They're packages only beside a diode word (`M7 diode`, `schottky M4`).
+- **Dual-rail outputs listed as two values:** TRACO's TMR 3-2422WI (`-12V、+12V`) still met `Output Voltage = 12V` and was missed by `±12V`. A pair with the plus written, or on an isolated module listing two outputs, is a ±12V rail. On a non-isolated regulator, `-12V、12V` (K7812-500R3) is still one output that can be wired either way.
+- **Metric threads:** `M2 standoff SMT` also found an M2.5 nut.
+- **`single supply` with op amps and comparators:** the words were reported as left out. They now mean a part listing a single-supply range (NE5532 lists none); a voltage beside them is matched against that range, as before.
+- **`get_design_rules`:** `brown-out` found nothing. `brown-out`, `brownout` and `reset IC` now find the voltage supervisor rules.
+- **`mounting_type`:** about 2,400 stocked parts were `not_sure`: SMD parts in LCC, TOLL, PowerPAK, PowerDI, SC-70, SC-59, WLP, DO-221 and similar packages, and through-hole ones in P600, TO-46 and GBL/GBP/KBJ.
+- **Package warnings in alternatives:** BQ25620RYKR (`WQFN-18`) was a "Different package" from BQ25622ERYKR (`WQFN-18(3x2.5)`), though it's the same package listed without its body size. The warning now says only the size is missing.
+
 ## 0.8.0 (2026-11-02)
 
 ### Breaking

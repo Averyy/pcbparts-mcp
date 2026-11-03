@@ -82,6 +82,9 @@ _ALIASES: dict[str, list[str]] = {
     "4-layer": ["guides/pcb-layout"],
     "6-layer": ["guides/pcb-layout"],
     "4 layer": ["guides/pcb-layout"],
+    # "brown-out" found nothing: no file mentions it often enough for the text lookup
+    **{word: ["protection/voltage-supervisor"] for word in (
+        "brown-out", "brownout", "brown out", "brown-outs", "brownouts", "reset ic", "reset supervisor")},
     "strapping": ["mcus/esp32"],
     "strapping pins": ["mcus/esp32"],
     "jlcpcb": ["guides/dfm"],
