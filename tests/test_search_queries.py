@@ -2135,7 +2135,9 @@ class TestRelease079:
         result = await search(query)
         assert result["parsed"]["subcategory"] == "rgb leds(built-in ic)"
         assert result["total"] > 0
-        assert all(p["subcategory"] == "RGB LEDs(Built-in IC)" for p in result["results"])
+        # A part number's parts in other LED subcategories join it (WS2812B-V6 is filed as an indicator LED)
+        assert all(p["subcategory"] == "RGB LEDs(Built-in IC)" or re.search(r"ws2812|sk6812", p["model"], re.I)
+                   for p in result["results"])
         dropped = (result.get("relaxed") or {}).get("dropped_text", "").lower()
         assert not re.search(r"addressable|smart|ws2812|sk6812", dropped)
 
@@ -2446,7 +2448,9 @@ class TestDualRailOutputs:
         result = await search(query, limit=100)
         assert {"name": "Output Voltage", "op": "=", "value": "±12V"} in result["filters_applied"]["spec_filters"]
         assert result["total"] > 0
-        assert all(p["specs"]["Output Voltage"] == "±12V" for p in result["results"])
+        # Isolated two-output modules listed as "-12V、12V" are ±12V too (0.8.1)
+        from pcbparts_mcp.search.engine import _as_dual_rail
+        assert all(_as_dual_rail(p["specs"]["Output Voltage"], p["specs"]) == "±12V" for p in result["results"])
 
 
 def _colors(value: str) -> list[str]:

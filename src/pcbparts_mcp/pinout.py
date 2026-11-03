@@ -30,13 +30,30 @@ def parse_easyeda_pins(data: dict[str, Any]) -> list[dict[str, Any]]:
     not {spice_pin}: module symbols leave {spice_pin} at 0 or reuse low numbers
     (SIM7080G: VBAT is spice 0, number 35).
 
+    Multi-unit symbols keep their pins in ``subparts``, one dataStr per unit, and leave the
+    top-level shape empty: MIMXRT1052CVL5B (BGA-196) has 153 + 43 pins there and returned
+    "missing pin data".
+
     Args:
-        data: EasyEDA component response dict with dataStr.shape array
+        data: EasyEDA component response dict with dataStr.shape array (and optional subparts)
 
     Returns:
-        List of pin dicts with number, name, and electrical type.
+        List of pin dicts with number, name, and electrical type, sorted by pin number
+        (BGA balls in natural order: A1, A2, ..., A10).
     """
-    pins = []
+    pins = _parse_unit(data)
+    for unit in data.get("subparts") or []:
+        if isinstance(unit, dict):
+            pins.extend(_parse_unit(unit))
+    # A pin drawn in two units (a shared supply) is listed once
+    pins = list({(p["number"], p["name"]): p for p in pins}.values())
+    pins.sort(key=lambda p: _sort_key(p["number"]))
+    return pins
+
+
+def _parse_unit(data: dict[str, Any]) -> list[dict[str, Any]]:
+    """Pins of one symbol unit (the component itself or one of its subparts), unsorted."""
+    pins: list[dict[str, Any]] = []
     data_str = data.get("dataStr", {})
 
     # Handle both string and dict dataStr
@@ -94,8 +111,6 @@ def parse_easyeda_pins(data: dict[str, Any]) -> list[dict[str, Any]]:
 
         pins.append(pin_data)
 
-    # Sort by pin number
-    pins.sort(key=lambda p: _sort_key(p["number"]))
     return pins
 
 
@@ -110,8 +125,9 @@ def _segment_text(segments: list[str], index: int) -> str | None:
 
 
 def _sort_key(num: str | None) -> tuple:
-    """Sort pin numbers numerically when possible."""
+    """Sort pin numbers numerically, and BGA balls by row then column (A2 before A10)."""
     try:
         return (0, int(num))  # type: ignore
     except (ValueError, TypeError):
-        return (1, num or "")
+        return (1, tuple((0, int(part), "") if part.isdigit() else (1, 0, part)
+                         for part in re.findall(r"\d+|\D+", num or "")))

@@ -372,7 +372,13 @@ def build(data_dir: Path | str, output: Path | str, verbose: bool = True) -> Non
 _LCSC_CODE = re.compile(r"\bC\d{3,}\b", re.IGNORECASE)
 
 
-def part_numbers(comp: dict) -> tuple[str | None, ...]:
+# Boards whose design files fill the MPN field with distributor order codes. PowerFeather PowerUPS
+# lists Mouser numbers there (187-CL21A226MAYNNNE, 595-BQ25622RYKR) and one DigiKey number
+# (455-SM02B-SRSS-TBDKR-ND), which board_get returned as the maker's part number.
+DISTRIBUTOR_CODES_AS_MPN = frozenset({"powerfeather-powerups"})
+
+
+def part_numbers(comp: dict, slug: str | None = None) -> tuple[str | None, ...]:
     """The design files' own part numbers: mpn, manufacturer, LCSC, Mouser and DigiKey.
 
     6,100 lines list an MPN and 2,291 an LCSC code, which board_get never returned, so agents
@@ -394,7 +400,14 @@ def part_numbers(comp: dict) -> tuple[str | None, ...]:
     if mpn and _LCSC_CODE.fullmatch(mpn):
         # The 0104 USB hub lists LCSC codes as MPNs (SL2.1A: "C192893")
         lcsc, mpn = lcsc or mpn.upper(), None
-    return mpn, text("manufacturer"), lcsc, number("mouser"), number("digikey")
+    mouser, digikey = number("mouser"), number("digikey")
+    if mpn and slug in DISTRIBUTOR_CODES_AS_MPN:
+        if mpn.upper().endswith("-ND"):
+            digikey = digikey or mpn
+        else:
+            mouser = mouser or mpn
+        mpn = None
+    return mpn, text("manufacturer"), lcsc, mouser, digikey
 
 
 def _build_tables(
@@ -545,7 +558,7 @@ def _build_tables(
                 comp.get("decouples"),
                 comp.get("pullup"),
                 comp.get("pulldown"),
-                *part_numbers(comp),
+                *part_numbers(comp, slug),
             ))
 
     conn.executemany("INSERT INTO board_tags (board_id, tag) VALUES (?, ?)", tag_rows)

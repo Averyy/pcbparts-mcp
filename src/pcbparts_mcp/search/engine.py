@@ -60,6 +60,34 @@ def _dual_rail(spec_filter: SpecFilter, attr_names_set: set[str]) -> bool | None
     return str(spec_filter.value).strip().startswith(_DUAL_RAIL_PREFIXES)
 
 
+def _as_dual_rail(value: str, part_specs: dict[str, str]) -> str:
+    """A rail pair LCSC writes as two outputs, as "±12V". "-12V、+12V" with the plus written is one
+    (TRACO TMR 3-2422WI), and so is "-12V、12V" on an isolated module listing two outputs (TEN 8-4822).
+    On a non-isolated regulator "-12V、12V" is one output wired either way (K7812-500R3; LCSC lists
+    R-78E12-0.5 with two outputs), so it stays a 12V part."""
+    items = [item.strip().replace(" ", "") for item in value.split("、")]
+    if len(items) != 2 or any("~" in item for item in items):
+        return value
+    negative = [item for item in items if item.startswith("-")]
+    positive = [item for item in items if not item.startswith("-")]
+    if len(negative) != 1 or len(positive) != 1 or negative[0][1:] != positive[0].lstrip("+"):
+        return value
+    two_isolated = (part_specs.get("Number of Outputs", "").strip() == "2"
+                    and any("isolation" in name.lower() for name in part_specs))
+    return f"±{negative[0][1:]}" if positive[0].startswith("+") or two_isolated else value
+
+
+def metric_thread_ok(text: str | None, thread: str) -> bool:
+    """False when a part's text names only finer sizes of a metric thread: M2.5 for "M2"
+    (SMTSO-M2.5-5.56-4-1.53), not M2 itself (SMTSO-M2-5.56-1.5-1.53, M2x5.56xL6.0)."""
+    if not text:
+        return True
+    size = re.escape(thread)
+    if not re.search(rf"{size}\.\d", text, re.IGNORECASE):
+        return True
+    return re.search(rf"(?<![A-Za-z0-9.]){size}(?![.\d])", text, re.IGNORECASE) is not None
+
+
 def _passes_post_filters(
     part_specs: dict[str, str],
     package: str | None,
@@ -89,8 +117,9 @@ def _passes_post_filters(
             continue
 
         if attr_names_set & RANGE_SPECS:
-            values = [v for name, v in part_specs.items() if name in attr_names_set]
             dual = _dual_rail(spec_filter, attr_names_set)
+            values = [v if dual is None else _as_dual_rail(v, part_specs)
+                      for name, v in part_specs.items() if name in attr_names_set]
             if not any(_range_passes(v, parser, spec_filter.operator, target_value, dual) for v in values):
                 return False
             continue
@@ -217,6 +246,7 @@ class SearchEngine:
         self._conn.create_function("connector_value", 2, connector_value, deterministic=True)
         self._conn.create_function("spec_preference_rank", 3, _spec_preference_rank, deterministic=True)
         self._conn.create_function("rds_gate_min", 1, rds_gate_min_json, deterministic=True)
+        self._conn.create_function("metric_thread_ok", 2, metric_thread_ok, deterministic=True)
         self._package_names: dict[str, list[str]] | None = None
         self._fuse_package_types: dict[str, set[int]] = {}
         columns = {

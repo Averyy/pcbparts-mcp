@@ -19,6 +19,7 @@ from ..db_worker import serialized
 from ..config import DEFAULT_MIN_STOCK
 from ..easyeda_store import FootprintAnswer
 from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
+from ..search.query_builder import build_fts_clause
 from ..search.spec_filter import CONNECTOR_COLUMN_NAMES, like_text
 from .connection import build_database, load_caches
 from .lookup import get_by_lcsc, get_by_lcsc_batch, get_by_mpn
@@ -345,6 +346,19 @@ class ComponentDatabase:
             ).fetchone()
             self._attribute_shares[key] = (row[1] or 0) / row[0] if row[0] else 0.0
         return self._attribute_shares[key]
+
+    @serialized
+    def subcategories_matching(self, text: str, min_stock: int = 0) -> dict[int, int]:
+        """In-stock parts whose text matches, counted by subcategory id ({} if the text can't be searched)."""
+        self._ensure_db()
+        fts_sql, fts_params = build_fts_clause(text, True)
+        if not self._conn or not fts_sql:
+            return {}
+        rows = self._conn.execute(
+            f"SELECT subcategory_id, COUNT(*) FROM components WHERE stock >= ? {fts_sql} GROUP BY subcategory_id",
+            [min_stock, *fts_params],
+        ).fetchall()
+        return {row[0]: row[1] for row in rows}
 
     @serialized
     def get_by_lcsc(self, lcsc: str) -> dict[str, Any] | None:
