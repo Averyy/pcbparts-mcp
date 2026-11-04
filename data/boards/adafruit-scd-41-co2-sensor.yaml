@@ -36,19 +36,23 @@ components:
 - ref: CONN3
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: CONN4
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: D1
   value: green LED
   footprint: '0603'
 - ref: JP2
   value: 1x5 header
   footprint: 1X05
+  pin_count: 5
 - ref: Q2
   value: BSS138
   footprint: SOT363
   description: Dual N-Channel MOSFET
+  pin_count: 6
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -56,12 +60,15 @@ components:
 - ref: R3
   value: 10kohm
   footprint: RESPACK
+  pin_count: 8
 - ref: SJ1
   value: 2-way solder jumper
   footprint: SJ-3
+  pin_count: 3
 - ref: SJ2
   value: 2-way solder jumper
   footprint: SJ-3
+  pin_count: 3
 - ref: SJ3
   value: smd solder jumper
   footprint: SJ-2
@@ -69,9 +76,12 @@ components:
   value: AP2112K-3.3
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: X1
   value: SCD-41
   footprint: SCD41
+  pin_count: 7
 nets:
 - name: 3.3V
   pins:

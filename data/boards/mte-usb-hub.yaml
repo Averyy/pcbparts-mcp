@@ -57,6 +57,8 @@ components:
 - ref: C21
   value: CC0402JRNPO9BN270
   footprint: CAPACITOR_0402N
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: C22
   value: CC0402KRX5R7BB105
   footprint: CAPACITOR_0402N
@@ -66,6 +68,8 @@ components:
 - ref: C24
   value: CC0402JRNPO9BN270
   footprint: CAPACITOR_0402N
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: C25
   value: CC0402KRX5R7BB105
   footprint: CAPACITOR_0402N
@@ -274,45 +278,58 @@ components:
 - ref: D10
   value: ESD8004MUTAG
   footprint: ESD8004MUTAG
+  pin_count: 10
 - ref: D11
   value: ESD9X3.3ST5G
   footprint: SODFL1006X43N
 - ref: D5
   value: ESD8004MUTAG
   footprint: ESD8004MUTAG
+  pin_count: 10
 - ref: D6
   value: ESD8004MUTAG
   footprint: ESD8004MUTAG
+  pin_count: 10
 - ref: D7
   value: ESD8004MUTAG
   footprint: ESD8004MUTAG
+  pin_count: 10
 - ref: D8
   value: ESD9X3.3ST5G
   footprint: SODFL1006X43N
 - ref: D9
   value: ESD8004MUTAG
   footprint: ESD8004MUTAG
+  pin_count: 10
 - ref: J1
   value: 1x2 header
   footprint: 1X2
 - ref: J2
   value: USB-C
   footprint: USB-C
+  pin_count: 25
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
   value: USB3_A
   footprint: USB3_A_Molex_48393-001
+  pin_count: 10
+  nc_pins: {VBUS: '1'}
 - ref: J4
   value: USB3_A
   footprint: USB3_A_Molex_48393-001
+  pin_count: 10
 - ref: J5
   value: USB3_A
   footprint: USB3_A_Molex_48393-001
+  pin_count: 10
 - ref: J6
   value: USB3_A
   footprint: USB3_A_Molex_48393-001
+  pin_count: 10
 - ref: L1
   value: ACM1211-701-2PL-TL01
   footprint: ACM1211-701-2PL-TL01
+  pin_count: 4
 - ref: L2
   value: FCUL0624-H-R22M=P3
   footprint: INDM730X660X240L150X140N
@@ -325,9 +342,11 @@ components:
 - ref: Q1
   value: CSD16342Q5A
   footprint: CSD16342Q5A
+  pin_count: 8
 - ref: Q2
   value: CSD17577Q5AT
   footprint: CSD16342Q5A
+  pin_count: 8
 - ref: R1
   value: RC0402JR-0710KL
   footprint: RESISTOR_0402N
@@ -445,24 +464,33 @@ components:
 - ref: U1
   value: USB7206
   footprint: QFN101P40
+  pin_count: 100
+  nc_pins: {NC@4: '4', NC@12: '12', NC@13: '13', NC@49: '49', NC@50: '50', PRT_CTL3_U3: '51', PRT_CTL4_U3: '52', PRT_CTL5_U3: '54', PRT_CTL5/OCS: '56', PRT_CTL4/OCS: '57', PRT_CTL3/OCS: '58', PRT_CTL2/OCS: '59', PRT_CTL1/OCS: '60', PF29: '74', PRT_CTL6: '77', NC@80: '80', USB3DN_5_TXDP: '83', USB3DN_5_TXDM: '84', ATEST: '96'}
 - ref: U2
   value: HD3SS3220
   footprint: QFN31P40
+  pin_count: 31
+  nc_pins: {CURRENT_MODE: '3', ADDR: '22', OUT3: '23', VCONN_FAULT_N: '24', ID: '27'}
 - ref: U3
   value: TPS563207SDRLR
   footprint: SOL6P50
+  pin_count: 6
 - ref: U4
   value: LM3150MH
   footprint: SOP15P65
+  pin_count: 15
 - ref: U6
   value: UCS2114
   footprint: UCS2114
+  pin_count: 20
 - ref: U?1
   value: LM317DCYR
   footprint: SOT223-4P230
+  pin_count: 4
 - ref: Y1
   value: RH100-25.000-20-F-1030-TR
   footprint: RH100-12.000-10-2020-EXT-TR
+  pin_count: 4
 nets:
 - name: +12V
   pins:

@@ -643,6 +643,8 @@ components:
 - ref: CN1
   value: USBBlaster2
   footprint: USBBLASTER
+  pin_count: 10
+  nc_pins: {'6': '6', '7': '7', '8': '8'}
 - ref: CN10
   value: 2x1 header
   footprint: 2x1
@@ -652,9 +654,13 @@ components:
 - ref: CN3
   value: MagJack
   footprint: MAGJACK
+  pin_count: 18
+  nc_pins: {'15': '15'}
 - ref: CN4
   value: STEREO
   footprint: STEREO
+  pin_count: 5
+  nc_pins: {'4': '4', '5': '5'}
 - ref: CN7
   value: PS
   footprint: PWRBARREL
@@ -685,30 +691,37 @@ components:
 - ref: D8
   value: SM05
   footprint: SOT23_3
+  pin_count: 3
 - ref: DB1
   value: IO20
   footprint: 10x2
+  pin_count: 20
 - ref: DB11
   value: RFD2b
   footprint: 2x1
 - ref: DB12
   value: IO6b
   footprint: 3x2
+  pin_count: 6
 - ref: DB13
   value: IO10
   footprint: 5x2
+  pin_count: 10
 - ref: DB14
   value: RFD2b
   footprint: 2x1
 - ref: DB15
   value: IO6b
   footprint: 4x5
+  pin_count: 6
 - ref: DB17
   value: RFD4b
   footprint: 4x1
+  pin_count: 4
 - ref: DB2
   value: RFD4d
   footprint: 4x1
+  pin_count: 4
 - ref: DB20
   value: RFD2b
   footprint: 2x1
@@ -721,18 +734,21 @@ components:
 - ref: DB3
   value: RFD4d
   footprint: 4x1
+  pin_count: 4
 - ref: DB6
   value: RFD2b
   footprint: 2x1smt
 - ref: DB7
   value: IO22
   footprint: 22x1
+  pin_count: 22
 - ref: DB8
   value: RFD2b
   footprint: 2x1
 - ref: DB9
   value: IO6b
   footprint: 6x1
+  pin_count: 6
 - ref: F1
   value: 3A@20V
   footprint: FUSE
@@ -919,6 +935,7 @@ components:
 - ref: K2
   value: NA3WK-K
   footprint: DPDT_GND
+  pin_count: 10
 - ref: L1
   value: 3.3uH
   footprint: GENERICPSL
@@ -961,21 +978,27 @@ components:
 - ref: Q1
   value: DMP3099L
   footprint: SOT23_3
+  pin_count: 3
 - ref: Q2
   value: NUD3124
   footprint: SOT23_3
+  pin_count: 3
 - ref: Q3
   value: LDMOS
   footprint: COMBORFGND
+  pin_count: 3
 - ref: Q4
   value: LDMOS
   footprint: COMBORFGND
+  pin_count: 3
 - ref: Q5
   value: NUD3124
   footprint: SOT23_3
+  pin_count: 3
 - ref: Q6
   value: MCP9700
   footprint: SOT23_3
+  pin_count: 3
 - ref: R1
   value: 33ohm
   footprint: '0603'
@@ -1360,72 +1383,101 @@ components:
 - ref: T1
   value: 1:1 Z
   footprint: TRANSFSMT4
+  pin_count: 4
 - ref: T2
   value: 8:1 Z
   footprint: TRANSFSMT
+  pin_count: 5
+  nc_pins: {'2': '2'}
 - ref: T3
   value: 4:1 Z
   footprint: BN202V
+  pin_count: 5
 - ref: U1
   value: EEPROM
   footprint: SOIC-8
+  pin_count: 8
 - ref: U10
   value: PE4259
   footprint: PE4259
+  pin_count: 6
 - ref: U11
   value: PE4259
   footprint: PE4259
+  pin_count: 6
 - ref: U12
   value: AP2204
   footprint: ap2204
+  pin_count: 8
+  nc_pins: {'2': '2', '3': '3', '6': '6'}
 - ref: U13
   value: MAX11613
   footprint: MAX11613
+  pin_count: 8
 - ref: U14
   value: INA199A1DC
   footprint: PE4259
+  pin_count: 6
 - ref: U15
   value: MCP4662
   footprint: SOIC-10
+  pin_count: 10
 - ref: U16
   value: ST1S10
   footprint: ST1S10
+  pin_count: 9
 - ref: U17
   value: TPS730
   footprint: SOT23
+  pin_count: 5
 - ref: U19
   value: LP2985
   footprint: SOT23
+  pin_count: 5
 - ref: U2
   value: FPGA
   footprint: CYCLONEIV
+  pin_count: 145
+  nc_pins: {'55': '55', '127': '127', '128': '128', '129': '129'}
 - ref: U3
   value: ST1S10
   footprint: ST1S10
+  pin_count: 9
 - ref: U4
   value: KSZ9031RN
   footprint: KSZ9031
+  pin_count: 49
+  nc_pins: {'43': '43'}
 - ref: U6
   value: 5P49V5923
   footprint: IDTVERSA
+  pin_count: 25
+  nc_pins: {'6': '6', '7': '7', '11': '11', '12': '12', '13': '13', '14': '14', '16': '16', '19': '19'}
 - ref: U7
   value: AD9866BCPZ
   footprint: AD9866
+  pin_count: 65
+  nc_pins: {'21': '21', '61': '61'}
 - ref: U8
   value: ST1S10
   footprint: ST1S10
+  pin_count: 9
 - ref: U9
   value: OPA2677
   footprint: OPA2677
+  pin_count: 8
 - ref: X1
   value: 25MHz
   footprint: XTAL
+  pin_count: 3
 - ref: X2
   value: 38.4MHz
   footprint: SMALLOSC
+  pin_count: 4
 - ref: X3
   value: 38.4MHz
   footprint: XTAL
+  pin_count: 3
 nets:
 - name: +1V2
   pins:

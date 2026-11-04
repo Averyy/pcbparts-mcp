@@ -166,10 +166,14 @@ components:
 - ref: J3
   value: 2x8 header
   footprint: IDC-Header
+  pin_count: 16
+  nc_pins: {Pin_9: '9', Pin_10: '10', Pin_13: '13', Pin_14: '14'}
 - ref: J4
   value: SJ-3524-SMT
   footprint: CUI_SJ-3524-SMT
   manufacturer: CUI Inc
+  pin_count: 4
+  nc_pins: {'4': '4'}
 - ref: J6
   value: 1x2 header
   footprint: 1X2
@@ -179,6 +183,7 @@ components:
   mpn: B4B-XH-A(LF)(SN)
   manufacturer: JST Sales America Inc.
   description: CONN HEADER VERT 4POS 2.5MM
+  pin_count: 4
 - ref: R1
   value: 270ohm
   footprint: '1206'
@@ -280,43 +285,60 @@ components:
   value: ADT1-1+
   footprint: Mini-Circuits_CD542_H2.84mm
   description: 0.15-400MHz 1:1 RF Transformer, Balanced to Balanced, CD542
+  pin_count: 4
 - ref: U1
   value: SN74LVC1G14DBV
   footprint: SOT-23-5
   description: Single Schmitt NOT Gate, Low-Voltage CMOS, SOT-23
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U10
   value: SN74LVC1G14DBV
   footprint: SOT-23-5
   description: Single Schmitt NOT Gate, Low-Voltage CMOS, SOT-23
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U11
   value: NCP114ASN330T1G
   footprint: TSOP-5-483-N_ONS
+  pin_count: 5
 - ref: U2
   value: SN74LVC1G14DBV
   footprint: SOT-23-5
   description: Single Schmitt NOT Gate, Low-Voltage CMOS, SOT-23
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U3
   value: SN74CBT3253
   footprint: TSSOP-16
   description: Dual 1 to 4 Analog Multiplexer
+  pin_count: 16
 - ref: U4
   value: SN74AC74PW
   footprint: TSSOP-14
+  pin_count: 14
+  nc_pins: {1Q: '5'}
 - ref: U5
   value: AD8137ARZ-R7
   footprint: R_8_ADI
+  pin_count: 8
 - ref: U6
   value: NCV8114ASN165T1G
   footprint: TSOP-5-483-N_ONS
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U7
   value: UA78M05IDCYR
   footprint: DCY0004A_N
+  pin_count: 4
 - ref: U8
   value: AP2120N-2.5TRG1
   footprint: SOT-23_DIO
+  pin_count: 3
 - ref: U9
   value: AD8137ARZ-R7
   footprint: R_8_ADI
+  pin_count: 8
 nets:
 - name: /12_0V
   pins: [J3.Pin_5, J3.Pin_6, R6.1]

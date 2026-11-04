@@ -37,6 +37,7 @@ components:
   value: MB10S
   footprint: OnSemi_751EP_SOIC-4
   manufacturer: MDD(Microdiode Semiconductor)
+  pin_count: 4
 - ref: D10
   value: red LED
   footprint: '0603'
@@ -58,21 +59,25 @@ components:
   footprint: TO-220
   manufacturer: STMicroelectronics
   description: Triode for alternating current, anode1/anode2/gate
+  pin_count: 3
 - ref: D15
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
   description: Triode for alternating current, anode1/anode2/gate
+  pin_count: 3
 - ref: D16
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
   description: Triode for alternating current, anode1/anode2/gate
+  pin_count: 3
 - ref: D17
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
   description: Triode for alternating current, anode1/anode2/gate
+  pin_count: 3
 - ref: D18
   value: red LED
   footprint: '0603'
@@ -103,26 +108,31 @@ components:
   footprint: TO-220
   manufacturer: STMicroelectronics
   description: Triode for alternating current, anode1/anode2/gate
+  pin_count: 3
 - ref: D5
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
   description: Triode for alternating current, anode1/anode2/gate
+  pin_count: 3
 - ref: D6
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
   description: Triode for alternating current, anode1/anode2/gate
+  pin_count: 3
 - ref: D7
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
   description: Triode for alternating current, anode1/anode2/gate
+  pin_count: 3
 - ref: D8
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
   description: Triode for alternating current, anode1/anode2/gate
+  pin_count: 3
 - ref: D9
   value: red LED
   footprint: '0603'
@@ -140,14 +150,19 @@ components:
   value: 1x19 header
   footprint: 1X19
   manufacturer: Shenzhen Kinghelm Elec
+  pin_count: 19
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_13: '13', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18'}
 - ref: J5
   value: 1x19 header
   footprint: 1X19
   manufacturer: Shenzhen Kinghelm Elec
+  pin_count: 19
+  nc_pins: {Pin_12: '12', Pin_13: '13', Pin_14: '14', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18', Pin_19: '19'}
 - ref: J6
   value: 1x4 screw terminal
   footprint: TerminalBlock_Phoenix_PT-1,5-4-5.0-H
   manufacturer: DORABO
+  pin_count: 4
 - ref: L1
   value: 33uH
   footprint: L_APV_ANR5045
@@ -161,56 +176,67 @@ components:
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: Q10
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: Q11
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: Q2
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: Q3
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: Q4
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: Q5
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: Q6
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: Q7
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: Q8
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: Q9
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: R1
   value: 1.2kohm
   footprint: 0805
@@ -546,51 +572,71 @@ components:
   footprint: TI_SO-PowerPAD-8_ThermalVias
   manufacturer: Texas Instruments
   description: 3A, Step Down Swift Converter, Adjustable Output Voltage, 5.5-36V Input
+  pin_count: 9
+  nc_pins: {NC@2: '2', NC@3: '3', EN: '5'}
 - ref: U10
   value: MOC3063S
   footprint: MOC306XS_LTO
   manufacturer: Lite-On
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+  pin_count: 6
+  nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U2
   value: MOC3063S
   footprint: MOC306XS_LTO
   manufacturer: Lite-On
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+  pin_count: 6
+  nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U3
   value: MOC3063S
   footprint: MOC306XS_LTO
   manufacturer: Lite-On
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+  pin_count: 6
+  nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U4
   value: MOC3063S
   footprint: MOC306XS_LTO
   manufacturer: Lite-On
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+  pin_count: 6
+  nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U5
   value: MOC3063S
   footprint: MOC306XS_LTO
   manufacturer: Lite-On
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+  pin_count: 6
+  nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U6
   value: MOC3063S
   footprint: MOC306XS_LTO
   manufacturer: Lite-On
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+  pin_count: 6
+  nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U7
   value: MOC3063S
   footprint: MOC306XS_LTO
   manufacturer: Lite-On
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+  pin_count: 6
+  nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U8
   value: MOC3063S
   footprint: MOC306XS_LTO
   manufacturer: Lite-On
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+  pin_count: 6
+  nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U9
   value: MOC3063S
   footprint: MOC306XS_LTO
   manufacturer: Lite-On
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
+  pin_count: 6
+  nc_pins: {NC@3: '3', NC@5: '5'}
 nets:
 - name: +5V
   pins:

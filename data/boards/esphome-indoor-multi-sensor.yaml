@@ -332,6 +332,8 @@ components:
   manufacturer: Adafruit
   mpn: '1938'
   description: RGB LED with integrated controller, 5mm/8mm LED package
+  pin_count: 4
+  nc_pins: {DOUT: '1'}
 - ref: J1
   value: 1x6 header
   footprint: JST_GH_BM06B-GHS-TBT
@@ -339,22 +341,27 @@ components:
   manufacturer: JST
   description: 6-Position, 1.25 mm pitch, Wire-to-Board connector
   lcsc: C189892
+  pin_count: 7
 - ref: J2
   value: USB-C
   footprint: USB-C
   manufacturer: Phoenix Contact
   mpn: '1332645'
   description: Connector, USB 2.0, 16P, Type-C, Receptacle
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
   value: 1x5 header
   footprint: 1X5
   manufacturer: Samtec
   mpn: CES-105-01-T-S
+  pin_count: 5
 - ref: J4
   value: 1x5 header
   footprint: 1X5
   manufacturer: Samtec
   mpn: RSM-105-02-S-S
+  pin_count: 5
 - ref: J5
   value: 1x2 header
   footprint: 1X2
@@ -367,6 +374,8 @@ components:
   manufacturer: Molex
   mpn: 79109-1003
   description: Socket, 8 position, 2mm spacing, dual row, 02x04, SMT
+  pin_count: 8
+  nc_pins: {Pin_1: '1', Pin_3: '3', Pin_4: '4', Pin_6: '6'}
 - ref: L1
   value: 1uH
   footprint: '1008'
@@ -387,6 +396,7 @@ components:
   manufacturer: TDK InvenSense
   mpn: ICS-43434
   description: TDK InvenSense MEMS Microphone, 24-bit I2S, 65 dBA SNR, LGA-6
+  pin_count: 6
 - ref: Q1
   value: MMBFJ201
   footprint: SOT-23
@@ -394,6 +404,7 @@ components:
   mpn: MMBFJ201
   description: 20mA min, 35V, 30mOhm max, 3-10V Vgs(off), N-Channel JFET, SOT-23
   lcsc: C891687
+  pin_count: 3
 - ref: R1
   value: 499Kohm
   footprint: '0402'
@@ -539,18 +550,23 @@ components:
   mpn: SN74LV1T34DBV
   description: IC, Single Power Supply, Single Buffer GATE, CMOS Logic, Level Shifter, SOT-23-5
   lcsc: C100024
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U10
   value: SCD41
   footprint: Sensirion_SCD4x-1EP
   mpn: SCD41-D-R2
   manufacturer: Sensirion
   description: Photoacoustic CO2 sensor, I2C, 2.4-5.5 V, High accuracy 400 - 5000 ppm
+  pin_count: 7
 - ref: U11
   value: BMP581
   footprint: BMP581
   manufacturer: Bosch Sensortec
   mpn: BMP581
   description: Barometric Pressure Sensor, 24-bit, Low-power and Low-noise, SMD
+  pin_count: 10
+  nc_pins: {INT: '7'}
 - ref: U12
   value: MCP6042
   footprint: MSOP-8
@@ -558,6 +574,7 @@ components:
   mpn: MCP6042T-I/MS
   description: Dual Operational Amplifiers, Rail-to-Rail Input/Output, MSOP-8
   lcsc: C627438
+  pin_count: 8
 - ref: U13
   value: ADS1115
   footprint: TSSOP-10
@@ -565,18 +582,22 @@ components:
   mpn: ADS1115IDGS
   description: Ultra-Small, Low-Power, I2C-Compatible, 860-SPS, 16-Bit ADCs With Internal
   lcsc: C37593
+  pin_count: 10
+  nc_pins: {ALERT/RDY: '2'}
 - ref: U14
   value: SHT45
   footprint: Sensirion_DFN-4
   mpn: SHT45-AD1B-R2
   manufacturer: Sensirion
   description: "Digital Humidity and Temperature Sensor, \xB11%RH, \xB10.1\xB0C, I2C, 1.08-3.6V, 16bit"
+  pin_count: 4
 - ref: U15
   value: EKMC1603111
   footprint: EKMC163111
   manufacturer: Panasonic
   mpn: EKMC1603111
   description: Passive Infrared (PIR) Motion Sensor, THT
+  pin_count: 3
 - ref: U16
   value: TGS5141
   footprint: '5141'
@@ -589,18 +610,23 @@ components:
   manufacturer: Maxim
   mpn: DS18S20+
   description: High-Precision 1-Wire Digital Thermometer TO-92
+  pin_count: 3
 - ref: U18
   value: INA238
   footprint: VSSOP-10
   manufacturer: Texas Instruments
   mpn: INA238AIDGSR
   description: IC, 85V, 16-Bit, High-Precision Power Monitor With I2C Interface, VSSOP-10
+  pin_count: 10
+  nc_pins: {nAlert: '3'}
 - ref: U19
   value: INA238
   footprint: VSSOP-10
   manufacturer: Texas Instruments
   mpn: INA238AIDGSR
   description: IC, 85V, 16-Bit, High-Precision Power Monitor With I2C Interface, VSSOP-10
+  pin_count: 10
+  nc_pins: {nAlert: '3'}
 - ref: U2
   value: TLV62568DRL
   footprint: SOT-6
@@ -608,18 +634,24 @@ components:
   mpn: TLV62568DRL
   description: High Efficiency Synchronous Buck Converter, Adjustable Output 0.6V-5.5V, 1A
   lcsc: C398372
+  pin_count: 6
+  nc_pins: {NC: '6'}
 - ref: U3
   value: MAX98357A
   footprint: TQFN-16-1EP
   mpn: MAX98357AETE
   manufacturer: Maxim
   description: Mono DAC with amplifier, I2S, PCM, TDM, 32-bit, 96khz, 3.2W, TQFP-16
+  pin_count: 17
+  nc_pins: {NC@5: '5', NC@6: '6', NC@12: '12', NC@13: '13'}
 - ref: U4
   value: TLV75533PDRV
   footprint: VREG_TLV75533PDRVR
   manufacturer: Texas Instruments
   mpn: TLV75533PDRV
   description: 500mA Low Dropout Voltage Regulator, Fixed Output 3.3V, WSON6
+  pin_count: 7
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: U5
   value: TLV62568DRL
   footprint: SOT-6
@@ -627,12 +659,16 @@ components:
   mpn: TLV62568DRL
   description: High Efficiency Synchronous Buck Converter, Adjustable Output 0.6V-5.5V, 1A
   lcsc: C398372
+  pin_count: 6
+  nc_pins: {NC: '6'}
 - ref: U6
   value: ESP32-S3-WROOM-2-N32R16V
   footprint: ESP32-S3-WROOM-2
   manufacturer: Espressif
   mpn: ESP32-S3-WROOM-2-N32R16V
   description: RF Module, ESP32-S3 SoC, Wi-Fi 802.11b/g/n, Bluetooth, BLE, 32-bit, 3.3V
+  pin_count: 41
+  nc_pins: {IO4: '4', IO15: '8', IO3: '15', IO46: '16', IO13: '21', IO14: '22', IO45: '26', NC1: '28', NC2: '29', NC3: '30', IO39: '32', IO2: '38', IO1: '39'}
 - ref: U7
   value: INA228
   footprint: VSSOP-10
@@ -640,18 +676,23 @@ components:
   mpn: INA228AIDGSR
   description: IC, 85-V, 20-Bit, Ultra-Precise Power-Energy-Charge Monitor With I2C Interface
   lcsc: C2887910
+  pin_count: 10
+  nc_pins: {nAlert: '3'}
 - ref: U8
   value: TSL2591
   footprint: AMS_TSL25911FN
   manufacturer: AMS
   mpn: TSL2591
   description: Light to digital converter, 2.7 to 3.6V Vdd, DFN-6
+  pin_count: 6
+  nc_pins: {INT: '2', NC: '4'}
 - ref: U9
   value: SGP41
   footprint: XCDR_SGP40-D-R4
   mpn: SGP41-D-R4
   manufacturer: Sensirion
   description: Indoor Air Quality Sensor, MOx based, DFN-6
+  pin_count: 7
 nets:
 - name: +3.3V
   pins:

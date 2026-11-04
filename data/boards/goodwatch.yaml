@@ -19,9 +19,12 @@ components:
   value: YageoS432
   footprint: YageoS432
   manufacturer: Yaego
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: BRD1
   value: CA53BOARD
   footprint: ca53board
+  pin_count: 8
 - ref: BT1
   value: AAAA
   footprint: BE-AAAA-PC
@@ -87,6 +90,8 @@ components:
   value: DX07S016JA1R1500
   footprint: JAE_DX07S016JA1R1500
   manufacturer: JAE Industry Ltd.
+  pin_count: 18
+  nc_pins: {'4': '4', '10': '10'}
 - ref: J3
   value: SMA
   footprint: SMA_Amphenol_132289_EdgeMount
@@ -96,6 +101,8 @@ components:
 - ref: LCD1
   value: CA53LCD
   footprint: ca53lcd
+  pin_count: 35
+  nc_pins: {'1': '1', '5': '5', '30': '30', '31': '31', '32': '32', '33': '33', '34': '34'}
 - ref: R1
   value: 75kohm
   footprint: '0402'
@@ -121,75 +128,120 @@ components:
 - ref: SW0
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW1
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW10
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW11
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW12
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW13
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW14
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW15
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW16
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW17
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW2
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW3
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW4
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW5
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW6
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW7
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW8
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: SW9
   value: tactile switch
   footprint: TL6700
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: U1
   value: CC430F613x
   footprint: CC430F613x
   manufacturer: Texas Instruments
+  pin_count: 65
+  nc_pins: {'46': '46', '47': '47', '48': '48', '49': '49'}
 - ref: U2
   value: 0915LP15B02
   footprint: LP15
   manufacturer: 0500LP15A500, 0915LP15B02
+  pin_count: 8
+  nc_pins: {'2': '2', '6': '6'}
 - ref: U3
   value: B0310J50100AHF
   footprint: B0310J50100AHF
   manufacturer: B0310J50100AH
+  pin_count: 6
+  nc_pins: {'5': '5', '6': '6'}
 - ref: U4
   value: SN74AXC4T774RSVR
   footprint: SN74AXC4T774RSVR
+  pin_count: 16
 - ref: U5
   value: FT232RQ
   footprint: FT232RQ-REEL
+  pin_count: 33
+  nc_pins: {'3': '3', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '12': '12', '13': '13', '18': '18', '23': '23', '25': '25', '27': '27', '28': '28', '29': '29'}
 - ref: Y1
   value: 32.768kHz
   footprint: SMD3215
@@ -198,6 +250,7 @@ components:
   value: FA128 26MHz
   footprint: FA128
   manufacturer: FA-128 26.0000MF10Z-W5
+  pin_count: 4
 nets:
 - name: /BUZZ
   pins: [BRD1.8, BZ1.1, U1.57]

@@ -97,9 +97,12 @@ components:
 - ref: D4
   value: FM-B2020RGBA-HG
   footprint: LED_TRI_2020
+  pin_count: 4
 - ref: J1
   value: USB-C
   footprint: USB-C
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: JP1
   value: VIN-VBUS
   footprint: '0603'
@@ -294,31 +297,41 @@ components:
   value: 10kohm
   footprint: R_Array_Convex
   pullup: /SPI_SCK
+  pin_count: 8
 - ref: SW1
   value: TACT
   footprint: SW_SPST
 - ref: U1
   value: USBLC6-2
   footprint: SOT-666
+  pin_count: 6
 - ref: U2
   value: TLV75533PDRV
   footprint: WSON-6-1EP
+  pin_count: 7
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: U3
   value: TLV73312PDRV
   footprint: WSON-6-1EP
+  pin_count: 7
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: U4
   value: LY68L6400
   footprint: SOIC-8
   description: 64Mb (8M x 8)
+  pin_count: 8
 - ref: U5
   value: W25Q128JVxxM
   footprint: WSON-8-1EP
+  pin_count: 8
 - ref: U6
   value: ICE40UP5K
   footprint: QFN-48-1EP
+  pin_count: 49
 - ref: X1
   value: 12MHz
   footprint: Oscillator_SMD_SCTF_S2DXX-4Pin
+  pin_count: 4
 nets:
 - name: +1V2
   pins:

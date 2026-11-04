@@ -63,9 +63,11 @@ components:
 - ref: CON1
   value: 1x8 header
   footprint: HN1x8_EDGE
+  pin_count: 8
 - ref: CON2
   value: 1x8 header
   footprint: HN1x8_EDGE
+  pin_count: 8
 - ref: EXT_ANT1
   value: U.FL
   footprint: U.FL-R-SMT-1
@@ -90,9 +92,12 @@ components:
 - ref: U1
   value: SX1276
   footprint: QFN-28_EP
+  pin_count: 29
+  nc_pins: {'1': '1', '20': '20', '27': '27', '28': '28'}
 - ref: X1
   value: 32.000MHz_10ppm
   footprint: SMD2016_4p
+  pin_count: 4
 nets:
 - name: /DIO0
   pins: [CON2.6, U1.8]

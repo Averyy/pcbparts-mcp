@@ -245,9 +245,11 @@ components:
 - ref: D1
   value: SMF05CT1G
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: D2
   value: SMF05CT1G
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: D3
   value: red LED
   footprint: '0603'
@@ -266,15 +268,18 @@ components:
 - ref: J2
   value: 1x7 header
   footprint: JST_PH_B7B-PH-K
+  pin_count: 7
 - ref: J3
   value: 1x3 header
   footprint: JST_PH_B3B-PH-K
+  pin_count: 3
 - ref: J4
   value: 1x2 header
   footprint: JST_PH_B2B-PH-K
 - ref: J5
   value: 2x5 header
   footprint: 2X5
+  pin_count: 10
 - ref: J6
   value: 1x3 header
   footprint: 1X2
@@ -317,30 +322,38 @@ components:
 - ref: P4
   value: 1x6 header
   footprint: JST_PH_B6B-PH-K
+  pin_count: 6
 - ref: P5
   value: SWD
   footprint: 1X5
+  pin_count: 5
 - ref: POS1
   value: POS
   footprint: 1pin_4mm
 - ref: Q1
   value: NCEP60T20
   footprint: TO-220
+  pin_count: 3
 - ref: Q2
   value: NCEP60T20
   footprint: TO-220
+  pin_count: 3
 - ref: Q3
   value: NCEP60T20
   footprint: TO-220
+  pin_count: 3
 - ref: Q4
   value: NCEP60T20
   footprint: TO-220
+  pin_count: 3
 - ref: Q5
   value: NCEP60T20
   footprint: TO-220
+  pin_count: 3
 - ref: Q6
   value: NCEP60T20
   footprint: TO-220
+  pin_count: 3
 - ref: R1
   value: 39kohm
   footprint: '0603'
@@ -569,24 +582,34 @@ components:
 - ref: U1
   value: AMS1117-3.3
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: U2
   value: DRV8301
   footprint: HTSSOP-56-1EP
+  pin_count: 57
+  nc_pins: {'4': '4', '5': '5', '12': '12'}
 - ref: U3
   value: TP2604-SR
   footprint: SOIC-8
+  pin_count: 8
 - ref: U4
   value: TJA1051T/3/1J
   footprint: SOIC-8
+  pin_count: 8
 - ref: U5
   value: STM32F405RGT6
   footprint: LQFP-64
+  pin_count: 64
 - ref: U6
   value: BMI160
   footprint: Bosch_LGA-14
+  pin_count: 14
+  nc_pins: {'2': '2', '3': '3', '4': '4', '9': '9', '10': '10', '11': '11'}
 - ref: USB1
   value: USB Micro  U-D-M5DD-W-1
   footprint: USB_Micro-B_Wuerth_614105150721_Vertical
+  pin_count: 6
+  nc_pins: {'1': '1', '4': '4'}
 - ref: X1
   value: 8MHz 10ppm
   footprint: SMD5032

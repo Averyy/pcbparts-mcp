@@ -2474,9 +2474,11 @@ def board_get(
             ("U3", "J1", "D2") or value words ("USB-C" finds the receptacle; connectors first):
             returns its pin neighborhood instead of the component list. Ground and supply pins are
             in power_pins: the net, with its parts when few (VBUS through a fuse) or part_count (GND);
-            pins_in_nets counts the part's pins in the netlist, so a pin in neither pins nor
-            power_pins is in no net (often NC); pin_nets names each pin's net (numbered pins say
-            what they are: an ESP32 module's "3" is CHIP_PU). A focus matching nothing lists available_ics and
+            pins_in_nets counts the part's pins in the netlist; pin_count is the part's own pin count
+            and nc_pins its pins on no net, by pad ({"I/O1": "1"}: left unconnected, a design
+            decision; {} = all connected), where the design files give the footprint's pins (most
+            parts with 3+ pins); pin_nets names each pin's net (numbered pins say what they are: an
+            ESP32 module's "3" is CHIP_PU). A focus matching nothing lists available_ics and
             available_refs
         include_bom: Also list plain passives (R/C/L); by default only ICs, connectors and
             annotated passives (the rest are counted in passives_omitted)
@@ -2484,7 +2486,7 @@ def board_get(
 
     Returns:
         Default: ICs + connectors + annotated passives + neighborhood summary (ref, value and
-            pin_count, the IC's pins in the netlist, per IC).
+            pin_count per IC: its own pins where known, else its pins in the netlist).
         With focus: focused part's pin-grouped neighborhood + cross-board consensus +
             focus_match_type ("exact", "partial", or "ref") indicating how the focus was matched.
         With include_bom: adds all plain passives to component list.

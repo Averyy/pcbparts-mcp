@@ -200,35 +200,45 @@ components:
   footprint: USB-C
   mpn: TYPE-C-31-M-12
   lcsc: C165948
+  pin_count: 24
+  nc_pins: {'2': '2', '3': '3', '10': '10', '11': '11', '13': '13', '14': '14', '15': '15', A8: A8, B8: B8}
 - ref: J2
   value: JTAG
   footprint: 1X9
   mpn: MTP125-1108S1
   lcsc: C358689
+  pin_count: 9
 - ref: J3
   value: 1x9 header
   footprint: 1X9
   mpn: PZ254V-11-09P
   lcsc: C492408
+  pin_count: 9
 - ref: J4
   value: 2x4 header
   footprint: 2X4
   mpn: MTP125-1204S1
   lcsc: C358693
+  pin_count: 8
 - ref: J5
   value: 2x5 header
   footprint: 2X5
   mpn: FTSH-105-01-F-DV-K
   lcsc: C448647
+  pin_count: 10
+  nc_pins: {'7': '7'}
 - ref: J6
   value: 2x7 header
   footprint: 2X7
   mpn: FTSH-107-01-F-DV-K
+  pin_count: 14
+  nc_pins: {'11': '11', '12': '12', '13': '13', '14': '14'}
 - ref: J7
   value: 1x4 header
   footprint: JST_SH_SM04B-SRSS-TB
   mpn: SM04B-SRSS-TB(LF)(SN)
   lcsc: C160404
+  pin_count: 5
 - ref: JP1
   value: ISO
   footprint: SJ-2
@@ -240,6 +250,7 @@ components:
   footprint: SOT-23_RoundRect
   mpn: BSH103,235
   lcsc: C88711
+  pin_count: 3
 - ref: R1
   value: 5.1kohm
   footprint: '0402'
@@ -372,86 +383,108 @@ components:
   footprint: R_Array_Convex
   mpn: 4D02WGJ0104TCE
   lcsc: C25724
+  pin_count: 8
 - ref: RN2
   value: 100kohm
   footprint: R_Array_Convex
   mpn: 4D02WGJ0104TCE
   lcsc: C25724
+  pin_count: 8
 - ref: RN3
   value: 100ohm
   footprint: R_Array_Convex
   mpn: 4D02WGJ0101TCE
   lcsc: C48442
+  pin_count: 8
 - ref: RN4
   value: 100ohm
   footprint: R_Array_Convex
   mpn: 4D02WGJ0101TCE
   lcsc: C48442
+  pin_count: 8
 - ref: RN5
   value: 100ohm
   footprint: R_Array_Convex
   mpn: 4D02WGJ0101TCE
   lcsc: C48442
+  pin_count: 8
 - ref: RN6
   value: 100ohm
   footprint: R_Array_Convex
   mpn: 4D02WGJ0101TCE
   lcsc: C48442
+  pin_count: 8
+  nc_pins: {'3': '3', '4': '4'}
 - ref: RN7
   value: 100kohm
   footprint: R_Array_Convex
   mpn: 4D02WGJ0104TCE
   lcsc: C25724
+  pin_count: 8
 - ref: RN8
   value: 100kohm
   footprint: R_Array_Convex
   mpn: 4D02WGJ0104TCE
   lcsc: C25724
+  pin_count: 8
 - ref: SW1
   value: TARGET
   footprint: SW_ALPS_SSSS224100_DP4T
   mpn: SSSS224100
   lcsc: C255514
+  pin_count: 10
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5'}
 - ref: SW2
   value: MODE
   footprint: SW_CuK_JS202011CQN_DPDT_Straight
   mpn: JS202011CQN
   lcsc: C221663
+  pin_count: 6
 - ref: U1
   value: AP7365-18
   footprint: SOT-23-5_RoundRect
   mpn: AP7365-18WG-7
   lcsc: C460402
+  pin_count: 5
+  nc_pins: {'4': '4'}
 - ref: U2
   value: AP7365-33
   footprint: SOT-23-5_RoundRect
   mpn: AP7365-33WG-7
   lcsc: C150742
+  pin_count: 5
+  nc_pins: {'4': '4'}
 - ref: U3
   value: FT2232HQ
   footprint: QFN-64-1EP
   mpn: FT2232HQ-REEL
   lcsc: C193662
+  pin_count: 65
+  nc_pins: {'24': '24', '26': '26', '27': '27', '28': '28', '32': '32', '33': '33', '34': '34', '36': '36', '48': '48', '52': '52', '53': '53', '54': '54', '55': '55', '57': '57', '58': '58', '59': '59'}
 - ref: U4
   value: 93LC46BT-I/OT
   footprint: SOT-23-6_RoundRect
   mpn: 93LC56BT-I/OT
   lcsc: C190271
+  pin_count: 6
 - ref: U5
   value: SN74LVC8T245
   footprint: TSSOP-24
   mpn: SN74LVC8T245PWR
   lcsc: C27643
+  pin_count: 24
 - ref: U6
   value: SN74LVC8T245
   footprint: TSSOP-24
   mpn: SN74LVC8T245PWR
   lcsc: C27643
+  pin_count: 24
 - ref: Y1
   value: 12MHz
   footprint: SMD3225
   mpn: X322512MSB4SI
   lcsc: C9002
+  pin_count: 4
 nets:
 - name: +1V8
   pins: [C2.1, SW1.9, U1.5]

@@ -498,9 +498,13 @@ components:
 - ref: FB5
   value: Ferrite_Bead
   footprint: '1206'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: FB6
   value: Ferrite_Bead
   footprint: '1206'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: IC1
   value: ADS8686SIPZAR
   footprint: LQFP-80
@@ -508,27 +512,37 @@ components:
   manufacturer: Texas Instruments
   mpn: ADS8686SIPZAR
   description: Analog to Digital Converters - ADC 16-channel 16-bit 1-MSPS dual
+  pin_count: 80
 - ref: IC3
   value: OPA1662
   footprint: VSSOP-8
+  pin_count: 8
 - ref: J1
   value: HDMI_A
   footprint: CONN_10029449-111RLF_HDMI_A
+  pin_count: 20
+  nc_pins: {D2+: '1', D2-: '3'}
 - ref: J10
   value: 2x7 header
   footprint: 2X7
+  pin_count: 14
 - ref: J11
   value: 2x12 header
   footprint: 2X12
+  pin_count: 24
+  nc_pins: {Pin_1: '1', Pin_3: '3', Pin_5: '5', Pin_7: '7', Pin_15: '15', Pin_17: '17', Pin_21: '21'}
 - ref: J13
   value: 2x5 header
   footprint: 2X5
+  pin_count: 10
 - ref: J14
   value: 1x12 screw terminal
   footprint: TerminalBlock_Phoenix_MPT-0,5-12-2.54
+  pin_count: 12
 - ref: J15
   value: 2x12 header
   footprint: 2X12
+  pin_count: 24
 - ref: J16
   value: coaxial connector
   footprint: BU-SMA-G
@@ -538,27 +552,39 @@ components:
 - ref: J18
   value: Qwiic connector
   footprint: 1X04
+  pin_count: 4
 - ref: J2
   value: HDMI_A
   footprint: CONN_10029449-111RLF_HDMI_A
+  pin_count: 20
+  nc_pins: {D2+: '1', D2-: '3', D1+: '4', D1-: '6', D0+: '7', CK-: '12'}
 - ref: J3
   value: 1x6 header
   footprint: Molex_6Pin_CONN
+  pin_count: 6
 - ref: J7
   value: HDMI_A
   footprint: CONN_10029449-111RLF_HDMI_A
+  pin_count: 20
+  nc_pins: {D2-: '3', D1+: '4', D1-: '6', D0+: '7', CK-: '12'}
 - ref: J8
   value: HDMI_A
   footprint: CONN_10029449-111RLF_HDMI_A
+  pin_count: 20
+  nc_pins: {D2-: '3', D1+: '4', D1-: '6', D0+: '7', CK-: '12'}
 - ref: J9
   value: 2x6 header
   footprint: 2X6
+  pin_count: 12
 - ref: OK1
   value: OPALKELLY_XEM7310
   footprint: OPALKELLY_XEM7310
+  pin_count: 160
+  nc_pins: {+VDCIN@MC1-1: MC1-1, +VDCIN@MC1-3: MC1-3, +1.0VDD@MC1-4: MC1-4, +VDCIN@MC1-5: MC1-5, +1.0VDD@MC1-6: MC1-6, SYS_CLK_MC1: MC1-8, XADC_VN: MC1-10, XADC_VP: MC1-12, B34_L24P: MC1-15, B34_L24N: MC1-17, B34_L17P: MC1-19, B34_L17N: MC1-21, B34_L16P: MC1-23, B34_L16N: MC1-25, B34_L14P: MC1-27, B34_L15P: MC1-28, B34_L14N: MC1-29, B34_L15N: MC1-30, B34_L10P: MC1-31, B34_L13P: MC1-32, B34_L10N: MC1-33, B34_L13N: MC1-34, B34_L20P: MC1-37, B34_L20N: MC1-39, B34_L4P: MC1-53, B34_L4N: MC1-57, B34_L1P: MC1-59, B34_L1N: MC1-61, B34_L8N: MC1-62, B34_L7P: MC1-63, B13_L5P: MC1-64, B34_L7N: MC1-65, B34_L12P_MRCC: MC1-77, B34_L12N_MRCC: MC1-79, +VCCBATT: MC2-3, FPGA_TCK: MC2-5, FPGA_TMS: MC2-7, FPGA_TDO: MC2-8, FPGA_TDI: MC2-9, B35_IO0: MC2-10, SYS_CLK_MC2: MC2-11, B35_L21P: MC2-15, B35_L21N: MC2-17, B35_L19P: MC2-19, B35_L19N: MC2-21, B35_L18P: MC2-23, B35_L18N: MC2-25, B35_L23P: MC2-27, B35_L23N: MC2-29, B35_L16N: MC2-30, B35_L15P: MC2-31, B35_L17P: MC2-32, B35_L15N: MC2-33, B35_L17N: MC2-34, VCCO_MC2@MC2-35: MC2-35, B35_L9P: MC2-37, B35_L14P: MC2-38, B35_L9N: MC2-39, B35_L11N: MC2-47, B35_L4P: MC2-49, B35_L4N: MC2-51, VCCO_MC2@MC2-55: MC2-55, B35_L2P: MC2-60, B13_L6N: MC2-74}
 - ref: Q2
   value: BC856
   footprint: SOT-23
+  pin_count: 3
 - ref: R100
   value: 1kohm
   footprint: '0603'
@@ -1052,76 +1078,114 @@ components:
 - ref: U14
   value: LP38692MP-5.0
   footprint: SOT-223-5
+  pin_count: 5
+  nc_pins: {NC: '2'}
 - ref: U15
   value: LP38693MP-3.3
   footprint: SOT-223-5
+  pin_count: 5
+  nc_pins: {NC: '2'}
 - ref: U16
   value: LM2937xMP
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: U17
   value: MAX6070BAUT21+T
   footprint: SOT-23-6
+  pin_count: 6
 - ref: U18
   value: LP38693MP-1.8
   footprint: SOT-223-5
+  pin_count: 5
+  nc_pins: {NC: '2'}
 - ref: U19
   value: MC7915BD2TR4G
   footprint: TO-263
+  pin_count: 3
 - ref: U20
   value: LP38693MP-2.5
   footprint: SOT-223-5
+  pin_count: 5
+  nc_pins: {NC: '2'}
 - ref: U21
   value: 24AA025UID
   footprint: SOIC-8
+  pin_count: 8
+  nc_pins: {NC: '7'}
 - ref: U22
   value: PCA9306
   footprint: TSSOP-8
   description: IC TRNSLTR BIDIRECTIONAL 8TSSOP
+  pin_count: 8
 - ref: U23
   value: NLSX3018DTR2G
   footprint: TSSOP-20
+  pin_count: 20
+  nc_pins: {I/OVL2: '2', I/OVL3: '3', I/OVL4: '4', I/OVL8: '10'}
 - ref: U24
   value: TXS0108EPW
   footprint: TSSOP-20
+  pin_count: 20
+  nc_pins: {A7: '8', A8: '9', B8: '12', B7: '13'}
 - ref: U25
   value: TXS0108EPW
   footprint: TSSOP-20
+  pin_count: 20
+  nc_pins: {A7: '8', A8: '9', B8: '12', B7: '13'}
 - ref: U26
   value: TCA9555
   footprint: SSOP-24
+  pin_count: 24
+  nc_pins: {nINT: '1', P04: '8', P05: '9', P06: '10', P07: '11', P10: '13', P11: '14', P12: '15', P13: '16', P14: '17', P15: '18', P16: '19', P17: '20'}
 - ref: U27
   value: TCA9555
   footprint: SSOP-24
+  pin_count: 24
+  nc_pins: {nINT: '1', P00: '4', P01: '5', P02: '6', P03: '7', P04: '8', P05: '9', P06: '10', P07: '11', P10: '13', P11: '14', P12: '15', P13: '16'}
 - ref: U30
   value: AD7961BCPZ
   footprint: QFN-32-1EP
+  pin_count: 33
 - ref: U31
   value: OPA325
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U39
   value: TMUX6111PWR
   footprint: TSSOP-16
+  pin_count: 16
+  nc_pins: {NC: '12'}
 - ref: U40
   value: AD5453
   footprint: TSOT-23-8
+  pin_count: 8
 - ref: U41
   value: OPA2156xD
   footprint: SOIC-8
+  pin_count: 8
 - ref: U58
   value: DAC80508ZRTER
   footprint: WQFN-16-1EP
+  pin_count: 17
+  nc_pins: {OUT2: '4', OUT3: '5'}
 - ref: U63
   value: TMUX6136PWR
   footprint: TSSOP-16
+  pin_count: 16
+  nc_pins: {NC@7: '7', NC@8: '8', S2B: '12', NC@14: '14', NC@15: '15', NC@16: '16'}
 - ref: U64
   value: TMUX6136PWR
   footprint: TSSOP-16
+  pin_count: 16
+  nc_pins: {S1B: '4', NC@7: '7', NC@8: '8', S2B: '12', NC@14: '14', NC@15: '15', NC@16: '16'}
 - ref: U65
   value: OPA991S
   footprint: SOT-23-6
+  pin_count: 6
 - ref: U8
   value: OPA2156xD
   footprint: SOIC-8
+  pin_count: 8
 nets:
 - name: +15V
   pins:

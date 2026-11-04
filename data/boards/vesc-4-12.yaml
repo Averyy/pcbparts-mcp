@@ -186,21 +186,27 @@ components:
 - ref: K1
   value: SERVO
   footprint: pinhead-1X03
+  pin_count: 3
 - ref: L1
   value: 22uH
   footprint: inductor_smd
 - ref: P1
   value: HALL/Encoder
   footprint: MICRO_JST_6
+  pin_count: 6
 - ref: P101
   value: CANBUS
   footprint: b4b-ph-kl
+  pin_count: 4
 - ref: P2
   value: SWD
   footprint: MICRO_JST_6
+  pin_count: 6
+  nc_pins: {'6': '6'}
 - ref: P3
   value: PWR_COMM
   footprint: b7b-ph-kl
+  pin_count: 7
 - ref: P4
   value: IN+
   footprint: 1PAD
@@ -219,21 +225,27 @@ components:
 - ref: Q1
   value: IRFS7530
   footprint: D2PAK-7-GDS
+  pin_count: 3
 - ref: Q2
   value: IRFS7530
   footprint: D2PAK-7-GDS
+  pin_count: 3
 - ref: Q3
   value: IRFS7530
   footprint: D2PAK-7-GDS
+  pin_count: 3
 - ref: Q4
   value: IRFS7530
   footprint: D2PAK-7-GDS
+  pin_count: 3
 - ref: Q5
   value: IRFS7530
   footprint: D2PAK-7-GDS
+  pin_count: 3
 - ref: Q6
   value: IRFS7530
   footprint: D2PAK-7-GDS
+  pin_count: 3
 - ref: R1
   value: NTC 10k
   footprint: '0603'
@@ -371,9 +383,11 @@ components:
 - ref: R53
   value: SHUNT
   footprint: WSLP2726
+  pin_count: 4
 - ref: R54
   value: SHUNT
   footprint: WSLP2726
+  pin_count: 4
 - ref: R6
   value: 0ohm
   footprint: '0603'
@@ -390,22 +404,32 @@ components:
 - ref: U1
   value: STM32F40X
   footprint: lqfp64_pad_mod
+  pin_count: 64
+  nc_pins: {'2': '2', '3': '3', '4': '4', '9': '9', '11': '11', '28': '28', '39': '39', '40': '40', '50': '50', '54': '54', '55': '55', '56': '56'}
 - ref: U2
   value: TC2117
   footprint: SOT-223
+  pin_count: 3
 - ref: U3
   value: DRV8302
   footprint: TSSOP-56-PP
+  pin_count: 57
+  nc_pins: {'4': '4', '5': '5', '55': '55', '56': '56'}
 - ref: U401
   value: SN65HVD232
   footprint: SOIC-8-W
+  pin_count: 8
+  nc_pins: {'5': '5'}
 - ref: X1
   value: MINI-USB-SHIELD-32005-201
   footprint: USB-UX60R-MB-5ST
+  pin_count: 5
+  nc_pins: {'4': '4'}
 - ref: X2
   value: 8MHz 10ppm
   footprint: Crystal
   mpn: ABM3B-8.0-10-1UT
+  pin_count: 3
 nets:
 - name: +5V
   pins:

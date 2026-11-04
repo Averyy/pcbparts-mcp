@@ -33,9 +33,11 @@ components:
 - ref: CONN3
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: CONN4
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: D1
   value: green LED
   footprint: '0603'
@@ -45,12 +47,15 @@ components:
 - ref: JP2
   value: 1x5 header
   footprint: 1X05
+  pin_count: 5
 - ref: JP3
   value: 1x1 header
   footprint: 1X01
 - ref: R3
   value: 10kohm
   footprint: RESPACK
+  pin_count: 8
+  nc_pins: {G$2.1: '2', G$2.2: '7'}
 - ref: SJ1
   value: smd solder jumper
   footprint: SJ-2
@@ -58,6 +63,7 @@ components:
   value: DRV2605L
   footprint: PSOP10
   description: DRV2605
+  pin_count: 10
 nets:
 - name: GND
   pins:

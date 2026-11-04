@@ -30,21 +30,27 @@ components:
 - ref: FET401
   value: IRLML6244
   footprint: SOT-23
+  pin_count: 3
 - ref: FET402
   value: IRLML2244
   footprint: SOT-23
+  pin_count: 3
 - ref: FET403
   value: IRLML6244
   footprint: SOT-23
+  pin_count: 3
 - ref: FET404
   value: IRLML2244
   footprint: SOT-23
+  pin_count: 3
 - ref: FET405
   value: IRLML6244
   footprint: SOT-23
+  pin_count: 3
 - ref: FET406
   value: IRLML2244
   footprint: SOT-23
+  pin_count: 3
 - ref: R401
   value: 1kohm
   footprint: '0402'
@@ -70,6 +76,8 @@ components:
 - ref: U401
   value: EFM8BB21
   footprint: QFN20
+  pin_count: 21
+  nc_pins: {'6': '6', '7': '7', '15': '15', '16': '16', '17': '17'}
 nets:
 - name: /single esc 3/Ac_0
   pins: [FET402.1, U401.13]

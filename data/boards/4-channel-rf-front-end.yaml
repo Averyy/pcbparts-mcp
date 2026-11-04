@@ -277,18 +277,22 @@ components:
   value: LPF04023600L
   footprint: '0402'
   manufacturer: ATC
+  pin_count: 4
 - ref: F15
   value: LPF04023600L
   footprint: '0402'
   manufacturer: ATC
+  pin_count: 4
 - ref: F16
   value: LP0603A2140ANTR
   footprint: '0603'
   manufacturer: AVX
+  pin_count: 4
 - ref: F17
   value: DEA162300HT-8047A1
   footprint: F_DEA16_LGA
   manufacturer: TDK
+  pin_count: 4
 - ref: FB1
   value: BLM18HE152SN1D
   footprint: '0603'
@@ -299,6 +303,7 @@ components:
   value: PJ1-021-SMT-TR
   footprint: CUI_PJ1-021-SMT-TR
   description: CONN PWR JACK 1.75X4.75MM SOLDER
+  pin_count: 3
 - ref: J18
   value: 5-1814832-1
   footprint: RF_SMA_Vertical_5-1814832-1
@@ -316,6 +321,7 @@ components:
   footprint: 2X6
   description: CONN HDR 12POS 0.1 TIN PCB R/A
   manufacturer: Sullins Connector Solutions
+  pin_count: 12
 - ref: J20
   value: 5-1814832-1
   footprint: RF_SMA_Vertical_5-1814832-1
@@ -338,6 +344,7 @@ components:
   value: ACP3225
   footprint: '3225'
   description: CMC 500 Ohms @ 100MHz 2A DCR 40 mOhm
+  pin_count: 4
 - ref: L10
   value: 43nH
   footprint: '0603'
@@ -374,18 +381,26 @@ components:
   value: 33ohm
   footprint: '0402'
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R17
   value: 33ohm
   footprint: '0402'
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R18
   value: 33ohm
   footprint: '0402'
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R19
   value: 33ohm
   footprint: '0402'
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R2
   value: 10ohm
   footprint: '0402'
@@ -398,10 +413,14 @@ components:
   value: 33ohm
   footprint: '0402'
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R22
   value: 33ohm
   footprint: '0402'
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R23
   value: 100ohm
   footprint: '0402'
@@ -440,6 +459,7 @@ components:
   value: CSR1206-0R002F1
   footprint: '1206'
   description: RES 0.002 OHM 1% 1W 1206
+  pin_count: 4
 - ref: R6
   value: 180ohm
   footprint: '0603'
@@ -457,98 +477,125 @@ components:
   value: EXB-28V103JX
   footprint: R_Array_Convex
   description: 4x 10K +/- 5%
+  pin_count: 8
 - ref: RN2
   value: EXB-28V103JX
   footprint: R_Array_Convex
   description: 4x 10K +/- 5%
+  pin_count: 8
 - ref: RN3
   value: EXB-28V103JX
   footprint: R_Array_Convex
   description: 4x 10K +/- 5%
+  pin_count: 8
 - ref: RN4
   value: EXB-28V103JX
   footprint: R_Array_Convex
   description: 4x 10K +/- 5%
+  pin_count: 8
 - ref: T7
   value: MABA-011082
   footprint: T_6pin_23_balun
   description: 1:1 Transformer Balun 5 - 8000 MHz
+  pin_count: 6
 - ref: T8
   value: MABA-011082
   footprint: T_6pin_23_balun
   description: 1:1 Transformer Balun 5 - 8000 MHz
+  pin_count: 6
 - ref: U1
   value: MCP1755ST-5002E_DB
   footprint: MCP1755ST-5002E_DB
   description: IC REG LINEAR 5V 300MA SOT223-3
+  pin_count: 3
 - ref: U10
   value: SN74HCU04PWR
   footprint: SN74HCU04PWR
   description: IC INVERTER 6CH 6-INP 14TSSOP
+  pin_count: 14
 - ref: U2
   value: MCP1755ST-5002E_DB
   footprint: MCP1755ST-5002E_DB
   description: IC REG LINEAR 5V 300MA SOT223-3
+  pin_count: 3
 - ref: U3
   value: MCP1755ST-5002E_DB
   footprint: MCP1755ST-5002E_DB
   description: IC REG LINEAR 5V 300MA SOT223-3
+  pin_count: 3
 - ref: U35
   value: ADL5611ARKZ-R7
   footprint: ADL5611ARKZ-R7
   description: IC AMP W-CDMA 30MHZ-6GHZ SOT89-3
+  pin_count: 3
 - ref: U36
   value: PE43711
   footprint: QFN-24-1EP
   description: RF ATTENUATOR 31.5DB 50OHM 24QFN
+  pin_count: 25
+  nc_pins: {'25': '25'}
 - ref: U37
   value: HMC544AETR
   footprint: SOT-23-6
   description: IC RF SWITCH SPDT 4GHZ SOT26
+  pin_count: 6
 - ref: U38
   value: ADL5611ARKZ-R7
   footprint: ADL5611ARKZ-R7
   description: IC AMP W-CDMA 30MHZ-6GHZ SOT89-3
+  pin_count: 3
 - ref: U39
   value: PE43711
   footprint: QFN-24-1EP
   description: RF ATTENUATOR 31.5DB 50OHM 24QFN
+  pin_count: 25
+  nc_pins: {'25': '25'}
 - ref: U4
   value: MCP1755ST-5002E_DB
   footprint: MCP1755ST-5002E_DB
   description: IC REG LINEAR 5V 300MA SOT223-3
+  pin_count: 3
 - ref: U40
   value: HMC544AETR
   footprint: SOT-23-6
   description: IC RF SWITCH SPDT 4GHZ SOT26
+  pin_count: 6
 - ref: U41
   value: HMC544AETR
   footprint: SOT-23-6
   description: IC RF SWITCH SPDT 4GHZ SOT26
+  pin_count: 6
 - ref: U42
   value: PCAL6416APW
   footprint: TSSOP-24_W4.40mm
   description: IC I/O EXPANDER 16BIT 24TSSOP
+  pin_count: 24
+  nc_pins: {'1': '1'}
 - ref: U5
   value: INA219AIDCNR
   footprint: SOT-23-8
   mpn: INA219AIDCNR
   description: IC CURRENT MONITOR 1% SOT23-8
   manufacturer: Texas Instruments
+  pin_count: 8
 - ref: U6
   value: TPS562208DDCT
   footprint: TPS562208DDCT
   description: IC REG BUCK ADJ 2A TSOT23-6
+  pin_count: 6
 - ref: U7
   value: PCA9548APW
   footprint: TSSOP-24
+  pin_count: 24
 - ref: U8
   value: M24C02
   footprint: TSSOP-8
+  pin_count: 8
 - ref: U9
   value: SN74LVC125APWR
   footprint: SN74LVC125APWR
   description: IC BUF NON-INVERT 3.6V 14TSSOP
+  pin_count: 14
 nets:
 - name: +3V3
   pins:

@@ -19,6 +19,7 @@ components:
   value: -3dB
   footprint: PAT1220
   description: Susumu PAT1220 SMD chip attenuator
+  pin_count: 3
 - ref: C1
   value: 100pF
   footprint: '0603'
@@ -41,12 +42,14 @@ components:
   value: HMC476MP86
   footprint: WW107
   description: Mini-Circuits ERA-2SM+ MMIC amplifier
+  pin_count: 4
 - ref: J1
   value: RF Input
   footprint: J502-ND-142-0701-881
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-881
   description: SMA 50 Ohm
+  pin_count: 5
 - ref: J2
   value: TPS
   footprint: P1-13
@@ -57,6 +60,7 @@ components:
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-881
   description: SMA 50 Ohm
+  pin_count: 5
 - ref: J4
   value: TPS
   footprint: P1-13

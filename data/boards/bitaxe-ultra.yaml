@@ -265,6 +265,7 @@ components:
   footprint: BarrelJack_Wuerth_694106106102
   digikey: 839-54-00164CT-ND
   partno: 54-00164
+  pin_count: 3
 - ref: J2
   value: 1x2 header
   footprint: JST_XH_B2B-XH-A
@@ -275,16 +276,20 @@ components:
   footprint: '470531000'
   partno: '0470531000'
   digikey: WM4330-ND
+  pin_count: 4
 - ref: J8
   value: USB-C
   footprint: USB-C
   digikey: 2073-USB4105-GF-ACT-ND
   partno: USB4105-GF-A
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J9
   value: 1x4 header
   footprint: 1X4
   digikey: S5596-ND
   partno: NPTC041KFXC-RC
+  pin_count: 4
 - ref: L1
   value: 150nH
   footprint: FP1005R1-R15-R
@@ -295,16 +300,19 @@ components:
   footprint: CSD17311Q5
   digikey: 296-27625-1-ND
   partno: CSD17311Q5
+  pin_count: 5
 - ref: Q2
   value: CSD17311Q5
   footprint: CSD17311Q5
   digikey: 296-27625-1-ND
   partno: CSD17311Q5
+  pin_count: 5
 - ref: Q4
   value: 2N7002K
   footprint: SOT-323_SC-70
   digikey: 2N7002KWCT-ND
   partno: 2N7002KW
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0402'
@@ -401,54 +409,74 @@ components:
   footprint: O 25,0-JO32-B-1V3-1-T1-LF
   digikey: 1908-O250-JO32-B-1V3-1-T1-LFCT-ND
   partno: O 25,0-JO32-B-1V3-1-T1-LF
+  pin_count: 4
 - ref: U10
   value: DS4432U+
   footprint: TSSOP-8
   digikey: DS4432U+-ND
   partno: DS4432U+
+  pin_count: 8
+  nc_pins: {FS1: '3', OUT1: '7'}
 - ref: U11
   value: RT9080-33
   footprint: RT9080-33GJ5
   digikey: 1028-1509-1-ND
   partno: RT9080-33GJ5
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U12
   value: ESP32-S3-WROOM-1
   footprint: ESP32-S3-WROOM-1
   digikey: 1965-ESP32-S3-WROOM-1-N16R8CT-ND
   partno: ESP32-S3-WROOM-1-N16R8
+  pin_count: 41
+  nc_pins: {GPIO4/TOUCH4/ADC1_CH3: '4', GPIO5/TOUCH5/ADC1_CH4: '5', GPIO6/TOUCH6/ADC1_CH5: '6', GPIO7/TOUCH7/ADC1_CH6: '7', GPIO8/TOUCH8/ADC1_CH7/SUBSPICS1: '12', '*GPIO46': '16', GPIO9/TOUCH9/ADC1_CH8/FSPIHD/SUBSPIHD: '17', GPIO13/TOUCH13/ADC2_CH2/FSPIQ/FSPIIO7/SUBSPIQ: '21', GPIO14/TOUCH14/ADC2_CH3/FSPIWP/FSPIDQS/SUBSPIWP: '22', GPIO21: '23', '*GPIO45': '26', SPIIO6/GPIO35/FSPID/SUBSPID: '28', SPIIO7/GPIO36/FSPICLK/SUBSPICLK: '29', SPIDQS/GPIO37/FSPIQ/SUBSPIQ: '30', GPIO38/FSPIWP/SUBSPIWP: '31', MTCK/GPIO39/CLK_OUT3/SUBSPICS1: '32', MTDO/GPIO40/CLK_OUT2: '33', MTDI/GPIO41/CLK_OUT1: '34', MTMS/GPIO42: '35', U0RXD/GPIO44/CLK_OUT2: '36', U0TXD/GPIO43/CLK_OUT1: '37'}
 - ref: U14
   value: BM1366
   footprint: BM1366
+  pin_count: 30
+  nc_pins: {ADDR0: '10', ADDR1: '11', PIN_MODE: '18', INV_CLKO: '19', CO: '20', CLKO: '21', RI: '22', BO: '23', NRSTO: '24'}
 - ref: U2
   value: TXB0104RGYR
   footprint: TXB0104
   digikey: 296-21930-1-ND
   partno: TXB0104RGYR
+  pin_count: 19
+  nc_pins: {NC@6: '6', NC@9: '9'}
 - ref: U5
   value: MCP1824
   footprint: SOT-23-5
   partno: MCP1824T-1802E/OT
   digikey: MCP1824T-1802E/OTCT-ND
+  pin_count: 5
+  nc_pins: {PG: '4'}
 - ref: U6
   value: MCP1824
   footprint: SOT-23-5
   partno: MCP1824T-0802E/OT
   digikey: MCP1824T-0802E/OTCT-ND
+  pin_count: 5
+  nc_pins: {PG: '4'}
 - ref: U7
   value: EMC2101
   footprint: TSSOP-8
   digikey: EMC2101-R-ACZL-CT-ND
   partno: EMC2101-R-ACZL-TR
+  pin_count: 8
+  nc_pins: {DP: '2', DN: '3'}
 - ref: U8
   value: INA260
   footprint: TSSOP-16
   partno: INA260AIPW
   digikey: 296-45218-5-ND
+  pin_count: 16
+  nc_pins: {ALERT: '7', NC: '13'}
 - ref: U9
   value: TPS40305
   footprint: TPS40305
   digikey: 296-37445-1-ND
   partno: TPS40305DRCR
+  pin_count: 11
 - ref: Y1
   value: 32.768kHz
   footprint: SC32S-7PF20PPM

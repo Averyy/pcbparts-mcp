@@ -51,9 +51,11 @@ components:
 - ref: J1
   value: JTAG
   footprint: 1X6
+  pin_count: 6
 - ref: J2
   value: 1x6 header
   footprint: 1X6
+  pin_count: 6
 - ref: J3
   value: U.FL
   footprint: U.FL_Molex_MCRF_73412-0110_Vertical
@@ -79,6 +81,7 @@ components:
 - ref: U1
   value: RF430FRL152
   footprint: RF430FRL152H
+  pin_count: 25
 nets:
 - name: /ADC0
   pins: [J2.6, U1.13]

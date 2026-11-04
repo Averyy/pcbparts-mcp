@@ -9,6 +9,7 @@ components:
 - ref: ANT1
   value: U.FL-R-SMT-1
   footprint: U-FL3P-SMD-2.6X2.6X1.0MM
+  pin_count: 3
 - ref: C1
   value: 100nF
   footprint: '0402'
@@ -295,9 +296,11 @@ components:
   value: CJ2102
   footprint: SOT-323
   description: 'IRLL014:'
+  pin_count: 3
 - ref: Q8
   value: CJ2101
   footprint: SOT-323
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0402'
@@ -458,51 +461,71 @@ components:
 - ref: S1
   value: '323030226'
   footprint: SHIELD_CLIP
+  pin_count: 5
 - ref: S2
   value: '323030226'
   footprint: SHIELD_CLIP
+  pin_count: 5
 - ref: S3
   value: '323030226'
   footprint: SHIELD_CLIP
+  pin_count: 5
 - ref: S4
   value: '323030226'
   footprint: SHIELD_CLIP
+  pin_count: 5
 - ref: S5
   value: '323030226'
   footprint: SHIELD_CLIP
+  pin_count: 5
 - ref: S6
   value: '323030226'
   footprint: SHIELD_CLIP
+  pin_count: 5
 - ref: U1
   value: SX1302IMLTRT
   footprint: QFN68-0.35-7X7X0.75MM
+  pin_count: 69
+  nc_pins: {RADIO_CTRL1: '11', RADIO_CTRL5: '17', RADIO_CTRL6: '22', RADIO_CTRL7: '26', RADIO_CTRL8: '27', RADIO_CTRL10: '29', RADIO_CTRL11: '31', GPIO11: '50', GPIO10: '51', GPIO9: '52', GPIO6: '57', GPIO5: '58', GPIO3: '60', GPIO1: '64'}
 - ref: U10
   value: HDF866A3-S6
   footprint: FILTER6P-1.1-3X3X1.3MM
+  pin_count: 6
 - ref: U13
   value: STTS751
   footprint: UDFN-6L
+  pin_count: 6
 - ref: U2
   value: HDF866A3-S6
   footprint: FILTER6P-1.1-3X3X1.3MM
+  pin_count: 6
 - ref: U5
   value: SX1250IMLTRT
   footprint: QFN24G-0.5-4X4MM
+  pin_count: 25
+  nc_pins: {XTB: '4'}
 - ref: U6
   value: MP2161GJ
   footprint: TSOT23-8
+  pin_count: 8
 - ref: U7
   value: SX1250IMLTRT
   footprint: QFN24G-0.5-4X4MM
+  pin_count: 25
+  nc_pins: {VR_PA: '1', XTB: '4', RFO: '24'}
 - ref: U8
   value: HDF866A3-S6
   footprint: FILTER6P-1.1-3X3X1.3MM
+  pin_count: 6
 - ref: U9
   value: SKY66420-11
   footprint: MODULE16P-0.5-3X3X0.75MM
+  pin_count: 17
+  nc_pins: {TX_ALT: '3', NC: '14'}
 - ref: X1
   value: DSB221SDN
   footprint: X4-SMD-2.5X2.0X1.0MM
+  pin_count: 4
 - ref: X3
   value: 2x1 header
   footprint: X2-SMD-3.2X1.5X0.55MM

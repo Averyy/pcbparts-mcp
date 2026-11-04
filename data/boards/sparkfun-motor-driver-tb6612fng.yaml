@@ -31,14 +31,17 @@ components:
 - ref: JP1
   value: 1x8 header
   footprint: 1X08
+  pin_count: 8
 - ref: JP2
   value: 1x8 header
   footprint: 1X08
+  pin_count: 8
 - ref: U1
   value: TB6612FNG
   footprint: SSOP24
   prod_id: IC-09363
   description: Toshiba 1A dual motor driver IC-09363
+  pin_count: 24
 nets:
 - name: A01
   pins: [JP1.5, U1.A01@1, U1.A01@2]

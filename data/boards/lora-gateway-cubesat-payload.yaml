@@ -56,6 +56,8 @@ components:
   value: 56pF
   footprint: '0402'
   mpn: GCM1555C1H560FA16D
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C1104
   value: 56pF
   footprint: '0402'
@@ -94,6 +96,8 @@ components:
   value: 56pF
   footprint: '0402'
   mpn: GCM1555C1H560FA16D
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: C1208
   value: 10nF
   footprint: '0402'
@@ -625,10 +629,14 @@ components:
   value: 2x26 header
   footprint: 2X26
   mpn: ESQ-126-39-G-D
+  pin_count: 52
+  nc_pins: {Pin_2: '2', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_14: '14', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18', Pin_19: '19', Pin_20: '20', Pin_21: '21', Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_25: '25', Pin_26: '26', Pin_27: '27', Pin_28: '28', Pin_29: '29', Pin_30: '30', Pin_31: '31', Pin_32: '32', Pin_33: '33', Pin_34: '34', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39', Pin_40: '40', Pin_41: '41', Pin_42: '42', Pin_43: '43', Pin_44: '44', Pin_45: '45', Pin_46: '46', Pin_47: '47', Pin_48: '48', Pin_49: '49', Pin_50: '50', Pin_51: '51', Pin_52: '52'}
 - ref: CSKB-H402
   value: 2x26 header
   footprint: 2X26
   mpn: ESQ-126-39-G-D
+  pin_count: 52
+  nc_pins: {Pin_2: '2', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_13: '13', Pin_14: '14', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18', Pin_19: '19', Pin_20: '20', Pin_21: '21', Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_27: '27', Pin_28: '28', Pin_33: '33', Pin_34: '34', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39', Pin_40: '40', Pin_41: '41', Pin_42: '42', Pin_43: '43', Pin_44: '44', Pin_45: '45', Pin_46: '46', Pin_47: '47', Pin_48: '48', Pin_49: '49', Pin_50: '50', Pin_51: '51', Pin_52: '52'}
 - ref: D1101
   value: LXES1UTAA1-157
   footprint: SOD-882
@@ -705,18 +713,26 @@ components:
   footprint: Molex_PicoBlade_53261-1471
   mpn: '532611471'
   description: PicoBlade-14 SMD connector
+  pin_count: 15
+  nc_pins: {P13_UART.RX: '1', P13_UART.TX: '2', PPS: '4', I2C.SDA: '6', I2C.SCL: '7', NC@12: '12', NC@13: '13'}
 - ref: J501
   value: USB-C
   footprint: USB-C
   description: USB 2.0-only 16P Type-C Receptacle connector
+  pin_count: 17
+  nc_pins: {CC1: A5, SBU1: A8, CC2: B5, SBU2: B8}
 - ref: J502
   value: Micro_SD_Card_Det2
   footprint: microSD_HC_Hirose_DM3AT-SF-PEJM5
   description: Micro SD Card Socket with two card detection pins
+  pin_count: 11
+  nc_pins: {DET_B: '9', DET_A: '10', SHIELD@11: '11'}
 - ref: J503
   value: USB-C
   footprint: USB-C
   description: USB 2.0-only 16P Type-C Receptacle connector
+  pin_count: 17
+  nc_pins: {D+@A6: A6, D-@A7: A7, SBU1: A8, D+@B6: B6, D-@B7: B7, SBU2: B8}
 - ref: L1001
   value: 15uH
   footprint: '1008'
@@ -806,11 +822,13 @@ components:
   footprint: TSOT-23
   mpn: PMV15ENEA
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: Q1602
   value: N-channel MOSFET
   footprint: TSOT-23
   mpn: PMV15ENEA
   description: N-MOSFET transistor, gate/source/drain
+  pin_count: 3
 - ref: R1001
   value: 47kohm
   footprint: '0402'
@@ -1143,11 +1161,13 @@ components:
   footprint: R_Array_Convex
   mpn: YC164-FR-0733RL
   description: 4 resistor network, parallel topology, split
+  pin_count: 8
 - ref: RN702
   value: 33ohm
   footprint: R_Array_Convex
   mpn: YC164-FR-0733RL
   description: 4 resistor network, parallel topology, split
+  pin_count: 8
 - ref: SW201
   value: tactile switch
   footprint: SW_Push_1P1T_NO_Vertical_Wuerth_434133025816
@@ -1155,184 +1175,246 @@ components:
   value: switch
   footprint: SW_DIP_SPSTx03_Slide_KingTek_DSHP03TJ_W5.25mm_P1.27mm_JPin
   description: 3x DIP Switch, Single Pole Single Throw (SPST) switch, small symbol
+  pin_count: 6
 - ref: U1001
   value: SX1261IMLTRT
   footprint: QFN-24-1EP
   description: 150 MHz to 960 MHz Low Power Long Range Transceiver, 14dBm output power
+  pin_count: 25
+  nc_pins: {XTB: '4', DIO3: '6', RFO: '23', VR_PA: '24'}
 - ref: U1101
   value: 74AHC1G08
   footprint: SOT-23-5
   mpn: SN74AHC1G08DCK3
   description: Single AND Gate, Low-Voltage CMOS
+  pin_count: 5
 - ref: U1102
   value: BGS12P2L6
   footprint: Infineon_PG-TSNP-6-10
   description: SPDT DC-6GHz switch, 45dB isolation at 960MHz, PG-TSNP-6-10, high power
+  pin_count: 6
 - ref: U1103
   value: SN74LVC1G00DBV
   footprint: SOT-23-5
   mpn: SN74LVC1G00DBVR
   description: Single NAND Gate, Low-Voltage CMOS, SOT-23
+  pin_count: 5
 - ref: U1104
   value: SN74LVC1G14DBV
   footprint: SOT-23-5
   mpn: SN74LVC1G14DBVR
   description: Single Schmitt NOT Gate, Low-Voltage CMOS, SOT-23
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U1201
   value: B4377
   footprint: Filter_1411-5
   mpn: B39871B4377P810
   description: Low-loss SAW RF filter 50 Ohm 866.50 MHz 7 MHz BW
+  pin_count: 5
 - ref: U1202
   value: CMX90A004
   footprint: QFN-16-1EP
   mpn: CMX90A004
   description: 860-960 MHz 2 Watt GaAs HBT Power Amplifier
+  pin_count: 17
 - ref: U1203
   value: TPS22917DBV
   footprint: SOT-23-6
   description: "1V to 5.5V, 2A, 80m\u03A9 Ultra-Low Leakage Load Switch, SOT23-6"
+  pin_count: 6
+  nc_pins: {CT: '4'}
 - ref: U1401
   value: SCN-3-13+
   footprint: Mini-Circuits_FV1206-1
   mpn: SCN-3-13+
   description: Power Splitter/Combiner 3 Way-0 deg 50 Ohm 750 to 1325 MHz
+  pin_count: 6
 - ref: U1402
   value: B4377
   footprint: Filter_1411-5
   mpn: B39871B4377P810
   description: Low-loss SAW RF filter 50 Ohm 866.50 MHz 7 MHz BW
+  pin_count: 5
 - ref: U1403
   value: B4377
   footprint: Filter_1411-5
   mpn: B39871B4377P810
   description: Low-loss SAW RF filter 50 Ohm 866.50 MHz 7 MHz BW
+  pin_count: 5
 - ref: U1404
   value: QPL9095
   footprint: DFN-8-1EP
   mpn: QPL9095SR
   description: Ultra Low-Noise, Bypass LNA, bypass mode, 22 dB gain, +33 dBm OIP3, and 0.6 dB
+  pin_count: 9
 - ref: U1601
   value: LM74700
   footprint: SOT-23-6
   description: Low Iq reverse battery protection ideal diode controller, SOT-23-6
+  pin_count: 6
 - ref: U1602
   value: LM74700
   footprint: SOT-23-6
   description: Low Iq reverse battery protection ideal diode controller, SOT-23-6
+  pin_count: 6
 - ref: U1701
   value: TPS259474x
   footprint: Texas_VQFN-10-HR
   description: True Reverse Current Blocking eFuse with Input Reverse Polarity Protection
+  pin_count: 10
 - ref: U1702
   value: TLA2024
   footprint: Texas_X2QFN-10
   mpn: TLA2024IRUGR
   description: 12-bit I2C ADC, Sigma-Delta, X2QFN-10
+  pin_count: 10
+  nc_pins: {NC: '2', AIN2: '6', AIN3: '7'}
 - ref: U1703
   value: TPS22917DBV
   footprint: SOT-23-6
   description: "1V to 5.5V, 2A, 80m\u03A9 Ultra-Low Leakage Load Switch, SOT23-6"
+  pin_count: 6
+  nc_pins: {CT: '4'}
 - ref: U1704
   value: TPS259474x
   footprint: Texas_VQFN-10-HR
   description: True Reverse Current Blocking eFuse with Input Reverse Polarity Protection
+  pin_count: 10
 - ref: U1801
   value: TPS62912
   footprint: Texas_RPU0010A_VQFN-HR-10
   description: 2.2MHz or 1MHz, 2A, Low Noise, Low Ripple, Buck Converter with Integrated
+  pin_count: 10
+  nc_pins: {PG: '5'}
 - ref: U1802
   value: TPS62912
   footprint: Texas_RPU0010A_VQFN-HR-10
   description: 2.2MHz or 1MHz, 2A, Low Noise, Low Ripple, Buck Converter with Integrated
+  pin_count: 10
 - ref: U1901
   value: TPS62912
   footprint: Texas_RPU0010A_VQFN-HR-10
   description: 2.2MHz or 1MHz, 2A, Low Noise, Low Ripple, Buck Converter with Integrated
+  pin_count: 10
 - ref: U1902
   value: TPS73601DBV
   footprint: SOT-23-5
   description: Cap free NMOS 400mA Low Drop Adjustable Out Regulator, SOT-23-5
+  pin_count: 5
 - ref: U1903
   value: LP5912-3.3
   footprint: WSON-6-1EP
   description: 500-mA Ultra-Low-Noise Low-IQ LDO, 3.3V, WSON-6
+  pin_count: 7
+  nc_pins: {NC: '2'}
 - ref: U1904
   value: LP5912-1.8
   footprint: WSON-6-1EP
   description: 500-mA Ultra-Low-Noise Low-IQ LDO, 1.8V, WSON-6
+  pin_count: 7
+  nc_pins: {NC: '2'}
 - ref: U201
   value: TMP117xxDRV
   footprint: WSON-6-1EP
   description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
+  pin_count: 6
+  nc_pins: {ALERT: '3'}
 - ref: U202
   value: TMP117xxDRV
   footprint: WSON-6-1EP
   description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
+  pin_count: 6
+  nc_pins: {ALERT: '3'}
 - ref: U203
   value: TMP117xxDRV
   footprint: WSON-6-1EP
   description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
+  pin_count: 6
+  nc_pins: {ALERT: '3'}
 - ref: U204
   value: TMP117xxDRV
   footprint: WSON-6-1EP
   description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
+  pin_count: 6
+  nc_pins: {ALERT: '3'}
 - ref: U301
   value: Compute_Module_5
   footprint: CM5
+  pin_count: 201
+  nc_pins: {Ethernet_Pair3_P: '3', Ethernet_Pair1_P: '4', Ethernet_Pair3_N: '5', Ethernet_Pair1_N: '6', Ethernet_Pair2_N: '9', Ethernet_Pair0_N: '10', Ethernet_Pair2_P: '11', Ethernet_Pair0_P: '12', nEthernet_nLED3: '15', Fan_tacho: '16', nEthernet_nLED2: '17', Ethernet_SYNC_OUT: '18', Fan_PWM: '19', ID_SC: '35', ID_SD: '36', SD_DAT5: '64', SD_DAT4: '68', SD_DAT7: '70', SD_DAT6: '72', SD_VDD_Override: '73', I2C_SCL0: '80', I2C_SDA0: '82', CM5_1.8V@88: '88', CM5_1.8V@90: '90', nPI_LED_nPWR: '95', CAM_GPIO0: '97', CAM_GPIO1: '100', USB_OTG_ID: '101', nPCIe_CLK_nREQ: '102', PCIE_DET_nWAKE: '104', PCIE_PWR_EN: '106', nPCIe_nRST: '109', PCIe_CLK_P: '110', VBUS_EN: '111', PCIe_CLK_N: '112', MIPI0_D0_N: '115', PCIe_RX_P: '116', MIPI0_D0_P: '117', PCIe_RX_N: '118', MIPI0_D1_N: '121', PCIe_TX_P: '122', MIPI0_D1_P: '123', PCIe_TX_N: '124', MIPI0_C_N: '127', USB3-0-RX_N: '128', MIPI0_C_P: '129', USB3-0-RX_P: '130', MIPI0_D2_N: '133', USB3-0-DP: '134', MIPI0_D2_P: '135', USB3-0-DM: '136', MIPI0_D3_N: '139', USB3-0-TX_N: '140', MIPI0_D3_P: '141', USB3-0-TX_P: '142', HDMI1_HOTPLUG: '143', HDMI1_SDA: '145', HDMI1_TX2_P: '146', HDMI1_SCL: '147', HDMI1_TX2_N: '148', HDMI1_CEC: '149', HDMI0_CEC: '151', HDMI1_TX1_P: '152', HDMI0_HOTPLUG: '153', HDMI1_TX1_N: '154', USB3-1-RX_N: '157', HDMI1_TX0_P: '158', USB3-1-RX_P: '159', HDMI1_TX0_N: '160', USB3-1-DP: '163', HDMI1_CLK_P: '164', USB3-1-DM: '165', HDMI1_CLK_N: '166', USB3-1-TX_N: '169', HDMI0_TX2_P: '170', USB3-1-TX_P: '171', HDMI0_TX2_N: '172', MIPI1_D0_N: '175', HDMI0_TX1_P: '176', MIPI1_D0_P: '177', HDMI0_TX1_N: '178', MIPI1_D1_N: '181', HDMI0_TX0_P: '182', MIPI1_D1_P: '183', HDMI0_TX0_N: '184', MIPI1_C_N: '187', HDMI0_CLK_P: '188', MIPI1_C_P: '189', HDMI0_CLK_N: '190', MIPI1_D2_N: '193', MIPI1_D3_N: '194', MIPI1_D2_P: '195', MIPI1_D3_P: '196', HDMI0_SDA: '199', HDMI0_SCL: '200'}
 - ref: U401
   value: MCP2558FD-xMF
   footprint: DFN-8-1EP
   description: CAN FD Transceiver with Silent Mode, up to 8 Mbps, DFN-8
+  pin_count: 9
 - ref: U402
   value: MCP2518FD-xQBB
   footprint: DFN-14-1EP
   description: CAN FD Controller with SPI Interface, up to 8 Mbps, Vdd 2.7..5.5V, functional
+  pin_count: 15
+  nc_pins: {CLKO/SOF: '3', OSC2: '5', nINT1/GPIO1: '8', nINT0/GPIO0/XSTBY: '9'}
 - ref: U403
   value: MCP2558FD-xMF
   footprint: DFN-8-1EP
   description: CAN FD Transceiver with Silent Mode, up to 8 Mbps, DFN-8
+  pin_count: 9
 - ref: U404
   value: MCP2518FD-xQBB
   footprint: DFN-14-1EP
   description: CAN FD Controller with SPI Interface, up to 8 Mbps, Vdd 2.7..5.5V, functional
+  pin_count: 15
+  nc_pins: {CLKO/SOF: '3', OSC2: '5', nINT1/GPIO1: '8', nINT0/GPIO0/XSTBY: '9'}
 - ref: U501
   value: TPS22917DBV
   footprint: SOT-23-6
   description: "1V to 5.5V, 2A, 80m\u03A9 Ultra-Low Leakage Load Switch, SOT23-6"
+  pin_count: 6
+  nc_pins: {CT: '4'}
 - ref: U502
   value: USBLC6-2
   footprint: SOT-23-6
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-23-6
+  pin_count: 6
 - ref: U701
   value: SX1302IMLTRT
   footprint: Semtech SX1302 QFN-68-1EP_7x7mm_P0.35mm_EP5.49x5.49mm_ThermalVias
   mpn: SX1302IMLTRT
   description: LoRa Gateway Baseband Transceiver
+  pin_count: 69
+  nc_pins: {RADIO_A_CTRL_1/EN_LNA: '11', RADIO_A_CTRL_5/PA_GAIN_1: '17', RADIO_B_CTRL_6/EN_LDO: '22', RADIO_B_CTRL_7/EN_LNA: '26', RADIO_B_CTRL_8/EN_PA: '27', RADIO_B_CTRL_10/PA_GAIN_0: '29', RADIO_B_CTRL_11/PA_GAIN_1: '31', GPIO_9: '52', GPIO_5: '58', GPIO_3: '60', GPIO_1: '64'}
 - ref: U801
   value: SX1250IMLTRT
   footprint: QFN-24-1EP
   mpn: SX1250IMLTRT
   description: Multi-band, Sub-GHz, RF Front End, LoRa modem
+  pin_count: 25
+  nc_pins: {XTB: '4'}
 - ref: U901
   value: SX1250IMLTRT
   footprint: QFN-24-1EP
   mpn: SX1250IMLTRT
   description: Multi-band, Sub-GHz, RF Front End, LoRa modem
+  pin_count: 25
+  nc_pins: {VR_PA: '1', XTB: '4', RFO: '24'}
 - ref: X601
   value: 32 MHz 1.8 V TCXO
   footprint: Oscillator_SMD_SeikoEpson_TG2520SMN-xxx-xxxxxx-4Pin
   mpn: TG2520SMN 32.0000M-ECGNNM3
+  pin_count: 4
+  nc_pins: {NC: '1'}
 - ref: Y401
   value: SG-210STF
   footprint: Oscillator_SMD_SeikoEpson_SG210-4Pin
   mpn: SG-210STF 40.0000ML
   description: CMOS Crystal Oscillator SPXO
+  pin_count: 4
 - ref: Y402
   value: SG-210STF
   footprint: Oscillator_SMD_SeikoEpson_SG210-4Pin
   mpn: SG-210STF 40.0000ML
   description: CMOS Crystal Oscillator SPXO
+  pin_count: 4
 nets:
 - name: +1V2_D
   pins:

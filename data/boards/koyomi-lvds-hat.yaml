@@ -51,10 +51,12 @@ components:
   value: DLP2ADN121HL4L
   footprint: Murata_DLP2ADN121HL4L
   description: EMI 4-inductor filter
+  pin_count: 8
 - ref: FL2
   value: DLP2ADN121HL4L
   footprint: Murata_DLP2ADN121HL4L
   description: EMI 4-inductor filter
+  pin_count: 8
 - ref: IC1
   value: SN75LVDS83B
   footprint: TSSOP56
@@ -62,18 +64,25 @@ components:
   mpn: SN75LVDS83B
   digikey: 296-24529-6-ND
   description: 5/0 Driver LVDS 56-BGA MICROSTAR JUNIOR (7.0x4.5)
+  pin_count: 56
+  nc_pins: {Y3P: '37', Y3M: '38'}
 - ref: J1
   value: RPi_GPIO
   footprint: Samtec_HLE-120-02-XXX-DV-BE-XX-XX
+  pin_count: 40
+  nc_pins: {BCM27: '13', BCM22: '15', BCM25: '22', BCM26: '37'}
 - ref: J2
   value: 20374-R30E-31
   footprint: I-PEX_20374-R30E-31
   manufacturer: I-PEX
   mpn: 20374-R30E-31
   description: 30 POS Right Angle SMD 0.4 mm pitch vertical mating type micro-coaxial
+  pin_count: 32
+  nc_pins: {'3': '3', '10': '10', '11': '11', '12': '12', '13': '13', '14': '14', '15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '30': '30'}
 - ref: J4
   value: Qwiic connector
   footprint: JST_SH_SM04B-SRSS-TB
+  pin_count: 5
 - ref: R1
   value: 4.7kohm
   footprint: '0603'
@@ -86,29 +95,38 @@ components:
   value: 47ohm
   footprint: R_Array_Convex
   description: 4 resistor network, parallel topology
+  pin_count: 8
 - ref: RN2
   value: 47ohm
   footprint: R_Array_Convex
   description: 4 resistor network, parallel topology
+  pin_count: 8
+  nc_pins: {R1.1: '1', R1.2: '8'}
 - ref: RN3
   value: 47ohm
   footprint: R_Array_Convex
   description: 4 resistor network, parallel topology
+  pin_count: 8
 - ref: RN4
   value: 47ohm
   footprint: R_Array_Convex
   description: 4 resistor network, parallel topology
+  pin_count: 8
 - ref: RN5
   value: 47ohm
   footprint: R_Array_Convex
   description: 4 resistor network, parallel topology
+  pin_count: 8
 - ref: RN6
   value: 47ohm
   footprint: R_Array_Convex
   description: 4 resistor network, parallel topology
+  pin_count: 8
+  nc_pins: {R1.1: '1', R1.2: '8'}
 - ref: U1
   value: AP2114H-2.5
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 nets:
 - name: +2V5
   pins:

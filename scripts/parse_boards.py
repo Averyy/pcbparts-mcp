@@ -51,6 +51,8 @@ class Component:
     footprint: str
     package: str = ""       # raw package name before normalization
     attributes: dict[str, str] = field(default_factory=dict)  # PROD_ID, MPN, specs, etc.
+    pin_count: int = 0      # the part's pins (pads), from its footprint or symbol; 0 = not known
+    nc_pins: dict[str, str] = field(default_factory=dict)  # pins on no net: {pin label: pad number}
 
 
 @dataclass
@@ -2154,6 +2156,65 @@ def _apply_net_pin_fixes(slug: str, nets: list[Net]) -> int:
     return count
 
 
+def assign_pin_info(slug: str, components: list[Component], nets: list[Net],
+                    part_pins: dict[str, dict[str, str]],
+                    implicit: dict[str, set[str]] | None = None) -> tuple[int, list[str]]:
+    """Set each part's pin_count and nc_pins (its pins on no net) from its full pin list.
+
+    part_pins is {ref: {pin label: pad number}}, labelled as the parser labels net pins; the labels
+    get the same cleanup and fixes as net pins here. implicit lists pins connected without a wire
+    (Eagle supply pins join the net of their name), which are never NC. A part with a net pin
+    missing from its list is left alone: the two disagree, so its NC pins can't be trusted.
+    Returns (parts set, refs whose lists disagreed).
+    """
+    connected: dict[str, set[str]] = {}
+    for net in nets:
+        for pin in net.pins:
+            ref, _, label = pin.partition(".")
+            connected.setdefault(ref, set()).add(label)
+    count = 0
+    mismatched: list[str] = []
+    for comp in components:
+        pins = part_pins.get(comp.ref)
+        if not pins:
+            continue
+        cleaned: dict[str, str] = {}
+        for label, pad in pins.items():
+            raw = f"{comp.ref}.{label}"
+            fixed = _NET_PIN_FIXES.get((slug, raw)) or _clean_pin_name(raw)
+            cleaned[fixed.partition(".")[2]] = pad
+        mine = connected.get(comp.ref, set())
+        if mine <= cleaned.keys():
+            on_net = {label for label in cleaned if label in mine}
+        elif mine <= set(cleaned.values()):
+            # The nets name this part's pins by pad ("U1.3"), from files that gave no pin names then
+            on_net = {label for label, pad in cleaned.items() if pad in mine}
+        else:
+            mismatched.append(comp.ref)
+            continue
+        skip = {_clean_pin_name(f"{comp.ref}.{label}").partition(".")[2]
+                for label in (implicit or {}).get(comp.ref, set())}
+        comp.pin_count = len({pad for value in cleaned.values() for pad in value.split()})
+        comp.nc_pins = {label: pad for label, pad in cleaned.items() if label not in on_net and label not in skip}
+        count += 1
+    return count, mismatched
+
+
+def pin_info_fields(pin_count: int, nc_pins: dict[str, str]) -> dict:
+    """The YAML fields for a part's pins: pin_count when it isn't a plain two-pin part, nc_pins when any."""
+    fields: dict = {}
+    if pin_count > 2 or nc_pins:
+        fields["pin_count"] = pin_count
+    if nc_pins:
+        fields["nc_pins"] = dict(sorted(nc_pins.items(), key=lambda item: _pad_sort_key(item[1])))
+    return fields
+
+
+def _pad_sort_key(pad: str) -> tuple:
+    """Pad numbers in natural order: "2" before "10", "A2" before "A10"."""
+    return tuple((0, int(part), "") if part.isdigit() else (1, 0, part) for part in re.split(r"(\d+)", pad) if part)
+
+
 # ---------------------------------------------------------------------------
 # MPN / value conflict detection
 # ---------------------------------------------------------------------------
@@ -2583,6 +2644,7 @@ def board_to_dict(board: BoardData) -> dict:
             comp: dict = {"ref": c.ref, "value": c.value, "footprint": c.footprint}
             if c.attributes:
                 comp.update(c.attributes)
+            comp.update(pin_info_fields(c.pin_count, c.nc_pins))
             d["components"].append(comp)
 
     if board.nets:
@@ -2688,18 +2750,9 @@ def _extract_key_ics_from_components(components: list[Component]) -> list[str]:
     return (mcu_ics + other_ics)[:5]
 
 
-def process_board(slug: str, board_info: dict, dry_run: bool = False,
-                  force_clone: bool = False) -> BoardData | None:
-    """Process a single board: clone → parse → write YAML."""
+def find_schematic(repo_dir: Path, board_info: dict) -> Path | None:
+    """The board's schematic (a PADS board's layout) in its cached repo."""
     fmt = board_info["format"]
-    zip_url = ""
-    if board_info["repo"].startswith("ZIP:"):
-        zip_url = "https://" + re.sub(r"^ZIP:\s*|[`\s]", "", board_info["repo"]).removeprefix("https://")
-        repo_dir = fetch_zip(zip_url, slug, force=force_clone)
-    else:
-        repo_dir = clone_repo(board_info["repo"], fmt, force=force_clone)
-
-    # Find schematic file
     sch_path = repo_dir / board_info["schematic_path"]
     if not sch_path.exists():
         parent = sch_path.parent
@@ -2714,6 +2767,105 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
         else:
             log.error("Schematic not found: %s", sch_path)
             return None
+    return sch_path
+
+
+def extract_board_pins(fmt: str, sch_path: Path, part_refs: set[str]
+                       ) -> tuple[dict[str, dict[str, str]], dict[str, set[str]]]:
+    """Every part's pins ({ref: {label: pad}}) and its implicitly connected ones, by format."""
+    if fmt == "eagle":
+        from parsers.eagle import extract_part_pins as eagle_part_pins
+        return eagle_part_pins(sch_path, part_refs)
+    if fmt == "pads":
+        from parsers.pads import extract_part_pins as pads_part_pins
+        return pads_part_pins(sch_path, part_refs)
+    if fmt.startswith("kicad"):
+        from parsers.kicad import extract_part_pins as kicad_part_pins
+        pcb_path = sch_path.with_suffix(".kicad_pcb")
+        return (kicad_part_pins(pcb_path, part_refs), {}) if pcb_path.exists() else ({}, {})
+    return {}, {}
+
+
+def merge_pin_info(slug: str, board_info: dict, dry_run: bool = False) -> tuple[int, list[str]] | None:
+    """Add pin_count and nc_pins to a board's YAML from its cached source, changing nothing else.
+
+    The YAMLs carry hand fixes a re-parse would undo, so this reads the parts and nets from the
+    YAML, the pin lists from the source, and writes the two fields into each part's lines.
+    Returns (parts with pin lists, refs whose lists disagree with the nets), or None to skip.
+    """
+    yaml_path = OUTPUT_DIR / f"{slug}.yaml"
+    if not yaml_path.exists():
+        log.warning("%s: no YAML, skipped", slug)
+        return None
+    text = yaml_path.read_text(encoding="utf-8")
+    board = yaml.safe_load(text)
+    # The YAML's source is the cache key: "org/repo" for a clone, a name for a ZIP download
+    repo_dir = CACHE_DIR / str(board.get("source", "")).replace("/", "--")
+    if not board.get("source") or not repo_dir.exists():
+        log.warning("%s: source not cached (%s), skipped", slug, repo_dir.name)
+        return None
+    sch_path = find_schematic(repo_dir, board_info)
+    if sch_path is None:
+        return None
+    components = [Component(ref=c["ref"], value=str(c.get("value", "")), footprint=str(c.get("footprint", "")))
+                  for c in board.get("components") or []]
+    nets = [Net(name=n["name"], pins=n.get("pins") or []) for n in board.get("nets") or []]
+    part_pins, implicit = extract_board_pins(board_info["format"], sch_path, {c.ref for c in components})
+    count, mismatched = assign_pin_info(slug, components, nets, part_pins, implicit)
+    fields = {c.ref: pin_info_fields(c.pin_count, c.nc_pins) for c in components}
+
+    out: list[str] = []
+    ref = None
+    in_components = False
+
+    def close_part() -> None:
+        for key, value in (fields.get(ref) or {}).items():
+            # nc_pins on one line: {I/O1: '1', I/O2: '3'}
+            dumped = yaml.dump(value, default_flow_style=True, sort_keys=False, width=10_000, allow_unicode=True)
+            out.append(f"  {key}: {dumped.removesuffix(chr(10)).removesuffix('...').strip()}")
+
+    for line in text.splitlines():
+        if in_components and (line.startswith("- ref: ") or not line.startswith((" ", "-"))):
+            close_part()
+            ref = None
+        if line == "components:":
+            in_components = True
+        elif in_components and line.startswith("- ref: "):
+            ref = str(yaml.safe_load(line[2:])["ref"])
+        elif in_components and not line.startswith((" ", "-")):
+            in_components = False
+        if in_components and ref and line.startswith(("  pin_count:", "  nc_pins:")):
+            continue  # an earlier merge's fields, written again below
+        out.append(line)
+    if in_components:
+        close_part()
+    merged = "\n".join(out) + "\n"
+
+    # Nothing else changed: the YAML reads back the same apart from the two fields
+    def without_pins(data: dict) -> dict:
+        return {**data, "components": [{k: v for k, v in c.items() if k not in ("pin_count", "nc_pins")}
+                                       for c in data.get("components") or []]}
+    if without_pins(yaml.safe_load(merged)) != without_pins(board):
+        raise RuntimeError(f"{slug}: merging pin fields changed other YAML content")
+    if not dry_run and merged != text:
+        yaml_path.write_text(merged, encoding="utf-8")
+    return count, mismatched
+
+
+def process_board(slug: str, board_info: dict, dry_run: bool = False,
+                  force_clone: bool = False) -> BoardData | None:
+    """Process a single board: clone → parse → write YAML."""
+    fmt = board_info["format"]
+    zip_url = ""
+    if board_info["repo"].startswith("ZIP:"):
+        zip_url = "https://" + re.sub(r"^ZIP:\s*|[`\s]", "", board_info["repo"]).removeprefix("https://")
+        repo_dir = fetch_zip(zip_url, slug, force=force_clone)
+    else:
+        repo_dir = clone_repo(board_info["repo"], fmt, force=force_clone)
+
+    sch_path = find_schematic(repo_dir, board_info)
+    if sch_path is None:
+        return None
 
     log.info("Parsing schematic: %s", sch_path)
 
@@ -2787,6 +2939,13 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
 
     # Apply net pin fixes
     _apply_net_pin_fixes(slug, nets)
+
+    # Each part's pin count and its pins on no net (NC), from its full pin list
+    part_pins, implicit = extract_board_pins(fmt, sch_path, {c.ref for c in components})
+    n_pins, mismatched = assign_pin_info(slug, components, nets, part_pins, implicit)
+    log.info("Pin lists for %d parts", n_pins)
+    if mismatched:
+        log.warning("Pin lists disagree with the nets, NC pins left out: %s", ", ".join(mismatched))
 
     # Check for MPN/value conflicts
     _check_mpn_conflicts(components)
@@ -2865,6 +3024,9 @@ def main():
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     parser.add_argument("--force-clone", action="store_true", help="Force re-clone repos")
     parser.add_argument("--format", "-f", help="Filter --list/--all by format (eagle, kicad7, etc.)")
+    parser.add_argument("--pins", action="store_true",
+                        help="With --board or --all: only add pin_count/nc_pins to the existing YAML "
+                             "from the cached source (keeps hand fixes)")
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -2874,6 +3036,23 @@ def main():
 
     boards = parse_boards_md()
     log.info("Loaded %d boards from BOARDS.md", len(boards))
+
+    if args.pins:
+        slugs = [args.board] if args.board else sorted(s for s, i in boards.items()
+                                                       if not args.format or i["format"] == args.format)
+        totals = [0, 0, 0]
+        for slug in slugs:
+            result = merge_pin_info(slug, boards[slug], dry_run=args.dry_run)
+            if result is None:
+                totals[2] += 1
+                continue
+            totals[0] += result[0]
+            totals[1] += len(result[1])
+            if result[1]:
+                log.warning("%s: pin lists disagree with the nets, NC pins left out: %s",
+                            slug, ", ".join(result[1]))
+        log.info("Pin lists for %d parts; %d disagree; %d boards skipped", *totals)
+        return
 
     if args.list:
         fmt_filter = args.format

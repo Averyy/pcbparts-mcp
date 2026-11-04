@@ -190,9 +190,13 @@ components:
 - ref: P6
   value: 2x10 header
   footprint: 2X10
+  pin_count: 20
+  nc_pins: {'7': '7'}
 - ref: P7
   value: MICRO-B-USB
   footprint: ZX62-B-5PA_11_CFK
+  pin_count: 5
+  nc_pins: {'4': '4'}
 - ref: P8
   value: 1x2 header
   footprint: 2X1
@@ -202,21 +206,27 @@ components:
 - ref: Q1
   value: PMV31XN
   footprint: SOT23GDS
+  pin_count: 3
 - ref: Q2
   value: PMV31XN
   footprint: SOT23GDS
+  pin_count: 3
 - ref: Q3
   value: PMV31XN
   footprint: SOT23GDS
+  pin_count: 3
 - ref: Q4
   value: PMV31XN
   footprint: SOT23GDS
+  pin_count: 3
 - ref: Q5
   value: 2N7002
   footprint: SOT23GDS
+  pin_count: 3
 - ref: Q6
   value: 2N7002
   footprint: SOT23GDS
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: SM0402
@@ -365,39 +375,57 @@ components:
 - ref: U1
   value: STM32F103CB
   footprint: LQFP-48
+  pin_count: 48
 - ref: U10
   value: MAX16054
   footprint: SOT23_6
+  pin_count: 6
+  nc_pins: {'5': '5'}
 - ref: U2
   value: NRF24L01+
   footprint: QFN20-4x4mm
+  pin_count: 20
+  nc_pins: {'9': '9'}
 - ref: U3
   value: MPU60X0
   footprint: MPU60X0
+  pin_count: 24
+  nc_pins: {'2': '2', '3': '3', '4': '4', '5': '5', '11': '11', '14': '14', '15': '15', '16': '16', '17': '17', '19': '19', '21': '21', '22': '22'}
 - ref: U4
   value: HMC5883L
   footprint: QFN16_HMC5883L
+  pin_count: 16
+  nc_pins: {'3': '3', '5': '5', '7': '7', '14': '14', '15': '15'}
 - ref: U5
   value: MS5611-01BA03
   footprint: MS5611
+  pin_count: 8
+  nc_pins: {'6': '6'}
 - ref: U6
   value: NUF2221
   footprint: SOT363
+  pin_count: 6
 - ref: U7
   value: TPS79301
   footprint: SOT23_6
+  pin_count: 6
 - ref: U8
   value: BQ24075
   footprint: QFN16
+  pin_count: 17
 - ref: U9
   value: TPS79301
   footprint: SOT23_6
+  pin_count: 6
 - ref: X1
   value: 16Mhz
   footprint: XTAL-5.0x3.2
+  pin_count: 4
 - ref: Y1
   value: CHIP_ANTENNA
   footprint: CHIP-ANT-6.5x2.2
+  pin_count: 2
+  nc_pins: {'2': '2'}
 nets:
 - name: +BATT
   pins:

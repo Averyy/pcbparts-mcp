@@ -206,21 +206,27 @@ components:
 - ref: J20
   value: 1x7 header
   footprint: 1X7
+  pin_count: 7
 - ref: J21
   value: 2x6 header
   footprint: Socket_Strip_Angled
+  pin_count: 12
 - ref: J22
   value: 2x6 header
   footprint: Socket_Strip_Angled
+  pin_count: 12
 - ref: J23
   value: 2x6 header
   footprint: Socket_Strip_Straight
+  pin_count: 12
 - ref: J24
   value: 2x6 header
   footprint: 2X6
+  pin_count: 12
 - ref: J25
   value: 2x4 header
   footprint: 2X4
+  pin_count: 8
 - ref: J26
   value: 2x1 header
   footprint: 2X1
@@ -260,6 +266,8 @@ components:
 - ref: P1
   value: pkl_USB_OTG
   footprint: Connector_USB_Micro_B_SMD
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: P2
   value: 1x2 header
   footprint: PAD_SMD
@@ -282,6 +290,7 @@ components:
   value: 10kohm
   footprint: R_Array_Convex
   pullup: /FLASH_nHLD|nRST|IO3
+  pin_count: 8
 - ref: R12
   value: 2.2kohm
   footprint: '0402'
@@ -300,9 +309,12 @@ components:
   value: 10kohm
   footprint: R_Array_Convex
   pulldown: /P2_9x
+  pin_count: 8
+  nc_pins: {'7': '7', '8': '8'}
 - ref: R17
   value: 330ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: R18
   value: 330ohm
   footprint: '0402'
@@ -314,21 +326,28 @@ components:
   value: 10kohm
   footprint: R_Array_Convex
   pullup: U1.4
+  pin_count: 8
+  nc_pins: {'7': '7', '8': '8'}
 - ref: R20
   value: 33ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: R21
   value: 33ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: R22
   value: 33ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: R23
   value: 33ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: R24
   value: 33ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: R25
   value: 10kohm
   footprint: '0402'
@@ -343,6 +362,7 @@ components:
 - ref: R4
   value: 33ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: R5
   value: 330ohm
   footprint: '0402'
@@ -377,24 +397,33 @@ components:
   value: 93C46B
   footprint: SOT-23-6
   manufacturer: 93C46B
+  pin_count: 6
 - ref: U2
   value: 3.3V
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U3
   value: 1V2
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U4
   value: FT2232H
   footprint: QFN-64-4.45mm1EP
+  pin_count: 65
+  nc_pins: {'3': '3', '19': '19', '22': '22', '26': '26', '27': '27', '28': '28', '29': '29', '30': '30', '32': '32', '33': '33', '34': '34', '36': '36', '57': '57', '58': '58', '59': '59', '60': '60'}
 - ref: U5
   value: W25Q
   footprint: SOIC-8
+  pin_count: 8
 - ref: U6
   value: ICE5LP4K
   footprint: QFN-48-1EP
+  pin_count: 49
 - ref: U7
   value: 12MHz oscillator
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {'2': '2'}
 nets:
 - name: +1V2
   pins: [C15.1, J14.2, J25.3, U3.5]

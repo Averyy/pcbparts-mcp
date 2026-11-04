@@ -18,6 +18,8 @@ components:
 - ref: -_BT_TP_+
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4'}
 - ref: C1
   value: 100nF
   footprint: C050-025X075
@@ -52,10 +54,12 @@ components:
   value: NMA
   footprint: NMA
   description: DC-DC CONVERTER
+  pin_count: 5
 - ref: DC2
   value: NMA
   footprint: NMA
   description: DC-DC CONVERTER
+  pin_count: 5
 - ref: EBOT
   value: 1x1 header
   footprint: 1X01
@@ -71,15 +75,21 @@ components:
 - ref: IC1
   value: HCPL3120
   footprint: DIL08
+  pin_count: 6
 - ref: IC2
   value: HCPL3120
   footprint: DIL08
+  pin_count: 6
 - ref: R1
   value: 220ohm
   footprint: '0207'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R2
   value: 220ohm
   footprint: '0207'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R3
   value: 4.7ohm
   footprint: 0309

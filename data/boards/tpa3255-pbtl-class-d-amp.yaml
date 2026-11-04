@@ -172,21 +172,26 @@ components:
 - ref: D3
   value: LED
   footprint: IC4_WP934EB_2GD_KNB
+  pin_count: 4
 - ref: D4
   value: schottky
   footprint: SOD-123
 - ref: D5
   value: LED
   footprint: IC4_WP934EB_2GD_KNB
+  pin_count: 4
 - ref: D6
   value: LED
   footprint: IC4_WP934EB_2GD_KNB
+  pin_count: 4
 - ref: J1
   value: Barrel_Jack_Switch
   footprint: BarrelJack_GCT_DCJ200-10-A_Horizontal
+  pin_count: 3
 - ref: J2
   value: AC3FAH2-XLR
   footprint: AC3FAH2-F-XLR
+  pin_count: 4
 - ref: J3
   value: 1x2 screw terminal
   footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08
@@ -199,9 +204,11 @@ components:
 - ref: J6
   value: AC3MAH-AU-PRE
   footprint: AC3MAH-AU-PRE_AMP
+  pin_count: 4
 - ref: J7
   value: AC3FAH2-XLR
   footprint: AC3FAH2-F-XLR
+  pin_count: 4
 - ref: L1
   value: 100uH
   footprint: MWPY8040
@@ -221,18 +228,23 @@ components:
 - ref: Q1
   value: DMP4015SK3
   footprint: TO-252
+  pin_count: 4
 - ref: Q2
   value: DMN10H220L
   footprint: SOT-23
+  pin_count: 3
 - ref: Q3
   value: DMN10H220L
   footprint: SOT-23
+  pin_count: 3
 - ref: Q4
   value: DMN10H220L
   footprint: SOT-23
+  pin_count: 3
 - ref: Q5
   value: DMN10H220L
   footprint: SOT-23
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: 0805
@@ -413,36 +425,48 @@ components:
   value: '500'
   footprint: Potentiometer_Bourns_3296W_Vertical
   description: Trim-potentiometer
+  pin_count: 3
 - ref: S1
   value: PB400EEQX
   footprint: SW_PB400EEQX
   manufacturer: E-Switch
+  pin_count: 4
 - ref: S2
   value: PB400OAQX
   footprint: SW_PB400EEQX
   manufacturer: E-Switch
+  pin_count: 4
 - ref: U1
   value: TPA3255DDV
   footprint: SOP-44
   manufacturer: Texas Instruments
+  pin_count: 44
+  nc_pins: {OSC_IOM: '9', OSC_IOP: '10'}
 - ref: U2
   value: L78L12
   footprint: SOT-89-3
+  pin_count: 3
 - ref: U3
   value: L78L33_SO8
   footprint: SOIC-8
+  pin_count: 8
+  nc_pins: {NC@4: '4', NC@5: '5'}
 - ref: U4
   value: AD8512
   footprint: SO-8
+  pin_count: 8
 - ref: U5
   value: XL7015
   footprint: XL7015E1
+  pin_count: 6
 - ref: U6
   value: AD8512
   footprint: SO-8
+  pin_count: 8
 - ref: U7
   value: AD8512
   footprint: SO-8
+  pin_count: 8
 nets:
 - name: +12V
   pins:

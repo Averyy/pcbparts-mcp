@@ -109,10 +109,12 @@ components:
   value: LMC6062
   footprint: DIP-8
   description: Precision CMOS Dual Micropower Operational Amplifier, DIP-8/SOIC-8
+  pin_count: 8
 - ref: U2
   value: LM358
   footprint: SO-8
   description: Low-Power, Dual Operational Amplifiers, DIP-8/SOIC-8/TO-99-8
+  pin_count: 8
 - ref: V31
   value: Nuclear-Radiation_Detector
   footprint: IonizationChamberSensor

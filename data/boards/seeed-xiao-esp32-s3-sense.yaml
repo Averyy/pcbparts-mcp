@@ -21,6 +21,7 @@ components:
 - ref: ANT1
   value: U.FL-R-SMT-1
   footprint: U-FL3P-SMD-2.6X2.6X1.0MM
+  pin_count: 3
 - ref: BAT0
   value: VBAT
   footprint: TP-80X40MIL
@@ -111,12 +112,16 @@ components:
 - ref: J3
   value: DF40C-30DP-0.4V
   footprint: BTB30-0.4-7.52X2.97X1.14
+  pin_count: 34
+  nc_pins: {'20': '20', '32': '32'}
 - ref: K1
   value: SKTAAAE010/311021459
   footprint: SW4-SMD-2.8-2.6X1.6X0.53MM
+  pin_count: 4
 - ref: K2
   value: SKTAAAE010/311021459
   footprint: SW4-SMD-2.8-2.6X1.6X0.53MM
+  pin_count: 4
 - ref: L1
   value: 2nH
   footprint: '0201'
@@ -132,6 +137,7 @@ components:
 - ref: Q1
   value: LP0404N3T5G
   footprint: PMOS_1.0_0.6_0.35MM
+  pin_count: 3
 - ref: R1
   value: 5.1kohm
   footprint: '0201'
@@ -176,24 +182,33 @@ components:
 - ref: U1
   value: ESP32-S3R8
   footprint: QFN56G-0.4-7X7MM
+  pin_count: 57
+  nc_pins: {SPICS1: '28', GPIO33: '38', GPIO34: '39', GPIO35: '40', GPIO36: '41', GPIO37: '42', GPIO45: '51', GPIO46: '52'}
 - ref: U3
   value: SGM6029CYG
   footprint: BGA6-0.35-0.745X10.95X0.4MM
+  pin_count: 6
 - ref: U4
   value: SGM40567-4.2
   footprint: WLCSP-0.4-0.92X1.16X0.4MM
+  pin_count: 6
 - ref: U5
   value: GD25Q64ENIGR
   footprint: USON8-0.8-4X3MM
+  pin_count: 8
 - ref: U9
   value: XIAO-Add-On
   footprint: XIAO-14P-Add-On
+  pin_count: 14
 - ref: USB0
   value: UBF31-0171
   footprint: USB2.0-TYPE-C
+  pin_count: 18
+  nc_pins: {A8/SBU1: A8, B8/SBU2: B8}
 - ref: X1
   value: 40MHz/306011364
   footprint: X4-SMD-1.6X1.2X0.35MM
+  pin_count: 4
 nets:
 - name: /03 XIAO ESP32-S3-Sense/D0/A0
   pins: [U1.GPIO1, U9.D0@1]

@@ -98,6 +98,7 @@ components:
   value: FSV1045V
   footprint: TO277-3
   mpn: FSV1045V
+  pin_count: 3
 - ref: DSW1
   value: DIP-SW-CHS-01TB
   footprint: DSS-CHS-01TB
@@ -115,10 +116,14 @@ components:
   footprint: J-5-0065-FOS-MICROUSB10118192
   mpn: 10118192-0001LF
   description: "CONN. USB F/90\xB0 TYPE MICRO-B C.S. 10118192-0001LF FCI SMT"
+  pin_count: 6
+  nc_pins: {ID: '4'}
 - ref: J20
   value: MDT420E01001
   footprint: J-75-0050-MOS-M2-E
   description: "CONN. M.2 75P M/90\xB0 P=0.5 MDT420E01001 AMPHENOL SMT"
+  pin_count: 67
+  nc_pins: {NC1: '1', SIM_VCC: '8', SIM_RST: '10', SIM_IO: '12', SIM_CLK: '14', NC15: '15', SIM_NPRESENT: '16', NC17: '17', NC19: '19', NC21: '21', NC23: '23', NC32: '32', NC34: '34', NC35: '35', NC36: '36', NC37: '37', NC41: '41', NC43: '43', NC44: '44', AUX1: '46', NC47: '47', AUX2: '48', NC49: '49', AUX3: '50', AUX4: '52', NC53: '53', NC55: '55', NC59: '59', NC61: '61', NC63: '63', NC65: '65', NC66: '66', NC68: '68', NC69: '69', NC75: '75'}
 - ref: J23
   value: JST PH 2-pin
   footprint: J-2-0200-MOS-S2B
@@ -129,6 +134,7 @@ components:
   footprint: J-4-0100-MOS-SH
   mpn: SM04B-SRSS-TBT(LF)(SN)
   description: CONN. SH 4P M/D P=1 SM04B-SRSS-TBT(LF)(SN) JST SMT
+  pin_count: 4
 - ref: L2
   value: 2.2uH
   footprint: 0806
@@ -151,6 +157,7 @@ components:
 - ref: Q2
   value: AO3420
   footprint: SOT23_NO-FILL
+  pin_count: 3
 - ref: R10
   value: 10Mohm
   footprint: '0402'
@@ -197,10 +204,13 @@ components:
   value: 100R/5%
   footprint: RR-8X-1506
   description: ARRAY CHIP RES. 8R sing. 100R 5% 1506 CAY16-101J8LF BOURNS SMT
+  pin_count: 16
+  nc_pins: {R1.1: '1', R2.1: '2', R3.1: '3', R4.1: '4', R5.1: '5', R6.1: '6', R7.1: '7', R8.1: '8'}
 - ref: RR2
   value: 100R/5%
   footprint: RR-8X-1506
   description: ARRAY CHIP RES. 8R sing. 100R 5% 1506 CAY16-101J8LF BOURNS SMT
+  pin_count: 16
 - ref: TVS1
   value: SM6T6V8A
   footprint: SMB
@@ -209,16 +219,21 @@ components:
   footprint: WDFN6-0200X0200
   mpn: MAX17225ELT+T
   description: I.C. DC/DC MAX17225ELT+T MAXIM W-DFN6 SMT
+  pin_count: 6
 - ref: U4
   value: TPS62748
   footprint: XFBGA8
   mpn: TPS62748YFPT
   description: I.C. DC/DC TPS62748YFPT TEXAS DSBGA8 SMT
+  pin_count: 8
+  nc_pins: {LOAD: D2}
 - ref: U5
   value: MCP73831-2
   footprint: VFDFN8-EXP
   mpn: MCP73831-2ACI/MC
   description: I.C. BATTERY MANAGEMENT MCP73831-2ACI/MC MICROCHIP DFN8 SMT
+  pin_count: 9
+  nc_pins: {NC: '7'}
 nets:
 - name: +1V8
   pins:

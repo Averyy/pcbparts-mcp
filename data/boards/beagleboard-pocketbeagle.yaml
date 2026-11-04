@@ -51,9 +51,11 @@ components:
 - ref: P1
   value: 2x18 header
   footprint: TH-2X18-(35MIL-DIA)-W_O-SILK
+  pin_count: 36
 - ref: P2
   value: 2x18 header
   footprint: TH-2X18-(35MIL-DIA)-W_O-SILK
+  pin_count: 36
 - ref: R1
   value: 1kohm
   footprint: '0402'
@@ -61,9 +63,12 @@ components:
 - ref: R10
   value: 10kohm
   footprint: RN0804
+  pin_count: 8
 - ref: R11
   value: 10kohm
   footprint: RN0804
+  pin_count: 8
+  nc_pins: {'1': '1', '8': '8'}
 - ref: R12
   value: 10kohm
   footprint: '0402'
@@ -79,33 +84,46 @@ components:
 - ref: R4
   value: 1kohm
   footprint: RN0804
+  pin_count: 8
 - ref: R5
   value: 10kohm
   footprint: RN0804
+  pin_count: 8
 - ref: R6
   value: 100kohm
   footprint: RN0804
+  pin_count: 8
 - ref: R7
   value: 100kohm
   footprint: RN0804
+  pin_count: 8
 - ref: R8
   value: 100kohm
   footprint: RN0804
+  pin_count: 8
 - ref: R9
   value: 100kohm
   footprint: RN0804
+  pin_count: 8
 - ref: SW1
   value: POWER
   footprint: MINI_PUSHBUTTON
+  pin_count: 4
 - ref: U1
   value: OSD3358-512M-BSM
   footprint: OSD335X-BGA-256
+  pin_count: 256
+  nc_pins: {A5: A5, A6: A6, B5: B5, C1: C1, C2: C2, D1: D1, D2: D2, D5: D5, D12: D12, D13: D13, D14: D14, D15: D15, D16: D16, E2: E2, E3: E3, E13: E13, E14: E14, E15: E15, E16: E16, F4: F4, F13: F13, F14: F14, F15: F15, F16: F16, G4: G4, G13: G13, G14: G14, G15: G15, G16: G16, H6: H6, H14: H14, H15: H15, H16: H16, J6: J6, J14: J14, J15: J15, K4: K4, K13: K13, L13: L13, M1: M1, M13: M13, N1: N1, N2: N2, P1: P1, P2: P2, P3: P3, P4: P4, R1: R1, R2: R2, R3: R3, R4: R4, R12: R12, T1: T1, T2: T2, T3: T3, T4: T4, T12: T12, T13: T13}
 - ref: U2
   value: SN74LVC1G07DCK
   footprint: SC70(TI-DCK)
+  pin_count: 5
+  nc_pins: {'1': '1'}
 - ref: U3
   value: TPD4S012DRY
   footprint: SON-6(TI)-DRY
+  pin_count: 6
+  nc_pins: {'5': '5'}
 - ref: USR0
   value: LTST-C191TBKT
   footprint: '0603'
@@ -121,9 +139,11 @@ components:
 - ref: X1
   value: 10118192-0001LF
   footprint: 10118192-0001LF(MICRO-USB-B-AMPHENOL-FCI)
+  pin_count: 6
 - ref: X2
   value: MICROSD
   footprint: MICROSD
+  pin_count: 13
 - ref: Y1
   value: 24 MHz
   footprint: CRYSTAL

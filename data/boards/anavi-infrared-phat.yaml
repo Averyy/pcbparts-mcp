@@ -24,6 +24,7 @@ components:
 - ref: IRRX1
   value: TSOP34838
   footprint: TSOP38X
+  pin_count: 3
 - ref: IRTX1
   value: L-53F3BT
   footprint: LED-5MM
@@ -36,6 +37,7 @@ components:
 - ref: Q1
   value: BC817
   footprint: SOT-23
+  pin_count: 3
 - ref: R1
   value: 1kohm
   footprint: '0603'
@@ -69,18 +71,24 @@ components:
 - ref: RASP_CONN1
   value: Raspberry_PI
   footprint: 2X20
+  pin_count: 40
+  nc_pins: {'7': '7', '8': '8', '10': '10', '13': '13', '15': '15', '16': '16', '18': '18', '19': '19', '21': '21', '22': '22', '23': '23', '24': '24', '26': '26', '29': '29', '31': '31', '32': '32', '33': '33', '35': '35', '36': '36', '37': '37', '38': '38', '40': '40'}
 - ref: SENS1
   value: I2C_SENS_1
   footprint: 1X4
+  pin_count: 4
 - ref: SENS2
   value: I2C_SENS_1
   footprint: 1X4
+  pin_count: 4
 - ref: SENS3
   value: I2C_SENS_1
   footprint: 1X4
+  pin_count: 4
 - ref: U1
   value: CAT24C32WI-GT3
   footprint: DIP-8
+  pin_count: 8
 - ref: UART1
   value: 1x4 header
   footprint: 1X4

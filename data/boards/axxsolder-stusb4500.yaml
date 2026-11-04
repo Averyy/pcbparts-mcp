@@ -216,6 +216,7 @@ components:
   height: '1.1'
   manufacturer: Diodes Incorporated
   mpn: BAV199WQ-7
+  pin_count: 3
 - ref: D10
   value: PMEG6020ER
   footprint: PMEG6020ER115
@@ -229,6 +230,7 @@ components:
   height: '1.1'
   manufacturer: Diodes Incorporated
   mpn: BAV199WQ-7
+  pin_count: 3
 - ref: D3
   value: SMF4L24AT1G
   footprint: SODFL3619X98N
@@ -246,21 +248,25 @@ components:
   footprint: SOT-3
   manufacturer: Nexperia
   mpn: BAT54S,215
+  pin_count: 3
 - ref: D6
   value: BAT54S
   footprint: SOT-3
   manufacturer: Nexperia
   mpn: BAT54S,215
+  pin_count: 3
 - ref: D7
   value: BAT54S
   footprint: SOT-3
   manufacturer: Nexperia
   mpn: BAT54S,215
+  pin_count: 3
 - ref: D8
   value: BAT54S
   footprint: SOT-3
   manufacturer: Nexperia
   mpn: BAT54S,215
+  pin_count: 3
 - ref: D9
   value: PMEG6020ER
   footprint: PMEG6020ER115
@@ -293,42 +299,51 @@ components:
   height: '0.8'
   manufacturer: Texas Instruments
   mpn: TLV76733DRVR
+  pin_count: 7
 - ref: IC2
   value: OPA2387DSGT
   footprint: SON-9
   height: '0.8'
   manufacturer: Texas Instruments
   mpn: OPA2387DSGT
+  pin_count: 9
 - ref: IC3
   value: LMR54406DBVR
   footprint: SOT-6
   height: '1.45'
   manufacturer: Texas Instruments
   mpn: LMR54406DBVR
+  pin_count: 6
 - ref: IC4
   value: STM32G431CBT6
   footprint: QFP-48
   height: '1.6'
   manufacturer: STMicroelectronics
   mpn: STM32G431CBT6
+  pin_count: 48
+  nc_pins: {PB0: '16', PB1: '17', PB2: '18', PB10: '22', PA8: '30', PA10: '32', PB4: '41', PB6: '43'}
 - ref: IC5
   value: TPD4E1U06DBVR
   footprint: SOT-6
   height: '1.45'
   manufacturer: Texas Instruments
   mpn: TPD4E1U06DBVR
+  pin_count: 6
+  nc_pins: {NC: '5'}
 - ref: IC6
   value: STUSB4500QTR
   footprint: QFN50P400X400X100-25N-D
   height: '1'
   manufacturer: STMicroelectronics
   mpn: STUSB4500QTR
+  pin_count: 18
 - ref: IC7
   value: MAX16171ATA_VY+T
   footprint: SON-9
   height: '0.8'
   manufacturer: Analog Devices
   mpn: MAX16171ATA/VY+T
+  pin_count: 7
 - ref: IC8
   value: LTC4440AHMS8E
   footprint: SOP-9
@@ -336,45 +351,58 @@ components:
   manufacturer: Analog Devices
   mpn: LTC4440AHMS8E-5#PBF
   description: Driver 1.1A 1-OUT High Side Full Brdg Non-Inv Automotive 8-Pin MSOP EP Tube
+  pin_count: 9
+  nc_pins: {NC: '5'}
 - ref: IC9
   value: INA281A5QDBVRQ1
   footprint: SOT-5
   height: '1.45'
   manufacturer: Texas Instruments
   mpn: INA281A5QDBVRQ1
+  pin_count: 5
 - ref: J1
   value: USB4110-GF-A
   footprint: USB4110GFA
   height: '3.26'
   manufacturer: GCT (GLOBAL CONNECTOR TECHNOLOGY)
   mpn: USB4110-GF-A
+  pin_count: 17
+  nc_pins: {SHIELD@S2: S2}
 - ref: J2
   value: '691243110009'
   footprint: '691243110009'
   height: '9.2'
   manufacturer: Wurth Elektronik
   mpn: '691243110009'
+  pin_count: 9
 - ref: J4
   value: '61300611821'
   footprint: RHDR6W97P0X254
   height: '8.65'
   manufacturer: Wurth Elektronik
   mpn: '61300611821'
+  pin_count: 6
 - ref: J5
   value: TSW-102-07-T-S
   footprint: TSW-102-XX-YY-S
   manufacturer: SAMTEC
   mpn: TSW-102-07-T-S
+  pin_count: 2
+  nc_pins: {Pin_1: '1', Pin_2: '2'}
 - ref: J6
   value: TSW-102-07-T-S
   footprint: TSW-102-XX-YY-S
   manufacturer: SAMTEC
   mpn: TSW-102-07-T-S
+  pin_count: 2
+  nc_pins: {Pin_1: '1', Pin_2: '2'}
 - ref: J7
   value: TSW-108-07-T-S
   footprint: TSW-108-XX-YY-S
   manufacturer: SAMTEC
   mpn: TSW-108-07-T-S
+  pin_count: 8
+  nc_pins: {Pin_4: '4'}
 - ref: L1
   value: 15uH
   footprint: INDPM7366X300N
@@ -393,12 +421,14 @@ components:
   footprint: STL9P3LLH6
   manufacturer: STMicroelectronics
   mpn: STL9P3LLH6
+  pin_count: 3
 - ref: Q2
   value: STL10N3LLH5
   footprint: STL10N3LLH5
   height: '1'
   manufacturer: STMicroelectronics
   mpn: STL10N3LLH5
+  pin_count: 3
 - ref: Q3
   value: 2N7002NXAKR
   footprint: SOT-3
@@ -406,6 +436,7 @@ components:
   manufacturer: Nexperia
   mpn: 2N7002NXAKR
   description: NEXPERIA - 2N7002NXAKR - MOSFET Transistor, Trench, N Channel, 190 mA, 60 V, 3
+  pin_count: 3
 - ref: R1
   value: 1.5kohm
   footprint: '0603'
@@ -682,11 +713,13 @@ components:
   height: '25'
   manufacturer: Bourns
   mpn: PEC11J-9215F-S0015
+  pin_count: 6
 - ref: U3
   value: BSC014N04LS
   footprint: BSC014N04LS
   manufacturer: Infineon Technologies
   mpn: BSC014N04LSATMA1
+  pin_count: 3
 nets:
 - name: +3.3V
   pins:

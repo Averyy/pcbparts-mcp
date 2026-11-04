@@ -252,12 +252,14 @@ components:
   manufacturer: "\u7535\u8FDE"
   mpn: '320080244'
   description: SMD IPEX-GEN4 Female CONN;4P-L1.7*W1.7*H0.6mm
+  pin_count: 4
 - ref: J2
   value: '818000500'
   footprint: U-FL4P-SMD-1
   manufacturer: "\u7535\u8FDE"
   mpn: '320080244'
   description: SMD IPEX-GEN4 Female CONN;4P-L1.7*W1.7*H0.6mm
+  pin_count: 4
 - ref: L1
   value: 47nH
   footprint: '0402'
@@ -336,6 +338,7 @@ components:
   manufacturer: KDS
   mpn: '306020441'
   description: SMD Oscillator TCXO;32MHz-1.5ppm-L2.5*W2.0*H0.8mm
+  pin_count: 4
 - ref: R1
   value: 200ohm
   footprint: '0201'
@@ -389,17 +392,21 @@ components:
   manufacturer: SKYWORKS
   mpn: '310060742'
   description: SMD IC RF Switch;0.1GHz-8GHz SP3T;QFN-12 2*2*0.55 mm
+  pin_count: 13
 - ref: U2
   value: LR1121
   footprint: QFN32_0D5
   manufacturer: Semtech
   mpn: TMP-874
   description: SMD IC LoRa Edge;QFN32;5*5mm
+  pin_count: 33
+  nc_pins: {'5': '5', '11': '11', '16': '16', '17': '17', '18': '18', '27': '27', '28': '28'}
 - ref: U3
   value: LR1121 PIN OUT
   footprint: MODULE24_1D27
   mpn: TMP-881
   description: SMD Lora Module;
+  pin_count: 24
 - ref: X1
   value: 32.768kHz
   footprint: X2_SMD

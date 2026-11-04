@@ -35,9 +35,11 @@ components:
 - ref: K1
   value: screw terminal
   footprint: TERMINAL_KF235-5.0-3P
+  pin_count: 3
 - ref: K2
   value: 1x6 header
   footprint: HEADER_MALE
+  pin_count: 6
 - ref: R1
   value: 20kohm
   footprint: '0603'
@@ -55,6 +57,7 @@ components:
 - ref: U1
   value: SN65176BDR
   footprint: SOIC-8-SWB
+  pin_count: 8
 nets:
 - name: 5V
   pins: [C1.2, C2.2, JP1.1, K2.5, R4.2, U1.VCC]

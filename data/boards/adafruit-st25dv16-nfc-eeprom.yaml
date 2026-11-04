@@ -27,21 +27,27 @@ components:
 - ref: CONN3
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: CONN4
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: D1
   value: green LED
   footprint: '0603'
 - ref: JP1
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: R3
   value: 10kohm
   footprint: RESPACK
+  pin_count: 8
+  nc_pins: {G$4.1: '4', G$4.2: '5'}
 - ref: RF1
   value: ST25DVXX
   footprint: TSSOP8-4.4MM
+  pin_count: 8
 nets:
 - name: GND
   pins:

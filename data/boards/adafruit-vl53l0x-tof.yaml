@@ -30,9 +30,11 @@ components:
 - ref: CONN3
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: CONN4
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: D1
   value: 1N4148
   footprint: SOD-323
@@ -42,10 +44,12 @@ components:
 - ref: JP2
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: Q3
   value: BSS138
   footprint: SOT363
   description: Dual N-Channel MOSFET
+  pin_count: 6
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -61,14 +65,19 @@ components:
 - ref: R7
   value: 10kohm
   footprint: RESPACK
+  pin_count: 8
 - ref: U1
   value: VL53L0X
   footprint: LGA12_ST
   description: VL53L0X
+  pin_count: 12
+  nc_pins: {DNC: '8'}
 - ref: U3
   value: LP5907-2.8
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 nets:
 - name: 2.8V
   pins:

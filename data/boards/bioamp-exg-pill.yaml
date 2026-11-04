@@ -41,15 +41,18 @@ components:
 - ref: J1
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J2
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP1
   value: solder jumper
   footprint: SJ-2
 - ref: JP2
   value: solder jumper
   footprint: SJ-2
+  pin_count: 3
 - ref: R1
   value: 1kohm
   footprint: '0603'
@@ -95,6 +98,7 @@ components:
 - ref: U1
   value: op-amp
   footprint: TSSOP-14
+  pin_count: 14
 nets:
 - name: DRL
   pins: [J2.Pin_1, JP2.C, R11.1]

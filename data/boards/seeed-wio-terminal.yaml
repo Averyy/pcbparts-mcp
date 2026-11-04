@@ -193,6 +193,7 @@ components:
 - ref: D15
   value: SP3012-06
   footprint: UDFN14-0.5-3.5X1.35X0.5MM
+  pin_count: 14
 - ref: D2
   value: CESDP0402UC5VB
   footprint: '0402'
@@ -231,34 +232,48 @@ components:
 - ref: J1
   value: 1x14 header
   footprint: MICRO-SD9+4P-SMD-16.1X14.5X1.85MM
+  pin_count: 13
 - ref: J2
   value: DL
   footprint: H5-SMD-2.0-TEST
+  pin_count: 5
 - ref: J3
   value: FPC-CONNECTOR-10P
   footprint: FPC10-SMD-0.5-10.6X3.5X4.5MM
+  pin_count: 12
+  nc_pins: {'5': '5', '7': '7'}
 - ref: J4
   value: SMD_GROVE
   footprint: HW4-SMD-2.0-90D
+  pin_count: 6
+  nc_pins: {SS1: SS1, SS2: SS2}
 - ref: J5
   value: SMD_GROVE
   footprint: HW4-SMD-2.0-90D
+  pin_count: 6
+  nc_pins: {SS1: SS1, SS2: SS2}
 - ref: J6
   value: XW05200-20
   footprint: FPC20-SMD-0.5-90D
   description: FH12-20S-0
+  pin_count: 22
+  nc_pins: {'14': '14'}
 - ref: J7
   value: SMD_Header
   footprint: H6-SMD-2.0_TEST
+  pin_count: 6
 - ref: K1
   value: BUTTON-2+2P
   footprint: SW2+2P-3.45-4.8X2.5X1.8MM
+  pin_count: 4
 - ref: K2
   value: BUTTON-2+2P
   footprint: SW2+2P-3.45-4.8X2.5X1.8MM
+  pin_count: 4
 - ref: K3
   value: BUTTON-2+2P
   footprint: SW2+2P-3.45-4.8X2.5X1.8MM
+  pin_count: 4
 - ref: L2
   value: 2.2uH
   footprint: 0805
@@ -277,53 +292,68 @@ components:
 - ref: MIC1
   value: MEMS microphone
   footprint: MIC2-SMD-4X4MM
+  pin_count: 5
 - ref: Q1
   value: 2N7002,215
   footprint: SOT-23
   description: 'IRLL014:'
+  pin_count: 3
 - ref: Q10
   value: CJ3407
   footprint: SOT-23
+  pin_count: 3
 - ref: Q11
   value: BC856S
   footprint: SOT-363
+  pin_count: 6
 - ref: Q12
   value: CJ3407
   footprint: SOT-23
+  pin_count: 3
 - ref: Q13
   value: 2N7002,215
   footprint: SOT-23
   description: 'IRLL014:'
+  pin_count: 3
 - ref: Q14
   value: CJ3407
   footprint: SOT-23
+  pin_count: 3
 - ref: Q15
   value: CJ3407
   footprint: SOT-23
+  pin_count: 3
 - ref: Q16
   value: 2N7002,215
   footprint: SOT-23
   description: 'IRLL014:'
+  pin_count: 3
 - ref: Q2
   value: CJ3407
   footprint: SOT-23
+  pin_count: 3
 - ref: Q3
   value: 2N7002,215
   footprint: SOT-23
   description: 'IRLL014:'
+  pin_count: 3
 - ref: Q4
   value: 2N7002,215
   footprint: SOT-23
   description: 'IRLL014:'
+  pin_count: 3
 - ref: Q7
   value: CJ3407
   footprint: SOT-23
+  pin_count: 3
 - ref: Q8
   value: CJ3407
   footprint: SOT-23
+  pin_count: 3
 - ref: Q9
   value: CJ3407
   footprint: SOT-23
+  pin_count: 3
 - ref: R1
   value: 5.1kohm
   footprint: '0402'
@@ -620,55 +650,78 @@ components:
 - ref: SW1
   value: DHT-1500
   footprint: SWITCH-2X3P
+  pin_count: 8
 - ref: SW3
   value: MK-13E03N-G
   footprint: SW4-SMD-11.2X3.6MM
+  pin_count: 4
 - ref: U1
   value: ATSAMD51P19A
   footprint: TFBGA120-0.5-8X8MM
+  pin_count: 120
+  nc_pins: {G$2.PA23/I2C/I7/SERCOM3.1+5.0/SOF/I2SFS1/TC4.1+TCC1.7+0.3/PTC: C14, G$2.PB15/I15/SERCOM4.3/PCC9/TC5.1/TCC4.1+0.3/PTC: P7}
 - ref: U10
   value: RTL8720D
   footprint: MODULE-32P-0.8-13X12MM-MOTHER
+  pin_count: 36
+  nc_pins: {'4': '4', '5': '5', '6': '6', '11': '11', '12': '12', '13': '13', '14': '14', '17': '17', '18': '18', '19': '19', '20': '20', '27': '27', '28': '28', '29': '29'}
 - ref: U11
   value: ATECC608
   footprint: UDFN8-0.5-2X3X0.5MM
+  pin_count: 9
+  nc_pins: {NC: '1', NC@1: '2', NC@2: '3', NC@3: '7'}
 - ref: U12
   value: MP2161GJ
   footprint: TSOT23-8
+  pin_count: 8
+  nc_pins: {PG: '1'}
 - ref: U13
   value: AP2112K-3.3TRG1
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC/ADJ: '4'}
 - ref: U14
   value: W25Q32JVZPIM
   footprint: SOIC8-1.27-5.3X5.3MM
   description: 1M-BIT,2M-BIT,4M-BIT AND 8M-BIT SERIAL FLASH MEMORY WITH 4KB SECTORS AND DUAL
+  pin_count: 8
 - ref: U2
   value: LMV358IDGKR
   footprint: MSOP8-0.65-3X3MM
+  pin_count: 8
 - ref: U3
   value: RPI
   footprint: H2X20-SMD-2.54-50.8X5MM-LONG
+  pin_count: 40
 - ref: U4
   value: LCD
   footprint: LCM18-0.8-60.26X42.72X2.2MM
+  pin_count: 18
 - ref: U5
   value: LIS3DHTR
   footprint: LGA16-0.5-3X3MM
+  pin_count: 16
+  nc_pins: {NC: '2', NC@1: '3', INT2: '9', ADC3: '13', ADC2: '15', ADC1: '16'}
 - ref: U8
   value: photodiode
   footprint: SNR4-SMD-3.2X2.7MM
+  pin_count: 4
 - ref: U9
   value: SN74LVC1G125DCKR
   footprint: SC-70-5
+  pin_count: 5
 - ref: USB1
   value: USB_TYPE C
   footprint: USB2.0-TYPE-C
+  pin_count: 18
+  nc_pins: {A8/SBU1: A8, B8/SBU2: B8}
 - ref: X2
   value: 32.768KHz FC-12M
   footprint: X2-SMD-L2.0X1.2X0.55MM
 - ref: X4
   value: 32MHz / 306010026
   footprint: X4-SMD-3.2X2.5X0.7MM
+  pin_count: 4
 nets:
 - name: 3V3_OUTPUT_CTR
   pins: [R99.2, U1.G$3.PC15/I15/SERCOM7+6.3/TCC0.5+1.1]

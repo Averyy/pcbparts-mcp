@@ -263,6 +263,7 @@ components:
   value: PMEG2005CT
   footprint: SOT-23-3
   description: 500 mA low VF dual MEGA Schottky barrier rectifier
+  pin_count: 3
 - ref: D201
   value: PESD0402-140
   footprint: '0402'
@@ -315,50 +316,63 @@ components:
   value: DF13C-6P-1.25V
   footprint: DF13C-6P-1.25V
   description: DF13-6P 1
+  pin_count: 6
 - ref: J202
   value: DF13C-6P-1.25V
   footprint: DF13C-6P-1.25V
   description: DF13-6P 1
+  pin_count: 6
 - ref: J203
   value: DF13C-6P-1.25V
   footprint: DF13C-6P-1.25V
   description: DF13-6P 1
+  pin_count: 6
 - ref: J204
   value: DF13C-6P-1.25V
   footprint: DF13C-6P-1.25V
   description: DF13-6P 1
+  pin_count: 6
 - ref: J301
   value: 47346-0001
   footprint: MOLEX-47346-0001
   description: MICRO USB B, BOTTOM MOUNT
+  pin_count: 9
+  nc_pins: {'4': ID}
 - ref: J302
   value: DF13C-4P-1.25V
   footprint: DF13C-4P-1.25V
   description: DF13-4P 1
+  pin_count: 4
 - ref: J401
   value: DF13C-4P-1.25V
   footprint: DF13C-4P-1.25V
   description: DF13-4P 1
+  pin_count: 4
 - ref: J402
   value: DF13C-3P-1.25V
   footprint: DF13C-3P-1.25V
   description: DF13-3P 1
+  pin_count: 3
 - ref: J403
   value: DF13C-7P-1.25V
   footprint: DF13C-7P-1.25V
   description: DF13-7P 1
+  pin_count: 7
 - ref: J404
   value: DF13C-5P-1.25V
   footprint: DF13C-5P-1.25V
   description: DF13-5P 1
+  pin_count: 5
 - ref: J405
   value: DF13C-4P-1.25V
   footprint: DF13C-4P-1.25V
   description: DF13-4P 1
+  pin_count: 4
 - ref: J601
   value: DF13C-6P-1.25V
   footprint: DF13C-6P-1.25V
   description: DF13-6P 1
+  pin_count: 6
 - ref: J701
   value: DF13C-2P-1.25V
   footprint: DF13C-2P-1.25V
@@ -367,59 +381,78 @@ components:
   value: DF13C-3P-1.25V
   footprint: DF13C-3P-1.25V
   description: DF13-3P 1
+  pin_count: 3
 - ref: J801
   value: JST ZH-
   footprint: JST-ZH-SMT-VERTICAL
+  pin_count: 3
 - ref: J901
   value: 3x16 header
   footprint: 3X16RA
   description: 3x16 servo header
+  pin_count: 48
 - ref: JX301
   value: ARM JTAG
   footprint: FTSH-105-01-XXX-DV-K
+  pin_count: 9
+  nc_pins: {-TDI/EXTB.S: '8', -!RESET.S: '10'}
 - ref: JX801
   value: 3x1 header
   footprint: HEADER
   description: Single row 0.1" servo header
+  pin_count: 3
 - ref: JX802
   value: ARM JTAG
   footprint: FTSH-105-01-XXX-DV-K
+  pin_count: 9
+  nc_pins: {-TDI/EXTB.S: '8', -!RESET.S: '10'}
 - ref: L1101
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  pin_count: 5
 - ref: L1102
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  pin_count: 5
 - ref: L201
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  pin_count: 5
 - ref: L202
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  pin_count: 5
 - ref: L203
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  pin_count: 5
 - ref: L401
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  pin_count: 5
 - ref: L402
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  pin_count: 5
 - ref: L403
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  pin_count: 5
 - ref: L404
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  pin_count: 5
 - ref: L603
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  pin_count: 5
 - ref: L701
   value: 47uH
   footprint: 0805
 - ref: L901
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  pin_count: 5
 - ref: LED701
   value: amber LED
   footprint: '0603'
@@ -439,6 +472,7 @@ components:
   value: MMBT3906*
   footprint: SOT23-BEC
   description: PNP Transistror
+  pin_count: 3
 - ref: R1001
   value: 100kohm
   footprint: '0402'
@@ -774,6 +808,8 @@ components:
   value: 1Mohm
   footprint: EXB28V
   description: Array Chip Resistor
+  pin_count: 8
+  nc_pins: {A.1: '1', A.2: '8'}
 - ref: S601
   value: RESET
   footprint: EVQP7J01K
@@ -783,109 +819,149 @@ components:
 - ref: U1001
   value: BQ24313
   footprint: QFN8-DSG
+  pin_count: 10
 - ref: U1002
   value: MIC5332
   footprint: MLF-8-EPAD
+  pin_count: 9
 - ref: U101
   value: STM32F4X7VX
   footprint: TQFP100
   description: STM32F4X7VX 100 pin LQFP STM32F407VE - 512 KB flash, no crypto STM32F407VG - 1
+  pin_count: 100
+  nc_pins: {PORTC_L.PC1: '16'}
 - ref: U102
   value: FM25V01
   footprint: SOIC-8
   description: FM25V01 128Kb Serial 3V F-RAM Memory
+  pin_count: 8
 - ref: U1101
   value: LTC4417
   footprint: MO-220
+  pin_count: 25
+  nc_pins: {CAS: P$11, EN: P$22, '!SHDN': P$23}
 - ref: U1102
   value: NTHD4102PT1G
   footprint: '1206'
+  pin_count: 8
 - ref: U1103
   value: NTHD4102PT1G
   footprint: '1206'
+  pin_count: 8
 - ref: U1104
   value: NTHD4102PT1G
   footprint: '1206'
+  pin_count: 8
 - ref: U201
   value: TXS0108
   footprint: QFN20-RGY
+  pin_count: 20
 - ref: U202
   value: TXS0108
   footprint: QFN20-RGY
+  pin_count: 20
+  nc_pins: {A1: '1', A2: '3', B2: '18', B1: '20'}
 - ref: U301
   value: 2908-05WB-MG
   footprint: MICROSD
+  pin_count: 8
 - ref: U302
   value: NUF2042XV6
   footprint: SOT563-6
+  pin_count: 6
 - ref: U401
   value: MAX3051
   footprint: SOT-23-8
+  pin_count: 8
 - ref: U501
   value: L3GD20
   footprint: L3G4200DH-MAN
   description: L3G4200DH - Digital 3-axis Gyroscope
+  pin_count: 16
+  nc_pins: {INT1: '7'}
 - ref: U502
   value: L3GD20H
   footprint: LGA-16L
   description: 'L3GD20H MEMS motion sensor: 3-axis digital output gyroscope'
+  pin_count: 16
+  nc_pins: {INT1: '7', DEN: '8'}
 - ref: U504
   value: LSM303D
   footprint: LGA-16L
   description: 'LSM303D Ultra compact high performance e-compass: 3D accelerometer and 3D'
+  pin_count: 16
 - ref: U505
   value: MPU-6000
   footprint: QFN-24
   description: 'Invensense MPU-6000: 3-axis gyro, 3-axis accel & 9-axis MotionFusion'
+  pin_count: 24
+  nc_pins: {NC1: '2', NC2: '3', NC3: '4', NC4: '5', AUX_DA: '6', AUX_CL: '7', FSYNC: '11', NC5: '14', NC6: '15', NC7: '16', NC8: '17', RESV1: '19', RESV2: '21', CLKOUT: '22'}
 - ref: U506
   value: MS5611-01
   footprint: MS5611-01BA
   description: MS5611-01BA
+  pin_count: 8
+  nc_pins: {CSB1: '4'}
 - ref: U601
   value: BQ24315
   footprint: QFN8-DSG
+  pin_count: 10
 - ref: U602
   value: BQ24315
   footprint: QFN8-DSG
+  pin_count: 10
 - ref: U603
   value: MIC5332
   footprint: MLF-8-EPAD
+  pin_count: 9
 - ref: U701
   value: TCA62724FMG
   footprint: SON10
   description: Toshiba TCA62724FMG I2C RGB LED driver
+  pin_count: 10
 - ref: U702
   value: LT3469
   footprint: SOT-23-8
   description: LT3469 Piezo microactuator driver with boost regulator
+  pin_count: 8
 - ref: U703
   value: LRTB GFTG-T7AW-1+V7A7-29+R5T9-49-L
   footprint: 6-PLCC
   description: RGB LED with separate anode/cathode terminals
+  pin_count: 6
 - ref: U801
   value: STM32F10XCXT6
   footprint: TQFP48
   description: ST STM32F101/103 48pin LQFP
+  pin_count: 48
+  nc_pins: {PORTC.PC14: '3', PORTC.PC15: '4', PORTB_H.PB12: '25', PORTA_H.PA11: '32', PORTB_L.PB6: '42', PORTB_L.PB7: '43'}
 - ref: U901
   value: TXS0108
   footprint: QFN20-RGY
+  pin_count: 20
+  nc_pins: {A7: '8', A8: '9', B8: '12', B7: '13'}
 - ref: U902
   value: TXS0108
   footprint: QFN20-RGY
+  pin_count: 20
 - ref: U903
   value: 74LVC2G240
   footprint: TSSOP8_SOT505-2
   description: Dual inverter tri-state, 3
+  pin_count: 8
 - ref: X101
   value: 3.2x2.5 mm / 24 MHz / 15 ppm
   footprint: OSCILLATOR-3.2X2.5
+  pin_count: 4
 - ref: X503
   value: 0512811094
   footprint: 51281-1094
   description: 10-pin FPC connector for PX4 sensor board
+  pin_count: 10
 - ref: X801
   value: 3.2x2.5 mm / 24 MHz / 15 ppm
   footprint: OSCILLATOR-3.2X2.5
+  pin_count: 4
 nets:
 - name: '!ACCEL_MAG_CS'
   pins: [U101.PORTC_H.PC15, U504.CS, X503.G$6.S]

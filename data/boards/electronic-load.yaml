@@ -116,6 +116,7 @@ components:
 - ref: IC7
   value: LM1117-5.0
   footprint: SOT223
+  pin_count: 4
 - ref: J1
   value: XT60-M
   footprint: AMASS_XT60-M
@@ -134,6 +135,7 @@ components:
   description: Check availability
   manufacturer: JST Sales America Inc.
   mpn: B4B-XH-A(LF)(SN)
+  pin_count: 4
 - ref: J4
   value: B2B-XH
   footprint: JST_B2B-XH-A(LF)(SN)
@@ -146,6 +148,8 @@ components:
   description: Connector Header Through Hole 2 position 0.098 (2.50mm)
   manufacturer: JST Sales
   mpn: B2B-XH-A(LF)(SN)
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: J6
   value: B2B-XH
   footprint: JST_B2B-XH-A(LF)(SN)
@@ -164,52 +168,65 @@ components:
   description: Check availability
   manufacturer: JST Sales America Inc.
   mpn: B5B-XH-A(LF)(SN)
+  pin_count: 5
 - ref: JP1
   value: 1x9 header
   footprint: 1X09
+  pin_count: 9
 - ref: JP2
   value: B4B-XH
   footprint: JST_B4B-XH-A(LF)(SN)
   description: Check availability
   manufacturer: JST Sales America Inc.
   mpn: B4B-XH-A(LF)(SN)
+  pin_count: 4
 - ref: Q1
   value: IRFP25*
   footprint: TO-247
   description: 33A/27A, 200V/150V, 0.085/0.012 Ohm, N-Channel Power MOSFET
+  pin_count: 3
 - ref: Q10
   value: S9015
   footprint: SOT23
+  pin_count: 3
 - ref: Q11
   value: S9015
   footprint: SOT23
+  pin_count: 3
 - ref: Q2
   value: IRFP25*
   footprint: TO-247
   description: 33A/27A, 200V/150V, 0.085/0.012 Ohm, N-Channel Power MOSFET
+  pin_count: 3
 - ref: Q3
   value: IRFP25*
   footprint: TO-247
   description: 33A/27A, 200V/150V, 0.085/0.012 Ohm, N-Channel Power MOSFET
+  pin_count: 3
 - ref: Q4
   value: IRFP25*
   footprint: TO-247
   description: 33A/27A, 200V/150V, 0.085/0.012 Ohm, N-Channel Power MOSFET
+  pin_count: 3
 - ref: Q5
   value: 32768Hz
   footprint: TC26H
 - ref: Q6
   value: IRLML6244
   footprint: SOT23
+  pin_count: 3
 - ref: Q7
   value: BD911
   footprint: TO220V
+  pin_count: 3
 - ref: Q8
   value: S9015
   footprint: SOT23
+  pin_count: 3
 - ref: Q9
   value: S9015
   footprint: SOT23
+  pin_count: 3
 - ref: R1
   value: 1kohm
   footprint: 0805
@@ -352,62 +369,79 @@ components:
 - ref: SPI
   value: MA03-2
   footprint: MA03-2
+  pin_count: 6
 - ref: U$2
   value: 16MHz oscillator
   footprint: CRYSTAL_3,4X2,7
+  pin_count: 4
 - ref: U$3
   value: LM4140
   footprint: SOIC8
+  pin_count: 8
+  nc_pins: {NC: '5'}
 - ref: U1
   value: AD8630
   footprint: ANALOG_DEVICES_AD8630ARZ-REEL7_0
   manufacturer: Analog Devices
   mpn: AD8630ARZ-REEL7
   description: ADI-ADxxxx_OPxxxx-X-14
+  pin_count: 14
 - ref: U2
   value: MCP4725A0T-E
   footprint: SOT-6
   description: MCP4725 Series 1 Ch I2C EEPROM Memory 5
   manufacturer: Microchip
   mpn: MCP4725A0T-E/CH
+  pin_count: 6
 - ref: U3
   value: ADS1115
   footprint: MSOP10
   description: 16-Bit Del-Sig ADC Four single-ended inputs or two differential inputs Internal
   manufacturer: Texas Instruments
   mpn: ADS1115
+  pin_count: 10
+  nc_pins: {ALERT/RDY: '2', AIN1: '5'}
 - ref: U4
   value: ATMEGA328P-AU
   footprint: QFP-32
   description: ATmega Series 20 MHz 32 KB Flash 2 KB SRAM 8-Bit Microcontroller - TQFP-32
   manufacturer: Microchip Technology
   mpn: ATMEGA328P-AU
+  pin_count: 32
 - ref: U5
   value: OPA277
   footprint: SOIC-08_150MIL
   description: High Precision OPERATIONAL AMPLIFIERS
   manufacturer: Texas Instruments
   mpn: OPA277
+  pin_count: 7
+  nc_pins: {CMP1: '1', CMP2: '8'}
 - ref: U6
   value: MCP79410-I
   footprint: SOIC-8
   description: MCP79410 Series 5
   manufacturer: Microchip
   mpn: MCP79410-I/SN
+  pin_count: 8
+  nc_pins: {MFP: '7'}
 - ref: U7
   value: ICL7660CPAZSOIC
   footprint: SOIC8
   description: CMOS Voltage Converters Check availability
+  pin_count: 8
+  nc_pins: {NC: '1', LV: '6'}
 - ref: U8
   value: PC817X2NIP0F
   footprint: SOT-4
   description: PC817 Series 1 Channel 80 V 5000 Vrms General Purpose Photocoupler - DIP-4
   manufacturer: Sharp Microelectronics
   mpn: PC817X2NIP0F
+  pin_count: 4
 - ref: VR1
   value: TL431
   footprint: TO92-CLP
   description: VOLTAGE REGULATOR
+  pin_count: 3
 nets:
 - name: '!OFF'
   pins: [R37.1, R38.1, R39.1, R40.1, U4.PD4]

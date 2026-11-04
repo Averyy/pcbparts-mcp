@@ -112,45 +112,59 @@ components:
 - ref: J1
   value: 1x3 header
   footprint: Conn
+  pin_count: 3
 - ref: J10
   value: USB-C
   footprint: USB-SMD_GT-USB-7010AN
+  pin_count: 10
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J12
   value: 1x4 header
   footprint: Conn
+  pin_count: 4
 - ref: J14
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J15
   value: 1x4 header
   footprint: Conn
+  pin_count: 4
 - ref: J2
   value: 1x4 header
   footprint: Conn
+  pin_count: 4
 - ref: J3
   value: 1x4 header
   footprint: Conn
+  pin_count: 4
 - ref: J4
   value: 1x3 header
   footprint: Conn
+  pin_count: 3
 - ref: J5
   value: 1x4 header
   footprint: Conn
+  pin_count: 4
 - ref: J6
   value: 1x3 header
   footprint: Conn
+  pin_count: 3
 - ref: J7
   value: 1x2 header
   footprint: Conn
 - ref: J8
   value: 1x4 header
   footprint: Conn
+  pin_count: 4
 - ref: J9
   value: 1x3 header
   footprint: Conn
+  pin_count: 3
 - ref: Q1
   value: P-channel MOSFET
   footprint: SOT-23
+  pin_count: 3
 - ref: R1
   value: 1kohm
   footprint: '0402'
@@ -213,21 +227,29 @@ components:
   value: BMI270
   footprint: BMI270
   manufacturer: Bosch Sensortec
+  pin_count: 14
+  nc_pins: {ASDX: '2', ASCX: '3', OSCB: '10', OSDO: '11'}
 - ref: U2
   value: RP2040
   footprint: QFN-56-1EP
+  pin_count: 57
+  nc_pins: {GPIO15: '18', GPIO16: '27', GPIO17: '28', GPIO21: '32', GPIO29_ADC3: '41'}
 - ref: U3
   value: W25Q128JVSIQ
   footprint: SOIC-8
+  pin_count: 8
 - ref: U4
   value: AMS1117-5.0
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: U5
   value: AMS1117-3.3
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: Y1
   value: CM4012M00020T8188087
   footprint: SMD2520
+  pin_count: 4
 nets:
 - name: +1V1
   pins: [C15.1, C16.1, C18.1, U2.DVDD@23, U2.DVDD@50, U2.VREG_VOUT]

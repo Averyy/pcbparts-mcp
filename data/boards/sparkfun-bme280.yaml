@@ -32,10 +32,12 @@ components:
 - ref: JP1
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: JP2
   value: 1x6 header
   footprint: 1X06
   prod_id: CONN-08437
+  pin_count: 6
 - ref: R1
   value: 4.7kohm
   footprint: '0603'
@@ -64,16 +66,19 @@ components:
 - ref: SJ1
   value: EN I2C PULL
   footprint: SJ-3
+  pin_count: 3
 - ref: SJ2
   value: EN I2C MODE
   footprint: SJ-2
 - ref: SJ3
   value: EN ADR PULLUP
   footprint: SJ-3
+  pin_count: 3
 - ref: U1
   value: BME280
   footprint: BME280_LGA
   prod_id: IC-13090
+  pin_count: 8
 nets:
 - name: '!CS'
   pins: [JP2.1, R3.1, U1.!CS]

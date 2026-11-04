@@ -279,22 +279,27 @@ components:
   footprint: SM06B
   digikey: 455-1806-1-ND
   description: CONN HEADER SH 6POS SIDE 1MM TIN
+  pin_count: 8
 - ref: CON2
   value: 4-pin connector
   footprint: JST_GH-4P-RA
   digikey: 455-1566-1-ND
+  pin_count: 6
 - ref: CON3
   value: 4-pin connector
   footprint: JST_GH-4P-RA
   digikey: 455-1566-1-ND
+  pin_count: 6
 - ref: CON4
   value: 4-pin connector
   footprint: JST_GH-4P-RA
   digikey: 455-1566-1-ND
+  pin_count: 6
 - ref: CON5
   value: 4-pin connector
   footprint: JST_GH-4P-RA
   digikey: 455-1566-1-ND
+  pin_count: 6
 - ref: D3
   value: BAS21AHT1G
   footprint: SOD323
@@ -317,69 +322,87 @@ components:
   footprint: TQFP64-10X10
   digikey: 497-8918-ND
   description: MCU ARM 256KB FLASH MEM 64-LQFP
+  pin_count: 64
+  nc_pins: {PC13: '2', PC14: '3', PC15: '4', NRST: '7', PA6: '22', PC4: '24', PC5: '25', PB2: '28', PB10: '29', PB11: '30', PB14: '35', PB15: '36', PC9: '40', PA15: '50', PC10: '51', PC11: '52', PC12: '53', PD2: '54', PB3: '55', PB5: '57'}
 - ref: IC2
   value: CAT24C02
   footprint: SOT-23-5
   digikey: CAT24C02TDI-GT3AOSCT-ND
   description: IC EEPROM 2KBIT 400KHZ TSOT23-5
+  pin_count: 5
 - ref: IC3
   value: SN65HVD232D
   footprint: SOIC8
   digikey: 296-26344-1-ND
   description: IC CAN TRANSCEIVER 3
+  pin_count: 8
+  nc_pins: {NC@1: '5', NC@2: '8'}
 - ref: IC4
   value: SN65HVD232D
   footprint: SOIC8
   digikey: 296-26344-1-ND
   description: IC CAN TRANSCEIVER 3
+  pin_count: 8
+  nc_pins: {NC@1: '5', NC@2: '8'}
 - ref: IC5
   value: LM75BD
   footprint: TSSOP8
   digikey: 568-4768-1-ND
   description: SENSOR TEMPERATURE I2C 8TSSOP
+  pin_count: 8
 - ref: IC6
   value: FAN7888
   footprint: SOIC20
   digikey: FAN7888MXTR-ND
   description: IC GATE DRIVER HALF BRIDG 20SOIC
+  pin_count: 20
 - ref: IC7
   value: ZXCT1051
   footprint: SOT-23-5
   digikey: ZXCT1051E5CT-ND
   description: IC CURRENT MONITOR 1% SOT23-5
+  pin_count: 5
 - ref: IC8
   value: 3.3V
   footprint: SOT-223
   digikey: NCV1117ST33T3GOSCT-ND
   description: IC REG LDO 3
+  pin_count: 4
 - ref: LED1
   value: LTST-C19HE1WT
   footprint: LITE_ON_RGB_LED
   digikey: 160-2162-1-ND
+  pin_count: 4
 - ref: Q1
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  pin_count: 8
 - ref: Q2
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  pin_count: 8
 - ref: Q3
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  pin_count: 8
 - ref: Q4
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  pin_count: 8
 - ref: Q5
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  pin_count: 8
 - ref: Q6
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  pin_count: 8
 - ref: R1
   value: 200ohm
   footprint: '0402'
@@ -410,6 +433,7 @@ components:
   footprint: 2010_CURRENT_SHUNT
   digikey: 985-1563-1-ND
   tolerance: 1%
+  pin_count: 4
 - ref: R15
   value: 560ohm
   footprint: '0402'
@@ -520,6 +544,7 @@ components:
   footprint: OSCILLATOR-3.2X2.5
   digikey: 1253-1182-1-ND
   description: Smd Crystal
+  pin_count: 4
 nets:
 - name: BLABLA
   pins: [IC7.VOUT, R7.1]

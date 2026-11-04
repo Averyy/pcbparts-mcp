@@ -145,6 +145,8 @@ components:
   value: NUP2114UCMR6T1G
   footprint: SO-8
   manufacturer: ON Semicon
+  pin_count: 6
+  nc_pins: {I/O@1: '1', NC@3: '3', NC@4: '4', I/O@6: '6'}
 - ref: D10
   value: 1N4148W_C81598
   footprint: SOD-123
@@ -173,6 +175,7 @@ components:
   value: BAT54C,215
   footprint: SOT-23
   manufacturer: "Nexperia(\u5B89\u4E16)"
+  pin_count: 3
 - ref: D8
   value: 1N4148W_C81598
   footprint: SOD-123
@@ -192,34 +195,45 @@ components:
   value: KH-2.54PH90-1X2P-L13.8
   footprint: 1X2
   manufacturer: "kinghelm(\u91D1\u822A\u6807)"
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: P1
   value: 2x2 header
   footprint: 2X2
   manufacturer: "BOOMELE(\u535A\u7A46\u7CBE\u5BC6)"
+  pin_count: 4
 - ref: P2
   value: 2x2 header
   footprint: 2X2
   manufacturer: "BOOMELE(\u535A\u7A46\u7CBE\u5BC6)"
+  pin_count: 4
 - ref: Q1
   value: BC847
   footprint: SOT-23
   manufacturer: "CJ(\u6C5F\u82CF\u957F\u7535/\u957F\u6676)"
+  pin_count: 3
 - ref: Q2
   value: MMBT5551LT1G
   footprint: SOT-23
   manufacturer: "onsemi(\u5B89\u68EE\u7F8E)"
+  pin_count: 3
 - ref: Q3
   value: AO3401A
   footprint: SOT-23
   manufacturer: AOS
+  pin_count: 3
+  nc_pins: {D: '3'}
 - ref: Q4
   value: AO3401A
   footprint: SOT-23
   manufacturer: AOS
+  pin_count: 3
+  nc_pins: {G: '1'}
 - ref: Q5
   value: MMBT5551LT1G
   footprint: SOT-23
   manufacturer: "onsemi(\u5B89\u68EE\u7F8E)"
+  pin_count: 3
 - ref: R11
   value: 330kohm
   footprint: 0805
@@ -262,6 +276,8 @@ components:
   value: 6.8kohm
   footprint: 0805
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R22
   value: 30kohm
   footprint: 0805
@@ -314,10 +330,14 @@ components:
   value: 1kohm
   footprint: 0805
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R34
   value: 200kohm
   footprint: 0805
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R35
   value: 47kohm
   footprint: 0805
@@ -353,55 +373,75 @@ components:
   value: 1kohm
   footprint: 0805
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: U10
   value: 74LVC1G08GV,125
   footprint: SOT-353_SC-70-5
   manufacturer: "Nexperia(\u5B89\u4E16)"
+  pin_count: 5
+  nc_pins: {B: '1'}
 - ref: U11
   value: LT3014BHVES5#TRMPBF
   footprint: SOT-23-5
   manufacturer: "ADI(\u4E9A\u5FB7\u8BFA)"
+  pin_count: 5
+  nc_pins: {NC: '3'}
 - ref: U13
   value: TLV7031DBVR
   footprint: SOT-23-5
   manufacturer: "TI(\u5FB7\u5DDE\u4EEA\u5668)"
+  pin_count: 5
 - ref: U14
   value: TLR341G
   footprint: SOT-23-6
   manufacturer: "ROHM(\u7F57\u59C6)"
+  pin_count: 6
 - ref: U16
   value: ESP32-C3_SUPERMINI_TH
   footprint: MODULE_ESP32-C3_SUPERMINI_TH
   manufacturer: Espressif Systems
   mpn: ESP32-C3 SuperMini_TH
+  pin_count: 16
+  nc_pins: {GPIO0: '0', GPIO1: '1', GPIO2: '2', GPIO3: '3', GPIO4: '4', GPIO5: '5', 5V: 5V, GPIO6: '6', GPIO7: '7', GPIO10: '10', GPIO20: '20', GPIO21: '21'}
 - ref: U2
   value: XC6209F332MR-G
   footprint: SOT-23-5
   manufacturer: "TOREX(\u7279\u745E\u4ED5)"
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U3
   value: MC14043BDR2G
   footprint: SOIC-16
   manufacturer: "onsemi(\u5B89\u68EE\u7F8E)"
+  pin_count: 16
+  nc_pins: {Q3: '1', R0: '3', Q1: '9', Q2: '10', NC: '13'}
 - ref: U4
   value: LMV793MFX
   footprint: MSOP-8
   manufacturer: "TI(\u5FB7\u5DDE\u4EEA\u5668)"
+  pin_count: 5
 - ref: U5
   value: TPS7A2030PDBVR
   footprint: SOT-23-5
   manufacturer: "TI(\u5FB7\u5DDE\u4EEA\u5668)"
+  pin_count: 5
+  nc_pins: {EN: '3', N/C: '4'}
 - ref: U6
   value: TLV3201AIDBVT
   footprint: SOT-23-5
   manufacturer: "TI(\u5FB7\u5DDE\u4EEA\u5668)"
+  pin_count: 5
 - ref: U7
   value: OPA357AIDBVR
   footprint: SOT-23-5
   manufacturer: "TI(\u5FB7\u5DDE\u4EEA\u5668)"
+  pin_count: 5
 - ref: U8
   value: TLR341G
   footprint: SOT-23-6
   manufacturer: "ROHM(\u7F57\u59C6)"
+  pin_count: 6
 nets:
 - name: 3V0
   pins: [C13.2, D5.K, R22.2, U4.V+, U5.OUT]

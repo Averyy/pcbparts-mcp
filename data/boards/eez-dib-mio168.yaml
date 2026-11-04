@@ -472,26 +472,31 @@ components:
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  pin_count: 3
 - ref: D16
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  pin_count: 3
 - ref: D17
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  pin_count: 3
 - ref: D18
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  pin_count: 3
 - ref: D19
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  pin_count: 3
 - ref: D2
   value: MBR0530T3G
   footprint: SOD123
@@ -502,26 +507,31 @@ components:
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  pin_count: 3
 - ref: D21
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  pin_count: 3
 - ref: D22
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  pin_count: 3
 - ref: D23
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  pin_count: 3
 - ref: D24
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  pin_count: 3
 - ref: D25
   value: MBR0530T3G
   footprint: SOD123
@@ -572,131 +582,166 @@ components:
   footprint: DBV0006A_N
   digikey: 296-43154-2-ND
   mouser: 595-SN6505BDBVT
+  pin_count: 6
 - ref: IC10
   value: W9812G6KH-6
   footprint: TSOPII-54
   digikey: W9812G6KH-6-ND
   mouser: 454-W9812G6KH-6
+  pin_count: 54
+  nc_pins: {A12/NC-36: '36', NC-40: '40'}
 - ref: IC11
   value: OPA2196IDR
   footprint: SOIC-8
   digikey: 296-1282-1-ND
   mouser: 595-TL072CDR
+  pin_count: 8
 - ref: IC12
   value: DAC7760IPWPR
   footprint: PWP24
   digikey: 296-37188-1-ND
   mouser: 595-DAC7760IPWPR
+  pin_count: 25
+  nc_pins: {ISET-R: '13', BOOST: '20'}
 - ref: IC13
   value: DAC7760IPWPR
   footprint: PWP24
   digikey: 296-37188-1-ND
   mouser: 595-DAC7760IPWPR
+  pin_count: 25
+  nc_pins: {ISET-R: '13', BOOST: '20'}
 - ref: IC14
   value: BM2LB150FJ-CE2
   footprint: SOIC-8
   digikey: BM2LB150FJ-CE2TR-ND
   mouser: 755-BM2LB150FJ-CE2
+  pin_count: 8
 - ref: IC15
   value: DAC7563TDGSR
   footprint: DGS10
   digikey: 296-43287-1-ND
   mouser: 595-DAC7563TDGSR
+  pin_count: 10
 - ref: IC16
   value: OPA376AIDBVR
   footprint: SOT23-5L_STM
   digikey: 296-39130-2-ND
   mouser: 595-OPA376AIDBVR
+  pin_count: 5
 - ref: IC17
   value: BM2LB150FJ-CE2
   footprint: SOIC-8
   digikey: BM2LB150FJ-CE2TR-ND
   mouser: 755-BM2LB150FJ-CE2
+  pin_count: 8
 - ref: IC18
   value: BM2LB150FJ-CE2
   footprint: SOIC-8
   digikey: BM2LB150FJ-CE2TR-ND
   mouser: 755-BM2LB150FJ-CE2
+  pin_count: 8
 - ref: IC19
   value: OPA2196IDR
   footprint: SOIC-8
   digikey: 296-1282-1-ND
   mouser: 595-TL072CDR
+  pin_count: 8
 - ref: IC2
   value: LP5907MFX-3.3
   footprint: SOT23-5L_STM
   digikey: 296-38557-2-ND
   mouser: 595-LP5907MFX-3.3NPB
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: IC20
   value: BM2LB150FJ-CE2
   footprint: SOIC-8
   digikey: BM2LB150FJ-CE2TR-ND
   mouser: 755-BM2LB150FJ-CE2
+  pin_count: 8
 - ref: IC21
   value: TL431B
   footprint: SOT-3
   digikey: 296-17332-1-ND
   mouser: 595-TL431IDBZR
+  pin_count: 3
 - ref: IC22
   value: 74HC126PW,118
   footprint: PW(R-PDSO-G14)
   digikey: 1727-6579-1-ND
   mouser: 771-HC126PW118
+  pin_count: 14
 - ref: IC23
   value: DG212BDY-T1-E3
   footprint: SOIC-16
   digikey: DG212BDY-T1-E3CT-ND
   mouser: 781-DG212BDY-T1-E3
+  pin_count: 16
 - ref: IC3
   value: L78L15
   footprint: SOIC-8
   digikey: MC78L15ACDR2GOSDKR-ND
   mouser: 863-MC78L15ACDR2G
+  pin_count: 8
+  nc_pins: {NC@4: '4', NC@5: '5'}
 - ref: IC4
   value: L79L15
   footprint: SOIC-8
   digikey: MC79L15ABDR2GOSDKR
   mouser: 863-MC79L15ACDR2G
+  pin_count: 8
+  nc_pins: {NC@4: '4', NC@8: '8'}
 - ref: IC5
   value: M24C32
   footprint: SOIC-8
   digikey: 497-8572-5-ND
   mouser: 511-M24C32-WMN6P
+  pin_count: 8
 - ref: IC6
   value: SI8641NSOIC-16
   footprint: SOIC-16
   digikey: 336-2566-ND
   mouser: 634-SI8641BB-B-IS1
+  pin_count: 16
 - ref: IC7
   value: SI8641NSOIC-16
   footprint: SOIC-16
   digikey: 336-2566-ND
   mouser: 634-SI8641BB-B-IS1
+  pin_count: 16
+  nc_pins: {A4: '6'}
 - ref: IC8
   value: STM32F446ZCT6
   footprint: LQFP-144
   digikey: 497-17473-ND
   mouser: 511-STM32F446ZCT6
+  pin_count: 144
+  nc_pins: {PA13: '105', PA14: '109'}
 - ref: IC9
   value: SN74LVC1G139DCUR
   footprint: DCU8
   digikey: 296-18203-2-ND
   mouser: 595-SN74LVC1G139DCUR
+  pin_count: 8
 - ref: J1
   value: '4907'
   footprint: '4907'
   digikey: 36-4907-ND
   mouser: 534-4907
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: JP2
   value: DS1025-01-1*3P8BV1-B
   footprint: ZL303-03P
   digikey: 952-1312-ND
   mouser: 855-M22-2510305
+  pin_count: 3
 - ref: JP3
   value: DS1025-01-1*3P8BV1-B
   footprint: ZL303-03P
   digikey: 952-1312-ND
   mouser: 855-M22-2510305
+  pin_count: 3
 - ref: KK1
   value: PCB-MB
   footprint: PCB-MB-01
@@ -712,6 +757,7 @@ components:
   footprint: SRF0905
   digikey: SRF0905-202YCT-ND
   mouser: 652-SRF0905-202Y
+  pin_count: 4
 - ref: L2
   value: BLM18AG102SH1D
   footprint: BEAD0603
@@ -747,56 +793,67 @@ components:
   footprint: SC88
   digikey: 1727-4791-2-ND
   mouser: 771-2N7002PS-115
+  pin_count: 6
 - ref: Q10
   value: 2N7002
   footprint: SOT-3
   digikey: 2N7002LT1GOSCT-ND
   mouser: 863-2N7002LT1G
+  pin_count: 3
 - ref: Q11
   value: IRLML2246TRPBF
   footprint: SOT-3
   digikey: IRLML2246TRPBFTR-ND
   mouser: 942-IRLML2246TRPBF
+  pin_count: 3
 - ref: Q2
   value: 2N7002PS,115
   footprint: SC88
   digikey: 1727-4791-2-ND
   mouser: 771-2N7002PS-115
+  pin_count: 6
 - ref: Q3
   value: 2N7002PS,115
   footprint: SC88
   digikey: 1727-4791-2-ND
   mouser: 771-2N7002PS-115
+  pin_count: 6
 - ref: Q4
   value: 2N7002PS,115
   footprint: SC88
   digikey: 1727-4791-2-ND
   mouser: 771-2N7002PS-115
+  pin_count: 6
 - ref: Q5
   value: 2N7002PS,115
   footprint: SC88
   digikey: 1727-4791-2-ND
   mouser: 771-2N7002PS-115
+  pin_count: 6
 - ref: Q6
   value: MMBT5401
   footprint: SOT23-BEC
   digikey: MMBT5401-FDICT-ND
   mouser: 621-MMBT5401-F
+  pin_count: 3
 - ref: Q7
   value: MMBT5551
   footprint: SOT23-BEC
   digikey: MMBT5551LT1GOSCT-ND
   mouser: 863-MMBT5551LT1G
+  pin_count: 3
 - ref: Q8
   value: MMBT5551
   footprint: SOT23-BEC
   digikey: MMBT5551LT1GOSCT-ND
   mouser: 863-MMBT5551LT1G
+  pin_count: 3
 - ref: Q9
   value: IRLML2246TRPBF
   footprint: SOT-3
   digikey: IRLML2246TRPBFTR-ND
   mouser: 942-IRLML2246TRPBF
+  pin_count: 3
 - ref: R1
   value: 470kohm
   footprint: 0805
@@ -1126,26 +1183,33 @@ components:
   footprint: CAY16
   digikey: CAY16-330J4LFCT-ND
   mouser: 652-CAY16-330J4LF
+  pin_count: 8
 - ref: RN2
   value: DR1206-47K-4/8
   footprint: CAY16
   digikey: CAY16-330J4LFCT-ND
   mouser: 652-CAY16-330J4LF
+  pin_count: 8
+  nc_pins: {1@4: '4', 2@5: '5'}
 - ref: RN3
   value: DR1206-33R-4/8
   footprint: CAY16
   digikey: CAY16-330J4LFCT-ND
   mouser: 652-CAY16-330J4LF
+  pin_count: 8
 - ref: RN4
   value: DR1206-33R-4/8
   footprint: CAY16
   digikey: CAY16-330J4LFCT-ND
   mouser: 652-CAY16-330J4LF
+  pin_count: 8
+  nc_pins: {1@1: '1', 2@8: '8'}
 - ref: TR1
   value: WE-750315371
   footprint: MURATA_78615
   digikey: 1297-1178-1-ND
   mouser: 710-750315371
+  pin_count: 6
 - ref: TVS1
   value: PESD12VL1BA,115
   footprint: SOD-323_PESD
@@ -1171,36 +1235,45 @@ components:
   footprint: '691327310016'
   digikey: 732-691327310016-ND
   mouser: 710-691327310016
+  pin_count: 16
 - ref: X4
   value: '691322310008'
   footprint: '691322310008'
   digikey: 732-2093-ND
   mouser: 710-691322310008
+  pin_count: 8
 - ref: X5
   value: 87833-1032
   footprint: DS1014-10RF1B
   digikey: WM8615-ND
   mouser: 538-87833-1032
+  pin_count: 10
 - ref: X6
   value: DS1023-2*14S21
   footprint: TSW-114-07-F-D
   digikey: SAM1183-14-ND
   mouser: 200-SSQ11401TD
+  pin_count: 28
+  nc_pins: {Pin_17: '17', Pin_18: '18'}
 - ref: X7
   value: 87833-1032
   footprint: DS1014-10RF1B
   digikey: WM8615-ND
   mouser: 538-87833-1032
+  pin_count: 10
 - ref: X8
   value: DS1023-2*14S21
   footprint: TSW-114-07-F-D
   digikey: SAM1183-14-ND
   mouser: 200-SSQ11401TD
+  pin_count: 28
 - ref: Y1
   value: LF XTAL026392
   footprint: 12SMX(B)
   digikey: 1923-1009-ND
   mouser: 449-LFXTAL026392BULK
+  pin_count: 4
+  nc_pins: {NC@2: '2', NC@4: '4'}
 - ref: ZD1
   value: SMAJ16A
   footprint: DO214AC-2

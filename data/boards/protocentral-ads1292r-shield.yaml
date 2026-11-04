@@ -98,9 +98,12 @@ components:
   footprint: AUDIO-JACK-3.5MM-SMD
   prod_id: CONN-10353
   description: 3.5mm Audio Jack
+  pin_count: 3
 - ref: M1
   value: ARDUINO
   footprint: ARDUINO
+  pin_count: 38
+  nc_pins: {A0: A0, A1: A1, A2: A2, A3: A3, A4/SDA: A4, A5/SCL: A5, AREF: AREF, D0: D0, D1: D1, D2: D2, D8: D8, D9: D9, D10: D10, IOREF: IOREF, RESERVED: RESERVED, /RESET: RESET, RST: RESET_ICSP, SCL: SCL, SDA: SDA}
 - ref: POWER1
   value: red LED
   footprint: CHIPLED_0603
@@ -146,20 +149,26 @@ components:
 - ref: SJ1
   value: solder jumper
   footprint: SJ-2
+  pin_count: 3
 - ref: U$1
   value: CERT
   footprint: CERT-SMALL-SILK
 - ref: U$3
   value: ADS1292R
   footprint: SQFP-S-5X5-32
+  pin_count: 32
+  nc_pins: {GPIO2: '25', GPIO1: '26'}
 - ref: U1
   value: TXB0108PWR
   footprint: TSSOP20
   description: 8-Bit Bi-Directional Level Shifter
+  pin_count: 20
 - ref: U3
   value: AP2112K-3.3
   footprint: SOT-23-5
   description: Voltage Regulator LDO
+  pin_count: 5
+  nc_pins: {BP: '4'}
 nets:
 - name: '!ADS_DRDY'
   pins: [U$3.!DRDY, U1.A1]

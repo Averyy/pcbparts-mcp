@@ -259,101 +259,138 @@ components:
   value: ADS1299IPAG
   footprint: TQFP64
   description: 8-Channel, 24-Bit Analog-To-Digital Converter With Integrated EEG Front End.
+  pin_count: 64
+  nc_pins: {NC@2: '27', NC@1: '29', RESV1: '31', BIASREF: '60', NC@3: '64'}
 - ref: IC10
   value: TXB0108PWR
   footprint: TSSOP20
   description: 8-Bit Bi-Directional Level Shifter
+  pin_count: 20
 - ref: IC11
   value: TXB0108PWR
   footprint: TSSOP20
   description: 8-Bit Bi-Directional Level Shifter
+  pin_count: 20
 - ref: IC2
   value: TPS72325DBVT
   footprint: SOT-23-5
   description: Cap-Free, NMOS, 250mA Low Dropout Regulator with Reverse Current Protection
+  pin_count: 5
 - ref: IC3
   value: TPS73225DBVT
   footprint: SOT-23-5
   description: Cap-Free, NMOS, 250mA Low Dropout Regulator with Reverse Current Protection
+  pin_count: 5
 - ref: IC5
   value: 24AA256UID
   footprint: SO-08
   manufacturer: MICROCHIP
   mpn: 24LCS52-I/SN
   description: EEPROM
+  pin_count: 8
 - ref: IC6
   value: TPS60403DBVT
   footprint: SOT-23-5
   description: 60mA Charge Pump Voltage Inverter with Fixed 250kHz Operation
+  pin_count: 5
 - ref: IC7
   value: OPA376
   footprint: SOT-23-5
   description: Low-Noise, Low Quiescent Current, Precision Operational Amplifier
+  pin_count: 5
 - ref: IC8
   value: OPA376
   footprint: SOT-23-5
   description: Low-Noise, Low Quiescent Current, Precision Operational Amplifier
+  pin_count: 5
 - ref: IC9
   value: TXS0102
   footprint: VFSOP-8
   description: 2-Bit Bi-Directional Level Shifter (I2C, etc.)
+  pin_count: 8
 - ref: JP1
   value: 2x12 header
   footprint: 2X12
+  pin_count: 24
 - ref: JP15
   value: External Sync
   footprint: JST-4-PTH
+  pin_count: 4
 - ref: JP16
   value: Electrodes
   footprint: OST_302-R241
   description: Conn Socket Strip SKT 24 POS 2
   manufacturer: On Shore
   mpn: 302-R241
+  pin_count: 24
 - ref: JP2
   value: 2x10 header
   footprint: 2X10
+  pin_count: 20
 - ref: JP20
   value: 1x10 header
   footprint: 1X10
+  pin_count: 10
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '9': '9', '10': '10'}
 - ref: JP21
   value: 1x8 header
   footprint: 1X08
+  pin_count: 8
+  nc_pins: {'1': '1', '2': '2', '3': '3', '5': '5', '6': '6', '7': '7', '8': '8'}
 - ref: JP22
   value: 1x8 header
   footprint: 1X08
+  pin_count: 8
+  nc_pins: {'1': '1', '2': '2', '5': '5', '6': '6'}
 - ref: JP23
   value: 2x18 header
   footprint: 2X18
+  pin_count: 36
+  nc_pins: {'1': '1', '2': '2', '3': '3', '9': '9', '10': '10', '15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '23': '23', '24': '24', '25': '25', '26': '26', '30': '30', '31': '31', '32': '32', '34': '34'}
 - ref: JP24
   value: 1x8 header
   footprint: 1X08
+  pin_count: 8
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8'}
 - ref: JP25
   value: 1x8 header
   footprint: 1X08
+  pin_count: 8
+  nc_pins: {'2': '2', '3': '3', '4': '4', '6': '6', '7': '7'}
 - ref: JP26
   value: 1x8 header
   footprint: 1X08
+  pin_count: 8
+  nc_pins: {'1': '1', '3': '3', '5': '5', '6': '6', '7': '7', '8': '8'}
 - ref: JP3
   value: 2x4 header
   footprint: 2X04
+  pin_count: 8
+  nc_pins: {'5': '5', '6': '6', '7': '7', '8': '8'}
 - ref: JP4
   value: 1x3 header
   footprint: 1X03
+  pin_count: 3
 - ref: JP5
   value: 1x3 header
   footprint: 1X03
+  pin_count: 3
 - ref: JP6
   value: 1x3 header
   footprint: 1X03
+  pin_count: 3
 - ref: JP7
   value: 1x3 header
   footprint: 1X03
+  pin_count: 3
 - ref: JP8
   value: 1x3 header
   footprint: 1X03
+  pin_count: 3
 - ref: JP9
   value: 1x3 header
   footprint: 1X03
+  pin_count: 3
 - ref: L1
   value: 3.3uH
   footprint: 0805
@@ -462,6 +499,8 @@ components:
 - ref: SPI
   value: 2x3 header
   footprint: 2X03
+  pin_count: 6
+  nc_pins: {'5': '5'}
 - ref: TP1
   value: AVDD_TEST_POINT
   footprint: 1X01

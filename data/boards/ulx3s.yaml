@@ -20,6 +20,8 @@ components:
   mpn: SJ-43516-SMT-TR
   mouser: 490-SJ43515TS-SMT-TR
   digikey: CP-43516SJCT-ND
+  pin_count: 6
+  nc_pins: {'5': '5', '6': '6'}
 - ref: B0
   value: PTS645
   footprint: SW_SPST_PTS645
@@ -315,18 +317,26 @@ components:
 - ref: C69
   value: 22nF
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C7
   value: 22uF
   footprint: 0805
 - ref: C70
   value: 22nF
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: C71
   value: 22nF
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C72
   value: 22nF
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: C8
   value: 22uF
   footprint: 0805
@@ -485,21 +495,26 @@ components:
   mouser: 649-10029449-111RLF
   digikey: 609-4614-1-ND
   lcsc: C427307
+  pin_count: 20
 - ref: J1
   value: 2x20 header
   footprint: Socket_Strip_Angled
+  pin_count: 40
 - ref: J2
   value: 2x20 header
   footprint: Socket_Strip_Angled
+  pin_count: 40
 - ref: J3
   value: 1x2 header
   footprint: 1X2
 - ref: J4
   value: 2x3 header
   footprint: Socket_Strip_Straight
+  pin_count: 6
 - ref: J5
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: L1
   value: 2.2uH
   footprint: '1008'
@@ -530,6 +545,7 @@ components:
   value: ST7789
   footprint: st7789
   mpn: DM-OLEDC095-626
+  pin_count: 8
 - ref: Q1
   value: BC857
   footprint: SOT-23
@@ -537,6 +553,7 @@ components:
   mouser: 583-BC856A-T
   digikey: TBC857BLMCT-ND
   lcsc: C181146
+  pin_count: 3
 - ref: Q2
   value: 2N7002
   footprint: SOT-23
@@ -544,6 +561,7 @@ components:
   mouser: 512-2N7002L
   digikey: 2N7002K-TPMSCT-ND
   lcsc: C179727
+  pin_count: 3
 - ref: R1
   value: 4.7kohm
   footprint: '0603'
@@ -868,6 +886,8 @@ components:
   mouser: 538-104031-0811
   digikey: WM6357CT-ND
   lcsc: C585350
+  pin_count: 19
+  nc_pins: {'10': '10', '11': '11', '12': '12'}
 - ref: SW1
   value: switch
   footprint: SW_DIP_x4_W8.61mm_Slide_LowProfile
@@ -875,10 +895,13 @@ components:
   mouser: 774-2194MST
   digikey: CT2194MST-ND
   lcsc: C319050
+  pin_count: 8
 - ref: U1
   value: LFE5U-85F-6BG381C
   footprint: BGA-381_pitch0.8mm_dia0.4mm
   mpn: LFE5U-85F-6BG381C
+  pin_count: 382
+  nc_pins: {A15: A15, C9: C9, D9: D9, D10: D10, D11: D11, D12: D12, E10: E10, E11: E11, K16: K16, K17: K17, M5: M5, N5: N5, P5: P5, R3: R3, T16: T16, W4: W4, W5: W5, W8: W8, W9: W9, W10: W10, W11: W11, W13: W13, W14: W14, W20: W20, X: X, Y16: Y16, Y17: Y17, Y19: Y19}
 - ref: U10
   value: IS25LP128F
   footprint: SOA008-150-208mil
@@ -886,12 +909,14 @@ components:
   mouser: 454-W25Q128JVSIMTR
   digikey: W25Q128JVSIQCT-ND
   lcsc: C113767
+  pin_count: 8
 - ref: U11
   value: PCA9306D
   footprint: SM8
   mpn: PCA9306D
   mouser: 771-PCA9306D-T
   digikey: 568-4215-1-ND
+  pin_count: 8
 - ref: U2
   value: MT48LC16M16A2TG
   footprint: TSOP54
@@ -899,6 +924,8 @@ components:
   mouser: 870-IS42S16160G7TLTR
   digikey: 1450-1385-1-ND
   lcsc: C492195
+  pin_count: 54
+  nc_pins: {'40': '40'}
 - ref: U3
   value: TLV62569DBV
   footprint: TSOT-25
@@ -906,16 +933,19 @@ components:
   mouser: 453-DIO6015BCST5
   digikey: 296-47360-1-ND
   lcsc: C141836
+  pin_count: 5
 - ref: U4
   value: TLV62569DBV
   footprint: TSOT-25
   mpn: TLV62569DBVR
   mouser: 595-TLV62569DBVR
+  pin_count: 5
 - ref: U5
   value: TLV62569DBV
   footprint: TSOT-25
   mpn: TLV62569DBVR
   mouser: 595-TLV62569DBVR
+  pin_count: 5
 - ref: U6
   value: FT231XQ
   footprint: FT231X-QFN-20-1EP
@@ -923,6 +953,7 @@ components:
   mouser: 895-FT231XQ-R
   digikey: 768-1128-1-ND
   lcsc: C132159
+  pin_count: 21
 - ref: U7
   value: MCP7940NT
   footprint: SOT96-1
@@ -930,6 +961,7 @@ components:
   mouser: 579-MCP7940NT-I/SN
   digikey: MCP7940NT-I/SNCT-ND
   lcsc: C148052
+  pin_count: 8
 - ref: U8
   value: MAX11125
   footprint: MAX1112x-TQFN-28-1EP
@@ -937,6 +969,8 @@ components:
   mouser: 700-MAX11125ATI+
   digikey: MAX11125ATI+-ND
   lcsc: C490299
+  pin_count: 29
+  nc_pins: {'12': '12', '25': '25'}
 - ref: U9
   value: ESP32
   footprint: ESP32
@@ -944,6 +978,8 @@ components:
   mouser: 356-ESP32WRVE22864PC
   digikey: 1965-ESP32-WROVER-B(16MB)CT-ND
   lcsc: C529589
+  pin_count: 32
+  nc_pins: {'27': '27', '28': '28', '32': '32'}
 - ref: US1
   value: USB Micro-B
   footprint: USB-MICRO-B-FCI-10118192-0001LF
@@ -951,9 +987,12 @@ components:
   mouser: 649-10118192-0001LF
   digikey: 609-4613-1-ND
   lcsc: C132564
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: US2
   value: USB Micro-B
   footprint: USB-MICRO-B-FCI-10118192-0001LF
+  pin_count: 6
 - ref: Y1
   value: FNETHE025
   footprint: SMD7050
@@ -961,6 +1000,7 @@ components:
   mouser: 729-FNETHE025
   digikey: 3305-7050XOM2500BMD13CCC-CT-ND
   lcsc: C390569
+  pin_count: 4
 - ref: Y2
   value: 32768Hz
   footprint: Crystal_SMD_ABS07
@@ -968,6 +1008,8 @@ components:
   mouser: 520-.327-6-34BT
   digikey: 535-11937-1-ND
   lcsc: C252402
+  pin_count: 4
+  nc_pins: {'2': '2', '3': '3'}
 nets:
 - name: +1V1
   pins:

@@ -35,60 +35,79 @@ components:
 - ref: K1
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K10
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K11
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K12
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: K13
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: K14
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K15
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K16
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: K17
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: K18
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K19
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K2
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K3
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: K4
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: K5
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: K6
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K7
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K8
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: K9
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -116,6 +135,7 @@ components:
 - ref: U1
   value: TCA9548APWR
   footprint: TSSOP-24
+  pin_count: 24
 nets:
 - name: A0
   pins: [JP1.1, R1.2, U1.A0]

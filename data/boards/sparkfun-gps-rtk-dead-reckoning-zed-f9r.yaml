@@ -91,6 +91,7 @@ components:
   footprint: SOT886
   prod_id: DIO-14084
   description: A small ESD protection device
+  pin_count: 6
 - ref: D4
   value: red LED
   footprint: '0603'
@@ -126,6 +127,7 @@ components:
   footprint: SMA-EDGE
   prod_id: CONN-08289
   description: SMA Antenna Connector w/ Ground
+  pin_count: 5
 - ref: FB1
   value: 120ohm
   footprint: '0402'
@@ -138,30 +140,38 @@ components:
   value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
+  pin_count: 3
 - ref: J2
   value: USB-C
   footprint: USB-C
   prod_id: CONN-14122
   description: USB Type C 16Pin Connector
+  pin_count: 14
 - ref: J3
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J4
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J5
   value: 1x11 header
   footprint: 1X11
+  pin_count: 11
 - ref: J6
   value: 1x9 header
   footprint: 1X09
+  pin_count: 9
 - ref: J7
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
+  nc_pins: {'1': '1', '4': '4', '5': '5'}
 - ref: PPS
   value: solder jumper (NC)
   footprint: SJ-2
@@ -178,10 +188,13 @@ components:
   value: 33ohm
   footprint: 1206_RA
   prod_id: RES-15081
+  pin_count: 8
 - ref: R11
   value: 33ohm
   footprint: 1206_RA
   prod_id: RES-15081
+  pin_count: 8
+  nc_pins: {C.1: P3, D.1: P4, D.2: P5, C.2: P6}
 - ref: R12
   value: 33ohm
   footprint: '0603'
@@ -264,10 +277,12 @@ components:
   value: 33ohm
   footprint: 1206_RA
   prod_id: RES-15081
+  pin_count: 8
 - ref: R9
   value: 33ohm
   footprint: 1206_RA
   prod_id: RES-15081
+  pin_count: 8
 - ref: RTK
   value: solder jumper (NC)
   footprint: SJ-2
@@ -285,26 +300,32 @@ components:
   footprint: SOIC-8
   prod_id: IC-15070
   description: HCPL-073L
+  pin_count: 8
 - ref: U3
   value: UHS_INVERTER_SCHMITT_TRIGGERSIP6
   footprint: SIP6_MICROPAK2
   prod_id: IC-17000
   description: NC7SZ14
+  pin_count: 4
 - ref: U4
   value: UHS_INVERTER_SCHMITT_TRIGGERSIP6
   footprint: SIP6_MICROPAK2
   prod_id: IC-17000
   description: NC7SZ14
+  pin_count: 4
 - ref: U5
   value: 3.3V
   footprint: SOT-23-5
   prod_id: VREG-12457
   description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
+  pin_count: 4
 - ref: U6
   value: U-BLOX_ZED-F9R
   footprint: UBLOX_ZED_F9R
   prod_id: IC-14716
   description: u-blox ZED-F9K ADR
+  pin_count: 83
+  nc_pins: {ANT_DETECT: P4, ANT_OFF: P5, '!ANT_SHORT!': P6}
 nets:
 - name: '!RESET'
   pins: [J6.4, R8.B.1]

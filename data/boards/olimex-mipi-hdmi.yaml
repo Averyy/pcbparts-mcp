@@ -146,18 +146,24 @@ components:
 - ref: FET1
   value: BSS138
   footprint: SOT23
+  pin_count: 3
 - ref: FET2
   value: BSS138
   footprint: SOT23
+  pin_count: 3
 - ref: FET3
   value: BSS138
   footprint: SOT23
+  pin_count: 3
 - ref: FET4
   value: BSS138
   footprint: SOT23
+  pin_count: 3
 - ref: HDMI1
   value: HDMI-SWM-19
   footprint: HDMI-SWM-19_Paste
+  pin_count: 20
+  nc_pins: {'13': '13', '14': '14'}
 - ref: L1
   value: 600ohm
   footprint: 0805
@@ -176,12 +182,15 @@ components:
 - ref: MIPI-DSI1
   value: 15-pin FFC
   footprint: FPC-15P-1mm-Right_Angle(AFA07-S15FCC-00)
+  pin_count: 16
 - ref: Q1
   value: 25MHz
   footprint: TSX-3.2x2.5mm_GND(3)
+  pin_count: 3
 - ref: Q2
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0402'
@@ -239,21 +248,30 @@ components:
 - ref: U1
   value: ME2188C50M5G
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '3'}
 - ref: U2
   value: LT8912B
   footprint: QFN64
+  pin_count: 65
+  nc_pins: {MIPIRX2_DP: '9', MIPIRX2_DN: '10', MIPIRX3_DP: '11', MIPIRX3_DN: '12', VBUS: '15', USB_ID: '16', USB_DP: '19', USB_DM: '20', LVDSTX3_DP: '37', LVDSTX3_DN: '38', LVDSTX_CKP: '39', LVDSTX_CKN: '40', LVDSTX2_DP: '43', LVDSTX2_DN: '44', LVDSTX1_DP: '45', LVDSTX1_DN: '46', LVDSTX0_DP: '47', LVDSTX0_DN: '48', REFCLK: '55', SD0_CEC: '58', WS_I/SPDIF_IN: '59', SCLK_I: '60', INT: '63'}
 - ref: U3
   value: RCLAMP0524P
   footprint: SLP2510P8_TEST
+  pin_count: 10
 - ref: U4
   value: RCLAMP0524P
   footprint: SLP2510P8_TEST
+  pin_count: 10
 - ref: U5
   value: RCLAMP0524P
   footprint: SLP2510P8_TEST
+  pin_count: 10
+  nc_pins: {IN1: '1', OUT1: '10'}
 - ref: VR1
   value: LD1117AG-AD-AA3-A-R
   footprint: SOT223
+  pin_count: 3
 nets:
 - name: +3.3V
   pins:

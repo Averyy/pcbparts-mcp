@@ -38,15 +38,18 @@ components:
 - ref: K1
   value: 1x5 header
   footprint: HEADER_MALE
+  pin_count: 5
 - ref: K2
   value: 1x2 header
   footprint: HEADER_MALE
 - ref: K3
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: Q1
   value: MMBT4403
   footprint: SOT-23-3
+  pin_count: 3
 - ref: R1
   value: 100ohm
   footprint: '0603'
@@ -66,6 +69,8 @@ components:
 - ref: U1
   value: HX711
   footprint: SOP-16
+  pin_count: 16
+  nc_pins: {XO: '13'}
 nets:
 - name: AVDD
   pins: [Q1.C, R3.2, R5.1, U1.AVDD]

@@ -72,6 +72,8 @@ components:
 - ref: P501
   value: USB_OTG
   footprint: Molex-Micro-USB-B-Middle-Mount
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: R201
   value: 4.7kohm
   footprint: '0603'
@@ -109,12 +111,16 @@ components:
 - ref: U201
   value: STM32F072C8Tx
   footprint: LQFP-48
+  pin_count: 48
+  nc_pins: {'3': '3', '4': '4', '12': '12', '13': '13', '14': '14', '15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '25': '25', '26': '26', '27': '27', '28': '28', '29': '29', '30': '30', '31': '31', '38': '38', '39': '39', '40': '40', '41': '41'}
 - ref: U301
   value: MCP1754ST-3302E
   footprint: SOT89-3_Housing
+  pin_count: 3
 - ref: U401
   value: TJA1051/3
   footprint: SOIC-8
+  pin_count: 8
 - ref: W201
   value: TEST_1P
   footprint: Measurement_Point_Round-SMD-Pad_Small
@@ -148,9 +154,13 @@ components:
 - ref: X501
   value: CON_SWD
   footprint: TC2030-NL
+  pin_count: 6
+  nc_pins: {'6': '6'}
 - ref: X502
   value: SUB-D9
   footprint: DB9M_CI
+  pin_count: 9
+  nc_pins: {'1': '1', '4': '4', '5': '5', '6': '6', '8': '8', '9': '9'}
 - ref: Y201
   value: 8MHz
   footprint: ABM3

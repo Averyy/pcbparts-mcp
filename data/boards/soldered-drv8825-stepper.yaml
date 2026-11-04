@@ -43,9 +43,11 @@ components:
 - ref: K1
   value: 1x8 header
   footprint: HEADER_MALE
+  pin_count: 8
 - ref: K2
   value: 1x8 header
   footprint: HEADER_MALE
+  pin_count: 8
 - ref: R1
   value: 73L2R20G
   footprint: '0603'
@@ -58,6 +60,7 @@ components:
 - ref: R4
   value: tc33x-2-104e
   footprint: tc33x-2-103e
+  pin_count: 3
 - ref: R5
   value: 1.5kohm
   footprint: '0603'
@@ -73,6 +76,8 @@ components:
 - ref: U1
   value: DRV8825
   footprint: DRV8825
+  pin_count: 29
+  nc_pins: {DECAY: '19', NC: '23', nHOME: '27'}
 nets:
 - name: 3V3
   pins: [C6.2, R4.1, U1.V3P3OUT]

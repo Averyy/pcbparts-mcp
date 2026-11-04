@@ -47,10 +47,12 @@ components:
   value: 2x8 header
   footprint: 2X8
   mpn: PZ254R-12-16P
+  pin_count: 16
 - ref: J2
   value: 2x8 header
   footprint: 2X8
   mpn: PZ254R-12-16P
+  pin_count: 16
 - ref: J3
   value: 5.08mm Terminal Block 01x02
   footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08
@@ -59,10 +61,12 @@ components:
   value: 1x3 header
   footprint: 1X3
   mpn: PZ254R-11-03P
+  pin_count: 3
 - ref: J5
   value: 2.54mm Terminal Block 01x04
   footprint: TerminalBlock_Phoenix_MPT-0,5-4-2.54
   mpn: XY308-2.54-4P
+  pin_count: 4
 - ref: L1
   value: 47uH
   footprint: L_SunItechTech_SLO1040H470MTT
@@ -99,18 +103,24 @@ components:
   value: Pico_H
   footprint: RPi_Pico_TH_Socket
   mpn: SC0917
+  pin_count: 40
+  nc_pins: {GPIO0: '1', GPIO1: '2', GPIO2: '4', GPIO3: '5', GPIO4: '6', GPIO5: '7', GPIO6: '9', GPIO7: '10', GPIO8: '11', GPIO9: '12', GPIO10: '14', GPIO11: '15', GPIO12: '16', GPIO13: '17', GPIO14: '19', GPIO15: '20', GPIO20: '26', GPIO22: '29', RUN: '30', GPIO26_ADC0: '31', GPIO27_ADC1: '32', ADC_VREF: '35', 3V3_EN: '37', VBUS: '40'}
 - ref: U2
   value: 74HC595
   footprint: SOIC-16
   mpn: 74HC595D,118
+  pin_count: 16
 - ref: U3
   value: 74HC595
   footprint: SOIC-16
   mpn: 74HC595D,118
+  pin_count: 16
+  nc_pins: {QH': '9'}
 - ref: U5
   value: LM2596S-ADJ
   footprint: TO-263
   mpn: LM2596S-ADJ
+  pin_count: 5
 nets:
 - name: +12V
   pins: [D1.A, J3.Pin_1]

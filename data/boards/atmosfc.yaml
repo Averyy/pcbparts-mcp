@@ -230,16 +230,21 @@ components:
   footprint: HUSON-3-1EP
   manufacturer: Nexperia
   description: Schottky Diodes & Rectifiers RECTIFIER SOT1061/HUSON3
+  pin_count: 3
 - ref: D7
   value: SP1001-04
   footprint: SOT-553
   manufacturer: Littlefuse
   description: 8pF 15kV Unidirectional TVS Array
+  pin_count: 5
+  nc_pins: {K@5: '5'}
 - ref: D8
   value: SP1001-04
   footprint: SOT-553
   manufacturer: Littlefuse
   description: 8pF 15kV Unidirectional TVS Array
+  pin_count: 5
+  nc_pins: {K@5: '5'}
 - ref: FB1
   value: 120R@100MHz
   footprint: '0402'
@@ -250,14 +255,18 @@ components:
   footprint: JST_SR_SM08B-SRSS-TB
   manufacturer: JST Sales America Inc.
   description: Headers & Wire Housings SR HEADER (SMT SIDE)
+  pin_count: 8
 - ref: J3
   value: USB-C
   footprint: USB-C
   manufacturer: GCT
   description: USB 2.0-only 16P Type-C Receptacle connector
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J8
   value: 1x8 header
   footprint: SolderWirePads-2x4
+  pin_count: 8
 - ref: L1
   value: 10uH
   footprint: L_Bourns_SRP5030CC
@@ -268,6 +277,7 @@ components:
   footprint: DFN1010D-3
   manufacturer: Nexperia
   description: Bipolar Transistors - BJT SOT8015 45V .5A NPN GP TRANS
+  pin_count: 3
 - ref: R1
   value: 20kohm
   footprint: '0402'
@@ -325,6 +335,8 @@ components:
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 75ohms 1%
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R2
   value: 33ohm
   footprint: '0402'
@@ -410,31 +422,43 @@ components:
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R34
   value: 33ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R35
   value: 33ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R36
   value: 33ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R37
   value: 33ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R38
   value: 33ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R39
   value: 1kohm
   footprint: '0402'
@@ -483,49 +507,64 @@ components:
   footprint: Maxim_TDFN-12-1EP
   manufacturer: Analog Devices
   description: 36V, 3A Mini Buck Converters with 3.5uA IQ
+  pin_count: 13
 - ref: U2
   value: TPS78533BQDRBRQ1
   footprint: VSON-8-1EP
   manufacturer: Texas Instruments
   description: TPS785-Q1 Automotive, 1-A, High-PSRR Low-Dropout Voltage Regulator With High
+  pin_count: 9
+  nc_pins: {NC@2: '2', NC@3: '3', NC@4: '4', NC@7: '7'}
 - ref: U3
   value: STM32G473CEU6
   footprint: QFN-48-1EP
   manufacturer: STMicroelectronics
   description: ARM Microcontrollers - MCU Mainstream Arm Cortex-M4 MCU 170MHz 512Kbytes of
+  pin_count: 49
+  nc_pins: {PC15: '4', PC4: '16', PB0: '17', PB6: '44'}
 - ref: U4
   value: MAX7456
   footprint: TSSOP-28-1EP
   manufacturer: Analog Devices
   description: Single-Channel Monochrome On-Screen Display with Integrated EEPROM
+  pin_count: 29
+  nc_pins: {NC@1: '1', NC@2: '2', CLKOUT: '7', LOS: '12', NC@13: '13', NC@14: '14', NC@15: '15', NC@16: '16', nVSYNC: '17', nHSYNC: '18', NC@27: '27', NC@28: '28'}
 - ref: U5
   value: ICM-42688-P
   footprint: ICM-42688-P
   manufacturer: TDK InvenSense
   description: High Precision 6-Axis MEMS MotionTrackingTM Device
+  pin_count: 14
+  nc_pins: {RESV@2: '2', RESV@10: '10', RESV@11: '11'}
 - ref: U6
   value: W25Q256JVE
   footprint: WSON-8-1EP
   manufacturer: Winbond
   description: 3V 256M-BIT SERIAL FLASH MEMORY WITH DUAL/QUAD SPI
+  pin_count: 8
 - ref: U7
   value: DPS368XTSA1
   footprint: Infineon_PG-VLGA-8-2
   manufacturer: Infineon Technologies
   description: Digital XENSIVTM barometric pressure sensor
+  pin_count: 8
+  nc_pins: {CSB: '2'}
 - ref: U8
   value: USBLC6-2
   footprint: SOT-666
   manufacturer: STMicroelectronics
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+  pin_count: 6
 - ref: Y1
   value: 8MHz
   footprint: Crystal_SMD_ECS_ECX33_4Pin
   manufacturer: ECS
+  pin_count: 4
 - ref: Y2
   value: 27MHz
   footprint: SMD2016
   manufacturer: KYOCERA AVX
+  pin_count: 4
 nets:
 - name: +3V3
   pins:

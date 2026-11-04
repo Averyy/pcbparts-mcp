@@ -138,6 +138,8 @@ components:
   footprint: '0201'
   lcsc: C181043
   description: Unpolarized capacitor, small symbol
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: C124
   value: 100nF
   footprint: '0201'
@@ -671,11 +673,13 @@ components:
 - ref: J1
   value: USB_SPI_
   footprint: 1X3
+  pin_count: 3
 - ref: J10
   value: USB3_A
   footprint: GSB4116344HR
   lcsc: C5119948
   description: USB 3.0 A connector
+  pin_count: 9
 - ref: J11
   value: 8-pin ATX connector
   footprint: 45586-000Y
@@ -683,42 +687,56 @@ components:
   manufacturer: Molex
   mpn: 45586-0005
   description: Mini-Fit Jr. Header, Dual Row, Right-Angle, Third Generation Polarization Type
+  pin_count: 8
 - ref: J12
   value: USB-C
   footprint: USB-C
   description: USB Full-Featured Type-C Receptacle connector
+  pin_count: 25
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J13
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J2
   value: USB-C
   footprint: USB420003A
   description: USB Full-Featured Type-C Receptacle connector
+  pin_count: 24
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
   value: 1x4 header
   footprint: 1X4
+  pin_count: 4
 - ref: J4
   value: USB-C
   footprint: USB420003A
   description: USB Full-Featured Type-C Receptacle connector
+  pin_count: 24
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J5
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J6
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J7
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J8
   value: SD_Card_Receptacle
   footprint: SD2A
   description: SD card receptacle
+  pin_count: 9
 - ref: J9
   value: USB3_A
   footprint: GSB4116344HR
   lcsc: C5119948
   description: USB 3.0 A connector
+  pin_count: 9
 - ref: JP1
   value: Connect to I2C mode
   footprint: SJ-2
@@ -743,6 +761,7 @@ components:
   value: MMBT2222A
   footprint: SOT-23-3
   lcsc: C82460
+  pin_count: 3
 - ref: R1
   value: 12kohm
   footprint: '0402'
@@ -1193,106 +1212,134 @@ components:
 - ref: U1
   value: USB7206C
   footprint: QFN40P1200X1200X90-101N-D
+  pin_count: 101
+  nc_pins: {PF31: '3', NC@4: '4', NC@12: '12', NC@13: '13', USB2DN_DM6/PRT_DIS_M6: '41', USB2DN_DP6/PRT_DIS_P6: '42', PF3: '44', PF4: '45', PF5: '46', PF6: '47', PF7: '48', PF8: '49', PF9: '50', PF10: '51', PF11: '52', PF12: '54', PRT_CTL5/PF13: '56', PRT_CTL4/PF14: '57', PRT_CTL1/PF17: '60', PF18: '61', PF19: '66', SPI_D1/PF23: '71', SPI_D2/PF24: '72', SPI_D3/PF25: '73', PF29: '74', PF26: '75', PF27: '76', PRT_CTL6/PF28: '77', NC@80: '80', ATEST: '96'}
 - ref: U10
   value: 24LC256
   footprint: SO-8_L4.9-W3.9-P1.27-LS5.9-BL
   lcsc: C283433
+  pin_count: 8
 - ref: U11
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U12
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U13
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U14
   value: TUSB1142IRNQR
   footprint: WQFN-40_L6.0-W4.0-P0.40-TL
   lcsc: C5216209
+  pin_count: 41
+  nc_pins: {EQCFG: '3', NC@5: '5', TESTOUT1: '7', TESTOUT2: '8', RSVD1: '9', RSVD2: '10', NC@11: '11', RSVD3: '12', RSVD4: '13', NC@24: '24', NC@25: '25', CEQ1: '29', NC@32: '32', CEQ0: '38'}
 - ref: U15
   value: GL3224
   footprint: HQFN-32_L5.0-W5.0-P0.50-BL-EP3.0
   lcsc: C157357
+  pin_count: 33
+  nc_pins: {SPI_MISO: '10', SPI_MOSI: '11', SPI_CK: '12', SPI_CS: '13', VUHSI: '24'}
 - ref: U16
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U17
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U18
   value: UCS2114-1-V/G4
   footprint: QFN-20_L4.0-W4.0-P0.50-BL-EP2.7
   lcsc: C638222
+  pin_count: 21
 - ref: U19
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U2
   value: MIC803-29D4VM3
   footprint: SOT-23-3_L2.9-W1.3-P1.90-LS2.4-BR
   lcsc: C626154
+  pin_count: 3
 - ref: U20
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U21
   value: SiRA80DP
   footprint: PowerPAK_SO-8L_Single
   lcsc: C3289458
   description: "12A Id, 30V Vds, N-Channel MOSFET, Rds 18m\u03A9 PowerPAK, SC70-6"
+  pin_count: 5
 - ref: U22
   value: TPS25983
   footprint: TPS259830ONRGER
   lcsc: C20611808
+  pin_count: 25
 - ref: U23
   value: AP7361C-33
   footprint: SOT-223-3_TabPin2
   lcsc: C500795
   description: 1A Low Dropout regulator, positive, 3.3V fixed output, SOT-223
+  pin_count: 3
 - ref: U24
   value: MP8795
   footprint: MPS-QFN-21
   lcsc: C3188708
+  pin_count: 14
 - ref: U25
   value: MIC23201YML
   footprint: TDFN-10_L3.0-W3.0-P0.50-TL
   lcsc: C621769
+  pin_count: 11
 - ref: U26
   value: HD3SS3220IRNHR
   footprint: RNH0030A
   lcsc: C165155
+  pin_count: 31
+  nc_pins: {CURRENT_MODE: '3', VCONN_FAULT_N: '24', ID: '27'}
 - ref: U27
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U28
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U29
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U3
   value: HD3SS3220IRNHR
   footprint: RNH0030A
   lcsc: C165155
+  pin_count: 31
+  nc_pins: {TXN: '7', VCONN_FAULT_N: '24'}
 - ref: U30
   value: TPD4E02B04DQA
   footprint: USON-10
@@ -1308,44 +1355,54 @@ components:
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U4
   value: TPS2068EDBVR
   footprint: TSOT-23-5_L2.9-W1.6-P0.95-LS2.8-BR
   lcsc: C19272843
+  pin_count: 5
 - ref: U5
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U6
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U7
   value: TPD4E02B04DQA
   footprint: USON-10
   lcsc: C106794
   description: 4-Channel ESD Protection Diode for USB Type-C and HDMI 2.0, USON-10
+  pin_count: 10
 - ref: U8
   value: TVS2200DRV
   footprint: WSON-6-1EP
   lcsc: C523793
   description: Flat-Clamp Surge Protection Device. 22Vrwm, WSON-6
+  pin_count: 7
 - ref: U9
   value: TPS25762CQRQLRQ1
   footprint: VQFN-HR-29_L6.0-W5.0-P0.50_TPS25762CQRQLRQ1
   lcsc: C5986888
+  pin_count: 29
+  nc_pins: {GPIO6|SYNC: '1', nGPIO9|IRQ: '2', PA_LSGD: '9', PA_DM|GPIO7: '17', PA_DP|GPIO8: '18'}
 - ref: Y1
   value: 25MHz
   footprint: SMD3225
   lcsc: C179643
   description: Four pin crystal, GND on pins 2 and 3
+  pin_count: 4
 - ref: Y2
   value: 25MHz +-0.03%
   footprint: SMD3225
   lcsc: C179643
   description: Four pin crystal, GND on pins 2 and 3
+  pin_count: 4
 nets:
 - name: +12V
   pins:

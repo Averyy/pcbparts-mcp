@@ -74,6 +74,7 @@ components:
 - ref: D2
   value: ESDA6V1W5
   footprint: SOT-353_SC-70-5
+  pin_count: 5
 - ref: D3
   value: NETLIGHT
   footprint: '0603'
@@ -98,15 +99,20 @@ components:
 - ref: J3
   value: USB Micro-B
   footprint: U254-051T-4BH83
+  pin_count: 6
+  nc_pins: {'4': '4', '6': '6'}
 - ref: J4
   value: SIM_Card
   footprint: HOAUC-HYC240-SIM-06-150_C645501
+  pin_count: 6
+  nc_pins: {'6': '6'}
 - ref: J5
   value: JST PH
   footprint: JST_PH_S2B-PH-K
 - ref: J6
   value: 1x10 header
   footprint: 1X10
+  pin_count: 10
 - ref: JP1
   value: solder jumper
   footprint: SJ-2
@@ -116,18 +122,23 @@ components:
 - ref: Q1
   value: FDN340P
   footprint: SOT-23
+  pin_count: 3
 - ref: Q2
   value: DTC143Z
   footprint: SOT523
+  pin_count: 3
 - ref: Q3
   value: DTC143Z
   footprint: SOT523
+  pin_count: 3
 - ref: Q4
   value: DTC143Z
   footprint: SOT523
+  pin_count: 3
 - ref: Q5
   value: FDN340P
   footprint: SOT-23
+  pin_count: 3
 - ref: R1
   value: 0ohm
   footprint: '0603'
@@ -164,21 +175,30 @@ components:
 - ref: U1
   value: USBLC6-2
   footprint: SOT-23-6
+  pin_count: 6
 - ref: U2
   value: SIM7080G
   footprint: SIM7080G
+  pin_count: 77
+  nc_pins: {'3': '3', '4': '4', '5': '5', '9': '9', '10': '10', '11': '11', '12': '12', '14': '14', '22': '22', '23': '23', '28': '28', '29': '29', '38': '38', '43': '43', '44': '44', '46': '46', '47': '47', '48': '48', '49': '49', '50': '50', '51': '51', '52': '52', '53': '53', '54': '54', '55': '55', '56': '56', '57': '57', '58': '58', '59': '59', '60': '60', '61': '61', '62': '62', '64': '64', '65': '65'}
 - ref: U3
   value: ST4SIM-200M
   footprint: ST4SIM-200M
+  pin_count: 9
+  nc_pins: {'2': '2', '4': '4', '5': '5'}
 - ref: U4
   value: TXB0104PW
   footprint: TSSOP-14
+  pin_count: 14
+  nc_pins: {'6': '6', '9': '9'}
 - ref: U5
   value: ME6211A33M3G-N
   footprint: SOT-23
+  pin_count: 3
 - ref: U6
   value: MCP73831-2-OT
   footprint: SOT-23-5
+  pin_count: 5
 nets:
 - name: 1.8V
   pins: [C11.2, R2.1, U2.40, U4.1, U4.8]

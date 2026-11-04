@@ -50,22 +50,27 @@ components:
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
+  pin_count: 4
 - ref: J3
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J4
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
+  pin_count: 4
 - ref: J5
   value: 1x2 header
   footprint: 1X02
 - ref: J7
   value: Spring Terminal
   footprint: 1X04
+  pin_count: 8
 - ref: JP1
   value: 1x5 header
   footprint: 1X05
+  pin_count: 5
 - ref: JP2
   value: 1x2 header
   footprint: 1X02
@@ -73,6 +78,7 @@ components:
   value: I2C
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
+  pin_count: 3
 - ref: R1
   value: 1kohm
   footprint: '0603'
@@ -99,6 +105,8 @@ components:
   footprint: SOIC-16
   prod_id: IC-14299
   description: 24-bit load cell conversion IC with I2C interface in SOIC-16 package
+  pin_count: 16
+  nc_pins: {XIN: '10', XOUT: '11'}
 nets:
 - name: 3.3V
   pins: [J2.2, J3.2, J4.2, JP3.2, R1.2, U1.DVDD]

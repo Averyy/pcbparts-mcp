@@ -27,18 +27,26 @@ components:
   value: 10uF
   footprint: '0603'
   voltage: 16V
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: C101
   value: 10uF
   footprint: '0603'
   voltage: 16V
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: C102
   value: 10uF
   footprint: '0603'
   voltage: 16V
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: C103
   value: 10uF
   footprint: '0603'
   voltage: 16V
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: C105
   value: 470uF
   footprint: CP_Radial_D8.0mm_P3.50mm
@@ -403,18 +411,26 @@ components:
   value: 10uF
   footprint: '0603'
   voltage: 16V
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: C97
   value: 10uF
   footprint: '0603'
   voltage: 16V
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: C98
   value: 10uF
   footprint: '0603'
   voltage: 16V
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C99
   value: 10uF
   footprint: '0603'
   voltage: 16V
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: CR0
   value: 10u
   footprint: '0603'
@@ -579,6 +595,8 @@ components:
   value: TPA3255
   footprint: tssop44-powerpad
   mpn: TPA3255DDVR
+  pin_count: 44
+  nc_pins: {3_M1: '3', 4_M2: '4', 9_OSC_IOM: '9', 10_OSC_IOP: '10'}
 - ref: J10
   value: 1x2 header
   footprint: AMASS_XT30U-M
@@ -589,22 +607,30 @@ components:
   value: 1x6 header
   footprint: JST_GH_BM06B-GHS-TBT
   mpn: BM03B-GHS-TBT
+  pin_count: 6
 - ref: J4
   value: 1x4 header
   footprint: 1X4
+  pin_count: 4
+  nc_pins: {Pin_4: '4'}
 - ref: J5
   value: 1x5 header
   footprint: JST_GH_BM05B-GHS-TBT
+  pin_count: 5
 - ref: J6
   value: AudioJack4
   footprint: Jack_3.5mm_PJ320D_Horizontal
+  pin_count: 4
 - ref: J7
   value: 1x6 header
   footprint: JST_GH_BM06B-GHS-TBT
   mpn: BM03B-GHS-TBT
+  pin_count: 6
+  nc_pins: {Pin_4: '4'}
 - ref: J8
   value: AudioJack4
   footprint: Jack_3.5mm_PJ320D_Horizontal
+  pin_count: 4
 - ref: L1
   value: 10uH
   footprint: SPM12565VT-D-vertical
@@ -645,21 +671,30 @@ components:
   value: PNP transistor
   footprint: SOT23-3_PO123
   mpn: MMBT2907A
+  pin_count: 3
 - ref: Q2
   value: NPN transistor
   footprint: SOT23-3_PO123
+  pin_count: 3
 - ref: Q3
   value: NPN transistor
   footprint: SOT23-3_PO123
+  pin_count: 3
 - ref: R10
   value: 100ohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R11
   value: t330
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R12
   value: t330
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R13
   value: t330
   footprint: '0603'
@@ -700,6 +735,8 @@ components:
 - ref: R152
   value: 100ohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R153
   value: 10kohm
   footprint: '0603'
@@ -1042,91 +1079,121 @@ components:
   value: 10k
   footprint: TC33X-2 trimpot
   mpn: TC33X-2-103E
+  pin_count: 3
 - ref: RV3
   value: 2k
   footprint: PV37X
   mpn: PV37X202C01B00
+  pin_count: 3
 - ref: U13
   value: L78L05
   footprint: SOT-89-3
   mpn: ua78l05acpke6
+  pin_count: 3
 - ref: U14
   value: AK4454
   footprint: QFN-8p8p-5x5mm
   mpn: AK4454VN
   description: 4ch DACv 115db
+  pin_count: 33
+  nc_pins: {TDMO1: '6', AOUT0+: '14', AOUT0-: '15', AOUT1-: '18', AOUT1+: '19'}
 - ref: U15
   value: OPA2322
   footprint: SOIC-8
   mpn: OPA2322AIDR
+  pin_count: 8
 - ref: U16
   value: OPA1642
   footprint: SOIC-8
   mpn: NE5532DR
   description: Dual operational amplifier
+  pin_count: 8
 - ref: U18
   value: LMR36520
   footprint: SOIC-8-ppad
   mpn: LMR36520
+  pin_count: 9
+  nc_pins: {PG: '4'}
 - ref: U19
   value: LMR36520
   footprint: SOIC-8-ppad
   mpn: LMR36520
+  pin_count: 9
+  nc_pins: {PG: '4'}
 - ref: U2
   value: OPA1642
   footprint: SOIC-8
+  pin_count: 8
 - ref: U20
   value: LM7812_TO220
   footprint: TO-220
   mpn: L7812CV
+  pin_count: 3
 - ref: U21
   value: 24.576MHz oscillator
   footprint: K2016_kyocera_xosc
   mpn: KC2016K24.5760C10E00
+  pin_count: 4
 - ref: U22
   value: ADAU1701
   footprint: LQFP-48_adi
   mpn: adau1701
+  pin_count: 48
+  nc_pins: {MP0: '11', MP7: '14', MP6: '15', OSCO: '31', PLL_MODE0: '38', PLL_MODE1: '39'}
 - ref: U23
   value: MC33275
   footprint: SOT-223-3_TabPin2
   mpn: MC33275ST-3.3
+  pin_count: 3
 - ref: U24
   value: MC33275
   footprint: SOT-223-3_TabPin2
   mpn: MC33275ST-3.3
+  pin_count: 3
 - ref: U25
   value: tps3824-50
   footprint: SOT-23-5
   mpn: tps3824-50
+  pin_count: 5
+  nc_pins: {RST: '3', WDI: '4'}
 - ref: U26
   value: ESP32-WROOM-32D
   footprint: ESP32-WROOM-32D
   mpn: ESP32-WROOM-32E-N16
+  pin_count: 39
+  nc_pins: {SENSOR_VP: '4', SENSOR_VN: '5', IO34: '6', IO35: '7', IO32: '8', IO33: '9', IO27: '12', IO13: '16', SHD/SD2: '17', SWP/SD3: '18', SCS/CMD: '19', SCK/CLK: '20', SDO/SD0: '21', SDI/SD1: '22', IO15: '23', IO2: '24', IO4: '26', IO17: '28', IO5: '29', IO18: '30', IO19: '31', NC: '32', IO23: '37'}
 - ref: U27
   value: '4040'
   footprint: texas_R-PVQFN-N16
   mpn: SN74LV4040ARGYR
+  pin_count: 16
+  nc_pins: {Q11: '1', Q5: '2', Q4: '3', Q6: '4', Q3: '5', Q1: '7', Q0: '9', Q7: '13', Q9: '14', Q10: '15'}
 - ref: U28
   value: LMZM23601
   footprint: LMZM23601
   mpn: LMZM23601V3SILR
+  pin_count: 11
+  nc_pins: {pgood: '5', '8': '8', '9': '9', '10': '10'}
 - ref: U29
   value: max97220
   footprint: qfn_4p4p
   mpn: MAX97220B
   description: Dual operational amplifier with charge pump
+  pin_count: 17
 - ref: U30
   value: M24128
   footprint: TSSOP-8_STM
   mpn: M24128-**DW
+  pin_count: 8
 - ref: U4
   value: OPA1642
   footprint: SOIC-8
+  pin_count: 8
 - ref: U7
   value: OPA1642
   footprint: SOIC-8
   mpn: OPA1642AIDR
+  pin_count: 8
 - ref: s45
   value: ref
   footprint: pad

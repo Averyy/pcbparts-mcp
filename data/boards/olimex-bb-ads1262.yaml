@@ -47,12 +47,16 @@ components:
 - ref: CON1
   value: 1x13 header
   footprint: HN1x13
+  pin_count: 13
 - ref: CON2
   value: 1x10 header
   footprint: HN1x10
+  pin_count: 10
 - ref: CON3
   value: BH10S
   footprint: UEXTF
+  pin_count: 10
+  nc_pins: {'3': '3', '4': '4', '5': '5', '6': '6'}
 - ref: D1
   value: 1N5819/SS14
   footprint: SOD-123_KA
@@ -89,12 +93,17 @@ components:
 - ref: U1
   value: ADS1262
   footprint: TSSOP28-PW
+  pin_count: 28
+  nc_pins: {'16': '16'}
 - ref: U2
   value: MT3608
   footprint: SOT-23-6
+  pin_count: 6
+  nc_pins: {'6': '6'}
 - ref: U3
   value: AP2127K-ADJ
   footprint: SOT-23-5
+  pin_count: 5
 nets:
 - name: +3.3VD
   pins: [C2.1, CON2.1, CON3.1, R2.1, SJ1.1, U1.19]

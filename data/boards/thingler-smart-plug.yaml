@@ -39,21 +39,25 @@ components:
 - ref: D1
   value: ABS10A
   footprint: ABS10A
+  pin_count: 4
 - ref: F1
   value: Fuse 1A
   footprint: fuse-2410
 - ref: J1
   value: 1x4 screw terminal
   footprint: 3d_power_connector
+  pin_count: 4
 - ref: L1
   value: ME3220 12u
   footprint: ME3220
 - ref: Q1
   value: STGD5NB120SZ
   footprint: TO-252
+  pin_count: 3
 - ref: Q2
   value: BTA316B-600E
   footprint: TO-263
+  pin_count: 3
 - ref: R1
   value: 200kohm
   footprint: '1206'
@@ -81,15 +85,20 @@ components:
 - ref: U1
   value: THINGLER-ESP32-PICO
   footprint: Thingler-esp32-vertical
+  pin_count: 8
+  nc_pins: {'3': '3', '4': '4', '5': '5', '6': '6', '7': '7'}
 - ref: U2
   value: SR086
   footprint: SOIC-8-1EP
+  pin_count: 9
 - ref: U3
   value: FODM3012
   footprint: FODM3012
+  pin_count: 4
 - ref: U4
   value: TPS560430X3F
   footprint: SOT-23-6
+  pin_count: 6
 nets:
 - name: +3V3
   pins: [C7.2, L1.2, U1.1, U4.3]

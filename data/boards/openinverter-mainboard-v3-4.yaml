@@ -183,54 +183,75 @@ components:
   manufacturer: NATIONAL SEMICONDUCTOR
   mpn: LM2596S-ADJ/NOPB
   description: "SIMPLE SWITCHER\xAE Power Converter 150 kHz 3A Step-Down Voltage Regulator"
+  pin_count: 6
 - ref: IC2
   value: TDA2822
   footprint: SOIC-8
   description: OP AMP
+  pin_count: 8
+  nc_pins: {B.OUT: '3', B.-IN: '5', B.+IN: '6'}
 - ref: IC3
   value: SN65HVD230DR
   footprint: SOIC-8
   description: CAN transceiver
+  pin_count: 8
+  nc_pins: {VREF: '5'}
 - ref: IC4
   value: STM32F103RBT6
   footprint: TQFP64
   description: STM32F101/103 64pin LQFP
+  pin_count: 64
+  nc_pins: {PORTC_H.PC14: '3', PORTC_H.PC15: '4', PORTA_L.PA0: '14', PORTB_L.PB2: '28', PORTA_H.PA15: '50', PORTB_L.PB3: '55', PORTB_L.PB4: '56'}
 - ref: IC5
   value: MIC2288YD5
   footprint: SOT-23-5
+  pin_count: 5
 - ref: IC6
   value: ULN2003A
   footprint: SOIC-16
   description: DRIVER ARRAY
+  pin_count: 16
 - ref: IC7
   value: LM2901
   footprint: SOIC-14
   description: Low Power Low Offset Voltage Quad Comparators
+  pin_count: 14
 - ref: IC8
   value: REG1117
   footprint: SOT223
   mpn: REG1117
   description: 800mA and 1A Low Dropout (LDO) Positive Regulator
+  pin_count: 3
 - ref: IC9
   value: NC7SZ10P6X
   footprint: SC70-6
   description: 3-input NAND gate
+  pin_count: 6
 - ref: J1
   value: Tag-Connect SWD
   footprint: TC2030-MCP
   description: ARM20-CTX 20-Pin to TC2030-IDC Adapter for Cortex 6-Pin (TC2030-IDC family)
+  pin_count: 6
+  nc_pins: {'!RESET': '3', SWO/TDO: '6'}
 - ref: JP1
   value: 2x5 header
   footprint: 2X05
+  pin_count: 10
+  nc_pins: {'5': '5', '6': '6', '7': '7', '8': '8', '9': '9', '10': '10'}
 - ref: JP2
   value: 2x13 header
   footprint: 2X13
+  pin_count: 26
 - ref: JP3
   value: 2x7 header
   footprint: 2X07
+  pin_count: 14
+  nc_pins: {'14': '14'}
 - ref: JP7
   value: 2x8 header
   footprint: 2X08
+  pin_count: 16
+  nc_pins: {'3': '3', '14': '14'}
 - ref: L1
   value: 10uH
   footprint: '2012'
@@ -427,6 +448,7 @@ components:
 - ref: T1
   value: AP9T18GH-HF
   footprint: D-PAK_TO252AA
+  pin_count: 3
 nets:
 - name: +12V
   pins: [D1.A, JP2.24, SJ1.2]

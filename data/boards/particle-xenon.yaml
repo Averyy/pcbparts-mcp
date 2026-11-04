@@ -25,6 +25,7 @@ components:
 - ref: BUTTON
   value: TS-1185A-020
   footprint: TS-1185A-020
+  pin_count: 4
 - ref: C1
   value: 10pF
   footprint: '0402'
@@ -192,15 +193,20 @@ components:
 - ref: DEBUG
   value: CON5X2
   footprint: CON5X2_1.27
+  pin_count: 10
+  nc_pins: {'7': '7', '8': '8'}
 - ref: F1
   value: 6V 1A
   footprint: F0805
 - ref: HEAD1
   value: 1x16 header
   footprint: HEADER_16P2.54
+  pin_count: 32
+  nc_pins: {'1': 1 P$1}
 - ref: HEAD2
   value: SIP-12
   footprint: SIP-12
+  pin_count: 24
 - ref: L1
   value: 3.9nH
   footprint: R-0402S
@@ -226,22 +232,27 @@ components:
   value: UFL
   footprint: IPEX-20279-001E
   description: Ultra Miniature Coaxial SMT RF Receptacle
+  pin_count: 3
 - ref: Q1
   value: 2n7002
   footprint: SOT323
   description: NMOS
+  pin_count: 3
 - ref: Q2
   value: IRLML6401
   footprint: SOT-23
   description: PMOS
+  pin_count: 3
 - ref: Q3
   value: IRLML6401
   footprint: SOT-23
   description: PMOS
+  pin_count: 3
 - ref: Q4
   value: 2n7002
   footprint: SOT323
   description: NMOS
+  pin_count: 3
 - ref: R1
   value: 3kohm
   footprint: R-0402S
@@ -320,39 +331,51 @@ components:
 - ref: RESET
   value: TS-1185A-020
   footprint: TS-1185A-020
+  pin_count: 4
 - ref: RF
   value: UFL
   footprint: IPEX-20279-001E
   description: Ultra Miniature Coaxial SMT RF Receptacle
+  pin_count: 3
 - ref: RGB
   value: RGB-LED-CLMVB-FKA
   footprint: PLCC4-2MM-RGB
   description: CREE CLMVB-FKA RGB LED 2mm x 2mm
+  pin_count: 4
 - ref: U$2
   value: SKY13351-378
   footprint: MLPD-6-1X1
+  pin_count: 8
 - ref: U1
   value: NRF52840
   footprint: AQN507X7X0.85_HA-74_V2
+  pin_count: 83
+  nc_pins: {P0.02/AIN0@A12: P$A12, P0.16@AC11: P$AC11, P0.07@M2: P$M2, P1.07@P23: P$P23, P1.06@R24: P$R24, P1.05@T23: P$T23, P1.04@U24: P$U24}
 - ref: U3
   value: XC6208A42
   footprint: USP-6C
+  pin_count: 7
+  nc_pins: {NC: P$5}
 - ref: U5
   value: SPI flash
   footprint: USON8-3X4
+  pin_count: 10
 - ref: U6
   value: XC9258A33CER
   footprint: USP-6C
+  pin_count: 7
 - ref: USB
   value: USB Micro-B
   footprint: MICRO_USB
   description: Micro-USB
+  pin_count: 9
 - ref: Y1
   value: 32.768K 9P 20PPM
   footprint: CRY_3215
 - ref: Y2
   value: 32M 8P 10PPM
   footprint: CRY_2520
+  pin_count: 4
 nets:
 - name: /CHG
   pins: [D2.P$2, R20.1, R22.1, U3./CHG]

@@ -22,6 +22,7 @@ components:
 - ref: JP5
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: JP6
   value: 1x2 header
   footprint: 1X02
@@ -38,14 +39,17 @@ components:
 - ref: SJ1
   value: solder jumper (NC)
   footprint: SJ-3
+  pin_count: 3
 - ref: SJ2
   value: solder jumper (NC)
   footprint: SJ-3
+  pin_count: 3
 - ref: U1
   value: MCP4725
   footprint: SOT-23-6
   prod_id: IC-08886
   description: Microchip 12-bit I2C DAC, SOT23-6
+  pin_count: 6
 nets:
 - name: AO
   pins: [SJ2.2, U1.AO]

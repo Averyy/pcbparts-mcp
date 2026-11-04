@@ -19,6 +19,7 @@ components:
   value: CR1220
   footprint: CR1220
   description: CR1220 SMT
+  pin_count: 3
 - ref: C1
   value: 100nF
   footprint: 0805
@@ -43,6 +44,7 @@ components:
 - ref: JP1
   value: 1x9 header
   footprint: 1X09
+  pin_count: 9
 - ref: LED1
   value: red LED
   footprint: CHIPLED_0805
@@ -61,14 +63,19 @@ components:
 - ref: U$20
   value: U.FL
   footprint: U.FL
+  pin_count: 3
 - ref: U1
   value: FGPMMOPA6H
   footprint: FGPMMOPA6H
   description: GPS Module
+  pin_count: 20
+  nc_pins: {NRESET: P$2, NC@1: P$6, NC@2: P$7, RTCM: P$14, NC@3: P$15, NC@4: P$16, NC@5: P$17, NC@6: P$18, NC@7: P$20}
 - ref: U2
   value: MIC5225-3.3
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 nets:
 - name: 1PPS
   pins: [JP1.1, U1.1PPS]

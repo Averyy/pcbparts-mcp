@@ -81,6 +81,7 @@ components:
   footprint: ESP32_MODULE
   description: ESP32-WROOM-32D (32 Mbit)
   mpn: ESP32-WROOM-32D
+  pin_count: 39
 - ref: D3
   value: BAT760-7
   footprint: SOD323
@@ -101,22 +102,28 @@ components:
   value: Micro USB
   footprint: USB_5P
   description: Micro USB Type B receptacle, 5 pins, through-hole legs
+  pin_count: 9
+  nc_pins: {'4': '4'}
 - ref: J2
   value: CON19X1_2P54
   footprint: CON19_2P54
   description: Male PCB Single Row Straight Header Connector, 2.54 mm Pitch, 19 Pins
+  pin_count: 19
 - ref: J3
   value: CON19X1_2P54
   footprint: CON19_2P54
   description: Male PCB Single Row Straight Header Connector, 2.54 mm Pitch, 19 Pins
+  pin_count: 19
 - ref: Q1
   value: S8050
   footprint: SOT-23-3
   description: Transistor
+  pin_count: 3
 - ref: Q2
   value: S8050
   footprint: SOT-23-3
   description: Transistor
+  pin_count: 3
 - ref: R11
   value: 10kohm
   footprint: '0402'
@@ -183,14 +190,18 @@ components:
   value: CP2102N-A01-GQFN28
   footprint: CP2102_QFN_28P
   description: USB-to-UART,USB2.0 full speed, data rate up to 3M baud
+  pin_count: 29
+  nc_pins: {'1': '1', '2': '2', '10': '10', '12': '12', '13': '13', '14': '14', '15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '23': '23', '27': '27'}
 - ref: U2
   value: AMS1117-3.3
   footprint: SOT-223
   description: "LDO, 5V \u8F6C 3.3V \u56FA\u5B9A\u8F93\u51FA, 1A, SOT-223 (LDO, 5V/3.3V, 1A, SOT-223)"
+  pin_count: 4
 - ref: U3
   value: ESP32-WROVER
   footprint: ESP32_MODULE_2COL
   description: 'Not fitted ((NC) on Espressif''s schematic): alternative ESP32-WROVER footprint under the WROOM module'
+  pin_count: 39
 nets:
 - name: ACTIVE
   pins: [R23.2, U1.11]

@@ -105,9 +105,12 @@ components:
 - ref: K1
   value: HR_913550A
   footprint: HR913550A
+  pin_count: 12
+  nc_pins: {NC_P7: '7'}
 - ref: K2
   value: 1x9 header
   footprint: HEADER_MALE
+  pin_count: 9
 - ref: R1
   value: 33ohm
   footprint: '0603'
@@ -184,18 +187,26 @@ components:
 - ref: U1
   value: W5500
   footprint: WIZnet W5500
+  pin_count: 48
+  nc_pins: {DNC: '7', NC@12: '12', NC@13: '13', VBG: '18', RSVD@23: '23', SPDLED: '24', DUPLED: '26', RSVD@38: '38', RSVD@39: '39', RSVD@40: '40', RSVD@41: '41', RSVD@42: '42', NC@46: '46', NC@47: '47'}
 - ref: U2
   value: SE5218
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U3
   value: TXB0104PWR
   footprint: TXB0104QPWRQ1
+  pin_count: 14
+  nc_pins: {NC@6: '6', NC@9: '9'}
 - ref: U5
   value: dual NMOS
   footprint: SOT-363
+  pin_count: 6
 - ref: X1
   value: TSX-3225 25.0000MF10P-C3
   footprint: '3225'
+  pin_count: 4
 nets:
 - name: /RXN
   pins: [C9.1, K1.RD-P6]

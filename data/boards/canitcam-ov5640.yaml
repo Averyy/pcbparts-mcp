@@ -41,49 +41,60 @@ components:
   value: CAMERA
   footprint: XUNPU_FPC-05F-24PH15
   lcsc: C2856831
+  pin_count: 26
 - ref: J2
   value: 1x3 header
   footprint: 1X3
   lcsc: C2937625
+  pin_count: 3
 - ref: J3
   value: 1x3 header
   footprint: 1X3
   lcsc: C2937625
+  pin_count: 3
 - ref: J4
   value: 2x5 header
   footprint: 2X5
   lcsc: C492422
+  pin_count: 10
 - ref: J5
   value: 2x5 header
   footprint: 2X5
   lcsc: C492422
+  pin_count: 10
 - ref: J6
   value: 1x3 header
   footprint: 1X3
   lcsc: C2937625
+  pin_count: 3
 - ref: J7
   value: 1x3 header
   footprint: 1X3
   lcsc: C2937625
+  pin_count: 3
 - ref: U1
   value: CH32V006F8U6
   footprint: QFN-20-1EP
   lcsc: C42431288
+  pin_count: 21
 - ref: U2
   value: XC6206P182MR
   footprint: SOT-23
   lcsc: C347373
   description: 3.0A 20V LDO Linear Regulator, Fixed Output 3.6V, TO-220/TO-263
+  pin_count: 3
 - ref: U3
   value: XC6206P282MR
   footprint: SOT-23
   lcsc: C347374
   description: 3.0A 20V LDO Linear Regulator, Fixed Output 3.6V, TO-220/TO-263
+  pin_count: 3
 - ref: Y2
   value: 24MHz 2520
   footprint: SMD2520
   lcsc: C2965580
   description: Four pin crystal, GND on pins 2 and 4, small symbol
+  pin_count: 4
 nets:
 - name: +3.3V
   pins: [C3.1, C4.1, J7.Pin_2, U1.VDD, U2.VI, U3.VI]

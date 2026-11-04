@@ -20,11 +20,15 @@ components:
   footprint: ANT-NN03310-LTE_NO-SILK
   mpn: NN03-310
   description: ANTENNA CHIP LTE/GNSS/BT D=30X3X1 NN03-310 IGNION SMT
+  pin_count: 7
+  nc_pins: {NC4: '4', FEED-GNSS-BT: '7'}
 - ref: ANT2
   value: NN03-320
   footprint: ANT-NN03320-GPS_NO-SILK
   mpn: NN03-320
   description: ANTENNA CHIP GPS/BT D=3X7X2 NN03-320 IGNION SMT
+  pin_count: 4
+  nc_pins: {M1: '1', FEED-BT: '3'}
 - ref: C1
   value: 47u 16V-X5R
   footprint: '1206'
@@ -148,10 +152,12 @@ components:
   value: FSV1045V
   footprint: TO277-3
   mpn: FSV1045V
+  pin_count: 3
 - ref: DS3
   value: FSV1045V
   footprint: TO277-3
   mpn: FSV1045V
+  pin_count: 3
 - ref: DS4
   value: STPS3H100U
   footprint: SMB
@@ -164,6 +170,7 @@ components:
   value: FSV1045V
   footprint: TO277-3
   mpn: FSV1045V
+  pin_count: 3
 - ref: F1
   value: SF-0603F150-2
   footprint: '0603'
@@ -177,11 +184,14 @@ components:
   footprint: J-3-0254-FDT_H0508
   mpn: '00711'
   description: STRIP 3P F/D P=2.54 H=5.08 00711 4UCON
+  pin_count: 3
 - ref: J11
   value: 10118192-0002LF
   footprint: J-5-0065-FOS-USB10118192-NOF
   mpn: 10118192-0002LF
   description: "CONN. USB F/90\xB0 TYPE MICRO-B C.S. 10118192-0002LF FCI SMT"
+  pin_count: 6
+  nc_pins: {ID: '4'}
 - ref: J12
   value: B2B-PH-SM4-TBT(LF)
   footprint: J-2-0200-MDS-B2B-PH-SM4
@@ -192,11 +202,13 @@ components:
   footprint: J-4-0100-MDS-SH_NO-SILK
   mpn: BM04B-SRSS-TBT(LF)(SN)
   description: CONN. SH 4P M/D P=1 BM04B-SRSS-TBT(LF)(SN) JST SMT
+  pin_count: 4
 - ref: J14
   value: JST SH 4-pin
   footprint: J-4-0100-MDS-SH_NO-SILK
   mpn: BM04B-SRSS-TBT(LF)(SN)
   description: CONN. SH 4P M/D P=1 BM04B-SRSS-TBT(LF)(SN) JST SMT
+  pin_count: 4
 - ref: J3
   value: B2B-PH-SM4-TBT(LF)
   footprint: J-2-0200-MDS-B2B-PH-SM4
@@ -212,10 +224,14 @@ components:
   footprint: J-NANOSIM-SF72S006VBA_NO-FILL
   mpn: SF72S006VBAR2500
   description: "CONN. NANOSIM 8P F/90\xB0 PUSH-PUSH SF72S006VBAR2500 JAE ELECTRONICS SMT"
+  pin_count: 9
+  nc_pins: {VPP/SWP: C6}
 - ref: J6
   value: MDT420E01001
   footprint: J-75-0050-MOS-M2-E_smaller-mask
   description: "CONN. M.2 75P M/90\xB0 P=0.5 MDT420E01001 AMPHENOL SMT"
+  pin_count: 67
+  nc_pins: {NC1: '1', NC15: '15', NC17: '17', NC19: '19', NC21: '21', VACT_GPS_IN: '22', NC23: '23', NC32: '32', NC34: '34', NC35: '35', NC36: '36', NC37: '37', NC41: '41', NC43: '43', NC44: '44', NC47: '47', NC49: '49', NC53: '53', NC55: '55', NC59: '59', NC61: '61', NC63: '63', NC66: '66', NC68: '68', NC69: '69', NC75: '75'}
 - ref: J7
   value: uFL-R-SMT-1-10
   footprint: J-3-MDS-UFL_NO-SILK
@@ -231,6 +247,7 @@ components:
   footprint: J-22-0254-FDT-H0508_EDGE
   mpn: '12734'
   description: STRIP 22P F/D P=2.54 H=5.08 12734 4UCON
+  pin_count: 22
 - ref: L1
   value: 2.2uH
   footprint: LS-XFL4020
@@ -281,6 +298,7 @@ components:
 - ref: Q1
   value: AO3420
   footprint: SOT23
+  pin_count: 3
 - ref: R1
   value: 10Mohm
   footprint: '0402'
@@ -359,14 +377,17 @@ components:
   value: 100R/5%
   footprint: RR-8X-1506
   description: RETE RESISTIVA 8R sing. 100R 5% 1506 CAY16-101J8LF BOURNS SMT
+  pin_count: 16
 - ref: RR2
   value: 100R/5%
   footprint: RR-8X-1506
   description: RETE RESISTIVA 8R sing. 100R 5% 1506 CAY16-101J8LF BOURNS SMT
+  pin_count: 16
 - ref: SW1
   value: CJS-1200TA
   footprint: SW_CJS-1200TA_NO-SILK
   description: INTERR. SLITTA ON-ON DA C.S. CJS-1200TA NIDEC COPAL ELECTRONICS SMT
+  pin_count: 3
 - ref: TVS1
   value: SM6T6V8A
   footprint: SMB
@@ -375,26 +396,33 @@ components:
   value: ESDLC5V0M5-TP
   footprint: SOT666_NO-SILK
   description: DIODO TVS TRANSIL UNIDIR. 20W 5V ESDLC5V0M5-TP SOT563 SMT
+  pin_count: 6
 - ref: U1
   value: TPS62748
   footprint: XFBGA8
   mpn: TPS62748YFPT
   description: I.C. DC/DC TPS62748YFPT TEXAS DSBGA8 SMT
+  pin_count: 8
+  nc_pins: {LOAD: D2}
 - ref: U2
   value: MAX17225
   footprint: WDFN6-0200X0200
   mpn: MAX17225ELT+T
   description: I.C. DC/DC MAX17225ELT+T MAXIM W-DFN6 SMT
+  pin_count: 6
 - ref: U3
   value: BQ24210
   footprint: WSON10-EXP_NO-SILK
   mpn: BQ24210DQCT
   description: INTEGRATO BQ24210DQCT WSON10 TEXAS SMT
+  pin_count: 11
+  nc_pins: {VDPM: '9'}
 - ref: U5
   value: BGA725L6E6327FTSA1
   footprint: XFDFN6_NO-SILK
   mpn: BGA725L6E6327FTSA1
   description: INTEGRATO BGA725L6E6327FTSA1 INFINEON TSLP-6 SMT
+  pin_count: 6
 nets:
 - name: +1V8
   pins:

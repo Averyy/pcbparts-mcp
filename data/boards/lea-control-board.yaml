@@ -728,42 +728,53 @@ components:
   manufacturer: GTC
   mouser: 640-USB4110-GF-A
   description: USB Connectors USB Type C, 2.0, Rec, SMT , G/F, RA , Top Mnt, T & R
+  pin_count: 13
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J202
   value: FTR-110-03-G-D-06-TR
   footprint: FTR-110-03-G-D-06
   manufacturer: Samtec
   mouser: 200-FTR11003GD06TR
   description: 20 pin SMD Micro Header, 1.27 mm pitch
+  pin_count: 19
+  nc_pins: {'15': '15'}
 - ref: J401
   value: Molex_532617006
   footprint: 6-PinHeader_Molex_532617006
   manufacturer: Molex
   mouser: 538-53261-7006
   description: 6 Pin Male, right angle, 1.25mm Pitch
+  pin_count: 6
 - ref: J402
   value: ERF5-075-05.0-L-DV-TR
   footprint: ERF5-075-05.0-L-DV
   manufacturer: Samtec
   mouser: 200-ERF507505.0LDVTR
   description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed Socket
+  pin_count: 150
+  nc_pins: {'107': '107', '108': '108', '109': '109', '110': '110', '111': '111', '112': '112'}
 - ref: J403
   value: ERF5-075-05.0-L-DV-TR
   footprint: ERF5-075-05.0-L-DV
   manufacturer: Samtec
   mouser: 200-ERF507505.0LDVTR
   description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed Socket
+  pin_count: 150
 - ref: J501
   value: ERM5-075-05.0-L-DV-K-TR
   footprint: ERM5-075-05.0-L-DV
   manufacturer: Samtec
   mouser: 200-ERM5075050LDVKTR
   description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed
+  pin_count: 150
+  nc_pins: {'107': '107', '108': '108', '109': '109', '110': '110', '111': '111', '112': '112'}
 - ref: J502
   value: ERM5-075-05.0-L-DV-K-TR
   footprint: ERM5-075-05.0-L-DV
   manufacturer: Samtec
   mouser: 200-ERM5075050LDVKTR
   description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed
+  pin_count: 150
 - ref: L201
   value: Ferrite_0603
   footprint: '0603'
@@ -1332,12 +1343,14 @@ components:
   manufacturer: Nidec
   mouser: 229-CAS-120TA
   description: Slide Switches SPDT, ON-ON, slide, J-hook SMD terminals, 100mA @ 6V DC
+  pin_count: 3
 - ref: S301
   value: CAS-120TA
   footprint: CAS-120TA
   manufacturer: Nidec
   mouser: 229-CAS-120TA
   description: Slide Switches SPDT, ON-ON, slide, J-hook SMD terminals, 100mA @ 6V DC
+  pin_count: 3
 - ref: SW701
   value: switch
   footprint: Sw_Push_RightAngle
@@ -1350,124 +1363,154 @@ components:
   manufacturer: FTDI
   mouser: 895-FT2232HL-TRAY
   description: USB Interface IC USB HS to Dual UART/ FIFO/SPI/JTAG/I2C
+  pin_count: 64
+  nc_pins: {OSCO: '3', ADBUS5: '22', ADBUS6: '23', ACBUS0: '26', ACBUS1: '27', ACBUS3: '29', ACBUS4: '30', ACBUS6: '33', ACBUS7: '34', SUSPEND#: '36', BDBUS4: '43', BDBUS5: '44', BDBUS6: '45', BDBUS7: '46', BCBUS0: '48', BCBUS1: '52', BCBUS2: '53', BCBUS5: '57', BCBUS6: '58', BCBUS7: '59', PWREN#: '60'}
 - ref: U202
   value: 93LC56BT-I_OT
   footprint: SOT-23-6_Microchip
   manufacturer: Microchip
   mouser: 579-93LC56BT-I/OT
   description: EEPROM Serial-Microwire 2K-Bit 128 x 16 2MHz,93LC56BT-I/OT,SOT-23-6,SMD
+  pin_count: 6
 - ref: U203
   value: MIC5259-3.3
   footprint: SOT-23-5_Microchip
   manufacturer: Microchip
   mouser: 998-MIC5259-3.3YD5TR
   description: LDO Voltage Regulator 3.3V 300mA
+  pin_count: 5
 - ref: U204
   value: ADG736BRMZ
   footprint: MSOP10_AnalogDevices
   manufacturer: Analog Devices
   mouser: 584-ADG736BRMZ
   description: Analog Devices ADG736BRMZ, Analogue SPDT Switch Dual SPDT, 3 V, 5 V, 10-Pin MSOP
+  pin_count: 10
 - ref: U205
   value: ADG736BRMZ
   footprint: MSOP10_AnalogDevices
   manufacturer: Analog Devices
   mouser: 584-ADG736BRMZ
   description: Analog Devices ADG736BRMZ, Analogue SPDT Switch Dual SPDT, 3 V, 5 V, 10-Pin MSOP
+  pin_count: 10
 - ref: U206
   value: ADG736BRMZ
   footprint: MSOP10_AnalogDevices
   manufacturer: Analog Devices
   mouser: 584-ADG736BRMZ
   description: Analog Devices ADG736BRMZ, Analogue SPDT Switch Dual SPDT, 3 V, 5 V, 10-Pin MSOP
+  pin_count: 10
+  nc_pins: {S1A: '2', S1B: '9', D1: '10'}
 - ref: U301
   value: ISO_ISO7741FQDWWQ1
   footprint: SOIC-16_TI_DWW0016A_Optimized
   manufacturer: Texas Instruments
   mouser: 595-ISO7741FQDWWQ1
   description: ISO774x-Q1 Automotive, High-Speed, Reinforced Quad-Channel Digital Isolators
+  pin_count: 16
 - ref: U302
   value: ISO_ISO7741FQDWWQ1
   footprint: SOIC-16_TI_DWW0016A_Optimized
   manufacturer: Texas Instruments
   mouser: 595-ISO7741FQDWWQ1
   description: ISO774x-Q1 Automotive, High-Speed, Reinforced Quad-Channel Digital Isolators
+  pin_count: 16
+  nc_pins: {OUTC: '12'}
 - ref: U601
   value: MIC5504-1.2
   footprint: SOT-23-5_Microchip
   manufacturer: Microchip
   mouser: 998-MIC5504-1.2YM5TR
   description: LDO Voltage Regulator 1.2V 300mA
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U701
   value: TPS3702CX33DDCT
   footprint: TSOT-23-6_TI
   manufacturer: Texas Instruments
   mouser: 595-TPS3702CX33DDCT
   description: Supervisory Circuits High-Acc, Fixed Threshold OV/UV Mntr
+  pin_count: 6
+  nc_pins: {OV: '6'}
 - ref: U702
   value: TPS3702CX12DDCT
   footprint: TSOT-23-6_TI
   manufacturer: Texas Instruments
   mouser: 595-TPS3702CX12DDCT
   description: Supervisory Circuits High-Acc, Fixed Threshold OV/UV Mntr
+  pin_count: 6
+  nc_pins: {OV: '6'}
 - ref: U703
   value: TMS320F28388D
   footprint: BGA-361
   manufacturer: Texas Instruments
   mouser: 595-F28388DZWTSR
   description: MCU C2000 32-bit, Dual-core C28x architecture
+  pin_count: 337
+  nc_pins: {GPIO_67: B19, GPIO_74: C17, GPIO_75: D16, GPIO_133: G18, NC@H4: H4, NC@J18: J18, X2: J19, GPIO_35: T14, ERRORSTS: U19, FLT2: V13, FLT1: W12}
 - ref: U704
   value: PI6C49CB04AQ3WEX
   footprint: SOIC-8
   manufacturer: Diodes Incorporated
   mouser: 621-PI6C49CB04AQ3WEX
   description: Clock Buffer LOW SKEW 1 TO 4 CLOCK BUFFER
+  pin_count: 8
 - ref: U801
   value: 74HC74PW
   footprint: TSSOP-14-Nexperia
   manufacturer: Nexperia
   mouser: 771-74HC74PW-T
   description: Flip-Flops 74HC74PW/SOT402/TSSOP14
+  pin_count: 14
 - ref: U802
   value: 74HC74PW
   footprint: TSSOP-14-Nexperia
   manufacturer: Nexperia
   mouser: 771-74HC74PW-T
   description: Flip-Flops 74HC74PW/SOT402/TSSOP14
+  pin_count: 14
 - ref: U803
   value: TLV3202AIDGKR
   footprint: VSSOP-8-TI
   mouser: 595-TLV3202AIDGKR
   manufacturer: Texas Instruments
+  pin_count: 8
 - ref: U804
   value: TLV3202AIDGKR
   footprint: VSSOP-8-TI
   mouser: 595-TLV3202AIDGKR
   manufacturer: Texas Instruments
+  pin_count: 8
 - ref: U805
   value: 74ALVC08PW
   footprint: TSSOP-14-Nexperia
   mouser: 771-ALVC08PW118
   manufacturer: Nexperia
   description: 4 gate, 8 input, 4 Output, AND gate, Logic Gates 74ALVC08PW/TSSOP14
+  pin_count: 14
+  nc_pins: {4Y: '11'}
 - ref: U901
   value: MAX6037AAUK30+T
   footprint: SOT-23-5_Microchip
   manufacturer: Maxim Integrated
   mouser: 700-MAX6037AAUK30T
   description: Precision Voltage Reference 3.0V
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: Y201
   value: ECS-2033-120-AU
   footprint: Osc_ECS
   manufacturer: ECS
   mouser: 520-2033-120-AU
   description: Standard Clock Oscillators 12.000 MHZ 3.3Volt 100 ppm -55C +125C
+  pin_count: 4
 - ref: Y701
   value: ECS-2520S33-250-FN-TR
   footprint: Osc_ECS
   manufacturer: ECS
   mouser: 520-2520S33-250-FNT
   description: Standard Clock Oscillators 25MHz 3.3V 10ppm -40C +85C
+  pin_count: 4
 nets:
 - name: +1.2V_HV
   pins:

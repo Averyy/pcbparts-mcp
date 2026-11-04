@@ -81,24 +81,33 @@ components:
   footprint: J-20x2-0254-FDT-SSQX03
   mpn: '2223'
   description: STRIP 20P F/D DOPPIA FILA P=2.54 2223 ADAFRUIT
+  pin_count: 40
+  nc_pins: {Pin_7: '7', Pin_11: '11', Pin_12: '12', Pin_13: '13', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18', Pin_19: '19', Pin_21: '21', Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_26: '26', Pin_27: '27', Pin_28: '28', Pin_29: '29', Pin_32: '32', Pin_33: '33', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_40: '40'}
 - ref: J2
   value: NanoSIM - SF72S006VBAR2500
   footprint: J-NANOSIM-SF72S006VBA_NO-FILL
   mpn: SF72S006VBAR2500
   description: "CONN. NANOSIM 8P F/90\xB0 PUSH-PUSH SF72S006VBAR2500 JAE ELECTRONICS SMT"
+  pin_count: 9
+  nc_pins: {VPP/SWP: C6}
 - ref: J3
   value: MDT420E01001
   footprint: J-75-0050-MOS-M2-E
   description: "CONN. M.2 75P M/90\xB0 P=0.5 MDT420E01001 AMPHENOL SMT"
+  pin_count: 67
+  nc_pins: {NC1: '1', NC15: '15', NC17: '17', NC19: '19', NC21: '21', NC23: '23', NC32: '32', NC34: '34', NC35: '35', NC36: '36', NC37: '37', NC38: '38', NC41: '41', NC43: '43', NC44: '44', AUX1: '46', NC47: '47', AUX2: '48', NC49: '49', AUX3: '50', AUX4: '52', NC53: '53', NC55: '55', NC59: '59', NC61: '61', RX_P: '62', NC63: '63', TX_P: '64', NC65: '65', NC66: '66', NRST: '67', NC68: '68', NC69: '69', NC75: '75'}
 - ref: J4
   value: 10118192-0002LF
   footprint: J-5-0065-FOS-USB10118192-NOF
   mpn: 10118192-0002LF
   description: "CONN. USB F/90\xB0 TYPE MICRO-B C.S. 10118192-0002LF FCI SMT"
+  pin_count: 6
+  nc_pins: {ID: '4'}
 - ref: J5
   value: GROVE
   footprint: J-4-0200-MOS-GROVE_NO-SILK
   description: "CONN. GROVE 4P M/90\xB0 P=2 1125R-SMT-4P SEEDSTUDIO SMT"
+  pin_count: 4
 - ref: OBJ1
   value: 9774025151R
   footprint: DIST-WASMSIM0250
@@ -171,6 +180,7 @@ components:
   value: ESDLC5V0M5-TP
   footprint: SOT666_NO-SILK
   description: DIODO TVS TRANSIL UNIDIR. 20W 5V ESDLC5V0M5-TP SOT563 SMT
+  pin_count: 6
 nets:
 - name: /ATTN
   pins: [DSW3.2, J1.Pin_31]

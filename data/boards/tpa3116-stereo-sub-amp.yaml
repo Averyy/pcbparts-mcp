@@ -163,6 +163,8 @@ components:
   footprint: AUDIO-JACK
   prod_id: CONN-08774
   description: Audio Jack
+  pin_count: 5
+  nc_pins: {RSH: RSH, TSH: TSH}
 - ref: J10
   value: +12V
   footprint: BANANA_CONN
@@ -182,15 +184,18 @@ components:
   value: AUDIO_IN
   footprint: 1X04
   prod_id: CONN-09696
+  pin_count: 4
 - ref: J15
   value: 1x4 header
   footprint: 1X04
   prod_id: CONN-09696
+  pin_count: 4
 - ref: J2
   value: POWER_JACK
   footprint: POWER_JACK_PTH_LOCK
   prod_id: CONN-08197
   description: Power Jack Connector
+  pin_count: 3
 - ref: J3
   value: LEFT
   footprint: SCREWTERMINAL-5MM-2
@@ -306,12 +311,15 @@ components:
 - ref: U$1
   value: TPA3116
   footprint: HTSSOP32DAP
+  pin_count: 33
 - ref: U$2
   value: DUAL_POT_H
   footprint: DUAL_POT_H
+  pin_count: 6
 - ref: U$3
   value: TPA3116
   footprint: HTSSOP32DAP
+  pin_count: 33
 nets:
 - name: +12V
   pins:

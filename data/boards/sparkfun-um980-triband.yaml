@@ -113,11 +113,14 @@ components:
   footprint: SOT-353
   prod_id: DIO-19494
   description: Low capacitance unidirectional quadruple ESD protection diode array, 3.3V
+  pin_count: 5
 - ref: D11
   value: PESD3V3L4UG
   footprint: SOT-353
   prod_id: DIO-19494
   description: Low capacitance unidirectional quadruple ESD protection diode array, 3.3V
+  pin_count: 5
+  nc_pins: {K4: '5'}
 - ref: D2
   value: white LED
   footprint: '0603'
@@ -145,6 +148,7 @@ components:
   footprint: SOT-353
   prod_id: DIO-19494
   description: Low capacitance unidirectional quadruple ESD protection diode array, 3.3V
+  pin_count: 5
 - ref: F1
   value: 6V/0.75A/1.5A
   footprint: '1206'
@@ -155,6 +159,8 @@ components:
   footprint: USB-C
   prod_id: CONN-14122
   description: USB 2.0-only Type-C Receptacle connector
+  pin_count: 14
+  nc_pins: {NC@A8: A8, NC@B8: B8, NC@NC1: NC1, NC@NC2: NC2, NC@NC3: NC3}
 - ref: J4
   value: 1x2 header
   footprint: 1x02
@@ -167,16 +173,22 @@ components:
   value: JST Locking
   footprint: JST_SMD_1.25mm-4_Locking
   prod_id: CONN-15303
+  pin_count: 6
+  nc_pins: {NC@NC1: NC1, NC@NC2: NC2}
 - ref: J7
   value: 1x6 header
   footprint: 1x06
+  pin_count: 6
+  nc_pins: {Pin_1: '1', Pin_5: '5'}
 - ref: J8
   value: 1x9 header
   footprint: 1x09
+  pin_count: 9
 - ref: JP1
   value: solder jumper
   footprint: SJ-3
   description: 3-pole Solder Jumper, pins 1+2 closed/bridged
+  pin_count: 3
 - ref: JP2
   value: solder jumper
   footprint: SJ-2
@@ -197,6 +209,7 @@ components:
   value: solder jumper
   footprint: SJ-3
   description: 3-pole Solder Jumper, pins 1+2 closed/bridged
+  pin_count: 3
 - ref: JP7
   value: solder jumper
   footprint: SJ-2
@@ -320,20 +333,28 @@ components:
   footprint: SOT-23-6
   prod_id: IC-13538
   description: Very low capacitance ESD protection diode, 4 data-line, SOT-23-6
+  pin_count: 6
+  nc_pins: {I/O1: '1', I/O2: '3'}
 - ref: U2
   value: AP2112K-3.3
   footprint: SOT-23-5
   prod_id: VREG-12457
   description: 600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U5
   value: UM980
   footprint: UM980
   prod_id: GPS-19527
+  pin_count: 102
+  nc_pins: {ANT_DETECT: '4', ANT_OFF: '5', nANT_SHORT: '6', SPI_nCS: '8', SPI_PICO: '9', SPI_CLK: '10', SPI_POCI: '11', NC@13: '13', NC@15: '15', NC@16: '16', NC@17: '17', NC@18: '18', NC@22: '22', NC@23: '23', NC@24: '24', NC@25: '25', NC@35: '35', NC@38: '38', NC@39: '39', NC@40: '40', SDA: '44', SCL: '45', NC@46: '46', NC@47: '47', NC@50: '50', NC@52: '52', NC@54: '54'}
 - ref: U8
   value: CH340C
   footprint: SO-16
   prod_id: IC-14038
   description: USB serial converter, UART, SOIC-16
+  pin_count: 16
+  nc_pins: {NC@7: '7', NC@8: '8', nCTS: '9', nDSR: '10', nRI: '11', nDCD: '12', nDTR: '13', nRTS: '14', R232: '15'}
 nets:
 - name: +5V
   pins:

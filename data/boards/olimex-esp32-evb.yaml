@@ -18,9 +18,12 @@ components:
 - ref: 5.0V/3.3V1
   value: Closed(1-2)/Opened
   footprint: SJ-2
+  pin_count: 3
+  nc_pins: {0V/3.3V1.1@1: '1', 0V/3.3V1.2@2: '2', 0V/3.3V1.3: '3'}
 - ref: BAT/BUT1
   value: Opened(2-3)/Soldered
   footprint: SJ-2
+  pin_count: 3
 - ref: BAT1
   value: DW02R
   footprint: LIPO_BAT-CON2DW02R
@@ -206,6 +209,7 @@ components:
 - ref: CAN1
   value: "TB3-3.5\u041C\u041C"
   footprint: TB3-3.5mm
+  pin_count: 3
 - ref: CAN_T1
   value: Opened
   footprint: SJ
@@ -215,18 +219,22 @@ components:
 - ref: CON1
   value: DG306-5.0-3P
   footprint: TB3-DG306-5.0_3P
+  pin_count: 3
 - ref: CON2
   value: DG306-5.0-3P
   footprint: TB3-DG306-5.0_3P
+  pin_count: 3
 - ref: CR1
   value: 50MHz
   footprint: 5032-4P_HCX-3S
+  pin_count: 4
 - ref: D1
   value: 1N5819S4
   footprint: SOD-123_1C-2A_KA
 - ref: D10
   value: BAT54A
   footprint: SOT-23-3
+  pin_count: 3
 - ref: D15
   value: 1N5819S4
   footprint: SOD-123_1C-2A_KA
@@ -254,18 +262,23 @@ components:
 - ref: EXT1
   value: HN2x20
   footprint: HN2x20
+  pin_count: 40
 - ref: FET1
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: FET2
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: FET3
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: FET4
   value: BSS138
   footprint: SOT23
+  pin_count: 3
 - ref: GND1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
@@ -293,6 +306,7 @@ components:
 - ref: LAN1
   value: RJ45
   footprint: RJLBC-060TC1
+  pin_count: 12
 - ref: LED1
   value: LED/GREEN/0603
   footprint: '0603'
@@ -305,6 +319,7 @@ components:
 - ref: MICRO_SD1
   value: TFC-WXCP11-08-LF
   footprint: TFC-WXCP11-08-LF
+  pin_count: 10
 - ref: PHY_RST1
   value: Opened
   footprint: SJ
@@ -320,18 +335,23 @@ components:
 - ref: Q1
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: Q10
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: Q2
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: Q7
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: Q9
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: R1
   value: 1kohm
   footprint: '0603'
@@ -540,63 +560,86 @@ components:
 - ref: REL1
   value: RAS-0515
   footprint: Relay_RAS-05-15
+  pin_count: 5
 - ref: REL2
   value: RAS-0515
   footprint: Relay_RAS-05-15
+  pin_count: 5
 - ref: RM1
   value: RA1206_(4X0603)_4B8_2.2k
   footprint: R_MATRIX_4
+  pin_count: 8
 - ref: RM2
   value: RA1206_(4X0603)_4B8_2.2k
   footprint: R_MATRIX_4
+  pin_count: 8
 - ref: RM3
   value: RA1206_(4X0603)_4B8_2.2k
   footprint: R_MATRIX_4
+  pin_count: 8
 - ref: RST1
   value: T1107A
   footprint: T1107A(6x3,8x2,5MM)
 - ref: TVS1
   value: ESDS314DBVR
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U1
   value: TP4054-42-SOT25-R
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U10
   value: BAT54C
   footprint: SOT-23-3
+  pin_count: 3
 - ref: U11
   value: HX7027
   footprint: SOT-23
+  pin_count: 3
 - ref: U2
   value: TPS62A02ADRLR
   footprint: SOT-563-6
+  pin_count: 6
+  nc_pins: {PG: '6'}
 - ref: U3
   value: ESP32-WROOM-32E
   footprint: ESP-WROOM-32_MODULE
+  pin_count: 39
+  nc_pins: {NC: '32'}
 - ref: U4
   value: LAN8710A
   footprint: QFN32_EP(33)
+  pin_count: 33
+  nc_pins: {XTAL2: '4', CRS: '14', NINT/TXER/TXD4: '18', TXCLK: '20', RXDV: '26'}
 - ref: U5
   value: CH340X
   footprint: MSOP-10_Pitch-0.5mm
+  pin_count: 10
 - ref: U6
   value: SIT1050T
   footprint: SOIC-8_150mil
+  pin_count: 8
 - ref: U7
   value: VS1838B
   footprint: RPM7236-H8
+  pin_count: 4
 - ref: U8
   value: NCP303LSN27T1G
   footprint: SOT-23-5
+  pin_count: 4
 - ref: U9
   value: BAT54C
   footprint: SOT-23-3
+  pin_count: 3
 - ref: UEXT1
   value: BH10S
   footprint: UEXT_ML10
+  pin_count: 10
 - ref: USB-UART1
   value: MISB-SWMM-5B-LF
   footprint: USB-MICRO_MISB-SWMM-5B_LF
+  pin_count: 6
+  nc_pins: {ID: '4'}
 nets:
 - name: +3.3V
   pins:

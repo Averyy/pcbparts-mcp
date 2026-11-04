@@ -1,6 +1,6 @@
 [project]
 name = "pcbparts-mcp"
-version = "0.8.10"
+version = "0.8.11"
 description = "MCP server for searching electronic components for PCB design and assembly"
 requires-python = ">=3.12"
 # Dependencies are pinned to exact versions so a rebuild never silently pulls a new major/minor
@@ -31,6 +31,7 @@ dev = [
     "pytest-asyncio==1.4.0",
     "pyyaml==6.0.3",
     "defusedxml==0.8.0rc2",
+    "openpyxl==3.1.5",
 ]
 
 [build-system]

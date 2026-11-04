@@ -147,17 +147,21 @@ components:
   value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
+  pin_count: 3
 - ref: J1
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J4
   value: 1x16 header
   footprint: 1X16
+  pin_count: 16
 - ref: J5
   value: 1x16 header
   footprint: 1X16
+  pin_count: 16
 - ref: L1
   value: 220ohm
   footprint: 0805
@@ -244,16 +248,19 @@ components:
   value: XC6222B331MR-G
   footprint: SOT-23-5
   prod_id: VREG-16775
+  pin_count: 4
 - ref: U4
   value: WM8960
   footprint: QFN-32
   prod_id: IC-14824
   description: Cirrus Logic WM8960 stereo codec with Class D amplifier
+  pin_count: 33
 - ref: Y1
   value: 24 MHz
   footprint: RESONATOR-SMD-3.2X2.5
   prod_id: XTAL-14907
   description: Abracon 24 MHZ Oscillator
+  pin_count: 4
 nets:
 - name: 3.3V
   pins:

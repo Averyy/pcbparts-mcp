@@ -447,10 +447,14 @@ components:
   value: 1nF
   footprint: '1206'
   description: 1206B102K202NT
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C82
   value: 1nF
   footprint: '1206'
   description: 1206B102K202NT
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C83
   value: 100nF
   footprint: '0603'
@@ -463,6 +467,8 @@ components:
   value: 100nF
   footprint: '0603'
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: C86
   value: 1uF
   footprint: '0603'
@@ -745,29 +751,41 @@ components:
 - ref: FL1
   value: SDCW3225S-2-102TF
   footprint: FILTER-SMD_4P-L3.2-W2.5-BL
+  pin_count: 4
 - ref: FL3
   value: SDCW3225S-2-102TF
   footprint: FILTER-SMD_4P-L3.2-W2.5-BL
+  pin_count: 4
 - ref: J15
   value: USB-C
   footprint: USB-C
   description: USB 2.0-only 16P Type-C Receptacle connector
+  pin_count: 17
+  nc_pins: {CC1: A5, SBU1: A8, CC2: B5, SBU2: B8}
 - ref: J17
   value: USB-C
   footprint: USB-C
   description: USB 2.0-only 16P Type-C Receptacle connector
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J18
   value: USB-C
   footprint: USB-C
   description: USB 2.0-only 16P Type-C Receptacle connector
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J19
   value: 8P8C_LED_Shielded_x2
   footprint: RJ45_Amphenol_RJHSE538X-02
   description: RJ connector, 8P8C (8 positions 8 connected), two LEDs, RJ45, Shielded, two
+  pin_count: 25
+  nc_pins: {'1': '1', '2': '2', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '12': '12', '13': '13', '14': '14', '19': '19', '20': '20', '21': '21', '22': '22', '23': '23', '24': '24'}
 - ref: J3
   value: 8P8C_LED_Shielded_x2
   footprint: RJ45_Amphenol_RJHSE538X-02
   description: RJ connector, 8P8C (8 positions 8 connected), two LEDs, RJ45, Shielded, two
+  pin_count: 25
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '12': '12'}
 - ref: J6
   value: OEM Connector
   footprint: CONN_SD-34912-001_02_MOL
@@ -816,22 +834,28 @@ components:
   value: MFM-15-5
   footprint: Converter_ACDC_MeanWell_MFM-15-xx_THT
   description: Meanwell AC/DC converter, 80-264VAC, output 5V, 15 watts
+  pin_count: 4
+  nc_pins: {AC/L: '1', AC/N: '2', -Vo: '3', +Vo: '4'}
 - ref: Q1
   value: CRSM034N06L2
   footprint: AO_DFN-8-1EP
   description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
+  pin_count: 5
 - ref: Q2
   value: CRSM034N06L2
   footprint: AO_DFN-8-1EP
   description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
+  pin_count: 5
 - ref: Q3
   value: CRSM034N06L2
   footprint: AO_DFN-8-1EP
   description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
+  pin_count: 5
 - ref: Q5
   value: CRSM034N06L2
   footprint: AO_DFN-8-1EP
   description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
+  pin_count: 5
 - ref: R1
   value: 1kohm
   footprint: '0603'
@@ -955,6 +979,8 @@ components:
   value: 120r
   footprint: '1206'
   description: Resistor, small symbol
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R13
   value: 5.1kohm
   footprint: '0603'
@@ -1138,18 +1164,26 @@ components:
   value: 1Mohm
   footprint: '1206'
   description: Resistor, small symbol
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R225
   value: 1Mohm
   footprint: '1206'
   description: Resistor, small symbol
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R226
   value: 1Mohm
   footprint: '1206'
   description: Resistor, small symbol
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R227
   value: 1Mohm
   footprint: '1206'
   description: Resistor, small symbol
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R228
   value: 220r
   footprint: '0603'
@@ -1196,6 +1230,8 @@ components:
   value: 100r
   footprint: '0603'
   description: Resistor, small symbol
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: R31
   value: 10kohm
   footprint: '0603'
@@ -1385,6 +1421,8 @@ components:
   value: 1kohm
   footprint: '0603'
   description: Resistor, small symbol
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R72
   value: 1kohm
   footprint: '0603'
@@ -1411,6 +1449,8 @@ components:
   value: 1kohm
   footprint: '0603'
   description: Resistor, small symbol
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R79
   value: 24kohm
   footprint: '0603'
@@ -1544,123 +1584,160 @@ components:
   value: HM2113ZNLT
   footprint: HM2113ZNLT
   description: Low profile BMS Transformers
+  pin_count: 6
+  nc_pins: {C_TD: '2'}
 - ref: U1
   value: SN74LV1T08DBVR
   footprint: SOT-23-5
   description: Single power supply 2-input POSITIVE AND Gate with Logic Level Shifter
+  pin_count: 5
 - ref: U10
   value: LTV-217-B-G
   footprint: SSOP-4
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+  pin_count: 4
 - ref: U11
   value: RP2354B
   footprint: RP2350-QFN-80-1EP
   description: 2Mbit internal flash
+  pin_count: 81
+  nc_pins: {GPIO4: '1', GPIO5: '2', GPIO7: '4', GPIO9: '7', GPIO10: '8', GPIO12: '11', GPIO13: '12', GPIO15: '14', GPIO16: '16', GPIO17: '17', GPIO18: '18', GPIO19: '19', GPIO20: '20', GPIO21: '21', GPIO22: '22', GPIO23: '23', GPIO24: '25', GPIO26: '27', GPIO27: '28', SWCLK: '33', SWD: '34', GPIO31: '39', GPIO32: '40', GPIO33: '42', GPIO34: '43', GPIO35: '44', GPIO36: '45', GPIO37: '46', GPIO40_ADC0: '49', GPIO41_ADC1: '52', GPIO42_ADC2: '53', GPIO43_ADC3: '54', GPIO44_ADC4: '55', GPIO45_ADC5: '56', GPIO46_ADC6: '57', GPIO47_ADC7: '58', QSPI_SD3: '70', QSPI_SCLK: '71', QSPI_SD0: '72', QSPI_SD2: '73', QSPI_SD1: '74', GPIO3: '80'}
 - ref: U12
   value: ADS1115
   footprint: TSSOP-10
   description: Ultra-Small, Low-Power, I2C-Compatible, 860-SPS, 16-Bit ADCs With Internal
+  pin_count: 10
 - ref: U13
   value: ISO1050DUB
   footprint: SOP-8
   description: Isolated CAN Transceiver, SOP-8
+  pin_count: 8
 - ref: U14
   value: F0505S-1
   footprint: H0505S-1WR2
   description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+  pin_count: 4
 - ref: U15
   value: UCC27524DR
   footprint: SOIC-8
   description: Dual 5A MOSFET driver, 4.5V..18V supply, non-inverting, SOIC-8
+  pin_count: 8
 - ref: U17
   value: TPS5430DDAR
   footprint: TI_SO-PowerPAD-8_ThermalVias
   lcsc: C9864
   description: 500kHz 3A
+  pin_count: 9
+  nc_pins: {NC@2: '2', NC@3: '3', ENA: '5'}
 - ref: U18
   value: ISO1540
   footprint: SOIC-8
   description: I2C Isolator, 2.5 kVrms, Bidirectional clock and data, SOIC-8
+  pin_count: 8
 - ref: U19
   value: UCC27524DR
   footprint: SOIC-8
   description: Dual 5A MOSFET driver, 4.5V..18V supply, non-inverting, SOIC-8
+  pin_count: 8
 - ref: U2
   value: ISO1540
   footprint: SOIC-8
   description: I2C Isolator, 2.5 kVrms, Bidirectional clock and data, SOIC-8
+  pin_count: 8
 - ref: U20
   value: LTV-217-B-G
   footprint: SSOP-4
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+  pin_count: 4
 - ref: U21
   value: AMS1117-3.3
   footprint: SOT-223-3_TabPin2
   description: 1A Low Dropout regulator, positive, 3.3V fixed output, SOT-223
+  pin_count: 3
 - ref: U22
   value: F0505S-1
   footprint: H0505S-1WR2
   description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+  pin_count: 4
 - ref: U23
   value: F0505S-1
   footprint: H0505S-1WR2
   description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+  pin_count: 4
 - ref: U24
   value: F0505S-1
   footprint: H0505S-1WR2
   description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+  pin_count: 4
 - ref: U25
   value: ISO1050DUB
   footprint: SOP-8
   description: Isolated CAN Transceiver, SOP-8
+  pin_count: 8
 - ref: U27
   value: RP2354B
   footprint: RP2350-QFN-80-1EP
   description: 2MB internal flash
+  pin_count: 81
+  nc_pins: {SWCLK: '33', SWD: '34', GPIO31: '39', GPIO32: '40', GPIO33: '42', GPIO34: '43', GPIO35: '44', GPIO37: '46', QSPI_SD3: '70', QSPI_SCLK: '71', QSPI_SD0: '72', QSPI_SD2: '73', QSPI_SD1: '74', GPIO3: '80'}
 - ref: U28
   value: AM26LV32EIDR
   footprint: SOIC-16
   description: 32Mbps 3.3V RS485 Quad Line Receivers, SOIC-16
+  pin_count: 16
+  nc_pins: {3B: '9', 3A: '10', 3Y: '11'}
 - ref: U3
   value: INA228
   footprint: VSSOP-10
   description: Shunt Monitor
+  pin_count: 10
+  nc_pins: {nAlert: '3'}
 - ref: U32
   value: SP3485EN-L
   footprint: SOIC-8
   description: 10Mbps 2mA 3.3V 32 Half-Duplex Transceiver SOIC-8 RS-485 / RS-422 ICs ROHS
+  pin_count: 8
+  nc_pins: {RO: '1'}
 - ref: U4
   value: ISO1540
   footprint: SOIC-8
   description: I2C Isolator, 2.5 kVrms, Bidirectional clock and data, SOIC-8
+  pin_count: 8
 - ref: U5
   value: LTV-217-B-G
   footprint: SSOP-4
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+  pin_count: 4
 - ref: U6
   value: F0505S-1
   footprint: H0505S-1WR2
   description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+  pin_count: 4
 - ref: U7
   value: LTV-217-B-G
   footprint: SSOP-4
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+  pin_count: 4
 - ref: U8
   value: LTV-217-B-G
   footprint: SSOP-4
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+  pin_count: 4
 - ref: U9
   value: LTV-217-B-G
   footprint: SSOP-4
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
+  pin_count: 4
 - ref: Y1
   value: ABM8-272-T3
   footprint: SMD3225
   description: 12MHz
+  pin_count: 4
 - ref: Y2
   value: ABM8-272-T3
   footprint: SMD3225
   description: 12MHz
+  pin_count: 4
 nets:
 - name: +1V1
   pins:

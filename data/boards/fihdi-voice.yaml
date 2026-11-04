@@ -57,72 +57,98 @@ components:
 - ref: J1
   value: 1x6 header
   footprint: 1X6
+  pin_count: 6
 - ref: J2
   value: 1x12 header
   footprint: 1X12
+  pin_count: 12
 - ref: J3
   value: 1x11 header
   footprint: 1X11
+  pin_count: 11
 - ref: J4
   value: 2x6 header
   footprint: 2X6
+  pin_count: 12
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12'}
 - ref: J5
   value: 1x11 header
   footprint: 1X11
+  pin_count: 11
 - ref: J6
   value: 1x10 header
   footprint: 1X10
+  pin_count: 10
+  nc_pins: {Pin_4: '4', Pin_7: '7'}
 - ref: J7
   value: 2x6 header
   footprint: 2X6
+  pin_count: 12
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12'}
 - ref: J8
   value: 1x12 header
   footprint: 1X12
+  pin_count: 12
 - ref: J9
   value: 1x6 header
   footprint: 1X6
+  pin_count: 6
 - ref: Q1
   value: BC547
   footprint: TO-92
+  pin_count: 3
 - ref: Q10
   value: BC547
   footprint: TO-92
+  pin_count: 3
 - ref: Q11
   value: BC557
   footprint: TO-92
+  pin_count: 3
 - ref: Q12
   value: BC547
   footprint: TO-92
+  pin_count: 3
 - ref: Q13
   value: BC547
   footprint: TO-92
+  pin_count: 3
 - ref: Q14
   value: BC547
   footprint: TO-92
+  pin_count: 3
 - ref: Q2
   value: BC557
   footprint: TO-92
+  pin_count: 3
 - ref: Q3
   value: BC557
   footprint: TO-92
+  pin_count: 3
 - ref: Q4
   value: BC547
   footprint: TO-92
+  pin_count: 3
 - ref: Q5
   value: BC547
   footprint: TO-92
+  pin_count: 3
 - ref: Q6
   value: BC557
   footprint: TO-92
+  pin_count: 3
 - ref: Q7
   value: BC547
   footprint: TO-92
+  pin_count: 3
 - ref: Q8
   value: BC547
   footprint: TO-92
+  pin_count: 3
 - ref: Q9
   value: BC547
   footprint: TO-92
+  pin_count: 3
 - ref: R1
   value: 100kohm
   footprint: Axial
@@ -334,54 +360,71 @@ components:
 - ref: RV1
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: RV10
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: RV11
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: RV12
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: RV2
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: RV3
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: RV4
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: RV5
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: RV6
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: RV7
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: RV8
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: RV9
   value: potentiometer
   footprint: AlpsPot
+  pin_count: 3
 - ref: U1
   value: 3.5mm audio jack
   footprint: 3mm5 Mono Aux
 - ref: U10
   value: TL072
   footprint: DIP-8
+  pin_count: 8
 - ref: U11
   value: '4013'
   footprint: DIP-14
+  pin_count: 14
+  nc_pins: {S@8: '8', D@9: '9', R@10: '10', C@11: '11', nQ@12: '12', Q@13: '13'}
 - ref: U12
   value: 3.5mm audio jack
   footprint: 3mm5 Mono Aux
 - ref: U13
   value: TL074
   footprint: DIP-14
+  pin_count: 14
+  nc_pins: {+@5: '5', -@6: '6', '7': '7'}
 - ref: U14
   value: 3.5mm audio jack
   footprint: 3mm5 Mono Aux
@@ -428,9 +471,11 @@ components:
   value: TL072
   footprint: DIP-8
   description: Dual Low-Noise JFET-Input Operational Amplifiers, DIP-8/SOIC-8
+  pin_count: 8
 - ref: U8
   value: TL074
   footprint: DIP-14
+  pin_count: 14
 - ref: U9
   value: 3.5mm audio jack
   footprint: 3mm5 Mono Aux

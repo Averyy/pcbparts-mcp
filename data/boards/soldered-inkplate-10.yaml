@@ -221,9 +221,11 @@ components:
 - ref: D6
   value: BAT54S
   footprint: SOT-23-3
+  pin_count: 3
 - ref: D7
   value: BAT54S
   footprint: SOT-23-3
+  pin_count: 3
 - ref: D8
   value: red LED
   footprint: '0402'
@@ -239,30 +241,40 @@ components:
 - ref: JP2
   value: solder jumper (NC)
   footprint: SJ-2
+  pin_count: 3
 - ref: JP3
   value: solder jumper (NC)
   footprint: SJ-2
+  pin_count: 3
 - ref: JP4
   value: solder jumper (NC)
   footprint: SJ-2
+  pin_count: 3
 - ref: JP5
   value: solder jumper (NC)
   footprint: SJ-2
+  pin_count: 3
 - ref: JP6
   value: solder jumper (NC)
   footprint: SJ-2
+  pin_count: 3
 - ref: K1
   value: Inkplate_TP
   footprint: INKPLATE TEST HEADER
+  pin_count: 14
 - ref: K10
   value: CR2032_BS-6-1
   footprint: CR2032-BS-6-1
 - ref: K11
   value: microSD socket
   footprint: HYC77-TF09-200
+  pin_count: 8
+  nc_pins: {X@1: '1', X@8: '8'}
 - ref: K12
   value: 33-pin FFC
   footprint: SFV33R-1STE9HLF
+  pin_count: 34
+  nc_pins: {'2': '2', '4': '4', '6': '6', '21': '21', '23': '23', '25': '25', '27': '27'}
 - ref: K13
   value: 1x1 header
   footprint: HEADER_MALE
@@ -287,6 +299,8 @@ components:
 - ref: K2
   value: U262-161N-4BVC11
   footprint: U262-161N-4BVC11
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: K20
   value: 1x1 header
   footprint: HEADER_MALE
@@ -320,6 +334,7 @@ components:
 - ref: K3
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K30
   value: 1x1 header
   footprint: HEADER_MALE
@@ -416,30 +431,39 @@ components:
 - ref: Q10
   value: P-channel MOSFET
   footprint: SOT-23-3
+  pin_count: 3
 - ref: Q2
   value: NPN transistor
   footprint: SOT-23-3
+  pin_count: 3
 - ref: Q3
   value: NPN transistor
   footprint: SOT-23-3
+  pin_count: 3
 - ref: Q4
   value: N-channel MOSFET
   footprint: SOT-23-3
+  pin_count: 3
 - ref: Q5
   value: P-channel MOSFET
   footprint: SOT-23-3
+  pin_count: 3
 - ref: Q6
   value: P-channel MOSFET
   footprint: SOT-23-3
+  pin_count: 3
 - ref: Q7
   value: SSM3J358R,LF
   footprint: SOT-23-3
+  pin_count: 3
 - ref: Q8
   value: NPN transistor
   footprint: SOT-23-3
+  pin_count: 3
 - ref: Q9
   value: SSM3J358R,LF
   footprint: SOT-23-3
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -607,6 +631,8 @@ components:
 - ref: S1
   value: SK-3296S-01-L1
   footprint: SK-3296S-01-L1
+  pin_count: 3
+  nc_pins: {'1': '1'}
 - ref: SW1
   value: YTSA007A0151803B
   footprint: YTSA007A0151803B
@@ -619,39 +645,57 @@ components:
 - ref: U1
   value: TPS65186RGZR
   footprint: VQFN-49
+  pin_count: 39
 - ref: U10
   value: ESP32-WROVER
   footprint: ESP32-WROVER
+  pin_count: 36
+  nc_pins: {SD2: '17', SD3: '18', CMD: '19', CLK: '20', SD0: '21', SD1: '22'}
 - ref: U11
   value: PCAL6416AHF,128
   footprint: PCAL6416AHF,128
+  pin_count: 25
 - ref: U12
   value: E_D097OC1
   footprint: E D097OC1
 - ref: U2
   value: TPS3840PL27DBVR
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {CT: '5'}
 - ref: U3
   value: CH340C
   footprint: SOP-16
+  pin_count: 14
+  nc_pins: {CTS#: '9', DSR#: '10', RI#: '11', DCD#: '12', R232: '15'}
 - ref: U4
   value: MCP73831T
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U5
   value: MC14093BDTR2G
   footprint: TSSOP-14
+  pin_count: 14
+  nc_pins: {OUTA: '3', OUTB: '4'}
 - ref: U6
   value: TPS7A2633DRVR
   footprint: TPS7A2633DRVR
+  pin_count: 5
+  nc_pins: {PG: '3'}
 - ref: U7
   value: PCF85063A
   footprint: PCF85063A
+  pin_count: 10
+  nc_pins: {NC: '8'}
 - ref: U8
   value: SN74LVC1G34DBV
   footprint: SN74LVC1G34DBV
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U9
   value: PCAL6416AHF,128
   footprint: PCAL6416AHF,128
+  pin_count: 25
 - ref: X1
   value: 7LC32768F12UC
   footprint: ABS07AIG-32.768KHZ-7-D-T

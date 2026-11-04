@@ -18,15 +18,22 @@ components:
 - ref: +3.3V1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
+  pin_count: 1
+  nc_pins: {3V1.Pad: '1'}
 - ref: +5V1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
+  pin_count: 1
+  nc_pins: {Pad: '1'}
 - ref: +5V_USB1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
+  pin_count: 1
+  nc_pins: {Pad: '1'}
 - ref: BAT1
   value: PH2.0-2PWB
   footprint: PH2.0-2PWB
+  pin_count: 3
 - ref: C1
   value: 100nF
   footprint: '0402'
@@ -85,9 +92,11 @@ components:
 - ref: EXT1
   value: B-V-14-LF
   footprint: GBH-254-SMT-14
+  pin_count: 14
 - ref: FET1
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: GND1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
@@ -106,12 +115,14 @@ components:
 - ref: PWR_In/Out1
   value: PH2.0-3PWB
   footprint: PH2.0-3PWB
+  pin_count: 4
 - ref: PWR_LED1
   value: LED/RED/0603
   footprint: '0603'
 - ref: PWR_OFF/ON1
   value: SS-12D11G5
   footprint: SS-12D11G5
+  pin_count: 3
 - ref: R1
   value: 2.2kohm
   footprint: '0402'
@@ -182,30 +193,43 @@ components:
 - ref: U1
   value: BL4054B
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U2
   value: CH32V003F4P6
   footprint: TSSOP20_Pitch-0.65mm
+  pin_count: 20
+  nc_pins: {PD7/NRST/T2CH4/OPP1/UCK_: '4', PD1/SWIO/AETR2/T1CH3N/SCL_/URX_: '18'}
 - ref: U3
   value: TPS62A02ADRLR
   footprint: SOT-563-6
+  pin_count: 6
+  nc_pins: {PG: '6'}
 - ref: U4
   value: MT3608
   footprint: SOT-23-6
+  pin_count: 6
+  nc_pins: {NC: '6'}
 - ref: UEXT1
   value: P-B-V-10-LF
   footprint: GBH-254-SMT-10
+  pin_count: 10
 - ref: UEXT2
   value: P-B-V-10-LF
   footprint: GBH-254-SMT-10
+  pin_count: 10
 - ref: UEXT3
   value: P-B-V-10-LF
   footprint: GBH-254-SMT-10
+  pin_count: 10
 - ref: UEXT4
   value: P-B-V-10-LF
   footprint: GBH-254-SMT-10
+  pin_count: 10
 - ref: USB-PWR_In1
   value: USB-C
   footprint: USB2.0_TYPE-C(A40-00119-A52-12)_Paste
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: VBAT1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
@@ -215,6 +239,7 @@ components:
 - ref: pUEXT1
   value: SH1.0-10P-90D
   footprint: SM10B-SRSS-TB
+  pin_count: 11
 nets:
 - name: +3.3V
   pins:

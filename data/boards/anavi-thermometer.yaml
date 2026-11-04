@@ -27,12 +27,15 @@ components:
 - ref: ESP-12
   value: ESP-12E
   footprint: ESP-12E_SMD
+  pin_count: 22
+  nc_pins: {'1': '1', '2': '2', '5': '5', '7': '7', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22'}
 - ref: J1
   value: USB Micro-B
   footprint: USB_Micro-B_Molex-105017-0001
 - ref: P1
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: R1
   value: 68ohm
   footprint: '0603'
@@ -65,18 +68,23 @@ components:
 - ref: U1
   value: I2C_SENS_1
   footprint: 1X4
+  pin_count: 4
 - ref: U2
   value: I2C_SENS_1
   footprint: 1X4
+  pin_count: 4
 - ref: U3
   value: I2C_SENS_1
   footprint: 1X4
+  pin_count: 4
 - ref: U4
   value: 1x4 header
   footprint: 1X4
 - ref: V1
   value: LD1117S33TR
   footprint: SOT-223
+  pin_count: 4
+  nc_pins: {'4': '4'}
 nets:
 - name: +3V3
   pins:

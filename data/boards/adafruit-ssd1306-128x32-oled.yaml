@@ -50,6 +50,8 @@ components:
 - ref: CONN4
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
+  nc_pins: {G$2.MT: MT1, G$3.MT: MT2}
 - ref: D1
   value: green LED
   footprint: '0603'
@@ -59,17 +61,21 @@ components:
 - ref: IC5
   value: APX803
   footprint: SOT23
+  pin_count: 3
 - ref: JP1
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: LCD1
   value: OLED display
   footprint: UG-2832HSWEG02_WRAPUNDER
   description: 128x32 I2C 0
+  pin_count: 14
 - ref: Q2
   value: BSS138
   footprint: SOT363
   description: Dual N-Channel MOSFET
+  pin_count: 6
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -81,6 +87,7 @@ components:
 - ref: R3
   value: 10kohm
   footprint: RESPACK
+  pin_count: 8
 - ref: R5
   value: 10kohm
   footprint: '0603'
@@ -89,6 +96,8 @@ components:
   value: AP2112K-3.3
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 nets:
 - name: 3.3V
   pins:

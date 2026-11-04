@@ -36,6 +36,7 @@ components:
   value: 0R-JUMP
   footprint: A0R-JMP
   description: SMD 0R 0805 Jumper
+  pin_count: 3
 - ref: R3
   value: 330ohm
   footprint: 0805
@@ -63,6 +64,8 @@ components:
   description: ESP8285 Module - M2
   manufacturer: Doctors of Intelligence & Technology Co., LTD
   mpn: ESP-M2
+  pin_count: 18
+  nc_pins: {ADC: ADC, EN: EN, RST: RST}
 - ref: U$2
   value: 1x1 header
   footprint: PAD1
@@ -82,18 +85,22 @@ components:
   value: SX1280
   footprint: SX1280
   description: 2.4GHz LoRa transceiver
+  pin_count: 16
+  nc_pins: {DIO2: '1', DIO3: '2'}
 - ref: U2
   value: AMS1117-3.3
   footprint: SOT-4
   description: Sot223/Pkg 1-Amp 3
   manufacturer: Advanced Monolithic Systems
   mpn: AMS1117-3.3
+  pin_count: 3
 - ref: X1
   value: '734120110'
   footprint: '734120110'
   description: MICRO COAXIAL CONNECTOR RECEPTACLE VERTICAL
   manufacturer: Molex
   mpn: 734-12-0110
+  pin_count: 4
 nets:
 - name: 3V3
   pins:

@@ -60,15 +60,20 @@ components:
   value: USB-C
   footprint: USB-C
   lcsc: C963370
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J2
   value: 1x14 header
   footprint: Pin
+  pin_count: 14
 - ref: J3
   value: 1x14 header
   footprint: Pin
+  pin_count: 14
 - ref: J4
   value: 1x4 header
   footprint: Pin
+  pin_count: 4
 - ref: R1
   value: 5.1kohm
   footprint: '0603'
@@ -100,6 +105,7 @@ components:
   value: switch
   footprint: SW_DIP_SPSTx02_Slide_Copal_CHS-02B_W7.62mm_P1.27mm
   lcsc: C3293142
+  pin_count: 4
 - ref: SW2
   value: tactile switch
   footprint: SW_Push_1P1T_NO_Vertical_Wuerth_434133025816
@@ -112,13 +118,17 @@ components:
   value: XC6206B331MR
   footprint: SOT-23-5
   lcsc: C82942
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U2
   value: CH32V203G6
   footprint: QFN-28-1EP
   lcsc: C5142280
+  pin_count: 29
 - ref: Y1
   value: Crystal_GND24_Small
   footprint: SMD3225
+  pin_count: 4
 nets:
 - name: /+3V3
   pins:

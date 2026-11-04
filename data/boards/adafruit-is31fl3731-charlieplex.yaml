@@ -36,23 +36,29 @@ components:
   value: STEMMA QT
   footprint: JST_SH4
   lcsc: C2845363
+  pin_count: 6
 - ref: CONN2
   value: STEMMA QT
   footprint: JST_SH4
   lcsc: C2845363
+  pin_count: 6
 - ref: JP2
   value: 1x13 header
   footprint: 1X13
+  pin_count: 13
 - ref: JP4
   value: 1x13 header
   footprint: 1X13
+  pin_count: 13
 - ref: JP5
   value: 1x7 header
   footprint: 1X07
+  pin_count: 7
 - ref: R1
   value: 20kohm
   footprint: '0603'
   pulldown: REXT
+  pin_count: 4
 - ref: R2
   value: 20kohm
   footprint: '0603'
@@ -77,6 +83,7 @@ components:
   value: IS31FL3731
   footprint: QFN28_4MM_0.4MM
   description: IS31FL3731 PWM LED Matrix Driver
+  pin_count: 29
 nets:
 - name: ADDR
   pins: [JP4.12, R6.2, U1.ADDR]

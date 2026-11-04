@@ -73,51 +73,67 @@ components:
 - ref: J1
   value: 2x6 header
   footprint: 2X6
+  pin_count: 12
 - ref: J10
   value: XLR3
   footprint: Jack_XLR_Neutrik_NC3FAAH_Horizontal
+  pin_count: 3
 - ref: J11
   value: XLR3
   footprint: Jack_XLR_Neutrik_NC3FD-H_Horizontal
+  pin_count: 3
 - ref: J12
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J13
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J14
   value: 8P8C
   footprint: RJ45_Sparkfun
+  pin_count: 8
 - ref: J2
   value: XLR3
   footprint: Jack_XLR_Neutrik_NC3FAAH_Horizontal
+  pin_count: 3
 - ref: J3
   value: XLR3
   footprint: Jack_XLR_Neutrik_NC3FD-H_Horizontal
+  pin_count: 3
 - ref: J4
   value: XLR3
   footprint: Jack_XLR_Neutrik_NC3FAAH_Horizontal
+  pin_count: 3
 - ref: J5
   value: XLR3
   footprint: Jack_XLR_Neutrik_NC3FD-H_Horizontal
+  pin_count: 3
 - ref: J6
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J7
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J8
   value: XLR3
   footprint: Jack_XLR_Neutrik_NC3FAAH_Horizontal
+  pin_count: 3
 - ref: J9
   value: XLR3
   footprint: Jack_XLR_Neutrik_NC3FD-H_Horizontal
+  pin_count: 3
 - ref: PS1
   value: MEE1S0503SC
   footprint: Converter_DCDC_Murata_CRE1xxxxxx3C_THT
+  pin_count: 4
 - ref: PS2
   value: MEE1S0503SC
   footprint: Converter_DCDC_Murata_CRE1xxxxxx3C_THT
+  pin_count: 4
 - ref: R1
   value: 680ohm
   footprint: '0603'
@@ -202,28 +218,39 @@ components:
   value: M24C64
   footprint: SOIC-8
   lcsc: C79988
+  pin_count: 8
 - ref: U2
   value: CRE1S0505DC
   footprint: Converter_DCDC_Murata_CRE1xxxxxxDC_THT
+  pin_count: 4
 - ref: U3
   value: CRE1S0505DC
   footprint: Converter_DCDC_Murata_CRE1xxxxxxDC_THT
+  pin_count: 4
 - ref: U4
   value: ADM2483xRW
   footprint: SOIC-16W
   lcsc: C9637
+  pin_count: 16
+  nc_pins: {NC@10: '10', NC@11: '11', NC@14: '14'}
 - ref: U5
   value: ADM2483xRW
   footprint: SOIC-16W
   lcsc: C9637
+  pin_count: 16
+  nc_pins: {NC@10: '10', NC@11: '11', NC@14: '14'}
 - ref: U6
   value: ADM2483xRW
   footprint: SOIC-16W
   lcsc: C9637
+  pin_count: 16
+  nc_pins: {NC@10: '10', NC@11: '11', NC@14: '14'}
 - ref: U7
   value: ADM2483xRW
   footprint: SOIC-16W
   lcsc: C9637
+  pin_count: 16
+  nc_pins: {NC@10: '10', NC@11: '11', NC@14: '14'}
 nets:
 - name: +3V3
   pins:

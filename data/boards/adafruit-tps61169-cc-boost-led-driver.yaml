@@ -36,6 +36,7 @@ components:
 - ref: JP1
   value: 1x5 header
   footprint: 1X05
+  pin_count: 5
 - ref: L1
   value: 6.8~10uH
   footprint: INDUCTOR
@@ -63,10 +64,12 @@ components:
   value: 4DIP 1.27mm
   footprint: DIPSWITCH_4PIN_1.27
   description: DIP Switch - 4 Pin
+  pin_count: 8
 - ref: U3
   value: TPS61169
   footprint: SC70-5
   description: FAN5331 - LED/OLED 20V Boost Converter
+  pin_count: 5
 - ref: X1
   value: 1x2 header
   footprint: TERMBLOCK

@@ -249,11 +249,13 @@ components:
   footprint: SOT-23-6
   manufacturer: STMicroelectronics
   mpn: USBLC6-2SC6Y
+  pin_count: 6
 - ref: D4
   value: NUP2105L
   footprint: SOT-23
   manufacturer: ON Semiconductor
   mpn: NUP2105LT1G
+  pin_count: 3
 - ref: D5
   value: SMBJ36A
   footprint: SMB
@@ -264,6 +266,8 @@ components:
   footprint: SOT-23
   manufacturer: Microchip
   mpn: LM4040DYM3-2.5-TR
+  pin_count: 3
+  nc_pins: {'3': '3'}
 - ref: D8
   value: MM3Z12VT1G
   footprint: SOD-323
@@ -307,21 +311,25 @@ components:
 - ref: J4
   value: 2x5 header
   footprint: Box_Header
+  pin_count: 10
 - ref: J5
   value: 1x3 header
   footprint: Phoenix_Contact_MC_1,5_3-G-3,81
   manufacturer: Phoenix Contact
   mpn: '1803280'
+  pin_count: 3
 - ref: JP1
   value: RJ45_NS
   footprint: RJ45_8P8C
   manufacturer: Amphenol FCI
   mpn: 54602-908LF
+  pin_count: 8
 - ref: JP2
   value: RJ45_NS
   footprint: RJ45_8P8C
   manufacturer: Amphenol FCI
   mpn: 54602-908LF
+  pin_count: 8
 - ref: JP3
   value: 1x2 header
   footprint: 1X2
@@ -363,41 +371,49 @@ components:
   footprint: USB_Micro-B_10103594-0001LF
   manufacturer: FCI
   mpn: 10103594-0001LF
+  pin_count: 6
 - ref: Q1
   value: CSD18540Q5B
   footprint: 5X6
   manufacturer: Texas Instruments
   mpn: CSD18540Q5BT
+  pin_count: 3
 - ref: Q2
   value: CSD18540Q5B
   footprint: 5X6
   manufacturer: Texas Instruments
   mpn: CSD18540Q5BT
+  pin_count: 3
 - ref: Q3
   value: CSD18540Q5B
   footprint: 5X6
   manufacturer: Texas Instruments
   mpn: CSD18540Q5BT
+  pin_count: 3
 - ref: Q4
   value: CSD18540Q5B
   footprint: 5X6
   manufacturer: Texas Instruments
   mpn: CSD18540Q5BT
+  pin_count: 3
 - ref: Q5
   value: BSS84
   footprint: SOT-23
   manufacturer: Fairchild
   mpn: BSS84
+  pin_count: 3
 - ref: Q6
   value: BSS84
   footprint: SOT-23
   manufacturer: Fairchild
   mpn: BSS84
+  pin_count: 3
 - ref: Q7
   value: BSS84
   footprint: SOT-23
   manufacturer: Fairchild
   mpn: BSS84
+  pin_count: 3
 - ref: R1
   value: 3.3ohm
   footprint: 0805
@@ -677,71 +693,86 @@ components:
 - ref: SWD1
   value: ST_Nucleo_SWD
   footprint: 1X6
+  pin_count: 6
+  nc_pins: {'6': '6'}
 - ref: T1
   value: MMBT3904
   footprint: SOT-23
   manufacturer: Diodes Inc.
   mpn: MMBT3904-7-F
+  pin_count: 3
 - ref: T2
   value: MMBT3904
   footprint: SOT-23
   manufacturer: Diodes Inc.
   mpn: MMBT3904-7-F
+  pin_count: 3
 - ref: T3
   value: MMBT3904
   footprint: SOT-23
   manufacturer: Diodes Inc.
   mpn: MMBT3904-7-F
+  pin_count: 3
 - ref: T4
   value: MMBT3904
   footprint: SOT-23
   manufacturer: Diodes Inc.
   mpn: MMBT3904-7-F
+  pin_count: 3
 - ref: U1
   value: LM5107
   footprint: SOIC-8
   manufacturer: Texas Instruments
   mpn: LM5107MAX/NOPB
+  pin_count: 8
 - ref: U2
   value: STM32F072CB
   footprint: LQFP-48
   manufacturer: STMicroelectronics
   mpn: STM32F072CBT6
+  pin_count: 48
 - ref: U3
   value: AZ1117
   footprint: SOT-223-3_TabPin2
   manufacturer: Diodes Inc.
   mpn: AZ1117EH-5.0TRG1
+  pin_count: 3
 - ref: U4
   value: MP2459
   footprint: SOT-23-6
   manufacturer: Monolithic Power
   mpn: MP2459GJ-Z
+  pin_count: 6
 - ref: U5
   value: AP2210-3.3
   footprint: SOT-23-5
   manufacturer: Diodes Inc.
   mpn: AP2210K-3.3TRG1
+  pin_count: 5
 - ref: U6
   value: 24AA01
   footprint: SOT-23-5
   manufacturer: Microchip
   mpn: 24AA32AFT-I/OT
+  pin_count: 5
 - ref: U7
   value: LM258
   footprint: SOIC-8
   manufacturer: Texas Instruments
   mpn: LM258DR
+  pin_count: 8
 - ref: U8
   value: TJA1042T/3
   footprint: SOIC-8
   manufacturer: NXP
   mpn: TJA1042T/3/1J
+  pin_count: 8
 - ref: Y1
   value: 8MHz
   footprint: Resonator_Murata_CSTCE_G
   manufacturer: Murata
   mpn: CSTCE8M00G15C99-R0
+  pin_count: 3
 nets:
 - name: +10V
   pins:

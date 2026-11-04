@@ -206,24 +206,30 @@ components:
 - ref: J1
   value: 1x6 header
   footprint: JST_GH_SM06B-GHS-TB
+  pin_count: 6
 - ref: J2
   value: 1x6 header
   footprint: 1X6
+  pin_count: 6
 - ref: J3
   value: 1x2 header
   footprint: AMASS_XT60-M
 - ref: J4
   value: 1x9 header
   footprint: JST_GH_SM09B-GHS-TB
+  pin_count: 9
 - ref: J5
   value: 1x3 header
   footprint: AMASS MR30PB-F
+  pin_count: 3
 - ref: J6
   value: 2x2 header
   footprint: JST_GH_SM03B-GHS-TB
+  pin_count: 3
 - ref: J7
   value: 2x2 header
   footprint: JST_GH_SM03B-GHS-TB
+  pin_count: 3
 - ref: L1
   value: 22uH
   footprint: L_Bourns-SRN8040
@@ -231,24 +237,31 @@ components:
 - ref: LD1
   value: multicolor LED
   footprint: RGB LED 1.6x1.6mm
+  pin_count: 4
 - ref: Q1
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  pin_count: 5
 - ref: Q2
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  pin_count: 5
 - ref: Q3
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  pin_count: 5
 - ref: Q4
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  pin_count: 5
 - ref: Q5
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  pin_count: 5
 - ref: Q6
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  pin_count: 5
 - ref: R1
   value: 4.7kohm
   footprint: '0402'
@@ -330,9 +343,13 @@ components:
 - ref: R30
   value: 120ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R31
   value: 120ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R32
   value: 0.5mohm
   footprint: '2512'
@@ -355,6 +372,8 @@ components:
 - ref: R37
   value: 120ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R38
   value: 10kohm
   footprint: '0402'
@@ -391,24 +410,36 @@ components:
 - ref: U1
   value: XC6220B331MR
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U2
   value: DRV8301
   footprint: HTSSOP-56-1EP
+  pin_count: 57
+  nc_pins: {EN_BUCK: '55'}
 - ref: U3
   value: STM32G431CBT6
   footprint: LQFP-48
+  pin_count: 48
+  nc_pins: {PC14-OCS32_IN: '3', PC15-OCS32_OUT: '4', PB4: '41', PB5: '42', PB6: '43'}
 - ref: U4
   value: MCP25625
   footprint: QFN-28-1EP
+  pin_count: 28
+  nc_pins: {NC@2: '2', nTx1RTS: '6', nTx2RTS: '7', nRx1BF: '11', nRx0BF: '12', CLKOUT: '22', nTx0RTS: '23', NC@25: '25'}
 - ref: U5
   value: AS5147
   footprint: TSSOP-14
+  pin_count: 14
+  nc_pins: {B: '6', A: '7', W/PWM: '8', V: '9', U: '10', I/PWM: '14'}
 - ref: Y1
   value: 8MHz
   footprint: SMD3225
+  pin_count: 4
 - ref: Y2
   value: 16MHz
   footprint: SMD3225
+  pin_count: 3
 nets:
 - name: +5V
   pins:

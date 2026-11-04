@@ -154,6 +154,7 @@ components:
 - ref: J1
   value: 2x4 header
   footprint: 2X4
+  pin_count: 8
 - ref: J2
   value: SMA
   footprint: 2484637-1
@@ -166,10 +167,12 @@ components:
   value: DMP3099L-13
   footprint: SOT-23-3
   description: -3.8A Id, -30V Vds, P-Channel MOSFET, 65mOhm Ron, 563 pF Qg (typ)
+  pin_count: 3
 - ref: Q2
   value: 2N7002BK
   footprint: SOT-23
   description: 0.35A Id, 60V Vds, N-Channel MOSFET, SOT-23
+  pin_count: 3
 - ref: R1
   value: 5.1kohm
   footprint: '0402'
@@ -300,34 +303,43 @@ components:
   value: LP2985-10.0
   footprint: SOT-23-5
   description: 150mA 16V Low-noise Low-dropout Regulator With Shutdown, 10.0V output voltage
+  pin_count: 5
 - ref: U2
   value: TLV74130P
   footprint: SOT-23-5
   description: 150mA Low Dropout Voltage Regulator, Fixed Output 3.0V, SOT-23-5
+  pin_count: 5
 - ref: U3
   value: TLV74033P
   footprint: SOT-23-5
   description: 300mA Low Dropout Voltage Regulator, Fixed Output 3.3V, SOT-23-5
+  pin_count: 5
 - ref: U4
   value: HMC391
   footprint: QFN-24-1EP
   description: 3.9-4.45GHz VCO, QFN-24
+  pin_count: 25
 - ref: U5
   value: AD8065
   footprint: TSOT-23-5
   description: High Performance, 145 MHzFastFET Op Amp, SOT-23-5
+  pin_count: 5
 - ref: U6
   value: ADF4158
   footprint: LFCSP-24-1EP
   description: 0.5-6.1GHz fractional-N PLL, LFCSP-24
+  pin_count: 25
+  nc_pins: {SW2: '21'}
 - ref: U7
   value: TPS62143
   footprint: VQFN-16-1EP
   description: 2A Step-Down Converter with DCS-Control, Fixed 5.0V Output Voltage, 3-17V Input
+  pin_count: 17
 - ref: Y1
   value: KT2016K
   footprint: KT2016K
   description: 10 MHz VCTCXO
+  pin_count: 4
 nets:
 - name: +10V
   pins: [C23.2, R3.2, U5.V+]

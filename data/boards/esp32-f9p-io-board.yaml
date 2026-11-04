@@ -179,6 +179,7 @@ components:
 - ref: D10
   value: BAT54C
   footprint: SOT-23
+  pin_count: 3
 - ref: D11
   value: SD0805S020S1R0
   footprint: 0805
@@ -211,6 +212,8 @@ components:
   height: '0.55'
   manufacturer: ON Semiconductor
   mpn: FXL6408UMX
+  pin_count: 16
+  nc_pins: {'1': '1'}
 - ref: IC2
   value: ATA6561
   footprint: SOIC-8
@@ -218,6 +221,7 @@ components:
   height: '1.75'
   manufacturer: Microchip
   mpn: ATA6561-GAQW-N
+  pin_count: 8
 - ref: IC3
   value: ICL3221EIVZ
   footprint: SOP-16
@@ -225,6 +229,8 @@ components:
   height: '1.2'
   manufacturer: Intersil
   mpn: ICL3221EIVZ
+  pin_count: 16
+  nc_pins: {'10': '10'}
 - ref: J1
   value: PTSM-Header-Horizontal-6
   footprint: '1814883'
@@ -232,36 +238,52 @@ components:
   height: '5'
   manufacturer: Phoenix Contact
   mpn: '1814883'
+  pin_count: 6
+  nc_pins: {'2': '2', '4': '4'}
 - ref: J10
   value: 1x8 header
   footprint: 1X8
+  pin_count: 8
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '8': '8'}
 - ref: J11
   value: 1x8 header
   footprint: 1X8
+  pin_count: 8
+  nc_pins: {'1': '1', '5': '5', '6': '6', '8': '8'}
 - ref: J12
   value: 2x2 header
   footprint: 2X2
+  pin_count: 4
 - ref: J13
   value: JST SH 4-pin
   footprint: JST_SH_SM04B-SRSS-TB
   description: JST (JAPAN SOLDERLESS TERMINALS) - SM04B-SRSS-TB(LF)(SN) - CONNECTOR, HEADER, SMT, R/A, 1MM, 4WAY
   manufacturer: JST (JAPAN SOLDERLESS TERMINALS)
   mpn: SM04B-SRSS-TB(LF)(SN)
+  pin_count: 5
+  nc_pins: {MP: MP}
 - ref: J14
   value: USB Micro-B
   footprint: USB_Micro-B_Molex-105017-0001
+  pin_count: 6
 - ref: J15
   value: RJ45_Amphenol_RJMG1BD3B8K1ANR
   footprint: RJ45_Amphenol_RJMG1BD3B8K1ANR
+  pin_count: 13
+  nc_pins: {R7: R7}
 - ref: J16
   value: DB9_Male_MountingHoles
   footprint: LD09P33E4GV00LF
+  pin_count: 10
+  nc_pins: {'1': '1', '4': '4', '6': '6', '7': '7', '8': '8', '9': '9'}
 - ref: J17
   value: JST SH 4-pin
   footprint: JST_SH_SM04B-SRSS-TB
   description: JST (JAPAN SOLDERLESS TERMINALS) - SM04B-SRSS-TB(LF)(SN) - CONNECTOR, HEADER, SMT, R/A, 1MM, 4WAY
   manufacturer: JST (JAPAN SOLDERLESS TERMINALS)
   mpn: SM04B-SRSS-TB(LF)(SN)
+  pin_count: 5
+  nc_pins: {MP: MP}
 - ref: J18
   value: PTSM-Header-Horizontal-2
   footprint: '1814841'
@@ -279,6 +301,7 @@ components:
   height: '5'
   manufacturer: Phoenix Contact
   mpn: '1814896'
+  pin_count: 7
 - ref: J4
   value: CCA-Header-Horizontal-4
   footprint: '1836366'
@@ -286,6 +309,8 @@ components:
   height: '8.72'
   manufacturer: Phoenix Contact
   mpn: '1836366'
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 - ref: J5
   value: PTSM-Header-Horizontal-5
   footprint: '1814870'
@@ -293,15 +318,20 @@ components:
   height: '5'
   manufacturer: Phoenix Contact
   mpn: '1814870'
+  pin_count: 5
 - ref: J7
   value: 1x4 header
   footprint: 1X4
+  pin_count: 4
 - ref: J8
   value: 1x4 header
   footprint: 1X4
+  pin_count: 4
 - ref: J9
   value: 1x8 header
   footprint: 1X8
+  pin_count: 8
+  nc_pins: {'3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8'}
 - ref: K1
   value: CP1SA-12V-Z
   footprint: CP1SA12VZ
@@ -309,6 +339,8 @@ components:
   height: '10.5'
   manufacturer: Panasonic
   mpn: CP1SA-12V-Z
+  pin_count: 5
+  nc_pins: {'5': '5'}
 - ref: K2
   value: CP1SA-12V-Z
   footprint: CP1SA12VZ
@@ -316,9 +348,12 @@ components:
   height: '10.5'
   manufacturer: Panasonic
   mpn: CP1SA-12V-Z
+  pin_count: 5
 - ref: PS1
   value: V78E05-1000-SMT
   footprint: SOP-10
+  pin_count: 8
+  nc_pins: {'6': '6'}
 - ref: Q1
   value: BC817-40,215
   footprint: SOT-3
@@ -326,6 +361,7 @@ components:
   height: '1.1'
   manufacturer: Nexperia
   mpn: BC817-40,215
+  pin_count: 3
 - ref: Q2
   value: BC817-40,215
   footprint: SOT-3
@@ -333,6 +369,7 @@ components:
   height: '1.1'
   manufacturer: Nexperia
   mpn: BC817-40,215
+  pin_count: 3
 - ref: R1
   value: 120ohm
   footprint: 0805
@@ -343,12 +380,18 @@ components:
 - ref: R11
   value: 1kohm
   footprint: 0805
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R12
   value: 1kohm
   footprint: 0805
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R13
   value: 1kohm
   footprint: 0805
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R14
   value: 2.4kohm
   footprint: 0805
@@ -496,6 +539,8 @@ components:
 - ref: U1
   value: ESP32-WROOM-32
   footprint: ESP32-WROOM-32
+  pin_count: 39
+  nc_pins: {'4': '4', '5': '5', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '32': '32', '39': '39'}
 - ref: U10
   value: NUD3124LT1G
   footprint: SOT-3
@@ -503,30 +548,44 @@ components:
   height: '1'
   manufacturer: ON Semiconductor
   mpn: NUD3124LT1G
+  pin_count: 3
 - ref: U11
   value: LAN8720A
   footprint: QFN-24-1EP
+  pin_count: 25
+  nc_pins: {'4': '4', '14': '14'}
 - ref: U12
   value: LSM9DS1
   footprint: LGA-24L
+  pin_count: 24
+  nc_pins: {'9': '9', '10': '10', '11': '11', '12': '12', '13': '13'}
 - ref: U2
   value: AZ1117-3.3
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: U4
   value: ADS1115I
   footprint: MSOP-10
+  pin_count: 10
+  nc_pins: {'2': '2'}
 - ref: U6
   value: PCA9306DCTR
   footprint: SSOP-8
+  pin_count: 8
 - ref: U7
   value: TPD3E001DRLR
   footprint: SOT-553
+  pin_count: 5
 - ref: U8
   value: CP2102N-A01-GQFN24
   footprint: QFN-24-1EP
+  pin_count: 25
+  nc_pins: {'1': '1', '10': '10', '11': '11', '12': '12', '13': '13', '14': '14', '15': '15', '16': '16', '17': '17', '18': '18', '22': '22', '24': '24'}
 - ref: U9
   value: VNH7070AS
   footprint: SOIC-16
+  pin_count: 16
+  nc_pins: {'13': '13'}
 nets:
 - name: +12V
   pins:

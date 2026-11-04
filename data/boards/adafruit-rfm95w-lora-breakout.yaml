@@ -30,12 +30,14 @@ components:
 - ref: JP1
   value: 1x5 header
   footprint: 1X05
+  pin_count: 5
 - ref: JP2
   value: 1x1 header
   footprint: 1X01
 - ref: JP3
   value: 1x9 header
   footprint: 1X09
+  pin_count: 9
 - ref: R1
   value: 100kohm
   footprint: 0805
@@ -52,18 +54,24 @@ components:
   value: RFM95W
   footprint: RFMHCW_SMT
   description: SX1276 LoRa Radio Transceiver
+  pin_count: 16
 - ref: U2
   value: 74HC4050D
   footprint: TSSOP16
   description: SOIC16
+  pin_count: 14
+  nc_pins: {5A: '11', 5Y: '12', 6A: '14', 6Y: '15'}
 - ref: U3
   value: AP2112K-3.3
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: X1
   value: uFL/SMA
   footprint: SMA_EDGELAUNCH_UFL
   description: SMA Connector
+  pin_count: 5
 nets:
 - name: 3.3V
   pins: [C1.1, C2.1, U1.VDD, U2.VCC, U3.OUT]

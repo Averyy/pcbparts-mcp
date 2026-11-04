@@ -65,6 +65,7 @@ components:
 - ref: JP3
   value: 1x11 header
   footprint: 1X11
+  pin_count: 11
 - ref: JP4
   value: 1x1 header
   footprint: 1X01
@@ -86,6 +87,8 @@ components:
 - ref: R3
   value: 590ohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R4
   value: 5.1kohm
   footprint: '0603'
@@ -93,6 +96,8 @@ components:
 - ref: R5
   value: 2kohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R6
   value: 5.1kohm
   footprint: '0603'
@@ -110,9 +115,11 @@ components:
 - ref: SJ1
   value: 2-way solder jumper
   footprint: SJ-3
+  pin_count: 3
 - ref: SJ2
   value: 2-way solder jumper
   footprint: SJ-3
+  pin_count: 3
 - ref: SYSOUT
   value: JST 2PH
   footprint: JST-PH-2-SMT-RA
@@ -125,13 +132,17 @@ components:
   value: USB Type C
   footprint: USB-C
   description: USB Type-C USB 2.0
+  pin_count: 12
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: X3
   value: 2.1mm DC
   footprint: DCJACK_2MM_SMT
   description: DC Barrel Jack
+  pin_count: 4
 - ref: X4
   value: BQ24074
   footprint: QFN16_3MM
+  pin_count: 17
 nets:
 - name: '!CE'
   pins: [JP3.7, R8.1, X4.!CE]

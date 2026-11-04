@@ -210,9 +210,11 @@ components:
 - ref: K1
   value: 1x5 header
   footprint: HEADER_MALE
+  pin_count: 5
 - ref: K2
   value: 1x5 header
   footprint: HEADER_MALE
+  pin_count: 5
 - ref: R1
   value: 22kohm
   footprint: '0603'
@@ -220,6 +222,7 @@ components:
 - ref: U1
   value: MAX7219CWG+
   footprint: SOIC-24
+  pin_count: 24
 nets:
 - name: CLK
   pins: [K1.1, K2.1, U1.CLK]

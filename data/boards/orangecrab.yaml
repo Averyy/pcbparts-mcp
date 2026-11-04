@@ -360,11 +360,14 @@ components:
   footprint: 0404LED_RGB
   manufacturer: OSRAM Opto Semiconductors Inc.
   mpn: LRTB R48G-P9Q7-1+R7S5-26+N5P-68-ZB
+  pin_count: 4
 - ref: D2
   value: multicolor LED
   footprint: 0404LED_RGB
   manufacturer: OSRAM Opto Semiconductors Inc.
   mpn: LRTB R48G-P9Q7-1+R7S5-26+N5P-68-ZB
+  pin_count: 4
+  nc_pins: {'4': '4'}
 - ref: FB1
   value: 600ohm
   footprint: '0402'
@@ -384,29 +387,36 @@ components:
   value: 1x12 header
   footprint: Feather_PinHeader
   mpn: DNP
+  pin_count: 12
 - ref: J2
   value: 1x16 header
   footprint: Feather_PinHeader
   mpn: DNP
+  pin_count: 16
 - ref: J3
   value: USB-C
   footprint: USB-C
   manufacturer: GCT
   mpn: USB4105-GF-A
+  pin_count: 17
+  nc_pins: {A8: A8, B8: B8}
 - ref: J4
   value: MicroSd
   footprint: molex_microsd_1040310811
   mpn: '1040310811'
   manufacturer: Molex
+  pin_count: 10
 - ref: J5
   value: JST
   footprint: JST_PH_B2B-PH-SM4-TB
   mpn: S2B-PH-SM4-TB(LF)(SN)
   manufacturer: JST Sales America Inc.
+  pin_count: 3
 - ref: J6
   value: 1x5 header
   footprint: 1X5
   mpn: DNP
+  pin_count: 5
 - ref: L1
   value: 2.2uH
   footprint: 0805
@@ -427,6 +437,7 @@ components:
   footprint: Oscilator
   mpn: ECS-2520MV-480-BN-TR
   manufacturer: ECS Inc.
+  pin_count: 4
 - ref: R1
   value: 1kohm
   footprint: '0201'
@@ -693,46 +704,60 @@ components:
   footprint: SOT-563
   manufacturer: Texas Instruments
   mpn: TLV62569DRLR
+  pin_count: 6
+  nc_pins: {'6': '6'}
 - ref: U10
   value: NCP115-2.5
   footprint: Texas_X2SON-4
   mpn: NCP115CMX250TCG
   manufacturer: ON Semiconductor
+  pin_count: 4
 - ref: U2
   value: TLV62569DRL
   footprint: SOT-563
   manufacturer: Texas Instruments
   mpn: TLV62569DRLR
+  pin_count: 6
+  nc_pins: {'6': '6'}
 - ref: U3
   value: LFE5U-25F-8MG285C
   footprint: csBGA285
   mpn: LFE5U-25F-8MG285C
   manufacturer: Lattice Semiconductor Corporation
+  pin_count: 285
+  nc_pins: {A10: A10, A11: A11, B11: B11, C11: C11, H18: H18, M16: M16, M17: M17, R16: R16, U15: U15, V2: V2, V3: V3, V11: V11, V12: V12, V16: V16}
 - ref: U4
   value: MT41K64M16TW-107_J
   footprint: BGA-96
   mpn: MT41K64M16TW-107:J TR
   manufacturer: Micron Technology Inc.
+  pin_count: 96
+  nc_pins: {G8: G8, J1: J1, J9: J9, L1: L1, L9: L9}
 - ref: U5
   value: BQ24232
   footprint: QFN-16-1EP
   mpn: BQ24232RGTR
   manufacturer: Texas Instruments
+  pin_count: 17
 - ref: U6
   value: W25Q128JVP
   footprint: WSON-8-1EP
   mpn: W25Q128JVPIQ
   manufacturer: Winbond Electronics
+  pin_count: 8
 - ref: U7
   value: TLV62569DRL
   footprint: SOT-563
   manufacturer: Texas Instruments
   mpn: TLV62569DRLR
+  pin_count: 6
+  nc_pins: {'6': '6'}
 - ref: U9
   value: 74HC4067BQ
   footprint: Texas_RGY_R-PVQFN-N24_EP2.05x3.1mm
   manufacturer: Nexperia USA Inc.
   mpn: 74HC4067BQ\\,118
+  pin_count: 24
 nets:
 - name: /DRAM/RAM_VDD
   pins:

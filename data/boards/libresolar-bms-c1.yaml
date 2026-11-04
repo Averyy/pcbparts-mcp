@@ -415,6 +415,7 @@ components:
   manufacturer: Nexperia
   mpn: PESD2CANFD24V-TR
   lcsc: C552486
+  pin_count: 3
 - ref: D9
   value: VSS8D3M10-M3/I
   footprint: SOD-128
@@ -426,35 +427,42 @@ components:
   footprint: Molex_Micro-Fit_3.0_43045-2410
   manufacturer: "W\xFCrth"
   mpn: '662024231722'
+  pin_count: 25
 - ref: J2
   value: 1x4 header
   footprint: JST_PH_B4B-PH-SM4-TB
   manufacturer: JST
   mpn: B4B-PH-SM4-TB(LF)(SN)
   lcsc: C160354
+  pin_count: 5
 - ref: J3
   value: USB-C
   footprint: USB-C
   manufacturer: GCT
   mpn: USB4105-GF-A
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J4
   value: 1x3 header
   footprint: JST_PH_B3B-PH-SM4-TB
   manufacturer: JST
   mpn: B3B-PH-SM4-TB(LF)(SN)
   lcsc: C160353
+  pin_count: 4
 - ref: J5
   value: 1x2 header
   footprint: JST_PH_B2B-PH-SM4-TB
   manufacturer: JST
   mpn: B2B-PH-SM4-TB(LF)(SN)
   lcsc: C160352
+  pin_count: 3
 - ref: J6
   value: 1x4 header
   footprint: JST_PH_B4B-PH-SM4-TB
   manufacturer: JST
   mpn: B4B-PH-SM4-TB(LF)(SN)
   lcsc: C160354
+  pin_count: 5
 - ref: L2
   value: 22uH
   footprint: Bourns_SRN8040TA
@@ -509,72 +517,84 @@ components:
   manufacturer: Diodes Inc.
   mpn: DMN10H220LE
   lcsc: C258216
+  pin_count: 4
 - ref: Q10
   value: BSS84
   footprint: SOT-23
   manufacturer: Nexperia
   mpn: BSS84AK,215
   lcsc: C127273
+  pin_count: 3
 - ref: Q11
   value: BSS123N
   footprint: SOT-23
   manufacturer: Infineon
   mpn: BSS123N H6327
   lcsc: C534594
+  pin_count: 3
 - ref: Q12
   value: ZXMP10A17GTA
   footprint: SOT-223-3_TabPin2
   manufacturer: Diodes Incorporated
   mpn: ZXMP10A17GTA
   lcsc: C32998
+  pin_count: 3
 - ref: Q2
   value: IPT012N08N5
   footprint: Infineon_PG-HSOF-8-1_ThermalVias
   manufacturer: Infineon
   mpn: IPT012N08N5
   lcsc: C531199
+  pin_count: 3
 - ref: Q3
   value: IPT012N08N5
   footprint: Infineon_PG-HSOF-8-1_ThermalVias
   manufacturer: Infineon
   mpn: IPT012N08N5
   lcsc: C531199
+  pin_count: 3
 - ref: Q4
   value: IPT012N08N5
   footprint: Infineon_PG-HSOF-8-1_ThermalVias
   manufacturer: Infineon
   mpn: IPT012N08N5
   lcsc: C531199
+  pin_count: 3
 - ref: Q5
   value: IPT012N08N5
   footprint: Infineon_PG-HSOF-8-1_ThermalVias
   manufacturer: Infineon
   mpn: IPT012N08N5
   lcsc: C531199
+  pin_count: 3
 - ref: Q6
   value: IPT012N08N5
   footprint: Infineon_PG-HSOF-8-1_ThermalVias
   manufacturer: Infineon
   mpn: IPT012N08N5
   lcsc: C531199
+  pin_count: 3
 - ref: Q7
   value: IPT012N08N5
   footprint: Infineon_PG-HSOF-8-1_ThermalVias
   manufacturer: Infineon
   mpn: IPT012N08N5
   lcsc: C531199
+  pin_count: 3
 - ref: Q8
   value: IPT012N08N5
   footprint: Infineon_PG-HSOF-8-1_ThermalVias
   manufacturer: Infineon
   mpn: IPT012N08N5
   lcsc: C531199
+  pin_count: 3
 - ref: Q9
   value: IPT012N08N5
   footprint: Infineon_PG-HSOF-8-1_ThermalVias
   manufacturer: Infineon
   mpn: IPT012N08N5
   lcsc: C531199
+  pin_count: 3
 - ref: R1
   value: 20ohm
   footprint: '2010'
@@ -789,6 +809,7 @@ components:
   footprint: '5931'
   manufacturer: Vishay
   mpn: WSLP5931L3000FEA
+  pin_count: 4
 - ref: R46
   value: 1kohm
   footprint: '0603'
@@ -887,6 +908,7 @@ components:
   footprint: Bourns_PWR163
   manufacturer: Bourns
   mpn: PWR163S-25-40R0FE
+  pin_count: 3
 - ref: R64
   value: 62ohm
   footprint: '0603'
@@ -952,30 +974,39 @@ components:
   manufacturer: Texas Instruments
   mpn: SN65HVD230DR
   lcsc: C12084
+  pin_count: 8
+  nc_pins: {Vref: '5'}
 - ref: U2
   value: SN65HVD75
   footprint: SOIC-8
   manufacturer: Texas Instruments
   mpn: SN65HVD75DR
   lcsc: C57928
+  pin_count: 8
 - ref: U3
   value: LMR38010
   footprint: SOIC-8-1EP
   manufacturer: Texas Instruments
   mpn: LMR38010SDDAR
   lcsc: C3192337
+  pin_count: 9
+  nc_pins: {PG: '6'}
 - ref: U4
   value: BQ76952
   footprint: TQFP-48
   manufacturer: Texas Instruments
   mpn: BQ76952PFBR
   lcsc: C2862742
+  pin_count: 48
+  nc_pins: {NC@19: '19', HDQ: '28', CFETOFF: '29', DDSG: '32', PCHG: '40', NC@44: '44'}
 - ref: U5
   value: ESP32-C3-MINI-1
   footprint: ESP32-C3-MINI-1
   mpn: ESP32-C3-MINI-1-N4
   manufacturer: Espressif Systems
   lcsc: C2838502
+  pin_count: 36
+  nc_pins: {NC@4: '4', NC@7: '7', NC@9: '9', NC@10: '10', NC@15: '15', NC@17: '17', NC@24: '24', NC@25: '25', NC@28: '28', NC@29: '29', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35'}
 nets:
 - name: +3V3
   pins:

@@ -30,14 +30,17 @@ components:
 - ref: JP1
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: Q1
   value: BSS138
   footprint: SOT23-WIDE
   description: N-Channel Mosfet
+  pin_count: 3
 - ref: Q2
   value: BSS138
   footprint: SOT23-WIDE
   description: N-Channel Mosfet
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: 0805
@@ -58,10 +61,13 @@ components:
   value: APDS-9960
   footprint: '9960'
   description: APDS-9960 - Digital Proximity Sensor with Ambient Light/RGB/Gesture Detection
+  pin_count: 8
 - ref: U2
   value: VREG
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 nets:
 - name: 3.3V
   pins:

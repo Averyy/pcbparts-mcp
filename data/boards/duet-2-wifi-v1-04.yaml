@@ -497,12 +497,15 @@ components:
 - ref: D22
   value: BAT54C
   footprint: SOT-23-D
+  pin_count: 3
 - ref: D23
   value: BAT54C
   footprint: SOT-23-D
+  pin_count: 3
 - ref: D24
   value: BAT54C
   footprint: SOT-23-D
+  pin_count: 3
 - ref: D25
   value: SOD-523F
   footprint: SOD-523F
@@ -542,9 +545,11 @@ components:
 - ref: J1
   value: EXPANSION
   footprint: PIN_ARRAY
+  pin_count: 50
 - ref: J10
   value: E0 MOT
   footprint: PIN_ARRAY
+  pin_count: 4
 - ref: J11
   value: 2x1 header
   footprint: 3.5MM
@@ -560,24 +565,33 @@ components:
 - ref: J15
   value: uSDHC
   footprint: uSD_SKT
+  pin_count: 11
+  nc_pins: {H: H}
 - ref: J16
   value: CONN_ALT_HEADER
   footprint: CONN_ALT_HEADER
+  pin_count: 15
 - ref: J19
   value: 3x1 header
   footprint: PIN_ARRAY
+  pin_count: 3
 - ref: J2
   value: 2x1 header
   footprint: PIN_ARRAY
 - ref: J20
   value: 3x1 header
   footprint: PIN_ARRAY
+  pin_count: 3
 - ref: J21
   value: JTAG
   footprint: MICRO
+  pin_count: 10
+  nc_pins: {'7': '7'}
 - ref: J22
   value: USB
   footprint: uUSB_new
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: J23
   value: VIN
   footprint: TERM_2-WAY_6.35mm
@@ -590,39 +604,50 @@ components:
 - ref: J28
   value: Probe
   footprint: PIN_ARRAY
+  pin_count: 4
 - ref: J29
   value: 2x1 header
   footprint: PIN_ARRAY
 - ref: J3
   value: 3x1 header
   footprint: CONN
+  pin_count: 3
 - ref: J30
   value: PanelDUE
   footprint: PIN_ARRAY
+  pin_count: 4
 - ref: J31
   value: 2x1 header
   footprint: PIN_ARRAY
 - ref: J32
   value: 3x1 header
   footprint: PIN_ARRAY
+  pin_count: 3
 - ref: J33
   value: 3x1 header
   footprint: PIN_ARRAY
+  pin_count: 3
 - ref: J34
   value: 3x1 header
   footprint: PIN_ARRAY
+  pin_count: 3
 - ref: J35
   value: 3x1 header
   footprint: PIN_ARRAY
+  pin_count: 3
 - ref: J36
   value: Z A
   footprint: PIN_ARRAY
+  pin_count: 4
 - ref: J37
   value: SPI0
   footprint: MAX_TEMP_DB
+  pin_count: 10
+  nc_pins: {'10': '10'}
 - ref: J39
   value: ESP_COMMS
   footprint: CONN
+  pin_count: 8
 - ref: J4
   value: BED HEAT
   footprint: TERM_2-WAY_6.35mm
@@ -632,15 +657,19 @@ components:
 - ref: J6
   value: E1 MOT
   footprint: PIN_ARRAY
+  pin_count: 4
 - ref: J7
   value: Z B
   footprint: PIN_ARRAY
+  pin_count: 4
 - ref: J8
   value: Y MOT
   footprint: PIN_ARRAY
+  pin_count: 4
 - ref: J9
   value: X MOT
   footprint: PIN_ARRAY
+  pin_count: 4
 - ref: JP1
   value: ERASE
   footprint: JUMPER
@@ -704,9 +733,11 @@ components:
 - ref: P1
   value: CONN_SD
   footprint: IDC_PIN_ARRAY
+  pin_count: 10
 - ref: P2
   value: CONN_LCD
   footprint: IDC_PIN_ARRAY
+  pin_count: 10
 - ref: R1
   value: 2.2kohm
   footprint: '0603'
@@ -1062,69 +1093,98 @@ components:
 - ref: S1
   value: RESET
   footprint: SW_SIDE_1_lugs
+  pin_count: 4
 - ref: TR1
   value: PMV40UN2
   footprint: SOT-23
+  pin_count: 3
 - ref: TR2
   value: IPD036N04L
   footprint: D-PAK
+  pin_count: 3
 - ref: TR4
   value: IPD036N04L
   footprint: D-PAK
+  pin_count: 3
 - ref: TR5
   value: PMV40UN2
   footprint: SOT-23
+  pin_count: 3
 - ref: TR7
   value: PMV40UN2
   footprint: SOT-23
+  pin_count: 3
 - ref: TR8
   value: IPD036N04L
   footprint: D-PAK
+  pin_count: 3
 - ref: TR9
   value: PMV40UN2
   footprint: SOT-23
+  pin_count: 3
 - ref: U1
   value: ATSAM4E8E
   footprint: LQFP144
+  pin_count: 144
 - ref: U10
   value: 74HC125
   footprint: TSSOP-14
+  pin_count: 14
+  nc_pins: {'8': '8'}
 - ref: U11
   value: 74HCT02
   footprint: TSSOP-14
+  pin_count: 14
 - ref: U12
   value: 74HC74
   footprint: TSSOP-14
+  pin_count: 14
+  nc_pins: {'6': '6', '8': '8', '9': '9'}
 - ref: U13
   value: 74HC32
   footprint: TSSOP-14
+  pin_count: 14
 - ref: U2
   value: AP7361C-33
   footprint: SOT-223
+  pin_count: 4
 - ref: U3
   value: A4403
   footprint: QFN16-4x4
+  pin_count: 17
 - ref: U4
   value: ESP-07/12
   footprint: ESP-12S
+  pin_count: 16
 - ref: U5
   value: TMC2660
   footprint: TMC2660
+  pin_count: 36
+  nc_pins: {'20': '20', '34': '34', '37': '37'}
 - ref: U6
   value: TMC2660
   footprint: TMC2660
+  pin_count: 36
+  nc_pins: {'20': '20', '34': '34', '37': '37'}
 - ref: U7
   value: TMC2660
   footprint: TMC2660
+  pin_count: 36
+  nc_pins: {'20': '20', '34': '34', '37': '37'}
 - ref: U8
   value: TMC2660
   footprint: TMC2660
+  pin_count: 36
+  nc_pins: {'20': '20', '34': '34', '37': '37'}
 - ref: U9
   value: TMC2660
   footprint: TMC2660
+  pin_count: 36
+  nc_pins: {'20': '20', '34': '34', '37': '37'}
 - ref: X2
   value: CRYSTAL_4PIN
   footprint: Xtal
+  pin_count: 4
 nets:
 - name: +3.3V
   pins:

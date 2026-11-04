@@ -136,51 +136,70 @@ components:
 - ref: J1
   value: 2x6 header
   footprint: 2X6
+  pin_count: 12
 - ref: J10
   value: 1x4 header
   footprint: NS-Tech_Grove
+  pin_count: 4
 - ref: J11
   value: 1x4 header
   footprint: NS-Tech_Grove
+  pin_count: 4
 - ref: J12
   value: 1x4 header
   footprint: NS-Tech_Grove
+  pin_count: 4
+  nc_pins: {Pin_2: '2'}
 - ref: J13
   value: 1x4 header
   footprint: JST_SH_BM04B-SRSS-TB
+  pin_count: 4
 - ref: J14
   value: 1x4 header
   footprint: JST_SH_BM04B-SRSS-TB
+  pin_count: 4
 - ref: J15
   value: 2x2 header
   footprint: 2X2
+  pin_count: 4
 - ref: J2
   value: 2x6 header
   footprint: 2X6
+  pin_count: 12
 - ref: J3
   value: 2x6 header
   footprint: 2X6
+  pin_count: 12
 - ref: J4
   value: 2x6 header
   footprint: 2X6
+  pin_count: 12
 - ref: J5
   value: USB Micro-B
   footprint: USB_Micro-B_Wuerth_629105150521
+  pin_count: 6
+  nc_pins: {D-: '2', D+: '3', ID: '4'}
 - ref: J6
   value: 1x5 header
   footprint: 1X5
+  pin_count: 5
+  nc_pins: {Pin_2: '2', Pin_3: '3', Pin_4: '4'}
 - ref: J7
   value: 1x4 screw terminal
   footprint: TerminalBlock_Altech_AK300-4_P5.00mm
+  pin_count: 4
 - ref: J8
   value: 2x2 header
   footprint: 2X2
+  pin_count: 4
 - ref: J9
   value: 2x2 header
   footprint: 2X2
+  pin_count: 4
 - ref: JP1
   value: solder jumper
   footprint: SJ-2
+  pin_count: 3
 - ref: R1
   value: 2kohm
   footprint: 0805
@@ -194,12 +213,17 @@ components:
 - ref: U1
   value: NRF24L01_Breakout
   footprint: nRF24L01_Breakout
+  pin_count: 8
 - ref: U2
   value: Pico
   footprint: RPi_Pico_SMD_TH
+  pin_count: 43
+  nc_pins: {RUN@30: '30', ADC_VREF@35: '35', 3V3_EN@37: '37', VBUS@40: '40', SWCLK@41: '41', GND@42: '42', SWDIO@43: '43'}
 - ref: U3
   value: W5500_Mini
   footprint: W5500_Mini
+  pin_count: 12
+  nc_pins: {nRST: '8', NC: '9'}
 nets:
 - name: +3.3V
   pins:

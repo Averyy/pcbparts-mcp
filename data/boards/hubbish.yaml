@@ -234,6 +234,7 @@ components:
   value: LTST-C195KGJRKT
   footprint: T1615_LiteOn_LTST_C195x
   mpn: LTST-C195KGJRKT
+  pin_count: 4
 - ref: D11
   value: SMF24A
   footprint: SOD-123F
@@ -253,56 +254,71 @@ components:
   value: LTST-C195KGJRKT
   footprint: T1615_LiteOn_LTST_C195x
   mpn: LTST-C195KGJRKT
+  pin_count: 4
 - ref: D5
   value: LTST-C195KGJRKT
   footprint: T1615_LiteOn_LTST_C195x
   mpn: LTST-C195KGJRKT
+  pin_count: 4
 - ref: D6
   value: LTST-C195KGJRKT
   footprint: T1615_LiteOn_LTST_C195x
   mpn: LTST-C195KGJRKT
+  pin_count: 4
 - ref: D7
   value: LTST-C195KGJRKT
   footprint: T1615_LiteOn_LTST_C195x
   mpn: LTST-C195KGJRKT
+  pin_count: 4
 - ref: D8
   value: LTST-C195KGJRKT
   footprint: T1615_LiteOn_LTST_C195x
   mpn: LTST-C195KGJRKT
+  pin_count: 4
 - ref: D9
   value: LTST-C195KGJRKT
   footprint: T1615_LiteOn_LTST_C195x
   mpn: LTST-C195KGJRKT
+  pin_count: 4
 - ref: J1
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J2
   value: USB-A
   footprint: USB_A_Plug_SOFNG_USB-05
   mpn: SOFNG USB-05
+  pin_count: 5
 - ref: J3
   value: USB Micro-B
   footprint: USB_Micro-B_Amphenol_10118194-0001LF_Horizontal
   mpn: U254-051T-4BH23-S2B
+  pin_count: 6
+  nc_pins: {ID: '4'}
 - ref: J4
   value: USB-A
   footprint: USB_A_Stewart_SS-52100-001_Horizontal
   mpn: 902-141A1011D10100
+  pin_count: 5
 - ref: J5
   value: USB-A
   footprint: USB_A_Wuerth_61400826021_Horizontal_Stacked
   mpn: 907-111A1012D10200
+  pin_count: 9
 - ref: J6
   value: USB-A
   footprint: USB_A_Wuerth_61400826021_Horizontal_Stacked
   mpn: 907-111A1012D10200
+  pin_count: 9
 - ref: J7
   value: USB-A
   footprint: USB_A_Wuerth_61400826021_Horizontal_Stacked
   mpn: 907-111A1012D10200
+  pin_count: 9
 - ref: J8
   value: 1x6 header
   footprint: PhoenixContact_MSTBA_2,5_6-G-5,08
+  pin_count: 6
 - ref: JP1
   value: solder jumper
   footprint: TestPoint_2Pads_Pitch2.54mm_Drill0.8mm
@@ -317,18 +333,22 @@ components:
   value: BCM857BS
   footprint: SOT-363_SC-70-6
   mpn: BCM857BS-7-F
+  pin_count: 6
 - ref: Q4
   value: HSM6115
   footprint: SOIC-8
   mpn: HSM6115
+  pin_count: 8
 - ref: Q5
   value: HSM6115
   footprint: SOIC-8
   mpn: HSM6115
+  pin_count: 8
 - ref: Q6
   value: AO3401A
   footprint: SOT-23
   mpn: AO3401A
+  pin_count: 3
 - ref: R1
   value: 330ohm
   footprint: '0603'
@@ -484,82 +504,111 @@ components:
   value: 2k i2c eeprom
   footprint: SOIC-8
   mpn: M24C02-WMN6TP
+  pin_count: 8
 - ref: U10
   value: APL3511C
   footprint: SOT-23-5
   mpn: AP22802AW5-7
+  pin_count: 5
 - ref: U11
   value: NUP4202
   footprint: SOT-23-6
   mpn: SRV05-4-P-T7
+  pin_count: 6
+  nc_pins: {'3': '3', '4': '4'}
 - ref: U12
   value: NUP4202
   footprint: SOT-23-6
   mpn: SRV05-4-P-T7
+  pin_count: 6
+  nc_pins: {'3': '3', '4': '4'}
 - ref: U13
   value: NUP4202
   footprint: SOT-23-6
   mpn: SRV05-4-P-T7
+  pin_count: 6
+  nc_pins: {'3': '3', '4': '4'}
 - ref: U14
   value: NUP4202
   footprint: SOT-23-6
   mpn: SRV05-4-P-T7
+  pin_count: 6
+  nc_pins: {'3': '3', '4': '4'}
 - ref: U15
   value: NUP4202
   footprint: SOT-23-6
   mpn: SRV05-4-P-T7
+  pin_count: 6
+  nc_pins: {'1': '1', '6': '6'}
 - ref: U16
   value: NUP4202
   footprint: SOT-23-6
   mpn: SRV05-4-P-T7
+  pin_count: 6
+  nc_pins: {'1': '1', '6': '6'}
 - ref: U17
   value: NUP4202
   footprint: SOT-23-6
   mpn: SRV05-4-P-T7
+  pin_count: 6
+  nc_pins: {'1': '1', '6': '6'}
 - ref: U18
   value: SiC437AED
   footprint: Vishay_MLP-44L
   mpn: SIC437AED-T1-GE3
+  pin_count: 20
 - ref: U19
   value: AMS1117-33
   footprint: SOT-223-3_TabPin2
   mpn: AMS1117-33
+  pin_count: 3
 - ref: U2
   value: NUP4202
   footprint: SOT-23-6
   mpn: SRV05-4-P-T7
+  pin_count: 6
+  nc_pins: {'1': '1', '6': '6'}
 - ref: U3
   value: USB2517
   footprint: QFN-64-1EP
   mpn: USB2517I-JZX-TR
+  pin_count: 65
+  nc_pins: {~LED_B7: '14', ~LED_B6: '16', ~LED_B5: '18', ~LED_B4: '32', ~LED_B3~/GANG_EN: '34', ~LED_B2~/BOOST1: '48', ~LED_B1~/BOOST0: '50'}
 - ref: U4
   value: APL3511C
   footprint: SOT-23-5
   mpn: AP22802AW5-7
+  pin_count: 5
 - ref: U5
   value: APL3511C
   footprint: SOT-23-5
   mpn: AP22802AW5-7
+  pin_count: 5
 - ref: U6
   value: APL3511C
   footprint: SOT-23-5
   mpn: AP22802AW5-7
+  pin_count: 5
 - ref: U7
   value: APL3511C
   footprint: SOT-23-5
   mpn: AP22802AW5-7
+  pin_count: 5
 - ref: U8
   value: APL3511C
   footprint: SOT-23-5
   mpn: AP22802AW5-7
+  pin_count: 5
 - ref: U9
   value: APL3511C
   footprint: SOT-23-5
   mpn: AP22802AW5-7
+  pin_count: 5
 - ref: Y1
   value: 24MHz
   footprint: SMD3225
   mpn: X322524MOB4SI
+  pin_count: 4
 nets:
 - name: +3V3
   pins:

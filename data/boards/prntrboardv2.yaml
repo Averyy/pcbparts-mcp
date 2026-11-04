@@ -219,15 +219,20 @@ components:
 - ref: D1
   value: B5819W
   footprint: SOD-123
+  pin_count: 2
+  nc_pins: {K: '1'}
 - ref: D10
   value: BAT54S
   footprint: SOT-23
+  pin_count: 3
 - ref: D11
   value: BAT54S
   footprint: SOT-23
+  pin_count: 3
 - ref: D12
   value: BAT54S
   footprint: SOT-23
+  pin_count: 3
 - ref: D13
   value: LED
   footprint: '0603'
@@ -315,21 +320,27 @@ components:
 - ref: D7
   value: BAT54S
   footprint: SOT-23
+  pin_count: 3
 - ref: D8
   value: BAT54S
   footprint: SOT-23
+  pin_count: 3
 - ref: D9
   value: BAT54S
   footprint: SOT-23
+  pin_count: 3
 - ref: EXP1
   value: IDC 2x5
   footprint: IDC-Header
+  pin_count: 10
 - ref: EXP2
   value: IDC 2x5
   footprint: IDC-Header
+  pin_count: 10
 - ref: EXP3
   value: IDC 2x5
   footprint: IDC-Header
+  pin_count: 10
 - ref: F1
   value: 500mA
   footprint: '0603'
@@ -351,21 +362,27 @@ components:
 - ref: J10
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J11
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J12
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J13
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J14
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J15
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J16
   value: JST XH
   footprint: JST_XH_B2B-XH-A
@@ -405,9 +422,13 @@ components:
 - ref: J29
   value: RJ12_Shielded
   footprint: RJ12_Amphenol_54601
+  pin_count: 6
+  nc_pins: {'1': '1', '3': '3', '4': '4', '6': '6'}
 - ref: J3
   value: USB Micro-B
   footprint: MC-101C
+  pin_count: 6
+  nc_pins: {ID: '4'}
 - ref: J30
   value: 1x2 screw terminal
   footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08
@@ -423,78 +444,108 @@ components:
 - ref: J7
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J8
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J9
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP1
   value: 1x2 header
   footprint: 1X2
 - ref: JP10
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP11
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP12
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP13
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP14
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP15
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP2
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP3
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP4
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP5
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP6
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP7
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP8
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J_SER1
   value: 1x4 header
   footprint: 1X4
+  pin_count: 4
 - ref: J_ST1
   value: PCIe_Stepper
   footprint: AMPHENOL_10018784-10210TLF
+  pin_count: 36
+  nc_pins: {A5: A5, A8: A8, A9: A9, A10: A10, B6: B6, B7: B7, B10: B10}
 - ref: J_ST2
   value: PCIe_Stepper
   footprint: AMPHENOL_10018784-10210TLF
+  pin_count: 36
+  nc_pins: {A5: A5, A8: A8, A9: A9, A10: A10, B6: B6, B7: B7, B10: B10}
 - ref: J_ST3
   value: PCIe_Stepper
   footprint: AMPHENOL_10018784-10210TLF
+  pin_count: 36
+  nc_pins: {A5: A5, A8: A8, A9: A9, A10: A10, B6: B6, B7: B7, B10: B10}
 - ref: J_ST4
   value: PCIe_Stepper
   footprint: AMPHENOL_10018784-10210TLF
+  pin_count: 36
+  nc_pins: {A5: A5, A8: A8, A9: A9, A10: A10, B6: B6, B7: B7, B10: B10}
 - ref: J_ST5
   value: PCIe_Stepper
   footprint: AMPHENOL_10018784-10210TLF
+  pin_count: 36
+  nc_pins: {A5: A5, A8: A8, A9: A9, A10: A10, B6: B6, B7: B7, B10: B10}
 - ref: J_ST6
   value: PCIe_Stepper
   footprint: AMPHENOL_10018784-10210TLF
+  pin_count: 36
+  nc_pins: {A5: A5, A8: A8, A9: A9, A10: A10, B6: B6, B7: B7, B10: B10}
 - ref: J_SWD1
   value: SWD
   footprint: 1X5
+  pin_count: 5
 - ref: J_TH1
   value: JST XH
   footprint: JST_XH_B2B-XH-A
@@ -516,36 +567,46 @@ components:
 - ref: J_U-1
   value: JST XH 3p
   footprint: JST_XH_B3B-XH-A
+  pin_count: 3
 - ref: J_V-1
   value: JST XH 3p
   footprint: JST_XH_B3B-XH-A
+  pin_count: 3
 - ref: J_X+1
   value: JST XH 3p
   footprint: JST_XH_B3B-XH-A
+  pin_count: 3
 - ref: J_X-1
   value: JST XH 3p
   footprint: JST_XH_B3B-XH-A
+  pin_count: 3
 - ref: J_Y+1
   value: JST XH 3p
   footprint: JST_XH_B3B-XH-A
+  pin_count: 3
 - ref: J_Y-1
   value: JST XH 3p
   footprint: JST_XH_B3B-XH-A
+  pin_count: 3
 - ref: J_Z+1
   value: JST XH 3p
   footprint: JST_XH_B3B-XH-A
+  pin_count: 3
 - ref: J_Z-1
   value: JST XH 3p
   footprint: JST_XH_B3B-XH-A
+  pin_count: 3
 - ref: NT1
   value: Net-Tie_2
   footprint: NetTie-2_SMD_Pad0.5mm
 - ref: Q1
   value: NCE40P40K
   footprint: TO-252
+  pin_count: 3
 - ref: Q2
   value: SQM110P06-8M9L
   footprint: TO-252
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -815,12 +876,15 @@ components:
 - ref: RN1
   value: 4x470
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN2
   value: 4x470
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN3
   value: 4x10k
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: SW_BOOT1
   value: tactile switch
   footprint: Button
@@ -830,75 +894,104 @@ components:
 - ref: TC1
   value: TC
   footprint: Molex-SL-6POS
+  pin_count: 6
 - ref: TC2
   value: TC
   footprint: Molex-SL-6POS
+  pin_count: 6
 - ref: TC3
   value: TC
   footprint: Molex-SL-6POS
+  pin_count: 6
 - ref: TC4
   value: TC
   footprint: Molex-SL-6POS
+  pin_count: 6
 - ref: TC5
   value: TC
   footprint: Molex-SL-6POS
+  pin_count: 6
 - ref: TC6
   value: TC
   footprint: Molex-SL-6POS
+  pin_count: 6
 - ref: TR1
   value: SI2318CDS
   footprint: SOT-23
+  pin_count: 3
 - ref: TR2
   value: PSMN7R0-30YL
   footprint: SOT-669_LFPAK
+  pin_count: 3
 - ref: TR3
   value: PSMN7R0-30YL
   footprint: SOT-669_LFPAK
+  pin_count: 3
 - ref: TR4
   value: SI2318CDS
   footprint: SOT-23
+  pin_count: 3
 - ref: TR5
   value: PSMN7R0-30YL
   footprint: SOT-669_LFPAK
+  pin_count: 3
 - ref: TR6
   value: SI2318CDS
   footprint: SOT-23
+  pin_count: 3
 - ref: TR7
   value: SI2318CDS
   footprint: SOT-23
+  pin_count: 3
 - ref: TR8
   value: PSMN7R0-30YL
   footprint: SOT-669_LFPAK
+  pin_count: 3
 - ref: TR9
   value: SI2318CDS
   footprint: SOT-23
+  pin_count: 3
 - ref: U1
   value: 74LVC125
   footprint: TSSOP-14
+  pin_count: 14
 - ref: U2
   value: STM32F407VETx
   footprint: LQFP-100
+  pin_count: 100
+  nc_pins: {PH1: '13'}
 - ref: U3
   value: 24LC64
   footprint: SO-8
+  pin_count: 8
 - ref: U4
   value: AMS1117-3.3
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: U6
   value: 74HCT04
   footprint: TSSOP-14
+  pin_count: 14
+  nc_pins: {'6': '6', '8': '8'}
 - ref: U7
   value: 74LVC125
   footprint: TSSOP-14
+  pin_count: 14
+  nc_pins: {'6': '6', '8': '8', '11': '11'}
 - ref: U8
   value: TJA1040
   footprint: SOIC-8
+  pin_count: 8
 - ref: X1
   value: 12MHz
   footprint: Oscillator_SMD_EuroQuartz_XO32-4Pin
+  pin_count: 4
+  nc_pins: {EN: '1'}
 - ref: XS1
   value: microSD
   footprint: Conn_uSDcard
+  pin_count: 9
+  nc_pins: {DAT2: '1', DAT1: '8'}
 nets:
 - name: /Sheet5DABBBAA/BOOT0
   pins: [R1.1, SW_BOOT1.2@2, U2.BOOT0]

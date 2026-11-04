@@ -189,9 +189,11 @@ components:
 - ref: J1
   value: 2x8 header
   footprint: IDC-Header
+  pin_count: 16
 - ref: J6
   value: 1x8 header
   footprint: PhoenixContact_MCV_1,5_8-G-5.08
+  pin_count: 8
 - ref: L1
   value: 10000mH
   footprint: L_TOROID_D25_W10_P8_V_1
@@ -296,12 +298,15 @@ components:
 - ref: U1
   value: TPA3255
   footprint: HTSSOP-44
+  pin_count: 44
 - ref: U2
   value: TL072
   footprint: SOIC-8
+  pin_count: 8
 - ref: U3
   value: TL072
   footprint: SOIC-8
+  pin_count: 8
 nets:
 - name: +12V
   pins:

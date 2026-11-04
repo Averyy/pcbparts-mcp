@@ -188,6 +188,7 @@ components:
   value: TVS3300DRVx
   footprint: DRV0006A
   lcsc: C2863624
+  pin_count: 7
 - ref: D3
   value: STPS3H100UF
   footprint: SMBflat
@@ -210,11 +211,15 @@ components:
   footprint: R-RJ45R08P-C000
   lcsc: C386757
   description: RJ45, Horizontal, Shielded with LED
+  pin_count: 13
+  nc_pins: {'9': '9', '10': '10', '11': '11', '12': '12'}
 - ref: J3
   value: R-RJ45R08P-C000
   footprint: R-RJ45R08P-C000
   lcsc: C386757
   description: RJ45, Horizontal, Shielded with LED
+  pin_count: 13
+  nc_pins: {'9': '9', '10': '10', '11': '11', '12': '12'}
 - ref: J4
   value: 1x2 header
   footprint: SolderWire-2.5sqmm
@@ -228,10 +233,12 @@ components:
   footprint: TO-252
   lcsc: C3017
   description: N-MOSFET transistor, gate/drain/source
+  pin_count: 3
 - ref: Q2
   value: CSD19537Q3T
   footprint: CSD19537Q3T
   description: N-MOSFET transistor, source/gate/drain
+  pin_count: 3
 - ref: R1
   value: 47ohm
   footprint: '0603'
@@ -350,11 +357,14 @@ components:
   mpn: SM51625EL
   lcsc: C5357757
   description: LAN 10/100/1000 Base-T (PoE++) Transformer
+  pin_count: 24
 - ref: U1
   value: TPS23861
   footprint: TPS23861
   lcsc: C93245
   description: IEEE 802.3at Quad Port Power-over-Ethernet PSE Controller
+  pin_count: 28
+  nc_pins: {SDAO: '5', nINT: '6', GATE3: '10', GATE4: '14', GATE2: '21', AIN: '25', AOUT: '26', NC: '27'}
 - ref: U2
   value: LM5155QDSSRQ1
   footprint: DSS0012x
@@ -363,6 +373,7 @@ components:
   mpn: LM5155QDSSRQ1
   lcsc: C1849528
   description: Switching Controllers 2.2MHz wide VIN non-synchronous boost/SEPIC/flyback
+  pin_count: 13
 - ref: U3
   value: TPS7B8233QDGNRQ1
   footprint: DGN0008G
@@ -371,6 +382,8 @@ components:
   mpn: TPS7B8233QDGNRQ1
   lcsc: C5220182
   description: Automotive 300-mA high-voltage ultra-low-IQ low-dropout (LDO) linear regulator
+  pin_count: 9
+  nc_pins: {NC@3: '3', NC@7: '7'}
 nets:
 - name: +3.3V
   pins: [C2.2, C28.1, U1.VDD, U1.nSHTDWN, U3.OUT]

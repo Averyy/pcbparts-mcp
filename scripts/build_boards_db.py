@@ -441,7 +441,9 @@ def _build_tables(
             manufacturer TEXT,
             lcsc TEXT,
             mouser TEXT,
-            digikey TEXT
+            digikey TEXT,
+            pin_count INTEGER,
+            nc_pins TEXT
         );
     """)
 
@@ -523,6 +525,8 @@ def _build_tables(
                 comp.get("pullup"),
                 comp.get("pulldown"),
                 *part_numbers(comp, slug),
+                comp.get("pin_count"),
+                json.dumps(comp["nc_pins"]) if comp.get("nc_pins") else None,
             ))
 
     conn.executemany("INSERT INTO board_tags (board_id, tag) VALUES (?, ?)", tag_rows)
@@ -530,8 +534,8 @@ def _build_tables(
     conn.executemany(
         """INSERT INTO board_components (board_id, ref, value, footprint, description,
            voltage, tolerance, dielectric, decouples, pullup, pulldown,
-           mpn, manufacturer, lcsc, mouser, digikey)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+           mpn, manufacturer, lcsc, mouser, digikey, pin_count, nc_pins)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         comp_rows,
     )
 

@@ -154,9 +154,12 @@ components:
 - ref: J3
   value: F14D-1B7H1-E8C25
   footprint: AMPHENOL_F14D-1B7H1-E8C25_38825256
+  pin_count: 25
+  nc_pins: {'15': '15'}
 - ref: JMP1
   value: 0R-JUMPA
   footprint: SJ-2
+  pin_count: 3
 - ref: L1
   value: '74438357022'
   footprint: L_Coilcraft_XxL4020
@@ -197,6 +200,8 @@ components:
 - ref: R27
   value: 10kohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R3
   value: 10kohm
   footprint: '0402'
@@ -209,6 +214,8 @@ components:
 - ref: R40
   value: 51kohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R42
   value: 200ohm
   footprint: '0402'
@@ -240,42 +247,61 @@ components:
 - ref: U$18
   value: MAX30208CLB+
   footprint: IC_MAX30208CLB_
+  pin_count: 8
 - ref: U$29
   value: SIT1533AI-H4-DCC-32.768E
   footprint: SIT1533
+  pin_count: 4
+  nc_pins: {NC: '1'}
 - ref: U$3
   value: MAX32664GTGD+
   footprint: MAX-QFN24
+  pin_count: 24
+  nc_pins: {D.N.C: '2', N.C: '3', D.N.C@1: '4', D.N.C@2: '5', N.C@1: '15', D.N.C@3: '16', D.N.C@4: '17', ACCL_INT: '19', D.N.C@5: '20', D.N.C@6: '21'}
 - ref: U$30
   value: MAX30001CWV+
   footprint: BGA30N50P5X6
+  pin_count: 30
+  nc_pins: {AOUT: C2, INT2B: E2}
 - ref: U$32
   value: ECS-.327-12.5-34B
   footprint: ECX-31B
 - ref: U$48
   value: KX122-1037
   footprint: '1057'
+  pin_count: 12
+  nc_pins: {INT2: '6', NC: '11'}
 - ref: U1
   value: MAX17222ELT+T
   footprint: SON-6
+  pin_count: 6
 - ref: U2
   value: MAX32664GTGC+
   footprint: MAX-QFN24
+  pin_count: 24
+  nc_pins: {NC@3: '3', DNC@4: '4', DNC@5: '5', NC@15: '15', DNC@16: '16', DNC@17: '17'}
 - ref: U3
   value: MAX86141ENP+T
   footprint: 21-100134_N201A2-1_MXM
+  pin_count: 20
+  nc_pins: {GPIO2: B4}
 - ref: U4
   value: SFH_7072
   footprint: XDCR_SFH_7072
+  pin_count: 12
 - ref: U5
   value: DG2788ADN-T1-GE4
   footprint: MINIQFN-16_VIS
+  pin_count: 16
+  nc_pins: {NC2: '1', NC3: '5', NO4: '7', COM4: '8', NC4: '9', NC1: '13'}
 - ref: U6
   value: TXS0102DQMR
   footprint: IC_TXS0102DQMR
+  pin_count: 8
 - ref: U7
   value: TXS0102DQMR
   footprint: IC_TXS0102DQMR
+  pin_count: 8
 nets:
 - name: +5V
   pins:

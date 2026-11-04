@@ -235,46 +235,57 @@ components:
   footprint: CUI_PJ-063AH
   manufacturer: CUI Inc.
   mpn: PJ-063AH
+  pin_count: 3
 - ref: J2
   value: 2173157-3
   footprint: CONN_2173157-3
   manufacturer: TE Connectivity AMP Connectors
   mpn: 2173157-3
+  pin_count: 9
+  nc_pins: {'4': '4'}
 - ref: J3
   value: SJ1-42534-SMT
   footprint: CUI_SJ1-42534-SMT
   manufacturer: CUI Inc.
   mpn: SJ1-42534-SMT-TR
+  pin_count: 4
 - ref: K1
   value: '9011-05-11'
   footprint: relay_9011-05-11
   manufacturer: Coto Technology
   mpn: '9011-05-11'
+  pin_count: 4
 - ref: K2
   value: '9011-05-11'
   footprint: relay_9011-05-11
   manufacturer: Coto Technology
   mpn: '9011-05-11'
+  pin_count: 4
 - ref: K3
   value: '9011-05-11'
   footprint: relay_9011-05-11
   manufacturer: Coto Technology
   mpn: '9011-05-11'
+  pin_count: 4
 - ref: K4
   value: '9011-05-11'
   footprint: relay_9011-05-11
   manufacturer: Coto Technology
   mpn: '9011-05-11'
+  pin_count: 4
 - ref: K5
   value: '9011-05-11'
   footprint: relay_9011-05-11
   manufacturer: Coto Technology
   mpn: '9011-05-11'
+  pin_count: 4
 - ref: P1
   value: 1x6 header
   footprint: 1X6
   manufacturer: Sullins Connector Solutions
   mpn: PRPC006SAAN-RC
+  pin_count: 6
+  nc_pins: {'6': '6'}
 - ref: R1
   value: 60.4 kohm
   footprint: 0805
@@ -407,81 +418,103 @@ components:
   footprint: OPA192
   manufacturer: Texas Instruments
   mpn: OPA192IDBVR
+  pin_count: 5
 - ref: U11
   value: BUF634A
   footprint: SOIC-8
   manufacturer: Texas Instruments
   mpn: BUF634AIDR
+  pin_count: 8
+  nc_pins: {'1': '1', '2': '2', '5': '5', '8': '8'}
 - ref: U12
   value: ADG1419
   footprint: MSOP-8
   manufacturer: Analog Devices Inc.
   mpn: ADG1419BRMZ-REEL7
+  pin_count: 8
+  nc_pins: {'5': '5'}
 - ref: U13
   value: OPA192
   footprint: OPA192
   manufacturer: Texas Instruments
   mpn: OPA192IDBVR
+  pin_count: 5
 - ref: U14
   value: OPA192
   footprint: OPA192
   manufacturer: Texas Instruments
   mpn: OPA192IDBVR
+  pin_count: 5
 - ref: U15
   value: OPA192
   footprint: OPA192
   manufacturer: Texas Instruments
   mpn: OPA192IDBVR
+  pin_count: 5
 - ref: U16
   value: OPA192
   footprint: OPA192
   manufacturer: Texas Instruments
   mpn: OPA192IDBVR
+  pin_count: 5
 - ref: U17
   value: OPA192
   footprint: OPA192
   manufacturer: Texas Instruments
   mpn: OPA192IDBVR
+  pin_count: 5
 - ref: U2
   value: LTM8045
   footprint: MODULE
   manufacturer: Linear Technology/Analog Devices
   mpn: LTM8045IY
+  pin_count: 40
+  nc_pins: {E1: E1, F1: F1}
 - ref: U3
   value: ADP7182AUJZ-R7
   footprint: TSOT-23-5
   manufacturer: Analog Devices Inc.
   mpn: ADP7182AUJZ-R7
+  pin_count: 5
 - ref: U4
   value: ADP7118AUJZ-5.0-R7
   footprint: TSOT-23-5
   manufacturer: Analog Devices Inc.
   mpn: ADP7118AUJZ-5.0-R7
+  pin_count: 5
 - ref: U5
   value: PIC16F1459
   footprint: SOIC-20W
   manufacturer: Microchip Technology
   mpn: PIC16F1459-I/SO
+  pin_count: 20
+  nc_pins: {'14': '14'}
 - ref: U6
   value: ADR421
   footprint: SOIC-8
   manufacturer: Analog Devices Inc.
   mpn: ADR421ARZ
+  pin_count: 8
+  nc_pins: {'1': '1', '3': '3', '5': '5', '7': '7', '8': '8'}
 - ref: U7
   value: MCP3550-60
   footprint: SOIC-8
   manufacturer: Microchip Technology
   mpn: MCP3550-60E/SN
+  pin_count: 8
 - ref: U8
   value: MCP3550-60
   footprint: SOIC-8
   manufacturer: Microchip Technology
   mpn: MCP3550-60E/SN
+  pin_count: 8
 - ref: U9
   value: DAC1220
   footprint: DAC1220
   manufacturer: Texas Instruments
   mpn: DAC1220E
+  pin_count: 16
+  nc_pins: {'6': '6', '7': '7', '8': '8'}
 - ref: X1
   value: 2.5 MHz
   footprint: Crystal_HC49-U_Vertical

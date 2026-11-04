@@ -65,24 +65,31 @@ components:
   footprint: SO8-TH
   manufacturer: Monolithic Power
   mpn: MP2307
+  pin_count: 8
+  nc_pins: {BS: '1', FB: '5', COMP: '6', EN: '7', SS: '8'}
 - ref: J2
   value: 1x4 header
   footprint: JST_XH_B4B-XH-A
+  pin_count: 4
 - ref: J4
   value: 1x7 header
   footprint: JST_XH_B7B-XH-A
+  pin_count: 7
+  nc_pins: {Pin_3: '3', Pin_5: '5', Pin_6: '6', Pin_7: '7'}
 - ref: JP2
   value: 1x2 header
   footprint: 1X02
 - ref: JP4
   value: 1x5 header
   footprint: 1X05
+  pin_count: 5
 - ref: L1
   value: 3.3uH
   footprint: 0805
 - ref: Q1
   value: MMBT4403
   footprint: SOT-23-3
+  pin_count: 3
 - ref: R1
   value: 20kohm
   footprint: '0603'
@@ -93,12 +100,18 @@ components:
 - ref: R13
   value: 100ohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R14
   value: 5.1kohm
   footprint: 0805
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R15
   value: 5.1kohm
   footprint: 0805
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R16
   value: 4.7kohm
   footprint: '0603'
@@ -127,25 +140,35 @@ components:
   footprint: XCVR_ESP32-S3-WROOM-1U
   manufacturer: Espressif Systems
   mpn: ESP32-S3-WROOM-1U
+  pin_count: 49
+  nc_pins: {IO4: '4', IO5: '5', IO6: '6', IO7: '7', IO15: '8', IO16: '9', IO17: '10', IO18: '11', IO8: '12', IO19: '13', IO20: '14', IO3: '15', IO46: '16', IO9: '17', IO10: '18', IO11: '19', IO12: '20', IO13: '21', IO14: '22', IO21: '23', IO47: '24', IO48: '25', IO45: '26', IO35: '28', IO36: '29', IO37: '30', IO38: '31', IO39: '32', IO40: '33', IO41: '34', IO42: '35', RXD0: '36', TXD0: '37', IO2: '38', IO1: '39'}
 - ref: U2
   value: HX711
   footprint: SOP-16
   description: 24-Bit Analog-to-Digital Converter (ADC) for Weight Scales
+  pin_count: 16
+  nc_pins: {DOUT: '12', XO: '13'}
 - ref: U3
   value: ADXL362
   footprint: LGA-16-3X2.5
   manufacturer: Analog Devices
   prod_id: IC-11297
   mpn: ADXL362
+  pin_count: 11
+  nc_pins: {SCLK: P$4, MOSI: P$6, MISO: P$7, nCS: P$8}
 - ref: U5
   value: TP5100
   footprint: QFN-17
   manufacturer: NanJing Top Power ASIC Corp.
   mpn: TP5100
+  pin_count: 17
+  nc_pins: {PWR_ON-: '6', nSTDBY: '14', nCHRG: '15'}
 - ref: U6
   value: MCP1700x-330xxTT
   footprint: SOT-23
   description: 250mA Low Quiscent Current LDO, 3.3V output, SOT-23
+  pin_count: 3
+  nc_pins: {GND: '1'}
 nets:
 - name: +12V
   pins: [C20.1, U5.VIN@1, U5.VIN@16, U5.VIN@4, U5.VIN@5]

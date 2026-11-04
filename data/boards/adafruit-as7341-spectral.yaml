@@ -34,15 +34,18 @@ components:
 - ref: CONN3
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: CONN4
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: D1
   value: green LED
   footprint: '0603'
 - ref: JP1
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: LED1
   value: EAHC2835WD6
   footprint: KA-3528ASYC
@@ -50,6 +53,7 @@ components:
   value: BSS138
   footprint: SOT363
   description: Dual N-Channel MOSFET
+  pin_count: 6
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -61,13 +65,16 @@ components:
 - ref: R3
   value: 10kohm
   footprint: RESPACK
+  pin_count: 8
 - ref: U1
   value: AP7312-3.3/1.8
   footprint: SOT-23-6
   description: Dual Output SOT23-6 Linear Regulators
+  pin_count: 6
 - ref: X1
   value: AS7341
   footprint: AS7341
+  pin_count: 8
 nets:
 - name: 1.8V
   pins:

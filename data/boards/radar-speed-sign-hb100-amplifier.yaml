@@ -87,6 +87,7 @@ components:
   value: 1x3 header
   footprint: 1X3
   mpn: P125-1103A0BR138A1
+  pin_count: 3
 - ref: R1
   value: 1Mohm
   footprint: '0603'
@@ -134,10 +135,12 @@ components:
   value: LMV358
   footprint: SOIC-8
   mpn: LMV358IDR
+  pin_count: 8
 - ref: U2
   value: LM1117IMPX-3.3
   footprint: SOT-223-3_TabPin2
   mpn: LM1117IMPX-3.3/NOPB
+  pin_count: 3
 nets:
 - name: +3V3
   pins:

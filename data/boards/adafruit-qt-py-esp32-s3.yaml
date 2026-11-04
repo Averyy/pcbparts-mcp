@@ -89,6 +89,7 @@ components:
 - ref: CONN1
   value: STEMMA QT
   footprint: JST_SH4_SKINNY
+  pin_count: 6
 - ref: D1
   value: NSR0320
   footprint: SOD-323_MINI
@@ -98,9 +99,11 @@ components:
 - ref: JP1
   value: 1x7 header
   footprint: 1X07
+  pin_count: 14
 - ref: JP3
   value: 1x7 header
   footprint: 1X07
+  pin_count: 14
 - ref: L1
   value: 2nH
   footprint: '0402'
@@ -110,14 +113,18 @@ components:
 - ref: LED1
   value: WS2812B
   footprint: SK6805_1515
+  pin_count: 4
+  nc_pins: {DO: '3'}
 - ref: Q1
   value: BOOT0
   footprint: BTN_KMR2
   description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
+  pin_count: 4
 - ref: Q2
   value: reset
   footprint: BTN_KMR2
   description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
+  pin_count: 4
 - ref: R1
   value: 10kohm
   footprint: '0402'
@@ -140,6 +147,8 @@ components:
   value: AP2112K-3.3
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: X1
   value: 2.4 GHz Antenna
   footprint: ANT_2450AT18B100
@@ -150,10 +159,14 @@ components:
   description: WiFi 802.11b/g/n Transceiver Module 2.4GHz Antenna Not Included Surface Mount
   manufacturer: Espressif Systems
   mpn: ESP32-S3
+  pin_count: 57
+  nc_pins: {IO1: '6', IO2: '7', IO3: '8', IO4: '9', IO11: '16', IO12: '17', IO13: '18', IO14: '19', XTAL_32K_P: '21', SPICS1: '28', SPIHD: '30', SPIWP: '31', SPICS0: '32', SPICLK: '33', SPIQ: '34', SPID: '35', SPICLK_N: '36', SPICLK_P: '37', IO33: '38', IO34: '39', MTMS: '48', U0TXD: '49', U0RXD: '50', IO45: '51', IO46: '52'}
 - ref: X6
   value: USB TYPE C
   footprint: USB-C
   description: USB Type-C USB 2.0
+  pin_count: 12
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: Y1
   value: 40MHz
   footprint: CRYSTAL

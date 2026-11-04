@@ -30,18 +30,21 @@ components:
 - ref: U1
   value: BFP420
   footprint: SOT343_INFINEON
+  pin_count: 4
 - ref: X1
   value: SMA-
   footprint: J502-ND-142-0701-801
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-801
   description: SMA 50 Ohm
+  pin_count: 5
 - ref: X2
   value: SMA-
   footprint: J502-ND-142-0701-801
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-801
   description: SMA 50 Ohm
+  pin_count: 5
 nets:
 - name: '1'
   pins: [TP3.MP, X1.1]

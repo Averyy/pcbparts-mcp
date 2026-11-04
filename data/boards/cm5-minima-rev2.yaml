@@ -85,21 +85,26 @@ components:
 - ref: D101
   value: RCLAMP0502BA
   footprint: SOT-416
+  pin_count: 3
 - ref: D401
   value: PUSB3F96X
   footprint: DFN2510A-10_L2.5-W1.0-P0.50-BL
   lcsc: C478121
+  pin_count: 10
 - ref: D402
   value: PUSB3F96X
   footprint: DFN2510A-10_L2.5-W1.0-P0.50-BL
   lcsc: C478121
+  pin_count: 10
 - ref: D403
   value: PUSB3F96X
   footprint: DFN2510A-10_L2.5-W1.0-P0.50-BL
   lcsc: C478121
+  pin_count: 10
 - ref: D502
   value: RCLAMP0502BA
   footprint: SOT-416
+  pin_count: 3
 - ref: D605
   value: green LED
   footprint: LED-SMD_L1.7-W0.6-RD
@@ -109,6 +114,7 @@ components:
 - ref: D701
   value: RCLAMP0502BA
   footprint: SOT-416
+  pin_count: 3
 - ref: D702
   value: green LED
   footprint: LED-SMD_L1.7-W0.6-RD
@@ -116,27 +122,39 @@ components:
   value: USB-C
   footprint: USB-C
   description: Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J501
   value: GT-HD001B-CNNG1
   footprint: EDAC 690-019-298-412
+  pin_count: 23
+  nc_pins: {UTILITY/HEAC+: '14'}
 - ref: J502
   value: 1x4 header
   footprint: JST_SH_BM04B-SRSS-TB
   description: Generic connectable mounting pin connector, single row, 01x04, script generated
+  pin_count: 5
+  nc_pins: {MountPin@MP: MP}
 - ref: J503
   value: 1x10 header
   footprint: JST_SUR_BM10B-SURS-TF
   description: Generic connectable mounting pin connector, single row, 01x10, script generated
+  pin_count: 11
+  nc_pins: {MountPin@MP: MP}
 - ref: J601
   value: JST_SHBM04B-SRSS-TB
   footprint: JST_SH_BM04B-SRSS-TB
+  pin_count: 4
 - ref: J701
   value: M.2
   footprint: M.2 M Key socket 2230
   description: M.2 Socket 3 Mechanical Key M
+  pin_count: 69
+  nc_pins: {PETn3: '5', NC@6: '6', PETp3: '7', NC@8: '8', PERn3: '11', PERp3: '13', PETn2: '17', PETp2: '19', PERn2: '23', NC@24: '24', PERp2: '25', NC@26: '26', NC@28: '28', PETn1: '29', NC@30: '30', PETp1: '31', NC@32: '32', NC@34: '34', PERn1: '35', NC@36: '36', PERp1: '37', DEVSLP: '38', NC@40: '40', NC@42: '42', NC@44: '44', NC@46: '46', NC@48: '48', NC@56: '56', NC@58: '58', NC@67: '67', PEDET: '69'}
 - ref: J802
   value: 1x22 header
   footprint: Hirose_FH12-22S-0.5SH
+  pin_count: 22
 - ref: L701
   value: 2.2uH
   footprint: L_Bourns_SRP5030CC
@@ -147,10 +165,14 @@ components:
   value: ComputeModule5-CM5
   footprint: Raspberry-Pi-5-Compute-Module_GPIO
   description: RaspberryPi Compute module 5
+  pin_count: 100
+  nc_pins: {Ethernet_SYNC_OUT(3.3v): '18', GPIO26: '24', GPIO13: '28', GPIO16: '29', GPIO6: '30', GPIO12: '31', ID_SC: '35', ID_SD: '36', GPIO7: '37', GPIO11: '38', GPIO8: '39', GPIO9: '40', GPIO10: '44', GPIO22: '46', GPIO23: '47', GPIO17: '50', GPIO15: '51', GPIO14: '55', GPIO3: '56', SD_CLK: '57', GPIO2: '58', SD_DAT3: '61', SD_CMD: '62', SD_DAT0: '63', SD_DAT5: '64', SD_DAT1: '67', SD_DAT4: '68', SD_DAT2: '69', SD_DAT7: '70', SD_DAT6: '72', SD_VDD_Override: '73', SD_PWR_ON: '75', VBAT: '76', WiFi_nDisable: '89', BT_nDisable: '91', PMIC_ENABLE: '99'}
 - ref: Module302
   value: ComputeModule5-CM5
   footprint: Raspberry-Pi-5-Compute-Module_HSS
   description: RaspberryPi Compute module 5
+  pin_count: 100
+  nc_pins: {USB_OTG_ID: '101', USB3-0-RX_N: '128', USB3-0-RX_P: '130', USB3-0-TX_N: '140', USB3-0-TX_P: '142', HDMI1_HOTPLUG: '143', HDMI1_SDA: '145', HDMI1_TX2_P: '146', HDMI1_SCL: '147', HDMI1_TX2_N: '148', HDMI1_CEC: '149', HDMI1_TX1_P: '152', HDMI1_TX1_N: '154', USB3-1-RX_N: '157', HDMI1_TX0_P: '158', USB3-1-RX_P: '159', HDMI1_TX0_N: '160', USB3-1-D_P: '163', HDMI1_CLK_P: '164', USB3-1-D_N: '165', HDMI1_CLK_N: '166', USB3-1-TX_N: '169', USB3-1-TX_P: '171', MIPI1_D0_N: '175', MIPI1_D0_P: '177', MIPI1_D1_N: '181', MIPI1_D1_P: '183', MIPI1_C_N: '187', MIPI1_C_P: '189', MIPI1_D2_N: '193', MIPI1_D3_N: '194', MIPI1_D2_P: '195', MIPI1_D3_P: '196'}
 - ref: R101
   value: 2.2kohm
   footprint: '0402'
@@ -218,48 +240,67 @@ components:
   value: MK-11C04-G013
   footprint: SW-SMD_MK-11C04-G013
   lcsc: C778185
+  pin_count: 5
+  nc_pins: {'2': '2'}
 - ref: SW501
   value: TS-1010A-B
   footprint: SW-SMD_TS-1010A-B
   lcsc: C381059
+  pin_count: 5
 - ref: T401
   value: 7498111120AR
   footprint: 7498111120AR
   manufacturer: "W\xFCrth Elektronik"
   mpn: 7498111120AR
+  pin_count: 16
 - ref: U401
   value: TPD4EUSB30
   footprint: USON-10
   mpn: TPD4EUSB30
+  pin_count: 10
 - ref: U402
   value: TPD4EUSB30
   footprint: USON-10
   mpn: TPD4EUSB30
+  pin_count: 10
 - ref: U405
   value: STMPS2151STR
   footprint: SOT-23-5
   lcsc: C135998
+  pin_count: 5
+  nc_pins: {FAULT: '3'}
 - ref: U601
   value: SHTC3
   footprint: Sensirion_DFN-4-1EP
   description: "Humidity and Temperature Sensor, \xB12%RH, \xB10.2\xB0C, I2C, 1.62-3.6V, DFN-4"
+  pin_count: 5
+  nc_pins: {NC: '5'}
 - ref: U602
   value: SN74LVC1G14DBVR
   footprint: SOT-353_SC-70-5
   mpn: SN74LVC1G14DBVR
+  pin_count: 5
+  nc_pins: {'1': '1'}
 - ref: U701
   value: AP22653W6
   footprint: SOT-23-6
+  pin_count: 6
+  nc_pins: {nFault: '4'}
 - ref: U702
   value: AP3441SHE-7B
   footprint: DFN-8-1EP
+  pin_count: 9
+  nc_pins: {PG: '2', nc: '5'}
 - ref: U703
   value: ASEK-32.768KHZ-L-R-T
   footprint: SMD3225
+  pin_count: 4
 - ref: USB701
   value: USB-C
   footprint: USB-C
   lcsc: C5454943
+  pin_count: 17
+  nc_pins: {SUB1: A8, SUB2: B8}
 nets:
 - name: +1V8
   pins: [Module301.+1.8v_(Output)@88, Module301.+1.8v_(Output)@90]

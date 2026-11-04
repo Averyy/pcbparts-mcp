@@ -18,6 +18,8 @@ components:
 - ref: 3.3V_E1
   value: Opened
   footprint: SJ-1
+  pin_count: 2
+  nc_pins: {3V_E1.1: '1', 3V_E1.2: '2'}
 - ref: BUT1
   value: YTS-A016-X
   footprint: YTS-A016-X
@@ -90,15 +92,19 @@ components:
 - ref: CON1
   value: DG306-5.0-3P
   footprint: TB3-DG306-5.0_3P
+  pin_count: 3
 - ref: CON2
   value: DG306-5.0-3P
   footprint: TB3-DG306-5.0_3P
+  pin_count: 3
 - ref: CON3
   value: DG306-5.0-3P
   footprint: TB3-DG306-5.0_3P
+  pin_count: 3
 - ref: CON4
   value: DG306-5.0-3P
   footprint: TB3-DG306-5.0_3P
+  pin_count: 3
 - ref: D1
   value: SMAJ58A/SMA
   footprint: SMA-KA
@@ -135,12 +141,15 @@ components:
 - ref: ESP-PROG1
   value: WU06S
   footprint: WU06S
+  pin_count: 6
 - ref: EXT1
   value: HN1x10
   footprint: HN1x10
+  pin_count: 10
 - ref: FET1
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: GND1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
@@ -193,15 +202,19 @@ components:
 - ref: OPT1
   value: PC817CS_CYPC817
   footprint: H11A817C_SMD(PC817X3NIP06)_FP
+  pin_count: 4
 - ref: OPT2
   value: PC817CS_CYPC817
   footprint: H11A817C_SMD(PC817X3NIP06)_FP
+  pin_count: 4
 - ref: OPT3
   value: PC817CS_CYPC817
   footprint: H11A817C_SMD(PC817X3NIP06)_FP
+  pin_count: 4
 - ref: OPT4
   value: PC817CS_CYPC817
   footprint: H11A817C_SMD(PC817X3NIP06)_FP
+  pin_count: 4
 - ref: PWR1
   value: PWRJ-2mm
   footprint: PWRJ-2mm(YDJ-1136)
@@ -343,48 +356,67 @@ components:
 - ref: REL1
   value: RAS-0515
   footprint: Relay_RAS-05-15
+  pin_count: 5
 - ref: REL2
   value: RAS-0515
   footprint: Relay_RAS-05-15
+  pin_count: 5
 - ref: REL3
   value: RAS-0515
   footprint: Relay_RAS-05-15
+  pin_count: 5
 - ref: REL4
   value: RAS-0515
   footprint: Relay_RAS-05-15
+  pin_count: 5
 - ref: RST1
   value: YTS-A016-X
   footprint: YTS-A016-X
 - ref: T1
   value: LMUN2235LT1G
   footprint: SOT23
+  pin_count: 3
 - ref: T2
   value: LMUN2235LT1G
   footprint: SOT23
+  pin_count: 3
 - ref: T3
   value: LMUN2235LT1G
   footprint: SOT23
+  pin_count: 3
 - ref: T4
   value: LMUN2235LT1G
   footprint: SOT23
+  pin_count: 3
 - ref: U1
   value: TX4138
   footprint: ESOIC-8
+  pin_count: 9
+  nc_pins: {'6': '6', '7': '7'}
 - ref: U2
   value: SY8089AAAC
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U3
   value: ESP32-C6-WROOM-1
   footprint: ESP32-C6-WROOM-1-xx-UNIVERSAL_MODULE
+  pin_count: 30
+  nc_pins: {'22': '22', Past: Past}
 - ref: UEXT1
   value: P-B-V-10-LF
   footprint: GBH-254-SMT-10
+  pin_count: 11
+  nc_pins: {past: past}
 - ref: UEXT2
   value: JST SH 10-pin
   footprint: SM10B-SRSS-TB
+  pin_count: 11
+  nc_pins: {'0': '0'}
 - ref: USB-OTG1
   value: USB-C
   footprint: USB2.0_TYPE-C(A40-00119-A52-12)
+  pin_count: 17
+  nc_pins: {A8: A8, B8: B8}
 - ref: USER_LED1
   value: LED/GREEN/0603
   footprint: '0603'

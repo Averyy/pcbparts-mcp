@@ -141,21 +141,26 @@ components:
   footprint: HRO_TYPE-C-31-M-12
   manufacturer: HRO
   mpn: C165948
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J2
   value: USB_DS
   footprint: CKMTW_U-USBAN04P-F005
   manufacturer: Ckmtw
   mpn: C386739
+  pin_count: 5
 - ref: J3
   value: USB_DS
   footprint: CKMTW_U-USBAN04P-F005
   manufacturer: Ckmtw
   mpn: C386739
+  pin_count: 5
 - ref: J4
   value: USB_DS
   footprint: CKMTW_U-USBAN04P-F005
   manufacturer: Ckmtw
   mpn: C386739
+  pin_count: 5
 - ref: R1
   value: 5.1kohm
   footprint: '0402'
@@ -188,26 +193,35 @@ components:
   footprint: SW_Push_DPDT
   manufacturer: GANGYUAN
   mpn: C194405
+  pin_count: 6
+  nc_pins: {A@1: '1', B@2: '2', C@3: '3', A@4: '4'}
 - ref: SW2
   value: DPDT switch
   footprint: SW_Push_DPDT
   manufacturer: GANGYUAN
   mpn: C194405
+  pin_count: 6
+  nc_pins: {A@1: '1', B@2: '2', C@3: '3', A@4: '4'}
 - ref: SW3
   value: DPDT switch
   footprint: SW_Push_DPDT
   manufacturer: GANGYUAN
   mpn: C194405
+  pin_count: 6
+  nc_pins: {A@1: '1', B@2: '2', C@3: '3', A@4: '4'}
 - ref: U1
   value: SL2.1A
   footprint: SOP-16
   manufacturer: CoreChips
   mpn: C192893
+  pin_count: 16
+  nc_pins: {DM1: '7', DP1: '8'}
 - ref: Y1
   value: 12MHz
   footprint: Oscillator_SMD
   manufacturer: YXC
   mpn: C9002
+  pin_count: 4
 nets:
 - name: /DS1_D+
   pins: [D8.A2, J2.D+, U1.DP2]

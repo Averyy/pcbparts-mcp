@@ -19,18 +19,22 @@ components:
   value: MOSFET
   footprint: PowerPAK_SO-8_123
   lcsc: C501507
+  pin_count: 3
 - ref: AL2
   value: MOSFET
   footprint: PowerPAK_SO-8_123
   lcsc: C501507
+  pin_count: 3
 - ref: BH2
   value: MOSFET
   footprint: PowerPAK_SO-8_123
   lcsc: C501507
+  pin_count: 3
 - ref: BL2
   value: MOSFET
   footprint: PowerPAK_SO-8_123
   lcsc: C501507
+  pin_count: 3
 - ref: C1
   value: 100nF
   footprint: '0603'
@@ -115,10 +119,12 @@ components:
   value: MOSFET
   footprint: PowerPAK_SO-8_123
   lcsc: C501507
+  pin_count: 3
 - ref: CL2
   value: MOSFET
   footprint: PowerPAK_SO-8_123
   lcsc: C501507
+  pin_count: 3
 - ref: D1
   value: SMDJ51CA
   footprint: SMC
@@ -179,6 +185,7 @@ components:
   value: 1x3 header
   footprint: MT60-F.G.Y
   lcsc: C99176
+  pin_count: 3
 - ref: J2
   value: 1x2 header
   footprint: AMASS_XT60PW-M
@@ -190,24 +197,30 @@ components:
 - ref: J4
   value: 2x6 header
   footprint: 2X5
+  pin_count: 10
 - ref: J5
   value: 2x6 header
   footprint: 2X5
+  pin_count: 10
 - ref: J6
   value: 1x6 header
   footprint: 1X6
+  pin_count: 6
 - ref: Q1
   value: PNP transistor
   footprint: SOT-23
   lcsc: C686646
+  pin_count: 3
 - ref: Q2
   value: PNP transistor
   footprint: SOT-23
   lcsc: C686646
+  pin_count: 3
 - ref: Q3
   value: PNP transistor
   footprint: SOT-23
   lcsc: C686646
+  pin_count: 3
 - ref: R1
   value: 0ohm
   footprint: '0603'
@@ -359,26 +372,32 @@ components:
   value: INA240A1D
   footprint: SOIC-8
   lcsc: C1346458
+  pin_count: 8
 - ref: U2
   value: EG3113
   footprint: SOIC-8
   lcsc: C480666
+  pin_count: 8
 - ref: U21
   value: INA240A1D
   footprint: SOIC-8
   lcsc: C1346458
+  pin_count: 8
 - ref: U44
   value: INA240A1D
   footprint: SOIC-8
   lcsc: C1346458
+  pin_count: 8
 - ref: U5
   value: EG3113
   footprint: SOIC-8
   lcsc: C480666
+  pin_count: 8
 - ref: U8
   value: EG3113
   footprint: SOIC-8
   lcsc: C480666
+  pin_count: 8
 nets:
 - name: +12V
   pins:

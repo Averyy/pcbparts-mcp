@@ -22,6 +22,7 @@ components:
 - ref: JP1
   value: solder jumper (NC)
   footprint: SJ-2
+  pin_count: 3
 - ref: JP2
   value: solder jumper
   footprint: SJ-2
@@ -34,12 +35,15 @@ components:
 - ref: K2
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K3
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: K4
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -60,6 +64,7 @@ components:
 - ref: U1
   value: INA219
   footprint: SOT-23-8
+  pin_count: 8
 nets:
 - name: A0
   pins: [JP2.1, R3.2, U1.A0]

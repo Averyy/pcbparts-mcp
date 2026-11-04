@@ -39,22 +39,27 @@ components:
   value: STEMMA QT
   footprint: JST_SH4
   lcsc: C2845363
+  pin_count: 6
 - ref: D1
   value: 1N4148
   footprint: SOD-323
 - ref: IC1
   value: TSC2007
   footprint: TSSOP16
+  pin_count: 12
 - ref: IC5
   value: APX803
   footprint: SOT23
+  pin_count: 3
 - ref: MS2
   value: Featherwing headers
   footprint: FEATHERWING_SMT2
+  pin_count: 56
 - ref: Q4
   value: BSS138
   footprint: SOT23-WIDE
   description: N-Channel Mosfet
+  pin_count: 3
 - ref: R1
   value: 10ohm
   footprint: '0603'
@@ -123,22 +128,31 @@ components:
   value: Slide Switch
   footprint: EG1390
   lcsc: C2837066
+  pin_count: 6
+  nc_pins: {S1: S1, S2: S2}
 - ref: SW3
   value: RA TACT
   footprint: SPST_TACTILE_RA
   lcsc: C778159
+  pin_count: 4
 - ref: U$10
   value: TFT LCD
   footprint: TFT_2.4IN
+  pin_count: 50
+  nc_pins: {VSYNC: '11', HSYNC: '12', DOTCLK: '13', DE: '14', DB17: '15', DB16: '16', DB15: '17', DB14: '18', DB13: '19', DB12: '20', DB11: '21', DB10: '22', DB9: '23', DB8: '24', DB7: '25', DB6: '26', DB5: '27', DB4: '28', DB3: '29', DB2: '30', DB1: '31', DB0: '32', '#RD': '35', TE: '39'}
 - ref: U2
   value: AP2127K-3.3
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: X2
   value: microSD
   footprint: MICROSD
   lcsc: C125617
   description: MicroSD/Transflash Card Holder with SPI pinout
+  pin_count: 12
+  nc_pins: {DAT2: '1', DAT1: '8'}
 nets:
 - name: '!RESET'
   pins: [D1.C, MS2.!RESET, SW3.G$1.P, TP4.P$1]

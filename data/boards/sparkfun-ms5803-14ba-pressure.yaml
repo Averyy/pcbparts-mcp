@@ -25,6 +25,7 @@ components:
 - ref: JP1
   value: 1x7 header
   footprint: 1X07
+  pin_count: 7
 - ref: R1
   value: 2.2kohm
   footprint: '0603'
@@ -50,6 +51,7 @@ components:
 - ref: SJ1
   value: solder jumper
   footprint: SJ-3
+  pin_count: 3
 - ref: SJ2
   value: solder jumper
   footprint: SJ-2
@@ -60,6 +62,7 @@ components:
   value: MS5803-14
   footprint: MS5803
   prod_id: IC-12111
+  pin_count: 7
 nets:
 - name: 3.3V
   pins: [C1.1, JP1.2, R3.2, R4.2, SJ1.2, U1.VDD]
