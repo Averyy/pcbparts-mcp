@@ -7,6 +7,7 @@ from typing import Any
 
 from ..alternatives import SPEC_PARSERS
 from ..search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN, _ATTR_FULL_TO_ALIASES
+from ..search.spec_sort import sort_spec_for_attribute
 from ..subcategory_aliases import (
     resolve_subcategory_name as _resolve_subcategory_name,
     find_similar_subcategories as _find_similar_subcategories,
@@ -164,6 +165,8 @@ def list_attributes(
             "type": "numeric" if is_numeric else "string",
             "count": count,
         }
+        if sort_label := sort_spec_for_attribute(name):
+            attr_info["sort_spec"] = sort_label  # jlc_search(sort_spec=...) sorts by it
 
         if is_numeric:
             attr_info["example_values"] = sorted_values[:5]
