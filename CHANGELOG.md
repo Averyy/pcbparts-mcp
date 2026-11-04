@@ -4,6 +4,13 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.12 (2026-11-04)
+
+### Fixed
+
+- **RF antenna design rule:** its "ADI table" said 1.5 mm FR4 with a 2.8 mm trace and 0.2 mm gap gives 50 ohm GCPW. That's the plain-microstrip 50 ohm width; with ground 0.2 mm away it's about 35 ohm (2-D field solve), and ADI's article has no such row. The rule's own 2-layer line (1.2 mm trace, 0.25 mm gap) is right at 50 ohm and now says solder mask takes about 3 ohm off. Checking the same sources fixed three more lines: ADI gives about -45 dB as the practical isolation limit between RF lines, not a minimum; ADI's 0402 SRFs (100 pF: 800 MHz, 20 pF: 2.5 GHz) replace figures that had 100 pF bypassing at 2.4 GHz; and the ESP32 line follows Espressif (a 15 mil, 100 ohm stub trace, not a 5.6 nH inductor; all layers clear under an IPEX connector, not a 1 mm ring).
+- **`jlc_get_pinout` footprint hint:** a client that loaded the tool list before 0.8.4 has no `footprint` argument, so the note pointing to `footprint=true` left it stuck. The note now says to reconnect to load it.
+
 ## 0.8.11 (2026-11-04)
 
 New reply fields, all optional. One value changes: the neighborhood summary's `pin_count`.

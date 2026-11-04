@@ -266,6 +266,8 @@ class TestFootprintPads:
     async def test_pinout_points_to_it(self, pinout_client):
         result = await server.jlc_get_pinout(lcsc="C2681581")
         assert "footprint" not in result and "footprint=true adds the pad positions" in result["note"]
+        # 0.8.12: a client that loaded the tools before 0.8.4 has no footprint argument (2026-11-04 report)
+        assert "reconnect to the server to load it" in result["note"]
 
     async def test_uuid_only(self, pinout_client):
         result = await server.jlc_get_pinout(uuid="a" * 32, footprint=True)

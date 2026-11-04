@@ -2032,7 +2032,9 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None, footp
             result["note"] += (" Jacks with the same footprint from different makers can number the tip, "
                                "ring and sleeve pads differently, so check this part's own datasheet.")
         if not footprint:
-            result["note"] += " footprint=true adds the pad positions to match against its drawing."
+            # A client that loaded the tool list before footprint existed (0.8.4) can't send it until it reconnects
+            result["note"] += (" footprint=true adds the pad positions to match against its drawing (if your "
+                               "jlc_get_pinout has no footprint argument, reconnect to the server to load it).")
 
     if footprint:
         footprint_uuid = (part or {}).get("easyeda_footprint_uuid")

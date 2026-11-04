@@ -40,11 +40,11 @@
 ### RF Trace Routing
 
 - **GCPW preferred over microstrip.** Better isolation, less sensitive to board thickness variation. Ground copper on both sides of center conductor with via fences connecting to ground plane below.
-- **50 ohm GCPW dimensions (FR4, Er=4.4, 1.6mm board):** 2-layer: trace width ~1.2mm, gap to ground ~0.25mm. 4-layer (0.26mm prepreg): trace width ~0.45mm, gap ~0.64mm. ADI RF layout guide provides impedance table: at h=0.2mm, w=0.3mm, gap=0.15mm gives 50 ohm; at h=1.5mm, w=2.8mm, gap=0.2mm gives 50 ohm. Use impedance calculator with actual stackup -- Er varies 3.8-4.6.
+- **50 ohm GCPW dimensions (FR4, 1oz copper, 1.6mm board):** 2-layer (1.5mm to the bottom ground, Er 4.4-4.5): trace 1.2mm, gap 0.25mm = 50 ohm. 4-layer (0.26mm prepreg, Er 4.4): trace 0.45mm, gap 0.64mm = 51 ohm. Solder mask over the line takes about 3 ohm off (the 1.2/0.25 line is 47 ohm under 25um of mask), so include it in the calculation. A 2.8mm trace is the plain-microstrip 50 ohm width on 1.5mm; with coplanar ground 0.2mm away it is 35 ohm. Use an impedance calculator with the actual stackup -- Er varies 3.8-4.6.
 - **No vias in RF trace.** Layer changes add 0.1-0.5nH inductance per via. If unavoidable, use 2+ vias in parallel (cuts inductance ~50%) with largest possible drill diameter.
 - **Bends: radius >= 3x trace width.** If 90-degree bend unavoidable, use mitered corner (cut corner at 45 degrees).
 - **RF trace length: every 10mm of 50 ohm trace adds ~0.05 dB loss at 2.4 GHz on FR4.** At 5.8 GHz: ~0.12 dB/cm. Keep total RF path < 20mm.
-- **Isolation between RF traces:** parallel microstrip coupling reaches -20 dB at 1mm spacing over 10mm length at 2.4 GHz. GCPW with via fences achieves -45 dB isolation minimum.
+- **Isolation between RF traces:** parallel microstrip coupling reaches -20 dB at 1mm spacing over 10mm length at 2.4 GHz. GCPW with via fences isolates best, but ADI puts the practical limit on a small PCB at about -45 dB between RF lines: don't budget for more.
 - **Silicon Labs AN629: via curtain spacing < lambda/10 of the highest harmonic of concern.** At 2.4 GHz (10th harmonic = 24 GHz): via spacing < 1.25mm. At 915 MHz: < 3.3mm. This is more aggressive than most generic guidelines.
 
 ### Matching Network
@@ -60,7 +60,7 @@
 
 - **Antenna end of module must overhang or be flush with base board edge.** Base board copper under the module antenna area couples to the antenna and degrades performance by 3-10 dB.
 - **If overhang not possible: 15mm clearance in all directions around antenna.** No copper on any layer, no components, no traces. Cut out base board under antenna if needed.
-- **ESP32 specific (Espressif HW design guidelines):** 4-layer preferred. CLC pi-match network using 0201 components between RF pin and antenna. Add 5.6nH shunt inductor as stub for 2nd harmonic suppression. IPEX connector: 1mm keep-out ring around connector pad on all layers.
+- **ESP32 specific (Espressif HW design guidelines):** 4-layer preferred. CLC pi-match network of 0201 parts close to the RF pin, the two capacitors not facing the same way. For the 2nd harmonic, a stub trace on the ground pad of the first grounding capacitor at the chip: 15mil long, 100 ohm +/-10% (layer 2 cleared under it, layer 3 as reference); not needed with 0402 or larger parts. IPEX connector: keep all layers clear under the connector.
 - **Nordic nRF52 (general PCB guidelines): copy reference design exactly.** Matching network doubles as harmonic filter -- changing values to "improve match" often degrades regulatory compliance. 50 ohm CPWG mandatory from IC to matching network.
 
 ### Sub-GHz (LoRa/ISM 868/915 MHz)
@@ -87,7 +87,7 @@
 
 ### Bypass and Decoupling for RF ICs
 
-- **ADI RF layout guide: bypass cap SRF must exceed the operating frequency.** A 100nF 0402 ceramic has SRF around 400 MHz -- useless at 2.4 GHz. Use 100pF (SRF ~1.5 GHz) or 10pF (SRF ~5 GHz) for GHz-range bypass. Parallel 100nF + 100pF covers both low and high frequency.
+- **ADI RF layout guide: bypass cap SRF must exceed the operating frequency.** ADI's 0402 SRFs: 2pF 4 GHz, 20pF 2.5 GHz, 100pF 800 MHz, 1000pF 250 MHz, 1uF 60 MHz; above its SRF a cap is an inductor. At 2.4 GHz bypass with 20pF or less -- 100pF and 100nF are both inductive there. Parallel caps of rising value (20pF, 1000pF, 1uF) for broadband bypass.
 - **IC exposed paddle: minimum 9 ground vias in 3x3 grid directly under the paddle.** ADI recommends via drill 0.3mm, pitch 1mm. Incomplete paddle grounding adds inductance to the die ground -- 1nH shifts the RF match by several dB at 2.4 GHz.
 
 ## Common Mistakes
