@@ -2370,7 +2370,8 @@ def board_search(
             led-driver, level-shifting, signal-conditioning, usb, usb-pd, ethernet, wifi, bluetooth,
             lora, gps-gnss, video, drone-uav, esd-protection, fpga, battery-management,
             current-sensing, energy-harvesting, relay, robotics, rs485, 3d-printer
-        org: Organization (e.g., "Adafruit", "SparkFun", "Olimex", "Seeed Studio")
+        org: Organization (e.g., "Adafruit", "SparkFun", "Olimex", "Seeed Studio", "Espressif" for its
+            own DevKits, "Raspberry Pi")
         layers: PCB layer count (e.g., 2, 4, 6, 8)
         limit: Max results (max 50)
 
@@ -2471,7 +2472,8 @@ def board_get(
             returns its pin neighborhood instead of the component list. Ground and supply pins are
             in power_pins: the net, with its parts when few (VBUS through a fuse) or part_count (GND);
             pins_in_nets counts the part's pins in the netlist, so a pin in neither pins nor
-            power_pins is in no net (often NC). A focus matching nothing lists available_ics and
+            power_pins is in no net (often NC); pin_nets names each pin's net (numbered pins say
+            what they are: an ESP32 module's "3" is CHIP_PU). A focus matching nothing lists available_ics and
             available_refs
         include_bom: Also list plain passives (R/C/L); by default only ICs, connectors and
             annotated passives (the rest are counted in passives_omitted)

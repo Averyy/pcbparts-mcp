@@ -2,6 +2,9 @@ name: Seeed XIAO ESP32-S3 Sense
 slug: seeed-xiao-esp32-s3-sense
 source: seeed-xiao-esp32s3
 format: kicad9
+source_url: https://files.seeedstudio.com/wiki/SeeedStudio-XIAO-ESP32S3/new-res/202003751_XIAO%20ESP32S3_v1.4_SCH&PCB_260226.zip
+org: Seeed-Studio
+org_display: Seeed Studio
 description: ESP32-S3R8 WiFi/BLE with GD25Q64 flash, SGM6029 buck
 tags: [battery-charging, power-supply, wifi]
 key_ics: [ESP32-S3R8, SGM6029, SGM40567, GD25Q64]

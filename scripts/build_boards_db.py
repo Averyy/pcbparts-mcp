@@ -466,6 +466,9 @@ def _build_tables(
         design_rules = board.get("design_rules", {}) or {}
 
         org, org_display = _extract_org(source)
+        # A ZIP download (Raspberry Pi, Seeed, Espressif) names its maker and link in the YAML
+        org, org_display = board.get("org") or org, board.get("org_display") or org_display
+        source = board.get("source_url") or source
         all_ics = _extract_all_ics(components)
         key_coverage = coverage_map.get(slug, "")
         neighborhoods = _extract_neighborhoods(board)

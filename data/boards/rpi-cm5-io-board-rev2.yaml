@@ -2,6 +2,9 @@ name: RPi CM5 IO Board rev2
 slug: rpi-cm5-io-board-rev2
 source: rpi-cm5io
 format: kicad7
+source_url: https://pip-assets.raspberrypi.com/categories/1098-design-files/documents/RP-008099-DD-1-CM5%20IO%20Board,%20revision%202,%20KiCAD%20files..zip
+org: raspberrypi
+org_display: Raspberry Pi
 description: 'CM5 reference design: dual HDMI 2.1, M.2 PCIe Gen 3 x4, USB 3.0, USB-C PD input'
 tags: [ethernet, usb, usb-pd, video]
 key_ics: [TPD4EUSB30, RT9742]

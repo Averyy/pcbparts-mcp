@@ -310,11 +310,14 @@ def get_board(
                 matched = {**matched, "power_pins": power}
 
         if matched:
-            pins_in_nets = {pin for _, mine in _net_pins(nets, matched["ref"]) for pin in mine}
+            # Each pin's net: numbered pins ("3" on an ESP32 module, a KiCad pad) say what they are
+            pin_nets = {pin: net.get("name") for net, mine in _net_pins(nets, matched["ref"]) for pin in mine
+                        if net.get("name")}
             matched = {**matched, **_part_numbers(conn, row["id"], matched["ref"]),
                        "pins": _clean_junk_values(matched["pins"])}
-            if pins_in_nets:
-                matched["pins_in_nets"] = len(pins_in_nets)
+            if pin_nets:
+                matched["pins_in_nets"] = len(pin_nets)
+                matched["pin_nets"] = pin_nets
             result["focus"] = matched
             result["focus_match_type"] = match_type
 
