@@ -4,6 +4,24 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.6 (2026-11-04)
+
+New reply fields, all optional. One count changes meaning: see Changed.
+
+### Added
+
+- **`board_get` focus on any part:** `focus="J1"` answered "IC 'J1' not found on this board", though the description said a ref works, so the only way to see a USB-C receptacle's CC resistors, ESD parts and VBUS path was the 100 KB+ netlist. Focus now takes any part's ref (`J1`, `D2`) or words in its value, description or footprint (`USB-C`, `USB`, `Type-C` find the receptacle; connectors come first), and builds its pin neighborhood from the netlist. A focus that matches nothing lists `available_refs` (connectors, diodes, switches and the like) beside `available_ics`.
+- **Ground and supply pins in focus:** `power_pins` gives each pin on a ground or supply rail its net, with the net's parts when there are few (VBUS through a diode) or `part_count` when there are many (GND). IC neighborhoods left these out, so a focused ESD array showed no GND pin. `pins_in_nets` counts the part's pins in the netlist, so a pin in neither `pins` nor `power_pins` is in no net: the DT1042-04 on SparkFun's Thing Plus ESP32-S3 shows 4 of its 6 pins, and I/O1 and I/O2 are left unconnected.
+
+### Changed
+
+- **`pin_count` in `board_get` neighborhood summaries** now counts the IC's pins in the netlist, ground and supply included. It counted only pins with a signal connection, plus a `_decoupling` group that isn't a pin, so the DT1042-04 above showed 3.
+
+### Design rules
+
+- **USB-C CC protection:** the rule said a CC TVS needs VRWM <= 5 V. CC1/CC2 sit next to VBUS in the receptacle and can short to it directly, and non-compliant adapters start at 20 V even into a 5 V-only port, so TI requires CC protection at least 22 V DC tolerant (TPD2S300 datasheet 7.1). A 5.5 V clamp survives VBUS through a cable's 56 kohm but fails on a direct short. The rule now says to use a 24 V clamp (ESD752, ESD2CAN24) or a short-to-VBUS protector (TPD2S300, TPD4S311), never a spare channel of the D+/D- array, and that a sink with only Rd on CC needs none, as on the ESP32-S3 reference boards. The ESD rule's ESD441 line said the same 5.5 V part suits SBU; TI's pick there is ESD341.
+- **USB-C sink CC windows:** the figures were right, but they're the Type-C R2.5 Table 4-36 worked example for a ±10% Rd, not fixed limits. The rule now says so, gives the threshold bands (0.613-0.745 V and 1.165-1.368 V, disconnect below 0.276 V) and Table 4-28's 2.04 V / 2.18 V pin maximums, and notes the older R1.x table with fixed 0.66 V and 1.23 V thresholds. Its "0.20 V Ra/Rd threshold" is now the R2.5 band where a source sets it (0.144-0.271 V).
+
 ## 0.8.5 (2026-11-03)
 
 New arguments and reply fields, all optional; nothing existing changes shape.

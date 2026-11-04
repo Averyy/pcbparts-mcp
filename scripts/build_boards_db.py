@@ -14,10 +14,14 @@ import json
 import logging
 import re
 import sqlite3
+import sys
 import time
 from pathlib import Path
 
 import yaml
+
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+from pcbparts_mcp.boards_db.nets import classify_role, is_power_net  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -142,52 +146,9 @@ def _count_ics(components: list[dict]) -> int:
     return sum(1 for c in components if c.get("ref", "").upper().startswith("U") or c.get("ref", "").upper().startswith("IC"))
 
 
-# Power rail net names to exclude from neighborhoods (they connect everything)
-_POWER_NET_NAMES = frozenset({
-    "GND", "AGND", "DGND", "PGND", "SGND", "EGND",
-    "VCC", "VDD", "3V3", "3.3V", "5V", "5V0", "12V", "24V",
-    "VBAT", "VIN", "VMAIN", "VBUS", "V+", "V-",
-    "+5V", "+3V3", "+3.3V", "+12V", "+24V", "+48V",
-    "VSS", "AVCC", "AVDD", "DVCC", "DVDD",
-    "VDDIO", "VDDA", "VDDCORE", "VCC_IO",
-})
-
-
-def _is_power_net(name: str | None) -> bool:
-    """Check if a net name is a power rail (not useful for neighborhoods)."""
-    if not name:
-        return True
-    upper = name.upper().strip()
-    if upper in _POWER_NET_NAMES:
-        return True
-    # Match patterns like N$123, GND1, VCC_3V3, +BATT, etc.
-    if upper.startswith("GND") or upper.startswith("N$"):
-        return True
-    return False
-
-
-def _classify_role(ref: str, comp: dict, ic_ref: str) -> str:
-    """Classify a component's role relative to an IC."""
-    if comp.get("decouples") == ic_ref:
-        return "decoupling"
-    if comp.get("pullup"):
-        return "pullup"
-    if comp.get("pulldown"):
-        return "pulldown"
-    # By ref prefix
-    prefix = ref.rstrip("0123456789")
-    role_map = {
-        "R": "resistor", "RN": "resistor_network", "C": "capacitor", "L": "inductor",
-        "D": "diode", "Q": "transistor", "SW": "switch",
-        "LED": "led", "FB": "ferrite_bead", "F": "fuse",
-    }
-    if prefix in role_map:
-        return role_map[prefix]
-    if ref.upper().startswith("U") or ref.upper().startswith("IC"):
-        return "ic"
-    if ref.startswith("J") or ref.startswith("X") or ref.startswith("CONN") or prefix == "P":
-        return "connector"
-    return "other"
+# Rails and roles are shared with board_get's focus view
+_is_power_net = is_power_net
+_classify_role = classify_role
 
 
 def _extract_neighborhoods(board: dict) -> list[dict]:

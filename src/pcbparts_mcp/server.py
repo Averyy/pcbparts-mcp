@@ -2463,15 +2463,21 @@ def board_get(
 
     Args:
         slug: Board slug from board_search (e.g., "adafruit-esp32-s3-feather")
-        focus: IC name (e.g., "MCP73831"; partial match: "ESP32" finds "ESP32-S3") or ref ("U3"):
-            returns its pin neighborhood instead of the component list
+        focus: IC name (e.g., "MCP73831"; partial match: "ESP32" finds "ESP32-S3"), or any part's ref
+            ("U3", "J1", "D2") or value words ("USB-C" finds the receptacle; connectors first):
+            returns its pin neighborhood instead of the component list. Ground and supply pins are
+            in power_pins: the net, with its parts when few (VBUS through a fuse) or part_count (GND);
+            pins_in_nets counts the part's pins in the netlist, so a pin in neither pins nor
+            power_pins is in no net (often NC). A focus matching nothing lists available_ics and
+            available_refs
         include_bom: Also list plain passives (R/C/L); by default only ICs, connectors and
             annotated passives (the rest are counted in passives_omitted)
         include_nets: Add the full netlist, positions and copper pours (can be 100 KB+)
 
     Returns:
-        Default: ICs + connectors + annotated passives + neighborhood summary (ref/value per IC).
-        With focus: focused IC's pin-grouped neighborhood + cross-board consensus +
+        Default: ICs + connectors + annotated passives + neighborhood summary (ref, value and
+            pin_count, the IC's pins in the netlist, per IC).
+        With focus: focused part's pin-grouped neighborhood + cross-board consensus +
             focus_match_type ("exact", "partial", or "ref") indicating how the focus was matched.
         With include_bom: adds all plain passives to component list.
         With include_nets: adds nets (name + pin list), positions (x/y/rotation), copper pours.

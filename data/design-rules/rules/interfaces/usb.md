@@ -14,13 +14,17 @@
 
 ### USB-C CC Configuration
 
-- **Sink: 5.1 kohm on each CC pin to GND; the spec allows ±10% (±20% if the sink ignores the advertised current).** The sink reads Default / 1.5 A / 3.0 A from the CC voltage across Rd: 0.277-0.612 V, 0.746-1.164 V, 1.369-2.042 V (Type-C R2.4 Table 4-36). A 1% Rd only widens those margins. Ra (0.8-1.2 kohm) is nowhere near: a -5% Rd against Default Rp gives 0.40 V, twice the source's 0.20 V Ra/Rd threshold.
+- **Sink: 5.1 kohm on each CC pin to GND; the spec allows ±10% (±20%, or a 1.1 V clamp, if the sink ignores the advertised current).** Max voltage on the pin: 2.04 V at ±10%, 2.18 V at ±20% (Type-C R2.5 Table 4-28).
+- **Sink CC windows are the spec's worked example for a ±10% Rd, not fixed limits.** Type-C R2.5 Table 4-36 (same numbering in R2.4): Default 0.277-0.612 V, 1.5 A 0.746-1.164 V, 3.0 A 1.369-2.042 V; the sink puts its Default/1.5 A threshold anywhere in 0.613-0.745 V and its 1.5 A/3.0 A threshold in 1.165-1.368 V, and reads disconnect below 0.276 V. R2.x computes these from its section 4.11.3.1.1 equations (Rp/current-source tolerance, 250 mV cable ground offset); R1.x tabled 0.25-0.61 / 0.70-1.16 / 1.31-2.04 V with fixed 0.66 V and 1.23 V thresholds. A 1% Rd only widens the margins.
+- **Ra (0.8-1.2 kohm) is nowhere near an Rd.** A -5% Rd against Default Rp gives 0.40 V; a source sets its Ra/Rd threshold in 0.144-0.271 V (Rp to 5 V) or 0.116-0.260 V (current source) (R2.5 Tables 4-37, 4-38).
 - **Source: Rp pull-up to 4.75-5.5 V on each CC pin.** 56 kohm = default USB (500/900 mA), 22 kohm = 1.5 A, 10 kohm = 3 A. Spec tolerance: 56 kohm ±20%, but ±5% in legacy A-to-C cables, adapters and captive host cables (allows for VBUS/GND drop); 22 and 10 kohm ±5% (Type-C R2.0 Table 4-24).
 - **USB-C plug (cable-end, not receptacle): only ONE CC pull-down.** Populating both 5.1 kohm pull-downs on a plug makes a debug mode adapter -- Framework laptops expose EC UART on SBU pins when they see dual pull-downs.
 
 > WARNING: The Raspberry Pi 4 shipped with CC1/CC2 shorted through a single Rd. E-marked cables (every MacBook cable since 2016) put Ra (800-1200 ohm) on the unused CC, paralleling with 5.1 kohm to ~840 ohm. Source sees this as invalid attachment and provides 0V. Always use two separate resistors.
 
-- **CC pin TVS protection: VRWM <= 5V, breakdown 5-7V.** CC never exceeds 5V in normal operation. When Rd is disabled and a legacy A-to-C cable with Rp connects to a non-standard charger (9-20V VBUS), CC gets pulled to VBUS through 56 kohm -- add a 5.1V zener or TVS to clamp.
+- **CC TVS: rate it for a short to VBUS, not for CC's 5 V.** CC1/CC2 sit next to VBUS in the receptacle (A4/A5, B4/B5); a twisted plug, debris or moisture shorts them directly, and non-compliant adapters start at 20 V even into a 5 V-only port, so TI requires CC protection at least 22 V DC tolerant, 24 V recommended (TPD2S300 datasheet 7.1). A 5.5 V clamp (ESD441, TI's CC pick for a 5 V-only port in SLVAF82B Table 7-1) survives VBUS through a cable's 56 kohm Rp (0.26 mA at 20 V) but conducts amps on a direct short and fails. Use a 24 V clamp (ESD752, ESD2CAN24: SLVAF82B Table 8-2) or a short-to-VBUS protector (TPD2S300, TPD4S311).
+- **Never put CC on a spare channel of the D+/D- ESD array.** On a short to VBUS the shared array fails and takes the data lines with it.
+- **A sink with only Rd on CC needs no CC TVS.** Nothing on the net but a 5.1 kohm resistor to GND; Adafruit QT Py ESP32-S3, Seeed XIAO ESP32-S3 Sense and SparkFun Thing Plus ESP32-S3 put none there. Protect CC when a CC/PD controller pin is on it.
 - **CC receiver capacitance: 200-600 pF per PD spec.** TVS on CC contributes to this -- choose TVS capacitance that keeps total within range. Can eliminate the need for extra CC capacitors.
 
 ### USB-C PD Controllers
@@ -127,3 +131,6 @@
 14. TI SLVA994 -- USB PD Power Path Performance and Protection: https://www.ti.com/lit/an/slva994/slva994.pdf
 15. Wurth ANE009 -- Production Guide USB 3.1 Type C (Connector Footprint): https://www.we-online.com/components/media/o563289v410%20ANE009a_EN.pdf
 16. TI SLVAE65 -- Dead Battery Application (TPS6598x): https://www.ti.com/lit/an/slvae65/slvae65.pdf
+17. USB-IF -- USB Type-C Cable and Connector Specification Release 2.5 (March 2026), Tables 4-28, 4-35 to 4-38: https://www.usb.org/document-library/usb-type-cr-cable-and-connector-specification-release-25
+18. TI SLVSDL1 -- TPD2S300 USB Type-C Short-to-VBUS and IEC ESD Protector for the CC Pins: https://www.ti.com/lit/ds/symlink/tpd2s300.pdf
+19. TI SLVAF82B -- ESD and Surge Protection for USB Interfaces: https://www.ti.com/lit/an/slvaf82b/slvaf82b.pdf
