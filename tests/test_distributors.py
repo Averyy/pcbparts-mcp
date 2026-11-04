@@ -317,7 +317,8 @@ class TestDigiKeyNormalizeProduct:
         assert result["mfr_part_number"] == "LM358P"
         assert result["manufacturer"] == "Texas Instruments"
         assert result["stock"] == 15234
-        assert result["price"] == 0.29
+        # The packaging's own 1-piece price, not the product-level UnitPrice (0.8.14)
+        assert result["price"] == 0.41
         assert len(result["price_breaks"]) == 2
         assert result["price_breaks"][0]["qty"] == 1
         assert result["price_breaks"][0]["price"] == 0.41

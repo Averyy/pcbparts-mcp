@@ -2123,7 +2123,9 @@ async def digikey_get_part(product_number: str) -> dict:
             partial one can find nothing and still uses a request.
 
     Returns:
-        Full product details including all parameters, pricing variations, availability, datasheet
+        Product details: parameters, stock, datasheet, and part_number, price, price_breaks and
+        min_qty for one packaging (the DigiKey PN given, else the smallest order, usually cut tape).
+        other_packaging lists the rest (reel, Digi-Reel) with their PN, min_qty and price.
     """
     if not _digikey_client:
         return {"error": "DigiKey API credentials not configured. Set DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET in environment."}

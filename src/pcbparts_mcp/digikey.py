@@ -43,36 +43,62 @@ class DigiKeyNotFound(DigiKeyError):
     """DigiKey answered 404: it has no product with that number."""
 
 
-def _normalize_product(product: dict[str, Any]) -> dict[str, Any]:
-    """Normalize a DigiKey Product object into our standard format."""
+def _min_qty(variation: dict[str, Any]) -> int:
+    return variation.get("MinimumOrderQuantity") or 1
+
+
+def _pick_variation(variations: list[dict[str, Any]], product_number: str) -> dict[str, Any]:
+    """The packaging the reply is about: the DigiKey number asked for, if it's one of this product's;
+    otherwise the smallest order (cut tape before a 3000-piece reel), from DigiKey's own stock before
+    Marketplace, without a Digi-Reel fee, in DigiKey's order on a tie."""
+    wanted = product_number.strip().upper()
+    for variation in variations:
+        if wanted and (variation.get("DigiKeyProductNumber") or "").upper() == wanted:
+            return variation
+    return min(variations, key=lambda v: (_min_qty(v), bool(v.get("MarketPlace")), bool(v.get("DigiReelFee"))))
+
+
+def _price_breaks(variation: dict[str, Any]) -> list[dict[str, Any]]:
+    return [{"qty": sp.get("BreakQuantity", 0), "price": sp.get("UnitPrice", 0)}
+            for sp in variation.get("StandardPricing") or []]
+
+
+def _normalize_product(product: dict[str, Any], product_number: str = "") -> dict[str, Any]:
+    """Normalize a DigiKey Product object into our standard format. A product can be sold in
+    several packagings (cut tape, reel, Digi-Reel), each with its own DigiKey number, minimum order
+    and prices; part_number, price, price_breaks and min_qty all describe the one picked, and
+    other_packaging lists the rest."""
     desc = product.get("Description", {})
     manufacturer = product.get("Manufacturer", {})
     category = product.get("Category", {})
     status = product.get("ProductStatus", {})
     classifications = product.get("Classifications", {})
 
-    # Get best pricing from first variation
-    price_breaks = []
-    variations = product.get("ProductVariations", [])
+    variations = product.get("ProductVariations") or []
     stock = product.get("QuantityAvailable", 0)
-    min_qty = 1
-
-    if variations:
-        # Use first variation for pricing
-        first_var = variations[0]
-        min_qty = first_var.get("MinimumOrderQuantity", 1) or 1
-        for sp in first_var.get("StandardPricing", []):
-            price_breaks.append({
-                "qty": sp.get("BreakQuantity", 0),
-                "price": sp.get("UnitPrice", 0),
-            })
-
-    unit_price = product.get("UnitPrice") or (price_breaks[0]["price"] if price_breaks else None)
-
-    # Get DigiKey part number from first variation
-    digikey_pn = ""
-    if variations:
-        digikey_pn = variations[0].get("DigiKeyProductNumber", "")
+    chosen = _pick_variation(variations, product_number) if variations else {}
+    price_breaks = _price_breaks(chosen)
+    min_qty = _min_qty(chosen)
+    digikey_pn = chosen.get("DigiKeyProductNumber", "")
+    # The product's UnitPrice is its single-unit price in whichever packaging sells one, so it's
+    # only the fallback: on a reel it isn't the reel's price
+    unit_price = price_breaks[0]["price"] if price_breaks else product.get("UnitPrice")
+    other_packaging = []
+    for variation in variations:
+        if variation is chosen:
+            continue
+        breaks = _price_breaks(variation)
+        other = {
+            "part_number": variation.get("DigiKeyProductNumber", ""),
+            "packaging": (variation.get("PackageType") or {}).get("Name", ""),
+            "min_qty": _min_qty(variation),
+            "price": breaks[0]["price"] if breaks else None,
+        }
+        if variation.get("DigiReelFee"):
+            other["reel_fee"] = variation["DigiReelFee"]
+        if variation.get("MarketPlace"):
+            other["marketplace"] = True
+        other_packaging.append(other)
 
     # Parse parameters
     parameters = {}
@@ -87,7 +113,7 @@ def _normalize_product(product: dict[str, Any]) -> dict[str, Any]:
     if product.get("Discontinued"):
         lifecycle = "Discontinued"
 
-    return {
+    result = {
         "source": "digikey",
         "part_number": digikey_pn,
         "mfr_part_number": product.get("ManufacturerProductNumber", ""),
@@ -105,6 +131,16 @@ def _normalize_product(product: dict[str, Any]) -> dict[str, Any]:
         "min_qty": min_qty,
         "currency": DIGIKEY_LOCALE_CURRENCY,
     }
+    packaging = (chosen.get("PackageType") or {}).get("Name")
+    if packaging:
+        result["packaging"] = packaging
+    if chosen.get("DigiReelFee"):
+        result["reel_fee"] = chosen["DigiReelFee"]
+    if chosen.get("MarketPlace"):
+        result["marketplace"] = True
+    if other_packaging:
+        result["other_packaging"] = other_packaging
+    return result
 
 
 class DigiKeyClient:
@@ -274,7 +310,7 @@ class DigiKeyClient:
             return not_found
 
         result = {
-            "results": [_normalize_product(product)],
+            "results": [_normalize_product(product, product_number)],
             "total": 1,
         }
         self._cache.set(cache_key, result)
