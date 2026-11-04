@@ -4,6 +4,18 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.7 (2026-11-04)
+
+Nothing existing changes shape.
+
+### Added
+
+- **Sort by gate charge:** `sort_spec="Gate Charge"` (or `Qg`, or "lowest gate charge" in a query). 0.8.5 refused it as unlisted, but 30,000 MOSFETs list it as "Gate Charge(Qg)"; the database read only "Total Gate Charge(Qg)", so its column was empty. Listings give it at different gate voltages, and `sort.note` says so.
+
+### Fixed
+
+- **MOSFET RDS(on) and Vgs(th) mix typical and maximum figures:** LCSC takes them from different datasheet columns on different listings. AO3401A lists 47 mΩ at 10 V (its 4.5 V typical) and its 4.5 V and 2.5 V maxima, while HL3415A lists typicals, so a gate-drive ranking put HL3415A 2.1x ahead at 2.5 V when max against max it's 1.5x; LBSS84LT1G's Vgs(th) is the maximum and AO3401A's the typical. `jlc_get_part` adds a `specs_note` for MOSFETs saying so, and that the Vgs rating is on about a third of listings and gate leakage on none; RDS(on) sorts and the `jlc_search` description say to compare the datasheets' max columns. The figures themselves are LCSC's.
+
 ## 0.8.6 (2026-11-04)
 
 New reply fields, all optional. One count changes meaning: see Changed.

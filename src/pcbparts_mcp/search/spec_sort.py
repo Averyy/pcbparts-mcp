@@ -56,6 +56,8 @@ class SortableSpec:
     # Sortable at one condition: "gate" (V), "load" or "current" (A)
     at: str | None = None
     example_at: str | None = None
+    # How its figures differ between listings, said with every sort on it
+    caveat: str | None = None
 
 
 _CURRENT_NAMES = ("Quiescent Current(Iq)", "Quiescent Current", "standby current", "Supply Current (Iq)")
@@ -64,7 +66,12 @@ SORTABLE_SPECS: tuple[SortableSpec, ...] = (
     SortableSpec("RDS(on)", "rds_on_ohms", ("RDS(on)",), parse_resistance,
                  words=("on resistance", "on-resistance", "drain-source on resistance"),
                  phrases=("rds(on)", "rdson", "rds on", "rds", "on resistance", "on-resistance"),
-                 conditions="gate voltages and drain currents", at="gate", example_at="4.5V"),
+                 conditions="gate voltages and drain currents", at="gate", example_at="4.5V",
+                 caveat="LCSC lists the typical figure on some parts and the maximum on others (AO3401A's 4.5 V "
+                        "and 2.5 V entries are maxima, HL3415A's typicals), so compare the datasheets' max "
+                        "columns before choosing."),
+    SortableSpec("Gate Charge", "qg_nc", ("Total Gate Charge(Qg)", "Gate Charge(Qg)"), parse_capacitance,
+                 words=("Qg", "total gate charge"), phrases=("gate charge", "qg"), conditions="gate voltages"),
     SortableSpec("Quiescent Current", "iq_ua", _CURRENT_NAMES, parse_current,
                  words=("Iq", "quiescent", "standby current", "supply current"),
                  phrases=("iq", "quiescent current", "standby current")),
@@ -159,7 +166,6 @@ _REFUSED: dict[tuple[str, ...], str] = {
     ("Slew Rate",): "the catalog lists it in V/µs, V/ms and V/ns, and these figures aren't converted to one unit",
     ("Vgs(th)", "Gate Threshold", "Gate Threshold Voltage", "Gate Threshold Voltage (Vgs(th))"):
         "it's a min~max range; filter it instead ({\"name\": \"Vgs(th)\", \"op\": \"<=\", \"value\": \"2.5V\"})",
-    ("Gate Charge", "Qg", "Total Gate Charge(Qg)"): "the catalog doesn't list it",
     ("Luminous Intensity", "Brightness", "Wavelength", "Dominant Wavelength", "Wavelength - Dominant"):
         "many LEDs list one figure per colour or a range",
 }
@@ -340,6 +346,8 @@ class SpecSort:
             if spec.at:
                 note += f"; sort_spec=\"{spec.label}@{spec.example_at}\" compares them at one condition"
             notes.append(note + ".")
+        if spec.caveat:
+            notes.append(spec.caveat)
         notes.append(f"Parts that don't list it come last (sort_value null); ties go to {ties}. These are "
                      "JLCPCB's listed figures, and a mistyped one sorts to the top, so check the "
                      "datasheets of the parts you pick.")

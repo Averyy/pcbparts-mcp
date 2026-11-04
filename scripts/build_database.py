@@ -89,6 +89,7 @@ ATTRIBUTE_TO_COLUMN: dict[str, tuple[str, Any]] = {
     "Current - Continuous Drain(Id)": ("id_max_a", parse_current),
     "RDS(on)": ("rds_on_ohms", parse_resistance),
     "Total Gate Charge(Qg)": ("qg_nc", parse_capacitance),  # Stored in Coulombs
+    "Gate Charge(Qg)": ("qg_nc", parse_capacitance),  # the name LCSC lists (30,000 MOSFETs)
 
     # Diodes
     "Voltage - Forward(Vf@If)": ("vf_v", parse_voltage),

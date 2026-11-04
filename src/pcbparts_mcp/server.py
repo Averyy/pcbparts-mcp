@@ -770,6 +770,8 @@ def jlc_search(
             below that drive ranks first; other parts remain eligible. rds_on_at_drive
             is the entry at the highest listed gate voltage <= drive, or null without
             such evidence; this does not establish load-current or thermal suitability.
+            LCSC's RDS(on) and Vgs(th) are typical figures on some listings and maximum on
+            others, so compare the datasheets' max columns before choosing.
         subcategory_id: Subcategory ID (e.g., 2954 for MOSFETs)
         subcategory_name: Subcategory name (e.g., "MOSFETs", "Schottky Diodes")
         spec_filters: List of {"name", "op", "value"}, e.g. [{"name": "Vgs(th)", "op": "<",
@@ -814,7 +816,7 @@ def jlc_search(
         sort_spec: Sort by a spec (sort_by="spec" is implied), parts that don't list it last, then
             library tier and stock: RDS(on), Iq, Dropout, Vf, Isat, DCR, ESR, Ripple Current, Lifetime,
             GBW, CMRR, Noise Figure, Load Capacitance, Frequency Stability, Flash, RAM, CPU Speed, Memory
-            Size, Charge Current, Clamping Voltage, Standoff Voltage, Peak Pulse Power, Voltage Rating,
+            Size, Charge Current, Clamping Voltage, Standoff Voltage, Peak Pulse Power, Gate Charge, Voltage Rating,
             Current Rating, Power, Tolerance, Resistance, Capacitance, Inductance, Vds, Id, Vr, If,
             Output Current (jlc_search_help marks them with sort_spec). Ranges (supply or adjustable
             output voltage, Vgs(th)) are refused. RDS(on), dropout and Vf are listed at different test
@@ -1662,7 +1664,8 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     the PDF and stays valid; maker_datasheet is the manufacturer's own datasheet link where JLCPCB
     lists one (most TI parts), and datasheet_note says when there is no PDF; specs_note says when LCSC
     lists no specs, or what the listing leaves out for the part type (Isat's definition, MLCC DC-bias
-    loss, an RF cable's end styles); lcsc_url is the LCSC product page; pcba_type is "economic" or
+    loss, an RF cable's end styles, a MOSFET's RDS(on)/Vgs(th) mixing typical and maximum figures);
+    lcsc_url is the LCSC product page; pcba_type is "economic" or
     "standard_only" (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard
     assembly). No lifecycle status (NRND, obsolete): JLCPCB doesn't list it; mouser_get_part and
     digikey_get_part return lifecycle. jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.

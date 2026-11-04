@@ -72,7 +72,7 @@ class TestParse:
         assert sort.spec.label == label and sort.at == pytest.approx(at) and sort.descending
 
     @pytest.mark.parametrize("text", ["Output Voltage", "Vout", "Supply Voltage", "Vgs(th)", "Slew Rate",
-                                      "Gate Charge", "Operating Temperature", "Sampling Rate"])
+                                      "Operating Temperature", "Sampling Rate"])
     def test_ranges_refused_with_reason(self, text):
         with pytest.raises(SortSpecError, match=r"^Can't sort by .+: .{20,}"):
             SpecSort.parse(text)
