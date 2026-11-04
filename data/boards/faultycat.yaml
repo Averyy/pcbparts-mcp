@@ -101,8 +101,6 @@ components:
 - ref: D10
   value: SM4005PL-TP
   footprint: SOD-123F
-  pin_count: 2
-  nc_pins: {A: '2'}
 - ref: D2
   value: SM4005PL-TP
   footprint: SOD-123F

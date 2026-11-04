@@ -30,7 +30,7 @@ components:
   value: 2x20 header
   footprint: 2X20
   pin_count: 40
-  nc_pins: {GPIO2: '3', GPIO3: '5', GPIO14: '8', GND@9: '9', GPIO15: '10', GPIO18: '12', GPIO27: '13', GND@14: '14', GPIO22: '15', 3.3V@17: '17', GPIO24: '18', GPIO10: '19', GND@20: '20', GPIO9: '21', GPIO25: '22', GPIO11: '23', GPIO8: '24', GND@25: '25', GPIO7: '26', GPIO0: '27', GPIO1: '28', GPIO5: '29', GND@30: '30', GPIO6: '31', GPIO12: '32', GPIO13: '33', GND@34: '34', GPIO19: '35', GPIO16: '36', GPIO26: '37', GPIO20: '38', GND@39: '39', GPIO21: '40'}
+  nc_pins: {GPIO2: '3', GPIO3: '5', GPIO14: '8', GND@9: '9', GPIO15: '10', GPIO18: '12', GND@14: '14', 3.3V@17: '17', GND@20: '20', GPIO9: '21', GPIO25: '22', GPIO11: '23', GPIO8: '24', GND@25: '25', GPIO7: '26', GPIO0: '27', GPIO1: '28', GPIO5: '29', GND@30: '30', GPIO6: '31', GPIO12: '32', GPIO13: '33', GND@34: '34', GPIO19: '35', GPIO16: '36', GPIO26: '37', GPIO20: '38', GND@39: '39', GPIO21: '40'}
 - ref: J2
   value: 1x2 screw terminal
   footprint: MX5-2P-BK
@@ -41,12 +41,10 @@ components:
   value: 1x3 screw terminal
   footprint: MX5-3P-BK
   pin_count: 3
-  nc_pins: {Pin_2: '2', Pin_3: '3'}
 - ref: J5
   value: 1x3 screw terminal
   footprint: MX5-3P-BK
   pin_count: 3
-  nc_pins: {Pin_2: '2', Pin_3: '3'}
 - ref: Q5
   value: PMBT3904
   footprint: TSOT-23

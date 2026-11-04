@@ -361,13 +361,11 @@ components:
   footprint: R_Array_Convex
   mpn: YC124-JR-07560RL
   pin_count: 8
-  nc_pins: {R2.2: '7', R1.2: '8'}
 - ref: RN13
   value: 560ohm
   footprint: R_Array_Convex
   mpn: YC124-JR-07560RL
   pin_count: 8
-  nc_pins: {R2.2: '7', R1.2: '8'}
 - ref: RN3
   value: 14.3kohm
   footprint: R_Array_Convex
@@ -403,7 +401,7 @@ components:
   footprint: QFN-32-1EP
   mpn: AK4619VN
   pin_count: 33
-  nc_pins: {IN4N/AIN5R/GND6R: '9', IN3N/AIN5L/GND6L: '11', IN2N/AIN2R/GND3R: '13', IN2P/AIN1R/AIN3R: '14', IN1N/AIN2L/GND3L: '15', IN1P/AIN1L/AIN3L: '16', AOUT1L: '22', AOUT1R: '23', SDOUT2: '32'}
+  nc_pins: {IN4N/AIN5R/GND6R: '9', IN3N/AIN5L/GND6L: '11', IN2N/AIN2R/GND3R: '13', IN1N/AIN2L/GND3L: '15', SDOUT2: '32'}
 - ref: U10
   value: PCA9635 LED DRIVER
   footprint: TSSOP-28
@@ -414,19 +412,16 @@ components:
   footprint: SOIC-14
   mpn: TL074CDT
   pin_count: 14
-  nc_pins: {'1': '1', -@2: '2', +@3: '3', +@5: '5', -@6: '6', '7': '7'}
 - ref: U3
   value: TL074 OP AMP
   footprint: SOIC-14
   mpn: TL074CDT
   pin_count: 14
-  nc_pins: {'1': '1', -@2: '2', +@3: '3', +@5: '5', -@6: '6', '7': '7'}
 - ref: U4
   value: PCA9557PW IO EXPANDER
   footprint: TSSOP-16
   mpn: PCA9557PW,118
   pin_count: 16
-  nc_pins: {IO0: '6', IO1: '7', IO4: '11', IO5: '12'}
 - ref: U5
   value: 24AA025UIDT EEPROM
   footprint: SOT-23-6

@@ -13,7 +13,7 @@ import re
 # ---------------------------------------------------------------------------
 
 # Ref prefixes that are never real components
-JUNK_REF_PREFIXES = ("FRAME", "LOGO", "FID", "FD", "STANDOFF", "TP", "MH", "H")
+JUNK_REF_PREFIXES = ("FRAME", "LOGO", "FID", "FD", "STANDOFF", "TP", "MH", "H", "Box")  # Box: an enclosure drawing (1590A)
 
 
 def is_junk_ref(ref: str) -> bool:

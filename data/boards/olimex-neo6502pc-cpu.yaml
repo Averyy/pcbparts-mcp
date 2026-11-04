@@ -18,18 +18,12 @@ components:
 - ref: +1V1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
-  pin_count: 1
-  nc_pins: {Pad: '1'}
 - ref: +3.3V1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
-  pin_count: 1
-  nc_pins: {3V1.Pad: '1'}
 - ref: +5V1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
-  pin_count: 1
-  nc_pins: {Pad: '1'}
 - ref: AUDIO1
   value: PJ-3.5-365-5P
   footprint: SCJ325P00XG0B02G
@@ -302,7 +296,6 @@ components:
   value: PH2.0-3PWB
   footprint: PH2.0-3PWB
   pin_count: 4
-  nc_pins: {P2@2: '2'}
 - ref: Q1
   value: 12MHz
   footprint: TSX-3.2x2.5mm_GND(3)

@@ -151,8 +151,6 @@ components:
   value: 2.2kohm
   footprint: '0603'
   lcsc: C4190
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R2
   value: 2.7kohm
   footprint: '0603'
@@ -161,8 +159,6 @@ components:
   value: 2.2kohm
   footprint: '0603'
   lcsc: C4190
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R21
   value: 10kohm
   footprint: '0603'
@@ -172,38 +168,26 @@ components:
   value: 100ohm
   footprint: '0603'
   lcsc: C22775
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R23
   value: 100ohm
   footprint: '0603'
   lcsc: C22775
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R24
   value: 100ohm
   footprint: '0603'
   lcsc: C22775
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R25
   value: 100ohm
   footprint: '0603'
   lcsc: C22775
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R26
   value: 100ohm
   footprint: '0603'
   lcsc: C22775
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R27
   value: 100ohm
   footprint: '0603'
   lcsc: C22775
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R28
   value: 10kohm
   footprint: '0603'
@@ -230,8 +214,6 @@ components:
   value: 1kohm
   footprint: '0603'
   lcsc: C21190
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R33
   value: 1kohm
   footprint: '0603'
@@ -250,26 +232,18 @@ components:
   value: 10kohm
   footprint: '0603'
   lcsc: C25804
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R46
   value: 10kohm
   footprint: '0603'
   lcsc: C25804
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R47
   value: 10kohm
   footprint: '0603'
   lcsc: C25804
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R48
   value: 10kohm
   footprint: '0603'
   lcsc: C25804
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R49
   value: 1kohm
   footprint: '0603'
@@ -288,8 +262,6 @@ components:
   value: 4.7kohm
   footprint: '0603'
   lcsc: C23162
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R6
   value: 10kohm
   footprint: '0603'
@@ -425,7 +397,6 @@ components:
   footprint: EL3H7-G
   lcsc: C92243
   pin_count: 4
-  nc_pins: {COL: '4'}
 - ref: U11
   value: 74LVC1G32
   footprint: SOT-353_SC-70-5
@@ -447,13 +418,12 @@ components:
   footprint: HTSSOP-16
   lcsc: C460504
   pin_count: 16
-  nc_pins: {QE: '4'}
 - ref: U16
   value: 74HCT595
   footprint: HTSSOP-16
   lcsc: C460504
   pin_count: 16
-  nc_pins: {QD: '3', QE: '4', QF: '5', QG: '6', GH: '7', SQH: '9'}
+  nc_pins: {SQH: '9'}
 - ref: U17
   value: LM358D
   footprint: SOIC-8
@@ -464,49 +434,41 @@ components:
   footprint: EL3H7-G
   lcsc: C92243
   pin_count: 4
-  nc_pins: {COL: '4'}
 - ref: U3
   value: EL3H7-G
   footprint: EL3H7-G
   lcsc: C92243
   pin_count: 4
-  nc_pins: {COL: '4'}
 - ref: U4
   value: EL3H7-G
   footprint: EL3H7-G
   lcsc: C92243
   pin_count: 4
-  nc_pins: {COL: '4'}
 - ref: U5
   value: EL3H7-G
   footprint: EL3H7-G
   lcsc: C92243
   pin_count: 4
-  nc_pins: {COL: '4'}
 - ref: U6
   value: EL3H7-G
   footprint: EL3H7-G
   lcsc: C92243
   pin_count: 4
-  nc_pins: {COL: '4'}
 - ref: U7
   value: EL3H7-G
   footprint: EL3H7-G
   lcsc: C92243
   pin_count: 4
-  nc_pins: {COL: '4'}
 - ref: U8
   value: EL3H7-G
   footprint: EL3H7-G
   lcsc: C92243
   pin_count: 4
-  nc_pins: {COL: '4'}
 - ref: U9
   value: EL3H7-G
   footprint: EL3H7-G
   lcsc: C92243
   pin_count: 4
-  nc_pins: {COL: '4'}
 nets:
 - name: +12V
   pins: [C1.1, C10.1, R1.1, U1.VI, U17.V+]

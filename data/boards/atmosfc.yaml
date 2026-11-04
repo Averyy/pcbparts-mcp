@@ -335,8 +335,6 @@ components:
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 75ohms 1%
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R2
   value: 33ohm
   footprint: '0402'
@@ -422,43 +420,31 @@ components:
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R34
   value: 33ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R35
   value: 33ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R36
   value: 33ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R37
   value: 33ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R38
   value: 33ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R39
   value: 1kohm
   footprint: '0402'

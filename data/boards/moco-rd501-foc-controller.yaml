@@ -343,13 +343,9 @@ components:
 - ref: R30
   value: 120ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R31
   value: 120ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R32
   value: 0.5mohm
   footprint: '2512'
@@ -372,8 +368,6 @@ components:
 - ref: R37
   value: 120ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R38
   value: 10kohm
   footprint: '0402'
@@ -421,7 +415,7 @@ components:
   value: STM32G431CBT6
   footprint: LQFP-48
   pin_count: 48
-  nc_pins: {PC14-OCS32_IN: '3', PC15-OCS32_OUT: '4', PB4: '41', PB5: '42', PB6: '43'}
+  nc_pins: {PC14-OCS32_IN: '3', PC15-OCS32_OUT: '4'}
 - ref: U4
   value: MCP25625
   footprint: QFN-28-1EP
@@ -431,7 +425,7 @@ components:
   value: AS5147
   footprint: TSSOP-14
   pin_count: 14
-  nc_pins: {B: '6', A: '7', W/PWM: '8', V: '9', U: '10', I/PWM: '14'}
+  nc_pins: {W/PWM: '8', V: '9', U: '10'}
 - ref: Y1
   value: 8MHz
   footprint: SMD3225

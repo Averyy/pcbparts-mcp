@@ -75,7 +75,7 @@ components:
   value: Raspberry_PI
   footprint: 2X20
   pin_count: 40
-  nc_pins: {'8': '8', '10': '10', '18': '18', '22': '22', '26': '26', '29': '29', '31': '31', '32': '32', '33': '33', '35': '35', '36': '36', '37': '37', '38': '38', '40': '40'}
+  nc_pins: {'18': '18', '22': '22', '26': '26', '29': '29', '31': '31', '32': '32', '33': '33', '35': '35', '36': '36', '37': '37', '38': '38', '40': '40'}
 - ref: SENS1
   value: I2C_SENS_1
   footprint: 1X4
@@ -92,7 +92,6 @@ components:
   value: MCP3002
   footprint: SOIC-8
   pin_count: 8
-  nc_pins: {'2': '2', '3': '3'}
 - ref: UART1
   value: 1x4 header
   footprint: 1X4

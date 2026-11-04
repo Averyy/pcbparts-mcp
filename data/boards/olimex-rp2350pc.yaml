@@ -18,33 +18,21 @@ components:
 - ref: +1V1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
-  pin_count: 1
-  nc_pins: {Pad: '1'}
 - ref: +3.3V1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
-  pin_count: 1
-  nc_pins: {3V1.Pad: '1'}
 - ref: +3.3VA1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
-  pin_count: 1
-  nc_pins: {3VA1.Pad: '1'}
 - ref: +5V1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
-  pin_count: 1
-  nc_pins: {Pad: '1'}
 - ref: +5VA1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
-  pin_count: 1
-  nc_pins: {Pad: '1'}
 - ref: +5V_USB1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
-  pin_count: 1
-  nc_pins: {Pad: '1'}
 - ref: AMP_SHDN_E1
   value: Opened
   footprint: SJ
@@ -686,7 +674,6 @@ components:
   value: TFC-WPAPR-08-LF
   footprint: TFC-WPAPR-08
   pin_count: 13
-  nc_pins: {'9': '9'}
 - ref: PWR_LED1
   value: LED/RED/0603
   footprint: '0603'
@@ -1081,7 +1068,6 @@ components:
   value: RP2350B
   footprint: QFN-80
   pin_count: 81
-  nc_pins: {SWCLK: '33', SWDIO: '34', GPIO40_ADC0/SPI1_RX/UART1_TX/I2C0_SDA/PWM8_A/SIO/PIO0/PIO1/PIO2/USB_VBUS_DET: '49', GPIO41_ADC1/SPI1_CSn/UART1_RX/I2C0_SCL/PWM8_B/SIO/PIO0/PIO1/PIO2/USB_VBUS_EN: '52'}
 - ref: U4
   value: TPS62A02ADRLR
   footprint: SOT-563-6

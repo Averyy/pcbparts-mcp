@@ -239,7 +239,6 @@ components:
   manufacturer: Phoenix Contact
   mpn: '1814883'
   pin_count: 6
-  nc_pins: {'2': '2', '4': '4'}
 - ref: J10
   value: 1x8 header
   footprint: 1X8
@@ -310,7 +309,6 @@ components:
   manufacturer: Phoenix Contact
   mpn: '1836366'
   pin_count: 4
-  nc_pins: {'3': '3', '4': '4'}
 - ref: J5
   value: PTSM-Header-Horizontal-5
   footprint: '1814870'
@@ -380,18 +378,12 @@ components:
 - ref: R11
   value: 1kohm
   footprint: 0805
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R12
   value: 1kohm
   footprint: 0805
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R13
   value: 1kohm
   footprint: 0805
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R14
   value: 2.4kohm
   footprint: 0805
@@ -540,7 +532,7 @@ components:
   value: ESP32-WROOM-32
   footprint: ESP32-WROOM-32
   pin_count: 39
-  nc_pins: {'4': '4', '5': '5', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '32': '32', '39': '39'}
+  nc_pins: {'17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '32': '32', '39': '39'}
 - ref: U10
   value: NUD3124LT1G
   footprint: SOT-3

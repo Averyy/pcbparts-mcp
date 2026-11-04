@@ -208,7 +208,7 @@ _TAG_RULES: dict[str, list[str]] = {
                 "time-of-flight", "ToF ", "gesture", "proximity"],
     "display": ["OLED", "TFT", "LCD", "e-Paper", "e-ink", "LED matrix",
                 "SSD1306", "ILI9341", "charlieplex"],
-    "audio": ["audio", "codec", " DAC ", "I2S", "Class D", "amplifier",
+    "audio": ["audio", "codec", " DAC ", "I2S", "Class D", "amplifier", "guitar",
               "WM8960", "MAX98357", "TLV320"],
     "rf-sdr": ["SDR", "RF front-end", "RF frontend", "RF board",
                "RFFC5072", "MAX2837", "MAX5864", "FMCW", "radar", "ADS-B",
@@ -2162,9 +2162,10 @@ def assign_pin_info(slug: str, components: list[Component], nets: list[Net],
     """Set each part's pin_count and nc_pins (its pins on no net) from its full pin list.
 
     part_pins is {ref: {pin label: pad number}}, labelled as the parser labels net pins; the labels
-    get the same cleanup and fixes as net pins here. implicit lists pins connected without a wire
-    (Eagle supply pins join the net of their name), which are never NC. A part with a net pin
-    missing from its list is left alone: the two disagree, so its NC pins can't be trusted.
+    get the same cleanup and fixes as net pins here. implicit lists pins connected though no net here
+    shows it (Eagle supply pins join the net of their name; a pin wired only to a part the parser
+    drops, such as a pedal's wiring pad), which are never NC. A part with a net pin missing from its
+    list is left alone: the two disagree, so its NC pins can't be trusted.
     Returns (parts set, refs whose lists disagreed).
     """
     connected: dict[str, set[str]] = {}
@@ -2178,22 +2179,21 @@ def assign_pin_info(slug: str, components: list[Component], nets: list[Net],
         pins = part_pins.get(comp.ref)
         if not pins:
             continue
-        cleaned: dict[str, str] = {}
-        for label, pad in pins.items():
+        def net_label(label: str) -> str:
             raw = f"{comp.ref}.{label}"
-            fixed = _NET_PIN_FIXES.get((slug, raw)) or _clean_pin_name(raw)
-            cleaned[fixed.partition(".")[2]] = pad
+            return (_NET_PIN_FIXES.get((slug, raw)) or _clean_pin_name(raw)).partition(".")[2]
+
+        cleaned = {net_label(label): pad for label, pad in pins.items()}
         mine = connected.get(comp.ref, set())
         if mine <= cleaned.keys():
             on_net = {label for label in cleaned if label in mine}
-        elif mine <= set(cleaned.values()):
+        elif mine <= {one for pad in cleaned.values() for one in pad.split()}:
             # The nets name this part's pins by pad ("U1.3"), from files that gave no pin names then
-            on_net = {label for label, pad in cleaned.items() if pad in mine}
+            on_net = {label for label, pad in cleaned.items() if set(pad.split()) & mine}
         else:
             mismatched.append(comp.ref)
             continue
-        skip = {_clean_pin_name(f"{comp.ref}.{label}").partition(".")[2]
-                for label in (implicit or {}).get(comp.ref, set())}
+        skip = {net_label(label) for label in (implicit or {}).get(comp.ref, set())}
         comp.pin_count = len({pad for value in cleaned.values() for pad in value.split()})
         comp.nc_pins = {label: pad for label, pad in cleaned.items() if label not in on_net and label not in skip}
         count += 1
@@ -2206,7 +2206,7 @@ def pin_info_fields(pin_count: int, nc_pins: dict[str, str]) -> dict:
     if pin_count > 2 or nc_pins:
         fields["pin_count"] = pin_count
     if nc_pins:
-        fields["nc_pins"] = dict(sorted(nc_pins.items(), key=lambda item: _pad_sort_key(item[1])))
+        fields["nc_pins"] = _FlowMap(sorted(nc_pins.items(), key=lambda item: _pad_sort_key(item[1])))
     return fields
 
 
@@ -2488,8 +2488,17 @@ def _list_representer(dumper: yaml.Dumper, data: list) -> yaml.Node:
     return dumper.represent_sequence("tag:yaml.org,2002:seq", data)
 
 
+class _FlowMap(dict):
+    """A mapping written on one line ({I/O1: '1', I/O2: '3'}), as nc_pins is."""
+
+
+def _flow_map_representer(dumper: yaml.Dumper, data: dict) -> yaml.Node:
+    return dumper.represent_mapping("tag:yaml.org,2002:map", data, flow_style=True)
+
+
 _BoardDumper.add_representer(str, _str_representer)
 _BoardDumper.add_representer(list, _list_representer)
+_BoardDumper.add_representer(_FlowMap, _flow_map_representer)
 
 
 # ---------------------------------------------------------------------------
@@ -2772,7 +2781,8 @@ def find_schematic(repo_dir: Path, board_info: dict) -> Path | None:
 
 def extract_board_pins(fmt: str, sch_path: Path, part_refs: set[str]
                        ) -> tuple[dict[str, dict[str, str]], dict[str, set[str]]]:
-    """Every part's pins ({ref: {label: pad}}) and its implicitly connected ones, by format."""
+    """Every part's pins ({ref: {label: pad}}) and those connected without a net in the board data
+    (to a dropped part, or Eagle supply pins by name), by format."""
     if fmt == "eagle":
         from parsers.eagle import extract_part_pins as eagle_part_pins
         return eagle_part_pins(sch_path, part_refs)
@@ -2782,7 +2792,7 @@ def extract_board_pins(fmt: str, sch_path: Path, part_refs: set[str]
     if fmt.startswith("kicad"):
         from parsers.kicad import extract_part_pins as kicad_part_pins
         pcb_path = sch_path.with_suffix(".kicad_pcb")
-        return (kicad_part_pins(pcb_path, part_refs), {}) if pcb_path.exists() else ({}, {})
+        return kicad_part_pins(pcb_path, part_refs) if pcb_path.exists() else ({}, {})
     return {}, {}
 
 
@@ -2821,10 +2831,15 @@ def merge_pin_info(slug: str, board_info: dict, dry_run: bool = False) -> tuple[
     def close_part() -> None:
         for key, value in (fields.get(ref) or {}).items():
             # nc_pins on one line: {I/O1: '1', I/O2: '3'}
-            dumped = yaml.dump(value, default_flow_style=True, sort_keys=False, width=10_000, allow_unicode=True)
+            dumped = yaml.dump(value, Dumper=_BoardDumper, default_flow_style=True, sort_keys=False,
+                               width=10_000, allow_unicode=True)
             out.append(f"  {key}: {dumped.removesuffix(chr(10)).removesuffix('...').strip()}")
 
+    in_pin_field = False
     for line in text.splitlines():
+        if in_pin_field and (line.startswith("    ") or not line.strip()):
+            continue  # a block-style or wrapped nc_pins line from an earlier write
+        in_pin_field = False
         if in_components and (line.startswith("- ref: ") or not line.startswith((" ", "-"))):
             close_part()
             ref = None
@@ -2835,7 +2850,8 @@ def merge_pin_info(slug: str, board_info: dict, dry_run: bool = False) -> tuple[
         elif in_components and not line.startswith((" ", "-")):
             in_components = False
         if in_components and ref and line.startswith(("  pin_count:", "  nc_pins:")):
-            continue  # an earlier merge's fields, written again below
+            in_pin_field = line.startswith("  nc_pins:")  # its block entries or wrapped lines follow
+            continue  # an earlier write's fields, written again below
         out.append(line)
     if in_components:
         close_part()

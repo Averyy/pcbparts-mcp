@@ -407,7 +407,7 @@ components:
   mpn: LTC4015EUHF#PBF
   lcsc: C687159
   pin_count: 39
-  nc_pins: {CELLS1: '1', CELLS2: '2', nSMBALERT: '6', CHEM0: '36', CHEM1: '37', CELLS0: '38'}
+  nc_pins: {nSMBALERT: '6'}
 - ref: J1
   value: '693072010801'
   footprint: '693072010801'

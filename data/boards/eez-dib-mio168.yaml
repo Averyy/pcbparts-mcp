@@ -602,14 +602,14 @@ components:
   digikey: 296-37188-1-ND
   mouser: 595-DAC7760IPWPR
   pin_count: 25
-  nc_pins: {ISET-R: '13', BOOST: '20'}
+  nc_pins: {BOOST: '20'}
 - ref: IC13
   value: DAC7760IPWPR
   footprint: PWP24
   digikey: 296-37188-1-ND
   mouser: 595-DAC7760IPWPR
   pin_count: 25
-  nc_pins: {ISET-R: '13', BOOST: '20'}
+  nc_pins: {BOOST: '20'}
 - ref: IC14
   value: BM2LB150FJ-CE2
   footprint: SOIC-8
@@ -709,14 +709,12 @@ components:
   digikey: 336-2566-ND
   mouser: 634-SI8641BB-B-IS1
   pin_count: 16
-  nc_pins: {A4: '6'}
 - ref: IC8
   value: STM32F446ZCT6
   footprint: LQFP-144
   digikey: 497-17473-ND
   mouser: 511-STM32F446ZCT6
   pin_count: 144
-  nc_pins: {PA13: '105', PA14: '109'}
 - ref: IC9
   value: SN74LVC1G139DCUR
   footprint: DCU8

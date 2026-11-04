@@ -155,7 +155,7 @@ components:
   footprint: Raspberry-Pi-5-Compute-Module
   description: RaspberryPi Compute module 5
   pin_count: 200
-  nc_pins: {SD_DAT5: '64', SD_DAT4: '68', SD_DAT7: '70', SD_DAT6: '72', SD_VDD_Override: '73', WiFi_nDisable: '89', BT_nDisable: '91'}
+  nc_pins: {SD_DAT5: '64', SD_DAT4: '68', SD_DAT7: '70', SD_DAT6: '72', SD_VDD_Override: '73'}
 - ref: R1
   value: 1kohm
   footprint: '0402'

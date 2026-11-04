@@ -109,8 +109,8 @@ nets:
   - C5.2
   - JP1.2
   - SJ1.1
+  - U1.AGND@1
   - U1.AGND@2
-  - U1.ANGD@1
   - U1.GND
   - U1.PAD
   - U3.GND

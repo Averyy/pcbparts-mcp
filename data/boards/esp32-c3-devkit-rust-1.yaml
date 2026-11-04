@@ -253,13 +253,13 @@ components:
   footprint: IC_ICM-42670-P
   manufacturer: TDK InvenSense
   pin_count: 14
-  nc_pins: {RESV_1: '2', RESV_2: '3', INT1/INT: '4', INT2: '9', RESV_3: '10', RESV_4: '11'}
+  nc_pins: {RESV_1: '2', RESV_2: '3', INT1/INT: '4', RESV_3: '10', RESV_4: '11'}
 - ref: U3
   value: ESP32-C3-MINI-1
   footprint: ESP32-C3-MINI-1
   lcsc: C2838502
   pin_count: 36
-  nc_pins: {NC@4: '4', GPIO3/ADC1_CH3: '6', NC@7: '7', NC@9: '9', NC@10: '10', GPIO0/ADC1_CH0/XTAL_32K_P: '12', GPIO1/ADC1_CH1/XTAL_32K_N: '13', NC@15: '15', NC@17: '17', GPIO4/ADC1_CH4: '18', GPIO5/ADC2_CH0: '19', GPIO6: '20', NC@24: '24', NC@25: '25', NC@28: '28', NC@29: '29', GPIO20/U0RXD: '30', GPIO21/U0TXD: '31', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35'}
+  nc_pins: {NC@4: '4', NC@7: '7', NC@9: '9', NC@10: '10', NC@15: '15', NC@17: '17', NC@24: '24', NC@25: '25', NC@28: '28', NC@29: '29', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35'}
 - ref: U5
   value: SY8088
   footprint: SOT-23-5

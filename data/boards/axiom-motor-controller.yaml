@@ -457,13 +457,11 @@ components:
   footprint: CONN-100MIL-M-2x8
   mpn: Amphenol FCI
   pin_count: 16
-  nc_pins: {'5': '5', '6': '6', '7': '7', '13': '13', '14': '14', '15': '15', '16': '16'}
 - ref: J2
   value: 2x8 header
   footprint: CONN-100MIL-M-2x8
   mpn: Amphenol FCI
   pin_count: 16
-  nc_pins: {'5': '5', '6': '6', '7': '7', '13': '13', '14': '14', '15': '15', '16': '16'}
 - ref: J3
   value: 2x8 header
   footprint: CONN-100MIL-M-2x8
@@ -480,7 +478,6 @@ components:
   footprint: mcv_1,5-3-G-3,81
   mpn: Phoenix Contact
   pin_count: 3
-  nc_pins: {'2': '2'}
 - ref: J6
   value: REGEN
   footprint: mcv_1,5-3-G-3,81
@@ -956,7 +953,7 @@ components:
   footprint: QFP50P1200X1200X100-64
   mpn: STMicroelectronics
   pin_count: 64
-  nc_pins: {'2': '2', '4': '4', '8': '8', '9': '9', '14': '14', '15': '15', '20': '20', '21': '21', '25': '25'}
+  nc_pins: {'2': '2', '4': '4'}
 - ref: U11
   value: LM3488
   footprint: SOP65P490X109-8
@@ -1024,7 +1021,6 @@ components:
   footprint: SOP65P640X110-14
   mpn: SN74ACT08PWR
   pin_count: 14
-  nc_pins: {'3': '3', '6': '6', '8': '8', '11': '11'}
 - ref: U7
   value: SN74ACT08PWR
   footprint: SOP65P640X110-14

@@ -181,7 +181,7 @@ components:
   footprint: RP2350-QFN-60-1EP
   lcsc: C42411118
   pin_count: 61
-  nc_pins: {GPIO14: '18', GPIO15: '19', SWCLK: '24', SWD: '25', RUN: '26', GPIO16: '27', GPIO17: '28', GPIO25: '37', GPIO26_ADC0: '40', GPIO27_ADC1: '41', GPIO28_ADC2: '42', GPIO29_ADC3: '43'}
+  nc_pins: {GPIO14: '18', GPIO15: '19', GPIO16: '27', GPIO17: '28', GPIO25: '37', GPIO26_ADC0: '40', GPIO27_ADC1: '41', GPIO28_ADC2: '42', GPIO29_ADC3: '43'}
 - ref: U3
   value: ZD25WQ80CTIGT
   footprint: SOIC-8

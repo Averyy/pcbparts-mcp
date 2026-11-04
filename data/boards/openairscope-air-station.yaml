@@ -841,7 +841,7 @@ components:
   manufacturer: Shenzhen RAKwireless Technology Co.,Ltd.
   mpn: RAK3172
   pin_count: 32
-  nc_pins: {UART1_TX/PB6: '4', UART1_RX/PB7: '5', SWDIO/PA13: '7', SWCLK/PA14: '8', MOSI/PA7: '13', MISO/PA6: '14', PB12: '27', PB5: '30'}
+  nc_pins: {SWDIO/PA13: '7', SWCLK/PA14: '8', MOSI/PA7: '13', MISO/PA6: '14', PB12: '27', PB5: '30'}
 - ref: U9
   value: SN65HVD230
   footprint: SOIC-8

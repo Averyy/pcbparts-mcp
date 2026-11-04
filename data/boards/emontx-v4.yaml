@@ -290,8 +290,6 @@ components:
 - ref: R10
   value: 1kohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R11
   value: 33kohm
   footprint: '0603'

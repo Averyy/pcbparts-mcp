@@ -114,6 +114,15 @@ BOARD_META_OVERRIDES: dict[str, dict] = {
     "espressif-esp32-s3-devkitc-1": {"key_ics": ["ESP32-S3-WROOM-1", "CP2102N", "SGM2212"]},
     "espressif-esp32-s3-devkitm-1": {"key_ics": ["ESP32-S3-MINI-1", "CP2102N", "SGM2212"]},
     "espressif-esp32-devkitc-v4": {"key_ics": ["ESP32-WROOM-32D", "CP2102N", "AMS1117"]},
+    # Guitar pedals: discrete stages, so the transistors and JFETs are the parts to compare
+    "guitarml-classic-boost": {"key_ics": ["2N5088"]},
+    "guitarml-ts-rat-combo": {"key_ics": ["TL072", "LM301", "2N5458", "2SC1815"]},
+    "1590a-boost-effect": {"key_ics": ["MMBF5103", "DMMT5551"]},
+    "1590a-buffered-base": {"key_ics": ["LT3462A", "AP2202", "DMC3071LVT"]},
+    "1590a-compressor-effect": {"key_ics": ["LS844", "MMBF5103", "NMB2227A"]},
+    "1590a-daisy-seed-base": {"key_ics": ["Daisy Seed", "LS844", "PMV250"]},
+    "1590a-fuzz-effect": {"key_ics": ["MMBFJ201", "BAT41Z"]},
+    "1590a-octaver-effect": {"key_ics": ["MMBF5103", "DMMT5551"]},
     "adafruit-esp32-s3-feather": {
         "key_ics": ["ESP32-S3-MINI-1", "LC709203F", "MCP73831"],
     },
@@ -193,6 +202,9 @@ BOARD_META_OVERRIDES: dict[str, dict] = {
 # ---------------------------------------------------------------------------
 
 TAG_OVERRIDES: dict[str, list[str]] = {
+    # A guitar "boost" is a gain stage, not a boost converter
+    "guitarml-classic-boost": ["audio"],
+    "1590a-boost-effect": ["audio"],
     "darth-vadar-2-4-ghz-fmcw-radar": ["rf-sdr", "radar-fmcw"],
     "adf4158-10-ghz-fmcw-lo": ["rf-sdr", "radar-fmcw"],
     "simplefmcwradar-rf-board": ["rf-sdr", "radar-fmcw"],
@@ -217,5 +229,6 @@ TAG_OVERRIDES: dict[str, list[str]] = {
 # ---------------------------------------------------------------------------
 
 NET_PIN_FIXES: dict[tuple[str, str], str] = {
-    ("adafruit-max31865-rtd", "U1.ANGD"): "U1.AGND",
+    # Eagle names the two ground pins AGND@2 and (misspelled) ANGD@1
+    ("adafruit-max31865-rtd", "U1.ANGD@1"): "U1.AGND@1",
 }

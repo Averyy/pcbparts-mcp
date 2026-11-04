@@ -222,7 +222,6 @@ components:
   footprint: SOT-23
   manufacturer: AOS
   pin_count: 3
-  nc_pins: {D: '3'}
 - ref: Q4
   value: AO3401A
   footprint: SOT-23

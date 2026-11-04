@@ -667,7 +667,7 @@ components:
   manufacturer: STMicroelectronics
   description: USB Controller USB 2.0 I2C Interface 24-QFN (4x4)
   pin_count: 25
-  nc_pins: {NC: '3', ATTACH: '11', GPIO: '15', A_B_SIDE: '17', nALERT: '19'}
+  nc_pins: {NC: '3'}
 - ref: U2
   value: SIC477ED-T1-GE3
   footprint: SIC47XED-T1-GE3
@@ -675,7 +675,7 @@ components:
   mpn: SIC477ED-T1-GE3
   description: DC/DC Synchronous Regulator, Adjustable, 4.5V to 55VIn, 0.8V to 50.6V/6AOut
   pin_count: 28
-  nc_pins: {GL: '15', NC@18: '18', NC@21: '21'}
+  nc_pins: {GL: '15', NC@18: '18'}
 - ref: U3
   value: AP62301Z6-7
   footprint: SOT-563

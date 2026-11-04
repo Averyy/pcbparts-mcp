@@ -418,14 +418,10 @@ components:
   value: 100ohm
   footprint: '0402'
   mpn: MF-RES-0402-100
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R35
   value: 100ohm
   footprint: '0402'
   mpn: MF-RES-0402-100
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R9
   value: 2mohm
   footprint: 0805
@@ -465,7 +461,7 @@ components:
   mpn: DRV8323SRTAR
   manufacturer: TI
   pin_count: 41
-  nc_pins: {GHA: '6', SHA: '7', GLA: '8', SPA: '9', SNA: '10', SNB: '11', SPB: '12', GHC: '16', SHC: '17', GLC: '18', SPC: '19', SNC: '20', CAL: '31'}
+  nc_pins: {CAL: '31'}
 - ref: U5
   value: TCAN1057AEV-Q1
   footprint: SOIC-8

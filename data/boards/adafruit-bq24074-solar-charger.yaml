@@ -87,8 +87,6 @@ components:
 - ref: R3
   value: 590ohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R4
   value: 5.1kohm
   footprint: '0603'
@@ -96,8 +94,6 @@ components:
 - ref: R5
   value: 2kohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R6
   value: 5.1kohm
   footprint: '0603'

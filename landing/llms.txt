@@ -51,7 +51,7 @@ Tool descriptions include reply-field guidance: `relaxed` names omitted query wo
 | `sensor_recommend` | Find sensor ICs/modules by measurement need, protocol, or platform (1,600+ sensors, 56 measure types) |
 | `cse_search` | Search SamacSys for ECAD models and datasheets |
 | `cse_get_kicad` | Download KiCad symbols and footprints |
-| `board_search` | Search ~295 reference board schematics (open-source projects and Espressif's own DevKits) by IC, tag, org, or free text. Cross-board consensus shows how ICs are typically used. |
+| `board_search` | Search ~300 reference board schematics (open-source projects and Espressif's own DevKits) by IC, tag, org, or free text. Cross-board consensus shows how ICs are typically used. |
 | `board_get` | Get full board details — BOM, design rules, dimensions. Use `focus` param for a part's pin-grouped neighborhood (decoupling, bias, connections): an IC, or any part by ref (`J1`) or value (`USB-C`). |
 | `get_design_rules` | PCB design rules & best practices (41 curated reference files: power, protection, interfaces, MCUs, layout, EMC) |
 

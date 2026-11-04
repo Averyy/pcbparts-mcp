@@ -436,7 +436,7 @@ components:
   footprint: TSSOP-24
   lcsc: C255606
   pin_count: 24
-  nc_pins: {IO0_0: '4', IO0_1: '5', IO0_2: '6', IO0_3: '7', IO0_4: '8', IO0_5: '9', IO0_6: '10', IO0_7: '11', IO1_2: '15'}
+  nc_pins: {IO1_2: '15'}
 - ref: U3
   value: TPS651851RSLR
   footprint: TPS651851RSLR
@@ -464,13 +464,11 @@ components:
   footprint: SOIC-8
   lcsc: C7440
   pin_count: 8
-  nc_pins: {CLKO: '7'}
 - ref: U8
   value: ESP32-S3-WROOM-1
   footprint: ESP32-S3-WROOM-1
   lcsc: C2913202
   pin_count: 41
-  nc_pins: {GPIO19/U1RTS/ADC2_CH8/CLK_OUT2/USB_D-: '13', GPIO20/U1CTS/ADC2_CH9/CLK_OUT1/USB_D+: '14', GPIO3/TOUCH3/ADC1_CH2: '15', GPIO46: '16', SPIIO6/GPIO35/FSPID/SUBSPID: '28', SPIIO7/GPIO36/FSPICLK/SUBSPICLK: '29', SPIDQS/GPIO37/FSPIQ/SUBSPIQ: '30', GPIO2/TOUCH2/ADC1_CH1: '38', GPIO1/TOUCH1/ADC1_CH0: '39'}
 - ref: U9
   value: CH340C
   footprint: SOIC-16

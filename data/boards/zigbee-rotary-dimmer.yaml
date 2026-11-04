@@ -171,14 +171,13 @@ components:
   manufacturer: "ESPRESSIF(\u4E50\u946B)"
   lcsc: C5736265
   pin_count: 53
-  nc_pins: {NC@4: '4', IO2: '5', IO3: '6', NC@7: '7', IO4: '9', IO5: '10', IO0: '12', NC@21: '21', IO23: '29', RXD0: '30', TXD0: '31', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35', GND@36: '36', GND@37: '37', GND@38: '38', GND@39: '39', GND@40: '40', GND@41: '41', GND@42: '42', GND@43: '43', GND@44: '44', GND@45: '45', GND@46: '46', GND@47: '47', GND@48: '48', GND@49: '49', GND@50: '50', GND@52: '52', GND@53: '53'}
+  nc_pins: {NC@4: '4', IO2: '5', IO3: '6', NC@7: '7', IO4: '9', IO5: '10', IO0: '12', NC@21: '21', IO23: '29', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35', GND@36: '36', GND@37: '37', GND@38: '38', GND@39: '39', GND@40: '40', GND@41: '41', GND@42: '42', GND@43: '43', GND@44: '44', GND@45: '45', GND@46: '46', GND@47: '47', GND@48: '48', GND@49: '49', GND@50: '50', GND@52: '52', GND@53: '53'}
 - ref: U4
   value: SN74LV1T125DBV
   footprint: SOT-23-5
   lcsc: C473338
   description: Single Power Supply, Single Buffer Gate with 3-State Output, CMOS Logic Level
   pin_count: 5
-  nc_pins: {Y: '4'}
 - ref: U6
   value: 'LDO: SSP7603P50M5R'
   footprint: SOT-23-5

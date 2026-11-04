@@ -70,7 +70,6 @@ components:
   value: RPi_GPIO
   footprint: Samtec_HLE-120-02-XXX-DV-BE-XX-XX
   pin_count: 40
-  nc_pins: {BCM27: '13', BCM22: '15', BCM25: '22', BCM26: '37'}
 - ref: J2
   value: 20374-R30E-31
   footprint: I-PEX_20374-R30E-31
@@ -78,7 +77,7 @@ components:
   mpn: 20374-R30E-31
   description: 30 POS Right Angle SMD 0.4 mm pitch vertical mating type micro-coaxial
   pin_count: 32
-  nc_pins: {'3': '3', '10': '10', '11': '11', '12': '12', '13': '13', '14': '14', '15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '30': '30'}
+  nc_pins: {'3': '3', '11': '11', '12': '12', '19': '19', '20': '20'}
 - ref: J4
   value: Qwiic connector
   footprint: JST_SH_SM04B-SRSS-TB

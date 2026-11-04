@@ -323,7 +323,7 @@ components:
   digikey: 497-8918-ND
   description: MCU ARM 256KB FLASH MEM 64-LQFP
   pin_count: 64
-  nc_pins: {PC13: '2', PC14: '3', PC15: '4', NRST: '7', PA6: '22', PC4: '24', PC5: '25', PB2: '28', PB10: '29', PB11: '30', PB14: '35', PB15: '36', PC9: '40', PA15: '50', PC10: '51', PC11: '52', PC12: '53', PD2: '54', PB3: '55', PB5: '57'}
+  nc_pins: {PC13: '2', PC14: '3', PC15: '4', NRST: '7', PA6: '22', PC4: '24', PC5: '25', PB2: '28', PB10: '29', PB11: '30', PB14: '35', PC9: '40', PA15: '50', PC10: '51', PD2: '54', PB3: '55', PB5: '57'}
 - ref: IC2
   value: CAT24C02
   footprint: SOT-23-5

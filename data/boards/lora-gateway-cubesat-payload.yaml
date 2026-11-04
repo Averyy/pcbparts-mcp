@@ -56,8 +56,6 @@ components:
   value: 56pF
   footprint: '0402'
   mpn: GCM1555C1H560FA16D
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C1104
   value: 56pF
   footprint: '0402'
@@ -96,8 +94,6 @@ components:
   value: 56pF
   footprint: '0402'
   mpn: GCM1555C1H560FA16D
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: C1208
   value: 10nF
   footprint: '0402'
@@ -1181,7 +1177,7 @@ components:
   footprint: QFN-24-1EP
   description: 150 MHz to 960 MHz Low Power Long Range Transceiver, 14dBm output power
   pin_count: 25
-  nc_pins: {XTB: '4', DIO3: '6', RFO: '23', VR_PA: '24'}
+  nc_pins: {XTB: '4', RFO: '23', VR_PA: '24'}
 - ref: U1101
   value: 74AHC1G08
   footprint: SOT-23-5
@@ -1286,7 +1282,6 @@ components:
   footprint: Texas_RPU0010A_VQFN-HR-10
   description: 2.2MHz or 1MHz, 2A, Low Noise, Low Ripple, Buck Converter with Integrated
   pin_count: 10
-  nc_pins: {PG: '5'}
 - ref: U1802
   value: TPS62912
   footprint: Texas_RPU0010A_VQFN-HR-10
@@ -1382,7 +1377,7 @@ components:
   mpn: SX1302IMLTRT
   description: LoRa Gateway Baseband Transceiver
   pin_count: 69
-  nc_pins: {RADIO_A_CTRL_1/EN_LNA: '11', RADIO_A_CTRL_5/PA_GAIN_1: '17', RADIO_B_CTRL_6/EN_LDO: '22', RADIO_B_CTRL_7/EN_LNA: '26', RADIO_B_CTRL_8/EN_PA: '27', RADIO_B_CTRL_10/PA_GAIN_0: '29', RADIO_B_CTRL_11/PA_GAIN_1: '31', GPIO_9: '52', GPIO_5: '58', GPIO_3: '60', GPIO_1: '64'}
+  nc_pins: {RADIO_A_CTRL_5/PA_GAIN_1: '17', RADIO_B_CTRL_6/EN_LDO: '22', RADIO_B_CTRL_7/EN_LNA: '26', RADIO_B_CTRL_8/EN_PA: '27', RADIO_B_CTRL_10/PA_GAIN_0: '29', RADIO_B_CTRL_11/PA_GAIN_1: '31'}
 - ref: U801
   value: SX1250IMLTRT
   footprint: QFN-24-1EP

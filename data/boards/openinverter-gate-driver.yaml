@@ -19,7 +19,6 @@ components:
   value: 1x4 header
   footprint: 1X04
   pin_count: 4
-  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4'}
 - ref: C1
   value: 100nF
   footprint: C050-025X075
@@ -83,13 +82,9 @@ components:
 - ref: R1
   value: 220ohm
   footprint: '0207'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R2
   value: 220ohm
   footprint: '0207'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R3
   value: 4.7ohm
   footprint: 0309

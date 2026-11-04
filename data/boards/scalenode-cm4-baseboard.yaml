@@ -311,7 +311,7 @@ components:
   mpn: LSHM-130-01-L-RH-A-S-K-TR
   manufacturer: Samtec
   pin_count: 62
-  nc_pins: {'13': '13', '14': '14', '15': '15', '16': '16', '28': '28', '30': '30'}
+  nc_pins: {'13': '13', '14': '14', '15': '15', '16': '16'}
 - ref: J3
   value: M.2
   footprint: Bus_M.2_Socket_Key_M_Amphenol_MDT580M01001
@@ -648,7 +648,6 @@ components:
   mpn: AP62301WU-7
   manufacturer: Diodes Incorporated
   pin_count: 6
-  nc_pins: {EN: '5'}
 - ref: U5
   value: TS3USB30EDGSR
   footprint: MSOP-10_W3mm

@@ -31,7 +31,7 @@ components:
   value: ESP-12E
   footprint: ESP-12E_SMD
   pin_count: 22
-  nc_pins: {'1': '1', '5': '5', '11': '11', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22'}
+  nc_pins: {'1': '1', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22'}
 - ref: FAN1
   value: 1x2 header
   footprint: JST_XH_B02B-XH-A
@@ -45,7 +45,7 @@ components:
   value: SANYOU_SRD_Form_C
   footprint: Relay_SPDT_SANYOU_SRD_Series_Form_C
   pin_count: 5
-  nc_pins: {'3': '3', '4': '4'}
+  nc_pins: {'4': '4'}
 - ref: P1
   value: 1x3 header
   footprint: 1X3

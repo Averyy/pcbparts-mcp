@@ -447,14 +447,10 @@ components:
   value: 1nF
   footprint: '1206'
   description: 1206B102K202NT
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C82
   value: 1nF
   footprint: '1206'
   description: 1206B102K202NT
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C83
   value: 100nF
   footprint: '0603'
@@ -467,8 +463,6 @@ components:
   value: 100nF
   footprint: '0603'
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: C86
   value: 1uF
   footprint: '0603'
@@ -785,7 +779,7 @@ components:
   footprint: RJ45_Amphenol_RJHSE538X-02
   description: RJ connector, 8P8C (8 positions 8 connected), two LEDs, RJ45, Shielded, two
   pin_count: 25
-  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '12': '12'}
+  nc_pins: {'9': '9', '10': '10', '11': '11', '12': '12'}
 - ref: J6
   value: OEM Connector
   footprint: CONN_SD-34912-001_02_MOL
@@ -979,8 +973,6 @@ components:
   value: 120r
   footprint: '1206'
   description: Resistor, small symbol
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R13
   value: 5.1kohm
   footprint: '0603'
@@ -1164,26 +1156,18 @@ components:
   value: 1Mohm
   footprint: '1206'
   description: Resistor, small symbol
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R225
   value: 1Mohm
   footprint: '1206'
   description: Resistor, small symbol
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R226
   value: 1Mohm
   footprint: '1206'
   description: Resistor, small symbol
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R227
   value: 1Mohm
   footprint: '1206'
   description: Resistor, small symbol
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R228
   value: 220r
   footprint: '0603'
@@ -1230,8 +1214,6 @@ components:
   value: 100r
   footprint: '0603'
   description: Resistor, small symbol
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: R31
   value: 10kohm
   footprint: '0603'
@@ -1421,8 +1403,6 @@ components:
   value: 1kohm
   footprint: '0603'
   description: Resistor, small symbol
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R72
   value: 1kohm
   footprint: '0603'
@@ -1449,8 +1429,6 @@ components:
   value: 1kohm
   footprint: '0603'
   description: Resistor, small symbol
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R79
   value: 24kohm
   footprint: '0603'
@@ -1585,7 +1563,6 @@ components:
   footprint: HM2113ZNLT
   description: Low profile BMS Transformers
   pin_count: 6
-  nc_pins: {C_TD: '2'}
 - ref: U1
   value: SN74LV1T08DBVR
   footprint: SOT-23-5
@@ -1601,7 +1578,7 @@ components:
   footprint: RP2350-QFN-80-1EP
   description: 2Mbit internal flash
   pin_count: 81
-  nc_pins: {GPIO4: '1', GPIO5: '2', GPIO7: '4', GPIO9: '7', GPIO10: '8', GPIO12: '11', GPIO13: '12', GPIO15: '14', GPIO16: '16', GPIO17: '17', GPIO18: '18', GPIO19: '19', GPIO20: '20', GPIO21: '21', GPIO22: '22', GPIO23: '23', GPIO24: '25', GPIO26: '27', GPIO27: '28', SWCLK: '33', SWD: '34', GPIO31: '39', GPIO32: '40', GPIO33: '42', GPIO34: '43', GPIO35: '44', GPIO36: '45', GPIO37: '46', GPIO40_ADC0: '49', GPIO41_ADC1: '52', GPIO42_ADC2: '53', GPIO43_ADC3: '54', GPIO44_ADC4: '55', GPIO45_ADC5: '56', GPIO46_ADC6: '57', GPIO47_ADC7: '58', QSPI_SD3: '70', QSPI_SCLK: '71', QSPI_SD0: '72', QSPI_SD2: '73', QSPI_SD1: '74', GPIO3: '80'}
+  nc_pins: {GPIO13: '12', GPIO15: '14', GPIO16: '16', GPIO17: '17', GPIO18: '18', GPIO19: '19', GPIO20: '20', GPIO21: '21', GPIO22: '22', GPIO23: '23', GPIO24: '25', GPIO26: '27', GPIO27: '28', GPIO33: '42', GPIO34: '43', GPIO35: '44', GPIO36: '45', GPIO37: '46', GPIO40_ADC0: '49', GPIO41_ADC1: '52', GPIO42_ADC2: '53', GPIO43_ADC3: '54', GPIO44_ADC4: '55', GPIO45_ADC5: '56', GPIO46_ADC6: '57', GPIO47_ADC7: '58', QSPI_SD3: '70', QSPI_SCLK: '71', QSPI_SD0: '72', QSPI_SD2: '73', QSPI_SD1: '74'}
 - ref: U12
   value: ADS1115
   footprint: TSSOP-10
@@ -1679,7 +1656,7 @@ components:
   footprint: RP2350-QFN-80-1EP
   description: 2MB internal flash
   pin_count: 81
-  nc_pins: {SWCLK: '33', SWD: '34', GPIO31: '39', GPIO32: '40', GPIO33: '42', GPIO34: '43', GPIO35: '44', GPIO37: '46', QSPI_SD3: '70', QSPI_SCLK: '71', QSPI_SD0: '72', QSPI_SD2: '73', QSPI_SD1: '74', GPIO3: '80'}
+  nc_pins: {QSPI_SD3: '70', QSPI_SCLK: '71', QSPI_SD0: '72', QSPI_SD2: '73', QSPI_SD1: '74'}
 - ref: U28
   value: AM26LV32EIDR
   footprint: SOIC-16

@@ -321,7 +321,6 @@ components:
   manufacturer: STMicroelectronics
   mpn: STM32G431CBT6
   pin_count: 48
-  nc_pins: {PB0: '16', PB1: '17', PB2: '18', PB10: '22', PA8: '30', PA10: '32', PB4: '41', PB6: '43'}
 - ref: IC5
   value: TPD4E1U06DBVR
   footprint: SOT-6

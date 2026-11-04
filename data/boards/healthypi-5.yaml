@@ -18,8 +18,6 @@ components:
 - ref: C1
   value: 12pF
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C10
   value: 1uF
   footprint: 0805
@@ -32,16 +30,12 @@ components:
 - ref: C13
   value: 2.2uF
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C14
   value: 100nF
   footprint: '0402'
 - ref: C15
   value: 12pF
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: C16
   value: 100nF
   footprint: '0402'
@@ -85,16 +79,12 @@ components:
 - ref: C26
   value: 1uF
   footprint: 0805
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: C27
   value: 10uF
   footprint: 0805
 - ref: C29
   value: 1nF
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C3
   value: 1uF
   footprint: '0402'
@@ -108,16 +98,12 @@ components:
 - ref: C32
   value: 10uF
   footprint: 0805
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C33
   value: 10uF
   footprint: 0805
 - ref: C34
   value: 1uF
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C35
   value: 1uF
   footprint: '0402'
@@ -204,13 +190,9 @@ components:
 - ref: C6
   value: 22pF
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: C63
   value: 47nF
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: C64
   value: 4.7uF
   footprint: 0805
@@ -222,21 +204,15 @@ components:
 - ref: C66
   value: 47nF
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: C7
   value: 22pF
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: C70
   value: 1uF
   footprint: '0402'
 - ref: C8
   value: 2.2uF
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C9
   value: 100nF
   footprint: '0402'
@@ -245,7 +221,6 @@ components:
   footprint: SOT323
   description: Dual DIODE
   pin_count: 3
-  nc_pins: {CA: '1'}
 - ref: D10
   value: S1B-13-F
   footprint: SOD-123_MINI-SMA
@@ -285,13 +260,11 @@ components:
   footprint: SOT323
   description: Dual DIODE
   pin_count: 3
-  nc_pins: {CA: '1'}
 - ref: D3
   value: BAV99W-7-F
   footprint: SOT323
   description: Dual DIODE
   pin_count: 3
-  nc_pins: {CA: '1'}
 - ref: D4
   value: PESD0402
   footprint: '0402'
@@ -302,7 +275,6 @@ components:
   footprint: SOT323
   description: Dual DIODE
   pin_count: 3
-  nc_pins: {CA: '1'}
 - ref: D7
   value: PESD0402
   footprint: '0402'
@@ -323,7 +295,6 @@ components:
   footprint: USB-C
   description: USB Type C 16Pin Connector
   pin_count: 18
-  nc_pins: {VBUS: VBUS1 VBUS2}
 - ref: JP6
   value: JST PH 2-pin
   footprint: JST-2-SMD
@@ -331,7 +302,7 @@ components:
   value: PIN20X2
   footprint: PIN
   pin_count: 40
-  nc_pins: {'7': '7', '11': '11', '12': '12', '13': '13', '15': '15', '16': '16', '18': '18', '22': '22', '24': '24', '26': '26', '27': '27', '28': '28', '31': '31', '32': '32', '33': '33', '35': '35', '36': '36', '37': '37', '38': '38', '40': '40'}
+  nc_pins: {'7': '7', '11': '11', '13': '13', '15': '15', '18': '18', '27': '27', '28': '28', '32': '32', '33': '33', '35': '35', '37': '37', '38': '38', '40': '40'}
 - ref: Q3
   value: SI2323DS-TI
   footprint: SOT23-R
@@ -340,8 +311,6 @@ components:
 - ref: R10
   value: 22ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R11
   value: 1kohm
   footprint: '0402'
@@ -349,54 +318,36 @@ components:
 - ref: R12
   value: 100ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: R13
   value: 0ohm
   footprint: 0805
 - ref: R14
   value: 100ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: R15
   value: 5.1kohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R16
   value: 5.1kohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R17
   value: 100ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: R18
   value: 1kohm
   footprint: '0402'
   prod_id: RES-14342
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R19
   value: 27ohm
   footprint: '0402'
   prod_id: RES-15238
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R2
   value: 0ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R20
   value: 27ohm
   footprint: '0402'
   prod_id: RES-15238
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R21
   value: 1kohm
   footprint: '0402'
@@ -417,8 +368,6 @@ components:
 - ref: R25
   value: 10kohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R26
   value: 5.1kohm
   footprint: '0402'
@@ -430,26 +379,18 @@ components:
 - ref: R28
   value: 100ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R29
   value: 100ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R3
   value: 100ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R30
   value: 10kohm
   footprint: '0402'
 - ref: R31
   value: 100ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R33
   value: 10kohm
   footprint: '0402'
@@ -458,30 +399,22 @@ components:
   value: 0ohm
   footprint: '0402'
   prod_id: RES-15238
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: R37
   value: 0ohm
   footprint: '0402'
   prod_id: RES-15238
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: R39
   value: 200kohm
   footprint: 0805
 - ref: R4
   value: 100ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: R40
   value: 200kohm
   footprint: 0805
 - ref: R41
   value: 0ohm
   footprint: 0805
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R42
   value: 0ohm
   footprint: '0402'
@@ -491,33 +424,21 @@ components:
 - ref: R47
   value: 10kohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R48
   value: 330ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R49
   value: 330ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: R5
   value: 10kohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R51
   value: 330ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: R6
   value: 100ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R7
   value: 10kohm
   footprint: '0402'
@@ -525,19 +446,15 @@ components:
 - ref: R8
   value: 22ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R9
   value: 100ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: SW1
   value: KMR211GLFS
   footprint: BTN_KMR2
   description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
   pin_count: 4
-  nc_pins: {P: A, S: B, S1: B'}
+  nc_pins: {P: A, S: B}
 - ref: SW2
   value: KMR211GLFS
   footprint: BTN_KMR2
@@ -555,15 +472,13 @@ components:
   footprint: BTN_KMR2
   description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
   pin_count: 4
-  nc_pins: {P: A, S: B, S1: B'}
+  nc_pins: {P: A, S: B}
 - ref: SWIO1
   value: TPSQ
   footprint: TP11R
 - ref: SWIO2
   value: TPSQ
   footprint: TP11R
-  pin_count: 1
-  nc_pins: {TP: TP}
 - ref: SWIO5
   value: TPSQ
   footprint: TP11R
@@ -573,13 +488,9 @@ components:
 - ref: SWIO8
   value: TPSQ
   footprint: TP11R
-  pin_count: 1
-  nc_pins: {TP: TP}
 - ref: SWIO9
   value: TPSQ
   footprint: TP11R
-  pin_count: 1
-  nc_pins: {TP: TP}
 - ref: TP5
   value: TPSQ
   footprint: TP11R
@@ -599,7 +510,6 @@ components:
   footprint: WSON-8-6X5-SKINNY_CENTERPAD
   prod_id: IC-15107
   pin_count: 8
-  nc_pins: {D1/DO: '2', D2/!WP!: '3', D0/DI: '5', CLK: '6', D3/!HOLD!: '7'}
 - ref: Y2
   value: 12MHz
   footprint: CRYSTAL-SMD-2X2.5MM

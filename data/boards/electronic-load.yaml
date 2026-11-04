@@ -148,8 +148,6 @@ components:
   description: Connector Header Through Hole 2 position 0.098 (2.50mm)
   manufacturer: JST Sales
   mpn: B2B-XH-A(LF)(SN)
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: J6
   value: B2B-XH
   footprint: JST_B2B-XH-A(LF)(SN)

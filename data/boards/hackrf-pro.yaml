@@ -2869,7 +2869,7 @@ components:
   mpn: LPC4330FET180
   description: ARM Cortex-M4/M0 flashless MCU
   pin_count: 180
-  nc_pins: {RTC_ALARM: A10, NC: B8, PB_4: B10, PB_2: B11, WAKEUP1: C8, P4_8: D2, P4_0: D4, USB1_DP: D11, WAKEUP2: E5, USB1_DM: E11, USB0_ID: G2, P6_10: G13, P8_3: H3, TDI: H4, P8_8: K1, TMS/SWDIO: K5, P5_0: L2, nTRST: L4, PA_0: L10, P6_5: L14, P6_0: M10}
+  nc_pins: {RTC_ALARM: A10, NC: B8, PB_4: B10, PB_2: B11, WAKEUP1: C8, P4_8: D2, P4_0: D4, USB1_DP: D11, WAKEUP2: E5, USB1_DM: E11, USB0_ID: G2, P6_10: G13, P8_3: H3, P8_8: K1, P5_0: L2, PA_0: L10, P6_0: M10}
 - ref: U24
   value: AP22652
   footprint: TSOP-6

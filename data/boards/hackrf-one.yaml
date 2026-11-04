@@ -1961,7 +1961,7 @@ components:
   mpn: MAX2837ETM+T
   description: IC TXRX 2.3GHZ-2.7GHZ 48TQFN
   pin_count: 49
-  nc_pins: {B5: '3', B4: '6', B3: '8', B2: '9', B1: '12', PABIAS: '14', CLOCKOUT: '16', XTAL1: '18', B7: '33', B6: '34', RXHP: '40'}
+  nc_pins: {B5: '3', B4: '6', B3: '8', B2: '9', B1: '12', PABIAS: '14', XTAL1: '18', B7: '33', B6: '34', RXHP: '40'}
 - ref: U18
   value: MAX5864
   footprint: QFN-48
@@ -2005,7 +2005,7 @@ components:
   mpn: LPC4320FBD144,551
   description: IC MCU 32BIT 144LQFP
   pin_count: 144
-  nc_pins: {TRST: '29', P6_7: '85', USB1_DP: '89', USB1_DM: '90'}
+  nc_pins: {P6_7: '85', USB1_DP: '89', USB1_DM: '90'}
 - ref: U24
   value: GSG-XC2C64A-7VQG100C
   footprint: VQ-100
@@ -2035,7 +2035,7 @@ components:
   mpn: RFFC5072TR7
   description: WIDEBAND SYNTHESIZER/VCO WITH INTEGRATED 6GHz MIXER
   pin_count: 33
-  nc_pins: {ENBL/GPO5: '1', EXT_LO: '2', EXT_LO_DEC: '3', MODE/GPO6: '9', NC@11: '11', NC@13: '13', NC@14: '14', GPO2/ADD2: '16', NC@17: '17', NC@18: '18', NC@20: '20', NC@21: '21', GPO3/FM: '25', GPO4/LD/DO: '26'}
+  nc_pins: {ENBL/GPO5: '1', EXT_LO: '2', EXT_LO_DEC: '3', NC@11: '11', NC@13: '13', NC@14: '14', NC@17: '17', NC@18: '18', NC@20: '20', NC@21: '21'}
 - ref: U5
   value: SKY13453
   footprint: SKY13350-385LF

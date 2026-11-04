@@ -1,0 +1,364 @@
+name: 1590A Compressor Effect
+slug: 1590a-compressor-effect
+source: torvalds/1590A
+format: kicad9
+description: 'Guitar pedal JFET compressor: MMBF5103 input buffer, LS844 matched dual JFET'
+tags: [audio]
+key_ics: [LS844, MMBF5103, NMB2227A]
+outline:
+  width_mm: 30.0
+  height_mm: 62.0
+design_rules:
+  layers: 2
+  min_trace: 0.35mm
+  min_clearance: 0.15mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 22uF
+  footprint: '1206'
+- ref: C10
+  value: 4.7uF
+  footprint: '1206'
+- ref: C2
+  value: 100nF
+  footprint: '0704'
+- ref: C3
+  value: 470nF
+  footprint: '1206'
+- ref: C4
+  value: 1uF
+  footprint: '1206'
+- ref: C5
+  value: 1uF
+  footprint: '1206'
+- ref: C6
+  value: 4.7uF
+  footprint: '1206'
+- ref: C7
+  value: 4.7uF
+  footprint: '1206'
+- ref: C8
+  value: 4.7uF
+  footprint: '1206'
+- ref: C9
+  value: 470nF
+  footprint: '1206'
+- ref: D1
+  value: BAT54S
+  footprint: SOT-23
+  description: Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-23-3
+  pin_count: 3
+- ref: J1
+  value: 1x4 header
+  footprint: 1X4
+  pin_count: 4
+- ref: J2
+  value: 1x4 header
+  footprint: 1X4
+  pin_count: 4
+  nc_pins: {Pin_4: '4'}
+- ref: Q1
+  value: MMBF5103
+  footprint: SOT-23
+  description: MMBF5103
+  pin_count: 3
+- ref: Q2
+  value: LS844
+  footprint: SOT-23-6
+  description: "Matched Dual N\u2011Channel JFET, SOT-23-6L"
+  pin_count: 6
+- ref: Q3
+  value: NMB2227A
+  footprint: TSOP-6
+  description: Dual NPN/PNP transistor, 6 pin package
+  pin_count: 6
+- ref: R1
+  value: 150kohm
+  footprint: 0805
+- ref: R10
+  value: 100kohm
+  footprint: 0805
+- ref: R11
+  value: 100kohm
+  footprint: 0805
+- ref: R12
+  value: 10kohm
+  footprint: 0805
+  pulldown: Q3.B1
+- ref: R13
+  value: 1kohm
+  footprint: 0805
+  pulldown: Q3.E1
+- ref: R14
+  value: 100kohm
+  footprint: 0805
+  pulldown: C9.1
+- ref: R15
+  value: 1MEG
+  footprint: 0805
+- ref: R16
+  value: 100kohm
+  footprint: 0805
+- ref: R2
+  value: 1MEG
+  footprint: 0805
+- ref: R3
+  value: 100kohm
+  footprint: 0805
+- ref: R4
+  value: 3.3kohm
+  footprint: 0805
+  pulldown: BUF_IN
+- ref: R5
+  value: 620ohm
+  footprint: 0805
+- ref: R6
+  value: 10kohm
+  footprint: 0805
+  pulldown: BASELEVEL
+- ref: R7
+  value: 33kohm
+  footprint: 0805
+- ref: R8
+  value: 10kohm
+  footprint: 0805
+- ref: R9
+  value: 6.8kohm
+  footprint: 0805
+- ref: RV1
+  value: 10k Attack
+  footprint: Potentiometer_9mm_MP
+  description: Potentiometer with a mounting pin
+  pin_count: 4
+- ref: RV2
+  value: 100k Level
+  footprint: Potentiometer_9mm_MP
+  description: Potentiometer with a mounting pin
+  pin_count: 4
+- ref: RV3
+  value: 100k Decay
+  footprint: Potentiometer_9mm_MP
+  description: Potentiometer with a mounting pin
+  pin_count: 4
+- ref: RV4
+  value: 100k Volume
+  footprint: Potentiometer_9mm_MP
+  description: Potentiometer with a mounting pin
+  pin_count: 4
+nets:
+- name: +V
+  pins:
+  - C1.1
+  - J2.Pin_1
+  - Q1.D
+  - Q2.D@2
+  - Q3.E2
+  - R1.2
+  - R5.1
+  - R7.2
+- name: AMP_IN
+  pins: [C7.2, C8.1, Q2.S@6, R10.2]
+- name: AMP_OUT
+  pins: [C2.1, C6.1, Q3.C2, R9.1]
+- name: BASELEVEL
+  pins: [C5.1, Q2.S@3, R6.1, RV2.1]
+- name: BUF_IN
+  pins: [Q1.S, R4.1, R8.1]
+- name: GND
+  pins:
+  - C1.2
+  - C10.1
+  - C3.2
+  - C4.2
+  - C5.2
+  - D1.A
+  - J1.Pin_2
+  - J1.Pin_3
+  - J2.Pin_2
+  - J2.Pin_3
+  - Q2.G@1
+  - R12.1
+  - R13.2
+  - R14.2
+  - R2.2
+  - R4.2
+  - R6.2
+  - RV1.MountPin@MP
+  - RV2.MountPin@MP
+  - RV3.2
+  - RV3.3
+  - RV3.MountPin@MP
+  - RV4.1
+  - RV4.MountPin@MP
+- name: IN
+  pins: [J1.Pin_1, Q1.G, R2.1]
+- name: LEVEL
+  pins: [C4.1, R10.1, R16.1, RV2.2]
+- name: Net-(C3-Pad1)
+  pins: [C3.1, RV1.2]
+- name: Net-(C6-Pad2)
+  pins: [C6.2, RV4.3]
+- name: Net-(C7-Pad1)
+  pins: [C7.1, R11.1, R8.2]
+- name: Net-(C9-Pad1)
+  pins: [C9.1, R11.2, R14.1]
+- name: Net-(D1-COM)
+  pins: [C2.2, D1.COM]
+- name: Net-(D1-K)
+  pins: [D1.K, RV1.1]
+- name: Net-(Q2B-D)
+  pins: [C10.2, Q2.D@5, R16.2]
+- name: Net-(Q2B-G)
+  pins: [C9.2, Q2.G@4, R15.2]
+- name: Net-(Q3A-B1)
+  pins: [C8.2, Q3.B1, R12.2, R7.1]
+- name: Net-(Q3A-C1)
+  pins: [Q3.B2, Q3.C1, R5.2]
+- name: Net-(Q3A-E1)
+  pins: [Q3.E1, R13.1, R9.2]
+- name: Net-(R1-Pad1)
+  pins: [R1.1, RV2.3]
+- name: Net-(R3-Pad1)
+  pins: [R3.1, RV3.1]
+- name: OUT
+  pins: [J1.Pin_4, RV4.2]
+- name: RECT
+  pins: [R15.1, R3.2, RV1.3]
+positions:
+- ref: C1
+  x: 90.3
+  y: 115.5
+  rot: -90.0
+- ref: C10
+  x: 99.95
+  y: 100.25
+- ref: C2
+  x: 93.0
+  y: 99.1
+  rot: 180.0
+- ref: C3
+  x: 90.3
+  y: 85.3
+  rot: 90.0
+- ref: C4
+  x: 101.15
+  y: 97.15
+  rot: 180.0
+- ref: C5
+  x: 100.0
+  y: 74.0
+  rot: 180.0
+- ref: C6
+  x: 93.0
+  y: 85.3
+  rot: 90.0
+- ref: C7
+  x: 103.85
+  y: 109.1
+  rot: -90.0
+- ref: C8
+  x: 105.95
+  y: 116.05
+  rot: -90.0
+- ref: C9
+  x: 107.9
+  y: 112.05
+- ref: D1
+  x: 88.5
+  y: 99.1
+  rot: 180.0
+- ref: J1
+  x: 113.0
+  y: 100.0
+  rot: 180.0
+  side: back
+- ref: J2
+  x: 87.0
+  y: 114.0
+  rot: 180.0
+  side: back
+- ref: Q1
+  x: 107.35
+  y: 100.0
+- ref: Q2
+  x: 102.6
+  y: 113.7
+- ref: Q3
+  x: 97.9
+  y: 113.7
+  rot: 180.0
+- ref: R1
+  x: 108.1
+  y: 96.5
+  rot: 180.0
+- ref: R10
+  x: 101.45
+  y: 107.35
+  rot: -90.0
+- ref: R11
+  x: 107.35
+  y: 107.35
+  rot: 180.0
+- ref: R12
+  x: 99.1
+  y: 117.5
+  rot: 90.0
+- ref: R13
+  x: 98.1
+  y: 110.0
+  rot: 90.0
+- ref: R14
+  x: 107.35
+  y: 109.4
+- ref: R15
+  x: 109.0
+  y: 114.7
+- ref: R16
+  x: 101.45
+  y: 103.8
+  rot: 90.0
+- ref: R2
+  x: 110.35
+  y: 100.9
+  rot: -90.0
+- ref: R3
+  x: 100.0
+  y: 91.5
+  rot: 180.0
+- ref: R4
+  x: 107.35
+  y: 102.95
+- ref: R5
+  x: 91.2
+  y: 111.95
+- ref: R6
+  x: 106.8
+  y: 68.9
+  rot: 90.0
+- ref: R7
+  x: 97.1
+  y: 117.5
+  rot: 90.0
+- ref: R8
+  x: 107.35
+  y: 105.2
+- ref: R9
+  x: 95.3
+  y: 110.75
+- ref: RV1
+  x: 92.0
+  y: 84.0
+- ref: RV2
+  x: 108.0
+  y: 68.0
+- ref: RV3
+  x: 108.0
+  y: 84.0
+- ref: RV4
+  x: 92.0
+  y: 68.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

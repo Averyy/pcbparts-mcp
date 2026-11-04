@@ -33,28 +33,18 @@ components:
 - ref: D1
   value: PWR
   footprint: CHIP-LED0603
-  pin_count: 2
-  nc_pins: {C: C}
 - ref: D2
   value: ERROR
   footprint: CHIP-LED0603
-  pin_count: 2
-  nc_pins: {C: C}
 - ref: D3
   value: ERROR
   footprint: CHIP-LED0603
-  pin_count: 2
-  nc_pins: {C: C}
 - ref: D4
   value: LED
   footprint: CHIP-LED0603
-  pin_count: 2
-  nc_pins: {C: C}
 - ref: D5
   value: LED
   footprint: CHIP-LED0603
-  pin_count: 2
-  nc_pins: {C: C}
 - ref: I1
   value: NR4018
   footprint: 4X4
@@ -207,37 +197,32 @@ components:
   value: TMS320F28069MPZT
   footprint: PQFP100
   pin_count: 100
-  nc_pins: {G$2.GPIO42/EPWM8A/!TZ1!/COMP1OUT: '1', G$1.ADC_INA7: '16', G$1.ADC_INA5: '18', G$1.ADC_INA4/COMP2A/AIO4: '19', G$1.ADC_INA3: '20', G$1.ADC_INA2/COMP1A/AIO2: '21', G$1.ADC_INA1: '22', G$1.ADC_INA0: '23', G$1.VREFHI: '24', G$1.ADC_INB0: '28', G$1.ADC_INB1: '29', G$1.ADC_INB3: '31', G$1.ADC_INB4/COMP2B/AIO12: '32', G$1.ADC_INB7: '35', G$2.GPIO25/ECAP2/EQEP2B/SPISOMIB: '39', G$2.GPIO31/CAN_TXA/EQEP2S/EPWM8A: '40', G$2.GPIO30/CAN_RXA/EQEP2I/EPWM7A: '41', G$1.TEST2: '45', G$2.GPIO44/MFSRA/SCIRXDB/EPWM7B: '56', G$1.X2: '59', G$1.X1: '60', G$2.GPIO41/EPWM7B/SCI_RXDB: '76', G$2.GPIO40/EPWM7A/SCI_TXDB: '82', G$2.GPIO57/SPISTEA/EQEP2S/HRCAP4: '89', G$2.GPIO58/MCLKRA/SCI_TXDB/EPWM7A: '94', G$2.GPIO14/TZ3/SCITXDB/SPICLKB: '96', G$2.GPIO24/ECAP1/EQEP2A/SPISIMOB: '97', G$2.GPIO22/EQEP1S/MCLKXA/SCITXDB: '98'}
+  nc_pins: {G$2.GPIO42/EPWM8A/!TZ1!/COMP1OUT: '1', G$1.VREFHI: '24', G$2.GPIO25/ECAP2/EQEP2B/SPISOMIB: '39', G$1.TEST2: '45', G$2.GPIO44/MFSRA/SCIRXDB/EPWM7B: '56', G$1.X2: '59', G$1.X1: '60', G$2.GPIO41/EPWM7B/SCI_RXDB: '76', G$2.GPIO40/EPWM7A/SCI_TXDB: '82', G$2.GPIO57/SPISTEA/EQEP2S/HRCAP4: '89', G$2.GPIO58/MCLKRA/SCI_TXDB/EPWM7A: '94', G$2.GPIO14/TZ3/SCITXDB/SPICLKB: '96', G$2.GPIO24/ECAP1/EQEP2A/SPISIMOB: '97', G$2.GPIO22/EQEP1S/MCLKXA/SCITXDB: '98'}
 - ref: U2
   value: SN74LVC2G07
   footprint: SOT23-6-DBV
   pin_count: 6
-  nc_pins: {2Y: '4', 1Y: '6'}
 - ref: U3
   value: SN65HVD234D
   footprint: SOIC8-PDSO
   pin_count: 8
-  nc_pins: {D: P$1, R: P$4, EN: P$5, RS: P$8}
 - ref: U4
   value: TXB0106
   footprint: VQFN-N16
   pin_count: 16
-  nc_pins: {OE: '8'}
 - ref: U5
   value: DRV8305
   footprint: HTQFP-48
   pin_count: 49
-  nc_pins: {AVDD: '15', SO1: '16', SO2: '17', SO3: '18', VCP_LSD: '37', VCPH: '38', CP2H: '39', CP2L: '40', CP1L: '42', CP1H: '43', VDRAIN: '44', DVDD: '46', VREG: '48'}
 - ref: U6
   value: DRV8305
   footprint: HTQFP-48
   pin_count: 49
-  nc_pins: {AVDD: '15', SO1: '16', SO2: '17', SO3: '18', VCP_LSD: '37', VCPH: '38', CP2H: '39', CP2L: '40', CP1L: '42', CP1H: '43', VDRAIN: '44', DVDD: '46', VREG: '48'}
 - ref: U7
   value: MAX15062
   footprint: TDFN-8
   pin_count: 8
-  nc_pins: {VCC: P$3, MODE: P$5, '!RST!': P$6}
+  nc_pins: {MODE: P$5, '!RST!': P$6}
 - ref: U8
   value: TLV70033DSER
   footprint: SON-6
