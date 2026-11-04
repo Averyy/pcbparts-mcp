@@ -204,6 +204,11 @@ _MLCC_DC_BIAS_NOTE = ("Capacitance is the nominal value at 0 V. Class II dielect
                       "capacitance under DC bias, more in small cases, often half or more near the rated voltage; "
                       "the maker's DC-bias curve (Murata SimSurfing, Samsung, TDK, KEMET K-SIM) gives the "
                       "effective value at your voltage.")
+_MOSFET_NOTE = ("LCSC takes RDS(on) and Vgs(th) from different datasheet columns on different listings: AO3401A "
+                "lists 47mOhm@10V (its 4.5 V typical) and its 4.5 V and 2.5 V maxima, HL3415A lists typicals, "
+                "LBSS84LT1G's Vgs(th) is the maximum and AO3401A's the typical. Compare the datasheets' max columns "
+                "(and Vgs(th) min for a threshold detector). The Vgs rating (the \"Vgs\" spec) is on about a third "
+                "of listings, and gate leakage (IGSS) on none.")
 _RF_CABLE_NOTE = ("The listing doesn't say each end's style: bulkhead with nut and washer or PCB-mount (straight or "
                   "right angle), jack or plug, SMA or RP-SMA. Check the maker's drawing.")
 
@@ -213,7 +218,8 @@ def catalog_gap_note(subcategory: str | None, specs: dict[str, str]) -> str | No
 
     From design-session reports: an Isat filter treated a 30%-drop figure like a 10%-drop one; a
     100 uF 6.3 V X5R bank was sized at its nominal value; an IPEX-to-SMA pigtail listed only as
-    "IPEX to SMA" went into a design as a bulkhead when its SMA end is PCB-mount.
+    "IPEX to SMA" went into a design as a bulkhead when its SMA end is PCB-mount; a P-FET ranked 2.1x better
+    than AO3401A at 2.5 V compared its typical against AO3401A's maximum (1.5x max against max).
     """
     sub = (subcategory or "").lower()
     if any(name.startswith("Current - Saturation") and value not in ("", "-") for name, value in specs.items()):
@@ -223,6 +229,8 @@ def catalog_gap_note(subcategory: str | None, specs: dict[str, str]) -> str | No
         return _MLCC_DC_BIAS_NOTE
     if sub == "rf cables":
         return _RF_CABLE_NOTE
+    if sub == "mosfets" and (specs.get("RDS(on)") or specs.get("Gate Threshold Voltage (Vgs(th))")):
+        return _MOSFET_NOTE
     return None
 
 
