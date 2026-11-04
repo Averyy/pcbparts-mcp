@@ -41,7 +41,7 @@
 - **USB 2.0 D+/D-:** TPD2E2U06 (TI, dual, 1.5pF, SOT-23-3) or ESD122 (TI, dual, 0.2pF, DFN1006-3) for tighter budget. General purpose USB/UART: USBLC6-2SC6 (ST, dual, 1.2pF, SOT-23-6).
 - **USB 3.2 Gen 1 TX/RX:** TPD4E02B04 (TI, 4-ch, 0.25pF, USON 2.5x1.0). Covers up to 10 Gbps per lane.
 - **USB 3.2 Gen 2x2 / 20 Gbps:** TPD1E01B04 (TI, 1-ch, 0.18pF, DFN0603). Use 8x for full Type-C TX/RX.
-- **General GPIO/signal:** ESD321 (TI, 1-ch, 0.9pF, DFN1006) for 3.6V lines. ESD441 (TI, 1-ch, 1pF, DFN0603) for 5.5V lines (CC, VBUS, SBU).
+- **General GPIO/signal:** ESD321 (TI, 1-ch, 0.9pF, DFN1006) for 3.6V lines. ESD441 (TI, 1-ch, 1pF, DFN0603) for 5.5V lines: CC and VBUS on a 5V-only USB-C port; ESD341 (0.66pF) for SBU. A Type-C CC pin can short to VBUS in the connector, so CC needs >= 22V DC tolerance (24V clamp such as ESD752, or TPD2S300) wherever VBUS can exceed 5.5V; see `interfaces/usb.md`.
 - **CAN:** ESD2CANFD24-Q1 (TI, 2-ch, 2.5pF, SOT-23). Standard ESD2CAN24-Q1 is 3pF -- check if CAN FD > 2 Mbps needs lower.
 - **HDMI TMDS:** TPD4E05U06 (TI, 4-ch, 0.4pF, USON 2.5x1.0) -- two devices cover 8 TMDS lines plus clock.
 - **USB-PD VBUS surge (5-48V):** TVS0500 (5V/9V clamp), TVS1400 (9V/18V), TVS2200 (20V/28V), TVS3300 (33V/38V). Flat-clamp family, 2x2mm DRV package.

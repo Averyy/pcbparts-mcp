@@ -10,6 +10,7 @@ import sqlite3
 from collections import Counter
 from typing import Any
 
+from .nets import classify_role, is_power_net
 from .search import _escape_like, _source_url
 
 # Ref prefixes that are plain passives (R, C, L, RN, etc.)
@@ -58,12 +59,74 @@ def _match_focus(
     return matched, match_type, partial_matches
 
 
+# A rail with more parts than this shows its name and part count instead of the list (a GND net)
+_RAIL_LIST_LIMIT = 8
+
+
+def _net_pins(nets: list[dict], ref: str) -> list[tuple[dict, list[str]]]:
+    """Each net the part is on, with the part's own pin names there."""
+    found = []
+    prefix = f"{ref}."
+    for net in nets:
+        mine = [p[len(prefix):] for p in net.get("pins", []) if p.startswith(prefix)]
+        if mine:
+            found.append((net, mine))
+    return found
+
+
+def _pin_neighborhood(nets: list[dict], ref: str, comp_by_ref: dict[str, dict]
+                      ) -> tuple[dict[str, list[dict]], dict[str, dict]]:
+    """A part's pins and what each connects to, from the netlist: signal pins list the other parts
+    (as the build's IC neighborhoods do); ground and supply pins go apart, with the net's name and its
+    parts when there are few (VBUS through a fuse and a TVS) or their count (a GND net)."""
+    pins: dict[str, list[dict]] = {}
+    power: dict[str, dict] = {}
+    for net, mine in _net_pins(nets, ref):
+        others = list(dict.fromkeys(p.split(".")[0] for p in net["pins"] if p.split(".")[0] != ref))
+        parts = [{"ref": o, "value": comp_by_ref[o].get("value", ""), "role": classify_role(o, comp_by_ref[o], ref)}
+                 for o in others if o in comp_by_ref]
+        for pin in mine:
+            if is_power_net(net.get("name")):
+                power[pin] = ({"net": net.get("name") or "unnamed", "part_count": len(parts)}
+                              if len(parts) > _RAIL_LIST_LIMIT else {"net": net.get("name") or "unnamed", "parts": parts})
+            else:
+                listed = pins.setdefault(pin, [])
+                listed.extend(e for e in parts if e not in listed)
+    return pins, power
+
+
+def _component_focus(components: list[dict], focus: str) -> tuple[dict | None, str | None, list[dict]]:
+    """A focus on any part, when no IC matched: its ref ("J1", "D3"), or words in its value,
+    description or footprint ("USB-C" finds the receptacle). Connectors come first."""
+    focus_key = re.sub(r"[^a-z0-9]", "", focus.lower())
+    for c in components:
+        if c["ref"].lower() == focus.lower():
+            return c, "ref", []
+    if len(focus_key) < 2:
+        return None, None, []
+
+    def text(c: dict) -> str:
+        words = re.sub(r"[^a-z0-9]", "", " ".join(str(c.get(k) or "") for k in ("value", "description", "footprint")).lower())
+        # "USB TYPE C", "USB-C" and "Type-C" are the same receptacle
+        return words + (" usbc typec" if any(w in words for w in ("usbc", "typec")) else "")
+
+    key = focus_key.replace("usbtypec", "usbc")
+    matches = [c for c in components if key in text(c) and _ref_prefix(c["ref"]) not in _PASSIVE_PREFIXES]
+    matches.sort(key=lambda c: classify_role(c["ref"], c, "") != "connector")
+    return (matches[0], "partial", matches) if matches else (None, None, [])
+
+
+def _ref_prefix(ref: str) -> str:
+    prefix = re.match(r"[A-Za-z]+", ref)
+    return prefix.group() if prefix else ""
+
+
 def _clean_junk_values(pins: dict[str, list]) -> dict[str, list]:
     """Clean junk values in neighborhood pins (bare 'R'/'C'/'L' from parse failures)."""
     cleaned: dict[str, list] = {}
     for pin_name, components in pins.items():
         cleaned[pin_name] = [
-            {**c, "value": _JUNK_MAP[c["value"]]} if c["value"] in _JUNK_MAP else c
+            {**c, "value": _JUNK_MAP[c["value"]]} if c.get("value") in _JUNK_MAP else c
             for c in components
         ]
     return cleaned
@@ -138,18 +201,27 @@ def _enrich_neighborhoods(
             if desc:
                 ic_descriptions[ref] = desc
 
+    nets = _board_nets(conn, board_id)
     result = []
     for h in neighborhoods:
+        # Pins in the board's nets, rails included (the "_decoupling" group isn't a pin)
+        pin_names = {pin for _, mine in _net_pins(nets, h["ref"]) for pin in mine} if nets else \
+            {p for p in h["pins"] if p != "_decoupling"}
         entry: dict[str, Any] = {
             "ref": h["ref"],
             "value": h["value"],
-            "pin_count": len(h["pins"]),
+            "pin_count": len(pin_names),
         }
         desc = ic_descriptions.get(h["ref"])
         if desc:
             entry["description"] = desc
         result.append(entry)
     return result
+
+
+def _board_nets(conn: sqlite3.Connection, board_id: int) -> list[dict]:
+    row = conn.execute("SELECT nets_json FROM boards WHERE id = ?", (board_id,)).fetchone()
+    return json.loads(row[0]) if row and row[0] else []
 
 
 def get_board(
@@ -220,10 +292,29 @@ def get_board(
 
     if focus:
         matched, match_type, partial_matches = _match_focus(neighborhoods, focus)
+        nets = _board_nets(conn, row["id"])
+        components, _ = _filter_components(conn, row["id"], include_bom=True)
+        comp_by_ref = {c["ref"]: c for c in components}
+        if not matched and nets:
+            # Not an IC: any part by ref ("J1"), or words in its value ("USB-C")
+            part, match_type, partial_matches = _component_focus(components, focus)
+            if part:
+                pins, power = _pin_neighborhood(nets, part["ref"], comp_by_ref)
+                matched = {"ref": part["ref"], "value": part.get("value", ""), "pins": pins,
+                           **({"power_pins": power} if power else {})}
+                partial_matches = [{"ref": c["ref"], "value": c.get("value", "")} for c in partial_matches]
+        elif nets:
+            # The build leaves ground and supply pins out of IC neighborhoods
+            _, power = _pin_neighborhood(nets, matched["ref"], comp_by_ref)
+            if power:
+                matched = {**matched, "power_pins": power}
 
         if matched:
+            pins_in_nets = {pin for _, mine in _net_pins(nets, matched["ref"]) for pin in mine}
             matched = {**matched, **_part_numbers(conn, row["id"], matched["ref"]),
                        "pins": _clean_junk_values(matched["pins"])}
+            if pins_in_nets:
+                matched["pins_in_nets"] = len(pins_in_nets)
             result["focus"] = matched
             result["focus_match_type"] = match_type
 
@@ -248,14 +339,19 @@ def get_board(
         else:
             available = [{"ref": h["ref"], "value": h["value"]} for h in neighborhoods]
             if available:
-                result["focus_error"] = f"IC '{focus[:50]}' not found on this board"
+                result["focus_error"] = f"No IC, part ref or part value '{focus[:50]}' on this board"
             else:
                 result["focus_error"] = (
-                    f"IC '{focus[:50]}' not found — this board has no parsed IC neighborhoods. "
-                    "Try include_bom=True to see all components."
+                    f"No IC, part ref or part value '{focus[:50]}' on this board, and it has no parsed IC "
+                    "neighborhoods. Try include_bom=True to see all components."
                 )
                 available = [{"value": ic} for ic in key_ics]
             result["available_ics"] = available
+            ic_refs = {h["ref"] for h in neighborhoods}
+            others = [{"ref": c["ref"], "value": c.get("value", "")} for c in components
+                      if c["ref"] not in ic_refs and _ref_prefix(c["ref"]) not in _PASSIVE_PREFIXES]
+            if others:
+                result["available_refs"] = others
     else:
         components, passives_omitted = _filter_components(conn, row["id"], include_bom)
         result["components"] = components
