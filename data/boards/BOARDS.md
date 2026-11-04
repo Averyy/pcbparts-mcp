@@ -1,16 +1,16 @@
 # Reference Boards Registry
 
-294 boards across ~274 sources (271 GitHub repos + 3 ZIP downloads) from OSHW organizations, hacker hardware, 3D printer controllers, CM4/CM5 carriers, ham radio SDR, CNC controllers, drone FCs, eurorack synth modules, and more. Three schematic formats: KiCad 6+/8/9 S-expression, KiCad 5 legacy text, and Eagle XML.
+297 boards across ~277 sources (271 GitHub repos + 6 ZIP downloads) from OSHW organizations, hacker hardware, 3D printer controllers, CM4/CM5 carriers, ham radio SDR, CNC controllers, drone FCs, eurorack synth modules, and more. Four formats: KiCad 6+/8/9 S-expression, KiCad 5 legacy text, Eagle XML, and PADS PowerPCB ASCII layouts with a BOM spreadsheet (Espressif's DevKits).
 
-## All Parseable Boards (294 boards)
+## All Parseable Boards (297 boards)
 
 *Sorted by organization, then board name. Format: `kicad6` (KiCad 6), `kicad7` (KiCad 7), `kicad8`, `kicad9`, `kicad_legacy` (KiCad 4/5), `eagle` (Eagle XML). KiCad 6/7/8/9 all use S-expression format (same parser).*
 
-*Format breakdown: 85 kicad7, 29 kicad8, 31 kicad9, 16 kicad6, 45 kicad_legacy, 88 eagle = 294 total.*
+*Format breakdown: 85 kicad7, 29 kicad8, 31 kicad9, 16 kicad6, 45 kicad_legacy, 88 eagle, 3 pads = 297 total.*
 
 *All Eagle boards use embedded `<libraries>` in .sch XML — no external .lbr needed.*
 
-<!-- 294 entries -->
+<!-- 297 entries -->
 | Board | Org | Repo | Format | Schematic Path | Key Coverage |
 |-------|-----|------|--------|---------------|-------------|
 | iCEBreaker | 1BitSquared | `icebreaker-fpga/icebreaker` | kicad7 | `hardware/v1.0a/icebreaker.kicad_sch` | iCE40UP5K FPGA (open toolchain), FT2232H programming, PMOD connectors, SPI flash |
@@ -111,6 +111,9 @@
 | ChameleonMini RevG | emsec | `emsec/ChameleonMini` | eagle | `Hardware/ChameleonMini-RevG.sch` (1 sheet, 743 KB) | NFC emulator: contactless smartcard emulation (ISO 14443A/B, ISO 15693), antenna matching, NFC frontend (Ruhr University Bochum) |
 | ENNOID-BMS | EnnoidMe | `EnnoidMe/ENNOID-BMS` | kicad_legacy | `Master/HV/PCB/BMS-Master.sch` (hierarchical: CAN, MCU, PowerMonitor, PowerSupply, USB, ltc6813, switches, cell) | High-voltage modular BMS master (48-400V, 500A): STM32F303, LTC6820 isoSPI to external cell-monitor slave boards, LM5165 buck, ISO1050 isolated CAN, discrete contactor control, precharge circuit |
 | ESP32-C3-DevKit-RUST-1 | esp-rs | `esp-rs/esp-rust-board` | kicad7 | `hardware/esp-rust-board/esp-rust-board.kicad_sch` (1 sheet) | ESP32-C3-MINI-1 RISC-V (WiFi+BLE), ICM-42670-P 6-axis IMU, SHTC3 temp/humidity, MCP73831 LiPo charger, SY8088 buck, WS2812B, Feather form factor, CERN-OHL-P v2 |
+| Espressif ESP32-DevKitC V4 | Espressif | ZIP: `documentation.espressif.com/api/resource/doc/file/Wb1W49Yx/FILE/esp32-devkitc-v4_reference_design.zip` | pads | `ESP32-DevKitC-V4_Reference_Design/02_PCB Layout/ESP32_DevKitc_V4-ForPADS9.5_20171206A.asc` (BOM: `ESP32-DevKitC-V4_Reference_Design/05_BOM List/ESP32-DevKitC-V4-(ESP32-WROOM-32D)-BOMList(V1.1)-20180607A.xlsx`) | Espressif's own ESP32-WROOM-32D board: CP2102N USB-UART on micro-USB with LESD5D5.0 ESD on D+/D-/VBUS, BAT760 VBUS diode, AMS1117-3.3 LDO, EN RC reset, DTR/RTS auto-reset transistors, boot and reset buttons |
+| Espressif ESP32-S3-DevKitC-1 | Espressif | ZIP: `documentation.espressif.com/api/resource/doc/file/0wyBg1eV/FILE/ESP32-S3-DevKitC-1_Reference_Design.zip` | pads | `ESP32-S3-DevKitC-1/02_PCB/PCB_ESP32-S3-DevKitC-1_V1.1_20220429.asc` (BOM: `ESP32-S3-DevKitC-1/05_BOM/BOM(V0.3)_ESP32-S3-DevKitC-1_XX_TTNNVV.xlsx`) | Espressif's own ESP32-S3-WROOM-1 board (v1.1): native USB and CP2102N USB-UART micro-USB ports with LESD5D5.0 ESD on D+/D-/VBUS, Schottky VBUS OR-ing, SGM2212-3.3 LDO, CHIP_PU RC reset, DTR/RTS auto-reset transistors, WS2812 RGB LED |
+| Espressif ESP32-S3-DevKitM-1 | Espressif | ZIP: `documentation.espressif.com/api/resource/doc/file/BV1rwY65/FILE/ESP32-S3-DevKitM-1_Reference_Design.zip` | pads | `ESP32-S3-DevKitM-1/02_PCB/PCB_ESP32-S3-DevKitM-1_V1.0_20220429.asc` (BOM: `ESP32-S3-DevKitM-1/05_BOM/BOM(V0.2)_ESP32-S3-DEVKITM-1_XX_TTNNVV.xlsx`) | Espressif's own ESP32-S3-MINI-1 board: native USB and CP2102N USB-UART micro-USB ports with LESD5D5.0 ESD on D+/D-/VBUS, Schottky VBUS OR-ing, SGM2212-3.3 LDO, CHIP_PU RC reset, DTR/RTS auto-reset transistors, WS2812 RGB LED |
 | Pipad CM4 Logic Board | EvanKrall | `EvanKrall/pipad` | kicad6 | `pipad.kicad_sch` (8 sheets) | CM4 tablet motherboard with MIPI DSI to LVDS bridge (SN65DSI83), capacitive touchscreen controller (GT9113), DisplayPort output |
 | Koyomi LVDS Hat | exentio | `exentio/koyomi-lvds-hat` | kicad8 | `koyomi-lvds-hat.kicad_sch` (1 sheet) | RPi LVDS transmitter hat (SN75LVDS83B FlatLink) for repurposing laptop LCD panels, I-PEX micro-coax connector |
 | ExpressLRS RX 20x20 v2 | ExpressLRS | `ExpressLRS/ExpressLRS-Hardware` | eagle | `PCB/2400MHz/RX_20x20/v2.0/pcb/project/rx_1280.sch` | SX1280 2.4GHz LoRa RC receiver, ESP8285, antenna matching network, dominant open RC link protocol |
@@ -349,6 +352,7 @@
 - ChameleonMini RevG (Eagle 6.6) is a 743 KB single-sheet schematic — large but parseable
 - RPi CM4 IO Board and CM5 IO Board are **ZIP downloads**, not GitHub repos. Pipeline needs `wget` + `unzip` instead of sparse git checkout. CM4: `https://pip-assets.raspberrypi.com/categories/1210-design-files/documents/RP-008173-DS-1-CM4IO-KiCAD.zip` → `CM4IOv5.kicad_sch`. CM5: `https://pip-assets.raspberrypi.com/categories/1098-design-files/documents/RP-008099-DD-1-CM5%20IO%20Board,%20revision%202,%20KiCAD%20files..zip` → `CM5IO.kicad_sch`. Same parser once files are extracted.
 - Seeed XIAO ESP32-S3 Sense is a **ZIP download** too, extracted into `.cache/repos/seeed-xiao-esp32s3/` (the YAML's `source`). Seeed's "XIAO ESP32-S3" and "XIAO ESP32-S3 Sense" KiCad links serve the same file, the Sense design (camera/microphone board connector included).
+- Espressif's DevKits (ESP32-S3-DevKitC-1, ESP32-S3-DevKitM-1, ESP32-DevKitC V4) are **ZIP downloads** from Espressif's documentation site: `parse_boards.py` fetches them into `.cache/repos/<slug>/` (`fetch_zip`) and reads the PADS ASCII layout (`.asc`) with the BOM spreadsheet named in the row (`uv run --with openpyxl python scripts/parse_boards.py --board <slug>`). The OrCAD `.DSN` schematic is binary and not read; parts the schematic marks `(NC)` are on the layout but not in the BOM, so `board_overrides.py` gives their schematic values and "Not fitted". The ZIPs state no license; only parts and connections are kept, with a link to the download. The ESP32-C6-DevKitC-1 is published as PDFs only.
 - PowerFeather PowerUPS keeps its BQ25622E and MAX17260 sheets in the `powerfeather-kicad-lib` submodule at a pinned commit (the library's current head no longer has them); `clone_repo()` fetches submodules.
 - Duet 2 WiFi uses KiCad legacy with 7 hierarchical sheets — one of the deeper legacy hierarchies alongside VESC 4.12 (7 sheets) and stmbl (12 sheets)
 - LDO Leviathan v1.3 uses `.kicad_sch` format (modern KiCad). Repo also has legacy `.sch` files — use `.kicad_sch`

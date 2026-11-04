@@ -4,6 +4,23 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.8 (2026-11-04)
+
+New boards and reply fields, all optional.
+
+### Added
+
+- **Espressif's own DevKits as reference boards:** ESP32-S3-DevKitC-1 v1.1, ESP32-S3-DevKitM-1 and ESP32-DevKitC V4 (ESP32-WROOM-32D), from the reference-design ZIPs Espressif publishes (a PADS layout and a BOM spreadsheet; the board parser reads both now). `board_search(org="Espressif")` found nothing, and "what does Espressif do" for native USB, ESD, the CHIP_PU RC and auto-reset fell back to reading schematic PDFs. Parts the schematic marks not fitted say so in their description. The links point to Espressif's download; the ZIPs state no license, and only the parts and connections are kept.
+- **`pin_nets` in `board_get` focus:** each pin's net. Numbered pins (an ESP32 module's, a KiCad pad's) now say what they are: on the S3 DevKitC-1 the module's pin 3 is CHIP_PU and 27 is GPIO0.
+
+### Fixed
+
+- **ZIP-download boards' links and makers:** the Raspberry Pi CM4/CM5 IO boards and Seeed's XIAO ESP32-S3 Sense linked to github.com pages that don't exist (`https://github.com/rpi-cm4io`), and their org read "Rpi-cm4io", so `org="Raspberry Pi"` missed them. They now link the maker's download and list as Raspberry Pi and Seeed Studio.
+
+### Design rules
+
+- **ESP32 USB and reset, from Espressif's DevKits:** one LESD5D5.0CT1G (5 V, 15 pF) on each of VBUS, D- and D+ per USB port and nothing on CC; the ESP32-C6-DevKitC-1 v1.4's two USB-C ports with 5.1 kohm Rd, SBU unconnected, shell to GND through 0 ohm and Schottky OR-ing into 5 V (from its schematic, which is published only as a PDF); and the DevKits' 10 kohm + 1 uF on CHIP_PU with an unfitted 0.1 uF beside it.
+
 ## 0.8.7 (2026-11-04)
 
 Nothing existing changes shape.

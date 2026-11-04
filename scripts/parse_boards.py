@@ -107,6 +107,10 @@ class BoardData:
     outline: BoardOutline | None = None
     design_rules: DesignRules | None = None
     copper_pours: list[CopperPour] = field(default_factory=list)
+    # Boards from a ZIP download, not a GitHub repo: where it is, and whose (source is the cache key)
+    source_url: str = ""
+    org: str = ""
+    org_display: str = ""
 
 
 # ---------------------------------------------------------------------------
@@ -149,6 +153,8 @@ def parse_boards_md(path: Path | None = None) -> dict[str, dict]:
 
             # Clean repo field: strip backticks
             repo = repo_raw.strip("`")
+            # A PADS row names its BOM after the layout: "`x.asc` (BOM: `x.xlsx`)"
+            bom_match = re.search(r"BOM:\s*`([^`]+)`", sch_path)
             # Clean schematic path: remove backticks, remove size/sheet annotations
             sch_path_clean = sch_path.replace("`", "")
             sch_path_clean = re.sub(r"\s*\(.*?\)\s*$", "", sch_path_clean).strip()
@@ -161,6 +167,7 @@ def parse_boards_md(path: Path | None = None) -> dict[str, dict]:
                 "format": fmt,
                 "schematic_path": sch_path_clean,
                 "key_coverage": key_coverage,
+                **({"bom_path": bom_match.group(1)} if bom_match else {}),
             }
 
     return boards
@@ -2048,6 +2055,28 @@ def clone_repo(org_repo: str, fmt: str, cache_dir: Path | None = None,
     return repo_dir
 
 
+def fetch_zip(url: str, slug: str, cache_dir: Path | None = None, force: bool = False) -> Path:
+    """Download and unpack a design ZIP (Espressif's DevKit reference designs) into the cache."""
+    import shutil
+    import tempfile
+
+    cache_dir = cache_dir or CACHE_DIR
+    repo_dir = cache_dir / slug
+    if repo_dir.exists() and not force:
+        log.info("Using cached download: %s", repo_dir)
+        return repo_dir
+    if repo_dir.exists():
+        shutil.rmtree(repo_dir)
+    repo_dir.mkdir(parents=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        archive = Path(tmp) / "design.zip"
+        log.info("Downloading %s", url)
+        subprocess.run(["curl", "-sSfL", "--max-time", "300", "-o", str(archive), url], check=True, timeout=320)
+        subprocess.run(["unzip", "-q", "-o", str(archive), "-x", "__MACOSX/*", "-d", str(repo_dir)],
+                       check=True, timeout=120)
+    return repo_dir
+
+
 # ---------------------------------------------------------------------------
 # Board-specific overrides (imported from board_overrides.py)
 # ---------------------------------------------------------------------------
@@ -2500,6 +2529,9 @@ def board_to_dict(board: BoardData) -> dict:
         "source": board.source,
         "format": board.format,
     }
+    for key in ("source_url", "org", "org_display"):
+        if getattr(board, key):
+            d[key] = getattr(board, key)
 
     if board.description:
         d["description"] = board.description
@@ -2660,9 +2692,12 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
                   force_clone: bool = False) -> BoardData | None:
     """Process a single board: clone → parse → write YAML."""
     fmt = board_info["format"]
-
-    # Clone repo
-    repo_dir = clone_repo(board_info["repo"], fmt, force=force_clone)
+    zip_url = ""
+    if board_info["repo"].startswith("ZIP:"):
+        zip_url = "https://" + re.sub(r"^ZIP:\s*|[`\s]", "", board_info["repo"]).removeprefix("https://")
+        repo_dir = fetch_zip(zip_url, slug, force=force_clone)
+    else:
+        repo_dir = clone_repo(board_info["repo"], fmt, force=force_clone)
 
     # Find schematic file
     sch_path = repo_dir / board_info["schematic_path"]
@@ -2720,6 +2755,12 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
         pro_path = sch_path.with_suffix(".kicad_pro")
         if pro_path.exists():
             design_rules = enrich_from_project(pro_path, design_rules, nets)
+
+    elif fmt == "pads":
+        from parsers.pads import parse_pads
+
+        bom_path = repo_dir / board_info["bom_path"] if board_info.get("bom_path") else None
+        components, nets, positions, outline, design_rules = parse_pads(sch_path, bom_path)
 
     elif fmt == "kicad_legacy":
         from parsers.kicad_legacy import parse_schematic as legacy_parse_sch
@@ -2782,7 +2823,10 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
     board = BoardData(
         name=board_info["name"],
         slug=slug,
-        source=board_info["repo"],
+        source=slug if zip_url else board_info["repo"],
+        source_url=zip_url,
+        org=slugify(board_info["org"]) if zip_url else "",
+        org_display=board_info["org"] if zip_url else "",
         format=fmt,
         description=description,
         tags=tags,

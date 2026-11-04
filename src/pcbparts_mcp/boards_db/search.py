@@ -11,8 +11,10 @@ def _escape_like(value: str) -> str:
 
 
 def _source_url(source: str | None) -> str | None:
-    """Build GitHub URL from source field."""
-    return f"https://github.com/{source}" if source else None
+    """A GitHub repo's URL from its "org/repo" source; a ZIP download's source is its URL already."""
+    if not source:
+        return None
+    return source if source.startswith(("https://", "http://")) else f"https://github.com/{source}"
 
 
 # Stop words filtered from FTS queries

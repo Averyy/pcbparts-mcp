@@ -32,6 +32,7 @@
 ### Reset Circuit
 
 - **RC delay: R = 10 kohm, C = 1 uF on CHIP_PU (S3/C6) or CHIP_EN (C3), when 3V3 rises in under ~7 ms.** tSTBL (>= 50 us) counts from the supply crossing 2.8 V, and CHIP_PU must stay below VIL_nRST (0.25 * VDD) until then. The RC voltage follows a slow ramp up, so with tau = 10 ms it crosses 0.25 * VDD about 6 ms into the ramp: an 8.7 ms soft start needs tau >= 12.3 ms. Espressif lists "slow power rise or fall" as a case where the RC alone fails. Reset requires CHIP_PU/EN held below 0.25 * VDD for >= 50 us (tRST).
+- **Espressif's DevKits fit exactly 10 kohm + 1 uF on CHIP_PU (S3-DevKitC-1, S3-DevKitM-1, C6-DevKitC-1), and leave a 0.1 uF footprint unfitted beside it and on the boot pin.** Their 3.3 V is an SGM2212-3.3 LDO fed from USB 5 V; check your own regulator's ramp against the 7 ms limit above before copying the RC.
 - **If the regulator's soft start is slow or unknown: drive CHIP_PU from its power-good output or a supervisor, or size tau with the formula below.** When sizing C, count its DC-bias loss at 3.3 V (a 2.2 uF X5R 0402 can be near half that).
 - **For slow/unstable power sources (battery charging, solar): add external reset IC** with threshold ~3.0V (e.g., voltage supervisor). RC circuit alone may not provide monotonic, clean enable signal.
 - **Auto-reset for programming: DTR -> boot pin, RTS -> EN.** S3: DTR -> GPIO0, RTS -> CHIP_PU. C3/C6: DTR -> GPIO9, RTS -> CHIP_EN/CHIP_PU. Two-transistor circuit prevents simultaneous DTR+RTS assertion from holding chip in reset. Requires 1 uF cap on EN pin for reliable auto-reset -- boards without this cap fail intermittently on Windows.
@@ -75,6 +76,7 @@
 - **S3 USB pins: GPIO19 (D-) / GPIO20 (D+). C3: GPIO18 (D-) / GPIO19 (D+). C6: GPIO12 (D-) / GPIO13 (D+).** S3 has USB OTG (full-speed); C3/C6 have USB Serial/JTAG controller only.
 - **Reserve 22-33 ohm series-resistor footprints between the chip USB pins and the connector, close to the chip, plus a cap-to-ground footprint on each trace, initially unpopulated.** Espressif's checklist says "reserve" (initial value 22/33 ohm); they are EMC tuning options, not required parts.
 - **USB differential pair: 90 ohm impedance.**
+- **Espressif's own DevKits put one LESD5D5.0CT1G (LRC, 5 V, 15 pF) on each of VBUS, D- and D+ per USB port, and nothing on CC.** ESP32-C6-DevKitC-1 v1.4: two USB-C ports (J2 to the CP2102N bridge, J4 to native GPIO12/13), 5.1 kohm Rd on each CC pin, SBU unconnected, shell to GND through a 0 ohm (R15), and each VBUS into VCC_5V through a 1N5819 Schottky (OR-ing the two ports). The micro-USB S3-DevKitC-1 v1.1, S3-DevKitM-1 and DevKitC V4 protect D+/D-/VBUS the same way; their netlists are in board_get (espressif-esp32-s3-devkitc-1, espressif-esp32-s3-devkitm-1, espressif-esp32-devkitc-v4). 15 pF per line is fine at full speed (12 Mbps, all ESP32 USB) but not at 480 Mbps.
 - **USB D+ fluctuates between high and low on power-up.** If stable initial state is needed, add external pull-up on D+ for consistent high level at startup.
 - **S3 USB-OTG download boot mode: drives MTMS, MTDI, MTDO, MTCK, GPIO21, GPIO38 after init.** If USB-OTG download boot is not needed, disable via eFuse bit EFUSE_DIS_USB_OTG_DOWNLOAD_MODE to prevent unexpected IO state changes.
 
@@ -125,4 +127,6 @@
 8. Espressif -- ESP32-S3 Series Datasheet v2.2 (Table 2-13 power-up timing, Table 5-2 note 3 eFuse supply): https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf
 9. Espressif -- ESP32-C3 Series Datasheet v2.4 (Table 2-11 power-up timing, Table 5-2 note 2 eFuse supply): https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf
 10. Espressif -- ESP32-C6 Series Datasheet v1.5 (Table 2-15 power-up timing, Table 5-2 note 3 eFuse supply on VDDPST2): https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf
+11. Espressif -- ESP32-C6-DevKitC-1 v1.4 schematic (USB-C ports, ESD, CHIP_PU RC): https://dl.espressif.com/dl/schematics/esp32-c6-devkitc-1-schematics_v1.4.pdf
+12. Espressif -- ESP32-S3-DevKitC-1 v1.1 reference design (schematic, PADS layout, BOM): https://documentation.espressif.com/api/resource/doc/file/0wyBg1eV/FILE/ESP32-S3-DevKitC-1_Reference_Design.zip
 

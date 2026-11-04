@@ -1,0 +1,484 @@
+name: Espressif ESP32-DevKitC V4
+slug: espressif-esp32-devkitc-v4
+source: espressif-esp32-devkitc-v4
+format: pads
+source_url: https://documentation.espressif.com/api/resource/doc/file/Wb1W49Yx/FILE/esp32-devkitc-v4_reference_design.zip
+org: espressif
+org_display: Espressif
+description: 'Espressif''s own ESP32-WROOM-32D board: CP2102N USB-UART on micro-USB with LESD5D5.0 ESD on D+/D-/VBUS, BAT760
+  VBUS diode'
+tags: [esd-protection, power-supply, usb]
+key_ics: [ESP32-WROOM-32D, CP2102N, AMS1117]
+outline:
+  width_mm: 27.94
+  height_mm: 48.26
+design_rules:
+  layers: 2
+components:
+- ref: C1
+  value: 22uF
+  footprint: '0603'
+  voltage: 10V
+  tolerance: 20%
+  description: Ceramic Capacitor
+- ref: C14
+  value: 100nF
+  footprint: '0402'
+  voltage: 50V
+  tolerance: 10%
+  description: Ceramic Capacitor
+- ref: C15
+  value: 100nF
+  footprint: '0402'
+  description: 'Not fitted ((NC) on Espressif''s schematic): 0.1uF on IO0'
+- ref: C19
+  value: 100nF
+  footprint: '0402'
+  voltage: 50V
+  tolerance: 10%
+  description: Ceramic Capacitor
+  decouples: U1
+- ref: C20
+  value: 4.7uF
+  footprint: '0402'
+  voltage: 6.3V
+  tolerance: 10%
+  description: Ceramic Capacitor
+  decouples: U2
+- ref: C21
+  value: 22uF
+  footprint: '0603'
+  voltage: 10V
+  tolerance: 20%
+  description: Ceramic Capacitor
+  decouples: U2
+- ref: C22
+  value: 100nF
+  footprint: '0402'
+  voltage: 50V
+  tolerance: 10%
+  description: Ceramic Capacitor
+  decouples: U2
+- ref: C3
+  value: 22uF
+  footprint: '0603'
+  voltage: 10V
+  tolerance: 20%
+  description: Ceramic Capacitor
+  decouples: U2
+- ref: C9
+  value: 100nF
+  footprint: '0402'
+  voltage: 50V
+  tolerance: 10%
+  description: Ceramic Capacitor
+- ref: D1
+  value: RED LED
+  footprint: '0603'
+  description: 'light-emitting diode: Red'
+- ref: D2
+  value: ESP32-WROOM-32D
+  footprint: ESP32_MODULE
+  description: ESP32-WROOM-32D (32 Mbit)
+  mpn: ESP32-WROOM-32D
+- ref: D3
+  value: BAT760-7
+  footprint: SOD323
+  description: Schottky Diode,Vrrm=30V, Vr=21V, I=1A, IFSM=5.5A
+- ref: D4
+  value: LESD5D5.0CT1G
+  footprint: SOD-523
+  description: ESD, TVS Diode, 5V
+- ref: D5
+  value: LESD5D5.0CT1G
+  footprint: SOD-523
+  description: ESD, TVS Diode, 5V
+- ref: D6
+  value: LESD5D5.0CT1G
+  footprint: SOD-523
+  description: ESD, TVS Diode, 5V
+- ref: J1
+  value: Micro USB
+  footprint: USB_5P
+  description: Micro USB Type B receptacle, 5 pins, through-hole legs
+- ref: J2
+  value: CON19X1_2P54
+  footprint: CON19_2P54
+  description: Male PCB Single Row Straight Header Connector, 2.54 mm Pitch, 19 Pins
+- ref: J3
+  value: CON19X1_2P54
+  footprint: CON19_2P54
+  description: Male PCB Single Row Straight Header Connector, 2.54 mm Pitch, 19 Pins
+- ref: Q1
+  value: S8050
+  footprint: SOT-23-3
+  description: Transistor
+- ref: Q2
+  value: S8050
+  footprint: SOT-23-3
+  description: Transistor
+- ref: R11
+  value: 10kohm
+  footprint: '0402'
+  tolerance: 5%
+  description: Chip Resistors
+  pullup: EN
+- ref: R17
+  value: 0ohm
+  footprint: '0402'
+  tolerance: 5%
+  description: Chip Resistors
+- ref: R18
+  value: 0ohm
+  footprint: '0402'
+  tolerance: 5%
+  description: Chip Resistors
+- ref: R2
+  value: 2kohm
+  footprint: '0402'
+  tolerance: 5%
+  description: Chip Resistors
+- ref: R21
+  value: 10kohm
+  footprint: '0402'
+  tolerance: 5%
+  description: Chip Resistors
+- ref: R22
+  value: 10kohm
+  footprint: '0402'
+  tolerance: 5%
+  description: Chip Resistors
+- ref: R23
+  value: 10kohm
+  footprint: '0402'
+  description: Not fitted ((NC) on Espressif's schematic)
+  pulldown: ACTIVE
+- ref: R24
+  value: 2kohm
+  footprint: '0402'
+  tolerance: 5%
+  description: Chip Resistors
+  pullup: N16660617
+- ref: R25
+  value: 22.1kohm
+  footprint: '0402'
+  tolerance: 5%
+  description: Chip Resistors
+  pullup: N16507634
+- ref: R26
+  value: 47.5kohm
+  footprint: '0402'
+  tolerance: 5%
+  description: Chip Resistors
+  pulldown: N16507634
+- ref: SW1
+  value: SW push button
+  footprint: Tact Switch
+  description: "\u590D\u4F4D\u6309\u952E\uFF0C2 \u811A\uFF0C3x4x2\uFF0C\u8D34\u7247 (reset button, 2-pin, 3x4x2, SMT)"
+- ref: SW2
+  value: SW push button
+  footprint: Tact Switch
+  description: "\u590D\u4F4D\u6309\u952E\uFF0C2 \u811A\uFF0C3x4x2\uFF0C\u8D34\u7247 (reset button, 2-pin, 3x4x2, SMT)"
+- ref: U1
+  value: CP2102N-A01-GQFN28
+  footprint: CP2102_QFN_28P
+  description: USB-to-UART,USB2.0 full speed, data rate up to 3M baud
+- ref: U2
+  value: AMS1117-3.3
+  footprint: SOT-223
+  description: "LDO, 5V \u8F6C 3.3V \u56FA\u5B9A\u8F93\u51FA, 1A, SOT-223 (LDO, 5V/3.3V, 1A, SOT-223)"
+- ref: U3
+  value: ESP32-WROVER
+  footprint: ESP32_MODULE_2COL
+  description: 'Not fitted ((NC) on Espressif''s schematic): alternative ESP32-WROVER footprint under the WROOM module'
+nets:
+- name: ACTIVE
+  pins: [R23.2, U1.11]
+- name: CLK
+  pins: [D2.20, J3.19, U3.20]
+- name: CMD
+  pins: [D2.19, J2.18, U3.19]
+- name: D+
+  pins: [D5.1, J1.3, U1.4]
+- name: D-
+  pins: [D4.1, J1.2, U1.5]
+- name: DTR
+  pins: [Q2.2, R21.1, U1.28]
+- name: EN
+  pins:
+  - C14.2
+  - C9.1
+  - D2.3
+  - J2.2
+  - Q1.3
+  - R11.2
+  - SW2.2
+  - U3.3
+- name: EXT_5V
+  pins: [C1.2, D3.1, J2.19, R2.1, U2.3]
+- name: GND
+  pins:
+  - C1.1
+  - C14.1
+  - C15.1
+  - C19.2
+  - C20.1
+  - C21.1
+  - C22.2
+  - C3.1
+  - C9.2
+  - D1.2
+  - D2.1
+  - D2.15
+  - D2.38
+  - D2.39
+  - D4.2
+  - D5.2
+  - D6.2
+  - J1.5
+  - J1.6
+  - J1.7
+  - J1.8
+  - J1.9
+  - J2.14
+  - J3.1
+  - J3.7
+  - R23.1
+  - R26.1
+  - SW1.1
+  - SW2.1
+  - U1.29
+  - U1.3
+  - U2.1
+  - U3.1
+  - U3.15
+  - U3.38
+  - U3.39
+- name: IO0
+  pins: [C15.2, D2.25, J3.14, Q2.3, SW1.2, U3.25]
+- name: IO12
+  pins: [D2.14, J2.13, U3.14]
+- name: IO13
+  pins: [D2.16, J2.15, U3.16]
+- name: IO14
+  pins: [D2.13, J2.12, U3.13]
+- name: IO15
+  pins: [D2.23, J3.16, U3.23]
+- name: IO16
+  pins: [D2.27, J3.12, U3.27]
+- name: IO17
+  pins: [D2.28, J3.11, U3.28]
+- name: IO18
+  pins: [D2.30, J3.9, U3.30]
+- name: IO19
+  pins: [D2.31, J3.8, U3.31]
+- name: IO2
+  pins: [D2.24, J3.15, U3.24]
+- name: IO21
+  pins: [D2.33, J3.6, U3.33]
+- name: IO22
+  pins: [D2.36, J3.3, U3.36]
+- name: IO23
+  pins: [D2.37, J3.2, U3.37]
+- name: IO25
+  pins: [D2.10, J2.9, U3.10]
+- name: IO26
+  pins: [D2.11, J2.10, U3.11]
+- name: IO27
+  pins: [D2.12, J2.11, U3.12]
+- name: IO32
+  pins: [D2.8, J2.7, U3.8]
+- name: IO33
+  pins: [D2.9, J2.8, U3.9]
+- name: IO34
+  pins: [D2.6, J2.5, U3.6]
+- name: IO35
+  pins: [D2.7, J2.6, U3.7]
+- name: IO4
+  pins: [D2.26, J3.13, U3.26]
+- name: IO5
+  pins: [D2.29, J3.10, U3.29]
+- name: N16505834
+  pins: [Q2.1, R22.2]
+- name: N16505838
+  pins: [Q1.1, R21.2]
+- name: N16507634
+  pins: [R25.1, R26.2, U1.8]
+- name: N16522975
+  pins: [D1.1, R2.2]
+- name: N16660617
+  pins: [R24.2, U1.9]
+- name: NC
+  pins: [D2.32, U3.32]
+- name: RTS
+  pins: [Q1.2, R22.1, U1.24]
+- name: RXD
+  pins: [R17.1, U1.25]
+- name: RXD0
+  pins: [D2.34, J3.5, R18.2, U3.34]
+- name: SD0
+  pins: [D2.21, J3.18, U3.21]
+- name: SD1
+  pins: [D2.22, J3.17, U3.22]
+- name: SD2
+  pins: [D2.17, J2.16, U3.17]
+- name: SD3
+  pins: [D2.18, J2.17, U3.18]
+- name: SENSOR_VN
+  pins: [D2.5, J2.4, U3.5]
+- name: SENSOR_VP
+  pins: [D2.4, J2.3, U3.4]
+- name: TXD
+  pins: [R18.1, U1.26]
+- name: TXD0
+  pins: [D2.35, J3.4, R17.2, U3.35]
+- name: VBUS
+  pins: [D3.2, D6.1, J1.1, R25.2]
+- name: VDD33
+  pins:
+  - C19.1
+  - C20.2
+  - C21.2
+  - C22.1
+  - C3.2
+  - D2.2
+  - J2.1
+  - R11.1
+  - R24.1
+  - U1.6
+  - U1.7
+  - U2.2
+  - U2.4
+  - U3.2
+positions:
+- ref: C1
+  x: 8.38
+  y: 17.4
+  rot: 270.0
+- ref: C14
+  x: 8.64
+  y: 6.35
+  rot: 270.0
+- ref: C15
+  x: 19.3
+  y: 6.35
+  rot: 270.0
+- ref: C19
+  x: 9.14
+  y: 13.84
+  rot: 180.0
+- ref: C20
+  x: 9.14
+  y: 14.73
+- ref: C21
+  x: 6.22
+  y: 20.95
+  rot: 270.0
+- ref: C22
+  x: 6.35
+  y: 18.54
+  rot: 180.0
+- ref: C3
+  x: 8.38
+  y: 20.95
+  rot: 270.0
+- ref: C9
+  x: 6.35
+  y: 16.51
+- ref: D1
+  x: 6.22
+  y: 12.32
+  rot: 90.0
+- ref: D2
+  x: 5.0
+  y: 46.8
+- ref: D3
+  x: 9.14
+  y: 8.38
+- ref: D4
+  x: 13.84
+  y: 7.87
+  rot: 90.0
+- ref: D5
+  x: 15.24
+  y: 7.87
+  rot: 90.0
+- ref: D6
+  x: 12.45
+  y: 7.87
+  rot: 90.0
+- ref: J1
+  x: 13.94
+  y: 1.84
+  rot: 90.0
+- ref: J2
+  x: 1.24
+  y: 47.01
+- ref: J3
+  x: 26.64
+  y: 47.01
+- ref: Q1
+  x: 21.59
+  y: 11.56
+  rot: 270.0
+- ref: Q2
+  x: 21.59
+  y: 19.43
+  rot: 90.0
+- ref: R11
+  x: 6.35
+  y: 17.53
+  rot: 180.0
+- ref: R17
+  x: 18.92
+  y: 14.35
+  rot: 90.0
+- ref: R18
+  x: 18.03
+  y: 14.35
+  rot: 90.0
+- ref: R2
+  x: 6.22
+  y: 10.29
+  rot: 90.0
+- ref: R21
+  x: 18.92
+  y: 9.91
+  rot: 270.0
+- ref: R22
+  x: 18.03
+  y: 9.91
+  rot: 270.0
+- ref: R23
+  x: 9.14
+  y: 11.81
+- ref: R24
+  x: 9.14
+  y: 12.83
+- ref: R25
+  x: 9.65
+  y: 10.29
+  rot: 270.0
+- ref: R26
+  x: 8.64
+  y: 10.29
+  rot: 90.0
+- ref: SW1
+  x: 20.5
+  y: 1.86
+  rot: 90.0
+- ref: SW2
+  x: 4.5
+  y: 1.86
+  rot: 90.0
+- ref: U1
+  x: 14.0
+  y: 12.25
+  rot: 270.0
+- ref: U2
+  x: 10.92
+  y: 19.18
+  rot: 270.0
+- ref: U3
+  x: 5.5
+  y: 46.8

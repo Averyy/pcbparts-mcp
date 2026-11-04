@@ -12,6 +12,23 @@ from __future__ import annotations
 # ---------------------------------------------------------------------------
 
 BOARD_OVERRIDES: dict[tuple[str, str], dict[str, str]] = {
+    # Espressif DevKits (PADS layout + BOM): parts on the layout but not in the BOM are the schematic's
+    # "(NC)" footprints; their values come from the schematic
+    ("espressif-esp32-s3-devkitc-1", "C13"): {"value": "100nF", "description": "Not fitted ((NC) on Espressif's schematic): 0.1uF on GPIO0"},
+    ("espressif-esp32-s3-devkitc-1", "C14"): {"value": "100nF", "description": "Not fitted ((NC) on Espressif's schematic): 0.1uF on CHIP_PU"},
+    ("espressif-esp32-s3-devkitc-1", "C15"): {"value": "10uF", "description": "Not fitted ((NC) on Espressif's schematic)"},
+    ("espressif-esp32-s3-devkitc-1", "R14"): {"value": "10kohm", "description": "Not fitted ((NC) on Espressif's schematic)"},
+    ("espressif-esp32-s3-devkitm-1", "C13"): {"value": "100nF", "description": "Not fitted ((NC) on Espressif's schematic): 0.1uF on GPIO0"},
+    ("espressif-esp32-s3-devkitm-1", "C14"): {"value": "100nF", "description": "Not fitted ((NC) on Espressif's schematic): 0.1uF on CHIP_PU"},
+    ("espressif-esp32-s3-devkitm-1", "C15"): {"value": "10uF", "description": "Not fitted ((NC) on Espressif's schematic)"},
+    ("espressif-esp32-s3-devkitm-1", "R14"): {"value": "10kohm", "description": "Not fitted ((NC) on Espressif's schematic)"},
+    ("espressif-esp32-s3-devkitm-1", "R6"): {"value": "10kohm", "description": "Not fitted ((NC) on Espressif's schematic)"},
+    ("espressif-esp32-devkitc-v4", "C15"): {"value": "100nF", "description": "Not fitted ((NC) on Espressif's schematic): 0.1uF on IO0"},
+    ("espressif-esp32-devkitc-v4", "R23"): {"value": "10kohm", "description": "Not fitted ((NC) on Espressif's schematic)"},
+    ("espressif-esp32-devkitc-v4", "U3"): {"value": "ESP32-WROVER", "description": "Not fitted ((NC) on Espressif's schematic): alternative ESP32-WROVER footprint under the WROOM module"},
+    # The module is D2 on this board; its BOM value is the old "ESP-WROOM-32" name
+    ("espressif-esp32-devkitc-v4", "D2"): {"value": "ESP32-WROOM-32D", "mpn": "ESP32-WROOM-32D"},
+    ("espressif-esp32-devkitc-v4", "J1"): {"value": "Micro USB", "description": "Micro USB Type B receptacle, 5 pins, through-hole legs"},
     # Adafruit RFM LoRa breakout: shared schematic defaults to RFM69HCW,
     # but the board is sold/documented as RFM95W LoRa
     ("adafruit-rfm95w-lora-breakout", "U1"): {
@@ -93,6 +110,10 @@ BOARD_OVERRIDES: dict[tuple[str, str], dict[str, str]] = {
 # ---------------------------------------------------------------------------
 
 BOARD_META_OVERRIDES: dict[str, dict] = {
+    # Espressif's DevKits: the USB-UART bridge and LDO are what agents compare against
+    "espressif-esp32-s3-devkitc-1": {"key_ics": ["ESP32-S3-WROOM-1", "CP2102N", "SGM2212"]},
+    "espressif-esp32-s3-devkitm-1": {"key_ics": ["ESP32-S3-MINI-1", "CP2102N", "SGM2212"]},
+    "espressif-esp32-devkitc-v4": {"key_ics": ["ESP32-WROOM-32D", "CP2102N", "AMS1117"]},
     "adafruit-esp32-s3-feather": {
         "key_ics": ["ESP32-S3-MINI-1", "LC709203F", "MCP73831"],
     },
