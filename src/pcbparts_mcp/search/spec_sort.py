@@ -85,7 +85,10 @@ SORTABLE_SPECS: tuple[SortableSpec, ...] = (
     SortableSpec("Isat", "isat_a", ("Current - Saturation(Isat)", "Current - Saturation (Isat)", "Saturation Current"),
                  parse_current, words=("saturation current",), phrases=("isat", "saturation current")),
     SortableSpec("DCR", "dcr_ohms", ("DC Resistance(DCR)",), parse_resistance,
-                 words=("dc resistance",), phrases=("dcr", "dc resistance")),
+                 words=("dc resistance",), phrases=("dcr", "dc resistance"),
+                 caveat="LCSC lists the typical DCR on some inductors and the maximum on others (SRP4020TA-1R0M's "
+                        "27 mOhm is its maximum, 22 typical), so compare the datasheets' max columns before "
+                        "choosing."),
     SortableSpec("ESR", "esr_ohms", ("Equivalent Series Resistance(ESR)",), parse_resistance,
                  words=("equivalent series resistance",), phrases=("esr",), conditions="test frequencies"),
     SortableSpec("Ripple Current", "ripple_current_a", ("Ripple Current",), parse_current,

@@ -87,6 +87,13 @@ def clamp_limit(limit: int, hi: int) -> int:
     """
     return max(1, min(int(limit), hi))
 
+# LCSC's product data, read when JLCPCB lists no datasheet or no specs for a part (9 of 12 such parts
+# sampled 2026-11-04 had an LCSC PDF). One request per part per PART_CACHE_TTL at most.
+LCSC_PRODUCT_URL = "https://wmsc.lcsc.com/ftps/wm/product/detail"
+LCSC_REQUEST_TIMEOUT = 8.0   # total budget
+LCSC_ATTEMPT_TIMEOUT = 4.0   # per attempt, so a retry fits in the budget
+LCSC_RATE_LIMIT = 0.5        # min seconds between requests
+
 # Part cache settings (JLCPCB API)
 PART_CACHE_TTL = 3600  # Cache part details for 1 hour
 PART_CACHE_MAX_SIZE = 5000  # Max cached parts

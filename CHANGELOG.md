@@ -4,6 +4,13 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.10 (2026-11-04)
+
+### Fixed
+
+- **`jlc_get_part` datasheet and specs from LCSC when JLCPCB lists none:** YY-0807RGBJ26-07-FJ (C54796803) came back with `datasheet: null`, no specs and a note to find the datasheet on the maker's site, while LCSC's page linked a 14-page datasheet and listed its rise and fall times. JLCPCB lists no datasheet for about 18% of parts, and LCSC had one for 9 of 12 sampled. When JLCPCB has neither a PDF nor a maker link, or no specs, the part's LCSC product data fills `datasheet_pdf` (LCSC's PDF, linked directly since it doesn't expire) and an empty `specs`, and `datasheet_note` / `specs_note` say they're LCSC's. It's one LCSC request per part per hour at most, and the reply is as before when LCSC doesn't answer.
+- **Inductor DCR and Current Rating:** LCSC lists the typical DCR on some inductors and the maximum on others (Bourns SRP4020TA-1R0M: 27 mOhm, its maximum; 22 typical), and an inductor's Current Rating is usually its Irms for a temperature rise (5 A at 40 C there; Isat is 8.5 A), with neither labelled. `jlc_get_part`'s `specs_note` for inductors says so, and DCR sorts say to compare the datasheets' max columns.
+
 ## 0.8.9 (2026-11-04)
 
 ### Fixed

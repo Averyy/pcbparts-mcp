@@ -1661,8 +1661,9 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
 
     Reply: prices lists quantity tiers; datasheet is LCSC's datasheet page (a viewer, null when LCSC
     has none) and datasheet_pdf the datasheet itself: a short link on this server that redirects to
-    the PDF and stays valid; maker_datasheet is the manufacturer's own datasheet link where JLCPCB
-    lists one (most TI parts), and datasheet_note says when there is no PDF; specs_note says when LCSC
+    the PDF and stays valid (LCSC's own link when the PDF is LCSC's); maker_datasheet is the manufacturer's own datasheet link where JLCPCB
+    lists one (most TI parts), and datasheet_note says when there is no PDF, or that datasheet_pdf is
+    LCSC's copy when JLCPCB has none (specs come from LCSC too when JLCPCB lists none); specs_note says when LCSC
     lists no specs, or what the listing leaves out for the part type (Isat's definition, MLCC DC-bias
     loss, an RF cable's end styles, a MOSFET's RDS(on)/Vgs(th) mixing typical and maximum figures);
     lcsc_url is the LCSC product page; pcba_type is "economic" or
@@ -1763,8 +1764,10 @@ def _datasheet_link_base() -> str | None:
 def _short_datasheet_link(part: dict[str, Any]) -> dict[str, Any]:
     """A part reply whose datasheet_pdf is this server's /mcp/datasheet/<lcsc>, which signs a fresh
     JLCPCB link on each visit. The signed link was ~1.2KB of a 3.3KB reply and expired in 30 minutes.
-    Without an HTTP request (tests) the signed link and datasheet_pdf_expires stay."""
-    if not part.get("datasheet_pdf") or not part.get("lcsc") or not (base := _datasheet_link_base()):
+    Without an HTTP request (tests) the signed link and datasheet_pdf_expires stay. LCSC's copy (no
+    expiry; JLCPCB has none to sign) is returned as it is."""
+    if (not part.get("datasheet_pdf") or not part.get("datasheet_pdf_expires") or not part.get("lcsc")
+            or not (base := _datasheet_link_base())):
         return part
     short = {**part, "datasheet_pdf": f"{base}/mcp/datasheet/{part['lcsc']}"}
     short.pop("datasheet_pdf_expires", None)
