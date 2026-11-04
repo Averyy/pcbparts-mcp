@@ -4,6 +4,16 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.5 (2026-11-03)
+
+New arguments and reply fields, all optional; nothing existing changes shape.
+
+### Added
+
+- **Sort `jlc_search` by a spec:** `sort_spec` (`sort_by="spec"` is implied) and `sort_order` (`asc`, the default, or `desc`). "Lowest Iq 3.3V LDO", "lowest RDS(on) in SOT-23" and "highest Isat 4.7 µH" couldn't be answered by stock or price order. Parts that don't list the spec come last, then library tier and stock break ties. Each row's `sort_value` is the figure it was sorted on, as listed with its test condition, and `sort` says what was compared. 34 specs sort, from RDS(on), Iq, dropout, Vf, Isat, DCR, ESR, GBW and crystal ppm to flash, RAM and CPU speed; `jlc_search_help(subcategory=...)` marks them with `sort_spec`. Ranges (supply or adjustable output voltage, Vgs(th)) and figures the catalog lists in mixed units (slew rate in V/µs, V/ms and V/ns) are refused with the reason. A listed 0 (38 parts list "0uA" Iq) counts as not listed.
+- **Sorting at a test condition:** RDS(on), dropout and Vf are listed at different conditions (`9.8mΩ@10V`, `180mV@(300mA)`, `450mV@300mA`), so a plain sort compares a 10 V figure with a 2.5 V one. `RDS(on)@4.5V` uses the figure listed at the highest gate voltage at or below the drive, `Dropout@500mA` the figure listed at or above the load (or a lower one scaled up linearly, leaving out parts rated below it), and `Vf@1A` the figure listed at 1 A or more. Without one, the condition comes from the search when it has one (the query's gate drive, a Dropout filter's load, an Output Current or If filter), and otherwise `sort.note` says the order is the catalog figures', not a like-for-like comparison.
+- **Sort words in queries:** `lowest Iq`, `highest Isat`, `smallest DCR`, `tightest tolerance`, `most flash` and `longest life` sort by that spec, and `parsed.detected.sort` says so. They used to stay in the searched words, find nothing and be dropped. When no match lists the spec ("lowest ESR 100uF capacitor" searches MLCCs), `sort.note` says so and names the part types that list it.
+
 ## 0.8.4 (2026-11-03)
 
 New arguments and reply fields, all optional; nothing existing changes shape.

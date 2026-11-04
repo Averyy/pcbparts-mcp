@@ -21,6 +21,7 @@ from ..easyeda_store import FootprintAnswer
 from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
 from ..search.query_builder import build_fts_clause
 from ..search.spec_filter import CONNECTOR_COLUMN_NAMES, like_text
+from ..search.spec_sort import SpecSort
 from .connection import build_database, load_caches
 from .lookup import get_by_lcsc, get_by_lcsc_batch, get_by_mpn
 from .categories import (
@@ -251,6 +252,7 @@ class ComponentDatabase:
         lcsc_codes: bool = False,
         count_unlisted: bool = False,
         pcba_type: str | None = None,
+        spec_sort: SpecSort | None = None,
     ) -> dict[str, Any]:
         """
         Search components with parametric filtering.
@@ -323,6 +325,7 @@ class ComponentDatabase:
             lcsc_codes=lcsc_codes,
             count_unlisted=count_unlisted,
             pcba_type=pcba_type,
+            spec_sort=spec_sort,
         )
 
         # Add warning if min_stock was clamped

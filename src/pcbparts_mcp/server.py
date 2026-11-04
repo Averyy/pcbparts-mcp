@@ -44,6 +44,7 @@ from .boards_db import get_boards_db, close_boards_db
 from .search import SpecFilter, get_attribute_names
 from .search.mpn import LCSC_CODE, is_placeholder_mpn, looks_like_mpn, mpn_key
 from .search.query_builder import package_family_adjustments
+from .search.spec_sort import SORTABLE_LABELS, SortSpecError, SpecSort
 from .smart_parser import ParsedQuery, parse_smart_query, merge_spec_filters
 from .smart_parser.mapping import DEFAULT_SPECS
 from .alternatives import SPEC_PARSERS
@@ -226,7 +227,8 @@ _ERROR_KINDS = [(kind, re.compile(pattern)) for kind, pattern in (
     ("bad_request", r"Too many "),
     ("bad_request", r"Invalid [\w ]+: "),
     ("bad_request", r"Strict search cannot apply every constraint; "),
-    ("bad_request", r"Unsupported (library_type|pcba_type|tag|value for \w+): "),
+    ("bad_request", r"Unsupported (library_type|pcba_type|sort_spec|tag|value for \w+): "),
+    ("bad_request", r"Can't sort "),
     ("bad_request", r"Must provide "),
     ("bad_request", r"lcsc must be "),
     ("bad_request", r"board_quantity and placements_per_board must be "),
@@ -454,7 +456,17 @@ LibraryType = Annotated[
 ]
 
 
-SearchSort = Annotated[Literal["stock", "price"] | None, BeforeValidator(_normalize_library_type)]
+SearchSort = Annotated[Literal["stock", "price", "spec"] | None, BeforeValidator(_normalize_library_type)]
+
+
+def _normalize_sort_order(value: Any) -> Any:
+    if not isinstance(value, str):
+        return value
+    value = value.strip().lower()
+    return {"ascending": "asc", "lowest": "asc", "descending": "desc", "highest": "desc"}.get(value, value)
+
+
+SortOrder = Annotated[Literal["asc", "desc"] | None, BeforeValidator(_normalize_sort_order)]
 StockSort = Annotated[Literal["quantity", "price"] | None, BeforeValidator(_normalize_library_type)]
 
 
@@ -731,6 +743,8 @@ def jlc_search(
     offset: int = 0,
     strict: bool = False,
     pcba_type: str | None = None,
+    sort_spec: str | None = None,
+    sort_order: SortOrder = None,
 ) -> dict:
     """Search in-stock JLCPCB parts locally with natural-language parsing and spec filters.
     Default 20 results; strict=true disables relaxation. Reply: relaxed names query words, a
@@ -785,8 +799,10 @@ def jlc_search(
             arguments override query packages; "0402 or 0603" in a query also means OR.
         manufacturer: Manufacturer
         match_all_terms: Require every query term (AND)
-        sort_by: "stock" (most first) or "price" (cheapest within library tiers when prefer_no_fee);
-            omitted defaults to stock unless the query says "cheapest"/"lowest price".
+        sort_by: "stock" (most first), "price" (cheapest within library tiers when prefer_no_fee) or
+            "spec" (by sort_spec); omitted defaults to stock unless the query says "cheapest"/"lowest
+            price", or names a spec after lowest/highest/smallest/most ("lowest Iq LDO", "highest Isat
+            4.7uH inductor", "most flash STM32"), which sorts by that spec.
         limit: Max results (default 20, max 100)
         offset: Results to skip, for the next page of the same search (offset=20 with limit=20 is
             page 2; max 10000); total stays the whole population
@@ -795,12 +811,27 @@ def jlc_search(
             Default false allows relaxation, reporting omitted requirements.
         pcba_type: "economic" keeps parts JLCPCB's Economic assembly can place (its PCBA Type
             "Economic and Standard"); "standard_only" keeps the parts that need Standard assembly.
+        sort_spec: Sort by a spec (sort_by="spec" is implied), parts that don't list it last, then
+            library tier and stock: RDS(on), Iq, Dropout, Vf, Isat, DCR, ESR, Ripple Current, Lifetime,
+            GBW, CMRR, Noise Figure, Load Capacitance, Frequency Stability, Flash, RAM, CPU Speed, Memory
+            Size, Charge Current, Clamping Voltage, Standoff Voltage, Peak Pulse Power, Voltage Rating,
+            Current Rating, Power, Tolerance, Resistance, Capacitance, Inductance, Vds, Id, Vr, If,
+            Output Current (jlc_search_help marks them with sort_spec). Ranges (supply or adjustable
+            output voltage, Vgs(th)) are refused. RDS(on), dropout and Vf are listed at different test
+            conditions; sort at one: "RDS(on)@4.5V" (gate drive), "Dropout@500mA" (load), "Vf@1A".
+            Without one it's taken from the query's gate drive, a Dropout filter's load, an Output
+            Current or If filter. A listed 0 counts as not listed.
+        sort_order: "asc" (default, lowest first) or "desc" (highest first), with sort_spec.
 
     Returns:
         results: Matching components with specs; description is omitted when specs are nonempty.
             pcba_type is "economic" or "standard_only" (one standard_only part moves the whole order
             to Standard assembly, with its higher setup and stencil fees); no_datasheet: true when
-            JLCPCB lists no datasheet for the part (find it on the maker's site, or pick another)
+            JLCPCB lists no datasheet for the part (find it on the maker's site, or pick another);
+            sort_value (spec sorts): the figure it was sorted on as listed, with its test condition,
+            or null
+        sort: (spec sorts) spec, order, at (the test condition compared, and where it came from) and
+            a note on how far the order compares like with like
         total: Matching population before limit. library_type_counts and no_fee_available use
             the same constraints, including library_type and Python spec checks. If a post-filter
             scan reaches its cap, counts_complete=false marks these as counts of checked matches.
@@ -855,8 +886,27 @@ def jlc_search(
         return _argument_error("packages", exc, ["string", "array of strings", "JSON array of strings"])
     if sort_by is not None:
         sort_by = _normalize_library_type(sort_by)
-        if sort_by not in ("stock", "price"):
-            return _argument_error("sort_by", ValueError("expected stock or price"), ["stock", "price"])
+        if sort_by not in ("stock", "price", "spec"):
+            return _argument_error("sort_by", ValueError("expected stock, price or spec"), ["stock", "price", "spec"])
+    if sort_order is not None:
+        sort_order = _normalize_sort_order(sort_order)
+        if sort_order not in ("asc", "desc"):
+            return _argument_error("sort_order", ValueError("expected asc or desc"), ["asc", "desc"])
+    spec_sort = None
+    if sort_spec is not None and not str(sort_spec).strip():
+        sort_spec = None
+    if sort_spec is not None or sort_by == "spec":
+        if sort_by not in (None, "spec"):
+            return {"error": f"Give a sort_spec only with sort_by=\"spec\" or no sort_by (sort_by=\"{sort_by}\" "
+                             "sorts by something else)", "results": [], "total": 0}
+        if sort_spec is None:
+            return {"error": "Give a sort_spec with sort_by=\"spec\": the spec to sort on, such as \"RDS(on)\", "
+                             "\"Iq\" or \"Dropout@500mA\"", "valid_values": SORTABLE_LABELS, "results": [], "total": 0}
+        try:
+            spec_sort = SpecSort.parse(sort_spec, sort_order)
+        except SortSpecError as exc:
+            return {"error": str(exc), "valid_values": exc.valid_values, "results": [], "total": 0}
+        sort_by = None
     explicit_filters = list(parsed_filters or [])
     query_library = library_type is None
 
@@ -934,7 +984,16 @@ def jlc_search(
 
         if library_type is None:
             library_type = parsed.detected.get("library_type")
-        if sort_by is None:
+        if parsed.spec_sort and sort_by is None and spec_sort is None:
+            # "lowest Iq" in the query; an explicit sort_order still sets the direction
+            spec_sort = parsed.spec_sort if sort_order is None else SpecSort(
+                parsed.spec_sort.spec, descending=sort_order == "desc")
+            if parsed.detected.pop("sort_by", None) == "price":
+                parsed_query_info.setdefault("adjusted_filters", []).append({
+                    "filter": "cheapest", "now": None,
+                    "reason": f"results sort by one thing, and the query also asks for {parsed.detected['sort']['from']}; "
+                              "sort_by=\"price\" sorts by price instead"})
+        elif sort_by is None and spec_sort is None:
             sort_by = parsed.detected.get("sort_by")
 
         # Apply parsed values only if user didn't provide explicit ones
@@ -1030,9 +1089,14 @@ def jlc_search(
         if parsed.remaining_text and len(parsed.remaining_text) >= 2:
             effective_query = parsed.remaining_text
         elif (parsed.spec_filters or parsed.subcategory or parsed.package or parsed.packages
-              or parsed.gate_drive_v is not None):
+              or parsed.gate_drive_v is not None or parsed.spec_sort is not None):
             # Query was fully parsed into structured filters, no text needed
             effective_query = None
+
+    if sort_order is not None and spec_sort is None:
+        return {"error": "Give a sort_spec to use sort_order (stock and price sorts have one direction): "
+                         "sort_spec=\"Isat\", sort_order=\"desc\" lists the highest first",
+                "valid_values": SORTABLE_LABELS, "results": [], "total": 0}
 
     search_args: dict[str, Any] = dict(
         subcategory_id=subcategory_id,
@@ -1054,6 +1118,7 @@ def jlc_search(
         lcsc_codes=bool(query and query.split()) and all(LCSC_CODE.fullmatch(t) for t in query.split()),
         count_unlisted=True,
         pcba_type=pcba_type,
+        spec_sort=spec_sort,
     )
     requested_packages = parsed_packages or ([effective_package] if effective_package else [])
     package_adjustments = package_family_adjustments(requested_packages)

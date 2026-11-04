@@ -42,6 +42,9 @@ from .query_builder import (
     unlisted_clause,
 )
 from .result import row_to_dict
+from .spec_sort import (
+    SpecSort, dropout_sort_value, rds_on_at_drive_ohms, spec_sort_value_json, vf_at_current_json,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -258,6 +261,10 @@ class SearchEngine:
         self._conn.create_function("metric_thread_ok", 2, metric_thread_ok, deterministic=True)
         self._conn.create_function("switch_circuit", 1, switch_circuit, deterministic=True)
         self._conn.create_function("dropout_at_load", 2, dropout_at_load_json, deterministic=True)
+        self._conn.create_function("rds_on_at_drive_ohms", 2, rds_on_at_drive_ohms, deterministic=True)
+        self._conn.create_function("vf_at_current", 2, vf_at_current_json, deterministic=True)
+        self._conn.create_function("dropout_sort_value", 2, dropout_sort_value, deterministic=True)
+        self._conn.create_function("spec_sort_value", 2, spec_sort_value_json, deterministic=True)
         self._package_names: dict[str, list[str]] | None = None
         self._fuse_package_types: dict[str, set[int]] = {}
         columns = {
@@ -266,6 +273,7 @@ class SearchEngine:
         self._connector_columns = CONNECTOR_COLUMN_NAMES <= columns
         self._mosfet_gate_column = "rds_gate_min_v" in columns
         self._temperature_columns = {"temp_min_c", "temp_max_c"} <= columns
+        self._sort_spec_subcategories: dict[str, list[dict[str, Any]]] = {}
         self._subcategories = subcategories
         self._categories = categories
         self._subcategory_name_to_id = subcategory_name_to_id
@@ -381,6 +389,7 @@ class SearchEngine:
         lcsc_codes: bool = False,
         count_unlisted: bool = False,
         pcba_type: str | None = None,
+        spec_sort: SpecSort | None = None,
     ) -> dict[str, Any]:
         """Execute a search query with pre-resolved parameters.
 
@@ -494,13 +503,19 @@ class SearchEngine:
             params.extend(spec_params_list)
             count_params.extend(spec_params_list)
 
-        # Sorting
+        # Sorting. A spec sort orders by the spec first (missing values last); library tier and stock
+        # break ties. Its parameters go before the ranks', as its term goes before theirs.
+        if spec_sort is not None:
+            spec_sort = spec_sort.with_condition(spec_filters, gate_drive_v)
+            spec_order, spec_order_params = spec_sort.order_sql()
+            params.extend(spec_order_params)
         sort_clause = build_sort_clause(sort_by, prefer_no_fee, bool(query))
         ranks = []
         if part_number:
             ranks.append("mpn_match_rank(mpn, ?)")
             params.append(part_number)
-        words = [w for w in dict.fromkeys((query or "").lower().split()) if len(w) > 1] if not match_all_terms and sort_by != "price" else []
+        words = [w for w in dict.fromkeys((query or "").lower().split()) if len(w) > 1] \
+            if not match_all_terms and sort_by != "price" and spec_sort is None else []
         if len(words) > 1:
             # Any-word searches: parts with more of the words first, then the usual order ("mPCIe card
             # latch standoff nut" led with an op-amp that matched one word on stock)
@@ -535,6 +550,8 @@ class SearchEngine:
             params.extend([preference.name, preference.value])
         if ranks:
             sort_clause = sort_clause.replace("ORDER BY ", "ORDER BY " + ", ".join(ranks) + ", ", 1)
+        if spec_sort is not None:
+            sort_clause = sort_clause.replace("ORDER BY ", f"ORDER BY {spec_order}, ", 1)
         sql_parts.append(sort_clause)
 
         base_params = list(params)
@@ -605,6 +622,10 @@ class SearchEngine:
                     part["dropout_at_load"] = {"load": f"{loads[0] * 1000:g}mA", "dropout": f"{volts * 1000:.0f}mV",
                                                "from": listed + (", scaled linearly" if scaled else "")}
 
+        if spec_sort is not None:
+            for part in results:
+                part["sort_value"] = spec_sort.value_text(part["specs"])
+
         no_fee_available = library_type_counts["basic"] > 0 or library_type_counts["preferred"] > 0
 
         result = {
@@ -616,6 +637,11 @@ class SearchEngine:
         }
         if post_filter_metadata and not complete:
             result["counts_complete"] = False
+        if spec_sort is not None:
+            result["sort"] = spec_sort.summary(prefer_no_fee)
+            # Missing values come last, so a first result without one means none of the matches list it
+            if results and offset == 0 and results[0].get("sort_value") is None:
+                result["sort"]["note"] = self._sort_unlisted_note(spec_sort, total, results[0].get("category"))
         if mpn_counts is not None:
             result["mpn_matches"] = mpn_counts
         if count_unlisted and spec_filters and not part_number:
@@ -623,6 +649,28 @@ class SearchEngine:
             if unlisted:
                 result["unlisted"] = unlisted
         return result
+
+    def _sort_unlisted_note(self, spec_sort: SpecSort, total: int, category: str | None) -> str:
+        """Why a spec sort changed nothing: no match lists the spec (at its condition), and the part
+        types that do list it, those in the matches' own category first."""
+        label, parts = spec_sort.spec.label, f"{total} match{'es' if total != 1 else ''}"
+        if spec_sort.at is not None:
+            return f"None of the {parts} list {label} at that condition, so they're in the usual order."
+        if label not in self._sort_spec_subcategories:
+            names = spec_sort.spec.names
+            listed = " OR ".join("instr(attributes, ?) > 0" for _ in names)
+            try:
+                rows = self._conn.execute(
+                    f"SELECT subcategory_id, COUNT(*) FROM components WHERE {spec_sort.spec.column} IS NOT NULL "
+                    f"AND ({listed}) GROUP BY subcategory_id ORDER BY 2 DESC",
+                    [json.dumps(name) for name in names]).fetchall()
+            except sqlite3.OperationalError:
+                rows = []
+            self._sort_spec_subcategories[label] = [self._subcategories[i] for i, _ in rows if i in self._subcategories]
+        found = self._sort_spec_subcategories[label]
+        where = [s["name"] for s in sorted(found, key=lambda s: s.get("category_name") != category)[:3]]
+        return (f"None of the {parts} list {label}, so they're in the usual order"
+                + (f"; parts in {', '.join(where)} list it." if where else "."))
 
     def _unlisted_counts(
         self, base_parts: list[str], base_params: list[Any], spec_filters: list[SpecFilter],
@@ -747,6 +795,7 @@ class SearchEngine:
         lcsc_codes: bool = False,
         count_unlisted: bool = False,
         pcba_type: str | None = None,
+        spec_sort: SpecSort | None = None,
     ) -> dict[str, Any]:
         """Search components with parametric filtering.
 
@@ -899,6 +948,7 @@ class SearchEngine:
             lcsc_codes=lcsc_codes,
             count_unlisted=count_unlisted,
             pcba_type=pcba_type,
+            spec_sort=spec_sort,
         )
 
         results = search_result["results"]
@@ -936,6 +986,7 @@ class SearchEngine:
                     lcsc_codes=lcsc_codes,
                     count_unlisted=count_unlisted,
                     pcba_type=pcba_type,
+                    spec_sort=spec_sort,
                 )
                 if retry_result["total"] > 0:
                     # Found results with normalized query
@@ -981,6 +1032,8 @@ class SearchEngine:
             response["counts_complete"] = search_result["counts_complete"]
         if "mpn_matches" in search_result:
             response["mpn_matches"] = search_result["mpn_matches"]
+        if "sort" in search_result:
+            response["sort"] = search_result["sort"]
         if search_result.get("ignored_filters"):
             response["ignored_filters"] = search_result["ignored_filters"]
         if search_result.get("unlisted"):

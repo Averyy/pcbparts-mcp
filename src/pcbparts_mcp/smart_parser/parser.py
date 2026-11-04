@@ -5,6 +5,7 @@ from dataclasses import dataclass, field, replace
 from typing import Any
 
 from ..search.spec_filter import ConnectorFilter, FuseFilter, ScopedTextFilter, SpecFilter, switch_circuit
+from ..search.spec_sort import SpecSort, extract_sort_phrase
 from ..subcategory_aliases import _POWER_MUX_WORDS, SUBCATEGORY_GROUPS
 from .packages import extract_package, extract_package_choices
 from .values import ExtractedValue, extract_values, normalize_value_notation
@@ -28,6 +29,7 @@ class ParsedQuery:
     spec_filters: list[Any] = field(default_factory=list)  # List of SpecFilter
     preferred_specs: list[SpecFilter] = field(default_factory=list)  # Sparse PD attributes rank in SQL
     gate_drive_v: float | None = None
+    spec_sort: SpecSort | None = None  # "lowest Iq": sort by that spec
     package: str | None = None
     packages: list[str] = field(default_factory=list)
     model_number: str | None = None
@@ -115,6 +117,14 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
     # extraction, but only in the LED/diode conflict covered by this rule.
     if re.search(r'\bdiodes?\b', remaining, re.IGNORECASE):
         remaining = re.sub(r'\bLED\d+\b', 'LED', remaining, flags=re.IGNORECASE)
+
+    # "lowest Iq", "highest Isat": a sort, not words to search (before the model number, so "most
+    # flash STM32" keeps STM32 as the part number)
+    spec_sort, sort_words, remaining = extract_sort_phrase(remaining)
+    if spec_sort:
+        result.spec_sort = spec_sort
+        detected["sort"] = {"spec": spec_sort.spec.label, "order": "desc" if spec_sort.descending else "asc",
+                            "from": sort_words}
 
     # Step 1: Extract model number (if present, it becomes the primary search term)
     model, remaining = extract_model_number(remaining)
@@ -667,8 +677,9 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
                 f"{' '.join(unused)}: words beside a part number aren't searched (strict=true keeps them)")
     elif remaining and len(remaining) >= 2:
         result.remaining_text = remaining
-    elif result.spec_filters or subcategory or result.package or result.packages or result.gate_drive_v is not None:
-        # Structured filters exist, FTS may not be needed
+    elif (result.spec_filters or subcategory or result.package or result.packages or result.gate_drive_v is not None
+          or result.spec_sort is not None):
+        # Structured filters (or a sort: "highest GBW") exist, FTS may not be needed
         result.remaining_text = ""
     else:
         result.remaining_text = query  # Fall back to original
