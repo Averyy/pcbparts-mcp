@@ -16,6 +16,7 @@ from wafer import (
     ConnectionFailed,
     EmptyResponse,
     RateLimited,
+    WaferError,
     WaferHTTPError,
     WaferTimeout,
 )
@@ -23,6 +24,10 @@ from wafer import (
 from .config import (
     JLCPCB_SEARCH_URL,
     JLCPCB_DETAIL_URL,
+    LCSC_PRODUCT_URL,
+    LCSC_REQUEST_TIMEOUT,
+    LCSC_ATTEMPT_TIMEOUT,
+    LCSC_RATE_LIMIT,
     EASYEDA_COMPONENT_URL,
     EASYEDA_SYMBOL_URL,
     EASYEDA_CACHE_TTL,
@@ -200,6 +205,12 @@ _CLASS_II_DIELECTRIC = re.compile(r"\b(?:X[5-8][RSTPUV]|Y5[PUV]|Z5U)\b", re.IGNO
 _ISAT_NOTE = ("Isat is each maker's own figure: the inductance drop it's measured at (commonly 10% to 30%) and "
               "whether it's typical or minimum differ, so compare Isat on the datasheets before treating two "
               "parts as equal.")
+# Bourns SRP4020TA-1R0M (C913245): LCSC lists DCR 27 mOhm (its max; 22 typical) and Current Rating 5 A
+# (its Irms at a 40 C rise; Isat is 8.5 A at a 20% drop), neither labelled
+_INDUCTOR_DCR_NOTE = ("DCR is the typical figure on some listings and the maximum on others (SRP4020TA-1R0M lists "
+                      "27 mOhm, its maximum; 22 typical), and Current Rating is usually the Irms for the maker's "
+                      "temperature rise (often 40 C), a heating limit rather than saturation; check the datasheet's "
+                      "columns.")
 _MLCC_DC_BIAS_NOTE = ("Capacitance is the nominal value at 0 V. Class II dielectrics (X5R, X7R, Y5V) lose "
                       "capacitance under DC bias, more in small cases, often half or more near the rated voltage; "
                       "the maker's DC-bias curve (Murata SimSurfing, Samsung, TDK, KEMET K-SIM) gives the "
@@ -222,8 +233,12 @@ def catalog_gap_note(subcategory: str | None, specs: dict[str, str]) -> str | No
     than AO3401A at 2.5 V compared its typical against AO3401A's maximum (1.5x max against max).
     """
     sub = (subcategory or "").lower()
-    if any(name.startswith("Current - Saturation") and value not in ("", "-") for name, value in specs.items()):
-        return _ISAT_NOTE
+    listed = {name for name, value in specs.items() if value not in ("", "-")}
+    dcr = "DC Resistance(DCR)" in listed and "inductor" in sub
+    if any(name.startswith("Current - Saturation") for name in listed):
+        return f"{_ISAT_NOTE} {_INDUCTOR_DCR_NOTE}" if dcr else _ISAT_NOTE
+    if dcr:
+        return _INDUCTOR_DCR_NOTE
     if sub.startswith("multilayer ceramic capacitors") and _CLASS_II_DIELECTRIC.search(
             specs.get("Temperature Coefficient") or ""):
         return _MLCC_DC_BIAS_NOTE
@@ -232,6 +247,29 @@ def catalog_gap_note(subcategory: str | None, specs: dict[str, str]) -> str | No
     if sub == "mosfets" and (specs.get("RDS(on)") or specs.get("Gate Threshold Voltage (Vgs(th))")):
         return _MOSFET_NOTE
     return None
+
+
+def apply_lcsc_fallback(result: dict[str, Any], product: dict[str, Any] | None) -> None:
+    """Fill a jlc_get_part reply's missing datasheet and specs from LCSC's product data.
+
+    JLCPCB listed neither for YY-0807RGBJ26-07-FJ (C54796803), and the reply sent the caller to the
+    maker's site, while LCSC's page linked a 14-page datasheet and listed its rise and fall times.
+    """
+    if not product:
+        return
+    pdf = product.get("pdfUrl")
+    if pdf and not result.get("datasheet_pdf") and not result.get("maker_datasheet"):
+        code = product.get("productCode")
+        result["datasheet_pdf"] = pdf
+        result["datasheet"] = result.get("datasheet") or (f"https://www.lcsc.com/datasheet/{code}.pdf" if code else None)
+        result["datasheet_note"] = "JLCPCB has no datasheet for this part; datasheet_pdf is LCSC's copy."
+    if not result.get("specs"):
+        specs = {p.get("paramNameEn"): p.get("paramValueEn") for p in product.get("paramVOList") or []
+                 if p.get("paramNameEn") and p.get("paramValueEn") not in (None, "", "-")}
+        if specs:
+            result["specs"] = specs
+            result["specs_note"] = ("JLCPCB lists no specs for this part; these are LCSC's, which searches don't "
+                                    "use, so spec filters still leave it out.")
 
 
 def _pdf_link_expiring(result: dict[str, Any] | None, now: float) -> bool:
@@ -253,6 +291,7 @@ class JLCPCBClient:
         self._jlcpcb_session: wafer.AsyncSession | None = None
         self._easyeda_session: wafer.AsyncSession | None = None
         self._easyeda_products_session: wafer.AsyncSession | None = None
+        self._lcsc_session: wafer.AsyncSession | None = None
         # EasyEDA /api/products blocks an IP after ~24 requests (docs/ref-easyeda-api.md): budget every
         # request and pause all of them after a block. Per client; the server has one, so process-wide.
         self._easyeda_products_budget = SlidingWindowBudget(EASYEDA_PRODUCTS_BUDGET, EASYEDA_PRODUCTS_WINDOW)
@@ -409,11 +448,38 @@ class JLCPCBClient:
             )
         return self._easyeda_products_session
 
+    def _get_lcsc_session(self) -> wafer.AsyncSession:
+        """LCSC's product-data API (datasheet and specs when JLCPCB lists none)."""
+        if self._lcsc_session is None:
+            self._lcsc_session = wafer.AsyncSession(
+                timeout=LCSC_REQUEST_TIMEOUT,
+                attempt_timeout=LCSC_ATTEMPT_TIMEOUT,
+                max_retries=1,
+                rate_limit=LCSC_RATE_LIMIT,
+                cache_dir=None,
+                headers={"Accept": "application/json, text/plain, */*"},
+            )
+        return self._lcsc_session
+
+    async def lcsc_product(self, lcsc: str) -> dict[str, Any] | None:
+        """LCSC's product data for a part (pdfUrl, paramVOList), or None when LCSC has none or
+        doesn't answer: the reply then keeps JLCPCB's own (lack of) datasheet and specs."""
+        try:
+            response = await self._get_lcsc_session().get(LCSC_PRODUCT_URL, params={"productCode": lcsc})
+            response.raise_for_status()
+            data = response.json()
+        except (WaferError, ValueError) as e:
+            logger.warning(f"LCSC product data unavailable for {lcsc}: {type(e).__name__}")
+            return None
+        product = data.get("result") if isinstance(data, dict) and data.get("code") == 200 else None
+        return product if isinstance(product, dict) and product.get("productCode") == lcsc else None
+
     async def close(self):
         """Release persistent HTTP sessions and the footprint store."""
         self._jlcpcb_session = None
         self._easyeda_session = None
         self._easyeda_products_session = None
+        self._lcsc_session = None
         if self._easyeda_store is not None:
             self._easyeda_store.close()
 
@@ -1344,6 +1410,9 @@ class JLCPCBClient:
         for item in items:
             if item.get("componentCode") == lcsc:
                 result = self._transform_part(item, slim=False)
+                # JLCPCB lists no datasheet for 18% of parts and no specs for some; LCSC often has both
+                if (not result.get("datasheet_pdf") and not result.get("maker_datasheet")) or not result.get("specs"):
+                    apply_lcsc_fallback(result, await self.lcsc_product(lcsc))
                 # Add EasyEDA footprint availability
                 easyeda_info = await self.check_easyeda_footprint(lcsc)
                 result.update(easyeda_info)
