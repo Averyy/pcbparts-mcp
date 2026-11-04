@@ -1549,11 +1549,6 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
-  "3398": {
-    "name": "Cleaner",
-    "category_id": 53,
-    "category_name": "Cleaning/daily necessities"
-  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -2076,6 +2071,11 @@
   },
   "635": {
     "name": "Cassette nuts",
+    "category_id": 47,
+    "category_name": "Hardware Fasteners"
+  },
+  "1660": {
+    "name": "Combination washer",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -3599,6 +3599,11 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
+  "2515": {
+    "name": "Speaker",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "3716": {
     "name": "SSD",
     "category_id": 49,
@@ -3879,11 +3884,6 @@
     "category_id": 68,
     "category_name": "Power Modules"
   },
-  "500": {
-    "name": "Safety warning labels",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
   "2029": {
     "name": "SiC Diodes",
     "category_id": 66,
@@ -4106,6 +4106,11 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
+    "category_id": 50,
+    "category_name": "Tool Equipment"
+  },
+  "157": {
+    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
