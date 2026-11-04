@@ -4,6 +4,14 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.14 (2026-11-04)
+
+New `digikey_get_part` reply fields, all optional. For a manufacturer part number whose first DigiKey listing is a reel, `part_number`, `price_breaks` and `min_qty` change to the cut tape's.
+
+### Fixed
+
+- **`digikey_get_part` mixed two packagings:** TPS62130RGTR came back as 296-37682-2-ND, the 3000-piece reel, with price breaks from 3000 at $1.00 and `min_qty` 3000, next to `price` $1.99, the cut tape's single-unit price. The part number, breaks and minimum came from whichever packaging DigiKey listed first, and `price` from the product as a whole. All four now describe one packaging: the DigiKey number you asked for, or else the smallest order (cut tape before a reel, DigiKey's own stock before Marketplace, no Digi-Reel fee). `packaging` names it, and `other_packaging` lists the others with their part number, minimum order and price (a Digi-Reel adds `reel_fee`, a Marketplace listing `marketplace`).
+
 ## 0.8.13 (2026-11-04)
 
 ### Added
