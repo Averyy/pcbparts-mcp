@@ -227,7 +227,7 @@ class TestMouserNormalizePart:
         assert result["price_breaks"][0]["currency"] == "USD"
         assert result["datasheet_url"] == "https://example.com/ds.pdf"
         assert result["rohs"] == "RoHS Compliant"
-        assert result["lifecycle"] == "Active"
+        assert result["lifecycle"] is None  # Mouser states no status: not "Active" (0.8.15)
         assert result["parameters"]["Packaging"] == "Tube"
         assert result["min_qty"] == 1
         assert result["currency"] == "USD"

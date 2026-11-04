@@ -172,3 +172,74 @@ def detect_mounting_type(
 
     # No pattern matched - return unknown instead of guessing
     return "not_sure"
+
+
+# JLCPCB's English package field keeps some Chinese words and full-width characters: 2,975 parts
+# read "插件,12.6x4.4mm" beside "Plugin" (C2681581), so a BOM's package column and package filters
+# saw two spellings. They become the words the English listings already use.
+_PACKAGE_WORDS = (
+    ("插件", "Plugin"),  # "plug-in": through-hole
+    ("直插", "Plugin"),  # "straight plug-in"
+    ("交错脚", "Staggered pins"),  # English listings: "Plugin,P=1.27mm(Staggered pins)"
+    ("卧贴", "Right Angle"),  # SMD lying flat, as in "SMD,P=0.5mm,Surface Mount,Right Angle"
+    ("立贴", "Vertical"),  # SMD standing up
+    ("母头", "Female"),
+    ("公头", "Male"),
+    ("插头", "Plug"),
+    ("螺栓", "Bolt"),
+    ("，", ","),  # full-width comma: "Surface Mount，Right Angle" on 17,370 SMD connectors
+    ("×", "x"),
+)
+# Cyrillic capitals that look Latin: "SOТ23-6" (C5371028) matched no SOT23-6 filter
+_CYRILLIC_LOOKALIKES = str.maketrans("АВСЕНКМОРТХ", "ABCEHKMOPTX")
+
+
+def english_package(package: str | None) -> str | None:
+    """A package string in the English listings' own words ("插件,12.6x4.4mm" → "Plugin,12.6x4.4mm").
+
+    "弯插" ("bent plug-in", right-angle through-hole) becomes Plugin with ",Right Angle" at the end.
+    Words with no English listing (colours, "15寸卷盘编带封装") stay as they are.
+    """
+    if not package or package.isascii():
+        return package
+    if package.startswith("弯插"):
+        package = f"Plugin{package[2:]},Right Angle"
+    for chinese, english in _PACKAGE_WORDS:
+        package = package.replace(chinese, english)
+    return package.translate(_CYRILLIC_LOOKALIKES)
+
+
+# english_package's words back to JLCPCB's: each swap is tried on and off, then kept only if it
+# translates back ("SMD,7.7x3.6mm,Right Angle" may be "SMD,7.7x3.6mm,卧贴" upstream). "×" and Cyrillic
+# letters (one part each) aren't swapped back, which would double every package with an x or a T;
+# the catalog's package_spellings table has them.
+_PACKAGE_SWAPS = (
+    ("Staggered pins", "交错脚"),
+    ("Surface Mount,Right Angle", "Surface Mount，Right Angle"),
+    (",Right Angle", ",卧贴"),
+    (".Right Angle", ".卧贴"),  # "SMD,P=0.5mm.卧贴"
+    (",Vertical", ",立贴"),
+    ("Bolt", "螺栓"),
+)
+_WHOLE_PACKAGES = {"Female": "母头", "Male": "公头", "Plug": "插头"}
+
+
+def jlcpcb_package_spellings(package: str) -> list[str]:
+    """The spellings JLCPCB's live search may use for a package english_package gives, without the
+    catalog: low- and out-of-stock parts aren't in it ("Plugin,12.6x4.4mm" is also "插件,12.6x4.4mm").
+    English first; only spellings that english_package turns back into it."""
+    english = english_package(package) or package
+    bases = [english]
+    if english.startswith("Plugin"):
+        rest = english[len("Plugin"):]
+        bases.append("插件" + rest)
+        if rest.endswith(",Right Angle"):
+            bases.append("弯插" + rest[:-len(",Right Angle")])
+    if english in _WHOLE_PACKAGES:
+        bases.append(_WHOLE_PACKAGES[english])
+    spellings = dict.fromkeys(bases)
+    for english_words, chinese in _PACKAGE_SWAPS:
+        for spelling in list(spellings):
+            if english_words in spelling:
+                spellings[spelling.replace(english_words, chinese)] = None
+    return [s for s in spellings if english_package(s) == english][:12]

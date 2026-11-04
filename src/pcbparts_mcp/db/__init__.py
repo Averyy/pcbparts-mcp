@@ -12,12 +12,14 @@ import logging
 import os
 import sqlite3
 import threading
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Literal
 
 from ..db_worker import serialized
 from ..config import DEFAULT_MIN_STOCK
 from ..easyeda_store import FootprintAnswer
+from ..mounting import english_package, jlcpcb_package_spellings
 from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
 from ..search.query_builder import build_fts_clause
 from ..search.spec_filter import CONNECTOR_COLUMN_NAMES, like_text
@@ -48,6 +50,17 @@ DEFAULT_DATA_DIR = Path(os.environ.get("JLCPCB_DATA_DIR", str(_PACKAGE_DATA_DIR)
 DEFAULT_DB_PATH = Path(os.environ.get("JLCPCB_DB_PATH", str(DEFAULT_DATA_DIR / "components.db")))
 
 
+def _iso_utc(value: str) -> str | None:
+    """The manifest's "2026-11-04T20:10:49.531605+00:00" as "2026-11-04T20:10:49Z"."""
+    try:
+        moment = datetime.fromisoformat(value)
+    except (TypeError, ValueError):
+        return None
+    if moment.tzinfo is not None:
+        moment = moment.astimezone(timezone.utc)
+    return moment.replace(microsecond=0, tzinfo=None).isoformat() + "Z"
+
+
 class ComponentDatabase:
     """SQLite database for parametric component search.
 
@@ -71,6 +84,8 @@ class ComponentDatabase:
         self._attribute_shares: dict[tuple[tuple[int, ...], tuple[str, ...]], float] = {}
         self._attribute_names: dict[int, set[str]] = {}
         self._pcba_type_loaded: bool | None = None
+        self._scraped_at: str | None = None
+        self._english_packages = False
 
     @serialized
     def _ensure_db(self) -> None:
@@ -109,12 +124,23 @@ class ComponentDatabase:
                 limitations.append("connector filters and series ranking are slow")
             if "rds_gate_min_v" not in columns:
                 limitations.append("MOSFET gate-drive ranking is slow")
+            # Built since 0.8.15: packages in English ("Plugin", not "插件"), JLCPCB's spellings kept
+            self._english_packages = self._conn.execute(
+                "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'package_spellings'").fetchone() is not None
+            if not self._english_packages:
+                limitations.append("package names keep JLCPCB's Chinese words, unlike live replies")
             if limitations:
                 logger.warning(
                     "Component database %s predates this version: %s. "
                     "Rebuild with .venv/bin/python scripts/build_database.py",
                     self.db_path, "; ".join(limitations),
                 )
+
+            try:
+                row = self._conn.execute("SELECT value FROM metadata WHERE key = 'scraped_at'").fetchone()
+            except sqlite3.OperationalError:  # built before 0.8.15
+                row = None
+            self._scraped_at = _iso_utc(row[0]) if row else None
 
             # Load caches
             (
@@ -144,6 +170,37 @@ class ComponentDatabase:
                 self._conn = None
                 self._search_engine = None
                 self._pcba_type_loaded = None
+
+    def scraped_at(self) -> str | None:
+        """When the catalog's stock and prices were scraped ("2026-11-04T20:10:49Z"), or None for a
+        database built before 0.8.15."""
+        self._ensure_db()
+        return self._scraped_at
+
+    def english_packages(self) -> bool:
+        """Whether the database was built with packages in English (english_package), since 0.8.15."""
+        self._ensure_db()
+        return self._english_packages
+
+    @serialized
+    def upstream_packages(self, packages: list[str]) -> list[str]:
+        """Packages as JLCPCB's live search filters them: each given one, its English spelling
+        (english_package) and JLCPCB's own spellings of that ("Plugin,12.6x4.4mm" also sends
+        "插件,12.6x4.4mm"), so a package copied from any reply finds its parts. The spellings come
+        from the translation rules, which also cover parts not in the catalog (stock under 10), and
+        from the catalog's own (package_spellings: SOT23-6 is also "SOТ23-6", Cyrillic Т)."""
+        self._ensure_db()
+        spellings: dict[str, None] = {}
+        for package in packages:
+            english = english_package(package) or package
+            spellings.update(dict.fromkeys((package, *jlcpcb_package_spellings(package))))
+            try:
+                rows = self._conn.execute("SELECT upstream FROM package_spellings WHERE package = ? "
+                                          "ORDER BY upstream", (english,)).fetchall() if self._conn else []
+            except sqlite3.OperationalError:  # built before 0.8.15
+                rows = []
+            spellings.update(dict.fromkeys(upstream for (upstream,) in rows))
+        return list(spellings)
 
     def _get_attribute_names(self, name: str) -> list[str]:
         """Get all possible attribute names for a given name (including aliases)."""

@@ -65,7 +65,7 @@ from .subcategory_aliases import SUBCATEGORY_ALIASES, resolve_subcategory_name a
 from .db_worker import COMPONENT_POOL, run_db
 from .easyeda_store import EasyEDAStore, FootprintAnswer, answer_problem, pick_answer
 from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
-from .mounting import detect_mounting_type
+from .mounting import detect_mounting_type, english_package
 from .search.result import pcba_type_from_item
 from .rf_coverage import COVERAGE_ORDER, RF_BAND_SUBCATEGORIES, check_candidates
 from .alternatives import (
@@ -1138,8 +1138,8 @@ class JLCPCBClient:
 
         return params
 
-    def _transform_part(self, item: dict[str, Any], slim: bool = True) -> dict[str, Any]:
-        """Transform API response to our format."""
+    def _transform_part(self, item: dict[str, Any], slim: bool = True, with_prices: bool = False) -> dict[str, Any]:
+        """Transform API response to our format. with_prices keeps the price tiers in a slim part."""
         # Get price from the first tier; full details retain every stated price tier.
         # `or []` guards against componentPrices being present-but-null (API returns null
         # for some parts) — otherwise len()/indexing raises on None. Tier dicts keep
@@ -1162,7 +1162,7 @@ class JLCPCBClient:
 
         # Note: API returns firstSortName as subcategory, secondSortName as category
         stock = item.get("stockCount")
-        package = item.get("componentSpecificationEn")
+        package = english_package(item.get("componentSpecificationEn"))
         subcategory = item.get("firstSortName")
         category = item.get("secondSortName")
         # Get subcategory_id from API or lookup by name
@@ -1224,15 +1224,15 @@ class JLCPCBClient:
                 f"https://www.lcsc.com/product-detail/{code}.html" if code else None
             )
 
-            # Transform all prices
-            if prices:
-                result["prices"] = [
-                    {
-                        "qty": f"{p['startNumber']}+",
-                        "price": round(p["productPrice"], 4),
-                    }
-                    for p in prices
-                ]
+        # Every stated price tier: full details, and a stock check of one LCSC code (a BOM line)
+        if prices and (not slim or with_prices):
+            result["prices"] = [
+                {
+                    "qty": f"{p['startNumber']}+",
+                    "price": round(p["productPrice"], 4),
+                }
+                for p in prices
+            ]
 
         return result
 
@@ -1250,8 +1250,9 @@ class JLCPCBClient:
         sort_by: Literal["quantity", "price"] | None = None,
         page: int = 1,
         limit: int = DEFAULT_PAGE_SIZE,
+        with_prices: bool = False,
     ) -> dict[str, Any]:
-        """Search for components."""
+        """Search for components. with_prices adds each part's price tiers (prices)."""
         # Load categories if filtering by category/subcategory, or if we have a query
         # that might match a category name
         if category_id or subcategory_id or query:
@@ -1327,7 +1328,7 @@ class JLCPCBClient:
                     (pref_total + pref_limit - 1) // pref_limit,
                 )
                 has_more = page * basic_limit < basic_total or page * pref_limit < pref_total
-            results = [self._transform_part(item, slim=True) for item in items]
+            results = [self._transform_part(item, slim=True, with_prices=with_prices) for item in items]
         else:
             # Standard single-call path
             params = self._build_search_params(
@@ -1344,7 +1345,7 @@ class JLCPCBClient:
             items = page_info.get("list") or []
             total = page_info.get("total") or 0
 
-            results = [self._transform_part(item, slim=True) for item in items]
+            results = [self._transform_part(item, slim=True, with_prices=with_prices) for item in items]
 
             total_pages = (total + limit - 1) // limit if limit > 0 else 0
             has_more = page * limit < total
