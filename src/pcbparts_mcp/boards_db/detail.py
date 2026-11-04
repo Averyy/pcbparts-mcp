@@ -59,6 +59,9 @@ def _match_focus(
     return matched, match_type, partial_matches
 
 
+# Fewer boards than this sharing the exact part is a thin consensus; a partial focus uses its family's
+_THIN_CONSENSUS = 3
+
 # A rail with more parts than this shows its name and part count instead of the list (a GND net)
 _RAIL_LIST_LIMIT = 8
 
@@ -324,8 +327,13 @@ def get_board(
             # Auto-include cross-board consensus for the focused IC
             if get_consensus_fn:
                 consensus = get_consensus_fn(matched["value"])
-                if not consensus and match_type == "partial" and focus != matched["value"]:
-                    consensus = get_consensus_fn(focus)
+                # A partial match ("ESP32") falls back to the family's consensus when the exact part has
+                # none, or only a thin one: two boards sharing ESP32-S3-MINI-1 replaced 33 ESP32 boards
+                if (match_type == "partial" and focus != matched["value"]
+                        and (not consensus or consensus.get("board_count", 0) < _THIN_CONSENSUS)):
+                    family = get_consensus_fn(focus)
+                    if family and family.get("board_count", 0) > (consensus or {}).get("board_count", 0):
+                        consensus = family
                 if consensus:
                     result["consensus"] = consensus
 
