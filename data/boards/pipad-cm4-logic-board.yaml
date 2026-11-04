@@ -192,12 +192,10 @@ components:
   value: 10118194-0001LF
   footprint: 10118194-0001LF
   pin_count: 11
-  nc_pins: {ID: '4'}
 - ref: J2
   value: 1x6 header
   footprint: 78171-0004
   pin_count: 6
-  nc_pins: {Pin_1: '1', Pin_2: '2'}
 - ref: J3
   value: 2x20 header
   footprint: 2X20
@@ -224,7 +222,6 @@ components:
   value: 1x4 header
   footprint: ipad battery connector
   pin_count: 4
-  nc_pins: {Pin_2: '2'}
 - ref: J9
   value: 1x34 header
   footprint: 20474-030E-11
@@ -345,7 +342,7 @@ components:
   footprint: Texas_S-PWQFN-N24_EP2.7x2.7mm_ThermalVias
   manufacturer: Texas Instruments
   pin_count: 25
-  nc_pins: {STAT: '4', OTG: '8', ~QON: '12', DSEL: '24'}
+  nc_pins: {STAT: '4'}
 - ref: U16
   value: MIC5365-3.0
   footprint: SOT-23-5
@@ -359,7 +356,6 @@ components:
   value: FSA2275UMX
   footprint: FSA2275
   pin_count: 12
-  nc_pins: {R1: '10'}
 - ref: U5
   value: SN65DSI83TPAPRQ1
   footprint: SN65DSI83TPAPRQ1

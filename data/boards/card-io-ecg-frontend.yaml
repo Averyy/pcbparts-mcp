@@ -131,8 +131,6 @@ components:
 - ref: R5
   value: 2kohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R6
   value: 2kohm
   footprint: '0603'
@@ -149,7 +147,6 @@ components:
   value: ADS1291/2
   footprint: ADS1291-2
   pin_count: 33
-  nc_pins: {nCS: '18', DIN: '19', SCLK: '20', DOUT: '21', nDRDY: '22', GPIO2/RCLK2: '25'}
 - ref: U2
   value: KC2016Z2
   footprint: KC2016Z

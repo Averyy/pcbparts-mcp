@@ -77,7 +77,7 @@ components:
   value: EFM8BB21
   footprint: QFN20
   pin_count: 21
-  nc_pins: {'6': '6', '7': '7', '15': '15', '16': '16', '17': '17'}
+  nc_pins: {'7': '7', '15': '15', '16': '16'}
 nets:
 - name: /single esc 3/Ac_0
   pins: [FET402.1, U401.13]

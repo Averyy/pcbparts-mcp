@@ -1315,7 +1315,7 @@ components:
   footprint: RNH0030A
   lcsc: C165155
   pin_count: 31
-  nc_pins: {CURRENT_MODE: '3', VCONN_FAULT_N: '24', ID: '27'}
+  nc_pins: {CURRENT_MODE: '3'}
 - ref: U27
   value: TPD4E02B04DQA
   footprint: USON-10
@@ -1339,7 +1339,7 @@ components:
   footprint: RNH0030A
   lcsc: C165155
   pin_count: 31
-  nc_pins: {TXN: '7', VCONN_FAULT_N: '24'}
+  nc_pins: {TXN: '7'}
 - ref: U30
   value: TPD4E02B04DQA
   footprint: USON-10

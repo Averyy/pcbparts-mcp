@@ -97,7 +97,7 @@ components:
   footprint: 1X10
   prod_id: CONN-11563
   pin_count: 10
-  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '8': '8'}
+  nc_pins: {'6': '6', '8': '8'}
 - ref: J5
   value: 1x8 header
   footprint: 1X08
@@ -154,8 +154,6 @@ components:
 - ref: R3
   value: 10kohm
   footprint: 0603-RES-MARKED
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R4
   value: 10kohm
   footprint: 0603-RES-MARKED
@@ -171,7 +169,7 @@ components:
   value: 10kohm
   footprint: RES_ARRAY
   pin_count: 8
-  nc_pins: {D.1: '4', D.2: '5', C.2: '6', B.2: '7', A.2: '8'}
+  nc_pins: {D.1: '4', D.2: '5'}
 - ref: R8
   value: 470ohm
   footprint: 0603-RES-MARKED
@@ -179,7 +177,7 @@ components:
   value: SIM7000
   footprint: SIM7000
   pin_count: 68
-  nc_pins: {DTR: '3', RI: '4', DCD: '5', BOOT_CFG: '6', CTS: '7', RTS: '8', TXD: '9', RXD: '10', PCM_CLK: '11', PCM_SYNC: '12', PCM_DIN: '13', PCM_DOUT: '14', NC@1: '19', NC@2: '20', NC@3: '21', NC@4: '22', MDM_LOG_TX: '23', ADC: '25', NC@5: '26', SIM_DET: '34', NC@6: '35', NC@7: '36', I2C_SDA: '37', I2C_SCL: '38', NC@8: '40', NC@9: '41', NC@10: '42', NC@11: '43', NC@12: '44', NC@13: '47', GPIO4: '48', GPIO1/UART3_RXD: '49', GPIO0/UART3_TXD: '50', NC@14: '51', GPIO2: '67', GPIO3: '68'}
+  nc_pins: {DCD: '5', BOOT_CFG: '6', CTS: '7', RTS: '8', PCM_CLK: '11', PCM_SYNC: '12', PCM_DIN: '13', PCM_DOUT: '14', NC@1: '19', NC@2: '20', NC@3: '21', NC@4: '22', MDM_LOG_TX: '23', ADC: '25', NC@5: '26', SIM_DET: '34', NC@6: '35', NC@7: '36', I2C_SDA: '37', I2C_SCL: '38', NC@8: '40', NC@9: '41', NC@10: '42', NC@11: '43', NC@12: '44', NC@13: '47', GPIO4: '48', GPIO1/UART3_RXD: '49', GPIO0/UART3_TXD: '50', NC@14: '51', GPIO2: '67', GPIO3: '68'}
 - ref: X1
   value: LTE-uFL
   footprint: U.FL

@@ -329,7 +329,6 @@ components:
   footprint: LFCSP-24-1EP
   description: 0.5-6.1GHz fractional-N PLL, LFCSP-24
   pin_count: 25
-  nc_pins: {SW2: '21'}
 - ref: U7
   value: TPS62143
   footprint: VQFN-16-1EP

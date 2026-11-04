@@ -104,7 +104,7 @@ class TestKicadPins:
     def test_every_pin_labelled_as_nets_label_them(self, tmp_path):
         pcb = tmp_path / "board.kicad_pcb"
         pcb.write_text(_KICAD_PCB, encoding="utf-8")
-        pins = kicad_part_pins(pcb, {"U2", "R1", "J1"})
+        pins, _ = kicad_part_pins(pcb, {"U2", "R1", "J1"})
         # GND twice: GND@2 and GND@6, as nets name them; MP (no pintype) and the unplated hole aren't pins
         assert pins["U2"] == {"I/O1": "1", "GND@2": "2", "I/O2": "3", "I/O3": "4", "VCC": "5", "GND@6": "6"}
         nets = _extract_nets(_parse_sexpr(_KICAD_PCB)[0], {"U2", "R1", "J1"})
@@ -117,7 +117,7 @@ class TestKicadPins:
         refs = {"U2", "R1", "J1"}
         nets = _extract_nets(_parse_sexpr(_KICAD_PCB)[0], refs)
         comps = [pb.Component(ref=r, value="x", footprint="") for r in sorted(refs)]
-        count, mismatched = pb.assign_pin_info("test", comps, nets, kicad_part_pins(pcb, refs))
+        count, mismatched = pb.assign_pin_info("test", comps, nets, *kicad_part_pins(pcb, refs))
         u2 = next(c for c in comps if c.ref == "U2")
         assert (count, mismatched) == (3, [])
         assert u2.pin_count == 6 and u2.nc_pins == {"I/O1": "1", "I/O2": "3"}
@@ -152,7 +152,7 @@ class TestEaglePins:
         sch.write_text(_EAGLE_SCH, encoding="utf-8")
         pins, supply = eagle_part_pins(sch, {"U2"})
         assert pins["U2"] == {"IN": "1", "GND": "2 6", "EN": "3", "BP": "4", "OUT": "5"}
-        assert supply == {"U2": {"IN", "GND"}}
+        assert supply == {"U2": {"IN", "GND", "OUT"}}  # OUT and IN also reach C1/C2 (0.8.13)
         comps = [pb.Component(ref="U2", value="LDO", footprint="")]
         nets = [pb.Net(name="VOUT", pins=["U2.OUT", "C1.1"]), pb.Net(name="VIN", pins=["U2.IN", "C2.1"])]
         pb.assign_pin_info("test", comps, nets, pins, supply)

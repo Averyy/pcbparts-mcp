@@ -102,7 +102,6 @@ components:
   value: USB-C
   footprint: USB-C
   pin_count: 17
-  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: JP1
   value: VIN-VBUS
   footprint: '0603'

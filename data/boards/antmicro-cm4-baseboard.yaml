@@ -616,8 +616,6 @@ components:
   footprint: '0603'
   mpn: KP-1608CGCK
   manufacturer: Kingbright
-  pin_count: 2
-  nc_pins: {A: '2'}
 - ref: D203
   value: TPD1E0B04
   footprint: XDFN-2
@@ -902,8 +900,6 @@ components:
   footprint: '0603'
   mpn: KP-1608CGCK
   manufacturer: Kingbright
-  pin_count: 2
-  nc_pins: {C: '1'}
 - ref: D907
   value: green LED
   footprint: '0603'
@@ -970,14 +966,14 @@ components:
   manufacturer: Hirose Electric
   mpn: DF40HC(3.0)-100DS-0.4V(51)
   pin_count: 100
-  nc_pins: {'16': '16', '18': '18', '19': '19', '20': '20', '64': '64', '68': '68', '70': '70', '72': '72', '73': '73', '75': '75', '76': '76', '89': '89', '91': '91', '92': '92', '93': '93', '97': '97', '100': '100'}
+  nc_pins: {'19': '19', '64': '64', '68': '68', '70': '70', '72': '72', '75': '75'}
 - ref: J202
   value: connector
   footprint: Conn_Socket_Hirose_DF40
   manufacturer: Hirose Electric
   mpn: DF40HC(3.0)-100DS-0.4V(51)
   pin_count: 100
-  nc_pins: {'4': '4', '6': '6', '11': '11', '43': '43', '45': '45', '47': '47', '49': '49', '69': '69', '71': '71'}
+  nc_pins: {'4': '4', '6': '6', '69': '69', '71': '71'}
 - ref: J301
   value: Molex Nano-Fit 1x2
   footprint: Conn_Molex_Nano-Fit
@@ -996,7 +992,7 @@ components:
   manufacturer: TE Connectivity
   mpn: 1-2199230-6
   pin_count: 69
-  nc_pins: {NC@6: '6', NC@8: '8', NC@20: '20', NC@22: '22', NC@24: '24', NC@26: '26', NC@28: '28', NC@30: '30', NC@32: '32', NC@34: '34', NC@36: '36', NC@38: '38', SMB_CLK: '40', SMB_DATA: '42', ALERT: '44', NC@46: '46', NC@48: '48', NC@56: '56', NC@58: '58', NC@67: '67', SUSCLK: '68', NC@69: '69'}
+  nc_pins: {NC@6: '6', NC@8: '8', NC@20: '20', NC@22: '22', NC@24: '24', NC@26: '26', NC@28: '28', NC@30: '30', NC@32: '32', NC@34: '34', NC@36: '36', NC@38: '38', NC@46: '46', NC@48: '48', NC@56: '56', NC@58: '58', NC@67: '67', NC@69: '69'}
 - ref: J502
   value: microSD
   footprint: MicroSD_Amphenol_1140084168
@@ -1048,7 +1044,6 @@ components:
   mpn: SM02B-SRSS-TB(LF)(SN)
   manufacturer: JST Automotive Connectors
   pin_count: 3
-  nc_pins: {'1': '1', '2': '2'}
 - ref: J901
   value: USB-C
   footprint: USB-C
@@ -1103,7 +1098,7 @@ components:
   mpn: DZDH0401DW
   manufacturer: Diodes Incorporated
   pin_count: 6
-  nc_pins: {NC@1: '1', NC@5: '5', D: '6'}
+  nc_pins: {NC@1: '1', NC@5: '5'}
 - ref: R1
   value: 100kohm
   footprint: '0402'
@@ -1127,8 +1122,6 @@ components:
   mpn: CR0402-FX-1003GLF
   manufacturer: Bourns
   tolerance: 1%
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R204
   value: 100kohm
   footprint: '0402'
@@ -1181,8 +1174,6 @@ components:
   manufacturer: Bourns
   mpn: CR0402-FX-2201GLF
   tolerance: 1%
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R216
   value: 0ohm
   footprint: '0402'
@@ -1229,8 +1220,6 @@ components:
   mpn: CR0402-FX-1001GLF
   manufacturer: Bourns
   tolerance: 1%
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R225
   value: 0ohm
   footprint: '0402'
@@ -1257,8 +1246,6 @@ components:
   mpn: CR0402-FX-1001GLF
   manufacturer: Bourns
   tolerance: 1%
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R231
   value: 10kohm
   footprint: '0402'
@@ -1346,8 +1333,6 @@ components:
   mpn: CR0402-FX-1003GLF
   manufacturer: Bourns
   tolerance: 1%
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R262
   value: 100kohm
   footprint: '0402'
@@ -1827,8 +1812,6 @@ components:
   manufacturer: Bourns
   mpn: CR0402-FX-1003GLF
   tolerance: 1%
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R905
   value: 4.7kohm
   footprint: '0402'
@@ -2049,7 +2032,7 @@ components:
   manufacturer: Microchip Technology
   mpn: MCP23017T-E/ML
   pin_count: 29
-  nc_pins: {GPB6: '3', NC@7: '7', NC@10: '10', INTB: '15'}
+  nc_pins: {NC@7: '7', NC@10: '10', INTB: '15'}
 - ref: U301
   value: AP62301
   footprint: TSOT23-6
@@ -2075,7 +2058,7 @@ components:
   mpn: TPS2372-3RGWR
   manufacturer: Texas Instruments
   pin_count: 21
-  nc_pins: {nAUTCLS: '10', NC@14: '14', NC@15: '15', IRSHDL_EN: '16', TPL: '17', TPH: '18', nBT: '19', NC@20: '20'}
+  nc_pins: {nAUTCLS: '10', NC@14: '14', NC@15: '15', IRSHDL_EN: '16', NC@20: '20'}
 - ref: U402
   value: ACPL-217-500E
   footprint: SOIC-4
@@ -2090,7 +2073,6 @@ components:
   mpn: ULS-12/5-D48N-C
   description: Isolated Through Hole DC/DC Converter, ITE, 2:1, 60 W, 1 Output, 12 V, 5 A
   pin_count: 8
-  nc_pins: {CTRL: '2', TRIM: '6'}
 - ref: U601
   value: AP22615A
   footprint: TSOT23-6
@@ -2109,7 +2091,7 @@ components:
   mpn: PN7160A1HN/C100E
   manufacturer: NXP
   pin_count: 41
-  nc_pins: {IC@11: '11', RXN: '15', RXP: '16', TX2: '19', TX1: '21', ANT1: '23', ANT2: '24', VDD(HF): '25', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35', NC@36: '36', DCDC_EN: '37', IC@38: '38', WKUP_REQ: '39', CLK_REQ: '40'}
+  nc_pins: {IC@11: '11', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35', NC@36: '36', IC@38: '38'}
 - ref: U802
   value: DS1338
   footprint: SOIC-8
@@ -2151,14 +2133,13 @@ components:
   mpn: FT4233HPQ-REEL
   manufacturer: FTDI Chip
   pin_count: 77
-  nc_pins: {GPIO3: '5', GPIO4: '6', GPIO5: '7', ADBUS2: '13', ADBUS3: '14', ADBUS4: '15', ADBUS5: '16', ADBUS6: '17', ADBUS7: '18', BDBUS3: '22', BDBUS4: '23', BDBUS6: '25', BDBUS7: '26', FSOURCE: '34', VPP: '35', CDBUS2: '38', CDBUS3: '39', CDBUS4: '40', CDBUS5: '42', CDBUS6: '43', CDBUS7: '44', GPIO6: '46', DDBUS2: '50', DDBUS3: '51', DDBUS4: '52', DDBUS5: '53', DDBUS6: '56', DDBUS7: '57', GPIO7: '58', GPIO2: '59', GPIO1: '60', GPIO0: '61', PD2_CC1: '71', PD2_SVBUS: '72', PD2_CC2: '73'}
+  nc_pins: {ADBUS2: '13', ADBUS3: '14', ADBUS4: '15', ADBUS5: '16', ADBUS6: '17', ADBUS7: '18', BDBUS3: '22', BDBUS4: '23', BDBUS6: '25', BDBUS7: '26', FSOURCE: '34', VPP: '35', CDBUS2: '38', CDBUS3: '39', CDBUS4: '40', CDBUS5: '42', CDBUS6: '43', CDBUS7: '44', DDBUS2: '50', DDBUS3: '51', DDBUS4: '52', DDBUS5: '53', DDBUS6: '56', DDBUS7: '57'}
 - ref: U906
   value: TUSB321RWBR
   footprint: Texas_X2QFN-12
   mpn: TUSB321RWBR
   manufacturer: Texas Instruments
   pin_count: 12
-  nc_pins: {PORT: '4', nVCONN_FAULT: '6', OUT1: '7', OUT2: '8', DIR: '11'}
 - ref: U907
   value: TXB0104
   footprint: UQFN-12

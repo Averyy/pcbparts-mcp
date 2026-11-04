@@ -1669,7 +1669,6 @@ components:
   footprint: LQFP-100
   manufacturer: STMicroelectronics
   pin_count: 100
-  nc_pins: {'31': '31', '32': '32', '55': '55', '56': '56', '57': '57', '58': '58', '62': '62'}
 - ref: U27
   value: ACT4088
   footprint: SOT-23-6

@@ -19,7 +19,6 @@ components:
   value: Closed(1-2)/Opened
   footprint: SJ-2
   pin_count: 3
-  nc_pins: {0V/3.3V1.1@1: '1', 0V/3.3V1.2@2: '2', 0V/3.3V1.3: '3'}
 - ref: BAT/BUT1
   value: Opened(2-3)/Soldered
   footprint: SJ-2

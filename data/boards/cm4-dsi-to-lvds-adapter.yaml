@@ -430,7 +430,6 @@ components:
   mpn: SM10B-SURS-TF
   manufacturer: JST Automotive Connectors
   pin_count: 11
-  nc_pins: {'2': '2', '3': '3'}
 - ref: J3
   value: 1x40 header
   footprint: Conn_FFC_Amphenol
@@ -438,7 +437,6 @@ components:
   manufacturer: Amphenol
   description: FFC & FPC Connectors, 40 pin, 0.5mm, SMD/SMT, Right Angle, Bottom Concact
   pin_count: 41
-  nc_pins: {'4': '4', '23': '23', '24': '24', '26': '26', '27': '27', '36': '36', '37': '37'}
 - ref: L1
   value: 3.3uH
   footprint: '1008'
@@ -859,7 +857,7 @@ components:
   mpn: MPQ7235GQBE-AEC1-Z
   manufacturer: Monolithic Power Systems
   pin_count: 13
-  nc_pins: {NC: '3', nFAULT: '4'}
+  nc_pins: {NC: '3'}
 - ref: U6
   value: TLV76701_WSON
   footprint: WSON-6-1EP

@@ -1102,7 +1102,7 @@ components:
   lcsc: C2684867
   description: Recom Switching Regulator, 6.5 28V Input, 3 5.5V Output, 2A
   pin_count: 12
-  nc_pins: {ON/OFF: '1', VADJ: '12'}
+  nc_pins: {ON/OFF: '1'}
 - ref: PS2
   value: K7812-2000
   footprint: Converter_DCDC_RECOM_R-78B-2.0_THT

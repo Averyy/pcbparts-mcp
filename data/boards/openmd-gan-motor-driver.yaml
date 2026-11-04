@@ -363,14 +363,13 @@ components:
   mpn: SM08B-SRSS-TB(LF)(SN)
   description: Generic connectable mounting pin connector, single row, 01x08, script generated
   pin_count: 9
-  nc_pins: {Pin_2: '2', Pin_3: '3', Pin_6: '6', Pin_7: '7'}
 - ref: J3
   value: 1x12 header
   footprint: JST_SH_SM12B-SRSS-TB
   mpn: SM12B-SRSS-TB(LF)(SN)
   description: Generic connectable mounting pin connector, single row, 01x12, script generated
   pin_count: 13
-  nc_pins: {Pin_4: '4', Pin_5: '5', Pin_11: '11'}
+  nc_pins: {Pin_11: '11'}
 - ref: J5
   value: A
   footprint: DIP-4

@@ -293,7 +293,7 @@ components:
   mpn: MDT420E01001
   description: CONN M.2 KEY E 67P F RIGHT ANGLE P=0.5mm SMT BLACK
   pin_count: 67
-  nc_pins: {NC1: '1', NC15: '15', NC17: '17', NC19: '19', NC21: '21', NC23: '23', NC35: '35', NC37: '37', NC44: '44', AUX1: '46', RTX: '47', AUX2: '48', CTX: '49', NC53: '53', NC55: '55', NC59: '59', NC61: '61', NC63: '63', BOOT: '65', NC66: '66', NC68: '68', NC69: '69', NC75: '75'}
+  nc_pins: {NC1: '1', NC15: '15', NC17: '17', NC19: '19', NC21: '21', NC23: '23', NC35: '35', NC37: '37', NC44: '44', NC53: '53', NC55: '55', NC59: '59', NC61: '61', NC63: '63', NC66: '66', NC68: '68', NC69: '69', NC75: '75'}
 - ref: J7
   value: JST SH 4-pin
   footprint: JST SM04B-SRSS-TB_Fv1.2
@@ -333,7 +333,6 @@ components:
   mpn: PPTC161LFBN-RC
   description: STRIP 16P F P=2.54mm H=8.50mm D=6.00mm THT BLACK
   pin_count: 16
-  nc_pins: {Pin_3: '3', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_13: '13'}
 - ref: MODR1
   value: CES-112-01-L-S
   footprint: 12PIN_254MM_Fv1.2
@@ -341,7 +340,6 @@ components:
   mpn: PPTC121LFBN-RC
   description: STRIP 12P F P=2.54mm H=8.50mm D=6.00mm THT BLACK
   pin_count: 12
-  nc_pins: {Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10'}
 - ref: OBJ1
   value: 9774025151R
   footprint: DIST-WASMSIM0250_Fv1.2
@@ -432,7 +430,6 @@ components:
   mpn: 742C163101JP
   description: RES ARRAY 8CH 100 OHM 5% SMT 2506
   pin_count: 16
-  nc_pins: {R1_1: '1', R2_1: '2', R5_1: '5'}
 - ref: R3
   value: 499ohm
   footprint: '0402'
@@ -555,7 +552,6 @@ components:
   mpn: DGQ2788AEN-T1-GE4
   description: IC ANALOG SWITCH QUAD SPDT SMT 16-UFQFN
   pin_count: 16
-  nc_pins: {NO3: '3', NO4: '7', NO1: '11', NO2: '15'}
 - ref: U6
   value: DGQ2788A
   footprint: QFN40P260X180X60-16N_Fv1.2

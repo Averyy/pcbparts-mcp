@@ -269,8 +269,6 @@ components:
 - ref: R8
   value: 100ohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R9
   value: 330ohm
   footprint: '0603'
@@ -298,7 +296,7 @@ components:
   value: RP2040
   footprint: QFN-56-1EP
   pin_count: 57
-  nc_pins: {GPIO6: '8', GPIO7: '9', SWCLK: '24', SWD: '25', GPIO21: '32', GPIO22: '34', GPIO29_ADC3: '41'}
+  nc_pins: {GPIO6: '8', GPIO7: '9', SWCLK: '24', SWD: '25', GPIO22: '34', GPIO29_ADC3: '41'}
 - ref: U4
   value: 0900PC15A0036
   footprint: 0900FM15D0039E

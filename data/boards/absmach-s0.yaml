@@ -222,7 +222,7 @@ components:
   footprint: 2X23
   lcsc: C725895
   pin_count: 46
-  nc_pins: {Pin_3: '3', Pin_4: '4', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_13: '13', Pin_14: '14', Pin_16: '16', Pin_19: '19', Pin_20: '20', Pin_21: '21', Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_27: '27', Pin_28: '28', Pin_29: '29', Pin_30: '30', Pin_31: '31', Pin_32: '32', Pin_33: '33', Pin_34: '34', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39', Pin_40: '40', Pin_41: '41', Pin_42: '42'}
+  nc_pins: {Pin_3: '3', Pin_4: '4', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_13: '13', Pin_14: '14', Pin_16: '16', Pin_21: '21', Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_27: '27', Pin_28: '28', Pin_29: '29', Pin_30: '30', Pin_31: '31', Pin_32: '32', Pin_33: '33', Pin_34: '34', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39', Pin_40: '40', Pin_41: '41', Pin_42: '42'}
 - ref: Q1
   value: NPN transistor
   footprint: SOT-23
@@ -359,7 +359,7 @@ components:
   manufacturer: SIMCOM
   lcsc: C2943992
   pin_count: 68
-  nc_pins: {UART1_DCD: '5', PCM_DIN: '9', PCM_DOUT: '10', PCM_CLK: '11', PCM_SYNC: '12', GPIO5: '14', USB_BOOT: '20', UART2_TXD: '22', UART2_RXD: '23', ADC: '38', ANT_CONTROL1: '43', ANT_CONTROL0: '44', SPI_CS: '48', SPI_MOSI: '49', SPI_CLK: '50', SPI_MISO: '51', GPIO1: '57', GPIO2: '58', GPIO3: '59', GPIO4: '60', UART3_TXD: '61', UART3_RXD: '62'}
+  nc_pins: {UART1_DCD: '5', PCM_DIN: '9', PCM_DOUT: '10', PCM_CLK: '11', PCM_SYNC: '12', GPIO5: '14', UART2_TXD: '22', UART2_RXD: '23', ADC: '38', ANT_CONTROL1: '43', ANT_CONTROL0: '44', SPI_CS: '48', SPI_MOSI: '49', SPI_CLK: '50', SPI_MISO: '51', GPIO1: '57', GPIO2: '58', GPIO3: '59', GPIO4: '60', UART3_TXD: '61', UART3_RXD: '62'}
 - ref: U3
   value: NANO SIM XG6P H1.35
   footprint: SIM-SMD_NANO-SIM-XG6P-H1.35
@@ -372,7 +372,7 @@ components:
   lcsc: C194701
   description: "8-Bit Bidirectional Voltage-Level Translator, Auto Direction Sensing and \xB115-kV"
   pin_count: 21
-  nc_pins: {OE: '10', B4: '16', B3: '17'}
+  nc_pins: {OE: '10'}
 - ref: U5
   value: RC-S2LP-868
   footprint: XCVR_RC-S2LP-868

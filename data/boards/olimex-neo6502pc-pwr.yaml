@@ -18,18 +18,12 @@ components:
 - ref: +3.3V1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
-  pin_count: 1
-  nc_pins: {3V1.Pad: '1'}
 - ref: +5V1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
-  pin_count: 1
-  nc_pins: {Pad: '1'}
 - ref: +5V_USB1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
-  pin_count: 1
-  nc_pins: {Pad: '1'}
 - ref: BAT1
   value: PH2.0-2PWB
   footprint: PH2.0-2PWB
@@ -198,7 +192,7 @@ components:
   value: CH32V003F4P6
   footprint: TSSOP20_Pitch-0.65mm
   pin_count: 20
-  nc_pins: {PD7/NRST/T2CH4/OPP1/UCK_: '4', PD1/SWIO/AETR2/T1CH3N/SCL_/URX_: '18'}
+  nc_pins: {PD7/NRST/T2CH4/OPP1/UCK_: '4'}
 - ref: U3
   value: TPS62A02ADRLR
   footprint: SOT-563-6

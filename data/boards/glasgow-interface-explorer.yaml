@@ -645,8 +645,6 @@ components:
   footprint: '0402'
   manufacturer: Yageo
   mpn: RC0402FR-1347RL
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R4
   value: 100kohm
   footprint: '0402'
@@ -664,8 +662,6 @@ components:
   footprint: '0402'
   manufacturer: Yageo
   mpn: RC0402FR-1347RL
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R44
   value: 10kohm
   footprint: '0402'
@@ -854,14 +850,14 @@ components:
   manufacturer: BL(Shanghai Belling)
   mpn: BL24C256A-SFRC
   pin_count: 8
-  nc_pins: {A1: '2', A2: '3', WP: '7'}
+  nc_pins: {A2: '3', WP: '7'}
 - ref: U30
   value: ICE40HX8K
   footprint: BGA-121
   mpn: ICE40HX8K-BG121
   manufacturer: Lattice Semiconductor Corporation
   pin_count: 121
-  nc_pins: {VPP_FAST: B10, IOR_161: B11, IOR_160: C11, IOR_154: D10, IOR_152: D11, IOR_141_GBIN2: E10, IOR_148: E11, IOR_137: F9, IOR_136: F10, IOR_140_GBIN3: F11, IOR_120: G10, IOR_129: G11, IOR_116: H10, IOR_119: H11, IOR_117: J10, IOR_114: J11, IOR_115: K11}
+  nc_pins: {VPP_FAST: B10}
 - ref: U31
   value: TPS73101DBV
   footprint: SOT-23-5

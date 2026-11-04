@@ -27,26 +27,18 @@ components:
   value: 10uF
   footprint: '0603'
   voltage: 16V
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: C101
   value: 10uF
   footprint: '0603'
   voltage: 16V
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: C102
   value: 10uF
   footprint: '0603'
   voltage: 16V
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: C103
   value: 10uF
   footprint: '0603'
   voltage: 16V
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: C105
   value: 470uF
   footprint: CP_Radial_D8.0mm_P3.50mm
@@ -411,26 +403,18 @@ components:
   value: 10uF
   footprint: '0603'
   voltage: 16V
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: C97
   value: 10uF
   footprint: '0603'
   voltage: 16V
-  pin_count: 2
-  nc_pins: {'1': '1', '2': '2'}
 - ref: C98
   value: 10uF
   footprint: '0603'
   voltage: 16V
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C99
   value: 10uF
   footprint: '0603'
   voltage: 16V
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: CR0
   value: 10u
   footprint: '0603'
@@ -596,7 +580,6 @@ components:
   footprint: tssop44-powerpad
   mpn: TPA3255DDVR
   pin_count: 44
-  nc_pins: {3_M1: '3', 4_M2: '4', 9_OSC_IOM: '9', 10_OSC_IOP: '10'}
 - ref: J10
   value: 1x2 header
   footprint: AMASS_XT30U-M
@@ -683,18 +666,12 @@ components:
 - ref: R10
   value: 100ohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R11
   value: t330
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R12
   value: t330
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R13
   value: t330
   footprint: '0603'
@@ -735,8 +712,6 @@ components:
 - ref: R152
   value: 100ohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R153
   value: 10kohm
   footprint: '0603'
@@ -1096,7 +1071,7 @@ components:
   mpn: AK4454VN
   description: 4ch DACv 115db
   pin_count: 33
-  nc_pins: {TDMO1: '6', AOUT0+: '14', AOUT0-: '15', AOUT1-: '18', AOUT1+: '19'}
+  nc_pins: {TDMO1: '6'}
 - ref: U15
   value: OPA2322
   footprint: SOIC-8
@@ -1139,7 +1114,7 @@ components:
   footprint: LQFP-48_adi
   mpn: adau1701
   pin_count: 48
-  nc_pins: {MP0: '11', MP7: '14', MP6: '15', OSCO: '31', PLL_MODE0: '38', PLL_MODE1: '39'}
+  nc_pins: {OSCO: '31'}
 - ref: U23
   value: MC33275
   footprint: SOT-223-3_TabPin2

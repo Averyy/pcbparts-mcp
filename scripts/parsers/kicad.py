@@ -443,23 +443,35 @@ def _extract_nets(root: list, part_names: set[str]) -> list[Net]:
     return nets
 
 
-def extract_part_pins(pcb_path: Path, part_names: set[str]) -> dict[str, dict[str, str]]:
-    """Every pin of each part, {ref: {label: pad number}}, labelled as nets label them.
+def extract_part_pins(pcb_path: Path, part_names: set[str]
+                      ) -> tuple[dict[str, dict[str, str]], dict[str, set[str]]]:
+    """Every pin of each part, {ref: {label: pad number}}, labelled as nets label them, and the pins
+    wired to another pad on the board, the parts the parser drops included ({ref: {label}}).
 
     KiCad 6+ marks the pads that come from symbol pins (pintype); a pad without one is mechanical
     (a mounting tab, a shield lug not in the symbol) and isn't a pin. KiCad 5 boards don't say, so
-    every numbered pad counts. Unplated holes never do.
+    every numbered pad counts. Unplated holes never do. A pin whose only other pad is a dropped part
+    (a pedal's wiring pad for its jack, a test point) has no net in the board data but isn't NC.
     """
     text = pcb_path.read_text(encoding="utf-8", errors="replace")
     tree = _parse_sexpr(text)
     root = tree[0] if tree and isinstance(tree[0], list) and tree[0] and tree[0][0] == "kicad_pcb" else tree
     marks_pins = "(pintype " in text  # "~" numbers an unnumbered pad (a fiducial) in KiCad 5
+    # Distinct pads on each net across the whole board (a pad split in pieces counts once)
+    net_pads: dict[str, set[tuple[int, str]]] = {}
+    for index, fp_node in enumerate(_iter_footprints(root)):
+        for pad in _find_all(fp_node, "pad"):
+            if len(pad) >= 2 and _pad_net(pad):
+                net_pads.setdefault(_pad_net(pad), set()).add((index, str(pad[1])))
     parts: dict[str, dict[str, str]] = {}
+    wired: dict[str, set[str]] = {}
     for fp_node in _iter_footprints(root):
         ref = _get_fp_ref(fp_node)
         if not ref or ref not in part_names or ref in parts:
             continue
-        on_nets = {pad_num: label for pad_num, label, _ in _footprint_net_pins(fp_node)}
+        net_labels = _footprint_net_pins(fp_node)
+        wired[ref] = {label for _, label, net in net_labels if len(net_pads.get(net, ())) >= 2}
+        on_nets = {pad_num: label for pad_num, label, _ in net_labels}
         others: list[tuple[str, str]] = []
         for pad in _find_all(fp_node, "pad"):
             if len(pad) < 3 or not isinstance(pad[1], str) or pad[1] in ("", "~") or pad[2] == "np_thru_hole":
@@ -475,7 +487,7 @@ def extract_part_pins(pcb_path: Path, part_names: set[str]) -> dict[str, dict[st
         for pad_num, pinfunc in others:
             pins.setdefault(_pin_label(pad_num, pinfunc, counts), pad_num)
         parts[ref] = pins
-    return parts
+    return parts, wired
 
 
 def _extract_copper_pours(root: list) -> list[CopperPour]:

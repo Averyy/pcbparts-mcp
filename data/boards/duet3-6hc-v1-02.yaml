@@ -2006,8 +2006,6 @@ components:
   value: 59ohm
   footprint: '0402'
   mpn: RMCF0402FT59R0
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R11
   value: 47ohm
   footprint: '0402'
@@ -2017,8 +2015,6 @@ components:
   value: 59ohm
   footprint: '0402'
   mpn: RMCF0402FT59R0
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R111
   value: 5.62kohm
   footprint: '0402'
@@ -2136,14 +2132,10 @@ components:
   value: 59ohm
   footprint: '0402'
   mpn: RMCF0402FT59R0
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R134
   value: 59ohm
   footprint: '0402'
   mpn: RMCF0402FT59R0
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R135
   value: 4.7kohm
   footprint: '0402'

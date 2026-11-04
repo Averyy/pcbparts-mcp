@@ -57,7 +57,6 @@ components:
   value: 1x3 header
   footprint: JST_EH_B3B-EH-A
   pin_count: 3
-  nc_pins: {Pin_2: '2'}
 - ref: R1
   value: 470ohm
   footprint: 0805
@@ -67,8 +66,6 @@ components:
 - ref: R3
   value: 470ohm
   footprint: 0805
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: SW1
   value: switch
   footprint: SW_SPDT_CK_JS102011SAQN

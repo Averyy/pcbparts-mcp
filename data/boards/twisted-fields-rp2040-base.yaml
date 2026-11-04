@@ -324,38 +324,26 @@ components:
   value: 22nF
   footprint: 0805
   lcsc: C77069
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C88
   value: 22nF
   footprint: 0805
   lcsc: C77069
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: C89
   value: 22nF
   footprint: 0805
   lcsc: C77069
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: C90
   value: 22nF
   footprint: 0805
   lcsc: C77069
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C91
   value: 22nF
   footprint: 0805
   lcsc: C77069
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C92
   value: 22nF
   footprint: 0805
   lcsc: C77069
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: C94
   value: 22uF
   footprint: 0805
@@ -501,7 +489,6 @@ components:
   footprint: CONN-TH_3P-P2.54_HCTL_HC-2510-3AW
   lcsc: C2982042
   pin_count: 3
-  nc_pins: {Pin_1: '1', Pin_2: '2'}
 - ref: J11
   value: 1x4 header
   footprint: PINREX-744-81-04TW00 _1x04_P2.54mm_Vertical
@@ -522,7 +509,6 @@ components:
   footprint: CONN-TH_3P-P2.54_HCTL_HC-2510-3AW
   lcsc: C2982042
   pin_count: 3
-  nc_pins: {Pin_1: '1', Pin_2: '2'}
 - ref: J15
   value: AUX Encoder
   footprint: CONN-TH_5P-P2.54_HCTL_HC-2510-5AW
@@ -624,7 +610,6 @@ components:
   footprint: SOT-323_SC-70
   lcsc: C879165
   pin_count: 3
-  nc_pins: {D: '3'}
 - ref: Q11
   value: AO7400-VB
   footprint: SOT-323_SC-70
@@ -635,14 +620,12 @@ components:
   footprint: SOT-323_SC-70
   lcsc: C879165
   pin_count: 3
-  nc_pins: {D: '3'}
 - ref: Q3
   value: NCE40P05Y
   footprint: SOT-23
   lcsc: C163738
   description: "40V 5.3A 2W 85m\u03A9@10V,5A 3V@250uA 1 Piece P-Channel"
   pin_count: 3
-  nc_pins: {S: '2'}
 - ref: Q4
   value: LBSS139WT1G
   footprint: SOT-323_SC-70
@@ -973,7 +956,6 @@ components:
   footprint: RP2040-QFN-56
   lcsc: C2040
   pin_count: 57
-  nc_pins: {GPIO4: '6', GPIO5: '7', GPIO6: '8', GPIO7: '9', GPIO8: '11', GPIO9: '12', GPIO10: '13', GPIO11: '14', GPIO12: '15', GPIO13: '16', GPIO14: '17', GPIO15: '18', GPIO26_ADC0: '38', GPIO27_ADC1: '39', GPIO28_ADC2: '40', GPIO29_ADC3: '41'}
 - ref: U17
   value: CA-IS3052G
   footprint: SOIC-8
@@ -990,7 +972,6 @@ components:
   footprint: RP2040-QFN-56
   lcsc: C2040
   pin_count: 57
-  nc_pins: {GPIO5: '7', GPIO17: '28', GPIO23: '35'}
 - ref: U22
   value: ADS7822U
   footprint: SOIC-8
@@ -1020,7 +1001,6 @@ components:
   footprint: SOT-23-6
   lcsc: C130227
   pin_count: 6
-  nc_pins: {VIN: '3'}
 - ref: U27
   value: USBLC6-2
   footprint: SOT-666
@@ -1062,7 +1042,7 @@ components:
   footprint: SOIC-8-1EP
   lcsc: C329266
   pin_count: 9
-  nc_pins: {EN: '6', POK: '7'}
+  nc_pins: {POK: '7'}
 - ref: U34
   value: LTV-208
   footprint: SSOP-8
@@ -1073,7 +1053,6 @@ components:
   footprint: TSSOP-16
   lcsc: C201547
   pin_count: 16
-  nc_pins: {IO4: '11', IO5: '12', IO6: '13', IO7: '14'}
 - ref: U4
   value: TXS0101DCKR
   footprint: SOT-363_SC-70-6
@@ -1096,7 +1075,6 @@ components:
   footprint: SOT-23-6
   lcsc: C130227
   pin_count: 6
-  nc_pins: {VIN: '3'}
 - ref: Y1
   value: 12MHz
   footprint: SMD3225

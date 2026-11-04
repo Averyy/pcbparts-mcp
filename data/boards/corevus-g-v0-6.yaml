@@ -809,13 +809,9 @@ components:
 - ref: R37
   value: 33ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R38
   value: 33ohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R39
   value: 100ohm
   footprint: '0402'
@@ -1074,7 +1070,7 @@ components:
   value: STM32F407ZETx
   footprint: LQFP-144
   pin_count: 144
-  nc_pins: {PE2: '1', PE3: '2', PE4: '3', PE5: '4', PF1: '11', PF2: '12', PF3: '13', PF4: '14', PA0: '34', PA2: '36', PA3: '37', PA5: '41', PA6: '42', PA7: '43', PC4: '44', PC5: '45', PB0: '46', PB2: '48', PF11: '49', PF12: '50', PE12: '65', PE13: '66', PE14: '67', PE15: '68', PB10: '69', PB11: '70', PB12: '73', PD8: '77', PD9: '78', PD10: '79', PD11: '80', PD12: '81', PG4: '89', PG5: '90', PG6: '91', PG7: '92', PG8: '93', PA13: '105', PA14: '109', PC12: '113', PD0: '114', PD1: '115', PD2: '116', PD3: '117', PD4: '118', PD5: '119', PD6: '122', PD7: '123', PG9: '124', PG11: '126', PG14: '129'}
+  nc_pins: {PA0: '34', PA2: '36', PA3: '37', PA5: '41', PA6: '42', PA7: '43', PB2: '48', PB10: '69', PB11: '70', PA13: '105', PA14: '109', PC12: '113', PD0: '114', PD1: '115', PD2: '116', PD3: '117', PD4: '118', PD5: '119', PD6: '122', PD7: '123', PG9: '124', PG11: '126', PG14: '129'}
 - ref: U11
   value: TMC2160
   footprint: TMCx160
@@ -1084,7 +1080,7 @@ components:
   value: CD4504B
   footprint: TSSOP-16
   pin_count: 16
-  nc_pins: {Aout: '2', Bout: '4', Cout: '6', Dout: '10'}
+  nc_pins: {Cout: '6'}
 - ref: U3
   value: TPS54335A
   footprint: SOIC-8-1EP

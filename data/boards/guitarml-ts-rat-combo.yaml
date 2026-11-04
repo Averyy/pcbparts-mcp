@@ -1,0 +1,637 @@
+name: GuitarML TS/RAT Combo
+slug: guitarml-ts-rat-combo
+source: GuitarML/GuitarPedalPCBs
+format: kicad9
+description: Guitar pedal Tube Screamer-style overdrive (TL072, 1N914 clipping pair in the op-amp feedback, 2SC1815 emitter-follower
+  buffers) and RAT-style distortion (LM301, 1N914 hard clipping to ground)
+tags: [audio, signal-conditioning]
+key_ics: [TL072, LM301, 2N5458, 2SC1815]
+outline:
+  width_mm: 110.0
+  height_mm: 48.0
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 22nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C10
+  value: 4.7uF
+  footprint: CP_Radial_D5.0mm_P2.50mm
+- ref: C11
+  value: 3.3nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C12
+  value: 47uF
+  footprint: CP_Radial_D5.0mm_P2.50mm
+- ref: C13
+  value: 1uF
+  footprint: C_Rect_L7.0mm_W6.0mm_P5.00mm
+- ref: C14
+  value: 51pF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C15
+  value: 220nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C16
+  value: 220nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C17
+  value: 1uF
+  footprint: C_Rect_L7.0mm_W6.0mm_P5.00mm
+- ref: C18
+  value: 100nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C19
+  value: 10uF
+  footprint: CP_Radial_D5.0mm_P2.50mm
+- ref: C2
+  value: 1nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C20
+  value: 22nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C21
+  value: 1uF
+  footprint: C_Rect_L7.0mm_W6.0mm_P5.00mm
+- ref: C22
+  value: 47nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C3
+  value: 100nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C4
+  value: 47uF
+  footprint: CP_Radial_D5.0mm_P2.50mm
+- ref: C5
+  value: 22nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C6
+  value: 100pF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C7
+  value: 2.2uF
+  footprint: CP_Radial_D5.0mm_P2.50mm
+- ref: C8
+  value: 4.7uF
+  footprint: CP_Radial_D5.0mm_P2.50mm
+- ref: C9
+  value: 30pF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: D1
+  value: 1N914
+  footprint: T-1_P5.08mm_Horizontal
+- ref: D2
+  value: 1N5817
+  footprint: DO-35_SOD27_P7.62mm_Horizontal
+- ref: D3
+  value: 1N914
+  footprint: T-1_P5.08mm_Horizontal
+- ref: D8
+  value: 1N914
+  footprint: T-1_P5.08mm_Horizontal
+- ref: D9
+  value: 1N914
+  footprint: T-1_P5.08mm_Horizontal
+- ref: JN1
+  value: 2N5458
+  footprint: TO92
+  pin_count: 3
+- ref: POT1
+  value: A100K
+  footprint: Potentiometer_Omeg_PC16BU_Vertical
+  pin_count: 3
+- ref: POT2
+  value: A100K
+  footprint: Potentiometer_Omeg_PC16BU_Vertical
+  pin_count: 3
+- ref: POT3
+  value: A100K
+  footprint: Potentiometer_Omeg_PC16BU_Vertical
+  pin_count: 3
+- ref: POT4
+  value: A500K
+  footprint: Potentiometer_Omeg_PC16BU_Vertical
+  pin_count: 3
+- ref: POT5
+  value: W20K
+  footprint: Potentiometer_Omeg_PC16BU_Vertical
+  pin_count: 3
+- ref: POT6
+  value: B100K
+  footprint: Potentiometer_Omeg_PC16BU_Vertical
+  pin_count: 3
+- ref: Q1
+  value: 2SC1815
+  footprint: TO-92
+  description: 0.15A Ic, 50V Vce, Low Noise Audio NPN Transistor, TO-92
+  pin_count: 3
+- ref: Q2
+  value: 2SC1815
+  footprint: TO-92
+  description: 0.15A Ic, 50V Vce, Low Noise Audio NPN Transistor, TO-92
+  pin_count: 3
+- ref: R1
+  value: 1Mohm
+  footprint: Axial
+- ref: R10
+  value: 510kohm
+  footprint: Axial
+- ref: R11
+  value: 1kohm
+  footprint: Axial
+- ref: R12
+  value: 1.5kohm
+  footprint: Axial
+- ref: R13
+  value: 1Mohm
+  footprint: Axial
+- ref: R14
+  value: 10kohm
+  footprint: Axial
+  pulldown: C21.1
+- ref: R15
+  value: 4.7kohm
+  footprint: Axial
+- ref: R16
+  value: 10kohm
+  footprint: Axial
+  pulldown: Q1.E
+- ref: R17
+  value: 10kohm
+  footprint: Axial
+- ref: R18
+  value: 51kohm
+  footprint: Axial
+- ref: R19
+  value: 1kohm
+  footprint: Axial
+- ref: R2
+  value: 1Mohm
+  footprint: Axial
+- ref: R20
+  value: 10kohm
+  footprint: Axial
+- ref: R21
+  value: 220ohm
+  footprint: Axial
+- ref: R22
+  value: 1kohm
+  footprint: Axial
+- ref: R23
+  value: 1kohm
+  footprint: Axial
+- ref: R24
+  value: 510kohm
+  footprint: Axial
+- ref: R25
+  value: 10kohm
+  footprint: Axial
+  pulldown: Q2.E
+- ref: R26
+  value: 100ohm
+  footprint: Axial
+- ref: R27
+  value: 10kohm
+  footprint: Axial
+  pulldown: C19.1
+- ref: R28
+  value: 1kohm
+  footprint: Axial
+- ref: R29
+  value: 4.7kohm
+  footprint: Axial
+- ref: R3
+  value: 1kohm
+  footprint: Axial
+- ref: R4
+  value: 47ohm
+  footprint: Axial
+- ref: R5
+  value: 560ohm
+  footprint: Axial
+- ref: R6
+  value: 4.7kohm
+  footprint: Axial
+- ref: R7
+  value: 10kohm
+  footprint: Axial
+  pullup: VREF
+- ref: R8
+  value: 10kohm
+  footprint: Axial
+  pulldown: VREF
+- ref: R9
+  value: 2.2Mohm
+  footprint: Axial
+- ref: S1
+  value: FS57003PLT2B2M2QE
+  footprint: SW_FS57003PLT2B2M2QE
+  manufacturer: E-Switch
+  mpn: FS57003PLT2B2M2QE
+  pin_count: 9
+- ref: U1
+  value: TL072
+  footprint: DIP-8
+  pin_count: 8
+- ref: U2
+  value: LM301
+  footprint: DIP-8
+  description: Operational Amplifier, DIP-8/TO-99-8
+  pin_count: 8
+  nc_pins: {COMP: '5'}
+nets:
+- name: GND
+  pins:
+  - C11.2
+  - C12.2
+  - C15.1
+  - C2.2
+  - C3.2
+  - C4.2
+  - C7.2
+  - C8.2
+  - D1.A
+  - D3.K
+  - InG1.Pin_1
+  - POT3.1
+  - R1.1
+  - R13.1
+  - R14.1
+  - R16.1
+  - R21.1
+  - R25.1
+  - R27.1
+  - R8.1
+  - R9.1
+  - U1.V-
+  - U2.V-
+- name: Net-(9v1-Pin_1)
+  pins: [9v1.Pin_1, D2.A, R15.2, R6.2]
+- name: Net-(C1-Pad2)
+  pins: [C1.2, R2.2, R3.2]
+- name: Net-(C10-Pad1)
+  pins: [C10.1, C6.2, POT1.2, POT1.3, U2.6]
+- name: Net-(C10-Pad2)
+  pins: [C10.2, R11.2]
+- name: Net-(C11-Pad1)
+  pins: [C11.1, C20.1, R12.1]
+- name: Net-(C16-Pad1)
+  pins: [C16.1, R21.2]
+- name: Net-(C16-Pad2)
+  pins: [C16.2, POT5.2]
+- name: Net-(C17-Pad1)
+  pins: [C17.1, R23.1]
+- name: Net-(C17-Pad2)
+  pins: [C17.2, R22.2, U1.7]
+- name: Net-(C18-Pad2)
+  pins: [C18.2, POT6.2]
+- name: Net-(C19-Pad2)
+  pins: [C19.2, R26.1]
+- name: Net-(C20-Pad2)
+  pins: [C20.2, JN1.1, R13.2]
+- name: Net-(C21-Pad1)
+  pins: [C21.1, JN1.2, R14.2]
+- name: Net-(C21-Pad2)
+  pins: [C21.2, POT3.3]
+- name: Net-(C22-Pad1)
+  pins: [C22.1, R29.2]
+- name: Net-(C5-Pad2)
+  pins: [C5.2, R28.2]
+- name: Net-(C7-Pad1)
+  pins: [C7.1, R4.1]
+- name: Net-(C8-Pad1)
+  pins: [C8.1, R5.1]
+- name: Net-(D1-K)
+  pins: [D1.K, D3.A, POT2.1, R11.1]
+- name: Net-(D8-A)
+  pins:
+  - C14.2
+  - D8.A
+  - D9.K
+  - POT4.2
+  - POT4.3
+  - R19.2
+  - U1.1
+- name: Net-(D8-K)
+  pins: [C14.1, C22.2, D8.K, D9.A, R18.2, U1.-@2]
+- name: Net-(In1-Pin_1)
+  pins: [S1.1, S1.6]
+- name: Net-(POT2-Pad2)
+  pins: [POT2.2, POT2.3, R12.2]
+- name: Net-(POT4-Pad1)
+  pins: [POT4.1, R18.1]
+- name: Net-(POT6-Pad3)
+  pins: [POT6.3, R23.2]
+- name: Net-(Q1-B)
+  pins: [Q1.B, R10.2, R28.1]
+- name: Net-(Q1-E)
+  pins: [C13.1, Q1.E, R16.2]
+- name: Net-(Q2-B)
+  pins: [C18.1, Q2.B, R24.2]
+- name: Net-(Q2-E)
+  pins: [Q2.E, R25.2, R26.2]
+- name: Net-(Rat_in1-Pin_1)
+  pins: [C1.1, R1.2]
+- name: Net-(U1A-+)
+  pins: [C13.2, R17.2, U1.+@3]
+- name: Net-(U1B-+)
+  pins: [C15.2, POT5.1, R19.1, R20.2, U1.+@5]
+- name: Net-(U1B--)
+  pins: [POT5.3, R22.1, U1.-@6]
+- name: Net-(U2-+)
+  pins: [C2.1, R3.1, U2.+]
+- name: Net-(U2--)
+  pins: [C6.1, POT1.1, R4.2, R5.2, U2.-]
+- name: Net-(U2-BAL)
+  pins: [C9.2, U2.BAL]
+- name: Net-(U2-C/B)
+  pins: [C9.1, U2.C/B]
+- name: Net-(ts_in1-Pin_1)
+  pins: [C5.1, R9.2]
+- name: Net-(ts_out1-Pin_1)
+  pins: [C19.1, R27.2]
+- name: RAT_RTN
+  pins: [S1.3, S1.7]
+- name: TS_RTN
+  pins: [S1.4, S1.9]
+- name: VCC
+  pins:
+  - C12.1
+  - C3.1
+  - D2.K
+  - JN1.3
+  - Q1.C
+  - Q2.C
+  - R7.2
+  - U1.V+
+  - U2.V+
+- name: VREF
+  pins:
+  - C4.1
+  - POT6.1
+  - R10.1
+  - R17.1
+  - R2.1
+  - R20.1
+  - R24.1
+  - R29.1
+  - R7.1
+  - R8.2
+positions:
+- ref: C1
+  x: 130.5
+  y: 110.0
+- ref: C10
+  x: 103.46
+  y: 114.75
+  rot: 180.0
+- ref: C11
+  x: 104.5
+  y: 107.0
+  rot: 180.0
+- ref: C12
+  x: 97.5
+  y: 101.29
+  rot: -90.0
+- ref: C13
+  x: 174.25
+  y: 92.75
+  rot: 180.0
+- ref: C14
+  x: 163.4
+  y: 94.5
+  rot: 180.0
+- ref: C15
+  x: 201.5
+  y: 94.0
+  rot: -90.0
+- ref: C16
+  x: 197.75
+  y: 112.75
+  rot: 180.0
+- ref: C17
+  x: 180.75
+  y: 99.0
+  rot: -90.0
+- ref: C18
+  x: 163.4
+  y: 90.5
+  rot: 180.0
+- ref: C19
+  x: 201.25
+  y: 104.96
+  rot: 90.0
+- ref: C2
+  x: 116.7
+  y: 98.75
+- ref: C20
+  x: 99.5
+  y: 110.5
+- ref: C21
+  x: 118.5
+  y: 90.25
+- ref: C22
+  x: 159.25
+  y: 118.75
+- ref: C3
+  x: 201.5
+  y: 90.75
+  rot: 90.0
+- ref: C4
+  x: 149.25
+  y: 108.79
+  rot: -90.0
+- ref: C5
+  x: 164.25
+  y: 114.5
+  rot: 180.0
+- ref: C6
+  x: 146.75
+  y: 122.25
+- ref: C7
+  x: 121.7
+  y: 103.6
+  rot: 180.0
+- ref: C8
+  x: 150.46
+  y: 126.5
+  rot: 180.0
+- ref: C9
+  x: 138.25
+  y: 99.5
+  rot: -90.0
+- ref: D1
+  x: 121.21
+  y: 108.0
+- ref: D2
+  x: 126.06
+  y: 84.5
+  rot: 180.0
+- ref: D3
+  x: 126.29
+  y: 111.5
+  rot: 180.0
+- ref: D8
+  x: 173.71
+  y: 84.5
+- ref: D9
+  x: 178.79
+  y: 88.0
+  rot: 180.0
+- ref: JN1
+  x: 97.5
+  y: 96.5
+  rot: -90.0
+- ref: POT1
+  x: 133.25
+  y: 126.8
+- ref: POT2
+  x: 112.7
+  y: 103.8
+- ref: POT3
+  x: 113.2
+  y: 86.8
+  rot: 90.0
+- ref: POT4
+  x: 195.2
+  y: 86.75
+  rot: 90.0
+- ref: POT5
+  x: 185.62
+  y: 93.8
+  rot: 180.0
+- ref: POT6
+  x: 154.2
+  y: 86.8
+  rot: 90.0
+- ref: Q1
+  x: 180.25
+  y: 92.96
+  rot: -90.0
+- ref: Q2
+  x: 192.21
+  y: 90.5
+- ref: R1
+  x: 116.12
+  y: 111.3
+  rot: 180.0
+- ref: R10
+  x: 157.44
+  y: 106.75
+- ref: R11
+  x: 109.81
+  y: 101.25
+  rot: 180.0
+- ref: R12
+  x: 102.19
+  y: 98.0
+- ref: R13
+  x: 116.12
+  y: 108.3
+  rot: 180.0
+- ref: R14
+  x: 109.51
+  y: 94.25
+  rot: 180.0
+- ref: R15
+  x: 145.44
+  y: 114.5
+- ref: R16
+  x: 189.06
+  y: 90.0
+  rot: 180.0
+- ref: R17
+  x: 157.44
+  y: 103.0
+- ref: R18
+  x: 191.5
+  y: 83.75
+  rot: 180.0
+- ref: R19
+  x: 189.2
+  y: 93.8
+- ref: R2
+  x: 134.56
+  y: 89.75
+  rot: 180.0
+- ref: R20
+  x: 196.82
+  y: 96.8
+  rot: 180.0
+- ref: R21
+  x: 200.06
+  y: 109.0
+  rot: 180.0
+- ref: R22
+  x: 186.31
+  y: 108.0
+  rot: 180.0
+- ref: R23
+  x: 166.81
+  y: 87.0
+  rot: 180.0
+- ref: R24
+  x: 196.95
+  y: 99.8
+  rot: 180.0
+- ref: R25
+  x: 197.0
+  y: 102.8
+  rot: 180.0
+- ref: R26
+  x: 197.0
+  y: 106.0
+  rot: 180.0
+- ref: R27
+  x: 179.0
+  y: 111.5
+- ref: R28
+  x: 157.39
+  y: 99.25
+- ref: R29
+  x: 157.39
+  y: 110.5
+- ref: R3
+  x: 126.88
+  y: 93.0
+- ref: R4
+  x: 124.01
+  y: 95.0
+  rot: 180.0
+- ref: R5
+  x: 152.81
+  y: 118.0
+  rot: 180.0
+- ref: R6
+  x: 176.56
+  y: 111.5
+  rot: 180.0
+- ref: R7
+  x: 137.7
+  y: 88.99
+  rot: -90.0
+- ref: R8
+  x: 140.7
+  y: 96.42
+  rot: 90.0
+- ref: R9
+  x: 168.19
+  y: 108.0
+- ref: S1
+  x: 149.2
+  y: 98.8
+  rot: -90.0
+- ref: U1
+  x: 168.08
+  y: 96.94
+- ref: U2
+  x: 126.88
+  y: 97.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

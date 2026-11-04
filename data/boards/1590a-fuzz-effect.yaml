@@ -1,0 +1,151 @@
+name: 1590A Fuzz Effect
+slug: 1590a-fuzz-effect
+source: torvalds/1590A
+format: kicad8
+description: Guitar pedal single-JFET fuzz (MMBFJ201) with BAT41Z Schottky clipping to ground; plugs into a 1590A base board
+tags: [audio]
+key_ics: [MMBFJ201, BAT41Z]
+outline:
+  width_mm: 30.0
+  height_mm: 62.0
+design_rules:
+  layers: 2
+  min_trace: 0.35mm
+  min_clearance: 0.15mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 22uF
+  footprint: '1206'
+- ref: C2
+  value: 100nF
+  footprint: '0704'
+- ref: C3
+  value: 220pF
+  footprint: 0805
+- ref: C4
+  value: 22nF
+  footprint: 0805
+- ref: D1
+  value: BAT41Z
+  footprint: SOD-123
+  description: 100 V, 200 mA Surface Mount General Purpose Signal Schottky Diode
+- ref: J1
+  value: 1x4 header
+  footprint: 1X4
+  pin_count: 4
+- ref: J2
+  value: 1x4 header
+  footprint: 1X4
+  pin_count: 4
+  nc_pins: {Pin_4: '4'}
+- ref: Q1
+  value: MMBFJ201
+  footprint: SOT-23
+  description: 5mA min, 35V, 50mOhm max, 1-5V Vgs(off), N-Channel JFET, SOT-23
+  pin_count: 3
+- ref: R1
+  value: 10kohm
+  footprint: 0805
+- ref: R2
+  value: 1MEG
+  footprint: 0805
+- ref: RV1
+  value: 100k
+  footprint: Potentiometer_9mm_MP
+  description: Potentiometer with a mounting pin
+  pin_count: 4
+- ref: RV2
+  value: 100k
+  footprint: Potentiometer_9mm_MP
+  description: Potentiometer with a mounting pin
+  pin_count: 4
+- ref: RV3
+  value: 10k
+  footprint: Potentiometer_9mm_MP
+  description: Potentiometer with a mounting pin
+  pin_count: 4
+nets:
+- name: +V
+  pins: [C1.1, J2.Pin_1, RV1.2, RV1.3]
+- name: GND
+  pins:
+  - C1.2
+  - C3.1
+  - C4.1
+  - D1.K
+  - J1.Pin_2
+  - J1.Pin_3
+  - J2.Pin_2
+  - J2.Pin_3
+  - R2.2
+  - RV1.MountPin@MP
+  - RV2.1
+  - RV2.MountPin@MP
+  - RV3.1
+  - RV3.MountPin@MP
+- name: IN
+  pins: [J1.Pin_1, Q1.G, R2.1]
+- name: Net-(C4-Pad2)
+  pins: [C4.2, RV3.2]
+- name: Net-(D1-A)
+  pins: [C2.1, C3.2, D1.A, RV2.3]
+- name: Net-(Q1-D)
+  pins: [C2.2, Q1.D, R1.1]
+- name: Net-(Q1-S)
+  pins: [Q1.S, RV3.3]
+- name: Net-(R1-Pad2)
+  pins: [R1.2, RV1.1]
+- name: OUT
+  pins: [J1.Pin_4, RV2.2]
+positions:
+- ref: C1
+  x: 108.0
+  y: 68.0
+  rot: 90.0
+- ref: C2
+  x: 98.0
+  y: 75.5
+- ref: C3
+  x: 92.0
+  y: 78.8
+- ref: C4
+  x: 99.0
+  y: 94.5
+- ref: D1
+  x: 92.0
+  y: 68.0
+  rot: -90.0
+- ref: J1
+  x: 113.0
+  y: 100.0
+  rot: 180.0
+  side: back
+- ref: J2
+  x: 87.0
+  y: 114.0
+  rot: 180.0
+  side: back
+- ref: Q1
+  x: 111.0
+  y: 82.6
+- ref: R1
+  x: 101.6
+  y: 75.5
+- ref: R2
+  x: 110.3
+  y: 92.9
+  rot: 180.0
+- ref: RV1
+  x: 108.0
+  y: 68.0
+- ref: RV2
+  x: 92.0
+  y: 68.0
+- ref: RV3
+  x: 100.0
+  y: 84.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

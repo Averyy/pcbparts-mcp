@@ -14,7 +14,7 @@ MCP server that gives Claude, Cursor, and other AI coding assistants electronic 
 - **Pinout data:** Component pin information from EasyEDA symbols
 - **MPN lookup:** Find JLCPCB equivalents by manufacturer part number
 - **Sensor recommendation:** Find sensor ICs by what they measure, protocol, or platform (1,600+ sensors, 56 measure types)
-- **Reference boards:** Search ~295 reference board schematics (OSHW projects and Espressif's own DevKits), IC neighborhoods, cross-board consensus for design patterns
+- **Reference boards:** Search ~300 reference board schematics (OSHW projects and Espressif's own DevKits), IC neighborhoods, cross-board consensus for design patterns
 - **Design rules:** 41 curated PCB design reference files covering power, protection, interfaces, MCUs, layout, and EMC
 - **14 MCP tools**
 - No API key required for JLCPCB (Mouser/DigiKey optional)
@@ -138,7 +138,7 @@ Tool descriptions include reply-field guidance: `relaxed` names omitted query wo
 
 | Tool | Description |
 |------|-------------|
-| `board_search` | Search ~295 reference board schematics (OSHW projects and Espressif's DevKits) by IC, tag, org, or free text. Cross-board consensus shows how ICs are typically used. |
+| `board_search` | Search ~300 reference board schematics (OSHW projects and Espressif's DevKits) by IC, tag, org, or free text. Cross-board consensus shows how ICs are typically used. |
 | `board_get` | Get full board details — BOM, design rules, dimensions. Use `focus` param for a part's pin-grouped neighborhood (decoupling, bias, connections): an IC, or any part by ref (`J1`) or value (`USB-C`). |
 
 ### Design Rules (no key required)

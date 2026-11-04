@@ -1,16 +1,16 @@
 # Reference Boards Registry
 
-297 boards across ~277 sources (271 GitHub repos + 6 ZIP downloads) from OSHW organizations, hacker hardware, 3D printer controllers, CM4/CM5 carriers, ham radio SDR, CNC controllers, drone FCs, eurorack synth modules, and more. Four formats: KiCad 6+/8/9 S-expression, KiCad 5 legacy text, Eagle XML, and PADS PowerPCB ASCII layouts with a BOM spreadsheet (Espressif's DevKits).
+303 boards across ~277 sources (271 GitHub repos + 6 ZIP downloads) from OSHW organizations, hacker hardware, 3D printer controllers, CM4/CM5 carriers, ham radio SDR, CNC controllers, drone FCs, eurorack synth modules, and more. Four formats: KiCad 6+/8/9 S-expression, KiCad 5 legacy text, Eagle XML, and PADS PowerPCB ASCII layouts with a BOM spreadsheet (Espressif's DevKits).
 
-## All Parseable Boards (297 boards)
+## All Parseable Boards (303 boards)
 
 *Sorted by organization, then board name. Format: `kicad6` (KiCad 6), `kicad7` (KiCad 7), `kicad8`, `kicad9`, `kicad_legacy` (KiCad 4/5), `eagle` (Eagle XML). KiCad 6/7/8/9 all use S-expression format (same parser).*
 
-*Format breakdown: 85 kicad7, 29 kicad8, 31 kicad9, 16 kicad6, 45 kicad_legacy, 88 eagle, 3 pads = 297 total.*
+*Format breakdown: 86 kicad7, 30 kicad8, 35 kicad9, 16 kicad6, 45 kicad_legacy, 88 eagle, 3 pads = 303 total.*
 
 *All Eagle boards use embedded `<libraries>` in .sch XML — no external .lbr needed.*
 
-<!-- 297 entries -->
+<!-- 303 entries -->
 | Board | Org | Repo | Format | Schematic Path | Key Coverage |
 |-------|-----|------|--------|---------------|-------------|
 | iCEBreaker | 1BitSquared | `icebreaker-fpga/icebreaker` | kicad7 | `hardware/v1.0a/icebreaker.kicad_sch` | iCE40UP5K FPGA (open toolchain), FT2232H programming, PMOD connectors, SPI flash |
@@ -135,7 +135,8 @@
 | T41 QSD2 Receiver | Greg-R | `Greg-R/qsd2` | kicad7 | `qsd2.kicad_sch` (1 sheet) | Double-balanced quadrature sampling detector: ADT4-6T+ transformer, GALI-39+ wideband LNA, AD8226 instrumentation amps for balanced I/Q, divide-by-2 quadrature LO |
 | T41 QSE2 Transmitter | Greg-R | `Greg-R/qse2` | kicad7 | `qse2.kicad_sch` (1 sheet) | Quadrature sampling exciter for HF transmit: I/Q modulation, Class E PA driver, LPF output, complements QSD2 receiver |
 | T41 SDR Main Board | Greg-R | `Greg-R/t41_2_main_board` | kicad7 | `t41_2_main_board.kicad_sch` (1 sheet) | Teensy 4.1 (600MHz ARM) SDR transceiver main board: Si5351 synthesis, audio codec, digital control, modular architecture for QSD/QSE boards |
-| GuitarML Boost + TS/RAT Combo | GuitarML | `GuitarML/GuitarPedalPCBs` | kicad8 | `ClassicBoost_1590a/ClassicBoost_v2.kicad_sch` + `TS_Rat_Combo_1590bb/jack_pedal.kicad_sch` (2 sheets) | LPB-1-style single-transistor boost (2N3904) and TS/RAT combo overdrive (TL072 + LM301 + JFET buffer) |
+| GuitarML Classic Boost | GuitarML | `GuitarML/GuitarPedalPCBs` | kicad7 | `ClassicBoost_1590a/ClassicBoost_v2.kicad_sch` (1 sheet) | Guitar pedal single-transistor clean boost (2N5088 common emitter), 1N5817 series reverse-polarity diode, 100K output pot; jacks, footswitch, LED and 9V wired to pads |
+| GuitarML TS/RAT Combo | GuitarML | `GuitarML/GuitarPedalPCBs` | kicad9 | `TS_Rat_Combo_1590bb/jack_pedal.kicad_sch` (1 sheet) | Guitar pedal Tube Screamer-style overdrive (TL072, 1N914 clipping pair in the op-amp feedback, 2SC1815 emitter-follower buffers) and RAT-style distortion (LM301, 1N914 hard clipping to ground), 2N5458 JFET buffer, 1N5817 reverse-polarity diode, send/return pads per stage |
 | SolarMeshtasticNode | h0lad | `h0lad/SolarMeshtasticNode` | kicad9 | `pcb/MeshtasticNode_BQ25185.kicad_sch` (1 sheet) | Solar-powered Meshtastic node: Heltec HT-CT62 LoRa module, BQ25185 solar-input charger (battery-tracking VINDPM), off-grid mesh |
 | HALPI2 RS-485 | Hat Labs | `hatlabs/HALPI2-hardware` | kicad9 | `rs485.kicad_sch` (1 sheet, part of 25-sheet project) | Isolated RS-485: ISO7741 digital isolator + isolated DC-DC (B0505S), SP3485EN transceiver, SM712 TVS bus protection |
 | HEEV Motor Controller 2018 | HEEV | `HEEV/motor-controller-2018` | kicad_legacy | `motor-controller-hw/motor-controller-hw.sch` (hierarchical: IO, TMC4671, microcontroller, power-conversion, power-supply, signal-processing) | Shell Eco-Marathon motor controller: TMC4671 dedicated hardware FOC chip, STM32, FET gate drivers, Hall-effect current sensing (3 channels), 60V->5V DC-DC, 48V nominal/60V peak, CAN interface |
@@ -286,7 +287,12 @@
 | Tigard | Tigard Tools | `tigard-tools/tigard` | kicad_legacy | `tigard.sch` | FT2232H dual-channel JTAG/SWD/UART/SPI/I2C, voltage level translation (1.8V-5V) |
 | 0104 USB Hub | TileParts | `TileParts/0104-USB-HUB` | kicad6 | `0104-USB-HUB.kicad_sch` (1 sheet) | 3-port USB 2.0 hub (SL2.1A) with per-port mechanical power cutoff switches, LESD5Z5.0CT1G TVS protection |
 | EHM Energy Harvester | tinstructor | `tinstructor/EHM` | eagle | `Project/EHM.sch` (2 sheets) | BQ25570 nano-power energy harvesting: MPPT boost charger for TEG/solar, dual MAX9934 current sense amplifiers, OPA314 voltage buffer, ADS7041 12-bit ADC, MAX4715 MUX, configurable MPPT percentage via solder bridges |
-| 1590A Guitar Pedal Collection | torvalds | `torvalds/1590A` | kicad8 | `Effect/Fuzzy/Fuzzy.kicad_sch` + `Effect/Boost/Boost.kicad_sch` + more (7+ sheets) | Modular guitar pedal platform: JFET fuzz, BJT boost, compressor, octaver — swappable effect daughter boards for 1590A enclosures |
+| 1590A Boost Effect | torvalds | `torvalds/1590A` | kicad8 | `Effect/Boost/Boost.kicad_sch` (1 sheet) | Guitar pedal effect board: MMBF5103 JFET source-follower input buffer into a two-stage DMMT5551 matched-NPN boost with a gain toggle; plugs into a 1590A base board |
+| 1590A Buffered Base | torvalds | `torvalds/1590A` | kicad8 | `Base/Buffered/Buffered.kicad_sch` (3 sheets) | Guitar pedal base board for swappable 1590A effect boards: P-MOSFET reverse-polarity protection, LT3462A inverting converter (coupled inductor) for the -V rail, AP2202-ADJ low-noise LDO for +V, DMC3071LVT complementary MOSFET pairs switching the effect in and out from a momentary footswitch, LED |
+| 1590A Compressor Effect | torvalds | `torvalds/1590A` | kicad9 | `Effect/Compressor/Compressor.kicad_sch` (1 sheet) | Guitar pedal JFET compressor: MMBF5103 input buffer, LS844 matched dual JFET, NMB2227A NPN/PNP pair amplifier, BAT54S level rectifier; plugs into a 1590A base board |
+| 1590A Daisy Seed Base | torvalds | `torvalds/1590A` | kicad9 | `Base/DaisySeed/DaisySeed.kicad_sch` (3 sheets) | Guitar pedal base for the Electrosmith Daisy Seed audio module: LS844 matched dual JFET input buffer, PMV250 P-MOSFET reverse-polarity protection, BC846 transistor switching the LED, two pots, toggle and footswitch inputs |
+| 1590A Fuzz Effect | torvalds | `torvalds/1590A` | kicad8 | `Effect/Fuzzy/Fuzzy.kicad_sch` (1 sheet) | Guitar pedal single-JFET fuzz (MMBFJ201) with BAT41Z Schottky clipping to ground; plugs into a 1590A base board |
+| 1590A Octaver Effect | torvalds | `torvalds/1590A` | kicad9 | `Effect/Octaver/Octaver.kicad_sch` (1 sheet) | Guitar pedal octave-up: MMBF5103 JFET phase splitter into a DMMT5551 matched-NPN full-wave rectifier, DMMT5551 output stage; plugs into a 1590A base board |
 | GoodTag | travisgoodspeed | `travisgoodspeed/goodtag` | kicad_legacy | `hardware/goodtag11/goodtag11.sch` (1 sheet) | NFC Type V tag (RF430FRL152H): NFC energy harvesting, antenna matching, passive NFC sensor interface |
 | GoodWatch | travisgoodspeed | `travisgoodspeed/goodwatch` | kicad7 | `hardware/goodpocketwatch31/goodpocketwatch31.kicad_sch` (3 sheets) | CC430F6137 (MSP430 + sub-GHz radio SoC), LCD driving, watch-scale power optimization |
 | PLC77 Glitcher | travisgoodspeed | `travisgoodspeed/plc77-glitcher` | kicad7 | `plc77-glitcher.kicad_sch` (1 sheet) | Voltage glitching for fault injection: high-speed power/clock switching, timing circuits, target power control. Unique topology. |

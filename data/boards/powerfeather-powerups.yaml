@@ -306,20 +306,18 @@ components:
   footprint: FAN48623
   mpn: 512-FAN48623UC50X
   pin_count: 16
-  nc_pins: {EN: A1}
 - ref: U4
   value: AVR128DB28
   footprint: SSOP-28
   mpn: 579-AVR128DB28T-I/SS
   pin_count: 28
-  nc_pins: {PC0: '2', PC1: '3', PD4: '10', nRESET/PF6: '18', UPDI: '19'}
 - ref: U5
   value: NCV68261
   footprint: DFN-6-1EP
   mpn: 863-NCV68261MTWAITBG
   description: Ideal Diode and High Side Switch NMOS Controller
   pin_count: 7
-  nc_pins: {D: '3', IN: '6', EP: '7'}
+  nc_pins: {EP: '7'}
 - ref: U6
   value: BQ25622E
   footprint: BQ25622E
@@ -331,7 +329,7 @@ components:
   footprint: TDFN-14-1EP
   mpn: 700-MAX17260SETD+T
   pin_count: 15
-  nc_pins: {NC@2: '2', NC@3: '3', NC@4: '4', NC@5: '5', CSPH: '10'}
+  nc_pins: {NC@2: '2', NC@3: '3', NC@4: '4', NC@5: '5'}
 - ref: Y1
   value: 32.768 kHz
   footprint: Crystal_SMD_G8-2Pin

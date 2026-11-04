@@ -2356,7 +2356,7 @@ def board_search(
     layers: int | None = None,
     limit: int = 10,
 ) -> dict:
-    """Search ~290 open-source reference board schematics to see how real designs use an IC: its
+    """Search ~300 open-source reference board schematics to see how real designs use an IC: its
     passives, decoupling, pull-ups and power topology. Not for buying parts (jlc_search) or
     choosing sensors (sensor_recommend). Then call board_get(slug, focus=IC) for that IC's
     pin-by-pin neighborhood.

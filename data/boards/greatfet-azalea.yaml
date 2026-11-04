@@ -248,7 +248,6 @@ components:
   mpn: 10103592-0001LF
   description: CONN RCPT REV MICRO USB TYPE B
   pin_count: 6
-  nc_pins: {'4': '4'}
 - ref: J5
   value: JTAG
   footprint: 50MIL-HEADER-2x5-TH
@@ -489,7 +488,6 @@ components:
   mpn: LPC4330FBD144,551
   description: IC MCU ARM ROMLESS 144LQFP
   pin_count: 144
-  nc_pins: {'29': '29'}
 - ref: U2
   value: W25Q16DV
   footprint: SOIC8-208

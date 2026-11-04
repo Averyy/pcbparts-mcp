@@ -323,11 +323,12 @@ def _multi_gate_parts(root: ET.Element, part_names: set[str]) -> set[str]:
 
 def extract_part_pins(sch_path: Path, part_names: set[str]
                       ) -> tuple[dict[str, dict[str, str]], dict[str, set[str]]]:
-    """Every pin of each part, {ref: {label: pads}}, labelled as nets label them, and its supply pins.
+    """Every pin of each part, {ref: {label: pads}}, labelled as nets label them, and the pins that
+    are connected though the board data may show no net for them ({ref: {label}}).
 
     A pin is a symbol pin the device connects to pads ("1" or "1 2 3" when it joins several). Supply
-    pins (direction pwr) join the net of their own name without a wire, as a hidden VCC/GND gate's do,
-    so they come back separately as connected.
+    pins (direction pwr) join the net of their own name without a wire, as a hidden VCC/GND gate's do.
+    A pin whose net reaches only parts the parser drops (a bare pad, a test point) is connected too.
     """
     root = ET.parse(sch_path).getroot()
     symbols: dict[tuple[str, str], dict[str, str]] = {}
@@ -347,10 +348,15 @@ def extract_part_pins(sch_path: Path, part_names: set[str]
 
     multi_gate_parts = _multi_gate_parts(root, part_names)
     wired: dict[str, set[tuple[str, str]]] = {}
-    for pinref in root.iter("pinref"):
-        wired.setdefault(pinref.get("part", ""), set()).add((pinref.get("gate", "").lstrip(">"), pinref.get("pin", "")))
+    net_members: dict[str, set[tuple[str, str, str]]] = {}  # merged across sheets by name, as nets are
+    for net_elem in root.iter("net"):
+        for pinref in net_elem.iter("pinref"):
+            member = (pinref.get("part", ""), pinref.get("gate", "").lstrip(">"), pinref.get("pin", ""))
+            wired.setdefault(member[0], set()).add(member[1:])
+            net_members.setdefault(net_elem.get("name", ""), set()).add(member)
+    reaches_other = {member for members in net_members.values() if len(members) >= 2 for member in members}
     pins: dict[str, dict[str, str]] = {}
-    supply: dict[str, set[str]] = {}
+    connected: dict[str, set[str]] = {}
     for part in root.iter("part"):
         ref, lib = part.get("name", ""), part.get("library", "")
         key = (lib, part.get("deviceset", ""), part.get("device", ""))
@@ -366,12 +372,14 @@ def extract_part_pins(sch_path: Path, part_names: set[str]
                 qualified = bool(gate_name)
             label = f"{gate_name}.{pin}" if qualified else pin
             mine[label] = pad
+            if (ref, gate_name, pin) in reaches_other:
+                connected.setdefault(ref, set()).add(label)
             symbol = gates.get(key[:2], {}).get(gate, "")
             if symbols.get((lib, symbol), {}).get(pin) == "pwr":
-                supply.setdefault(ref, set()).add(label)
+                connected.setdefault(ref, set()).add(label)
         if mine:
             pins[ref] = mine
-    return pins, supply
+    return pins, connected
 
 
 def parse_board(brd_path: Path, part_names: set[str]) -> tuple[list[Position], BoardOutline | None, DesignRules | None, list[CopperPour]]:

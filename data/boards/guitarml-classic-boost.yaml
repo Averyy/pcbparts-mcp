@@ -1,0 +1,103 @@
+name: GuitarML Classic Boost
+slug: guitarml-classic-boost
+source: GuitarML/GuitarPedalPCBs
+format: kicad7
+description: Guitar pedal single-transistor clean boost (2N5088 common emitter), 1N5817 series reverse-polarity diode
+tags: [audio]
+key_ics: [2N5088]
+outline:
+  width_mm: 27.3
+  height_mm: 24.77
+design_rules:
+  layers: 2
+  min_trace: 0.25mm
+  min_clearance: 0.2mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 100nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: C2
+  value: 100nF
+  footprint: C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
+- ref: D1
+  value: 1N5817
+  footprint: DO-35_SOD27_P7.62mm_Horizontal
+- ref: POT1
+  value: 100K
+  footprint: Potentiometer_Omeg_PC16BU_Vertical
+  pin_count: 3
+- ref: Q2
+  value: 2N5088
+  footprint: TO-92
+  pin_count: 3
+- ref: R1
+  value: 430kohm
+  footprint: Axial
+- ref: R2
+  value: 43kohm
+  footprint: Axial
+  pulldown: Q2.B
+- ref: R3
+  value: 10kohm
+  footprint: Axial
+- ref: R4
+  value: 390ohm
+  footprint: Axial
+- ref: R5
+  value: 4.7kohm
+  footprint: Axial
+nets:
+- name: GND
+  pins: [POT1.1, R2.1, R4.1]
+- name: Net-(C2-Pad2)
+  pins: [C2.2, POT1.3]
+- name: Net-(D1-K)
+  pins: [D1.K, R1.2, R3.2]
+- name: Net-(Q2-B)
+  pins: [C1.2, Q2.B, R1.1, R2.2]
+- name: Net-(Q2-C)
+  pins: [C2.1, Q2.C, R3.1]
+- name: Net-(Q2-E)
+  pins: [Q2.E, R4.2]
+positions:
+- ref: C1
+  x: 151.13
+  y: 104.1
+  rot: 90.0
+- ref: C2
+  x: 160.49
+  y: 104.14
+  rot: 180.0
+- ref: D1
+  x: 166.12
+  y: 96.52
+- ref: POT1
+  x: 166.59
+  y: 107.95
+  rot: 90.0
+- ref: Q2
+  x: 151.13
+  y: 94.74
+  rot: 90.0
+- ref: R1
+  x: 173.74
+  y: 101.09
+  rot: 180.0
+- ref: R2
+  x: 166.12
+  y: 104.39
+- ref: R3
+  x: 155.45
+  y: 93.47
+- ref: R4
+  x: 163.07
+  y: 96.77
+  rot: 180.0
+- ref: R5
+  x: 155.45
+  y: 100.33
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

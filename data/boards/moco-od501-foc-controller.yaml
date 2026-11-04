@@ -319,7 +319,6 @@ components:
   value: DRV8323H
   footprint: QFN-40-1EP
   pin_count: 41
-  nc_pins: {VDRAIN: '5', SPA: '9', SNA: '10', SNB: '11', SPB: '12', SPC: '19', SNC: '20'}
 - ref: U4
   value: STM32G431CBUx
   footprint: QFN-48-1EP

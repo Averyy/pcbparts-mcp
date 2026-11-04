@@ -147,7 +147,7 @@ components:
   footprint: SOP-16
   description: 24-Bit Analog-to-Digital Converter (ADC) for Weight Scales
   pin_count: 16
-  nc_pins: {DOUT: '12', XO: '13'}
+  nc_pins: {XO: '13'}
 - ref: U3
   value: ADXL362
   footprint: LGA-16-3X2.5
@@ -155,7 +155,6 @@ components:
   prod_id: IC-11297
   mpn: ADXL362
   pin_count: 11
-  nc_pins: {SCLK: P$4, MOSI: P$6, MISO: P$7, nCS: P$8}
 - ref: U5
   value: TP5100
   footprint: QFN-17

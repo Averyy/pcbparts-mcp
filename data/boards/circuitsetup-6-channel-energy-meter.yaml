@@ -230,13 +230,13 @@ components:
   footprint: QFP50P900X900X120-48
   description: ATMEL Poly-phase energy metering
   pin_count: 48
-  nc_pins: {I4P: '9', I4N: '10', CF2: '26', CF3: '27', CF4: '28', NC@1: '35', NC@2: '45', NC@3: '46'}
+  nc_pins: {I4P: '9', I4N: '10', NC@1: '35', NC@2: '45', NC@3: '46'}
 - ref: IC2
   value: ATM90E32AS
   footprint: QFP50P900X900X120-48
   description: ATMEL Poly-phase energy metering
   pin_count: 48
-  nc_pins: {I4P: '9', I4N: '10', CF2: '26', CF3: '27', CF4: '28', NC@1: '35', NC@2: '45', NC@3: '46'}
+  nc_pins: {I4P: '9', I4N: '10', NC@1: '35', NC@2: '45', NC@3: '46'}
 - ref: IC3
   value: LMR14020SDDA
   footprint: SOIC-9
@@ -420,7 +420,7 @@ components:
   manufacturer: Espressif Systems
   mpn: ESP32-DEVKITC-32D
   pin_count: 38
-  nc_pins: {EN: '2', SENSOR_VP: '3', SENSOR_VN: '4', IO35: '6', IO25: '9', IO26: '10', IO27: '11', IO14: '12', IO12: '13', IO13: '15', SD2: '16', SD3: '17', CMD: '18', IO22: '22', TXD0: '23', RXD0: '24', IO21: '25', IO17: '30', IO16: '31', IO0: '33', IO2: '34', IO15: '35', SD1: '36', SD0: '37', CLK: '38'}
+  nc_pins: {IO22: '22', TXD0: '23', RXD0: '24', IO21: '25', IO17: '30', IO16: '31', IO0: '33', IO2: '34', IO15: '35', SD1: '36', SD0: '37', CLK: '38'}
 - ref: Y1
   value: 16.384MHz
   footprint: CRYSTAL-SMD-3.2X2.5MM

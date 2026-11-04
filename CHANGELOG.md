@@ -4,6 +4,17 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.13 (2026-11-04)
+
+### Added
+
+- **Eight guitar-pedal reference boards:** GuitarML's Classic Boost (2N5088) and TS/RAT combo (TL072 Tube Screamer-style overdrive, LM301 RAT-style distortion, 2N5458 JFET buffer), and six boards from torvalds/1590A: the Buffered base (LT3462A inverting converter for -V, AP2202 LDO, DMC3071LVT MOSFET bypass switching), the Daisy Seed base (LS844 JFET input buffer), and the Boost, Compressor, Fuzz and Octaver effect boards (MMBF5103, MMBFJ201, LS844, DMMT5551). `BOARDS.md` listed them as two rows of several boards each, which the parser couldn't read, so neither had ever been searchable. All are tagged `audio`. torvalds' STM32 effect board is left out: its PCM3060 codec's I2S pins connect to nothing, so it isn't a working reference.
+
+### Fixed
+
+- **`nc_pins` listed pins that are connected:** a pin wired only to a part the board parser drops (a test point, a solder jumper, a pedal's wiring pad) has no net in the board data, so 0.8.11 listed it as NC. The SIM7080G's USB_BOOT pin on the Absmach S0 goes to solder jumper JP1, for one. Pins are now checked against every pad in the design file: 1,082 pins on 316 parts are no longer listed as NC.
+- **Adafruit MAX31865 board:** its library misspells one ground pin `ANGD@1`; the fix meant to rename it never matched, so it's now `AGND@1` in the netlist.
+
 ## 0.8.12 (2026-11-04)
 
 ### Fixed

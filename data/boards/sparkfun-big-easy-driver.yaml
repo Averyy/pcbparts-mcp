@@ -92,7 +92,6 @@ components:
   prod_id: IC-11483
   description: DMOS Microstepping Driver with Translator
   pin_count: 29
-  nc_pins: {NC@1: P$7, NC@2: P$20, NC@3: P$25}
 - ref: IC2
   value: LM317L
   footprint: SCHMALZHAUS_SOT89

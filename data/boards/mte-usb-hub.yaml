@@ -313,7 +313,6 @@ components:
   value: USB3_A
   footprint: USB3_A_Molex_48393-001
   pin_count: 10
-  nc_pins: {VBUS: '1'}
 - ref: J4
   value: USB3_A
   footprint: USB3_A_Molex_48393-001

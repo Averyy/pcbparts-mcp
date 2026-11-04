@@ -282,13 +282,9 @@ components:
 - ref: R12
   value: 1kohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R13
   value: 1kohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R14
   value: 1Mohm
   footprint: REDBEAR_R0603
@@ -301,8 +297,6 @@ components:
 - ref: R17
   value: 0ohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R18
   value: 100kohm
   footprint: '0603'
@@ -322,8 +316,6 @@ components:
 - ref: R22
   value: 0ohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R23
   value: 0ohm
   footprint: R-0402S
@@ -376,8 +368,6 @@ components:
 - ref: R43
   value: 1Mohm
   footprint: REDBEAR_R0603
-  pin_count: 2
-  nc_pins: {'2': '2'}
 - ref: R44
   value: 1kohm
   footprint: '0603'
@@ -385,16 +375,12 @@ components:
 - ref: R5
   value: 1.5kohm
   footprint: R-0402S
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R7
   value: 15kohm
   footprint: R-0402S
 - ref: R87
   value: 1kohm
   footprint: '0603'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R9
   value: 20kohm
   footprint: R-0402S
@@ -647,7 +633,7 @@ components:
   footprint: TRACKER-SOM-3A
   description: Asset Tracker SoM
   pin_count: 110
-  nc_pins: {GNSS_RESET@3: '3', CELL_RI@85: '85', CELL_GPS_RF@87: '87', GNSS_BOOT@90: '90', GNSS_LNA_EN@92: '92', GNSS_RF@94: '94'}
+  nc_pins: {GNSS_RESET@3: '3', CELL_GPS_RF@87: '87', GNSS_BOOT@90: '90', GNSS_LNA_EN@92: '92', GNSS_RF@94: '94'}
 - ref: U5
   value: LP5910
   footprint: QFN6P

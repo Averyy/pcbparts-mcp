@@ -1438,7 +1438,6 @@ components:
   value: FPGA
   footprint: CYCLONEIV
   pin_count: 145
-  nc_pins: {'55': '55', '127': '127', '128': '128', '129': '129'}
 - ref: U3
   value: ST1S10
   footprint: ST1S10
@@ -1457,7 +1456,6 @@ components:
   value: AD9866BCPZ
   footprint: AD9866
   pin_count: 65
-  nc_pins: {'21': '21', '61': '61'}
 - ref: U8
   value: ST1S10
   footprint: ST1S10

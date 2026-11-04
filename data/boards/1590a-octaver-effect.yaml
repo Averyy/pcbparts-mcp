@@ -1,0 +1,260 @@
+name: 1590A Octaver Effect
+slug: 1590a-octaver-effect
+source: torvalds/1590A
+format: kicad9
+description: 'Guitar pedal octave-up: MMBF5103 JFET phase splitter into a DMMT5551 matched-NPN full-wave rectifier'
+tags: [audio]
+key_ics: [MMBF5103, DMMT5551]
+outline:
+  width_mm: 30.0
+  height_mm: 55.0
+design_rules:
+  layers: 2
+  min_trace: 0.35mm
+  min_clearance: 0.15mm
+  min_drill: 0.3mm
+  min_via: 0.5mm
+components:
+- ref: C1
+  value: 22uF
+  footprint: '1206'
+- ref: C2
+  value: 1uF
+  footprint: '1206'
+- ref: C3
+  value: 1uF
+  footprint: '1206'
+- ref: C4
+  value: 1uF
+  footprint: '1206'
+- ref: C5
+  value: 1uF
+  footprint: '1206'
+- ref: C6
+  value: 22uF
+  footprint: '1206'
+- ref: J1
+  value: 1x4 header
+  footprint: 1X4
+  pin_count: 4
+- ref: J2
+  value: 1x4 header
+  footprint: 1X4
+  pin_count: 4
+  nc_pins: {Pin_4: '4'}
+- ref: Q1
+  value: MMBF5103
+  footprint: SOT-23
+  description: MMBF5103
+  pin_count: 3
+- ref: Q2
+  value: DMMT5551
+  footprint: SOT-23-6
+  description: Matched dual small signal NPN transistor
+  pin_count: 6
+- ref: Q3
+  value: DMMT5551
+  footprint: SOT-23-6
+  description: Matched dual small signal NPN transistor
+  pin_count: 6
+- ref: R1
+  value: 1kohm
+  footprint: 0805
+- ref: R10
+  value: 47kohm
+  footprint: 0805
+  pulldown: VBIAS
+- ref: R11
+  value: 470kohm
+  footprint: 0805
+- ref: R12
+  value: 470kohm
+  footprint: 0805
+- ref: R13
+  value: 10kohm
+  footprint: 0805
+  pulldown: Q3.E@5
+- ref: R2
+  value: 10kohm
+  footprint: 0805
+- ref: R3
+  value: 1MEG
+  footprint: 0805
+- ref: R4
+  value: 1kohm
+  footprint: 0805
+  pulldown: BUF
+- ref: R5
+  value: 33kohm
+  footprint: 0805
+  pulldown: Q2.E@5
+- ref: R6
+  value: 470kohm
+  footprint: 0805
+- ref: R7
+  value: 3.3kohm
+  footprint: 0805
+  pulldown: Q2.E@6
+- ref: R8
+  value: 22kohm
+  footprint: 0805
+- ref: R9
+  value: 100kohm
+  footprint: 0805
+- ref: RV1
+  value: 100k
+  footprint: Potentiometer_9mm_MP
+  description: Potentiometer with a mounting pin
+  pin_count: 4
+nets:
+- name: +V
+  pins:
+  - C1.1
+  - J2.Pin_1
+  - Q2.C@4
+  - R1.1
+  - R2.1
+  - R8.1
+  - R9.1
+- name: BUF
+  pins: [C4.1, Q1.S, R4.1]
+- name: BUF_NOT
+  pins: [C5.2, Q1.D, R1.2]
+- name: GND
+  pins:
+  - C1.2
+  - C6.2
+  - J1.Pin_2
+  - J1.Pin_3
+  - J2.Pin_2
+  - J2.Pin_3
+  - R10.2
+  - R13.2
+  - R3.2
+  - R4.2
+  - R5.2
+  - R7.2
+  - RV1.1
+  - RV1.MountPin@MP
+- name: IN
+  pins: [J1.Pin_1, Q1.G, R3.1]
+- name: Net-(C2-Pad2)
+  pins: [C2.2, RV1.3]
+- name: Net-(Q2A-B)
+  pins: [C3.2, Q2.B@2, R6.2]
+- name: Net-(Q2A-C)
+  pins: [C2.1, Q2.C@1, R2.2]
+- name: Net-(Q2A-E)
+  pins: [Q2.E@6, R7.1]
+- name: Net-(Q2B-E)
+  pins: [C3.1, Q2.E@5, R5.1]
+- name: Net-(Q3A-B)
+  pins: [C4.2, Q3.B@2, R11.2]
+- name: Net-(Q3A-E)
+  pins: [Q3.E@5, Q3.E@6, R13.1]
+- name: Net-(Q3B-B)
+  pins: [C5.1, Q3.B@3, R12.2]
+- name: OUT
+  pins: [J1.Pin_4, RV1.2]
+- name: RECT
+  pins: [Q2.B@3, Q3.C@1, Q3.C@4, R8.2]
+- name: VBIAS
+  pins: [C6.1, R10.1, R11.1, R12.1, R6.1, R9.2]
+positions:
+- ref: C1
+  x: 98.4
+  y: 87.2
+  rot: 180.0
+- ref: C2
+  x: 104.0
+  y: 89.1
+  rot: 180.0
+- ref: C3
+  x: 95.1
+  y: 95.0
+  rot: -90.0
+- ref: C4
+  x: 99.4
+  y: 103.0
+  rot: 180.0
+- ref: C5
+  x: 103.04
+  y: 99.12
+  rot: 90.0
+- ref: C6
+  x: 98.8
+  y: 114.0
+- ref: J1
+  x: 113.0
+  y: 100.0
+  rot: 180.0
+  side: back
+- ref: J2
+  x: 87.0
+  y: 114.0
+  rot: 180.0
+  side: back
+- ref: Q1
+  x: 106.7
+  y: 100.03
+- ref: Q2
+  x: 98.15
+  y: 94.67
+  rot: 90.0
+- ref: Q3
+  x: 98.14
+  y: 99.53
+  rot: 90.0
+- ref: R1
+  x: 103.0
+  y: 94.81
+  rot: -90.0
+- ref: R10
+  x: 97.3
+  y: 117.1
+  rot: -90.0
+- ref: R11
+  x: 95.1
+  y: 102.7
+- ref: R12
+  x: 98.2
+  y: 105.3
+- ref: R13
+  x: 94.14
+  y: 100.6
+  rot: 180.0
+- ref: R2
+  x: 103.8
+  y: 91.91
+- ref: R3
+  x: 109.9
+  y: 100.92
+  rot: -90.0
+- ref: R4
+  x: 103.0
+  y: 103.8
+  rot: -90.0
+- ref: R5
+  x: 98.15
+  y: 90.77
+  rot: 90.0
+- ref: R6
+  x: 94.2
+  y: 98.4
+- ref: R7
+  x: 96.15
+  y: 90.77
+  rot: 90.0
+- ref: R8
+  x: 101.0
+  y: 94.81
+  rot: -90.0
+- ref: R9
+  x: 94.6
+  y: 114.0
+- ref: RV1
+  x: 100.0
+  y: 76.0
+copper_pours:
+- net: GND
+  layers: [B.Cu, F.Cu]

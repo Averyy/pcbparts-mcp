@@ -200,8 +200,6 @@ components:
 - ref: R27
   value: 10kohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R3
   value: 10kohm
   footprint: '0402'
@@ -214,8 +212,6 @@ components:
 - ref: R40
   value: 51kohm
   footprint: '0402'
-  pin_count: 2
-  nc_pins: {'1': '1'}
 - ref: R42
   value: 200ohm
   footprint: '0402'

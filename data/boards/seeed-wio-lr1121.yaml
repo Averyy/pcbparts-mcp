@@ -400,7 +400,7 @@ components:
   mpn: TMP-874
   description: SMD IC LoRa Edge;QFN32;5*5mm
   pin_count: 33
-  nc_pins: {'5': '5', '11': '11', '16': '16', '17': '17', '18': '18', '27': '27', '28': '28'}
+  nc_pins: {'5': '5', '16': '16', '17': '17', '18': '18', '27': '27', '28': '28'}
 - ref: U3
   value: LR1121 PIN OUT
   footprint: MODULE24_1D27

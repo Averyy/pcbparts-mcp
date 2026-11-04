@@ -18,8 +18,6 @@ components:
 - ref: 3.3V_E1
   value: Opened
   footprint: SJ-1
-  pin_count: 2
-  nc_pins: {3V_E1.1: '1', 3V_E1.2: '2'}
 - ref: BUT1
   value: YTS-A016-X
   footprint: YTS-A016-X

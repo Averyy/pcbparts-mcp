@@ -219,8 +219,6 @@ components:
 - ref: D1
   value: B5819W
   footprint: SOD-123
-  pin_count: 2
-  nc_pins: {K: '1'}
 - ref: D10
   value: BAT54S
   footprint: SOT-23

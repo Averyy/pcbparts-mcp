@@ -143,7 +143,6 @@ components:
   prod_id: DIO-15591
   description: RGB LED with integrated controller
   pin_count: 4
-  nc_pins: {DOUT: '1'}
 - ref: J1
   value: USB-C
   footprint: USB-C
