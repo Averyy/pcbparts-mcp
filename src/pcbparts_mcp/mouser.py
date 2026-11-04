@@ -123,13 +123,13 @@ def _normalize_part(part: dict[str, Any]) -> dict[str, Any]:
         except (ValueError, TypeError):
             pass
 
+    # Mouser states a status for some parts only (Not Recommended for New Designs, End of Life, New
+    # Product). None stated isn't "Active": AP2553W6-7 came back Active while Diodes and DigiKey list it NRND.
     lifecycle = None
     if part.get("LifecycleStatus"):
         lifecycle = part["LifecycleStatus"]
     elif part.get("IsDiscontinued") == "Yes":
         lifecycle = "Discontinued"
-    else:
-        lifecycle = "Active"
 
     return {
         "source": "mouser",

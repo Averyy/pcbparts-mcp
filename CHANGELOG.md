@@ -4,6 +4,22 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.15 (2026-11-04)
+
+New reply fields: `data_as_of` in `jlc_search`, and `prices` in `jlc_stock_check` for one LCSC code. Changed replies: `jlc_stock_check` with one LCSC code returns only that part; `mouser_get_part`'s `lifecycle` is null instead of `Active` when Mouser states no status; package names that had Chinese words in them are in English.
+
+### Added
+
+- **Price tiers in `jlc_stock_check`:** a query of one LCSC code returns the part's price tiers (`prices`, as in `jlc_get_part`) from the same live reply as its stock, so a BOM line takes one call instead of two. Text searches stay without them.
+
+### Fixed
+
+- **`mouser_get_part` said Active when Mouser says nothing:** `lifecycle` was `Active` for every part Mouser gave no status and didn't mark discontinued. AP2553W6-7 came back Active though Diodes' datasheet is stamped NOT RECOMMENDED FOR NEW DESIGN and DigiKey lists it NRND; Mouser states no status for it. `lifecycle` is now Mouser's own status where it states one (Not Recommended for New Designs, End of Life, Obsolete, Discontinued) and null otherwise, which is most parts. The descriptions point to `digikey_get_part`'s `lifecycle` and the maker's site for NRND.
+- **`jlc_search` and `jlc_get_part` gave different stock and prices for the same part:** C14663 read 38,555,997 at $0.0083 in search and 37,538,619 at $0.0072 in `jlc_get_part`. Both are the 1-piece price; search uses the daily catalog snapshot, and JLCPCB had changed the price since. Search replies now give the snapshot's scrape time as `data_as_of`, and the descriptions say which tools are live (`jlc_get_part`, held up to an hour, and `jlc_stock_check`).
+- **`jlc_stock_check` with an LCSC code listed other parts:** JLCPCB's search also matches the code's digits inside part numbers, so `C5947` returned four TLC5947 drivers after the 74HC595D, and `C1622` 16.2k resistors and a 74LVC162245 after the 47 nF capacitor. One LCSC code now returns only that part, and says so when it has less stock than `min_stock` or doesn't match the filters given.
+- **Package names in Chinese:** 2,975 parts read `插件,12.6x4.4mm` (through-hole) next to `Plugin` on others, so a BOM's package column and package filters saw two spellings. They now use the English listings' own words in every tool: `插件` is `Plugin`, `弯插` (right-angle through-hole, 1,187 parts) is `Plugin` with `,Right Angle`, `交错脚` is `(Staggered pins)`, and `卧贴`/`立贴` are `Right Angle`/`Vertical`. The full-width comma in `Surface Mount，Right Angle` (17,370 connectors) is a comma, and `SOТ23-6` (C5371028), spelled with a Cyrillic Т, now matches SOT23-6 filters. Package filters take either spelling: `jlc_stock_check` also sends JLCPCB's own (its live search still uses `插件,12.6x4.4mm`), and `jlc_search` reads the old one.
+- **`jlc_search` description:** `filters_applied` lists every filter that ran, given as an argument or read from the query; `parsed` shows only what the query text gave. A `Voltage >= 25V` filter given as an argument was missing from `parsed`, so it looked as if it hadn't run.
+
 ## 0.8.14 (2026-11-04)
 
 New `digikey_get_part` reply fields, all optional. For a manufacturer part number whose first DigiKey listing is a reel, `part_number`, `price_breaks` and `min_qty` change to the cut tape's.

@@ -37,6 +37,7 @@ from .client import DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient
 from .mouser import MouserAPIError, MouserClient, MouserError
 from .digikey import DigiKeyClient, DigiKeyError
 from .cse import CSEClient
+from .mounting import english_package
 from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, offload, run_db
 from .db import get_db, close_db
 from .sensor_db import get_sensor_db, close_sensor_db
@@ -500,7 +501,9 @@ async def jlc_stock_check(
     through large result sets.
 
     Args:
-        query: Keywords (e.g., "ESP32", "10uF 25V", "STM32F103")
+        query: Keywords (e.g., "ESP32", "10uF 25V", "STM32F103"); one LCSC code ("C5947") returns
+            that part only, not the parts with its digits in their part number (TLC5947), with its
+            price tiers (prices, as in jlc_get_part)
         category_id: Category ID from jlc_search_help
         subcategory_id: Subcategory ID from jlc_search_help
         category_name: Category name (e.g., "Resistors")
@@ -576,6 +579,19 @@ async def jlc_stock_check(
         if resolved_subcategory_id is None:
             return {"error": f"Subcategory not found: '{subcategory_name}'", "hint": "Use jlc_search_help(category='Connectors') to see available subcategories"}
 
+    # Replies give packages in English ("Plugin,12.6x4.4mm"), but JLCPCB filters on its own spelling
+    # ("插件,12.6x4.4mm"): send both, so a package copied from any reply finds its parts
+    if wanted := parsed_packages or ([package] if package else None):
+        spellings = await run_db(COMPONENT_POOL, get_db().upstream_packages, wanted)
+        if spellings != wanted:
+            parsed_packages, package = spellings, None
+
+    # A query that is one LCSC code is that part: JLCPCB's keyword search also matches the digits
+    # inside part numbers (C5947 found four TLC5947 drivers; C1622 16.2k resistors and a 74LVC162245)
+    lcsc_code = (query or "").strip().upper()
+    if not LCSC_CODE.fullmatch(lcsc_code):
+        lcsc_code = None
+
     try:
         result = await _client.search(
             query=query,
@@ -588,15 +604,32 @@ async def jlc_stock_check(
             packages=parsed_packages,
             manufacturers=parsed_manufacturers,
             # JLCPCB's own order is by LCSC code: SMF18A's Preferred part with the most stock
-            # (C19077512) was on page 2 of 2
-            sort_by=sort_by or "quantity",
-            page=effective_page,
-            limit=effective_limit,
+            # (C19077512) was on page 2 of 2. For an LCSC code it puts that part first (C6965 was
+            # third by stock, after parts with 6965 in their part number).
+            sort_by=None if lcsc_code else sort_by or "quantity",
+            page=1 if lcsc_code else effective_page,
+            limit=MAX_PAGE_SIZE if lcsc_code else effective_limit,
+            # A BOM line's stock and its price at the order quantity, from one reply
+            with_prices=bool(lcsc_code),
         )
     except ValueError as e:
         # Client raises ValueError with actionable messages (rate limited / WAF / timeout).
         # Return them as a dict so they survive mask_error_details=True.
         return {"error": str(e)}
+    if lcsc_code and not result.get("error"):
+        exact = [p for p in result.get("results") or [] if (p.get("lcsc") or "").upper() == lcsc_code]
+        result.update(results=exact if effective_page == 1 else [], page=effective_page,
+                      per_page=effective_limit, total=len(exact), total_pages=len(exact), has_more=False)
+        if not exact:
+            filters = ", ".join(name for name, value in (
+                ("library_type", library_type), ("package", package or parsed_packages),
+                ("manufacturer", manufacturer or parsed_manufacturers),
+                ("category", resolved_category_id or resolved_subcategory_id)) if value)
+            result["hint"] = (f"No part {lcsc_code} with stock >= {effective_min_stock}"
+                              + (f" matching {filters}" if filters else "")
+                              + f". min_stock=0 includes out-of-stock parts; jlc_get_part(lcsc=\"{lcsc_code}\") "
+                              "looks the code up.")
+        return result
     # "2812" found no part number with it (only 594D capacitors in a 2812 case) though WS2812B and
     # XL-5050RGBC-2812B contain it: JLCPCB's search matches whole part numbers and their starts.
     # Name in-stock parts that contain it.
@@ -747,7 +780,10 @@ def jlc_search(
     sort_order: SortOrder = None,
 ) -> dict:
     """Search in-stock JLCPCB parts locally with natural-language parsing and spec filters.
-    Default 20 results; strict=true disables relaxation. Reply: relaxed names query words, a
+    Stock and price (the 1-piece price) are from the daily catalog snapshot, scraped at data_as_of;
+    jlc_get_part and jlc_stock_check are live. Default 20 results; strict=true disables relaxation.
+    Reply: filters_applied lists every filter that ran, given or read from the query; parsed shows
+    only what the query text gave. relaxed names query words, a
     query-only library preference or part type left out; ignored_filters explains unapplied/rare filters,
     parsed.adjusted_filters explains moved/omitted specs; unlisted counts, per range filter, parts it
     left out only because they don't list that attribute ("-"); counts_complete=false means partial counts;
@@ -886,6 +922,12 @@ def jlc_search(
         parsed_packages = _parse_list_param(packages)
     except ValueError as exc:
         return _argument_error("packages", exc, ["string", "array of strings", "JSON array of strings"])
+    # The catalog's packages are in English since 0.8.15: "插件,12.6x4.4mm" from an older reply or a
+    # BOM is "Plugin,12.6x4.4mm". A database built before that still has JLCPCB's spelling.
+    if db.english_packages():
+        package = english_package(package)
+        if parsed_packages:
+            parsed_packages = [english_package(p) for p in parsed_packages]
     if sort_by is not None:
         sort_by = _normalize_library_type(sort_by)
         if sort_by not in ("stock", "price", "spec"):
@@ -1397,6 +1439,10 @@ def jlc_search(
             hints.append("Use jlc_stock_check for low-stock parts.")
         result["hint"] = " ".join(hints)
 
+    # Stock and price are the daily snapshot's: C14663 read 38,555,997 at $0.0083 here and 37,538,619
+    # at $0.0072 in jlc_get_part, a day later
+    if as_of := db.scraped_at():
+        result["data_as_of"] = as_of
     return result
 
 
@@ -1659,7 +1705,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     """Full details for one JLCPCB part (all price tiers, datasheet, specs, EasyEDA footprint
     availability), or the JLCPCB parts matching a manufacturer part number.
 
-    Reply: prices lists quantity tiers; datasheet is LCSC's datasheet page (a viewer, null when LCSC
+    Reply: stock and prices are live, held up to an hour; prices lists quantity tiers; datasheet is LCSC's datasheet page (a viewer, null when LCSC
     has none) and datasheet_pdf the datasheet itself: a short link on this server that redirects to
     the PDF and stays valid (LCSC's own link when the PDF is LCSC's); maker_datasheet is the manufacturer's own datasheet link where JLCPCB
     lists one (most TI parts), and datasheet_note says when there is no PDF, or that datasheet_pdf is
@@ -1669,7 +1715,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     lcsc_url is the LCSC product page; pcba_type is "economic" or
     "standard_only" (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard
     assembly). No lifecycle status (NRND, obsolete): JLCPCB doesn't list it; mouser_get_part and
-    digikey_get_part return lifecycle. jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.
+    digikey_get_part return lifecycle (Mouser's is null where it states none). jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.
     has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results and total. Non-exact replies
     add match (separators, packing, alias, alternative, lcsc or related), matched_mpn where
     applicable, and a note naming the part types for related full-text results (and parts another
@@ -2085,7 +2131,11 @@ async def mouser_get_part(part_number: str) -> dict:
 
     Returns:
         results: Full part details including all attributes, pricing tiers, availability, datasheet.
-            A number can match another maker's part (Mouser's SRV05-4 is onsemi's): check manufacturer
+            A number can match another maker's part (Mouser's SRV05-4 is onsemi's): check manufacturer.
+            lifecycle is Mouser's status where it states one (Not Recommended for New Designs, End of
+            Life, Obsolete, Discontinued), else null: Mouser states none for most parts, including some
+            the maker marks NRND (AP2553W6-7). digikey_get_part's lifecycle is DigiKey's product status
+            (it listed AP2553W6-7 as NRND); the maker's site decides.
         total: Number of parts found
         not_found: The given numbers no result matches (Mouser skips them without saying)
     """

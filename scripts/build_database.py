@@ -23,6 +23,7 @@ from typing import Any
 # Add parent directory to path for imports when running as script
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from pcbparts_mcp.mounting import english_package  # noqa: E402
 from pcbparts_mcp.parsers import (
     parse_capacitance,
     parse_capacitance_pf,
@@ -560,6 +561,8 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
         )
     """)
 
+    conn.execute("CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)")
+
     # Create categories table (derived from subcategories)
     conn.execute("""
         CREATE TABLE categories (
@@ -603,10 +606,15 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
                 "INSERT OR REPLACE INTO categories VALUES (?, ?, ?)",
                 (cat_info["id"], cat_info["name"], slug)
             )
+        # When the stock and prices were scraped: jlc_search replies give it as data_as_of
+        if manifest.get("scraped_at"):
+            conn.execute("INSERT OR REPLACE INTO metadata VALUES ('scraped_at', ?)", (manifest["scraped_at"],))
 
     # Load all category files
     categories_dir = data_dir / "categories"
     total_parts = 0
+    # English package -> JLCPCB's own spellings of it, for live package filters (jlc_stock_check)
+    package_spellings: set[tuple[str, str]] = set()
     category_counts = {}
     BATCH_SIZE = 1000  # Insert in batches for better performance
 
@@ -636,12 +644,16 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
                 # Extract numeric values from attributes
                 numeric_values = extract_numeric_columns(attrs)
 
+                package = english_package(part.get("p"))
+                if package != part.get("p"):
+                    package_spellings.add((package, part["p"]))
+
                 # Build row tuple
                 row = [
                     part["l"],
                     part.get("m"),
                     part.get("f"),
-                    part.get("p"),
+                    package,
                     part.get("s"),
                     part.get("t"),
                     part.get("c"),
@@ -671,6 +683,11 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
 
         if verbose and count > 0:
             print(f"  {cat_slug}: {count:,} parts")
+
+    # JLCPCB's live search still filters on its own spelling ("插件,12.6x4.4mm" for "Plugin,12.6x4.4mm")
+    conn.execute("CREATE TABLE package_spellings (package TEXT NOT NULL, upstream TEXT NOT NULL, "
+                 "PRIMARY KEY (package, upstream))")
+    conn.executemany("INSERT INTO package_spellings VALUES (?, ?)", sorted(package_spellings))
 
     if verbose:
         print(f"Total parts loaded: {total_parts:,}")
