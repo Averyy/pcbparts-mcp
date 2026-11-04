@@ -4,6 +4,12 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.9 (2026-11-04)
+
+### Fixed
+
+- **`board_get` consensus for a partial focus:** 0.8.8's ESP32-S3-DevKitM-1 made ESP32-S3-MINI-1 a two-board consensus, which then replaced the 33-board ESP32 one that `focus="ESP32"` on Adafruit's ESP32-S3 Feather returned. A partial focus now uses its family's consensus when the exact part's covers fewer than 3 boards and the family's covers more. Exact and ref focus are unchanged.
+
 ## 0.8.8 (2026-11-04)
 
 New boards and reply fields, all optional.

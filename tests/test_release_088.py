@@ -113,3 +113,16 @@ class TestEsp32Rule:
         assert "one LESD5D5.0CT1G (LRC, 5 V, 15 pF) on each of VBUS, D- and D+" in content
         assert "espressif-esp32-s3-devkitc-1" in content and "esp32-c6-devkitc-1-schematics_v1.4.pdf" in content
         assert "Espressif's DevKits fit exactly 10 kohm + 1 uF on CHIP_PU" in content
+
+
+class TestThinConsensus:
+    """0.8.9: the DevKitM-1 made ESP32-S3-MINI-1 a two-board consensus, which replaced the 33-board
+    ESP32 one a partial "ESP32" focus used (CI's board quality gate caught it)."""
+
+    async def test_partial_focus_keeps_the_family_consensus(self):
+        board = await server.board_get(slug="adafruit-esp32-s3-feather", focus="ESP32")
+        assert board["focus"]["value"].startswith("ESP32-S3") and board["consensus"]["board_count"] >= 10
+
+    async def test_exact_focus_keeps_its_own(self):
+        board = await server.board_get(slug=DEVKIT_C, focus="ESP32-S3-WROOM-1")
+        assert board["focus_match_type"] == "exact" and board["consensus"]["ic"] == "ESP32-S3-WROOM-1"
