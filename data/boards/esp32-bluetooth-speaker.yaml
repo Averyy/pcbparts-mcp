@@ -270,6 +270,7 @@ components:
   value: USB-C
   footprint: USB-C
   description: USB 2.0-only 14P Type-C Receptacle connector
+  pin_count: 15
 - ref: J4
   value: 1x2 screw terminal
   footprint: JST_PH_B2B-PH-K
@@ -292,14 +293,17 @@ components:
   value: BC817
   footprint: SOT-23
   description: 0.8A Ic, 45V Vce, NPN Transistor, SOT-23
+  pin_count: 3
 - ref: Q2
   value: BC817
   footprint: SOT-23
   description: 0.8A Ic, 45V Vce, NPN Transistor, SOT-23
+  pin_count: 3
 - ref: Q3
   value: DMG2301L
   footprint: SOT-23
   description: -3A Id, -20V Vds, P-Channel MOSFET, SOT-23
+  pin_count: 3
 - ref: R1
   value: 3.3ohm
   footprint: '0603'
@@ -409,36 +413,51 @@ components:
 - ref: U1
   value: TPA3116D2
   footprint: SOP-33
+  pin_count: 33
+  nc_pins: {SYNC: '16'}
 - ref: U2
   value: PCM5100
   footprint: TSSOP-20
   description: 2VRMS DirectPath, 100dB Audio Stereo DAC with 32-bit, 384kHz PCM Interface
+  pin_count: 20
 - ref: U3
   value: ESP32-WROOM-32
   footprint: ESP32-WROOM-32
   description: RF Module, ESP32-D0WDQ6 SoC, Wi-Fi 802.11b/g/n, Bluetooth, BLE, 32-bit
+  pin_count: 39
+  nc_pins: {SENSOR_VP: '4', SENSOR_VN: '5', IO34: '6', IO35: '7', IO32: '8', IO33: '9', IO27: '12', IO14: '13', IO12: '14', IO13: '16', SHD/SD2: '17', SWP/SD3: '18', SCS/CMD: '19', SCK/CLK: '20', SDO/SD0: '21', SDI/SD1: '22', IO15: '23', IO2: '24', IO18: '30', NC: '32', IO23: '37'}
 - ref: U4
   value: CH340C
   footprint: SOIC-16
   description: USB serial converter, crystal-less, UART, SOIC-16
+  pin_count: 16
+  nc_pins: {NC@7: '7', NC@8: '8', nCTS: '9', nDSR: '10', nRI: '11', nDCD: '12', R232: '15'}
 - ref: U5
   value: XC6220B331MR
   footprint: SOT-23-5
   description: 1A, Low Drop-out Voltage Regulator, Fixed Output 3.3V, SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U6
   value: TP4056
   footprint: SOIC-8-1EP
   description: "1A Standalone Linear Li-ion/LiPo single-cell battery charger, 4.2V \xB11% charge"
+  pin_count: 9
+  nc_pins: {TEMP: '1'}
 - ref: U7
   value: TPS61088RHLR
   footprint: VQFN-20
   manufacturer: Texas Instruments
   mpn: TPS61088RHLR
+  pin_count: 21
+  nc_pins: {NC_11: '11', NC_12: '12', MODE: '13'}
 - ref: U8
   value: MAX17048G_T10
   footprint: SON-9
   manufacturer: Analog Devices
   mpn: MAX17048G+T10
+  pin_count: 8
+  nc_pins: {nALERT: '5'}
 nets:
 - name: +12V
   pins:

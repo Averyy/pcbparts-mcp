@@ -91,34 +91,43 @@ components:
   footprint: QFN-28-5MM_ALT1
   prod_id: IC-11483
   description: DMOS Microstepping Driver with Translator
+  pin_count: 29
+  nc_pins: {NC@1: P$7, NC@2: P$20, NC@3: P$25}
 - ref: IC2
   value: LM317L
   footprint: SCHMALZHAUS_SOT89
   description: Voltage Regulator
+  pin_count: 4
 - ref: JP1
   value: 1x2 header
   footprint: 1X02
 - ref: JP10
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: JP11
   value: 1x4 screw terminal
   footprint: SCREWTERMINAL-3.5MM-4_LOCK
+  pin_count: 4
 - ref: JP12
   value: 1x4 screw terminal
   footprint: SCREWTERMINAL-3.5MM-4_LOCK
+  pin_count: 4
 - ref: JP13
   value: 1x2 screw terminal
   footprint: SCREWTERMINAL-3.5MM-2_LOCK
 - ref: JP14
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: JP3
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: JP5
   value: 1x4 screw terminal
   footprint: SCREWTERMINAL-3.5MM-4_LOCK
+  pin_count: 4
 - ref: JP6
   value: 1x2 header
   footprint: 1X02
@@ -173,6 +182,7 @@ components:
   value: 10kohm
   footprint: TRIMPOT-3MM-2
   pulldown: CUR_REF
+  pin_count: 3
 - ref: R18
   value: 110mohm
   footprint: '2010'

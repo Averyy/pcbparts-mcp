@@ -63,9 +63,11 @@ components:
 - ref: K3
   value: 1x8 header
   footprint: HEADER_MALE
+  pin_count: 8
 - ref: Q1
   value: NPN transistor
   footprint: SOT-23-3
+  pin_count: 3
 - ref: R1
   value: 5.1kohm
   footprint: '0603'
@@ -105,12 +107,17 @@ components:
 - ref: U1
   value: dual NMOS
   footprint: SOT-363
+  pin_count: 6
 - ref: U2
   value: L86-M33
   footprint: L86-M33
+  pin_count: 12
+  nc_pins: {NC: '9'}
 - ref: U3
   value: SE5218
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '4'}
 nets:
 - name: 3V3
   pins:

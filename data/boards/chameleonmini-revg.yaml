@@ -134,12 +134,15 @@ components:
 - ref: D2
   value: BAS70-05
   footprint: SOT323
+  pin_count: 3
 - ref: D3
   value: BAS70-05
   footprint: SOT323
+  pin_count: 3
 - ref: D4
   value: BAS70-05
   footprint: SOT323
+  pin_count: 3
 - ref: D5
   value: Schottky
   footprint: SOD323(F)
@@ -147,39 +150,50 @@ components:
 - ref: D8
   value: BAS70-05
   footprint: SOT323
+  pin_count: 3
 - ref: IC1
   value: ATxmega128A4U-AU
   footprint: TQFP44
+  pin_count: 44
+  nc_pins: {PC3: '13', PC7: '17', PE1: '29', PA0: '40'}
 - ref: IC2
   value: MCP1700
   footprint: SOT23
+  pin_count: 3
 - ref: IC3
   value: '7408'
   footprint: SC70-5
   description: 2-input AND gate
+  pin_count: 5
 - ref: IC4
   value: '7486'
   footprint: SC70-5
   description: EXCLUSIV-OR
+  pin_count: 5
 - ref: IC5
   value: MB85RS256
   footprint: SO-08
+  pin_count: 8
 - ref: IC6
   value: '7474'
   footprint: VSSOP8
+  pin_count: 8
 - ref: IC7
   value: '7432'
   footprint: SC70-5
   description: 2-input OR gate
+  pin_count: 5
 - ref: IC9
   value: '7432'
   footprint: SC70-5
   description: 2-input OR gate
+  pin_count: 5
 - ref: J1
   value: Micro USB
   footprint: USB-MICROB-10118194
   digikey: 609-4618-6-ND
   description: USB Connectors
+  pin_count: 12
 - ref: L1
   value: 33R@100MHz
   footprint: '2012'
@@ -193,6 +207,8 @@ components:
   value: tactile switch
   footprint: TACTILE-SWITCH-SMD
   prod_id: SWCH-08247
+  pin_count: 4
+  nc_pins: {'2': '2', '3': '3'}
 - ref: LEDGREEN
   value: HSMG-C190
   footprint: '0603'
@@ -206,27 +222,34 @@ components:
 - ref: Q1
   value: Si1967DH
   footprint: SOT363
+  pin_count: 6
 - ref: Q2
   value: 13.56 MHz
   footprint: 5MMX3.2MM
 - ref: Q3
   value: BSS138
   footprint: SOT323
+  pin_count: 3
 - ref: Q4
   value: BC846W
   footprint: SOT323
+  pin_count: 3
 - ref: Q5
   value: BSS84
   footprint: SOT323
+  pin_count: 3
 - ref: Q6
   value: BSS84
   footprint: SOT323
+  pin_count: 3
 - ref: Q7
   value: BSS138
   footprint: SOT323
+  pin_count: 3
 - ref: Q8
   value: BSS138
   footprint: SOT323
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -335,19 +358,26 @@ components:
   value: tactile switch
   footprint: TACTILE-SWITCH-SMD
   prod_id: SWCH-08247
+  pin_count: 4
+  nc_pins: {'2': '2', '3': '3'}
 - ref: SW1
   value: AYZ0102AGRLC
   footprint: AYZ0102AGRLC
+  pin_count: 3
 - ref: U1
   value: MCP73832T
   footprint: SOT-23-5
   description: Microchip's MCP73831
+  pin_count: 5
 - ref: X1
   value: 2x3 header
   footprint: PINHD-2X3-2.54-EDGE
+  pin_count: 6
 - ref: X3
   value: U.FL-R-SMT
   footprint: U.FL-R-SMT
+  pin_count: 3
+  nc_pins: {GND@1: GND2}
 nets:
 - name: '!BRIDGE-CLK'
   pins: [IC1.PC0, IC7.A.I0, R16.1]

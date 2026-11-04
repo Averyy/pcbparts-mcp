@@ -324,26 +324,38 @@ components:
   value: 22nF
   footprint: 0805
   lcsc: C77069
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C88
   value: 22nF
   footprint: 0805
   lcsc: C77069
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: C89
   value: 22nF
   footprint: 0805
   lcsc: C77069
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: C90
   value: 22nF
   footprint: 0805
   lcsc: C77069
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C91
   value: 22nF
   footprint: 0805
   lcsc: C77069
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C92
   value: 22nF
   footprint: 0805
   lcsc: C77069
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C94
   value: 22uF
   footprint: 0805
@@ -374,6 +386,7 @@ components:
   value: ESDCAN24-2BLY
   footprint: SOT-23
   lcsc: C5158050
+  pin_count: 3
 - ref: D27
   value: SS310
   footprint: SMA
@@ -411,18 +424,23 @@ components:
   value: WS2812B
   footprint: LED_WS2812_3528
   lcsc: C2890364
+  pin_count: 4
 - ref: D34
   value: WS2812B
   footprint: LED_WS2812_3528
   lcsc: C2890364
+  pin_count: 4
 - ref: D35
   value: WS2812B
   footprint: LED_WS2812_3528
   lcsc: C2890364
+  pin_count: 4
+  nc_pins: {DOUT: '4'}
 - ref: D36
   value: BAT54S
   footprint: SOT-23
   lcsc: C916425
+  pin_count: 3
 - ref: D37
   value: B5819W SL
   footprint: SOD-123
@@ -443,6 +461,7 @@ components:
   value: ESDCAN24-2BLY
   footprint: SOT-23
   lcsc: C5158050
+  pin_count: 3
 - ref: D41
   value: red LED
   footprint: '0603'
@@ -457,6 +476,7 @@ components:
   value: BAT54S
   footprint: SOT-23
   lcsc: C916425
+  pin_count: 3
 - ref: D45
   value: 10V Zener
   footprint: SOD-123
@@ -474,86 +494,118 @@ components:
   value: CPU1 USB
   footprint: USB-C
   lcsc: C2835315
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J10
   value: AUX GPIO 1
   footprint: CONN-TH_3P-P2.54_HCTL_HC-2510-3AW
   lcsc: C2982042
+  pin_count: 3
+  nc_pins: {Pin_1: '1', Pin_2: '2'}
 - ref: J11
   value: 1x4 header
   footprint: PINREX-744-81-04TW00 _1x04_P2.54mm_Vertical
   lcsc: C2982033
+  pin_count: 4
 - ref: J12
   value: 1x6 header
   footprint: Ckmtw-W-2510S06P
   lcsc: C2982035
+  pin_count: 6
 - ref: J13
   value: ADC AUX 2
   footprint: CONN-TH_3P-P2.54_HCTL_HC-2510-3AW
   lcsc: C2982042
+  pin_count: 3
 - ref: J14
   value: AUX GPIO 2
   footprint: CONN-TH_3P-P2.54_HCTL_HC-2510-3AW
   lcsc: C2982042
+  pin_count: 3
+  nc_pins: {Pin_1: '1', Pin_2: '2'}
 - ref: J15
   value: AUX Encoder
   footprint: CONN-TH_5P-P2.54_HCTL_HC-2510-5AW
   lcsc: C2982044
+  pin_count: 5
 - ref: J16
   value: 2x5 header
   footprint: 2X5
   lcsc: C239345
+  pin_count: 10
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10'}
 - ref: J17
   value: CAN Output
   footprint: M12A-08PFFR
   mpn: M12A-08PFFR-SF7003
+  pin_count: 9
 - ref: J18
   value: 1x6 header
   footprint: 1X6
   lcsc: C718239
+  pin_count: 6
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6'}
 - ref: J19
   value: 2x5 header
   footprint: 2X5
   lcsc: C239345
+  pin_count: 10
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10'}
 - ref: J2
   value: CAN Input
   footprint: M12A-08PFFR
   mpn: M12A-08PFFR-SF7003
+  pin_count: 9
 - ref: J20
   value: 2x5 header
   footprint: 2X5
   lcsc: C239345
+  pin_count: 10
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10'}
 - ref: J21
   value: 1x6 header
   footprint: 1X6
   lcsc: C718239
+  pin_count: 6
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6'}
 - ref: J3
   value: 1x6 header
   footprint: Ckmtw-W-2510S06P
   lcsc: C2982035
+  pin_count: 6
 - ref: J4
   value: 1x6 header
   footprint: Ckmtw-W-2510S06P
   lcsc: C2982035
+  pin_count: 6
 - ref: J5
   value: 1x6 header
   footprint: Ckmtw-W-2510S06P
   lcsc: C2982035
+  pin_count: 6
 - ref: J6
   value: CPU2 USB
   footprint: USB-C
   lcsc: C2835315
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J7
   value: 2x5 header
   footprint: 2X5
   lcsc: C239345
+  pin_count: 10
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10'}
 - ref: J8
   value: 1x3 header
   footprint: BOOMELE-2510-3A
   lcsc: C509148
+  pin_count: 3
+  nc_pins: {Pin_2: '2'}
 - ref: J9
   value: ADC AUX 1
   footprint: CONN-TH_3P-P2.54_HCTL_HC-2510-3AW
   lcsc: C2982042
+  pin_count: 3
 - ref: L1
   value: 68uH
   footprint: L_Sunlord_SWPA6045S
@@ -571,31 +623,41 @@ components:
   value: AO7400-VB
   footprint: SOT-323_SC-70
   lcsc: C879165
+  pin_count: 3
+  nc_pins: {D: '3'}
 - ref: Q11
   value: AO7400-VB
   footprint: SOT-323_SC-70
   lcsc: C879165
+  pin_count: 3
 - ref: Q2
   value: AO7400-VB
   footprint: SOT-323_SC-70
   lcsc: C879165
+  pin_count: 3
+  nc_pins: {D: '3'}
 - ref: Q3
   value: NCE40P05Y
   footprint: SOT-23
   lcsc: C163738
   description: "40V 5.3A 2W 85m\u03A9@10V,5A 3V@250uA 1 Piece P-Channel"
+  pin_count: 3
+  nc_pins: {S: '2'}
 - ref: Q4
   value: LBSS139WT1G
   footprint: SOT-323_SC-70
   lcsc: C383204
+  pin_count: 3
 - ref: Q7
   value: N-channel MOSFET
   footprint: SOT-23
   lcsc: C400505
+  pin_count: 3
 - ref: Q8
   value: N-channel MOSFET
   footprint: SOT-23
   lcsc: C400505
+  pin_count: 3
 - ref: R10
   value: 510ohm
   footprint: '0603'
@@ -877,6 +939,7 @@ components:
   value: CONFIG SWITCH
   footprint: SW_DIP_SPSTx06_Slide_KingTek_DSHP06TS_W7.62mm_P1.27mm
   lcsc: C40737
+  pin_count: 12
 - ref: SW4
   value: switch
   footprint: SW-SMD_DSHP01TSGER
@@ -889,128 +952,166 @@ components:
   value: TXS0101DCKR
   footprint: SOT-363_SC-70-6
   lcsc: C132031
+  pin_count: 6
 - ref: U11
   value: TLV1117LV33DCYR
   footprint: SOT-223-3_TabPin2
   lcsc: C15578
+  pin_count: 3
 - ref: U12
   value: W25Q128JVSIQ
   footprint: SOIC-8
   lcsc: C113767
+  pin_count: 8
 - ref: U13
   value: W25Q128JVSIQ
   footprint: SOIC-8
   lcsc: C113767
+  pin_count: 8
 - ref: U15
   value: RP2040
   footprint: RP2040-QFN-56
   lcsc: C2040
+  pin_count: 57
+  nc_pins: {GPIO4: '6', GPIO5: '7', GPIO6: '8', GPIO7: '9', GPIO8: '11', GPIO9: '12', GPIO10: '13', GPIO11: '14', GPIO12: '15', GPIO13: '16', GPIO14: '17', GPIO15: '18', GPIO26_ADC0: '38', GPIO27_ADC1: '39', GPIO28_ADC2: '40', GPIO29_ADC3: '41'}
 - ref: U17
   value: CA-IS3052G
   footprint: SOIC-8
   lcsc: C528764
+  pin_count: 8
 - ref: U18
   value: MCP2515-xSO
   footprint: SOIC-18W
   lcsc: C12368
+  pin_count: 18
+  nc_pins: {CLKOUT/SOF: '3', nTX0RTS: '4', nTX1RTS: '5', nTX2RTS: '6', nRX1BF: '10', nRX0BF: '11'}
 - ref: U19
   value: RP2040
   footprint: RP2040-QFN-56
   lcsc: C2040
+  pin_count: 57
+  nc_pins: {GPIO5: '7', GPIO17: '28', GPIO23: '35'}
 - ref: U22
   value: ADS7822U
   footprint: SOIC-8
   lcsc: C16324
+  pin_count: 8
 - ref: U23
   value: SN74LVC1G07QDCKTQ1
   footprint: SOT-353_SC-70-5
   digikey: TC7SH34FULJ(CTCT-ND
   mpn: TC7SH34FU,LJ(CT
   lcsc: C171458
+  pin_count: 5
 - ref: U24
   value: MT2492
   footprint: SOT-23-6
   lcsc: C89358
+  pin_count: 6
 - ref: U25
   value: SN74LVC1G07QDCKTQ1
   footprint: SOT-353_SC-70-5
   digikey: TC7SH34FULJ(CTCT-ND
   mpn: TC7SH34FU,LJ(CT
   lcsc: C171458
+  pin_count: 5
 - ref: U26
   value: ADC081S021CISD
   footprint: SOT-23-6
   lcsc: C130227
+  pin_count: 6
+  nc_pins: {VIN: '3'}
 - ref: U27
   value: USBLC6-2
   footprint: SOT-666
   lcsc: C2827693
+  pin_count: 6
 - ref: U28
   value: USBLC6-2
   footprint: SOT-666
   lcsc: C2827693
+  pin_count: 6
 - ref: U29
   value: USBLC6-4
   footprint: SOT-23-6
   lcsc: C558419
+  pin_count: 6
 - ref: U3
   value: USBLC6-4
   footprint: SOT-23-6
   lcsc: C558419
+  pin_count: 6
 - ref: U30
   value: USBLC6-4
   footprint: SOT-23-6
   lcsc: C558419
+  pin_count: 6
 - ref: U31
   value: USBLC6-4
   footprint: SOT-23-6
   lcsc: C558419
+  pin_count: 6
+  nc_pins: {I/O3: '4'}
 - ref: U32
   value: TLV1117LV33DCYR
   footprint: SOT-223-3_TabPin2
   lcsc: C15578
+  pin_count: 3
 - ref: U33
   value: TX4139
   footprint: SOIC-8-1EP
   lcsc: C329266
+  pin_count: 9
+  nc_pins: {EN: '6', POK: '7'}
 - ref: U34
   value: LTV-208
   footprint: SSOP-8
   lcsc: C133121
+  pin_count: 8
 - ref: U35
   value: PCA9557PWR
   footprint: TSSOP-16
   lcsc: C201547
+  pin_count: 16
+  nc_pins: {IO4: '11', IO5: '12', IO6: '13', IO7: '14'}
 - ref: U4
   value: TXS0101DCKR
   footprint: SOT-363_SC-70-6
   lcsc: C132031
+  pin_count: 6
 - ref: U43
   value: USBLC6-4
   footprint: SOT-23-6
   lcsc: C558419
+  pin_count: 6
 - ref: U6
   value: SN74LVC1G07QDCKTQ1
   footprint: SOT-353_SC-70-5
   digikey: TC7SH34FULJ(CTCT-ND
   mpn: TC7SH34FU,LJ(CT
   lcsc: C171458
+  pin_count: 5
 - ref: U9
   value: ADC081S021CISD
   footprint: SOT-23-6
   lcsc: C130227
+  pin_count: 6
+  nc_pins: {VIN: '3'}
 - ref: Y1
   value: 12MHz
   footprint: SMD3225
   lcsc: C9002
+  pin_count: 4
 - ref: Y2
   value: 12MHz
   footprint: SMD3225
   lcsc: C9002
+  pin_count: 4
 - ref: Y3
   value: 16MHz
   footprint: SMD3225
   lcsc: C362342
+  pin_count: 4
 nets:
 - name: +12V
   pins:

@@ -176,16 +176,22 @@ components:
   manufacturer: ESS Technology
   mpn: ES9018K2M
   description: Digital to Analog Converters - DAC Sabre 32 Reference Stereo low power
+  pin_count: 29
+  nc_pins: {N.C._1: '2', XO: '6', N.C._2: '19', N.C._3: '22', GPIO2: '23', GPIO1: '24'}
 - ref: J1
   value: JST SH 7-pin
   footprint: SM07B-SRSS-TB
   manufacturer: JST (JAPAN SOLDERLESS TERMINALS)
   mpn: SM07B-SRSS-TB (LF)(SN)
   description: JST SH Series, 1mm Pitch 7 Way 1 Row Right Angle PCB Header, Solder
+  pin_count: 7
+  nc_pins: {'1': '1', '2': '2', '6': '6', '7': '7'}
 - ref: J3
   value: USB-C
   footprint: USB-C
   description: USB 2.0-only 16P Type-C Receptacle connector
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: PS1
   value: SGM3204YN6G
   footprint: SOT-6
@@ -193,6 +199,7 @@ components:
   manufacturer: SGMICRO
   mpn: SGM3204YN6G/TR
   description: EasyEDA Model Description Charge Pump Negative Adjustable 1 Up to 200mA 950kHz
+  pin_count: 6
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -314,25 +321,32 @@ components:
   value: CH32V305FBP6
   footprint: TSSOP-20
   description: The CH32V303/5/7 is an connectivity MCUs based on 32-bit RISC-V core.
+  pin_count: 20
+  nc_pins: {PB14: '7', PC7: '10', PC8: '11', PA8/PC9: '12'}
 - ref: U2
   value: ME6210A33M3G
   footprint: SOT-23
+  pin_count: 3
 - ref: U3
   value: OPA1678
   footprint: SOIC-8
   description: Low-Distortion Audio Operational Amplifiers, SOIC-8/VSSOP-8
+  pin_count: 8
 - ref: U4
   value: OPA1678
   footprint: SOIC-8
   description: Low-Distortion Audio Operational Amplifiers, SOIC-8/VSSOP-8
+  pin_count: 8
 - ref: U5
   value: OPA1678
   footprint: SOIC-8
   description: Low-Distortion Audio Operational Amplifiers, SOIC-8/VSSOP-8
+  pin_count: 8
 - ref: X1
   value: 8M
   footprint: SMD3225
   description: SMD Quartz crystal, 4 terminals, 3.2mm x 2.5mm, Alternate KiCad Library
+  pin_count: 4
 nets:
 - name: +3.3V
   pins:

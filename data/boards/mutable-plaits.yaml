@@ -216,84 +216,120 @@ components:
 - ref: D3
   value: BAT54S
   footprint: SOT23
+  pin_count: 3
 - ref: IC1
   value: WE173950378
   footprint: WE78
+  pin_count: 3
 - ref: IC2
   value: TLC59281DBQ
   footprint: TSSOP24_0635
+  pin_count: 24
+  nc_pins: {'22': '22'}
 - ref: IC3
   value: LD2981ABU
   footprint: SOT89
+  pin_count: 4
+  nc_pins: {2@1: 2@1}
 - ref: IC4
   value: STM32F373C
   footprint: LQFP48
+  pin_count: 48
+  nc_pins: {'2': '2', '3': '3', '4': '4', '38': '38', '39': '39', '40': '40', '41': '41'}
 - ref: IC5
   value: PCM5100PW
   footprint: SSOP20
+  pin_count: 20
 - ref: IC6
   value: TL074PW
   footprint: TSSOP14_065
+  pin_count: 14
 - ref: IC7
   value: TL074PW
   footprint: TSSOP14_065
+  pin_count: 14
 - ref: IC8
   value: TL072PW
   footprint: TSSOP08
+  pin_count: 8
 - ref: IC9
   value: LM4041DBZ
   footprint: DBZ_R-PDSO-G3
+  pin_count: 3
+  nc_pins: {'3': '3'}
 - ref: J1
   value: 3.5mm audio jack
   footprint: WQP_PJ_301M6
+  pin_count: 3
 - ref: J10
   value: 3.5mm audio jack
   footprint: WQP_PJ_301M6
+  pin_count: 3
+  nc_pins: {P2: P2}
 - ref: J2
   value: 3.5mm audio jack
   footprint: WQP_PJ_301M6
+  pin_count: 3
 - ref: J3
   value: 3.5mm audio jack
   footprint: WQP_PJ_301M6
+  pin_count: 3
 - ref: J4
   value: 3.5mm audio jack
   footprint: WQP_PJ_301M6
+  pin_count: 3
 - ref: J5
   value: 3.5mm audio jack
   footprint: WQP_PJ_301M6
+  pin_count: 3
 - ref: J6
   value: 3.5mm audio jack
   footprint: WQP_PJ_301M6
+  pin_count: 3
 - ref: J7
   value: 3.5mm audio jack
   footprint: WQP_PJ_301M6
+  pin_count: 3
 - ref: J8
   value: 3.5mm audio jack
   footprint: WQP_PJ_301M6
+  pin_count: 3
 - ref: J9
   value: 3.5mm audio jack
   footprint: WQP_PJ_301M6
+  pin_count: 3
+  nc_pins: {P2: P2}
 - ref: JP1
   value: 1x2 header
   footprint: FIDUCIAL-1X2
+  pin_count: 1
+  nc_pins: {'1': '1'}
 - ref: JP2
   value: 1x2 header
   footprint: FIDUCIAL-1X2
+  pin_count: 1
+  nc_pins: {'1': '1'}
 - ref: JP3
   value: 1x2 header
   footprint: FIDUCIAL-1X2
+  pin_count: 1
+  nc_pins: {'1': '1'}
 - ref: JP4
   value: 1x2 header
   footprint: FIDUCIAL-1X2
+  pin_count: 1
+  nc_pins: {'1': '1'}
 - ref: JP5
   value: 1x2 header
   footprint: 1X02
 - ref: JP6
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: JP8
   value: 2x5 header
   footprint: 2X5
+  pin_count: 10
 - ref: L1
   value: L-USL2012C
   footprint: '2012'
@@ -312,34 +348,45 @@ components:
 - ref: LED1
   value: LED-BICOLOR-THROUGHHOLE-CA
   footprint: LED-BICOLOR-THROUGHHOLE-LUMEX
+  pin_count: 3
 - ref: LED2
   value: LED-BICOLOR-THROUGHHOLE-CA
   footprint: LED-BICOLOR-THROUGHHOLE-LUMEX
+  pin_count: 3
 - ref: LED3
   value: LED-BICOLOR-THROUGHHOLE-CA
   footprint: LED-BICOLOR-THROUGHHOLE-LUMEX
+  pin_count: 3
 - ref: LED4
   value: LED-BICOLOR-THROUGHHOLE-CA
   footprint: LED-BICOLOR-THROUGHHOLE-LUMEX
+  pin_count: 3
 - ref: LED5
   value: LED-BICOLOR-THROUGHHOLE-CA
   footprint: LED-BICOLOR-THROUGHHOLE-LUMEX
+  pin_count: 3
 - ref: LED6
   value: LED-BICOLOR-THROUGHHOLE-CA
   footprint: LED-BICOLOR-THROUGHHOLE-LUMEX
+  pin_count: 3
 - ref: LED7
   value: LED-BICOLOR-THROUGHHOLE-CA
   footprint: LED-BICOLOR-THROUGHHOLE-LUMEX
+  pin_count: 3
 - ref: LED8
   value: LED-BICOLOR-THROUGHHOLE-CA
   footprint: LED-BICOLOR-THROUGHHOLE-LUMEX
+  pin_count: 3
 - ref: Q1
   value: CRYSTAL
   footprint: CTS406
+  pin_count: 4
 - ref: R1
   value: 10kohm
   footprint: ALPS_POT_VERTICAL_PS
   pulldown: +3V3_A
+  pin_count: 5
+  nc_pins: {P$4: P$4, P$5: P$5}
 - ref: R10
   value: 100ohm
   footprint: '0402'
@@ -374,6 +421,8 @@ components:
   value: 10kohm
   footprint: ALPS_POT_VERTICAL_PS
   pulldown: +3V3_A
+  pin_count: 5
+  nc_pins: {P$4: P$4, P$5: P$5}
 - ref: R20
   value: 33kohm
   footprint: '0402'
@@ -452,14 +501,20 @@ components:
   value: 10kohm
   footprint: ALPS_POT_VERTICAL
   pulldown: +3V3_A
+  pin_count: 5
+  nc_pins: {P$4: P$4, P$5: P$5}
 - ref: R43
   value: 10kohm
   footprint: ALPS_POT_VERTICAL
   pulldown: +3V3_A
+  pin_count: 5
+  nc_pins: {P$4: P$4, P$5: P$5}
 - ref: R44
   value: 10kohm
   footprint: ALPS_POT_VERTICAL
   pulldown: +3V3_A
+  pin_count: 5
+  nc_pins: {P$4: P$4, P$5: P$5}
 - ref: R45
   value: 10kohm
   footprint: '0402'
@@ -491,19 +546,25 @@ components:
   value: 10kohm
   footprint: ALPS_POT_VERTICAL_PS
   pulldown: +3V3_A
+  pin_count: 5
+  nc_pins: {P$4: P$4, P$5: P$5}
 - ref: R8
   value: 10kohm
   footprint: ALPS_POT_VERTICAL_PS
   pulldown: +3V3_A
+  pin_count: 5
+  nc_pins: {P$4: P$4, P$5: P$5}
 - ref: R9
   value: 100ohm
   footprint: '0402'
 - ref: SW1
   value: TAC_SWITCHPTH
   footprint: TACTILE-PTH
+  pin_count: 4
 - ref: SW2
   value: TAC_SWITCHPTH
   footprint: TACTILE-PTH
+  pin_count: 4
 nets:
 - name: +3V3
   pins:

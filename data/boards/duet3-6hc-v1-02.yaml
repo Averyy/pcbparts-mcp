@@ -1151,6 +1151,7 @@ components:
   value: BAT54C
   footprint: SOT-23
   mpn: BAT54CLT1G
+  pin_count: 3
 - ref: D10
   value: 1A 40V
   footprint: SOD-123F
@@ -1195,6 +1196,7 @@ components:
   value: BAT54C
   footprint: SOT-23
   mpn: BAT54CLT1G
+  pin_count: 3
 - ref: D20
   value: 1N4448WT
   footprint: SOD-523F
@@ -1215,10 +1217,12 @@ components:
   value: BAT54C
   footprint: SOT-23
   mpn: BAT54CLT1G
+  pin_count: 3
 - ref: D25
   value: BAT54C
   footprint: SOT-23
   mpn: BAT54CLT1G
+  pin_count: 3
 - ref: D26
   value: 3A+ 60V+
   footprint: SMA
@@ -1259,6 +1263,7 @@ components:
   value: BAT54C
   footprint: SOT-23
   mpn: BAT54CLT1G
+  pin_count: 3
 - ref: D35
   value: 1A 60V
   footprint: SOD-123F
@@ -1275,10 +1280,14 @@ components:
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D39
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D4
   value: V_FUSED
   footprint: '0603'
@@ -1287,42 +1296,62 @@ components:
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D41
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D42
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D43
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D44
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D45
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D46
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D47
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D48
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D49
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D5
   value: 5V+
   footprint: '0603'
@@ -1331,42 +1360,62 @@ components:
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D51
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D52
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D53
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D54
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D55
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D56
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D57
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D58
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D59
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D6
   value: 3.3V
   footprint: '0603'
@@ -1375,10 +1424,14 @@ components:
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D61
   value: BAT40V
   footprint: SOT-563
   mpn: BAT40V-7
+  pin_count: 6
+  nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: D62
   value: TVS 3.3V
   footprint: DFN1610-2L
@@ -1391,14 +1444,18 @@ components:
   value: BAT54C
   footprint: SOT-23
   mpn: BAT54CLT1G
+  pin_count: 3
 - ref: D65
   value: BAT54C
   footprint: SOT-23
   mpn: BAT54CLT1G
+  pin_count: 3
 - ref: D66
   value: BAT54C
   footprint: SOT-23
   mpn: BAT54CLT1G
+  pin_count: 3
+  nc_pins: {'1': '1'}
 - ref: D7
   value: STATUS
   footprint: '0603'
@@ -1407,6 +1464,8 @@ components:
   value: BAT54C
   footprint: SOT-23
   mpn: BAT54CLT1G
+  pin_count: 3
+  nc_pins: {'1': '1'}
 - ref: D9
   value: 1A 60V
   footprint: SOD-123F
@@ -1427,6 +1486,7 @@ components:
   value: SWD
   footprint: JST_ZH
   mpn: B6B-ZR(LF)(SN) or 64800611622
+  pin_count: 6
 - ref: J10
   value: 1x2 header
   footprint: JST_VH_B2P-VH-B
@@ -1455,18 +1515,22 @@ components:
   value: 1x5 header
   footprint: 1X05
   mpn: '61900511121'
+  pin_count: 5
 - ref: J17
   value: 1x5 header
   footprint: 1X05
   mpn: '61900511121'
+  pin_count: 5
 - ref: J18
   value: 1x5 header
   footprint: 1X05
   mpn: '61900511121'
+  pin_count: 5
 - ref: J19
   value: 1x5 header
   footprint: 1X05
   mpn: '61900511121'
+  pin_count: 5
 - ref: J2
   value: 1x2 header
   footprint: 1X02
@@ -1475,10 +1539,12 @@ components:
   value: 1x5 header
   footprint: 1X05
   mpn: '61900511121'
+  pin_count: 5
 - ref: J21
   value: 1x5 header
   footprint: 1X05
   mpn: '61900511121'
+  pin_count: 5
 - ref: J22
   value: 1x2 header
   footprint: 1X02
@@ -1487,30 +1553,39 @@ components:
   value: CAN_1
   footprint: RJ11_6P6C_half_shield
   mpn: '615006143421'
+  pin_count: 8
+  nc_pins: {'1': '1', '2': '2', '5': '5', '6': '6'}
 - ref: J24
   value: 1x4 header
   footprint: JST_VH_B4P-VH
   mpn: VH396-04-S010
+  pin_count: 4
 - ref: J25
   value: 1x4 header
   footprint: JST_VH_B4P-VH
   mpn: VH396-04-S010
+  pin_count: 4
 - ref: J26
   value: 1x4 header
   footprint: JST_VH_B4P-VH
   mpn: VH396-04-S010
+  pin_count: 4
 - ref: J27
   value: uSD_Socket
   footprint: uSD_SKT
   mpn: '693071020811'
+  pin_count: 10
 - ref: J28
   value: SPI_DB
   footprint: MAX_TEMP_DB
   mpn: THD-05-R
+  pin_count: 10
+  nc_pins: {Pin_10: '10'}
 - ref: J29
   value: 1x3 header
   footprint: 1X3
   mpn: THS-03-R - Jumper fitted to VIN Side
+  pin_count: 3
 - ref: J3
   value: 1x2 header
   footprint: 1X02
@@ -1519,6 +1594,7 @@ components:
   value: 1x3 header
   footprint: 1X03
   mpn: '61900311121'
+  pin_count: 3
 - ref: J31
   value: 1x2 header
   footprint: 1X02
@@ -1527,34 +1603,42 @@ components:
   value: 1x5 header
   footprint: 1X05
   mpn: '61900511121'
+  pin_count: 5
 - ref: J33
   value: 1x5 header
   footprint: 1X05
   mpn: '61900511121'
+  pin_count: 5
 - ref: J34
   value: 1x5 header
   footprint: 1X05
   mpn: '61900511121'
+  pin_count: 5
 - ref: J35
   value: 1x4 header
   footprint: JST_VH_B4P-VH
   mpn: VH396-04-S010
+  pin_count: 4
 - ref: J36
   value: 1x4 header
   footprint: JST_VH_B4P-VH
   mpn: VH396-04-S010
+  pin_count: 4
 - ref: J37
   value: 1x4 header
   footprint: JST_VH_B4P-VH
   mpn: VH396-04-S010
+  pin_count: 4
 - ref: J38
   value: 2x5 header
   footprint: IDC-Header
   mpn: '61201021621'
+  pin_count: 10
 - ref: J39
   value: 2x6 header
   footprint: 2X6
   mpn: THD-06-R
+  pin_count: 12
 - ref: J4
   value: 1x2 header
   footprint: 1X02
@@ -1567,10 +1651,13 @@ components:
   value: 1x4 header
   footprint: 1X04
   mpn: '61900411121'
+  pin_count: 4
 - ref: J43
   value: USB
   footprint: USB-C
   mpn: CSP-USC16-TR
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J45
   value: shield ground
   footprint: 2.8mm_Spade_terminal
@@ -1579,10 +1666,14 @@ components:
   value: Ethernet
   footprint: RJ45+MAG
   mpn: HR911105A
+  pin_count: 14
+  nc_pins: {NC: '7'}
 - ref: J48
   value: 2x13 header
   footprint: IDC-Header
   mpn: '61202621621'
+  pin_count: 26
+  nc_pins: {Pin_1: '1', Pin_3: '3', Pin_5: '5', Pin_7: '7', Pin_8: '8', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_13: '13', Pin_15: '15', Pin_16: '16', Pin_18: '18', Pin_26: '26'}
 - ref: J49
   value: 1x2 header
   footprint: 1X02
@@ -1595,26 +1686,32 @@ components:
   value: 1x3 header
   footprint: 1X03
   mpn: '61900311121'
+  pin_count: 3
 - ref: J52
   value: 1x3 header
   footprint: 1X3
   mpn: THS-03-R - Jumper fitted to 12V side
+  pin_count: 3
 - ref: J6
   value: 1x4 header
   footprint: FanPinHeader
   mpn: '470533000'
+  pin_count: 4
 - ref: J7
   value: 1x4 header
   footprint: FanPinHeader
   mpn: '470533000'
+  pin_count: 4
 - ref: J8
   value: 1x4 header
   footprint: FanPinHeader
   mpn: '470533000'
+  pin_count: 4
 - ref: J9
   value: 1x6 screw terminal
   footprint: screwt-barrier-9.5mm-1x6
   mpn: HB950-9.50-6P
+  pin_count: 6
 - ref: JP2
   value: 1x2 header
   footprint: 1X2
@@ -1631,6 +1728,7 @@ components:
   value: 1x3 header
   footprint: 1X3
   mpn: THS-03-R - Jumper fitted to EXT 5V side
+  pin_count: 3
 - ref: L1
   value: 1uH, 2A+
   footprint: '1008'
@@ -1643,6 +1741,7 @@ components:
   value: CM Choke
   footprint: '1812'
   mpn: '744235110'
+  pin_count: 4
 - ref: L12
   value: 10uH
   footprint: L_Wuerth_7440405xxxx
@@ -1688,6 +1787,7 @@ components:
   value: CM Choke
   footprint: '1812'
   mpn: '744235110'
+  pin_count: 4
 - ref: M9
   value: FID
   footprint: Fiducial_0.5mm_Mask1.5mm
@@ -1756,82 +1856,102 @@ components:
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: Q10
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: Q11
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: Q12
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: Q13
   value: DMN6040SVT
   footprint: SOT-23-6
   mpn: DMN6040SVT
+  pin_count: 6
 - ref: Q14
   value: DMN6040SVT
   footprint: SOT-23-6
   mpn: DMN6040SVT
+  pin_count: 6
 - ref: Q15
   value: DMN6040SVT
   footprint: SOT-23-6
   mpn: DMN6040SVT
+  pin_count: 6
 - ref: Q16
   value: DMN6040SVT
   footprint: SOT-23-6
   mpn: DMN6040SVT
+  pin_count: 6
 - ref: Q17
   value: DMN6040SVT
   footprint: SOT-23-6
   mpn: DMN6040SVT
+  pin_count: 6
 - ref: Q18
   value: DMN6040SVT
   footprint: SOT-23-6
   mpn: DMN6040SVT
+  pin_count: 6
 - ref: Q19
   value: DMT6018LDR
   footprint: Fairchild_DualPower33-6
   mpn: DMT6018LDR
+  pin_count: 6
 - ref: Q2
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: Q20
   value: BC807
   footprint: SOT-23
   mpn: BC807-25LT1G
+  pin_count: 3
 - ref: Q3
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: Q4
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: Q5
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: Q6
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: Q7
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: Q8
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: Q9
   value: DMHT6016LFJ
   footprint: DMHT6016LFJ-13
   mpn: DMHT6016LFJ
+  pin_count: 15
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -1886,6 +2006,8 @@ components:
   value: 59ohm
   footprint: '0402'
   mpn: RMCF0402FT59R0
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R11
   value: 47ohm
   footprint: '0402'
@@ -1895,6 +2017,8 @@ components:
   value: 59ohm
   footprint: '0402'
   mpn: RMCF0402FT59R0
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R111
   value: 5.62kohm
   footprint: '0402'
@@ -2012,10 +2136,14 @@ components:
   value: 59ohm
   footprint: '0402'
   mpn: RMCF0402FT59R0
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R134
   value: 59ohm
   footprint: '0402'
   mpn: RMCF0402FT59R0
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R135
   value: 4.7kohm
   footprint: '0402'
@@ -2972,122 +3100,162 @@ components:
   value: RESET
   footprint: SW_SIDE_1_lugs
   mpn: LY-A03-02A
+  pin_count: 4
 - ref: TR1
   value: DMN6017SFV
   footprint: Diodes_PowerDI3333-8
   mpn: DMN6017SFV
+  pin_count: 5
 - ref: TR10
   value: MCACL175N06Y-TP
   footprint: POWERDFN_DFN5060
   mpn: MCACL175N06Y-TP
+  pin_count: 5
 - ref: TR11
   value: AO3400A
   footprint: SOT-23_AO3400A
   mpn: AO3400A or similar (PMV20XNER, PMV40UN2)
+  pin_count: 3
 - ref: TR3
   value: DMN6017SFV
   footprint: Diodes_PowerDI3333-8
   mpn: DMN6017SFV
+  pin_count: 5
 - ref: TR5
   value: DMN6017SFV
   footprint: Diodes_PowerDI3333-8
   mpn: DMN6017SFV
+  pin_count: 5
 - ref: U1
   value: TMC2160
   footprint: TMC5160-TA
   mpn: TMC2160A-TA
+  pin_count: 49
+  nc_pins: {ENCN_DCO_CFG6: '25', DIAG1_SWP: '27'}
 - ref: U10
   value: MAX25208ATPA_VY+
   footprint: MAX25206.7.8ATPA_VY
   mpn: MAX25206ATPA_VY+,MAX25207ATPA_VY+,MAX25208ATPA_VY+ (Note the changes to DNP resistors on the schematics)
+  pin_count: 21
+  nc_pins: {SYNCOUT: '2', PGOOD: '5', NC: '11'}
 - ref: U11
   value: ATSAME70Q20B-AN
   footprint: LQFP-144
   mpn: ATSAME70Q20B-AN
+  pin_count: 144
+  nc_pins: {TST: '85', JTAGSEL: '104'}
 - ref: U12
   value: 74HCT2G34GW,125
   footprint: SOT-363
   mpn: 74HCT2G34GW,125
+  pin_count: 6
 - ref: U13
   value: MCP2542
   footprint: SOIC-8
   mpn: MCP2542FD or WFD
+  pin_count: 8
 - ref: U14
   value: TS30041
   footprint: QFN-16-1EP
   mpn: TS30041-M000QFNR
+  pin_count: 17
+  nc_pins: {NC@6: '6', NC@7: '7', PG: '8', EN_SYNC: '9'}
 - ref: U15
   value: MCP2542
   footprint: SOIC-8
   mpn: MCP2542FD-E/SN
+  pin_count: 8
 - ref: U16
   value: KSZ8081RNACA
   footprint: KSZ8081RNA _QFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm
   mpn: KSZ8081RNACA (same as on the v0.6)
+  pin_count: 25
 - ref: U17
   value: 74LVC2G125
   footprint: X2-DFN2010-8
   mpn: 74LVC2G125HD4-7
+  pin_count: 8
 - ref: U18
   value: AP2127K-ADJ
   footprint: SOT-23-5
   mpn: AP2127K-ADJTRG1
+  pin_count: 5
 - ref: U19
   value: 74LVC2G34
   footprint: SOT-363_SC-70-6
   mpn: 74LVC2G34GW,125
+  pin_count: 6
 - ref: U2
   value: TMC2160
   footprint: TMC5160-TA
   mpn: TMC2160A-TA
+  pin_count: 49
+  nc_pins: {ENCN_DCO_CFG6: '25', DIAG1_SWP: '27'}
 - ref: U20
   value: RClamp0504FB
   footprint: SC-70-6L
   mpn: RClamp0504FB
+  pin_count: 6
 - ref: U21
   value: CM1624
   footprint: UDFN-16-1EP
   mpn: "CM1624\u221208DE"
+  pin_count: 17
+  nc_pins: {ESD3: '5'}
 - ref: U22
   value: AP22816AKEWT
   footprint: SOT-23-5
   mpn: AP22816AKEWT or AP2151WG-7 if APP22816KEWT unavailable
+  pin_count: 5
 - ref: U3
   value: TMC2160
   footprint: TMC5160-TA
   mpn: TMC2160A-TA
+  pin_count: 49
+  nc_pins: {ENCN_DCO_CFG6: '25', DIAG1_SWP: '27'}
 - ref: U4
   value: AP7361C-33
   footprint: SOT-223
   mpn: AP7361C-33E-13
+  pin_count: 4
 - ref: U5
   value: TMC2160
   footprint: TMC5160-TA
   mpn: TMC2160A-TA
+  pin_count: 49
+  nc_pins: {ENCN_DCO_CFG6: '25', DIAG1_SWP: '27'}
 - ref: U6
   value: TMC2160
   footprint: TMC5160-TA
   mpn: TMC2160A-TA
+  pin_count: 49
+  nc_pins: {ENCN_DCO_CFG6: '25', DIAG1_SWP: '27'}
 - ref: U7
   value: TMC2160
   footprint: TMC5160-TA
   mpn: TMC2160A-TA
+  pin_count: 49
+  nc_pins: {ENCN_DCO_CFG6: '25', DIAG1_SWP: '27'}
 - ref: U8
   value: 74HCT365
   footprint: TSSOP-16
   mpn: MC74HCT365ADTR2G
+  pin_count: 16
 - ref: U9
   value: 74HCT365
   footprint: TSSOP-16
   mpn: MC74HCT365ADTR2G
+  pin_count: 16
 - ref: X1
   value: 12Mhz
   footprint: Crystal_SMD_ECS-33B-4Pin
   mpn: FL1200112TR-ND or ECS-120-10-33B-CKM-TR,
+  pin_count: 4
 - ref: X2
   value: 25Mhz
   footprint: Crystal_SMD_ECS-33B-4Pin
   mpn: TSX-3225 25.0000MF10P-C0 (note requires different caps if changed)
+  pin_count: 4
 nets:
 - name: +3.3V
   pins:

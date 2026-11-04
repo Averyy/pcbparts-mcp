@@ -95,93 +95,124 @@ components:
 - ref: EXLED1
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: EXLED2
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
+  nc_pins: {DOUT: '2'}
 - ref: EXSW1
   value: rotary encoder
   footprint: keyswitch_cherrymx_hotswap_1u_rotary_encoder_ec12
+  pin_count: 5
 - ref: EXSW2
   value: rotary encoder
   footprint: keyswitch_cherrymx_hotswap_1u_rotary_encoder_ec12
+  pin_count: 5
 - ref: J1
   value: USB-C
   footprint: TYPE-C-31-M-13C
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J2
   value: TRS
   footprint: PJ-398A-5A_PJ-399B-6A
+  pin_count: 3
 - ref: J3
   value: 1x4 header
   footprint: OLED
+  pin_count: 4
 - ref: J4
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: JP1
   value: solder jumper
   footprint: SJ-2
 - ref: LED1
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED10
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED11
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED12
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED13
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED14
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED15
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED16
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED17
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED18
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED19
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED2
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED20
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED21
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED3
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED4
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED5
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED6
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED7
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED8
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: LED9
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: R1
   value: 5.1kohm
   footprint: '0402'
@@ -286,19 +317,24 @@ components:
 - ref: U1
   value: RP2040
   footprint: QFN-56-1EP
+  pin_count: 57
 - ref: U2
   value: NCP1117LPST33T3G
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: U3
   value: TPD4E05U06DQAR
   footprint: USON-10
+  pin_count: 10
 - ref: U4
   value: W25Q128JVSIQ
   footprint: SOIC-8
+  pin_count: 8
 - ref: Y1
   value: 12MHz 18pF
   footprint: SMD3225
   description: "12MHz 18pF \xB120ppm SMD3225-4P Crystals ROHS"
+  pin_count: 4
 - ref: ZD1
   value: RB521S30T1G
   footprint: SOD-523
@@ -368,93 +404,124 @@ components:
 - ref: rEXLED1
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rEXLED2
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
+  nc_pins: {DOUT: '2'}
 - ref: rEXSW1
   value: rotary encoder
   footprint: keyswitch_cherrymx_hotswap_1u_rotary_encoder_ec12
+  pin_count: 5
 - ref: rEXSW2
   value: rotary encoder
   footprint: keyswitch_cherrymx_hotswap_1u_rotary_encoder_ec12
+  pin_count: 5
 - ref: rJ1
   value: USB-C
   footprint: TYPE-C-31-M-13C
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: rJ2
   value: TRS
   footprint: PJ-398A-5A_PJ-399B-6A
+  pin_count: 3
 - ref: rJ3
   value: 1x4 header
   footprint: OLED
+  pin_count: 4
 - ref: rJ4
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: rJP1
   value: solder jumper
   footprint: SJ-2
 - ref: rLED1
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED10
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED11
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED12
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED13
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED14
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED15
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED16
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED17
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED18
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED19
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED2
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED20
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED21
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED3
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED4
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED5
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED6
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED7
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED8
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rLED9
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
+  pin_count: 4
 - ref: rR1
   value: 5.1kohm
   footprint: '0402'
@@ -554,19 +621,24 @@ components:
 - ref: rU1
   value: RP2040
   footprint: QFN-56-1EP
+  pin_count: 57
 - ref: rU2
   value: NCP1117LPST33T3G
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: rU3
   value: TPD4E05U06DQAR
   footprint: USON-10
+  pin_count: 10
 - ref: rU4
   value: W25Q128JVSIQ
   footprint: SOIC-8
+  pin_count: 8
 - ref: rY1
   value: 12MHz 18pF
   footprint: SMD3225
   description: "12MHz 18pF \xB120ppm SMD3225-4P Crystals ROHS"
+  pin_count: 4
 - ref: rZD1
   value: RB521S30T1G
   footprint: SOD-523

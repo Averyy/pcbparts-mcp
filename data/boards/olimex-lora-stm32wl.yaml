@@ -24,6 +24,8 @@ components:
 - ref: BB-STM32WL_PLATFORM1
   value: 2xPN_F-D-1X12-LF
   footprint: BB-STM32WL
+  pin_count: 24
+  nc_pins: {'5': '5'}
 - ref: BUTTON1
   value: T1107A
   footprint: T1107A(6x3,8x2,5MM)
@@ -93,15 +95,18 @@ components:
 - ref: CON1
   value: 1x10 header
   footprint: HN1x10
+  pin_count: 10
 - ref: D1
   value: 1N5819
   footprint: SOD-123_KA
 - ref: FET1
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: FET2
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: L1
   value: FB0805 600R
   footprint: 0805
@@ -191,24 +196,36 @@ components:
 - ref: U1
   value: ME6210A33PG
   footprint: SOT89
+  pin_count: 3
 - ref: U2
   value: STM32L052K8U3
   footprint: QFN32_EP(33)
+  pin_count: 33
+  nc_pins: {'2': '2', '3': '3', '6': '6', '7': '7', '14': '14', '15': '15', '16': '16', '18': '18', '19': '19', '20': '20', '29': '29'}
 - ref: U3
   value: IIS2MDCTR
   footprint: LGA-12
+  pin_count: 12
+  nc_pins: {'2': '2', '11': '11', '12': '12'}
 - ref: U4
   value: BME280
   footprint: BME280
+  pin_count: 8
 - ref: U5
   value: AHT20
   footprint: AHT20
+  pin_count: 6
+  nc_pins: {'1': '1', '6': '6'}
 - ref: UEXT1
   value: BH10S
   footprint: GBH-254-SMT-10
+  pin_count: 11
+  nc_pins: {past: past}
 - ref: USB1
   value: MISB-SWMM-5B-LF
   footprint: USB-MICRO_MISB-SWMM-5B_LF
+  pin_count: 6
+  nc_pins: {'4': '4'}
 nets:
 - name: +3.3V
   pins:

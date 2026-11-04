@@ -277,30 +277,37 @@ components:
   manufacturer: Amphenol ICC / FCI
   mpn: 10118193-0001LF
   description: CONN MICRO-B USB F RIGHT ANGLE WITH FLANGE AND 2 LEGS SMT
+  pin_count: 6
 - ref: J5
   value: SF72S006VBDR2500
   footprint: J-NANOSIM-SF72S006VBA_Fv1.2
   manufacturer: JAE Electronics
   mpn: SF72S006VBAR2500
   description: CONN NANOSIM 8P F RIGHT ANGLE PUSH-PUSH SMT
+  pin_count: 9
+  nc_pins: {VPP/SWP: C6}
 - ref: J6
   value: MDT420E01001
   footprint: J-75-0050-MOS-M2_Fv1.2
   manufacturer: Amphenol ICC / FCI
   mpn: MDT420E01001
   description: CONN M.2 KEY E 67P F RIGHT ANGLE P=0.5mm SMT BLACK
+  pin_count: 67
+  nc_pins: {NC1: '1', NC15: '15', NC17: '17', NC19: '19', NC21: '21', NC23: '23', NC35: '35', NC37: '37', NC44: '44', AUX1: '46', RTX: '47', AUX2: '48', CTX: '49', NC53: '53', NC55: '55', NC59: '59', NC61: '61', NC63: '63', BOOT: '65', NC66: '66', NC68: '68', NC69: '69', NC75: '75'}
 - ref: J7
   value: JST SH 4-pin
   footprint: JST SM04B-SRSS-TB_Fv1.2
   manufacturer: JST
   mpn: SM04B-SRSS-TB(LF)(SN)
   description: HEADER JST SH 4P M SIDE ENTRY QWIIC P=1.0mm SMT NATURAL
+  pin_count: 4
 - ref: J8
   value: JST SH 4-pin
   footprint: JST SM04B-SRSS-TB_Fv1.2
   manufacturer: JST
   mpn: SM04B-SRSS-TB(LF)(SN)
   description: HEADER JST SH 4P M SIDE ENTRY QWIIC P=1.0mm SMT NATURAL
+  pin_count: 4
 - ref: L1
   value: 2.2uH
   footprint: IND_XFL4020-222MEC_Fv1.2
@@ -325,12 +332,16 @@ components:
   manufacturer: Sullins
   mpn: PPTC161LFBN-RC
   description: STRIP 16P F P=2.54mm H=8.50mm D=6.00mm THT BLACK
+  pin_count: 16
+  nc_pins: {Pin_3: '3', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_13: '13'}
 - ref: MODR1
   value: CES-112-01-L-S
   footprint: 12PIN_254MM_Fv1.2
   manufacturer: Sullins
   mpn: PPTC121LFBN-RC
   description: STRIP 12P F P=2.54mm H=8.50mm D=6.00mm THT BLACK
+  pin_count: 12
+  nc_pins: {Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10'}
 - ref: OBJ1
   value: 9774025151R
   footprint: DIST-WASMSIM0250_Fv1.2
@@ -343,6 +354,7 @@ components:
   manufacturer: CTS Components
   mpn: 742C163101JP
   description: RES ARRAY 8CH 100 OHM 5% SMT 2506
+  pin_count: 16
 - ref: R10
   value: 10kohm
   footprint: '0402'
@@ -419,6 +431,8 @@ components:
   manufacturer: CTS Components
   mpn: 742C163101JP
   description: RES ARRAY 8CH 100 OHM 5% SMT 2506
+  pin_count: 16
+  nc_pins: {R1_1: '1', R2_1: '2', R5_1: '5'}
 - ref: R3
   value: 499ohm
   footprint: '0402'
@@ -467,6 +481,8 @@ components:
   footprint: SW_CJS-1200TA_Fv1.2
   manufacturer: Nidec Copal
   mpn: CJS-1200TA
+  pin_count: 3
+  nc_pins: {A: '3'}
 - ref: SW2
   value: EVP-BB2A9B000
   footprint: SW_EVP-BB2A9B000_Fv1.2
@@ -477,11 +493,13 @@ components:
   footprint: SW_CJS-1200TA_Fv1.2
   manufacturer: Nidec Copal
   mpn: CJS-1200TA
+  pin_count: 3
 - ref: SW4
   value: CJS-1200TA
   footprint: SW_CJS-1200TA_Fv1.2
   manufacturer: Nidec Copal
   mpn: CJS-1200TA
+  pin_count: 3
 - ref: TVS1
   value: SM6T6V8A
   footprint: SMB_Fv1.2
@@ -492,59 +510,74 @@ components:
   footprint: SOT666_Fv1.2
   manufacturer: MCC
   mpn: ESDLC5V0M5-TP
+  pin_count: 6
 - ref: TVS3
   value: PESD5V0L5UV,125
   footprint: SOT666_Fv1.2
   manufacturer: MCC
   mpn: ESDLC5V0M5-TP
+  pin_count: 6
+  nc_pins: {K1: '1'}
 - ref: U1
   value: TXS0102
   footprint: SOP50P310X90-8N_Fv1.2
   manufacturer: Texas Instruments
   mpn: TXS0102DCUR
   description: IC LEVEL SHIFTER 2CH SMT 8-VFSOP
+  pin_count: 8
 - ref: U2
   value: BQ24210
   footprint: WSON10-EXP_Fv1.2
   manufacturer: Texas Instruments
   mpn: BQ24210DQCR
   description: IC BATTERY MANAGEMENT SOLAR LIPO CHARGER 3.5V-18V IN 4.2V 800mA OUT SMT WSON-10
+  pin_count: 11
+  nc_pins: {VDPM: '9'}
 - ref: U3
   value: TPS63020
   footprint: TI PVSON-14 DSJ_Fv1.2
   manufacturer: Texas Instruments
   mpn: TPS63020DSJR
   description: IC VOLTAGE REGULATOR SWITCHING BUCK-BOOST 1.8V-5.5V IN 1.2V-5.5V 4A OUT SMT
+  pin_count: 15
+  nc_pins: {PG: '14'}
 - ref: U4
   value: TXS0102
   footprint: SOP50P310X90-8N_Fv1.2
   manufacturer: Texas Instruments
   mpn: TXS0102DCUR
   description: IC LEVEL SHIFTER 2CH SMT 8-VFSOP
+  pin_count: 8
 - ref: U5
   value: DGQ2788A
   footprint: QFN40P260X180X60-16N_Fv1.2
   manufacturer: Vishay
   mpn: DGQ2788AEN-T1-GE4
   description: IC ANALOG SWITCH QUAD SPDT SMT 16-UFQFN
+  pin_count: 16
+  nc_pins: {NO3: '3', NO4: '7', NO1: '11', NO2: '15'}
 - ref: U6
   value: DGQ2788A
   footprint: QFN40P260X180X60-16N_Fv1.2
   manufacturer: Vishay
   mpn: DGQ2788AEN-T1-GE4
   description: IC ANALOG SWITCH QUAD SPDT SMT 16-UFQFN
+  pin_count: 16
 - ref: U7
   value: MAX17225
   footprint: MAX17225ELT+UDFN_Fv1.2
   manufacturer: Maxim Integrated
   mpn: MAX17225ELT+T
   description: IC VOLTAGE REGULATOR SWITCHING BOOST 400mV-5.5V IN 1.8V-5V 1A OUT SMT UDFN-6
+  pin_count: 6
 - ref: U8
   value: TPS62748
   footprint: TPS62748YFPT-DSBGA4x2_Fv1.2
   manufacturer: Texas Instruments
   mpn: TPS62748YFPR
   description: IC VOLTAGE REGULATOR SWITCHING BUCK 2.15V-5.5V IN 1.2V/1.8V 300mA OUT SMT
+  pin_count: 8
+  nc_pins: {LOAD: D2}
 nets:
 - name: /Feather/ALT_DFU_ACTIVE
   pins: [J6.nALT_DFU_ACTIVE, R18.1, U5.IN1-2, U5.IN3-4]

@@ -47,6 +47,7 @@ components:
 - ref: D3
   value: AOD4185
   footprint: DPAK
+  pin_count: 3
 - ref: D4
   value: RBR5LAM30ATFTR
   footprint: RBR5LAM30ATFTR
@@ -62,6 +63,7 @@ components:
 - ref: K2
   value: 2x4 header
   footprint: HEADER_MALE
+  pin_count: 8
 - ref: K3
   value: JST-2pin-SMD
   footprint: JST-2pin-SMD
@@ -110,6 +112,7 @@ components:
 - ref: U1
   value: CN3791
   footprint: CN3791
+  pin_count: 10
 nets:
 - name: BAT
   pins: [C6.2, C7.+, K3.+, K6.1, R8.2, U1.BAT]

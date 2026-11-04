@@ -19,14 +19,17 @@ components:
   value: 6MM_TACT
   footprint: EVQ-Q2
   description: SMT Tact Switches RKB2
+  pin_count: 4
 - ref: BTN2
   value: 6MM_TACT
   footprint: EVQ-Q2
   description: SMT Tact Switches RKB2
+  pin_count: 4
 - ref: BTN3
   value: 6MM_TACT
   footprint: EVQ-Q2
   description: SMT Tact Switches RKB2
+  pin_count: 4
 - ref: C1
   value: 2.2uF
   footprint: '0603'
@@ -218,6 +221,7 @@ components:
   value: STEMMA QT
   footprint: JST_SH4
   lcsc: C2845363
+  pin_count: 6
 - ref: D2
   value: 3.6V
   footprint: SOD-323
@@ -228,18 +232,21 @@ components:
 - ref: DEBUG
   value: JST_SH3
   footprint: JST_SH3_RA
+  pin_count: 5
 - ref: ESP_BOOT
   value: 1x1 header
   footprint: 1X01
 - ref: IC1
   value: 74AHC1G125
   footprint: SOT-23-5
+  pin_count: 5
 - ref: JP1
   value: 1x2 header
   footprint: 1X02
 - ref: JP3
   value: 2x16 header
   footprint: 2X16
+  pin_count: 32
 - ref: L
   value: red LED
   footprint: '0603'
@@ -249,21 +256,28 @@ components:
 - ref: LED1
   value: WS2812B
   footprint: LED3535_FULLPADS
+  pin_count: 4
 - ref: LED2
   value: WS2812B
   footprint: LED3535_FULLPADS
+  pin_count: 4
 - ref: LED3
   value: WS2812B
   footprint: LED3535_FULLPADS
+  pin_count: 4
 - ref: LED4
   value: WS2812B
   footprint: LED3535_FULLPADS
+  pin_count: 4
 - ref: LED5
   value: WS2812B
   footprint: LED3535_FULLPADS
+  pin_count: 4
+  nc_pins: {DO: '3'}
 - ref: O1
   value: GENERIC_IR_RECV_IRM-H6XXT
   footprint: IRM-H6XXT
+  pin_count: 4
 - ref: 'ON'
   value: green LED
   footprint: '0603'
@@ -281,14 +295,17 @@ components:
   value: BSS138
   footprint: SOT23-WIDE
   description: N-Channel Mosfet
+  pin_count: 3
 - ref: Q2
   value: BSS138 Dual
   footprint: SOT363
   description: Dual N-Channel MOSFET
+  pin_count: 6
 - ref: Q3
   value: DMP3098L
   footprint: SOT23-WIDE
   description: P-Channel Mosfet
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -303,6 +320,7 @@ components:
 - ref: R12
   value: 220ohm
   footprint: RESPACK
+  pin_count: 8
 - ref: R13
   value: 10kohm
   footprint: '0603'
@@ -310,10 +328,12 @@ components:
 - ref: R14
   value: 220ohm
   footprint: RESPACK
+  pin_count: 8
 - ref: R15
   value: 10kohm
   footprint: RESPACK
   pullup: SCL
+  pin_count: 8
 - ref: R16
   value: 100kohm
   footprint: '0603'
@@ -397,20 +417,26 @@ components:
 - ref: SENSE1
   value: JST PH 3
   footprint: JSTPH3
+  pin_count: 5
 - ref: SJ1
   value: 2-way solder jumper
   footprint: SJ-3
+  pin_count: 3
 - ref: SW1
   value: 6MM_TACT
   footprint: EVQ-Q2
   description: SMT Tact Switches RKB2
+  pin_count: 4
 - ref: SW2
   value: SS12D07VG5
   footprint: SPDT_SS12D07VG5
+  pin_count: 5
+  nc_pins: {G$1.S: T2}
 - ref: T1
   value: DMP3098L
   footprint: SOT23-WIDE
   description: P-Channel Mosfet
+  pin_count: 3
 - ref: TP3
   value: SEWTAP
   footprint: SMT_NUT_3MM
@@ -424,59 +450,81 @@ components:
   value: AP2112K-3.3
   footprint: SOT23-DBV
   description: ULTRALOW-POWER 50-mA LOW-DROPOUT LINEAR REGULATORS
+  pin_count: 5
+  nc_pins: {NC/FB: '4'}
 - ref: U3
   value: AP6404
   footprint: SOIC8_208MIL
   description: SOIC8 SPI Flash
+  pin_count: 8
 - ref: U4
   value: TLV320DAC3100
   footprint: TLV320DAC3100
+  pin_count: 31
 - ref: U5
   value: AP2127K-1.8
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: U6
   value: W25Q128
   footprint: SOIC8_208MIL
   description: SOIC8 SPI Flash
+  pin_count: 8
 - ref: U9
   value: ESP32-C6-MINI
   footprint: ESP32-PICO-MINI
+  pin_count: 54
+  nc_pins: {IO2/ADC1_2: '5', IO4/ADC1_4: '9', IO5/ADC1_5: '10', IO0/ADC1_0: '12', IO1/ADC1_1: '13', IO12/D-: '17', IO13/D+: '18', IO14: '19', IO15: '20', IO19: '25', IO20: '26', IO23: '29'}
 - ref: X1
   value: MICROSD
   footprint: MICROSD
   lcsc: C125617
   description: MicroSD/Transflash Card Holder with SPI pinout
+  pin_count: 12
 - ref: X2
   value: USB_TYPEA
   footprint: USB_TYPE_A_THM_SHORT
   description: USB - Type A Connectors
+  pin_count: 6
 - ref: X3
   value: USB Type C
   footprint: USB-C
   lcsc: C165948
   description: USB Type-C USB 2.0
+  pin_count: 16
+  nc_pins: {SBU1: A8, SBU2: B8, MT: M1 M2 M3 M4}
 - ref: X4
   value: RP2350B
   footprint: QFN80
+  pin_count: 81
 - ref: X5
   value: USB_TYPEA
   footprint: USB_TYPE_A_THM_SHORT
   description: USB - Type A Connectors
+  pin_count: 6
 - ref: X6
   value: CH334F
   footprint: QFN24_4MM
+  pin_count: 23
+  nc_pins: {'!OVCUR': '1', D-4: '5', D+4: '6', LED3/SCL: '13', '!RESET/CDP': '16', PSELF: '18', LED1: '22', '!PWREN': '24'}
 - ref: X7
   value: 47151-0001
   footprint: '0001'
   lcsc: C138388
   description: 46 (Milling)
+  pin_count: 23
+  nc_pins: {CEC: '13', UTILITY: '14'}
 - ref: X8
   value: TRRS_2SWITCH
   footprint: PJ-332A
+  pin_count: 6
 - ref: X9
   value: CON_MOLEX_2P
   footprint: 53398-0271
+  pin_count: 4
+  nc_pins: {G$2.MT: M1, G$3.MT: M2}
 - ref: Y1
   value: 12MHz_10pF_50ohm
   footprint: CRYSTAL

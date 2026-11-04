@@ -162,26 +162,33 @@ components:
   value: XKB_U262-16XN-4BVC11
   footprint: USB-C
   description: USB 2.0-only 16P Type-C Receptacle connector
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J2
   value: HRO_TYPE-C-31-M-17
   footprint: USB-C
   description: USB Power-Only 6P Type-C Receptacle connector
+  pin_count: 7
 - ref: J3
   value: XKB_U221-041N-4V33
   footprint: U221-041N-4V33
   description: USB Type A connector
+  pin_count: 5
 - ref: J4
   value: XKB_U221-041N-4V33
   footprint: U221-041N-4V33
   description: USB Type A connector
+  pin_count: 5
 - ref: J5
   value: XKB_U221-041N-4V33
   footprint: U221-041N-4V33
   description: USB Type A connector
+  pin_count: 5
 - ref: J6
   value: XKB_U221-041N-4V33
   footprint: U221-041N-4V33
   description: USB Type A connector
+  pin_count: 5
 - ref: R1
   value: 5.1kohm
   footprint: '0402'
@@ -229,53 +236,69 @@ components:
 - ref: T1
   value: DA2303-AL
   footprint: DA2303-AL
+  pin_count: 8
 - ref: U1
   value: SN6505BDBV
   footprint: SOT-23-6
   description: Low Noise, 1A, Transformer Drivers for Isolated Power Supplies, 420 kHz
+  pin_count: 6
+  nc_pins: {CLK: '6'}
 - ref: U10
   value: USBLC6-2
   footprint: SOT-666
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+  pin_count: 6
 - ref: U2
   value: USBLC6-2
   footprint: SOT-666
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+  pin_count: 6
 - ref: U3
   value: ADUM3165
   footprint: SSOP-20
+  pin_count: 20
+  nc_pins: {PGOOD: '14'}
 - ref: U4
   value: TLV76750DRVx
   footprint: WSON-6-1EP
   description: 1A, 16V Precision Linear Voltage Regulator, with enable pin, Adjustable Output
+  pin_count: 7
 - ref: U5
   value: TPS2116DRL
   footprint: SOT-583-8
   description: 2 Channnels Power Mux with Manual and Priority Switchover, 1.6-5.5V Input
+  pin_count: 8
 - ref: U6
   value: CH334P
   footprint: QFN-16-1EP
   description: USB HUB controller, UART, QFN-16
+  pin_count: 17
+  nc_pins: {nRESET/CDP: '13', PGANG: '14'}
 - ref: U7
   value: USBLC6-2
   footprint: SOT-666
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+  pin_count: 6
 - ref: U8
   value: USBLC6-2
   footprint: SOT-666
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+  pin_count: 6
 - ref: U9
   value: USBLC6-2
   footprint: SOT-666
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+  pin_count: 6
 - ref: Y1
   value: 24Mhz/12pF
   footprint: SMD2016
   description: Four pin crystal, GND on pins 2 and 4, small symbol
+  pin_count: 4
 - ref: Y2
   value: CSTxE12M
   footprint: Resonator_SMD_Murata_CSTxExxV-3Pin
   description: Three pin ceramic resonator, small symbol
+  pin_count: 3
 nets:
 - name: +5V
   pins: [C14.1, R8.1, U4.OUT, U5.VIN2]

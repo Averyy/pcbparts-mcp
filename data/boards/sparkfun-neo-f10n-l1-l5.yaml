@@ -93,11 +93,14 @@ components:
   footprint: SOT-353
   prod_id: DIO-19494
   description: Low capacitance unidirectional quadruple ESD protection diode array, 3.3V
+  pin_count: 5
+  nc_pins: {K1: '1', K2: '3'}
 - ref: D3
   value: PESD3V3L4UG
   footprint: SOT-353
   prod_id: DIO-19494
   description: Low capacitance unidirectional quadruple ESD protection diode array, 3.3V
+  pin_count: 5
 - ref: D4
   value: yellow LED
   footprint: '0603'
@@ -127,12 +130,17 @@ components:
   footprint: USB-C
   prod_id: CONN-14122
   description: USB 2.0-only Type-C Receptacle connector
+  pin_count: 14
+  nc_pins: {NC@A8: A8, NC@B8: B8, NC@NC1: NC1, NC@NC2: NC2, NC@NC3: NC3}
 - ref: J2
   value: 1x9 header
   footprint: 1x09
+  pin_count: 9
 - ref: J4
   value: 1x6 header
   footprint: 1x06
+  pin_count: 6
+  nc_pins: {Pin_1: '1', Pin_5: '5'}
 - ref: J5
   value: SMA_Edge
   footprint: SMA_Edge
@@ -183,6 +191,7 @@ components:
   footprint: SOT-23-3
   prod_id: TRANS-00830
   description: N-MOSFET transistor, drain/gate/source
+  pin_count: 3
 - ref: R1
   value: 5.1kohm
   footprint: '0603'
@@ -242,20 +251,28 @@ components:
   footprint: SOT-23-6
   prod_id: IC-13538
   description: Very low capacitance ESD protection diode, 4 data-line, SOT-23-6
+  pin_count: 6
+  nc_pins: {I/O1: '1', I/O2: '3'}
 - ref: U2
   value: AP2112K-3.3
   footprint: SOT-23-5
   prod_id: VREG-12457
   description: 600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U3
   value: NEO-F10N
   footprint: NEO-M9N_M8T_M8U_D9S_F9P_F10N
   prod_id: IC-20627
+  pin_count: 24
+  nc_pins: {RESERVED@2: '2', RESERVED@5: '5', RESERVED@6: '6', RESERVED@7: '7', LNA_EN: '14', RESERVED@15: '15', RESERVED@16: '16', RESERVED@17: '17', RESERVED@18: '18', RESERVED@19: '19'}
 - ref: U8
   value: CH340C
   footprint: SO-16
   prod_id: IC-14038
   description: USB serial converter, UART, SOIC-16
+  pin_count: 16
+  nc_pins: {NC@7: '7', NC@8: '8', nCTS: '9', nDSR: '10', nRI: '11', nDCD: '12', nDTR: '13', nRTS: '14', R232: '15'}
 nets:
 - name: /D+
   pins: [J1.D+@A6, J1.D+@B6, U1.I/O4, U8.UD+]

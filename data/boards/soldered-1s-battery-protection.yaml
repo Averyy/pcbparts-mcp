@@ -49,9 +49,13 @@ components:
 - ref: U1
   value: DW01+G
   footprint: SOT-23-6
+  pin_count: 6
+  nc_pins: {TD: '4'}
 - ref: U2
   value: FS8205A
   footprint: TSSOP8
+  pin_count: 8
+  nc_pins: {D12@1: '1', D12@8: '8'}
 nets:
 - name: CS
   pins: [R2.2, U1.CS]

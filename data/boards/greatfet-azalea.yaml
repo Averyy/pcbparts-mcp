@@ -227,34 +227,43 @@ components:
   footprint: HEADER-2x20
   manufacturer: Samtec
   mpn: SSW-120-01-F-D
+  pin_count: 40
 - ref: J2
   value: 2x20 header
   footprint: HEADER-2x20
   manufacturer: Samtec
   mpn: SSW-120-01-F-D
+  pin_count: 40
 - ref: J3
   value: USB-MICRO-B-SHIELDED
   footprint: USB-MICROB-FCI-10103592-LONGPADS
   manufacturer: FCI
   mpn: 10103592-0001LF
   description: CONN RCPT REV MICRO USB TYPE B
+  pin_count: 6
 - ref: J4
   value: USB-MICRO-B-SHIELDED
   footprint: USB-MICROB-FCI-10103592-LONGPADS
   manufacturer: FCI
   mpn: 10103592-0001LF
   description: CONN RCPT REV MICRO USB TYPE B
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: J5
   value: JTAG
   footprint: 50MIL-HEADER-2x5-TH
+  pin_count: 10
+  nc_pins: {'7': '7'}
 - ref: J6
   value: 2x4 header
   footprint: HEADER-SMT-2x4
+  pin_count: 8
 - ref: J7
   value: 1x20 header
   footprint: HEADER-1x20
   manufacturer: Sullins
   mpn: PRPC020SAAN-RC
+  pin_count: 20
 - ref: R1
   value: 330ohm
   footprint: '0603'
@@ -463,42 +472,53 @@ components:
   manufacturer: C&K Components
   mpn: PTS840 PM SMTR LFS
   description: SWITCH TACTILE SPST-NO 0.05A 12V
+  pin_count: 3
+  nc_pins: {'0': '0'}
 - ref: SW2
   value: RESET
   footprint: SWITCH-PTS840-P
   manufacturer: C&K Components
   mpn: PTS840 PM SMTR LFS
   description: SWITCH TACTILE SPST-NO 0.05A 12V
+  pin_count: 3
+  nc_pins: {'0': '0'}
 - ref: U1
   value: LPC4330FBD144
   footprint: LQFP144
   manufacturer: NXP
   mpn: LPC4330FBD144,551
   description: IC MCU ARM ROMLESS 144LQFP
+  pin_count: 144
+  nc_pins: {'29': '29'}
 - ref: U2
   value: W25Q16DV
   footprint: SOIC8-208
   manufacturer: Winbond
   mpn: W25Q16JVSSIQ
   description: IC FLASH 16MBIT 104MHZ 8SOIC
+  pin_count: 8
 - ref: U3
   value: AP7333
   footprint: SOT-23-3
   manufacturer: Diodes Inc.
   mpn: AP7333-33SAG-7
   description: IC REG LDO 3.3V .3A SOT23
+  pin_count: 3
 - ref: U4
   value: IP4220CZ6
   footprint: SOT457
   manufacturer: NXP
   mpn: IP4220CZ6,125
   description: IC USB DUAL ESD PROTECT 6TSOP
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: U5
   value: AP2553W6-7
   footprint: SOT457
   manufacturer: Diodes Inc.
   mpn: AP2553W6-7
   description: IC PD SW CURR LIMIT SOT26
+  pin_count: 6
 - ref: W1
   value: VBUS_BYPASS
   footprint: '0603'
@@ -508,12 +528,15 @@ components:
   manufacturer: TXC
   mpn: 7V-12.000MAAE-T
   description: CRYSTAL 12.000 MHZ 12PF SMD
+  pin_count: 4
 - ref: X2
   value: RTC_XTAL
   footprint: XTAL-AB26TRQ
   manufacturer: Abracon
   mpn: AB26TRQ-32.768KHZ-T
   description: CRYSTAL 32.768KHZ 12.5PF SMD
+  pin_count: 3
+  nc_pins: {'0': '0'}
 nets:
 - name: +5V
   pins:

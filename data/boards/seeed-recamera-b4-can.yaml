@@ -21,11 +21,13 @@ components:
   manufacturer: HRS
   mpn: U.FL-R-SMT-1
   description: SMD U-FL Female CONN-Gold;3P-L2.6*W2.6*H1.25mm
+  pin_count: 3
 - ref: ANT2
   value: ANT Connect
   footprint: ANTENNA-5P-13.5X6.5X6.5MM
   manufacturer: BOANTONG
   description: DIP SMA-K ;5P-16.5*6.5mm
+  pin_count: 5
 - ref: C1
   value: 22uF
   footprint: '1210'
@@ -256,6 +258,7 @@ components:
   manufacturer: Diodes
   mpn: SM05-7
   description: SMD Diode TVS;5V-20.6V-SOT-23-3
+  pin_count: 3
 - ref: D6
   value: TPD1E10B06DPYR
   footprint: '0402'
@@ -298,30 +301,36 @@ components:
   manufacturer: SUNGTECH
   mpn: ST-BTB-058060-A
   description: SMD BTB Male CONN;2*30P-0.5mm-17.7*4.4*4mm
+  pin_count: 60
+  nc_pins: {'2': '2', '4': '4', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '23': '23', '26': '26', '32': '32', '37': '37', '39': '39', '41': '41', '42': '42', '43': '43', '44': '44', '45': '45', '47': '47', '49': '49', '51': '51', '53': '53', '55': '55', '56': '56', '57': '57', '58': '58', '59': '59', '60': '60'}
 - ref: J2
   value: JST SH 6-pin
   footprint: SMD-SH1.0-6P-90D
   manufacturer: JST
   mpn: SM06B-SRSS-TB(LF)(SN)
   description: SMD Male SH-Narutal R/A;6P-1.0-90D
+  pin_count: 8
 - ref: J3
   value: FF-1025
   footprint: H4-2.54-65_35MIL
   manufacturer: SiTuoZhan
   mpn: FF-1025
   description: DIP Black Female Header VERT;1*4P-2.54-8.5mm
+  pin_count: 4
 - ref: K1
   value: TD-1100AP-A4N-D1R
   footprint: SW5-SMD-4.56X2.3X1.9MM
   manufacturer: DeYiLong
   mpn: TD-1100AP-A4N-D1R
   description: SMD Switch;5P+2-L4.56*W1.90*H2.3mm
+  pin_count: 5
 - ref: K2
   value: TD-1100AP-A4N-D1R
   footprint: SW5-SMD-4.56X2.3X1.9MM
   manufacturer: DeYiLong
   mpn: TD-1100AP-A4N-D1R
   description: SMD Switch;5P+2-L4.56*W1.90*H2.3mm
+  pin_count: 5
 - ref: L1
   value: 5.6uH
   footprint: INT2-SMD-4.2X4.4X1.8MM
@@ -334,18 +343,21 @@ components:
   manufacturer: PROD
   mpn: PCAQ4520MB-142
   description: SMD Common Mode Chokes 1.4k@100MHz 1.9A-50V;4P-L4.75*W4.5*H2mm
+  pin_count: 4
 - ref: Q3
   value: RQ3E120ATTB
   footprint: DFN8P-0.65-3X3X0.8MM
   manufacturer: Rohm
   mpn: RQ3E120ATTB
   description: SMD MOSFET P-CH 30V-12A;HSMT8
+  pin_count: 9
 - ref: Q4
   value: RQ3E120ATTB
   footprint: DFN8P-0.65-3X3X0.8MM
   manufacturer: Rohm
   mpn: RQ3E120ATTB
   description: SMD MOSFET P-CH 30V-12A;HSMT8
+  pin_count: 9
 - ref: R1
   value: 5.1kohm
   footprint: '0402'
@@ -561,48 +573,58 @@ components:
   manufacturer: MPS
   mpn: MP2315GJ
   description: SMD IC PMIC;DCDC Buck-ADJ-3A;TSOT23-8
+  pin_count: 8
 - ref: U2
   value: MCP2518FDT-E
   footprint: VDFN14-0.65-4.5X3X0.85MM
   manufacturer: Microchip
   mpn: MCP2518FDT-E/QBB
   description: SMD IC Interface CAN Controller;VDFN-14
+  pin_count: 15
+  nc_pins: {CLKO/SOF: '3', nINT1/GPIO1: '8', nINT0/GPIO0/XSTBY: '9'}
 - ref: U3
   value: MCP2558FD-H
   footprint: SOIC8-1.27-5X4MM
   manufacturer: Microchip
   mpn: MCP2558FD-H/SN
   description: SMD IC Interface;CAN FD Transceiver;SOIC-8
+  pin_count: 8
 - ref: U4
   value: TPS22916C
   footprint: WLCSP4-0.4-0.77X0.77X0.33MM
   manufacturer: TI
   mpn: TPS22916CYFPR
   description: SMD IC LOW RON LOAD SWITCH;5.5V-2A;4-DSBGA
+  pin_count: 4
 - ref: U5
   value: BC856S
   footprint: SOT-363
   manufacturer: CJ
   mpn: BC856S
   description: SMD Transistor Array 2 PNP -65V-100mA
+  pin_count: 6
 - ref: U6
   value: BC856S
   footprint: SOT-363
   manufacturer: CJ
   mpn: BC856S
   description: SMD Transistor Array 2 PNP -65V-100mA
+  pin_count: 6
 - ref: USB1
   value: USB-31C-F-16P-L7.35
   footprint: USB2.0-TYPE-C
   manufacturer: "\u91D1\u500D\u5229"
   mpn: USB-31C-F-16P-L7.35
   description: SMD USB TYPE C-W/P;12+4P-8.94*7.35*3.26mm
+  pin_count: 18
+  nc_pins: {A8/SBU1: A8, B8/SBU2: B8}
 - ref: X1
   value: 40MHz
   footprint: X4-SMD-2.0X1.6MM
   manufacturer: "\u4E1C\u6676\u7535\u5B50"
   mpn: Y4000Fc001
   description: SMD Crystal 40MHz-9pF-10ppm-40R;4P-L2.0*W1.6*H0.5mm
+  pin_count: 4
 nets:
 - name: +3V3
   pins: [C12.1, FB4.1, R16.2, R20.1]

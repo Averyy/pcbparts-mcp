@@ -33,18 +33,25 @@ components:
 - ref: ESP-12
   value: ESP-12E
   footprint: ESP-12E_SMD
+  pin_count: 22
+  nc_pins: {'1': '1', '2': '2', '7': '7', '11': '11', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22'}
 - ref: J1
   value: dc_jack
   footprint: dc_socket
+  pin_count: 3
 - ref: JP1
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: L1
   value: SN74AHCT125D
   footprint: SOIC-14
+  pin_count: 14
+  nc_pins: {'8': '8', '9': '9', '10': '10', '11': '11', '12': '12', '13': '13'}
 - ref: P1
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: R1
   value: 68ohm
   footprint: '0603'
@@ -64,15 +71,19 @@ components:
 - ref: T1
   value: 1x6 screw terminal
   footprint: TerminalBlock_Phoenix_MKDS-1,5-6
+  pin_count: 6
 - ref: U1
   value: I2C_SENS_1
   footprint: 1X4
+  pin_count: 4
 - ref: U2
   value: I2C_SENS_1
   footprint: 1X4
+  pin_count: 4
 - ref: U3
   value: I2C_SENS_1
   footprint: 1X4
+  pin_count: 4
 - ref: U4
   value: 1x4 header
   footprint: 1X4
@@ -82,9 +93,13 @@ components:
 - ref: V1
   value: NCP1117ST50T3G
   footprint: SOT-223
+  pin_count: 4
+  nc_pins: {'4': '4'}
 - ref: V2
   value: LD1117S33TR
   footprint: SOT-223
+  pin_count: 4
+  nc_pins: {'4': '4'}
 nets:
 - name: +12V
   pins: [C1.1, JP1.3, V1.3]

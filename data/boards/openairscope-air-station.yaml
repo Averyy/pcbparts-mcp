@@ -334,10 +334,12 @@ components:
   mpn: PESD1CAN,215
   manufacturer: Nexperia USA Inc.
   description: TVS DIODE 24V 70V SOT23
+  pin_count: 3
 - ref: D7
   value: SM712
   footprint: SOT-23
   description: 7V/12V, 600W Asymmetrical TVS Diode Array, SOT-23
+  pin_count: 3
 - ref: D9
   value: LED
   footprint: '0603'
@@ -357,21 +359,28 @@ components:
   value: USB-C
   footprint: USB-C
   description: USB 2.0-only 16P Type-C Receptacle connector
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J10
   value: JST ZR 5-pin
   footprint: JST_S5B-ZR_LF__SN_
   manufacturer: JST
   mpn: S5B-ZR (LF)(SN)
+  pin_count: 5
+  nc_pins: {'2': '2'}
 - ref: J11
   value: Micro_SD_Card
   footprint: microSD_HC_Wuerth_693072010801
   description: Micro SD Card Socket
+  pin_count: 9
 - ref: J13
   value: 1x7 header
   footprint: 1X7
+  pin_count: 7
 - ref: J14
   value: 1x8 header
   footprint: 1X8
+  pin_count: 8
 - ref: J2
   value: JST PH 2-pin
   footprint: JST_S2B-PH-K-S_LF__SN_
@@ -382,20 +391,26 @@ components:
   value: 2x7 header
   footprint: 2X7
   description: ST Debug Connector, standard ARM Cortex-M SWD and JTAG interface plus UART
+  pin_count: 14
+  nc_pins: {NC@1: '1', NC@2: '2', JRCLK/NC: '9'}
 - ref: J4
   value: 1x8 header
   footprint: 1X8
+  pin_count: 8
 - ref: J5
   value: 1x8 header
   footprint: 1X8
+  pin_count: 8
 - ref: J6
   value: RFPC-SMA27-F
   footprint: GRADCONN_RFPC-SMA27-F
   manufacturer: GradConn
   mpn: RFPC-SMA27-F
+  pin_count: 5
 - ref: J7
   value: 1x7 header
   footprint: 1X7
+  pin_count: 7
 - ref: J8
   value: 1x2 screw terminal
   footprint: TerminalBlock_RND_205-00045
@@ -414,38 +429,47 @@ components:
   value: SPH0645LM4H-B
   footprint: Knowles_SPH0645LM4H-6
   description: Knowles MEMS Microphone, 24-bit I2S, 65 dBA SNR, LGA-6
+  pin_count: 6
 - ref: MK2
   value: SPH0645LM4H-B
   footprint: Knowles_SPH0645LM4H-6
   description: Knowles MEMS Microphone, 24-bit I2S, 65 dBA SNR, LGA-6
+  pin_count: 6
 - ref: Q1
   value: BC817
   footprint: SOT-23
   description: 0.8A Ic, 45V Vce, NPN Transistor, SOT-23
+  pin_count: 3
 - ref: Q3
   value: BC817
   footprint: SOT-23
   description: 0.8A Ic, 45V Vce, NPN Transistor, SOT-23
+  pin_count: 3
 - ref: Q4
   value: BC817
   footprint: SOT-23
   description: 0.8A Ic, 45V Vce, NPN Transistor, SOT-23
+  pin_count: 3
 - ref: Q5
   value: BC817
   footprint: SOT-23
   description: 0.8A Ic, 45V Vce, NPN Transistor, SOT-23
+  pin_count: 3
 - ref: Q6
   value: BC817
   footprint: SOT-23
   description: 0.8A Ic, 45V Vce, NPN Transistor, SOT-23
+  pin_count: 3
 - ref: Q7
   value: BC817
   footprint: SOT-23
   description: 0.8A Ic, 45V Vce, NPN Transistor, SOT-23
+  pin_count: 3
 - ref: Q8
   value: BC817
   footprint: SOT-23
   description: 0.8A Ic, 45V Vce, NPN Transistor, SOT-23
+  pin_count: 3
 - ref: R1
   value: 1kohm
   footprint: '0603'
@@ -727,6 +751,7 @@ components:
   footprint: Switch_Tactile_THT
   mpn: 1825910-6
   manufacturer: TE Connectivity ALCOSWITCH Switches
+  pin_count: 4
 - ref: SW3
   value: tactile switch
   footprint: SW_PUSH_6mm_H13mm
@@ -744,65 +769,85 @@ components:
   value: MCP73871
   footprint: QFN-20-1EP
   description: Single cell, Li-Ion/Li-Po charge management controller
+  pin_count: 21
 - ref: U10
   value: MAX3485
   footprint: SOIC-8
   description: True RS-485/RS-422, 10Mbps, Slew-Rate Limited, with low-power shutdown, with
+  pin_count: 8
 - ref: U11
   value: SGP41-D-R4
   footprint: XDCR_SGP41-D-R4
   manufacturer: Sensirion
   mpn: SGP41-D-R4
+  pin_count: 7
 - ref: U12
   value: SCD40-D-R2
   footprint: Sensirion_SCD4x-1EP
   description: Photoacoustic CO2 sensor, 40 000 ppm, I2C, 2.4-5.5 V, Base accuracy 400 - 2000
+  pin_count: 7
 - ref: U13
   value: LTR-303ALS-01
   footprint: Lite-On_LTR-303ALS-01
   description: ambient light sensor, i2c interface, 0.01 to 64k lux, 2.4-3.6V
+  pin_count: 6
+  nc_pins: {NC: '2'}
 - ref: U14
   value: CM1624
   footprint: OnSemi_UDFN-16-1EP
   description: MMC interface, EMI filter, TVS, Line termination, UDFN-16
+  pin_count: 17
+  nc_pins: {ESD1@4: '4', ESD3: '5', ESD1@13: '13'}
 - ref: U15
   value: DS3231M
   footprint: SOIC-16W
   description: Extremely Accurate I2C-Integrated RTC/TCXO/Crystal SOIC-16
+  pin_count: 16
 - ref: U2
   value: TPD2E2U06DCK
   footprint: SOT-323_SC-70
   description: Dual-Channel High-Speed ESD Protection, SC-70
+  pin_count: 3
 - ref: U3
   value: TPS61023DRLT
   footprint: SOT-6
   manufacturer: Texas Instruments
   mpn: TPS61023DRLT
+  pin_count: 6
 - ref: U4
   value: LD39150DT33-R
   footprint: TO-252
   description: 1.5A Ultra Low Dropout regulator, positive, 3.3V fixed output, TO-252
+  pin_count: 3
 - ref: U5
   value: STM32H743ZITx
   footprint: LQFP-144
   description: STMicroelectronics Arm Cortex-M7 MCU, 2048KB flash, 1024KB RAM, 480 MHz
+  pin_count: 144
+  nc_pins: {PE5: '4', PE6: '5', PF10: '22', PH0: '23', PH1: '24', PC2_C: '28', PC3_C: '29', PC4: '44', PC5: '45', PF11: '49', PF12: '50', PF13: '53', PG1: '57', PE10: '63', PE12: '65', PE13: '66', PE14: '67', PB13: '74', PB14: '75', PB15: '76', PD14: '85', PD15: '86', PG5: '90', PG6: '91', PG7: '92', PG8: '93', PD0: '114', PD1: '115', PD3: '117', PD4: '118', PD5: '119', PD6: '122', PD7: '123', PG9: '124', PG10: '125', PB4: '134', PE0: '141', PE1: '142'}
 - ref: U6
   value: M95256
   footprint: SOIC-8
   description: SPI EEPROM, 256Kb (32K x 8), No Identification Page, 2.5 to 5.5V, SO8
+  pin_count: 8
 - ref: U7
   value: ESP32-C3-WROOM-02
   footprint: ESP32-C3-WROOM-02
   description: "802.11 b/g/n Wi\xADFi and Bluetooth 5 module, ESP32\xADC3 SoC, RISC\xADV microprocessor"
+  pin_count: 19
 - ref: U8
   value: RAK3172
   footprint: RAK3172
   manufacturer: Shenzhen RAKwireless Technology Co.,Ltd.
   mpn: RAK3172
+  pin_count: 32
+  nc_pins: {UART1_TX/PB6: '4', UART1_RX/PB7: '5', SWDIO/PA13: '7', SWCLK/PA14: '8', MOSI/PA7: '13', MISO/PA6: '14', PB12: '27', PB5: '30'}
 - ref: U9
   value: SN65HVD230
   footprint: SOIC-8
   description: CAN Bus Transceivers, 3.3V, 1Mbps, Low-Power capabilities, SOIC-8
+  pin_count: 8
+  nc_pins: {Vref: '5'}
 - ref: XTAL1
   value: ECS-_327-12_5-34B-TR
   footprint: SMD-2

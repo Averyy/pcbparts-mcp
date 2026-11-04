@@ -139,10 +139,12 @@ components:
   value: STEMMA QT
   footprint: JST_SH4_RA
   lcsc: C145961
+  pin_count: 6
 - ref: D1
   value: PESD1CAN
   footprint: SOT23
   description: CAN bus ESD protection diode
+  pin_count: 3
 - ref: D3
   value: 1N5819
   footprint: SOD-323_MINI
@@ -153,18 +155,24 @@ components:
   value: RP2040
   footprint: QFN56_7MM_REDUCEDEPAD
   lcsc: C2040
+  pin_count: 57
+  nc_pins: {SWCLK: '24', SWDIO: '25'}
 - ref: IC4
   value: MCP25625
   footprint: QFN28-ML
+  pin_count: 27
+  nc_pins: {CLKO: '6', '!TX1RTS': '8', '!TX2RTS': '9', '!RX1BF': '23'}
 - ref: JP1
   value: 1x16 header
   footprint: 1X16
+  pin_count: 16
 - ref: JP2
   value: 1x1 header
   footprint: 1X01
 - ref: JP3
   value: 1x12 header
   footprint: 1X12
+  pin_count: 12
 - ref: L
   value: red LED
   footprint: '0603'
@@ -172,13 +180,17 @@ components:
   value: WS2812B
   footprint: SK6805_1515
   lcsc: C2890035
+  pin_count: 4
+  nc_pins: {DO: '3'}
 - ref: NEOPIX1
   value: 3.5mm
   footprint: TERMBLOCK
+  pin_count: 3
 - ref: Q3
   value: DMG3415UFY
   footprint: DFN2015-3
   description: P-Channel Mosfet
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0402'
@@ -249,35 +261,45 @@ components:
   value: RKB2
   footprint: BTN_RKB2
   description: SMT Tact Switches RKB2
+  pin_count: 4
 - ref: SW2
   value: RKB2
   footprint: BTN_RKB2
   description: SMT Tact Switches RKB2
+  pin_count: 4
 - ref: U1
   value: 8MB QSPI
   footprint: USON8
   description: SOIC8 SPI Flash
+  pin_count: 9
 - ref: U2
   value: RT9080-3.3
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: U3
   value: MCP73831
   footprint: SOT-23-5
   lcsc: C424093
   description: MCP73831/2 LIPO Charger
+  pin_count: 5
 - ref: U4
   value: AP3602
   footprint: SOT-23-6
+  pin_count: 6
 - ref: X1
   value: JSTPH
   footprint: JSTPH2_BATT
   lcsc: C47647
+  pin_count: 4
 - ref: X6
   value: USB Type C
   footprint: USB-C
   lcsc: C165948
   description: USB Type-C USB 2.0
+  pin_count: 12
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: Y1
   value: 12MHz/12pF
   footprint: CRYSTAL

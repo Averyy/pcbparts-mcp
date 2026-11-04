@@ -43,6 +43,7 @@ components:
 - ref: JP3
   value: 1x3 header
   footprint: 1X03
+  pin_count: 3
 - ref: JP4
   value: 1x1 header
   footprint: 1X01
@@ -60,15 +61,19 @@ components:
 - ref: R3
   value: TRIMPOT
   footprint: TRIMPOT-3MM
+  pin_count: 3
 - ref: R4
   value: TRIMPOT
   footprint: TRIMPOT-3MM
+  pin_count: 3
 - ref: U1
   value: ACS712
   footprint: SOIC-8
+  pin_count: 8
 - ref: U2
   value: OPA344
   footprint: SOT-23-5
+  pin_count: 5
 nets:
 - name: 5V
   pins: [C3.1, C4.2, JP3.1, R4.CW, U1.VCC, U2.V+]

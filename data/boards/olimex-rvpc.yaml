@@ -38,6 +38,8 @@ components:
 - ref: PS2_KBD1
   value: MDR6_MINI-DIN
   footprint: PS2_MDR6_MINI-DIN
+  pin_count: 9
+  nc_pins: {'2': '2', '6': '6', NC1: '7', NC2: '8'}
 - ref: PWR_JACK1
   value: PWRJ-2mm
   footprint: PWRJ-2mm(YDJ-1136)
@@ -88,12 +90,16 @@ components:
 - ref: T1
   value: 2N3904
   footprint: TO-92
+  pin_count: 3
 - ref: U1
   value: CH32V003J4M6
   footprint: SOIC-8_150mil
+  pin_count: 8
 - ref: VGA1
   value: HDR15-3.08-14.5T/VGA15/14.5mm
   footprint: VGA15-F(HDR15-3.08-14.5T)_DrillSlot
+  pin_count: 17
+  nc_pins: {ID2/RES: '4', Key/PWR: '9', ID0/RES: '11', ID1/SDA: '12', ID3/SCL: '15'}
 nets:
 - name: +5V
   pins:

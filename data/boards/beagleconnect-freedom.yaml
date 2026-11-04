@@ -18,9 +18,11 @@ components:
 - ref: AE1
   value: Antenna_Dipole
   footprint: RFECA3216060A1T
+  pin_count: 3
 - ref: B1
   value: 0900PC15A0036E
   footprint: 0900PC15A0036
+  pin_count: 10
 - ref: BZ1
   value: Buzzer
   footprint: BUZZER3-5.5X5X2MM
@@ -288,20 +290,27 @@ components:
 - ref: J2
   value: TAG-CONNECT-10
   footprint: Tag-Connect-10
+  pin_count: 10
+  nc_pins: {Pin_7: '7', Pin_9: '9'}
 - ref: J3
   value: TAG-CONNECT-10
   footprint: Tag-Connect-10
+  pin_count: 10
+  nc_pins: {Pin_2: '2', Pin_3: '3', Pin_5: '5', Pin_6: '6', Pin_8: '8', Pin_10: '10'}
 - ref: J4
   value: mikroBUS
   footprint: MikroBus-SMD
   description: Order 2 of these connectors! Right tight top
+  pin_count: 16
 - ref: J5
   value: mikroBUS
   footprint: MikroBus-SMD
+  pin_count: 16
 - ref: J8
   value: UFL
   footprint: A-1JB
   description: CONN UMC JACK STR 50 OHM SMD
+  pin_count: 3
 - ref: L1
   value: 120R-1.3A
   footprint: '0402'
@@ -364,15 +373,19 @@ components:
 - ref: Q1
   value: CJ2305
   footprint: SOT-23
+  pin_count: 3
 - ref: Q2
   value: 2N7002PW
   footprint: SOT-323_SC-70
+  pin_count: 3
 - ref: Q3
   value: BC856S
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: Q4
   value: CJ2305
   footprint: SOT-23
+  pin_count: 3
 - ref: R1
   value: 1kohm
   footprint: '0402'
@@ -625,60 +638,82 @@ components:
 - ref: SH1
   value: Shield
   footprint: SHIELDING
+  pin_count: 5
 - ref: SW1
   value: TS23M-BN-PT-PF
   footprint: TS23M-BN-PT-PF
+  pin_count: 5
 - ref: SW2
   value: TS23M-BN-PT-PF
   footprint: TS23M-BN-PT-PF
+  pin_count: 5
 - ref: U1
   value: MSP430F5503
   footprint: Texas_S-PVQFN-N48_EP5.15x5.15mm
+  pin_count: 49
+  nc_pins: {P6.0/CB0: '1', P5.0/VeREF+: '5', P5.1/VeREF-: '6', P5.4/XIN: '8', P5.5/XOUT: '9', TA0.1/P1.2: '16', TA0.2/P1.3: '17', PJ.0/TDO: '23', PJ.1/TDI/TCLK: '24', PJ.2/TMS: '25', PJ.3/TCK: '26'}
 - ref: U10
   value: TS5A2066YZPR
   footprint: TS5A2066YZPR
   description: SMD IC Dual SPST DSBGA-8
+  pin_count: 8
 - ref: U11
   value: SKY13317-373
   footprint: SKY13317-373LF
+  pin_count: 9
+  nc_pins: {NC: '2'}
 - ref: U2
   value: BQ21040
   footprint: SOT-23-6
+  pin_count: 6
 - ref: U3
   value: TPS62821
   footprint: TPS62821DLC
   description: IC REG BUCK ADJ 1A 8VSON-HR
+  pin_count: 8
+  nc_pins: {NC: '4', PG: '8'}
 - ref: U4
   value: CC1352P
   footprint: QFN-48-1EP
+  pin_count: 49
 - ref: U5
   value: TS5A23157
   footprint: QFN10_0.6
+  pin_count: 10
 - ref: U6
   value: GD25Q16CEIGR
   footprint: MX25R8035FZUIL0
   description: IC FLASH 8M SPI 33MHZ 8USON
+  pin_count: 9
 - ref: U7
   value: OPT3001
   footprint: USON6
+  pin_count: 6
 - ref: U8
   value: HDC2010
   footprint: HDC2010
+  pin_count: 6
 - ref: U9
   value: LIS2DE12
   footprint: LGA-12
+  pin_count: 12
+  nc_pins: {INT2: '11'}
 - ref: USB1
   value: USB-C
   footprint: USB-C
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: Y1
   value: 24MHz
   footprint: SMD3225
+  pin_count: 4
 - ref: Y2
   value: 32.768KHz
   footprint: SMD2012
 - ref: Y3
   value: 48MHz
   footprint: SMD2016
+  pin_count: 4
 nets:
 - name: /Programming/CC1352_TDI
   pins: [J2.Pin_8, R16.2]

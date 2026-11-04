@@ -69,30 +69,41 @@ components:
 - ref: D3
   value: MSQA6V1W5T2G
   footprint: SOT-353
+  pin_count: 5
 - ref: IC1
   value: MCP73831
   footprint: SOT-23-5
   prod_id: IC-09995
   description: Miniature single cell, fully integrated Li-Ion, Li-polymer charge management
+  pin_count: 5
 - ref: J1
   value: 1x8 header
   footprint: 1X08
   prod_id: CONN-08438
+  pin_count: 8
+  nc_pins: {'1': '1', '5': '5', '6': '6', '7': '7'}
 - ref: J2
   value: 1x6 header
   footprint: 1X06
   prod_id: CONN-08437
+  pin_count: 6
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6'}
 - ref: J3
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J4
   value: 1x10 header
   footprint: 1X10
   prod_id: CONN-11563
+  pin_count: 10
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '8': '8'}
 - ref: J5
   value: 1x8 header
   footprint: 1X08
   prod_id: CONN-08438
+  pin_count: 8
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6'}
 - ref: J6
   value: LiPo
   footprint: JST-2-SMD
@@ -103,6 +114,8 @@ components:
 - ref: J8
   value: microUSB
   footprint: USB-B-MICRO-SMD
+  pin_count: 9
+  nc_pins: {USBID: ID}
 - ref: JP3
   value: solder jumper (NC)
   footprint: SJ-2
@@ -111,6 +124,7 @@ components:
   value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (1 of 2 connections)
+  pin_count: 3
 - ref: LED1
   value: green LED
   footprint: '0603'
@@ -124,10 +138,12 @@ components:
   value: BSS138L
   footprint: SOT-23-3
   description: N-Channel Mosfet
+  pin_count: 3
 - ref: Q2
   value: BSS138L
   footprint: SOT-23-3
   description: N-Channel Mosfet
+  pin_count: 3
 - ref: R1
   value: 1kohm
   footprint: 0603-RES-MARKED
@@ -138,6 +154,8 @@ components:
 - ref: R3
   value: 10kohm
   footprint: 0603-RES-MARKED
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R4
   value: 10kohm
   footprint: 0603-RES-MARKED
@@ -152,21 +170,29 @@ components:
 - ref: R7
   value: 10kohm
   footprint: RES_ARRAY
+  pin_count: 8
+  nc_pins: {D.1: '4', D.2: '5', C.2: '6', B.2: '7', A.2: '8'}
 - ref: R8
   value: 470ohm
   footprint: 0603-RES-MARKED
 - ref: U1
   value: SIM7000
   footprint: SIM7000
+  pin_count: 68
+  nc_pins: {DTR: '3', RI: '4', DCD: '5', BOOT_CFG: '6', CTS: '7', RTS: '8', TXD: '9', RXD: '10', PCM_CLK: '11', PCM_SYNC: '12', PCM_DIN: '13', PCM_DOUT: '14', NC@1: '19', NC@2: '20', NC@3: '21', NC@4: '22', MDM_LOG_TX: '23', ADC: '25', NC@5: '26', SIM_DET: '34', NC@6: '35', NC@7: '36', I2C_SDA: '37', I2C_SCL: '38', NC@8: '40', NC@9: '41', NC@10: '42', NC@11: '43', NC@12: '44', NC@13: '47', GPIO4: '48', GPIO1/UART3_RXD: '49', GPIO0/UART3_TXD: '50', NC@14: '51', GPIO2: '67', GPIO3: '68'}
 - ref: X1
   value: LTE-uFL
   footprint: U.FL
+  pin_count: 3
 - ref: X2
   value: GNSS-uFL
   footprint: U.FL
+  pin_count: 3
 - ref: X3
   value: MICROSIM_SOCKET_PUSH-PULL
   footprint: MICROSIM_SOCKET_PUSH-PULL
+  pin_count: 12
+  nc_pins: {C6: C6}
 nets:
 - name: 1.8V
   pins: [C3.2, U1.VDD_EXT]

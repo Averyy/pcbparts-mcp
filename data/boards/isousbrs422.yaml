@@ -128,15 +128,19 @@ components:
 - ref: D104
   value: PSM712LFT7
   footprint: SOT23
+  pin_count: 3
 - ref: D105
   value: PSM712LFT7
   footprint: SOT23
+  pin_count: 3
 - ref: FB101
   value: MI0805K601R-10
   footprint: SM0805
 - ref: J101
   value: USB
   footprint: USB_B
+  pin_count: 5
+  nc_pins: {'6': '6'}
 - ref: J102
   value: KLE3MM5
   footprint: KLE3mm5
@@ -220,18 +224,24 @@ components:
 - ref: U101
   value: FT230X
   footprint: SSOP16
+  pin_count: 16
+  nc_pins: {'2': '2', '6': '6'}
 - ref: U102
   value: SN74LVC2T45
   footprint: R_PDSO_G8
+  pin_count: 8
 - ref: U103
   value: SN74LVC2T45
   footprint: R_PDSO_G8
+  pin_count: 8
 - ref: U104
   value: ADM2682E
   footprint: SO16W
+  pin_count: 16
 - ref: U105
   value: SN74LVC2T45
   footprint: R_PDSO_G8
+  pin_count: 8
 nets:
 - name: +3.3V
   pins:

@@ -143,6 +143,7 @@ components:
 - ref: CON1
   value: 1x20 header
   footprint: HN1x20
+  pin_count: 20
 - ref: D1
   value: 1N5819S4
   footprint: SOD-123_1C-2A_KA
@@ -155,6 +156,7 @@ components:
 - ref: D4
   value: BAT54C
   footprint: SOT-23-3
+  pin_count: 3
 - ref: D5
   value: 1N5819S4
   footprint: SOD-123_1C-2A_KA
@@ -164,9 +166,11 @@ components:
 - ref: FET1
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: FET2
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: GND1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
@@ -192,6 +196,8 @@ components:
 - ref: LAN1
   value: RJLD-060TC1
   footprint: RJLBC-060TC1
+  pin_count: 14
+  nc_pins: {'4': '4', '5': '5'}
 - ref: LED1
   value: LED/GREEN/0603
   footprint: '0603'
@@ -201,6 +207,8 @@ components:
 - ref: MICRO_SD1
   value: TFC-WXCP11-08-LF
   footprint: TFC-WXCP11-08-LF
+  pin_count: 14
+  nc_pins: {FID1: FID1, FID2: FID2, FID3: FID3, FID4: FID4}
 - ref: PHY_RST1
   value: Opened
   footprint: SJ
@@ -210,9 +218,11 @@ components:
 - ref: Q4
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: Q5
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: R1
   value: 2.2kohm
   footprint: '0603'
@@ -356,15 +366,18 @@ components:
 - ref: RM2
   value: RA1206_(4X0603)_4B8_2.2k
   footprint: R_MATRIX_4
+  pin_count: 8
 - ref: RM3
   value: RA1206_(4X0603)_4B8_2.2k
   footprint: R_MATRIX_4
+  pin_count: 8
 - ref: RST1
   value: T1107A
   footprint: T1107A(6x3,8x2,5MM)
 - ref: T1
   value: LMUN2211LT1G
   footprint: SOT23
+  pin_count: 3
 - ref: TVS1
   value: GG0402052R542P
   footprint: 0402_5MIL_DWS
@@ -380,18 +393,27 @@ components:
 - ref: U1
   value: TPS62A02ADRLR
   footprint: SOT-563-6
+  pin_count: 7
+  nc_pins: {'6': '6', Paste: Paste}
 - ref: U3
   value: ESP32-WROOM-32E
   footprint: ESP-WROOM-32_MODULE
+  pin_count: 40
+  nc_pins: {'17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '32': '32', Past: Past}
 - ref: U4
   value: LAN8710A-EZC-ABC
   footprint: QFN32_EP(33)
+  pin_count: 34
+  nc_pins: {'4': '4', '14': '14', '18': '18', '20': '20', '26': '26', PAST: PAST}
 - ref: U5
   value: CH340X
   footprint: MSOP-10_Pitch-0.5mm
+  pin_count: 10
 - ref: USB-UART1
   value: USB-C
   footprint: USB2.0_TYPE-C(A40-00119-A52-12)
+  pin_count: 17
+  nc_pins: {A8: A8, B8: B8}
 nets:
 - name: +3.3VLAN
   pins:

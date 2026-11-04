@@ -18,21 +18,29 @@ components:
 - ref: +1V1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
+  pin_count: 1
+  nc_pins: {Pad: '1'}
 - ref: +3.3V1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
+  pin_count: 1
+  nc_pins: {3V1.Pad: '1'}
 - ref: +5V1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
+  pin_count: 1
+  nc_pins: {Pad: '1'}
 - ref: AUDIO1
   value: PJ-3.5-365-5P
   footprint: SCJ325P00XG0B02G
+  pin_count: 5
 - ref: BOOT1
   value: T1102D
   footprint: T1102D
 - ref: BUS1
   value: P-B-V-40-LF
   footprint: GBH-254-SMT-40
+  pin_count: 40
 - ref: C1
   value: 100nF
   footprint: '0402'
@@ -263,6 +271,8 @@ components:
 - ref: DVI1
   value: HDMI-SWM-19
   footprint: HDMI-SWM-19_Paste
+  pin_count: 20
+  nc_pins: {'14': '14'}
 - ref: FUSE1
   value: 350mA PTC
   footprint: '1206'
@@ -287,18 +297,24 @@ components:
 - ref: HUB_RST_OFF/ON1
   value: SS-12D10L5
   footprint: SS-12D10L5
+  pin_count: 3
 - ref: PWR_In/Out1
   value: PH2.0-3PWB
   footprint: PH2.0-3PWB
+  pin_count: 4
+  nc_pins: {P2@2: '2'}
 - ref: Q1
   value: 12MHz
   footprint: TSX-3.2x2.5mm_GND(3)
+  pin_count: 3
 - ref: Q2
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: Q3
   value: 12MHz
   footprint: TSX-3.2x2.5mm_GND(3)
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0402'
@@ -412,60 +428,80 @@ components:
 - ref: RM1
   value: RA1206_(4x0603)_4B8_330R
   footprint: RA1206_(4X0603)_4B8_xx
+  pin_count: 8
 - ref: RM2
   value: RA1206_(4x0603)_4B8_330R
   footprint: RA1206_(4X0603)_4B8_xx
+  pin_count: 8
 - ref: SPK1
   value: speaker
   footprint: Speaker_QMB-09B-03_1-Plus_2-Minus
 - ref: SWITCH1
   value: SLIDE SWITCH DM-04
   footprint: SLIDE_SWITCH_DM-04(Step_2.54mm)
+  pin_count: 8
 - ref: U1
   value: ZD25Q16BTIGT
   footprint: SO-8_208mil
+  pin_count: 8
 - ref: U2
   value: RP2040
   footprint: QFN56
+  pin_count: 57
 - ref: U3
   value: CH217K
   footprint: SOT-23-6
+  pin_count: 6
 - ref: U4
   value: CH334S
   footprint: SSOP28
+  pin_count: 28
+  nc_pins: {NC@1: '1', NC@5: '5', NC@10: '10', LED3/SCL: '14', NC@16: '16', PSELF: '17', PGANG: '18', NC@19: '19', NC@20: '20', LED4/SDA: '22'}
 - ref: U5
   value: W65C02S6TQTG-14
   footprint: TQFP44_NEO6502
+  pin_count: 44
+  nc_pins: {NC@6: '6', NC@33: '33', PHI2O: '37', PHI1O: '42'}
 - ref: U6
   value: 74LVC245APW
   footprint: TSSOP20_Pitch-0.65mm
+  pin_count: 20
 - ref: U7
   value: 74LVC245APW
   footprint: TSSOP20_Pitch-0.65mm
+  pin_count: 20
 - ref: U8
   value: 74LVC245APW
   footprint: TSSOP20_Pitch-0.65mm
+  pin_count: 20
 - ref: USB-HOST2
   value: USB-A
   footprint: USB-A-SMT-6.3H_HOST_Female
+  pin_count: 5
 - ref: USB-HOST3
   value: USB-A
   footprint: USB-A-SMT-6.3H_HOST_Female
+  pin_count: 5
 - ref: USB-HOST4
   value: USB-A
   footprint: USB-A-SMT-6.3H_HOST_Female
+  pin_count: 5
 - ref: USB-PGM1
   value: USB-C
   footprint: USB2.0_TYPE-C(A40-00119-A52-12)_Paste
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: USB-PWR_Out1
   value: USB-A
   footprint: USB-A-SMT-6.3H_HOST_Female
+  pin_count: 5
 - ref: VBUS1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
 - ref: pUEXT1
   value: SH1.0-10P-90D
   footprint: SM10B-SRSS-TB
+  pin_count: 11
 nets:
 - name: +3.3V
   pins:

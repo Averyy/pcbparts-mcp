@@ -26,7 +26,13 @@ log = logging.getLogger(__name__)
 # PADS "basic" units: 38,100 per mil, 1,500,000 per mm
 _UNITS_PER_MM = 1_500_000
 
-_PART_LINE = re.compile(r"^(\S+)\s+(\S+)\s+(-?\d+)\s+(-?\d+)\s+(-?[\d.]+)\s+[GU]\s+([NM])\b")
+_PART_LINE = re.compile(r"^(\S+)\s+(\S+)\s+(-?\d+)\s+(-?\d+)\s+(-?[\d.]+)\s+[GU]\s+([NM])\b(?:\s+(\d+))?")
+# A decal's header: NAME UNITS ORIX ORIY PIECES TERMINALS STACKS TEXT LABELS
+_DECAL_HEADER = re.compile(r"^(\S+)\s+[A-Z]\s+-?\d+\s+-?\d+\s+\d+\s+\d+\s+\d+\s+\d+\s+\d+\s*$")
+# A terminal: T XLOC YLOC NMXLOC NMYLOC PINNUMBER
+_TERMINAL = re.compile(r"^T\s*-?\d+\s+-?\d+\s+-?\d+\s+-?\d+\s+(\S+)")
+# A part type: NAME DECALNM TYPE GATES SIGPINS UNUSEDPINNMS FLAGS ECO
+_PART_TYPE = re.compile(r"^(\S+)\s+(\S+)\s+\S+\s+\d+\s+\d+\s+\d+\s+\d+\s+[YN]\s*$")
 _PIN_PAIR = re.compile(r"^(\S+?)\.(\S+)\s+(\S+?)\.(\S+)\s*$")
 _SECTION = re.compile(r"^\*([A-Z]+)\*")
 # "0.1uF/50V(10%)", "10K(1%)", "1uF/16V(10%)"
@@ -108,6 +114,73 @@ def read_bom(bom_path: Path) -> dict[str, dict[str, str]]:
     return parts
 
 
+def extract_part_pins(asc_path: Path, part_names: set[str]
+                      ) -> tuple[dict[str, dict[str, str]], dict[str, set[str]]]:
+    """Every pin of each part ({ref: {pin: pin}}: nets name PADS pins by number) from its decal's
+    terminals, and the pins its part type ties to a signal by name (SIGPIN), which need no wire.
+
+    A terminal whose pad stack has no copper on any layer (a placeholder, an unplated locating hole)
+    isn't a pin. Stack 0 is the decal's default; stack N overrides its Nth terminal.
+    """
+    sections = _sections(asc_path.read_text(encoding="latin-1"))
+    terminals: dict[str, list[str]] = {}
+    stacks: dict[str, dict[int, bool]] = {}  # decal: {stack index: has copper}
+    decal = None
+    stack: tuple[int, int] | None = None  # (index, stack lines left)
+    copper = False
+    for line in sections.get("PARTDECAL", []):
+        if stack:
+            tokens = line.split()
+            copper = copper or (len(tokens) >= 2 and tokens[1].isdigit() and int(tokens[1]) > 0)
+            stack = (stack[0], stack[1] - 1)
+            if stack[1] == 0:
+                stacks[decal][stack[0]] = copper
+                stack = None
+            continue
+        header = _DECAL_HEADER.match(line)
+        if header:
+            decal = header.group(1)
+            terminals[decal] = []
+            stacks[decal] = {}
+            continue
+        terminal = _TERMINAL.match(line)
+        if decal and terminal:
+            terminals[decal].append(terminal.group(1))
+        elif decal and re.match(r"^PAD\s+\d+\s+\d+\s*$", line):
+            _, index, lines = line.split()
+            stack, copper = (int(index), int(lines)), False
+
+    type_decals: dict[str, list[str]] = {}
+    signal_pins: dict[str, set[str]] = {}
+    part_type = None
+    for line in sections.get("PARTTYPE", []):
+        match = _PART_TYPE.match(line)
+        if match:
+            part_type = match.group(1)
+            type_decals[part_type] = match.group(2).split(":")
+        elif part_type and line.startswith("SIGPIN "):
+            signal_pins.setdefault(part_type, set()).add(line.split()[1])
+
+    pins: dict[str, dict[str, str]] = {}
+    tied: dict[str, set[str]] = {}
+    for line in sections.get("PART", []):
+        match = _PART_LINE.match(line)
+        if not match or match.group(1) not in part_names:
+            continue
+        ref, type_name, alt = match.group(1), match.group(2), int(match.group(7) or 0)
+        type_name, _, decal_name = type_name.partition("@")
+        decals = type_decals.get(type_name, [])
+        decal_name = decal_name or (decals[alt] if alt < len(decals) else decals[0] if decals else "")
+        copper = stacks.get(decal_name, {})
+        real = [pin for i, pin in enumerate(terminals.get(decal_name, []), start=1)
+                if copper.get(i, copper.get(0, True))]
+        if real:
+            pins[ref] = {pin: pin for pin in real}
+            if signal_pins.get(type_name):
+                tied[ref] = signal_pins[type_name]
+    return pins, tied
+
+
 def parse_pads(asc_path: Path, bom_path: Path | None) -> tuple[
         list[Component], list[Net], list[Position], BoardOutline | None, DesignRules]:
     """Components (BOM parts placed on the board), nets, positions, outline and layer count."""
@@ -119,7 +192,7 @@ def parse_pads(asc_path: Path, bom_path: Path | None) -> tuple[
     for line in sections.get("PART", []):
         match = _PART_LINE.match(line)
         if match:
-            ref, part_type, x, y, rotation, mirror = match.groups()
+            ref, part_type, x, y, rotation, mirror, _ = match.groups()
             placed[ref] = (part_type.split("@")[0], Position(
                 ref=ref, x=round(int(x) / _UNITS_PER_MM, 2), y=round(int(y) / _UNITS_PER_MM, 2),
                 rotation=float(rotation), side="back" if mirror == "M" else "front"))

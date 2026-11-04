@@ -182,10 +182,12 @@ components:
 - ref: J1
   value: 2x4 header
   footprint: 2X4
+  pin_count: 8
 - ref: J2
   value: 1x3 header
   footprint: JST_GH_SM03B-GHS-TB
   lcsc: C514175
+  pin_count: 3
 - ref: J3
   value: V+
   footprint: wire_3.2mm
@@ -209,6 +211,7 @@ components:
   value: multicolor LED
   footprint: RGB LED 1.6x1.6mm
   lcsc: C375569
+  pin_count: 4
 - ref: R1
   value: 1kohm
   footprint: '0402'
@@ -273,14 +276,20 @@ components:
   value: RT9013-33
   footprint: SOT-23-5
   lcsc: C587158
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U2
   value: STM32G431CBUx
   footprint: QFN-48-1EP
   lcsc: C529356
+  pin_count: 49
+  nc_pins: {PC13: '2', PC14: '3', PC15: '4', PA2: '10', PA3: '11', PA4: '12', PC4: '16', PB0: '17', PB1: '18', PB10: '22', PC6: '29', PA11: '33', PA12: '34', PA15: '38', PC10: '39', PC11: '40', PB8: '46'}
 - ref: U3
   value: DRV8316CR
   footprint: VQFN-40_RGF
   lcsc: C5447274
+  pin_count: 41
+  nc_pins: {NC@1: '1', NC@24: '24'}
 - ref: U4
   value: LM4040A50
   footprint: SOT-353_SC-70-5
@@ -289,10 +298,13 @@ components:
   value: AS5047x
   footprint: TSSOP-14
   lcsc: C962063
+  pin_count: 14
+  nc_pins: {B: '6', A: '7', W/PWM: '8', V: '9', U: '10', I/PWM: '14'}
 - ref: Y1
   value: 16MHz
   footprint: SMD3225
   lcsc: C13738
+  pin_count: 4
 nets:
 - name: +3.3V
   pins:

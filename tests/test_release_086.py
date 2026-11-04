@@ -49,10 +49,10 @@ class TestFocusOnAnyPart:
         assert {"ref": "J1", "value": "USB-C"} in board["available_refs"]
         assert all(not a["ref"].startswith(("R", "C", "L")) or a["ref"].startswith("CONN") for a in board["available_refs"])
 
-    async def test_summary_pin_count_is_pins_in_nets(self):
+    async def test_summary_pin_count(self):
         board = await server.board_get(slug=THING_PLUS)
         counts = {h["ref"]: h["pin_count"] for h in board["neighborhoods"]}
-        assert counts["U2"] == 4  # was 3: GND left out
+        assert counts["U2"] == 6  # the part's own pins since 0.8.11 (4 in nets: I/O1 and I/O2 are NC)
 
 
 class TestUsbRules:

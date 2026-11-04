@@ -51,9 +51,11 @@ components:
 - ref: Q1
   value: IRFS7530
   footprint: D2PAK-7-GDS
+  pin_count: 3
 - ref: Q2
   value: IRFS7530
   footprint: D2PAK-7-GDS
+  pin_count: 3
 - ref: R1
   value: 1Mohm
   footprint: '0603'

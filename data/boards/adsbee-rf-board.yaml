@@ -60,17 +60,21 @@ components:
 - ref: U1
   value: AZ1117-3.3
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: U2
   value: BGA2818
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: X1
   value: SF2321D
   footprint: Filter_SAW-6
   mpn: SF2321D
+  pin_count: 6
 - ref: X2
   value: SF2321D
   footprint: Filter_SAW-6
   mpn: SF2321D
+  pin_count: 6
 nets:
 - name: +3V3
   pins: [C1.1, C6.1, C7.1, U1.VO@2, U2.Vcc]

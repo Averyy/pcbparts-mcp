@@ -174,6 +174,8 @@ components:
 - ref: D1
   value: BAS40WT
   footprint: SOT-323
+  pin_count: 3
+  nc_pins: {'2': '2'}
 - ref: F1
   value: CORNER
   footprint: miter_0.179_90deg
@@ -216,9 +218,11 @@ components:
 - ref: P4
   value: 1x6 header
   footprint: SIL-6
+  pin_count: 6
 - ref: Q1
   value: MOS_P_BSS84
   footprint: SOT-23
+  pin_count: 3
 - ref: R1
   value: 47kohm
   footprint: '0402'
@@ -351,54 +355,77 @@ components:
 - ref: U1
   value: SST11LP12
   footprint: VQFN-16
+  pin_count: 17
+  nc_pins: {'1': '1', '5': '5', '12': '12', '13': '13'}
 - ref: U10
   value: LTC6242
   footprint: SSOP-16
+  pin_count: 16
+  nc_pins: {'8': '8', '9': '9'}
 - ref: U11
   value: LT6230
   footprint: TSOT-23
+  pin_count: 6
 - ref: U12
   value: MCP4017
   footprint: SC-70-6
+  pin_count: 6
 - ref: U13
   value: USB-MICRO
   footprint: USB_MICRO
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: U14
   value: MKL26Z128VFT4
   footprint: QFN-48
+  pin_count: 49
+  nc_pins: {'13': '13', '15': '15', '16': '16', '21': '21', '30': '30', '31': '31', '32': '32', '34': '34', '36': '36', '37': '37', '38': '38', '39': '39', '40': '40', '41': '41', '42': '42', '43': '43', '44': '44', '45': '45', '46': '46', '47': '47', '48': '48'}
 - ref: U15
   value: TSV321RAILT
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U16
   value: LM2681
   footprint: SOT-23-6
+  pin_count: 6
 - ref: U17
   value: TSV321RAILT
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U18
   value: SC189
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U19
   value: AAT3220
   footprint: SOT-23
+  pin_count: 3
 - ref: U2
   value: HMC431LP4
   footprint: VQFN-24
+  pin_count: 25
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '12': '12', '13': '13', '14': '14', '17': '17', '18': '18', '19': '19', '21': '21', '23': '23', '24': '24'}
 - ref: U3
   value: SKY65404
   footprint: XFDFN-6
+  pin_count: 7
 - ref: U4
   value: HMC219AMS8
   footprint: MSOP-8
+  pin_count: 8
+  nc_pins: {'4': '4'}
 - ref: U5
   value: PAT1220-7dB
   footprint: PAT1220
+  pin_count: 3
 - ref: U7
   value: PAT1220-7dB
   footprint: PAT1220
+  pin_count: 3
 - ref: U8
   value: MCP1700
   footprint: SOT23
+  pin_count: 3
 - ref: X1
   value: 8MHz
   footprint: XTAL-7A

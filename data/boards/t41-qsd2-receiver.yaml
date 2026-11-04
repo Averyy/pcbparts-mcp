@@ -142,10 +142,14 @@ components:
 - ref: J3
   value: 2x8 header
   footprint: IDC-Header
+  pin_count: 16
+  nc_pins: {Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_9: '9', Pin_10: '10', Pin_13: '13', Pin_14: '14'}
 - ref: J4
   value: SJ-3524-SMT
   footprint: CUI_SJ-3524-SMT
   manufacturer: CUI Inc
+  pin_count: 4
+  nc_pins: {'4': '4'}
 - ref: R1
   value: 270ohm
   footprint: '1206'
@@ -219,40 +223,54 @@ components:
   value: ADT4-6T+
   footprint: Mini-Circuits_CD637_H5.23mm
   description: 1.5-70MHz 1:4 RF Transformer, Unbalanced to Balanced Center Tap, CD637
+  pin_count: 5
 - ref: U1
   value: SN74LVC1G14DBV
   footprint: SOT-23-5
   description: Single Schmitt NOT Gate, Low-Voltage CMOS, SOT-23
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U10
   value: GALI-39
   footprint: SOT-89-3
   description: DC-7000MHz +19.7dB Low Noise Amplifier, SOT-89
+  pin_count: 3
 - ref: U2
   value: SN74LVC1G14DBV
   footprint: SOT-23-5
   description: Single Schmitt NOT Gate, Low-Voltage CMOS, SOT-23
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U3
   value: SN74CBT3253
   footprint: TSSOP-16
   description: Dual 1 to 4 Analog Multiplexer
+  pin_count: 16
 - ref: U4
   value: SN74AC74PW
   footprint: TSSOP-14
+  pin_count: 14
+  nc_pins: {1Q: '5'}
 - ref: U5
   value: AD8226ARZ-R7
   footprint: R_8_ADI
+  pin_count: 8
 - ref: U6
   value: AD8226ARZ-R7
   footprint: R_8_ADI
+  pin_count: 8
 - ref: U7
   value: AP2120N-2.5TRG1
   footprint: SOT-23_DIO
+  pin_count: 3
 - ref: U8
   value: AP2120N-2.5TRG1
   footprint: SOT-23_DIO
+  pin_count: 3
 - ref: U9
   value: UA78M05IDCYR
   footprint: DCY0004A_N
+  pin_count: 4
 nets:
 - name: /12V_FILT
   pins: [C3.2, C7.1, R3.1, R6.2, U9.INPUT]

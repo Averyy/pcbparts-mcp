@@ -18,6 +18,8 @@ components:
 - ref: AUDIO_JACK_5PIN1
   value: PJ-W47S-05D2-LF_V2
   footprint: PJ-W47S-05D2-LF_5PIN_V2
+  pin_count: 7
+  nc_pins: {'4': '4', '6': '6', '7': '7'}
 - ref: BAT1
   value: DW02R
   footprint: LIPO_BAT-CON2DW02R
@@ -245,9 +247,11 @@ components:
 - ref: FET1
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: FET2
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: GND1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
@@ -271,6 +275,8 @@ components:
 - ref: MICRO_SD1
   value: MICRO_SD
   footprint: TFC-WXCP11-08-LF
+  pin_count: 14
+  nc_pins: {'1': '1', '8': '8', FID1: FID1, FID2: FID2, FID3: FID3, FID4: FID4}
 - ref: PWR1
   value: PWRJ-2mm
   footprint: PWRJ-2mm(YDJ-1136)
@@ -280,12 +286,15 @@ components:
 - ref: Q1
   value: DTC114YKA
   footprint: SOT23
+  pin_count: 3
 - ref: Q4
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: Q5
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: R1
   value: 220ohm
   footprint: '0402'
@@ -435,6 +444,7 @@ components:
 - ref: RM1
   value: RA1206_(4x0603)_4B8_22R
   footprint: RA1206_(4X0603)_4B8_mine_1.1
+  pin_count: 8
 - ref: RSPK1
   value: DW02R
   footprint: LIPO_BAT-CON2DW02R
@@ -459,39 +469,59 @@ components:
 - ref: U1
   value: AP1231-33
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {'4': '4'}
 - ref: U10
   value: BAT54C
   footprint: SOT23
+  pin_count: 3
 - ref: U2
   value: SY8089AAAC
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U3
   value: ESP32-WROVER(_PCB,_IPEX,-xB)_and_ESP-WROOM-32-Universal
   footprint: ESP32-WROVER_MODULE_
+  pin_count: 40
+  nc_pins: {'17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '27': '27', '28': '28', '32': '32', Past: Past}
 - ref: U4
   value: BL4054B
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U5
   value: CH340T
   footprint: SSOP-20W
+  pin_count: 20
+  nc_pins: {'1': '1', '2': '2', '11': '11', '12': '12', '13': '13', '14': '14', '17': '17', '18': '18', '20': '20'}
 - ref: U6
   value: ES8388
   footprint: QFN28_EP(29)
+  pin_count: 30
+  nc_pins: {'9': '9', '21': '21', '22': '22', '25': '25', Past: Past}
 - ref: U7
   value: PAM8003
   footprint: SO-16
+  pin_count: 16
+  nc_pins: {'11': '11'}
 - ref: U8
   value: VS1838B
   footprint: RPM7236-H8
+  pin_count: 4
 - ref: UEXT1
   value: BH10S
   footprint: GBH-254-SMT-10_Smaller
+  pin_count: 11
+  nc_pins: {'11': '11'}
 - ref: USB-UART1
   value: MISB-SWMM-5B-LF
   footprint: USB-MICRO_MISB-SWMM-5B_LF
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: Y1
   value: 12MHz
   footprint: TSX-3.2x2.5mm_GND(3)
+  pin_count: 3
+  nc_pins: {'3': '3'}
 nets:
 - name: +3.3VA
   pins:

@@ -235,6 +235,7 @@ components:
   value: CORTEX_DEBUG
   footprint: 2X5-PTH-1.27MM-NO_SILK
   description: Cortex Debug Connector - 10 pin
+  pin_count: 8
 - ref: EN
   value: 1x1 header
   footprint: 1X01
@@ -244,17 +245,22 @@ components:
 - ref: I2C
   value: PTH
   footprint: 1X04
+  pin_count: 4
 - ref: J1
   value: IRIDIUM_9603N
   footprint: IRIDIUM_9603N
   prod_id: CONN-14689
   description: Iridium 9603N Modem
+  pin_count: 20
+  nc_pins: {DCD: '9', DSR: '10', CTS: '11', RESERVED_16: '16', RESERVED_17: '17', SUPPLY_OUT: '20'}
 - ref: J10
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J11
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J13
   value: 1x1 header
   footprint: 1X01
@@ -263,11 +269,15 @@ components:
   footprint: USB-C
   prod_id: CONN-14122
   description: USB Type C 16Pin Connector
+  pin_count: 14
+  nc_pins: {SHLD: SHLD1 SHLD2 SHLD3 SHLD4}
 - ref: J3
   value: JST_2MM_MALE
   footprint: JST-2-SMD
   prod_id: CONN-11443
   description: JST 2MM MALE RA CONNECTOR
+  pin_count: 4
+  nc_pins: {PAD1: NC1, PAD2: NC2}
 - ref: J4
   value: 1x2 header
   footprint: 1X02
@@ -276,20 +286,25 @@ components:
   footprint: JST-2-SMD
   prod_id: CONN-11443
   description: JST 2MM MALE RA CONNECTOR
+  pin_count: 4
+  nc_pins: {PAD1: NC1, PAD2: NC2}
 - ref: J6
   value: U.FL
   footprint: U.FL
   prod_id: CONN-09193
   description: SMD Antenna Connector - U.FL
+  pin_count: 3
 - ref: J7
   value: ANTENNA-GROUNDED
   footprint: SMA-EDGE
   prod_id: CONN-08289
   description: Antenna w/ Ground Connection
+  pin_count: 5
 - ref: JP1
   value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (1 of 2 connections)
+  pin_count: 3
 - ref: JP2
   value: solder jumper (NC)
   footprint: SJ-2
@@ -307,31 +322,37 @@ components:
   footprint: SOT-23-3
   prod_id: TRANS-12988
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q2
   value: 20V/4.2A/52mohm/1.4W
   footprint: SOT-23-3
   prod_id: TRANS-14388
   description: P-channel MOSFETs
+  pin_count: 3
 - ref: Q3
   value: 20V/4.2A/52mohm/1.4W
   footprint: SOT-23-3
   prod_id: TRANS-14388
   description: P-channel MOSFETs
+  pin_count: 3
 - ref: Q4
   value: 600mA/40V
   footprint: SOT-23-3
   prod_id: TRANS-08049
   description: NPN transistor
+  pin_count: 3
 - ref: Q6
   value: 20V/4.2A/52mohm/1.4W
   footprint: SOT-23-3
   prod_id: TRANS-14388
   description: P-channel MOSFETs
+  pin_count: 3
 - ref: QWIIC
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: R1
   value: 330ohm
   footprint: '0402'
@@ -474,6 +495,7 @@ components:
   footprint: TACTILE_SWITCH_SMD_5.2MM
   prod_id: SWCH-14139
   description: Momentary Switch (Pushbutton) - SPST - Two Circuits
+  pin_count: 4
 - ref: SC1+
   value: 1x1 header
   footprint: 1X01
@@ -489,66 +511,83 @@ components:
 - ref: SPI
   value: 1x7 header
   footprint: 1X07
+  pin_count: 7
 - ref: U1
   value: CH340E
   footprint: MSOP10
   prod_id: IC-14135
+  pin_count: 10
+  nc_pins: {'!CTS': '5', TNOW: '6'}
 - ref: U10
   value: 3.3V
   footprint: SOT-23-5
   prod_id: VREG-12457
   description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U11
   value: 74LVC1G04SE
   footprint: SOT353
   prod_id: IC-10843
   description: Single Inverter
+  pin_count: 4
 - ref: U12
   value: 74LVC1G08W5-7
   footprint: SOT-23-5
   prod_id: IC-16359
   description: Single AND gate
+  pin_count: 5
 - ref: U2
   value: LTC3225EDDB
   footprint: DFN300X200-10L
   prod_id: IC-14693
   description: 150mA Supercapacitor Charger
+  pin_count: 11
 - ref: U3
   value: ADM4210_1
   footprint: TSOT6
   prod_id: IC-14694
   description: Hot Swap Controller (In-Rush Current Limiter)
+  pin_count: 6
 - ref: U4
   value: u-blox_ZOE_M8Q-0-10
   footprint: UBLOX_ZOE_M8-0-10
   prod_id: IC-14251
   description: UBLOX ZOE-M8Q-0-10
+  pin_count: 51
+  nc_pins: {NC: 6 13 14 15 28 42 51, SQI_O: 30 45, TIMEPULSE: '33', LNA_EN: '35', P1015: '36', PI013/!EXTINT: '43', D_SEL: '48'}
 - ref: U5
   value: AS179-92
   footprint: SOT-6
   prod_id: IC-15047
   description: SKYWORKS SOLUTIONS - AS179-92LF - IC, SWITCH, RF, SPDT, 0.02-3.0GHZ
+  pin_count: 6
 - ref: U6
   value: MS8607-02BA01
   footprint: MS8607-02BA01
   prod_id: IC-15048
   description: PHT Combination Sensor
+  pin_count: 4
 - ref: U7
   value: Artemis module
   footprint: ARTEMIS_FP
   prod_id: SUB-14402
   description: The Artemis Module from SparkFun is a Cortex-M4F with BLE 5
+  pin_count: 59
+  nc_pins: {AD16(TRIG0/SCCRST): AD16, (SLSCK/SLSCL/CLKOUT)D0: D0, (SLSDO/SLSDA)D1: D1, (SLSDI)D2: D2, (SLNCE/I2SWCLK)D3: D3, (ADCD1P/TX1/PDMCLK)D14: D14, (RX1/TRIG1/PDMDATA)D36: D36, (SDO3/RX1)D38: D38, (I2SWCLK/CMPOUT)~D23: ~D23, (SWO/I2SDAT/PDMDATA)~D45: ~D45}
 - ref: U8
   value: V_SUPERVISOR
   footprint: SOT-23-3
   prod_id: IC-15065
   voltage: '2.4'
   description: BD48xxx - Voltage Detector IC
+  pin_count: 3
 - ref: U9
   value: MCP73831
   footprint: SOT-23-5
   prod_id: IC-09995
   description: MCP73831T Li-Ion, Li-Pol Controller
+  pin_count: 5
 - ref: X1
   value: 32.768kHz
   footprint: CRYSTAL-SMD-3.2X1.5MM

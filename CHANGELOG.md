@@ -4,6 +4,16 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.11 (2026-11-04)
+
+New reply fields, all optional. One value changes: the neighborhood summary's `pin_count`.
+
+### Fixed
+
+- **`board_get` names a part's unconnected pins:** focus on the DT1042-04 on SparkFun's Thing Plus ESP32-S3 showed 4 of its 6 pins, so its two spare channels, left unconnected, looked the same as pins the extraction had dropped, and checking took the full netlist. A focused part now has `pin_count`, its own pin count, and `nc_pins`, its pins on no net by pad (`{"I/O1": "1", "I/O2": "3"}`; `{}` when every pin is connected). They come from each board's footprints (KiCad, PADS) or symbols (Eagle): 5,438 parts on 285 boards, 95% of the ICs on boards with a netlist, 1,735 of them with NC pins. Eagle supply pins join the net of their name without a wire, so they're never listed as NC; footprint pads that aren't pins (a mounting tab outside the symbol, an unplated hole, a PADS terminal with no copper) don't count.
+- **Neighborhood `pin_count`** in the `board_get` summary is the part's own pin count where known (the DT1042-04: 6), not its pins in the netlist (4).
+- **Board parser:** `openpyxl` is in the dev dependencies; re-parsing an Espressif board failed without it (it reads their BOM spreadsheets). `parse_boards.py --pins` adds the pin fields to existing board files from the cached sources without re-parsing them, so hand fixes stay.
+
 ## 0.8.10 (2026-11-04)
 
 ### Fixed

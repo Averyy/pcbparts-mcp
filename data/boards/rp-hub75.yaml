@@ -113,11 +113,14 @@ components:
   value: 2x8 header
   footprint: 2X8
   lcsc: C30734
+  pin_count: 16
 - ref: J2
   value: USB-C
   footprint: USB-C
   lcsc: C2988369
   description: USB 2.0-only 16P Type-C Receptacle connector
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
   value: 1x2 screw terminal
   footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08
@@ -127,10 +130,12 @@ components:
   footprint: USB_A_Kycon_KUSBX-AS1N-B_Horizontal
   lcsc: C2346
   description: USB Type A connector
+  pin_count: 5
 - ref: J6
   value: 1x10 header
   footprint: JST_XH_S10B-XH-A-1
   lcsc: C491718
+  pin_count: 10
 - ref: L1
   value: 3.3uH
   footprint: '1008'
@@ -170,18 +175,23 @@ components:
   value: AMS1117-3.3
   footprint: SOT-223-3_TabPin2
   lcsc: C6186
+  pin_count: 3
 - ref: U2
   value: RP2350_60QFN
   footprint: RP2350-QFN-60-1EP
   lcsc: C42411118
+  pin_count: 61
+  nc_pins: {GPIO14: '18', GPIO15: '19', SWCLK: '24', SWD: '25', RUN: '26', GPIO16: '27', GPIO17: '28', GPIO25: '37', GPIO26_ADC0: '40', GPIO27_ADC1: '41', GPIO28_ADC2: '42', GPIO29_ADC3: '43'}
 - ref: U3
   value: ZD25WQ80CTIGT
   footprint: SOIC-8
   lcsc: C7525143
+  pin_count: 8
 - ref: Y1
   value: TXM12M0004322CBCDO00T
   footprint: SMD3225
   lcsc: C362368
+  pin_count: 4
 nets:
 - name: +1V1
   pins:

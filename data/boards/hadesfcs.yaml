@@ -21,6 +21,7 @@ components:
 - ref: ANT1
   value: 5-1814832-1
   footprint: TE_5-1814832-1
+  pin_count: 5
 - ref: BAT1
   value: XT60-M
   footprint: AMASS_XT60-M
@@ -40,9 +41,13 @@ components:
 - ref: C13
   value: 2.2uF
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C14
   value: 2.2uF
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C15
   value: 10uF
   footprint: '0603'
@@ -125,9 +130,13 @@ components:
 - ref: C37
   value: 2.2uF
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C38
   value: 2.2uF
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: C39
   value: 10uF
   footprint: '0603'
@@ -306,9 +315,11 @@ components:
 - ref: HSE1
   value: 25MHz
   footprint: Crystal_SMD_Abracon_ABM8G-4Pin
+  pin_count: 4
 - ref: HSE2
   value: 25MHz
   footprint: Crystal_SMD_Abracon_ABM8G-4Pin
+  pin_count: 4
 - ref: I2C3_FCC1
   value: 1x4 header
   footprint: Molex_PicoBlade_53048-0410
@@ -318,15 +329,22 @@ components:
 - ref: JP1
   value: solder jumper
   footprint: SJ-2
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: JP2
   value: solder jumper
   footprint: SJ-2
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: JP3
   value: solder jumper
   footprint: SJ-2
+  pin_count: 3
 - ref: JP4
   value: solder jumper
   footprint: SJ-2
+  pin_count: 3
+  nc_pins: {'3': '3'}
 - ref: L1
   value: 15uH
   footprint: INDPM135125X650N
@@ -339,12 +357,18 @@ components:
 - ref: LED10
   value: R
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: LED11
   value: Y
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: LED12
   value: B
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: LED13
   value: G
   footprint: '0603'
@@ -357,33 +381,49 @@ components:
 - ref: LED3
   value: R
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: LED4
   value: R
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: LED5
   value: Y
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: LED6
   value: B
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: LED7
   value: B
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: LED8
   value: B
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: LED9
   value: R
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: NAVC1
   value: STM32F405RGTx
   footprint: LQFP-64
 - ref: PWM_POW1
   value: 2x8 header
   footprint: 2X8
+  pin_count: 16
 - ref: PWM_SIG1
   value: 2.54mm
   footprint: 1X8
+  pin_count: 8
 - ref: R1
   value: 10mohm
   footprint: '2512'
@@ -402,9 +442,13 @@ components:
 - ref: R13
   value: 4.7kohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R14
   value: 4.7kohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R15
   value: 330ohm
   footprint: '0603'
@@ -432,9 +476,13 @@ components:
 - ref: R22
   value: 10kohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R23
   value: 620ohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R24
   value: 10kohm
   footprint: '0402'
@@ -446,9 +494,13 @@ components:
 - ref: R26
   value: 10kohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R27
   value: 10kohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R28
   value: 4.7kohm
   footprint: '0402'
@@ -463,12 +515,18 @@ components:
 - ref: R30
   value: 4.7kohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R31
   value: 4.7kohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R32
   value: 620ohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R33
   value: 330ohm
   footprint: '0603'
@@ -498,33 +556,53 @@ components:
 - ref: R40
   value: 10ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: R41
   value: 10ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: R42
   value: 10ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: R43
   value: 10ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: R44
   value: 10ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: R45
   value: 10ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: R46
   value: 10ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: R47
   value: 10ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: R48
   value: 10ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: R49
   value: 10ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1', '2': '2'}
 - ref: R5
   value: 6.8kohm
   footprint: 0805
@@ -532,27 +610,43 @@ components:
 - ref: R50
   value: 0ohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R51
   value: 0ohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R52
   value: 22ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R53
   value: 22ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R54
   value: 560ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R55
   value: 22ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R56
   value: 22ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R57
   value: 560ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R58
   value: 560ohm
   footprint: '0603'
@@ -583,6 +677,8 @@ components:
   height: '2'
   manufacturer: Micrel
   mpn: MIC26903YJL-TR
+  pin_count: 31
+  nc_pins: {'3': '3'}
 - ref: REG2
   value: LD39200PU33R
   footprint: SON95P300X300X100-7N-D
@@ -590,6 +686,8 @@ components:
   height: '1'
   manufacturer: STMicroelectronics
   mpn: LD39200PU33R
+  pin_count: 7
+  nc_pins: {'4': '4'}
 - ref: SW1
   value: SKRPANE010
   footprint: SKRPADE010
@@ -597,6 +695,7 @@ components:
   height: '2'
   manufacturer: ALPS
   mpn: SKRPANE010
+  pin_count: 4
 - ref: SW2
   value: TDD01H0SB1R
   footprint: SOT-3
@@ -604,6 +703,7 @@ components:
   height: '2.3'
   manufacturer: C & K COMPONENTS
   mpn: TDD01H0SB1R
+  pin_count: 3
 - ref: SW3
   value: TDD01H0SB1R
   footprint: SOT-3
@@ -611,6 +711,7 @@ components:
   height: '2.3'
   manufacturer: C & K COMPONENTS
   mpn: TDD01H0SB1R
+  pin_count: 3
 - ref: SW4
   value: TDD01H0SB1R
   footprint: SOT-3
@@ -618,6 +719,7 @@ components:
   height: '2.3'
   manufacturer: C & K COMPONENTS
   mpn: TDD01H0SB1R
+  pin_count: 3
 - ref: SW5
   value: SKRPANE010
   footprint: SKRPADE010
@@ -625,6 +727,7 @@ components:
   height: '2'
   manufacturer: ALPS
   mpn: SKRPANE010
+  pin_count: 4
 - ref: SWD1
   value: 2x5 header
   footprint: 2X5
@@ -634,18 +737,27 @@ components:
 - ref: U1
   value: INA219AIDCNR
   footprint: SOT-8
+  pin_count: 8
 - ref: U10
   value: u-blox MAX-8Q
   footprint: GPS18P-SMD-1.1-10X9.6MM
+  pin_count: 18
+  nc_pins: {'2': '2', '3': '3', '4': '4', '5': '5', '13': '13', '15': '15', '16': '16', '17': '17'}
 - ref: U11
   value: otter:CH330
   footprint: SSOP-8
+  pin_count: 8
+  nc_pins: {'4': '4', '6': '6', '7': '7'}
 - ref: U12
   value: otter:CH330
   footprint: SSOP-8
+  pin_count: 8
+  nc_pins: {'4': '4', '6': '6', '7': '7'}
 - ref: U2
   value: PCA9685PW
   footprint: TSSOP-28
+  pin_count: 28
+  nc_pins: {'15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '25': '25'}
 - ref: U3
   value: 24CW1280T-I_OT
   footprint: SOT-5
@@ -653,6 +765,8 @@ components:
   height: '1.45'
   manufacturer: Microchip
   mpn: 24CW1280T-I/OT
+  pin_count: 5
+  nc_pins: {'5': '5'}
 - ref: U4
   value: W25N01GVZEIG
   footprint: SON127P800X600X80-9N-D
@@ -660,15 +774,22 @@ components:
   height: '0.8'
   manufacturer: Winbond
   mpn: W25N01GVZEIG TR
+  pin_count: 9
+  nc_pins: {'1': '1', '2': '2', '5': '5', '6': '6'}
 - ref: U5
   value: BMI088
   footprint: PQFN-16
+  pin_count: 16
+  nc_pins: {'1': '1', '2': '2', '5': '5', '12': '12', '13': '13', '16': '16'}
 - ref: U6
   value: TMP100
   footprint: SOT-23-6
+  pin_count: 6
 - ref: U7
   value: MPRLS0025PA00001A
   footprint: XDCR_MPRLS0025PA00001A
+  pin_count: 12
+  nc_pins: {'1': '1', '5': '5', '7': '7', '9': '9', '11': '11'}
 - ref: U8
   value: IIS2MDCTR
   footprint: IIS2MDCTR
@@ -676,6 +797,8 @@ components:
   height: '0.7'
   manufacturer: STMicroelectronics
   mpn: IIS2MDCTR
+  pin_count: 12
+  nc_pins: {'2': '2', '7': '7', '11': '11', '12': '12'}
 - ref: U9
   value: 24CW1280T-I_OT
   footprint: SOT-5
@@ -683,6 +806,8 @@ components:
   height: '1.45'
   manufacturer: Microchip
   mpn: 24CW1280T-I/OT
+  pin_count: 5
+  nc_pins: {'5': '5'}
 - ref: UART3_FCC1
   value: 1x4 header
   footprint: Molex_PicoBlade_53048-0410
@@ -698,15 +823,21 @@ components:
 - ref: USB1
   value: USB Micro-B
   footprint: USB_Micro-B_Wuerth_629105150521_CircularHoles
+  pin_count: 6
 - ref: USB2
   value: USB Micro-B
   footprint: USB_Micro-B_Wuerth_629105150521_CircularHoles
+  pin_count: 6
 - ref: USB3
   value: USB Micro-B
   footprint: USB_Micro-B_Wuerth_629105150521_CircularHoles
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: USB4
   value: USB Micro-B
   footprint: USB_Micro-B_Wuerth_629105150521_CircularHoles
+  pin_count: 6
+  nc_pins: {'4': '4'}
 nets:
 - name: +3V3
   pins:

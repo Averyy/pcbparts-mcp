@@ -116,6 +116,7 @@ components:
   value: D_ACAC
   footprint: SOT323
   description: Dual DIODE
+  pin_count: 3
 - ref: D11
   value: BAT20J
   footprint: SOD-323
@@ -124,24 +125,29 @@ components:
   value: D_ACAC
   footprint: SOT323
   description: Dual DIODE
+  pin_count: 3
 - ref: D3
   value: D_ACAC
   footprint: SOT323
   description: Dual DIODE
+  pin_count: 3
 - ref: D5
   value: D_ACAC
   footprint: SOT323
   description: Dual DIODE
+  pin_count: 3
 - ref: J3
   value: Qwiic connector
   footprint: 1X04
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J4
   value: USB-C
   footprint: USB-C
   prod_id: CONN-14122
   description: USB Type C 16Pin Connector
+  pin_count: 18
 - ref: JP1
   value: JST PH 2-pin
   footprint: JST-2-SMD
@@ -177,11 +183,13 @@ components:
   footprint: SC70-6
   prod_id: TRANS-13337
   description: MBT3904DW1 Dual NPN Transistors
+  pin_count: 6
 - ref: Q2
   value: 2.5A/30V
   footprint: SOT-23-3
   prod_id: TRANS-11308
   description: Generic PMOSFET IRLML2244 - TRANS-11153 (SOT-23 -20V -4
+  pin_count: 3
 - ref: R11
   value: 10kohm
   footprint: '0603'
@@ -264,10 +272,13 @@ components:
 - ref: SV1
   value: MA06-1
   footprint: MA06-1
+  pin_count: 6
 - ref: SW2
   value: KMR2
   footprint: BTN_KMR2
   description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
+  pin_count: 4
+  nc_pins: {P1: A', S1: B'}
 - ref: SWIO1
   value: TPSQTP13R
   footprint: TP13R
@@ -283,9 +294,12 @@ components:
 - ref: U$2
   value: AFE4400
   footprint: QFN-40
+  pin_count: 44
+  nc_pins: {DNC@1: '5', DNC@2: '6', RSVD: '9', DNC@3: '10', DNC@4: '34', DNC@5: '35'}
 - ref: U$24
   value: JS102011SCQN
   footprint: JS102011SCQN
+  pin_count: 3
 - ref: U$27
   value: 520-327-12.5-34B
   footprint: ECX-31B
@@ -308,21 +322,30 @@ components:
   value: AP2112K-3.3
   footprint: SOT-23-5
   description: Voltage Regulator LDO
+  pin_count: 5
+  nc_pins: {BP: '4'}
 - ref: U3
   value: CP2102N
   footprint: QFN24
   prod_id: IC-14020
+  pin_count: 23
+  nc_pins: {'!RI!/CLK': '1', GPIO3/WAKEUP: '11', GPIO2/RS485: '12', GPIO1/RXT: '13', GPIO0/TXT: '14', SUSPENDB: '15', SUSPEND: '17', CTS: '18', DSR: '22', DCD: '24'}
 - ref: U4
   value: ESP-WROOM-32
   footprint: ESP-WROOM-32
+  pin_count: 39
+  nc_pins: {SENSOR_VN: '5', IO34: '6', SD2: '17', SD3: '18', CMD: '19', CLK: '20', SDO: '21', SD1: '22', IO15: '23', IO2: '24', NC: '32'}
 - ref: U6
   value: MCP73831
   footprint: SOT-23-5
   description: Microchip's MCP73831
+  pin_count: 5
 - ref: X1
   value: DB9
   footprint: DB9
   description: DB9 Connector
+  pin_count: 11
+  nc_pins: {'1': '1', '4': '4', '6': '6', '8': '8'}
 nets:
 - name: '!ADC_RESET'
   pins: [R3.2, U$2.!RESET, U4.IO14]

@@ -19,14 +19,17 @@ components:
   value: -3dB
   footprint: PAT1220
   description: Susumu PAT1220 SMD chip attenuator
+  pin_count: 3
 - ref: ATT2
   value: -3dB
   footprint: PAT1220
   description: Susumu PAT1220 SMD chip attenuator
+  pin_count: 3
 - ref: ATT3
   value: -6dB
   footprint: PAT1220
   description: Susumu PAT1220 SMD chip attenuator
+  pin_count: 3
 - ref: C1
   value: 1uF
   footprint: '0603'
@@ -107,51 +110,62 @@ components:
   value: MCP1700
   footprint: SOT23
   description: 250 mA, 16V, Low Quiescent Current LDO Regulator
+  pin_count: 3
 - ref: IC2
   value: HMC431LP4
   footprint: QFN24
   description: MMIC VCO w/ BUFFER AMPLIFIER, 2.25 - 2.5 GHz
+  pin_count: 5
 - ref: IC3
   value: HMC476MP86
   footprint: WW107
   description: Mini-Circuits ERA-2SM+ MMIC amplifier
+  pin_count: 4
 - ref: IC4
   value: HMC219AMS8
   footprint: 8-MSOP
   description: Hittite HMC219AMS8 double-balanced microwave mixer
+  pin_count: 7
 - ref: IC5
   value: HMC474MP86E
   footprint: WW107
   description: Mini-Circuits ERA-2SM+ MMIC amplifier
+  pin_count: 4
 - ref: IC6
   value: HMC474MP86E
   footprint: WW107
   description: Mini-Circuits ERA-2SM+ MMIC amplifier
+  pin_count: 4
 - ref: IC7
   value: HMC717LP3
   footprint: 16-QFN
   description: Hittite HMC717LP3 6GHz LNA
+  pin_count: 17
 - ref: J1
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J2
   value: IF Out
   footprint: J502-ND-142-0701-881
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-881
   description: SMA 50 Ohm
+  pin_count: 5
 - ref: J3
   value: Tx Antenna
   footprint: J502-ND-142-0701-881
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-881
   description: SMA 50 Ohm
+  pin_count: 5
 - ref: J4
   value: Rx Antenna
   footprint: J502-ND-142-0701-881
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-881
   description: SMA 50 Ohm
+  pin_count: 5
 - ref: LED1
   value: Power
   footprint: '0603'
@@ -162,10 +176,12 @@ components:
   value: 2N7002P
   footprint: SOT-23-3
   description: 2N7002 N-ch MOSFET in SOT-23
+  pin_count: 3
 - ref: Q2
   value: BSS84
   footprint: SOT-23-3
   description: DMP2035U P-channel MOSFET in SOT-23
+  pin_count: 3
 - ref: R1
   value: 1kohm
   footprint: '0603'

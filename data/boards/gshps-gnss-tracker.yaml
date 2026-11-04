@@ -148,6 +148,7 @@ components:
   value: DRTR5V0U2SR-7
   footprint: SOT-143
   mpn: DRTR5V0U2SR-7
+  pin_count: 4
 - ref: D1
   value: red LED
   footprint: '0603'
@@ -187,22 +188,31 @@ components:
   value: USB-C
   footprint: USB-C
   mpn: USB4115-03-C
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
   value: 1x3 header
   footprint: Molex_PicoBlade_53261-0371
   mpn: '0532610371'
+  pin_count: 3
 - ref: J4
   value: SWD 10-pin
   footprint: 2X5
   mpn: '4048'
+  pin_count: 10
+  nc_pins: {SWO/TDO: '6', KEY: '7', NC/TDI: '8', GNDDetect: '9'}
 - ref: J5
   value: 1x24 header
   footprint: Hirose_FH34SRJ-24S-0.5SH
   mpn: FH34SRJ-24S-0.5SH(50)
+  pin_count: 24
+  nc_pins: {NC@1: '1', NC@4: '4', NC@6: '6', NC@7: '7', NC@19: '19'}
 - ref: J6
   value: DM3AT-SF
   footprint: microSD_HC_Hirose_DM3D-SF
   mpn: DM3AT-SF-PEJM5
+  pin_count: 11
+  nc_pins: {DAT2: '1', DAT1: '8'}
 - ref: L1
   value: 10uH
   footprint: '1008'
@@ -212,38 +222,47 @@ components:
   value: 20V 4.2A
   footprint: SOT-23
   mpn: DMG2305UX-7
+  pin_count: 3
 - ref: Q2
   value: 20V 4.2A
   footprint: SOT-23
   mpn: DMG2305UX-7
+  pin_count: 3
 - ref: Q3
   value: 30V 2.2A
   footprint: SOT-23
   mpn: DMN3200U-7
+  pin_count: 3
 - ref: Q4
   value: 30V 2.2A
   footprint: SOT-23
   mpn: DMN3200U-7
+  pin_count: 3
 - ref: Q5
   value: 20V 4.2A
   footprint: SOT-23
   mpn: DMG2305UX-7
+  pin_count: 3
 - ref: Q6
   value: 20V 4.2A
   footprint: SOT-23
   mpn: DMG2305UX-7
+  pin_count: 3
 - ref: Q7
   value: 30V 2.2A
   footprint: SOT-23
   mpn: DMN3200U-7
+  pin_count: 3
 - ref: Q8
   value: 30V 2.2A
   footprint: SOT-23
   mpn: DMN3200U-7
+  pin_count: 3
 - ref: Q9
   value: 20V 4.2A
   footprint: SOT-23
   mpn: DMG2305UX-7
+  pin_count: 3
 - ref: R1
   value: 5.1kohm
   footprint: '0402'
@@ -398,24 +417,34 @@ components:
 - ref: U1
   value: TP4056
   footprint: HSOP-8-1EP
+  pin_count: 9
+  nc_pins: {TEMP: '1'}
 - ref: U2
   value: AP2112K-3.3
   footprint: SOT-23-5
   mpn: AP2112K-3.3TRG1
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U3
   value: W25Q128JVS
   footprint: SOIC-8
+  pin_count: 8
 - ref: U4
   value: RP2040
   footprint: QFN-56-1EP
+  pin_count: 57
+  nc_pins: {GPIO22: '34', GPIO27_ADC1: '39', GPIO28_ADC2: '40', GPIO29_ADC3: '41'}
 - ref: U5
   value: PA1616S
   footprint: PA1616S
   mpn: PA1616S
+  pin_count: 20
+  nc_pins: {NC@6: '6', NC@7: '7', EX_ANT: '11', RTCM: '14', TX_1: '15', NC@16: '16', NC@17: '17', NC@18: '18', NC@20: '20'}
 - ref: Y1
   value: 12.000MHz 18pF
   footprint: Crystal_SMD_SeikoEpson_FA238-4Pin
   mpn: FA-238V 12.0000MA-C5
+  pin_count: 4
 nets:
 - name: +1V1
   pins: [C15.2, C7.2, C8.2, U4.DVDD@23, U4.DVDD@50, U4.VREG_VOUT]

@@ -77,6 +77,7 @@ components:
   value: JST SH 4P
   footprint: JST_SH4
   lcsc: C2845363
+  pin_count: 6
 - ref: D1
   value: PMEG3050
   footprint: SOD-128
@@ -92,21 +93,28 @@ components:
 - ref: IC1
   value: CH343P
   footprint: QFN16_3MM
+  pin_count: 17
+  nc_pins: {'!ACT': '10', DCD: '11', DSR: '14', CTS: '15', RI: '16'}
 - ref: IC2
   value: ICS-43434
   footprint: SPH0645LM4H
+  pin_count: 6
 - ref: IC4
   value: 74LVC2G34
   footprint: SC70-6L
+  pin_count: 6
 - ref: IC5
   value: 74LVC2G34
   footprint: SC70-6L
+  pin_count: 6
 - ref: JP1
   value: 9p 2.54mm Terminal
   footprint: 1X09_2.54MMTERMINAL
+  pin_count: 9
 - ref: JP3
   value: 2x3 header
   footprint: 2X03
+  pin_count: 6
 - ref: L1
   value: 8.2uH 150mOhm
   footprint: INDUCTOR
@@ -115,9 +123,12 @@ components:
   value: WS2812B
   footprint: SK6805_1515
   lcsc: C2890035
+  pin_count: 4
+  nc_pins: {DO: '3'}
 - ref: O1
   value: GENERIC_IR_RECV
   footprint: IRM-H6XXT
+  pin_count: 4
 - ref: PTC1
   value: 5A PTC
   footprint: PTC2920
@@ -126,14 +137,17 @@ components:
   value: AONR21307
   footprint: POWERDI3333
   description: P-Channel Mosfet
+  pin_count: 5
 - ref: Q5
   value: DUAL NPN
   footprint: SOT363
   description: Dual N-Channel MOSFET
+  pin_count: 6
 - ref: R1
   value: 10kohm
   footprint: RESPACK
   pullup: SDA
+  pin_count: 8
 - ref: R10
   value: 14kohm
   footprint: '0603'
@@ -191,38 +205,54 @@ components:
   value: KMR2
   footprint: BTN_RKB2
   description: SMT Tact Switches RKB2
+  pin_count: 4
 - ref: SW2
   value: KMR2
   footprint: BTN_RKB2
   description: SMT Tact Switches RKB2
+  pin_count: 4
 - ref: SW3
   value: 3-position switch
   footprint: MSK-13C01
+  pin_count: 8
+  nc_pins: {G$1.1: '1'}
 - ref: U$10
   value: TPS54202
   footprint: SOT-23-6
+  pin_count: 6
+  nc_pins: {EN: '5'}
 - ref: U2
   value: NCP718ASN500T1G
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: X2
   value: JST SH 3P
   footprint: JST_SH3
+  pin_count: 5
 - ref: X3
   value: HUSB238
   footprint: DFN10
+  pin_count: 11
+  nc_pins: {D+: '2', D-: '3'}
 - ref: X4
   value: ESP32-MINI-1
   footprint: ESP32-MINI-1
+  pin_count: 59
+  nc_pins: {IO12/A2_5: '17', IO15/A2_3: '19', IO5: '29'}
 - ref: X5
   value: USB Type C
   footprint: USB-C
   lcsc: C165948
   description: USB Type-C USB 2.0
+  pin_count: 16
+  nc_pins: {SBU1: A8, SBU2: B8, MT: M1 M2 M3 M4}
 - ref: X7
   value: 2.1mm 5A
   footprint: DCJACK_2MM_PTH
   description: DC Barrel Jack
+  pin_count: 3
 nets:
 - name: '!RESET'
   pins:

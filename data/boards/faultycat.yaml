@@ -101,6 +101,8 @@ components:
 - ref: D10
   value: SM4005PL-TP
   footprint: SOD-123F
+  pin_count: 2
+  nc_pins: {A: '2'}
 - ref: D2
   value: SM4005PL-TP
   footprint: SOD-123F
@@ -140,6 +142,7 @@ components:
 - ref: J3
   value: 1x10 header
   footprint: 1X10
+  pin_count: 10
 - ref: J7
   value: 1x2 header
   footprint: 1X2
@@ -152,29 +155,38 @@ components:
 - ref: P1
   value: USB-C
   footprint: C393939
+  pin_count: 7
 - ref: Q1
   value: AO3422
   footprint: SOT-23
+  pin_count: 3
 - ref: Q2
   value: AO3422
   footprint: SOT-23
+  pin_count: 3
 - ref: Q3
   value: LDA111STR
   footprint: SOP-6
+  pin_count: 6
+  nc_pins: {NC: '3', B: '6'}
 - ref: Q4
   value: RGT16BM65DTL
   footprint: TO-252
+  pin_count: 3
 - ref: Q5
   value: DMG3415U-7
   footprint: SOT-23
+  pin_count: 3
 - ref: Q7
   value: IRLML2502
   footprint: SOT-23
   description: N-Channel MOSFET - Generic
+  pin_count: 3
 - ref: Q8
   value: IRF7807PBF
   footprint: SOIC-8_SI
   description: N-Channel MOSFET IRF9410 and NDS8434 are common, SOIC-8 parts.
+  pin_count: 8
 - ref: R1
   value: 10ohm
   footprint: '0603'
@@ -281,33 +293,46 @@ components:
   value: 3-position switch
   footprint: Sw3P1T
   description: Switch, three position, single pole triple throw, 3 position switch, SP3T
+  pin_count: 4
 - ref: T1
   value: ATB322524
   footprint: ATB3225240110T000
+  pin_count: 4
 - ref: T2
   value: ATB322524
   footprint: ATB3225240110T000
+  pin_count: 4
 - ref: U1
   value: AP2112K-3.3
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U2
   value: W25Q16JV
   footprint: W25Q16JVUUIQ
+  pin_count: 9
+  nc_pins: {EP: '9'}
 - ref: U3
   value: RP2040
   footprint: RP2040-QFN-56
+  pin_count: 57
+  nc_pins: {GPIO12: '15', GPIO13: '16', GPIO15: '18', SWCLK: '24', SWD: '25', GPIO19: '30', GPIO21: '32', GPIO22: '34', GPIO23: '35', GPIO24: '36', GPIO25: '37'}
 - ref: U4
   value: TXS0108EPW
   footprint: TSSOP-20
   description: Bidirectional level-shifting voltage translator, TSSOP-20
+  pin_count: 20
 - ref: U5
   value: TLV75718PDBV
   footprint: SOT-23-5
   description: 1A Low IQ Small Size Low Dropout Voltage Regulator, Fixed Output 1.8V, SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U6
   value: SN74LVC1T45DBV
   footprint: SOT-23-6
   description: Single-Bit Dual-Supply Bus Transceiver With Configurable Voltage Translation
+  pin_count: 6
 - ref: Y1
   value: 12Mhz
   footprint: SMD5032

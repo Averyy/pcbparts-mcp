@@ -67,21 +67,28 @@ components:
 - ref: J1
   value: USB Micro-B
   footprint: U254051N4BH806
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: J2
   value: 1x2 header
   footprint: 1X2
 - ref: J3
   value: 1x8 header
   footprint: 1X8
+  pin_count: 8
+  nc_pins: {'8': '8'}
 - ref: J4
   value: 1x9 header
   footprint: 1X9
+  pin_count: 9
+  nc_pins: {'1': '1', '4': '4'}
 - ref: J5
   value: 1x2 header
   footprint: 1X2
 - ref: J6
   value: SWD
   footprint: 1X4
+  pin_count: 4
 - ref: R1
   value: 1kohm
   footprint: 0805
@@ -109,6 +116,8 @@ components:
 - ref: SW1
   value: ON/OFF
   footprint: Micro_interruptor_SPDT
+  pin_count: 4
+  nc_pins: {'3': '3', NC: NC}
 - ref: SW2
   value: RST
   footprint: SW_SPST_TL3342
@@ -121,21 +130,31 @@ components:
 - ref: U1
   value: AP2112K-3.3
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {'4': '4'}
 - ref: U2
   value: ATSAMD21E18A
   footprint: QFN-32-1EP
+  pin_count: 33
+  nc_pins: {'1': '1', '2': '2', '4': '4', '16': '16', '21': '21', '22': '22', '33': '33'}
 - ref: U3
   value: ATSAMD21E18A
   footprint: TQFP-32
+  pin_count: 32
+  nc_pins: {'1': '1', '2': '2', '4': '4', '16': '16', '21': '21', '22': '22'}
 - ref: U4
   value: MCP73831-2-OT
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U5
   value: TC4424
   footprint: SOIC-8
+  pin_count: 8
+  nc_pins: {'1': '1', '8': '8'}
 - ref: U6
   value: GD25Q16C
   footprint: SOIC-8
+  pin_count: 8
 nets:
 - name: +3V3
   pins:

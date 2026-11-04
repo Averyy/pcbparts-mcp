@@ -29,9 +29,11 @@ components:
 - ref: CONN3
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: CONN4
   value: STEMMA QT
   footprint: JST_SH4
+  pin_count: 6
 - ref: D1
   value: green LED
   footprint: '0603'
@@ -44,13 +46,16 @@ components:
 - ref: JP1
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: JP2
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: R1
   value: 10kohm
   footprint: RESPACK
   pulldown: SCL
+  pin_count: 8
 - ref: R2
   value: 10kohm
   footprint: '0603'
@@ -61,6 +66,7 @@ components:
   value: ADS1115IDGST
   footprint: MSOP10
   description: 16-bit 4-channel I2C ADC
+  pin_count: 10
 nets:
 - name: ADDR
   pins: [JP2.5, R1.G$1.1, U1.ADDR]

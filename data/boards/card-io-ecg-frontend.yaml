@@ -70,21 +70,27 @@ components:
 - ref: Q1
   value: T2N7002AK,LM
   footprint: SOT-23
+  pin_count: 3
 - ref: Q2
   value: NX3008PBK,215
   footprint: SOT-23
+  pin_count: 3
 - ref: Q3
   value: NX3008PBK,215
   footprint: SOT-23
+  pin_count: 3
 - ref: Q4
   value: T2N7002AK,LM
   footprint: SOT-23
+  pin_count: 3
 - ref: Q5
   value: NX3008PBK,215
   footprint: SOT-23
+  pin_count: 3
 - ref: Q6
   value: T2N7002AK,LM
   footprint: SOT-23
+  pin_count: 3
 - ref: R1
   value: 2kohm
   footprint: '0603'
@@ -125,6 +131,8 @@ components:
 - ref: R5
   value: 2kohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R6
   value: 2kohm
   footprint: '0603'
@@ -140,9 +148,12 @@ components:
 - ref: U1
   value: ADS1291/2
   footprint: ADS1291-2
+  pin_count: 33
+  nc_pins: {nCS: '18', DIN: '19', SCLK: '20', DOUT: '21', nDRDY: '22', GPIO2/RCLK2: '25'}
 - ref: U2
   value: KC2016Z2
   footprint: KC2016Z
+  pin_count: 4
 nets:
 - name: +3.3V
   pins: [C3.1, C4.1, R14.2, R17.2, U1.DVDD, U2.VCC]

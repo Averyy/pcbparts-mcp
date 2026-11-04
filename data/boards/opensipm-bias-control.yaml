@@ -96,6 +96,8 @@ components:
   manufacturer: Linear Technology
   mpn: LT8364EMSE#TRPBF
   description: Switching Voltage Regulators Low IQ Boost/SEPIC/ Inverting Converter with 4A
+  pin_count: 13
+  nc_pins: {NC: '6', SYNC/MODE: '12'}
 - ref: IC2
   value: ATSAMD21E18A-AF
   footprint: ATSAMD21E18A-AF
@@ -103,6 +105,8 @@ components:
   manufacturer: Microchip
   mpn: ATSAMD21E18A-AFT
   description: ARM Microcontrollers - MCU Cortex-M0+,64KB FLASH,8KB SRAM T&R, - 32TQFP 125C
+  pin_count: 32
+  nc_pins: {PA01: '2', PA03: '4', PA04: '5', PA05: '6', PA06: '7', PA07: '8', PA11: '14', PA14: '15', PA15: '16', PA16: '17', PA17: '18', PA18: '19', PA19: '20', PA22: '21', PA23: '22', PA27: '25', PA28: '27'}
 - ref: IC4
   value: MCP47FEB22A2-E_ST
   footprint: SOP-8
@@ -110,17 +114,24 @@ components:
   manufacturer: Microchip
   mpn: MCP47FEB22A2-E/ST
   description: Digital to Analog Converters - DAC Dual channel 12-bit nonvolatile, I2C DAC
+  pin_count: 8
+  nc_pins: {LAT/HVC: '6'}
 - ref: J2
   value: 1x4 header
   footprint: 1X4
+  pin_count: 4
 - ref: J3
   value: 1x6 header
   footprint: 2X3
+  pin_count: 6
+  nc_pins: {Pin_2: '2', Pin_3: '3'}
 - ref: J4
   value: USB-C
   footprint: CUI_UJ20-C-V-C-2-SMT-TR_fixedV2
   lcsc: https://jlcpcb.com/partdetail/SHOUHAN-TYPE_C_16PLC_H100/C3151747
   description: USB 2.0-only 16P Type-C Receptacle connector
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: L1
   value: 3.3uH
   footprint: SRP05204R7K
@@ -181,12 +192,16 @@ components:
 - ref: U1
   value: MIC5317-3.3
   footprint: MIC5317-3.3YM5-TR
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U2
   value: RT9072B
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U3
   value: MCP6C02T-020E
   footprint: SOT-23-6
+  pin_count: 6
 nets:
 - name: +3V3
   pins:

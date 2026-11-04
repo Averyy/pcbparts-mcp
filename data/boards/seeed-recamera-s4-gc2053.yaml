@@ -147,80 +147,97 @@ components:
   manufacturer: SUNGTECH
   mpn: ST-BTB-058060-B
   description: SMD BTB Female CONN;2*30P-0.5mm-17.7*4.4*4mm
+  pin_count: 60
+  nc_pins: {'1': '1', '3': '3', '4': '4', '5': '5', '6': '6', '17': '17', '19': '19', '21': '21', '23': '23', '25': '25', '27': '27', '28': '28', '29': '29', '30': '30', '31': '31', '50': '50', '52': '52', '54': '54', '56': '56', '58': '58', '60': '60'}
 - ref: J2
   value: 2x12 header
   footprint: BTB2x12P_0d4_7
   manufacturer: HRS
   mpn: DF30FC-24DS-0.4V
   description: SMD BTB Female CONN;2*12P-0.4mm-7.02*3.76*0.9mm
+  pin_count: 24
 - ref: J3
   value: 1.25-2A-WT
   footprint: GH2-1.25-7.4X5.3X3.5MM
   manufacturer: SiTuoZhan
   mpn: 1.25-2A-WT
   description: SMD Female Header-White;1*2P-1.25mm-90D
+  pin_count: 4
 - ref: M1
   value: PTH_5X2MM
   footprint: PTH
   description: PTH_5X2MM
+  pin_count: 1
+  nc_pins: {'1': '1'}
 - ref: M2
   value: PTH_5X2MM
   footprint: PTH
   description: PTH_5X2MM
+  pin_count: 1
+  nc_pins: {'1': '1'}
 - ref: MIC1
   value: HMD-4013B423-CR1
   footprint: MIC-5P-SMD-4X4MM
   manufacturer: LongHua
   mpn: HMD-4013B423-CR1
   description: SMD Micphone;ECM -42dB-None;L4*W4*H1.3mm
+  pin_count: 4
 - ref: Q2
   value: LBSS138WT1G
   footprint: SOT-323
   manufacturer: LRC
   mpn: LBSS138WT1G
   description: SMD MOSFET N-CH 50V-200mA;SOT-323-3
+  pin_count: 3
 - ref: Q3
   value: CJ2101
   footprint: SOT-323
   manufacturer: CJ
   mpn: CJ2101
   description: SMD MOSFET P-CH 20V-2.1A;SOT-323
+  pin_count: 3
 - ref: Q4
   value: LBSS138WT1G
   footprint: SOT-323
   manufacturer: LRC
   mpn: LBSS138WT1G
   description: SMD MOSFET N-CH 50V-200mA;SOT-323-3
+  pin_count: 3
 - ref: Q5
   value: LBSS138WT1G
   footprint: SOT-323
   manufacturer: LRC
   mpn: LBSS138WT1G
   description: SMD MOSFET N-CH 50V-200mA;SOT-323-3
+  pin_count: 3
 - ref: Q6
   value: CJ2101
   footprint: SOT-323
   manufacturer: CJ
   mpn: CJ2101
   description: SMD MOSFET P-CH 20V-2.1A;SOT-323
+  pin_count: 3
 - ref: Q7
   value: LBSS138WT1G
   footprint: SOT-323
   manufacturer: LRC
   mpn: LBSS138WT1G
   description: SMD MOSFET N-CH 50V-200mA;SOT-323-3
+  pin_count: 3
 - ref: Q8
   value: CJ2101
   footprint: SOT-323
   manufacturer: CJ
   mpn: CJ2101
   description: SMD MOSFET P-CH 20V-2.1A;SOT-323
+  pin_count: 3
 - ref: Q9
   value: LBSS138WT1G
   footprint: SOT-323
   manufacturer: LRC
   mpn: LBSS138WT1G
   description: SMD MOSFET N-CH 50V-200mA;SOT-323-3
+  pin_count: 3
 - ref: R1
   value: 2.2kohm
   footprint: '0201'
@@ -425,12 +442,14 @@ components:
   manufacturer: Nsiway
   mpn: NS4150B
   description: SMD IC Audio;Class-D AMP;MSOP8
+  pin_count: 8
 - ref: X1
   value: 9C24000004
   footprint: X4-SMD-2.0X1.6MM
   manufacturer: Faith Long
   mpn: 9C24000004
   description: SMD Oscillator;24MHZ-1.8V-15ppm-3mA-4P-L2.05*W1.65*H0.74mm
+  pin_count: 4
 nets:
 - name: /24MHz
   pins: [J2.4, R18.2]

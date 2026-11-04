@@ -101,12 +101,15 @@ components:
 - ref: Q1
   value: 2N7002
   footprint: SOT-23
+  pin_count: 3
 - ref: Q2
   value: PSMN025-80YLX
   footprint: LFPAK56
+  pin_count: 5
 - ref: Q3
   value: PSMN025-80YLX
   footprint: LFPAK56
+  pin_count: 5
 - ref: R1
   value: 0ohm
   footprint: '0603'
@@ -176,6 +179,7 @@ components:
 - ref: U1
   value: LM3424
   footprint: ETSSOP-20-1EP
+  pin_count: 21
 nets:
 - name: +VDC
   pins:

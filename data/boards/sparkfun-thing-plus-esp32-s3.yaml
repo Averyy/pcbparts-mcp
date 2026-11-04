@@ -142,26 +142,35 @@ components:
   footprint: WS2812_2020
   prod_id: DIO-15591
   description: RGB LED with integrated controller
+  pin_count: 4
+  nc_pins: {DOUT: '1'}
 - ref: J1
   value: USB-C
   footprint: USB-C
   prod_id: CONN-14122
   description: USB 2.0-only Type-C Receptacle connector
+  pin_count: 14
+  nc_pins: {NC@A8: A8, NC@B8: B8, NC@NC1: NC1, NC@NC2: NC2, NC@NC3: NC3}
 - ref: J2
   value: microSD_Friction
   footprint: microSD_Friction_Fit_Common
   prod_id: CONN-20948
   description: Micro SD socket External Pin
+  pin_count: 10
 - ref: J3
   value: JST_2mm_LiPo
   footprint: JST_SMD_2.0mm-2
   prod_id: CONN-11443
   description: 2 Pin 2mm JST Battery Connector
+  pin_count: 4
+  nc_pins: {NC1: NC1, NC2: NC2}
 - ref: J4
   value: Qwiic connector
   footprint: JST_SMD_1.0mm-4_RA
   prod_id: CONN-13694
   description: 4 pin JST 1mm polarized connector for I2C
+  pin_count: 6
+  nc_pins: {NC@NC1: NC1, NC@NC2: NC2}
 - ref: JP1
   value: solder jumper
   footprint: SJ-2
@@ -267,30 +276,40 @@ components:
   footprint: SOT-23-5
   prod_id: VREG-19034
   description: 600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U2
   value: DT1042-04
   footprint: SOT-23-6
   prod_id: IC-13538
   description: Very low capacitance ESD protection diode, 4 data-line, SOT-23-6
+  pin_count: 6
+  nc_pins: {I/O1: '1', I/O2: '3'}
 - ref: U3
   value: ESP32-S3-MINI
   footprint: ESP32-MINI
   prod_id: IC-20979
+  pin_count: 65
+  nc_pins: {IOA3: '7', IO26: '26', IO36: '32', IO37: '33', IO41: '37'}
 - ref: U4
   value: MAX17048
   footprint: DFN-8
   prod_id: IC-12551
   description: Fuela Gauge IC for Batteries
+  pin_count: 9
 - ref: U5
   value: MCP73831
   footprint: SOT-23-5
   prod_id: IC-09995
   description: Single cell, Li-Ion/Li-Po charge management controller, 4.50V, Tri-State Status
+  pin_count: 5
 - ref: U6
   value: RT9080-3.3
   footprint: SOT-23-5
   prod_id: VREG-19034
   description: 600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage
+  pin_count: 5
+  nc_pins: {NC: '4'}
 nets:
 - name: 3.3V
   pins:

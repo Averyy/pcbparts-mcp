@@ -191,6 +191,7 @@ components:
 - ref: D2
   value: BAT54C
   footprint: SOT-23-3
+  pin_count: 3
 - ref: D3
   value: 1N5822/SS34/SMA
   footprint: SMA-KA
@@ -215,18 +216,23 @@ components:
 - ref: EXT1
   value: NS
   footprint: HN1x10
+  pin_count: 10
 - ref: EXT2
   value: NS
   footprint: HN1x10
+  pin_count: 10
 - ref: FET1
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: FET2
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: FET3
   value: WPM2015-3/TR
   footprint: SOT23
+  pin_count: 3
 - ref: L1
   value: FB0805 600R
   footprint: 0805
@@ -252,21 +258,26 @@ components:
 - ref: LAN_CON1
   value: RJP-003TC1
   footprint: RJP-003TC1(LPJ4112CNL)
+  pin_count: 11
 - ref: LNK1
   value: LED/GREEN/0603
   footprint: '0603'
 - ref: MICRO_SD1
   value: TFC-9P-1.7H
   footprint: uSD(TFC-9P-1.xH(ATFFS150A01BR016))
+  pin_count: 10
+  nc_pins: {Card_Detect: CD1}
 - ref: PWR1
   value: LED/RED/0603
   footprint: '0603'
 - ref: Q2
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: Q3
   value: BC817-40
   footprint: SOT23
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0402'
@@ -457,21 +468,26 @@ components:
 - ref: RM1
   value: RA1206_(4X0603)_4B8_2.2k
   footprint: R_MATRIX_4
+  pin_count: 6
 - ref: RM2
   value: RA1206_(4X0603)_4B8_2.2k
   footprint: R_MATRIX_4
+  pin_count: 8
 - ref: RM3
   value: RA1206_(4X0603)_4B8_2.2k
   footprint: R_MATRIX_4
+  pin_count: 8
 - ref: RST1
   value: IT1185AU2
   footprint: IT1185AU2_V2
 - ref: T1
   value: LMUN2211LT1G
   footprint: SOT23
+  pin_count: 3
 - ref: TVS1
   value: ESDS314DBVR
   footprint: SOT-23-5
+  pin_count: 5
 - ref: TVS2
   value: GG0402052R542P
   footprint: 0402_5MIL_DWS
@@ -481,33 +497,50 @@ components:
 - ref: U1
   value: CH340X
   footprint: MSOP-10_Pitch-0.5mm
+  pin_count: 10
 - ref: U3
   value: TP4054-42-SOT25-R
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U4
   value: LAN8710A
   footprint: QFN32_EP(33)
+  pin_count: 33
+  nc_pins: {XTAL2: '4', CRS: '14', NINT/TXER/TXD4: '18', TXCLK: '20', RXDV: '26'}
 - ref: U5
   value: TX4138
   footprint: ESOIC-8
+  pin_count: 9
+  nc_pins: {POK: '7'}
 - ref: U6
   value: ESP32-WROOM-32E
   footprint: ESP32-WROVER_MODULE
+  pin_count: 39
+  nc_pins: {NC@17: '17', NC@18: '18', NC@19: '19', NC@20: '20', NC@21: '21', NC@22: '22', NC@32: '32'}
 - ref: U7
   value: TPS62A02ADRLR
   footprint: SOT-563-6
+  pin_count: 6
+  nc_pins: {PG: '6'}
 - ref: U8
   value: SN74LVC1G04DBVR
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U9
   value: TPS2378DDAR
   footprint: ESOIC-8
+  pin_count: 9
+  nc_pins: {T2P: '7'}
 - ref: UEXT1
   value: P-B-V-10-LF
   footprint: GBH-254-SMT-10
+  pin_count: 10
 - ref: USB-UART1
   value: MISB-SWMM-5B-LF
   footprint: USB-MICRO_MISB-SWMM-5B_LF
+  pin_count: 6
+  nc_pins: {ID: '4'}
 nets:
 - name: +3.3V
   pins:

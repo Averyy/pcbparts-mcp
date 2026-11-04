@@ -22,6 +22,7 @@ components:
   height: 2.9mm
   manufacturer: Comchip Technology
   mpn: CDBHM240L-HF
+  pin_count: 4
 - ref: C1
   value: 100nF
   footprint: '0603'
@@ -159,6 +160,8 @@ components:
   manufacturer: CUI
   mpn: SJ2-35813B-SMT-TR
   description: 3 conductors, 3
+  pin_count: 4
+  nc_pins: {RING: '3', TIP_SWITCH: '10'}
 - ref: CT2
   value: CONN_02
   footprint: SCREWTERMINAL-3.5MM-2
@@ -169,6 +172,8 @@ components:
   manufacturer: CUI
   mpn: SJ2-35813B-SMT-TR
   description: 3 conductors, 3
+  pin_count: 4
+  nc_pins: {RING: '3', TIP_SWITCH: '10'}
 - ref: CT3
   value: CONN_02
   footprint: SCREWTERMINAL-3.5MM-2
@@ -179,6 +184,8 @@ components:
   manufacturer: CUI
   mpn: SJ2-35813B-SMT-TR
   description: 3 conductors, 3
+  pin_count: 4
+  nc_pins: {RING: '3', TIP_SWITCH: '10'}
 - ref: CT4
   value: CONN_02
   footprint: SCREWTERMINAL-3.5MM-2
@@ -189,6 +196,8 @@ components:
   manufacturer: CUI
   mpn: SJ2-35813B-SMT-TR
   description: 3 conductors, 3
+  pin_count: 4
+  nc_pins: {RING: '3', TIP_SWITCH: '10'}
 - ref: CT5
   value: CONN_02
   footprint: SCREWTERMINAL-3.5MM-2
@@ -199,6 +208,8 @@ components:
   manufacturer: CUI
   mpn: SJ2-35813B-SMT-TR
   description: 3 conductors, 3
+  pin_count: 4
+  nc_pins: {RING: '3', TIP_SWITCH: '10'}
 - ref: CT6
   value: CONN_02
   footprint: SCREWTERMINAL-3.5MM-2
@@ -209,6 +220,8 @@ components:
   manufacturer: CUI
   mpn: SJ2-35813B-SMT-TR
   description: 3 conductors, 3
+  pin_count: 4
+  nc_pins: {RING: '3', TIP_SWITCH: '10'}
 - ref: D1
   value: DIODE-
   footprint: DO214AC
@@ -216,10 +229,14 @@ components:
   value: ATM90E32AS
   footprint: QFP50P900X900X120-48
   description: ATMEL Poly-phase energy metering
+  pin_count: 48
+  nc_pins: {I4P: '9', I4N: '10', CF2: '26', CF3: '27', CF4: '28', NC@1: '35', NC@2: '45', NC@3: '46'}
 - ref: IC2
   value: ATM90E32AS
   footprint: QFP50P900X900X120-48
   description: ATMEL Poly-phase energy metering
+  pin_count: 48
+  nc_pins: {I4P: '9', I4N: '10', CF2: '26', CF3: '27', CF4: '28', NC@1: '35', NC@2: '45', NC@3: '46'}
 - ref: IC3
   value: LMR14020SDDA
   footprint: SOIC-9
@@ -227,6 +244,7 @@ components:
   height: 1.7mm
   manufacturer: Texas Instruments
   mpn: LMR14020SDDA
+  pin_count: 9
 - ref: J3
   value: 1x2 screw terminal
   footprint: SCREWTERMINAL-3.5MM-2
@@ -237,6 +255,8 @@ components:
   description: 24 VDC 5 A Surface Mount Unshielded 2 Conductors 3 Contacts Male Power Jack
   manufacturer: CUI
   mpn: PJ-002AH-SMT-TR
+  pin_count: 4
+  nc_pins: {'3': '3'}
 - ref: J9
   value: micro HDMI
   footprint: PKS01940110
@@ -244,6 +264,7 @@ components:
   height: 3.27mm
   manufacturer: Yamaichi
   mpn: PKS019-4011-0
+  pin_count: 23
 - ref: JP1
   value: solder jumper
   footprint: SJ-2
@@ -298,6 +319,7 @@ components:
   value: 1kohm
   footprint: RA1206-8
   mpn: Chip-Array-Series-1%
+  pin_count: 8
 - ref: R12
   value: 10kohm
   footprint: '0603'
@@ -306,10 +328,12 @@ components:
   value: 10kohm
   footprint: RA1206-8
   mpn: Chip-Array-Series-1%
+  pin_count: 8
 - ref: R14
   value: 100ohm
   footprint: RA1206-8
   mpn: Chip-Array-Series-1%
+  pin_count: 8
 - ref: R15
   value: 100ohm
   footprint: '0603'
@@ -329,6 +353,7 @@ components:
   value: 10kohm
   footprint: RA1206-8
   mpn: Chip-Array-Series-1%
+  pin_count: 8
 - ref: R20
   value: 1kohm
   footprint: '0603'
@@ -348,6 +373,7 @@ components:
   value: 20kohm
   footprint: RA1206-8
   mpn: Chip-Array-Series-1%
+  pin_count: 8
 - ref: R26
   value: 20kohm
   footprint: '0603'
@@ -360,6 +386,7 @@ components:
   value: 100ohm
   footprint: RA1206-8
   mpn: Chip-Array-Series-1%
+  pin_count: 8
 - ref: R32
   value: 20kohm
   footprint: '0603'
@@ -392,14 +419,18 @@ components:
   description: Eval Board For Esp-Wroom-32
   manufacturer: Espressif Systems
   mpn: ESP32-DEVKITC-32D
+  pin_count: 38
+  nc_pins: {EN: '2', SENSOR_VP: '3', SENSOR_VN: '4', IO35: '6', IO25: '9', IO26: '10', IO27: '11', IO14: '12', IO12: '13', IO13: '15', SD2: '16', SD3: '17', CMD: '18', IO22: '22', TXD0: '23', RXD0: '24', IO21: '25', IO17: '30', IO16: '31', IO0: '33', IO2: '34', IO15: '35', SD1: '36', SD0: '37', CLK: '38'}
 - ref: Y1
   value: 16.384MHz
   footprint: CRYSTAL-SMD-3.2X2.5MM
   description: passive
+  pin_count: 4
 - ref: Y2
   value: 16.384MHz
   footprint: CRYSTAL-SMD-3.2X2.5MM
   description: passive
+  pin_count: 4
 nets:
 - name: '!CS'
   pins: [IC1.!CS, R2.4, U1.IO5]

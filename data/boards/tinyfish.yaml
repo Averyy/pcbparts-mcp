@@ -159,6 +159,7 @@ components:
 - ref: Q1
   value: SI2302DS
   footprint: SI2302DS_SOT-23
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0402'
@@ -235,24 +236,35 @@ components:
 - ref: U1
   value: CC2510
   footprint: QFN36_CC2510
+  pin_count: 37
+  nc_pins: {'1': '1', '3': '3', '4': '4', '5': '5', '7': '7', '8': '8', '11': '11', '12': '12', '13': '13', '14': '14', '17': '17', '18': '18', '32': '32', '36': '36'}
 - ref: U2
   value: MPU-6000
   footprint: QFN-24
+  pin_count: 24
+  nc_pins: {'2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '14': '14', '15': '15', '16': '16', '17': '17', '19': '19', '21': '21', '22': '22'}
 - ref: U3
   value: LP2985AIM5-3.1
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U4
   value: STM32F303CCTx
   footprint: LQFP-48
+  pin_count: 48
+  nc_pins: {'7': '7', '10': '10', '11': '11', '20': '20', '30': '30', '31': '31', '39': '39', '40': '40', '41': '41', '42': '42'}
 - ref: U5
   value: M25P16
   footprint: VFDFPN8
+  pin_count: 8
 - ref: U6
   value: USB Micro-B
   footprint: USB_MICRO_MOLEX
+  pin_count: 5
+  nc_pins: {'1': '1', '4': '4'}
 - ref: U7
   value: INA139
   footprint: DBV
+  pin_count: 5
 - ref: VBAT1
   value: 1x1 header
   footprint: PAD
@@ -262,9 +274,11 @@ components:
 - ref: X1
   value: 26MHz
   footprint: crystal_2016
+  pin_count: 4
 - ref: X2
   value: 8MHz
   footprint: CSTCE_G_A
+  pin_count: 3
 nets:
 - name: /power/BAT+
   pins: [C26.2, R10.2, R12.1, U7.3, U7.5, VBAT_IN1.1]

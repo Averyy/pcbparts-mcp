@@ -85,32 +85,41 @@ components:
   value: BC817-40W
   footprint: SOT23
   description: Generic NPN BJT
+  pin_count: 3
 - ref: Q2
   value: BC817-40W
   footprint: SOT23
   description: Generic NPN BJT
+  pin_count: 3
 - ref: Q3
   value: BC817-40W
   footprint: SOT23
   description: Generic NPN BJT
+  pin_count: 3
 - ref: Q4
   value: N-channel MOSFET
   footprint: TDSON-8
+  pin_count: 5
 - ref: Q5
   value: N-channel MOSFET
   footprint: TDSON-8
+  pin_count: 5
 - ref: Q6
   value: N-channel MOSFET
   footprint: TDSON-8
+  pin_count: 5
 - ref: Q7
   value: N-channel MOSFET
   footprint: TDSON-8
+  pin_count: 5
 - ref: Q8
   value: N-channel MOSFET
   footprint: TDSON-8
+  pin_count: 5
 - ref: Q9
   value: N-channel MOSFET
   footprint: TDSON-8
+  pin_count: 5
 - ref: R1
   value: 47kohm
   footprint: '0603'
@@ -261,30 +270,41 @@ components:
 - ref: U$16
   value: HEADER-6
   footprint: HEADER-2MM-6POS
+  pin_count: 6
 - ref: U$17
   value: HEADER-12
   footprint: HEADER-2MM-12POS
+  pin_count: 12
 - ref: U$3
   value: ACS7XX
   footprint: 12-WFQFN
+  pin_count: 8
+  nc_pins: {FAULT: FAULT}
 - ref: U$4
   value: HEADER-6
   footprint: HEADER-2MM-6POS
+  pin_count: 6
 - ref: U$8
   value: HEADER-12
   footprint: HEADER-2MM-12POS
+  pin_count: 12
 - ref: U1
   value: ATMEGA168
   footprint: TQFP32-08
   description: Atmel 32-pin 8-bit micro, 16k flash
+  pin_count: 32
+  nc_pins: {PB4(MISO): '16', PB5(SCK): '17', PD0(RXD): '30', PD1(TXD): '31'}
 - ref: U2
   value: LDO regulator
   footprint: SOT-23-5
   description: Voltage Regulator LDO
+  pin_count: 5
+  nc_pins: {EN: '3', BP: '4'}
 - ref: Y1
   value: resonator
   footprint: RESONATOR-SMD
   description: Resonator
+  pin_count: 3
 nets:
 - name: CENTER
   pins: [R1.1, R2.1, R3.1, U1.PD6(AIN0)]

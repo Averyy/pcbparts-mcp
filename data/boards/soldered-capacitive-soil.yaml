@@ -41,6 +41,7 @@ components:
 - ref: K1
   value: 1x3 header
   footprint: HEADER_MALE
+  pin_count: 3
 - ref: R1
   value: 1Mohm
   footprint: '0603'
@@ -72,15 +73,18 @@ components:
 - ref: R8
   value: tc33x-2-103e
   footprint: tc33x-2-103e
+  pin_count: 3
 - ref: R9
   value: 10kohm
   footprint: '0603'
 - ref: U1
   value: TLC555CD
   footprint: SOIC-8
+  pin_count: 8
 - ref: U2
   value: SGM358YMS
   footprint: MSOP-8
+  pin_count: 8
 nets:
 - name: CONT
   pins: [C2.2, U1.CONT]

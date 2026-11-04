@@ -39,24 +39,29 @@ components:
   value: 1x4 header
   footprint: 1X04
   prod_id: CONN-09696
+  pin_count: 4
 - ref: J2
   value: Qwiic connector
   footprint: 1X04
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J3
   value: Qwiic connector
   footprint: 1X04
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J4
   value: 3x2 header
   footprint: 2X3
   description: AVR ISP 6 Pin
+  pin_count: 6
 - ref: J5
   value: 1x3 screw terminal
   footprint: SCREWTERMINAL-5MM-3
   prod_id: CONN-10134
+  pin_count: 3
 - ref: JP10
   value: solder jumper (NO)
   footprint: SJ-2
@@ -65,16 +70,19 @@ components:
   value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
+  pin_count: 3
 - ref: K1
   value: SPDT relay
   footprint: RELAY_G5LE
   prod_id: COMP-14214
   description: SPDT Electromechanical Relay
+  pin_count: 5
 - ref: Q4
   value: 600mA/40V
   footprint: SOT-23-3
   prod_id: TRANS-08049
   description: NPN transistor
+  pin_count: 3
 - ref: R1
   value: 10ohm
   footprint: '0603'
@@ -109,6 +117,7 @@ components:
   value: ATTINY85
   footprint: ATTINY85
   prod_id: IC-09092
+  pin_count: 8
 nets:
 - name: '!RESET'
   pins: [J4.5, R8.2, U3.PB5]

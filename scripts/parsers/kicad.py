@@ -378,6 +378,49 @@ def enrich_from_pcb(pcb_path: Path, components: list[Component]) -> None:
     parse_pcb(pcb_path, {c.ref for c in components}, components)
 
 
+def _pad_net(pad: list) -> str:
+    """The pad's net name, or "" if it has none."""
+    net_node = _find(pad, "net")
+    if not net_node:
+        return ""
+    # KiCad <=9: (net 42 "VCC") — index 2 is the name
+    # KiCad 10+: (net "VCC")    — index 1 is the name (netcodes removed)
+    if len(net_node) >= 3:
+        return net_node[2]
+    if len(net_node) == 2:
+        return net_node[1]
+    return ""
+
+
+def _pin_label(pad_num: str, pinfunc: str, counts: dict[str, int]) -> str:
+    """A pin as nets name it: its pin name, "name@pad" when pads share the name, else its pad number."""
+    if pinfunc and counts.get(pinfunc, 0) <= 1:
+        return pinfunc
+    if pinfunc:
+        return f"{pinfunc}@{pad_num}"
+    return pad_num
+
+
+def _footprint_net_pins(fp_node: list) -> list[tuple[str, str, str]]:
+    """(pad number, pin label, net name) for each pad on a net."""
+    # Pass 1: collect (pad_num, pinfunction, net_name) tuples
+    pad_info: list[tuple[str, str, str]] = []
+    for pad in _find_all(fp_node, "pad"):
+        if len(pad) < 2:
+            continue
+        net_name = _pad_net(pad)
+        if net_name:
+            pad_info.append((pad[1], _get_str(pad, "pinfunction"), net_name))
+
+    # Pass 2: detect duplicate pin labels, disambiguate with @pad_num
+    label_counts: dict[str, int] = {}
+    for pad_num, pinfunc, _ in pad_info:
+        label = pinfunc if pinfunc else pad_num
+        label_counts[label] = label_counts.get(label, 0) + 1
+    return [(pad_num, _pin_label(pad_num, pinfunc, label_counts), net_name)
+            for pad_num, pinfunc, net_name in pad_info]
+
+
 def _extract_nets(root: list, part_names: set[str]) -> list[Net]:
     """Extract nets from PCB pad→net assignments.
 
@@ -390,47 +433,49 @@ def _extract_nets(root: list, part_names: set[str]) -> list[Net]:
         ref = _get_fp_ref(fp_node)
         if not ref or ref not in part_names:
             continue
-
-        # Pass 1: collect (pad_num, pinfunction, net_name) tuples
-        pad_info: list[tuple[str, str, str]] = []
-        for pad in _find_all(fp_node, "pad"):
-            if len(pad) < 2:
-                continue
-            pad_num = pad[1]
-            net_node = _find(pad, "net")
-            if net_node:
-                # KiCad <=9: (net 42 "VCC") — index 2 is the name
-                # KiCad 10+: (net "VCC")    — index 1 is the name (netcodes removed)
-                if len(net_node) >= 3:
-                    net_name = net_node[2]
-                elif len(net_node) == 2:
-                    net_name = net_node[1]
-                else:
-                    continue
-                if net_name:
-                    pinfunc = _get_str(pad, "pinfunction")
-                    pad_info.append((pad_num, pinfunc, net_name))
-
-        # Pass 2: detect duplicate pin labels, disambiguate with @pad_num
-        label_counts: dict[str, int] = {}
-        for pad_num, pinfunc, _ in pad_info:
-            label = pinfunc if pinfunc else pad_num
-            label_counts[label] = label_counts.get(label, 0) + 1
-
-        for pad_num, pinfunc, net_name in pad_info:
-            if pinfunc and label_counts.get(pinfunc, 0) <= 1:
-                pin = f"{ref}.{pinfunc}"
-            elif pinfunc and label_counts.get(pinfunc, 0) > 1:
-                pin = f"{ref}.{pinfunc}@{pad_num}"
-            else:
-                pin = f"{ref}.{pad_num}"
-            net_pins.setdefault(net_name, set()).add(pin)
+        for _, label, net_name in _footprint_net_pins(fp_node):
+            net_pins.setdefault(net_name, set()).add(f"{ref}.{label}")
 
     nets: list[Net] = []
     for net_name, pins in net_pins.items():
         if len(pins) >= 2:
             nets.append(Net(name=net_name, pins=sorted(pins)))
     return nets
+
+
+def extract_part_pins(pcb_path: Path, part_names: set[str]) -> dict[str, dict[str, str]]:
+    """Every pin of each part, {ref: {label: pad number}}, labelled as nets label them.
+
+    KiCad 6+ marks the pads that come from symbol pins (pintype); a pad without one is mechanical
+    (a mounting tab, a shield lug not in the symbol) and isn't a pin. KiCad 5 boards don't say, so
+    every numbered pad counts. Unplated holes never do.
+    """
+    text = pcb_path.read_text(encoding="utf-8", errors="replace")
+    tree = _parse_sexpr(text)
+    root = tree[0] if tree and isinstance(tree[0], list) and tree[0] and tree[0][0] == "kicad_pcb" else tree
+    marks_pins = "(pintype " in text  # "~" numbers an unnumbered pad (a fiducial) in KiCad 5
+    parts: dict[str, dict[str, str]] = {}
+    for fp_node in _iter_footprints(root):
+        ref = _get_fp_ref(fp_node)
+        if not ref or ref not in part_names or ref in parts:
+            continue
+        on_nets = {pad_num: label for pad_num, label, _ in _footprint_net_pins(fp_node)}
+        others: list[tuple[str, str]] = []
+        for pad in _find_all(fp_node, "pad"):
+            if len(pad) < 3 or not isinstance(pad[1], str) or pad[1] in ("", "~") or pad[2] == "np_thru_hole":
+                continue
+            if pad[1] in on_nets or any(pad[1] == n for n, _ in others):
+                continue
+            if marks_pins and _find(pad, "pintype") is None:
+                continue
+            others.append((pad[1], _get_str(pad, "pinfunction")))
+        names = [f for _, f in others] + [label.split("@")[0] for label in on_nets.values()]
+        counts = {n: names.count(n) for n in set(names)}
+        pins = {label: pad_num for pad_num, label in on_nets.items() if pad_num not in ("", "~")}
+        for pad_num, pinfunc in others:
+            pins.setdefault(_pin_label(pad_num, pinfunc, counts), pad_num)
+        parts[ref] = pins
+    return parts
 
 
 def _extract_copper_pours(root: list) -> list[CopperPour]:

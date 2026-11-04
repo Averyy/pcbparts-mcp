@@ -62,18 +62,22 @@ components:
   footprint: POWER_JACK_SMD
   prod_id: CONN-08106
   description: Power Jack
+  pin_count: 3
 - ref: J2
   value: POWER_JACK
   footprint: POWER_JACK_PTH
   description: Power Jack
+  pin_count: 3
 - ref: J3
   value: JST_2MM_MALE
   footprint: JST-2-SMD
   prod_id: CONN-08352
   description: Mates to single-cell LiPo batteries
+  pin_count: 4
 - ref: J4
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J5
   value: 1x2 header
   footprint: 1X02
@@ -139,10 +143,13 @@ components:
   value: 10kohm
   footprint: TRIMPOT-3MM
   prod_id: RES-09285
+  pin_count: 3
 - ref: U1
   value: LT3652
   footprint: MSOP-12_GND
   description: LT3652 MPPT Solar Charge Controller
+  pin_count: 13
+  nc_pins: {NTC: '8'}
 nets:
 - name: '!CHRG'
   pins: [J4.1, R4.2, U1.!CHRG]

@@ -1132,6 +1132,7 @@ components:
   manufacturer: FCI
   mpn: 10103592-0001LF
   description: CONN RCPT REV MICRO USB TYPE B
+  pin_count: 6
 - ref: J10
   value: GND_CLIP
   footprint: GSG-TEST-POINT-S1751-46R
@@ -1219,27 +1220,34 @@ components:
   manufacturer: Sullins
   mpn: PPPC112LFBN-RC
   description: CONN HEADER FMAL 22PS.1" DL GOLD
+  pin_count: 22
 - ref: P22
   value: 2x13 header
   footprint: GSG-HEADER-2x13
   manufacturer: Sullins
   mpn: PPPC132LFBN-RC
   description: CONN HEADER FMAL 26PS.1" DL GOLD
+  pin_count: 26
 - ref: P25
   value: 1x6 header
   footprint: GSG-HEADER-1x6
+  pin_count: 6
+  nc_pins: {Pin_3: '3'}
 - ref: P26
   value: LPC_JTAG
   footprint: GSG-50MIL-HEADER-2x5-TH
   manufacturer: Sullins
   mpn: GRPB052VWVN-RC
   description: CONN HEADER .050" 10PS DL PCB AU
+  pin_count: 10
+  nc_pins: {Pin_7: '7'}
 - ref: P28
   value: 2x11 header
   footprint: GSG-HEADER-2x11
   manufacturer: Sullins
   mpn: PPPC112LFBN-RC
   description: CONN HEADER FMAL 22PS.1" DL GOLD
+  pin_count: 22
 - ref: P29
   value: CPLD_JTAG
   footprint: GSG-HEADER-1x2
@@ -1249,6 +1257,7 @@ components:
 - ref: P30
   value: 2x10 header
   footprint: GSG-HEADER-2x10
+  pin_count: 20
 - ref: P4
   value: ANTENNA
   footprint: GSG-SMA-73251-2120
@@ -1258,6 +1267,7 @@ components:
 - ref: P5
   value: 2x3 header
   footprint: GSG-HEADER-2x3
+  pin_count: 6
 - ref: P80
   value: 1x2 header
   footprint: GSG-HEADER-NOMARK-1x2
@@ -1267,36 +1277,42 @@ components:
   manufacturer: Sullins
   mpn: PPPC082LFBN-RC
   description: CONN HEADER FMAL 16PS.1" DL GOLD
+  pin_count: 16
 - ref: Q1
   value: MOSFET
   footprint: SOT-23-3
   manufacturer: Yangzhou Yangjie
   mpn: YJL2301C
   description: P-CH MOSFET 20V 3.4A SOT-23-3L
+  pin_count: 3
 - ref: Q2
   value: MOSFET
   footprint: SOT-23-3
   manufacturer: Yangzhou Yangjie
   mpn: YJL2301C
   description: P-CH MOSFET 20V 3.4A SOT-23-3L
+  pin_count: 3
 - ref: Q3
   value: MOSFET
   footprint: SOT-23-3
   manufacturer: Yangzhou Yangjie
   mpn: YJL2301C
   description: P-CH MOSFET 20V 3.4A SOT-23-3L
+  pin_count: 3
 - ref: Q4
   value: MOSFET
   footprint: SOT-23-3
   manufacturer: Yangzhou Yangjie
   mpn: YJL2301C
   description: P-CH MOSFET 20V 3.4A SOT-23-3L
+  pin_count: 3
 - ref: Q5
   value: MOSFET
   footprint: SOT-23-3
   manufacturer: Yangzhou Yangjie
   mpn: YJL2301C
   description: P-CH MOSFET 20V 3.4A SOT-23-3L
+  pin_count: 3
 - ref: R1
   value: 470ohm
   footprint: '0402'
@@ -1851,183 +1867,223 @@ components:
   footprint: GSG-SWITCH-FSMRA
   manufacturer: TE Connectivity
   mpn: FSMRA3JH
+  pin_count: 3
 - ref: SW2
   value: RESET
   footprint: GSG-SWITCH-FSMRA
   manufacturer: TE Connectivity
   mpn: FSMRA3JH
+  pin_count: 3
 - ref: T1
   value: MIX_IN_BALUN
   footprint: GSG-B0310J50100AHF
   manufacturer: TTM
   mpn: B0310J50100AHF
   description: Ultra Low Profile 0805 Balun 50 to 100 ohm Balanced
+  pin_count: 4
 - ref: T2
   value: MIX_OUT_BALUN
   footprint: GSG-B0310J50100AHF
   manufacturer: TTM
   mpn: B0310J50100AHF
   description: Ultra Low Profile 0805 Balun 50 to 100 ohm Balanced
+  pin_count: 4
 - ref: T3
   value: RX_BALUN
   footprint: GSG-2500BL14M100
   manufacturer: Johanson Technology
   mpn: 2500BL14M100T
   description: BALUN CERAMIC CHIP WIMAX 2.5GHZ
+  pin_count: 5
 - ref: T4
   value: TX_BALUN
   footprint: GSG-2500BL14M100
   manufacturer: Johanson Technology
   mpn: 2500BL14M100T
   description: BALUN CERAMIC CHIP WIMAX 2.5GHZ
+  pin_count: 5
 - ref: U1
   value: SKY13453
   footprint: SKY13350-385LF
   manufacturer: Skyworks
   mpn: SKY13453-385LF
   description: IC RF SWITCH 6GHZ 6QFN
+  pin_count: 6
 - ref: U10
   value: SKY13453
   footprint: SKY13350-385LF
   manufacturer: Skyworks
   mpn: SKY13453-385LF
   description: IC RF SWITCH 6GHZ 6QFN
+  pin_count: 6
 - ref: U11
   value: SKY13453
   footprint: SKY13350-385LF
   manufacturer: Skyworks
   mpn: SKY13453-385LF
   description: IC RF SWITCH 6GHZ 6QFN
+  pin_count: 6
 - ref: U12
   value: SKY13317
   footprint: GSG-SKY13317-373LF
   manufacturer: Skyworks
   mpn: SKY13317-373LF
   description: 20 MHz-6.0 GHz pHEMT GaAs SP3T Switch
+  pin_count: 9
+  nc_pins: {NC: '2'}
 - ref: U13
   value: MGA-81563
   footprint: SOT-363
   manufacturer: Avago
   mpn: MGA-81563-TR1G
   description: 0.1-6 GHz 3 V, 14 dBm Amplifier
+  pin_count: 6
 - ref: U14
   value: SKY13317
   footprint: GSG-SKY13317-373LF
   manufacturer: Skyworks
   mpn: SKY13317-373LF
   description: 20 MHz-6.0 GHz pHEMT GaAs SP3T Switch
+  pin_count: 9
+  nc_pins: {NC: '2'}
 - ref: U15
   value: TVS
   footprint: GSG-LXES1TBCC2-004
   manufacturer: Vishay
   mpn: VBUS54CV-HSF-G4-08
   description: TVS DIODE 5.5V 22V LLP75-6L
+  pin_count: 6
+  nc_pins: {NC@4: '4', NC@6: '6'}
 - ref: U17
   value: MAX2837
   footprint: QFN-48
   manufacturer: Maxim
   mpn: MAX2837ETM+T
   description: IC TXRX 2.3GHZ-2.7GHZ 48TQFN
+  pin_count: 49
+  nc_pins: {B5: '3', B4: '6', B3: '8', B2: '9', B1: '12', PABIAS: '14', CLOCKOUT: '16', XTAL1: '18', B7: '33', B6: '34', RXHP: '40'}
 - ref: U18
   value: MAX5864
   footprint: QFN-48
   manufacturer: Maxim
   mpn: MAX5864ETM+T
   description: IC ANLG FRONT END 22MSPS 48-TQFN
+  pin_count: 49
+  nc_pins: {NC: '38'}
 - ref: U19
   value: SI5351C
   footprint: QFN-20
   manufacturer: Silicon Laboratories Inc
   mpn: SI5351C-B-GM
   description: IC CLK GENERATOR 160MHZ 20QFN
+  pin_count: 21
 - ref: U2
   value: SKY13453
   footprint: SKY13350-385LF
   manufacturer: Skyworks
   mpn: SKY13453-385LF
   description: IC RF SWITCH 6GHZ 6QFN
+  pin_count: 6
 - ref: U20
   value: W25Q80
   footprint: SOIC-8
   manufacturer: Winbond
   mpn: W25Q80DVSSIG
   description: IC FLASH 8MBIT 8SOIC
+  pin_count: 8
 - ref: U21
   value: TPS62410
   footprint: GSG-S-PVSON-N10
   manufacturer: Texas Instruments
   mpn: TPS62410DRCR
   description: IC BUCK SYNC DUAL ADJ 0.8A 10SON
+  pin_count: 11
 - ref: U23
   value: LPC4320FBD144
   footprint: LQFP-144
   manufacturer: NXP
   mpn: LPC4320FBD144,551
   description: IC MCU 32BIT 144LQFP
+  pin_count: 144
+  nc_pins: {TRST: '29', P6_7: '85', USB1_DP: '89', USB1_DM: '90'}
 - ref: U24
   value: GSG-XC2C64A-7VQG100C
   footprint: VQ-100
   manufacturer: Xilinx
   mpn: XC2C64A-7VQG100C
   description: IC CR-II CPLD 64MCELL 100-VQFP
+  pin_count: 100
+  nc_pins: {BANK1F2M1: '14', BANK1F2M2: '15', BANK1F2M3: '16', NC@20: '20', NC@25: '25', NC@44: '44', NC@46: '46', BANK1F4M9: '49', BANK1F4M10: '50', BANK1F4M11: '52', BANK1F4M12: '53', NC@54: '54', BANK1F4M15: '58', NC@59: '59', BANK1F4M16: '60', NC@63: '63', NC@65: '65', NC@66: '66', BANK2F3M13: '68', NC@73: '73', NC@75: '75', NC@80: '80', NC@82: '82', NC@85: '85', NC@86: '86', NC@87: '87', NC@93: '93', NC@95: '95', NC@96: '96'}
 - ref: U25
   value: MGA-81563
   footprint: SOT-363
   manufacturer: Avago
   mpn: MGA-81563-TR1G
   description: 0.1-6 GHz 3 V, 14 dBm Amplifier
+  pin_count: 6
 - ref: U3
   value: lowpass filter
   footprint: LP-0603
   manufacturer: AVX
   mpn: LP0603A1880ANTR
   description: FILTER LOW PASS 1880MHZ 0603 SMD
+  pin_count: 4
 - ref: U4
   value: RFFC5072
   footprint: QFN-32
   manufacturer: RFMD
   mpn: RFFC5072TR7
   description: WIDEBAND SYNTHESIZER/VCO WITH INTEGRATED 6GHz MIXER
+  pin_count: 33
+  nc_pins: {ENBL/GPO5: '1', EXT_LO: '2', EXT_LO_DEC: '3', MODE/GPO6: '9', NC@11: '11', NC@13: '13', NC@14: '14', GPO2/ADD2: '16', NC@17: '17', NC@18: '18', NC@20: '20', NC@21: '21', GPO3/FM: '25', GPO4/LD/DO: '26'}
 - ref: U5
   value: SKY13453
   footprint: SKY13350-385LF
   manufacturer: Skyworks
   mpn: SKY13453-385LF
   description: IC RF SWITCH 6GHZ 6QFN
+  pin_count: 6
 - ref: U6
   value: SKY13453
   footprint: SKY13350-385LF
   manufacturer: Skyworks
   mpn: SKY13453-385LF
   description: IC RF SWITCH 6GHZ 6QFN
+  pin_count: 6
 - ref: U7
   value: SKY13453
   footprint: SKY13350-385LF
   manufacturer: Skyworks
   mpn: SKY13453-385LF
   description: IC RF SWITCH 6GHZ 6QFN
+  pin_count: 6
 - ref: U8
   value: highpass filter
   footprint: GSG-HP-DEA
   manufacturer: TDK
   mpn: DEA162400HT-8004B1
   description: FILTER HIGHPASS WLAN&BLUETOOTH
+  pin_count: 4
 - ref: U9
   value: SKY13317
   footprint: GSG-SKY13317-373LF
   manufacturer: Skyworks
   mpn: SKY13317-373LF
   description: 20 MHz-6.0 GHz pHEMT GaAs SP3T Switch
+  pin_count: 9
+  nc_pins: {NC: '2'}
 - ref: X1
   value: 25MHz
   footprint: GSG-XTAL3.2x2.5mm
   manufacturer: Abracon
   mpn: ABM8-25.000MHZ-10-D1G-T
+  pin_count: 4
 - ref: X2
   value: 12MHz
   footprint: GSG-XTAL3.2x2.5mm
   manufacturer: TXC
   mpn: 7V-12.000MAAE-T
+  pin_count: 4
 - ref: X3
   value: RTC_XTAL
   footprint: GSG-XTAL-AB26TRQ

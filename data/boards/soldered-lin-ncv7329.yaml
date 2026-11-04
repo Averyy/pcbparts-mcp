@@ -36,9 +36,11 @@ components:
 - ref: K1
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: K2
   value: screw terminal
   footprint: TERMINAL_KF235-5.0-3P
+  pin_count: 3
 - ref: R1
   value: 4.7kohm
   footprint: '0603'
@@ -52,6 +54,8 @@ components:
 - ref: U1
   value: NCV7329
   footprint: SOIC-8
+  pin_count: 8
+  nc_pins: {NC@3: '3', NC@8: '8'}
 nets:
 - name: EN
   pins: [K1.2, R1.2, U1.EN]

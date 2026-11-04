@@ -225,6 +225,7 @@ components:
 - ref: P1
   value: USB-C
   footprint: C393939
+  pin_count: 7
 - ref: R1
   value: 5.1kohm
   footprint: '0603'
@@ -268,6 +269,8 @@ components:
 - ref: R8
   value: 100ohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'2': '2'}
 - ref: R9
   value: 330ohm
   footprint: '0603'
@@ -284,49 +287,64 @@ components:
   value: AP2112K-3.3
   footprint: SOT-23-5
   mouser: 865-XC6210B332MR-G
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U2
   value: RFSW8006QTR7
   footprint: SON-9
   mouser: 772-RFSW8006QTR7
+  pin_count: 8
 - ref: U3
   value: RP2040
   footprint: QFN-56-1EP
+  pin_count: 57
+  nc_pins: {GPIO6: '8', GPIO7: '9', SWCLK: '24', SWD: '25', GPIO21: '32', GPIO22: '34', GPIO29_ADC3: '41'}
 - ref: U4
   value: 0900PC15A0036
   footprint: 0900FM15D0039E
   mouser: 609-0900PC15A0036E
+  pin_count: 10
 - ref: U5
   value: 0900FM15D0039
   footprint: 0900FM15D0039E
   mouser: 609-0900FM15D0039E
+  pin_count: 10
 - ref: U6
   value: PE42421
   footprint: SOT-363_SC-70-6
   mouser: 81-PE42421SCAA-Z
+  pin_count: 6
 - ref: U7
   value: SX1262IMLTRT
   footprint: QFN-24-1EP
   mouser: 947-SX1262IMLTRT
+  pin_count: 24
 - ref: U8
   value: CC1352P
   footprint: VQFN-48-1EP
   mouser: 595-CC1352P1F3RGZT
+  pin_count: 49
+  nc_pins: {TX_20DBM_P: '5', TX_20DBM_N: '6', DIO_5: '10', DIO_6: '11', DIO_7: '12', DIO_8: '14', DIO_9: '15', DIO_10: '16', DIO_11: '17', DIO_14: '20', DIO_18: '28', DIO_19: '29', DIO_20: '30', DIO_21: '31', DIO_22: '32', DIO_23: '36', DIO_25: '38', DIO_26: '39', DIO_27: '40', DIO_28: '41', DIO_29: '42', DIO_30: '43'}
 - ref: U9
   value: W25Q16JV
   footprint: W25Q16JVUUIQ
   mouser: 454-W25Q16JVUUIQTR
+  pin_count: 8
 - ref: Y1
   value: 48MHz
   footprint: SMD3225
+  pin_count: 4
 - ref: Y2
   value: 32.768kHz
   footprint: SMD2012
 - ref: Y3
   value: 32Mhz
   footprint: SMD2520
+  pin_count: 4
 - ref: Y4
   value: 12MHz
   footprint: SMD3225
+  pin_count: 4
 nets:
 - name: +1V2
   pins: [C3.1, C30.1, C5.1, U3.DVDD@23, U3.DVDD@50, U3.VREG_VOUT]

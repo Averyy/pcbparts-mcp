@@ -48,6 +48,7 @@ components:
 - ref: JP1
   value: 1x8 header
   footprint: 1X08
+  pin_count: 8
 - ref: R1
   value: 430ohm 4300ohm 0.1%
   footprint: 0805
@@ -66,14 +67,19 @@ components:
 - ref: SJ1
   value: 2-way solder jumper
   footprint: SJ-3
+  pin_count: 3
 - ref: U1
   value: MAX31865
   footprint: QFN20_4MM_0.65MM
   description: MAX31865 - Resistance to Digital Convertor for Platinum Resistance Temperature
+  pin_count: 21
+  nc_pins: {NC: '17'}
 - ref: U3
   value: MIC5225-3.3
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: X1
   value: 1x2 header
   footprint: TERMBLOCK

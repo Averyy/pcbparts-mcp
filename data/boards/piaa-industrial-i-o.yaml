@@ -161,21 +161,26 @@ components:
 - ref: J1
   value: 1x3 screw terminal
   footprint: TerminalBlock_bornier-3_P5.08mm
+  pin_count: 3
 - ref: J2
   value: 2x4 header
   footprint: 2X4
+  pin_count: 8
 - ref: J6
   value: 1x6 screw terminal
   footprint: TerminalBlock_bornier-6_P5.08mm
+  pin_count: 6
 - ref: J7
   value: 1x5 screw terminal
   footprint: TerminalBlock_bornier-5_P5.08mm
+  pin_count: 5
 - ref: J8
   value: 1x2 screw terminal
   footprint: TerminalBlock_bornier-2_P5.08mm
 - ref: J9
   value: 1x6 header
   footprint: 2X3
+  pin_count: 6
 - ref: JP1
   value: 1x2 header
   footprint: 1X2
@@ -194,6 +199,7 @@ components:
 - ref: P1
   value: PS2805-4
   footprint: SSOP-16
+  pin_count: 16
 - ref: PS1
   value: USMF020
   footprint: USMF020
@@ -203,21 +209,33 @@ components:
 - ref: Q1
   value: FQT13N06L
   footprint: SOT-223
+  pin_count: 4
+  nc_pins: {D@2: '2'}
 - ref: Q2
   value: FQT13N06L
   footprint: SOT-223
+  pin_count: 4
+  nc_pins: {D@2: '2'}
 - ref: Q3
   value: FQT13N06L
   footprint: SOT-223
+  pin_count: 4
+  nc_pins: {D@2: '2'}
 - ref: Q4
   value: FQT13N06L
   footprint: SOT-223
+  pin_count: 4
+  nc_pins: {D@2: '2'}
 - ref: Q5
   value: FQT13N06L
   footprint: SOT-223
+  pin_count: 4
+  nc_pins: {D@2: '2'}
 - ref: Q6
   value: FQT13N06L
   footprint: SOT-223
+  pin_count: 4
+  nc_pins: {D@2: '2'}
 - ref: R1
   value: 330ohm
   footprint: '0201'
@@ -332,33 +350,50 @@ components:
 - ref: U1
   value: MCP1416
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U10
   value: NCP1117-3.3_SOT223
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: U2
   value: MCP1416
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U3
   value: MCP1416
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U4
   value: MCP1416
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U5
   value: MCP1416
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U6
   value: MCP1416
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: U7
   value: MAX3072E
   footprint: SOIC-8
+  pin_count: 8
 - ref: U8
   value: Pico
   footprint: RPi_Pico_SMD_TH
+  pin_count: 40
+  nc_pins: {GPIO11@15: '15', GPIO22@29: '29', RUN@30: '30', GPIO26_ADC0@31: '31', GPIO27_ADC1@32: '32', AGND@33: '33', GPIO28_ADC2@34: '34', ADC_VREF@35: '35', 3V3@36: '36', 3V3_EN@37: '37'}
 - ref: U9
   value: LM2596S-5
   footprint: TO-263
+  pin_count: 5
 nets:
 - name: +24V
   pins: [D14.1, J8.Pin_1]

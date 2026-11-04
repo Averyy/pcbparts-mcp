@@ -49,16 +49,20 @@ components:
   value: USBA_FEMALE
   footprint: USB_HOST-PTH
   description: USB - Type A Connectors
+  pin_count: 4
 - ref: CN4
   value: MicroUSB
   footprint: 4UCONN_20329
   description: USB Connectors
+  pin_count: 11
+  nc_pins: {D+: D+, D-: D-, ID: ID}
 - ref: DONE
   value: green LED
   footprint: 0805
 - ref: JP2
   value: 1x8 header
   footprint: 1X08
+  pin_count: 8
 - ref: L1
   value: 6.8uH
   footprint: INDUCTOR
@@ -137,6 +141,7 @@ components:
   value: MMUN2133LT1G
   footprint: SC59-BEC
   description: PNP Bias Resistor Transistor
+  pin_count: 3
 - ref: THERM
   value: 15K
   footprint: 0805
@@ -144,10 +149,13 @@ components:
   value: TPS61090RSAR
   footprint: PVQFN-16
   description: TPS6103x 4A Boost
+  pin_count: 21
 - ref: U2
   value: MCP73871
   footprint: QFN20_4MM
   description: USB/solar charger with LiPo power management
+  pin_count: 21
+  nc_pins: {/PG: P$6}
 - ref: X1
   value: 1x2 header
   footprint: TERMBLOCK

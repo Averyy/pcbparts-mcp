@@ -414,6 +414,8 @@ components:
 - ref: J1
   value: USB 2.0
   footprint: USB_Type-C_16p
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J10
   value: JST XH
   footprint: JST_XH
@@ -426,9 +428,12 @@ components:
 - ref: J13
   value: USB 2.0
   footprint: USB_Type-C_16p
+  pin_count: 17
+  nc_pins: {VBUS@A4: A4, SBU1: A8, VBUS@A9: A9, VBUS@B4: B4, SBU2: B8, VBUS@B9: B9}
 - ref: J14
   value: 1x4 header
   footprint: FanPinHeader
+  pin_count: 4
 - ref: J15
   value: JST XH
   footprint: JST_XH
@@ -441,15 +446,18 @@ components:
 - ref: J18
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J19
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J2
   value: JST XH
   footprint: JST_XH
 - ref: J20
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J21
   value: JST XH
   footprint: JST_XH
@@ -462,27 +470,35 @@ components:
 - ref: J24
   value: 1x3 header
   footprint: JST_XH
+  pin_count: 3
 - ref: J25
   value: 1x3 header
   footprint: JST_XH
+  pin_count: 3
 - ref: J26
   value: 1x3 header
   footprint: JST_XH
+  pin_count: 3
 - ref: J27
   value: JST XH
   footprint: JST_XH
+  pin_count: 3
 - ref: J28
   value: 2x4 header
   footprint: Molex_Micro-Fit-3.0_430450813
+  pin_count: 8
 - ref: J29
   value: USB-A
   footprint: Jing_USB-A_906-761
+  pin_count: 5
+  nc_pins: {D-: '2', D+: '3'}
 - ref: J3
   value: 1x2 header
   footprint: Kefa_KF8500-8.5-2P
 - ref: J31
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J32
   value: 1x2 header
   footprint: HCTL_HC-MX3.0-2A
@@ -498,6 +514,7 @@ components:
 - ref: J38
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J39
   value: JST XH
   footprint: JST_XH
@@ -510,15 +527,18 @@ components:
 - ref: J41
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J42
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J5
   value: JST XH
   footprint: JST_XH
 - ref: J6
   value: 1x4 header
   footprint: FanPinHeader
+  pin_count: 4
 - ref: J7
   value: JST XH
   footprint: JST_XH
@@ -537,78 +557,103 @@ components:
 - ref: M3
   value: JST XH
   footprint: JST_XH
+  pin_count: 4
 - ref: M5
   value: JST XH
   footprint: JST_XH
+  pin_count: 4
 - ref: Q1
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q10
   value: 30N06
   footprint: MOSFET_DFN8
+  pin_count: 8
 - ref: Q19
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q2
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q20
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q21
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q22
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q23
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q24
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q25
   value: 60N03F
   footprint: MOSFET_DFN8
+  pin_count: 8
 - ref: Q26
   value: 60N03F
   footprint: MOSFET_DFN8
+  pin_count: 8
 - ref: Q27
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q28
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q29
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q3
   value: 30N06
   footprint: MOSFET_DFN8
+  pin_count: 8
 - ref: Q30
   value: AO3400
   footprint: SOT-23
+  pin_count: 3
 - ref: Q33
   value: DFN8-5x6
   footprint: MOSFET_DFN8
+  pin_count: 8
 - ref: Q4
   value: 30N06
   footprint: MOSFET_DFN8
+  pin_count: 8
 - ref: Q5
   value: 30N06
   footprint: MOSFET_DFN8
+  pin_count: 8
 - ref: Q6
   value: 30N06
   footprint: MOSFET_DFN8
+  pin_count: 8
 - ref: Q7
   value: 30N06
   footprint: MOSFET_DFN8
+  pin_count: 8
 - ref: Q8
   value: 30N06
   footprint: MOSFET_DFN8
+  pin_count: 8
 - ref: Q9
   value: 30N06
   footprint: MOSFET_DFN8
+  pin_count: 8
 - ref: R1
   value: 10kohm
   footprint: '0402'
@@ -764,9 +809,13 @@ components:
 - ref: R37
   value: 33ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R38
   value: 33ohm
   footprint: '0402'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R39
   value: 100ohm
   footprint: '0402'
@@ -1024,29 +1073,41 @@ components:
 - ref: U1
   value: STM32F407ZETx
   footprint: LQFP-144
+  pin_count: 144
+  nc_pins: {PE2: '1', PE3: '2', PE4: '3', PE5: '4', PF1: '11', PF2: '12', PF3: '13', PF4: '14', PA0: '34', PA2: '36', PA3: '37', PA5: '41', PA6: '42', PA7: '43', PC4: '44', PC5: '45', PB0: '46', PB2: '48', PF11: '49', PF12: '50', PE12: '65', PE13: '66', PE14: '67', PE15: '68', PB10: '69', PB11: '70', PB12: '73', PD8: '77', PD9: '78', PD10: '79', PD11: '80', PD12: '81', PG4: '89', PG5: '90', PG6: '91', PG7: '92', PG8: '93', PA13: '105', PA14: '109', PC12: '113', PD0: '114', PD1: '115', PD2: '116', PD3: '117', PD4: '118', PD5: '119', PD6: '122', PD7: '123', PG9: '124', PG11: '126', PG14: '129'}
 - ref: U11
   value: TMC2160
   footprint: TMCx160
+  pin_count: 49
+  nc_pins: {DCEN_CFG4: '23', DCIN_CFG5: '24', DCO_CFG6: '25', DIAG0: '26'}
 - ref: U2
   value: CD4504B
   footprint: TSSOP-16
+  pin_count: 16
+  nc_pins: {Aout: '2', Bout: '4', Cout: '6', Dout: '10'}
 - ref: U3
   value: TPS54335A
   footprint: SOIC-8-1EP
   description: 4.5-V to 28-V Input, 3-A Output, Synchronous Step-Down DC-DC Converter
+  pin_count: 9
 - ref: U4
   value: TPS54335A
   footprint: SOIC-8-1EP
   description: 4.5-V to 28-V Input, 3-A Output, Synchronous Step-Down DC-DC Converter
+  pin_count: 9
 - ref: U5
   value: AMS1117-3.3
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: U8
   value: TMC2209-LA
   footprint: TMC220x
+  pin_count: 29
+  nc_pins: {SPREAD: '7', MS1: '9', MS2: '10', DIAG: '11', INDEX: '12', CLK: '13', VREF: '17', STDBY: '20'}
 - ref: Y1
   value: 25 MHz
   footprint: SMD3225
+  pin_count: 4
 nets:
 - name: +12V
   pins:

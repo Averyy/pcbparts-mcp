@@ -48,6 +48,7 @@ components:
   footprint: SMA-EDGE
   prod_id: CONN-08289
   description: SMA Antenna Connector w/ Ground
+  pin_count: 5
 - ref: FB2
   value: 2.66ohm
   footprint: '0402'
@@ -56,24 +57,31 @@ components:
   value: USB-to-Serial
   footprint: 1X06
   description: 6-pin header connection for use with the "FTDI BASIC" pinout - TARGET SIDE.
+  pin_count: 6
+  nc_pins: {DTR: '1', CTS: '5'}
 - ref: J2
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
+  pin_count: 4
 - ref: J3
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J4
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
+  pin_count: 4
 - ref: J5
   value: 1x8 header
   footprint: 1X08
+  pin_count: 8
 - ref: JP5
   value: solder jumper (NO)
   footprint: SJ-3
   description: Normally open jumper
+  pin_count: 3
 - ref: LED2
   value: red LED
   footprint: '0603'
@@ -82,6 +90,7 @@ components:
 - ref: MEAS
   value: solder jumper (NC)
   footprint: SJ-2
+  pin_count: 4
 - ref: PPS_LED
   value: solder jumper (NC)
   footprint: SJ-2
@@ -150,6 +159,8 @@ components:
   value: MAX-M10S
   footprint: MAX-M10S
   prod_id: IC-15926
+  pin_count: 17
+  nc_pins: {LNA_EN: '13'}
 nets:
 - name: '!RESET'
   pins: [J5.8, R19.2]

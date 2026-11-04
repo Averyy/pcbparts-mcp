@@ -35,6 +35,7 @@ components:
 - ref: JP1
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: JP2
   value: 1x2 header
   footprint: 1X02
@@ -63,6 +64,7 @@ components:
 - ref: U1
   value: AL8860
   footprint: SOT-23-5
+  pin_count: 5
 nets:
 - name: CTRL_CH1
   pins: [JP1.4, U1.CTRL]

@@ -37,18 +37,25 @@ components:
 - ref: J1
   value: USB Micro-B
   footprint: USB_Micro-B_Molex-105017-0001
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: J2
   value: 1x4 header
   footprint: 1X4
+  pin_count: 4
 - ref: J3
   value: 1x3 header
   footprint: LedConnector
+  pin_count: 3
 - ref: J4
   value: 1x3 header
   footprint: LedConnector
+  pin_count: 3
+  nc_pins: {'2': '2'}
 - ref: J5
   value: 2x3 header
   footprint: 2X3
+  pin_count: 6
 - ref: L1
   value: LED
   footprint: LED_D3.0mm
@@ -76,6 +83,7 @@ components:
 - ref: Q1
   value: NPN transistor
   footprint: SOT-23
+  pin_count: 3
 - ref: R1
   value: 20ohm
   footprint: '0603'
@@ -149,9 +157,13 @@ components:
 - ref: U1
   value: ATmega32U4-AU
   footprint: TQFP-44
+  pin_count: 44
+  nc_pins: {'8': '8', '12': '12', '20': '20', '21': '21', '22': '22', '26': '26', '30': '30', '32': '32', '40': '40', '41': '41'}
 - ref: Y1
   value: Crystal
   footprint: SMD3225
+  pin_count: 4
+  nc_pins: {'3': '3', '4': '4'}
 nets:
 - name: +5V
   pins:

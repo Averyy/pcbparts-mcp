@@ -324,6 +324,8 @@ components:
   manufacturer: Molex
   mpn: 43650-0315
   description: Micro-Fit 3.0 Vertical Header, 3.00mm Pitch, Single Row, 3 Circuits, with PCB
+  pin_count: 3
+  nc_pins: {'2': '2'}
 - ref: J1.2
   value: 1x1 header
   footprint: '~'
@@ -375,6 +377,7 @@ components:
 - ref: JP1
   value: Fan Voltage Select
   footprint: SJ-2
+  pin_count: 3
 - ref: L1
   value: 4.7uH
   footprint: ASPI-4030S
@@ -400,50 +403,61 @@ components:
   value: PMV20ENR
   footprint: SOT-23
   mpn: PMV20ENR
+  pin_count: 3
 - ref: Q10
   value: IMBG65R050M2HXTMA1
   footprint: TO-263
   mpn: IMBG65R050M2HXTMA1
+  pin_count: 8
 - ref: Q11
   value: IMBG65R050M2HXTMA1
   footprint: TO-263
   mpn: IMBG65R050M2HXTMA1
+  pin_count: 8
 - ref: Q2
   value: PMV20ENR
   footprint: SOT-23
   mpn: PMV20ENR
+  pin_count: 3
 - ref: Q3
   value: SIHP24N80AE
   footprint: TO-220
   mpn: SIHP24N80AE-GE3
+  pin_count: 3
 - ref: Q4
   value: IXYP8N90C3
   footprint: TO-220
   mpn: IXYP8N90C3
+  pin_count: 3
 - ref: Q5
   value: PMV20ENR
   footprint: SOT-23
   mpn: PMV20ENR
+  pin_count: 3
 - ref: Q6
   value: PMV20ENR
   footprint: SOT-23
   mpn: PMV20ENR
+  pin_count: 3
 - ref: Q7
   value: PMV20ENR
   footprint: SOT-23
   mpn: PMV20ENR
+  pin_count: 3
 - ref: Q8
   value: BSC027N06LS5ATMA1
   footprint: BSC027N06LS5ATMA1
   height: '1'
   manufacturer: Infineon
   mpn: BSC027N06LS5ATMA1
+  pin_count: 9
 - ref: Q9
   value: BSC027N06LS5ATMA1
   footprint: BSC027N06LS5ATMA1
   height: '1'
   manufacturer: Infineon
   mpn: BSC027N06LS5ATMA1
+  pin_count: 9
 - ref: R1
   value: 100Mohm
   footprint: '2512'
@@ -749,14 +763,17 @@ components:
   value: 20k
   footprint: Potentiometer_Bourns_PVG3G
   mpn: PVG3A203C01R00
+  pin_count: 3
 - ref: RV2
   value: 10k
   footprint: Potentiometer_Bourns_3214W_Vertical
   mpn: PVG5A103C03R00
+  pin_count: 3
 - ref: T1
   value: DIY Transformer ETD 39
   footprint: Transformer_ETD39_uprightV3.6 (PSS 24V)
   mpn: B66363G0000X197
+  pin_count: 5
 - ref: T1.1
   value: Ferrite Core
   footprint: '~'
@@ -794,59 +811,75 @@ components:
   value: RP-1515S
   footprint: Converter_DCDC_TRACO_TBA 1-1212HI-3kV-iso
   mpn: RP-1515S
+  pin_count: 4
 - ref: U10
   value: LM2904BIDDFR
   footprint: SOT-23-8_DC-DC_v9
   mpn: LM2904BIDDFR
+  pin_count: 8
 - ref: U11
   value: UCC21520DW
   footprint: SOIC-16W
   mpn: UCC21520DW
+  pin_count: 16
+  nc_pins: {NC@7: '7', NC@12: '12', NC@13: '13'}
 - ref: U12
   value: UCC25600
   footprint: SOIC-8
   mpn: UCC25600DR
+  pin_count: 8
 - ref: U13
   value: ZXRE330ASA-7
   footprint: SOT-23
   mpn: ZXRE330ASA-7
+  pin_count: 3
+  nc_pins: {'3': '3'}
 - ref: U14
   value: LM2904BIDDFR
   footprint: SOT-23-8_DC-DC_v9
   mpn: LM2904BIDDFR
+  pin_count: 8
 - ref: U2
   value: RT9058-90
   footprint: SOT-23
   mpn: RT9058-90GVL
   description: 250mA Low Quiscent Current LDO, 1.8V output, SOT-23
+  pin_count: 3
 - ref: U3
   value: MP4541
   footprint: SOIC-8-1EP
   mpn: MP4541GN-Z
+  pin_count: 8
 - ref: U4
   value: TLV61048DBVR
   footprint: SOT-23-6
   mpn: TLV61048DBVR
+  pin_count: 6
 - ref: U5
   value: NCP4305DMTTWG
   footprint: WDFN-8
   mpn: NCP4305DMTTWG
+  pin_count: 8
 - ref: U6
   value: LM2904BIDDFR
   footprint: SOT-23-8_DC-DC_v9
   mpn: LM2904BIDDFR
+  pin_count: 8
 - ref: U7
   value: TL431
   footprint: SOT-23
   mpn: TL431BCDBZRG4
+  pin_count: 3
 - ref: U8
   value: NCP4305DMTTWG
   footprint: WDFN-8
   mpn: NCP4305DMTTWG
+  pin_count: 8
 - ref: U9
   value: ACPL-217-50AE
   footprint: SOIC-4
   mpn: ACPL-217-560E
+  pin_count: 4
 nets:
 - name: +12V_HS
   pins: [C41.2, D14.K, U11.VDDA]

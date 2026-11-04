@@ -80,46 +80,59 @@ components:
 - ref: J1
   value: 1x3 screw terminal
   footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+  pin_count: 3
 - ref: J2
   value: 1x3 screw terminal
   footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+  pin_count: 3
 - ref: J3
   value: 1x3 screw terminal
   footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+  pin_count: 3
 - ref: J4
   value: 1x3 screw terminal
   footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+  pin_count: 3
 - ref: K1
   value: SRD-05VDC-SL-C
   footprint: RELAY_SRD-05VDC-SL-C
   manufacturer: SONGLE RELAY
+  pin_count: 5
 - ref: K2
   value: SRD-05VDC-SL-C
   footprint: RELAY_SRD-05VDC-SL-C
   manufacturer: SONGLE RELAY
+  pin_count: 5
 - ref: K3
   value: SRD-05VDC-SL-C
   footprint: RELAY_SRD-05VDC-SL-C
   manufacturer: SONGLE RELAY
+  pin_count: 5
 - ref: K4
   value: SRD-05VDC-SL-C
   footprint: RELAY_SRD-05VDC-SL-C
   manufacturer: SONGLE RELAY
+  pin_count: 5
 - ref: Q1
   value: MBT3904DW1
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: Q2
   value: BC547A
   footprint: TSOT-23
+  pin_count: 3
 - ref: Q3
   value: BC547A
   footprint: TSOT-23
+  pin_count: 3
 - ref: Q4
   value: BC547A
   footprint: TSOT-23
+  pin_count: 3
 - ref: Q5
   value: BC547A
   footprint: TSOT-23
+  pin_count: 3
 - ref: R1
   value: 2kohm
   footprint: 0805
@@ -185,30 +198,42 @@ components:
 - ref: U1
   value: AMS1117-3.3
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 - ref: U2
   value: CH340C
   footprint: SOIC-16
+  pin_count: 16
+  nc_pins: {NC@7: '7', NC@8: '8', nCTS: '9', nDSR: '10', nRI: '11', nDCD: '12', R232: '15'}
 - ref: U3
   value: PRTR5V0U2X
   footprint: SOT-143
+  pin_count: 4
 - ref: U4
   value: ESP32-WROOM-32
   footprint: ESP32-WROOM-32
+  pin_count: 39
+  nc_pins: {SENSOR_VP: '4', SENSOR_VN: '5', IO34: '6', IO35: '7', IO32: '8', IO33: '9', IO25: '10', IO26: '11', IO27: '12', IO14: '13', IO12: '14', IO13: '16', SHD/SD2: '17', SWP/SD3: '18', SCS/CMD: '19', SCK/CLK: '20', SDO/SD0: '21', SDI/SD1: '22', IO15: '23', IO2: '24', IO4: '26', IO16: '27', IO17: '28', NC: '32', IO22: '36', IO23: '37'}
 - ref: U5
   value: PC817
   footprint: SMDIP-4_W7.62mm
+  pin_count: 4
 - ref: U6
   value: PC817
   footprint: SMDIP-4_W7.62mm
+  pin_count: 4
 - ref: U7
   value: PC817
   footprint: SMDIP-4_W7.62mm
+  pin_count: 4
 - ref: U8
   value: PC817
   footprint: SMDIP-4_W7.62mm
+  pin_count: 4
 - ref: USB1
   value: HRO-TYPE-C-31-M-12
   footprint: HRO-TYPE-C-31-M-12-HandSoldering
+  pin_count: 13
+  nc_pins: {SBU2: '3', SBU1: '9'}
 nets:
 - name: +3.3V
   pins:

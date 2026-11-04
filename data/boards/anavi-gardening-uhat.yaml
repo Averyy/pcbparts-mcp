@@ -30,6 +30,7 @@ components:
 - ref: P1
   value: 1x3 header
   footprint: KLEMA
+  pin_count: 3
 - ref: P2
   value: 1x3 header
   footprint: 1X3
@@ -39,6 +40,7 @@ components:
 - ref: P4
   value: 2x5 header
   footprint: 2X5
+  pin_count: 10
 - ref: R1
   value: 1kohm
   footprint: '0603'
@@ -72,18 +74,25 @@ components:
 - ref: RASP_CONN1
   value: Raspberry_PI
   footprint: 2X20
+  pin_count: 40
+  nc_pins: {'8': '8', '10': '10', '18': '18', '22': '22', '26': '26', '29': '29', '31': '31', '32': '32', '33': '33', '35': '35', '36': '36', '37': '37', '38': '38', '40': '40'}
 - ref: SENS1
   value: I2C_SENS_1
   footprint: 1X4
+  pin_count: 4
 - ref: SENS2
   value: I2C_SENS_1
   footprint: 1X4
+  pin_count: 4
 - ref: U1
   value: CAT24C32WI-GT3
   footprint: DIP-8
+  pin_count: 8
 - ref: U2
   value: MCP3002
   footprint: SOIC-8
+  pin_count: 8
+  nc_pins: {'2': '2', '3': '3'}
 - ref: UART1
   value: 1x4 header
   footprint: 1X4

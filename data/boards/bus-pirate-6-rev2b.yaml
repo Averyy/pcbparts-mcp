@@ -297,18 +297,24 @@ components:
 - ref: D500
   value: BAS40T-05
   footprint: SOT-523
+  pin_count: 3
+  nc_pins: {'2': '2'}
 - ref: D501
   value: BAS40T-05
   footprint: SOT-523
+  pin_count: 3
 - ref: D502
   value: BAS40T-05
   footprint: SOT-523
+  pin_count: 3
 - ref: D503
   value: BAS40T-05
   footprint: SOT-523
+  pin_count: 3
 - ref: D504
   value: BAS40T-05
   footprint: SOT-523
+  pin_count: 3
 - ref: D601
   value: 1N4148WT
   footprint: SOD-523
@@ -321,114 +327,152 @@ components:
 - ref: J201
   value: 1x3 header
   footprint: 1X3
+  pin_count: 3
 - ref: J202
   value: USB-C
   footprint: HRO_TYPE-C-31-M-12
+  pin_count: 16
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J301
   value: 1x10 header
   footprint: 1X10
+  pin_count: 10
 - ref: J302
   value: 1x9 header
   footprint: JST_SH_SM09B-SRSS-TB
+  pin_count: 9
 - ref: L201
   value: CBW201209U300T
   footprint: 0805
 - ref: LCD201
   value: TFT_20_QT200H1201
   footprint: TFT_20_QT200H1201
+  pin_count: 12
 - ref: LED701
   value: SK6812
   footprint: SK6812-side-a_b
+  pin_count: 4
 - ref: LED702
   value: SK6812
   footprint: SK6812-mini-e
+  pin_count: 4
 - ref: LED703
   value: SK6812
   footprint: SK6812-mini-e
+  pin_count: 4
 - ref: LED704
   value: SK6812
   footprint: SK6812-side-a_b
+  pin_count: 4
 - ref: LED705
   value: SK6812
   footprint: SK6812-mini-e
+  pin_count: 4
 - ref: LED706
   value: SK6812
   footprint: SK6812-mini-e
+  pin_count: 4
 - ref: LED707
   value: SK6812
   footprint: SK6812-side-a_b
+  pin_count: 4
 - ref: LED708
   value: SK6812
   footprint: SK6812-side-a_b
+  pin_count: 4
 - ref: LED710
   value: SK6812
   footprint: SK6812-mini-e
+  pin_count: 4
 - ref: LED712
   value: SK6812
   footprint: SK6812-side-a_b
+  pin_count: 4
 - ref: LED713
   value: SK6812
   footprint: SK6812-mini-e
+  pin_count: 4
 - ref: LED714
   value: SK6812
   footprint: SK6812-mini-e
+  pin_count: 4
 - ref: LED715
   value: SK6812
   footprint: SK6812-mini-e
+  pin_count: 4
 - ref: LED716
   value: SK6812
   footprint: SK6812-side-a_b
+  pin_count: 4
 - ref: LED717
   value: SK6812
   footprint: SK6812-side-a_b
+  pin_count: 4
 - ref: LED718
   value: SK6812
   footprint: SK6812-mini-e
+  pin_count: 4
 - ref: LED719
   value: SK6812
   footprint: SK6812-mini-e
+  pin_count: 4
 - ref: LED720
   value: SK6812
   footprint: SK6812-side-a_b
+  pin_count: 4
+  nc_pins: {DO: '2'}
 - ref: Q202
   value: MMBT7002K
   footprint: SOT-23
+  pin_count: 3
 - ref: Q300
   value: BC2301T 2.8A
   footprint: SOT-523
+  pin_count: 3
 - ref: Q301
   value: BC2301T 2.8A
   footprint: SOT-523
+  pin_count: 3
 - ref: Q302
   value: BC2301T 2.8A
   footprint: SOT-523
+  pin_count: 3
 - ref: Q303
   value: BC2301T 2.8A
   footprint: SOT-523
+  pin_count: 3
 - ref: Q304
   value: BC2301T 2.8A
   footprint: SOT-523
+  pin_count: 3
 - ref: Q305
   value: BC2301T 2.8A
   footprint: SOT-523
+  pin_count: 3
 - ref: Q306
   value: BC2301T 2.8A
   footprint: SOT-523
+  pin_count: 3
 - ref: Q307
   value: BC2301T 2.8A
   footprint: SOT-523
+  pin_count: 3
 - ref: Q401
   value: BCM857
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: Q402
   value: BC2301T 2.8A
   footprint: SOT-523
+  pin_count: 3
 - ref: Q601
   value: MMDT3906
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: Q602
   value: BC2301T 2.8A
   footprint: SOT-523
+  pin_count: 3
 - ref: R1
   value: 10ohm
   footprint: '0402'
@@ -565,143 +609,193 @@ components:
 - ref: RN1
   value: 100kohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN301
   value: 330ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN302
   value: 4.7kohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN303
   value: 100kohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN304
   value: 1Mohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN305
   value: 120ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN306
   value: 330ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN307
   value: 4.7kohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN308
   value: 100kohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN309
   value: 120ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN310
   value: 1Mohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN311
   value: 10kohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN312
   value: 10kohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN315
   value: 510ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN317
   value: 100kohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN318
   value: 100kohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN400
   value: 510ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN401
   value: 510ohm
   footprint: R_Array_Convex
+  pin_count: 8
 - ref: RN402
   value: 510ohm
   footprint: R_Array_Convex
+  pin_count: 8
+  nc_pins: {R1.1@3: '3', R1.8@6: '6'}
 - ref: SW101
   value: TS3425BA 098 2.5H 250gf
   footprint: SW_SPST_PTS810
 - ref: SW102
   value: TS3315A 250gf 025
   footprint: GT-TC026X-HXXX-LX
+  pin_count: 4
+  nc_pins: {'2': '2', '3': '3'}
 - ref: U1
   value: RP2350B
   footprint: qfn80
+  pin_count: 81
+  nc_pins: {GPIO37: '46', VREG_PGND: '62', VREG_LX: '63', VREG_FB: '65'}
 - ref: U102
   value: W25Q128JVSIQ
   footprint: SOP-8
+  pin_count: 8
 - ref: U105
   value: MT29F1G01ABAFDWB
   footprint: U-PDFN-8
+  pin_count: 8
 - ref: U2
   value: 74LVC8T245BQ
   footprint: NXP-DHVQFN24
+  pin_count: 24
 - ref: U3
   value: TLV74311PDBVR
   footprint: SOT-23-5
   description: 150mA, Tiny CMOS LDO With Shutdown, Fixed Voltage, SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U301
   value: AiP74LVC1T45GC363.TR
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: U302
   value: AiP74LVC1T45GC363.TR
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: U303
   value: AiP74LVC1T45GC363.TR
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: U304
   value: AiP74LVC1T45GC363.TR
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: U305
   value: AiP74LVC1T45GC363.TR
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: U306
   value: AiP74LVC1T45GC363.TR
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: U307
   value: AiP74LVC1T45GC363.TR
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: U308
   value: AiP74LVC1T45GC363.TR
   footprint: SOT-363_SC-70-6
+  pin_count: 6
 - ref: U401
   value: ME6211A33PG-N
   footprint: SOT-89-3
+  pin_count: 3
 - ref: U402
   value: CD4067
   footprint: TSSOP-24
+  pin_count: 24
 - ref: U403
   value: AP2127
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U404
   value: LMV321
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U503
   value: 74HCT245BQ
   footprint: DHVQFN-20-1EP
+  pin_count: 20
+  nc_pins: {B6: '12', B5: '13'}
 - ref: U504
   value: GS324MT
   footprint: TSSOP-14
+  pin_count: 14
 - ref: U505
   value: GS324MT
   footprint: TSSOP-14
+  pin_count: 14
 - ref: U506
   value: LMV321
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U601
   value: GS321A
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U602
   value: GSV331
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U603
   value: LMV321
   footprint: SOT-23-5
+  pin_count: 5
 - ref: Y101
   value: ABM8-272-T3
   footprint: SMD3225
   description: 12MHz
+  pin_count: 4
 nets:
 - name: +1V1
   pins:

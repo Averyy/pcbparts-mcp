@@ -71,31 +71,43 @@ components:
 - ref: IC1
   value: LSM6DS3
   footprint: LGA-14L
+  pin_count: 12
+  nc_pins: {SCX: '3', INT2: '9'}
 - ref: IC2
   value: GD25Q16
   footprint: USON8
   description: SOIC8 SPI Flash
+  pin_count: 8
 - ref: IC3
   value: LIS3MDL
   footprint: LGA12
   description: Digital output magnetic sensor
+  pin_count: 12
+  nc_pins: {INT: '7', DRDY: '8'}
 - ref: IC4
   value: MIC_PDM
   footprint: SPK0415HM4H
+  pin_count: 8
 - ref: LED1
   value: WS2812B
   footprint: LED3535_FULLPADS
+  pin_count: 4
+  nc_pins: {DO: '3'}
 - ref: MDBT1
   value: MDBT50
   footprint: MDBT50
   description: Raytac Corporation
+  pin_count: 61
+  nc_pins: {P1.12: '5', P1.13: '6', P1.14: '7', P1.15: '8', P1.04: '56', P1.06: '57', P1.07: '58', P1.05: '59', P1.03: '60', P1.01: '61'}
 - ref: MS1
   value: Featherwing headers
   footprint: FEATHERWING_NODIM
+  pin_count: 28
 - ref: Q3
   value: AO3401
   footprint: SOT23-R
   description: P-Channel Mosfet
+  pin_count: 3
 - ref: R1
   value: 4.7kohm
   footprint: '0603'
@@ -108,6 +120,7 @@ components:
 - ref: R12
   value: 100kohm
   footprint: RESPACK
+  pin_count: 8
 - ref: R3
   value: 4.7kohm
   footprint: '0603'
@@ -119,14 +132,17 @@ components:
   value: 4.7kohm
   footprint: RESPACK
   pullup: SDA
+  pin_count: 8
 - ref: SW1
   value: KMR2
   footprint: BTN_RKB2
   description: SMT Tact Switches RKB2
+  pin_count: 4
 - ref: SW2
   value: KMR2
   footprint: BTN_RKB2
   description: SMT Tact Switches RKB2
+  pin_count: 4
 - ref: SWC
   value: TPTP12R
   footprint: TP12R
@@ -137,31 +153,41 @@ components:
   value: APDS-9960
   footprint: '9960'
   description: APDS-9960 - Digital Proximity Sensor with Ambient Light/RGB/Gesture Detection
+  pin_count: 8
 - ref: U2
   value: RT9080-3.3
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: U3
   value: MCP73831
   footprint: SOT-23-5
   lcsc: C424093
   description: MCP73831/2 LIPO Charger
+  pin_count: 5
 - ref: U4
   value: SHT30
   footprint: SHT3X
   description: SHT3x
+  pin_count: 9
+  nc_pins: {ALERT: '3'}
 - ref: U5
   value: BMP280
   footprint: BMP280
   description: BMP280
+  pin_count: 8
 - ref: X1
   value: MicroUSB
   footprint: 4UCONN_20329_V2
   description: USB Connectors
+  pin_count: 11
+  nc_pins: {ID: ID}
 - ref: X3
   value: CON_JST_PH_2PIN_MT
   footprint: JSTPH2_BATT
   lcsc: C47647
+  pin_count: 4
 nets:
 - name: 3.3V
   pins:

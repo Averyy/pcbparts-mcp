@@ -130,13 +130,18 @@ components:
 - ref: IC1
   value: 74HC125D
   footprint: SOIC-14
+  pin_count: 14
+  nc_pins: {'11': '11', '12': '12', '13': '13'}
 - ref: J1
   value: 2x8 header
   footprint: IDC-Header
+  pin_count: 16
 - ref: J10
   value: SJ-3524-SMT
   footprint: CUI_SJ-3524-SMT
   manufacturer: CUI Inc
+  pin_count: 4
+  nc_pins: {'4': '4'}
 - ref: J11
   value: 1x2 header
   footprint: 1X2
@@ -149,48 +154,65 @@ components:
   mpn: B3B-XH-A(LF)(SN)
   manufacturer: JST Sales America Inc.
   description: CONN HEADER VERT 3POS 2.5MM
+  pin_count: 3
 - ref: J15
   value: 1x4 header
   footprint: 1X4
   mpn: B4B-XH-A(LF)(SN)
   manufacturer: JST Sales America Inc.
   description: CONN HEADER VERT 4POS 2.5MM
+  pin_count: 4
 - ref: J16
   value: 1x3 header
   footprint: 1X3
   mpn: B3B-XH-A(LF)(SN)
   manufacturer: JST Sales America Inc.
   description: CONN HEADER VERT 3POS 2.5MM
+  pin_count: 3
 - ref: J2
   value: 2x5 header
   footprint: IDC-Header
+  pin_count: 10
+  nc_pins: {Pin_3: '3', Pin_4: '4', Pin_9: '9', Pin_10: '10'}
 - ref: J3
   value: 2x5 header
   footprint: IDC-Header
+  pin_count: 10
 - ref: J4
   value: 2x5 header
   footprint: IDC-Header
+  pin_count: 10
+  nc_pins: {Pin_3: '3', Pin_4: '4', Pin_9: '9', Pin_10: '10'}
 - ref: J5
   value: 2x5 header
   footprint: IDC-Header
+  pin_count: 10
+  nc_pins: {Pin_1: '1', Pin_2: '2'}
 - ref: J6
   value: SJ-3524-SMT
   footprint: CUI_SJ-3524-SMT
   manufacturer: CUI Inc
+  pin_count: 4
+  nc_pins: {'4': '4'}
 - ref: J7
   value: SJ-3524-SMT
   footprint: CUI_SJ-3524-SMT
   manufacturer: CUI Inc
+  pin_count: 4
+  nc_pins: {'4': '4'}
 - ref: J8
   value: SJ-3524-SMT
   footprint: CUI_SJ-3524-SMT
   manufacturer: CUI Inc
+  pin_count: 4
+  nc_pins: {'4': '4'}
 - ref: J9
   value: 1x3 header
   footprint: 1X3
   mpn: B3B-XH-A(LF)(SN)
   manufacturer: JST Sales America Inc.
   description: CONN HEADER VERT 3POS 2.5MM
+  pin_count: 3
 - ref: R1
   value: 470ohm
   footprint: '1206'
@@ -234,9 +256,13 @@ components:
 - ref: U1
   value: Teensy4.1
   footprint: Teensy41
+  pin_count: 67
+  nc_pins: {1_TX1_CTX2_MISO1: '3', 7_RX2_OUT1A: '9', 8_TX2_IN1: '10', 9_OUT1C: '11', 3V3@15: '15', 24_A10_TX6_SCL2: '16', 25_A11_RX6_SDA2: '17', 26_A12_MOSI1: '18', 27_A13_SCK1: '19', 33_MCLK2: '25', 34_RX8: '26', 40_A16: '32', 41_A17: '33', VUSB: '49', VBAT: '50', 3V3@51: '51', GND@52: '52', PROGRAM: '53', ON_OFF: '54', 5V: '55', D-@56: '56', D+@57: '57', GND@58: '58', GND@59: '59', R+: '60', LED: '61', T-: '62', T+: '63', GND@64: '64', R-: '65', D-@66: '66', D+@67: '67'}
 - ref: U4
   value: P82B715DR
   footprint: SOIC-8
+  pin_count: 8
+  nc_pins: {NC@1: '1', NC@5: '5'}
 nets:
 - name: /12V_FIL
   pins: [C4.1, FB1.2]

@@ -56,24 +56,30 @@ components:
 - ref: C2
   value: NFM21CC221R1H3D-220pF
   footprint: FIR1
+  pin_count: 3
 - ref: C20
   value: 100nF
   footprint: 0805
 - ref: C21
   value: NFM21PC105-1uF
   footprint: FIR1
+  pin_count: 3
 - ref: C22
   value: NFM21CC221R1H3D-220pF
   footprint: FIR1
+  pin_count: 3
 - ref: C23
   value: NFM21PC105-1uF
   footprint: FIR1
+  pin_count: 3
 - ref: C24
   value: NFM21PC105-1uF
   footprint: FIR1
+  pin_count: 3
 - ref: C25
   value: NFM21PC105-1uF
   footprint: FIR1
+  pin_count: 3
 - ref: C3
   value: 4.7uF
   footprint: 0805
@@ -104,6 +110,7 @@ components:
 - ref: J1
   value: 2x3 header
   footprint: Straight
+  pin_count: 6
 - ref: J11
   value: 2x1 header
   footprint: Straight
@@ -188,21 +195,28 @@ components:
 - ref: U1
   value: OPA2314
   footprint: SOIC-8
+  pin_count: 8
 - ref: U2
   value: OPA2314
   footprint: SOIC-8
+  pin_count: 8
 - ref: U3
   value: ISL21080DIH312Z-TK  1V25
   footprint: SOT-23
+  pin_count: 3
 - ref: U4
   value: TS7211
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U5
   value: TS5A4594
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U6
   value: LM4041CIM3-1.2
   footprint: SOT-23
+  pin_count: 3
+  nc_pins: {'3': '3'}
 nets:
 - name: /#PeakDetect/Trace
   pins: [C2.3, J3.1, J3.2]

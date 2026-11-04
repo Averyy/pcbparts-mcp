@@ -38,6 +38,7 @@ components:
 - ref: JP1
   value: 1x7 header
   footprint: 1X07
+  pin_count: 7
 - ref: R1
   value: 1Mohm
   footprint: 0805
@@ -45,6 +46,7 @@ components:
   value: MAX98357A
   footprint: QFN16_3MM
   description: MAX98357
+  pin_count: 13
 - ref: X1
   value: 1x2 header
   footprint: TERMBLOCK

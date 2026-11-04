@@ -18,21 +18,33 @@ components:
 - ref: +1V1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
+  pin_count: 1
+  nc_pins: {Pad: '1'}
 - ref: +3.3V1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
+  pin_count: 1
+  nc_pins: {3V1.Pad: '1'}
 - ref: +3.3VA1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
+  pin_count: 1
+  nc_pins: {3VA1.Pad: '1'}
 - ref: +5V1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
+  pin_count: 1
+  nc_pins: {Pad: '1'}
 - ref: +5VA1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
+  pin_count: 1
+  nc_pins: {Pad: '1'}
 - ref: +5V_USB1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
+  pin_count: 1
+  nc_pins: {Pad: '1'}
 - ref: AMP_SHDN_E1
   value: Opened
   footprint: SJ
@@ -42,6 +54,7 @@ components:
 - ref: BAT1
   value: PH2.0-2AT
   footprint: PH2.0-2AT(BAT)
+  pin_count: 3
 - ref: BOOT1
   value: YTS-A016-X
   footprint: YTS-A016-X
@@ -556,6 +569,8 @@ components:
 - ref: DVI1
   value: HDMI-SWM-19
   footprint: HDMI-SWM-19_Paste
+  pin_count: 20
+  nc_pins: {'14': '14'}
 - ref: FB1
   value: FB0805 600R
   footprint: 0805
@@ -575,21 +590,27 @@ components:
 - ref: FET1
   value: IRLML6402TRPbF
   footprint: SOT23
+  pin_count: 3
 - ref: FET2
   value: BSS138
   footprint: SOT23
+  pin_count: 3
 - ref: FET3
   value: BSS138
   footprint: SOT23
+  pin_count: 3
 - ref: FET4
   value: BSS138
   footprint: SOT23
+  pin_count: 3
 - ref: FET5
   value: BSS138
   footprint: SOT23
+  pin_count: 3
 - ref: FET6
   value: BSS138
   footprint: SOT23
+  pin_count: 3
 - ref: GND1
   value: TESTPAD
   footprint: TEST_PAD40x70_SQUARE
@@ -602,6 +623,8 @@ components:
 - ref: HEADSETS1
   value: PJ-W47S-05D2-LF
   footprint: PJ-W47S-05D2-LF_5PIN_V2_LongerPads
+  pin_count: 5
+  nc_pins: {'4': '4'}
 - ref: HSCL1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
@@ -653,24 +676,32 @@ components:
 - ref: LSPK1
   value: PH2.0-2PWB
   footprint: PH2.0-2PWB
+  pin_count: 3
 - ref: Line-In1
   value: PJ-W47S-05D2-LF
   footprint: PJ-W47S-05D2-LF_5PIN_V2_LongerPads
+  pin_count: 5
+  nc_pins: {'1': '1', '4': '4'}
 - ref: MICRO_SD1
   value: TFC-WPAPR-08-LF
   footprint: TFC-WPAPR-08
+  pin_count: 13
+  nc_pins: {'9': '9'}
 - ref: PWR_LED1
   value: LED/RED/0603
   footprint: '0603'
 - ref: PWR_ON/OFF1
   value: SS-12D11G5
   footprint: SS-12D11G5
+  pin_count: 4
 - ref: Q1
   value: 12MHz
   footprint: TSX-3.2x2.5mm_GND(3)
+  pin_count: 3
 - ref: Q2
   value: 12MHz
   footprint: TSX-3.2x2.5mm_GND(3)
+  pin_count: 3
 - ref: R1
   value: 2.2kohm
   footprint: '0402'
@@ -1005,75 +1036,105 @@ components:
 - ref: RM1
   value: RA0805_(4X0402)_33R
   footprint: RA0805_(4X0402)_xx_BIGGEROUTPADS
+  pin_count: 8
 - ref: RSPK1
   value: PH2.0-2PWB
   footprint: PH2.0-2PWB
+  pin_count: 3
 - ref: RST1
   value: YTS-A016-X
   footprint: YTS-A016-X
 - ref: T1
   value: LMUN2235LT1G
   footprint: SOT23
+  pin_count: 3
 - ref: T2
   value: LMUN2111LT1G
   footprint: SOT23
+  pin_count: 3
 - ref: T3
   value: LMUN2235LT1G
   footprint: SOT23
+  pin_count: 3
 - ref: T4
   value: LMUN2235LT1G
   footprint: SOT23
+  pin_count: 3
 - ref: U1
   value: W25Q128JVSIQ
   footprint: SO-8_208mil
+  pin_count: 8
 - ref: U10
   value: APS6404L
   footprint: SO-8
+  pin_count: 8
 - ref: U11
   value: PAM8003DR
   footprint: SO-16
+  pin_count: 16
+  nc_pins: {NC: '11'}
 - ref: U2
   value: TP4054-42-SOT25-R
   footprint: SOT-23-5
+  pin_count: 5
 - ref: U3
   value: RP2350B
   footprint: QFN-80
+  pin_count: 81
+  nc_pins: {SWCLK: '33', SWDIO: '34', GPIO40_ADC0/SPI1_RX/UART1_TX/I2C0_SDA/PWM8_A/SIO/PIO0/PIO1/PIO2/USB_VBUS_DET: '49', GPIO41_ADC1/SPI1_CSn/UART1_RX/I2C0_SCL/PWM8_B/SIO/PIO0/PIO1/PIO2/USB_VBUS_EN: '52'}
 - ref: U4
   value: TPS62A02ADRLR
   footprint: SOT-563-6
+  pin_count: 6
+  nc_pins: {PG: '6'}
 - ref: U5
   value: CH217K
   footprint: SOT-23-6
+  pin_count: 6
 - ref: U6
   value: FE1.1s
   footprint: SSOP28
+  pin_count: 28
+  nc_pins: {TESTJ/SDA: '27'}
 - ref: U7
   value: MT3608
   footprint: SOT-23-6
+  pin_count: 6
+  nc_pins: {NC: '6'}
 - ref: U8
   value: ES8311
   footprint: QFN-20_EP(21)
+  pin_count: 21
 - ref: U9
   value: W25Q128JVSIQ
   footprint: SO-8_208mil
+  pin_count: 8
 - ref: UEXT1
   value: P-B-V-10-LF
   footprint: GBH-254-SMT-10
+  pin_count: 10
 - ref: UEXT2
   value: P-B-V-10-LF
   footprint: GBH-254-SMT-10
+  pin_count: 10
 - ref: USB-PGM1
   value: USB-C
   footprint: USB2.0_TYPE-C(A40-00119-A52-12)_Paste
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: USB-PWR1
   value: USB-C
   footprint: USB2.0_TYPE-C(A40-00119-A52-12)_Paste
+  pin_count: 17
+  nc_pins: {DP1: A6, DN1: A7, SBU1: A8, DP2: B6, DN2: B7, SBU2: B8}
 - ref: USB_HOST1-2
   value: USB-B
   footprint: USB_TWO_LEVEL
+  pin_count: 9
 - ref: USB_HOST3-4
   value: USB-B
   footprint: USB_TWO_LEVEL
+  pin_count: 9
 - ref: VBAT1
   value: TESTPAD
   footprint: TESTPAD_40-ROUND
@@ -1083,6 +1144,8 @@ components:
 - ref: VR1
   value: AP1231-3.3V
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {'4': '4'}
 nets:
 - name: +3.3V
   pins:

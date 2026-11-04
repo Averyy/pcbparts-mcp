@@ -151,6 +151,7 @@ components:
   footprint: SON-10
   lcsc: C138714
   description: TVS Diode for USBC
+  pin_count: 10
 - ref: D2
   value: schottky
   footprint: SMA
@@ -175,10 +176,13 @@ components:
   footprint: USB-C
   lcsc: C963411
   description: USB 2.0 16P Type-C Receptacle
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J4
   value: OLED
   footprint: Conn_OLED_PocketPD
   lcsc: C20071191
+  pin_count: 4
 - ref: J6
   value: BananaP
   footprint: Banana_Cliff_FCR7350R_S16N-PC_Horizontal
@@ -328,16 +332,19 @@ components:
   footprint: RotaryEncoder_EC11B_SW_Horizontal
   lcsc: C9900176956
   description: Rotary encoder, dual channel, incremental quadrate outputs, with switch
+  pin_count: 5
 - ref: SW2
   value: switch
   footprint: Button
   lcsc: C2762973
   description: Normally-open tactile switch 160gf 12mm Stem
+  pin_count: 4
 - ref: SW4
   value: switch
   footprint: Button
   lcsc: C2762973
   description: Normally-open tactile switch 160gf 12mm Stem
+  pin_count: 4
 - ref: TH1
   value: Thermistor_NTC
   footprint: '0402'
@@ -347,19 +354,27 @@ components:
   footprint: VQFN-HR-16
   lcsc: C3210761
   description: Ideal diode and load switch 3V-23V
+  pin_count: 10
+  nc_pins: {PG: '3', PGTH: '4', DVDT: '7', NC: '10'}
 - ref: U2
   value: AP33772
   footprint: QFN-24-1EP
   lcsc: C5244513
   description: USB PD Sink PD3.0 Controller
+  pin_count: 25
+  nc_pins: {NC@2: '2', GPIO4: '6', GPIO2: '7', GPIO1: '8', NC@10: '10', GPIO5: '11', VFB: '14', NC@18: '18', NC@19: '19', NC@21: '21', PWR_EN: '23'}
 - ref: U3
   value: RP2040
   footprint: QFN-56-1EP
   lcsc: C2040
+  pin_count: 57
+  nc_pins: {GPIO0: '2', GPIO3: '5', GPIO6: '8', GPIO7: '9', GPIO8: '11', GPIO9: '12', GPIO12: '15', GPIO13: '16', GPIO14: '17', GPIO15: '18', SWCLK: '24', SWD: '25', GPIO16: '27', GPIO17: '28', GPIO21: '32', GPIO22: '34', GPIO23: '35', GPIO25: '37', GPIO26_ADC0: '38', GPIO27_ADC1: '39', GPIO28_ADC2: '40'}
 - ref: U4
   value: AP2204K-3.3
   footprint: SOT-23-5
   lcsc: C112032
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U5
   value: W25Q16JVUXIQ
   footprint: 8-USON
@@ -367,24 +382,31 @@ components:
   mpn: W25Q16JVUXIQ TR
   lcsc: C2843335
   description: NOR Flash Serial (SPI, Dual SPI, Quad SPI) 3V/3.3V 16M-bit 2M x 8 6ns 8-Pin
+  pin_count: 9
 - ref: U6
   value: LM73100
   footprint: VQFN-HR-16
   lcsc: C3210761
   description: Ideal diode and load switch 3V-23V
+  pin_count: 10
+  nc_pins: {PG: '3', PGTH: '4', DVDT: '7', NC: '10'}
 - ref: U7
   value: INA226
   footprint: VSSOP-10
   lcsc: C49851
+  pin_count: 10
 - ref: U8
   value: 74LVC1G17
   footprint: SOT-353_SC-70-5
   lcsc: C10425
   description: Single Schmitt Buffer Gate, Low-Voltage CMOS
+  pin_count: 5
+  nc_pins: {NC: '1'}
 - ref: Y1
   value: 12MHz
   footprint: SMD3225
   lcsc: C133334
+  pin_count: 4
 nets:
 - name: +1V1
   pins: [C4.1, C5.1, C6.1, U3.DVDD@23, U3.DVDD@50, U3.VREG_VOUT]

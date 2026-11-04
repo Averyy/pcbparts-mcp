@@ -48,9 +48,12 @@ components:
 - ref: D1
   value: SIPM
   footprint: S14420
+  pin_count: 3
 - ref: J1
   value: 2x3 header
   footprint: 2X3
+  pin_count: 6
+  nc_pins: {Pin_1: '1'}
 - ref: J2
   value: coaxial connector
   footprint: SMB_Jack_Vertical
@@ -85,6 +88,8 @@ components:
 - ref: U1
   value: OPA847
   footprint: OPA847IDBVT
+  pin_count: 6
+  nc_pins: {nDIS: '5'}
 nets:
 - name: +VDC
   pins: [J1.Pin_5, R11.1]

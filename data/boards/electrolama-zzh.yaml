@@ -82,6 +82,7 @@ components:
   height: 0.5mm
   manufacturer: Nexperia
   mpn: PRTR5V0U2F,115
+  pin_count: 6
 - ref: FL1
   value: balun
   footprint: LFB182G45BG5D920
@@ -89,12 +90,16 @@ components:
   height: mm
   manufacturer: Murata Electronics
   mpn: LFB182G45BG5D920
+  pin_count: 6
 - ref: IC1
   value: CH340E
   footprint: MSOP10
+  pin_count: 10
+  nc_pins: {RTS#: '4', CTS#: '5', TNOW: '6'}
 - ref: IC2
   value: ME6211C33R5G
   footprint: SOT-5
+  pin_count: 4
 - ref: IC3
   value: CC2652R
   footprint: QFN-49
@@ -102,6 +107,8 @@ components:
   height: 1mm
   manufacturer: Texas Instruments
   mpn: CC2652R1FRGZT
+  pin_count: 49
+  nc_pins: {DIO_0: '5', DIO_1: '6', DIO_4: '9', DIO_5: '10', DIO_6: '11', DIO_8: '14', DIO_9: '15', DIO_10: '16', DIO_11: '17', DIO_12: '18', DIO_14: '20', DIO_15: '21', DIO_16: '26', DIO_17: '27', DIO_18: '28', DIO_19: '29', DIO_20: '30', DIO_21: '31', DIO_22: '32', DIO_23: '36', DIO_24: '37', DIO_25: '38', DIO_26: '39', DIO_27: '40', DIO_28: '41', DIO_29: '42', DIO_30: '43'}
 - ref: L1
   value: BLM18HE152SN1
   footprint: '0603'
@@ -117,6 +124,7 @@ components:
 - ref: MOD1
   value: ZZH_MODULE
   footprint: ZZH_MODULE
+  pin_count: 11
 - ref: R1
   value: 100kohm
   footprint: '0402'
@@ -131,10 +139,12 @@ components:
 - ref: SW1
   value: K2-1177SW-D4DW-06
   footprint: K2-1177SW-D4DW-06
+  pin_count: 4
 - ref: Y1
   value: Q22FA12800150
   footprint: XTAL-4P-2016
   description: "48MHz \xB110ppm Crystal 7pF 50 Ohms 4-SMD, No Lead"
+  pin_count: 4
 - ref: Y2
   value: 32.768KHz
   footprint: XTAL-2P-3215

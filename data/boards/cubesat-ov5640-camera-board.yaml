@@ -72,24 +72,30 @@ components:
 - ref: J2
   value: 1x5 header
   footprint: 1X5
+  pin_count: 5
 - ref: J7
   value: 1x12 header
   footprint: Molex_Pico-Lock_504050-1291
+  pin_count: 12
 - ref: J8
   value: 1x4 header
   footprint: JST_SH_BM04B-SRSS-TB
+  pin_count: 4
 - ref: JP1
   value: solder jumper
   footprint: SJ-2
 - ref: OSC1
   value: 24MHz 3.3V Oscillator
   footprint: Oscillator_SMD_SeikoEpson_SG8002CE-4Pin
+  pin_count: 4
 - ref: Q1
   value: BSS83P
   footprint: SOT-23
+  pin_count: 3
 - ref: Q2
   value: BSS138
   footprint: SOT-23
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -112,12 +118,18 @@ components:
 - ref: U2
   value: TLV74315
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: U3
   value: TLV74328
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: X1
   value: 1x24 header
   footprint: Molex_502244-2430
+  pin_count: 24
+  nc_pins: {DATA0: '1'}
 nets:
 - name: +3V3
   pins:

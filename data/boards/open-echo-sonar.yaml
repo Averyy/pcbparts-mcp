@@ -81,6 +81,7 @@ components:
   value: 1x3 header
   footprint: 1X3
   lcsc: C49257
+  pin_count: 3
 - ref: JP1
   value: 40kHz
   footprint: 1X2
@@ -135,12 +136,16 @@ components:
   value: RST
   footprint: SW_Push_1P1T_NO_CK_KSC7xxJ
   lcsc: C318884
+  pin_count: 2
+  nc_pins: {1@1: '1'}
 - ref: U1
   value: TUSS4470TRTJR
   footprint: QFN-20-1EP
   manufacturer: Texas instruments
   mpn: TUSS4470TRTJR
   lcsc: C1855776
+  pin_count: 21
+  nc_pins: {OUT3: '1', NCS: '3', SCLK: '4', SDI: '5', SDO: '6', IO1: '7', IO2: '8', VOUT: '9', OUTB: '16', OUT4: '19'}
 nets:
 - name: +5V
   pins: [C8.2, R3.2, U1.VDD]

@@ -145,6 +145,16 @@ def _part_numbers(conn: sqlite3.Connection, board_id: int, ref: str) -> dict[str
     return {k: v for k, v in zip(PART_NUMBER_FIELDS, row or ()) if v}
 
 
+def _pin_info(conn: sqlite3.Connection, board_id: int, ref: str) -> dict[str, Any]:
+    """The part's pin count and its pins on no net ({label: pad}), where its footprint or symbol
+    gave them; an empty nc_pins then says every pin is connected."""
+    row = conn.execute("SELECT pin_count, nc_pins FROM board_components WHERE board_id = ? AND ref = ?",
+                       (board_id, ref)).fetchone()
+    if not row or not row[0]:
+        return {}
+    return {"pin_count": row[0], "nc_pins": json.loads(row[1]) if row[1] else {}}
+
+
 def _filter_components(
     conn: sqlite3.Connection,
     board_id: int,
@@ -195,14 +205,17 @@ def _enrich_neighborhoods(
     """Build neighborhood summaries enriched with IC descriptions."""
     ic_refs = [h["ref"] for h in neighborhoods]
     ic_descriptions: dict[str, str] = {}
+    ic_pin_counts: dict[str, int] = {}
     if ic_refs:
         placeholders = ",".join("?" for _ in ic_refs)
-        for ref, desc in conn.execute(
-            f"SELECT ref, description FROM board_components WHERE board_id = ? AND ref IN ({placeholders})",
+        for ref, desc, pin_count in conn.execute(
+            f"SELECT ref, description, pin_count FROM board_components WHERE board_id = ? AND ref IN ({placeholders})",
             [board_id] + ic_refs,
         ):
             if desc:
                 ic_descriptions[ref] = desc
+            if pin_count:
+                ic_pin_counts[ref] = pin_count
 
     nets = _board_nets(conn, board_id)
     result = []
@@ -210,10 +223,11 @@ def _enrich_neighborhoods(
         # Pins in the board's nets, rails included (the "_decoupling" group isn't a pin)
         pin_names = {pin for _, mine in _net_pins(nets, h["ref"]) for pin in mine} if nets else \
             {p for p in h["pins"] if p != "_decoupling"}
+        # The part's own pin count where its footprint or symbol gave one, else its pins in nets
         entry: dict[str, Any] = {
             "ref": h["ref"],
             "value": h["value"],
-            "pin_count": len(pin_names),
+            "pin_count": ic_pin_counts.get(h["ref"], len(pin_names)),
         }
         desc = ic_descriptions.get(h["ref"])
         if desc:
@@ -321,6 +335,8 @@ def get_board(
             if pin_nets:
                 matched["pins_in_nets"] = len(pin_nets)
                 matched["pin_nets"] = pin_nets
+            # Every pin of the part: how many, and those on no net, by pad (NC, as the design leaves them)
+            matched.update(_pin_info(conn, row["id"], matched["ref"]))
             result["focus"] = matched
             result["focus_match_type"] = match_type
 

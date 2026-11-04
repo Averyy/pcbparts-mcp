@@ -601,42 +601,52 @@ components:
   footprint: DSN1006-2
   manufacturer: Nexperia
   mpn: PMEG4010ESBYL
+  pin_count: 2
+  nc_pins: {A: '2'}
 - ref: FL1
   value: common mode filter
   footprint: L_CommonModeChoke_Murata_DLM0NS
   manufacturer: Murata
   mpn: DLM0NSB280HY2D
   description: CMC 130MA 2LN 28 OHM SMD
+  pin_count: 4
+  nc_pins: {'1': '1', '3': '3'}
 - ref: FL2
   value: common mode filter
   footprint: L_CommonModeChoke_Murata_DLM0NS
   manufacturer: Murata
   mpn: DLM0NSB280HY2D
   description: CMC 130MA 2LN 28 OHM SMD
+  pin_count: 4
 - ref: FL3
   value: common mode filter
   footprint: L_CommonModeChoke_Murata_DLM0NS
   manufacturer: Murata
   mpn: DLM0NSB280HY2D
   description: CMC 130MA 2LN 28 OHM SMD
+  pin_count: 4
 - ref: FL4
   value: common mode filter
   footprint: L_CommonModeChoke_Murata_DLM0NS
   manufacturer: Murata
   mpn: DLM0NSB280HY2D
   description: CMC 130MA 2LN 28 OHM SMD
+  pin_count: 4
 - ref: IC1
   value: ECP5
   footprint: lattice_cabga256
   manufacturer: Lattice
   mpn: LFE5U-12F-6BG256C
   description: FPGA - Field Programmable Gate Array ECP5; 12k LUTs; 1.1V
+  pin_count: 256
+  nc_pins: {PT4A: A2, PT6A: A3, PT6B: A4, PT4B: B3, PT11A: C4, PT9B: D4, PR8A: D16, PT9A: E4, PR8B: E15, PR11D: E16, PL14A: F1, PR11C: F15, PR14A: F16, PL20A: G1, PR14B: G15, PR20A: G16, PR20B: H15, PR17C: J13, PR23B: J15, PR23A: J16, PL23C: K1, PL23D: K2, PL20D: K3, PR23D: K15, PR23C: K16, PL26C: M1, PL26D: M2, DOUT/nCSO/PB15B: M8, nWRITE/PB18A: M9, PL32A: N1, PL35D: N3, PL35A: P1, PL32B: P2, D4/PICO2/PB6B: P7, nCS1/PB13B: P8, PL35B: R1, PL38C: R2, PL41B: R3, PL41C: R4, D5/POCI2/PB6A: R7, nCS/nS/PB13A: R8, PR44A: R12, PR41C: R13, PL38D: T2, PL41D: T3, PL44B: T4}
 - ref: J1
   value: USB-C
   footprint: USB-C
   manufacturer: DEALON
   mpn: USB-TYPE-C-019
   description: CONN RCPT USB2.0 TYPE-C 16POS
+  pin_count: 17
 - ref: J11
   value: spring contact
   footprint: BW0033AG-L3.4W0.9H1.8
@@ -679,138 +689,167 @@ components:
   manufacturer: DEALON
   mpn: USB-TYPE-C-019
   description: CONN RCPT USB2.0 TYPE-C 16POS
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
   value: USB-A
   footprint: USB_A_Kycon_KUSBXHT-SB-AS1N-B30-NF_Horizontal
   manufacturer: Jing Extension of the Electronic Co.
   mpn: C42411
   description: USB A TYPE RECEPTACLE, SHORT BODY
+  pin_count: 5
 - ref: J4
   value: USB-C
   footprint: USB-C
   manufacturer: DEALON
   mpn: USB-TYPE-C-019
   description: CONN RCPT USB2.0 TYPE-C 16POS
+  pin_count: 17
+  nc_pins: {CC1: A5, SBU1: A8, CC2: B5, SBU2: B8}
 - ref: J5
   value: MEZZANINE
   footprint: Amphenol_10132798-03
   manufacturer: Amphenol
   mpn: 10132798-031100LF
   description: CONN RCPT 30POS SMD GOLD
+  pin_count: 31
+  nc_pins: {Pin_1: '1', Pin_30: '30'}
 - ref: J6
   value: MCU_SWD
   footprint: SWD_CONNECTOR_LARGE_BOX
   manufacturer: Samtec
   mpn: FTSH-105-01-F-D-K
   description: CONN HEADER VERT 10POS 1.27MM
+  pin_count: 10
+  nc_pins: {SWO/TDO: '6', KEY: '7', NC/TDI: '8'}
 - ref: J7
   value: 2x6 header
   footprint: 2X6
   mpn: DW254W-22-12-85
   manufacturer: DEALON
   description: CONN HDR 12POS 0.1 GOLD PCB R/A
+  pin_count: 12
 - ref: J8
   value: 2x6 header
   footprint: 2X6
   mpn: DW254W-22-12-85
   manufacturer: DEALON
   description: CONN HDR 12POS 0.1 GOLD PCB R/A
+  pin_count: 12
 - ref: Q1
   value: P-channel MOSFET
   footprint: Vishay_PowerPAK_SC70-6L_Single
   manufacturer: Vishay Siliconix
   mpn: SIA483ADJ-T1-GE3
+  pin_count: 3
 - ref: Q10
   value: 2PNP
   footprint: SOT-363_SC-70-6
   manufacturer: Yangzhou Yangjie
   mpn: BC857BS
   description: PNP+PNP TRANS 45V 0.2A SOT-363
+  pin_count: 6
 - ref: Q11
   value: 2NPN
   footprint: SOT-363_SC-70-6
   manufacturer: Yangzhou Yangjie
   mpn: BC847BS
   description: SOT-363 NPN+NPN 0.3W 0.1A 50V
+  pin_count: 6
 - ref: Q12
   value: P-channel MOSFET
   footprint: SOT-23-3
   manufacturer: Yangzhou Yangjie
   mpn: YJL3401A
   description: P-CH MOSFET 30V 4.4A SOT-23-3L
+  pin_count: 3
 - ref: Q13
   value: 2PNP
   footprint: SOT-363_SC-70-6
   manufacturer: Yangzhou Yangjie
   mpn: BC857BS
   description: PNP+PNP TRANS 45V 0.2A SOT-363
+  pin_count: 6
 - ref: Q14
   value: 2PNP
   footprint: SOT-363_SC-70-6
   manufacturer: Yangzhou Yangjie
   mpn: BC857BS
   description: PNP+PNP TRANS 45V 0.2A SOT-363
+  pin_count: 6
 - ref: Q15
   value: 2PNP
   footprint: SOT-363_SC-70-6
   manufacturer: Yangzhou Yangjie
   mpn: BC857BS
   description: PNP+PNP TRANS 45V 0.2A SOT-363
+  pin_count: 6
 - ref: Q16
   value: 2NPN
   footprint: SOT-363_SC-70-6
   manufacturer: Yangzhou Yangjie
   mpn: BC847BS
   description: SOT-363 NPN+NPN 0.3W 0.1A 50V
+  pin_count: 6
+  nc_pins: {C2: '3', E2: '4', B2: '5'}
 - ref: Q2
   value: P-channel MOSFET
   footprint: Vishay_PowerPAK_SC70-6L_Single
   manufacturer: Vishay Siliconix
   mpn: SIA483ADJ-T1-GE3
+  pin_count: 3
 - ref: Q3
   value: 2NPN
   footprint: SOT-363_SC-70-6
   manufacturer: Yangzhou Yangjie
   mpn: BC847BS
   description: SOT-363 NPN+NPN 0.3W 0.1A 50V
+  pin_count: 6
 - ref: Q4
   value: P-channel MOSFET
   footprint: Vishay_PowerPAK_SC70-6L_Single
   manufacturer: Vishay Siliconix
   mpn: SIA483ADJ-T1-GE3
+  pin_count: 3
 - ref: Q5
   value: P-channel MOSFET
   footprint: Vishay_PowerPAK_SC70-6L_Single
   manufacturer: Vishay Siliconix
   mpn: SIA483ADJ-T1-GE3
+  pin_count: 3
 - ref: Q6
   value: P-channel MOSFET
   footprint: Vishay_PowerPAK_SC70-6L_Single
   manufacturer: Vishay Siliconix
   mpn: SIA483ADJ-T1-GE3
+  pin_count: 3
 - ref: Q7
   value: P-channel MOSFET
   footprint: Vishay_PowerPAK_SC70-6L_Single
   manufacturer: Vishay Siliconix
   mpn: SIA483ADJ-T1-GE3
+  pin_count: 3
 - ref: Q8
   value: 2NPN
   footprint: SOT-363_SC-70-6
   manufacturer: Yangzhou Yangjie
   mpn: BC847BS
   description: SOT-363 NPN+NPN 0.3W 0.1A 50V
+  pin_count: 6
 - ref: Q9
   value: P-channel MOSFET
   footprint: SOT-23-3
   manufacturer: Yangzhou Yangjie
   mpn: YJL3401A
   description: P-CH MOSFET 30V 4.4A SOT-23-3L
+  pin_count: 3
 - ref: R1
   value: 20mohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3BWFR020V
   description: RES 0.02 OHM 1% 1/3W 0603
+  pin_count: 4
 - ref: R10
   value: 2.2kohm
   footprint: '0402'
@@ -998,6 +1037,7 @@ components:
   manufacturer: Panasonic
   mpn: ERJ-3BWFR020V
   description: RES 0.02 OHM 1% 1/3W 0603
+  pin_count: 4
 - ref: R22
   value: 10kohm
   footprint: '0402'
@@ -1121,6 +1161,7 @@ components:
   manufacturer: Panasonic
   mpn: ERJ-3BWFR020V
   description: RES 0.02 OHM 1% 1/3W 0603
+  pin_count: 4
 - ref: R43
   value: 33kohm
   footprint: '0402'
@@ -1233,6 +1274,7 @@ components:
   manufacturer: Panasonic
   mpn: ERJ-3BWFR020V
   description: RES 0.02 OHM 1% 1/3W 0603
+  pin_count: 4
 - ref: R6
   value: 5.1kohm
   footprint: '0402'
@@ -1517,135 +1559,164 @@ components:
   manufacturer: Yageo
   mpn: YC124-JR-0733RL
   description: RES ARRAY 4 RES 33 OHM 0804
+  pin_count: 8
 - ref: RN2
   value: 33ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-0733RL
   description: RES ARRAY 4 RES 33 OHM 0804
+  pin_count: 8
 - ref: RN3
   value: 33ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-0733RL
   description: RES ARRAY 4 RES 33 OHM 0804
+  pin_count: 8
 - ref: RN4
   value: 33ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-0733RL
   description: RES ARRAY 4 RES 33 OHM 0804
+  pin_count: 8
 - ref: RN5
   value: 0ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-070RL
   description: RES ARRAY 4 RES ZERO OHM 0804
+  pin_count: 8
 - ref: RN6
   value: 0ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-070RL
   description: RES ARRAY 4 RES ZERO OHM 0804
+  pin_count: 8
 - ref: RN7
   value: 0ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-070RL
   description: RES ARRAY 4 RES ZERO OHM 0804
+  pin_count: 8
 - ref: SW1
   value: BTN_PROGRAM
   footprint: SW_Tactile_SPST_Angled_TC-1109DE-B-F
   manufacturer: XKB
   mpn: TC-1109DE-B-F
+  pin_count: 3
 - ref: SW2
   value: BTN_RESET
   footprint: SW_Tactile_SPST_Angled_TC-1109DE-B-F
   manufacturer: XKB
   mpn: TC-1109DE-B-F
+  pin_count: 3
 - ref: SW3
   value: BTN_USER
   footprint: SW_Tactile_SPST_Angled_TC-1109DE-B-F
   manufacturer: XKB
   mpn: TC-1109DE-B-F
+  pin_count: 3
 - ref: U1
   value: PAC1954
   footprint: QFN-16-1EP
   manufacturer: Microchip
   mpn: PAC1954T-E/4MX
   description: IC CURRENT/VOLT MON 1% 16VQFN
+  pin_count: 17
 - ref: U10
   value: HyperRAM
   footprint: BGA-24
   manufacturer: Winbond
   mpn: W956A8MBYA6I
   description: DRAM 64Mb HyperRAM x8, 166MHz, Ind temp, 3.0V
+  pin_count: 24
+  nc_pins: {RFU@A2: A2, RFU@A5: A5, RFU/PSC: B5, RFU@C2: C2, RFU/nPSC: C5}
 - ref: U12
   value: FUSB302B
   footprint: WQFN-14-1EP
   manufacturer: onsemi
   mpn: FUSB302BMPX
   description: IC USB TYPE C CTLR PROGR 14-MLP
+  pin_count: 15
 - ref: U14
   value: DPO2036
   footprint: Diodes_UQFN2020-12_Type-B
   manufacturer: Diodes Inc.
   mpn: DPO2036DBB-7
   description: DATALINE OVER VOLTAGE PROTECTION
+  pin_count: 13
 - ref: U15
   value: 1V8REG
   footprint: SOT-23-5
   manufacturer: Microchip
   mpn: MIC5504-1.8YM5-TR
   description: IC REG LINEAR 1.8V 300MA SOT23-5
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U16
   value: PI3USB102G
   footprint: Diodes_10-TQFN_ZL
   manufacturer: Diodes Inc.
   mpn: PI3USB102GZLEX
   description: IC USB 2.0 SWITCH 2:1 10TQFN
+  pin_count: 10
 - ref: U3
   value: 3V3REG
   footprint: DFN-8-1EP
   manufacturer: Diodes Inc.
   mpn: AP7361EA-33FGE-7
   description: LDO CMOS HICURR U-DFN3030-8
+  pin_count: 9
+  nc_pins: {NC@2: '2', NC@6: '6', NC@7: '7'}
 - ref: U4
   value: 1V15REG
   footprint: SOT-23-5
   manufacturer: Toshiba
   mpn: TCR2EF115,LM(CT
   description: IC REG LINEAR 1.15V 200MA SMV
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U5
   value: 2V5REG
   footprint: SOT-23-5
   manufacturer: Microchip
   mpn: MIC5504-2.5YM5-TR
   description: IC REG LINEAR 2.5V 300MA SOT23-5
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U6
   value: ATSAMD11
   footprint: QFN-24-1EP
   manufacturer: Microchip
   mpn: ATSAMD11D14A-MUT
   description: IC MCU 32BIT 16KB FLASH 24QFN
+  pin_count: 24
 - ref: U7
   value: W25Q32JVSS
   footprint: SOIC-8
   manufacturer: Winbond
   mpn: W25Q32JVSSIQ
   description: IC FLASH 32M SPI 133MHZ 8SOIC
+  pin_count: 8
 - ref: U8
   value: USB3343-CP
   footprint: VQFN-24-1EP
   manufacturer: Microchip
   mpn: USB3343-CP
   description: IC TRANSCEIVER 1/1 24QFN
+  pin_count: 25
+  nc_pins: {XO: '20'}
 - ref: Y1
   value: Osc60MHz
   footprint: SMD3225
   manufacturer: SiTIME
   mpn: SIT1602BC-23-33E-60.000000E
   description: MEMS OSC XO 60.0000MHZ H/LV-CMOS
+  pin_count: 4
 nets:
 - name: +1V1
   pins:

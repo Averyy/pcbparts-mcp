@@ -25,9 +25,11 @@ components:
 - ref: J1
   value: 2x3 header
   footprint: 2X3
+  pin_count: 6
 - ref: Q1
   value: BC817
   footprint: SOT-23
+  pin_count: 3
 - ref: R1
   value: 120ohm
   footprint: '0603'
@@ -43,6 +45,8 @@ components:
 - ref: U1
   value: ATtiny85-20M
   footprint: QFN-20-1EP
+  pin_count: 21
+  nc_pins: {NC@3: '3', NC@4: '4', NC@6: '6', NC@7: '7', NC@9: '9', NC@10: '10', NC@13: '13', NC@16: '16', NC@17: '17', NC@18: '18', NC@19: '19', NC@20: '20'}
 nets:
 - name: /MISO
   pins: [J1.MISO, R3.1, U1.PB1]

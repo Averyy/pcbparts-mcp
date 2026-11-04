@@ -270,15 +270,7 @@ def parse_schematic(sch_path: Path) -> tuple[list[Component], list[Net]]:
             net_classes[num] = (name, width if width != "0" else "")
 
     # Pass 1: scan all pinrefs to identify multi-gate parts (2+ gates)
-    part_gates: dict[str, set[str]] = {}
-    for net_elem in root.iter("net"):
-        for pinref in net_elem.iter("pinref"):
-            part = pinref.get("part", "")
-            gate = pinref.get("gate", "")
-            if part in part_names and gate:
-                part_gates.setdefault(part, set()).add(gate)
-
-    multi_gate_parts = {p for p, gates in part_gates.items() if len(gates) > 1}
+    multi_gate_parts = _multi_gate_parts(root, part_names)
 
     # Pass 2: parse nets — merge across sheets, qualify multi-gate pins
     merged_pins: dict[str, set[str]] = {}
@@ -315,6 +307,71 @@ def parse_schematic(sch_path: Path) -> tuple[list[Component], list[Net]]:
 
     log.info("Parsed Eagle schematic: %d components, %d nets", len(components), len(nets))
     return components, nets
+
+
+def _multi_gate_parts(root: ET.Element, part_names: set[str]) -> set[str]:
+    """Parts wired through two or more gates: their net pins are named "gate.pin"."""
+    part_gates: dict[str, set[str]] = {}
+    for net_elem in root.iter("net"):
+        for pinref in net_elem.iter("pinref"):
+            part = pinref.get("part", "")
+            gate = pinref.get("gate", "")
+            if part in part_names and gate:
+                part_gates.setdefault(part, set()).add(gate)
+    return {p for p, gates in part_gates.items() if len(gates) > 1}
+
+
+def extract_part_pins(sch_path: Path, part_names: set[str]
+                      ) -> tuple[dict[str, dict[str, str]], dict[str, set[str]]]:
+    """Every pin of each part, {ref: {label: pads}}, labelled as nets label them, and its supply pins.
+
+    A pin is a symbol pin the device connects to pads ("1" or "1 2 3" when it joins several). Supply
+    pins (direction pwr) join the net of their own name without a wire, as a hidden VCC/GND gate's do,
+    so they come back separately as connected.
+    """
+    root = ET.parse(sch_path).getroot()
+    symbols: dict[tuple[str, str], dict[str, str]] = {}
+    gates: dict[tuple[str, str], dict[str, str]] = {}
+    connects: dict[tuple[str, str, str], list[tuple[str, str, str]]] = {}
+    for lib in root.iter("library"):
+        lib_name = lib.get("name", "")
+        for sym in lib.iter("symbol"):
+            symbols[(lib_name, sym.get("name", ""))] = {pin.get("name", ""): pin.get("direction", "io")
+                                                         for pin in sym.iter("pin")}
+        for ds in lib.iter("deviceset"):
+            ds_name = ds.get("name", "")
+            gates[(lib_name, ds_name)] = {g.get("name", ""): g.get("symbol", "") for g in ds.iter("gate")}
+            for dev in ds.iter("device"):
+                connects[(lib_name, ds_name, dev.get("name", ""))] = [
+                    (c.get("gate", ""), c.get("pin", ""), c.get("pad", "")) for c in dev.iter("connect")]
+
+    multi_gate_parts = _multi_gate_parts(root, part_names)
+    wired: dict[str, set[tuple[str, str]]] = {}
+    for pinref in root.iter("pinref"):
+        wired.setdefault(pinref.get("part", ""), set()).add((pinref.get("gate", "").lstrip(">"), pinref.get("pin", "")))
+    pins: dict[str, dict[str, str]] = {}
+    supply: dict[str, set[str]] = {}
+    for part in root.iter("part"):
+        ref, lib = part.get("name", ""), part.get("library", "")
+        key = (lib, part.get("deviceset", ""), part.get("device", ""))
+        if ref not in part_names or ref in pins or key not in connects:
+            continue
+        names = [pin for _, pin, _ in connects[key]]
+        mine: dict[str, str] = {}
+        for gate, pin, pad in connects[key]:
+            gate_name = gate.lstrip(">")
+            qualified = ref in multi_gate_parts and gate_name
+            # A name two gates share ("MT" on two mounting tabs): the nets' bare name is the wired gate's
+            if not qualified and names.count(pin) > 1 and (gate_name, pin) not in wired.get(ref, set()):
+                qualified = bool(gate_name)
+            label = f"{gate_name}.{pin}" if qualified else pin
+            mine[label] = pad
+            symbol = gates.get(key[:2], {}).get(gate, "")
+            if symbols.get((lib, symbol), {}).get(pin) == "pwr":
+                supply.setdefault(ref, set()).add(label)
+        if mine:
+            pins[ref] = mine
+    return pins, supply
 
 
 def parse_board(brd_path: Path, part_names: set[str]) -> tuple[list[Position], BoardOutline | None, DesignRules | None, list[CopperPour]]:

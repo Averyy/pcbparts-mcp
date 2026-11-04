@@ -388,18 +388,22 @@ components:
   manufacturer: GCT
   mpn: USB4105-GF-A
   description: USB-C (USB TYPE-C) USB 2.0 Receptacle Connector 24 (16+8 Dummy) Position
+  pin_count: 17
+  nc_pins: {DA+: A6, DA-: A7, SBU1: A8, DB+: B6, DB-: B7, SBU2: B8}
 - ref: J2
   value: JST SH 1x4
   footprint: Conn_JST_SH
   mpn: SM04B-SRSS-TB(LF)(SN)
   manufacturer: JST Automotive Connectors
   description: Pin Header, Right Angle, Wire-to-Board, 1 mm, 1 Rows, 4 Contacts, Surface Mount
+  pin_count: 5
 - ref: J3
   value: JST SH 1x4
   footprint: Conn_JST_SH
   mpn: SM04B-SRSS-TB(LF)(SN)
   manufacturer: JST Automotive Connectors
   description: Pin Header, Right Angle, Wire-to-Board, 1 mm, 1 Rows, 4 Contacts, Surface Mount
+  pin_count: 5
 - ref: J4
   value: Molex Nano-Fit 1x2
   footprint: Conn_Molex_Nano-Fit
@@ -430,6 +434,7 @@ components:
   mpn: SQS401EN-T1_BE3
   manufacturer: Vishay
   description: MOSFET, P Channel, 40 V, 16A, 0.047 ohm, PowerPAK 1212-8, Surface Mount
+  pin_count: 5
 - ref: R1
   value: 3.16kohm
   footprint: '0402'
@@ -661,48 +666,59 @@ components:
   mpn: STUSB4500QTR
   manufacturer: STMicroelectronics
   description: USB Controller USB 2.0 I2C Interface 24-QFN (4x4)
+  pin_count: 25
+  nc_pins: {NC: '3', ATTACH: '11', GPIO: '15', A_B_SIDE: '17', nALERT: '19'}
 - ref: U2
   value: SIC477ED-T1-GE3
   footprint: SIC47XED-T1-GE3
   manufacturer: Vishay
   mpn: SIC477ED-T1-GE3
   description: DC/DC Synchronous Regulator, Adjustable, 4.5V to 55VIn, 0.8V to 50.6V/6AOut
+  pin_count: 28
+  nc_pins: {GL: '15', NC@18: '18', NC@21: '21'}
 - ref: U3
   value: AP62301Z6-7
   footprint: SOT-563
   mpn: AP62301Z6-7
   manufacturer: Diodes Incorporated
   description: DC-DC Switching Synchronous Buck Regulator, Adjustable, 4.2V-18Vin, 0.8V-7V/3A
+  pin_count: 6
 - ref: U4
   value: AP62301Z6-7
   footprint: SOT-563
   mpn: AP62301Z6-7
   manufacturer: Diodes Incorporated
   description: DC-DC Switching Synchronous Buck Regulator, Adjustable, 4.2V-18Vin, 0.8V-7V/3A
+  pin_count: 6
 - ref: U5
   value: TVS2200DRVR
   footprint: WSON-6-1EP
   mpn: TVS2200DRVR
   manufacturer: Texas Instruments
   description: ESD Protection Device, 1 kV, WSON-6, 22 V, 105 pF
+  pin_count: 7
 - ref: U6
   value: TPD4E02B04DQA
   footprint: USON-10
   mpn: TPD4E02B04DQAR
   manufacturer: Texas Instruments
   description: TVS diode array, 12 kV, USON-10, 3.6 V, 0.33 pF
+  pin_count: 10
+  nc_pins: {'1': '1', '10': '10'}
 - ref: U7
   value: TVS2200DRVR
   footprint: WSON-6-1EP
   mpn: TVS2200DRVR
   manufacturer: Texas Instruments
   description: ESD Protection Device, 1 kV, WSON-6, 22 V, 105 pF
+  pin_count: 7
 - ref: U8
   value: TVS2200DRVR
   footprint: WSON-6-1EP
   mpn: TVS2200DRVR
   manufacturer: Texas Instruments
   description: ESD Protection Device, 1 kV, WSON-6, 22 V, 105 pF
+  pin_count: 7
 nets:
 - name: +12V
   pins:

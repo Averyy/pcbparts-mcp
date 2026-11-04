@@ -269,6 +269,7 @@ components:
   manufacturer: CNC Tech
   mpn: 1001-010-01001
   description: CONN USB A TYPE ULTRA FLAT T/H
+  pin_count: 4
 - ref: L1
   value: 1uH
   footprint: '0603'
@@ -284,6 +285,7 @@ components:
 - ref: P1
   value: 2x7 header
   footprint: HEADER-2x7
+  pin_count: 14
 - ref: P2
   value: SMA-EDGE
   footprint: SMA-EDGE
@@ -310,6 +312,7 @@ components:
   footprint: SOT-23
   manufacturer: onsemi
   mpn: BSS84
+  pin_count: 3
 - ref: R1
   value: 4.7kohm
   footprint: '0402'
@@ -417,64 +420,79 @@ components:
   manufacturer: Anaren
   mpn: B0310J50100AHF
   description: Ultra Low Profile 0805 Balun 50 to 100 ohm Balanced
+  pin_count: 4
 - ref: U1
   value: CC1111
   footprint: CC1111-QFN36
   manufacturer: Texas Instruments
   mpn: CC1111F32RSPR
   description: IC SUB1GHZ W/MCU USB 32KB 36-QFN
+  pin_count: 37
+  nc_pins: {P1_5: '34', P1_4: '35'}
 - ref: U2
   value: AP7313
   footprint: SOT-23
   manufacturer: Diodes Inc.
   mpn: AP7313-33SAG-7
   description: IC REG LDO 3.3V .15A SOT23
+  pin_count: 3
 - ref: U3
   value: SSM6L36FE
   footprint: SOT-563
   manufacturer: Toshiba
   mpn: SSM6L36FE,LM
+  pin_count: 6
 - ref: U4
   value: RX amplifier
   footprint: SOT343-WP
   manufacturer: Infineon
   mpn: BGA 420 H6327
   description: IC AMP SI-MMIC 6V 15MA SOT343
+  pin_count: 4
 - ref: U5
   value: SKY13251
   footprint: QFN-8-1EP
   manufacturer: Skyworks Solutions Inc.
   mpn: SKY13251-349LF
   description: IC RF SWITCH SP3T 3GHZ 8QFN
+  pin_count: 9
+  nc_pins: {NC: '2'}
 - ref: U6
   value: SKY13251
   footprint: QFN-8-1EP
   manufacturer: Skyworks Solutions Inc.
   mpn: SKY13251-349LF
   description: IC RF SWITCH SP3T 3GHZ 8QFN
+  pin_count: 9
+  nc_pins: {NC: '2'}
 - ref: U7
   value: TX amplifier
   footprint: SOT343-WP
   manufacturer: RFMD
   mpn: SPF5043Z
   description: IC MMIC AMP LN 50-4000MHZ SOT343
+  pin_count: 4
 - ref: U8
   value: SSM6L36FE
   footprint: SOT-563
   manufacturer: Toshiba
   mpn: SSM6L36FE,LM
+  pin_count: 6
 - ref: U9
   value: LPF
   footprint: 0915LP15B026
   manufacturer: Johanson Technology
   mpn: 0915LP15B026
   description: FILTER LOWPASS GSM/CDMA 915MHZ
+  pin_count: 8
+  nc_pins: {NC@2: '2', NC@6: '6'}
 - ref: X1
   value: 48 MHz clock
   footprint: SMD3225
   manufacturer: Raltron Electronics
   mpn: RH100-48.000-18-F-3030-TR
   description: "48 MHz \xB130ppm Crystal 18pF 50 Ohms 4-SMD, No Lead"
+  pin_count: 4
 nets:
 - name: +3V3
   pins:

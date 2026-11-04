@@ -37,27 +37,37 @@ components:
 - ref: J1
   value: 1x7 header
   footprint: 1X7
+  pin_count: 7
 - ref: J2
   value: 1x2 header
   footprint: 1X2
 - ref: J3
   value: USB Micro-B
   footprint: USB_Micro-B_Amphenol_10104110_Horizontal
+  pin_count: 6
+  nc_pins: {ID: '4'}
 - ref: SW1
   value: Reset
   footprint: SW_SPST_B3U-1000P
 - ref: U1
   value: CH32V003f4p6
   footprint: TSSOP-20
+  pin_count: 20
+  nc_pins: {PD4_A7_T2AETR2: '1', PA1_A1_T1CH2_OSCI: '5', PA2_A0_T1CH2N_OSCO: '6', PD0_T1CH1N: '8', PC1_SDA: '11', PC2_SCL: '12', PC3: '13', PC4_A2_T1CH4: '14', PD2_A3_T2CH1: '19'}
 - ref: U2
   value: 8 megabytes SPI PSRAM
   footprint: SOIC-8
+  pin_count: 8
+  nc_pins: {SIO2: '3', SIO3: '7'}
 - ref: U3
   value: CH330N
   footprint: SOIC-8
+  pin_count: 8
+  nc_pins: {nRTS: '4'}
 - ref: U4
   value: AMS1117-3.3
   footprint: SOT-223-3_TabPin2
+  pin_count: 3
 nets:
 - name: +3.3V
   pins:

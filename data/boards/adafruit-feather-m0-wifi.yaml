@@ -57,9 +57,11 @@ components:
 - ref: JP1
   value: 1x16 header
   footprint: 1X16
+  pin_count: 16
 - ref: JP3
   value: 1x12 header
   footprint: 1X12
+  pin_count: 12
 - ref: L
   value: red LED
   footprint: 0805
@@ -110,17 +112,23 @@ components:
   value: tactile switch
   footprint: KMR2
   description: SMT 6mm switch, EVQQ2 series
+  pin_count: 4
 - ref: U$4
   value: ATSAMD21G18
   footprint: TQFN48_7MM
+  pin_count: 49
+  nc_pins: {PA09/I2C/I9/AIN17/SERCOM0+2.1/I2SMC: '14', PA13/I13/I2C/SERCOM2+4.1: '22', PB22/I6/SERCOM5.2: '37', PB23/I7/SERCOM5.3: '38', PA27/I15: '39', PA28/I8: '41', PB03/I3/AIN11/SERCOM5.1: '48'}
 - ref: U2
   value: AP2112K-3.3
   footprint: SOT-23-5
   description: SOT23-5 Fixed Voltage Regulators
+  pin_count: 5
+  nc_pins: {P4: '4'}
 - ref: U3
   value: MCP73831
   footprint: SOT-23-5
   description: MCP73831/2 LIPO Charger
+  pin_count: 5
 - ref: WIFI
   value: green LED
   footprint: 0805
@@ -136,10 +144,14 @@ components:
   value: microUSB
   footprint: 4UCONN_20329_V2
   description: USB Connectors
+  pin_count: 11
+  nc_pins: {ID: ID}
 - ref: X4
   value: ATWINC1500
   footprint: ATWINC1500_MR210PA
   description: ATWINC1500_MR210PA wifi module
+  pin_count: 24
+  nc_pins: {GPIO18: J1, SCL: J2, SDA: J3, TXD: J14, RXD: J19, GPIO1: J21, 1.3V: J24}
 nets:
 - name: '!RESET'
   pins: [JP1.16, SW1.P, SW1.P1, U$4./RESET]

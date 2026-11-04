@@ -50,10 +50,12 @@ components:
 - ref: JP2
   value: 1x10 header
   footprint: 1X10
+  pin_count: 10
 - ref: U1
   value: MAX3232
   footprint: SOIC-16
   description: RS232 Transceiver
+  pin_count: 16
 nets:
 - name: C1+
   pins: [C1.1, U1.C1+]

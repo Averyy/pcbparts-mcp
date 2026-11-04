@@ -126,11 +126,15 @@ components:
   value: WS2812B
   footprint: LED_SK6812MINI_PLCC4
   lcsc: C527089
+  pin_count: 4
+  nc_pins: {DOUT: '2'}
 - ref: J1
   value: USB4105-GF-A
   footprint: GCT_USB4105-GF-A
   manufacturer: GCT
   lcsc: C165948
+  pin_count: 16
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: L1
   value: 2.2uH
   footprint: L_Bourns-SRN4018
@@ -139,6 +143,7 @@ components:
   value: DMG3415U
   footprint: SOT-23
   lcsc: C96616
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0402'
@@ -242,22 +247,29 @@ components:
   footprint: SON-5
   manufacturer: Sensirion
   lcsc: C194656
+  pin_count: 5
 - ref: U2
   value: ICM-42670-P
   footprint: IC_ICM-42670-P
   manufacturer: TDK InvenSense
+  pin_count: 14
+  nc_pins: {RESV_1: '2', RESV_2: '3', INT1/INT: '4', INT2: '9', RESV_3: '10', RESV_4: '11'}
 - ref: U3
   value: ESP32-C3-MINI-1
   footprint: ESP32-C3-MINI-1
   lcsc: C2838502
+  pin_count: 36
+  nc_pins: {NC@4: '4', GPIO3/ADC1_CH3: '6', NC@7: '7', NC@9: '9', NC@10: '10', GPIO0/ADC1_CH0/XTAL_32K_P: '12', GPIO1/ADC1_CH1/XTAL_32K_N: '13', NC@15: '15', NC@17: '17', GPIO4/ADC1_CH4: '18', GPIO5/ADC2_CH0: '19', GPIO6: '20', NC@24: '24', NC@25: '25', NC@28: '28', NC@29: '29', GPIO20/U0RXD: '30', GPIO21/U0TXD: '31', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35'}
 - ref: U5
   value: SY8088
   footprint: SOT-23-5
   lcsc: C479072
+  pin_count: 5
 - ref: U6
   value: MCP73831
   footprint: SOT-23-5
   lcsc: C424093
+  pin_count: 5
 nets:
 - name: +3V3
   pins:

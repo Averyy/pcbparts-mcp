@@ -56,12 +56,15 @@ components:
   value: TMC2209
   footprint: QFN28-PAD3.7
   description: Trinamic TMC2209 Stepper Motor Driver (5V
+  pin_count: 28
 - ref: J1
   value: 1x8 header
   footprint: MA08-1
+  pin_count: 8
 - ref: J2
   value: 1x8 header
   footprint: MA08-1
+  pin_count: 8
 - ref: J3
   value: 1x2 header
   footprint: MA02-1
@@ -69,6 +72,7 @@ components:
   value: solder jumper
   footprint: SJ-3
   description: 3-Pin Jumper
+  pin_count: 3
 - ref: R1
   value: 20kohm
   footprint: '0402'
@@ -80,6 +84,7 @@ components:
   value: 20kohm
   footprint: POT_EVM3R
   pulldown: VREF
+  pin_count: 3
 - ref: R5
   value: 20kohm
   footprint: '0402'

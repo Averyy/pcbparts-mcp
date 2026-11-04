@@ -46,15 +46,20 @@ components:
   value: 1x6 header
   footprint: 1X06
   prod_id: CONN-08437
+  pin_count: 6
+  nc_pins: {'2': '2', '6': '6'}
 - ref: J2
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J3
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J4
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J5
   value: 1x1 header
   footprint: 1X01
@@ -62,6 +67,7 @@ components:
   value: 1x8 header
   footprint: 1X08
   prod_id: CONN-08438
+  pin_count: 8
 - ref: J7
   value: 1x2 header
   footprint: 1X02
@@ -119,6 +125,7 @@ components:
 - ref: SJ1
   value: normally closed solder jumper
   footprint: SJ-3
+  pin_count: 3
 - ref: SJ2
   value: solder jumper
   footprint: SJ-2
@@ -133,6 +140,7 @@ components:
   footprint: LGA-28
   prod_id: SEN-13947
   description: Hillcrest Labs BNO080 - High Precision IMU (VR)
+  pin_count: 19
 - ref: Y1
   value: 32.768kHz
   footprint: CRYSTAL-SMD-3.2X1.5MM

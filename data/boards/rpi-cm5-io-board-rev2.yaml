@@ -90,43 +90,63 @@ components:
 - ref: J10
   value: 690-019-298-412
   footprint: EDAC 690-019-298-412
+  pin_count: 23
+  nc_pins: {UTILITY/HEAC+: '14'}
 - ref: J11
   value: USB-C
   footprint: USB-C
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J12
   value: USB3_A
   footprint: MTCONN_UBAF30-D2011
+  pin_count: 19
 - ref: J14
   value: JST_SHBM04B-SRSS-TB
   footprint: JST_SH_BM04B-SRSS-TB
+  pin_count: 4
 - ref: J16
   value: 1x22 header
   footprint: Hirose_FH12-22S-0.5SH
+  pin_count: 22
+  nc_pins: {Pin_18: '18'}
 - ref: J2
   value: 2x7 header
   footprint: PinHeader
+  pin_count: 14
+  nc_pins: {Pin_8: '8'}
 - ref: J22
   value: 690-019-298-412
   footprint: EDAC 690-019-298-412
+  pin_count: 23
+  nc_pins: {UTILITY/HEAC+: '14'}
 - ref: J4
   value: M.2
   footprint: M.2 M Key socket
   description: M.2 Socket 3 Mechanical Key M
+  pin_count: 73
+  nc_pins: {PETn3: '5', NC@6: '6', PETp3: '7', NC@8: '8', PERn3: '11', PERp3: '13', PETn2: '17', PETp2: '19', NC@20: '20', NC@22: '22', PERn2: '23', NC@24: '24', PERp2: '25', NC@26: '26', NC@28: '28', PETn1: '29', NC@30: '30', PETp1: '31', NC@32: '32', NC@34: '34', PERn1: '35', NC@36: '36', PERp1: '37', DEVSLP: '38', NC@40: '40', NC@42: '42', NC@44: '44', NC@46: '46', NC@48: '48', NC@56: '56', NC@58: '58', NC@67: '67', PEDET: '69'}
 - ref: J5
   value: 1x22 header
   footprint: Hirose_FH12-22S-0.5SH
+  pin_count: 22
 - ref: J6
   value: 2x2 header
   footprint: PinHeader
+  pin_count: 4
 - ref: J7
   value: Micro_SD_Card_Det
   footprint: '1892'
+  pin_count: 11
+  nc_pins: {DET_B: '9', DET_A: '10'}
 - ref: J8
   value: 2x20 header
   footprint: PinHeader
+  pin_count: 40
 - ref: J9
   value: 2x2 header
   footprint: PinHeader
+  pin_count: 4
 - ref: L1
   value: 2.2uH
   footprint: L_Bourns_SRP5030CC
@@ -134,6 +154,8 @@ components:
   value: ComputeModule5-CM5
   footprint: Raspberry-Pi-5-Compute-Module
   description: RaspberryPi Compute module 5
+  pin_count: 200
+  nc_pins: {SD_DAT5: '64', SD_DAT4: '68', SD_DAT7: '70', SD_DAT6: '72', SD_VDD_Override: '73', WiFi_nDisable: '89', BT_nDisable: '91'}
 - ref: R1
   value: 1kohm
   footprint: '0402'
@@ -202,27 +224,38 @@ components:
 - ref: U1
   value: TPD4EUSB30
   footprint: USON-10
+  pin_count: 10
 - ref: U12
   value: RT9742SNGV
   footprint: TSOT-23
+  pin_count: 3
 - ref: U18
   value: RT9742GGJ5
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {nFLG: '3'}
 - ref: U2
   value: TPD4EUSB30
   footprint: USON-10
+  pin_count: 10
 - ref: U3
   value: MagJack-A70-112-331N126
   footprint: TRJG0926HENL
+  pin_count: 20
 - ref: U6
   value: AP22653W6
   footprint: SOT-23-6
+  pin_count: 6
+  nc_pins: {nFault: '4'}
 - ref: U7
   value: ASEK-32.768KHZ-L-R-T
   footprint: SMD3225
+  pin_count: 4
 - ref: U8
   value: AP3441SHE-7B
   footprint: DFN-8
+  pin_count: 9
+  nc_pins: {PG: '2', nc: '5'}
 nets:
 - name: /+3.3v
   pins:

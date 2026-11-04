@@ -151,16 +151,19 @@ components:
   footprint: SOT-363_SC-70-6
   mpn: 757-SSM6N7002KFULF
   description: Dual NMOS transistor, 6 pin package
+  pin_count: 6
 - ref: Q2
   value: DMN3016LFDE
   footprint: DMN3016LFDE
   mpn: 621-DMN3016LFDE-13
   description: N-MOSFET transistor, gate/drain/source
+  pin_count: 3
 - ref: Q3
   value: DMN3016LFDE
   footprint: DMN3016LFDE
   mpn: 621-DMN3016LFDE-13
   description: N-MOSFET transistor, gate/drain/source
+  pin_count: 3
 - ref: R1
   value: 267kohm
   footprint: '0402'
@@ -297,28 +300,38 @@ components:
   value: TPS2120
   footprint: TPS2120
   mpn: 595-TPS2120YFPR
+  pin_count: 20
 - ref: U3
   value: FAN48623
   footprint: FAN48623
   mpn: 512-FAN48623UC50X
+  pin_count: 16
+  nc_pins: {EN: A1}
 - ref: U4
   value: AVR128DB28
   footprint: SSOP-28
   mpn: 579-AVR128DB28T-I/SS
+  pin_count: 28
+  nc_pins: {PC0: '2', PC1: '3', PD4: '10', nRESET/PF6: '18', UPDI: '19'}
 - ref: U5
   value: NCV68261
   footprint: DFN-6-1EP
   mpn: 863-NCV68261MTWAITBG
   description: Ideal Diode and High Side Switch NMOS Controller
+  pin_count: 7
+  nc_pins: {D: '3', IN: '6', EP: '7'}
 - ref: U6
   value: BQ25622E
   footprint: BQ25622E
   mpn: 595-BQ25622RYKR
   description: BQ25622E I2C Controlled 1-Cell, 3A, Maximum 18V Input, Buck Battery Charger
+  pin_count: 18
 - ref: U7
   value: MAX17260
   footprint: TDFN-14-1EP
   mpn: 700-MAX17260SETD+T
+  pin_count: 15
+  nc_pins: {NC@2: '2', NC@3: '3', NC@4: '4', NC@5: '5', CSPH: '10'}
 - ref: Y1
   value: 32.768 kHz
   footprint: Crystal_SMD_G8-2Pin

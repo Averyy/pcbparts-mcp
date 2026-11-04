@@ -38,14 +38,17 @@ components:
   footprint: 1X04
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J3
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J4
   value: Qwiic connector
   footprint: 1X04
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J5
   value: 1x1 header
   footprint: 1X01
@@ -79,6 +82,7 @@ components:
   footprint: VL53L1X
   prod_id: IC-13960
   description: STMicroelectronics VL53L1X - 400 cm IR Laser ToF Sensor
+  pin_count: 11
 nets:
 - name: '!INT'
   pins: [J5.1, R1.1, U2.!INT]

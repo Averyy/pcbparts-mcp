@@ -154,6 +154,7 @@ components:
   value: USB-A
   footprint: USB_A_Stewart_SS-52100-001_Horizontal
   mpn: 902-141A1011D10100
+  pin_count: 5
 - ref: J3
   value: 3.5mm Terminal Plug
   footprint: Terminal-block-plug
@@ -174,42 +175,52 @@ components:
   value: MMBT3904
   footprint: SOT-23
   mpn: MMBT3904
+  pin_count: 3
 - ref: Q10
   value: AO3400A
   footprint: SOT-23
   mpn: AO3400A
+  pin_count: 3
 - ref: Q2
   value: SS8550
   footprint: SOT-23
   mpn: SS8550
+  pin_count: 3
 - ref: Q3
   value: MMBT3904
   footprint: SOT-23
   mpn: MMBT3904
+  pin_count: 3
 - ref: Q4
   value: SS8550
   footprint: SOT-23
   mpn: SS8550
+  pin_count: 3
 - ref: Q5
   value: 2SD1767
   footprint: SOT-89-3
   mpn: 2SD1767T100Q
+  pin_count: 3
 - ref: Q6
   value: SS8550
   footprint: SOT-23
   mpn: SS8550
+  pin_count: 3
 - ref: Q7
   value: MMBT3904
   footprint: SOT-23
   mpn: MMBT3904
+  pin_count: 3
 - ref: Q8
   value: IRFR120N
   footprint: TO-252
   mpn: IRFR120NTRPBF
+  pin_count: 3
 - ref: Q9
   value: AO3400A
   footprint: SOT-23
   mpn: AO3400A
+  pin_count: 3
 - ref: R1
   value: 470ohm
   footprint: '0603'
@@ -414,42 +425,56 @@ components:
   value: switch
   footprint: Switch_DPDT_OS202011MS2QS1
   mpn: SS22D03L5
+  pin_count: 7
 - ref: SW2
   value: switch
   footprint: Switch_DPDT_OS202011MS2QS1
   mpn: SS22D03L5
+  pin_count: 7
+  nc_pins: {A@4: '4', B@5: '5', C@6: '6'}
 - ref: SW3
   value: switch
   footprint: Switch_DPDT_OS202011MS2QS1
   mpn: SS22D03L5
+  pin_count: 7
+  nc_pins: {A@4: '4', B@5: '5', C@6: '6'}
 - ref: T1
   value: HR051142
   footprint: Transformer_POE13P
   mpn: HR051142
+  pin_count: 10
+  nc_pins: {Bias_M: '1', BIAS_P: '2', '5': '5', '6': '6'}
 - ref: U1
   value: UC3843BD1013TR
   footprint: SO-8
   mpn: UC3843BD1013TR
+  pin_count: 8
 - ref: U2
   value: LTV-356T-B
   footprint: SO-4
   mpn: LTV-356T-B
+  pin_count: 4
 - ref: U3
   value: LTV-356T-B
   footprint: SO-4
   mpn: LTV-356T-B
+  pin_count: 4
 - ref: U4
   value: TL431
   footprint: SOT-23
   mpn: TL431AFDT,215
+  pin_count: 3
 - ref: U5
   value: TL431
   footprint: SOT-23
   mpn: TL431AFDT,215
+  pin_count: 3
 - ref: U6
   value: TS555IDTTR
   footprint: SOIC-8
   mpn: TS555IDTTR
+  pin_count: 8
+  nc_pins: {DIS: '7'}
 nets:
 - name: /COMP
   pins: [Q4.E, Q6.E, R11.1, SW1.B@5, U1.COMP]

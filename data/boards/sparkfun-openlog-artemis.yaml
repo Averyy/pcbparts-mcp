@@ -156,37 +156,45 @@ components:
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J14
   value: JTAG
   footprint: 2X5-PTH-1.27MM
   description: Cortex Debug Connector - 10 pin
+  pin_count: 8
 - ref: J2
   value: JST_2MM_MALE
   footprint: JST-2-SMD
   prod_id: CONN-11443
   description: JST 2MM MALE RA CONNECTOR
+  pin_count: 4
+  nc_pins: {PAD1: NC1, PAD2: NC2}
 - ref: J3
   value: 1x2 header
   footprint: 1X02
 - ref: J4
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: J5
   value: USB-C
   footprint: USB-C
   prod_id: CONN-14122
   description: USB Type C 16Pin Connector
+  pin_count: 14
 - ref: J6
   value: MICRO-SD
   footprint: MICRO-SD-SOCKET
   prod_id: CONN-07820
   description: microSD Socket for Transflash
+  pin_count: 11
 - ref: J7
   value: 1x1 header
   footprint: 1X01
 - ref: JP2
   value: MEAS
   footprint: SJ-2
+  pin_count: 4
 - ref: LED1
   value: red LED
   footprint: '0603'
@@ -197,31 +205,37 @@ components:
   footprint: SOT-416FL
   prod_id: TRANS-14399
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q10
   value: 20V/0.2A/8MHz/1.2ohm/1Vth
   footprint: SOT-416FL
   prod_id: TRANS-14399
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q2
   value: 20V/4.2A/52mohm/1.4W
   footprint: SOT-23-3
   prod_id: TRAN-14388
   description: P-channel MOSFETs
+  pin_count: 3
 - ref: Q3
   value: 20V/0.2A/8MHz/1.2ohm/1Vth
   footprint: SOT-416FL
   prod_id: TRANS-14399
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q7
   value: 20V/0.2A/8MHz/1.2ohm/1Vth
   footprint: SOT-416FL
   prod_id: TRANS-14399
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q9
   value: 20V/0.2A/8MHz/1.2ohm/1Vth
   footprint: SOT-416FL
   prod_id: TRANS-14399
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: R1
   value: 2.2kohm
   footprint: '0402'
@@ -331,45 +345,60 @@ components:
   footprint: TACTILE_SWITCH_SMD
   prod_id: SWCH-13065
   description: Momentary Switch (Pushbutton) - SPST
+  pin_count: 4
 - ref: U1
   value: 3.0V Supervisor
   footprint: SOT-23-3
   prod_id: IC-14809
   description: BD48xxx - Voltage Detector IC
+  pin_count: 3
 - ref: U10
   value: CH340E
   footprint: MSOP10
   prod_id: IC-14135
+  pin_count: 10
+  nc_pins: {'!CTS': '5', TNOW: '6'}
 - ref: U13
   value: 9DoF IMU
   footprint: QFN24-3X3-ICM-20948
   prod_id: IC-14247
   description: ICM-20948 9 Degree of Freedom IMU
+  pin_count: 13
+  nc_pins: {AUX_CL: '7', FSYNC: '11', AUX_DA: '21'}
 - ref: U14
   value: 1.8V/100mA
   footprint: SC70
   prod_id: VREG-08428
   description: Voltage Regulator - SP6214
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U2
   value: MCP73831
   footprint: SOT-23-5
   prod_id: IC-09995
   description: MCP73831T Li-Ion, Li-Pol Controller
+  pin_count: 5
 - ref: U3
   value: 3.3V
   footprint: SOT-23-5
   prod_id: VREG-12457
   description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U4
   value: 3.3V
   footprint: SOT-23-5
   prod_id: VREG-12457
   description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U8
   value: Artemis module
   footprint: ARTEMIS_FP
   prod_id: SUB-14402
   description: The Artemis Module from SparkFun is a Cortex-M4F with BLE 5
+  pin_count: 59
+  nc_pins: {AD16(TRIG0/SCCRST): AD16, (SLSCK/SLSCL/CLKOUT)D0: D0, (SLSDO/SLSDA)D1: D1, (SLSDI)D2: D2, (SDO1/TX1/PDMCLK)D10: D10, (ADCD1P/TX1/PDMCLK)D14: D14, (CMPRF1/TRIG1/SCCCLK)D17: D17, (RX1/TRIG1/PDMDATA)D36: D36, (SDO3/RX1)D38: D38, (SDA4/SDI4/RX1)D40: D40, (BLEIF_IRQ/SWO/I2SWCLK)D41: D41, ~AD31(SCCCLK): ~AD31, ~AD35(TX1/I2SDAT/PDMCLK): ~AD35, (TX1/32KHZ/SWO)~D24: ~D24, (SDO2/I2SWCLK)~D28: ~D28, (SCL4/SCK4/TX1)~D39: ~D39, (SCL3/SCK3/TX1)~D42: ~D42, (SDA3/SDI3/RX1)~D43: ~D43, (SWO/I2SDAT/PDMDATA)~D45: ~D45}
 - ref: Y3
   value: 32.768kHz
   footprint: CRYSTAL-SMD-3.2X1.5MM

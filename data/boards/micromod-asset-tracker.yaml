@@ -196,6 +196,8 @@ components:
   value: BAS70-05
   footprint: SOT-23-3
   prod_id: DIO-14829
+  pin_count: 3
+  nc_pins: {A: '1'}
 - ref: D4
   value: yellow LED
   footprint: '0603'
@@ -220,25 +222,30 @@ components:
   value: DT1042-04SO-7
   footprint: SOT-23-6
   prod_id: DIO-14095
+  pin_count: 6
 - ref: DSR
   value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (1 of 2 connections)
+  pin_count: 3
 - ref: E1
   value: SPH0641LM4H-1
   footprint: SPH0641LM4H-1_MICROPHONE
   prod_id: IC-14361
   description: SPH0641LM4H-1 Microphone
+  pin_count: 8
 - ref: E3
   value: SMA antenna
   footprint: SMA-EDGE-SMD
   prod_id: CONN-15100
   description: SMA Antenna Connector w/ Ground
+  pin_count: 3
 - ref: E4
   value: SMA antenna
   footprint: SMA-EDGE-SMD
   prod_id: CONN-15100
   description: SMA Antenna Connector w/ Ground
+  pin_count: 3
 - ref: F2
   value: 6V/2A
   footprint: '1210'
@@ -256,6 +263,7 @@ components:
   manufacturer: Texas Instruments
   mpn: SN74AVC4T774PW
   prod_id: IC-15360
+  pin_count: 16
 - ref: IC2
   value: SN74AVC4T774PW
   footprint: SOP-16
@@ -263,6 +271,7 @@ components:
   manufacturer: Texas Instruments
   mpn: SN74AVC4T774PW
   prod_id: IC-15360
+  pin_count: 16
 - ref: IC3
   value: SN74AVC4T774PW
   footprint: SOP-16
@@ -270,33 +279,43 @@ components:
   manufacturer: Texas Instruments
   mpn: SN74AVC4T774PW
   prod_id: IC-15360
+  pin_count: 16
 - ref: J1
   value: USB-C
   footprint: USB-C
   prod_id: CONN-14122
   description: USB Type C 16Pin Connector
+  pin_count: 14
+  nc_pins: {SHLD: SHLD1 SHLD2 SHLD3 SHLD4}
 - ref: J10
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: J11
   value: microSD
   footprint: MICRO-SD-SOCKET
   prod_id: CONN-07820
   description: microSD Socket for Transflash
+  pin_count: 11
+  nc_pins: {DAT1/NC: DAT1, DAT2/NC: DAT2}
 - ref: J12
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J13
   value: 1x1 header
   footprint: 1X01
 - ref: J14
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J15
   value: JST_2MM_MALE
   footprint: JST-2-SMD
   prod_id: CONN-11443
   description: JST 2MM MALE RA CONNECTOR
+  pin_count: 4
+  nc_pins: {PAD1: NC1, PAD2: NC2}
 - ref: J16
   value: 1x2 header
   footprint: 1X02
@@ -304,10 +323,13 @@ components:
   value: NANO_SIM
   footprint: NANO_SIM_WURTH_693043020611
   prod_id: CONN-14097
+  pin_count: 6
+  nc_pins: {VPP: C6}
 - ref: J18
   value: SARA_USB
   footprint: 1X04
   prod_id: CONN-09696
+  pin_count: 4
 - ref: J19
   value: 1x1 header
   footprint: 1X01
@@ -315,25 +337,33 @@ components:
   value: JTAG
   footprint: 2X5-PTH-1.27MM
   description: Cortex Debug Connector - 10 pin
+  pin_count: 8
+  nc_pins: {SWO: '6'}
 - ref: J4
   value: MICROMOD
   footprint: M.2-CONNECTOR-E
   prod_id: CONN-14877
   description: MicroMod Connector
+  pin_count: 67
+  nc_pins: {G11: '8', USBHOST_D+: '35', USBHOST_D-: '37', CAN-RX: '41', CAN-TX: '43', AUD_IN/CAM_PCLK: '54', AUD_OUT/CAM_MCLK: '56', AUD_MCLK: '58', SPI_SCK1/SDIO_CLK: '60', SPI_SDO1/SDIO_CMD: '62', G10/ADC_D+/CAM_VSYNC: '63', SPI_SDI1/SDIO_DATA0: '64', G9/ADC_D-/CAM_HSYNC: '65', SDIO_DATA1: '66', G8: '67', SDIO_DATA2: '68', SPI_!CS1!/SDIO_DATA3: '70'}
 - ref: J5
   value: 1x5 header
   footprint: 1X05
+  pin_count: 5
 - ref: J6
   value: 1x5 header
   footprint: 1X05
+  pin_count: 5
 - ref: J7
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J8
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: J9
   value: 1x1 header
   footprint: 1X01
@@ -341,6 +371,7 @@ components:
   value: solder jumper
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
+  pin_count: 3
 - ref: JP10
   value: solder jumper (NC)
   footprint: SJ-2
@@ -381,10 +412,12 @@ components:
   value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (1 of 2 connections)
+  pin_count: 3
 - ref: JP2
   value: solder jumper
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
+  pin_count: 3
 - ref: JP20
   value: solder jumper (NC)
   footprint: SJ-2
@@ -426,51 +459,61 @@ components:
   footprint: SOT323
   prod_id: TRANS-11151
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q10
   value: 20V/0.2A/8MHz/1.2ohm/1Vth
   footprint: SOT-416FL
   prod_id: TRANS-14399
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q2
   value: 310mA/60V/1.6ohm
   footprint: SOT323
   prod_id: TRANS-11151
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q3
   value: 310mA/60V/1.6ohm
   footprint: SOT323
   prod_id: TRANS-11151
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q4
   value: 310mA/60V/1.6ohm
   footprint: SOT323
   prod_id: TRANS-11151
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q5
   value: 20V/0.2A/8MHz/1.2ohm/1Vth
   footprint: SOT-416FL
   prod_id: TRANS-14399
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q6
   value: 20V/4.2A/52mohm/1.4W
   footprint: SOT-23-3
   prod_id: TRAN-14388
   description: P-channel MOSFETs
+  pin_count: 3
 - ref: Q7
   value: 310mA/60V/1.6ohm
   footprint: SOT323
   prod_id: TRANS-11151
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q8
   value: 310mA/60V/1.6ohm
   footprint: SOT323
   prod_id: TRANS-11151
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q9
   value: 310mA/60V/1.6ohm
   footprint: SOT323
   prod_id: TRANS-11151
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: R1
   value: 2.2kohm
   footprint: '0603'
@@ -683,60 +726,77 @@ components:
   footprint: TACTILE_SWITCH_SMD_5.2MM
   prod_id: SWCH-14139
   description: Momentary Switch (Pushbutton) - SPST
+  pin_count: 4
 - ref: S2
   value: BOOT
   footprint: TACTILE_SWITCH_SMD_5.2MM
   prod_id: SWCH-14139
   description: Momentary Switch (Pushbutton) - SPST
+  pin_count: 4
 - ref: S3
   value: SARA_PWR
   footprint: TACTILE_SWITCH_SMD_5.2MM
   prod_id: SWCH-14139
   description: Momentary Switch (Pushbutton) - SPST
+  pin_count: 4
 - ref: U1
   value: SARA-R510M8S
   footprint: SARA-LGA
   prod_id: IC-15573
+  pin_count: 96
+  nc_pins: {RSVD: '2', GPIO4: '25', I2S_WA: '34', I2S_TXD: '35', I2S_CLK: '36', I2S_RXD: '37', GPIO5: '42', SDIO_D2: '44', SDIO_CLK: '45', SDIO_CMD: '46', SDIO_D0: '47', SDIO_D3: '48', SDIO_D1: '49'}
 - ref: U13
   value: 9DoF IMU
   footprint: QFN24-3X3-ICM-20948
   prod_id: IC-14247
   description: ICM-20948 9 Degree of Freedom IMU
+  pin_count: 13
+  nc_pins: {AUX_CL: '7', FSYNC: '11', AUX_DA: '21'}
 - ref: U14
   value: 1.8V/100mA
   footprint: SC70
   prod_id: VREG-08428
   description: Voltage Regulator - SP6214
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U2
   value: MCP73831
   footprint: SOT-23-5
   prod_id: IC-09995
   description: MCP73831T Li-Ion, Li-Pol Controller
+  pin_count: 5
 - ref: U3
   value: 3.3V
   footprint: SOT-23-5
   prod_id: VREG-12457
   description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U4
   value: MAX17048
   footprint: DFN-8
   prod_id: IC-12551
   description: Micropower 1-Cell Li+ ModelGauge
+  pin_count: 9
+  nc_pins: {'!ALRT': '5'}
 - ref: U5
   value: AP7361C-33
   footprint: UDFN-8
   prod_id: VREG-14094
   description: AP7361C 3.3V LDO Regulator
+  pin_count: 5
 - ref: U7
   value: PCA9306
   footprint: VSSOP_8PIN
   prod_id: IC-14450
   description: Bidirectional I2C level shifter
+  pin_count: 8
 - ref: U8
   value: 74HC1G04
   footprint: SOT353
   prod_id: COMP-08268
   description: Single Inverter
+  pin_count: 4
 - ref: VIN/3
   value: solder jumper (NC)
   footprint: SJ-2

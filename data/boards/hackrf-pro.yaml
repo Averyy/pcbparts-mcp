@@ -1342,6 +1342,7 @@ components:
   footprint: LED_Dual_Xinglight_XL-3210_Horizontal
   manufacturer: Xinglight
   mpn: XL-3210SURSYGC
+  pin_count: 4
 - ref: D5
   value: LED
   footprint: LED_Single_Xinglight_XL-3210_Horizontal
@@ -1352,16 +1353,21 @@ components:
   footprint: LED_Dual_Xinglight_XL-3210_Horizontal
   manufacturer: Xinglight
   mpn: XL-3210SURUBC
+  pin_count: 4
+  nc_pins: {A1: '1', K1: '2'}
 - ref: D7
   value: LED
   footprint: LED_Dual_Xinglight_XL-3210_Horizontal
   manufacturer: Xinglight
   mpn: XL-3210SURUBC
+  pin_count: 4
 - ref: D8
   value: LED
   footprint: LED_Dual_Xinglight_XL-3210_Horizontal
   manufacturer: Xinglight
   mpn: XL-3210SURUBC
+  pin_count: 4
+  nc_pins: {A2: '3', K2: '4'}
 - ref: D9
   value: TVS
   footprint: TSLP-2-19
@@ -1422,24 +1428,29 @@ components:
   manufacturer: Murata
   mpn: DLM0NSB280HY2D
   description: CMC 130MA 2LN 28 OHM SMD
+  pin_count: 4
 - ref: FL2
   value: BPF
   footprint: Filter_Pulse_BPF1608LM09R5000A
   manufacturer: Pulse Electronics
   mpn: BPF1608LM02R2400A
   description: RF FILTER BAND PASS 2.45GHZ 0603
+  pin_count: 4
 - ref: FL3
   value: BPF
   footprint: Filter_Pulse_BPF1608LM09R5000A
   manufacturer: Pulse Electronics
   mpn: BPF1608LM02R2400A
   description: RF FILTER BAND PASS 2.45GHZ 0603
+  pin_count: 4
 - ref: J1
   value: USB-C
   footprint: USB-C
   manufacturer: DEALON
   mpn: USB-TYPE-C-019
   description: CONN RCPT USB2.0 TYPE-C 16POS
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
   value: RF shield
   footprint: Laird_Technologies_BMI-S-230-F
@@ -1650,18 +1661,21 @@ components:
   manufacturer: Sullins
   mpn: PPPC112LFBN-RC
   description: CONN HEADER FMAL 22PS.1" DL GOLD
+  pin_count: 22
 - ref: P22
   value: 2x13 header
   footprint: 2X13
   manufacturer: Sullins
   mpn: PPPC132LFBN-RC
   description: CONN HEADER FMAL 26PS.1" DL GOLD
+  pin_count: 26
 - ref: P28
   value: 2x11 header
   footprint: 2X11
   manufacturer: Sullins
   mpn: PPPC112LFBN-RC
   description: CONN HEADER FMAL 22PS.1" DL GOLD
+  pin_count: 22
 - ref: P3
   value: SMA
   footprint: SMA_MyAntenna_A-SMA-KE-16.5A_EdgeMount
@@ -1674,48 +1688,57 @@ components:
   manufacturer: Diodes Inc.
   mpn: DMC2400UV-7
   description: Dual NMOS/PMOS transistor, 6 pin package
+  pin_count: 6
 - ref: Q10
   value: 2NPN
   footprint: SOT-363_SC-70-6
   manufacturer: Yangzhou Yangjie
   mpn: BC847BS
   description: SOT-363 NPN+NPN 0.3W 0.1A 50V
+  pin_count: 6
 - ref: Q3
   value: P-channel MOSFET
   footprint: SOT-23-3
   manufacturer: Yangzhou Yangjie
   mpn: YJL3401A
   description: P-CH MOSFET 30V 4.4A SOT-23-3L
+  pin_count: 3
 - ref: Q4
   value: P-channel MOSFET
   footprint: SOT-23-3
   manufacturer: Yangzhou Yangjie
   mpn: YJL3401A
   description: P-CH MOSFET 30V 4.4A SOT-23-3L
+  pin_count: 3
 - ref: Q5
   value: P-channel MOSFET
   footprint: SOT-23-3
   manufacturer: Yangzhou Yangjie
   mpn: YJL3401A
   description: P-CH MOSFET 30V 4.4A SOT-23-3L
+  pin_count: 3
 - ref: Q6
   value: P-channel MOSFET
   footprint: SOT-23-3
   manufacturer: Yangzhou Yangjie
   mpn: YJL3401A
   description: P-CH MOSFET 30V 4.4A SOT-23-3L
+  pin_count: 3
 - ref: Q7
   value: 2NPN
   footprint: SOT-363_SC-70-6
   manufacturer: Yangzhou Yangjie
   mpn: BC847BS
   description: SOT-363 NPN+NPN 0.3W 0.1A 50V
+  pin_count: 6
+  nc_pins: {C2: '3', E2: '4', B2: '5'}
 - ref: Q9
   value: 2PNP
   footprint: SOT-363_SC-70-6
   manufacturer: Yangzhou Yangjie
   mpn: BC857BS
   description: PNP+PNP TRANS 45V 0.2A SOT-363
+  pin_count: 6
 - ref: R1
   value: 470ohm
   footprint: '0201'
@@ -2637,327 +2660,393 @@ components:
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
+  pin_count: 8
 - ref: RN2
   value: 100ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
+  pin_count: 8
+  nc_pins: {R1.1: '1', R1.2: '8'}
 - ref: RN3
   value: 100ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
+  pin_count: 8
+  nc_pins: {R1.1: '1', R1.2: '8'}
 - ref: RN4
   value: 100ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
+  pin_count: 8
 - ref: RN5
   value: 100ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
+  pin_count: 8
 - ref: RN6
   value: 100ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
+  pin_count: 8
 - ref: RN7
   value: 100ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
+  pin_count: 8
 - ref: RN8
   value: 100ohm
   footprint: R_Array_Convex
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
+  pin_count: 8
 - ref: SW1
   value: switch
   footprint: SW_Tactile_SPST_Angled_PTS645Vx58-2LFS
   manufacturer: TE Connectivity
   mpn: FSMRA3JH
+  pin_count: 3
 - ref: SW2
   value: switch
   footprint: SW_Tactile_SPST_Angled_PTS645Vx58-2LFS
   manufacturer: TE Connectivity
   mpn: FSMRA3JH
+  pin_count: 3
 - ref: T1
   value: RF_BALUN
   footprint: Anaren_0805_2012Metric-6
   manufacturer: TTM
   mpn: B0310J50100AHF
   description: Ultra Low Profile 0805 Balun 50 to 100 ohm Balanced
+  pin_count: 4
 - ref: T2
   value: RF_BALUN
   footprint: Anaren_0805_2012Metric-6
   manufacturer: TTM
   mpn: B0310J50100AHF
   description: Ultra Low Profile 0805 Balun 50 to 100 ohm Balanced
+  pin_count: 4
 - ref: T3
   value: IF_BALUN
   footprint: Balun_TDK_TFSZ06052460-3310A2X
   manufacturer: TDK
   mpn: TFSZ06052460-3310A2X
   description: Thin-Film Balun for 2300-2690MHz
+  pin_count: 4
 - ref: T4
   value: IF_BALUN
   footprint: Balun_TDK_TFSZ06052460-3310A2X
   manufacturer: TDK
   mpn: TFSZ06052460-3310A2X
   description: Thin-Film Balun for 2300-2690MHz
+  pin_count: 4
 - ref: U1
   value: MXD8546F
   footprint: QFN-12-1EP
   manufacturer: Maxscend
   mpn: MXD8546F
   description: X-DPDT RF SWITCH
+  pin_count: 13
+  nc_pins: {N/C@2: '2', N/C@8: '8'}
 - ref: U10
   value: 74LVC1G86
   footprint: SOT-353_SC-70-5
   manufacturer: UMW
   mpn: SN74LVC1G86DCKR
   description: IC GATE XOR 1CH 2-INP SC70-5
+  pin_count: 5
 - ref: U11
   value: 74LVC1G86
   footprint: SOT-353_SC-70-5
   manufacturer: UMW
   mpn: SN74LVC1G86DCKR
   description: IC GATE XOR 1CH 2-INP SC70-5
+  pin_count: 5
 - ref: U12
   value: MXD8638C
   footprint: MXD8638C
   manufacturer: Maxscend
   mpn: MXD8638C
   description: Wideband RF SP3T Switch
+  pin_count: 9
 - ref: U13
   value: 74LVC1G86
   footprint: SOT-353_SC-70-5
   manufacturer: UMW
   mpn: SN74LVC1G86DCKR
   description: IC GATE XOR 1CH 2-INP SC70-5
+  pin_count: 5
 - ref: U14
   value: MXD8638C
   footprint: MXD8638C
   manufacturer: Maxscend
   mpn: MXD8638C
   description: Wideband RF SP3T Switch
+  pin_count: 9
 - ref: U15
   value: USB TVS
   footprint: Diodes_UDFN-10
   manufacturer: TECH PUBLIC
   mpn: TPAZ1143-04F
   description: 4-Channel Low Capacitance TVS Diode Array, DFN-10
+  pin_count: 10
 - ref: U16
   value: ICE40UP5K
   footprint: QFN-48-1EP
   manufacturer: Lattice
   mpn: ICE40UP5K-SG48ITR
   description: iCE40 UltraPlus FPGA, 5280 LUTs, 1.2V, 48-pin QFN
+  pin_count: 49
 - ref: U17
   value: MAX2831
   footprint: QFN-48-1EP
   manufacturer: Maxim
   mpn: MAX2831ETM+T
   description: IC RF TXRX WIFI 48TQFN
+  pin_count: 49
+  nc_pins: {B6: '3', B7: '6', B3: '8', B2: '11', B5: '14', CLOCKOUT: '21', B1: '23', CTUNE: '29', B4: '34'}
 - ref: U18
   value: MAX5865
   footprint: QFN-48-1EP
   manufacturer: Maxim
   mpn: MAX5865ETM+T
   description: IC ANLG FRONT END 40MSPS 48-TQFN
+  pin_count: 49
+  nc_pins: {NC: '38'}
 - ref: U19
   value: SI5351C
   footprint: QFN-20-1EP
   manufacturer: Silicon Laboratories Inc
   mpn: SI5351C-B-GM
   description: IC CLK GENERATOR 160MHZ 20QFN
+  pin_count: 21
+  nc_pins: {XB: '2'}
 - ref: U2
   value: MXD8546F
   footprint: QFN-12-1EP
   manufacturer: Maxscend
   mpn: MXD8546F
   description: X-DPDT RF SWITCH
+  pin_count: 13
+  nc_pins: {N/C@2: '2', N/C@8: '8'}
 - ref: U20
   value: W25Q32
   footprint: SOIC-8
   manufacturer: Winbond
   mpn: W25Q32JVSSIQ
   description: IC FLASH 32MBIT SPI/QUAD 8SOIC
+  pin_count: 8
 - ref: U21
   value: TPS62410
   footprint: Texas_S-PVSON-N10_ThermalVias
   manufacturer: Texas Instruments
   mpn: TPS62410DRCR
   description: IC BUCK SYNC DUAL ADJ 0.8A 10SON
+  pin_count: 11
 - ref: U22
   value: 2.5V LDO
   footprint: SOT-23-3
   manufacturer: UMW
   mpn: XC6206P252MR
   description: Linear Voltage Regulator IC Positive Fixed 1 Output 100mA SOT-23
+  pin_count: 3
 - ref: U23
   value: LPC4330FET180
   footprint: TFBGA-180
   manufacturer: NXP
   mpn: LPC4330FET180
   description: ARM Cortex-M4/M0 flashless MCU
+  pin_count: 180
+  nc_pins: {RTC_ALARM: A10, NC: B8, PB_4: B10, PB_2: B11, WAKEUP1: C8, P4_8: D2, P4_0: D4, USB1_DP: D11, WAKEUP2: E5, USB1_DM: E11, USB0_ID: G2, P6_10: G13, P8_3: H3, TDI: H4, P8_8: K1, TMS/SWDIO: K5, P5_0: L2, nTRST: L4, PA_0: L10, P6_5: L14, P6_0: M10}
 - ref: U24
   value: AP22652
   footprint: TSOP-6
   manufacturer: Diodes Inc.
   mpn: AP22652W6-7
   description: LOAD SWITCH,SOT26,T&R,3K
+  pin_count: 6
 - ref: U25
   value: TRF37C73
   footprint: WSON-8-1EP
   manufacturer: Texas Instruments
   mpn: TRF37C73IDSGR
   description: IC RF AMP 1MHZ-6GHZ 8WSON
+  pin_count: 9
 - ref: U26
   value: 74HC00
   footprint: DHVQFN-14-1EP
   manufacturer: Nexperia
   mpn: 74HC00BQ,115
   description: IC GATE NAND 4CH 2-INP 14DHVQFN
+  pin_count: 14
 - ref: U27
   value: 74LVC1G32
   footprint: SOT-353_SC-70-5
   manufacturer: UMW
   mpn: SN74LVC1G32DCKR
   description: IC GATE OR 1CH 2-INP SC70-5
+  pin_count: 5
 - ref: U28
   value: AP22652
   footprint: TSOP-6
   manufacturer: Diodes Inc.
   mpn: AP22652W6-7
   description: LOAD SWITCH,SOT26,T&R,3K
+  pin_count: 6
 - ref: U3
   value: GT4227
   footprint: GTIC_UQFN-10
   manufacturer: GTIC
   mpn: GT4227QA
   description: USB 2.0 Switch with ESD Protection, UQFN-10 Pitch 0.4 mm
+  pin_count: 10
 - ref: U30
   value: 74LVC1G3157
   footprint: SOT-363_SC-70-6
   manufacturer: UMW
   mpn: ET3157
   description: IC SW SPDT-NO/NCX1 7OHM SC70-6
+  pin_count: 6
 - ref: U31
   value: 74LVC1G3157
   footprint: SOT-363_SC-70-6
   manufacturer: UMW
   mpn: ET3157
   description: IC SW SPDT-NO/NCX1 7OHM SC70-6
+  pin_count: 6
 - ref: U32
   value: 2.5V LDO
   footprint: SOT-23-3
   manufacturer: UMW
   mpn: XC6206P252MR
   description: Linear Voltage Regulator IC Positive Fixed 1 Output 100mA SOT-23
+  pin_count: 3
 - ref: U33
   value: 74HC4051
   footprint: DHVQFN-16-1EP
   manufacturer: Nexperia
   mpn: 74HC4051BQ,115
   description: IC MUX 8:1 120OHM 16DHVQFN
+  pin_count: 16
+  nc_pins: {A6: '2'}
 - ref: U34
   value: GT4227
   footprint: GTIC_UQFN-10
   manufacturer: GTIC
   mpn: GT4227QA
   description: USB 2.0 Switch with ESD Protection, UQFN-10 Pitch 0.4 mm
+  pin_count: 10
 - ref: U35
   value: GT4227
   footprint: GTIC_UQFN-10
   manufacturer: GTIC
   mpn: GT4227QA
   description: USB 2.0 Switch with ESD Protection, UQFN-10 Pitch 0.4 mm
+  pin_count: 10
 - ref: U36
   value: 74LVC1G86
   footprint: SOT-353_SC-70-5
   manufacturer: UMW
   mpn: SN74LVC1G86DCKR
   description: IC GATE XOR 1CH 2-INP SC70-5
+  pin_count: 5
 - ref: U37
   value: 74LVC1G3157
   footprint: SOT-363_SC-70-6
   manufacturer: UMW
   mpn: ET3157
   description: IC SW SPDT-NO/NCX1 7OHM SC70-6
+  pin_count: 6
 - ref: U38
   value: BGB741L7ESD
   footprint: TSLP-7-1
   manufacturer: Infineon
   mpn: BGB741L7ESDE6327XTSA1
   description: IC AMP CELL 50MHZ-3.5GHZ TSLP7-1
+  pin_count: 7
 - ref: U39
   value: 74LVC1G08
   footprint: SOT-353_SC-70-5
   manufacturer: UMW
   mpn: SN74LVC1G08DCKR
   description: IC GATE AND 1CH 2-INP SC70-5
+  pin_count: 5
 - ref: U4
   value: RFFC5072
   footprint: QFN-32-1EP
   manufacturer: RFMD
   mpn: RFFC5072TR7
   description: WIDEBAND SYNTHESIZER/VCO WITH INTEGRATED 6GHz MIXER
+  pin_count: 33
+  nc_pins: {EXT_LO: '2', EXT_LO_DEC: '3', NC@11: '11', NC@13: '13', NC@14: '14', GPO1/ADD1: '15', GPO2/ADD2: '16', NC@17: '17', NC@18: '18', NC@20: '20', NC@21: '21', GPO3/FM: '25'}
 - ref: U40
   value: BGB741L7ESD
   footprint: TSLP-7-1
   manufacturer: Infineon
   mpn: BGB741L7ESDE6327XTSA1
   description: IC AMP CELL 50MHZ-3.5GHZ TSLP7-1
+  pin_count: 7
 - ref: U5
   value: FM8625H
   footprint: TSLP-6-4
   manufacturer: Shenzhen Fuman
   mpn: FM8625H
   description: SPDT RF SWITCH
+  pin_count: 6
 - ref: U6
   value: FM8625H
   footprint: TSLP-6-4
   manufacturer: Shenzhen Fuman
   mpn: FM8625H
   description: SPDT RF SWITCH
+  pin_count: 6
 - ref: U7
   value: FM8625H
   footprint: TSLP-6-4
   manufacturer: Shenzhen Fuman
   mpn: FM8625H
   description: SPDT RF SWITCH
+  pin_count: 6
 - ref: U8
   value: GT4227
   footprint: GTIC_UQFN-10
   manufacturer: GTIC
   mpn: GT4227QA
   description: USB 2.0 Switch with ESD Protection, UQFN-10 Pitch 0.4 mm
+  pin_count: 10
 - ref: U9
   value: MXD8638C
   footprint: MXD8638C
   manufacturer: Maxscend
   mpn: MXD8638C
   description: Wideband RF SP3T Switch
+  pin_count: 9
 - ref: X1
   value: TCXO
   footprint: Oscillator_SMD_SeikoEpson_TG2520SMN-xxx-xxxxxx-4Pin
   manufacturer: HCI
   mpn: 8122S-25.000NQ33FTL
   description: 25 MHz TCXO
+  pin_count: 4
+  nc_pins: {NC: '1'}
 - ref: X2
   value: MCU_XTAL
   footprint: SMD3225
   manufacturer: Shenzhen SCTF Electronics
   mpn: SX3B12.000F1210F30
+  pin_count: 4
 - ref: X3
   value: RTC_XTAL
   footprint: SMD3215

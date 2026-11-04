@@ -81,6 +81,7 @@ components:
   value: DF06M
   footprint: Diode_Bridge_DIP-4_W7.62mm_P5.08mm
   description: Miniature Glass Passivated Single-Phase Bridge Rectifiers, 420V Vrms, 1.0A If
+  pin_count: 4
 - ref: D2
   value: 1N4148W
   footprint: SOD-123
@@ -115,16 +116,20 @@ components:
   value: L_Coupled_1342
   footprint: WE-SL5_HC
   description: Coupled inductor
+  pin_count: 4
 - ref: Q1
   value: BSP135H6433XTMA1
   footprint: SOT-4
   height: '1.8'
   manufacturer: Infineon
   mpn: BSP135H6433XTMA1
+  pin_count: 4
+  nc_pins: {D_1: '2'}
 - ref: Q2
   value: C3M0065090D
   footprint: TO-247
   description: 36A Id, 900V Vds, 65mOhm, N-Channel SiC MOSFET, TO-247
+  pin_count: 3
 - ref: R1
   value: 499kohm
   footprint: '1206'
@@ -181,17 +186,22 @@ components:
   value: LM5023
   footprint: VSSOP-8
   description: Quasi-Resonant Current-Mode PWM Controller for Off-Line Supplies, OVP/OTP
+  pin_count: 8
 - ref: U2
   value: PC817
   footprint: DIP-4
   description: DC Optocoupler, Vce 35V, CTR 50-300%, DIP-4
+  pin_count: 4
 - ref: U3
   value: '750313417'
   footprint: SMD_13417_WRE
+  pin_count: 12
+  nc_pins: {PR1_CEN: '2', NC: '4'}
 - ref: U5
   value: MAX6101
   footprint: SOT-23
   description: "Low-dropout high current voltage reference, 1.250V, \xB10.4% accuracy, SOT-23"
+  pin_count: 3
 nets:
 - name: GND
   pins:

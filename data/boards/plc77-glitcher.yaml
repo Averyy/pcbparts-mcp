@@ -18,6 +18,7 @@ components:
 - ref: B1
   value: RB1A
   footprint: RB1A
+  pin_count: 4
 - ref: C1
   value: 100nF
   footprint: C5B3
@@ -48,6 +49,8 @@ components:
 - ref: CDR1
   value: CHEAPREADR
   footprint: CHEAPREA
+  pin_count: 10
+  nc_pins: {P$5: P$5, P$8: P$8, P$11: P$11}
 - ref: D1
   value: Red/Grn LED
   footprint: LED2
@@ -66,18 +69,26 @@ components:
 - ref: IC1
   value: AT90S2313P
   footprint: DIL20
+  pin_count: 20
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '6': '6', '7': '7', '8': '8', '9': '9', '11': '11', '12': '12', '15': '15', '17': '17', '18': '18', '19': '19'}
 - ref: IC2
   value: '7405'
   footprint: DIL14
+  pin_count: 14
 - ref: IC3
   value: MAX232
   footprint: DIL16
+  pin_count: 16
+  nc_pins: {'11': '11', '14': '14'}
 - ref: IC4
   value: 74HC00N
   footprint: DIL14
+  pin_count: 14
 - ref: J1
   value: FLOPPY-4
   footprint: FLOPPY-4
+  pin_count: 4
+  nc_pins: {'1': '1', '2': '2'}
 - ref: Q1
   value: 3.5795 MHZ
   footprint: HC49U-V
@@ -96,12 +107,16 @@ components:
 - ref: U$7
   value: POWER1
   footprint: POWER1
+  pin_count: 3
 - ref: U1
   value: 7805T
   footprint: TO220H
+  pin_count: 3
 - ref: X1
   value: F09HP
   footprint: F09HP
+  pin_count: 11
+  nc_pins: {'1': '1', '8': '8', '9': '9', G1: G1, G2: G2}
 nets:
 - name: GND
   pins:

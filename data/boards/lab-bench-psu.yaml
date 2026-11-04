@@ -87,6 +87,7 @@ components:
 - ref: D1
   value: 1.5 A Bridge Rectifier
   footprint: Diode_Bridge_Round_D9.0mm
+  pin_count: 4
 - ref: D2
   value: 1N4148
   footprint: DO-35_SOD27_P7.62mm_Horizontal
@@ -111,12 +112,16 @@ components:
 - ref: J2
   value: 1x4 header
   footprint: 1X4
+  pin_count: 4
 - ref: J3
   value: 1x6 header
   footprint: 1X6
+  pin_count: 6
+  nc_pins: {'6': '6'}
 - ref: J4
   value: 1x5 header
   footprint: 1X5
+  pin_count: 5
 - ref: J5
   value: Output
   footprint: TerminalBlock_Altech_AK300-2_P5.00mm
@@ -126,15 +131,19 @@ components:
 - ref: Q1
   value: BC557
   footprint: TO-92
+  pin_count: 3
 - ref: Q2
   value: BC547
   footprint: TO-92
+  pin_count: 3
 - ref: Q3
   value: TIP41C
   footprint: TO-220
+  pin_count: 3
 - ref: Q4
   value: BC557
   footprint: TO-92
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: Axial
@@ -263,18 +272,24 @@ components:
 - ref: U1
   value: LM324
   footprint: DIP-14
+  pin_count: 14
 - ref: U2
   value: LM317_TO-220
   footprint: TO-220
+  pin_count: 3
 - ref: U3
   value: LM7805_TO220
   footprint: TO-220
+  pin_count: 3
 - ref: U4
   value: LM2576T-ADJ
   footprint: TO-220
+  pin_count: 5
 - ref: U5
   value: PIC16F18855-xSP
   footprint: DIP-28
+  pin_count: 28
+  nc_pins: {'2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '16': '16', '17': '17', '18': '18', '22': '22', '25': '25'}
 - ref: Y1
   value: 20 MHz Crystal
   footprint: Crystal_HC18-U_Vertical

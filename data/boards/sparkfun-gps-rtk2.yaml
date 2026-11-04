@@ -78,16 +78,19 @@ components:
   footprint: SOT886
   prod_id: DIO-14084
   description: A small ESD protection device
+  pin_count: 6
 - ref: E1
   value: SMA
   footprint: SMA-EDGE
   prod_id: CONN-08289
   description: Antenna w/ Ground Connection
+  pin_count: 5
 - ref: E2
   value: SMA
   footprint: SMA-EDGE
   prod_id: CONN-08289
   description: Antenna w/ Ground Connection
+  pin_count: 5
 - ref: FB1
   value: ferrite bead
   footprint: '0402'
@@ -96,33 +99,42 @@ components:
   value: 1x6 header
   footprint: 1X06
   description: 6-pin header connection for use with the "FTDI BASIC" pinout - TARGET SIDE.
+  pin_count: 6
+  nc_pins: {DTR: '1', CTS: '5'}
 - ref: J2
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
+  pin_count: 4
 - ref: J3
   value: 1x4 header
   footprint: 1X04
+  pin_count: 4
 - ref: J4
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
+  pin_count: 4
 - ref: J5
   value: USB-C
   footprint: USB-C
   prod_id: CONN-14122
   description: USB Type C 16Pin Connector
+  pin_count: 14
 - ref: J6
   value: 1x6 header
   footprint: 1X06
   prod_id: CONN-08437
+  pin_count: 6
 - ref: J7
   value: 1x9 header
   footprint: 1X09
+  pin_count: 9
 - ref: JP5
   value: solder jumper
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
+  pin_count: 3
 - ref: LED2
   value: red LED
   footprint: '0603'
@@ -235,9 +247,13 @@ components:
   footprint: SOT-23-5
   prod_id: VREG-12457
   description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U3
   value: ZED-F9P
   footprint: ZED-F9P
+  pin_count: 81
+  nc_pins: {ANT_DETECT: '4', ANT_OFF: '5', '!ANT_SHORT!': '6', TX_READY: '46'}
 nets:
 - name: '!RESET'
   pins: [J6.4, R19.2]

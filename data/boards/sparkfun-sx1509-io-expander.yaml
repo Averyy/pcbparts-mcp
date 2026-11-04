@@ -40,18 +40,22 @@ components:
   value: 1x6 header
   footprint: 1X06
   prod_id: CONN-08437
+  pin_count: 6
 - ref: JP2
   value: 1x6 header
   footprint: 1X06
   prod_id: CONN-08437
+  pin_count: 6
 - ref: JP3
   value: 2x10 header
   footprint: 2X10
   description: This was SPECIALLY designed to be used with our Graphic LCD Backpack
+  pin_count: 20
 - ref: JP4
   value: 2x10 header
   footprint: 2X10
   description: This was SPECIALLY designed to be used with our Graphic LCD Backpack
+  pin_count: 20
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -95,6 +99,7 @@ components:
 - ref: SJ1
   value: solder jumper (NC)
   footprint: SJ-3
+  pin_count: 3
 - ref: SJ2
   value: VCC1-3.3V
   footprint: SJ-2
@@ -104,9 +109,11 @@ components:
 - ref: SJ4
   value: solder jumper
   footprint: SJ-3
+  pin_count: 3
 - ref: SJ5
   value: solder jumper
   footprint: SJ-3
+  pin_count: 3
 - ref: SJ6
   value: A-VCC1
   footprint: SJ-2
@@ -124,6 +131,7 @@ components:
   footprint: QFN-28
   prod_id: IC-11311
   description: Semtech SX1509
+  pin_count: 29
 nets:
 - name: '!INT'
   pins: [JP1.1, R1.1, U1.!INT]

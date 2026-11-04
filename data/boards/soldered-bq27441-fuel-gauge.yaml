@@ -32,9 +32,11 @@ components:
 - ref: JP1
   value: solder jumper (NC)
   footprint: SJ-2
+  pin_count: 3
 - ref: JP2
   value: solder jumper (NC)
   footprint: SJ-2
+  pin_count: 3
 - ref: JP3
   value: solder jumper (NC)
   footprint: SJ-2
@@ -53,12 +55,15 @@ components:
 - ref: K4
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K5
   value: easyC-SMD
   footprint: easyC-connector
+  pin_count: 5
 - ref: K6
   value: 1x4 header
   footprint: HEADER_MALE
+  pin_count: 4
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -88,12 +93,17 @@ components:
 - ref: U1
   value: BQ27441DRZR
   footprint: BQ27441
+  pin_count: 12
+  nc_pins: {NC@4: '4', NC@9: '9', NC@11: '11'}
 - ref: U2
   value: dual NMOS
   footprint: SOT-363
+  pin_count: 6
 - ref: U3
   value: SE5218
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {NC: '4'}
 nets:
 - name: 3V3
   pins:

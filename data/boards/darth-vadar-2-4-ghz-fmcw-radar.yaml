@@ -49,6 +49,7 @@ components:
   height: 0.58mm
   manufacturer: ANAREN
   mpn: PD2425J5050S2HF
+  pin_count: 6
 - ref: IC2
   value: BGS12PN10
   footprint: BGSA11GN10E6327XTSA1
@@ -56,6 +57,8 @@ components:
   height: 0.4mm
   manufacturer: Infineon
   mpn: BGS12PN10E6327XTSA1
+  pin_count: 10
+  nc_pins: {N.C.: '5'}
 - ref: IC3
   value: BGS12PN10
   footprint: BGSA11GN10E6327XTSA1
@@ -63,6 +66,8 @@ components:
   height: 0.4mm
   manufacturer: Infineon
   mpn: BGS12PN10E6327XTSA1
+  pin_count: 10
+  nc_pins: {N.C.: '5'}
 - ref: J1
   value: 1x2 header
   footprint: 10X02MTA
@@ -91,58 +96,68 @@ components:
   height: 0.9mm
   manufacturer: Infineon
   mpn: BGA622H6820XTSA1
+  pin_count: 4
 - ref: LNA_IN
   value: SMA-
   footprint: J502-ND-142-0711-821
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0711-821
   description: SMA 50 Ohm
+  pin_count: 5
 - ref: LO_IN
   value: U.FL-R-SMT-1
   footprint: HRS_U.FL-R-SMT-1(10)
   description: U.FL _UMCC_ Connector Receptacle, Male Pin 50Ohm Surface Mount Solder
   manufacturer: Hirose
   mpn: U.FL-R-SMT-1_10_
+  pin_count: 3
 - ref: OUT_1
   value: SMA-
   footprint: J502-ND-142-0711-821
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0711-821
   description: SMA 50 Ohm
+  pin_count: 5
 - ref: OUT_2
   value: SMA-
   footprint: J502-ND-142-0711-821
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0711-821
   description: SMA 50 Ohm
+  pin_count: 5
 - ref: R1
   value: 100ohm
   footprint: '0603'
 - ref: U$1
   value: MDB-73H+
   footprint: QFN24
+  pin_count: 10
 - ref: U$2
   value: GVA-60+
   footprint: SOT89
   description: MiniCircuits GVA-60+ SiGE Power Amplifier
+  pin_count: 4
 - ref: U1
   value: MAX2750
   footprint: SOP-8
   description: 2.4GHz ISM-band VCO
   manufacturer: Maxim Integrated
   mpn: MAX2750EUA+
+  pin_count: 8
 - ref: X6
   value: VCO Test
   footprint: J502-ND-142-0711-821
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0711-821
   description: SMA 50 Ohm
+  pin_count: 5
 - ref: X7
   value: SMA-
   footprint: J502-ND-142-0711-821
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0711-821
   description: SMA 50 Ohm
+  pin_count: 5
 nets:
 - name: BYP
   pins: [C3.2, U1.BYP]

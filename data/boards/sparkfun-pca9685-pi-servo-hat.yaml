@@ -67,84 +67,106 @@ components:
   value: 2x20 header
   footprint: 2X20
   description: Raspberry Pi GPIO Header
+  pin_count: 40
+  nc_pins: {GP4: '7', GP17: '11', GP18#: '12', GP27: '13', GP22: '15', GP23: '16', GP24: '18', MOSI: '19', MISO: '21', GP25: '22', SCLK: '23', CE0: '24', CE1: '26', ID_SD: '27', ID_SC: '28', GP5: '29', GP6: '31', GP12: '32', GP13: '33', GP19: '35', GP16: '36', GP26: '37', GP20: '38', GP21: '40'}
 - ref: J10
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J11
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J12
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J13
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J14
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J15
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J16
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J17
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J18
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J19
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J20
   value: USB C
   footprint: USB-C
   prod_id: CONN-14122
   description: USB Type C 16Pin Connector
+  pin_count: 18
+  nc_pins: {SHLD: SHLD1 SHLD2 SHLD3 SHLD4 SHLD5 SHLD6 SHLD7 SHLD8}
 - ref: J21
   value: 1x4 header
   footprint: 1X04
   prod_id: CONN-09696
+  pin_count: 4
 - ref: J3
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J4
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J5
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J6
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J7
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J8
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: J9
   value: 1x3 header
   footprint: 1X03
   prod_id: XXX-00000
+  pin_count: 3
 - ref: JP2
   value: FUSE BP
   footprint: SJ-2
@@ -153,6 +175,7 @@ components:
   value: I2C
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
+  pin_count: 3
 - ref: JP4
   value: PI ISO
   footprint: SJ-2
@@ -162,61 +185,73 @@ components:
   footprint: SOT323
   prod_id: TRANS-11151
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q10
   value: dual PNP transistor
   footprint: SOT363
   prod_id: TRAN-14386
   description: Dual PNP Transistors in Single Package
+  pin_count: 6
 - ref: Q11
   value: dual NPN transistor
   footprint: SC70-6
   prod_id: TRANS-13337
   description: Dual NPN Transistors in Single Package
+  pin_count: 6
 - ref: Q12
   value: 20V/4.2A/52mohm/1.4W
   footprint: SOT-23-3
   prod_id: TRAN-14388
   description: P-channel MOSFETs
+  pin_count: 3
 - ref: Q2
   value: 20V/4.2A/52mohm/1.4W
   footprint: SOT-23-3
   prod_id: TRAN-14388
   description: P-channel MOSFETs
+  pin_count: 3
 - ref: Q3
   value: dual PNP transistor
   footprint: SOT363
   prod_id: TRAN-14386
   description: Dual PNP Transistors in Single Package
+  pin_count: 6
 - ref: Q4
   value: 310mA/60V/1.6ohm
   footprint: SOT323
   prod_id: TRANS-11151
   description: N-channel MOSFETs
+  pin_count: 3
 - ref: Q5
   value: 20V/4.2A/52mohm/1.4W
   footprint: SOT-23-3
   prod_id: TRAN-14388
   description: P-channel MOSFETs
+  pin_count: 3
 - ref: Q6
   value: dual PNP transistor
   footprint: SOT363
   prod_id: TRAN-14386
   description: Dual PNP Transistors in Single Package
+  pin_count: 6
 - ref: Q7
   value: 20V/4.2A/52mohm/1.4W
   footprint: SOT-23-3
   prod_id: TRAN-14388
   description: P-channel MOSFETs
+  pin_count: 3
 - ref: Q8
   value: dual PNP transistor
   footprint: SOT363
   prod_id: TRAN-14386
   description: Dual PNP Transistors in Single Package
+  pin_count: 6
 - ref: Q9
   value: 20V/4.2A/52mohm/1.4W
   footprint: SOT-23-3
   prod_id: TRAN-14388
   description: P-channel MOSFETs
+  pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0603'
@@ -319,20 +354,26 @@ components:
   footprint: SWITCH_SPST_SMD_A
   prod_id: SWCH-10651
   description: Single Pole, Double Throw (SPDT) Switch
+  pin_count: 3
 - ref: U1
   value: PCA9685
   footprint: TSSOP-28_4MM
   prod_id: IC-12271
   description: 16-channel 12-bit PWM
+  pin_count: 28
+  nc_pins: {A0: '1', A1: '2', A2: '3', A3: '4', A4: '5', A5: '24'}
 - ref: U2
   value: SN74LVC1G32DCKR
   footprint: SOT353
   prod_id: IC-10842
   description: Single OR gate
+  pin_count: 5
 - ref: U3
   value: CH340C
   footprint: SOIC-16
   prod_id: IC-14038
+  pin_count: 14
+  nc_pins: {'!CTS': '9', '!DSR': '10', '!RI': '11', '!DCD': '12', '!DTR': '13', '!RTS': '14', R232: '15'}
 nets:
 - name: 3.3V
   pins:

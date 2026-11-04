@@ -57,12 +57,15 @@ components:
   value: USB2.0_C_v3
   footprint: Connector_USB-C-Receptacle_SMT_12-Pin_Simple
   description: USB 2.0-only Type-C Plug connector
+  pin_count: 6
 - ref: J2
   value: ProMicro-LeftPin-NoGND
   footprint: PinOut_ProMicro-LIKE_LEFT_NO-GND
+  pin_count: 12
 - ref: J3
   value: ProMicro-RightPin
   footprint: PinOut_ProMicro-LIKE_RIGHT
+  pin_count: 12
 - ref: R1
   value: 5.1kohm
   footprint: 0805
@@ -99,16 +102,21 @@ components:
   value: AMS1117-3.3
   footprint: Package_SOT-89-3
   description: 1A Low Dropout regulator, positive, 3.3V fixed output, SOT-223
+  pin_count: 3
 - ref: U2
   value: CH32V203C8T6
   footprint: Package_LQFP-48
+  pin_count: 48
+  nc_pins: {PC13/TAMPER_RTC: '2', PC14/OSC32IN: '3', PC15/OSC32OUT: '4', PB10/I2C2_SCL/UART3_TX: '21', PB11/I2C2_SDA/UART3_RX: '22', PB12/SPI2_NSS/I2C2_SMBA/UART3_CK: '25', PB13/SPI2_SCK/UART3_CTS: '26', PB14/API2_MISO/UART3_RTS: '27', PB15/API2_MOSI: '28', PA8/UART1_CK: '29', PA15: '38', PB5/I2C1_SMBA: '41'}
 - ref: U3
   value: CH213K
   footprint: Package_SOT-23
+  pin_count: 3
 - ref: Y1
   value: 8MHz
   footprint: SMD3225
   description: Four pin crystal, GND on pins 2 and 4
+  pin_count: 4
 nets:
 - name: +3V3
   pins:

@@ -20,6 +20,8 @@ components:
   footprint: JST_SM07B-GHS-TB(LF)(SN)
   manufacturer: JST
   mpn: SM07B-GHS-TB(LF)(SN)
+  pin_count: 9
+  nc_pins: {SHIELD@S1: S1, SHIELD@S2: S2}
 - ref: C1
   value: 1uF
   footprint: 0805
@@ -255,6 +257,7 @@ components:
   footprint: JST_S3B-PH-SM4-TB(LF)(SN)
   manufacturer: JST
   mpn: S3B-PH-SM4-TB(LF)(SN)
+  pin_count: 3
 - ref: D1
   value: SMBJ48D-M3/I
   footprint: SMB
@@ -298,11 +301,13 @@ components:
   footprint: TSON Advance_TOS
   mpn: TPN19008QM,LQ
   manufacturer: TOSHIBA
+  pin_count: 8
 - ref: Q4
   value: TPN19008QM_LQ
   footprint: TSON Advance_TOS
   mpn: TPN19008QM,LQ
   manufacturer: TOSHIBA
+  pin_count: 8
 - ref: R1
   value: 0ohm
   footprint: '0402'
@@ -413,10 +418,14 @@ components:
   value: 100ohm
   footprint: '0402'
   mpn: MF-RES-0402-100
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R35
   value: 100ohm
   footprint: '0402'
   mpn: MF-RES-0402-100
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R9
   value: 2mohm
   footprint: 0805
@@ -427,36 +436,49 @@ components:
   footprint: JST_S6B-ZR-SM4A-TF(LF)(SN)
   manufacturer: JST
   mpn: S6B-ZR-SM4A-TF(LF)(SN)
+  pin_count: 8
+  nc_pins: {'1': '1', SHIELD@SH1: SH1, SHIELD@SH2: SH2}
 - ref: U1
   value: MAX15062BATA+T
   footprint: 21-0487A_MXM
   mpn: MAX15062BATA+T
   manufacturer: MAXIM
+  pin_count: 8
+  nc_pins: {'*RESET': '6'}
 - ref: U2
   value: TLV70233PDBVR
   footprint: SOT-23-5
   mpn: TLV70233PDBVR
   manufacturer: TI
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U3
   value: STM32G474CEU6
   footprint: UFQFPN-48
   mpn: STM32G474CEU6
   manufacturer: ST
+  pin_count: 49
+  nc_pins: {PB11: '24', PB14: '27', PB8-BOOT0: '46'}
 - ref: U4
   value: DRV8323SRTAR
   footprint: RTA0040B
   mpn: DRV8323SRTAR
   manufacturer: TI
+  pin_count: 41
+  nc_pins: {GHA: '6', SHA: '7', GLA: '8', SPA: '9', SNA: '10', SNB: '11', SPB: '12', GHC: '16', SHC: '17', GLC: '18', SPC: '19', SNC: '20', CAL: '31'}
 - ref: U5
   value: TCAN1057AEV-Q1
   footprint: SOIC-8
   mpn: TCAN1057AEVDRQ1
   manufacturer: TI
+  pin_count: 8
 - ref: U6
   value: AS5047P
   footprint: TSSOP14_OSM
   mpn: AS5047P-ATSM
   manufacturer: OSRAM
+  pin_count: 14
+  nc_pins: {B: '6', A: '7', W/PWM: '8', V: '9', U: '10', I/PWM: '14'}
 nets:
 - name: +3V
   pins:

@@ -19,6 +19,7 @@ components:
   value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (1 of 2 connections)
+  pin_count: 3
 - ref: C3
   value: 100nF
   footprint: '0603'
@@ -38,22 +39,27 @@ components:
   value: solder jumper
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
+  pin_count: 3
 - ref: J1
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: J2
   value: Qwiic connector
   footprint: JST04_1MM_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
+  pin_count: 4
 - ref: JP1
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: JP3
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: L1
   value: ferrite bead
   footprint: '0603'
@@ -98,6 +104,7 @@ components:
   footprint: LGA14L
   prod_id: IC-15837
   description: The LSM6DSO is a system-in-package featuring a high-performance 3-axis digital
+  pin_count: 14
 nets:
 - name: '!CS!'
   pins: [JP1.1, R3.1, U1.!CS!]

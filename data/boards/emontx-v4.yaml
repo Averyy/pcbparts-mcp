@@ -19,6 +19,7 @@ components:
   value: 1x9 header
   footprint: 1X09
   description: Pin header 1x10 0.1" spacing
+  pin_count: 9
 - ref: AP2112
   value: AP2112K-3.3TRG1
   footprint: SOT-5
@@ -26,6 +27,8 @@ components:
   height: 1.3mm
   manufacturer: Diodes Inc.
   mpn: AP2112K-3.3TRG1
+  pin_count: 5
+  nc_pins: {ADJ/NC: '4'}
 - ref: AVRDB
   value: AVR128DB48T-E_6LX
   footprint: QFN-49
@@ -33,6 +36,8 @@ components:
   height: 0.9mm
   manufacturer: Microchip
   mpn: AVR128DB48T-E/6LX
+  pin_count: 49
+  nc_pins: {PB3: '7', PC3: '13', PC4: '16', PC5: '17', PC6: '18', PC7: '19', PF4: '38', PF5: '39', PA2: '46', PA3: '47'}
 - ref: C1
   value: 10uF
   footprint: '0603'
@@ -136,18 +141,23 @@ components:
   value: 1x3 screw terminal
   footprint: SCREWTERMINAL-3.5MM-3
   prod_id: CONN-08288
+  pin_count: 3
 - ref: CN2
   value: 1x3 screw terminal
   footprint: SCREWTERMINAL-3.5MM-3
   prod_id: CONN-08288
+  pin_count: 3
 - ref: CN3
   value: 1x3 screw terminal
   footprint: SCREWTERMINAL-3.5MM-3
   prod_id: CONN-08288
+  pin_count: 3
 - ref: CP2102
   value: CP210x USB-UART
   footprint: MLP28
   description: Single-Chip USB to UART Bridge
+  pin_count: 19
+  nc_pins: {DCD: '1', RI: '2', '!RST': '9', '!SUSPEND': '11', SUSPEND: '12', CTS: '23', RTS: '24', DSR: '27'}
 - ref: D1
   value: ESD5Z3.3T1G
   footprint: SOD-523
@@ -188,6 +198,7 @@ components:
   height: 1.75mm
   manufacturer: Microchip
   mpn: MCP1501-10E/SN
+  pin_count: 8
 - ref: J1
   value: SJ-3524-SMT-TR
   footprint: '3524'
@@ -195,6 +206,8 @@ components:
   height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  pin_count: 4
+  nc_pins: {RING: '3'}
 - ref: J2
   value: SJ-3524-SMT-TR
   footprint: '3524'
@@ -202,6 +215,8 @@ components:
   height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  pin_count: 4
+  nc_pins: {RING: '3'}
 - ref: J3
   value: SJ-3524-SMT-TR
   footprint: '3524'
@@ -209,6 +224,8 @@ components:
   height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  pin_count: 4
+  nc_pins: {RING: '3'}
 - ref: J4
   value: SJ-3524-SMT-TR
   footprint: '3524'
@@ -216,6 +233,8 @@ components:
   height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  pin_count: 4
+  nc_pins: {RING: '3'}
 - ref: J5
   value: SJ-3524-SMT-TR
   footprint: '3524'
@@ -223,6 +242,8 @@ components:
   height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  pin_count: 4
+  nc_pins: {RING: '3'}
 - ref: J6
   value: SJ-3524-SMT-TR
   footprint: '3524'
@@ -230,14 +251,19 @@ components:
   height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  pin_count: 4
+  nc_pins: {RING: '3'}
 - ref: J9
   value: RJ11
   footprint: RJ11-6
   prod_id: CONN-08590
   description: RJ11 Jack - 6 pin
+  pin_count: 6
+  nc_pins: {'3': '3'}
 - ref: JP1
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
 - ref: JP2
   value: solder jumper (NC)
   footprint: SJ-2
@@ -264,6 +290,8 @@ components:
 - ref: R10
   value: 1kohm
   footprint: '0603'
+  pin_count: 2
+  nc_pins: {'1': '1'}
 - ref: R11
   value: 33kohm
   footprint: '0603'
@@ -394,9 +422,12 @@ components:
   value: 2_SMT_DIP_SWITCH
   footprint: DIP_SWITCH_SMT
   description: Multicomp MCEMR-02-T 2 throw SMT DIP switch, Farnell 1524005
+  pin_count: 4
 - ref: SPI_EXT
   value: 1x6 header
   footprint: 1X06
+  pin_count: 6
+  nc_pins: {'2': '2'}
 - ref: TX_LINK4
   value: solder jumper (NC)
   footprint: SJ-2
@@ -413,21 +444,29 @@ components:
   value: RJ45-8
   footprint: RJ45-8
   description: RJ45 Jack
+  pin_count: 8
+  nc_pins: {'7': '7'}
 - ref: U$14
   value: RFM12B
   footprint: RFM12B
+  pin_count: 10
+  nc_pins: {FFS: FFS, IRQ: IRQ}
 - ref: UDPI
   value: 1x3 header
   footprint: 1X03
+  pin_count: 3
 - ref: USB-C
   value: CSP-USC16-TR
   footprint: USB-C
   mpn: CSP-USC16-TR
   description: CSP-USC16-TR TOBY
+  pin_count: 10
+  nc_pins: {VBUS2: B4/A9}
 - ref: X1
   value: SMACONNECTOR
   footprint: SMA90_DIP
   description: SMA Connector
+  pin_count: 5
 - ref: XTAL
   value: MCSJK-7U-12.00-12-10-80-B-10
   footprint: MCSJK7U1200121080B10
@@ -435,6 +474,7 @@ components:
   height: 0.8mm
   manufacturer: MULTICOMP
   mpn: MCSJK-7U-12.00-12-10-80-B-10
+  pin_count: 4
 nets:
 - name: +5V
   pins:

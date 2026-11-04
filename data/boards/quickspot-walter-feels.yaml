@@ -369,10 +369,13 @@ components:
   footprint: BZX84C5V6LT1G
   lcsc: C82471
   partno: BZX84C5V6LT1G
+  pin_count: 3
+  nc_pins: {A@2: '2'}
 - ref: D3
   value: ESDCAN01-2BLY
   footprint: SOT-3
   lcsc: C1976606
+  pin_count: 3
 - ref: D4
   value: 8.2V
   footprint: SOD-523
@@ -387,6 +390,7 @@ components:
   value: D3V3X4U10LP-7
   footprint: D3V3X4U10LP7
   lcsc: C1974550
+  pin_count: 10
 - ref: F1
   value: 5A Slow
   footprint: '1206'
@@ -402,10 +406,13 @@ components:
   manufacturer: Analog Devices
   mpn: LTC4015EUHF#PBF
   lcsc: C687159
+  pin_count: 39
+  nc_pins: {CELLS1: '1', CELLS2: '2', nSMBALERT: '6', CHEM0: '36', CHEM1: '37', CELLS0: '38'}
 - ref: J1
   value: '693072010801'
   footprint: '693072010801'
   lcsc: C5912397
+  pin_count: 12
 - ref: J2
   value: '1071010'
   footprint: '1071010'
@@ -418,14 +425,17 @@ components:
   value: '1990070'
   footprint: '1990070'
   lcsc: C17275119
+  pin_count: 9
 - ref: J5
   value: '1990070'
   footprint: '1990070'
   lcsc: C17275119
+  pin_count: 9
 - ref: J6
   value: 1x4 header
   footprint: 1X4
   lcsc: C5116483
+  pin_count: 4
 - ref: L1
   value: 10uH
   footprint: INDPM178169X700N
@@ -442,30 +452,37 @@ components:
   value: common mode choke
   footprint: ACT45B1012PTL003
   lcsc: C76584
+  pin_count: 4
 - ref: Q1
   value: FDMC8030
   footprint: FDMC89521L
   lcsc: C890952
+  pin_count: 10
 - ref: Q2
   value: FDMC8327L
   footprint: FDMC86139P
   manufacturer: onsemi
   mpn: FDMC8327L
   lcsc: C890957
+  pin_count: 9
 - ref: Q3
   value: SI7611DN-T1
   footprint: VISHAY_SIS468DN-T1-GE3
   lcsc: C506599
+  pin_count: 9
 - ref: Q4
   value: CSD17318Q2
   footprint: CSD17318Q2
+  pin_count: 3
 - ref: Q5
   value: DMP2021UFDE-7
   footprint: MOSFET_DMP2066UFDE-7
   lcsc: C151459
+  pin_count: 7
 - ref: Q6
   value: CSD17318Q2
   footprint: CSD17318Q2
+  pin_count: 3
 - ref: R1
   value: 45.3kohm
   footprint: '0603'
@@ -490,10 +507,12 @@ components:
   value: 3mohm
   footprint: RES_KRL3216T4-M-R003-F-T1
   lcsc: C4119998
+  pin_count: 4
 - ref: R14
   value: 4mohm
   footprint: RES_KRL3216T4-M-R003-F-T1
   lcsc: C2090348
+  pin_count: 4
 - ref: R15
   value: 60.4ohm
   footprint: '0603'
@@ -632,51 +651,69 @@ components:
 - ref: U1
   value: DPT_Walter
   footprint: walter-socket
+  pin_count: 28
 - ref: U10
   value: SCD30
   footprint: SCD30
   lcsc: C1519271
+  pin_count: 7
+  nc_pins: {RDY: '5', PWM: '6'}
 - ref: U11
   value: LT3120JV#PBF
   footprint: QFN50P400X500X83-29N-D
   lcsc: C3198178
+  pin_count: 29
 - ref: U12
   value: MAX17291ATA+T
   footprint: SON50P200X200X80-9N-D
   lcsc: C7456683
+  pin_count: 9
+  nc_pins: {POK: '5'}
 - ref: U14
   value: SN65HVDA1050AQDRQ1
   footprint: SOIC-8
   lcsc: C115764
+  pin_count: 8
 - ref: U2
   value: MAX3221
   footprint: SOP-16
   lcsc: C44383
   partno: MAX3221IPWR
+  pin_count: 16
+  nc_pins: {nINVALID: '10'}
 - ref: U3
   value: MIC2005A-2
   footprint: MIC2005A-2YM5
   lcsc: C625654
+  pin_count: 5
+  nc_pins: {FAULT/: '4'}
 - ref: U4
   value: THVD1450D
   footprint: SOIC-8
   lcsc: C2671361
+  pin_count: 8
 - ref: U5
   value: SN74LV1T126DBVR
   footprint: DBV0005A_N
   lcsc: C23654
+  pin_count: 5
 - ref: U6
   value: SN74LV1T126DBVR
   footprint: DBV0005A_N
   lcsc: C23654
+  pin_count: 5
 - ref: U7
   value: HDC1080DMBR
   footprint: Texas_PWSON-N6
   lcsc: C82227
+  pin_count: 7
+  nc_pins: {NC@3: '3', NC@4: '4', DAP: '7'}
 - ref: U8
   value: LPS22HBTR
   footprint: HLGA10
   lcsc: C94049
+  pin_count: 10
+  nc_pins: {INT_DRDY: '7'}
 - ref: U9
   value: LSM6DSM
   footprint: LGA-14

@@ -811,25 +811,30 @@ components:
   value: RJ45_LED
   footprint: RJ45_LED
   manufacturer: METZ CONNECT
+  pin_count: 13
 - ref: J3
   value: RJ45_LED
   footprint: RJ45_LED
   manufacturer: METZ CONNECT
+  pin_count: 13
 - ref: JP1
   value: solder jumper (NO)
   footprint: SOLDER_JUMPER
 - ref: JP3
   value: solder jumper (NC)
   footprint: SOLDER_JUMPER_3_NC
+  pin_count: 3
 - ref: JP4
   value: solder jumper (NO)
   footprint: SOLDER_JUMPER
 - ref: JP5
   value: solder jumper (NC)
   footprint: SOLDER_JUMPER_3_NC
+  pin_count: 3
 - ref: JP6
   value: solder jumper (NC)
   footprint: SOLDER_JUMPER_3_NC
+  pin_count: 3
 - ref: JP9
   value: solder jumper (NO)
   footprint: SOLDER_JUMPER
@@ -881,23 +886,31 @@ components:
   value: USB_OTG
   footprint: USB_Micro-B
   manufacturer: Molex
+  pin_count: 6
+  nc_pins: {'1': '1', '4': '4'}
 - ref: P10
   value: 2x6 header
   footprint: Socket_Strip_Angled
+  pin_count: 12
 - ref: P11
   value: USB_OTG
   footprint: USB_Micro-B
   manufacturer: Molex
+  pin_count: 6
+  nc_pins: {'1': '1', '4': '4'}
 - ref: P12
   value: 1x4 header
   footprint: 1X4
+  pin_count: 4
 - ref: P13
   value: 1x4 header
   footprint: Socket_Strip_Straight
+  pin_count: 4
 - ref: P14
   value: 1x4 header
   footprint: 1X4
   manufacturer: Molex
+  pin_count: 4
 - ref: P15
   value: 1x2 header
   footprint: RM3.5
@@ -917,6 +930,7 @@ components:
   value: 1x6 header
   footprint: RM3.5
   manufacturer: Phoenix
+  pin_count: 6
 - ref: P6
   value: 1x2 header
   footprint: RM5.08
@@ -924,34 +938,42 @@ components:
 - ref: P7
   value: 1x4 header
   footprint: 1X4
+  pin_count: 4
 - ref: P8
   value: 1x3 header
   footprint: RM5.08
   manufacturer: Phoenix
+  pin_count: 3
 - ref: P9
   value: 1x6 header
   footprint: RM3.5
   manufacturer: Phoenix
+  pin_count: 6
 - ref: Q1
   value: IRLML6344
   footprint: SOT-23
   manufacturer: Infineon
+  pin_count: 3
 - ref: Q2
   value: IRLML6344
   footprint: SOT-23
   manufacturer: Infineon
+  pin_count: 3
 - ref: Q3
   value: IRLML6344
   footprint: SOT-23
   manufacturer: Infineon
+  pin_count: 3
 - ref: Q4
   value: IRLML6344
   footprint: SOT-23
   manufacturer: Infineon
+  pin_count: 3
 - ref: Q5
   value: IRLML6344
   footprint: SOT-23
   manufacturer: Infineon
+  pin_count: 3
 - ref: R1
   value: 120ohm
   footprint: '0603'
@@ -1570,54 +1592,70 @@ components:
   value: USBLC6-4
   footprint: SOT-23-6
   manufacturer: STMicroelectronics
+  pin_count: 6
+  nc_pins: {'4': '4', '6': '6'}
 - ref: U10
   value: SN65176B
   footprint: SOIC-8-N
   manufacturer: Texas Instruments
+  pin_count: 8
 - ref: U11
   value: SN65176B
   footprint: SOIC-8-N
   manufacturer: Texas Instruments
+  pin_count: 8
 - ref: U12
   value: IRAM256a
   footprint: IRAM256
   manufacturer: Infineon
+  pin_count: 21
 - ref: U13
   value: ACT4088
   footprint: SOT-23-6
   manufacturer: Active-Semi
+  pin_count: 6
+  nc_pins: {'3': '3'}
 - ref: U15
   value: SN65176B
   footprint: SOIC-8-N
   manufacturer: Texas Instruments
+  pin_count: 8
 - ref: U16
   value: SN65176B
   footprint: SOIC-8-N
   manufacturer: Texas Instruments
+  pin_count: 8
 - ref: U19
   value: SN65176B
   footprint: SOIC-8-N
   manufacturer: Texas Instruments
+  pin_count: 8
 - ref: U2
   value: zldo1117
   footprint: SOT-223
   manufacturer: Diodes Incorporated
+  pin_count: 3
 - ref: U20
   value: USBLC6-4
   footprint: SOT-23-6
   manufacturer: STMicroelectronics
+  pin_count: 6
 - ref: U21
   value: USBLC6-4
   footprint: SOT-23-6
   manufacturer: STMicroelectronics
+  pin_count: 6
+  nc_pins: {'4': '4'}
 - ref: U22
   value: USBLC6-4
   footprint: SOT-23-6
   manufacturer: STMicroelectronics
+  pin_count: 6
 - ref: U23
   value: USBLC6-4
   footprint: SOT-23-6
   manufacturer: STMicroelectronics
+  pin_count: 6
 - ref: U24
   value: non_plated
   footprint: non_plated_3mm
@@ -1625,26 +1663,34 @@ components:
   value: STM32F303CBTx
   footprint: LQFP-48
   manufacturer: STMicroelectronics
+  pin_count: 48
 - ref: U26
   value: STM32F405VG
   footprint: LQFP-100
   manufacturer: STMicroelectronics
+  pin_count: 100
+  nc_pins: {'31': '31', '32': '32', '55': '55', '56': '56', '57': '57', '58': '58', '62': '62'}
 - ref: U27
   value: ACT4088
   footprint: SOT-23-6
   manufacturer: Active-Semi
+  pin_count: 6
+  nc_pins: {'3': '3'}
 - ref: U28
   value: ACT4088
   footprint: SOT-23-6
   manufacturer: Active-Semi
+  pin_count: 6
 - ref: U29
   value: USBLC6-4
   footprint: SOT-23-6
   manufacturer: STMicroelectronics
+  pin_count: 6
 - ref: U3
   value: SI8621
   footprint: SOIC-8-N
   manufacturer: Silicon Labs
+  pin_count: 8
 - ref: U30
   value: non_plated
   footprint: non_plated_3mm
@@ -1658,30 +1704,40 @@ components:
   value: ACT4088
   footprint: SOT-23-6
   manufacturer: Active-Semi
+  pin_count: 6
+  nc_pins: {'3': '3'}
 - ref: U5
   value: LNK304D
   footprint: SOIC-7
   manufacturer: Power Integrations
+  pin_count: 7
 - ref: U7
   value: LM358
   footprint: SOIC-8-N
   manufacturer: Texas Instruments
+  pin_count: 8
 - ref: U8
   value: SN65176B
   footprint: SOIC-8-N
   manufacturer: Texas Instruments
+  pin_count: 8
 - ref: U9
   value: SN65176B
   footprint: SOIC-8-N
   manufacturer: Texas Instruments
+  pin_count: 8
 - ref: Y1
   value: 8MHz
   footprint: SMD0503
   manufacturer: Abracon LLC
+  pin_count: 3
+  nc_pins: {'3': '3'}
 - ref: Y2
   value: 8MHz
   footprint: SMD0503
   manufacturer: Abracon LLC
+  pin_count: 3
+  nc_pins: {'3': '3'}
 nets:
 - name: +12V
   pins:

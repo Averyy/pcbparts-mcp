@@ -220,69 +220,99 @@ components:
 - ref: D3
   value: BAT54C-7-F
   footprint: SOT-23
+  pin_count: 3
 - ref: D4
   value: MMBZ5242BLT3G
   footprint: SOT-23_ANK
 - ref: J1
   value: 1x3 header
   footprint: PinHeader
+  pin_count: 3
 - ref: J10
   value: 690-019-298-412
   footprint: EDAC 690-019-298-412
+  pin_count: 23
+  nc_pins: {UTILITY/HEAC+: '14'}
 - ref: J11
   value: USB_OTG
   footprint: USB_Micro-B_EDAC_UCON00686
+  pin_count: 6
+  nc_pins: {ID: '4'}
 - ref: J12
   value: 10018783-11200TLF
   footprint: PCIex1-36
+  pin_count: 36
+  nc_pins: {nPRSNT1: A1, TD0: A7, SMCLK: B5, SMDAT: B6, nWAKE: B11, nPRSNT2: B17}
 - ref: J13
   value: 690-008-221-904
   footprint: '4090'
+  pin_count: 12
 - ref: J14
   value: 2x5 header
   footprint: PinHeader
+  pin_count: 10
+  nc_pins: {Pin_9: '9', Pin_10: '10'}
 - ref: J15
   value: 1x22 header
   footprint: Hirose_FH12-22S-0.5SH
+  pin_count: 22
+  nc_pins: {Pin_11: '11', Pin_12: '12', Pin_14: '14', Pin_15: '15', Pin_17: '17', Pin_18: '18'}
 - ref: J16
   value: 1x22 header
   footprint: Hirose_FH12-22S-0.5SH
+  pin_count: 22
+  nc_pins: {Pin_17: '17', Pin_18: '18'}
 - ref: J17
   value: Molex 470531000
   footprint: FanPinHeader
+  pin_count: 4
 - ref: J19
   value: Barrel_Jack
   footprint: BarrelJack_Horizontal
+  pin_count: 3
 - ref: J2
   value: 2x7 header
   footprint: PinHeader
+  pin_count: 14
 - ref: J20
   value: AMP171826-4
   footprint: TE_171826-4
+  pin_count: 4
 - ref: J22
   value: 690-019-298-412
   footprint: EDAC 690-019-298-412
+  pin_count: 23
+  nc_pins: {UTILITY/HEAC+: '14'}
 - ref: J3
   value: 1x3 header
   footprint: PinHeader
+  pin_count: 3
 - ref: J4
   value: 1x22 header
   footprint: Hirose_FH12-22S-0.5SH
+  pin_count: 22
+  nc_pins: {Pin_11: '11', Pin_12: '12', Pin_14: '14', Pin_15: '15', Pin_18: '18'}
 - ref: J5
   value: 1x22 header
   footprint: Hirose_FH12-22S-0.5SH
+  pin_count: 22
+  nc_pins: {Pin_18: '18'}
 - ref: J6
   value: 2x2 header
   footprint: PinHeader
+  pin_count: 4
 - ref: J7
   value: Micro_SD_Card_Det
   footprint: '1892'
+  pin_count: 11
 - ref: J8
   value: 2x20 header
   footprint: PinHeader
+  pin_count: 40
 - ref: J9
   value: 2x2 header
   footprint: PinHeader
+  pin_count: 4
 - ref: L3
   value: 3.3uH
   footprint: L_Bourns_SRN6045TA
@@ -292,9 +322,12 @@ components:
 - ref: Module1
   value: ComputeModule4
   footprint: Raspberry-Pi-4-Compute-Module
+  pin_count: 200
+  nc_pins: {Ethernet_nLED1(3.3v): '19', SD_DAT5: '64', SD_DAT4: '68', SD_DAT7: '70', SD_DAT6: '72', SD_VDD_Override: '73', Reserved@104: '104', Reserved@106: '106'}
 - ref: Q1
   value: DMP3013SFV-7
   footprint: Diodes_PowerDI3333-8
+  pin_count: 5
 - ref: R1
   value: 1kohm
   footprint: '0402'
@@ -422,51 +455,71 @@ components:
 - ref: U1
   value: TPD4EUSB30
   footprint: USON-10
+  pin_count: 10
 - ref: U11
   value: EMC2301-1-ACZL
   footprint: MSOP-8
+  pin_count: 8
+  nc_pins: {CLK: '7', nALERT: '8'}
 - ref: U12
   value: RT9742SNGV
   footprint: SOT-23
+  pin_count: 3
 - ref: U13
   value: FSUSB42MUX
   footprint: MSOP-10
+  pin_count: 10
 - ref: U14
   value: 74LVC1G07SE-7
   footprint: SOT-353_SC-70-5
+  pin_count: 4
 - ref: U15
   value: AP64501SP-13
   footprint: SOIC-8
+  pin_count: 9
 - ref: U16
   value: AP64501SP-13
   footprint: SOIC-8
+  pin_count: 9
 - ref: U18
   value: RT9742GGJ5
   footprint: SOT-23-5
+  pin_count: 5
+  nc_pins: {nFLG: '3'}
 - ref: U2
   value: TPD4EUSB30
   footprint: USON-10
+  pin_count: 10
 - ref: U3
   value: MagJack-A70-112-331N126
   footprint: TRJG0926HENL
+  pin_count: 20
 - ref: U4
   value: TPD4EUSB30
   footprint: USON-10
+  pin_count: 10
 - ref: U5
   value: 74LVC1G07SE-7
   footprint: SOT-353_SC-70-5
+  pin_count: 4
 - ref: U6
   value: USB2514B-I/M2
   footprint: QFN-36
+  pin_count: 37
+  nc_pins: {TEST: '11', CRFILT: '14', PRTPWR2/BC_EN2: '16', PRTPWR3/BC_EN3: '18', PRTPWR4/BC_EN4: '20', PLLFILT: '34'}
 - ref: U7
   value: AP22653W6
   footprint: SOT-23-6
+  pin_count: 6
 - ref: U8
   value: PCF85063AT
   footprint: SOIC-8
+  pin_count: 8
+  nc_pins: {CLKO: '7'}
 - ref: U9
   value: 74LVC1G07SE-7
   footprint: SOT-353_SC-70-5
+  pin_count: 4
 - ref: Y1
   value: 24MHz
   footprint: Crystal_SMD_HC49-SD

@@ -56,18 +56,28 @@ components:
 - ref: J1
   value: USB-C
   footprint: USB-C
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J2
   value: USB-C
   footprint: USB-C
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
   value: USB-C
   footprint: USB-C
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J4
   value: USB-C
   footprint: USB-C
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J5
   value: USB-C
   footprint: USB-C
+  pin_count: 17
+  nc_pins: {SBU1: A8, SBU2: B8}
 - ref: R1
   value: 5.1kohm
   footprint: 0805
@@ -106,6 +116,8 @@ components:
 - ref: U1
   value: SL2.1A
   footprint: SOIC-16
+  pin_count: 16
+  nc_pins: {XOUT: '15'}
 nets:
 - name: /D+
   pins: [J1.D+@A6, J1.D+@B6, U1.UDP]

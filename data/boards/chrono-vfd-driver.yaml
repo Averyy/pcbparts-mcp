@@ -62,12 +62,15 @@ components:
   footprint: 1X5
   mpn: PREC040DBAN-M71RC
   manufacturer: Sullins
+  pin_count: 5
 - ref: J2
   value: UPDI
   footprint: UPDI_PogoProg_pinHoles
+  pin_count: 3
 - ref: J3
   value: 1x4 header
   footprint: JST_SH_SM04B-SRSS-TB
+  pin_count: 5
 - ref: L1
   value: 10uH
   footprint: '1210'
@@ -124,22 +127,30 @@ components:
   value: IVL2-5_7
   footprint: IVL2-7_5
   mpn: IVL2-7/5
+  pin_count: 23
+  nc_pins: {F+@1: '1', F-@16: '16', G5@18: '18', G4@19: '19', G3@20: '20', G2@21: '21', G1@22: '22'}
 - ref: U2
   value: ATtiny414-SS
   footprint: SOIC-14
+  pin_count: 14
+  nc_pins: {PA2: '12'}
 - ref: U3
   value: LM2733YMF
   footprint: SOT-23-5
   mpn: LM2733YMF/NOPB
   manufacturer: Texas Instr
+  pin_count: 5
 - ref: U4
   value: HV5812WG
   footprint: SOIC-28W
   mpn: HV5812WG-G
   manufacturer: Microchip
+  pin_count: 28
+  nc_pins: {DATA_OUT: '2', HVOUT20: '3', HVOUT19: '4', HVOUT18: '5', HVOUT17: '6', HVOUT16: '7', HVOUT15: '8'}
 - ref: U5
   value: ZXBM5210-S
   footprint: SOIC-8
+  pin_count: 8
 nets:
 - name: +5V
   pins:
