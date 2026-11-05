@@ -29,8 +29,17 @@ from build_database import build_database  # noqa: E402
 from search_baseline import offline  # noqa: E402
 
 
+def _sent(tool, param=None):
+    """The description fastmcp sends for a tool (its first text section) or a parameter: a docstring's
+    Returns section never reaches clients (the 0.8.15 Mouser lifecycle note was there at first)."""
+    from fastmcp.utilities.docstring_parsing import parse_docstring
+    parsed = parse_docstring(tool)
+    return " ".join((parsed.parameters[param] if param else parsed.description).split())
+
+
 @pytest.fixture
-def no_network():
+async def no_network():
+    # Async so the event loop exists first: on Windows its socket pair is built with connect()
     with offline():
         yield
 
@@ -117,10 +126,10 @@ class TestDataAsOf:
         assert result["data_as_of"] == get_db().scraped_at()
 
     def test_descriptions(self):
-        search = " ".join(inspect.getdoc(server.jlc_search).split())
+        search = _sent(server.jlc_search)
         assert "daily catalog snapshot" in search and "data_as_of" in search and "1-piece price" in search
         assert "jlc_get_part and jlc_stock_check are live" in search
-        assert "live, held up to an hour" in " ".join(inspect.getdoc(server.jlc_get_part).split())
+        assert "live, held up to an hour" in _sent(server.jlc_get_part)
 
 
 class TestFiltersAppliedVsParsed:
@@ -137,7 +146,7 @@ class TestFiltersAppliedVsParsed:
         assert volts and min(volts) >= 25
 
     def test_description(self):
-        doc = " ".join(inspect.getdoc(server.jlc_search).split())
+        doc = _sent(server.jlc_search)
         assert "filters_applied lists every filter that ran" in doc
         assert "parsed shows only what the query text gave" in doc
 
@@ -193,7 +202,7 @@ class TestStockCheckLcscCode:
         assert calls[0]["sort_by"] == "quantity" and calls[0]["limit"] == 5
 
     def test_description(self):
-        doc = " ".join(inspect.getdoc(server.jlc_stock_check).split())
+        doc = _sent(server.jlc_stock_check, "query")
         assert 'one LCSC code ("C5947") returns that part only' in doc
 
 
@@ -235,7 +244,7 @@ class TestStockCheckPriceTiers:
         assert asked == [True, False]
 
     def test_description(self):
-        doc = " ".join(inspect.getdoc(server.jlc_stock_check).split())
+        doc = _sent(server.jlc_stock_check, "query")
         assert "with its price tiers (prices, as in jlc_get_part)" in doc
 
 
@@ -256,9 +265,11 @@ class TestMouserLifecycle:
         assert _normalize_part({"MouserPartNumber": "621-AP2553W6-7", **raw})["lifecycle"] == lifecycle
 
     def test_descriptions(self):
-        mouser = " ".join(inspect.getdoc(server.mouser_get_part).split())
+        mouser = _sent(server.mouser_get_part)
         assert "else null: Mouser states none for most parts" in mouser and "digikey_get_part's lifecycle" in mouser
-        assert "Mouser's is null where it states none" in " ".join(inspect.getdoc(server.jlc_get_part).split())
+        assert "Mouser's is null where it states none" in _sent(server.jlc_get_part)
+        digikey = _sent(server.digikey_get_part)
+        assert "other_packaging lists the rest" in digikey and "lifecycle is DigiKey's product status" in digikey
 
 
 def _switch_db(tmp_path):
