@@ -84,11 +84,6 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
-  "3232": {
-    "name": "Supercapacitors",
-    "category_id": 2,
-    "category_name": "Capacitors"
-  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -2159,11 +2154,6 @@
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
-  "661": {
-    "name": "Cross slot washer head self-drilling self-tapping screw",
-    "category_id": 47,
-    "category_name": "Hardware Fasteners"
-  },
   "665": {
     "name": "Cylindrical pins",
     "category_id": 47,
@@ -2561,11 +2551,6 @@
   },
   "3600": {
     "name": "Torx Machine Screw with Plain & Spring Washer Combo",
-    "category_id": 47,
-    "category_name": "Hardware Fasteners"
-  },
-  "3610": {
-    "name": "Torx Self-Tapping Screw",
     "category_id": 47,
     "category_name": "Hardware Fasteners"
   },
@@ -3599,11 +3584,6 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
-  "2515": {
-    "name": "Speaker",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
   "3716": {
     "name": "SSD",
     "category_id": 49,
@@ -4106,11 +4086,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "157": {
-    "name": "Phillips screwdriver",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },
