@@ -1871,6 +1871,31 @@ def _easyeda_unknown_error(lcsc: str) -> dict[str, str]:
                      "EasyEDA is rate-limiting). Try again in a few minutes."}
 
 
+# Pin names EasyEDA symbols give the two ends of a diode, LED, buzzer or battery holder
+# (A/K on BAS316 C109218, C/A on IR333C-A C5130, -/+ on MHP3528IRCT-D C405277)
+_ANODE_PIN_NAMES = frozenset({"A", "ANODE", "+"})
+_CATHODE_PIN_NAMES = frozenset({"K", "C", "CATHODE", "-", "−"})
+# Of 7 well-stocked diodes and LEDs, 3 symbols put the anode on pin 1 (BAS316 C109218, B5819WS
+# C7420331, KT-0603R C2286) and 4 the cathode (1N4148WS C2128, SS34 C8678, XL-1608SURC-06 C965799,
+# BZT52C5V6 C19077402). Nexperia's BAS316 datasheet has the cathode on pin 1. Each footprint's
+# polarity mark sat on the pad its symbol names K, so EasyEDA's own pair agrees; mixing its numbers
+# with a datasheet's or another library's footprint puts the part in backwards.
+_POLARIZED_PAIR_NOTE = (
+    "These pin numbers are EasyEDA's and match its footprint's pads, but polarized two-pin parts have "
+    "no standard numbering: EasyEDA puts the anode or + on pin 1 for some parts and the cathode or - "
+    "for others, and the maker's datasheet or another library's footprint may number them the other "
+    "way. Connect the part by pin name, not number.")
+
+
+def _is_polarized_pair(pins: list[dict[str, Any]]) -> bool:
+    """Two pins, one named for the anode or + end and the other for the cathode or - end."""
+    if len(pins) != 2:
+        return False
+    first, second = (str(p.get("name") or "").strip().upper() for p in pins)
+    return ((first in _ANODE_PIN_NAMES and second in _CATHODE_PIN_NAMES)
+            or (first in _CATHODE_PIN_NAMES and second in _ANODE_PIN_NAMES))
+
+
 @mcp.tool(
     annotations=ToolAnnotations(
         title="Get Component Pinout",
@@ -1886,7 +1911,8 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None, footp
     A pin's number is as the symbol shows it and matches the footprint pad ("1", "A2");
     electrical (input, output, bidirectional, power) appears only where the symbol's creator set
     it, so its absence says nothing. unverified=true means LCSC hasn't verified the symbol; note
-    means every pin's name is its number, so the symbol doesn't say what the pins do.
+    means every pin's name is its number, so the symbol doesn't say what the pins do, or that a
+    polarized two-pin part's numbers may not match its datasheet's (connect it by pin name).
     footprint_error says why a requested footprint is missing.
 
     Args:
@@ -1992,6 +2018,8 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None, footp
             # A client that loaded the tool list before footprint existed (0.8.4) can't send it until it reconnects
             result["note"] += (" footprint=true adds the pad positions to match against its drawing (if your "
                                "jlc_get_pinout has no footprint argument, reconnect to the server to load it).")
+    elif _is_polarized_pair(pins):
+        result["note"] = _POLARIZED_PAIR_NOTE
 
     if footprint:
         footprint_uuid = (part or {}).get("easyeda_footprint_uuid")

@@ -740,3 +740,61 @@ class TestPinoutNumbersOnly:
         monkeypatch.setattr(server, "_client", FakePinoutClient({}, {SYM: SYMBOL_DATA}))
         result = await server.jlc_get_pinout(lcsc="C1")
         assert "note" not in result
+
+
+def _two_pin_symbol(first: str, second: str) -> dict:
+    """BAS316's EasyEDA symbol (C109218, pin 1 = A, pin 2 = K) with its two pin names replaced."""
+    return {"dataStr": {"head": {}, "shape": [
+        "P~show~0~1~380~300~180~gge4~0^^380~300^^M 380 300 h 15~#880000^^0~398~303~0~" + first
+        + "~start~~~#0000FF^^0~389~299~0~1~end~~~#0000FF^^0~392~300^^0~M 395 303 L 398 300 L 395 297",
+        "P~show~0~2~420~300~0~gge12~0^^420~300^^M 420 300 h -15~#880000^^0~402~303~0~" + second
+        + "~end~~~#0000FF^^0~411~299~0~2~start~~~#0000FF^^0~408~300^^0~M 405 297 L 402 300 L 405 303",
+    ]}, "verify": True}
+
+
+class TestPinoutPolarizedPair:
+    """todo-idea (avr-trigger-splitter, 2026-11-04): BAS316 C109218's symbol has pin 1 = A, pin 2 = K,
+    the reverse of Nexperia's datasheet. EasyEDA numbers diodes and LEDs both ways (3 of 7 sampled put
+    the anode on pin 1), so a reply for a polarized two-pin part says to connect it by name."""
+
+    @pytest.mark.parametrize("first, second", [
+        ("A", "K"),  # BAS316 C109218
+        ("K", "A"),  # 1N4148WS C2128
+        ("C", "A"),  # IR333C-A C5130
+        ("A", "C"),  # PD204-6B/L3 C182237
+        ("-", "+"),  # MHP3528IRCT-D C405277
+        ("Anode", "Cathode"),
+    ])
+    async def test_note(self, monkeypatch, first, second):
+        from pcbparts_mcp import server
+        monkeypatch.setattr(server, "_client", FakePinoutClient({}, {SYM: _two_pin_symbol(first, second)}))
+        result = await server.jlc_get_pinout(lcsc="C1")
+        assert [(p["number"], p["name"]) for p in result["pins"]] == [("1", first), ("2", second)]
+        assert result["note"] == server._POLARIZED_PAIR_NOTE
+        assert "Connect the part by pin name, not number." in result["note"]
+
+    @pytest.mark.parametrize("first, second", [
+        ("A", "A"),  # no cathode end
+        ("K", "K"),
+        ("G", "S"),
+        ("A", "B"),
+        ("+", "OUT"),
+    ])
+    async def test_no_note(self, monkeypatch, first, second):
+        from pcbparts_mcp import server
+        monkeypatch.setattr(server, "_client", FakePinoutClient({}, {SYM: _two_pin_symbol(first, second)}))
+        result = await server.jlc_get_pinout(lcsc="C1")
+        assert "note" not in result
+
+    async def test_numbers_only_note_stays(self, monkeypatch):
+        """A tantalum's symbol (TAJA106K016RNJ C7171) names its pins 1 and 2: the numbers-only note."""
+        from pcbparts_mcp import server
+        monkeypatch.setattr(server, "_client", FakePinoutClient({}, {SYM: _two_pin_symbol("1", "2")}))
+        result = await server.jlc_get_pinout(lcsc="C1")
+        assert "only by number" in result["note"]
+
+    def test_three_pins_get_no_note(self):
+        """A dual diode (BAV99, SOT-23) has its own pin table; the note is for two-pin parts."""
+        from pcbparts_mcp import server
+        pins = [{"number": "1", "name": "A"}, {"number": "2", "name": "K"}, {"number": "3", "name": "A"}]
+        assert not server._is_polarized_pair(pins)
