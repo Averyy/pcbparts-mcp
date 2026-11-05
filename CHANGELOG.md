@@ -4,6 +4,12 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.17 (2026-11-05)
+
+### Fixed
+
+- **Tool descriptions left out their reply notes:** MCP clients get a tool description's first section and its argument notes, not the docstring's Returns or Examples sections, so about 9,000 characters across 12 tools never reached them. The guidance in them is now in the part clients get: `pcba_type` `standard_only` moves the whole order to Standard assembly, `no_datasheet`, `total` before `limit`, spec-sort `sort_value`/`sort` (`jlc_search`); JLCPCB matching only whole part numbers and their starts (`jlc_stock_check`); MPN lookups searching the daily snapshot (`jlc_get_part`) and where alternatives' stock comes from; pin numbers matching footprint pads and when `electrical`, `unverified` and `note` appear (`jlc_get_pinout`); Mouser's `not_found`; result order and `matched_by`, consensus counts and `tag_consensus` (`board_search`); board part numbers and `did_you_mean` (`board_get`); sensor order; design rules' `note`. Field lists the replies already show and the examples were dropped. A test checks that every word of each tool's docstring reaches clients.
+
 ## 0.8.16 (2026-11-05)
 
 ### Fixed
