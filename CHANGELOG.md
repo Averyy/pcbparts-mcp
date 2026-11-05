@@ -4,6 +4,14 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.18 (2026-11-05)
+
+Changed replies: `jlc_get_pinout` has a `note` for polarized two-pin parts.
+
+### Added
+
+- **`jlc_get_pinout` warns that diode and LED pin numbers aren't standard:** BAS316's EasyEDA symbol (C109218) has the anode on pin 1 and the cathode on pin 2, the reverse of Nexperia's datasheet, and the reply gave no hint. EasyEDA numbers these parts both ways: of 7 well-stocked diodes and LEDs, 3 symbols put the anode on pin 1 and 4 the cathode. Each footprint's polarity mark sat on the pad its symbol names K, so EasyEDA's symbol and footprint agree; mixing their numbers with a datasheet's or another library's footprint puts the part in backwards. A two-pin symbol whose pins are named for the anode and cathode (A/K, A/C, +/-) now gets a `note` saying the numbers match EasyEDA's footprint pads but not necessarily other sources, so connect the part by pin name.
+
 ## 0.8.17 (2026-11-05)
 
 ### Fixed
