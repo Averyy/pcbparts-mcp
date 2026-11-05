@@ -4,6 +4,12 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.16 (2026-11-05)
+
+### Fixed
+
+- **`mouser_get_part` and `digikey_get_part` descriptions:** 0.8.15's note on Mouser's `lifecycle` (null where Mouser states none; DigiKey's status and the maker's site for NRND) and 0.8.14's note on DigiKey's packaging fields (`packaging`, `other_packaging`) were in the part of the description that MCP clients don't receive. Both are now in the part they do.
+
 ## 0.8.15 (2026-11-04)
 
 New reply fields: `data_as_of` in `jlc_search`, and `prices` in `jlc_stock_check` for one LCSC code. Changed replies: `jlc_stock_check` with one LCSC code returns only that part; `mouser_get_part`'s `lifecycle` is null instead of `Active` when Mouser states no status; package names that had Chinese words in them are in English.

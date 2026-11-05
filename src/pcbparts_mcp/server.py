@@ -2123,6 +2123,10 @@ async def mouser_get_part(part_number: str) -> dict:
     """Mouser price, stock and datasheet for specific parts. Use only when the user wants Mouser data;
     find parts with jlc_search first. Shared daily limit: batch up to 10 parts per call (one
     request). Don't retry a quota error.
+    Reply: lifecycle is Mouser's status where it states one (Not Recommended for New Designs, End of
+    Life, Obsolete, Discontinued), else null: Mouser states none for most parts, including some the
+    maker marks NRND (AP2553W6-7). digikey_get_part's lifecycle is DigiKey's product status (it
+    listed AP2553W6-7 as NRND); the maker's site decides.
 
     Args:
         part_number: Mouser PN or MPN, or up to 10 joined by "|" ("595-LM358P|NE555P"),
@@ -2131,11 +2135,7 @@ async def mouser_get_part(part_number: str) -> dict:
 
     Returns:
         results: Full part details including all attributes, pricing tiers, availability, datasheet.
-            A number can match another maker's part (Mouser's SRV05-4 is onsemi's): check manufacturer.
-            lifecycle is Mouser's status where it states one (Not Recommended for New Designs, End of
-            Life, Obsolete, Discontinued), else null: Mouser states none for most parts, including some
-            the maker marks NRND (AP2553W6-7). digikey_get_part's lifecycle is DigiKey's product status
-            (it listed AP2553W6-7 as NRND); the maker's site decides.
+            A number can match another maker's part (Mouser's SRV05-4 is onsemi's): check manufacturer
         total: Number of parts found
         not_found: The given numbers no result matches (Mouser skips them without saying)
     """
@@ -2167,15 +2167,16 @@ async def digikey_get_part(product_number: str) -> dict:
     """DigiKey price, stock and datasheet for one part. Use only when the user wants DigiKey data;
     find parts with jlc_search first. Shared daily limit, one part per call: don't check whole
     BOMs. Don't retry a quota error.
+    Reply: part_number, price, price_breaks and min_qty are one packaging's (the DigiKey PN given,
+    else the smallest order, usually cut tape; packaging names it); other_packaging lists the rest
+    (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status.
 
     Args:
         product_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a
             partial one can find nothing and still uses a request.
 
     Returns:
-        Product details: parameters, stock, datasheet, and part_number, price, price_breaks and
-        min_qty for one packaging (the DigiKey PN given, else the smallest order, usually cut tape).
-        other_packaging lists the rest (reel, Digi-Reel) with their PN, min_qty and price.
+        Product details: parameters, stock, datasheet, and one packaging's price (see Reply above).
     """
     if not _digikey_client:
         return {"error": "DigiKey API credentials not configured. Set DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET in environment."}
