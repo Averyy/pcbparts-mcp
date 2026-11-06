@@ -72,7 +72,7 @@
 - **Component order from connector inward: TVS -> CMC -> series resistors -> PHY.** TVS must clamp before the transient reaches the CMC. CMC saturates on full ESD and passes the pulse through if placed first.
 - **IP4220CZ6 (NXP): <1 pF/line, SOT-457.** Max output voltage 9V during ESD -- higher than most PHY tolerance ratings, but most energy is dissipated in the TVS. Tested to IEC 61000-4-2 8 kV contact on EFM32GG-STK3700.
 - **SRV05-4: one name, different silicon.** Semtech's original (SOT-23-6) is 3 pF typ (datasheet 2018-12-15; JLC lists C13612 at 3 pF): fine for full-speed, over the 1.5 pF high-speed budget. Suggested by FTDI for all their USB IC families alongside Littelfuse PGB1010603. Most JLC parts sold as SRV05-4 are clones listing 0.3-1 pF (hongjiacheng C7420376 1 pF, MSKSEMI C2836319 0.6 pF); read the clone's own datasheet, not Semtech's.
-- **USB 2.0 CMC: Murata DLW21SN series (0805, 90 ohm CM at 100 MHz).** CMCs degrade signal quality -- TI TUSB121x: "should only be used if EMI enhancement is absolutely necessary." Place after ESD TVS, before PHY. Do NOT use USB 2.0 CMCs on USB 3.x -- they destroy SuperSpeed above 5 GHz.
+- **USB 2.0 CMC: Murata DLW21HN900SQ2 (0805 inch / 2.0 x 1.2 mm, 90 ohm CM at 100 MHz) [20, 21].** CMCs degrade signal quality -- TI TUSB121x: "should only be used if EMI enhancement is absolutely necessary." Place after ESD TVS, before PHY. Do NOT use USB 2.0 CMCs on USB 3.x: Murata lists this part for USB 2.0 only, and its chart wants >= 2.5 GHz differential cutoff for 5 Gbps even with an equalizing receiver [21] -> `guides/emc.md`.
 - **Ferrite beads on D+/D- are prohibited by USB spec.** Only allowed on VBUS.
 
 ### Connector and Shield Grounding
@@ -134,3 +134,5 @@
 17. USB-IF -- USB Type-C Cable and Connector Specification Release 2.5 (March 2026), Tables 4-28, 4-35 to 4-38: https://www.usb.org/document-library/usb-type-cr-cable-and-connector-specification-release-25
 18. TI SLVSDL1 -- TPD2S300 USB Type-C Short-to-VBUS and IEC ESD Protector for the CC Pins: https://www.ti.com/lit/ds/symlink/tpd2s300.pdf
 19. TI SLVAF82B -- ESD and Surge Protection for USB Interfaces: https://www.ti.com/lit/an/slvaf82b/slvaf82b.pdf
+20. Murata -- DLW21HN900SQ2 data sheet (2022-06-13): https://www.murata.com/en-us/products/productdetail?partno=DLW21HN900SQ2%23
+21. Murata -- Common Mode Choke Coil / Noise Filter selection chart, USB 2.0/3.0/3.1 (read 2026-11-06): https://www.murata.com/-/media/webrenewal/products/emc/emifil/cmcc/pdf/usb.ashx

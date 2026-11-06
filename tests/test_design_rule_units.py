@@ -47,6 +47,56 @@ def test_paired_units_agree():
     assert not wrong, "\n".join(wrong)
 
 
+VALUE = NUM + r"\s*(kohm|K|ohm)"
+# "300e-9 / (0.8473 * 200e-12) = 1.77 kohm -> use 1.6 kohm": the chosen value must not exceed the maximum
+RP_MAX = re.compile(NUM + r"\s*(?:e-9|ns)\s*/\s*\(\s*0\.8473\s*\*\s*" + NUM + r"\s*(?:e-12|pF)\s*\)\s*=\s*"
+                    + VALUE + r"(?:\s*max)?\s*->\s*use\s*" + VALUE)
+# "(3.3 - 0.4) / 0.003 = 967 ohm -> use 1 kohm": the chosen value must not be below the minimum
+RP_MIN = re.compile(r"\(\s*" + NUM + r"\s*-\s*" + NUM + r"\s*\)\s*/\s*" + NUM + r"\s*=\s*"
+                    + VALUE + r"\s*->\s*use\s*" + VALUE)
+
+
+def _ohms(value, unit):
+    return float(value) * (1 if unit == "ohm" else 1000)
+
+
+def _pullup_errors(text):
+    errors = []
+    for m in RP_MAX.finditer(text):
+        t_ns, c_pf = float(m.group(1)), float(m.group(2))
+        limit, stated, chosen = t_ns * 1e-9 / (0.8473 * c_pf * 1e-12), _ohms(*m.group(3, 4)), _ohms(*m.group(5, 6))
+        if abs(stated - limit) > 0.01 * limit or chosen > limit:
+            errors.append(f"{m.group(0)!r}: max is {limit:.0f} ohm")
+    for m in RP_MIN.finditer(text):
+        vcc, vol, iol = (float(g) for g in m.group(1, 2, 3))
+        limit, stated, chosen = (vcc - vol) / iol, _ohms(*m.group(4, 5)), _ohms(*m.group(6, 7))
+        if abs(stated - limit) > 0.01 * limit or chosen < limit:
+            errors.append(f"{m.group(0)!r}: min is {limit:.0f} ohm")
+    return errors
+
+
+def test_pullup_worked_examples_hold():
+    # The I2C example said "= 1.77 kohm -> use 1.8 kohm", over its own maximum (todo-bug-design-rule-audit-followup.md)
+    found = 0
+    for path in sorted(RULES.rglob("*.md")):
+        text = path.read_text(encoding="utf-8")
+        found += len(RP_MAX.findall(text)) + len(RP_MIN.findall(text))
+        errors = _pullup_errors(text)
+        assert not errors, f"{path.relative_to(RULES).as_posix()}: " + "; ".join(errors)
+    assert found >= 4  # 4 on 2026-11-06: i2c.md (2), level-shifting.md, DESIGN-STYLE-GUIDE.md
+
+
+@pytest.mark.parametrize("text, ok", [
+    ("300e-9 / (0.8473 * 200e-12) = 1.77 kohm -> use 1.6 kohm", True),
+    ("300e-9 / (0.8473 * 200e-12) = 1.77 kohm -> use 1.8 kohm", False),
+    ("300ns / (0.8473 * 200pF) = 1.77K max -> use 1.6K", True),
+    ("(3.3 - 0.4) / 0.003 = 967 ohm -> use 1 kohm", True),
+    ("(5 - 0.4) / 0.003 = 1533 ohm -> use 1.5 kohm", False),
+])
+def test_pullup_checker(text, ok):
+    assert (RP_MAX.search(text) or RP_MIN.search(text)) and (not _pullup_errors(text)) == ok
+
+
 @pytest.mark.parametrize("text, ok", [
     ("0.25mm (10mil)", True), ("0.1mm (4mil)", True), ("0.25mm (100mil)", False),
     ("136 ps/in (5.4 ps/mm)", True), ("136 ps/in (5.4 ns/100mm)", False), ("136 ps/in (0.54 ns/100mm)", True),

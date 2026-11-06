@@ -4,7 +4,7 @@
 
 ## Quick Reference
 
-- **Pull-ups: 4.7 kohm default (100 kHz, <200 pF).** Use 2.2 kohm for 400 kHz or >200 pF. Calculate from formulas below when bus capacitance is known.
+- **Pull-ups: 4.7 kohm default (100 kHz, up to 250 pF).** At 400 kHz the window is narrow: 200 pF allows 967 ohm-1.77 kohm at 3.3 V, so use 1.6 kohm (also above the 1.53 kohm minimum at 5 V); 2.2 kohm meets 400 kHz only up to 160 pF [1]. Calculate from the formulas below when bus capacitance is known.
 - **Max bus capacitance: 400 pF** (Standard/Fast). Budget ~10 pF/device + 0.5 pF/cm trace + 80 pF/m cable.
 - **Level shift: BSS138 N-MOSFET** (SOT-23). Gate to lower VDD, source to low side, drain to high side. Pull-ups on both sides. Standard/Fast mode only.
 - **Hung bus: 9 clock pulses on SCL** before every I2C peripheral init on boot.
@@ -80,17 +80,17 @@
 ## Formulas
 
 **Minimum pull-up resistance:**
-**Rule of thumb:** 1 kohm at 3.3V, 1.5 kohm at 5V.
+**Rule of thumb:** 1 kohm at 3.3V, 1.6 kohm at 5V.
 **Formula:** Rp_min = (VCC - VOL) / IOL
   - VOL: 0.4V (VCC > 2V), 0.2*VCC (VCC <= 2V)
   - IOL: 3 mA (Standard/Fast), 20 mA (Fast Plus)
 **Example:** VCC = 3.3V, Fast mode -> (3.3 - 0.4) / 0.003 = 967 ohm -> use 1 kohm minimum.
 
 **Maximum pull-up resistance:**
-**Rule of thumb:** 4.7 kohm for Standard mode, 2.2 kohm for Fast mode.
+**Rule of thumb:** 4.7 kohm for Standard mode up to 250 pF, 1.6 kohm for Fast mode up to 220 pF.
 **Formula:** Rp_max = tr / (0.8473 * Cb)
   - tr: 1000 ns (Standard), 300 ns (Fast), 120 ns (Fast Plus)
-**Example:** Fast mode, Cb = 200 pF -> 300e-9 / (0.8473 * 200e-12) = 1.77 kohm -> use 1.8 kohm.
+**Example:** Fast mode, Cb = 200 pF -> 300e-9 / (0.8473 * 200e-12) = 1.77 kohm -> use 1.6 kohm (round down: 1.8 kohm is over the limit).
 
 **Bus capacitance estimate:**
 **Rule of thumb:** 10 pF/device + 0.5 pF/cm trace + 80 pF/m cable.
