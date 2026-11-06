@@ -819,7 +819,7 @@ def jlc_search(
             "value": "2.5V"}]. Values accept text or numbers (unitless uses base units: V, A,
             ohms, F, H, Hz, W, mm, bytes); names ignore case. JSON arrays as strings also work.
             op: =, >=, <=, >, < (=> normalizes to >=); invalid inputs return valid_values. Short names: Vgs(th), Vds, Id, Rds(on), Vr,
-            If, Vf, Vceo, Ic, Vout, Iout, Supply Voltage, Capacitance, Resistance, Inductance,
+            If, Vf, Vceo, Ic, Vout, Iout, Iq, Supply Voltage, Capacitance, Resistance, Inductance,
             Voltage, Tolerance, Power, DCR, Isat, Frequency; others by the name jlc_search_help
             shows. Range ops only work on attributes it lists as "numeric"; parts with no value
             ("-") don't match them. On ranges ("2.7V~5.5V": supply, output voltage) = means the
@@ -1910,9 +1910,10 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None, footp
     GND, PA0); with footprint=true also the EasyEDA footprint's pads.
     A pin's number is as the symbol shows it and matches the footprint pad ("1", "A2");
     electrical (input, output, bidirectional, power) appears only where the symbol's creator set
-    it, so its absence says nothing. unverified=true means LCSC hasn't verified the symbol; note
-    means every pin's name is its number, so the symbol doesn't say what the pins do, or that a
-    polarized two-pin part's numbers may not match its datasheet's (connect it by pin name).
+    it, so its absence says nothing. unverified ("Symbol not verified by LCSC") appears when LCSC
+    hasn't verified the symbol; note means every pin's name is its number, so the symbol doesn't
+    say what the pins do, or that a polarized two-pin part's numbers may not match its datasheet's
+    (connect it by pin name).
     footprint_error says why a requested footprint is missing.
 
     Args:
@@ -2139,8 +2140,9 @@ async def cse_search(
     limit: int = 5,
 ) -> dict:
     """Check whether KiCad, Eagle or Altium symbols, footprints and 3D models exist for a part on
-    SamacSys ComponentSearchEngine, with its datasheet. Slow (up to 45 s): only when you need
-    ECAD models. For part search use jlc_search; for EasyEDA footprints, jlc_get_part.
+    SamacSys ComponentSearchEngine, with its datasheet. Slow (a search takes about 15 s, longer when
+    ComponentSearchEngine is busy; answers are kept): only when you need ECAD models. For part
+    search use jlc_search; for EasyEDA footprints, jlc_get_part.
 
     Args:
         query: MPN or keyword (e.g., "LM358P", "STM32F103")
@@ -2179,8 +2181,9 @@ async def cse_get_kicad(
     part_id: int | None = None,
 ) -> dict:
     """Download a part's KiCad symbol (.kicad_sym) and footprint (.kicad_mod) as text from SamacSys
-    ComponentSearchEngine; works for any manufacturer. Slow (up to 45 s): only when you need the
-    KiCad files. For EasyEDA footprints use jlc_get_part.
+    ComponentSearchEngine; works for any manufacturer. Slow (a search of about 15 s, then a
+    download; files are kept): only when you need the KiCad files. For EasyEDA footprints use
+    jlc_get_part.
 
     Args:
         query: MPN (e.g., "LM358P", "ESP32-WROOM-32E"); picks the best match that has a model

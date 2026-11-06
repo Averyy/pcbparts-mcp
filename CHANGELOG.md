@@ -4,6 +4,18 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.19 (2026-11-06)
+
+### Fixed
+
+- **`Iq` in `spec_filters` was ignored:** `Iq` worked in query text (`LDO Iq < 100nA`) and as a `sort_spec`, but a `spec_filters` entry named `Iq` came back in `ignored_filters` as "isn't numeric" and the search ran without it. `Iq` (any case) now filters the same as `Quiescent Current`: 1,154 3.3V LDOs under 10µA either way. The `spec_filters` description lists it among the short names.
+- **`jlc_get_pinout` description:** it said `unverified=true`, but the reply holds the string "Symbol not verified by LCSC", as it always has. The description now names the string.
+- **`cse_search` and `cse_get_kicad` descriptions** said "up to 45 s", but no limit caps a call: timeouts apply to each request phase, and `cse_get_kicad` searches, then downloads. An uncached search took about 15 s (four measured), and prod's daily average ran from 3 to 26 s. The descriptions now give the typical time and say answers are kept.
+
+### Changed
+
+- **Docs rewritten:** the README is now an overview, down from 5,600 words to about 1,150. `landing/llms.txt` lists the facts an AI client needs (each tool's arguments, defaults, limits and reply fields, how queries are read, quotas) without the per-release notes it had copied from the README. The query rules, spec filters, packages, sorting and alternatives rules moved to `docs/search-guide.md`. Corrections made on the way: `cse_get_kicad` needs `CSEARCH_USER` and `CSEARCH_PASS` when self-hosting, and `docker-compose.yml` needs the external `web` network created first.
+
 ## 0.8.18 (2026-11-05)
 
 Changed replies: `jlc_get_pinout` has a `note` for polarized two-pin parts.

@@ -32,7 +32,7 @@
 
 ## Project Overview
 
-PCB Parts MCP server for electronic component search and sensor recommendation. See README.md for full tool documentation.
+PCB Parts MCP server for electronic component search and sensor recommendation. Tool docstrings document arguments and replies; README.md is a high-level overview (per-release detail goes in CHANGELOG.md, query rules in `docs/search-guide.md`).
 
 - **Sensor feature:** `sensor_recommend` tool — separate SQLite DB (`sensor.db`) from components. 14 scrapers produce `data/sensors/*.json`, merged by `scripts/build_sensor_db.py`, runtime at `src/pcbparts_mcp/sensor_db/`. Scraper reference: `docs/ref-sensor-scrapers.md`.
 
@@ -69,7 +69,7 @@ uv venv && uv pip install -e ".[dev]"
 
 ## llms.txt
 
-When updating the landing page (`landing/index.html`) with new features, tools, or setup instructions, also update `landing/llms.txt` to match. The llms.txt file is the LLM-readable version of the landing page content (tools list, setup instructions, feature descriptions, etc).
+`landing/llms.txt` holds every fact an AI needs to use the MCP (tools, arguments, defaults, limits, reply fields), and nothing else: no marketing, no changelog. Update it when a release changes any of those.
 
 ## Testing Local Changes
 
