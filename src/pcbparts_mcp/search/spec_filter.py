@@ -412,7 +412,9 @@ ATTRIBUTE_ALIASES: dict[str, list[str]] = {
     "Ic": ["Current - Collector(Ic)"],
 
     # LDOs/Regulators
-    "Quiescent Current": ["Quiescent Current", "Quiescent Current(Iq)", "standby current", "Supply Current (Iq)"],
+    # "Iq" as in query text ("LDO Iq < 100nA") and sort_spec; no catalog attribute is named Iq
+    "Quiescent Current": ["Quiescent Current", "Quiescent Current(Iq)", "standby current", "Supply Current (Iq)",
+                          "Iq"],
     "Vout": ["Output Voltage"],
     "Iout": ["Output Current"],
     # Power modules list "Output Current(Max)", isolated converter ICs "Iout" (all in iout_max_a)
