@@ -192,7 +192,7 @@ Covers: when a trace becomes a transmission line, characteristic impedance, refl
 | 8 | Intel -- Basic Principles of Signal Integrity | PDF 4pp | `https://cdrdv2-public.intel.com/650327/wp_sgnlntgry.pdf` |
 | 9 | ADI -- A Short Course in PCB Layout for High-Speed ADCs | HTML | `https://www.analog.com/en/resources/technical-articles/a-short-course-in-pcb-layout-for-high-speed-adcs.html` |
 
-**Key teaching points:** #1 is the best single-page SI overview. #2 debunks the 1/4 rise time myth. #3 covers all 5 termination types. #4 has the f_knee = 0.35/t_rise formula and 3h spacing rule. #5 debunks guard traces. #8 covers ground bounce in just 4 pages.
+**Key teaching points:** #1 is the best single-page SI overview. #2 debunks the 1/4 rise time myth. #3 covers all 5 termination types. #4 gives 1 ns rise time -> 500 MHz bandwidth (f_knee = 0.5/t_rise) and the 3h spacing rule. #5 debunks guard traces. #8 covers ground bounce in just 4 pages.
 
 ---
 

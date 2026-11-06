@@ -4,130 +4,135 @@
 
 ## Quick Reference
 
-- **Standard minimum: 0.15 mm (6 mil) trace/space.** Budget fabs support 0.1 mm (4 mil) but yield drops. 6 mil saves ~15% on fab cost.
-- **Minimum drill: 0.2 mm (8 mil).** Finished hole tolerance: +/-0.08 mm. Via aspect ratio <= 10:1 (board thickness : hole diameter).
-- **Get verified stackup from fab before routing.** Fab dielectric thicknesses define trace widths for impedance control. A 4-layer designed at 0.2/1.0/0.2 mm may ship as 0.18/1.1/0.18 mm. JLCPCB's 1.6 mm 4-layer default is JLC04161H-7628 (0.21 mm prepreg); see JLCPCB below.
-- **Three global fiducials per board** for pick-and-place. 1-3 mm bare copper circle, no solder mask, >= 3 mm from board edge. Clearance zone must be bare laminate -- copper pour in the clearance zone causes AOI to misidentify the fiducial.
-- **Tombstoning prevention: equal thermal mass on both pads.** Equal trace width for >= 0.25 mm from pad edge, no vias within 0.25 mm of pad edge, no silkscreen under 0603 or smaller.
+- **Fab limits belong to one fab and service: check your fab's capability page.** JLCPCB rigid FR-4: 0.10 mm (4 mil) trace/space on 1-2 layers, 0.15 mm drill, 0.30 / 0.45 mm hole/pad vias without surcharge (table below). PCBWay prototype: 0.10 mm minimum, > 0.15 mm (6 mil) recommended to save cost [2].
+- **Get the fab's stackup before routing controlled impedance.** JLCPCB's 1.6 mm 4-layer default is JLC04161H-7628 (0.2104 mm prepreg); JLC04161H-3313 is 0.0994 mm. Calculate widths for the stackup you order [10].
+- **JLCPCB assembly:** Economic PCBA is single-sided, 0402 smallest, 0.4 mm IC pitch, 255C fixed reflow, needs no fiducials or rails. Standard PCBA is double-sided, to 01005 and 0.35 mm pitch, and needs both [15]: >= 5 mm rails, 3-4 fiducials of 1 mm copper in a 2 mm mask opening, >= 3.35 mm from the board edge [16].
+- **Tombstoning on two-terminal passives: heat both pads alike** (Eurocircuits): equal-width feeds for >= 0.25 mm, hole edges >= 0.25 mm from the pad, no legend under 0603 and smaller [6].
 
 ## Design Rules
 
-### Fab Capability
+### Fab Capability (other fabs)
 
-| Parameter | Budget Fab | Standard | Notes |
-|-----------|-----------|----------|-------|
-| Min trace/space | 0.1 mm (4 mil) | 0.15 mm (6 mil) | 6 mil saves cost |
-| Min drill | 0.2 mm (8 mil) | 0.25 mm (10 mil) | Laser for < 0.15 mm |
-| Hole tolerance | +/-0.08 mm | +/-0.05 mm | |
-| Min annular ring | 0.1 mm (4 mil) | 0.13 mm (5 mil) | Breakout probability -> `guides/pcb-layout.md` |
-| Board thickness tol | +/-10% (>= 1 mm) | +/-0.1 mm (< 1 mm) | |
-| Via aspect ratio | 10:1 max | 8:1 preferred | Board thickness / hole diameter |
-| Microvia aspect ratio | 1:1 max | 0.75:1 preferred | Depth / hole diameter (laser drill). Deeper traps air -> open circuits |
-| Board size tolerance | +/-0.2 mm (CNC routing) | +/-0.5 mm (V-scoring) | |
+Each value is one fab's published limit for the named service; check your own fab's page.
 
-- **2 oz outer copper increases minimum trace/space** due to thicker etch. Confirm min trace/space per copper weight with fab before routing -- designing at 0.1 mm then specifying 2 oz outer causes fab rejection.
-- **Blind/buried vias require sequential lamination** -- not supported by all budget fabs (e.g., OSH Park does not support blind or buried vias on any service). Verify with fab before designing.
-- **Minimum dielectric thickness: 0.065 mm (2.56 mil)** per IPC 6012 Rev F (September 2023). Lowered from previous revision to facilitate laser drilling of HDI microvias.
-- **Drill-to-copper clearance:** finished hole to nearest copper must account for plating thickness and inner layer registration shift. Insufficient clearance causes tangency or breakout on inner layers where registration shift is largest.
+| Parameter | Value | Fab / service |
+|-----------|-------|---------------|
+| Min trace/space | 0.10 mm (4 mil); > 0.15 mm (6 mil) recommended for cost | PCBWay prototype [2] |
+| Min drill | 0.20 mm (8 mil) CNC | PCBWay [2] |
+| Min drill | 0.254 mm (2/4-layer), 0.2032 mm (6-layer) | OSH Park [3] |
+| Finished-hole tolerance | +/-0.08 mm | PCBWay CNC [2] |
+| Annular ring | 0.127 mm (2-layer), 0.1016 mm (4/6-layer) | OSH Park [3] |
+| Board thickness tolerance | +/-10% (>= 1 mm), +/-0.1 mm (< 1 mm) | PCBWay [2] |
+| Outline tolerance | +/-0.2 mm CNC, +/-0.5 mm V-score | PCBWay [2] |
+
+- **Via aspect ratio:** confirm the ordered process's limit and whether it divides by drilled or finished diameter. Sierra's IPC tables reach 10:1 for particular drilled geometries [5]; no universal ceiling is sourced here.
+- **2 oz outer copper raises minimum trace/space:** JLCPCB rigid FR-4 at 2 oz needs >= 0.16 mm on 2-layer, >= 0.15 mm on multilayer [9, 11].
+- **Blind/buried vias require sequential lamination;** OSH Park's 4/6-layer services exclude them. Confirm the via technology with the fab before designing [3].
+- **Minimum dielectric 0.065 mm (2.56 mil) after lamination for Class 2/3,** per Sierra's IPC-6012 Rev F summary; lowered to allow HDI laser drilling [5].
+- **Drill-to-copper clearance:** use the fab's layer-specific hole-to-copper rules and its drilled/finished-hole definitions; annular-ring-to-copper clearance is a different quantity [4, 5, 9].
 
 ### JLCPCB
 
-Published limits in mm, from JLCPCB's capabilities, copper-weight and impedance pages (read 2026-11-03).
+Rigid FR-4 through-hole limits in mm, from JLCPCB's capabilities, copper-weight and impedance pages (read 2026-11-03) [9, 11]. HDI, flex and metal-core services differ.
 
 | Parameter | JLCPCB minimum | Notes |
 |-----------|----------------|-------|
-| Trace/space, 1 oz outer | 0.10 / 0.10 (1-2 layers), 0.09 / 0.09 (4+) | Inner layers (0.5 or 1 oz): 0.09 / 0.09. 2 oz: 0.15-0.16 |
-| Mechanical drill | 0.15 (2+ layers), 0.30 (1 layer) | 0.10 holes are laser microvias: board <= 1.0 mm, ENIG/OSP only |
-| Via hole / pad | 0.15 / 0.25 | Pad = hole + 0.10 minimum, + 0.15 preferred |
+| Trace/space, 1 oz outer | 0.10 / 0.10 (1-2 layers), 0.09 / 0.09 (4+) | Inner layers (0.5 or 1 oz): 0.09 / 0.09. 2 oz: 0.16 (2-layer), 0.15 (multilayer) |
+| Mechanical drill | 0.15 (2+ layers), 0.30 (1 layer) | 0.10 option: board <= 1.0 mm, ENIG/OSP only |
+| Via hole / pad (2+ layers) | 0.15 / 0.25 | Pad = hole + 0.10 minimum, + 0.15 preferred |
 | PTH annular ring, 1 oz | 0.18 (2 layers), 0.15 (4+) | Recommended >= 0.25 (2 layers), >= 0.20 (4+) |
-| NPTH / castellated hole | 0.50 / 0.50 | Component PTH: >= 0.50 recommended (mask/tin blocks smaller) |
+| NPTH / castellated hole | 0.50 / 0.50 | Castellated boards >= 10x10 mm and >= 0.6 mm thick. Component PTH: >= 0.50 recommended (mask/tin blocks smaller) |
 | Via hole-to-hole / pad hole-to-hole | 0.20 / 0.45 | |
-| Via-to-track / PTH-to-track | 0.20 / 0.28 | PTH-to-track 0.35 recommended. NPTH-to-track 0.20 |
-| Copper to routed edge / V-cut | 0.20 / 0.40 | |
+| Via hole / PTH / NPTH to track | 0.20 / 0.28 / 0.20 | PTH-to-track 0.35 recommended |
+| Copper to routed edge / V-cut | 0.20 / 0.40 | V-cut: straight lines, zero gap, board >= 0.6 mm |
 | Silkscreen stroke / text height | 0.15 / 1.0 | Pad-to-silkscreen 0.15 |
-| Solder mask bridge (pad spacing) | 0.10 | Black/white mask 0.13; 2 oz copper 0.20 |
+| Pad spacing that keeps a mask dam | 0.10 | Black/white mask 0.13; 2 oz copper 0.20 [13] |
 
-- **No-surcharge default at JLCPCB: 0.30 mm hole / 0.45 mm pad vias.** 0.10 and 0.15 mm holes always cost extra, and 0.20-0.25 mm holes do with a pad under 0.45 mm. 3.0-3.5 mil trace/space adds 20% on 4-8 layers (30% at 10+).
-- **Solder mask expansion: 0.05 mm per side on 1-2 layer JLCPCB boards.** The capabilities page allows 1:1 openings since its June 2025 LDI upgrade, but JLCPCB's September 2026 mask article still gives +0.05 mm for standard 1-2 layer boards and 1:1 for multilayer. Keep >= 0.09 mm from a mask opening to a neighbouring trace either way.
+- **No-surcharge default at JLCPCB: 0.30 mm hole / 0.45 mm pad vias.** 0.10 and 0.15 mm holes always cost extra, and 0.20-0.25 mm holes do with a pad under 0.45 mm. 3.0-3.5 mil trace/space adds 20% on 4-8 layers (30% at 10+) [9, 12].
+- **Solder mask expansion: 0.05 mm per side on 1-2 layer JLCPCB boards.** The capabilities page allows 1:1 openings since its June 2025 LDI upgrade, but JLCPCB's September 2026 mask article still gives +0.05 mm for standard 1-2 layer boards and 1:1 for multilayer. Keep >= 0.09 mm from a mask opening to a neighbouring trace either way [9, 13].
 
-| 1.6 mm 4-layer, top to bottom | JLC04161H-7628 (default) | JLC04161H-3313 |
+| 1.6 mm 4-layer, top to bottom [10] | JLC04161H-7628 (default) | JLC04161H-3313 |
 |-------------------------------|--------------------------|----------------|
 | L1, L4 copper | 0.035 mm (1 oz) | 0.035 mm (1 oz) |
 | L1-L2 and L3-L4 prepreg | 7628, 0.2104 mm, Er 4.4 | 3313, 0.0994 mm, Er 4.1 |
 | L2, L3 copper | 0.0152 mm (0.5 oz) | 0.0152 mm (0.5 oz) |
 | Core | 1.065 mm, Er 4.6 | 1.265 mm, Er 4.6 |
 
-- **Pick the stackup before routing controlled-impedance traces.** An order without an impedance requirement gets JLC04161H-7628; 3313's prepreg is half as thick, so the same 50 ohm microstrip or 90 ohm USB pair is much narrower. Size widths with JLCPCB's impedance calculator for the stackup you order. Other prepregs it lists: 1080 (Er 3.91), 2116 (Er 4.16); 3313 replaced 2313 with the same thickness and Er.
+- **Pick the stackup before routing controlled-impedance traces.** An order without an impedance requirement gets JLC04161H-7628; 3313's prepreg is half as thick, so the same 50 ohm microstrip or 90 ohm USB pair is much narrower. Size widths with JLCPCB's impedance calculator for the stackup you order. Other prepregs it lists: 1080 (Er 3.91), 2116 (Er 4.16); 3313 replaced 2313 with the same thickness and Er [10].
 
 ### IPC Classes
 
+Sierra Circuits' summary of IPC-6012 and IPC-A-610 [5]:
+
 | Feature | Class 2 | Class 3 |
 |---------|---------|---------|
-| Annular ring breakout | 90-degree acceptable | None allowed. Min external ring >= 0.05 mm (2 mil), min internal >= 0.025 mm (1 mil) |
-| Barrel fill (PTH) | >= 75% (50% exceptions -- see below) | >= 75% (no exceptions) |
-| Plating voids | Max 5% of holes (1 per 20) | None allowed |
-| Min copper plating | 0.02 mm (0.8 mil) | 0.025 mm (1 mil) |
+| Annular ring breakout | Up to 90 degrees, subject to spacing and conductor-junction criteria | None. External ring >= 0.05 mm (2 mil), internal >= 0.025 mm (1 mil); isolated 20% external reductions allowed |
+| Barrel fill (PTH) | >= 75% (exceptions below) | >= 75% |
+| PTH copper voids | One per hole, in <= 5% of holes | None |
+| Min PTH plating | 0.020 mm (0.8 mil) | 0.025 mm (1 mil) |
 
 - **Class 2 is the default** for commercial and industrial.
-- **Class 2 barrel fill exceptions (IPC-A-610 rev H):** >= 14-lead components accept >= 50% fill if visible lead + surrounding PTHs pass. < 14-lead accepts >= 50% fill with 360-degree wetting + thermal plane connection.
-- **PTH drill sizing:** drill hole 0.38 mm (15 mil) larger than lead diameter. Gives 0.19 mm (7.5 mil) clearance per side for reliable paste fill.
-- **Class 3 pad sizing formula:** `Pad = finished_hole + 2 * min_annular_ring + fab_allowance`. Fab allowance (drill wander) up to 0.2 mm (8 mil) per IPC-2221. Class 3 requires teardrop via pads.
-- **Class 3 IST testing:** D coupons subjected to 6 reflow simulations + 100 thermal shocks. Pass = <= 10% resistance change over 300-500 cycles.
-- **IPC 6012 Rev F default surface finish is now ENIG** (was tin/lead). If fab drawing doesn't specify, manufacturer assumes ENIG.
+- **Class 2 barrel fill exceptions (IPC-A-610 rev H):** the lesser of 50% depth or 1.2 mm, with the lead visible on the source side and surrounding PTHs compliant; parts with < 14 leads also need plane-connected barrels and 360-degree wetting on the destination side.
+- **PTH drill sizing for paste-in-hole (Sierra):** hole 0.38 mm (15 mil) larger than the lead, 0.19 mm (7.5 mil) per side; check the finished-hole tolerance and solder process.
+- **Pad sizing:** `Pad = finished_hole + 2 * min_annular_ring + fab_allowance`. Sierra ties an allowance up to 0.2 mm (8 mil) to IPC-2221 producibility level C; agree it with the fab.
+- **IST coupons (Sierra's example):** D coupons through 6 reflow simulations + 100 thermal shocks; a 10% resistance change fails. Agree the method and cycles with the fab.
+- **Specify the surface finish on the fab drawing.** Sierra says IPC-6012 Rev F defaults to ENIG; not confirmed against the standard itself.
 
 ### Panelization
 
-- **V-score:** zero spacing between boards, clean break on straight lines only. Not suitable for curves or thin boards (< 0.8 mm).
-- **Tab routing:** minimum 1.6 mm clearance between boards. Routing bit consumes 2.5 mm (0.1 in) of material.
-- **Component-to-edge clearance:** depanelization shear force cracks solder joints near V-score lines. Maintain >= 1 mm from V-score to nearest pad.
-- **Impedance test coupons:** place in panel border outside routing path -- coupons in routing channels get destroyed during depanelization.
-- **Half-holes (castellated vias):** minimum plated half-hole diameter 0.6 mm.
-- **Panel utilization:** target > 70% usable area. V-score wastes less space than tab routing. Standard panel sizes: 610 x 457 mm (24 x 18 in), 305 x 457 mm (12 x 18 in), 610 x 229 mm (24 x 9 in), 305 x 229 mm (12 x 9 in).
+- **V-score:** straight lines only, zero gap between boards; JLCPCB needs a board >= 0.6 mm [9].
+- **Tab routing:** PCBWay needs >= 1.6 mm between boards [2]; Sierra's panel example reserves 2.54 mm (0.1 in) of routing space [8].
+- **Keep parts away from V-score lines:** depanelization stress cracks nearby solder joints. Agree the keep-out with the assembler [4].
+- **Impedance test coupons:** Sierra places them at the panel end; agree their location and that they survive depanelization [8].
+- **Castellated half-holes:** PCBWay prototype >= 0.6 mm [2]; JLCPCB 0.5 mm with the conditions above [9].
+- **Panel planning (Sierra's example):** > 70% usable area; laminate panels 610 x 457, 305 x 457, 610 x 229 or 305 x 229 mm [8]. JLCPCB recommends assembly panels no larger than 250 x 250 mm [15].
 
 ### Tombstoning Prevention
 
-- **Equal trace width to both pads for at least 0.25 mm from pad edge.** Multiple tracks to one pad and a single track to the other creates thermal asymmetry -> one pad wets first, pulls component vertical.
-- **No vias within 0.25 mm of pad edge.** Vias wick solder and create thermal imbalance. Even with identical vias on both pads, solder wicking is unpredictable -- one via connects to different copper on different layers.
-- **No silkscreen under 0603 or smaller.** Stacked copper + soldermask + silkscreen height exceeds pad height, lifting the component off the pads entirely.
-- **Equal copper connection on both pads.** If one pad connects to a large pour, route both through thermal relief traces >= 0.25 mm long before connecting to copper. Large copper areas act as heatsinks and cause one pad to wet later.
-- **Via-in-pad for passives:** even filled vias cause unpredictable wicking. Fill vias or move them >= 0.25 mm from pad edge.
+Eurocircuits' guidance for two-terminal passives [6]:
+
+- **Equal-width feeds to both pads for >= 0.25 mm from the pad edge.** Several tracks on one pad and one on the other heat them unevenly -> one pad wets first and pulls the part upright.
+- **Hole edges >= 0.25 mm from the pad edge, with a reliable mask dam.** A nearby PTH changes the pad's heating and can wick solder.
+- **No legend under small passives such as 0603.** Stacked trace + mask + legend can lift the body off its pads.
+- **Matching feed tracks >= 0.25 mm before a pour.** Adapt high-power connections so both pads still heat alike.
+- **Via-in-pad on passives:** filling stops most wicking, but the via still draws heat from its pad. Keep hole edges >= 0.25 mm away where possible.
 
 ### DFA Component Spacing
 
-- **Chip-to-chip (0402-0805):** 0.25-0.5 mm (10-20 mil).
-- **Chip-to-IC (SOT, SOIC):** 0.38-0.64 mm (15-25 mil).
-- **IC-to-IC (QFP, BGA):** 2.5-3 mm (100-120 mil).
-- **BGA courtyard clearance:** 1.0 mm minimum around BGA body. >= 1.9 mm (75 mil) from any component to BGA, 3 mm preferred for rework and inspection.
-- **Parts < 0603:** 0.15 mm clearance minimum.
-- **Connectors and crystals:** 0.5 mm clearance plus mating connector clearance.
-- **NSMD (non-solder-mask-defined) pads preferred for BGA.** Mask opening larger than copper pad gives more consistent pad size. Do not mix NSMD and SMD pads on the same BGA -- inconsistent solder volume causes defects.
+Sierra Circuits' recommended ranges [4]; dense small boards differ.
+
+- **Chip-to-chip:** 0.25-0.5 mm (10-20 mil).
+- **Chip-to-SOT:** 0.38-0.64 mm (15-25 mil). **Chip-to-SOIC:** 0.51-0.64 mm (20-25 mil).
+- **QFP-QFP and BGA-BGA:** 2.54-3.05 mm (100-120 mil). **QFP-BGA:** 1.91-3.05 mm (75-120 mil).
+- **BGA courtyard:** 1.0 mm; larger clearances next to PLCC, axial and PTH parts.
+- **Courtyard for parts < 0603:** 0.15 mm. **Connectors and crystals:** 0.5 mm plus mating clearance.
+- **BGA pads: follow the package's land pattern.** NSMD is generally preferred; NXP allows a constrained NSMD/SMD mix on thin FCCSP outside each corner's 3x3 balls [17, pp.15-16].
 
 ### Solder Mask and Silkscreen
 
-- **Solder mask dam width: >= 0.1 mm (4 mil) standard LPI.** Fine-pitch (< 0.5 mm) pads: verify fab can hold 0.075 mm (3 mil) dams -- insufficient dams cause solder bridging between adjacent pads.
-- **Solder mask registration tolerance:** 0.05 mm (2 mil) standard, 0.025 mm (1 mil) advanced. Misregistration worsens with board size.
-- **Min silkscreen character height: 0.8 mm.** Min stroke width: 0.15 mm. Width-to-height ratio: 1:5.
-- **No silkscreen on exposed copper pads** -- prevents solder wetting.
+- **Mask dams:** fab limits are pad gaps, not dam widths. JLCPCB rigid 1 oz: >= 0.10 mm (black/white 0.13), 2 oz: 0.20 [9, 13]. Fine-pitch pads closer than that get no dam and can bridge.
+- **Mask alignment:** JLCPCB multilayer LDI +/-0.02 mm [13].
+- **Legend:** PCBWay prototype height >= 0.8 mm, stroke >= 0.15 mm, width:height 1:5 [2]; JLCPCB 1.0 mm height (table above).
+- **No silkscreen on solderable pads;** check the fab's pad-to-legend clearance [9].
 - Solder mask on test points -> `guides/test-debug.md`.
 
 ## Common Mistakes
 
-- **Double-sided SMD without considering reflow order.** First-side components see two reflow cycles. Heavy/tall components may fall off during second-side reflow when gravity reverses. Fix: place heavier components on the first-reflow side so they see only one inverted pass.
-- **Copper pour under fiducial clearance zone.** AOI and pick-and-place interpret pour copper as part of the fiducial, causing misalignment of all component placements. Fix: clearance zone must be bare laminate, not just mask-free copper.
-- **Designing with 0.1 mm trace/space then specifying 2 oz outer copper.** Thicker copper requires wider etch clearance. The fab will reject or silently widen spacing, potentially breaking impedance targets. Fix: confirm min trace/space per copper weight with fab before layout.
-- **Pad size not accounting for drill wander on inner layers.** Inner layer registration shift is larger than outer layers. Class 3 boards with minimal annular ring fail at inner layers first. Fix: use IPC pad sizing formula with full fab allowance, verify with fab's DFM tool.
+- **Double-sided reflow with heavy parts on the first side.** First-side parts hang upside down during the second pass. Fix: heavy parts on the side soldered last; check their retention and reflow limits with the assembler [14].
+- **Fiducial clearance filled with copper or other features.** The camera can't find a clean target. Fix: use the assembler's fiducial copper, mask-opening and keep-out geometry [8, 16].
+- **Designing with 0.1 mm trace/space then specifying 2 oz outer copper.** Thicker copper needs wider etch clearance; the fab rejects the order or widens the spacing, which can break impedance targets. Fix: confirm min trace/space per copper weight before layout [9, 11].
+- **Pad size not accounting for drill wander.** Fix: account for drill wander and layer-specific ring measurements; agree the fab allowance and check pad sizes with the fab's DFM tool [5].
 
 ## Formulas
 
 **Via aspect ratio:**
-**Rule of thumb:** Stay at 8:1 or below for standard processes. 10:1 is the hard limit.
-**Formula:** Aspect_ratio = board_thickness / finished_hole_diameter
-**Example:** 1.6 mm board, 0.2 mm drill -> 1.6 / 0.2 = 8:1 (acceptable). 0.15 mm drill -> 10.7:1 (needs HDI process or thinner board).
+**Rule of thumb:** confirm the fab's limit and whether it uses drilled or finished diameter [5, 9].
+**Formula:** Aspect_ratio = board_thickness / hole_diameter
+**Example:** 1.6 mm board, 0.2 mm hole -> 8:1. 0.15 mm hole -> 10.7:1 (check the fab's limit, or use HDI or a thinner board).
 
-**Class 3 pad size:**
-**Rule of thumb:** Add 0.3 mm (12 mil) to drill diameter for external pads.
+**Pad size:**
 **Formula:** Pad = finished_hole + 2 * min_annular_ring + fab_allowance
-**Example:** 0.25 mm drill, 0.05 mm ring, 0.2 mm allowance -> Pad = 0.25 + 0.1 + 0.2 = 0.55 mm (22 mil).
+**Example (Sierra):** 0.25 mm finished hole + 2 * 0.05 mm ring + 0.2 mm allowance = 0.55 mm (22 mil) external pad [5].
 
 ## Sources
 
@@ -151,3 +156,7 @@ Published limits in mm, from JLCPCB's capabilities, copper-weight and impedance 
 11. JLCPCB -- Copper Weight (inner-layer trace/space): https://jlcpcb.com/help/article/jlcpcb-copper-weight
 12. JLCPCB -- In What Cases Will There Be Charged Extra: https://jlcpcb.com/help/article/in-what-cases-will-there-be-charged-extra
 13. JLCPCB -- Basic Design of Solder Mask: https://jlcpcb.com/blog/basic-design-of-solder-mask
+14. PCBCart -- Double-Sided SMT Assembly: How the Second Side Changes Your Design Decisions: https://www.pcbcart.com/article/content/pcba-double-sided-assembly.html
+15. JLCPCB -- PCB Assembly Capabilities (read 2026-11-06): https://jlcpcb.com/capabilities/pcb-assembly-capabilities
+16. JLCPCB -- How to Add Edge Rails and Fiducials for PCB Assembly Orders (read 2026-11-06): https://jlcpcb.com/help/article/how-to-add-edge-rails-fiducials-for-pcb-assembly-order
+17. NXP AN13656 -- Assembly Guidelines for FCPBGA and FCCSP (Rev.1, 2022), secs. 4.1.2, 4.2.1: https://www.nxp.com/docs/en/application-note/AN13656.pdf

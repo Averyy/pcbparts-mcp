@@ -7,26 +7,26 @@
 - **ERC/DRC must be 100% clean.** Every exception individually reviewed and signed off. Zero unreviewed warnings.
 - **Verify ALL symbol pinouts against datasheet.** Even trusted library symbols. Compare pin numbers, not just names.
 - **Thermal pad net is NOT always ground.** Some ICs connect exposed pad to VCC, some float. Check datasheet for every IC.
-- **Every external connector pin has ESD protection.** TVS or clamp on every line leaving the board -> `protection/esd.md`.
+- **ESD on lines users or cables can touch.** Pick each clamp by working voltage, leakage and capacitance for that signal [2, 10] -> `protection/esd.md`.
 
 ## Design Rules
 
 ### Components
 
 - **External pull-up/pull-down on all strapping and config pins.** Internal pulls may not overcome board capacitance during fast power-up. Document expected state in schematic notes.
-- **Reset and enable pins: external pull-up/pull-down.** Use supervisor IC when regulator has soft start -> `protection/voltage-supervisor.md`.
+- **Reset and enable pins: check the device's power-up timing against the supply ramp.** Add pulls, an RC delay or a supervisor where a slow or soft-started rail violates it [4, 8] -> `protection/voltage-supervisor.md`.
 - **Check errata sheets for all major ICs.** Silicon bugs affect pin usage, peripheral availability, and required workaround components.
 - **Tantalum voltage derating: >= 2x for surge-prone circuits.** Low-impedance source driving tantalum can cause premature failure -- limit switch-on current.
 - **Alternate/substitute parts: verify footprint, pinout, AND key specs match.** Two pin-compatible SOT-23-5 LDOs may swap EN and NC pins. Check lifecycle -- no EOL or NRND parts.
 
 ### Power
 
-- **Input protection at every power entry: fuse + TVS + reverse polarity** -> `protection/reverse-polarity.md`.
-- **Total input capacitance > 100 uF causes inrush** that can trip protection or weld connector pins. Add NTC thermistor or active inrush limiter.
+- **Power entry protection matched to its faults:** fuse and/or reverse-voltage protection where a wrong or shorted supply is possible, TVS where surges are [2] -> `protection/reverse-polarity.md`.
+- **Inrush: I = C * dV/dt.** Check the supply, connector and trace limits against it; slow the ramp (load switch, hot-swap, NTC) when it exceeds them. TI's 3.3 V / 47 uF example already draws > 3 A [12, secs.1-3].
 - **Regulator input voltage range vs actual input under all conditions.** Battery droop, USB tolerance (+/-5%), transient overshoot, cable voltage drop.
 - **LDO output cap ESR within stable range.** Many LDOs oscillate with near-zero ESR ceramic caps -> `power/ldo.md`.
 - **Current-sense resistors placed after regulator output caps.** Not in SMPS switching loop -- added inductance increases noise and EMI.
-- **Analog rails filtered or isolated from digital.** Series ferrite + parallel cap minimum. Do not split ground planes -> `guides/pcb-layout.md`.
+- **Analog rails filtered or isolated from digital as needed** [2]. A ferrite + ceramic cap can resonate and amplify noise (ADI: ~10 dB near 2.5 MHz in its example); check DC bias and damping [11] -> `guides/pcb-layout.md`.
 
 ### Signals
 
@@ -50,8 +50,8 @@
 - **Import fab DRC rules before routing.** Get verified stackup -> `guides/dfm.md`.
 - **Decoupling caps within 2 mm of IC power pins** -> `power/decoupling.md`.
 - **No vias in pads without fill and cap.** Solder wicking weakens joints -> `guides/dfm.md`.
-- **3 mm component-free border** for machine handling and depanelization.
-- **Trace-to-trace clearance by voltage per IPC-2221.** Internal layers: 0.1 mm (4 mil) at 31-50 V. External uncoated: 0.6 mm (24 mil) at 31-100 V. Above 500 V: internal 0.025 mm/V, external 0.005 mm/V.
+- **3 mm component-free border** for machine handling, or panel rails for small boards [5].
+- **Trace-to-trace clearance by voltage per IPC-2221 (1998).** Internal (B1): 0.1 mm (4 mil) at 31-50 V. External uncoated up to 3050 m (B2): 0.6 mm (24 mil) at 31-100 V. Above 500 V: B1 = 0.25 + 0.0025 * (V - 500) mm, B2 = 2.5 + 0.005 * (V - 500) mm [13, sec.6.3].
 - **Drill-to-copper clearance on all layers.** Finished hole to nearest copper must include plating: clearance = drill-to-copper + (plating thickness * 2). Verify on inner layers where registration shifts are largest.
 - **Stress-sensitive MLCCs away from V-score and mouse-bite edges.** Depanelization bending cracks ceramic caps. Orient cap length parallel to board edge (not perpendicular).
 - **QFN/BGA exposed pad: segmented solder paste stencil aperture.** Full coverage causes excessive voiding and solder balling during reflow.
@@ -105,3 +105,7 @@ Board bring-up procedure -> `guides/test-debug.md`.
 7. Sierra Circuits -- DFM Rules: https://www.protoexpress.com/kb/dfm-rules/
 8. Espressif ESP32-S3 HW Design Guidelines -- Schematic Checklist: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/schematic-checklist.html
 9. Espressif ESP32-S3 HW Design Guidelines -- PCB Layout Design: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/pcb-layout-design.html
+10. TI SSZB130 -- System-Level ESD Protection Guide: https://www.ti.com/lit/pdf/sszb130
+11. ADI AN-1368 -- Ferrite Bead Demystified: https://www.analog.com/en/resources/app-notes/an-1368.html
+12. TI SLVA670A -- Managing Inrush Current: https://www.ti.com/lit/an/slva670a/slva670a.pdf
+13. IPC-2221 -- Generic Standard on Printed Board Design (Feb 1998), section 6.3, Table 6-1: https://www.tortai-tech.com/wp-content/uploads/2023/09/IPC-2221-Generic-Standard-on-Printed-Board-Design.pdf

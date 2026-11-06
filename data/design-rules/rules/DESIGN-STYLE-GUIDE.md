@@ -23,7 +23,7 @@ Write like a senior EE reviewing a junior's schematic. Not "here's what a capaci
 **PASSES the expert filter — specific, non-obvious, changes a decision:**
 "A 4.7uF X7R 0805 retains only 1.5uF (32%) at 12V bias. Same cap in 1206: 3.4uF (73%). Check Murata SimSurfing at your operating voltage — the 2x derating rule is often not enough for 0402/0603."
 
-No introductions, no motivation, no marketing language, no hedging. State the rule, the value, the consequence.
+No introductions, no motivation, no marketing language, no vague hedging ("may", "consider"). State the rule, the value, the consequence, and the conditions the value holds under. Keep every condition, exception and uncertainty the source states: a number stripped of the conditions it was measured under becomes a wrong universal rule.
 
 ## Audience
 
@@ -54,6 +54,8 @@ Every file uses these four sections in this order. Do not add new sections. Omit
 
 - 3-5 most critical rules, each one line with specific values.
 - These alone should be enough for a simple design.
+- State each rule once. A Quick Reference item is a rule's short form; Design Rules adds its
+  conditions and detail without repeating it, and Common Mistakes adds failure modes.
 
 ## Design Rules
 
@@ -111,7 +113,7 @@ Bad: "Not using decoupling caps -> noise. Fix: use decoupling caps."]
 
 The only length rules:
 - **Don't pad.** Every line must pass the expert filter (see top of this doc). If it doesn't, cut it.
-- **Don't restrict.** If a topic has 300 lines of genuine expert content, use 300 lines. Context budget is not the bottleneck — Claude loads 3-5 files at ~2-4K tokens each, which is 5-10% of a 200K context window. Cutting valuable content to save tokens is a bad trade.
+- **Don't grow by repetition.** These files are loaded during design work, so routine text should stay flat or shrink. Replace repetition with conditions and pointers. A topic with 300 lines of genuine expert content can use 300 lines; a rule stated three times can't.
 - **Split by topic, not by length.** If a file covers two distinct decision domains, split it into two files. If it covers one domain deeply, keep it as one file regardless of length.
 
 ## Units
@@ -128,13 +130,22 @@ The only length rules:
 
 ### Granularity: specific default + conditions
 
-Always give a concrete default value. Then state when to deviate.
+Give a concrete default when the sources support one for the common case, with the conditions it holds for. When the right value depends on the design (timing, load, exact device, fab service), give the calculation or the check instead of a number. Don't force a part or value where only a calculation or the exact device's datasheet can decide.
 
-**Pattern:** "Default: [value]. Use [alternative] when [condition]."
+**Pattern:** "Default: [value] (for [condition]). Use [alternative] when [condition]."
 
 **Bad:** "Choose an appropriate pull-up resistor for the I2C bus."
 
 **Good:** "I2C pull-ups: 4.7K default (100kHz, <200pF bus). Use 2.2K for 400kHz or >200pF bus."
+
+### Kinds of statements
+
+Say which kind a number is, because each fails differently when misapplied:
+
+- **Requirement:** a datasheet or standard says so ("USB 2.0 High-Speed allows ...", "the LDO needs >= 1uF ceramic for stability"). Name the device or standard.
+- **Fab limit:** one fab service's capability ("JLCPCB standard 2-layer: 0.1mm trace/space"). Name the fab and service; limits differ between services and change.
+- **Recommendation:** a default with the conditions it holds for ("I2C pull-ups: 4.7K for 100kHz under 200pF").
+- **Example:** a value measured on one design or test board ("ADI measured 22.8% error on a 0.5 mohm shunt at 20A"). Say it's a measurement; it's not a default for other designs.
 
 ### Rule format
 
@@ -201,7 +212,7 @@ When a rule touches another file's domain, give a one-line summary with pointer.
 
 ## Conflicting Sources
 
-When sources disagree on a value, use the most conservative safe value as the default and note the range. Flag the conflict for the user.
+When sources disagree on a value, give the range and the condition each source measured or assumed. Pick a default only when one source's condition matches the common case, and say which. "Conservative" isn't one direction: a larger capacitor, a smaller pull-up or more filtering can break a design (slow edges, overloaded drivers, resonance). Flag the conflict for the user.
 
 ```
 - **I2C pull-up: 4.7K default.** Range across sources: 2.2K-10K. TI recommends
@@ -233,7 +244,7 @@ Avoid tables for simple lists — bullets are more token-efficient.
 - **Tutorial explanations.** No "what is SPI?" or "how does a buck converter work?"
 - **History or context.** No "USB Type-C was introduced in 2014..."
 - **Multiple worked examples.** One is enough. Two is waste.
-- **Inline source citations.** Don't clutter rules with "[Source: TI SLVA450]" attributions. Sources go in the `## Sources` section at the bottom.
+- **Long inline citations.** Don't write "[Source: TI SLVA450, Layout Guidelines for...]" in a rule. Cite a number or claim that changes a decision with a short ID matching the numbered References list, plus page or section where it helps: `[3, p.12]`. Full titles and URLs appear once, in References.
 - **Padding.** If the topic only has 70 lines of expert content after filtering, the file should be 70 lines.
 
 **The filter in practice — examples from actual files:**
@@ -262,9 +273,9 @@ Avoid tables for simple lists — bullets are more token-efficient.
 
 ## Writing Process
 
-1. **Read the extracted sources first.** All source material is in `raw_sources/{topic}/`. Base rules on what sources actually say, not general knowledge.
+1. **Read the extracted sources first.** Source snapshots are in `data/design-rules/rules_sources/{category}/{topic}/`. Base rules on what sources actually say, not general knowledge, and keep the snapshot for every number you cite.
 2. **Distill, don't summarize.** Each source contributes 1-3 key rules. Identify what each source uniquely teaches — skip content that merely confirms what other sources already cover.
-3. **Resolve conflicts across sources.** When two app notes give different values, use the most conservative safe value as default and note the range (see "Conflicting Sources" above).
+3. **Resolve conflicts across sources.** When two app notes give different values, give the range with each source's conditions (see "Conflicting Sources" above).
 4. **Apply the expert filter (see top of this doc — mandatory before finalizing).** For each bullet point:
    - **Is this a definition, basic theory, or standard spec?** Cut it. ("Conducted emissions: 150kHz-30MHz" — cut. "CM currents flow in the same direction" — cut.)
    - **Would Claude produce this from training data alone?** If yes — cut it unless it carries a specific number, part, or threshold that Claude would get wrong.
@@ -273,6 +284,8 @@ Avoid tables for simple lists — bullets are more token-efficient.
    - **Is it restated elsewhere in the same file?** Merge or cut.
    - **Target: 80% of remaining content should be stuff Claude would get wrong without it.**
 5. **Component recommendation check.** Every subsection involving component selection must name specific ICs or families. This is the single most actionable content type — it directly prevents Claude from hallucinating part numbers or picking wrong parts.
+6. **Check the numbers.** Redo every worked example and unit conversion; `tests/test_design_rule_units.py` checks mm/mil and ps/in pairs in every file. Check conditional claims against the source passage. Agreement between LLMs isn't evidence.
+7. **Record what you couldn't confirm.** A claim no source supports is cut or marked as unconfirmed in the rule, never kept silently.
 
 ## Scope: PCB Layout Content
 
@@ -280,4 +293,4 @@ Four rule files cover PCB layout topics (`pcb-layout.md`, `signal-integrity.md`,
 
 ## Tone
 
-Write like a senior EE reviewing a junior's schematic. Not teaching — correcting. Not explaining theory — pointing at the specific thing that will fail and naming the specific part that works. Terse, technical, opinionated. Every line should make the reader think "I wouldn't have known that."
+Write like a senior EE reviewing a junior's schematic. Not teaching — correcting. Not explaining theory — pointing at the specific thing that will fail and naming the specific part that works. Terse, technical, opinionated within the conditions the source tested. Every line should make the reader think "I wouldn't have known that."
