@@ -6,7 +6,7 @@
 
 - **Fab limits belong to one fab and service: check your fab's capability page.** JLCPCB rigid FR-4: 0.10 mm (4 mil) trace/space on 1-2 layers, 0.15 mm drill, 0.30 / 0.45 mm hole/pad vias without surcharge (table below). PCBWay prototype: 0.10 mm minimum, > 0.15 mm (6 mil) recommended to save cost [2].
 - **Get the fab's stackup before routing controlled impedance.** JLCPCB's 1.6 mm 4-layer default is JLC04161H-7628 (0.2104 mm prepreg); JLC04161H-3313 is 0.0994 mm. Calculate widths for the stackup you order [10].
-- **JLCPCB assembly:** Economic PCBA is single-sided, 0402 smallest, 0.4 mm IC pitch, 255C fixed reflow, needs no fiducials or rails. Standard PCBA is double-sided, to 01005 and 0.35 mm pitch, and needs both [15]: >= 5 mm rails, 3-4 fiducials of 1 mm copper in a 2 mm mask opening, >= 3.35 mm from the board edge [16].
+- **JLCPCB assembly:** Economic PCBA is single-sided, 0402 smallest, 0.4 mm IC pitch, reflow 255 +/- 5 C (not adjustable: check each part's rated peak, time and MSL against 260 C), needs no fiducials or rails. Standard PCBA is double-sided, to 01005 and 0.35 mm pitch, reflow 240 +/- 5 C, and needs both [15]: >= 5 mm rails, 3-4 fiducials of 1 mm copper in a 2 mm mask opening, >= 3.35 mm from the board edge [16].
 - **Tombstoning on two-terminal passives: heat both pads alike** (Eurocircuits): equal-width feeds for >= 0.25 mm, hole edges >= 0.25 mm from the pad, no legend under 0603 and smaller [6].
 
 ## Design Rules

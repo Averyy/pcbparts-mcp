@@ -104,3 +104,35 @@ jobs:
           echo "Image: \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "MCP endpoint: \`https://pcbparts.dev/mcp\`" >> $GITHUB_STEP_SUMMARY
+
+  # After a deploy from main, publish a GitHub release for pyproject.toml's version if it has none
+  # yet, with that version's CHANGELOG.md section as the notes. Daily data commits keep the version,
+  # so they skip this. A version with no "## X.Y.Z (date)" section fails here: add the entry.
+  release:
+    needs: build-and-push
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Publish release for this version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(sed -n 's/^version = "\(.*\)"$/\1/p' pyproject.toml | head -n 1)
+          if [ -z "$version" ]; then echo "::error::no version in pyproject.toml"; exit 1; fi
+          tag="v$version"
+          if gh release view "$tag" > /dev/null 2>&1; then
+            echo "Release $tag already exists"
+            exit 0
+          fi
+          awk -v head="## $version " 'index($0, head) == 1 {found = 1; next} found && /^## / {exit} found' CHANGELOG.md > notes.md
+          if ! grep -q '[^[:space:]]' notes.md; then
+            echo "::error::CHANGELOG.md has no '## $version (date)' section"
+            exit 1
+          fi
+          gh release create "$tag" --target "$GITHUB_SHA" --title "$version" --notes-file notes.md
+          echo "Published release [$tag](https://github.com/${{ github.repository }}/releases/tag/$tag)" >> "$GITHUB_STEP_SUMMARY"

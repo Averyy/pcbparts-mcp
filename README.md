@@ -170,6 +170,6 @@ The four paths are unset outside Docker, which keeps that data in memory only. T
 ## More
 
 - [llms.txt](https://pcbparts.dev/llms.txt): this service described for LLMs, with the defaults and limits they need
-- [CHANGELOG.md](CHANGELOG.md): every release. Minor releases in 0.x can change replies, and each lists what to check under **Breaking**.
+- [CHANGELOG.md](CHANGELOG.md): every release, also published as [GitHub releases](https://github.com/Averyy/pcbparts-mcp/releases) from 0.8.21. Minor releases in 0.x can change replies, and each lists what to check under **Breaking**.
 - [CONTRIBUTING.md](CONTRIBUTING.md): development setup, tests and project conventions. Issues and PRs welcome.
 - License: MIT

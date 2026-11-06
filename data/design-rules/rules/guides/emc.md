@@ -5,7 +5,7 @@
 ## Quick Reference
 
 - **Hot loop area determines SMPS emissions.** L2 ground plane at 0.13 mm reduces loop inductance 14x (187 nH -> 13 nH). Route VIN/return traces through filter cap pads, not around them.
-- **Series resistors on simple MCU I/O.** 50-100 ohm on outputs, 35-50 ohm on inputs, at the MCU [7, p.11]. TI excludes memory-bus and oscillator pins; check the signal's timing before adding them.
+- **Series resistors on simple MCU I/O.** 50-100 ohm on outputs, 35-50 ohm on inputs, at the MCU [7, p.11]. TI writes this for simple digital I/O, not memory-expansion-bus or oscillator pins, but ranks fast parallel ports (e.g. to an external memory) above other I/O for filtering [7, p.11]. Check the signal's timing before adding either.
 - **1 mV between two antenna parts** (cables, heatsinks) can fail CISPR 32 Class B. Threshold drops to 100 uV for stricter limits.
 - **No Y-caps on LISN side of CM choke.** Y-caps between choke and cable bypass the choke entirely. Y-caps go on the board side only.
 - **A single unfiltered wire through a shielded enclosure eliminates ALL shielding benefit.** Every cable penetration must be filtered or have a 360-degree shield connection.
@@ -92,25 +92,23 @@
 - **3-terminal capacitors** maintain insertion loss to ~100 MHz (vs 2-terminal SRF at ~10 MHz). Route input/output vias on opposite sides of the cap body -- adjacent vias couple capacitively and bypass the filter (performance drops from ~100 MHz to ~10 MHz).
 - **3-terminal cap mounting:** "through" connection (pattern cut, cap in series) for best I/O filtering. "Non-through" (parallel, pattern intact) for IC supply decoupling -- halves bypass impedance but some noise passes unfiltered.
 - **3-terminal cap families:** Murata NFM series (0402-1210, feed-through, to 100 MHz). TDK YFF series (4-terminal, improved HF).
-- **LC composite EMI filters:** Murata NFE61P (0603, LC pi-filter, broadband). TDK MAF series (0402-0805, integrated LC, USB/HDMI). Key advantage: no PCB parasitics between L and C elements. Array-type (4 circuits/package) for LCD/camera interfaces.
+- **LC composite EMI filters:** pi (C-L-C), T (L-C-L) or L type: the capacitor faces the high-impedance side, the inductor the low-impedance side [14]. Murata NFE61P is a single-circuit T filter, 6.8 x 1.6 mm, 2 A, made for DC power lines; its 33-4700 pF values can go on signal lines [15]. Check insertion loss at the signal's frequency before using one on a data line.
 - **Ferrite bead LC resonance** -> `guides/passives.md`. On power rails, ADI runs beads at ~20% of rated current (rated >= 5x load) and checks impedance at the actual DC bias [13, DC Bias]. Prefer a lossy impedance curve; sharp-curve beads need a series damping resistor (check its voltage drop).
 - **CMC saturation risk:** CMCs with intentional DM impedance can saturate under high DC load. Symptom: filter works at low load, fails at full load. Verify CMC impedance at rated DC current.
-- **CMC differential-mode leakage:** all CM chokes have some DM inductance. For USB 3.0/DisplayPort, verify DM insertion loss does not degrade signal integrity above 5 GHz.
 
 ### CM Choke and EMI Component Recommendations
 
-- **Signal-line CMCs (USB 2.0, HDMI, MIPI):** Murata DLW21SN series (0805, 90 ohm CM at 100 MHz). Provides skew correction -- transformer coupling realigns edge timing, reducing jitter from trace imbalance.
-- **Signal-line CMCs (USB 3.x, DP HBR):** Murata DLW21HN (optimized for > 5 Gbps). TDK ACM series (low DM loss to 10 GHz).
+- **Signal-line CMCs: choose by differential cutoff frequency; the suffix matters more than the series.** Murata's USB chart needs >= 1 GHz for USB 2.0, >= 2.5 GHz for 5 Gbps and >= 5 GHz for 10 Gbps (both with an equalizing receiver), and recommends >= 8 GHz parts for 10 Gbps [16]. Murata's picks in 2.0 x 1.2 mm, inch code 0805: DLW21HN900SQ2 for USB 2.0 only [17, 18]; DLW21SN900HQ2 for HDMI 1.4/2.0, DisplayPort 1.4 and USB 5-10 Gbps [18]. A CMC also corrects skew -- transformer coupling realigns edge timing, reducing jitter from trace imbalance.
 - **Power-line CMCs (DC bus, SMPS input):** If DC bus > 6A or need nanocrystalline for low-frequency CM noise: Wurth WE-CMB (through-hole, 1-30A, MnZn or nanocrystalline). If SMD and <= 6A: TDK ACT series (ferrite, smaller footprint).
 - **AC mains line filters (integrated CMC + X/Y caps):** If pre-certified module needed to skip filter compliance iteration: Schaffner FN series (widest range of current/voltage ratings). If space-constrained or need board-mount IEC inlet combo: Schurter 5500 series (integrated inlet + fuse + filter).
 
 ### Interface-Specific EMI Filtering
 
-- **USB 2.0 data lines:** a CMC (Murata DLW21SN, 90 ohm at 100 MHz) near the connector, after ESD, only if EMI needs it [11, items 1.08-1.09]. Shunt caps depend on speed: FTDI allows optional 47 pF C0G on Full-Speed parts (FT2xxB/R/X, FT2232D) but 0-10 pF on High-Speed FTx232H [10, sec.2.3]; TI caps total external discrete capacitance at 4 pF per line for High-Speed [11, item 1.06]. ESD -> `protection/esd.md`.
+- **USB 2.0 data lines:** a CMC (Murata DLW21HN900SQ2, 90 ohm at 100 MHz [17]) near the connector, after ESD, only if EMI needs it [11, items 1.08-1.09]. Shunt caps depend on speed: FTDI allows optional 47 pF C0G on Full-Speed parts (FT2xxB/R/X, FT2232D) but 0-10 pF on High-Speed FTx232H [10, sec.2.3]; TI caps total external discrete capacitance at 4 pF per line for High-Speed [11, item 1.06]. ESD -> `protection/esd.md`.
 - **USB hub ports:** one CMC per port. Shared CMCs degrade inter-port isolation and create ground loops.
-- **USB 3.x:** standard USB 2.0 CMCs destroy SuperSpeed signal integrity. Use Murata DLW21HN or TDK ACM2012H within 15 mm of connector. Separate 2.0 and 3.x pairs with independent CMCs.
-- **HDMI / DisplayPort:** CMC on each TMDS/ML lane pair, 90 ohm CM at 100 MHz, DM insertion loss < 0.5 dB at signal frequency. TDK MAF for space-constrained designs.
-- **Camera MIPI CSI-2:** LC composite filters (Murata NFE61P) on each data lane pair. Place at receiver end (SoC side) to prevent noise coupling along flex cable. 4-circuit array filters for 4-lane CSI.
+- **USB 3.x:** a USB 2.0 CMC is too slow for SuperSpeed; choose by data rate and receiver equalization (above) [16, 18]. Within 15 mm of the connector (no source found). Separate 2.0 and 3.x pairs with independent CMCs.
+- **HDMI / DisplayPort:** CMC on each TMDS/ML lane pair, chosen by cutoff for the lane rate. Murata lists DLW21SN900HQ2 (2.0 x 1.2 mm) for HDMI 1.4/2.0 and DisplayPort 1.4; for HDMI 2.1, DLM11CB120HH2 (1.25 x 1.0 mm), DLM0NSB120HY2 (0.85 x 0.65 mm) or DLM0QSB120HY2 (0.65 x 0.5 mm) [18].
+- **MIPI D-PHY (camera, display):** filter only if EMI measurements need it. D-PHY mixes high-speed differential and low-power single-ended signaling, so the filter must leave both waveforms intact. Murata recommends DLM common-mode filters at the main-board end of the FPC [19]: DLM0QSN500HY2 (0.65 x 0.5 mm) for D-PHY 1.1-2.0, DLM0NSN900HY2 (0.85 x 0.65 mm) for 1.1 (1.5 Gbps), DLM0NSN500HY2 (0.85 x 0.65 mm) for 1.2-2.0 [18, 19]. Check the exact PHY's signal budget.
 - **SPI/I2C off-board:** ferrite bead + TVS on each line. SPI clock > 10 MHz: add 33-100 pF cap after the ferrite -> `interfaces/spi.md`, `interfaces/i2c.md`.
 - **General rule for high-speed differential:** always verify DM insertion loss at actual data rate. A CMC that fixes EMI at 200 MHz but adds 3 dB loss at 5 GHz will cause bit errors.
 
@@ -170,3 +168,9 @@
 11. TI SWCA124 -- TUSB121x USB 2.0 Board Guidelines: https://www.ti.com/lit/pdf/swca124
 12. Murata -- Basics of Noise Countermeasures, Lesson 14: Common Mode Choke Coils for Power Lines: https://article.murata.com/en-us/article/basics-of-noise-countermeasures-lesson-14
 13. ADI AN-1368 -- Ferrite Bead Demystified: https://www.analog.com/en/resources/app-notes/an-1368.html
+14. Murata -- Basics of Noise Countermeasures, Lesson 7: LC Compound-type EMI Filters: https://article.murata.com/en-us/article/basics-of-noise-countermeasures-lesson-7
+15. Murata -- NFE61PT330B1H9 data sheet (2020-07-25): https://www.murata.com/en/products/productdetail?partno=NFE61PT330B1H9%23
+16. Murata -- Common Mode Choke Coil / Noise Filter selection chart, USB 2.0/3.0/3.1 (read 2026-11-06): https://www.murata.com/-/media/webrenewal/products/emc/emifil/cmcc/pdf/usb.ashx
+17. Murata -- DLW21HN900SQ2 data sheet (2022-06-13): https://www.murata.com/en-us/products/productdetail?partno=DLW21HN900SQ2%23
+18. Murata -- Common Mode Choke Coil / Noise Filter application list, signal line, non-automotive (read 2026-11-06): https://www.murata.com/-/media/webrenewal/products/emc/emifil/cmcc/pdf/consumer-signal.ashx
+19. Murata -- Noise Suppression for MIPI D-PHY (2020-05-14): https://article.murata.com/en-us/article/noise-suppression-for-mipi-d-phy

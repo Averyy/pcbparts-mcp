@@ -2,7 +2,20 @@
 
 Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.dev always runs the latest version.
 
-Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
+Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
+
+## 0.8.21 (2026-11-06)
+
+Changed replies: `get_design_rules` text for EMC, DFM, I2C and USB.
+
+### Fixed
+
+- **Design rules that were still wrong** (from a follow-up review of 0.8.20, each checked against its source). The EMC guide put Murata NFE61P filters on MIPI camera lanes and called them 0603 pi filters; NFE61P is a 6.8 x 1.6 mm single-circuit T filter made for DC power lines, and Murata's MIPI D-PHY note recommends DLM common-mode filters, which keep both the differential and single-ended signals intact. TDK MAF is an audio-line filter, not a USB/HDMI part. DLW21HN was called a > 5 Gbps choke, but DLW21HN900SQ2 is Murata's USB 2.0 part; signal-line chokes are now chosen by cutoff frequency from Murata's charts, with sizes in mm (Murata's codes mix inch 0805 with metric 1210/0806/0605; inch 1210 is a 3.2 x 2.5 mm footprint). TDK ACM2012H's commercial version was discontinued in 2019. The I2C rule "2.2 kohm for 400 kHz or > 200 pF" gives a 373 ns rise at 200 pF, over the 300 ns limit; 400 kHz at 200 pF needs 967 ohm-1.77 kohm (3.3 V), and the worked example's "use 1.8 kohm" was over its own 1.77 kohm maximum. The 5 V minimum was 1.5 kohm, under the 1.53 kohm limit. JLCPCB Economic reflow is 255 +/- 5 C, so up to 260 C, and Standard is 240 +/- 5 C. TI's MCU-pin resistor note now also says TI ranks fast parallel ports, such as external-memory buses, high for filtering.
+
+### Changed
+
+- A new test recomputes the I2C pull-up worked examples in the rule files.
+- Each version is now published as a GitHub release, tagged `vX.Y.Z`, with its changelog entry as the notes. Self-hosters can watch the repository's releases to hear about new versions.
 
 ## 0.8.20 (2026-11-06)
 

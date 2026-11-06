@@ -141,7 +141,9 @@ Run the server locally:
 2. Full unit suite green locally.
 3. Tests included for any behavior change; regression test for bug fixes.
 4. Bump the **patch** version in `pyproject.toml` (maintainer will adjust to
-   minor/major if warranted). Docs-only changes don't need a bump.
+   minor/major if warranted) and add a `## X.Y.Z (YYYY-MM-DD)` entry to `CHANGELOG.md`.
+   Merging publishes a GitHub release with that entry as its notes. Docs-only changes
+   don't need a bump.
 5. Match the existing code style; add comments only where the code can't speak for
    itself (constraints, gotchas — not narration).
 6. PR description: what, why, and for bug fixes a before/after repro.

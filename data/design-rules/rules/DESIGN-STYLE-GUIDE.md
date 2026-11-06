@@ -136,7 +136,7 @@ Give a concrete default when the sources support one for the common case, with t
 
 **Bad:** "Choose an appropriate pull-up resistor for the I2C bus."
 
-**Good:** "I2C pull-ups: 4.7K default (100kHz, <200pF bus). Use 2.2K for 400kHz or >200pF bus."
+**Good:** "I2C pull-ups: 4.7K default (100kHz, up to 250pF). At 400kHz, R_max = 300ns / (0.8473 * C_bus): 1.6K for a 200pF bus (window 967 ohm-1.77K at 3.3V)."
 
 ### Kinds of statements
 
@@ -191,10 +191,10 @@ The expert filter applies here too. Only include formulas that have a non-obviou
 Include both the shortcut and the real formula. One worked example, no more.
 
 ```
-**Rule of thumb:** 4.7K for standard mode, 2.2K for fast mode.
-**Formula:** R_pull-up = t_rise / (0.8473 * C_bus)
+**Rule of thumb:** 4.7K for standard mode up to 250pF, 1.6K for fast mode up to 220pF.
+**Formula:** R_max = t_rise / (0.8473 * C_bus); R_min = (VCC - 0.4V) / 3mA
   - t_rise: 1000ns (SM), 300ns (FM), 120ns (FM+)
-**Example:** 200pF bus, 400kHz -> 300ns / (0.8473 * 200pF) = 1.77K -> use 1.8K
+**Example:** 200pF bus, 400kHz -> 300ns / (0.8473 * 200pF) = 1.77K max -> use 1.6K (round down: 1.8K is over)
 ```
 
 ## Cross-References
@@ -215,9 +215,9 @@ When a rule touches another file's domain, give a one-line summary with pointer.
 When sources disagree on a value, give the range and the condition each source measured or assumed. Pick a default only when one source's condition matches the common case, and say which. "Conservative" isn't one direction: a larger capacitor, a smaller pull-up or more filtering can break a design (slow edges, overloaded drivers, resonance). Flag the conflict for the user.
 
 ```
-- **I2C pull-up: 4.7K default.** Range across sources: 2.2K-10K. TI recommends
-  4.7K; NXP spec allows up to 10K for standard mode. Use 4.7K unless bus
-  capacitance demands lower (calculate with formula below).
+- **I2C pull-up:** sources give 2.2K-10K because each assumes a different
+  speed and bus capacitance. 4.7K holds for 100kHz up to 250pF; otherwise
+  calculate the window (formula below) [TI SLVA689].
 ```
 
 ## Tables
@@ -259,7 +259,7 @@ Avoid tables for simple lists — bullets are more token-efficient.
 
 ## What TO Include (ranked by value)
 
-1. **Component recommendations** — the single highest-value content type. Claude hallucinates part numbers and picks wrong parts without guidance. Every subsection involving component selection MUST name specific ICs or families with key specs. Pattern: "For [use case]: [part] ([key spec]). For [alternative]: [other part]." Example: "USB 2.0 CM choke: Murata DLW21SN (0805, 90 ohm CM at 100MHz). USB 3.x: DLW21HN — standard 2.0 CMCs destroy SuperSpeed signal integrity above 5GHz."
+1. **Component recommendations** — the single highest-value content type. Claude hallucinates part numbers and picks wrong parts without guidance. Every subsection involving component selection MUST name specific ICs or families with key specs. Pattern: "For [use case]: [part] ([key spec]). For [alternative]: [other part]." Example: "USB 2.0 CM choke: Murata DLW21HN900SQ2 (0805 inch, 90 ohm CM at 100MHz). USB 3.x: a part Murata lists for the data rate, such as DLW21SN900HQ2 (5-10 Gbps)."
 
 2. **Quantified gotchas from app notes** — specific numbers that experienced engineers know from measurement, not from theory. "ADI AN-139: L2 ground plane at 0.13mm reduces hot loop inductance 14x (187nH -> 13nH)." "ST AN5686: 1nH ground inductance adds 30V at IEC Level 4." These are the numbers Claude cannot derive and will get wrong.
 
