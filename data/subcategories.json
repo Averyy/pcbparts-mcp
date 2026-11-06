@@ -84,6 +84,11 @@
     "category_id": 2,
     "category_name": "Capacitors"
   },
+  "3232": {
+    "name": "Supercapacitors",
+    "category_id": 2,
+    "category_name": "Capacitors"
+  },
   "2930": {
     "name": "Tantalum Capacitors",
     "category_id": 2,
@@ -2019,8 +2024,33 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
+  "3317": {
+    "name": "Anti-static workbench",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
   "2621": {
     "name": "Cable Tie",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
+  "3323": {
+    "name": "kraft paper tape",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
+  "3303": {
+    "name": "Packaging Bag",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
+  "2522": {
+    "name": "Packing tape",
+    "category_id": 52,
+    "category_name": "Handling/Packaging/Storage"
+  },
+  "3326": {
+    "name": "Teflon tape",
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
@@ -2661,6 +2691,11 @@
   },
   "956": {
     "name": "Ceramic plugin capacitor",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
+  "3752": {
+    "name": "Coaxial Connector",
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
@@ -3549,6 +3584,11 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "3230": {
+    "name": "Double-sided tape",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3586,6 +3626,11 @@
   },
   "3716": {
     "name": "SSD",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "856": {
+    "name": "Sticky hook",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
