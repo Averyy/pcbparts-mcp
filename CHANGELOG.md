@@ -4,6 +4,19 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details.
 
+## 0.8.20 (2026-11-06)
+
+Changed replies: `get_design_rules` text for EMC, PCB layout, signal integrity, thermal, DFM, connectors, checklist and test/debug.
+
+### Fixed
+
+- **Design rules that were wrong** (each checked against its source). Microstrip and stripline delay were 10x off ("136 ps/in (5.4 ns/100mm)"; it's 5.4 ps/mm). IPC-2221's internal clearance above 500 V was 10x off (0.025 mm/V; IPC says 0.0025 mm/V added to the 500 V spacing). TI's 1000 pF MCU-pin cap applies to edges of 100 ns or slower, not faster. Double-sided reflow put heavy parts on the wrong side. The series-termination explanation had the receiver wait two trips (it sees full voltage on the first). The duty-cycle Zth formula underestimated peak Tj about fourfold. CDCV304's 50 ps is output skew, not jitter (56-63 fs RMS); DS125BR820 is a redriver, not a retimer; GCT USB4085 is through-hole, not mid-mount. Henry Ott proposed the split-ground-plane test; he didn't report one. The nearest E24 value to 25 ohm is 24; a 0.3 Dk error moves 50 ohm by ~2 ohm, not 4.
+- **Rules stated as universal that hold only where their source measured them** (from the design-session report in `todo-bug-design-rule-accuracy-and-applicability.md`): series resistors and 1000 pF caps on simple MCU I/O only; grounding unused pins (ESP32 boot pins fight it); 47 pF USB data caps (Full-Speed only; High-Speed allows ~4 pF); ESD, fuse, TVS and ferrite on every line or rail; the 20-25 ohm "normal" rail resistance; mandatory teardrops; ground-plane splits (the exceptions are now listed); the 2-layer EMC cutoff; IPC-2152 current capacity; ADI's Kelvin-shunt results; thermal metrics (datasheet theta-JA vs board theta-JA vs psi-JT); fab limits now name their fab and service; DFA spacing and tombstoning guidance name their source. Numbers with no source are cut or marked "no source found".
+
+### Changed
+
+- **Design rules style guide:** rules keep the conditions and uncertainty their source states, say whether a number is a requirement, fab limit, recommendation or one design's example, cite short [n] IDs, and give a calculation instead of a default where the design decides. "Most conservative value" is gone: a bigger cap or smaller pull-up isn't always safer. A new test checks every paired unit (mm/mil, ps/in) in the rule files.
+
 ## 0.8.19 (2026-11-06)
 
 ### Fixed

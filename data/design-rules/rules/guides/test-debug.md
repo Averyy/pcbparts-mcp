@@ -4,17 +4,17 @@
 
 ## Quick Reference
 
-- **Test point pad: >= 1.0 mm diameter, no solder mask, no paste.** 0.8 mm absolute minimum. All test points on one side of the board.
+- **Bed-of-nails test pads: >= 0.8 mm, 1.0 mm preferred, no solder mask, no paste** [7]. Match the size to the probes; flying-probe and ICT can use smaller [4]. All test points on one side of the board.
 - **ARM 10-pin Cortex debug connector (1.27 mm pitch)** is the standard for SWD. Tag-Connect TC2030-IDC saves board space (pogo pads, zero height).
-- **Current shunt without Kelvin sensing: 22.8% error** at 20 A on a 0.5 mohm shunt (ADI measured 12.28 mV vs 10 mV ideal). Kelvin layout C reduces to < 1%.
-- **Board bring-up: scope on rails, not DMM.** DMM averages out oscillation and noise. Rail resistance < 5 ohm with board OFF = suspected short.
+- **Current shunt without Kelvin sensing: 22.8% error** in ADI's 0.5 mohm, 20 A test; its best Kelvin layouts measured 0.6-1%, others up to 5% [3]. Details and conditions below.
+- **Board bring-up: scope on rails, not DMM.** DMM averages out oscillation and noise. Before first power, compare rail-to-GND readings with the expected load or a known-good board, and current-limit the first power-up [2, 10].
 - **2.54 mm (100 mil) test grid spacing** for ICT. 1.27 mm (50 mil) costs 4x and reduces probe reliability.
 
 ## Design Rules
 
 ### Test Point Design
 
-- **Pad diameter: 1.0 mm recommended, 0.8 mm absolute minimum.** No solder mask on pad. No solder paste -- paste residue degrades probe contact after reflow.
+- **No solder paste on test pads** -- paste residue degrades probe contact after reflow (pad size: Quick Reference).
 - **Spacing: 2.54 mm (100 mil) grid preferred.** 1.91 mm (75 mil) acceptable. 1.27 mm (50 mil) costs 4x and reduces probe durability.
 - **Single-sided probing** (fewer-component side). Reduces fixture cost by half or more.
 - **Route unused MCU pins to test pads** for firmware debug and greenwire patches.
@@ -24,7 +24,7 @@
 ### Flying Probe Test (FPT)
 
 - **FPT minimum pad: 0.5 mm (20 mil) recommended, 0.15 mm (6 mil) absolute minimum.**
-- **Probe-to-sensor gap: 2.8 mm minimum.**
+- **Probe-to-sensor gap: 2.8 mm** for SEICA single-sided horizontal flying probe; vertical and double-sided testers differ [4].
 - **Board support every 150 mm** to prevent flex during probing -- unsupported areas cause false failures on large boards.
 - FPT needs no custom fixture -- ideal for prototypes and low volume. ICT is faster for volume > ~500 boards.
 
@@ -63,19 +63,19 @@
 
 ### Current Shunt Kelvin Sensing
 
-- **Without Kelvin sensing, solder + trace resistance (~0.14 mohm) dominates.** A 0.5 mohm shunt at 20 A reads 12.28 mV instead of 10 mV = 22.8% error (ADI measured).
-- **Sense vias at outer edge of each resistor pad, not center.** ADI tested 5 footprint variants (A-E): Layout C (sense vias at outermost pad edge, separate sense layer) achieved < 1% error. Layouts with center-placed sense points: 3-5% error. Without Kelvin: 22.8%.
+- **ADI's test: Welwyn ULRG3-2512-0M50-FLFSLT (0.5 mohm 2512), 20 A, 25 C, sampled within 1 s.** Without Kelvin it read 12.28 mV for 10 mV ideal (22.8%; about 0.11 mohm of solder and copper in series) [3].
+- **Sense vias at the outer edge of each pad worked best for that resistor.** ADI Table 1: layout C (outer edge, separate sense layer) measured 1%, D 0.6%; C tolerates placement better [3]. ADI says results depend on resistor composition and size: check the shunt maker's recommended footprint.
 - **Route sense traces on a different layer** from the power path. Vias at pad edges reach the sense layer without cutting main current-carrying copper.
 
 **Parallel shunts (from TI SDAA115):**
 - **Individual Kelvin sense from each shunt is mandatory.** Sensing from only one shunt (Layout 1) gives 56.5 mV offset. From center shunt (Layout 2) gives 51.2 mV offset. From all shunts (Layout 3): 1.7 mV offset on 397 mV expected.
-- **Series resistors in Kelvin loops: >= 100 * R_shunt.** Without these, hundreds of mA circulate between sense loops, generating heat and offset. For uohm shunts, use >= 100 mohm.
+- **Parallel shunts: series resistors in each Kelvin loop >= 100 * R_shunt** (TI's INA190 example). Without them, hundreds of mA circulate between sense loops. Check the amplifier's input-bias error with the chosen value [8, sec.2].
 - **Match trace length and width to every shunt** for even current sharing. Diagonal current paths (TL-BR or TR-BL) give best results -- avoid same-side paths (TR-BR, TL-BL) which create asymmetric drops.
 
 ### Board Bring-Up Procedure
 
 1. **Visual inspection** (both sides). Check pin 1 orientation, solder bridges, tombstoned passives, blown packages, bad barrel fill on THT.
-2. **Power rail resistance (board OFF).** Each rail to GND. Normal: 20-25 ohm. < 5 ohm: suspected short -- do not power up.
+2. **Power rail resistance (board OFF).** Each rail to GND. Normal depends on the load: 20-25 ohm needn't alarm; about 5 ohm or less, investigate a short [2]. Compare with a known-good board.
 3. **Apply power with current-limited supply.** Start low, increase while monitoring. Touch components for excessive heat.
 4. **Measure rails with oscilloscope** (not multimeter). Scope reveals oscillation and noise that a DMM averages out.
 5. **Check reset signal.** If stuck, trace what holds it asserted (supervisor, watchdog, external pull-down).
@@ -93,7 +93,7 @@
 ## Common Mistakes
 
 - **ICT fixture probe hits component body instead of pad.** Tall components near test points shadow the probe at approach angle. Fix: maintain >= 1.91 mm clearance from test pads to any component > 4 mm tall.
-- **Kelvin sense vias at pad center instead of outer edge.** Copper between via and resistor terminal carries current and adds error. ADI tested 5 footprint variants: Layout C (outermost edge) achieved < 1% error vs 22.8% for naive layout. Fix: place sense vias at outermost edge of each shunt pad.
+- **Copying ADI's outer-edge pickup to a different shunt.** ADI's results are for one 2512 metal shunt; composition and size change them. Fix: use the shunt maker's Kelvin footprint [3].
 - **Parallel shunt array sensed from only one resistor.** TI SDAA115 shows sensing from nearest shunt (Layout 1) adds 56.5 mV offset to a 397 mV expected output. Sensing from center shunt (Layout 2) still adds 51.2 mV. Fix: individual Kelvin from each shunt with >= 100x series limiting resistors.
 - **Solder paste on test point pads.** Residue from reflow degrades probe contact reliability over production life. Fix: exclude test points from paste layer.
 
@@ -104,14 +104,9 @@
 **Formula:** L = (0.29 * H) + 0.7, where H = component height (mm), L = clearance (mm)
 **Example:** 6 mm electrolytic cap -> L = (0.29 * 6) + 0.7 = 2.44 mm clearance from pad edge.
 
-**Kelvin sense error (no Kelvin vs Kelvin):**
-**Rule of thumb:** Solder and trace parasitics add ~0.14 mohm total. On a 0.5 mohm shunt this is > 20% error. Kelvin layout reduces to < 1%.
-**Example:** 0.5 mohm shunt at 20 A: ideal = 10 mV. Without Kelvin: 12.28 mV = 22.8% error. With Kelvin Layout C: < 1% error.
-
 **Parallel shunt Kelvin current-limiting resistor:**
-**Rule of thumb:** R_limit >= 100 * R_shunt. Prevents circulating current between sense loops.
-**Formula:** R_limit >= 100 * R_shunt (minimum)
-**Example:** Three parallel 300 uohm shunts -> R_limit >= 100 * 300 uohm = 30 mohm. Use 100 mohm for margin.
+**Rule of thumb:** R_limit >= 100 * R_shunt (TI's INA190 example) [8, sec.2].
+**Example:** Three parallel 300 uohm shunts -> R_limit >= 30 mohm; add margin only within the amplifier's input-bias error budget.
 
 ## Sources
 
@@ -130,3 +125,4 @@
 7. FixturFab -- Basic PCBA Design for Test (DFT) Guide: https://www.fixturfab.com/articles/basic-pcba-design-test-dft-guide
 8. TI SDAA115 -- Optimal Layout Practices for Low-Ohmic Current Sense Resistors in Parallel: https://www.ti.com/lit/an/sdaa115/sdaa115.pdf
 9. Altium -- Checklist for Systematically Testing PCB Prototypes: https://resources.altium.com/p/checklist-systematically-testing-pcb-prototypes
+10. grosdode/PCB-design -- Prototyping & Bring-up Checklist: https://raw.githubusercontent.com/grosdode/PCB-design/main/PCB_Checklist/pcb_checklist.md

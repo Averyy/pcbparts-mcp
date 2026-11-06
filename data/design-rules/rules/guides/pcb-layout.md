@@ -4,25 +4,25 @@
 
 ## Quick Reference
 
-- **4-layer with thin prepreg (< 0.25 mm / 10 mil) gives 10+ dB less radiation than equal-spaced layers.** This is the single cheapest EMC improvement on a 4-layer board.
-- **Never split a ground plane.** Partition routing into analog/digital zones instead. Henry Ott tested jumpered split planes -- connecting them together improved both functional and EMC performance in nearly all cases.
-- **Every signal via needs an adjacent ground return via.** Without it, return current forms a large radiating loop. Do not rely on randomly placed stitching vias.
+- **4-layer: signal layers < 0.25 mm (10 mil) from their planes, thick core between planes.** At 0.13 mm (5 mil) Ott puts the trace-loop radiation reduction at 10 dB or more vs equal spacing [5, Fig.2]. The cheapest EMC improvement on a 4-layer board.
+- **Default: one solid ground plane, routing partitioned into analog/digital zones** [3]. Splits are rare exceptions (below).
+- **Fast signals changing between two ground planes need a ground via next to the signal via;** between ground and power, the return goes through a decoupling cap [16, Fig.4-13/4-14]. Passing through the same plane needs nothing extra.
 - **50-ohm microstrip: W/H ~ 2:1 on FR4 (Er ~ 4.0).** 50-ohm stripline: B/W ~ 2-2.2:1. IPC-2141A equations are ~5-6% accurate between 50-100 ohm; less accurate outside that range.
-- **IPC-2152 replaces IPC-2221B for trace current.** The old "internal = half external" rule is wrong -- FR4 dielectric has 10x better thermal conductivity than air. Same copper cross-section applies to all layers.
+- **Size trace current with IPC-2152, not IPC-2221B's "internal = half external"** [9]. IPC-2152's baseline is one isolated trace in still air with no planes; copper weight, nearby planes, board and neighbouring traces change the real rise.
 
 ## Design Rules
 
 ### Stackup Design
 
 - **Five stackup objectives (Henry Ott):** (1) Every signal layer adjacent to a plane. (2) Signal layers tightly coupled to adjacent planes (< 0.25 mm / 10 mil). (3) Power and ground planes closely coupled. (4) High-speed signals buried between planes. (5) Multiple ground planes.
-- **When forced to choose #2 vs #3: always choose tight signal-to-plane coupling.** Interplane capacitance is insufficient below ~500 MHz for decoupling -- use discrete caps instead.
+- **When forced to choose #2 vs #3 on a conventional stackup, choose tight signal-to-plane coupling** [4]. Interplane capacitance alone is inadequate below ~500 MHz; decouple with discrete caps.
 - **8-layer is the minimum to satisfy all five objectives simultaneously.** 4-layer and 6-layer boards require compromises. Above 8 layers, additional layers are for routing density only.
 - **Stackup must be symmetrical** (balanced) to prevent warping during fabrication.
 - **Request your fab's standard stackup table before designing custom layer spacing.** Standard total thicknesses: 1.6 mm (most common), 1.0 mm, 2.0 mm. Fab standard 4-layer: typically 0.2 mm prepreg / 1.0 mm core / 0.2 mm prepreg at 1.6 mm total. Deviating adds cost and lead time. JLCPCB's (JLC04161H-7628 default, -3313 thin prepreg) with thicknesses and Er -> `guides/dfm.md`.
 
 #### 2-Layer Boards
 
-- **2-layer boards rarely pass EMC unshielded above 20-25 MHz.** Use only for low-speed designs (GPIO, I2C, UART) or cost-constrained products with shielded enclosures.
+- **Above ~10-15 MHz, consider multilayer boards** [4]. Ott has seen unshielded 2-layer boards work at 20-25 MHz, but as the exception; the emission class, enclosure and layout skill decide.
 - **Fill all empty space with ground copper on both layers.** Connect top and bottom fills with stitching vias at every intersection (max 5 mm pitch). A ground fill connected at only 1 point is a floating island -- parasitic antenna, not a ground plane.
 - **Place all ICs on one side, connectors on one edge.** Reduces layer transitions and simplifies return paths.
 
@@ -30,7 +30,7 @@
 
 | Stackup | Objectives Met | Notes |
 |---------|---------------|-------|
-| Sig/GND/PWR/Sig | #1, #2 (with thin prepreg) | Most common. Standard fab: 0.2 mm prepreg, 1.0 mm core. 10+ dB vs equal spacing |
+| Sig/GND/PWR/Sig | #1, #2 (with thin prepreg) | Most common. Standard fab: 0.2 mm prepreg, 1.0 mm core |
 | GND/Sig+Pwr/Sig+Pwr/GND | #1, #2, #4, #5 | Best 4-layer EMC. Two GND planes can stitch into Faraday cage. Power routed as wide traces. Rework difficult |
 | Sig+Pwr/GND/GND/Sig+Pwr | #1, #2, #5 | Outer signals allow rework. Two GND planes but no shielding of signal layers |
 
@@ -43,20 +43,21 @@
 
 ### Ground Planes & Mixed-Signal
 
-- **Connect AGND and DGND pins of ADCs to the same solid ground plane.** Plane resistance is < 1 mohm/square -- coupling between regions is millivolts worst-case at DC. A/D datasheets that recommend split planes are wrong; their own fine print says "connect AGND and DGND to the same low-impedance ground."
+- **Connect AGND and DGND pins of ADCs to the same solid ground plane** unless the converter's datasheet says otherwise. Plane resistance is < 1 mohm/square -- coupling between regions is millivolts worst-case at DC.
 - **ADC ground noise budget (1V reference):** 8-bit = 4 mV, 10-bit = 1 mV, 12-bit = 240 uV, 16-bit = 15 uV, 24-bit = 60 nV. Single solid plane adequate for 8/10/12-bit. For 14+ bit, use isolated routing zones but still a connected plane.
 - **Routing discipline is the solution, not plane splits.** Route digital signals only in the digital section, analog only in the analog section, on all layers. HF return currents self-confine in a narrow band directly beneath their signal trace -- they have no desire to flow through the analog region.
+- **When an analog/digital split is right:** low-frequency (< 100 kHz) noisy currents that must not share copper with a circuit ~1000x more sensitive [2], or complex systems where a solid ground can't be kept [15]. Join it at one point and route every crossing over that bridge [3]. An isolation barrier is different: keep it clear of copper on every layer and never bridge it [16].
 
 ### Microstrip vs Stripline
 
-- **Microstrip (surface layer):** propagation delay ~136 ps/in (5.4 ns/100mm) on FR4. Higher radiation, lower dielectric loss. Trace width ~2x stripline for same impedance.
-- **Stripline (buried between planes):** propagation delay ~170 ps/in (6.7 ns/100mm) on FR4. ~25% slower than microstrip. Better shielding, lower radiation. Required for high-speed signals that must be contained.
+- **Microstrip (surface layer):** propagation delay ~136 ps/in (5.4 ps/mm) at Er = 4.0 [7]. Higher radiation, lower dielectric loss. Trace width ~2x stripline for same impedance.
+- **Stripline (buried between planes):** propagation delay ~170 ps/in (6.7 ps/mm) at Er = 4.0, ~25% more delay than microstrip [7]. Better shielding, lower radiation. Required for high-speed signals that must be contained.
 - **Propagation delay depends only on dielectric constant, not trace dimensions.** All impedance variants on the same layer have identical delay -- useful for length matching.
 - **Termination rule:** if one-way propagation delay >= half the signal rise/fall time, terminate in characteristic impedance. Conservative: 2-inch/nanosecond rule. Example: 5 ns rise time -> terminate traces >= 10 inches.
 
 ### Trace Width & Current Capacity
 
-- **IPC-2152 unified formula** (valid for dT = 2-100C, I up to 30A):
+- **SMPS.us fit of IPC-2152's baseline chart** (1.78 mm polyimide, 3 oz, still air, no planes; dT = 2-100C, I up to 30A) [9]:
   `Ac (sq.mil) = (117.555 * dT^-0.913 + 1.15) * I^(0.84 * dT^-0.108 + 1.159)`
   `Width (mil) = Ac / thickness (mil)` where `thickness = oz * 1.37`
 - **Nearby copper planes reduce actual temperature rise** substantially below the generic chart prediction. IPC-2152 provides correction factors for plane proximity.
@@ -64,11 +65,11 @@
 
 ### Vias
 
-- **Via current capacity:** model as copper cylinder -- circumference (pi * d) is analogous to trace width. A 0.25/0.5 mm (10/20 mil) via: R ~ 1.5 mohm, thermal resistance ~ 180 C/W. A single via carrying 20A dissipates 600 mW (108C rise). 10 vias in parallel: 2A each, 1.08C rise. Always use via arrays for high-current connections.
-- **Return vias:** at every signal layer transition, place a ground via adjacent to signal via within 2-3x the via-to-plane distance. For high-speed/RF, use purposefully designed stitching via arrays -- randomly placed stitching vias do not guarantee signal integrity.
-- **Stitching via pitch for shielding:** center-to-center < lambda/10 at target frequency. Example: 0.5 mm (20 mil) pitch -> effective shielding to ~43 GHz.
+- **Via current capacity:** model as copper cylinder -- circumference (pi * d) is analogous to trace width. Altium's example: 0.25/0.5 mm (10/20 mil) via, 25 um plating, R ~ 1.5 mohm, ~180 C/W: 20A in one via dissipates 600 mW (108C rise); ten in parallel, 2A each, 1.08C [12, Power]. A model, not a measurement: via length and heat spreading change it. Use via arrays for high current.
+- **Return vias** (conditions in Quick Reference): place the ground via as close to the signal via as the layout allows. For high-speed/RF, use purposefully designed stitching via arrays -- randomly placed stitching vias do not guarantee signal integrity [12].
+- **Stitching via pitch for shielding:** a fraction of the wavelength at the highest frequency of concern; sources differ on the fraction (lambda/10 to lambda/20). Altium's 0.5 mm (20 mil) pitch shielding to ~43 GHz is a grounded-coplanar feedline example [12].
 - **Single-ended via impedance** is dominated by stitching via placement and antipad size. **Differential via impedance** is more sensitive to signal via-to-via spacing and antipad than to stitching vias -- stitching mainly affects field confinement (localization frequency).
-- **Via-in-pad required for:** fine-pitch BGAs (< 0.8 mm pitch) and thermal pads needing via arrays. Adds cost: epoxy fill + planarization + cap plate. Not needed for 0805+ passives or QFP/QFN with accessible pads.
+- **Via-in-pad where BGA escape or a thermal-pad via array needs it** [11]. Specify epoxy fill + planarization + cap plate so solder doesn't wick; it adds cost, so confirm with the assembler. Not needed where pads can be reached by a trace.
 - **Via aspect ratio <= 10:1** (board thickness : hole diameter) for reliable plating. Preferred <= 8:1. A 1.6 mm board needs >= 0.2 mm drill.
 - **Blind via aspect ratio: 1:1 max.** Deeper holes trap air during plating -> open circuits. When exceeded, use stacked microvias (2-3x standard process cost).
 - **Staggered vias** are cheaper and more reliable than stacked -- less precision required, lower stress. Use staggered unless vertical alignment is physically required.
@@ -76,9 +77,9 @@
 
 ### Annular Ring & Thermal Relief
 
-- **Annular ring vs breakout probability:** 0.05 mm (2 mil) = 98% breakout. 0.13 mm (5 mil) = 5% breakout. >= 0.15 mm (6 mil) = ~0% breakout. Design for 0.13 mm+ minimum.
-- **Teardrop pads** required for traces < 0.5 mm (20 mil) wide. Also recommended for flex PCBs where shear and vibration stress trace-pad junctions.
-- **Thermal relief:** 0.2 mm spoke width, 0.25 mm clearance. Apply on SMD pads connected to large copper pours and through-hole pins connected to planes.
+- **Annular ring vs breakout, one supplier's microvia data:** 0.05 mm (2 mil) = 98%, 0.13 mm (5 mil) = 5%, >= 0.15 mm (6 mil) = ~0% [13]. Rates are process-specific: use your fab's annular-ring limit.
+- **Teardrop pads recommended** where traces under 0.5 mm (20 mil) meet annular pads (drill misalignment) and on flex boards (shear, vibration) [13]. A recommendation, not a fab requirement.
+- **Thermal relief:** typical 0.2 mm spoke width, 0.25 mm clearance; smaller for dense small passives within fab limits [14]. Apply on SMD pads connected to large copper pours and through-hole pins connected to planes.
 - **DO NOT use thermal relief on:** vias connecting to planes (put relief on the SMD pad instead), die-attach/exposed pads, thermal pads of ICs. A thermal relief on a via has no value -- confine heat at the SMD pad, not at the via.
 
 ### Component Placement
@@ -89,12 +90,10 @@
 
 ## Common Mistakes
 
-- **Splitting the ground plane between analog and digital.** Manufacturers' own datasheets recommend it -- ignore this. Henry Ott tested boards with jumpered split planes: connecting them together improved both functional performance and EMC in nearly all cases. Fix: single solid plane with partitioned routing zones.
-- **4-layer stackup with equally spaced layers.** Signal-to-plane distance ~0.5 mm instead of < 0.25 mm. Costs 10+ dB radiation. Fix: thin prepreg (< 0.25 mm) for signal-to-plane, thick core (> 1 mm) for plane-to-plane. Ask fab for their standard stackup -- it already uses this spacing.
+- **Splitting the ground plane by habit.** Ott's test for skeptics: build it split with jumpers every 12.7 mm (1/2 in), measure, then join the planes; he expects the joined board to win in almost all cases [3].
 - **Using a power plane on a 4-layer board when a second ground plane would be better.** Two GND planes can be stitched around the board periphery to form a Faraday cage enclosing all signal traces -- impossible with only one GND plane. Route power as wide traces instead.
 - **20-H rule applied when power plane is sandwiched between two ground planes.** The full 20-H pullback is unnecessary and wastes board area. 2-3H is sufficient if pullback is needed at all; sandwiched power planes are not a radiation problem.
 - **Ground fill on 2-layer board connected at only one point.** Acts as parasitic antenna rather than ground plane. Fix: connect ground fill at multiple points with stitching vias, max 5 mm pitch.
-- **Trace width sized by IPC-2221B "internal = half external."** Wrong -- IPC-2152 shows same copper cross-section for all layers. FR4 dielectric conducts heat 10x better than air; internal layers may actually run cooler.
 - **Slowing risetimes ignored in favor of matched termination.** Matched terminations make risetimes faster and pull more current. First impulse should be to slow the risetime. Unless building very high-speed digital boards, few traces should require matched termination.
 
 ## Formulas
@@ -110,7 +109,7 @@
 **Example:** Er = 4.0, B = 20 mil, W = 8 mil, T = 1.4 mil -> Zo = 30 * ln(38 / 7.8) = 30 * 1.58 = 47.5 ohm.
 
 **IPC-2152 trace current capacity:**
-**Rule of thumb:** 1A per 0.25 mm (10 mil) width at 1 oz copper with 10C rise (conservative).
+**Rule of thumb:** none safe: at 1 oz and 10C rise the fit below needs ~0.29 mm (11 mil) for 1A, before plane and board corrections [9].
 **Formula:** Ac (sq.mil) = (117.555 * dT^-0.913 + 1.15) * I^(0.84 * dT^-0.108 + 1.159)
 **Example:** I = 3A, dT = 10C, 1 oz Cu (1.37 mil) -> Ac ~ 114 sq.mil -> Width = 114 / 1.37 = 83 mil (2.1 mm).
 
@@ -140,3 +139,5 @@
 12. Altium -- Everything You Need to Know About Stitching Vias: https://resources.altium.com/p/everything-you-need-know-about-stitching-vias
 13. Sierra Circuits -- Annular Ring Explained by a PCB Manufacturer: https://www.protoexpress.com/blog/dont-let-annular-rings-drive-you-crazy/
 14. Altium -- Thermal Relief Design Guide: https://resources.altium.com/p/thermal-relief-design
+15. ADI -- Basic Guidelines for Layout Design of Mixed-Signal PCBs: https://www.analog.com/en/resources/analog-dialogue/articles/what-are-the-basic-guidelines-for-layout-design-of-mixed-signal-pcbs.html
+16. TI SLLA284 -- Digital Isolator Design Guide: https://www.ti.com/document-viewer/lit/html/SLLA284

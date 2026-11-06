@@ -4,21 +4,21 @@
 
 ## Quick Reference
 
-- **Series termination is the default for point-to-point CMOS.** R_series = Zo - Z_driver (get Z_driver from IBIS model, not datasheet). Place within 6 mm of driver.
+- **Series termination is the default for point-to-point CMOS.** R_series = Zo - Z_driver (get Z_driver from the IBIS model, not the datasheet). Place it at the driver; simulate the allowable distance for fast edges [3].
 - **Crosstalk: edge-to-edge spacing >= 3h** (3 * dielectric height to reference plane). Trace width has no effect -- only separation and height matter.
-- **Unterminated 5V CMOS on 50 ohm line: 6.67V at receiver** (1.67V above VDD). 25 ohm series resistor eliminates overshoot entirely.
+- **Unterminated 5V CMOS, 25 ohm driver, 50 ohm line, open load: 6.67V at receiver** (1.67V above VDD). A 25 ohm series resistor matches the source and removes it [3, Figs.13-16].
 - **Stripline eliminates FEXT.** In stripline with symmetric dielectric, far-end crosstalk approaches zero because Cm/C ~ Lm/L. Strongly preferred for long parallel runs.
-- **Ground bounce:** V_bounce = L_pkg * N * dI/dt. 8 LVCMOS outputs in TSSOP (10 nH) switching 12 mA in 1 ns = 960 mV -- exceeds 400 mV noise margin.
+- **Ground bounce:** V_bounce = L_pkg * N * dI/dt [8, p.4]. Example with assumed values: 8 outputs sharing 10 nH, 12 mA each in 1 ns = 960 mV, beyond a 400 mV noise budget. Take L_pkg from the IBIS package model.
 
 ## Design Rules
 
 ### Termination Techniques
 
-- **Series (default for point-to-point).** R_series = Zo - Z_driver. Signal reaches half amplitude at load, reflects, doubles to full level on return. Receiver sees signal delayed by 2 * one-way propagation. Place resistor within 6 mm of driver. Allowable distance decreases with faster rise time -- simulate if < 500 ps.
+- **Series (default for point-to-point).** R_series = Zo - Z_driver launches V/2. At the open load it reflects and the receiver sees full V on first arrival (one-way delay); the driver end sits at V/2 until the reflection returns and is absorbed at 2x the one-way delay [3, Figs.9-11]. Load taps along the line see the V/2 step: series termination suits a single load at the end.
 - **Get Z_driver from the IBIS or SPICE model VI curve,** not the datasheet (rarely published). Most SI tools calculate Z_out and recommend R_series automatically.
 - **Parallel (= Zo at receiver to GND or Vtt).** Absorbs incident wave with no reflection. Draws DC current. Use when multiple loads tap the line or driver side cannot be modified. Parallel to Vtt (VDD/2) reduces DC power but requires a dedicated Vtt supply.
 - **Thevenin.** Two resistors to VDD and GND, parallel combination = Zo. Creates Vtt without separate supply. DC current: VDD / (R1 + R2).
-- **AC termination (series RC at receiver) degrades at modern clock rates** -- visible at 66 MHz in testing. Not recommended for new designs.
+- **AC termination (series RC at receiver)** degraded a 66 MHz clock in Ritchey's test [3]; whether it works depends on the RC against edge and clock timing. Prefer series or parallel termination for clocks.
 - **On-die termination (ODT)** in FPGAs and DDR eliminates external resistors and stub inductance. Programmable 50/75/100/150 ohm. Always enable when available.
 - **Resistor arrays for bus termination:** Bourns CAT16 (8-pin, 4 resistors, 0.8 mm pitch, 1206-size), CTS 742C (8-pin convex). Use isolated-element (not bussed) to avoid inter-channel crosstalk.
 
@@ -26,44 +26,43 @@
 
 ### Component Selection for Clocking
 
-- **Clock buffer/fanout:** TI CDCV304 (1-to-4 LVCMOS, TSSOP-8, < 50 ps additive jitter) for distributing one clock without stub reflections. SiLabs Si5351A (I2C-programmable, 3 outputs, 2.5-200 MHz) for multiple frequencies from one crystal.
-- **Pre-emphasis/equalization ICs for channels > 250 mm at > 3 Gb/s:** Retimers (full CDR -- TI DS125BR820 for 8-channel PCIe) when channel has connectors or exceeds PHY equalization range. Redrivers (TI SN65LVPE502 for USB 3.0) for shorter reach where latency matters -- < 1 ns vs 4-8 ns for retimers.
+- **Clock buffer/fanout:** TI CDCV304 (1-to-4 LVCMOS, TSSOP-8, 0-200 MHz; at 3.3 V: 50 ps typical output skew, 56-63 fs RMS additive jitter [11, sec.5.7]) for distributing one clock without stub reflections. SiLabs Si5351A (I2C-programmable, 3 outputs, 2.5-200 MHz) for multiple frequencies from one crystal.
+- **Equalization ICs when the channel's loss exceeds the PHY's equalization:** linear redrivers add CTLE gain with little delay -- TI DS125BR820 (8 channels to 12.5 Gb/s, PCIe/SAS/40G, 80 ps typical delay [12]), TI SN65LVPE502 (USB 3.0). A retimer (full CDR) resets jitter at the cost of more latency; choose from the channel loss and latency budget.
 - Level shifting for mixed-voltage signals -> `misc/level-shifting.md`.
 
 ### Crosstalk
 
-- **Near-end crosstalk (NEXT)** saturates at critical coupling length -- longer parallel runs do not increase NEXT beyond saturation. Critical coupling length: ~150 mm at 1.4 ns rise time. At 100 ps: < 12 mm.
+- **Near-end crosstalk (NEXT)** saturates at critical coupling length -- longer parallel runs do not increase NEXT beyond saturation. In Ritchey's curves the saturation length is ~150 mm (6 in) at 1.4 ns rise time and < 12.7 mm (0.5 in) at 100 ps; it scales with rise time and dielectric [5, Fig.3].
 - **Far-end crosstalk (FEXT)** increases with length (does not saturate). In stripline with symmetric dielectric, FEXT approaches zero because inductive coupling coefficient KL ~ capacitive coupling coefficient KC. Stripline strongly preferred for long parallel runs.
 - **Quantified example (stripline, ADI/Ritchey):** 0.13 mm traces at 0.13 mm spacing, 0.13 mm height above plane: ~8% backward crosstalk. Increase spacing to 0.38 mm: < 1%. Improvement comes entirely from separation, not trace width.
 - **Worst-case CMOS crosstalk topology:** far ends open, near end at logic low. Backward crosstalk reflects off low-impedance driver, doubles at open receiver -- full-amplitude noise pulse.
 - **Guard traces do not shield.** They work by separation only. Without ground vias at lambda/10 spacing, a guard trace is a resonant circuit that can amplify crosstalk. Use spacing instead.
 - **Route orthogonally on adjacent layers** (X on one, Y on other). Capacitive coupling dominates between adjacent layers -- only safe control is orthogonal routing. PCB routers sometimes violate this constraint -- verify after autoroute.
 - **Power plane edges radiate.** Keep power planes >= 1.27 mm (50 mil) from board edges. Caps grounded at a plane edge have higher impedance than interior caps.
-- **Noise budget (3.3V LVCMOS, ~400 mV margin):** crosstalk <= 150 mV, reflections <= 100 mV, VDD ripple <= 100 mV, ground bounce <= 50 mV.
+- **Example noise budget (3.3V LVCMOS, ~400 mV margin; allocate your own):** crosstalk <= 150 mV, reflections <= 100 mV, VDD ripple <= 100 mV, ground bounce <= 50 mV.
 
 ### Differential Pairs
 
 - **Coupling coefficient K = Zm / Zse.** Higher K (closer spacing) lowers Zdiff, improves CM rejection, but tightens manufacturing tolerance on spacing.
 - **When separation exceeds max(trace width, dielectric height),** coupling becomes negligible and Zdiff approaches 2 * Zse. Loosely-coupled pairs lose the noise-rejection benefit but are easier to manufacture.
 - **Tightly coupled pairs** route EM fields largely between conductors, reducing sensitivity to reference plane. Advantage for routing across plane splits (though splits should still be avoided).
-- **Length match within a pair:** < 5% of rise_time * propagation_speed. Example: 500 ps rise time at 150 mm/ns -> match within 3.75 mm.
+- **Length match within a pair to the interface's skew budget,** converted with the stackup's delay (at 150 mm/ns, 1 mm = 6.7 ps).
 - **In stripline, FEXT cancels** when dielectric above and below is symmetric (KL ~ KC). Strongly preferred for long differential runs.
 - **Differential impedance targets:** 90 ohm (USB 2.0), 100 ohm (LVDS, Ethernet, USB 3.x), 120 ohm (CAN).
 
 ### Via Discontinuities
 
-- **Each 0.25 mm via in a 16 mm board: ~1 nH, presenting ~6.3 ohm at 1 GHz.** In a standard 1.6 mm board, via inductance is ~0.5-1.5 nH depending on pad/antipad geometry. Two vias in parallel halve inductance. Use 2-4 ground vias per signal via on critical nets.
+- **A 0.25 mm via through a 1.6 mm board: ~1.34 nH, 8.4 ohm at 1 GHz** [10, Vias]. Parallel vias placed close together reduce it by less than half (mutual inductance). Return vias -> `guides/pcb-layout.md`.
 - **Via capacitance:** ~0.3 pF for 0.3 mm drill in 2.5 mm board.
-- **Combined L and C acceptable up to ~3 Gb/s** without special treatment. Via stubs: 2.5 mm stub resonates at ~15 GHz. Back-drill or use blind/buried vias above ~3 Gb/s.
-- **No impedance discontinuities within 20-38 mm of high-speed ADC inputs/clocks.** Caps, wide pads, and vias are all discontinuities. If closer, add series resistors (10 ohm at ADC, 50 ohm at 20-38 mm for 50 ohm lines).
+- **Ritchey found via L and C acceptable up to ~3 Gb/s without special treatment** (experience, not a limit) [3, Vias]. Above that, simulate the via and its stub: a 2.5 mm open stub resonates near 15 GHz at 150 mm/ns (quarter wave); back-drill or use blind/buried vias when the channel model says so.
+- **No impedance discontinuities at 100-200 ps from a high-speed ADC's input or clock** (ADI: 800 mil-1.5 in, 20-38 mm, on FR4) [9, rule 7]. Caps, wide pads and vias are all discontinuities. Closer elements need series resistors: ~10 ohm very close, 49.9 ohm at 100-200 ps for 50 ohm/side.
 - **Thermal relief on ground vias near ADC:** avoid spokes -- they increase via inductance. Use thermal collector: copper pour pad grounded with one large via plus distributed smaller vias.
 - Return via placement -> `guides/pcb-layout.md`.
 
 ### Ground Bounce (SSO)
 
-- **Package lead inductance:** BGA ball ~0.5-1.5 nH. QFN bond wire ~2-5 nH. TSSOP gull-wing ~5-15 nH. DIP ~15-35 nH.
-- **Example:** 8 LVCMOS outputs switching 12 mA in 1 ns through TSSOP lead (10 nH): V_bounce = 10e-9 * 8 * 12e-3 / 1e-9 = 960 mV. Exceeds 400 mV noise margin.
-- **Mitigation:** multiple VDD/GND pins near I/O, slew rate control, stagger switching times. Series resistors (50-100 ohm) on digital outputs -> `guides/emc.md`.
+- **Package lead inductance (typical ranges; use the IBIS package model's L_pkg):** BGA ball ~0.5-1.5 nH. QFN bond wire ~2-5 nH. TSSOP gull-wing ~5-15 nH. DIP ~15-35 nH.
+- **Mitigation:** multiple VDD/GND pins near I/O, slew rate control, stagger switching times. Series resistors on simple MCU outputs -> `guides/emc.md`.
 - **Decoupling for SSO:** low-inductance caps (0402/0201) at each I/O bank power pin to source transient current locally. Goal: reduce current loop through package GND pins -> `power/decoupling.md`.
 - **Programmable drive strength** (e.g., 2/4/8/12/16 mA on FPGAs): use minimum that meets timing. Halving drive current halves SSO contribution.
 
@@ -78,9 +77,8 @@
 
 ### Eye Diagram and Channel Analysis
 
-- **When to use IBIS simulation:** (a) trace > 50 mm with rise time < 500 ps, (b) multiple loads (bus topology), (c) board-to-board connectors in path. Short point-to-point with series termination: rules of thumb suffice.
 - **S21 (insertion loss):** < 3-6 dB at Nyquist frequency for the data rate. **S11 (return loss):** < -10 dB across signal bandwidth.
-- **Decision rule:** below 1 Gb/s with controlled impedance and proper termination, rules of thumb work. Above 3 Gb/s, extract S-parameters and simulate with IBIS-AMI. 1-3 Gb/s: simulate if connectors, vias, or traces > 150 mm.
+- **When to simulate (rule of thumb, no source found):** below 1 Gb/s, point-to-point with controlled impedance and termination, rules of thumb work; 1-3 Gb/s, simulate if connectors, vias or traces > 150 mm are in the path; above 3 Gb/s, extract S-parameters and use IBIS-AMI. Always simulate multi-load buses and termination placement for fast edges [3].
 
 ### High-Speed ADC Layout
 
@@ -88,45 +86,42 @@
 - **Do not share vias between subsystems.** Supply bypass vias are offensive to analog input and clock return paths. Assume all ADC pins are offensive to all others.
 - **Copper flood grounding:** via spacing ~1.27 mm (50 mil) around periphery. Poorly grounded copper acts as antenna. Do not flood close to signal lines unless uninterrupted ground paths exist on both sides.
 - **Symmetry is critical for high-speed ADC inputs.** Asymmetric copper flooding converts CM transients to differential error with non-linear charge content, directly degrading SFDR. Even LVDS outputs should see symmetrical loading.
-- **Clock path sensitivity extends to ~10 GHz bandwidth** on modern ADCs regardless of sample rate. Clock has zero noise margin (like a local oscillator).
+- **ADI's 1.8V-process pipelined ADCs show artifacts to ~10 GHz regardless of sample rate;** their clock inputs have 2-3 GHz bandwidth [9]. Clock has zero noise margin (like a local oscillator).
 - **Do not route signals alongside ADC clock.** Maintain 0.76-1.27 mm spacing in same layer for oversampling ADCs. For undersampling ADCs (more jitter-sensitive), use only grounded copper between clock and data.
 - **Overlapping power planes create parasitic capacitors** with lowest possible impedance. Coupled noise is nearly impossible to suppress with discrete caps. Avoid overlapping unrelated power planes in ADC region.
-- **Termination after ADC gives better SFDR** on undersampling ADCs. Requires layer change near input pads. If the driver/filter/transformer is outside the 20-38 mm critical distance, extend the transmission line and place end termination past the ADC.
+- **Termination after the ADC gave ADI its best SFDR** when the driver, filter or transformer sat outside the 100-200 ps zone: extend the line past the ADC, change layers at the input pads [9, rule 7]. Transformer type and common-mode impedance change the compromise.
 - **Filter design must account for distance to ADC.** A filter designed in isolation may produce reflections when placed at wrong distance from ADC input. Re-simulate with extracted PCB parasitics after layout.
 
 ## Common Mistakes
 
 - **Guard traces without ground vias.** Ungrounded guard resonates, amplifying crosstalk at specific frequencies. Fix: increase spacing instead, or ground guard at lambda/10 intervals.
-- **Ignoring via stubs at multi-Gb/s.** 2.5 mm stub resonates at ~15 GHz -- within passband for 10 Gb/s signaling. Fix: back-drill or blind/buried vias above ~3 Gb/s.
 - **Asymmetric copper flooding near differential pairs.** Unequal capacitive loading converts CM to differential error with nonlinear charge content. Directly degrades ADC SFDR. Fix: symmetric fills on both sides, or remove all flooding within 3h.
-- **Using generic Dk = 4.0 for impedance calculations.** Actual FR4 ranges 3.8-4.5 by manufacturer. Dk error of 0.3 shifts 50-ohm impedance by ~4 ohm (8%). Fix: request fab's measured Dk at your target frequency.
-- **Ignoring receiver input capacitance.** CMOS inputs are 2-8 pF. At 500 MHz, 5 pF adds ~60 ohm in parallel to 50 ohm line, shifting load to ~27 ohm -> 30% undershoot. Fix: include C_in in simulation.
-- **Placing termination before ADC instead of after.** Termination after ADC (past the bond wire) gives better SFDR on undersampling ADCs because the high CM impedance of an unterminated transmission line transformer reflects clock transients back. Fix: extend line, terminate after ADC with layer change at input pads.
+- **Using generic Dk = 4.0 for impedance calculations.** A 0.3 Dk error shifts a 50 ohm stripline by ~2 ohm (Z ~ 1/sqrt(Dk)); together with etch and thickness tolerances it can break a +/-10% target. Fix: use the fab's measured Dk at your frequency and its stackup model.
+- **Ignoring receiver input capacitance.** CMOS inputs are several pF (IBIS C_comp). At 500 MHz, 5 pF is -j64 ohm: across a 50 ohm termination the load becomes 31-j24 ohm, a ~37% reflection. Fix: include C_in in simulation.
 - **Sharing ground vias between ADC subsystems.** Via-to-via coupling makes supply noise appear on analog and clock returns. Fix: dedicate separate ground vias per signal domain.
-- **AC termination at modern clock rates.** Capacitor impedance degrades termination above ~66 MHz. Fix: use series or parallel termination.
 - **Routing differential pair across plane gap.** Destroys impedance match and CM rejection. Return current forced to detour, creating a large radiating loop. Fix: both traces same layer, continuous reference plane.
 
 ## Formulas
 
 **Series termination resistor:**
-**Rule of thumb:** Most CMOS drivers: 20-40 ohm output impedance. Series resistor: 10-33 ohm typical for 50 ohm traces.
+**Rule of thumb:** take Z_driver from the IBIS VI curve [3]; CMOS drivers are commonly 20-40 ohm (no source found).
 **Formula:** R_series = Zo - Z_driver
-**Example:** Zo = 50 ohm, Z_driver = 25 ohm -> R_series = 25 ohm -> use 22 ohm (nearest E24).
+**Example:** Zo = 50 ohm, Z_driver = 25 ohm -> R_series = 25 ohm -> 24 ohm (E24) or 22 ohm (E12).
 
 **Differential impedance:**
 **Rule of thumb:** Zdiff = 2 * Zse * (1 - K). Tightly coupled (K ~ 0.25): Zdiff ~ 1.5 * Zse. Loosely coupled (K < 0.05): Zdiff ~ 2 * Zse.
 **Formula:** Zdiff = 2 * (Zse - Zm), where Zm = K * Zse
-**Example:** Zse = 55 ohm, K = 0.1 -> Zdiff = 2 * (55 - 5.5) = 99 ohm (meets 100 ohm target).
+**Example:** Zse = 55 ohm, K = 0.1 -> Zdiff = 2 * (55 - 5.5) = 99 ohm [6].
 
 **Ground bounce (SSO):**
-**Rule of thumb:** > 8 outputs switching simultaneously in TSSOP at 3.3V LVCMOS will exceed noise margin. Use BGA or add slew rate control.
+**Rule of thumb:** compare N * L_pkg * dI/dt (shared return inductance) with the receiver noise budget left [8, p.4]; reduce with more ground pins, slew-rate control or lower drive.
 **Formula:** V_bounce = L_pkg * N * (dI/dt)
-**Example:** 4 outputs, 10 mA each, 2 ns rise, QFN (3 nH): V_bounce = 3e-9 * 4 * 10e-3 / 2e-9 = 60 mV (safe for 400 mV margin).
+**Example:** 4 outputs, 10 mA each, 2 ns rise, shared 3 nH (assumed): V_bounce = 3e-9 * 4 * 10e-3 / 2e-9 = 60 mV.
 
 **Knee frequency:**
-**Rule of thumb:** 1 ns rise time = 350 MHz bandwidth. 100 ps = 3.5 GHz.
-**Formula:** f_knee = 0.35 / t_rise
-**Example:** 500 ps rise time -> f_knee = 700 MHz. Trace, termination, and decoupling must handle 700 MHz.
+**Rule of thumb:** 1 ns rise time (10-90%) -> ~500 MHz of significant content [4]. 100 ps -> 5 GHz.
+**Formula:** f_knee = 0.5 / t_rise. (0.35 / t_rise is a single-pole -3 dB bandwidth, a lower figure; neither is a channel cutoff [2].)
+**Example:** 500 ps rise time -> f_knee = 1 GHz.
 
 ## Sources
 
@@ -149,3 +144,6 @@
 7. Sierra Circuits -- Handling Crosstalk in High-Speed PCB Designs: https://www.protoexpress.com/blog/crosstalk-high-speed-pcb-design/
 8. Intel -- Basic Principles of Signal Integrity: https://cdrdv2-public.intel.com/650327/wp_sgnlntgry.pdf
 9. ADI -- A Short Course in PCB Layout for High-Speed ADCs: https://www.analog.com/en/resources/technical-articles/a-short-course-in-pcb-layout-for-high-speed-adcs.html
+10. ADI -- Avoid PC-Layout "Gotchas" in ISM-RF Products: https://www.analog.com/en/resources/technical-articles/avoid-pclayout-gotchas-in-ismrf-products.html
+11. TI CDCV304 datasheet (SCAS643I): https://www.ti.com/lit/ds/symlink/cdcv304.pdf
+12. TI DS125BR820 datasheet (SNLS491B), 8-Channel Linear Repeater: https://www.ti.com/lit/ds/symlink/ds125br820.pdf

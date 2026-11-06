@@ -5,7 +5,7 @@
 ## Quick Reference
 
 - **Hot loop area determines SMPS emissions.** L2 ground plane at 0.13 mm reduces loop inductance 14x (187 nH -> 13 nH). Route VIN/return traces through filter cap pads, not around them.
-- **Series resistors on every digital I/O pin.** 50-100 ohm on outputs, 35-50 ohm on inputs. Place at the driving IC. Single most cost-effective EMI reduction.
+- **Series resistors on simple MCU I/O.** 50-100 ohm on outputs, 35-50 ohm on inputs, at the MCU [7, p.11]. TI excludes memory-bus and oscillator pins; check the signal's timing before adding them.
 - **1 mV between two antenna parts** (cables, heatsinks) can fail CISPR 32 Class B. Threshold drops to 100 uV for stricter limits.
 - **No Y-caps on LISN side of CM choke.** Y-caps between choke and cable bypass the choke entirely. Y-caps go on the board side only.
 - **A single unfiltered wire through a shielded enclosure eliminates ALL shielding benefit.** Every cable penetration must be filtered or have a 360-degree shield connection.
@@ -14,18 +14,18 @@
 
 ### PCB Layout for EMC
 
-- **1000 pF bypass cap on any MCU pin with edge rate < 100 ns.** On outputs: cap on receiver side of series R. On inputs: cap on MCU side of series R. Wrong side of the resistor negates the filtering.
+- **1000 pF to MCU ground on simple I/O that can tolerate edges of 100 ns or slower** [7, p.11]. Outputs and bidirectional pins: cap after the series R (before it, the MCU switches into a short). Input-only pins: cap on the MCU side. Not on oscillator pins; check reset and interrupt timing.
 - **All I/O connectors on one edge of the board.** Connectors on opposite edges let cables form loop antennas with the board. Plane resistance is < 1 mohm/square -- digital return currents couple only millivolts of noise, but those millivolts drive cables as antennas.
-- **Never gap the ground plane between analog and digital sections.** The gap forces return current to detour, creating a much larger loop. At frequencies above ~100 kHz, return currents are confined directly below the signal trace -- gapping provides zero benefit. Use routing partitions (separate trace zones on different layers), not copper gaps.
+- **Don't gap the ground plane between analog and digital by default.** Above ~100 kHz return currents stay under their trace, so a gap only forces a detour and a larger loop. Use routing partitions; the rare cases for a split -> `guides/pcb-layout.md`.
 - **Power plane spacing < 0.25 mm** for closely-coupled plane pairs with 3+ IC power pins at a given voltage.
 - **Never put a ferrite on a ground connection.** Ferrites go on VCC/power inputs only. PLLs and clock multipliers: ferrite on power per IC datasheet, never on ground.
-- **Crystal is the #1 susceptibility vulnerability.** Harmonics of other signals (UART, SDIO, SMPS) coupling into the crystal loop corrupt the oscillator and degrade RF performance even when the crystal itself is spec-compliant. No unrelated components within 25 mm. No signal traces routed under the crystal on any layer. Guard ring with ground copper connected to ground plane.
-- **Unused MCU pins:** configure as inputs, tie directly to ground. Floating pins couple noise from substrate capacitively. Enable watchdog to recover if a disturbance reconfigures the pin as a high output.
-- **Slot antennas:** no slot > 100 mm in enclosures or ground planes. A 4x4 grid of 3 mm holes provides equivalent airflow to a single 12 mm hole with > 20 dB better shielding.
+- **The oscillator loop is a major susceptibility point** [7, p.13]. Harmonics of other signals (UART, SDIO, SMPS) coupling into it corrupt the oscillator and degrade RF even with a spec-compliant crystal. TI keeps unrelated parts 25 mm (1 in) away on unshielded, mostly 2-layer boards [7, p.13]; follow the MCU's oscillator layout otherwise. Copper, guard ring -> `misc/crystal.md`.
+- **Unused MCU pins:** follow the device's own guidance and its reset, boot and sleep states. TI ties unused inputs to ground [7, p.11], but a pin the boot ROM drives high (ESP32-S3 drives some during USB boot) fights a direct ground: ESP32-S3 recommends a pull-up or pull-down on high-impedance pins instead [9, GPIO].
+- **Enclosure slots:** TI's limit is 100 mm (4 in) [7, p.18]; at higher frequencies size openings against the wavelength, and prefer many small holes to one large one of the same area [6, Apertures].
 - **Filtering priority order:** (1) signals leaving the enclosure, (2) signals leaving the PCB to other boards, (3) on-board signals with high-impedance loads, (4) parallel I/O with fast edges. Remove filter components one at a time in pre-compliance to identify which are actually needed.
 - **Cable ground return ratio:** minimum 1 ground wire per 9 signal wires. For cables > 300 mm, use 1:4. A single ground wire returning all RF energy from a second board creates a radiating antenna path.
 - **Stripline traces (buried between planes) produce zero voltage at board edges.** Use for traces routed between connectors -> `guides/pcb-layout.md`.
-- **DC power traces carry HF noise.** Clock-frequency currents drawn from power pins often exceed clock-frequency currents on clock traces. Filter every power pin with bypass caps and apply series R to I/O pins regardless of nominal switching rate.
+- **DC power traces carry HF noise.** Clock-frequency currents drawn from power pins often exceed clock-frequency currents on clock traces. Filter every power pin with bypass caps; series R on simple MCU I/O: Quick Reference.
 
 ### 2-Layer Board EMC
 
@@ -65,7 +65,7 @@
 - **Isolated DC inputs (no chassis ground):** add capacitors between circuit ground plane and chassis ground plane under the connector to emphasize the imbalance, enabling effective unbalanced filtering on the driven conductor only.
 - **Balanced systems need balanced filters.** An unbalanced filter on a balanced system forces mode conversion -- DM noise becomes CM, making emissions worse, not better.
 - **CM choke core material:** ferrite for broadband (100 kHz - 100 MHz). Nanocrystalline for lower-frequency conducted (10 kHz - 10 MHz) -- higher mu_i but physically larger.
-- **AC mains CM filtering:** CMC rated AC 250V + X-cap (100 nF - 1 uF) + Y-caps (2.2 nF per line). Y-cap total limited to ~4.7 nF per line-to-ground (safety leakage at 60 Hz/250V). CMC covers the low-frequency range Y-caps cannot reach.
+- **AC mains CM filtering:** CMC rated for the mains voltage + safety-rated X and Y caps [12, sec.2]. Larger Y-caps filter lower frequencies but raise ground leakage: size them against the product safety standard's leakage limit. The CMC covers the low-frequency range Y-caps can't reach.
 - **Products without a metal chassis:** use lossy CM choke (resistance, not just inductance). Pure inductance creates resonances with the capacitive return path through stray capacitance. Y-caps give power wires low-impedance path to board ground.
 - **Small plastic enclosures** with all wires on one edge: DM filtering (pi-filter to board ground) is usually sufficient. CM filtering needed only if cables act as antennas.
 
@@ -78,7 +78,7 @@
 
 - **Apertures determine real-world shielding**, not material thickness. 2-mil copper at 100 MHz gives 66 dB absorption + 88 dB reflection -- any solid copper is effectively perfect above a few MHz.
 - **A shielded enclosure can have SE < 0 dB** (worse than no shield) if poorly placed apertures couple energy to the enclosure, which becomes a better antenna than the original source. Sealed metallic enclosure with no apertures: >= 40 dB. Add one unfiltered cable: 0 dB.
-- **Depth-to-width ratio of 3:1 gives ~90 dB attenuation per aperture** (waveguide below cutoff). Does not apply if a wire penetrates the opening (TEM mode propagates regardless).
+- **Depth-to-width ratio of 3:1 adds ~90 dB per aperture** well below its cutoff (f << fc, depth >> width) [6, eq.2]. It's added attenuation, not the enclosure's total SE, and doesn't apply if a wire penetrates the opening (TEM mode propagates).
 - **Cable shield 360-degree contact** to enclosure. Pigtail connections provide negligible shielding above a few MHz.
 - **Seams** are worse than apertures due to length. A half-wavelength seam radiates as a dipole. Conductive adhesive tape is not adequate for seams > ~25 mm -- use finger stock or conductive gaskets with continuous contact.
 - **Paint/anodize heatsink surfaces** -- radiation accounts for ~25% of natural convection heat transfer, and painted surfaces reduce EMI reflections from internal sources.
@@ -93,7 +93,7 @@
 - **3-terminal cap mounting:** "through" connection (pattern cut, cap in series) for best I/O filtering. "Non-through" (parallel, pattern intact) for IC supply decoupling -- halves bypass impedance but some noise passes unfiltered.
 - **3-terminal cap families:** Murata NFM series (0402-1210, feed-through, to 100 MHz). TDK YFF series (4-terminal, improved HF).
 - **LC composite EMI filters:** Murata NFE61P (0603, LC pi-filter, broadband). TDK MAF series (0402-0805, integrated LC, USB/HDMI). Key advantage: no PCB parasitics between L and C elements. Array-type (4 circuits/package) for LCD/camera interfaces.
-- **Ferrite bead LC resonance** -> `guides/passives.md`. Key rule: beads rated >= 5x load current. Prefer lossy impedance curve to avoid resonance; sharp-curve beads need a series damping resistor.
+- **Ferrite bead LC resonance** -> `guides/passives.md`. On power rails, ADI runs beads at ~20% of rated current (rated >= 5x load) and checks impedance at the actual DC bias [13, DC Bias]. Prefer a lossy impedance curve; sharp-curve beads need a series damping resistor (check its voltage drop).
 - **CMC saturation risk:** CMCs with intentional DM impedance can saturate under high DC load. Symptom: filter works at low load, fails at full load. Verify CMC impedance at rated DC current.
 - **CMC differential-mode leakage:** all CM chokes have some DM inductance. For USB 3.0/DisplayPort, verify DM insertion loss does not degrade signal integrity above 5 GHz.
 
@@ -106,7 +106,7 @@
 
 ### Interface-Specific EMI Filtering
 
-- **USB 2.0:** CM choke (90 ohm at 100 MHz, Murata DLW21SN) within 10 mm of connector. Add 47 pF caps from each data line to ground after the CMC for HF emissions above 500 MHz. ESD TVS on VBUS and data lines -> `protection/esd.md`.
+- **USB 2.0 data lines:** a CMC (Murata DLW21SN, 90 ohm at 100 MHz) near the connector, after ESD, only if EMI needs it [11, items 1.08-1.09]. Shunt caps depend on speed: FTDI allows optional 47 pF C0G on Full-Speed parts (FT2xxB/R/X, FT2232D) but 0-10 pF on High-Speed FTx232H [10, sec.2.3]; TI caps total external discrete capacitance at 4 pF per line for High-Speed [11, item 1.06]. ESD -> `protection/esd.md`.
 - **USB hub ports:** one CMC per port. Shared CMCs degrade inter-port isolation and create ground loops.
 - **USB 3.x:** standard USB 2.0 CMCs destroy SuperSpeed signal integrity. Use Murata DLW21HN or TDK ACM2012H within 15 mm of connector. Separate 2.0 and 3.x pairs with independent CMCs.
 - **HDMI / DisplayPort:** CMC on each TMDS/ML lane pair, 90 ohm CM at 100 MHz, DM insertion loss < 0.5 dB at signal frequency. TDK MAF for space-constrained designs.
@@ -131,7 +131,6 @@
 - **Filter inductor too close to SMPS power inductor.** Transformer coupling bypasses filter attenuation. Symptom: conducted emissions show no improvement despite adding pi-filter. Fix: orient perpendicular, place outside GND ring.
 - **Near-field probe scan at wrong distance.** H-field probes must be within 1-5 mm. At 10 mm+ resolution is too poor to identify hot loops. Fix: smallest H-field loop (Langer RF-B 3-2) at 1-2 mm, board at full load.
 - **CMC dot convention reversed in schematic.** Dots on opposite sides makes the coil block differential signals instead of common-mode noise. On USB/HDMI this kills the data link entirely. Fix: dots on the same side for both windings; verify against datasheet equivalent circuit.
-- **Ground plane gap "between analog and digital."** 50-year-old rule that no longer applies on multilayer boards. At > 100 kHz return currents are confined directly below the signal trace -- the gap forces them to detour, creating the very coupling it was supposed to prevent.
 
 ## Formulas
 
@@ -141,7 +140,7 @@
 **Example:** 2-mil copper (50.8 um) at 100 MHz (delta = 6.7 um) -> A = 8.7 * (50.8 / 6.7) = 66 dB.
 
 **Waveguide below cutoff (aperture attenuation):**
-**Rule of thumb:** Depth-to-width ratio of 3:1 gives ~90 dB attenuation per aperture.
+**Rule of thumb:** Depth-to-width ratio of 3:1 adds ~90 dB per aperture when f << fc.
 **Formula:** Attenuation(dB) ~ 30 * (d/a) * sqrt(1 - (f/fc)^2), where d = depth, a = max dimension, fc = v/(2a). Does not apply if a wire penetrates the opening (TEM mode propagates).
 **Example:** 5 mm deep, 2 mm wide hole at 1 GHz: fc = 75 GHz >> 1 GHz, attenuation ~ 30 * (5/2) * 1 = 75 dB.
 
@@ -166,3 +165,8 @@
 6. LearnEMC -- Practical Electromagnetic Shielding: https://learnemc.com/practical-em-shielding
 7. TI SZZA009 -- PCB Design Guidelines for Reduced EMI: https://www.ti.com/lit/an/szza009/szza009.pdf
 8. ADI AN-139 -- Power Supply Layout and EMI: https://www.analog.com/en/resources/app-notes/an-139.html
+9. Espressif -- ESP32-S3 Hardware Design Guidelines, Schematic Checklist: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/schematic-checklist.html
+10. FTDI AN_146 -- USB Hardware Design Guidelines for FTDI ICs: https://ftdichip.com/wp-content/uploads/2020/08/AN_146_USB_Hardware_Design_Guidelines_for_FTDI_ICs.pdf
+11. TI SWCA124 -- TUSB121x USB 2.0 Board Guidelines: https://www.ti.com/lit/pdf/swca124
+12. Murata -- Basics of Noise Countermeasures, Lesson 14: Common Mode Choke Coils for Power Lines: https://article.murata.com/en-us/article/basics-of-noise-countermeasures-lesson-14
+13. ADI AN-1368 -- Ferrite Bead Demystified: https://www.analog.com/en/resources/app-notes/an-1368.html

@@ -5,10 +5,10 @@
 ## Quick Reference
 
 - **Always specify exact series + position count.** "JST connector" is meaningless -- JST makes hundreds of types. Use "JST PH 2-pin" or "JST SH 4-pin".
-- **Barrel jacks: 5.5 mm outer / 2.1 mm inner, center-positive** is the de facto standard. A 2.5 mm plug fits a 2.1 mm jack but makes only intermittent contact.
-- **USB-C power-only: GCT USB4125 (6-pin, top-mount).** USB 2.0 with data: GCT USB4085 (16-pin, mid-mount). USB data routing -> `interfaces/usb.md`.
-- **Terminal blocks: wave solder only.** Reflow melts housings. Spring terminals over screw for vibration environments.
-- **FFC orientation: straight vs reverse.** Wrong choice gives reversed pinout. Swap bottom-contact for top-contact connector instead of replacing the cable.
+- **Barrel jacks: 5.5 mm outer / 2.1 mm inner, center-positive** is SparkFun's convention and the common one; verify the target device. A plug made for a 2.5 mm pin fits a 2.1 mm jack but makes only intermittent contact [1].
+- **USB-C power-only: GCT USB4125. USB 2.0 with data: GCT USB4085** (details below). USB data routing -> `interfaces/usb.md`.
+- **Terminal blocks: pick the soldering process by exact series.** Many are wave-only and reflow damages them; THR and SMT series are made for reflow [4, 7].
+- **FFC orientation: match the straight or reverse cable to the connector's contact side** (details below).
 
 ## Design Rules
 
@@ -20,33 +20,33 @@
 | PH | 2.0 mm | LiPo battery (SparkFun standard) | Extremely hard to disconnect -- good for reliability, bad for servicing |
 | ZH | 1.5 mm | Compact I/O | Thinner wires |
 | GH | 1.25 mm | Compact sensor/I/O | Easily confused with Molex PicoBlade |
-| SH | 1.0 mm | Ultra-compact | Optional grip protrusions; pins dislodge easily at 0.5 mm FFC pitch |
+| SH | 1.0 mm | Ultra-compact | Optional grip protrusions [6] |
 
 - **JST GH vs Molex PicoBlade: both 1.25 mm pitch but NOT interchangeable.** Surplus inventory is frequently mislabeled. Measure pitch first, then compare housing features to specific series datasheet.
 - **JST PH battery connector: S2B-PH-SM4-TB** (2-pin, right-angle SMD). Through-hole variant: S2B-PH-K-S.
 
 ### Barrel Connectors
 
-- **De facto standard: 5.5 mm outer / 2.1 mm inner, center-positive.** SparkFun, most consumer devices use this. 3.5 mm outer / 1.3 mm inner for smaller devices.
-- **2.5 mm plug in 2.1 mm jack: passes bench test, fails under vibration or thermal cycling.** The cantilevered spring contact on the outer sleeve tolerates this -- the inner pin does not. Always verify inner diameter match.
-- **Third-pin switching:** spring contact shorts to sleeve when no plug inserted. Use for auto-switching between battery and wall adapter.
-- **Never use audio jacks for power.** Tip and sleeve momentarily short during insertion. Audio connectors also lack rated voltage/current specs from many manufacturers.
-- **Insertion depth: jack depth < plug barrel length.** Account for chassis wall thickness. If plug barrel is too short, it won't reach the inner contact through the panel cutout.
+- **3.5 mm outer / 1.3 mm inner** for smaller devices.
+- **Pin-size mismatch:** the outer sleeve spring tolerates a loose plug, the inner pin doesn't, so a 2.5 mm plug on a 2.1 mm pin contacts intermittently [1]. Always verify the inner diameter match.
+- **Switched jacks:** some models have a third contact that switches with the sleeve, for auto-switching between battery and wall adapter; follow the datasheet's switch topology [2].
+- **Don't use audio jacks for power.** Many lack voltage and current ratings, exposed contacts can short during insertion, and they invite plugging in the wrong cable [2].
+- **Insertion depth through a panel:** check the plug's engagement through the actual chassis thickness on the jack and plug mating drawings; a short barrel won't reach the inner contact [2].
 
 ### USB Power Connectors
 
-- **USB-C receptacle (power-only): GCT USB4125** (6-pin, top-mount, cheaper). **USB 2.0 with data: GCT USB4085** (16-pin, mid-mount).
+- **USB-C power-only: GCT USB4125,** 6 contacts (power and CC), SMT top-mount, 3 A [9]. **USB 2.0 with data: GCT USB4085,** 16 contacts, through-hole top-mount, 5 A [8].
 - **Some USB-C cables only break out USB 2.0** (4 wires, not full 24). Do not assume full cable capability in your test setup.
 - USB-C CC resistors, data line routing, and VBUS protection -> `interfaces/usb.md`.
 
 ### Terminal Blocks
 
-- **Spring terminals over screw terminals for vibration.** Spring terminals auto-adjust tension with temperature cycling. Screw terminals loosen -- apply hot glue dab for retention if screw type is required.
-- **Reflow soldering destroys terminal blocks.** Wave solder: peak 235-260 C (SnPb), 10 s max per wave. Manual solder: 350 C iron for 4-5 s.
-- **UL 1059 vs IEC 60947-7 current ratings differ.** UL defines by heat rise at rated current; IEC defines by power dissipated at rated current. Always check which standard the datasheet references -- same block gets different numbers.
-- **Inrush and surge: derate.** Terminal block ratings are steady-state. Frequent surges require oversizing.
+- **Vibration:** pick a terminal series rated for it (spring-clamp types keep their grip as screws can loosen), torque screws to spec and test under the real conditions [1, 4]. SparkFun's hot-glue dab is a hobby fix, not a qualified retention.
+- **Soldering (Eaton's blocks):** reflow not recommended; SnPb wave peak 235-260 C, <= 10 s total and <= 5 s per wave, per EN 61760-1 [4, p.6]. Phoenix Contact's THR and SMT terminal blocks are made for reflow [7].
+- **UL 1059 vs IEC 60947-7 ratings use different methods:** UL by heat rise at rated current, IEC by power dissipated at rated current. Check which standard the datasheet's numbers come from [4, p.2].
+- **Inrush and surge: derate.** Terminal block ratings are steady-state; Eaton recommends extra margin for repeated inrush or overvoltage. Validate the real duty cycle [4, pp.2-3].
 
-**UL 1059 voltage/spacing classes (151-300 V range):**
+**UL 1059 voltage/spacing classes, 151-300 V (Eaton's summary) [4, p.4]:**
 
 | Class | Application | Min Air Gap | Min Surface |
 |-------|------------|-------------|-------------|
@@ -54,47 +54,42 @@
 | B | Commercial/IT | 2.3 mm (0.09") | 2.3 mm (0.09") |
 | C | Industrial (UL 508) | 6.4 mm (0.25") | 9.7 mm (0.38") |
 
-- **IEC creepage at 250 V, Pollution Degree 3:** 3.2 mm (Material Group I, CTI >= 600 V) to 5.0 mm (Group IIIb, CTI 100-175 V).
+- **IEC 60947-7-1 creepage at 250 V working voltage (AC rms or DC), Pollution Degree 3 at the insulation:** 3.2 mm (Material Group I, CTI >= 600) to 5.0 mm (Group IIIb, CTI 100 to < 175) [4, p.5].
 
 ### FFC/FPC
 
-- **Orientation: straight vs reverse.** Wrong orientation gives reversed pinout or no connection. If you picked wrong, swap bottom-contact for top-contact connector instead of replacing the cable.
-- **Standard pitches: 1 mm (hand-solderable), 0.5 mm (reflow with stencil).** 0.8 mm rare. 0.35 mm uses staggered pins (usually FPC-produced, dark orange).
-- **FFC connectors melt under hot air rework.** Cover with kapton tape before rework. IR oven reflow is OK for the initial assembly.
-- **Latch from center or both sides simultaneously.** One-sided prying snaps the latch permanently. At 0.5 mm pitch, careless insertion shorts pins to neighbors.
-- **Same pitch/pin count FFCs can vary in overall width.** Some (especially laptop keyboards) have "ears" for extra-secure mating. Verify connector datasheet accepts the cable width before ordering.
-- **Do not solder directly to white-plastic FFCs** -- solder melts the plastic covering. Kapton-backed FPCs tolerate soldering.
+- **Orientation: straight vs reverse.** The wrong one gives a reversed pinout or no connection. Fix it with the other cable type or a footprint-compatible top/bottom-contact connector; verify the pin numbering and cable dimensions [5].
+- **Pitches:** Hackaday prefers 1 mm FFC for hand soldering and 0.5 mm for stencil reflow; 0.8 mm is rare; 0.35 mm cables use staggered pins (usually FPC, dark orange) [5].
+- **Use the FFC connector's specified reflow and rework profile** (Hirose FH12 gives one); shield the plastic with Kapton tape during hot-air rework [5, 10].
+- **Flip-lock actuators: operate them evenly, as the series instructs.** One-sided prying can snap the latch; a misinserted 0.5 mm cable can bend conductors into their neighbours [5, 10].
+- **Same pitch/pin count FFCs can vary in overall width.** Some (laptop keyboards) have "ears" for extra-secure mating. Match width, thickness and ears to the connector drawing [5].
+- **Don't solder directly to white-plastic FFCs** -- solder melts the plastic (low-temperature solder is the exception); Kapton-backed FPCs tolerate it. Check the cable's rating [5].
 
 ### Pin Headers and Debug
 
 - **Tag-Connect TC2030-IDC** for space-constrained debug: 6-pin pogo pads, zero board-side height. Standard SWD: 2x5 1.27 mm pitch header (ARM 10-pin).
-- **Machine-pin headers vs stamped:** better contact, longer life, but not always compatible with stamped-pin mates. Verify before mixing.
+- **Machine-pin headers vs stamped:** better contact, longer life, but some combinations don't mate. Verify before mixing [1].
 - ESD protection on connector pins -> `protection/esd.md`.
 
 ### Molex Power Connectors
 
-- **Molex 8981 series: up to 11 A per pin.** Press-fit, very tight. Common in CNC and 3D printer stepper driver boards.
-- **Designed for very few mating cycles.** Do not use where frequent connect/disconnect is expected.
+- **Molex 8981 series (SparkFun: up to 11 A per pin):** very tight friction fit, made for few mating cycles; common in CNC and 3D printer stepper driver boards. Check the exact part's current and mating-cycle ratings [1].
 
 ### RF Connectors (SMA)
 
-- **SMA vs RP-SMA: center pin gender is swapped.** Convention: SMA for GPS/cellular (sub-2 GHz). RP-SMA for 2.4 GHz (WiFi, BT, ZigBee).
-- **All antennas/cables: inner thread (outer nut). All boards/devices: outer thread.**
+- **SMA vs RP-SMA: center pin gender is swapped.** SparkFun commonly uses SMA for GPS/cellular and RP-SMA for 2.4 GHz (WiFi, BT, ZigBee); check the antenna's connector [1].
+- **Threads:** SparkFun's boards use outer threads, its antennas an outer nut with inner threads [1].
 - Antenna placement, matching, and keep-out zones -> `misc/rf-antenna.md`.
 
 ## Common Mistakes
 
-- **2.5 mm barrel plug in 2.1 mm jack passes bench test, fails in the field.** Intermittent under vibration or thermal cycling. The outer sleeve spring compensates but the inner pin connection is unreliable. Fix: verify inner pin diameter match between plug and jack.
-- **Terminal block reflow-soldered -> deformed housing.** Cage clamps no longer grip wire properly even though connections appear OK visually. Fix: wave solder only; hand solder at 350 C for 4-5 s max.
-- **FFC latch opened from one side -> broken latch.** 0.5 mm pitch latch tabs snap from one-sided prying. Connector can no longer retain cable. Fix: open from center or both sides. Budget spare connectors for prototyping.
+- **Wave-only terminal block reflow-soldered -> damaged housing.** Fix: use the exact series' approved process and profile, or a THR/SMT-rated block where it must go through reflow [4, 7].
 - **JST GH (1.25 mm) mislabeled as Molex PicoBlade.** Surplus inventory is frequently wrong. Housings look similar but latch geometry differs. Fix: measure pitch, compare housing features to series datasheet.
-- **DC power connected to standard Ethernet port.** Signal transformers in standard jacks are damaged by DC. Fix: use jacks without built-in transformers if passing DC, or use dedicated power connectors.
-- **Low mating-cycle connector in a user-accessible port.** Molex 8981 (tens of cycles) or board-to-board connectors in a position where users plug/unplug daily guarantees field failures. Fix: match connector mating-cycle rating to expected use frequency.
+- **Low mating-cycle connector in a user-accessible port.** Molex 8981 or board-to-board connectors where users plug in daily wear out. Fix: match the exact connector's rated mating life to expected use [1].
 
 ## Formulas
 
-**Terminal block dielectric withstand (UL 1059):**
-**Rule of thumb:** Test voltage is always well above rated voltage.
+**Terminal block dielectric withstand (UL 1059, Eaton's summary) [4, p.4]:**
 **Formula:** V_test = 1000 V + 2 * V_rated
 **Example:** 300 V rated terminal block -> V_test = 1000 + 2 * 300 = 1600 V applied for 1 minute.
 
@@ -112,3 +107,7 @@
 4. Eaton -- How to Select a Terminal Block: https://www.eaton.com/content/dam/eaton/products/electronic-components/resources/brochure/eaton-how-to-select-terminal-block-white-paper.pdf
 5. Hackaday -- Friendly Flexible Circuits: The Cables: https://hackaday.com/2024/02/07/friendly-flexible-circuits-the-cables/
 6. Hackaday -- JST Is Not A Connector: https://hackaday.com/2017/12/27/jst-is-not-a-connector/
+7. Phoenix Contact -- PCB terminal blocks (wave, THR and SMT soldering): https://www.phoenixcontact.com/en-us/products/pcb-terminal-blocks-and-pcb-connectors/pcb-terminal-blocks
+8. GCT -- USB4085 Type C USB 2.0 Connector (read 2026-11-06): https://gct.co/connector/usb4085
+9. GCT -- USB4125 Type C USB Charging Connector (read 2026-11-06): https://gct.co/connector/usb4125
+10. Hirose -- FH12 Series FPC/FFC Connectors catalog: https://www.hirose.com/en/product/series/FH12
