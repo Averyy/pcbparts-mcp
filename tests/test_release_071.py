@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 from types import SimpleNamespace
@@ -265,7 +266,10 @@ async def test_misparsed_suffix_searches_the_surviving_part_number():
     # "40W" is read as a power rating; the part number left is BC817, listed as BC817-40
     assert server._protected_mpn_tokens("BC817-40W", parse_smart_query("BC817-40W")) == ["BC817"]
     result = await server.jlc_search(query="BC817-40W SOT-23 transistor", limit=100)
-    assert result["results"] and all(p["model"].upper().startswith("BC817") for p in result["results"])
+    # BC817 anywhere as its own word: GOODWORK lists its BC817-40 (C5807902) with the marking code
+    # in front, as 6C-BC817-40 (2026-11-05 catalog)
+    assert result["results"] and all(re.search(r"(?<![A-Z0-9])BC817", p["model"].upper())
+                                     for p in result["results"])
 
 
 @pytest.mark.parametrize("query", ["YS-SK6812MINI-E LED", "VS-E7FX0212-M3/I diode", "DR73-100-R inductor"])
