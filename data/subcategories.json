@@ -1609,6 +1609,11 @@
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
+  "439": {
+    "name": "Fixed seat/fixed clamp",
+    "category_id": 59,
+    "category_name": "Consumables and auxiliary materials"
+  },
   "87": {
     "name": "Plastic shell",
     "category_id": 59,
@@ -2024,33 +2029,8 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
-  "3317": {
-    "name": "Anti-static workbench",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
   "2621": {
     "name": "Cable Tie",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
-  "3323": {
-    "name": "kraft paper tape",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
-  "3303": {
-    "name": "Packaging Bag",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
-  "2522": {
-    "name": "Packing tape",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
-  "3326": {
-    "name": "Teflon tape",
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
@@ -2844,6 +2824,11 @@
     "category_id": 46,
     "category_name": "Industrial control electrical"
   },
+  "959": {
+    "name": "Key lock switch",
+    "category_id": 46,
+    "category_name": "Industrial control electrical"
+  },
   "1288": {
     "name": "LED light strip",
     "category_id": 46,
@@ -3156,6 +3141,11 @@
   },
   "448": {
     "name": "Accelerator/primer",
+    "category_id": 58,
+    "category_name": "Industrial reagents/lubrication/rust removal"
+  },
+  "3492": {
+    "name": "diesel engine oil",
     "category_id": 58,
     "category_name": "Industrial reagents/lubrication/rust removal"
   },
@@ -3584,8 +3574,8 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3230": {
-    "name": "Double-sided tape",
+  "3531": {
+    "name": "Network Switch",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3626,11 +3616,6 @@
   },
   "3716": {
     "name": "SSD",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
-  },
-  "856": {
-    "name": "Sticky hook",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
