@@ -4,6 +4,14 @@ Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.de
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.8.22 (2026-11-07)
+
+Changed replies: `get_design_rules` text for voltage supervisors.
+
+### Fixed
+
+- **Voltage-supervisor rules that had open-drain RESET backwards** (from a design-session report, checked against the TLV803, TPS3808 and MAX803/809 datasheets). The rule said to pull RESET up to a rail that's up before the monitored rail, never to the monitored rail; TI's TLV803 application and Maxim's MAX803 datasheet pull up to the monitored rail, and Maxim warns that a pull-up to another rail drives RESET high while the supervisor is below 1 V. It said an open-drain output can't discharge a capacitor on RESET; an asserted output is a low-impedance sink, and the real limits are its current rating (5 mA on TLV803 and TPS3808) and the RC release delay. TPS3808 and MAX809 were said to hold RESET low below 0.6 V; they're valid down to 0.8 V and 1 V. The 100 kohm pull-down fix applies to push-pull outputs such as MAX809; beside an open-drain pull-up it only forms a divider. The 4.7 kohm default is now the datasheet's range (10 kohm-1 Mohm on TLV803 and TPS3808).
+
 ## 0.8.21 (2026-11-06)
 
 Changed replies: `get_design_rules` text for EMC, DFM, I2C and USB.
