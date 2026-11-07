@@ -6,7 +6,7 @@
 
 - **VTH(nom) = (Vss(min) + Vcpu(min)) / 2.** Total VTH accuracy window must fit entirely between Vcpu(min) and Vss(min) -- overlap means false resets or missed brown-outs.
 - **TPS3808 has only 6mV hysteresis on sense pin** -- reflects to 27mV on 1.8V through divider. Battery systems need external hysteresis (Rh=1M, Rp=100K -> ~200mV).
-- **Open-drain for multi-rail: wired-OR resets.** Pull-up to a rail stable BEFORE the monitored rail, never to the rail being monitored. 4.7K default.
+- **Open-drain RESET: pull up to the monitored rail by default; wire-OR outputs for multiple rails** [9, 11]. Resistor: the datasheet's range, 10K-1M on TLV803 and TPS3808 [9, 10].
 - **Watchdog from main loop, NEVER from timer ISR.** ISR-serviced watchdog hides main-loop lockups. Windowed watchdog catches this; simple timeout does not.
 - **Q&A watchdog window > 64ms.** SPI overhead for reading question and writing 4 responses requires significant time per TCAN1146 reference.
 
@@ -21,11 +21,11 @@
 
 > WARNING: VTH accuracy window MUST NOT overlap supply accuracy window. Example: +/-2.5% total budget on 3.0V nominal -> VTH range 2.925-3.075V. If Vcpu(min)=2.97V, VTH_min (2.925V) < Vcpu(min) -> supervisor may not assert before CPU browns out.
 
-- **VPOR (power-on reset voltage):** below VPOR (0.6-1.0V typical), output is undefined -- may float high. TPS3808 and MAX809 guarantee output low below 0.6V. Many cheaper parts do not -- causes power-on glitch that low-voltage logic may interpret as valid high.
+- **VPOR (power-on reset voltage): the lowest supply at which RESET is valid.** TPS3808: 0.8V max; MAX803/809: 1V; TLV803: 1.1V [9, 10, 11].
 
 ### Output Type
 
-- **Open-drain:** wired-OR -- any supervisor pulling low holds reset. Pull-up to a rail stable BEFORE the monitored rail.
+- **Open-drain:** wired-OR -- any supervisor pulling low holds reset [9, §9.1.1].
 - **Push-pull:** only ONE per reset line -- multiple push-pull outputs cause bus contention.
 - **Bi-directional uP reset + push-pull:** add 1K series resistor so uP can override supervisor.
 - **Bi-directional + wired-OR (MAX6316):** open-drain with internal 4.7K pull-up + ~2us active pull-up for fast rise time. uP reset pins typically sink only 1.6mA -- reducing external pull-up below ~2K to speed rise time may prevent uP from pulling low enough to register as logic low.
@@ -40,7 +40,8 @@
 
 ### Pull-Up Sizing
 
-- **Default: 4.7K.** R_max = (V_pullup - V_IH(min)) / I_leakage(max). R_min = (V_pullup - V_OL(max)) / I_OL(test).
+- **Pull-up rail: the monitored rail (the supervisor's VDD) by default** [9, §9.2.2; 11]. Below VPOR, RESET follows the pull-up [9, §8.3.2]; on another rail it reads high then [11]. Use another rail only to match the reset input's logic level [9, §9.1.2], and only if it can't come up before the monitored rail.
+- **Value: inside the datasheet's range.** TLV803 and TPS3808: 10K-1M [9, 10]; ADI's nominal for Maxim parts is 4.7K [3]. R_max = (V_pullup - V_IH(min)) / I_leakage(max). R_min = (V_pullup - V_OL(max)) / I_OL(test).
 - **Leakage doubles every 10-15C.** At 125C, 10nA (25C) spec may reach 100-300nA. Verify R_max at max operating temperature.
 - **Large pull-up (>100K):** high-impedance net picks up noise from nearby digital traces. Long open-drain traces with large R are especially vulnerable.
 - **Small pull-up (<2K):** power consumption when RESET asserted (3.3V/2K = 1.65mA), and uP reset sink current limit (~1.6mA) may prevent valid logic low.
@@ -74,10 +75,9 @@
 
 ## Common Mistakes
 
-- **Capacitor on RESET line without discharge path.** Cap holds RESET high after supervisor pulls low. Open-drain cannot actively discharge external cap. Use supervisor with active pull-down or add discharge resistor parallel to cap.
+- **Capacitor on RESET without checking current and delay.** An asserted open-drain output sinks and discharges it [9, 10]. Check the discharge peak against the pin rating (5mA on TLV803 and TPS3808 [9, 10]) and the release delay as the pull-up recharges it: t = R_pu * C * ln(V_pu / (V_pu - V_IH)). A series resistor limits the peak but lifts the asserted low by R_series * pull-up current: check V_IL.
 - **Watchdog error counter ignored.** TCAN1146 and MAX20478 have configurable error counters -- a single missed service increments counter but doesn't immediately assert RESET. Two consecutive valid services needed to decrement counter back. Fail to configure threshold and nuisance resets occur, or genuine faults are masked.
-- **Open-drain pull-up to the monitored rail.** When rail drops, pull-up loses drive, RESET voltage drops with it -- defeating the reset hold. Solution: pull up to a rail that is stable before the monitored rail rises.
-- **VPOR undefined region causes power-on glitch.** Below VPOR (0.6-1.0V), many supervisors let RESET float high for 50-200us before VCC rises enough to assert low. Low-voltage logic (1.2V FPGA core, 1.8V SRAM) interprets this as a valid release and begins operation while supply is still sub-threshold, corrupting SRAM or latching FPGA I/O banks. Select supervisors that guarantee RESET low below 0.6V (TPS3808, MAX809), or add a 100K pull-down on RESET to hold it low during the undefined region.
+- **Power-on glitch read as a release.** Below VPOR the supervisor can't sink: an open-drain RESET sits at its pull-up rail, a push-pull one floats [1, 11]. A pull-up rail that comes up first, or logic with a low V_IH (1.2V FPGA core, 1.8V SRAM), sees a release while the supply is below threshold. Pull up to the monitored rail (the glitch then stays under VPOR), bring the monitored rail up first, or pick a lower-VPOR part. Push-pull (MAX809): 100K from RESET to ground holds it low down to 0V [11]; beside an open-drain pull-up it only divides (10K up, 100K down leaves 91%).
 - **Windowed watchdog CLOSED window sized without clock drift.** +/-20% watchdog RC oscillator + +/-1% MCU crystal = service pulse may land in CLOSED window under worst-case drift. Size OPEN window >= 2x nominal service period.
 
 ## Formulas
@@ -88,9 +88,9 @@
 **Example:** 1.8V rail, VTH_nom=1.737V, 1% ref, 1% dividers (R1=500K), 25nA leakage -> VTH range 1.708-1.766V. CPU min=1.71V. VTH_min (1.708V) < Vcpu_min (1.71V) -> FAIL. Reduce R1 to 250K -> VTH range 1.712-1.763V -> PASS.
 
 **Pull-up resistor range:**
-**Rule of thumb:** 4.7K works for most supervisors.
-**Formula:** R_max = (V_pullup - V_IH(min)) / (I_leak_OD + I_leak_input). R_min = (V_pullup - V_OL(max)) / I_OL(test).
-**Example:** V_pullup=1.8V, V_IH=1.0V, I_leak=1.1uA -> R_max=727K. V_OL=0.3V, I_OL=1mA -> R_min=1.5K. 4.7K is within range.
+**Rule of thumb:** the datasheet's range (10K-1M on TLV803 and TPS3808 [9, 10]); ADI's nominal is 4.7K [3].
+**Formula:** R_max = (V_pullup - V_IH(min)) / (I_leak_OD + I_leak_input). R_min = (V_pullup - V_OL(max)) / I_OL(test), and never below the datasheet's minimum.
+**Example:** V_pullup=1.8V, V_IH=1.0V, I_leak=1.1uA -> R_max=727K. V_OL=0.3V, I_OL=1mA -> R_min=1.5K. 10K (the TPS3808 minimum) is within range.
 
 **External hysteresis (TPS3808):**
 **Rule of thumb:** Rh=1M, Rp=100K -> ~200mV on 1.8V rail.
@@ -119,3 +119,6 @@
 6. TI SLVA485 -- Pull-up/Pull-down Resistor for Open Drain Outputs: https://www.ti.com/lit/an/slva485/slva485.pdf
 7. ADI -- The Basics of Windowed Watchdogs (MAX20478/MAX20480): https://www.analog.com/en/resources/technical-articles/the-basics-of-windowed-watchdogs.html
 8. TI SLLA546 -- Q&A Watchdog Overview and Configuration: https://www.ti.com/lit/pdf/slla546
+9. TI TLV803 datasheet (SBVS157E): https://www.ti.com/lit/gpn/tlv803
+10. TI TPS3808 datasheet (SBVS050N): https://www.ti.com/lit/gpn/tps3808
+11. Analog Devices (Maxim) MAX803/MAX809/MAX810 datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/MAX803-MAX810Z.pdf
