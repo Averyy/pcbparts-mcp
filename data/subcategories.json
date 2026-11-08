@@ -1609,11 +1609,6 @@
     "category_id": 59,
     "category_name": "Consumables and auxiliary materials"
   },
-  "439": {
-    "name": "Fixed seat/fixed clamp",
-    "category_id": 59,
-    "category_name": "Consumables and auxiliary materials"
-  },
   "87": {
     "name": "Plastic shell",
     "category_id": 59,
@@ -3573,11 +3568,6 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
-  },
-  "3531": {
-    "name": "Network Switch",
-    "category_id": 49,
-    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
