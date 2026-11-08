@@ -208,7 +208,7 @@ async def test_part_number_retry_order_and_explicit_constraints(monkeypatch, dro
 async def test_empty_mpn_lookup_keeps_error_and_adds_hint():
     mpn = "ZZNOEXIST123456789"
     result = await server.jlc_get_part(mpn=mpn)
-    assert result["error"] == f"No JLCPCB parts found for MPN '{mpn}'"
+    assert result["error"] == f"No part found in the local snapshot for MPN '{mpn}'"
     assert "stock >= 10" in result["hint"] and f'jlc_stock_check(query="{mpn}")' in result["hint"]
     assert "mouser_get_part" in result["hint"] and "digikey_get_part" in result["hint"]
     assert server._call_outcome(SimpleNamespace(structured_content=result)) == "not_found"
@@ -249,17 +249,27 @@ def test_scrape_part_count_guard(monkeypatch, tmp_path, total, allow, success):
     script = guard["run"].split("\n", 1)[1].rstrip().removesuffix("PY")
     (tmp_path / "data").mkdir()
     manifest = tmp_path / "data/manifest.json"
-    manifest.write_text(json.dumps({"total_parts": 100}))
+    previous = json.loads(Path("data/manifest.json").read_text())
+    manifest.write_text(json.dumps(previous))
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts/check_component_scrape.py").write_text(Path("scripts/check_component_scrape.py").read_text())
     git = ["git", "-C", str(tmp_path), "-c", "user.name=test", "-c", "user.email=test@example.com",
            "-c", "commit.gpgsign=false"]
     subprocess.run([*git, "init", "-q"], check=True)
     subprocess.run([*git, "add", "data/manifest.json"], check=True)
     subprocess.run([*git, "commit", "-q", "--no-verify", "-m", "previous scrape"], check=True)
-    manifest.write_text(json.dumps({"total_parts": total}))
+    current = json.loads(json.dumps(previous))
+    target_total = (previous["total_parts"] * total + 99) // 100
+    for category in current["categories"].values():
+        category["count"] = int(category["count"] * total / 100)
+    gap = target_total - sum(c["count"] for c in current["categories"].values())
+    max(current["categories"].values(), key=lambda c:c["count"])["count"] += gap
+    current["total_parts"] = target_total
+    manifest.write_text(json.dumps(current))
     monkeypatch.setenv("ALLOW_PART_DROP", str(allow).lower())
     result = subprocess.run([sys.executable, "-c", script], cwd=tmp_path, capture_output=True, text=True)
     assert (result.returncode == 0) is success, result.stderr
-    assert "100" in result.stdout and str(total) in result.stdout
+    assert str(previous["total_parts"]) in result.stdout and str(target_total) in result.stdout
 
 
 async def test_misparsed_suffix_searches_the_surviving_part_number():

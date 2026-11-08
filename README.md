@@ -115,7 +115,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 ## Good to know
 
 - `jlc_search` covers parts with at least 10 in stock, from a snapshot taken daily (`data_as_of` in each reply). `jlc_get_part(lcsc=...)` and `jlc_stock_check` are live, and `jlc_stock_check` also reaches the rest of JLCPCB's 7M+ part catalog.
-- JLCPCB charges no assembly fee for **basic** and **preferred** parts and $3 per unique **extended** part. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
+- For Economic assembly, **basic** and **preferred** parts avoid the extended-type loading fee. Alternatives savings use a rounded legacy **$3 estimate** per extended type, not a current quote; Standard assembly fees differ. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
 - Spec figures are JLCPCB's listings, and alternatives are checked against the catalog. Check the datasheet and pinout before you order.
 - On pcbparts.dev, all users share one Mouser key and one DigiKey app: 1,000 requests a day each. Self-host with your own keys to get your own limits.
 
@@ -127,7 +127,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 git clone https://github.com/Averyy/pcbparts-mcp
 cd pcbparts-mcp
 uv venv && uv pip install -e .
-.venv/bin/python -m pcbparts_mcp.server  # http://localhost:8080/mcp
+uv run python -m pcbparts_mcp.server  # http://localhost:8080/mcp
 ```
 
 Or with Docker (needs BuildKit, the default since Docker 23). `docker-compose.yml` joins an external network named `web`, so create it first:
@@ -140,7 +140,7 @@ docker compose -f docker-compose.local.yml up --build   # built from source
 
 `docker-compose.yml` publishes the server on `127.0.0.1:8080` for a reverse proxy on the same host. Change the mapping to `"8080:8080"` to reach it from other machines.
 
-The server builds `data/components.db` on first run. After upgrading, it logs a warning if the database is too old for the new version; rebuild it with `.venv/bin/python scripts/build_database.py`.
+The server builds `data/components.db` on first run. After upgrading, it logs a warning if the database is too old for the new version; rebuild it with `uv run python scripts/build_database.py`.
 
 Mouser keys are free from Mouser's API hub, and DigiKey client credentials from DigiKey's developer portal. `cse_get_kicad` downloads need a SamacSys ComponentSearchEngine account; `cse_search` works without one.
 

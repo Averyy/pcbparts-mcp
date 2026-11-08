@@ -51,6 +51,8 @@ jobs:
           pip install "wafer-py==0.4.6" "wreq==0.12.3"
 
       - name: Run scraper
+        env:
+          ALLOW_PART_DROP: ${{ github.event_name == 'workflow_dispatch' && inputs.allow_part_drop || false }}
         run: |
           WORKERS="${{ github.event.inputs.workers || '10' }}"
           echo "Running scraper with $WORKERS workers..."
@@ -74,15 +76,17 @@ jobs:
           import os
           import subprocess
 
-          previous = json.loads(subprocess.check_output(["git", "show", "HEAD:data/manifest.json"]))["total_parts"]
+          import sys
+          sys.path.insert(0, "scripts")
+          from check_component_scrape import validate_manifest
+          previous = json.loads(subprocess.check_output(["git", "show", "HEAD:data/manifest.json"]))
           with open("data/manifest.json") as stream:
-              current = json.load(stream)["total_parts"]
-          print(f"Part count: previous={previous}, current={current}", flush=True)
-          if current * 100 < previous * 95:
-              if os.environ.get("ALLOW_PART_DROP", "false").lower() == "true":
-                  print("Part count drop allowed for this manual run.")
-              else:
-                  raise SystemExit("Part count dropped more than 5%; stopping before commit and deploy.")
+              current = json.load(stream)
+          print(f"Part count: previous={previous['total_parts']}, current={current['total_parts']}", flush=True)
+          failures = validate_manifest(previous, current,
+              allow_count_drop=os.environ.get("ALLOW_PART_DROP", "false").lower() == "true")
+          if failures:
+              raise SystemExit("; ".join(failures))
           PY
 
       - name: Commit and push data files

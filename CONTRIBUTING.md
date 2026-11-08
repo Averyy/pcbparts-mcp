@@ -27,28 +27,29 @@ The SQLite databases are build artifacts (gitignored) generated from the committ
 data files. They build automatically on first use, or explicitly:
 
 ```bash
-.venv/bin/python scripts/build_database.py     # components.db (~730 MB, ~20s)
-.venv/bin/python scripts/build_sensor_db.py    # sensor.db
-.venv/bin/python scripts/build_boards_db.py    # boards.db
+uv run python scripts/build_database.py     # components.db (~730 MB, ~20s)
+uv run python scripts/build_sensor_db.py    # sensor.db
+uv run python scripts/build_boards_db.py    # boards.db
 ```
 
 Run the server locally:
 
 ```bash
-.venv/bin/python -m pcbparts_mcp.server        # http://localhost:8080/mcp
+uv run python -m pcbparts_mcp.server        # http://localhost:8080/mcp
 ```
 
 ## Testing
 
 ```bash
-.venv/bin/pytest tests/ -v                     # unit tests (default) — must be green
-.venv/bin/pytest tests/ -v -m integration      # integration tests (hit live APIs)
-.venv/bin/pytest tests/ -v -m ""               # everything
+uv run pytest tests/ -v                     # unit tests (default) — must be green
+uv run pytest tests/ -v -m quality          # board-quality checks
+uv run pytest tests/ -v -m integration      # integration tests (hit live APIs)
+uv run pytest tests/ -v -m ""               # everything
 ```
 
 - **The full unit suite must pass before you open a PR.**
 - CI (`.github/workflows/tests.yml`) builds the databases and runs the unit suite on
-  Linux and Windows for every PR. Windows catches what Linux/macOS hide, so pass
+  Linux and Windows for every PR, plus an explicit board-quality gate. Windows catches what Linux/macOS hide, so pass
   `encoding="utf-8"` to every text-mode `open()`/`read_text()`/`write_text()` (Windows
   defaults to cp1252) and use `as_posix()` when a path becomes a string key.
 - Integration tests hit live JLCPCB/EasyEDA/distributor APIs. They can flake from
@@ -65,6 +66,37 @@ Run the server locally:
 - Bug-fix PRs should include a regression test that fails on the code before your fix.
 - **Never test changes against the live server** (`pcbparts.dev`) — it runs the deployed
   code, not yours. Test locally against your built databases.
+
+## Component scraper publication and local verification
+
+The existing component scraper collects results and retries privately in
+`<output>/.scrape-staging/`. It generates history only after every subcategory succeeds,
+then validates and publishes the prepared files. An incomplete/tripped run exits nonzero
+and leaves the published categories, subcategory map, manifest and history unchanged.
+Use `--resume` with the same `--output` directory to load the staging progress and partial
+records. A fresh run without `--resume` discards that directory and starts again.
+
+Validation rejects remaining failed subcategories, invalid/inconsistent totals, a total
+count drop over 5%, or a drop over 30% in a category that previously held at least 1,000
+parts. `ALLOW_PART_DROP=true` deliberately bypasses the count-drop thresholds only;
+it cannot bypass failed subcategories or invalid counts. The workflow passes its explicit
+manual override to both the scraper and the same shared pre-commit validation helper.
+
+Publication uses atomic file replacements and rolls completed replacements back on an
+I/O error, retaining staged output. This does not claim a single filesystem transaction
+or crash/power-loss recovery across all files. Run one scraper per output directory.
+
+Local regression commands (no live scrape):
+
+```bash
+uv run pytest tests/test_component_publication.py tests/test_history.py -q
+uv run pytest tests/test_do_now_20261108.py -q
+```
+
+For the 0.8.23 changes, local tests replay real catalog records and inject
+transport/publication failures to verify success, retry, resume, rollback and the absence
+of false history events. A full end-to-end scrape against JLCPCB **has not been run**.
+A separate paced verification into an isolated output directory remains outstanding; these local tests do not establish live API pagination or completeness.
 
 ## Project conventions (read this — these are the review blockers)
 
@@ -91,8 +123,7 @@ Run the server locally:
   (`/mcp/stats`): list it in `ERROR_REPLIES` in `tests/test_usage_stats.py` as
   `not_found`, `bad_request`, `rate_limited` or `failed`, and add a pattern to
   `_ERROR_KINDS` in `server.py` if none matches. The test names any message you missed.
-- Library types are domain-critical: `basic`/`preferred` = no assembly fee,
-  `extended` = $3 per unique part. Don't conflate them.
+- Library types are domain-critical: `basic`/`preferred` avoid the extended-type loading fee in Economic assembly. `extended` has a per-type fee; the savings calculator labels its rounded legacy $3 Economic assumption as an estimate, not a quote. Standard service differs.
 - JLCPCB API gotcha: `firstSortName` is the **subcategory** and `secondSortName` is the
   **category**. Counterintuitive but verified; the client maps this correctly.
 
@@ -142,6 +173,7 @@ Run the server locally:
 3. Tests included for any behavior change; regression test for bug fixes.
 4. Bump the **patch** version in `pyproject.toml` (maintainer will adjust to
    minor/major if warranted) and add a `## X.Y.Z (YYYY-MM-DD)` entry to `CHANGELOG.md`.
+   Reuse the current version and combine entries while changes remain unreleased.
    Merging publishes a GitHub release with that entry as its notes. Docs-only changes
    don't need a bump.
 5. Match the existing code style; add comments only where the code can't speak for

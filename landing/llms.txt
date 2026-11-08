@@ -54,7 +54,7 @@ Searches the daily snapshot (stock >= 10). Stock and the 1-piece price are as of
 - Reply: `total` counts every match before `limit` and `offset`. `filters_applied` lists every filter that ran; `parsed` what the query text gave. `relaxed` names query words, a query-only library preference or a part type left out to get results; `relaxed.dropped_filters` lists parsed spec filters dropped when a part number was retried, so those results don't meet them. `parsed.adjusted_filters` lists specs moved or left out (including a package that fell back to its bare family); `ignored_filters` filters not applied or rarely listed. `unlisted` counts parts a range filter left out only because they list no value. `hint` on an empty reply suggests a next step. `counts_complete=false` means the counts are partial. `valid_values` lists accepted inputs on an error.
 - When the search shortens a part number (`LM1117-3.3` searches `LM1117`), `mpn_match` on each result is `full`, `same_suffix` or `family`, in that order.
 - MOSFET queries with a gate drive add `rds_on_at_drive`: the RDS(on) listed at or below that drive, or null when none is listed there. Null parts stay in the results.
-- `pcba_type="standard_only"` on a part means one such part moves the whole order to Standard assembly. `no_datasheet=true` means JLCPCB lists no datasheet.
+- `pcba_type="standard_only"` on a part means one such part moves the whole order to Standard assembly. `no_datasheet=true` means JLCPCB lists no datasheet; `no_datasheet_note` clarifies that LCSC or the manufacturer may have one.
 
 ### jlc_stock_check
 
@@ -65,11 +65,17 @@ Live JLCPCB search over the whole catalog (7M+ parts). Arguments: `query`, `cate
 - `lcsc` (e.g. "C82899"): live details, cached up to an hour.
 - `mpn` (e.g. "LM358P"): searches the daily snapshot (stock >= 10) and returns `{mpn, results, total}`; call `jlc_get_part(lcsc=...)` on a result for live stock and full details. It also finds other dash and space spellings, the same maker's packing codes and BOM text with notes ("TL074 OP AMP"), and never a different grade. Inexact matches add `match` (`separators`, `packing`, `alias`, `alternative`, `lcsc`, `related`) and `matched_mpn`; `related` results can be other part types.
 
-Reply fields: `prices` (quantity tiers), `datasheet_pdf` (a stable link to the PDF), `datasheet` (LCSC's viewer page, null when none), `maker_datasheet` (the manufacturer's link, where listed), `datasheet_note`, `specs`, `specs_note` (what the listing leaves out for the part type), `pcba_type`, `lcsc_url`, `has_easyeda_footprint` (null = unknown, false = none). No lifecycle status: use `mouser_get_part` or `digikey_get_part`.
+Snapshot part rows carry `data_source` (kind, provider, observation time); live lookup observations keep their time through caching. MPN replies include `data_as_of`; misses identify snapshot scope, `availability: unknown_outside_snapshot`, and an optional unexecuted live-check `next_call`.
+
+Reply fields: `prices` (quantity tiers), `datasheet_pdf` (a stable link to the PDF), `datasheet` (LCSC's viewer page, null when none), `maker_datasheet` (the manufacturer's link, where listed), `datasheet_note`, `specs`, `specs_note` (what the listing leaves out for the part type), `spec_evidence` (where reviewed: manufacturer values, conditions, document, printed page, source URL, review date), `spec_discrepancies` (known catalog/document conflicts; catalog specs and numeric filtering/sorting are preserved), `pcba_type`, `lcsc_url`, `has_easyeda_footprint` (null = unknown, false = none). No lifecycle status: use `mouser_get_part` or `digikey_get_part`.
+
+Savings use a rounded legacy $3 Economic loading-fee estimate, labelled with `is_estimate` and `assembly_service_assumption`; confirm current quotes. Standard service differs.
 
 ### jlc_get_pinout
 
 `lcsc` or `uuid` (EasyEDA symbol), `footprint` (default false; needs `lcsc`). Pin numbers and names exactly as the EasyEDA symbol has them; numbers match the EasyEDA footprint's pads. `electrical` appears only where the symbol sets it. `unverified` is present when LCSC hasn't verified the symbol. `note`: the pins are named only by number, or a diode/LED-type part whose numbering varies between sources (connect it by pin name). `footprint=true` adds the footprint's name, `source_link`, `pad_count`, `pitch`, `pad_sizes` and `pads` (number, x, y in mm from the origin with y down, shape, size, layer, hole); if the footprint can't be fetched, the pins still come back with `footprint_error`.
+
+Empty `jlc_search` responses can include `why_empty`: tested library/package/stock changes, retained constraints, counts with exact/at_least relation, executable next calls where representable, and `diagnostics_complete`. Only the stock>=10 snapshot is checked. Diagnostics are bounded to three queries/200 ms; incomplete work is explicit and original results remain empty. Negative Vout preserves polarity; impedance@frequency compares that frequency; part-number exclusions are reported as unsupported.
 
 ### jlc_find_alternatives
 
@@ -77,7 +83,7 @@ Reply fields: `prices` (quantity tiers), `datasheet_pdf` (a stable link to the P
 
 - `summary.found` counts `alternatives`: parts whose primary value and required specs match (connector series and contacts, transistor polarity, regulator output and listed input range) and whose readable ratings are the same or better. Ranked basic/preferred first.
 - Ratings that are missing or unreadable don't disqualify a part: they're listed in `specs_unparseable`. `unchecked_requirements` lists what wasn't checked; pinout and external circuit always need checking. A regulator's single input rating checks only the maximum.
-- `unverified_alternatives` miss a required match: compare by hand.
+- `unverified_alternatives` miss a required match or lack comparable rating conditions: compare by hand. Inductor Isat needs comparable inductance-drop criteria and rating bases; thermal current needs matching thermal conditions and bases; DCR needs comparable published bases. Multi-diode current comparisons need loading/thermal evidence. These candidates do not drive the recommended savings comparison.
 - `has_easyeda_footprint` checks at most 15 candidates and leaves out any it couldn't check; `summary.footprint_filter` says when.
 - Part types without rules return `similar_parts`. RF parts are ordered by `frequency_coverage` of the original's range. Modules and others list the same package and part family first, marked `likely_drop_in` (pinout unchecked).
 - Lifecycle (NRND) isn't checked.
@@ -108,6 +114,8 @@ SamacSys ComponentSearchEngine; slow: a search takes about 15 s (longer when the
 
 `query`, `measure` (one or a list of up to 20, all must match), `type`, `protocol`, `platform` ("arduino", "esphome", "micropython", "circuitpython", "tasmota", "zephyr", "raspberry_pi"), `limit` (default 15, max 100). Unknown values return `valid_values`. Sorted by how many platforms have drivers. Not for buying: use `jlc_search`.
 
+Sensor capability notes: CCS811 exposes estimated `eco2` and VOC output, with humidity/temperature compensation inputs and operating/stress voltage evidence; these inputs are not selectable direct measurements for that device. Descriptions prefer device/integration sources over breakout marketing.
+
 ### get_design_rules
 
 `topic`: empty lists every file; an exact key (`power/ldo`) returns that file; a keyword (`usb`, `type-c`, `lipo`, `stm32g0`) returns matching files.
@@ -127,11 +135,11 @@ SamacSys ComponentSearchEngine; slow: a search takes about 15 s (longer when the
 
 ## Library types
 
-| Type | Assembly fee | Meaning |
+| Type | Economic loading fee | Meaning |
 |------|--------------|---------|
 | `basic` | none | JLCPCB's standard library |
 | `preferred` | none | Recommended parts with good availability |
-| `extended` | $3 per unique part | Everything else |
+| `extended` | Fee per unique type; calculator uses a rounded $3 estimate | Everything else |
 | `no_fee` | none | Filter for basic and preferred together |
 | `all` | | No library filter |
 

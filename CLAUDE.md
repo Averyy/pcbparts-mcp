@@ -14,7 +14,7 @@
 - **GET LATEST FIRST** github actions runs automatically to commit new parts
 - **NEVER commit without explicit permission** only commit when user explicitly asks ("commit this", "push these changes")
 - **NEVER add Claude attribution** - No "Co-Authored-By: Claude" or similar
-- **Always bump version** in `pyproject.toml` and `uv.lock` (PATCH/MINOR/MAJOR per semver, ask permission before bumping major/minor, patch is the default), and add an entry to `CHANGELOG.md` with client-visible changes under **Breaking**. Head it `## X.Y.Z (YYYY-MM-DD)`: after the deploy, the `release` job in `docker-build.yml` publishes GitHub release `vX.Y.Z` with that section as its notes (no section, failed job). Don't create releases or tags by hand.
+- **Use one version for all unreleased work**: reuse and consolidate the current unreleased entry; bump only when starting work after that version has been released. **Bump version** in `pyproject.toml` and `uv.lock` (PATCH/MINOR/MAJOR per semver, ask permission before bumping major/minor, patch is the default), and add an entry to `CHANGELOG.md` with client-visible changes under **Breaking**. Head it `## X.Y.Z (YYYY-MM-DD)`: after the deploy, the `release` job in `docker-build.yml` publishes GitHub release `vX.Y.Z` with that section as its notes (no section, failed job). Don't create releases or tags by hand.
 
 ## Critical Rules
 
@@ -28,7 +28,7 @@
 ## Library Types (Quick Reference)
 
 - **basic/preferred** = no assembly fee
-- **extended** = $3 per unique part type
+- **extended** = loading fee per unique part type; the alternatives calculator labels its legacy $3 Economic assumption as a rounded estimate, not a current quote (Standard service differs)
 
 ## Project Overview
 
@@ -54,13 +54,17 @@ The JLCPCB API has backwards field names:
 
 This is counterintuitive but verified. The client handles this mapping correctly.
 
+## Local backlog
+
+Completed work is recorded in `CHANGELOG.md`. The local deferred backlog is `docs/do-later.md`, intentionally kept uncommitted.
+
 ## Development
 
 ```bash
 uv venv && uv pip install -e ".[dev]"
-.venv/bin/pytest tests/ -v                    # unit tests only (default)
-.venv/bin/pytest tests/ -v -m integration     # integration tests (hits live APIs)
-.venv/bin/pytest tests/ -v -m ""              # all tests
+uv run pytest tests/ -v                    # unit tests only (default)
+uv run pytest tests/ -v -m integration     # integration tests (hits live APIs)
+uv run pytest tests/ -v -m ""              # all tests
 ```
 
 ## Frontend & Design Work

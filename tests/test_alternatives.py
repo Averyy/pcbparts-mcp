@@ -815,7 +815,7 @@ class TestSummaryMessage:
                               "Resistance", primary_value, 5)["summary"]["message"]
 
     def test_saving_only_claimed_for_an_extended_original(self):
-        assert "save $3" in self._message("extended", ["basic"])
+        assert "estimated $3" in self._message("extended", ["basic"])
         assert "save $3" not in self._message("basic", ["basic"])
 
     def test_no_primary_value(self):

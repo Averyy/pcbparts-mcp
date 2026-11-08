@@ -32,6 +32,8 @@ TIER3_SOURCES = {"sparkfun", "dfrobot"}
 # IDs to skip entirely — these are Arduino library names, generic component wrappers,
 # or product names that don't correspond to actual sensor ICs/modules.
 SKIP_IDS = {
+    # MCU/platform targets in a driver name are not the measured peripheral.
+    "rp2040", "rp2350", "esp32", "esp8266", "arduino", "raspberrypi",
     # Arduino library names (not IC identifiers)
     "pressuresensor", "i2cencoder", "i2ccolor", "pm2", "10dof",
     "uvindex240370sensor", "24ghzradar",
@@ -891,6 +893,8 @@ NAME_OVERRIDES: dict[str, str] = {
 MEASURE_REMOVALS: dict[str, set[str]] = {
     "bm25s2621": {"humidity"},
     "bmm150": {"sound"},
+    "ccs811": {"co2", "humidity", "temperature"},  # estimated CO2; humidity/temp are compensation inputs
+    "scd4x": {"gas"},  # a CO2 sensor, not a multi-gas breakout
 }
 
 # Measures a sensor takes that no source tags. ESPHome lists the PMWCS3 under temperature only;
@@ -898,6 +902,7 @@ MEASURE_REMOVALS: dict[str, set[str]] = {
 # The CY8CMBR3102 is the CapSense touch controller on SparkFun's capacitive soil moisture sensor
 # (its library's only product); SparkFun notes it also works as a touch or proximity sensor.
 MEASURE_ADDITIONS: dict[str, set[str]] = {
+    "ccs811": {"eco2", "voc"},
     "pmwcs3": {"soil_moisture", "conductivity"},
     "cy8cmbr3102": {"touch"},
 }
@@ -1731,7 +1736,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "ad2s1210": "hall_effect",
     "amt25": "hall_effect",
     "ky040": "hall_effect",
-    "rp2040": "hall_effect",
     # ── Shunt / current / power monitor ICs ───────────────────────────
     "ina219": "shunt",
     "ina226": "shunt",
@@ -2208,7 +2212,7 @@ VOLTAGE_TABLE: dict[str, str] = {
     "scd30": "3.3-5.5",         # Sensirion SCD30 datasheet
     "sgp30": "1.62-1.98",       # Sensirion SGP30 datasheet
     "sgp40": "1.62-1.98",       # Sensirion SGP40 datasheet
-    "ccs811": "1.8-3.6",        # ams CCS811 datasheet
+    "ccs811": "1.8-3.3",        # ams CCS811 v1-06 electrical characteristics p.6; 3.6V is stress only
     "ens160": "1.71-3.6",       # ScioSense ENS160 datasheet
     "ags02ma": "3.0-5.5",       # ASAIR AGS02MA datasheet
     "sds011": "4.7-5.3",        # Nova SDS011 datasheet
@@ -2885,7 +2889,6 @@ VOLTAGE_TABLE: dict[str, str] = {
     "k30": "4.5-14.0",             # Senseair K30
     "gsl1680": "2.8-3.3",          # Silead GSL1680 touch controller
     "rv3032": "1.3-5.5",           # Micro Crystal RV-3032 RTC
-    "rp2040": "1.8-3.3",           # Raspberry Pi RP2040 (temp sensor built-in)
     "tcs230": "2.7-5.5",           # TCS230 color sensor
     "tsl235r": "2.7-5.5",          # TSL235R light-to-frequency
     "qmc5583l": "2.16-3.6",        # QMC5883L compass
@@ -2984,6 +2987,10 @@ def _enrich_voltages(merged: dict[str, dict], quiet: bool = False) -> int:
     """
     enriched = 0
     for sid, sensor in merged.items():
+        if sid == "ccs811":
+            sensor["voltage"] = "1.8-3.3"
+            enriched += 1
+            continue
         if sensor["voltage"] is not None:
             continue
         voltage = VOLTAGE_TABLE.get(sid)
@@ -3502,7 +3509,6 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "sen0590": ["uart"],
     "sen10724": ["analog"],
     "ad8232": ["analog"],
-    "rp2040": ["i2c", "spi"],
     "cv7": ["uart"],
     "aci10kantemp": ["analog"],
     "esp32thermistor": ["analog"],
@@ -4147,6 +4153,20 @@ def load_source(data_dir: Path, source_name: str) -> list[dict]:
     return data.get("sensors", [])
 
 
+def description_rank(source: str, description: str) -> tuple[int, int]:
+    """Prefer device/integration evidence over an aggregated library or breakout's prose.
+
+    Length breaks ties within the same authority; it cannot promote an all-in-one
+    board's feature list into its component IC's description.
+    """
+    if not description:
+        return (-1, 0)
+    authority = (0 if source in TIER3_SOURCES else
+                 2 if source in {"esphome", "circuitpython", "zephyr"} or source not in {"arduino", "micropython", "tasmota"}
+                 else 1)
+    return authority, len(description)
+
+
 def merge_sensors(data_dir: Path, aliases: dict[str, str], quiet: bool = False) -> dict[str, dict]:
     """Merge all sources into a single dict of sensor entries."""
     merged: dict[str, dict] = {}
@@ -4190,6 +4210,7 @@ def merge_sensors(data_dir: Path, aliases: dict[str, str], quiet: bool = False) 
                     "urls": list(raw.get("urls", [])),
                     "sources": [source_name],
                     "_from_alias": is_alias,
+                    "_description_rank": description_rank(source_name, clean_description(raw.get("description") or "")),
                 }
             else:
                 # Enrich existing entry
@@ -4219,10 +4240,12 @@ def merge_sensors(data_dir: Path, aliases: dict[str, str], quiet: bool = False) 
                     if not existing["datasheet_url"] and raw.get("datasheet_url"):
                         existing["datasheet_url"] = raw["datasheet_url"]
 
-                # Description: keep longest, max 200 chars
+                # Description: source authority first, length only within that authority
                 new_desc = clean_description(raw.get("description") or "")
-                if len(new_desc) > len(existing["description"] or ""):
+                rank = description_rank(source_name, new_desc)
+                if rank > existing["_description_rank"]:
                     existing["description"] = new_desc[:200]
+                    existing["_description_rank"] = rank
 
                 # Upgrade tier if enriched by non-tier3 source
                 if not is_tier3 and existing["source_tier"] == "breakout_only":

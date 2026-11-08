@@ -358,4 +358,13 @@ def search_sensors(
             "urls": urls,
         })
 
+    for result in results:
+        if result["id"] == "ccs811":
+            result["capability_note"] = "VOC sensing with estimated eCO2 output; humidity and temperature are compensation inputs, not direct measurements."
+            result["compensation_inputs"] = ["humidity", "temperature"]
+            result["voltage_evidence"] = {
+                "recommended_operating": "1.8-3.3V", "absolute_maximum": "3.6V",
+                "source_url": "https://cdn.sparkfun.com/assets/2/c/c/6/5/CN04-2019_attachment_CCS811_Datasheet_v1-06.pdf",
+                "document": "ams CCS811 v1-06, 2019-02-07", "printed_pages": [1, 5, 6],
+            }
     return {"total": total, "results": results}

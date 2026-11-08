@@ -6,6 +6,7 @@ import sqlite3
 from typing import Any
 
 from ..mounting import detect_mounting_type
+from ..catalog_evidence import annotate_catalog
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +71,7 @@ def row_to_dict(
             result["pcba_type"] = pcba
         if row["no_datasheet"]:
             result["no_datasheet"] = True
+    annotate_catalog(result)
     return result
 
 

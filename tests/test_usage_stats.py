@@ -494,6 +494,7 @@ SRC = Path(__file__).parent.parent / "src" / "pcbparts_mcp"
 
 # {"error": ...} replies, by their text with formatted parts as {}
 ERROR_REPLIES = {
+    "Part-number exclusions are not supported: {}. Search positively and exclude that identity during review.": "bad_request",
     "Invalid {}: {}": "bad_request",
     "Strict search cannot apply every constraint; see ignored_filters and parsed.adjusted_filters and use jlc_search_help(subcategory=...) for supported attributes": "bad_request",
     "lcsc must be an LCSC C-code (e.g., C6186); use jlc_get_part(mpn=...) to find the code for an MPN": "bad_request",
@@ -566,7 +567,7 @@ ERROR_REPLIES = {
     "Part not found: {}": "not_found",
     "Part {} not found": "not_found",
     "Board '{}' not found": "not_found",
-    "No JLCPCB parts found for MPN '{}'": "not_found",
+    "No part found in the local snapshot for MPN '{}'": "not_found",
     "No parts found for '{}'": "not_found",
     "No ECAD model available for '{}'": "not_found",
     "No KiCad files found in model archive for part {}": "not_found",
