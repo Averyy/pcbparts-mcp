@@ -747,6 +747,10 @@ def build_spec_filter_clauses(
                 params.extend(circuit[1])
                 continue
 
+            if spec_name.lower() == "impedance @ frequency" and any("@" in value for value in values):
+                post_filter_metadata.append((SpecFilter(spec_name, "=", "、".join(values)), set(attr_names), _parse_impedance_ohms, 0.0))
+                continue
+
             # Build OR clause for all values: (Interface LIKE '%I2C%' OR Interface LIKE '%SPI%')
             use_substring_match = spec_name.lower() == "interface"
             is_impedance_at_freq = spec_name.lower() == "impedance @ frequency"
@@ -796,6 +800,21 @@ def build_spec_filter_clauses(
                                 "reason": 'use a temperature ("-40", "85°C") or, with =, a range ("-40~85")'})
             continue
         is_range = _is_range_spec(spec_filter.name, attr_names)
+        if set(attr_names) & {"Output Voltage", "Vout"}:
+            if spec_filter.value.strip().startswith(("-", "−")):
+                is_range = True
+            elif not spec_filter.value.strip().startswith(("±", "+/-")):
+                sql_clauses.append("AND NOT EXISTS (SELECT 1 FROM json_each(components.attributes) j "
+                                   "WHERE json_extract(j.value, '$[0]') = 'Output Configuration' "
+                                   "AND lower(json_extract(j.value, '$[1]')) = 'negative')")
+        if spec_filter.name.lower() == "impedance @ frequency" and "@" in spec_filter.value:
+            from ..parsers import parse_impedance_at_freq
+            if parse_impedance_at_freq(spec_filter.value) is None:
+                ignored.append({"filter": f"{spec_filter.name} {spec_filter.operator} {spec_filter.value}",
+                                "reason": "use impedance@frequency, such as 600Ohm@100MHz"})
+            else:
+                post_filter_metadata.append((spec_filter, set(attr_names), _parse_impedance_ohms, 0.0))
+            continue
 
         if (spec_filter.operator == "=" and spec_filter.name.lower() == "type"
                 and spec_filter.value.lower() in _POLARITY_VALUES):
@@ -832,6 +851,10 @@ def build_spec_filter_clauses(
             if parser:
                 parsed_value = _filter_value(parser, spec_filter.value)
                 if parsed_value is not None:
+                    if set(attr_names) & {"Output Voltage", "Vout"}:
+                        # Keep the short-name scalar prefilter, but verify the actual
+                        # signed/dual output too: numeric columns store magnitudes.
+                        post_filter_metadata.append((spec_filter, set(attr_names), parser, parsed_value))
                     # Use SQL numeric comparison on pre-computed column
                     if spec_filter.operator == "=":
                         share = RESISTANCE_MATCH_TOLERANCE if parser is parse_resistance else 0.01
@@ -859,6 +882,9 @@ def build_spec_filter_clauses(
         parsed_value = None
         if parser:
             parsed_value = _filter_value(parser, spec_filter.value)
+            if (parsed_value is not None and set(attr_names) & {"Output Voltage", "Output Voltage(Vout)"}
+                    and spec_filter.value.strip().startswith(("-", "−"))):
+                parsed_value = -abs(parsed_value)
 
         if parsed_value is not None and spec_filter.operator in (">=", "<=", ">", "<", "="):
             # Numeric comparison - still need post-filtering for these

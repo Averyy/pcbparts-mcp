@@ -27,7 +27,7 @@ _IND = re.compile(r'\b(\d+(?:\.\d+)?)\s*(u[hH]|n[hH]|m[hH]|[u]H|nH|mH)\b')
 
 # Voltage: 25V, 50V, 3.3V, 5kV (but not in model numbers)
 # A sign keeps a dual rail apart from a single voltage: a ±12V module isn't a 12V one
-_VOLT = re.compile(r'(±|\+/-)?\b(\d+(?:\.\d+)?)\s*([kK])?[vV]\b')
+_VOLT = re.compile(r'(?<![\w.])(?:(±|\+/-|[+-])(?=\d))?\b(\d+(?:\.\d+)?)\s*([kK])?[vV]\b')
 
 # Current: 5A, 10A, 100mA, 500mA, 10uA
 # Require space or start before number to avoid matching model suffixes like "6.0A" in "SMBJ6.0A"
@@ -220,7 +220,7 @@ def extract_values(query: str, *, connector_context: bool = False) -> tuple[list
         # Skip if preceded by letter (likely model number)
         if match.start() > 0 and query[match.start()-1].isalpha():
             continue
-        sign = "±" if match.group(1) else ""
+        sign = "±" if match.group(1) in ("±", "+/-") else (match.group(1) or "")
         value = float(match.group(2))
         kilo = match.group(3)
         if kilo:

@@ -5,13 +5,14 @@ import logging
 import math
 import re
 import sqlite3
+import time
 from typing import Any, Literal
 
 from ..config import DEFAULT_MIN_STOCK
 from ..mosfet import rds_gate_min_json, rds_on_at_drive
 from ..alternatives import SPEC_PARSERS, DIMENSION_SPEC_FIELDS
 from ..parsers import (
-    RESISTANCE_MATCH_TOLERANCE, parse_dimensions_from_package, parse_esp32_module_memory, parse_resistance, parse_voltage,
+    RESISTANCE_MATCH_TOLERANCE, parse_dimensions_from_package, parse_esp32_module_memory, parse_resistance, parse_voltage, parse_impedance_at_freq,
 )
 from ..subcategory_aliases import (
     resolve_subcategory_name as _resolve_subcategory_name,
@@ -95,6 +96,31 @@ def metric_thread_ok(text: str | None, thread: str) -> bool:
     return re.search(rf"(?<![A-Za-z0-9.]){size}(?![.\d])", text, re.IGNORECASE) is not None
 
 
+def _signed_output(value: str, specs: dict[str, str]) -> str:
+    value = _as_dual_rail(value, specs)
+    if specs.get("Output Configuration", "").casefold() == "negative":
+        return "、".join("~".join("-" + end.lstrip("+- ") for end in item.split("~"))
+                        for item in value.split("、"))
+    return value
+
+
+def _impedance_passes(value: str, requested: str, operator: str) -> bool:
+    observed = parse_impedance_at_freq(value)
+    if observed is None:
+        return False
+    for target in requested.split("、"):
+        pair = parse_impedance_at_freq(target)
+        wanted = pair[0] if pair else parse_resistance(target)
+        if wanted is None or ("@" in target and (pair is None or not math.isclose(observed[1], pair[1], rel_tol=0.02))):
+            continue
+        a, b = observed[0], wanted
+        if ((operator == "=" and math.isclose(a, b, rel_tol=RESISTANCE_MATCH_TOLERANCE, abs_tol=1e-12))
+                or (operator == ">=" and a >= b) or (operator == "<=" and a <= b)
+                or (operator == ">" and a > b) or (operator == "<" and a < b)):
+            return True
+    return False
+
+
 def _passes_post_filters(
     part_specs: dict[str, str],
     package: str | None,
@@ -112,7 +138,7 @@ def _passes_post_filters(
                 (spec_filter.operator, parser, target_value, _dual_rail(spec_filter, attr_names_set)))
     for names, checks in windows.items():
         if len(checks) > 1 and not any(
-                all(_range_passes(item, parser, op, target, dual) for op, parser, target, dual in checks)
+                all(_range_passes(_signed_output(item, part_specs) if dual is not None else item, parser, op, target, dual) for op, parser, target, dual in checks)
                 for name, value in part_specs.items() if name in names for item in value.split("、")):
             return False
 
@@ -123,9 +149,14 @@ def _passes_post_filters(
         if not parser or spec_filter.operator not in (">=", "<=", ">", "<", "=") or target_value is None:
             continue
 
+        if "Impedance @ Frequency" in attr_names_set and "@" in spec_filter.value:
+            if not any(_impedance_passes(value, spec_filter.value, spec_filter.operator)
+                       for name, value in part_specs.items() if name in attr_names_set):
+                return False
+            continue
         if attr_names_set & RANGE_SPECS:
             dual = _dual_rail(spec_filter, attr_names_set)
-            values = [v if dual is None else _as_dual_rail(v, part_specs)
+            values = [v if dual is None else _signed_output(v, part_specs)
                       for name, v in part_specs.items() if name in attr_names_set]
             if not any(_range_passes(v, parser, spec_filter.operator, target_value, dual) for v in values):
                 return False
@@ -735,6 +766,10 @@ class SearchEngine:
         scanned = 0
         page_ids: list[int] = []
         for rowid, attributes, package, mpn, library, subcategory in self._conn.execute(scan_sql, [*params, POST_FILTER_SCAN_ROWS]):
+            if hasattr(self, 'diagnostic_deadline'):
+                self.diagnostic_rows_remaining -= 1
+                if self.diagnostic_rows_remaining < 0 or time.monotonic() >= self.diagnostic_deadline:
+                    raise sqlite3.OperationalError('interrupted')
             scanned += 1
             try:
                 specs = {name: value for name, value in json.loads(attributes)} if attributes else {}

@@ -168,10 +168,12 @@ class TestPadsPins:
         assert pins == {"J1": {"1": "1", "2": "2", "3": "3"}} and tied == {}
 
 
+@pytest.fixture(scope="class")
+def boards():
+    return [yaml.safe_load(p.read_text(encoding="utf-8")) for p in sorted(BOARDS.glob("*.yaml"))]
+
+
 class TestBoardYamls:
-    @pytest.fixture(scope="class")
-    def boards(self):
-        return [yaml.safe_load(p.read_text(encoding="utf-8")) for p in sorted(BOARDS.glob("*.yaml"))]
 
     def test_nc_pins_are_on_no_net(self, boards):
         checked = 0

@@ -104,7 +104,7 @@ A package filter includes its other spellings:
 
 ## Sorting and paging
 
-`sort_by` is `stock` or `price`, or sort by a spec with `sort_spec` and `sort_order` (`asc` by default): `jlc_search(query="n-channel mosfet SOT-23", sort_spec="RDS(on)@4.5V")`. RDS(on), dropout and Vf are listed at different test conditions, so they sort at one (`RDS(on)@4.5V`, `Dropout@500mA`, `Vf@1A`) or at the condition the search already gives; without one, `sort.note` says the figures were compared as listed. `sort_order` works only with `sort_spec`. Parts that don't list the spec come last. Each row's `sort_value` is the figure it sorted on. Query words work too: `lowest Iq`, `highest Isat`, `smallest DCR`, `most flash`. A mistyped catalog figure sorts to the top, so check the datasheets of the parts you pick.
+`sort_by` is `stock` or `price`, or sort by a spec with `sort_spec` and `sort_order` (`asc` by default): `jlc_search(query="n-channel mosfet SOT-23", sort_spec="RDS(on)@4.5V")`. RDS(on), dropout and Vf are listed at different test conditions, so they sort at one (`RDS(on)@4.5V`, `Dropout@500mA`, `Vf@1A`) or at the condition the search already gives; without one, `sort.note` says the figures were compared as listed. `sort_order` works only with `sort_spec`. Parts that don't list the spec come last. Each row's `sort_value` is the figure it sorted on. Query words work too: `lowest Iq`, `highest Isat`, `smallest DCR`, `most flash`. Isat rankings compare catalog numbers across potentially different inductance-drop criteria and rating bases; multi-diode current rankings can mix loading conditions. A mistyped catalog figure sorts to the top, so check the datasheets of the parts you pick.
 
 `limit` is 20 by default and up to 100; `offset` pages through the same search (`offset=20` with `limit=20` is page 2). `total` counts every match. Counts come from at most 50,000 candidates, and `counts_complete=false` says when that cap was hit.
 
@@ -117,9 +117,20 @@ The rules, for 120+ subcategories:
 1. The primary value (resistance, capacitance, ...) and the required specs match. A spec that's missing or can't be read keeps the part out of `alternatives`.
 2. Physical and functional identity: connector contacts, orientation and series; transistor polarity and count; battery IC function; module chip. ESP32 modules need at least the original's flash and PSRAM.
 3. Ratings are the same or better, at the same test condition where one is listed (dropout, Vf, RDS(on)). A rating that's missing or can't be read doesn't disqualify a part: it goes in `specs_unparseable` for you to check.
-4. Regulators must cover the original's input and output ranges. A single input rating proves only the maximum, so the minimum input stays unchecked. Their pinout and external parts always need checking, so their confidence is never high.
-5. Basic and preferred parts rank first, then passives and crystals in the original's package. `same_package=true` keeps only that package. Each list is 10 parts by default, up to 50.
+4. Inductor Isat needs comparable inductance-drop criteria and rating bases; thermal current needs comparable temperature-rise, ambient and rating bases; DCR needs comparable published bases. Missing or differing conditions put candidates in `unverified_alternatives`. Multi-diode current comparisons need loading/thermal evidence too. Reviewed `spec_evidence` keeps document values and citations separate from catalog specs; `spec_discrepancies` flags known conflicts without changing numeric search/sort values.
+5. Regulators must cover the original's input and output ranges. A single input rating proves only the maximum, so the minimum input stays unchecked. Their pinout and external parts always need checking, so their confidence is never high.
+6. Basic and preferred parts rank first, then passives and crystals in the original's package. `same_package=true` keeps only that package. Each list is 10 parts by default, up to 50.
 
 RF parts (splitters, LNAs, filters, transceivers) have no rules: `similar_parts` are ordered by how much of the original's frequency range each covers (`frequency_coverage`). Modules and other part types without rules list parts in the original's package and part family first, marked `likely_drop_in`.
 
-A passing check means the catalog listings are compatible. It doesn't guarantee a drop-in: compare datasheets, pinouts and `package_warning`. `board_quantity` and `placements_per_board` turn `comparison.savings` into an order total, counting the $3 fee for each extended part type added or removed.
+A passing check means the catalog listings are compatible. It doesn't guarantee a drop-in: compare datasheets, pinouts and `package_warning`. `board_quantity` and `placements_per_board` turn `comparison.savings` into an order total, using the rounded legacy $3 Economic loading-fee estimate for each extended type added or removed; the result is not a current order quote.
+
+## Empty searches and source scope
+
+`why_empty` tests only supplied library/package/stock restrictions on the normalized plan, retaining the other constraints. `blocking` contains useful single changes and next calls; `tested` records counts as exact or at least. `diagnostics_complete=false` means the private diagnostic connection reached its time/work/row budget or a count was incomplete. No suggestion proves suitability; several requirements can interact. Original results stay empty and no live requests are triggered.
+
+Snapshot rows carry `data_source` and their observation time. Live lookups preserve their observed timestamp while cached. A local MPN miss is not proof the part is absent from JLCPCB: its `next_call` describes a live check with `min_stock=0`, which runs only if the caller executes it.
+
+Negative Vout requirements compare signed outputs, including unsigned catalog magnitudes labelled Negative. `Impedance @ Frequency` with `@` requires the listed frequency too; numeric comparisons apply to impedance at that condition. Unsupported part-number exclusions return an error instead of a positive match.
+
+Savings retain the rounded legacy $3 Economic loading-fee estimate with explicit machine-readable assumptions; they are not current order quotes and do not calculate Standard-service fees.

@@ -126,6 +126,12 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         detected["sort"] = {"spec": spec_sort.spec.label, "order": "desc" if spec_sort.descending else "asc",
                             "from": sort_words}
 
+    # Negation must not become the only positive model term. Exclusions are not
+    # supported by the search contract, so keep this as an actionable parse error.
+    negated = re.search(r"\b(?:not|except|excluding|without)\s+([A-Za-z][A-Za-z0-9+./-]*\d[A-Za-z0-9+./-]*)", remaining, re.I)
+    if negated:
+        detected["unsupported_negation"] = negated.group(0)
+
     # Step 1: Extract model number (if present, it becomes the primary search term)
     model, remaining = extract_model_number(remaining)
     if model:
@@ -301,6 +307,7 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         remaining = _add_topology(query, remaining, result, detected)
     if subcat_now in ("dc-dc converters", _LDO, "dc-dc power modules", "isolated power modules"):
         # Modules too: "5V to 12V isolated DC-DC" is a 5V-input, 12V-output module (B0512S)
+        remaining = re.sub(r"\bnegative\s+(?=\d+(?:\.\d+)?\s*V\b)", "-", remaining, flags=re.I)
         remaining = _add_input_output_voltages(remaining, subcat_now, result, detected)
     if subcat_now == "translators, level shifters":
         pair = _VOLTAGE_TO_VOLTAGE.search(remaining)
@@ -335,6 +342,14 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         word in subcat_now for word in ("connector", "header", "terminal block", "ffc cable")
     )
     values, remaining = extract_values(remaining, connector_context=connector_context and not strict)
+    if (subcategory_hint or result.subcategory or "").lower() == "ferrite beads":
+        resistances = [v for v in values if v.unit_type == "resistance"]
+        frequencies = [v for v in values if v.unit_type == "frequency"]
+        if len(resistances) == len(frequencies) == 1:
+            result.spec_filters.append(SpecFilter("Impedance @ Frequency", "=",
+                                                  f"{resistances[0].normalized}@{frequencies[0].normalized}"))
+            values = [v for v in values if v not in resistances + frequencies]
+            remaining = re.sub(r"\bat\b", " ", remaining, flags=re.I).strip()
     if values:
         detected["values"] = [{"raw": v.raw, "type": v.unit_type, "normalized": v.normalized} for v in values]
 

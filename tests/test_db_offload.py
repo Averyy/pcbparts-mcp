@@ -75,7 +75,7 @@ async def test_other_catalog_paths_run_off_loop(monkeypatch, handler, args, owne
 
     monkeypatch.setattr(owner(), method, work)
     result = await handler(**args)
-    assert result == ({"mpn": "LM358", "total": 1, "results": reply}
+    assert result == ({"mpn": "LM358", "total": 1, "results": reply, "data_as_of": db.get_db().scraped_at()}
                       if handler is server.jlc_get_part else reply)
 
 

@@ -9,6 +9,7 @@ This module provides intelligent alternative finding that:
 
 import re
 from typing import Any, Callable
+from .catalog_evidence import multi_diode, reviewed_specs
 
 # Import shared parsers from the unified parsers module
 from pcbparts_mcp.parsers import (
@@ -1701,6 +1702,39 @@ def is_compatible_alternative(
         orig_val = orig_specs.get(spec)
         cand_val = cand_specs.get(spec)
         parser = SPEC_PARSERS.get(spec)
+        # Bare inductor ratings omit the basis/conditions needed to compare makers.
+        # Reviewed document values may establish a check; never infer conditions from
+        # a matching number or use a catalog figure contradicted by that document.
+        requirements = None
+        evidence_spec = spec.replace("Saturation (", "Saturation(")
+        if "inductor" in subcategory.lower():
+            requirements = {
+                "Current - Saturation(Isat)": ("basis", "inductance_drop_pct"),
+                "DC Resistance(DCR)": ("basis",),
+                "Current Rating": ("basis", "temperature_rise_c", "ambient_c"),
+            }.get(evidence_spec)
+        if requirements is not None:
+            original_evidence = reviewed_specs(original).get(evidence_spec, {})
+            candidate_evidence = reviewed_specs(candidate).get(evidence_spec, {})
+            unknown = [key for key in requirements
+                       if original_evidence.get(key) is None or candidate_evidence.get(key) is None
+                       or original_evidence[key] != candidate_evidence[key]]
+            if unknown or not original_evidence.get("value") or not candidate_evidence.get("value"):
+                specs_unparseable.append(spec)
+                labels = {"basis": "typical/minimum/maximum basis", "inductance_drop_pct": "inductance-drop criterion",
+                          "temperature_rise_c": "temperature rise", "ambient_c": "ambient temperature"}
+                conditions = ", ".join(labels[key] for key in (unknown or requirements))
+                reason = f"{spec}: comparable datasheet rating basis/conditions ({conditions})"
+                unchecked_requirements.append(reason)
+                unverified_requirements.append(reason)
+                continue
+            orig_val, cand_val = original_evidence["value"], candidate_evidence["value"]
+        if spec == "Current - Rectified" and (multi_diode(orig_specs) or multi_diode(cand_specs)):
+            specs_unparseable.append(spec)
+            reason = "Current - Rectified: per-diode loading and thermal conditions"
+            unchecked_requirements.append(reason)
+            unverified_requirements.append(reason)
+            continue
         if spec in _CONDITIONAL_SPECS and direction == "lower" and orig_val and cand_val:
             better = _conditional_ok(orig_val, cand_val, spec)
             if better is False:
@@ -1834,8 +1868,11 @@ def build_response(
 
     extended_examples: the best extended matches when a no-fee request found none (summary only).
     """
-    alternatives = scored_alternatives[:limit]
-    unverified = (unverified_alternatives or [])[:limit]
+    # Enforce this boundary here too: callers cannot accidentally recommend an
+    # unchecked required match simply by passing it in the scored list.
+    alternatives = [item for item in scored_alternatives if not item[3].get("unverified_requirements")][:limit]
+    unverified = [item for item in scored_alternatives if item[3].get("unverified_requirements")]
+    unverified = (unverified + (unverified_alternatives or []))[:limit]
 
     # Count basic/preferred alternatives
     no_fee_count = sum(
@@ -1846,7 +1883,7 @@ def build_response(
 
     # Unchecked ranges and replacement requirements must never imply a verified drop-in pinout.
     unchecked = list(dict.fromkeys(
-        spec for _, _, _, info in alternatives
+        spec for _, _, _, info in [*alternatives, *unverified]
         for spec in info.get("unchecked_requirements", info["specs_unparseable"])
     ))
     all_specs_verified = bool(alternatives) and not unchecked
@@ -1873,7 +1910,7 @@ def build_response(
         message = f"Found {no_fee_count} basic/preferred alternative(s)"
     elif no_fee_count > 0:
         message = (
-            f"Found {no_fee_count} basic/preferred alternative(s) that save $3 assembly fee"
+            f"Found {no_fee_count} basic/preferred alternative(s) with an estimated $3 Economic loading-fee saving"
         )
     else:
         message = f"Found {len(alternatives)} alternative(s), but all are extended library"
@@ -1891,12 +1928,17 @@ def build_response(
         component_quantity = board_quantity * placements_per_board
         savings = {
             "assembly_fee": assembly_savings,
+            "is_estimate": True,
+            "assembly_service_assumption": "Economic",
+            "loading_fee_per_extended_type_estimate_usd": 3.0,
+            "fee_basis": "rounded legacy estimate; confirm the current assembly quote",
+
             "unit_price_diff": price_diff,
             "board_quantity": board_quantity,
             "placements_per_board": placements_per_board,
             "component_quantity": component_quantity,
             "order_total": round(assembly_savings + price_diff * component_quantity, 4) if price_diff is not None else None,
-            "note": "Assembly fees are per unique part type per order, assuming the original type is removed and the replacement type is newly added. Unit prices use qty 1 tiers, not order quotes.",
+            "note": "Rounded Economic loading-fee estimate ($3 per extended type), not a current quote; Standard assembly has different fees. Fees are per unique part type per order, assuming the original type is removed and the replacement type is newly added. Unit prices use qty 1 tiers, not order quotes.",
         }
 
     # Comparison helper

@@ -4,7 +4,7 @@
 
 14 scrapers in `scripts/scrapers/` produce per-source JSON files in `data/sensors/`. Each scraper extracts sensor IC metadata from a different source. Orchestrated by `scripts/scrape_sensors.py`.
 
-**Stats:** 1,607 sensors in DB | 56 measure types | 7 platforms | 136 IC aliases
+**Counts vary with source snapshots.** Use `sensor_recommend` filter discovery for current measures and platforms; static per-measure counts below are historical, not current coverage.
 
 ## Architecture
 
@@ -103,9 +103,11 @@ Fields are sparse — only included when the source provides them. Different sou
 
 `stats.sensor_count` is still the number the scrape found, so the deploy gate still fails a source that finds nothing, while its last data stays in place. `stats.kept_missing` counts the carried sensors, and the scrape log names each one. If a scraper's ID scheme changes, the old IDs are carried for two more scrapes, so delete `{source}.json` before that run.
 
-## Measure Types (56)
+## Measure Types (historical snapshot)
 
 ### Primary measures
+
+Counts in this section predate the current merge corrections. `eco2` is now a separate tag for CCS811; plain `co2` tags on other families still need individual source audits.
 temperature (348), gas (289), distance (228), acceleration (146), pressure (134), humidity (125), gyroscope (96), motion (81), light (72), magnetic_field (68), particulate (58), co2 (57), current (55), proximity (40), voltage (40), color (30), water_quality (27), touch (25), flow (24), biometric (23), co (23), ir_temperature (20), flame (19), oxygen (18), weight (15), sound (13), uv (13), rotation (12), gesture (10), gps (9)
 
 ### Sub-measures (coexist with parent)
@@ -139,10 +141,10 @@ wind (7), soil_moisture (5), moisture (5), tilt (5), rain (4), dissolved_oxygen 
 
 ```bash
 # All scrapers
-.venv/bin/python -m scripts.scrape_sensors
+uv run python -m scripts.scrape_sensors
 
 # Single source
-.venv/bin/python -m scripts.scrape_sensors --source arduino
+uv run python -m scripts.scrape_sensors --source arduino
 
 # Winsen is slow (~10 min, crawls ~400 pages)
 ```
@@ -178,7 +180,7 @@ next deploy from the daily components workflow, where the only backstop is
 Scraped JSONs are merged into `data/sensor.db` by `scripts/build_sensor_db.py`:
 
 ```bash
-.venv/bin/python scripts/build_sensor_db.py [--data-dir data/] [--output data/sensor.db] [--quiet]
+uv run python scripts/build_sensor_db.py [--data-dir data/] [--output data/sensor.db] [--quiet]
 ```
 
 Merge pipeline: load sources in priority order → alias resolution → union multi-value fields → enrich manufacturers/types/voltages/protocols → build SQLite with FTS5.
@@ -188,3 +190,13 @@ sensors (guards the deploy path against a truncated dataset) and builds atomical
 `.db.tmp` + rename — a failed or interrupted build leaves the old DB in place.
 
 Runtime module: `src/pcbparts_mcp/sensor_db/` exposes `sensor_recommend` MCP tool.
+
+### Reviewed merge corrections (0.8.23)
+
+Generic MCU/platform IDs such as RP2040 are excluded from physical sensor recommendations.
+Description selection ranks device/integration sources above aggregated library descriptions,
+then breakout prose; length breaks ties within that authority. Source URLs remain available.
+CCS811's `eco2` output is estimated, humidity/temperature are compensation inputs, and its
+reviewed operating supply is 1.8–3.3 V (3.6 V absolute maximum). The runtime reply cites ams
+CCS811 v1-06, pages 1/5/6. These corrections do not establish the accuracy of every merged
+family: further capability/identity audits remain pending.

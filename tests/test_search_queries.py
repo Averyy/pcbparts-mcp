@@ -804,6 +804,9 @@ class TestPackageConstraints:
         assert expected["total"] > 0
         normal = await search(subcategory_name="MOSFETs", package=package)
         strict = await search(subcategory_name="MOSFETs", package=package, strict=True)
+        # Diagnostic timing is request-specific; query semantics must stay identical.
+        for response in (normal, strict):
+            response.get("why_empty", {}).pop("elapsed_ms", None)
         assert normal == strict
         assert not normal.get("parsed", {}).get("adjusted_filters")
 

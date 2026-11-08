@@ -60,6 +60,7 @@ from .config import (
     PART_CACHE_TTL,
     PART_CACHE_MAX_SIZE,
 )
+from .catalog_evidence import annotate_catalog, catalog_gap_note
 from .cache import Cooldown, SlidingWindowBudget
 from .subcategory_aliases import SUBCATEGORY_ALIASES, resolve_subcategory_name as _resolve_subcategory_name
 from .db_worker import COMPONENT_POOL, run_db
@@ -201,54 +202,6 @@ def maker_datasheet_link(*urls: str | None) -> str | None:
     return None
 
 
-_CLASS_II_DIELECTRIC = re.compile(r"\b(?:X[5-8][RSTPUV]|Y5[PUV]|Z5U)\b", re.IGNORECASE)
-_ISAT_NOTE = ("Isat is each maker's own figure: the inductance drop it's measured at (commonly 10% to 30%) and "
-              "whether it's typical or minimum differ, so compare Isat on the datasheets before treating two "
-              "parts as equal.")
-# Bourns SRP4020TA-1R0M (C913245): LCSC lists DCR 27 mOhm (its max; 22 typical) and Current Rating 5 A
-# (its Irms at a 40 C rise; Isat is 8.5 A at a 20% drop), neither labelled
-_INDUCTOR_DCR_NOTE = ("DCR is the typical figure on some listings and the maximum on others (SRP4020TA-1R0M lists "
-                      "27 mOhm, its maximum; 22 typical), and Current Rating is usually the Irms for the maker's "
-                      "temperature rise (often 40 C), a heating limit rather than saturation; check the datasheet's "
-                      "columns.")
-_MLCC_DC_BIAS_NOTE = ("Capacitance is the nominal value at 0 V. Class II dielectrics (X5R, X7R, Y5V) lose "
-                      "capacitance under DC bias, more in small cases, often half or more near the rated voltage; "
-                      "the maker's DC-bias curve (Murata SimSurfing, Samsung, TDK, KEMET K-SIM) gives the "
-                      "effective value at your voltage.")
-_MOSFET_NOTE = ("LCSC takes RDS(on) and Vgs(th) from different datasheet columns on different listings: AO3401A "
-                "lists 47mOhm@10V (its 4.5 V typical) and its 4.5 V and 2.5 V maxima, HL3415A lists typicals, "
-                "LBSS84LT1G's Vgs(th) is the maximum and AO3401A's the typical. Compare the datasheets' max columns "
-                "(and Vgs(th) min for a threshold detector). The Vgs rating (the \"Vgs\" spec) is on about a third "
-                "of listings, and gate leakage (IGSS) on none.")
-_RF_CABLE_NOTE = ("The listing doesn't say each end's style: bulkhead with nut and washer or PCB-mount (straight or "
-                  "right angle), jack or plug, SMA or RP-SMA. Check the maker's drawing.")
-
-
-def catalog_gap_note(subcategory: str | None, specs: dict[str, str]) -> str | None:
-    """What a part type's listing leaves out that its users need (jlc_get_part's specs_note).
-
-    From design-session reports: an Isat filter treated a 30%-drop figure like a 10%-drop one; a
-    100 uF 6.3 V X5R bank was sized at its nominal value; an IPEX-to-SMA pigtail listed only as
-    "IPEX to SMA" went into a design as a bulkhead when its SMA end is PCB-mount; a P-FET ranked 2.1x better
-    than AO3401A at 2.5 V compared its typical against AO3401A's maximum (1.5x max against max).
-    """
-    sub = (subcategory or "").lower()
-    listed = {name for name, value in specs.items() if value not in ("", "-")}
-    dcr = "DC Resistance(DCR)" in listed and "inductor" in sub
-    if any(name.startswith("Current - Saturation") for name in listed):
-        return f"{_ISAT_NOTE} {_INDUCTOR_DCR_NOTE}" if dcr else _ISAT_NOTE
-    if dcr:
-        return _INDUCTOR_DCR_NOTE
-    if sub.startswith("multilayer ceramic capacitors") and _CLASS_II_DIELECTRIC.search(
-            specs.get("Temperature Coefficient") or ""):
-        return _MLCC_DC_BIAS_NOTE
-    if sub == "rf cables":
-        return _RF_CABLE_NOTE
-    if sub == "mosfets" and (specs.get("RDS(on)") or specs.get("Gate Threshold Voltage (Vgs(th))")):
-        return _MOSFET_NOTE
-    return None
-
-
 def apply_lcsc_fallback(result: dict[str, Any], product: dict[str, Any] | None) -> None:
     """Fill a jlc_get_part reply's missing datasheet and specs from LCSC's product data.
 
@@ -268,8 +221,11 @@ def apply_lcsc_fallback(result: dict[str, Any], product: dict[str, Any] | None) 
                  if p.get("paramNameEn") and p.get("paramValueEn") not in (None, "", "-")}
         if specs:
             result["specs"] = specs
+            if result.get("data_source"):
+                result["data_source"]["specs_provider"] = "LCSC"
             result["specs_note"] = ("JLCPCB lists no specs for this part; these are LCSC's, which searches don't "
                                     "use, so spec filters still leave it out.")
+            annotate_catalog(result)
 
 
 def _pdf_link_expiring(result: dict[str, Any] | None, now: float) -> bool:
@@ -1186,6 +1142,9 @@ class JLCPCBClient:
         if pcba := pcba_type_from_item(item):
             result["pcba_type"] = pcba
 
+        if not any(item.get(k) for k in ("dataManualUrl", "dataManualFileAccessIdUrl", "dataManualOfficialLink")):
+            result["no_datasheet"] = True
+
         # Include key specs in slim mode
         # All attributes as a dict for compatibility checking and display
         attrs = item.get("attributes") or []  # Handle null/None
@@ -1234,6 +1193,9 @@ class JLCPCBClient:
                 for p in prices
             ]
 
+        result["data_source"] = {"kind": "live_lookup", "provider": "JLCPCB",
+                                 "observed_at": datetime.now(timezone.utc).isoformat()}
+        annotate_catalog(result)
         return result
 
     async def search(

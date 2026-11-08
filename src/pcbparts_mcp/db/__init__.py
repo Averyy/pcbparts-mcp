@@ -385,6 +385,8 @@ class ComponentDatabase:
             spec_sort=spec_sort,
         )
 
+        self._snapshot_parts(result.get("results", []))
+
         # Add warning if min_stock was clamped
         if original_min_stock < DEFAULT_MIN_STOCK:
             result["warning"] = (
@@ -440,13 +442,22 @@ class ComponentDatabase:
         ).fetchall()
         return {row[0]: row[1] for row in rows}
 
+    def _snapshot_part(self, part):
+        if part is not None:
+            part["data_source"] = {"kind": "snapshot", "provider": "JLCPCB",
+                                   "observed_at": self._scraped_at}
+        return part
+
+    def _snapshot_parts(self, parts):
+        return [self._snapshot_part(part) for part in parts]
+
     @serialized
     def get_by_lcsc(self, lcsc: str) -> dict[str, Any] | None:
         """Get a single component by LCSC code."""
         self._ensure_db()
         if not self._conn:
             return None
-        return get_by_lcsc(self._conn, lcsc, self._subcategories)
+        return self._snapshot_part(get_by_lcsc(self._conn, lcsc, self._subcategories))
 
     @serialized
     def get_easyeda_seed(self, lcsc: str) -> FootprintAnswer | None:
@@ -499,7 +510,7 @@ class ComponentDatabase:
         self._ensure_db()
         if not self._conn:
             return []
-        return get_by_mpn(self._conn, mpn, self._subcategories, match_info=match_info)
+        return self._snapshot_parts(get_by_mpn(self._conn, mpn, self._subcategories, match_info=match_info))
 
     @serialized
     def get_by_lcsc_batch(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
@@ -507,7 +518,7 @@ class ComponentDatabase:
         self._ensure_db()
         if not self._conn:
             return {}
-        return get_by_lcsc_batch(self._conn, lcsc_codes, self._subcategories)
+        return {code: self._snapshot_part(part) for code, part in get_by_lcsc_batch(self._conn, lcsc_codes, self._subcategories).items()}
 
     @serialized
     def find_alternative_candidates(
@@ -528,7 +539,7 @@ class ComponentDatabase:
         if not self._conn:
             return []
         try:
-            return find_alternative_candidates(
+            return self._snapshot_parts(find_alternative_candidates(
                 conn=self._conn,
                 subcategories=self._subcategories,
                 original=original,
@@ -538,7 +549,7 @@ class ComponentDatabase:
                 library_type=library_type,
                 accept=accept,
                 limit=limit,
-            )
+            ))
         except sqlite3.Error:
             logger.warning("Alternative candidates query failed for %s", original.get("lcsc"), exc_info=True)
             return []
@@ -557,14 +568,14 @@ class ComponentDatabase:
         if not self._conn:
             return []
         try:
-            return subcategory_parts(
+            return self._snapshot_parts(subcategory_parts(
                 conn=self._conn,
                 subcategories=self._subcategories,
                 subcategory_id=subcategory_id,
                 min_stock=min_stock,
                 library_type=library_type,
                 limit=limit,
-            )
+            ))
         except sqlite3.Error:
             logger.warning("Subcategory parts query failed for %s", subcategory_id, exc_info=True)
             return []

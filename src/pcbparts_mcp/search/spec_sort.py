@@ -83,7 +83,9 @@ SORTABLE_SPECS: tuple[SortableSpec, ...] = (
                  phrases=("vf", "forward voltage", "forward drop", "forward voltage drop"),
                  conditions="forward currents", at="current", example_at="1A"),
     SortableSpec("Isat", "isat_a", ("Current - Saturation(Isat)", "Current - Saturation (Isat)", "Saturation Current"),
-                 parse_current, words=("saturation current",), phrases=("isat", "saturation current")),
+                 parse_current, words=("saturation current",), phrases=("isat", "saturation current"),
+                 caveat="Isat sorts catalog numbers; makers use different inductance-drop criteria and "
+                        "typical/minimum bases, so this does not establish equal bias performance."),
     SortableSpec("DCR", "dcr_ohms", ("DC Resistance(DCR)",), parse_resistance,
                  words=("dc resistance",), phrases=("dcr", "dc resistance"),
                  caveat="LCSC lists the typical DCR on some inductors and the maximum on others (SRP4020TA-1R0M's "
@@ -149,7 +151,9 @@ SORTABLE_SPECS: tuple[SortableSpec, ...] = (
     SortableSpec("Vr", "vr_max_v", ("Voltage - DC Reverse(Vr)",), parse_voltage,
                  words=("reverse voltage",), phrases=("reverse voltage",)),
     SortableSpec("If", "if_max_a", ("Current - Rectified",), parse_current,
-                 words=("rectified current", "forward current"), phrases=("forward current", "rectified current")),
+                 words=("rectified current", "forward current"), phrases=("forward current", "rectified current"),
+                 caveat="Multi-diode current ratings can depend on how many diodes are loaded; catalog "
+                        "figures omit the loading condition. Check per-diode limits and thermal conditions."),
     SortableSpec("Output Current", "iout_max_a", ("Output Current", "Output Current(Max)", "Iout"), parse_current,
                  phrases=("output current", "iout")),
 )

@@ -227,6 +227,7 @@ _ERROR_KINDS = [(kind, re.compile(pattern)) for kind, pattern in (
     ("bad_request", r"[\w ]+ too long \(max \d+ characters\)$"),
     ("bad_request", r"Too many "),
     ("bad_request", r"Invalid [\w ]+: "),
+    ("bad_request", r"Part-number exclusions are not supported: "),
     ("bad_request", r"Strict search cannot apply every constraint; "),
     ("bad_request", r"Unsupported (library_type|pcba_type|sort_spec|tag|value for \w+): "),
     ("bad_request", r"Can't sort "),
@@ -239,6 +240,7 @@ _ERROR_KINDS = [(kind, re.compile(pattern)) for kind, pattern in (
     ("bad_request", r"Query contains (invalid characters|no searchable terms)$"),
     ("bad_request", r"(Invalid slug|Invalid UUID format|UUID is required)$"),
     # it worked and found nothing
+    ("not_found", r"No part found in the local snapshot for MPN "),
     ("not_found", r"Part not found: "),
     ("not_found", r"Part .* not found$"),
     ("not_found", r"Board '.*' not found$"),
@@ -670,6 +672,10 @@ def _parse_spec_filters(filters: list[dict[str, Any]] | str | None) -> list[Spec
         known_names = [*ATTRIBUTE_ALIASES, *(n for names in ATTRIBUTE_ALIASES.values() for n in names),
                        *SPEC_PARSERS, "Module Flash", "Module PSRAM"]
         name = next((n for n in known_names if n.casefold() == name.strip().casefold()), name.strip())
+        if name.casefold() == "impedance @ frequency" and "@" in str(value):
+            from .parsers import parse_impedance_at_freq
+            if parse_impedance_at_freq(str(value)) is None:
+                raise ValueError("impedance needs a valid frequency, such as 600Ohm@100MHz")
         result.append(SpecFilter(name, op, str(value)))
     return result or None
 
@@ -796,7 +802,10 @@ def jlc_search(
     offset; library_type_counts use the same constraints. Spec sorts add sort_value (the figure
     sorted on, as listed, with its test condition, or null) and sort (what was compared, at which
     condition, and how far the order compares like with like). An empty reply's hint suggests a
-    next step.
+    next step. why_empty adds bounded local library/package/stock checks with counts, next calls and
+    diagnostics_complete; original results stay empty. Negative Vout preserves polarity, impedance@frequency
+    compares that condition, and part-number exclusions are reported as unsupported. Part rows carry
+    data_source (snapshot/provider/observation time); no diagnostic makes live requests.
 
     Args:
         query: Natural language, e.g. "10k resistor 0603 1%", "100nF 25V capacitor" (adds
@@ -992,6 +1001,10 @@ def jlc_search(
             "spec_filters": [f.to_dict() for f in parsed.spec_filters],
             "remaining_text": parsed.remaining_text,
         }
+
+        if negation := parsed.detected.get("unsupported_negation"):
+            return {"error": f"Part-number exclusions are not supported: {negation}. Search positively and exclude that identity during review.",
+                    "results": [], "total": 0, "parsed": parsed_query_info}
 
         if parsed.subcategory == "supercapacitors" and not (subcategory_name or subcategory_id):
             if not (parsed.model_number or parsed.remaining_text.strip()):
@@ -1416,6 +1429,10 @@ def jlc_search(
             hints.append("Use jlc_stock_check for low-stock parts.")
         result["hint"] = " ".join(hints)
 
+    if result.get("total") == 0 and not result.get("error") and not result.get("ignored_filters"):
+        from .search.diagnostics import diagnose_empty
+        result["why_empty"] = diagnose_empty(db, effective_query, search_args)
+
     # Stock and price are the daily snapshot's: C14663 read 38,555,997 at $0.0083 here and 37,538,619
     # at $0.0072 in jlc_get_part, a day later
     if as_of := db.scraped_at():
@@ -1677,7 +1694,10 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     lists one (most TI parts), and datasheet_note says when there is no PDF, or that datasheet_pdf is
     LCSC's copy when JLCPCB has none (specs come from LCSC too when JLCPCB lists none); specs_note says when LCSC
     lists no specs, or what the listing leaves out for the part type (Isat's definition, MLCC DC-bias
-    loss, an RF cable's end styles, a MOSFET's RDS(on)/Vgs(th) mixing typical and maximum figures);
+    loss, an RF cable's end styles, a MOSFET's RDS(on)/Vgs(th) mixing typical and maximum figures,
+    multi-diode loading conditions); spec_evidence cites reviewed manufacturer values and conditions,
+    document identity, printed page and source URL; spec_discrepancies flags catalog/document conflicts
+    without replacing catalog specs. no_datasheet/no_datasheet_note refer only to JLCPCB availability;
     lcsc_url is the LCSC product page; pcba_type is "economic" or
     "standard_only" (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard
     assembly). No lifecycle status (NRND, obsolete): JLCPCB doesn't list it; mouser_get_part and
@@ -1688,6 +1708,9 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     manufacturer numbered after the original). An LCSC code given as mpn finds that part
     (match=lcsc); BOM placeholders such as N/A or DNP find nothing.
     MPN lookups search the daily catalog snapshot (stock >= 10), most stock first.
+    Rows carry data_source (kind/provider/observed_at); cached live observations retain their timestamp.
+    MPN misses describe snapshot scope, availability outside it is unknown, and next_call offers an explicit
+    jlc_stock_check with min_stock=0 without executing it.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
@@ -1718,10 +1741,14 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
                     hint = (f"'{mpn.strip()}' looks like an LCSC code: "
                             f"jlc_get_part(lcsc=\"{mpn.strip().upper()}\") looks it up live, "
                             "including low or zero stock. " + hint)
-            return {"error": f"No JLCPCB parts found for MPN '{mpn}'", "mpn": mpn, "results": [],
-                    "hint": hint}
+            return {"error": f"No part found in the local snapshot for MPN '{mpn}'", "mpn": mpn, "results": [],
+                    "hint": hint, "data_source": {"kind": "snapshot", "provider": "JLCPCB", "observed_at": db.scraped_at()},
+                    "next_call": None if is_placeholder_mpn(mpn) else {
+                        "tool": "jlc_stock_check", "arguments": {"query": mpn, "min_stock": 0, "limit": 10}},
+                    "availability": "unknown_outside_snapshot"}
         reply = {
             "mpn": mpn,
+            "data_as_of": db.scraped_at(),
             "total": len(results),
             "results": results,
             **match_info,
@@ -1811,8 +1838,11 @@ async def jlc_find_alternatives(
 ) -> dict:
     """Find catalog-checked alternatives, ranked no-fee first (same-package passives/crystals first
     within each tier). Reply: summary.found counts verified alternatives; unverified_alternatives
-    need manual comparison for missing required matches; specs_unparseable lists specs not verified;
+    need manual comparison for missing required matches or incomparable rating conditions (inductor Isat, DCR,
+    thermal current; multi-diode loading); specs_unparseable lists specs not verified;
     unchecked_requirements includes pinout/circuit checks still needed; has_easyeda_footprint=null means unknown.
+    Reviewed spec_evidence cites manufacturer values/conditions; spec_discrepancies preserves catalog conflicts.
+    no_datasheet and no_datasheet_note refer only to JLCPCB availability.
     RF parts (splitters, baluns, couplers, amplifiers, filters, transceivers) have no rules, so they come
     back as similar_parts from every maker, ordered by how much of the original's frequency range
     each covers (frequency_coverage: full, partial with share, or unknown); parts that don't overlap it
@@ -1823,7 +1853,9 @@ async def jlc_find_alternatives(
     summary.extended_examples. Listed parts carry has_easyeda_footprint where it's already known (no
     extra request), and pcba_type ("economic" or "standard_only"). Lifecycle (NRND) isn't checked:
     mouser_get_part or digikey_get_part has it.
-    Stock comes from the live search or the daily catalog snapshot.
+    Stock comes from the live search or the daily catalog snapshot. Each part's data_source identifies
+    that observation. Savings use a rounded $3 Economic loading-fee estimate (is_estimate and
+    assembly_service_assumption), not a current quote; Standard service differs.
 
     Args:
         lcsc: LCSC code of the original part (e.g., "C2557")
@@ -2227,6 +2259,8 @@ def sensor_recommend(
     support. Filter choices come from the catalog; unknown values list valid choices.
     Accepts 1-wire/one-wire and heart rate/blood oxygen aliases. Not for buying parts: use jlc_search.
     Results are sorted by how many platforms have drivers for the sensor.
+    CCS811 exposes estimated eco2 and VOC output; humidity/temperature are compensation inputs,
+    with cited operating/stress voltage evidence. Generic MCU/platform IDs such as RP2040 are excluded.
 
     Args:
         query: Name, description or manufacturer (e.g., "BME280", "waterproof")

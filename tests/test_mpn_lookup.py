@@ -61,7 +61,7 @@ async def test_recorded_recovery(case):
 async def test_no_grade_or_other_manufacturer_substitution(mpn):
     reply = await server.jlc_get_part(mpn=mpn)
     assert reply["results"] == []
-    assert reply["error"] == f"No JLCPCB parts found for MPN '{mpn}'"
+    assert reply["error"] == f"No part found in the local snapshot for MPN '{mpn}'"
     assert "match" not in reply
 
 
@@ -94,7 +94,8 @@ async def test_related_ssd1306_names_every_part_type():
 @pytest.mark.parametrize("mpn", ["AO3400A", "ao3400a", " LM358DR2G "])  # Basic parts: LM358P left the catalog 2026-11-01
 async def test_exact_reply_is_unchanged(mpn):
     reply = await server.jlc_get_part(mpn=mpn)
-    assert set(reply) == {"mpn", "total", "results"}
+    assert set(reply) == {"mpn", "total", "results", "data_as_of"}
+    assert reply["data_as_of"]
     assert all(p["model"].lower() == mpn.strip().lower() for p in reply["results"])
 
 
@@ -219,7 +220,7 @@ async def test_placeholder_finds_nothing(mpn):
     # N/A used to list JST ...-N-A connectors; NC, LEDs whose part numbers start with NC.
     reply = await server.jlc_get_part(mpn=mpn)
     assert reply["results"] == []
-    assert reply["error"] == f"No JLCPCB parts found for MPN '{mpn}'"
+    assert reply["error"] == f"No part found in the local snapshot for MPN '{mpn}'"
     assert "placeholder" in reply["hint"] and "match" not in reply
 
 

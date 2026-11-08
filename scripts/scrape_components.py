@@ -14,7 +14,9 @@ import asyncio
 import gzip
 import json
 import logging
+import os
 import re
+import shutil
 import sys
 import time
 from dataclasses import dataclass, field
@@ -343,6 +345,7 @@ async def worker(
 
                 # Update progress
                 progress.completed_subcategories.add(subcat.id)
+                progress.failed_subcategories.discard(subcat.id)
                 progress.category_counts[subcat.category_slug] = (
                     progress.category_counts.get(subcat.category_slug, 0) + count
                 )
@@ -512,7 +515,7 @@ def generate_stock_history(
 
 # === Main Scraper ===
 
-async def run_scraper(
+async def _run_scraper_staged(
     output_dir: Path,
     num_workers: int = 4,
     resume: bool = False,
@@ -581,6 +584,14 @@ async def run_scraper(
     logger.info(f"Pending: {len(pending)} subcategories")
     logger.info("")
 
+    partial_dir = output_dir / "partial"
+    partial_dir.mkdir(exist_ok=True)
+    results: dict[str, list[dict[str, Any]]] = {}
+    if resume:
+        for gz_file in partial_dir.glob("*.jsonl.gz"):
+            with gzip.open(gz_file, "rt", encoding="utf-8") as stream:
+                results[gz_file.name.removesuffix(".jsonl.gz")] = [json.loads(line) for line in stream if line.strip()]
+
     if not pending:
         logger.info("All subcategories already scraped!")
     else:
@@ -594,18 +605,8 @@ async def run_scraper(
             await queue.put(None)
 
         # Results storage
-        results: dict[str, list[dict[str, Any]]] = {}
         results_lock = asyncio.Lock()
         circuit_breaker = CircuitBreaker(threshold=3)
-
-        # If resuming, load existing partial results
-        if resume:
-            for gz_file in categories_dir.glob("*.jsonl.gz"):
-                cat_slug = gz_file.stem.replace(".jsonl", "")
-                results[cat_slug] = []
-                with gzip.open(gz_file, "rt", encoding="utf-8") as f:
-                    for line in f:
-                        results[cat_slug].append(json.loads(line))
 
         # Start workers with staggered launch — each gets its own wafer session
         logger.info(f"Starting {num_workers} workers...")
@@ -625,6 +626,7 @@ async def run_scraper(
         # Drop worker session references (no close() needed — wafer manages resources)
         worker_sessions.clear()
 
+        save_partial_results(partial_dir, results)
         # Check if circuit breaker tripped
         if circuit_breaker.is_tripped():
             logger.error("")
@@ -640,22 +642,56 @@ async def run_scraper(
                 json.dump(progress.to_dict(), f, indent=2)
             logger.info(f"\nProgress saved to {progress_file}")
             logger.info("Run with --resume to continue from where we left off.")
-            return
+            raise RuntimeError("Component scrape aborted: circuit breaker tripped; published data unchanged")
 
         # Save progress periodically during scrape would be nice, but for now save at end
         with open(progress_file, "w", encoding="utf-8") as f:
             json.dump(progress.to_dict(), f, indent=2)
 
-        # Generate stock history (compare old JSONL with new results)
-        # Skip on resume runs (old data is unreliable after partial updates)
-        if not resume:
+    # Retry failed subcategories
+    if progress.failed_subcategories:
+        logger.info("")
+        logger.info(f"Retrying {len(progress.failed_subcategories)} failed subcategories...")
+        failed_subcats = [s for s in subcategories if s.id in progress.failed_subcategories]
+        retry_session = create_scraper_session()
+
+        for subcat in failed_subcats:
             try:
-                history_dir = output_dir / "history"
-                history_stats = generate_stock_history(categories_dir, history_dir, results)
-                if history_stats.get("events", 0) > 0:
-                    logger.info(f"Stock history: {history_stats['events']} events recorded")
-            except Exception:
-                logger.warning("Stock history generation failed (non-fatal):", exc_info=True)
+                parts, count = await scrape_subcategory(subcat, retry_session)
+
+                results.setdefault(subcat.category_slug, []).extend(parts)
+                new_count = count
+
+                progress.failed_subcategories.remove(subcat.id)
+                progress.completed_subcategories.add(subcat.id)
+                progress.total_parts += new_count
+                progress.category_counts[subcat.category_slug] = (
+                    progress.category_counts.get(subcat.category_slug, 0) + new_count
+                )
+
+                dup_msg = f", {count - new_count} duplicates" if new_count < count else ""
+                logger.info(f"  Retry OK: {subcat.name} ({new_count} parts{dup_msg})")
+
+            except Exception as e:
+                logger.error(f"  Retry FAILED: {subcat.name} - {e}")
+
+        del retry_session  # No close() needed — wafer manages resources
+
+    save_partial_results(partial_dir, results)
+    with open(progress_file, "w", encoding="utf-8") as stream:
+        json.dump(progress.to_dict(), stream, indent=2)
+    if progress.failed_subcategories or {sub.id for sub in subcategories} - progress.completed_subcategories:
+        raise RuntimeError("Component scrape incomplete; published data unchanged (resume with --resume)")
+
+    if results:
+        # Generate stock history (compare old JSONL with new results)
+        try:
+            history_dir = output_dir / "history"
+            history_stats = generate_stock_history(categories_dir, history_dir, results)
+            if history_stats.get("events", 0) > 0:
+                logger.info(f"Stock history: {history_stats['events']} events recorded")
+        except Exception:
+            raise RuntimeError("Stock history generation failed; published data unchanged") from None
 
         # Write category files, deduplicated by LCSC *globally* across categories, so a
         # cross-category duplicate can't reach build_database.py's lcsc PRIMARY KEY twice
@@ -665,6 +701,7 @@ async def run_scraper(
         logger.info("Writing category files...")
         seen_lcsc: set[str] = set()
         total_dupes = 0
+        progress.category_counts = {}
         for cat_slug, parts in sorted(results.items()):
             unique_parts = []
             duplicates = 0
@@ -681,6 +718,7 @@ async def run_scraper(
                 for part in unique_parts:
                     f.write(json.dumps(part, separators=(",", ":")) + "\n")
 
+            progress.category_counts[cat_slug] = len(unique_parts)
             total_dupes += duplicates
             if duplicates > 0:
                 logger.info(f"  {cat_slug}: {len(unique_parts)} parts ({duplicates} duplicates removed)")
@@ -694,64 +732,16 @@ async def run_scraper(
         all_cat_slugs = {slugify(cat["name"]) for cat in categories}
         for cat_slug in all_cat_slugs:
             output_file = categories_dir / f"{cat_slug}.jsonl.gz"
-            if not output_file.exists():
+            if cat_slug not in results:
+                progress.category_counts[cat_slug] = 0
                 with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL, encoding="utf-8") as f:
                     pass  # Empty file
                 logger.info(f"  {cat_slug}: 0 parts (empty)")
 
-    # Retry failed subcategories
-    if progress.failed_subcategories:
-        logger.info("")
-        logger.info(f"Retrying {len(progress.failed_subcategories)} failed subcategories...")
-        failed_subcats = [s for s in subcategories if s.id in progress.failed_subcategories]
-        retry_session = create_scraper_session()
-
-        for subcat in failed_subcats:
-            try:
-                parts, count = await scrape_subcategory(subcat, retry_session)
-
-                # Append to category file
-                output_file = categories_dir / f"{subcat.category_slug}.jsonl.gz"
-
-                # Read existing and collect LCSC codes
-                existing = []
-                seen_lcsc: set[str] = set()
-                if output_file.exists():
-                    with gzip.open(output_file, "rt", encoding="utf-8") as f:
-                        for line in f:
-                            part = json.loads(line)
-                            existing.append(part)
-                            if part.get("l"):
-                                seen_lcsc.add(part["l"])
-
-                # Add new parts (deduplicated)
-                new_count = 0
-                for part in parts:
-                    lcsc = part.get("l")
-                    if lcsc and lcsc not in seen_lcsc:
-                        seen_lcsc.add(lcsc)
-                        existing.append(part)
-                        new_count += 1
-
-                # Write back
-                with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL, encoding="utf-8") as f:
-                    for part in existing:
-                        f.write(json.dumps(part, separators=(",", ":")) + "\n")
-
-                progress.failed_subcategories.remove(subcat.id)
-                progress.completed_subcategories.add(subcat.id)
-                progress.total_parts += new_count
-                progress.category_counts[subcat.category_slug] = (
-                    progress.category_counts.get(subcat.category_slug, 0) + new_count
-                )
-
-                dup_msg = f", {count - new_count} duplicates" if new_count < count else ""
-                logger.info(f"  Retry OK: {subcat.name} ({new_count} parts{dup_msg})")
-
-            except Exception as e:
-                logger.error(f"  Retry FAILED: {subcat.name} - {e}")
-
-        del retry_session  # No close() needed — wafer manages resources
+    for old_file in categories_dir.glob("*.jsonl.gz"):
+        if old_file.name.removesuffix(".jsonl.gz") not in {slugify(cat["name"]) for cat in categories}:
+            old_file.unlink()
+    progress.total_parts = sum(progress.category_counts.values())
 
     # Generate manifest
     logger.info("")
@@ -781,9 +771,7 @@ async def run_scraper(
     with open(output_dir / "manifest.json", "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
 
-    # Cleanup progress file on successful completion
-    if not progress.failed_subcategories and progress_file.exists():
-        progress_file.unlink()
+    # Progress is retained until the outer validation/publication succeeds.
 
     # Summary
     elapsed = time.time() - start_time
@@ -796,6 +784,77 @@ async def run_scraper(
     logger.info(f"Failed subcategories: {len(progress.failed_subcategories)}")
     logger.info(f"Time: {elapsed/60:.1f} minutes")
     logger.info(f"Output: {output_dir}")
+
+
+def save_partial_results(directory: Path, results: dict[str, list[dict[str, Any]]]) -> None:
+    for slug, parts in results.items():
+        target = directory / f"{slug}.jsonl.gz"
+        temporary = target.with_suffix(".tmp")
+        with gzip.open(temporary, "wt", encoding="utf-8", compresslevel=GZIP_LEVEL) as stream:
+            for part in parts:
+                stream.write(json.dumps(part, separators=(",", ":")) + "\n")
+        temporary.replace(target)
+
+
+def publish_staged_files(output_dir: Path, staging: Path, files: list[Path]) -> None:
+    """Atomic file replacements with rollback on publication I/O failure."""
+    backup = staging / "publication-backup"
+    backup.mkdir(exist_ok=True)
+    published = []
+    expected = {source.relative_to(staging) for source in files}
+    stale = [p for p in (output_dir / "categories").glob("*.jsonl.gz")
+             if p.relative_to(output_dir) not in expected]
+    try:
+        for source in [*files, *stale]:
+            relative = source.relative_to(output_dir) if source in stale else source.relative_to(staging)
+            destination = output_dir / relative
+            saved = backup / relative
+            existed = destination.exists()
+            if existed:
+                saved.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(destination, saved)
+            if source in stale:
+                destination.unlink()
+            else:
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                source.replace(destination)
+            published.append((destination, saved, existed, None if source in stale else source))
+    except OSError:
+        for destination, saved, existed, source in reversed(published):
+            if source is not None:
+                shutil.copy2(destination, source)
+            if existed:
+                saved.replace(destination)
+            else:
+                destination.unlink(missing_ok=True)
+        raise
+
+
+async def run_scraper(output_dir: Path, num_workers: int = 4, resume: bool = False):
+    """Build/retry privately, validate against the published baseline, then publish."""
+    from check_component_scrape import validate_manifest
+    output_dir.mkdir(parents=True, exist_ok=True)
+    staging = output_dir / ".scrape-staging"
+    if not resume or not staging.exists():
+        if staging.exists():
+            shutil.rmtree(staging)
+        staging.mkdir()
+        for name in ("categories", "history"):
+            if (output_dir / name).exists():
+                shutil.copytree(output_dir / name, staging / name)
+    await _run_scraper_staged(staging, num_workers, resume)
+    current = json.loads((staging / "manifest.json").read_text(encoding="utf-8"))
+    previous_path = output_dir / "manifest.json"
+    previous = json.loads(previous_path.read_text(encoding="utf-8")) if previous_path.exists() else {}
+    failures = validate_manifest(previous, current, allow_count_drop=os.environ.get("ALLOW_PART_DROP", "").lower() == "true")
+    if failures:
+        raise RuntimeError("Component scrape rejected; published data unchanged: " + "; ".join(failures))
+    # Every byte is prepared and validated before the first published file is replaced.
+    files = [*sorted((staging / "categories").glob("*.jsonl.gz")),
+             *sorted((staging / "history").glob("*.jsonl.gz")),
+             staging / "subcategories.json", staging / "manifest.json"]
+    publish_staged_files(output_dir, staging, files)
+    shutil.rmtree(staging)
 
 
 def main():

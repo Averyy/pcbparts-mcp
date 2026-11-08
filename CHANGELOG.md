@@ -1,8 +1,29 @@
 # Changelog
 
-Notable changes to PCB Parts MCP, newest first. The hosted server at pcbparts.dev always runs the latest version.
+Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
+
+## 0.8.23 (2026-11-08)
+
+### Breaking
+
+- Inductor alternatives with unknown or differing Isat criteria, rating bases, or thermal-current conditions now appear in `unverified_alternatives`, with explicit unchecked requirements. They no longer drive a verified recommendation, savings comparison, or `compatibility_verified=true`. DCR comparisons require comparable published rating bases. Multi-diode forward-current comparisons also remain unverified when loading/thermal conditions aren't established.
+- Part results can include `spec_evidence` (reviewed manufacturer values, conditions, document identity, printed page and source URL), `spec_discrepancies` (catalog versus document claims), and `no_datasheet_note` (the flag applies to JLCPCB only). Catalog specs and numeric search/sort values are preserved.
+- Negative output-voltage queries/filters preserve polarity, including catalogs with unsigned values plus Negative configuration. Ferrite impedance filters with a frequency require that condition (including OR alternatives and natural-language requests). Negated part-number searches return an explicit unsupported-exclusion error instead of selecting the excluded identity.
+- Empty searches can return `why_empty`: bounded local library/package/stock counterfactuals with retained constraints, exact/lower-bound counts, next calls and completeness. Original results remain empty. Diagnostic work uses a private read-only connection, at most three queries, a 200 ms deadline, two million SQLite steps and 5,000 post-filter rows. No automatic external calls.
+- Local part results carry `data_source` with snapshot observation time; live lookup results retain their observation time through caching. MPN misses explicitly describe the local snapshot and offer an unexecuted `next_call` to `jlc_stock_check(min_stock=0)`; availability beyond the snapshot stays unknown. MPN hits also return `data_as_of`.
+- Sensor data excludes generic MCU/platform identities such as RP2040. CCS811 exposes `eco2` instead of `co2`; humidity/temperature are compensation inputs, not its direct measurements. It includes capability/voltage evidence and the 1.8–3.3 V operating range (3.6 V is a stress limit). Description merging prioritizes device/integration sources over breakout prose, preventing SCD4X from inheriting an all-in-one board's capabilities. Other families still need individual capability audits.
+- Alternatives savings preserve the legacy $3 numeric basis but explicitly label it a rounded Economic loading-fee estimate: `is_estimate`, `assembly_service_assumption`, `loading_fee_per_extended_type_estimate_usd` and `fee_basis`. It is not a current quote or a Standard assembly fee calculation.
+
+### Fixed
+
+- C53308978's catalog DCR is 20 mΩ, but SOREDE SRD-WI-22770 Rev A (2024-06-14), printed p.2/8, specifies 27 mΩ maximum. The discrepancy is annotated at runtime, independently of daily catalog rebuilds. Its 8.5 A typical Isat at 30% inductance drop cannot verify equivalence to C913245's 8.5 A at 20% drop. Reviewed evidence accompanies both parts.
+- C2500 (Nexperia BAV99,215) now explains multi-diode loading conditions and carries the manufacturer's 215 mA single-loaded and 125 mA per-diode both-loaded limiting values (BAV99 v.9, Table 5). Multi-diode listings warn about loading and thermal conditions; single-diode listings do not receive that warning. `If >= 150mA` still filters the catalog's 125 mA value.
+- Isat and diode-current sorting explain the missing comparison conditions. Missing-datasheet flags explicitly refer to JLCPCB's listing, even when LCSC has a copy. The response builder also enforces the unverified-candidate boundary, and confidence reports unchecked requirements from those candidates.
+- Component scrapes finish retries in a private staging directory before history generation or category publication. Incomplete/tripped runs fail without replacing published data; progress remains resumable. Publication I/O errors roll back completed replacements and retain staged output. Final checks reject remaining failed subcategories, inconsistent counts, >5% total drops and >30% drops in previously 1,000+ part categories. The existing explicit manual drop override applies to count thresholds only.
+- The component workflow reuses the same manifest validation before commit/deploy. No workflow was executed as part of local verification.
+- Fixed a deprecated class-scoped test fixture. Removed completed and duplicate planning documents; remaining deferred work stays in a local, uncommitted backlog.
 
 ## 0.8.22 (2026-11-07)
 
