@@ -19,7 +19,7 @@ from ..subcategory_aliases import (
     find_similar_subcategories as _find_similar_subcategories,
 )
 from .spec_filter import (
-    CONNECTOR_COLUMN_NAMES, FUSE_ATTRIBUTE_MAP, RANGE_SPECS, FuseFilter, SpecFilter,
+    CONNECTOR_COLUMN_NAMES, FUSE_ATTRIBUTE_MAP, RANGE_SPECS, FuseFilter, PostFilterGroup, PostFilterMetadata, SpecFilter,
     connector_orientation, connector_value, dropout_at_load, dropout_at_load_json, dropout_loads,
     get_attribute_names, switch_circuit,
 )
@@ -124,10 +124,18 @@ def _impedance_passes(value: str, requested: str, operator: str) -> bool:
 def _passes_post_filters(
     part_specs: dict[str, str],
     package: str | None,
-    post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]],
+    post_filter_metadata: list[PostFilterMetadata],
     subcategory_id: int | None = None,
 ) -> bool:
     """Whether a part's specs meet every filter SQL couldn't apply."""
+    for index, item in enumerate(post_filter_metadata):
+        if isinstance(item, PostFilterGroup):
+            others = post_filter_metadata[:index] + post_filter_metadata[index + 1:]
+            # Keep the other constraints in each alternative so range-window checks still
+            # require the equality and inequalities to hold for the same listed item.
+            return any(_passes_post_filters(part_specs, package, [*others, *metadata], subcategory_id)
+                       for _, _, metadata in item.alternatives)
+
     # Several range filters on one attribute must hold for the same listed item: a dual supervisor's
     # "2.93V、4.55V" has no threshold in a 3.3-3.5V window, though 4.55 >= 3.3 and 2.93 <= 3.5
     windows: dict[frozenset[str], list[tuple[str, Any, float, bool | None]]] = {}
@@ -521,7 +529,7 @@ class SearchEngine:
         base_count_parts, base_count_params = list(count_parts), list(count_params)
 
         # Spec filters
-        post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]] = []
+        post_filter_metadata: list[PostFilterMetadata] = []
         ignored_filters: list[dict[str, str]] = []
         if spec_filters:
             spec_sqls, spec_params_list, post_filter_metadata, ignored_filters = build_spec_filter_clauses(
@@ -750,22 +758,33 @@ class SearchEngine:
         self,
         sql_parts: list[str],
         params: list[Any],
-        post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]],
+        post_filter_metadata: list[PostFilterMetadata],
         limit: int,
         offset: int,
         mpn_counts: dict[str, Any] | None = None,
     ) -> tuple[list[dict[str, Any]], dict[str, int], bool]:
         """Check SQL matches against post-filters. Returns the page, library counts of passing
         matches, and whether every match was checked (at most POST_FILTER_SCAN_ROWS are)."""
+        # A branch's SQL and Python checks must both pass. Project SQL eligibility so an
+        # SQL-only alternative (or a signed output's SQL guard) cannot pass another branch.
+        alternatives = [branch for item in post_filter_metadata if isinstance(item, PostFilterGroup)
+                        for branch in item.alternatives]
+        branch_sql = "".join(f", ({sql})" for sql, _, _ in alternatives)
+        branch_params = [p for _, values, _ in alternatives for p in values]
+        flat_metadata = [entry for item in post_filter_metadata
+                         for entry in ([item] if not isinstance(item, PostFilterGroup)
+                                       else [entry for _, _, metadata in item.alternatives for entry in metadata])]
+        module_memory = any(f.name in ("Module Flash", "Module PSRAM") for f, *_ in flat_metadata)
         scan_sql = " ".join(sql_parts).replace(
-            "SELECT * FROM components", "SELECT rowid, attributes, package, mpn, library_type, subcategory_id FROM components", 1
+            "SELECT * FROM components", f"SELECT rowid, attributes, package, mpn, library_type, subcategory_id{branch_sql} FROM components", 1
         ) + " LIMIT ?"
         passed = 0
         library_counts = {"basic": 0, "preferred": 0, "extended": 0}
         library_names = {"b": "basic", "p": "preferred", "e": "extended"}
         scanned = 0
         page_ids: list[int] = []
-        for rowid, attributes, package, mpn, library, subcategory in self._conn.execute(scan_sql, [*params, POST_FILTER_SCAN_ROWS]):
+        for row in self._conn.execute(scan_sql, [*branch_params, *params, POST_FILTER_SCAN_ROWS]):
+            rowid, attributes, package, mpn, library, subcategory = row[:6]
             if hasattr(self, 'diagnostic_deadline'):
                 self.diagnostic_rows_remaining -= 1
                 if self.diagnostic_rows_remaining < 0 or time.monotonic() >= self.diagnostic_deadline:
@@ -777,13 +796,16 @@ class SearchEngine:
                 specs = {}
             # ESP32 module memory is encoded in ordering codes, not catalog attributes.
             # Only derive it for a requested module-memory filter; unknown codes cannot pass.
-            if any(f.name in ("Module Flash", "Module PSRAM") for f, *_ in post_filter_metadata):
+            if module_memory:
                 flash, psram = parse_esp32_module_memory(mpn)
                 if flash is not None:
                     specs["Module Flash"] = f"{flash}MB"
                 if psram is not None:
                     specs["Module PSRAM"] = f"{psram}MB"
-            if _passes_post_filters(specs, package, post_filter_metadata, subcategory):
+            eligible = iter(row[6:])
+            metadata = [PostFilterGroup([branch for branch in item.alternatives if next(eligible)])
+                        if isinstance(item, PostFilterGroup) else item for item in post_filter_metadata]
+            if _passes_post_filters(specs, package, metadata, subcategory):
                 passed += 1
                 if mpn_counts is not None:
                     mpn_counts[MPN_MATCH_NAMES[mpn_match_rank(mpn, mpn_counts["part_number"])]] += 1

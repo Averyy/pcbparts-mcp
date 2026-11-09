@@ -31,6 +31,13 @@ _ISOLATED_MODULE_WORDS = (
 POWER_MODULE_WORDS = (*_DCDC_MODULE_WORDS, *_ISOLATED_POWER_WORDS, *_ISOLATED_MODULE_WORDS, "power module",
                       "power modules", "ac-dc module", "ac-dc power module")
 
+BATTERY_HOLDER_SUBCATEGORIES = (
+    "battery connector", "batter holder", "button and strip battery connector", "battery holder base",
+)
+_BATTERY_HOLDER_WORDS = tuple(
+    f"{kind} holder{plural}" for kind in ("battery", "cell", "coin cell", "button cell") for plural in ("", "s")
+)
+
 # "isolated" picks a sibling part type, but only next to the part word through an alias above.
 # "isolated 5V to 12V DC-DC converter" or "CAN transceiver, isolated" switch through this map
 # (the part type a keyword resolved to -> the isolated keyword).
@@ -519,6 +526,7 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # ==========================================================================
     # BATTERY MANAGEMENT
     # ==========================================================================
+    **dict.fromkeys(_BATTERY_HOLDER_WORDS, BATTERY_HOLDER_SUBCATEGORIES[0]),
     "battery charger": "battery management",
     "battery management": "battery management",
     "lithium charger": "battery management",
@@ -796,6 +804,7 @@ UNAVAILABLE_SUBCATEGORY_ALIASES: dict[str, str] = {
 # search only Inductors (SMD): 8.4k of 41k inductors ("22uH inductor 3A": 5 results, 255 in Power
 # Inductors). "relay" missed the 1.3k power relays (the SRD-05VDC), "diode" the rectifiers.
 SUBCATEGORY_GROUPS: dict[str, tuple[str, ...]] = {
+    **dict.fromkeys(_BATTERY_HOLDER_WORDS, (*BATTERY_HOLDER_SUBCATEGORIES, "battery accessories")),
     "motor driver": ("motor driver ics", "brushed dc motor drivers", "stepper motor driver", "brushless dc (bldc) motor driver"),
     **dict.fromkeys(("inductor", "inductors", "coil"), (
         "inductors (smd)", "power inductors", "molding power inductors",

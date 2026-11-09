@@ -302,16 +302,47 @@ class DigiKeyClient:
         except DigiKeyNotFound:
             data = {}
         product = data.get("Product", {})
+        products = [product] if product else []
 
-        if not product:
+        if not products and product_number.isdigit():
+            if self._quota:
+                quota_error = self._quota.check(caller)
+                if quota_error:
+                    stats.usage.record_distributor("digikey", "rate_limited")
+                    return quota_error
+            stats.usage.record_distributor("digikey", "sent")
+            try:
+                data = await self._request("POST", "/search/keyword", json={
+                    "Keywords": product_number, "Limit": 50, "Offset": 0,
+                })
+            except DigiKeyRateLimited as e:
+                return {"error": str(e)}
+            except DigiKeyNotFound:
+                data = {}
+
+            seen = set()
+            for candidate in (data.get("ExactMatches") or []) + (data.get("Products") or []):
+                mpn = candidate.get("ManufacturerProductNumber") or ""
+                if mpn.strip().casefold() != product_number.casefold():
+                    continue
+                key = ((candidate.get("Manufacturer") or {}).get("Name", ""), mpn)
+                if key not in seen:
+                    seen.add(key)
+                    products.append(candidate)
+
+        if not products:
             # Cached too, so asking again for a wrong or partial number costs no request
             not_found = {"error": f"Part not found: {product_number}"}
+            if product_number.isdigit():
+                not_found["hint"] = ("DigiKey found no exact match for this all-digit number by lookup or "
+                                     "keyword search. If you have it, try the DigiKey part number "
+                                     "(usually ending in -ND).")
             self._cache.set(cache_key, not_found, ttl=DIGIKEY_NOT_FOUND_TTL)
             return not_found
 
         result = {
-            "results": [_normalize_product(product, product_number)],
-            "total": 1,
+            "results": [_normalize_product(p, product_number) for p in products],
+            "total": len(products),
         }
         self._cache.set(cache_key, result)
         return result

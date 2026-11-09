@@ -55,7 +55,7 @@ async def test_recorded_recovery(case):
 @pytest.mark.parametrize("mpn", [
     "AD8137ARZ-R7", "AVR128DB48T-E/6LX", "AVR128DB48T-E_6LX",
     "LT3957AEUHE#PBF", "STM32L052K8U3",
-    "1N4448WQ-7-F", "824032815 or 824031815", "DMC2400UV-7",
+    "1N4448WQ-7-F", "824032815 or 824031815",
     "MMSZ5233BS-7-F", "PESD36VS1UL,315", "SMF4L24AT1G",
 ])
 async def test_no_grade_or_other_manufacturer_substitution(mpn):
@@ -63,6 +63,12 @@ async def test_no_grade_or_other_manufacturer_substitution(mpn):
     assert reply["results"] == []
     assert reply["error"] == f"No part found in the local snapshot for MPN '{mpn}'"
     assert "match" not in reply
+
+
+async def test_no_other_maker_substitution_when_the_part_goes_in_and_out_of_stock():
+    # C177025 is DMC2400UV-7 and comes and goes from the catalog; TECH PUBLIC's DMC2400UV isn't it
+    reply = await server.jlc_get_part(mpn="DMC2400UV-7")
+    assert all(part["model"] == "DMC2400UV-7" for part in reply["results"])
 
 
 async def test_plus_radio_alias_excludes_non_plus():
