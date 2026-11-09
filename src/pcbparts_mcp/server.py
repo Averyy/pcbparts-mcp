@@ -49,7 +49,7 @@ from .search.spec_sort import SORTABLE_LABELS, SortSpecError, SpecSort
 from .smart_parser import ParsedQuery, parse_smart_query, merge_spec_filters
 from .smart_parser.mapping import DEFAULT_SPECS
 from .alternatives import SPEC_PARSERS
-from .search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN, ConnectorFilter, FuseFilter, ScopedTextFilter
+from .search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN, BatterySizeFilter, ConnectorFilter, FuseFilter, ScopedTextFilter
 from .parsers import parse_resistance
 from .pinout import parse_easyeda_footprint, parse_easyeda_pins
 from .design_rules import get_design_rules as _get_design_rules, _RULES_DIR, _build_index
@@ -832,7 +832,9 @@ def jlc_search(
             Voltage, Tolerance, Power, DCR, Isat, Frequency; others by the name jlc_search_help
             shows. Range ops only work on attributes it lists as "numeric"; parts with no value
             ("-") don't match them. On ranges ("2.7V~5.5V": supply, output voltage) = means the
-            range includes the value. Operating Temperature (any name for the rated range,
+            range includes the value. Several = filters on one spec match any of the values (OR),
+            except Supply Voltage and Vin, where a part must cover all of them (AND).
+            Operating Temperature (any name for the rated range,
             junction range for diodes) in °C: <= -40 means rated down to -40, >= 85 up to 85,
             = "-40~85" covers both. A query's "-40°C", "105C" or "-40~85℃" does the same.
             LDO dropout at a load: {"name": "Dropout", "op": "<=", "value": "0.3V@500mA"} uses each
@@ -1494,7 +1496,7 @@ def _fit_parsed_filters(
     kept: list[SpecFilter] = []
     adjusted: list[dict[str, str | None]] = []
     for spec_filter in filters:
-        if isinstance(spec_filter, ScopedTextFilter):
+        if isinstance(spec_filter, (ScopedTextFilter, BatterySizeFilter)):
             kept.append(spec_filter)
             continue
         if isinstance(spec_filter, ConnectorFilter):
@@ -2141,7 +2143,9 @@ async def digikey_get_part(product_number: str) -> dict:
 
     Args:
         product_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a
-            partial one can find nothing and still uses a request.
+            partial one can find nothing and still uses a request. An all-digit MPN ("209") that
+            the lookup misses is tried by keyword (one more request) and can return several
+            makers' parts: check manufacturer.
     """
     if not _digikey_client:
         return {"error": "DigiKey API credentials not configured. Set DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET in environment."}

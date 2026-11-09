@@ -113,6 +113,14 @@ class TestDigiKeyNotFound:
         assert fake.product_requests == 1  # the repeat cost no request
         assert quota.status()["used_today"] == 1
 
+    async def test_all_digit_miss_points_to_the_digikey_number(self):
+        # Keystone 209: not found by its MPN, found as 36-209-ND
+        fake = FakeDigiKey(httpx.Response(404, json={"title": "Not Found", "status": 404}),
+                           httpx.Response(200, json={"Products": [], "ExactMatches": []}))
+        first = await digikey(fake).get_part("209")
+        assert first["error"] == "Part not found: 209"
+        assert "-ND" in first["hint"]
+
     async def test_not_found_is_kept_ten_minutes(self):
         fake = FakeDigiKey(httpx.Response(404), httpx.Response(200, json=PRODUCT))
         client = digikey(fake)

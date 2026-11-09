@@ -4,6 +4,22 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.8.24 (2026-11-09)
+
+Changed replies: `jlc_search` results for repeated `=` filters on range specs, battery holders and the words adjustable, variable and fixed; `digikey_get_part` misses on all-digit numbers.
+
+### Breaking
+
+- Repeated `=` filters on a range-listed spec now keep range matching: each value matches what it would alone, and the filters still mean any of the values. LDOs with `Output Voltage` = 3.3V and = 5V went from 4,793 parts to 6,281, because adjustable parts such as C75510 (1.2V~37V) were being left out. `Supply Voltage` and `Vin` still require a part to cover every value. The rule is now in the `spec_filters` description.
+- "battery holder", "cell holder", "coin cell holder" and "button cell holder" are now a part type covering the five subcategories holders are filed under; in Battery accessories only listings that say "holder" match. `battery holder` went from 188 parts to about 660 and `coin cell holder` from none to about 400.
+- In a holder search, AA, AAA, C, D, No. 1/2/5/7, 14500, 10440 and coin or button cell match the size in the part's text, as `Battery Size` in `filters_applied.spec_filters`. `AA` no longer returns AAA-only holders, 14500 finds AA holders, and D returns no parts because none is stocked.
+- "adjustable", "variable" and "fixed" stay search words when the query names no part type or model. They used to add an `Output Type` filter, which turned `adjustable battery holder` into DC-DC converters.
+- `digikey_get_part` retries an all-digit number its lookup misses with DigiKey's keyword search, which costs one more request and keeps exact manufacturer part numbers only, so Keystone 209 is found. Several makers' parts can come back. A number still not found adds `hint`.
+
+### Fixed
+
+- A single letter joined by a hyphen stays attached to its word: `BH-D` searched `BH` and returned 889 unrelated parts. It now matches that prefix only, and finds nothing because no part has it.
+
 ## 0.8.23 (2026-11-08)
 
 ### Breaking

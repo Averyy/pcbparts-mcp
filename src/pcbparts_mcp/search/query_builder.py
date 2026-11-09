@@ -20,8 +20,11 @@ from .spec_filter import (
     RANGE_SPECS,
     TEMPERATURE_RANGE_ATTRIBUTES,
     ConnectorFilter,
+    BatterySizeFilter,
     ScopedTextFilter,
     FuseFilter,
+    PostFilterGroup,
+    PostFilterMetadata,
     SpecFilter,
     SPEC_TO_COLUMN,
     _escape_like,
@@ -644,7 +647,7 @@ def build_spec_filter_clauses(
     *,
     connector_columns: bool = False,
     temperature_columns: bool = True,
-) -> tuple[list[str], list[Any], list[tuple[SpecFilter, set[str], Any, float | None]], list[dict[str, str]]]:
+) -> tuple[list[str], list[Any], list[PostFilterMetadata], list[dict[str, str]]]:
     """Build spec filter clauses for SQL and collect post-filter metadata.
 
     Args:
@@ -657,14 +660,19 @@ def build_spec_filter_clauses(
         - sql_clauses: List of SQL WHERE clause parts
         - params: List of SQL parameters
         - post_filter_metadata: List of (spec_filter, attr_names_set, parser, target_value)
-          for filters that need Python post-filtering
+          or PostFilterGroup alternatives for filters that need Python post-filtering
         - ignored: filters that couldn't be applied, as {"filter", "reason"} (a range op on a
           spec with no numeric parser, or a value that doesn't parse); the search runs without them
     """
     sql_clauses: list[str] = []
     params: list[Any] = []
-    post_filter_metadata: list[tuple[SpecFilter, set[str], Any, float | None]] = []
+    post_filter_metadata: list[PostFilterMetadata] = []
     ignored: list[dict[str, str]] = []
+
+    sizes = [f.fts_query for f in spec_filters if isinstance(f, BatterySizeFilter)]
+    if sizes:
+        sql_clauses.append("AND lcsc IN (SELECT lcsc FROM components_fts WHERE components_fts MATCH ?)")
+        params.append(" OR ".join(f"({size})" for size in sizes))
 
     # Automatic fuse/connector constraints have scoped numeric semantics. Caller-supplied
     # SpecFilters keep their existing string/operator semantics.
@@ -712,7 +720,7 @@ def build_spec_filter_clauses(
 
     # Group multi-value "=" filters (like multiple Interface values) for OR logic
     grouped_filters = _group_multi_value_filters(
-        [f for f in spec_filters if not isinstance(f, (ConnectorFilter, FuseFilter, ScopedTextFilter))])
+        [f for f in spec_filters if not isinstance(f, (ConnectorFilter, FuseFilter, ScopedTextFilter, BatterySizeFilter))])
 
     for item in grouped_filters:
         # Handle grouped filters (spec_name, [values])
@@ -749,6 +757,21 @@ def build_spec_filter_clauses(
 
             if spec_name.lower() == "impedance @ frequency" and any("@" in value for value in values):
                 post_filter_metadata.append((SpecFilter(spec_name, "=", "、".join(values)), set(attr_names), _parse_impedance_ohms, 0.0))
+                continue
+
+            if spec_name.lower() not in ("interface", "impedance @ frequency", "circuit"):
+                alternatives = []
+                for value in values:
+                    clauses, branch_params, metadata, branch_ignored = build_spec_filter_clauses(
+                        [SpecFilter(spec_name, "=", value)],
+                        connector_columns=connector_columns, temperature_columns=temperature_columns,
+                    )
+                    alternatives.append(("1 " + " ".join(clauses), branch_params, metadata))
+                    ignored.extend(branch_ignored)
+                sql_clauses.append("AND (" + " OR ".join(f"({sql})" for sql, _, _ in alternatives) + ")")
+                params.extend(p for _, branch_params, _ in alternatives for p in branch_params)
+                if any(metadata for _, _, metadata in alternatives):
+                    post_filter_metadata.append(PostFilterGroup(alternatives))
                 continue
 
             # Build OR clause for all values: (Interface LIKE '%I2C%' OR Interface LIKE '%SPI%')

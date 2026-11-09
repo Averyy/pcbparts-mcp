@@ -4,9 +4,9 @@ import re
 from dataclasses import dataclass, field, replace
 from typing import Any
 
-from ..search.spec_filter import ConnectorFilter, FuseFilter, ScopedTextFilter, SpecFilter, switch_circuit
+from ..search.spec_filter import BatterySizeFilter, ConnectorFilter, FuseFilter, ScopedTextFilter, SpecFilter, switch_circuit
 from ..search.spec_sort import SpecSort, extract_sort_phrase
-from ..subcategory_aliases import _POWER_MUX_WORDS, SUBCATEGORY_GROUPS
+from ..subcategory_aliases import BATTERY_HOLDER_SUBCATEGORIES, _BATTERY_HOLDER_WORDS, _POWER_MUX_WORDS, SUBCATEGORY_GROUPS
 from .packages import extract_package, extract_package_choices
 from .values import ExtractedValue, extract_values, normalize_value_notation
 from .models import extract_model_number
@@ -42,7 +42,19 @@ class ParsedQuery:
 _SCOPED_TEXT = {
     **dict.fromkeys(("ideal diode", "ideal diodes", *_POWER_MUX_WORDS), ("ideal diode", ("power distribution switches",))),
     **dict.fromkeys(("lora", "lora transceiver", "lora chip"), ("lora", ("rf transceiver ics",))),
+    **dict.fromkeys(_BATTERY_HOLDER_WORDS, ("holder", ("battery accessories",))),
 }
+
+_BATTERY_SIZES = tuple(
+    (size, re.compile(r"(?<![\w-])(?:" + words + r")(?![\w-])", re.IGNORECASE))
+    for size, words in (
+        ("AA", r"AA|14500|No\.?\s*5"),
+        ("AAA", r"AAA|10440|No\.?\s*7"),
+        ("C", r"C|No\.?\s*2"),
+        ("D", r"D|No\.?\s*1"),
+        ("coin", r"coin(?:\s+cell)?|button\s+cell"),
+    )
+)
 
 _TEMP_UNIT = r"(?:\s*(?:°|º|deg(?:rees?)?)\s*C|\s*℃)"
 _TEMP_START = r"(?:(?<![\w.])([+-])|(?<![\w.+-]))(\d{1,3})"
@@ -194,7 +206,7 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         remaining = _ufl_as_ipex(re.sub(r"\s+", " ", _RF_CABLE_STRIP.sub(" ", remaining)).strip())
     else:
         subcategory, remaining, matched_keyword = extract_component_type(
-            remaining, memory_is_spec=memory_is_spec, model=model)
+            remaining, memory_is_spec=memory_is_spec, model=model, subcategory_hint=subcategory_hint)
     if subcategory == _COAX and (subcategory_hint or "").lower() in _RF_SERIES_CONTEXT - {_COAX}:
         # In RF Cables or Antennas, "SMA"/"IPEX" is the connector the description names ("IPEX to SMA"),
         # not a coax connector search; as an RF Series filter it was dropped there and matched every part
@@ -286,6 +298,13 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
 
     # Step 3b: Regulator specifics: buck/boost, and voltages marked input or output
     subcat_now = (result.subcategory or "").lower()
+    if (subcategory_hint or subcat_now).lower() in BATTERY_HOLDER_SUBCATEGORIES:
+        for size, pattern in _BATTERY_SIZES:
+            # "coin cell holder" is itself a part-type alias, already consumed above.
+            if pattern.search(remaining) or pattern.search(matched_keyword or ""):
+                result.spec_filters.append(BatterySizeFilter("Battery Size", "=", size))
+                remaining = pattern.sub(" ", remaining)
+        remaining = re.sub(r"\s+", " ", remaining).strip()
     pd_sink = False
     if subcat_now == "usb pd":
         pd_sink = bool(re.search(r'\b(?:sinks?|triggers?|receivers?)\b', remaining, re.IGNORECASE))
@@ -657,8 +676,10 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
 
     # Remove orphaned hyphens and single characters (e.g., "- -F" -> "")
     if not strict:
-        remaining = re.sub(r'\b[A-Za-z]\b', '', remaining)  # Single letters
-    remaining = re.sub(r'\s*-\s*', ' ', remaining)  # Orphaned hyphens
+        remaining = re.sub(r'(?<![A-Za-z0-9]-)\b[A-Za-z]\b', '', remaining)
+    # Orphaned hyphens. "BH-D" keeps its hyphen: as one FTS term it's the phrase "bh d*", while "BH D"
+    # also matched BHC LEDs with any word starting with d.
+    remaining = re.sub(r'\s*-\s*(?![A-Za-z]\b)|(?<![A-Za-z0-9])-', ' ', remaining)
     remaining = re.sub(r'(?<!\S)/+(?!\S)', ' ', remaining)  # Slashes left from "20V/4.2A/52mohm"
     remaining = re.sub(r'\s+', ' ', remaining).strip()
 
@@ -713,6 +734,18 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
     if not strict and result.connector_spec:
         result.remaining_text = re.sub(r"\b(?:jst|connectors?)\b", " ", result.remaining_text, flags=re.IGNORECASE)
         result.remaining_text = re.sub(r"\s+", " ", result.remaining_text).strip()
+
+    # "adjustable holder" describes the text to search, not a regulator's output type.
+    if result.remaining_text and not (result.subcategory or result.subcategories or subcategory_hint or model):
+        output_words = list(dict.fromkeys(
+            f.source for f in semantic_filters
+            if f.spec_name == "Output Type" and f.source in ("adjustable", "variable", "fixed")))
+        if output_words:
+            result.spec_filters = [f for f in result.spec_filters if f.name != "Output Type"]
+            result.remaining_text = f"{' '.join(output_words)} {result.remaining_text}"
+            detected["semantic"] = [s for s in detected["semantic"] if s not in output_words]
+            if not detected["semantic"]:
+                del detected["semantic"]
 
     # Attach ordering after parsing so a maker alone changes no text or filters.
     manufacturer = extract_connector_manufacturer(query)

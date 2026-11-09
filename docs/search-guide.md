@@ -69,6 +69,10 @@ Short names:
 
 **Ranges.** Supply and output voltages are often listed as ranges ("2.7V~5.5V"): `=` matches a range that includes the value, `>=` one that reaches it, `<=` one that goes down to it. Operating temperature works the same way: `<= -40` means rated down to -40°C, `>= 85` up to 85°C, and `= "-40~85"` covers both ends. In a query, `-40°C` means rated down to it and `105C` up to it. A dual-rail output (`±12V`) matches only a `±12V` filter.
 
+**Several `=` filters on one spec.** They match any of the values (OR), and each value matches what it would alone, ranges included. Supply specs (`Supply Voltage`, `Vin`) are the exception: a part must cover all the values (AND).
+
+**Battery holders.** "battery holder" searches every subcategory holders are filed under. Cell sizes are read from the query: AA (No. 5, 14500), AAA (No. 7, 10440), C (No. 2), D (No. 1) and coin or button cell. They match the part's text and show as `Battery Size` in `filters_applied`; other sizes such as 18650 are plain search words.
+
 **Dropout at a load.** `{"name": "Dropout", "op": "<=", "value": "0.3V@500mA"}` compares each LDO's dropout at or above 500mA (scaling a lower test current's figure up) and shows the figure used in `dropout_at_load`.
 
 ## Part types

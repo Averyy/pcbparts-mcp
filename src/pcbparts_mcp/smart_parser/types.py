@@ -2,7 +2,7 @@
 
 import re
 
-from ..subcategory_aliases import ISOLATED_SIBLINGS, SUBCATEGORY_ALIASES, UNAVAILABLE_SUBCATEGORY_ALIASES
+from ..subcategory_aliases import BATTERY_HOLDER_SUBCATEGORIES, ISOLATED_SIBLINGS, SUBCATEGORY_ALIASES, UNAVAILABLE_SUBCATEGORY_ALIASES
 
 
 # Pre-sorted by length (longest first) for correct matching
@@ -49,7 +49,7 @@ SCHMITT_KEYWORDS = {
 
 
 def extract_component_type(
-    query: str, *, memory_is_spec: bool = False, model: str | None = None,
+    query: str, *, memory_is_spec: bool = False, model: str | None = None, subcategory_hint: str | None = None,
 ) -> tuple[str | None, str, str | None]:
     """Extract component type from query.
 
@@ -95,6 +95,10 @@ def extract_component_type(
         return "resettable fuses", re.sub(r'\s+', ' ', remaining).strip(), "resettable fuse"
 
     for keyword in _SUBCATEGORY_KEYWORDS_BY_LENGTH:
+        # In an explicitly searched holder family, "button cell" is a size, not a switch.
+        if (keyword == "button" and (subcategory_hint or "").lower() in BATTERY_HOLDER_SUBCATEGORIES
+                and re.search(r"\bbutton\s+cell\b", query_lower)):
+            continue
         # A controller without PD is not enough to infer a Type-C connector.
         if keyword in ("usb c", "usbc", "type c", "typec") and re.search(r'\b(?:pd|controller)\b', query_lower):
             continue

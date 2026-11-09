@@ -197,6 +197,19 @@ class SpecFilter:
         return {"name": self.name, "op": self.operator, "value": self.value}
 
 
+PostFilter = tuple[SpecFilter, set[str], Any, float | None]
+
+
+@dataclass
+class PostFilterGroup:
+    """OR alternatives, each retaining its single-filter SQL and Python checks."""
+
+    alternatives: list[tuple[str, list[Any], list[PostFilter]]]
+
+
+PostFilterMetadata = PostFilter | PostFilterGroup
+
+
 class ConnectorFilter(SpecFilter):
     """A parsed connector count/pitch, compared numerically without changing explicit filters."""
 
@@ -238,6 +251,20 @@ class ScopedTextFilter(SpecFilter):
 
     def to_dict(self) -> dict[str, Any]:
         return {"name": "text", "op": "=", "value": self.value, "subcategory": self.subcategory}
+
+
+class BatterySizeFilter(SpecFilter):
+    """A holder size matched in catalog text, including listings with blank size attributes."""
+
+    @property
+    def fts_query(self) -> str:
+        return {
+            "AA": '"aa" OR "no 5"',
+            "AAA": '"aaa" OR "no 7"',
+            "C": '"c" OR "no 2"',
+            "D": '"d" OR "no 1"',
+            "coin": '"coin" OR "button" OR "cr"*',
+        }[self.value]
 
 
 CONNECTOR_FILTER_COLUMNS = {
