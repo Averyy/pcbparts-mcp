@@ -1549,6 +1549,11 @@
     "category_id": 62,
     "category_name": "Building materials / Building hardware"
   },
+  "3506": {
+    "name": "air purifier",
+    "category_id": 53,
+    "category_name": "Cleaning/daily necessities"
+  },
   "2101": {
     "name": "555 Timers / Counters",
     "category_id": 20,
@@ -3569,6 +3574,31 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
+  "3528": {
+    "name": "Air Fryer",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3515": {
+    "name": "Blender",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3524": {
+    "name": "Garment Steamer",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3527": {
+    "name": "Health Pot",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3530": {
+    "name": "High-Speed Blender",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1107": {
     "name": "Panel Switch/Panel Socket",
     "category_id": 49,
@@ -3584,6 +3614,11 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
+  "3503": {
+    "name": "Pressure Cooker",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "1207": {
     "name": "Reel",
     "category_id": 49,
@@ -3594,6 +3629,11 @@
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
+  "3517": {
+    "name": "Rice Cooker",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
   "198": {
     "name": "RJ sheath",
     "category_id": 49,
@@ -3601,6 +3641,11 @@
   },
   "1317": {
     "name": "Socket panel box",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
+  },
+  "3702": {
+    "name": "soy milk maker",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
