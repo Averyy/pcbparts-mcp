@@ -118,15 +118,15 @@ components:
   mpn: 791-0402B473K250CT
 - ref: CONN1
   value: Battery
-  footprint: TerminalBlock_Phoenix_PT-1,5-2-3.5-H
+  footprint: TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02
   mpn: 571-1776275-2
 - ref: CONN6
   value: Thermistor
-  footprint: JST_SH_SM02B-SRSS-TB
+  footprint: JST_SH_SM02B-SRSS-TB_1x02
   mpn: 455-SM02B-SRSS-TBDKR-ND
 - ref: CONN7
   value: External DC
-  footprint: TerminalBlock_Phoenix_PT-1,5-2-3.5-H
+  footprint: TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02
   mpn: 571-1776275-2
 - ref: L1
   value: 470nH
@@ -180,7 +180,6 @@ components:
 - ref: R13
   value: 0ohm
   footprint: R_Shunt
-  mpn: 504-MFSA0603R0100FSM
   description: Current shunt resistor
 - ref: R14
   value: 267kohm
@@ -313,7 +312,7 @@ components:
   pin_count: 28
 - ref: U5
   value: NCV68261
-  footprint: DFN-6-1EP
+  footprint: DFN-6-1EP_2x2
   mpn: 863-NCV68261MTWAITBG
   description: Ideal Diode and High Side Switch NMOS Controller
   pin_count: 7
@@ -321,18 +320,17 @@ components:
 - ref: U6
   value: BQ25622E
   footprint: BQ25622E
-  mpn: 595-BQ25622RYKR
   description: BQ25622E I2C Controlled 1-Cell, 3A, Maximum 18V Input, Buck Battery Charger
   pin_count: 18
 - ref: U7
   value: MAX17260
-  footprint: TDFN-14-1EP
+  footprint: TDFN-14-1EP_3x3
   mpn: 700-MAX17260SETD+T
   pin_count: 15
   nc_pins: {NC@2: '2', NC@3: '3', NC@4: '4', NC@5: '5'}
 - ref: Y1
   value: 32.768 kHz
-  footprint: Crystal_SMD_G8-2Pin
+  footprint: Crystal_SMD_G8-2Pin_3.2x1.5
   mpn: 520-.327-7-34R-T
 nets:
 - name: +3.3V

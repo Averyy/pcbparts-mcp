@@ -182,10 +182,13 @@ components:
 - ref: MIPI-DSI1
   value: 15-pin FFC
   footprint: FPC-15P-1mm-Right_Angle(AFA07-S15FCC-00)
+  mpn: AFA07-S15FCC-00
   pin_count: 16
 - ref: Q1
-  value: 25MHz
+  value: 25MHz 18pF
   footprint: TSX-3.2x2.5mm_GND(3)
+  tolerance: 30ppm
+  mpn: ABM8-25.000MHZ-D2Y-T
   pin_count: 3
 - ref: Q2
   value: BC817-40
@@ -252,22 +255,12 @@ components:
   nc_pins: {NC: '3'}
 - ref: U2
   value: LT8912B
-  footprint: QFN64
+  footprint: QFN64_7.5x7.5
   pin_count: 65
-  nc_pins: {MIPIRX2_DP: '9', MIPIRX2_DN: '10', MIPIRX3_DP: '11', MIPIRX3_DN: '12', VBUS: '15', USB_ID: '16', USB_DP: '19', USB_DM: '20', LVDSTX3_DP: '37', LVDSTX3_DN: '38', LVDSTX_CKP: '39', LVDSTX_CKN: '40', LVDSTX2_DP: '43', LVDSTX2_DN: '44', LVDSTX1_DP: '45', LVDSTX1_DN: '46', LVDSTX0_DP: '47', LVDSTX0_DN: '48', REFCLK: '55', SD0_CEC: '58', WS_I/SPDIF_IN: '59', SCLK_I: '60', INT: '63'}
-- ref: U3
-  value: RCLAMP0524P
-  footprint: SLP2510P8_TEST
-  pin_count: 10
-- ref: U4
-  value: RCLAMP0524P
-  footprint: SLP2510P8_TEST
-  pin_count: 10
-- ref: U5
-  value: RCLAMP0524P
-  footprint: SLP2510P8_TEST
-  pin_count: 10
-  nc_pins: {IN1: '1', OUT1: '10'}
+  nc_pins: {MIPIRX2_DP: '9', MIPIRX2_DN: '10', MIPIRX3_DP: '11', MIPIRX3_DN: '12', VBUS: '15', USB_ID: '16', USB_DP: '19',
+    USB_DM: '20', LVDSTX3_DP: '37', LVDSTX3_DN: '38', LVDSTX_CKP: '39', LVDSTX_CKN: '40', LVDSTX2_DP: '43', LVDSTX2_DN: '44',
+    LVDSTX1_DP: '45', LVDSTX1_DN: '46', LVDSTX0_DP: '47', LVDSTX0_DN: '48', REFCLK: '55', SD0_CEC: '58', WS_I/SPDIF_IN: '59',
+    SCLK_I: '60', INT: '63'}
 - ref: VR1
   value: LD1117AG-AD-AA3-A-R
   footprint: SOT223
@@ -309,31 +302,31 @@ nets:
 - name: /GPIO8\I2C_SCL
   pins: [FET1.D, FET4.S, MIPI-DSI1.P11, R8.2]
 - name: /HPD_DET
-  pins: [HDMI1.19, R13.2, R14.1, U5.IN4, U5.OUT4]
+  pins: [HDMI1.19, R13.2, R14.1]
 - name: /HSCL
-  pins: [FET4.D, HDMI1.15, R9.2, U5.IN2, U5.OUT2]
+  pins: [FET4.D, HDMI1.15, R9.2]
 - name: /HSDA
-  pins: [FET3.D, HDMI1.16, R7.2, U5.IN3, U5.OUT3]
+  pins: [FET3.D, HDMI1.16, R7.2]
 - name: /LT8912_SCL
   pins: [FET1.S, R4.2, U2.S_SCL]
 - name: /LT8912_SDA
   pins: [FET2.S, R5.2, U2.S_SDA]
 - name: /TX0_DN
-  pins: [HDMI1.9, U2.HDMITX0_DN, U4.IN2, U4.OUT2]
+  pins: [HDMI1.9, U2.HDMITX0_DN]
 - name: /TX0_DP
-  pins: [HDMI1.7, U2.HDMITX0_DP, U4.IN1, U4.OUT1]
+  pins: [HDMI1.7, U2.HDMITX0_DP]
 - name: /TX1_DN
-  pins: [HDMI1.6, U2.HDMITX1_DN, U3.IN4, U3.OUT4]
+  pins: [HDMI1.6, U2.HDMITX1_DN]
 - name: /TX1_DP
-  pins: [HDMI1.4, U2.HDMITX1_DP, U3.IN3, U3.OUT3]
+  pins: [HDMI1.4, U2.HDMITX1_DP]
 - name: /TX2_DN
-  pins: [HDMI1.3, U2.HDMITX2_DN, U3.IN2, U3.OUT2]
+  pins: [HDMI1.3, U2.HDMITX2_DN]
 - name: /TX2_DP
-  pins: [HDMI1.1, U2.HDMITX2_DP, U3.IN1, U3.OUT1]
+  pins: [HDMI1.1, U2.HDMITX2_DP]
 - name: /TX_CKN
-  pins: [HDMI1.12, U2.HDMITX_CKN, U4.IN4, U4.OUT4]
+  pins: [HDMI1.12, U2.HDMITX_CKN]
 - name: /TX_CKP
-  pins: [HDMI1.10, U2.HDMITX_CKP, U4.IN3, U4.OUT3]
+  pins: [HDMI1.10, U2.HDMITX_CKP]
 - name: /TX_HPD
   pins: [Q2.E, R15.1, U2.HPD_CBUS]
 - name: GND
@@ -386,12 +379,6 @@ nets:
   - U2.VSSA_LVDSTX
   - U2.VSSA_MIPIRX
   - U2.VSSA_SYSCLK
-  - U3.GND@3
-  - U3.GND@8
-  - U4.GND@3
-  - U4.GND@8
-  - U5.GND@3
-  - U5.GND@8
 - name: LT8912_VCCA
   pins:
   - C13.2
@@ -644,15 +631,6 @@ positions:
 - ref: U2
   x: 150.0
   y: 88.03
-- ref: U3
-  x: 146.75
-  y: 74.94
-- ref: U4
-  x: 150.0
-  y: 75.0
-- ref: U5
-  x: 153.25
-  y: 75.0
 - ref: VR1
   x: 158.25
   y: 98.75

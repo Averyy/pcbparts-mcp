@@ -187,27 +187,27 @@ components:
   value: '225'
   footprint: '1210'
 - ref: J1
-  value: 2x8 header
-  footprint: IDC-Header
+  value: 2x8 2.54mm header
+  footprint: IDC-Header_2x08
   pin_count: 16
 - ref: J6
-  value: 1x8 header
-  footprint: PhoenixContact_MCV_1,5_8-G-5.08
+  value: 1x8 5.08mm screw terminal
+  footprint: PhoenixContact_MCV_1,5_8-G-5.08_1x08
   pin_count: 8
 - ref: L1
-  value: 10000mH
+  value: '10'
   footprint: L_TOROID_D25_W10_P8_V_1
 - ref: L2
-  value: 10000mH
+  value: '10'
   footprint: L_TOROID_D25_W10_P8_V_1
 - ref: L3
-  value: 10000mH
+  value: '10'
   footprint: L_TOROID_D25_W10_P8_V_1
 - ref: L4
-  value: 10000mH
+  value: '10'
   footprint: L_TOROID_D25_W10_P8_V_1
 - ref: L5
-  value: 10000mH
+  value: '10'
   footprint: '1210'
 - ref: R1
   value: 10kohm

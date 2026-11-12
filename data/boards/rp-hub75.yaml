@@ -110,8 +110,8 @@ components:
   footprint: 0805
   lcsc: C84256
 - ref: J1
-  value: 2x8 header
-  footprint: 2X8
+  value: 2x8 2.54mm header
+  footprint: 2X8_P2.54mm
   lcsc: C30734
   pin_count: 16
 - ref: J2
@@ -122,8 +122,8 @@ components:
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
-  value: 1x2 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08
+  value: 1x2 5.08mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02
   lcsc: C8465
 - ref: J5
   value: USB-A
@@ -132,8 +132,8 @@ components:
   description: USB Type A connector
   pin_count: 5
 - ref: J6
-  value: 1x10 header
-  footprint: JST_XH_S10B-XH-A-1
+  value: JST XH 10-pin
+  footprint: JST_XH_S10B-XH-A-1_1x10
   lcsc: C491718
   pin_count: 10
 - ref: L1
@@ -162,7 +162,6 @@ components:
   value: 1kohm
   footprint: '0402'
   lcsc: C11702
-  pullup: D1.A
 - ref: R6
   value: 1kohm
   footprint: '0402'
@@ -178,10 +177,11 @@ components:
   pin_count: 3
 - ref: U2
   value: RP2350_60QFN
-  footprint: RP2350-QFN-60-1EP
+  footprint: RP2350-QFN-60-1EP_7x7
   lcsc: C42411118
   pin_count: 61
-  nc_pins: {GPIO14: '18', GPIO15: '19', GPIO16: '27', GPIO17: '28', GPIO25: '37', GPIO26_ADC0: '40', GPIO27_ADC1: '41', GPIO28_ADC2: '42', GPIO29_ADC3: '43'}
+  nc_pins: {GPIO14: '18', GPIO15: '19', GPIO16: '27', GPIO17: '28', GPIO25: '37', GPIO26_ADC0: '40', GPIO27_ADC1: '41', GPIO28_ADC2: '42',
+    GPIO29_ADC3: '43'}
 - ref: U3
   value: ZD25WQ80CTIGT
   footprint: SOIC-8

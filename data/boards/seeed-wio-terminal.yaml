@@ -21,6 +21,7 @@ components:
 - ref: BUZ1
   value: buzzer
   footprint: BZ3-SMD-5.0X5.0X2.5MM
+  mpn: LET5020CS-03L-4.0-12-R
 - ref: C1
   value: 22uF
   footprint: '0603'
@@ -193,6 +194,7 @@ components:
 - ref: D15
   value: SP3012-06
   footprint: UDFN14-0.5-3.5X1.35X0.5MM
+  mpn: SP3012-06UTG
   pin_count: 14
 - ref: D2
   value: CESDP0402UC5VB
@@ -221,6 +223,7 @@ components:
 - ref: F1
   value: 3A PTC
   footprint: F1206
+  mpn: 1206L300SLTHYR
 - ref: FB2
   value: 120ohm
   footprint: F0402
@@ -230,8 +233,9 @@ components:
   footprint: F0402
   current: 2A
 - ref: J1
-  value: 1x14 header
+  value: ST-TF-003J
   footprint: MICRO-SD9+4P-SMD-16.1X14.5X1.85MM
+  prod_id: '320090000'
   pin_count: 13
 - ref: J2
   value: DL
@@ -278,20 +282,23 @@ components:
   value: 2.2uH
   footprint: 0805
 - ref: L3
-  value: 0.0005nH
+  value: 0.5pF
   footprint: '0402'
 - ref: L5
   value: 1.2uH
   footprint: '2520'
+  mpn: SPH252012H1R2MT
 - ref: L6
-  value: CBC3225T100MR
+  value: 10uH
   footprint: '2520'
+  mpn: CBC3225T100MR
 - ref: LED1
   value: Green 90D
   footprint: LED-SIDE-VIEW-0603-RIGHT
 - ref: MIC1
   value: MEMS microphone
   footprint: MIC2-SMD-4X4MM
+  mpn: B4013AM422-042
   pin_count: 5
 - ref: Q1
   value: 2N7002,215
@@ -440,7 +447,6 @@ components:
 - ref: R31
   value: 1kohm
   footprint: '0402'
-  pullup: LED1.+
 - ref: R35
   value: 33ohm
   footprint: '0402'
@@ -500,7 +506,6 @@ components:
 - ref: R51
   value: 1kohm
   footprint: '0402'
-  pullup: D7.+
 - ref: R52
   value: 100kohm
   footprint: '0402'
@@ -664,7 +669,8 @@ components:
   value: RTL8720D
   footprint: MODULE-32P-0.8-13X12MM-MOTHER
   pin_count: 36
-  nc_pins: {'4': '4', '5': '5', '6': '6', '11': '11', '12': '12', '13': '13', '14': '14', '17': '17', '18': '18', '19': '19', '20': '20', '27': '27', '28': '28', '29': '29'}
+  nc_pins: {'4': '4', '5': '5', '6': '6', '11': '11', '12': '12', '13': '13', '14': '14', '17': '17', '18': '18', '19': '19',
+    '20': '20', '27': '27', '28': '28', '29': '29'}
 - ref: U11
   value: ATECC608
   footprint: UDFN8-0.5-2X3X0.5MM
@@ -688,6 +694,7 @@ components:
 - ref: U2
   value: LMV358IDGKR
   footprint: MSOP8-0.65-3X3MM
+  prod_id: '111'
   pin_count: 8
 - ref: U3
   value: RPI
@@ -817,8 +824,6 @@ nets:
   - C15.2
   - C16.2
   - C2.1
-  - C27.1
-  - C28.1
   - C29.1
   - C3.1
   - C30.1
@@ -901,7 +906,6 @@ nets:
   - R23.2
   - R25.1
   - R28.1
-  - R50.2
   - R52.1
   - R54.2
   - R7.1
@@ -910,7 +914,6 @@ nets:
   - R78.1
   - R80.2
   - R91.2
-  - R93.1
   - R95.1
   - R97.1
   - R98.1
@@ -981,8 +984,6 @@ nets:
   pins: [C50.2, U1.G$2.PA01/I1/SERCOM1.1/TC2.1, X2.1]
 - name: G_2_PA03_I3_VREFA_AIN0_1
   pins: [R12.2, U1.G$2.PA03/I3/VREFA/AIN0.1]
-- name: G_3_PC00_I1_ADC1_10
-  pins: [R50.1, U1.G$3.PC00/I1/ADC1.10]
 - name: G_3_PC22_I6_SERCOM1_0_3_1_TCC0_6
   pins: [R69.1, U1.G$3.PC22/I6/SERCOM1.0+3.1/TCC0.6]
 - name: G_3_PC23_I7_SERCOM1_1_3_0_TCC0_7
@@ -992,9 +993,9 @@ nets:
 - name: I2C0_SDA
   pins: [R14.2, U1.G$2.PA13/I13/I2C/SERCOM2.1+4.0/TC2.1+TCC0.7+1.3, U11.SDA, U3.ID_SD, U5.SDA/SDI/SDO]
 - name: I2C1_SCL
-  pins: [J4.1, R33.1, U1.G$2.PA16/I2C/I0/SERCOM1.0+3.1/TC2.0+TCC1.0+0.4/PTC, U3.GPIO3/SCL1]
+  pins: [J4.1, U1.G$2.PA16/I2C/I0/SERCOM1.0+3.1/TC2.0+TCC1.0+0.4/PTC, U3.GPIO3/SCL1]
 - name: I2C1_SDA
-  pins: [J4.2, R34.1, U1.G$2.PA17/I2C/I1/SERCOM1.1+3.0/TC2.1+TCC1.1+0.5/PTC, U3.GPIO2/SDA1]
+  pins: [J4.2, U1.G$2.PA17/I2C/I1/SERCOM1.1+3.0/TC2.1+TCC1.1+0.5/PTC, U3.GPIO2/SDA1]
 - name: I2S_BLCK
   pins: [U1.G$2.PB16/I0/SERCOM5.0/I2SCK0/TC6.0+TCC3.0+0.4, U3.GPIO18]
 - name: I2S_LRCLK
@@ -1004,7 +1005,7 @@ nets:
 - name: I2S_SDOUT
   pins: [U1.G$2.PA22/I2C/16/SERCOM3.0+5.1/I2SDI/TC4.0+TCC1.6+0.2/PTC, U3.GPIO21]
 - name: IRQ0
-  pins: [R103.1, U1.G$3.PC20/I4/TCC0.4/SDHC1.SDCD, U10.2]
+  pins: [U1.G$3.PC20/I4/TCC0.4/SDHC1.SDCD, U10.2]
 - name: IR_CTL
   pins: [R47.2, U1.G$2.PB31/I15/SERCOM5.0/TC0.1+TCC4.1+0.7]
 - name: LCDVCC_3V3
@@ -1043,33 +1044,29 @@ nets:
 - name: MCU_FLASH_QSPI_CLK
   pins: [U1.G$2.PB10/I10/SERCOM4.2/I2SDI/TC5.0+TCC0.4+1.0, U14.CLK]
 - name: MCU_FLASH_QSPI_CS
-  pins: [R32.1, U1.G$2.PB11/I11/SERCOM4.3/I2SFS1/TC5.1+TCC0.5+1.1, U14./CS]
+  pins: [U1.G$2.PB11/I11/SERCOM4.3/I2SFS1/TC5.1+TCC0.5+1.1, U14./CS]
 - name: MCU_FLASH_QSPI_IO0
   pins: [U1.G$2.PA08/I2C/AIN0.8+1.2/SERCOM0.0+2.1/I2SMCK1/TC0.0+TCC0.0+1.4/PTC, U14.DIO]
 - name: MCU_FLASH_QSPI_IO1
   pins: [U1.G$2.PA09/I2C/I9/AIN0.9+1.3/SERCOM0.1+2.0/I2SFS0/TC0.1+TCC0.1+1.5/PTC, U14.DO]
 - name: MCU_FLASH_QSPI_IO2
-  pins: [R58.1, U1.G$2.PA10/I10/AIN0.10/SERCOM0+2.2/I2SCK1/TC1.0+TCC0.2+1.6/PTC, U14./WP]
+  pins: [U1.G$2.PA10/I10/AIN0.10/SERCOM0+2.2/I2SCK1/TC1.0+TCC0.2+1.6/PTC, U14./WP]
 - name: MCU_FLASH_QSPI_IO3
-  pins: [R59.1, U1.G$2.PA11/I11/AIN0.11/SERCOM0+2.3/I2SDO/TC1.1+TCC0.3+1.7, U14./HOLD]
+  pins: [U1.G$2.PA11/I11/AIN0.11/SERCOM0+2.3/I2SDO/TC1.1+TCC0.3+1.7, U14./HOLD]
 - name: MCU_RESET
   pins: [D6.2, J3.4, J7.4, R30.2, SW3.P$1, U1.G$1.!RESET]
 - name: MIC_OUTPUT
   pins: [C55.2, U1.G$3.PC30/I14/AIN1.12]
 - name: N$11
-  pins: [ANT2.2, C28.2, L3.1]
+  pins: [ANT2.2, L3.1]
 - name: N$14
   pins: [Q7.G, Q8.D, R91.1, SW3.P$2]
-- name: N$16
-  pins: [R65.2, U10.23]
-- name: N$19
-  pins: [R10.2, U10.22]
 - name: N$20
   pins: [Q13.D, R83.2]
 - name: N$21
   pins: [Q13.G, R47.1, R80.1]
 - name: N$23
-  pins: [Q14.G, Q16.D, Q9.G, R93.2, R94.1]
+  pins: [Q14.G, Q16.D, Q9.G, R94.1]
 - name: N$24
   pins: [R66.1, U10.7]
 - name: N$25
@@ -1117,7 +1114,7 @@ nets:
 - name: N$63
   pins: [Q3.G, R52.2, R53.2]
 - name: N$64
-  pins: [D15.14, J1.DATA1, R60.1]
+  pins: [D15.14, J1.DATA1]
 - name: N$66
   pins: [Q12.D, Q15.D]
 - name: N$67
@@ -1127,11 +1124,11 @@ nets:
 - name: N$7
   pins: [BUZ1.-, D5.+, R6.1]
 - name: N$72
-  pins: [D15.8, J1.DATA2, R64.1]
+  pins: [D15.8, J1.DATA2]
 - name: N$73
   pins: [R71.1, R72.2]
 - name: N$74
-  pins: [C27.2, L3.2, U10.31]
+  pins: [L3.2, U10.31]
 - name: N$76
   pins: [D15.13, J1.DO, R43.1]
 - name: N$77
@@ -1141,7 +1138,7 @@ nets:
 - name: N$8
   pins: [Q4.G, R5.2, R7.2]
 - name: PWR_EN
-  pins: [Q7.D, R73.1, R78.2, R90.2, U12.EN, U13.!SHUTDOWN]
+  pins: [Q7.D, R78.2, U12.EN, U13.!SHUTDOWN]
 - name: RPI_3V3
   pins: [Q10.D, Q11.A.E, Q15.S, U3.3V3@1, U3.3V3@2]
 - name: RPI_5V
@@ -1149,13 +1146,13 @@ nets:
 - name: RTL8720D_CHIP_PU
   pins: [C9.1, J2.5, J3.10, R11.1, U1.G$2.PA18/I2/SERCOM1+3.2/TC3.0+TCC1.2+0.6/PTC, U10.24]
 - name: RTL8720D_HSPI_CLK
-  pins: [R10.1, R66.2, U1.G$2.PB25/SERCOM0.1+2.0/QDI.2]
+  pins: [R66.2, U1.G$2.PB25/SERCOM0.1+2.0/QDI.2]
 - name: RTL8720D_HSPI_CS
   pins: [R82.2, U1.G$3.PC25/I9/SERCOM0+2.3/TRACEDATA.2]
 - name: RTL8720D_HSPI_MISO
   pins: [R81.2, U1.G$3.PC24/I8/SERCOM0+2.2/TRACEDATA.3]
 - name: RTL8720D_HSPI_MOSI
-  pins: [R65.1, R67.2, U1.G$2.PB24/I8/SERCOM0.0+2.1/QDI.1]
+  pins: [R67.2, U1.G$2.PB24/I8/SERCOM0.0+2.1/QDI.1]
 - name: RTL8720D_RXD
   pins: [J2.4, J3.9, R69.2, U10.26]
 - name: RTL8720D_TXD
@@ -1189,9 +1186,9 @@ nets:
 - name: SW
   pins: [L5.1, U12.SW]
 - name: SWDCLK
-  pins: [J3.1, J7.1, R33.2, R38.2, U1.G$2.PA30/I14/SERCOM1.2/SWCLK]
+  pins: [J3.1, J7.1, R38.2, U1.G$2.PA30/I14/SERCOM1.2/SWCLK]
 - name: SWDIO
-  pins: [J3.2, J7.2, R34.2, R54.1, U1.G$2.PA31/I15/SERCOM1.3/SWDIO]
+  pins: [J3.2, J7.2, R54.1, U1.G$2.PA31/I15/SERCOM1.3/SWDIO]
 - name: SWITCH_B
   pins: [R86.1, SW1.4, U1.G$3.PD12/I7/TCC0.5]
 - name: SWITCH_U
@@ -1205,7 +1202,7 @@ nets:
 - name: SWO
   pins: [J3.3, J7.3, U1.G$2.PB30/I14/SERCOM5.1/TC0.0+TCC4.0+0.6/SWO]
 - name: SYNC
-  pins: [R102.1, U1.G$2.PA19/I3/SERCOM1+3.3/TC3.1+TCC1.3+0.7/PT, U10.3]
+  pins: [U1.G$2.PA19/I3/SERCOM1+3.3/TC3.1+TCC1.3+0.7/PT, U10.3]
 - name: TXD
   pins: [U1.G$2.PB26/I12/SERCOM2.0+4.1/TCC1.3, U3.TXD0/GPIO14]
 - name: USB_5V
@@ -1222,8 +1219,6 @@ nets:
   - Q8.S
   - Q9.S
   - R29.2
-  - R73.2
-  - R90.1
   - R94.2
   - U12.VIN
   - U13.VIN
@@ -1243,8 +1238,6 @@ nets:
   - C6.2
   - C7.1
   - J2.1
-  - R102.2
-  - R103.2
   - R11.2
   - U10.16
   - U13.VOUT
@@ -1272,20 +1265,15 @@ nets:
   - J1.VDD
   - J7.6
   - R3.2
-  - R32.2
   - R36.2
   - R37.2
   - R38.1
   - R4.2
   - R49.2
   - R51.1
-  - R58.2
-  - R59.2
-  - R60.2
   - R61.2
   - R62.2
   - R63.2
-  - R64.2
   - R84.2
   - R85.2
   - R86.2

@@ -1,8 +1,8 @@
 name: iCEBreaker
 slug: icebreaker
 source: icebreaker-fpga/icebreaker
-format: kicad7
-description: "iCE40UP5K FPGA (open toolchain), FT2232H programming"
+format: kicad8
+description: iCE40UP5K FPGA (open toolchain), FT2232H programming
 tags: [fpga, usb]
 key_ics: [iCE40UP5K, FT2232H]
 outline:
@@ -209,15 +209,15 @@ components:
   pin_count: 7
 - ref: J21
   value: 2x6 header
-  footprint: Socket_Strip_Angled
+  footprint: Socket_Strip_Angled_2x06
   pin_count: 12
 - ref: J22
   value: 2x6 header
-  footprint: Socket_Strip_Angled
+  footprint: Socket_Strip_Angled_2x06
   pin_count: 12
 - ref: J23
   value: 2x6 header
-  footprint: Socket_Strip_Straight
+  footprint: Socket_Strip_Straight_2x06
   pin_count: 12
 - ref: J24
   value: 2x6 header
@@ -234,8 +234,8 @@ components:
   value: 2x1 header
   footprint: 2X1
 - ref: J28
-  value: 2x1 header
-  footprint: 2X1
+  value: 2x1 2.54mm header
+  footprint: 2X1_P2.54mm
 - ref: J3
   value: solder jumper
   footprint: J_0603
@@ -258,10 +258,10 @@ components:
   value: solder jumper
   footprint: J_0603
 - ref: L1
-  value: ferrite bead
+  value: 600ohm
   footprint: '0402'
 - ref: L2
-  value: ferrite bead
+  value: 600ohm
   footprint: '0402'
 - ref: P1
   value: pkl_USB_OTG
@@ -269,17 +269,17 @@ components:
   pin_count: 6
   nc_pins: {'4': '4'}
 - ref: P2
-  value: 1x2 header
-  footprint: PAD_SMD
+  value: UP
+  footprint: PAD_SMD_1x2.65
 - ref: P3
-  value: 1x2 header
-  footprint: PAD_SMD
+  value: UP
+  footprint: PAD_SMD_1x2.65
 - ref: P4
-  value: 1x2 header
-  footprint: PAD_SMD
+  value: UP
+  footprint: PAD_SMD_1x2.65
 - ref: P5
-  value: 1x2 header
-  footprint: PAD_SMD
+  value: UP
+  footprint: PAD_SMD_1x2.65
 - ref: R1
   value: 1Mohm
   footprint: '0402'
@@ -288,7 +288,7 @@ components:
   footprint: '0402'
 - ref: R11
   value: 10kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pullup: /FLASH_nHLD|nRST|IO3
   pin_count: 8
 - ref: R12
@@ -307,13 +307,13 @@ components:
   footprint: '0402'
 - ref: R16
   value: 10kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pulldown: /P2_9x
   pin_count: 8
   nc_pins: {'7': '7', '8': '8'}
 - ref: R17
   value: 330ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: R18
   value: 330ohm
@@ -324,29 +324,29 @@ components:
   pullup: /iCE_CRESET
 - ref: R2
   value: 10kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pullup: U1.4
   pin_count: 8
   nc_pins: {'7': '7', '8': '8'}
 - ref: R20
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: R21
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: R22
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: R23
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: R24
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: R25
   value: 10kohm
@@ -361,7 +361,7 @@ components:
   pullup: U2.3
 - ref: R4
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: R5
   value: 330ohm
@@ -408,16 +408,17 @@ components:
   pin_count: 5
 - ref: U4
   value: FT2232H
-  footprint: QFN-64-4.45mm1EP
+  footprint: QFN-64-4.45mm1EP_9x9
   pin_count: 65
-  nc_pins: {'3': '3', '19': '19', '22': '22', '26': '26', '27': '27', '28': '28', '29': '29', '30': '30', '32': '32', '33': '33', '34': '34', '36': '36', '57': '57', '58': '58', '59': '59', '60': '60'}
+  nc_pins: {'3': '3', '19': '19', '22': '22', '26': '26', '27': '27', '28': '28', '29': '29', '30': '30', '32': '32', '33': '33',
+    '34': '34', '36': '36', '57': '57', '58': '58', '59': '59', '60': '60'}
 - ref: U5
   value: W25Q
   footprint: SOIC-8
   pin_count: 8
 - ref: U6
   value: ICE5LP4K
-  footprint: QFN-48-1EP
+  footprint: QFN-48-1EP_7x7
   pin_count: 49
 - ref: U7
   value: 12MHz oscillator
@@ -447,9 +448,6 @@ nets:
   - C21.1
   - C22.1
   - C29.1
-  - C32.2
-  - C33.2
-  - C34.2
   - C4.1
   - C5.1
   - D2.A
@@ -721,10 +719,6 @@ nets:
   - C3.2
   - C30.2
   - C31.2
-  - C32.1
-  - C33.1
-  - C34.1
-  - C35.2
   - C36.2
   - C37.2
   - C38.2
@@ -791,7 +785,7 @@ nets:
 - name: Net-(C3-Pad1)
   pins: [C3.1, U2.4]
 - name: Net-(C35-Pad1)
-  pins: [C35.1, D2.C, U6.24]
+  pins: [D2.C, U6.24]
 - name: Net-(C39-Pad1)
   pins: [C39.1, R3.2, U2.3]
 - name: Net-(D1-PadA)

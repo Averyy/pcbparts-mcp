@@ -1,0 +1,234 @@
+{
+  "bsec3": {
+    "targets": [
+      {
+        "id": "bme690"
+      }
+    ],
+    "evidence": {
+      "url": "https://github.com/mauringo/Bsec3-ArduinoLibrary-Unofficial.git",
+      "text": "Source description explicitly identifies BME690."
+    },
+    "review_date": "2026-11-10"
+  },
+  "bme680bsec": {
+    "targets": [
+      {
+        "id": "bme680"
+      }
+    ],
+    "evidence": {
+      "url": "https://esphome.io/components/sensor/bme680_bsec/",
+      "text": "BME680 via BSEC software library."
+    },
+    "review_date": "2026-11-10"
+  },
+  "bme68xbsec2": {
+    "targets": [
+      {
+        "id": "bme680"
+      },
+      {
+        "id": "bme688"
+      }
+    ],
+    "evidence": {
+      "url": "https://esphome.io/components/sensor/bme68x_bsec2/",
+      "text": "Required model selects BME680 or BME688."
+    },
+    "review_date": "2026-11-10"
+  },
+  "bno08xrvc": {
+    "targets": [
+      {
+        "id": "bno08x"
+      }
+    ],
+    "evidence": {
+      "url": "https://docs.circuitpython.org/projects/bno08x_rvc/en/latest/",
+      "text": "RVC UART heading mode for BNO08x devices."
+    },
+    "review_date": "2026-11-10"
+  },
+  "lsm303accel": {
+    "targets": [
+      {
+        "id": "lsm303dlhc"
+      },
+      {
+        "id": "lsm303agr"
+      }
+    ],
+    "evidence": {
+      "url": "https://learn.adafruit.com/lsm303-accelerometer-slash-compass-breakout/which-lsm303-do-i-have",
+      "text": "DLHC and AGR share the accelerometer register layout and driver; magnetometers differ."
+    },
+    "review_date": "2026-11-10"
+  },
+  "pm25": {
+    "targets": [
+      {
+        "id": "pms5003"
+      },
+      {
+        "id": "pmsa003i"
+      }
+    ],
+    "evidence": {
+      "url": "https://docs.circuitpython.org/projects/pm25/en/latest/",
+      "text": "Related Products explicitly identify PMS5003 UART and PMSA003I I2C sensors."
+    },
+    "review_date": "2026-11-10"
+  },
+  "ubloxgnssv3": {
+    "targets": [
+      {
+        "id": "zedf9p",
+        "name": "ZED-F9P",
+        "manufacturer": "u-blox",
+        "description": "ZED-F9P GNSS receiver module",
+        "measures": [
+          "gps"
+        ],
+        "protocols": []
+      },
+      {
+        "id": "zedf9k",
+        "name": "ZED-F9K",
+        "manufacturer": "u-blox",
+        "description": "ZED-F9K GNSS receiver module",
+        "measures": [
+          "gps"
+        ],
+        "protocols": []
+      },
+      {
+        "id": "zedf9r",
+        "name": "ZED-F9R",
+        "manufacturer": "u-blox",
+        "description": "ZED-F9R GNSS receiver module",
+        "measures": [
+          "gps"
+        ],
+        "protocols": []
+      },
+      {
+        "id": "maxm10s",
+        "name": "MAX-M10S",
+        "manufacturer": "u-blox",
+        "description": "MAX-M10S GNSS receiver module",
+        "measures": [
+          "gps"
+        ],
+        "protocols": []
+      }
+    ],
+    "evidence": {
+      "url": "https://raw.githubusercontent.com/sparkfun/SparkFun_u-blox_GNSS_v3/main/README.md",
+      "text": "README product links explicitly identify these supported receiver modules; this is not a claim of every possible compatible model."
+    },
+    "review_date": "2026-11-10"
+  },
+  "ubloxgnssv4": {
+    "targets": [
+      {
+        "id": "zedf9p",
+        "name": "ZED-F9P",
+        "manufacturer": "u-blox",
+        "description": "ZED-F9P GNSS receiver module",
+        "measures": [
+          "gps"
+        ],
+        "protocols": []
+      },
+      {
+        "id": "zedf9r",
+        "name": "ZED-F9R",
+        "manufacturer": "u-blox",
+        "description": "ZED-F9R GNSS receiver module",
+        "measures": [
+          "gps"
+        ],
+        "protocols": []
+      },
+      {
+        "id": "maxm10s",
+        "name": "MAX-M10S",
+        "manufacturer": "u-blox",
+        "description": "MAX-M10S GNSS receiver module",
+        "measures": [
+          "gps"
+        ],
+        "protocols": []
+      },
+      {
+        "id": "zedx20p",
+        "name": "ZED-X20P",
+        "manufacturer": "u-blox",
+        "description": "ZED-X20P GNSS receiver module",
+        "measures": [
+          "gps"
+        ],
+        "protocols": []
+      }
+    ],
+    "evidence": {
+      "url": "https://raw.githubusercontent.com/sparkfun/SparkFun_u-blox_GNSS_v4/main/README.md",
+      "text": "README product links explicitly identify these supported receiver modules; this is not a claim of every possible compatible model."
+    },
+    "review_date": "2026-11-10"
+  },
+  "sd3031": {
+    "targets": [
+      {
+        "id": "l76k",
+        "name": "L76K",
+        "manufacturer": "Quectel",
+        "description": "L76K GNSS receiver module",
+        "measures": [
+          "gps"
+        ],
+        "protocols": [
+          "uart"
+        ]
+      }
+    ],
+    "evidence": {
+      "url": "https://raw.githubusercontent.com/DFRobot/DFRobot_GNSSAndRTC/master/README.md",
+      "text": "GNSS(L76K) module API explicitly exposes position and satellite data; SD3031 has a separate RTC API."
+    },
+    "review_date": "2026-11-10"
+  },
+  "l3g": {
+    "targets": [
+      {
+        "id": "l3gd20"
+      },
+      {
+        "id": "l3gd20h",
+        "name": "L3GD20H",
+        "manufacturer": "STMicroelectronics",
+        "description": "STMicroelectronics L3GD20H three-axis angular-rate sensor",
+        "measures": [
+          "gyroscope"
+        ],
+        "protocols": []
+      },
+      {
+        "id": "l3g4200d",
+        "name": "L3G4200D",
+        "manufacturer": "STMicroelectronics",
+        "description": "STMicroelectronics L3G4200D three-axis angular-rate sensor",
+        "measures": [
+          "gyroscope"
+        ],
+        "protocols": []
+      }
+    ],
+    "evidence": {
+      "url": "https://raw.githubusercontent.com/pololu/l3g-arduino/master/README.md",
+      "text": "This is a library for an Arduino-compatible controller that interfaces with L3GD20H, L3GD20, and L3G4200D gyros on Pololu boards."
+    },
+    "review_date": "2026-11-10"
+  }
+}

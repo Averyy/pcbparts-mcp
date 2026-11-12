@@ -1,9 +1,8 @@
 name: SparkFun Soft Power Switch
 slug: sparkfun-soft-power-switch
 source: sparkfun/SparkFun_Soft_Power_Switch_USB-C
-format: kicad7
+format: kicad8
 description: Soft latching power (SN74LVC1G175 flip-flop + MOSFET)
-tags: [level-shifting]
 key_ics: [SN74LVC1G14DCK]
 outline:
   width_mm: 25.4
@@ -78,11 +77,11 @@ components:
   footprint: 1x06
   pin_count: 6
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper, 2-pole, closed/bridged
 - ref: JP2
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper, 2-pole, closed/bridged
 - ref: Q1
@@ -157,7 +156,7 @@ components:
   prod_id: RES-07856
 - ref: SW1
   value: switch
-  footprint: Push_SMD
+  footprint: Push_SMD_5.2x5.2
   prod_id: SWCH-14139
   description: Single Pole Single Throw (SPST) switch
 - ref: U2

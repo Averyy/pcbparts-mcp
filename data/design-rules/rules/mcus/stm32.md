@@ -4,114 +4,101 @@
 
 ## Quick Reference
 
-- **VCAP capacitors: F4 = 2x 2.2 uF low ESR (< 2 ohm). H7 = 2.2 uF low ESR (< 100 mohm).** Wrong ESR causes regulator instability. Single VCAP packages (no VCAP2): use 1x 4.7 uF (ESR < 1 ohm).
-- **NRST: 100 nF pull-down cap for EMS protection.** F4 does not require external reset circuit for power-up. G0 NRST is configurable as reset I/O, reset input only, or GPIO (PF2).
-- **Boot: F4 uses BOOT0/BOOT1 pins. H7 uses BOOT pin + option bytes. G0 uses BOOT0 pin + option bytes.** Default: boot from main flash. 10 kohm pull-down on BOOT0 for normal operation.
-- **VDDA: 100 nF + 1 uF decoupling. Connect to VDD through ferrite bead.** VREF+ to VDDA through 47 ohm resistor (H7). VDDA minimum depends on which analog peripherals are used.
-- **HSE: 25 MHz for H7 (required for Ethernet/USB), 8 MHz typical for G0 (4-48 MHz range).** Crystal accuracy and load cap calculation -> `misc/crystal.md`.
+- **VCAP with internal regulator enabled: F4 = 2x 2.2 uF, ESR < 2 ohm; STM32H74x/H75x = 2.2 uF on each of VCAP1/VCAP2, ESR < 100 mohm.** F4 packages with only VCAP1: 1x 4.7 uF, ESR < 1 ohm [1, p.9; 4, p.12].
+- **NRST: 100 nF to ground for F4 EMS protection.** Internal POR/PDR handles normal power-up; G0 option bytes can disable the external reset function by selecting PF2 GPIO mode [1, p.13; 3, p.8].
+- **Boot selection is device-specific: F405/407 use BOOT0 + PB2/BOOT1; STM32H74x/H75x use BOOT + address option bytes; G0 can ignore the BOOT0 pin.** Check the programmed option bytes before relying on a boot strap [8, p.52; 4, p.25; 3, p.21].
+- **F4 and STM32H74x/H75x VDDA: 100 nF + 1 uF.** Ferrite filtering from VDD is optional; the H7 47 ohm VREF+ filter is an option for an externally supplied reference, not a connection for a VREFBUF output [1, p.9; 4, pp.7, 12-13].
+- **STM32H74x/H75x and G0 HSE crystal range: 4-48 MHz.** H7 25 MHz is a reference-design choice, not a universal Ethernet/USB requirement; select load capacitors for the crystal and actual stray capacitance [4, pp.21-22; 3, p.13; 2, pp.12-14].
 
 ## Design Rules
 
 ### Power Supply
 
-- **F4 VDD range: 1.8-3.6V (down to 1.7V with restrictions).** Decoupling: one 4.7 uF (min) bulk tantalum or ceramic per package + 100 nF ceramic per VDD pin. Place caps as close as possible to pins, preferably underneath on opposite PCB layer.
-- **H7 VDD range: 1.71-3.6V (down to 1.62V with external power supervisor on PDR_ON).** Decoupling: 4.7 uF min per package + 100 nF per VDD pin. Below 1.71V requires external reset controller on NRST.
-- **G0 VDD range: 1.7-3.6V.** Decoupling: 4.7 uF + 100 nF ceramic per VDD/VSS pair.
-- **VCAP pins (F4): 2x 2.2 uF low ESR < 2 ohm ceramic.** Single VCAP packages: 1x 4.7 uF ESR < 1 ohm. These supply the internal 1.2V core regulator output. Wrong capacitor ESR causes regulator oscillation.
-- **VCAP pins (H7): 2.2 uF low ESR < 100 mohm ceramic on VCAP1/VCAP2.** Much tighter ESR requirement than F4. VDDLDO pins connected together with 4.7 uF cap.
-- **VDDA: 100 nF ceramic + 1 uF.** Connect VDDA to VDD through ferrite bead for noise isolation. VSSA must be externally connected to same ground as VSS.
-- **VDDA minimum voltage by peripheral (H7):** No analog: 0V. ADC/comparator: 1.62V. DAC: 1.8V. OPAMP: 2.0V. VREFBUF: depends on selected output level. Design for the most demanding peripheral used.
-- **VREF+: connect to VDDA unless separate reference needed.** If separate: 100 nF + 1 uF decoupling. H7: VREF+ to VDDA through 47 ohm resistor. Must be <= VDDA, minimum 1.7V (F4) or 2V when VDDA > 2V (H7).
-- **VBAT: connect to VDD with 100 nF if no battery used.** Range: 1.65-3.6V (F4), 1.2-3.6V (H7), 1.55-3.6V (G0). H7: if VDD > VBAT + 0.6V during startup, current injects into VBAT through internal diode -- add external low-drop diode if battery cannot handle this.
+- **F4 VDD range: 1.8-3.6V (down to 1.7V with device-specific restrictions).** Decoupling: one 4.7 uF minimum bulk tantalum or ceramic per package + 100 nF ceramic per VDD pin [1, pp.7, 9].
+- **STM32H74x/H75x VDD range: 1.71-3.6V; 1.62V requires an external supervisor on NRST and PDR_ON tied to VSS.** This lower limit is available only on packages exposing PDR_ON. Decoupling: 4.7 uF minimum per package + 100 nF per VDD pin [4, pp.7, 12, 17-18].
+- **G0 VDD range: 1.7-3.6V for startup.** Decoupling: 4.7 uF + 100 nF ceramic at the VDD/VDDA supply pair; operating below the startup threshold is subject to the device's PDR limits [3, pp.2-4].
+- **VCAP pins (F4): 2x 2.2 uF low ESR < 2 ohm ceramic.** Single VCAP packages: 1x 4.7 uF ESR < 1 ohm. These stabilize the internal core regulator; the F405/407 specification gives an ESR upper limit, not a minimum ESR requirement [1, p.9; 8, p.84].
+- **VCAP pins (STM32H74x/H75x, LDO enabled): 2.2 uF low ESR < 100 mohm ceramic on each of VCAP1/VCAP2.** AN4938 connects the VCAP pins together; if VCAP3 exists, connect it to the others without an additional capacitor. VDDLDO pins connect together with 4.7 uF decoupling [4, p.12].
+- **F4 and STM32H74x/H75x VDDA: 100 nF ceramic + 1 uF.** A ferrite bead between VDD and VDDA is an optional noise filter. VSSA must be externally connected to the same ground as VSS [1, pp.9, 12; 4, pp.12-13].
+- **VDDA minimum voltage by peripheral (STM32H74x/H75x):** No analog: 0V. ADC/comparator: 1.62V. DAC: 1.8V. OPAMP: 2.0V. VREFBUF: depends on selected output level. Design for the most demanding peripheral used [4, pp.7-8].
+- **VREF+ with an external reference: F4 requires max(1.7V, VDDA - 1.2V) <= VREF+ <= VDDA.** STM32H74x/H75x: minimum 2V when VDDA > 2V and the ADC is used, otherwise 1.62V; do not exceed VDDA. Use 100 nF + 1 uF for a separate reference. AN4938's optional 47 ohm filter connects VDDA to an externally supplied VREF+; leave that connection out when VREFBUF drives the pin [1, p.9; 4, pp.7, 12-13].
+- **VBAT: connect to VDD and decouple to ground with 100 nF if no battery is used.** Range: 1.65-3.6V (F4), 1.2-3.6V (STM32H74x/H75x), 1.55-3.6V (G0) [1, p.9; 4, pp.10, 12; 3, p.2].
 
-### H7 SMPS and Voltage Scaling
+### STM32H74x/H75x SMPS and Voltage Scaling
 
-- **H7 SMPS step-down converter (available on some packages): enables power optimization.** Enabled via SDEN bit in PWR_CR3. Internal supply mode: VCORE follows system operating modes with VOS/SVOS bits. External supply mode: outputs 2.5V or 1.8V (SDLEVEL bits).
-- **SMPS external components: 2.2 uH inductor + 220 pF cap on VLXSMPS, 10 uF (ESR < 20 mohm) on VFBSMPS, 4.7 uF (ESR < 100 mohm) on VDDSMPS.** VDDSMPS must equal VDD level.
-- **Voltage scaling: VOS0 through VOS3 (run mode), SVOS3/SVOS4/SVOS5 (stop mode).** Higher VOS level = higher max frequency but higher power. Default after reset is VOS3 (lowest performance). Must configure VOS before increasing clock frequency.
+- **STM32H7x5/H7x7 SMPS: select internal or external supply mode before choosing the output network.** Enable through SDEN in PWR_CR3. Direct internal supply tracks VOS/SVOS; external supply mode provides 1.8V or 2.5V through SDLEVEL [4, pp.11, 14].
+- **AN4938 SMPS component network: 2.2 uH inductor at VLXSMPS with 220 pF, 10 uF at VFBSMPS, and 4.7 uF at VDDSMPS.** The note lists nominal ESR values of 20 mohm and 100 mohm respectively; use the selected device datasheet for component limits and supply-mode connections. Wire VDDSMPS to VDD [4, pp.9, 13].
+- **STM32H74x/H75x voltage scaling: VOS0 through VOS3 in Run, SVOS3/SVOS4/SVOS5 in Stop.** Reset selects VOS3. Select the voltage scale allowed for the target clock before increasing frequency; the scale number is not an increasing-performance index [4, pp.10-11].
 
 ### F4 BYPASS_REG and PDR_ON
 
-- **BYPASS_REG = VDD: internal regulator bypassed.** Core power supplied externally through VCAP pins (connected together). Replace 2.2 uF VCAP caps with 100 nF decoupling. External voltage must match targeted max frequency. Requires external power supervisor on PA0 to monitor V12 domain.
-- **When BYPASS_REG active: PA0 reserved for V12 reset (not usable as GPIO), over-drive/under-drive unavailable, standby mode unavailable, debug under reset requires separate PA0/NRST management.**
-- **PDR_ON = VSS: disables internal POR/PDR.** Intended for 1.8V +/-5% supply. When internal reset OFF: BOR must be disabled, PVD unavailable, VBAT must connect to VDD. Requires external voltage supervisor on NRST or PDR_ON.
-- **PDR_ON voltage supervisor selection: active-high push-pull output.** Trip point example for 1.8V supply: supervisor at 1.66V +/-2.5% with 0.5% hysteresis gives rising trip max = 1.71V, falling trip min = 1.62V.
+- **On F4 packages exposing BYPASS_REG, BYPASS_REG = VDD bypasses the internal regulator.** Supply the core externally through VCAP pins connected together; replace the two 2.2 uF capacitors with two 100 nF decoupling capacitors. External voltage must match the target frequency, and an external supervisor must monitor the core domain through PA0 [1, pp.7-8; 8, pp.28-29, 84].
+- **When BYPASS_REG active: PA0 is reserved for core-domain reset, over-drive/under-drive and Standby are unavailable.** Manage PA0 and NRST separately for debug connection under reset [1, p.8].
+- **F4 external reset supervision has two different connections.** F410/411/412/413/423/446/469/479 packages with PDR_ON can tie it to VSS and use an active-low open-drain supervisor on NRST. For the other F4 products covered by AN4488, use its active-high push-pull supervisor on PDR_ON, including asserting PDR_ON high during power-down; do not simply tie it low [1, pp.13-17]. With internal reset disabled, disable BOR, PVD is unavailable, and tie VBAT to VDD [1, pp.14, 16].
+- **Budget the supervisor trip point including hysteresis.** AN4488's example uses a 1.8V +/-5% supply and a 1.66V +/-2.5% supervisor with 0.5% hysteresis: recomputed rising maximum = 1.7098V, falling minimum = 1.6185V. These are rounded to 1.71V and 1.62V in the note, not guaranteed margins for every F4 device [1, p.17].
 
 ### Reset
 
-- **F4: 100 nF pull-down cap on NRST for EMS protection.** No external reset circuit required for normal power-up. Internal POR/PDR handles reset from 1.8V. Can reduce to 10 nF to limit power consumption from charging through internal pull-up.
-- **G0 NRST: configurable via option bytes as reset I/O (default), reset input only, or GPIO (PF2).** Default: bidirectional -- internal resets drive pin low, external low signal triggers reset. 20 us minimum reset pulse width. Internal reset holder option (in option bytes) ensures pin stays low until VIL threshold is met.
-- **H7 NRST: active-low with internal filter.** Minimum 20 us reset pulse. BOOT0 pin with 10 kohm pull-down for default flash boot.
-- **VBAT domain reset: only occurs when both VDD and VBAT have been powered off.** Setting BDRST bit in RCC_BDCR triggers software RTC domain reset.
+- **F4: 100 nF pull-down cap on NRST for EMS protection.** No external reset circuit is required for normal power-up with internal POR/PDR enabled. AN4488 permits reducing the capacitor to 10 nF to limit charging/discharging consumption [1, p.13].
+- **G0 NRST: configurable via option bytes as reset I/O (default), reset input only, or GPIO (PF2).** The 20 us minimum is the pulse generated for internal resets in bidirectional mode, not an external-input pulse-width requirement. The optional internal reset holder keeps driving until the pin reaches VIL [3, p.8].
+- **STM32H74x/H75x reset pulse generator: minimum 20 us output pulse.** Use the selected device datasheet for external NRST input timing [4, pp.16-17].
 
 ### Boot Configuration
 
-- **F4: BOOT0 + BOOT1 pins, latched on 4th rising edge of SYSCLK after reset.**
+- **F405/407: BOOT0 + PB2/BOOT1 pins, latched on the 4th rising edge of SYSCLK after reset.** The table applies to these devices; other F4 boot controls must be checked against their own reference manual [1, pp.25-26; 8, p.52].
 
 | BOOT1 | BOOT0 | Boot space |
 |-------|-------|-----------|
 | x | 0 | Main flash (default) |
 | 0 | 1 | System memory (bootloader) |
 | 1 | 1 | Embedded SRAM |
-
-- **H7: single BOOT pin + option bytes (BOOT_ADD0/BOOT_ADD1).** BOOT=0 uses BOOT_ADD0 (default: flash at 0x08000000). BOOT=1 uses BOOT_ADD1 (default: system memory at 0x1FF00000). Option bytes allow any boot address from 0x00000000 to 0x3FFF0000. Flash level 2 protection forces flash-only boot.
-- **G0: BOOT0 pin + option bytes (nBOOT1, BOOT_SEL, nBOOT0).** BOOT_LOCK bit in FLASH_SECR forces main flash boot regardless of other settings. Boot latched on 4th rising edge of SYSCLK. Bootloader supports USART (PA2/3, PA9/10), I2C (PB6/7), SPI (PA4-7).
-- **F4 bootloader peripherals vary by sub-family.** F405/407/415/417/427-439: USB OTG FS (PA11/12) + USART1 (PA9/10) + I2C + SPI + CAN. F401/411: USART + I2C + SPI only (no CAN). Check AN2606 for exact peripheral/pin mapping per device -- USB bootloader availability varies by sub-family and revision.
-- **BOOT0: 10 kohm pull-down to VSS for normal flash boot.** Applying VDD permanently to BOOT0 generates extra current consumption through internal circuits.
+- **STM32H74x/H75x: BOOT pin selects BOOT_ADD0 or BOOT_ADD1.** Factory defaults are flash at 0x08000000 and system memory at 0x1FF00000 respectively. Option bytes select mapped boot addresses from 0x00000000 to 0x3FFF0000; level 2 readout protection forces flash boot. Secure access mode changes this behavior [4, p.25].
+- **G0: nBOOT_SEL=0 selects the BOOT0 pin; nBOOT_SEL=1 selects the inverse of nBOOT0.** With BOOT_LOCK=0, effective BOOT0=0 boots flash; effective BOOT0=1 selects system memory when nBOOT1=1, SRAM when nBOOT1=0. BOOT_LOCK=1 forces main flash. Settings latch on the 4th SYSCLK rising edge and are sampled again on Standby exit [3, p.21].
+- **F4 bootloader peripherals vary by sub-family; every F4 group except F410 has USB OTG FS DFU on PA11/PA12.** AN4488 lists DFU for F401, F405/407/415/417/427/437/429/439, F411, F412/413/423 and F469/479, and USART1 on PA9/PA10 for all groups. The F405-F439 group adds USART3 and CAN (PB5/PB13) but has no I2C/SPI bootloader interface. Check AN2606 for the exact device and bootloader revision before allocating recovery pins [1, pp.27-28].
+- **BOOT0: a 10 kohm pull-down is the STM32H753 reference-design example, not a substitute for checking boot option bytes.** Applying VDD permanently to BOOT0 generates extra consumption [4, p.34; 5, p.28].
 
 ### HSE Crystal
 
-- **H7: 25 MHz recommended for accurate Ethernet, USB OTG HS, I2S, and SAI clocking.** Range: 4-48 MHz. Load caps: 5-25 pF typical, ~10 pF estimated pin + board stray capacitance.
-- **G0: 8 MHz typical (range 4-48 MHz).** HSI48 available on G0B1/G0C1 for crystal-less USB via clock recovery system (CRS) synchronized to USB SOF.
-- **LSE: 32.768 kHz with configurable drive strength via LSEDRV[1:0] in RCC_BDCR.** Four levels: Low, Medium-Low, Medium-High, High. Higher drive = more robust startup but higher power. LSE frequency must exceed 30 kHz to avoid false CSS detections.
-- **Clock security system (CSS): switches to HSI on HSE failure, sends break to TIM1/TIM8/TIM15-17, generates NMI.** LSE CSS must be enabled only after LSE and LSI are ready and RTC clock source is selected.
-- **HSE gain margin must exceed 5x for reliable startup across temperature.** LSE gain margin must exceed 3x. Gain margin = g_m_crit / g_m_min where g_m_crit depends on crystal ESR, load caps, and frequency. Verify with negative resistance measurement -- crystal must start within spec'd time at coldest operating temperature.
+- **STM32H74x/H75x: 25 MHz is an HSE choice recommended for Ethernet, USB OTG HS, I2S, and SAI clocking; the crystal range is 4-48 MHz.** AN4938's 5-25 pF load capacitors and estimated 10 pF pin/board capacitance are illustrative; calculate for the chosen crystal and board [4, pp.21-22; 2, pp.12-14].
+- **G0 HSE crystal range: 4-48 MHz.** HSI48 is available on G0B1/G0C1 for crystal-less USB using CRS synchronized to USB SOF [3, pp.13-14].
+- **LSE: 32.768 kHz with drive strength selected through LSEDRV[1:0].** On G0, with LSE clock security enabled, frequency must exceed 30 kHz to avoid false detections [3, pp.15-16; 4, p.23].
+- **STM32H74x/H75x HSE CSS: on HSE failure, HSI replaces an HSE-derived system clock, TIM1/TIM8/TIM15-17 receive a break event, and an NMI is generated.** Enable LSE CSS only after LSE is ready and the RTC clock source is selected [4, p.24].
+- **Oscillator compatibility: when the datasheet specifies oscillator transconductance gm, require gain margin gm / gmcrit > 5 for HSE or LSE.** For equal load capacitors, gmcrit = 4 * ESR * (2 * pi * f)^2 * (C0 + CL)^2. If the datasheet instead specifies Gm_crit_max (sometimes named Gm), compare gmcrit directly against that limit; its factor-of-five margin is already included [2, pp.13-14].
 - Crystal selection and load cap calculation details -> `misc/crystal.md`.
 
 ### USB
 
-- **F4/G0 USB FS: internal PHY, no external series resistors needed on D+/D-.** Matching impedance is embedded. ESD protection: USBLC6-2SC6 (low cost) or USBLC6-2P6 (low area), placed close to connector.
-- **H7 USB: VDD50USB (4.0-5.5V from VBUS) regulates to VDD33USB (3.0-3.6V).** If both pins available, connect together. Decoupling: VDD50USB 4.7 uF, VDD33USB 100 nF + 1 uF. When VDD33USB separate from VDD: must be last applied / first removed, VDD33USB < VDD + 300 mV.
-- **USB FS requires precise 48 MHz clock.** From main PLL (needs HSE crystal), or HSI48 with CRS (device mode only, not accurate enough for host). AHB frequency must be > 14.2 MHz for OTG_FS, > 30 MHz for OTG_HS.
-- **G0B1/G0C1 crystal-less USB via HSI48+CRS.** HSI48 free-run accuracy is ~3%, but CRS locks to USB SOF packets in device mode for sufficient accuracy. Enables USB DFU bootloader without external crystal. Clock sources for G0 USB: HSE, HSI48, or PLLQCLK. HSI48 is auto-enabled when selected as USB clock source.
-- **VBUS sensing on PA9: voltage divider required.** PA9 is 5V-tolerant but must not see 5V VBUS when MCU unpowered (violates abs max). Divider values: 82 kohm to GND + 33 kohm to VBUS for 3.0-3.6V VDD range. 68 kohm to GND + 82 kohm to VBUS for 1.65-2.0V VDD range.
-- **Self-powered USB device: only start PHY/controller on VBUS detection.** D+ 1.5 kohm pull-up (embedded on some STM32s) must connect only when VBUS present. GPIO drives pull-up enable after VBUS detection.
+- **F4/G0 USB FS: internal PHY, no external series resistors needed on D+/D-.** Matching impedance is embedded. For bus-powered USB FS, AN4879 lists USBLC6-2SC6 (low cost) or USBLC6-2P6 (low area); use the separate self-powered protection recommendations when applicable [6, pp.9-10, 14].
+- **STM32H74x/H75x USB supply: choose either 5V-input regulation or direct 3.3V supply.** With VDD50USB at 4.0-5.5V, use 4.7 uF on that input and 1 uF (ESR <= 600 mohm) on the regulated VDD33USB output; do not short the two pins. With direct 3.0-3.6V on VDD33USB, tie VDD50USB to it if present and decouple with 100 nF + 1 uF [4, pp.8, 12]. For an independent VDD33USB supply, apply it last and remove it first; its VDD + 300 mV restriction applies during power-on/down while VDD is below its minimum. Check VDD50USB sequencing separately against the selected device datasheet [4, pp.8-9].
+- **USB FS requires a precise 48 MHz clock.** Use an HSE-derived PLL clock (crystal or HSE bypass), or a supported HSI48/CRS device-mode clock. For OTG peripherals, AHB must be > 14.2 MHz for OTG_FS and > 30 MHz for OTG_HS [6, pp.10-11, 24].
+- **G0B1/G0C1 crystal-less USB via HSI48+CRS.** The ~3% free-run accuracy is a factory calibration at 25 degrees C; CRS can lock to USB SOF in device mode. USB clock choices are HSE, HSI48, or PLLQCLK; HSI48 is auto-enabled when selected while USB is enabled [3, pp.11, 14].
+- **VBUS sensing through a resistor divider uses a regular GPIO input; disable the embedded PA9 VBUS-sensing function.** AN4879 specifies 82 kohm to GND + 33 kohm to VBUS for VDD=3.0-3.6V, or 68 kohm to GND + 82 kohm to VBUS for VDD=1.65-2.0V, with 1% resistors. Check worst-case divider voltage against the selected GPIO operating limits at every supply state, including unpowered; the 82/33 kohm divider can exceed 3.6V at the pin. If those limits are exceeded, use its 2N7002 detector [6, pp.11-13; 5, pp.19-20].
+- **Self-powered USB device: only start PHY/controller on VBUS detection.** Connect the D+ 1.5 kohm pull-up (embedded on some STM32s) only while VBUS is present [6, pp.14-15].
 - USB ESD and layout details -> `protection/esd.md`, `interfaces/usb.md`.
 
 ### GPIO
 
-- **Unused pins: configure as analog input (lowest power -- Schmitt trigger disabled) or push-pull output driven low.** Floating inputs cause Schmitt trigger to toggle randomly, increasing consumption.
-- **GPIO speed (OSPEEDR): higher speed = faster edges but more EMI and SSO noise.** F4 at OSPEEDR=11 (very high): 100 MHz max at 30 pF load (VDD >= 2.7V), 180 MHz at 10 pF. Use lowest speed setting that meets timing requirements. IO compensation cell can be activated above 50 MHz (VDD > 2.4V) to reduce overshoot.
-- **Five-volt tolerant (FT) pins: tolerant to VDD + 3.6V (max 5.5V) in input mode only.** When analog function enabled (ADC), FT tolerance is lost -- pin limited to min(VDDA, VREF+) + 0.3V. When VDD = 0V, max input on FT pins drops to 3.6V.
+- **Unused pins: configure as analog input or push-pull output driven low.** Analog mode disables the input Schmitt trigger [1, p.25; 5, p.29].
+- **STM32F469 GPIO speed example, OSPEEDR=11: 100 MHz at 30 pF or 180 MHz at 10 pF, both with VDD >= 2.7V.** These are not family-wide F4 limits. The I/O compensation recommendation applies above 50 MHz with VDD > 2.4V [1, pp.22-23].
+- **FT pin voltage tolerance depends on every supply connected to that pad.** AN4899 describes VIN <= min(relevant supplies) + 3.6V, capped at 5.5V, in input mode without an enabled analog function; at zero supply the bound falls to 3.6V. With an analog function enabled, the limit is min(VDDA, VREF+) + 0.3V. Use the selected device's operating limits, not its absolute maximum rating, for the actual pad [5, pp.19-20].
 
-> WARNING: Not all GPIO pins are 5V-tolerant. STM32 datasheets mark each pin as FT (five-volt tolerant), TT (three-volt tolerant), or TC (three-volt capable). TC pins are limited to VDD + 0.3V max -- connecting 5V signals to a TC pin damages the device. Check the pinout table in the datasheet for every pin that interfaces with 5V logic. Common trap: assuming all pins on a 3.3V STM32 tolerate 5V because "some pins are FT."
-
-- **Debug pins (PA13/SWDIO, PA14/SWCLK): have internal pull-up/pull-down by default.** PA13 pull-up, PA14 pull-down. If reused as GPIO, avoid forcing opposite level (causes extra consumption through internal pull resistors).
-- **VBAT-domain GPIO (H7): limited to 3 mA drive strength** through integrated power switch. Do not use for high-current loads even when VDD is valid.
-- **G0 multi-bonding on small packages (STM32G03x/G04x): multiple die pads connected to single package pin.** No internal protection against pad conflicts -- configure each pad carefully. Can increase drive strength by configuring multiple pads as same output level.
+> WARNING: Check the datasheet I/O structure for every 5V interface. TC pins lack the FT protection structure; applying 5V to an ordinary VDD-powered TC pin can exceed its VDD + 0.3V limit and damage it [5, pp.11, 19].
+- **Debug pins (PA13/SWDIO, PA14/SWCLK): internal pull-up/pull-down by default.** PA13 pull-up, PA14 pull-down. If reused as GPIO, avoid forcing the opposite level [1, pp.30-31; 5, p.28].
+- **VBAT-domain GPIO: limited to 3 mA through the integrated power switch.** Do not use for high-current loads even when VDD is valid [5, p.28].
+- **G0 multi-bonding on small packages (STM32G03x/G04x): multiple die pads connect to one package pin.** No internal protection against pad conflicts; configure each pad consistently. Same-level outputs can increase drive strength [3, p.25].
 
 ### ADC Accuracy
 
-- **F2/F4 (F405/407/415/417): configure ART with data cache ON + instruction cache ON + prefetch OFF for best ADC accuracy.** Prefetch causes extra flash access noise: raw dispersion drops from 21 LSB (prefetch ON) to 18 LSB (prefetch OFF) at 12-bit resolution, 1.65V input.
-- **F42x/F43x: additional ADC accuracy options (ADCDC1 in PWR_CR, ADCxDC2 in SYSCFG_PMC).** Option 1 (ADCDC1): requires prefetch OFF, VDD >= 2.4V. Option 2 (ADCxDC2): requires fADC >= 30 MHz, 12-bit resolution. Both reduce dispersion to ~6 LSB (vs 21 LSB baseline on F42x/F43x with default ART settings -- not directly comparable to F405/407 numbers above due to different silicon revisions).
-- **Do not toggle I/Os on the same port as ADC input during conversion.** Switching noise couples into analog inputs. Avoid starting communication peripheral TX just before conversion.
-- **Averaging by 4 with optimal ART config: 0% of samples exceed +/-5 LSB from mode at 0.6 Msps (12-bit).** Total dispersion range ~7-8 LSB. Averaging by 8 narrows to +/-4 LSB.
+- **F2/F405/407/415/417: data cache ON + instruction cache ON + prefetch OFF improves ADC dispersion in AN4073's test.** On STM32F407ZGT6 at 25 degrees C, VDD=VDDA=VREF+=3.3V, fADC=36 MHz, fCPU=144 MHz, 12-bit resolution, 3-cycle sampling, and 1.65V input, raw dispersion fell from 21 to 18 LSB. These are lab histogram widths, not guaranteed accuracy limits [7, pp.10-15].
+- **F42x/F43x ADC accuracy options are mutually exclusive: ADCDC1 in PWR_CR or ADCxDC2 in SYSCFG_PMC.** ADCDC1 requires prefetch OFF and VDD=2.4-3.6V. ADCxDC2 requires fADC >= 30 MHz and 12-bit resolution; enable multiple ADCxDC2 bits only under the simultaneous-sampling/interleaving conditions in AN4073 Table 6. In its 1.65V test with caches ON/prefetch OFF, default dispersion was 8 LSB and either option gave 6 LSB, not a 21-LSB F42x/F43x baseline [7, pp.18-22].
+- **Do not toggle I/Os on the same port as an ADC input during conversion.** Avoid starting communication TX just before conversion [7, p.9].
+- **AN4073 lab result: averaging by 4 with caches ON/prefetch OFF gave no samples outside +/-5 LSB of the histogram mode at 0.6 Msps.** Under the STM32F407 conditions above, total dispersion was 7-8 LSB; averaging by 8 gave 4-5 LSB total dispersion. This is not a guaranteed ENOB improvement [7, pp.15-17].
 
 ## Common Mistakes
 
-- **Wrong VCAP ESR causes regulator oscillation.** F4 requires ESR < 2 ohm, H7 requires ESR < 100 mohm. Using a generic bulk ceramic (ESR near 0) on F4 can also cause instability -- the regulator needs some ESR for stability. Check the specific ESR range in the datasheet.
-- **Leaving BOOT0 pulled to VDD permanently.** Generates continuous extra current consumption through internal boot selection circuits. Fix: 10 kohm pull-down to VSS, use pushbutton or jumper only when bootloader access needed.
-- **Connecting 5V VBUS directly to PA9 without voltage divider.** When MCU is unpowered, 5V on PA9 exceeds absolute maximum ratings and damages the pin. Fix: resistor divider (82k/33k) or MOSFET detector (2N7002).
-- **ADC prefetch causing 21 LSB dispersion on F2/F4.** Flash prefetch generates noise that corrupts ADC readings. Most developers leave ART at default (all ON) without realizing the impact. Fix: disable prefetch during ADC conversions, re-enable after.
-- **G0 NRST permanently grounded as "enable" pin.** Holds device in startup phase indefinitely -- NRST is not a chip enable. Fix: use low-power standby/shutdown modes instead. NRST has ~40 kohm internal pull-up; grounding it wastes current continuously.
-- **H7 VBAT current injection during startup.** If VDD > VBAT + 0.6V, current flows through internal diode into VBAT. Can damage coin cell batteries. Fix: add external low-drop diode in series with battery on VBAT pin.
-
-## Formulas
-
-**STM32 ADC effective resolution with averaging:**
-**Rule of thumb:** Averaging by N adds log2(N)/2 effective bits. 4x averaging adds 1 ENOB.
-**Formula:** ENOB = log2(2^N / sigma_rms), where sigma_rms = dispersion_LSB / (2 * sqrt(2))
-**Example:** F4 with prefetch OFF: 18 LSB dispersion at 12-bit. sigma_rms ~ 6.4 LSB. ENOB = log2(4096/6.4) = 9.3 bits. With 4x averaging: ~10.3 ENOB.
+- **G0 still booting the loader after first programming.** The flash-empty flag updates during option-byte loading; reload option bytes, power-reset, or clear EMPTY as documented before expecting user-flash boot after a system reset [3, p.21].
+- **NRST permanently grounded as an enable wastes current and holds startup indefinitely.** The internal pull-up is approximately 40 kohm; use a low-power mode after releasing reset [5, p.28].
+- **STM32H74x/H75x VBAT injection during a fast VDD startup.** If VDD rises within tRSTTEMPO and exceeds VBAT + 0.6V, the internal diode can inject current into the battery. Add a low-drop series diode when the battery cannot accept that current [4, p.10].
 
 ## Sources
 
@@ -123,10 +110,11 @@
 
 ### References
 
-1. ST AN4488 -- Getting Started with STM32F4xxxx HW Dev: https://www.st.com/resource/en/application_note/an4488-getting-started-with-stm32f4xxxx-mcu-hardware-development-stmicroelectronics.pdf
-2. ST AN2867 -- Oscillator Design Guide for STM8/STM32: https://www.st.com/resource/en/application_note/an2867-oscillator-design-guide-for-stm8af-al-s-and-stm32-microcontrollers-stmicroelectronics.pdf
-3. ST AN5096 -- Getting Started with STM32G0 HW Dev: https://www.st.com/resource/en/application_note/an5096-getting-started-with-stm32g0-mcus-hardware-development-stmicroelectronics.pdf
-4. ST AN4938 -- Getting Started with STM32H7 HW Dev: https://www.st.com/resource/en/application_note/an4938-getting-started-with-stm32h74xig-and-stm32h75xig-mcu-hardware-development-stmicroelectronics.pdf
-5. ST AN4899 -- STM32 GPIO HW Settings & Low-Power: https://www.st.com/resource/en/application_note/an4899-stm32-microcontroller-gpio-hardware-settings-and-lowpower-consumption-stmicroelectronics.pdf
-6. ST AN4879 -- USB Hardware/PCB Guidelines for STM32: https://www.st.com/resource/en/application_note/an4879-introduction-to-usb-hardware-and-pcb-guidelines-using-stm32-mcus-stmicroelectronics.pdf
-7. ST AN4073 -- Improving ADC Accuracy (STM32F2/F4): https://www.st.com/resource/en/application_note/an4073-how-to-improve-adc-accuracy-when-using-stm32f2xx-and-stm32f4xx-microcontrollers-stmicroelectronics.pdf
+1. ST AN4488 (Rev 7, October 2018) -- Getting Started with STM32F4xxxx HW Dev: https://www.st.com/resource/en/application_note/an4488-getting-started-with-stm32f4xxxx-mcu-hardware-development-stmicroelectronics.pdf
+2. ST AN2867 (Rev 25) -- Oscillator Design Guide for STM8/STM32: https://www.st.com/resource/en/application_note/an2867-oscillator-design-guide-for-stm8af-al-s-and-stm32-microcontrollers-stmicroelectronics.pdf
+3. ST AN5096 (Rev 4) -- Getting Started with STM32G0 HW Dev: https://www.st.com/resource/en/application_note/an5096-getting-started-with-stm32g0-mcus-hardware-development-stmicroelectronics.pdf
+4. ST AN4938 (Rev 7, October 2024) -- Getting Started with STM32H7 HW Dev: https://www.st.com/resource/en/application_note/an4938-getting-started-with-stm32h74xig-and-stm32h75xig-mcu-hardware-development-stmicroelectronics.pdf
+5. ST AN4899 (Rev 4, May 2026) -- STM32 GPIO HW Settings & Low-Power: https://www.st.com/resource/en/application_note/an4899-stm32-microcontroller-gpio-hardware-settings-and-lowpower-consumption-stmicroelectronics.pdf
+6. ST AN4879 (Rev 13) -- USB Hardware/PCB Guidelines for STM32: https://www.st.com/resource/en/application_note/an4879-introduction-to-usb-hardware-and-pcb-guidelines-using-stm32-mcus-stmicroelectronics.pdf
+7. ST AN4073 (DocID022945 Rev 5) -- Improving ADC Accuracy (STM32F2/F4): https://www.st.com/resource/en/application_note/an4073-how-to-improve-adc-accuracy-when-using-stm32f2xx-and-stm32f4xx-microcontrollers-stmicroelectronics.pdf
+8. ST DS8626 (Rev 12, March 2026) -- STM32F405xx/STM32F407xx datasheet: https://www.st.com/resource/en/datasheet/stm32f405rg.pdf

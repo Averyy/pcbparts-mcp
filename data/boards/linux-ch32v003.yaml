@@ -1,7 +1,7 @@
 name: Linux-CH32V003
 slug: linux-ch32v003
 source: tvlad1234/linux-ch32v003
-format: kicad6
+format: kicad7
 description: Minimal CH32V003F4P6 RISC-V board, 24 MHz crystal
 tags: [power-supply]
 key_ics: [CH32V003f4p6, CH330N, AMS1117-3.3]
@@ -35,12 +35,12 @@ components:
   footprint: 0805
   decouples: U4
 - ref: J1
-  value: 1x7 header
-  footprint: 1X7
+  value: 1x7 2.54mm header
+  footprint: 1X7_P2.54mm
   pin_count: 7
 - ref: J2
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
 - ref: J3
   value: USB Micro-B
   footprint: USB_Micro-B_Amphenol_10104110_Horizontal
@@ -53,7 +53,8 @@ components:
   value: CH32V003f4p6
   footprint: TSSOP-20
   pin_count: 20
-  nc_pins: {PD4_A7_T2AETR2: '1', PA1_A1_T1CH2_OSCI: '5', PA2_A0_T1CH2N_OSCO: '6', PD0_T1CH1N: '8', PC1_SDA: '11', PC2_SCL: '12', PC3: '13', PC4_A2_T1CH4: '14', PD2_A3_T2CH1: '19'}
+  nc_pins: {PD4_A7_T2AETR2: '1', PA1_A1_T1CH2_OSCI: '5', PA2_A0_T1CH2N_OSCO: '6', PD0_T1CH1N: '8', PC1_SDA: '11', PC2_SCL: '12',
+    PC3: '13', PC4_A2_T1CH4: '14', PD2_A3_T2CH1: '19'}
 - ref: U2
   value: 8 megabytes SPI PSRAM
   footprint: SOIC-8

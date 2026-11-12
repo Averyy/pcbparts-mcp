@@ -19,399 +19,505 @@ components:
   value: 1.2pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013021'
-  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: C11
   value: 1uF
   footprint: '0201'
+  voltage: 6.3V
   manufacturer: YAGEO
-  mpn: '302010270'
+  mpn: CC0201MRX5R5BB105
+  prod_id: '302010270'
+  temp_range: "-55\xB0C to 85\xB0C"
   description: "SMD CAP Ceramic;1uF-6.3V-\xB120%-X5R;0201"
   decouples: U3
 - ref: C12
   value: 47pF
   footprint: '0201'
+  voltage: 25V
   manufacturer: Murata
-  mpn: '302012202'
+  mpn: GRM0335C1E470JA01D
+  prod_id: '302012202'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 47PF-25V-C0G/NP0;0201
   decouples: U3
 - ref: C13
   value: 100nF
   footprint: '0201'
+  voltage: 10V
   manufacturer: YAGEO
-  mpn: '302010271'
+  mpn: CC0201KRX5R6BB104
+  prod_id: '302010271'
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 100nF-10V-10%-X5R;0201
   decouples: U2
 - ref: C14
   value: 3.3pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302011041'
+  mpn: CQ0201BRNPO8BN3R3
+  prod_id: '302011041'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: "SMD CAP Ceramic 3.3pF-25V\xB10.1pF-NPO;0201"
 - ref: C15
   value: 3.3pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302011041'
+  mpn: CQ0201BRNPO8BN3R3
+  prod_id: '302011041'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: "SMD CAP Ceramic 3.3pF-25V\xB10.1pF-NPO;0201"
 - ref: C18
   value: 1.5pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013025'
+  mpn: CC0201BRNPO9BN1R5
+  prod_id: '302013025'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 1.5PF-50V-0.1pF-NPO;0201
 - ref: C19
   value: 1nF
   footprint: '0201'
+  voltage: 16V
   manufacturer: YAGEO
-  mpn: '302010389'
+  mpn: CC0201KRX7R7BB102
+  prod_id: '302010389'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 1nF-16V-10%-X7R;0201
 - ref: C2
   value: 42pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013021'
-  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: C20
   value: 1.5pF
   footprint: '0201'
   manufacturer: YAGEO
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: C22
   value: 1.2pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013023'
+  mpn: CC0201BRNPO9BN1R2
+  prod_id: '302013023'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 1.2PF-50V-0.1pF-NPO;0201
 - ref: C24
   value: 3pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013021'
-  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: C25
   value: 1pF
   footprint: '0201'
+  voltage: 50V
   manufacturer: YAGEO
-  mpn: '302010274'
-  description: SMD CAP Ceramic;1pF-50V-0.25%-NPO;0201
+  mpn: CC0201CRNPO9BN1R0
+  prod_id: '302010274'
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: C26
   value: 1pF
   footprint: '0201'
+  voltage: 50V
   manufacturer: YAGEO
-  mpn: '302010274'
-  description: SMD CAP Ceramic;1pF-50V-0.25%-NPO;0201
+  mpn: CC0201CRNPO9BN1R0
+  prod_id: '302010274'
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: C27
   value: 33pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013021'
-  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: C28
   value: 1.3pF
   footprint: '0201'
   manufacturer: Murata
-  mpn: '302013028'
+  mpn: GRM0335C1H1R3BA01D
+  prod_id: '302013028'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 1.3pF-50V-0.1pF-NPO;0201
 - ref: C29
   value: 1.6pF
   footprint: '0201'
   manufacturer: Murata
-  mpn: '302013029'
+  mpn: GRM0335C1H1R6BA01D
+  prod_id: '302013029'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 1.6pF-50V-0.1pF-NPO;0201
 - ref: C3
   value: 6.8pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013021'
+  mpn: CC0201BRNPO9BN6R8
+  prod_id: '302013021'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
 - ref: C30
   value: 0.8pF
   footprint: '0201'
   manufacturer: Murata
-  mpn: '302011837'
+  mpn: GRM0335C1HR80BA01D
+  prod_id: '302011837'
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 0.8PF-50V-0.01pF-C0G/NP0;0201
 - ref: C31
   value: 470nF
   footprint: '0201'
+  voltage: 6.3V
   manufacturer: YAGEO
-  mpn: '302012521'
+  mpn: CC0201KRX5R5BB474
+  prod_id: '302012521'
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic;470nF-6.3V;0201
 - ref: C32
   value: 1nF
   footprint: '0201'
+  voltage: 16V
   manufacturer: YAGEO
-  mpn: '302010389'
+  mpn: CC0201KRX7R7BB102
+  prod_id: '302010389'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 1nF-16V-10%-X7R;0201
 - ref: C33
   value: 1nF
   footprint: '0201'
+  voltage: 16V
   manufacturer: YAGEO
-  mpn: '302010389'
+  mpn: CC0201KRX7R7BB102
+  prod_id: '302010389'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 1nF-16V-10%-X7R;0201
 - ref: C34
   value: 10pF
   footprint: '0201'
+  voltage: 16V
   manufacturer: YAGEO
-  mpn: '302010389'
-  description: SMD CAP Ceramic 1nF-16V-10%-X7R;0201
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: C35
   value: 470nF
   footprint: '0201'
+  voltage: 6.3V
   manufacturer: YAGEO
-  mpn: '302012521'
+  mpn: CC0201KRX5R5BB474
+  prod_id: '302012521'
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic;470nF-6.3V;0201
 - ref: C36
   value: 100nF
   footprint: '0201'
+  voltage: 10V
   manufacturer: YAGEO
-  mpn: '302010271'
+  mpn: CC0201KRX5R6BB104
+  prod_id: '302010271'
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 100nF-10V-10%-X5R;0201
 - ref: C37
   value: 6.8pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013021'
+  mpn: CC0201BRNPO9BN6R8
+  prod_id: '302013021'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
 - ref: C38
   value: 6.8pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013021'
+  mpn: CC0201BRNPO9BN6R8
+  prod_id: '302013021'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
 - ref: C39
   value: 47pF
   footprint: '0201'
   manufacturer: YAGEO
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: C4
   value: 6.8pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013021'
+  mpn: CC0201BRNPO9BN6R8
+  prod_id: '302013021'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
 - ref: C40
   value: 6.8pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013021'
+  mpn: CC0201BRNPO9BN6R8
+  prod_id: '302013021'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
 - ref: C41
   value: 47pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013021'
-  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: C42
   value: 100nF
   footprint: '0201'
+  voltage: 10V
   manufacturer: YAGEO
-  mpn: '302010271'
+  mpn: CC0201KRX5R6BB104
+  prod_id: '302010271'
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 100nF-10V-10%-X5R;0201
 - ref: C43
   value: 33pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013021'
-  description: SMD CAP Ceramic 6.8pF-50V-0.1pF-NPO;0201
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: C5
   value: 1.2pF
   footprint: '0201'
   manufacturer: YAGEO
-  mpn: '302013023'
+  mpn: CC0201BRNPO9BN1R2
+  prod_id: '302013023'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 1.2PF-50V-0.1pF-NPO;0201
 - ref: C6
   value: 2.2nF
   footprint: '0201'
+  voltage: 10V
   manufacturer: YAGEO
-  mpn: '302010426'
+  mpn: CC0201KRX7R6BB222
+  prod_id: '302010426'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP 2.2nF-10V-10%-X7R;0201
 - ref: C7
   value: 47pF
   footprint: '0201'
+  voltage: 25V
   manufacturer: Murata
-  mpn: '302012202'
+  mpn: GRM0335C1E470JA01D
+  prod_id: '302012202'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 47PF-25V-C0G/NP0;0201
 - ref: C8
   value: 47pF
   footprint: '0201'
+  voltage: 25V
   manufacturer: Murata
-  mpn: '302012202'
+  mpn: GRM0335C1E470JA01D
+  prod_id: '302012202'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 47PF-25V-C0G/NP0;0201
 - ref: C9
   value: 3pF
   footprint: '0201'
   manufacturer: YAGEO
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: FB1
   value: 120ohm
   footprint: '0201'
+  current: 200mA
   manufacturer: Murata
-  mpn: '303030259'
+  mpn: BLM03AG121SN1D
+  prod_id: '303030259'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Ferrite Bead 120R-200mA;0201
 - ref: J1
   value: '818000500'
-  footprint: U-FL4P-SMD-1
+  footprint: U-FL4P-SMD-1_7X1
   manufacturer: "\u7535\u8FDE"
-  mpn: '320080244'
+  mpn: '818000500'
+  prod_id: '320080244'
+  temp_range: "-40\xB0C to 85\xB0C"
   description: SMD IPEX-GEN4 Female CONN;4P-L1.7*W1.7*H0.6mm
   pin_count: 4
 - ref: J2
   value: '818000500'
-  footprint: U-FL4P-SMD-1
+  footprint: U-FL4P-SMD-1_7X1
   manufacturer: "\u7535\u8FDE"
-  mpn: '320080244'
+  mpn: '818000500'
+  prod_id: '320080244'
+  temp_range: "-40\xB0C to 85\xB0C"
   description: SMD IPEX-GEN4 Female CONN;4P-L1.7*W1.7*H0.6mm
   pin_count: 4
 - ref: L1
   value: 47nH
   footprint: '0402'
   manufacturer: Murata
-  mpn: '303010245'
-  description: SMD Inductor 3.3nH-0.2nH-450mA;0201
+  mpn: LQW15AN47NJ00D
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: L10
   value: 3.6nH
   footprint: '0201'
   manufacturer: Murata
-  mpn: '303011721'
+  mpn: LQP03TN3N6B02D
+  prod_id: '303011721'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Inductor;3.6nH-0.1H-400mA;0201
 - ref: L11
   value: 3.6nH
   footprint: '0201'
   manufacturer: Murata
-  mpn: '303011721'
+  mpn: LQP03TN3N6B02D
+  prod_id: '303011721'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Inductor;3.6nH-0.1H-400mA;0201
 - ref: L12
   value: 10uH
   footprint: '0201'
   manufacturer: TDK
-  mpn: '303011378'
+  mpn: MLZ1608N100LT000
+  prod_id: '303011378'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Inductor 10uH-20%-60mA;0603
 - ref: L13
   value: 47nH
   footprint: '0201'
   manufacturer: Murata
-  mpn: '303010245'
-  description: SMD Inductor 3.3nH-0.2nH-450mA;0201
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: L2
   value: 3.3nH
   footprint: '0201'
   manufacturer: Murata
-  mpn: '303010245'
+  mpn: LQP03TN3N3C02D
+  prod_id: '303010245'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Inductor 3.3nH-0.2nH-450mA;0201
 - ref: L3
   value: 8.2nH
   footprint: '0201'
   manufacturer: Murata
-  mpn: '303011716'
+  mpn: LQP03TN8N2H02D
+  prod_id: '303011716'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Inductor;8.2nH-3%-250mA;0201
 - ref: L5
   value: 9.1nH
   footprint: '0201'
   manufacturer: Murata
-  mpn: '303011719'
+  mpn: LQP03TN9N1H02D
+  prod_id: '303011719'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Inductor;9.1nH-3%-250mA;0201
 - ref: L6
   value: 2.7nH
   footprint: '0201'
   manufacturer: Murata
-  mpn: '303010094'
+  mpn: LQP03TN2N7B02D
+  prod_id: '303010094'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Inductor;2.7nH-0.1nH-500mA;0201
 - ref: L7
   value: 6.8nH
   footprint: '0201'
   manufacturer: Murata
-  mpn: '303010171'
+  mpn: LQP03TN6N8H02D
+  prod_id: '303010171'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Inductor 6.8nH-3%-300mA;0201
 - ref: L8
   value: 6.8nH
   footprint: '0201'
   manufacturer: Murata
-  mpn: '303010171'
+  mpn: LQP03TN6N8H02D
+  prod_id: '303010171'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Inductor 6.8nH-3%-300mA;0201
 - ref: L9
   value: 47nH
   footprint: '0201'
   manufacturer: Murata
-  mpn: '303011717'
+  mpn: LQP03TN47NH02D
+  prod_id: '303011717'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Inductor;47nH-3%-100mA;0201
 - ref: OSC1
   value: 32MHz
-  footprint: X4_SMD_2
+  footprint: X4_SMD_2_5X2
   manufacturer: KDS
-  mpn: '306020441'
+  mpn: DSB221SDN-1XXB32000PAA
+  prod_id: '306020441'
+  temp_range: "-40\xB0C to 85\xB0C"
   description: SMD Oscillator TCXO;32MHz-1.5ppm-L2.5*W2.0*H0.8mm
   pin_count: 4
 - ref: R1
   value: 200ohm
   footprint: '0201'
+  tolerance: 1%
   manufacturer: YAGEO
-  mpn: '301013351'
+  mpn: RC0201FR-07200RL
+  prod_id: '301013351'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD RES 200R-1%-1/20W;0201
 - ref: R2
   value: 100ohm
   footprint: '0201'
+  tolerance: 1%
   manufacturer: YAGEO
-  mpn: '301010765'
-  description: "SMD RES 100K-\xB11%-1/20W;0201"
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: R3
   value: 100ohm
   footprint: '0201'
+  tolerance: 1%
   manufacturer: YAGEO
-  mpn: '301010765'
-  description: "SMD RES 100K-\xB11%-1/20W;0201"
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: R4
   value: 220ohm
   footprint: '0201'
+  tolerance: 1%
   manufacturer: YAGEO
-  mpn: '301010765'
-  description: "SMD RES 100K-\xB11%-1/20W;0201"
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: R7
   value: 100kohm
   footprint: '0201'
+  tolerance: 1%
   manufacturer: YAGEO
-  mpn: '301010765'
+  mpn: RC0201FR-07100KL
+  prod_id: '301010765'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: "SMD RES 100K-\xB11%-1/20W;0201"
   pullup: LR1121_RSTN
 - ref: R8
   value: 0ohm
   footprint: '0201'
+  tolerance: 1%
   manufacturer: YAGEO
-  mpn: '301013351'
-  description: SMD RES 200R-1%-1/20W;0201
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: R9
   value: 0ohm
   footprint: '0201'
+  tolerance: 1%
   manufacturer: YAGEO
-  mpn: '301013351'
-  description: SMD RES 200R-1%-1/20W;0201
+  temp_range: "-55\xB0C to 125\xB0C"
 - ref: SH1
   value: RF Shielding
   footprint: ''
-  description: DIP PoE module;4+3P-2.54mm-L53*W14*H12.58mm
 - ref: U1
   value: SKY13373-460
-  footprint: QFN12_0D5
+  footprint: QFN12_0D5_2X2X0
   manufacturer: SKYWORKS
-  mpn: '310060742'
+  mpn: SKY13373-460LF
+  prod_id: '310060742'
+  temp_range: "-40\xB0C to 85\xB0C"
   description: SMD IC RF Switch;0.1GHz-8GHz SP3T;QFN-12 2*2*0.55 mm
   pin_count: 13
 - ref: U2
   value: LR1121
-  footprint: QFN32_0D5
+  footprint: QFN32_0D5_5X5MM_EP3P3MM
   manufacturer: Semtech
-  mpn: TMP-874
+  mpn: LR1121
+  prod_id: TMP-874
+  temp_range: "-45\xB0C to 85\xB0C"
   description: SMD IC LoRa Edge;QFN32;5*5mm
   pin_count: 33
   nc_pins: {'5': '5', '16': '16', '17': '17', '18': '18', '27': '27', '28': '28'}
 - ref: U3
   value: LR1121 PIN OUT
-  footprint: MODULE24_1D27
+  footprint: MODULE24_1D27_17X12MM
   mpn: TMP-881
+  temp_range: "-40\xB0C to 85\xB0C"
   description: SMD Lora Module;
   pin_count: 24
 - ref: X1
   value: 32.768kHz
-  footprint: X2_SMD
+  footprint: X2_SMD_2X1
   manufacturer: KDS
-  mpn: '306011285'
+  mpn: 1TJG090DP1A0005
+  prod_id: '306011285'
+  temp_range: "-40\xB0C to 85\xB0C"
   description: SMD Crystal 32.768KHz-9pF-20ppm-80KR;2P-2.0*1.2*0.6mm
 nets:
 - name: 2.4G_RF

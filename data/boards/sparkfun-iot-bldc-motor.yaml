@@ -26,120 +26,168 @@ components:
 - ref: C1
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-16503
   decouples: U4
 - ref: C10
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
   decouples: U2
 - ref: C11
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
 - ref: C12
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U2
 - ref: C13
   value: 10uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-11015
   decouples: U6
 - ref: C14
   value: 10uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-11015
   decouples: U6
 - ref: C15
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
 - ref: C16
   value: 33pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-10142
 - ref: C17
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U3
 - ref: C18
   value: 10uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-11015
 - ref: C19
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-16503
 - ref: C2
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-16503
 - ref: C20
   value: 22uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-14464
 - ref: C21
   value: 22uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-14464
 - ref: C22
   value: 22uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-14464
   decouples: U3
 - ref: C23
   value: 100nF
   footprint: '0402'
+  voltage: 10V
+  tolerance: 10%
   prod_id: CAP-15083
   decouples: U8
 - ref: C24
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U7
 - ref: C25
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U11
 - ref: C26
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U9
 - ref: C3
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U10
 - ref: C4
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-16503
 - ref: C5
   value: 10nF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 10%
   prod_id: CAP-00867
 - ref: C6
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U5
 - ref: C7
   value: 10uF
   footprint: '0603'
+  voltage: 6.3V
   prod_id: CAP-13210
   decouples: U5
 - ref: C8
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-16503
 - ref: C9
   value: 2.2uF
   footprint: '0603'
+  voltage: 10V
+  tolerance: 20%
   prod_id: CAP-07888
   decouples: U2
 - ref: D1
@@ -210,7 +258,7 @@ components:
   pin_count: 4
 - ref: L1
   value: 4.7uH
-  footprint: INDUCTOR
+  footprint: INDUCTOR_4X4MM
   prod_id: NDUC-15245
 - ref: MEAS
   value: solder jumper (NC)
@@ -251,28 +299,32 @@ components:
 - ref: R1
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: Q1.G1.B
 - ref: R10
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: ESP_18/VH
 - ref: R11
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: ESP_17/UL
 - ref: R12
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: ESP_16/UH
 - ref: R13
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
-  pulldown: D4.C
 - ref: R14
   value: 12mohm
   footprint: '0603'
@@ -280,63 +332,77 @@ components:
 - ref: R15
   value: 330ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00818
 - ref: R16
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pullup: '!RESET'
 - ref: R17
   value: 4.7kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07857
 - ref: R18
   value: 5.1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-12083
   pulldown: J1.CC2
 - ref: R19
   value: 5.1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-12083
   pulldown: J1.CC1
 - ref: R2
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
 - ref: R20
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
   pulldown: U9.G1.-IN
 - ref: R21
   value: 20kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-09383
 - ref: R22
   value: 4.7kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07857
 - ref: R24
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: U2.EN
 - ref: R26
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R27
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R28
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
 - ref: R3
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
 - ref: R32
   value: 12mohm
@@ -353,6 +419,7 @@ components:
 - ref: R4
   value: 1Mohm
   footprint: '0603'
+  tolerance: 5%
   prod_id: RES-07868
 - ref: R5
   value: 93.1kohm
@@ -361,21 +428,25 @@ components:
 - ref: R6
   value: 30.1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-14690
   pulldown: FB
 - ref: R7
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: ESP_33/WL
 - ref: R8
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: ESP_19/WH
 - ref: R9
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: ESP_23/VL
 - ref: S1
@@ -567,21 +638,21 @@ nets:
 - name: ESP_15/GPIO4
   pins: [J4.7, U3.CS2/IOA15]
 - name: ESP_16/UH
-  pins: [R12.2, TP3.1, U1.UH, U3.IO16]
+  pins: [R12.2, U1.UH, U3.IO16]
 - name: ESP_17/UL
-  pins: [R11.2, TP4.1, U1.UL, U3.IO17]
+  pins: [R11.2, U1.UL, U3.IO17]
 - name: ESP_18/VH
-  pins: [R10.2, TP5.1, U1.VH, U3.SCK3/IO18]
+  pins: [R10.2, U1.VH, U3.SCK3/IO18]
 - name: ESP_19/WH
-  pins: [R8.2, TP7.1, U1.WH, U3.POCI3/IO19]
+  pins: [R8.2, U1.WH, U3.POCI3/IO19]
 - name: ESP_2/RGB_DI
-  pins: [J5.6, STAT.DI, TP1.1, U3.IOA2]
+  pins: [J5.6, STAT.DI, U3.IOA2]
 - name: ESP_21/TP_SDA
   pins: [J4.3, J7.3, R27.1, U3.SDA/IO21, U8.SDA]
 - name: ESP_22/TP_SCL
   pins: [J4.2, J7.4, R26.1, U3.SCL/IO22, U8.SCL]
 - name: ESP_23/VL
-  pins: [R9.2, TP6.1, U1.VL, U3.PICO3/IO23]
+  pins: [R9.2, U1.VL, U3.PICO3/IO23]
 - name: ESP_25/TP_A1
   pins: [J4.6, U3.DAC1/IOA25]
 - name: ESP_26/TP_A0
@@ -589,17 +660,17 @@ nets:
 - name: ESP_27/GPIO2
   pins: [J4.4, U3.IOA27]
 - name: ESP_32/CURR_SENSE
-  pins: [J5.4, R21.2, TP9.1, U3.XTAL_P/IOA32, U9.G1.OUT]
+  pins: [J5.4, R21.2, U3.XTAL_P/IOA32, U9.G1.OUT]
 - name: ESP_33/WL
-  pins: [R7.2, TP8.1, U1.WL, U3.XTAL_N/IOA33]
+  pins: [R7.2, U1.WL, U3.XTAL_N/IOA33]
 - name: ESP_34/DIAG
   pins: [DIAG.2, U1.DIAG, U3.IA34]
 - name: ESP_35/U_OUT
-  pins: [TP10.1, U3.IA35, U7.OUT]
+  pins: [U3.IA35, U7.OUT]
 - name: ESP_36/V_OUT
-  pins: [TP11.1, U11.OUT, U3.SENSOR_VP/IA36]
+  pins: [U11.OUT, U3.SENSOR_VP/IA36]
 - name: ESP_39/W_OUT
-  pins: [TP12.1, U10.OUT, U3.SENSOR_VN/IA39]
+  pins: [U10.OUT, U3.SENSOR_VN/IA39]
 - name: ESP_4/!INT_MAG
   pins: [J5.5, R28.1, U3.IOA4, U8.!INT]
 - name: ESP_5/!STDBY
@@ -734,12 +805,10 @@ nets:
   pins: [J1.SHLD, SHLD.2]
 - name: SW
   pins: [C15.2, L1.1, U6.SW]
-- name: TP2
-  pins: [STAT.DO, TP2.1]
 - name: U
-  pins: [P1.3, R32.2, TP13.1, U7.IN-]
+  pins: [P1.3, R32.2, U7.IN-]
 - name: V
-  pins: [P1.2, R33.2, TP14.1, U11.IN-]
+  pins: [P1.2, R33.2, U11.IN-]
 - name: V3
   pins: [C5.1, U4.V3]
 - name: VCP
@@ -747,7 +816,7 @@ nets:
 - name: V_USB
   pins: [C6.1, C7.+, J1.VBUS, Q1.G1.C, Q3.D, U5.VCC]
 - name: W
-  pins: [P1.1, R34.2, TP15.1, U10.IN-]
+  pins: [P1.1, R34.2, U10.IN-]
 positions:
 - ref: '!STBY'
   x: 52.58

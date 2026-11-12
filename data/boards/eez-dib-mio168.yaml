@@ -1,7 +1,7 @@
 name: EEZ DIB MIO168
 slug: eez-dib-mio168
 source: eez-open/dib-mio168
-format: kicad6
+format: kicad7
 description: Isolated mixed I/O module (SI8641BB isolator, SN6505B transformer driver)
 tags: [isolation]
 key_ics: [SN6505B]
@@ -20,587 +20,701 @@ components:
   footprint: '1206'
   digikey: 732-12074-2-ND
   mouser: 710-885342208020
+  tme: 1206B472K102CT
 - ref: C10
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C11
   value: 4.7uF
   footprint: 0805
   digikey: 490-14466-1-ND
   mouser: 963-TMK212AB7475MG-T
+  tme: C0805C475K3RACAUTO
 - ref: C12
   value: 4.7uF
   footprint: 0805
   digikey: 490-14466-1-ND
   mouser: 963-TMK212AB7475MG-T
+  tme: C0805C475K3RACAUTO
 - ref: C13
   value: 1uF
   footprint: 0805
   digikey: 490-10494-2-ND
   mouser: 81-GRM219R7YA105KA2J
+  tme: GRM219R7YA105KA12D
 - ref: C14
   value: 1uF
   footprint: 0805
   digikey: 490-10494-2-ND
   mouser: 81-GRM219R7YA105KA2J
+  tme: GRM219R7YA105KA12D
 - ref: C15
   value: 2.2uF
   footprint: 0805
   digikey: 1276-2954-1-ND
   mouser: 80-C0805C225M4RECLR
+  tme: CL21B225KOFNNNG
 - ref: C16
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C17
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C19
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
   decouples: IC6
 - ref: C2
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C20
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
   decouples: IC5
 - ref: C21
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C22
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C23
   value: 1uF
   footprint: 0805
   digikey: 490-10494-2-ND
   mouser: 81-GRM219R7YA105KA2J
+  tme: GRM219R7YA105KA12D
 - ref: C24
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C25
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C26
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C27
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C28
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C29
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C3
   value: 10uF
   footprint: '1206'
   digikey: 1276-2872-1-ND
   mouser: 810-CGA4J1X7S1C106KA
+  tme: CL21A106KOQNNNG
 - ref: C30
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C31
   value: 2.2uF
   footprint: 0805
   digikey: 1276-2954-1-ND
   mouser: 80-C0805C225M4RECLR
+  tme: CL21B225KOFNNNG
 - ref: C32
   value: 4.7uF
   footprint: '1206'
   digikey: 399-9717-1-ND
   mouser: 80-T491A475K006
+  tme: T491A475K006AT
 - ref: C33
   value: 2.2uF
   footprint: 0805
   digikey: 1276-2954-1-ND
   mouser: 80-C0805C225M4RECLR
+  tme: CL21B225KOFNNNG
 - ref: C34
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C35
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C36
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C37
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C38
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C39
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C4
   value: 4.7uF
   footprint: 0805
   digikey: 490-14466-1-ND
   mouser: 963-TMK212AB7475MG-T
+  tme: C0805C475K3RACAUTO
 - ref: C40
   value: 4.7pF
   footprint: '0603'
   digikey: 311-1740-1-ND
   mouser: 710-885012006049
+  tme: CL10C4R7CB8NNNC
 - ref: C41
   value: 4.7pF
   footprint: '0603'
   digikey: 311-1740-1-ND
   mouser: 710-885012006049
+  tme: CL10C4R7CB8NNNC
 - ref: C42
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C43
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C44
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C45
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C46
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C47
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C48
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C49
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C5
   value: 4.7uF
   footprint: 0805
   digikey: 490-14466-1-ND
   mouser: 963-TMK212AB7475MG-T
+  tme: C0805C475K3RACAUTO
 - ref: C50
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C51
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C52
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C53
   value: 4.7uF
   footprint: 0805
   digikey: 490-14466-1-ND
   mouser: 963-TMK212AB7475MG-T
+  tme: C0805C475K3RACAUTO
 - ref: C54
   value: 4.7uF
   footprint: 0805
   digikey: 490-14466-1-ND
   mouser: 963-TMK212AB7475MG-T
+  tme: C0805C475K3RACAUTO
 - ref: C55
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C56
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C57
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C58
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C59
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C6
   value: 1uF
   footprint: 0805
   digikey: 490-10494-2-ND
   mouser: 81-GRM219R7YA105KA2J
+  tme: GRM219R7YA105KA12D
 - ref: C60
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C61
   value: 2.2nF
   footprint: 0805
   digikey: 732-7840-1-ND
   mouser: 710-885012007065
+  tme: 0805N222J500CT
 - ref: C62
   value: 4.7uF
   footprint: 0805
   digikey: 490-14466-1-ND
   mouser: 963-TMK212AB7475MG-T
+  tme: C0805C475K3RACAUTO
 - ref: C63
   value: 2.2nF
   footprint: 0805
   digikey: 732-7840-1-ND
   mouser: 710-885012007065
+  tme: 0805N222J500CT
 - ref: C64
   value: 4.7uF
   footprint: 0805
   digikey: 490-14466-1-ND
   mouser: 963-TMK212AB7475MG-T
+  tme: C0805C475K3RACAUTO
 - ref: C65
   value: 22nF
   footprint: 0805
   digikey: 399-1163-1-ND
   mouser: 80-C0805C223K5R
+  tme: CL21B223KBANNNC
 - ref: C66
   value: 22nF
   footprint: 0805
   digikey: 399-1163-1-ND
   mouser: 80-C0805C223K5R
+  tme: CL21B223KBANNNC
 - ref: C67
   value: 1nF
   footprint: 0805
   digikey: 732-7858-1-ND
   mouser: 710-885012007040
+  tme: CL21C102JBCNNNC
 - ref: C68
   value: 1nF
   footprint: 0805
   digikey: 732-7858-1-ND
   mouser: 710-885012007040
+  tme: CL21C102JBCNNNC
 - ref: C69
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C7
   value: 1uF
   footprint: 0805
   digikey: 490-10494-2-ND
   mouser: 81-GRM219R7YA105KA2J
+  tme: GRM219R7YA105KA12D
 - ref: C70
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C71
   value: 4.7uF
   footprint: 0805
   digikey: 490-14466-1-ND
   mouser: 963-TMK212AB7475MG-T
+  tme: C0805C475K3RACAUTO
 - ref: C72
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C75
   value: 1nF
   footprint: 0805
   digikey: 732-7858-1-ND
   mouser: 710-885012007040
+  tme: CL21C102JBCNNNC
 - ref: C76
   value: 1nF
   footprint: 0805
   digikey: 732-7858-1-ND
   mouser: 710-885012007040
+  tme: CL21C102JBCNNNC
 - ref: C77
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C78
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C79
   value: 100pF
   footprint: 0805
   digikey: 399-15000-1-ND
   mouser: 80-C0805C101K5G
+  tme: CL21C101JBANNNC
 - ref: C8
   value: 1uF
   footprint: 0805
   digikey: 490-10494-2-ND
   mouser: 81-GRM219R7YA105KA2J
+  tme: GRM219R7YA105KA12D
 - ref: C80
   value: 10nF
   footprint: 0805
   digikey: 490-7194-1-ND
   mouser: 710-885012207122
+  tme: CC0805KRX7R9103
 - ref: C81
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: C82
   value: 100pF
   footprint: 0805
   digikey: 399-15000-1-ND
   mouser: 80-C0805C101K5G
+  tme: CL21C101JBANNNC
 - ref: C83
   value: 10uF
   footprint: '1206'
   digikey: 1276-2872-1-ND
   mouser: 810-CGA4J1X7S1C106KA
+  tme: CL21A106KOQNNNG
 - ref: C84
   value: 10nF
   footprint: 0805
   digikey: 490-7194-1-ND
   mouser: 710-885012207122
+  tme: CC0805KRX7R9103
 - ref: C85
   value: 10nF
   footprint: 0805
   digikey: 490-7194-1-ND
   mouser: 710-885012207122
+  tme: CC0805KRX7R9103
 - ref: C86
   value: 10nF
   footprint: 0805
   digikey: 490-7194-1-ND
   mouser: 710-885012207122
+  tme: CC0805KRX7R9103
 - ref: C87
   value: 10nF
   footprint: 0805
   digikey: 490-7194-1-ND
   mouser: 710-885012207122
+  tme: CC0805KRX7R9103
 - ref: C88
   value: 10nF
   footprint: 0805
   digikey: 490-7194-1-ND
   mouser: 710-885012207122
+  tme: CC0805KRX7R9103
 - ref: C89
   value: 10nF
   footprint: 0805
   digikey: 490-7194-1-ND
   mouser: 710-885012207122
+  tme: CC0805KRX7R9103
 - ref: C9
   value: 1uF
   footprint: 0805
   digikey: 490-10494-2-ND
   mouser: 81-GRM219R7YA105KA2J
+  tme: GRM219R7YA105KA12D
 - ref: C90
   value: 100pF
   footprint: 0805
   digikey: 399-15000-1-ND
   mouser: 80-C0805C101K5G
+  tme: CL21C101JBANNNC
 - ref: C91
   value: 100nF
   footprint: '0603'
   digikey: 1276-1005-2-ND
   mouser: 187-CL10B104KO8NNNC
+  tme: CL10B104KA8NNNC
 - ref: D1
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: D10
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: D15
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  tme: BAT54SFILM
   pin_count: 3
 - ref: D16
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  tme: BAT54SFILM
   pin_count: 3
 - ref: D17
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  tme: BAT54SFILM
   pin_count: 3
 - ref: D18
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  tme: BAT54SFILM
   pin_count: 3
 - ref: D19
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  tme: BAT54SFILM
   pin_count: 3
 - ref: D2
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: D20
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  tme: BAT54SFILM
   pin_count: 3
 - ref: D21
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  tme: BAT54SFILM
   pin_count: 3
 - ref: D22
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  tme: BAT54SFILM
   pin_count: 3
 - ref: D23
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  tme: BAT54SFILM
   pin_count: 3
 - ref: D24
   value: BAT54S
   footprint: SOT-23-3
   digikey: 497-2522-1-ND
   mouser: 511-BAT54SFILM
+  tme: BAT54SFILM
   pin_count: 3
 - ref: D25
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: D26
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: D3
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: D4
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: D5
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: D6
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: D7
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: D8
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: D9
   value: MBR0530T3G
   footprint: SOD123
   digikey: 863-MBR0530T3G
   mouser: MBR0530T3GOSCT-ND
+  tme: MBR0530T3G
 - ref: IC1
   value: SN6505BDBVT
   footprint: DBV0006A_N
   digikey: 296-43154-2-ND
   mouser: 595-SN6505BDBVT
+  tme: '-'
   pin_count: 6
 - ref: IC10
   value: W9812G6KH-6
   footprint: TSOPII-54
   digikey: W9812G6KH-6-ND
   mouser: 454-W9812G6KH-6
+  tme: '-'
   pin_count: 54
   nc_pins: {A12/NC-36: '36', NC-40: '40'}
 - ref: IC11
   value: OPA2196IDR
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   digikey: 296-1282-1-ND
   mouser: 595-TL072CDR
+  tme: TL072CD-ST
   pin_count: 8
 - ref: IC12
   value: DAC7760IPWPR
   footprint: PWP24
   digikey: 296-37188-1-ND
   mouser: 595-DAC7760IPWPR
+  tme: '-'
   pin_count: 25
   nc_pins: {BOOST: '20'}
 - ref: IC13
@@ -608,124 +722,146 @@ components:
   footprint: PWP24
   digikey: 296-37188-1-ND
   mouser: 595-DAC7760IPWPR
+  tme: '-'
   pin_count: 25
   nc_pins: {BOOST: '20'}
 - ref: IC14
   value: BM2LB150FJ-CE2
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   digikey: BM2LB150FJ-CE2TR-ND
   mouser: 755-BM2LB150FJ-CE2
+  tme: '-'
   pin_count: 8
 - ref: IC15
   value: DAC7563TDGSR
   footprint: DGS10
   digikey: 296-43287-1-ND
   mouser: 595-DAC7563TDGSR
+  tme: '-'
   pin_count: 10
 - ref: IC16
   value: OPA376AIDBVR
   footprint: SOT23-5L_STM
   digikey: 296-39130-2-ND
   mouser: 595-OPA376AIDBVR
+  tme: OPA376AIDBVR
   pin_count: 5
 - ref: IC17
   value: BM2LB150FJ-CE2
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   digikey: BM2LB150FJ-CE2TR-ND
   mouser: 755-BM2LB150FJ-CE2
+  tme: '-'
   pin_count: 8
 - ref: IC18
   value: BM2LB150FJ-CE2
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   digikey: BM2LB150FJ-CE2TR-ND
   mouser: 755-BM2LB150FJ-CE2
+  tme: '-'
   pin_count: 8
 - ref: IC19
   value: OPA2196IDR
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   digikey: 296-1282-1-ND
   mouser: 595-TL072CDR
+  tme: TL072CD-ST
   pin_count: 8
 - ref: IC2
   value: LP5907MFX-3.3
   footprint: SOT23-5L_STM
   digikey: 296-38557-2-ND
   mouser: 595-LP5907MFX-3.3NPB
+  tme: LP5907MFX-3.3/NOPB
+  mpn: LP5907MFX-3.3/NOPB
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: IC20
   value: BM2LB150FJ-CE2
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   digikey: BM2LB150FJ-CE2TR-ND
   mouser: 755-BM2LB150FJ-CE2
+  tme: '-'
   pin_count: 8
 - ref: IC21
   value: TL431B
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   digikey: 296-17332-1-ND
   mouser: 595-TL431IDBZR
+  tme: L431QDBZR.215
   pin_count: 3
 - ref: IC22
   value: 74HC126PW,118
   footprint: PW(R-PDSO-G14)
   digikey: 1727-6579-1-ND
   mouser: 771-HC126PW118
+  tme: SN74HC126PW
   pin_count: 14
 - ref: IC23
   value: DG212BDY-T1-E3
   footprint: SOIC-16
   digikey: DG212BDY-T1-E3CT-ND
   mouser: 781-DG212BDY-T1-E3
+  tme: '-'
   pin_count: 16
 - ref: IC3
   value: L78L15
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   digikey: MC78L15ACDR2GOSDKR-ND
   mouser: 863-MC78L15ACDR2G
+  tme: L78L15ACD13TR
   pin_count: 8
   nc_pins: {NC@4: '4', NC@5: '5'}
 - ref: IC4
   value: L79L15
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   digikey: MC79L15ABDR2GOSDKR
   mouser: 863-MC79L15ACDR2G
+  tme: MC79L15ACDG
   pin_count: 8
   nc_pins: {NC@4: '4', NC@8: '8'}
 - ref: IC5
   value: M24C32
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   digikey: 497-8572-5-ND
   mouser: 511-M24C32-WMN6P
+  tme: M24C32-WMN6P
+  mpn: M24C32-WMN6P
   pin_count: 8
 - ref: IC6
   value: SI8641NSOIC-16
-  footprint: SOIC-16
+  footprint: SOIC127P600X265-16N
   digikey: 336-2566-ND
   mouser: 634-SI8641BB-B-IS1
+  tme: '-'
   pin_count: 16
 - ref: IC7
   value: SI8641NSOIC-16
-  footprint: SOIC-16
+  footprint: SOIC127P600X265-16N
   digikey: 336-2566-ND
   mouser: 634-SI8641BB-B-IS1
+  tme: '-'
   pin_count: 16
 - ref: IC8
   value: STM32F446ZCT6
   footprint: LQFP-144
   digikey: 497-17473-ND
   mouser: 511-STM32F446ZCT6
+  tme: '-'
   pin_count: 144
 - ref: IC9
   value: SN74LVC1G139DCUR
   footprint: DCU8
   digikey: 296-18203-2-ND
   mouser: 595-SN74LVC1G139DCUR
+  tme: SN74LVC1G139DCUR
   pin_count: 8
 - ref: J1
   value: '4907'
   footprint: '4907'
   digikey: 36-4907-ND
   mouser: 534-4907
+  tme: 61-1537-11/0031
   pin_count: 2
   nc_pins: {'2': '2'}
 - ref: JP2
@@ -733,460 +869,552 @@ components:
   footprint: ZL303-03P
   digikey: 952-1312-ND
   mouser: 855-M22-2510305
+  tme: ZL303-03P
   pin_count: 3
 - ref: JP3
   value: DS1025-01-1*3P8BV1-B
   footprint: ZL303-03P
   digikey: 952-1312-ND
   mouser: 855-M22-2510305
+  tme: ZL303-03P
   pin_count: 3
 - ref: KK1
   value: PCB-MB
   footprint: PCB-MB-01
   digikey: RPC1760-ND
   mouser: 144-PCB-MB-01
+  tme: RI-PCB-MB-01
 - ref: KK2
   value: PCB-MB
   footprint: PCB-MB-01
   digikey: RPC1760-ND
   mouser: 144-PCB-MB-01
+  tme: RI-PCB-MB-01
 - ref: L1
   value: SRF0905-202Y
   footprint: SRF0905
   digikey: SRF0905-202YCT-ND
   mouser: 652-SRF0905-202Y
+  tme: '-'
   pin_count: 4
 - ref: L2
-  value: BLM18AG102SH1D
+  value: 1kohm
   footprint: BEAD0603
   digikey: 490-7809-1-ND
   mouser: 81-BLM18AG102SH1D
+  tme: BLM18AG102SH1D
+  mpn: BLM18AG102SH1D
 - ref: L3
-  value: BLM18AG102SH1D
+  value: 1kohm
   footprint: BEAD0603
   digikey: 490-7809-1-ND
   mouser: 81-BLM18AG102SH1D
+  tme: BLM18AG102SH1D
+  mpn: BLM18AG102SH1D
 - ref: L4
-  value: BLM18AG102SH1D
+  value: 1kohm
   footprint: BEAD0603
   digikey: 490-7809-1-ND
   mouser: 81-BLM18AG102SH1D
+  tme: BLM18AG102SH1D
+  mpn: BLM18AG102SH1D
 - ref: L5
-  value: BLM18AG102SH1D
+  value: 1kohm
   footprint: BEAD0603
   digikey: 490-7809-1-ND
   mouser: 81-BLM18AG102SH1D
+  tme: BLM18AG102SH1D
+  mpn: BLM18AG102SH1D
 - ref: L6
-  value: BLM18AG102SH1D
+  value: 1kohm
   footprint: BEAD0603
   digikey: 490-7809-1-ND
   mouser: 81-BLM18AG102SH1D
+  tme: BLM18AG102SH1D
+  mpn: BLM18AG102SH1D
 - ref: L7
-  value: BLM18AG102SH1D
+  value: 1kohm
   footprint: BEAD0603
   digikey: 490-7809-1-ND
   mouser: 81-BLM18AG102SH1D
+  tme: BLM18AG102SH1D
+  mpn: BLM18AG102SH1D
 - ref: Q1
   value: 2N7002PS,115
   footprint: SC88
   digikey: 1727-4791-2-ND
   mouser: 771-2N7002PS-115
+  tme: 2N7002PS.115
   pin_count: 6
 - ref: Q10
   value: 2N7002
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   digikey: 2N7002LT1GOSCT-ND
   mouser: 863-2N7002LT1G
+  tme: 2N7002LT1G
   pin_count: 3
 - ref: Q11
   value: IRLML2246TRPBF
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   digikey: IRLML2246TRPBFTR-ND
   mouser: 942-IRLML2246TRPBF
+  tme: IRLML2246TRPBF
   pin_count: 3
 - ref: Q2
   value: 2N7002PS,115
   footprint: SC88
   digikey: 1727-4791-2-ND
   mouser: 771-2N7002PS-115
+  tme: 2N7002PS.115
   pin_count: 6
 - ref: Q3
   value: 2N7002PS,115
   footprint: SC88
   digikey: 1727-4791-2-ND
   mouser: 771-2N7002PS-115
+  tme: 2N7002PS.115
   pin_count: 6
 - ref: Q4
   value: 2N7002PS,115
   footprint: SC88
   digikey: 1727-4791-2-ND
   mouser: 771-2N7002PS-115
+  tme: 2N7002PS.115
   pin_count: 6
 - ref: Q5
   value: 2N7002PS,115
   footprint: SC88
   digikey: 1727-4791-2-ND
   mouser: 771-2N7002PS-115
+  tme: 2N7002PS.115
   pin_count: 6
 - ref: Q6
   value: MMBT5401
   footprint: SOT23-BEC
   digikey: MMBT5401-FDICT-ND
   mouser: 621-MMBT5401-F
+  tme: MMBT5401
   pin_count: 3
 - ref: Q7
   value: MMBT5551
   footprint: SOT23-BEC
   digikey: MMBT5551LT1GOSCT-ND
   mouser: 863-MMBT5551LT1G
+  tme: MMBT5551
   pin_count: 3
 - ref: Q8
   value: MMBT5551
   footprint: SOT23-BEC
   digikey: MMBT5551LT1GOSCT-ND
   mouser: 863-MMBT5551LT1G
+  tme: MMBT5551
   pin_count: 3
 - ref: Q9
   value: IRLML2246TRPBF
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   digikey: IRLML2246TRPBFTR-ND
   mouser: 942-IRLML2246TRPBF
+  tme: IRLML2246TRPBF
   pin_count: 3
 - ref: R1
   value: 470kohm
   footprint: 0805
   digikey: 13-RT0805FRE07470KLDKR-ND
   mouser: 652-CMP0805-FX-4703L
+  tme: 0805S8F4703T5E
 - ref: R10
   value: 15ohm
   footprint: 0805
   digikey: RNCP0805FTD15R0CT-ND
   mouser: 652-CR0805FX-15R0ELF
+  tme: 0805S8F150JT5E
 - ref: R11
   value: 15ohm
   footprint: 0805
   digikey: RNCP0805FTD15R0CT-ND
   mouser: 652-CR0805FX-15R0ELF
+  tme: 0805S8F150JT5E
 - ref: R12
   value: 15ohm
   footprint: 0805
   digikey: RNCP0805FTD15R0CT-ND
   mouser: 652-CR0805FX-15R0ELF
+  tme: 0805S8F150JT5E
 - ref: R13
   value: 9.09kohm
   footprint: 0805
   digikey: P9.09KDACT-ND
   mouser: 667-ERJ-PB6B9091V
+  tme: ERA6AEB9091V
 - ref: R14
   value: 9.09kohm
   footprint: 0805
   digikey: P9.09KDACT-ND
   mouser: 667-ERJ-PB6B9091V
+  tme: ERA6AEB9091V
   pulldown: IC16.+IN
 - ref: R15
   value: 9.09kohm
   footprint: 0805
   digikey: P9.09KDACT-ND
   mouser: 667-ERJ-PB6B9091V
+  tme: ERA6AEB9091V
 - ref: R16
   value: 9.09kohm
   footprint: 0805
   digikey: P9.09KDACT-ND
   mouser: 667-ERJ-PB6B9091V
+  tme: ERA6AEB9091V
 - ref: R17
   value: 9.09kohm
   footprint: 0805
   digikey: P9.09KDACT-ND
   mouser: 667-ERJ-PB6B9091V
+  tme: ERA6AEB9091V
 - ref: R18
   value: 9.09kohm
   footprint: 0805
   digikey: P9.09KDACT-ND
   mouser: 667-ERJ-PB6B9091V
+  tme: ERA6AEB9091V
 - ref: R19
   value: 75kohm
   footprint: 0805
   digikey: P75KDACT-ND
   mouser: 667-ERA-6AEB753V
+  tme: ERA6AEB753V
   pulldown: IC19.+IN@5
 - ref: R2
   value: 470kohm
   footprint: 0805
   digikey: 13-RT0805FRE07470KLDKR-ND
   mouser: 652-CMP0805-FX-4703L
+  tme: 0805S8F4703T5E
   pulldown: R1.2
 - ref: R20
   value: 75kohm
   footprint: 0805
   digikey: P75KDACT-ND
   mouser: 667-ERA-6AEB753V
+  tme: ERA6AEB753V
   pulldown: IC19.+IN@3
 - ref: R21
   value: 75kohm
   footprint: 0805
   digikey: P75KDACT-ND
   mouser: 667-ERA-6AEB753V
+  tme: ERA6AEB753V
 - ref: R22
   value: 75kohm
   footprint: 0805
   digikey: P75KDACT-ND
   mouser: 667-ERA-6AEB753V
+  tme: ERA6AEB753V
 - ref: R23
   value: 180ohm
   footprint: 0805
   digikey: A126343CT-ND
   mouser: 652-CR0805FX-1800ELF
+  tme: 0805S8F1800T5E
 - ref: R24
   value: 180ohm
   footprint: 0805
   digikey: A126343CT-ND
   mouser: 652-CR0805FX-1800ELF
+  tme: 0805S8F1800T5E
 - ref: R25
   value: 47ohm
   footprint: 0805
   digikey: P47.0CCT-ND
   mouser: 279-CRGCQ0805F47R
+  tme: SMD0805-47R-1%
 - ref: R26
   value: 47ohm
   footprint: 0805
   digikey: P47.0CCT-ND
   mouser: 279-CRGCQ0805F47R
+  tme: SMD0805-47R-1%
 - ref: R27
   value: 2.7kohm
   footprint: '1206'
   digikey: 311-2.70KFRCT-ND
   mouser: 652-CR1206FX-2701ELF
+  tme: 1206S4F2701T5E
 - ref: R28
   value: 2.7kohm
   footprint: '1206'
   digikey: 311-2.70KFRCT-ND
   mouser: 652-CR1206FX-2701ELF
+  tme: 1206S4F2701T5E
 - ref: R29
   value: 2.7kohm
   footprint: '1206'
   digikey: 311-2.70KFRCT-ND
   mouser: 652-CR1206FX-2701ELF
+  tme: 1206S4F2701T5E
 - ref: R3
   value: 47ohm
   footprint: 0805
   digikey: P47.0CCT-ND
   mouser: 279-CRGCQ0805F47R
+  tme: SMD0805-47R-1%
 - ref: R30
   value: 2.7kohm
   footprint: '1206'
   digikey: 311-2.70KFRCT-ND
   mouser: 652-CR1206FX-2701ELF
+  tme: 1206S4F2701T5E
 - ref: R31
   value: 2.7kohm
   footprint: '1206'
   digikey: 311-2.70KFRCT-ND
   mouser: 652-CR1206FX-2701ELF
+  tme: 1206S4F2701T5E
 - ref: R32
   value: 2.7kohm
   footprint: '1206'
   digikey: 311-2.70KFRCT-ND
   mouser: 652-CR1206FX-2701ELF
+  tme: 1206S4F2701T5E
 - ref: R33
   value: 2.7kohm
   footprint: '1206'
   digikey: 311-2.70KFRCT-ND
   mouser: 652-CR1206FX-2701ELF
+  tme: 1206S4F2701T5E
 - ref: R34
   value: 2.7kohm
   footprint: '1206'
   digikey: 311-2.70KFRCT-ND
   mouser: 652-CR1206FX-2701ELF
+  tme: 1206S4F2701T5E
 - ref: R35
   value: 27kohm
   footprint: 0805
   digikey: A126356CT-ND
   mouser: 279-CRGCQ0805F27K
+  tme: 0805S8F2702T5E
   pulldown: DIN0
 - ref: R36
   value: 1kohm
   footprint: 0805
   digikey: RC0805FR-071KL
   mouser: 603-RC0805FR-071KL
+  tme: RC0805FR-071K
 - ref: R37
   value: 27kohm
   footprint: 0805
   digikey: A126356CT-ND
   mouser: 279-CRGCQ0805F27K
+  tme: 0805S8F2702T5E
   pulldown: DIN1
 - ref: R38
   value: 1kohm
   footprint: 0805
   digikey: RC0805FR-071KL
   mouser: 603-RC0805FR-071KL
+  tme: RC0805FR-071K
 - ref: R39
   value: 27kohm
   footprint: 0805
   digikey: A126356CT-ND
   mouser: 279-CRGCQ0805F27K
+  tme: 0805S8F2702T5E
   pulldown: DIN2
 - ref: R4
   value: 10kohm
   footprint: 0805
   digikey: CRGH0603F10K
   mouser: 756-WCR0603-10KFI
+  tme: SMD0603-10K-1%
   pulldown: BOOT0
 - ref: R40
   value: 1kohm
   footprint: 0805
   digikey: RC0805FR-071KL
   mouser: 603-RC0805FR-071KL
+  tme: RC0805FR-071K
 - ref: R41
   value: 27kohm
   footprint: 0805
   digikey: A126356CT-ND
   mouser: 279-CRGCQ0805F27K
+  tme: 0805S8F2702T5E
   pulldown: DIN3
 - ref: R42
   value: 1kohm
   footprint: 0805
   digikey: RC0805FR-071KL
   mouser: 603-RC0805FR-071KL
+  tme: RC0805FR-071K
 - ref: R43
   value: 27kohm
   footprint: 0805
   digikey: A126356CT-ND
   mouser: 279-CRGCQ0805F27K
+  tme: 0805S8F2702T5E
   pulldown: DIN4
 - ref: R44
   value: 1kohm
   footprint: 0805
   digikey: RC0805FR-071KL
   mouser: 603-RC0805FR-071KL
+  tme: RC0805FR-071K
 - ref: R45
   value: 27kohm
   footprint: 0805
   digikey: A126356CT-ND
   mouser: 279-CRGCQ0805F27K
+  tme: 0805S8F2702T5E
   pulldown: DIN5
 - ref: R46
   value: 1kohm
   footprint: 0805
   digikey: RC0805FR-071KL
   mouser: 603-RC0805FR-071KL
+  tme: RC0805FR-071K
 - ref: R47
   value: 27kohm
   footprint: 0805
   digikey: A126356CT-ND
   mouser: 279-CRGCQ0805F27K
+  tme: 0805S8F2702T5E
   pulldown: DIN6
 - ref: R48
   value: 1kohm
   footprint: 0805
   digikey: RC0805FR-071KL
   mouser: 603-RC0805FR-071KL
+  tme: RC0805FR-071K
 - ref: R49
   value: 27kohm
   footprint: 0805
   digikey: A126356CT-ND
   mouser: 279-CRGCQ0805F27K
+  tme: 0805S8F2702T5E
   pulldown: DIN7/MISO
 - ref: R5
   value: 4.7kohm
   footprint: 0805
   digikey: 311-4.70KCRCT-ND
   mouser: 603-RC0805FR-074K7L
+  tme: 0805S8F4701T5E
 - ref: R50
   value: 1kohm
   footprint: 0805
   digikey: RC0805FR-071KL
   mouser: 603-RC0805FR-071KL
+  tme: RC0805FR-071K
 - ref: R51
   value: 100ohm
   footprint: 0805
   digikey: 311-100CRCT-ND
   mouser: 652-CR0805FX-1000ELF
+  tme: 0805S8F1000T5E
 - ref: R52
   value: 470ohm
   footprint: 0805
   digikey: 311-470CRCT-ND
   mouser: 71-CRCW0805470RFKEB
+  tme: RC0805FR-07470R
 - ref: R53
   value: 1.8kohm
   footprint: 0805
   digikey: A129752CT-ND
   mouser: 652-CR0805FX-1801ELF
+  tme: 0805S8J0182T5E
   pulldown: IC21.R
 - ref: R54
   value: 47ohm
   footprint: 0805
   digikey: P47.0CCT-ND
   mouser: 279-CRGCQ0805F47R
+  tme: SMD0805-47R-1%
 - ref: R55
   value: 47ohm
   footprint: 0805
   digikey: P47.0CCT-ND
   mouser: 279-CRGCQ0805F47R
+  tme: SMD0805-47R-1%
 - ref: R56
   value: 470ohm
   footprint: 0805
   digikey: 311-470CRCT-ND
   mouser: 71-CRCW0805470RFKEB
+  tme: RC0805FR-07470R
 - ref: R57
   value: 100kohm
   footprint: 0805
   digikey: RMCF0805FT100KCT-ND
   mouser: 71-CRCW0805100KFKEAC
+  tme: 0805S8F1003T5E
 - ref: R58
   value: 100kohm
   footprint: 0805
   digikey: RMCF0805FT100KCT-ND
   mouser: 71-CRCW0805100KFKEAC
+  tme: 0805S8F1003T5E
 - ref: R59
   value: 10kohm
   footprint: 0805
   digikey: CRGH0603F10K
   mouser: 756-WCR0603-10KFI
+  tme: SMD0603-10K-1%
 - ref: R6
   value: 10kohm
   footprint: 0805
   digikey: CRGH0603F10K
   mouser: 756-WCR0603-10KFI
+  tme: SMD0603-10K-1%
 - ref: R60
   value: 10kohm
   footprint: 0805
   digikey: CRGH0603F10K
   mouser: 756-WCR0603-10KFI
+  tme: SMD0603-10K-1%
 - ref: R61
   value: 100ohm
   footprint: 0805
   digikey: 311-100CRCT-ND
   mouser: 652-CR0805FX-1000ELF
+  tme: 0805S8F1000T5E
 - ref: R62
   value: 100ohm
   footprint: 0805
   digikey: 311-100CRCT-ND
   mouser: 652-CR0805FX-1000ELF
+  tme: 0805S8F1000T5E
 - ref: R63
   value: 1kohm
   footprint: 0805
   digikey: RC0805FR-071KL
   mouser: 603-RC0805FR-071KL
+  tme: RC0805FR-071K
 - ref: R64
   value: 1kohm
   footprint: 0805
   digikey: RC0805FR-071KL
   mouser: 603-RC0805FR-071KL
+  tme: RC0805FR-071K
 - ref: R9
   value: 15ohm
   footprint: 0805
   digikey: RNCP0805FTD15R0CT-ND
   mouser: 652-CR0805FX-15R0ELF
+  tme: 0805S8F150JT5E
 - ref: RN1
   value: DR1206-33R-4/8
   footprint: CAY16
   digikey: CAY16-330J4LFCT-ND
   mouser: 652-CAY16-330J4LF
+  tme: 4D03WGJ0330T
   pin_count: 8
 - ref: RN2
   value: DR1206-47K-4/8
   footprint: CAY16
   digikey: CAY16-330J4LFCT-ND
   mouser: 652-CAY16-330J4LF
+  tme: 4D03WGJ0330T
   pin_count: 8
   nc_pins: {1@4: '4', 2@5: '5'}
 - ref: RN3
@@ -1194,12 +1422,14 @@ components:
   footprint: CAY16
   digikey: CAY16-330J4LFCT-ND
   mouser: 652-CAY16-330J4LF
+  tme: 4D03WGJ0330T
   pin_count: 8
 - ref: RN4
   value: DR1206-33R-4/8
   footprint: CAY16
   digikey: CAY16-330J4LFCT-ND
   mouser: 652-CAY16-330J4LF
+  tme: 4D03WGJ0330T
   pin_count: 8
   nc_pins: {1@1: '1', 2@8: '8'}
 - ref: TR1
@@ -1207,50 +1437,67 @@ components:
   footprint: MURATA_78615
   digikey: 1297-1178-1-ND
   mouser: 710-750315371
+  tme: '-'
   pin_count: 6
 - ref: TVS1
   value: PESD12VL1BA,115
   footprint: SOD-323_PESD
   digikey: 1727-3808-1-ND
   mouser: 771-PESD12VL1BA-T/R
+  tme: PESD12VL1BA.115
 - ref: TVS2
   value: PESD12VL1BA,115
   footprint: SOD-323_PESD
   digikey: 1727-3808-1-ND
   mouser: 771-PESD12VL1BA-T/R
+  tme: PESD12VL1BA.115
 - ref: TVS3
   value: PESD12VL1BA,115
   footprint: SOD-323_PESD
   digikey: 1727-3808-1-ND
   mouser: 771-PESD12VL1BA-T/R
+  tme: PESD12VL1BA.115
 - ref: TVS4
   value: PESD12VL1BA,115
   footprint: SOD-323_PESD
   digikey: 1727-3808-1-ND
   mouser: 771-PESD12VL1BA-T/R
+  tme: PESD12VL1BA.115
+- ref: X1
+  value: Conn_2Rows-28Pins
+  footprint: 77317-104-28LF
+  digikey: S2111EC-14-ND
+  mouser: 649-77317-104-28LF
+  tme: '-'
+  pin_count: 28
+  nc_pins: {Pin_2: '2', Pin_3: '3', Pin_21: '21', Pin_22: '22', Pin_27: '27', Pin_28: '28'}
 - ref: X3
   value: '691327310016'
   footprint: '691327310016'
   digikey: 732-691327310016-ND
   mouser: 710-691327310016
+  tme: '-'
   pin_count: 16
 - ref: X4
   value: '691322310008'
   footprint: '691322310008'
   digikey: 732-2093-ND
   mouser: 710-691322310008
+  tme: '-'
   pin_count: 8
 - ref: X5
   value: 87833-1032
   footprint: DS1014-10RF1B
   digikey: WM8615-ND
   mouser: 538-87833-1032
+  tme: DS1014-10RF1B
   pin_count: 10
 - ref: X6
   value: DS1023-2*14S21
   footprint: TSW-114-07-F-D
   digikey: SAM1183-14-ND
   mouser: 200-SSQ11401TD
+  tme: DS1023-2*14S21
   pin_count: 28
   nc_pins: {Pin_17: '17', Pin_18: '18'}
 - ref: X7
@@ -1258,18 +1505,21 @@ components:
   footprint: DS1014-10RF1B
   digikey: WM8615-ND
   mouser: 538-87833-1032
+  tme: DS1014-10RF1B
   pin_count: 10
 - ref: X8
   value: DS1023-2*14S21
   footprint: TSW-114-07-F-D
   digikey: SAM1183-14-ND
   mouser: 200-SSQ11401TD
+  tme: DS1023-2*14S21
   pin_count: 28
 - ref: Y1
   value: LF XTAL026392
   footprint: 12SMX(B)
   digikey: 1923-1009-ND
   mouser: 449-LFXTAL026392BULK
+  tme: 16.00M-12SM
   pin_count: 4
   nc_pins: {NC@2: '2', NC@4: '4'}
 - ref: ZD1
@@ -1277,11 +1527,13 @@ components:
   footprint: DO214AC-2
   digikey: SMAJ16A-FDICT-ND
   mouser: 621-SMAJ16A-13-F
+  tme: SMAJ16A-13-F
 - ref: ZD2
   value: SMAJ16A
   footprint: DO214AC-2
   digikey: SMAJ16A-FDICT-ND
   mouser: 621-SMAJ16A-13-F
+  tme: SMAJ16A-13-F
 nets:
 - name: +15V_ISO
   pins:
@@ -3005,6 +3257,9 @@ positions:
   x: 120.42
   y: 110.35
   rot: 90.0
+- ref: X1
+  x: 163.0
+  y: 140.0
 - ref: X3
   x: 87.5
   y: 119.5

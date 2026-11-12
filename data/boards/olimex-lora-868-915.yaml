@@ -91,7 +91,7 @@ components:
   footprint: Shield1620
 - ref: U1
   value: SX1276
-  footprint: QFN-28_EP
+  footprint: QFN-28_EP_6x6
   pin_count: 29
   nc_pins: {'1': '1', '20': '20', '27': '27', '28': '28'}
 - ref: X1

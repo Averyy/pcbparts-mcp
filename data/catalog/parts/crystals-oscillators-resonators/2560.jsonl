@@ -1,0 +1,83 @@
+{"l":"C434592","m":"ICL8038N","f":"HGSEMI","p":"DIP-14","t":"e","c":2560,"d":"-15V~-5V、5V~15V 0℃~+70℃ 10V~30V 36V DIP-14 Voltage Controlled Oscillators (VCOs) ROHS","a":[["Operating Temperature","0℃~+70℃"],["Vos - Input Offset Voltage","-"],["Input Offset Current(Ios)","-"],["Output Current","-"],["Slew Rate","-"],["Gain Bandwidth Product","-"],["Single supply","10V~30V"],["Common Mode Rejection Ratio(CMRR)","-"],["Rail to Rail","-"],["Number of Channels","-"],["Input Voltage Noise Density","-"],["Quiescent Current","-"],["Ib - Input Bias Current","-"],["Dual Supply","-15V~-5V、5V~15V"]],"x":0}
+{"l":"C661863","m":"HMC431LP4ETR","f":"Analog Devices","p":"QFN-24-EP(4x4)","t":"e","c":2560,"d":"-40℃~+85℃ 2.75V~3.25V 5.5GHz~6.1GHz General Purpose Supports hardware frequency modulation VCO、Buffer Amplifier QFN-24-EP(4x4) Voltage Controlled Oscillators (VCOs) ROHS","a":[["Frequency Range","5.5GHz~6.1GHz"],["Function","VCO、Buffer Amplifier"],["Operating Temperature","-40℃~+85℃"],["Applications","General Purpose"],["Voltage - Supply","2.75V~3.25V"],["Features","Supports hardware frequency modulation"]],"x":0}
+{"l":"C903832","m":"MC100EL1648DTR2G","f":"onsemi","p":"TSSOP-8-3mm","t":"e","c":2560,"d":"-40℃~+85℃ 4.2V~5.5V TSSOP-8-3mm Voltage Controlled Oscillators (VCOs) ROHS","a":[["frequency range","-"],["Voltage - Supply","4.2V~5.5V"],["operating temperature","-40℃~+85℃"]],"x":0}
+{"l":"C1540002","m":"SN74LS629D","f":"Texas Instruments","p":"SOIC-16","t":"e","c":2560,"d":"0℃~+70℃ 4.75V~5.25V SOIC-16 Voltage Controlled Oscillators (VCOs) ROHS","a":[["frequency range","-"],["Voltage - Supply","4.75V~5.25V"],["operating temperature","0℃~+70℃"]],"x":0}
+{"l":"C3304280","m":"SN74LS624DR","f":"Texas Instruments","p":"SOIC-14","t":"e","c":2560,"d":"0℃~+70℃ 4.75V~5.25V SOIC-14 Voltage Controlled Oscillators (VCOs) ROHS","a":[["frequency range","-"],["Voltage - Supply","4.75V~5.25V"],["operating temperature","0℃~+70℃"]],"x":0}
+{"l":"C19193495","m":"ICL8038M/TR","f":"HGSEMI","p":"SOP-14","t":"e","c":2560,"d":"0℃~+70℃ 10V~30V SOP-14 Voltage Controlled Oscillators (VCOs) ROHS","a":[["Harmonics","-"],["frequency range","-"],["Voltage - Supply","10V~30V"],["operating temperature","0℃~+70℃"],["phase noise","-"]],"x":0}
+{"l":"C19193496","m":"ICL8038MT/TR","f":"HGSEMI","p":"TSSOP-14","t":"e","c":2560,"d":"0℃~+70℃ 10V~30V TSSOP-14 Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043262","m":"YV257208","f":"INNOTION","p":"DFN-6-EP(2x2)","t":"e","c":2560,"d":"DFN-6-EP(2x2) Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043272","m":"YSGM07014010","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043273","m":"YSGM10021008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043274","m":"YSGM112208","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043275","m":"YSGM172204D","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043326","m":"YSGM17032008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043327","m":"YSGM22041010","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043328","m":"YSGM243008D","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043329","m":"YSGM030408","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043330","m":"YSGM32047008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043331","m":"YSGM30065008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043332","m":"YSGM30060008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043333","m":"YSGM37075008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043334","m":"YSGM040508","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043335","m":"YSGM46080009","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043336","m":"YSGM49092008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043337","m":"YSGM051010","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043338","m":"YSGM050608","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043339","m":"YSGM060708","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043340","m":"YSGM060808","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043341","m":"YSGM061008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043342","m":"YSGM061108","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043343","m":"YSGM071408","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043344","m":"YSGM081210","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043345","m":"YSGM081008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043346","m":"YSGM091308D","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043347","m":"YSGM091208","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043348","m":"YSGM101208","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043349","m":"YSGM101409","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043350","m":"YSGM101510","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043351","m":"YSGM111308","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043352","m":"YSGM111608","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043353","m":"YSGM141608","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043354","m":"YSGM151708","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043355","m":"YSGM152008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043356","m":"YSGM172010","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043357","m":"YSGM172308","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043358","m":"YSGM182008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043359","m":"YSGM192308","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043360","m":"YSGM202208","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043361","m":"YSGM232508","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043362","m":"YSGM222806","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043363","m":"YSGM233008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043364","m":"YSGM252708","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043365","m":"YSGM263306","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043366","m":"YSGM263008","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043367","m":"YSGM293606","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043368","m":"YSGM323706","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043369","m":"YSGM333606","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043371","m":"YSGM364206","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043372","m":"YSGM374802","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043373","m":"YSGM404506","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043374","m":"YSGM445206","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043375","m":"YSGM455006","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043376","m":"YSGM505506","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043377","m":"YSGM505406","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043378","m":"YSGM515906","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043379","m":"YSGM536106","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043380","m":"YSGM556006","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043381","m":"YSGM606506","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043382","m":"YSGM657103","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043383","m":"YSGMTC5800","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043384","m":"YSGMTC5200","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043385","m":"YSGMTC6200","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043386","m":"YSGM475508","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043387","m":"YSGM576408","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043388","m":"YSGM606808","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043389","m":"YSGM667406","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C52043390","m":"YSGM707706","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0}
+{"l":"C53309263","m":"YSGM788301","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0,"n":1}
+{"l":"C53309264","m":"YSGM758001","f":"INNOTION","p":"SMD9070-8P","t":"e","c":2560,"d":"SMD9070-8P Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0,"n":1}
+{"l":"C53468208","m":"ICL8038MS/TR-HG","f":"HGSEMI","p":"QSOP-16","t":"e","c":2560,"d":"QSOP-16 Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0,"n":1}
+{"l":"C53593440","m":"YSGM536204","f":"INNOTION","p":"SMD-8P,9x7mm","t":"e","c":2560,"d":"SMD-8P,9x7mm Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0,"n":1}
+{"l":"C55109618","m":"YSGM828700","f":"INNOTION","p":"SMD-8P,9x7mm","t":"e","c":2560,"d":"SMD-8P,9x7mm Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0,"n":1}
+{"l":"C55595657","m":"ICL8038CCPD-HX","f":"ZHHXDZ","p":"DIP-14","t":"e","c":2560,"d":"DIP-14 Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0,"n":1}
+{"l":"C56345786","m":"SIT5001AI-2D-33E0-25.000000","f":"SiTime","p":"SMD","t":"e","c":2560,"d":"SMD Voltage Controlled Oscillators (VCOs) ROHS","a":[],"x":0,"n":1}

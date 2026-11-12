@@ -23,6 +23,8 @@ components:
 - ref: C1
   value: 10nF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 10%
   prod_id: CAP-00867
 - ref: D1
   value: BAS70-05
@@ -63,28 +65,34 @@ components:
 - ref: R1
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: '!EVI'
 - ref: R2
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: '!INT'
 - ref: R3
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R4
   value: 4.7kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07857
 - ref: R5
   value: 4.7kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07857
 - ref: R6
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: CLKOE
 - ref: S1

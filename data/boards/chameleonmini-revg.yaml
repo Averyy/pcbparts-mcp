@@ -3,7 +3,7 @@ slug: chameleonmini-revg
 source: emsec/ChameleonMini
 format: eagle
 description: 'NFC emulator: contactless smartcard emulation (ISO 14443A/B, ISO 15693)'
-tags: [nfc-rfid, rtc, security]
+tags: [nfc-rfid, security]
 key_ics: [ATxmega128A4U-AU, MCP1700, MB85RS256, MCP73832T]
 outline:
   width_mm: 140.01
@@ -215,10 +215,6 @@ components:
 - ref: LEDRED
   value: HSMS-C190
   footprint: '0603'
-- ref: PE0
-  value: PAD
-  footprint: SMD1,27-2,54
-  description: Wire PAD
 - ref: Q1
   value: Si1967DH
   footprint: SOT363
@@ -370,7 +366,7 @@ components:
   description: Microchip's MCP73831
   pin_count: 5
 - ref: X1
-  value: 2x3 header
+  value: 2x3 2.54mm header
   footprint: PINHD-2X3-2.54-EDGE
   pin_count: 6
 - ref: X3
@@ -479,7 +475,6 @@ nets:
   pins: [IC1.PD1, IC5.SCK]
 - name: GND
   pins:
-  - B-.TP
   - BAT1.-
   - C1.2
   - C10.2
@@ -574,12 +569,10 @@ nets:
   pins: [C17.2, C30.2, D1.1, D2.A2, D8.A2, R7.1]
 - name: N$19
   pins: [C27.1, D8.K, R9.2]
-- name: N$24
-  pins: [IC1.PE0, PE0.P]
 - name: N$3
   pins: [D5.K, Q3.D]
 - name: N$31
-  pins: [B+.TP, BAT1.+, C4.1, SW1.S, U1.VBAT]
+  pins: [BAT1.+, C4.1, SW1.S, U1.VBAT]
 - name: N$56
   pins: [C23.2, Q4.B, R20.1, R25.2]
 - name: N$59
@@ -821,10 +814,6 @@ positions:
   x: 27.3
   y: 35.08
   rot: 180.0
-- ref: PE0
-  x: 31.47
-  y: 62.36
-  rot: 270.0
 - ref: Q1
   x: 42.23
   y: 70.33

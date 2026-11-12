@@ -2,9 +2,9 @@ name: emonTx v4
 slug: emontx-v4
 source: openenergymonitor/emontx4
 format: eagle
-description: "AVR128DB48 direct-ADC energy monitoring (no metering IC), RFM69CW 433MHz radio"
+description: AVR128DB48 direct-ADC energy monitoring (no metering IC), RFM69CW 433MHz radio
 tags: [adc-dac, energy-monitoring, sub-ghz]
-key_ics: [RFM69CW]
+key_ics: [RFM69CW, AVR128DB48]
 outline:
   width_mm: 99.9
   height_mm: 64.91
@@ -22,20 +22,24 @@ components:
   pin_count: 9
 - ref: AP2112
   value: AP2112K-3.3TRG1
-  footprint: SOT-5
-  description: 600mA 3.3V LDO Regulator Enable SOT23-5 DiodesZetex AP2112K-3.3TRG1, LDO
+  footprint: SOT95P282X130-5N
+  arrow: AP2112K-3.3TRG1
+  description: 600mA 3.3V LDO Regulator Enable SOT23-5 DiodesZetex AP2112K-3.3TRG1, LDO Voltage Regulator, 3.3 V +/-1.5%,
+    2.5  6 Vin, 5-Pin SOT-23
   height: 1.3mm
   manufacturer: Diodes Inc.
   mpn: AP2112K-3.3TRG1
+  mouser: 621-AP2112K-3.3TRG1
   pin_count: 5
   nc_pins: {ADJ/NC: '4'}
 - ref: AVRDB
   value: AVR128DB48T-E_6LX
-  footprint: QFN-49
+  footprint: QFN40P600X600X90-49N
   description: IC MCU 8BIT 128KB FLASH 48VQFN
   height: 0.9mm
   manufacturer: Microchip
   mpn: AVR128DB48T-E/6LX
+  mouser: 579-VR128DB48T-E/6LX
   pin_count: 49
   nc_pins: {PB3: '7', PC3: '13', PC4: '16', PC5: '17', PC6: '18', PC7: '19', PF4: '38', PF5: '39', PA2: '46', PA3: '47'}
 - ref: C1
@@ -138,17 +142,17 @@ components:
   footprint: '0603'
   voltage: 6V
 - ref: CN1
-  value: 1x3 screw terminal
+  value: 1x3 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-3
   prod_id: CONN-08288
   pin_count: 3
 - ref: CN2
-  value: 1x3 screw terminal
+  value: 1x3 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-3
   prod_id: CONN-08288
   pin_count: 3
 - ref: CN3
-  value: 1x3 screw terminal
+  value: 1x3 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-3
   prod_id: CONN-08288
   pin_count: 3
@@ -193,64 +197,72 @@ components:
   footprint: SOD-523
 - ref: IC1
   value: MCP1501-10
-  footprint: SOIC-8
+  footprint: SOIC127P600X175-8N
+  arrow: MCP1501-10E/SN
   description: MICROCHIP - MCP1501-10E/SN - VOLTAGE REF, SERIES, 1.024V, NSOIC-8
   height: 1.75mm
   manufacturer: Microchip
   mpn: MCP1501-10E/SN
+  mouser: 579-MCP1501-10E/SN
   pin_count: 8
 - ref: J1
   value: SJ-3524-SMT-TR
   footprint: '3524'
+  arrow: SJ-3524-SMT-TR
   description: Phone Connectors Audio Jacks
-  height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  mouser: 490-SJ-3524-SMT-TR
   pin_count: 4
   nc_pins: {RING: '3'}
 - ref: J2
   value: SJ-3524-SMT-TR
   footprint: '3524'
+  arrow: SJ-3524-SMT-TR
   description: Phone Connectors Audio Jacks
-  height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  mouser: 490-SJ-3524-SMT-TR
   pin_count: 4
   nc_pins: {RING: '3'}
 - ref: J3
   value: SJ-3524-SMT-TR
   footprint: '3524'
+  arrow: SJ-3524-SMT-TR
   description: Phone Connectors Audio Jacks
-  height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  mouser: 490-SJ-3524-SMT-TR
   pin_count: 4
   nc_pins: {RING: '3'}
 - ref: J4
   value: SJ-3524-SMT-TR
   footprint: '3524'
+  arrow: SJ-3524-SMT-TR
   description: Phone Connectors Audio Jacks
-  height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  mouser: 490-SJ-3524-SMT-TR
   pin_count: 4
   nc_pins: {RING: '3'}
 - ref: J5
   value: SJ-3524-SMT-TR
   footprint: '3524'
+  arrow: SJ-3524-SMT-TR
   description: Phone Connectors Audio Jacks
-  height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  mouser: 490-SJ-3524-SMT-TR
   pin_count: 4
   nc_pins: {RING: '3'}
 - ref: J6
   value: SJ-3524-SMT-TR
   footprint: '3524'
+  arrow: SJ-3524-SMT-TR
   description: Phone Connectors Audio Jacks
-  height: mm
   manufacturer: CUI Inc.
   mpn: SJ-3524-SMT-TR
+  mouser: 490-SJ-3524-SMT-TR
   pin_count: 4
   nc_pins: {RING: '3'}
 - ref: J9
@@ -310,10 +322,16 @@ components:
   value: 33kohm
   footprint: '0603'
   pulldown: C14.2
+- ref: R16
+  value: R
+  footprint: '0204'
 - ref: R17
   value: 180kohm
   footprint: '0603'
   pullup: C14.2
+- ref: R18
+  value: R
+  footprint: '1206'
 - ref: R19
   value: 1kohm
   footprint: '0603'
@@ -327,6 +345,9 @@ components:
   value: 33kohm
   footprint: '0603'
   pulldown: C29.2
+- ref: R22
+  value: R
+  footprint: '0204'
 - ref: R23
   value: 180kohm
   footprint: '0603'
@@ -348,6 +369,12 @@ components:
 - ref: R28
   value: 1kohm
   footprint: '0603'
+- ref: R29
+  value: R
+  footprint: '0204'
+- ref: R3
+  value: R
+  footprint: '0204'
 - ref: R30
   value: 10kohm
   footprint: '0603'
@@ -370,9 +397,18 @@ components:
 - ref: R35
   value: 10ohm
   footprint: '0603'
+- ref: R36
+  value: R
+  footprint: '1206'
 - ref: R37
   value: 1kohm
   footprint: '0603'
+- ref: R38
+  value: R
+  footprint: '0204'
+- ref: R39
+  value: R
+  footprint: '1206'
 - ref: R4
   value: 33kohm
   footprint: '0603'
@@ -412,10 +448,22 @@ components:
   value: 180kohm
   footprint: '0603'
   pullup: C8.2
+- ref: R5
+  value: R
+  footprint: '0204'
 - ref: R6
   value: 180kohm
   footprint: '0603'
   pullup: C3.2
+- ref: R7
+  value: R
+  footprint: '1206'
+- ref: R8
+  value: R
+  footprint: '1206'
+- ref: R9
+  value: R
+  footprint: '1206'
 - ref: S3
   value: 2_SMT_DIP_SWITCH
   footprint: DIP_SWITCH_SMT
@@ -1082,9 +1130,17 @@ positions:
   x: 37.78
   y: 58.42
   rot: 270.0
+- ref: R16
+  x: 39.88
+  y: 68.58
+  rot: 270.0
 - ref: R17
   x: 35.24
   y: 58.42
+  rot: 270.0
+- ref: R18
+  x: 39.88
+  y: 68.58
   rot: 270.0
 - ref: R19
   x: 71.75
@@ -1101,6 +1157,10 @@ positions:
 - ref: R21
   x: 24.77
   y: 58.42
+  rot: 270.0
+- ref: R22
+  x: 52.83
+  y: 68.58
   rot: 270.0
 - ref: R23
   x: 22.23
@@ -1126,6 +1186,14 @@ positions:
   x: 89.85
   y: 54.29
   rot: 90.0
+- ref: R29
+  x: 26.92
+  y: 68.58
+  rot: 270.0
+- ref: R3
+  x: 65.79
+  y: 68.58
+  rot: 270.0
 - ref: R30
   x: 23.81
   y: 47.31
@@ -1149,9 +1217,21 @@ positions:
   x: 21.27
   y: 50.8
   rot: 90.0
+- ref: R36
+  x: 26.92
+  y: 68.58
+  rot: 270.0
 - ref: R37
   x: 19.68
   y: 58.42
+  rot: 270.0
+- ref: R38
+  x: 13.72
+  y: 68.58
+  rot: 270.0
+- ref: R39
+  x: 13.72
+  y: 68.58
   rot: 270.0
 - ref: R4
   x: 76.83
@@ -1193,9 +1273,25 @@ positions:
   x: 81.28
   y: 60.01
   rot: 180.0
+- ref: R5
+  x: 78.74
+  y: 68.58
+  rot: 270.0
 - ref: R6
   x: 74.3
   y: 58.42
+  rot: 270.0
+- ref: R7
+  x: 78.74
+  y: 68.58
+  rot: 270.0
+- ref: R8
+  x: 65.79
+  y: 68.58
+  rot: 270.0
+- ref: R9
+  x: 52.83
+  y: 68.58
   rot: 270.0
 - ref: S3
   x: 81.92

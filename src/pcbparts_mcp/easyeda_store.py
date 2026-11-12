@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 SEED_FILE = Path("easyeda") / "footprints.csv"
 SEED_COLUMNS = ("lcsc", "has_footprint", "symbol_uuid", "footprint_uuid", "checked", "source")
 CHECKED_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
-_LCSC_RE = re.compile(r"C\d+")
+_LCSC_RE = re.compile(r"C[0-9]+")
 _UUID_RE = re.compile(r"[0-9a-fA-F]{32}")
 
 
@@ -43,7 +43,7 @@ class SeedRow(NamedTuple):
 
 def lcsc_number(lcsc: str) -> int:
     """Numeric part of an LCSC code, for sorting (C2040 before C10000)."""
-    return int(lcsc[1:]) if lcsc[1:].isdigit() else 0
+    return int(lcsc[1:]) if lcsc[1:].isascii() and lcsc[1:].isdigit() else 0
 
 
 def seed_checked_at(checked: str) -> int:

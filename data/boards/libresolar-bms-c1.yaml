@@ -1,7 +1,7 @@
 name: LibreSolar BMS-C1
 slug: libresolar-bms-c1
 source: LibreSolar/bms-c1
-format: kicad7
+format: kicad8
 description: Battery management system (BQ76952 AFE + ESP32-C3), cell balancing
 tags: [battery-management]
 key_ics: [ESP32-C3, BQ76952]
@@ -424,13 +424,13 @@ components:
   lcsc: C3760174
 - ref: J1
   value: MicroFit 2x12
-  footprint: Molex_Micro-Fit_3.0_43045-2410
+  footprint: Molex_Micro-Fit_3.0_43045-2410_2x12
   manufacturer: "W\xFCrth"
   mpn: '662024231722'
   pin_count: 25
 - ref: J2
-  value: 1x4 header
-  footprint: JST_PH_B4B-PH-SM4-TB
+  value: JST PH 4-pin
+  footprint: JST_PH_B4B-PH-SM4-TB_1x04
   manufacturer: JST
   mpn: B4B-PH-SM4-TB(LF)(SN)
   lcsc: C160354
@@ -443,22 +443,22 @@ components:
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J4
-  value: 1x3 header
-  footprint: JST_PH_B3B-PH-SM4-TB
+  value: JST PH 3-pin
+  footprint: JST_PH_B3B-PH-SM4-TB_1x03
   manufacturer: JST
   mpn: B3B-PH-SM4-TB(LF)(SN)
   lcsc: C160353
   pin_count: 4
 - ref: J5
-  value: 1x2 header
-  footprint: JST_PH_B2B-PH-SM4-TB
+  value: JST PH 2-pin
+  footprint: JST_PH_B2B-PH-SM4-TB_1x02
   manufacturer: JST
   mpn: B2B-PH-SM4-TB(LF)(SN)
   lcsc: C160352
   pin_count: 3
 - ref: J6
-  value: 1x4 header
-  footprint: JST_PH_B4B-PH-SM4-TB
+  value: JST PH 4-pin
+  footprint: JST_PH_B4B-PH-SM4-TB_1x04
   manufacturer: JST
   mpn: B4B-PH-SM4-TB(LF)(SN)
   lcsc: C160354
@@ -509,8 +509,8 @@ components:
   mpn: 225852-E
   lcsc: C3217898
 - ref: P5
-  value: 1x1 header
-  footprint: SolderWirePad
+  value: 1x1 solder wire pads
+  footprint: SolderWirePad_1x01
 - ref: Q1
   value: DMN10H220LE
   footprint: SOT-223
@@ -985,7 +985,7 @@ components:
   pin_count: 8
 - ref: U3
   value: LMR38010
-  footprint: SOIC-8-1EP
+  footprint: SOIC-8-1EP_3.9x4.9
   manufacturer: Texas Instruments
   mpn: LMR38010SDDAR
   lcsc: C3192337
@@ -1006,7 +1006,8 @@ components:
   manufacturer: Espressif Systems
   lcsc: C2838502
   pin_count: 36
-  nc_pins: {NC@4: '4', NC@7: '7', NC@9: '9', NC@10: '10', NC@15: '15', NC@17: '17', NC@24: '24', NC@25: '25', NC@28: '28', NC@29: '29', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35'}
+  nc_pins: {NC@4: '4', NC@7: '7', NC@9: '9', NC@10: '10', NC@15: '15', NC@17: '17', NC@24: '24', NC@25: '25', NC@28: '28',
+    NC@29: '29', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35'}
 nets:
 - name: +3V3
   pins:

@@ -1,7 +1,7 @@
 name: Radar Speed Sign HB100 Amplifier
 slug: radar-speed-sign-hb100-amplifier
 source: CoolNamesAllTaken/radar-speed-sign
-format: kicad7
+format: kicad8
 description: 'HB100 10.525 GHz Doppler preamp: op-amp signal conditioning for microwave module, analog filter chain'
 tags: [rf-sdr, signal-conditioning]
 key_ics: [LMV358, LM1117IMPX-3.3]
@@ -19,127 +19,152 @@ components:
   value: 100nF
   footprint: '0603'
   mpn: CL10B104KB8NNNC
+  lcsc: C1591
   decouples: U1
 - ref: C11
   value: 4.7uF
   footprint: 0805
   mpn: CL21A475KAQNNNE
+  lcsc: C1779
 - ref: C2
   value: 10uF
   footprint: 0805
   mpn: CL21B106KOQNNNE
+  lcsc: C95841
   decouples: U2
 - ref: C3
   value: 10uF
   footprint: 0805
   mpn: CL21B106KOQNNNE
+  lcsc: C95841
   decouples: U2
 - ref: C4
   value: 10uF
   footprint: 0805
   mpn: CL21B106KOQNNNE
+  lcsc: C95841
   decouples: U2
 - ref: C5
   value: 2.2nF
   footprint: '0603'
   mpn: CL10B222KB8NNNC
+  lcsc: C16033
 - ref: C6
   value: 4.7uF
   footprint: 0805
   mpn: CL21A475KAQNNNE
+  lcsc: C1779
 - ref: C7
   value: 10uF
   footprint: 0805
   mpn: CL21B106KOQNNNE
+  lcsc: C95841
 - ref: C8
   value: 4.7uF
   footprint: 0805
   mpn: CL21A475KAQNNNE
+  lcsc: C1779
 - ref: C9
   value: 2.2nF
   footprint: '0603'
   mpn: CL10B222KB8NNNC
+  lcsc: C16033
 - ref: D1
   value: 1N5819
   footprint: SOD-123
   mpn: 1N5819W
+  lcsc: C963381
 - ref: D2
   value: red LED
   footprint: '0603'
   mpn: SML-D12U8WT86
+  lcsc: C510027
 - ref: J1
-  value: 1x2 header
-  footprint: 1X2
-  mpn: C49661
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
+  lcsc: C49661
 - ref: J2
-  value: 1x2 header
-  footprint: 1X2
-  mpn: C49661
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
+  lcsc: C49661
 - ref: J3
-  value: 1x2 header
-  footprint: 1X2
-  mpn: C49661
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
+  lcsc: C49661
 - ref: J4
-  value: 1x2 header
-  footprint: 1X2
-  mpn: C49661
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
+  lcsc: C49661
 - ref: J5
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm_Horizontal
   mpn: P125-1103A0BR138A1
+  lcsc: C19190476
   pin_count: 3
 - ref: R1
   value: 1Mohm
   footprint: '0603'
   mpn: RC0603FR-071ML
+  lcsc: C105578
 - ref: R10
   value: 287ohm
   footprint: '0603'
   mpn: AC0603FR-07287RL
+  lcsc: C227756
 - ref: R2
   value: 10kohm
   footprint: '0603'
   mpn: RC0603FR-0710KL
+  lcsc: C98220
 - ref: R3
   value: 100kohm
   footprint: '0603'
   mpn: RC0603FR-07100KL
+  lcsc: C14675
   pullup: /BIAS_1V65
 - ref: R4
   value: 100kohm
   footprint: '0603'
   mpn: RC0603FR-07100KL
+  lcsc: C14675
   pulldown: /BIAS_1V65
 - ref: R5
   value: 330kohm
   footprint: '0603'
   mpn: RC0603FR-07330KL
+  lcsc: C114618
 - ref: R6
   value: 8.2kohm
   footprint: '0603'
   mpn: RC0603FR-078K2L
+  lcsc: C114637
 - ref: R7
   value: 1Mohm
   footprint: '0603'
   mpn: RC0603FR-071ML
+  lcsc: C105578
 - ref: R8
   value: 0ohm
   footprint: 0805
   mpn: RC0603JR-070RL
+  lcsc: C95177
 - ref: R9
   value: 12kohm
   footprint: '0603'
   mpn: RC0603FR-0712KL
+  lcsc: C114659
   pulldown: /HB100_OUT
 - ref: U1
   value: LMV358
   footprint: SOIC-8
   mpn: LMV358IDR
+  lcsc: C63813
   pin_count: 8
 - ref: U2
   value: LM1117IMPX-3.3
   footprint: SOT-223-3_TabPin2
   mpn: LM1117IMPX-3.3/NOPB
+  lcsc: C23984
   pin_count: 3
 nets:
 - name: +3V3

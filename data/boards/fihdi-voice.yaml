@@ -1,9 +1,9 @@
 name: Fihdi Voice
 slug: fihdi-voice
 source: Fihdi/Eurorack
-format: kicad7
+format: kicad8
 description: 'Complete analog synth voice: voltage-controlled oscillator, state-variable filter'
-tags: [eurorack, signal-conditioning]
+tags: [audio, eurorack, signal-conditioning]
 key_ics: [TL072, TL074]
 outline:
   width_mm: 193.98
@@ -55,43 +55,45 @@ components:
   value: LED
   footprint: LED_D5.0mm
 - ref: J1
-  value: 1x6 header
-  footprint: 1X6
+  value: 1x6 2.54mm header
+  footprint: 1X6_P2.54mm
   pin_count: 6
 - ref: J2
-  value: 1x12 header
-  footprint: 1X12
+  value: 1x12 2.54mm header
+  footprint: 1X12_P2.54mm
   pin_count: 12
 - ref: J3
-  value: 1x11 header
-  footprint: 1X11
+  value: 1x11 2.54mm header
+  footprint: 1X11_P2.54mm
   pin_count: 11
 - ref: J4
-  value: 2x6 header
-  footprint: 2X6
+  value: 2x6 2.54mm header
+  footprint: 2X6_P2.54mm
   pin_count: 12
-  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12'}
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10',
+    Pin_11: '11', Pin_12: '12'}
 - ref: J5
-  value: 1x11 header
-  footprint: 1X11
+  value: 1x11 2.54mm header
+  footprint: 1X11_P2.54mm
   pin_count: 11
 - ref: J6
-  value: 1x10 header
-  footprint: 1X10
+  value: 1x10 2.54mm header
+  footprint: 1X10_P2.54mm
   pin_count: 10
   nc_pins: {Pin_4: '4', Pin_7: '7'}
 - ref: J7
-  value: 2x6 header
-  footprint: 2X6
+  value: 2x6 2.54mm header
+  footprint: 2X6_P2.54mm
   pin_count: 12
-  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12'}
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10',
+    Pin_11: '11', Pin_12: '12'}
 - ref: J8
-  value: 1x12 header
-  footprint: 1X12
+  value: 1x12 2.54mm header
+  footprint: 1X12_P2.54mm
   pin_count: 12
 - ref: J9
-  value: 1x6 header
-  footprint: 1X6
+  value: 1x6 2.54mm header
+  footprint: 1X6_P2.54mm
   pin_count: 6
 - ref: Q1
   value: BC547
@@ -193,7 +195,6 @@ components:
 - ref: R21
   value: 2.2kohm
   footprint: Axial
-  pulldown: D7.K
 - ref: R22
   value: R
   footprint: Axial

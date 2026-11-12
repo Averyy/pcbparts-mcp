@@ -306,11 +306,13 @@ components:
 - ref: C21
   value: 270uF
   footprint: Radial
+  mpn: ESMR401VSN271MQ30S
   voltage: 400V
   manufacturer: United Chemi-Con
 - ref: C22
   value: 270uF
   footprint: Radial
+  mpn: ESMR401VSN271MQ30S
   voltage: 400V
   manufacturer: United Chemi-Con
 - ref: C23
@@ -331,6 +333,7 @@ components:
 - ref: C28
   value: 150nF
   footprint: '1808'
+  mpn: C1808W154KCRACTU
   voltage: 500V
   tolerance: X7R
   manufacturer: KEMET
@@ -342,6 +345,7 @@ components:
 - ref: C3
   value: 150nF
   footprint: '1808'
+  mpn: C1808W154KCRACTU
   voltage: 500V
   tolerance: X7R
   manufacturer: KEMET
@@ -368,6 +372,7 @@ components:
 - ref: C34
   value: 150nF
   footprint: '1808'
+  mpn: C1808W154KCRACTU
   voltage: 500V
   tolerance: X7R
   manufacturer: KEMET
@@ -384,6 +389,7 @@ components:
 - ref: C38
   value: 150nF
   footprint: '1808'
+  mpn: C1808W154KCRACTU
   voltage: 500V
   tolerance: X7R
   manufacturer: KEMET
@@ -676,12 +682,14 @@ components:
 - ref: C92
   value: 150nF
   footprint: '1808'
+  mpn: C1808W154KCRACTU
   voltage: 500V
   tolerance: X7R
   manufacturer: KEMET
 - ref: C93
   value: 150nF
   footprint: '1808'
+  mpn: C1808W154KCRACTU
   voltage: 500V
   tolerance: X7R
   manufacturer: KEMET
@@ -722,99 +730,123 @@ components:
 - ref: D1
   value: red LED
   footprint: 0805
+  mpn: LTST-S220KRKT
   manufacturer: Lite-On
 - ref: D10
   value: ES1J R2
   footprint: SMA_Standard
+  mpn: ES1J-LTP
   manufacturer: Micro Commercial Co
 - ref: D11
   value: ES1J R2
   footprint: SMA_Standard
+  mpn: ES1J-LTP
   manufacturer: Micro Commercial Co
 - ref: D12
   value: SS34A
   footprint: SMA_Standard
+  mpn: SS34A
   manufacturer: Multicomp
 - ref: D13
   value: SS34A
   footprint: SMA_Standard
+  mpn: SS34A
   manufacturer: Multicomp
 - ref: D14
   value: green LED
   footprint: 0805
+  mpn: LTST-S220KGKT
   manufacturer: Lite-On
 - ref: D15
   value: green LED
   footprint: 0805
+  mpn: LTST-S220KGKT
   manufacturer: Lite-On
 - ref: D16
   value: red LED
   footprint: 0805
+  mpn: LTST-S220KRKT
   manufacturer: Lite-On
 - ref: D17
   value: yellow LED
   footprint: 0805
+  mpn: LTST-S220KSKT
   manufacturer: Lite-On
 - ref: D18
   value: green LED
   footprint: 0805
+  mpn: LTST-S220KGKT
   manufacturer: Lite-On
 - ref: D19
   value: green LED
   footprint: 0805
+  mpn: LTST-S220KGKT
   manufacturer: Lite-On
 - ref: D2
   value: ES1J R2
   footprint: SMA_Standard
+  mpn: ES1J-LTP
   manufacturer: Micro Commercial Co
 - ref: D20
   value: green LED
   footprint: 0805
+  mpn: LTST-S220KGKT
   manufacturer: Lite-On
 - ref: D22
   value: SMAJ24A TVS 24V
   footprint: SMA_Standard
+  mpn: SMAJ24A-TR
   manufacturer: STMicroelectronics
 - ref: D24
   value: green LED
   footprint: 0805
+  mpn: LTST-S220KGKT
   manufacturer: Lite-On
 - ref: D3
   value: ES1J R2
   footprint: SMA_Standard
+  mpn: ES1J-LTP
   manufacturer: Micro Commercial Co
 - ref: D4
   value: green LED
   footprint: 0805
+  mpn: LTST-S220KGKT
   manufacturer: Lite-On
 - ref: D5
   value: ES1J R2
   footprint: SMA_Standard
+  mpn: ES1J-LTP
   manufacturer: Micro Commercial Co
 - ref: D6
   value: SS34A
   footprint: SMA_Standard
+  mpn: SS34A
   manufacturer: Multicomp
 - ref: D7
   value: ES1J R2
   footprint: SMA_Standard
+  mpn: ES1J-LTP
   manufacturer: Micro Commercial Co
 - ref: D8
   value: green LED
   footprint: 0805
+  mpn: LTST-S220KGKT
   manufacturer: Lite-On
 - ref: D9
   value: SS34A
   footprint: SMA_Standard
+  mpn: SS34A
   manufacturer: Multicomp
 - ref: J1
   value: RJ45_LED
   footprint: RJ45_LED
+  mpn: AJT34L8813-011
   manufacturer: METZ CONNECT
   pin_count: 13
 - ref: J3
   value: RJ45_LED
   footprint: RJ45_LED
+  mpn: AJT34L8813-011
   manufacturer: METZ CONNECT
   pin_count: 13
 - ref: JP1
@@ -841,60 +873,72 @@ components:
 - ref: L1
   value: 220r 700mA
   footprint: '0603'
+  mpn: BLM18AG221SN1
   manufacturer: Murata
 - ref: L10
   value: 220r 700mA
   footprint: '0603'
+  mpn: BLM18AG221SN1
   manufacturer: Murata
 - ref: L11
   value: 220r 700mA
   footprint: '0603'
+  mpn: BLM18AG221SN1
   manufacturer: Murata
 - ref: L12
   value: 4.7uH
-  footprint: SMD_INDUCTOR
+  footprint: SMD_INDUCTOR_32x25
+  mpn: LQH32PN4R7NNC
   manufacturer: Murata
   current: 1.5A
 - ref: L2
   value: 1m 250mA
   footprint: NPI31W
+  mpn: DT3316P-105
   manufacturer: Coilcraft
 - ref: L3
   value: 220r 700mA
   footprint: '0603'
+  mpn: BLM18AG221SN1
   manufacturer: Murata
 - ref: L4
   value: 10uH
-  footprint: SMD_INDUCTOR
+  footprint: SMD_INDUCTOR_32x25
+  mpn: LQH32PN100MNCL
   manufacturer: Murata
   current: 1A
 - ref: L5
   value: 4.7uH
-  footprint: SMD_INDUCTOR
+  footprint: SMD_INDUCTOR_32x25
+  mpn: LQH32PN4R7NNC
   manufacturer: Murata
   current: 1.5A
 - ref: L6
   value: 10uH
-  footprint: SMD_INDUCTOR
+  footprint: SMD_INDUCTOR_32x25
+  mpn: LQH32PN100MNCL
   manufacturer: Murata
   current: 1A
 - ref: L7
   value: 220r 700mA
   footprint: '0603'
+  mpn: BLM18AG221SN1
   manufacturer: Murata
 - ref: P1
   value: USB_OTG
   footprint: USB_Micro-B
+  mpn: 105017-0001
   manufacturer: Molex
   pin_count: 6
   nc_pins: {'1': '1', '4': '4'}
 - ref: P10
   value: 2x6 header
-  footprint: Socket_Strip_Angled
+  footprint: Socket_Strip_Angled_2x06
   pin_count: 12
 - ref: P11
   value: USB_OTG
   footprint: USB_Micro-B
+  mpn: 105017-0001
   manufacturer: Molex
   pin_count: 6
   nc_pins: {'1': '1', '4': '4'}
@@ -904,36 +948,42 @@ components:
   pin_count: 4
 - ref: P13
   value: 1x4 header
-  footprint: Socket_Strip_Straight
+  footprint: Socket_Strip_Straight_1x04
   pin_count: 4
 - ref: P14
   value: 1x4 header
   footprint: 1X4
+  mpn: '901210764'
   manufacturer: Molex
   pin_count: 4
 - ref: P15
   value: 1x2 header
-  footprint: RM3.5
+  footprint: RM3.5_1x2
+  mpn: '1844210'
   manufacturer: Phoenix
 - ref: P2
   value: 1x2 header
-  footprint: RM3.5
+  footprint: RM3.5_1x2
+  mpn: '1844210'
   manufacturer: Phoenix
 - ref: P3
   value: 1x2 header
-  footprint: RM3.5
+  footprint: RM3.5_1x2
+  mpn: '1844210'
   manufacturer: Phoenix
 - ref: P4
   value: 1x2 header
   footprint: 1X2
 - ref: P5
   value: 1x6 header
-  footprint: RM3.5
+  footprint: RM3.5_1x6
+  mpn: '1844252'
   manufacturer: Phoenix
   pin_count: 6
 - ref: P6
   value: 1x2 header
-  footprint: RM5.08
+  footprint: RM5.08_1x2
+  mpn: '1757242'
   manufacturer: Phoenix
 - ref: P7
   value: 1x4 header
@@ -941,37 +991,44 @@ components:
   pin_count: 4
 - ref: P8
   value: 1x3 header
-  footprint: RM5.08
+  footprint: RM5.08_1x3
+  mpn: '1757255'
   manufacturer: Phoenix
   pin_count: 3
 - ref: P9
   value: 1x6 header
-  footprint: RM3.5
+  footprint: RM3.5_1x6
+  mpn: '1844252'
   manufacturer: Phoenix
   pin_count: 6
 - ref: Q1
   value: IRLML6344
   footprint: SOT-23
+  mpn: IRLML6344TRPBF
   manufacturer: Infineon
   pin_count: 3
 - ref: Q2
   value: IRLML6344
   footprint: SOT-23
+  mpn: IRLML6344TRPBF
   manufacturer: Infineon
   pin_count: 3
 - ref: Q3
   value: IRLML6344
   footprint: SOT-23
+  mpn: IRLML6344TRPBF
   manufacturer: Infineon
   pin_count: 3
 - ref: Q4
   value: IRLML6344
   footprint: SOT-23
+  mpn: IRLML6344TRPBF
   manufacturer: Infineon
   pin_count: 3
 - ref: Q5
   value: IRLML6344
   footprint: SOT-23
+  mpn: IRLML6344TRPBF
   manufacturer: Infineon
   pin_count: 3
 - ref: R1
@@ -1175,7 +1232,6 @@ components:
   value: 3.9kohm
   footprint: '0603'
   tolerance: 1%
-  pulldown: D24.1
 - ref: R15
   value: 1kohm
   footprint: '0603'
@@ -1519,16 +1575,19 @@ components:
 - ref: R80
   value: 3mohm
   footprint: '2512'
+  mpn: CSS2H-2512K-3L00F
   tolerance: 1%
   manufacturer: Bourns
 - ref: R81
   value: 3mohm
   footprint: '2512'
+  mpn: CSS2H-2512K-3L00F
   tolerance: 1%
   manufacturer: Bourns
 - ref: R82
   value: 3mohm
   footprint: '2512'
+  mpn: CSS2H-2512K-3L00F
   tolerance: 1%
   manufacturer: Bourns
 - ref: R83
@@ -1591,69 +1650,82 @@ components:
 - ref: U1
   value: USBLC6-4
   footprint: SOT-23-6
+  mpn: USBLC6-4SC6
   manufacturer: STMicroelectronics
   pin_count: 6
   nc_pins: {'4': '4', '6': '6'}
 - ref: U10
   value: SN65176B
   footprint: SOIC-8-N
+  mpn: SN65176B
   manufacturer: Texas Instruments
   pin_count: 8
 - ref: U11
   value: SN65176B
   footprint: SOIC-8-N
+  mpn: SN65176B
   manufacturer: Texas Instruments
   pin_count: 8
 - ref: U12
   value: IRAM256a
   footprint: IRAM256
+  mpn: IRAM256-2067A2
   manufacturer: Infineon
   pin_count: 21
 - ref: U13
   value: ACT4088
   footprint: SOT-23-6
+  mpn: ACT4088US-T
   manufacturer: Active-Semi
   pin_count: 6
   nc_pins: {'3': '3'}
 - ref: U15
   value: SN65176B
   footprint: SOIC-8-N
+  mpn: SN65176B
   manufacturer: Texas Instruments
   pin_count: 8
 - ref: U16
   value: SN65176B
   footprint: SOIC-8-N
+  mpn: SN65176B
   manufacturer: Texas Instruments
   pin_count: 8
 - ref: U19
   value: SN65176B
   footprint: SOIC-8-N
+  mpn: SN65176B
   manufacturer: Texas Instruments
   pin_count: 8
 - ref: U2
   value: zldo1117
   footprint: SOT-223
+  mpn: ZLDO1117G33TA
   manufacturer: Diodes Incorporated
   pin_count: 3
 - ref: U20
   value: USBLC6-4
   footprint: SOT-23-6
+  mpn: USBLC6-4SC6
   manufacturer: STMicroelectronics
   pin_count: 6
 - ref: U21
   value: USBLC6-4
   footprint: SOT-23-6
+  mpn: USBLC6-4SC6
   manufacturer: STMicroelectronics
   pin_count: 6
   nc_pins: {'4': '4'}
 - ref: U22
   value: USBLC6-4
   footprint: SOT-23-6
+  mpn: USBLC6-4SC6
   manufacturer: STMicroelectronics
   pin_count: 6
 - ref: U23
   value: USBLC6-4
   footprint: SOT-23-6
+  mpn: USBLC6-4SC6
   manufacturer: STMicroelectronics
   pin_count: 6
 - ref: U24
@@ -1662,32 +1734,38 @@ components:
 - ref: U25
   value: STM32F303CBTx
   footprint: LQFP-48
+  mpn: STM32F303CBT
   manufacturer: STMicroelectronics
   pin_count: 48
 - ref: U26
   value: STM32F405VG
   footprint: LQFP-100
+  mpn: STM32F405VGT
   manufacturer: STMicroelectronics
   pin_count: 100
 - ref: U27
   value: ACT4088
   footprint: SOT-23-6
+  mpn: ACT4088US-T
   manufacturer: Active-Semi
   pin_count: 6
   nc_pins: {'3': '3'}
 - ref: U28
   value: ACT4088
   footprint: SOT-23-6
+  mpn: ACT4088US-T
   manufacturer: Active-Semi
   pin_count: 6
 - ref: U29
   value: USBLC6-4
   footprint: SOT-23-6
+  mpn: USBLC6-4SC6
   manufacturer: STMicroelectronics
   pin_count: 6
 - ref: U3
   value: SI8621
   footprint: SOIC-8-N
+  mpn: Si8621BB-B-IS
   manufacturer: Silicon Labs
   pin_count: 8
 - ref: U30
@@ -1702,38 +1780,45 @@ components:
 - ref: U4
   value: ACT4088
   footprint: SOT-23-6
+  mpn: ACT4088US-T
   manufacturer: Active-Semi
   pin_count: 6
   nc_pins: {'3': '3'}
 - ref: U5
   value: LNK304D
   footprint: SOIC-7
+  mpn: LNK304DN
   manufacturer: Power Integrations
   pin_count: 7
 - ref: U7
   value: LM358
   footprint: SOIC-8-N
+  mpn: LM358AD
   manufacturer: Texas Instruments
   pin_count: 8
 - ref: U8
   value: SN65176B
   footprint: SOIC-8-N
+  mpn: SN65176B
   manufacturer: Texas Instruments
   pin_count: 8
 - ref: U9
   value: SN65176B
   footprint: SOIC-8-N
+  mpn: SN65176B
   manufacturer: Texas Instruments
   pin_count: 8
 - ref: Y1
   value: 8MHz
   footprint: SMD0503
+  mpn: ABM3B-8.000MHZ-10-1UT
   manufacturer: Abracon LLC
   pin_count: 3
   nc_pins: {'3': '3'}
 - ref: Y2
   value: 8MHz
   footprint: SMD0503
+  mpn: ABM3B-8.000MHZ-10-1UT
   manufacturer: Abracon LLC
   pin_count: 3
   nc_pins: {'3': '3'}
@@ -2326,7 +2411,6 @@ nets:
   - R80.2
   - R81.2
   - R82.2
-  - T2.1
   - U12.29
   - U21.2
   - U25.10
@@ -2582,14 +2666,6 @@ nets:
   pins: [R59.1, R97.2, U27.4]
 - name: Net-(R77-Pad2)
   pins: [R77.2, R78.1]
-- name: Net-(T1-Pad1)
-  pins: [T1.1, U25.19]
-- name: Net-(T44-Pad1)
-  pins: [T44.1, U25.12]
-- name: Net-(T45-Pad1)
-  pins: [T45.1, U25.14]
-- name: Net-(T46-Pad1)
-  pins: [T46.1, U25.16]
 - name: VPP
   pins:
   - C21.1

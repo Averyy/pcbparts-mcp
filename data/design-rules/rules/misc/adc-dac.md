@@ -4,137 +4,123 @@
 
 ## Quick Reference
 
-- **Do NOT split the ground plane.** Use a single solid ground plane; separate analog and digital by component placement and routing direction, not by copper cuts. ADS1274 datasheet: "AGND: connect to DGND using a single plane."
-- **Anti-alias filter corner: set fc >= 10x signal BW.** At fc the filter is already -3 dB. A 4th-order Butterworth at fc = 10kHz reaches 1-LSB error (12-bit) at only 1.04kHz. If your signal BW is 1kHz and you need < 1 LSB error, fc >= 10kHz.
-- **NP0/C0G caps only in the signal path.** X7R caps add measurable harmonic distortion -- verified on AD7960 eval board: X7R degraded THD by several dB vs NP0 at 10kHz.
-- **SAR ADC reference pin: decouple with 22uF ceramic, minimal trace inductance.** Dynamic impedance on the reference input causes gain errors if not properly bypassed. Pair AD7685 with ADR421/ADR431.
-- **Recommended ADCs:** AD7685 (16-bit 250kSPS SAR), ADS1220 (24-bit 2kSPS, integrated PGA + ref), AD7606 (16-bit simultaneous 8-ch), AD7960 (18-bit 5MSPS, requires NP0 input caps).
+- **ADS1274: connect AGND and DGND using a single plane.** Separate analog and digital by component placement and routing direction; follow the selected converter's grounding requirements [7, p.6].
+- **Anti-alias filter corner: 10x signal BW is the SLYT626 example, not a universal rule.** Its implemented fourth-order 10kHz filter reaches about 1-LSB gain error for 12 bits at 1.04kHz; verify the actual circuit's passband error and stopband attenuation [6, pp.7-9].
+- **Use NP0/C0G signal-path capacitors for low distortion.** ADI compares 1nF 0603 NP0 and X7R capacitors on EVAL-AD7960FMCZ at 10kHz; this is a distortion comparison, not an AD7960 functional requirement [2, Figure 6].
+- **AD7685 reference pin: 22uF ceramic with minimal trace inductance in ADI's example.** This is not a universal SAR bypass value; the article pairs this ADC with ADR421/ADR431 [1, Step 3].
 
 ## Design Rules
 
 ### Signal Chain Architecture
 
-- **7-step methodology for sensor-to-ADC design (ADI Seven Steps):**
-  1. Characterize sensor output (amplitude, bandwidth, noise floor)
-  2. Calculate required ADC ENOB from input SNR: ENOB = (SNR - 1.76) / 6.02
-  3. Select ADC + reference that exceeds this ENOB
-  4. Calculate max front-end gain to fill ADC input range
-  5. Select driver op amp with noise < 1/10 of sensor noise (referred to input)
-  6. Verify total noise budget: op amp + resistors + ADC < sensor noise
-  7. Simulate and prototype
-
-- **Driver amplifier noise budget:** total noise at op amp input must be < 1/10 of sensor noise floor. After gain, op amp noise is amplified equally with signal -- pick an op amp where en * gain << sensor noise. ADI recommends AD8641 for high-impedance sensors (1pA Ib, 28.5nV/rtHz).
-- **Resistor noise matters.** A 1K resistor = 4 nV/rtHz. A 100K resistor = 40 nV/rtHz. Using a "low noise" op amp (3 nV/rtHz) with 100K feedback resistors wastes the op amp's noise advantage. ADI Seven Steps calls this "the most common signal chain mistake."
+- **Budget added noise at a common reference point and bandwidth.** ADI's gain-of-10 AD7685/AD8641 example targets added conditioning noise at one-tenth the sensor noise; include amplifier voltage/current noise, resistor noise, and ADC noise referred through the gain. This is an example budget, not a requirement for every sensor [1, Steps 2-6].
+- **Resistor noise can defeat a low-noise amplifier.** At room temperature, 1K contributes about 4nV/rtHz and 100K about 40nV/rtHz; include their actual transfer functions in the noise budget [1, Step 5].
 
 ### Anti-Aliasing Filter Design
 
-- **Six frequencies define the AAF design** (in ascending order per TI SLYT626): fSIGNAL (signal BW), fLSB (frequency where filter gain error = 1 LSB), fC (filter -3dB corner), fPEAK (op amp max full-scale output), fS (ADC sample rate), fGBW (op amp unity-gain BW). All six must be in this order or the design is broken.
-- **fc should be ~10x signal BW, not equal to it.** TI SLYT626 table: 4th-order Butterworth at fc = 10kHz reaches 1-LSB error (-2mdB for 12-bit) at 1.04kHz, 2 LSB at 1.47kHz, 3 LSB at 1.82kHz, 4 LSB at 2.11kHz.
-- **RC filter in front of SAR ADC: do NOT reduce R to narrow bandwidth.** ADI practical filter paper: a 590 ohm resistor giving 100kHz BW on AD7980 causes 30% amplitude attenuation and prevents the internal S/H from charging within the acquisition window. Use the datasheet-recommended RC values.
-- **Filter GBW requirement:** fGBW >= 100 * Q * G * fc. For 10kHz 4th-order Butterworth, worst-case stage Q = 1.31, G = 1: fGBW >= 1.31 MHz. OPA2314 at 2.7MHz works. Also verify op amp slew rate: fPEAK = SR / (Vpp * pi). OPA2314 at 1.5V/us with 5.46Vpp -> 87.5kHz calculated, ~70kHz measured (-> `misc/op-amp-basics.md` for amplifier stability).
-- **Use MFB (multiple feedback) topology for single-supply active filters.** MFB exercises the op amp at mid-supply DC bias, avoiding rail-to-rail output limitations. TI SLYT626 recommends WEBENCH Filter Designer or ADI Filter Wizard to generate component values.
-- **Multiplexed ADC settling:** a single post-mux filter must recharge to new channel voltage on every switch. Worst case = full-scale step. For fast throughput, use per-channel filters before the mux.
-- **Oversampling relaxes the anti-alias filter.** Sampling at 100kHz with a 1kHz signal puts Nyquist at 50kHz -- the filter only needs -50dB at 50kHz, easily achieved with a 2nd-order filter at 10kHz corner.
-
-> WARNING: Digital decimation can re-introduce aliasing. ADI practical filter paper: if you oversample at 200kSPS then decimate to 6.25kSPS, a 3.5kHz input signal aliases to 2.75kHz (6.25k - 3.5k). The analog anti-alias filter must satisfy Nyquist for the DECIMATED rate, not the original sample rate.
+- **Check passband error, corner frequency, full-power bandwidth, sample rate, and GBW separately.** SLYT626's frequency ordering describes its example; it is not a necessary ordering for every DAQ architecture. Its 1.04/1.47/1.82/2.11kHz error points are SPICE results for the implemented filter, not the ideal fourth-order Butterworth response [6, pp.7-8, Table 1].
+- **Do not increase the SAR input RC resistance just to match signal bandwidth.** ADI's AD7980 example has a 3.11MHz RC corner for a 100kHz input signal. Increasing R to 590 ohm gives a 100kHz corner, about 30% signal attenuation near that frequency, and inadequate acquisition settling; put additional narrow filtering before the driver [2, Analog Filter Considerations, Figure 3].
+- **Active-filter GBW: use the stage Q, gain, and corner frequency.** SLYT626 uses fGBW >= 100 * Q * G * fc; its 10kHz fourth-order design requires 1.31MHz and uses OPA2314 at 2.7MHz. Also check slew rate: at 5.5V supply and 5.46Vpp, the 1.5V/us specification predicts 87.5kHz full-power bandwidth, while the article reports about 70kHz on the bench with RL=10K and CL=10pF [6, p.9].
+- **Use MFB topology for the single-supply filter in SLYT626.** It holds amplifier input common-mode at mid-supply; output swing still needs checking. Generate values with a filter design tool and verify the complete circuit [6, p.8].
+- **Multiplexed ADC settling:** a single post-mux filter must recharge to the new channel voltage on every switch; worst case is a full-scale step. For fast throughput, use per-channel filters before the mux [2, Analog Filter Considerations, Figure 4].
+- **Oversampling relaxes analog filtering only with adequate rejection.** SLYT626's fourth-order 10kHz filter is down approximately 50dB at the 50kHz Nyquist frequency of its 100kSPS ADC. Choose rejection from the interferer/noise budget rather than assuming that this attenuation is always sufficient [6, p.9].
 
 ### DAC Output Considerations
 
-- **Sinc rolloff: -2.42dB at 80% of Nyquist (ADI equalizing techniques).** Zero-order hold creates sin(x)/x envelope. 0.1dB flatness extends only to 17% of fNyquist without compensation.
-- **Pre-equalization (digital FIR inverse-sinc):** extends 0.1dB flatness to 96% of fNyquist. ADI method: N=800 coefficient computation, truncate to 100 taps, apply Blackman window. Trade-off: must attenuate input to prevent clipping at high-frequency boost.
-- **Post-equalization (analog):** simple active filter with (1+R1/R2) gain shape extends 0.1dB flatness to 50% of fNyquist. Amplifies high-frequency noise.
-- **Interpolating DACs (e.g., MAX5895 with 8x):** push the sinc null out by the interpolation factor, relaxing the reconstruction filter. Best approach when available.
+- **Uncompensated zero-order-hold DAC sinc rolloff is -2.42dB at 80% of Nyquist.** Its 0.1dB flatness extends only to about 17% of Nyquist, before reconstruction-filter errors [3, Understanding DAC Frequency Response].
+- **Pre-equalization results depend on the FIR design.** ADI's example computes 800 coefficients, truncates to 100 taps, and applies a Blackman window to extend 0.1dB flatness to about 96% of Nyquist; attenuate the input to prevent clipping from high-frequency boost [3, Pre-Equalizing].
+- **Post-equalization trades noise for flatness.** ADI's analog equalizer example extends 0.1dB flatness to about 50% of Nyquist; 1+R1/R2 is its maximum gain, not the complete frequency response [3, Post-Equalizing].
+- **MAX5895's 8x interpolation pushes the sinc null out by 8x relative to the input data rate.** The DAC core must update at that higher rate [3, Interpolate].
+
 ### Voltage Reference Selection
 
-- **For 16-bit+ SAR ADCs, the reference dominates system accuracy.** At 16 bits with 5V range, 1 LSB = 76uV -- a 15ppm/C ref drifts 75uV per degree C (1 LSB per degree). The ADC ENOB is meaningless if the reference drifts more.
-- **REF5025** (2.5V, 3ppm/C, 0.05% initial accuracy): workhorse for 16-bit SAR. Low output impedance drives SAR reference pins directly. SOIC-8.
-- **ADR4540** (4.096V, 2ppm/C, 4.8uVpp 0.1-10Hz noise): best-in-class for 18-bit+ SAR. The 4.096V output gives clean binary LSB scaling (1 LSB = 4.096V / 2^N). MSOP-8.
-- **LM4040** (shunt reference, multiple voltages, 0.1% grade): use for ratiometric bridge sensors where the excitation voltage IS the reference. Shunt topology means near-zero AC output impedance. Budget option for 12-14 bit systems.
-- **ADR421/ADR431** (2.5V/2.048V XFET): recommended by ADI for AD7685 and similar PulSAR ADCs (ADI Seven Steps). Low 1/f noise, excellent long-term stability. Use when drift over months matters (calibration-free instruments).
-- **Bypass the reference output with 10uF ceramic + 0.1uF ceramic.** SAR ADCs draw transient current from the reference during each conversion. Insufficient bypassing causes gain errors proportional to the reference impedance at the conversion frequency.
+- **Separate reference accuracy/drift from ADC ENOB.** Reference errors affect gain accuracy; ENOB alone does not establish absolute accuracy [1, Steps 3-6; 8, Specifications].
+- **REF5025 high-grade:** 2.5V, 3ppm/degrees C maximum drift over -40 to +125 degrees C and 0.05% maximum initial error at 25 degrees C; standard-grade limits are different. Verify reference drive and output capacitance for the chosen ADC [9, Features, Electrical Characteristics].
+- **ADR4540B:** 4.096V, 2ppm/degrees C maximum box-method drift over -40 to +125 degrees C; package is SOIC-8, not MSOP-8. Other grades and the bowtie drift method have different limits [10, pp.1, 7-8].
+- **ADR421/ADR431 are the references recommended in ADI's AD7685 example.** ADR431 is 2.500V; ADR430 is the 2.048V member. Choose bypass capacitance from the reference and ADC requirements rather than applying a universal 10uF + 0.1uF rule [1, Step 3; 11, pp.1, 5].
 
 ### ADC Part Selection
 
-| Application | Part | Key Specs | Notes |
-|-------------|------|-----------|-------|
-| General 16-bit SAR | AD7685 | 250kSPS, 90dB SNR, SPI | 22uF ceramic on VREF; pair with ADR421/ADR431 |
-| Sensor front-end (thermocouple, load cell, RTD) | ADS1220 | 24-bit, 2kSPS, integrated PGA (1-128x) + 2.048V ref | Internal ref + PGA eliminates external amp + ref in many cases |
-| 24-bit multi-ch precision | ADS1274 | 4-ch, 128kSPS, 111dB SNR | Single ground plane per datasheet |
-| 8-ch simultaneous | AD7606 | 16-bit, 200kSPS/ch, integrated OSR | Onboard sinc filter, OS pins |
-| High-speed 18-bit | AD7960 | 5MSPS, 99dB SNR | Requires NP0 input caps -- X7R degraded THD by several dB |
-| Low-power 12-bit | ADS7138 | 8-ch, I2C, 1MSPS | Single GND pin -- no split possible |
-| High-impedance input | ADAS3022 | 16-bit, 1MSPS, 500M input Z | No external buffer needed |
+| Application | Part | Key Specs and Conditions | Notes |
+|-------------|------|--------------------------|-------|
+| General 16-bit SAR | AD7685 | 250kSPS, SPI-compatible [8, p.1] | 22uF reference bypass in ADI's example [1] |
+| Sensor front-end | ADS1220 | 24-bit, up to 2kSPS turbo mode, PGA 1-128, 2.048V reference [12] | Check PGA common-mode limits |
+| Multi-channel precision | ADS1274 | 4-ch, 24-bit; 128kSPS at 32.768MHz clock in high-speed mode [7, p.3] | 111dB SNR belongs to high-resolution mode, not high-speed mode [7, p.1] |
+| 8-ch simultaneous | AD7606 | 16-bit, 200kSPS/ch [13, p.1] | Integrated oversampling filter |
+| High-speed 18-bit | AD7960 | 5MSPS, 99dB SNR typical at 1kHz, -0.5dBFS input and VREF=5V [14, pp.1, 3] | NP0/X7R distortion comparison -> above |
+| Low-power 12-bit | ADS7138 | 8-ch, I2C; internal conversion timing up to 1MSPS [15, Table 5] | Do not equate internal conversion rate with I2C read throughput |
+| High-impedance input | ADAS3022 | 16-bit, 1MSPS; >500Mohm input impedance [22, p.1] | Reduces external buffering requirements |
 
-- **Oversampling ENOB gain:** 4x oversampling = +1 bit. 256x = +4 bits. Measured on AD7960: 256x OSR achieved 123dB dynamic range (theory: 125dB, 1-2dB degraded by 1/f noise from signal chain).
-- **Sigma-delta multiplexing penalty:** digital filter must flush on channel switch. AD7175 sinc5+sinc1 filter achieves single-cycle settling at <= 10kSPS -- designed specifically for muxed applications (ADI practical filter paper).
+- **Oversampling gain assumes noise that averages down.** Ideal quantization-noise-limited SNR = 6.02 * N + 1.76 + 10 * log10(OSR) dB for a full-scale sine, OSR = fS/(2 * BW), with filtering before decimation. Thus 4x gives 1 bit and 256x gives 4 bits; correlated noise, distortion, and drift do not follow this improvement. ADI measured 123dB dynamic range on AD7960 at OSR=256, 1-2dB below its extrapolation [2, Digital Filter Considerations].
+- **Sigma-delta multiplexing penalty:** flush the digital filter after switching channels. AD7175-x sinc5+sinc1 achieves single-cycle settling at output rates of 10kSPS and lower [2, Digital Filter Considerations].
 
 ### DAC Part Selection
 
 | Application | Part | Key Specs | Notes |
 |-------------|------|-----------|-------|
-| General-purpose audio/control | MCP4728 | 4-ch, 12-bit, I2C, internal 2.048V ref | No external ref needed |
-| Precision voltage output | DAC8562 | 2-ch, 16-bit, SPI, internal 2.5V ref | 1 LSB INL, rail-to-rail output with integrated buffer |
-| High-speed waveform | AD9744 | 14-bit, 210MSPS, current output | Requires external I-to-V or transformer; 0.1dB flat to 17% fNyquist without equalization |
-| Multi-channel setpoint | DAC7578 | 8-ch, 12-bit, I2C | Power-on reset to zero or mid-scale selectable |
-| Low-power single | MCP4725 | 1-ch, 12-bit, I2C, EEPROM | Stores last setting -- output restores on power-up |
-| Precision 16-bit | AD5761R | 1-ch, 16-bit, SPI, +/-10V output | Bipolar output for industrial control, integrated output clamp |
+| General-purpose control | MCP4728 | 4-ch, 12-bit, I2C, internal 2.048V ref [16, p.1] | Buffered outputs |
+| Precision voltage output | DAC8562 | 2-ch, 16-bit, SPI, internal 2.5V ref [17, p.1] | 4-LSB INL; reference disabled by default |
+| High-speed waveform | AD9744 | 14-bit, 210MSPS, current output [18, p.1] | Size termination for compliance voltage |
+| Multi-channel setpoint | DAC7578 | 8-ch, 12-bit, I2C [19, p.1] | TSSOP resets to zero; QFN supports zero or midscale |
+| Low-power single | MCP4725 | 1-ch, 12-bit, I2C, EEPROM [20, p.1] | Restores EEPROM-programmed code/configuration, not every volatile write |
+| Precision bipolar | AD5761R | 1-ch, 16-bit, SPI, programmable ranges including +/-10V [21, p.1] | Requires analog supplies appropriate to the output range |
 
-- **Current-output DACs (AD9744, AD9767) need an external op amp or transformer for voltage output.** Do not resistively terminate -- the compliance voltage range is limited and nonlinearity increases.
-- **For DACs driving capacitive loads (long cables, filter caps >1nF):** select a DAC with integrated output buffer or add an external buffer. Unbuffered R-2R DAC outputs have code-dependent output impedance that interacts with load capacitance to create settling tails and DNL errors.
+- **AD9744 supports resistive current-to-voltage conversion.** Select load resistance so both outputs remain inside compliance limits; an op amp or transformer is an alternative, not mandatory [18, Analog Outputs, Output Configurations].
+- **A buffered DAC still has a capacitive-load limit.** Check the chosen output amplifier's stability and settling conditions; an integrated buffer is not permission to attach arbitrary cable/filter capacitance -> `misc/op-amp-basics.md` [17, Output Amplifier].
 
 ### Mixed-Signal PCB Layout
 
-- **Single ground plane, no split.** ADI mixed-signal layout guidelines: modern ADCs with low digital current work best on a unified ground. Splitting creates return current detours that increase noise. Altium grounding article confirms: ADS1274 datasheet explicitly says "AGND: connect to DGND using a single plane."
-- **Start with a split during layout, then remove it.** Route analog signals over the "analog" zone, digital over the "digital" zone, then delete the split. Return currents naturally stay under their signal traces (lowest inductance path) even on a continuous plane. Both ADI and TI precision layout guides recommend this technique.
-- **4-layer minimum for precision systems:** L1 = signals, L2 = ground, L3 = power, L4 = aux signals. L2 ground adjacent to L1 gives tight return path coupling.
-
-> WARNING: Ferrite bead between analog and digital power rails with separated ground planes is the worst common advice (Altium grounding article). It creates a ground loop where return currents have no low-impedance path. If you need isolated analog power, use a separate precision reference with its own RC filter -- not a ferrite on a shared rail with split grounds.
-
-- **Thermocouple effects in precision layouts (TI SLYP167).** A PCB via creates a copper-solder junction. Different numbers of vias on + and - differential traces create a temperature-dependent offset. For 24-bit ADCs, 1 inch of 0.5oz trace carrying 10uA drops 1.3uV -- 4 LSBs. Route differential pairs symmetrically with equal via counts.
-- **Decoupling:** 0.01-0.1uF ceramic as close as physically possible to each power pin. 10-100uF electrolytic within 25mm. Connect through via to ground plane, not through a trace (-> `power/decoupling.md`).
+- **Use a unified ground plane for the low-digital-current ADC/DAC case in ADI's guidance.** Complex high-current mixed-signal systems require an explicit return-path plan; follow device grounding requirements [4, Ground Plane; 7, p.6].
+- **TI's layout exercise starts with a split, then removes it.** Keep analog and digital routing in their respective zones; the low-inductance return-under-trace argument applies at high frequency, not universally at DC [5, PCB Layout Process; 4, Single Ground Plane].
+- **Four or more layers are ADI's recommendation for high-performance acquisition, not a universal minimum.** Stackup and general routing -> `guides/pcb-layout.md` [4, Board Layers].
+- **Match differential-path thermal junctions.** TI shows feedthrough-count asymmetry creating temperature-dependent offsets; its separate trace-drop example is 25.4mm (1 inch) of 0.18mm (7mil), half-ounce copper carrying 10uA, giving 1.3uV, about 4 LSB at 24 bits with a 5V span [5, High Resolution Measurements, Offset Voltages].
+- Power-pin bypassing and ferrite/decoupling resonance -> `power/decoupling.md`; do not substitute a precision voltage reference for a supply rail [4, Power Supply Block, Decoupling Techniques].
 
 ### Component Selection for Low Distortion
 
-- **NP0/C0G ceramic or polystyrene for signal path capacitors.** X7R dielectric is voltage-dependent (piezoelectric effect) and introduces harmonic distortion. Measured on AD7960 eval board: swapping 1nF 0603 X7R for NP0 improved THD by several dB at 10kHz (ADI practical filter paper).
-- **Thin film or metal film resistors for precision signal paths.** Standard thick film resistors have voltage coefficient and power coefficient nonlinearity that contribute distortion in high-resolution (>14-bit) signal chains.
+- **Thin-film or metal-film resistors reduce passive-component distortion in demanding signal chains.** Evaluate voltage and power coefficients; ADI does not establish a universal 14-bit threshold for rejecting thick film [2, Component Selection Challenges].
+- **RC thermal-noise lookup, integrated over the complete single-pole response at 25 degrees C:** sqrt(k * T / C) gives about 6.4uVrms for 100pF, 2.0uVrms for 1nF, and 0.64uVrms for 10nF. This is the resistor's filtered equilibrium noise, not an additional independent capacitor-noise source [2, Component Selection Challenges].
 
 ## Common Mistakes
 
-- **Ferrite bead between analog and digital power rails (whether split or unified ground).** The ferrite's inductance (~1uH) resonates with decoupling caps (typically 1-10 MHz), amplifying noise at the resonant frequency by 10-20 dB. Worse than either a full split or a unified plane. Same failure when using the same supply for ADC analog and digital rails with a ferrite between them. Use a direct connection with adequate local decoupling, or a truly separate precision LDO for the analog rail with its own RC filter.
-- **Narrowing RC anti-alias filter bandwidth to match signal BW.** A 100kHz SAR ADC with 100kHz signal does not need a 100kHz filter -- it needs the recommended ~3MHz filter to allow S/H acquisition settling (ADI practical filter paper: 590 ohm on AD7980 caused 30% amplitude attenuation). Tighter filtering belongs before the driver amplifier where input impedance is high.
-- **Trusting oversampling to fix aliasing.** Oversampling spreads quantization noise but does not prevent out-of-band signals from aliasing. A strong interferer at 0.8*fS aliases in-band regardless of OSR. The analog filter must reject signals relative to the Nyquist frequency of the final decimated rate.
-- **Using the power supply as the ADC reference.** A 3.3V LDO with 1% accuracy and 50uV/rtHz noise is 10-bit performance at best. Even "clean" LDOs have load transients from other circuits. Use a dedicated voltage reference IC for anything above 10-bit.
-- **Ignoring DAC sinc rolloff in waveform generation.** An uncompensated DAC is only 0.1dB flat to 17% of fNyquist. At 80% of fNyquist, output is down 2.42dB. For broadband applications: interpolating DAC (MAX5895, 8x interpolation pushes null out 8x), digital pre-equalization (FIR inverse-sinc, 100-tap Blackman-windowed -> 0.1dB flat to 96% fNyquist), or post-equalization analog filter (~50% fNyquist but amplifies HF noise).
+- **Discarding samples before sufficient digital filtering.** ADI's AD7606 example converts at 200kSPS and decimates by 32 to 6.25kSPS; a 3.5kHz input produces a 2.75kHz alias. Reject it before downsampling with adequate digital filtering or analog filtering; the analog filter must also prevent aliases at the original ADC sampling rate [2, Avoid Aliasing by Decimation].
 
 ## Formulas
 
-**Oversampling SNR improvement:**
-**Rule of thumb:** 4x oversampling = +6dB (+1 bit). 16x = +12dB (+2 bits).
-**Formula:** SNR_improvement = 10 * log10(OSR), where OSR = fS / (2 * BW)
-**Example:** 12-bit ADC at 5.12MSPS, signal BW = 10kHz -> OSR = 256 -> +24dB -> effective 16-bit noise performance
-
-**Anti-alias filter GBW requirement:**
-**Rule of thumb:** Op amp GBW >= 100 * fc for unity-gain buffer driving the filter.
-**Formula:** fGBW >= 100 * Q * G * fc
-**Example:** 4th-order Butterworth at 10kHz, Q = 1.31 (stage 2), G = 1 -> fGBW >= 1.31MHz. OPA2314 (2.7MHz) provides 2x margin.
-
-**RC thermal noise (quick lookup):**
-**Rule of thumb:** 100pF = 6.4uVrms, 1nF = 2uVrms, 10nF = 0.64uVrms (at 25C).
+**Active-filter amplifier selection [6, p.9]:**
+**Rule of thumb:** Apply the 100 * Q * G factor to each active filter stage, not to an arbitrary ADC input buffer.
+**Formula:** fGBW >= 100 * Q * G * fc; verify settling, noise, and slew rate separately.
+**Example:** SLYT626's fourth-order 10kHz filter uses worst-stage Q about 1.31 and G=1 -> fGBW >= 1.31MHz. OPA2314 at 2.7MHz provides about 2.1x margin.
 
 ## Sources
 
 ### Related Rules
 
 - `misc/op-amp-basics.md` -- Amplifier stability and compensation for ADC driver stages
-- `power/decoupling.md` -- Decoupling strategy for ADC/DAC power pins
+- `power/decoupling.md` -- ADC/DAC power bypassing and ferrite resonance
+- `guides/pcb-layout.md` -- Stackup and mixed-signal routing
 
 ### References
 
-1. ADI -- Seven Steps to Successful Analog-to-Digital Signal Conversion: https://www.analog.com/en/resources/technical-articles/seven-steps-to-successful-analog-to-digital-signal-conversion.html
-2. ADI -- Practical Filter Design Challenges for Precision ADCs: https://www.analog.com/en/resources/analog-dialogue/articles/practical-filter-design-precision-adcs.html
-3. ADI -- Filter Basics: Anti-Aliasing: https://www.analog.com/en/resources/technical-articles/guide-to-antialiasing-filter-basics.html
-4. ADI -- Equalizing Techniques Flatten DAC Frequency Response: https://www.analog.com/en/resources/technical-articles/equalizing-techniques-flatten-dac-frequency-response.html
-5. ADI -- Basic Guidelines for Layout Design of Mixed-Signal PCBs: https://www.analog.com/en/resources/analog-dialogue/articles/what-are-the-basic-guidelines-for-layout-design-of-mixed-signal-pcbs.html
-6. Altium -- How to Properly Ground ADCs: https://resources.altium.com/p/how-properly-ground-adcs
-7. TI SLYP167 -- PCB Layout Tips for High Resolution (Precision Analog Seminar): https://www.ti.com/lit/ml/slyp167/slyp167.pdf
-8. TI SLYT626 -- Designing an Anti-Aliasing Filter for ADCs in the Frequency Domain: https://www.ti.com/lit/an/slyt626/slyt626.pdf
+1. ADI -- Seven Steps to Successful Analog-to-Digital Signal Conversion (HTML, Steps 1-7): https://www.analog.com/en/resources/technical-articles/seven-steps-to-successful-analog-to-digital-signal-conversion.html
+2. ADI -- Practical Filter Design Challenges for Precision ADCs (HTML, Analog/Digital Filter Considerations): https://www.analog.com/en/resources/analog-dialogue/articles/practical-filter-design-precision-adcs.html
+3. ADI -- Equalizing Techniques Flatten DAC Frequency Response (2006, HTML): https://www.analog.com/en/resources/technical-articles/equalizing-techniques-flatten-dac-frequency-response.html
+4. ADI -- Basic Guidelines for Layout Design of Mixed-Signal PCBs (HTML): https://www.analog.com/en/resources/analog-dialogue/articles/what-are-the-basic-guidelines-for-layout-design-of-mixed-signal-pcbs.html
+5. TI SLYP167 -- PCB Layout Tips for High Resolution (Precision Analog Seminar): https://www.ti.com/lit/ml/slyp167/slyp167.pdf
+6. TI SLYT626 (2Q 2015, pp.7-9) -- Designing an Anti-Aliasing Filter for ADCs in the Frequency Domain: https://www.ti.com/lit/an/slyt626/slyt626.pdf
+7. TI ADS1274/ADS1278 datasheet (SBAS367F, February 2011): https://www.ti.com/lit/ds/symlink/ads1274.pdf
+8. ADI AD7685 datasheet (Rev D): https://www.analog.com/media/en/technical-documentation/data-sheets/AD7685.pdf
+9. TI REF50xx datasheet (SBOS410, Features and Applications): https://www.ti.com/lit/ds/symlink/ref50.pdf
+10. ADI ADR45xx datasheet (Rev G): https://www.analog.com/media/en/technical-documentation/data-sheets/adr4520_4525_4530_4533_4540_4550.pdf
+11. ADI ADR43x datasheet (Rev N, February 2018): https://www.analog.com/media/en/technical-documentation/data-sheets/ADR430_431_433_434_435.pdf
+12. TI ADS1220 -- datasheet and product specifications: https://www.ti.com/product/ADS1220
+13. ADI AD7606 family datasheet (Rev G): https://www.analog.com/media/en/technical-documentation/data-sheets/AD7606_7606-6_7606-4.pdf
+14. ADI AD7960 datasheet (Rev C): https://www.analog.com/media/en/technical-documentation/data-sheets/AD7960.pdf
+15. TI ADS7138 datasheet (SBAS976A, May 2020): https://www.ti.com/lit/ds/symlink/ads7138.pdf
+16. Microchip MCP4728 datasheet (DS22187E): https://ww1.microchip.com/downloads/en/DeviceDoc/22187E.pdf
+17. TI DACxx6x datasheet (SLAS719E, June 2015): https://www.ti.com/lit/ds/symlink/dac8562.pdf
+18. ADI AD9744 datasheet (Rev C): https://www.analog.com/media/en/technical-documentation/data-sheets/AD9744.pdf
+19. TI DAC5578/6578/7578 datasheet (SBAS496B, August 2012): https://www.ti.com/lit/ds/symlink/dac7578.pdf
+20. Microchip MCP4725 datasheet (DS22039D): https://ww1.microchip.com/downloads/en/DeviceDoc/22039d.pdf
+21. ADI AD5761R/AD5721R datasheet (Rev C): https://www.analog.com/media/en/technical-documentation/data-sheets/AD5761R_5721R.pdf
+22. ADI ADAS3022 datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ADAS3022.pdf

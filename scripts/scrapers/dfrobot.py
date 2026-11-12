@@ -6,6 +6,8 @@ import re
 import subprocess
 from pathlib import Path
 
+from build_sensor_db import strip_software_prefix
+
 from .common import (
     has_ic_pattern,
     infer_measures,
@@ -319,6 +321,9 @@ def scrape_dfrobot(output_dir: Path) -> None:
             desc = props["sentence"]
         elif data["descriptions"]:
             desc = max(data["descriptions"], key=len)
+        library_title = bool(desc and strip_software_prefix(desc) != desc)
+        if desc:
+            desc = strip_software_prefix(desc)
         if desc and len(desc) > 200:
             desc = desc[:197] + "..."
 
@@ -351,6 +356,8 @@ def scrape_dfrobot(output_dir: Path) -> None:
             urls=data["urls"][:5],
             description=desc,
         ))
+        if library_title:
+            sensors[-1]["description_is_library_title"] = True
 
     logger.info(
         f"Extracted {len(sensors)} sensors from {len(dfrobot_repos)} repos "

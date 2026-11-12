@@ -18,23 +18,30 @@ components:
 - ref: C10
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
 - ref: C11
   value: 330pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-10108
 - ref: C12
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-00868
   decouples: U1
 - ref: C8
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
 - ref: C9
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U1
 - ref: D1
@@ -66,6 +73,7 @@ components:
 - ref: J7
   value: Spring Terminal
   footprint: 1X04
+  prod_id: PRT-08075
   pin_count: 8
 - ref: JP1
   value: 1x5 header
@@ -82,23 +90,27 @@ components:
 - ref: R1
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
-  pullup: D1.A
 - ref: R10
   value: 47ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-14282
 - ref: R2
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R3
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R9
   value: 47ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-14282
 - ref: U1
   value: NAU7802

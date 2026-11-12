@@ -253,6 +253,7 @@ components:
 - ref: L1
   value: 3.3uH
   footprint: INDUCTOR_1007
+  mpn: DFE252012F-3R3M=P2
 - ref: LED1
   value: WS2812B
   footprint: LED3535_FULLPADS
@@ -319,7 +320,7 @@ components:
   footprint: '0603'
 - ref: R12
   value: 220ohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pin_count: 8
 - ref: R13
   value: 10kohm
@@ -327,11 +328,11 @@ components:
   pullup: PERIPH_RST
 - ref: R14
   value: 220ohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pin_count: 8
 - ref: R15
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pullup: SCL
   pin_count: 8
 - ref: R16
@@ -352,7 +353,6 @@ components:
 - ref: R2
   value: 10kohm
   footprint: '0603'
-  pullup: ON.A
 - ref: R20
   value: 5.1kohm
   footprint: '0603'
@@ -476,7 +476,8 @@ components:
   value: ESP32-C6-MINI
   footprint: ESP32-PICO-MINI
   pin_count: 54
-  nc_pins: {IO2/ADC1_2: '5', IO4/ADC1_4: '9', IO5/ADC1_5: '10', IO0/ADC1_0: '12', IO1/ADC1_1: '13', IO12/D-: '17', IO13/D+: '18', IO14: '19', IO15: '20', IO19: '25', IO20: '26', IO23: '29'}
+  nc_pins: {IO2/ADC1_2: '5', IO4/ADC1_4: '9', IO5/ADC1_5: '10', IO0/ADC1_0: '12', IO1/ADC1_1: '13', IO12/D-: '17', IO13/D+: '18',
+    IO14: '19', IO15: '20', IO19: '25', IO20: '26', IO23: '29'}
 - ref: X1
   value: MICROSD
   footprint: MICROSD
@@ -527,10 +528,10 @@ components:
   nc_pins: {G$2.MT: M1, G$3.MT: M2}
 - ref: Y1
   value: 12MHz_10pF_50ohm
-  footprint: CRYSTAL
+  footprint: CRYSTAL_2.5X2
 - ref: Y2
   value: 12MHz
-  footprint: CRYSTAL
+  footprint: CRYSTAL_2.5X2
 nets:
 - name: '!RESET'
   pins: [JP3.26, R21.2, SW1.S, SW1.S1, X4./RUN]
@@ -788,7 +789,6 @@ nets:
   - SW1.P1
   - SW2.G$1.O
   - SW2.G$2.MT
-  - TP2.SEW
   - TP3.SEW
   - TP4.SEW
   - TP5.SEW
@@ -975,7 +975,7 @@ nets:
 - name: SWDIO
   pins: [DEBUG.G$1.3, X4.SWDIO]
 - name: USBBOOT/BUTTON1
-  pins: [BTN0.S, BTN0.S1, D3.C, JP3.12, TP1.P$1, X4.XPI_CS1/MISO0/TX0/SDA0/PWM0A/GPIO0]
+  pins: [BTN0.S, BTN0.S1, D3.C, JP3.12, X4.XPI_CS1/MISO0/TX0/SDA0/PWM0A/GPIO0]
 - name: USBH_D+
   pins: [JP1.1, X4.CS0/RX0/SCL0/PWM0B/GPIO1, X6.D+U]
 - name: USBH_D-

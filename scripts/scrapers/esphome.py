@@ -22,8 +22,12 @@ KNOWN_IC_MEASURES = {
     "mpl3115a2": ["pressure", "temperature"],
     "sds011": ["particulate"],
     "as3935": ["weather"],
-    "ads1115": ["current", "voltage"],
+    "ads1115": ["voltage"],
     "ads1118": ["temperature", "voltage"],
+    # RG-9 "moisture" is a 0-7 rain intensity level, not humidity (ESPHome hydreon_rgxx docs)
+    "hydreonrgxx": ["rain", "temperature"],
+    # Its "voltage" entity is the probe's own supply voltage (ESPHome smt100 docs)
+    "smt100": ["soil_moisture", "temperature"],
 }
 
 # ── ESPHome measure extraction: multiple signal sources ─────────────────────
@@ -49,7 +53,7 @@ ESPHOME_CONF_MEASURES = {
     "CONF_FIELD_STRENGTH_Y": "magnetic_field",
     "CONF_FIELD_STRENGTH_Z": "magnetic_field",
     "CONF_HEADING": "magnetic_field",
-    "CONF_MOISTURE": "humidity",
+    "CONF_MOISTURE": "soil_moisture",  # SMT100, b-parasite, Xiaomi plant sensors
     "CONF_GAS_RESISTANCE": "gas",
     "CONF_WIND_SPEED": "wind",
     "CONF_WIND_DIRECTION_DEGREES": "wind",
@@ -107,7 +111,7 @@ ESPHOME_DEVICE_CLASS_MAP = {
     "CARBON_MONOXIDE": "co",
     "VOLATILE_ORGANIC_COMPOUNDS": "gas",
     "VOLATILE_ORGANIC_COMPOUNDS_PARTS": "gas",
-    "AQI": "gas",
+    "AQI": None,  # An AQI can be calculated from particles alone.
     "NITROGEN_DIOXIDE": "gas",
     "CURRENT": "current",
     "VOLTAGE": "voltage",
@@ -117,7 +121,8 @@ ESPHOME_DEVICE_CLASS_MAP = {
     "GAS": "gas",
     "SOUND_PRESSURE": "sound",
     "WIND_SPEED": "wind",
-    "PRECIPITATION": None,
+    "PRECIPITATION": "rain",
+    "PRECIPITATION_INTENSITY": "rain",
 }
 
 # ICON_* -> measures (last resort, only very specific icons)
@@ -213,6 +218,16 @@ def _extract_esphome_measures(all_content: str) -> set[str]:
     """
     measures = set()
 
+    # Count constants where they are used, not where they are imported, and drop altitude
+    # entities: GY-39's and MPL3115A2's altitude is computed from pressure, so its UNIT_METER
+    # and DEVICE_CLASS_DISTANCE are not a distance sensor.
+    all_content = re.sub(r'from\s+esphome\.const\s+import\s*(?:\([^()]*\)|[^\n]*)', '', all_content)
+    all_content = re.sub(r'CONF_ALTITUDE\)\s*:\s*sensor\.sensor_schema\((?:[^()]|\([^()]*\))*\)', '',
+                         all_content)
+    # Rainfall in mm (Hydreon RG-15) is precipitation, not a distance reading.
+    if re.search(r'\bDEVICE_CLASS_PRECIPITATION', all_content):
+        all_content = re.sub(r'\bUNIT_MILLIMETER\b', '', all_content)
+
     # 1. CONF_* keys — most reliable (actual sensor output channels)
     for const_name, measure in ESPHOME_CONF_MEASURES.items():
         if re.search(rf'\b{const_name}\b', all_content):
@@ -236,11 +251,92 @@ def _extract_esphome_measures(all_content: str) -> set[str]:
         if measure and re.search(rf'\b{const_name}\b', all_content):
             measures.add(measure)
 
-    # 5. Detect color sensor channels from string literal arrays (e.g., TYPES = ["red", "green", "blue"])
+    # 5. A sensor entity keyed CONF_LIGHT reads ambient light (Hi-Link LD2410/LD2412 photodiode,
+    #    LTR390). ESPHome dropped DEVICE_CLASS_ILLUMINANCE from the unitless ones on 2026-11-06
+    #    (esphome 417973ddf2), so the key is the signal. CONF_LIGHT elsewhere is a light output.
+    if re.search(r'CONF_LIGHT\)\s*:\s*sensor\.sensor_schema\(', all_content):
+        measures.add("light")
+
+    # 6. Detect color sensor channels from string literal arrays (e.g., TYPES = ["red", "green", "blue"])
     if re.search(r'"red".*"green".*"blue"', all_content) or re.search(r'"clear".*"red"', all_content):
         measures.add("color")
 
     return measures
+
+
+# ESPHome's docs repo: branch "current" is esphome.io (the latest release),
+# "next" is next.esphome.io (components merged to dev for the next release).
+# The component repo is cloned from dev, so a new component has no page on
+# esphome.io until it ships, and some components have a page outside
+# components/sensor/ (hlk_fm22x, fingerprint_grow) or under a bus-suffixed
+# name (honeywellabp2_i2c). Guessing the URL left 44 of 224 links dead.
+ESPHOME_DOCS_REPO = "https://github.com/esphome/esphome.io.git"
+ESPHOME_DOCS_SITES = (("current", "https://esphome.io"), ("next", "https://next.esphome.io"))
+ESPHOME_DOCS_ROOT = "src/content/docs/"
+ESPHOME_SOURCE_TREE = "https://github.com/esphome/esphome/tree/dev/esphome/components"
+
+
+def _esphome_docs_pages(branch: str, tmpdir: str) -> set[str]:
+    """Return docs page paths on a docs branch, like "components/sensor/bme280".
+
+    Lists the tree without downloading file contents. Returns an empty set when
+    the clone fails, so links fall back to the next site or the source tree.
+    """
+    clone_dir = Path(tmpdir) / f"esphome-docs-{branch}"
+    try:
+        result = subprocess.run(
+            ["git", "clone", "--depth=1", "--filter=blob:none", "--no-checkout",
+             "--branch", branch, ESPHOME_DOCS_REPO, str(clone_dir)],
+            capture_output=True, text=True, timeout=120,
+        )
+        if result.returncode != 0:
+            logger.warning(f"ESPHome docs clone ({branch}) failed: {result.stderr.strip()[:200]}")
+            return set()
+        listing = subprocess.run(
+            ["git", "-C", str(clone_dir), "ls-tree", "-r", "--name-only", "HEAD",
+             ESPHOME_DOCS_ROOT + "components"],
+            capture_output=True, text=True, timeout=60,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        logger.warning(f"ESPHome docs listing ({branch}) failed: {exc}")
+        return set()
+    if listing.returncode != 0:
+        logger.warning(f"ESPHome docs listing ({branch}) failed: {listing.stderr.strip()[:200]}")
+        return set()
+    return esphome_docs_pages_from_paths(listing.stdout.splitlines())
+
+
+def esphome_docs_pages_from_paths(paths: list[str]) -> set[str]:
+    """Turn docs repo file paths into site page paths."""
+    pages = set()
+    for path in paths:
+        if not path.startswith(ESPHOME_DOCS_ROOT) or not path.endswith((".md", ".mdx")):
+            continue
+        page = path[len(ESPHOME_DOCS_ROOT):].rsplit(".", 1)[0]
+        if page.endswith("/index"):
+            page = page[: -len("/index")]
+        pages.add(page)
+    return pages
+
+
+def esphome_docs_url(
+    base_name: str, component_dirs: list[str], docs_pages: dict[str, set[str]],
+) -> str:
+    """Link a sensor to its docs page, or to its source when no page exists yet.
+
+    `base_name` is the component name without a bus suffix, `component_dirs`
+    the component directories merged into the sensor, and `docs_pages` maps
+    each docs branch in ESPHOME_DOCS_SITES to its page paths.
+    """
+    dirs = sorted(set(component_dirs))
+    names = list(dict.fromkeys([base_name, *dirs]))
+    for branch, site in ESPHOME_DOCS_SITES:
+        pages = docs_pages.get(branch, set())
+        for name in names:
+            for page in (f"components/sensor/{name}", f"components/{name}"):
+                if page in pages:
+                    return f"{site}/{page}/"
+    return f"{ESPHOME_SOURCE_TREE}/{dirs[0] if dirs else base_name}"
 
 
 def scrape_esphome(output_dir: Path) -> None:
@@ -332,6 +428,10 @@ def scrape_esphome(output_dir: Path) -> None:
                 protocols.add("uart")
             if 'one_wire.OneWireDevice' in all_content or re.search(r'DEPENDENCIES\s*=\s*\[.*"one_wire"', all_content):
                 protocols.add("one_wire")
+            # BLE devices (Xiaomi thermometers, Aranet) are read from their advertisements
+            if re.search(r'(?:AUTO_LOAD|DEPENDENCIES)\s*=\s*\[[^\]]*"(?:esp32_ble_tracker|ble_client|ble_device_base)"',
+                         all_content):
+                protocols.add("ble")
 
             # I2C address
             i2c_addresses = set()
@@ -354,14 +454,22 @@ def scrape_esphome(output_dir: Path) -> None:
             if ic_id not in ic_data:
                 ic_data[ic_id] = {
                     "comp_name": base_ic,
+                    "component_dirs": [],
                     "protocols": set(),
                     "i2c_addresses": set(),
                     "measures": set(),
                 }
             entry = ic_data[ic_id]
+            entry["component_dirs"].append(comp_name)
             entry["protocols"].update(protocols)
             entry["i2c_addresses"].update(i2c_addresses)
             entry["measures"].update(measures)
+
+        docs_pages = {
+            branch: _esphome_docs_pages(branch, tmpdir) for branch, _site in ESPHOME_DOCS_SITES
+        }
+        logger.info("ESPHome docs pages: " + ", ".join(
+            f"{branch} {len(pages)}" for branch, pages in docs_pages.items()))
 
         # Build sensor entries — drop sensors with no measures
         sensors = []
@@ -370,7 +478,7 @@ def scrape_esphome(output_dir: Path) -> None:
             if not agg["measures"]:
                 skipped_no_measures += 1
                 continue
-            docs_url = f"https://esphome.io/components/sensor/{agg['comp_name']}.html"
+            docs_url = esphome_docs_url(agg["comp_name"], agg["component_dirs"], docs_pages)
             sensors.append(make_sensor_entry(
                 sensor_id=ic_id,
                 name=agg["comp_name"],

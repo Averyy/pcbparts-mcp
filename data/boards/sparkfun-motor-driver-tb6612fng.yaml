@@ -18,15 +18,20 @@ components:
 - ref: C1
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
 - ref: C2
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
   decouples: U1
 - ref: C3
   value: 10uF
   footprint: EIA3528
+  voltage: 20V
   prod_id: CAP-08063
 - ref: JP1
   value: 1x8 header

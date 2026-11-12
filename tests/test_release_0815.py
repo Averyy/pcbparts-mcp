@@ -8,7 +8,6 @@
 - Packages read "插件,12.6x4.4mm" (C2681581) beside "Plugin" (C496551).
 """
 
-import gzip
 import inspect
 import json
 import re
@@ -18,6 +17,8 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+
+from conftest import write_catalog_category
 
 import pcbparts_mcp.server as server
 from pcbparts_mcp.client import JLCPCBClient
@@ -77,11 +78,11 @@ class TestEnglishPackage:
         assert part["package"] == "Plugin,12.6x4.4mm" and part["mounting_type"] == "through_hole"
 
     def test_build(self, tmp_path):
-        (tmp_path / "categories").mkdir()
-        with gzip.open(tmp_path / "categories" / "switches.jsonl.gz", "wt", encoding="utf-8") as f:
-            for lcsc, package in (("C2681581", "插件,12.6x4.4mm"), ("C496551", "Plugin")):
-                f.write(json.dumps({"l": lcsc, "m": "M" + lcsc, "f": "X", "p": package, "s": 100, "t": "e",
-                                    "c": 1, "$": 0.1, "d": "", "a": []}, ensure_ascii=False) + "\n")
+        write_catalog_category(tmp_path, "switches", [
+            {"l": lcsc, "m": "M" + lcsc, "f": "X", "p": package, "s": 100, "t": "e",
+             "c": 1, "$": 0.1, "d": "", "a": []}
+            for lcsc, package in (("C2681581", "插件,12.6x4.4mm"), ("C496551", "Plugin"))
+        ])
         build_database(tmp_path, tmp_path / "c.db", verbose=False)
         conn = sqlite3.connect(tmp_path / "c.db")
         try:
@@ -106,10 +107,10 @@ class TestDataAsOf:
         assert _iso_utc("not a date") is None
 
     def test_build_keeps_scrape_time(self, tmp_path):
-        (tmp_path / "categories").mkdir()
-        with gzip.open(tmp_path / "categories" / "resistors.jsonl.gz", "wt", encoding="utf-8") as f:
-            f.write(json.dumps({"l": "C1", "m": "M1", "f": "X", "p": "0402", "s": 100, "t": "b", "c": 1,
-                                "$": 0.01, "d": "", "a": []}) + "\n")
+        write_catalog_category(tmp_path, "resistors", [
+            {"l": "C1", "m": "M1", "f": "X", "p": "0402", "s": 100, "t": "b", "c": 1,
+             "$": 0.01, "d": "", "a": []}
+        ])
         (tmp_path / "manifest.json").write_text(json.dumps(
             {"scraped_at": "2026-11-04T20:10:49.531605+00:00", "categories": {}}), encoding="utf-8")
         build_database(tmp_path, tmp_path / "c.db", verbose=False)
@@ -117,6 +118,24 @@ class TestDataAsOf:
         db = ComponentDatabase(db_path=tmp_path / "c.db", data_dir=tmp_path)
         try:
             assert db.scraped_at() == "2026-11-04T20:10:49Z"
+            assert db.prices_as_of() == "2026-11-04T20:10:49Z"  # data from before 0.9.0: scraped together
+        finally:
+            db.close()
+
+    def test_weekly_prices_have_their_own_time(self, tmp_path):
+        """0.9.0: prices are refreshed weekly and stock daily, so replies give each its own time."""
+        write_catalog_category(tmp_path, "resistors", [
+            {"l": "C1", "m": "M1", "f": "X", "p": "0402", "s": 100, "t": "b", "c": 1,
+             "$": 0.01, "d": "", "a": []}
+        ])
+        (tmp_path / "manifest.json").write_text(json.dumps(
+            {"scraped_at": "2026-11-11T20:05:06.133972+00:00",
+             "prices_updated_at": "2026-11-07T19:58:12.000001+00:00", "categories": {}}), encoding="utf-8")
+        build_database(tmp_path, tmp_path / "c.db", verbose=False)
+        from pcbparts_mcp.db import ComponentDatabase
+        db = ComponentDatabase(db_path=tmp_path / "c.db", data_dir=tmp_path)
+        try:
+            assert (db.scraped_at(), db.prices_as_of()) == ("2026-11-11T20:05:06Z", "2026-11-07T19:58:12Z")
         finally:
             db.close()
 
@@ -124,6 +143,7 @@ class TestDataAsOf:
         result = await server.jlc_search(query="100nF capacitor X7R", package="0603", library_type="basic")
         assert re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ", result["data_as_of"])
         assert result["data_as_of"] == get_db().scraped_at()
+        assert result["prices_as_of"] == get_db().prices_as_of()
 
     def test_descriptions(self):
         search = _sent(server.jlc_search)
@@ -274,11 +294,11 @@ class TestMouserLifecycle:
 
 def _switch_db(tmp_path):
     from pcbparts_mcp.db import ComponentDatabase
-    (tmp_path / "categories").mkdir()
-    with gzip.open(tmp_path / "categories" / "switches.jsonl.gz", "wt", encoding="utf-8") as f:
-        for lcsc, package in (("C2681581", "插件,12.6x4.4mm"), ("C1", "Plugin,12.6x4.4mm"), ("C2", "0603")):
-            f.write(json.dumps({"l": lcsc, "m": "M" + lcsc, "f": "X", "p": package, "s": 100, "t": "e",
-                                "c": 1, "$": 0.1, "d": "", "a": []}, ensure_ascii=False) + "\n")
+    write_catalog_category(tmp_path, "switches", [
+        {"l": lcsc, "m": "M" + lcsc, "f": "X", "p": package, "s": 100, "t": "e",
+         "c": 1, "$": 0.1, "d": "", "a": []}
+        for lcsc, package in (("C2681581", "插件,12.6x4.4mm"), ("C1", "Plugin,12.6x4.4mm"), ("C2", "0603"))
+    ])
     build_database(tmp_path, tmp_path / "c.db", verbose=False)
     return ComponentDatabase(db_path=tmp_path / "c.db", data_dir=tmp_path)
 

@@ -18,7 +18,9 @@ with real users, so the bar is: working code, tests, and no silent behavior chan
 Requirements: Python 3.12+ and [uv](https://docs.astral.sh/uv/) (never pip directly).
 
 ```bash
-git clone https://github.com/Averyy/pcbparts-mcp.git
+# Full commit history, but old file versions download only when needed (~80 MB instead of ~7 GB,
+# mostly old daily catalog snapshots).
+git clone --filter=blob:none https://github.com/Averyy/pcbparts-mcp.git
 cd pcbparts-mcp
 uv venv && uv pip install -e ".[dev]"
 ```

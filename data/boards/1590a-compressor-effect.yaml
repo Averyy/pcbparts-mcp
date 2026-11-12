@@ -51,12 +51,12 @@ components:
   description: Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-23-3
   pin_count: 3
 - ref: J1
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: J2
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
   nc_pins: {Pin_4: '4'}
 - ref: Q1
@@ -96,13 +96,13 @@ components:
   footprint: 0805
   pulldown: C9.1
 - ref: R15
-  value: 1MEG
+  value: 1Mohm
   footprint: 0805
 - ref: R16
   value: 100kohm
   footprint: 0805
 - ref: R2
-  value: 1MEG
+  value: 1Mohm
   footprint: 0805
 - ref: R3
   value: 100kohm

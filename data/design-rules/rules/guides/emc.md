@@ -109,7 +109,7 @@
 - **USB 3.x:** a USB 2.0 CMC is too slow for SuperSpeed; choose by data rate and receiver equalization (above) [16, 18]. Within 15 mm of the connector (no source found). Separate 2.0 and 3.x pairs with independent CMCs.
 - **HDMI / DisplayPort:** CMC on each TMDS/ML lane pair, chosen by cutoff for the lane rate. Murata lists DLW21SN900HQ2 (2.0 x 1.2 mm) for HDMI 1.4/2.0 and DisplayPort 1.4; for HDMI 2.1, DLM11CB120HH2 (1.25 x 1.0 mm), DLM0NSB120HY2 (0.85 x 0.65 mm) or DLM0QSB120HY2 (0.65 x 0.5 mm) [18].
 - **MIPI D-PHY (camera, display):** filter only if EMI measurements need it. D-PHY mixes high-speed differential and low-power single-ended signaling, so the filter must leave both waveforms intact. Murata recommends DLM common-mode filters at the main-board end of the FPC [19]: DLM0QSN500HY2 (0.65 x 0.5 mm) for D-PHY 1.1-2.0, DLM0NSN900HY2 (0.85 x 0.65 mm) for 1.1 (1.5 Gbps), DLM0NSN500HY2 (0.85 x 0.65 mm) for 1.2-2.0 [18, 19]. Check the exact PHY's signal budget.
-- **SPI/I2C off-board:** ferrite bead + TVS on each line. SPI clock > 10 MHz: add 33-100 pF cap after the ferrite -> `interfaces/spi.md`, `interfaces/i2c.md`.
+- **SPI/I2C off-board:** ESD protection on each line at the connector -> `protection/esd.md`. Any series ferrite or shunt capacitor adds to the bus load: keep I2C within its rise-time limit (`interfaces/i2c.md`) and SPI within the slowest device's timing; no source here gives filter values.
 - **General rule for high-speed differential:** always verify DM insertion loss at actual data rate. A CMC that fixes EMI at 200 MHz but adds 3 dB loss at 5 GHz will cause bit errors.
 
 ### Compliance Testing

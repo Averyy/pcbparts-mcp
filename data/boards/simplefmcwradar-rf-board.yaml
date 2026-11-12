@@ -40,6 +40,7 @@ components:
 - ref: C11
   value: 2.2uF
   footprint: '0603'
+  voltage: 10V
 - ref: C12
   value: 100pF
   footprint: '0402'
@@ -53,7 +54,7 @@ components:
   value: 100pF
   footprint: '0402'
 - ref: C16
-  value: 1000000uF
+  value: 1nF
   footprint: '0402'
 - ref: C17
   value: 100pF
@@ -67,6 +68,7 @@ components:
 - ref: C2
   value: 4.7uF
   footprint: '0603'
+  voltage: 6.3V
 - ref: C20
   value: 100pF
   footprint: '0402'
@@ -80,14 +82,16 @@ components:
   value: 1.2pF
   footprint: '0402'
 - ref: C24
-  value: 1000000uF
+  value: 1nF
   footprint: '0402'
 - ref: C25
   value: 2.2uF
   footprint: '0603'
+  voltage: 10V
 - ref: C3
   value: 4.7uF
   footprint: '0603'
+  voltage: 6.3V
 - ref: C4
   value: 10nF
   footprint: '0402'
@@ -103,23 +107,24 @@ components:
 - ref: C8
   value: 2.2uF
   footprint: '0603'
+  voltage: 10V
 - ref: C9
   value: 1nF
   footprint: '0402'
 - ref: IC1
-  value: MCP1700
+  value: MCP1700T-3302E
   footprint: SOT23
-  description: 250 mA, 16V, Low Quiescent Current LDO Regulator
+  mpn: MCP1700T-3302E
   pin_count: 3
 - ref: IC2
   value: HMC431LP4
   footprint: QFN24
-  description: MMIC VCO w/ BUFFER AMPLIFIER, 2.25 - 2.5 GHz
+  description: HMC431 VCO
   pin_count: 5
 - ref: IC3
   value: HMC476MP86
   footprint: WW107
-  description: Mini-Circuits ERA-2SM+ MMIC amplifier
+  description: HMC476 MMIC gain block
   pin_count: 4
 - ref: IC4
   value: HMC219AMS8
@@ -129,12 +134,10 @@ components:
 - ref: IC5
   value: HMC474MP86E
   footprint: WW107
-  description: Mini-Circuits ERA-2SM+ MMIC amplifier
   pin_count: 4
 - ref: IC6
   value: HMC474MP86E
   footprint: WW107
-  description: Mini-Circuits ERA-2SM+ MMIC amplifier
   pin_count: 4
 - ref: IC7
   value: HMC717LP3
@@ -150,6 +153,8 @@ components:
   footprint: J502-ND-142-0701-881
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-881
+  farnell: '1608603'
+  newark: 08B906
   description: SMA 50 Ohm
   pin_count: 5
 - ref: J3
@@ -157,6 +162,8 @@ components:
   footprint: J502-ND-142-0701-881
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-881
+  farnell: '1608603'
+  newark: 08B906
   description: SMA 50 Ohm
   pin_count: 5
 - ref: J4
@@ -164,6 +171,8 @@ components:
   footprint: J502-ND-142-0701-881
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-881
+  farnell: '1608603'
+  newark: 08B906
   description: SMA 50 Ohm
   pin_count: 5
 - ref: LED1
@@ -185,7 +194,6 @@ components:
 - ref: R1
   value: 1kohm
   footprint: '0603'
-  pullup: LED1.A
 - ref: R10
   value: 0ohm
   footprint: '0402'

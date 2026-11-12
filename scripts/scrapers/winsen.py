@@ -6,13 +6,14 @@ then extracts model, specs, protocols, and datasheet URLs from each page.
 
 import logging
 import re
+import time
 from html import unescape
 from pathlib import Path
 from urllib.parse import unquote
 
 import wafer
 
-from .common import make_sensor_entry, make_session, write_source_json
+from .common import infer_measures, make_sensor_entry, make_session, parse_supply_voltage, write_source_json
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +60,16 @@ CATEGORY_URLS = [
 # Maps title keywords → (measures, sensor_type)
 # Order: more specific first
 TYPE_RULES = [
+    # Vibration: piezoelectric acceleration and velocity sensors (WAP01, WAV0x, WVV01). Before
+    # everything else: they otherwise fell through to the gas default.
+    (r"\bpiezoelectric\s+acceleration\b", ["acceleration", "vibration"], "piezoelectric"),
+    (r"\bpiezoelectric\s+velocity\b|\bvibration\s+velocity\b", ["vibration"], "piezoelectric"),
+    # Water conductivity and residual chlorine probes/modules
+    (r"(?<!thermal )\bconductivity\b", ["conductivity", "water_quality"], None),
+    (r"\bresidual\s+chlorine\b", ["water_quality"], None),
+    # Light sensors and aerosol (particle mass) monitors
+    (r"\blight\s+sensor\b|\blx\b", ["light"], None),
+    (r"\baerosol\b", ["particulate"], None),
     # CO2 sensors — thermal conduction type (e.g. MD62) before NDIR default
     (r"\bthermal\s+conduct\w*\b.*\bCO2\b|\bCO2\b.*\bthermal\s+conduct\w*\b", ["co2"], "thermal_conduction"),
     # CO2 sensors (NDIR — default for most Winsen CO2 sensors)
@@ -66,12 +77,18 @@ TYPE_RULES = [
     (r"\bCO2\b", ["co2"], "ndir"),
     # PM / dust / particulate
     (r"\bPM(?:1\.0|2\.5|4|10)\b|\bdust\b|\bparticulate\b", ["particulate"], "laser"),
+    # PbS/PbSe flame sensors are photoconductive cells, not pyroelectric: "lead - salt type
+    # infrared photoconductive sensor" (REF-X2212). Photoresistor is the catalog's photoconductor.
+    (r"\bphoto-?conduct\w*", [], "photoresistor"),
     # Flame sensors (pyroelectric flame detectors — before PIR)
     (r"\bflame\b", ["flame"], "pyroelectric"),
     # PIR / pyroelectric (motion/presence — NOT flame)
     (r"\bPIR\b|\bpyroelectric\b", ["motion", "pir"], "pir"),
-    # Thermopile / IR temperature
-    (r"\bthermopile\b|\bIR\s+temperature\b|\binfrared\s+temperature\b", ["ir_temperature"], "thermopile"),
+    # Non-contact (thermal radiation) temperature, e.g. the ZMT510-A boil-dry sensor
+    (r"\bboil-dry\b|\bthermal\s+radiation\b", ["ir_temperature"], None),
+    # Thermopile / IR temperature. A "Thermopile Gas Sensor" (RTGA71) is the IR detector inside an
+    # NDIR gas sensor: it reads gas absorption, not an object's temperature.
+    (r"\bthermopile\b(?!\s+gas\b)|\bIR\s+temperature\b|\binfrared\s+temperature\b", ["ir_temperature"], "thermopile"),
     # Flow sensors
     (r"\bflow\b", ["flow"], None),
     # Pressure sensors
@@ -80,19 +97,27 @@ TYPE_RULES = [
     (r"\btemperature\b.*\bhumidity\b|\bhumidity\b.*\btemperature\b", ["temperature", "humidity"], None),
     (r"\btemperature\b", ["temperature"], None),
     (r"\bhumidity\b", ["humidity"], None),
-    # Water quality / pH
-    (r"\bph\b.*(?:sensor|water|quality|module)|\bwater quality\b|\bturbidity\b|\bdissolved oxygen\b", ["water_quality"], None),
+    # Water quality. pH, ORP and dissolved oxygen are their own measures (ZW-pH201 wasn't found under
+    # "ph", and dissolved-oxygen modules were listed as oxygen gas sensors). The model names carry
+    # pH/ORP where titles don't ("ZW-PH101 water quality sensor module"); three digits keep ME3-PH3
+    # (phosphine) out. Ammonia nitrogen is dissolved ammonia, not ammonia gas (ZW-NH101).
+    (r"\bdissolved\s+oxygen\b", ["dissolved_oxygen", "water_quality"], None),
+    (r"\bORP\b|-ORP\d{3}", ["orp", "water_quality"], None),
+    (r"\bpH\b.*(?:sensor|water|quality|module)|-pH\d{3}", ["ph", "water_quality"], None),
+    (r"\bammonia\s*&?\s*nitrogen\b|\bNH3-N\b", ["water_quality"], None),
+    (r"\bph\b.*(?:sensor|water|quality|module)|\bwater quality\b|\bturbidity\b", ["water_quality"], None),
     # Liquid level
     (r"\bliquid level\b|\blevel transmitter\b|\bwater level\b", ["level"], None),
     # Specific gas types (must be after CO2)
     (r"\bCO\b(?!\s*2).*(?:sensor|module|detect)", ["co"], "electrochemical"),
-    (r"\bO2\b|\boxygen\b", ["oxygen"], "electrochemical"),
+    (r"\bO2\b|(?<!dissolved )\boxygen\b", ["oxygen"], "electrochemical"),
     (r"\bO3\b|\bozone\b", ["gas", "ozone"], "electrochemical"),
-    (r"\bNH3\b|\bammonia\b", ["gas", "nh3"], "electrochemical"),
+    (r"\bNH3\b(?!-N)|\bammonia\b(?!\s*&?\s*nitrogen)", ["gas", "nh3"], "electrochemical"),
     (r"\bH2S\b|\bhydrogen sulfide\b", ["gas", "h2s"], "electrochemical"),
     (r"\bSO2\b|\bsulfur dioxide\b", ["gas"], "electrochemical"),
     (r"\bNO2\b|\bnitrogen dioxide\b", ["gas"], "electrochemical"),
-    (r"\bCl2\b|\bchlorine\b", ["gas"], "electrochemical"),
+    # Residual chlorine is dissolved in water (ZW-RCl201), not chlorine gas
+    (r"\bCl2\b|(?<!residual )\bchlorine\b", ["gas"], "electrochemical"),
     (r"\bHCN\b|\bhydrogen cyanide\b", ["gas"], "electrochemical"),
     (r"\bHF\b|\bhydrogen fluoride\b", ["gas"], "electrochemical"),
     (r"\bETO\b|\bethylene oxide\b", ["gas"], "electrochemical"),
@@ -120,9 +145,12 @@ TYPE_RULES = [
 _TYPE_RULES = [(re.compile(pat, re.IGNORECASE), measures, stype) for pat, measures, stype in TYPE_RULES]
 
 # Skip non-sensor products
-SKIP_KEYWORDS = {"accessory", "accessories", "adapter", "cable", "connector",
+SKIP_KEYWORDS = {"accessory", "accessories", "adapter", "cable", "connector", "ion generator",
                  "evaluation board", "test board", "development board",
                  "calibration", "module holder"}
+
+
+DISCOVERY_SECONDS = 900
 
 
 def _discover_product_urls(session: wafer.SyncSession) -> list[str]:
@@ -132,36 +160,55 @@ def _discover_product_urls(session: wafer.SyncSession) -> list[str]:
     """
     seen = set()
 
-    for cat_url in CATEGORY_URLS:
-        try:
-            resp = session.get(cat_url, timeout=15)
-            if resp.status_code != 200:
-                logger.warning(f"Category page {cat_url} returned {resp.status_code}")
+    # Listing pages are large and the site is slow: at the product-page budget (15s, 5s per try)
+    # 13 of 30 timed out on 2026-11-10 and their products went unscraped. Give them longer
+    # tries, and retry the failures once after the first pass.
+    pending = list(CATEGORY_URLS)
+    deadline = time.monotonic() + DISCOVERY_SECONDS  # the whole sensor scrape job has 60 minutes
+    for attempt in (1, 2):
+        failed = []
+        for cat_url in pending:
+            if time.monotonic() > deadline:
+                logger.warning(f"Category discovery passed {DISCOVERY_SECONDS}s; skipping {cat_url}")
+                failed.append(cat_url)
                 continue
-        except Exception as e:
-            logger.warning(f"Failed to fetch category {cat_url}: {e}")
-            continue
-
-        # Extract product links: /product/{slug}.html
-        product_links = re.findall(
-            r'href="((?:https://www\.winsen-sensor\.com)?/product/[^"?]+\.html)',
-            resp.text,
-        )
-        # Also catch legacy paths like /semiconductor-gas-sensor/1806.html
-        legacy_links = re.findall(
-            r'href="((?:https://www\.winsen-sensor\.com)?/[a-z-]+/\d+\.html)',
-            resp.text,
-        )
-
-        for link in product_links + legacy_links:
-            # Normalize to absolute URL
-            if link.startswith("/"):
-                link = BASE_URL + link
-            link = link.split("?")[0]  # strip query params
-            seen.add(link)
+            text = _fetch_category(session, cat_url)
+            if text is None:
+                failed.append(cat_url)
+            else:
+                _collect_product_links(text, seen)
+        if not failed:
+            break
+        logger.warning(f"{len(failed)} category pages failed on pass {attempt}"
+                       + (", retrying" if attempt == 1 else ": " + ", ".join(failed)))
+        pending = failed
 
     logger.info(f"Discovered {len(seen)} unique product URLs from {len(CATEGORY_URLS)} category pages")
     return sorted(seen)
+
+
+def _fetch_category(session: wafer.SyncSession, cat_url: str) -> str | None:
+    try:
+        resp = session.get(cat_url, timeout=60, attempt_timeout=20)
+    except Exception as e:
+        logger.warning(f"Failed to fetch category {cat_url}: {e}")
+        return None
+    if resp.status_code != 200:
+        logger.warning(f"Category page {cat_url} returned {resp.status_code}")
+        return None
+    return resp.text
+
+
+def _collect_product_links(text: str, seen: set[str]) -> None:
+    """Add a listing page's product links (absolute, no query string) to `seen`."""
+    # Product links: /product/{slug}.html
+    product_links = re.findall(r'href="((?:https://www\.winsen-sensor\.com)?/product/[^"?]+\.html)', text)
+    # Legacy paths like /semiconductor-gas-sensor/1806.html
+    legacy_links = re.findall(r'href="((?:https://www\.winsen-sensor\.com)?/[a-z-]+/\d+\.html)', text)
+    for link in product_links + legacy_links:
+        if link.startswith("/"):
+            link = BASE_URL + link
+        seen.add(link.split("?")[0])
 
 
 def _extract_model_from_url(url: str) -> str:
@@ -180,6 +227,87 @@ def _clean_html(text: str) -> str:
     return text
 
 
+def _absolute_ratings(table: str) -> bool:
+    text = _clean_html(table)
+    if re.search(r"max(?:imum)? limit|absolute max", text, re.I):
+        return True
+    # Saved tables can omit their external heading. A Min/Max table with
+    # storage-temperature limits and no typical column is a ratings table.
+    return bool(re.search(r"storage\s*temperature", text, re.I)
+                and re.search(r"\bmin\b.*\bmax\b", text, re.I)
+                and not re.search(r"\btyp(?:ical)?\b", text, re.I))
+
+
+def _table_supply_range(cells: list[str]) -> str | None:
+    """Min/Typ/Max rows need both a supply label/symbol and a V unit."""
+    if len(cells) < 4 or not any(re.fullmatch(r"V(?:DC|AC)?", c, re.I) for c in cells):
+        return None
+    numbers = [float(c) for c in cells[1:] if re.fullmatch(r"-?\d+(?:\.\d+)?", c)]
+    if not numbers or min(numbers) <= 0:
+        return None
+    return parse_supply_voltage(" ".join(cells[:2]), f"{min(numbers):g}-{max(numbers):g} V")
+
+
+def _table_grid(rows: list[str]) -> list[list[tuple[int, str]]]:
+    """Rows as (origin row, text) per column, with rowspan'd cells repeated where they span."""
+    carry: dict[int, tuple[int, int, str]] = {}  # column -> (rows left, origin row, text)
+    grid = []
+    for r, row in enumerate(rows):
+        cells = iter(re.findall(r"<t[dh]([^>]*)>(.*?)</t[dh]>", row, re.DOTALL))
+        line: list[tuple[int, str]] = []
+        while True:
+            col = len(line)
+            if carry.get(col, (0,))[0] > 0:
+                left, origin, text = carry[col]
+                carry[col] = (left - 1, origin, text)
+                line.append((origin, text))
+                continue
+            cell = next(cells, None)
+            if cell is None:
+                break
+            span = re.search(r'rowspan\s*=\s*"?(\d+)', cell[0], re.I)
+            text = _clean_html(cell[1]).strip()
+            if span and int(span.group(1)) > 1:
+                carry[col] = (int(span.group(1)) - 1, r, text)
+            line.append((r, text))
+        grid.append(line)
+    return grid
+
+
+def _spanned_values(rows: list[str], index: int, key_text: str) -> list[str]:
+    """Values beside a rowspan'd label cell in the rows it covers below its own row.
+
+    `<td rowspan="2">Output</td><td>UART_TTL Output</td>` is followed by
+    `<tr><td>PWMOutput (3.3V level)</td></tr>`, and in two-pair tables (MH-Z1911A) by
+    `<tr><td>PWM</td><td>Lifespan</td><td>&gt;10 years</td></tr>`: the second output is the
+    cell next to the label's column. A label in an unspanned column (FRn20's "Output" under an
+    "Output signal" group) has no continuation rows.
+    """
+    grid = _table_grid(rows)
+    for col, (origin, text) in enumerate(grid[index]):
+        if origin == index and text.lower().strip().rstrip(":") == key_text:
+            values = []
+            for line in grid[index + 1:]:
+                if col + 1 >= len(line) or line[col][0] != index:
+                    break
+                if line[col + 1][1]:
+                    values.append(line[col + 1][1])
+            return values
+    return []
+
+
+def _add_output(specs: dict, values: list[str]) -> None:
+    """Join every output the tables name; the summary and spec tables can each list some."""
+    for value in values:
+        if value and value.lower() not in specs.get("output", "").lower():
+            specs["output"] = f"{specs['output']}; {value}" if specs.get("output") else value
+
+
+# A row whose symbol cell is the heater's (VH) is a heater row whatever its label says: MQ303B's
+# table pairs "Loop Voltage" with "V H | 0.9V±0.1V" and "Heater Voltage" with "V c | ≤6V DC".
+_HEATER_SYMBOL_RE = re.compile(r"[VU]\s*H", re.IGNORECASE)
+
+
 def _extract_specs(html: str) -> dict:
     """Extract key specs from the detailed specs table (Table 1).
 
@@ -194,9 +322,9 @@ def _extract_specs(html: str) -> dict:
 
     # Table 0 is summary, Table 1 is detailed specs — prefer Table 1 if available
     spec_table = tables[1] if len(tables) >= 2 else tables[0]
-    rows = re.findall(r"<tr[^>]*>(.*?)</tr>", spec_table, re.DOTALL)
+    rows = [] if _absolute_ratings(spec_table) else re.findall(r"<tr[^>]*>(.*?)</tr>", spec_table, re.DOTALL)
 
-    for row in rows:
+    for index, row in enumerate(rows):
         cells = re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row, re.DOTALL)
         if len(cells) < 2:
             continue
@@ -212,7 +340,8 @@ def _extract_specs(html: str) -> dict:
         #   → key=cells[1], val=cells[2]
         if len(cells) >= 4:
             alt_key = _clean_html(cells[1]).lower().strip().rstrip(":")
-            alt_val = _clean_html(cells[3]).strip()
+            # "Signal Output | Output Mode | Digital I²C and Analog 0.5V～4.5VDC | (empty unit)"
+            alt_val = _clean_html(cells[3]).strip() or _clean_html(cells[2]).strip()
             if alt_val and ("voltage" in alt_key or "model" in alt_key or "target" in alt_key
                            or "output" in alt_key or "detection" in alt_key or "measuring" in alt_key
                            or "resistance" in alt_key or "consumption" in alt_key):
@@ -236,26 +365,30 @@ def _extract_specs(html: str) -> dict:
             specs["model"] = val
         elif "target" in key or "detection gas" in key or "detect gas" in key:
             specs["target_gas"] = val
-        elif ("voltage" in key and "output" not in key
-              and "source" not in key):
-            if "heater" in key:
-                # Heater voltage is the operating voltage for MEMS/semiconductor gas sensors
-                # Store separately — use as fallback if no supply/working voltage found
-                if "heater_voltage" not in specs:
-                    specs["heater_voltage"] = val
-            elif "voltage" not in specs:
-                specs["voltage"] = val
-        elif key in ("output", "output signal"):
-            specs["output"] = val
+        elif _is_supply_key(key):
+            if any(_HEATER_SYMBOL_RE.fullmatch(_clean_html(c).strip()) for c in cells[1:-1]):
+                continue
+            # Three-cell rows can put the unit between the label and value.
+            if any(re.fullmatch(r"V(?:DC|AC)?", _clean_html(c).strip(), re.I) for c in cells[1:]):
+                key += " (V)"
+            voltage = _table_supply_range([_clean_html(c).strip() for c in cells])
+            if voltage is None:
+                voltage = parse_supply_voltage(key, val)
+            if voltage is None and re.fullmatch(r"V(?:DC|AC)?", val, re.I):
+                voltage = parse_supply_voltage(key, " ".join(_clean_html(c) for c in cells[2:]))
+            if voltage is not None and "voltage" not in specs:
+                specs["voltage"] = voltage + "V"
+        elif _is_output_key(key):
+            _add_output(specs, [val, *_spanned_values(rows, index, key)])
         elif "detection principle" in key or "sensor type" in key:
             specs["detection_principle"] = val
         elif "detection range" in key or "measuring range" in key:
             specs["detection_range"] = val
 
     # Also try Table 0 for fields not found in Table 1
-    if len(tables) >= 2:
+    if len(tables) >= 2 and not _absolute_ratings(tables[0]):
         rows0 = re.findall(r"<tr[^>]*>(.*?)</tr>", tables[0], re.DOTALL)
-        for row in rows0:
+        for index, row in enumerate(rows0):
             cells = re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row, re.DOTALL)
             if len(cells) < 2:
                 continue
@@ -269,110 +402,131 @@ def _extract_specs(html: str) -> dict:
                 specs["target_gas"] = val
             if ("detection principle" in key or "sensor type" in key) and "detection_principle" not in specs:
                 specs["detection_principle"] = val
-            # Table 0 "Working conditions" often embeds voltage inline
+            if _is_output_key(key):
+                _add_output(specs, [val, *_spanned_values(rows0, index, key)])
+            # Summary conditions may contain several semicolon-separated rails.
             if ("working" in key or "condition" in key) and "voltage" not in specs:
-                # Extract "Loop Voltage：5±0.1V" or "Working voltage:3-15V"
-                v_match = re.search(
-                    r"(?:loop|working|supply|circuit)\s*voltage\s*[:：]\s*"
-                    r"(\d+(?:\.\d+)?\s*[±~～–\-]?\s*\d*(?:\.\d+)?\s*V)",
+                for match in re.finditer(
+                    r"((?:loop|working|supply|circuit)\s*voltage)\s*[:：]\s*([^;；\n]+)",
                     val, re.IGNORECASE,
-                )
-                # Fallback: heater voltage inline
-                if not v_match and "heater_voltage" not in specs:
-                    v_match_h = re.search(
-                        r"heater\s*voltage\s*[:：]\s*"
-                        r"(\d+(?:\.\d+)?\s*[±~～–\-]?\s*\d*(?:\.\d+)?\s*V?)",
-                        val, re.IGNORECASE,
-                    )
-                    if v_match_h:
-                        specs["heater_voltage"] = v_match_h.group(1)
-                if v_match:
-                    specs["voltage"] = v_match.group(1)
-
-    # Check ALL tables for Min/Typ/Max format (e.g. RDA223 PIR sensors)
-    # Format: "Voltage | VDD | 2.7 | 3 | 3.3 | V" with Min/Typ/Max columns
-    # Also runs if specs["voltage"] was set to garbage like "VDD" (not parseable)
-    _has_parseable_voltage = bool(
-        specs.get("voltage") and re.search(r"\d", specs["voltage"])
-    )
-    if not _has_parseable_voltage and "heater_voltage" not in specs:
-        # Prefer LAST matching table (working conditions) over first (absolute max)
-        best_voltage = None
-        for table in tables:
-            # Skip absolute max rating tables
-            table_text = _clean_html(table).lower()
-            is_max_table = "max limit" in table_text or "absolute max" in table_text
-            rows_all = re.findall(r"<tr[^>]*>(.*?)</tr>", table, re.DOTALL)
-            for row in rows_all:
-                cells = re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row, re.DOTALL)
-                if len(cells) >= 4:
-                    k = _clean_html(cells[0]).lower()
-                    if "voltage" in k and "output" not in k and "high" not in k and "low" not in k:
-                        vals = [_clean_html(c).strip() for c in cells[1:]]
-                        nums = []
-                        for v in vals:
-                            m = re.search(r"(\d+(?:\.\d+)?)", v)
-                            if m:
-                                nums.append(float(m.group(1)))
-                        if nums:
-                            lo, hi = min(nums), max(nums)
-                            if 0.5 <= hi <= 48:
-                                candidate = f"{lo:g}-{hi:g}" if lo != hi else f"{hi:g}"
-                                # Non-max-limit tables override max-limit tables
-                                if not is_max_table or best_voltage is None:
-                                    best_voltage = candidate
-        if best_voltage:
-            specs["voltage"] = best_voltage
-
-    # Parse compound cells with voltage as dash-list within a single cell
-    # e.g. "- Supply Voltage (Vc): <=24V DC\n- Heating Voltage (VH): 3.3V+-0.1V"
-    if "voltage" not in specs and "heater_voltage" not in specs:
-        for table in tables:
-            for row in re.findall(r"<tr[^>]*>(.*?)</tr>", table, re.DOTALL):
-                cells = re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row, re.DOTALL)
-                for cell in cells:
-                    cell_text = _clean_html(cell)
-                    hv_match = re.search(
-                        r"heat(?:er|ing)\s*voltage[^:：]*[:：]\s*"
-                        r"(\d+(?:\.\d+)?)\s*V?\s*[±+\-]?\s*\d*(?:\.\d+)?\s*V?",
-                        cell_text, re.IGNORECASE,
-                    )
-                    if hv_match:
-                        specs["heater_voltage"] = hv_match.group(0)
+                ):
+                    # Stop at the next labelled spec (e.g. Heater Voltage).
+                    supply = re.split(r"\b(?:heater|heating|working current)\b", match[2], flags=re.I)[0]
+                    voltage = parse_supply_voltage(match[1], supply)
+                    if voltage is not None:
+                        specs["voltage"] = voltage + "V"
                         break
 
-    # Fallback: extract voltage from features/characteristics text (not in tables)
-    # Pattern: "voltage range, from 2.0V to 5.5V" or "supply voltage: 3.3V-5V"
-    if "voltage" not in specs and "heater_voltage" not in specs:
-        v_text_match = re.search(
-            r"(?:supply|power|operating|working)\s*voltage\s*(?:range)?[,:]?\s*"
-            r"(?:from\s+)?(\d+(?:\.\d+)?)\s*V?\s*(?:to|[-~～–])\s*(\d+(?:\.\d+)?)\s*V",
-            html, re.IGNORECASE,
+    # Min/Typ/Max rows carry the unit in a separate cell. Require a supply
+    # label/symbol AND an actual V unit; noise voltage in nV/Hz must never match.
+    if "voltage" not in specs:
+        for table in tables:
+            if _absolute_ratings(table):
+                continue
+            for row in re.findall(r"<tr[^>]*>(.*?)</tr>", table, re.DOTALL):
+                cells = [_clean_html(c).strip() for c in re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row, re.DOTALL)]
+                voltage = _table_supply_range(cells)
+                if voltage is not None:
+                    specs["voltage"] = voltage + "V"
+                    break
+
+    # Features can state a supply range without a table row.
+    if "voltage" not in specs:
+        match = re.search(
+            r"((?:supply|power|operating|working)\s*voltage)\s*(?:range)?[,:]?\s*"
+            r"(?:from\s+)?(\d+(?:\.\d+)?\s*V?\s*(?:to|[-~～–])\s*\d+(?:\.\d+)?\s*V)",
+            _clean_html(re.sub(r"<table[^>]*>.*?</table>",
+                               lambda m: "" if _absolute_ratings(m[0]) else m[0], html, flags=re.S)), re.IGNORECASE,
         )
-        if v_text_match:
-            lo, hi = v_text_match.group(1), v_text_match.group(2)
-            if float(hi) > float(lo) and float(hi) <= 48:
-                specs["voltage"] = f"{lo}-{hi}"
+        if match:
+            voltage = parse_supply_voltage(match[1], match[2])
+            if voltage is not None:
+                specs["voltage"] = voltage + "V"
+
+    # The Features list can name outputs the tables leave out: MH-711A's says "Output method: UART,
+    # analog voltage signal, etc." while its spec table gives only "IIC" and "0.4-2V DC".
+    _add_output(specs, _feature_outputs(html))
 
     return specs
 
 
+_FEATURE_OUTPUT_RE = re.compile(
+    r"(?:\d+\.\s*)?(?:multiple\s+)?output\s+(?:method|signal|mode|type|interface)s?\s*[:：]\s*(.+)", re.IGNORECASE)
+
+
+def _feature_outputs(html: str) -> list[str]:
+    """Outputs named in the product's own Features list ("Output method: UART, ..."). Only the
+    list under the page's Features heading: related-product cards repeat other parts' features."""
+    section = re.search(r"<h4[^>]*>\s*Features\s*</h4>(.*?)(?:<h4|$)", html, re.DOTALL | re.IGNORECASE)
+    if not section:
+        return []
+    outputs = []
+    for item in re.findall(r"<li[^>]*>(.*?)</li>", section[1], re.DOTALL):
+        match = _FEATURE_OUTPUT_RE.fullmatch(_clean_html(item).strip())
+        if match:
+            outputs.append(match[1].strip())
+    return outputs
+
+
+def _clean_title(raw: str) -> str:
+    """Page title without the site name some pages append ("... Module | Winsen")."""
+    return re.sub(r"\s*[|｜]\s*Winsen\s*$", "", unescape(raw).strip(), flags=re.I)
+
+
+def _is_supply_key(key: str) -> bool:
+    """A spec row naming the supply: "Working Voltage", or "Power Supply" (ZW-C1021)."""
+    return "voltage" in key or re.fullmatch(r"(?:dc\s+)?power\s+supply", key) is not None
+
+
+def _is_output_key(key: str) -> bool:
+    """A spec row naming the output: "Output", "Signal Output" (ZW-C1021),
+    "Output Interface" (ZW-ORP201), "Output Mode" (ZW-TUR1021), "OutputSignal" (MH-441D)."""
+    return re.fullmatch(r"(?:signal\s+)?output(?:\s*(?:signal|interface|mode|modes|type))?", key) is not None
+
+
+# Analog outputs as Winsen words them: "DAC (0.4~2V voltage ...)", a voltage span after the
+# UART ("UART-TTL (3.3V compatible with 5V) 0.4~2.0V"), a current loop ("RS485 / (4-20) mA",
+# but not "PWM, can be used as a 4-20mA control signal") and a bridge's millivolt output.
+_ANALOG_OUTPUT_RE = re.compile(
+    r"ANALOG|\bDAC\b|MILLIVOLT"
+    r"|\b\d+(?:\.\d+)?\s*V?\s*[-~～–]\s*\d+(?:\.\d+)?\s*V(?:DC)?\b"
+    r"|(?<!USED AS A )\(?\b4\s*[-–~～]\s*20\s*\)?\s*MA\b"
+)
+# A switching output ("High and low levels can be used to drive relays",
+# "High Level, 3V; Low Level, 0V")
+_LEVEL_OUTPUT_RE = re.compile(r"\bHIGH\s+(?:AND\s+LOW\s+)?LEVELS?\b|\bLOW\s+LEVEL\b|\bSWITCH(?:ING)?\s+(?:VALUE|OUTPUT|SIGNAL)\b")
+
+
 def _extract_protocols(html: str, specs: dict) -> list[str]:
-    """Extract communication protocols from specs and page content."""
+    """Extract communication protocols from specs and page content.
+
+    "LIN" has no tag in the catalog vocabulary (MH-V1512A-LGC: "LIN / PWM, Customizable").
+    """
     protocols = []
 
     # Check output signal spec first (most reliable)
     output = specs.get("output", "").upper()
-    if "UART" in output or "SERIAL" in output or "TTL" in output:
+    rs485 = "RS485" in output or "RS-485" in output
+    if rs485:
+        protocols.append("rs485")
+    # "RS485 serial" needs a transceiver; it is not a UART pin
+    if "UART" in output or "TTL" in output or ("SERIAL" in output and not rs485):
         protocols.append("uart")
-    if "I2C" in output:
+    if "I2C" in output or "I²C" in output or re.search(r"\bIIC\b", output):
         protocols.append("i2c")
     if "SPI" in output and "DISPLAY" not in output:
         protocols.append("spi")
     if "PWM" in output:
         protocols.append("pwm")
-    if "ANALOG" in output or "DAC" in output:
+    if _ANALOG_OUTPUT_RE.search(output):
         protocols.append("analog")
+    # Case-sensitive: "High and low levels can be used to drive relays" is not a CAN bus
+    if re.search(r"\bCAN\b", specs.get("output", "")):
+        protocols.append("can")
+    if not rs485 and re.search(r"(?<![\w.])485\b", output):  # "CAN, 485" (ZE-H100)
+        protocols.append("rs485")
+    if _LEVEL_OUTPUT_RE.search(output):
+        protocols.append("gpio")
 
     # If no output spec found, check the page title area (avoid full HTML noise)
     if not protocols:
@@ -387,7 +541,31 @@ def _extract_protocols(html: str, specs: dict) -> list[str]:
         if "I2C" in header:
             protocols.append("i2c")
 
+    # A bare sensing element has no output stage, so the host reads it through an analog front
+    # end: an electrochemical cell's current ("Sensitivity | (0.8±0.15) µA/ppm", ME3-H2S;
+    # "≥30nA/ppm"; "(80~130)uA") or a chemiresistor's resistance ("sensitive materials resistance
+    # | RS | 1KΩ～30KΩ", GM-602B). Without this the build's type defaults gave cells a UART and
+    # MEMS gas chips an I2C bus.
+    if not protocols and _ELEMENT_SIGNAL_RE.search(_tables_text(html)):
+        protocols.append("analog")
+
     return sorted(protocols)
+
+
+_ELEMENT_SIGNAL_RE = re.compile(
+    r"(?<![A-Za-z])[µμun]A\s*/\s*ppm"
+    # A sensitivity given as a raw signal: "（4±2）µA/(mg/L)", "8-15mV (in air)", "0.10±0.02mA"
+    r"|Sensitivity[^|]{0,30}\|[^|]{0,25}?\d\s*[)）]?\s*(?:[µμun]A|mA|mV)\b"
+    r"|sensitive\s+(?:materials?\s+)?resistance"
+    r"|\bresistance\b[^|]{0,40}\|\s*R\s*s\b",
+    re.IGNORECASE,
+)
+
+
+def _tables_text(html: str) -> str:
+    """Every table cell's text, cells separated by " | "."""
+    cells = re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", "".join(re.findall(r"<table[^>]*>(.*?)</table>", html, re.DOTALL)), re.DOTALL)
+    return " | ".join(_clean_html(c) for c in cells)
 
 
 def _type_from_principle(principle: str) -> str | None:
@@ -448,6 +626,12 @@ def _classify_sensor(title: str, specs: dict) -> tuple[list[str], str | None]:
     if specs.get("target_gas"):
         return (["gas"], first_type)
 
+    # The shared keyword rules before the gas default: Winsen also sells light, vibration and
+    # water-quality parts, which the default listed as gas sensors.
+    inferred = infer_measures(combined)
+    if inferred:
+        return (inferred, first_type)
+
     return (["gas"], None)  # Winsen is a gas sensor company — reasonable default
 
 
@@ -461,49 +645,40 @@ def _extract_datasheet_url(html: str) -> str | None:
 
 
 def _extract_voltage(specs: dict) -> str | None:
-    """Extract working voltage from specs."""
-    v = specs.get("voltage", "")
-    # "≤24V DC" is a max loop voltage bound, not an operating voltage — prefer heater voltage
-    if v and re.match(r"[≤<]", v.strip()):
-        v = specs.get("heater_voltage", v)
-    if not v:
-        # Fall back to heater voltage for MEMS/semiconductor gas sensors
-        v = specs.get("heater_voltage", "")
-    if not v:
-        return None
-    # Range: "3.6~5V", "3-15V", "3.6–5.0V", "3～15V", "DC5V～14V", "DC 3.6~5V"
-    # Handle optional DC prefix and optional V after first number
-    m = re.search(
-        r"(?:DC\s*)?(\d+(?:\.\d+)?)\s*V?\s*[~～–\-]\s*(\d+(?:\.\d+)?)\s*V",
-        v, re.IGNORECASE,
-    )
-    if m:
-        lo, hi = m.group(1), m.group(2)
-        # Sanity: must be an actual range, and within reasonable supply voltage
-        if float(hi) > float(lo) and float(hi) <= 48:
-            return f"{lo}-{hi}"
-    # Nominal with tolerance: "5.0±0.1V" or "5.0±0.1" (unitless) → "5.0"
-    m = re.search(r"(\d+(?:\.\d+)?)\s*[±]\s*\d+(?:\.\d+)?\s*V?\b", v)
-    if m:
-        return m.group(1)
-    # Plain value with unit: "5V", "3.3V DC"
-    m = re.search(r"(\d+(?:\.\d+)?)\s*V\b", v)
-    if m:
-        val = float(m.group(1))
-        if val <= 48:
-            return m.group(1)
-    # Bare numeric (no V unit) — trust it since the key already confirmed "voltage"
-    m = re.search(r"(\d+(?:\.\d+)?)", v)
-    if m:
-        val = float(m.group(1))
-        if 1.0 <= val <= 48:
-            return m.group(1)
-    return None
+    """Extract a verified supply, excluding unitless numbers and heater fallbacks."""
+    return parse_supply_voltage("supply voltage", specs.get("voltage", ""))
 
 
 def _make_sensor_id(model: str) -> str:
     """Create sensor ID from model name. Simple lowercase, keep alphanumeric."""
     return re.sub(r"[^a-z0-9]", "", model.lower())
+
+
+def _extract_product_model(html: str, title: str, url: str, specs: dict) -> str:
+    """Prefer an explicit Model row corroborated by the product title.
+
+    Old URL slugs survive manufacturer renames. Conversely, copied tables can
+    name an unrelated device, so a table alone must not redefine the product.
+    Search all tables: the summary often has the only Model row.
+    """
+    for table in re.findall(r"<table\b[^>]*>(.*?)</table>", html, re.I | re.S):
+        for row in re.findall(r"<tr\b[^>]*>(.*?)</tr>", table, re.I | re.S):
+            cells = re.findall(r"<t[dh]\b[^>]*>(.*?)</t[dh]>", row, re.I | re.S)
+            if len(cells) < 2:
+                continue
+            key = _clean_html(cells[0]).lower().rstrip(": .")
+            model = _clean_html(cells[1])
+            if key in {"model", "model no"} and model:
+                pattern = r"(?<![a-z0-9])" + re.escape(model) + r"(?![a-z0-9])"
+                if re.search(pattern, title, re.I):
+                    return model
+    url_model = _extract_model_from_url(url)
+    table_model = specs.get("model")
+    if table_model:
+        url_id, table_id = _make_sensor_id(url_model), _make_sensor_id(table_model)
+        if table_id and (url_id.startswith(table_id) or table_id.startswith(url_id)):
+            return table_model
+    return url_model
 
 
 def _build_description(title: str, specs: dict) -> str:
@@ -562,7 +737,7 @@ def scrape_winsen(output_dir: Path) -> None:
         if not title_match:
             errors += 1
             continue
-        title = unescape(title_match.group(1)).strip()
+        title = _clean_title(title_match.group(1))
 
         # Skip non-sensor items
         title_lower = title.lower()
@@ -573,24 +748,16 @@ def scrape_winsen(output_dir: Path) -> None:
         # Extract specs from table
         specs = _extract_specs(html)
 
-        # Model: use table model but cross-validate with URL slug.
-        # If the table model doesn't match the URL slug at all, the table
-        # may be wrong (e.g., MQ316's table says "MQ303B") — use URL slug.
-        url_model = _extract_model_from_url(url)
+        model = _extract_product_model(html, title, url, specs)
+        # Keep published IDs stable; Model/title agreement supplies the name.
+        # The alias table also accepts the current designation at query time.
+        legacy_model = _extract_model_from_url(url)
         table_model = specs.get("model")
         if table_model:
-            url_id = _make_sensor_id(url_model)
-            table_id = _make_sensor_id(table_model)
-            # Table model is trusted only if the URL slug starts with
-            # the table model ID (or vice versa). This catches cases like
-            # MQ316 having table model MQ303B (completely different model).
-            if url_id.startswith(table_id) or table_id.startswith(url_id):
-                model = table_model
-            else:
-                model = url_model
-        else:
-            model = url_model
-        sensor_id = _make_sensor_id(model)
+            url_id, table_id = _make_sensor_id(legacy_model), _make_sensor_id(table_model)
+            if table_id and (url_id.startswith(table_id) or table_id.startswith(url_id)):
+                legacy_model = table_model
+        sensor_id = _make_sensor_id(legacy_model)
 
         if (not sensor_id or len(sensor_id) < 2 or sensor_id.isdigit()
                 or len(sensor_id) > 20

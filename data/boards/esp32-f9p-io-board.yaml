@@ -11,7 +11,6 @@ tags:
 - motor-control
 - power-supply
 - relay
-- robotics
 - rs232
 - sensors
 key_ics: [ESP32]
@@ -97,7 +96,7 @@ components:
   decouples: U9
 - ref: C33
   value: 560uF
-  footprint: Electrolytic-10x10
+  footprint: Electrolytic-10x10.5
 - ref: C34
   value: 1nF
   footprint: '1206'
@@ -166,7 +165,7 @@ components:
   footprint: 0805
 - ref: C6
   value: 560uF
-  footprint: Electrolytic-10x10
+  footprint: Electrolytic-10x10.5
 - ref: C7
   value: 10uF
   footprint: 0805
@@ -207,24 +206,26 @@ components:
   current: 2A
 - ref: IC1
   value: FXL6408UMX
-  footprint: QFN-16
+  footprint: QFN40P180X260X55-16N
   description: Fully Configurable 8-Bit I2C-Controlled GPIO Expander
   height: '0.55'
+  mouser: 512-FXL6408UMX
   manufacturer: ON Semiconductor
   mpn: FXL6408UMX
   pin_count: 16
   nc_pins: {'1': '1'}
 - ref: IC2
   value: ATA6561
-  footprint: SOIC-8
+  footprint: SOIC127P600X175-8N
   description: MICROCHIP - ATA6561-GAQW-N - CAN TRANSCEIVER, 5MBPS, -40 TO 150DEG C
   height: '1.75'
+  mouser: 579-ATA6561-GAQW-N
   manufacturer: Microchip
   mpn: ATA6561-GAQW-N
   pin_count: 8
 - ref: IC3
   value: ICL3221EIVZ
-  footprint: SOP-16
+  footprint: SOP65P640X120-16N
   description: Intersil ICL3221EIVZ, Line Transceiver, EIA/TIA-232/ RS-232/ V.24/ V.28, 3.3 V, 5 V, 16-Pin TSSOP
   height: '1.2'
   manufacturer: Intersil
@@ -236,26 +237,27 @@ components:
   footprint: '1814883'
   description: Phoenix Contact PTSM Series, 2.5mm Pitch 6 Way 1 Row Right Angle PCB Terminal Block, Solder Termination, 6A
   height: '5'
+  mouser: 651-1814883
   manufacturer: Phoenix Contact
   mpn: '1814883'
   pin_count: 6
 - ref: J10
-  value: 1x8 header
-  footprint: 1X8
+  value: 1x8 2.54mm header
+  footprint: 1X8_P2.54mm
   pin_count: 8
   nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '8': '8'}
 - ref: J11
-  value: 1x8 header
-  footprint: 1X8
+  value: 1x8 2.54mm header
+  footprint: 1X8_P2.54mm
   pin_count: 8
   nc_pins: {'1': '1', '5': '5', '6': '6', '8': '8'}
 - ref: J12
-  value: 2x2 header
-  footprint: 2X2
+  value: 2x2 2.54mm header
+  footprint: 2X2_P2.54mm_Horizontal
   pin_count: 4
 - ref: J13
   value: JST SH 4-pin
-  footprint: JST_SH_SM04B-SRSS-TB
+  footprint: JST_SH_SM04B-SRSS-TB_1x04
   description: JST (JAPAN SOLDERLESS TERMINALS) - SM04B-SRSS-TB(LF)(SN) - CONNECTOR, HEADER, SMT, R/A, 1MM, 4WAY
   manufacturer: JST (JAPAN SOLDERLESS TERMINALS)
   mpn: SM04B-SRSS-TB(LF)(SN)
@@ -277,7 +279,7 @@ components:
   nc_pins: {'1': '1', '4': '4', '6': '6', '7': '7', '8': '8', '9': '9'}
 - ref: J17
   value: JST SH 4-pin
-  footprint: JST_SH_SM04B-SRSS-TB
+  footprint: JST_SH_SM04B-SRSS-TB_1x04
   description: JST (JAPAN SOLDERLESS TERMINALS) - SM04B-SRSS-TB(LF)(SN) - CONNECTOR, HEADER, SMT, R/A, 1MM, 4WAY
   manufacturer: JST (JAPAN SOLDERLESS TERMINALS)
   mpn: SM04B-SRSS-TB(LF)(SN)
@@ -288,16 +290,18 @@ components:
   footprint: '1814841'
   description: Phoenix Contact PTSM Series, 2.5mm Pitch 2 Way 1 Row Right Angle PCB Terminal Block, Solder Termination, 6A
   height: '5'
+  mouser: 651-1814841
   manufacturer: Phoenix Contact
   mpn: '1814841'
 - ref: J2
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
 - ref: J3
   value: PTSM-Header-Horizontal-7
   footprint: '1814896'
   description: Pluggable Terminal Blocks PTSM 0,5/ 7-HH-2,5- THR WH R44
   height: '5'
+  mouser: 651-1814896
   manufacturer: Phoenix Contact
   mpn: '1814896'
   pin_count: 7
@@ -308,26 +312,28 @@ components:
   height: '8.72'
   manufacturer: Phoenix Contact
   mpn: '1836366'
+  mouser: 651-1836366
   pin_count: 4
 - ref: J5
   value: PTSM-Header-Horizontal-5
   footprint: '1814870'
   description: Phoenix Contact PTSM Series, 2.5mm Pitch 5 Way 1 Row Right Angle PCB Terminal Block, Solder Termination, 6A
   height: '5'
+  mouser: 651-1814870
   manufacturer: Phoenix Contact
   mpn: '1814870'
   pin_count: 5
 - ref: J7
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm_Horizontal
   pin_count: 4
 - ref: J8
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: J9
-  value: 1x8 header
-  footprint: 1X8
+  value: 1x8 2.54mm header
+  footprint: 1X8_P2.54mm
   pin_count: 8
   nc_pins: {'3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8'}
 - ref: K1
@@ -335,6 +341,7 @@ components:
   footprint: CP1SA12VZ
   description: PANASONIC ELECTRIC WORKS - CP1SA-12V-Z - RELAY, AUTOMOTIVE, SPDT, 14VDC, 20A
   height: '10.5'
+  mouser: 769-CP1SA-12V-Z
   manufacturer: Panasonic
   mpn: CP1SA-12V-Z
   pin_count: 5
@@ -344,27 +351,32 @@ components:
   footprint: CP1SA12VZ
   description: PANASONIC ELECTRIC WORKS - CP1SA-12V-Z - RELAY, AUTOMOTIVE, SPDT, 14VDC, 20A
   height: '10.5'
+  mouser: 769-CP1SA-12V-Z
   manufacturer: Panasonic
   mpn: CP1SA-12V-Z
   pin_count: 5
 - ref: PS1
   value: V78E05-1000-SMT
-  footprint: SOP-10
+  footprint: SOP254P1140X825-10N
+  manufacturer: CUI Inc
+  mpn: V78E05-1000-SMT-TR
   pin_count: 8
   nc_pins: {'6': '6'}
 - ref: Q1
   value: BC817-40,215
-  footprint: SOT-3
+  footprint: SOT95P230X110-3N
   description: BC817; BC817W; BC337 - 45 V, 500 mA NPN general-purpose transistors
   height: '1.1'
+  mouser: 771-BC817-40-T/R
   manufacturer: Nexperia
   mpn: BC817-40,215
   pin_count: 3
 - ref: Q2
   value: BC817-40,215
-  footprint: SOT-3
+  footprint: SOT95P230X110-3N
   description: BC817; BC817W; BC337 - 45 V, 500 mA NPN general-purpose transistors
   height: '1.1'
+  mouser: 771-BC817-40-T/R
   manufacturer: Nexperia
   mpn: BC817-40,215
   pin_count: 3
@@ -387,7 +399,6 @@ components:
 - ref: R14
   value: 2.4kohm
   footprint: 0805
-  pulldown: D5.2
 - ref: R15
   value: 24ohm
   footprint: 0805
@@ -535,7 +546,7 @@ components:
   nc_pins: {'17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '32': '32', '39': '39'}
 - ref: U10
   value: NUD3124LT1G
-  footprint: SOT-3
+  footprint: SOT95P237X100-3N
   description: ON Semiconductor NUD3124LT1G, MOSFET Power Driver, 150mA, 3-Pin SOT-23
   height: '1'
   manufacturer: ON Semiconductor
@@ -543,12 +554,12 @@ components:
   pin_count: 3
 - ref: U11
   value: LAN8720A
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
   pin_count: 25
   nc_pins: {'4': '4', '14': '14'}
 - ref: U12
   value: LSM9DS1
-  footprint: LGA-24L
+  footprint: LGA-24L_3x3.5
   pin_count: 24
   nc_pins: {'9': '9', '10': '10', '11': '11', '12': '12', '13': '13'}
 - ref: U2
@@ -558,6 +569,7 @@ components:
 - ref: U4
   value: ADS1115I
   footprint: MSOP-10
+  mpn: ADS1115IDGS
   pin_count: 10
   nc_pins: {'2': '2'}
 - ref: U6
@@ -570,9 +582,10 @@ components:
   pin_count: 5
 - ref: U8
   value: CP2102N-A01-GQFN24
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
   pin_count: 25
-  nc_pins: {'1': '1', '10': '10', '11': '11', '12': '12', '13': '13', '14': '14', '15': '15', '16': '16', '17': '17', '18': '18', '22': '22', '24': '24'}
+  nc_pins: {'1': '1', '10': '10', '11': '11', '12': '12', '13': '13', '14': '14', '15': '15', '16': '16', '17': '17', '18': '18',
+    '22': '22', '24': '24'}
 - ref: U9
   value: VNH7070AS
   footprint: SOIC-16

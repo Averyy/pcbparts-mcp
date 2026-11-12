@@ -2,7 +2,7 @@ name: AtmosFC
 slug: atmosfc
 source: cypamigon/AtmosFC
 format: kicad8
-description: "STM32G473 flight controller: ICM-42688-P IMU, DPS368 baro"
+description: 'STM32G473 flight controller: ICM-42688-P IMU, DPS368 baro'
 tags: [drone-uav, sensors]
 key_ics: [STM32G473, MAX7456, ICM-42688-P]
 outline:
@@ -19,222 +19,280 @@ components:
   value: 10uF
   footprint: '1206'
   manufacturer: TAIYO YUDEN
+  mpn: MCJCG31LBB7106KTPA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 35V 10uF X7R 1206 10 %
 - ref: C10
   value: 4.7uF
   footprint: '0603'
   manufacturer: Murata Electronics
+  mpn: GRM188Z71C475KE21J
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 4.7 uF 16 VDC 10% 0603 X7R
   decouples: U2
 - ref: C11
   value: 4.7uF
   footprint: '0603'
   manufacturer: Murata Electronics
+  mpn: GRM188Z71C475KE21J
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 4.7 uF 16 VDC 10% 0603 X7R
   decouples: U5
 - ref: C12
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
   decouples: U6
 - ref: C13
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
   decouples: U3
 - ref: C14
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
   decouples: U3
 - ref: C15
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
   decouples: U3
 - ref: C16
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
   decouples: U3
 - ref: C17
   value: 4.7uF
   footprint: '0603'
   manufacturer: Murata Electronics
+  mpn: GRM188Z71C475KE21J
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 4.7 uF 16 VDC 10% 0603 X7R
   decouples: U3
 - ref: C18
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
 - ref: C19
   value: 10pF
   footprint: '0402'
   manufacturer: Murata Electronics
+  mpn: GRM1555C1H100JA01D
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 10 pF 50 VDC 5% 0402 C0G (NP0)
 - ref: C2
   value: 10uF
   footprint: '1206'
   manufacturer: TAIYO YUDEN
+  mpn: MCJCG31LBB7106KTPA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 35V 10uF X7R 1206 10 %
 - ref: C20
   value: 10pF
   footprint: '0402'
   manufacturer: Murata Electronics
+  mpn: GRM1555C1H100JA01D
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 10 pF 50 VDC 5% 0402 C0G (NP0)
 - ref: C21
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
 - ref: C22
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
   decouples: U4
 - ref: C23
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
   decouples: U4
 - ref: C24
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
   decouples: U4
 - ref: C25
   value: 47uF
   footprint: EIA-2012
   manufacturer: KYOCERA AVX
+  mpn: F981A476MSAAS1
   description: Tantalum Capacitors - Solid SMD 10V 47uF 0805 Tol +/-20%
 - ref: C26
   value: 47uF
   footprint: EIA-2012
   manufacturer: KYOCERA AVX
+  mpn: F981A476MSAAS1
   description: Tantalum Capacitors - Solid SMD 10V 47uF 0805 Tol +/-20%
 - ref: C27
   value: 2.2uF
   footprint: '0402'
   manufacturer: Murata Electronics
+  mpn: GRM155C71A225KE11D
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 2.2 uF 10 VDC 10% 0402 X7S
   decouples: U5
 - ref: C28
   value: 2.2uF
   footprint: '0402'
   manufacturer: Murata Electronics
+  mpn: GRM155C71A225KE11D
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 2.2 uF 10 VDC 10% 0402 X7S
 - ref: C29
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
 - ref: C3
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
 - ref: C30
   value: 10nF
   footprint: '0402'
   manufacturer: Murata Electronics
+  mpn: GRM1555C1E103GE01D
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 0.01 uF 25 VDC 2% 0402 C0G (NP0)
   decouples: U5
 - ref: C31
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
   decouples: U6
 - ref: C32
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
   decouples: U7
 - ref: C33
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
   decouples: U7
 - ref: C34
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
 - ref: C35
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
 - ref: C36
   value: 100nF
   footprint: '0402'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE105SB7104KFNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 0.1uF X7R 0402 10 %
 - ref: C4
   value: 1uF
   footprint: '0603'
   manufacturer: TAIYO YUDEN
+  mpn: MSAST168SB7105KTNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 25V 1uF X7R 0603 10 %
 - ref: C5
   value: 22uF
   footprint: '1206'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE31LBB7226MTNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 22uF X7R 1206 20 %
   decouples: U1
 - ref: C6
   value: 22uF
   footprint: '1206'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE31LBB7226MTNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 22uF X7R 1206 20 %
   decouples: U1
 - ref: C7
   value: 22uF
   footprint: '1206'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE31LBB7226MTNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 22uF X7R 1206 20 %
   decouples: U1
 - ref: C8
   value: 22uF
   footprint: '1206'
   manufacturer: TAIYO YUDEN
+  mpn: MSASE31LBB7226MTNA01
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 16V 22uF X7R 1206 20 %
   decouples: U1
 - ref: C9
   value: 4.7uF
   footprint: '0603'
   manufacturer: Murata Electronics
+  mpn: GRM188Z71C475KE21J
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 4.7 uF 16 VDC 10% 0603 X7R
 - ref: D1
   value: TVS
   footprint: SOD-882
   manufacturer: Nexperia
+  mpn: PESD30VF1BBL-QYL
   description: ESD Protection Diodes / TVS Diodes ESD 30V BI
 - ref: D2
   value: schottky
   footprint: DFN3820A
   manufacturer: Vishay Semiconductors
+  mpn: V7N103HM3/I
   description: Schottky Diodes & Rectifiers 7A, 100V, DFN3820A TRENCH SKY RECT.
 - ref: D3
   value: PMEG2020CPASX
-  footprint: HUSON-3-1EP
+  footprint: HUSON-3-1EP_2x2
   manufacturer: Nexperia
+  mpn: PMEG2020CPASX
   description: Schottky Diodes & Rectifiers RECTIFIER SOT1061/HUSON3
   pin_count: 3
+- ref: D4
+  value: LED
+  footprint: '0603'
+  manufacturer: ams OSRAM
+  mpn: LO Q976-PS-25
+  description: Single Colour LEDs Orange, 605nm 280mcd, 20mA
+- ref: D5
+  value: LED
+  footprint: '0603'
+  manufacturer: ams OSRAM
+  mpn: LT Q39G-Q1OO-25-1
+  description: Single Colour LEDs True Green
+- ref: D6
+  value: LED
+  footprint: '0603'
+  manufacturer: ams OSRAM
+  mpn: LB Q39G-N1OO-35-1
+  description: Single Colour LEDs Blue 470nm 120mcd 15mA
 - ref: D7
   value: SP1001-04
   footprint: SOT-553
   manufacturer: Littlefuse
+  mpn: SP1001-04XTG
   description: 8pF 15kV Unidirectional TVS Array
   pin_count: 5
   nc_pins: {K@5: '5'}
@@ -242,6 +300,7 @@ components:
   value: SP1001-04
   footprint: SOT-553
   manufacturer: Littlefuse
+  mpn: SP1001-04XTG
   description: 8pF 15kV Unidirectional TVS Array
   pin_count: 5
   nc_pins: {K@5: '5'}
@@ -249,289 +308,300 @@ components:
   value: 120R@100MHz
   footprint: '0402'
   manufacturer: Murata Electronics
+  mpn: BLM15PX121BH1D
   description: Ferrite Beads 0402 120ohm 25% 5A AEC-Q200
 - ref: J2
   value: JST-SH 8p
   footprint: JST_SR_SM08B-SRSS-TB
   manufacturer: JST Sales America Inc.
+  mpn: SM08B-SRSS-TB
   description: Headers & Wire Housings SR HEADER (SMT SIDE)
   pin_count: 8
 - ref: J3
   value: USB-C
   footprint: USB-C
   manufacturer: GCT
+  mpn: USB4105-GF-A
   description: USB 2.0-only 16P Type-C Receptacle connector
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J8
-  value: 1x8 header
+  value: 1x8 solder wire pads
   footprint: SolderWirePads-2x4
   pin_count: 8
 - ref: L1
   value: 10uH
   footprint: L_Bourns_SRP5030CC
   manufacturer: Bourns
+  mpn: SRP5030CC-100M
   description: Power Inductors - SMD Ind,5.7x5.2x2.8mm,10uH+/-20%,2.8A,shd
 - ref: Q1
   value: BC817
   footprint: DFN1010D-3
   manufacturer: Nexperia
+  mpn: BC817-40QBH-QZ
   description: Bipolar Transistors - BJT SOT8015 45V .5A NPN GP TRANS
   pin_count: 3
 - ref: R1
   value: 20kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW040220K0FKED
   description: Thick Film Resistors - SMD 1/16watt 20Kohms 1%
 - ref: R10
   value: 10kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW040210K0FKEDC
   description: Thick Film Resistors - SMD 1/16watt 10Kohms 1% Commercial Use
   pulldown: /MCU/BOOT0
 - ref: R11
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R12
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R13
   value: 100ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW0402100RFKEDC
   description: Thick Film Resistors - SMD 1/16watt 100ohms 1% Commercial Use
 - ref: R14
   value: 220ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW0402220RFKED
   description: Thick Film Resistors - SMD 1/16watt 220ohms 1%
 - ref: R15
   value: 130ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW0402130RFKEDC
   description: Thick Film Resistors - SMD 1/16watt 130ohms 1% Commercial Use
 - ref: R16
   value: 75ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW040275R0FKED
   description: Thick Film Resistors - SMD 1/16watt 75ohms 1%
 - ref: R17
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R18
   value: 10kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW040210K0FKEDC
   description: Thick Film Resistors - SMD 1/16watt 10Kohms 1% Commercial Use
   pullup: /OSD/OSD_nRESET
 - ref: R19
   value: 75ohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW040275R0FKED
   description: Thick Film Resistors - SMD 1/16watt 75ohms 1%
 - ref: R2
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R20
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R21
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R22
   value: 47kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW040247K0FKEDC
   description: Thick Film Resistors - SMD 1/16watt 47Kohms 1% Commercial Use
   pullup: /Flash Memory/FLASH_nWP
 - ref: R23
   value: 47kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW040247K0FKEDC
   description: Thick Film Resistors - SMD 1/16watt 47Kohms 1% Commercial Use
   pullup: /Flash Memory/FLASH_nHOLD
 - ref: R24
   value: 47kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW040247K0FKEDC
   description: Thick Film Resistors - SMD 1/16watt 47Kohms 1% Commercial Use
   pulldown: /Barometer/BARO_SDO
 - ref: R25
   value: 5.1kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW04025K10FKED
   description: Thick Film Resistors - SMD 1/16watt 5.1Kohms 1%
   pulldown: /Connectors/USB_CC2
 - ref: R26
   value: 5.1kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW04025K10FKED
   description: Thick Film Resistors - SMD 1/16watt 5.1Kohms 1%
   pulldown: /Connectors/USB_CC1
 - ref: R27
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R28
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R29
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R3
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R30
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R31
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R32
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R33
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R34
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R35
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R36
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R37
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R38
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R39
   value: 1kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW04021K00FKED
   description: Thick Film Resistors - SMD 1/16watt 1.0Kohms 1%
 - ref: R4
   value: 10kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW040210K0FKEDC
   description: Thick Film Resistors - SMD 1/16watt 10Kohms 1% Commercial Use
   pullup: /Connectors/I2C_SDA
 - ref: R5
   value: 10kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW040210K0FKEDC
   description: Thick Film Resistors - SMD 1/16watt 10Kohms 1% Commercial Use
   pullup: /Connectors/I2C_SCK
 - ref: R6
   value: 47kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW040247K0FKEDC
   description: Thick Film Resistors - SMD 1/16watt 47Kohms 1% Commercial Use
 - ref: R7
   value: 4.7kohm
   footprint: '0402'
   manufacturer: Vishay / Dale
+  mpn: CRCW04024K70FKEDC
   description: Thick Film Resistors - SMD 1/16watt 4.7Kohms 1% Commercial Use
   pulldown: /MCU/MCU_VBAT_SENSE
 - ref: R8
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: R9
   value: 33ohm
   footprint: '0402'
-  manufacturer: Vishay / Dale
   description: Thick Film Resistors - SMD 1/16watt 33ohms 1% 100ppm
 - ref: SW1
   value: tactile switch
   footprint: Wurth_436331045822
   manufacturer: Wurth Elektronik
+  mpn: '436331045822'
   description: Tactile Switches Tact Switch SMT 1.65mm
 - ref: U1
   value: MAX25232
-  footprint: Maxim_TDFN-12-1EP
+  footprint: Maxim_TDFN-12-1EP_3x3
   manufacturer: Analog Devices
+  mpn: MAX25232ATCD_V+
   description: 36V, 3A Mini Buck Converters with 3.5uA IQ
   pin_count: 13
 - ref: U2
   value: TPS78533BQDRBRQ1
-  footprint: VSON-8-1EP
+  footprint: VSON-8-1EP_3x3
   manufacturer: Texas Instruments
+  mpn: TPS78533BQWDRBRQ1
   description: TPS785-Q1 Automotive, 1-A, High-PSRR Low-Dropout Voltage Regulator With High
   pin_count: 9
   nc_pins: {NC@2: '2', NC@3: '3', NC@4: '4', NC@7: '7'}
 - ref: U3
   value: STM32G473CEU6
-  footprint: QFN-48-1EP
+  footprint: QFN-48-1EP_7x7
   manufacturer: STMicroelectronics
+  mpn: STM32G473CEU6
   description: ARM Microcontrollers - MCU Mainstream Arm Cortex-M4 MCU 170MHz 512Kbytes of
   pin_count: 49
   nc_pins: {PC15: '4', PC4: '16', PB0: '17', PB6: '44'}
 - ref: U4
   value: MAX7456
-  footprint: TSSOP-28-1EP
+  footprint: TSSOP-28-1EP_4.4x9.7
   manufacturer: Analog Devices
+  mpn: MAX7456EUI+
   description: Single-Channel Monochrome On-Screen Display with Integrated EEPROM
   pin_count: 29
-  nc_pins: {NC@1: '1', NC@2: '2', CLKOUT: '7', LOS: '12', NC@13: '13', NC@14: '14', NC@15: '15', NC@16: '16', nVSYNC: '17', nHSYNC: '18', NC@27: '27', NC@28: '28'}
+  nc_pins: {NC@1: '1', NC@2: '2', CLKOUT: '7', LOS: '12', NC@13: '13', NC@14: '14', NC@15: '15', NC@16: '16', nVSYNC: '17',
+    nHSYNC: '18', NC@27: '27', NC@28: '28'}
 - ref: U5
   value: ICM-42688-P
   footprint: ICM-42688-P
   manufacturer: TDK InvenSense
+  mpn: ICM-42688-P
   description: High Precision 6-Axis MEMS MotionTrackingTM Device
   pin_count: 14
   nc_pins: {RESV@2: '2', RESV@10: '10', RESV@11: '11'}
 - ref: U6
   value: W25Q256JVE
-  footprint: WSON-8-1EP
+  footprint: WSON-8-1EP_8x6
   manufacturer: Winbond
+  mpn: W25Q256JVEIQ
   description: 3V 256M-BIT SERIAL FLASH MEMORY WITH DUAL/QUAD SPI
   pin_count: 8
 - ref: U7
   value: DPS368XTSA1
   footprint: Infineon_PG-VLGA-8-2
   manufacturer: Infineon Technologies
+  mpn: DPS368XTSA1
   description: Digital XENSIVTM barometric pressure sensor
   pin_count: 8
   nc_pins: {CSB: '2'}
@@ -539,17 +609,20 @@ components:
   value: USBLC6-2
   footprint: SOT-666
   manufacturer: STMicroelectronics
+  mpn: USBLC6-2P6
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
   pin_count: 6
 - ref: Y1
   value: 8MHz
-  footprint: Crystal_SMD_ECS_ECX33_4Pin
+  footprint: Crystal_SMD_ECS_ECX33_4Pin_3.2x2.5
   manufacturer: ECS
+  mpn: ECS-80-10-33-CGN-TR3
   pin_count: 4
 - ref: Y2
   value: 27MHz
   footprint: SMD2016
   manufacturer: KYOCERA AVX
+  mpn: CX2016SA27000D0GSSCC
   pin_count: 4
 nets:
 - name: +3V3
@@ -596,7 +669,6 @@ nets:
   - D3.K@2
   - L1.2
   - R18.1
-  - R40.1
   - U1.OUT
   - U4.AVDD
   - U4.DVDD
@@ -616,8 +688,6 @@ nets:
   - U8.VBUS
 - name: /Connectors/+BATT
   pins: [D1.A2, D2.A, J2.Pin_7, J8.Pin_7]
-- name: /Connectors/BUZZER-
-  pins: [Q1.C, R40.2]
 - name: /Connectors/CURRENT_SENSE
   pins: [C36.1, R31.1, U3.PB1]
 - name: /Connectors/CURRENT_SENSE_C
@@ -989,6 +1059,18 @@ positions:
 - ref: D3
   x: 123.5
   y: 107.95
+  rot: 180.0
+- ref: D4
+  x: 157.16
+  y: 98.2
+  rot: 180.0
+- ref: D5
+  x: 157.16
+  y: 96.41
+  rot: 180.0
+- ref: D6
+  x: 157.16
+  y: 94.5
   rot: 180.0
 - ref: D7
   x: 137.9

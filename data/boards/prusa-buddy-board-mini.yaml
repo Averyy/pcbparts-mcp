@@ -107,7 +107,7 @@ components:
   footprint: '0402'
 - ref: C124
   value: 330uF
-  footprint: Electrolytic-8x10
+  footprint: Electrolytic-8x10.5
 - ref: C125
   value: 100nF
   footprint: '0402'
@@ -296,10 +296,10 @@ components:
   decouples: U4
 - ref: C60
   value: 100uF
-  footprint: c_elec
+  footprint: c_elec_6.3x7.7
 - ref: C61
   value: 100uF
-  footprint: c_elec
+  footprint: c_elec_6.3x7.7
 - ref: C62
   value: 100nF
   footprint: '0402'
@@ -397,10 +397,10 @@ components:
   footprint: '0402'
 - ref: C90
   value: 100uF
-  footprint: c_elec
+  footprint: c_elec_6.3x7.7
 - ref: C91
   value: 100uF
-  footprint: c_elec
+  footprint: c_elec_6.3x7.7
 - ref: C92
   value: 10uF
   footprint: '1206'
@@ -562,43 +562,43 @@ components:
   value: fuse 3A
   footprint: MEC
 - ref: J1
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J1-jumper1
   value: 2,54 jumper
   footprint: MEC
 - ref: J10
-  value: 2x4 header
-  footprint: 2X4
+  value: 2x4 2.54mm header
+  footprint: 2X4_P2.54mm
   pin_count: 8
   nc_pins: {'5': '5'}
 - ref: J11
   value: UFL coaxial
   footprint: UFL-MOLEX-73412-0114
 - ref: J12
-  value: 1x1 header
+  value: 1x1 1.00mm header
   footprint: Fiducial_1mm_Dia_2.54mm_Outer_CopperTop
 - ref: J13
-  value: 1x1 header
+  value: 1x1 1.00mm header
   footprint: Fiducial_1mm_Dia_2.54mm_Outer_CopperTop
 - ref: J14
-  value: 1x1 header
+  value: 1x1 1.00mm header
   footprint: Fiducial_1mm_Dia_2.54mm_Outer_CopperTop
 - ref: J15
-  value: 1x1 header
+  value: 1x1 1.00mm header
   footprint: Fiducial_1mm_Dia_2.54mm_Outer_CopperTop
 - ref: J16
-  value: 1x1 header
+  value: 1x1 3.20mm header
   footprint: MountingHole_3.2mm_M3_ISO14580_Pad
 - ref: J17
-  value: 1x1 header
+  value: 1x1 3.20mm header
   footprint: MountingHole_3.2mm_M3_ISO14580_Pad
 - ref: J18
-  value: 1x1 header
+  value: 1x1 3.20mm header
   footprint: MountingHole_3.2mm_M3_ISO14580_Pad
 - ref: J19
-  value: 1x1 header
+  value: 1x1 3.20mm header
   footprint: MountingHole_3.2mm_M3_ISO14580_Pad
 - ref: J2
   value: 105017-0001
@@ -609,8 +609,8 @@ components:
   footprint: USB-A-vertical-MX-67329-8000
   pin_count: 5
 - ref: J21
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J23
   value: 1x10 header
@@ -633,133 +633,170 @@ components:
   pin_count: 9
 - ref: J7
   value: 1x4 header
-  footprint: Pin
+  footprint: Pin_1x04
   pin_count: 4
 - ref: J8
-  value: 2x7 header
-  footprint: IDC-Header
+  value: 2x7 2.54mm header
+  footprint: IDC-Header_2x07
   pin_count: 14
 - ref: J9
   value: 1x3 header
-  footprint: Pin
+  footprint: Pin_1x03
   pin_count: 3
 - ref: JP1
   value: solder jumper
   footprint: SJ-2
 - ref: L1
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L10
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L11
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L12
-  value: BLM41PG600SN1L
+  value: 60ohm
   footprint: '1806'
+  mpn: BLM41PG600SN1L
 - ref: L13
   value: 15uH
   footprint: VLS6045EX
 - ref: L14
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L15
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L16
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L17
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L2
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L23
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L25
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L27
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L3
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L31
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L32
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L33
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L34
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L35
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L36
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L37
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L38
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L39
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L4
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L40
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L41
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L42
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L43
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L44
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L45
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L46
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L47
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L48
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L5
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L6
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L7
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L8
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: L9
-  value: BLM18KG121TN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18KG121TN1D
 - ref: NT3
   value: Net-Tie_2
   footprint: NetTie-2_SMD_Pad0.5mm
@@ -768,39 +805,39 @@ components:
   footprint: NetTie-2_SMD_Pad0.5mm
 - ref: P1
   value: 1x3 header
-  footprint: Pin
+  footprint: Pin_1x03
   pin_count: 3
 - ref: P10
   value: 1x4 header
-  footprint: Pin
+  footprint: Pin_1x04
   pin_count: 4
 - ref: P2
   value: 1x3 header
-  footprint: Pin
+  footprint: Pin_1x03
   pin_count: 3
 - ref: P3
   value: 1x2 header
-  footprint: Pin
+  footprint: Pin_1x02
 - ref: P4
   value: 1x2 header
-  footprint: Pin
+  footprint: Pin_1x02
 - ref: P5
-  value: 2x5 header
-  footprint: PhoenixContact_MSTBVA-G
+  value: TBG-5-PW-2P/GN
+  footprint: PhoenixContact_MSTBVA-G_02x5.08
 - ref: P6
-  value: 2x5 header
-  footprint: PhoenixContact_MSTBVA-G
+  value: TBG-5-PW-2P/GN
+  footprint: PhoenixContact_MSTBVA-G_02x5.08
 - ref: P7
   value: 1x4 header
-  footprint: Pin
+  footprint: Pin_1x04
   pin_count: 4
 - ref: P8
   value: 1x4 header
-  footprint: Pin
+  footprint: Pin_1x04
   pin_count: 4
 - ref: P9
   value: 1x4 header
-  footprint: Pin
+  footprint: Pin_1x04
   pin_count: 4
 - ref: Q1
   value: MMBF170
@@ -950,7 +987,6 @@ components:
 - ref: R45
   value: 10kohm
   footprint: '0603'
-  pullup: D13.2
 - ref: R46
   value: 100kohm
   footprint: '0402'
@@ -961,7 +997,6 @@ components:
 - ref: R48
   value: 10kohm
   footprint: '0603'
-  pullup: D15.2
 - ref: R49
   value: 100kohm
   footprint: '0402'
@@ -1158,7 +1193,8 @@ components:
   footprint: '0402'
 - ref: U1
   value: LAN8742A-CZ
-  footprint: VQFN-24-1EP
+  footprint: VQFN-24-1EP_4x4
+  mpn: LAN8742A-CZ-TR
   pin_count: 25
 - ref: U10
   value: MCU-STM32F407VGT6
@@ -1177,6 +1213,7 @@ components:
 - ref: U13
   value: DT1140-04
   footprint: DT1140-04LP
+  mpn: DT1140-04LP
   pin_count: 5
 - ref: U2
   value: W25Q64JVSSIQ
@@ -1184,7 +1221,8 @@ components:
   pin_count: 8
 - ref: U3
   value: LM25011MY
-  footprint: SOP-11
+  footprint: SOP50P490X110-11N
+  mpn: LM25011MY/NOPB
   pin_count: 11
 - ref: U4
   value: NCP1117-3.3_SOT223
@@ -1197,27 +1235,27 @@ components:
   nc_pins: {'15': '15'}
 - ref: U6
   value: TMC2209-LA
-  footprint: QFN-28_EP
+  footprint: QFN-28_EP_5x5
   pin_count: 29
   nc_pins: {'7': '7', '12': '12', '17': '17', '20': '20'}
 - ref: U7
   value: TMC2209-LA
-  footprint: QFN-28_EP
+  footprint: QFN-28_EP_5x5
   pin_count: 29
   nc_pins: {'7': '7', '12': '12', '17': '17', '20': '20'}
 - ref: U8
   value: TMC2209-LA
-  footprint: QFN-28_EP
+  footprint: QFN-28_EP_5x5
   pin_count: 29
   nc_pins: {'7': '7', '12': '12', '17': '17', '20': '20'}
 - ref: U9
   value: TMC2209-LA
-  footprint: QFN-28_EP
+  footprint: QFN-28_EP_5x5
   pin_count: 29
   nc_pins: {'7': '7', '12': '12', '17': '17', '20': '20'}
 - ref: X1
   value: ASE-xxxMHz*
-  footprint: Oscillator_SMD_EuroQuartz_XO53-4Pin
+  footprint: Oscillator_SMD_EuroQuartz_XO53-4Pin_5.0x3.2
   pin_count: 4
 - ref: Y2
   value: Crystal
@@ -1225,7 +1263,7 @@ components:
   pin_count: 4
 - ref: Y4
   value: ECS-250-20-30B-AGL-TR
-  footprint: Crystal_SMD_Abracon_ABM3C-4Pin
+  footprint: Crystal_SMD_Abracon_ABM3C-4Pin_5.0x3.2
   pin_count: 4
 nets:
 - name: +24V

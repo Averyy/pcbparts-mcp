@@ -19,324 +19,402 @@ components:
   value: 100uF
   footprint: EIA-3216
   mpn: TLJA107M006R0800
+  lcsc: C27279
 - ref: C11
   value: 22uF
   footprint: EIA-3216
   mpn: CA45-A-16V-22uF-K
+  lcsc: C782264
   decouples: U3
 - ref: C12
   value: 2.2uF
   footprint: EIA-3216
   mpn: T491A225K006AT
+  lcsc: C2798035
 - ref: C13
   value: 100nF
   footprint: '0603'
+  lcsc: C338036
   mpn: C1608X7R1E104KT000N
 - ref: C14
   value: 100nF
   footprint: '0603'
+  lcsc: C338036
   mpn: C1608X7R1E104KT000N
 - ref: C15
   value: 100nF
   footprint: '0603'
+  lcsc: C338036
   mpn: C1608X7R1E104KT000N
   decouples: U2
 - ref: C16
   value: 100uF
   footprint: EIA-3216
   mpn: TLJA107M006R0800
+  lcsc: C27279
   decouples: U1
 - ref: C17
   value: 100nF
   footprint: '0603'
+  lcsc: C338036
   mpn: C1608X7R1E104KT000N
   decouples: U1
 - ref: C20
   value: 220pF
   footprint: '0402'
+  lcsc: C71693
   mpn: GRM1555C1H221JA01D
 - ref: C21
   value: 220pF
   footprint: '0402'
+  lcsc: C71693
   mpn: GRM1555C1H221JA01D
 - ref: C24
   value: 56pF
   footprint: '0402'
+  lcsc: C526981
   mpn: CC0402FRNPO9BN560
 - ref: C25
   value: 56pF
   footprint: '0402'
+  lcsc: C526981
   mpn: CC0402FRNPO9BN560
 - ref: C26
   value: 22uF
   footprint: EIA-3216
   mpn: CA45-A-16V-22uF-K
+  lcsc: C782264
 - ref: C27
   value: 100nF
   footprint: '0603'
+  lcsc: C338036
   mpn: C1608X7R1E104KT000N
 - ref: C28
   value: 100uF
   footprint: EIA-3216
   mpn: TLJA107M006R0800
+  lcsc: C27279
   decouples: U10
 - ref: C29
   value: 100nF
   footprint: '0603'
+  lcsc: C338036
   mpn: C1608X7R1E104KT000N
   decouples: U6
 - ref: C3
   value: 100uF
   footprint: EIA-3216
   mpn: TLJA107M006R0800
+  lcsc: C27279
   decouples: U10
 - ref: C30
   value: 2.2nF
   footprint: '0402'
+  lcsc: C106861
   mpn: CC0402KRX7R9BB222
 - ref: C31
   value: 100nF
   footprint: '0603'
+  lcsc: C338036
   mpn: C1608X7R1E104KT000N
 - ref: C4
   value: 22uF
   footprint: EIA-3216
   mpn: CA45-A-16V-22uF-K
+  lcsc: C782264
 - ref: C5
   value: 22uF
   footprint: EIA-3216
   mpn: CA45-A-16V-22uF-K
+  lcsc: C782264
   decouples: U2
 - ref: C6
   value: 100nF
   footprint: '0603'
+  lcsc: C338036
   mpn: C1608X7R1E104KT000N
 - ref: C7
   value: 2.2uF
   footprint: EIA-3216
   mpn: T491A225K006AT
+  lcsc: C2798035
 - ref: C8
   value: 100nF
   footprint: '0603'
+  lcsc: C338036
   mpn: C1608X7R1E104KT000N
   decouples: U3
 - ref: C9
   value: 22uF
   footprint: EIA-3216
   mpn: CA45-A-16V-22uF-K
+  lcsc: C782264
 - ref: D1
   value: 1N4007FL
   footprint: SOD-123F
+  digikey: 1655-1N4007FLCT-ND
   mpn: 1N4007FL
+  lcsc: C2840959
 - ref: D10
   value: LED 0402 RED
   footprint: '0402'
+  lcsc: C965790
   mpn: XL-1005SURC
 - ref: D11
   value: LED 0402 GREEN
   footprint: '0402'
+  lcsc: C2856703
   mpn: XL-1005UGC
 - ref: D12
   value: LED 0402 RED
   footprint: '0402'
+  lcsc: C965790
   mpn: XL-1005SURC
 - ref: D13
   value: LED 0402 GREEN
   footprint: '0402'
+  lcsc: C2856703
   mpn: XL-1005UGC
 - ref: D14
   value: LED 0402 RED
   footprint: '0402'
+  lcsc: C965790
   mpn: XL-1005SURC
 - ref: D15
   value: LED 0402 GREEN
   footprint: '0402'
+  lcsc: C2856703
   mpn: XL-1005UGC
 - ref: D16
   value: LED 0402 RED
   footprint: '0402'
+  lcsc: C965790
   mpn: XL-1005SURC
 - ref: D17
   value: LED 0402 GREEN
   footprint: '0402'
+  lcsc: C2856703
   mpn: XL-1005UGC
 - ref: D18
   value: LED 0402 RED
   footprint: '0402'
+  lcsc: C965790
   mpn: XL-1005SURC
 - ref: D2
   value: 1N4007FL
   footprint: SOD-123F
+  digikey: 1655-1N4007FLCT-ND
   mpn: 1N4007FL
+  lcsc: C2840959
 - ref: D3
   value: LED 0402 GREEN
   footprint: '0402'
+  lcsc: C2856703
   mpn: XL-1005UGC
 - ref: D4
   value: LED 0402 RED
   footprint: '0402'
+  lcsc: C965790
   mpn: XL-1005SURC
 - ref: D5
   value: LED 0402 GREEN
   footprint: '0402'
+  lcsc: C2856703
   mpn: XL-1005UGC
 - ref: D6
   value: LED 0402 RED
   footprint: '0402'
+  lcsc: C965790
   mpn: XL-1005SURC
 - ref: D7
   value: LED 0402 GREEN
   footprint: '0402'
+  lcsc: C2856703
   mpn: XL-1005UGC
 - ref: D8
   value: LED 0402 RED
   footprint: '0402'
+  lcsc: C965790
   mpn: XL-1005SURC
 - ref: D9
   value: LED 0402 GREEN
   footprint: '0402'
+  lcsc: C2856703
   mpn: XL-1005UGC
 - ref: J1
-  value: 2x5 header
-  footprint: 2X5
+  value: 2x5 2.54mm header
+  footprint: 2X5_P2.54mm_Horizontal
+  lcsc: C492433
   mpn: PZ254R-12-10P
   pin_count: 10
 - ref: J10
   value: AUDIO JACK PJ-324M0
   footprint: pj324m
+  lcsc: C2884986
   mpn: PJ-324M0
   pin_count: 5
 - ref: J11
   value: AUDIO JACK PJ-324M0
   footprint: pj324m
+  lcsc: C2884986
   mpn: PJ-324M0
   pin_count: 5
 - ref: J2
-  value: 2x6 header
-  footprint: 2X6
+  value: 2x6 2.54mm header
+  footprint: 2X6_P2.54mm_Horizontal
+  lcsc: C2894986
   mpn: PZ254-2-06-W-8.5
   pin_count: 12
 - ref: J3
-  value: 1x14 header
-  footprint: Hirose_FH12-14S-0.5SH
+  value: 1x14 0.50mm header
+  footprint: Hirose_FH12-14S-0.5SH_1x14
+  lcsc: C5378715
   mpn: FH12-14S-0.5SH(55)
   pin_count: 14
   nc_pins: {Pin_2: '2'}
 - ref: J6
   value: AUDIO JACK PJ-324M0
   footprint: pj324m
+  lcsc: C2884986
   mpn: PJ-324M0
   pin_count: 5
 - ref: J7
   value: AUDIO JACK PJ-324M0
   footprint: pj324m
+  lcsc: C2884986
   mpn: PJ-324M0
   pin_count: 5
 - ref: L1
   value: ferrite bead
   footprint: '0603'
   mpn: BLM18PG121SN1D
+  lcsc: C14709
 - ref: L2
   value: ferrite bead
   footprint: '0603'
   mpn: BLM18PG121SN1D
+  lcsc: C14709
 - ref: L3
   value: ferrite bead
   footprint: '0603'
   mpn: BLM18PG121SN1D
+  lcsc: C14709
 - ref: L4
   value: ferrite bead
   footprint: '0603'
   mpn: BLM18PG121SN1D
+  lcsc: C14709
 - ref: L5
   value: ferrite bead
   footprint: '0603'
   mpn: BLM18PG121SN1D
+  lcsc: C14709
 - ref: Q1
   value: 2N7002E
   footprint: SOT-23
+  digikey: 2N7002ET1GOSCT-ND
+  lcsc: C71533
   mpn: 2N7002ET1G
   pin_count: 3
 - ref: R1
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C105871
   mpn: RC0402FR-074K7L
   pullup: /SCL
 - ref: R11
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C105871
   mpn: RC0402FR-074K7L
 - ref: R12
   value: 100kohm
   footprint: '0603'
+  lcsc: C14675
   mpn: RC0603FR-07100KL
 - ref: R13
   value: 1kohm
   footprint: '0603'
+  lcsc: C22548
   mpn: RC0603FR-071KL
 - ref: R14
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C105871
   mpn: RC0402FR-074K7L
 - ref: R15
   value: 100kohm
   footprint: '0603'
+  lcsc: C14675
   mpn: RC0603FR-07100KL
 - ref: R16
   value: 1kohm
   footprint: '0603'
+  lcsc: C22548
   mpn: RC0603FR-071KL
 - ref: R2
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C105871
   mpn: RC0402FR-074K7L
   pullup: /SDA
 - ref: R25
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C105871
   mpn: RC0402FR-074K7L
 - ref: R26
   value: 1kohm
   footprint: '0603'
+  lcsc: C22548
   mpn: RC0603FR-071KL
 - ref: R27
   value: 56kohm
   footprint: '0402'
+  lcsc: C114756
   mpn: RC0402FR-0756KL
 - ref: R28
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C105871
   mpn: RC0402FR-074K7L
   pulldown: U2.-@9
 - ref: R29
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C105871
   mpn: RC0402FR-074K7L
 - ref: R3
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C105871
   mpn: RC0402FR-074K7L
   pullup: /nPDN
 - ref: R30
   value: 1kohm
   footprint: '0603'
+  lcsc: C22548
   mpn: RC0603FR-071KL
 - ref: R31
   value: 56kohm
   footprint: '0402'
+  lcsc: C114756
   mpn: RC0402FR-0756KL
 - ref: R32
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C105871
   mpn: RC0402FR-074K7L
   pulldown: U2.-@13
 - ref: R33
   value: 330ohm
   footprint: '0603'
+  lcsc: C105881
   mpn: RC0603FR-07330RL
 - ref: R4
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C105871
   mpn: RC0402FR-074K7L
   pulldown: /PDN
 - ref: R42
@@ -345,102 +423,130 @@ components:
 - ref: R43
   value: 402kohm
   footprint: '0402'
+  lcsc: C327345
   mpn: RC0402FR-07402KL
 - ref: RN10
   value: 120ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-07120RL
+  lcsc: C326871
   pin_count: 8
 - ref: RN11
   value: 120ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-07120RL
+  lcsc: C326871
   pin_count: 8
 - ref: RN12
   value: 560ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-07560RL
+  lcsc: C695210
   pin_count: 8
 - ref: RN13
   value: 560ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-07560RL
+  lcsc: C695210
   pin_count: 8
 - ref: RN3
   value: 14.3kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-FR-0714K3L
+  lcsc: C728708
   pin_count: 8
 - ref: RN4
   value: 14.3kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-FR-0714K3L
+  lcsc: C728708
   pin_count: 8
 - ref: RN6
   value: 100kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-FR-07100KL
+  lcsc: C326786
   pin_count: 8
 - ref: RN7
   value: 100kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-FR-07100KL
+  lcsc: C326786
   pin_count: 8
 - ref: RN8
   value: 120ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-07120RL
+  lcsc: C326871
   pin_count: 8
 - ref: RN9
   value: 120ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-07120RL
+  lcsc: C326871
   pin_count: 8
 - ref: U1
   value: AK4619VN AUDIO CODEC
-  footprint: QFN-32-1EP
+  footprint: QFN-32-1EP_5x5
   mpn: AK4619VN
+  digikey: 974-AK4619VNCT-ND
+  lcsc: AK4619VN
   pin_count: 33
   nc_pins: {IN4N/AIN5R/GND6R: '9', IN3N/AIN5L/GND6L: '11', IN2N/AIN2R/GND3R: '13', IN1N/AIN2L/GND3L: '15', SDOUT2: '32'}
 - ref: U10
   value: PCA9635 LED DRIVER
   footprint: TSSOP-28
+  lcsc: C110795
+  digikey: 568-4067-1-ND
   mpn: PCA9635PW,118
   pin_count: 28
 - ref: U2
   value: TL074 OP AMP
   footprint: SOIC-14
+  digikey: 497-2204-1-ND
   mpn: TL074CDT
+  lcsc: C6963
   pin_count: 14
 - ref: U3
   value: TL074 OP AMP
   footprint: SOIC-14
+  digikey: 497-2204-1-ND
   mpn: TL074CDT
+  lcsc: C6963
   pin_count: 14
 - ref: U4
   value: PCA9557PW IO EXPANDER
   footprint: TSSOP-16
+  lcsc: C141380
+  digikey: 568-1061-1-ND
   mpn: PCA9557PW,118
   pin_count: 16
 - ref: U5
   value: 24AA025UIDT EEPROM
   footprint: SOT-23-6
   mpn: 24AA025UIDT-I/OT
+  digikey: 24AA025UIDT-I/OTCT-ND
+  lcsc: C2061498
   pin_count: 5
 - ref: U6
   value: CY8CMBR3108
-  footprint: QFN-16-1EP
+  footprint: QFN-16-1EP_3x3
+  lcsc: C462528
   mpn: CY8CMBR3108-LQXIT
   pin_count: 17
   nc_pins: {nHI: '16'}
 - ref: U8
-  value: LM4040DBZ-3 VREF
+  value: LM4040BIM3-3.0/NOPB
   footprint: SOT-23
+  digikey: LM4040BIM3-3.0/NOPB
   mpn: LM4040BIM3-3.0/NOPB
+  lcsc: C139380
 - ref: U9
   value: TL072 OP AMP
   footprint: SOIC-8
+  digikey: 497-2200-1-ND
   mpn: TL072CDT
+  lcsc: C6961
   pin_count: 8
 nets:
 - name: +12V

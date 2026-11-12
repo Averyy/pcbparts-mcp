@@ -1,7 +1,7 @@
 name: Corevus-G v0.6
 slug: corevus-g-v0-6
 source: calithameridi/corevus
-format: kicad7
+format: kicad8
 description: 'High-performance 3D printer mainboard: STM32F407ZETx, TMC2160/TMC2209 stepper drivers'
 tags: [3d-printer, can-bus, motor-control]
 key_ics: [STM32F407ZETx, TMC2160, TMC2209]
@@ -62,10 +62,12 @@ components:
 - ref: C13
   value: 470uF
   footprint: CP_Radial_D12.5mm_P5.00mm
+  lcsc: C310848
   voltage: 63V
 - ref: C14
   value: 470uF
   footprint: CP_Radial_D12.5mm_P5.00mm
+  lcsc: C310848
   voltage: 63V
 - ref: C15
   value: 1uF
@@ -74,10 +76,12 @@ components:
 - ref: C16
   value: 470uF
   footprint: CP_Radial_D12.5mm_P5.00mm
+  lcsc: C310848
   voltage: 63V
 - ref: C17
   value: 470uF
   footprint: CP_Radial_D12.5mm_P5.00mm
+  lcsc: C310848
   voltage: 63V
 - ref: C2
   value: 16pF
@@ -85,12 +89,10 @@ components:
 - ref: C28
   value: 1uF
   footprint: '0402'
-  lcsc: C1525
   decouples: U8
 - ref: C29
   value: 1uF
   footprint: '0402'
-  lcsc: C1525
 - ref: C3
   value: 2.2uF
   footprint: '0402'
@@ -418,73 +420,73 @@ components:
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J10
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J11
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J12
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J13
   value: USB 2.0
   footprint: USB_Type-C_16p
   pin_count: 17
   nc_pins: {VBUS@A4: A4, SBU1: A8, VBUS@A9: A9, VBUS@B4: B4, SBU2: B8, VBUS@B9: B9}
 - ref: J14
-  value: 1x4 header
-  footprint: FanPinHeader
+  value: 1x4 2.54mm header
+  footprint: FanPinHeader_1x04
   pin_count: 4
 - ref: J15
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J16
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J17
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J18
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J19
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J2
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J20
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J21
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J22
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J23
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J24
-  value: 1x3 header
-  footprint: JST_XH
+  value: JST XH 3-pin
+  footprint: JST_XH_1x03
   pin_count: 3
 - ref: J25
-  value: 1x3 header
-  footprint: JST_XH
+  value: JST XH 3-pin
+  footprint: JST_XH_1x03
   pin_count: 3
 - ref: J26
-  value: 1x3 header
-  footprint: JST_XH
+  value: JST XH 3-pin
+  footprint: JST_XH_1x03
   pin_count: 3
 - ref: J27
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x03
   pin_count: 3
 - ref: J28
-  value: 2x4 header
+  value: 2x4 3.00mm header
   footprint: Molex_Micro-Fit-3.0_430450813
   pin_count: 8
 - ref: J29
@@ -493,61 +495,61 @@ components:
   pin_count: 5
   nc_pins: {D-: '2', D+: '3'}
 - ref: J3
-  value: 1x2 header
+  value: 1x2 8.50mm screw terminal
   footprint: Kefa_KF8500-8.5-2P
 - ref: J31
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J32
   value: 1x2 header
   footprint: HCTL_HC-MX3.0-2A
 - ref: J35
-  value: 1x2 header
+  value: 1x2 8.50mm screw terminal
   footprint: Kefa_KF8500-8.5-2P
 - ref: J36
-  value: 1x2 header
+  value: 1x2 8.50mm screw terminal
   footprint: Kefa_KF8500-8.5-2P
 - ref: J37
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J38
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J39
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J4
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J40
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J41
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J42
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J5
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J6
-  value: 1x4 header
-  footprint: FanPinHeader
+  value: 1x4 2.54mm header
+  footprint: FanPinHeader_1x04
   pin_count: 4
 - ref: J7
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J8
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: J9
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x02
 - ref: L1
   value: 47uH
   footprint: L_Changjiang_FXL1040
@@ -556,11 +558,11 @@ components:
   footprint: L_Changjiang_FXL0640
 - ref: M3
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x04
   pin_count: 4
 - ref: M5
   value: JST XH
-  footprint: JST_XH
+  footprint: JST_XH_1x04
   pin_count: 4
 - ref: Q1
   value: AO3400
@@ -600,11 +602,11 @@ components:
   pin_count: 3
 - ref: Q25
   value: 60N03F
-  footprint: MOSFET_DFN8
+  footprint: MOSFET_DFN8_5x6
   pin_count: 8
 - ref: Q26
   value: 60N03F
-  footprint: MOSFET_DFN8
+  footprint: MOSFET_DFN8_5x6
   pin_count: 8
 - ref: Q27
   value: AO3400
@@ -628,7 +630,7 @@ components:
   pin_count: 3
 - ref: Q33
   value: DFN8-5x6
-  footprint: MOSFET_DFN8
+  footprint: MOSFET_DFN8_5x6
   pin_count: 8
 - ref: Q4
   value: 30N06
@@ -672,11 +674,9 @@ components:
 - ref: R106
   value: 10kohm
   footprint: '0402'
-  pullup: D19.K
 - ref: R108
   value: 10kohm
   footprint: '0402'
-  pullup: D30.A
 - ref: R109
   value: 22kohm
   footprint: '0402'
@@ -703,7 +703,6 @@ components:
 - ref: R115
   value: 22kohm
   footprint: '0402'
-  pulldown: D33.K
 - ref: R118
   value: 470ohm
   footprint: '0402'
@@ -725,19 +724,15 @@ components:
 - ref: R126
   value: 4.7kohm
   footprint: '0402'
-  pulldown: D1.K
 - ref: R127
   value: 4.7kohm
   footprint: '0402'
-  pulldown: D7.K
 - ref: R128
   value: 47kohm
   footprint: '0402'
-  pullup: D17.A
 - ref: R129
   value: 22kohm
   footprint: '0402'
-  pullup: D32.A
 - ref: R13
   value: 10kohm
   footprint: '0402'
@@ -850,11 +845,9 @@ components:
 - ref: R54
   value: 4.7kohm
   footprint: '0402'
-  pulldown: D2.K
 - ref: R55
   value: 4.7kohm
   footprint: '0402'
-  pulldown: D3.K
 - ref: R56
   value: 4.7kohm
   footprint: '0402'
@@ -862,7 +855,6 @@ components:
 - ref: R57
   value: 4.7kohm
   footprint: '0402'
-  pulldown: D5.K
 - ref: R58
   value: 4.7kohm
   footprint: '0402'
@@ -914,19 +906,15 @@ components:
 - ref: R70
   value: 22kohm
   footprint: '0402'
-  pulldown: D12.K
 - ref: R71
   value: 4.7kohm
   footprint: '0402'
-  pulldown: D9.K
 - ref: R72
   value: 4.7kohm
   footprint: '0402'
-  pulldown: D10.K
 - ref: R73
   value: 4.7kohm
   footprint: '0402'
-  pulldown: D11.K
 - ref: R74
   value: 100ohm
   footprint: '0402'
@@ -955,11 +943,9 @@ components:
 - ref: R80
   value: 4.7kohm
   footprint: '0402'
-  pulldown: D15.K
 - ref: R81
   value: 4.7kohm
   footprint: '0402'
-  pulldown: D16.K
 - ref: R82
   value: 10kohm
   footprint: '0402'
@@ -967,19 +953,15 @@ components:
 - ref: R83
   value: 4.7kohm
   footprint: '0402'
-  pullup: D27.A
 - ref: R84
   value: 4.7kohm
   footprint: '0402'
-  pullup: D18.A
 - ref: R85
   value: 4.7kohm
   footprint: '0402'
-  pullup: D25.A
 - ref: R86
   value: 4.7kohm
   footprint: '0402'
-  pullup: D26.A
 - ref: R87
   value: 4.7kohm
   footprint: '0402'
@@ -1070,7 +1052,9 @@ components:
   value: STM32F407ZETx
   footprint: LQFP-144
   pin_count: 144
-  nc_pins: {PA0: '34', PA2: '36', PA3: '37', PA5: '41', PA6: '42', PA7: '43', PB2: '48', PB10: '69', PB11: '70', PA13: '105', PA14: '109', PC12: '113', PD0: '114', PD1: '115', PD2: '116', PD3: '117', PD4: '118', PD5: '119', PD6: '122', PD7: '123', PG9: '124', PG11: '126', PG14: '129'}
+  nc_pins: {PA0: '34', PA2: '36', PA3: '37', PA5: '41', PA6: '42', PA7: '43', PB2: '48', PB10: '69', PB11: '70', PA13: '105',
+    PA14: '109', PC12: '113', PD0: '114', PD1: '115', PD2: '116', PD3: '117', PD4: '118', PD5: '119', PD6: '122', PD7: '123',
+    PG9: '124', PG11: '126', PG14: '129'}
 - ref: U11
   value: TMC2160
   footprint: TMCx160
@@ -1083,12 +1067,12 @@ components:
   nc_pins: {Cout: '6'}
 - ref: U3
   value: TPS54335A
-  footprint: SOIC-8-1EP
+  footprint: SOIC-8-1EP_3.9x4.9
   description: 4.5-V to 28-V Input, 3-A Output, Synchronous Step-Down DC-DC Converter
   pin_count: 9
 - ref: U4
   value: TPS54335A
-  footprint: SOIC-8-1EP
+  footprint: SOIC-8-1EP_3.9x4.9
   description: 4.5-V to 28-V Input, 3-A Output, Synchronous Step-Down DC-DC Converter
   pin_count: 9
 - ref: U5
@@ -1317,26 +1301,6 @@ nets:
   pins: [U1.PD15, U11.STEP]
 - name: /M1Therm
   pins: [C69.2, R88.1, TH2.1, U1.PB1]
-- name: /M3ACS
-  pins: [T28.1, U1.PG1]
-- name: /M3ADiag
-  pins: [T29.1, U1.PG0]
-- name: /M3ADir
-  pins: [T26.1, U1.PF14]
-- name: /M3AEn
-  pins: [T27.1, U1.PF15]
-- name: /M3AStep
-  pins: [T24.1, U1.PF13]
-- name: /M3BCS
-  pins: [T37.1, U1.PE8]
-- name: /M3BDiag
-  pins: [T38.1, U1.PE7]
-- name: /M3BDir
-  pins: [T32.1, U1.PE10]
-- name: /M3BEn
-  pins: [T36.1, U1.PE9]
-- name: /M3BStep
-  pins: [T30.1, U1.PE11]
 - name: /M3Therm
   pins: [T23.1, U1.PF9]
 - name: /M4Therm
@@ -1630,8 +1594,6 @@ nets:
   - R96.2
   - SW3.1@1
   - T19.1
-  - T25.1
-  - T31.1
   - TH1.2
   - TH2.2
   - TH3.2

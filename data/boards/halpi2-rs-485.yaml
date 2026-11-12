@@ -21,6 +21,7 @@ components:
   footprint: '0402'
   lcsc: C52923
   description: Unpolarized capacitor, small symbol
+  decouples: U47
 - ref: C157
   value: 1nF
   footprint: '1808'
@@ -76,11 +77,13 @@ components:
   footprint: SOT-23
   lcsc: C521963
   description: 7V/12V, 600W Asymmetrical TVS Diode Array, SOT-23
+  pin_count: 3
 - ref: D32
   value: SM712
   footprint: SOT-23
   lcsc: C521963
   description: 7V/12V, 600W Asymmetrical TVS Diode Array, SOT-23
+  pin_count: 3
 - ref: D33
   value: SMAJ16CA
   footprint: SMA
@@ -124,48 +127,57 @@ components:
   footprint: L_CommonModeChoke_PCAQ2012B
   lcsc: C2926967
   description: Coupled inductor with ferrite core
+  pin_count: 4
 - ref: FL3
   value: PCAQ2012B-201T030
   footprint: L_CommonModeChoke_PCAQ2012B
   lcsc: C2926967
   description: Coupled inductor with ferrite core
+  pin_count: 4
 - ref: J29
-  value: 1x5 header
-  footprint: PhoenixContact_MCV_1,5_5-G-3.81
+  value: 1x5 3.81mm screw terminal
+  footprint: PhoenixContact_MCV_1,5_5-G-3.81_1x05
   lcsc: C8391
+  pin_count: 5
 - ref: JP2
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm_SMD
   lcsc: C41417360
   description: Jumper, 3-pole, pins 1+2 closed/bridged
+  pin_count: 3
 - ref: JP3
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
   lcsc: C492401
   description: Jumper, 2-pole, closed/bridged
 - ref: JP4
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
   lcsc: C492401
   description: Jumper, 2-pole, open
 - ref: L8
   value: 4.7uH
   footprint: 0805
   lcsc: C394959
+  mpn: CMH201209B4R7MT
 - ref: L9
   value: 4.7uH
   footprint: 0805
   lcsc: C394959
+  mpn: CMH201209B4R7MT
 - ref: PS2
   value: B0505S-1
   footprint: SIP-4_L11.7-W6.0-P2.54_B0305S-1WR3
   lcsc: C7465178
   description: 3W, 1000 VDC isolated DC/DC converter, 5V input, 5V output, SIP
+  mpn: B0505S-1WR3
+  pin_count: 4
 - ref: Q9
   value: 2N7002
   footprint: SOT-23
   lcsc: C8545
   description: 0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23
+  pin_count: 3
 - ref: R103
   value: 10kohm
   footprint: '0402'
@@ -176,11 +188,13 @@ components:
   footprint: '0402'
   lcsc: C25744
   description: Resistor, small symbol
+  pullup: /RS-485/U_EN
 - ref: R105
   value: 10kohm
   footprint: '0402'
   lcsc: C25744
   description: Resistor, small symbol
+  pulldown: /RS-485/EN_PD
 - ref: R106
   value: 10ohm
   footprint: '0402'
@@ -214,13 +228,131 @@ components:
   footprint: SOIC-16
   lcsc: C471605
   description: High-Speed, Robust-EMC Reinforced and Basic Quad-Channel Digital Isolators
+  pin_count: 16
+  nc_pins: {OUTC: '12'}
 - ref: U48
   value: SP3485EN-L
   footprint: SOIC-8
   lcsc: C8963
   description: Industrial 3.3V Low Power Half-Duplex RS-485 Transceiver 10Mbps, SOIC-8
+  mpn: SP3485EN-L/TR
+  pin_count: 8
 - ref: U49
   value: SP3485EN-L
   footprint: SOIC-8
   lcsc: C8963
   description: Industrial 3.3V Low Power Half-Duplex RS-485 Transceiver 10Mbps, SOIC-8
+  mpn: SP3485EN-L/TR
+  pin_count: 8
+  nc_pins: {RO: '1'}
+nets:
+- name: +3.3V
+  pins: [C156.2, R104.2, U47.EN1, U47.VCC1]
+- name: +5V
+  pins: [C154.1, L8.1]
+- name: +5V_RS485
+  pins:
+  - C159.1
+  - C160.1
+  - C161.1
+  - C166.1
+  - L9.2
+  - R110.1
+  - R111.1
+  - U47.EN2
+  - U47.VCC2
+  - U48.VCC
+  - U49.VCC
+  - U49.nRE
+- name: /RS-485/EN
+  pins: [JP4.A, U47.OUTB, U49.DE]
+- name: /RS-485/ENMODE
+  pins: [JP2.C, R103.1]
+- name: /RS-485/EN_PD
+  pins: [JP4.B, R105.2, U48.nRE]
+- name: /RS-485/RX
+  pins: [D35.K, U47.IND, U48.RO]
+- name: /RS-485/RXD_
+  pins: [JP3.B, U47.OUTD]
+- name: /RS-485/RX_A
+  pins: [R107.1, U48.A]
+- name: /RS-485/RX_A_
+  pins: [C164.1, FL2.4, R107.2]
+- name: /RS-485/RX_A_C
+  pins: [F3.1, J29.Pin_2]
+- name: /RS-485/RX_A_C_
+  pins: [D31.A2, D33.A1, F3.2, FL2.3]
+- name: /RS-485/RX_B
+  pins: [R106.1, U48.B]
+- name: /RS-485/RX_B_
+  pins: [C162.1, FL2.1, R106.2]
+- name: /RS-485/RX_B_C
+  pins: [F2.1, J29.Pin_3]
+- name: /RS-485/RX_B_C_
+  pins: [D31.A1, D33.A2, F2.2, FL2.2]
+- name: /RS-485/TX
+  pins: [D36.K, U47.OUTA, U49.DI]
+- name: /RS-485/TX_A
+  pins: [R109.1, U49.A]
+- name: /RS-485/TX_A_
+  pins: [C165.1, FL3.4, R109.2]
+- name: /RS-485/TX_A_C
+  pins: [F5.1, J29.Pin_4]
+- name: /RS-485/TX_A_C_
+  pins: [D32.A2, D34.A1, F5.2, FL3.3]
+- name: /RS-485/TX_B
+  pins: [R108.1, U49.B]
+- name: /RS-485/TX_B_
+  pins: [C163.1, FL3.1, R108.2]
+- name: /RS-485/TX_B_C
+  pins: [F4.1, J29.Pin_5]
+- name: /RS-485/TX_B_C_
+  pins: [D32.A1, D34.A2, F4.2, FL3.2]
+- name: /RS-485/U_EN
+  pins: [Q9.D, R104.1, U47.INB]
+- name: /RS-485/Vin_
+  pins: [C155.1, L8.2, PS2.+Vin]
+- name: /RS-485/Vout_
+  pins: [C158.1, L9.1, PS2.+Vout]
+- name: /RS485.TXD
+  pins: [JP2.A, U47.INA]
+- name: GND
+  pins:
+  - C154.2
+  - C155.2
+  - C156.1
+  - C157.1
+  - PS2.-Vin
+  - Q9.S
+  - U47.GND1@2
+  - U47.GND1@8
+  - U47.INC
+- name: GND_RS485
+  pins:
+  - C157.2
+  - C158.2
+  - C159.2
+  - C160.2
+  - C161.2
+  - C162.2
+  - C163.2
+  - C164.2
+  - C165.2
+  - C166.2
+  - D31.common
+  - D32.common
+  - J29.Pin_1
+  - PS2.-Vout
+  - R105.1
+  - U47.GND2@15
+  - U47.GND2@9
+  - U48.DE
+  - U48.DI
+  - U48.GND
+  - U49.GND
+- name: Net-(D35-A)
+  pins: [D35.A, R110.2]
+- name: Net-(D36-A)
+  pins: [D36.A, R111.2]
+- name: Net-(Q9-G)
+  pins: [Q9.G, R103.2]

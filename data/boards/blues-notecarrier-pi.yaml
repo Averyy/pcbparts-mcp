@@ -3,7 +3,6 @@ slug: blues-notecarrier-pi
 source: blues/note-hardware
 format: kicad7
 description: Raspberry Pi HAT design pattern, M.2 Notecard + NanoSIM
-tags: [robotics]
 outline:
   width_mm: 65.0
   height_mm: 56.5
@@ -17,10 +16,12 @@ components:
 - ref: C1
   value: 22u 25V-X5R
   footprint: '1206'
+  temp_range: "-55\xB0..+85\xB0"
   description: CHIP CAP.CER. 22uF 25V 10% X5R 1206
 - ref: C2
   value: 22u 25V-X5R
   footprint: '1206'
+  temp_range: "-55\xB0..+85\xB0"
   description: CHIP CAP.CER. 22uF 25V 10% X5R 1206
 - ref: C3
   value: 100nF
@@ -59,46 +60,60 @@ components:
 - ref: DSW1
   value: DIP-SW-CHS-01TB
   footprint: DSS-CHS-01TB
+  temp_range: "-40\xB0..+85\xB0"
   description: DIP SWITCH 1P/D BLACK CHS-01TB COPAL SMT
 - ref: DSW2
   value: DIP-SW-CHS-01TB
   footprint: DSS-CHS-01TB
+  temp_range: "-40\xB0..+85\xB0"
   description: DIP SWITCH 1P/D BLACK CHS-01TB COPAL SMT
 - ref: DSW3
   value: DIP-SW-CHS-01TB
   footprint: DSS-CHS-01TB
+  temp_range: "-40\xB0..+85\xB0"
   description: DIP SWITCH 1P/D BLACK CHS-01TB COPAL SMT
 - ref: F1
   value: SF-0603F150-2
   footprint: '0603'
+  temp_range: "-40\xB0..+105\xB0"
   mpn: SF-0603F150-2
 - ref: F2
   value: 3.5A/32V
   footprint: '0603'
   mpn: 0603SFV350F/32-2
+  temp_range: "-55\xB0..+125\xB0"
 - ref: J1
   value: '2223'
   footprint: J-20x2-0254-FDT-SSQX03
   mpn: '2223'
+  temp_range: "-40\xB0..+105\xB0"
   description: STRIP 20P F/D DOPPIA FILA P=2.54 2223 ADAFRUIT
   pin_count: 40
-  nc_pins: {Pin_7: '7', Pin_11: '11', Pin_12: '12', Pin_13: '13', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18', Pin_19: '19', Pin_21: '21', Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_26: '26', Pin_27: '27', Pin_28: '28', Pin_29: '29', Pin_32: '32', Pin_33: '33', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_40: '40'}
+  nc_pins: {Pin_7: '7', Pin_11: '11', Pin_12: '12', Pin_13: '13', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18',
+    Pin_19: '19', Pin_21: '21', Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_26: '26', Pin_27: '27', Pin_28: '28', Pin_29: '29',
+    Pin_32: '32', Pin_33: '33', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_40: '40'}
 - ref: J2
   value: NanoSIM - SF72S006VBAR2500
   footprint: J-NANOSIM-SF72S006VBA_NO-FILL
   mpn: SF72S006VBAR2500
+  temp_range: "-25\xB0..+85\xB0"
   description: "CONN. NANOSIM 8P F/90\xB0 PUSH-PUSH SF72S006VBAR2500 JAE ELECTRONICS SMT"
   pin_count: 9
   nc_pins: {VPP/SWP: C6}
 - ref: J3
   value: MDT420E01001
   footprint: J-75-0050-MOS-M2-E
+  temp_range: "-40\xB0..+80\xB0"
   description: "CONN. M.2 75P M/90\xB0 P=0.5 MDT420E01001 AMPHENOL SMT"
   pin_count: 67
-  nc_pins: {NC1: '1', NC15: '15', NC17: '17', NC19: '19', NC21: '21', NC23: '23', NC32: '32', NC34: '34', NC35: '35', NC36: '36', NC37: '37', NC38: '38', NC41: '41', NC43: '43', NC44: '44', AUX1: '46', NC47: '47', AUX2: '48', NC49: '49', AUX3: '50', AUX4: '52', NC53: '53', NC55: '55', NC59: '59', NC61: '61', RX_P: '62', NC63: '63', TX_P: '64', NC65: '65', NC66: '66', NRST: '67', NC68: '68', NC69: '69', NC75: '75'}
+  nc_pins: {NC1: '1', NC15: '15', NC17: '17', NC19: '19', NC21: '21', NC23: '23', NC32: '32', NC34: '34', NC35: '35', NC36: '36',
+    NC37: '37', NC38: '38', NC41: '41', NC43: '43', NC44: '44', AUX1: '46', NC47: '47', AUX2: '48', NC49: '49', AUX3: '50',
+    AUX4: '52', NC53: '53', NC55: '55', NC59: '59', NC61: '61', RX_P: '62', NC63: '63', TX_P: '64', NC65: '65', NC66: '66',
+    NRST: '67', NC68: '68', NC69: '69', NC75: '75'}
 - ref: J4
   value: 10118192-0002LF
   footprint: J-5-0065-FOS-USB10118192-NOF
+  temp_range: "-30\xB0..+80\xB0"
   mpn: 10118192-0002LF
   description: "CONN. USB F/90\xB0 TYPE MICRO-B C.S. 10118192-0002LF FCI SMT"
   pin_count: 6
@@ -143,6 +158,7 @@ components:
 - ref: R4
   value: 15kohm
   footprint: '0402'
+  temp_range: "-55\xB0..+155\xB0"
   description: CHIP RES. 15K 0402 1/16W 1%
 - ref: R5
   value: 1Mohm
@@ -179,6 +195,7 @@ components:
 - ref: TVS4
   value: ESDLC5V0M5-TP
   footprint: SOT666_NO-SILK
+  temp_range: "-65\xB0..+150\xB0"
   description: DIODO TVS TRANSIL UNIDIR. 20W 5V ESDLC5V0M5-TP SOT563 SMT
   pin_count: 6
 nets:

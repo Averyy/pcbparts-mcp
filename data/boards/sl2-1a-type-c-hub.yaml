@@ -3,6 +3,7 @@ slug: sl2-1a-type-c-hub
 source: Hugoyhu/SL2.1A-Type-C-Hub
 format: kicad8
 description: 4-port USB 2.0 hub (SL2.1A) with USB-C downstream ports, per-port PTC fuses
+tags: [usb]
 key_ics: [SL2.1A]
 outline:
   width_mm: 57.4

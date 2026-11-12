@@ -2,7 +2,7 @@ name: Adafruit ESP32-S3 Feather
 slug: adafruit-esp32-s3-feather
 source: adafruit/Adafruit-Feather-ESP32-S3-PCB
 format: eagle
-description: ESP32-S3-MINI-1, LC709203F fuel gauge
+description: ESP32-S3-MINI-1 (8MB flash, no PSRAM), LC709203F fuel gauge
 tags: [battery-charging, battery-management, led-driver]
 key_ics: [ESP32-S3-MINI-1, LC709203F, MCP73831]
 outline:
@@ -109,7 +109,7 @@ components:
   footprint: '0603'
 - ref: R3
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pulldown: SDA
   pin_count: 8
 - ref: R4
@@ -129,13 +129,11 @@ components:
   pulldown: X3.CC1
 - ref: SW1
   value: KMR2
-  footprint: BTN_KMR2
-  description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
+  footprint: BTN_KMR2_4.6X2.8
   pin_count: 4
 - ref: SW2
   value: KMR2
-  footprint: BTN_KMR2
-  description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
+  footprint: BTN_KMR2_4.6X2.8
   pin_count: 4
 - ref: U1
   value: ESP32-S3-MINI-1
@@ -143,7 +141,8 @@ components:
   mpn: ESP32-S3-MINI-1
   manufacturer: Espressif Systems
   pin_count: 73
-  nc_pins: {IO1: '5', IO2: '6', IO26: '26', IO47: '27', IO40/TDO: '36', IO41/TDI: '37', IO42/TMS: '38', RXD0: '40', IO45_SPIV: '41', IO46_DEBUGOUT: '44'}
+  nc_pins: {IO1: '5', IO2: '6', IO26: '26', IO47: '27', IO40/TDO: '36', IO41/TDI: '37', IO42/TMS: '38', RXD0: '40', IO45_SPIV: '41',
+    IO46_DEBUGOUT: '44'}
 - ref: U2
   value: AP2112/RT9080-3.3
   footprint: SOT-23-5
@@ -154,6 +153,7 @@ components:
   value: MCP73831
   footprint: SOT-23-5
   description: MCP73831/2 LIPO Charger
+  mpn: MCP73831T-2ACI/OT
   pin_count: 5
 - ref: U4
   value: BME280
@@ -203,7 +203,7 @@ nets:
 - name: A5
   pins: [JP1.7, U1.IO8]
 - name: BOOT0
-  pins: [SW1.S, SW1.S1, TP1.P$1, U1.IO0_BOOT0]
+  pins: [SW1.S, SW1.S1, U1.IO0_BOOT0]
 - name: D+
   pins: [U1.IO20/D+, X3.D+]
 - name: D-

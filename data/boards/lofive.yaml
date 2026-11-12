@@ -1,9 +1,9 @@
 name: LoFive
 slug: lofive
 source: mwelling/lofive
-format: kicad7
+format: kicad9
 description: SiFive FE310 RISC-V MCU (RV32IMAC 320MHz), IS25LP128 128Mbit QSPI flash
-tags: [level-shifting, power-supply]
+tags: [power-supply]
 key_ics: [IS25LP128, SPX3819M5-L-3-3, SN74LVC1G07]
 outline:
   width_mm: 35.56
@@ -77,12 +77,12 @@ components:
   footprint: '0402'
   decouples: U5
 - ref: J1
-  value: 1x14 header
-  footprint: 1X14
+  value: 1x14 2.54mm header
+  footprint: 1X14_P2.54mm
   pin_count: 14
 - ref: J2
-  value: 1x14 header
-  footprint: 1X14
+  value: 1x14 2.54mm header
+  footprint: 1X14_P2.54mm
   pin_count: 14
 - ref: R1
   value: 100ohm
@@ -116,12 +116,14 @@ components:
   footprint: SW_SPST_EVQP2
 - ref: U1
   value: E310
-  footprint: UQFN-48-1EP
+  footprint: UQFN-48-1EP_6x6
+  mpn: E310-G002
   pin_count: 49
   nc_pins: {AON_PMU_OUT_1: '17', AON_PSD_LFALTCLK: '20', AON_PSD_LFCLKSEL: '21'}
 - ref: U2
   value: IS25LP128
   footprint: SOIJ-8
+  mpn: IS25LP128-JBLE
   pin_count: 8
 - ref: U3
   value: SPX3819M5-L-3-3

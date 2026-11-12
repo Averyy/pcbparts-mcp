@@ -138,6 +138,8 @@ Sierra Circuits' recommended ranges [4]; dense small boards differ.
 
 ### Related Rules
 
+- `guides/assembly-dfa.md` -- Polarity, tooling holes, QFN/BGA inspection and second-reflow qualification.
+
 - `guides/pcb-layout.md` -- Annular ring breakout probability, via aspect ratio, trace sizing
 - `guides/test-debug.md` -- Solder mask on test points, ICT pad sizing
 

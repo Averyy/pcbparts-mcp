@@ -113,6 +113,12 @@ class TestStore:
         assert query_key("LM358 P") == "lm358 p"
 
 
+@pytest.fixture
+def no_retry_wait():
+    with patch("pcbparts_mcp.cse.CSE_STATUS_RETRY_DELAY", 0):
+        yield
+
+
 class TestClient:
     async def test_search_survives_a_restart(self, tmp_path):
         """A new client (a restart) answers from the store without asking CSE."""
@@ -141,10 +147,43 @@ class TestClient:
         await client.search(" lm358p ")
         assert len(client.urls) == 1
 
-    async def test_failed_search_not_stored(self, tmp_path):
+    async def test_failed_search_not_stored(self, tmp_path, no_retry_wait):
         client = client_with(tmp_path / "cse.db", lambda url: response({"status": "Error"}))
-        await client.search("LM358P")
+        with pytest.raises(ValueError, match="no usable answer"):
+            await client.search("LM358P")
+        assert len(client.urls) == 2
         assert CSEStore(tmp_path / "cse.db").counts()["searches"] == 0
+
+    @pytest.mark.parametrize("status", ["F0R0", "R0F0"])
+    async def test_a_part_found_only_on_the_second_ask_is_returned(self, tmp_path, no_retry_wait, status):
+        """GD32F103CBT6 and MP2315GJ-Z came back this way, and read as "no parts found"."""
+        answers = iter([response({"status": status, "partCount": 3, "parts": [part(9)]}),
+                        response({"status": "Success", "partCount": 0, "parts": [part(1)]})])
+        client = client_with(tmp_path / "cse.db", lambda url: next(answers))
+        result = await client.search("GD32F103CBT6")
+        assert len(client.urls) == 2
+        assert [p["cse_part_id"] for p in result["results"]] == [1]  # the first answer's parts are dropped
+        assert CSEStore(tmp_path / "cse.db").counts()["searches"] == 1
+
+    async def test_unrelated_parts_in_a_first_answer_are_not_returned(self, tmp_path, no_retry_wait):
+        """blorptastic9: status F0R0 and 10 unrelated parts, then Success and none."""
+        answers = iter([response({"status": "F0R0", "partCount": 700, "parts": [part(9)]}),
+                        response({"status": "Success", "partCount": 0, "parts": []})])
+        client = client_with(tmp_path / "cse.db", lambda url: next(answers))
+        assert (await client.search("blorptastic9"))["results"] == []
+
+    async def test_a_success_answer_is_not_asked_twice(self, tmp_path, no_retry_wait):
+        client = client_with(tmp_path / "cse.db", lambda url: response({"status": "Success", "parts": [part(1)]}))
+        await client.search("LM358P")
+        assert len(client.urls) == 1
+
+    async def test_kicad_lookup_does_not_report_a_retried_part_as_missing(self, tmp_path, no_retry_wait):
+        answers = iter([response({"status": "R0F0", "parts": []}),
+                        response({"status": "Success", "partCount": 1, "parts": [part(1)]})])
+        client = client_with(tmp_path / "cse.db", lambda url: response(content=kicad_zip()) if "model.php" in url else next(answers))
+        with patch("pcbparts_mcp.cse.CSE_USER", "u"), patch("pcbparts_mcp.cse.CSE_PASS", "p"):
+            result = await client.get_kicad(query="P1")
+        assert "error" not in result and result["kicad_footprint"] == "(module P1)"
 
     async def test_kicad_files_survive_a_restart(self, tmp_path):
         search = {"status": "Success", "partCount": 1, "parts": [part(1)]}

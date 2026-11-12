@@ -56,6 +56,12 @@ jobs:
             echo "  $NAME: $COUNT"
           done
 
+      # Validate curated IDs before publishing any source changes. Fresh data
+      # from good sources can still land when a different source is stale,
+      # provided the complete catalog builds; freshness below gates deployment.
+      - name: Build sensor catalog (gate commit)
+        run: python scripts/check_scrape_status.py --build-only
+
       - name: Commit and push data files
         id: commit
         run: |

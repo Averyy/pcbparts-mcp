@@ -1,9 +1,9 @@
 name: Soldered Inkplate 10
 slug: soldered-inkplate-10
 source: SolderedElectronics/Soldered-Inkplate-10-hardware-design
-format: kicad7
+format: kicad6
 description: ESP32-WROVER, TPS65186 e-ink driver
-tags: [display, power-supply, robotics, rtc]
+tags: [display, power-supply, rtc]
 key_ics: [ESP32-WROVER, TPS65186]
 outline:
   width_mm: 224.8
@@ -18,39 +18,51 @@ components:
 - ref: C1
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C10
   value: 10uF
   footprint: '0603'
+  mpn: GRM188R61E106KA73J
 - ref: C11
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C12
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C13
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C14
   value: 2.2uF
   footprint: '0603'
+  mpn: GRM188R61E225MA12D
 - ref: C15
   value: 2.2uF
   footprint: '0603'
+  mpn: GRM188R61E225MA12D
 - ref: C16
   value: 10nF
   footprint: '0603'
+  mpn: AC0603KRX7R8BB103
 - ref: C17
   value: 10nF
   footprint: '0603'
+  mpn: AC0603KRX7R8BB103
 - ref: C18
   value: 100nF
   footprint: '0603'
+  mpn: AC0603KRX7R8BB104
 - ref: C19
   value: 100nF
   footprint: '0603'
+  mpn: AC0603KRX7R8BB104
 - ref: C2
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C20
   value: 100nF
   footprint: '0603'
@@ -88,6 +100,7 @@ components:
 - ref: C3
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C30
   value: 100nF
   footprint: '0603'
@@ -124,6 +137,7 @@ components:
 - ref: C4
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C40
   value: 100pF
   footprint: '0603'
@@ -158,6 +172,7 @@ components:
 - ref: C5
   value: 10uF
   footprint: '0603'
+  mpn: GRM188R61E106KA73J
   decouples: U1
 - ref: C50
   value: 100nF
@@ -166,34 +181,44 @@ components:
 - ref: C51
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C52
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C53
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C54
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C55
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C56
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C6
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C7
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: C8
   value: 10uF
   footprint: '0603'
+  mpn: GRM188R61E106KA73J
   decouples: U1
 - ref: C9
   value: 4.7uF
   footprint: 0805
+  mpn: TMK212AB7475KG-T
 - ref: D1
   value: CUS10F30,H3F
   footprint: SOD-323-2
@@ -268,34 +293,36 @@ components:
 - ref: K11
   value: microSD socket
   footprint: HYC77-TF09-200
+  mpn: HYC77-TF09-200
   pin_count: 8
   nc_pins: {X@1: '1', X@8: '8'}
 - ref: K12
   value: 33-pin FFC
   footprint: SFV33R-1STE9HLF
+  mpn: SFV33R-1STBE1HLF
   pin_count: 34
   nc_pins: {'2': '2', '4': '4', '6': '6', '21': '21', '23': '23', '25': '25', '27': '27'}
 - ref: K13
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K14
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K15
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K16
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K17
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K18
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K19
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K2
   value: U262-161N-4BVC11
   footprint: U262-161N-4BVC11
@@ -303,131 +330,133 @@ components:
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: K20
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K21
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K22
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K23
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K24
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K25
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K26
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K27
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K28
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K29
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K3
   value: easyC-SMD
   footprint: easyC-connector
   pin_count: 5
 - ref: K30
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K31
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K32
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K33
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K34
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K35
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K36
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K37
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K38
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K39
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K4
   value: JST-2pin-SMD
   footprint: JST-2pin-SMD
 - ref: K40
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K41
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K42
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K43
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K44
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K45
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K46
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K47
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K48
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K49
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K5
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K50
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K51
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K52
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K6
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K7
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K8
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K9
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: L1
   value: 4.7uH
   footprint: '1515'
+  mpn: LQH44PN4R7MP0L
 - ref: L2
   value: 2.2uH
   footprint: NR4012
+  mpn: NR4012T2R2M
 - ref: Q10
   value: P-channel MOSFET
   footprint: SOT-23-3
@@ -485,6 +514,7 @@ components:
 - ref: R14
   value: 47.5kohm
   footprint: '0603'
+  mpn: RC0603FR-0747K5L
   pulldown: /POWER/VDDH_FB
 - ref: R15
   value: 1Mohm
@@ -492,6 +522,7 @@ components:
 - ref: R16
   value: 52.3kohm
   footprint: '0603'
+  mpn: RC0603FR-0752K3L
   pulldown: /POWER/VEE_FB
 - ref: R17
   value: 5.1kohm
@@ -534,7 +565,6 @@ components:
 - ref: R28
   value: 1kohm
   footprint: '0603'
-  pullup: D8.A
 - ref: R29
   value: 510kohm
   footprint: '0603'
@@ -542,6 +572,7 @@ components:
 - ref: R3
   value: 43kohm
   footprint: '0603'
+  mpn: RC0603FR-0743KL
   pulldown: /POWER/TS
 - ref: R30
   value: 100kohm
@@ -771,7 +802,6 @@ nets:
   - C46.2
   - C47.2
   - C48.2
-  - C49.+
   - C50.2
   - D11.A
   - JP1.2
@@ -780,8 +810,6 @@ nets:
   - K47.1
   - K5.1
   - K50.1
-  - PAD4.1
-  - PAD5.1
   - Q10.S
   - R1.2
   - R20.2
@@ -879,7 +907,6 @@ nets:
   - C21.1
   - C22.1
   - C23.1
-  - C24.-
   - C25.1
   - C26.1
   - C27.1
@@ -906,7 +933,6 @@ nets:
   - C46.1
   - C47.1
   - C48.1
-  - C49.-
   - C5.1
   - C50.1
   - C51.1
@@ -945,9 +971,6 @@ nets:
   - K52.1
   - K8.1
   - L1.1
-  - PAD2.1
-  - PAD8.1
-  - PAD9.1
   - Q4.S
   - Q8.E
   - R10.1
@@ -957,7 +980,6 @@ nets:
   - R16.1
   - R17.2
   - R18.2
-  - R19.1
   - R2.1
   - R25.1
   - R3.1
@@ -999,9 +1021,7 @@ nets:
 - name: GPIO15
   pins: [JP3.3, K38.1]
 - name: GPIO_0
-  pins: [Q1.D, Q3.C, R21.1, R46.1, U10.IO0]
-- name: GPIO_0_MOSFET
-  pins: [Q1.G, R19.2, U9.P1_0]
+  pins: [Q3.C, R21.1, R46.1, U10.IO0]
 - name: GPIO_36
   pins: [K37.1, R41.1, SW3.2, U10.SENSOR_VP]
 - name: GPIO_39
@@ -1071,7 +1091,7 @@ nets:
 - name: Net-(K9-Pad1)
   pins: [K9.1, R37.2]
 - name: Net-(Q1-Pad2)
-  pins: [Q1.S, R20.1, R21.2]
+  pins: [R20.1, R21.2]
 - name: Net-(Q2-Pad1)
   pins: [Q2.B, R26.1]
 - name: Net-(Q3-Pad1)
@@ -1147,7 +1167,7 @@ nets:
 - name: STAT
   pins: [D8.K, U4.STAT]
 - name: SW_IN
-  pins: [D10.C, Q7.S, Q9.S, R34.1, U5.VDD]
+  pins: [D10.C, Q7.S, Q9.S, U5.VDD]
 - name: SW_OUT_D
   pins: [Q6.G, Q9.G, R38.2, U5.OUTD]
 - name: TXD
@@ -1156,11 +1176,9 @@ nets:
   pins: [C22.2, U3.V3]
 - name: VBAT
   pins:
-  - C24.+
   - C25.2
   - K1.BAT
   - K4.+
-  - PAD1.1
   - Q5.S
   - Q7.D
   - R29.2
@@ -1207,9 +1225,7 @@ nets:
   - C8.2
   - K1.VIN
   - L2.1
-  - PAD3.1
   - Q9.D
-  - R34.2
   - U1.VIN
   - U1.VIN_P
   - U6.EN

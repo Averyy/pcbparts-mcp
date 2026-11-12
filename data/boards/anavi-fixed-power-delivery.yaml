@@ -53,8 +53,8 @@ components:
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J2
-  value: 1x2 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-2
+  value: 1x2 5.00mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2_1x02
 - ref: Q1
   value: DMP3013SFV
   footprint: Diodes_PowerDI3333-8
@@ -101,9 +101,10 @@ components:
   pullup: U1.VBUS_MIN
 - ref: U1
   value: CYPD3177
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
   pin_count: 25
-  nc_pins: {SAFE_PWR_EN: '4', HPI_INT: '7', GPIO_1: '8', FLIP: '10', VDC_OUT: '11', HPI_SDA: '12', HPI_SCL: '13', DNU1: '20', DNU2: '21'}
+  nc_pins: {SAFE_PWR_EN: '4', HPI_INT: '7', GPIO_1: '8', FLIP: '10', VDC_OUT: '11', HPI_SDA: '12', HPI_SCL: '13', DNU1: '20',
+    DNU2: '21'}
 nets:
 - name: +3V3
   pins:

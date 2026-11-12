@@ -20,160 +20,190 @@ components:
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
   decouples: IC1
 - ref: C10
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
 - ref: C11
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
 - ref: C12
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
 - ref: C13
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
 - ref: C14
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C15
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
   decouples: IC4
 - ref: C16
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
   decouples: IC4
 - ref: C17
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
   decouples: IC4
 - ref: C18
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C19
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
 - ref: C2
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
   decouples: IC1
 - ref: C20
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
   decouples: IC4
 - ref: C21
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C22
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C23
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C24
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C25
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C26
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C27
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C28
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C29
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C3
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: C30
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
 - ref: C31
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
 - ref: C32
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
   decouples: IC8
 - ref: C33
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
   decouples: IC8
 - ref: C34
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
   decouples: U3
 - ref: C35
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
   decouples: U3
 - ref: C37
   value: 220uF
   footprint: CAPAE830X1050N
   height: '10.5'
+  mouser: 80-EEV227M035A9MAA
   manufacturer: KEMET
   mpn: EEV227M035A9MAA
   decouples: IC3
@@ -182,38 +212,45 @@ components:
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C102K3GAC
+  mouser: 80-C0603C102K3G
 - ref: C5
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
   decouples: IC3
 - ref: C6
   value: 1nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C102K3GAC
+  mouser: 80-C0603C102K3G
 - ref: C7
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
   decouples: IC1
 - ref: C8
   value: 10uF
   footprint: '0603'
   manufacturer: Murata Electronics
   mpn: GRM188R6YA106MA73J
+  mouser: 81-GRM188R6YA106MA3J
   decouples: IC1
 - ref: C9
   value: 100nF
   footprint: '0603'
   manufacturer: KEMET
   mpn: C0603C104J5RACTU
+  mouser: 80-C0603C104J5R
 - ref: D1
   value: BAV199WQ-7
-  footprint: SOT-3
+  footprint: SOT65P210X110-3N
   height: '1.1'
+  mouser: 621-BAV199WQ-7
   manufacturer: Diodes Incorporated
   mpn: BAV199WQ-7
   pin_count: 3
@@ -221,13 +258,15 @@ components:
   value: PMEG6020ER
   footprint: PMEG6020ER115
   height: '1.1'
+  mouser: 771-PMEG6020ER-115
   manufacturer: Nexperia
   mpn: PMEG6020ER,115
   description: Nexperia PMEG6020ER,115 SMT Schottky Diode, 60V 2A, 2-Pin SOD-123W
 - ref: D2
   value: BAV199WQ-7
-  footprint: SOT-3
+  footprint: SOT65P210X110-3N
   height: '1.1'
+  mouser: 621-BAV199WQ-7
   manufacturer: Diodes Incorporated
   mpn: BAV199WQ-7
   pin_count: 3
@@ -235,42 +274,49 @@ components:
   value: SMF4L24AT1G
   footprint: SODFL3619X98N
   height: '0.98'
+  mouser: 576-SMF4L24AT1G
   manufacturer: LITTELFUSE
   mpn: SMF4L24AT1G
 - ref: D4
   value: SMF4L24AT1G
   footprint: SODFL3619X98N
   height: '0.98'
+  mouser: 576-SMF4L24AT1G
   manufacturer: LITTELFUSE
   mpn: SMF4L24AT1G
 - ref: D5
   value: BAT54S
-  footprint: SOT-3
+  footprint: SOT95P230X110-3N
   manufacturer: Nexperia
   mpn: BAT54S,215
+  mouser: 771-BAT54S-T/R
   pin_count: 3
 - ref: D6
   value: BAT54S
-  footprint: SOT-3
+  footprint: SOT95P230X110-3N
   manufacturer: Nexperia
   mpn: BAT54S,215
+  mouser: 771-BAT54S-T/R
   pin_count: 3
 - ref: D7
   value: BAT54S
-  footprint: SOT-3
+  footprint: SOT95P230X110-3N
   manufacturer: Nexperia
   mpn: BAT54S,215
+  mouser: 771-BAT54S-T/R
   pin_count: 3
 - ref: D8
   value: BAT54S
-  footprint: SOT-3
+  footprint: SOT95P230X110-3N
   manufacturer: Nexperia
   mpn: BAT54S,215
+  mouser: 771-BAT54S-T/R
   pin_count: 3
 - ref: D9
   value: PMEG6020ER
   footprint: PMEG6020ER115
   height: '1.1'
+  mouser: 771-PMEG6020ER-115
   manufacturer: Nexperia
   mpn: PMEG6020ER,115
   description: Nexperia PMEG6020ER,115 SMT Schottky Diode, 60V 2A, 2-Pin SOD-123W
@@ -278,53 +324,61 @@ components:
   value: 0154007.DR
   footprint: 0154100DR
   height: '3.81'
+  mouser: 576-0154007.DR
   manufacturer: LITTELFUSE
   mpn: 0154007.DR
 - ref: F2
   value: SF-2410FP100W-2
   footprint: SF2410FP100W2
   height: '2.36'
+  mouser: 652-SF-2410FP100W-2
   manufacturer: Bourns
   mpn: SF-2410FP100W-2
 - ref: FB1
-  value: BLM18HE601SN1D
+  value: 600ohm
   footprint: '0603'
   height: '0.95'
+  mouser: 81-BLM18HE601SN1D
   manufacturer: Murata Electronics
   mpn: BLM18HE601SN1D
   description: BLM18_N1D Series EMI Suppression Filter 600+/-25% at 100MHz 800mA @85
 - ref: IC1
   value: TLV76733DRVR
-  footprint: SON-7
+  footprint: SON65P200X200X80-7N
   height: '0.8'
+  mouser: 595-TLV76733DRVR
   manufacturer: Texas Instruments
   mpn: TLV76733DRVR
   pin_count: 7
 - ref: IC2
   value: OPA2387DSGT
-  footprint: SON-9
+  footprint: SON50P200X200X80-9N
   height: '0.8'
+  mouser: 595-OPA2387DSGT
   manufacturer: Texas Instruments
   mpn: OPA2387DSGT
   pin_count: 9
 - ref: IC3
   value: LMR54406DBVR
-  footprint: SOT-6
+  footprint: SOT95P280X145-6N
   height: '1.45'
+  mouser: 595-LMR54406DBVR
   manufacturer: Texas Instruments
   mpn: LMR54406DBVR
   pin_count: 6
 - ref: IC4
   value: STM32G431CBT6
-  footprint: QFP-48
+  footprint: QFP50P900X900X160-48N
   height: '1.6'
+  mouser: 511-STM32G431CBT6
   manufacturer: STMicroelectronics
   mpn: STM32G431CBT6
   pin_count: 48
 - ref: IC5
   value: TPD4E1U06DBVR
-  footprint: SOT-6
+  footprint: SOT95P280X145-6N
   height: '1.45'
+  mouser: 595-TPD4E1U06DBVR
   manufacturer: Texas Instruments
   mpn: TPD4E1U06DBVR
   pin_count: 6
@@ -333,20 +387,23 @@ components:
   value: STUSB4500QTR
   footprint: QFN50P400X400X100-25N-D
   height: '1'
+  mouser: 511-STUSB4500QTR
   manufacturer: STMicroelectronics
   mpn: STUSB4500QTR
   pin_count: 18
 - ref: IC7
   value: MAX16171ATA_VY+T
-  footprint: SON-9
+  footprint: SON50P300X200X80-9N
   height: '0.8'
+  mouser: 700-MAX16171ATA/VY+T
   manufacturer: Analog Devices
   mpn: MAX16171ATA/VY+T
   pin_count: 7
 - ref: IC8
   value: LTC4440AHMS8E
-  footprint: SOP-9
+  footprint: SOP65P490X110-9N
   height: '1.1'
+  mouser: 584-C4440AHMS8E-5PBF
   manufacturer: Analog Devices
   mpn: LTC4440AHMS8E-5#PBF
   description: Driver 1.1A 1-OUT High Side Full Brdg Non-Inv Automotive 8-Pin MSOP EP Tube
@@ -354,8 +411,9 @@ components:
   nc_pins: {NC: '5'}
 - ref: IC9
   value: INA281A5QDBVRQ1
-  footprint: SOT-5
+  footprint: SOT95P280X145-5N
   height: '1.45'
+  mouser: 595-INA281A5QDBVRQ1
   manufacturer: Texas Instruments
   mpn: INA281A5QDBVRQ1
   pin_count: 5
@@ -363,6 +421,7 @@ components:
   value: USB4110-GF-A
   footprint: USB4110GFA
   height: '3.26'
+  mouser: 640-USB4110-GF-A
   manufacturer: GCT (GLOBAL CONNECTOR TECHNOLOGY)
   mpn: USB4110-GF-A
   pin_count: 17
@@ -371,19 +430,22 @@ components:
   value: '691243110009'
   footprint: '691243110009'
   height: '9.2'
+  mouser: 710-691243110009
   manufacturer: Wurth Elektronik
   mpn: '691243110009'
   pin_count: 9
 - ref: J4
   value: '61300611821'
-  footprint: RHDR6W97P0X254
+  footprint: RHDR6W97P0X254_1X6
   height: '8.65'
+  mouser: 710-61300611821
   manufacturer: Wurth Elektronik
   mpn: '61300611821'
   pin_count: 6
 - ref: J5
   value: TSW-102-07-T-S
   footprint: TSW-102-XX-YY-S
+  mouser: 200-TSW10207TS
   manufacturer: SAMTEC
   mpn: TSW-102-07-T-S
   pin_count: 2
@@ -391,6 +453,7 @@ components:
 - ref: J6
   value: TSW-102-07-T-S
   footprint: TSW-102-XX-YY-S
+  mouser: 200-TSW10207TS
   manufacturer: SAMTEC
   mpn: TSW-102-07-T-S
   pin_count: 2
@@ -398,6 +461,7 @@ components:
 - ref: J7
   value: TSW-108-07-T-S
   footprint: TSW-108-XX-YY-S
+  mouser: 200-TSW10807TS
   manufacturer: SAMTEC
   mpn: TSW-108-07-T-S
   pin_count: 8
@@ -406,18 +470,21 @@ components:
   value: 15uH
   footprint: INDPM7366X300N
   height: '3'
+  mouser: 652-SRP7028CC-150M
   manufacturer: Bourns
   mpn: SRP7028CC-150M
 - ref: LS1
   value: CMI-9653S-SMT-TR
   footprint: CMI9653SSMTTR
   height: '5'
+  mouser: 490-CMI-9653S-SMT-TR
   manufacturer: CUI Devices
   mpn: CMI-9653S-SMT-TR
   description: Audio Indicators & Alerts Buzzer 9.6mm sq 2.7kHz 3V SMT
 - ref: Q1
   value: STL9P3LLH6
   footprint: STL9P3LLH6
+  mouser: 511-STL9P3LLH6
   manufacturer: STMicroelectronics
   mpn: STL9P3LLH6
   pin_count: 3
@@ -425,15 +492,18 @@ components:
   value: STL10N3LLH5
   footprint: STL10N3LLH5
   height: '1'
+  mouser: 511-STL10N3LLH5
   manufacturer: STMicroelectronics
   mpn: STL10N3LLH5
   pin_count: 3
 - ref: Q3
   value: 2N7002NXAKR
-  footprint: SOT-3
+  footprint: SOT95P230X110-3N
   height: '1.1'
   manufacturer: Nexperia
   mpn: 2N7002NXAKR
+  mouser: 771-2N7002NXAKR
+  arrow: 2N7002NXAKR
   description: NEXPERIA - 2N7002NXAKR - MOSFET Transistor, Trench, N Channel, 190 mA, 60 V, 3
   pin_count: 3
 - ref: R1
@@ -441,188 +511,222 @@ components:
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-H3ED1501V
+  mouser: 667-ERJ-H3ED1501V
 - ref: R10
   value: 220kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RED2203V
+  mouser: 667-ERJ-3RED2203V
 - ref: R11
   value: 22kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-UP3J223V
+  mouser: 667-ERJ-UP3J223V
   pulldown: IC3.FB
 - ref: R12
   value: 22kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-UP3J223V
+  mouser: 667-ERJ-UP3J223V
 - ref: R13
   value: 100ohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-P03F1000V
+  mouser: 667-ERJ-P03F1000V
 - ref: R14
   value: 1.5kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-H3ED1501V
+  mouser: 667-ERJ-H3ED1501V
 - ref: R15
   value: 22kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-UP3J223V
+  mouser: 667-ERJ-UP3J223V
 - ref: R16
   value: 100ohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-P03F1000V
+  mouser: 667-ERJ-P03F1000V
 - ref: R17
   value: 1.5kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-H3ED1501V
+  mouser: 667-ERJ-H3ED1501V
 - ref: R18
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pullup: /S_sense
 - ref: R19
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pullup: /H_sense2
 - ref: R2
   value: 360kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RED3603V
+  mouser: 667-ERJ-3RED3603V
   pulldown: IC2.+@3
 - ref: R20
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pullup: /H_sense1
 - ref: R21
   value: 22kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-UP3J223V
+  mouser: 667-ERJ-UP3J223V
   pullup: R24.2
 - ref: R22
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
 - ref: R23
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pullup: Q3.D
 - ref: R24
   value: 22kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-UP3J223V
+  mouser: 667-ERJ-UP3J223V
 - ref: R25
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
 - ref: R26
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pullup: /SCL
 - ref: R27
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pullup: /SDA
 - ref: R28
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
 - ref: R29
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
 - ref: R3
   value: 220kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RED2203V
+  mouser: 667-ERJ-3RED2203V
   pulldown: IC2.+@5
 - ref: R30
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pulldown: /SW1
 - ref: R31
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pulldown: /SW2
 - ref: R32
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pulldown: /SW3
 - ref: R33
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pulldown: C24.1
 - ref: R34
   value: 100ohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-P03F1000V
+  mouser: 667-ERJ-P03F1000V
 - ref: R35
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pullup: /ENC_B
 - ref: R36
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pullup: /ENC_A
 - ref: R37
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pulldown: Q3.G
 - ref: R38
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pulldown: /Heater
 - ref: R4
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
 - ref: R42
   value: 5mohm
   footprint: RESC6432X89N
   height: '0.889'
+  mouser: 71-WSLP25125L000FEA
   manufacturer: Vishay
   mpn: WSLP25125L000FEA
   description: Current Sense Resistors - SMD 3watts .005ohms 1%
@@ -631,85 +735,107 @@ components:
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-P03F1000V
+  mouser: 667-ERJ-P03F1000V
 - ref: R44
   value: 1Mohm
   footprint: 0805
   manufacturer: Panasonic
   mpn: ERJ-6GEYJ105V
+  mouser: 667-ERJ-6GEYJ105V
 - ref: R45
   value: 100mohm
   footprint: 0805
   manufacturer: Panasonic
   mpn: ERJ-6DSFR10V
+  mouser: 667-ERJ-6DSFR10V
 - ref: R46
   value: 100ohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-P03F1000V
+  mouser: 667-ERJ-P03F1000V
 - ref: R47
   value: 100ohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-P03F1000V
+  mouser: 667-ERJ-P03F1000V
 - ref: R48
   value: 100ohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-P03F1000V
+  mouser: 667-ERJ-P03F1000V
 - ref: R49
   value: 10ohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RED10R0V
+  mouser: 667-ERJ-3RED10R0V
 - ref: R5
   value: 1.5kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-H3ED1501V
+  mouser: 667-ERJ-H3ED1501V
 - ref: R50
   value: 10ohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RED10R0V
+  mouser: 667-ERJ-3RED10R0V
 - ref: R6
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RBD4701V
+  mouser: 667-ERJ-3RBD4701V
   pulldown: IC2.-@6
 - ref: R7
   value: 360kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RED3603V
+  mouser: 667-ERJ-3RED3603V
   pullup: IC3.FB
 - ref: R8
   value: 360kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RED3603V
+  mouser: 667-ERJ-3RED3603V
   pullup: IC3.FB
 - ref: R9
   value: 360kohm
   footprint: '0603'
   manufacturer: Panasonic
   mpn: ERJ-3RED3603V
+  mouser: 667-ERJ-3RED3603V
 - ref: S2
   value: ADTSM644RVTR
   footprint: ADTSM644RVTR
   height: '7.3'
+  mouser: 642-ADTSM644RVTR
   manufacturer: Apem
   mpn: ADTSM644RVTR
 - ref: S3
   value: ADTSM644RVTR
   footprint: ADTSM644RVTR
   height: '7.3'
+  mouser: 642-ADTSM644RVTR
   manufacturer: Apem
   mpn: ADTSM644RVTR
+- ref: TFT1
+  value: Adafruit_240x320_TFT
+  footprint: Adafruit_240x320
+  manufacturer: Adafruit
+  mpn: '4311'
+  mouser: 485-4311
 - ref: U2
   value: rotary encoder
   footprint: PEC11J9215FS0015
   height: '25'
+  mouser: 652-PEC11J9215FS0015
   manufacturer: Bourns
   mpn: PEC11J-9215F-S0015
   pin_count: 6
@@ -718,6 +844,7 @@ components:
   footprint: BSC014N04LS
   manufacturer: Infineon Technologies
   mpn: BSC014N04LSATMA1
+  mouser: 726-BSC014N04LSATMA1
   pin_count: 3
 nets:
 - name: +3.3V
@@ -1588,6 +1715,9 @@ positions:
   x: 196.25
   y: 135.4
   rot: -90.0
+- ref: TFT1
+  x: 180.52
+  y: 126.64
 - ref: U2
   x: 170.25
   y: 135.4

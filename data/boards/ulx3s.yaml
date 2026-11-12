@@ -3,7 +3,7 @@ slug: ulx3s
 source: emard/ulx3s
 format: kicad_legacy
 description: ECP5 FPGA with GPDI (DVI) output, SerDes
-tags: [fpga, rf-sdr, video, wifi]
+tags: [fpga, video, wifi]
 key_ics: [ESP32, ECP5]
 outline:
   width_mm: 93.98
@@ -28,6 +28,7 @@ components:
   mpn: PTS645SL50SMTR92 LFS
   mouser: 611-PTS645SL50SMTR92
   digikey: CKN9088CT-ND
+  newark: 15N4500
   lcsc: C285463
 - ref: B1
   value: PTS645
@@ -55,17 +56,19 @@ components:
   mpn: PTS645SL50SMTR92 LFS
 - ref: BAT1
   value: CR1225
-  footprint: Keystone_3000
+  footprint: Keystone_3000_1x12
   mpn: 3000TR
   mouser: 614-SMTM1225.TR
   digikey: 952-1662-1-ND
   lcsc: C238097
+  newark: 65T3841
 - ref: C1
   value: 22uF
   footprint: 0805
   mpn: CC0805ZKY5V5BB226
   mouser: 81-GRM21BR61A226ME1L
   digikey: 1276-2413-1-ND
+  newark: 08P5169
   lcsc: C29277
   decouples: U4
 - ref: C10
@@ -83,6 +86,7 @@ components:
   mpn: CC0805MRX5R6BB225
   mouser: 187-CL21B225KOFNNNG
   digikey: 587-5918-1-ND
+  newark: 73AH0064
   lcsc: C87995
 - ref: C14
   value: 220nF
@@ -90,6 +94,7 @@ components:
   mpn: CC0603KRX7R8BB224
   mouser: 603-CC603KRX7R6BB224
   digikey: 1276-1112-1-ND
+  newark: 82AC9347
   lcsc: C326805
 - ref: C15
   value: 22uF
@@ -113,9 +118,8 @@ components:
 - ref: C2
   value: 100pF
   footprint: '0603'
-  mpn: CS0603KRX7R9BB471
+  mpn: CC0603JRNPO9BN101
   mouser: 581-06035A101JAT4A
-  digikey: 311-4078-1-ND
   lcsc: C14665
 - ref: C20
   value: 2.2uF
@@ -140,6 +144,7 @@ components:
   mpn: CC0603JRX7R8BB223
   mouser: 603-CC603KRX7R7BB223
   digikey: 587-1238-1-ND
+  newark: 82AC9346
   lcsc: C107137
   decouples: U1
 - ref: C26
@@ -271,10 +276,7 @@ components:
 - ref: C56
   value: 4.7pF
   footprint: '0603'
-  mpn: CC0603CRNPO9BN3R3
-  mouser: 603-CC603CPNPO9BN4R7
-  digikey: 1276-1792-1-ND
-  lcsc: C314302
+  newark: 96Y8338
 - ref: C57
   value: 4.7pF
   footprint: '0603'
@@ -351,6 +353,7 @@ components:
   mpn: LTST-C170KRKT
   mouser: 859-LTST-C170KRKT
   digikey: 160-1415-1-ND
+  newark: 75R0581
   lcsc: C94868
 - ref: D1
   value: orange LED
@@ -358,6 +361,7 @@ components:
   mpn: LTST-C170KFKT
   mouser: 859-LTST-C170KFKT
   digikey: 160-1413-1-ND
+  newark: 75R0583
   lcsc: C284931
 - ref: D10
   value: 1N914
@@ -380,6 +384,7 @@ components:
   mpn: NSR0530HT1G
   mouser: 771-BAT54J115
   digikey: NSR0530HT1GOSCT-ND
+  newark: 83H6419
   lcsc: C12744
 - ref: D16
   value: 1N914
@@ -387,6 +392,7 @@ components:
   mpn: 1N4148WS
   mouser: 241-1N4148WSR100001
   digikey: 1N914BWSCT-ND
+  newark: 12T2305
   lcsc: C258181
 - ref: D17
   value: 1N914
@@ -397,6 +403,7 @@ components:
   mpn: LTST-C170TGKT
   mouser: 859-LTST-C170TGKT
   digikey: 160-1887-1-ND
+  newark: 75R0588
   lcsc: C364562
 - ref: D19
   value: red LED
@@ -408,13 +415,16 @@ components:
   mpn: LTST-C170TGKT
   mouser: 859-LTST-C170TGKT
   digikey: 160-1887-1-ND
+  newark: 75R0588
   lcsc: C364562
+  tme: LTST-C170TGKT
 - ref: D20
   value: 3.6V
   footprint: SOD-323
   mpn: BZT52C3V6S
   mouser: 833-BZT52C3V6S-TP
   digikey: BZT52C3V6S-TPMSCT-ND
+  newark: 01P0395
   lcsc: C353525
 - ref: D21
   value: 3.6V
@@ -427,6 +437,7 @@ components:
   mpn: LTST-C170TBKT
   mouser: 859-LTST-C170TBKT
   digikey: 160-1579-1-ND
+  newark: 94T2911
   lcsc: C375453
 - ref: D23
   value: 1N914
@@ -447,6 +458,8 @@ components:
 - ref: D28
   value: 1N914
   footprint: SOD-323
+  mouser: 863-MMDL914T1G
+  digikey: 1N4148WXTPMSCT-ND
 - ref: D29
   value: 1N914
   footprint: SOD-323
@@ -456,6 +469,7 @@ components:
   mpn: LTST-C170TBKT
   mouser: 859-LTST-C170TBKT
   digikey: 160-1579-1-ND
+  newark: 94T2911
   lcsc: C375453
 - ref: D30
   value: 3.6V
@@ -484,6 +498,7 @@ components:
   mpn: STPS2L30AF
   mouser: 511-STPS2L40AF
   digikey: 497-12310-1-ND
+  newark: 69AH2828
   lcsc: C111630
 - ref: D9
   value: '0'
@@ -495,25 +510,26 @@ components:
   mouser: 649-10029449-111RLF
   digikey: 609-4614-1-ND
   lcsc: C427307
+  newark: 76T8273
   pin_count: 20
 - ref: J1
   value: 2x20 header
-  footprint: Socket_Strip_Angled
+  footprint: Socket_Strip_Angled_2x20
   pin_count: 40
 - ref: J2
   value: 2x20 header
-  footprint: Socket_Strip_Angled
+  footprint: Socket_Strip_Angled_2x20
   pin_count: 40
 - ref: J3
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
 - ref: J4
   value: 2x3 header
-  footprint: Socket_Strip_Straight
+  footprint: Socket_Strip_Straight_2x03
   pin_count: 6
 - ref: J5
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: L1
   value: 2.2uH
@@ -521,6 +537,7 @@ components:
   mpn: DFE322512F-2R2M=P2
   mouser: 81-DFE322512F-2R2MP2
   digikey: 445-TFM322512ALMA2R2MTAACT-ND
+  newark: 57AC6667
   lcsc: C285758
 - ref: L2
   value: 2.2uH
@@ -534,6 +551,7 @@ components:
   mpn: CV201210-330K
   mouser: 652-CV201210-330K
   digikey: CV201210-330KCT-ND
+  newark: 44AC1927
   lcsc: C412010
 - ref: L5
   value: 33uH
@@ -552,6 +570,7 @@ components:
   mpn: BC857
   mouser: 583-BC856A-T
   digikey: TBC857BLMCT-ND
+  newark: 45J0600
   lcsc: C181146
   pin_count: 3
 - ref: Q2
@@ -560,6 +579,7 @@ components:
   mpn: 2N7002P,215
   mouser: 512-2N7002L
   digikey: 2N7002K-TPMSCT-ND
+  newark: 65W8792
   lcsc: C179727
   pin_count: 3
 - ref: R1
@@ -568,6 +588,7 @@ components:
   mpn: AC0603FR-104K7L
   mouser: 755-SFR03EZPF4701
   digikey: YAG3613CT-ND
+  newark: 94X1638
   lcsc: C218056
 - ref: R10
   value: 130ohm
@@ -578,6 +599,7 @@ components:
   mpn: RC0603FR-0710KL
   mouser: 603-RC0603FR-0710KL
   digikey: 311-10KLMCT-ND
+  newark: 94X1379
   lcsc: C15401
   pullup: /flash/FLASH_nWP
 - ref: R12
@@ -594,6 +616,7 @@ components:
   mpn: RC0603FR-071K1L
   mouser: 603-RC0603FR-071K1L
   digikey: P1.10KHCT-ND
+  newark: 65T8314
   lcsc: C269415
 - ref: R15
   value: 549ohm
@@ -601,6 +624,7 @@ components:
   mpn: RC0603FR-07549RL
   mouser: 603-RC0603FR-07549RL
   digikey: 311-549HRCT-ND
+  newark: 65T8486
   lcsc: C308281
 - ref: R16
   value: 270ohm
@@ -608,6 +632,7 @@ components:
   mpn: RC0603FR-07270RL
   mouser: 603-AC0603FR-07270RL
   digikey: 311-270HRCT-ND
+  newark: 64R5333
   lcsc: C325609
 - ref: R17
   value: 130ohm
@@ -615,6 +640,7 @@ components:
   mpn: RC0603FR-07130RL
   mouser: 603-RC0603FR-07130RL
   digikey: 311-130HRCT-ND
+  newark: 65T8330
   lcsc: C269457
 - ref: R18
   value: 1.1kohm
@@ -646,6 +672,7 @@ components:
   mpn: AC0603FR-10100KL
   mouser: 71-RCA0603100KJNEC
   digikey: 311-100KHRCT-ND
+  newark: 08AH9140
   lcsc: C73806
   pullup: /gpdi/VREF2
 - ref: R25
@@ -709,6 +736,7 @@ components:
   mpn: 73L2R47J
   mouser: 774-73L2R47J
   digikey: 73L2R47JCT-ND
+  newark: 32K1357
   lcsc: C158884
 - ref: R39
   value: 130ohm
@@ -750,6 +778,7 @@ components:
   mpn: AC0603JR-0727RL
   mouser: 603-AC0603JR-0727RL
   digikey: 311-27.0HRCT-ND
+  newark: 08AH8595
   lcsc: C325726
 - ref: R5
   value: 2.2Mohm
@@ -757,6 +786,7 @@ components:
   mpn: RC0603FR-132M2L
   mouser: 603-AC0603FR-072M2L
   digikey: P2.20MHCT-ND
+  newark: 89M6741
   lcsc: C18679
 - ref: R50
   value: 27ohm
@@ -831,6 +861,7 @@ components:
   mpn: RC0603FR-0715KL
   mouser: 603-AC0603FR-1015KL
   digikey: YAG3569CT-ND
+  newark: 94X1443
   lcsc: C217750
 - ref: RA1
   value: 15k
@@ -848,6 +879,7 @@ components:
   mpn: RC0603FR-1018KL
   mouser: 71-CRCW060318K0FKEAC
   digikey: 311-18.0KHRCT-ND
+  newark: 94X1474
   lcsc: C425614
 - ref: RB2
   value: 4.7k
@@ -859,6 +891,7 @@ components:
   mpn: RT0603FRE073K3L
   mouser: 603-RC0603FR-073K3L
   digikey: YAG3605CT-ND
+  newark: 94X1577
   lcsc: C425629
 - ref: RP1
   value: '0'
@@ -878,6 +911,7 @@ components:
   mpn: RC0805JR-070RL
   mouser: 71-RCG08050000Z0EA
   digikey: YAG1327CT-ND
+  newark: 74AC1409
   lcsc: C112378
 - ref: SD1
   value: 104031-0811
@@ -885,6 +919,7 @@ components:
   mpn: 104031-0811
   mouser: 538-104031-0811
   digikey: WM6357CT-ND
+  newark: 41Y0636
   lcsc: C585350
   pin_count: 19
   nc_pins: {'10': '10', '11': '11', '12': '12'}
@@ -894,6 +929,7 @@ components:
   mpn: 219-4MST
   mouser: 774-2194MST
   digikey: CT2194MST-ND
+  newark: 29P1768
   lcsc: C319050
   pin_count: 8
 - ref: U1
@@ -901,13 +937,16 @@ components:
   footprint: BGA-381_pitch0.8mm_dia0.4mm
   mpn: LFE5U-85F-6BG381C
   pin_count: 382
-  nc_pins: {A15: A15, C9: C9, D9: D9, D10: D10, D11: D11, D12: D12, E10: E10, E11: E11, K16: K16, K17: K17, M5: M5, N5: N5, P5: P5, R3: R3, T16: T16, W4: W4, W5: W5, W8: W8, W9: W9, W10: W10, W11: W11, W13: W13, W14: W14, W20: W20, X: X, Y16: Y16, Y17: Y17, Y19: Y19}
+  nc_pins: {A15: A15, C9: C9, D9: D9, D10: D10, D11: D11, D12: D12, E10: E10, E11: E11, K16: K16, K17: K17, M5: M5, N5: N5,
+    P5: P5, R3: R3, T16: T16, W4: W4, W5: W5, W8: W8, W9: W9, W10: W10, W11: W11, W13: W13, W14: W14, W20: W20, X: X, Y16: Y16,
+    Y17: Y17, Y19: Y19}
 - ref: U10
   value: IS25LP128F
   footprint: SOA008-150-208mil
   mpn: IS25LP128F-JBLE
   mouser: 454-W25Q128JVSIMTR
   digikey: W25Q128JVSIQCT-ND
+  newark: 38AC3510
   lcsc: C113767
   pin_count: 8
 - ref: U11
@@ -916,6 +955,7 @@ components:
   mpn: PCA9306D
   mouser: 771-PCA9306D-T
   digikey: 568-4215-1-ND
+  newark: 70R6428
   pin_count: 8
 - ref: U2
   value: MT48LC16M16A2TG
@@ -932,6 +972,7 @@ components:
   mpn: TLV62569DBVR
   mouser: 453-DIO6015BCST5
   digikey: 296-47360-1-ND
+  newark: 54AH1585
   lcsc: C141836
   pin_count: 5
 - ref: U4
@@ -948,11 +989,12 @@ components:
   pin_count: 5
 - ref: U6
   value: FT231XQ
-  footprint: FT231X-QFN-20-1EP
+  footprint: FT231X-QFN-20-1EP_4x4
   mpn: FT231XQ
   mouser: 895-FT231XQ-R
   digikey: 768-1128-1-ND
   lcsc: C132159
+  newark: 83T7088
   pin_count: 21
 - ref: U7
   value: MCP7940NT
@@ -960,11 +1002,12 @@ components:
   mpn: MCP7940NT-I/SN
   mouser: 579-MCP7940NT-I/SN
   digikey: MCP7940NT-I/SNCT-ND
+  newark: 57AC2515
   lcsc: C148052
   pin_count: 8
 - ref: U8
   value: MAX11125
-  footprint: MAX1112x-TQFN-28-1EP
+  footprint: MAX1112x-TQFN-28-1EP_5x5
   mpn: MAX11125ATI+
   mouser: 700-MAX11125ATI+
   digikey: MAX11125ATI+-ND
@@ -986,6 +1029,7 @@ components:
   mpn: 10118192-0001LF
   mouser: 649-10118192-0001LF
   digikey: 609-4613-1-ND
+  newark: 47M0505
   lcsc: C132564
   pin_count: 6
   nc_pins: {'4': '4'}
@@ -999,6 +1043,7 @@ components:
   mpn: FNETHE025
   mouser: 729-FNETHE025
   digikey: 3305-7050XOM2500BMD13CCC-CT-ND
+  newark: 80AC8624
   lcsc: C390569
   pin_count: 4
 - ref: Y2
@@ -1007,7 +1052,9 @@ components:
   mpn: LFXTAL016178REEL
   mouser: 520-.327-6-34BT
   digikey: 535-11937-1-ND
+  newark: 94X0923
   lcsc: C252402
+  tme: 32.768K-855MXR
   pin_count: 4
   nc_pins: {'2': '2', '3': '3'}
 nets:

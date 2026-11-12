@@ -6,6 +6,8 @@ from pathlib import Path
 
 import wafer
 
+from build_sensor_db import description_quality, strip_software_prefix
+
 from .common import (
     attempt_cap,
     has_ic_pattern,
@@ -185,7 +187,10 @@ def scrape_micropython(output_dir: Path) -> None:
 
     sensors = []
     for ic_id, agg in sorted(ic_data.items()):
-        best_desc = max(agg["descriptions"], key=len) if agg["descriptions"] else None
+        best_desc = max(agg["descriptions"], key=lambda d: (description_quality(d), len(d))) if agg["descriptions"] else None
+        library_title = bool(best_desc and strip_software_prefix(best_desc) != best_desc)
+        if best_desc:
+            best_desc = strip_software_prefix(best_desc)
         if best_desc and len(best_desc) > 200:
             best_desc = best_desc[:197] + "..."
         sensors.append(make_sensor_entry(
@@ -196,6 +201,8 @@ def scrape_micropython(output_dir: Path) -> None:
             urls=agg["urls"][:10],
             description=best_desc,
         ))
+        if library_title:
+            sensors[-1]["description_is_library_title"] = True
 
     stats = {
         "sensor_count": len(sensors),

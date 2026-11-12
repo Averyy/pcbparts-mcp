@@ -2,8 +2,8 @@ name: 0104 USB Hub
 slug: 0104-usb-hub
 source: TileParts/0104-USB-HUB
 format: kicad6
-description: "3-port USB 2.0 hub (SL2.1A) with per-port mechanical power cutoff switches, LESD5Z5.0CT1G TVS protection"
-tags: [esd-protection]
+description: 3-port USB 2.0 hub (SL2.1A) with per-port mechanical power cutoff switches, LESD5Z5.0CT1G TVS protection
+tags: [esd-protection, usb]
 key_ics: [SL2.1A]
 outline:
   width_mm: 79.6
@@ -19,208 +19,221 @@ components:
   value: 10uF
   footprint: '1206'
   manufacturer: SAMSUNG
-  mpn: C13585
+  lcsc: C13585
   decouples: U1
 - ref: C2
   value: 10uF
   footprint: '0402'
   manufacturer: SAMSUNG
-  mpn: C15525
+  lcsc: C15525
 - ref: C3
   value: 10uF
   footprint: '0402'
   manufacturer: SAMSUNG
-  mpn: C15525
+  lcsc: C15525
 - ref: C4
   value: 100uF
   footprint: '1206'
   manufacturer: SAMSUNG
-  mpn: C15008
+  lcsc: C15008
 - ref: C5
   value: 100uF
   footprint: '1206'
   manufacturer: SAMSUNG
-  mpn: C15008
+  lcsc: C15008
 - ref: C6
   value: 100uF
   footprint: '1206'
   manufacturer: SAMSUNG
-  mpn: C15008
+  lcsc: C15008
 - ref: D1
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: D10
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: D11
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: D12
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: D13
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: D14
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: D15
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: D2
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: D3
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: D4
   value: LED
   footprint: '0603'
   manufacturer: EVERLIGHT
-  mpn: C72041
+  lcsc: C72041
 - ref: D5
   value: LED
   footprint: '0603'
   manufacturer: EVERLIGHT
-  mpn: C72041
+  lcsc: C72041
 - ref: D6
   value: LED
   footprint: '0603'
   manufacturer: EVERLIGHT
-  mpn: C72041
+  lcsc: C72041
 - ref: D7
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: D8
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: D9
   value: LESD5Z5.0CT1G
   footprint: SOD-523
   manufacturer: LRC
-  mpn: C136167
+  mpn: LESD5Z5.0CT1G
+  lcsc: C136167
 - ref: F1
   value: 1.5A/3A
   footprint: '1206'
   manufacturer: BHFUSE
-  mpn: C883133
+  lcsc: C883133
 - ref: F2
   value: 1.5A/3A
   footprint: '1206'
   manufacturer: BHFUSE
-  mpn: C883133
+  lcsc: C883133
 - ref: F3
   value: 1.5A/3A
   footprint: '1206'
   manufacturer: BHFUSE
-  mpn: C883133
+  lcsc: C883133
 - ref: J1
   value: USB_US
   footprint: HRO_TYPE-C-31-M-12
   manufacturer: HRO
-  mpn: C165948
+  lcsc: C165948
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J2
   value: USB_DS
   footprint: CKMTW_U-USBAN04P-F005
   manufacturer: Ckmtw
-  mpn: C386739
+  lcsc: C386739
   pin_count: 5
 - ref: J3
   value: USB_DS
   footprint: CKMTW_U-USBAN04P-F005
   manufacturer: Ckmtw
-  mpn: C386739
+  lcsc: C386739
   pin_count: 5
 - ref: J4
   value: USB_DS
   footprint: CKMTW_U-USBAN04P-F005
   manufacturer: Ckmtw
-  mpn: C386739
+  lcsc: C386739
   pin_count: 5
 - ref: R1
   value: 5.1kohm
   footprint: '0402'
   manufacturer: UNI-ROYAL
-  mpn: C25905
+  lcsc: C25905
   pulldown: J1.CC1
 - ref: R2
   value: 5.1kohm
   footprint: '0402'
   manufacturer: UNI-ROYAL
-  mpn: C25905
+  lcsc: C25905
   pulldown: J1.CC2
 - ref: R3
   value: 2kohm
   footprint: '0402'
   manufacturer: UNI-ROYAL
-  mpn: C4109
+  lcsc: C4109
 - ref: R4
   value: 2kohm
   footprint: '0402'
   manufacturer: UNI-ROYAL
-  mpn: C4109
+  lcsc: C4109
 - ref: R5
   value: 2kohm
   footprint: '0402'
   manufacturer: UNI-ROYAL
-  mpn: C4109
+  lcsc: C4109
 - ref: SW1
   value: DPDT switch
-  footprint: SW_Push_DPDT
+  footprint: SW_Push_DPDT_8.5x8.5
   manufacturer: GANGYUAN
-  mpn: C194405
+  lcsc: C194405
   pin_count: 6
   nc_pins: {A@1: '1', B@2: '2', C@3: '3', A@4: '4'}
 - ref: SW2
   value: DPDT switch
-  footprint: SW_Push_DPDT
+  footprint: SW_Push_DPDT_8.5x8.5
   manufacturer: GANGYUAN
-  mpn: C194405
+  lcsc: C194405
   pin_count: 6
   nc_pins: {A@1: '1', B@2: '2', C@3: '3', A@4: '4'}
 - ref: SW3
   value: DPDT switch
-  footprint: SW_Push_DPDT
+  footprint: SW_Push_DPDT_8.5x8.5
   manufacturer: GANGYUAN
-  mpn: C194405
+  lcsc: C194405
   pin_count: 6
   nc_pins: {A@1: '1', B@2: '2', C@3: '3', A@4: '4'}
 - ref: U1
   value: SL2.1A
   footprint: SOP-16
   manufacturer: CoreChips
-  mpn: C192893
+  mpn: SL2.1A
+  lcsc: C192893
   pin_count: 16
   nc_pins: {DM1: '7', DP1: '8'}
 - ref: Y1
   value: 12MHz
-  footprint: Oscillator_SMD
+  footprint: Oscillator_SMD_3.2x2.5
   manufacturer: YXC
-  mpn: C9002
+  lcsc: C9002
   pin_count: 4
 nets:
 - name: /DS1_D+

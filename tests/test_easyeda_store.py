@@ -1,7 +1,6 @@
 """Persistent EasyEDA footprint answers (0.6.0): the store, the seed, the client lookup order and the
 pinout self-heal. See docs/ref-easyeda-api.md. No network: fake clocks and sessions."""
 
-import gzip
 import json
 import re
 import sys
@@ -9,6 +8,8 @@ import types
 from pathlib import Path
 
 import pytest
+
+from conftest import write_catalog_category
 
 from pcbparts_mcp import client as client_module
 from pcbparts_mcp.cache import Cooldown, SlidingWindowBudget
@@ -261,11 +262,10 @@ class TestSeedCsv:
 
 
 def _write_category(data_dir: Path, parts: list[str]) -> None:
-    (data_dir / "categories").mkdir(parents=True, exist_ok=True)
-    with gzip.open(data_dir / "categories" / "test.jsonl.gz", "wt", encoding="utf-8") as f:
-        for lcsc in parts:
-            f.write(json.dumps({"l": lcsc, "m": f"MPN-{lcsc}", "f": "TestCorp", "p": "0402", "s": 100,
-                                "t": "b", "c": 1, "$": 0.01, "d": lcsc, "a": []}) + "\n")
+    write_catalog_category(data_dir, "test", [
+        {"l": lcsc, "m": f"MPN-{lcsc}", "f": "TestCorp", "p": "0402", "s": 100,
+         "t": "b", "c": 1, "$": 0.01, "d": lcsc, "a": []} for lcsc in parts
+    ])
 
 
 class TestSeedInComponentsDb:
@@ -319,8 +319,8 @@ class TestSeedInComponentsDb:
     def test_malformed_seed_fails_before_the_components_load(self, tmp_path):
         """The seed is read first, so a bad file fails the build in a second, not after the load."""
         data_dir = tmp_path / "data"
-        (data_dir / "categories").mkdir(parents=True)
-        (data_dir / "categories" / "broken.jsonl.gz").write_bytes(b"not gzip")  # the load would fail on this
+        write_catalog_category(data_dir, "test", [{"l": "C1"}])
+        (data_dir / "catalog" / "parts" / "test" / "1.jsonl").write_text("not json\n", encoding="utf-8")
         seed_path = data_dir / "easyeda" / "footprints.csv"
         seed_path.parent.mkdir()
         seed_path.write_text(f"{','.join(SEED_COLUMNS)}\nC1,1,,,2026-10-10T00:00:00Z,s\n", encoding="utf-8")

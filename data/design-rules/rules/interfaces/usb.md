@@ -4,135 +4,112 @@
 
 ## Quick Reference
 
-- **USB-C sink: 5.1 kohm 1% Rd on EACH CC pin to GND.** Never short CC1 to CC2 -- e-marked cables put 1 kohm Ra on the second CC, paralleling to 840 ohm total, which the source reads as invalid and provides 0V on VBUS.
-- **ESD TVS array closest to connector, before CMC.** NXP IP4220CZ6 (< 1 pF/line, SOT-457) or an SRV05-4 clone listing <= 1 pF (SOT-23-6); Semtech's own SRV05-4 is 3 pF typ. Max 1.5 pF external capacitance per D+/D- line total for high-speed.
-- **D+/D- length match within 1.27 mm (50 mil), 0.5 mm (20 mil) preferred.** Optimal trace length 50 mm, max 75 mm (USB 2.0 HS). Total trace length < 100 mm to preserve eye diagram.
-- **USB-C 2.0-only connector: Korean Hroparts TYPE-C-31-M-12 (LCSC C165948).** 16 contacts on 12 SMD pads in one row (A1/B12, A4/B9, B4/A9 and B1/A12 share pads), easily hand-solderable. Power-only alternative: TYPE-C-31-M-17 (C283540, 6 contacts).
-- **VBUS ferrite bead: 47-1000 ohm at 100 MHz.** 10 nF cap from VBUS to chassis GND after ferrite, before bulk decoupling.
+- **USB-C sink receptacle: separate 5.1 kohm 1% Rd on EACH CC pin to GND.** Shorting CC1 to CC2 lets a powered cable's Ra parallel the shared Rd and defeats valid attachment detection [1, Sections 4.5.1, 4.11.1].
+- **ESD TVS array closest to connector, before CMC.** For TUSB121x, TI recommends <=4 pF total external discrete capacitance per D+/D- line, excluding PCB trace capacitance; use the selected PHY's budget [4, p.2, items 1.06-1.09].
+- **TUSB121x HS routing: 90 ohm differential, 50 mm (1.97 in) optimum, <=0.5 ns one-way delay.** TI equates that delay to about 75 mm (2.95 in) at 67 ps/cm and allows <=3.81 mm (150 mil) pair mismatch; these are PHY board guidelines, not universal USB limits [4, p.2, items 2.03-2.05].
+- **CC protection for a 20 V short-to-VBUS environment: use a DC-tolerant protector.** TPD2S300 requires at least 22 V-tolerant ESD protection and recommends 24 V; a TVS's working voltage and clamping voltage are different specifications [10, p.12].
 
 ## Design Rules
 
 ### USB-C CC Configuration
 
-- **Sink: 5.1 kohm on each CC pin to GND; the spec allows ±10% (±20%, or a 1.1 V clamp, if the sink ignores the advertised current).** Max voltage on the pin: 2.04 V at ±10%, 2.18 V at ±20% (Type-C R2.5 Table 4-28).
-- **Sink CC windows are the spec's worked example for a ±10% Rd, not fixed limits.** Type-C R2.5 Table 4-36 (same numbering in R2.4): Default 0.277-0.612 V, 1.5 A 0.746-1.164 V, 3.0 A 1.369-2.042 V; the sink puts its Default/1.5 A threshold anywhere in 0.613-0.745 V and its 1.5 A/3.0 A threshold in 1.165-1.368 V, and reads disconnect below 0.276 V. R2.x computes these from its section 4.11.3.1.1 equations (Rp/current-source tolerance, 250 mV cable ground offset); R1.x tabled 0.25-0.61 / 0.70-1.16 / 1.31-2.04 V with fixed 0.66 V and 1.23 V thresholds. A 1% Rd only widens the margins.
-- **Ra (0.8-1.2 kohm) is nowhere near an Rd.** A -5% Rd against Default Rp gives 0.40 V; a source sets its Ra/Rd threshold in 0.144-0.271 V (Rp to 5 V) or 0.116-0.260 V (current source) (R2.5 Tables 4-37, 4-38).
-- **Source: Rp pull-up to 4.75-5.5 V on each CC pin.** 56 kohm = default USB (500/900 mA), 22 kohm = 1.5 A, 10 kohm = 3 A. Spec tolerance: 56 kohm ±20%, but ±5% in legacy A-to-C cables, adapters and captive host cables (allows for VBUS/GND drop); 22 and 10 kohm ±5% (Type-C R2.0 Table 4-24).
-- **USB-C plug (cable-end, not receptacle): only ONE CC pull-down.** Populating both 5.1 kohm pull-downs on a plug makes a debug mode adapter -- Framework laptops expose EC UART on SBU pins when they see dual pull-downs.
+- **Sink: 5.1 kohm on each CC pin to GND; the spec allows +/-10% (+/-20%, or a 1.1 V +/-20% clamp, if the sink ignores advertised current).** The resistor implementations give maximum normal CC voltages of 2.04 V and 2.18 V respectively; these are not controller absolute maximum ratings. A voltage-clamp Rd inhibits PD communication until switched to a resistor [1, p.244, Table 4-28].
+- **Sink current-detection windows are a worked example for +/-10% Rd, not fixed limits.** Type-C R2.4 Table 4-36 gives Default 0.277-0.612 V, 1.5 A 0.746-1.164 V, 3.0 A 1.369-2.042 V, with threshold windows 0.613-0.745 V and 1.165-1.368 V. Recalculate using Section 4.11.3.1.1 for actual termination tolerances and cable ground offset; do not infer a disconnect threshold below 0.276 V from this table [1, pp.247-252].
+- **Ra is 800-1200 ohm when VCONN is applied; it can be lower before power is applied.** For Default advertisement, the example source Ra/Rd threshold is 0.144-0.271 V with Rp to 5 V or 0.116-0.260 V with a current source; these source-side thresholds are not sink current-advertisement thresholds [1, pp.244,253-254, Tables 4-29, 4-37, 4-38].
+- **Source Rp depends on its pull-up voltage.** At 4.75-5.5 V: 56 kohm +/-20% = Default USB Power, 22 kohm +/-5% = 1.5 A, 10 kohm +/-5% = 3 A. At 3.3 V +/-5% the corresponding values are 36 kohm +/-20%, 12 kohm +/-5%, 4.7 kohm +/-5%. Legacy A-to-C cables/adapters and captive host cables require 56 kohm +/-5%; Default advertisement alone does not authorize an unenumerated USB device to draw 500/900 mA [1, pp.225-227,243, Table 4-27].
+- **A sink built with a Type-C plug exposes one CC pin, unlike a receptacle's CC1/CC2.** Do not treat the plug's VCONN contact as a second CC pull-down; two Rd terminations are the source's debug-accessory signature [1, Section 3.2.2, Table 4-10].
 
-> WARNING: The Raspberry Pi 4 shipped with CC1/CC2 shorted through a single Rd. E-marked cables (every MacBook cable since 2016) put Ra (800-1200 ohm) on the unused CC, paralleling with 5.1 kohm to ~840 ohm. Source sees this as invalid attachment and provides 0V. Always use two separate resistors.
+> WARNING: With CC1/CC2 shorted to one Rd, nominal 1 kohm Ra in parallel with 5.1 kohm gives 836 ohm, rather than a valid Rd. Keep the two receptacle CC terminations independent [1, Sections 4.5.1, 4.11.1; parallel resistance recalculated].
 
-- **CC TVS: rate it for a short to VBUS, not for CC's 5 V.** CC1/CC2 sit next to VBUS in the receptacle (A4/A5, B4/B5); a twisted plug, debris or moisture shorts them directly, and non-compliant adapters start at 20 V even into a 5 V-only port, so TI requires CC protection at least 22 V DC tolerant, 24 V recommended (TPD2S300 datasheet 7.1). A 5.5 V clamp (ESD441, TI's CC pick for a 5 V-only port in SLVAF82B Table 7-1) survives VBUS through a cable's 56 kohm Rp (0.26 mA at 20 V) but conducts amps on a direct short and fails. Use a 24 V clamp (ESD752, ESD2CAN24: SLVAF82B Table 8-2) or a short-to-VBUS protector (TPD2S300, TPD4S311).
-- **Never put CC on a spare channel of the D+/D- ESD array.** On a short to VBUS the shared array fails and takes the data lines with it.
-- **A sink with only Rd on CC needs no CC TVS.** Nothing on the net but a 5.1 kohm resistor to GND; Adafruit QT Py ESP32-S3, Seeed XIAO ESP32-S3 Sense and SparkFun Thing Plus ESP32-S3 put none there. Protect CC when a CC/PD controller pin is on it.
-- **CC receiver capacitance: 200-600 pF per PD spec.** TVS on CC contributes to this -- choose TVS capacitance that keeps total within range. Can eliminate the need for extra CC capacitors.
+- **For 20 V short-to-VBUS protection, select both DC withstand and controller-side clamping/isolation.** CC1/CC2 are adjacent to VBUS in the receptacle. TI lists ESD752/ESD2CAN24-Q1 with 24 V working voltage for this case, or use a short-to-VBUS isolator such as TPD2S300. A 24 V-working TVS alone does not hold a low-voltage controller pin below its absolute maximum during a sustained short [10, Section 7.1; 11, pp.16-17].
+- **Never put CC on a spare channel of the D+/D- ESD array.** A channel rated for 5 V data lines does not meet the at least 22 V DC tolerance CC needs for a short to VBUS [10, p.12].
+- **CC receiver capacitance is part of the PD circuit, not just a TVS selection number.** FUSB302B's reference schematic specifies 200-600 pF CCx receiver capacitance; include the protection capacitance when selecting the receiver network [9, Reference Schematic, Table 43].
 
 ### USB-C PD Controllers
 
-- **Sink-only PD, no MCU: STUSB4500 (ST, QFN-24).** NVM-configurable 5/9/15/20V profiles. Connect VBUS_EN output to load switch.
-- **Sink PD, no MCU, simpler: IP2721.** Hardware-only PD parsing via CC, auto-requests matching voltage. Less flexible than STUSB4500 but fewer external components.
-- **Sink PD with MCU: FUSB302B (ON Semi, WLCSP-9 or QFN-14).** I2C-controlled PD PHY requiring firmware policy engine. Most flexible, highest development effort. Used in MNT Pocket Reform charger port.
-- **Source PD: TPS65987D (TI, BGA-56).** Dual-port USB-C PD controller with integrated back-to-back VBUS FETs (25 mohm Rds_on each at 25C). Internal flash for configuration -- no external MCU for basic operation. Power duo mode parallels both internal FETs for 12.5 mohm total, enabling >5A source.
-- **CC logic only (no PD): TUSB320 (TI) or WUSB3801 (WillSemi).** DFP/UFP/DRP detection, cable orientation. WUSB3801 has internal Rp/Rd, I2C status output, and can limit charger current based on CC advertisement. TUSB320LA adds I2C role configuration.
+- **Sink-only PD, no MCU: STUSB4500 (ST, QFN-24 or WLCSP-25).** NVM stores up to three sink PDO profiles, up to 20 V/5 A. VBUS_EN_SNK is an active-low open-drain enable for the external sink power path; observe the reference circuit's polarity [8, pp.1-4,6].
+- **Sink PD with MCU: FUSB302B (onsemi, WLCSP-9 or WQFN-14).** I2C-controlled PD PHY requiring software policy control, rather than a standalone automatic voltage requester [9, pp.1-2].
+- **Source/sink PD: TPS65987D (TI, QFN-56), single port with two internal power paths.** Each integrated path is rated 20 V/5 A, with 25 mohm typical (33 mohm maximum) resistance at TJ=25 degrees C; the 5 A capability requires TJ < 150 degrees C. Configuration/patches can load from external SPI flash; do not assume internal configuration flash or two Type-C ports [12, Sections 6.7,8.3.3,8.3.13].
+- **TPS65987D power duo mode is a custom high-current arrangement.** Parallel paths reduce effective resistance, but >5 A requires compatible configuration at both ends and cabling rated for the desired current; it is not an ordinary USB PD current contract [13, Power Duo Mode].
+- **CC logic only (no PD): TUSB320 (TI).** DFP/UFP/DRP and orientation detection with I2C or GPIO reporting; system circuitry must enforce the detected current limit [14, Sections 7.3.1-7.3.3].
 
 ### Dead Battery Provision
 
-- **TPS6598x boots from VBUS when VIN_3V3 is absent.** Internal high-voltage LDO converts up to 22V VBUS to 3.3V. Presents Rd on CC even without local power, so a dead device can negotiate charging. Required for battery-powered USB-C devices that may fully discharge.
-- **VIN_3V3 takes precedence.** When VIN_3V3 becomes available, clearing the Dead Battery Flag switches LDO_3V3 supply from VBUS LDO to VIN_3V3 without brown-out. If VIN_3V3 drops below 2.85V, firmware hard-resets and reboots in dead battery mode.
-- **Dual VBUS inputs (TPS65988): reverse-current blocking between ports.** Path from each VBUS to internal LDO blocks reverse current -- power on one VBUS won't leak to the other.
+- **TPS6598x boots from VBUS when VIN_3V3 is absent.** SLVAE65 describes an internal LDO converting up to 22 V VBUS to 3.3 V and hardware configured to present Rd even without local power; verify the selected part's dead-battery wiring [7, pp.1-2,5].
+- **VIN_3V3 takes precedence.** When VIN_3V3 becomes available, clearing the Dead Battery Flag switches LDO_3V3 from the VBUS LDO without brown-out. In the opposite transition, VIN_3V3 below 2.85 V initiates a firmware hard reset and renegotiation; this is not an uninterrupted system-power handover [7, pp.3-4].
+- **Dual VBUS inputs (TPS65988): reverse-current blocking in the LDO input paths.** Power on one VBUS does not leak to the other through those paths; this does not replace protection in the main system power paths [7, p.2].
 
 ### VBUS Power Path
 
-- **Sink VBUS capacitance: 10 uF max equivalent.** Not a hard cap limit -- the spec limits the inrush charge to 50 uC at 5V. More capacitance is fine behind a current-limiting switch (e.g., Diodes AP2162/AP2172).
-- **Host/source VBUS decoupling: >= 96 uF near connector.** Source must handle load transient dI/dt up to 150 mA/us without unacceptable VBUS droop.
-- **Ferrite bead on VBUS: 47-1000 ohm at 100 MHz, resistive to ~1 GHz.** Place between connector VBUS pin and downstream regulator. Taiyo-Yuden BK0603HS330-T is a proven choice for FTDI designs.
-- **10 nF Y-cap from VBUS to chassis GND, after ferrite bead.** Shunts CM noise to chassis. Do not exceed 10 nF -- leakage current violates USB spec.
-- **No power back-feed into VBUS under any circumstance.** Self-powered devices must isolate local supply from VBUS when cable is disconnected. FTDI FT-series: use PWREN# with P-FET soft-start (IRLML6402TRPBF + RC circuit). SiLabs EFM32: FDC6420C dual N/P-FET switches between VBUS and battery power.
+- **USB 2.0 peripheral inrush is specified as a load equivalent to 10 uF in parallel with 44 ohm.** Larger bulk capacitance needs a soft-start path that meets the inrush requirement; a current-limiting switch alone is not proof. FTDI shows a PWREN#-controlled IRLML6402TRPBF soft-start circuit [5, Section 2.4.2].
+- **EFM32 USB host example: >=96 uF VBUS decoupling near its Type-A connector.** This is the AN0046 host checklist; do not apply it indiscriminately to Type-C sink or dual-role ports [2, Section 2.2].
+- **VBUS ferrite example: 47-1000 ohm at 100 MHz, resistive to approximately 1 GHz.** This is TI's AM335x/AM43xx filtering recommendation, not a universal required bead. FTDI names BK0603HS330-T for its USB peripheral filter; check load current and DC voltage drop [3, Section 2.4; 5, Section 2.4.4, Appendix A].
+- **No power back-feed into upstream VBUS from a USB peripheral.** FTDI's PWREN# soft-start example is not a general reverse-current blocker; select isolation for the actual local-supply/VBUS power paths [5, Sections 2.4.1-2.4.2].
 
 ### VBUS Protection (Source)
 
-- **TPS65987DDH: internal FET opens in <15 us on VBUS short to GND at 5V.** External discrete FET paths typically take >150 us -- internal paths protect before the 5V rail browns out. At 20V, current spikes to ~35A before the 30A hardware comparator opens the FET in <7 us.
-- **OCP trip point is dynamic: 10A default, 20A during voltage transitions.** When VBUS transitions from 5V to higher voltage, TPS65987DDH widens HW OCP from 10A to 20A for ~100 ms to handle non-compliant device inrush, then returns to 10A.
-- **Overcurrent clamping at 5V is separate from OCP.** OCC regulates internal FET Rds_on to clamp current at a programmable level (see IOCC table in SLVA994), holds for 640 us deglitch, then opens. Protects shared 5V rail from browning out other system loads.
-- **OVP: set to 5% of negotiated max voltage.** Configurable via Application Customization Tool. Do NOT use fixed OVP trip point when sourcing 5V -- a 24V fixed OVP would let 20V through on a 5V contract.
-- **Reverse current protection for multi-port systems.** Two ports closing onto same SYSPWR rail: if port 2 has 5V adapter and port 1 has 20V, port 2 must enable RCP (blocking FET) to prevent back-feeding 20V into the 5V adapter. TPS65987DDH handles this with internal back-to-back FETs.
+- **TPS65987DDH short-circuit timing is measured on the TPS65987DEVM.** SLVA994 reports <15 us opening at 5 V and <7 us at 20 V, where current exceeds the 30 A hardware-interrupt threshold. Do not treat these EVM waveforms as universal maximum response times for arbitrary supplies and layouts [6, pp.10-12].
+- **TPS65987DDH hardware OCP changes from 10 A to 20 A during a voltage transition.** SLVA994 returns it to 10 A approximately 100 ms after the Request message; this hardware threshold is separate from the negotiated operating current and firmware OCP [6, pp.3-4,10].
+- **Overcurrent clamping at 5 V is separate from OCP.** TPS65987DDH regulates the internal FET to the selected clamp setting, then opens after a 640 us deglitch if overcurrent persists. Check the selected IOCC setting's minimum/maximum, not just the GUI's nominal current [6, pp.5-9].
+- **TPS65987DDH OVP: use the GUI setting "5% of expected max," not 5% of negotiated voltage as an absolute threshold.** It tracks the contract; SLVA994 warns that a fixed 24 V trip point also applies during a 5 V contract and would pass a damaging overvoltage [6, pp.17-20].
+- **Reverse current protection for multi-port systems.** If separate ports close onto the same system rail at 5 V and 20 V, the 5 V port must block reverse current. TPS65987DDH uses its internal back-to-back FETs for this case [6, pp.13-16].
 
 ### D+/D- Routing
 
-- **Series resistors depend on PHY family.** FTDI FT2xxB/FT2xxX/FT12x/FT31xD: 27 ohm required. FTDI FT2xxR/FT313H: 0 ohm (internal). SiLabs EFM32: 15 ohm. Most integrated-PHY MCUs: check datasheet -- many need no external resistor.
-- **Optimum trace length for HS: 50 mm.** TI TUSB121x guideline: 0.5 ns one-way delay max = 75 mm in FR4. Eye diagram degrades noticeably above 100 mm. At 50 mm (2 inches), eye is clean; at 250 mm (10 inches), eye is nearly closed.
-- **Max external capacitance on D+/D-: 1.5 pF per line (typical).** TI TUSB121x allows up to 4 pF including discrete components (excludes trace capacitance). Budget: TVS array + test pad + connector parasitics. TVS with >0.75 pF/line eats half the budget.
-- **Crosstalk spacing: >= 4x dielectric height from USB pair to other high-speed traces.** If adjacent signals have faster edges or larger swings, increase to >= 0.75 mm (30 mil). TI AM335x guide: 5x trace width isolation from other signals, 3x width between D+/D- (3W rule).
-- **D+/D- length mismatch budget: 150 mil max (spec includes cable).** USB 2.0 HS skew limit is 100 ps. At ~6 ns/inch propagation, that's 15.2 mm (600 mil) total for the entire link including cable (100 ps cable budget per spec). After cable and guard band, PCB budget is ~3.8 mm (150 mil). Target 1.27 mm (50 mil), 0.5 mm (20 mil) is best.
-- **No stubs.** Test points must be fly-by (signal routes through the pad). TI AM335x: test points of any kind are NOT permitted on D+/D- pair. If stubs are unavoidable, keep under 0.5 cm.
-- **USB 2.0 mux for Type-C receptacle is optional but improves SI.** Spec allows shorting D+ to D+ and D- to D- across both orientations. The resulting stub can degrade HS signal quality. A USB 2.0 mux eliminates the stub but adds cost and complexity -- usually not needed for FS or LS.
+- **Series resistors depend on PHY family.** FTDI AN_146 specifies 27 ohm/1% for FT2xxB, FT2xxX, FT2232D, FT12x, FT31xD and VNC2; 0 ohm for FT2xxR/FT313H; 0-10 ohm for FTx232H. AN0046's EFM32 circuits use 15 ohm. Do not copy these onto another PHY without its data sheet [5, Section 2.3; 2, Sections 2.2-2.4].
+- **Length matching and spacing come from the selected PHY board guide.** TUSB121x permits 3.81 mm (150 mil) mismatch and <5.08 mm (200 mil) unavoidable stubs. AM335x/AM43xx prohibits test points of any kind on D+/D-; generic fly-by-pad advice does not override that restriction [4, p.2; 3, Section 2.6].
+- **USB 2.0 mux for a Type-C receptacle is optional.** D+ to D+ and D- to D- ties are allowed across receptacle orientations; a mux removes that branch but adds its own parasitics. Follow the selected PHY's stub and capacitance limits [15, USB Type-C UFP Sink].
+- General differential routing and return-plane guidance -> `guides/signal-integrity.md`.
 
 ### ESD Protection
 
-- **Component order from connector inward: TVS -> CMC -> series resistors -> PHY.** TVS must clamp before the transient reaches the CMC. CMC saturates on full ESD and passes the pulse through if placed first.
-- **IP4220CZ6 (NXP): <1 pF/line, SOT-457.** Max output voltage 9V during ESD -- higher than most PHY tolerance ratings, but most energy is dissipated in the TVS. Tested to IEC 61000-4-2 8 kV contact on EFM32GG-STK3700.
-- **SRV05-4: one name, different silicon.** Semtech's original (SOT-23-6) is 3 pF typ (datasheet 2018-12-15; JLC lists C13612 at 3 pF): fine for full-speed, over the 1.5 pF high-speed budget. Suggested by FTDI for all their USB IC families alongside Littelfuse PGB1010603. Most JLC parts sold as SRV05-4 are clones listing 0.3-1 pF (hongjiacheng C7420376 1 pF, MSKSEMI C2836319 0.6 pF); read the clone's own datasheet, not Semtech's.
-- **USB 2.0 CMC: Murata DLW21HN900SQ2 (0805 inch / 2.0 x 1.2 mm, 90 ohm CM at 100 MHz) [20, 21].** CMCs degrade signal quality -- TI TUSB121x: "should only be used if EMI enhancement is absolutely necessary." Place after ESD TVS, before PHY. Do NOT use USB 2.0 CMCs on USB 3.x: Murata lists this part for USB 2.0 only, and its chart wants >= 2.5 GHz differential cutoff for 5 Gbps even with an equalizing receiver [21] -> `guides/emc.md`.
-- **Ferrite beads on D+/D- are prohibited by USB spec.** Only allowed on VBUS.
+- **Component order from connector inward: TVS -> optional CMC -> PHY termination network.** Follow the PHY reference circuit for series resistor placement; TI specifies the TVS before all other external D+/D- devices [4, p.2, items 1.07-1.09; 5, Sections 2.2-2.3].
+- **IP4220CZ6: 1 pF typical per input at VI=0 V, VP=3 V, 1 MHz and 25 degrees C; SOT457/SC-74.** This is a typical value, not a <1 pF maximum. AN0046 reports an 8 kV contact pass on EFM32GG-STK3700; its 9 V residual-output discussion does not establish safe clamping for another PHY [16, pp.1-3; 2, Section 6.2].
+- **SRV05-4: one name, different silicon.** Semtech specifies 3 pF typical in SOT-23-6; FTDI lists it and Littelfuse PGB1010603 as candidates. Verify the exact manufacturer's capacitance against the PHY budget instead of substituting a same-named clone [21; 5, Appendix A; 4, item 1.06].
+- **USB 2.0 CMC: Murata DLW21HN900SQ2 (0805 inch / 2.0 * 1.2 mm, 90 ohm CM at 100 MHz) [17, 18].** Use only when EMI testing requires it: TI warns that CMCs degrade signal quality. Murata lists this part for USB 2.0; select a USB 3.x-rated part for a SuperSpeed pair [4, item 1.08; 18] -> `guides/emc.md`.
+- **Do not substitute separate ferrite beads on D+/D- for a USB-rated CMC.** FTDI explicitly prohibits individual data-line beads and recommends the power-line bead on VBUS [5, Sections 2.2.3, 2.4.4].
 
 ### Connector and Shield Grounding
 
-- **Connector shell to chassis GND, not signal GND.** Multiple vias from shell pads to chassis ground pour. If chassis and signal ground are unified, connect to ground plane nearest connector.
-- **RC between shield and signal GND: 1 Mohm + 4.7 nF in parallel.** Provides controlled DC reference and AC coupling. Alternative: 0 ohm direct -- depends on system grounding architecture. FTDI: provide pads for zero-ohm or capacitor between shield and signal GND for flexibility during EMC testing.
-- **Connector shell makes first contact on cable insertion.** USB connector pin length: power/GND leads longer than signal leads. Shield of cable contacts outer shell before any signal pins engage. This discharges ESD to chassis before it reaches D+/D-.
+- **Provide shield-to-signal-GND tuning pads rather than a universal RC value.** FTDI recommends pads for a zero-ohm resistor or capacitor during EMC tuning; TI's AM335x design bonds the shell to a local chassis-ground region while keeping signal GND under the connector pins [5, Section 2.2.2; 3, Section 2.4].
 
 ### USB-C Connector Manufacturing
 
-- **Hybrid (SMT + THR) connectors need special stencil parameters.** Solder paste grain size 5 (not standard 4), print speed 20 mm/s (not 40), squeegee force 70 N (not 50), 45-degree plastic squeegee angle, two print cycles. Target 75% minimum hole fill depth.
-- **Mid-mount connectors: increase milling edge distance from 0.80 mm to 1.00 mm (center of lowest pin row to milling contour center).** This gives 425 um routing width instead of 225 um for B2/B3 and B10/B11 differential pairs. Requires +/- 50 um pick-and-place accuracy -- discuss with EMS.
-- **Reflow direction: connector face or pin row enters oven first.** Prevents bending from non-simultaneous solder melting across pin rows.
+- **Wurth's horizontal THR/SMT and mid-mount receptacle process uses special stencil parameters.** ANE009 specifies type-5 paste, 20 mm/s print speed, 70 N squeegee force, 45-degree plastic squeegee and two print cycles for its listed parts; these are not universal settings for every hybrid connector [19, p.2].
+- **Wurth 632723130112 mid-mount example: 0.80 mm -> 1.00 mm pin-row-to-milling-contour distance.** With the note's 0.50 mm (20 mil) milling cutter, this increases routing width from 0.225 mm (8.86 mil) to 0.425 mm (16.73 mil). It requires +/-50 um placement accuracy and EMS agreement; do not transplant the footprint change to another connector [19, pp.8-9].
 
 ## Common Mistakes
 
-- **ESD TVS placed after CMC.** The CMC sees the full ESD transient, saturates, and passes the pulse to the PHY. TI AM335x and TUSB121x guides both specify: ESD device closest to connector, CMC after.
-- **VBUS capacitance exceeds 10 uF equivalent without current limiting.** Host overcurrent protection trips on inrush, causing repeated connect/disconnect cycles. The 10 uF limit is charge-equivalent (50 uC at 5V) -- larger caps are fine behind a soft-start switch like AP2162.
-- **Missing D+ pull-up on full-speed device.** FS requires 1.5 kohm pull-up on D+ to 3.3V for host detection. Most MCU USB peripherals handle this internally -- but EFM32 low-speed mode has an internal pull-up of ~2.2 kohm (out of spec), requiring an external 4.7 kohm in parallel to D- via USB_DMPU pin.
-- **Non-standard charger pulls CC high when Rd disabled.** Legacy A-to-C cables have 56 kohm Rp inside the cable. If the charger pushes VBUS above 5V (Quick Charge, etc.) and Rd is not active, CC gets pulled to VBUS voltage. Without a zener/TVS on CC, this can damage the CC controller. V_CC = V_BUS * 0.0835 with Rd enabled (safe at 20V = 1.67V), but with Rd disabled, CC = VBUS.
-- **Crossing reference plane splits with D+/D- traces.** Return current detours around the split, creating a radiating loop. If unavoidable, stitch with 100 nF 0603 cap per trace near the crossing point. Cross at 90 degrees to minimize coupling.
-
-## Formulas
-
-**Maximum trace length from rise time:**
-**Rule of thumb:** 75 mm max for USB 2.0 HS. 50 mm optimal. FS tolerant to ~600 mm.
-**Formula:** L_max = t_rise * v_prop * 0.1, where v_prop ~ 150 mm/ns (FR4 stripline)
-**Example:** USB 2.0 HS rise time ~4 ns -> L_max = 4 * 150 * 0.1 = 60 mm. Conservative -- allows margin for connector and via parasitics. TI recommends 75 mm practical max.
-
-**FS skew budget allocation:**
-**Rule of thumb:** Match D+/D- within 50 mil (1.27 mm) on PCB.
-**Formula:** Total skew budget = t_rise / 10 = 20 ns / 10 = 2 ns (FS). At 6 ns/inch -> 8.5 mm (333 mil) total link budget. Subtract 100 ps cable skew (per spec) -> 5.9 mm (233 mil) for host + device combined.
-**Example:** Two boards at 2.5 mm (100 mil) each + cable at 0.84 mm (33 mil) = 5.9 mm (233 mil) total. Comfortable margin at 1.27 mm (50 mil) per board.
+- **Omitting the external low-speed pull-up on the EFM32 family covered by AN0046.** Its approximately 2.2 kohm internal pull-up needs an external 4.7 kohm in parallel on D- to meet the 1.5 kohm identification value. Use USB_DMPU when VDD is 3.3 V; AN0046 requires a separately switched USB_VREGO connection if VDD is lower [2, Section 2.3.3].
+- **A legacy A-to-C cable pulls CC toward VBUS when Rd is disabled.** With a non-USB charging protocol that raises VBUS above 5 V, the cable's 56 kohm Rp exposes an unprotected CC controller to excess voltage. Protection must cover this disabled-Rd case as well as a direct short to VBUS [20, pp.2-3].
 
 ## Sources
 
 ### Related Rules
 
 - `protection/esd.md` -- ESD protection placement and design for USB connectors
+- `guides/signal-integrity.md` -- differential routing and continuous return paths
 
 ### References
 
-1. Embedded Hardware Design -- USB 2.0 PCB Layout Guidelines: https://embeddedhardwaredesign.com/usb2-0-pcb-layout-guidelines/
-2. Silicon Labs AN0046 -- USB Hardware Design Guidelines: https://www.silabs.com/documents/public/application-notes/an0046-efm32-usb-hardware-design-guidelines.pdf
-3. TI SPRABT8A -- AM335x USB Layout Guidelines: https://www.ti.com/lit/an/sprabt8a/sprabt8a.pdf
-4. TI SWCA124 -- TUSB121x USB 2.0 Board Guidelines: https://www.ti.com/lit/pdf/swca124
-5. FTDI AN_146 -- USB Hardware Design Guidelines for FTDI ICs: https://ftdichip.com/wp-content/uploads/2020/08/AN_146_USB_Hardware_Design_Guidelines_for_FTDI_ICs.pdf
-6. Espressif -- USB Type-C Hardware Design Guide: https://docs.espressif.com/projects/esp-iot-solution/en/latest/usb/usb_overview/usb_typec_hardware_guide.html
-7. TI SLYY109 -- USB Type-C Primer: https://www.ti.com/lit/pdf/slyy109
-8. Benson Leung -- How to Design a Proper USB-C Power Sink: https://medium.com/@leung.benson/how-to-design-a-proper-usb-c-power-sink-hint-not-the-way-raspberry-pi-4-did-it-f470d7a5910
-9. Dubious Creations -- Designing with USB-C: Lessons Learned: https://dubiouscreations.com/2021/04/06/designing-with-usb-c-lessons-learned/
-10. Hackaday -- All About USB-C: Resistors and Emarkers: https://hackaday.com/2023/01/04/all-about-usb-c-resistors-and-emarkers/
-11. Hackaday -- All About USB-C: Example Circuits: https://hackaday.com/2023/08/07/all-about-usb-c-example-circuits/
-12. onsemi AN-5086 -- USB Type-C CC Pin Design Considerations: https://www.onsemi.com/pub/Collateral/AN-5086-D.PDF
-13. TI SLYY145 -- USB Type-C and USB PD Power Path Design Considerations: https://www.ti.com/lit/slyy145
-14. TI SLVA994 -- USB PD Power Path Performance and Protection: https://www.ti.com/lit/an/slva994/slva994.pdf
-15. Wurth ANE009 -- Production Guide USB 3.1 Type C (Connector Footprint): https://www.we-online.com/components/media/o563289v410%20ANE009a_EN.pdf
-16. TI SLVAE65 -- Dead Battery Application (TPS6598x): https://www.ti.com/lit/an/slvae65/slvae65.pdf
-17. USB-IF -- USB Type-C Cable and Connector Specification Release 2.5 (March 2026), Tables 4-28, 4-35 to 4-38: https://www.usb.org/document-library/usb-type-cr-cable-and-connector-specification-release-25
-18. TI SLVSDL1 -- TPD2S300 USB Type-C Short-to-VBUS and IEC ESD Protector for the CC Pins: https://www.ti.com/lit/ds/symlink/tpd2s300.pdf
-19. TI SLVAF82B -- ESD and Surge Protection for USB Interfaces: https://www.ti.com/lit/an/slvaf82b/slvaf82b.pdf
-20. Murata -- DLW21HN900SQ2 data sheet (2022-06-13): https://www.murata.com/en-us/products/productdetail?partno=DLW21HN900SQ2%23
-21. Murata -- Common Mode Choke Coil / Noise Filter selection chart, USB 2.0/3.0/3.1 (read 2026-11-06): https://www.murata.com/-/media/webrenewal/products/emc/emifil/cmcc/pdf/usb.ashx
+1. USB-IF -- USB Type-C Cable and Connector Specification Release 2.4 (October 2024), published specification mirrored by TI: https://e2e.ti.com/cfs-file/__key/communityserver-discussions-components-files/196/USB-Type_2D00_C-Spec-R2.4-_2D00_-October-2024.pdf
+2. Silicon Labs AN0046 (Rev.1.02) -- USB Hardware Design Guidelines (EFM32 Giant/Leopard Gecko): https://www.silabs.com/documents/public/application-notes/an0046-efm32-usb-hardware-design-guidelines.pdf
+3. TI SPRABT8A (November 2014) -- AM335x and AM43xx USB Layout Guidelines: https://www.ti.com/lit/pdf/sprabt8
+4. TI SWCA124 (October 2011) -- TUSB121x USB 2.0 Board Guidelines: https://www.ti.com/lit/pdf/swca124
+5. FTDI AN_146 (Version 1.1, November 2013) -- USB Hardware Design Guidelines for FTDI ICs: https://ftdichip.com/wp-content/uploads/2020/08/AN_146_USB_Hardware_Design_Guidelines_for_FTDI_ICs.pdf
+6. TI SLVA994 (June 2018) -- TPS65987DDH Power Path Performance and Protection: https://www.ti.com/lit/pdf/slva994
+7. TI SLVAE65 (February 2019) -- TPS6598x Dead Battery Application Note: https://www.ti.com/lit/pdf/slvae65
+8. ST STUSB4500 (DS12499 Rev.8, November 2022): https://www.st.com/resource/en/datasheet/stusb4500.pdf
+9. onsemi FUSB302B (Rev.5, August 2021): https://www.onsemi.com/pdf/datasheet/fusb302b-d.pdf
+10. TI TPD2S300 (SLVSDL1, April 2017): https://www.ti.com/lit/ds/symlink/tpd2s300.pdf
+11. TI SLVAF82B (January 2024) -- ESD and Surge Protection for USB Interfaces: https://www.ti.com/lit/pdf/slvaf82
+12. TI TPS65987D (SLVSES1D, October 2022): https://www.ti.com/lit/ds/symlink/tps65987d.pdf
+13. TI SLYY145A (June 2019) -- USB Type-C and USB PD Power Path Design Considerations: https://www.ti.com/lit/pdf/slyy145
+14. TI TUSB320 (SLLSEN9F) -- USB Type-C Configuration Channel Logic and Port Control: https://www.ti.com/lit/ds/symlink/tusb320.pdf
+15. TI SLYY109 -- A Primer on USB Type-C and USB Power Delivery Applications and Requirements: https://www.ti.com/lit/pdf/slyy109
+16. NXP IP4220CZ6 (Rev.5, July 2011): https://assets.nexperia.com/documents/data-sheet/IP4220CZ6.pdf
+17. Murata -- DLW21HN900SQ2 data sheet (June 2022): https://www.murata.com/en-us/products/productdetail?partno=DLW21HN900SQ2%23
+18. Murata -- Common Mode Choke Coil / Noise Filter selection chart, USB 2.0/3.0/3.1: https://www.murata.com/-/media/webrenewal/products/emc/emifil/cmcc/pdf/usb.ashx
+19. Wurth ANE009 (May 2020) -- Production Guide USB 3.1 Type C: https://www.we-online.com/components/media/o563289v410%20ANE009a_EN.pdf
+20. onsemi AN-5086 (Rev.2, September 2017) -- USB Type-C CC Pin Design Considerations: https://www.onsemi.com/pub/Collateral/AN-5086-D.PDF
+21. Semtech -- SRV05-4 product specifications and datasheet listing (December 2018): https://www.semtech.com/products/circuit-protection/low-capacitance/srv05-4

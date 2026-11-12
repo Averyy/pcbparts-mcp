@@ -9,6 +9,7 @@ import pytest
 from pcbparts_mcp import db, server
 from pcbparts_mcp.boards_db import BoardsDatabase
 from pcbparts_mcp.sensor_db import SensorDatabase
+from pcbparts_mcp.history_db import StockHistoryDatabase
 
 
 async def test_slow_search_keeps_loop_and_health_responsive(monkeypatch):
@@ -75,7 +76,8 @@ async def test_other_catalog_paths_run_off_loop(monkeypatch, handler, args, owne
 
     monkeypatch.setattr(owner(), method, work)
     result = await handler(**args)
-    assert result == ({"mpn": "LM358", "total": 1, "results": reply, "data_as_of": db.get_db().scraped_at()}
+    assert result == ({"mpn": "LM358", "total": 1, "results": reply, "data_as_of": db.get_db().scraped_at(),
+                       "prices_as_of": db.get_db().prices_as_of()}
                       if handler is server.jlc_get_part else reply)
 
 
@@ -120,7 +122,8 @@ async def test_offloaded_tools_preserve_schemas():
     tools = await server.mcp.list_tools()
     by_name = {tool.name: tool for tool in tools}
     for handler in (server.jlc_search, server.jlc_search_help, server.sensor_recommend,
-                    server.get_design_rules, server.board_search, server.board_get):
+                    server.get_design_rules, server.board_search, server.board_get,
+                    server.jlc_stock_history):
         original = Tool.from_function(handler.__wrapped__)
         published = by_name[handler.__name__]
         assert published.parameters == original.parameters
@@ -178,6 +181,7 @@ async def test_worker_limit_survives_cancellation(pool_name, max_workers):
     (db.ComponentDatabase, "get_by_lcsc", ("C2040",)),
     (BoardsDatabase, "get_board", ("missing-board",)),
     (SensorDatabase, "search", ("BME280",)),
+    (StockHistoryDatabase, "history", ("C8314",)),
 ])
 def test_connection_use_and_close_are_serialized(factory, method, args):
     from concurrent.futures import ThreadPoolExecutor

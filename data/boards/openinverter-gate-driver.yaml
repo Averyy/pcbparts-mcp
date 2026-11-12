@@ -109,11 +109,22 @@ nets:
 - name: GBOT
   pins: [D2.2, GBOT.1, R5.2, R6.1]
 - name: GND
-  pins: [C7.-, C8.-, DC1.-VIN, DC2.-VIN, IC1.CATHODE, IC2.CATHODE]
+  pins:
+  - -_BT_TP_+.1
+  - C7.-
+  - C8.-
+  - DC1.-VIN
+  - DC2.-VIN
+  - IC1.CATHODE
+  - IC2.CATHODE
 - name: GTOP
   pins: [D1.1, GTOP.1, R3.2, R4.1]
 - name: N$15
-  pins: [C7.+, C8.+, DC1.+VIN, DC2.+VIN]
+  pins: [-_BT_TP_+.4, C7.+, C8.+, DC1.+VIN, DC2.+VIN]
+- name: N$17
+  pins: [-_BT_TP_+.3, R2.1]
+- name: N$18
+  pins: [-_BT_TP_+.2, R1.1]
 - name: N$6
   pins: [C1.1, C3.+, DC1.+VOUT, IC1.VCC]
 - name: N$7

@@ -36,10 +36,12 @@ components:
 - ref: C14
   value: 2.2uF 7.77mR
   footprint: 0805
+  mpn: GRM21BR71E225KA73L
   decouples: U7
 - ref: C15
   value: 2.2uF 7.77mR
   footprint: 0805
+  mpn: GRM21BR71E225KA73L
   decouples: U7
 - ref: C16
   value: 100nF
@@ -94,7 +96,7 @@ components:
   pin_count: 3
 - ref: J1
   value: JST-XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
   mpn: B2B-XH-A(LF)(SN)
   description: Connector Header Through Hole 2 position 0.098 (2.50mm)
   manufacturer: JST Sales
@@ -104,15 +106,17 @@ components:
   manufacturer: Molex
   pin_count: 5
 - ref: J3
-  value: 1x8 header
-  footprint: 1X8
+  value: 1x8 1.27mm header
+  footprint: 1X8_P1.27mm
   pin_count: 8
 - ref: L1
   value: 1uH 17mR
   footprint: 74404043010A
+  mpn: 74404043010A
 - ref: L2
   value: 1uH 17mR
   footprint: 74404043010A
+  mpn: 74404043010A
 - ref: R1
   value: 820ohm
   footprint: 0805
@@ -190,6 +194,7 @@ components:
   value: RFM95W-868
   footprint: HOPERF_RFM69HW
   manufacturer: RF Solution
+  mpn: RFM95W-868S2R
   pin_count: 16
   nc_pins: {DIO5: '7', DIO3: '11', DIO4: '12', DIO2: '16'}
 - ref: U10
@@ -207,7 +212,8 @@ components:
   value: STM32F301C8T6TR
   footprint: LQFP-48
   pin_count: 48
-  nc_pins: {PC15: '4', PA5: '15', PA6: '16', PA7: '17', PB0: '18', PB1: '19', PB2: '20', PA8: '29', PA11: '32', PA12: '33', PB4: '40', PB7: '43'}
+  nc_pins: {PC15: '4', PA5: '15', PA6: '16', PA7: '17', PB0: '18', PB1: '19', PB2: '20', PA8: '29', PA11: '32', PA12: '33',
+    PB4: '40', PB7: '43'}
 - ref: U4
   value: KP254
   footprint: Infineon-KP254-Manufacturer_Recommended
@@ -217,8 +223,11 @@ components:
 - ref: U5
   value: HIH6020-021-001
   footprint: Honeywell-HIH7120-021-001-Recommended_Land_Pattern_
+  description: SENS HUMID/TEMP 3.3V I2C 3% 4SIP
+  digikey: HIH7120-021-001CT-ND
   height: 5.9mm
   manufacturer: Honeywell
+  mouser: 785-HIH7120-021-001
   pin_count: 4
 - ref: U6
   value: TMP36GT9Z
@@ -237,10 +246,11 @@ components:
   value: BH1750FVI
   footprint: XDCR_BH1750FVI-TR
   manufacturer: Rohm
+  mpn: BH1750FVI-TR
   pin_count: 6
 - ref: Y1
   value: ABM3-8.000MHZ-D2Y
-  footprint: Crystal_SMD_Abracon_ABM3-2Pin
+  footprint: Crystal_SMD_Abracon_ABM3-2Pin_5.0x3.2
   manufacturer: Abracon
 nets:
 - name: +3V3

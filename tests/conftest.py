@@ -4,6 +4,19 @@ import pytest
 
 import pcbparts_mcp.server as server
 from pcbparts_mcp import stats
+from pcbparts_mcp.catalog_files import read_catalog, write_catalog
+
+
+def write_catalog_category(data_dir, slug, parts):
+    """Add or replace a category in a temporary catalog using the production writer."""
+    catalog_dir = data_dir / "catalog"
+    categories = {}
+    if (catalog_dir / "stock.tsv").exists():
+        for category, part in read_catalog(catalog_dir):
+            categories.setdefault(category, []).append(part)
+    categories[slug] = [{"c": 1, "s": None, "$": None, **part} for part in parts]
+    prices = {part["l"]: part.get("$") for rows in categories.values() for part in rows}
+    write_catalog(catalog_dir, categories, prices)
 
 
 @pytest.fixture(autouse=True)

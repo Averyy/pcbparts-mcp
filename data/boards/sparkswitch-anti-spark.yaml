@@ -3,7 +3,6 @@ slug: sparkswitch-anti-spark
 source: vedderb/SparkSwitch
 format: kicad_legacy
 description: 'Active precharge / anti-spark switch by VESC creator: MOSFET-based inrush current limiting'
-tags: [drone-uav]
 outline:
   width_mm: 40.0
   height_mm: 32.0
@@ -23,31 +22,31 @@ components:
   footprint: Diode-SMA
 - ref: P1
   value: IN+
-  footprint: 1PAD
+  footprint: 1PAD_6x5
 - ref: P2
   value: IN-
-  footprint: 1PAD
+  footprint: 1PAD_6x5
 - ref: P3
   value: SW
-  footprint: 1PAD
+  footprint: 1PAD_4x5
 - ref: P4
   value: OUT+
-  footprint: 1PAD
+  footprint: 1PAD_6x5
 - ref: P5
   value: OUT-
-  footprint: 1PAD
+  footprint: 1PAD_6x5
 - ref: P6
   value: FUSE_A
-  footprint: 1PAD
+  footprint: 1PAD_6x5
 - ref: P7
   value: 12V_SW
-  footprint: 1PAD
+  footprint: 1PAD_4x5
 - ref: P8
   value: 12V_SW
-  footprint: 1PAD
+  footprint: 1PAD_4x5
 - ref: P9
   value: FUSE_B
-  footprint: 1PAD
+  footprint: 1PAD_6x5
 - ref: Q1
   value: IRFS7530
   footprint: D2PAK-7-GDS

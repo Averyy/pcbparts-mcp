@@ -1,8 +1,8 @@
 name: Soldered MPPT CN3791
 slug: soldered-mppt-cn3791
 source: SolderedElectronics/MPPT-Li-Ion-CN3791-charger-board-hardware-design
-format: kicad7
-description: MPPT solar charging (CN3791), varistor
+format: kicad6
+description: MPPT solar charging (CN3791)
 tags: [battery-charging, energy-harvesting]
 key_ics: [CN3791]
 outline:
@@ -25,7 +25,8 @@ components:
   decouples: U1
 - ref: C3
   value: 220uF
-  footprint: ELECTROLITIC_CAP
+  footprint: ELECTROLITIC_CAP_8x8x14.5
+  mpn: VKMD1451H221MV
 - ref: C4
   value: 100nF
   footprint: '0603'
@@ -37,7 +38,8 @@ components:
   footprint: '1206'
 - ref: C7
   value: 220uF
-  footprint: ELECTROLITIC_CAP
+  footprint: ELECTROLITIC_CAP_8x8x14.5
+  mpn: VKMD1451H221MV
 - ref: D1
   value: green LED
   footprint: '0402'
@@ -62,7 +64,7 @@ components:
   footprint: TERMINAL_KF235-5.0-2P
 - ref: K2
   value: 2x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X2
   pin_count: 8
 - ref: K3
   value: JST-2pin-SMD
@@ -73,10 +75,10 @@ components:
 - ref: L1
   value: 47uH
   footprint: YPRH1209-470M
+  mpn: YPRH1209-470M
 - ref: R1
   value: 4.7kohm
   footprint: '0402'
-  pullup: D1.A
 - ref: R10
   value: 2.2kohm
   footprint: '0402'

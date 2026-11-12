@@ -636,7 +636,8 @@ components:
   mpn: LFE5U-12F-6BG256C
   description: FPGA - Field Programmable Gate Array ECP5; 12k LUTs; 1.1V
   pin_count: 256
-  nc_pins: {PT4B: B3, PL14A: F1, PL20A: G1, PL23C: K1, PL23D: K2, PL20D: K3, DOUT/nCSO/PB15B: M8, nWRITE/PB18A: M9, D4/PICO2/PB6B: P7, nCS1/PB13B: P8, D5/POCI2/PB6A: R7, nCS/nS/PB13A: R8, PR44A: R12, PR41C: R13}
+  nc_pins: {PT4B: B3, PL14A: F1, PL20A: G1, PL23C: K1, PL23D: K2, PL20D: K3, DOUT/nCSO/PB15B: M8, nWRITE/PB18A: M9, D4/PICO2/PB6B: P7,
+    nCS1/PB13B: P8, D5/POCI2/PB6A: R7, nCS/nS/PB13A: R8, PR44A: R12, PR41C: R13}
 - ref: J1
   value: USB-C
   footprint: USB-C
@@ -692,8 +693,8 @@ components:
   value: USB-A
   footprint: USB_A_Kycon_KUSBXHT-SB-AS1N-B30-NF_Horizontal
   manufacturer: Jing Extension of the Electronic Co.
-  mpn: C42411
   description: USB A TYPE RECEPTACLE, SHORT BODY
+  lcsc: C42411
   pin_count: 5
 - ref: J4
   value: USB-C
@@ -719,15 +720,15 @@ components:
   pin_count: 10
   nc_pins: {SWO/TDO: '6', KEY: '7', NC/TDI: '8'}
 - ref: J7
-  value: 2x6 header
-  footprint: 2X6
+  value: 2x6 2.54mm header
+  footprint: 2X6_P2.54mm
   mpn: DW254W-22-12-85
   manufacturer: DEALON
   description: CONN HDR 12POS 0.1 GOLD PCB R/A
   pin_count: 12
 - ref: J8
-  value: 2x6 header
-  footprint: 2X6
+  value: 2x6 2.54mm header
+  footprint: 2X6_P2.54mm
   mpn: DW254W-22-12-85
   manufacturer: DEALON
   description: CONN HDR 12POS 0.1 GOLD PCB R/A
@@ -852,7 +853,6 @@ components:
   mpn: RC0402JR-072K2L
   manufacturer: Yageo
   description: RES 2.2K OHM 5% 1/16W 0402
-  pullup: D13.A
 - ref: R101
   value: 8.06kohm
   footprint: '0402'
@@ -917,7 +917,6 @@ components:
   mpn: RC0402JR-075K1L
   manufacturer: Yageo
   description: RES 5.1K OHM 5% 1/16W 0402
-  pullup: D14.A
 - ref: R110
   value: 5.1kohm
   footprint: '0402'
@@ -1346,7 +1345,6 @@ components:
   mpn: RC0402JR-075K1L
   manufacturer: Yageo
   description: RES 5.1K OHM 5% 1/16W 0402
-  pullup: D10.A
 - ref: R70
   value: 33kohm
   footprint: '0402'
@@ -1418,7 +1416,6 @@ components:
   mpn: RC0402JR-072K2L
   manufacturer: Yageo
   description: RES 2.2K OHM 5% 1/16W 0402
-  pullup: D11.A
 - ref: R80
   value: 18.7kohm
   footprint: '0402'
@@ -1494,7 +1491,6 @@ components:
   mpn: RC0402JR-072K2L
   manufacturer: Yageo
   description: RES 2.2K OHM 5% 1/16W 0402
-  pullup: D12.A
 - ref: R90
   value: 100kohm
   footprint: '0402'
@@ -1551,49 +1547,49 @@ components:
   pullup: /AUX Port/AUX_TYPE_C.nFAULT
 - ref: RN1
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-0733RL
   description: RES ARRAY 4 RES 33 OHM 0804
   pin_count: 8
 - ref: RN2
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-0733RL
   description: RES ARRAY 4 RES 33 OHM 0804
   pin_count: 8
 - ref: RN3
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-0733RL
   description: RES ARRAY 4 RES 33 OHM 0804
   pin_count: 8
 - ref: RN4
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-0733RL
   description: RES ARRAY 4 RES 33 OHM 0804
   pin_count: 8
 - ref: RN5
   value: 0ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-070RL
   description: RES ARRAY 4 RES ZERO OHM 0804
   pin_count: 8
 - ref: RN6
   value: 0ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-070RL
   description: RES ARRAY 4 RES ZERO OHM 0804
   pin_count: 8
 - ref: RN7
   value: 0ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-070RL
   description: RES ARRAY 4 RES ZERO OHM 0804
@@ -1618,7 +1614,7 @@ components:
   pin_count: 3
 - ref: U1
   value: PAC1954
-  footprint: QFN-16-1EP
+  footprint: QFN-16-1EP_3x3
   manufacturer: Microchip
   mpn: PAC1954T-E/4MX
   description: IC CURRENT/VOLT MON 1% 16VQFN
@@ -1633,7 +1629,7 @@ components:
   nc_pins: {RFU@A2: A2, RFU@A5: A5, RFU/PSC: B5, RFU@C2: C2, RFU/nPSC: C5}
 - ref: U12
   value: FUSB302B
-  footprint: WQFN-14-1EP
+  footprint: WQFN-14-1EP_2.5x2.5
   manufacturer: onsemi
   mpn: FUSB302BMPX
   description: IC USB TYPE C CTLR PROGR 14-MLP
@@ -1662,7 +1658,7 @@ components:
   pin_count: 10
 - ref: U3
   value: 3V3REG
-  footprint: DFN-8-1EP
+  footprint: DFN-8-1EP_3x3
   manufacturer: Diodes Inc.
   mpn: AP7361EA-33FGE-7
   description: LDO CMOS HICURR U-DFN3030-8
@@ -1686,7 +1682,7 @@ components:
   nc_pins: {NC: '4'}
 - ref: U6
   value: ATSAMD11
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
   manufacturer: Microchip
   mpn: ATSAMD11D14A-MUT
   description: IC MCU 32BIT 16KB FLASH 24QFN
@@ -1700,7 +1696,7 @@ components:
   pin_count: 8
 - ref: U8
   value: USB3343-CP
-  footprint: VQFN-24-1EP
+  footprint: VQFN-24-1EP_4x4
   manufacturer: Microchip
   mpn: USB3343-CP
   description: IC TRANSCEIVER 1/1 24QFN

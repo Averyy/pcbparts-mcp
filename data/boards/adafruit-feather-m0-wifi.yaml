@@ -117,7 +117,8 @@ components:
   value: ATSAMD21G18
   footprint: TQFN48_7MM
   pin_count: 49
-  nc_pins: {PA09/I2C/I9/AIN17/SERCOM0+2.1/I2SMC: '14', PA13/I13/I2C/SERCOM2+4.1: '22', PB22/I6/SERCOM5.2: '37', PB23/I7/SERCOM5.3: '38', PA27/I15: '39', PA28/I8: '41', PB03/I3/AIN11/SERCOM5.1: '48'}
+  nc_pins: {PA09/I2C/I9/AIN17/SERCOM0+2.1/I2SMC: '14', PA13/I13/I2C/SERCOM2+4.1: '22', PB22/I6/SERCOM5.2: '37', PB23/I7/SERCOM5.3: '38',
+    PA27/I15: '39', PA28/I8: '41', PB03/I3/AIN11/SERCOM5.1: '48'}
 - ref: U2
   value: AP2112K-3.3
   footprint: SOT-23-5
@@ -128,6 +129,7 @@ components:
   value: MCP73831
   footprint: SOT-23-5
   description: MCP73831/2 LIPO Charger
+  mpn: MCP73831T-2ACI/OT
   pin_count: 5
 - ref: WIFI
   value: green LED
@@ -276,9 +278,7 @@ nets:
 - name: STAT
   pins: [R2.2, U3.STAT]
 - name: SWCLK
-  pins: [R11.1, TP1.P$1, U$4.PA30/I10/SECOM1.2/SWCLK]
-- name: SWDIO
-  pins: [TP2.P$1, U$4.PA31/I11/SECOM1.3/SWDIO]
+  pins: [R11.1, U$4.PA30/I10/SECOM1.2/SWCLK]
 - name: VBAT
   pins: [C3.1, D1.A, JP3.1, R3.1, U3.VBAT, X1.2]
 - name: VBUS

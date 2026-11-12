@@ -2,7 +2,7 @@ name: SimpleFMCWRadar GainBlock
 slug: simplefmcwradar-gainblock
 source: lukeweston/SimpleFMCWRadar
 format: eagle
-description: HMC476 gain block amplifier x3, standalone RF amplifier chain
+description: HMC476 MMIC gain block (single amplifier stage), SMA input and output
 tags: [rf-sdr]
 key_ics: [HMC476]
 outline:
@@ -29,6 +29,7 @@ components:
 - ref: C3
   value: 2.2uF
   footprint: 0805
+  voltage: 10V
 - ref: C4
   value: 1nF
   footprint: '0603'
@@ -41,13 +42,15 @@ components:
 - ref: IC1
   value: HMC476MP86
   footprint: WW107
-  description: Mini-Circuits ERA-2SM+ MMIC amplifier
+  description: HMC476 MMIC gain block
   pin_count: 4
 - ref: J1
   value: RF Input
   footprint: J502-ND-142-0701-881
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-881
+  farnell: '1608603'
+  newark: 08B906
   description: SMA 50 Ohm
   pin_count: 5
 - ref: J2
@@ -59,6 +62,8 @@ components:
   footprint: J502-ND-142-0701-881
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-881
+  farnell: '1608603'
+  newark: 08B906
   description: SMA 50 Ohm
   pin_count: 5
 - ref: J4

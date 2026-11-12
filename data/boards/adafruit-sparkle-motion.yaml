@@ -111,13 +111,9 @@ components:
   value: 9p 2.54mm Terminal
   footprint: 1X09_2.54MMTERMINAL
   pin_count: 9
-- ref: JP3
-  value: 2x3 header
-  footprint: 2X03
-  pin_count: 6
 - ref: L1
   value: 8.2uH 150mOhm
-  footprint: INDUCTOR
+  footprint: INDUCTOR_5X5MM_NR5040_NOTHERMALS
   current: 2A
 - ref: LED1
   value: WS2812B
@@ -133,6 +129,8 @@ components:
   value: 5A PTC
   footprint: PTC2920
   description: PTC (Resettable Fuse)
+  voltage: 30V
+  mpn: 2920L500/30GR
 - ref: Q1
   value: AONR21307
   footprint: POWERDI3333
@@ -145,7 +143,7 @@ components:
   pin_count: 6
 - ref: R1
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pullup: SDA
   pin_count: 8
 - ref: R10
@@ -200,15 +198,14 @@ components:
 - ref: R9
   value: 47kohm
   footprint: '0603'
-  pullup: D4.A
 - ref: SW1
   value: KMR2
-  footprint: BTN_RKB2
+  footprint: BTN_RKB2_4.6X2.8
   description: SMT Tact Switches RKB2
   pin_count: 4
 - ref: SW2
   value: KMR2
-  footprint: BTN_RKB2
+  footprint: BTN_RKB2_4.6X2.8
   description: SMT Tact Switches RKB2
   pin_count: 4
 - ref: SW3
@@ -233,7 +230,7 @@ components:
   pin_count: 5
 - ref: X3
   value: HUSB238
-  footprint: DFN10
+  footprint: DFN10_3X3MM
   pin_count: 11
   nc_pins: {D+: '2', D-: '3'}
 - ref: X4
@@ -255,14 +252,7 @@ components:
   pin_count: 3
 nets:
 - name: '!RESET'
-  pins:
-  - C4.1
-  - Q5.2.D
-  - R6.1
-  - SW2.S
-  - SW2.S1
-  - TP3.P$1
-  - X4.EN
+  pins: [C4.1, Q5.2.D, R6.1, SW2.S, SW2.S1, X4.EN]
 - name: +24V
   pins:
   - C3.1
@@ -304,7 +294,6 @@ nets:
   - IC1.VDD5
   - IC1.VIO
   - IC2.VDD
-  - JP3.2
   - L1.2
   - LED1.VDD
   - O1.VS
@@ -357,7 +346,6 @@ nets:
   - JP1.1
   - JP1.4
   - JP1.7
-  - JP3.1
   - LED1.GND
   - O1.GND
   - R10.1
@@ -386,13 +374,7 @@ nets:
   - X7.GND
   - X7.GNDBREAK
 - name: GPIO0
-  pins: [Q5.1.D, R3.1, SW1.S, SW1.S1, TP4.P$1, X4.IO0/A2_1]
-- name: IO10
-  pins: [JP3.4, X4.IO10]
-- name: IO18
-  pins: [JP3.5, X4.IO18]
-- name: IO9
-  pins: [JP3.3, X4.IO9]
+  pins: [Q5.1.D, R3.1, SW1.S, SW1.S1, X4.IO0/A2_1]
 - name: IR_RECV
   pins: [O1.OUT, X4.IO32/A1_4/X32P]
 - name: LED
@@ -430,15 +412,13 @@ nets:
 - name: RTS
   pins: [IC1.RTS, Q5.2.S, R1.G$2.2]
 - name: RXD0
-  pins: [IC1.TXD, TP1.P$1, X4.RXD0]
+  pins: [IC1.TXD, X4.RXD0]
 - name: S1
   pins: [JP1.8, R13.2]
 - name: S2
   pins: [JP1.5, R14.2]
 - name: S3
   pins: [JP1.2, R15.2]
-- name: S4
-  pins: [JP3.6, R16.2]
 - name: SCL
   pins: [CONN1.G$1.SCL, R1.G$3.1, X3.SCL, X4.IO13/A2_4]
 - name: SDA
@@ -456,7 +436,7 @@ nets:
 - name: SW
   pins: [C12.2, L1.1, U$10.SW]
 - name: TXD0
-  pins: [IC1.RXD, TP2.P$1, X4.TXD0]
+  pins: [IC1.RXD, X4.TXD0]
 - name: VBUS1
   pins: [Q1.S, R2.2, R5.1, X5.VBUS]
 positions:
@@ -556,9 +536,6 @@ positions:
   x: 45.72
   y: 16.51
   rot: 270.0
-- ref: JP3
-  x: 41.91
-  y: 2.54
 - ref: L1
   x: 17.65
   y: 25.21

@@ -113,7 +113,7 @@ components:
   footprint: '0402'
   mpn: GRM155Z71A105KE01J
 - ref: C1402
-  value: pF
+  value: 1nF
   footprint: '0402'
   mpn: GRM1555C1H102FA01D
 - ref: C1403
@@ -189,11 +189,11 @@ components:
   footprint: '0402'
   mpn: GRM155R71C104KA88J
 - ref: C1705
-  value: pF
+  value: 3.9nF
   footprint: '0402'
   mpn: C0402C392J3RACTU
 - ref: C1706
-  value: pF
+  value: 2.2nF
   footprint: '0402'
   mpn: C0402C222J3RACTU
 - ref: C1707
@@ -222,11 +222,11 @@ components:
   footprint: '0402'
   mpn: GRM155R71C104KA88J
 - ref: C1713
-  value: pF
+  value: 3.9nF
   footprint: '0402'
   mpn: C0402C392J3RACTU
 - ref: C1714
-  value: pF
+  value: 2.2nF
   footprint: '0402'
   mpn: C0402C222J3RACTU
 - ref: C1801
@@ -622,17 +622,26 @@ components:
   footprint: '0402'
   mpn: GRM1555C2A2R0WA01D
 - ref: CSKB-H401
-  value: 2x26 header
-  footprint: 2X26
+  value: 2x26 2.54mm header
+  footprint: 2X26_P2.54mm
   mpn: ESQ-126-39-G-D
   pin_count: 52
-  nc_pins: {Pin_2: '2', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_14: '14', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18', Pin_19: '19', Pin_20: '20', Pin_21: '21', Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_25: '25', Pin_26: '26', Pin_27: '27', Pin_28: '28', Pin_29: '29', Pin_30: '30', Pin_31: '31', Pin_32: '32', Pin_33: '33', Pin_34: '34', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39', Pin_40: '40', Pin_41: '41', Pin_42: '42', Pin_43: '43', Pin_44: '44', Pin_45: '45', Pin_46: '46', Pin_47: '47', Pin_48: '48', Pin_49: '49', Pin_50: '50', Pin_51: '51', Pin_52: '52'}
+  nc_pins: {Pin_2: '2', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11',
+    Pin_12: '12', Pin_14: '14', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18', Pin_19: '19', Pin_20: '20', Pin_21: '21',
+    Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_25: '25', Pin_26: '26', Pin_27: '27', Pin_28: '28', Pin_29: '29', Pin_30: '30',
+    Pin_31: '31', Pin_32: '32', Pin_33: '33', Pin_34: '34', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39',
+    Pin_40: '40', Pin_41: '41', Pin_42: '42', Pin_43: '43', Pin_44: '44', Pin_45: '45', Pin_46: '46', Pin_47: '47', Pin_48: '48',
+    Pin_49: '49', Pin_50: '50', Pin_51: '51', Pin_52: '52'}
 - ref: CSKB-H402
-  value: 2x26 header
-  footprint: 2X26
+  value: 2x26 2.54mm header
+  footprint: 2X26_P2.54mm
   mpn: ESQ-126-39-G-D
   pin_count: 52
-  nc_pins: {Pin_2: '2', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_13: '13', Pin_14: '14', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18', Pin_19: '19', Pin_20: '20', Pin_21: '21', Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_27: '27', Pin_28: '28', Pin_33: '33', Pin_34: '34', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39', Pin_40: '40', Pin_41: '41', Pin_42: '42', Pin_43: '43', Pin_44: '44', Pin_45: '45', Pin_46: '46', Pin_47: '47', Pin_48: '48', Pin_49: '49', Pin_50: '50', Pin_51: '51', Pin_52: '52'}
+  nc_pins: {Pin_2: '2', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11',
+    Pin_12: '12', Pin_13: '13', Pin_14: '14', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18', Pin_19: '19', Pin_20: '20',
+    Pin_21: '21', Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_27: '27', Pin_28: '28', Pin_33: '33', Pin_34: '34', Pin_35: '35',
+    Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39', Pin_40: '40', Pin_41: '41', Pin_42: '42', Pin_43: '43', Pin_44: '44',
+    Pin_45: '45', Pin_46: '46', Pin_47: '47', Pin_48: '48', Pin_49: '49', Pin_50: '50', Pin_51: '51', Pin_52: '52'}
 - ref: D1101
   value: LXES1UTAA1-157
   footprint: SOD-882
@@ -705,7 +714,7 @@ components:
   mpn: 73415-0961
   description: coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)
 - ref: J401
-  value: 1x14 header
+  value: 1x14 1.25mm header
   footprint: Molex_PicoBlade_53261-1471
   mpn: '532611471'
   description: PicoBlade-14 SMD connector
@@ -1032,15 +1041,12 @@ components:
 - ref: R401
   value: 100ohm
   footprint: '0402'
-  mpn: AC0402FR-070RL
 - ref: R402
   value: 100ohm
   footprint: '0402'
-  mpn: AC0402FR-070RL
 - ref: R403
   value: 100ohm
   footprint: '0402'
-  mpn: AC0402FR-070RL
 - ref: R404
   value: 120ohm
   footprint: '0402'
@@ -1056,15 +1062,12 @@ components:
 - ref: R407
   value: 100ohm
   footprint: '0402'
-  mpn: AC0402FR-070RL
 - ref: R408
   value: 100ohm
   footprint: '0402'
-  mpn: AC0402FR-070RL
 - ref: R409
   value: 100ohm
   footprint: '0402'
-  mpn: AC0402FR-070RL
 - ref: R410
   value: 120ohm
   footprint: '0402'
@@ -1154,13 +1157,13 @@ components:
   mpn: RC0402FR-07100RL
 - ref: RN701
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0603
   mpn: YC164-FR-0733RL
   description: 4 resistor network, parallel topology, split
   pin_count: 8
 - ref: RN702
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0603
   mpn: YC164-FR-0733RL
   description: 4 resistor network, parallel topology, split
   pin_count: 8
@@ -1174,7 +1177,7 @@ components:
   pin_count: 6
 - ref: U1001
   value: SX1261IMLTRT
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
   description: 150 MHz to 960 MHz Low Power Long Range Transceiver, 14dBm output power
   pin_count: 25
   nc_pins: {XTB: '4', RFO: '23', VR_PA: '24'}
@@ -1186,7 +1189,7 @@ components:
   pin_count: 5
 - ref: U1102
   value: BGS12P2L6
-  footprint: Infineon_PG-TSNP-6-10
+  footprint: Infineon_PG-TSNP-6-10_0.7x1.1
   description: SPDT DC-6GHz switch, 45dB isolation at 960MHz, PG-TSNP-6-10, high power
   pin_count: 6
 - ref: U1103
@@ -1210,7 +1213,7 @@ components:
   pin_count: 5
 - ref: U1202
   value: CMX90A004
-  footprint: QFN-16-1EP
+  footprint: QFN-16-1EP_4x4
   mpn: CMX90A004
   description: 860-960 MHz 2 Watt GaAs HBT Power Amplifier
   pin_count: 17
@@ -1240,7 +1243,7 @@ components:
   pin_count: 5
 - ref: U1404
   value: QPL9095
-  footprint: DFN-8-1EP
+  footprint: DFN-8-1EP_2x2
   mpn: QPL9095SR
   description: Ultra Low-Noise, Bypass LNA, bypass mode, 22 dB gain, +33 dBm OIP3, and 0.6 dB
   pin_count: 9
@@ -1256,7 +1259,7 @@ components:
   pin_count: 6
 - ref: U1701
   value: TPS259474x
-  footprint: Texas_VQFN-10-HR
+  footprint: Texas_VQFN-10-HR_2x2
   description: True Reverse Current Blocking eFuse with Input Reverse Polarity Protection
   pin_count: 10
 - ref: U1702
@@ -1274,22 +1277,22 @@ components:
   nc_pins: {CT: '4'}
 - ref: U1704
   value: TPS259474x
-  footprint: Texas_VQFN-10-HR
+  footprint: Texas_VQFN-10-HR_2x2
   description: True Reverse Current Blocking eFuse with Input Reverse Polarity Protection
   pin_count: 10
 - ref: U1801
   value: TPS62912
-  footprint: Texas_RPU0010A_VQFN-HR-10
+  footprint: Texas_RPU0010A_VQFN-HR-10_2x2
   description: 2.2MHz or 1MHz, 2A, Low Noise, Low Ripple, Buck Converter with Integrated
   pin_count: 10
 - ref: U1802
   value: TPS62912
-  footprint: Texas_RPU0010A_VQFN-HR-10
+  footprint: Texas_RPU0010A_VQFN-HR-10_2x2
   description: 2.2MHz or 1MHz, 2A, Low Noise, Low Ripple, Buck Converter with Integrated
   pin_count: 10
 - ref: U1901
   value: TPS62912
-  footprint: Texas_RPU0010A_VQFN-HR-10
+  footprint: Texas_RPU0010A_VQFN-HR-10_2x2
   description: 2.2MHz or 1MHz, 2A, Low Noise, Low Ripple, Buck Converter with Integrated
   pin_count: 10
 - ref: U1902
@@ -1299,37 +1302,39 @@ components:
   pin_count: 5
 - ref: U1903
   value: LP5912-3.3
-  footprint: WSON-6-1EP
+  footprint: WSON-6-1EP_2x2
   description: 500-mA Ultra-Low-Noise Low-IQ LDO, 3.3V, WSON-6
+  mpn: LP5912-3.3DRV
   pin_count: 7
   nc_pins: {NC: '2'}
 - ref: U1904
   value: LP5912-1.8
-  footprint: WSON-6-1EP
+  footprint: WSON-6-1EP_2x2
   description: 500-mA Ultra-Low-Noise Low-IQ LDO, 1.8V, WSON-6
+  mpn: LP5912-1.8DRV
   pin_count: 7
   nc_pins: {NC: '2'}
 - ref: U201
   value: TMP117xxDRV
-  footprint: WSON-6-1EP
+  footprint: WSON-6-1EP_2x2
   description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
   pin_count: 6
   nc_pins: {ALERT: '3'}
 - ref: U202
   value: TMP117xxDRV
-  footprint: WSON-6-1EP
+  footprint: WSON-6-1EP_2x2
   description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
   pin_count: 6
   nc_pins: {ALERT: '3'}
 - ref: U203
   value: TMP117xxDRV
-  footprint: WSON-6-1EP
+  footprint: WSON-6-1EP_2x2
   description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
   pin_count: 6
   nc_pins: {ALERT: '3'}
 - ref: U204
   value: TMP117xxDRV
-  footprint: WSON-6-1EP
+  footprint: WSON-6-1EP_2x2
   description: "Digital Temperature Sensor with I2C/SMBus Interface, 16 bits, \xB10.3\xB0C, one-shot"
   pin_count: 6
   nc_pins: {ALERT: '3'}
@@ -1337,26 +1342,40 @@ components:
   value: Compute_Module_5
   footprint: CM5
   pin_count: 201
-  nc_pins: {Ethernet_Pair3_P: '3', Ethernet_Pair1_P: '4', Ethernet_Pair3_N: '5', Ethernet_Pair1_N: '6', Ethernet_Pair2_N: '9', Ethernet_Pair0_N: '10', Ethernet_Pair2_P: '11', Ethernet_Pair0_P: '12', nEthernet_nLED3: '15', Fan_tacho: '16', nEthernet_nLED2: '17', Ethernet_SYNC_OUT: '18', Fan_PWM: '19', ID_SC: '35', ID_SD: '36', SD_DAT5: '64', SD_DAT4: '68', SD_DAT7: '70', SD_DAT6: '72', SD_VDD_Override: '73', I2C_SCL0: '80', I2C_SDA0: '82', CM5_1.8V@88: '88', CM5_1.8V@90: '90', nPI_LED_nPWR: '95', CAM_GPIO0: '97', CAM_GPIO1: '100', USB_OTG_ID: '101', nPCIe_CLK_nREQ: '102', PCIE_DET_nWAKE: '104', PCIE_PWR_EN: '106', nPCIe_nRST: '109', PCIe_CLK_P: '110', VBUS_EN: '111', PCIe_CLK_N: '112', MIPI0_D0_N: '115', PCIe_RX_P: '116', MIPI0_D0_P: '117', PCIe_RX_N: '118', MIPI0_D1_N: '121', PCIe_TX_P: '122', MIPI0_D1_P: '123', PCIe_TX_N: '124', MIPI0_C_N: '127', USB3-0-RX_N: '128', MIPI0_C_P: '129', USB3-0-RX_P: '130', MIPI0_D2_N: '133', USB3-0-DP: '134', MIPI0_D2_P: '135', USB3-0-DM: '136', MIPI0_D3_N: '139', USB3-0-TX_N: '140', MIPI0_D3_P: '141', USB3-0-TX_P: '142', HDMI1_HOTPLUG: '143', HDMI1_SDA: '145', HDMI1_TX2_P: '146', HDMI1_SCL: '147', HDMI1_TX2_N: '148', HDMI1_CEC: '149', HDMI0_CEC: '151', HDMI1_TX1_P: '152', HDMI0_HOTPLUG: '153', HDMI1_TX1_N: '154', USB3-1-RX_N: '157', HDMI1_TX0_P: '158', USB3-1-RX_P: '159', HDMI1_TX0_N: '160', USB3-1-DP: '163', HDMI1_CLK_P: '164', USB3-1-DM: '165', HDMI1_CLK_N: '166', USB3-1-TX_N: '169', HDMI0_TX2_P: '170', USB3-1-TX_P: '171', HDMI0_TX2_N: '172', MIPI1_D0_N: '175', HDMI0_TX1_P: '176', MIPI1_D0_P: '177', HDMI0_TX1_N: '178', MIPI1_D1_N: '181', HDMI0_TX0_P: '182', MIPI1_D1_P: '183', HDMI0_TX0_N: '184', MIPI1_C_N: '187', HDMI0_CLK_P: '188', MIPI1_C_P: '189', HDMI0_CLK_N: '190', MIPI1_D2_N: '193', MIPI1_D3_N: '194', MIPI1_D2_P: '195', MIPI1_D3_P: '196', HDMI0_SDA: '199', HDMI0_SCL: '200'}
+  nc_pins: {Ethernet_Pair3_P: '3', Ethernet_Pair1_P: '4', Ethernet_Pair3_N: '5', Ethernet_Pair1_N: '6', Ethernet_Pair2_N: '9',
+    Ethernet_Pair0_N: '10', Ethernet_Pair2_P: '11', Ethernet_Pair0_P: '12', nEthernet_nLED3: '15', Fan_tacho: '16', nEthernet_nLED2: '17',
+    Ethernet_SYNC_OUT: '18', Fan_PWM: '19', ID_SC: '35', ID_SD: '36', SD_DAT5: '64', SD_DAT4: '68', SD_DAT7: '70', SD_DAT6: '72',
+    SD_VDD_Override: '73', I2C_SCL0: '80', I2C_SDA0: '82', CM5_1.8V@88: '88', CM5_1.8V@90: '90', nPI_LED_nPWR: '95', CAM_GPIO0: '97',
+    CAM_GPIO1: '100', USB_OTG_ID: '101', nPCIe_CLK_nREQ: '102', PCIE_DET_nWAKE: '104', PCIE_PWR_EN: '106', nPCIe_nRST: '109',
+    PCIe_CLK_P: '110', VBUS_EN: '111', PCIe_CLK_N: '112', MIPI0_D0_N: '115', PCIe_RX_P: '116', MIPI0_D0_P: '117', PCIe_RX_N: '118',
+    MIPI0_D1_N: '121', PCIe_TX_P: '122', MIPI0_D1_P: '123', PCIe_TX_N: '124', MIPI0_C_N: '127', USB3-0-RX_N: '128', MIPI0_C_P: '129',
+    USB3-0-RX_P: '130', MIPI0_D2_N: '133', USB3-0-DP: '134', MIPI0_D2_P: '135', USB3-0-DM: '136', MIPI0_D3_N: '139', USB3-0-TX_N: '140',
+    MIPI0_D3_P: '141', USB3-0-TX_P: '142', HDMI1_HOTPLUG: '143', HDMI1_SDA: '145', HDMI1_TX2_P: '146', HDMI1_SCL: '147', HDMI1_TX2_N: '148',
+    HDMI1_CEC: '149', HDMI0_CEC: '151', HDMI1_TX1_P: '152', HDMI0_HOTPLUG: '153', HDMI1_TX1_N: '154', USB3-1-RX_N: '157',
+    HDMI1_TX0_P: '158', USB3-1-RX_P: '159', HDMI1_TX0_N: '160', USB3-1-DP: '163', HDMI1_CLK_P: '164', USB3-1-DM: '165', HDMI1_CLK_N: '166',
+    USB3-1-TX_N: '169', HDMI0_TX2_P: '170', USB3-1-TX_P: '171', HDMI0_TX2_N: '172', MIPI1_D0_N: '175', HDMI0_TX1_P: '176',
+    MIPI1_D0_P: '177', HDMI0_TX1_N: '178', MIPI1_D1_N: '181', HDMI0_TX0_P: '182', MIPI1_D1_P: '183', HDMI0_TX0_N: '184', MIPI1_C_N: '187',
+    HDMI0_CLK_P: '188', MIPI1_C_P: '189', HDMI0_CLK_N: '190', MIPI1_D2_N: '193', MIPI1_D3_N: '194', MIPI1_D2_P: '195', MIPI1_D3_P: '196',
+    HDMI0_SDA: '199', HDMI0_SCL: '200'}
 - ref: U401
   value: MCP2558FD-xMF
-  footprint: DFN-8-1EP
+  footprint: DFN-8-1EP_3x3
   description: CAN FD Transceiver with Silent Mode, up to 8 Mbps, DFN-8
   pin_count: 9
 - ref: U402
   value: MCP2518FD-xQBB
-  footprint: DFN-14-1EP
+  footprint: DFN-14-1EP_3x4.5
   description: CAN FD Controller with SPI Interface, up to 8 Mbps, Vdd 2.7..5.5V, functional
   pin_count: 15
   nc_pins: {CLKO/SOF: '3', OSC2: '5', nINT1/GPIO1: '8', nINT0/GPIO0/XSTBY: '9'}
 - ref: U403
   value: MCP2558FD-xMF
-  footprint: DFN-8-1EP
+  footprint: DFN-8-1EP_3x3
   description: CAN FD Transceiver with Silent Mode, up to 8 Mbps, DFN-8
   pin_count: 9
 - ref: U404
   value: MCP2518FD-xQBB
-  footprint: DFN-14-1EP
+  footprint: DFN-14-1EP_3x4.5
   description: CAN FD Controller with SPI Interface, up to 8 Mbps, Vdd 2.7..5.5V, functional
   pin_count: 15
   nc_pins: {CLKO/SOF: '3', OSC2: '5', nINT1/GPIO1: '8', nINT0/GPIO0/XSTBY: '9'}
@@ -1370,6 +1389,7 @@ components:
   value: USBLC6-2
   footprint: SOT-23-6
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-23-6
+  mpn: USBLC6-2SC6
   pin_count: 6
 - ref: U701
   value: SX1302IMLTRT
@@ -1377,36 +1397,37 @@ components:
   mpn: SX1302IMLTRT
   description: LoRa Gateway Baseband Transceiver
   pin_count: 69
-  nc_pins: {RADIO_A_CTRL_5/PA_GAIN_1: '17', RADIO_B_CTRL_6/EN_LDO: '22', RADIO_B_CTRL_7/EN_LNA: '26', RADIO_B_CTRL_8/EN_PA: '27', RADIO_B_CTRL_10/PA_GAIN_0: '29', RADIO_B_CTRL_11/PA_GAIN_1: '31'}
+  nc_pins: {RADIO_A_CTRL_5/PA_GAIN_1: '17', RADIO_B_CTRL_6/EN_LDO: '22', RADIO_B_CTRL_7/EN_LNA: '26', RADIO_B_CTRL_8/EN_PA: '27',
+    RADIO_B_CTRL_10/PA_GAIN_0: '29', RADIO_B_CTRL_11/PA_GAIN_1: '31'}
 - ref: U801
   value: SX1250IMLTRT
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
   mpn: SX1250IMLTRT
   description: Multi-band, Sub-GHz, RF Front End, LoRa modem
   pin_count: 25
   nc_pins: {XTB: '4'}
 - ref: U901
   value: SX1250IMLTRT
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
   mpn: SX1250IMLTRT
   description: Multi-band, Sub-GHz, RF Front End, LoRa modem
   pin_count: 25
   nc_pins: {VR_PA: '1', XTB: '4', RFO: '24'}
 - ref: X601
   value: 32 MHz 1.8 V TCXO
-  footprint: Oscillator_SMD_SeikoEpson_TG2520SMN-xxx-xxxxxx-4Pin
+  footprint: Oscillator_SMD_SeikoEpson_TG2520SMN-xxx-xxxxxx-4Pin_2.5x2.0
   mpn: TG2520SMN 32.0000M-ECGNNM3
   pin_count: 4
   nc_pins: {NC: '1'}
 - ref: Y401
   value: SG-210STF
-  footprint: Oscillator_SMD_SeikoEpson_SG210-4Pin
+  footprint: Oscillator_SMD_SeikoEpson_SG210-4Pin_2.5x2.0
   mpn: SG-210STF 40.0000ML
   description: CMOS Crystal Oscillator SPXO
   pin_count: 4
 - ref: Y402
   value: SG-210STF
-  footprint: Oscillator_SMD_SeikoEpson_SG210-4Pin
+  footprint: Oscillator_SMD_SeikoEpson_SG210-4Pin_2.5x2.0
   mpn: SG-210STF 40.0000ML
   description: CMOS Crystal Oscillator SPXO
   pin_count: 4

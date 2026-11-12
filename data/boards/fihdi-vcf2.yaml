@@ -1,7 +1,7 @@
 name: Fihdi VCF2
 slug: fihdi-vcf2
 source: Fihdi/Eurorack
-format: kicad7
+format: kicad9
 description: 'Standalone voltage-controlled filter: multi-mode state-variable topology, resonance control'
 tags: [signal-conditioning]
 key_ics: [TL074, LM13700]
@@ -37,41 +37,41 @@ components:
   value: LED
   footprint: LED_D3.0mm
 - ref: J1
-  value: 1x12 header
-  footprint: 1X12
+  value: 1x12 2.54mm header
+  footprint: 1X12_P2.54mm
   pin_count: 12
 - ref: J10
-  value: 1x1 header
-  footprint: 1X1
+  value: 1x1 2.54mm header
+  footprint: 1X1_P2.54mm
 - ref: J11
-  value: 1x1 header
-  footprint: 1X1
+  value: 1x1 2.54mm header
+  footprint: 1X1_P2.54mm
 - ref: J13
-  value: 1x1 header
-  footprint: 1X1
+  value: 1x1 2.54mm header
+  footprint: 1X1_P2.54mm
 - ref: J2
-  value: 2x5 header
-  footprint: 2X5
+  value: 2x5 2.54mm header
+  footprint: 2X5_P2.54mm
   pin_count: 10
 - ref: J3
-  value: 1x12 header
-  footprint: 1X12
+  value: 1x12 2.54mm header
+  footprint: 1X12_P2.54mm
   pin_count: 12
 - ref: J4
-  value: 1x1 header
-  footprint: 1X1
+  value: 1x1 2.54mm header
+  footprint: 1X1_P2.54mm
 - ref: J5
-  value: 1x1 header
-  footprint: 1X1
+  value: 1x1 2.54mm header
+  footprint: 1X1_P2.54mm
 - ref: J6
-  value: 1x1 header
-  footprint: 1X1
+  value: 1x1 2.54mm header
+  footprint: 1X1_P2.54mm
 - ref: J7
-  value: 1x1 header
-  footprint: 1X1
+  value: 1x1 2.54mm header
+  footprint: 1X1_P2.54mm
 - ref: J9
-  value: 1x1 header
-  footprint: 1X1
+  value: 1x1 2.54mm header
+  footprint: 1X1_P2.54mm
 - ref: Q1
   value: BC557
   footprint: TO-92
@@ -160,7 +160,6 @@ components:
 - ref: R3
   value: 1kohm
   footprint: Axial
-  pulldown: D1.K
 - ref: R30
   value: 100kohm
   footprint: Axial

@@ -2,13 +2,15 @@
   "source": "tasmota",
   "source_url": "https://tasmota.github.io/docs/Supported-Peripherals/",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-11-01T13:25:07.529025+00:00",
+  "scraped_at": "2026-11-10T23:04:41.784030+00:00",
   "stats": {
     "sensor_count": 103,
     "total_rows_checked": 147,
     "skipped_non_sensor": 35,
-    "skipped_no_measures": 0
+    "skipped_no_measures": 0,
+    "kept_missing": 0
   },
+  "missed_scrapes": {},
   "sensors": [
     {
       "id": "ads111x",
@@ -489,7 +491,7 @@
         "tasmota"
       ],
       "urls": [
-        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_106_gdk101.ino><strong>GDK101</strong></a"
+        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_106_gdk101.ino"
       ],
       "description": "Gamma radiation sensor",
       "protocol": [
@@ -506,7 +508,7 @@
         "tasmota"
       ],
       "urls": [
-        "https://github.com/iotdevicesdev/ggreg20-v3-tasmota-esp32-driver><strong>GGreg20_V3</strong></a"
+        "https://github.com/iotdevicesdev/ggreg20-v3-tasmota-esp32-driver"
       ],
       "description": "Ionizing radiation detector",
       "protocol": [
@@ -559,60 +561,6 @@
       "description": "Texas Instruments HDC2010 humidity and temperature sensor",
       "protocol": [
         "i2c"
-      ]
-    },
-    {
-      "id": "hlkld2410",
-      "name": "HLKLD2410",
-      "measures": [
-        "proximity",
-        "radar"
-      ],
-      "platforms": [
-        "tasmota"
-      ],
-      "urls": [
-        "https://tasmota.github.io/docs/HLK-LD2410/"
-      ],
-      "description": "24GHz mmWave presence sensor",
-      "protocol": [
-        "uart"
-      ]
-    },
-    {
-      "id": "hlkld2410b",
-      "name": "HLKLD2410B",
-      "measures": [
-        "proximity",
-        "radar"
-      ],
-      "platforms": [
-        "tasmota"
-      ],
-      "urls": [
-        "https://tasmota.github.io/docs/HLK-LD2410/"
-      ],
-      "description": "24GHz mmWave presence sensor",
-      "protocol": [
-        "uart"
-      ]
-    },
-    {
-      "id": "hlkld2410s",
-      "name": "HLKLD2410S",
-      "measures": [
-        "proximity",
-        "radar"
-      ],
-      "platforms": [
-        "tasmota"
-      ],
-      "urls": [
-        "https://tasmota.github.io/docs/HLK-LD2410S/"
-      ],
-      "description": "Low energy 24GHz mmWave presence sensor",
-      "protocol": [
-        "uart"
       ]
     },
     {
@@ -740,7 +688,7 @@
         "tasmota"
       ],
       "urls": [
-        "https://https://gitlab.com/Parura57/icp10125-driver><strong>InvenSense"
+        "https://gitlab.com/Parura57/icp10125-driver"
       ],
       "description": "Barometer/pressure sensor",
       "protocol": [
@@ -821,6 +769,60 @@
       ]
     },
     {
+      "id": "ld2410",
+      "name": "LD2410",
+      "measures": [
+        "proximity",
+        "radar"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/HLK-LD2410/"
+      ],
+      "description": "24GHz mmWave presence sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "ld2410b",
+      "name": "LD2410B",
+      "measures": [
+        "proximity",
+        "radar"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/HLK-LD2410/"
+      ],
+      "description": "24GHz mmWave presence sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
+      "id": "ld2410s",
+      "name": "LD2410S",
+      "measures": [
+        "proximity",
+        "radar"
+      ],
+      "platforms": [
+        "tasmota"
+      ],
+      "urls": [
+        "https://tasmota.github.io/docs/HLK-LD2410S/"
+      ],
+      "description": "Low energy 24GHz mmWave presence sensor",
+      "protocol": [
+        "uart"
+      ]
+    },
+    {
       "id": "lm75",
       "name": "LM75",
       "measures": [
@@ -861,7 +863,7 @@
         "tasmota"
       ],
       "urls": [
-        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_110_max17043.ino><strong>MAX17043</strong></a"
+        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_110_max17043.ino"
       ],
       "description": "LiPo fuel gauge",
       "protocol": [
@@ -958,7 +960,7 @@
         "tasmota"
       ],
       "urls": [
-        "https://github.com/mathias-buder/water-level-measure><strong>ME007</strong></a"
+        "https://github.com/mathias-buder/water-level-measure"
       ],
       "description": "Ultrasonic distance sensor",
       "protocol": [
@@ -1164,7 +1166,7 @@
         "tasmota"
       ],
       "urls": [
-        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_104_pmsa003i.ino><strong>PMSA003I</strong></a"
+        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_104_pmsa003i.ino"
       ],
       "description": "Air quality sensor",
       "protocol": [
@@ -1343,7 +1345,7 @@
         "tasmota"
       ],
       "urls": [
-        "https://github.com/arendst/Tasmota/pull/18880#issue-1757083089><strong>SGP41</strong></a"
+        "https://github.com/arendst/Tasmota/pull/18880#issue-1757083089"
       ],
       "description": "VOC and NOx sensor",
       "protocol": [
@@ -1480,7 +1482,7 @@
         "tasmota"
       ],
       "urls": [
-        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_108_tc74.ino><strong>TC74</strong></a"
+        "https://github.com/arendst/Tasmota/blob/development/tasmota/tasmota_xsns_sensor/xsns_108_tc74.ino"
       ],
       "description": "Temperature sensor",
       "protocol": [

@@ -57,14 +57,13 @@ components:
 - ref: R1
   value: 10kohm
   footprint: '0603'
-  pullup: D1.A
 - ref: R2
   value: 10kohm
   footprint: '0603'
   pullup: INT
 - ref: R3
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pin_count: 8
 - ref: U1
   value: AP7312-3.3/1.8

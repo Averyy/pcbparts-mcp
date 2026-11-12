@@ -18,16 +18,16 @@ components:
 - ref: C1
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-08604
   voltage: 25V
   tolerance: 5%
+  prod_id: CAP-08604
   decouples: U1
 - ref: C2
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-08604
   voltage: 25V
   tolerance: 5%
+  prod_id: CAP-08604
   decouples: U1
 - ref: JP1
   value: 1x4 header
@@ -41,27 +41,27 @@ components:
 - ref: R1
   value: 4.7kohm
   footprint: '0603'
-  prod_id: RES-07857
   tolerance: 1%
   power: 1/10W
+  prod_id: RES-07857
 - ref: R2
   value: 4.7kohm
   footprint: '0603'
-  prod_id: RES-07857
   tolerance: 1%
   power: 1/10W
+  prod_id: RES-07857
 - ref: R3
   value: 4.7kohm
   footprint: '0603'
-  prod_id: RES-07857
   tolerance: 1%
   power: 1/10W
+  prod_id: RES-07857
 - ref: R4
   value: 4.7kohm
   footprint: '0603'
-  prod_id: RES-07857
   tolerance: 1%
   power: 1/10W
+  prod_id: RES-07857
   pullup: SJ3.3
 - ref: SJ1
   value: EN I2C PULL

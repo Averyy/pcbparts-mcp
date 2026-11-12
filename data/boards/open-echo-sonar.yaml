@@ -74,42 +74,42 @@ components:
   footprint: 0805
   lcsc: C84256
 - ref: J1
-  value: 1x2 header
-  footprint: AMASS_XT30PW-M
+  value: XT30PW-M
+  footprint: AMASS_XT30PW-M_1x02
   lcsc: C431092
 - ref: J4
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   lcsc: C49257
   pin_count: 3
 - ref: JP1
   value: 40kHz
-  footprint: 1X2
+  footprint: 1X2_P2.54mm
   lcsc: C2905434
   description: Solder Jumper, 2-pole, open
 - ref: JP2
   value: 40kHz
-  footprint: 1X2
+  footprint: 1X2_P2.54mm
   lcsc: C2905434
   description: Solder Jumper, 2-pole, open
 - ref: JP3
   value: 200kHz
-  footprint: 1X2
+  footprint: 1X2_P2.54mm
   lcsc: C2905434
   description: Solder Jumper, 2-pole, open
 - ref: JP4
   value: 200kHz
-  footprint: 1X2
+  footprint: 1X2_P2.54mm
   lcsc: C2905434
   description: Solder Jumper, 2-pole, open
 - ref: JP5
   value: CUSTOM kHz
-  footprint: 1X2
+  footprint: 1X2_P2.54mm
   lcsc: C2905434
   description: Solder Jumper, 2-pole, open
 - ref: JP6
   value: CUSTOM kHz
-  footprint: 1X2
+  footprint: 1X2_P2.54mm
   lcsc: C2905434
   description: Solder Jumper, 2-pole, open
 - ref: R1
@@ -138,7 +138,9 @@ components:
   lcsc: C318884
 - ref: U1
   value: TUSS4470TRTJR
-  footprint: QFN-20-1EP
+  footprint: QFN-20-1EP_4x4
+  description: \n                        \n                            Direct drive ultrasonic sensor IC with logarithmic
+    amplifier\n                        \n
   manufacturer: Texas instruments
   mpn: TUSS4470TRTJR
   lcsc: C1855776

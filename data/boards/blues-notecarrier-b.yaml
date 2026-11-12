@@ -2,7 +2,7 @@ name: Blues Notecarrier-B
 slug: blues-notecarrier-b
 source: blues/note-hardware
 format: kicad7
-description: "MCP73831 LiPo charging, MAX17225 energy harvesting"
+description: MCP73831 LiPo charging, MAX17225 energy harvesting
 tags: [battery-charging, energy-harvesting]
 key_ics: [MCP73831, MAX17225, TPS62748]
 outline:
@@ -83,11 +83,13 @@ components:
 - ref: C8
   value: 10u 6.3V-X5R
   footprint: '0402'
+  temp_range: "-55\xB0..+85\xB0"
   description: CHIP CAP.CER. 10uF 6.3V 20% X5R 0402
   decouples: U3
 - ref: C9
   value: 10u 6.3V-X5R
   footprint: '0402'
+  temp_range: "-55\xB0..+85\xB0"
   description: CHIP CAP.CER. 10uF 6.3V 20% X5R 0402
   decouples: U3
 - ref: DS14
@@ -97,23 +99,28 @@ components:
 - ref: DS15
   value: FSV1045V
   footprint: TO277-3
+  temp_range: "-55\xB0..+150\xB0"
   mpn: FSV1045V
   pin_count: 3
 - ref: DSW1
   value: DIP-SW-CHS-01TB
   footprint: DSS-CHS-01TB
+  temp_range: "-40\xB0..+85\xB0"
   description: DIP SWITCH 1P/D BLACK CHS-01TB COPAL SMT
 - ref: F1
   value: SF-0603F150-2
   footprint: '0603'
+  temp_range: "-40\xB0..+105\xB0"
   mpn: SF-0603F150-2
 - ref: F2
   value: 3.5A/32V
   footprint: '0603'
   mpn: 0603SFV350F/32-2
+  temp_range: "-55\xB0..+125\xB0"
 - ref: J19
   value: MICROUSB-B
   footprint: J-5-0065-FOS-MICROUSB10118192
+  temp_range: "-30\xB0..+85\xB0"
   mpn: 10118192-0001LF
   description: "CONN. USB F/90\xB0 TYPE MICRO-B C.S. 10118192-0001LF FCI SMT"
   pin_count: 6
@@ -121,9 +128,13 @@ components:
 - ref: J20
   value: MDT420E01001
   footprint: J-75-0050-MOS-M2-E
+  temp_range: "-40\xB0..+80\xB0"
   description: "CONN. M.2 75P M/90\xB0 P=0.5 MDT420E01001 AMPHENOL SMT"
   pin_count: 67
-  nc_pins: {NC1: '1', SIM_VCC: '8', SIM_RST: '10', SIM_IO: '12', SIM_CLK: '14', NC15: '15', SIM_NPRESENT: '16', NC17: '17', NC19: '19', NC21: '21', NC23: '23', NC32: '32', NC34: '34', NC35: '35', NC36: '36', NC37: '37', NC41: '41', NC43: '43', NC44: '44', NC47: '47', NC49: '49', NC53: '53', NC55: '55', NC59: '59', NC61: '61', NC63: '63', NC65: '65', NC66: '66', NC68: '68', NC69: '69', NC75: '75'}
+  nc_pins: {NC1: '1', SIM_VCC: '8', SIM_RST: '10', SIM_IO: '12', SIM_CLK: '14', NC15: '15', SIM_NPRESENT: '16', NC17: '17',
+    NC19: '19', NC21: '21', NC23: '23', NC32: '32', NC34: '34', NC35: '35', NC36: '36', NC37: '37', NC41: '41', NC43: '43',
+    NC44: '44', NC47: '47', NC49: '49', NC53: '53', NC55: '55', NC59: '59', NC61: '61', NC63: '63', NC65: '65', NC66: '66',
+    NC68: '68', NC69: '69', NC75: '75'}
 - ref: J23
   value: JST PH 2-pin
   footprint: J-2-0200-MOS-S2B
@@ -132,23 +143,27 @@ components:
 - ref: J24
   value: JST SH 4-pin
   footprint: J-4-0100-MOS-SH
+  temp_range: "-25\xB0..+85\xB0"
   mpn: SM04B-SRSS-TBT(LF)(SN)
   description: CONN. SH 4P M/D P=1 SM04B-SRSS-TBT(LF)(SN) JST SMT
   pin_count: 4
 - ref: L2
   value: 2.2uH
   footprint: 0806
+  temp_range: "-40\xB0..+85\xB0"
   mpn: 1285AS-H-2R2M=P2
   description: INDUTTANZA 2.2uH 1.5A 20% 0806 1285AS-H-2R2M=P2 MURATA SMT
 - ref: L4
-  value: 2.2mH
+  value: 2.2uH
   footprint: LS-XFL4020
+  temp_range: "-40\xB0..+125\xB0"
   mpn: XFL4020-222MEC
   description: INDUTTANZA 2.2 uH 3.1A 20% XFL4020-222MEC COILCRAFT SMT
 - ref: LD1
   value: SML-P12WTT86R
   footprint: '0402'
   mpn: SML-P12WTT86R
+  temp_range: "-40\xB0..+85\xB0"
   description: YELLOW LED DIODE SML-P12WTT86R ROHM 0402 SMT
 - ref: OBJ1
   value: 9774025151R
@@ -157,10 +172,12 @@ components:
 - ref: Q2
   value: AO3420
   footprint: SOT23_NO-FILL
+  temp_range: "-55\xB0..+150\xB0"
   pin_count: 3
 - ref: R10
   value: 10Mohm
   footprint: '0402'
+  temp_range: "-55\xB0..+125\xB0"
   description: CHIP RES. 10M 0402 1/8W 5%
   tolerance: 5%
 - ref: R307
@@ -174,6 +191,7 @@ components:
 - ref: R319
   value: 1kohm
   footprint: '0402'
+  temp_range: "-55\xB0..+155\xB0"
   description: CHIP RES. 1K 0402 1/16W 1%
   pulldown: /RST
 - ref: R322
@@ -192,22 +210,26 @@ components:
 - ref: R6
   value: 82kohm
   footprint: '0402'
+  temp_range: "-55\xB0..+155\xB0"
   description: CHIP RES. 82K 0402 1/16W 1%
   pulldown: U3.SEL
 - ref: R7
   value: 2.8kohm
   footprint: '0201'
+  temp_range: "-55\xB0..+125\xB0"
   mpn: CRCW02012K80FKED
   description: "CHIP RES. 2K8 0201 1/20W 1% 100PPM/\xB0C"
   pulldown: U5.PROG
 - ref: RR1
   value: 100R/5%
   footprint: RR-8X-1506
+  temp_range: "-55\xB0..+125\xB0"
   description: ARRAY CHIP RES. 8R sing. 100R 5% 1506 CAY16-101J8LF BOURNS SMT
   pin_count: 16
 - ref: RR2
   value: 100R/5%
   footprint: RR-8X-1506
+  temp_range: "-55\xB0..+125\xB0"
   description: ARRAY CHIP RES. 8R sing. 100R 5% 1506 CAY16-101J8LF BOURNS SMT
   pin_count: 16
 - ref: TVS1
@@ -216,18 +238,21 @@ components:
 - ref: U3
   value: MAX17225
   footprint: WDFN6-0200X0200
+  temp_range: "-40\xB0..+85\xB0"
   mpn: MAX17225ELT+T
   description: I.C. DC/DC MAX17225ELT+T MAXIM W-DFN6 SMT
   pin_count: 6
 - ref: U4
   value: TPS62748
   footprint: XFBGA8
+  temp_range: "-40\xB0..+85\xB0"
   mpn: TPS62748YFPT
   description: I.C. DC/DC TPS62748YFPT TEXAS DSBGA8 SMT
   pin_count: 8
 - ref: U5
   value: MCP73831-2
   footprint: VFDFN8-EXP
+  temp_range: "-40\xB0..+85\xB0"
   mpn: MCP73831-2ACI/MC
   description: I.C. BATTERY MANAGEMENT MCP73831-2ACI/MC MICROCHIP DFN8 SMT
   pin_count: 9

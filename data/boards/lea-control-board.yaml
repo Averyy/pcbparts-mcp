@@ -3,7 +3,7 @@ slug: lea-control-board
 source: upb-lea/LCB-CCB-01_LEA_Control_Board
 format: kicad9
 description: 'Isolated gate-driver interface for power electronics: automotive-grade ISO7741, CAS-120TA isolated DC-DC'
-tags: [automotive, isolation, power-supply]
+tags: [isolation, power-supply]
 key_ics: [FT2232HL, MIC5259-3.3, ADG736BRMZ, ISO_ISO7741FQDWWQ1, MIC5504-1.2]
 outline:
   width_mm: 85.0
@@ -19,636 +19,742 @@ components:
   value: 4.7uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V475K
   mouser: 810-C1608X5R1V475K
   description: Capacitor 0603
 - ref: C202
   value: 10nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: CGA3E2X7R1H103K
   mouser: 810-CGA3E2X7R1H103K
   description: Capacitor 0603
 - ref: C203
   value: 10nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: CGA3E2X7R1H103K
   mouser: 810-CGA3E2X7R1H103K
   description: Capacitor 0603
 - ref: C204
   value: 1uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H105K
   mouser: 810-C1608X5R1H105K
   description: Capacitor 0603
 - ref: C205
   value: 4.7uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V475K
   mouser: 810-C1608X5R1V475K
   description: Capacitor 0603
 - ref: C206
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C207
   value: 4.7uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V475K
   mouser: 810-C1608X5R1V475K
   description: Capacitor 0603
 - ref: C208
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C209
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C210
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C211
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C212
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C213
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C214
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C215
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C216
   value: 4.7uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V475K
   mouser: 810-C1608X5R1V475K
   description: Capacitor 0603
 - ref: C217
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C218
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C219
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C220
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C221
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C222
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C223
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C301
   value: 2.2uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V225K
   mouser: 810-C1608X5R1V225K
   description: Capacitor 0603
 - ref: C302
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C303
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C304
   value: 2.2uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V225K
   mouser: 810-C1608X5R1V225K
   description: Capacitor 0603
 - ref: C305
   value: 2.2uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V225K
   mouser: 810-C1608X5R1V225K
   description: Capacitor 0603
 - ref: C306
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C307
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C308
   value: 2.2uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V225K
   mouser: 810-C1608X5R1V225K
   description: Capacitor 0603
 - ref: C601
   value: 1uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H105K
   mouser: 810-C1608X5R1H105K
   description: Capacitor 0603
 - ref: C602
   value: 1uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H105K
   mouser: 810-C1608X5R1H105K
   description: Capacitor 0603
 - ref: C603
   value: 2.2uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V225K
   mouser: 810-C1608X5R1V225K
   description: Capacitor 0603
 - ref: C604
   value: 2.2uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V225K
   mouser: 810-C1608X5R1V225K
   description: Capacitor 0603
 - ref: C605
   value: 2.2uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V225K
   mouser: 810-C1608X5R1V225K
   description: Capacitor 0603
 - ref: C607
   value: 2.2uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V225K
   mouser: 810-C1608X5R1V225K
   description: Capacitor 0603
 - ref: C608
   value: 2.2uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1V225K
   mouser: 810-C1608X5R1V225K
   description: Capacitor 0603
 - ref: C701
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C702
   value: 10nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: CGA3E2X7R1H103K
   mouser: 810-CGA3E2X7R1H103K
   description: Capacitor 0603
 - ref: C703
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C704
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C705
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C706
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C707
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C708
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C709
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C710
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C711
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C712
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C713
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C714
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C715
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C716
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C717
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C718
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C719
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C720
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C721
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C722
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C723
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C724
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C725
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C726
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C727
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C728
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C729
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C730
   value: 100nF
   footprint: '0402'
   manufacturer: TDK
+  mpn: C1005X7R1H104K
   mouser: 810-C1005X7R1H104K
   description: Capacitor 0402
 - ref: C740
   value: 1uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H105K
   mouser: 810-C1608X5R1H105K
   description: Capacitor 0603
 - ref: C741
   value: 1uF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H105K
   mouser: 810-C1608X5R1H105K
   description: Capacitor 0603
 - ref: C801
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C804
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C807
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C810
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C813
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C814
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C815
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C816
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C817
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C901
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C902
   value: 100nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X5R1H104K
   mouser: 810-C1608X5R1H104K
   description: Capacitor 0603
 - ref: C905
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C906
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C907
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C908
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C909
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C910
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C911
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C912
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C913
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C914
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C915
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C916
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C917
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C918
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C919
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C920
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C921
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C922
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C923
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C924
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C925
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C926
   value: 100pF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608C0G1H101KAA
   mouser: 810-C1608C0G1H101KAA
   description: Capacitor 0603
 - ref: C927
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C928
   value: 1nF
   footprint: '0603'
   manufacturer: TDK
+  mpn: C1608X7R1H102KAE
   mouser: 810-C1608X7R1H102KAE
   description: Capacitor 0603
 - ref: C929
   value: 22uF
   footprint: '0603'
   manufacturer: Samsung
+  mpn: CL10A226KQ8NRNE
   mouser: 187-CL10A226KQ8NRNE
   description: Capacitor 0603
 - ref: D1001
@@ -656,77 +762,92 @@ components:
   footprint: '0603'
   manufacturer: Kingbright
   mouser: 604-APTD1608LCGCK
+  mpn: APTD1608LCGCK
 - ref: D1002
   value: 2mA
   footprint: '0603'
   manufacturer: Kingbright
   mouser: 604-APTD1608LCGCK
+  mpn: APTD1608LCGCK
 - ref: D1003
   value: 2mA
   footprint: '0603'
   manufacturer: Kingbright
   mouser: 604-APTD1608LCGCK
+  mpn: APTD1608LCGCK
 - ref: D1004
   value: 2mA
   footprint: '0603'
   manufacturer: Kingbright
   mouser: 604-APTD1608LSYCK
+  mpn: APTD1608LSYCK
 - ref: D1005
   value: 2mA
   footprint: '0603'
   manufacturer: Kingbright
   mouser: 604-APHD1608LSURCK
+  mpn: APHD1608LSURCK
 - ref: D1006
   value: 2mA
   footprint: '0603'
   manufacturer: Kingbright
   mouser: 604-APHD1608LSURCK
+  mpn: APHD1608LSURCK
 - ref: D201
   value: 2mA
   footprint: '0603'
   manufacturer: Kingbright
   mouser: 604-APTD1608LCGCK
+  mpn: APTD1608LCGCK
 - ref: D202
   value: 1A0
   footprint: SOD-323_Infineon
   manufacturer: Infineon
   mouser: 726-BAS3010A-03WE6
+  mpn: BAS3010A03WE6327HTSA1
   description: Schottky Diodes & Rectifiers Medium Power IF Diode
 - ref: D203
   value: 2mA
   footprint: '0603'
   manufacturer: Kingbright
   mouser: 604-APHD1608LVBCD
+  mpn: APHD1608LVBC/D
 - ref: D204
   value: 2mA
   footprint: '0603'
   manufacturer: Kingbright
   mouser: 604-APHD1608LVBCD
+  mpn: APHD1608LVBC/D
 - ref: D801
   value: 150mA
   footprint: SOD-323_Panjit
   manufacturer: Panjit
   mouser: 241-BAS316_R1_00001
+  mpn: BAS316_R1_00001
 - ref: D802
   value: 150mA
   footprint: SOD-323_Panjit
   manufacturer: Panjit
   mouser: 241-BAS316_R1_00001
+  mpn: BAS316_R1_00001
 - ref: D803
   value: 150mA
   footprint: SOD-323_Panjit
   manufacturer: Panjit
   mouser: 241-BAS316_R1_00001
+  mpn: BAS316_R1_00001
 - ref: D804
   value: 150mA
   footprint: SOD-323_Panjit
   manufacturer: Panjit
   mouser: 241-BAS316_R1_00001
+  mpn: BAS316_R1_00001
 - ref: J201
   value: USBC_GTC_USB4110-GF-A
   footprint: USB-C
   manufacturer: GTC
   mouser: 640-USB4110-GF-A
+  mpn: USB4110-GF-A
   description: USB Connectors USB Type C, 2.0, Rec, SMT , G/F, RA , Top Mnt, T & R
   pin_count: 13
   nc_pins: {SBU1: A8, SBU2: B8}
@@ -735,6 +856,7 @@ components:
   footprint: FTR-110-03-G-D-06
   manufacturer: Samtec
   mouser: 200-FTR11003GD06TR
+  mpn: FTR-110-03-G-D-06-TR
   description: 20 pin SMD Micro Header, 1.27 mm pitch
   pin_count: 19
   nc_pins: {'15': '15'}
@@ -743,6 +865,7 @@ components:
   footprint: 6-PinHeader_Molex_532617006
   manufacturer: Molex
   mouser: 538-53261-7006
+  mpn: 53261-7006
   description: 6 Pin Male, right angle, 1.25mm Pitch
   pin_count: 6
 - ref: J402
@@ -750,6 +873,7 @@ components:
   footprint: ERF5-075-05.0-L-DV
   manufacturer: Samtec
   mouser: 200-ERF507505.0LDVTR
+  mpn: ERF5-075-05.0-L-DV-TR
   description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed Socket
   pin_count: 150
   nc_pins: {'107': '107', '108': '108', '109': '109', '110': '110', '111': '111', '112': '112'}
@@ -758,6 +882,7 @@ components:
   footprint: ERF5-075-05.0-L-DV
   manufacturer: Samtec
   mouser: 200-ERF507505.0LDVTR
+  mpn: ERF5-075-05.0-L-DV-TR
   description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed Socket
   pin_count: 150
 - ref: J501
@@ -765,6 +890,7 @@ components:
   footprint: ERM5-075-05.0-L-DV
   manufacturer: Samtec
   mouser: 200-ERM5075050LDVKTR
+  mpn: ERM5-075-05.0-L-DV-K-TR
   description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed
   pin_count: 150
   nc_pins: {'107': '107', '108': '108', '109': '109', '110': '110', '111': '111', '112': '112'}
@@ -773,78 +899,91 @@ components:
   footprint: ERM5-075-05.0-L-DV
   manufacturer: Samtec
   mouser: 200-ERM5075050LDVKTR
+  mpn: ERM5-075-05.0-L-DV-K-TR
   description: Board to Board & Mezzanine Connectors 0.50 mm Edge Rate Rugged High Speed
   pin_count: 150
 - ref: L201
-  value: Ferrite_0603
+  value: 600ohm
   footprint: '0603'
   manufacturer: Murata
   mouser: 530-FCB-0603-601A
+  mpn: FCB-0603-601A
   description: Ferrite Bead, 0603, 600Ohm, 300mA
 - ref: L202
-  value: Ferrite_0603
+  value: 600ohm
   footprint: '0603'
   manufacturer: Murata
   mouser: 530-FCB-0603-601A
+  mpn: FCB-0603-601A
   description: Ferrite Bead, 0603, 600Ohm, 300mA
 - ref: L601
   value: 60R 3A5
   footprint: '0603'
   manufacturer: TDK
   mouser: 810-MPZ1608S600ATAH0
+  mpn: MPZ1608S600ATAH0
   description: Ferrite Bead, 0603
 - ref: L603
   value: 60R 3A5
   footprint: '0603'
   manufacturer: TDK
   mouser: 810-MPZ1608S600ATAH0
+  mpn: MPZ1608S600ATAH0
   description: Ferrite Bead, 0603
 - ref: R1001
   value: 680ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW0603680RFKEAC
   mouser: 71-CRCW0603680RFKEAC
   description: Resistor 0603
 - ref: R1002
   value: 680ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW0603680RFKEAC
   mouser: 71-CRCW0603680RFKEAC
   description: Resistor 0603
 - ref: R1003
   value: 680ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW0603680RFKEAC
   mouser: 71-CRCW0603680RFKEAC
   description: Resistor 0603
 - ref: R1004
   value: 680ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW0603680RFKEAC
   mouser: 71-CRCW0603680RFKEAC
   description: Resistor 0603
 - ref: R1005
   value: 680ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW0603680RFKEAC
   mouser: 71-CRCW0603680RFKEAC
   description: Resistor 0603
 - ref: R1006
   value: 680ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW0603680RFKEAC
   mouser: 71-CRCW0603680RFKEAC
   description: Resistor 0603
 - ref: R201
   value: 2.2kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06032K20FKEAC
   mouser: 71-CRCW06032K20FKEAC
   description: Resistor 0603
 - ref: R202
   value: 680ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW0603680RFKEAC
   mouser: 71-CRCW0603680RFKEAC
   description: Resistor 0603
 - ref: R203
@@ -852,6 +991,7 @@ components:
   footprint: '0603'
   manufacturer: Vishay
   mouser: 71-CRCW06034K70FKEBC
+  mpn: CRCW06034K70FKEBC
   description: Resistor 0603
   pulldown: /XDS100 - Page 2/CC1
 - ref: R204
@@ -859,30 +999,35 @@ components:
   footprint: '0603'
   manufacturer: Vishay
   mouser: 71-CRCW06034K70FKEBC
+  mpn: CRCW06034K70FKEBC
   description: Resistor 0603
   pulldown: /XDS100 - Page 2/CC2
 - ref: R205
   value: 2.2kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06032K20FKEAC
   mouser: 71-CRCW06032K20FKEAC
   description: Resistor 0603
 - ref: R206
   value: 0ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06030000Z0EAC
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: R207
   value: 2.2kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06032K20FKEAC
   mouser: 71-CRCW06032K20FKEAC
   description: Resistor 0603
 - ref: R208
   value: 2.2kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06032K20FKEAC
   mouser: 71-CRCW06032K20FKEAC
   description: Resistor 0603
   pulldown: U201.ACBUS5
@@ -890,36 +1035,42 @@ components:
   value: 0ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06030000Z0EAC
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: R210
   value: 10kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060310K0FKEAC
   mouser: 71-CRCW060310K0FKEAC
   description: Resistor 0603
 - ref: R211
   value: 2.2kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06032K20FKEAC
   mouser: 71-CRCW06032K20FKEAC
   description: Resistor 0603
 - ref: R213
   value: 680ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW0603680RFKEAC
   mouser: 71-CRCW0603680RFKEAC
   description: Resistor 0603
 - ref: R214
   value: 680ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW0603680RFKEAC
   mouser: 71-CRCW0603680RFKEAC
   description: Resistor 0603
 - ref: R217
   value: 12kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060312K0FKEAC
   mouser: 71-CRCW060312K0FKEAC
   description: Resistor 0603
   pulldown: /XDS100 - Page 2/REF
@@ -927,24 +1078,28 @@ components:
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06034K70FKEBC
   mouser: 71-CRCW06034K70FKEBC
   description: Resistor 0603
 - ref: R221
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06034K70FKEBC
   mouser: 71-CRCW06034K70FKEBC
   description: Resistor 0603
 - ref: R222
   value: 0ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06030000Z0EAC
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: R223
   value: 2.2kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06032K20FKEAC
   mouser: 71-CRCW06032K20FKEAC
   description: Resistor 0603
   pulldown: TRST_LV
@@ -952,23 +1107,27 @@ components:
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06034K70FKEBC
   mouser: 71-CRCW06034K70FKEBC
   description: Resistor 0603
 - ref: R301
   value: 0ohm
   footprint: '0603'
+  mpn: CRCW06030000Z0EAC
   manufacturer: Vishay
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: R302
   value: 0ohm
   footprint: '0603'
+  mpn: CRCW06030000Z0EAC
   manufacturer: Vishay
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: R601
   value: 0ohm
   footprint: '0603'
+  mpn: CRCW06030000Z0EAC
   manufacturer: Vishay
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
@@ -976,36 +1135,42 @@ components:
   value: 2.2kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06032K20FKEAC
   mouser: 71-CRCW06032K20FKEAC
   description: Resistor 0603
 - ref: R702
   value: 2.2kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06032K20FKEAC
   mouser: 71-CRCW06032K20FKEAC
   description: Resistor 0603
 - ref: R703
   value: 2.2kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06032K20FKEAC
   mouser: 71-CRCW06032K20FKEAC
   description: Resistor 0603
 - ref: R704
   value: 0ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06030000Z0EAC
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: R705
   value: 2.2kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06032K20FKEAC
   mouser: 71-CRCW06032K20FKEAC
   description: Resistor 0603
 - ref: R706
   value: 2.2kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06032K20FKEAC
   mouser: 71-CRCW06032K20FKEAC
   description: Resistor 0603
   pulldown: TRST_HV
@@ -1013,47 +1178,55 @@ components:
   value: 33ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060333R0FKEAC
   mouser: 71-CRCW060333R0FKEAC
   description: Resistor 0603
 - ref: R708
   value: 33ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060333R0FKEAC
   mouser: 71-CRCW060333R0FKEAC
   description: Resistor 0603
 - ref: R709
   value: 33ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060333R0FKEAC
   mouser: 71-CRCW060333R0FKEAC
   description: Resistor 0603
 - ref: R710
   value: 33ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060333R0FKEAC
   mouser: 71-CRCW060333R0FKEAC
   description: Resistor 0603
 - ref: R711
   value: 56ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060356R0FKEAC
   mouser: 71-CRCW060356R0FKEAC
   description: Resistor 0603
 - ref: R712
   value: 0ohm
   footprint: '0603'
+  mpn: CRCW06030000Z0EAC
   manufacturer: Vishay
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: R713
   value: 0ohm
   footprint: '0603'
+  mpn: CRCW06030000Z0EAC
   manufacturer: Vishay
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: R714
   value: 0ohm
   footprint: '0603'
+  mpn: CRCW06030000Z0EAC
   manufacturer: Vishay
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
@@ -1061,48 +1234,56 @@ components:
   value: 10ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060310R0FKEAC
   mouser: 71-CRCW060310R0FKEAC
   description: Resistor 0603
 - ref: R801
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R802
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R803
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R804
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R805
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06034K70FKEBC
   mouser: 71-CRCW06034K70FKEBC
   description: Resistor 0603
 - ref: R806
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06034K70FKEBC
   mouser: 71-CRCW06034K70FKEBC
   description: Resistor 0603
 - ref: R807
   value: 10kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060310K0FKEAC
   mouser: 71-CRCW060310K0FKEAC
   description: Resistor 0603
   pulldown: /Error Detection - Page 8/OPA1IN+
@@ -1110,6 +1291,7 @@ components:
   value: 10kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060310K0FKEAC
   mouser: 71-CRCW060310K0FKEAC
   description: Resistor 0603
   pulldown: /Error Detection - Page 8/OPA3IN+
@@ -1117,42 +1299,49 @@ components:
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R810
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R811
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R812
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R813
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06034K70FKEBC
   mouser: 71-CRCW06034K70FKEBC
   description: Resistor 0603
 - ref: R814
   value: 4.7kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06034K70FKEBC
   mouser: 71-CRCW06034K70FKEBC
   description: Resistor 0603
 - ref: R815
   value: 10kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060310K0FKEAC
   mouser: 71-CRCW060310K0FKEAC
   description: Resistor 0603
   pulldown: /Error Detection - Page 8/OPA2IN+
@@ -1160,30 +1349,35 @@ components:
   value: 10kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW060310K0FKEAC
   mouser: 71-CRCW060310K0FKEAC
   description: Resistor 0603
   pulldown: /Error Detection - Page 8/OPA4IN+
 - ref: R820
   value: 0ohm
   footprint: '0603'
+  mpn: CRCW06030000Z0EAC
   manufacturer: Vishay
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: R821
   value: 0ohm
   footprint: '0603'
+  mpn: CRCW06030000Z0EAC
   manufacturer: Vishay
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: R822
   value: 0ohm
   footprint: '0603'
+  mpn: CRCW06030000Z0EAC
   manufacturer: Vishay
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: R823
   value: 0ohm
   footprint: '0603'
+  mpn: CRCW06030000Z0EAC
   manufacturer: Vishay
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
@@ -1191,150 +1385,175 @@ components:
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R902
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R903
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R904
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R905
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R906
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R907
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R908
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R909
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R910
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R911
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R912
   value: 1kohm
   footprint: 0805
   manufacturer: Vishay
+  mpn: CRCW08051K00FKEAC
   mouser: 71-CRCW08051K00FKEAC
   description: Resistor 0805
 - ref: R913
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R914
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R915
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R916
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R917
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R918
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R919
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R920
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R921
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R922
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R923
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R924
   value: 1kohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06031K00FKEAC
   mouser: 71-CRCW06031K00FKEAC
   description: Resistor 0603
 - ref: R925
   value: 0ohm
   footprint: '0603'
   manufacturer: Vishay
+  mpn: CRCW06030000Z0EAC
   mouser: 71-CRCW06030000Z0EAC
   description: Resistor 0603
 - ref: S201
@@ -1342,6 +1561,7 @@ components:
   footprint: CAS-120TA
   manufacturer: Nidec
   mouser: 229-CAS-120TA
+  mpn: CAS-120TA
   description: Slide Switches SPDT, ON-ON, slide, J-hook SMD terminals, 100mA @ 6V DC
   pin_count: 3
 - ref: S301
@@ -1349,6 +1569,7 @@ components:
   footprint: CAS-120TA
   manufacturer: Nidec
   mouser: 229-CAS-120TA
+  mpn: CAS-120TA
   description: Slide Switches SPDT, ON-ON, slide, J-hook SMD terminals, 100mA @ 6V DC
   pin_count: 3
 - ref: SW701
@@ -1356,20 +1577,25 @@ components:
   footprint: Sw_Push_RightAngle
   manufacturer: Omron Electronics
   mouser: 653-B3U-3000PM
+  mpn: B3U-3000PM
   description: Push button switch, right angle, generic, two pins
 - ref: U201
   value: FT2232HL
   footprint: LQFP-64
   manufacturer: FTDI
   mouser: 895-FT2232HL-TRAY
+  mpn: FT2232HL-TRAY
   description: USB Interface IC USB HS to Dual UART/ FIFO/SPI/JTAG/I2C
   pin_count: 64
-  nc_pins: {OSCO: '3', ADBUS5: '22', ADBUS6: '23', ACBUS0: '26', ACBUS1: '27', ACBUS3: '29', ACBUS4: '30', ACBUS6: '33', ACBUS7: '34', SUSPEND#: '36', BDBUS4: '43', BDBUS5: '44', BDBUS6: '45', BDBUS7: '46', BCBUS0: '48', BCBUS1: '52', BCBUS2: '53', BCBUS5: '57', BCBUS6: '58', BCBUS7: '59', PWREN#: '60'}
+  nc_pins: {OSCO: '3', ADBUS5: '22', ADBUS6: '23', ACBUS0: '26', ACBUS1: '27', ACBUS3: '29', ACBUS4: '30', ACBUS6: '33', ACBUS7: '34',
+    SUSPEND#: '36', BDBUS4: '43', BDBUS5: '44', BDBUS6: '45', BDBUS7: '46', BCBUS0: '48', BCBUS1: '52', BCBUS2: '53', BCBUS5: '57',
+    BCBUS6: '58', BCBUS7: '59', PWREN#: '60'}
 - ref: U202
   value: 93LC56BT-I_OT
   footprint: SOT-23-6_Microchip
   manufacturer: Microchip
   mouser: 579-93LC56BT-I/OT
+  mpn: 93LC56BT-I/OT
   description: EEPROM Serial-Microwire 2K-Bit 128 x 16 2MHz,93LC56BT-I/OT,SOT-23-6,SMD
   pin_count: 6
 - ref: U203
@@ -1377,6 +1603,7 @@ components:
   footprint: SOT-23-5_Microchip
   manufacturer: Microchip
   mouser: 998-MIC5259-3.3YD5TR
+  mpn: MIC5259-3.3YD5-TR
   description: LDO Voltage Regulator 3.3V 300mA
   pin_count: 5
 - ref: U204
@@ -1384,6 +1611,7 @@ components:
   footprint: MSOP10_AnalogDevices
   manufacturer: Analog Devices
   mouser: 584-ADG736BRMZ
+  mpn: ADG736BRMZ
   description: Analog Devices ADG736BRMZ, Analogue SPDT Switch Dual SPDT, 3 V, 5 V, 10-Pin MSOP
   pin_count: 10
 - ref: U205
@@ -1391,6 +1619,7 @@ components:
   footprint: MSOP10_AnalogDevices
   manufacturer: Analog Devices
   mouser: 584-ADG736BRMZ
+  mpn: ADG736BRMZ
   description: Analog Devices ADG736BRMZ, Analogue SPDT Switch Dual SPDT, 3 V, 5 V, 10-Pin MSOP
   pin_count: 10
 - ref: U206
@@ -1398,6 +1627,7 @@ components:
   footprint: MSOP10_AnalogDevices
   manufacturer: Analog Devices
   mouser: 584-ADG736BRMZ
+  mpn: ADG736BRMZ
   description: Analog Devices ADG736BRMZ, Analogue SPDT Switch Dual SPDT, 3 V, 5 V, 10-Pin MSOP
   pin_count: 10
   nc_pins: {S1A: '2', S1B: '9', D1: '10'}
@@ -1406,6 +1636,7 @@ components:
   footprint: SOIC-16_TI_DWW0016A_Optimized
   manufacturer: Texas Instruments
   mouser: 595-ISO7741FQDWWQ1
+  mpn: ISO7741FQDWWQ1
   description: ISO774x-Q1 Automotive, High-Speed, Reinforced Quad-Channel Digital Isolators
   pin_count: 16
 - ref: U302
@@ -1413,6 +1644,7 @@ components:
   footprint: SOIC-16_TI_DWW0016A_Optimized
   manufacturer: Texas Instruments
   mouser: 595-ISO7741FQDWWQ1
+  mpn: ISO7741FQDWWQ1
   description: ISO774x-Q1 Automotive, High-Speed, Reinforced Quad-Channel Digital Isolators
   pin_count: 16
   nc_pins: {OUTC: '12'}
@@ -1421,6 +1653,7 @@ components:
   footprint: SOT-23-5_Microchip
   manufacturer: Microchip
   mouser: 998-MIC5504-1.2YM5TR
+  mpn: MIC5504-1.2YM5-TR
   description: LDO Voltage Regulator 1.2V 300mA
   pin_count: 5
   nc_pins: {NC: '4'}
@@ -1429,6 +1662,7 @@ components:
   footprint: TSOT-23-6_TI
   manufacturer: Texas Instruments
   mouser: 595-TPS3702CX33DDCT
+  mpn: TPS3702CX33DDCT
   description: Supervisory Circuits High-Acc, Fixed Threshold OV/UV Mntr
   pin_count: 6
   nc_pins: {OV: '6'}
@@ -1437,6 +1671,7 @@ components:
   footprint: TSOT-23-6_TI
   manufacturer: Texas Instruments
   mouser: 595-TPS3702CX12DDCT
+  mpn: TPS3702CX12DDCT
   description: Supervisory Circuits High-Acc, Fixed Threshold OV/UV Mntr
   pin_count: 6
   nc_pins: {OV: '6'}
@@ -1444,15 +1679,18 @@ components:
   value: TMS320F28388D
   footprint: BGA-361
   manufacturer: Texas Instruments
+  mpn: F28388DZWTSR
   mouser: 595-F28388DZWTSR
   description: MCU C2000 32-bit, Dual-core C28x architecture
   pin_count: 337
-  nc_pins: {GPIO_67: B19, GPIO_74: C17, GPIO_75: D16, GPIO_133: G18, NC@H4: H4, NC@J18: J18, X2: J19, GPIO_35: T14, ERRORSTS: U19, FLT2: V13, FLT1: W12}
+  nc_pins: {GPIO_67: B19, GPIO_74: C17, GPIO_75: D16, GPIO_133: G18, NC@H4: H4, NC@J18: J18, X2: J19, GPIO_35: T14, ERRORSTS: U19,
+    FLT2: V13, FLT1: W12}
 - ref: U704
   value: PI6C49CB04AQ3WEX
   footprint: SOIC-8
   manufacturer: Diodes Incorporated
   mouser: 621-PI6C49CB04AQ3WEX
+  mpn: PI6C49CB04AQ3WEX
   description: Clock Buffer LOW SKEW 1 TO 4 CLOCK BUFFER
   pin_count: 8
 - ref: U801
@@ -1460,6 +1698,7 @@ components:
   footprint: TSSOP-14-Nexperia
   manufacturer: Nexperia
   mouser: 771-74HC74PW-T
+  mpn: 74HC74PW,118
   description: Flip-Flops 74HC74PW/SOT402/TSSOP14
   pin_count: 14
 - ref: U802
@@ -1467,18 +1706,21 @@ components:
   footprint: TSSOP-14-Nexperia
   manufacturer: Nexperia
   mouser: 771-74HC74PW-T
+  mpn: 74HC74PW,118
   description: Flip-Flops 74HC74PW/SOT402/TSSOP14
   pin_count: 14
 - ref: U803
   value: TLV3202AIDGKR
   footprint: VSSOP-8-TI
   mouser: 595-TLV3202AIDGKR
+  mpn: TLV3202AIDGKR
   manufacturer: Texas Instruments
   pin_count: 8
 - ref: U804
   value: TLV3202AIDGKR
   footprint: VSSOP-8-TI
   mouser: 595-TLV3202AIDGKR
+  mpn: TLV3202AIDGKR
   manufacturer: Texas Instruments
   pin_count: 8
 - ref: U805
@@ -1486,6 +1728,7 @@ components:
   footprint: TSSOP-14-Nexperia
   mouser: 771-ALVC08PW118
   manufacturer: Nexperia
+  mpn: 74ALVC08PW,118
   description: 4 gate, 8 input, 4 Output, AND gate, Logic Gates 74ALVC08PW/TSSOP14
   pin_count: 14
   nc_pins: {4Y: '11'}
@@ -1494,21 +1737,24 @@ components:
   footprint: SOT-23-5_Microchip
   manufacturer: Maxim Integrated
   mouser: 700-MAX6037AAUK30T
+  mpn: MAX6037AAUK30+T
   description: Precision Voltage Reference 3.0V
   pin_count: 5
   nc_pins: {NC: '1'}
 - ref: Y201
   value: ECS-2033-120-AU
-  footprint: Osc_ECS
+  footprint: Osc_ECS_2.5x2
   manufacturer: ECS
   mouser: 520-2033-120-AU
+  mpn: ECS-2033-120-AU
   description: Standard Clock Oscillators 12.000 MHZ 3.3Volt 100 ppm -55C +125C
   pin_count: 4
 - ref: Y701
   value: ECS-2520S33-250-FN-TR
-  footprint: Osc_ECS
+  footprint: Osc_ECS_2.5x2
   manufacturer: ECS
   mouser: 520-2520S33-250-FNT
+  mpn: ECS-2520S33-250-FN-TR
   description: Standard Clock Oscillators 25MHz 3.3V 10ppm -40C +85C
   pin_count: 4
 nets:

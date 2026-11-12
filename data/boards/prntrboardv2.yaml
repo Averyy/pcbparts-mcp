@@ -18,330 +18,516 @@ components:
 - ref: C1
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
 - ref: C10
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U2
 - ref: C11
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U3
 - ref: C12
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U2
 - ref: C13
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U7
 - ref: C14
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U2
 - ref: C15
   value: 10uF
   footprint: '0603'
+  mpn: CL10A106KP8NNNC
+  lcsc: C19702
   decouples: U7
 - ref: C16
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
   decouples: U1
 - ref: C17
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U1
 - ref: C18
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U4
 - ref: C19
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
 - ref: C2
   value: 10uF
   footprint: '0603'
+  mpn: CL10A106KP8NNNC
+  lcsc: C19702
 - ref: C20
   value: 10uF
   footprint: '0603'
+  mpn: CL10A106KP8NNNC
+  lcsc: C19702
   decouples: U4
 - ref: C21
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U4
 - ref: C22
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U4
 - ref: C23
   value: 10uF
   footprint: '0603'
+  mpn: CL10A106KP8NNNC
+  lcsc: C19702
   decouples: U4
 - ref: C24
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
   voltage: 50V
 - ref: C25
   value: 100uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x7.7
+  mpn: VES101M1VTR-0607
+  lcsc: C134792
   voltage: 35V
 - ref: C26
   value: 10uF
   footprint: '0603'
+  mpn: CL10A106KP8NNNC
+  lcsc: C19702
   decouples: U4
 - ref: C27
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C28
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C29
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C3
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
   decouples: U7
 - ref: C30
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C31
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C32
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C33
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C34
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C35
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C36
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C37
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C38
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C39
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C4
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U7
 - ref: C40
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
 - ref: C41
   value: 10uF
   footprint: '1206'
+  mpn: CL31A106KBHNNNE
+  lcsc: C13585
   voltage: 50V
 - ref: C42
   value: 10uF
   footprint: '1206'
+  mpn: CL31A106KBHNNNE
+  lcsc: C13585
   voltage: 50V
 - ref: C43
   value: 10uF
   footprint: '1206'
+  mpn: CL31A106KBHNNNE
+  lcsc: C13585
   voltage: 50V
 - ref: C44
   value: 10uF
   footprint: '1206'
+  mpn: CL31A106KBHNNNE
+  lcsc: C13585
   voltage: 50V
 - ref: C45
   value: 1nF
   footprint: '0603'
+  mpn: CL10B102KB8NNNC
+  lcsc: C1588
   decouples: U6
 - ref: C46
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U6
 - ref: C47
   value: 4.7uF
   footprint: '1210'
+  lcsc: C697607
+  mpn: HMK325C7475KN-TE
   voltage: 100V
 - ref: C48
   value: 4.7uF
   footprint: '1210'
+  lcsc: C697607
+  mpn: HMK325C7475KN-TE
   voltage: 100V
 - ref: C49
   value: 4.7uF
   footprint: '1210'
+  lcsc: C697607
+  mpn: HMK325C7475KN-TE
   voltage: 100V
 - ref: C5
   value: 10uF
   footprint: '0603'
+  mpn: CL10A106KP8NNNC
+  lcsc: C19702
 - ref: C50
   value: 4.7uF
   footprint: '1210'
+  lcsc: C697607
+  mpn: HMK325C7475KN-TE
   voltage: 100V
 - ref: C51
   value: 4.7uF
   footprint: '1210'
+  lcsc: C697607
+  mpn: HMK325C7475KN-TE
   voltage: 100V
 - ref: C52
   value: 4.7uF
   footprint: '1210'
+  lcsc: C697607
+  mpn: HMK325C7475KN-TE
   voltage: 100V
 - ref: C53
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U7
 - ref: C54
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
 - ref: C56
   value: 10uF
   footprint: '0603'
+  mpn: CL10A106KP8NNNC
+  lcsc: C19702
 - ref: C57
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
 - ref: C6
   value: 10uF
   footprint: '0603'
+  mpn: CL10A106KP8NNNC
+  lcsc: C19702
 - ref: C7
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
 - ref: C8
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U7
 - ref: C9
   value: 100nF
   footprint: '0603'
+  mpn: CC0603KRX7R9BB104
+  lcsc: C14663
   decouples: U1
 - ref: D1
   value: B5819W
   footprint: SOD-123
+  mpn: B5819W
+  lcsc: C8598
 - ref: D10
   value: BAT54S
   footprint: SOT-23
+  mpn: BAT54S
+  lcsc: C181201
   pin_count: 3
 - ref: D11
   value: BAT54S
   footprint: SOT-23
+  mpn: BAT54S
+  lcsc: C181201
   pin_count: 3
 - ref: D12
   value: BAT54S
   footprint: SOT-23
+  mpn: BAT54S
+  lcsc: C181201
   pin_count: 3
 - ref: D13
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D14
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D15
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D16
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D17
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D18
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D19
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D2
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D20
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D21
   value: B5819W
   footprint: SOD-123
+  mpn: B5819W
+  lcsc: C8598
 - ref: D22
   value: B5819W
   footprint: SOD-123
+  mpn: B5819W
+  lcsc: C8598
 - ref: D23
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D24
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D25
   value: B5819W
   footprint: SOD-123
+  mpn: B5819W
+  lcsc: C8598
 - ref: D26
   value: B5819W
   footprint: SOD-123
+  mpn: B5819W
+  lcsc: C8598
 - ref: D27
   value: B5819W
   footprint: SOD-123
+  mpn: B5819W
+  lcsc: C8598
 - ref: D28
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D29
   value: B5819W
   footprint: SOD-123
+  mpn: B5819W
+  lcsc: C8598
 - ref: D3
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D30
   value: B5819W
   footprint: SOD-123
+  mpn: B5819W
+  lcsc: C8598
 - ref: D31
   value: B5819W
   footprint: SOD-123
+  mpn: B5819W
+  lcsc: C8598
 - ref: D32
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D33
   value: B5819W
   footprint: SOD-123
+  mpn: B5819W
+  lcsc: C8598
 - ref: D34
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D35
   value: 10V
   footprint: SOD-323
+  lcsc: C131828
+  mpn: LM3Z10VT1G
 - ref: D4
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D5
   value: LED
   footprint: '0603'
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D6
   value: 10V
   footprint: SOD-323
+  lcsc: C131828
+  mpn: LM3Z10VT1G
 - ref: D7
   value: BAT54S
   footprint: SOT-23
+  mpn: BAT54S
+  lcsc: C181201
   pin_count: 3
 - ref: D8
   value: BAT54S
   footprint: SOT-23
+  mpn: BAT54S
+  lcsc: C181201
   pin_count: 3
 - ref: D9
   value: BAT54S
   footprint: SOT-23
+  mpn: BAT54S
+  lcsc: C181201
   pin_count: 3
 - ref: EXP1
   value: IDC 2x5
-  footprint: IDC-Header
+  footprint: IDC-Header_2x05
+  lcsc: C5661
   pin_count: 10
 - ref: EXP2
   value: IDC 2x5
-  footprint: IDC-Header
+  footprint: IDC-Header_2x05
+  lcsc: C5661
   pin_count: 10
 - ref: EXP3
   value: IDC 2x5
-  footprint: IDC-Header
+  footprint: IDC-Header_2x05
+  lcsc: C5661
   pin_count: 10
 - ref: F1
   value: 500mA
   footprint: '0603'
+  mpn: TLC-FSMD050
+  lcsc: C261937
 - ref: F2
   value: fuse
   footprint: 2410_FuseFolder
@@ -354,69 +540,71 @@ components:
 - ref: FB1
   value: 600 ohm @ 100MHz
   footprint: 0805
+  mpn: GZ2012D601TF
+  lcsc: C1017
 - ref: J1
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J10
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J11
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J12
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J13
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J14
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J15
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J16
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J17
-  value: 1x2 screw terminal
-  footprint: TerminalBlock_Phoenix_PT-1,5-2-3.5-H
+  value: 1x2 3.50mm screw terminal
+  footprint: TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02
 - ref: J18
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J19
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J20
-  value: 1x2 screw terminal
-  footprint: TerminalBlock_Phoenix_PT-1,5-2-3.5-H
+  value: 1x2 3.50mm screw terminal
+  footprint: TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02
 - ref: J21
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J22
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J23
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J24
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J25
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J27
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J28
-  value: 1x2 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08
+  value: 1x2 5.08mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02
 - ref: J29
   value: RJ12_Shielded
   footprint: RJ12_Amphenol_54601
@@ -425,90 +613,101 @@ components:
 - ref: J3
   value: USB Micro-B
   footprint: MC-101C
+  mpn: SOFNG MC-101C
+  lcsc: C183609
   pin_count: 6
   nc_pins: {ID: '4'}
 - ref: J30
-  value: 1x2 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08
+  value: 1x2 5.08mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02
 - ref: J4
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J5
-  value: 1x2 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08
+  value: 1x2 5.08mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02
 - ref: J6
-  value: 1x2 screw terminal
-  footprint: TerminalBlock_Phoenix_PT-1,5-2-3.5-H
+  value: 1x2 3.50mm screw terminal
+  footprint: TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02
 - ref: J7
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J8
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J9
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: JP1
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
+  lcsc: C160332
 - ref: JP10
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: JP11
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: JP12
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: JP13
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: JP14
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: JP15
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: JP2
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
+  lcsc: C152153
   pin_count: 3
 - ref: JP3
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
+  lcsc: C152153
   pin_count: 3
 - ref: JP4
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
+  lcsc: C152153
   pin_count: 3
 - ref: JP5
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
+  lcsc: C152153
   pin_count: 3
 - ref: JP6
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
+  lcsc: C152153
   pin_count: 3
 - ref: JP7
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
+  lcsc: C152153
   pin_count: 3
 - ref: JP8
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
+  lcsc: C152153
   pin_count: 3
 - ref: J_SER1
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
+  lcsc: C358686
   pin_count: 4
 - ref: J_ST1
   value: PCIe_Stepper
@@ -542,57 +741,57 @@ components:
   nc_pins: {A5: A5, A8: A8, A9: A9, A10: A10, B6: B6, B7: B7, B10: B10}
 - ref: J_SWD1
   value: SWD
-  footprint: 1X5
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J_TH1
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J_TH2
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J_TH3
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J_TH4
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J_TH5
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J_TH6
   value: JST XH
-  footprint: JST_XH_B2B-XH-A
+  footprint: JST_XH_B2B-XH-A_1x02
 - ref: J_U-1
   value: JST XH 3p
-  footprint: JST_XH_B3B-XH-A
+  footprint: JST_XH_B3B-XH-A_1x03
   pin_count: 3
 - ref: J_V-1
   value: JST XH 3p
-  footprint: JST_XH_B3B-XH-A
+  footprint: JST_XH_B3B-XH-A_1x03
   pin_count: 3
 - ref: J_X+1
   value: JST XH 3p
-  footprint: JST_XH_B3B-XH-A
+  footprint: JST_XH_B3B-XH-A_1x03
   pin_count: 3
 - ref: J_X-1
   value: JST XH 3p
-  footprint: JST_XH_B3B-XH-A
+  footprint: JST_XH_B3B-XH-A_1x03
   pin_count: 3
 - ref: J_Y+1
   value: JST XH 3p
-  footprint: JST_XH_B3B-XH-A
+  footprint: JST_XH_B3B-XH-A_1x03
   pin_count: 3
 - ref: J_Y-1
   value: JST XH 3p
-  footprint: JST_XH_B3B-XH-A
+  footprint: JST_XH_B3B-XH-A_1x03
   pin_count: 3
 - ref: J_Z+1
   value: JST XH 3p
-  footprint: JST_XH_B3B-XH-A
+  footprint: JST_XH_B3B-XH-A_1x03
   pin_count: 3
 - ref: J_Z-1
   value: JST XH 3p
-  footprint: JST_XH_B3B-XH-A
+  footprint: JST_XH_B3B-XH-A_1x03
   pin_count: 3
 - ref: NT1
   value: Net-Tie_2
@@ -600,295 +799,455 @@ components:
 - ref: Q1
   value: NCE40P40K
   footprint: TO-252
+  lcsc: C130100
+  mpn: NCE40P40K
   pin_count: 3
 - ref: Q2
   value: SQM110P06-8M9L
   footprint: TO-252
+  mpn: SQM110P06-8M9L
   pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pulldown: /Sheet5DABBBAA/BOOT0
 - ref: R10
   value: 22ohm
   footprint: '0603'
+  mpn: 0603WAF220JT5E
+  lcsc: C23345
 - ref: R11
   value: 22ohm
   footprint: '0603'
+  mpn: 0603WAF220JT5E
+  lcsc: C23345
 - ref: R12
   value: 100kohm
   footprint: '0603'
+  mpn: 0603WAF1003T5E
+  lcsc: C25803
   pulldown: J3.Shield@6
 - ref: R13
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R14
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R15
   value: 470ohm
   footprint: '0603'
+  mpn: 0603WAF4700T5E
+  lcsc: C23179
 - ref: R16
   value: 1kohm
   footprint: '0603'
-  pullup: D5.A
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R17
   value: 4.7kohm
   footprint: '0603'
+  mpn: 0603WAF4701T5E
+  lcsc: C23162
 - ref: R18
   value: 4.7kohm
   footprint: '0603'
+  mpn: 0603WAF4701T5E
+  lcsc: C23162
 - ref: R19
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R2
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R20
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R21
   value: 4.7kohm
   footprint: '0603'
+  mpn: 0603WAF4701T5E
+  lcsc: C23162
 - ref: R22
   value: 4.7kohm
   footprint: '0603'
+  mpn: 0603WAF4701T5E
+  lcsc: C23162
 - ref: R23
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R24
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R25
   value: 4.7kohm
   footprint: '0603'
+  mpn: 0603WAF4701T5E
+  lcsc: C23162
 - ref: R26
   value: 4.7kohm
   footprint: '0603'
+  mpn: 0603WAF4701T5E
+  lcsc: C23162
 - ref: R27
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R28
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R29
   value: 1kohm
   footprint: '0603'
-  pullup: D13.A
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R3
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pullup: nRESET
 - ref: R30
   value: 1kohm
   footprint: '0603'
-  pullup: D14.A
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R31
   value: 1kohm
   footprint: '0603'
-  pullup: D15.A
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R32
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R33
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R34
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R35
   value: 1kohm
   footprint: '0603'
-  pullup: D16.A
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R36
   value: 1kohm
   footprint: '0603'
-  pullup: D17.A
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R37
   value: 1kohm
   footprint: '0603'
-  pullup: D18.A
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R38
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R39
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R4
   value: 27kohm
   footprint: '0603'
+  mpn: 0603WAF2702T5E
+  lcsc: C22967
 - ref: R40
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R41
   value: 1kohm
   footprint: '0603'
-  pullup: D19.A
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R42
   value: 1kohm
   footprint: '0603'
-  pullup: D20.A
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R43
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R44
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R45
   value: 470ohm
   footprint: '0603'
+  mpn: 0603WAF4700T5E
+  lcsc: C23179
 - ref: R46
   value: 470ohm
   footprint: '0603'
+  mpn: 0603WAF4700T5E
+  lcsc: C23179
 - ref: R47
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pullup: nALARM1
 - ref: R48
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pullup: PWM1
 - ref: R49
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pullup: PWM4
 - ref: R5
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pulldown: nST1_CS
 - ref: R50
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pulldown: PWM9
 - ref: R51
   value: 1kohm
   footprint: '0603'
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R52
   value: 180ohm
   footprint: '0603'
+  mpn: 0603WAF1800T5E
+  lcsc: C22828
 - ref: R53
   value: 180ohm
   footprint: '0603'
+  mpn: 0603WAF1800T5E
+  lcsc: C22828
 - ref: R54
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R55
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R56
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pulldown: PWM5
 - ref: R57
   value: 1kohm
   footprint: '0603'
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R58
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pullup: PWM2
 - ref: R59
   value: 180ohm
   footprint: '0603'
+  mpn: 0603WAF1800T5E
+  lcsc: C22828
 - ref: R6
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pullup: I2C_SCL
 - ref: R60
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R61
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pulldown: PWM6
 - ref: R62
   value: 1kohm
   footprint: '0603'
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R63
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pullup: PWM3
 - ref: R64
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pulldown: PWM7
 - ref: R65
   value: 1kohm
   footprint: '0603'
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R66
   value: 180ohm
   footprint: '0603'
+  mpn: 0603WAF1800T5E
+  lcsc: C22828
 - ref: R67
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R68
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pulldown: PWM8
 - ref: R69
   value: 1kohm
   footprint: '0603'
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
 - ref: R7
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pullup: I2C_SDA
 - ref: R70
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pullup: nST_ENABLE
 - ref: R71
   value: 100kohm
   footprint: '0603'
+  lcsc: C25803
+  mpn: 0603WAF1003T5E
   pulldown: D6.A
 - ref: R72
   value: 22ohm
   footprint: '0603'
+  mpn: 0603WAF220JT5E
+  lcsc: C23345
 - ref: R73
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
 - ref: R74
   value: 56ohm
   footprint: '0603'
+  mpn: 0603WAF560JT5E
+  lcsc: C25196
 - ref: R75
   value: 56ohm
   footprint: '0603'
+  mpn: 0603WAF560JT5E
+  lcsc: C25196
 - ref: R77
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pulldown: CAN_RX
 - ref: R78
   value: 10kohm
   footprint: '0603'
+  mpn: 0603WAF1002T5E
+  lcsc: C25804
   pullup: nSD_CS
 - ref: R79
   value: 100kohm
   footprint: '0603'
+  lcsc: C25803
+  mpn: 0603WAF1003T5E
   pulldown: D35.A
 - ref: R8
   value: 1kohm
   footprint: '0603'
+  mpn: 0603WAF1001T5E
+  lcsc: C21190
   pullup: SW_BOOT1.1@1
 - ref: R9
   value: 1.5kohm
   footprint: '0603'
+  mpn: 0603WAF1501T5E
+  lcsc: C22843
   pullup: /Sheet5DAF0EF8/D+
 - ref: RN1
   value: 4x470
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0603
+  mpn: 4D03WGJ0471T5E
+  lcsc: C25510
   pin_count: 8
 - ref: RN2
   value: 4x470
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0603
+  mpn: 4D03WGJ0471T5E
+  lcsc: C25510
   pin_count: 8
 - ref: RN3
   value: 4x10k
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0603
+  mpn: 4D03WGJ0103T5E
+  lcsc: C29718
   pin_count: 8
 - ref: SW_BOOT1
   value: tactile switch
-  footprint: Button
+  footprint: Button_4x4
+  mpn: TS-1187A-B-A-B
+  lcsc: C318884
 - ref: SW_RST1
   value: tactile switch
-  footprint: Button
+  footprint: Button_4x4
+  mpn: TS-1187A-B-A-B
+  lcsc: C318884
 - ref: TC1
   value: TC
   footprint: Molex-SL-6POS
@@ -916,78 +1275,114 @@ components:
 - ref: TR1
   value: SI2318CDS
   footprint: SOT-23
+  mpn: AO3400A
+  lcsc: C20917
   pin_count: 3
 - ref: TR2
   value: PSMN7R0-30YL
   footprint: SOT-669_LFPAK
+  mpn: PSMN1R5-30YLC
+  lcsc: C427523
   pin_count: 3
 - ref: TR3
   value: PSMN7R0-30YL
   footprint: SOT-669_LFPAK
+  mpn: PSMN1R5-30YLC
+  lcsc: C427523
   pin_count: 3
 - ref: TR4
   value: SI2318CDS
   footprint: SOT-23
+  mpn: AO3400A
+  lcsc: C20917
   pin_count: 3
 - ref: TR5
   value: PSMN7R0-30YL
   footprint: SOT-669_LFPAK
+  mpn: PSMN1R5-30YLC
+  lcsc: C427523
   pin_count: 3
 - ref: TR6
   value: SI2318CDS
   footprint: SOT-23
+  mpn: AO3400A
+  lcsc: C20917
   pin_count: 3
 - ref: TR7
   value: SI2318CDS
   footprint: SOT-23
+  mpn: AO3400A
+  lcsc: C20917
   pin_count: 3
 - ref: TR8
   value: PSMN7R0-30YL
   footprint: SOT-669_LFPAK
+  mpn: PSMN1R5-30YLC
+  lcsc: C427523
   pin_count: 3
 - ref: TR9
   value: SI2318CDS
   footprint: SOT-23
+  mpn: AO3400A
+  lcsc: C20917
   pin_count: 3
 - ref: U1
   value: 74LVC125
   footprint: TSSOP-14
+  mpn: 74LVC125APW,118
+  lcsc: C6059
   pin_count: 14
 - ref: U2
   value: STM32F407VETx
   footprint: LQFP-100
+  mpn: STM32F407VET6
+  lcsc: C28730
   pin_count: 100
   nc_pins: {PH1: '13'}
 - ref: U3
   value: 24LC64
   footprint: SO-8
+  mpn: 24LC64T-I/SN
+  lcsc: C5460
   pin_count: 8
 - ref: U4
   value: AMS1117-3.3
   footprint: SOT-223-3_TabPin2
+  mpn: AMS1117-3.3
+  lcsc: C6186
   pin_count: 3
 - ref: U6
   value: 74HCT04
   footprint: TSSOP-14
+  mpn: 74HCT04PW,118
+  lcsc: C131317
   pin_count: 14
   nc_pins: {'6': '6', '8': '8'}
 - ref: U7
   value: 74LVC125
   footprint: TSSOP-14
+  mpn: 74LVC125APW,118
+  lcsc: C6059
   pin_count: 14
   nc_pins: {'6': '6', '8': '8', '11': '11'}
 - ref: U8
   value: TJA1040
   footprint: SOIC-8
+  lcsc: C6951
+  mpn: TJA1040T/CM,118
   pin_count: 8
 - ref: X1
   value: 12MHz
-  footprint: Oscillator_SMD_EuroQuartz_XO32-4Pin
+  footprint: Oscillator_SMD_EuroQuartz_XO32-4Pin_3.2x2.5
+  mpn: SIT1602AI-22-33E-12.000000D
+  lcsc: C29752
   pin_count: 4
   nc_pins: {EN: '1'}
 - ref: XS1
   value: microSD
   footprint: Conn_uSDcard
+  mpn: "SOFNG TF-15\xD715"
+  lcsc: C111196
   pin_count: 9
   nc_pins: {DAT2: '1', DAT1: '8'}
 nets:

@@ -44,7 +44,7 @@ components:
   description: Unpolarized capacitor, small symbol
 - ref: C14
   value: 68uF
-  footprint: Electrolytic
+  footprint: Electrolytic-12.5x13.5
   lcsc: C278544
 - ref: C15
   value: 4.7uF
@@ -82,12 +82,12 @@ components:
   decouples: U1
 - ref: C20
   value: 68uF
-  footprint: Electrolytic
+  footprint: Electrolytic-12.5x13.5
   lcsc: C278544
   voltage: 100V
 - ref: C21
   value: 68uF
-  footprint: Electrolytic
+  footprint: Electrolytic-12.5x13.5
   lcsc: C278544
   voltage: 100V
 - ref: C22
@@ -202,9 +202,11 @@ components:
   value: 1.1A PTC
   footprint: '2920'
   lcsc: C315903
+  voltage: 60V
+  mpn: 2920L110/60MR
 - ref: J1
-  value: 1x2 header
-  footprint: PhoenixContact_SPT_2.5_2-H-5.0
+  value: 1x2 5.00mm screw terminal
+  footprint: PhoenixContact_SPT_2.5_2-H-5.0_1x02
   lcsc: C5443538
 - ref: J2
   value: R-RJ45R08P-C000
@@ -221,13 +223,14 @@ components:
   pin_count: 13
   nc_pins: {'9': '9', '10': '10', '11': '11', '12': '12'}
 - ref: J4
-  value: 1x2 header
-  footprint: SolderWire-2.5sqmm
+  value: 1x2 8.80mm solder wire pads
+  footprint: SolderWire-2.5sqmm_1x02
 - ref: L1
   value: 22uH
-  footprint: L_TaiTech_TMPC1265
+  footprint: L_TaiTech_TMPC1265_13.5x12.5
   lcsc: C305224
   current: 9A
+  mpn: TMPC1265HP-220MG-D
 - ref: Q1
   value: IRLR3410TRPBF
   footprint: TO-252
@@ -307,7 +310,6 @@ components:
   footprint: '0603'
   lcsc: C22904
   description: Resistor, small symbol
-  pulldown: D4.K
 - ref: R21
   value: 48.7kohm
   footprint: '0402'
@@ -355,6 +357,8 @@ components:
   height: '6.25'
   manufacturer: Bourns
   mpn: SM51625EL
+  mouser: 652-SM51625EL
+  arrow: SM51625EL
   lcsc: C5357757
   description: LAN 10/100/1000 Base-T (PoE++) Transformer
   pin_count: 24
@@ -371,6 +375,8 @@ components:
   height: '0.8'
   manufacturer: Texas Instruments
   mpn: LM5155QDSSRQ1
+  mouser: 595-LM5155QDSSRQ1
+  arrow: LM5155QDSSRQ1
   lcsc: C1849528
   description: Switching Controllers 2.2MHz wide VIN non-synchronous boost/SEPIC/flyback
   pin_count: 13
@@ -380,6 +386,8 @@ components:
   height: '1.1'
   manufacturer: Texas Instruments
   mpn: TPS7B8233QDGNRQ1
+  mouser: 595-TPS7B8233QDGNRQ1
+  arrow: TPS7B8233QDGNRQ1
   lcsc: C5220182
   description: Automotive 300-mA high-voltage ultra-low-IQ low-dropout (LDO) linear regulator
   pin_count: 9

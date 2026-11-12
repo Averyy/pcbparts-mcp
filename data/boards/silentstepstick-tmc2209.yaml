@@ -69,7 +69,7 @@ components:
   value: 1x2 header
   footprint: MA02-1
 - ref: JMP
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-3
   description: 3-Pin Jumper
   pin_count: 3

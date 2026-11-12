@@ -3,7 +3,9 @@
 Per day: calls to each tool, split by outcome (see OUTCOMES), with the average time; calls in each UTC
 hour; the MCP apps that connected (by the name each app reports when it connects), the number of distinct
 callers, and what happened to Mouser/DigiKey lookups (sent, answered from the cache, or turned away
-by the shared limits). No IPs, queries or part numbers are kept: callers are counted through salted
+by the shared limits). For calls that found nothing or failed, the reason, from a fixed list of labels
+(REASONS); and how the checks behind jlc_search's why_empty went. No IPs, queries or part numbers are
+kept: callers are counted through salted
 hashes held in memory for the current day only, with a new random salt each day. A restart starts
 a new set, so a caller seen before and after one on the same day counts twice.
 
@@ -25,7 +27,7 @@ from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 
-KEEP_DAYS = 365  # in the file (about 650 KB for a busy year, at most about 1.5 MB)
+KEEP_DAYS = 365  # in the file (about 1 MB for a busy year, at most about 3 MB)
 PUBLIC_DAYS = 30  # the most /mcp/stats shows
 MAX_CALLERS = 100_000  # distinct callers counted a day (bounds memory); later ones aren't counted
 MAX_APPS = 50  # distinct app names a day; later ones count as "other"
@@ -38,10 +40,33 @@ _NOT_IN_APP_NAME = re.compile(r"[^A-Za-z0-9 ._()/+-]")  # app names are self-rep
 OUTCOMES = ("ok", "similar_only", "not_found", "bad_request", "rate_limited", "failed")
 TOOL_COUNTS = ("calls", *OUTCOMES, "ms")
 DISTRIBUTOR_EVENTS = ("sent", "cached", "rate_limited")
+# DigiKey only, and only once one has happened: an all-digit number missed the direct lookup and went on
+# to a keyword search, which found the part or didn't. That search is also counted in "sent".
+DISTRIBUTOR_RETRY_EVENTS = ("retry_found", "retry_missed")
+# Why a call counted as not_found or failed: one label a call, so a tool's labels add up to its not_found +
+# failed. Only these can be stored, which keeps what users typed out of the counts and bounds the file.
+REASONS = frozenset({
+    # jlc_search and jlc_stock_check came back empty
+    "offset_past_end", "blocked_by_library_type", "blocked_by_package", "blocked_by_min_stock", "blocked_by_several",
+    "part_number_not_in_stock", "part_number_filtered_out", "words_unmatched", "no_part_type", "no_catalog_subcategory",
+    "value_not_listed", "filter_ignored_or_sparse", "spec_filters_no_match", "stock_below_minimum",
+    "part_number_fragment", "no_results",
+    # lookups that found nothing
+    "mpn_not_in_snapshot", "placeholder_mpn", "lcsc_code_as_mpn", "part_not_found", "lcsc_not_found", "board_not_found",
+    "no_parts_for_query", "no_ecad_model", "no_kicad_in_archive", "no_easyeda_symbol", "no_alternatives",
+    # something failed
+    "service_not_ready", "not_configured", "no_pcba_types", "query_too_complex", "board_db_failed", "jlcpcb_waf",
+    "jlcpcb_unavailable", "easyeda_failed", "mouser_failed", "digikey_failed", "cse_auth_failed", "cse_lookup_failed",
+    "cse_download_http_4xx", "cse_download_http_5xx", "cse_download_http", "cse_download_network",
+    "cse_download_too_large", "cse_invalid_zip", "exception", "unexpected_error",
+    "other",  # a label not listed above
+})
+# How the checks behind jlc_search's why_empty went
+WHY_EMPTY_RESULTS = ("complete", "incomplete", "budget_exhausted_or_busy", "diagnostic_failed", "no_counterfactual")
 
 
 def _new_day() -> dict[str, Any]:
-    return {"tools": {}, "hours": [0] * 24, "apps": {}, "callers": 0, "distributors": {}}
+    return {"tools": {}, "hours": [0] * 24, "apps": {}, "callers": 0, "distributors": {}, "reasons": {}, "why_empty": {}}
 
 
 def _int(value: Any) -> int:
@@ -61,7 +86,14 @@ def _clean_day(day: dict) -> dict[str, Any]:
     for name, counts in _dict(day.get("distributors")).items():
         if isinstance(counts, dict):
             counts = {"rate_limited": counts.get("limited"), **counts}  # 0.6.3 called it "limited"
-            clean["distributors"][str(name)] = {key: _int(counts.get(key)) for key in DISTRIBUTOR_EVENTS}
+            clean["distributors"][str(name)] = {
+                **{key: _int(counts.get(key)) for key in DISTRIBUTOR_EVENTS},
+                **{key: _int(counts[key]) for key in DISTRIBUTOR_RETRY_EVENTS if key in counts}}
+    for name, counts in _dict(day.get("reasons")).items():
+        if isinstance(counts, dict):
+            clean["reasons"][str(name)] = {reason: _int(count) for reason, count in counts.items() if reason in REASONS}
+    clean["why_empty"] = {result: _int(count) for result, count in _dict(day.get("why_empty")).items()
+                          if result in WHY_EMPTY_RESULTS}
     for name, count in _dict(day.get("apps")).items():
         clean["apps"][str(name)] = _int(count)
     clean["callers"] = _int(day.get("callers"))
@@ -131,9 +163,11 @@ class UsageStats:
         self._dirty = True
         return day
 
-    def record_call(self, tool: str, outcome: str, ms: float, caller: str | None = None) -> None:
+    def record_call(self, tool: str, outcome: str, ms: float, caller: str | None = None,
+                    reason: str | None = None) -> None:
         """One tool call. outcome is one of OUTCOMES (anything else counts as "failed"). caller is
-        an IP, counted but not kept."""
+        an IP, counted but not kept. reason says why it found nothing or failed: one of REASONS
+        (anything else counts as "other"), on the same day as the call so the two add up."""
         if self.tools is not None and tool not in self.tools:
             tool = "unknown"
         now = datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc)  # one reading for date and hour
@@ -143,6 +177,10 @@ class UsageStats:
         counts["calls"] += 1
         counts[outcome if outcome in OUTCOMES else "failed"] += 1
         counts["ms"] += round(ms)
+        if reason is not None:
+            reasons = day["reasons"].setdefault(tool, {})
+            reason = reason if reason in REASONS else "other"
+            reasons[reason] = reasons.get(reason, 0) + 1
         if day["hours"] is None:  # a day saved without hours: the ones before now are unknown
             day["hours"] = [None] * hour + [0] * (24 - hour)
         day["hours"][hour] = (day["hours"][hour] or 0) + 1
@@ -171,6 +209,12 @@ class UsageStats:
         counts = self._day()["distributors"].setdefault(name, dict.fromkeys(DISTRIBUTOR_EVENTS, 0))
         counts[event] = counts.get(event, 0) + 1
 
+    def record_why_empty(self, result: str) -> None:
+        """How the checks behind a why_empty reply went: one of WHY_EMPTY_RESULTS."""
+        if result in WHY_EMPTY_RESULTS:
+            counts = self._day()["why_empty"]
+            counts[result] = counts.get(result, 0) + 1
+
     def save(self) -> None:
         """Write the counts if anything changed since the last save (atomic replace)."""
         if self.path is None or not self._dirty:
@@ -196,6 +240,8 @@ class UsageStats:
         total_tools: dict[str, dict[str, int]] = {}
         total_apps: dict[str, int] = {}
         total_distributors: dict[str, dict[str, int]] = {}
+        total_reasons: dict[str, dict[str, int]] = {}
+        total_why_empty: dict[str, int] = {}
         total_hours = [0] * 24
         for date in dates:
             day = self._days[date]
@@ -209,8 +255,14 @@ class UsageStats:
                 total_apps[name] = total_apps.get(name, 0) + count
             for name, c in day["distributors"].items():
                 total = total_distributors.setdefault(name, dict.fromkeys(DISTRIBUTOR_EVENTS, 0))
-                for key in DISTRIBUTOR_EVENTS:
-                    total[key] += c.get(key, 0)
+                for key, value in c.items():
+                    total[key] = total.get(key, 0) + value
+            for name, c in day["reasons"].items():
+                total = total_reasons.setdefault(name, {})
+                for reason, count in c.items():
+                    total[reason] = total.get(reason, 0) + count
+            for result, count in day["why_empty"].items():
+                total_why_empty[result] = total_why_empty.get(result, 0) + count
             tools = _tools_view(day["tools"])
             out.append({
                 "date": date,
@@ -220,6 +272,8 @@ class UsageStats:
                 "tools": tools,
                 "apps": _by_count(day["apps"]),
                 "distributors": day["distributors"],
+                "reasons": _reasons_view(day["reasons"]),
+                "why_empty": _by_count(day["why_empty"]),
             })
         totals_tools = _tools_view(total_tools)
         return {
@@ -234,7 +288,11 @@ class UsageStats:
                       "as claude.ai call from their own servers' IPs, and a caller seen before and after a restart "
                       "counts twice. apps are the names MCP apps send when they connect. The stats keep no IPs, "
                       "queries or part numbers. Cutover 2026-10-26: alternatives replies before that date counted "
-                      "similar-parts-only replies as not found; historical counts have not been reclassified."),
+                      "similar-parts-only replies as not found; historical counts have not been reclassified. reasons (from 0.9.0; "
+                      "earlier days have none): for each tool, why calls came back not_found or failed, one fixed label a "
+                      "call. why_empty: how the checks behind jlc_search's why_empty went (no_counterfactual: no library, "
+                      "package or stock limit to test). distributors retry_found and retry_missed: DigiKey all-digit "
+                      "numbers that missed the direct lookup and went on to a keyword search, also counted in sent."),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {
                 "from": dates[-1] if dates else None,
@@ -245,6 +303,8 @@ class UsageStats:
                 "tools": totals_tools,
                 "apps": _by_count(total_apps),
                 "distributors": total_distributors,
+                "reasons": _reasons_view(total_reasons),
+                "why_empty": _by_count(total_why_empty),
             },
             "days": out,
         }
@@ -258,6 +318,11 @@ def _tools_view(tools: dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
                "avg_ms": round(c["ms"] / c["calls"]) if c["calls"] else 0}
         for name, c in sorted(tools.items(), key=lambda item: (-item[1]["calls"], item[0]))
     }
+
+
+def _reasons_view(reasons: dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
+    """Each tool's reasons, commonest first, tools in name order."""
+    return {name: _by_count(counts) for name, counts in sorted(reasons.items())}
 
 
 def _by_count(counts: dict[str, int]) -> dict[str, int]:

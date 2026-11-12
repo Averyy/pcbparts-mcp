@@ -733,10 +733,11 @@ class TestClientIntegration:
         assert "subcategory" in result["search_criteria"]
 
     async def test_find_alternatives_invalid_lcsc(self, client):
-        """Test find_alternatives with invalid LCSC code returns error dict."""
+        """A malformed code is rejected before any lookup (since 0.7.0); a well-formed unknown one is not found."""
         result = await client.find_alternatives("INVALID123")
-        assert "error" in result
-        assert "not found" in result["error"].lower()
+        assert "must be an LCSC C-code" in result["error"]
+        result = await client.find_alternatives("C999999999")
+        assert result["error"] == "Part C999999999 not found"
 
     async def test_find_alternatives_same_package(self, client):
         """Test find_alternatives with same_package filter."""
@@ -871,3 +872,42 @@ class TestClientIntegration:
         assert "has_easyeda_footprint" in result
         assert "easyeda_symbol_uuid" in result
         assert "easyeda_footprint_uuid" in result
+
+
+@pytest.mark.parametrize("code", ["C²", "C١٢", "C１２"])
+async def test_non_ascii_digit_codes_are_rejected_before_any_request(code, monkeypatch):
+    """str.isdigit() accepts superscript and Arabic-Indic digits: "C²" passed the LCSC check and
+    could spend a slot of a shared upstream budget (security review, 2026-11-10)."""
+    client = JLCPCBClient()
+
+    async def no_network(*args, **kwargs):
+        raise AssertionError("no request expected")
+
+    monkeypatch.setattr(client, "_request", no_network, raising=False)
+    assert await client.get_part(code) is None
+
+
+@pytest.mark.parametrize("code", ["C²", "C١٢", "C１２", "C٦١٨٦"])
+def test_lcsc_code_patterns_take_ascii_digits_only(code):
+    """`\\d` matches any Unicode decimal digit, so "C٦١٨٦" passed as an LCSC code in the
+    search, alternatives and EasyEDA-seed checks (code review, 2026-11-10). Every check now
+    uses C[0-9]+."""
+    from pcbparts_mcp import easyeda_store
+    from pcbparts_mcp.search.mpn import LCSC_CODE
+
+    assert LCSC_CODE.fullmatch("C6186") and LCSC_CODE.fullmatch("c6186")
+    assert LCSC_CODE.fullmatch(code) is None
+    assert easyeda_store._LCSC_RE.fullmatch("C6186") and easyeda_store._LCSC_RE.fullmatch(code) is None
+    assert "isn't an LCSC code" in easyeda_store._row_problem(code, "1", "s", "f", "2026-11-10", "seed")
+
+
+@pytest.mark.parametrize("code", ["C١٢", "C１２"])
+async def test_find_alternatives_rejects_non_ascii_digit_codes(code, monkeypatch):
+    client = JLCPCBClient()
+
+    async def no_network(*args, **kwargs):
+        raise AssertionError("no request expected")
+
+    monkeypatch.setattr(client, "_request", no_network, raising=False)
+    result = await client.find_alternatives(code)
+    assert "LCSC C-code" in result["error"]

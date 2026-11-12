@@ -13,7 +13,7 @@ MCP server that gives Claude, Cursor and other AI assistants electronic componen
 - **KiCad files:** symbols and footprints from SamacSys
 - **Reference boards:** ~300 open-source boards and Espressif DevKits, showing how real designs wire an IC (decoupling, crystals, pull-ups)
 - **Sensors:** 1,600+ sensor ICs and modules by what they measure, their bus and the platforms with drivers
-- **Design rules:** 41 reference files on power, protection, interfaces, MCUs, layout and EMC
+- **Design rules:** 46 reference files on power, protection, interfaces, MCUs, layout and EMC
 
 ## Quick start
 
@@ -78,12 +78,13 @@ Add to the Extensions config:
 }
 ```
 
-## Tools
+## Tools (16)
 
 | Tool | What it does |
 |------|--------------|
 | `jlc_search` | Main search: plain-words queries, spec filters and sorting by a spec over the daily catalog snapshot |
 | `jlc_stock_check` | Live JLCPCB stock, including out-of-stock and low-stock parts |
+| `jlc_stock_history` | Recorded low-stock events for one LCSC code, with scrape-gap warnings and snapshot stock |
 | `jlc_get_part` | Full details for an LCSC code or manufacturer part number |
 | `jlc_get_pinout` | Pin numbers and names from the EasyEDA symbol; `footprint=true` adds the footprint's pads |
 | `jlc_find_alternatives` | Replacements checked against compatibility rules, with unverified candidates listed apart |
@@ -114,7 +115,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 
 ## Good to know
 
-- `jlc_search` covers parts with at least 10 in stock, from a snapshot taken daily (`data_as_of` in each reply). `jlc_get_part(lcsc=...)` and `jlc_stock_check` are live, and `jlc_stock_check` also reaches the rest of JLCPCB's 7M+ part catalog.
+- `jlc_search` covers parts with at least 10 in stock, from a snapshot taken daily (`data_as_of` in each reply). Its prices are refreshed weekly (`prices_as_of`). `jlc_get_part(lcsc=...)` and `jlc_stock_check` are live, and `jlc_stock_check` also reaches the rest of JLCPCB's 7M+ part catalog.
 - For Economic assembly, **basic** and **preferred** parts avoid the extended-type loading fee. Alternatives savings use a rounded legacy **$3 estimate** per extended type, not a current quote; Standard assembly fees differ. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
 - Spec figures are JLCPCB's listings, and alternatives are checked against the catalog. Check the datasheet and pinout before you order.
 - On pcbparts.dev, all users share one Mouser key and one DigiKey app: 1,000 requests a day each. Self-host with your own keys to get your own limits.
@@ -124,7 +125,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 ## Self-hosting
 
 ```bash
-git clone https://github.com/Averyy/pcbparts-mcp
+git clone --depth 1 https://github.com/Averyy/pcbparts-mcp  # current files only (~80 MB; full history ~7 GB)
 cd pcbparts-mcp
 uv venv && uv pip install -e .
 uv run python -m pcbparts_mcp.server  # http://localhost:8080/mcp
@@ -142,6 +143,8 @@ docker compose -f docker-compose.local.yml up --build   # built from source
 
 The server builds `data/components.db` on first run. After upgrading, it logs a warning if the database is too old for the new version; rebuild it with `uv run python scripts/build_database.py`.
 
+Build recorded stock history with `uv run python scripts/build_history_db.py`. `jlc_stock_history(lcsc, days=180)` shows up to 100 events, newest first, over 1-366 days ending at the newest recorded date. Changes above 1,000 stock are not tracked, and a missing part in a scrape is not a confirmed stockout. `JLCPCB_DATA_DIR` sets the data directory; `JLCPCB_HISTORY_DB_PATH` can override the history DB path.
+
 Mouser keys are free from Mouser's API hub, and DigiKey client credentials from DigiKey's developer portal. `cse_get_kicad` downloads need a SamacSys ComponentSearchEngine account; `cse_search` works without one.
 
 | Variable | Default | Description |
@@ -158,14 +161,14 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `EASYEDA_STORE_PATH` | `/app/cache/easyeda.db` in Docker | Keeps EasyEDA footprint answers across restarts |
 | `CSE_STORE_PATH` | `/app/cache/cse.db` in Docker | Keeps SamacSys searches and KiCad files across restarts |
 
-The four paths are unset outside Docker, which keeps that data in memory only. The compose files mount a named volume at `/app/cache`.
+These four cache and statistics paths are unset outside Docker, which keeps that data in memory only. The compose files mount a named volume at `/app/cache`.
 
 ## API
 
 - **Endpoint:** `https://pcbparts.dev/mcp`, Streamable HTTP (stateless), no auth
 - **Rate limit:** 100 requests a minute per IP
 - **Health:** `https://pcbparts.dev/health` (version, cache sizes, each distributor's requests today)
-- **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups. No IPs, queries or part numbers are kept.
+- **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups (including DigiKey's keyword retries found and missed), and why calls found nothing or failed: one label a call from a fixed list (`reasons`), plus how the checks behind an empty search went (`why_empty`). No IPs, queries or part numbers are kept.
 
 ## More
 

@@ -20,270 +20,303 @@ components:
   footprint: '0603'
   manufacturer: Yageo
   mpn: CC0603KRX7R7BB105
-  description: CAP CER 1uF 10% 16V X7R SMT 0603
+  digikey: 311-1445-1-ND
 - ref: C10
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C11
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C12
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C13
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C14
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C15
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C16
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
   mpn: CL21A226MOQNNNE
-  description: CAP CER 22uF 20% 16V X5R SMT 0805
 - ref: C17
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
   mpn: CL21A226MOQNNNE
-  description: CAP CER 22uF 20% 16V X5R SMT 0805
 - ref: C18
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C19
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C2
   value: 1uF
   footprint: '0603'
   manufacturer: Yageo
   mpn: CC0603KRX7R7BB105
-  description: CAP CER 1uF 10% 16V X7R SMT 0603
+  digikey: 311-1445-1-ND
   decouples: U2
 - ref: C20
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
   mpn: CL21A226MOQNNNE
-  description: CAP CER 22uF 20% 16V X5R SMT 0805
   decouples: U8
 - ref: C21
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
   mpn: CL21A226MOQNNNE
-  description: CAP CER 22uF 20% 16V X5R SMT 0805
   decouples: U7
 - ref: C22
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
   mpn: CL21A226MOQNNNE
-  description: CAP CER 22uF 20% 16V X5R SMT 0805
 - ref: C23
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
   mpn: CL21A226MOQNNNE
-  description: CAP CER 22uF 20% 16V X5R SMT 0805
 - ref: C24
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
   mpn: CL21A226MOQNNNE
-  description: CAP CER 22uF 20% 16V X5R SMT 0805
 - ref: C25
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C26
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C27
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
   mpn: CL21A226MOQNNNE
-  description: CAP CER 22uF 20% 16V X5R SMT 0805
 - ref: C28
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
   decouples: U7
 - ref: C29
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
   mpn: CL21A226MOQNNNE
-  description: CAP CER 22uF 20% 16V X5R SMT 0805
 - ref: C3
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C30
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C31
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C32
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
   decouples: U8
 - ref: C4
   value: 10nF
   footprint: '1206'
   manufacturer: KEMET
   mpn: C1206C103KDRACTU
-  description: CAP CER 10nF 10% 1kV X7R SMT 1206
+  description: "Capacitor ceramic 10n \xB110% X7R 1000V 1206"
+  digikey: 311-3578-1-ND
   voltage: 1000V
 - ref: C5
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: C6
   value: 33pF
   footprint: '0402'
   manufacturer: Samsung
   mpn: CL05C330JB5NNNC
-  description: CAP CER 33pF 5% 50V C0G SMT 0402
+  description: "Capacitor ceramic 33p \xB15% C0G 50V 0402"
+  digikey: 1276-1272-1-ND
 - ref: C7
   value: 33pF
   footprint: '0402'
   manufacturer: Samsung
   mpn: CL05C330JB5NNNC
-  description: CAP CER 33pF 5% 50V C0G SMT 0402
+  description: "Capacitor ceramic 33p \xB15% C0G 50V 0402"
+  digikey: 1276-1272-1-ND
 - ref: C8
   value: 33pF
   footprint: '0402'
   manufacturer: Samsung
   mpn: CL05C330JB5NNNC
-  description: CAP CER 33pF 5% 50V C0G SMT 0402
+  description: "Capacitor ceramic 33p \xB15% C0G 50V 0402"
+  digikey: 1276-1272-1-ND
 - ref: C9
   value: 100nF
   footprint: '0402'
   manufacturer: Yageo
   mpn: CC0402KRX7R7BB104
-  description: CAP CER 100nF 10% 16V X7R SMT 0402
+  description: "Capacitor ceramic 100n \xB110% X7R 16V 0402"
+  digikey: 490-3261-1-ND
 - ref: DS1
   value: B360A-13-F
   footprint: DO-214AC SMA_Fv1.2
   mpn: B360A-13-F
+  description: Schottky Diode B360-13-F 60V/3A
   manufacturer: Diodes Inc.
+  digikey: B360A-FDICT-ND
 - ref: DS2
   value: B360A-13-F
   footprint: DO-214AC SMA_Fv1.2
   mpn: B360A-13-F
+  description: Schottky Diode B360-13-F 60V/3A
   manufacturer: Diodes Inc.
+  digikey: B360A-FDICT-ND
 - ref: DS3
   value: B360A-13-F
   footprint: DO-214AC SMA_Fv1.2
   mpn: B360A-13-F
+  description: Schottky Diode B360-13-F 60V/3A
   manufacturer: Diodes Inc.
+  digikey: B360A-FDICT-ND
 - ref: DS4
   value: B360A-13-F
   footprint: DO-214AC SMA_Fv1.2
   mpn: B360A-13-F
+  description: Schottky Diode B360-13-F 60V/3A
   manufacturer: Diodes Inc.
+  digikey: B360A-FDICT-ND
 - ref: DS5
   value: B360A-13-F
   footprint: DO-214AC SMA_Fv1.2
   mpn: B360A-13-F
+  description: Schottky Diode B360-13-F 60V/3A
   manufacturer: Diodes Inc.
+  digikey: B360A-FDICT-ND
 - ref: DS6
   value: B360A-13-F
   footprint: DO-214AC SMA_Fv1.2
   mpn: B360A-13-F
+  description: Schottky Diode B360-13-F 60V/3A
   manufacturer: Diodes Inc.
+  digikey: B360A-FDICT-ND
 - ref: F1
   value: F1.5A
   footprint: '0603'
   manufacturer: Bourns
   mpn: SF-0603F150-2
+  description: FUSIBILE RAPIDO 1.5A 32V 0603 SF-0603F150-2 BOURNS SMT
+  digikey: SF-0603F150-2CT-ND
 - ref: F2
   value: 046703.5NR
   footprint: '0603'
   manufacturer: Bourns
   mpn: SF-0603FP350M-2
+  description: Fuse Chip Very Fast Acting 3.5A 32V SMD Solder Pad 0603 T/R CSA
+  digikey: F1400CT-ND
 - ref: J1
   value: S2BPHSM4TBLFSN
   footprint: JST S2B-PH-SM4-TB_Fv1.2
   manufacturer: 4UCON
   mpn: '20404'
-  description: HEADER JST PH 2P M SIDE ENTRY P=2.0mm SMT BLACK
+  description: PH SMT SIDE ENTRY HDR 2W
+  digikey: 455-1749-1-ND
 - ref: J2
   value: S2BPHSM4TBLFSN
   footprint: JST S2B-PH-SM4-TB_Fv1.2
   manufacturer: 4UCON
   mpn: '20404'
-  description: HEADER JST PH 2P M SIDE ENTRY P=2.0mm SMT BLACK
+  description: PH SMT SIDE ENTRY HDR 2W
+  digikey: 455-1749-1-ND
 - ref: J3
   value: S2BPHSM4TBLFSN
   footprint: JST S2B-PH-SM4-TB_Fv1.2
   manufacturer: 4UCON
   mpn: '20404'
-  description: HEADER JST PH 2P M SIDE ENTRY P=2.0mm SMT BLACK
+  description: PH SMT SIDE ENTRY HDR 2W
+  digikey: 455-1749-1-ND
 - ref: J4
   value: 10118193-0001LF
   footprint: FCI USB 10118193-0001LF_Fv1.2
   manufacturer: Amphenol ICC / FCI
   mpn: 10118193-0001LF
-  description: CONN MICRO-B USB F RIGHT ANGLE WITH FLANGE AND 2 LEGS SMT
+  description: CONN RCPT USB2.0 MICRO B SMD R/A
+  digikey: 609-4616-2-ND
   pin_count: 6
 - ref: J5
   value: SF72S006VBDR2500
   footprint: J-NANOSIM-SF72S006VBA_Fv1.2
   manufacturer: JAE Electronics
   mpn: SF72S006VBAR2500
-  description: CONN NANOSIM 8P F RIGHT ANGLE PUSH-PUSH SMT
+  description: "CONN. NANOSIM 8P F/90\xB0 PUSH-PUSH SF72S006VBAR2500 JAE ELECTRONICS SMT"
+  digikey: 670-2967-1-ND
   pin_count: 9
   nc_pins: {VPP/SWP: C6}
 - ref: J6
@@ -291,193 +324,222 @@ components:
   footprint: J-75-0050-MOS-M2_Fv1.2
   manufacturer: Amphenol ICC / FCI
   mpn: MDT420E01001
-  description: CONN M.2 KEY E 67P F RIGHT ANGLE P=0.5mm SMT BLACK
+  description: "CONN. M.2 75P M/90\xB0 P=0.5 MDT420E01001 AMPHENOL SMT"
+  digikey: MDT420E03001CT-ND
   pin_count: 67
-  nc_pins: {NC1: '1', NC15: '15', NC17: '17', NC19: '19', NC21: '21', NC23: '23', NC35: '35', NC37: '37', NC44: '44', NC53: '53', NC55: '55', NC59: '59', NC61: '61', NC63: '63', NC66: '66', NC68: '68', NC69: '69', NC75: '75'}
+  nc_pins: {NC1: '1', NC15: '15', NC17: '17', NC19: '19', NC21: '21', NC23: '23', NC35: '35', NC37: '37', NC44: '44', NC53: '53',
+    NC55: '55', NC59: '59', NC61: '61', NC63: '63', NC66: '66', NC68: '68', NC69: '69', NC75: '75'}
 - ref: J7
   value: JST SH 4-pin
   footprint: JST SM04B-SRSS-TB_Fv1.2
   manufacturer: JST
   mpn: SM04B-SRSS-TB(LF)(SN)
-  description: HEADER JST SH 4P M SIDE ENTRY QWIIC P=1.0mm SMT NATURAL
+  description: CONN HEADER SH 4POS SIDE 1MM TIN
+  digikey: 455-1804-1-ND
   pin_count: 4
 - ref: J8
   value: JST SH 4-pin
   footprint: JST SM04B-SRSS-TB_Fv1.2
   manufacturer: JST
   mpn: SM04B-SRSS-TB(LF)(SN)
-  description: HEADER JST SH 4P M SIDE ENTRY QWIIC P=1.0mm SMT NATURAL
+  description: CONN HEADER SH 4POS SIDE 1MM TIN
+  digikey: 455-1804-1-ND
   pin_count: 4
 - ref: L1
   value: 2.2uH
   footprint: IND_XFL4020-222MEC_Fv1.2
   manufacturer: Coilcraft
   mpn: XFL4020-222MEC
-  description: IND 2.2uH 20% 3.1A SMT 1616
+  description: Power Inductors - SMD 2.2Uh Shld 8A 23.5mOhms AECQ2
+  mouser: 994-XFL4020-222MEC
 - ref: L2
   value: 1.5uH
   footprint: VCHA042A-1R5MS6_Fv1.2
   manufacturer: Cyntec
   mpn: VCHA042A-1R5MS6
-  description: IND 1.5uH 20% 7.3A SMT 4.2mmx4.0mmx2.1mm
+  description: Fixed Ind 1.5UH 7.3A 15.4 Mohm
+  digikey: 2037-VCHA042A-1R5MS6CT-ND
 - ref: L3
   value: 2.2uH
   footprint: 1285AS-H-2R2M=P2-INDC2016X100N_Fv1.2
   manufacturer: Murata
   mpn: 1285AS-H-2R2M=P2
-  description: IND 2.2uH 20% 1.5A SMT 0806
+  description: FIXED IND 2.2UH 1.5A 204MOHM SMD
+  digikey: 490-10600-1-ND
 - ref: MODL1
   value: CES-116-01-L-S
   footprint: 16PIN_254MM_Fv1.2
   manufacturer: Sullins
   mpn: PPTC161LFBN-RC
-  description: STRIP 16P F P=2.54mm H=8.50mm D=6.00mm THT BLACK
+  description: Socket 16-Pin, 0.100 in
+  digikey: CES-116-01-L-S-ND
   pin_count: 16
 - ref: MODR1
   value: CES-112-01-L-S
   footprint: 12PIN_254MM_Fv1.2
   manufacturer: Sullins
   mpn: PPTC121LFBN-RC
-  description: STRIP 12P F P=2.54mm H=8.50mm D=6.00mm THT BLACK
+  description: Socket 12-Pin, 0.100 in
+  digikey: 612-CES-112-01-L-S-ND
   pin_count: 12
 - ref: OBJ1
   value: 9774025151R
   footprint: DIST-WASMSIM0250_Fv1.2
   manufacturer: "W\xFCrth Elektronik"
   mpn: 9774025151R
-  description: SPACER ROUND STANDOFF STEEL M2.5x0.45 H=2.5mm SMT
+  description: DISTANZ. CIL. METALLO 5.1X2.5 9774025151R W.E SMT
+  digikey: 732-7078-1-ND
 - ref: R1
   value: 100ohm
   footprint: RESCAXS80P640X160X50-16N_Fv1.2
   manufacturer: CTS Components
   mpn: 742C163101JP
-  description: RES ARRAY 8CH 100 OHM 5% SMT 2506
+  description: Resistor array 100R 5% 2506
+  digikey: 742C163101JPCT-ND
   pin_count: 16
 - ref: R10
   value: 10kohm
   footprint: '0402'
   manufacturer: Samsung
   mpn: RC1005F103CS
-  description: RES 10K OHM 1% 1/16W SMT 0402
+  description: "Resistor 10k \xB11% 0402"
+  digikey: 311-10.0KLRCT-ND
 - ref: R11
   value: 10kohm
   footprint: '0402'
   manufacturer: Samsung
   mpn: RC1005F103CS
-  description: RES 10K OHM 1% 1/16W SMT 0402
+  description: "Resistor 10k \xB11% 0402"
+  digikey: 311-10.0KLRCT-ND
 - ref: R12
   value: 10kohm
   footprint: '0402'
   manufacturer: Samsung
   mpn: RC1005F103CS
-  description: RES 10K OHM 1% 1/16W SMT 0402
+  description: "Resistor 10k \xB11% 0402"
+  digikey: 311-10.0KLRCT-ND
 - ref: R13
   value: 1.1Mohm
   footprint: '0402'
   manufacturer: Yageo
   mpn: AC0402FR-071M1L
-  description: RES 1.1M OHM 1% 1/16W SMT 0402
+  description: "Resistor 1M1 \xB11% 0402"
+  digikey: 13-RC0402FR-071M1LCT-ND
 - ref: R14
   value: 180kohm
   footprint: '0402'
   manufacturer: Yageo
   mpn: RC0402FR-07180KL
-  description: RES 180K OHM 1% 1/16W SMT 0402
+  description: "Resistor 180k \xB11% 0402"
   pulldown: U3.FB
 - ref: R15
   value: 10kohm
   footprint: '0402'
   manufacturer: Samsung
   mpn: RC1005F103CS
-  description: RES 10K OHM 1% 1/16W SMT 0402
+  description: "Resistor 10k \xB11% 0402"
+  digikey: 311-10.0KLRCT-ND
 - ref: R16
   value: 10kohm
   footprint: '0402'
   manufacturer: Samsung
   mpn: RC1005F103CS
-  description: RES 10K OHM 1% 1/16W SMT 0402
+  description: "Resistor 10k \xB11% 0402"
+  digikey: 311-10.0KLRCT-ND
   pulldown: F_3V3
 - ref: R17
   value: 82kohm
   footprint: '0402'
   manufacturer: Vishay
   mpn: CRCW040282K0FKED
-  description: RES 82K OHM 1% 1/16W SMT 0402
+  description: "Resistor 82k \xB11% 0402"
+  digikey: 311-82.0KLRCT-ND
   pulldown: U7.SEL
 - ref: R18
   value: 100kohm
   footprint: '0402'
   manufacturer: Yageo
   mpn: RC0402FR-07100KL
-  description: RES 100K OHM 1% 1/16W SMT 0402
+  description: "Resistor 100k \xB11% 0402"
+  digikey: RHM100CDCT-ND
 - ref: R19
   value: 10Mohm
   footprint: '0402'
   manufacturer: Yageo
   mpn: RC0402FR-0710ML
-  description: RES 10M OHM 1% 1/16W SMT 0402
+  description: "Resistor 10M \xB11% 0402"
+  digikey: RC0402FR-0710ML
 - ref: R2
   value: 10kohm
   footprint: '0402'
   manufacturer: Samsung
   mpn: RC1005F103CS
-  description: RES 10K OHM 1% 1/16W SMT 0402
+  description: "Resistor 10k \xB11% 0402"
+  digikey: 311-10.0KLRCT-ND
   pullup: U2.nEN
 - ref: R20
   value: 100ohm
   footprint: RESCAXS80P640X160X50-16N_Fv1.2
   manufacturer: CTS Components
   mpn: 742C163101JP
-  description: RES ARRAY 8CH 100 OHM 5% SMT 2506
+  description: Resistor array 100R 5% 2506
+  digikey: 742C163101JPCT-ND
   pin_count: 16
 - ref: R3
   value: 499ohm
   footprint: '0402'
   manufacturer: Royal Ohm
   mpn: 0402WGF4990TCE
-  description: RES 499 OHM 1% 1/16W SMT 0402
+  description: "Resistor 499R \xB11% 0402"
 - ref: R4
   value: 10kohm
   footprint: '0402'
   manufacturer: Samsung
   mpn: RC1005F103CS
-  description: RES 10K OHM 1% 1/16W SMT 0402
+  description: "Resistor 10k \xB11% 0402"
+  digikey: 311-10.0KLRCT-ND
   pulldown: U2.TS
 - ref: R5
   value: 1Mohm
   footprint: '1206'
   manufacturer: Bourns
   mpn: CR1206-FX-1004ELF
-  description: RES 1M OHM 1% 1/4W SMT 1206
+  description: "Resistor 1M \xB11% 1206"
 - ref: R6
   value: 15kohm
   footprint: '0402'
   manufacturer: Cyntec
   mpn: PFR05S-153-FNH
-  description: RES 15K OHM 1% 1/16W SMT 0402
+  description: "Resistor 15k \xB11% 0402"
+  digikey: P15.0KLCT-ND
 - ref: R7
   value: 22ohm
   footprint: '0402'
   manufacturer: Yageo
   mpn: RC0402FR-0722RL
-  description: RES 22 OHM 1% 1/16W SMT 0402
+  description: "Resistor 22R \xB11% 0402"
+  digikey: 311-22.0LRCT-ND
 - ref: R8
   value: 22ohm
   footprint: '0402'
   manufacturer: Yageo
   mpn: RC0402FR-0722RL
-  description: RES 22 OHM 1% 1/16W SMT 0402
+  description: "Resistor 22R \xB11% 0402"
+  digikey: 311-22.0LRCT-ND
 - ref: R9
   value: 22ohm
   footprint: '0402'
   manufacturer: Yageo
   mpn: RC0402FR-0722RL
-  description: RES 22 OHM 1% 1/16W SMT 0402
+  description: "Resistor 22R \xB11% 0402"
+  digikey: 311-22.0LRCT-ND
 - ref: SW1
   value: CJS-1200TA
   footprint: SW_CJS-1200TA_Fv1.2
   manufacturer: Nidec Copal
   mpn: CJS-1200TA
+  description: Switch Slide N.O./N.C. SPDT Raised Slide 0.1A 24VDC J-Hook SMD Embossed T/R
+  digikey: 563-1021-6-ND
   pin_count: 3
   nc_pins: {A: '3'}
 - ref: SW2
@@ -485,34 +547,45 @@ components:
   footprint: SW_EVP-BB2A9B000_Fv1.2
   manufacturer: Panasonic
   mpn: EVP-BB2A9B000
+  description: SWITCH TACTILE SPST-NO 0.05A 15V
 - ref: SW3
   value: CJS-1200TA
   footprint: SW_CJS-1200TA_Fv1.2
   manufacturer: Nidec Copal
   mpn: CJS-1200TA
+  description: Switch Slide N.O./N.C. SPDT Raised Slide 0.1A 24VDC J-Hook SMD Embossed T/R
+  digikey: 563-1021-6-ND
   pin_count: 3
 - ref: SW4
   value: CJS-1200TA
   footprint: SW_CJS-1200TA_Fv1.2
   manufacturer: Nidec Copal
   mpn: CJS-1200TA
+  description: Switch Slide N.O./N.C. SPDT Raised Slide 0.1A 24VDC J-Hook SMD Embossed T/R
+  digikey: 563-1021-6-ND
   pin_count: 3
 - ref: TVS1
   value: SM6T6V8A
   footprint: SMB_Fv1.2
   manufacturer: STMicroelectronics
   mpn: SM6T6V8A
+  description: DIODO TVS TRANSIL UNIDIR. 600W 6.8V SM6T6V8A SMB SMT
+  digikey: 497-6501-1-ND
 - ref: TVS2
   value: PESD5V0L5UV,125
   footprint: SOT666_Fv1.2
   manufacturer: MCC
   mpn: ESDLC5V0M5-TP
+  description: PESD Series 25 W 5 V Uni-Directional Fivefold ESD Protection Diode Array SOT-666
+  digikey: 1727-5797-1-ND
   pin_count: 6
 - ref: TVS3
   value: PESD5V0L5UV,125
   footprint: SOT666_Fv1.2
   manufacturer: MCC
   mpn: ESDLC5V0M5-TP
+  description: PESD Series 25 W 5 V Uni-Directional Fivefold ESD Protection Diode Array SOT-666
+  digikey: 1727-5797-1-ND
   pin_count: 6
   nc_pins: {K1: '1'}
 - ref: U1
@@ -520,14 +593,16 @@ components:
   footprint: SOP50P310X90-8N_Fv1.2
   manufacturer: Texas Instruments
   mpn: TXS0102DCUR
-  description: IC LEVEL SHIFTER 2CH SMT 8-VFSOP
+  description: 2-Bit Bidirectional Voltage-Level Shifter for Open-Drain and Push-Pull Application 8-VSSOP -40 to 85
+  digikey: 296-21931-6-ND
   pin_count: 8
 - ref: U2
   value: BQ24210
   footprint: WSON10-EXP_Fv1.2
   manufacturer: Texas Instruments
   mpn: BQ24210DQCR
-  description: IC BATTERY MANAGEMENT SOLAR LIPO CHARGER 3.5V-18V IN 4.2V 800mA OUT SMT WSON-10
+  description: INTEGRATO BQ24210DQCT WSON10 TEXAS SMT
+  digikey: 296-28738-1-ND
   pin_count: 11
   nc_pins: {VDPM: '9'}
 - ref: U3
@@ -535,7 +610,8 @@ components:
   footprint: TI PVSON-14 DSJ_Fv1.2
   manufacturer: Texas Instruments
   mpn: TPS63020DSJR
-  description: IC VOLTAGE REGULATOR SWITCHING BUCK-BOOST 1.8V-5.5V IN 1.2V-5.5V 4A OUT SMT
+  description: I.C. DC/DC CONVERTER TPS63020DSJR TEXAS VSON14 SMT
+  digikey: 296-36491-1-ND
   pin_count: 15
   nc_pins: {PG: '14'}
 - ref: U4
@@ -543,35 +619,40 @@ components:
   footprint: SOP50P310X90-8N_Fv1.2
   manufacturer: Texas Instruments
   mpn: TXS0102DCUR
-  description: IC LEVEL SHIFTER 2CH SMT 8-VFSOP
+  description: 2-Bit Bidirectional Voltage-Level Shifter for Open-Drain and Push-Pull Application 8-VSSOP -40 to 85
+  digikey: 296-21931-6-ND
   pin_count: 8
 - ref: U5
   value: DGQ2788A
   footprint: QFN40P260X180X60-16N_Fv1.2
   manufacturer: Vishay
   mpn: DGQ2788AEN-T1-GE4
-  description: IC ANALOG SWITCH QUAD SPDT SMT 16-UFQFN
+  description: Analog Switch Quad SPDT Automotive 16-Pin Mini-QFN T/R
+  digikey: DGQ2788AEN-T1-GE4CT-ND
   pin_count: 16
 - ref: U6
   value: DGQ2788A
   footprint: QFN40P260X180X60-16N_Fv1.2
   manufacturer: Vishay
   mpn: DGQ2788AEN-T1-GE4
-  description: IC ANALOG SWITCH QUAD SPDT SMT 16-UFQFN
+  description: Analog Switch Quad SPDT Automotive 16-Pin Mini-QFN T/R
+  digikey: DGQ2788AEN-T1-GE4CT-ND
   pin_count: 16
 - ref: U7
   value: MAX17225
   footprint: MAX17225ELT+UDFN_Fv1.2
   manufacturer: Maxim Integrated
   mpn: MAX17225ELT+T
-  description: IC VOLTAGE REGULATOR SWITCHING BOOST 400mV-5.5V IN 1.8V-5V 1A OUT SMT UDFN-6
+  description: IC REG BOOST ADJ 1A NANO 6UDFN
+  digikey: MAX17225ELT+ -ND
   pin_count: 6
 - ref: U8
   value: TPS62748
   footprint: TPS62748YFPT-DSBGA4x2_Fv1.2
   manufacturer: Texas Instruments
   mpn: TPS62748YFPR
-  description: IC VOLTAGE REGULATOR SWITCHING BUCK 2.15V-5.5V IN 1.2V/1.8V 300mA OUT SMT
+  description: IC REG BUCK PROG 300MA 8DSBGA
+  digikey: 296-43000-1-ND
   pin_count: 8
   nc_pins: {LOAD: D2}
 nets:

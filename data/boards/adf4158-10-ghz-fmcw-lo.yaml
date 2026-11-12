@@ -18,325 +18,399 @@ components:
 - ref: C1
   value: 10pF
   footprint: '0402'
+  digikey: 1276-1139-1-ND
   description: CAP CER 10PF 50V C0G/NP0 0402
   decouples: U6
 - ref: C10
   value: 1uF
   footprint: '0603'
+  digikey: 1276-1184-1-ND
   description: CAP CER 1UF 25V X7R 0603
 - ref: C11
   value: 10pF
   footprint: '0402'
+  digikey: 1276-1139-1-ND
   description: CAP CER 10PF 50V C0G/NP0 0402
   decouples: U6
 - ref: C12
   value: 3.3uF
   footprint: '1206'
+  digikey: 1276-1841-1-ND
   description: CAP CER 3.3UF 16V X7R 1206
 - ref: C13
   value: 100nF
   footprint: '0402'
+  digikey: 1276-1002-1-ND
   description: CAP CER 0.1UF 10V X7R 0402
   decouples: U6
 - ref: C14
   value: 1uF
   footprint: '0603'
+  digikey: 1276-1184-1-ND
   description: CAP CER 1UF 25V X7R 0603
   decouples: U3
 - ref: C15
   value: 10uF
   footprint: 0805
+  digikey: 1276-2872-1-ND
   description: CAP CER 10UF 16V X7R 0805
 - ref: C16
   value: 1uF
   footprint: '0603'
+  digikey: 1276-1184-1-ND
   description: CAP CER 1UF 25V X7R 0603
 - ref: C17
   value: 100pF
   footprint: '0402'
+  digikey: 1276-1025-1-ND
   description: CAP CER 100PF 50V C0G/NP0 0402
 - ref: C18
   value: 68pF
   footprint: '0402'
+  digikey: 490-5876-1-ND
   description: CAP CER 68PF 50V C0G/NP0 0402
 - ref: C19
   value: 100pF
   footprint: '0402'
+  digikey: 1276-1025-1-ND
   description: CAP CER 100PF 50V C0G/NP0 0402
 - ref: C2
   value: 100pF
   footprint: '0402'
+  digikey: 1276-1025-1-ND
   description: CAP CER 100PF 50V C0G/NP0 0402
 - ref: C20
   value: 100nF
   footprint: '0402'
+  digikey: 1276-1002-1-ND
   description: CAP CER 0.1UF 10V X7R 0402
   decouples: U6
 - ref: C21
   value: 100pF
   footprint: '0402'
+  digikey: 1276-1025-1-ND
   description: CAP CER 100PF 50V C0G/NP0 0402
 - ref: C22
   value: 100nF
   footprint: '0402'
+  digikey: 1276-1002-1-ND
   description: CAP CER 0.1UF 10V X7R 0402
   decouples: U4
 - ref: C23
   value: 100nF
   footprint: '0402'
+  digikey: 1276-1002-1-ND
   description: CAP CER 0.1UF 10V X7R 0402
   decouples: U5
 - ref: C24
   value: 1nF
   footprint: '0402'
+  digikey: 1276-1032-1-ND
   description: CAP CER 1000PF 50V X7R 0402
 - ref: C25
   value: 1nF
   footprint: '0402'
+  digikey: 1276-1032-1-ND
   description: CAP CER 1000PF 50V X7R 0402
 - ref: C26
   value: 10pF
   footprint: '0402'
+  digikey: 1276-1139-1-ND
   description: CAP CER 10PF 50V C0G/NP0 0402
   decouples: U6
 - ref: C27
   value: 10pF
   footprint: '0402'
+  digikey: 1276-1139-1-ND
   description: CAP CER 10PF 50V C0G/NP0 0402
   decouples: U4
 - ref: C28
   value: 10nF
   footprint: '0402'
+  digikey: 1276-1028-1-ND
   description: CAP CER 10000PF 50V X7R 0402
 - ref: C29
   value: 10nF
   footprint: '0402'
+  digikey: 1276-1028-1-ND
   description: CAP CER 10000PF 50V X7R 0402
   decouples: U6
 - ref: C3
   value: 1uF
   footprint: '0603'
+  digikey: 1276-1184-1-ND
   description: CAP CER 1UF 25V X7R 0603
   decouples: U1
 - ref: C30
   value: 22uF
   footprint: '0603'
+  digikey: 1276-1274-1-ND
   description: CAP CER 22UF 10V X5R 0603
 - ref: C4
   value: 4.7uF
   footprint: 0805
+  digikey: 490-GRM21BR71C475ME51KCT-ND
   description: CAP CER 4.7UF 16V X7R 0805
 - ref: C5
   value: 100nF
   footprint: '0402'
+  digikey: 1276-1002-1-ND
   description: CAP CER 0.1UF 10V X7R 0402
   decouples: U2
 - ref: C6
   value: 100nF
   footprint: '0402'
+  digikey: 1276-1002-1-ND
   description: CAP CER 0.1UF 10V X7R 0402
   decouples: U6
 - ref: C7
   value: 390pF
   footprint: '0402'
+  digikey: 490-1296-1-ND
   description: CAP CER 390PF 50V C0G/NP0 0402
 - ref: C8
   value: 10nF
   footprint: '0402'
+  digikey: 1276-1028-1-ND
   description: CAP CER 10000PF 50V X7R 0402
 - ref: C9
   value: 56pF
   footprint: '0402'
+  digikey: 490-1288-1-ND
   description: CAP CER 56PF 50V C0G/NP0 0402
 - ref: D1
   value: LED
   footprint: '0603'
+  digikey: 3147-B1931NG--20D001114U1930CT-ND
 - ref: J1
-  value: 2x4 header
-  footprint: 2X4
+  value: 2x4 2.54mm header
+  footprint: 2X4_P2.54mm
+  digikey: 2057-PH2-08-UA-ND
   pin_count: 8
 - ref: J2
   value: SMA
   footprint: 2484637-1
+  digikey: 343-2484637-1-ND
   description: SMA CONNECTOR
 - ref: L1
   value: 2.2uH
   footprint: '1008'
+  digikey: 490-10649-1-ND
   description: FIXED IND 2.2UH 2.2A 0.084OHM SM
 - ref: Q1
   value: DMP3099L-13
   footprint: SOT-23-3
+  digikey: DMP3099L-13DICT-ND
   description: -3.8A Id, -30V Vds, P-Channel MOSFET, 65mOhm Ron, 563 pF Qg (typ)
   pin_count: 3
 - ref: Q2
   value: 2N7002BK
   footprint: SOT-23
+  digikey: 1727-4789-1-ND
   description: 0.35A Id, 60V Vds, N-Channel MOSFET, SOT-23
   pin_count: 3
 - ref: R1
   value: 5.1kohm
   footprint: '0402'
+  digikey: P5.1KDCCT-ND
   description: RES SMD 5.1K OHM 0.1% 1/16W 0402
   pulldown: C7.2
 - ref: R10
   value: 330ohm
   footprint: '0402'
+  digikey: P330LCT-ND
   description: RES SMD 330 OHM 1% 1/10W 0402
 - ref: R11
   value: 1.8kohm
   footprint: '0402'
+  digikey: P1.80KLCT-ND
   description: RES SMD 1.8K OHM 1% 1/10W 0402
 - ref: R12
   value: 0ohm
   footprint: '0402'
+  digikey: P0.0JCT-ND
   description: RES SMD 0 OHM JUMPER 1/10W 0402
 - ref: R13
   value: 0ohm
   footprint: '0402'
+  digikey: P0.0JCT-ND
   description: RES SMD 0 OHM JUMPER 1/10W 0402
 - ref: R14
   value: 2kohm
   footprint: '0402'
+  digikey: P2.00KLCT-ND
   description: RES SMD 2K OHM 1% 1/10W 0402
 - ref: R16
   value: 18ohm
   footprint: '0402'
+  digikey: P18.0LCT-ND
   description: RES SMD 18 OHM 1% 1/10W 0402
 - ref: R17
   value: 1kohm
   footprint: '0402'
+  digikey: P1.00KLCT-ND
   description: RES SMD 1K OHM 1% 1/10W 0402
 - ref: R18
   value: 18ohm
   footprint: '0402'
+  digikey: P18.0LCT-ND
   description: RES SMD 18 OHM 1% 1/10W 0402
 - ref: R2
   value: 1kohm
   footprint: '0402'
+  digikey: P1.00KLCT-ND
   description: RES SMD 1K OHM 1% 1/10W 0402
   pulldown: U5.-
 - ref: R20
   value: 18ohm
   footprint: '0402'
+  digikey: P18.0LCT-ND
   description: RES SMD 18 OHM 1% 1/10W 0402
 - ref: R22
   value: 10kohm
   footprint: '0402'
+  digikey: P10.0KLCT-ND
   description: RES SMD 10K OHM 1% 1/10W 0402
   pullup: /ADF4158 + HMC391/ce
 - ref: R24
   value: 0ohm
   footprint: '0402'
+  digikey: P0.0JCT-ND
   description: RES SMD 0 OHM JUMPER 1/10W 0402
 - ref: R25
   value: 330ohm
   footprint: '0402'
+  digikey: P330LCT-ND
   description: RES SMD 330 OHM 1% 1/10W 0402
 - ref: R26
   value: 330ohm
   footprint: '0402'
+  digikey: P330LCT-ND
   description: RES SMD 330 OHM 1% 1/10W 0402
 - ref: R27
   value: 10kohm
   footprint: '0402'
+  digikey: P10.0KLCT-ND
   description: RES SMD 10K OHM 1% 1/10W 0402
   pullup: Y1.Vcon
 - ref: R28
   value: 330ohm
   footprint: '0402'
+  digikey: P330LCT-ND
   description: RES SMD 330 OHM 1% 1/10W 0402
 - ref: R29
   value: 100kohm
   footprint: '0402'
+  digikey: P100KLCT-ND
   description: RES 100K OHM 1% 1/16W 0402
 - ref: R3
   value: 0ohm
   footprint: '0402'
+  digikey: P0.0JCT-ND
   description: RES SMD 0 OHM JUMPER 1/10W 0402
 - ref: R30
   value: 0ohm
   footprint: '0402'
+  digikey: P0.0JCT-ND
   description: RES SMD 0 OHM JUMPER 1/10W 0402
 - ref: R31
   value: 10kohm
   footprint: '0402'
+  digikey: P10.0KLCT-ND
   description: RES SMD 10K OHM 1% 1/10W 0402
   pulldown: Y1.Vcon
 - ref: R32
   value: 330ohm
   footprint: '0402'
+  digikey: P330LCT-ND
   description: RES SMD 330 OHM 1% 1/10W 0402
 - ref: R33
   value: 330ohm
   footprint: '0402'
+  digikey: P330LCT-ND
   description: RES SMD 330 OHM 1% 1/10W 0402
 - ref: R34
   value: 330ohm
   footprint: '0402'
+  digikey: P330LCT-ND
   description: RES SMD 330 OHM 1% 1/10W 0402
 - ref: R4
   value: 0ohm
   footprint: '0402'
+  digikey: P0.0JCT-ND
   description: RES SMD 0 OHM JUMPER 1/10W 0402
 - ref: R5
   value: 5.1kohm
   footprint: '0402'
+  digikey: P5.1KDCCT-ND
   description: RES SMD 5.1K OHM 0.1% 1/16W 0402
   pulldown: U6.RSET
 - ref: R6
   value: 0ohm
   footprint: '0402'
+  digikey: P0.0JCT-ND
   description: RES SMD 0 OHM JUMPER 1/10W 0402
 - ref: R7
   value: 0ohm
   footprint: '0402'
+  digikey: P0.0JCT-ND
   description: RES SMD 0 OHM JUMPER 1/10W 0402
 - ref: R8
   value: 0ohm
   footprint: '0402'
+  digikey: P0.0JCT-ND
   description: RES SMD 0 OHM JUMPER 1/10W 0402
 - ref: R9
   value: 330ohm
   footprint: '0402'
+  digikey: P330LCT-ND
   description: RES SMD 330 OHM 1% 1/10W 0402
 - ref: U1
   value: LP2985-10.0
   footprint: SOT-23-5
+  digikey: 296-24263-1-ND
   description: 150mA 16V Low-noise Low-dropout Regulator With Shutdown, 10.0V output voltage
   pin_count: 5
 - ref: U2
   value: TLV74130P
   footprint: SOT-23-5
+  digikey: 296-50000-1-ND
   description: 150mA Low Dropout Voltage Regulator, Fixed Output 3.0V, SOT-23-5
   pin_count: 5
 - ref: U3
   value: TLV74033P
   footprint: SOT-23-5
+  digikey: 296-TLV74033PDBVRCT-ND
   description: 300mA Low Dropout Voltage Regulator, Fixed Output 3.3V, SOT-23-5
   pin_count: 5
 - ref: U4
   value: HMC391
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
+  digikey: 505-HMC391LP4ECT-ND
   description: 3.9-4.45GHz VCO, QFN-24
   pin_count: 25
 - ref: U5
   value: AD8065
   footprint: TSOT-23-5
+  digikey: AD8065ARTZ-REELCT-ND
   description: High Performance, 145 MHzFastFET Op Amp, SOT-23-5
   pin_count: 5
 - ref: U6
   value: ADF4158
-  footprint: LFCSP-24-1EP
+  footprint: LFCSP-24-1EP_4x4
+  digikey: 505-ADF4158CCPZ-ND
   description: 0.5-6.1GHz fractional-N PLL, LFCSP-24
   pin_count: 25
 - ref: U7
   value: TPS62143
-  footprint: VQFN-16-1EP
+  footprint: VQFN-16-1EP_3x3
+  digikey: 296-39448-1-ND
   description: 2A Step-Down Converter with DCS-Control, Fixed 5.0V Output Voltage, 3-17V Input
   pin_count: 17
 - ref: Y1
   value: KT2016K
   footprint: KT2016K
+  digikey: 478-KT2016K10000ZAW33ZGKCT-ND
   description: 10 MHz VCTCXO
   pin_count: 4
 nets:

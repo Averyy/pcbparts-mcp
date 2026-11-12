@@ -13,6 +13,8 @@ from pathlib import Path
 
 import pytest
 
+from conftest import write_catalog_category
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 from build_database import build_database, MAX_IGNORED_ROWS  # noqa: E402
 from build_sensor_db import build_db as build_sensor_db, MIN_SENSOR_COUNT  # noqa: E402
@@ -30,11 +32,7 @@ def _part(lcsc: str, **over) -> dict:
 
 
 def _write_category(data_dir: Path, slug: str, parts: list[dict]) -> None:
-    cat_dir = data_dir / "categories"
-    cat_dir.mkdir(parents=True, exist_ok=True)
-    with gzip.open(cat_dir / f"{slug}.jsonl.gz", "wt") as f:
-        for part in parts:
-            f.write(json.dumps(part) + "\n")
+    write_catalog_category(data_dir, slug, parts)
 
 
 def _row_count(db_path: Path) -> int:
@@ -56,6 +54,20 @@ class TestBuildDatabase:
         stats = build_database(tmp_path, tmp_path / "components.db", verbose=False)
         assert stats["total_parts"] == 2
         assert _row_count(tmp_path / "components.db") == 2
+
+    def test_empty_categories_come_from_manifest(self, tmp_path):
+        _write_category(tmp_path, "resistors", [_part("C1")])
+        (tmp_path / "manifest.json").write_text(json.dumps({"categories": {
+            "resistors": {"id": 1, "name": "Resistors", "count": 1},
+            "empty": {"id": 2, "name": "Empty", "count": 0},
+        }}), encoding="utf-8")
+        db_path = tmp_path / "components.db"
+        stats = build_database(tmp_path, db_path, verbose=False)
+        assert stats["category_counts"] == {"resistors": 1, "empty": 0}
+        assert stats["categories"] == 2
+        with sqlite3.connect(db_path) as conn:
+            assert conn.execute("SELECT name, slug FROM categories ORDER BY id").fetchall() == [
+                ("Resistors", "resistors"), ("Empty", "empty")]
 
     def test_connector_columns_and_migration(self, tmp_path):
         from build_database import migrate_connector_columns
@@ -183,20 +195,23 @@ class TestBuildDatabase:
 
     # --- #5: cross-category duplicate LCSC ---------------------------------------
 
-    def test_cross_category_duplicate_does_not_crash(self, tmp_path):
+    def test_cross_category_duplicate_does_not_crash(self, tmp_path, monkeypatch):
         """Same LCSC in two categories previously raised IntegrityError (PK) and
         aborted the build; OR IGNORE keeps the build alive."""
-        _write_category(tmp_path, "aaa", [_part("C1", d="from aaa"), _part("C2")])
-        _write_category(tmp_path, "bbb", [_part("C1", d="from bbb"), _part("C3")])
+        monkeypatch.setattr("build_database.read_catalog", lambda _: iter([
+            ("aaa", _part("C1", d="from aaa")), ("aaa", _part("C2")),
+            ("bbb", _part("C1", d="from bbb")), ("bbb", _part("C3")),
+        ]))
         db_path = tmp_path / "components.db"
         stats = build_database(tmp_path, db_path, verbose=False)
         assert stats["total_parts"] == 3  # C1 counted once
         assert _row_count(db_path) == 3
 
-    def test_duplicate_first_alphabetical_wins(self, tmp_path):
+    def test_duplicate_first_alphabetical_wins(self, tmp_path, monkeypatch):
         """Deterministic winner: sorted(glob) inserts aaa first, OR IGNORE keeps it."""
-        _write_category(tmp_path, "zzz", [_part("C1", d="from zzz")])
-        _write_category(tmp_path, "aaa", [_part("C1", d="from aaa")])
+        monkeypatch.setattr("build_database.read_catalog", lambda _: iter([
+            ("aaa", _part("C1", d="from aaa")), ("zzz", _part("C1", d="from zzz")),
+        ]))
         db_path = tmp_path / "components.db"
         build_database(tmp_path, db_path, verbose=False)
         conn = sqlite3.connect(db_path)
@@ -206,7 +221,7 @@ class TestBuildDatabase:
             conn.close()
         assert desc == "from aaa"
 
-    def test_mass_row_loss_aborts_and_keeps_old_db(self, tmp_path):
+    def test_mass_row_loss_aborts_and_keeps_old_db(self, tmp_path, monkeypatch):
         """> MAX_IGNORED_ROWS dropped rows means corruption, not benign dupes —
         the build must fail loudly and leave the previous DB serving."""
         db_path = tmp_path / "components.db"
@@ -216,8 +231,9 @@ class TestBuildDatabase:
 
         n_dupes = MAX_IGNORED_ROWS + 1
         dupes = [_part(f"D{i}") for i in range(n_dupes)]
-        _write_category(tmp_path, "poison1", dupes)
-        _write_category(tmp_path, "poison2", dupes)
+        monkeypatch.setattr("build_database.read_catalog", lambda _: iter([
+            (slug, part) for slug in ("poison1", "poison2") for part in dupes
+        ]))
         with pytest.raises(ValueError, match="dropped by INSERT OR IGNORE"):
             build_database(tmp_path, db_path, verbose=False)
 
@@ -243,10 +259,9 @@ class TestBuildDatabase:
         _write_category(tmp_path, "good", [_part("C1")])
         build_database(tmp_path, db_path, verbose=False)
 
-        bad = tmp_path / "categories" / "zzz-corrupt.jsonl.gz"
-        with gzip.open(bad, "wt") as f:
-            f.write("{this is not json\n")
-        with pytest.raises(json.JSONDecodeError):
+        bad = tmp_path / "catalog" / "parts" / "good" / "1.jsonl"
+        bad.write_text("{this is not json\n", encoding="utf-8")
+        with pytest.raises(ValueError, match="1.jsonl line 1"):
             build_database(tmp_path, db_path, verbose=False)
 
         assert _row_count(db_path) == 1  # old DB untouched

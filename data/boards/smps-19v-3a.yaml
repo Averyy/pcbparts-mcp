@@ -3,6 +3,7 @@ slug: smps-19v-3a
 source: sailor-elite/SMPS-19V-3A
 format: kicad8
 description: "AC-DC offline flyback power supply (230VAC\u219219V/60W), LM5023 current-mode controller"
+tags: [power-supply]
 key_ics: [C3M0065090D, LM5023]
 outline:
   width_mm: 107.92
@@ -109,6 +110,7 @@ components:
   value: '6160.0159'
   footprint: '61600159'
   height: '16'
+  mouser: 693-6160.0159
   manufacturer: SCHURTER
   mpn: '6160.0159'
   description: SCHURTER - 6160.0159 - POWER ENTRY, PLUG, 2.5A, PANEL
@@ -119,8 +121,9 @@ components:
   pin_count: 4
 - ref: Q1
   value: BSP135H6433XTMA1
-  footprint: SOT-4
+  footprint: SOT230P700X180-4N
   height: '1.8'
+  mouser: 726-BSP135H6433XTMA1
   manufacturer: Infineon
   mpn: BSP135H6433XTMA1
   pin_count: 4

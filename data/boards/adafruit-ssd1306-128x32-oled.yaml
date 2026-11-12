@@ -79,14 +79,13 @@ components:
 - ref: R1
   value: 10kohm
   footprint: '0603'
-  pulldown: D1.C
 - ref: R2
   value: 390kohm
   footprint: '0603'
   pulldown: LCD1.IREF
 - ref: R3
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pin_count: 8
 - ref: R5
   value: 10kohm

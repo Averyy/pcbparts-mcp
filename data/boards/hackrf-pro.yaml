@@ -1453,7 +1453,7 @@ components:
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
   value: RF shield
-  footprint: Laird_Technologies_BMI-S-230-F
+  footprint: Laird_Technologies_BMI-S-230-F_50.8x38.1
   manufacturer: TE Connectivity
   mpn: 2118732-2
   description: BOARD SHIELD 2INX1.5IN FRAME
@@ -1656,22 +1656,22 @@ components:
   mpn: A-SMA-KE-16.5A
   description: CONN SMA RCPT STR 50OHM EDGE MNT
 - ref: P20
-  value: 2x11 header
-  footprint: 2X11
+  value: 2x11 2.54mm header
+  footprint: 2X11_P2.54mm
   manufacturer: Sullins
   mpn: PPPC112LFBN-RC
   description: CONN HEADER FMAL 22PS.1" DL GOLD
   pin_count: 22
 - ref: P22
-  value: 2x13 header
-  footprint: 2X13
+  value: 2x13 2.54mm header
+  footprint: 2X13_P2.54mm
   manufacturer: Sullins
   mpn: PPPC132LFBN-RC
   description: CONN HEADER FMAL 26PS.1" DL GOLD
   pin_count: 26
 - ref: P28
-  value: 2x11 header
-  footprint: 2X11
+  value: 2x11 2.54mm header
+  footprint: 2X11_P2.54mm
   manufacturer: Sullins
   mpn: PPPC112LFBN-RC
   description: CONN HEADER FMAL 22PS.1" DL GOLD
@@ -2656,14 +2656,14 @@ components:
   pulldown: U11.2
 - ref: RN1
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
   pin_count: 8
 - ref: RN2
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
@@ -2671,7 +2671,7 @@ components:
   nc_pins: {R1.1: '1', R1.2: '8'}
 - ref: RN3
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
@@ -2679,35 +2679,35 @@ components:
   nc_pins: {R1.1: '1', R1.2: '8'}
 - ref: RN4
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
   pin_count: 8
 - ref: RN5
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
   pin_count: 8
 - ref: RN6
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
   pin_count: 8
 - ref: RN7
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
   pin_count: 8
 - ref: RN8
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   manufacturer: Yageo
   mpn: YC124-JR-07100RL
   description: RES ARRAY 4 RES 100 OHM 0804
@@ -2754,7 +2754,7 @@ components:
   pin_count: 4
 - ref: U1
   value: MXD8546F
-  footprint: QFN-12-1EP
+  footprint: QFN-12-1EP_2x2
   manufacturer: Maxscend
   mpn: MXD8546F
   description: X-DPDT RF SWITCH
@@ -2804,14 +2804,14 @@ components:
   pin_count: 10
 - ref: U16
   value: ICE40UP5K
-  footprint: QFN-48-1EP
+  footprint: QFN-48-1EP_7x7
   manufacturer: Lattice
   mpn: ICE40UP5K-SG48ITR
   description: iCE40 UltraPlus FPGA, 5280 LUTs, 1.2V, 48-pin QFN
   pin_count: 49
 - ref: U17
   value: MAX2831
-  footprint: QFN-48-1EP
+  footprint: QFN-48-1EP_7x7
   manufacturer: Maxim
   mpn: MAX2831ETM+T
   description: IC RF TXRX WIFI 48TQFN
@@ -2819,7 +2819,7 @@ components:
   nc_pins: {B6: '3', B7: '6', B3: '8', B2: '11', B5: '14', CLOCKOUT: '21', B1: '23', CTUNE: '29', B4: '34'}
 - ref: U18
   value: MAX5865
-  footprint: QFN-48-1EP
+  footprint: QFN-48-1EP_7x7
   manufacturer: Maxim
   mpn: MAX5865ETM+T
   description: IC ANLG FRONT END 40MSPS 48-TQFN
@@ -2827,7 +2827,7 @@ components:
   nc_pins: {NC: '38'}
 - ref: U19
   value: SI5351C
-  footprint: QFN-20-1EP
+  footprint: QFN-20-1EP_4x4
   manufacturer: Silicon Laboratories Inc
   mpn: SI5351C-B-GM
   description: IC CLK GENERATOR 160MHZ 20QFN
@@ -2835,7 +2835,7 @@ components:
   nc_pins: {XB: '2'}
 - ref: U2
   value: MXD8546F
-  footprint: QFN-12-1EP
+  footprint: QFN-12-1EP_2x2
   manufacturer: Maxscend
   mpn: MXD8546F
   description: X-DPDT RF SWITCH
@@ -2869,7 +2869,8 @@ components:
   mpn: LPC4330FET180
   description: ARM Cortex-M4/M0 flashless MCU
   pin_count: 180
-  nc_pins: {RTC_ALARM: A10, NC: B8, PB_4: B10, PB_2: B11, WAKEUP1: C8, P4_8: D2, P4_0: D4, USB1_DP: D11, WAKEUP2: E5, USB1_DM: E11, USB0_ID: G2, P6_10: G13, P8_3: H3, P8_8: K1, P5_0: L2, PA_0: L10, P6_0: M10}
+  nc_pins: {RTC_ALARM: A10, NC: B8, PB_4: B10, PB_2: B11, WAKEUP1: C8, P4_8: D2, P4_0: D4, USB1_DP: D11, WAKEUP2: E5, USB1_DM: E11,
+    USB0_ID: G2, P6_10: G13, P8_3: H3, P8_8: K1, P5_0: L2, PA_0: L10, P6_0: M10}
 - ref: U24
   value: AP22652
   footprint: TSOP-6
@@ -2879,14 +2880,14 @@ components:
   pin_count: 6
 - ref: U25
   value: TRF37C73
-  footprint: WSON-8-1EP
+  footprint: WSON-8-1EP_2x2
   manufacturer: Texas Instruments
   mpn: TRF37C73IDSGR
   description: IC RF AMP 1MHZ-6GHZ 8WSON
   pin_count: 9
 - ref: U26
   value: 74HC00
-  footprint: DHVQFN-14-1EP
+  footprint: DHVQFN-14-1EP_2.5x3
   manufacturer: Nexperia
   mpn: 74HC00BQ,115
   description: IC GATE NAND 4CH 2-INP 14DHVQFN
@@ -2935,7 +2936,7 @@ components:
   pin_count: 3
 - ref: U33
   value: 74HC4051
-  footprint: DHVQFN-16-1EP
+  footprint: DHVQFN-16-1EP_2.5x3.5
   manufacturer: Nexperia
   mpn: 74HC4051BQ,115
   description: IC MUX 8:1 120OHM 16DHVQFN
@@ -2985,12 +2986,13 @@ components:
   pin_count: 5
 - ref: U4
   value: RFFC5072
-  footprint: QFN-32-1EP
+  footprint: QFN-32-1EP_5x5
   manufacturer: RFMD
   mpn: RFFC5072TR7
   description: WIDEBAND SYNTHESIZER/VCO WITH INTEGRATED 6GHz MIXER
   pin_count: 33
-  nc_pins: {EXT_LO: '2', EXT_LO_DEC: '3', NC@11: '11', NC@13: '13', NC@14: '14', GPO1/ADD1: '15', GPO2/ADD2: '16', NC@17: '17', NC@18: '18', NC@20: '20', NC@21: '21', GPO3/FM: '25'}
+  nc_pins: {EXT_LO: '2', EXT_LO_DEC: '3', NC@11: '11', NC@13: '13', NC@14: '14', GPO1/ADD1: '15', GPO2/ADD2: '16', NC@17: '17',
+    NC@18: '18', NC@20: '20', NC@21: '21', GPO3/FM: '25'}
 - ref: U40
   value: BGB741L7ESD
   footprint: TSLP-7-1
@@ -3000,21 +3002,21 @@ components:
   pin_count: 7
 - ref: U5
   value: FM8625H
-  footprint: TSLP-6-4
+  footprint: TSLP-6-4_1.1x0.7
   manufacturer: Shenzhen Fuman
   mpn: FM8625H
   description: SPDT RF SWITCH
   pin_count: 6
 - ref: U6
   value: FM8625H
-  footprint: TSLP-6-4
+  footprint: TSLP-6-4_1.1x0.7
   manufacturer: Shenzhen Fuman
   mpn: FM8625H
   description: SPDT RF SWITCH
   pin_count: 6
 - ref: U7
   value: FM8625H
-  footprint: TSLP-6-4
+  footprint: TSLP-6-4_1.1x0.7
   manufacturer: Shenzhen Fuman
   mpn: FM8625H
   description: SPDT RF SWITCH
@@ -3035,7 +3037,7 @@ components:
   pin_count: 9
 - ref: X1
   value: TCXO
-  footprint: Oscillator_SMD_SeikoEpson_TG2520SMN-xxx-xxxxxx-4Pin
+  footprint: Oscillator_SMD_SeikoEpson_TG2520SMN-xxx-xxxxxx-4Pin_2.5x2.0
   manufacturer: HCI
   mpn: 8122S-25.000NQ33FTL
   description: 25 MHz TCXO

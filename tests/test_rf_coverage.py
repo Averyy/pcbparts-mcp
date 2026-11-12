@@ -1,12 +1,13 @@
 """Frequency coverage for RF similar parts in jlc_find_alternatives (2026-10-31 report: BP2G1+, a
 1.2-2 GHz splitter, got 5 MHz-1 GHz CATV splitters and a 2.8-3.7 GHz one as similar parts)."""
 
-import gzip
 import json
 import sys
 from pathlib import Path
 
 import pytest
+
+from conftest import write_catalog_category
 
 from pcbparts_mcp.parsers import parse_freq_bands
 from pcbparts_mcp.rf_coverage import band_coverage, check_candidates
@@ -126,9 +127,7 @@ def splitter_db(tmp_path):
         _row("C1003", 3000, None, maker="MEGSINE"),               # no band listed
         _row("C1004", 100, "1.2GHz~2GHz", maker="MEGSINE"),
     ]
-    (tmp_path / "categories").mkdir()
-    with gzip.open(tmp_path / "categories" / "rf.jsonl.gz", "wt") as f:
-        f.writelines(json.dumps(r) + "\n" for r in rows)
+    write_catalog_category(tmp_path, "rf", rows)
     (tmp_path / "subcategories.json").write_text(json.dumps(
         {str(SPLITTERS): {"name": "RF Power Splitters / Combiners", "category_id": 9, "category_name": "RF and Wireless"}}))
     build_database(tmp_path, tmp_path / "components.db", verbose=False)

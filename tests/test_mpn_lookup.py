@@ -100,8 +100,8 @@ async def test_related_ssd1306_names_every_part_type():
 @pytest.mark.parametrize("mpn", ["AO3400A", "ao3400a", " LM358DR2G "])  # Basic parts: LM358P left the catalog 2026-11-01
 async def test_exact_reply_is_unchanged(mpn):
     reply = await server.jlc_get_part(mpn=mpn)
-    assert set(reply) == {"mpn", "total", "results", "data_as_of"}
-    assert reply["data_as_of"]
+    assert set(reply) == {"mpn", "total", "results", "data_as_of", "prices_as_of"}
+    assert reply["data_as_of"] and reply["prices_as_of"]
     assert all(p["model"].lower() == mpn.strip().lower() for p in reply["results"])
 
 

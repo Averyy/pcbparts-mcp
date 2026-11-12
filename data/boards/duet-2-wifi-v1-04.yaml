@@ -3,7 +3,7 @@ slug: duet-2-wifi-v1-04
 source: Duet3D/Duet-2-Hardware
 format: kicad_legacy
 description: 'Gold-standard 3D printer controller: 5x TMC2660 SPI stepper drivers, SAM4E8E MCU'
-tags: [3d-printer, ethernet, motor-control, wifi]
+tags: [3d-printer, motor-control, wifi]
 key_ics: [TMC2660]
 outline:
   width_mm: 100.0
@@ -18,7 +18,7 @@ components:
 - ref: C1
   value: 10uF
   footprint: '1206'
-  voltage: '~'
+  voltage: 35V
 - ref: C10
   value: 10uF
   footprint: 0805
@@ -31,7 +31,7 @@ components:
   voltage: 50V
 - ref: C102
   value: 100uF
-  footprint: C_ELEC
+  footprint: C_ELEC_6.3x7.7
   voltage: 35V
 - ref: C103
   value: 100nF
@@ -94,7 +94,7 @@ components:
   footprint: '0603'
 - ref: C12
   value: 100uF
-  footprint: C_ELEC
+  footprint: C_ELEC_6.3x7.7
   voltage: 35V
 - ref: C120
   value: 1n >50V
@@ -155,11 +155,11 @@ components:
   footprint: '0603'
 - ref: C22
   value: 100uF
-  footprint: C_ELEC
+  footprint: C_ELEC_6.3x7.7
   voltage: 35V
 - ref: C23
   value: 100uF
-  footprint: C_ELEC
+  footprint: C_ELEC_6.3x7.7
   voltage: 35V
 - ref: C24
   value: 100nF
@@ -191,7 +191,7 @@ components:
   voltage: 50V
 - ref: C3
   value: 100uF
-  footprint: C_ELEC
+  footprint: C_ELEC_6.3x7.7
   voltage: 35V
 - ref: C30
   value: 470nF
@@ -201,11 +201,11 @@ components:
   footprint: '0603'
 - ref: C32
   value: 100uF
-  footprint: C_ELEC
+  footprint: C_ELEC_6.3x7.7
   voltage: 35V
 - ref: C33
   value: 100uF
-  footprint: C_ELEC
+  footprint: C_ELEC_6.3x7.7
   voltage: 35V
 - ref: C34
   value: 100nF
@@ -401,9 +401,6 @@ components:
 - ref: C82
   value: 100nF
   footprint: '0603'
-- ref: C83
-  value: DNP 47p
-  footprint: '0603'
 - ref: C84
   value: 2.2uF
   footprint: '0603'
@@ -449,7 +446,7 @@ components:
   voltage: 35V
 - ref: C99
   value: 220uF
-  footprint: C_ELEC
+  footprint: C_ELEC_6.3x7.7
   voltage: 25V
   decouples: U2
 - ref: D1
@@ -544,24 +541,24 @@ components:
   footprint: MCCQ-122-minibladefuseholder
 - ref: J1
   value: EXPANSION
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_25X2
   pin_count: 50
 - ref: J10
   value: E0 MOT
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_4x1
   pin_count: 4
 - ref: J11
-  value: 2x1 header
-  footprint: 3.5MM
+  value: 2x1 3.50mm header
+  footprint: 2X1_P3.50mm
 - ref: J12
   value: 2x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_2X1
 - ref: J13
-  value: 2x1 header
-  footprint: 3.5MM
+  value: 2x1 3.50mm header
+  footprint: 2X1_P3.50mm
 - ref: J14
   value: 2x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_2X1
 - ref: J15
   value: uSDHC
   footprint: uSD_SKT
@@ -573,18 +570,18 @@ components:
   pin_count: 15
 - ref: J19
   value: 3x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_3X1
   pin_count: 3
 - ref: J2
   value: 2x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_2X1
 - ref: J20
   value: 3x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_3X1
   pin_count: 3
 - ref: J21
   value: JTAG
-  footprint: MICRO
+  footprint: MICRO_5x2
   pin_count: 10
   nc_pins: {'7': '7'}
 - ref: J22
@@ -597,47 +594,47 @@ components:
   footprint: TERM_2-WAY_6.35mm
 - ref: J24
   value: 2x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_2X1
 - ref: J25
   value: 2x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_2X1
 - ref: J28
   value: Probe
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_4x1
   pin_count: 4
 - ref: J29
   value: 2x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_2X1
 - ref: J3
   value: 3x1 header
-  footprint: CONN
+  footprint: CONN_3x1
   pin_count: 3
 - ref: J30
   value: PanelDUE
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_4x1
   pin_count: 4
 - ref: J31
   value: 2x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_2X1
 - ref: J32
   value: 3x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_3X1
   pin_count: 3
 - ref: J33
   value: 3x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_3X1
   pin_count: 3
 - ref: J34
   value: 3x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_3X1
   pin_count: 3
 - ref: J35
   value: 3x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_3X1
   pin_count: 3
 - ref: J36
   value: Z A
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_4x1
   pin_count: 4
 - ref: J37
   value: SPI0
@@ -646,29 +643,29 @@ components:
   nc_pins: {'10': '10'}
 - ref: J39
   value: ESP_COMMS
-  footprint: CONN
+  footprint: CONN_4x2
   pin_count: 8
 - ref: J4
   value: BED HEAT
   footprint: TERM_2-WAY_6.35mm
 - ref: J5
   value: 2x1 header
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_2X1
 - ref: J6
   value: E1 MOT
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_4x1
   pin_count: 4
 - ref: J7
   value: Z B
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_4x1
   pin_count: 4
 - ref: J8
   value: Y MOT
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_4x1
   pin_count: 4
 - ref: J9
   value: X MOT
-  footprint: PIN_ARRAY
+  footprint: PIN_ARRAY_4x1
   pin_count: 4
 - ref: JP1
   value: ERASE
@@ -681,16 +678,19 @@ components:
   footprint: JUMPER
 - ref: L1
   value: 10uH
-  footprint: L
+  footprint: L_6x6
 - ref: L2
   value: 1uH
   footprint: '1210'
+  current: 2A
 - ref: L3
   value: 220 ohm, 3 A
   footprint: 0805
+  mpn: MPZ2012S221A
 - ref: L4
   value: 'MFB-201209-0011PW '
   footprint: 0805
+  mpn: MFB-201209-0011PW
 - ref: L5
   value: 10uH 100Mhz
   footprint: '0603'
@@ -700,43 +700,13 @@ components:
 - ref: L7
   value: 4.7nH
   footprint: '0603'
-- ref: M1
-  value: FID
-  footprint: Fiducial_1mm_Dia_2.54mm_Outer_CopperTop
-- ref: M10
-  value: CE Logo
-  footprint: Logo_CE_5mm_mirror
-- ref: M2
-  value: FID
-  footprint: Fiducial_1mm_Dia_2.54mm_Outer_CopperTop
-- ref: M3
-  value: FID
-  footprint: Fiducial_1mm_Dia_2.54mm_Outer_CopperTop
-- ref: M4
-  value: MOUNTING
-  footprint: Fixing_M4
-- ref: M5
-  value: MOUNTING
-  footprint: Fixing_M4
-- ref: M6
-  value: MOUNTING
-  footprint: Fixing_M4
-- ref: M7
-  value: MOUNTING
-  footprint: Fixing_M4
-- ref: M8
-  value: LOGO
-  footprint: LOGO1
-- ref: M9
-  value: CE Logo
-  footprint: Logo_CE_5mm
 - ref: P1
   value: CONN_SD
-  footprint: IDC_PIN_ARRAY
+  footprint: IDC_PIN_ARRAY_5x2
   pin_count: 10
 - ref: P2
   value: CONN_LCD
-  footprint: IDC_PIN_ARRAY
+  footprint: IDC_PIN_ARRAY_5x2
   pin_count: 10
 - ref: R1
   value: 2.2kohm
@@ -860,9 +830,6 @@ components:
 - ref: R35
   value: 51mohm
   footprint: '1206'
-- ref: R36
-  value: DNP 100K
-  footprint: '0603'
 - ref: R37
   value: 27kohm
   footprint: '0603'
@@ -904,9 +871,6 @@ components:
 - ref: R48
   value: 220ohm
   footprint: '0603'
-- ref: R49
-  value: DNP 100K
-  footprint: '0603'
 - ref: R5
   value: 470ohm
   footprint: '0603'
@@ -917,9 +881,6 @@ components:
   value: 10kohm
   footprint: '0603'
   pullup: ENN
-- ref: R52
-  value: DNP 100K
-  footprint: '0603'
 - ref: R53
   value: 4.7kohm
   footprint: '0603'
@@ -995,18 +956,6 @@ components:
   value: 1kohm
   footprint: '0603'
   pullup: D12.1
-- ref: R73
-  value: DNP 47K
-  footprint: '0603'
-- ref: R74
-  value: DNP 47K
-  footprint: '0603'
-- ref: R75
-  value: DNP 47K
-  footprint: '0603'
-- ref: R76
-  value: DNP 47K
-  footprint: '0603'
 - ref: R77
   value: 220ohm
   footprint: '0603'
@@ -1147,6 +1096,7 @@ components:
 - ref: U2
   value: AP7361C-33
   footprint: SOT-223
+  mpn: AP7361C-33E-13
   pin_count: 4
 - ref: U3
   value: A4403
@@ -1182,8 +1132,8 @@ components:
   pin_count: 36
   nc_pins: {'20': '20', '34': '34', '37': '37'}
 - ref: X2
-  value: CRYSTAL_4PIN
-  footprint: Xtal
+  value: 12MHz
+  footprint: Xtal_5x3.2
   pin_count: 4
 nets:
 - name: +3.3V
@@ -1231,20 +1181,13 @@ nets:
   - P1.8
   - P2.1
   - R106.2
-  - R36.1
-  - R49.1
   - R51.1
-  - R52.1
   - R63.2
   - R64.2
   - R69.2
   - R70.2
   - R71.2
   - R72.2
-  - R73.2
-  - R74.2
-  - R75.2
-  - R76.2
   - R96.2
   - U1.134
   - U1.143
@@ -1561,7 +1504,6 @@ nets:
   - C8.2
   - C80.2
   - C82.2
-  - C83.2
   - C84.2
   - C85.1
   - C86.1
@@ -1872,17 +1814,17 @@ nets:
 - name: Net-(F2-Pad2)
   pins: [F2.2, J3.3]
 - name: Net-(J15-Pad1)
-  pins: [J15.1, R22.1, R73.1]
+  pins: [J15.1, R22.1]
 - name: Net-(J15-Pad2)
-  pins: [J15.2, R25.1, R74.1]
+  pins: [J15.2, R25.1]
 - name: Net-(J15-Pad3)
   pins: [J15.3, R48.1, R63.1]
 - name: Net-(J15-Pad5)
   pins: [J15.5, R68.1]
 - name: Net-(J15-Pad7)
-  pins: [J15.7, R75.1, R77.1]
+  pins: [J15.7, R77.1]
 - name: Net-(J15-Pad8)
-  pins: [J15.8, R76.1, R78.1]
+  pins: [J15.8, R78.1]
 - name: Net-(J15-Pad9)
   pins: [J15.9, R64.1, R79.1]
 - name: Net-(J22-Pad2)
@@ -1946,13 +1888,13 @@ nets:
 - name: Net-(U13-Pad13)
   pins: [U13.13, U13.8]
 - name: PB4/TDI
-  pins: [J21.8, R36.2, U1.105]
+  pins: [J21.8, U1.105]
 - name: PB5/TDO
   pins: [J21.6, U1.109, U13.11]
 - name: PB6/TMS
-  pins: [J1.29, J21.2, R52.2, U1.79]
+  pins: [J1.29, J21.2, U1.79]
 - name: PB7/TCK
-  pins: [J21.4, R49.2, R83.2, U1.89]
+  pins: [J21.4, R83.2, U1.89]
 - name: PS_ON
   pins: [R14.2, R54.1, U1.106]
 - name: PS_ON_IN
@@ -2054,7 +1996,7 @@ nets:
 - name: UTXD1
   pins: [R103.2, U1.114]
 - name: UTXD1_CONN
-  pins: [C83.1, J16.14, J39.5, R103.1, U4.15]
+  pins: [J16.14, J39.5, R103.1, U4.15]
 - name: VBUS
   pins: [D13.1, D3.1, J22.1, R37.1]
 - name: VSSA
@@ -2600,10 +2542,6 @@ positions:
 - ref: C82
   x: 137.47
   y: 123.82
-- ref: C83
-  x: 153.04
-  y: 140.93
-  rot: 270.0
 - ref: C84
   x: 170.03
   y: 127.44
@@ -2932,39 +2870,6 @@ positions:
 - ref: L7
   x: 166.98
   y: 140.61
-- ref: M1
-  x: 172.57
-  y: 119.43
-- ref: M10
-  x: 144.48
-  y: 66.52
-  rot: 270.0
-- ref: M2
-  x: 140.3
-  y: 93.14
-- ref: M3
-  x: 89.59
-  y: 39.28
-- ref: M4
-  x: 176.21
-  y: 155.86
-- ref: M5
-  x: 84.21
-  y: 40.86
-- ref: M6
-  x: 84.21
-  y: 155.86
-- ref: M7
-  x: 176.21
-  y: 40.86
-- ref: M8
-  x: 150.1
-  y: 107.01
-  rot: 270.0
-- ref: M9
-  x: 151.08
-  y: 91.98
-  rot: 90.0
 - ref: P1
   x: 166.51
   y: 74.69
@@ -3113,10 +3018,6 @@ positions:
 - ref: R35
   x: 94.7
   y: 40.42
-- ref: R36
-  x: 133.0
-  y: 146.22
-  rot: 180.0
 - ref: R37
   x: 124.43
   y: 150.81
@@ -3165,10 +3066,6 @@ positions:
   x: 144.4
   y: 137.59
   rot: 90.0
-- ref: R49
-  x: 133.0
-  y: 143.75
-  rot: 180.0
 - ref: R5
   x: 172.56
   y: 144.18
@@ -3180,10 +3077,6 @@ positions:
 - ref: R51
   x: 135.11
   y: 88.57
-  rot: 180.0
-- ref: R52
-  x: 133.0
-  y: 142.24
   rot: 180.0
 - ref: R53
   x: 125.59
@@ -3264,20 +3157,6 @@ positions:
 - ref: R72
   x: 83.48
   y: 93.9
-- ref: R73
-  x: 147.21
-  y: 142.36
-- ref: R74
-  x: 144.46
-  y: 141.61
-  rot: 90.0
-- ref: R75
-  x: 137.61
-  y: 136.94
-- ref: R76
-  x: 138.46
-  y: 141.61
-  rot: 90.0
 - ref: R77
   x: 134.37
   y: 136.9

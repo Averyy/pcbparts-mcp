@@ -14,7 +14,7 @@ from pathlib import Path
 
 import wafer
 
-from .common import infer_measures, make_sensor_entry, make_session, write_source_json
+from .common import infer_measures, make_sensor_entry, make_session, parse_supply_voltage, write_source_json
 
 logger = logging.getLogger(__name__)
 
@@ -254,23 +254,12 @@ def _extract_product_id(html: str, url: str) -> str | None:
 def _extract_voltage(features: list[str]) -> str | None:
     """Extract operating voltage from features list."""
     for feat in features:
-        if "voltage" not in feat.lower() and "power supply" not in feat.lower():
-            continue
-        # Range: "3.0V to 5.0V", "3V~5V", "2.7V - 5.5V"
-        m = re.search(
-            r"(\d+(?:\.\d+)?)\s*V?\s*(?:to|[-~–])\s*(\d+(?:\.\d+)?)\s*V",
-            feat, re.IGNORECASE,
-        )
-        if m:
-            lo, hi = m.group(1), m.group(2)
-            if float(hi) >= float(lo) and float(hi) <= 48:
-                return f"{lo}-{hi}"
-        # Single value: "5V", "3.3V"
-        m = re.search(r"(\d+(?:\.\d+)?)\s*V\b", feat)
-        if m:
-            val = float(m.group(1))
-            if 1.0 <= val <= 48:
-                return m.group(1)
+        # Separate the supply heading from other specs later in the feature.
+        heading = re.match(r"[^\d:：]+", feat)
+        if heading:
+            voltage = parse_supply_voltage(heading[0], feat[len(heading[0]):].lstrip(":： "))
+            if voltage is not None:
+                return voltage
     return None
 
 

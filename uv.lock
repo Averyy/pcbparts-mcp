@@ -793,7 +793,7 @@ wheels = [
 
 [[package]]
 name = "pcbparts-mcp"
-version = "0.8.24"
+version = "0.9.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastmcp" },

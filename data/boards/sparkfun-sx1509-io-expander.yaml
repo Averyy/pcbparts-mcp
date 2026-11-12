@@ -18,23 +18,23 @@ components:
 - ref: C1
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-00810
   voltage: 25V
   tolerance: 20%
+  prod_id: CAP-00810
   decouples: U1
 - ref: C2
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-00810
   voltage: 25V
   tolerance: 20%
+  prod_id: CAP-00810
   decouples: U1
 - ref: C3
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-00810
   voltage: 25V
   tolerance: 20%
+  prod_id: CAP-00810
   decouples: U1
 - ref: JP1
   value: 1x6 header
@@ -59,42 +59,42 @@ components:
 - ref: R1
   value: 10kohm
   footprint: '0603'
-  prod_id: RES-00824
   tolerance: 1%
   power: 1/10W
+  prod_id: RES-00824
   pullup: '!INT'
 - ref: R2
   value: 10kohm
   footprint: '0603'
-  prod_id: RES-00824
   tolerance: 1%
   power: 1/10W
+  prod_id: RES-00824
 - ref: R3
   value: 10kohm
   footprint: '0603'
-  prod_id: RES-00824
   tolerance: 1%
   power: 1/10W
+  prod_id: RES-00824
   pullup: '!RESET'
 - ref: R4
   value: 10kohm
   footprint: '0603'
-  prod_id: RES-00824
   tolerance: 1%
   power: 1/10W
+  prod_id: RES-00824
 - ref: R5
   value: 10kohm
   footprint: '0603'
-  prod_id: RES-00824
   tolerance: 1%
   power: 1/10W
+  prod_id: RES-00824
   pullup: SJ4.1
 - ref: R6
   value: 10kohm
   footprint: '0603'
-  prod_id: RES-00824
   tolerance: 1%
   power: 1/10W
+  prod_id: RES-00824
   pullup: SJ5.1
 - ref: SJ1
   value: solder jumper (NC)
@@ -107,11 +107,11 @@ components:
   value: VCC2-3.3V
   footprint: SJ-2
 - ref: SJ4
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-3
   pin_count: 3
 - ref: SJ5
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-3
   pin_count: 3
 - ref: SJ6

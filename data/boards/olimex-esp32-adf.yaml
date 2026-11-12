@@ -275,11 +275,13 @@ components:
 - ref: MICRO_SD1
   value: MICRO_SD
   footprint: TFC-WXCP11-08-LF
+  mpn: TFC-WXCP11-08-LF
   pin_count: 14
   nc_pins: {'1': '1', '8': '8', FID1: FID1, FID2: FID2, FID3: FID3, FID4: FID4}
 - ref: PWR1
   value: PWRJ-2mm
   footprint: PWRJ-2mm(YDJ-1136)
+  mpn: YDJ-1134
 - ref: PWRLED1
   value: LED/RED/0603
   footprint: '0603'
@@ -321,9 +323,6 @@ components:
   footprint: '0402'
 - ref: R16
   value: 4.7ohm
-  footprint: '0402'
-- ref: R17
-  value: NA R0603
   footprint: '0402'
 - ref: R18
   value: 2.2kohm
@@ -404,7 +403,6 @@ components:
 - ref: R4
   value: 2.2kohm
   footprint: '0402'
-  pulldown: PWRLED1.1
 - ref: R40
   value: 220ohm
   footprint: '0402'
@@ -456,16 +454,16 @@ components:
   footprint: SJ
 - ref: TESTPAD1
   value: TESTPAD
-  footprint: TP_SMD
+  footprint: TP_SMD_10.00x5.00
 - ref: TESTPAD2
   value: TESTPAD
-  footprint: TP_SMD
+  footprint: TP_SMD_10.00x5.00
 - ref: TESTPAD3
   value: TESTPAD
-  footprint: TP_SMD
+  footprint: TP_SMD_10.00x5.00
 - ref: TESTPAD4
   value: TESTPAD
-  footprint: TP_SMD
+  footprint: TP_SMD_10.00x5.00
 - ref: U1
   value: AP1231-33
   footprint: SOT-23-5
@@ -487,6 +485,7 @@ components:
 - ref: U4
   value: BL4054B
   footprint: SOT-23-5
+  mpn: BL4054B-42TPRN
   pin_count: 5
 - ref: U5
   value: CH340T
@@ -495,7 +494,7 @@ components:
   nc_pins: {'1': '1', '2': '2', '11': '11', '12': '12', '13': '13', '14': '14', '17': '17', '18': '18', '20': '20'}
 - ref: U6
   value: ES8388
-  footprint: QFN28_EP(29)
+  footprint: QFN28_EP(29)_4.076x4.076x0.9
   pin_count: 30
   nc_pins: {'9': '9', '21': '21', '22': '22', '25': '25', Past: Past}
 - ref: U7
@@ -518,8 +517,9 @@ components:
   pin_count: 6
   nc_pins: {'4': '4'}
 - ref: Y1
-  value: 12MHz
+  value: 12MHz 20pF
   footprint: TSX-3.2x2.5mm_GND(3)
+  tolerance: 30ppm
   pin_count: 3
   nc_pins: {'3': '3'}
 nets:
@@ -579,7 +579,6 @@ nets:
   - C8.1
   - D4.1
   - FET1.2
-  - R17.2
   - R25.2
   - R8.2
   - U1.1
@@ -731,7 +730,7 @@ nets:
 - name: Net-(AUDIO_JACK_5PIN1-Pad3)
   pins: [AUDIO_JACK_5PIN1.3, C17.1]
 - name: Net-(BAT1-Pad1)
-  pins: [BAT1.1, FET1.3, R17.1, U4.3]
+  pins: [BAT1.1, FET1.3, U4.3]
 - name: Net-(BUT1-Pad2)
   pins: [BUT1.2, R14.1]
 - name: Net-(BUT2-Pad2)
@@ -1149,9 +1148,6 @@ positions:
   x: 86.8
   y: 57.3
   rot: 270.0
-- ref: R17
-  x: 61.5
-  y: 48.0
 - ref: R18
   x: 86.54
   y: 45.95

@@ -17,268 +17,327 @@ components:
 - ref: C1
   value: 100nF
   footprint: '0402'
-  mpn: Yageo
+  manufacturer: Yageo
+  mpn: CC0402KRX5R6BB104
 - ref: C10
   value: 100nF
   footprint: '0402'
-  mpn: Yageo
+  manufacturer: Yageo
+  mpn: CC0402KRX5R6BB104
 - ref: C11
   value: 10uF
   footprint: '0402'
-  mpn: Murata
+  manufacturer: Murata
+  mpn: GRM155R61A106ME11D
 - ref: C12
   value: 100nF
   footprint: '0402'
-  mpn: Yageo
+  manufacturer: Yageo
+  mpn: CC0402KRX5R6BB104
   decouples: U5
 - ref: C13
   value: 22uF
   footprint: '0603'
-  mpn: Samsung
+  manufacturer: Samsung
+  mpn: CL10A226MP8NUNE
   decouples: U5
 - ref: C14
   value: 22uF
   footprint: '0603'
-  mpn: Samsung
+  manufacturer: Samsung
+  mpn: CL10A226MP8NUNE
   decouples: U5
 - ref: C2
   value: 100nF
   footprint: '0402'
-  mpn: Yageo
+  manufacturer: Yageo
+  mpn: CC0402KRX5R6BB104
 - ref: C3
   value: 100nF
   footprint: '0402'
-  mpn: Yageo
+  manufacturer: Yageo
+  mpn: CC0402KRX5R6BB104
   decouples: U1
 - ref: C4
   value: 10uF
   footprint: '0402'
-  mpn: Murata
+  manufacturer: Murata
+  mpn: GRM155R61A106ME11D
   decouples: U2
 - ref: C5
   value: 100nF
   footprint: '0402'
-  mpn: Yageo
+  manufacturer: Yageo
+  mpn: CC0402KRX5R6BB104
   decouples: U1
 - ref: C6
   value: 10uF
   footprint: '0402'
-  mpn: Murata
+  manufacturer: Murata
+  mpn: GRM155R61A106ME11D
 - ref: C7
   value: 22uF
   footprint: '0603'
-  mpn: Samsung
+  manufacturer: Samsung
+  mpn: CL10A226MP8NUNE
 - ref: C8
   value: 22uF
   footprint: '0603'
-  mpn: Samsung
+  manufacturer: Samsung
+  mpn: CL10A226MP8NUNE
   decouples: U4
 - ref: C9
   value: 22uF
   footprint: '0603'
-  mpn: Samsung
+  manufacturer: Samsung
+  mpn: CL10A226MP8NUNE
   decouples: U4
 - ref: D1
   value: 5V_LED
   footprint: '0603'
-  mpn: XINGLIGHT
+  manufacturer: XINGLIGHT
+  mpn: XL-1608SURC-06
 - ref: D2
   value: 3V3_LED
   footprint: '0603'
-  mpn: XINGLIGHT
+  manufacturer: XINGLIGHT
+  mpn: XL-1608UOC-06
 - ref: J1
   value: GPIO15
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J10
-  value: 1x8 header
+  value: 1x8 1.25mm header
   footprint: Molex_PicoBlade_53261-0871
-  mpn: Molex
+  manufacturer: Molex
+  mpn: 0532610871
   pin_count: 8
 - ref: J11
   value: +3.3V
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J12
-  value: 1x12 header
-  footprint: 1X12
+  value: 1x12 2.54mm header
+  footprint: 1X12_P2.54mm
   mpn: DNP
+  manufacturer: DNP
   pin_count: 12
 - ref: J13
-  value: 1x12 header
-  footprint: JST_SH_SM12B-SRSS-TB
+  value: JST SH 12-pin
+  footprint: JST_SH_SM12B-SRSS-TB_1x12
   mpn: SM12B-SRSS-TB
+  manufacturer: JST
   pin_count: 12
 - ref: J14
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   mpn: DHT20
+  manufacturer: Asair
   pin_count: 4
 - ref: J15
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   mpn: AGS02MA
+  manufacturer: Asair
   pin_count: 4
 - ref: J16
   value: GND
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J17
   value: USB_D+
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J18
   value: USB_D-
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J19
   value: +5V
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J2
-  value: 1x4 header
-  footprint: Solderpad
+  value: 1x4 2.54mm header
+  footprint: Solderpad_1x04
   mpn: DNP
+  manufacturer: DNP
   pin_count: 4
 - ref: J20
   value: GND
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J21
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   mpn: DNP
+  manufacturer: DNP
   pin_count: 4
 - ref: J22
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   mpn: DNP
+  manufacturer: DNP
   pin_count: 4
 - ref: J24
   value: STEMMA QT
-  footprint: JST_SH_SM04B-SRSS-TB
-  mpn: JST
+  footprint: JST_SH_SM04B-SRSS-TB_1x04
+  manufacturer: JST
+  mpn: SM04B-SRSS-TB
   pin_count: 4
 - ref: J3
-  value: 1x4 header
-  footprint: Solderpad
+  value: 1x4 2.54mm header
+  footprint: Solderpad_1x04
   mpn: DNP
+  manufacturer: DNP
   pin_count: 4
 - ref: J4
   value: GPIO18
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J5
   value: ESP_RXD0
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J6
   value: ESP_TXD0
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J7
   value: I2C_SDA
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J8
   value: I2C_SCL
-  footprint: Solderpad_Rounded_Rectangle
+  footprint: Solderpad_Rounded_Rectangle_0.9x1.5
   mpn: DNP
+  manufacturer: DNP
 - ref: J9
-  value: 1x8 header
-  footprint: 1X8
+  value: 1x8 2.54mm header
+  footprint: 1X8_P2.54mm
   mpn: DNP
+  manufacturer: DNP
   pin_count: 8
 - ref: JP1
-  value: 1x2 header
-  footprint: Solder-Jumper-1x2_P1.3mm_Open_Rounded
+  value: 1x2 1.30mm header
+  footprint: Solder-Jumper-1x2_P1.3mm_Open_Rounded_1.0x1.2
   mpn: DNP
+  manufacturer: DNP
 - ref: JP2
-  value: 1x2 header
-  footprint: Solder-Jumper-1x2_P1.3mm_Open_Rounded
+  value: 1x2 1.30mm header
+  footprint: Solder-Jumper-1x2_P1.3mm_Open_Rounded_1.0x1.2
   mpn: DNP
+  manufacturer: DNP
 - ref: L1
   value: 1uH
   footprint: L_Changjiang_FNR6020S
   mpn: CD54-1R0M
+  manufacturer: SHUOXING
   description: Inductor, small symbol
 - ref: R1
   value: 1kohm
   footprint: '0402'
   mpn: RC0402FR-071KL
+  manufacturer: Yageo
 - ref: R10
   value: 10kohm
   footprint: '0402'
   mpn: RC0402FR-0710KL
+  manufacturer: Yageo
 - ref: R11
   value: 1kohm
   footprint: '0402'
   mpn: RC0402FR-071KL
+  manufacturer: Yageo
 - ref: R12
   value: 10kohm
   footprint: '0402'
   mpn: RC0402FR-0710KL
+  manufacturer: Yageo
 - ref: R13
   value: 10kohm
   footprint: '0402'
   mpn: RC0402FR-0710KL
+  manufacturer: Yageo
   pulldown: U3.CE
 - ref: R14
   value: 732kohm
   footprint: '0402'
   mpn: RC0402FR-07732KL
+  manufacturer: Yageo
   pullup: U4.FB
 - ref: R15
   value: 100kohm
   footprint: '0402'
   mpn: RC0402FR-07100KL
+  manufacturer: Yageo
   pulldown: U4.FB
 - ref: R16
   value: 10kohm
   footprint: '0402'
   mpn: RC0402FR-0710KL
+  manufacturer: Yageo
   pulldown: /GPIO15
 - ref: R2
   value: 1kohm
   footprint: '0402'
   mpn: RC0402FR-071KL
+  manufacturer: Yageo
 - ref: R3
   value: 5.1kohm
   footprint: '0402'
   mpn: RC0402FR-075K1L
+  manufacturer: Yageo
 - ref: R4
   value: 5.1kohm
   footprint: '0402'
   mpn: RC0402FR-075K1L
+  manufacturer: Yageo
 - ref: R5
   value: 4.7ohm
   footprint: '0402'
   mpn: RC0402FR-074R7L
+  manufacturer: Yageo
 - ref: R8
   value: 330ohm
   footprint: '0402'
-  mpn: Yageo
+  manufacturer: Yageo
+  mpn: RC0402FR-07330RL
 - ref: R9
   value: 220ohm
   footprint: '0402'
-  mpn: Yageo
+  manufacturer: Yageo
+  mpn: RC0402FR-7D220RL
 - ref: U1
   value: SCD40-D-R2
-  footprint: Sensirion_SCD4x-1EP
+  footprint: Sensirion_SCD4x-1EP_10.1x10.1
   mpn: SCD40-D-R2
+  manufacturer: Sensirion
   description: Photoacoustic CO2 sensor, 40 000 ppm, I2C, 2.4-5.5 V, Base accuracy 400 - 2000
   pin_count: 7
 - ref: U2
   value: SGP40-D-R4
-  footprint: DFN-6-1EP
+  footprint: DFN-6-1EP_2.44x2.44
   mpn: SGP40-D-R4
+  manufacturer: Sensirion
   description: TVOC sensor for indoor air quality sensing, I2C, 3.3V, DFN-6 SMD
   pin_count: 6
   nc_pins: {NC: '4'}
 - ref: U3
   value: LM66100DCKR
   footprint: SOT-363_SC-70-6
-  mpn: LM66200DRLR
+  mpn: LM66100DCKR
+  manufacturer: Texas Instruments
   description: "1.5~5.5V In, 1.5A Out, 79-m\u03A9, single-channel Ideal Diode ORing voltage"
   pin_count: 6
   nc_pins: {NC: '4'}
@@ -286,12 +345,14 @@ components:
   value: TPS61023
   footprint: SOT-563
   mpn: TPS61023DRLR
+  manufacturer: Texas Instruments
   description: 3A Boost Converter, 0.5-5.5 V input, 2.2-5.5V output, 1 MHz, SOT-563
   pin_count: 6
 - ref: U5
   value: AP22804AW5
   footprint: SOT-23-5
-  mpn: Diodes Inc
+  manufacturer: Diodes Inc
+  mpn: AP22804AW5-7
   description: Current limited 2.5A power switch, single channel, SOT-23-5
   pin_count: 5
 nets:

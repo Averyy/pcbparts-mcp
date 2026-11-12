@@ -2,20 +2,23 @@
   "source": "maxbotix",
   "source_url": "https://www.maxbotix.com/products.json?limit=250",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-11-01T13:25:09.248241+00:00",
+  "scraped_at": "2026-11-11T01:57:45.030878+00:00",
   "stats": {
     "sensor_count": 125,
     "total_products": 146,
     "skipped_retired": 2,
     "skipped_non_sensor": 17,
-    "skipped_no_model": 1
+    "skipped_no_model": 1,
+    "kept_missing": 0
   },
+  "missed_scrapes": {},
   "sensors": [
     {
       "id": "mb1710",
       "name": "MB1710",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -23,6 +26,9 @@
         "https://www.maxbotix.com/products/5m-ultrasonic-ir-kiosk-proximity-sensor"
       ],
       "description": "The 5m Ultrasonic + IR Kiosk Proximity Sensor is a compact, low-voltage IR + ultrasonic sensor designed for kiosk and people-detection applications. By combining optical proximity sensing with ultr...",
+      "protocol": [
+        "usb"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -31,6 +37,7 @@
       "name": "MB1711",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -38,6 +45,9 @@
         "https://www.maxbotix.com/products/5m-ultrasonic-ir-kiosk-proximity-sensor"
       ],
       "description": "The 5m Ultrasonic + IR Kiosk Proximity Sensor is a compact, low-voltage IR + ultrasonic sensor designed for kiosk and people-detection applications. By combining optical proximity sensing with ultr...",
+      "protocol": [
+        "usb"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -46,6 +56,7 @@
       "name": "MB1712",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -53,6 +64,9 @@
         "https://www.maxbotix.com/products/5m-ultrasonic-ir-kiosk-proximity-sensor"
       ],
       "description": "The 5m Ultrasonic + IR Kiosk Proximity Sensor is a compact, low-voltage IR + ultrasonic sensor designed for kiosk and people-detection applications. By combining optical proximity sensing with ultr...",
+      "protocol": [
+        "i2c"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -61,13 +75,18 @@
       "name": "MB8000",
       "measures": [
         "distance",
-        "ultrasonic"
+        "lidar",
+        "tof"
       ],
       "platforms": [],
       "urls": [
         "https://www.maxbotix.com/products/mb8000"
       ],
       "description": "MaxLidar™ MB8000: Precision LiDAR, 25m range, ±6 cm accuracy, 1kHz refresh rate, auto dust cleaning, IP5X-rated, Class 1 safe laser, industrial-grade, 3° FoV, low-power, UART/I2C interfaces.",
+      "protocol": [
+        "i2c",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "tof"
     },
@@ -212,6 +231,11 @@
         "https://www.maxbotix.com/products/mb7354"
       ],
       "description": "Ultrasonic snow depth sensor for weather stations and environmental monitoring. 5 m maximum range, 1 mm resolution, and internal temperature compensation. Standard (~6 Hz Update Rate) or condensati...",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -228,6 +252,11 @@
         "https://www.maxbotix.com/products/mb7374"
       ],
       "description": "Ultrasonic snow depth sensor for weather stations and environmental monitoring. 5 m maximum range, 1 mm resolution, and internal temperature compensation. Standard (~6 Hz Update Rate) or condensati...",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -244,6 +273,11 @@
         "https://www.maxbotix.com/products/mb7554"
       ],
       "description": "Ultrasonic snow depth sensor for weather stations and environmental monitoring. 5 m maximum range, 1 mm resolution, and internal temperature compensation. Standard (~6 Hz Update Rate) or condensati...",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -260,6 +294,11 @@
         "https://www.maxbotix.com/products/mb7574"
       ],
       "description": "Ultrasonic snow depth sensor for weather stations and environmental monitoring. 5 m maximum range, 1 mm resolution, and internal temperature compensation. Standard (~6 Hz Update Rate) or condensati...",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -268,6 +307,7 @@
       "name": "MB8450",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -284,6 +324,7 @@
       "name": "MB8460",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -292,6 +333,9 @@
         "https://www.maxbotix.com/products/mb8460"
       ],
       "description": "Ultrasonic vehicle detection sensor for drive-thru lanes, gates, and parking garages. 5 m maximum range, 1 cm resolution, and ~250 ms between readings (~4 Hz), plus a preset 1.5 m proximity zone. N...",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -300,6 +344,7 @@
       "name": "MB8480",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -308,6 +353,9 @@
         "https://www.maxbotix.com/products/mb8480"
       ],
       "description": "Ultrasonic vehicle detection sensor for drive-thru lanes, gates, and parking garages. 5 m maximum range, 1 cm resolution, and ~250 ms between readings (~4 Hz), plus a preset 1.5 m proximity zone. N...",
+      "protocol": [
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -323,6 +371,10 @@
         "https://www.maxbotix.com/products/mb7853-tanksensor"
       ],
       "description": "This ultrasonic tank level sensor features a 1mm resolution with a minimum range of 300mm and a 16.5-meter maximum range and operates from 2.5V to 5V. The sensor has the following outputs: RS232 & ...",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -338,6 +390,10 @@
         "https://www.maxbotix.com/products/mb7854-tanksensor"
       ],
       "description": "This ultrasonic tank level sensor features a 1mm resolution with a minimum range of 300mm and a 16.5-meter maximum range and operates from 5.5V to 40V. The sensor has the following outputs: RS232 &...",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -353,6 +409,10 @@
         "https://www.maxbotix.com/products/mb7850"
       ],
       "description": "This ultrasonic tank level sensor features a 1cm resolution with a 5-cm minimum range and a 5-meter maximum range. The sensor has the following outputs: RS232 & TTL Serial, analog voltage, analog e...",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -368,6 +428,10 @@
         "https://www.maxbotix.com/products/mb7851-xl-tanksensor-wrma"
       ],
       "description": "MB7851 is a weather-resistant ultrasonic tank-level sensor with 1 mm resolution, 5 m max range, and ~2 Hz read rate. Output is selectable by wiring—RS232 or TTL serial, scaled analog voltage, or an...",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -383,6 +447,11 @@
         "https://www.maxbotix.com/products/mb7062"
       ],
       "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target. Uses a stability filter.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -398,6 +467,11 @@
         "https://www.maxbotix.com/products/mb7066"
       ],
       "description": "Ranges from 20cm to 1068cm with a 10Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -413,6 +487,11 @@
         "https://www.maxbotix.com/products/mb7060"
       ],
       "description": "This ultrasonic sensor provides range information from 20cm up to 765cm* for the nearest detectable target at 1-centimeter resolution with a speed of 10Hz, and pulse-width, analog voltage, and RS23...",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -428,6 +507,10 @@
         "https://www.maxbotix.com/products/mb7076"
       ],
       "description": "Ranges from 20cm to 1068cm with a 10Hz read rate. Analog envelope, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -443,6 +526,10 @@
         "https://www.maxbotix.com/products/mb7070"
       ],
       "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Analog envelope, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -458,6 +545,10 @@
         "https://www.maxbotix.com/products/mb7092"
       ],
       "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Analog envelope, analog voltage, and RS232 serial. Reports range to largest target. Uses a stability filter.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -473,6 +564,9 @@
         "https://www.maxbotix.com/products/mb7137"
       ],
       "description": "Ranges from 20cm to 350cm with up to 40Hz read rate. I2C interface. Reports range to closest.",
+      "protocol": [
+        "i2c"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -488,6 +582,10 @@
         "https://www.maxbotix.com/products/mb7150"
       ],
       "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Analog envelope, analog voltage, and TTL serial. Reports range to largest target. Uses a stability filter.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -503,6 +601,10 @@
         "https://www.maxbotix.com/products/mb7155"
       ],
       "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Analog envelope, analog voltage, and TTL serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -518,6 +620,11 @@
         "https://www.maxbotix.com/products/mb7363"
       ],
       "description": "High sensitivity. Ranges from 500mm to 9999mm with 6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -533,6 +640,11 @@
         "https://www.maxbotix.com/products/mb7364"
       ],
       "description": "Ranges from 500mm to 5000mm with a 6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -548,6 +660,11 @@
         "https://www.maxbotix.com/products/mb7366"
       ],
       "description": "Ranges from 500mm to 9999mm with a 6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -563,6 +680,11 @@
         "https://www.maxbotix.com/products/mb7360"
       ],
       "description": "Ranges from 300mm to 5000mm with a 7.5Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -578,6 +700,11 @@
         "https://www.maxbotix.com/products/mb7375"
       ],
       "description": "Wide beam. Ranges from 500mm to 1525mm with 6.33Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -593,6 +720,11 @@
         "https://www.maxbotix.com/products/mb7380"
       ],
       "description": "The MB7380 HRXL-MaxSonar-WRT is a reliable ultrasonic distance sensor designed to provide accurate measurements over a wide range. Perfect for various automation and robotics applications, this sen...",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -608,6 +740,11 @@
         "https://www.maxbotix.com/products/mb7383"
       ],
       "description": "High sensitivity. Ranges from 500mm to 9999mm with a 6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -623,6 +760,11 @@
         "https://www.maxbotix.com/products/mb7386"
       ],
       "description": "Ranges from 500mm to 9999mm with a 6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -638,6 +780,11 @@
         "https://www.maxbotix.com/products/mb7384"
       ],
       "description": "Ranges from 500mm to 5000mm with a 6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -653,6 +800,11 @@
         "https://www.maxbotix.com/products/mb7395"
       ],
       "description": "Wide beam. Ranges from 500mm to 1525mm with 6.33Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -668,6 +820,11 @@
         "https://www.maxbotix.com/products/mb7544"
       ],
       "description": "Ranges from 500mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target. Uses filtering to prevent rapid changes in readings. Filter resets ...",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -683,6 +840,11 @@
         "https://www.maxbotix.com/products/mb7534"
       ],
       "description": "Ranges from 500mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target. Uses filtering to prevent rapid changes in readings. Filter reset...",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -698,6 +860,11 @@
         "https://www.maxbotix.com/products/mb7560"
       ],
       "description": "Ranges from 300mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -713,6 +880,11 @@
         "https://www.maxbotix.com/products/mb7564"
       ],
       "description": "Ranges from 500mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -728,6 +900,11 @@
         "https://www.maxbotix.com/products/mb7563"
       ],
       "description": "High sensitivity. Ranges from 500mm to 9999mm with a 0.6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -743,6 +920,11 @@
         "https://www.maxbotix.com/products/mb7566"
       ],
       "description": "Ranges from 500mm to 9999mm with a 0.6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -758,6 +940,11 @@
         "https://www.maxbotix.com/products/mb7580"
       ],
       "description": "Ranges from 300mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -773,6 +960,11 @@
         "https://www.maxbotix.com/products/mb7583"
       ],
       "description": "High sensitivity. Ranges from 500mm to 9999mm with a 0.6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -788,6 +980,11 @@
         "https://www.maxbotix.com/products/mb7586"
       ],
       "description": "Ranges from 500mm to 9999mm with a 0.6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -803,6 +1000,11 @@
         "https://www.maxbotix.com/products/mb7584"
       ],
       "description": "Ranges from 500mm to 5000mm with a 0.6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -811,6 +1013,7 @@
       "name": "MB1001",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -818,6 +1021,10 @@
         "https://www.maxbotix.com/products/mb1001"
       ],
       "description": "Ranges from 6 inches to 254 inches. 6-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -833,6 +1040,11 @@
         "https://www.maxbotix.com/products/ultrasonic_sensors_mb1000"
       ],
       "description": "Ranges from 6 inches to 254 inches with a 20Hz read rate. Widest detection field. Excellent for people detection.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -841,6 +1053,7 @@
       "name": "MB1002",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -848,6 +1061,10 @@
         "https://www.maxbotix.com/products/mb1002"
       ],
       "description": "Ranges from 6 inches to 254 inches. 7-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -863,6 +1080,11 @@
         "https://www.maxbotix.com/products/mb1003"
       ],
       "description": "Ranges from 300mm to 5000mm with a 10Hz read rate. Widest detection field. Excellent for people detection.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -871,6 +1093,7 @@
       "name": "MB1006",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -878,6 +1101,10 @@
         "https://www.maxbotix.com/products/mb1006"
       ],
       "description": "Ranges from 6 inches to 254 inches. 9-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -886,6 +1113,7 @@
       "name": "MB1005",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -893,6 +1121,10 @@
         "https://www.maxbotix.com/products/mb1005"
       ],
       "description": "Ranges from 6 inches to 254 inches. 8-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -901,6 +1133,7 @@
       "name": "MB1004",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -908,6 +1141,10 @@
         "https://www.maxbotix.com/products/mb1004"
       ],
       "description": "Ranges from 6 inches to 254 inches. 7-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -916,6 +1153,7 @@
       "name": "MB1009",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -923,6 +1161,10 @@
         "https://www.maxbotix.com/products/mb1009"
       ],
       "description": "Ranges from 6 inches to 254 inches. 12-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -931,6 +1173,7 @@
       "name": "MB1007",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -938,6 +1181,10 @@
         "https://www.maxbotix.com/products/mb1007"
       ],
       "description": "Ranges from 6 inches to 254 inches. 10-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -953,6 +1200,11 @@
         "https://www.maxbotix.com/products/mb1013"
       ],
       "description": "Ranges from 300mm to 5000mm with a 10Hz read rate. Wide detection field. Excellent for people detection.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -968,6 +1220,11 @@
         "https://www.maxbotix.com/products/mb1010"
       ],
       "description": "The LV-MaxSonar-EZ1 is an ideal entry-level ultrasonic distance sensor for hobby and indoor projects. Low power, high performance. Shop now.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -976,6 +1233,7 @@
       "name": "MB1008",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -983,6 +1241,10 @@
         "https://www.maxbotix.com/products/mb1008"
       ],
       "description": "Ranges from 6 inches to 254 inches. 11-foot detection zone for proximity information with a ~10-second acquire time and ~5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -998,6 +1260,11 @@
         "https://www.maxbotix.com/products/mb1023"
       ],
       "description": "Ranges from 300mm to 5000mm with a 10Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1006,6 +1273,7 @@
       "name": "MB1014",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -1013,6 +1281,10 @@
         "https://www.maxbotix.com/products/mb1014"
       ],
       "description": "Ranges from 6 inches to 254 inches. 5-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1021,6 +1293,7 @@
       "name": "MB1034",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -1028,6 +1301,10 @@
         "https://www.maxbotix.com/products/mb1034"
       ],
       "description": "Ranges from 6 inches to 254 inches. 2-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1036,6 +1313,7 @@
       "name": "MB1024",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -1043,6 +1321,10 @@
         "https://www.maxbotix.com/products/mb1024"
       ],
       "description": "Ranges from 6 inches to 254 inches. 3-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1058,6 +1340,11 @@
         "https://www.maxbotix.com/products/mb1020"
       ],
       "description": "Ranges from 6 inches to 254 inches with a 20Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1073,6 +1360,11 @@
         "https://www.maxbotix.com/products/mb1030"
       ],
       "description": "Ranges from 6 inches to 254 inches with a 20Hz read rate. Narrow detection field. High noise tolerance.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1088,6 +1380,11 @@
         "https://www.maxbotix.com/products/mb1033"
       ],
       "description": "Ranges from 300mm to 5000mm with a 10Hz read rate. Narrow detection field. High noise tolerance.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1096,6 +1393,7 @@
       "name": "MB1044",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -1103,6 +1401,10 @@
         "https://www.maxbotix.com/products/mb1044"
       ],
       "description": "Ranges from 6 inches to 254 inches. 1-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "protocol": [
+        "gpio",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1118,6 +1420,11 @@
         "https://www.maxbotix.com/products/mb1043"
       ],
       "description": "Ranges from 300mm to 5000mm with a 10Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1133,6 +1440,11 @@
         "https://www.maxbotix.com/products/mb1040"
       ],
       "description": "Ranges from 6 inches to 254 inches with a 20Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1148,6 +1460,11 @@
         "https://www.maxbotix.com/products/mb1061"
       ],
       "description": "Contains two of each of the LV-MaxSonar-EZ sensors: MB1000, MB1010, MB1020, MB1030 & MB1040.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1163,6 +1480,11 @@
         "https://www.maxbotix.com/products/mb1060"
       ],
       "description": "Contains one of each of the LV-MaxSonar-EZ sensors: MB1000, MB1010, MB1020, MB1030 & MB1040.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1178,6 +1500,9 @@
         "https://www.maxbotix.com/products/mb1202"
       ],
       "description": "Ranges from 25cm to 765cm with up to 40Hz read rate. Widest detection field. Excellent for people detection.",
+      "protocol": [
+        "i2c"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1193,6 +1518,11 @@
         "https://www.maxbotix.com/products/mb1200"
       ],
       "description": "Ranges from 25cm to 765cm with a 10Hz read rate. Widest detection field. Excellent for people detection.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1208,6 +1538,9 @@
         "https://www.maxbotix.com/products/mb1212"
       ],
       "description": "Ranges from 25cm to 765cm with up to 40Hz read rate. Wide detection field. Excellent for people detection.",
+      "protocol": [
+        "i2c"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1223,6 +1556,11 @@
         "https://www.maxbotix.com/products/mb1210"
       ],
       "description": "Ranges from 25cm to 765cm with a 10Hz read rate. Wide detection field. Excellent for people detection.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1238,6 +1576,9 @@
         "https://www.maxbotix.com/products/mb1222"
       ],
       "description": "Ranges from 20cm to 765cm with up to 40Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "protocol": [
+        "i2c"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1253,6 +1594,11 @@
         "https://www.maxbotix.com/products/mb1220"
       ],
       "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1268,6 +1614,9 @@
         "https://www.maxbotix.com/products/mb1232"
       ],
       "description": "Ranges from 20cm to 765cm with up to 40Hz read rate. Narrow detection field. High noise tolerance.",
+      "protocol": [
+        "i2c"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1283,6 +1632,11 @@
         "https://www.maxbotix.com/products/mb1230"
       ],
       "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Narrow detection field. High noise tolerance.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1298,6 +1652,9 @@
         "https://www.maxbotix.com/products/mb1242"
       ],
       "description": "Ranges from 20cm to 765cm with up to 40Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "protocol": [
+        "i2c"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1313,6 +1670,11 @@
         "https://www.maxbotix.com/products/mb1240"
       ],
       "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1328,6 +1690,10 @@
         "https://www.maxbotix.com/products/mb1300"
       ],
       "description": "Ranges from 25cm to 765cm with a 10Hz read rate. Widest detection field. Excellent for people detection.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1343,6 +1709,11 @@
         "https://www.maxbotix.com/products/mb1261"
       ],
       "description": "Ranges from 25cm to 1068cm with a 10Hz read rate. Wide detection field. Excellent for people detection.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1358,6 +1729,11 @@
         "https://www.maxbotix.com/products/mb1260"
       ],
       "description": "Ranges from 25cm to 1068cm with a 10Hz read rate. Widest detection field. Excellent for people detection.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1373,6 +1749,10 @@
         "https://www.maxbotix.com/products/mb1320"
       ],
       "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1388,6 +1768,10 @@
         "https://www.maxbotix.com/products/mb1310"
       ],
       "description": "Ranges from 25cm to 765cm with a 10Hz read rate. Wide detection field. Excellent for people detection.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1403,6 +1787,10 @@
         "https://www.maxbotix.com/products/mb1360"
       ],
       "description": "Ranges from 25cm to 1068cm with a 10Hz read rate. Widest detection field. Excellent for people detection.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1418,6 +1806,10 @@
         "https://www.maxbotix.com/products/mb1340"
       ],
       "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1433,6 +1825,10 @@
         "https://www.maxbotix.com/products/mb1330"
       ],
       "description": "Ranges from 20cm to 765cm with a 10Hz read rate. Narrow detection field. High noise tolerance.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1448,6 +1844,9 @@
         "https://www.maxbotix.com/products/mb1403"
       ],
       "description": "Ranges from 300mm to 5000mm with a ~4Hz read rate. Widest detection field. Excellent for people detection.",
+      "protocol": [
+        "usb"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1463,6 +1862,10 @@
         "https://www.maxbotix.com/products/mb1361"
       ],
       "description": "Ranges from 25cm to 1068cm with a 10Hz read rate. Wide detection field. Excellent for people detection.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1471,6 +1874,7 @@
       "name": "MB1414",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -1478,6 +1882,9 @@
         "https://www.maxbotix.com/products/mb1414"
       ],
       "description": "Ranges from 6 inches to 125 inches. 5-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "protocol": [
+        "usb"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1493,6 +1900,9 @@
         "https://www.maxbotix.com/products/mb1413"
       ],
       "description": "Ranges from 300mm to 5000mm with a ~4Hz read rate. Wide detection field. Excellent for people detection.",
+      "protocol": [
+        "usb"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1508,6 +1918,9 @@
         "https://www.maxbotix.com/products/mb1433"
       ],
       "description": "Ranges from 300mm to 5000mm with a ~4Hz read rate. Narrow detection field. High noise tolerance.",
+      "protocol": [
+        "usb"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1516,6 +1929,7 @@
       "name": "MB1424",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -1523,6 +1937,9 @@
         "https://www.maxbotix.com/products/mb1424"
       ],
       "description": "Ranges from 6 inches to 125 inches. 3-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "protocol": [
+        "usb"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1538,6 +1955,9 @@
         "https://www.maxbotix.com/products/mb1423"
       ],
       "description": "Ranges from 300mm to 5000mm with a ~4Hz read rate. Mid-width detection field. Balance between sensitivity and side object detection.",
+      "protocol": [
+        "usb"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1553,6 +1973,9 @@
         "https://www.maxbotix.com/products/mb1443"
       ],
       "description": "Ranges from 300mm to 5000mm with a ~4Hz read rate. Narrowest detection field. Highest noise tolerance.",
+      "protocol": [
+        "usb"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1561,6 +1984,7 @@
       "name": "MB1434",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -1568,6 +1992,9 @@
         "https://www.maxbotix.com/products/mb1434"
       ],
       "description": "Ranges from 6 inches to 125 inches. 2-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "protocol": [
+        "usb"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1583,6 +2010,11 @@
         "https://www.maxbotix.com/products/mb1603"
       ],
       "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1591,6 +2023,7 @@
       "name": "MB1444",
       "measures": [
         "distance",
+        "proximity",
         "ultrasonic"
       ],
       "platforms": [],
@@ -1598,6 +2031,9 @@
         "https://www.maxbotix.com/products/mb1444"
       ],
       "description": "Ranges from 6 inches to 125 inches. 1-foot detection zone for proximity information with a ~2.5-second acquire time and ~1.5-second release time.",
+      "protocol": [
+        "usb"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1613,6 +2049,11 @@
         "https://www.maxbotix.com/products/mb1614"
       ],
       "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1628,6 +2069,11 @@
         "https://www.maxbotix.com/products/mb1613"
       ],
       "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1643,6 +2089,11 @@
         "https://www.maxbotix.com/products/mb1604"
       ],
       "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1658,6 +2109,11 @@
         "https://www.maxbotix.com/products/mb1624"
       ],
       "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1673,6 +2129,11 @@
         "https://www.maxbotix.com/products/mb1623"
       ],
       "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1688,6 +2149,11 @@
         "https://www.maxbotix.com/products/mb1643"
       ],
       "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1703,6 +2169,11 @@
         "https://www.maxbotix.com/products/mb1634"
       ],
       "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1718,6 +2189,11 @@
         "https://www.maxbotix.com/products/mb1633"
       ],
       "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1733,6 +2209,11 @@
         "https://www.maxbotix.com/products/mb2530"
       ],
       "description": "Ranges from 50 cm to 1650 cm with a 1.8Hz read rate. Excellent for cargo detection.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1748,6 +2229,11 @@
         "https://www.maxbotix.com/products/mb1644"
       ],
       "description": "Detect large objects from 1mm to 5m. Senses range to objects from 2cm to 5m.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1763,6 +2249,10 @@
         "https://www.maxbotix.com/products/mb2532"
       ],
       "description": "Ranges from 50 cm to 1650 cm with a 1.8Hz read rate. Excellent for cargo detection.",
+      "protocol": [
+        "analog",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1778,6 +2268,9 @@
         "https://www.maxbotix.com/products/mb7040"
       ],
       "description": "Ranges from 20cm up to 765cm* with up to a 40Hz read rate. The sensor features I2C output and reports the range to the closest target.",
+      "protocol": [
+        "i2c"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1793,6 +2286,11 @@
         "https://www.maxbotix.com/products/mb7051"
       ],
       "description": "Ranges from 50cm to 1041cm to the target with the largest acoustic return, a 5.1Hz read rate, with pulse-width, analog voltage, and RS232 serial outputs.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1808,6 +2306,11 @@
         "https://www.maxbotix.com/products/mb7053"
       ],
       "description": "Sensor ranges from 50cm to 1041cm to the target with the largest acoustic return at a 5.1Hz read rate, with 1cm resolution and pulse-width, analog voltage, and RS232 serial outputs.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1823,6 +2326,11 @@
         "https://www.maxbotix.com/products/mb7052"
       ],
       "description": "Ultrasonic sensor ranges to the largest acoustic return, with centimeter resolution, providing range information from 25cm up to 765cm*, at a 6.7Hz read rate with pulse-width, analog voltage, and R...",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1838,6 +2346,11 @@
         "https://www.maxbotix.com/products/mb7138"
       ],
       "description": "Ranges from 20cm to 350cm with a 6.7Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to largest.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1853,6 +2366,11 @@
         "https://www.maxbotix.com/products/mb7139"
       ],
       "description": "Ranges from 20cm to 350cm with a 10Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1868,6 +2386,11 @@
         "https://www.maxbotix.com/products/mb7334"
       ],
       "description": "Ranges from 500mm to 5000mm with a 6Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target. Uses filtering to prevent rapid changes in readings. Filter resets ...",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1883,6 +2406,11 @@
         "https://www.maxbotix.com/products/mb7344"
       ],
       "description": "Ranges from 500mm to 5000mm with a 6Hz read rate. Pulse-width, analog voltage, and TTL serial. Reports range to closest target. Uses filtering to prevent rapid changes in readings. Filter resets at...",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     },
@@ -1898,6 +2426,11 @@
         "https://www.maxbotix.com/products/mb7072"
       ],
       "description": "Ranges from 20cm up to 765cm* with a 10Hz read rate. Pulse-width, analog voltage, and RS232 serial. Reports range to closest target. Uses a stability filter.",
+      "protocol": [
+        "analog",
+        "pwm",
+        "uart"
+      ],
       "manufacturer": "MaxBotix",
       "type": "ultrasonic"
     }

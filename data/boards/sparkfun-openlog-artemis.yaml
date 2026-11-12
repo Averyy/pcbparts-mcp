@@ -23,95 +23,137 @@ components:
 - ref: C1
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
   decouples: U3
 - ref: C2
   value: 2.2uF
   footprint: '0402'
+  voltage: 10V
+  tolerance: 10%
   prod_id: CAP-14232
   decouples: U3
 - ref: C29
   value: 15pF
   footprint: '0402'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-13063
 - ref: C3
   value: 4.7uF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-14240
   decouples: U2
 - ref: C30
   value: 15pF
   footprint: '0402'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-13063
 - ref: C31
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
   decouples: U8
 - ref: C32
   value: 10uF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-14848
   decouples: U8
 - ref: C33
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
   decouples: U8
 - ref: C4
   value: 4.7uF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-14240
 - ref: C40
   value: 10nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-14847
   decouples: U10
 - ref: C41
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
   decouples: U10
 - ref: C42
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
 - ref: C43
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
 - ref: C44
   value: 1nF
   footprint: '0402'
+  voltage: 50V
+  tolerance: 10%
   prod_id: CAP-14280
 - ref: C46
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
 - ref: C5
   value: 100nF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 10%
   prod_id: CAP-14993
 - ref: C51
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
 - ref: C52
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
 - ref: C53
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
 - ref: C54
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
   decouples: U14
 - ref: C7
   value: 2.2uF
   footprint: '0402'
+  voltage: 10V
+  tolerance: 10%
   prod_id: CAP-14232
 - ref: D1
   value: 3A/10V/280mV
@@ -239,102 +281,122 @@ components:
 - ref: R1
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
   pullup: RTC_BAT+
 - ref: R2
   value: 330kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-15187
   pullup: VREG_EN
 - ref: R22
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
 - ref: R23
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
 - ref: R24
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
-  pullup: D11.A
 - ref: R25
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
-  pullup: D12.A
 - ref: R26
   value: 5.1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14340
   pulldown: CC3
 - ref: R27
   value: 5.1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14340
   pulldown: CC4
 - ref: R28
   value: 100kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-13495
   pullup: ARTEMIS_!RESET
 - ref: R29
   value: 220kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-15094
   pulldown: ARTEMIS_BOOT
 - ref: R3
   value: 220kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-15094
   pulldown: QWIIC_PWR
 - ref: R4
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
   pulldown: U2.PROG
 - ref: R40
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
 - ref: R41
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
 - ref: R44
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
 - ref: R45
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
   pullup: ICM_INT
 - ref: R46
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
 - ref: R47
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
   pullup: ICM_!CS!
 - ref: R48
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
 - ref: R5
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
 - ref: R6
   value: 1Mohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-15185
 - ref: R7
   value: 2Mohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-15186
 - ref: R8
   value: 0ohm
@@ -342,7 +404,7 @@ components:
   prod_id: RES-14244
 - ref: S3
   value: RESET
-  footprint: TACTILE_SWITCH_SMD
+  footprint: TACTILE_SWITCH_SMD_4.6X2.8MM
   prod_id: SWCH-13065
   description: Momentary Switch (Pushbutton) - SPST
   pin_count: 4
@@ -398,7 +460,14 @@ components:
   prod_id: SUB-14402
   description: The Artemis Module from SparkFun is a Cortex-M4F with BLE 5
   pin_count: 59
-  nc_pins: {AD16(TRIG0/SCCRST): AD16, (SLSCK/SLSCL/CLKOUT)D0: D0, (SLSDO/SLSDA)D1: D1, (SLSDI)D2: D2, (SDO1/TX1/PDMCLK)D10: D10, (ADCD1P/TX1/PDMCLK)D14: D14, (CMPRF1/TRIG1/SCCCLK)D17: D17, (RX1/TRIG1/PDMDATA)D36: D36, (SDO3/RX1)D38: D38, (SDA4/SDI4/RX1)D40: D40, (BLEIF_IRQ/SWO/I2SWCLK)D41: D41, ~AD31(SCCCLK): ~AD31, ~AD35(TX1/I2SDAT/PDMCLK): ~AD35, (TX1/32KHZ/SWO)~D24: ~D24, (SDO2/I2SWCLK)~D28: ~D28, (SCL4/SCK4/TX1)~D39: ~D39, (SCL3/SCK3/TX1)~D42: ~D42, (SDA3/SDI3/RX1)~D43: ~D43, (SWO/I2SDAT/PDMDATA)~D45: ~D45}
+  nc_pins: {AD16(TRIG0/SCCRST): AD16, (SLSCK/SLSCL/CLKOUT)D0: D0, (SLSDO/SLSDA)D1: D1, (SLSDI)D2: D2, (SDO1/TX1/PDMCLK)D10: D10,
+    (ADCD1P/TX1/PDMCLK)D14: D14, (CMPRF1/TRIG1/SCCCLK)D17: D17, (RX1/TRIG1/PDMDATA)D36: D36, (SDO3/RX1)D38: D38, (SDA4/SDI4/RX1)D40: D40,
+    (BLEIF_IRQ/SWO/I2SWCLK)D41: D41, ~AD31(SCCCLK): ~AD31, ~AD35(TX1/I2SDAT/PDMCLK): ~AD35, (TX1/32KHZ/SWO)~D24: ~D24, (SDO2/I2SWCLK)~D28: ~D28,
+    (SCL4/SCK4/TX1)~D39: ~D39, (SCL3/SCK3/TX1)~D42: ~D42, (SDA3/SDI3/RX1)~D43: ~D43, (SWO/I2SDAT/PDMDATA)~D45: ~D45}
+- ref: VE
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
 - ref: Y3
   value: 32.768kHz
   footprint: CRYSTAL-SMD-3.2X1.5MM
@@ -421,7 +490,6 @@ nets:
   - R25.2
   - R45.2
   - R47.2
-  - R49.2
   - U1.VCC
   - U10.V3
   - U10.VCC
@@ -497,7 +565,6 @@ nets:
   - C54.2
   - C7.2
   - D9.C
-  - GND.1
   - J1.2
   - J11.1
   - J14.GND
@@ -578,21 +645,21 @@ nets:
 - name: PWR_LED
   pins: [R22.2, U8.~AD29(PDMDATA)]
 - name: QWIIC_3.3V
-  pins: [C5.1, C7.1, J11.2, QWIIC_3.3V.1, U4.OUT]
+  pins: [C5.1, C7.1, J11.2, U4.OUT]
 - name: QWIIC_PWR
   pins: [R3.2, U4.EN, U8.(CMPIN1/SCCIO)~D18]
 - name: REGOUT
   pins: [C51.1, U13.REGOUT]
 - name: RTC_BAT+
-  pins: [BT1.+, D3.A, R1.1, TP1.1]
+  pins: [BT1.+, D3.A, R1.1]
 - name: SCK
   pins: [J6.CLK/SCK, Q1.D, U8.(SCL0/SCK0)~D5]
 - name: SCL
-  pins: [J11.4, SCL.1, U8.(SCL1/SCK1/TX1/SCCLK)D8]
+  pins: [J11.4, U8.(SCL1/SCK1/TX1/SCCLK)D8]
 - name: SDA
-  pins: [J11.3, SDA.1, U8.(SDA1/SDI1/RX1/SCCIO)D9]
+  pins: [J11.3, U8.(SDA1/SDI1/RX1/SCCIO)D9]
 - name: SDI
-  pins: [J6.DAT0/SDO, Q10.D, R49.1, U8.(PDMCLK/SWO)~D22, U8.(SDA0/SDI0/I2SDAT)~D6]
+  pins: [J6.DAT0/SDO, Q10.D, U8.(PDMCLK/SWO)~D22, U8.(SDA0/SDI0/I2SDAT)~D6]
 - name: SDO
   pins: [J6.CMD/SDI, Q3.D, U8.(SDO0/CLKOUT)~D7]
 - name: SD_PWR
@@ -921,6 +988,10 @@ positions:
   x: 15.24
   y: 25.4
   rot: 90.0
+- ref: VE
+  x: 8.89
+  y: 11.43
+  rot: 270.0
 - ref: Y3
   x: 16.51
   y: 15.24

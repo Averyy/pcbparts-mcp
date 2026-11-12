@@ -1,0 +1,3944 @@
+{
+  "review_date": "2026-11-09",
+  "policy": "Only same-device renames, identical ordering variants and pure single-chip wrappers merge. Conservative removal is not a claim that two devices are electrically different. Evidence for wrappers is the linked author/manufacturer repository metadata preserved in the scraped source JSON.",
+  "sensor_count_before": 1643,
+  "aliases": [
+    {
+      "alias": "am2302",
+      "target": "dht22",
+      "active": true,
+      "decision": "keep",
+      "reason": "The Arduino source explicitly identifies AM2302 as DHT22 (aka); same device name.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/AM2301/",
+        "https://github.com/hasenradball/AM2302-Sensor.git",
+        "https://github.com/hasenradball/AM2302-Sensor-Pi-Pico.git"
+      ]
+    },
+    {
+      "alias": "am2303",
+      "target": "dht22",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "am2301",
+      "target": "dht22",
+      "active": true,
+      "decision": "remove",
+      "reason": "Distinct model; no primary-source equivalence to DHT22.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/AM2301/"
+      ]
+    },
+    {
+      "alias": "am232x",
+      "target": "dht22",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "dht2pin",
+      "target": "dht22",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "bmp085",
+      "target": "bmp180",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/BME280/",
+        "https://github.com/adafruit/Adafruit-BMP085-Library.git",
+        "https://github.com/adafruit/Adafruit_BMP085_Unified.git",
+        "https://github.com/SodaqMoja/Sodaq_BMP085.git",
+        "https://github.com/Seeed-Studio/Grove_Barometer_Sensor.git",
+        "https://bitbucket.org/christandlg/bmp180mi.git",
+        "https://esphome.io/components/sensor/bmp085.html"
+      ]
+    },
+    {
+      "alias": "bmx280",
+      "target": "bme280",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "sht30",
+      "target": "sht3x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/SHT30/",
+        "https://github.com/closedcube/ClosedCube_SHT31D_Arduino.git",
+        "https://github.com/malarz-supla/ClosedCube_SHT31D_Arduino.git",
+        "https://github.com/rsc1975/micropython-sht30",
+        "https://github.com/schinckel/micropython-sht30",
+        "https://github.com/robert-hh/SHT30"
+      ]
+    },
+    {
+      "alias": "sht31",
+      "target": "sht3x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://github.com/adafruit/Adafruit_SHT31.git",
+        "https://github.com/Seeed-Studio/Grove_SHT31_Temp_Humi_Sensor.git",
+        "https://github.com/RobTillaart/SHT31.git",
+        "https://github.com/mcci-catena/MCCI-Catena-SHT3x.git",
+        "https://github.com/RobTillaart/SHT31_SW.git",
+        "https://github.com/RobTillaart/SHT31_SWW.git",
+        "https://github.com/bonezegei/Bonezegei_SHT31.git",
+        "https://github.com/kfricke/micropython-sht31"
+      ]
+    },
+    {
+      "alias": "sht31d",
+      "target": "sht3x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://docs.circuitpython.org/projects/sht31d/en/latest/"
+      ]
+    },
+    {
+      "alias": "sht35",
+      "target": "sht3x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://github.com/Seeed-Studio/Seeed_SHT35.git"
+      ]
+    },
+    {
+      "alias": "sht3xdis",
+      "target": "sht3x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "sht31sw",
+      "target": "sht3x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "sht31sww",
+      "target": "sht3x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "sht40",
+      "target": "sht4x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://github.com/stm32duino/SHT40-AD1B.git",
+        "https://github.com/7semi-solutions/7Semi-SHT4x-Arduino-Library.git",
+        "https://github.com/MR01Right/SHT40.git",
+        "https://github.com/KacperTora/KT_SHT40.git"
+      ]
+    },
+    {
+      "alias": "sht45",
+      "target": "sht4x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://github.com/ArtronShop/ArtronShop_SHT45.git"
+      ]
+    },
+    {
+      "alias": "sht40ad1b",
+      "target": "sht4x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "bme680",
+      "target": "bme68x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/BME680/",
+        "https://docs.circuitpython.org/projects/bme680/en/latest/",
+        "https://github.com/adafruit/Adafruit_BME680.git",
+        "https://github.com/closedcube/ClosedCube_BME680_Arduino.git",
+        "https://github.com/FaBoPlatform/FaBoEnvironment-BME680-Library.git",
+        "https://github.com/Zanduino/BME680.git",
+        "https://github.com/BoschSensortec/Bosch-BME68x-Library.git",
+        "https://github.com/steveeidemiller/SE_BME680.git",
+        "https://github.com/UNIT-Electronics-MX/unit_bme68x_library.git",
+        "https://github.com/DFRobot/DFRobot_BME680",
+        "https://www.sparkfun.com/sparkfun-environmental-sensor-breakout-bme680-qwiic.html",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bme680.html",
+        "https://esphome.io/components/sensor/bme680.html",
+        "https://github.com/robmarkcole/bme680-mqtt-micropython",
+        "https://github.com/robert-hh/BME680-Micropython",
+        "https://github.com/octaprog7/BME680",
+        "https://github.com/antirez/bme680-pure-mp"
+      ]
+    },
+    {
+      "alias": "bme688",
+      "target": "bme68x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/BME680/",
+        "https://github.com/styropyr0/BME688.git",
+        "https://github.com/SolderedElectronics/Soldered-BME688-Sensor-Arduino-Library.git",
+        "https://www.sparkfun.com/sparkfun-environmental-sensor-bme688-qwiic.html",
+        "https://www.sparkfun.com/bosch-bme688-development-kit.html"
+      ]
+    },
+    {
+      "alias": "ds18s20",
+      "target": "ds18b20",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different thermometer and temperature register format from DS18B20.",
+      "evidence_urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,ds18s20.html"
+      ]
+    },
+    {
+      "alias": "mhz19b",
+      "target": "mhz19",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/MH-Z19B/",
+        "https://www.winsen-sensor.com/product/mh-z19b.html",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/winsen,mhz19b.html"
+      ]
+    },
+    {
+      "alias": "mhz19c",
+      "target": "mhz19",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/mh-z19c.html"
+      ]
+    },
+    {
+      "alias": "mhz14a",
+      "target": "mhz19",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/mh-z14a.html"
+      ]
+    },
+    {
+      "alias": "scd40",
+      "target": "scd4x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/SCD4x/",
+        "https://github.com/7semi-solutions/7Semi-SCD4x-Arduino-Library.git",
+        "https://www.sparkfun.com/sparkfun-co2-humidity-and-temperature-sensor-scd40-qwiic.html",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,scd40.html"
+      ]
+    },
+    {
+      "alias": "scd41",
+      "target": "scd4x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/SCD4x/",
+        "https://www.sparkfun.com/sparkfun-indoor-air-quality-combo-sensor-scd41-sen55-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-co2-humidity-and-temperature-sensor-scd41-qwiic.html",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,scd41.html"
+      ]
+    },
+    {
+      "alias": "max30100",
+      "target": "max30102",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different optical device and register map, not MAX30102.",
+      "evidence_urls": [
+        "https://github.com/oxullo/Arduino-MAX30100.git",
+        "https://github.com/kontakt/MAX30100.git",
+        "https://github.com/gabriel-milan/Arduino-MAX30100.git",
+        "https://gitlab.com/riscv-vega/vega-sensor-libraries/sensors/vega_max30100.git",
+        "https://gitlab.com/riscv-vega/vega-sensor-libraries/sensors/vega_max30102.git"
+      ]
+    },
+    {
+      "alias": "si7020",
+      "target": "si7021",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "hdc1000",
+      "target": "hdc1080",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/adafruit/Adafruit_HDC1000_Library.git",
+        "https://github.com/hotchpotch/Arduino-HDC1000.git",
+        "https://github.com/Seeed-Studio/HDC1000.git"
+      ]
+    },
+    {
+      "alias": "hdc1010",
+      "target": "hdc1080",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/closedcube/ClosedCube_HDC1010_Arduino.git"
+      ]
+    },
+    {
+      "alias": "htu21d",
+      "target": "htu21df",
+      "active": true,
+      "decision": "remove",
+      "reason": "HTU21D-F protective-filter variant equivalence to every unqualified HTU21D source unverified.",
+      "evidence_urls": [
+        "https://docs.circuitpython.org/projects/htu21d/en/latest/",
+        "https://github.com/adafruit/Adafruit_HTU21DF_Library.git",
+        "https://github.com/sparkfun/SparkFun_HTU21D_Breakout_Arduino_Library.git",
+        "https://github.com/devxplained/HTU21D-Sensor-Library.git",
+        "https://github.com/GyverLibs/GyverHTU21D.git",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/meas,htu21d.html",
+        "https://esphome.io/components/sensor/htu21d.html",
+        "https://github.com/julianhille/htu21d-esp8266",
+        "https://github.com/peterhinch/micropython-async/blob/master/v3/docs/HTU21D.md"
+      ]
+    },
+    {
+      "alias": "bmp388",
+      "target": "bmp3xx",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://github.com/MartinL1/BMP388_DEV.git",
+        "https://github.com/107-systems/107-Arduino-BMP388.git",
+        "https://github.com/SolderedElectronics/Soldered-BMP388-Arduino-Library.git",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmp388.html"
+      ]
+    },
+    {
+      "alias": "bmp390",
+      "target": "bmp3xx",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://github.com/faisalill/BMP390.git",
+        "https://github.com/gavinlyonsrepo/BMP390_LTSM.git",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmp390.html",
+        "https://github.com/octaprog7/BMP390"
+      ]
+    },
+    {
+      "alias": "lsm6ds3",
+      "target": "lsm6dsox",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/sparkfun/SparkFun_LSM6DS3_Arduino_Library.git",
+        "https://github.com/axelelettronica/sme-lsm6ds3-library.git",
+        "https://github.com/stm32duino/LSM6DS3.git",
+        "https://github.com/arduino-libraries/Arduino_LSM6DS3.git",
+        "https://github.com/Seeed-Studio/Seeed_Arduino_LSM6DS3.git",
+        "https://github.com/Amethyste-PCB/Amethyste_LSM6DS3.git",
+        "https://github.com/SolderedElectronics/Soldered-LSM6DS3-Arduino-Library.git"
+      ]
+    },
+    {
+      "alias": "lsm6dsl",
+      "target": "lsm6dsox",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/stm32duino/LSM6DSL.git",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6dsl.html"
+      ]
+    },
+    {
+      "alias": "lsm6dso",
+      "target": "lsm6dsox",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/stm32duino/LSM6DSO.git",
+        "https://github.com/SolderedElectronics/Soldered-LSM6DSO-Arduino-Library.git",
+        "https://www.sparkfun.com/sparkfun-6-degrees-of-freedom-breakout-lsm6dso-qwiic.html",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6dso.html"
+      ]
+    },
+    {
+      "alias": "lsm6dsr",
+      "target": "lsm6dsox",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/stm32duino/LSM6DSR.git"
+      ]
+    },
+    {
+      "alias": "lsm6dsv16x",
+      "target": "lsm6dsox",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/stm32duino/LSM6DSV16X.git",
+        "https://github.com/sparkfun/SparkFun_LSM6DSV16X_Arduino_Library.git",
+        "https://www.sparkfun.com/sparkfun-micro-6dof-imu-breakout-lsm6dsv16x-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-6dof-imu-breakout-lsm6dsv16x-qwiic.html",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm6dsv16x.html"
+      ]
+    },
+    {
+      "alias": "lsm6dsv16bx",
+      "target": "lsm6dsox",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/stm32duino/LSM6DSV16BX.git",
+        "https://github.com/stm32duino/LSM6DSV16BX-TDM.git"
+      ]
+    },
+    {
+      "alias": "lsm9ds0",
+      "target": "lsm9ds1",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different IMU; LSM9DS0 minimum analog supply is 2.4V, LSM9DS1 is 1.9V.",
+      "evidence_urls": [
+        "https://docs.circuitpython.org/projects/lsm9ds0/en/latest/",
+        "https://github.com/adafruit/Adafruit_LSM9DS0_Library.git",
+        "https://github.com/sparkfun/SparkFun_LSM9DS0_Arduino_Library.git",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm9ds0-gyro.html",
+        "https://github.com/micropython-IMU/micropython-lsm9ds0"
+      ]
+    },
+    {
+      "alias": "opt3001",
+      "target": "opt300x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://github.com/closedcube/ClosedCube_OPT3001_Arduino.git",
+        "https://github.com/sitronlabs/SitronLabs_TexasInstruments_OPT3001_Arduino_Library.git",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,opt3001.html",
+        "https://esphome.io/components/sensor/opt3001.html",
+        "https://github.com/octaprog7/opt3001"
+      ]
+    },
+    {
+      "alias": "opt3002",
+      "target": "opt300x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://github.com/closedcube/ClosedCube_OPT3002_Arduino.git"
+      ]
+    },
+    {
+      "alias": "bh1750fvi",
+      "target": "bh1750",
+      "active": true,
+      "decision": "keep",
+      "reason": "BH1750 is the catalog shorthand for ROHM BH1750FVI, explicitly identified in the Arduino driver.",
+      "evidence_urls": [
+        "https://github.com/PeterEmbedded/BH1750FVI.git",
+        "https://github.com/Starmbi/hp_BH1750.git",
+        "https://github.com/RobTillaart/BH1750FVI_RT.git",
+        "https://github.com/claws/BH1750.git"
+      ]
+    },
+    {
+      "alias": "bh1750fvc",
+      "target": "bh1750",
+      "active": false,
+      "decision": "remove",
+      "reason": "No source evidence; FVC is not a demonstrated ordering variant of FVI.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "hx711adc",
+      "target": "hx711",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "ism330dhcx",
+      "target": "ism330dlc",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/stm32duino/ISM330DHCX.git",
+        "https://github.com/sparkfun/SparkFun_6DoF_ISM330DHCX_Arduino_Library.git",
+        "https://github.com/7semi-solutions/7Semi-ISM330DHCX.git",
+        "https://www.sparkfun.com/sparkfun-6dof-imu-breakout-ism330dhcx-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-micro-6dof-imu-ism330dhcx-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-9dof-imu-breakout-ism330dhcx-mmc5983ma-qwiic.html",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,ism330dhcx.html"
+      ]
+    },
+    {
+      "alias": "mhzco2sensors",
+      "target": "mhzco2",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "scd30modbus",
+      "target": "scd30",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "bno080cortexbasedimu",
+      "target": "bno08x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "bno08xcortexbasedimu",
+      "target": "bno08x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "bno08xrvc",
+      "target": "bno08x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Run 3 excludes the RVC software-mode record and transfers platform support to BNO08x without merging its measurements or electrical fields.",
+      "evidence_urls": [
+        "https://docs.circuitpython.org/projects/bno08x_rvc/en/latest/",
+        "https://github.com/rdagger/micropython-bno08x-rvc"
+      ]
+    },
+    {
+      "alias": "aht21",
+      "target": "aht20",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "bno085",
+      "target": "bno08x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "itg3205",
+      "target": "itg3200",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "mpu6500",
+      "target": "mpu6050",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different IMU; MPU6500 supply/interface specifications differ from MPU6050.",
+      "evidence_urls": [
+        "https://github.com/xreef/MPU-6500-DMP_Library.git"
+      ]
+    },
+    {
+      "alias": "sht41",
+      "target": "sht4x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "sen66",
+      "target": "sen6x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "max30105",
+      "target": "max30101",
+      "active": true,
+      "decision": "remove",
+      "reason": "Smoke/particle sensor, not MAX30101 pulse-oximetry device; ADI marks it obsolete.",
+      "evidence_urls": [
+        "https://www.analog.com/en/products/max30105.html",
+        "https://github.com/bonezegei/Bonezegei_Max30105.git"
+      ]
+    },
+    {
+      "alias": "max3010x",
+      "target": "max30101",
+      "active": true,
+      "decision": "remove",
+      "reason": "Multi-device family driver, not one MAX30101.",
+      "evidence_urls": [
+        "https://github.com/devxplained/MAX3010x-Sensor-Library.git"
+      ]
+    },
+    {
+      "alias": "mq3",
+      "target": "mq3b",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/alcohol-gas-sensor-mq-3.html"
+      ]
+    },
+    {
+      "alias": "mq7",
+      "target": "mq7b",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/fjebaker/MQ7.git",
+        "https://www.sparkfun.com/carbon-monoxide-sensor-mq-7.html"
+      ]
+    },
+    {
+      "alias": "mq7sensor",
+      "target": "mq7b",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "tfmini",
+      "target": "tfminis",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "sen60",
+      "target": "sen6x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "sen63c",
+      "target": "sen6x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "sen65",
+      "target": "sen6x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "sen68",
+      "target": "sen6x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "tmf8828",
+      "target": "tmf882x",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "dps368",
+      "target": "dps310",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "pasco2v01",
+      "target": "pasco2",
+      "active": false,
+      "decision": "remove",
+      "reason": "Infineon PASCO2V01 must not merge into the Winsen PAS-CO2 module.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "ina238",
+      "target": "ina228",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "amg88",
+      "target": "amg88xx",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://github.com/sparkfun/SparkFun_GridEYE_Arduino_Library.git"
+      ]
+    },
+    {
+      "alias": "lis3dhtr",
+      "target": "lis3dh",
+      "active": true,
+      "decision": "keep",
+      "reason": "ST LIS3DH datasheet ordering table: LIS3DHTR is the tape-and-reel order code for LIS3DH.",
+      "evidence_urls": [
+        "https://www.st.com/resource/en/datasheet/lis3dh.pdf",
+        "https://github.com/Seeed-Studio/Seeed_Arduino_LIS3DHTR.git"
+      ]
+    },
+    {
+      "alias": "lsm6dsv",
+      "target": "lsm6dsox",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "bmi323",
+      "target": "bmi270",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different IMU with I3C support; not BMI270.",
+      "evidence_urls": [
+        "https://github.com/7semi-solutions/7Semi-BMI323.git",
+        "https://github.com/UNIT-Electronics-MX/unit_library_devlab_bmi323.git",
+        "https://github.com/DFRobot/DFRobot_BMI323",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmi323.html"
+      ]
+    },
+    {
+      "alias": "sph0645",
+      "target": "inmp441",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "ics43434",
+      "target": "inmp441",
+      "active": false,
+      "decision": "remove",
+      "reason": "Inactive mapping with no current source record and no verified same-device evidence; remove rather than redirect future records.",
+      "evidence_urls": []
+    },
+    {
+      "alias": "mhz19d",
+      "target": "mhz19",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/mh-z19d.html"
+      ]
+    },
+    {
+      "alias": "mhz19e",
+      "target": "mhz19",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/mh-z19e.html"
+      ]
+    },
+    {
+      "alias": "mhz1911a",
+      "target": "mhz19",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/mh-z1911a.html"
+      ]
+    },
+    {
+      "alias": "mhz14b",
+      "target": "mhz19",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/mh-z14b.html"
+      ]
+    },
+    {
+      "alias": "zh06ii",
+      "target": "zh06",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/zh06-ii.html"
+      ]
+    },
+    {
+      "alias": "zh06iii",
+      "target": "zh06",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/zh06-iii.html"
+      ]
+    },
+    {
+      "alias": "zh06iv",
+      "target": "zh06",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/zh06-iv.html"
+      ]
+    },
+    {
+      "alias": "ld2410b",
+      "target": "ld2410",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.hlktech.net/index.php?id=1094"
+      ]
+    },
+    {
+      "alias": "ld2410c",
+      "target": "ld2410",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.hlktech.net/index.php?id=1095"
+      ]
+    },
+    {
+      "alias": "sen54",
+      "target": "sen5x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/particle-voc-humidity-and-temperature-sensor-sen54.html"
+      ]
+    },
+    {
+      "alias": "sen55",
+      "target": "sen5x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/sensirion-particle-voc-humidity-and-temperature-sensor-sen55.html"
+      ]
+    },
+    {
+      "alias": "tmf8820",
+      "target": "tmf882x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/sparkfun-qwiic-mini-dtof-imager-tmf8820.html",
+        "https://www.sparkfun.com/sparkfun-qwiic-dtof-imager-tmf8820.html"
+      ]
+    },
+    {
+      "alias": "tmf8821",
+      "target": "tmf882x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/sparkfun-qwiic-mini-dtof-imager-tmf8821.html",
+        "https://www.sparkfun.com/sparkfun-qwiic-dtof-imager-tmf8821.html"
+      ]
+    },
+    {
+      "alias": "amg8833",
+      "target": "amg88xx",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/sparkfun-grid-eye-infrared-array-breakout-amg8833-qwiic.html"
+      ]
+    },
+    {
+      "alias": "as7262",
+      "target": "as726x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/sparkfun-spectral-sensor-breakout-as7262-visible-qwiic.html"
+      ]
+    },
+    {
+      "alias": "as7263",
+      "target": "as726x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/sparkfun-spectral-sensor-breakout-as7263-nir-qwiic.html"
+      ]
+    },
+    {
+      "alias": "as7262x",
+      "target": "as726x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Source supports both AS7262 and AS7263; same-device equivalence unverified.",
+      "evidence_urls": [
+        "https://github.com/rcolistete/MicroPython_AS7262X_driver"
+      ]
+    },
+    {
+      "alias": "kx134",
+      "target": "kx132",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/sparkfun-triple-axis-accelerometer-breakout-kx134-qwiic.html"
+      ]
+    },
+    {
+      "alias": "ms580314ba",
+      "target": "ms5803",
+      "active": true,
+      "decision": "remove",
+      "reason": "14-bar pressure variant must not be absorbed by an unqualified MS5803 family ID.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/sparkfun-pressure-sensor-breakout-ms5803-14ba.html"
+      ]
+    },
+    {
+      "alias": "fs30001005",
+      "target": "fs3000",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/sparkfun-air-velocity-sensor-breakout-fs3000-1005-qwiic.html"
+      ]
+    },
+    {
+      "alias": "fs30001015",
+      "target": "fs3000",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/sparkfun-air-velocity-sensor-breakout-fs3000-1015-qwiic.html"
+      ]
+    },
+    {
+      "alias": "tfminiplus",
+      "target": "tfminis",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://en.benewake.com/TFminiPlus/index.html"
+      ]
+    },
+    {
+      "alias": "tfli2c",
+      "target": "tfluna",
+      "active": true,
+      "decision": "keep",
+      "reason": "TFLuna-I2C source explicitly identifies TFLuna, with I2C mode selected.",
+      "evidence_urls": [
+        "https://github.com/budryerson/TFLuna-I2C.git"
+      ]
+    },
+    {
+      "alias": "tfs20",
+      "target": "tfs20l",
+      "active": true,
+      "decision": "keep",
+      "reason": "TFS20 source explicitly identifies the TFS20-L LiDAR module.",
+      "evidence_urls": [
+        "https://github.com/eicut/TFS20.git"
+      ]
+    },
+    {
+      "alias": "mq2lpg",
+      "target": "mq2",
+      "active": true,
+      "decision": "keep",
+      "reason": "Author README explicitly says it reads and calibrates the MQ-2 sensor; LPG is an application, not another model.",
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/cakraawijaya/MQ2_LPG/main/README.md"
+      ],
+      "evidence": {
+        "url": "https://raw.githubusercontent.com/cakraawijaya/MQ2_LPG/main/README.md",
+        "text": "[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?style=flat)](https://github.com/ellerbrock/open-source-badges/)\n[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?logo=github&color=%23F7DF1E)](https://opensource.org/licenses/MIT)\n![GitHub last commit](https://img.shields.io/github/last-commit/cakraawijaya/MQ2_LPG?logo=Codeforces&logoColor=white&color=%23F7DF1E)\n![Project](https://img.shields.io/badge/Project-Library-light.svg?style=flat&logo=arduino&logoColor=white&color=%23F7DF1E)\n![Type](https://img.shields.io/badge/Type-Personal%20Experiment-light.svg?style=flat&logo=gitbook&logoColor=white&color=%23F7DF1E)\n\n# MQ2_LPG\nThis library is used to read the LPG gas data: propane (C3H8) and butane (C4H10) captured by the sensor.\n\n<br>\n\n## GENERAL INFORMATION\n<img src=\"extras/documentation/pinout/MQ2.jpg\" alt=\"mq2-sensor-pinout\"><br><br>\n• Creator: Devan Cakra M.W.\n\n• Datasheet: <a href=\"https://components101.com/sensors/mq2-gas-sensor\">Click Here</a>\n\n• How to calibrate the LPG part of the MQ-2 sensor: <a href=\"extras/articles/How To Calibration.md\">Click Here</a><br><br>\n\n• Available features:<br>\n  1. Support Arduino/ESP8266/ESP32.<br>\n  2. Dynamically calibrate MQ-2.<br>\n  3. Ability to read LPG gas data.<br>\n  4. Available information about LPG gas status.\n\n<br><br>\n\n## Appreciation\nIf this work is useful to you, then support this work as a form of appreciation to the author by clicking the ``` ⭐Star ``` button at the top of the repository.\n\n<br><br>\n\n## LICENSE\nMIT License - Copyright © 2023 - Devan C. M. Wijaya, S.Kom\n\nPermission is hereby granted without charge to any person obtaining a copy of this software and the software-related documentation files to deal in them without restriction, including without limitation the right to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons receiving the Software to be furnished therewith on the following terms:\n\nThe abov"
+      },
+      "review_date": "2026-11-10"
+    },
+    {
+      "alias": "mq2b",
+      "target": "mq2",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/mq-2b.html"
+      ]
+    },
+    {
+      "alias": "64xdtof",
+      "target": "64x8dtof",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_64xDTOF source explicitly identifies 64x8DTOF, SKU SEN0682.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_64xDTOF"
+      ]
+    },
+    {
+      "alias": "dfr0067",
+      "target": "dht11",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_DHT11 is a pure DHT11 driver, SKU DFR0067.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_DHT11.git"
+      ]
+    },
+    {
+      "alias": "dfr0558",
+      "target": "max31855",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_MAX31855 is a pure MAX31855 driver, SKU DFR0558.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_MAX31855.git"
+      ]
+    },
+    {
+      "alias": "sen0032",
+      "target": "adxl345",
+      "active": true,
+      "decision": "remove",
+      "reason": "Aggregated source includes gyroscope/six-axis claims; not a pure ADXL345 record.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_ADXL345.git"
+      ]
+    },
+    {
+      "alias": "sen0140",
+      "target": "qmc5883l",
+      "active": true,
+      "decision": "remove",
+      "reason": "Aggregates QMC5883, ITG3200 and FreeTenIMU libraries; not one QMC5883L.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_QMC5883.git",
+        "https://github.com/DFRobot/DFRobot_ITG3200.git",
+        "https://github.com/DFRobot/DFRobot_FreeTenIMU.git"
+      ]
+    },
+    {
+      "alias": "sen0245",
+      "target": "vl53l0x",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_VL53L0X is a pure VL53L0X driver, SKU SEN0245.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_VL53L0X.git"
+      ]
+    },
+    {
+      "alias": "sen0250",
+      "target": "bmi160",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_BMI160 is a pure BMI160 driver, SKU SEN0250.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_BMI160.git"
+      ]
+    },
+    {
+      "alias": "sen0291",
+      "target": "ina219",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_INA219 is a pure INA219 driver, SKU SEN0291.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_INA219.git"
+      ]
+    },
+    {
+      "alias": "sen0372",
+      "target": "bmp280",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_BMP280 is a pure BMP280 driver, SKU SEN0372.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_BMP280.git"
+      ]
+    },
+    {
+      "alias": "sen0419",
+      "target": "bmm150",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_BMM150 is a pure BMM150 driver, SKU SEN0419; unrelated sound classification is independently removed.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_BMM150.git"
+      ]
+    },
+    {
+      "alias": "sen0443",
+      "target": "icg20660l",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_ICG20660L is a pure ICG20660L driver, SKU SEN0443.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_ICG20660L.git"
+      ]
+    },
+    {
+      "alias": "sen0527",
+      "target": "aht20",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_AHT20 is a pure AHT20 driver; SEN0527/SEN0528 use the same chip.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_AHT20.git"
+      ]
+    },
+    {
+      "alias": "sen0516",
+      "target": "icp10111",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_ICP10111 is a pure ICP10111 driver, SKU SEN0516.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_ICP10111.git"
+      ]
+    },
+    {
+      "alias": "sen0430",
+      "target": "tmf8x01",
+      "active": true,
+      "decision": "remove",
+      "reason": "Driver covers TMF8701/TMF8801 and two SKUs; no single-device identity.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_TMF8x01.git"
+      ]
+    },
+    {
+      "alias": "sen0610",
+      "target": "c4001",
+      "active": true,
+      "decision": "remove",
+      "reason": "Driver covers multiple C4001 module SKUs; identical module electrical specifications unverified.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_C4001.git"
+      ]
+    },
+    {
+      "alias": "sen0654",
+      "target": "mhz9041a",
+      "active": true,
+      "decision": "keep",
+      "reason": "DFRobot_MHZ9041A is a pure MH-Z9041A driver, SKU SEN0654.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_MHZ9041A.git"
+      ]
+    },
+    {
+      "alias": "sen0456",
+      "target": "mpx5700",
+      "active": true,
+      "decision": "remove",
+      "reason": "MPX5700 driver/module wrapper; exact pressure/package variant and electrical equivalence unverified.",
+      "evidence_urls": [
+        "https://github.com/DFRobot/DFRobot_MPX5700.git"
+      ]
+    },
+    {
+      "alias": "gyverds18",
+      "target": "ds18b20",
+      "active": true,
+      "decision": "keep",
+      "reason": "GyverDS18 source explicitly identifies its device as Dallas DS18B20.",
+      "evidence_urls": [
+        "https://github.com/GyverLibs/GyverDS18.git"
+      ]
+    },
+    {
+      "alias": "jobatsl2561",
+      "target": "tsl2561",
+      "active": true,
+      "decision": "keep",
+      "reason": "Joba_Tsl2561 source explicitly identifies its device as TSL2561.",
+      "evidence_urls": [
+        "https://github.com/joba-1/Joba_Tsl2561.git"
+      ]
+    },
+    {
+      "alias": "microfiresht3x",
+      "target": "sht3x",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify SHT3X. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/u-fire/SHT3x.git",
+        "https://github.com/ArtronShop/ArtronShop_SHT3x.git",
+        "https://github.com/barbarossa12/sht3x-dis-arduino-lib.git",
+        "https://github.com/Sensirion/arduino-i2c-sht3x.git",
+        "https://github.com/PlayingWithFusion/PWFusion_SHT3X.git",
+        "https://github.com/DFRobot/DFRobot_SHT3x",
+        "https://esphome.io/components/sensor/sht3xd.html",
+        "https://github.com/HAIZAKURA/esp-sht3x-micropython"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Measure air temperature, humdity, VPD, and dew point. It also calculates heat index and wet bulb estimates.",
+        "Arduino library of SHT3x Digital humidity and temperature sensor",
+        "Sht3x series T/H sensor(SKU: SEN0330,SEN0331,SEN0332,SEN0333,SEN0334).",
+        "",
+        "A SHT3x (SHT30/31/35) library for ESP8266/ESP32 with MicroPython."
+      ]
+    },
+    {
+      "alias": "mpybh1750fvi",
+      "target": "bh1750",
+      "active": true,
+      "decision": "keep",
+      "reason": "ESP8266 driver explicitly identifies BH1750FVI, catalog shorthand BH1750.",
+      "evidence_urls": [
+        "https://github.com/catdog2/mpy_bh1750fvi_esp8266"
+      ]
+    },
+    {
+      "alias": "mpybme280",
+      "target": "bme280",
+      "active": true,
+      "decision": "keep",
+      "reason": "ESP8266 driver explicitly identifies Bosch BME280.",
+      "evidence_urls": [
+        "https://github.com/catdog2/mpy_bme280_esp8266"
+      ]
+    },
+    {
+      "alias": "myld2410",
+      "target": "ld2410",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify LD2410. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/iavorvel/MyLD2410.git",
+        "https://github.com/ncmreynolds/ld2410.git",
+        "https://github.com/lizardking/LD2410Async.git",
+        "https://www.hlktech.net/index.php?id=1489",
+        "https://www.hlktech.net/index.php?id=1488",
+        "https://www.hlktech.net/index.php?id=988",
+        "https://esphome.io/components/sensor/ld2410.html",
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/ld2410.py"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "An Arduino/ESP32 library for the LD2410 presence sensor, including HLK-LD2410B and HLK-LD2410C.",
+        "Asynchronous driver for the Hi-Link LD2410 human presence radar sensor.",
+        "24GHz Hi-link 24G Human Presence Sensor LD2410-AA Radar Module Kit with Bluetooth 9M Detection Distance/Support Height 6M Hanging",
+        "",
+        "24GHz human presence sensing module, capable of detecting moving and stationary targets, and providing an approximate range."
+      ]
+    },
+    {
+      "alias": "pybina219",
+      "target": "ina219",
+      "active": true,
+      "decision": "keep",
+      "reason": "Driver explicitly identifies INA219 current sensor.",
+      "evidence_urls": [
+        "https://github.com/chrisb2/pyb_ina219"
+      ]
+    },
+    {
+      "alias": "pympu6050",
+      "target": "mpu6050",
+      "active": true,
+      "decision": "keep",
+      "reason": "ESP8266 driver explicitly identifies MPU6050 accelerometer/gyroscope.",
+      "evidence_urls": [
+        "https://github.com/larsks/py-mpu6050"
+      ]
+    },
+    {
+      "alias": "tiina226",
+      "target": "ina226",
+      "active": true,
+      "decision": "keep",
+      "reason": "MicroPython driver explicitly identifies Texas Instruments INA226.",
+      "evidence_urls": [
+        "https://github.com/elschopi/TI_INA226_micropython"
+      ]
+    },
+    {
+      "alias": "upyapds9960",
+      "target": "apds9960",
+      "active": true,
+      "decision": "keep",
+      "reason": "MicroPython driver explicitly identifies APDS9960.",
+      "evidence_urls": [
+        "https://github.com/rlangoy/uPy_APDS9960"
+      ]
+    },
+    {
+      "alias": "esp8266hmc5883l",
+      "target": "hmc5883l",
+      "active": true,
+      "decision": "keep",
+      "reason": "Repository name explicitly identifies the HMC5883L driver; ESP8266 is the host.",
+      "evidence_urls": [
+        "https://github.com/gvalkov/micropython-esp8266-hmc5883l"
+      ]
+    },
+    {
+      "alias": "pygp2y",
+      "target": "gp2y1010au0f",
+      "active": true,
+      "decision": "remove",
+      "reason": "Source explicitly names GP2Y1014AU0F, not GP2Y1010AU0F.",
+      "evidence_urls": [
+        "https://github.com/amigcamel/pyGP2Y"
+      ]
+    },
+    {
+      "alias": "rs232",
+      "target": "a02yyuw",
+      "active": true,
+      "decision": "keep",
+      "reason": "Repository and description explicitly identify A02YYUW; RS232 is a scraped wrapper ID.",
+      "evidence_urls": [
+        "https://github.com/elvandry13/UltrasonicA02YYUW.git"
+      ]
+    },
+    {
+      "alias": "sht25",
+      "target": "sht20",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/Miceuz/sht25-micropython",
+        "https://gitlab.com/miceuz/sht25-micropython"
+      ]
+    },
+    {
+      "alias": "sht21",
+      "target": "sht20",
+      "active": true,
+      "decision": "remove",
+      "reason": "Different model/variant; identical electrical specifications and same-device identity are not established by source records.",
+      "evidence_urls": [
+        "https://github.com/SodaqMoja/Sodaq_SHT2x.git",
+        "https://github.com/chipnorm/SHT21.git",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,sht21.html"
+      ]
+    },
+    {
+      "alias": "si1142",
+      "target": "si114x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://github.com/SolderedElectronics/Soldered-SI114X-sensor-easyC-Arduino-Library.git"
+      ]
+    },
+    {
+      "alias": "fabo206uvsi1132",
+      "target": "si114x",
+      "active": true,
+      "decision": "remove",
+      "reason": "Concrete model must remain separate from a multi-device family; common driver compatibility does not establish identical device identity.",
+      "evidence_urls": [
+        "https://github.com/FaBoPlatform/FaBoUV-Si1132-Library.git"
+      ]
+    },
+    {
+      "alias": "hlkld2410",
+      "target": "ld2410",
+      "active": true,
+      "decision": "keep",
+      "reason": "Hi-Link LD2410 radar module; HLK is the manufacturer prefix, not a separate chip. The module identity is preserved.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/HLK-LD2410/",
+        "https://github.com/ncmreynolds/ld2410.git",
+        "https://github.com/lizardking/LD2410Async.git",
+        "https://www.hlktech.net/index.php?id=1489",
+        "https://www.hlktech.net/index.php?id=1488",
+        "https://www.hlktech.net/index.php?id=988",
+        "https://esphome.io/components/sensor/ld2410.html",
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/ld2410.py"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "24GHz mmWave presence sensor",
+        "Asynchronous driver for the Hi-Link LD2410 human presence radar sensor.",
+        "24GHz Hi-link 24G Human Presence Sensor LD2410-AA Radar Module Kit with Bluetooth 9M Detection Distance/Support Height 6M Hanging",
+        "",
+        "24GHz human presence sensing module, capable of detecting moving and stationary targets, and providing an approximate range."
+      ]
+    },
+    {
+      "alias": "hlkld2410b",
+      "target": "ld2410b",
+      "active": true,
+      "decision": "keep",
+      "reason": "Hi-Link LD2410B module; HLK is a manufacturer prefix. B remains distinct from LD2410 and LD2410S.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/HLK-LD2410/",
+        "https://www.hlktech.net/index.php?id=1094"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "24GHz mmWave presence sensor",
+        "24GHz HLK-LD2410B+BLE 24Ghz Human Presence Body Induction Distance Detection Radar Sensor Module support GPIO and UART "
+      ]
+    },
+    {
+      "alias": "hlkld2410s",
+      "target": "ld2410s",
+      "active": true,
+      "decision": "keep",
+      "reason": "Hi-Link LD2410S module; manufacturer prefix only, with S variant preserved.",
+      "evidence_urls": [
+        "https://tasmota.github.io/docs/HLK-LD2410S/",
+        "https://www.hlktech.net/index.php?id=1176",
+        "https://esphome.io/components/sensor/ld2410s.html"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Low energy 24GHz mmWave presence sensor",
+        "24GHz 24G Ultra Low-power Radar Sensing Module LD2410S Human Presence Sensing Switch Intelligent Sensor",
+        ""
+      ]
+    },
+    {
+      "alias": "hrg15",
+      "target": "rg15",
+      "active": true,
+      "decision": "keep",
+      "reason": "Tasmota description explicitly identifies Hydreon RG-15; leading H is a wrapper.",
+      "evidence_urls": [
+        "https://github.com/sensebox/rg15-arduino-lib.git"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Hydreon RG-15 rain gauge sensor",
+        "The RG15 Arduino Library (RG15-Arduino) provides robust communication with the RG15 Rain Gauge Sensor over a serial interface."
+      ]
+    },
+    {
+      "alias": "omrond6fph",
+      "target": "d6fph",
+      "active": true,
+      "decision": "keep",
+      "reason": "Both sources explicitly identify the Omron D6F-PH differential-pressure family.",
+      "evidence_urls": [
+        "https://github.com/bitixel/Omron_D6FPH.git",
+        "https://github.com/ekspla/D6F-PH"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Library for I2C Communication with Omron D6F-PH Differential Pressure Sensor",
+        "MicroPython module for differential pressure sensor, D6F-PH (OMRON)."
+      ]
+    },
+    {
+      "alias": "sngcja5",
+      "target": "gcja5",
+      "active": true,
+      "decision": "keep",
+      "reason": "Panasonic SN-GCJA5 is the sensor exposed as GCJA5 by ESPHome; same module.",
+      "evidence_urls": [
+        "https://github.com/aleppax/micropython-SNGCJA5",
+        "https://github.com/sparkfun/SparkFun_Particle_Sensor_SN-GCJA5_Arduino_Library.git",
+        "https://esphome.io/components/sensor/gcja5.html"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "MicroPython driver for Panasonic SN-GCJA5 particulate matter (PM) sensor.",
+        "A library to communicate with the Panasonic SN-GCJA5 particle sensor.",
+        ""
+      ]
+    },
+    {
+      "alias": "pt19",
+      "target": "alspt19",
+      "active": true,
+      "decision": "keep",
+      "reason": "SparkFun product explicitly names ALS-PT19; Zephyr uses the complete ALS-PT19 designation.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/als-pt19-light-sensor.html",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/everlight,als-pt19.html"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "The ALS-PT19 is a low-cost ambient light sensor with a phototransistor in a miniature SMD IC form factor.",
+        "Everlight ALS-PT19 Ambient Light Sensor"
+      ]
+    },
+    {
+      "alias": "spa06",
+      "target": "spa06003",
+      "active": true,
+      "decision": "keep",
+      "reason": "Seeed library sentence explicitly says SPA06-003, matching the CircuitPython and Adafruit model.",
+      "evidence_urls": [
+        "https://github.com/Seeed-Studio/Seeed_Arduino_SPA06.git",
+        "https://esphome.io/components/sensor/spa06.html",
+        "https://docs.circuitpython.org/projects/spa06_003/en/latest/",
+        "https://github.com/adafruit/Adafruit_SPA06_003.git"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "SPA06-003 library for Arduino-compatible devices.",
+        "",
+        "SPA06-003 Temperature and Pressure",
+        "Arduino library for SPA06_003 digital pressure sensor"
+      ]
+    },
+    {
+      "alias": "fxas210002c",
+      "target": "fxas21002c",
+      "active": true,
+      "decision": "keep",
+      "reason": "The source sentence has one extra zero; library title and repository name both identify FXAS21002C.",
+      "evidence_urls": [
+        "https://github.com/adafruit/Adafruit_FXAS21002C.git",
+        "https://docs.circuitpython.org/projects/fxas21002c/en/latest/"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Unified sensor driver for the FXAS210002C Gyroscope",
+        "FXAS21002C Gyroscope"
+      ]
+    },
+    {
+      "alias": "pm1",
+      "target": "bmv080",
+      "active": true,
+      "decision": "keep",
+      "reason": "PM1 is the measured particle size, extracted from a SparkFun BMV080 library sentence; title, URL and description all identify BMV080.",
+      "evidence_urls": [
+        "https://github.com/sparkfun/SparkFun_BMV080_Arduino_Library.git",
+        "https://github.com/7semi-solutions/7Semi-BMV080-Particulate-Matter-Sensor.git",
+        "https://github.com/DFRobot/DFRobot_BMV080",
+        "https://www.sparkfun.com/sparkfun-air-quality-pm1-pm2-5-pm10-sensor-bmv080-qwiic.html"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "The SparkFun Air Quality PM1/PM2.5/PM10 Sensor - BMV080 (Qwiic)is an ultra-small, fan-less air quality sensor for sensing particulate matter!",
+        "Arduino library for accurate particulate matter sensing using Bosch Sensortec BMV080",
+        "Sensors",
+        "Measure air quality with unprecedented precision and size using the SparkFun Qwiic BMV080 sensor, the world's smallest PM1/PM2.5/PM10 detector."
+      ]
+    },
+    {
+      "alias": "lsm303dlhmag",
+      "target": "lsm303dlhc",
+      "active": true,
+      "decision": "keep",
+      "reason": "Author README explicitly says this driver targets LSM303DLHC, not LSM303DLH proper, which swaps magnetic Y/Z.",
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_LSM303DLH_Mag/main/README.rst",
+        "https://docs.circuitpython.org/projects/lsm303dlh-mag/en/latest/"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "LSM303DLH Magnetometer Onl"
+      ]
+    },
+    {
+      "alias": "lsm9ds0mfd",
+      "target": "lsm9ds0",
+      "active": true,
+      "decision": "keep",
+      "reason": "Zephyr binding explicitly identifies the accelerometer/magnetometer sub-device of physical LSM9DS0.",
+      "evidence_urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm9ds0-mfd.html"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "STMicroelectronics LSM9DS0 3-axis accelerometer + magnetometer"
+      ]
+    },
+    {
+      "alias": "lsm9ds1mag",
+      "target": "lsm9ds1",
+      "active": true,
+      "decision": "keep",
+      "reason": "Zephyr binding explicitly identifies only the magnetometer of physical LSM9DS1.",
+      "evidence_urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm9ds1_mag.html"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "STMicroelectronics LSM9DS1-MAG 3-axis magnetometer accessed through I2C bus. This binding describes only the magnetometer. When setting the mag-range and mag-odr properties in a .dts or .dtsi file ..."
+      ]
+    },
+    {
+      "alias": "7semibme68x",
+      "target": "bme68x",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify BME68X. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/7semi-solutions/7Semi-BME68x.git",
+        "https://github.com/DFRobot/DFRobot_BME68x"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Arduino library for Bosch BME68x environmental sensor with I2C and SPI support.",
+        "DFRobot Standard library(SKU:SEN0617)."
+      ]
+    },
+    {
+      "alias": "7semibmp58x",
+      "target": "bmp58x",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify BMP58X. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/7semi-solutions/7Semi-BMP58x-Pressure-Sensor.git",
+        "https://github.com/DFRobot/DFRobot_BMP58X"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Lightweight BMP58x driver for Arduino (I2C/SPI) with beginner-friendly defaults.",
+        "Read air pressure data (SKU:SEN0664/SEN0665/SEN0666/SEN0667)."
+      ]
+    },
+    {
+      "alias": "7semibno08x",
+      "target": "bno08x",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify BNO08X. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/7semi-solutions/7Semi-BNO08x-9-DOF-Orientation-IMU-Fusion.git",
+        "https://docs.circuitpython.org/projects/bno08x/en/latest/"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Minimal BNO08x IMU SHTP driver with pluggable I2C/SPI/UART transports.",
+        "BNO08X  9 Axis Sensor Fusion IMU"
+      ]
+    },
+    {
+      "alias": "7semihdc302x",
+      "target": "hdc302x",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify HDC302X. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/7semi-solutions/7Semi-HDC302x.git",
+        "https://docs.circuitpython.org/projects/hdc302x/en/latest/",
+        "https://github.com/ArtronShop/ArtronShop_HDC302x.git",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,hdc302x.html",
+        "https://esphome.io/components/sensor/hdc302x.html"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "High-accuracy temperature and humidity sensor driver for HDC302x.",
+        "HDC302x Temperature and Humidity Sensor",
+        "Arduino library of HDC302x Digital humidity and temperature sensor",
+        "Texas Instruments HDC302X Temperature and Humidity Sensor",
+        ""
+      ]
+    },
+    {
+      "alias": "7semists3x",
+      "target": "sts3x",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify STS3X. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/7semi-solutions/7Semi-STS3x.git",
+        "https://github.com/DFRobot/DFRobot_STS3X.git",
+        "https://github.com/Sensirion/arduino-i2c-sts3x.git",
+        "https://github.com/DFRobot/DFRobot_STS3X",
+        "https://esphome.io/components/sensor/sts3x.html"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Arduino library for the Sensirion STS3x digital temperature sensor.",
+        "This is a Library for STS3X, the function is to read temperature(SKU: SEN0434).",
+        "This is a Library for STS3X, the function is to read temperature(SKU: SEN0434).",
+        ""
+      ]
+    },
+    {
+      "alias": "7semists4x",
+      "target": "sts4x",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify STS4X. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/7semi-solutions/7Semi-STS4x.git",
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,sts4x.html"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Arduino library for Sensirion STS4x digital temperature sensors over I2C.",
+        "Sensirion STS4x temperature sensor"
+      ]
+    },
+    {
+      "alias": "7semisht2x",
+      "target": "sht2x",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify SHT2X. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/7semi-solutions/7Semi-SHT2x.git"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Driver for Sensirion SHT2x Temperature and Humidity Sensor with CRC check and flexible I2C pin configuration."
+      ]
+    },
+    {
+      "alias": "7semitmp23x",
+      "target": "tmp23x",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify TMP23X. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/7semi-solutions/7Semi-TMP23x.git"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Arduino library for Texas Instruments TMP23x analog temperature sensors."
+      ]
+    },
+    {
+      "alias": "iotycoind4",
+      "target": "coind4",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify COIND4. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/coind4.py"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Driver for the COIN-D4 360 degree LiDAR."
+      ]
+    },
+    {
+      "alias": "iotydelta2d",
+      "target": "delta2d",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify DELTA2D. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/delta2d.py"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Driver for the Delta-2D 360 degree LiDAR."
+      ]
+    },
+    {
+      "alias": "iotylds02rr",
+      "target": "lds02rr",
+      "active": true,
+      "decision": "keep",
+      "reason": "Library/vendor prefix only; source description and repository identify LDS02RR. Family wildcards are retained; no concrete model is folded into its family.",
+      "evidence_urls": [
+        "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/lds02rr.py"
+      ],
+      "review_date": "2026-11-10",
+      "source_text": [
+        "Driver for the LDS02RR 360 degree LiDAR."
+      ]
+    },
+    {
+      "alias": "me3ch2chcl",
+      "target": "me3c2h3cl",
+      "active": true,
+      "decision": "keep",
+      "reason": "Maker title and Model row identify the existing precise model; merge the legacy URL-slug record into that stable ID.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/me3-ch2chcl.html"
+      ],
+      "review_date": "2026-11-10"
+    },
+    {
+      "alias": "mrtd3011",
+      "target": "rttd721155",
+      "active": true,
+      "decision": "keep",
+      "reason": "Maker title and Model row identify the existing precise model; merge the legacy URL-slug record into that stable ID.",
+      "evidence_urls": [
+        "https://www.winsen-sensor.com/product/mrtd-3011.html"
+      ],
+      "review_date": "2026-11-10"
+    },
+    {
+      "alias": "vcnl4030",
+      "target": "vcnl4030x01",
+      "active": true,
+      "decision": "keep",
+      "reason": "CircuitPython driver implementation explicitly identifies VCNL4030X01; the abbreviated library name is not a separate model.",
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_VCNL4030/main/adafruit_vcnl4030.py",
+        "https://github.com/adafruit/Adafruit_VCNL4030.git"
+      ],
+      "review_date": "2026-11-10"
+    },
+    {
+      "alias": "l3gd20u",
+      "target": "l3gd20",
+      "active": true,
+      "decision": "keep",
+      "reason": "U denotes the Unified Sensor API wrapper for L3GD20; author README links both drivers for the same L3GD20 hardware.",
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/adafruit/Adafruit_L3GD20_U/master/README.md"
+      ],
+      "review_date": "2026-11-10"
+    },
+    {
+      "alias": "qmc5583l",
+      "target": "qmc5883l",
+      "active": true,
+      "decision": "keep",
+      "reason": "QMC5583L is a transposed-digit typo in library prose. Title, public class, repository and QST part catalog identify QMC5883L. Maker: https://www.qstcorp.com/en_comp_prod/QMC5883L",
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/mprograms/QMC5883LCompass/master/readme.md"
+      ],
+      "review_date": "2026-11-10"
+    },
+    {
+      "alias": "mmc5983",
+      "target": "mmc5983ma",
+      "active": true,
+      "decision": "keep",
+      "reason": "ESPHome MMC5983 documentation links the MMC5983MA maker datasheet; MicroPython driver uses the same address, identity register and scale.",
+      "evidence_urls": [
+        "https://esphome.io/components/sensor/mmc5983/"
+      ],
+      "evidence": {
+        "url": "https://esphome.io/components/sensor/mmc5983/",
+        "text": "# MMC5983 Magnetometer - ESPHome - Smart Home Made Simple\n\n[Skip to content](#_top)\n\n[![](https://esphome.io/_astro/logo-light.m0kM05OQ.svg)![](https://esphome.io/_astro/logo-dark.DAjdYWzy.svg)ESPHome - Smart Home Made Simple](/)[2026.10.2](/blog/2026/10/21/esphome-2026-10/ \"ESPHome 2026.10.2\")\n\nSearch`CtrlK`\n\nCancel\n\nSelect themeDarkLightAuto\n\n[Get started](/install/getting-started/)\n\n# MMC5983 Magnetometer\n\nThe `mmc5983` component allows you to use your MMC5983 triple-axis magnetometer ([datasheet](https://www.memsic.com/Public/Uploads/uploadfile/files/20220119/MMC5983MADatasheetRevA.pdf), [SparkFun](https://www.sparkfun.com/products/19921)) with ESPHome.\n\nThe [I²C Bus](/components/i2c) is required to be set up for this sensor to work. The device supports 400kHz\noperation, so you may specify up to `frequency: 400kHz` in your `i2c` configuration.\n\n![](https://esphome.io/images/mmc5983.jpg)\n\nMMC5983 Magnetometer.\n\n```\n# Example configuration entry\n\nsensor:\n\n- platform: mmc5983\n\nfield_strength_x:\n\nname: \"Field X\"\n\nfield_strength_y:\n\nid: \"field_y\"\n\ninternal: true\n\nfield_strength_z:\n\nname: \"Field Z\"\n\nfilters:\n\n- throttle: 120s\n\nupdate_interval: 60s\n```\n\n## Configuration variables\n\n[Section titled “Configuration variables”](#configuration-variables)\n\n- **field_strength_x** (*Optional*): The information for the X-axis field sensor. All options from\n  [Sensor](/components/sensor).\n- **field_strength_y** (*Optional*): The information for the Y-axis field sensor. All options from\n  [Sensor](/components/sensor).\n- **field_strength_z** (*Optional*): The information for the Z-axis field sensor. All options from\n  [Sensor](/components/sensor).\n- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor. Defaults to `60s`.\n\n## See Also\n\n[Section titled “See Also”](#see-also)\n\n- [Sensor Filters](/components/sensor/#sensor-filters)\n- [MMC5603 Magnetometer](/components/sensor/mmc5603/)\n- [SparkFun MMC5983MA Magnetometer Arduino Li"
+      },
+      "review_date": "2026-11-10"
+    },
+    {
+      "alias": "gp2y0a21yk",
+      "target": "gp2y0a21yk0f",
+      "active": true,
+      "decision": "keep",
+      "reason": "SparkFun abbreviated GP2Y0A21YK product links the GP2Y0A21YK0F datasheet, identifying the complete Sharp model.",
+      "evidence_urls": [
+        "https://www.sparkfun.com/infrared-proximity-sensor-sharp-gp2y0a21yk.html"
+      ],
+      "evidence": {
+        "url": "https://www.sparkfun.com/infrared-proximity-sensor-sharp-gp2y0a21yk.html",
+        "text": "# Infrared Proximity Sensor - Sharp GP2Y0A21YK - SparkFun Electronics\nInfrared Proximity Sensor - Sharp GP2Y0A21YK\n![Infrared Proximity Sensor - Sharp GP2Y0A21YK](https://www.sparkfun.com/media/catalog/product/cache/f3020b7489dcfc4d1d147cf4dad07b7f/0/0/00242-1.jpg)\n# Infrared Proximity Sensor - Sharp GP2Y0A21YK\n**Product:** Infrared Proximity Sensor - Sharp GP2Y0A21YK\nInfrared proximity sensor made by Sharp. Part # GP2Y0A21YK has an analog output that varies from 3.1V at 10cm to 0.4V at 80cm. The sensor has a Japanese Solderless Terminal (JST) Connector. We recommend purchasing the related pigtail below or soldering wires directly to the back of the module.\n- [Datasheet](http://www.sparkfun.com/datasheets/Components/GP2Y0A21YK.pdf)\n- [Datasheet](https://cdn.sparkfun.com/assets/6/3/5/0/4/GP2Y0A21YK.pdf)\n![Infrared Proximity Sensor - Sharp GP2Y0A21YK](https://www.sparkfun.com/media/catalog/product/cache/df4360b598d6f0c75fa659693b376bad/0/0/00242-1.jpg)\nInfrared Proximity Sensor - Sharp GP2Y0A21YK"
+      },
+      "review_date": "2026-11-10"
+    },
+    {
+      "alias": "c4001mmwave",
+      "target": "c4001",
+      "active": true,
+      "decision": "keep",
+      "reason": "The Arduino library C4001mmWave (mumanchu) is a driver for DFRobot's C4001 mmWave presence sensor (SEN0609/SEN0610); same device, not a separate part.",
+      "evidence_urls": [
+        "https://github.com/mumanchu/C4001mmWave"
+      ]
+    }
+  ],
+  "split_field_evidence": {
+    "lsm6dsl": {
+      "manufacturer": "STMicroelectronics",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi"
+      ],
+      "voltage": "1.71-3.6",
+      "source_url": "https://www.st.com/resource/en/datasheet/lsm6dsl.pdf",
+      "notes": "Analog VDD; independent I/O rail is not represented by the catalog voltage field.",
+      "unset_fields": []
+    },
+    "lsm6dso": {
+      "manufacturer": "STMicroelectronics",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi",
+        "i3c"
+      ],
+      "voltage": "1.71-3.6",
+      "source_url": "https://www.st.com/resource/en/datasheet/lsm6dso.pdf",
+      "notes": "Analog VDD; independent I/O rail is not represented by the catalog voltage field.",
+      "unset_fields": []
+    },
+    "lsm6dsr": {
+      "manufacturer": "STMicroelectronics",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi",
+        "i3c"
+      ],
+      "voltage": "1.71-3.6",
+      "source_url": "https://www.st.com/resource/en/datasheet/lsm6dsr.pdf",
+      "notes": "Analog VDD; independent I/O rail is not represented by the catalog voltage field.",
+      "unset_fields": []
+    },
+    "lsm6dsv16x": {
+      "manufacturer": "STMicroelectronics",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi",
+        "i3c"
+      ],
+      "voltage": "1.71-3.6",
+      "source_url": "https://www.st.com/resource/en/datasheet/lsm6dsv16x.pdf",
+      "notes": "Analog VDD; independent I/O rail is not represented by the catalog voltage field.",
+      "unset_fields": []
+    },
+    "lsm6dsv16bx": {
+      "manufacturer": "STMicroelectronics",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi",
+        "i3c"
+      ],
+      "voltage": "1.71-3.6",
+      "source_url": "https://www.st.com/resource/en/datasheet/lsm6dsv16bx.pdf",
+      "notes": "Analog VDD; independent I/O rail is not represented by the catalog voltage field.",
+      "unset_fields": []
+    },
+    "ism330dhcx": {
+      "manufacturer": "STMicroelectronics",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi"
+      ],
+      "voltage": "1.71-3.6",
+      "source_url": "https://www.st.com/resource/en/datasheet/ism330dhcx.pdf",
+      "notes": "Analog VDD; independent I/O rail is not represented by the catalog voltage field.",
+      "unset_fields": []
+    },
+    "lsm6ds3": {
+      "manufacturer": "STMicroelectronics",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi"
+      ],
+      "voltage": "1.71-3.6",
+      "source_url": "https://community.st.com/ysqtg83639/attachments/ysqtg83639/stm32-mcu-products-forum/89677/2/%5BATT%5D11987.pdf",
+      "notes": "LSM6DS3 DocID026899 Rev 10; not the LSM6DS3TR-C datasheet.",
+      "unset_fields": []
+    },
+    "lsm9ds0": {
+      "manufacturer": "STMicroelectronics",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi"
+      ],
+      "voltage": "2.4-3.6",
+      "source_url": "https://www.st.com/resource/en/datasheet/lsm9ds0.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "mpu6500": {
+      "manufacturer": "TDK",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi"
+      ],
+      "voltage": "1.71-3.45",
+      "source_url": "https://invensense.tdk.com/wp-content/uploads/2020/06/PS-MPU-6500A-01-v1.3.pdf",
+      "notes": "PS-MPU-6500A-01 v1.3 electrical-characteristics table lists VDD 1.71-3.45V; product page lists 1.71-3.6V. Use the narrower datasheet table, not the headline.",
+      "unset_fields": [],
+      "corroborating_source_url": "https://product.tdk.com/ja/search/sensor/mortion-inertial/imu/info?part_no=MPU-6500"
+    },
+    "bmi323": {
+      "manufacturer": "Bosch",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi",
+        "i3c"
+      ],
+      "voltage": "1.71-3.63",
+      "source_url": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi323-ds000.pdf",
+      "notes": "VDD; VDDIO 1.08-3.63V is separate.",
+      "unset_fields": []
+    },
+    "max30100": {
+      "manufacturer": "Analog Devices",
+      "type": "optical",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "1.7-2.0",
+      "source_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/max30100.pdf",
+      "notes": "VDD only; LED supply is separate (MAX30100 3.1-5.0V; MAX30105 3.1-5.25V).",
+      "unset_fields": []
+    },
+    "max30105": {
+      "manufacturer": "Analog Devices",
+      "type": "optical",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "1.7-2.0",
+      "source_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/max30105.pdf",
+      "notes": "VDD only; LED supply is separate (MAX30100 3.1-5.0V; MAX30105 3.1-5.25V).",
+      "unset_fields": []
+    },
+    "ds18s20": {
+      "manufacturer": "Analog Devices",
+      "type": "semiconductor",
+      "protocols": [
+        "one_wire"
+      ],
+      "voltage": "3.0-5.5",
+      "source_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18S20.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "sht30": {
+      "manufacturer": "Sensirion",
+      "type": "capacitive",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.15-5.5",
+      "source_url": "https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "sht31": {
+      "manufacturer": "Sensirion",
+      "type": "capacitive",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.15-5.5",
+      "source_url": "https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "sht31d": {
+      "manufacturer": "Sensirion",
+      "type": "capacitive",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.15-5.5",
+      "source_url": "https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "sht35": {
+      "manufacturer": "Sensirion",
+      "type": "capacitive",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.15-5.5",
+      "source_url": "https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "sht40": {
+      "manufacturer": "Sensirion",
+      "type": "capacitive",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "1.08-3.6",
+      "source_url": "https://sensirion.com/media/documents/33FD6951/6A7C10A0/HT_DS_Datasheet_SHT4x_V7.3.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "sht45": {
+      "manufacturer": "Sensirion",
+      "type": "capacitive",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "1.08-3.6",
+      "source_url": "https://sensirion.com/media/documents/33FD6951/6A7C10A0/HT_DS_Datasheet_SHT4x_V7.3.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "sht21": {
+      "manufacturer": "Sensirion",
+      "type": "capacitive",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.1-3.6",
+      "source_url": "https://sensirion.com/media/documents/120BBE4C/63500094/Sensirion_Datasheet_Humidity_Sensor_SHT21.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "sht25": {
+      "manufacturer": "Sensirion",
+      "type": "capacitive",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.1-3.6",
+      "source_url": "https://sensirion.com/media/documents/66189A49/6350F979/Sensirion_Datasheet_Humidity_Sensor_SHT25.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "bme680": {
+      "manufacturer": "Bosch",
+      "type": "semiconductor",
+      "protocols": [
+        "i2c",
+        "spi"
+      ],
+      "voltage": "1.71-3.6",
+      "source_url": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme680-ds001.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "bme688": {
+      "manufacturer": "Bosch",
+      "type": "semiconductor",
+      "protocols": [
+        "i2c",
+        "spi"
+      ],
+      "voltage": "1.71-3.6",
+      "source_url": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "bmp388": {
+      "manufacturer": "Bosch",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi"
+      ],
+      "voltage": "1.65-3.6",
+      "source_url": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp388-ds001.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "bmp390": {
+      "manufacturer": "Bosch",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi"
+      ],
+      "voltage": "1.65-3.6",
+      "source_url": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp390-ds002.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "bmp085": {
+      "manufacturer": "Bosch",
+      "type": "mems",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "1.8-3.6",
+      "source_url": "https://cdn.sparkfun.com/assets/6/f/3/9/4/BST-BMP085-DS000-05.pdf",
+      "notes": "Bosch maker datasheet hosted by SparkFun.",
+      "unset_fields": []
+    },
+    "scd40": {
+      "manufacturer": "Sensirion",
+      "type": "photoacoustic",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.4-5.5",
+      "source_url": "https://sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "scd41": {
+      "manufacturer": "Sensirion",
+      "type": "photoacoustic",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.4-5.5",
+      "source_url": "https://sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "hdc1000": {
+      "manufacturer": "Texas Instruments",
+      "type": "capacitive",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.7-5.5",
+      "source_url": "https://www.ti.com/lit/ds/symlink/hdc1000.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "hdc1010": {
+      "manufacturer": "Texas Instruments",
+      "type": "capacitive",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.7-5.5",
+      "source_url": "https://www.ti.com/lit/ds/symlink/hdc1010.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "opt3001": {
+      "manufacturer": "Texas Instruments",
+      "type": "photodiode",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "1.6-3.6",
+      "source_url": "https://www.ti.com/lit/ds/symlink/opt3001.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "opt3002": {
+      "manufacturer": "Texas Instruments",
+      "type": "photodiode",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "1.6-3.6",
+      "source_url": "https://www.ti.com/lit/ds/symlink/opt3002.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "mhz19b": {
+      "manufacturer": "Winsen",
+      "type": "ndir",
+      "protocols": [
+        "uart",
+        "pwm"
+      ],
+      "voltage": "4.5-5.5",
+      "source_url": "https://www.winsen-sensor.com/d/files/manual/mh-z19b.pdf",
+      "notes": "Operating supply; 5.0 ±0.1V is a range, not a fixed 5.0V.",
+      "unset_fields": []
+    },
+    "mhz19c": {
+      "manufacturer": "Winsen",
+      "type": "ndir",
+      "protocols": [
+        "uart",
+        "pwm"
+      ],
+      "voltage": "4.9-5.1",
+      "source_url": "https://www.winsen-sensor.com/d/files/manual/mh-z19c.pdf",
+      "notes": "Operating supply; 5.0 ±0.1V is a range, not a fixed 5.0V.",
+      "unset_fields": []
+    },
+    "mhz19d": {
+      "manufacturer": "Winsen",
+      "type": "ndir",
+      "protocols": [
+        "uart",
+        "pwm"
+      ],
+      "voltage": "4.9-5.1",
+      "source_url": "https://www.winsen-sensor.com/d/files/manual/mh-z19d.pdf",
+      "notes": "Operating supply; 5.0 ±0.1V is a range, not a fixed 5.0V.",
+      "unset_fields": []
+    },
+    "mhz19e": {
+      "manufacturer": "Winsen",
+      "type": "ndir",
+      "protocols": [
+        "uart",
+        "pwm"
+      ],
+      "voltage": "4.9-5.1",
+      "source_url": "https://www.winsen-sensor.com/d/files/manual/mh-z19e.pdf",
+      "notes": "Operating supply; 5.0 ±0.1V is a range, not a fixed 5.0V.",
+      "unset_fields": []
+    },
+    "mhz1911a": {
+      "manufacturer": "Winsen",
+      "type": "ndir",
+      "protocols": [
+        "uart",
+        "pwm"
+      ],
+      "voltage": "4.9-5.1",
+      "source_url": "https://www.winsen-sensor.com/d/files/manual/mh-z1911a.pdf",
+      "notes": "Operating supply; 5.0 ±0.1V is a range, not a fixed 5.0V.",
+      "unset_fields": []
+    },
+    "mhz14a": {
+      "manufacturer": "Winsen",
+      "type": "ndir",
+      "protocols": [
+        "uart",
+        "pwm"
+      ],
+      "voltage": "4.9-5.1",
+      "source_url": "https://www.winsen-sensor.com/d/files/manual/mh-z14a.pdf",
+      "notes": "Operating supply; 5.0 ±0.1V is a range, not a fixed 5.0V.",
+      "unset_fields": []
+    },
+    "mhz14b": {
+      "manufacturer": "Winsen",
+      "type": "ndir",
+      "protocols": [
+        "uart",
+        "pwm"
+      ],
+      "voltage": "4.9-5.1",
+      "source_url": "https://www.winsen-sensor.com/d/files/manual/mh-z14b.pdf",
+      "notes": "Operating supply; 5.0 ±0.1V is a range, not a fixed 5.0V.",
+      "unset_fields": []
+    },
+    "zh06ii": {
+      "manufacturer": "Winsen",
+      "type": "laser",
+      "protocols": [
+        "uart",
+        "pwm"
+      ],
+      "voltage": "4.9-5.5",
+      "source_url": "https://www.winsen-sensor.com/d/files/manual/zh06-ii.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "zh06iii": {
+      "manufacturer": "Winsen",
+      "type": "laser",
+      "protocols": [
+        "uart",
+        "pwm"
+      ],
+      "voltage": "4.9-5.5",
+      "source_url": "https://www.winsen-sensor.com/d/files/manual/zh06-iii.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "zh06iv": {
+      "manufacturer": "Winsen",
+      "type": "laser",
+      "protocols": [
+        "uart",
+        "pwm"
+      ],
+      "voltage": "4.9-5.5",
+      "source_url": "https://www.winsen-sensor.com/d/files/manual/zh06-iv.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "ld2410b": {
+      "manufacturer": "Hi-Link",
+      "type": "radar",
+      "protocols": [
+        "gpio",
+        "uart"
+      ],
+      "voltage": "5.0",
+      "source_url": "https://www.hlktech.net/index.php?id=65",
+      "notes": "Maker specifications: 5V supply; UART logic is separately 3.3V.",
+      "unset_fields": []
+    },
+    "ld2410c": {
+      "manufacturer": "Hi-Link",
+      "type": "radar",
+      "protocols": [
+        "gpio",
+        "uart"
+      ],
+      "voltage": "5.0",
+      "source_url": "https://www.hlktech.net/index.php?id=65",
+      "notes": "Maker specifications: 5V supply; UART logic is separately 3.3V.",
+      "unset_fields": []
+    },
+    "tmf8820": {
+      "manufacturer": "ams-OSRAM",
+      "type": "tof",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.7-3.5",
+      "source_url": "https://look.ams-osram.com/m/52236c476132a095/original/TMF882X-DS000693.pdf",
+      "notes": "I3C tolerant, not an I3C device. Recommended supply max is 3.5V; 3.6V is absolute maximum.",
+      "unset_fields": []
+    },
+    "tmf8821": {
+      "manufacturer": "ams-OSRAM",
+      "type": "tof",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "2.7-3.5",
+      "source_url": "https://look.ams-osram.com/m/52236c476132a095/original/TMF882X-DS000693.pdf",
+      "notes": "I3C tolerant, not an I3C device. Recommended supply max is 3.5V; 3.6V is absolute maximum.",
+      "unset_fields": []
+    },
+    "as7262": {
+      "manufacturer": "ams-OSRAM",
+      "type": "photodiode",
+      "protocols": [
+        "i2c",
+        "uart"
+      ],
+      "voltage": "2.7-3.6",
+      "source_url": "https://look.ams-osram.com/m/663487deeb7089a7/original/AS7262-DS000486.pdf",
+      "notes": "Supply range shown is for I2C; UART requires 2.97-3.6V. SPI pins serve external program flash, not a host interface.",
+      "unset_fields": []
+    },
+    "as7263": {
+      "manufacturer": "ams-OSRAM",
+      "type": "photodiode",
+      "protocols": [
+        "i2c",
+        "uart"
+      ],
+      "voltage": "2.7-3.6",
+      "source_url": "https://look.ams-osram.com/m/2f885f8e1b074032/original/AS7263-DS000476.pdf",
+      "notes": "Supply range shown is for I2C; UART requires 2.97-3.6V. SPI pins serve external program flash, not a host interface.",
+      "unset_fields": []
+    },
+    "fs30001005": {
+      "manufacturer": "Renesas",
+      "type": "thermopile",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "3.3",
+      "source_url": "https://www.renesas.com/en/document/dst/fs3000-datasheet",
+      "notes": "Regulated 3.3V operating supply; 5.5V is absolute maximum. Variants have different air-velocity ranges.",
+      "unset_fields": []
+    },
+    "fs30001015": {
+      "manufacturer": "Renesas",
+      "type": "thermopile",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "3.3",
+      "source_url": "https://www.renesas.com/en/document/dst/fs3000-datasheet",
+      "notes": "Regulated 3.3V operating supply; 5.5V is absolute maximum. Variants have different air-velocity ranges.",
+      "unset_fields": []
+    },
+    "ms580314ba": {
+      "manufacturer": "TE Connectivity",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi"
+      ],
+      "voltage": "1.8-3.6",
+      "source_url": "https://www.te.com/en/product-MS580314BA01-50.html",
+      "notes": "Maker specifications for 14-bar variant.",
+      "unset_fields": []
+    },
+    "tfminiplus": {
+      "manufacturer": "Benewake",
+      "type": "tof",
+      "protocols": [
+        "i2c",
+        "uart"
+      ],
+      "voltage": "4.5-5.5",
+      "source_url": "https://en.benewake.com/TFminiPlus/index.html",
+      "notes": "",
+      "unset_fields": []
+    },
+    "sen54": {
+      "manufacturer": "Sensirion",
+      "type": null,
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "4.5-5.5",
+      "source_url": "https://sensirion.com/media/documents/6791EFA0/62A1F68F/Sensirion_Datasheet_Environmental_Node_SEN5x.pdf",
+      "notes": "Multi-technology module; no single sensing type. SEN54 has no NOx sensor; SEN55 does.",
+      "unset_fields": [
+        "type"
+      ]
+    },
+    "sen55": {
+      "manufacturer": "Sensirion",
+      "type": null,
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "4.5-5.5",
+      "source_url": "https://sensirion.com/media/documents/6791EFA0/62A1F68F/Sensirion_Datasheet_Environmental_Node_SEN5x.pdf",
+      "notes": "Multi-technology module; no single sensing type. SEN54 has no NOx sensor; SEN55 does.",
+      "unset_fields": [
+        "type"
+      ]
+    },
+    "amg8833": {
+      "manufacturer": "Panasonic",
+      "type": "thermopile",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "3.3",
+      "source_url": "https://industrial.panasonic.com/ww/products/pt/grid-eye/models/AMG8833",
+      "notes": "Maker nominal operating supply; no tolerance asserted.",
+      "unset_fields": []
+    },
+    "fabo206uvsi1132": {
+      "manufacturer": "Silicon Labs",
+      "type": "photodiode",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "1.71-3.6",
+      "source_url": "https://www.silabs.com/documents/public/data-sheets/Si1132.pdf",
+      "notes": "Wrapper explicitly names Si1132, not Si114x.",
+      "unset_fields": []
+    },
+    "am2301": {
+      "manufacturer": "Aosong",
+      "type": "capacitive",
+      "protocols": [
+        "gpio"
+      ],
+      "voltage": "3.3-5.5",
+      "source_url": "https://www.aosong.com/userfiles/files/media/AM2301%E8%A7%84%E6%A0%BC%E4%B9%A6-%E8%8B%B1%E6%96%87%E7%89%88%EF%BC%8820210407%EF%BC%89.pdf",
+      "notes": "Aosong AM2301 Product Manual, electrical characteristics; mirrored/indexed copy at https://www.didacticaselectronicas.com/web/content/402887?download=true. Single-bus signaling uses GPIO, not Dallas 1-Wire.",
+      "unset_fields": []
+    },
+    "htu21d": {
+      "manufacturer": "TE Connectivity",
+      "type": "capacitive",
+      "protocols": [
+        "i2c"
+      ],
+      "voltage": "1.5-3.6",
+      "source_url": "https://my.avnet.com/wcm/connect/c76abfe6-a20b-4fe8-bfdf-db3dc9842ebd/TE-Connectivity-HTU21D-EN-Datasheet.pdf?CACHE=NONE&CVID=pFu5s5u&ContentCache=NONE&MOD=AJPERES",
+      "notes": "TE HTU21D(F) maker datasheet, May 2017, hosted by Avnet. Protective-filter identity is kept separate conservatively.",
+      "unset_fields": []
+    },
+    "max3010x": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "type",
+        "voltage",
+        "protocols"
+      ]
+    },
+    "mq3": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "manufacturer",
+        "type",
+        "voltage",
+        "protocols"
+      ]
+    },
+    "mq7": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "manufacturer",
+        "type",
+        "voltage",
+        "protocols"
+      ]
+    },
+    "tfmini": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "manufacturer",
+        "type",
+        "voltage"
+      ]
+    },
+    "amg88": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "type",
+        "voltage",
+        "protocols"
+      ]
+    },
+    "as7262x": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "type",
+        "voltage"
+      ]
+    },
+    "kx134": {
+      "manufacturer": "ROHM",
+      "type": "mems",
+      "protocols": [
+        "i2c",
+        "spi"
+      ],
+      "voltage": "1.7-3.6",
+      "source_url": "https://fscdn.rohm.com/kionix/en/datasheet/kx134-1211-e.pdf",
+      "notes": "",
+      "unset_fields": []
+    },
+    "mq2b": {
+      "manufacturer": "Winsen",
+      "type": "semiconductor",
+      "protocols": [
+        "analog"
+      ],
+      "voltage": "4.9-5.1",
+      "source_url": "https://www.winsen-sensor.com/d/files/manual/mq-2b.pdf",
+      "notes": "Heater and circuit voltage both 5.0 ±0.1V; manual v1.6 p.3.",
+      "unset_fields": []
+    },
+    "sen0032": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "type",
+        "voltage",
+        "protocols"
+      ]
+    },
+    "sen0140": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "type",
+        "voltage",
+        "protocols"
+      ]
+    },
+    "sen0430": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "type",
+        "voltage",
+        "protocols"
+      ]
+    },
+    "sen0610": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "type",
+        "voltage",
+        "protocols"
+      ]
+    },
+    "sen0456": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "type",
+        "voltage",
+        "protocols"
+      ]
+    },
+    "pygp2y": {
+      "manufacturer": "Sharp",
+      "type": "photodiode",
+      "protocols": [
+        "analog"
+      ],
+      "voltage": null,
+      "source_url": "https://global.sharp/products/device/lineup/selection/opto/dust/index.html",
+      "notes": "Source wrapper explicitly names GP2Y1014AU0F. Supply left unset: the retrieved table does not repeat the voltage cell for this model.",
+      "unset_fields": [
+        "voltage"
+      ]
+    },
+    "si1142": {
+      "type": null,
+      "source_url": null,
+      "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+      "unset_fields": [
+        "type",
+        "voltage"
+      ]
+    }
+  },
+  "sensor_count_after": 1720,
+  "parent_field_corrections": {
+    "mpu6050": {
+      "protocols": [
+        "i2c"
+      ],
+      "source_url": "https://cdn.sparkfun.com/datasheets/Components/General%20IC/PS-MPU-6000A.pdf",
+      "notes": "InvenSense PS-MPU-6000A-00 section 9.1; SPI belongs to MPU-6000, not MPU-6050."
+    },
+    "lsm6dsox": {
+      "description": "Component-specific description replaces a multi-chip library description.",
+      "source_url": "https://www.st.com/resource/en/datasheet/lsm6dsox.pdf"
+    },
+    "fs3000": {
+      "description": "Family description no longer asserts the concrete FS3000-1005 range.",
+      "source_url": "https://www.renesas.com/en/document/dst/fs3000-datasheet"
+    },
+    "scd41": {
+      "description": "Component-specific description replaces an SCD41+SEN55 combo-board description.",
+      "source_url": "https://sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf"
+    },
+    "sen55": {
+      "measures_added": [
+        "particulate"
+      ],
+      "source_url": "https://sensirion.com/media/documents/6791EFA0/62A1F68F/Sensirion_Datasheet_Environmental_Node_SEN5x.pdf",
+      "notes": "Own source omits this output; family merging no longer supplies it."
+    }
+  },
+  "verification_limits": [
+    "Sixteen ambiguous family/library/module records have unverified sensing technologies left unset; split_field_evidence identifies each.",
+    "GP2Y1014AU0F wrapper voltage is unset because the retrieved maker table omits a repeated voltage cell.",
+    "MPU6500 uses the narrower 1.71-3.45V datasheet electrical limit; one TDK product page advertises 1.71-3.6V.",
+    "Some legacy maker PDF endpoints are unavailable; indexed maker-document text and manufacturer/distributor-hosted copies are identified by the cited URLs."
+  ],
+  "kept_count": 27,
+  "removed_count": 109,
+  "active_removed_count": 77,
+  "validation": {
+    "rebuild_command": "uv run python scripts/build_sensor_db.py --quiet",
+    "focused_command": "uv run pytest tests/ -q -p no:cacheprovider -k \"sensor\"",
+    "focused_result": "506 passed, 4806 deselected",
+    "recommendation_command": "uv run pytest tests/test_sensor_recommend.py -q -p no:cacheprovider -m integration",
+    "recommendation_result": "12 passed",
+    "full_command": "uv run pytest tests/ -q -p no:cacheprovider",
+    "full_result": "5239 passed, 5 skipped, 65 deselected, 2 xfailed; 1 failed because the sandbox forbids binding 127.0.0.1.",
+    "full_failure": "tests/test_easyeda_regressions.py::test_blocked_check_sends_exactly_one_request: ThreadingHTTPServer socket.bind raises PermissionError [Errno 1] Operation not permitted.",
+    "database_integrity": "PRAGMA integrity_check: ok",
+    "diff_check": "git diff --check passed for edited tracked files."
+  },
+  "identity_run3": {
+    "review_date": "2026-11-10",
+    "merges": [
+      {
+        "alias": "hlkld2410",
+        "target": "ld2410",
+        "active": true,
+        "decision": "keep",
+        "reason": "Hi-Link LD2410 radar module; HLK is the manufacturer prefix, not a separate chip. The module identity is preserved.",
+        "evidence_urls": [
+          "https://tasmota.github.io/docs/HLK-LD2410/",
+          "https://github.com/ncmreynolds/ld2410.git",
+          "https://github.com/lizardking/LD2410Async.git",
+          "https://www.hlktech.net/index.php?id=1489",
+          "https://www.hlktech.net/index.php?id=1488",
+          "https://www.hlktech.net/index.php?id=988",
+          "https://esphome.io/components/sensor/ld2410.html",
+          "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/ld2410.py"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "24GHz mmWave presence sensor",
+          "Asynchronous driver for the Hi-Link LD2410 human presence radar sensor.",
+          "24GHz Hi-link 24G Human Presence Sensor LD2410-AA Radar Module Kit with Bluetooth 9M Detection Distance/Support Height 6M Hanging",
+          "",
+          "24GHz human presence sensing module, capable of detecting moving and stationary targets, and providing an approximate range."
+        ]
+      },
+      {
+        "alias": "hlkld2410b",
+        "target": "ld2410b",
+        "active": true,
+        "decision": "keep",
+        "reason": "Hi-Link LD2410B module; HLK is a manufacturer prefix. B remains distinct from LD2410 and LD2410S.",
+        "evidence_urls": [
+          "https://tasmota.github.io/docs/HLK-LD2410/",
+          "https://www.hlktech.net/index.php?id=1094"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "24GHz mmWave presence sensor",
+          "24GHz HLK-LD2410B+BLE 24Ghz Human Presence Body Induction Distance Detection Radar Sensor Module support GPIO and UART "
+        ]
+      },
+      {
+        "alias": "hlkld2410s",
+        "target": "ld2410s",
+        "active": true,
+        "decision": "keep",
+        "reason": "Hi-Link LD2410S module; manufacturer prefix only, with S variant preserved.",
+        "evidence_urls": [
+          "https://tasmota.github.io/docs/HLK-LD2410S/",
+          "https://www.hlktech.net/index.php?id=1176",
+          "https://esphome.io/components/sensor/ld2410s.html"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Low energy 24GHz mmWave presence sensor",
+          "24GHz 24G Ultra Low-power Radar Sensing Module LD2410S Human Presence Sensing Switch Intelligent Sensor",
+          ""
+        ]
+      },
+      {
+        "alias": "hrg15",
+        "target": "rg15",
+        "active": true,
+        "decision": "keep",
+        "reason": "Tasmota description explicitly identifies Hydreon RG-15; leading H is a wrapper.",
+        "evidence_urls": [
+          "https://github.com/sensebox/rg15-arduino-lib.git"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Hydreon RG-15 rain gauge sensor",
+          "The RG15 Arduino Library (RG15-Arduino) provides robust communication with the RG15 Rain Gauge Sensor over a serial interface."
+        ]
+      },
+      {
+        "alias": "omrond6fph",
+        "target": "d6fph",
+        "active": true,
+        "decision": "keep",
+        "reason": "Both sources explicitly identify the Omron D6F-PH differential-pressure family.",
+        "evidence_urls": [
+          "https://github.com/bitixel/Omron_D6FPH.git",
+          "https://github.com/ekspla/D6F-PH"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Library for I2C Communication with Omron D6F-PH Differential Pressure Sensor",
+          "MicroPython module for differential pressure sensor, D6F-PH (OMRON)."
+        ]
+      },
+      {
+        "alias": "sngcja5",
+        "target": "gcja5",
+        "active": true,
+        "decision": "keep",
+        "reason": "Panasonic SN-GCJA5 is the sensor exposed as GCJA5 by ESPHome; same module.",
+        "evidence_urls": [
+          "https://github.com/aleppax/micropython-SNGCJA5",
+          "https://github.com/sparkfun/SparkFun_Particle_Sensor_SN-GCJA5_Arduino_Library.git",
+          "https://esphome.io/components/sensor/gcja5.html"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "MicroPython driver for Panasonic SN-GCJA5 particulate matter (PM) sensor.",
+          "A library to communicate with the Panasonic SN-GCJA5 particle sensor.",
+          ""
+        ]
+      },
+      {
+        "alias": "pt19",
+        "target": "alspt19",
+        "active": true,
+        "decision": "keep",
+        "reason": "SparkFun product explicitly names ALS-PT19; Zephyr uses the complete ALS-PT19 designation.",
+        "evidence_urls": [
+          "https://www.sparkfun.com/als-pt19-light-sensor.html",
+          "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/everlight,als-pt19.html"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "The ALS-PT19 is a low-cost ambient light sensor with a phototransistor in a miniature SMD IC form factor.",
+          "Everlight ALS-PT19 Ambient Light Sensor"
+        ]
+      },
+      {
+        "alias": "spa06",
+        "target": "spa06003",
+        "active": true,
+        "decision": "keep",
+        "reason": "Seeed library sentence explicitly says SPA06-003, matching the CircuitPython and Adafruit model.",
+        "evidence_urls": [
+          "https://github.com/Seeed-Studio/Seeed_Arduino_SPA06.git",
+          "https://esphome.io/components/sensor/spa06.html",
+          "https://docs.circuitpython.org/projects/spa06_003/en/latest/",
+          "https://github.com/adafruit/Adafruit_SPA06_003.git"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "SPA06-003 library for Arduino-compatible devices.",
+          "",
+          "SPA06-003 Temperature and Pressure",
+          "Arduino library for SPA06_003 digital pressure sensor"
+        ]
+      },
+      {
+        "alias": "fxas210002c",
+        "target": "fxas21002c",
+        "active": true,
+        "decision": "keep",
+        "reason": "The source sentence has one extra zero; library title and repository name both identify FXAS21002C.",
+        "evidence_urls": [
+          "https://github.com/adafruit/Adafruit_FXAS21002C.git",
+          "https://docs.circuitpython.org/projects/fxas21002c/en/latest/"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Unified sensor driver for the FXAS210002C Gyroscope",
+          "FXAS21002C Gyroscope"
+        ]
+      },
+      {
+        "alias": "pm1",
+        "target": "bmv080",
+        "active": true,
+        "decision": "keep",
+        "reason": "PM1 is the measured particle size, extracted from a SparkFun BMV080 library sentence; title, URL and description all identify BMV080.",
+        "evidence_urls": [
+          "https://github.com/sparkfun/SparkFun_BMV080_Arduino_Library.git",
+          "https://github.com/7semi-solutions/7Semi-BMV080-Particulate-Matter-Sensor.git",
+          "https://github.com/DFRobot/DFRobot_BMV080",
+          "https://www.sparkfun.com/sparkfun-air-quality-pm1-pm2-5-pm10-sensor-bmv080-qwiic.html"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "The SparkFun Air Quality PM1/PM2.5/PM10 Sensor - BMV080 (Qwiic)is an ultra-small, fan-less air quality sensor for sensing particulate matter!",
+          "Arduino library for accurate particulate matter sensing using Bosch Sensortec BMV080",
+          "Sensors",
+          "Measure air quality with unprecedented precision and size using the SparkFun Qwiic BMV080 sensor, the world's smallest PM1/PM2.5/PM10 detector."
+        ]
+      },
+      {
+        "alias": "myld2410",
+        "target": "ld2410",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify LD2410. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/iavorvel/MyLD2410.git",
+          "https://github.com/ncmreynolds/ld2410.git",
+          "https://github.com/lizardking/LD2410Async.git",
+          "https://www.hlktech.net/index.php?id=1489",
+          "https://www.hlktech.net/index.php?id=1488",
+          "https://www.hlktech.net/index.php?id=988",
+          "https://esphome.io/components/sensor/ld2410.html",
+          "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/ld2410.py"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "An Arduino/ESP32 library for the LD2410 presence sensor, including HLK-LD2410B and HLK-LD2410C.",
+          "Asynchronous driver for the Hi-Link LD2410 human presence radar sensor.",
+          "24GHz Hi-link 24G Human Presence Sensor LD2410-AA Radar Module Kit with Bluetooth 9M Detection Distance/Support Height 6M Hanging",
+          "",
+          "24GHz human presence sensing module, capable of detecting moving and stationary targets, and providing an approximate range."
+        ]
+      },
+      {
+        "alias": "microfiresht3x",
+        "target": "sht3x",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify SHT3X. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/u-fire/SHT3x.git",
+          "https://github.com/ArtronShop/ArtronShop_SHT3x.git",
+          "https://github.com/barbarossa12/sht3x-dis-arduino-lib.git",
+          "https://github.com/Sensirion/arduino-i2c-sht3x.git",
+          "https://github.com/PlayingWithFusion/PWFusion_SHT3X.git",
+          "https://github.com/DFRobot/DFRobot_SHT3x",
+          "https://esphome.io/components/sensor/sht3xd.html",
+          "https://github.com/HAIZAKURA/esp-sht3x-micropython"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Measure air temperature, humdity, VPD, and dew point. It also calculates heat index and wet bulb estimates.",
+          "Arduino library of SHT3x Digital humidity and temperature sensor",
+          "Sht3x series T/H sensor(SKU: SEN0330,SEN0331,SEN0332,SEN0333,SEN0334).",
+          "",
+          "A SHT3x (SHT30/31/35) library for ESP8266/ESP32 with MicroPython."
+        ]
+      },
+      {
+        "alias": "lsm303dlhmag",
+        "target": "lsm303dlhc",
+        "active": true,
+        "decision": "keep",
+        "reason": "Author README explicitly says this driver targets LSM303DLHC, not LSM303DLH proper, which swaps magnetic Y/Z.",
+        "evidence_urls": [
+          "https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_LSM303DLH_Mag/main/README.rst",
+          "https://docs.circuitpython.org/projects/lsm303dlh-mag/en/latest/"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "LSM303DLH Magnetometer Onl"
+        ]
+      },
+      {
+        "alias": "lsm9ds0mfd",
+        "target": "lsm9ds0",
+        "active": true,
+        "decision": "keep",
+        "reason": "Zephyr binding explicitly identifies the accelerometer/magnetometer sub-device of physical LSM9DS0.",
+        "evidence_urls": [
+          "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm9ds0-mfd.html"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "STMicroelectronics LSM9DS0 3-axis accelerometer + magnetometer"
+        ]
+      },
+      {
+        "alias": "lsm9ds1mag",
+        "target": "lsm9ds1",
+        "active": true,
+        "decision": "keep",
+        "reason": "Zephyr binding explicitly identifies only the magnetometer of physical LSM9DS1.",
+        "evidence_urls": [
+          "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm9ds1_mag.html"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "STMicroelectronics LSM9DS1-MAG 3-axis magnetometer accessed through I2C bus. This binding describes only the magnetometer. When setting the mag-range and mag-odr properties in a .dts or .dtsi file ..."
+        ]
+      },
+      {
+        "alias": "7semibme68x",
+        "target": "bme68x",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify BME68X. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/7semi-solutions/7Semi-BME68x.git",
+          "https://github.com/DFRobot/DFRobot_BME68x"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Arduino library for Bosch BME68x environmental sensor with I2C and SPI support.",
+          "DFRobot Standard library(SKU:SEN0617)."
+        ]
+      },
+      {
+        "alias": "7semibmp58x",
+        "target": "bmp58x",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify BMP58X. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/7semi-solutions/7Semi-BMP58x-Pressure-Sensor.git",
+          "https://github.com/DFRobot/DFRobot_BMP58X"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Lightweight BMP58x driver for Arduino (I2C/SPI) with beginner-friendly defaults.",
+          "Read air pressure data (SKU:SEN0664/SEN0665/SEN0666/SEN0667)."
+        ]
+      },
+      {
+        "alias": "7semibno08x",
+        "target": "bno08x",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify BNO08X. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/7semi-solutions/7Semi-BNO08x-9-DOF-Orientation-IMU-Fusion.git",
+          "https://docs.circuitpython.org/projects/bno08x/en/latest/"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Minimal BNO08x IMU SHTP driver with pluggable I2C/SPI/UART transports.",
+          "BNO08X  9 Axis Sensor Fusion IMU"
+        ]
+      },
+      {
+        "alias": "7semihdc302x",
+        "target": "hdc302x",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify HDC302X. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/7semi-solutions/7Semi-HDC302x.git",
+          "https://docs.circuitpython.org/projects/hdc302x/en/latest/",
+          "https://github.com/ArtronShop/ArtronShop_HDC302x.git",
+          "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,hdc302x.html",
+          "https://esphome.io/components/sensor/hdc302x.html"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "High-accuracy temperature and humidity sensor driver for HDC302x.",
+          "HDC302x Temperature and Humidity Sensor",
+          "Arduino library of HDC302x Digital humidity and temperature sensor",
+          "Texas Instruments HDC302X Temperature and Humidity Sensor",
+          ""
+        ]
+      },
+      {
+        "alias": "7semists3x",
+        "target": "sts3x",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify STS3X. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/7semi-solutions/7Semi-STS3x.git",
+          "https://github.com/DFRobot/DFRobot_STS3X.git",
+          "https://github.com/Sensirion/arduino-i2c-sts3x.git",
+          "https://github.com/DFRobot/DFRobot_STS3X",
+          "https://esphome.io/components/sensor/sts3x.html"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Arduino library for the Sensirion STS3x digital temperature sensor.",
+          "This is a Library for STS3X, the function is to read temperature(SKU: SEN0434).",
+          "This is a Library for STS3X, the function is to read temperature(SKU: SEN0434).",
+          ""
+        ]
+      },
+      {
+        "alias": "7semists4x",
+        "target": "sts4x",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify STS4X. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/7semi-solutions/7Semi-STS4x.git",
+          "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,sts4x.html"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Arduino library for Sensirion STS4x digital temperature sensors over I2C.",
+          "Sensirion STS4x temperature sensor"
+        ]
+      },
+      {
+        "alias": "7semisht2x",
+        "target": "sht2x",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify SHT2X. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/7semi-solutions/7Semi-SHT2x.git"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Driver for Sensirion SHT2x Temperature and Humidity Sensor with CRC check and flexible I2C pin configuration."
+        ]
+      },
+      {
+        "alias": "7semitmp23x",
+        "target": "tmp23x",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify TMP23X. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/7semi-solutions/7Semi-TMP23x.git"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Arduino library for Texas Instruments TMP23x analog temperature sensors."
+        ]
+      },
+      {
+        "alias": "iotycoind4",
+        "target": "coind4",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify COIND4. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/coind4.py"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Driver for the COIN-D4 360 degree LiDAR."
+        ]
+      },
+      {
+        "alias": "iotydelta2d",
+        "target": "delta2d",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify DELTA2D. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/delta2d.py"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Driver for the Delta-2D 360 degree LiDAR."
+        ]
+      },
+      {
+        "alias": "iotylds02rr",
+        "target": "lds02rr",
+        "active": true,
+        "decision": "keep",
+        "reason": "Library/vendor prefix only; source description and repository identify LDS02RR. Family wildcards are retained; no concrete model is folded into its family.",
+        "evidence_urls": [
+          "https://github.com/QuirkyCort/IoTy/blob/main/public/extensions/lds02rr.py"
+        ],
+        "review_date": "2026-11-10",
+        "source_text": [
+          "Driver for the LDS02RR 360 degree LiDAR."
+        ]
+      },
+      {
+        "alias": "me3ch2chcl",
+        "target": "me3c2h3cl",
+        "active": true,
+        "decision": "keep",
+        "reason": "Maker title and Model row identify the existing precise model; merge the legacy URL-slug record into that stable ID.",
+        "evidence_urls": [
+          "https://www.winsen-sensor.com/product/me3-ch2chcl.html"
+        ],
+        "review_date": "2026-11-10"
+      },
+      {
+        "alias": "mrtd3011",
+        "target": "rttd721155",
+        "active": true,
+        "decision": "keep",
+        "reason": "Maker title and Model row identify the existing precise model; merge the legacy URL-slug record into that stable ID.",
+        "evidence_urls": [
+          "https://www.winsen-sensor.com/product/mrtd-3011.html"
+        ],
+        "review_date": "2026-11-10"
+      },
+      {
+        "alias": "zc401",
+        "target": "zc41",
+        "active": false,
+        "decision": "keep",
+        "reason": "Current maker title and Model row agree; retain published URL-based record ID.",
+        "evidence_urls": [
+          "https://www.winsen-sensor.com/product/zc41.html"
+        ],
+        "review_date": "2026-11-10"
+      },
+      {
+        "alias": "zp150",
+        "target": "zp510",
+        "active": false,
+        "decision": "keep",
+        "reason": "Current maker title and Model row agree; retain published URL-based record ID.",
+        "evidence_urls": [
+          "https://www.winsen-sensor.com/product/zp510.html"
+        ],
+        "review_date": "2026-11-10"
+      },
+      {
+        "alias": "vcnl4030",
+        "target": "vcnl4030x01",
+        "active": true,
+        "decision": "keep",
+        "reason": "CircuitPython driver implementation explicitly identifies VCNL4030X01; the abbreviated library name is not a separate model.",
+        "evidence_urls": [
+          "https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_VCNL4030/main/adafruit_vcnl4030.py",
+          "https://github.com/adafruit/Adafruit_VCNL4030.git"
+        ],
+        "review_date": "2026-11-10"
+      },
+      {
+        "alias": "l3gd20u",
+        "target": "l3gd20",
+        "active": true,
+        "decision": "keep",
+        "reason": "U denotes the Unified Sensor API wrapper for L3GD20; author README links both drivers for the same L3GD20 hardware.",
+        "evidence_urls": [
+          "https://raw.githubusercontent.com/adafruit/Adafruit_L3GD20_U/master/README.md"
+        ],
+        "review_date": "2026-11-10"
+      },
+      {
+        "alias": "qmc5583l",
+        "target": "qmc5883l",
+        "active": true,
+        "decision": "keep",
+        "reason": "QMC5583L is a transposed-digit typo in library prose. Title, public class, repository and QST part catalog identify QMC5883L. Maker: https://www.qstcorp.com/en_comp_prod/QMC5883L",
+        "evidence_urls": [
+          "https://raw.githubusercontent.com/mprograms/QMC5883LCompass/master/readme.md"
+        ],
+        "review_date": "2026-11-10"
+      }
+    ],
+    "normalized_name_collisions": [
+      {
+        "normalized_name": "ad8495",
+        "ids": [
+          "ad8494",
+          "ad8495"
+        ],
+        "decision": "Keep AD8494 and AD8495: separate concrete thermocouple-amplifier models; the shared library title caused the collision.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ]
+      },
+      {
+        "normalized_name": "bmp5xx",
+        "ids": [
+          "bmp580",
+          "bmp5xx"
+        ],
+        "decision": "Keep concrete BMP580 separate from BMP5xx driver family.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ]
+      },
+      {
+        "normalized_name": "fxas21002c",
+        "ids": [
+          "fxas210002c",
+          "fxas21002c"
+        ],
+        "decision": "Merge fxas210002c into existing fxas21002c: source repository and title show the extra-zero typo.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ]
+      },
+      {
+        "normalized_name": "hdc302x",
+        "ids": [
+          "hdc3020",
+          "hdc3022",
+          "hdc302x"
+        ],
+        "decision": "Keep concrete HDC3020 and HDC3022 separate from HDC302x family.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ]
+      },
+      {
+        "normalized_name": "icp101xx",
+        "ids": [
+          "icp10100",
+          "icp101xx"
+        ],
+        "decision": "Keep concrete ICP10100 separate from ICP101xx family.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ]
+      },
+      {
+        "normalized_name": "icp201xx",
+        "ids": [
+          "icp20100",
+          "icp201xx"
+        ],
+        "decision": "Keep concrete ICP20100 separate from ICP201xx family.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ]
+      },
+      {
+        "normalized_name": "lsm303",
+        "ids": [
+          "lsm303",
+          "lsm303dlh"
+        ],
+        "decision": "Keep LSM303 family and concrete LSM303DLH separate: broad LSM303 source combines DLHC, DLH and multi-variant drivers. DLH is not DLHC.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ]
+      },
+      {
+        "normalized_name": "ltr308",
+        "ids": [
+          "ltr308",
+          "ltr308als"
+        ],
+        "decision": "Keep separately: DFRobot README names LTR-308ALS-SYM, while the other library names LTR-308ALS-01; identical orderable variants are not established.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ],
+        "evidence_urls": [
+          "https://raw.githubusercontent.com/DFRobot/DFRobot_LTR308/master/README.md",
+          "https://github.com/dantudose/LTR308"
+        ]
+      },
+      {
+        "normalized_name": "max31855",
+        "ids": [
+          "max31855",
+          "max31855k"
+        ],
+        "decision": "Keep MAX31855 family separate from concrete K-thermocouple MAX31855K.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ]
+      },
+      {
+        "normalized_name": "mmc56x3",
+        "ids": [
+          "mmc5603",
+          "mmc56x3"
+        ],
+        "decision": "Keep concrete MMC5603 separate from MMC56x3 family (also MMC5613).",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ]
+      },
+      {
+        "normalized_name": "sgp4x",
+        "ids": [
+          "sgp40",
+          "sgp4x"
+        ],
+        "decision": "Keep concrete SGP40 separate from SGP4x family.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ]
+      },
+      {
+        "normalized_name": "tmp11x",
+        "ids": [
+          "tmp116",
+          "tmp11x"
+        ],
+        "decision": "Keep concrete TMP116 separate from TMP11x family.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ]
+      },
+      {
+        "normalized_name": "vcnl4030",
+        "ids": [
+          "vcnl4030",
+          "vcnl4030x01"
+        ],
+        "decision": "Merge abbreviated vcnl4030 into existing precise vcnl4030x01: CircuitPython driver explicitly identifies VCNL4030X01 hardware.",
+        "evidence_sources": [
+          "data/sensors/arduino.json",
+          "data/sensors/circuitpython.json",
+          "data/sensors/dfrobot.json",
+          "data/sensors/zephyr.json"
+        ],
+        "evidence_urls": [
+          "https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_VCNL4030/main/adafruit_vcnl4030.py"
+        ]
+      }
+    ],
+    "retained_not_part_candidate": {
+      "sd3031": "RTC with readable internal temperature sensor; retain temperature only."
+    },
+    "superseded_wrapper_field_evidence": {
+      "microfiresht3x": {
+        "type": null,
+        "source_url": null,
+        "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+        "unset_fields": [
+          "manufacturer",
+          "type",
+          "voltage",
+          "protocols"
+        ]
+      },
+      "bno08xrvc": {
+        "type": null,
+        "source_url": null,
+        "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+        "unset_fields": [
+          "manufacturer",
+          "type",
+          "voltage",
+          "protocols"
+        ]
+      },
+      "myld2410": {
+        "type": null,
+        "source_url": null,
+        "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+        "unset_fields": [
+          "manufacturer",
+          "type",
+          "voltage",
+          "protocols"
+        ]
+      }
+    },
+    "stable_module_ids": [
+      {
+        "id": "7semico2th",
+        "evidence": {
+          "url": "https://raw.githubusercontent.com/7semi-solutions/7Semi_CO2_Temperature_Humidity_I2C_Probe_Arduino_Library/main/README.md",
+          "text": "This is a real 7Semi CO2/temperature/humidity I2C probe, not a vendor-prefixed third-party chip. Keep its published module ID."
+        }
+      },
+      {
+        "id": "hlkfm22x",
+        "evidence": {
+          "url": "https://esphome.io/components/sensor/hlk_fm22x/",
+          "text": "Hi-Link FM22X face recognition module; keep the published module ID."
+        }
+      }
+    ],
+    "old_name_aliases": [
+      {
+        "query": "HLKLD2410",
+        "alias": "hlkld2410",
+        "target": "ld2410"
+      },
+      {
+        "query": "HLKLD2410B",
+        "alias": "hlkld2410b",
+        "target": "ld2410b"
+      },
+      {
+        "query": "HLKLD2410S",
+        "alias": "hlkld2410s",
+        "target": "ld2410s"
+      },
+      {
+        "query": "HRG15",
+        "alias": "hrg15",
+        "target": "rg15"
+      },
+      {
+        "query": "Omron D6F-PH",
+        "alias": "omrond6fph",
+        "target": "d6fph"
+      },
+      {
+        "query": "SNGCJA5",
+        "alias": "sngcja5",
+        "target": "gcja5"
+      },
+      {
+        "query": "PT19",
+        "alias": "pt19",
+        "target": "alspt19"
+      },
+      {
+        "query": "SPA06",
+        "alias": "spa06",
+        "target": "spa06003"
+      },
+      {
+        "query": "PM1",
+        "alias": "pm1",
+        "target": "bmv080"
+      },
+      {
+        "query": "MyLD2410",
+        "alias": "myld2410",
+        "target": "ld2410"
+      },
+      {
+        "query": "Microfire_SHT3x",
+        "alias": "microfiresht3x",
+        "target": "sht3x"
+      },
+      {
+        "query": "LSM303DLH-MAG",
+        "alias": "lsm303dlhmag",
+        "target": "lsm303dlhc"
+      },
+      {
+        "query": "LSM9DS0MFD",
+        "alias": "lsm9ds0mfd",
+        "target": "lsm9ds0"
+      },
+      {
+        "query": "LSM9DS1MAG",
+        "alias": "lsm9ds1mag",
+        "target": "lsm9ds1"
+      },
+      {
+        "query": "7SEMIBME68X",
+        "alias": "7semibme68x",
+        "target": "bme68x"
+      },
+      {
+        "query": "7SEMIBMP58X",
+        "alias": "7semibmp58x",
+        "target": "bmp58x"
+      },
+      {
+        "query": "7SEMIBNO08X",
+        "alias": "7semibno08x",
+        "target": "bno08x"
+      },
+      {
+        "query": "7SEMIHDC302X",
+        "alias": "7semihdc302x",
+        "target": "hdc302x"
+      },
+      {
+        "query": "7SEMISTS3X",
+        "alias": "7semists3x",
+        "target": "sts3x"
+      },
+      {
+        "query": "7SEMISTS4X",
+        "alias": "7semists4x",
+        "target": "sts4x"
+      },
+      {
+        "query": "7SEMISHT2X",
+        "alias": "7semisht2x",
+        "target": "sht2x"
+      },
+      {
+        "query": "7SEMITMP23X",
+        "alias": "7semitmp23x",
+        "target": "tmp23x"
+      },
+      {
+        "query": "IoTy coind4",
+        "alias": "iotycoind4",
+        "target": "coind4"
+      },
+      {
+        "query": "IoTy delta2d",
+        "alias": "iotydelta2d",
+        "target": "delta2d"
+      },
+      {
+        "query": "IoTy lds02rr",
+        "alias": "iotylds02rr",
+        "target": "lds02rr"
+      },
+      {
+        "query": "ME3-CH2CHCL",
+        "alias": "me3ch2chcl",
+        "target": "me3c2h3cl"
+      },
+      {
+        "query": "MRTD-3011",
+        "alias": "mrtd3011",
+        "target": "rttd721155"
+      },
+      {
+        "query": "L3GD20 U",
+        "alias": "l3gd20u",
+        "target": "l3gd20"
+      },
+      {
+        "query": "Adafruit L3GD20 U",
+        "alias": "adafruitl3gd20u",
+        "target": "l3gd20"
+      },
+      {
+        "query": "QMC5883LCompass",
+        "alias": "qmc5883lcompass",
+        "target": "qmc5883l"
+      },
+      {
+        "query": "QMC5883LCompass",
+        "alias": "qmc5883lcompass",
+        "target": "qmc5883l"
+      },
+      {
+        "query": "Omron D6F-PH Arduino Library",
+        "alias": "omrond6fpharduinolibrary",
+        "target": "d6fph"
+      },
+      {
+        "query": "Ambient Light Sensor - SMD (ALS-PT19)",
+        "alias": "ambientlightsensorsmdalspt19",
+        "target": "alspt19"
+      },
+      {
+        "query": "Seeed Arduino SPA06",
+        "alias": "seeedarduinospa06",
+        "target": "spa06003"
+      },
+      {
+        "query": "spa06",
+        "alias": "spa06",
+        "target": "spa06003"
+      },
+      {
+        "query": "Adafruit FXAS21002C",
+        "alias": "adafruitfxas21002c",
+        "target": "fxas21002c"
+      },
+      {
+        "query": "SparkFun BMV080 Arduino Library",
+        "alias": "sparkfunbmv080arduinolibrary",
+        "target": "bmv080"
+      },
+      {
+        "query": "lsm303dlh-mag",
+        "alias": "lsm303dlhmag",
+        "target": "lsm303dlhc"
+      },
+      {
+        "query": "7Semi_BME68x",
+        "alias": "7semibme68x",
+        "target": "bme68x"
+      },
+      {
+        "query": "7Semi BMP58x",
+        "alias": "7semibmp58x",
+        "target": "bmp58x"
+      },
+      {
+        "query": "7Semi BNO08x",
+        "alias": "7semibno08x",
+        "target": "bno08x"
+      },
+      {
+        "query": "7Semi HDC302x",
+        "alias": "7semihdc302x",
+        "target": "hdc302x"
+      },
+      {
+        "query": "7Semi STS3x",
+        "alias": "7semists3x",
+        "target": "sts3x"
+      },
+      {
+        "query": "7Semi STS4x",
+        "alias": "7semists4x",
+        "target": "sts4x"
+      },
+      {
+        "query": "7Semi SHT2x",
+        "alias": "7semisht2x",
+        "target": "sht2x"
+      },
+      {
+        "query": "7Semi TMP23x",
+        "alias": "7semitmp23x",
+        "target": "tmp23x"
+      }
+    ],
+    "validation": {
+      "requested_command": "uv run pytest tests/test_sensor_merge.py tests/test_sensor_db.py tests/test_sensor_recommend.py -q",
+      "local_integration_command": "uv run pytest tests/test_sensor_recommend.py -q -m integration",
+      "database_before_count": 1720,
+      "database_after_count": 1688,
+      "existing_records_merged": 31,
+      "records_excluded": 12,
+      "surviving_records_renamed": 68,
+      "introduced_records": 11,
+      "old_id_and_name_query_checks": 108,
+      "remaining_normalized_name_collisions": 0,
+      "requested_result": "687 passed, 12 deselected",
+      "local_integration_result": "12 passed"
+    }
+  },
+  "run4c": {
+    "review_date": "2026-11-10",
+    "aliases": [
+      {
+        "alias": "mmc5983",
+        "target": "mmc5983ma",
+        "active": true,
+        "decision": "merge",
+        "reason": "ESPHome MMC5983 documentation links the MMC5983MA maker datasheet; MicroPython driver uses the same address, identity register and scale.",
+        "evidence_urls": [
+          "https://esphome.io/components/sensor/mmc5983/"
+        ],
+        "evidence": {
+          "url": "https://esphome.io/components/sensor/mmc5983/",
+          "text": "# MMC5983 Magnetometer - ESPHome - Smart Home Made Simple\n\n[Skip to content](#_top)\n\n[![](https://esphome.io/_astro/logo-light.m0kM05OQ.svg)![](https://esphome.io/_astro/logo-dark.DAjdYWzy.svg)ESPHome - Smart Home Made Simple](/)[2026.10.2](/blog/2026/10/21/esphome-2026-10/ \"ESPHome 2026.10.2\")\n\nSearch`CtrlK`\n\nCancel\n\nSelect themeDarkLightAuto\n\n[Get started](/install/getting-started/)\n\n# MMC5983 Magnetometer\n\nThe `mmc5983` component allows you to use your MMC5983 triple-axis magnetometer ([datasheet](https://www.memsic.com/Public/Uploads/uploadfile/files/20220119/MMC5983MADatasheetRevA.pdf), [SparkFun](https://www.sparkfun.com/products/19921)) with ESPHome.\n\nThe [I²C Bus](/components/i2c) is required to be set up for this sensor to work. The device supports 400kHz\noperation, so you may specify up to `frequency: 400kHz` in your `i2c` configuration.\n\n![](https://esphome.io/images/mmc5983.jpg)\n\nMMC5983 Magnetometer.\n\n```\n# Example configuration entry\n\nsensor:\n\n- platform: mmc5983\n\nfield_strength_x:\n\nname: \"Field X\"\n\nfield_strength_y:\n\nid: \"field_y\"\n\ninternal: true\n\nfield_strength_z:\n\nname: \"Field Z\"\n\nfilters:\n\n- throttle: 120s\n\nupdate_interval: 60s\n```\n\n## Configuration variables\n\n[Section titled “Configuration variables”](#configuration-variables)\n\n- **field_strength_x** (*Optional*): The information for the X-axis field sensor. All options from\n  [Sensor](/components/sensor).\n- **field_strength_y** (*Optional*): The information for the Y-axis field sensor. All options from\n  [Sensor](/components/sensor).\n- **field_strength_z** (*Optional*): The information for the Z-axis field sensor. All options from\n  [Sensor](/components/sensor).\n- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor. Defaults to `60s`.\n\n## See Also\n\n[Section titled “See Also”](#see-also)\n\n- [Sensor Filters](/components/sensor/#sensor-filters)\n- [MMC5603 Magnetometer](/components/sensor/mmc5603/)\n- [SparkFun MMC5983MA Magnetometer Arduino Li"
+        },
+        "review_date": "2026-11-10"
+      },
+      {
+        "alias": "mq2lpg",
+        "target": "mq2",
+        "active": true,
+        "decision": "merge",
+        "reason": "Author README explicitly says it reads and calibrates the MQ-2 sensor; LPG is an application, not another model.",
+        "evidence_urls": [
+          "https://raw.githubusercontent.com/cakraawijaya/MQ2_LPG/main/README.md"
+        ],
+        "evidence": {
+          "url": "https://raw.githubusercontent.com/cakraawijaya/MQ2_LPG/main/README.md",
+          "text": "[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?style=flat)](https://github.com/ellerbrock/open-source-badges/)\n[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?logo=github&color=%23F7DF1E)](https://opensource.org/licenses/MIT)\n![GitHub last commit](https://img.shields.io/github/last-commit/cakraawijaya/MQ2_LPG?logo=Codeforces&logoColor=white&color=%23F7DF1E)\n![Project](https://img.shields.io/badge/Project-Library-light.svg?style=flat&logo=arduino&logoColor=white&color=%23F7DF1E)\n![Type](https://img.shields.io/badge/Type-Personal%20Experiment-light.svg?style=flat&logo=gitbook&logoColor=white&color=%23F7DF1E)\n\n# MQ2_LPG\nThis library is used to read the LPG gas data: propane (C3H8) and butane (C4H10) captured by the sensor.\n\n<br>\n\n## GENERAL INFORMATION\n<img src=\"extras/documentation/pinout/MQ2.jpg\" alt=\"mq2-sensor-pinout\"><br><br>\n• Creator: Devan Cakra M.W.\n\n• Datasheet: <a href=\"https://components101.com/sensors/mq2-gas-sensor\">Click Here</a>\n\n• How to calibrate the LPG part of the MQ-2 sensor: <a href=\"extras/articles/How To Calibration.md\">Click Here</a><br><br>\n\n• Available features:<br>\n  1. Support Arduino/ESP8266/ESP32.<br>\n  2. Dynamically calibrate MQ-2.<br>\n  3. Ability to read LPG gas data.<br>\n  4. Available information about LPG gas status.\n\n<br><br>\n\n## Appreciation\nIf this work is useful to you, then support this work as a form of appreciation to the author by clicking the ``` ⭐Star ``` button at the top of the repository.\n\n<br><br>\n\n## LICENSE\nMIT License - Copyright © 2023 - Devan C. M. Wijaya, S.Kom\n\nPermission is hereby granted without charge to any person obtaining a copy of this software and the software-related documentation files to deal in them without restriction, including without limitation the right to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons receiving the Software to be furnished therewith on the following terms:\n\nThe abov"
+        },
+        "review_date": "2026-11-10"
+      },
+      {
+        "alias": "gp2y0a21yk",
+        "target": "gp2y0a21yk0f",
+        "active": true,
+        "decision": "merge",
+        "reason": "SparkFun abbreviated GP2Y0A21YK product links the GP2Y0A21YK0F datasheet, identifying the complete Sharp model.",
+        "evidence_urls": [
+          "https://www.sparkfun.com/infrared-proximity-sensor-sharp-gp2y0a21yk.html"
+        ],
+        "evidence": {
+          "url": "https://www.sparkfun.com/infrared-proximity-sensor-sharp-gp2y0a21yk.html",
+          "text": "# Infrared Proximity Sensor - Sharp GP2Y0A21YK - SparkFun Electronics\nInfrared Proximity Sensor - Sharp GP2Y0A21YK\n![Infrared Proximity Sensor - Sharp GP2Y0A21YK](https://www.sparkfun.com/media/catalog/product/cache/f3020b7489dcfc4d1d147cf4dad07b7f/0/0/00242-1.jpg)\n# Infrared Proximity Sensor - Sharp GP2Y0A21YK\n**Product:** Infrared Proximity Sensor - Sharp GP2Y0A21YK\nInfrared proximity sensor made by Sharp. Part # GP2Y0A21YK has an analog output that varies from 3.1V at 10cm to 0.4V at 80cm. The sensor has a Japanese Solderless Terminal (JST) Connector. We recommend purchasing the related pigtail below or soldering wires directly to the back of the module.\n- [Datasheet](http://www.sparkfun.com/datasheets/Components/GP2Y0A21YK.pdf)\n- [Datasheet](https://cdn.sparkfun.com/assets/6/3/5/0/4/GP2Y0A21YK.pdf)\n![Infrared Proximity Sensor - Sharp GP2Y0A21YK](https://www.sparkfun.com/media/catalog/product/cache/df4360b598d6f0c75fa659693b376bad/0/0/00242-1.jpg)\nInfrared Proximity Sensor - Sharp GP2Y0A21YK"
+        },
+        "review_date": "2026-11-10"
+      }
+    ],
+    "exclusions": [
+      {
+        "id": "l3g",
+        "reason": "L3G is a Pololu software library for L3GD20H, L3GD20 and L3G4200D gyroscopes, not a physical sensor model.",
+        "evidence": {
+          "url": "https://raw.githubusercontent.com/pololu/l3g-arduino/master/README.md",
+          "text": "This is a library for an Arduino-compatible controller that interfaces with L3GD20H, L3GD20, and L3G4200D gyros on Pololu boards."
+        }
+      }
+    ],
+    "superseded_decisions": [
+      {
+        "alias": "mq2lpg",
+        "target": "mq2",
+        "active": true,
+        "decision": "remove",
+        "reason": "Generic LPG library description does not prove a single MQ-2 device.",
+        "evidence_urls": [
+          "https://github.com/cakraawijaya/MQ2_LPG.git"
+        ]
+      }
+    ],
+    "superseded_split_field_evidence": {
+      "mq2lpg": {
+        "type": null,
+        "source_url": null,
+        "notes": "No verified single-device sensing technology; leave unset rather than infer from measures or a sibling.",
+        "unset_fields": [
+          "manufacturer",
+          "type",
+          "voltage"
+        ]
+      }
+    }
+  }
+}

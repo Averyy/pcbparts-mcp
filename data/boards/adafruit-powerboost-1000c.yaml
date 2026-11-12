@@ -65,7 +65,7 @@ components:
   pin_count: 8
 - ref: L1
   value: 6.8uH
-  footprint: INDUCTOR
+  footprint: INDUCTOR_5X5MM_TDK_VLC5045
 - ref: LED1
   value: red LED
   footprint: 0805
@@ -121,7 +121,6 @@ components:
 - ref: R5
   value: 1kohm
   footprint: 0805
-  pullup: LED2.A
 - ref: R6
   value: 270kohm
   footprint: 0805
@@ -157,8 +156,8 @@ components:
   pin_count: 21
   nc_pins: {/PG: P$6}
 - ref: X1
-  value: 1x2 header
-  footprint: TERMBLOCK
+  value: 1x2 3.50mm screw terminal
+  footprint: TERMBLOCK_1X2
 nets:
 - name: 5.0V
   pins:

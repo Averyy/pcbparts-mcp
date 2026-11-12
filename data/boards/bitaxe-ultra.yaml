@@ -112,7 +112,7 @@ components:
   partno: EMK105BJ105MV-F
 - ref: C28
   value: 220uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x7.7
   digikey: 732-8422-1-ND
   partno: '865080345012'
 - ref: C29
@@ -262,13 +262,13 @@ components:
   partno: SK310A-LTP
 - ref: J1
   value: 54-00164
-  footprint: BarrelJack_Wuerth_694106106102
+  footprint: BarrelJack_Wuerth_694106106102_2.0x5.5
   digikey: 839-54-00164CT-ND
   partno: 54-00164
   pin_count: 3
 - ref: J2
-  value: 1x2 header
-  footprint: JST_XH_B2B-XH-A
+  value: JST XH 2-pin
+  footprint: JST_XH_B2B-XH-A_1x02
   digikey: 455-B2B-XH-A-ND
   partno: B2B-XH-A
 - ref: J4
@@ -285,8 +285,8 @@ components:
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J9
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm_SMD
   digikey: S5596-ND
   partno: NPTC041KFXC-RC
   pin_count: 4
@@ -422,6 +422,7 @@ components:
   footprint: RT9080-33GJ5
   digikey: 1028-1509-1-ND
   partno: RT9080-33GJ5
+  mpn: RT9080-33GJ5
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: U12
@@ -430,7 +431,11 @@ components:
   digikey: 1965-ESP32-S3-WROOM-1-N16R8CT-ND
   partno: ESP32-S3-WROOM-1-N16R8
   pin_count: 41
-  nc_pins: {GPIO4/TOUCH4/ADC1_CH3: '4', GPIO5/TOUCH5/ADC1_CH4: '5', GPIO6/TOUCH6/ADC1_CH5: '6', GPIO7/TOUCH7/ADC1_CH6: '7', GPIO8/TOUCH8/ADC1_CH7/SUBSPICS1: '12', '*GPIO46': '16', GPIO9/TOUCH9/ADC1_CH8/FSPIHD/SUBSPIHD: '17', GPIO13/TOUCH13/ADC2_CH2/FSPIQ/FSPIIO7/SUBSPIQ: '21', GPIO14/TOUCH14/ADC2_CH3/FSPIWP/FSPIDQS/SUBSPIWP: '22', GPIO21: '23', '*GPIO45': '26', SPIIO6/GPIO35/FSPID/SUBSPID: '28', SPIIO7/GPIO36/FSPICLK/SUBSPICLK: '29', SPIDQS/GPIO37/FSPIQ/SUBSPIQ: '30', GPIO38/FSPIWP/SUBSPIWP: '31', MTCK/GPIO39/CLK_OUT3/SUBSPICS1: '32', MTDO/GPIO40/CLK_OUT2: '33', MTDI/GPIO41/CLK_OUT1: '34', MTMS/GPIO42: '35'}
+  nc_pins: {GPIO4/TOUCH4/ADC1_CH3: '4', GPIO5/TOUCH5/ADC1_CH4: '5', GPIO6/TOUCH6/ADC1_CH5: '6', GPIO7/TOUCH7/ADC1_CH6: '7',
+    GPIO8/TOUCH8/ADC1_CH7/SUBSPICS1: '12', '*GPIO46': '16', GPIO9/TOUCH9/ADC1_CH8/FSPIHD/SUBSPIHD: '17', GPIO13/TOUCH13/ADC2_CH2/FSPIQ/FSPIIO7/SUBSPIQ: '21',
+    GPIO14/TOUCH14/ADC2_CH3/FSPIWP/FSPIDQS/SUBSPIWP: '22', GPIO21: '23', '*GPIO45': '26', SPIIO6/GPIO35/FSPID/SUBSPID: '28',
+    SPIIO7/GPIO36/FSPICLK/SUBSPICLK: '29', SPIDQS/GPIO37/FSPIQ/SUBSPIQ: '30', GPIO38/FSPIWP/SUBSPIWP: '31', MTCK/GPIO39/CLK_OUT3/SUBSPICS1: '32',
+    MTDO/GPIO40/CLK_OUT2: '33', MTDI/GPIO41/CLK_OUT1: '34', MTMS/GPIO42: '35'}
 - ref: U14
   value: BM1366
   footprint: BM1366
@@ -447,6 +452,7 @@ components:
   footprint: SOT-23-5
   partno: MCP1824T-1802E/OT
   digikey: MCP1824T-1802E/OTCT-ND
+  mpn: MCP1824T-1802E
   pin_count: 5
   nc_pins: {PG: '4'}
 - ref: U6
@@ -454,6 +460,7 @@ components:
   footprint: SOT-23-5
   partno: MCP1824T-0802E/OT
   digikey: MCP1824T-0802E/OTCT-ND
+  mpn: MCP1824T-0802E
   pin_count: 5
   nc_pins: {PG: '4'}
 - ref: U7

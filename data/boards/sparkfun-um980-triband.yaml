@@ -185,45 +185,46 @@ components:
   footprint: 1x09
   pin_count: 9
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-3
   description: 3-pole Solder Jumper, pins 1+2 closed/bridged
   pin_count: 3
 - ref: JP2
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper, 2-pole, closed/bridged
 - ref: JP3
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper, 2-pole, closed/bridged
 - ref: JP4
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper, 2-pole, closed/bridged
 - ref: JP5
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper, 2-pole, closed/bridged
 - ref: JP6
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-3
   description: 3-pole Solder Jumper, pins 1+2 closed/bridged
   pin_count: 3
 - ref: JP7
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper, 2-pole, closed/bridged
 - ref: JP8
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper, 2-pole, closed/bridged
 - ref: L1
   value: 68nH
   footprint: '0402'
+  current: 200mA
   prod_id: NDUC-15356
 - ref: L2
-  value: ferrite bead
+  value: 30R@100MHz
   footprint: '0603'
   prod_id: NDUC-07859
 - ref: R1
@@ -333,6 +334,7 @@ components:
   footprint: SOT-23-6
   prod_id: IC-13538
   description: Very low capacitance ESD protection diode, 4 data-line, SOT-23-6
+  mpn: DT1042-04SO
   pin_count: 6
   nc_pins: {I/O1: '1', I/O2: '3'}
 - ref: U2
@@ -347,7 +349,9 @@ components:
   footprint: UM980
   prod_id: GPS-19527
   pin_count: 102
-  nc_pins: {ANT_DETECT: '4', ANT_OFF: '5', nANT_SHORT: '6', SPI_nCS: '8', SPI_PICO: '9', SPI_CLK: '10', SPI_POCI: '11', NC@13: '13', NC@15: '15', NC@16: '16', NC@17: '17', NC@18: '18', NC@22: '22', NC@23: '23', NC@24: '24', NC@25: '25', NC@35: '35', NC@38: '38', NC@39: '39', NC@40: '40', SDA: '44', SCL: '45', NC@46: '46', NC@47: '47', NC@50: '50', NC@52: '52', NC@54: '54'}
+  nc_pins: {ANT_DETECT: '4', ANT_OFF: '5', nANT_SHORT: '6', SPI_nCS: '8', SPI_PICO: '9', SPI_CLK: '10', SPI_POCI: '11', NC@13: '13',
+    NC@15: '15', NC@16: '16', NC@17: '17', NC@18: '18', NC@22: '22', NC@23: '23', NC@24: '24', NC@25: '25', NC@35: '35', NC@38: '38',
+    NC@39: '39', NC@40: '40', SDA: '44', SCL: '45', NC@46: '46', NC@47: '47', NC@50: '50', NC@52: '52', NC@54: '54'}
 - ref: U8
   value: CH340C
   footprint: SO-16

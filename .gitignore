@@ -12,7 +12,7 @@ eggs/
 .eggs/
 lib/
 lib64/
-parts/
+/parts/
 sdist/
 var/
 wheels/
@@ -84,3 +84,7 @@ data/*.db.tmp
 # EasyEDA seed builder progress (scripts/build_easyeda_seed.py)
 data/easyeda/seed_state.json
 data/easyeda/*.tmp
+
+# The committed catalog: its directory names come from JLCPCB category names, so no pattern above
+# (lib/, var/, ...) may hide a file under it. git add skips ignored files without a word.
+!/data/catalog/**

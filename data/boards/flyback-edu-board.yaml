@@ -2,7 +2,7 @@ name: Flyback Edu Board
 slug: flyback-edu-board
 source: westonb/flyback-edu-board
 format: kicad6
-description: "Isolated flyback DC-DC converter (12–36V→5V), UC3843B current-mode control"
+description: "Isolated flyback DC-DC converter (12\u201336V\u21925V), UC3843B current-mode control"
 tags: [isolation, power-supply]
 key_ics: [UC3843BD1013TR, LTV-356T-B, TL431, TS555IDTTR]
 outline:
@@ -19,49 +19,61 @@ components:
   value: 4.7uF
   footprint: '0603'
   mpn: CL10A475KO8NNNC
+  lcsc: C19666
 - ref: C12
   value: 100uF
   footprint: CP_Radial_D8.0mm_P3.50mm
   mpn: 50ZLH100MEFC8X11.5
+  lcsc: C109393
 - ref: C13
   value: 39nF
   footprint: '0603'
   mpn: CC0603KRX7R9BB393
+  lcsc: C107091
 - ref: C14
   value: 22nF
   footprint: '0603'
   mpn: CL10B223KB8NNNC
+  lcsc: C21122
 - ref: C15
   value: 100uF
   footprint: CP_Radial_D8.0mm_P3.50mm
   mpn: 50ZLH100MEFC8X11.5
+  lcsc: C109393
 - ref: C16
   value: 1nF
   footprint: '1206'
+  lcsc: C9196
   mpn: 1206B102K202NT
 - ref: C17
   value: 1.5nF
   footprint: '0603'
   mpn: 0603B152K500NT
+  lcsc: C1595
 - ref: C19
   value: 4.7uF
   footprint: 0805
+  lcsc: C1779
   mpn: CL21A475KAQNNNE
 - ref: C2
   value: 4.7uF
   footprint: 0805
   mpn: CL21A475KAQNNNE
+  lcsc: C1779
 - ref: C20
   value: 220nF
   footprint: '0603'
   mpn: GCM188R71H224KA64D
+  lcsc: C97857
 - ref: C22
   value: 680uF
   footprint: CP_Radial_D8.0mm_P3.50mm
   mpn: 16ZLH680MEFC8X16
+  lcsc: C88760
 - ref: C23
   value: 3.3nF
   footprint: '0603'
+  lcsc: C1613
   mpn: CL10B332KB8NNNC
 - ref: C25
   value: 4.7uF
@@ -69,378 +81,451 @@ components:
 - ref: C26
   value: 470nF
   footprint: '0603'
+  lcsc: C1623
   mpn: CL10B474KA8NNNC
 - ref: C27
   value: 4.7uF
   footprint: 0805
   mpn: CL21A475KAQNNNE
+  lcsc: C1779
 - ref: C3
   value: 470nF
   footprint: '0603'
+  lcsc: C1623
   mpn: CL10B474KA8NNNC
 - ref: C4
   value: 3.3nF
   footprint: '0603'
+  lcsc: C1613
   mpn: CL10B332KB8NNNC
 - ref: C8
   value: 470pF
   footprint: '0603'
+  lcsc: C1620
   mpn: 0603B471K500NT
 - ref: C9
   value: 1uF
   footprint: 0805
   mpn: CL21B105KBFNNNE
+  lcsc: C28323
 - ref: D1
   value: BAT46WJ
   footprint: SOD-323
   mpn: BAT46WJ,115
+  lcsc: C114696
 - ref: D10
   value: LED
   footprint: '0603'
+  lcsc: C72038
   mpn: 19-213/Y2C-CQ2R2L/3T(CY)
 - ref: D11
   value: SMAJ6.0CA
   footprint: SMA
   mpn: SMAJ6.0CA
+  lcsc: C10759
 - ref: D12
   value: BAT46WJ
   footprint: SOD-323
   mpn: BAT46WJ,115
+  lcsc: C114696
 - ref: D2
   value: BAT46WJ
   footprint: SOD-323
   mpn: BAT46WJ,115
+  lcsc: C114696
 - ref: D3
   value: MMSZ15T1G
   footprint: SOD-123
   mpn: MMSZ15T1G
+  lcsc: C27754
 - ref: D4
   value: LED
   footprint: '0603'
+  lcsc: C72038
   mpn: 19-213/Y2C-CQ2R2L/3T(CY)
 - ref: D5
   value: SMAJ36CA
   footprint: SMA
   mpn: SMAJ36CA/TR13
+  lcsc: C87270
 - ref: D6
   value: STPS2H100A
   footprint: SMA
   mpn: STPS2H100A
+  lcsc: C81548
 - ref: D7
   value: LED
   footprint: '0603'
+  lcsc: C72038
   mpn: 19-213/Y2C-CQ2R2L/3T(CY)
 - ref: D8
   value: BAT46WJ
   footprint: SOD-323
   mpn: BAT46WJ,115
+  lcsc: C114696
 - ref: D9
   value: B340AE-13
   footprint: SMA
   mpn: B340AE-13
+  lcsc: C168859
 - ref: F1
   value: 1.85A
   footprint: '2920'
   mpn: ASMD2920-185
+  lcsc: C135379
 - ref: F2
   value: 2.6A
   footprint: '1812'
   mpn: SMD1812P260TF/16
+  lcsc: C20814
 - ref: J1
   value: 3.5mm Terminal Plug
-  footprint: Terminal-block-plug
+  footprint: Terminal-block-plug_2x1
+  lcsc: C880572
   mpn: XY2500R-G-3.5-2P
 - ref: J2
   value: USB-A
   footprint: USB_A_Stewart_SS-52100-001_Horizontal
+  lcsc: C42643
   mpn: 902-141A1011D10100
   pin_count: 5
 - ref: J3
   value: 3.5mm Terminal Plug
-  footprint: Terminal-block-plug
+  footprint: Terminal-block-plug_2x1
+  lcsc: C880572
   mpn: XY2500R-G-3.5-2P
-- ref: J4
-  value: JLC_TOOLING
-  footprint: JLC_TOOLING_HOLE
-- ref: J5
-  value: JLC_TOOLING
-  footprint: JLC_TOOLING_HOLE
-- ref: J6
-  value: JLC_TOOLING
-  footprint: JLC_TOOLING_HOLE
-- ref: J7
-  value: JLC_TOOLING
-  footprint: JLC_TOOLING_HOLE
 - ref: Q1
   value: MMBT3904
   footprint: SOT-23
+  lcsc: C20526
   mpn: MMBT3904
   pin_count: 3
 - ref: Q10
   value: AO3400A
   footprint: SOT-23
   mpn: AO3400A
+  lcsc: C20917
   pin_count: 3
 - ref: Q2
   value: SS8550
   footprint: SOT-23
+  lcsc: C8542
   mpn: SS8550
   pin_count: 3
 - ref: Q3
   value: MMBT3904
   footprint: SOT-23
+  lcsc: C20526
   mpn: MMBT3904
   pin_count: 3
 - ref: Q4
   value: SS8550
   footprint: SOT-23
+  lcsc: C8542
   mpn: SS8550
   pin_count: 3
 - ref: Q5
   value: 2SD1767
   footprint: SOT-89-3
+  lcsc: C24250
   mpn: 2SD1767T100Q
   pin_count: 3
 - ref: Q6
   value: SS8550
   footprint: SOT-23
+  lcsc: C8542
   mpn: SS8550
   pin_count: 3
 - ref: Q7
   value: MMBT3904
   footprint: SOT-23
+  lcsc: C20526
   mpn: MMBT3904
   pin_count: 3
 - ref: Q8
   value: IRFR120N
   footprint: TO-252
   mpn: IRFR120NTRPBF
+  lcsc: C3008
   pin_count: 3
 - ref: Q9
   value: AO3400A
   footprint: SOT-23
   mpn: AO3400A
+  lcsc: C20917
   pin_count: 3
 - ref: R1
   value: 470ohm
   footprint: '0603'
+  lcsc: C23179
   mpn: 0603WAF4700T5E
 - ref: R10
   value: 2.2kohm
   footprint: '0603'
+  lcsc: C4190
   mpn: 0603WAF2201T5E
   pulldown: Q6.C
 - ref: R11
   value: 2.2kohm
   footprint: '0603'
+  lcsc: C4190
   mpn: 0603WAF2201T5E
 - ref: R12
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   mpn: 0603WAF1001T5E
 - ref: R13
   value: 22ohm
   footprint: '0603'
   mpn: 0603WAF220JT5E
+  lcsc: C23345
 - ref: R14
   value: 470ohm
   footprint: '0603'
+  lcsc: C23179
   mpn: 0603WAF4700T5E
 - ref: R15
   value: 0ohm
   footprint: '1206'
+  lcsc: C17888
   mpn: 1206W4F0000T5E
 - ref: R16
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   mpn: 0603WAF1002T5E
 - ref: R17
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   mpn: 0603WAF1002T5E
 - ref: R18
   value: 750mohm
   footprint: '1206'
   mpn: FRL1206FR750TS
+  lcsc: C2907360
 - ref: R19
   value: 750mohm
   footprint: '1206'
+  lcsc: C2907360
   mpn: FRL1206FR750TS
 - ref: R2
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   mpn: 0603WAF1002T5E
 - ref: R20
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   mpn: 0603WAF1002T5E
 - ref: R22
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   mpn: 0603WAF1001T5E
   pulldown: U3.3
 - ref: R24
   value: 4.7kohm
   footprint: '0603'
+  lcsc: C23162
   mpn: 0603WAF4701T5E
   pulldown: /VFB_DIR
 - ref: R25
   value: 27kohm
   footprint: '0603'
   mpn: 0603WAF2702T5E
+  lcsc: C22967
 - ref: R26
   value: 4.7kohm
   footprint: '0603'
+  lcsc: C23162
   mpn: 0603WAF4701T5E
 - ref: R27
   value: 100mohm
   footprint: '1206'
   mpn: 1206W4F100LT5E
+  lcsc: C25334
 - ref: R28
   value: 22ohm
   footprint: '0603'
+  lcsc: C23345
   mpn: 0603WAF220JT5E
 - ref: R29
   value: 330ohm
   footprint: '0603'
+  lcsc: C23138
   mpn: 0603WAF3300T5E
 - ref: R3
   value: 27kohm
   footprint: '0603'
+  lcsc: C22967
   mpn: 0603WAF2702T5E
 - ref: R30
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   mpn: 0603WAF1002T5E
 - ref: R31
   value: 0ohm
   footprint: '1206'
+  lcsc: C17888
   mpn: 1206W4F0000T5E
 - ref: R32
   value: 0ohm
   footprint: '1206'
+  lcsc: C17888
   mpn: 1206W4F0000T5E
 - ref: R34
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   mpn: 0603WAF1001T5E
 - ref: R35
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   mpn: 0603WAF1001T5E
 - ref: R36
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   mpn: 0603WAF1001T5E
 - ref: R37
   value: 4.7kohm
   footprint: '0603'
+  lcsc: C23162
   mpn: 0603WAF4701T5E
 - ref: R38
   value: 3kohm
   footprint: '0603'
+  lcsc: C4211
   mpn: 0603WAF3001T5E
   pulldown: U5.REF
 - ref: R39
   value: 22ohm
   footprint: '0603'
+  lcsc: C23345
   mpn: 0603WAF220JT5E
 - ref: R4
   value: 470ohm
   footprint: '0603'
+  lcsc: C23179
   mpn: 0603WAF4700T5E
 - ref: R40
   value: 3kohm
   footprint: '0603'
+  lcsc: C4211
   mpn: 0603WAF3001T5E
 - ref: R41
   value: 3kohm
   footprint: '0603'
+  lcsc: C4211
   mpn: 0603WAF3001T5E
   pulldown: U4.REF
 - ref: R42
   value: 22ohm
   footprint: '0603'
+  lcsc: C23345
   mpn: 0603WAF220JT5E
 - ref: R43
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   mpn: 0603WAF1001T5E
 - ref: R44
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   mpn: 0603WAF1002T5E
   pulldown: /STEP_OUT_SW
 - ref: R46
   value: 5.1ohm
   footprint: Axial
   mpn: "MOF2WS-5.1\u03A9\xB15% T"
+  lcsc: C121605
 - ref: R47
   value: 5.1ohm
   footprint: Axial
   mpn: "MOF2WS-5.1\u03A9\xB15% T"
+  lcsc: C121605
 - ref: R48
   value: 330ohm
   footprint: '0603'
+  lcsc: C23138
   mpn: 0603WAF3300T5E
 - ref: R49
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   mpn: 0603WAF1002T5E
   pulldown: /LOAD_SW
 - ref: R5
   value: 2.2kohm
   footprint: '0603'
+  lcsc: C4190
   mpn: 0603WAF2201T5E
   pulldown: Q2.C
 - ref: R50
   value: 5.1ohm
   footprint: Axial
   mpn: "MOF2WS-5.1\u03A9\xB15% T"
+  lcsc: C121605
 - ref: R51
   value: 5.1ohm
   footprint: Axial
   mpn: "MOF2WS-5.1\u03A9\xB15% T"
+  lcsc: C121605
 - ref: R52
   value: 4.7kohm
   footprint: '0603'
+  lcsc: C23162
   mpn: 0603WAF4701T5E
 - ref: R6
   value: 2.2kohm
   footprint: '0603'
+  lcsc: C4190
   mpn: 0603WAF2201T5E
 - ref: R7
   value: 2.2kohm
   footprint: '0603'
+  lcsc: C4190
   mpn: 0603WAF2201T5E
 - ref: R8
   value: 470ohm
   footprint: '0603'
+  lcsc: C23179
   mpn: 0603WAF4700T5E
 - ref: R9
   value: 2.2kohm
   footprint: '0603'
+  lcsc: C4190
   mpn: 0603WAF2201T5E
 - ref: SW1
   value: switch
   footprint: Switch_DPDT_OS202011MS2QS1
+  lcsc: C609823
   mpn: SS22D03L5
   pin_count: 7
 - ref: SW2
   value: switch
   footprint: Switch_DPDT_OS202011MS2QS1
+  lcsc: C609823
   mpn: SS22D03L5
   pin_count: 7
   nc_pins: {A@4: '4', B@5: '5', C@6: '6'}
 - ref: SW3
   value: switch
   footprint: Switch_DPDT_OS202011MS2QS1
+  lcsc: C609823
   mpn: SS22D03L5
   pin_count: 7
   nc_pins: {A@4: '4', B@5: '5', C@6: '6'}
 - ref: T1
   value: HR051142
   footprint: Transformer_POE13P
+  lcsc: C55680
   mpn: HR051142
   pin_count: 10
   nc_pins: {Bias_M: '1', BIAS_P: '2', '5': '5', '6': '6'}
@@ -448,38 +533,44 @@ components:
   value: UC3843BD1013TR
   footprint: SO-8
   mpn: UC3843BD1013TR
+  lcsc: C92746
   pin_count: 8
 - ref: U2
   value: LTV-356T-B
   footprint: SO-4
   mpn: LTV-356T-B
+  lcsc: C10804
   pin_count: 4
 - ref: U3
   value: LTV-356T-B
   footprint: SO-4
   mpn: LTV-356T-B
+  lcsc: C10804
   pin_count: 4
 - ref: U4
   value: TL431
   footprint: SOT-23
   mpn: TL431AFDT,215
+  lcsc: C97758
   pin_count: 3
 - ref: U5
   value: TL431
   footprint: SOT-23
   mpn: TL431AFDT,215
+  lcsc: C97758
   pin_count: 3
 - ref: U6
   value: TS555IDTTR
   footprint: SOIC-8
   mpn: TS555IDTTR
+  lcsc: C880084
   pin_count: 8
   nc_pins: {DIS: '7'}
 nets:
 - name: /COMP
   pins: [Q4.E, Q6.E, R11.1, SW1.B@5, U1.COMP]
 - name: /COMP_DIR
-  pins: [C14.2, C17.2, R23.2, SW1.C@6]
+  pins: [C14.2, C17.2, SW1.C@6]
 - name: /COMP_OPTO
   pins: [R17.2, SW1.A@4]
 - name: /ISENSE
@@ -497,25 +588,15 @@ nets:
 - name: /VFB
   pins: [SW1.B@2, U1.VFB]
 - name: /VFB_DIR
-  pins: [C17.1, R23.1, R24.1, R25.1, R26.2, SW1.C@3]
+  pins: [C17.1, R24.1, R25.1, R26.2, SW1.C@3]
 - name: /VFB_OPTO
   pins: [R17.1, R20.2, SW1.A@1]
 - name: /VIN
-  pins:
-  - C10.1
-  - C12.1
-  - C15.1
-  - C9.1
-  - D2.A
-  - L1.2
-  - R15.2
-  - T1.Pri_M
+  pins: [C12.1, C15.1, C9.1, D2.A, R15.2, T1.Pri_M]
 - name: /VOUT
   pins:
   - C19.1
-  - C21.1
   - C22.1
-  - C24.1
   - D11.A2
   - D12.A
   - D9.K
@@ -523,7 +604,6 @@ nets:
   - J2.VBUS
   - R30.2
   - R31.1
-  - R33.1
   - R37.2
   - R39.1
   - R43.2
@@ -531,7 +611,7 @@ nets:
   - R50.1
   - U2.1
 - name: /VOUT_FILT
-  pins: [C27.1, R45.1, R48.2, SW3.A@1, U6.R, U6.VCC]
+  pins: [C27.1, R48.2, SW3.A@1, U6.R, U6.VCC]
 - name: /VREF
   pins:
   - C3.1
@@ -549,7 +629,6 @@ nets:
 - name: GND
   pins:
   - C1.2
-  - C10.2
   - C12.2
   - C13.2
   - C15.2
@@ -557,9 +636,6 @@ nets:
   - C2.2
   - C3.2
   - C4.2
-  - C5.2
-  - C6.2
-  - C7.2
   - C8.2
   - C9.2
   - D3.A
@@ -584,10 +660,8 @@ nets:
   pins:
   - C16.2
   - C19.2
-  - C21.2
   - C22.2
   - C23.2
-  - C24.2
   - C25.1
   - C26.1
   - C27.2
@@ -617,28 +691,16 @@ nets:
   pins: [R34.1, U5.K]
 - name: Net-(C1-Pad1)
   pins: [C1.1, D1.A, Q4.B, R3.2]
-- name: Net-(C11-Pad1)
-  pins: [C11.1, R21.1]
 - name: Net-(C11-Pad2)
-  pins: [C11.2, Q8.S, R14.1, R16.1, R18.2, R19.2]
+  pins: [Q8.S, R14.1, R16.1, R18.2, R19.2]
 - name: Net-(C13-Pad1)
   pins: [C13.1, R20.1, R22.2, U3.3]
 - name: Net-(C14-Pad1)
   pins: [C14.1, R25.2]
-- name: Net-(C18-Pad2)
-  pins: [C18.2, R33.2]
 - name: Net-(C2-Pad1)
   pins: [C2.1, Q5.E, U1.VCC]
 - name: Net-(C5-Pad1)
-  pins:
-  - C5.1
-  - C6.1
-  - C7.1
-  - D5.A2
-  - D6.K
-  - F1.2
-  - L1.1
-  - R15.1
+  pins: [D5.A2, D6.K, F1.2, R15.1]
 - name: Net-(D10-Pad2)
   pins: [D10.A, R43.1]
 - name: Net-(D12-Pad1)
@@ -694,7 +756,7 @@ nets:
 - name: OUT
   pins: [D8.K, R13.1, U1.OUT]
 - name: Pri_P
-  pins: [Q8.D, R21.2, T1.Pri_P]
+  pins: [Q8.D, T1.Pri_P]
 - name: REF
   pins: [C23.1, R37.1, R38.2, U5.REF]
 - name: REF_2
@@ -702,9 +764,9 @@ nets:
 - name: SEC_M
   pins: [R27.1, T1.SEC_M@10, T1.SEC_M@9]
 - name: SEC_P
-  pins: [C18.1, D9.A, T1.SEC_P@7, T1.SEC_P@8]
+  pins: [D9.A, T1.SEC_P@7, T1.SEC_P@8]
 - name: TR
-  pins: [C25.2, R45.2, R52.2, U6.THR, U6.TR]
+  pins: [C25.2, R52.2, U6.THR, U6.TR]
 positions:
 - ref: C1
   x: 160.5
@@ -836,18 +898,6 @@ positions:
   x: 232.5
   y: 64.0
   rot: -90.0
-- ref: J4
-  x: 236.25
-  y: 51.75
-- ref: J5
-  x: 235.0
-  y: 128.5
-- ref: J6
-  x: 145.0
-  y: 126.0
-- ref: J7
-  x: 152.0
-  y: 43.0
 - ref: Q1
   x: 177.75
   y: 101.0

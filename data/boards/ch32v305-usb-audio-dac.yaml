@@ -175,6 +175,7 @@ components:
   height: '0.9'
   manufacturer: ESS Technology
   mpn: ES9018K2M
+  mouser: 460-ES9018K2M
   description: Digital to Analog Converters - DAC Sabre 32 Reference Stereo low power
   pin_count: 29
   nc_pins: {N.C._1: '2', XO: '6', N.C._2: '19', N.C._3: '22', GPIO2: '23', GPIO1: '24'}
@@ -183,6 +184,7 @@ components:
   footprint: SM07B-SRSS-TB
   manufacturer: JST (JAPAN SOLDERLESS TERMINALS)
   mpn: SM07B-SRSS-TB (LF)(SN)
+  arrow: SM07B-SRSS-TB (LF)(SN)
   description: JST SH Series, 1mm Pitch 7 Way 1 Row Right Angle PCB Header, Solder
   pin_count: 7
   nc_pins: {'1': '1', '2': '2', '6': '6', '7': '7'}
@@ -192,9 +194,19 @@ components:
   description: USB 2.0-only 16P Type-C Receptacle connector
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
+- ref: PJ1
+  value: PJ-327A_C22355751
+  footprint: AUDIO-IN-SMD_PJ-327A_C22355751
+  mpn: PJ-327A
+  manufacturer: "SOFNG(\u7855\u65B9)"
+  lcsc: C22355751
+  description: "\u8FDE\u63A5\u5668\u7C7B\u578B:3.5mm\u8033\u673A\u5EA7;\u989D\u5B9A\u7535\u6D41:250mA;\u989D\u5B9A\u7535\u538B\
+    :12V;\u5DE5\u4F5C\u6E29\u5EA6\u8303\u56F4:-35\xB0C~+75\xB0C;"
+  pin_count: 5
+  nc_pins: {'4': '4'}
 - ref: PS1
   value: SGM3204YN6G
-  footprint: SOT-6
+  footprint: SOT95P280X125-6N
   height: '1.25'
   manufacturer: SGMICRO
   mpn: SGM3204YN6G/TR
@@ -238,7 +250,6 @@ components:
   value: 10kohm
   footprint: '0603'
   description: Resistor, small symbol
-  pullup: D3.A
 - ref: R2
   value: 5.1kohm
   footprint: '0603'
@@ -682,6 +693,10 @@ positions:
   x: 86.8
   y: 30.32
   rot: -90.0
+- ref: PJ1
+  x: 147.41
+  y: 30.62
+  rot: 180.0
 - ref: PS1
   x: 108.28
   y: 38.3

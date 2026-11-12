@@ -18,43 +18,43 @@ components:
 - ref: C1
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C100
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C101
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C102
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C103
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C104
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C105
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C106
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C107
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C108
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C11
   value: 100nF
   footprint: '0402'
@@ -62,168 +62,196 @@ components:
 - ref: C111
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C114
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C117
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C12
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C120
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C123
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C13
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C15
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C17
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C18
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C19
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C2
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C21
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C23
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C24
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C26
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C27
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C3
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C31
   value: 10uF
   footprint: '1210'
+  voltage: 100V
 - ref: C35
   value: 10uF
   footprint: '1210'
+  voltage: 100V
 - ref: C36
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C40
   value: 4.7uF
   footprint: '0402'
+  voltage: 6.3V
   mpn: V475M0603X5R6R3NDT
 - ref: C41
   value: 100nF
   footprint: '0402'
+  voltage: 6.3V
   mpn: CGA0603X7R104K500JT
 - ref: C42
   value: 100nF
   footprint: '0402'
+  voltage: 6.3V
   mpn: CGA0603X7R104K500JT
 - ref: C47
   value: 100nF
   footprint: '0402'
+  voltage: 6.3V
   mpn: CGA0603X7R104K500JT
   description: Unpolarized capacitor, small symbol
 - ref: C49
   value: 10nF
   footprint: '0402'
+  voltage: 5V
   mpn: CSA0603X7R103K500JT
   description: Unpolarized capacitor, small symbol
 - ref: C55
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C58
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C6
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C60
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C62
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C63
   value: 100nF
   footprint: '0402'
+  voltage: 5V
 - ref: C64
   value: 4.7uF
   footprint: '0402'
+  voltage: 6.3V
   mpn: V475M0603X5R6R3NDT
 - ref: C65
   value: 4.7uF
   footprint: '0402'
+  voltage: 6.3V
   mpn: V475M0603X5R6R3NDT
 - ref: C67
   value: 10nF
   footprint: '0402'
+  voltage: 5V
   mpn: CSA0603X7R103K500JT
   description: Unpolarized capacitor, small symbol
 - ref: C68
   value: 10nF
   footprint: '0402'
+  voltage: 5V
   mpn: CSA0603X7R103K500JT
   description: Unpolarized capacitor, small symbol
 - ref: C69
   value: 10nF
   footprint: '0402'
+  voltage: 5V
   mpn: CSA0603X7R103K500JT
   description: Unpolarized capacitor, small symbol
 - ref: C7
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C71
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C72
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C75
   value: 100nF
   footprint: '0603'
+  voltage: 100V
   mpn: CGA0603X7R104K101JT
 - ref: C76
   value: 2.2nF
@@ -232,58 +260,60 @@ components:
 - ref: C77
   value: 100nF
   footprint: '0402'
+  voltage: 5V
 - ref: C78
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C79
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C8
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C80
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C81
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C82
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C86
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C87
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C88
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C89
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C9
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C90
   value: 4.7uF
   footprint: '0402'
+  voltage: 6.3V
   mpn: V475M0603X5R6R3NDT
 - ref: C91
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C92
   value: 20pF
   footprint: '0402'
@@ -291,62 +321,71 @@ components:
 - ref: C93
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C94
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C95
   value: 10nF
   footprint: '0402'
+  voltage: 5V
   mpn: CSA0603X7R103K500JT
   description: Unpolarized capacitor, small symbol
 - ref: C96
   value: 10nF
   footprint: '0402'
+  voltage: 5V
   mpn: CSA0603X7R103K500JT
   description: Unpolarized capacitor, small symbol
 - ref: C97
   value: 10nF
   footprint: '0402'
+  voltage: 5V
   mpn: CSA0603X7R103K500JT
   description: Unpolarized capacitor, small symbol
 - ref: C98
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: C99
   value: 10uF
   footprint: '1210'
-  mpn: FS32X475K101EGG
+  voltage: 100V
 - ref: D13
   value: 5V
   footprint: '0402'
+  current: 1A
   mpn: 0603ESDA-05N
   description: Bidirectional transient-voltage-suppression diode, small symbol
 - ref: D16
   value: 5V
   footprint: '0402'
+  current: 1A
   mpn: 0603ESDA-05N
   description: Bidirectional transient-voltage-suppression diode, small symbol
 - ref: D18
   value: 6V
   footprint: SOD-882
+  current: 1A
   mpn: MMSZ5233BS-7-F
   description: Zener diode, filled shape
 - ref: D19
   value: 100V
   footprint: SOD-123F
+  current: 1A
   mpn: SZ4582
   description: Zener diode, filled shape
 - ref: D29
   value: 6V
   footprint: SOD-882
+  current: 1A
   mpn: MMSZ5233BS-7-F
   description: Zener diode, small symbol, filled shape
 - ref: D32
   value: 6V
   footprint: SOD-882
+  current: 1A
   mpn: MMSZ5233BS-7-F
   description: Zener diode, small symbol, filled shape
 - ref: D7
@@ -356,16 +395,18 @@ components:
 - ref: J1
   value: GND
   footprint: DIP-4
+  current: 80A
   mpn: AMT0440005TH0000G
 - ref: J2
-  value: 1x8 header
-  footprint: JST_SH_SM08B-SRSS-TB
+  value: JST SH 8-pin
+  footprint: JST_SH_SM08B-SRSS-TB_1x08
   mpn: SM08B-SRSS-TB(LF)(SN)
   description: Generic connectable mounting pin connector, single row, 01x08, script generated
   pin_count: 9
 - ref: J3
-  value: 1x12 header
-  footprint: JST_SH_SM12B-SRSS-TB
+  value: JST SH 12-pin
+  footprint: JST_SH_SM12B-SRSS-TB_1x12
+  current: 1A
   mpn: SM12B-SRSS-TB(LF)(SN)
   description: Generic connectable mounting pin connector, single row, 01x12, script generated
   pin_count: 13
@@ -373,28 +414,30 @@ components:
 - ref: J5
   value: A
   footprint: DIP-4
+  current: 80A
   mpn: AMT0440005TH0000G
 - ref: J6
   value: B
   footprint: DIP-4
+  current: 80A
   mpn: AMT0440005TH0000G
 - ref: J7
   value: C
   footprint: DIP-4
+  current: 80A
   mpn: AMT0440005TH0000G
 - ref: J8
   value: VMOTOR
   footprint: DIP-4
+  current: 80A
   mpn: AMT0440005TH0000G
 - ref: L1
   value: 68uH
   footprint: L_Abracon_ASPI-4030S
-  mpn: HPC 3012BMV-220M
+  current: 1A
 - ref: Q3
   value: EPC2361
   footprint: D0606F_100V
-  mpn: EPC2302
-  description: 100V 101A 1.0mE
   pin_count: 7
 - ref: Q6
   value: EPC2361
@@ -406,117 +449,129 @@ components:
   value: 72kohm
   footprint: '0402'
   description: Resistor, small US symbol
-  mpn: FRC0603J1R0 TS
+  power: 100mW
   pulldown: /Predriver Voltage Supply/FB
 - ref: R15
   value: 27kohm
   footprint: '0402'
   description: Resistor, small US symbol
-  mpn: FRC0603J1R0 TS
+  power: 100mW
   pulldown: U4.RON
 - ref: R16
   value: 240kohm
   footprint: '0402'
-  mpn: RTT03304JTP
+  power: 100mW
   description: Resistor, US symbol
 - ref: R17
   value: 10kohm
   footprint: '0402'
+  power: 100mW
   mpn: SCR0603J10K
   description: Resistor, US symbol
   pulldown: U5.+
 - ref: R18
   value: 240kohm
   footprint: '0402'
-  mpn: RTT03304JTP
+  power: 100mW
   description: Resistor, US symbol
 - ref: R19
   value: 10kohm
   footprint: '0402'
+  power: 100mW
   mpn: SCR0603J10K
   description: Resistor, US symbol
   pulldown: U6.+
 - ref: R20
   value: 240kohm
   footprint: '0402'
-  mpn: RTT03304JTP
+  power: 100mW
   description: Resistor, US symbol
 - ref: R21
   value: 10kohm
   footprint: '0402'
+  power: 100mW
   mpn: SCR0603J10K
   description: Resistor, US symbol
   pulldown: U7.+
 - ref: R22
   value: 10ohm
   footprint: '0402'
+  power: 100mW
   mpn: RTT0310R0FTP
   description: Resistor, small US symbol
 - ref: R23
   value: 0.5mohm
   footprint: '2512'
+  power: 3W
   mpn: ASR-M-3-0.5F
   description: Resistor, US symbol
 - ref: R24
   value: 10ohm
   footprint: '0402'
+  power: 100mW
   mpn: RTT0310R0FTP
   description: Resistor, small US symbol
 - ref: R31
   value: 10kohm
   footprint: '0402'
+  power: 100mW
   mpn: SCR0603J10K
   description: Resistor, US symbol
   pulldown: /V_SENSE
 - ref: R32
   value: 240kohm
   footprint: '0402'
-  mpn: RTT03304JTP
+  power: 100mW
   description: Resistor, US symbol
 - ref: R34
   value: 10kohm
   footprint: '0402'
+  power: 100mW
   mpn: SCR0603J10K
   description: Resistor, US symbol
 - ref: R5
   value: 240kohm
   footprint: '0402'
   description: Resistor, small US symbol
-  mpn: FRC0603J1R0 TS
+  power: 100mW
 - ref: R6
   value: 1ohm
   footprint: '0402'
+  power: 100mW
   mpn: FRC0603J1R0 TS
   description: Resistor, US symbol
 - ref: R7
   value: 0ohm
   footprint: '0402'
+  power: 100mW
   mpn: SCR0603J0R
   description: Resistor, US symbol
 - ref: R8
   value: 0ohm
   footprint: '0402'
+  power: 100mW
   mpn: SCR0603J0R
   description: Resistor, US symbol
 - ref: R9
   value: 1ohm
   footprint: '0402'
+  power: 100mW
   mpn: FRC0603J1R0 TS
   description: Resistor, US symbol
 - ref: TH1
   value: 10k NTC
   footprint: '0402'
+  power: 100mW
   mpn: KNTC0603/10KJ3950
   description: Temperature dependent resistor, negative temperature coefficient, US symbol
 - ref: U2
   value: LM1205
   footprint: WLCSP1.6x1.6-12B_ECC
-  mpn: UP1966E
   pin_count: 12
   nc_pins: {NC: C4}
 - ref: U4
   value: LM5164DDA
-  footprint: HSOP-8-1EP
+  footprint: HSOP-8-1EP_3.9x4.9
   description: 1A synchronous buck converter with ultra-low IQ, 6V - 100V input, adjustable
   pin_count: 9
   nc_pins: {PGOOD: '6'}
@@ -538,6 +593,7 @@ components:
 - ref: U8
   value: INA241A2
   footprint: SOT-23-8
+  voltage: 110V
   mpn: INA241A2DDFR
   description: High- and Low-Side, Bidirectional, Zero-Drift, Current-Sense Amplifier With
   pin_count: 8

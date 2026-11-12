@@ -27,16 +27,16 @@
 
 ## Library Types (Quick Reference)
 
-- **basic/preferred** = no assembly fee
+- **basic/preferred** = no extended-type loading fee for Economic assembly
 - **extended** = loading fee per unique part type; the alternatives calculator labels its legacy $3 Economic assumption as a rounded estimate, not a current quote (Standard service differs)
 
 ## Project Overview
 
 PCB Parts MCP server for electronic component search and sensor recommendation. Tool docstrings document arguments and replies; README.md is a high-level overview (per-release detail goes in CHANGELOG.md, query rules in `docs/search-guide.md`).
 
-- **Sensor feature:** `sensor_recommend` tool — separate SQLite DB (`sensor.db`) from components. 14 scrapers produce `data/sensors/*.json`, merged by `scripts/build_sensor_db.py`, runtime at `src/pcbparts_mcp/sensor_db/`. Scraper reference: `docs/ref-sensor-scrapers.md`.
+- **Sensor feature:** `sensor_recommend` tool — separate SQLite DB (`sensor.db`) from components. 14 scrapers produce `data/sensors/*.json`, merged by `scripts/build_sensor_db.py`, runtime at `src/pcbparts_mcp/sensor_db/`. Hand corrections go in `data/sensors/curated.json`, per field with evidence (maker URL, page, quote); they always win over scraped data, so fix a general cause in the scraper or build rule instead and curate only per-record facts. The Docker image runs `build_sensor_db.py` from that file alone, so it must not import other `scripts/` modules (`tests/test_docker_build_scripts.py`). Scraper reference: `docs/ref-sensor-scrapers.md`.
 
-- **Design rules:** `get_design_rules` tool — 41 markdown reference files in `data/design-rules/rules/`, organized by category (guides, interfaces, power, protection, mcus, misc). Substring match on `category/filename`. Any edits to rule files must follow `data/design-rules/rules/DESIGN-STYLE-GUIDE.md`.
+- **Design rules:** `get_design_rules` tool — 46 markdown reference files in `data/design-rules/rules/`, organized by category (guides, interfaces, power, protection, mcus, misc). Exact normalized keys, aliases and token-boundary matching on `category/filename`, followed by scored text fallback. Any edits to rule files must follow `data/design-rules/rules/DESIGN-STYLE-GUIDE.md`.
 
 - **Website:** https://pcbparts.dev
 - **Endpoint:** https://pcbparts.dev/mcp
@@ -44,7 +44,7 @@ PCB Parts MCP server for electronic component search and sensor recommendation. 
 
 ## Usage Stats
 
-`/mcp/stats` (under `/mcp` because Caddy forwards only `/mcp*` and `/health`) serves anonymous daily counts from `stats.py`: per-tool calls = ok + similar_only + not_found + bad_request + rate_limited + failed (alternatives: ok means verified alternatives found; similar_only means manual comparison candidates without verified replacements), calls per UTC hour, apps, distinct callers, Mouser/DigiKey lookups. The file (`USAGE_STATS_PATH` on the cache volume) keeps 365 days; the page shows 30. Error replies are sorted by `_ERROR_KINDS` in `server.py`; every error message must be listed in `ERROR_REPLIES` in `tests/test_usage_stats.py` (the test enforces it). Keep it same-origin: if another site ever needs it, allow that domain only, never `*`.
+`/mcp/stats` (under `/mcp` because Caddy forwards only `/mcp*` and `/health`) serves anonymous daily counts from `stats.py`: per-tool calls = ok + similar_only + not_found + bad_request + rate_limited + failed (alternatives: ok means verified alternatives found; similar_only means manual comparison candidates without verified replacements), calls per UTC hour, apps, distinct callers, Mouser/DigiKey lookups, plus why calls found nothing or failed (`reasons`: one label a call from the fixed `stats.REASONS` list, so a tool's labels add up to its not_found + failed) and how `why_empty` checks went. The file (`USAGE_STATS_PATH` on the cache volume) keeps 365 days; the page shows 30. Error replies are sorted by `_ERROR_KINDS` in `server.py`; every error message must be listed in `ERROR_REPLIES` in `tests/test_usage_stats.py` (the test enforces it), and not_found and failed ones need a reason in `_NOT_FOUND_ERRORS` or `_FAILED_REASONS` (`tests/test_usage_reasons.py` enforces that). Keep it same-origin: if another site ever needs it, allow that domain only, never `*`.
 
 ## API Gotcha
 

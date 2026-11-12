@@ -2,13 +2,19 @@
   "source": "zephyr",
   "source_url": "https://github.com/zephyrproject-rtos/zephyr",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-11-01T13:25:08.914169+00:00",
+  "scraped_at": "2026-11-10T21:51:22.593509+00:00",
   "stats": {
-    "sensor_count": 247,
-    "total_bindings": 501,
-    "skipped_internal": 47,
-    "skipped_bus_variant": 73,
-    "skipped_no_measures": 31
+    "sensor_count": 248,
+    "total_bindings": 508,
+    "skipped_internal": 55,
+    "skipped_bus_variant": 74,
+    "skipped_no_measures": 32,
+    "kept_missing": 3
+  },
+  "missed_scrapes": {
+    "bcm283xvcthermal": 1,
+    "emu": 1,
+    "tsen": 1
   },
   "sensors": [
     {
@@ -97,6 +103,44 @@
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adis1647x.html"
       ],
       "description": "ADIS1647x 6-DoF MEMS IMU with SPI connection",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adis166072",
+      "name": "ADIS166072",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adis16607-2.html"
+      ],
+      "description": "ADIS16607-2 6-DoF IMU, +/-450 deg/s gyroscope, +/-40 g accelerometer",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "Analog Devices"
+    },
+    {
+      "id": "adis166073",
+      "name": "ADIS166073",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adis16607-3.html"
+      ],
+      "description": "ADIS16607-3 6-DoF IMU, +/-2000 deg/s gyroscope, +/-40 g accelerometer",
       "protocol": [
         "spi"
       ],
@@ -204,7 +248,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adxl313.html"
       ],
-      "description": "ADXL313 3-axis I2C accelerometer. When setting the accelerometer DTS properties, include adxl313.h and use the macros defined there. SENSOR_ATTR_FULL_SCALE uses integer g via sensor_ms2_to_g(). Bec...",
+      "description": "ADXL313 3-axis I2C accelerometer.",
       "protocol": [
         "i2c"
       ],
@@ -260,7 +304,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/adi,adxl362.html"
       ],
-      "description": "ADXL362 3-axis SPI accelerometer When setting the accelerometer DTS properties and want to use streaming functionality, make sure to include adxl362.h and use the macros defined there for fifo-mode...",
+      "description": "ADXL362 3-axis SPI accelerometer",
       "protocol": [
         "spi"
       ],
@@ -336,7 +380,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/brcm,afbr-s50.html"
       ],
-      "description": "AFBR-S50 3D ToF sensor This sensor requires the SPI bus attached to it, to define the following pinctrl states: - pinctrl-0: default (SPI mode). - pinctrl-1: GPIO mode (used to access the internal ...",
+      "description": "AFBR-S50 3D ToF sensor",
       "protocol": [
         "spi"
       ],
@@ -537,7 +581,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ams,as5048.html"
       ],
-      "description": "AMS AS5048 magnetic rotary sensor &spi3 { status = \"okay\"; as5048@0 { compatible = \"ams,as5048\"; reg = <0>; spi-max-frequency = <4000000>; }; }; compatible: \"ams,as5048\"",
+      "description": "AMS AS5048 magnetic rotary sensor",
       "protocol": [
         "spi"
       ],
@@ -614,20 +658,6 @@
         "i2c"
       ],
       "manufacturer": "ams-OSRAM"
-    },
-    {
-      "id": "bcm283xvcthermal",
-      "name": "BCM283XVCTHERMAL",
-      "measures": [
-        "temperature"
-      ],
-      "platforms": [
-        "zephyr"
-      ],
-      "urls": [
-        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/raspberrypi,bcm283x-vc-thermal.html"
-      ],
-      "description": "Raspberry Pi BCM283x SoC die-temperature sensor. The SoC temperature is read through the VideoCore firmware GET_TEMPERATURE property tag -- the same source as `vcgencmd measure_temp`. The sensor ow..."
     },
     {
       "id": "bh1730",
@@ -714,7 +744,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bma4xx.html"
       ],
-      "description": "Bosch BMA4xx 3-axis acceleration sensors in SPI mode.  See more info at: https://www.bosch-sensortec.com/products/motion-sensors/accelerometers/ SPI mode is currently NOT supported in the driver bu...",
+      "description": "Bosch BMA4xx 3-axis acceleration sensors in I2C mode.  See more info at: https://www.bosch-sensortec.com/products/motion-sensors/accelerometers/",
       "protocol": [
         "i2c",
         "spi"
@@ -989,7 +1019,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bosch,bmp581.html"
       ],
-      "description": "The BMP581 is a Barometric pressure sensor on I2C. See more info at: https://www.bosch-sensortec.com/products/environmental-sensors/pressure-sensors/bmp581/ When setting the sensor DTS properties, ...",
+      "description": "The BMP581 is a Barometric pressure sensor on I2C.",
       "protocol": [
         "i2c",
         "spi"
@@ -1155,21 +1185,6 @@
       ],
       "description": "Maxim DS3231 I2C temperature sensor",
       "manufacturer": "Maxim"
-    },
-    {
-      "id": "emu",
-      "name": "EMU",
-      "measures": [
-        "temperature"
-      ],
-      "platforms": [
-        "zephyr"
-      ],
-      "urls": [
-        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/silabs,emu-temp.html"
-      ],
-      "description": "Silicon Labs Series 2 EMU internal die temperature sensor. The Energy Management Unit (EMU) periodically samples the die temperature (every ~250 ms) and stores the result in EMU_TEMP. The value is ...",
-      "manufacturer": "Silicon Labs"
     },
     {
       "id": "ens160",
@@ -1598,7 +1613,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/avia,hx711-spi.html"
       ],
-      "description": "Avia Semiconductor HX711 24-bit ADC Specialized for Load Cells / Strain Gauges on SPI bus This driver implements the sensor interface. A trigger can be configured for data ready events (i.e. when t...",
+      "description": "Avia Semiconductor HX711 24-bit ADC Specialized for Load Cells / Strain Gauges on SPI bus",
       "protocol": [
         "spi"
       ]
@@ -1620,6 +1635,25 @@
         "i2c"
       ],
       "manufacturer": "ams-OSRAM"
+    },
+    {
+      "id": "icm20689",
+      "name": "ICM20689",
+      "measures": [
+        "acceleration",
+        "gyroscope"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm20689.html"
+      ],
+      "description": "TDK InvenSense ICM-20689 6-axis SPI inertial sensor.",
+      "protocol": [
+        "spi"
+      ],
+      "manufacturer": "InvenSense"
     },
     {
       "id": "icm20948",
@@ -1674,7 +1708,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm42686.html"
       ],
-      "description": "ICM-42686 motion tracking device. When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm42686.h and use the macros d...",
+      "description": "ICM-42686 motion tracking device.",
       "protocol": [
         "spi"
       ],
@@ -1693,7 +1727,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm42688.html"
       ],
-      "description": "ICM-42688 motion tracking device. When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm42688.h and use the macros d...",
+      "description": "ICM-42688 motion tracking device.",
       "protocol": [
         "spi"
       ],
@@ -1712,7 +1746,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm45605.html"
       ],
-      "description": "ICM45605 High-precision 6-axis motion tracking device When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm45686.h ...",
+      "description": "ICM45605 High-precision 6-axis motion tracking device",
       "protocol": [
         "i2c",
         "spi"
@@ -1732,7 +1766,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm45605s.html"
       ],
-      "description": "ICM45605S High-precision 6-axis motion tracking device When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm45686.h...",
+      "description": "ICM45605S High-precision 6-axis motion tracking device",
       "protocol": [
         "i2c",
         "spi"
@@ -1752,7 +1786,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm45686.html"
       ],
-      "description": "ICM45686 High-precision 6-axis motion tracking device When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm45686.h ...",
+      "description": "ICM45686 High-precision 6-axis motion tracking device",
       "protocol": [
         "i2c",
         "spi"
@@ -1772,7 +1806,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm45686s.html"
       ],
-      "description": "ICM45686S High-precision 6-axis motion tracking device When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm45686.h...",
+      "description": "ICM45686S High-precision 6-axis motion tracking device",
       "protocol": [
         "i2c",
         "spi"
@@ -1792,7 +1826,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm45688p.html"
       ],
-      "description": "ICM45688P High-precision 6-axis motion tracking device When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in a .dts or .dtsi file you may include icm45686.h...",
+      "description": "ICM45688P High-precision 6-axis motion tracking device",
       "protocol": [
         "i2c",
         "spi"
@@ -1812,7 +1846,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm56622.html"
       ],
-      "description": "ICM56622 High-precision 6-axis motion tracking device. When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in devicetree, you may include icm566xx.h and use ...",
+      "description": "ICM56622 High-precision 6-axis motion tracking device.",
       "protocol": [
         "i2c",
         "spi"
@@ -1832,7 +1866,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/invensense,icm56686.html"
       ],
-      "description": "ICM56686 High-precision 6-axis motion tracking device. When setting the accel-pm, accel-range, accel-odr, gyro-pm, gyro-range, gyro-odr properties in devicetree, you may include icm566xx.h and use ...",
+      "description": "ICM56686 High-precision 6-axis motion tracking device.",
       "protocol": [
         "i2c",
         "spi"
@@ -2041,7 +2075,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,ina226.html"
       ],
-      "description": "TI INA226 Bidirectional Current and Power Monitor. The <zephyr/dt-bindings/sensor/ina226.h> file should be included in the DeviceTree as it provides macros that can be used for initializing the con...",
+      "description": "TI INA226 Bidirectional Current and Power Monitor.",
       "protocol": [
         "i2c"
       ],
@@ -2059,7 +2093,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,ina230.html"
       ],
-      "description": "TI INA230, INA231 and INA236 Bidirectional Current and Power Monitor. The <zephyr/dt-bindings/sensor/ina230.h> file should be included in the DeviceTree and it provides macro that can be used for i...",
+      "description": "TI INA230, INA231 and INA236 Bidirectional Current and Power Monitor.",
       "protocol": [
         "i2c"
       ],
@@ -2077,7 +2111,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,ina232.html"
       ],
-      "description": "TI INA232 Bidirectional Current and Power Monitor. The <zephyr/dt-bindings/sensor/ina230.h> file includes the macro for initializing the config register so it should be included.",
+      "description": "TI INA232 Bidirectional Current and Power Monitor.",
       "protocol": [
         "i2c"
       ],
@@ -2095,7 +2129,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,ina236.html"
       ],
-      "description": "TI INA236 Bidirectional Current and Power Monitor. The <zephyr/dt-bindings/sensor/ina230.h> file should be included in the DeviceTree and it provides macro that can be used for initializing the con...",
+      "description": "TI INA236 Bidirectional Current and Power Monitor.",
       "protocol": [
         "i2c"
       ],
@@ -2113,7 +2147,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/ti,ina237.html"
       ],
-      "description": "TI INA237 Bidirectional Current and Power Monitor. The <zephyr/dt-bindings/sensor/ina237.h> file should be included in the DeviceTree and it provides macros that can be used for initializing the co...",
+      "description": "TI INA237 Bidirectional Current and Power Monitor.",
       "protocol": [
         "i2c"
       ],
@@ -2225,11 +2259,10 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/jedec,jc-42.4-temp.html"
       ],
-      "description": "JEDEC JC42.4 compliant temperature sensor. See http://www.jedec.org/sites/default/files/docs/4_01_04R19.pdf. Driver based on the Microchip MCP9808 Digital Temperature Sensor. See http://ww1.microch...",
+      "description": "JEDEC JC42.4 compliant temperature sensor.",
       "protocol": [
         "i2c"
-      ],
-      "manufacturer": "Microchip"
+      ]
     },
     {
       "id": "lis2de12",
@@ -2594,8 +2627,7 @@
       "id": "lsm6ds0",
       "name": "LSM6DS0",
       "measures": [
-        "acceleration",
-        "gyroscope"
+        "acceleration"
       ],
       "platforms": [
         "zephyr"
@@ -2820,7 +2852,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm9ds1.html"
       ],
-      "description": "STMicroelectronics LSM9DS1 3-axis accelerometer + gyroscope accessed through I2C bus. This binding describe only the inertial part : accelerometer and gyroscope. When setting the accel-range, gyro-...",
+      "description": "STMicroelectronics LSM9DS1 3-axis accelerometer + gyroscope accessed through I2C bus.",
       "protocol": [
         "i2c"
       ],
@@ -2838,7 +2870,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,lsm9ds1_mag.html"
       ],
-      "description": "STMicroelectronics LSM9DS1-MAG 3-axis magnetometer accessed through I2C bus. This binding describes only the magnetometer. When setting the mag-range and mag-odr properties in a .dts or .dtsi file ...",
+      "description": "STMicroelectronics LSM9DS1-MAG 3-axis magnetometer accessed through I2C bus.",
       "protocol": [
         "i2c"
       ],
@@ -3066,7 +3098,7 @@
       "id": "max32664c",
       "name": "MAX32664C",
       "measures": [
-        "acceleration"
+        "biometric"
       ],
       "platforms": [
         "zephyr"
@@ -3074,7 +3106,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/maxim,max32664c.html"
       ],
-      "description": "The MAX32664 is a ultra-low power biometric sensor hub. NOTES: This driver is primarily written to work with a MAX86141. Other sensors can be used but they are untested! The driver supports up to t...",
+      "description": "The MAX32664 is a ultra-low power biometric sensor hub.",
       "protocol": [
         "i2c"
       ],
@@ -3165,7 +3197,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/microchip,mcp9600.html"
       ],
-      "description": "Microchip MCP9600 I2C Thermocouple EMF to Temperature Converter. See https://www.microchip.com/wwwproducts/en/MCP9600. When setting the DTS properties, make sure to include mcp9600.h and use the ma...",
+      "description": "Microchip MCP9600 I2C Thermocouple EMF to Temperature Converter.",
       "protocol": [
         "i2c"
       ],
@@ -3526,7 +3558,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/pni,rm3100.html"
       ],
-      "description": "PNI RM3100 3-axis Magnetometer. The RM3100 can use either I2C or SPI as a communication bus. When using SPI, the device only supports SPI mode 0 or 3. When setting the odr property in a .dts or .dt...",
+      "description": "PNI RM3100 3-axis Magnetometer. The RM3100 can use either I2C or SPI as a communication bus. When using SPI, the device only supports SPI mode 0 or 3.",
       "protocol": [
         "i2c",
         "spi"
@@ -3727,7 +3759,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,shtcx.html"
       ],
-      "description": "Sensirion SHTCx humidity and temperature sensor Additionally use \"sensirion,shtc1\" or \"sensirion,shtc3\" compatibles such that a generic driver can consider chip specific behaviour. Example device t...",
+      "description": "Sensirion SHTCx humidity and temperature sensor",
       "protocol": [
         "i2c"
       ],
@@ -3746,7 +3778,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/silabs,si7006.html"
       ],
-      "description": "Silicon Labs Si7006 Humidity and Temperature Sensor This is compatible with a range of Silicon Labs sensors, such as the Si7013, Si7020, and Si7021.  This binding will use a slightly different (bet...",
+      "description": "Silicon Labs Si7006 Humidity and Temperature Sensor This is compatible with a range of Silicon Labs sensors, such as the Si7013, Si7020, and Si7021.",
       "protocol": [
         "i2c"
       ],
@@ -3828,6 +3860,24 @@
       "manufacturer": "Sensirion"
     },
     {
+      "id": "sts35",
+      "name": "STS35",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/sensirion,sts35.html"
+      ],
+      "description": "STS35-DIS high-accuracy digital temperature sensor",
+      "protocol": [
+        "i2c"
+      ],
+      "manufacturer": "Sensirion"
+    },
+    {
       "id": "sts4x",
       "name": "STS4X",
       "measures": [
@@ -3857,7 +3907,7 @@
       "urls": [
         "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/st,stts22h.html"
       ],
-      "description": "STMicroelectronics STTS22H temperature sensor connected to I2C bus When setting the sampling-rate property in a .dts or .dtsi file you may include stts22h.h and use the macros defined there.",
+      "description": "STMicroelectronics STTS22H temperature sensor connected to I2C bus",
       "protocol": [
         "i2c"
       ],
@@ -4189,20 +4239,6 @@
         "i2c"
       ],
       "manufacturer": "Texas Instruments"
-    },
-    {
-      "id": "tsen",
-      "name": "TSEN",
-      "measures": [
-        "temperature"
-      ],
-      "platforms": [
-        "zephyr"
-      ],
-      "urls": [
-        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bflb,tsen.html"
-      ],
-      "description": "TSEN is an internal input of the GPADC. It has no external pins: the analog front-end is shared with the general-purpose ADC and is switched into temperature-sense mode by the BFLB ADC driver when ..."
     },
     {
       "id": "tsicxx6",
@@ -4588,6 +4624,49 @@
       "protocol": [
         "i2c"
       ]
+    },
+    {
+      "id": "bcm283xvcthermal",
+      "name": "BCM283XVCTHERMAL",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/raspberrypi,bcm283x-vc-thermal.html"
+      ],
+      "description": "Raspberry Pi BCM283x SoC die-temperature sensor. The SoC temperature is read through the VideoCore firmware GET_TEMPERATURE property tag -- the same source as `vcgencmd measure_temp`. The sensor ow..."
+    },
+    {
+      "id": "emu",
+      "name": "EMU",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/silabs,emu-temp.html"
+      ],
+      "description": "Silicon Labs Series 2 EMU internal die temperature sensor. The Energy Management Unit (EMU) periodically samples the die temperature (every ~250 ms) and stores the result in EMU_TEMP. The value is ...",
+      "manufacturer": "Silicon Labs"
+    },
+    {
+      "id": "tsen",
+      "name": "TSEN",
+      "measures": [
+        "temperature"
+      ],
+      "platforms": [
+        "zephyr"
+      ],
+      "urls": [
+        "https://docs.zephyrproject.org/latest/build/dts/api/bindings/sensor/bflb,tsen.html"
+      ],
+      "description": "TSEN is an internal input of the GPADC. It has no external pins: the analog front-end is shared with the general-purpose ADC and is switched into temperature-sense mode by the BFLB ADC driver when ..."
     }
   ]
 }

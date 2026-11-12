@@ -103,7 +103,8 @@ components:
   value: ARDUINO
   footprint: ARDUINO
   pin_count: 38
-  nc_pins: {A0: A0, A1: A1, A2: A2, A3: A3, A4/SDA: A4, A5/SCL: A5, AREF: AREF, D0: D0, D1: D1, D2: D2, D8: D8, D9: D9, D10: D10, IOREF: IOREF, RESERVED: RESERVED, /RESET: RESET, RST: RESET_ICSP, SCL: SCL, SDA: SDA}
+  nc_pins: {A0: A0, A1: A1, A2: A2, A3: A3, A4/SDA: A4, A5/SCL: A5, AREF: AREF, D0: D0, D1: D1, D2: D2, D8: D8, D9: D9, D10: D10,
+    IOREF: IOREF, RESERVED: RESERVED, /RESET: RESET, RST: RESET_ICSP, SCL: SCL, SDA: SDA}
 - ref: POWER1
   value: red LED
   footprint: CHIPLED_0603
@@ -166,6 +167,7 @@ components:
 - ref: U3
   value: AP2112K-3.3
   footprint: SOT-23-5
+  prod_id: VREG-12457
   description: Voltage Regulator LDO
   pin_count: 5
   nc_pins: {BP: '4'}

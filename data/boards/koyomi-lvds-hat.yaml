@@ -2,7 +2,7 @@ name: Koyomi LVDS Hat
 slug: koyomi-lvds-hat
 source: exentio/koyomi-lvds-hat
 format: kicad8
-description: "RPi LVDS transmitter hat (SN75LVDS83B FlatLink) for repurposing laptop LCD panels, I-PEX micro-coax connector"
+description: RPi LVDS transmitter hat (SN75LVDS83B FlatLink) for repurposing laptop LCD panels, I-PEX micro-coax connector
 tags: [display]
 key_ics: [SN75LVDS83B, AP2114H-2.5]
 outline:
@@ -80,7 +80,7 @@ components:
   nc_pins: {'3': '3', '11': '11', '12': '12', '19': '19', '20': '20'}
 - ref: J4
   value: Qwiic connector
-  footprint: JST_SH_SM04B-SRSS-TB
+  footprint: JST_SH_SM04B-SRSS-TB_1x04
   pin_count: 5
 - ref: R1
   value: 4.7kohm
@@ -92,33 +92,33 @@ components:
   pullup: SHTDN
 - ref: RN1
   value: 47ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0603
   description: 4 resistor network, parallel topology
   pin_count: 8
 - ref: RN2
   value: 47ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0603
   description: 4 resistor network, parallel topology
   pin_count: 8
   nc_pins: {R1.1: '1', R1.2: '8'}
 - ref: RN3
   value: 47ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0603
   description: 4 resistor network, parallel topology
   pin_count: 8
 - ref: RN4
   value: 47ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0603
   description: 4 resistor network, parallel topology
   pin_count: 8
 - ref: RN5
   value: 47ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0603
   description: 4 resistor network, parallel topology
   pin_count: 8
 - ref: RN6
   value: 47ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0603
   description: 4 resistor network, parallel topology
   pin_count: 8
   nc_pins: {R1.1: '1', R1.2: '8'}

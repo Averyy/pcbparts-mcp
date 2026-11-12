@@ -2,14 +2,16 @@
   "source": "sparkfun",
   "source_url": "https://www.sparkfun.com/graphql",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-11-01T13:52:43.459081+00:00",
+  "scraped_at": "2026-11-11T02:00:13.463179+00:00",
   "stats": {
     "sensor_count": 131,
     "total_products": 415,
     "skipped_sku_prefix": 57,
     "skipped_pattern": 64,
-    "skipped_no_ic": 112
+    "skipped_no_ic": 112,
+    "kept_missing": 0
   },
+  "missed_scrapes": {},
   "sensors": [
     {
       "id": "a111",
@@ -513,7 +515,8 @@
       "description": "An incredibly precise 9DoF orientation sensor featuring 14-bit accelerometer fusion, Interactive Calibration, and flexible I 2 C, SPI, or UART communication options.",
       "protocol": [
         "i2c",
-        "spi"
+        "spi",
+        "uart"
       ]
     },
     {
@@ -1059,8 +1062,8 @@
       "urls": [
         "https://www.sparkfun.com/ir-array-sensor-55-degree-fov-mlx90640.html",
         "https://www.sparkfun.com/ir-array-sensor-110-degree-fov-mlx90640.html",
-        "https://www.sparkfun.com/sparkfun-ir-array-breakout-110-degree-fov-mlx90640-qwiic.html",
-        "https://www.sparkfun.com/sparkfun-ir-array-breakout-55-degree-fov-mlx90640-qwiic.html"
+        "https://www.sparkfun.com/sparkfun-ir-array-breakout-55-degree-fov-mlx90640-qwiic.html",
+        "https://www.sparkfun.com/sparkfun-ir-array-breakout-110-degree-fov-mlx90640-qwiic.html"
       ],
       "description": "The MLX90640 is a fully calibrated 32x24 pixels thermal IR array in an industry standard 4-lead TO39 package with digital interface. The MLX90640 contains 768 FIR pixels. An ambient sensor is integ...",
       "protocol": [
@@ -1521,9 +1524,7 @@
       "id": "stc31",
       "name": "CO₂ Sensor - STC31 (Qwiic)",
       "measures": [
-        "co2",
-        "humidity",
-        "temperature"
+        "co2"
       ],
       "platforms": [],
       "urls": [
@@ -1600,7 +1601,6 @@
       "name": "Load Cell - 5kg, Straight Bar (TAL220B)",
       "measures": [
         "force",
-        "pressure",
         "weight"
       ],
       "platforms": [],
@@ -1614,7 +1614,6 @@
       "name": "Mini Load Cell - 500g, Straight Bar (TAL221)",
       "measures": [
         "force",
-        "pressure",
         "weight"
       ],
       "platforms": [],

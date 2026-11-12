@@ -23,7 +23,7 @@ components:
   footprint: YTS-A016-X
 - ref: C1
   value: 100uF 10x13MM Low_ESR RM5
-  footprint: CPOL-RM5mm
+  footprint: CPOL-RM5mm_10.0x16.0
   voltage: 63V
   tolerance: 20%
 - ref: C10
@@ -65,7 +65,7 @@ components:
   tolerance: 5%
 - ref: C6
   value: 470uF Low_ESR RM2.5
-  footprint: CPOL-RM2.5mm
+  footprint: CPOL-RM2.5mm_6.3x11
   voltage: 10V
   tolerance: 20%
 - ref: C7
@@ -136,14 +136,6 @@ components:
 - ref: D9
   value: 1N4148W
   footprint: SOD-123_1C-2A_KA
-- ref: ESP-PROG1
-  value: WU06S
-  footprint: WU06S
-  pin_count: 6
-- ref: EXT1
-  value: HN1x10
-  footprint: HN1x10
-  pin_count: 10
 - ref: FET1
   value: WPM2015-3/TR
   footprint: SOT23
@@ -168,11 +160,13 @@ components:
   footprint: DBS135
   current: 2.1A
   tolerance: 20%
+  mpn: PD3316MT330
 - ref: L2
   value: 2.2uH
   footprint: CD32
   current: 1.5A
   tolerance: 20%
+  mpn: NR3015T2R2M
 - ref: LED1
   value: LED/RED/0603
   footprint: '0603'
@@ -216,9 +210,7 @@ components:
 - ref: PWR1
   value: PWRJ-2mm
   footprint: PWRJ-2mm(YDJ-1136)
-- ref: PWR2
-  value: DG306-5.0-2P
-  footprint: TB2-DG306-5.0_2P
+  mpn: YDJ-1134
 - ref: PWR_LED1
   value: LED/RED/0603
   footprint: '0603'
@@ -226,9 +218,6 @@ components:
   value: 5.1kohm
   footprint: '0603'
   pulldown: /CC2
-- ref: R10
-  value: NA R0402
-  footprint: '0402'
 - ref: R11
   value: 2.2kohm
   footprint: '0402'
@@ -257,9 +246,6 @@ components:
   value: 30.1kohm
   footprint: '0402'
   tolerance: 1%
-- ref: R18
-  value: NA R0402
-  footprint: '0402'
 - ref: R19
   value: 220kohm
   footprint: '0402'
@@ -300,38 +286,24 @@ components:
 - ref: R27
   value: 2.2kohm
   footprint: '0402'
-  pullup: USER_LED1.2
 - ref: R28
   value: 2.2kohm
   footprint: '0402'
-  pullup: LED5.2
 - ref: R29
   value: 2.2kohm
   footprint: '0402'
-  pullup: LED6.2
 - ref: R3
   value: 2.2kohm
   footprint: '0402'
-  pullup: PWR_LED1.2
 - ref: R30
   value: 2.2kohm
   footprint: '0402'
-  pullup: LED7.2
 - ref: R31
   value: 2.2kohm
   footprint: '0402'
-  pullup: LED8.2
 - ref: R32
   value: 100ohm
   footprint: '0402'
-- ref: R33
-  value: 2.2kohm
-  footprint: '0402'
-  pullup: /GPIO7\LP_I2C_SCL
-- ref: R34
-  value: 2.2kohm
-  footprint: '0402'
-  pullup: /GPIO6\LP_I2C_SDA
 - ref: R4
   value: 30mohm
   footprint: '1206'
@@ -348,9 +320,6 @@ components:
 - ref: R8
   value: 3.9kohm
   footprint: '1206'
-- ref: R9
-  value: NA R0402
-  footprint: '0402'
 - ref: REL1
   value: RAS-0515
   footprint: Relay_RAS-05-15
@@ -398,6 +367,7 @@ components:
 - ref: U3
   value: ESP32-C6-WROOM-1
   footprint: ESP32-C6-WROOM-1-xx-UNIVERSAL_MODULE
+  mpn: ESP32-C6-WROOM-1-N4
   pin_count: 30
   nc_pins: {'22': '22', Past: Past}
 - ref: UEXT1
@@ -408,11 +378,13 @@ components:
 - ref: UEXT2
   value: JST SH 10-pin
   footprint: SM10B-SRSS-TB
+  mpn: SM10B-SRSS-TB
   pin_count: 11
   nc_pins: {'0': '0'}
 - ref: USB-OTG1
   value: USB-C
   footprint: USB2.0_TYPE-C(A40-00119-A52-12)
+  mpn: A40-00119-A52-12
   pin_count: 17
   nc_pins: {A8: A8, B8: B8}
 - ref: USER_LED1
@@ -426,9 +398,7 @@ nets:
   - C7.1
   - C8.1
   - C9.1
-  - EXT1.2
   - L2.2
-  - R10.1
   - R11.1
   - R14.1
   - R15.1
@@ -441,8 +411,6 @@ nets:
   - R25.1
   - R26.1
   - R27.1
-  - R33.1
-  - R34.1
   - U3.2
   - UEXT1.1
   - UEXT2.1
@@ -454,7 +422,6 @@ nets:
   - D7.1
   - D8.1
   - D9.1
-  - EXT1.1
   - FET1.2
   - R28.2
   - R29.2
@@ -476,9 +443,7 @@ nets:
 - name: /CC2
   pins: [R1.2, USB-OTG1.B5]
 - name: /ESP_EN
-  pins: [C11.1, ESP-PROG1.6, EXT1.4, R25.2, RST1.2, U3.3]
-- name: /GPIO0
-  pins: [EXT1.5, U3.8]
+  pins: [C11.1, R25.2, RST1.2, U3.3]
 - name: /GPIO10\REL1
   pins: [T1.1, U3.11]
 - name: /GPIO11\REL2
@@ -489,10 +454,6 @@ nets:
   pins: [U3.14, USB-OTG1.A6, USB-OTG1.B6]
 - name: /GPIO15\In4
   pins: [OPT4.4, R24.1, U3.23]
-- name: /GPIO16\U0TXD
-  pins: [ESP-PROG1.1, EXT1.8, U3.25]
-- name: /GPIO17\U0RXD
-  pins: [ESP-PROG1.3, EXT1.9, U3.24]
 - name: /GPIO18\SPI2D(MOSI)\SDIO_CMD
   pins: [U3.16, UEXT1.8, UEXT2.8]
 - name: /GPIO19\SPI2CLK(CLK)\SDIO_CLK
@@ -512,28 +473,21 @@ nets:
 - name: /GPIO3\In3
   pins: [OPT3.4, R23.1, U3.26]
 - name: /GPIO4\LP_UART_RXD
-  pins: [R16.2, R18.2, U3.4, UEXT1.4, UEXT2.4]
+  pins: [R16.2, U3.4, UEXT1.4, UEXT2.4]
 - name: /GPIO5\LP_UART_TXD
-  pins: [R10.2, R9.2, U3.5, UEXT1.3, UEXT2.3]
+  pins: [U3.5, UEXT1.3, UEXT2.3]
 - name: /GPIO6\LP_I2C_SDA
-  pins: [R15.2, R34.2, U3.6, UEXT1.6, UEXT2.6]
+  pins: [R15.2, U3.6, UEXT1.6, UEXT2.6]
 - name: /GPIO7\LP_I2C_SCL
-  pins: [R11.2, R33.2, U3.7, UEXT1.5, UEXT2.5]
+  pins: [R11.2, U3.7, UEXT1.5, UEXT2.5]
 - name: /GPIO8\USER_LED1
-  pins: [EXT1.6, R26.2, U3.10, USER_LED1.1]
+  pins: [R26.2, U3.10, USER_LED1.1]
 - name: /GPIO9\BUT1
-  pins: [ESP-PROG1.2, EXT1.7, R32.1, U3.15]
+  pins: [R32.1, U3.15]
 - name: /ILIM
   pins: [R4.1, U1.2, U1.9]
 - name: /VIN
-  pins:
-  - C1.1
-  - C2.1
-  - D1.1
-  - PWR1.+
-  - PWR2.1
-  - R4.2
-  - U1.3
+  pins: [C1.1, C2.1, D1.1, PWR1.+, R4.2, U1.3]
 - name: GND
   pins:
   - BUT1.2
@@ -548,23 +502,17 @@ nets:
   - C9.2
   - D1.2
   - D6.2
-  - ESP-PROG1.4
-  - EXT1.10
-  - EXT1.3
   - GND1.1
   - OPT1.3
   - OPT2.3
   - OPT3.3
   - OPT4.3
   - PWR1.-
-  - PWR2.2
   - PWR_LED1.1
   - R1.1
   - R13.2
-  - R18.1
   - R2.1
   - R20.2
-  - R9.1
   - RST1.1
   - T1.2
   - T2.2
@@ -582,8 +530,6 @@ nets:
   - USB-OTG1.A12
   - USB-OTG1.B1
   - USB-OTG1.B12
-- name: Net-(3.3V_E1-Pad1)
-  pins: [3.3V_E1.1, ESP-PROG1.5]
 - name: Net-(BUT1-Pad1)
   pins: [BUT1.1, R32.2]
 - name: Net-(C4-Pad1)
@@ -780,14 +726,6 @@ positions:
   x: 138.94
   y: 88.14
   rot: 180.0
-- ref: ESP-PROG1
-  x: 178.53
-  y: 117.98
-  rot: 180.0
-- ref: EXT1
-  x: 188.5
-  y: 74.25
-  rot: 270.0
 - ref: FET1
   x: 109.73
   y: 93.22
@@ -857,10 +795,6 @@ positions:
   x: 100.67
   y: 69.0
   rot: 270.0
-- ref: PWR2
-  x: 105.5
-  y: 59.5
-  rot: 180.0
 - ref: PWR_LED1
   x: 99.0
   y: 58.0
@@ -869,10 +803,6 @@ positions:
   x: 106.3
   y: 112.78
   rot: 270.0
-- ref: R10
-  x: 103.76
-  y: 103.76
-  rot: 180.0
 - ref: R11
   x: 103.76
   y: 101.22
@@ -901,10 +831,6 @@ positions:
   x: 95.0
   y: 89.92
   rot: 90.0
-- ref: R18
-  x: 103.76
-  y: 106.55
-  rot: 180.0
 - ref: R19
   x: 111.89
   y: 97.79
@@ -963,14 +889,6 @@ positions:
   x: 97.28
   y: 113.16
   rot: 180.0
-- ref: R33
-  x: 167.77
-  y: 117.09
-  rot: 270.0
-- ref: R34
-  x: 168.91
-  y: 117.09
-  rot: 270.0
 - ref: R4
   x: 96.52
   y: 78.87
@@ -991,10 +909,6 @@ positions:
   x: 150.62
   y: 111.0
   rot: 90.0
-- ref: R9
-  x: 103.76
-  y: 107.82
-  rot: 180.0
 - ref: REL1
   x: 121.0
   y: 75.0

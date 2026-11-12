@@ -55,8 +55,9 @@ components:
   lcsc: C1570
 - ref: C17
   value: 100uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x7.7
   lcsc: C178560
+  mpn: EEEFK1V101XP
   description: "100uF 35V 210mA@120Hz \xB120% SMD,D6.3xL7.7mm Aluminum Electrolytic Capacitors"
   decouples: U6
 - ref: C18
@@ -148,19 +149,21 @@ components:
   decouples: U5
 - ref: D1
   value: TPD4E05U06DQAR
-  footprint: SON-10
+  footprint: SON50P100X255X50-10N
   lcsc: C138714
   description: TVS Diode for USBC
   pin_count: 10
 - ref: D2
   value: schottky
   footprint: SMA
+  current: 3A
   lcsc: C8678
   voltage: 40V
 - ref: D3
   value: TVS
   footprint: SMA
   lcsc: C19077540
+  manufacturer: Littelfuse
   description: Bidirectional transient-voltage-suppression diode
 - ref: D5
   value: red LED
@@ -170,6 +173,7 @@ components:
   value: TVS
   footprint: SMA
   lcsc: C19077540
+  manufacturer: Littelfuse
   description: Bidirectional transient-voltage-suppression diode
 - ref: J1
   value: USB-C
@@ -257,7 +261,6 @@ components:
   value: 10kohm
   footprint: '0402'
   lcsc: C25744
-  pulldown: D5.K
 - ref: R23
   value: 5.1kohm
   footprint: '0402'
@@ -335,16 +338,24 @@ components:
   pin_count: 5
 - ref: SW2
   value: switch
-  footprint: Button
+  footprint: Button_6.2x6.2x12
   lcsc: C2762973
   description: Normally-open tactile switch 160gf 12mm Stem
   pin_count: 4
 - ref: SW4
   value: switch
-  footprint: Button
+  footprint: Button_6.2x6.2x12
   lcsc: C2762973
   description: Normally-open tactile switch 160gf 12mm Stem
   pin_count: 4
+- ref: SW5
+  value: Button_Side_TS24CA
+  footprint: Button-SMD_TS24CA
+  lcsc: C692458
+  description: 1.8mm 3.5mm Horizontal attachment Tactile Switches
+  manufacturer: "SHOU HAN(\u9996\u97E9)"
+  pin_count: 4
+  nc_pins: {'2': '2'}
 - ref: TH1
   value: Thermistor_NTC
   footprint: '0402'
@@ -358,17 +369,20 @@ components:
   nc_pins: {PG: '3', PGTH: '4', DVDT: '7', NC: '10'}
 - ref: U2
   value: AP33772
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
   lcsc: C5244513
   description: USB PD Sink PD3.0 Controller
   pin_count: 25
-  nc_pins: {NC@2: '2', GPIO4: '6', GPIO2: '7', GPIO1: '8', NC@10: '10', GPIO5: '11', VFB: '14', NC@18: '18', NC@19: '19', NC@21: '21', PWR_EN: '23'}
+  nc_pins: {NC@2: '2', GPIO4: '6', GPIO2: '7', GPIO1: '8', NC@10: '10', GPIO5: '11', VFB: '14', NC@18: '18', NC@19: '19',
+    NC@21: '21', PWR_EN: '23'}
 - ref: U3
   value: RP2040
-  footprint: QFN-56-1EP
+  footprint: QFN-56-1EP_7x7
   lcsc: C2040
   pin_count: 57
-  nc_pins: {GPIO0: '2', GPIO3: '5', GPIO6: '8', GPIO7: '9', GPIO8: '11', GPIO9: '12', GPIO12: '15', GPIO13: '16', GPIO14: '17', GPIO15: '18', GPIO16: '27', GPIO17: '28', GPIO21: '32', GPIO22: '34', GPIO23: '35', GPIO25: '37', GPIO26_ADC0: '38', GPIO27_ADC1: '39', GPIO28_ADC2: '40'}
+  nc_pins: {GPIO0: '2', GPIO3: '5', GPIO6: '8', GPIO7: '9', GPIO8: '11', GPIO9: '12', GPIO12: '15', GPIO13: '16', GPIO14: '17',
+    GPIO15: '18', GPIO16: '27', GPIO17: '28', GPIO21: '32', GPIO22: '34', GPIO23: '35', GPIO25: '37', GPIO26_ADC0: '38', GPIO27_ADC1: '39',
+    GPIO28_ADC2: '40'}
 - ref: U4
   value: AP2204K-3.3
   footprint: SOT-23-5
@@ -893,6 +907,9 @@ positions:
 - ref: SW4
   x: 63.36
   y: 39.6
+- ref: SW5
+  x: 55.96
+  y: 35.82
 - ref: TH1
   x: 54.16
   y: 72.81

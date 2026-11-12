@@ -2,8 +2,8 @@ name: Crazyflie
 slug: crazyflie
 source: bitcraze/crazyflie-electronics
 format: kicad_legacy
-description: "Crazyflie 1.0 STM32F103CB nano quadcopter, NRF24L01+ radio"
-tags: [adc-dac, battery-charging, drone-uav, sensors]
+description: Crazyflie 1.0 STM32F103CB nano quadcopter, NRF24L01+ radio
+tags: [battery-charging, drone-uav, sensors]
 key_ics: [STM32F103CB, BQ24075, MAX16054]
 outline:
   width_mm: 80.0
@@ -18,18 +18,23 @@ components:
 - ref: BT1
   value: BATTERY
   footprint: JST-B2B-ZR
+  manufacturer: JST
+  mpn: B2B-ZR
 - ref: C1
   value: 100nF
   footprint: SM0603_Capa
 - ref: C10
   value: 1pF
   footprint: SM0603_Capa
+  description: NPO, +/- 0.1pF
 - ref: C11
   value: 2.2nF
   footprint: SM0603_Capa
+  description: X7R, +/- 10%
 - ref: C12
   value: 4.7pF
   footprint: SM0603_Capa
+  description: NPO, +/- 0.25pF
 - ref: C13
   value: 10nF
   footprint: SM0603_Capa
@@ -41,6 +46,7 @@ components:
 - ref: C15
   value: 33nF
   footprint: SM0603_Capa
+  description: X7R, +/-10%, 6.3V
 - ref: C16
   value: 10nF
   footprint: SM0603_Capa
@@ -78,6 +84,7 @@ components:
 - ref: C3
   value: 15pF
   footprint: SM0603_Capa
+  description: NP0, +/-5%, 50V
 - ref: C30
   value: 4.7uF
   footprint: SM0603_Capa
@@ -88,12 +95,15 @@ components:
 - ref: C32
   value: 10nF
   footprint: SM0603_Capa
+  description: X7R, +/-10, 25V
 - ref: C33
   value: 100nF
   footprint: SM0603_Capa
+  description: X7R, +/-10%, 25V
 - ref: C34
   value: 4.7uF
   footprint: SM0603_Capa
+  description: X7R, +/-10% 6.3V
 - ref: C35
   value: 15pF
   footprint: SM0603_Capa
@@ -110,6 +120,7 @@ components:
 - ref: C39
   value: 10uF
   footprint: SM0603_Capa
+  description: X5R, +/-20%, 6.3V
 - ref: C4
   value: 100nF
   footprint: SM0603_Capa
@@ -117,6 +128,7 @@ components:
 - ref: C40
   value: 10nF
   footprint: SM0603_Capa
+  description: X7R, +/-10%, 25V
 - ref: C41
   value: 100nF
   footprint: SM0603_Capa
@@ -139,9 +151,12 @@ components:
 - ref: C9
   value: 1.5pF
   footprint: SM0603_Capa
+  description: NPO, +/- 0.1pF
 - ref: D1
   value: BAT54
   footprint: SOD323
+  manufacturer: ST Microelectronics
+  mpn: BAT54JFILM
 - ref: D2
   value: BAT54
   footprint: SOD323
@@ -154,58 +169,69 @@ components:
 - ref: D5
   value: RED LED
   footprint: '0603'
+  description: Red, If:20mA, vf:2-2.2V, >40mcd
 - ref: D6
   value: GREEN LED
   footprint: '0603'
+  description: Green, If:20mA, vf:2-2.2V, >40mcd
 - ref: D7
   value: BLUE LED
   footprint: '0603'
+  description: Blue, If:20mA
 - ref: D8
   value: BLUE LED
   footprint: '0603'
+  description: Blue, If:20mA
 - ref: L1
   value: 3.9nH
   footprint: SM0603_Capa
+  description: +/-5%
 - ref: L2
   value: 8.2nH
   footprint: SM0603_Capa
+  description: +/-5%
 - ref: L3
   value: 2.7nH
   footprint: SM0603_Capa
+  description: +/-5%
 - ref: P1
-  value: 1x2 header
-  footprint: 2X1
+  value: 1x2 1.27mm header
+  footprint: 2X1_P1.27mm
 - ref: P2
-  value: 1x2 header
-  footprint: 2X1
+  value: 1x2 1.27mm header
+  footprint: 2X1_P1.27mm
 - ref: P3
-  value: 1x2 header
-  footprint: 2X1
+  value: 1x2 1.27mm header
+  footprint: 2X1_P1.27mm
 - ref: P4
-  value: 1x2 header
-  footprint: 2X1
+  value: 1x2 1.27mm header
+  footprint: 2X1_P1.27mm
 - ref: P5
-  value: 1x2 header
-  footprint: 2X1
+  value: 1x2 1.27mm header
+  footprint: 2X1_P1.27mm
 - ref: P6
-  value: 2x10 header
-  footprint: 2X10
+  value: 2x10 1.27mm header
+  footprint: 2X10_P1.27mm
   pin_count: 20
   nc_pins: {'7': '7'}
 - ref: P7
   value: MICRO-B-USB
   footprint: ZX62-B-5PA_11_CFK
+  manufacturer: Hirose Connectors
+  description: ZX62-B-5PA(11)
   pin_count: 5
   nc_pins: {'4': '4'}
 - ref: P8
-  value: 1x2 header
-  footprint: 2X1
+  value: 1x2 1.27mm header
+  footprint: 2X1_P1.27mm
 - ref: P9
-  value: 1x1 header
-  footprint: 1X1
+  value: 1x1 1.27mm header
+  footprint: 1X1_P1.27mm
 - ref: Q1
   value: PMV31XN
   footprint: SOT23GDS
+  manufacturer: NXP
+  mpn: PMV31XN
   pin_count: 3
 - ref: Q2
   value: PMV31XN
@@ -222,24 +248,21 @@ components:
 - ref: Q5
   value: 2N7002
   footprint: SOT23GDS
+  mpn: 2N7002
   pin_count: 3
 - ref: Q6
   value: 2N7002
   footprint: SOT23GDS
+  mpn: 2N7002
   pin_count: 3
 - ref: R1
   value: 10kohm
   footprint: SM0402
   pulldown: N-000046
-- ref: R10
-  value: NM
-  footprint: SM0603
-- ref: R11
-  value: NM
-  footprint: SM0603
 - ref: R12
   value: 22kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 25V
   pulldown: N-000095
 - ref: R13
   value: 2.2kohm
@@ -252,13 +275,16 @@ components:
 - ref: R16
   value: 39kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
   pullup: N-000080
 - ref: R17
   value: 10ohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
 - ref: R18
   value: 30kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
   pulldown: N-000080
 - ref: R19
   value: 0ohm
@@ -270,21 +296,25 @@ components:
 - ref: R20
   value: 42.2kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
   pullup: N-000078
 - ref: R21
   value: 300kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
   pullup: /POWER/PGOOD
 - ref: R22
   value: 1kohm
   footprint: SM0603
-  pullup: N-000090
+  description: +/-1%, 0.125W, 50V
 - ref: R23
   value: 150kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
 - ref: R24
   value: 1.2kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
   pulldown: N-000085
 - ref: R25
   value: 10kohm
@@ -297,6 +327,7 @@ components:
 - ref: R27
   value: 10kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
   pulldown: N-000083
 - ref: R28
   value: 30kohm
@@ -305,6 +336,7 @@ components:
 - ref: R29
   value: 0ohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
 - ref: R3
   value: 10kohm
   footprint: SM0402
@@ -315,6 +347,7 @@ components:
 - ref: R31
   value: 100kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
   pulldown: /POWER/SYSOFF
 - ref: R32
   value: 10kohm
@@ -323,18 +356,21 @@ components:
 - ref: R33
   value: 10kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
 - ref: R36
   value: 10kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
   pulldown: VCOM
 - ref: R37
   value: 10kohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 50V
   pulldown: /POWER/VUSB
 - ref: R38
   value: 1kohm
   footprint: SM0603
-  pullup: N-000076
+  description: +/-1%, 0.125W, 50V
 - ref: R39
   value: 100ohm
   footprint: SM0402
@@ -354,6 +390,7 @@ components:
 - ref: R5
   value: 330ohm
   footprint: SM0603
+  description: +/-1%, 0.125W, 25V
 - ref: R6
   value: 220ohm
   footprint: SM0603
@@ -372,25 +409,34 @@ components:
 - ref: SW1
   value: PUSH ON/OFF
   footprint: SPST-NO-4x2.5
+  manufacturer: Omron
+  mpn: B3U-3000P
 - ref: U1
   value: STM32F103CB
   footprint: LQFP-48
+  manufacturer: ST Microelectronics
+  mpn: STM32F103CB
   pin_count: 48
 - ref: U10
   value: MAX16054
   footprint: SOT23_6
+  manufacturer: Maxim
+  mpn: MAX16054AZT
   pin_count: 6
   nc_pins: {'5': '5'}
 - ref: U2
   value: NRF24L01+
   footprint: QFN20-4x4mm
+  manufacturer: Nordic Semi
+  mpn: nRF24L01P
   pin_count: 20
   nc_pins: {'9': '9'}
 - ref: U3
   value: MPU60X0
   footprint: MPU60X0
   pin_count: 24
-  nc_pins: {'2': '2', '3': '3', '4': '4', '5': '5', '11': '11', '14': '14', '15': '15', '16': '16', '17': '17', '19': '19', '21': '21', '22': '22'}
+  nc_pins: {'2': '2', '3': '3', '4': '4', '5': '5', '11': '11', '14': '14', '15': '15', '16': '16', '17': '17', '19': '19',
+    '21': '21', '22': '22'}
 - ref: U4
   value: HMC5883L
   footprint: QFN16_HMC5883L
@@ -404,6 +450,8 @@ components:
 - ref: U6
   value: NUF2221
   footprint: SOT363
+  manufacturer: OnSemi
+  mpn: NUF2221W1T2G
   pin_count: 6
 - ref: U7
   value: TPS79301
@@ -412,18 +460,26 @@ components:
 - ref: U8
   value: BQ24075
   footprint: QFN16
+  manufacturer: TI
+  mpn: BQ24075RGTT
   pin_count: 17
 - ref: U9
   value: TPS79301
   footprint: SOT23_6
+  manufacturer: TI
+  mpn: TPS79301DBVR
   pin_count: 6
 - ref: X1
   value: 16Mhz
   footprint: XTAL-5.0x3.2
+  manufacturer: TXC
+  mpn: 7B-16.000MEEQ-T
   pin_count: 4
 - ref: Y1
   value: CHIP_ANTENNA
   footprint: CHIP-ANT-6.5x2.2
+  manufacturer: Linx Technologies
+  mpn: ANT-2.45-CHP
   pin_count: 2
   nc_pins: {'2': '2'}
 nets:
@@ -446,9 +502,9 @@ nets:
 - name: /BOOT0
   pins: [R7.1, U1.44]
 - name: /EXT_I2C_SCL/TX
-  pins: [P6.3, R11.1, R9.2, U1.21]
+  pins: [P6.3, R9.2, U1.21]
 - name: /EXT_I2C_SDA/RX
-  pins: [P6.5, R10.1, R8.2, U1.22]
+  pins: [P6.5, R8.2, U1.22]
 - name: /EXT_SPI_CS
   pins: [P6.11, U1.14]
 - name: /EXT_SPI_MISO
@@ -574,8 +630,6 @@ nets:
   - P6.9
   - P7.5
   - P8.2
-  - R10.2
-  - R11.2
   - R12.2
   - R28.1
   - R29.1
@@ -1016,14 +1070,6 @@ positions:
   x: 151.5
   y: 103.5
   rot: 90.0
-- ref: R10
-  x: 135.6
-  y: 104.5
-  rot: 270.0
-- ref: R11
-  x: 134.1
-  y: 104.5
-  rot: 270.0
 - ref: R12
   x: 134.0
   y: 114.8

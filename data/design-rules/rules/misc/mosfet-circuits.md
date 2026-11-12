@@ -4,130 +4,98 @@
 
 ## Quick Reference
 
-- **VDS sizing: 2x Vin_max, no more.** Higher voltage = higher Rds(on) for same die area. 30V Si ~10mohm, 60V ~25mohm, 100V ~80mohm. A 60V FET on a 12V rail has 2-3x the Rds(on) of a 25V part.
-- **Check Rds(on) at your actual Vgs, not 10V.** Rds(on) at 4.5V can be 2-3x higher than at 10V. For 3.3V drive, verify at Vgs=3.3V or select FETs specified for 2.5V drive (Infineon OptiMOS 2.5V family).
-- **Spirito effect: SOA shrinks at high temperature.** Linear-mode hotspot thermal runaway at Tj>100C. 25C SOA curves are dangerously optimistic. Always use highest-temperature SOA curve.
-- **Relay coil flyback: Zener + Schottky in series, not Schottky alone.** Schottky-only delays release 5-50x. 12V Zener: clamps at 12.3V, release drops from ~50ms to ~2ms.
-- **Integrated load switches beat discrete below 5A.** TPS22916, RT9742: built-in inrush control, thermal shutdown, reverse current blocking, <1uA shutdown.
+- **Size VDS for the worst-case bus and switching overshoot.** Infineon recommends at least 20% margin above maximum steady-state voltage; twice the bus voltage is a motor-inverter example, not a ceiling [1, Section 3.4].
+- **Check guaranteed Rds(on) at the available gate voltage.** CSD17571Q2 has Vgs(th)=1.3-2V at only 250uA; its Rds(on) is specified at 4.5V and 10V, so that threshold does not qualify it for 3.3V power switching [10, p.3].
+- **Linear-mode SOA depends on case temperature and pulse duration.** Use the device's SOA and its manufacturer's temperature-derating method, not a universal 100 degrees C instability threshold [1, Section 6; 5, Sections 4-7].
+- **For fast relay release, use a series diode/Zener suppression path.** Check the Zener's clamping voltage at coil current against MOSFET VDS; a plain freewheel diode extends current decay [7, Figures 3-4].
+- **TPS22916 reverse blocking is a specified feature, not a property of every load switch.** Its timing and output-discharge options depend on the suffix [11, Sections 3, 8.3].
 
 ## Design Rules
 
 ### MOSFET Selection
 
-- **Datasheet ID_max is a package limit, not silicon limit.** Bond wires cap current below what Rds(on)/Rth would allow. Infineon IPP029N06N: calculates to 169A from Rds(on)/Rth, bond wires cap at 100A. Compare FETs by Rds(on) at your operating Vgs, not by ID_max.
-- **Rds(on) temperature coefficient: alpha ~0.4%/C for Si MOSFETs.** Rds(on)(Tj) = Rds(on)_25C * 1.004^(Tj - 25). At 125C: 1.49x. At 150C: 1.65x. Always use hot Rds(on) for thermal calculations.
-- **Logic-level gate (Vgs(th) < 2.5V) required for direct MCU drive.** Standard-level needs 10V gate drive. Logic-level FETs have higher Qg than standard-level at same Rds(on)/VDS -- and lower Vgs(th) makes them susceptible to dVDS/dt-induced turn-on in half-bridge. Standard-level preferred for high-frequency switching.
-- **FOM = Rds(on) * Qg for switching apps; Rds(on) alone for DC loads.** Gate charge, not Rds(on), limits switching speed. At Qg=50nC, Ig=25mA: ton=2us.
-- **SOA is the binding constraint for any linear-mode operation.** Hot-plug, soft-start, current limiting, active clamping all put the FET in linear mode. Not Rds(on) or Id_max.
+- **ID_max can be package-limited or thermally limited.** Infineon's IPP029N06N example calculates 169A with Tj(max)=175 degrees C, Tc=25 degrees C, RthJC=0.8 degrees C/W and hot Rds(on)=6.6mohm, but caps the rating at 100A because of package/assembly constraints. Compare Rds(on) at the operating Vgs and thermal conditions rather than ID_max alone [2, Section 2.2].
+- **Infineon's alpha=0.4%/degree C is an OptiMOS approximation.** Rds(on)(Tj) = Rds(on)_25C * 1.004^(Tj - 25), giving 1.49 times at 125 degrees C and 1.65 times at 150 degrees C. Use the selected device's temperature curve when available [2, Section 2.9].
+- **A logic-level label does not establish MCU-drive suitability.** Standard-level devices in AN_2203 are typically driven at 10-15V; logic-level devices typically at 5V. The latter's lower threshold increases susceptibility to dVDS/dt-induced turn-on in half-bridges [4, Sections 2.1-2.2].
+- **SOA is the binding constraint for linear-mode operation.** Hot-plug, soft-start, current limiting, and active clamping require checks at simultaneous VDS and ID for the actual pulse waveform, rather than relying on Rds(on) or ID_max [5, Sections 3-7].
 
-> WARNING: Spirito effect (electro-thermal instability) causes localized hotspot runaway in MOSFETs in linear mode at high Tj. Modern trench FETs have worse linear-mode SOA than older planar. For hot-swap/active clamp: select parts with guaranteed SOA at 125C (not 25C). Infineon OptiMOS linear FETs and IXYS linear-mode parts are designed for this.
+> WARNING: Electrothermal instability causes localized current crowding below the device's zero-temperature-coefficient operating point. A low-Rds(on) trench MOSFET is not automatically suitable for hot-swap or active clamping; check the thermal-stability boundary as well as the constant-power boundary [1, Sections 6.3-6.4].
 
-**Recommended MOSFETs:**
+**MOSFET selection checks (resistances at 25 degrees C):**
 
 | Application | Part | Key Specs |
 |-------------|------|-----------|
-| 5V N-ch load switch | CSD17571Q2 | 30V, 2.6mohm@4.5V, Qg 3.1nC, SON-2x2 |
-| 12V N-ch switching | BSC019N04LS | 40V, 1.9mohm@4.5V, Qg 41nC, TDSON-8 |
-| 12V P-ch load switch | DMP2035U | -20V, 30mohm@Vgs=-2.5V, SOT-23 |
-| Linear mode / hot-swap | IPD90P03P4L-04 | -30V P-ch, guaranteed SOA at 175C |
-| High-side P-ch <2A | Si2301CDS | -20V, 110mohm, SOT-23 |
+| 5V N-ch load switch | CSD17571Q2 | 30V, 24mohm typical / 29mohm max at Vgs=4.5V, ID=5A; Qg=2.4nC typical / 3.1nC max at 4.5V, VDS=15V, ID=5A; SON 2mm * 2mm [10, pp.1,3] |
+| 12V N-ch switching | BSC019N04LS | 40V, 2.7mohm max at Vgs=4.5V, ID=50A; 1.9mohm max at 10V; PG-TDSON-8 [12, pp.1,5] |
+| P-ch load switch | DMP2035U | -20V, 45mohm max at Vgs=-2.5V, ID=-4A; SOT-23; Vgs absolute maximum +/-10V rules out pulling its gate directly to ground on a 12V rail [13, p.2] |
+| Low-voltage P-ch | Si2301CDS | -20V, 112mohm max at Vgs=-4.5V, ID=-2.8A; 142mohm max at -2.5V, -2A; SOT-23; Vgs absolute maximum +/-8V [14, pp.1-2] |
 
 - Reverse polarity MOSFET selection -> `protection/reverse-polarity.md`. Thermal design -> `guides/thermal.md`.
 
 ### Gate Drive
 
-- **Gate resistor sizing: Rg = (Vdrive - Vplateau) / Ig_peak.** Start with 10 ohm. Too low -> EMI from fast dV/dt, ringing from gate loop inductance. Too high -> slow switching, high loss.
-- **Separate turn-on and turn-off resistors.** Diode in parallel with Rg_on bypasses during turn-off. Faster turn-off reduces body diode conduction in half-bridge dead time. This is the standard gate drive network for hard-switching half-bridges.
-- **Gate loop inductance: every 1nH causes ~1V gate overshoot at fast di/dt.** Keep gate driver, Rg, and FET gate pin in <5mm loop. Route on same layer, no vias in gate path.
-- **Miller plateau determines dV/dt.** dV/dt = Ig / Cgd. Cgd (Crss) varies 5-10x with VDS -- use value at operating VDS, not 0V.
-- **QGD/QGS ratio matters for half-bridge.** QGD/QGS of 0.5-0.8 and QGD/QGS(TH) < 1.0 recommended for hard switching. Higher ratios increase dVDS/dt-induced turn-on risk (shoot-through).
-- **Bootstrap cap >= 10x Qg of high-side FET.** Fast recovery diode (<50ns trr), low Vf. Minimum low-side on-time to recharge cap limits max duty cycle to ~99%. For 100% duty cycle or always-on high-side: use charge pump (LTC4440, LM5109).
+- **Gate resistance includes driver output impedance and the FET's internal gate resistance.** During the plateau, Ig_on is approximately (Vdrive - Vplateau) / (Rdriver_source + Rg_external + Rg_internal). Select external resistance from the required gate current and verify ringing and switching loss; there is no universal 10 ohm starting value in this calculation [4, Sections 4.1, 4.3].
+- **Separate turn-on and turn-off resistors when the half-bridge needs stronger turn-off.** A diode/resistor network allows independent switching speeds; stronger pull-down reduces induced turn-on, while turn-off overshoot still requires checking [1, Sections 3.4, 7.1].
+- **Use gate charge over the actual switching excursion.** Crss varies with VDS, so a single capacitance measured at one voltage does not predict the whole transition. Gate-loop/source inductance also alters the effective drive voltage [2, Sections 2.11, 2.15; 4, Section 3.2].
+- **QGD/QGS of 0.5-0.8 and QGD/QGS(TH) < 1 are Infineon's hard-switching selection guidance.** Higher charge ratios increase dVDS/dt-induced turn-on risk; check the driver pull-down and actual gate waveform too [1, Section 7.1].
+- **Bootstrap sizing uses charge divided by allowable droop, not capacitance compared directly with Qg.** Include driver consumption and maximum high-side on-time; bootstrap-only supplies need a recharge interval. MOTIX 6EDL7141 uses charge pumps for operation up to 100% duty cycle [4, Sections 6.2, 6.6]; calculation -> `misc/motor-control.md`.
 
-**Recommended gate drivers:**
+**Gate drivers:**
 
 | Application | Part | Key Specs |
 |-------------|------|-----------|
-| Single low-side | UCC27511A | 4A peak, 4.5-35V, SOT-23-5 |
-| Half-bridge integrated | UCC21520 | 4A/6A, isolated, SOIC-16 |
-| Low-voltage half-bridge | MIC4606 | 1A, 5.5-16V, bootstrap, TSSOP-10 |
-| Configurable 3-phase | MOTIX 6EDL7141 | 10mA-1.5A prog, SPI config, charge pump for 100% duty |
+| Single low-side | UCC27511A | 4A source / 8A sink peak, 4.5-18V supply, SOT-23-6; split outputs set turn-on/off resistances independently [15, pp.1-2] |
+| Isolated dual-channel | UCC21520 | 4A source / 6A sink peak, SOIC-16; each output needs bias referenced to its own source [16, Sections 3, 6.3] |
+| Full-bridge | MIC4606 | 85V bridge, 1A peak drive, 5.5-16V gate supply, bootstrap; QFN-16 or TSSOP-16 [17, pp.1,4] |
+| Configurable 3-phase | MOTIX 6EDL7141 | 10mA-1.5A programmable source/sink, SPI, charge pumps for 100% duty cycle [4, Section 6.6] |
 
 ### Load Switches
 
-- **Integrated load switches below 5A:** TPS22916 (5.5V, 2A, 24mohm, SOT-23-5) -- controlled rise time via CT pin, <1uA off-state, quick output discharge. RT9742 (5.5V, 2A, 22mohm) similar, lower cost.
-- **Discrete P-ch load switch:** source to supply, drain to load. Gate pull-up to source via 100K (off by default). Drive gate low through N-ch level shifter (BSS138) when supply > MCU VDD. Add 10-15V Zener gate-to-source clamp when Vin > Vgs(max).
-- **Discrete N-ch high-side: requires charge pump or bootstrap.** Better Rds(on) than P-ch but more complex. Prefer integrated (TPS22916 family) unless current > 5A.
-- **Inrush current limiting: target 1-10ms rise time for capacitive loads.** Integrated switches use CT pin (external cap sets dV/dt). Discrete: series gate resistor + gate capacitor sets RC ramp.
-
-> WARNING: Hot-plugging into discharged capacitive load puts FET in linear mode (full VDS, rising ID). A 100uF cap at 5V: 5V * 0.5A = 2.5W instantaneous. At 10,000uF on 12V, peak power reaches hundreds of watts for milliseconds. Check SOA at actual hot-plug pulse duration.
-
-- **Reverse current blocking:** most integrated load switches block reverse current by design. Discrete P-ch does NOT -- body diode conducts. Back-to-back FETs needed -> `power/power-path.md`.
+- **TPS22916: 1-5.5V, 2A maximum continuous switch current, WCSP-4.** RON is 60mohm typical / 80mohm max at VIN=5V, IOUT=200mA, 25 degrees C, rising to 100mohm max over -40 to +85 degrees C. B/C suffixes select fixed fast/slow timing; there is no CT pin or thermal shutdown [11, Sections 3, 5, 6.5, 9.4].
+- **Discrete P-ch load switch:** source to supply, drain to load. Pull the gate up to source for default-off and use a small-signal N-ch level shifter when the control cannot reach the source voltage; AND9093's example uses 1K-10K, selected to limit pull-up current to milliamps or less. Constrain Vgs to the selected FET's rating with a current-limited drive/clamp network [3, pp.1-3; 13, p.2; 14, p.1].
+- **Discrete N-ch high-side: drain to supply, source to load.** The gate supply must rise above the output by the Vgs needed for specified Rds(on); a bootstrap-only driver cannot sustain an always-on output [3, pp.1-3; 4, Section 6.2].
+- **Set inrush from load capacitance and the permissible supply current.** A gate RC does not establish a universal 1-10ms safe ramp; validate the resulting VDS/ID waveform against SOA at startup temperature [3, Turn-on Considerations; 5, Section 7].
+- **A single discrete load-switch FET does not block output-to-input backfeed.** With the P-ch source at VIN or N-ch drain at VIN, the body diode conducts from output toward input. Use a device with specified reverse blocking or back-to-back FETs -> `power/power-path.md` [3, Figures 2-3; 6, Reverse Current Blocking].
 
 ### Inductive Load Driving (Relays, Solenoids)
 
-- **Schottky diode across coil: simplest but slowest release.** Clamps flyback to ~0.3V above rail. Relay stays energized 5-50x longer than unclamped. SS14 (1A/40V SMA) or B5819W (1A/40V SOD-123) for coils up to 1A.
-- **Zener + Schottky in series: fast release with controlled clamp.** Zener voltage <= (VDS_max - Vcoil) / 2 for margin. 12V relay with 30V FET: 12V Zener clamps at 12.3V, VDS peak = 24.3V. Release drops from ~50ms to ~2ms.
-- **TVS across FET (drain-to-source): best for high-energy solenoids.** Bidirectional TVS, Vbr > Vcoil, Vc < VDS_max. Verify single-pulse energy rating (Eppk) >= 0.5*L*I^2.
-- **RC snubber across coil for EMC.** R = sqrt(L/C_parasitic), C = 10x C_parasitic. Typical: 100 ohm + 10nF for small relays. Use with diode clamp.
-- **ULN2003A / ULN2803A for multiple low-current coils.** 7/8 Darlington drivers, 50V/500mA per channel, integrated clamp diodes to COM pin (connect to V+). Vce(sat) ~1V at 300mA. Use MOSFET for >500mA or when 1V drop matters (5V relay on 5V supply).
-- **Coil suppression tradeoff: release speed vs contact life.** Faster flyback decay = more arc at contacts = better self-cleaning but more erosion. Slower = less arcing but risk of contact welding. Signal relays: fast clamp. Power relays: balance.
+- **Low-side coil flyback diode: cathode to coil supply, anode to the switched coil terminal.** Size it for initial turn-off current and reverse voltage. COM on ULN2003A is the common cathode of its clamp diodes and connects to the coil supply [18, Sections 4, 7.2, 8.2]; a plain diode slows release [7, Figure 3].
+- **Series Zener plus forward diode across the coil gives faster release.** The suppression path must block during energization and conduct through Zener breakdown at turn-off. For a low-side switch, check VDS_peak = Vcoil + VZ(clamp at coil current) + VF + switching overshoot; do not use nominal Zener voltage or a fixed 0.3V diode drop as a guaranteed clamp [7, Figure 4; 1, Section 3.4].
+- **ULN2003A for multiple low-current coils:** seven Darlington outputs, 50V and 500mA single-output rating. At 350mA collector / 500uA input current, Vce(sat) is 1.2V typical / 1.6V max; package thermal limits prevent treating all seven channels as independently continuous 500mA loads [18, Sections 3, 5.6, 5.8, 9.3].
 
 ### TEC/Peltier Driver Circuits
 
-- **DC drive is significantly more efficient than PWM.** TI measured 39% less input power for equivalent cooling at one operating point (1A avg, 50% duty, 20 kHz). PWM I^2*R losses from RMS current exceeding DC equivalent. Five months continuous testing showed no aging difference between PWM and DC drive.
-- **H-bridge for heating AND cooling.** DRV8871 (single-chip, 3.6A, PWM input) or discrete bridge with gate drivers. Buck-boost alternative (TPS63020): TEC between input and output, single inductor, polarity set by output voltage relative to input.
-- **Current control, not voltage control.** TEC resistance varies with temperature (positive tempco). Voltage drive causes current runaway. Delta T remains constant across temperature range with current drive but not voltage drive.
-- **Operate at 50-70% of Imax for best COP.** Exceeding Imax causes Joule heating > Peltier cooling -- TEC gets hotter, not colder.
-- **PWM frequency if used: >10 kHz minimum.** Below 10 kHz, thermal cycling fatigues TEC solder joints. LC filter on PWM output converts to quasi-DC -- preferred over raw PWM. For laser diode / photodiode TECs: use DC only -- even kHz-range current ripple can frequency-modulate the laser.
-- **Thermal runaway protection mandatory.** NTC on hot side, firmware shutdown. Without protection, heatsink failure + TEC = fire risk.
-- **PID compensation: TEC module is ~two-pole system (20mHz + 1Hz).** Integrator zero at 70mHz, derivative zero at crossover/5 for phase margin. Loop crossover at ~2Hz. Use ultra-low-leakage op-amp for integrator (MAX4475, 150pA max). C0G or polystyrene for integrator cap -- no electrolytic or tantalum (leakage causes gain errors).
+- **TI's unfiltered-PWM TEC test measured temperature lift, not 39% less input power for equal cooling.** On ET-063-10-13 with a heatsink, 1A DC produced 8.1 degrees C more ambient-to-cold-side difference than 0A/2A, 50% duty, 20kHz PWM. TPS54201-Q1 provided filtered current and DRV8873-Q1 the unfiltered bridge drive. The five-month, 1.4A aging comparison found no measurable module degradation under those test conditions [9, pp.2-5].
+- **For reversible TEC drive:** DRV8871 provides a 6.5-45V H-bridge with 3.6A peak capability and internal current regulation, in HSOP-8; continuous capability requires a thermal calculation. TI also identifies TPS63020 as a constant-current buck-boost alternative [19, pp.1,13-14; 9, p.3].
+- **Current drive avoids the temperature-dependent impedance error of open-loop voltage drive.** TI's test uses constant-current regulation; its result does not establish that voltage drive universally causes current runaway [9, p.2].
+- **PID compensation values describe a laser-diode TEC model, not every Peltier assembly.** HFAN-08.2.0 assumes poles at 20mHz and 1Hz; its example places an integrator zero at 70mHz, a derivative zero at 0.4Hz and crossover at 2Hz. Characterize the actual TEC/thermistor response, including heating mode [8, Using a Control Loop; Compensating the Loop].
+- **High-impedance TEC integrators need leakage control.** HFAN-08.2.0 specifies MAX4475ASA (150pA maximum input leakage), a guard ring, and low-leakage capacitors; polystyrene is preferred, large ceramic values require leakage checks, and electrolytic/tantalum capacitors are excluded [8, Selecting Components].
 
-**Recommended TEC driver ICs:**
+**TEC driver ICs:**
 
-| IC | Topology | Max Current | Key Feature |
-|----|----------|-------------|-------------|
-| DRV8871 | H-bridge | 3.6A | PWM input, current limiting, HTSSOP-16 |
-| MAX1968 | PWM H-bridge | 3A | Integrated 4 switches, analog control, TSSOP-EP-28 |
-| ADN8834 | Half-linear H-bridge | 1.5A | Single inductor, ultracompact |
-| LTC1923 | PWM H-bridge | External FETs | Full TEC controller, SSOP-24 |
+| IC | Topology | Key Specs |
+|----|----------|-----------|
+| MAX1968 | PWM H-bridge | +/-3A, integrated switches, TSSOP-EP-28 [20, p.1] |
+| ADN8834 | Linear/PWM H-bridge | 1.5A, single inductor [21, p.1] |
+| LTC1923 | PWM H-bridge controller | External FETs, SSOP-28 or QFN-32 [22, pp.1-2] |
 
 ### Paralleling MOSFETs
 
-- **Positive Rds(on) tempco self-balances DC current.** Hotter FET -> higher Rds(on) -> less current. Inherent to Si MOSFETs, makes DC paralleling straightforward.
-- **Dynamic current sharing requires matched Vgs(th).** FET with lower Vgs(th) turns on first, carries transient overcurrent. Use same part from same lot. Typical lot spread: +/-100mV.
-- **Individual gate resistors: 1-10 ohm per FET.** Prevents parasitic oscillation at 50-200MHz from gate loop coupling. Without them, parallel FETs oscillate.
-- **Kelvin source connection for gate drive.** Separate source sense trace from each FET source pad to driver ground. Common source inductance (even 1nH) causes negative feedback that slows switching and current imbalance during transitions.
+- **Positive Rds(on) tempco helps sharing only in fully enhanced operation.** Dynamic sharing also depends on Vgs(th), transconductance, capacitances and diode recovery; same part/lot does not guarantee a particular threshold spread [1, Section 10; 2, Section 2.7].
+- **Give each parallel FET its own gate network.** Individual series resistors or ferrite beads decouple gates; choose values for the actual devices and parasitics rather than a universal 1-10 ohm range or oscillation frequency [1, Section 10].
+- **Keep source and gate-drive impedances matched.** Common-source inductance feeds back against gate drive during current transitions; a separate source return prevents power-path inductance from becoming part of the drive loop [1, Section 10; 4, Section 3.2].
 
 ## Common Mistakes
 
-- **Ignoring Miller plateau in thermal calculation.** Switching loss occurs primarily during Miller plateau. P_sw = 0.5 * Vds * Id * (t_rise + t_fall) * f_sw. At 100kHz with 50ns transitions: switching loss can exceed conduction loss. Omitting this underestimates total dissipation by 30-50%.
-- **Zener clamp voltage selected without checking hot VDS margin.** At 125C, Zener voltage rises ~5-8% (positive tempco). A 12V Zener at 125C clamps at ~12.9V, pushing VDS_peak from 24.3V to 25.2V. On a 30V FET derated to 80% at temperature, max VDS = 24V -- now exceeded. Select Zener for hot conditions: V_zener(125C) + V_coil + margin < VDS_max.
-- **SOA derating at temperature.** Linear derating: IDS(TC) = IDS(25C) * (TJ_max - TC) / (TJ_max - 25C). At 100C case with 150C TJ_max: only 40% of 25C SOA current. Designers often use 25C SOA at elevated temperature -- guaranteed failure in hot-swap.
-- **Bootstrap cap too small.** Must supply Qg plus driver quiescent current for entire high-side on-time. If Cboot < 10x Qg, gate voltage droops -> Rds(on) increases -> FET overheats. At 100% duty cycle, bootstrap cannot recharge -- use charge pump.
-- **Driving gate from open-drain without adequate pull-up.** Slow pull-up means slow dV/dt, extended time in linear region, high switching loss. Size pull-up for Ig = (Vdrive - Vplateau) / Rpullup >= Qg / t_sw_target. Or use totem-pole gate driver.
+- **Using nominal Zener voltage as the hot flyback clamp.** The suppression diode's operating-current voltage, temperature behavior and tolerance determine peak VDS. The gate clamp must also respect the selected part's Vgs maximum: the listed DMP2035U and Si2301CDS allow only +/-10V and +/-8V respectively [7, Figure 4; 13, p.2; 14, p.1].
+- **Treating a ramped hot-plug waveform as a full-duration square pulse.** TI's equivalent-square method retains peak power and equal energy; apply temperature and repetition corrections separately. A peak instantaneous power alone does not establish safe operation [5, pp.6-7].
 
 ## Formulas
 
-**Rds(on) at temperature:**
-**Rule of thumb:** Rds(on) at 125C ~ 1.5x the 25C value. At 150C ~ 1.65x.
-**Formula:** Rds(on)(Tj) = Rds(on)_25C * 1.004^(Tj - 25)
-**Example:** 10mohm at 25C, Tj=125C -> 10m * 1.004^100 = 10m * 1.49 = 14.9mohm
-
-**MOSFET switching loss:**
-**Rule of thumb:** At f_sw > 100kHz, switching loss often exceeds conduction loss.
-**Formula:** P_sw = 0.5 * Vds * Id * (t_rise + t_fall) * f_sw
-  - t_rise ~ Qgd / Ig_on, t_fall ~ Qgd / Ig_off
-**Example:** Vds=12V, Id=5A, Qgd=8nC, Ig=0.5A -> t_rise=16ns, P_sw = 0.5 * 12 * 5 * 32e-9 * 500e3 = 0.48W
-
-**Inductive clamp Zener voltage:**
-**Rule of thumb:** V_zener = (VDS_max - Vcoil) / 2 for 50% margin.
-**Formula:** VDS_peak = Vcoil + V_zener + V_schottky. Select V_zener <= VDS_max - Vcoil - V_margin.
-**Example:** 12V relay, 30V FET, 6V margin -> V_zener <= 30 - 12 - 6 = 12V. VDS_peak = 12 + 12.3 = 24.3V.
-
-**SOA temperature derating:**
-**Rule of thumb:** At TC = 100C with TJ_max = 150C, SOA current drops to 40% of 25C value.
-**Formula:** IDS(TC) = IDS(25C) * (TJ_max - TC) / (TJ_max - 25C)
-**Example:** IDS(25C) = 7.3A at 12V/10ms, TC = 100C, TJ_max = 150C -> IDS = 7.3 * (150-100)/(150-25) = 2.9A
+**SOA temperature derating, TI CSD17570Q5B example [5, p.4]:**
+**Rule of thumb:** At Tc=100 degrees C and Tj(max)=150 degrees C, TI's linear derating factor is 0.4.
+**Formula:** IDS(Tc) = IDS(25 degrees C) * (Tj_max - Tc) / (Tj_max - 25 degrees C)
+**Example:** For the 12V, 10ms single-pulse SOA point, 7.3A * (150 - 100)/(150 - 25) = 2.92A. Check case temperature, pulse shape and repetition separately; this is not an ambient-temperature rating.
 
 ## Sources
 
@@ -139,15 +107,25 @@
 
 ### References
 
-1. Infineon AN_2112 -- Designing with Power MOSFETs: https://www.infineon.com/assets/row/public/documents/24/42/infineon-designing-with-power-mosfets-applicationnotes-en.pdf
-2. Infineon -- OptiMOS Datasheet Explanation: https://www.infineon.com/assets/row/public/documents/24/42/infineon-mosfet-optimos-datasheet-explanation-an-en.pdf
-3. onsemi AND9093 -- Using MOSFETs in Load Switch Applications: https://www.onsemi.com/pub/collateral/and9093-d.pdf
-4. Infineon AN_2203 -- Gate Drive for Power MOSFETs: https://www.infineon.com/dgdl/Infineon-Gate_drive_for_power_MOSFETs_in_switchtin_applications-ApplicationNotes-v01_00-EN.pdf?fileId=8ac78c8c80027ecd0180467c871b3622
-5. TI SLUAAO2 -- Using MOSFET SOA Curves in Your Design: https://www.ti.com/lit/an/sluaao2/sluaao2.pdf
-6. onsemi AND90146 -- MOSFET Selection for Reverse Polarity Protection: https://www.onsemi.com/download/application-notes/pdf/and90146-d.pdf
-7. TI SLVA652A -- Basics of Load Switches: https://www.ti.com/lit/an/slva652a/slva652a.pdf
-8. ADI -- Switching Inductive Loads with Safe Demagnetization: https://www.analog.com/en/resources/technical-articles/switching-inductive-loads-with-safe-demagnetization.html
-9. ADI HFAN-08.2.0 -- How to Control and Compensate a TEC: https://www.analog.com/en/resources/technical-articles/hfan0820-how-to-control-and-compensate-a-thermoelectric-cooler-tec.html
-10. TI SLUA202A -- Closed Loop Temperature Regulation Using UC3638 H-Bridge: https://www.ti.com/lit/an/slua202a/slua202a.pdf
-11. TI SLUA979A -- Driving a Peltier Element (TEC): Efficiency and Aging: https://www.ti.com/lit/an/slua979a/slua979a.pdf
-12. EDN -- Low-Cost Driver for Thermoelectric Coolers (TECs): https://www.edn.com/low-cost-driver-for-thermoelectric-coolers-tecs/
+1. Infineon AN_2112_PL18_2112_024619 (V1.1, February 2022) -- Designing with Power MOSFETs: https://www.infineon.com/assets/row/public/documents/24/42/infineon-designing-with-power-mosfets-applicationnotes-en.pdf
+2. Infineon AN 2012-03 (V1.1, March 2012) -- OptiMOS Power MOSFET Datasheet Explanation: https://www.infineon.com/assets/row/public/documents/24/42/infineon-mosfet-optimos-datasheet-explanation-an-en.pdf
+3. onsemi AND9093/D (Rev.1, February 2014) -- Using MOSFETs in Load Switch Applications: https://www.onsemi.com/pub/collateral/and9093-d.pdf
+4. Infineon AN_2203_PL18_2204_004502 (V1.0, April 2022) -- Gate Drive for Power MOSFETs in Switching Applications: https://www.infineon.com/dgdl/Infineon-Gate_drive_for_power_MOSFETs_in_switchtin_applications-ApplicationNotes-v01_00-EN.pdf?fileId=8ac78c8c80027ecd0180467c871b3622
+5. TI SLUAAO2 (March 2023) -- Using MOSFET Safe Operating Area Curves in Your Design: https://www.ti.com/lit/an/sluaao2/sluaao2.pdf
+6. TI SLVA652A -- Basics of Load Switches: https://www.ti.com/lit/an/slva652a/slva652a.pdf
+7. ADI -- Switching Inductive Loads with Safe Demagnetization: https://www.analog.com/en/resources/technical-articles/switching-inductive-loads-with-safe-demagnetization.html
+8. ADI HFAN-08.2.0 -- How to Control and Compensate a Thermoelectric Cooler: https://www.analog.com/en/resources/technical-articles/hfan0820-how-to-control-and-compensate-a-thermoelectric-cooler-tec.html
+9. TI SLUA979A (January 2020) -- Driving a Peltier Element (TEC): Efficiency and Aging: https://www.ti.com/lit/an/slua979a/slua979a.pdf
+10. TI CSD17571Q2 (SLPS393A, January 2015): https://www.ti.com/lit/ds/symlink/csd17571q2.pdf
+11. TI TPS22916 (SLVSDO5F, December 2021): https://www.ti.com/lit/ds/symlink/tps22916.pdf
+12. Infineon BSC019N04LS (Rev.2.4, May 2024): https://www.infineon.com/assets/row/public/documents/24/49/infineon-bsc019n04ls-datasheet-en.pdf
+13. Diodes DMP2035U (DS31830 Rev.11-2, June 2025): https://www.diodes.com/assets/Datasheets/DMP2035U.pdf
+14. Vishay Si2301CDS (68741 Rev.C, October 2010): https://www.vishay.com/docs/68741/si2301cd.pdf
+15. TI UCC27511A (SLUSD95A, January 2024): https://www.ti.com/lit/ds/symlink/ucc27511a.pdf
+16. TI UCC21520 (SLUSCJ9F): https://www.ti.com/lit/ds/symlink/ucc21520.pdf
+17. Microchip MIC4606 (DS20005604D): https://www.microchip.com/content/dam/mchp/documents/APID/ProductDocuments/DataSheets/MIC4606-Data-Sheet-DS20005604D.pdf
+18. TI ULN200x/ULQ200x (SLRS027T): https://www.ti.com/lit/ds/symlink/uln2003a.pdf
+19. TI DRV8871 (SLVSCY9B, July 2016): https://www.ti.com/lit/ds/symlink/drv8871.pdf
+20. ADI MAX1968/MAX1969 (Rev.3, June 2015): https://www.analog.com/media/en/technical-documentation/data-sheets/MAX1968-MAX1969.pdf
+21. ADI ADN8834 (Rev.C): https://www.analog.com/media/en/technical-documentation/data-sheets/ADN8834.pdf
+22. ADI LTC1923 (1923f): https://www.analog.com/media/en/technical-documentation/data-sheets/1923f.pdf

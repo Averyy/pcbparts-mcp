@@ -2,8 +2,8 @@ name: bGeigieScint
 slug: bgeigiescint
 source: Safecast/bGeigieScint
 format: kicad9
-description: "SiPM radiation detector frontend for external AFBR-S4N44P014M + CsI(Tl) scintillator, OPA357 pulse shaper"
-tags: [audio, power-supply, sbc, signal-conditioning]
+description: SiPM radiation detector frontend for external AFBR-S4N44P014M + CsI(Tl) scintillator, OPA357 pulse shaper
+tags: [power-supply, signal-conditioning]
 key_ics: [ESP32-C3_SUPERMINI_TH, XC6209F332MR-G, LT3014BHVES5#TRMPBF, TLV7031DBVR, TLR341G]
 outline:
   width_mm: 38.1
@@ -18,428 +18,612 @@ components:
 - ref: C1
   value: 1uF
   footprint: 0805
+  mpn: GRM55DR72D105KW01L
   manufacturer: "muRata(\u6751\u7530)"
+  lcsc: C437573
 - ref: C13
   value: 1uF
   footprint: 0805
+  mpn: CL10A105KB8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C15849
 - ref: C14
   value: 1uF
   footprint: 0805
+  mpn: CL10A105KB8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C15849
 - ref: C15
   value: 1nF
   footprint: 0805
+  mpn: CL10B102KB8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C1588
 - ref: C16
   value: 1nF
   footprint: 0805
+  mpn: CL10B102KB8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C1588
 - ref: C23
   value: 100nF
   footprint: 0805
+  mpn: CC0603KRX7R9BB104
   manufacturer: "YAGEO(\u56FD\u5DE8)"
+  lcsc: C14663
   decouples: U13
 - ref: C24
   value: 1nF
   footprint: 0805
+  mpn: CL10B102KB8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C1588
 - ref: C25
   value: 1uF
   footprint: 0805
+  mpn: 08051C105KAT2A
   manufacturer: Kyocera AVX
+  lcsc: C597292
 - ref: C26
   value: 100nF
   footprint: 0805
+  mpn: CC0603KRX7R9BB104
   manufacturer: "YAGEO(\u56FD\u5DE8)"
+  lcsc: C14663
 - ref: C27
   value: 100nF
   footprint: 0805
+  mpn: CC0603KRX7R9BB104
   manufacturer: "YAGEO(\u56FD\u5DE8)"
+  lcsc: C14663
   decouples: U13
 - ref: C28
   value: 1uF
   footprint: 0805
+  mpn: 08051C105KAT2A
   manufacturer: Kyocera AVX
+  lcsc: C597292
 - ref: C29
   value: 1nF
   footprint: 0805
+  mpn: CL10B102KB8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C1588
 - ref: C30
   value: 1nF
   footprint: 0805
+  mpn: CL10B102KB8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C1588
 - ref: C31
   value: 1uF
   footprint: 0805
+  mpn: 08051C105KAT2A
   manufacturer: Kyocera AVX
+  lcsc: C597292
 - ref: C32
   value: 1uF
   footprint: 0805
+  mpn: GRM55DR72D105KW01L
   manufacturer: "muRata(\u6751\u7530)"
+  lcsc: C437573
 - ref: C33
   value: 1uF
   footprint: 0805
+  mpn: CL10A105KB8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C15849
 - ref: C34
   value: 1nF
   footprint: 0805
+  mpn: CL10B102KB8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C1588
 - ref: C35
   value: 100nF
   footprint: 0805
+  mpn: CC0603KRX7R9BB104
   manufacturer: "YAGEO(\u56FD\u5DE8)"
+  lcsc: C14663
 - ref: C36
   value: 100nF
   footprint: 0805
+  mpn: CC0603KRX7R9BB104
   manufacturer: "YAGEO(\u56FD\u5DE8)"
+  lcsc: C14663
 - ref: C37
   value: 1uF
   footprint: 0805
+  mpn: CL10A105KB8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C15849
 - ref: C38
   value: 4.7uF
   footprint: '1812'
+  mpn: 1206B475K500NT
   manufacturer: "FH(\u98CE\u534E)"
+  lcsc: C29823
 - ref: C39
   value: 4.7uF
   footprint: '1812'
+  mpn: 1206B475K500NT
   manufacturer: "FH(\u98CE\u534E)"
+  lcsc: C29823
 - ref: C40
   value: 100nF
   footprint: 0805
+  mpn: CC0603KRX7R9BB104
   manufacturer: "YAGEO(\u56FD\u5DE8)"
+  lcsc: C14663
 - ref: C41
   value: 100nF
   footprint: 0805
+  mpn: CC0603KRX7R9BB104
   manufacturer: "YAGEO(\u56FD\u5DE8)"
+  lcsc: C14663
 - ref: C48
   value: 4.7uF
   footprint: 0805
+  mpn: CL10A475KO8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C19666
 - ref: C5
   value: 10uF
   footprint: '1206'
+  mpn: CL10A106KP8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C19702
 - ref: C55
   value: 100nF
   footprint: 0805
+  mpn: CC0603KRX7R9BB104
   manufacturer: "YAGEO(\u56FD\u5DE8)"
+  lcsc: C14663
 - ref: C57
   value: 10uF
   footprint: '1206'
+  mpn: CL10A106KP8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C19702
 - ref: C58
   value: 10uF
   footprint: '1206'
+  mpn: CL10A106KP8NNNC
   manufacturer: "SAMSUNG(\u4E09\u661F)"
+  lcsc: C19702
 - ref: C8
   value: 10nF
   footprint: 0805
+  mpn: 12062C103KAT2A
   manufacturer: Kyocera AVX
+  lcsc: C597478
 - ref: C9
   value: 30pF
   footprint: 0805
+  mpn: 0603CG300J500NT
   manufacturer: "FH(\u98CE\u534E)"
+  lcsc: C1658
 - ref: D1
   value: NUP2114UCMR6T1G
   footprint: SO-8
+  mpn: NUP2114UCMR6T1G
   manufacturer: ON Semicon
+  lcsc: C393373
   pin_count: 6
   nc_pins: {I/O@1: '1', NC@3: '3', NC@4: '4', I/O@6: '6'}
 - ref: D10
   value: 1N4148W_C81598
   footprint: SOD-123
+  mpn: 1N4148W
   manufacturer: "ST(\u5148\u79D1)"
+  lcsc: C81598
 - ref: D2
   value: BAS21HT1G
   footprint: SOT-23
+  mpn: BAS21HT1G
   manufacturer: "onsemi(\u5B89\u68EE\u7F8E)"
+  lcsc: C82466
 - ref: D3
   value: 1N4148W_C81598
   footprint: SOD-123
+  mpn: 1N4148W
   manufacturer: "ST(\u5148\u79D1)"
+  lcsc: C81598
 - ref: D4
   value: 1N4148W_C81598
   footprint: SOD-123
+  mpn: 1N4148W
   manufacturer: "ST(\u5148\u79D1)"
+  lcsc: C81598
 - ref: D5
   value: 1N4148W_C81598
   footprint: SOD-123
+  mpn: 1N4148W
   manufacturer: "ST(\u5148\u79D1)"
+  lcsc: C81598
 - ref: D6
   value: 1N4148W_C81598
   footprint: SOD-123
+  mpn: 1N4148W
   manufacturer: "ST(\u5148\u79D1)"
+  lcsc: C81598
 - ref: D7
   value: BAT54C,215
   footprint: SOT-23
+  mpn: BAT54C,215
   manufacturer: "Nexperia(\u5B89\u4E16)"
+  lcsc: C37704
   pin_count: 3
 - ref: D8
   value: 1N4148W_C81598
   footprint: SOD-123
+  mpn: 1N4148W
   manufacturer: "ST(\u5148\u79D1)"
+  lcsc: C81598
 - ref: D9
   value: SS34_C8678
   footprint: SMA
+  mpn: SS34
   manufacturer: MDD
+  lcsc: C8678
 - ref: L1
   value: 10mH
   footprint: 0805
+  mpn: SDR0503-103JL
 - ref: L2
   value: 10uH
   footprint: '1210'
+  mpn: SDFL1608S100KTF
   manufacturer: "Sunlord(\u987A\u7EDC)"
+  lcsc: C1035
 - ref: MEAS1
   value: KH-2.54PH90-1X2P-L13.8
-  footprint: 1X2
+  footprint: 1X2_P2.54mm
+  mpn: KH-2.54PH90-1X2P-L13.8
   manufacturer: "kinghelm(\u91D1\u822A\u6807)"
+  lcsc: C2905424
   pin_count: 2
   nc_pins: {'2': '2'}
 - ref: P1
-  value: 2x2 header
-  footprint: 2X2
+  value: 2x2 2.54mm header
+  footprint: 2X2_P2.54mm
+  mpn: "2.54-2*2P\u9488"
   manufacturer: "BOOMELE(\u535A\u7A46\u7CBE\u5BC6)"
+  lcsc: C66690
   pin_count: 4
 - ref: P2
-  value: 2x2 header
-  footprint: 2X2
+  value: 2x2 2.54mm header
+  footprint: 2X2_P2.54mm
+  mpn: "2.54-2*2P\u9488"
   manufacturer: "BOOMELE(\u535A\u7A46\u7CBE\u5BC6)"
+  lcsc: C66690
   pin_count: 4
 - ref: Q1
   value: BC847
   footprint: SOT-23
+  mpn: BC847
   manufacturer: "CJ(\u6C5F\u82CF\u957F\u7535/\u957F\u6676)"
+  lcsc: C2910145
   pin_count: 3
 - ref: Q2
   value: MMBT5551LT1G
   footprint: SOT-23
+  mpn: MMBT5551LT1G
   manufacturer: "onsemi(\u5B89\u68EE\u7F8E)"
+  lcsc: C41095
   pin_count: 3
 - ref: Q3
   value: AO3401A
   footprint: SOT-23
+  mpn: AO3401A
   manufacturer: AOS
+  lcsc: C15127
   pin_count: 3
 - ref: Q4
   value: AO3401A
   footprint: SOT-23
+  mpn: AO3401A
   manufacturer: AOS
+  lcsc: C15127
   pin_count: 3
   nc_pins: {G: '1'}
 - ref: Q5
   value: MMBT5551LT1G
   footprint: SOT-23
+  mpn: MMBT5551LT1G
   manufacturer: "onsemi(\u5B89\u68EE\u7F8E)"
+  lcsc: C41095
   pin_count: 3
 - ref: R11
   value: 330kohm
   footprint: 0805
+  mpn: 0603WAF3303T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C23137
 - ref: R12
   value: 330kohm
   footprint: 0805
+  mpn: 0603WAF3303T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C23137
   pulldown: U13.IN+
 - ref: R13
   value: 100kohm
   footprint: 0805
+  mpn: 0603WAF1003T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C25803
   pullup: U13.IN+
 - ref: R14
   value: 120Mohm
   footprint: 0805
-  manufacturer: "UNI-ROYAL(\u539A\u58F0)"
 - ref: R15
   value: 5.6Mohm
   footprint: 0805
+  mpn: 0603WAF5604T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C23190
 - ref: R17
   value: 1kohm
   footprint: 0805
+  mpn: 0603WAF1001T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C21190
 - ref: R18
   value: 100ohm
   footprint: 0805
+  mpn: 0603WAF1000T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C22775
 - ref: R19
   value: 22kohm
   footprint: 0805
+  mpn: 0603WAF2202T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C31850
 - ref: R20
   value: 100ohm
   footprint: 0805
+  mpn: 0603WAF1000T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C22775
 - ref: R21
   value: 6.8kohm
   footprint: 0805
+  mpn: 0603WAF6801T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C23212
   pin_count: 2
   nc_pins: {'1': '1'}
 - ref: R22
   value: 30kohm
   footprint: 0805
+  mpn: 0603WAF3002T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C22984
   pullup: SiPM_A
 - ref: R23
   value: 10kohm
   footprint: 0805
+  mpn: 0603WAF1002T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C25804
   pulldown: PB03_PEAKDET_EN
 - ref: R24
   value: 10kohm
   footprint: 0805
+  mpn: 0603WAF1002T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C25804
 - ref: R25
   value: 4.7Mohm
   footprint: 0805
+  mpn: 0603WAF4704T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C23163
 - ref: R26
   value: 2.2kohm
   footprint: 0805
+  mpn: 0603WAF2201T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C4190
 - ref: R27
   value: 6.8kohm
   footprint: 0805
+  mpn: 0603WAF6801T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C23212
   pullup: Q2.B
 - ref: R28
   value: 100ohm
   footprint: 0805
+  mpn: 0603WAF1000T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C22775
 - ref: R29
   value: 1kohm
   footprint: 0805
+  mpn: 0603WAF1001T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C21190
   pulldown: U4.-IN
 - ref: R30
   value: 1kohm
   footprint: 0805
+  mpn: 0603WAF1001T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C21190
 - ref: R31
   value: 510ohm
   footprint: 0805
+  mpn: 0603WAF5100T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C23193
 - ref: R32
   value: 100ohm
   footprint: 0805
+  mpn: 0603WAF1000T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C22775
 - ref: R33
   value: 1kohm
   footprint: 0805
+  mpn: 0603WAF1001T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C21190
   pin_count: 2
   nc_pins: {'1': '1'}
 - ref: R34
   value: 200kohm
   footprint: 0805
+  mpn: 0603WAF2003T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C25811
   pin_count: 2
   nc_pins: {'1': '1'}
 - ref: R35
   value: 47kohm
   footprint: 0805
+  mpn: 0603WAF4702T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C25819
   pulldown: U14.+IN
 - ref: R36
   value: 47kohm
   footprint: 0805
+  mpn: 0603WAF4702T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C25819
 - ref: R37
   value: 10kohm
   footprint: 0805
+  mpn: 0603WAF1002T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C25804
 - ref: R41
   value: 1kohm
   footprint: 0805
+  mpn: 0603WAF1001T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C21190
 - ref: R42
   value: 100kohm
   footprint: 0805
+  mpn: 0603WAF1003T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C25803
   pulldown: Q4.D
 - ref: R5
   value: 220kohm
   footprint: 0805
+  mpn: 0603WAF2203T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C22961
   pulldown: U11.ADJ
 - ref: R8
   value: 330kohm
   footprint: 0805
+  mpn: 0603WAF3303T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C23137
 - ref: R9
   value: 1kohm
   footprint: 0805
+  mpn: 0603WAF1001T5E
   manufacturer: "UNI-ROYAL(\u539A\u58F0)"
+  lcsc: C21190
   pin_count: 2
   nc_pins: {'1': '1'}
 - ref: U10
   value: 74LVC1G08GV,125
   footprint: SOT-353_SC-70-5
+  mpn: 74LVC1G08GV,125
   manufacturer: "Nexperia(\u5B89\u4E16)"
+  lcsc: C282347
   pin_count: 5
   nc_pins: {B: '1'}
 - ref: U11
   value: LT3014BHVES5#TRMPBF
   footprint: SOT-23-5
+  mpn: LT3014BHVES5#TRMPBF
   manufacturer: "ADI(\u4E9A\u5FB7\u8BFA)"
+  lcsc: C666252
   pin_count: 5
   nc_pins: {NC: '3'}
 - ref: U13
   value: TLV7031DBVR
   footprint: SOT-23-5
+  mpn: TLV7031DBVR
   manufacturer: "TI(\u5FB7\u5DDE\u4EEA\u5668)"
+  lcsc: C2869832
   pin_count: 5
 - ref: U14
   value: TLR341G
   footprint: SOT-23-6
+  mpn: TLR341G-GTR
   manufacturer: "ROHM(\u7F57\u59C6)"
+  lcsc: C4366767
   pin_count: 6
 - ref: U16
   value: ESP32-C3_SUPERMINI_TH
   footprint: MODULE_ESP32-C3_SUPERMINI_TH
   manufacturer: Espressif Systems
+  description: Super tiny ESP32-C3 board
   mpn: ESP32-C3 SuperMini_TH
   pin_count: 16
-  nc_pins: {GPIO0: '0', GPIO1: '1', GPIO2: '2', GPIO3: '3', GPIO4: '4', GPIO5: '5', 5V: 5V, GPIO6: '6', GPIO7: '7', GPIO10: '10', GPIO20: '20', GPIO21: '21'}
+  nc_pins: {GPIO0: '0', GPIO1: '1', GPIO2: '2', GPIO3: '3', GPIO4: '4', GPIO5: '5', 5V: 5V, GPIO6: '6', GPIO7: '7', GPIO10: '10',
+    GPIO20: '20', GPIO21: '21'}
 - ref: U2
   value: XC6209F332MR-G
   footprint: SOT-23-5
+  mpn: XC6209F332MR-G
   manufacturer: "TOREX(\u7279\u745E\u4ED5)"
+  lcsc: C216624
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: U3
   value: MC14043BDR2G
   footprint: SOIC-16
+  mpn: MC14043BDR2G
   manufacturer: "onsemi(\u5B89\u68EE\u7F8E)"
+  lcsc: C233502
   pin_count: 16
   nc_pins: {Q3: '1', R0: '3', Q1: '9', Q2: '10', NC: '13'}
 - ref: U4
   value: LMV793MFX
   footprint: MSOP-8
+  mpn: LMV793MFX/NOPB
   manufacturer: "TI(\u5FB7\u5DDE\u4EEA\u5668)"
+  lcsc: C2058263
   pin_count: 5
 - ref: U5
   value: TPS7A2030PDBVR
   footprint: SOT-23-5
+  mpn: TPS7A2030PDBVR
   manufacturer: "TI(\u5FB7\u5DDE\u4EEA\u5668)"
+  lcsc: C963429
   pin_count: 5
   nc_pins: {EN: '3', N/C: '4'}
 - ref: U6
   value: TLV3201AIDBVT
   footprint: SOT-23-5
+  mpn: TLV3201AIDBVT
   manufacturer: "TI(\u5FB7\u5DDE\u4EEA\u5668)"
+  lcsc: C83561
   pin_count: 5
 - ref: U7
   value: OPA357AIDBVR
   footprint: SOT-23-5
+  mpn: OPA357AIDBVR
   manufacturer: "TI(\u5FB7\u5DDE\u4EEA\u5668)"
+  lcsc: C139385
   pin_count: 5
 - ref: U8
   value: TLR341G
   footprint: SOT-23-6
+  mpn: TLR341G-GTR
   manufacturer: "ROHM(\u7F57\u59C6)"
+  lcsc: C4366767
   pin_count: 6
 nets:
 - name: 3V0

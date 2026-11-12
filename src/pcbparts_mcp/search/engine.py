@@ -6,6 +6,8 @@ import math
 import re
 import sqlite3
 import time
+from dataclasses import dataclass
+from collections.abc import Callable
 from typing import Any, Literal
 
 from ..config import DEFAULT_MIN_STOCK
@@ -266,6 +268,47 @@ def _spec_preference_rank(attributes: str | None, name: str, target: str) -> int
     return 1
 
 
+class PostFilterPredicate:
+    """SQL branch eligibility and the exact Python predicate shared by pages and facets."""
+
+    def __init__(self, metadata: list[PostFilterMetadata]):
+        self.metadata = metadata
+        alternatives = [branch for item in metadata if isinstance(item, PostFilterGroup)
+                        for branch in item.alternatives]
+        self.sql = "".join(f", ({sql})" for sql, _, _ in alternatives)
+        self.params = [p for _, values, _ in alternatives for p in values]
+        flat = [entry for item in metadata
+                for entry in ([item] if not isinstance(item, PostFilterGroup)
+                              else [entry for _, _, branch in item.alternatives for entry in branch])]
+        self.module_memory = any(f.name in ("Module Flash", "Module PSRAM") for f, *_ in flat)
+
+    def passes(self, attributes, package, mpn, subcategory, eligibility) -> bool:
+        try:
+            specs = {name: value for name, value in json.loads(attributes)} if attributes else {}
+        except (json.JSONDecodeError, TypeError, ValueError):
+            specs = {}
+        if self.module_memory:
+            flash, psram = parse_esp32_module_memory(mpn)
+            if flash is not None:
+                specs["Module Flash"] = f"{flash}MB"
+            if psram is not None:
+                specs["Module PSRAM"] = f"{psram}MB"
+        eligible = iter(eligibility)
+        metadata = [PostFilterGroup([branch for branch in item.alternatives if next(eligible)])
+                    if isinstance(item, PostFilterGroup) else item for item in self.metadata]
+        return _passes_post_filters(specs, package, metadata, subcategory)
+
+
+@dataclass
+class CompiledSearch:
+    """Resolved membership predicates, without ordering or pagination."""
+
+    where_sql: str
+    params: list[Any]
+    post_filters: list[PostFilterMetadata]
+    mpn_predicate: Callable[[str], bool] | None = None
+
+
 class SearchEngine:
     """Search engine for parametric component queries.
 
@@ -429,6 +472,7 @@ class SearchEngine:
         count_unlisted: bool = False,
         pcba_type: str | None = None,
         spec_sort: SpecSort | None = None,
+        capture_plan: bool = False,
     ) -> dict[str, Any]:
         """Execute a search query with pre-resolved parameters.
 
@@ -542,6 +586,9 @@ class SearchEngine:
             params.extend(spec_params_list)
             count_params.extend(spec_params_list)
 
+        compiled = CompiledSearch(" ".join(count_parts).replace("SELECT COUNT(*) FROM components", "", 1),
+                                  list(count_params), post_filter_metadata) if capture_plan else None
+
         # Sorting. A spec sort orders by the spec first (missing values last); library tier and stock
         # break ties. Its parameters go before the ranks', as its term goes before theirs.
         if spec_sort is not None:
@@ -616,7 +663,12 @@ class SearchEngine:
         try:
             rows = [] if post_filter_metadata else self._conn.execute(sql, params).fetchall()
             lib_rows = self._conn.execute(lib_count_sql, count_params).fetchall()
-        except sqlite3.OperationalError:
+        except sqlite3.OperationalError as exc:
+            # A why_empty diagnostic search runs under a step/time budget; running out is expected,
+            # and diagnostics reports it as budget_exhausted_or_busy. Logged as an error with a
+            # traceback, it looked like a failed search (10 per 3,164-query corpus run).
+            if hasattr(self, "diagnostic_deadline") and "interrupt" in str(exc).lower():
+                raise
             logger.error("Search SQL execution failed", exc_info=True)
             return {
                 "error": "Search failed: query too complex. Reduce the number of filters.",
@@ -674,6 +726,8 @@ class SearchEngine:
             "no_fee_available": no_fee_available,
             "ignored_filters": ignored_filters,
         }
+        if compiled is not None:
+            result["_facet_plan"] = compiled
         if post_filter_metadata and not complete:
             result["counts_complete"] = False
         if spec_sort is not None:
@@ -767,45 +821,23 @@ class SearchEngine:
         matches, and whether every match was checked (at most POST_FILTER_SCAN_ROWS are)."""
         # A branch's SQL and Python checks must both pass. Project SQL eligibility so an
         # SQL-only alternative (or a signed output's SQL guard) cannot pass another branch.
-        alternatives = [branch for item in post_filter_metadata if isinstance(item, PostFilterGroup)
-                        for branch in item.alternatives]
-        branch_sql = "".join(f", ({sql})" for sql, _, _ in alternatives)
-        branch_params = [p for _, values, _ in alternatives for p in values]
-        flat_metadata = [entry for item in post_filter_metadata
-                         for entry in ([item] if not isinstance(item, PostFilterGroup)
-                                       else [entry for _, _, metadata in item.alternatives for entry in metadata])]
-        module_memory = any(f.name in ("Module Flash", "Module PSRAM") for f, *_ in flat_metadata)
+        predicate = PostFilterPredicate(post_filter_metadata)
         scan_sql = " ".join(sql_parts).replace(
-            "SELECT * FROM components", f"SELECT rowid, attributes, package, mpn, library_type, subcategory_id{branch_sql} FROM components", 1
+            "SELECT * FROM components", f"SELECT rowid, attributes, package, mpn, library_type, subcategory_id{predicate.sql} FROM components", 1
         ) + " LIMIT ?"
         passed = 0
         library_counts = {"basic": 0, "preferred": 0, "extended": 0}
         library_names = {"b": "basic", "p": "preferred", "e": "extended"}
         scanned = 0
         page_ids: list[int] = []
-        for row in self._conn.execute(scan_sql, [*branch_params, *params, POST_FILTER_SCAN_ROWS]):
+        for row in self._conn.execute(scan_sql, [*predicate.params, *params, POST_FILTER_SCAN_ROWS]):
             rowid, attributes, package, mpn, library, subcategory = row[:6]
             if hasattr(self, 'diagnostic_deadline'):
                 self.diagnostic_rows_remaining -= 1
                 if self.diagnostic_rows_remaining < 0 or time.monotonic() >= self.diagnostic_deadline:
                     raise sqlite3.OperationalError('interrupted')
             scanned += 1
-            try:
-                specs = {name: value for name, value in json.loads(attributes)} if attributes else {}
-            except (json.JSONDecodeError, TypeError, ValueError):
-                specs = {}
-            # ESP32 module memory is encoded in ordering codes, not catalog attributes.
-            # Only derive it for a requested module-memory filter; unknown codes cannot pass.
-            if module_memory:
-                flash, psram = parse_esp32_module_memory(mpn)
-                if flash is not None:
-                    specs["Module Flash"] = f"{flash}MB"
-                if psram is not None:
-                    specs["Module PSRAM"] = f"{psram}MB"
-            eligible = iter(row[6:])
-            metadata = [PostFilterGroup([branch for branch in item.alternatives if next(eligible)])
-                        if isinstance(item, PostFilterGroup) else item for item in post_filter_metadata]
-            if _passes_post_filters(specs, package, metadata, subcategory):
+            if predicate.passes(attributes, package, mpn, subcategory, row[6:]):
                 passed += 1
                 if mpn_counts is not None:
                     mpn_counts[MPN_MATCH_NAMES[mpn_match_rank(mpn, mpn_counts["part_number"])]] += 1
@@ -853,6 +885,7 @@ class SearchEngine:
         count_unlisted: bool = False,
         pcba_type: str | None = None,
         spec_sort: SpecSort | None = None,
+        capture_plan: bool = False,
     ) -> dict[str, Any]:
         """Search components with parametric filtering.
 
@@ -1006,6 +1039,7 @@ class SearchEngine:
             count_unlisted=count_unlisted,
             pcba_type=pcba_type,
             spec_sort=spec_sort,
+            capture_plan=capture_plan,
         )
 
         results = search_result["results"]
@@ -1044,6 +1078,7 @@ class SearchEngine:
                     count_unlisted=count_unlisted,
                     pcba_type=pcba_type,
                     spec_sort=spec_sort,
+                    capture_plan=capture_plan,
                 )
                 if retry_result["total"] > 0:
                     # Found results with normalized query
@@ -1085,6 +1120,8 @@ class SearchEngine:
             "library_type_counts": library_type_counts,
             "no_fee_available": no_fee_available,
         }
+        if "_facet_plan" in search_result:
+            response["_facet_plan"] = search_result["_facet_plan"]
         if "counts_complete" in search_result:
             response["counts_complete"] = search_result["counts_complete"]
         if "mpn_matches" in search_result:

@@ -93,29 +93,25 @@ components:
   value: 10kohm
   footprint: '0603'
   pullup: /CAN/CAN_S
-- ref: R402
-  value: dnp
-  footprint: 0805
 - ref: R601
   value: 1kohm
   footprint: '0603'
-  pullup: D601.2
 - ref: R602
   value: 1kohm
   footprint: '0603'
-  pullup: D602.2
 - ref: R603
   value: 1kohm
   footprint: '0603'
-  pullup: D603.2
 - ref: U201
   value: STM32F072C8Tx
   footprint: LQFP-48
   pin_count: 48
-  nc_pins: {'3': '3', '4': '4', '12': '12', '13': '13', '14': '14', '15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '29': '29', '38': '38', '39': '39', '40': '40', '41': '41'}
+  nc_pins: {'3': '3', '4': '4', '12': '12', '13': '13', '14': '14', '15': '15', '16': '16', '17': '17', '18': '18', '19': '19',
+    '20': '20', '21': '21', '22': '22', '29': '29', '38': '38', '39': '39', '40': '40', '41': '41'}
 - ref: U301
   value: MCP1754ST-3302E
   footprint: SOT89-3_Housing
+  mpn: MCP1754ST-3302E/MB
   pin_count: 3
 - ref: U401
   value: TJA1051/3
@@ -192,9 +188,9 @@ nets:
 - name: +5V
   pins: [C301.1, C402.1, P501.1, U301.1, U401.3, W301.1]
 - name: /CAN/CAN_H
-  pins: [R402.1, U401.7, X502.7]
+  pins: [U401.7, X502.7]
 - name: /CAN/CAN_L
-  pins: [R402.2, U401.6, X502.2]
+  pins: [U401.6, X502.2]
 - name: /CAN/CAN_S
   pins: [R401.2, U201.2, U401.8]
 - name: /Connectors/NRST
@@ -255,9 +251,21 @@ nets:
 - name: Net-(D603-Pad2)
   pins: [D603.2, R603.1]
 - name: Net-(R201-Pad2)
-  pins: [R201.2, U201.42]
+  pins: [R201.2, U201.42, W203.1]
 - name: Net-(R202-Pad1)
-  pins: [R202.1, U201.43]
+  pins: [R202.1, U201.43, W204.1]
+- name: Net-(U201-Pad25)
+  pins: [U201.25, W205.1]
+- name: Net-(U201-Pad26)
+  pins: [U201.26, W206.1]
+- name: Net-(U201-Pad27)
+  pins: [U201.27, W207.1]
+- name: Net-(U201-Pad28)
+  pins: [U201.28, W208.1]
+- name: Net-(U201-Pad30)
+  pins: [U201.30, W201.1]
+- name: Net-(U201-Pad31)
+  pins: [U201.31, W202.1]
 positions:
 - ref: C201
   x: 64.9
@@ -340,10 +348,6 @@ positions:
   x: 74.0
   y: 93.25
   rot: 90.0
-- ref: R402
-  x: 71.65
-  y: 85.5
-  rot: 270.0
 - ref: R601
   x: 61.95
   y: 77.65
@@ -367,6 +371,38 @@ positions:
 - ref: U401
   x: 67.8
   y: 91.8
+- ref: W201
+  x: 51.5
+  y: 86.0
+  side: back
+- ref: W202
+  x: 54.0
+  y: 86.0
+  side: back
+- ref: W203
+  x: 52.5
+  y: 92.0
+  side: back
+- ref: W204
+  x: 55.0
+  y: 92.0
+  side: back
+- ref: W205
+  x: 54.0
+  y: 80.5
+  side: back
+- ref: W206
+  x: 51.5
+  y: 80.5
+  side: back
+- ref: W207
+  x: 51.5
+  y: 83.0
+  side: back
+- ref: W208
+  x: 54.0
+  y: 83.0
+  side: back
 - ref: W301
   x: 48.15
   y: 78.5

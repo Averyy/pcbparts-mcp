@@ -32,6 +32,7 @@ scripts/
 data/sensors/
   {source}.json              # Per-source output
   ic_aliases.json            # IC name equivalence table
+  curated.json               # Reviewed field corrections, never written by scrapers
 ```
 
 ## Sources
@@ -41,7 +42,7 @@ data/sensors/
 | Source | ICs | Platform tag | What it provides |
 |---|---|---|---|
 | Arduino Library Index | 642 | `arduino` | IC names, popularity, descriptions, manufacturer, GitHub URLs |
-| ESPHome | 173 | `esphome` | Protocol (i2c/spi/uart), I2C addresses |
+| ESPHome | 224 | `esphome` | Protocol (i2c/spi/uart/one_wire, ble for BLE devices), I2C addresses. Clones `dev`; each link is the component's page on esphome.io, else next.esphome.io (merged for the next release), else its source on GitHub, found by listing the esphome.io docs repo |
 | CircuitPython | 126 | `circuitpython` | Adafruit driver URLs. Reads `docs/drivers.rst` from the Adafruit bundle on GitHub, not docs.circuitpython.org: Read the Docs gives GitHub Actions runners a Cloudflare challenge (HTTP 429) |
 | MicroPython | 165 | `micropython` | GitHub URLs, category-based measures |
 | Tasmota | 103 | `tasmota` | Protocol, similar to ESPHome |
@@ -54,7 +55,7 @@ data/sensors/
 | Winsen | 377 | Gas/environmental sensors. Voltage, sensor_type, datasheet URLs, protocol |
 | MaxBotix | 125 | Ultrasonic distance sensors. All measure `distance` + `ultrasonic` |
 | Hi-Link | 36 | mmWave radar modules. Motion/distance/biometric |
-| Benewake | 19 | LiDAR sensors. All measure `distance` + `lidar` |
+| Benewake | 19 | LiDAR sensors. All measure `distance` + `lidar`. Interfaces per model from the product menu's Interface row (I/O = `gpio`) |
 | Atlas Scientific | 28 | Water quality (pH, ORP, DO, EC, RTD). Protocol (i2c/uart) |
 | Best Modules Corp | 81 | Holtek sensor modules. Voltage, protocol, sensor_type, datasheet URLs |
 
@@ -99,9 +100,125 @@ Each `{source}.json` has this structure:
 
 Fields are sparse — only included when the source provides them. Different sources contribute different fields.
 
-`write_source_json()` (common.py) keeps sensors that drop out of a scrape. A sensor in the previous `{source}.json` that this scrape didn't find is written again, unchanged, after the fresh ones, and `missed_scrapes` counts how many scrapes in a row have missed it. The third miss in a row (`REMOVE_AFTER_MISSED_SCRAPES`) drops it, and a sensor that comes back is written as scraped with its count cleared. New sensors are added straight away. The reason is that sources flicker: on 2026-11-01 the Best Modules listing left out its five HT7M21xx modules for one run while their product pages were still up.
+Measures describe the part's own sensing channels. ADC applications, external
+transducers, host-supplied compensation inputs and calculated outputs do not add
+physical measures. "IMU", "6-axis" and "9-DoF" are not measure keywords (they gave
+magnetometers a gyroscope); `infer_measures` uses them only as a fallback, giving acceleration and
+gyroscope when the text names no inertial or magnetic channel, and nine-axis wording always adds a
+gyroscope to a named accelerometer.
+Keep parent/sub-measure pairs such as distance/lidar and motion/radar where applicable.
+CO2, particulate and power-monitor tags alone do not establish NDIR, laser or shunt
+technology; type inference requires a device lookup or explicit mechanism text.
+Atlas probe connections are distinct from their reader circuits. MaxBotix outputs
+are model-specific (including I2C, USB and analog/serial variants), rather than a
+manufacturer-wide analog/PWM/UART default.
 
-`stats.sensor_count` is still the number the scrape found, so the deploy gate still fails a source that finds nothing, while its last data stays in place. `stats.kept_missing` counts the carried sensors, and the scrape log names each one. If a scraper's ID scheme changes, the old IDs are carried for two more scrapes, so delete `{source}.json` before that run.
+### Curated field corrections
+
+`data/sensors/curated.json` is an object keyed by **canonical merged record ID**.
+Use it for individual, verified corrections; fix a scraper or general build rule
+when the cause affects a class of records. Each corrected field has its own
+`value`, `evidence`, and `review_date` (`YYYY-MM-DD`):
+
+```json
+{
+  "ads1293": {
+    "voltage": {
+      "value": "2.7-5.5",
+      "evidence": {
+        "url": "https://www.ti.com/lit/ds/symlink/ads1293.pdf",
+        "page": 4,
+        "text": "Recommended Operating Conditions: analog supply VDD, 2.7 to 5.5 V"
+      },
+      "review_date": "2026-11-10"
+    }
+  }
+}
+```
+
+Supported fields are `name`, `description` (up to 200 characters), `manufacturer`,
+`type`, `voltage`, `datasheet_url`, `measures`, `protocols`, and `exclude`.
+`measures` and `protocols` values are exact arrays, including `[]` to clear them;
+they replace the scraped unions and any legacy additions/removals. Nullable
+scalars (`manufacturer`, `type`, `voltage`, `datasheet_url`) accept `null` to clear
+an incorrect value. Voltages use the existing DB string format in volts without
+a unit suffix, including ranges such as `"2.4-2.6"`; `sensor_recommend` returns
+that string unchanged. It currently has no supply-voltage input filter or range
+parser. `exclude` takes a boolean and also requires a nonempty
+`reason` alongside its evidence and review date.
+
+Evidence must contain a source `url`, a `document` and positive `page`, or a
+scraper `source` path and the supporting `text`. Include the relevant passage
+and datasheet page when available; preserve scraped text in the correction so
+its evidence survives later scrapes. Evidence is reviewed by a person, not
+re-fetched during a build.
+
+The builder validates the complete file, then applies corrections **after all
+scrape merging, aliases and legacy enrichment tables**. Every curated field wins
+unconditionally for that field only; other fields retain the existing behavior.
+In particular, the description length guard cannot block a curated description,
+and insertion-time measure rules cannot change a curated exact set. Excluded
+records are removed after validation. A reviewed `exclude: true` entry may remain
+after its source record disappears, so a later scrape cannot resurrect it. Other
+unknown/stale IDs, missing evidence,
+invalid review date, unsupported field or malformed value fails the build before
+the existing database is replaced. A standalone data directory without this
+optional file retains the legacy build behavior.
+
+Voltage reviews retain the source passage, record identity, other supply rails
+and the resolution rule in each curated field. Passive elements have no VDD and
+use `null`; heater voltage, noise density, resistance and absolute limits are not
+operating supplies. Nominal tolerances become intervals, conflicting maker
+statements use their safe intersection, and unresolved identities/disjoint
+variants retain their previous values without a verified voltage override.
+Superseded entries are removed from `VOLTAGE_TABLE`.
+
+The Winsen and Best Modules voltage extractors require an explicit supply label
+and a volt unit (including a separate table unit column). They preserve voltage
+tolerances, reject noise/bias/heater rows and upper bounds, and do not turn
+discrete supply options into a continuous interval.
+
+### Record identity and driver support
+
+IDs identify physical parts, modules or explicitly named device families. Library
+vendor prefixes (including joined names such as `MyLD2410` and `7SemiBME68x`)
+are removed during scraping and building; complete model suffixes and family
+wildcards are preserved. `ic_aliases.json` merges verified same-device wrappers
+and misspellings into existing canonical IDs and also resolves their old display
+names at query time. Decisions and source passages live in `ic_alias_evidence.json`.
+Concrete models are not merged into families just because they share a driver.
+Explicit alias targets take precedence over prefix stripping, preserving published
+IDs for genuine manufacturer modules such as `7semico2th` and `hlkfm22x`.
+
+Names use a complete model token matching the canonical ID, with source punctuation
+when available. A shared three-character prefix or a library's shortest title is
+insufficient. Reviewed exceptions, including legacy Winsen URL slugs whose current
+title and Model row identify another designation, use per-record curated names.
+The Winsen scraper requires title/Model agreement before trusting such a designation;
+it preserves the prior ID convention for client compatibility.
+
+`support_transfers.json` records evidence-backed multi-device driver relationships.
+Before curated exclusions, the builder copies only platform tags, driver URLs and
+source provenance to the specified physical parts. It never copies wrapper measures,
+descriptions or electrical fields. Targets containing only an `id` refer to existing
+parts; complete target metadata can introduce a verified part missing from all other
+sources (for example a GNSS receiver explicitly named in a library's product links).
+This keeps BSEC, RVC and generic PM2.5 software out of the part catalog without losing
+their platform support. LSM303 accelerometer support applies to both AGR and DLHC;
+the similarly named `lsm303dlh-mag` driver explicitly targets DLHC, not DLH.
+
+Rebuild as Docker does with
+`uv run python scripts/build_sensor_db.py --data-dir data --output data/sensor.db --quiet`.
+Verify corrections with
+`uv run pytest tests/test_sensor_merge.py tests/test_sensor_db.py tests/test_sensor_recommend.py -q`.
+The repository excludes integration-marked tests by default; to also exercise
+the local `sensor.db` integration tests, run
+`uv run pytest tests/test_sensor_recommend.py -q -m integration` (these sensor
+tests query the local database without calling the deployed MCP).
+
+`write_source_json()` (common.py) keeps sensors that drop out of a scrape. A sensor in the previous `{source}.json` that this scrape didn't find is written again, unchanged, after the fresh ones, and `missed_scrapes` counts how many scrapes in a row have missed it. The third miss in a row (`REMOVE_AFTER_MISSED_SCRAPES`) drops it, and a sensor that comes back is written as scraped with its count cleared. New sensors are added straight away. A missed sensor whose own pages all answer 404 or 410 (a deleted driver repo) is dropped at once instead. The reason for carrying the rest is that sources flicker: on 2026-11-01 the Best Modules listing left out its five HT7M21xx modules for one run while their product pages were still up.
+
+`stats.sensor_count` is still the number the scrape found, so the deploy gate still fails a source that finds nothing, while its last data stays in place. `stats.kept_missing` counts the carried sensors, and the scrape log names each one. A rerun within 20 hours of the last scrape (`SAME_SCRAPE_HOURS`: a re-dispatched job, a local run) is the same monthly scrape, so a sensor it misses again keeps its count. An old ID that today's `normalize_sensor_id()` maps to an ID this scrape found (Tasmota's hlkld2410 is ld2410) is a rename, not a miss, and isn't carried. Any other ID scheme change still carries the old IDs for two more scrapes, so delete `{source}.json` before that run.
 
 ## Measure Types (historical snapshot)
 
@@ -146,7 +263,8 @@ uv run python -m scripts.scrape_sensors
 # Single source
 uv run python -m scripts.scrape_sensors --source arduino
 
-# Winsen is slow (~10 min, crawls ~400 pages)
+# Winsen is slow (~25 min, ~400 pages from 30 category listings; a listing gets 60s with 20s tries,
+# failed listings are retried once, and discovery stops after 15 min)
 ```
 
 Each run writes `data/sensors/_scrape_status.json` (gitignored) recording per-source
@@ -194,9 +312,42 @@ Runtime module: `src/pcbparts_mcp/sensor_db/` exposes `sensor_recommend` MCP too
 ### Reviewed merge corrections (0.8.23)
 
 Generic MCU/platform IDs such as RP2040 are excluded from physical sensor recommendations.
-Description selection ranks device/integration sources above aggregated library descriptions,
-then breakout prose; length breaks ties within that authority. Source URLs remain available.
+Description selection first prefers hardware facts over software prose (libraries, drivers,
+wrappers, examples and APIs), then ranks device/integration sources above aggregated library
+descriptions and breakout prose; length breaks ties within that authority. Generic breakout
+marketing cannot displace a useful IC title. `scripts/build_sensor_db.py` shares guarded
+software-prefix cleanup between the build and Arduino/MicroPython/DFRobot scrapers. These scrapers
+mark cleaned titles with optional `description_is_library_title: true` so removing a prefix
+does not promote the text's rank after the next scrape. Zephyr binding instructions are cut
+at instruction/code boundaries, preserving preceding hardware sentences. The build applies
+the same rules to existing source JSON. Curated corrections still win last. Source URLs remain available.
 CCS811's `eco2` output is estimated, humidity/temperature are compensation inputs, and its
 reviewed operating supply is 1.8–3.3 V (3.6 V absolute maximum). The runtime reply cites ams
 CCS811 v1-06, pages 1/5/6. These corrections do not establish the accuracy of every merged
 family: further capability/identity audits remain pending.
+
+### Catalog audit corrections (0.9.0)
+
+An audit of 80 records against maker sources found these general causes, fixed at the source:
+
+- Arduino: a Deneyap board-library title ("Deneyap Temperature&Humidity, Barometer Sensor SHT4X")
+  describes the whole board, so it supplies a chip's measures and description only when no other
+  library describes that chip (`chip_texts()`).
+- Winsen: every output the spec and summary tables name is kept, including rowspan continuation
+  rows (ZH08 "UART_TTL Output" + "PWMOutput"). Voltage spans, DAC, millivolt and 4-20 mA outputs
+  are `analog`, IIC/I²C `i2c`, a case-sensitive CAN `can`, high/low-level outputs `gpio`. LIN has
+  no tag. A part whose page names no output but specifies a bare element's signal (µA/ppm, mV or a
+  sensing resistance Rs) is `analog`. Rows whose symbol cell is VH are heater rows whatever their
+  label. PbS/PbSe photoconductive flame cells are `photoresistor`, not pyroelectric. For a Winsen
+  part whose page names its outputs, the build's legacy `IC_PROTOCOLS` guesses no longer add a bus.
+  An "Output method:" item in the product's own Features list joins the table outputs (MH-711A:
+  UART beside the table's IIC); related-product cards further down the page are not read. A
+  "Thermopile Gas Sensor" (RTGA71) is an NDIR detector, not `ir_temperature`.
+- Benewake: protocols come from the product menu's Interface row; the build's former blanket
+  UART+I2C default is gone (TF02-i and TFmini-i are CAN/RS-485, TFA170-L RS-232, Horn Ethernet).
+- MaxBotix: products with a detection/proximity zone output also measure `proximity`.
+- SparkFun: a UART named in the product summary is a protocol; a load cell's "pressure (force)"
+  is not a pressure measure.
+- Build: a thermopile reporting temperature also measures `ir_temperature`; descriptions longer
+  than the column end at their last complete sentence (else a whole word plus "...") instead of
+  mid-word; brand names inside URLs are not stripped.

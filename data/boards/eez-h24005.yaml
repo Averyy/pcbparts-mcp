@@ -74,8 +74,9 @@ components:
   footprint: '0603'
   decouples: IC25
 - ref: C112
-  value: EECS5R5H105
+  value: 1F
   footprint: SG-R20MM
+  mpn: EECS5R5H105
 - ref: C113
   value: 100nF
   footprint: '0603'
@@ -141,9 +142,10 @@ components:
 - ref: C13
   value: 47uF
   footprint: CAPAE830X1050N
-  mpn: EEE-FP1V221AP
-  tolerance: "\xB120 %"
-  voltage: 35V
+  mpn: EEEFK1H470P
+  farnell: '9696032'
+  newark: 96K9403
+  manufacturer: PANASONIC
 - ref: C130
   value: 4.7uF
   footprint: '1206'
@@ -215,6 +217,7 @@ components:
 - ref: C15
   value: 100uF
   footprint: PANASONIC_F
+  mpn: EEEFK1J101P
 - ref: C150
   value: 470nF
   footprint: 0805
@@ -287,9 +290,10 @@ components:
 - ref: C3
   value: 18uF
   footprint: CAPAE830X650N
-  mpn: EEE-FP1E101AP
-  tolerance: "\xB120 %"
-  voltage: 25V
+  mpn: 50SVPF18M
+  farnell: '9696016'
+  newark: 96K9400
+  manufacturer: PANASONIC
 - ref: C30
   value: 10uF
   footprint: '1210'
@@ -494,9 +498,10 @@ components:
 - ref: C86
   value: 18uF
   footprint: CAPAE830X650N
-  mpn: EEE-FP1E101AP
-  tolerance: "\xB120 %"
-  voltage: 25V
+  mpn: 50SVPF18M
+  farnell: '9696016'
+  newark: 96K9400
+  manufacturer: PANASONIC
 - ref: C87
   value: 470nF
   footprint: 0805
@@ -505,11 +510,12 @@ components:
   footprint: '1210'
   voltage: 100V
 - ref: C89
-  value: UWT1H220MCL
+  value: 22uF
   footprint: CAPAE830X650N
-  mpn: EEE-FP1E101AP
-  tolerance: "\xB120 %"
-  voltage: 25V
+  mpn: UWT1H220MCL
+  farnell: '9696016'
+  newark: 96K9400
+  manufacturer: PANASONIC
 - ref: C9
   value: 100nF
   footprint: '0603'
@@ -529,11 +535,12 @@ components:
   footprint: '1210'
   voltage: 100V
 - ref: C94
-  value: UWT1H220MCL
+  value: 22uF
   footprint: CAPAE830X650N
-  mpn: EEE-FP1E101AP
-  tolerance: "\xB120 %"
-  voltage: 25V
+  mpn: UWT1H220MCL
+  farnell: '9696016'
+  newark: 96K9400
+  manufacturer: PANASONIC
 - ref: C95
   value: 4.7nF
   footprint: '1210'
@@ -541,9 +548,10 @@ components:
 - ref: C96
   value: 18uF
   footprint: CAPAE830X650N
-  mpn: EEE-FP1E101AP
-  tolerance: "\xB120 %"
-  voltage: 25V
+  mpn: 50SVPF18M
+  farnell: '9696016'
+  newark: 96K9400
+  manufacturer: PANASONIC
 - ref: C97
   value: 100nF
   footprint: '0603'
@@ -583,6 +591,7 @@ components:
 - ref: D17
   value: SMBJ5.0A
   footprint: DO214AA
+  mpn: SMBJ5.0A-TR
 - ref: D18
   value: BAS316
   footprint: SOD323-W
@@ -677,17 +686,19 @@ components:
   pin_count: 8
 - ref: IC12
   value: TS5A9411DCKT
-  footprint: SOT-6
+  footprint: SOT65P210X110-6N
+  farnell: '1755582'
   description: "10-\u03A9 SPDT ANALOG SWITCH SINGLE-CHANNEL 2:1 MULTIPLEXER/DEMULTIPLEXER"
   pin_count: 6
 - ref: IC13
   value: ADS1120
   footprint: PW(R-PDSO-G16)
   description: '2402249'
+  mpn: ADS1120IPWR
   pin_count: 16
 - ref: IC14
   value: LP339D
-  footprint: SOIC-14
+  footprint: SOIC127P600X175-14N
   description: Low Power Low Offset Voltage Quad Comparators
   pin_count: 14
 - ref: IC15
@@ -697,7 +708,7 @@ components:
   pin_count: 5
 - ref: IC16
   value: TPD2E001
-  footprint: SOP-4
+  footprint: SOP192P292X122-4N
   description: Low-Capacitance 2-Channel +/-15 kV ESD-Protection Array for High-Speed Data
   pin_count: 4
 - ref: IC17
@@ -707,8 +718,11 @@ components:
   pin_count: 16
 - ref: IC18
   value: TLC5925IDBQR
-  footprint: SOP-24
+  footprint: SOP63P600X175-24N
   mpn: TLC5925IDBQR
+  farnell: '1694438'
+  newark: 46P3784
+  manufacturer: Texas Instruments
   description: CONSTANT-CURRENT LED SINK DRIVER
   pin_count: 24
   nc_pins: {SDO: '22'}
@@ -719,18 +733,20 @@ components:
   pin_count: 16
 - ref: IC2
   value: LP2951
-  footprint: SOIC-8
+  footprint: SOIC127P600X175-8N
   description: LP2950-N/LP2951-N Series of Adjustable Micropower Voltage Regulators
   pin_count: 8
   nc_pins: {SENSE: '2', SD: '3', VTAP: '6'}
 - ref: IC20
   value: SI8651EC-B-IS1
   footprint: SOIC-16
+  farnell: '2423323'
   description: Low power 5-ch digital isolator (4+1)
   pin_count: 16
 - ref: IC21
   value: SI8651EC-B-IS1
   footprint: SOIC-16
+  farnell: '2423323'
   description: Low power 5-ch digital isolator (4+1)
   pin_count: 16
 - ref: IC22
@@ -745,93 +761,105 @@ components:
   pin_count: 16
 - ref: IC24
   value: PCA21125T/Q900/1,1
-  footprint: SOP-14
+  footprint: SOP65P640X120-14N
   description: '2400445'
   pin_count: 10
   nc_pins: {CLKOUT: '13'}
 - ref: IC25
   value: AT25256B
-  footprint: SOIC-8
+  footprint: SOIC127P600X175-8N
   description: '2345601'
+  mpn: AT25256B-SSHL-B
   pin_count: 8
 - ref: IC26
   value: W5500
   footprint: TQFP48-7X7
+  tme: W5500
   description: The W5500 chip is a Hardwired TCP/IP embedded Ethernet controller that enables
   pin_count: 48
   nc_pins: {DNC: '7', NC: '12', NC1: '13', VBG: '18', SPDLED: '24', DUPLED: '26', NC2: '46', NC3: '47'}
 - ref: IC27
   value: BC857BS
-  footprint: SOT-6
+  footprint: SOT65P210X110-6N
   description: PNP general purpose dual transistor
   pin_count: 6
 - ref: IC28
   value: TLC555
-  footprint: SOIC-8
+  footprint: SOIC127P600X175-8N
   pin_count: 8
   nc_pins: {CV: '5'}
 - ref: IC29
   value: SN74LVC08APWR
-  footprint: SOP-14
+  footprint: SOP65P640X120-14N
+  farnell: '1102978'
   description: QUADRUPLE 2-INPUT POSITIVE-AND GATES
   pin_count: 14
 - ref: IC3
   value: TL783CKTTR
-  footprint: TO-4
+  footprint: TO254P1524X483-4N
   mpn: TL783CKTTR
+  farnell: '2075436'
+  newark: 18M3193
+  manufacturer: TEXAS INSTRUMENTS
   description: REG, HI-VOLT, ADJ, D2PAK-3
   pin_count: 4
 - ref: IC30
   value: SN74LV1T34DBVR
-  footprint: SOT-5
+  footprint: SOT95P280X145-5N
+  farnell: '2499914'
   description: Single Power Supply Single Buffer GATE CMOS Logic Level Shifter
   pin_count: 4
 - ref: IC31
   value: TPS3705-33
-  footprint: SOIC-8
+  footprint: SOIC127P600X175-8N
+  farnell: '2296066'
   description: Processor supervisory circuit with power-fail
+  mpn: TPS3705-33D
   pin_count: 8
 - ref: IC32
   value: SN74LVC2G02DCTR
-  footprint: SOP-8
+  footprint: SOP65P400X130-8N
   description: NOR Gate, LVC Family, 2 Input, 32 mA, 1
   pin_count: 8
 - ref: IC33
   value: 74LVC1G125GW.125
-  footprint: SOT-5
+  footprint: SOT65P210X110-5N
   description: Bus buffer/line driver, 3-state
   pin_count: 5
 - ref: IC34
   value: TPA6205A1DGN
-  footprint: SOP-9
+  footprint: SOP65P490X110-9N
   pin_count: 9
 - ref: IC4
   value: LTC3260EMSE#PBF
-  footprint: SOP-17
+  footprint: SOP50P490X110-17N
   description: Low Noise Dual Supply Inverting Charge Pump
   pin_count: 17
 - ref: IC5
   value: TL072D
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   pin_count: 8
 - ref: IC6
   value: TL072D
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   pin_count: 8
 - ref: IC7
   value: LTC2050HVCS8#PBF
-  footprint: SOIC-8
+  footprint: SOIC127P600X173-8N
   description: Low Noise, Precision Operational Amplifier
   pin_count: 5
 - ref: IC8
   value: MCP23S17-E
-  footprint: SOP-28
+  footprint: SOP65P780X200-28N
+  farnell: '1467675'
+  tme: MCP23S17-E/SS
   description: 16-Bit I/O Expander with Serial Interface
+  mpn: MCP23S17-E/SS
   pin_count: 28
   nc_pins: {GPB3: '4', GPB4: '5', GPB5: '6', GPB6: '7', GPB7: '8', INTB: '19'}
 - ref: IC9
   value: REF5025AIDG4
-  footprint: SOIC-8
+  footprint: SOIC127P600X175-8N
   description: '1439628'
   pin_count: 5
   nc_pins: {TEMP: '3'}
@@ -866,6 +894,7 @@ components:
 - ref: JP10
   value: 1x3 header
   footprint: ZL303-03P
+  mpn: ZL303-03P
   pin_count: 3
 - ref: JP2
   value: JP3-CUT
@@ -885,6 +914,7 @@ components:
 - ref: JP9
   value: 1x3 header
   footprint: ZL303-03P
+  mpn: ZL303-03P
   pin_count: 3
 - ref: KK1
   value: SK 145/37,5
@@ -905,6 +935,8 @@ components:
   footprint: G6K-2F
   manufacturer: OMRON COMPONENTS USA
   mpn: G6K-2F DC24
+  farnell: '1690427'
+  newark: 36K7467
   description: Low Signal Relay
   pin_count: 8
 - ref: K_S2
@@ -912,6 +944,8 @@ components:
   footprint: G6K-2F
   manufacturer: OMRON COMPONENTS USA
   mpn: G6K-2F DC24
+  farnell: '1690427'
+  newark: 36K7467
   description: Low Signal Relay
   pin_count: 8
 - ref: K_SER
@@ -925,13 +959,18 @@ components:
 - ref: L2
   value: '7443551331'
   footprint: WE-HCI_1350
-  mpn: '7443551920'
+  mpn: '7443551331'
+  farnell: '2211631'
+  newark: 44W4647
+  manufacturer: "W\xFCrth Elektronik eiSos GmbH"
 - ref: L3
   value: 3.3uH
   footprint: IHLP-2020BZ-11
+  mpn: IHLP2020CZER3R3M11
 - ref: L4
   value: 3.3uH
   footprint: IHLP-2020BZ-11
+  mpn: IHLP2020CZER3R3M11
 - ref: L5
   value: 470uH
   footprint: DE0704
@@ -980,7 +1019,9 @@ components:
   value: Arduino Due
   footprint: ARDUINO+ICSP_MIRROR
   pin_count: 88
-  nc_pins: {-PWML.0(PE0): '0', -PWML.1(PE1): '1', -POWER.3V3: 3.3V, -DIGITAL.5V(1): 5V(1), -DIGITAL.5V(2): 5V(2), -DIGITAL.52(PB3/SCK): '52', -ADCH.ADC13: A13, -ADCH.ADC14: A14, -ADCH.ADC15: A15, -PWMH.AREF: AREF, -ICSP.+5V: ICSP_+5V, -ICSP.!RESET: ICSP_RESET, -POWER.VIN: VIN}
+  nc_pins: {-PWML.0(PE0): '0', -PWML.1(PE1): '1', -POWER.3V3: 3.3V, -DIGITAL.5V(1): 5V(1), -DIGITAL.5V(2): 5V(2), -DIGITAL.52(PB3/SCK): '52',
+    -ADCH.ADC13: A13, -ADCH.ADC14: A14, -ADCH.ADC15: A15, -PWMH.AREF: AREF, -ICSP.+5V: ICSP_+5V, -ICSP.!RESET: ICSP_RESET,
+    -POWER.VIN: VIN}
 - ref: NTC1
   value: 10K/Beta:3570K
   footprint: R_0204/5+0805
@@ -993,9 +1034,7 @@ components:
 - ref: OK2
   value: MOC3062
   footprint: DIL6-SMD
-  manufacturer: FAIRCHILD SEMICONDUCTOR
-  mpn: MOC3043SM
-  description: 6-Pin DIP Zero-Cross Optoisolators Triac Driver Output
+  newark: 05C2878
   pin_count: 4
 - ref: OK3
   value: HCPL-181
@@ -1019,7 +1058,7 @@ components:
   pin_count: 4
 - ref: Q1
   value: IRFR5305
-  footprint: TO-3
+  footprint: TO229P990X239-3N
   description: HEXFET Power MosFet
   pin_count: 3
 - ref: Q10
@@ -1044,18 +1083,25 @@ components:
   pin_count: 4
 - ref: Q14
   value: IRFR48ZPBF
-  footprint: TO-3
+  footprint: TO229P990X239-3N
   pin_count: 3
 - ref: Q15
   value: IRLML2246TRPBF
-  footprint: SOT-3
+  footprint: SOT95P237X112-3N
   mpn: IRLML2246TRPBF
+  farnell: '1888166'
+  newark: 40T7450
+  manufacturer: International Rectifier
+  tme: IRLML2246TRPBF
   description: HEXFET Power MOSFET (-20V, -2
   pin_count: 3
 - ref: Q16
   value: 2N7002
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   mpn: 2N7002-7-F
+  farnell: '1713823'
+  newark: 25R5679
+  manufacturer: DIODES INC.
   description: N-CHANNEL ENHANCEMENT MODE FIELD EFFECT TRANSISTOR
   pin_count: 3
 - ref: Q17
@@ -1100,74 +1146,115 @@ components:
   pin_count: 4
 - ref: Q24
   value: 2N7002
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   mpn: 2N7002-7-F
+  farnell: '1713823'
+  newark: 25R5679
+  manufacturer: DIODES INC.
   description: N-CHANNEL ENHANCEMENT MODE FIELD EFFECT TRANSISTOR
   pin_count: 3
 - ref: Q25
   value: 2N7002
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   mpn: 2N7002-7-F
+  farnell: '1713823'
+  newark: 25R5679
+  manufacturer: DIODES INC.
   description: N-CHANNEL ENHANCEMENT MODE FIELD EFFECT TRANSISTOR
   pin_count: 3
 - ref: Q26
   value: IRLML2246TRPBF
-  footprint: SOT-3
+  footprint: SOT95P237X112-3N
   mpn: IRLML2246TRPBF
+  farnell: '1888166'
+  newark: 40T7450
+  manufacturer: International Rectifier
+  tme: IRLML2246TRPBF
   description: HEXFET Power MOSFET (-20V, -2
   pin_count: 3
 - ref: Q27
   value: IRLML2246TRPBF
-  footprint: SOT-3
+  footprint: SOT95P237X112-3N
   mpn: IRLML2246TRPBF
+  farnell: '1888166'
+  newark: 40T7450
+  manufacturer: International Rectifier
+  tme: IRLML2246TRPBF
   description: HEXFET Power MOSFET (-20V, -2
   pin_count: 3
 - ref: Q28
   value: IRLML2246TRPBF
-  footprint: SOT-3
+  footprint: SOT95P237X112-3N
   mpn: IRLML2246TRPBF
+  farnell: '1888166'
+  newark: 40T7450
+  manufacturer: International Rectifier
+  tme: IRLML2246TRPBF
   description: HEXFET Power MOSFET (-20V, -2
   pin_count: 3
 - ref: Q29
   value: IRLML2246TRPBF
-  footprint: SOT-3
+  footprint: SOT95P237X112-3N
   mpn: IRLML2246TRPBF
+  farnell: '1888166'
+  newark: 40T7450
+  manufacturer: International Rectifier
+  tme: IRLML2246TRPBF
   description: HEXFET Power MOSFET (-20V, -2
   pin_count: 3
 - ref: Q3
   value: 2N7002
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   mpn: 2N7002-7-F
+  farnell: '1713823'
+  newark: 25R5679
+  manufacturer: DIODES INC.
   description: N-CHANNEL ENHANCEMENT MODE FIELD EFFECT TRANSISTOR
   pin_count: 3
 - ref: Q30
   value: 2N7002
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   mpn: 2N7002-7-F
+  farnell: '1713823'
+  newark: 25R5679
+  manufacturer: DIODES INC.
   description: N-CHANNEL ENHANCEMENT MODE FIELD EFFECT TRANSISTOR
   pin_count: 3
 - ref: Q31
   value: IRLML2246TRPBF
-  footprint: SOT-3
+  footprint: SOT95P237X112-3N
   mpn: IRLML2246TRPBF
+  farnell: '1888166'
+  newark: 40T7450
+  manufacturer: International Rectifier
+  tme: IRLML2246TRPBF
   description: HEXFET Power MOSFET (-20V, -2
   pin_count: 3
 - ref: Q32
   value: 2N7002
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   mpn: 2N7002-7-F
+  farnell: '1713823'
+  newark: 25R5679
+  manufacturer: DIODES INC.
   description: N-CHANNEL ENHANCEMENT MODE FIELD EFFECT TRANSISTOR
   pin_count: 3
 - ref: Q33
   value: 2N7002
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   mpn: 2N7002-7-F
+  farnell: '1713823'
+  newark: 25R5679
+  manufacturer: DIODES INC.
   description: N-CHANNEL ENHANCEMENT MODE FIELD EFFECT TRANSISTOR
   pin_count: 3
 - ref: Q34
   value: 2N7002
-  footprint: SOT-3
+  footprint: SOT103P240X110-3N
   mpn: 2N7002-7-F
+  farnell: '1713823'
+  newark: 25R5679
+  manufacturer: DIODES INC.
   description: N-CHANNEL ENHANCEMENT MODE FIELD EFFECT TRANSISTOR
   pin_count: 3
 - ref: Q4
@@ -1182,17 +1269,17 @@ components:
   pin_count: 3
 - ref: Q6
   value: BCP56-16.115
-  footprint: SOT-4
+  footprint: SOT230P700X180-4N
   description: Low power NPN Transistor, Vceo=80V, Ic=1A, SOT-223
   pin_count: 4
 - ref: Q7
   value: IRFR5305
-  footprint: TO-3
+  footprint: TO229P990X239-3N
   description: HEXFET Power MosFet
   pin_count: 3
 - ref: Q8
   value: BCP56-16.115
-  footprint: SOT-4
+  footprint: SOT230P700X180-4N
   description: Low power NPN Transistor, Vceo=80V, Ic=1A, SOT-223
   pin_count: 4
 - ref: Q9
@@ -1833,10 +1920,12 @@ components:
 - ref: SP1
   value: LD-BZEN-0903
   footprint: LD-BZEN-0903
+  tme: LD-BZEN-0903
   description: 'Loudity LD-BZEN-0903 Sound transducer: electromagnetic; without built-in'
 - ref: SP2
   value: LD-BZEN-0903
   footprint: LD-BZEN-0903
+  tme: LD-BZEN-0903
   description: 'Loudity LD-BZEN-0903 Sound transducer: electromagnetic; without built-in'
 - ref: SW1
   value: A101SYCQ04
@@ -1847,6 +1936,7 @@ components:
 - ref: SW2
   value: rotary encoder
   footprint: EC12E_SW
+  mpn: PEC12R-4225F-S0024
   pin_count: 7
 - ref: SW3
   value: '1301.9316'
@@ -1859,19 +1949,15 @@ components:
 - ref: VAR1
   value: ERZE14A431
   footprint: VARISTOR
-  description: 'EPCOS - B72220S0251K101 - VARISTOR, 140J, 250VAC Farnell: 1004357'
 - ref: VAR2
   value: ERZE14A431
   footprint: VARISTOR
-  description: 'EPCOS - B72220S0251K101 - VARISTOR, 140J, 250VAC Farnell: 1004357'
 - ref: VAR3
   value: ERZE11A431
   footprint: VARISTOR_13MM
-  description: 'EPCOS - B72220S0251K101 - VARISTOR, 140J, 250VAC Farnell: 1004357'
 - ref: VAR4
   value: ERZE11A431
   footprint: VARISTOR_13MM
-  description: 'EPCOS - B72220S0251K101 - VARISTOR, 140J, 250VAC Farnell: 1004357'
 - ref: X1
   value: 39-30-1039
   footprint: MINIFIT_39301039
@@ -1881,6 +1967,7 @@ components:
   value: 826629-5
   footprint: SSW-105-02-S-S
   mpn: SSW-105-02-S-S
+  newark: 11P9399
   description: THROUGH-HOLE .025" SQ POST SOCKET
   pin_count: 5
   nc_pins: {'-1.1': '1', '-5.1': '5'}
@@ -1892,27 +1979,32 @@ components:
 - ref: X12
   value: MC000006
   footprint: MC000006_MIRROR
+  farnell: '2007972'
   description: Wire-To-Board Terminal Block, 8, 150 V, 6 A, 26 AWG, 20 AWG No
   pin_count: 16
 - ref: X13
   value: TSW-113-07-F-D
   footprint: TSW-113-07-F-D
+  farnell: '2025182'
   description: Samtec TSW-110-07-F-D Header, 2
   pin_count: 26
 - ref: X14
   value: MC000006
   footprint: MC000006_MIRROR
+  farnell: '2007972'
   description: Wire-To-Board Terminal Block, 8, 150 V, 6 A, 26 AWG, 20 AWG No
   pin_count: 16
   nc_pins: {'-6.1': 6 6.1}
 - ref: X15
   value: TSW-113-07-F-D
   footprint: TSW-113-07-F-D
+  farnell: '2025182'
   description: Samtec TSW-110-07-F-D Header, 2
   pin_count: 26
 - ref: X16
   value: 09185067324
   footprint: IDC-10PIN
+  tme: T821-1-10-S1
   description: 10-pin IDC socket male, straight
   pin_count: 10
 - ref: X17
@@ -1920,6 +2012,8 @@ components:
   footprint: 22-23-2021
   manufacturer: MOLEX
   mpn: 22-23-2021
+  farnell: '1462926'
+  newark: 25C3832
 - ref: X18
   value: MC34753
   footprint: HEADER_8-PIN
@@ -1930,6 +2024,8 @@ components:
 - ref: X2
   value: SSW-113-02-T-D-RA
   footprint: SSW-113-02-T-D-RA
+  farnell: '1805583'
+  tme: ZL263-26DG
   description: Samtec SSW-113-02-T-D-RA Receptacle, 2
   pin_count: 26
 - ref: X20
@@ -1948,10 +2044,13 @@ components:
   footprint: 22-23-2031
   manufacturer: MOLEX
   mpn: 22-23-2031
+  farnell: '1462950'
+  newark: 30C0862
   pin_count: 3
 - ref: X5
   value: 09185067324
   footprint: IDC-10PIN
+  tme: T821-1-10-S1
   description: 10-pin IDC socket male, straight
   pin_count: 10
 - ref: X6
@@ -1961,6 +2060,7 @@ components:
 - ref: X7
   value: 'Amphenol: LMJ2138812S0LOT6C or WE: 74990101210'
   footprint: RJ45-VERT
+  tme: LMJ2138812S0LOT6C
   description: AMPHENOL LMJ2138812S0LOT6C Socket; RJ45; PIN:8; vertical, shielded, with LED
   pin_count: 13
   nc_pins: {CR: '5'}
@@ -1973,6 +2073,7 @@ components:
   value: 826629-5
   footprint: SSW-105-02-S-S
   mpn: SSW-105-02-S-S
+  newark: 11P9399
   description: THROUGH-HOLE .025" SQ POST SOCKET
   pin_count: 5
   nc_pins: {'-1.1': '1'}
@@ -1985,7 +2086,6 @@ components:
 - ref: ZD1
   value: SMAJ51A
   footprint: DO214AA
-  description: Transient Voltage Suppression Diodes, DO-214AA
 - ref: ZD10
   value: P4SMAJ48A
   footprint: DO214AC
@@ -1993,22 +2093,18 @@ components:
 - ref: ZD11
   value: SMAJ18A
   footprint: DO214AC
-  description: Transient Voltage Suppressor, TVS, P4SMA Series, Unidirectional
 - ref: ZD12
   value: SMAJ18A
   footprint: DO214AC
-  description: Transient Voltage Suppressor, TVS, P4SMA Series, Unidirectional
 - ref: ZD13
   value: 4V3
   footprint: MINIMELF
 - ref: ZD14
   value: SMAJ18A
   footprint: DO214AC
-  description: Transient Voltage Suppressor, TVS, P4SMA Series, Unidirectional
 - ref: ZD15
   value: n.c.
   footprint: DO214AA
-  description: Transient Voltage Suppression Diodes, DO-214AA
 - ref: ZD16
   value: PDZ5.6B
   footprint: SOD323-W
@@ -2034,7 +2130,6 @@ components:
 - ref: ZD6
   value: SMAJ18A
   footprint: DO214AC
-  description: Transient Voltage Suppressor, TVS, P4SMA Series, Unidirectional
 - ref: ZD7
   value: P4SMAJ48A
   footprint: DO214AC
@@ -2042,11 +2137,9 @@ components:
 - ref: ZD8
   value: SMAJ18A
   footprint: DO214AC
-  description: Transient Voltage Suppressor, TVS, P4SMA Series, Unidirectional
 - ref: ZD9
   value: SMAJ18A
   footprint: DO214AC
-  description: Transient Voltage Suppressor, TVS, P4SMA Series, Unidirectional
 nets:
 - name: '!ADC1_SELECT'
   pins: [IC20.A3, MCU.-COMM.15]

@@ -6,7 +6,7 @@ source_url: https://files.seeedstudio.com/wiki/SeeedStudio-XIAO-ESP32S3/new-res/
 org: Seeed-Studio
 org_display: Seeed Studio
 description: ESP32-S3R8 WiFi/BLE with GD25Q64 flash, SGM6029 buck
-tags: [battery-charging, power-supply, wifi]
+tags: [battery-charging, bluetooth, power-supply, wifi]
 key_ics: [ESP32-S3R8, SGM6029, SGM40567, GD25Q64]
 outline:
   width_mm: 17.78
@@ -187,10 +187,12 @@ components:
 - ref: U3
   value: SGM6029CYG
   footprint: BGA6-0.35-0.745X10.95X0.4MM
+  mpn: SGM6029CYG/TR
   pin_count: 6
 - ref: U4
   value: SGM40567-4.2
   footprint: WLCSP-0.4-0.92X1.16X0.4MM
+  mpn: SGM40567-4.2XG/TR
   pin_count: 6
 - ref: U5
   value: GD25Q64ENIGR

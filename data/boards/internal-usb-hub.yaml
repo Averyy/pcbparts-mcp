@@ -3,6 +3,7 @@ slug: internal-usb-hub
 source: wozniak-works/Internal-USB-Hub
 format: kicad9
 description: 7-port USB 3.2 Gen1 hub (USB7206C), TPS25983 smart power switch
+tags: [usb]
 key_ics: [USB7206C, TPS25983]
 outline:
   width_mm: 108.94
@@ -95,7 +96,6 @@ components:
 - ref: C114
   value: 22uF
   footprint: '1812'
-  lcsc: C141660
 - ref: C115
   value: 100nF
   footprint: '0201'
@@ -107,7 +107,6 @@ components:
 - ref: C117
   value: 22uF
   footprint: '1812'
-  lcsc: C141660
 - ref: C118
   value: 100nF
   footprint: '0201'
@@ -304,7 +303,6 @@ components:
 - ref: C38
   value: 22uF
   footprint: '1812'
-  lcsc: C141660
   voltage: 40V
   decouples: U9
 - ref: C39
@@ -324,7 +322,6 @@ components:
 - ref: C41
   value: 220nF
   footprint: '0402'
-  lcsc: C114401
 - ref: C42
   value: 100nF
   footprint: '0402'
@@ -332,7 +329,6 @@ components:
 - ref: C43
   value: 220nF
   footprint: '0402'
-  lcsc: C114401
 - ref: C44
   value: 100nF
   footprint: '0402'
@@ -345,7 +341,6 @@ components:
 - ref: C46
   value: 220nF
   footprint: '0402'
-  lcsc: C114401
 - ref: C47
   value: 470nF
   footprint: '0603'
@@ -366,6 +361,7 @@ components:
 - ref: C50
   value: 33uF
   footprint: '2220'
+  mouser: 710-865080645010
 - ref: C51
   value: 100uF
   footprint: Radial
@@ -659,20 +655,26 @@ components:
   footprint: X2SON-2_L0.6-W0.3-P0.35
   lcsc: C22427765
 - ref: FB1
-  value: 7.42793Mohm
+  value: '7427934'
   footprint: '7427934'
   lcsc: C5429469
+  mouser: 710-7427934
+  mpn: '7427934'
 - ref: FB2
-  value: 7.42793Mohm
+  value: '7427934'
   footprint: '7427934'
   lcsc: C5429469
+  mouser: 710-7427934
+  mpn: '7427934'
 - ref: FB3
-  value: 7.42793Mohm
+  value: '7427934'
   footprint: '7427934'
   lcsc: C5429469
+  mouser: 710-7427934
+  mpn: '7427934'
 - ref: J1
   value: USB_SPI_
-  footprint: 1X3
+  footprint: 1X3_P1.00mm
   pin_count: 3
 - ref: J10
   value: USB3_A
@@ -686,6 +688,7 @@ components:
   height: '10'
   manufacturer: Molex
   mpn: 45586-0005
+  mouser: 538-45586-0005
   description: Mini-Fit Jr. Header, Dual Row, Right-Angle, Third Generation Polarization Type
   pin_count: 8
 - ref: J12
@@ -695,40 +698,43 @@ components:
   pin_count: 25
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J13
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 1.00mm header
+  footprint: 1X3_P1.00mm
   pin_count: 3
 - ref: J2
   value: USB-C
   footprint: USB420003A
+  mouser: 640-USB4200-03-A
   description: USB Full-Featured Type-C Receptacle connector
   pin_count: 24
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 1.00mm header
+  footprint: 1X4_P1.00mm
   pin_count: 4
 - ref: J4
   value: USB-C
   footprint: USB420003A
+  mouser: 640-USB4200-03-A
   description: USB Full-Featured Type-C Receptacle connector
   pin_count: 24
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J5
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 1.00mm header
+  footprint: 1X3_P1.00mm
   pin_count: 3
 - ref: J6
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 1.00mm header
+  footprint: 1X3_P1.00mm
   pin_count: 3
 - ref: J7
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 1.00mm header
+  footprint: 1X3_P1.00mm
   pin_count: 3
 - ref: J8
   value: SD_Card_Receptacle
   footprint: SD2A
+  mouser: 179-SD-2-A
   description: SD card receptacle
   pin_count: 9
 - ref: J9
@@ -755,7 +761,7 @@ components:
   lcsc: C18199458
 - ref: L3
   value: 1.5uH
-  footprint: L
+  footprint: L_6.3x6.3
   lcsc: C520330
 - ref: Q1
   value: MMBT2222A
@@ -776,6 +782,7 @@ components:
 - ref: R11
   value: 900kohm
   footprint: '1206'
+  mouser: 603-RT1206CRE07900KL
   pullup: U3.VBUS_DET
 - ref: R12
   value: 200kohm
@@ -812,8 +819,6 @@ components:
 - ref: R19
   value: 1.5kohm
   footprint: '0402'
-  lcsc: C327253
-  pullup: D4.A
 - ref: R2
   value: 10kohm
   footprint: '0402'
@@ -864,6 +869,7 @@ components:
   value: 6.65ohm
   footprint: '0402'
   lcsc: C332644
+  mouser: 71-CRCW04026R65FKEDH
 - ref: R29
   value: 10ohm
   footprint: '0603'
@@ -1029,13 +1035,9 @@ components:
 - ref: R64
   value: 1.5kohm
   footprint: '0402'
-  lcsc: C327253
-  pullup: D6.A
 - ref: R65
   value: 1.5kohm
   footprint: '0402'
-  lcsc: C327253
-  pullup: D7.A
 - ref: R66
   value: 10kohm
   footprint: '0402'
@@ -1088,7 +1090,6 @@ components:
 - ref: R76
   value: 290kohm
   footprint: '0402'
-  lcsc: C5126158
   description: Resistor, small symbol
   pullup: U24.EN
 - ref: R77
@@ -1132,11 +1133,9 @@ components:
   value: 4.7kohm
   footprint: '0402'
   lcsc: C105871
-  pullup: D15.A
 - ref: R85
   value: 1.5kohm
   footprint: '0402'
-  lcsc: C327253
 - ref: R86
   value: 560ohm
   footprint: '0402'
@@ -1171,6 +1170,7 @@ components:
 - ref: R92
   value: 900kohm
   footprint: '1206'
+  mouser: 603-RT1206CRE07900KL
   pullup: U26.VBUS_DET
 - ref: R93
   value: 200kohm
@@ -1199,21 +1199,25 @@ components:
   pullup: /USB-C_UP1/I2C_HD3SS3220.SCL
 - ref: SW1
   value: RESET_HUB
-  footprint: ultra_small_switch
+  footprint: ultra_small_switch_1.6x3.0
   lcsc: C913788
 - ref: SW2
   value: FW_Upgrade
-  footprint: ultra_small_switch
+  footprint: ultra_small_switch_1.6x3.0
   lcsc: C913788
 - ref: TH1
   value: TMP61
-  footprint: 1X2
-  description: Temperature dependent resistor, negative temperature coefficient
+  footprint: 1X2_P1.27mm
 - ref: U1
   value: USB7206C
   footprint: QFN40P1200X1200X90-101N-D
+  mouser: 579-USB7206C/KDX
+  mpn: USB7206C/KDX
   pin_count: 101
-  nc_pins: {PF31: '3', NC@4: '4', NC@12: '12', NC@13: '13', USB2DN_DM6/PRT_DIS_M6: '41', USB2DN_DP6/PRT_DIS_P6: '42', PF3: '44', PF4: '45', PF5: '46', PF6: '47', PF7: '48', PF8: '49', PF9: '50', PF10: '51', PF11: '52', PF12: '54', PRT_CTL5/PF13: '56', PRT_CTL4/PF14: '57', PRT_CTL1/PF17: '60', PF18: '61', PF19: '66', SPI_D1/PF23: '71', SPI_D2/PF24: '72', SPI_D3/PF25: '73', PF29: '74', PF26: '75', PF27: '76', PRT_CTL6/PF28: '77', NC@80: '80', ATEST: '96'}
+  nc_pins: {PF31: '3', NC@4: '4', NC@12: '12', NC@13: '13', USB2DN_DM6/PRT_DIS_M6: '41', USB2DN_DP6/PRT_DIS_P6: '42', PF3: '44',
+    PF4: '45', PF5: '46', PF6: '47', PF7: '48', PF8: '49', PF9: '50', PF10: '51', PF11: '52', PF12: '54', PRT_CTL5/PF13: '56',
+    PRT_CTL4/PF14: '57', PRT_CTL1/PF17: '60', PF18: '61', PF19: '66', SPI_D1/PF23: '71', SPI_D2/PF24: '72', SPI_D3/PF25: '73',
+    PF29: '74', PF26: '75', PF27: '76', PRT_CTL6/PF28: '77', NC@80: '80', ATEST: '96'}
 - ref: U10
   value: 24LC256
   footprint: SO-8_L4.9-W3.9-P1.27-LS5.9-BL
@@ -1242,11 +1246,13 @@ components:
   footprint: WQFN-40_L6.0-W4.0-P0.40-TL
   lcsc: C5216209
   pin_count: 41
-  nc_pins: {EQCFG: '3', NC@5: '5', TESTOUT1: '7', TESTOUT2: '8', RSVD1: '9', RSVD2: '10', NC@11: '11', RSVD3: '12', RSVD4: '13', NC@24: '24', NC@25: '25', CEQ1: '29', NC@32: '32', CEQ0: '38'}
+  nc_pins: {EQCFG: '3', NC@5: '5', TESTOUT1: '7', TESTOUT2: '8', RSVD1: '9', RSVD2: '10', NC@11: '11', RSVD3: '12', RSVD4: '13',
+    NC@24: '24', NC@25: '25', CEQ1: '29', NC@32: '32', CEQ0: '38'}
 - ref: U15
   value: GL3224
   footprint: HQFN-32_L5.0-W5.0-P0.50-BL-EP3.0
   lcsc: C157357
+  mpn: GL3224-OIY04
   pin_count: 33
   nc_pins: {SPI_MISO: '10', SPI_MOSI: '11', SPI_CK: '12', SPI_CS: '13', VUHSI: '24'}
 - ref: U16
@@ -1265,6 +1271,7 @@ components:
   value: UCS2114-1-V/G4
   footprint: QFN-20_L4.0-W4.0-P0.50-BL-EP2.7
   lcsc: C638222
+  mouser: 579-UCS2114-1-V/LX
   pin_count: 21
 - ref: U19
   value: TPD4E02B04DQA
@@ -1276,6 +1283,7 @@ components:
   value: MIC803-29D4VM3
   footprint: SOT-23-3_L2.9-W1.3-P1.90-LS2.4-BR
   lcsc: C626154
+  mpn: MIC803-29D4VM3-TR
   pin_count: 3
 - ref: U20
   value: TPD4E02B04DQA
@@ -1287,6 +1295,7 @@ components:
   value: SiRA80DP
   footprint: PowerPAK_SO-8L_Single
   lcsc: C3289458
+  mouser: 78-SIRA80DP-T1-RE3
   description: "12A Id, 30V Vds, N-Channel MOSFET, Rds 18m\u03A9 PowerPAK, SC70-6"
   pin_count: 5
 - ref: U22
@@ -1299,16 +1308,19 @@ components:
   footprint: SOT-223-3_TabPin2
   lcsc: C500795
   description: 1A Low Dropout regulator, positive, 3.3V fixed output, SOT-223
+  mpn: AP7361C-33E
   pin_count: 3
 - ref: U24
   value: MP8795
-  footprint: MPS-QFN-21
+  footprint: MPS-QFN-21_3x4
   lcsc: C3188708
   pin_count: 14
 - ref: U25
   value: MIC23201YML
   footprint: TDFN-10_L3.0-W3.0-P0.50-TL
   lcsc: C621769
+  mouser: 998-MIC23201YMLTR
+  mpn: MIC23201YML-TR
   pin_count: 11
 - ref: U26
   value: HD3SS3220IRNHR
@@ -1381,7 +1393,7 @@ components:
   pin_count: 10
 - ref: U8
   value: TVS2200DRV
-  footprint: WSON-6-1EP
+  footprint: WSON-6-1EP_2x2
   lcsc: C523793
   description: Flat-Clamp Surge Protection Device. 22Vrwm, WSON-6
   pin_count: 7
@@ -1389,6 +1401,7 @@ components:
   value: TPS25762CQRQLRQ1
   footprint: VQFN-HR-29_L6.0-W5.0-P0.50_TPS25762CQRQLRQ1
   lcsc: C5986888
+  mouser: 595-TPS25762CQRQLRQ1
   pin_count: 29
   nc_pins: {GPIO6|SYNC: '1', nGPIO9|IRQ: '2', PA_LSGD: '9', PA_DM|GPIO7: '17', PA_DP|GPIO8: '18'}
 - ref: Y1
@@ -1455,7 +1468,6 @@ nets:
   - R36.1
   - R4.1
   - R43.1
-  - R45.1
   - R46.1
   - R54.1
   - R55.1
@@ -1682,7 +1694,7 @@ nets:
 - name: /USB-C1/nFLT
   pins: [D3.K, R16.2, U4.nFLT]
 - name: /USB-C2/AEQCFG
-  pins: [R45.2, R50.2, U14.AEQCFG]
+  pins: [R50.2, U14.AEQCFG]
 - name: /USB-C2/AEQENZ
   pins: [J6.Pin_1, R46.2, R51.2, U14.AEQENZ/SDA]
 - name: /USB-C2/CRX1+

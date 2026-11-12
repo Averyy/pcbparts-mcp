@@ -4,77 +4,62 @@
 
 ## Quick Reference
 
-- **Ground plane: minimum 50x50mm for a 25x25mm patch.** Below 40x40mm, performance degrades significantly. 70x70mm gives optimal patch gain.
-- **Active antenna for any cable > 10cm.** Cable loss at L1 (1575 MHz): RG174 ~0.5dB/m, RG316 ~0.8dB/m, RG178 ~1.1dB/m. Active LNA gain: 15-26dB for u-blox receivers; above 35dB with short cable, receiver overloads.
-- **Backup battery on V_BCKP enables hot/warm start.** Without it, every power cycle is cold start (~30s TTFF vs ~1s hot). CR2032 or ML2032 rechargeable.
-- **Keep-out zone: no components within 10mm of patch antenna edges.** Tall components (h > 3mm) must be >= 10mm away. Enclosure/cover >= 5mm clearance.
-- **Recommended modules:** u-blox SAM-M8Q (integrated patch, 15.5x15.5mm), u-blox NEO-M9N (multi-band), Quectel L76-L (low power, 10.1x9.7mm), Quectel LC29H (RTK-capable).
+- **SAM-M8Q: center on a 50x50mm ground plane; below 40x40mm performance can decrease significantly.** This is module-specific, not a minimum for every patch [2, pp.11-12].
+- **u-blox recommends an active antenna for cable lengths above about 10cm.** Typically 15dB LNA gain suffices for receivers supporting passive antennas; > 35dB with short cables risks overload on some receivers [1, p.7].
+- **SAM-M8Q V_BCKP: 1.4-3.6V operating range.** Backup preserves RTC/BBR; valid retained time/orbit data is needed for hot/warm starts [2, p.5; 6, p.17].
+- **SAM-M8Q: keep components 10mm from module edges; cover >= 5mm from antenna.** The manual specifically requires tall components (h > 3mm) >= 10mm away [2, pp.11-12].
+- **NEO-M9N is multi-constellation L1, not multi-band.** SAM-M8Q integrates a patch in a 15.5x15.5mm footprint; L76-L is a 10.1x9.7mm option with an embedded LNA [6, p.1; 7, p.4; 3, pp.10,40].
 
 ## Design Rules
 
 ### Antenna Selection
 
-| Antenna Type | Gain (dBic) | Ground Plane Req | Best For |
-|-------------|-------------|-----------------|----------|
-| 25x25mm ceramic patch | 4-5 | 70x70mm optimal, 50x50mm min | Roof/dashboard mount, best performance |
-| 18x18mm ceramic patch | 2-3 | 50x50mm min | Space-constrained with decent GP |
-| Chip antenna (3.2x1.6mm) | -1 to +1 | 80x40mm min, highly GP-dependent | Consumer electronics, non-critical nav |
-| Quadrifilar helix | 2-4 | Less GP-dependent | Multi-orientation, vehicle tracking |
-
-- **Patches < 17x17mm show moderate navigation performance.** Smaller aperture = less signal energy. Amplifying after the antenna does not improve SNR.
-- **Chip antennas have 3dB loss vs patch/helix** due to linear polarization (GNSS signals are RHCP). Average C/N0 on 80x40mm PCB: 43.4 dBHz. On 24x15mm PCB: only 34.7 dBHz -- marginal for navigation. Not recommended where positioning is essential.
-- **Ceramic patch resonant frequency depends on dielectric and ground plane.** Conformal coating or potting shifts resonant frequency and voids antenna module warranty (SAM-M8Q).
+- **Do not select a patch from size alone.** u-blox recommends allowing about 50x50 to 70x70mm ground plane for ceramic patches; optimum gain and axial ratio depend on the specific antenna/ground combination, rather than a universal 70x70mm optimum [1, pp.16-17].
+- **Patches < 17x17mm tend to show moderate navigation performance in u-blox's comparison.** The source notes an exception for its SuperSense technology; performance also depends on ground plane. Amplification cannot recover antenna signal-to-noise loss [1, p.8].
+- **Chip antennas incur approximately 3dB polarization loss for RHCP GNSS signals.** u-blox's measured examples average 43.4dBHz C/N0 on an 80x40mm PCB and 34.7dBHz on a 24x15mm PCB; those board sizes are examples, not generic minimum ground planes. Prefer patch/helix where navigation performance is central [1, pp.9-10,15].
+- **Ceramic patch tuning depends on its dielectric environment and ground plane.** SAM-M8Q conformal coating or potting voids its warranty; do not generalize that warranty rule to unrelated modules [1, §5.3; 2, pp.15-16].
 
 ### Ground Plane Design
 
-- **SAM-M8Q: optimized for 50x50mm ground plane center mount.** Below 40x40mm, performance decreases significantly. Use at least one full copper layer for ground.
-- **For external patch: 70x70mm ground plane gives peak gain** from a 25x25mm patch. Undersized planes tilt the radiation pattern and reduce gain toward zenith.
-- **Route signal traces away from the module on the top layer.** Layer swaps (top to bottom) > 20mm from the module edge.
+- **SAM-M8Q: use at least one solid ground layer under the module, with no signal traces below it.** Route signals away on the top layer; if a layer change is necessary, make it > 20mm from the module [2, p.12].
+- **External RF feed: use a controlled 50 ohm trace.** Quectel's L76/L76-L passive-antenna reference design calls for a short 50 ohm RF trace; antenna matching still requires the selected antenna's reference design [3, p.39].
 
 ### Active Antenna Power (Bias-Tee)
 
-- **DC supply via coax center conductor.** RF choke (100nH, Murata LQG15HS) blocks RF from DC supply path. Decoupling cap (1nF) at LNA Vcc pin filters residual RF.
-- **LNA BOM: NXP BGU7004/BGU7008.** NF = 0.85-0.9dB, gain = 16.5-18.5dB, 1.5-2.85V optimized at 1.8V, 4.5-4.8mA. Input matching: one external inductor (5.6nH, Murata LQW15A). Integrated input/output DC blocking -- no external blocking caps needed.
-- **Active antenna current draw: 3-20mA typical.** u-blox modules with integrated bias-tee (MAX-M8Q, NEO series) limit supply current and detect antenna short/open.
-- **Antenna supervisor for fault detection.** u-blox AADET_N pin monitors supply current (open = 0mA, normal = 5-15mA, shorted = >50mA). Quectel L76 uses 10 ohm series resistor on VDD_RF for short protection.
-- **ESD on antenna port:** NXP PESD5V0F1BL TVS increases system ESD from 2kV to 10kV HBM.
-- **SAW filter before LNA when cellular transmitter co-located.** Epcos B9444 or B7839, Murata. GSM transmits up to +33dBm peak -- can exceed GNSS module RF_IN absolute max.
+- **Use antenna-specific bias voltage and current.** Quectel L76/L76-L VDD_RF follows VCC (2.8-4.3V recommended); verify the antenna's operating range. Its reference design uses a 10 ohm protection resistor and RF choke >= 47nH, not a guaranteed electronic current limiter or open/short detector [3, pp.37-38,45-46].
+- **NXP BGU7004/BGU7008 coax-powered example: 100nH Murata LQG15HS RF choke and 1nF VCC decoupling.** These are the AN11420 evaluation circuit values, not universal active-antenna defaults [4, pp.4,6].
+- **BGU7004/BGU7008: 1.5-2.85V supply, optimized at 1.8V.** AN11420 lists NF=0.9/0.85dB, gain=16.5/18.5dB and current=4.5/4.8mA respectively; current increases during strong jamming. Input matching uses 5.6nH Murata LQW15A; both RF ports have internal DC blocking [4, pp.3-6].
+- **Limit total gain at the receiver input.** u-blox states no need for antenna LNA gain above 26dB for its receivers, and warns of possible overload above 35dB with short cables. Quectel L76/L76-L instead specifies active-antenna total gain < 18dB and NF < 1.5dB; use the selected receiver's conditions [1, p.7; 3, p.36].
+- **PESD5V0F1BL is the optional ESD diode in NXP's BGU7004/BGU7008 example.** AN11420 reports increasing that circuit's ESD performance from 2kV to as much as 10kV; this is not an IEC system-level immunity rating for any GNSS input [4, pp.4,6].
+- **Choose SAW placement from blocker tolerance and noise budget.** Filtering before an LNA protects it from strong blockers but adds pre-LNA loss; placing the LNA first reduces the filter's noise contribution but requires an LNA that tolerates the blocker. u-blox's dual-antenna example deliberately places the LNA before the SAW [1, pp.20-21].
 
 ### Module Integration
 
-- **VCC supply: low impedance, < 0.2 ohm.** No series resistors, no ferrite beads, no inductors in VCC line. Peak current during backup-to-normal transition exceeds steady-state operating current.
-- **V_BCKP:** maintains RTC and BBR for hot/warm start. Connect to VCC_IO if no backup battery. Avoid high resistance on V_BCKP line -- current spike during supply switchover causes voltage drop and malfunction.
-- **VCC_IO sets I/O logic level.** Without VCC_IO, module stays in reset. Connect to VCC for single-supply designs.
-- **RESET_N: do not add capacitance to GND** (causes false reset at startup). Leave open if unused. Do not drive high -- input only.
-- **I/O lines > 3mm act as antennas at L-band.** Add ferrite beads (Murata BLM15HD102SN1) or series resistors (> 20 ohm) on UART, I2C lines close to the module pin. Prevents in-band interference from digital switching coupling into the GNSS antenna.
+- **SAM-M8Q VCC supply: low impedance, < 0.2 ohm.** Its manual prohibits series resistors, ferrite beads and coils in VCC; startup/backup-to-normal current can exceed steady-state current [2, pp.4,8].
+- **SAM-M8Q V_BCKP: connect to VCC_IO if no backup source is available.** Avoid high resistance because switchover current spikes can cause malfunction; VCC_IO supplies RTC/BBR while present, with V_BCKP taking over below 1.4V [2, p.5].
+- **SAM-M8Q VCC_IO must be supplied or the module remains in reset.** VCC_IO requires >= 2.7V and <= min(VCC + 0.3V, 3.6V); connect to VCC for a single-supply design, rather than a low-voltage host I/O rail [2, p.4; 6, p.17].
+- **Quectel L76/L76-L V_BCKP: 1.5-4.5V, 3.3V typical.** Do not transfer SAM-M8Q's backup limits or VCC_IO wiring to this module [3, pp.23,45].
+- **SAM-M8Q RESET_N: leave open if unused, do not drive HIGH or add capacitance to GND.** Use it for reset, not power control; capacitance can cause startup reset problems [2, pp.6,8].
+- **SAM-M8Q unshielded I/O > approximately 3mm can pick up interference.** The manual proposes > 20 ohm series resistors or BLM15HD102SN1 ferrites near affected I/O; check bus rise time/loading before applying the filter [2, pp.7,18].
 
 ### PPS (Pulse Per Second) Signal
 
-- **Accuracy (u-blox LEA-6T): 30 ns RMS without compensation, 15 ns with quantization error compensation** (UBX-TIM-TP message provides nanosecond quantization error for each pulse).
-- **Time pulse derived from 48 MHz internal clock.** Integer divisors (e.g., 8 MHz = 48/6) avoid quantization jitter. Non-integer divisors (e.g., 10 MHz) add edge jitter from clock rounding.
-- **For improved phase noise: add external PLL.** Lock external TCXO or OCXO to PPS for holdover and clean spectrum. The 48MHz-derived pulse is not designed for low phase noise.
-- **Cable delay compensation:** RG174: 5.26 ns/m; RG316: 5.05 ns/m. A 10 m RG174 cable = 52.6 ns offset. Configure in UBX-CFG-TP5 user delay field. Calibrate against reference PPS if sub-50 ns accuracy needed.
+- **LEA-6T timing: 30ns RMS without compensation, 15ns with quantization-error compensation.** UBX-TIM-TP provides the next pulse's error, valid for a 1Hz time pulse in this u-blox 6 application note; these values are not specifications for every GNSS module [5, pp.4-7].
+- **u-blox 6 time pulse is derived from 48MHz.** Integer division (8MHz = 48MHz / 6) avoids the additional quantization jitter seen at 10MHz. SAM-M8Q specifies a 0.25Hz-10MHz TIMEPULSE output; its 500kHz limit applies to the EXTINT frequency-aiding input [5, pp.10-11; 6, p.5; 2, p.6].
+- **For improved phase noise, add an external PLL.** The u-blox 6 note recommends an external oscillator, with an OCXO instead of a TCXO when additional holdover is required [5, p.9].
+- **Compensate antenna cable delay separately from arbitrary user delay.** u-blox 6's UBX-CFG-TP5 supports cable and user corrections; derive delay from the actual cable specification or calibration, not a universal RG174/RG316 velocity [5, pp.4-5].
 
 ### Interference Management
 
-- **In-band interference (near 1575MHz):** display harmonics (e.g., 315 MHz * 5 = 1575 MHz), MCU clocks (e.g., 26 MHz * 60.6), SDRAM bus switching.
-- **>= 20dB isolation between GNSS and cellular antennas.** If insufficient, add SAW filter on GNSS RF input.
-- **Shield the GNSS module** if co-located with wireless transmitters. Feed-through capacitors (Murata NFL18SP157X1A3, 34pF) on I/O lines penetrating the shield.
+- **Assess GSM isolation using the receiver/filter combination.** u-blox's general antenna note plans >= 40dB isolation for GSM; approximately 20dB achievable in handheld layouts is insufficient without additional input filtering. Its SAM-M8Q manual separately calls for extra filtering if approximately 20dB cannot be achieved; do not treat either as a universal cellular rule [1, p.20; 2, pp.18-19].
+- **A GNSS-band SAW cannot remove in-band interference.** Use shielding/layout measures for in-band sources and input filtering for out-of-band transmitters; a clock harmonic example is 315MHz * 5 = 1575MHz, not a fractional harmonic of 26MHz [1, pp.29-30].
+- **Shield penetrations need filtering at the boundary.** SAM-M8Q lists Murata NFL18SP157X1A3 feed-through filtering with 34pF data-line loading; account for that capacitance on the interface [2, pp.18,21].
 
 ## Common Mistakes
 
-- **Ground plane too small for chip antenna.** A chip antenna on 24x15mm PCB averages 34.7 dBHz C/N0 -- below 44 dBHz minimum for reliable navigation. Same chip on 80x40mm: 43.4 dBHz. Either use larger PCB or switch to patch/helix with adequate ground plane.
-- **Conformal coating or potting over patch antenna.** Changes dielectric environment, shifts resonant frequency. Module manufacturer explicitly voids warranty. Leave antenna area exposed or use window in coating.
-- **No backup battery -- every power cycle is cold start.** Cold start TTFF ~26-30s. Hot start with valid ephemeris: ~1s. For frequent power cycles (vehicle tracking, wearables), backup battery pays for itself in user experience.
-- **Ultrasonic cleaning after soldering.** Permanently damages quartz oscillators inside the GNSS module. Use no-clean solder paste and skip cleaning. Do not apply ultrasonic welding near the module.
-- **Digital signal traces routed under or near the module.** SPI clock, I2C, UART lines under the module radiate directly into the antenna. Even 3mm of unshielded trace acts as antenna at L-band. Route all signals away on top layer, use inner layers only > 20mm from module edge.
-
-## Formulas
-
-**GNSS link budget (simplified):**
-**Rule of thumb:** Minimum C/N0 for navigation: 44 dBHz. Typical GPS L1 signal at ground: -130 dBm.
-**Formula:** C/N0 = P_rx + G_ant - NF + 174 (dBHz)
-**Example:** P_rx = -130 dBm, G_ant = 3 dBi (patch), NF = 1.5 dB (SAW+LNA) -> C/N0 = -130 + 3 - 1.5 + 174 = 45.5 dBHz. Margin: 1.5 dB above minimum -- tight, add LNA gain or improve antenna.
+- **Treating 44dBHz C/N0 as a receiver acquisition threshold.** u-blox uses average strong/high-elevation satellite C/N0 of 44-50dBHz as an integration-quality target. Designs whose strongest signals remain below 40dBHz generally have degraded TTFF/coverage/accuracy; this does not mean they cannot navigate [1, pp.5,32].
+- **Expecting hot start solely because a battery is fitted.** It requires valid retained time/orbit data; SAM-M8Q can also retain RTC/BBR through VCC_IO without a separate battery [2, p.5].
+- **Ultrasonic cleaning or welding near SAM-M8Q.** Its manual warns that ultrasonic processes risk damage to the receiver and excludes that damage from warranty; use the documented assembly/cleaning process [2, pp.15-16].
 
 ## Sources
 
@@ -84,12 +69,10 @@
 
 ### References
 
-1. u-blox GNSS Antennas Application Note UBX-15030289: https://content.u-blox.com/sites/default/files/products/documents/GNSS-Antennas_AppNote_%28UBX-15030289%29.pdf
-2. u-blox SAM-M8Q Hardware Integration Manual UBX-16018358: https://content.u-blox.com/sites/default/files/SAM-M8Q_HardwareIntegrationManual_%28UBX-16018358%29.pdf
+1. u-blox UBX-15030289 (R03, October 2019) -- GNSS Antennas Application Note: https://content.u-blox.com/sites/default/files/products/documents/GNSS-Antennas_AppNote_%28UBX-15030289%29.pdf
+2. u-blox UBX-16018358 (R07, May 2020) -- SAM-M8Q Hardware Integration Manual: https://content.u-blox.com/sites/default/files/SAM-M8Q_HardwareIntegrationManual_%28UBX-16018358%29.pdf
 3. Quectel L76 Hardware Design V3.3: https://centerclick.com/ntp/docs/Quectel_L76L76-L_Hardware_Design_V3.3.pdf
-4. SparkFun GPS-RTK2 Hookup Guide: https://learn.sparkfun.com/tutorials/gps-rtk2-hookup-guide/all
-5. ArduSimple -- Understanding GPS Timepulse or PPS: https://www.ardusimple.com/understanding-gps-timepulse-or-pps/
-6. LXAntenna -- How to Power an Active GPS Antenna: https://lxantenna.com/how-to-power-an-active-gps-antenna/
-7. NXP AN11420 -- GPS LNA Voltage Supply via Coax Cable: https://www.nxp.com/docs/en/application-note/AN11420.pdf
-8. Wurth ANR017 -- GNSS Antenna Selection Guide: https://www.we-online.com/components/media/o171079v410%20ANR017_GNSS_Antenna.pdf
-9. u-blox GPS-based Timing Application Note GPS.G6-X-11007: https://content.u-blox.com/sites/default/files/products/documents/Timing_AppNote_%28GPS.G6-X-11007%29.pdf
+4. NXP AN11420 (Rev.1, October 2013) -- GPS LNA Voltage Supply via Coax Cable: https://www.nxp.com/docs/en/application-note/AN11420.pdf
+5. u-blox GPS.G6-X-11007 (initial release, March 2011, preliminary) -- GPS-based Timing Application Note: https://content.u-blox.com/sites/default/files/products/documents/Timing_AppNote_%28GPS.G6-X-11007%29.pdf
+6. u-blox UBX-16012619 (R07, September 2024) -- SAM-M8Q Data Sheet: https://content.u-blox.com/sites/default/files/documents/SAM-M8Q_DataSheet_UBX-16012619.pdf
+7. u-blox UBX-19014285 (R08, October 2025) -- NEO-M9N-00B Data Sheet: https://content.u-blox.com/sites/default/files/NEO-M9N-00B_DataSheet_UBX-19014285.pdf

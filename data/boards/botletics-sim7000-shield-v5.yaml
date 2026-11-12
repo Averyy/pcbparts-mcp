@@ -38,12 +38,15 @@ components:
 - ref: C3
   value: 100nF
   footprint: 0603-CAP-MARKED
+  decouples: IC2
 - ref: C4
   value: 100nF
   footprint: 0603-CAP-MARKED
+  decouples: IC2
 - ref: C5
   value: 100nF
   footprint: 0603-CAP-MARKED
+  decouples: IC3
 - ref: C6
   value: 220nF
   footprint: 0603-CAP-MARKED
@@ -76,6 +79,15 @@ components:
   prod_id: IC-09995
   description: Miniature single cell, fully integrated Li-Ion, Li-polymer charge management
   pin_count: 5
+- ref: IC2
+  value: TXB0104
+  footprint: VQFN-14
+  pin_count: 15
+  nc_pins: {NC@1: '6', NC@2: '9'}
+- ref: IC3
+  value: MCP9808
+  footprint: 8-TSSOP
+  pin_count: 8
 - ref: J1
   value: 1x8 header
   footprint: 1X08
@@ -116,6 +128,14 @@ components:
   footprint: USB-B-MICRO-SMD
   pin_count: 9
   nc_pins: {USBID: ID}
+- ref: JP1
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
+- ref: JP2
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
 - ref: JP3
   value: solder jumper (NC)
   footprint: SJ-2
@@ -154,6 +174,7 @@ components:
 - ref: R3
   value: 10kohm
   footprint: 0603-RES-MARKED
+  pullup: ALERT
 - ref: R4
   value: 10kohm
   footprint: 0603-RES-MARKED
@@ -167,7 +188,8 @@ components:
   pullup: SDA
 - ref: R7
   value: 10kohm
-  footprint: RES_ARRAY
+  footprint: RES_ARRAY_4X0603
+  pulldown: ADDR2
   pin_count: 8
   nc_pins: {D.1: '4', D.2: '5'}
 - ref: R8
@@ -177,7 +199,10 @@ components:
   value: SIM7000
   footprint: SIM7000
   pin_count: 68
-  nc_pins: {DCD: '5', BOOT_CFG: '6', CTS: '7', RTS: '8', PCM_CLK: '11', PCM_SYNC: '12', PCM_DIN: '13', PCM_DOUT: '14', NC@1: '19', NC@2: '20', NC@3: '21', NC@4: '22', MDM_LOG_TX: '23', ADC: '25', NC@5: '26', SIM_DET: '34', NC@6: '35', NC@7: '36', I2C_SDA: '37', I2C_SCL: '38', NC@8: '40', NC@9: '41', NC@10: '42', NC@11: '43', NC@12: '44', NC@13: '47', GPIO4: '48', GPIO1/UART3_RXD: '49', GPIO0/UART3_TXD: '50', NC@14: '51', GPIO2: '67', GPIO3: '68'}
+  nc_pins: {DCD: '5', BOOT_CFG: '6', CTS: '7', RTS: '8', PCM_CLK: '11', PCM_SYNC: '12', PCM_DIN: '13', PCM_DOUT: '14', NC@1: '19',
+    NC@2: '20', NC@3: '21', NC@4: '22', MDM_LOG_TX: '23', ADC: '25', NC@5: '26', SIM_DET: '34', NC@6: '35', NC@7: '36', I2C_SDA: '37',
+    I2C_SCL: '38', NC@8: '40', NC@9: '41', NC@10: '42', NC@11: '43', NC@12: '44', NC@13: '47', GPIO4: '48', GPIO1/UART3_RXD: '49',
+    GPIO0/UART3_TXD: '50', NC@14: '51', GPIO2: '67', GPIO3: '68'}
 - ref: X1
   value: LTE-uFL
   footprint: U.FL
@@ -193,10 +218,22 @@ components:
   nc_pins: {C6: C6}
 nets:
 - name: 1.8V
-  pins: [C3.2, U1.VDD_EXT]
+  pins: [C3.2, IC2.OE, IC2.VCCA, U1.VDD_EXT]
   trace_width: '0.3048'
 - name: 5V
   pins: [C1.1, IC1.VIN, J1.4, JP4.3]
+  trace_width: '0.3048'
+- name: ADDR0
+  pins: [IC3.A0, R7.C.2]
+  trace_width: '0.3048'
+- name: ADDR1
+  pins: [IC3.A1, R7.B.2]
+  trace_width: '0.3048'
+- name: ADDR2
+  pins: [IC3.A2, R7.A.2]
+  trace_width: '0.3048'
+- name: ALERT
+  pins: [IC3.ALERT, JP1.2, R3.1]
   trace_width: '0.3048'
 - name: D+
   pins: [J8.D+, U1.USB_DP]
@@ -219,6 +256,8 @@ nets:
   - C9.2
   - D3.COM
   - IC1.VSS
+  - IC2.GND
+  - IC3.GND
   - J1.2
   - J1.3
   - J3.3
@@ -258,11 +297,23 @@ nets:
 - name: GNSS_ANT
   pins: [C7.2, U1.GNSS_ANT]
   trace_width: '0.3048'
+- name: LTE_DTR
+  pins: [IC2.A4, U1.DTR]
+  trace_width: '0.3048'
 - name: LTE_PWR
   pins: [D1.C, J5.7]
   trace_width: '0.3048'
+- name: LTE_RI
+  pins: [IC2.A3, U1.RI]
+  trace_width: '0.3048'
 - name: LTE_RST
   pins: [D2.C, J5.8]
+  trace_width: '0.3048'
+- name: LTE_RXD
+  pins: [IC2.A1, U1.RXD]
+  trace_width: '0.3048'
+- name: LTE_TXD
+  pins: [IC2.A2, U1.TXD]
   trace_width: '0.3048'
 - name: N$10
   pins: [Q2.D, R8.1]
@@ -285,6 +336,12 @@ nets:
 - name: N$5
   pins: [LED2.C, R5.2]
   trace_width: '0.3048'
+- name: N$7
+  pins: [J4.5, JP1.1]
+  trace_width: '0.3048'
+- name: N$8
+  pins: [J4.1, JP2.1]
+  trace_width: '0.3048'
 - name: NETLIGHT
   pins: [Q2.G, U1.NETLIGHT]
   trace_width: '0.3048'
@@ -304,10 +361,10 @@ nets:
   pins: [U1.RF_ANT, X1.SIGNAL]
   trace_width: '0.3048'
 - name: SCL
-  pins: [J3.1, J4.10, R4.1]
+  pins: [IC3.SCL, J3.1, J4.10, R4.1]
   trace_width: '0.3048'
 - name: SDA
-  pins: [J3.2, J4.9, R6.1]
+  pins: [IC3.SDA, J3.2, J4.9, R6.1]
   trace_width: '0.3048'
 - name: SIM_CLK
   pins: [D3.2, U1.SIM_CLK, X3.C3]
@@ -324,10 +381,24 @@ nets:
 - name: STAT
   pins: [IC1.STAT, R1.1]
   trace_width: '0.3048'
+- name: UC_DTR
+  pins: [IC2.B4, JP2.2]
+  trace_width: '0.3048'
+- name: UC_RI
+  pins: [IC2.B3, J4.2]
+  trace_width: '0.3048'
+- name: UC_RXD
+  pins: [IC2.B2, J4.3]
+  trace_width: '0.3048'
+- name: UC_TXD
+  pins: [IC2.B1, J4.4]
+  trace_width: '0.3048'
 - name: VCC
   pins:
   - C4.1
   - C5.1
+  - IC2.VCCB
+  - IC3.VDD
   - J3.4
   - JP4.2
   - R3.2
@@ -419,6 +490,13 @@ positions:
   x: 28.83
   y: 8.51
   rot: 135.0
+- ref: IC2
+  x: 35.43
+  y: 42.67
+- ref: IC3
+  x: 9.65
+  y: 39.88
+  rot: 180.0
 - ref: J1
   x: 26.67
   y: 2.54
@@ -449,6 +527,14 @@ positions:
 - ref: J8
   x: 2.03
   y: 30.48
+- ref: JP1
+  x: 21.34
+  y: 46.99
+  rot: 270.0
+- ref: JP2
+  x: 36.58
+  y: 46.74
+  rot: 270.0
 - ref: JP3
   x: 45.72
   y: 42.8

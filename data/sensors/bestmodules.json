@@ -2,7 +2,7 @@
   "source": "bestmodules",
   "source_url": "https://www.bestmodulescorp.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-11-01T15:11:01.481321+00:00",
+  "scraped_at": "2026-11-10T22:43:59.190187+00:00",
   "stats": {
     "sensor_count": 81,
     "total_pages_checked": 91,
@@ -28,7 +28,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/296/product/925/",
-      "voltage": "3.0-5.0"
+      "voltage": "3-5"
     },
     {
       "id": "bm22s2301",
@@ -46,7 +46,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/2642/product/1446/",
-      "voltage": "6.0-28.0"
+      "voltage": "6-28"
     },
     {
       "id": "bm22s2302",
@@ -65,7 +65,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/2662/product/1461/",
-      "voltage": "5.0"
+      "voltage": "5"
     },
     {
       "id": "bm22s3021",
@@ -122,7 +122,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/315/product/922/",
-      "voltage": "2.5-5.0",
+      "voltage": "2.5-5",
       "type": "electrochemical"
     },
     {
@@ -141,7 +141,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/2346/product/1334/",
-      "voltage": "3.0-5.5",
+      "voltage": "3-5.5",
       "type": "electrochemical"
     },
     {
@@ -284,7 +284,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/339/product/1176/",
-      "voltage": "4.0-12.0",
+      "voltage": "4-12",
       "type": "radar"
     },
     {
@@ -304,7 +304,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/2451/product/1336/",
-      "voltage": "4.0-12.0",
+      "voltage": "4-12",
       "type": "radar"
     },
     {
@@ -384,7 +384,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/410/product/994/",
-      "voltage": "5.0",
+      "voltage": "4.9-5.1",
       "type": "ndir"
     },
     {
@@ -443,7 +443,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/2422/product/1362/",
-      "voltage": "5"
+      "voltage": "4.75-5.25"
     },
     {
       "id": "bm25s4421",
@@ -481,7 +481,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/438/product/481/",
-      "voltage": "3.0-5.5"
+      "voltage": "3-5.5"
     },
     {
       "id": "bm42p782n1",
@@ -557,7 +557,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/501/product/1260/",
-      "voltage": "3.0-5.5",
+      "voltage": "3-5.5",
       "type": "tof"
     },
     {
@@ -694,7 +694,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/2733/product/1307/",
-      "voltage": "3.3-5.0",
+      "voltage": "3.3-5",
       "type": "capacitive"
     },
     {
@@ -713,7 +713,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/296/product/1104/",
-      "voltage": "3.0-5.5"
+      "voltage": "3-5.5"
     },
     {
       "id": "bma26m221",
@@ -752,7 +752,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/316/product/1276/",
-      "voltage": "3.0-5.0",
+      "voltage": "3-5",
       "type": "mems"
     },
     {
@@ -790,7 +790,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/309/product/1105/",
-      "voltage": "3.0-3.6",
+      "voltage": "3-3.6",
       "type": "catalytic"
     },
     {
@@ -810,7 +810,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/338/product/1108/",
-      "voltage": "3.0-5.5",
+      "voltage": "3-5.5",
       "type": "pir"
     },
     {
@@ -830,7 +830,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/2575/product/1419/",
-      "voltage": "3.0-5.5",
+      "voltage": "3-5.5",
       "type": "pir"
     },
     {
@@ -850,7 +850,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/315/product/1111/",
-      "voltage": "2.5-5.0",
+      "voltage": "2.5-5",
       "type": "electrochemical"
     },
     {
@@ -1438,7 +1438,7 @@
       ],
       "manufacturer": "Holtek",
       "datasheet_url": "https://www.bestmodulescorp.com/en/amfile/file/download/file/1205/product/1128/",
-      "voltage": "3.0-5.5"
+      "voltage": "3-5.5"
     },
     {
       "id": "gtm5210f32",

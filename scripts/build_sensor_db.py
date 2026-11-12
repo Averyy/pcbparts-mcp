@@ -13,6 +13,7 @@ import json
 import re
 import sqlite3
 import sys
+from datetime import date
 
 from pathlib import Path
 
@@ -32,8 +33,23 @@ TIER3_SOURCES = {"sparkfun", "dfrobot"}
 # IDs to skip entirely — these are Arduino library names, generic component wrappers,
 # or product names that don't correspond to actual sensor ICs/modules.
 SKIP_IDS = {
+    # Not sensors, each checked against the maker's or project's documentation (2026-11-09).
+    # ESPHome platform and software components: "number" had 13 measures from its device-class list
+    "number", "dewpoint", "motion",
+    # ESPHome integrations for appliances, controllers and other people's sensors
+    "duco", "ecocomfort2", "emontx", "haierwaterheater", "mk2pvrouter", "renogyinverterble", "systabus", "vevordtx",
+    # Other chips: USB PD controller, stepper driver, I/O expanders, analog mux, RF transceiver,
+    # battery charge controller (TI BQ25820; its ADC reports its own voltages and currents)
+    "fusb302b", "tmc2209", "waveshareioch32v003", "pca9536", "cd74hc4067", "cc1101", "bq25820",
+    # Software with no device of its own, and Winsen ion generators
+    "pid5sensors", "ximu3", "rk182xexamples", "zi100zi101", "zi121",
+    # An Arduino category that merges MH-Z, Cozir, T67XX, S8, SCD4x, STC3x and PAS CO2 libraries
+    "co2",
     # MCU/platform targets in a driver name are not the measured peripheral.
     "rp2040", "rp2350", "esp32", "esp8266", "arduino", "raspberrypi",
+    # Sensors inside an SoC, not parts (Zephyr bflb,tsen: the Bouffalo Lab GPADC's own input;
+    # silabs,emu-temp: Series 2 die temperature; raspberrypi,bcm283x-vc-thermal: SoC temperature)
+    "tsen", "emu", "bcm283xvcthermal",
     # Arduino library names (not IC identifiers)
     "pressuresensor", "i2cencoder", "i2ccolor", "pm2", "10dof",
     "uvindex240370sensor", "24ghzradar",
@@ -89,12 +105,33 @@ MANUFACTURER_ALIASES = {
     "maxim": "Analog Devices",
     "maxim integrated": "Analog Devices",
     "invensense": "TDK",
+    "memsic": "MEMSIC",
 }
 
 # IC prefix -> manufacturer mapping for post-merge enrichment.
 # Applied ONLY when manufacturer is NULL. Longest prefix matched first.
 # Sources: datasheets, manufacturer websites, acquisition history.
-IC_PREFIX_MANUFACTURERS: dict[str, str] = {
+IC_PREFIX_MANUFACTURERS: dict[str, str | None] = {
+    "bno08xrvc": None,  # Multi-device firmware/library wrapper; no verified chip manufacturer.
+    "mq2b": "Winsen",  # https://www.winsen-sensor.com/d/files/manual/mq-2b.pdf
+    "pygp2y": "Sharp",  # https://global.sharp/products/device/lineup/selection/opto/dust/index.html
+    # Split-device identity audit (2026-11-09); details: data/sensors/ic_alias_evidence.json
+    "scd40": "Sensirion",  # https://sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf
+    "scd41": "Sensirion",  # https://sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf
+    "mhz19b": "Winsen",  # https://www.winsen-sensor.com/d/files/manual/mh-z19b.pdf
+    "mhz19c": "Winsen",  # https://www.winsen-sensor.com/d/files/manual/mh-z19c.pdf
+    "mhz19d": "Winsen",  # https://www.winsen-sensor.com/d/files/manual/mh-z19d.pdf
+    "mhz19e": "Winsen",  # https://www.winsen-sensor.com/d/files/manual/mh-z19e.pdf
+    "mhz1911a": "Winsen",  # https://www.winsen-sensor.com/d/files/manual/mh-z1911a.pdf
+    "mhz14a": "Winsen",  # https://www.winsen-sensor.com/d/files/manual/mh-z14a.pdf
+    "mhz14b": "Winsen",  # https://www.winsen-sensor.com/d/files/manual/mh-z14b.pdf
+    "zh06ii": "Winsen",  # https://www.winsen-sensor.com/d/files/manual/zh06-ii.pdf
+    "zh06iii": "Winsen",  # https://www.winsen-sensor.com/d/files/manual/zh06-iii.pdf
+    "zh06iv": "Winsen",  # https://www.winsen-sensor.com/d/files/manual/zh06-iv.pdf
+    "ld2410b": "Hi-Link",  # https://www.hlktech.net/index.php?id=65
+    "ld2410c": "Hi-Link",  # https://www.hlktech.net/index.php?id=65
+    "tfminiplus": "Benewake",  # https://en.benewake.com/TFminiPlus/index.html
+    "fabo206uvsi1132": "Silicon Labs",  # https://www.silabs.com/documents/public/data-sheets/Si1132.pdf
     # Analog Devices (includes former Maxim Integrated, Linear Technology)
     "ad8": "Analog Devices",       # AD8232, AD8494/8495
     "ade": "Analog Devices",       # ADE7880, ADE7953 energy metering
@@ -355,8 +392,11 @@ IC_PREFIX_MANUFACTURERS: dict[str, str] = {
     # DFRobot product SKUs (these are breakout boards, skip — manufacturer is the IC)
     # sen0xxx → DFRobot SKU numbers, skip
 
-    # Amphenol
-    "sm300d2": "Amphenol",         # SM300D2
+    # SM300D2: a Shenzhen-made module sold under its own code; no maker datasheet names a company
+    # (2026-11-09), and nothing ties it to Amphenol
+    "sm300d2": "Generic",
+    "adc128d818": "Texas Instruments",  # ADC128D818 system monitor (formerly National)
+    "cs1237": "Chipsea",           # CS1237/CS1238 load-cell ADCs
 
     # Microchip (MGC3130)
     "mgc3130": "Microchip",        # MGC3130 GestIC
@@ -447,7 +487,7 @@ IC_PREFIX_MANUFACTURERS: dict[str, str] = {
     "ips7100": "Piera Systems",    # IPS7100 particle sensor
 
     # Honeywell (additional)
-    "ah1815": "Honeywell",         # AH1815 Hall effect
+    "ah1815": "Diodes Incorporated",         # AH1815 Hall effect
 
     # TSC2007 — Texas Instruments
     "tsc2007": "Texas Instruments", # TSC2007 touch controller
@@ -861,6 +901,29 @@ IC_PREFIX_MANUFACTURERS: dict[str, str] = {
     "tct40": "Generic",               # TCT40 ultrasonic transducer pair
     "gy26": "Generic",                # GY-26 compass module
     "fsr16x16bnl": "Generic",         # FSR 16x16 force sensing resistor array
+    "hscdtd": "Alps Alpine",
+    "amc1302": "Texas Instruments",
+    "apc1": "ScioSense",
+    "aranet": "SAF Tehnika",
+    "bq76972": "Texas Instruments",
+    "cw2017": "CellWise",
+    "ds1603l": "DYP",
+    "fsr40": "Interlink Electronics",
+    "hwt901b": "WIT Motion",
+    "it7259": "ITE Tech",
+    "lc26g": "Quectel",
+    "max78630": "Analog Devices",
+    "mht7042a": "Winsen",
+    "mt6826s": "MagnTek",
+    "pasco2v01": "Infineon",
+    "s3km1110": "Iclegend",
+    "sciosenseens17x": "ScioSense",
+    "spd1200": "ERDI",
+    "st1vafe3bx": "STMicroelectronics",
+    "tfmini": "Benewake",
+    "xdb401": "XIDIBEI",
+    "amg88": "Panasonic",
+    "icm536": "TDK",
 }
 
 # Name overrides for sensors where the scraped name is bad (too long, includes
@@ -870,7 +933,7 @@ NAME_OVERRIDES: dict[str, str] = {
     "ina219": "INA219",                   # was "GyverINA" (Arduino lib name)
     "hmc5883l": "HMC5883L",              # was "HMC5883 Unified"
     "ak9750": "AK9750",                  # was "AK9750 HUMAN PRESENCE"
-    "ak9753": "AK975X",                  # was "AK975X Human Presence"
+    "ak9753": "AK9753",                  # AK975X is the library, not this model
     "lidarlightv3hp": "LidarLite v3HP",   # was "LidarLight_v3HP_micropython"
     "mq2": "MQ-2",                       # was "Smoke Sensor - MQ-2"
     "ina237": "INA237",                   # was "INA237 AND INA238"
@@ -894,7 +957,26 @@ MEASURE_REMOVALS: dict[str, set[str]] = {
     "bm25s2621": {"humidity"},
     "bmm150": {"sound"},
     "ccs811": {"co2", "humidity", "temperature"},  # estimated CO2; humidity/temp are compensation inputs
+    # Calculated eCO2. ESPHome tags its compensation inputs; SparkFun's pressure, humidity and temperature
+    # come from the BME280 on its ENS160/BME280 combo board, merged under this IC.
+    "ens160": {"co2", "humidity", "pressure", "temperature"},
+    "sgp30": {"co2"},  # CO2eq, calculated from ethanol and H2 signals
+    # Makers' own terms for a calculated value: "CO2 equivalent" predictions, "does not directly measure CO2"
+    "iaqcore": {"co2"},
+    "bme680bsec": {"co2"},
+    "bme68xbsec2": {"co2"},
+    "apc1": {"co2"},
+    # "the CO2 value and CH2O value output by the module are the equivalent values of TVOC"
+    # (SM300D2 parameter table; ESPHome lists 4.8-5.2V)
+    "sm300d2": {"co2"},
     "scd4x": {"gas"},  # a CO2 sensor, not a multi-gas breakout
+    # Words in Arduino library text, scraped before the matcher learned them (scrapers/common.py):
+    # "low noise" ADCs read as sound, "Iowa Scaled Engineering" as a weighing scale, "PGA/FSR"
+    # (full-scale range) as a force-sensing resistor
+    "ad7193": {"sound"}, "ad7194": {"sound"}, "ads122c04": {"sound"},
+    "mcp3427": {"weight"}, "i2cirsense": {"weight"}, "tla2021": {"force"},
+    # MAX32664 hubs read an optical front end and an accelerometer; they measure nothing themselves
+    "max32664c": {"acceleration"},
 }
 
 # Measures a sensor takes that no source tags. ESPHome lists the PMWCS3 under temperature only;
@@ -902,19 +984,51 @@ MEASURE_REMOVALS: dict[str, set[str]] = {
 # The CY8CMBR3102 is the CapSense touch controller on SparkFun's capacitive soil moisture sensor
 # (its library's only product); SparkFun notes it also works as a touch or proximity sensor.
 MEASURE_ADDITIONS: dict[str, set[str]] = {
+    "sen55": {"particulate"},  # Sensirion SEN5x datasheet v2 p.4; source omits this output.
     "ccs811": {"eco2", "voc"},
+    "ens160": {"eco2", "voc"},
+    "ens161": {"eco2"},
+    "sciosenseens16x": {"eco2", "voc"},
+    "sgp30": {"eco2", "voc"},
+    "iaqcore": {"eco2", "voc"},
+    "bme680bsec": {"eco2", "voc"},
+    "bme68xbsec2": {"eco2", "voc"},
+    "apc1": {"eco2", "voc"},
+    "sm300d2": {"eco2", "voc"},
+    # General-purpose ADCs measure a voltage; what a library connects to them is the library's
+    "ad7194": {"voltage"}, "ads122c04": {"voltage"}, "mcp3427": {"voltage"}, "tla2021": {"voltage"},
+    "adc128d818": {"voltage"}, "ads1258": {"voltage"},
+    "max32664c": {"biometric"},
     "pmwcs3": {"soil_moisture", "conductivity"},
     "cy8cmbr3102": {"touch"},
 }
+
+
+def type_implied_measures(sensor_type: str | None, measures: set[str]) -> set[str]:
+    """Measures a sensing technology implies for the part's own readings.
+
+    A thermopile reporting a temperature reads it from the target's infrared radiation, so it is a
+    non-contact (ir_temperature) sensor, as MLX90614 and the Grid-EYE arrays are tagged: TI's
+    TMP006/TMP007 "measure the temperature of an object without having to be in direct contact".
+    Thermopile air-velocity sensors (FS3000) report no temperature and get nothing.
+    """
+    if sensor_type == "thermopile" and "temperature" in measures:
+        return {"ir_temperature"}
+    return set()
 
 # Description overrides for sensors where no source provides a useful description.
 # Applied post-merge ONLY when the sensor still has no description (or a very short one).
 # Keep descriptions concise, search-friendly, and under 200 chars.
 # Format: {sensor_id: "description"}
 DESCRIPTION_OVERRIDES: dict[str, str] = {
+    # Maker datasheets: https://www.st.com/resource/en/datasheet/lsm6dsox.pdf
+    "lsm6dsox": "ST LSM6DSOX 6-axis MEMS accelerometer and gyroscope with machine learning core and embedded temperature sensor",
+    # https://www.renesas.com/en/document/dst/fs3000-datasheet
+    "fs3000": "FS3000 thermopile air-velocity sensor family; FS3000-1005 and FS3000-1015 have different measurement ranges",
+    # https://sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf
+    "scd41": "Sensirion SCD41 photoacoustic CO2 sensor with integrated temperature and humidity sensing",
     # ── Multi-platform sensors (platform_count >= 2) ─────────────────────────
     "ads1115010v": "ADS1115 16-bit ADC configured for 0-10V analog input measurement",
-    "sfa40": "Sensirion formaldehyde and VOC sensor module with temperature and humidity output",
     "mics4514": "Dual-element gas sensor for CO and NO2 detection with separate reducing and oxidizing channels",
     "icg20660l": "6-axis IMU with 3-axis accelerometer and 3-axis gyroscope, I2C/SPI interface",
     "tmf8x01": "Time-of-flight distance sensor with multi-zone ranging and histogram output",
@@ -922,7 +1036,6 @@ DESCRIPTION_OVERRIDES: dict[str, str] = {
 
     # ── Energy metering ICs (ESPHome-only) ───────────────────────────────────
     "ade7880": "Polyphase energy metering IC for 3-phase power measurement with harmonic analysis",
-    "ade7953": "Single-phase energy metering IC with power, voltage, and current measurement",
     "atm90e32": "3-phase energy metering IC with voltage, current, and power measurement",
     "bl0906": "6-channel single-phase energy metering IC for multi-load power monitoring",
     "bl0939": "Single-phase energy metering IC with dual-channel current measurement",
@@ -969,7 +1082,7 @@ DESCRIPTION_OVERRIDES: dict[str, str] = {
     "senseair": "Senseair NDIR CO2 sensor module for indoor air quality monitoring",
     "sfa30": "Sensirion formaldehyde sensor with temperature and humidity compensation",
     "sgp4x": "Sensirion multi-gas sensor for VOC and NOx index with I2C interface",
-    "sm300d2": "Multi-parameter air quality sensor module with CO2, PM2.5, temperature, humidity",
+    "sm300d2": "7-in-1 air quality module (UART and RS485): TVOC, eCO2 and eCH2O calculated from TVOC, laser PM2.5/PM10, temperature, humidity",
     "t6615": "NDIR CO2 sensor module with UART output for HVAC and indoor air quality",
     "zyaura": "CO2, temperature, and humidity sensor module with USB output for monitoring",
 
@@ -987,9 +1100,7 @@ DESCRIPTION_OVERRIDES: dict[str, str] = {
     "lc709203f": "Smart LiPo battery fuel gauge IC with I2C interface and coulomb counting",
 
     # ── Motion & presence sensors ────────────────────────────────────────────
-    "ld2420": "Hi-Link 24GHz mmWave radar module for motion and presence detection",
     "mr24hpc1": "24GHz mmWave radar module for human presence and motion detection",
-    "mr60bha2": "60GHz mmWave radar module for breathing and heartbeat detection",
     "msa3xx": "MEMSIC 3-axis accelerometer with I2C interface, low power consumption",
     "hlkfm22x": "Hi-Link 24GHz radar module for presence detection and ranging",
     "glr01": "Gesture and light recognition sensor module",
@@ -1070,8 +1181,8 @@ def enrich_descriptions(merged: dict[str, dict], quiet: bool = False) -> int:
             continue
         current = (sensor.get("description") or "").strip()
         override = DESCRIPTION_OVERRIDES[sid]
-        # Replace if empty OR if current is very short and override is better
-        if not current or (len(current) < 20 and len(override) > len(current)):
+        # Correct known component/family contamination; otherwise fill only missing or short prose.
+        if sid in {"lsm6dsox", "fs3000", "scd41"} or not current or (len(current) < 20 and len(override) > len(current)):
             sensor["description"] = override
             enriched += 1
 
@@ -1150,12 +1261,6 @@ MEASURE_TYPE_INFERENCE = {
     frozenset({"dissolved_oxygen"}): "electrochemical",
 }
 
-# Single-measure shortcuts: if sensor has ONLY these measures (possibly
-# combined with generic ones like temperature/humidity), infer type.
-# For CO2: only apply NDIR when no gas/voc/particulate measures (those
-# indicate a MOX or multi-sensor module that estimates eCO2).
-_MOX_INDICATORS = {"voc", "gas", "particulate"}
-
 # Stage 2: Description keyword inference (case-insensitive).
 # Only applied when type is still NULL after stage 1.
 # Order matters for priority: first match wins.
@@ -1168,7 +1273,7 @@ TYPE_KEYWORDS = [
     ("thermocouple", ["thermocouple"]),
     ("pir", ["passive infrared", "pyroelectric infrared", " pir "]),
     ("lidar", ["lidar"]),
-    ("mems", ["mems microphone", "mems accelerometer", "mems gyroscope", "mems inertial"]),
+    ("mems", ["mems microphone", "mems accelerometer", "mems gyroscope", "mems inertial", "mems imu"]),
     ("capacitive", ["capacitive touch", "capacitive humidity", "capacitive soil",
                      "capacitive sensor", "capacitive keypad"]),
     ("resistive", ["resistive touch"]),
@@ -1182,14 +1287,91 @@ TYPE_KEYWORDS = [
     ("rtd", ["pt100", "pt1000", " rtd "]),
     ("ntc", [" ntc ", "negative temperature coefficient"]),
     ("photoacoustic", ["photoacoustic"]),
-    ("shunt", ["current shunt", "current monitor", "power monitor", "energy meter",
-               "energy metering", "power metering"]),
+    ("shunt", ["current shunt", "shunt-based", "shunt based"]),
     ("adc", ["analog-to-digital", "analog to digital", " adc "]),
 ]
 
 # Stage 3: Well-known IC → type mappings for popular sensors where
 # measure-pattern and keyword inference can't determine the technology.
-IC_TYPE_OVERRIDES: dict[str, str] = {
+IC_TYPE_OVERRIDES: dict[str, str | None] = {
+    # Split-device identity audit (2026-11-09); details: data/sensors/ic_alias_evidence.json
+    "lsm6dsl": "mems",  # https://www.st.com/resource/en/datasheet/lsm6dsl.pdf
+    "lsm6dso": "mems",  # https://www.st.com/resource/en/datasheet/lsm6dso.pdf
+    "lsm6dsr": "mems",  # https://www.st.com/resource/en/datasheet/lsm6dsr.pdf
+    "lsm6dsv16x": "mems",  # https://www.st.com/resource/en/datasheet/lsm6dsv16x.pdf
+    "lsm6dsv16bx": "mems",  # https://www.st.com/resource/en/datasheet/lsm6dsv16bx.pdf
+    "ism330dhcx": "mems",  # https://www.st.com/resource/en/datasheet/ism330dhcx.pdf
+    "lsm6ds3": "mems",  # https://community.st.com/ysqtg83639/attachments/ysqtg83639/stm32-mcu-products-forum/89677/2/%5BATT%5D11987.pdf
+    "lsm9ds0": "mems",  # https://www.st.com/resource/en/datasheet/lsm9ds0.pdf
+    "mpu6500": "mems",  # https://www.invensense.tdk.com/en-us/products/inertial-sensors/mpu-6500
+    "bmi323": "mems",  # https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi323-ds000.pdf
+    "max30100": "optical",  # https://www.analog.com/media/en/technical-documentation/data-sheets/max30100.pdf
+    "max30105": "optical",  # https://www.analog.com/media/en/technical-documentation/data-sheets/max30105.pdf
+    "ds18s20": "semiconductor",  # https://www.analog.com/media/en/technical-documentation/data-sheets/DS18S20.pdf
+    "sht30": "capacitive",  # https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf
+    "sht31": "capacitive",  # https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf
+    "sht31d": "capacitive",  # https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf
+    "sht35": "capacitive",  # https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf
+    "sht40": "capacitive",  # https://sensirion.com/media/documents/33FD6951/6A7C10A0/HT_DS_Datasheet_SHT4x_V7.3.pdf
+    "sht45": "capacitive",  # https://sensirion.com/media/documents/33FD6951/6A7C10A0/HT_DS_Datasheet_SHT4x_V7.3.pdf
+    "sht21": "capacitive",  # https://sensirion.com/media/documents/120BBE4C/63500094/Sensirion_Datasheet_Humidity_Sensor_SHT21.pdf
+    "sht25": "capacitive",  # https://sensirion.com/media/documents/66189A49/6350F979/Sensirion_Datasheet_Humidity_Sensor_SHT25.pdf
+    "bme680": "semiconductor",  # https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme680-ds001.pdf
+    "bme688": "semiconductor",  # https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf
+    "bmp388": "mems",  # https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp388-ds001.pdf
+    "bmp390": "mems",  # https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp390-ds002.pdf
+    "bmp085": "mems",  # https://cdn.sparkfun.com/assets/6/f/3/9/4/BST-BMP085-DS000-05.pdf
+    "scd40": "photoacoustic",  # https://sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf
+    "scd41": "photoacoustic",  # https://sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf
+    "hdc1000": "capacitive",  # https://www.ti.com/lit/ds/symlink/hdc1000.pdf
+    "hdc1010": "capacitive",  # https://www.ti.com/lit/ds/symlink/hdc1010.pdf
+    "opt3001": "photodiode",  # https://www.ti.com/lit/ds/symlink/opt3001.pdf
+    "opt3002": "photodiode",  # https://www.ti.com/lit/ds/symlink/opt3002.pdf
+    "mhz19b": "ndir",  # https://www.winsen-sensor.com/d/files/manual/mh-z19b.pdf
+    "mhz19c": "ndir",  # https://www.winsen-sensor.com/d/files/manual/mh-z19c.pdf
+    "mhz19d": "ndir",  # https://www.winsen-sensor.com/d/files/manual/mh-z19d.pdf
+    "mhz19e": "ndir",  # https://www.winsen-sensor.com/d/files/manual/mh-z19e.pdf
+    "mhz1911a": "ndir",  # https://www.winsen-sensor.com/d/files/manual/mh-z1911a.pdf
+    "mhz14a": "ndir",  # https://www.winsen-sensor.com/d/files/manual/mh-z14a.pdf
+    "mhz14b": "ndir",  # https://www.winsen-sensor.com/d/files/manual/mh-z14b.pdf
+    "zh06ii": "laser",  # https://www.winsen-sensor.com/d/files/manual/zh06-ii.pdf
+    "zh06iii": "laser",  # https://www.winsen-sensor.com/d/files/manual/zh06-iii.pdf
+    "zh06iv": "laser",  # https://www.winsen-sensor.com/d/files/manual/zh06-iv.pdf
+    "ld2410b": "radar",  # https://www.hlktech.net/index.php?id=65
+    "ld2410c": "radar",  # https://www.hlktech.net/index.php?id=65
+    "tmf8820": "tof",  # https://look.ams-osram.com/m/52236c476132a095/original/TMF882X-DS000693.pdf
+    "tmf8821": "tof",  # https://look.ams-osram.com/m/52236c476132a095/original/TMF882X-DS000693.pdf
+    "as7262": "photodiode",  # https://look.ams-osram.com/m/663487deeb7089a7/original/AS7262-DS000486.pdf
+    "as7263": "photodiode",  # https://look.ams-osram.com/m/2f885f8e1b074032/original/AS7263-DS000476.pdf
+    "fs30001005": "thermopile",  # https://www.renesas.com/en/document/dst/fs3000-datasheet
+    "fs30001015": "thermopile",  # https://www.renesas.com/en/document/dst/fs3000-datasheet
+    "ms580314ba": "mems",  # https://www.te.com/en/product-MS580314BA01-50.html
+    "tfminiplus": "tof",  # https://en.benewake.com/TFminiPlus/index.html
+    "sen54": None,  # https://sensirion.com/media/documents/6791EFA0/62A1F68F/Sensirion_Datasheet_Environmental_Node_SEN5x.pdf
+    "sen55": None,  # https://sensirion.com/media/documents/6791EFA0/62A1F68F/Sensirion_Datasheet_Environmental_Node_SEN5x.pdf
+    "amg8833": "thermopile",  # https://industrial.panasonic.com/ww/products/pt/grid-eye/models/AMG8833
+    "fabo206uvsi1132": "photodiode",  # https://www.silabs.com/documents/public/data-sheets/Si1132.pdf
+    "am2301": "capacitive",  # Identity audit: technology unverified; do not infer a sibling's type.
+    "htu21d": "capacitive",  # Identity audit: technology unverified; do not infer a sibling's type.
+    "bno08xrvc": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "max3010x": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "mq3": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "mq7": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "tfmini": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "amg88": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "as7262x": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "kx134": "mems",  # Identity audit: technology unverified; do not infer a sibling's type.
+    "mq2lpg": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "mq2b": "semiconductor",  # Identity audit: technology unverified; do not infer a sibling's type.
+    "sen0032": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "sen0140": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "sen0430": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "sen0610": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "sen0456": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "microfiresht3x": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "myld2410": None,  # Identity audit: technology unverified; do not infer a sibling's type.
+    "pygp2y": "photodiode",  # Identity audit: technology unverified; do not infer a sibling's type.
+    "si1142": None,  # Identity audit: technology unverified; do not infer a sibling's type.
     # ── MOX (metal oxide semiconductor) gas sensors ───────────────────
     "ccs811": "semiconductor",
     "ens160": "semiconductor",
@@ -1217,7 +1399,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "sp3s": "semiconductor",
     "mg811": "semiconductor",
     "mhz9041a": "semiconductor",
-    "mht5052b": "semiconductor",
     "mp4": "semiconductor",
     "mp7": "semiconductor",
     "mpn5": "semiconductor",
@@ -1556,7 +1737,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "sen10724": "mems",
     "rak12034": "mems",
     "7semibno08x": "mems",
-    "max32664c": "mems",
     "im19": "mems",
     "at407": "mems",
     # ── MEMS barometric pressure sensors ──────────────────────────────
@@ -1645,7 +1825,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "mpxhz6250a": "mems",
     "mpl115a1": "mems",
     "pd10lx": "mems",
-    "wpah01": "mems",
     "wpah31": "mems",
     "wpak63": "mems",
     "wpak63j": "mems",
@@ -1692,28 +1871,28 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "max31850": "thermocouple",
     # ── Photoacoustic CO2 ─────────────────────────────────────────────
     "scd4x": "photoacoustic",
-    # ── Hall-effect magnetometers / magnetic encoders ─────────────────
+    # ── Magnetometers and rotary encoders (Hall, AMR/TMR, fluxgate, capacitive) ─
     "as5600": "hall_effect",
     "mlx90393": "hall_effect",
     "bmm150": "hall_effect",
-    "qmc5883l": "hall_effect",
-    "hmc5883l": "hall_effect",
-    "bmm350": "hall_effect",
-    "mmc5603": "hall_effect",
-    "mmc56x3": "hall_effect",
-    "mmc5983": "hall_effect",
-    "mmc5983ma": "hall_effect",
-    "mmc5603nj": "hall_effect",
-    "mmc34160pj": "hall_effect",
-    "qmc5883": "hall_effect",
+    "qmc5883l": "magnetoresistive",
+    "hmc5883l": "magnetoresistive",
+    "bmm350": "magnetoresistive",
+    "mmc5603": "magnetoresistive",
+    "mmc56x3": "magnetoresistive",
+    "mmc5983": "magnetoresistive",
+    "mmc5983ma": "magnetoresistive",
+    "mmc5603nj": "magnetoresistive",
+    "mmc34160pj": "magnetoresistive",
+    "qmc5883": "magnetoresistive",
     "qmc5583l": "hall_effect",
-    "qmc5883p": "hall_effect",
-    "rm3100": "hall_effect",
+    "qmc5883p": "magnetoresistive",
+    "rm3100": "magneto_inductive",
     "ak8975": "hall_effect",
     "akm09918c": "hall_effect",
-    "hmc6343": "hall_effect",
-    "hmc6352": "hall_effect",
-    "ist8310": "hall_effect",
+    "hmc6343": "magnetoresistive",
+    "hmc6352": "magnetoresistive",
+    "ist8310": "magnetoresistive",
     "tlv493d": "hall_effect",
     "mlx90377": "hall_effect",
     "mlx90392": "hall_effect",
@@ -1726,16 +1905,16 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "as5600l": "hall_effect",
     "am4096": "hall_effect",
     "mt6701": "hall_effect",
-    "gy26": "hall_effect",
-    "fg3": "hall_effect",
-    "hscdtd008a": "hall_effect",
+    "gy26": "magnetoresistive",
+    "fg3": "fluxgate",
+    "hscdtd008a": None,  # Alps names no technology; it is not stated to be Hall
     "lsm303dlhmag": "hall_effect",
     "lsm9ds1mag": "hall_effect",
-    "bm32s2031": "hall_effect",
+    "bm32s2031": "optical",
     "bms36t001": "hall_effect",
-    "ad2s1210": "hall_effect",
-    "amt25": "hall_effect",
-    "ky040": "hall_effect",
+    "ad2s1210": "adc",
+    "amt25": "capacitive",
+    "ky040": "mechanical",
     # ── Shunt / current / power monitor ICs ───────────────────────────
     "ina219": "shunt",
     "ina226": "shunt",
@@ -1755,12 +1934,12 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "ltc2959": "shunt",
     "max471": "shunt",
     "max9611": "shunt",
-    "acs37800": "shunt",
-    "tli4970": "shunt",
-    "tli4971": "shunt",
-    "sct013": "shunt",
-    "ctclamp": "shunt",
-    "zmpt101b": "shunt",
+    "acs37800": "hall_effect",
+    "tli4970": "hall_effect",
+    "tli4971": "hall_effect",
+    "sct013": "transformer",
+    "ctclamp": "transformer",
+    "zmpt101b": "transformer",
     "pzem004t": "shunt",
     "p1meter": "shunt",
     "atm90e26": "shunt",
@@ -1800,8 +1979,8 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "cd74hc4067": "adc",
     "mcp3427": "adc",
     # ── Strain gauge / load cell ADCs ─────────────────────────────────
-    "hx710a": "strain_gauge",
-    "hx710b": "strain_gauge",
+    "hx710a": "adc",
+    "hx710b": "adc",
     "tal220": "strain_gauge",
     "bmh12m105": "strain_gauge",
     "tas501": "strain_gauge",
@@ -1898,10 +2077,12 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     # ── Biometric / PPG / ECG (photodiode-based) ──────────────────────
     "max30101": "photodiode",
     "max30102": "photodiode",
-    "max30001": "photodiode",
-    "max30003": "photodiode",
+    "max30001": "adc",  # biopotential (ECG) and bioimpedance AFEs, like the ADS1292R
+    "max30003": "adc",
     "max86150": "photodiode",
-    "max32664": "photodiode",
+    # Sensor hubs: a microcontroller that reads an optical front end (MAX30101, MAX86141) and an
+    # accelerometer, with no sensing element of its own (MAX32664 datasheet Rev 4, p.1)
+    "max32664": None, "max32664c": None,
     "bh1790": "photodiode",
     "afe4490": "photodiode",
     "afe44xx": "photodiode",
@@ -1991,10 +2172,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "yfs201waterflow": "hall_effect",
     "f1012": "hall_effect",
     "f1032": "hall_effect",
-    "frn03h": "hall_effect",
-    "frn03p": "hall_effect",
-    "frn06": "hall_effect",
-    "frn20": "hall_effect",
     "flowmeter": "hall_effect",
     # ── Water quality / electrochemical probes ────────────────────────
     "dfr0300": "electrochemical",
@@ -2003,7 +2180,6 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "ufireise": "electrochemical",
     "sen0161": "electrochemical",
     "sen0322": "electrochemical",
-    "fcxmldx5": "electrochemical",
     # ── Resistive force sensors ───────────────────────────────────────
     "fsr16x16bnl": "resistive",
     # ── MEMS gyro modules ────────────────────────────────────────────
@@ -2066,6 +2242,16 @@ IC_TYPE_OVERRIDES: dict[str, str] = {
     "bme34k262a": "capacitive",      # Soil moisture kit built on the BM25S2621-1
     "bmh83m101a": "photodiode",      # Pulse oximetry (transmissive PPG)
     "bms33m332": "photodiode",       # STK3337 ambient light + IR proximity
+    "stc31": "thermal_conduction",
+    "stcc4": "thermal_conduction",
+    "stmpe610": "resistive",
+    "tsc2007": "resistive",
+    "cs1237": "adc",
+    "hx710": "adc",
+    "hx711": "adc",
+    "nau7802": "adc",
+    "pasco2": "photoacoustic",
+    "pasco2v01auma3": "photoacoustic",
 }
 
 
@@ -2107,14 +2293,6 @@ def enrich_types(merged: dict[str, dict], quiet: bool = False) -> int:
                 inferred = sensor_type
                 break
 
-        # CO2 sensors without MOX indicators -> NDIR
-        if inferred is None and "co2" in measures and not (measures & _MOX_INDICATORS):
-            inferred = "ndir"
-
-        # Standalone particulate sensors -> laser (most PM sensors use laser scattering)
-        if inferred is None and "particulate" in measures and "co2" not in measures:
-            inferred = "laser"
-
         if inferred:
             sensor["type"] = inferred
             enriched += 1
@@ -2145,784 +2323,312 @@ def enrich_types(merged: dict[str, dict], quiet: bool = False) -> int:
 # Voltage enrichment: static lookup for well-known sensor ICs
 # ---------------------------------------------------------------------------
 
-# Format: "min-max" in volts (operating supply voltage from datasheet).
-# Only includes values verified from manufacturer datasheets.
+# Legacy fallbacks not yet superseded by a per-field review in curated.json.
+# Format: "min-max" or a single nominal value in volts. These remaining entries
+# include unresolved/unverified records; their presence is not verification.
 # Applied as post-merge enrichment — never overwrites existing voltage data.
 VOLTAGE_TABLE: dict[str, str] = {
+    # Split-device identity audit (2026-11-09); details: data/sensors/ic_alias_evidence.json
+    "fabo206uvsi1132": "1.71-3.6",  # https://www.silabs.com/documents/public/data-sheets/Si1132.pdf
     # --- Temperature / Humidity / Pressure ---
-    "bme280": "1.71-3.6",       # Bosch BME280 datasheet
-    "bme68x": "1.71-3.6",       # Bosch BME680/688 datasheet
-    "bmp280": "1.71-3.6",       # Bosch BMP280 datasheet
-    "bmp180": "1.8-3.6",        # Bosch BMP180 datasheet
-    "bmp3xx": "1.65-3.6",       # Bosch BMP384/388/390 datasheet
-    "bmp581": "1.71-3.6",       # Bosch BMP581 datasheet
-    "dps310": "1.7-3.6",        # Infineon DPS310 datasheet
-    "ms5611": "1.8-3.6",        # TE MS5611 datasheet
-    "ms8607": "1.5-3.6",        # TE MS8607 datasheet
-    "mpl3115a2": "1.95-3.6",    # NXP MPL3115A2 datasheet
-    "mpl115a2": "2.375-5.5",    # NXP MPL115A2 datasheet
-    "sht3x": "2.15-5.5",        # Sensirion SHT30/31/35 datasheet
-    "sht4x": "1.08-3.6",        # Sensirion SHT40/41/45 datasheet
-    "hts221": "1.7-3.6",        # ST HTS221 datasheet
-    "hdc1080": "2.7-5.5",       # TI HDC1080 datasheet
-    "hdc2010": "1.62-3.6",      # TI HDC2010 datasheet
-    "hdc302x": "1.62-3.6",      # TI HDC3020/3021/3022 datasheet
-    "htu21df": "1.5-3.6",       # TE HTU21D datasheet
-    "htu31d": "2.6-5.5",        # TE HTU31D datasheet
-    "si7021": "1.9-3.6",        # Silicon Labs Si7021 datasheet
-    "aht20": "2.0-5.5",         # ASAIR AHT20 datasheet
-    "am2320": "3.1-5.5",        # ASAIR AM2320 datasheet
-    "dht11": "3.0-5.5",         # ASAIR DHT11 datasheet
-    "dht12": "2.7-5.5",         # ASAIR DHT12 datasheet
-    "dht": "3.3-5.5",           # Generic DHT (DHT22/AM2302)
-    "dht20": "2.0-5.5",         # ASAIR DHT20 datasheet
-    "stts22h": "1.5-3.6",       # ST STTS22H datasheet
-    "tmp117": "1.7-5.5",        # TI TMP117 datasheet
-    "mcp9808": "2.7-5.5",       # Microchip MCP9808 datasheet
-    "adt7410": "2.7-5.5",       # Analog Devices ADT7410 datasheet
-    "as6212": "1.4-3.6",        # ams AS6212 datasheet
-    "as6221": "1.6-3.6",        # ams AS6221 datasheet
     "lm75": "2.7-5.5",          # TI/NXP LM75 datasheet
 
     # --- Temperature probes (thermocouple/RTD/1-wire) ---
-    "max31855": "3.0-3.6",      # Analog Devices MAX31855 datasheet
-    "max31856": "3.0-3.6",      # Analog Devices MAX31856 datasheet
-    "max6675": "3.0-5.5",       # Analog Devices MAX6675 datasheet
-    "max31865": "3.0-3.6",      # Analog Devices MAX31865 datasheet
-    "ds18b20": "3.0-5.5",       # Analog Devices DS18B20 datasheet
-    "mcp9600": "2.7-5.5",       # Microchip MCP9600 datasheet
 
     # --- Light ---
-    "bh1750": "2.4-3.6",        # ROHM BH1750 datasheet
-    "tsl2561": "2.7-3.6",       # ams TSL2561 datasheet
-    "tsl2591": "3.0-3.6",       # ams TSL2591 datasheet
-    "veml7700": "2.5-3.6",      # Vishay VEML7700 datasheet
-    "veml6075": "1.7-3.6",      # Vishay VEML6075 datasheet
-    "max44009": "1.7-3.6",      # Analog Devices MAX44009 datasheet
-    "opt300x": "1.6-3.6",       # TI OPT3001/3002 datasheet
-    "ltr390": "1.7-3.6",        # Lite-On LTR-390UV datasheet
-    "ltr390uv": "1.7-3.6",      # Lite-On LTR-390UV datasheet
-    "apds9960": "2.4-3.6",      # Broadcom APDS-9960 datasheet
-    "tcs34725": "2.7-3.6",      # ams TCS34725 datasheet
-    "as7341": "1.7-3.6",        # ams AS7341 datasheet
-    "as726x": "2.7-3.6",        # ams AS7262/7263 datasheet
 
     # --- Gas / Air Quality ---
-    "scd4x": "2.4-5.5",         # Sensirion SCD40/41 datasheet
-    "scd30": "3.3-5.5",         # Sensirion SCD30 datasheet
-    "sgp30": "1.62-1.98",       # Sensirion SGP30 datasheet
-    "sgp40": "1.62-1.98",       # Sensirion SGP40 datasheet
-    "ccs811": "1.8-3.3",        # ams CCS811 v1-06 electrical characteristics p.6; 3.6V is stress only
-    "ens160": "1.71-3.6",       # ScioSense ENS160 datasheet
-    "ags02ma": "3.0-5.5",       # ASAIR AGS02MA datasheet
-    "sds011": "4.7-5.3",        # Nova SDS011 datasheet
-    "mics4514": "4.9-5.1",      # SGX MICS-4514 datasheet
 
     # --- IMU / Motion ---
-    "mpu6050": "2.375-3.46",    # TDK MPU-6050 datasheet
-    "mpu9250": "2.4-3.6",       # TDK MPU-9250 datasheet
-    "bmi160": "1.71-3.6",       # Bosch BMI160 datasheet
-    "bmi270": "1.71-3.6",       # Bosch BMI270 datasheet
-    "lsm6dsox": "1.71-3.6",     # ST LSM6DSOX datasheet
-    "lsm9ds1": "1.9-3.6",       # ST LSM9DS1 datasheet
-    "lis3dh": "1.71-3.6",       # ST LIS3DH datasheet
-    "lis2dw12": "1.62-3.6",     # ST LIS2DW12 datasheet
-    "adxl345": "2.0-3.6",       # Analog Devices ADXL345 datasheet
-    "mma8451": "1.95-3.6",      # NXP MMA8451Q datasheet
-    "msa301": "1.62-3.6",       # MEMSensing MSA301 datasheet
-    "icm42688": "1.71-3.6",     # TDK ICM-42688-P datasheet
-    "bno055": "2.4-3.6",        # Bosch BNO055 datasheet
-    "fxos8700": "1.95-3.6",     # NXP FXOS8700CQ datasheet
 
     # --- Magnetometer ---
-    "bmm150": "1.62-3.6",       # Bosch BMM150 datasheet
-    "bmm350": "1.62-3.6",       # Bosch BMM350 datasheet
-    "lis2mdl": "1.71-3.6",      # ST LIS2MDL datasheet
-    "lis3mdl": "1.71-3.6",      # ST LIS3MDL datasheet
-    "hmc5883l": "2.16-3.6",     # Honeywell HMC5883L datasheet
-    "qmc5883l": "2.16-3.6",     # QST QMC5883L datasheet
-    "mmc5603": "1.62-3.6",      # MEMSIC MMC5603NJ datasheet
-    "mlx90393": "2.2-3.6",      # Melexis MLX90393 datasheet
 
     # --- Distance / Proximity ---
-    "vl53l0x": "2.6-3.5",       # ST VL53L0X datasheet
-    "vl53l1x": "2.6-3.5",       # ST VL53L1X datasheet
-    "vl6180x": "2.6-3.0",       # ST VL6180X datasheet
 
     # --- Load cell ---
-    "hx711": "2.6-5.5",         # Avia HX711 datasheet
 
     # --- Touch ---
-    "mpr121": "1.71-3.6",       # NXP MPR121 datasheet
 
     # --- Lightning ---
-    "as3935": "2.4-5.5",        # ams AS3935 datasheet
 
     # --- Encoder ---
     "as5600": "3.0-3.6",        # ams AS5600 datasheet
 
     # --- Gesture ---
-    "mgc3130": "2.7-3.6",       # Microchip MGC3130 datasheet
 
     # --- Power monitoring ---
-    "ina219": "3.0-5.5",        # TI INA219 datasheet
-    "ina226": "2.7-5.5",        # TI INA226 datasheet
-    "ina260": "2.7-5.5",        # TI INA260 datasheet
-    "ina3221": "2.7-5.5",       # TI INA3221 datasheet
-    "atm90e26": "2.8-3.6",      # Microchip ATM90E26 datasheet
-    "ads1115": "2.0-5.5",       # TI ADS1115 datasheet
 
     # --- Infrared temperature ---
     "mlx90614": "2.6-3.6",      # Melexis MLX90614 datasheet
 
     # --- Radar ---
-    "ld2410": "5.0-5.0",        # Hi-Link LD2410 (5V only)
 
     # --- Particulate ---
-    "sps30": "4.5-5.5",         # Sensirion SPS30 datasheet
-    "pms5003": "4.5-5.5",       # Plantower PMS5003 datasheet
 
     # --- Additional well-known sensors ---
-    "sht1x": "2.4-5.5",         # Sensirion SHT10/11/15 datasheet
-    "sht2x": "2.1-3.6",         # Sensirion SHT20/21/25 datasheet
-    "sht20": "2.1-3.6",         # Sensirion SHT20 datasheet (alias)
-    "sht21": "2.1-3.6",         # Sensirion SHT21 datasheet (alias)
-    "sht85": "2.15-5.5",        # Sensirion SHT85 datasheet
-    "shtc3": "1.62-3.6",        # Sensirion SHTC3 datasheet
-    "shtcx": "1.62-3.6",        # Sensirion SHTC1/SHTC3 datasheet
-    "sts3x": "2.15-5.5",        # Sensirion STS30/31/35 datasheet
-    "lps22hb": "1.7-3.6",       # ST LPS22HB datasheet
-    "lps22hh": "1.7-3.6",       # ST LPS22HH datasheet
-    "lps22df": "1.7-3.6",       # ST LPS22DF datasheet
-    "lps25hb": "1.7-3.6",       # ST LPS25HB datasheet
-    "lps28dfw": "1.7-3.6",      # ST LPS28DFW datasheet
-    "lps35hw": "1.7-3.6",       # ST LPS35HW datasheet
-    "ilps22qs": "1.7-3.6",      # ST ILPS22QS datasheet
-    "amg8833": "3.0-3.6",       # Panasonic AMG8833 datasheet
     "amg88xx": "3.0-3.6",       # Panasonic AMG88xx datasheet (alias)
-    "veml6070": "2.7-5.5",      # Vishay VEML6070 datasheet
-    "max30102": "1.7-2.0",      # Analog Devices MAX30102 datasheet
-    "max30101": "1.7-2.0",      # Analog Devices MAX30101 datasheet
-    "bmx160": "1.71-3.6",       # Bosch BMX160 datasheet
 
     # --- More temperature ---
-    "pct2075": "2.7-5.5",       # NXP PCT2075 datasheet
-    "tc74": "2.7-5.5",          # Microchip TC74 datasheet
-    "tmp102": "1.4-3.6",        # TI TMP102 datasheet
-    "tmp1075": "1.7-5.5",       # TI TMP1075 datasheet
-    "tmp007": "2.5-5.5",        # TI TMP007 datasheet (discontinued)
-    "tmp006": "2.2-5.5",        # TI TMP006 datasheet
-    "lm75a": "2.7-5.5",         # NXP LM75A datasheet
-    "ds18x20": "3.0-5.5",       # Analog Devices DS18x20 family
-    "ds1624": "2.7-5.5",        # Analog Devices DS1624 datasheet
-    "emc2101": "3.0-3.6",       # Microchip EMC2101 datasheet
-    "stts751": "2.25-3.6",      # ST STTS751 datasheet
-    "mlx90615": "2.6-3.6",      # Melexis MLX90615 datasheet
-    "mlx90632": "2.6-3.6",      # Melexis MLX90632 datasheet
-    "mlx90640": "3.0-3.6",      # Melexis MLX90640 datasheet
-    "sths34pf80": "1.7-3.6",    # ST STHS34PF80 datasheet
 
     # --- More humidity ---
-    "hdc2080": "1.62-3.6",      # TI HDC2080 datasheet
-    "am2301b": "2.2-5.5",       # ASAIR AM2301B datasheet
-    "am2315c": "2.2-5.5",       # ASAIR AM2315C datasheet
-    "ahtx0": "2.0-5.5",         # ASAIR AHT10/AHT20 family
-    "dht22": "3.3-5.5",         # ASAIR DHT22/AM2302 datasheet
-    "hs300x": "1.8-3.6",        # Renesas HS300x datasheet
-    "ens210": "1.71-3.6",       # ScioSense ENS210 datasheet
 
     # --- More pressure ---
-    "bmp58x": "1.71-3.6",       # Bosch BMP58x family datasheet
-    "ms5803": "1.8-3.6",        # TE MS5803 datasheet
-    "ms5837": "1.5-3.6",        # TE MS5837 datasheet
-    "icp10111": "1.65-3.6",     # TDK ICP-10111 datasheet
-    "sdp3x": "1.7-3.6",         # Sensirion SDP3x datasheet
 
     # --- More light ---
-    "tcs3430": "1.7-3.6",       # ams TCS3430 datasheet
-    "tcs3200": "2.7-5.5",       # ams TCS3200 datasheet
-    "si1145": "1.71-3.6",       # Silicon Labs SI1145 datasheet
-    "apds9306": "1.7-3.6",      # Broadcom APDS-9306 datasheet
-    "bh1730": "2.4-3.6",        # ROHM BH1730 datasheet
-    "ltr308": "1.7-3.6",        # Lite-On LTR-308ALS datasheet
-    "ltr329": "1.7-3.6",        # Lite-On LTR-329ALS datasheet
-    "ltr553": "2.4-3.6",        # Lite-On LTR-553ALS datasheet
-    "veml6040": "2.5-3.6",      # Vishay VEML6040 datasheet
-    "opt4048": "1.6-3.6",       # TI OPT4048 datasheet
-    "vcnl4010": "2.5-3.6",      # Vishay VCNL4010 datasheet
-    "vcnl4040": "2.5-3.6",      # Vishay VCNL4040 datasheet
-    "vcnl4200": "2.5-3.6",      # Vishay VCNL4200 datasheet
-    "isl29125": "2.5-3.3",      # Renesas ISL29125 datasheet
 
     # --- More gas ---
-    "sgp41": "1.7-3.6",         # Sensirion SGP41 datasheet
-    "ags10": "3.0-5.5",         # ASAIR AGS10 datasheet
-    "mics6814": "4.9-5.1",      # SGX MICS-6814 datasheet
-    "sen5x": "4.5-5.5",         # Sensirion SEN5x datasheet
-    "sen6x": "4.5-5.5",         # Sensirion SEN6x datasheet
-    "sfa40": "3.15-3.45",       # Sensirion SFA40 datasheet
-    "ee895": "3.0-5.5",         # E+E Elektronik EE895 datasheet
 
     # --- More IMU / accel ---
-    "adxl343": "2.0-3.6",       # Analog Devices ADXL343 datasheet
-    "adxl362": "1.6-3.5",       # Analog Devices ADXL362 datasheet
-    "adxl372": "1.6-3.5",       # Analog Devices ADXL372 datasheet
-    "bma400": "1.2-3.6",        # Bosch BMA400 datasheet
-    "bno08x": "2.4-3.6",        # CEVA BNO08x datasheet
-    "icm20948": "1.71-3.6",     # TDK ICM-20948 datasheet
-    "icm42605": "1.71-3.6",     # TDK ICM-42605 datasheet
-    "icm45605": "1.71-3.6",     # TDK ICM-45605 datasheet
-    "icm45686": "1.71-3.6",     # TDK ICM-45686 datasheet
-    "icg20660l": "1.71-3.45",   # TDK ICG-20660L datasheet
-    "itg3200": "2.1-3.6",       # TDK ITG-3200 datasheet
-    "mpu6886": "2.4-3.6",       # TDK MPU-6886 datasheet
-    "mma8452q": "1.95-3.6",     # NXP MMA8452Q datasheet
-    "kx132": "1.7-3.6",         # ROHM/Kionix KX132 datasheet
-    "lis2dh12": "1.71-3.6",     # ST LIS2DH12 datasheet
-    "lis2du12": "1.71-3.6",     # ST LIS2DU12 datasheet
-    "lis2duxs12": "1.71-3.6",   # ST LIS2DUXS12 datasheet
-    "lis2hh12": "1.71-3.6",     # ST LIS2HH12 datasheet
-    "lis331": "2.16-3.6",       # ST LIS331DLH datasheet
-    "lsm6ds0": "1.8-3.6",      # ST LSM6DS0 datasheet
-    "lsm6dso16is": "1.71-3.6",  # ST LSM6DSO16IS datasheet
-    "lsm303": "2.16-3.6",       # ST LSM303DLHC datasheet
-    "lsm303agr": "1.71-3.6",    # ST LSM303AGR datasheet
-    "ism330dlc": "1.71-3.6",    # ST ISM330DLC datasheet
-    "iis2dlpc": "1.62-3.6",     # ST IIS2DLPC datasheet
-    "iis2mdc": "1.71-3.6",      # ST IIS2MDC datasheet
 
     # --- More magnetometer ---
     "mmc56x3": "1.62-3.6",      # MEMSIC MMC56x3 datasheet
     "mmc5983": "1.62-3.6",      # MEMSIC MMC5983MA datasheet
-    "qmc5883": "2.16-3.6",      # QST QMC5883 datasheet
-    "rm3100": "1.8-3.6",        # PNI RM3100 datasheet
 
     # --- More distance ---
-    "vl53l5cx": "2.6-3.5",      # ST VL53L5CX datasheet
-    "vl6180": "2.6-3.0",        # ST VL6180 datasheet (alias)
-    "tmf8x01": "2.7-5.5",       # ams TMF8801 datasheet
     "gp2y0a21yk": "4.5-5.5",    # Sharp GP2Y0A21YK datasheet
 
     # --- More particulate ---
-    "pms7003": "4.5-5.5",       # Plantower PMS7003 datasheet
-    "pmsa003i": "4.5-5.5",      # Plantower PMSA003I datasheet
-    "gp2y1010au0f": "2.5-5.5",  # Sharp GP2Y1010AU0F datasheet
 
     # --- Power monitoring ---
-    "ina237": "1.7-5.5",        # TI INA237/INA238 datasheet
-    "nau7802": "2.7-5.5",       # Nuvoton NAU7802 datasheet
-    "hlw8012": "3.0-5.5",       # HLW8012 datasheet
-    "hlw8032": "3.0-5.5",       # HLW8032 datasheet
-    "max17043": "2.5-4.5",      # Analog Devices MAX17043 datasheet
-    "mcp39f521": "3.0-3.6",     # Microchip MCP39F521 datasheet
 
     # --- Gesture ---
-    "paj7620": "2.7-3.6",       # PixArt PAJ7620U2 datasheet
-    "paj7620u2": "2.7-3.6",     # PixArt PAJ7620U2 datasheet (alias)
 
     # --- Touch ---
-    "cap1188": "2.5-5.5",       # Microchip CAP1188 datasheet
 
     # --- Misc ---
-    "mcp9700": "2.3-5.5",       # Microchip MCP9700 datasheet
-    "spa06003": "1.7-3.6",      # Goertek SPA06-003 datasheet
 
     # --- Batch 2: DHT / Aosong ---
-    "dht21": "3.3-5.5", "aht10": "2.0-5.5", "aht1x": "2.0-5.5",
-    "aht2x": "2.0-5.5", "am2315": "3.1-5.5", "am2321": "3.1-5.5",
-    "acd10": "4.5-5.5", "acd3100": "4.5-5.5",
+    "acd3100": "4.5-5.5",
     # --- TMP / TI temp ---
-    "tmp36": "2.7-5.5", "lm335": "0.5-40.0", "lm73": "2.7-5.5",
-    "lmt01": "2.0-5.5",
+    "lm335": "0.5-40.0",
     # --- ADS / TI ADCs ---
-    "ads1015": "2.0-5.5", "ads111x": "2.0-5.5", "ads1115010v": "2.0-5.5",
-    "ads1118": "2.0-5.5", "ads1220": "2.3-5.5", "ads1258": "4.75-5.25",
-    "ads1292r": "2.7-5.25", "ads1293": "1.7-3.6",
     # --- MCP / Microchip temp ---
-    "mcp9802": "2.7-5.5", "mcp9601": "2.7-5.5", "mcp9701": "2.3-5.5",
     # --- AS / ams-OSRAM ---
     "as5040": "3.0-5.5", "as5047p": "3.0-3.6", "as5048": "3.0-3.6",
-    "as5200l": "3.0-3.6", "as5600l": "3.0-3.6", "as7265x": "2.7-3.6",
-    "as7331": "1.7-2.0", "as7341l": "1.7-3.6", "as7343": "1.7-3.6",
-    "iaqcore": "3.0-5.5",
+    "as5200l": "3.0-3.6", "as5600l": "3.0-3.6",
     # --- HDC / TI humidity ---
-    "hdc1008": "3.0-5.0", "hdc10xx": "3.0-5.0",
     # --- HTU / TE humidity ---
-    "htu21d": "1.5-3.6",
     # --- NXP ---
-    "fxas21002": "2.1-3.6", "fxas21002c": "2.1-3.6",
-    "mma7660": "2.4-3.6", "mma7455": "2.4-3.6",
-    "mma8453q": "1.95-3.6", "mma8652": "1.95-3.6",
-    "mpl115a1": "2.375-5.5", "mpx5700": "4.75-5.25",
-    "mpxa6115a": "4.75-5.25", "mpxhz6116a": "4.75-5.25",
     # --- ADXL / Analog Devices accel ---
-    "adxl313": "1.6-3.5", "adxl335": "1.8-3.6", "adxl34x": "2.0-3.6",
-    "adxl355": "2.25-3.6", "adxl366": "1.6-3.5", "adxl367": "1.1-3.6",
-    "adxl375": "2.0-3.6", "adxl37x": "2.0-3.6",
     # --- Analog Devices misc ---
-    "ad22100a": "4.0-6.5", "ad22100k": "4.0-6.5", "ad22100s": "4.0-6.5",
-    "ad22103k": "3.1-3.5", "ad7193": "3.0-5.25", "ad7194": "3.0-5.25",
-    "ad7797": "2.7-5.25", "ad8232": "2.0-3.5", "ad8494": "2.7-36.0",
-    "ad2s1210": "4.75-5.25", "ade7880": "2.4-3.7", "ade7953": "2.4-3.7",
-    "ade7978": "2.4-3.7", "adis16470": "3.0-3.6", "adltc2990": "2.9-5.5",
-    "adstds75lm75": "2.7-5.5", "adt7310": "2.7-5.5", "adt7420": "2.7-5.5",
-    "ds1621": "2.7-5.5", "ds1821": "3.0-5.5", "ds3231": "2.3-5.5",
-    "ds7505": "1.7-3.7", "ltc2959": "2.7-80.0", "max17055": "2.7-4.5",
-    "max30001": "1.7-3.6", "max30003": "1.7-3.6", "max30205": "2.7-3.6",
-    "max30210": "1.7-3.6", "max31820": "3.0-3.6", "max31850": "3.0-3.6",
-    "max31855k": "3.0-3.6", "max31875": "1.6-3.6",
-    "max32664": "1.8-3.3", "max32664c": "1.8-3.3",
-    "max44007": "1.7-3.6", "max471": "3.0-36.0",
-    "max6605mxk": "3.0-5.5", "max6605mxkv": "3.0-5.5",
-    "max6607ixk": "2.7-5.5", "max6613mxk": "2.4-5.5",
-    "max6626": "3.0-5.5", "max86150": "1.7-2.0", "max9611": "2.7-5.5",
+    "adstds75lm75": "2.7-5.5",
     # --- INA / TI power ---
-    "ina169": "2.7-60.0", "ina228": "2.7-5.5", "ina23x": "1.7-5.5",
-    "ina2xx": "2.7-5.5", "ina780x": "2.7-5.5",
+    "ina2xx": "2.7-5.5",
     # --- Bosch ---
-    "bma220": "2.0-3.6", "bma280": "1.62-3.6", "bma423": "1.2-3.6",
-    "bma4xx": "1.2-3.6", "bmc150": "1.62-3.6",
+    "bma4xx": "1.2-3.6",
     "bme680bsec": "1.71-3.6",
-    "bme68xbsec2": "1.71-3.6", "bme690": "1.71-3.6",
-    "bmg160": "2.4-3.6",
-    "bmi085": "1.71-3.6", "bmi088": "1.71-3.6", "bmi08x": "1.71-3.6",
-    "bmi270bmm150": "1.71-3.6", "bmx055": "2.4-3.6", "bno080": "2.4-3.6",
-    "bmp384": "1.65-3.6", "bmp580": "1.71-3.6", "bmp585": "1.71-3.6",
-    "bmp5xx": "1.71-3.6", "bmv080": "1.62-3.6",
+    "bme68xbsec2": "1.71-3.6",
     # --- STMicroelectronics ---
-    "asm330lhh": "1.71-3.6", "h3lis200dl": "2.16-3.6",
-    "h3lis331dl": "2.16-3.6", "ism330is": "1.71-3.6",
-    "ism6hg256x": "1.71-3.6", "iis2dulpx": "1.62-3.6",
-    "l3gd20": "2.4-3.6", "lps2x": "1.7-3.6", "lsm6ds3tr": "1.71-3.6",
-    "lsm6dsm": "1.71-3.6", "lsm6dso": "1.71-3.6", "lsm6dsv": "1.71-3.6",
-    "lsm9ds1tr": "1.9-3.6", "stmpe610": "1.8-3.3", "vl53l4cd": "2.6-3.5",
-    "mp23db01hp": "1.64-3.6", "imp34dt05": "1.6-3.6",
+    "lsm6dsv": "1.71-3.6",
     # --- TDK / InvenSense ---
-    "icm20689": "1.71-3.45", "icm20x": "1.71-3.6",
-    "icm42670p": "1.71-3.6", "icm42670s": "1.71-3.6",
-    "icm45608": "1.71-3.6", "icm45689": "1.71-3.6",
-    "icp10125": "1.65-3.6", "ics40619": "1.5-3.6",
-    "mpu6000": "2.375-3.46", "mpu9x50": "2.4-3.6", "ch101": "1.8-3.6",
+    "icm42670s": "1.71-3.6",
+    "ics40619": "1.5-3.6",
     # --- Silicon Labs ---
-    "si7005": "1.9-3.6", "si7013": "1.9-3.6", "si7051": "1.9-3.6",
-    "si7055": "1.9-3.6", "si705x": "1.9-3.6", "si70xx": "1.9-3.6",
-    "si114x": "1.71-3.6",
     # --- Sensirion ---
-    "sfa30": "3.15-3.45", "sgp4x": "1.62-1.98", "stc31": "1.08-3.6",
-    "sts4x": "1.08-3.6", "sht11": "2.4-5.5", "sht25": "2.1-3.6",
-    "co2": "4.5-5.5", "sdp31": "1.7-3.6",
+    "co2": "4.5-5.5",
     # --- ROHM ---
-    "bh1730fvc": "2.4-3.6", "bh1749nuc": "2.3-3.6", "bh1790": "1.7-3.6",
-    "bh1900nux": "2.5-3.6", "bd1020hfv": "2.7-5.5",
-    "kx134": "1.7-3.6", "kxtj3": "1.7-3.6", "kx023": "1.7-3.6",
     # --- Lite-On ---
-    "ltr308als": "1.7-3.6", "ltr329als": "1.7-3.6",
-    "ltr329ltr303": "1.7-3.6", "ltr381rgb": "1.7-3.6",
-    "ltr501": "2.4-3.6", "ltr507": "1.7-3.6", "ltralsps": "1.7-3.6",
-    "ltrf216a": "1.7-3.6", "ap3216": "2.4-3.6",
+    "ap3216": "2.4-3.6",
     # --- Vishay ---
-    "vcnl36687": "2.5-3.6", "vcnl4020": "2.5-3.6", "veml3235": "2.6-3.6",
-    "veml3328": "2.5-3.6", "veml6030": "2.5-3.6", "veml6046": "2.5-3.6",
-    "temt6000": "3.3-5.0", "alspt19": "2.5-5.5",
     # --- Broadcom ---
-    "apds9253": "1.7-3.6", "apds9900": "2.4-3.6",
-    "apds9950": "2.4-3.6", "apds9999": "1.7-3.6",
     # --- Melexis ---
-    "mlx90377": "3.0-3.6", "mlx90392": "1.8-3.6", "mlx90395": "2.6-3.6",
     # --- Allegro ---
-    "acs712": "4.5-5.5", "acs723": "4.5-5.5", "acs772": "4.5-5.5",
-    "acs37800": "3.0-5.5", "als31300": "2.5-3.6",
+    "acs37800": "3.0-5.5",
     # --- Infineon ---
-    "tlv493d": "2.7-3.5", "tli4970": "3.1-3.5", "tli4971": "3.1-3.5",
-    "bgt60tr13c": "1.8-3.3",
     # --- Renesas ---
-    "isl29034": "2.25-3.63", "hs3003": "2.3-5.5",
-    "fs3000": "3.0-3.6", "isl28022": "2.7-5.5",
+    "isl29034": "2.25-3.63",
     # --- Microchip ---
-    "cap1203": "2.5-5.5", "at42qt1010": "1.8-5.5", "at42qt1011": "1.8-5.5",
-    "atm90e32": "2.8-3.6", "atm90e32as": "2.8-3.6",
+    "atm90e32": "2.8-3.6",
     # --- MEMSIC ---
-    "mc3479": "1.7-3.6", "mmc34160pj": "2.16-3.6", "mmc5603nj": "1.62-3.6",
-    "mmc5983ma": "1.62-3.6", "msa3xx": "1.62-3.6",
     # --- ScioSense ---
-    "ens161": "1.71-3.6",
     # --- QST ---
-    "qmc5883p": "2.16-3.6", "qmi8658": "1.71-3.6",
-    "qmi8658c": "1.71-3.6", "qmp6988": "1.71-3.6",
     # --- Goertek ---
-    "spa06": "1.7-3.6", "spl06": "1.7-3.6", "spl07": "1.7-3.6",
+    "spa06": "1.7-3.6",
     # --- Panasonic ---
-    "gcja5": "4.5-5.5",
     # --- MaxBotix LV-MaxSonar-EZ: 2.5-5.5V ---
-    "mb1000": "2.5-5.5", "mb1001": "2.5-5.5", "mb1002": "2.5-5.5",
-    "mb1003": "2.5-5.5", "mb1004": "2.5-5.5", "mb1005": "2.5-5.5",
-    "mb1006": "2.5-5.5", "mb1007": "2.5-5.5", "mb1008": "2.5-5.5",
-    "mb1009": "2.5-5.5", "mb1010": "2.5-5.5", "mb1013": "2.5-5.5",
-    "mb1014": "2.5-5.5", "mb1020": "2.5-5.5", "mb1023": "2.5-5.5",
-    "mb1024": "2.5-5.5", "mb1030": "2.5-5.5", "mb1033": "2.5-5.5",
-    "mb1034": "2.5-5.5", "mb1040": "2.5-5.5", "mb1043": "2.5-5.5",
-    "mb1044": "2.5-5.5", "mb1060": "2.5-5.5", "mb1061": "2.5-5.5",
+    "mb1060": "2.5-5.5", "mb1061": "2.5-5.5",
     "mb1710": "2.5-5.5", "mb1711": "2.5-5.5", "mb1712": "2.5-5.5",
     # --- MaxBotix XL-MaxSonar: 3.0-5.5V ---
-    "mb1200": "3.0-5.5", "mb1202": "3.0-5.5", "mb1210": "3.0-5.5",
-    "mb1212": "3.0-5.5", "mb1220": "3.0-5.5", "mb1222": "3.0-5.5",
-    "mb1230": "3.0-5.5", "mb1232": "3.0-5.5", "mb1240": "3.0-5.5",
-    "mb1242": "3.0-5.5", "mb1260": "3.0-5.5", "mb1261": "3.0-5.5",
-    "mb1300": "3.0-5.5", "mb1310": "3.0-5.5", "mb1320": "3.0-5.5",
-    "mb1330": "3.0-5.5", "mb1340": "3.0-5.5", "mb1360": "3.0-5.5",
-    "mb1361": "3.0-5.5",
     # --- MaxBotix I2CXL: 3.0-5.5V ---
     "mb1403": "3.0-5.5", "mb1413": "3.0-5.5", "mb1414": "3.0-5.5",
     "mb1423": "3.0-5.5", "mb1424": "3.0-5.5", "mb1433": "3.0-5.5",
     "mb1434": "3.0-5.5", "mb1443": "3.0-5.5", "mb1444": "3.0-5.5",
-    "mb1603": "3.0-5.5", "mb1604": "3.0-5.5", "mb1613": "3.0-5.5",
-    "mb1614": "3.0-5.5", "mb1623": "3.0-5.5", "mb1624": "3.0-5.5",
-    "mb1633": "3.0-5.5", "mb1634": "3.0-5.5", "mb1643": "3.0-5.5",
-    "mb1644": "3.0-5.5", "mb2530": "3.0-5.5", "mb2532": "3.0-5.5",
     # --- MaxBotix XL-WR: 3.0-5.5V ---
-    "mb7040": "3.0-5.5", "mb7051": "3.0-5.5", "mb7052": "3.0-5.5",
-    "mb7053": "3.0-5.5", "mb7060": "3.0-5.5", "mb7062": "3.0-5.5",
-    "mb7066": "3.0-5.5", "mb7070": "3.0-5.5", "mb7072": "3.0-5.5",
-    "mb7076": "3.0-5.5", "mb7092": "3.0-5.5", "mb7137": "3.0-5.5",
-    "mb7138": "3.0-5.5", "mb7139": "3.0-5.5", "mb7150": "3.0-5.5",
-    "mb7155": "3.0-5.5",
     # --- MaxBotix HRXL-WR: 2.7-5.5V ---
-    "mb7334": "2.7-5.5", "mb7344": "2.7-5.5", "mb7354": "2.7-5.5",
-    "mb7360": "2.7-5.5", "mb7363": "2.7-5.5", "mb7364": "2.7-5.5",
-    "mb7366": "2.7-5.5", "mb7368": "2.7-5.5", "mb7369": "2.7-5.5",
-    "mb7380": "2.7-5.5", "mb7383": "2.7-5.5", "mb7384": "2.7-5.5",
-    "mb7386": "2.7-5.5", "mb7388": "2.7-5.5", "mb7389": "2.7-5.5",
-    "mb7560": "2.7-5.5", "mb7563": "2.7-5.5", "mb7564": "2.7-5.5",
-    "mb7566": "2.7-5.5", "mb7568": "2.7-5.5", "mb7569": "2.7-5.5",
-    "mb7580": "2.7-5.5", "mb7583": "2.7-5.5", "mb7584": "2.7-5.5",
-    "mb7586": "2.7-5.5", "mb7588": "2.7-5.5", "mb7589": "2.7-5.5",
-    "mb8000": "3.0-5.5", "mb8450": "3.0-5.5", "mb8460": "3.0-5.5",
-    "mb8480": "3.0-5.5", "hrxlmaxsonarwr": "2.7-5.5",
+    "mb8450": "3.0-5.5",
     # --- Hi-Link radar ---
     "hlkld2410": "5.0-5.0", "hlkld2410b": "5.0-5.0",
-    "hlkld2410s": "3.0-3.6", "ld2410b": "5.0-5.0",
-    "ld2410c": "5.0-5.0", "ld2410d": "5.0-5.0", "ld2410s": "3.0-3.6",
-    "ld2411": "5.0-5.0", "ld2411s": "5.0-5.0", "ld2412": "5.0-5.0",
-    "ld2413": "5.0-5.0", "ld2415h": "5.0-5.0", "ld2420": "5.0-5.0",
-    "ld2450": "5.0-5.0", "ld2451": "5.0-5.0", "ld2452": "5.0-5.0",
-    "ld2460": "5.0-5.0", "ld2401": "5.0-5.0", "ld2402": "5.0-5.0",
-    "ld6001": "3.0-3.6", "ld6001a": "3.0-3.6", "ld6001c": "3.0-3.6",
-    "ld6002": "3.0-3.6", "ld6002c": "3.0-3.6", "ld6002h": "3.0-3.6",
-    "ld6004": "3.0-3.6", "ld8001": "3.0-3.6", "ld8001b": "3.0-3.6",
-    "ld8001h": "3.0-3.6", "ld012": "5.0-5.0", "ld020": "5.0-5.0",
-    "ld021": "5.0-5.0", "ld101": "5.0-5.0", "ld101l": "5.0-5.0",
-    "ld101v": "5.0-5.0", "ld1040": "5.0-5.0", "ld1040c": "5.0-5.0",
-    "hlkfm22x": "5.0-5.0", "as201": "12.0-12.0", "as2019": "12.0-12.0",
+    "hlkld2410s": "3.0-3.6",
+    "ld2412": "5.0-5.0",
+    "ld2452": "5.0-5.0",
+    "ld6001a": "3.0-3.6", "ld6001c": "3.0-3.6",
+    "ld8001": "3.0-3.6",
+    "ld101": "5.0-5.0", "ld101l": "5.0-5.0",
+    "ld101v": "5.0-5.0",
+    "hlkfm22x": "5.0-5.0",
     # --- Benewake LiDAR ---
-    "tfluna": "3.7-5.2", "tfli2c": "3.7-5.2",
-    "tfminis": "4.5-5.5", "tfminiplus": "4.5-5.5", "tfminii": "4.5-5.5",
-    "tf02pro": "5.0-12.0", "tf02prow": "5.0-12.0", "tf02i": "5.0-12.0",
-    "tf03": "5.0-24.0", "tf350": "5.0-24.0", "tfnova": "5.0-5.0",
+    "tfli2c": "3.7-5.2",
     # --- Atlas Scientific ---
-    "ezoph": "3.3-5.0", "ezoec": "3.3-5.0", "ezoorp": "3.3-5.0",
-    "ezodo": "3.3-5.0", "ezortd": "3.3-5.0", "ezoco2": "3.3-5.0",
-    "ezoflo": "3.3-5.0", "ezohum": "3.3-5.0", "ezoo2": "3.3-5.0",
-    "ezoprs": "3.3-5.0", "ezorgb": "3.3-5.0", "phoem": "3.3-5.0",
-    "dooem": "3.3-5.0", "ecoem": "3.3-5.0", "orpoem": "3.3-5.0",
-    "rtdoem": "3.3-5.0",
     # --- Amphenol ---
-    "t6615": "4.5-5.5", "t6703": "4.5-5.5", "t6713": "4.5-5.5",
     # --- Shanghai Belling ---
-    "bl0906": "3.0-3.6", "bl0939": "3.0-3.6",
-    "bl0940": "3.0-3.6", "bl0942": "3.0-3.6",
     # --- HiSilicon ---
-    "cse7761": "3.0-3.6", "cse7766": "3.0-3.6",
+    "cse7761": "3.0-3.6",
     # --- Cirrus Logic ---
-    "cs5460a": "3.0-3.6", "cs5464": "3.0-3.6", "cs5490": "3.0-3.6",
     # --- Asahi Kasei ---
-    "ak8975": "2.4-3.6", "ak9750": "3.0-3.6",
-    "ak9753": "3.0-3.6", "akm09918c": "1.65-3.6",
     # --- TE Connectivity ---
-    "lwlp5000": "3.0-3.6", "ms4525do": "3.3-5.5",
-    "ms580314ba": "1.8-3.6", "mprls": "3.0-3.6",
-    "hte501": "2.0-5.5", "tee501": "2.0-5.5", "tsd305": "3.0-3.6",
+    "ms4525do": "3.3-5.5",
     # --- Honeywell ---
-    "hpma115": "5.0-5.0", "hpma115xx": "5.0-5.0",
-    "hih61xx": "2.3-5.5", "honeywellabp": "3.0-3.6",
-    "honeywellabp2": "1.8-3.6", "honeywellhih": "2.3-5.5",
-    "hscdtd008a": "2.7-3.6",
+    "honeywellabp": "3.0-3.6",
     # --- Plantower ---
-    "pms3003": "4.5-5.5", "pmsx003": "4.5-5.5",
     # --- Gas ---
-    "cm1106": "4.5-5.5", "cbhchov4": "3.5-5.0",
-    "pm1006": "4.5-5.5", "pm1006k": "4.5-5.5",
-    "explorirm": "3.25-5.5", "envco2": "3.2-5.5",
     # --- Avia ---
-    "hx710": "2.4-5.5", "hx710a": "2.4-5.5", "hx710b": "2.4-5.5",
     # --- DFRobot/Ultrasonic ---
-    "a01nyub": "3.3-5.0", "urm07": "3.3-5.5", "urm09": "3.3-5.5",
-    "urm13": "3.3-5.5",
     # --- TI misc ---
-    "bq27220": "2.4-4.5", "cd74hc4067": "2.0-6.0",
-    "lmp91000": "2.7-5.25", "tsc2007": "1.5-3.6", "opt4001": "1.6-3.6",
+    "cd74hc4067": "2.0-6.0",
+    "opt4001": "1.6-3.6",
     # --- Touch ---
-    "ft5336": "2.6-3.3", "ft6x06": "2.6-3.3", "uft6336u": "2.6-3.3",
-    "cst816d": "2.6-3.6", "cst8xx": "2.6-3.6", "tt21100": "1.7-3.6",
-    "iqs5xx": "2.0-3.5", "cy8cmbr3102": "1.7-5.5",
-    "sx8634": "2.4-3.6", "xpt2046": "2.7-5.25",
+    "cst8xx": "2.6-3.6", "tt21100": "1.7-3.6",
     # --- Gxht ---
-    "cht8305": "1.35-5.5", "cht8310": "1.35-5.5", "cht832x": "1.35-5.5",
     # --- HopeRF ---
-    "th02": "2.1-3.6", "barometerhp20x": "3.0-3.6", "hp206c": "3.0-3.6",
     # --- Würth ---
-    "wsenpdus": "1.7-3.6", "wsentids": "1.7-3.6", "wsenpads": "1.7-3.6",
-    "wsenhids": "1.7-3.6", "wsenitds": "1.7-3.6", "wsenisds": "1.7-3.6",
+    "wsenpdus": "1.7-3.6",
     # --- Omron ---
-    "2smpb": "1.7-3.6", "d6fph": "3.0-3.6",
     # --- Acconeer ---
-    "a111": "1.8-3.6", "xm125": "1.8-3.6",
     # --- Misc ---
-    "s11059": "2.25-3.6", "gdk101": "3.3-5.0", "rfd77402": "2.7-3.3",
-    "sds021": "4.7-5.3", "pms7003t": "4.5-5.5",
-    "hmc6343": "2.7-3.6", "hmc6352": "2.7-3.6",
-    "mt6701": "3.0-3.6", "s5851a": "2.4-5.5", "nst1001": "1.5-5.5",
-    "f75303": "3.0-3.6", "lc709203f": "2.4-4.5",
-    "ags01db": "3.0-5.5", "hyt271": "2.7-5.5", "ips7100": "5.0-5.0",
-    "c4001": "3.0-3.6", "hm330x": "5.0-5.0", "hm3301": "5.0-5.0",
-    "hrg15": "5.0-24.0", "hydreonrgxx": "5.0-24.0", "rg15": "5.0-24.0",
-    "gp2y0a41sk0f": "4.5-5.5", "gp2y0e03": "2.7-5.3",
+    "pms7003t": "4.5-5.5",
+    "c4001": "3.0-3.6",  "hm3301": "5.0-5.0",
+    "hrg15": "5.0-24.0",
     "pzem004t": "5.0-5.0",
-    "ags2616": "3.0-5.5", "ags3870": "3.0-5.5", "ags3871": "3.0-5.5",
-    "rcwl0516": "4.0-28.0", "rcwl9610": "3.0-5.5", "rcwl9620": "3.0-5.5",
-    "ncs36000": "3.0-5.5",
-    "xgzp6897d": "3.0-5.5", "xgzp68xx": "3.0-5.5",
-    "mr24hpc1": "5.0-5.0", "mr60bha2": "5.0-5.0",
-    "mtp40": "3.6-5.5", "mg811": "5.0-6.0",
-    "rd03": "5.0-5.0", "rd03d": "5.0-5.0",
-    "a02yyuw": "3.0-5.5", "dypme007": "3.0-5.5",
-    "ggreg20v3": "3.3-5.0", "gr1030": "3.0-3.6",
-    "tx20": "3.0-3.6", "isys4001": "3.0-3.6",
+    "ags3870": "3.0-5.5",
+    "xgzp68xx": "3.0-5.5",
+    "mtp40": "3.6-5.5",
+    "dypme007": "3.0-5.5",
+    "tx20": "3.0-3.6",
 
     # --- Additional voltage entries (from datasheet research) ---
 
     # TI AFE / capacitance-to-digital
-    "afe4490": "2.0-3.6", "afe44xx": "2.0-3.6", "afe4950": "1.7-3.6",
-    "fdc1004": "3.0-3.6", "fdc2x1x": "2.7-3.6",
+    "afe44xx": "2.0-3.6",
 
     # TI INA current/power monitors
-    "ina219b": "3.0-5.5", "ina230": "2.7-5.5", "ina232": "1.7-5.5", "ina236": "1.7-5.5",
 
     # TI HDC humidity/temperature
-    "hdc2021": "1.62-3.6", "hdc2022": "1.62-3.6", "hdc3020": "1.62-3.6", "hdc3022": "1.62-3.6",
 
     # TI temperature sensors
-    "lm35": "4.0-30.0", "lm35c": "4.0-30.0", "lm35d": "4.0-30.0",
-    "lm45b": "4.0-10.0", "lm50b": "4.5-10.0", "lm50c": "4.5-10.0",
-    "lm95234": "3.0-5.5", "tmp108": "1.4-3.6", "tmp112": "1.4-3.6",
-    "tmp114": "1.9-5.5", "tmp116": "1.9-5.5", "tmp11x": "1.9-5.5",
-    "tmp126": "1.62-5.5", "tmp435": "2.7-5.5", "tmp61": "1.8-5.5",
+    "tmp11x": "1.9-5.5",
 
     # TI optical / magnetic
-    "opt3004": "1.6-3.6", "opt3101": "3.0-5.0",
-    "tmag5170": "2.3-5.5", "tmag5273": "1.7-3.6",
 
     # TI misc
-    "lm335a": "0.5-40.0", "lm75b": "2.8-5.5",
 
     # ST IIS industrial MEMS
-    "iis2dh": "1.71-3.6", "iis2iclx": "1.71-3.6", "iis328dq": "2.16-3.6",
-    "iis3dhhc": "1.71-3.6", "iis3dwb": "2.1-3.6",
 
     # ST LIS accelerometers
-    "lis2de12": "1.71-3.6", "lis2dh": "1.71-3.6", "lis2ds12": "1.62-1.98",
-    "lis2dux12": "1.71-3.6",
 
     # ST LSM IMUs
-    "lsm6": "1.71-3.6", "lsm6dso32": "1.71-3.6", "lsm6dsv32x": "1.71-3.6",
-    "lsm6dsv80x": "1.71-3.6",
 
     # ST LSM303 combos
-    "lsm303accel": "2.16-3.6", "lsm303c": "1.71-3.6",
-    "lsm303dlh": "2.16-3.6", "lsm303dlhc": "2.16-3.6",
+    "lsm303accel": "2.16-3.6",
     "lsm303dlhmag": "2.16-3.6",
 
     # ST L3G gyroscopes / LPS pressure
     "l3g": "2.4-3.6", "l3gd20u": "2.4-3.6",
-    "lps22": "1.7-3.6", "lps25h": "1.7-3.6", "lps28": "1.7-3.6",
 
     # TDK ICM/ICG IMUs
-    "icg20660": "1.71-3.45", "icm42686": "1.71-3.6",
     "icm45605s": "1.71-3.6", "icm45686s": "1.71-3.6", "icm45688p": "1.71-3.6",
 
     # TDK ICP pressure
-    "icp10100": "1.7-1.89", "icp101xx": "1.7-1.89",
     "icp20100": "1.62-1.98", "icp201xx": "1.62-1.98",
 
     # NXP
-    "fxas210002c": "2.1-3.6", "fxls8974": "1.71-3.6", "mma8653": "1.95-3.6",
-    "p3t1755": "1.4-3.6",
+    "fxas210002c": "2.1-3.6",
 
     # MEMSIC / Melexis
-    "mc3419": "1.7-3.6",
-    "mlx90394": "1.7-3.6", "mlx90621": "2.6-3.3", "mlx90641": "3.0-3.6",
 
     # Microchip
-    "mcp3427": "2.7-5.5", "mcp970x": "2.3-5.5", "mcp9800": "2.7-5.5",
-    "tcn75a": "2.7-5.5",
 
     # onsemi / iSentek / Silicon Labs
-    "nct75": "3.0-5.5", "ist8310": "1.71-3.6",
-    "si7006": "1.9-3.6", "si7060": "1.71-5.5", "si7210": "1.71-5.5",
 
     # Semtech / ams-OSRAM optical
-    "sx9500": "2.7-5.5",
-    "tcs3210": "2.7-5.5", "tcs3400": "2.7-3.6", "tcs3472": "2.7-3.3",
-    "tmd2620": "2.7-3.6", "tmd3725": "1.7-2.0",
-    "tsl2540": "1.7-2.0", "tsl2550": "2.7-5.5",
 
     # Vishay
-    "vcnl3040": "2.5-3.6", "vcnl36825t": "2.64-3.6", "veml6031": "2.5-3.6",
 
     # Sensirion
-    "sht3xd": "2.15-5.5",
 
     # TE Connectivity / MEAS pressure
-    "ms5607": "1.8-3.6", "ms5637": "1.5-3.6", "ms5xxx": "1.5-3.6",
-    "hp03s": "2.2-3.6", "hp303b": "1.7-3.6", "tsys01": "2.7-3.6",
+    "ms5xxx": "1.5-3.6",
 
     # ScioSense
-    "ens190": "4.5-5.5", "ens220": "1.62-1.98",
 
     # ROHM / Renesas / Honeywell / PixArt
-    "ml8511": "2.7-3.6", "hs400x": "1.8-3.6", "isl29035": "2.25-3.63",
-    "pmw3360": "3.3-3.6", "pmw3901": "1.8-2.1",
+    "pmw3360": "3.3-3.6",
 
     # ams ToF / TE humidity / misc
-    "tmf8801": "2.7-3.3", "tmf882x": "2.7-3.6",
-    "htu21": "1.5-3.6",
     "ams5812": "3.0-5.5", "ams5915": "3.0-5.5",
 
     # Broadcom ToF
-    "afbrs50": "5.0-5.0",
 
     # --- Generic modules ---
-    "hcsr04": "5.0-5.0",           # HC-SR04 ultrasonic (5V)
     "jsnsr04t": "3.0-5.5",         # JSN-SR04T waterproof ultrasonic
     "sr04m": "3.0-5.5",            # SR04M waterproof ultrasonic variant
     "tof10120": "3.0-5.0",         # TOF10120 laser rangefinder
     "me007": "3.0-5.5",            # ME007 ultrasonic rangefinder
     "us100": "2.4-5.5",            # US-100 ultrasonic (has both 3.3V and 5V mode)
-    "tct40": "5.0-5.0",            # TCT40 ultrasonic transducer driver
     "fc28": "3.3-5.0",             # FC-28 soil moisture module
     "fc37": "3.3-5.0",             # FC-37 rain sensor module
-    "gl5528": "3.3-5.0",           # GL5528 LDR (voltage divider circuit)
     "ky040": "3.3-5.0",            # KY-040 rotary encoder module
-    "gp20u7": "3.0-5.5",           # GP20U7 GPS module
-    "gy26": "3.0-5.0",             # GY-26 compass module
     "yfs201waterflow": "5.0-24.0",  # YF-S201 water flow sensor
-    "sct013": "3.3-3.3",           # SCT-013 CT clamp (analog output)
-    "ctclamp": "3.3-5.0",          # CT clamp module
     "fingerprintgrow": "3.3-6.0",  # R307/R503 fingerprint modules
     "cc1101": "1.8-3.6",           # TI CC1101 RF transceiver
-    "zmpt101b": "3.3-5.0",         # ZMPT101B voltage transformer module
-    "ttp223": "2.0-5.5",           # TTP223 touch sensor
-    "ttp229bsf": "2.4-5.5",        # TTP229 16-key touch pad
-    "tcrt5000": "3.3-5.0",         # TCRT5000 reflective sensor module
-    "pt100": "3.3-5.0",            # PT100 RTD amplifier module (MAX31865)
     "l58touch": "3.3-3.3",         # L58 touch sensor
 
     # --- MaxBotix ultrasonic ---
-    "mb7374": "3.0-5.5", "mb7375": "3.0-5.5", "mb7395": "3.0-5.5",
-    "mb7534": "3.0-5.5", "mb7544": "3.0-5.5", "mb7554": "3.0-5.5",
-    "mb7574": "3.0-5.5", "mb7850": "3.0-5.5", "mb7851": "3.0-5.5",
-    "mb7853": "3.0-5.5", "mb7854": "3.0-5.5",
 
     # --- Benewake LiDAR/ToF ---
-    "lc02": "5.0-5.0",             # Benewake LC02 short-range
-    "tfs20l": "5.0-5.0",           # Benewake TFS20-L
     "hornrt": "5.0-5.0",           # Benewake Horn-RT
-    "hornx2pro": "9.0-28.0",       # Benewake Horn-X2-Pro (industrial)
 
     # --- Senseair CO2 ---
-    "k70": "4.5-5.25",             # Senseair K70
     "senseair": "4.5-5.25",        # Senseair S8
 
     # --- Melexis ---
-    "mlx90642": "3.0-3.6",         # MLX90642 IR array
-    "us1881": "3.5-24.0",          # US1881 hall-effect latch
 
     # --- Murata ---
-    "sca100t": "5.0-5.0",          # SCA100T inclinometer
-    "scl3300": "3.0-3.6",          # SCL3300 inclinometer
-    "scl3400": "3.0-3.6",          # SCL3400 inclinometer
-    "zpa4756": "1.65-3.6",         # ZPA4756 pressure sensor (Murata/SureSensor)
 
     # --- NXP pressure ---
-    "mpx5999d": "4.75-5.25",       # NXP MPX5999D
-    "mpxa4250a": "4.75-5.25",      # NXP MPXA4250A
-    "mpxh6115a": "4.85-5.35",      # NXP MPXH6115A
-    "mpxh6400a": "4.85-5.35",      # NXP MPXH6400A
-    "mpxhz6250a": "4.85-5.35",     # NXP MPXHZ6250A
     "pca9536": "2.3-5.5",          # NXP PCA9536 I/O expander
 
     # --- STMicroelectronics ---
-    "stlm20dd9f": "2.4-5.5",       # STLM20 analog temp sensor
-    "stlm20w87f": "2.4-5.5",       # STLM20 analog temp sensor
-    "stpm34": "3.0-3.6",           # STPM3x energy metering
-    "lsm6dsv320x": "1.71-3.6",     # LSM6DSV32OX IMU
 
     # --- Sensirion ---
-    "mts4x": "1.08-3.6",           # STS4x temperature sensor
-    "sfm3200": "4.5-5.5",          # SFM3x00 flow sensor
 
     # --- Panasonic ---
-    "ekmb1107112": "3.0-6.0",      # Panasonic PIR sensor
-    "ekmc4607112k": "3.0-6.0",     # Panasonic PIR sensor
     "sngcja5": "5.0-5.0",          # Panasonic SN-GCJA5 PM sensor
 
     # --- DFRobot modules ---
-    "sen0153": "3.3-5.0",          # DFRobot ultrasonic
-    "sen0321": "3.3-5.5",          # DFRobot ozone sensor
-    "sen0395": "5.0-12.0",         # DFRobot mmWave radar
 
     # --- Plantower ---
     "pm25": "5.0-5.0",             # Plantower PMSx003
 
     # --- Other well-known ---
-    "ct1780": "1.62-3.6",          # Sensylink CT1780 temp sensor
     "zyaura": "4.5-5.5",           # ZyAura CO2 sensor module
-    "k30": "4.5-14.0",             # Senseair K30
-    "gsl1680": "2.8-3.3",          # Silead GSL1680 touch controller
-    "rv3032": "1.3-5.5",           # Micro Crystal RV-3032 RTC
-    "tcs230": "2.7-5.5",           # TCS230 color sensor
-    "tsl235r": "2.7-5.5",          # TSL235R light-to-frequency
     "qmc5583l": "2.16-3.6",        # QMC5883L compass
 
     # --- Holtek/Best Modules (common 3-5V modules) ---
-    "bm22s2021": "3.0-5.0", "bm22s3021": "3.0-5.0", "bm22s3031": "3.0-5.0",
-    "bm22s3221": "3.0-5.0", "bm22s3421": "3.0-5.0", "bm22s4221": "3.0-5.0",
-    "bm25s2021": "2.7-5.5", "bm25s2621": "2.7-5.5", "bm25s3221": "3.0-5.0",
-    "bm25s3321": "3.0-5.0", "bm25s3421": "3.0-5.0", "bm25s4021": "3.0-5.0",
-    "bm32s2031": "3.0-5.0", "bm32s3021": "3.0-5.0",
-    "bm42s3021": "3.0-5.0", "bm42s5321": "3.0-5.0",
-    "bm62s2201": "3.0-5.0", "bm62s2301": "3.0-5.0", "bm62s6021": "3.0-5.0",
+    "bm22s3021": "3.0-5.0",
+    "bm62s6021": "3.0-5.0",
     "bm92s2021": "3.0-5.0",
 
     # --- ScioSense ---
-    "sciosenseas60xx": "1.8-3.6",   # AS6031/AS6040 ultrasonic flow
-    "sciosenseens16x": "1.8-3.6",   # ENS160/161 MOx gas sensor
-    "sciosenseens21x": "1.8-3.6",   # ENS210/211 temp/humidity
 
     # --- TE Connectivity ---
-    "msp300": "4.75-5.25",         # MSP300 pressure transducer
 
     # --- TDK ---
-    "icu10201": "1.8-3.6",         # ICU-10201 ultrasonic ToF
 
     # --- Honeywell ---
-    "ah1815": "3.0-5.5",           # AH1815 hall-effect
     "i2casdx": "4.75-5.25",        # ASDX pressure sensor
 
     # --- Microchip ---
-    "tc1046": "2.5-5.5",           # TC1046 analog temp sensor
-    "tc1047": "2.7-4.4",           # TC1047 analog temp sensor
     "jc424": "2.0-3.6",            # MCP9844 renamed
-    "xpt2046touchpad": "2.7-5.25",  # XPT2046 touch controller
 
     # --- Vishay ---
     "vncl4020c": "2.5-3.6",        # VCNL4020C proximity/ambient light
@@ -2930,51 +2636,23 @@ VOLTAGE_TABLE: dict[str, str] = {
 
     # --- Bosch ---
     "7semibno08x": "2.4-3.6",      # BNO08x 9-DoF IMU
-    "7semico2th": "1.8-3.6",       # BME688 variant (Bosch 7semi)
-    "rak12034": "1.71-3.6",        # RAK12034 uses BME680
 
     # --- RAKWireless modules ---
-    "rak12010": "3.0-3.6", "rak12019": "3.0-3.6", "rak12021": "3.0-3.6",
-    "rak12023": "3.0-3.6", "rak12025": "3.0-3.6", "rak12039": "5.0-5.0",
-    "rak14002": "3.0-3.6",
+    "rak12023": "3.0-3.6",  "rak12039": "5.0-5.0",
 
     # --- Xiaomi BLE sensors ---
-    "xiaomilywsd02mmc": "3.0-3.0",  # CR2032 battery
     "xiaomixmwsdj04mmc": "3.0-3.0",
 
     # --- Atlas Scientific probes (circuit boards) ---
-    "doprobe": "3.3-5.0",          # EZO-DO circuit
-    "ecprobe": "3.3-5.0",          # EZO-EC circuit
-    "orpprobe": "3.3-5.0",         # EZO-ORP circuit
-    "phprobe": "3.3-5.0",          # EZO-pH circuit
-    "pt1000probe": "3.3-5.0",      # EZO-RTD circuit
 
     # --- Garmin ---
-    "lidarlightv3hp": "4.75-5.25",  # Garmin LIDAR-Lite v3HP
 
     # --- Winsen active sensors ---
-    "mhz1341b": "3.3-5.5",         # Winsen MH-Z1341B NDIR
-    "mtp40f": "4.2-5.5",           # MemsFrontier MTP40-F NDIR CO2
-    "sp3s": "5.0-5.0",             # Shinyei SP3S semiconductor gas
-    "pm2005": "5.0-5.0",           # Cubic PM2005 laser particle
     "ze29ac2h5oh": "3.7-9.0",      # Winsen ZE29A electrochemical module (common spec)
     "gm1602": "5.0-5.0",           # Winsen GM1602 semiconductor gas module
-    "mhz9041a": "5.0-5.0",         # Winsen MHZ9041A gas sensor module
-    "zwc102": "5.0-5.0",           # Winsen ZW-C102 water quality module
 
     # --- Other remaining well-known ---
-    "tl555q": "4.5-16.0",          # TI TL555Q CMOS timer
-    "tmp9a00": "1.62-3.6",         # TI TMP9A sensor (via I3C)
-    "ms01": "3.0-3.3",             # Sonoff MS01 soil moisture
-    "ppd71": "5.0-5.0",            # Shinyei PPD71 particle sensor
-    "sm300d2": "5.0-5.0",          # Amphenol SM300D2 multi-gas
-    "bluxv30b": "2.7-5.5",         # B-Lux-V30B ambient light
-    "kmeteriso": "5.0-5.0",        # M5Stack K-Meter thermocouple
-    "mmr902": "3.0-3.6",           # Murata MMR902 radar
-    "wsenpdms": "1.2-3.6",         # Würth WSEN-PDUS pressure
-    "amt25": "4.75-5.25",          # CUI AMT25 encoder
-    "am4096": "3.0-5.5",           # RLS AM4096 encoder
-    "zmod4450": "1.7-3.6",         # Renesas ZMOD4450 gas sensor
+    "sm300d2": "4.8-5.2",          # 5 ± 0.2V (SM300D2 parameter table; ESPHome docs)
 }
 
 
@@ -2987,10 +2665,6 @@ def _enrich_voltages(merged: dict[str, dict], quiet: bool = False) -> int:
     """
     enriched = 0
     for sid, sensor in merged.items():
-        if sid == "ccs811":
-            sensor["voltage"] = "1.8-3.3"
-            enriched += 1
-            continue
         if sensor["voltage"] is not None:
             continue
         voltage = VOLTAGE_TABLE.get(sid)
@@ -3011,6 +2685,64 @@ def _enrich_voltages(merged: dict[str, dict], quiet: bool = False) -> int:
 # ---------------------------------------------------------------------------
 
 IC_PROTOCOLS: dict[str, list[str]] = {
+    "am2301": ["gpio"],  # https://www.aosong.com/userfiles/files/media/AM2301%E8%A7%84%E6%A0%BC%E4%B9%A6-%E8%8B%B1%E6%96%87%E7%89%88%EF%BC%8820210407%EF%BC%89.pdf
+    "htu21d": ["i2c"],  # https://my.avnet.com/wcm/connect/c76abfe6-a20b-4fe8-bfdf-db3dc9842ebd/TE-Connectivity-HTU21D-EN-Datasheet.pdf?CACHE=NONE&CVID=pFu5s5u&ContentCache=NONE&MOD=AJPERES
+    "kx134": ["i2c", "spi"],  # https://fscdn.rohm.com/kionix/en/datasheet/kx134-1211-e.pdf
+    "pygp2y": ["analog"],  # https://global.sharp/products/device/lineup/selection/opto/dust/index.html
+    # Split-device identity audit (2026-11-09); details: data/sensors/ic_alias_evidence.json
+    "lsm6dsl": ["i2c", "spi"],  # https://www.st.com/resource/en/datasheet/lsm6dsl.pdf
+    "lsm6dso": ["i2c", "spi", "i3c"],  # https://www.st.com/resource/en/datasheet/lsm6dso.pdf
+    "lsm6dsr": ["i2c", "spi", "i3c"],  # https://www.st.com/resource/en/datasheet/lsm6dsr.pdf
+    "lsm6dsv16x": ["i2c", "spi", "i3c"],  # https://www.st.com/resource/en/datasheet/lsm6dsv16x.pdf
+    "lsm6dsv16bx": ["i2c", "spi", "i3c"],  # https://www.st.com/resource/en/datasheet/lsm6dsv16bx.pdf
+    "ism330dhcx": ["i2c", "spi"],  # https://www.st.com/resource/en/datasheet/ism330dhcx.pdf
+    "lsm6ds3": ["i2c", "spi"],  # https://community.st.com/ysqtg83639/attachments/ysqtg83639/stm32-mcu-products-forum/89677/2/%5BATT%5D11987.pdf
+    "lsm9ds0": ["i2c", "spi"],  # https://www.st.com/resource/en/datasheet/lsm9ds0.pdf
+    "mpu6500": ["i2c", "spi"],  # https://www.invensense.tdk.com/en-us/products/inertial-sensors/mpu-6500
+    "bmi323": ["i2c", "spi", "i3c"],  # https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi323-ds000.pdf
+    "max30100": ["i2c"],  # https://www.analog.com/media/en/technical-documentation/data-sheets/max30100.pdf
+    "max30105": ["i2c"],  # https://www.analog.com/media/en/technical-documentation/data-sheets/max30105.pdf
+    "ds18s20": ["one_wire"],  # https://www.analog.com/media/en/technical-documentation/data-sheets/DS18S20.pdf
+    "sht30": ["i2c"],  # https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf
+    "sht31": ["i2c"],  # https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf
+    "sht31d": ["i2c"],  # https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf
+    "sht35": ["i2c"],  # https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf
+    "sht40": ["i2c"],  # https://sensirion.com/media/documents/33FD6951/6A7C10A0/HT_DS_Datasheet_SHT4x_V7.3.pdf
+    "sht45": ["i2c"],  # https://sensirion.com/media/documents/33FD6951/6A7C10A0/HT_DS_Datasheet_SHT4x_V7.3.pdf
+    "sht21": ["i2c"],  # https://sensirion.com/media/documents/120BBE4C/63500094/Sensirion_Datasheet_Humidity_Sensor_SHT21.pdf
+    "bme680": ["i2c", "spi"],  # https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme680-ds001.pdf
+    "bme688": ["i2c", "spi"],  # https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf
+    "bmp388": ["i2c", "spi"],  # https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp388-ds001.pdf
+    "bmp390": ["i2c", "spi"],  # https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp390-ds002.pdf
+    "bmp085": ["i2c"],  # https://cdn.sparkfun.com/assets/6/f/3/9/4/BST-BMP085-DS000-05.pdf
+    "scd40": ["i2c"],  # https://sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf
+    "scd41": ["i2c"],  # https://sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf
+    "hdc1000": ["i2c"],  # https://www.ti.com/lit/ds/symlink/hdc1000.pdf
+    "hdc1010": ["i2c"],  # https://www.ti.com/lit/ds/symlink/hdc1010.pdf
+    "opt3001": ["i2c"],  # https://www.ti.com/lit/ds/symlink/opt3001.pdf
+    "opt3002": ["i2c"],  # https://www.ti.com/lit/ds/symlink/opt3002.pdf
+    "mhz19b": ["uart", "pwm"],  # https://www.winsen-sensor.com/d/files/manual/mh-z19b.pdf
+    "mhz19c": ["uart", "pwm"],  # https://www.winsen-sensor.com/d/files/manual/mh-z19c.pdf
+    "mhz19d": ["uart", "pwm"],  # https://www.winsen-sensor.com/d/files/manual/mh-z19d.pdf
+    "mhz19e": ["uart", "pwm"],  # https://www.winsen-sensor.com/d/files/manual/mh-z19e.pdf
+    "mhz1911a": ["uart", "pwm"],  # https://www.winsen-sensor.com/d/files/manual/mh-z1911a.pdf
+    "mhz14a": ["uart", "pwm"],  # https://www.winsen-sensor.com/d/files/manual/mh-z14a.pdf
+    "mhz14b": ["uart", "pwm"],  # https://www.winsen-sensor.com/d/files/manual/mh-z14b.pdf
+    "zh06ii": ["uart", "pwm"],  # https://www.winsen-sensor.com/d/files/manual/zh06-ii.pdf
+    "zh06iii": ["uart", "pwm"],  # https://www.winsen-sensor.com/d/files/manual/zh06-iii.pdf
+    "zh06iv": ["uart", "pwm"],  # https://www.winsen-sensor.com/d/files/manual/zh06-iv.pdf
+    "ld2410b": ["gpio", "uart"],  # https://www.hlktech.net/index.php?id=65
+    "ld2410c": ["gpio", "uart"],  # https://www.hlktech.net/index.php?id=65
+    "tmf8820": ["i2c"],  # https://look.ams-osram.com/m/52236c476132a095/original/TMF882X-DS000693.pdf
+    "tmf8821": ["i2c"],  # https://look.ams-osram.com/m/52236c476132a095/original/TMF882X-DS000693.pdf
+    "as7262": ["i2c", "uart"],  # https://look.ams-osram.com/m/663487deeb7089a7/original/AS7262-DS000486.pdf
+    "as7263": ["i2c", "uart"],  # https://look.ams-osram.com/m/2f885f8e1b074032/original/AS7263-DS000476.pdf
+    "fs30001005": ["i2c"],  # https://www.renesas.com/en/document/dst/fs3000-datasheet
+    "fs30001015": ["i2c"],  # https://www.renesas.com/en/document/dst/fs3000-datasheet
+    "ms580314ba": ["i2c", "spi"],  # https://www.te.com/en/product-MS580314BA01-50.html
+    "tfminiplus": ["i2c", "uart"],  # https://en.benewake.com/TFminiPlus/index.html
+    "amg8833": ["i2c"],  # https://industrial.panasonic.com/ww/products/pt/grid-eye/models/AMG8833
+    "fabo206uvsi1132": ["i2c"],  # https://www.silabs.com/documents/public/data-sheets/Si1132.pdf
     # ===== Temperature / Humidity / Pressure =====
     "bme280": ["i2c", "spi"],
     "bme68x": ["i2c", "spi"],
@@ -3137,7 +2869,9 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "t5403barometric": ["i2c"],
 
     # ===== IMU / Motion / Accelerometer =====
-    "mpu6050": ["i2c", "spi"],
+    # InvenSense PS-MPU-6000A-00 section 9.1: only MPU-6000 supports SPI.
+    # https://cdn.sparkfun.com/datasheets/Components/General%20IC/PS-MPU-6000A.pdf
+    "mpu6050": ["i2c"],
     "mpu6000": ["i2c", "spi"],
     "mpu9x50": ["i2c", "spi"],
     "bmi160": ["i2c", "spi"],
@@ -3476,7 +3210,7 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "us1881": ["gpio"],
     "ah1815": ["gpio"],
     "tli4970": ["spi"],
-    "tli4971": ["spi"],
+    "tli4971": ["analog"],
     "tlv493d": ["i2c"],
     "ak9750": ["i2c"],
     "tcrt5000": ["analog"],
@@ -3521,8 +3255,10 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "pd10lx": ["analog"],
     "mpbmp3xxfull": ["i2c", "spi"],
     "mpm10": ["i2c"],
-    "xiaomilywsd02mmc": ["i2c"],
-    "xiaomixmwsdj04mmc": ["i2c"],
+    # Finished BLE thermometers: ESPHome reads their advertisements (AUTO_LOAD xiaomi_ble);
+    # nothing on them can be wired to an I2C bus.
+    "xiaomilywsd02mmc": ["ble"],
+    "xiaomixmwsdj04mmc": ["ble"],
     "sca100t": ["spi"],
     "wf100dpz": ["i2c"],
     "tel0157": ["uart"],
@@ -3569,7 +3305,7 @@ IC_PROTOCOLS: dict[str, list[str]] = {
 
     # ===== RAKwireless =====
     "rak12010": ["i2c"],
-    "rak12019": ["analog"],
+    "rak12019": ["i2c"],
     "rak12021": ["i2c"],
     "rak12023": ["analog"],
     "rak12025": ["i2c"],
@@ -3829,8 +3565,6 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     # ===== Winsen flow/Hall sensors =====
     "f1012": ["gpio"],            # Winsen F1012 flow — Hall pulse
     "f1032": ["gpio"],            # Winsen F1032 flow — Hall pulse
-    "frn03h": ["gpio"],           # Winsen FRn03H flow — Hall pulse
-    "frn03p": ["gpio"],           # Winsen FRn03P flow — Hall pulse
     "ea134": ["analog"],          # Winsen EA-134 vibration — analog
     "gm1602": ["analog"],         # Winsen GM1602 CO — analog
     "msz202": ["uart"],           # Winsen MS-Z202 humidity — UART
@@ -3845,6 +3579,143 @@ IC_PROTOCOLS: dict[str, list[str]] = {
     "ht7m2136": ["gpio", "i2c"],
     "ht7m2156": ["gpio", "i2c"],
     "ht7m2176": ["gpio", "i2c"],
+    "adc128d818": ["i2c"],
+    "ads122c04": ["i2c"],
+    "afs01": ["i2c"],
+    "bma580": ["i2c", "i3c", "spi"],
+    "d6fw04a1": ["analog"],
+    "ina229": ["spi"],
+    "it7259": ["i2c"],
+    "mt6826s": ["gpio", "pwm", "spi"],
+    "sciosenseens17x": ["i2c", "spi"],
+    "spd1200": ["uart"],
+    "tla2021": ["i2c"],
+    "tsw10": ["analog"],
+    "ze40b": ["uart"],
+    "acs37800": ["i2c", "spi"],
+    "mb7040": ["i2c"],
+    "mb7137": ["i2c"],
+    "mb8000": ["i2c", "uart"],
+    "mb1000": ["analog", "pwm", "uart"],
+    "mb1001": ["gpio", "uart"],
+    "mb1002": ["gpio", "uart"],
+    "mb1003": ["analog", "pwm", "uart"],
+    "mb1004": ["gpio", "uart"],
+    "mb1005": ["gpio", "uart"],
+    "mb1006": ["gpio", "uart"],
+    "mb1007": ["gpio", "uart"],
+    "mb1008": ["gpio", "uart"],
+    "mb1009": ["gpio", "uart"],
+    "mb1010": ["analog", "pwm", "uart"],
+    "mb1013": ["analog", "pwm", "uart"],
+    "mb1014": ["gpio", "uart"],
+    "mb1020": ["analog", "pwm", "uart"],
+    "mb1023": ["analog", "pwm", "uart"],
+    "mb1024": ["gpio", "uart"],
+    "mb1030": ["analog", "pwm", "uart"],
+    "mb1033": ["analog", "pwm", "uart"],
+    "mb1034": ["gpio", "uart"],
+    "mb1040": ["analog", "pwm", "uart"],
+    "mb1043": ["analog", "pwm", "uart"],
+    "mb1044": ["gpio", "uart"],
+    "mb1200": ["analog", "pwm", "uart"],
+    "mb1202": ["i2c"],
+    "mb1210": ["analog", "pwm", "uart"],
+    "mb1212": ["i2c"],
+    "mb1220": ["analog", "pwm", "uart"],
+    "mb1222": ["i2c"],
+    "mb1230": ["analog", "pwm", "uart"],
+    "mb1232": ["i2c"],
+    "mb1240": ["analog", "pwm", "uart"],
+    "mb1242": ["i2c"],
+    "mb1260": ["analog", "pwm", "uart"],
+    "mb1261": ["analog", "pwm", "uart"],
+    "mb1300": ["analog", "uart"],
+    "mb1310": ["analog", "uart"],
+    "mb1320": ["analog", "uart"],
+    "mb1330": ["analog", "uart"],
+    "mb1340": ["analog", "uart"],
+    "mb1360": ["analog", "uart"],
+    "mb1361": ["analog", "uart"],
+    "mb1403": ["usb"],
+    "mb1413": ["usb"],
+    "mb1414": ["usb"],
+    "mb1423": ["usb"],
+    "mb1424": ["usb"],
+    "mb1433": ["usb"],
+    "mb1434": ["usb"],
+    "mb1443": ["usb"],
+    "mb1444": ["usb"],
+    "mb1603": ["analog", "pwm", "uart"],
+    "mb1604": ["analog", "pwm", "uart"],
+    "mb1613": ["analog", "pwm", "uart"],
+    "mb1614": ["analog", "pwm", "uart"],
+    "mb1623": ["analog", "pwm", "uart"],
+    "mb1624": ["analog", "pwm", "uart"],
+    "mb1633": ["analog", "pwm", "uart"],
+    "mb1634": ["analog", "pwm", "uart"],
+    "mb1643": ["analog", "pwm", "uart"],
+    "mb1644": ["analog", "pwm", "uart"],
+    "mb1710": ["usb"],
+    "mb1711": ["usb"],
+    "mb1712": ["i2c"],
+    "mb2530": ["analog", "pwm", "uart"],
+    "mb2532": ["analog", "uart"],
+    "mb7051": ["analog", "pwm", "uart"],
+    "mb7052": ["analog", "pwm", "uart"],
+    "mb7053": ["analog", "pwm", "uart"],
+    "mb7060": ["analog", "pwm", "uart"],
+    "mb7062": ["analog", "pwm", "uart"],
+    "mb7066": ["analog", "pwm", "uart"],
+    "mb7070": ["analog", "uart"],
+    "mb7076": ["analog", "uart"],
+    "mb7092": ["analog", "uart"],
+    "mb7138": ["analog", "pwm", "uart"],
+    "mb7139": ["analog", "pwm", "uart"],
+    "mb7150": ["analog", "uart"],
+    "mb7155": ["analog", "uart"],
+    "mb7354": ["analog", "pwm", "uart"],
+    "mb7360": ["analog", "pwm", "uart"],
+    "mb7363": ["analog", "pwm", "uart"],
+    "mb7364": ["analog", "pwm", "uart"],
+    "mb7366": ["analog", "pwm", "uart"],
+    "mb7368": ["analog", "pwm", "uart"],
+    "mb7369": ["analog", "pwm", "uart"],
+    "mb7374": ["analog", "pwm", "uart"],
+    "mb7375": ["analog", "pwm", "uart"],
+    "mb7380": ["analog", "pwm", "uart"],
+    "mb7383": ["analog", "pwm", "uart"],
+    "mb7384": ["analog", "pwm", "uart"],
+    "mb7386": ["analog", "pwm", "uart"],
+    "mb7388": ["analog", "pwm", "uart"],
+    "mb7389": ["analog", "pwm", "uart"],
+    "mb7395": ["analog", "pwm", "uart"],
+    "mb7534": ["analog", "pwm", "uart"],
+    "mb7544": ["analog", "pwm", "uart"],
+    "mb7554": ["analog", "pwm", "uart"],
+    "mb7560": ["analog", "pwm", "uart"],
+    "mb7563": ["analog", "pwm", "uart"],
+    "mb7564": ["analog", "pwm", "uart"],
+    "mb7566": ["analog", "pwm", "uart"],
+    "mb7568": ["analog", "pwm", "uart"],
+    "mb7569": ["analog", "pwm", "uart"],
+    "mb7574": ["analog", "pwm", "uart"],
+    "mb7580": ["analog", "pwm", "uart"],
+    "mb7583": ["analog", "pwm", "uart"],
+    "mb7584": ["analog", "pwm", "uart"],
+    "mb7586": ["analog", "pwm", "uart"],
+    "mb7588": ["analog", "pwm", "uart"],
+    "mb7589": ["analog", "pwm", "uart"],
+    "mb7850": ["analog", "uart"],
+    "mb7851": ["analog", "uart"],
+    "mb7853": ["analog", "uart"],
+    "mb7854": ["analog", "uart"],
+    "mb8460": ["uart"],
+    "mb8480": ["uart"],
+    "mb7072": ["analog", "uart"],
+    "mb7334": ["analog", "pwm", "uart"],
+    "mb7344": ["analog", "pwm", "uart"],
+    "mb8450": ["usb"],
 }
 
 # Winsen sensor type -> protocol mapping.
@@ -3858,23 +3729,25 @@ WINSEN_TYPE_PROTOCOLS: dict[str, list[str]] = {
     "catalytic": ["analog"],
     "pir": ["analog"],
     "pyroelectric": ["analog"],
+    "photoresistor": ["analog"],  # PbS/PbSe photoconductive flame cells (REF-X2212)
     "thermopile": ["analog"],
     "thermal_conduction": ["analog"],
     "mems": ["i2c"],
     "pid": ["analog"],
 }
 
-# MaxBotix ultrasonic sensors all have analog + PWM + UART output
+# Legacy MaxSonar output set; apply only to documented MaxSonar product families.
 MAXBOTIX_PROTOCOLS = ["analog", "uart", "pwm"]
 
-# Benewake ToF LiDAR sensors — default UART, some also support I2C
-BENEWAKE_PROTOCOLS = ["uart", "i2c"]
+# Benewake interfaces come from the scraper (the product menu's Interface row per model). The
+# former UART+I2C default for every Benewake part contradicted that row for CAN/RS-485-only
+# (TF02-i, TFmini-i), RS-232-only (TFA170-L) and Ethernet (Horn) parts, so there is none.
 
 # Hi-Link radar modules (LD-series) — all use UART
 HILINK_RADAR_PROTOCOLS = ["uart"]
 HILINK_IMU_PROTOCOLS = ["uart"]
 
-# Atlas Scientific probes/modules — all support I2C and UART
+# Atlas EZO/OEM digital circuits; probes and Surveyor meters have separate outputs.
 ATLAS_SCIENTIFIC_PROTOCOLS = ["i2c", "uart"]
 
 
@@ -3892,8 +3765,11 @@ def enrich_protocols(merged: dict[str, dict], quiet: bool = False) -> int:
         had_protocols = bool(sensor["protocols"])
         added = False
 
-        # 1. IC protocol lookup — always union (adds secondary interfaces like SPI)
-        if sid in IC_PROTOCOLS:
+        # 1. IC protocol lookup — union (adds secondary interfaces like SPI). Winsen product pages
+        # state each part's outputs, so for a Winsen part the table only fills one whose page names
+        # none: its blanket guesses ("WAV/WAP/WP-series all-in-one modules": UART) gave 4-20 mA
+        # transmitters, millivolt pressure cores and CAN modules a UART.
+        if sid in IC_PROTOCOLS and not ("winsen" in sensor.get("sources", ()) and had_protocols):
             new_protos = set(IC_PROTOCOLS[sid]) - sensor["protocols"]
             if new_protos:
                 sensor["protocols"].update(IC_PROTOCOLS[sid])
@@ -3906,15 +3782,7 @@ def enrich_protocols(merged: dict[str, dict], quiet: bool = False) -> int:
                 sensor["protocols"].update(WINSEN_TYPE_PROTOCOLS[stype])
                 added = True
 
-        # 3. MaxBotix ultrasonic sensors (all have analog + UART + PWM)
-        if not added and "maxbotix" in sensor["sources"]:
-            sensor["protocols"].update(MAXBOTIX_PROTOCOLS)
-            added = True
-
-        # 4. Benewake ToF LiDAR (UART + I2C)
-        if not added and "benewake" in sensor["sources"]:
-            sensor["protocols"].update(BENEWAKE_PROTOCOLS)
-            added = True
+        # MaxBotix outputs are model-specific; supplied by the scraper or IC lookup.
 
         # 5. Hi-Link modules
         if not added and "hilink" in sensor["sources"]:
@@ -3926,8 +3794,10 @@ def enrich_protocols(merged: dict[str, dict], quiet: bool = False) -> int:
                 sensor["protocols"].update(HILINK_IMU_PROTOCOLS)
                 added = True
 
-        # 6. Atlas Scientific probes (all I2C + UART)
-        if not added and "atlas_scientific" in sensor["sources"]:
+        # 6. Atlas digital circuits only; never infer a probe's bus from its reader.
+        if not had_protocols and not added and "atlas_scientific" in sensor["sources"] and (
+            (sid.startswith("ezo") and not sid.startswith("ezocomplete")) or sid.endswith("oem")
+        ):
             sensor["protocols"].update(ATLAS_SCIENTIFIC_PROTOCOLS)
             added = True
 
@@ -4029,7 +3899,7 @@ _NAME_CLEAN = [
 # Description cleaning patterns (applied in order)
 _DESC_CLEAN = [
     # Strip "DFRobot Standard library(SKU:...)." lines first
-    re.compile(r"DFRobot Standard library\S*\.?\s*", re.IGNORECASE),
+    re.compile(r"DFRobot Standard library(?:\s+for\s+(?:the\s+)?|\S*\.?\s*)", re.IGNORECASE),
     # Strip "Easy to use <IC>." — these are empty-calorie descriptions
     re.compile(r"^Easy to use \w+\.?\s*$", re.IGNORECASE),
     # Strip "A library for/to/of/that ..." preamble — keep the useful part after it
@@ -4054,8 +3924,9 @@ _DESC_CLEAN = [
     ),
     # Strip "The SparkFun" / "This SparkFun" etc. prefixes
     re.compile(rf"\b(?:The|This)\s+{_BRANDS}\s+", re.IGNORECASE),
-    # Strip remaining bare brand names anywhere
-    re.compile(rf"{_BRANDS}\s*", re.IGNORECASE),
+    # Strip remaining bare brand names anywhere except inside a URL or host name: removing it
+    # from "https://cdn-shop.adafruit.com/datasheets/tmp007.pdf" left "cdn-shop..com"
+    re.compile(rf"(?<![\w./-]){_BRANDS}(?!\.\w)\s*", re.IGNORECASE),
     # Strip SKU references like "(SKU:SEN0206/SEN0263)"
     re.compile(r"\s*\(SKU[:\s][^)]*\)", re.IGNORECASE),
     # Strip trailing period if description is very short after cleaning
@@ -4064,37 +3935,22 @@ _DESC_CLEAN = [
 
 
 def clean_name(name: str, sensor_id: str = "") -> str:
-    """Strip brand names, 'Library', 'Breakout', etc. from sensor names.
+    """Use the complete model identity, preserving its source punctuation.
 
-    If the cleaned name doesn't contain any part of the sensor_id (indicating
-    the library name is completely disconnected from the IC), falls back to
-    uppercasing the sensor_id.
+    A sibling or family sharing three letters is not evidence for a model's
+    name. Only a complete token matching the ID can supply display spelling.
+    Reviewed exceptions are applied later via curated.json.
     """
     for pat in _NAME_CLEAN:
         name = pat.sub(" " if pat.pattern.startswith(r"\s{2") else "", name)
     # Collapse spaces, strip punctuation and leading underscores
     cleaned = re.sub(r"\s{2,}", " ", name).strip(" -,_")
 
-    # If cleaned name is empty or doesn't relate to the IC at all,
-    # fall back to uppercased sensor ID
-    if sensor_id and cleaned:
-        sid_alpha = re.sub(r"[^a-z0-9]", "", sensor_id.lower())
-        name_alpha = re.sub(r"[^a-z0-9]", "", cleaned.lower())
-        # If the name doesn't share a 3+ char substring with the ID, it's disconnected
-        if len(sid_alpha) >= 3 and sid_alpha[:3] not in name_alpha and sid_alpha not in name_alpha:
-            cleaned = sensor_id.upper()
-        else:
-            # Strip unknown prefixes/suffixes around the IC name
-            # e.g., "ASTRON_CCS811" -> "CCS811", "BH1750_WE" -> "BH1750"
-            # Use uppercase for comparison to handle mixed-case names
-            sid_upper = sensor_id.upper()
-            cleaned_upper = cleaned.upper()
-            if sid_upper in cleaned_upper and cleaned_upper != sid_upper:
-                idx = cleaned_upper.index(sid_upper)
-                after = cleaned_upper[idx + len(sid_upper):].lstrip(" _-")
-                if after and " " not in after:
-                    after = ""
-                cleaned = (sid_upper + (" " + after if after else "")).strip()
+    if sensor_id:
+        if re.sub(r"[^a-z0-9]", "", cleaned.lower()) != sensor_id:
+            model = r"[\s_.-]*".join(re.escape(c) for c in sensor_id)
+            match = re.search(r"(?<![a-z0-9])" + model + r"(?![a-z0-9])", cleaned, re.I)
+            cleaned = match.group().upper() if match else sensor_id.upper()
 
     # If the cleaned name is all lowercase and looks like a raw IC ID
     # (no spaces, just alphanumeric+underscore), uppercase it
@@ -4104,7 +3960,102 @@ def clean_name(name: str, sensor_id: str = "") -> str:
     return cleaned or sensor_id.upper()
 
 
-def clean_description(desc: str) -> str:
+_SOFTWARE_PREFIX = re.compile(
+    r"^(?:An\s+)?(?:Arduino\s+library|MicroPython\s+(?:driver|module)|Library)"
+    r"\s+for\s+(?:the\s+)?", re.IGNORECASE,
+)
+_SENSING = re.compile(
+    r"\b(?:sensor|accelerometer|gyroscope|magnetometer|encoder|imu|adc|"
+    r"transducers?|thermistors?|thermopile|spectrometer|altimeter|"
+    r"(?:power|energy)\s+monitor|flow\s+(?:converter|sensing)|"
+    r"particulate\s+(?:matter\s+)?(?:sensing|sensors)|"
+    r"light\s+to\s+frequency\s+convertor|ambient\s+light\s+detection)\b|"
+    r"\b(?:temperature|humidity|pressure)\b.*\bsensors\b", re.IGNORECASE,
+)
+_SOFTWARE = re.compile(
+    # "Class for DHT11, DHT12, DHT21 and DHT22 Sensors" is a C++ class, not the part
+    r"\b(?:librar\w*|drivers?|wrappers?|examples?|APIs?|functions|function\s+calls?|methods|classes|class\s+for|"
+    r"implement\w*|code|firmware|sketch\w*|beginner[- ]friendly|register\s+access|"
+    r"heading\s+helpers?|precision\s+control|optimized\s+for|support\s+for\s+Arduino|"
+    r"for\s+(?:MicroPython|Arduino)|pure\s+Python|drive(?!-thru)|managing|"
+    r"interfacing|communicating|controlling|interrupt[- ]based|dependenc(?:y|ies)|"
+    # An application built around the part ("Current monitor using the INA219 and an SSD1306 OLED",
+    # "Air Quality monitor using PMS5003 sensor and WiPy") is not the part's own description
+    r"SSD1306|OLED|WiPy|monitor\s+using)\b|^reading\b|\ballows\s+reading\b", re.IGNORECASE,
+)
+_BOARD_PROSE = re.compile(
+    r"\b(?:boards?|shields?|breakouts?|development\s+kit|platform\s+for|"
+    r"Wemos|Trinket|Gemma|your|our|projects?|easy-to-use|professional-grade|"
+    r"unprecedented|pocket-sized|micro-sized|sewable)\b", re.IGNORECASE,
+)
+_PREFIX_REMAINDER_PROSE = re.compile(
+    r"\b(?:librar\w*|drivers?|Arduino|MicroPython|boards?|shields?|breakouts?|"
+    r"examples?|protocol)\b", re.IGNORECASE,
+)
+
+
+def strip_software_prefix(description: str) -> str:
+    """Remove only a preamble that leaves a sensing description, not more prose."""
+    remainder = _SOFTWARE_PREFIX.sub("", description)
+    if (remainder != description and _SENSING.search(remainder)
+            and not _PREFIX_REMAINDER_PROSE.search(remainder)):
+        return remainder
+    return description
+
+
+_BINDING_BOUNDARY = re.compile(
+    r"\bWhen\s+setting\b|\bThis\s+(?:driver|binding)\b|"
+    r"\bThis\s+sensor\s+requires\b(?=[^.!?]*\bpinctrl\b)|\bThe\s+<zephyr/dt-bindings/|"
+    r"\bNOTES:\s*This\s+driver\b|\bDriver\s+based\s+on\b|"
+    r"\bSPI\s+mode\s+is\s+currently\b|"
+    r"\bAdditionally\s+use\b|&[\w]+\s*\{", re.IGNORECASE,
+)
+
+
+def trim_zephyr_description(description: str) -> str:
+    """Cut at binding prose/code, preserving every preceding hardware sentence."""
+    boundary = _BINDING_BOUNDARY.search(description)
+    if not boundary:
+        return description
+    hardware = description[:boundary.start()].rstrip()
+    # A reference link immediately before instructions is not a hardware sentence.
+    hardware = re.sub(r"\s+See\s+(?:more info at:?\s+|datasheet at\s+)?https?://\S+\s*$",
+                      "", hardware, flags=re.IGNORECASE)
+    return hardware.rstrip()
+
+
+def description_quality(description: str) -> int:
+    """Hardware facts beat software prose; board marketing cannot displace a title.
+
+    A removable library preamble still ranks below an independent hardware text.
+    Keep that distinction when ranking raw input, before displaying cleaned text.
+    """
+    if not description:
+        return -1
+    remainder = strip_software_prefix(description)
+    if _BOARD_PROSE.search(remainder):
+        return 0
+    if _SOFTWARE.search(remainder):
+        return 0
+    # Text naming a software platform is library copy ("Arduino Temp & Humidity Sensors for DHT11
+    # and DHT22"); an independent hardware text wins a tie with it.
+    if remainder != description or _PLATFORM_PROSE.search(remainder):
+        return 1
+    return 2
+
+
+_PLATFORM_PROSE = re.compile(r"\b(?:Arduino|MicroPython|CircuitPython)\b", re.IGNORECASE)
+
+
+def has_software_prose(description: str) -> bool:
+    """Identify remaining prose for review, without inventing replacement facts."""
+    return bool(_SOFTWARE.search(description) or re.search(
+        r"\b(?:Arduino|MicroPython|Python|ESP8266|ESP32|beginner[- ]friendly)\b",
+        description, re.IGNORECASE,
+    ))
+
+
+def clean_description(desc: str, *, strip_prefix: bool = True) -> str:
     """Strip brand names and boilerplate from descriptions.
 
     After pattern cleaning, also discards results that are just a bare IC name
@@ -4113,11 +4064,56 @@ def clean_description(desc: str) -> str:
     for pat in _DESC_CLEAN:
         desc = pat.sub("", desc)
     desc = desc.strip(" -,_")
+    if strip_prefix:
+        desc = strip_software_prefix(desc)
     # If cleaned result is just an IC-like identifier (alphanumeric, possibly
     # with hyphens/underscores), it carries no search value — discard it
     if desc and re.match(r'^[A-Za-z0-9][-A-Za-z0-9_]*$', desc) and len(desc) < 30:
         return ""
     return desc
+
+
+# Maker pages (mostly Winsen and Best Modules) use full-width punctuation, invisible
+# spaces, list bullets and subscript digits. CO₂ and CH₄ also hide "CO2"/"CH4" from search.
+_TEXT_TIDY = str.maketrans({
+    "（": "(", "）": ")", "，": ", ", "、": ", ", "：": ": ", "～": "~",
+    " ": " ", "​": "", "⬥": "-", "◆": "-",
+    **{chr(0x2080 + d): str(d) for d in range(10)},
+})
+
+
+def tidy_text(text: str | None) -> str | None:
+    """ASCII punctuation, plain digits and single spaces for stored descriptions."""
+    if not text:
+        return text
+    return re.sub(r"\s{2,}", " ", text.translate(_TEXT_TIDY)).strip()
+
+
+DESCRIPTION_LIMIT = 200
+_CUT_MARK = re.compile(r"\s*(?:\.{2,}|…)\s*$")
+_SENTENCE_END = re.compile(r"[.!?](?=\s|$)")
+
+
+def fit_description(text: str | None, limit: int = DESCRIPTION_LIMIT) -> str | None:
+    """Fit a description in the stored column, ending at a sentence rather than mid-word.
+
+    Scrapers cut long text at 197 characters plus "...", and the column at 200, which stopped
+    descriptions mid-word or mid-number ("The DHT11 ..", "0~500ppm: 0.1ppm - 500p.."). A cut
+    text keeps its complete sentences when they hold at least 40% of the limit; otherwise it
+    ends at the last whole word, marked "...". Text that fits and wasn't cut is unchanged: a
+    short text ending in ".." is the source's own wording ("ammonia, alcohol.."), not a cut.
+    """
+    if not text:
+        return None
+    cut = _CUT_MARK.search(text) if len(text) >= limit - 15 else None
+    if len(text) <= limit and not cut:
+        return text
+    body = (text[:cut.start()] if cut else text)[:limit - 3]
+    ends = [m.end() for m in _SENTENCE_END.finditer(body)]
+    if ends and ends[-1] >= limit * 0.4:
+        return body[:ends[-1]]
+    words = body.rsplit(" ", 1)[0] if " " in body else body
+    return words.rstrip(" ,;:-") + "..."
 
 
 def normalize_manufacturer(name: str | None) -> str | None:
@@ -4137,9 +4133,168 @@ def load_aliases(data_dir: Path) -> dict[str, str]:
         return json.load(f)
 
 
-def resolve_id(raw_id: str, aliases: dict[str, str]) -> str:
+def apply_curated(merged: dict[str, dict], data_dir: Path) -> list[str]:
+    """Validate and apply field-level corrections after every enrichment rule.
+
+    IDs are canonical merged record IDs, not aliases. Validate the whole file
+    before mutating records so undocumented edits abort the build. An ID with no
+    record (a part that left every source after three missed scrapes, or whose
+    pages are gone) is skipped with a warning and returned: failing would make the
+    catalog build that gates the monthly scrape discard every source's data.
+    tests/test_sensor_db.py requires every curated ID to exist, so typos still fail.
+    """
+    path = data_dir / "sensors" / "curated.json"
+    if not path.exists():
+        return []
+    corrections = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(corrections, dict):
+        raise ValueError(f"{path}: expected an object keyed by sensor ID")
+    stale: list[str] = []
+    scalar_fields = {"name", "description", "manufacturer", "type", "voltage", "datasheet_url"}
+    nullable_fields = {"manufacturer", "type", "voltage", "datasheet_url"}
+    for sid, fields in corrections.items():
+        exclusion = fields.get("exclude") if isinstance(fields, dict) else None
+        if sid not in merged and not (isinstance(exclusion, dict) and exclusion.get("value") is True):
+            stale.append(sid)
+        if not isinstance(fields, dict) or not fields:
+            raise ValueError(f"{path}: {sid}: expected field corrections")
+        for field, correction in fields.items():
+            context = f"{path}: {sid}.{field}"
+            if field not in scalar_fields | {"measures", "protocols", "exclude"}:
+                raise ValueError(f"{context}: unsupported curated field")
+            if not isinstance(correction, dict) or "value" not in correction:
+                raise ValueError(f"{context}: missing value")
+            evidence = correction.get("evidence")
+            if not isinstance(evidence, dict) or not (
+                (isinstance(evidence.get("url"), str) and re.match(r"https?://\S+$", evidence["url"]))
+                or (isinstance(evidence.get("document"), str) and evidence["document"].strip()
+                    and isinstance(evidence.get("page"), int) and evidence["page"] > 0)
+                or (isinstance(evidence.get("source"), str) and evidence["source"].strip()
+                    and isinstance(evidence.get("text"), str) and evidence["text"].strip())
+            ):
+                raise ValueError(f"{context}: missing evidence (URL, document/page, or scraper source/text)")
+            reviewed = correction.get("review_date")
+            try:
+                if not isinstance(reviewed, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", reviewed):
+                    raise ValueError
+                date.fromisoformat(reviewed)
+            except ValueError:
+                raise ValueError(f"{context}: review_date must be YYYY-MM-DD") from None
+            value = correction["value"]
+            if field in scalar_fields:
+                if not (isinstance(value, str) and value.strip()) and not (value is None and field in nullable_fields):
+                    raise ValueError(f"{context}: expected a nonempty string" + (" or null" if field in nullable_fields else ""))
+                if field == "description" and len(value) > 200:
+                    raise ValueError(f"{context}: description exceeds DB limit of 200 characters")
+            elif field in {"measures", "protocols"}:
+                if not isinstance(value, list) or any(not isinstance(v, str) or not v.strip() for v in value):
+                    raise ValueError(f"{context}: expected an exact list of nonempty strings")
+            elif not isinstance(value, bool) or not isinstance(correction.get("reason"), str) or not correction["reason"].strip():
+                raise ValueError(f"{context}: exclude requires a boolean value and a reason")
+
+    for sid, fields in corrections.items():
+        if sid not in merged:  # A persistent exclusion can outlive its scraped record.
+            continue
+        sensor = merged[sid]
+        for field, correction in fields.items():
+            if field != "exclude":
+                value = correction["value"]
+                sensor[field] = set(value) if field in {"measures", "protocols"} else value
+        # Measures have legacy additions/removals at insertion time; bypass them
+        # only when an exact curated set is present.
+        sensor["_curated_measures"] = "measures" in fields
+        if fields.get("exclude", {}).get("value"):
+            del merged[sid]
+    if stale:
+        print(f"  WARNING: {len(stale)} curated IDs have no record and were skipped: {', '.join(sorted(stale))}",
+              file=sys.stderr)
+    return stale
+
+
+def strip_identity_prefixes(raw: str, known_ids=()) -> str:
+    """Prefer known identities after removing vendor/library wrappers.
+
+    Lookup also accepts digit-first models (24GHzRadar) and short stems
+    (A02YYUW). Unknown models retain the conservative shape-based rule.
+    Kept identical in the standalone database builder for Docker builds.
+    """
+    normalize = lambda value: re.sub(r"[^a-z0-9]", "", value.lower())
+    library_prefixes = (
+        "adafruit", "sparkfun", "dfrobot", "micropython", "esp", "circuitpython",
+        "grove", "seeed", "closedcube", "bluedot", "artronshop", "sensirion",
+        "protocentral", "stm32duino", "reefwing", "pwfusion", "arduino",
+        "smarteverything", "bolderflight_systems", "bolderflightsystems",
+    )
+    prefixes = ("7semi", "microfire", "ioty", "hlk", "omron", "my") + library_prefixes
+    pending = [raw]
+    seen = set()
+    while pending:
+        candidate = pending.pop(0)
+        key = normalize(candidate)
+        if candidate != raw and key in known_ids:
+            return candidate
+        if key in seen:
+            continue
+        seen.add(key)
+        for prefix in prefixes:
+            if candidate.lower().startswith(prefix):
+                rest = candidate[len(prefix):].lstrip(" _. -")
+                if rest:
+                    pending.append(rest)
+    # For new models, strip library prefixes only at a separator boundary.
+    stripped = re.sub(
+        r"^(?:" + "|".join(library_prefixes) + r")[\s_.-]+", "", raw, flags=re.I,
+    )
+    if stripped != raw:
+        return strip_identity_prefixes(stripped, known_ids)
+    return re.sub(
+        r"^(?:(?:7semi|microfire|ioty|hlk|omron)[\s_.-]*|my[\s_.-]*(?=[a-z]{2,}\d))"
+        r"(?=[a-z]+[\s_.-]*\d)", "", raw, flags=re.IGNORECASE,
+    )
+
+
+def resolve_id(raw_id: str, aliases: dict[str, str], known_ids=()) -> str:
     """Resolve an IC ID through the alias table."""
-    return aliases.get(raw_id, raw_id)
+    if raw_id in aliases:
+        return aliases[raw_id]
+    if raw_id in aliases.values():  # Preserve explicitly chosen, published module IDs.
+        return raw_id
+    normalized = re.sub(r"[^a-z0-9]", "", strip_identity_prefixes(raw_id, known_ids).lower())
+    return aliases.get(normalized, normalized)
+
+
+def transfer_platform_support(merged: dict[str, dict], data_dir: Path) -> None:
+    """Attach reviewed multi-device driver support without merging identities.
+
+    Only platform tags, driver URLs and provenance transfer. Measurements,
+    descriptions and electrical specs of a software wrapper never transfer.
+    Target metadata is used only to introduce a previously missing real part.
+    """
+    path = data_dir / "sensors" / "support_transfers.json"
+    if not path.exists():
+        return
+    for origin, entry in json.loads(path.read_text(encoding="utf-8")).items():
+        if not entry.get("evidence", {}).get("url") or not entry.get("targets"):
+            raise ValueError(f"{path}: {origin}: targets and evidence URL required")
+        driver = merged.get(origin)
+        if driver is None:
+            continue
+        for part in entry["targets"]:
+            sid = part["id"]
+            if sid not in merged:
+                if "measures" not in part:  # Reference to a part absent from this scrape.
+                    continue
+                merged[sid] = {
+                    "id": sid, "name": part["name"], "manufacturer": part.get("manufacturer"),
+                    "description": part["description"], "measures": set(part["measures"]),
+                    "protocols": set(part.get("protocols", [])), "platforms": set(),
+                    "type": None, "voltage": None, "datasheet_url": None,
+                    "source_tier": "primary", "urls": [], "sources": [],
+                }
+            target = merged[sid]
+            target["platforms"].update(driver["platforms"])
+            for field in ("urls", "sources"):
+                target[field].extend(value for value in driver[field] if value not in target[field])
 
 
 def load_source(data_dir: Path, source_name: str) -> list[dict]:
@@ -4153,26 +4308,43 @@ def load_source(data_dir: Path, source_name: str) -> list[dict]:
     return data.get("sensors", [])
 
 
-def description_rank(source: str, description: str) -> tuple[int, int]:
-    """Prefer device/integration evidence over an aggregated library or breakout's prose.
+def description_rank(source: str, description: str, *, library_title: bool = False) -> tuple[int, int, int]:
+    """Prefer hardware facts, then source authority, then length.
 
     Length breaks ties within the same authority; it cannot promote an all-in-one
     board's feature list into its component IC's description.
     """
     if not description:
-        return (-1, 0)
+        return (-1, -1, 0)
     authority = (0 if source in TIER3_SOURCES else
                  2 if source in {"esphome", "circuitpython", "zephyr"} or source not in {"arduino", "micropython", "tasmota"}
                  else 1)
-    return authority, len(description)
+    quality = description_quality(description)
+    # Generic library/breakout copy must not replace a useful IC title. Promote
+    # it across source tiers only when it identifies a part or gives a numeric spec.
+    if source in TIER3_SOURCES | {"arduino", "micropython"} and quality == 2 and not re.search(
+        r"\b[A-Za-z]{2,}[- ]?\d|\d+(?:\.\d+)?\s*(?:nm|[kM]?Hz|[mµu]?A|[mµu]?V|bit)\b",
+        description,
+    ):
+        quality = 1
+    if library_title and quality == 2:
+        quality = 1
+    return quality, authority, len(description)
 
 
 def merge_sensors(data_dir: Path, aliases: dict[str, str], quiet: bool = False) -> dict[str, dict]:
     """Merge all sources into a single dict of sensor entries."""
     merged: dict[str, dict] = {}
 
-    for source_name in SOURCE_ORDER:
-        sensors = load_source(data_dir, source_name)
+    sources = {source: load_source(data_dir, source) for source in SOURCE_ORDER}
+    known_ids = set(aliases) | set(aliases.values()) | SKIP_IDS
+    known_ids.update(re.sub(r"[^a-z0-9]", "", raw.get("id", "").lower())
+                     for sensors in sources.values() for raw in sensors)
+    curated_path = data_dir / "sensors" / "curated.json"
+    if curated_path.exists():
+        known_ids.update(json.loads(curated_path.read_text(encoding="utf-8")))
+
+    for source_name, sensors in sources.items():
         is_tier3 = source_name in TIER3_SOURCES
 
         if not quiet:
@@ -4183,7 +4355,7 @@ def merge_sensors(data_dir: Path, aliases: dict[str, str], quiet: bool = False) 
             if not raw_id:
                 continue
 
-            canonical_id = resolve_id(raw_id, aliases)
+            canonical_id = resolve_id(raw_id, aliases, known_ids)
             if canonical_id in SKIP_IDS or raw_id in SKIP_IDS:
                 continue
 
@@ -4192,6 +4364,17 @@ def merge_sensors(data_dir: Path, aliases: dict[str, str], quiet: bool = False) 
             # If the raw ID was an alias, the canonical ID's own entry
             # should override the name (e.g. dht22 overrides am2302's name)
             is_alias = raw_id != canonical_id
+
+            # Rank before prefix cleanup so an independent hardware description
+            # beats a library title. Trim binding instructions before both steps.
+            raw_desc = raw.get("description") or ""
+            if source_name == "zephyr":
+                raw_desc = trim_zephyr_description(raw_desc)
+            new_desc = clean_description(raw_desc)
+            rank = description_rank(
+                source_name, clean_description(raw_desc, strip_prefix=False),
+                library_title=raw.get("description_is_library_title", False),
+            ) if new_desc else (-1, -1, 0)
 
             if existing is None:
                 # New entry
@@ -4202,15 +4385,16 @@ def merge_sensors(data_dir: Path, aliases: dict[str, str], quiet: bool = False) 
                     "type": raw.get("type"),
                     "voltage": raw.get("voltage"),
                     "datasheet_url": raw.get("datasheet_url"),
-                    "description": clean_description(raw.get("description", "")),
+                    "description": new_desc,
                     "source_tier": "breakout_only" if is_tier3 else "primary",
                     "measures": set(raw.get("measures", [])),
                     "protocols": set(raw.get("protocol", [])),
                     "platforms": set(raw.get("platforms", [])),
                     "urls": list(raw.get("urls", [])),
                     "sources": [source_name],
+                    "_search_names": {raw.get("name", raw_id)},
                     "_from_alias": is_alias,
-                    "_description_rank": description_rank(source_name, clean_description(raw.get("description") or "")),
+                    "_description_rank": rank,
                 }
             else:
                 # Enrich existing entry
@@ -4218,6 +4402,9 @@ def merge_sensors(data_dir: Path, aliases: dict[str, str], quiet: bool = False) 
                 # by an alias, upgrade name and popularity
                 if not is_alias and existing.get("_from_alias"):
                     existing["name"] = clean_name(raw.get("name", existing["name"]), canonical_id)
+                    existing["_from_alias"] = False
+
+                existing["_search_names"].add(raw.get("name", raw_id))
 
                 # Multi-value: union
                 existing["measures"].update(raw.get("measures", []))
@@ -4240,9 +4427,7 @@ def merge_sensors(data_dir: Path, aliases: dict[str, str], quiet: bool = False) 
                     if not existing["datasheet_url"] and raw.get("datasheet_url"):
                         existing["datasheet_url"] = raw["datasheet_url"]
 
-                # Description: source authority first, length only within that authority
-                new_desc = clean_description(raw.get("description") or "")
-                rank = description_rank(source_name, new_desc)
+                # Description: hardware quality first, authority and length break ties.
                 if rank > existing["_description_rank"]:
                     existing["description"] = new_desc[:200]
                     existing["_description_rank"] = rank
@@ -4333,12 +4518,16 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, merged: dict[str, dict], output
             s["voltage"],
             s["datasheet_url"],
             len(platforms),  # platform_count
-            (s["description"] or "")[:200] or None,
+            fit_description(tidy_text(s["description"])),
             s["source_tier"],
             json.dumps(s["sources"]),
         ))
 
-        for m in sorted((set(s["measures"]) | MEASURE_ADDITIONS.get(sid, set())) - MEASURE_REMOVALS.get(sid, set())):
+        measures = set(s["measures"])
+        if not s.get("_curated_measures"):
+            measures = (measures | MEASURE_ADDITIONS.get(sid, set())) - MEASURE_REMOVALS.get(sid, set())
+            measures |= type_implied_measures(s["type"], measures)
+        for m in sorted(measures):
             measure_rows.append((sid, m))
         for p in sorted(s["protocols"]):
             protocol_rows.append((sid, p))
@@ -4361,6 +4550,12 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, merged: dict[str, dict], output
 
     # Create and populate FTS5
     conn.executescript(FTS_SQL)
+    # Search-only source/historical names; displayed sensors.name stays clean.
+    conn.executemany(
+        "UPDATE sensors_fts SET name = ? WHERE id = ?",
+        [(" ".join(sorted({s["name"]} | s.get("_search_names", set()))), sid)
+         for sid, s in sorted(merged.items())],
+    )
 
     conn.commit()
     conn.execute("ANALYZE")
@@ -4443,6 +4638,8 @@ def build(data_dir: Path, output: Path, verbose: bool = True) -> None:
 
     if not quiet:
         print("\nFixing bad sensor names...")
+    for sensor in merged.values():
+        sensor["_search_names"].add(sensor["name"])
     fix_names(merged, quiet=quiet)
 
     if not quiet:
@@ -4464,6 +4661,18 @@ def build(data_dir: Path, output: Path, verbose: bool = True) -> None:
     if not quiet:
         print("\nEnriching protocols via IC lookup and manufacturer defaults...")
     enrich_protocols(merged, quiet=quiet)
+
+    if not quiet:
+        print("\nApplying curated field corrections...")
+    transfer_platform_support(merged, data_dir)
+    for sensor in merged.values():
+        sensor.setdefault("_search_names", set()).add(sensor["name"])
+    apply_curated(merged, data_dir)
+    name_aliases = data_dir / "sensors" / "name_aliases.json"
+    if name_aliases.exists():
+        for sid, names in json.loads(name_aliases.read_text(encoding="utf-8")).items():
+            if sid in merged:
+                merged[sid]["_search_names"].update(names)
 
     if not quiet:
         print(f"\nBuilding database ({len(merged)} sensors)...")

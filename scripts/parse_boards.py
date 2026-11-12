@@ -32,6 +32,8 @@ except ImportError:
     print("PyYAML required: uv pip install pyyaml", file=sys.stderr)
     sys.exit(1)
 
+from parsers.common import _INVISIBLE  # noqa: E402  (zero-width/bidi marks; common imports nothing here)
+
 log = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -113,6 +115,8 @@ class BoardData:
     source_url: str = ""
     org: str = ""
     org_display: str = ""
+    # Explicit when connectivity is unavailable or recovered from a schematic/legacy layout.
+    netlist_source: str = ""
 
 
 # ---------------------------------------------------------------------------
@@ -131,7 +135,7 @@ def slugify(name: str) -> str:
 # ---------------------------------------------------------------------------
 
 def parse_boards_md(path: Path | None = None) -> dict[str, dict]:
-    """Parse BOARDS.md table into {slug: {name, org, repo, format, schematic_path, key_coverage}}."""
+    """Parse BOARDS.md, including optional repo-relative BOM and PCB associations."""
     path = path or BOARDS_MD
     boards: dict[str, dict] = {}
     in_table = False
@@ -157,6 +161,7 @@ def parse_boards_md(path: Path | None = None) -> dict[str, dict]:
             repo = repo_raw.strip("`")
             # A PADS row names its BOM after the layout: "`x.asc` (BOM: `x.xlsx`)"
             bom_match = re.search(r"BOM:\s*`([^`]+)`", sch_path)
+            pcb_match = re.search(r"PCB:\s*`([^`]+)`", sch_path)
             # Clean schematic path: remove backticks, remove size/sheet annotations
             sch_path_clean = sch_path.replace("`", "")
             sch_path_clean = re.sub(r"\s*\(.*?\)\s*$", "", sch_path_clean).strip()
@@ -170,6 +175,7 @@ def parse_boards_md(path: Path | None = None) -> dict[str, dict]:
                 "schematic_path": sch_path_clean,
                 "key_coverage": key_coverage,
                 **({"bom_path": bom_match.group(1)} if bom_match else {}),
+                **({"pcb_path": pcb_match.group(1)} if pcb_match else {}),
             }
 
     return boards
@@ -179,88 +185,91 @@ def parse_boards_md(path: Path | None = None) -> dict[str, dict]:
 # Key coverage → description, tags, key_ics
 # ---------------------------------------------------------------------------
 
-# Tag derivation rules: keyword patterns → tag name
+# Tag derivation rules: bounded keywords → tag name. A trailing * explicitly
+# permits a suffix (IC families, plurals and word stems); the left boundary is
+# always required, so ROV never matches Grove or WROVER.
 _TAG_RULES: dict[str, list[str]] = {
-    "battery-charging": ["charger", "charging", "lipo", "li-ion", "battery charger",
-                         "MCP73831", "BQ24210", "BQ24295", "TP4056", "CN3791"],
+    "battery-charging": ["charger", "charging", "lipo", "battery charger",
+                         "MCP73831*", "BQ24210*", "BQ24295*", "TP4056*", "CN3791*"],
     "battery-management": ["BMS", "cell balancing", "battery monitor", "fuel gauge",
-                           "LTC6813", "LTC6811", "MAX17048", "BQ27441", "LC709203"],
-    "usb-pd": ["USB-C PD", "USB PD", "power delivery", "STUSB4500", "CYPD3177",
-               "HUSB238", "PD sink", "PD source"],
-    "lora": ["LoRa", "SX1262", "SX1276", "SX1280", "RFM95", "RFM96", "LR1121"],
-    "can-bus": ["CAN bus", "CAN transceiver", "CAN FD", "CAN controller",
-                "MCP2515", "MCP2518", "MCP25625", "MCP2551", "MCP2558",
-                "TJA1050", "TCAN", "SN65HVD", "PESD1CAN"],
+                           "LTC6813", "LTC6811", "MAX17048*", "BQ27441*", "LC709203*"],
+    "usb-pd": ["USB-C PD", "USB PD", "power delivery", "STUSB4500*", "CYPD3177*",
+               "HUSB238*", "PD sink", "PD source"],
+    "lora": ["LoRa*", "SX1262*", "SX1276*", "SX1280*", "RFM95*", "RFM96*", "LR1121*"],
+    "can-bus": ["CAN bus", "CAN transceiver", "CAN FD", "CAN controller", "CAN peripheral",
+                "MCP2515", "MCP2518*", "MCP25625*", "MCP2551", "MCP2558*",
+                "TJA1050", "TCAN*", "SN65HVD*", "PESD1CAN*"],
     "rs485": ["RS-485", "RS485"],
     "rs232": ["RS-232", "RS232", "MAX3232"],
-    "wifi": ["WiFi", "Wi-Fi", "ATWINC", "ESP8266"],
-    "bluetooth": [" BLE ", "Bluetooth", "BLE,", "BLE5"],
-    "zigbee-thread": ["Zigbee", "Thread", "CC2652", "CC1352"],
-    "gps-gnss": ["GPS", "GNSS", "u-blox", "RTK", "L86", "NEO-F10", "PA1616",
-                 "ZED-F9", "MAX-M10"],
-    "motor-control": ["motor", "BLDC", "FOC", "stepper", " ESC", "DRV83", "TMC2",
-                      "A4988", "TB6612", "H-bridge"],
-    "power-supply": ["buck", "boost", "LDO", " regulator", "DC-DC", "SMPS",
-                     "TPS6", "LMR1", "AP2112", "MIC5504", "RT9080"],
-    "sensors": ["sensor", " IMU", "BME280", "BMP280", "BME680", "accelerometer",
+    "wifi": ["WiFi", "Wi-Fi", "ATWINC*", "ESP8266"],
+    "bluetooth": ["BLE", "Bluetooth"],
+    "zigbee-thread": ["Zigbee", "Thread", "CC2652*", "CC1352*"],
+    "gps-gnss": ["GPS", "GNSS", "u-blox", "RTK", "L86*", "NEO-F10*", "PA1616*",
+                 "ZED-F9*", "MAX-M10*", "FGPMMOPA6H*"],
+    "motor-control": ["motor", "BLDC", "FOC", "stepper", "ESC", "DRV83*", "TMC2*",
+                      "A4988*", "TB6612*", "H-bridge"],
+    "power-supply": ["buck", "boost", "LDO*", "regulator", "DC-DC", "SMPS", "power supply",
+                     "TPS6*", "LMR1*", "AP2112*", "MIC5504*", "RT9080*"],
+    "sensors": ["sensor", "sensors", "IMU", "BME280*", "BMP280", "BME680", "accelerometer",
                 "gyroscope", "barometer", "thermocouple", "RTD",
                 "temperature", "humidity", "pressure sensor", "spectral",
-                "time-of-flight", "ToF ", "gesture", "proximity"],
+                "time-of-flight", "ToF", "gesture", "proximity"],
     "display": ["OLED", "TFT", "LCD", "e-Paper", "e-ink", "LED matrix",
-                "SSD1306", "ILI9341", "charlieplex"],
-    "audio": ["audio", "codec", " DAC ", "I2S", "Class D", "amplifier", "guitar",
-              "WM8960", "MAX98357", "TLV320"],
+                "SSD1306*", "ILI9341*", "charlieplex"],
+    "audio": ["audio", "codec", "I2S", "Class D", "Class-D", "speaker", "guitar",
+              "synth", "eurorack", "WM8960*", "MAX98357*", "TLV320AIC*", "TLV320DAC*"],
     "rf-sdr": ["SDR", "RF front-end", "RF frontend", "RF board",
                "RFFC5072", "MAX2837", "MAX5864", "FMCW", "radar", "ADS-B",
                "Doppler", "balun", "10.525 GHz", "HB100"],
-    "fpga": ["FPGA", "iCE40", "ECP5", "Lattice"],
-    "level-shifting": ["level shift", "BSS138", "TXB0108", "TXS0102",
-                       "74LVC", "74HC4050"],
-    "esd-protection": ["ESD", "TVS diode", "PESD", "TPD4E"],
-    "isolation": ["isolated", "galvanic", "optocoupler", "ADuM", "isoSPI"],
+    "fpga": ["FPGA", "iCE40*", "ECP5", "Lattice"],
+    "level-shifting": ["level shift*", "level-shift*", "BSS138*", "TXB0108*", "TXS0102*",
+                       "74LVC*", "74HC4050*"],
+    "esd-protection": ["ESD", "TVS diode*", "PESD*", "TPD4E*", "LESD5Z*"],
+    "isolation": ["isolated", "optoisolated", "galvanic", "optocoupler*", "ADuM*", "isoSPI"],
     "current-sensing": ["current sense", "current sensor", "current monitor",
-                        "INA219", "INA228", "INA260", "ACS712", "shunt"],
-    "nfc-rfid": ["NFC", "RFID", "PN532", "ST25DV", "ISO 14443",
+                        "INA219*", "INA228*", "INA260*", "ACS712*", "shunt"],
+    "nfc-rfid": ["NFC", "RFID", "PN532*", "ST25DV*", "ISO 14443",
                  "contactless", "smartcard"],
-    "ethernet": ["Ethernet", "LAN8720", "W5500", "PoE", "RJ45"],
-    "energy-harvesting": ["energy harvest", "BQ25570", "solar input", "MPPT"],
-    "3d-printer": ["3D printer", "stepper driver", "heated bed",
+    "ethernet": ["Ethernet", "LAN8720*", "W5500", "PoE", "RJ45"],
+    "energy-harvesting": ["energy harvest*", "BQ25570*", "solar input", "solar-input", "MPPT"],
+    "3d-printer": ["3D printer", "stepper driver*", "heated bed",
                    "TMC2660", "print controller"],
-    "drone-uav": ["flight controller", "drone", "quadcopter", "ESC ",
+    "drone-uav": ["flight controller", "drone", "quadcopter", "ESC",
                   "autopilot", "PX4"],
     "keyboard": ["keyboard", "Cherry MX", "QMK", "macro pad", "split keyboard"],
-    "usb": ["USB hub", "USB host", "FT2232", "CH340", "USB-UART", "FTDI"],
-    "haptic": ["haptic", "DRV2605"],
-    "led-driver": ["LED driver", "NeoPixel", "WS2812", "SK6812",
-                   "constant-current", "IS31FL"],
+    "usb": ["USB hub", "USB 2.0 hub", "USB 3.2 Gen1 hub", "USB bridge", "USB host", "FT2232*", "CH340*", "USB-UART", "FTDI"],
+    "haptic": ["haptic", "DRV2605*"],
+    "led-driver": ["LED driver*", "NeoPixel*", "WS2812*", "SK6812*",
+                   "constant-current", "IS31FL*"],
     "security": ["fault injection", "EMFI", "glitch", "pentest",
-                 "emulator", "sniff"],
+                 "emulator", "sniff*"],
     # Not bare "transmitter": an IR or ultrasonic transmitter isn't a ham radio (Olimex ESP32-EVB)
     "ham-radio": ["ham radio", "SDR receiver", "HF transmit", "QSD", "QSE"],
-    # Matching is by substring, so no bare "LTE" (it's inside "filter")
+    # Name cellular protocols explicitly rather than inferring them from a generic modem.
     "cellular": ["LTE-M", "LTE Cat", "4G LTE", "LTE modem", "Cat-M", "NB-IoT", "GPRS", "cellular",
-                 "SIM7000", "SIM7080", "SIM7600", "SIM800", "BG95", "BG96", "SARA-R"],
+                 "SIM7000*", "SIM7080*", "SIM7600*", "SIM800*", "BG95*", "BG96*", "SARA-R*"],
     "eurorack": ["eurorack", "synth voice", "VCO", "VCF", "VCA", "envelope",
                  "analog synth"],
-    "inverter": ["inverter", "3-phase", "gate driver"],
-    "robotics": ["robot", "ROV", "underwater", "thruster"],
-    "adc-dac": ["ADC", " DAC", "ADS1115", "ADS1262", "MCP4725", "NAU7802",
-                "ADS1015", "HX711"],
-    "relay": ["relay", "relay driver"],
+    # A gate driver also occurs in DC-DC converters; DRV83 parts are three-phase motor drivers.
+    "inverter": ["inverter", "3-phase", "DRV83*"],
+    "robotics": ["robot*", "ROV", "ROVs", "underwater", "thruster*"],
+    "adc-dac": ["ADC", "DAC", "ADS1115*", "ADS1262*", "MCP4725*", "NAU7802*",
+                "ADS1015*", "HX711*"],
+    "relay": ["relay*", "relay driver"],
     "sub-ghz": ["Sub-GHz", "sub-GHz", "433MHz", "868MHz", "915MHz",
-                "RFM69", "CC1111", "M-Bus"],
-    "rtc": ["real-time clock", "RTC", "RV-8803", "DS3231"],
+                "RFM69*", "CC1111*", "M-Bus"],
+    "rtc": ["real-time clock", "RTC", "RV-8803*", "DS3231*"],
     "power-protection": ["protection IC", "over-charge", "over-discharge",
                          "crowbar", "OVP"],
     "automotive": ["LIN bus", "automotive", "LIN transceiver"],
-    "pwm-servo": ["PWM driver", "servo", "PCA9685"],
+    "pwm-servo": ["PWM driver", "servo", "PCA9685*"],
     "energy-monitoring": ["energy meter", "energy monitoring", "CT channel",
-                          "metering", "ATM90E"],
-    "data-logging": ["data logger", "logging", "OpenLog"],
-    "signal-conditioning": ["op-amp", "signal conditioning", "555 timer",
+                          "metering", "ATM90E*"],
+    "data-logging": ["data logger", "logging", "datalogging", "OpenLog*"],
+    "signal-conditioning": ["op-amp*", "signal conditioning", "555 timer",
                            "Wheatstone", "comparator"],
-    "video": ["HDMI", "MIPI", "DSI", " DVI", "GPDI"],
-    "sbc": [" SBC", "single board computer", "SiP", "Linux SBC"],
+    "video": ["HDMI", "MIPI", "DSI", "DVI", "GPDI"],
+    "sbc": ["SBC", "single board computer", "SiP", "Linux SBC"],
     "debug-tool": ["bus tool", "bus pirate", "interface explorer",
                    "logic analyzer", "programmer", "GreatFET"],
     "power-distribution": ["power distribution", "power board"],
@@ -275,7 +284,12 @@ def extract_tags(key_coverage: str) -> list[str]:
     tags: list[str] = []
     for tag, keywords in _TAG_RULES.items():
         for kw in keywords:
-            if kw.lower() in key_coverage.lower():
+            stem = kw.endswith("*")
+            keyword = kw.removesuffix("*")
+            pattern = r"(?<!\w)" + re.escape(keyword)
+            if not stem:
+                pattern += r"(?![a-zA-Z])"
+            if re.search(pattern, key_coverage, re.IGNORECASE):
                 tags.append(tag)
                 break
     return sorted(tags)
@@ -519,6 +533,29 @@ def _decode_mpn_value(mpn: str, ref_prefix: str) -> str | None:
     if ref_prefix == "C":
         # Manufacturer-specific patterns for precise value extraction.
 
+        # AVX/Kyocera imperial MLCC: size, voltage, dielectric, EIA pF,
+        # tolerance, termination/packaging. DRV8825's 12101C335K4T2A is 3.3uF;
+        # 08051C103KAT2A is 10nF, not a package or a bare capacitance number.
+        m = re.fullmatch(r"(?:0201|0402|0603|0805|1206|1210|1812|2220)[1-9][ACDUYZ]"
+                         r"(\d{3}|\dR\d)[BCDFGJKM][A-Z0-9]{4,5}", upper)
+        if m:
+            code = m.group(1)
+            return (_format_value(float(code.replace("R", ".")) * 1e-12, "F")
+                    if "R" in code else _decode_eia_cap(code))
+
+        # Panasonic EEC-S EDLC: voltage 5R5, orientation H/V, EIA code in F.
+        m = re.fullmatch(r"EECS5R5[HV](\d{3})", upper)
+        if m:
+            code = m.group(1)
+            return f"{int(code[:2]) * 10 ** (int(code[2]) - 6):g}F"
+
+        # Nichicon UWT: series(3), voltage(2), capacitance(3, in uF), tolerance M.
+        # UWT1H220MCL = 22uF (1H = 50V); voltage is not part of the value.
+        m = re.fullmatch(r"UWT(?:0[GJ]|1[ACEVH])(\d{3})M(?:CL|NL)[A-Z0-9]*", upper)
+        if m:
+            code = m.group(1)
+            return _format_value(int(code[:2]) * 10 ** int(code[2]) * 1e-6, "F")
+
         # Murata GRM/GCM/GQM: value code after voltage code, before tolerance
         # GRM21BR71C475KE51K — value is 475, tolerance is K
         # Format: GRM + size(2) + height(1) + tempcoeff(varies) + value(3) + tolerance(1)
@@ -570,6 +607,15 @@ def _decode_mpn_value(mpn: str, ref_prefix: str) -> str | None:
 
     # === Resistor MPN decoding ===
     if ref_prefix == "R":
+        # Bourns TC33X trimmers: resistance code in ohms after the style number.
+        m = re.fullmatch(r"TC33X-2-(\d{3})E", upper)
+        if m:
+            code = m.group(1)
+            return _format_value(int(code[:2]) * 10 ** int(code[2]), "ohm")
+        # CSR current shunts use an explicit R decimal, not an EIA code.
+        m = re.fullmatch(r"CSR\d{4}-(\d+R\d+)[FJG]\d", upper)
+        if m:
+            return _format_value(float(m.group(1).replace("R", ".")), "ohm")
         # Current sense resistors with embedded R-as-decimal: KRL3216T4-M-R003-F-T1 → 3mohm
         # R means decimal point: R003 = 0.003Ω, R004 = 0.004Ω, R0100 = 0.0100Ω
         m = re.search(r"[-_]R(\d{3,4})[-A-Z]", upper)
@@ -581,6 +627,38 @@ def _decode_mpn_value(mpn: str, ref_prefix: str) -> str | None:
 
     # === Inductor MPN decoding ===
     if ref_prefix in ("L", "FB"):
+        # Taiyo Yuden CBC wirewound inductors: EIA code in uH.
+        m = re.fullmatch(r"CBC\d{4}T(\d{3})[MK]R", upper)
+        if ref_prefix == "L" and m:
+            code = m.group(1)
+            return _format_value(int(code[:2]) * 10 ** int(code[2]) * 1e-6, "H")
+        # Sunlord CBW/GZ ferrites use EIA impedance codes at 100MHz. The
+        # offline catalog identifies CBW201209U300T and GZ1608D300TF as 30Ω.
+        m = re.fullmatch(r"(?:CBW\d{6}U|GZ\d{4}[A-Z])(\d{3})T[F]?", upper)
+        if m:
+            code = m.group(1)
+            return _format_value(int(code[:2]) * 10 ** int(code[2]), "ohm")
+        # Taiyo Yuden MAKK2520H: size 2520, type H, 3-digit uH code,
+        # tolerance M. OpenOx's MAKK2520H100M is explicitly described as 10uH.
+        m = re.fullmatch(r"MAKK2520H(\d{3})M", upper)
+        if ref_prefix == "L" and m:
+            code = m.group(1)
+            return _format_value(int(code[:2]) * 10 ** int(code[2]) * 1e-6, "H")
+
+        # Murata LQ numbering: family(3), size(2), application(1), category(1),
+        # inductance(3), tolerance(1), features/electrode(2), optional packaging.
+        # In the inductance field N denotes nH and the decimal point (1N2, 47N).
+        m = re.fullmatch(r"LQ[WP][0-9A-Z]{2}[A-Z]{2}(\dN\d|\d{2}N)[BCDGHJKMNSW][A-Z0-9]{2}[A-Z]?", upper)
+        if m:
+            return _format_value(float(m.group(1).replace("N", ".")) * 1e-9, "H")
+
+        # Murata BLM: size(2), characteristics(2), impedance(3) at 100MHz,
+        # followed by performance/category/circuits/packaging (BLM18PG221SN1D = 220ohm).
+        m = re.fullmatch(r"BLM[0-9A-Z]{2}[A-Z]{2}(\d{3})[A-Z][A-Z0-9]{2}[A-Z]?", upper)
+        if m:
+            code = m.group(1)
+            return _format_value(int(code[:2]) * 10 ** int(code[2]), "ohm")
+
         # Bourns SRN: SRN5020TA__2R2M → 2R2 → 2.2uH
         # Murata LQH: LQH44PN4R7MP0L → 4R7 → 4.7uH
         # Taiyo Yuden NR: NR4012T2R2M → 2R2 → 2.2uH
@@ -609,6 +687,13 @@ def _decode_mpn_value(mpn: str, ref_prefix: str) -> str | None:
             d1, d2, exp = int(m.group(1)[0]), int(m.group(1)[1]), int(m.group(1)[2])
             microhenries = (d1 * 10 + d2) * (10 ** exp)
             return _format_value(microhenries * 1e-6, "H")
+
+        # Coilcraft XFL, XEL and MSS codes are in nH: XFL4020-222 = 2.2uH, XEL4030-102 = 1uH,
+        # MSS1210-153 = 15uH. The generic rule below would make these 1000 times too large.
+        m = re.match(r"^(?:XFL|XEL|MSS)\d+-(\d)(\d)(\d)[MKJG]", upper)
+        if m:
+            d1, d2, exp = int(m.group(1)), int(m.group(2)), int(m.group(3))
+            return _format_value((d1 * 10 + d2) * (10 ** exp) * 1e-9, "H")
 
         # Standard 3-digit inductor code (like YPRH series): 470 = 47uH
         m = re.search(r"[-_](\d)(\d)(\d)[MKJG]", upper)
@@ -738,25 +823,36 @@ def normalize_value(value: str, ref: str) -> str:
         prefix = "R"
 
     # Universal cleanups (apply to all component types)
+    value = _INVISIBLE.sub("", value)
     cleaned = value.strip()
+    # The RF board's literal "1\\nF" escapes the nano prefix; retain nF.
+    # Other escaped line breaks keep their existing cleanup behavior.
+    if prefix == "C":
+        cleaned = re.sub(r"(?<=\d)\\(?=nF\b)", "", cleaned)
     cleaned = cleaned.replace("\\n", "")
     # Unicode normalization: μ→u, Ω→ohm, −→-
     cleaned = cleaned.replace("\u03BC", "u").replace("\u00B5", "u")  # Greek mu, micro sign
     cleaned = cleaned.replace("\u03A9", "ohm")  # Greek capital omega
     cleaned = cleaned.replace("\u2212", "-")  # Unicode minus → ASCII hyphen
     cleaned = cleaned.replace("\u2013", "-").replace("\u2014", "-")  # en/em dash
-    # NA(...) pattern (Olimex boards): NA(47uF C0805) → extract inner value
+    # Würth 74279-series ferrite MPNs are numeric identifiers, not bare ohm values.
+    # Internal USB Hub's 7427934 is also its source footprint; no impedance is given.
+    if prefix == "FB" and re.fullmatch(r"74279\d{2,4}", cleaned):
+        return cleaned
+    # Decode recognized MPNs before suffix/footprint stripping can destroy their codes.
+    if prefix in ("R", "C", "L", "FB", "F", "PTC", "FUSE") and re.fullmatch(r"[A-Z0-9][A-Z0-9_-]*", cleaned, re.IGNORECASE):
+        decoded = _decode_mpn_value(cleaned, prefix)
+        if decoded:
+            return decoded
+    # Olimex marks a part it doesn't assemble NA, with the value it would have: "NA(47uF/6.3V/20%/X5R/C0805)",
+    # "NA(RCLAMP0524P(SLP2510P8))". It stays the NA marker, so it is dropped like "DNP 47K" and a bare
+    # "NA" (58 such parts on 8 Olimex boards were listed as fitted 47uF caps, 10k resistors and TVS arrays).
     # Must run BEFORE generic paren stripping
-    m_na = re.match(r"^NA\((.+)\)$", cleaned)
-    if m_na:
-        inner = m_na.group(1).strip()
-        inner = re.sub(r"\([^)]*\)$", "", inner).strip()  # strip inner parens
-        parts = inner.split()
-        cleaned = parts[0] if parts else ""
-    else:
-        # Strip trailing parenthetical specs like (25V), (SSOP) but preserve (NC)/(NO)
-        if not re.search(r"\((?:NC|NO)\)\s*$", cleaned):
-            cleaned = re.sub(r"\([^)]+\)$", "", cleaned).strip()
+    if re.match(r"^NA\(.+\)$", cleaned):
+        return "NA"
+    # Strip trailing parenthetical specs like (25V), (SSOP) but preserve (NC)/(NO)
+    if not re.search(r"\((?:NC|NO)\)\s*$", cleaned):
+        cleaned = re.sub(r"\([^)]+\)$", "", cleaned).strip()
     # Strip LaTeX-style subscripts: V_{CC} → VCC, V_{BK} → VBK
     cleaned = re.sub(r"_\{([^}]+)\}", r"\1", cleaned)
     # Strip KiCad active-low notation: ~{RESET} → nRESET
@@ -775,10 +871,11 @@ def normalize_value(value: str, ref: str) -> str:
     cleaned = re.sub(r"\s+DCR=\S+", "", cleaned)
     cleaned = re.sub(r"\s+\d+\.?\d*x\d+\.?\d*(?:x\d+\.?\d*)?mm\b.*$", "", cleaned)
     cleaned = re.sub(r"\s+[A-Z]\d{4}$", "", cleaned)  # trailing footprint codes like " L2016"
-    # Olimex crystal values: Q25MHz/18pF/30ppm/4P/3.2x2.5mm → 25MHz
-    m_crystal = re.match(r"^Q(\d+\.?\d*[kM]?Hz)", cleaned, re.IGNORECASE)
+    # Olimex crystal values: Q25MHz/18pF/30ppm/4P/3.2x2.5mm → 25MHz 18pF (the load capacitance
+    # the board's caps are chosen for; the ppm stability is kept as tolerance by the parser)
+    m_crystal = re.match(r"^Q(\d+\.?\d*[kM]?Hz)(?:/(\d+(?:\.\d+)?pF)\b)?", cleaned, re.IGNORECASE)
     if m_crystal:
-        cleaned = m_crystal.group(1)
+        cleaned = " ".join(filter(None, m_crystal.groups()))
     # Strip trailing power rating from resistor values: "1.27k 62.5mW R0402" → "1.27k"
     cleaned = re.sub(r"\s+\d+\.?\d*m?W\b.*$", "", cleaned)
     # SMD_5.2x5.2mm_h2.5mm → "switch" (footprint used as value for switches)
@@ -1399,11 +1496,16 @@ def normalize_value(value: str, ref: str) -> str:
         elif re.match(r"^\d+\.?\d*[kMG]$", cleaned):
             cleaned = f"{cleaned}Hz"
 
-    # Eagle/KiCad solder jumper deviceset names → "solder jumper"
-    if re.match(r"^(JUMPER-?(SMT_?|PAD-?|COMBO)?|SOLDERJUMPER|SMD[_-]?JUMPER)", cleaned, re.IGNORECASE):
-        if "NO" in cleaned.upper() and "NC" not in cleaned.upper():
+    # Eagle/KiCad solder jumper deviceset names → "solder jumper", with its default state where the
+    # name gives one: KiCad's SolderJumper_2_Bridged is normally closed (SparkFun UM980 JP1-JP8),
+    # SparkFun's SOLDERJUMPER device NO normally open (BNO080 SJ2-SJ4)
+    if re.match(r"^(JUMPER-?(SMT_?|PAD-?|COMBO)?|SOLDER_?JUMPER|SMD[_-]?JUMPER)", cleaned, re.IGNORECASE):
+        upper = cleaned.upper()
+        words = set(re.split(r"[^A-Z]+", upper))
+        if "NO" in upper and "NC" not in upper or "OPEN" in words:
             cleaned = "solder jumper (NO)"
-        elif "NC" in cleaned.upper() or "CONNECTED" in cleaned.upper() or "TRACE" in cleaned.upper():
+        elif ("NC" in upper or "CONNECTED" in upper or "TRACE" in upper or "CLOSED" in words
+              or re.search(r"BRIDGED", upper)):
             cleaned = "solder jumper (NC)"
         else:
             cleaned = "solder jumper"
@@ -1483,10 +1585,10 @@ def normalize_value(value: str, ref: str) -> str:
     if prefix == "L" and re.match(r"^\d+R\d*$", stripped):
         val_str = stripped.replace("R", ".", 1).rstrip(".")
         return f"{_format_value(float(val_str), 'ohm')}"
-    if prefix == "L" and re.match(r"^\d+\.?\d*[kKMm]?OHM", stripped, re.IGNORECASE):
-        m_ohm = re.match(r"^(\d+\.?\d*[kKMm]?)OHM", stripped, re.IGNORECASE)
-        if m_ohm:
-            return f"{m_ohm.group(1)}ohm"
+    # "0 ohm" with a space must be the whole value: "100 ohm, 4 A" (Duet L13) keeps its current rating
+    m_ohm = re.match(r"^(\d+\.?\d*)(\s*)([kKMm]?)OHM(.*)$", stripped, re.IGNORECASE)
+    if prefix == "L" and m_ohm and not (m_ohm.group(2) and m_ohm.group(4).strip()):
+        return f"{m_ohm.group(1)}{m_ohm.group(3)}ohm"
 
     # P7: Strip trailing package suffix from values: "10k R0402" → "10k"
     stripped = re.sub(r"\s+[RCL]?\d{4}$", "", stripped)
@@ -1498,9 +1600,11 @@ def normalize_value(value: str, ref: str) -> str:
     stripped = re.sub(r"^O\.", "0.", stripped)
 
     # Handle R-EU_, R-US_, C-EU_ etc. (Eagle default deviceset names with no real value)
-    # Also handles R-EU_R2010, R-EU_0204_7, R-US_0207_10 etc. (symbol + footprint)
+    # Also handles R-EU_R2010, R-EU_0204_7, R-US_0207_10 etc. (symbol + footprint).
+    # The source sets no value, but the part is fitted: a bare "R" as for other unvalued symbols.
+    # Returning "" dropped emonTx V4's 12 such resistors with their nets.
     if re.match(r"^[RCL]-(?:EU|US)_", stripped):
-        return ""  # empty — source schematic has no value set
+        return stripped[0]
 
     # Handle bare library symbol names used as values (no real value set)
     # e.g. "C" for a capacitor, "R" for a resistor, "D" for a diode, "L" for an inductor
@@ -1564,8 +1668,18 @@ def normalize_value(value: str, ref: str) -> str:
     # Only strip single A/B/C/W after SI prefix — these denote taper type
     stripped = re.sub(r"(?<=\d[kKMm])[ABCW]$", "", stripped)
 
-    # Normalize "Meg" → "M" before parsing (1Meg = 1M = 1 megaohm)
-    raw = re.sub(r"Meg\b", "M", stripped)
+    # An L with no henry unit stays as written: a bare "10" (TPA3255 output filter) was stored as
+    # 10000mH, and capacitor values on L refs ("2.0pF") as a fraction of a nanohenry.
+    if prefix == "L" and re.fullmatch(r"\d+(?:\.\d+)?(?:\s*[munpMUNP]?[fF])?", stripped):
+        return value
+
+    # A bare capacitor number has no unit to assume (ANAVI's "0.1" / "4.7").
+    # Real supercaps with explicit F units, such as Artemis's "1F", still normalize.
+    if prefix == "C" and re.fullmatch(r"\d+(?:\.\d+)?", stripped):
+        return value
+
+    # SPICE resistor suffix: 1MEG / 1meg / 1Meg = 1 megaohm.
+    raw = re.sub(r"Meg\b", "M", stripped, flags=re.IGNORECASE) if prefix == "R" else stripped
     raw = re.sub(r"(ohm|ohms|Ω|[FH])\s*$", "", raw, flags=re.IGNORECASE).strip()
 
     parsed_val, parsed_prefix = _parse_eng_value(raw)
@@ -1618,7 +1732,7 @@ def extract_inline_specs(value: str) -> tuple[str, dict[str, str]]:
         return value, specs
 
     core_parts = []
-    for part in parts:
+    for i, part in enumerate(parts):
         # Voltage: 60V, 25V, 6.3V, 6V3 (European embedded: 6.3V)
         m = re.match(r"^(\d+\.?\d*)V(\d+)?$", part, re.IGNORECASE)
         if m:
@@ -1627,8 +1741,12 @@ def extract_inline_specs(value: str) -> tuple[str, dict[str, str]]:
             else:
                 specs["voltage"] = f"{m.group(1)}V"
             continue
-        # SMD package size embedded in value: strip "0805", "0603" etc.
-        if re.match(r"^\d{4}$", part):
+        # Strip known SMD packages, but keep a magnitude followed by its unit
+        # (even if it happens to equal a package code, e.g. "1206 pF").
+        if (part in {"01005", "0201", "0402", "0603", "0805", "1206", "1210",
+                     "1806", "1812", "1825", "2010", "2220", "2512", "2920"}
+                and not (i + 1 < len(parts) and re.fullmatch(
+                    r"[pnumkMGµμ]?(?:F|H|ohms?|Ω)", parts[i + 1], re.IGNORECASE))):
             continue
         # Tolerance: 1%, 5%, 10%, ±20%
         m = re.match(r"^[±]?(\d+)%$", part)
@@ -1665,6 +1783,9 @@ _NAMED_CONNECTOR_KEYWORDS = {
 }
 
 
+_XT_POWER_CONNECTOR = re.compile(r"(?<![A-Z0-9])(XT(?:30|60|90)(?:PW|U|E)?(?:[-_][FM])?)(?![A-Z0-9])", re.IGNORECASE)
+
+
 def _extract_header_dims(s: str) -> tuple[int, int] | None:
     """Extract (rows, cols) from header patterns like M06, 1X04, CONN_01X04."""
     # M06, M04
@@ -1675,8 +1796,9 @@ def _extract_header_dims(s: str) -> tuple[int, int] | None:
     m = re.match(r"^MA(\d+)", s)
     if m:
         return (1, int(m.group(1)))
-    # NxM: 1X04, 2X03, CONN_01X04, 1X06_NO_SILK
-    m = re.search(r"(\d+)X(\d+)", s, re.IGNORECASE)
+    # NxM: 1X04, 2X03, CONN_01X04, 1X06_NO_SILK — not inside a body size: crystal X2's package
+    # X2-SMD-3.2X1.5X0.55MM read as a "2x1 header", a microSD socket's 16.1X14.5 as "1x14"
+    m = re.search(r"(?<![\d.])(\d+)X(\d+)(?![\d.])", s, re.IGNORECASE)
     if m:
         rows, cols = int(m.group(1)), int(m.group(2))
         if 1 <= rows <= 3 and 1 <= cols <= 40:
@@ -1688,25 +1810,73 @@ def _extract_header_dims(s: str) -> tuple[int, int] | None:
     return None
 
 
+def connector_pitch(package: str) -> str:
+    """The contact pitch a connector package names, as "2.54mm", or "".
+
+    KiCad: PinHeader_2x07_P1.27mm_Vertical, Pin_Header_Straight_1x08_Pitch2.54mm. Eagle: SparkFun's
+    1X04_1MM_RA (the Qwiic JST-SH), TERMBLOCK_1X2-3.5MM, PINHD-2X3-2.54-EDGE, PINHEADER_127_2X1.
+    """
+    m = (re.search(r"(?:^|[_-])P(\d+(?:\.\d+)?)mm(?=[_-]|$)", package)
+         or re.search(r"Pitch[-_]?(\d+(?:\.\d+)?)mm", package, re.IGNORECASE)
+         or re.search(r"(?:^|[_-])(\d+(?:\.\d+)?)MM(?=[_-]|$)", package, re.IGNORECASE)
+         or re.search(r"(?:^|[_-]|\dP)(\d\.\d{1,2})(?=[_-]|$)", package))
+    if m:
+        return f"{float(m.group(1)):.2f}mm"
+    m = re.match(r"^PIN_?HEADER[_-](100|127|200|254)[_-]", package, re.IGNORECASE)
+    return f"{int(m.group(1)) / 100:.2f}mm" if m else ""
+
+
+# Wire-to-board families a footprint names: KiCad JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal
+_JST_FAMILY = re.compile(r"JST[_ -]?(SH|GH|PH|XH|ZH|EH|VH|SUR|ZR|PA|NH)(?![A-Za-z])", re.IGNORECASE)
+_TERMINAL_BLOCK = re.compile(r"TERMINAL|TERMBLOCK|SCREW|BORNIER|MKDS|MSTBA|KF\d{3}|PhoenixContact", re.IGNORECASE)
+
+
+def _connector_label(rows: int, cols: int, package: str, kind: str = "header") -> str:
+    """'1x4 header' with what the package adds: its pitch, a JST series, or a terminal block."""
+    family = _JST_FAMILY.search(package)
+    if family and kind == "header":
+        return f"JST {family.group(1).upper()} {rows * cols}-pin"
+    if _TERMINAL_BLOCK.search(package):
+        kind = "screw terminal"
+    elif re.match(r"^SolderWire", package, re.IGNORECASE):
+        kind = "solder wire pads"  # KiCad's SolderWire-2.5sqmm_1x02_P8.8mm (dc-poe's 54 V test points)
+    pitch = connector_pitch(package)
+    return f"{rows}x{cols} {pitch + ' ' if pitch else ''}{kind}"
+
+
 def normalize_connector_value(value: str, footprint: str, ref: str) -> str:
     """Normalize generic connector values to 'NxM header' format.
 
     Preserves named connector types (USB, JTAG, etc.). For generic
     Eagle deviceset names (M06, I2C_STANDARD), extracts pin layout
-    from value or footprint.
+    from value or footprint. The footprint's pitch and series stay in the value: a 1.27 mm
+    2x7 SWD header read "2x7 header" like a 2.54 mm one, and JST SH sockets "1x4 header".
     """
     m = re.match(r"^([A-Za-z]+)", ref)
     prefix = m.group(1).upper() if m else ""
+    # A fiducial or do-not-fit marker stays one: Mutable Plaits' FIDUCIAL1X2 and a DNP crystal X3
+    # (package X2-SMD-3.2X1.5X0.55MM) both became headers
+    if is_junk_value(value):
+        return value
 
     # Check if value or footprint names a specific connector type
     upper_val = value.upper()
     upper_fp = footprint.upper()
-    val_has_named = any(kw in upper_val for kw in _NAMED_CONNECTOR_KEYWORDS)
+    # "1x2 screw terminal" (a Screw_Terminal_01x02 symbol) is generic, though it names SCREW
+    generic = re.fullmatch(r"\d+x\d+ (?:header|screw terminal)", value)
+    val_has_named = not generic and any(kw in upper_val for kw in _NAMED_CONNECTOR_KEYWORDS)
     fp_has_named = any(kw in upper_fp for kw in _NAMED_CONNECTOR_KEYWORDS)
 
     # Value itself is a named type (USB-C, JST SH, etc.) — preserve it
     if val_has_named:
         return value
+
+    # AMASS XT30/XT60/XT90 power connectors (footprint AMASS_XT60-F) read "1x2 7.20mm header"
+    if _XT_POWER_CONNECTOR.search(value):
+        return value  # "XT60 Female" says more than its footprint
+    xt = _XT_POWER_CONNECTOR.search(footprint)
+    if xt:
+        return xt.group(1).upper().replace("_", "-")
 
     # Crystal/oscillator: skip connector normalization if footprint or value indicates crystal
     if any(kw in upper_fp or kw in upper_val
@@ -1717,18 +1887,15 @@ def normalize_connector_value(value: str, footprint: str, ref: str) -> str:
     if upper_val in ("I2C", "SPI", "I2C_STANDARD", "SPI_STANDARD"):
         dims = _extract_header_dims(footprint)
         if dims:
-            return f"{dims[0]}x{dims[1]} header"
+            return _connector_label(*dims, footprint)
         return value
 
-    # For known connector refs, extract pin layout
-    if prefix in _CONNECTOR_REFS:
+    # For known connector refs (and "1x4 header" from a Conn_01x04 symbol on any ref), the pin layout
+    kind = "screw terminal" if value.endswith("screw terminal") else "header"
+    if prefix in _CONNECTOR_REFS or generic:
         dims = _extract_header_dims(value) or _extract_header_dims(footprint)
         if dims:
-            rows, cols = dims
-            # Use footprint info for connector type
-            if "SCREW" in upper_fp or "TERMINAL" in upper_fp:
-                return f"{rows}x{cols} screw terminal"
-            return f"{rows}x{cols} header"
+            return _connector_label(*dims, footprint, kind)
 
     # For any ref, normalize pin header deviceset names: PINHD-1X9, HEADER-1X1, CONN_02
     if not val_has_named and not fp_has_named:
@@ -1736,8 +1903,7 @@ def normalize_connector_value(value: str, footprint: str, ref: str) -> str:
         if m:
             dims = _extract_header_dims(value) or _extract_header_dims(footprint)
             if dims:
-                rows, cols = dims
-                return f"{rows}x{cols} header"
+                return _connector_label(*dims, footprint)
 
     return value
 
@@ -1826,12 +1992,15 @@ def normalize_footprint(footprint: str, ref: str = "") -> str:
     if re.match(r"^USB[_-]C", fp, re.IGNORECASE):
         return "USB-C"
 
-    # KiCad PinHeader/PinSocket: PinHeader_1x06_P2.54mm_Vertical → 1X06
-    # Also Pin_Header_Straight_1x08_Pitch2.54mm
+    # KiCad PinHeader/PinSocket: PinHeader_1x06_P2.54mm_Vertical → 1X6_P2.54mm; the pitch and a
+    # right-angle or SMD build stay (a 1.27 mm 2x7 SWD header read "2X7" like a 2.54 mm one).
+    # Also Pin_Header_Straight_1x08_Pitch2.54mm, PINHEADER_127_2X1
     m = re.match(r"^Pin[_ ]?(?:Header|Socket)\w*_(\d+)x(\d+)", fp, re.IGNORECASE)
     if m:
         rows, cols = m.group(1), m.group(2)
-        return f"{rows}X{cols.lstrip('0') or '0'}"
+        pitch = connector_pitch(fp)
+        build = "".join(f"_{word}" for word in ("Horizontal", "SMD") if re.search(rf"_{word}(?:_|$)", fp))
+        return f"{rows}X{cols.lstrip('0') or '0'}{'_P' + pitch if pitch else ''}{build}"
 
     # KiCad through-hole axial/radial: R_Axial_DIN0204_..., C_Axial_..., C_Radial_...
     m = re.match(r"^[RCLD]_(Axial|Radial)", fp, re.IGNORECASE)
@@ -1843,9 +2012,9 @@ def normalize_footprint(footprint: str, ref: str = "") -> str:
     if m:
         return f"EIA-{m.group(1)}"
 
-    # KiCad electrolytic: CP_Elec_XXXX → Electrolytic, CP_Elec → Electrolytic
+    # KiCad electrolytic: CP_Elec_6.3x7.7 → Electrolytic-6.3x7.7 (diameter x height), CP_Elec → Electrolytic
     if fp.startswith("CP_Elec"):
-        m = re.match(r"^CP_Elec_(\d+x\d+)", fp)
+        m = re.match(r"^CP_Elec_(\d+(?:\.\d+)?x\d+(?:\.\d+)?)", fp)
         if m:
             return f"Electrolytic-{m.group(1)}"
         return "Electrolytic"
@@ -1958,23 +2127,34 @@ def normalize_footprint(footprint: str, ref: str = "") -> str:
             return parts[1]  # LED_0603 → 0603
         return parts[0]  # SOT886, MSOP10
 
-    # IPC-7351: QFN50P700X700X100-49N → QFN-49, SOT65P212X110-5N → SOT-5
-    m = re.match(r"^([A-Z]{2,4})\d+P\d+X\d+(?:X\d+)?-(\d+)[A-Z]?$", fp)
-    if m:
-        return f"{m.group(1)}-{m.group(2)}"
+    # IPC-7351 names stay whole: SOT50P160X60-6N (a 0.5 mm pitch SOT-563) and SOT95P280X145-6N
+    # (a 0.95 mm SOT-23-6) both read "SOT-6", and TO229P990X239-3N (a DPAK) read "TO-3". Their
+    # numbers are pitch, then lead span and height for leaded parts but body size for no-lead
+    # ones, so a rewritten "6.00x1.75mm" would read as a body size; the IPC form is unambiguous.
+    if re.match(r"^[A-Z]{2,4}\d+P\d+X\d+(?:X\d+)?-\d+[A-Z]?$", fp):
+        return fp
 
-    # Connector footprint: 1X04_NO_SILK, 1X05_ROUND_76 → 1X04, 1X05
+    # Pitch-first connector names: Duet's 3.5MM_2X1 heater terminals → 2X1_P3.50mm
+    m = re.match(r"^(\d+(?:\.\d+)?)MM[_-](\d+X\d+)$", fp, re.IGNORECASE)
+    if m:
+        return f"{m.group(2).upper()}_P{float(m.group(1)):.2f}mm"
+
+    # Connector footprint: 1X04_NO_SILK, 1X05_ROUND_76 → 1X04, 1X05; a pitch or right-angle build
+    # stays: 1X04_1MM_RA → 1X04_P1.00mm_RA (SparkFun's Qwiic JST-SH, which read as a 2.54 mm 1X04)
     m = re.match(r"^(\d+X\d+)(?:[_-]\w+)+$", fp, re.IGNORECASE)
     if m:
-        return m.group(1)
+        pitch = connector_pitch(fp)
+        right_angle = "_RA" if re.search(r"[_-]RA(?:[_-]|$)", fp, re.IGNORECASE) else ""
+        return f"{m.group(1)}{'_P' + pitch if pitch else ''}{right_angle}"
 
     # Embedded SMD size: CHIPLED_0603_NOOUTLINE, LED_0805_NOOUTLINE → 0603, 0805
     m = re.match(r"^\w+_(\d{4})(?:_\w+)+$", fp)
     if m:
         return m.group(1)
 
-    # Strip trailing dimension info: SOMETHING_3.2x1.6mm → SOMETHING
-    m = re.match(r"^(\S+?)_\d+\.?\d*[xX]\d+", fp)
+    # Trailing orientation and pitch go, the first size stays: it is the part's size or layout here
+    # (Xtal_5x3.2 read "Xtal", R_Array_Convex_4x0402 "R_Array_Convex", Straight_2x01 "Straight")
+    m = re.match(r"^(\S+?_\d+(?:\.\d+)?[xX]\d+(?:\.\d+)?(?:[xX]\d+(?:\.\d+)?)?)(?:mm)?(?=[_-]|$)", fp)
     if m:
         return m.group(1)
 
@@ -2018,7 +2198,9 @@ def clone_repo(org_repo: str, fmt: str, cache_dir: Path | None = None,
     if fmt == "eagle":
         patterns = ["*.sch", "*.brd"]
     elif fmt.startswith("kicad"):
-        patterns = ["*.kicad_sch", "*.kicad_pcb", "*.kicad_pro", "*.sch"]
+        patterns = ["*.kicad_sch", "*.kicad_pcb", "*.kicad_pro", "*.sch",
+                    "*.lib", "*.dcm", "*.net", "*.brd", "*.pro",
+                    "sym-lib-table", "fp-lib-table"]
     else:
         patterns = ["*"]
 
@@ -2108,7 +2290,10 @@ def _apply_overrides(slug: str, components: list[Component]) -> int:
                 log.info("Override %s.%s value: %s → %s", slug, comp.ref, old, new_val)
             else:
                 old = comp.attributes.get(field, "")
-                comp.attributes[field] = new_val
+                if new_val is None:
+                    comp.attributes.pop(field, None)
+                else:
+                    comp.attributes[field] = new_val
                 log.info("Override %s.%s %s: %s → %s", slug, comp.ref, field, old, new_val)
             count += 1
     return count
@@ -2128,8 +2313,34 @@ def _clean_pin_name(pin: str) -> str:
     return cleaned
 
 
+def split_pin(pin: str, refs=None) -> tuple[str, str]:
+    """A net pin "REF.LABEL" as (ref, label).
+
+    Refs can hold dots (the LLC converter's J5.1 XT60 and T1.1, Olimex's "5.0V/3.3V1" jumper) and so
+    can labels (an Eagle gate pin U1.A.1, an nRF pin U1.P0.13), so neither the first nor the last dot
+    is the split. Given the board's refs, the longest ref the pin starts with wins; without them, the
+    first dot splits.
+    """
+    if refs:
+        best = ""
+        i = pin.find(".")
+        while i != -1:
+            if pin[:i] in refs:
+                best = pin[:i]
+            i = pin.find(".", i + 1)
+        if best:
+            return best, pin[len(best) + 1:]
+    ref, _, label = pin.partition(".")
+    return ref, label
+
+
 def _apply_net_pin_fixes(slug: str, nets: list[Net]) -> int:
-    """Fix known pin name typos in nets and clean formatting. Returns count of fixes applied."""
+    """Fix known pin name typos in nets and clean formatting. Returns count of fixes applied.
+
+    Power symbols and flags never reach the nets: each parser drops them by symbol (KiCad's power
+    flag, Eagle's packageless supply symbols). A ref starting with + or - is a real part, such as
+    Olimex's TESTPAD test pads +3.3V1, +5V1 and +1V1, which lost every connection to a ref filter here.
+    """
     count = 0
     for net in nets:
         # Clean LaTeX from net name
@@ -2142,14 +2353,7 @@ def _apply_net_pin_fixes(slug: str, nets: list[Net]) -> int:
                 count += 1
                 log.info("Net pin fix %s: %s → %s", slug, pin, fixed)
             else:
-                cleaned_pin = _clean_pin_name(pin)
-                # Filter power flag footprint pins that leaked from PCB
-                # e.g., +3.3V1.Pad, +5V1.Pad, GND1.Pad, VBUS1.Pad, +1V1.Pad
-                ref_part = cleaned_pin.split(".")[0]
-                if re.match(r"^[+\-]", ref_part):
-                    count += 1
-                    continue  # skip power flag pin
-                new_pins.append(cleaned_pin)
+                new_pins.append(_clean_pin_name(pin))
         net.pins = sorted(new_pins)
     # Remove nets that became single-pin or empty after cleanup
     nets[:] = [n for n in nets if len(n.pins) >= 2]
@@ -2168,10 +2372,11 @@ def assign_pin_info(slug: str, components: list[Component], nets: list[Net],
     list is left alone: the two disagree, so its NC pins can't be trusted.
     Returns (parts set, refs whose lists disagreed).
     """
+    refs = {c.ref for c in components}
     connected: dict[str, set[str]] = {}
     for net in nets:
         for pin in net.pins:
-            ref, _, label = pin.partition(".")
+            ref, label = split_pin(pin, refs)
             connected.setdefault(ref, set()).add(label)
     count = 0
     mismatched: list[str] = []
@@ -2181,7 +2386,7 @@ def assign_pin_info(slug: str, components: list[Component], nets: list[Net],
             continue
         def net_label(label: str) -> str:
             raw = f"{comp.ref}.{label}"
-            return (_NET_PIN_FIXES.get((slug, raw)) or _clean_pin_name(raw)).partition(".")[2]
+            return split_pin(_NET_PIN_FIXES.get((slug, raw)) or _clean_pin_name(raw), {comp.ref})[1]
 
         cleaned = {net_label(label): pad for label, pad in pins.items()}
         mine = connected.get(comp.ref, set())
@@ -2307,6 +2512,7 @@ def annotate_circuit_roles(components: list[Component], nets: list[Net],
 
     # IC prefixes — components that get decoupled
     ic_prefixes = {"U", "IC", "MOD"}
+    comp_by_ref = {c.ref: c for c in components}
 
     for comp in components:
         prefix = _get_ref_prefix(comp.ref)
@@ -2314,11 +2520,25 @@ def annotate_circuit_roles(components: list[Component], nets: list[Net],
         if prefix == "C":
             # Decoupling cap detection: one pin on power, one on GND
             _annotate_decoupling(comp, pin_to_net, net_pins, power_nets, gnd_nets,
-                                 ic_prefixes, pos_map)
+                                 ic_prefixes, pos_map, comp_by_ref.keys())
 
         elif prefix in ("R", "FB"):
             # Pull-up/pull-down detection: one pin on power/GND, other on signal
-            _annotate_pull(comp, pin_to_net, power_nets, gnd_nets, net_pins)
+            _annotate_pull(comp, pin_to_net, power_nets, gnd_nets, net_pins, comp_by_ref)
+
+
+# Parts whose pin on a net makes it a signal: ICs, modules, connectors, transistors, switches
+_SIGNAL_PART_PREFIXES = {"U", "IC", "MOD", "M", "J", "P", "CN", "CON", "X", "Q", "T", "SW", "S", "TP"}
+
+
+def _is_led(comp: Component | None) -> bool:
+    """An indicator LED: LED/DS refs, or a diode whose value, footprint or description says LED."""
+    if comp is None:
+        return False
+    if _get_ref_prefix(comp.ref) in ("LED", "DS"):
+        return True
+    text = " ".join((comp.value, comp.footprint, comp.package, comp.attributes.get("description", "")))
+    return bool(re.search(r"(?<![A-Za-z])LEDS?(?![A-Za-z])", text, re.IGNORECASE))
 
 
 def _find_component_nets(ref: str, pin_to_net: dict[str, str]) -> list[str]:
@@ -2341,7 +2561,8 @@ def _find_component_nets(ref: str, pin_to_net: dict[str, str]) -> list[str]:
 def _annotate_decoupling(cap: Component, pin_to_net: dict[str, str],
                          net_pins: dict[str, set[str]], power_nets: set[str],
                          gnd_nets: set[str], ic_prefixes: set[str],
-                         pos_map: dict[str, tuple[float, float]] | None = None) -> None:
+                         pos_map: dict[str, tuple[float, float]] | None = None,
+                         refs=None) -> None:
     """Annotate a cap with 'decouples: <IC ref>' if it bridges power and GND."""
     cap_nets = _find_component_nets(cap.ref, pin_to_net)
     if len(cap_nets) < 2:
@@ -2361,7 +2582,7 @@ def _annotate_decoupling(cap: Component, pin_to_net: dict[str, str],
     # Find ICs that share this power net
     ics: set[str] = set()
     for pin in net_pins.get(power_net, set()):
-        ref = pin.split(".")[0]
+        ref = split_pin(pin, refs)[0]
         if ref != cap.ref and _get_ref_prefix(ref) in ic_prefixes:
             ics.add(ref)
 
@@ -2377,7 +2598,9 @@ def _annotate_decoupling(cap: Component, pin_to_net: dict[str, str],
                 return float("inf")
             return ((cap_pos[0] - ic_pos[0]) ** 2 + (cap_pos[1] - ic_pos[1]) ** 2) ** 0.5
 
-        closest = min(ics, key=_ic_dist)
+        # Equidistant ICs tie-break on the ref: min() over a set made the choice depend on the
+        # hash seed (4-channel RF front end C-refs flipped between U9 and U10 from run to run).
+        closest = min(sorted(ics), key=_ic_dist)
         # Only annotate if the closest IC is within 15mm
         if _ic_dist(closest) <= 15.0:
             cap.attributes["decouples"] = closest
@@ -2392,7 +2615,7 @@ _RAW_NET_RE = re.compile(
 
 
 def _resolve_net_name(net_name: str, net_pins: dict[str, set[str]],
-                      res_ref: str) -> str:
+                      res_ref: str, refs=None) -> str:
     """Resolve auto-generated net names to meaningful signal names.
 
     For nets named N$10, Net-(R3-Pad2), etc., look at the other pins on the
@@ -2413,7 +2636,7 @@ def _resolve_net_name(net_name: str, net_pins: dict[str, set[str]],
     ic_pins = []
     active_pins = []
     for pin in other_pins:
-        ref = pin.split(".")[0]
+        ref = split_pin(pin, refs)[0]
         prefix = _get_ref_prefix(ref)
         if prefix in ("U", "IC", "MOD"):
             ic_pins.append(pin)
@@ -2424,8 +2647,8 @@ def _resolve_net_name(net_name: str, net_pins: dict[str, set[str]],
     best = ic_pins or active_pins or other_pins
     # Pick the pin with the most descriptive name (has a non-numeric suffix)
     for pin in sorted(best):
-        parts = pin.split(".", 1)
-        if len(parts) == 2 and not parts[1].isdigit():
+        label = split_pin(pin, refs)[1]
+        if label and not label.isdigit():
             return _clean_pin_name(pin)
 
     # Fallback: first other pin as "REF.PIN"
@@ -2434,11 +2657,14 @@ def _resolve_net_name(net_name: str, net_pins: dict[str, set[str]],
 
 def _annotate_pull(res: Component, pin_to_net: dict[str, str],
                    power_nets: set[str], gnd_nets: set[str],
-                   net_pins: dict[str, set[str]]) -> None:
+                   net_pins: dict[str, set[str]],
+                   comp_by_ref: dict[str, Component] | None = None) -> None:
     """Annotate a resistor with 'pullup: <net>' or 'pulldown: <net>'.
 
     Only annotates resistors ≥ 1kohm — lower values are likely current sense,
-    series termination, or other non-pull functions.
+    series termination, or other non-pull functions. A resistor whose other end
+    reaches an LED is its series (current-limiting) resistor, not a pull: PocketPD's
+    R22 was a "pulldown" on D5.K and Soldered MPPT's R1 a "pullup" on D1.A.
     """
     # Skip low-value resistors — real pull-ups are ≥ 1kohm
     val_str = res.value.lower().replace("ohm", "").strip()
@@ -2456,15 +2682,28 @@ def _annotate_pull(res: Component, pin_to_net: dict[str, str],
         return
 
     net1, net2 = res_nets[0], res_nets[1]
+    refs = (comp_by_ref or {}).keys()
+
+    def drives_led(net: str) -> bool:
+        # Only the LED (and passives) on the other end: with an IC, connector or transistor pin there
+        # too it is a pull with an indicator on the line (Duet 3's 27k SWCLK pull-up and activity LED)
+        others = {split_pin(pin, refs)[0] for pin in net_pins.get(net, ())} - {res.ref}
+        return (any(_is_led((comp_by_ref or {}).get(ref)) for ref in others)
+                and not any(_get_ref_prefix(ref) in _SIGNAL_PART_PREFIXES for ref in others))
 
     if net1 in power_nets and net2 not in gnd_nets and net2 not in power_nets:
-        res.attributes["pullup"] = _resolve_net_name(net2, net_pins, res.ref)
+        kind, signal = "pullup", net2
     elif net2 in power_nets and net1 not in gnd_nets and net1 not in power_nets:
-        res.attributes["pullup"] = _resolve_net_name(net1, net_pins, res.ref)
+        kind, signal = "pullup", net1
     elif net1 in gnd_nets and net2 not in power_nets and net2 not in gnd_nets:
-        res.attributes["pulldown"] = _resolve_net_name(net2, net_pins, res.ref)
+        kind, signal = "pulldown", net2
     elif net2 in gnd_nets and net1 not in power_nets and net1 not in gnd_nets:
-        res.attributes["pulldown"] = _resolve_net_name(net1, net_pins, res.ref)
+        kind, signal = "pulldown", net1
+    else:
+        return
+    if drives_led(signal):
+        return
+    res.attributes[kind] = _resolve_net_name(signal, net_pins, res.ref, refs)
 
 
 # ---------------------------------------------------------------------------
@@ -2525,19 +2764,18 @@ def _is_auto_net(name: str) -> bool:
     return bool(_AUTO_NET_EAGLE.match(name) or _AUTO_NET_KICAD.match(name))
 
 
-def _pin_ref_prefix(pin: str) -> str:
+def _pin_ref_prefix(pin: str, refs=None) -> str:
     """Extract the reference prefix from a pin string like 'U1.SW' → 'U'."""
-    ref = pin.split(".")[0]
-    return ref.rstrip("0123456789$")
+    ref = split_pin(pin, refs)[0]
+    return ref.rstrip("0123456789$") if "." not in ref else _get_ref_prefix(ref)
 
 
-def _pin_function(pin: str) -> str:
+def _pin_function(pin: str, refs=None) -> str:
     """Extract the pin function from 'U1.SW' → 'SW', 'R1.2' → '2'."""
-    parts = pin.split(".", 1)
-    return parts[1] if len(parts) > 1 else ""
+    return split_pin(pin, refs)[1]
 
 
-def infer_net_names(nets: list[Net]) -> int:
+def infer_net_names(nets: list[Net], refs=None) -> int:
     """Rename auto-numbered nets in-place using IC pin function heuristics.
 
     Only renames when a single unambiguous IC pin name is found.
@@ -2554,10 +2792,10 @@ def infer_net_names(nets: list[Net]) -> int:
         # Find IC pins with meaningful names
         candidates: list[str] = []
         for pin in net.pins:
-            prefix = _pin_ref_prefix(pin)
+            prefix = _pin_ref_prefix(pin, refs)
             if prefix not in _IC_PREFIXES:
                 continue
-            func = _pin_function(pin)
+            func = _pin_function(pin, refs)
             if not func or _GENERIC_PIN.match(func):
                 continue
             # Strip @pad_num disambiguation suffix
@@ -2591,6 +2829,30 @@ def infer_net_names(nets: list[Net]) -> int:
     return renamed
 
 
+# Values that are no fitted electrical part: logos, pads, holes, and do-not-fit markers.
+# Checked case-insensitively: Duet's M1-M10 (FID, MOUNTING, LOGO, CE Logo) passed as parts.
+_JUNK_VALUES = {
+    "LOGO", "PAD", "TEST POINT", "MOUNTING HOLE", "FIDUCIAL", "HEATSINK",
+    "NC", "DNP", "NF", "NI", "NM", "DNI", "DNF", "NOFIT", "NOPOP",
+}
+_JUNK_VALUE_PATTERNS = re.compile(
+    r"^(mounting[\s_-]*hole|tooling[\s_-]*hole|standoff|spacer|mouse[\s_-]*bite|jlc[\s_-]*tooling|"
+    r"test[\s_-]*point|fiducial|fid(?![A-Za-z0-9])|mounting(?![A-Za-z0-9])|oshw[_-]?logo|"
+    r"(?:[A-Za-z0-9-]+[\s_-])?logo(?![A-Za-z0-9]))",
+    re.IGNORECASE,
+)
+# The same do-not-fit markers ahead of the value the part would have: Duet's "DNP 47K" stayed on
+# the board while hubbish's "DNP" was dropped. Olimex's bare "NA"/"NA R0603" (not assembled) too.
+_DNP_PREFIXED = re.compile(r"^(?:DNP|DNI|DNF|NOFIT|NOPOP)\b[\s/:(_-]|^NA(?:[\s(]+[RCL]?\d{4}\)?)?$", re.IGNORECASE)
+
+
+def is_junk_value(value: str) -> bool:
+    """A value naming no fitted electrical part (a logo, hole or pad), or a do-not-fit marker."""
+    value = value.strip()
+    return (value.upper() in _JUNK_VALUES or bool(_JUNK_VALUE_PATTERNS.match(value))
+            or bool(_DNP_PREFIXED.match(value)))
+
+
 def board_to_dict(board: BoardData) -> dict:
     """Convert BoardData to a dict suitable for YAML output."""
     d: dict = {
@@ -2609,6 +2871,8 @@ def board_to_dict(board: BoardData) -> dict:
         d["tags"] = board.tags
     if board.key_ics:
         d["key_ics"] = board.key_ics
+    if board.netlist_source:
+        d["netlist_source"] = board.netlist_source
 
     if board.outline:
         d["outline"] = {"width_mm": board.outline.width, "height_mm": board.outline.height}
@@ -2628,22 +2892,20 @@ def board_to_dict(board: BoardData) -> dict:
 
     if board.components:
         d["components"] = []
-        # Filter junk components (logos, pads, ordering instructions, etc.)
-        _JUNK_VALUES = {
-            "logo", "pad", "test point", "mounting hole",
-            "NC", "DNP", "NF", "NI", "DNI", "NOFIT", "NOPOP",
-            "FIDUCIAL", "heatsink",
-        }
-        _JUNK_VALUE_PATTERNS = re.compile(
-            r"^(mounting\s*hole|tooling\s*hole|standoff|spacer|mouse\s*bite|"
-            r"jlc\s*tooling|test\s*point|fiducial|oshw[_-]?logo)",
-            re.IGNORECASE,
-        )
         _JUNK_FOOTPRINTS = {"Ordering_Instructions"}
         for c in sorted(board.components, key=lambda c: c.ref):
-            if not c.value or c.value in _JUNK_VALUES:
+            # A fitted part with no value is still a part: the T41 SDR's PCM1808 ADC and PCM5102 DAC
+            # modules were dropped, and with them every net to its audio path. The parsers name such
+            # parts by their symbol; failing that, by their MPN or footprint, never silently dropped.
+            if not c.value:
+                c.value = c.attributes.get("mpn") or c.footprint.rsplit(":", 1)[-1]
+                if c.value:
+                    log.warning("%s has no value; named %r from its %s", c.ref, c.value,
+                                "MPN" if c.attributes.get("mpn") else "footprint")
+            if not c.value:
+                log.warning("%s has no value, MPN or footprint; left out", c.ref)
                 continue
-            if c.value and _JUNK_VALUE_PATTERNS.match(c.value):
+            if is_junk_value(c.value):
                 continue
             if c.footprint in _JUNK_FOOTPRINTS:
                 continue
@@ -2658,8 +2920,12 @@ def board_to_dict(board: BoardData) -> dict:
 
     if board.nets:
         d["nets"] = []
+        comp_refs = {c["ref"] for c in d.get("components", [])}
         for n in sorted(board.nets, key=lambda n: n.name):
-            net_dict: dict = {"name": n.name, "pins": n.pins}
+            pins = [pin for pin in n.pins if split_pin(pin, comp_refs)[0] in comp_refs]
+            if len(pins) < 2:
+                continue
+            net_dict: dict = {"name": n.name, "pins": pins}
             if n.net_class and n.net_class != "default":
                 net_dict["class"] = n.net_class
             if n.trace_width:
@@ -2763,23 +3029,42 @@ def find_schematic(repo_dir: Path, board_info: dict) -> Path | None:
     """The board's schematic (a PADS board's layout) in its cached repo."""
     fmt = board_info["format"]
     sch_path = repo_dir / board_info["schematic_path"]
-    if not sch_path.exists():
-        parent = sch_path.parent
-        # Search for schematic files matching the format
-        if fmt.startswith("kicad") and fmt != "kicad_legacy":
-            candidates = list(parent.glob("*.kicad_sch"))
-        else:
-            candidates = list(parent.glob("*.sch"))
-        if candidates:
-            sch_path = candidates[0]
-            log.warning("Exact path not found, using: %s", sch_path)
-        else:
-            log.error("Schematic not found: %s", sch_path)
-            return None
-    return sch_path
+    # The registry's explicit root takes priority over sibling subsheets.
+    if sch_path.is_file():
+        return sch_path
+    parent = sch_path.parent
+    # Search for schematic files matching the format only for a registered wildcard. A missing
+    # concrete path fails even with one candidate left: a lone file can be a subsheet (Bus Pirate 5
+    # was parsed from one), and publishing another sheet's parts as the board is worse than failing.
+    pattern = "*.kicad_sch" if fmt.startswith("kicad") and fmt != "kicad_legacy" else "*.sch"
+    candidates = sorted(parent.glob(pattern))
+    if "*" in sch_path.name and len(candidates) == 1:
+        return candidates[0]
+    if candidates:
+        raise FileNotFoundError(
+            f"Schematic not found: {sch_path}; candidates: "
+            + ", ".join(p.name for p in candidates)
+            + ". Register the intended root schematic explicitly."
+        )
+    raise FileNotFoundError(f"Schematic not found: {sch_path}")
 
 
-def extract_board_pins(fmt: str, sch_path: Path, part_refs: set[str]
+def find_pcb(repo_dir: Path, board_info: dict, sch_path: Path) -> Path:
+    """Use the registered connectivity layout, otherwise the schematic's sibling PCB."""
+    if board_info.get("pcb_path"):
+        pcb_path = repo_dir / board_info["pcb_path"]
+        if not pcb_path.is_file():
+            raise FileNotFoundError(f"Registered PCB not found: {pcb_path}")
+        return pcb_path
+    pcb_path = sch_path.with_suffix(".kicad_pcb")
+    if board_info["format"] == "kicad_legacy" and not pcb_path.is_file():
+        legacy_path = sch_path.with_suffix(".brd")
+        if legacy_path.is_file():
+            return legacy_path
+    return pcb_path
+
+
+def extract_board_pins(fmt: str, sch_path: Path, part_refs: set[str], pcb_path: Path | None = None
                        ) -> tuple[dict[str, dict[str, str]], dict[str, set[str]]]:
     """Every part's pins ({ref: {label: pad}}) and those connected without a net in the board data
     (to a dropped part, or Eagle supply pins by name), by format."""
@@ -2791,8 +3076,26 @@ def extract_board_pins(fmt: str, sch_path: Path, part_refs: set[str]
         return pads_part_pins(sch_path, part_refs)
     if fmt.startswith("kicad"):
         from parsers.kicad import extract_part_pins as kicad_part_pins
-        pcb_path = sch_path.with_suffix(".kicad_pcb")
-        return kicad_part_pins(pcb_path, part_refs) if pcb_path.exists() else ({}, {})
+        pcb_path = pcb_path or sch_path.with_suffix(".kicad_pcb")
+        if pcb_path.exists():
+            if fmt == "kicad_legacy" and pcb_path.suffix == ".brd":
+                from parsers.kicad_legacy import read_layout, reference_paths
+                _, pins, wired = read_layout(pcb_path, part_refs, reference_paths(sch_path))
+                return pins, wired
+            paths = None
+            if fmt == "kicad_legacy":
+                from parsers.kicad_legacy import reference_paths
+                paths = reference_paths(sch_path)
+            pins, wired = kicad_part_pins(pcb_path, part_refs, reference_paths=paths)
+            if pins:
+                return pins, wired
+        from parsers.kicad_netlist import export_schematic
+        try:
+            _, pins, wired = export_schematic(sch_path, part_refs)
+            return pins, wired
+        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+            log.warning("Schematic pin information unavailable for %s: %s", sch_path, exc)
+            return {}, {}
     return {}, {}
 
 
@@ -2820,7 +3123,8 @@ def merge_pin_info(slug: str, board_info: dict, dry_run: bool = False) -> tuple[
     components = [Component(ref=c["ref"], value=str(c.get("value", "")), footprint=str(c.get("footprint", "")))
                   for c in board.get("components") or []]
     nets = [Net(name=n["name"], pins=n.get("pins") or []) for n in board.get("nets") or []]
-    part_pins, implicit = extract_board_pins(board_info["format"], sch_path, {c.ref for c in components})
+    pcb_path = find_pcb(repo_dir, board_info, sch_path) if board_info["format"].startswith("kicad") else None
+    part_pins, implicit = extract_board_pins(board_info["format"], sch_path, {c.ref for c in components}, pcb_path)
     count, mismatched = assign_pin_info(slug, components, nets, part_pins, implicit)
     fields = {c.ref: pin_info_fields(c.pin_count, c.nc_pins) for c in components}
 
@@ -2871,6 +3175,8 @@ def merge_pin_info(slug: str, board_info: dict, dry_run: bool = False) -> tuple[
 def process_board(slug: str, board_info: dict, dry_run: bool = False,
                   force_clone: bool = False) -> BoardData | None:
     """Process a single board: clone → parse → write YAML."""
+    from board_overrides import BOARD_PROPERTY_ALIASES
+    property_aliases = BOARD_PROPERTY_ALIASES.get(slug)
     fmt = board_info["format"]
     zip_url = ""
     if board_info["repo"].startswith("ZIP:"):
@@ -2890,6 +3196,9 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
     outline: BoardOutline | None = None
     design_rules: DesignRules | None = None
     copper_pours: list[CopperPour] = []
+    schematic_pins = None
+    netlist_source = ""
+    pcb_path = find_pcb(repo_dir, board_info, sch_path) if fmt.startswith("kicad") else None
 
     if fmt == "eagle":
         from parsers.eagle import parse_schematic, parse_board as eagle_parse_board
@@ -2907,14 +3216,17 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
         from parsers.kicad import parse_schematic as kicad_parse_sch
         from parsers.kicad import parse_pcb, enrich_from_project
 
-        components, _ = kicad_parse_sch(sch_path, repo_root=repo_dir)
+        components, _ = kicad_parse_sch(sch_path, repo_root=repo_dir, property_aliases=property_aliases)
 
-        # KiCad PCB file has same stem, different extension
-        pcb_path = sch_path.with_suffix(".kicad_pcb")
         if pcb_path.exists():
             part_refs = {c.ref for c in components}
-            positions, outline, design_rules, nets, copper_pours = parse_pcb(
-                pcb_path, part_refs, components)
+            if board_info.get("pcb_path"):
+                # An associated layout may be the parent design of this subsheet: use only
+                # its connectivity, filtered to our refs, not its BOM or board-wide geometry.
+                _, _, _, nets, _ = parse_pcb(pcb_path, part_refs)
+            else:
+                positions, outline, design_rules, nets, copper_pours = parse_pcb(
+                    pcb_path, part_refs, components)
         else:
             nets = []
             log.info("No .kicad_pcb file found, skipping positions/nets")
@@ -2932,15 +3244,24 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
 
     elif fmt == "kicad_legacy":
         from parsers.kicad_legacy import parse_schematic as legacy_parse_sch
+        from parsers.kicad_legacy import reference_paths
         from parsers.kicad import parse_pcb
 
-        components, _ = legacy_parse_sch(sch_path)
+        components, _ = legacy_parse_sch(sch_path, property_aliases=property_aliases)
 
-        pcb_path = sch_path.with_suffix(".kicad_pcb")
-        if pcb_path.exists():
+        if pcb_path.exists() and pcb_path.suffix == ".brd":
+            from parsers.kicad_legacy import read_layout
+            nets, pins, wired = read_layout(pcb_path, {c.ref for c in components}, reference_paths(sch_path))
+            schematic_pins = (pins, wired)
+            netlist_source = "layout"
+        elif pcb_path.exists():
             part_refs = {c.ref for c in components}
-            positions, outline, design_rules, nets, copper_pours = parse_pcb(
-                pcb_path, part_refs, components)
+            paths = reference_paths(sch_path)
+            if board_info.get("pcb_path"):
+                _, _, _, nets, _ = parse_pcb(pcb_path, part_refs, reference_paths=paths)
+            else:
+                positions, outline, design_rules, nets, copper_pours = parse_pcb(
+                    pcb_path, part_refs, components, reference_paths=paths)
         else:
             nets = []
             log.info("No .kicad_pcb file found, skipping positions/nets")
@@ -2950,6 +3271,19 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
         log.warning("Format '%s' not yet supported, skipping %s", fmt, slug)
         return None
 
+    # A missing layout (or an empty placeholder PCB) has no pad connectivity.
+    # Use KiCad itself rather than guessing at schematic geometry and hierarchy.
+    if fmt.startswith("kicad") and not nets and not positions:
+        from parsers.kicad_netlist import export_schematic
+        try:
+            nets, pins, wired = export_schematic(sch_path, {c.ref for c in components})
+            schematic_pins = (pins, wired)
+            netlist_source = "schematic" if nets else "unavailable"
+        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+            log.warning("No netlist available for %s: %s", slug, exc)
+            schematic_pins = ({}, {})
+            netlist_source = "unavailable"
+
     # Apply board-specific overrides for known source-data errors
     _apply_overrides(slug, components)
 
@@ -2957,7 +3291,8 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
     _apply_net_pin_fixes(slug, nets)
 
     # Each part's pin count and its pins on no net (NC), from its full pin list
-    part_pins, implicit = extract_board_pins(fmt, sch_path, {c.ref for c in components})
+    part_pins, implicit = (schematic_pins if schematic_pins is not None else
+                           extract_board_pins(fmt, sch_path, {c.ref for c in components}, pcb_path))
     n_pins, mismatched = assign_pin_info(slug, components, nets, part_pins, implicit)
     log.info("Pin lists for %d parts", n_pins)
     if mismatched:
@@ -2970,7 +3305,7 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
     annotate_circuit_roles(components, nets, positions)
 
     # Infer meaningful names for auto-numbered nets
-    n_renamed = infer_net_names(nets)
+    n_renamed = infer_net_names(nets, {c.ref for c in components})
     if n_renamed:
         log.info("Inferred names for %d auto-numbered nets", n_renamed)
 
@@ -3012,7 +3347,13 @@ def process_board(slug: str, board_info: dict, dry_run: bool = False,
         outline=outline,
         design_rules=design_rules,
         copper_pours=copper_pours,
+        netlist_source=netlist_source,
     )
+    # A ZIP board's identity fields come from its registry row; an override keeps the identity
+    # clients already filter on (org="Seeed Studio" matches the other Seeed boards).
+    for key in ("source", "org", "org_display"):
+        if key in meta:
+            setattr(board, key, meta[key])
 
     if dry_run:
         outline_str = f", {outline.width}x{outline.height}mm" if outline else ""

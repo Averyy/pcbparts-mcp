@@ -4,86 +4,67 @@
 
 ## Quick Reference
 
-- **Power sequence is family-specific -- no universal rule.** ECP5 hardware checklist recommends VCCIO before or with VCC and VCCAUX (verify against your device's datasheet). iCE40: VCC + VCCPLL first, then SPI_VCC, then VPP_2.5V. Always check your family's datasheet.
-- **SERDES analog supplies require isolated LDO or passive LC filter.** Switching regulator ripple at the SERDES PLL bandwidth directly adds jitter. Target < 0.25% peak noise on PLL rails, < 1% on SERDES differential rails.
-- **100 nF per power pin + bulk per rail.** ECP5: 3x 10 uF bulk on VCC. iCE40: 4.7 uF + 100 nF per pin.
-- **JTAG: always route to header.** 4.7 kohm pull-up on TDI/TMS/TDO, 4.7 kohm pull-down on TCK. Even if primary config is SPI, JTAG enables debug.
-- **Unused VCCIO banks: connect to a power rail, never leave floating.**
+- **ECP5 external-flash boot needs VCCIO8 high enough for the flash before POR release, or PROGRAMN/INITN held low.** iCE40 sequencing is different; follow the exact family requirements below [7, p.52; 2, pp.9-10].
+- **ECP5/ECP5-5G rail noise targets: < 0.25% peak on PLL supplies, <= 1% peak on SERDES differential supplies.** Include regulator error and filter voltage drop in the supply tolerance budget [1, pp.8-11].
+- **ECP5 VCC: 3x 10 uF bulk + 100 nF per pin; iCE40: 4.7 uF per rail + 100 nF per pin.** The iCE40 VCCPLL filter also needs a 100 ohm series resistor [1, p.10; 2, pp.8-9].
+- **ECP5 JTAG: 4.7 kohm pull-up on TDI/TMS/TDO to VCCIO8, 4.7 kohm pull-down on TCK.** iCE40 uses SPI configuration; do not apply an ECP5 JTAG pin rule to it [1, p.15; 2, p.11].
+- **ECP5 unused VCCIO banks: connect to a power rail, never leave floating.** Other families need their own unused-bank pin rules [1, p.12].
 
 ## Design Rules
 
 ### Power Supply Architecture
 
-- **Combined switching + linear strategy for SERDES FPGAs.** Switching regulator for VCC core and VCCIO (high current, efficiency matters). Dedicated LDO for SERDES analog (VCCA, VCCPLL): LP5907 (6.5 uVrms, 250 mA) for low-power SERDES, TPS7A20 (10 uVrms, 300 mA) for general use, LT3045 (0.8 uVrms) for jitter-critical links.
-- **Regulator tolerance: <= 3% to leave 2% margin for noise and layout.** The 1.2V core rail is especially sensitive: 12 mV = 1% of rail voltage. Tolerance budget must include reference, line/load regulation, and feedback resistor tolerance.
-- **Ferrite bead passive filter for SERDES Rx/Tx termination supplies (VCCIB/VCCOB).** 120-240 ohm at 100 MHz. ESR * current < 1% of rail voltage for non-analog, < 0.25% for PLL. PLL rails draw low current, allowing ferrite ESR up to 0.3 ohm. Murata BLM41PG471SN1L is a known-good choice.
+- **ECP5/ECP5-5G and iCE40 regulator recommendation: <= 3% error, leaving 2% for noise/layout within a +/-5% rail budget.** The 1.2V rail loses 1% margin per 12 mV; include reference, line/load, feedback resistor, and filter voltage-drop errors [1, pp.8-11; 2, p.10].
+- **ECP5/ECP5-5G analog filtering: 120 ohm ferrite + 10 uF + 100 nF per pin on VCCA, VCCHRX, VCCHTX, and VCCAUXA.** The checklist recommends beads in the 120-240 ohm at 100 MHz range; DC resistance * current must stay below 1% of non-analog rail voltage or 0.25% of sensitive rail voltage. PLL bead DC resistance can be <= 0.3 ohm only when its load current meets that drop budget [1, pp.10-11].
 
-> WARNING: Ferrite bead + downstream cap = LC resonance. If resonance falls in the ferrite's inductive region, you get gain instead of attenuation at the switching frequency. Damping guidance -> `guides/passives.md`.
-
-- **Unused SERDES DCU: connect VCCA, VCCAUXA, VCCHRX, VCCHTX, REFCLK, and Rx inputs to ground.** Leave Tx outputs open. For unused channels within an active DCU: connect VCCA and VCCHTX to power, Rx inputs to ground, leave VCCAUXA/VCCHRX and Tx open.
+- Ferrite bead resonance and damping -> `guides/passives.md`.
+- **ECP5/ECP5-5G unused SERDES DCU: ground VCCA, VCCAUXA, VCCHRX, VCCHTX, REFCLK, and Rx inputs; leave Tx outputs open.** For an unused channel in an active DCU, power VCCA/VCCHTX, ground its unused REFCLK and Rx inputs, and leave the channel's VCCAUXA/VCCHRX and Tx open. Preserve the supply/reference-clock connections needed by the active channel [1, p.12].
 
 ### Power Sequencing
 
-- **No universal FPGA power sequence -- it is family-specific.** Get it from the hardware checklist document for your exact part.
-- **ECP5: Lattice hardware checklist recommends VCCIO before or together with VCC and VCCAUX** (exact requirements may vary by package -- always verify against your device's datasheet). POR de-asserts when VCC >= 0.9V, VCCAUX >= 2.0V, VCCIO8 >= 0.95V. Supplies must ramp monotonically.
-- **iCE40: VCC + VCCPLL first, then SPI_VCC, then VPP_2.5V, then VCCIO.** Each supply must reach 0.5V before the next is applied. No power-down sequence required.
-- **Intel/Altera Cyclone V/Arria V: no strict sequence required (supports hot socketing).** But design monotonic ramps and ensure minimum POR current is available. MSEL pins select POR delay: 4 ms or 100 ms typical.
-- **Simplest sequencing: cascade PGOOD into EN.** Second supply starts when first reaches 90% of final value. Low cost but no timing control and no power-down sequencing.
-- **For > 3 rails: use a sequencer IC.** LM3880 (3 outputs, up/down sequencing). For monitored sequencing: TPS386000 (4-channel reset IC with programmable delay). For complex systems: UCD90120A (12 rails, PMBus, GUI-configurable).
+- **ECP5/ECP5-5G: the checklist recommends VCCIO before or together with VCC/VCCAUX; external-flash boot has a specific constraint.** VCCIO8 must exceed the flash VIH before at least one of VCC/VCCAUX reaches its POR threshold. If VCCIO8 comes last, hold PROGRAMN or INITN low until it meets flash VIH. On LFE5UM/LFE5UM5G, power VCCA before VCCAUXA [1, p.13; 7, p.52].
+- **iCE40 recommended order: VCC + VCCPLL, then SPI_VCC, then VPP_2.5V where present.** Each preceding supply must reach >= 0.5V before the next is applied. Other VCCIO supplies can start any time after VCC/VCCPLL; they need not wait for VPP_2.5V. No power-down order is required, but partial-rail restart must follow the power-up order [2, pp.7, 9-10].
+- **Intel/Altera Cyclone V/Arria V: AN-662 does not require a sequence for correct operation, but multi-rail startup timing must avoid excessive transient current.** Use monotonic ramps with sufficient POR current. MSEL selects a typical 4 ms or 100 ms POR delay; extend it through nSTATUS if rails cannot meet ramp timing [5, p.12].
+- **PGOOD-to-EN sequencing uses the actual regulator PGOOD threshold.** TI's example uses a typical 90% threshold; it provides monitored startup but no controlled power-down order [4, p.1].
+- **Sequencer choices: LM3880 for three timed outputs with up/down sequencing; TPS386000 for monitored reset-based startup.** For programmable dependencies and PMBus monitoring, TI uses UCD90120A; select by timing and monitoring needs rather than a universal rail-count threshold [4, pp.1-3].
 
 ### Decoupling
 
-- **ECP5: 3x 10 uF bulk + 100 nF per VCC pin.** VCCAUX: 120 ohm ferrite + 10 uF + 100 nF per pin. VCCIO: 10 uF + 100 nF per pin (unused banks: replace 10 uF with 1 uF; heavy-output banks: add extra 10 uF or use 22 uF).
-- **iCE40: 4.7 uF + 100 nF per power pin on every rail.** VCCPLL: 100 ohm series resistor + 4.7 uF + 100 nF. GNDPLL must NOT connect to board ground (except on packages without dedicated GNDPLL ball). This filter is required even if PLL is not used.
-- **Capacitor sizing for FPGA decoupling.** Preferred/next-best: 100 nF in 0201/0402, 1-2.2 uF in 0402/0603, 4.7 uF in 0603/0402, 10 uF in 0603/0805, 22 uF in 0805/1206. Use X5R or X7R. Voltage rating >= 1.8x rail voltage to maintain capacitance under DC bias.
-- **BGA decoupling: caps on back side directly under power pins.** Via-in-pad recommended for larger caps. Use sub-0402 for fastest high-speed decoupling response.
+- **ECP5: 3x 10 uF bulk + 100 nF per VCC pin.** VCCAUX: 120 ohm ferrite + 10 uF + 100 nF per pin. VCCIO: 10 uF per bank + 100 nF per pin; unused banks can replace 10 uF with 1 uF, heavy-output banks can add 10 uF or use 22 uF [1, p.10].
+- **iCE40: 4.7 uF per rail + 100 nF per power pin.** VCCPLL: 100 ohm series resistor + 4.7 uF + 100 nF, with the capacitors returning to GNDPLL when that pin exists. GNDPLL must not connect externally to board ground when a dedicated pin is present; its DC ground connection is internal. Apply the filter even if the PLL is unused [2, pp.8-9].
+- **ECP5 capacitor package recommendations, preferred/next-best:** 100 nF in 0201/0402, 1-2.2 uF in 0402/0603, 4.7 uF in 0603/0402, 10 uF in 0603/0805, 22 uF in 0805/1206. Lattice recommends X5R/X7R and a voltage rating >= 1.8x maximum rail voltage; verify actual biased capacitance separately [1, p.12].
+
 - Per-IC decoupling strategy details -> `power/decoupling.md`.
 
 ### Configuration
 
-- **iCE40 configuration modes are set by SPI_SS_B at POR.** SPI_SS_B = 0: boot from external SPI flash (Controller SPI mode). SPI_SS_B = 1: boot from internal NVCM.
-- **External SPI flash must support 0x0B Fast Read command** with 24-bit start address and 8 dummy bits (iCE40). RP2040/RP2350 flash requirements differ -> `mcus/rp2040.md`.
-- **Recommended SPI config flash for iCE40: Winbond W25Q32JVSS (32Mbit, 104MHz) or W25Q128JVSIQ (128Mbit).** Must support 0x0B Fast Read with 24-bit addressing. For ECP5: Winbond W25Q128JVSIQ or ISSI IS25LP128 (QSPI, 133MHz). Flash voltage must match FPGA SPI_VCC / VCCIO8 rail. Mismatched flash voltage or unsupported read commands are the #1 cause of ECP5/iCE40 boot failures in open-source designs.
-- **ECP5 configuration pins pull-up/pull-down:** PROGRAMN: 4.7 kohm pull-up to VCCIO8. INITN: 4.7 kohm pull-up. MCLK/CCLK: 510 ohm to 1 kohm series resistor near TX side. CSSPIN: 4.7-10 kohm pull-up close to SPI flash. CFG[2:0]: 1-10 kohm as needed.
-- **Always route JTAG to a programming header on every PCB** even if primary config is SPI/NVCM. Include VCC and GND on the header. JTAG pin treatment: TDI/TMS/TDO pull-up 4.7 kohm, TCK pull-down 4.7 kohm.
-- **Leave unused configuration ports open** (ECP5). Connecting unused config pins can cause contention.
+- **iCE40 LP/HX/Ultra/UltraLite/UltraPlus: SPI_SS_B high at POR release or CRESET_B rising selects NVCM when enabled, otherwise external-flash SPI master boot; low selects SPI slave configuration by an external controller.** LM has no NVCM. FPGA-TN-02006-2.3 p.11 conflicts with the mode-selection description; use FPGA-TN-02001-3.5 pp.10-11 [8].
+- **External SPI flash must support 0x0B Fast Read with a 24-bit start address and 8 dummy bits for iCE40 master boot.** Pull SPI_SS_B up to SPI_VCC with 10 kohm for master boot; use 10 kohm down for slave configuration when no processor drives it [2, pp.11-13; 8, pp.19-21].
+- **ECP5 configuration flash voltage must match VCCIO8; choose a part in Diamond Programmer's SPI Flash Support list.** For iCE40, match the SPI flash interface to SPI_VCC and its required command format; capacity and maximum clock alone do not prove configuration compatibility [1, p.19; 2, pp.11-13].
+- **ECP5 configuration pulls: PROGRAMN/INITN 4.7 kohm up to VCCIO8; CSSPIN 4.7-10 kohm up near the flash; CFG[2:0] 1-10 kohm straps.** MCLK/CCLK uses a 510 ohm-1 kohm pull-up, with a separate 22-80 ohm series resistor selected for the PCB and placed near the transmitter; 510 ohm-1 kohm is not the series-termination value [1, p.15, Table 6.2 and notes].
+- **ECP5: route TCK/TMS/TDI/TDO, VCCIO8, and GND to a common test header even when booting from SPI.** For iCE40 SPI access, pull CRESET_B up with 10 kohm to its I/O bank and pull CDONE up to its bank supply; choose CDONE resistance for configuration frequency and trace capacitance (10 kohm is shown in the checklist examples) [1, p.15; 2, pp.11-13].
+- **Leave ECP5 configuration ports unused by the selected mode open, while retaining its required dedicated control pins and straps.** Table 6.3 lists the pins required in each mode [1, p.15].
 
 ### IO Banking and Pin Assignment
 
-- **Do not place fast-switching single-ended outputs in IO banks adjacent to SERDES channels.** SSO from 8 mA outputs toggling at 100 MHz couples ~30-50 mV into VCCA through PCB via mutual inductance in wire-bond packages. At 3.125 Gbps SERDES, 30 mV on a 1.2V rail adds ~25 ps deterministic jitter -- enough to close an eye diagram. Limit output count and drive strength in adjacent banks, or assign adjacent pins as static/ground.
-- **Flip-chip packages are less sensitive to SSO than wire-bond** but still benefit from limiting output count and drive strength in banks adjacent to SERDES.
-- **iCE40 LVDS inputs require external 100 ohm differential termination.** LVDS outputs need series resistors (Rs) and parallel resistor (Rp) network -- values computed from output driver specs in the LVDS usage guide.
-- **High-speed signals: 5x trace-width clearance from other signals.** Layer transitions need ground vias (ground-ground reference) or stitching caps (power reference change).
+- **ECP5/ECP5-5G: keep switching outputs away from SERDES analog supply and reference-clock pins.** Assign nearby I/Os to static or low-switching signals; the checklist identifies output crosstalk as a leading source of noise on sensitive supplies [1, pp.10, 20].
+- **iCE40 LP/HX LVDS inputs require external differential termination.** Emulated LVDS outputs need two series resistors and a parallel resistor network; compute their values from the LP/HX differential-I/O guide. This is not a universal iCE40 Ultra-family pin rule [2, p.16].
 
 ### Clock Distribution
 
-- **iCE40: use dedicated GBIN clock input pins.** GBIN7 and its associated PIO are best for direct differential clock inputs. Other GBIN pins can be used for single-ended clocks.
-- **ECP5 reference clock oscillator: decouple supply with 100 nF + 10 uF close to oscillator.** Use dual-footprint PCB pad supporting both HCSL and LVDS oscillator packages for flexibility.
-- **SERDES reference clock: use two center-tapped 50 ohm resistors to ground** for CML interface (LatticeECP2M/ECP3). LVPECL clock sources require external AC coupling (75-200 nF for PCIe, 20+ nF for 8b/10b/XAUI).
+- **iCE40 LP/HX: use dedicated GBIN clock inputs.** GBIN7 and its associated PIO are recommended for direct differential clocks; LM/Ultra/UltraLite/UltraPlus have a different global-buffer arrangement [2, p.14, Figure 4.1].
+- **ECP5 reference clock oscillator: decouple with 100 nF + 1 uF close to the oscillator.** The checklist shows a dual HCSL/LVDS footprint option [1, p.23].
+- **LatticeECP2M/ECP3 LVPECL-to-CML reference clock: use the vendor's driver-load and AC-coupling circuit.** Their reference receivers offer configurable internal 50 ohm termination; LatticeSC requires external termination. PCIe transmitter coupling values are not a reference-clock capacitor rule [3, pp.17-18, Figures 14-15].
 
 ### DDR Memory Interfaces
 
-- **DDR3/DDR4: use fly-by topology** (daisy chain from controller through Chip 0 to Chip N). Fly-by reduces SSN vs double-T topology. DDR protocol handles fly-by skew via write leveling.
-
-> WARNING: Write leveling is mandatory for fly-by DDR3/DDR4 routing. Fly-by topology introduces intentional clock-to-data skew at each DRAM device -- without write leveling calibration, the controller cannot align DQS to CLK per-device. If your FPGA DDR controller does not support write leveling, you cannot use fly-by topology.
-
-- **DDR3 impedance: 50-60 ohm single-ended, 100-120 ohm differential.** DDR4 adds 48 ohm option. On-die termination (ODT) in DRAM handles matching -- verify programmable settings match your trace impedance.
-- **100 ohm differential termination at last SDRAM device in chain.** Route ADDR/CMD/CLK on same layer. Minimum 5 mm (200 mil) spacing between memory chips.
-- **DDR4 additions vs DDR3:** new VPP supply (2.5V), removed VREFDQ input, POD (pseudo open-drain) instead of SSTL, added ACT_n control. DDR4 training/calibration is mandatory -- VDD calibration and write training must complete before timing specs are valid.
-- **Include FPGA pin-package delay in length matching.** Large FPGAs add significant propagation delay through the package. Extract pin-package delay from vendor tools and include in total flight time calculations.
-- **Data byte lanes routed on same layer.** DQS lines matched within byte lane. Swap data bits within a byte lane freely to simplify routing.
+- **For a multi-device DDR4 command/address bus, Micron TN-40-40 recommends fly-by routing with end termination to VTT.** This does not apply to DQ/DQS point-to-point routing; use the selected FPGA memory-controller topology and calibration requirements [6, pp.19, 30].
+- **DDR4 additions vs DDR3:** 2.5V VPP supply, internally generated VREFDQ instead of an external VREFDQ input, POD data interface, and ACT_n control. VREFDQ calibration and data-bus write training must complete before DDR4 timing specifications are valid [6, pp.1, 11-12, 16].
+- **Include FPGA package and PCB flight times in memory-interface timing.** For Cyclone V/Arria V, Quartus Enable Advanced I/O Timing includes the I/O buffer, package, and board-trace models; PCB length matching alone is incomplete [5, p.19].
 
 ## Common Mistakes
 
-- **Connecting iCE40 GNDPLL to board ground.** GNDPLL has internal DC connection -- external GNDPLL must NOT connect to board ground (unless the specific device/package lacks a dedicated GNDPLL ball). Violating this couples digital noise directly into PLL, causing excessive jitter.
-- **Using switching regulator directly for SERDES analog supply.** Switching ripple at the PLL bandwidth adds deterministic jitter. If ripple frequency is below SERDES/PLL bandwidth, it passes through unfiltered. Always use LDO post-regulation or passive LC filter with cutoff a decade below switching frequency.
-- **Single-ended outputs adjacent to SERDES degrading link quality.** SSO from GPIO toggling causes via-to-via coupling into VCCA power pins on PCB. Fix: assign these pins as "soft ground" (output buffer driving low, connected to ground plane), or use only differential/static signals in affected banks.
-- **Omitting pin-package delay from DDR length matching.** Large BGA FPGAs add 200-800 ps propagation delay through bond wires and substrate traces, varying per pin. Length-matching PCB traces alone without extracting per-pin package delay from vendor tools causes DQ-to-DQS skew violations at DDR3-1600+ rates. Fix: export pin-package delays from the FPGA vendor's timing model and include them in total flight time calculations.
-- **Not accounting for DDR4 VPP supply.** DDR4 requires a separate 2.5V VPP supply that DDR3 did not need. Missing this rail causes immediate DRAM failure.
-
-## Formulas
-
-**FPGA IO bank bulk decoupling estimate:** 100 IO pins switching simultaneously, 8 mA each, 2 ns edge, 50 mV ripple budget -> C_bulk >= 0.8A * 2ns / 50mV = 32 nF. Add 10x margin -> 330 nF bulk minimum per IO bank, plus per-pin 100 nF. Generic capacitor sizing formula and placement rules -> `power/decoupling.md`.
+- **Missing DDR4 VPP prevents correct operation.** The 2.5V rail powers the internal word line; provide its required current rather than treating it as a reference-only supply [6, p.11].
 
 ## Sources
 
@@ -91,15 +72,15 @@
 
 - `guides/passives.md` -- Ferrite bead LC resonance damping and passive component selection
 - `power/decoupling.md` -- Per-IC decoupling strategy, capacitor sizing, and placement rules
-- `mcus/rp2040.md` -- RP2040/RP2350 SPI flash configuration (shared flash requirements with iCE40)
+- `mcus/rp2040.md` -- RP2040/RP2350 SPI flash configuration (check each device's boot commands)
 
 ### References
 
-1. Lattice FPGA-TN-02038 -- ECP5 and ECP5-5G Hardware Checklist: https://0x04.net/~mwk/doc/lattice/ecp5/FPGA-TN-02038-2-0-ECP5-and-ECP5-5G-Hardware-Checklist.pdf
-2. Lattice FPGA-TN-02006 -- iCE40 Hardware Checklist: https://0x04.net/~mwk/sbdocs/ice40/FPGA-TN-02006-2-3-iCE40-Hardware-Checklist.pdf
-3. Lattice TN1114 -- Electrical Recommendations for Lattice SERDES: https://www.latticesemi.com/~/media/3E4AA60747DC46FC9EC26A9FD2F35894.ashx
-4. TI SLYT598 -- Power Supply Sequencing for FPGAs: https://www.ti.com/lit/pdf/slyt598
-5. Altium -- How to Start an FPGA PCB Layout For Your Embedded System: https://resources.altium.com/p/how-start-fpga-pcb-layout-your-embedded-system
-6. Intel/Altera AN-662 -- Arria V and Cyclone V Design Guidelines: https://cdrdv2-public.intel.com/654271/an662.pdf
-7. Altium -- Fly-by Topology for DDR3 and DDR4 Memory: Routing Guidelines: https://resources.altium.com/p/fly-topology-routing-ddr3-and-ddr4-memory
-8. Micron TN-40-40 -- DDR4 Point-to-Point Design Guide: https://www.mouser.com/pdfDocs/Micron_DDR4_Design_Guide.pdf
+1. Lattice FPGA-TN-02038-2.0 (July 2024) -- ECP5 and ECP5-5G Hardware Checklist: https://0x04.net/~mwk/doc/lattice/ecp5/FPGA-TN-02038-2-0-ECP5-and-ECP5-5G-Hardware-Checklist.pdf
+2. Lattice FPGA-TN-02006-2.3 (April 2024) -- iCE40 Hardware Checklist: https://0x04.net/~mwk/sbdocs/ice40/FPGA-TN-02006-2-3-iCE40-Hardware-Checklist.pdf
+3. Lattice TN1114 (Rev 02.9, March 2014) -- Electrical Recommendations for Lattice SERDES: https://www.latticesemi.com/~/media/3E4AA60747DC46FC9EC26A9FD2F35894.ashx
+4. TI SLYT598 (4Q 2014) -- Power Supply Sequencing for FPGAs: https://www.ti.com/lit/pdf/slyt598
+5. Intel/Altera AN-662-1.3 (November 2016) -- Arria V and Cyclone V Design Guidelines: https://cdrdv2-public.intel.com/654271/an662.pdf
+6. Micron TN-40-40 (Rev H, August 2020) -- DDR4 Point-to-Point Design Guide: https://www.mouser.com/pdfDocs/Micron_DDR4_Design_Guide.pdf
+7. Lattice FPGA-DS-02012-3.4 (September 2025) -- ECP5 and ECP5-5G Family Data Sheet: https://www.latticesemi.com/view_document?document_id=50461
+8. Lattice FPGA-TN-02001-3.5 (August 2026) -- iCE40 Programming and Configuration: https://www.latticesemi.com/view_document?document_id=46502

@@ -1,9 +1,9 @@
 name: ESPresence
 slug: espresence
 source: JamieKaiRemkes/ESPresence
-format: kicad7
+format: kicad6
 description: '24GHz mmWave presence sensor: HLK-LD2410 radar module, ESP32-C3 SuperMini'
-tags: [led-driver, rf-sdr, sensors]
+tags: [led-driver, power-supply, rf-sdr, sensors]
 key_ics: [ESP32-C3]
 outline:
   width_mm: 40.64
@@ -17,13 +17,14 @@ design_rules:
 components:
 - ref: D1
   value: WS2812B
-  footprint: LED_WS2812B_PLCC4
+  footprint: LED_WS2812B_PLCC4_5.0x5.0
   pin_count: 4
   nc_pins: {DOUT: '2'}
 - ref: J1
   value: 1x2 screw terminal
-  footprint: RHDRRA2W95P0X500
+  footprint: RHDRRA2W95P0X500_1X2
   height: '12.8'
+  mouser: 710-691101710002
   manufacturer: Wurth Elektronik
   mpn: '691101710002'
 - ref: PS1
@@ -40,7 +41,8 @@ components:
   manufacturer: Espressif
   description: Super tiny ESP32-C3 board
   pin_count: 16
-  nc_pins: {GPIO0: '0', GPIO2: '2', 3V3: '3.3', GPIO4: '4', GPIO5: '5', GPIO6: '6', GPIO8: '8', GPIO9: '9', GPIO10: '10', GPIO20: '20', GPIO21: '21'}
+  nc_pins: {GPIO0: '0', GPIO2: '2', 3V3: '3.3', GPIO4: '4', GPIO5: '5', GPIO6: '6', GPIO8: '8', GPIO9: '9', GPIO10: '10',
+    GPIO20: '20', GPIO21: '21'}
 - ref: U2
   value: LD2410_
   footprint: LD2410 (B)

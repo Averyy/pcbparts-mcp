@@ -1,0 +1,2477 @@
+{
+  "64x8dtof": [
+    "64xDTOF"
+  ],
+  "7semico2th": [
+    "7SEMICO2TH",
+    "7Semi_CO2TH"
+  ],
+  "a01nyub": [
+    "a01nyub"
+  ],
+  "a02yyuw": [
+    "UltrasonicA02YYUW",
+    "a02yyuw"
+  ],
+  "a111": [
+    "SparkFun Pulsed Radar Breakout - A111"
+  ],
+  "abp2": [
+    "I2C_ABP2"
+  ],
+  "acs37800": [
+    "ACS37800 POWER MONITOR",
+    "SparkFun ACS37800 Power Monitor Arduino Library",
+    "SparkX Power Meter - ACS37800 (Qwiic)"
+  ],
+  "acs712": [
+    "ACS712-driver"
+  ],
+  "acs723": [
+    "SparkFun Current Sensor Breakout - ACS723"
+  ],
+  "acs772": [
+    "ACS772_CurrentSensor"
+  ],
+  "ad22100a": [
+    "OSS-EC_ADI_AD22100A_00000057"
+  ],
+  "ad22100k": [
+    "OSS-EC_ADI_AD22100K_00000057"
+  ],
+  "ad22100s": [
+    "OSS-EC_ADI_AD22100S_00000057"
+  ],
+  "ad22103k": [
+    "OSS-EC_ADI_AD22103K_00000057"
+  ],
+  "ad7194": [
+    "PRDC_AD7194"
+  ],
+  "ad7797": [
+    "PRDC_AD7797"
+  ],
+  "ad8232": [
+    "SparkFun Single Lead Heart Rate Monitor - AD8232"
+  ],
+  "ad8494": [
+    "AD8495"
+  ],
+  "ad8495": [
+    "Soldered Thermocouple Sensor AD8495 Library"
+  ],
+  "ade7880": [
+    "ade7880"
+  ],
+  "ade7953": [
+    "SparkFun ADE7953 Arduino Library",
+    "SparkFun Non-Invasive Current Sensor - ADE7953 (Qwiic)",
+    "ade7953"
+  ],
+  "adis16470": [
+    "Grove 6Axis_Digital_Accelerometer_Gyroscope4_ADIS16470"
+  ],
+  "ads1015": [
+    "ADS1X15"
+  ],
+  "ads1115": [
+    "ads1115"
+  ],
+  "ads1118": [
+    "ads1118"
+  ],
+  "ads1220": [
+    "ADS1220 24-BIT ADC",
+    "ProtoCentral ADS1220 24-bit ADC Library"
+  ],
+  "ads122c04": [
+    "Adafruit ADS122C04"
+  ],
+  "ads1258": [
+    "ADS1X58"
+  ],
+  "ads1292r": [
+    "ProtoCentral ADS1292R ECG and Respiration boards library"
+  ],
+  "ads1293": [
+    "ProtoCentral ADS1293 ECG Library"
+  ],
+  "adt7410": [
+    "Adafruit ADT7410 Library",
+    "adt7410"
+  ],
+  "adxl313": [
+    "SparkFun ADXL313 Arduino Library",
+    "SparkFun Triple Axis Digital Accelerometer Breakout - ADXL313 (Qwiic)"
+  ],
+  "adxl335": [
+    "LilyPad Accelerometer - ADXL335",
+    "TroykaAccelerometer"
+  ],
+  "adxl343": [
+    "Adafruit ADXL343"
+  ],
+  "adxl345": [
+    "ADXL345-with-Pyboard",
+    "SparkFun Triple Axis Accelerometer Breakout - ADXL345"
+  ],
+  "adxl34x": [
+    "adxl34x"
+  ],
+  "adxl355": [
+    "PL ADXL355"
+  ],
+  "adxl362": [
+    "SparkFun Triple Axis Accelerometer Breakout - ADXL362"
+  ],
+  "adxl375": [
+    "Adafruit ADXL375"
+  ],
+  "adxl37x": [
+    "adxl37x"
+  ],
+  "afe4490": [
+    "ProtoCentral AFE4490 PPG and SpO2 boards library"
+  ],
+  "afe44xx": [
+    "AFE44XX library"
+  ],
+  "afs01": [
+    "AFS01Sensor"
+  ],
+  "ags02ma": [
+    "ags02ma"
+  ],
+  "ags10": [
+    "MKE_S17_AGS10",
+    "ags10"
+  ],
+  "ah1815": [
+    "Hall-Effect Sensor - AH1815 (Non-Latching)"
+  ],
+  "aht10": [
+    "aht10"
+  ],
+  "aht20": [
+    "DFRobot_AHT20"
+  ],
+  "ahtx0": [
+    "ahtx0"
+  ],
+  "ak09918": [
+    "Soldered Compass AK09918"
+  ],
+  "ak9750": [
+    "SparkFun AK9750 Human Presence Sensor Library"
+  ],
+  "ak9753": [
+    "AK975X",
+    "SparkFun AK975X Human Presence Sensor Library",
+    "SparkFun Human Presence Sensor Breakout - AK9753 (Qwiic)"
+  ],
+  "alspt19": [
+    "ALSPT19",
+    "Ambient Light Sensor - SMD (ALS-PT19)",
+    "PT19"
+  ],
+  "am2315c": [
+    "am2315c"
+  ],
+  "am2320": [
+    "AM232X",
+    "am2320"
+  ],
+  "amg88": [
+    "SparkFun GridEYE AMG88 Library"
+  ],
+  "amg8833": [
+    "SparkFun Grid-EYE Infrared Array Breakout - AMG8833 (Qwiic)"
+  ],
+  "amg88xx": [
+    "AMG88XX",
+    "Adafruit AMG88xx Library",
+    "amg88xx"
+  ],
+  "ams5812": [
+    "Bolder Flight Systems AMS5812"
+  ],
+  "ams5915": [
+    "Bolder Flight Systems AMS5915"
+  ],
+  "ap3216": [
+    "AP3216_WE"
+  ],
+  "apc1": [
+    "apc1"
+  ],
+  "apds9306": [
+    "apds9306"
+  ],
+  "apds9930": [
+    "apds9930"
+  ],
+  "apds9950": [
+    "107--APDS-9950",
+    "107-Arduino-APDS-9950"
+  ],
+  "apds9960": [
+    "ColorWaveSensorAPDS9960",
+    "SparkFun RGB and Gesture Sensor - APDS-9960",
+    "apds9960",
+    "uPy_APDS9960"
+  ],
+  "apds9999": [
+    "Arduino_APDS9999",
+    "apds9999"
+  ],
+  "aranet": [
+    "aranet"
+  ],
+  "as3935": [
+    "SparkFun Lightning Detector - AS3935",
+    "as3935"
+  ],
+  "as5600": [
+    "as5600"
+  ],
+  "as6212": [
+    "AS6212 Temperature Sensor",
+    "SparkFun Digital Temperature Sensor Breakout - AS6212 (Qwiic)"
+  ],
+  "as6221": [
+    "DFRobot_AS6221"
+  ],
+  "as7262": [
+    "SparkFun Spectral Sensor Breakout - AS7262 Visible (Qwiic)"
+  ],
+  "as7262x": [
+    "AS7262X_driver"
+  ],
+  "as7263": [
+    "SparkFun Spectral Sensor Breakout - AS7263 NIR (Qwiic)"
+  ],
+  "as7265x": [
+    "SparkFun Spectral Triad AS7265X",
+    "SparkFun Triad Spectroscopy Sensor - AS7265x (Qwiic)"
+  ],
+  "as726x": [
+    "AS726X_LoPy",
+    "SparkFun AS726X",
+    "as726x"
+  ],
+  "as7331": [
+    "SparkFun Spectral UV Sensor - AS7331 (Qwiic)",
+    "as7331"
+  ],
+  "as7341": [
+    "DFRobot_AS7341",
+    "as7341"
+  ],
+  "as7341l": [
+    "AS7341L 10-CHANNEL SPECTRAL",
+    "SparkFun Qwiic AS7341L 10-Channel Spectral Sensor"
+  ],
+  "as7343": [
+    "7Semi AS7343",
+    "SparkFun Spectral Sensor - AS7343 (Qwiic)"
+  ],
+  "as734x": [
+    "as734x"
+  ],
+  "asm330lhh": [
+    "STM32duino ASM330LHH"
+  ],
+  "at407": [
+    "Tilt Sensor - AT407"
+  ],
+  "at42qt1010": [
+    "SparkFun Capacitive Touch Breakout - AT42QT1010"
+  ],
+  "at42qt1011": [
+    "SparkFun Capacitive Touch Breakout - AT42QT1011"
+  ],
+  "atm90e26": [
+    "ATM90E26 Arduino",
+    "ATM90E26_Micropython",
+    "atm90e26"
+  ],
+  "atm90e32": [
+    "atm90e32"
+  ],
+  "atm90e32as": [
+    "MCM_ATM90E32"
+  ],
+  "barometerhp20x": [
+    "Grove barometer HP20x"
+  ],
+  "bd1020hfv": [
+    "OSS-EC_ROHM_BD1020HFV_00000057"
+  ],
+  "bgt60tr13c": [
+    "XENSIV BGT60TR13C Radar Sensor"
+  ],
+  "bh1745": [
+    "bh1745"
+  ],
+  "bh1749nuc": [
+    "FaBo 230 Color BH1749NUC"
+  ],
+  "bh1750": [
+    "BH1750_WE",
+    "bh1750",
+    "mpy_bh1750fvi_esp8266"
+  ],
+  "bh1900nux": [
+    "bh1900nux"
+  ],
+  "bhi385": [
+    "Soldered BHI385 IMU"
+  ],
+  "bl0906": [
+    "bl0906"
+  ],
+  "bl0939": [
+    "bl0939"
+  ],
+  "bl0940": [
+    "MCM_BL0940",
+    "bl0940"
+  ],
+  "bl0942": [
+    "bl0942"
+  ],
+  "bluxv30b": [
+    "DFRobot_B_LUX_V30B"
+  ],
+  "bm22s2021": [
+    "BM22S2021-1"
+  ],
+  "bm22s3021": [
+    "BM22S3021-1"
+  ],
+  "bm22s3031": [
+    "BM22S3031-1"
+  ],
+  "bm22s3221": [
+    "BM22S3221-1"
+  ],
+  "bm22s3421": [
+    "BM22S3421-1"
+  ],
+  "bm22s4221": [
+    "BM22S4221-1"
+  ],
+  "bm25s2021": [
+    "BM25S2021-1"
+  ],
+  "bm25s2621": [
+    "BM25S2621-1"
+  ],
+  "bm25s3221": [
+    "BM25S3221-1"
+  ],
+  "bm25s3321": [
+    "BM25S3321-1"
+  ],
+  "bm25s3421": [
+    "BM25S3421-1"
+  ],
+  "bm25s4021": [
+    "BM25S4021-1"
+  ],
+  "bm32s2031": [
+    "BM32S2031-1"
+  ],
+  "bm32s3021": [
+    "BM32S3021-1"
+  ],
+  "bm42s3021": [
+    "BM42S3021-1"
+  ],
+  "bm42s5321": [
+    "BM42S5321-1"
+  ],
+  "bm62s2201": [
+    "BM62S2201-1"
+  ],
+  "bm62s2301": [
+    "BM62S2301-1"
+  ],
+  "bm62s6021": [
+    "BM62S6021-1"
+  ],
+  "bm92s2021": [
+    "BM92S2021-A"
+  ],
+  "bma250": [
+    "UBMA250"
+  ],
+  "bma400": [
+    "BlueDot BMA400 Library",
+    "SparkFun Triple Axis Accelerometer Breakout - BMA400 (Qwiic)"
+  ],
+  "bma423": [
+    "bma423-pure-mp"
+  ],
+  "bma456": [
+    "SparkFun Triple Axis Accelerometer Breakout - BMA456 (Qwiic)"
+  ],
+  "bme280": [
+    "SparkFun Atmospheric Sensor Breakout - BME280",
+    "bme280",
+    "mpy_bme280_esp8266"
+  ],
+  "bme680": [
+    "SparkFun Environmental Sensor Breakout - BME680 (Qwiic)",
+    "bme680",
+    "bme680-mqtt-micropython"
+  ],
+  "bme688": [
+    "Bosch BME688 Development Kit"
+  ],
+  "bme68x": [
+    "7SEMIBME68X",
+    "7Semi_BME68x",
+    "BME68x"
+  ],
+  "bme690": [
+    "7Semi BME690"
+  ],
+  "bmh08002": [
+    "BMH08002-4"
+  ],
+  "bmi085": [
+    "High Performance IMU BMI085"
+  ],
+  "bmi088": [
+    "VEGA_BMI088"
+  ],
+  "bmi160": [
+    "DFRobot_BMI160",
+    "EmotiBit BMI160",
+    "bmi160"
+  ],
+  "bmi270": [
+    "7Semi BMI270",
+    "SparkFun 6DoF IMU Breakout - BMI270 (Qwiic)",
+    "bmi270"
+  ],
+  "bmi270bmm150": [
+    "Arduino_BMI270_BMM150"
+  ],
+  "bmi323": [
+    "7Semi BMI323"
+  ],
+  "bmi330": [
+    "7Semi_BMI330",
+    "SparkFun 6DoF IMU Breakout - BMI330 (Qwiic)"
+  ],
+  "bmm150": [
+    "7Semi BMM150",
+    "DFRobot_BMM150"
+  ],
+  "bmm350": [
+    "Soldered BMM350 Geomagnetic Sensor"
+  ],
+  "bmp085": [
+    "BMP180MI",
+    "bmp085"
+  ],
+  "bmp180": [
+    "bmp180"
+  ],
+  "bmp280": [
+    "DFRobot_BMP280",
+    "bmp280"
+  ],
+  "bmp384": [
+    "7Semi BMP384",
+    "SparkFun Pressure Sensor - BMP384 (Qwiic)"
+  ],
+  "bmp388": [
+    "BMP388_DEV"
+  ],
+  "bmp3xx": [
+    "DFRobot_BMP3XX",
+    "bmp3xx"
+  ],
+  "bmp580": [
+    "Adafruit BMP5xx Library",
+    "BMP5xx"
+  ],
+  "bmp581": [
+    "SparkFun BMP581 Arduino Library",
+    "SparkFun Pressure Sensor - BMP581 (Qwiic)",
+    "bmp581"
+  ],
+  "bmp585": [
+    "7Semi_BMP585",
+    "BMPxxx"
+  ],
+  "bmp58x": [
+    "7SEMIBMP58X",
+    "7Semi BMP58x"
+  ],
+  "bmp5xx": [
+    "bmp5xx"
+  ],
+  "bmv080": [
+    "7Semi BMV080",
+    "PM1",
+    "SparkFun Air Quality PM1/PM2.5/PM10 Sensor - BMV080 (Qwiic)",
+    "SparkFun BMV080 Arduino Library"
+  ],
+  "bmx055": [
+    "bmx055"
+  ],
+  "bmx160": [
+    "DFRobot_BMX160"
+  ],
+  "bno055": [
+    "bno055"
+  ],
+  "bno080": [
+    "BNO080 CORTEX BASED IMU",
+    "SparkFun BNO080 Cortex Based IMU"
+  ],
+  "bno086": [
+    "SparkFun VR IMU Breakout - BNO086 (Qwiic)"
+  ],
+  "bno08x": [
+    "7SEMIBNO08X",
+    "7Semi BNO08x",
+    "bno08x"
+  ],
+  "bq27220": [
+    "bq27220",
+    "kode_bq27220"
+  ],
+  "bq76972": [
+    "bq76972"
+  ],
+  "cap1188": [
+    "Adafruit CAP1188 Library",
+    "cap1188"
+  ],
+  "cap1203": [
+    "SparkFun CAP1203 Arduino Library",
+    "SparkFun Capacitive Touch Slider - CAP1203 (Qwiic)"
+  ],
+  "ccs811": [
+    "ASTRON_CCS811",
+    "ccs811"
+  ],
+  "ch101": [
+    "CHx01"
+  ],
+  "cm1106": [
+    "cm1106"
+  ],
+  "coind4": [
+    "IoTy coind4"
+  ],
+  "cs1237": [
+    "CS123x"
+  ],
+  "cs5460a": [
+    "cs5460a"
+  ],
+  "cs5464": [
+    "CS5464 Arduino"
+  ],
+  "cs5490": [
+    "cs5490_micropython"
+  ],
+  "cse7761": [
+    "cse7761"
+  ],
+  "cse7766": [
+    "cse7766"
+  ],
+  "cst816d": [
+    "cst816d"
+  ],
+  "cst8xx": [
+    "cst8xx"
+  ],
+  "ct1780": [
+    "DFRobot_CT1780"
+  ],
+  "ctclamp": [
+    "ct_clamp"
+  ],
+  "cv7": [
+    "CV7Lib"
+  ],
+  "cw2017": [
+    "cw2017"
+  ],
+  "cy8cmbr3102": [
+    "CY8CMBR3xxx",
+    "SparkFun CY8CMBR3xxx Arduino Library"
+  ],
+  "d01": [
+    "d01"
+  ],
+  "d6fph": [
+    "Omron D6F-PH",
+    "Omron D6F-PH Arduino Library"
+  ],
+  "delta2d": [
+    "IoTy delta2d"
+  ],
+  "dfr0300": [
+    "DFRobot_EC10"
+  ],
+  "dht": [
+    "dht"
+  ],
+  "dht11": [
+    "DFRobot_DHT11",
+    "Official DHT11+DHT12",
+    "SDHT"
+  ],
+  "dht12": [
+    "dht12"
+  ],
+  "dht20": [
+    "Humidity and Temperature Sensor - DHT20"
+  ],
+  "dht22": [
+    "AM2302",
+    "AM2302-Sensor"
+  ],
+  "dps310": [
+    "Adafruit DPS310",
+    "dps310"
+  ],
+  "ds1603l": [
+    "ds1603l"
+  ],
+  "ds18b20": [
+    "GyverDS18",
+    "Temperature Sensor - Waterproof (DS18B20)",
+    "dallas_temp"
+  ],
+  "ds18x20": [
+    "ds18x20"
+  ],
+  "ds3231": [
+    "ds3231"
+  ],
+  "ds7505": [
+    "MillaMilla DS7505 Library"
+  ],
+  "ecprobe": [
+    "Conductivity Probe"
+  ],
+  "ee895": [
+    "EE895 Arduino Library",
+    "ee895"
+  ],
+  "ekmb1107112": [
+    "SparkFun Qwiic PIR - 1uA (EKMB1107112)"
+  ],
+  "ekmc4607112k": [
+    "SparkFun Qwiic PIR - 170uA (EKMC4607112K)"
+  ],
+  "emc2101": [
+    "emc2101"
+  ],
+  "ens160": [
+    "DFRobot_ENS160",
+    "SparkFun Indoor Air Quality Sensor - ENS160 (Qwiic)",
+    "ens160"
+  ],
+  "ens190": [
+    "ScioSense_ENS190"
+  ],
+  "ens210": [
+    "7Semi ENS210",
+    "ens210"
+  ],
+  "ens220": [
+    "ScioSense_ENS220"
+  ],
+  "fc28": [
+    "ESP_FC28"
+  ],
+  "fc37": [
+    "RAIN"
+  ],
+  "fdc1004": [
+    "FDCxCapSense"
+  ],
+  "fg3": [
+    "FGSensors FG-3+ Sensor"
+  ],
+  "fingerprintgrow": [
+    "fingerprint_grow"
+  ],
+  "frn20": [
+    "FRN20"
+  ],
+  "fs3000": [
+    "Renesas FS3000-1005 Air Velocity Module (SMD)",
+    "fs3000"
+  ],
+  "fs30001005": [
+    "SparkFun Air Velocity Sensor Breakout - FS3000-1005 (Qwiic)"
+  ],
+  "fs30001015": [
+    "SparkFun Air Velocity Sensor Breakout - FS3000-1015 (Qwiic)"
+  ],
+  "ft5336": [
+    "ft5336"
+  ],
+  "ft6x06": [
+    "ft6x06"
+  ],
+  "fxas21002c": [
+    "Adafruit FXAS21002C",
+    "fxas21002c"
+  ],
+  "fxos8700": [
+    "NXPMotionSense",
+    "fxos8700"
+  ],
+  "gcja5": [
+    "GCJA5",
+    "SNGCJA5",
+    "SparkFun Particle Sensor Panasonic SN-GCJA5",
+    "gcja5"
+  ],
+  "gdk101": [
+    "gdk101"
+  ],
+  "ggreg20v3": [
+    "GGREG20V3"
+  ],
+  "gl5516": [
+    "GL55xxSensor"
+  ],
+  "gl5528": [
+    "TroykaLight"
+  ],
+  "gm1602": [
+    "GM1602lib"
+  ],
+  "gp20u7": [
+    "GP20U7 GPS Library"
+  ],
+  "gp2y0a21yk0f": [
+    "ESP32_SharpIR",
+    "GP2Y0A21YK",
+    "GP2Y0A21YK_lib",
+    "Infrared Proximity Sensor - Sharp GP2Y0A21YK"
+  ],
+  "gp2y0a41sk0f": [
+    "Infrared Proximity Sensor Short Range - Sharp GP2Y0A41SK0F"
+  ],
+  "gp2y0e03": [
+    "gp2y0e03"
+  ],
+  "gp2y1010au0f": [
+    "Optical Dust Sensor - GP2Y1010AU0F",
+    "PMsensor",
+    "gp2y1010au0f"
+  ],
+  "gy26": [
+    "GY26Compass"
+  ],
+  "h3lis331dl": [
+    "SparkFun Triple Axis Accelerometer Breakout - H3LIS331DL"
+  ],
+  "hcsr04": [
+    "SHCSR04",
+    "Ultrasonic Distance Sensor - 5V (HC-SR04)",
+    "hcsr04"
+  ],
+  "hdc1008": [
+    "hdc1008"
+  ],
+  "hdc1010": [
+    "ClosedCube HDC1010"
+  ],
+  "hdc1080": [
+    "ClosedCube HDC1080",
+    "hdc1080"
+  ],
+  "hdc10xx": [
+    "GuL_TI_Humidity_HDC10XX"
+  ],
+  "hdc2010": [
+    "hdc2010"
+  ],
+  "hdc2080": [
+    "Lime Labs HDC2080",
+    "hdc2080"
+  ],
+  "hdc3020": [
+    "HDC302x"
+  ],
+  "hdc3022": [
+    "Adafruit HDC302x",
+    "HDC302x"
+  ],
+  "hdc302x": [
+    "7SEMIHDC302X",
+    "7Semi HDC302x",
+    "ArtronShop_HDC302x",
+    "hdc302x"
+  ],
+  "hg4930": [
+    "Bolder Flight Systems Honeywell HG4930"
+  ],
+  "hlkfm22x": [
+    "HLK_FM22X",
+    "hlk_fm22x"
+  ],
+  "hlw8012": [
+    "hlw8012"
+  ],
+  "hlw8032": [
+    "hlw8032"
+  ],
+  "hm3301": [
+    "HM330X by Tomoto",
+    "hm3301"
+  ],
+  "hmc5883l": [
+    "GyverMag",
+    "esp8266-hmc5883l",
+    "hmc5883l"
+  ],
+  "hmc6343": [
+    "7Semi HMC6343 Compass",
+    "SparkFun Digital Compass - HMC6343"
+  ],
+  "honeywellabp": [
+    "honeywellabp"
+  ],
+  "honeywellabp2": [
+    "honeywellabp2"
+  ],
+  "honeywellhih": [
+    "honeywell_hih"
+  ],
+  "hpma115": [
+    "PMSensor-HPMA115"
+  ],
+  "hrxlmaxsonarwr": [
+    "hrxl_maxsonar_wr"
+  ],
+  "hs300x": [
+    "HS300X"
+  ],
+  "hte501": [
+    "hte501"
+  ],
+  "hts221": [
+    "Sodaq_HTS221",
+    "hts221"
+  ],
+  "htu21d": [
+    "GyverHTU21D",
+    "htu21d",
+    "htu21d-esp8266"
+  ],
+  "htu31d": [
+    "htu31d"
+  ],
+  "hw827": [
+    "HW827_PPG"
+  ],
+  "hwt901b": [
+    "TungLam_HWT901B"
+  ],
+  "hx710": [
+    "hx710"
+  ],
+  "hx710a": [
+    "HX710AB"
+  ],
+  "hx710b": [
+    "hx710b_arduino"
+  ],
+  "hx711": [
+    "HX711_ADC",
+    "SparkFun Load Cell Amplifier - HX711",
+    "hx711"
+  ],
+  "hydreonrgxx": [
+    "hydreon_rgxx",
+    "HYDREON_RGXX",
+    "RG9",
+    "RG-9"
+  ],
+  "hyt271": [
+    "hyt271"
+  ],
+  "i2cirsense": [
+    "I2C-IRSENSE Library"
+  ],
+  "iaqcore": [
+    "iaqcore"
+  ],
+  "icg20660l": [
+    "DFRobot_ICG20660L"
+  ],
+  "icm20600": [
+    "Grove IMU 9DOF ICM20600 AK09918 UNO R4",
+    "ICM20600 AK09918 UNO R4"
+  ],
+  "icm20689": [
+    "icm20689"
+  ],
+  "icm20948": [
+    "ICM20948_WE",
+    "SparkFun 9DoF IMU Breakout - ICM-20948 (Qwiic)"
+  ],
+  "icm20x": [
+    "icm20x"
+  ],
+  "icm42688p": [
+    "Voltino_TriSense"
+  ],
+  "icp10100": [
+    "ICP101xx"
+  ],
+  "icp10111": [
+    "DFRobot_ICP10111"
+  ],
+  "icp20100": [
+    "ICP201xx"
+  ],
+  "ics40619": [
+    "Deneyap Mikrofon"
+  ],
+  "icu10201": [
+    "ICUX0201"
+  ],
+  "iis2dlpc": [
+    "STM32duino IIS2DLPC"
+  ],
+  "iis2dulpx": [
+    "STM32duino IIS2DULPX"
+  ],
+  "iis2mdc": [
+    "STM32duino IIS2MDC"
+  ],
+  "ilps22qs": [
+    "STM32duino ILPS22QS"
+  ],
+  "im19": [
+    "SparkFun 9DoF IMU Breakout - IM19",
+    "SparkFun IM19 IMU Arduino Library"
+  ],
+  "imp34dt05": [
+    "STM32duino X-NUCLEO-IKS02A1 Audio"
+  ],
+  "ina169": [
+    "SparkFun Current Sensor Breakout - INA169"
+  ],
+  "ina219": [
+    "DFRobot_INA219",
+    "GyverINA",
+    "ina219",
+    "micropythonINA219",
+    "pyb_ina219"
+  ],
+  "ina226": [
+    "INA226Lib",
+    "TI_INA226_micropython",
+    "ina226"
+  ],
+  "ina228": [
+    "Adafruit INA228 Library",
+    "SparkFun Current Sensor - INA228 (Qwiic)",
+    "ina228"
+  ],
+  "ina229": [
+    "INA229_SPI_Driver"
+  ],
+  "ina237": [
+    "Adafruit INA237 and INA238 Library",
+    "SparkFun Current Sensor - INA237 (Qwiic)"
+  ],
+  "ina23x": [
+    "ina23x"
+  ],
+  "ina260": [
+    "7Semi INA260",
+    "ina260"
+  ],
+  "ina2xx": [
+    "ina2xx"
+  ],
+  "ina3221": [
+    "ina3221"
+  ],
+  "ips7100": [
+    "IPS-7100-I2C",
+    "IPS-7100-I2C-Arduino"
+  ],
+  "iqs5xx": [
+    "IQS5XX-B000 Trackpad"
+  ],
+  "isl29034": [
+    "FaBo 217 Ambient Light ISL29034"
+  ],
+  "isl29125": [
+    "SparkFun ISL29125 Breakout",
+    "SparkFun RGB Light Sensor - ISL29125"
+  ],
+  "ism330dhcx": [
+    "7Semi_ISM330DHCX",
+    "SparkFun Micro 6DoF IMU - ISM330DHCX (Qwiic)"
+  ],
+  "ism330dlc": [
+    "STM32duino ISM330DLC"
+  ],
+  "ism330is": [
+    "STM32duino ISM330IS"
+  ],
+  "ism6hg256x": [
+    "STM32duino ISM6HG256X"
+  ],
+  "it7259": [
+    "IT7259_Touch"
+  ],
+  "jsnsr04t": [
+    "jsn_sr04t"
+  ],
+  "kmeteriso": [
+    "kmeteriso"
+  ],
+  "kx023": [
+    "KX0231025IMU"
+  ],
+  "kx132": [
+    "KX13X",
+    "SparkFun KX13X Arduino Library",
+    "SparkFun Triple Axis Accelerometer Breakout - KX132 (Qwiic)"
+  ],
+  "kx134": [
+    "SparkFun Triple Axis Accelerometer Breakout - KX134 (Qwiic)"
+  ],
+  "kxtj3": [
+    "KXTJ3-1057"
+  ],
+  "ky040": [
+    "KY040-rotary"
+  ],
+  "l3gd20": [
+    "Adafruit L3GD20 U",
+    "L3GD20 U",
+    "l3gd20"
+  ],
+  "lc02": [
+    "TF-LC02"
+  ],
+  "lc26g": [
+    "Quectel_LCx6G_GNSS"
+  ],
+  "lc709203f": [
+    "lc709203f"
+  ],
+  "ld2410": [
+    "HLKLD2410",
+    "MyLD2410",
+    "ld2410"
+  ],
+  "ld2410b": [
+    "HLKLD2410B"
+  ],
+  "ld2410s": [
+    "HLKLD2410S",
+    "ld2410s"
+  ],
+  "ld2412": [
+    "ld2412"
+  ],
+  "ld2420": [
+    "LD2420HumanMotion",
+    "ld2420"
+  ],
+  "ld2450": [
+    "HLK-LD2450",
+    "ld2450"
+  ],
+  "ld2460": [
+    "ld2460"
+  ],
+  "ld6004": [
+    "HLK-LD6004"
+  ],
+  "lds02rr": [
+    "IoTy lds02rr"
+  ],
+  "lg290p": [
+    "SparkFun LG290P Quadband RTK GNSS Arduino Library"
+  ],
+  "lidarlightv3hp": [
+    "LidarLight_v3HP_micropython"
+  ],
+  "lis2dh12": [
+    "SparkFun LIS2DH12 Arduino Library"
+  ],
+  "lis2du12": [
+    "STM32duino LIS2DU12"
+  ],
+  "lis2duxs12": [
+    "STM32duino LIS2DUXS12"
+  ],
+  "lis2dw12": [
+    "LIS",
+    "STM32duino LIS2DW12",
+    "lis2dw12"
+  ],
+  "lis2hh12": [
+    "lis2hh12",
+    "rhio-LIS2HH12"
+  ],
+  "lis2mdl": [
+    "Adafruit LIS2MDL",
+    "lis2mdl"
+  ],
+  "lis331": [
+    "lis331"
+  ],
+  "lis3dh": [
+    "7Semi LIS3DH",
+    "Grove-3-Axis-Digital-Accelerometer-2g-to-16g-LIS3DHTR",
+    "SparkFun Triple Axis Accelerometer Breakout - LIS3DH",
+    "lis3dh"
+  ],
+  "lis3mdl": [
+    "lis3mdl"
+  ],
+  "lm335a": [
+    "MD_LM335A"
+  ],
+  "lm35": [
+    "LM35IC"
+  ],
+  "lm35c": [
+    "OSS-EC_TI_LM35C_LM35CA_00000057"
+  ],
+  "lm35d": [
+    "OSS-EC_TI_LM35D_00000057"
+  ],
+  "lm45b": [
+    "OSS-EC_TI_LM45B_LM45C_00000057"
+  ],
+  "lm50b": [
+    "OSS-EC_TI_LM50B_00000057"
+  ],
+  "lm50c": [
+    "OSS-EC_TI_LM50C_00000057"
+  ],
+  "lm75": [
+    "LM75-MicroPython"
+  ],
+  "lm75a": [
+    "LM75A Arduino library",
+    "lm75a"
+  ],
+  "lm75b": [
+    "lm75b"
+  ],
+  "lps22": [
+    "lps22"
+  ],
+  "lps22df": [
+    "STM32duino LPS22DF"
+  ],
+  "lps22hb": [
+    "Sodaq_LPS22HB"
+  ],
+  "lps22hh": [
+    "STM32duino LPS22HH"
+  ],
+  "lps25h": [
+    "SmartEverything LPS25H"
+  ],
+  "lps25hb": [
+    "ClosedCube LPS25HB"
+  ],
+  "lps28": [
+    "lps28"
+  ],
+  "lps28dfw": [
+    "7Semi_LPS28DFW",
+    "SparkFun Absolute Digital Barometer - LPS28DFW (Qwiic)"
+  ],
+  "lps2x": [
+    "lps2x"
+  ],
+  "lps35hw": [
+    "lps35hw"
+  ],
+  "lsm303": [
+    "lsm303"
+  ],
+  "lsm303agr": [
+    "STM32duino LSM303AGR"
+  ],
+  "lsm303c": [
+    "LSM303C 6 DOF IMU",
+    "SparkFun LSM303C 6 DOF IMU Breakout"
+  ],
+  "lsm303dlh": [
+    "DFRobot_LSM303",
+    "LSM303"
+  ],
+  "lsm303dlhc": [
+    "LSM303DLH-MAG",
+    "lsm303dlh-mag"
+  ],
+  "lsm6ds": [
+    "Adafruit LSM6DS",
+    "lsm6ds"
+  ],
+  "lsm6ds0": [
+    "STM32duino LSM6DS0"
+  ],
+  "lsm6ds3": [
+    "Arduino_LSM6DS3"
+  ],
+  "lsm6ds3tr": [
+    "JoyIT_LSM6DS3TR-C"
+  ],
+  "lsm6dsl": [
+    "STM32duino LSM6DSL"
+  ],
+  "lsm6dsm": [
+    "Deneyap 6 Eksen Alaletsel Olcum Birimi"
+  ],
+  "lsm6dso": [
+    "STM32duino LSM6DSO",
+    "SparkFun 6 Degrees of Freedom Breakout - LSM6DSO (Qwiic)"
+  ],
+  "lsm6dso16is": [
+    "STM32duino LSM6DSO16IS"
+  ],
+  "lsm6dso32": [
+    "STM32duino LSM6DSO32"
+  ],
+  "lsm6dsox": [
+    "Arduino_LSM6DSOX",
+    "lsm6dsox"
+  ],
+  "lsm6dsr": [
+    "STM32duino LSM6DSR"
+  ],
+  "lsm6dsv16bx": [
+    "STM32duino LSM6DSV16BX"
+  ],
+  "lsm6dsv16x": [
+    "STM32duino LSM6DSV16X",
+    "SparkFun 6DoF IMU Breakout - LSM6DSV16X (Qwiic)"
+  ],
+  "lsm9ds0": [
+    "Adafruit LSM9DS0 Library",
+    "LSM9DS0MFD",
+    "lsm9ds0"
+  ],
+  "lsm9ds1": [
+    "Arduino_LSM9DS1",
+    "LSM9DS1MAG",
+    "lsm9ds1"
+  ],
+  "lsm9ds1tr": [
+    "Soldered LSM9DS1TR Arduino Library"
+  ],
+  "ltc2942": [
+    "LTC2942_RT"
+  ],
+  "ltr308": [
+    "DFRobot_LTR308",
+    "LTR308"
+  ],
+  "ltr308als": [
+    "LTR308",
+    "LTR308 library"
+  ],
+  "ltr329": [
+    "Adafruit LTR329 and LTR303"
+  ],
+  "ltr329als": [
+    "MCCI LTR-329ALS"
+  ],
+  "ltr329ltr303": [
+    "ltr329-ltr303"
+  ],
+  "ltr381rgb": [
+    "Arduino_LTR381RGB"
+  ],
+  "ltr390": [
+    "ltr390"
+  ],
+  "ltr390uv": [
+    "ltr390uv"
+  ],
+  "ltr501": [
+    "ltr501"
+  ],
+  "ltr507": [
+    "Soldered LTR-507 Arduino Library"
+  ],
+  "ltr553": [
+    "Deneyap Mesafe Olcer Isik Algilayici"
+  ],
+  "ltralsps": [
+    "ltr_als_ps"
+  ],
+  "lwlp5000": [
+    "LWLP"
+  ],
+  "max17043": [
+    "max17043"
+  ],
+  "max17048": [
+    "max17048"
+  ],
+  "max30003": [
+    "ProtoCentral MAX30003 ECG AFE Sensor Library"
+  ],
+  "max30101": [
+    "EmotiBit MAX30101",
+    "SparkFun Photodetector Breakout - MAX30101 (Qwiic)"
+  ],
+  "max30102": [
+    "DevLab_MAX30102",
+    "MAX30102-MicroPython-driver"
+  ],
+  "max30105": [
+    "Bonezegei_Max30105"
+  ],
+  "max3010x": [
+    "MAX3010x Sensor Library"
+  ],
+  "max31820": [
+    "One-Wire Ambient Temperature Sensor - MAX31820"
+  ],
+  "max31855": [
+    "DFRobot_MAX31855",
+    "MAX31855_RT",
+    "max31855"
+  ],
+  "max31855k": [
+    "MAX31855",
+    "MAX31855-Library",
+    "SparkFun Thermocouple Breakout - MAX31855K"
+  ],
+  "max31856": [
+    "7Semi_MAX31856",
+    "max31856"
+  ],
+  "max31865": [
+    "7Semi_MAX31865",
+    "max31865"
+  ],
+  "max31888": [
+    "max31888"
+  ],
+  "max32664": [
+    "SparkFun Bio Sensor Hub Library"
+  ],
+  "max44009": [
+    "MAX44009",
+    "max44009"
+  ],
+  "max6605mxk": [
+    "OSS-EC_MAXIM_MAX6605MXK_00000057"
+  ],
+  "max6605mxkv": [
+    "OSS-EC_MAXIM_MAX6605MXKV_00000057"
+  ],
+  "max6607ixk": [
+    "OSS-EC_MAXIM_MAX6607IXK_MAX6608IUK_00000057"
+  ],
+  "max6613mxk": [
+    "OSS-EC_MAXIM_MAX6613MXK_MAX6613MXKV_00000057"
+  ],
+  "max6675": [
+    "max6675"
+  ],
+  "max86150": [
+    "ProtoCentral MAX86150 PPG and ECG IC library"
+  ],
+  "max9611": [
+    "max9611"
+  ],
+  "mcp3427": [
+    "ISE I2C-MCP3427 Library"
+  ],
+  "mcp39f521": [
+    "UpbeatLabs MCP39F521"
+  ],
+  "mcp9600": [
+    "Adafruit MCP9600 Library",
+    "SparkFun Qwiic Thermocouple Amplifier - MCP9600 (PCC Connector)",
+    "mcp9600"
+  ],
+  "mcp9601": [
+    "PWFusion_Mcp960x"
+  ],
+  "mcp9700": [
+    "OSS-EC_MICROCHIP_MCP9700_MCP9700A_00000057",
+    "mcp9700"
+  ],
+  "mcp9701": [
+    "OSS-EC_MICROCHIP_MCP9701_MCP9701A_00000057"
+  ],
+  "mcp9808": [
+    "mcp9808"
+  ],
+  "me3c2h3cl": [
+    "ME3-CH2CHCL"
+  ],
+  "mg811": [
+    "MG811SpaceData"
+  ],
+  "mgc3130": [
+    "DFRobot_MGC3130"
+  ],
+  "mht7042a": [
+    "MH-T7042A Library"
+  ],
+  "mhz19": [
+    "mhz19"
+  ],
+  "mhz19b": [
+    "MH-Z19B"
+  ],
+  "mhz9041a": [
+    "DFRobot_MHZ9041A",
+    "MHZ9041A"
+  ],
+  "mics4514": [
+    "MICS",
+    "mics_4514"
+  ],
+  "mics5524": [
+    "mics_5524"
+  ],
+  "mics6814": [
+    "MICS6814-Micropython-driver",
+    "MiCS6814-I2C"
+  ],
+  "mlx90377": [
+    "MLX90377_SENT"
+  ],
+  "mlx90392": [
+    "Melexis MLX90392 I2C Library"
+  ],
+  "mlx90393": [
+    "MLX90393_raw",
+    "SparkFun Triple Axis Magnetometer Breakout - MLX90393 (Qwiic)",
+    "mlx90393"
+  ],
+  "mlx90395": [
+    "mlx90395"
+  ],
+  "mlx90614": [
+    "Infrared Thermometer - MLX90614",
+    "mlx90614"
+  ],
+  "mlx90615": [
+    "Digital Infrared Temperature Sensor MLX90615",
+    "MLX90615_driver"
+  ],
+  "mlx90632": [
+    "EmotiBit MLX90632",
+    "mlx90632"
+  ],
+  "mlx90640": [
+    "IR Array Sensor - 55 Degree FOV (MLX90640)",
+    "mlx90640"
+  ],
+  "mma7455": [
+    "MMA7455 sensor Library"
+  ],
+  "mma8451": [
+    "Adafruit MMA8451 Library",
+    "mma8451"
+  ],
+  "mma8452q": [
+    "3-Axis MEMS Accelerometer - MMA8452Q",
+    "RoboCore - MMA8452Q"
+  ],
+  "mma8453q": [
+    "MMA8453_n0m1"
+  ],
+  "mmc5603": [
+    "Adafruit MMC56x3",
+    "MMC56x3",
+    "mmc5603"
+  ],
+  "mmc5603nj": [
+    "Deneyap 9-Eksen Ataletsel Olcum Birimi"
+  ],
+  "mmc56x3": [
+    "mmc56x3"
+  ],
+  "mmc5983ma": [
+    "7Semi_MMC5983MA",
+    "MMC5983",
+    "SparkFun Micro Magnetometer - MMC5983MA (Qwiic)",
+    "mmc5983"
+  ],
+  "mp23db01hp": [
+    "STM32duino STEVAL-MKBOXPRO-Audio"
+  ],
+  "mpl115a1": [
+    "Barometric Pressure Sensor - MPL115A1"
+  ],
+  "mpl115a2": [
+    "Adafruit MPL115A2",
+    "mpl115a2"
+  ],
+  "mpl3115a2": [
+    "Adafruit MPL3115A2 Library",
+    "MPL3115A2_MicroPython",
+    "SparkFun Altitude/Pressure Sensor Breakout - MPL3115A2",
+    "mpl3115a2"
+  ],
+  "mpr121": [
+    "Adafruit MPR121",
+    "mpr121"
+  ],
+  "mprls": [
+    "mprls"
+  ],
+  "mpu6000": [
+    "ReefwingMPU6x00"
+  ],
+  "mpu6050": [
+    "3-Axis Gyro/Accelerometer IC - MPU-6050",
+    "mpu6050",
+    "py-mpu6050"
+  ],
+  "mpu6500": [
+    "MPU6500-DMP"
+  ],
+  "mpu6886": [
+    "mpu6886"
+  ],
+  "mpu9250": [
+    "MPU9250_WE",
+    "mpu9250"
+  ],
+  "mpu9x50": [
+    "mpu9x50"
+  ],
+  "mpx5999d": [
+    "OSS-EC_NXP_MPX5999D_00000057"
+  ],
+  "mpxa4250a": [
+    "OSS-EC NXP MPXA4250A 00000057"
+  ],
+  "mpxh6115a": [
+    "OSS-EC_NXP_MPXH6115A_00000057"
+  ],
+  "mpxh6400a": [
+    "OSS-EC_NXP_MPXH6400A_00000057"
+  ],
+  "mpxhz6250a": [
+    "OSS-EC_NXP_MPXHZ6250A_00000057"
+  ],
+  "mq131": [
+    "MQ131 gas sensor"
+  ],
+  "mq136": [
+    "Hydrogen Sulfide Gas Sensor - MQ-136"
+  ],
+  "mq137": [
+    "Ammonia Gas Sensor - MQ-137"
+  ],
+  "mq2": [
+    "MQ2_LPG",
+    "Smoke Sensor - MQ-2"
+  ],
+  "mq3": [
+    "Alcohol Gas Sensor - MQ-3"
+  ],
+  "mq4": [
+    "Methane CNG Gas Sensor - MQ-4"
+  ],
+  "mq6": [
+    "LPG Gas Sensor - MQ-6"
+  ],
+  "mq7": [
+    "Carbon Monoxide Sensor - MQ-7",
+    "MQ7Sensor"
+  ],
+  "mq8": [
+    "Hydrogen Gas Sensor - MQ-8"
+  ],
+  "mq9b": [
+    "Dual Gas CO and CH4 Detection Sensor - MQ-9B"
+  ],
+  "mr24hpc1": [
+    "seeed_mr24hpc1"
+  ],
+  "mr60bha2": [
+    "mmWaveKit",
+    "seeed_mr60bha2"
+  ],
+  "ms4525do": [
+    "MS4525DO_RT"
+  ],
+  "ms5611": [
+    "ms5611"
+  ],
+  "ms5637": [
+    "BaroLibrary"
+  ],
+  "ms5803": [
+    "MS5803 14BA PRESSURE",
+    "SparkFun MS5803-14BA Pressure Sensor",
+    "ms5803-micropython"
+  ],
+  "ms580314ba": [
+    "SparkFun Pressure Sensor Breakout - MS5803-14BA"
+  ],
+  "ms8607": [
+    "Adafruit MS8607",
+    "Qwiic Pressure/Humidity/Temp (PHT) Sensor - MS8607",
+    "ms8607"
+  ],
+  "msa301": [
+    "Adafruit MSA301",
+    "msa301",
+    "msa301-micropython-driver"
+  ],
+  "msa3xx": [
+    "msa3xx"
+  ],
+  "mt6826s": [
+    "MT6826S SPI"
+  ],
+  "mtp40": [
+    "MTP40C"
+  ],
+  "nau7802": [
+    "Adafruit NAU7802 Library",
+    "SparkFun Qwiic Scale - NAU7802",
+    "nau7802"
+  ],
+  "ncs36000": [
+    "Deneyap Hareket Algilama"
+  ],
+  "npi19": [
+    "npi19"
+  ],
+  "opt3001": [
+    "ClosedCube OPT3001",
+    "opt3001"
+  ],
+  "opt3002": [
+    "ClosedCube OPT3002"
+  ],
+  "opt3004": [
+    "7Semi-OPT3004-Digital-Ambient-Light-Sensor-Arduino-Library"
+  ],
+  "opt4048": [
+    "SparkFun Tristimulus Color Sensor - OPT4048DTSR (Qwiic)",
+    "opt4048"
+  ],
+  "paa5160e1": [
+    "SparkFun Optical Tracking Odometry Sensor - PAA5160E1 (Qwiic)"
+  ],
+  "pac1711": [
+    "PAC1xxx"
+  ],
+  "paj7620": [
+    "RevEng PAJ7620"
+  ],
+  "paj7620u2": [
+    "Gesture PAJ7620"
+  ],
+  "pasco2v01auma3": [
+    "CO2 Sensor - PASCO2V01AUMA3"
+  ],
+  "pct2075": [
+    "pct2075"
+  ],
+  "pd10lx": [
+    "PD-10LX-Library"
+  ],
+  "pm1006": [
+    "pm1006"
+  ],
+  "pm2005": [
+    "pm2005"
+  ],
+  "pms5003": [
+    "upython-aq-monitor"
+  ],
+  "pms7003": [
+    "MCCI-Catena-PMS7003",
+    "pms7003"
+  ],
+  "pmsa003i": [
+    "pmsa003i"
+  ],
+  "pmsx003": [
+    "pmsx003"
+  ],
+  "pmw3360": [
+    "PMW3360 Module"
+  ],
+  "pmw3901": [
+    "Bitcraze PMW3901"
+  ],
+  "pmwcs3": [
+    "pmwcs3"
+  ],
+  "pt100": [
+    "Platinum RTD Sensor - PT100"
+  ],
+  "pt1000c": [
+    "pt1000-c"
+  ],
+  "pzem004t": [
+    "PZEM004Tv30"
+  ],
+  "pzem6l24": [
+    "pzem6l24"
+  ],
+  "qmc5883l": [
+    "QMC5883LCompass",
+    "qmc5883l"
+  ],
+  "qmc5883p": [
+    "QMC5883PMagnetometer"
+  ],
+  "qmc6309": [
+    "PCBCUPID QMC6309"
+  ],
+  "qmi8658": [
+    "qmi8658"
+  ],
+  "qmp6988": [
+    "qmp6988"
+  ],
+  "rak12010": [
+    "RAKwireless VEML Light Sensor"
+  ],
+  "rak12019": [
+    "RAK12019_LTR390_UV_Light"
+  ],
+  "rak12021": [
+    "RAKwireless-RAK12021-TCS37725"
+  ],
+  "rak12023": [
+    "RAK12035_SoilMoisture"
+  ],
+  "rak12025": [
+    "RAKwireless I3G4250D Gyroscope library"
+  ],
+  "rak12034": [
+    "RAKwireless RAK12034"
+  ],
+  "rak12039": [
+    "RAK12039_PM_Sensor"
+  ],
+  "rak14002": [
+    "RAKwireless CAP1293 Touch Pad library"
+  ],
+  "rcwl0516": [
+    "Doppler Radar Sensor Module - RCWL-0516 (with Headers)"
+  ],
+  "rcwl9610": [
+    "AlashUltrasonic"
+  ],
+  "rcwl9620": [
+    "ultrasonic"
+  ],
+  "rd03": [
+    "RD03Radar"
+  ],
+  "rd03d": [
+    "rd03d"
+  ],
+  "rfd77402": [
+    "Qwiic_TOF_Module_RFD77402",
+    "SparkFun RFD77402 Distance Sensor - VCSEL Time of Flight"
+  ],
+  "rg15": [
+    "HRG15",
+    "RG15-Arduino"
+  ],
+  "rm3100": [
+    "RM3100-Arduino"
+  ],
+  "rttd721155": [
+    "MRTD-3011"
+  ],
+  "scd30": [
+    "CO₂ Humidity and Temperature Sensor - SCD30",
+    "scd30",
+    "scd30_modbus"
+  ],
+  "scd40": [
+    "7semi_SCD4x_CO2_Sensor",
+    "SparkFun CO2 Humidity and Temperature Sensor - SCD40 (Qwiic)"
+  ],
+  "scd41": [
+    "SparkFun CO2 Humidity and Temperature Sensor - SCD41 (Qwiic)"
+  ],
+  "scd43": [
+    "Soldered-SCD43"
+  ],
+  "scd4x": [
+    "DFRobot_SCD4X",
+    "scd4x"
+  ],
+  "sct013": [
+    "SCT013-100"
+  ],
+  "sd3031": [
+    "DFRobot_GNSSAndRTC"
+  ],
+  "sdp31": [
+    "MCCI Catena SDP"
+  ],
+  "sdp3x": [
+    "SparkFun SDP3x Arduino Library",
+    "sdp3x"
+  ],
+  "sds011": [
+    "esp_sds011",
+    "polly",
+    "sds011"
+  ],
+  "sen0032": [
+    "DFRobot_ADXL345"
+  ],
+  "sen0140": [
+    "DFRobot_QMC5883"
+  ],
+  "sen0153": [
+    "DFRobot_URM07"
+  ],
+  "sen0161": [
+    "DFRobot_PH"
+  ],
+  "sen0285": [
+    "DFRobot_Gesture_Touch"
+  ],
+  "sen0321": [
+    "sen0321"
+  ],
+  "sen0322": [
+    "DFRobot_OxygenSensor"
+  ],
+  "sen0343": [
+    "DFRobot_LWLP"
+  ],
+  "sen0395": [
+    "DFR_Radar"
+  ],
+  "sen0430": [
+    "DFRobot_TMF8x01"
+  ],
+  "sen0456": [
+    "DFRobot_MPX5700"
+  ],
+  "sen0465": [
+    "dfrobot_sen0465"
+  ],
+  "sen0496": [
+    "DFRobot_EOxygenSensor"
+  ],
+  "sen0560": [
+    "DFRobot_AirQualitySensor"
+  ],
+  "sen0575": [
+    "DFRobot_RainfallSensor"
+  ],
+  "sen0590": [
+    "DYP-R01CW"
+  ],
+  "sen0609": [
+    "dfrobot_sen0609"
+  ],
+  "sen0610": [
+    "DFRobot_C4001"
+  ],
+  "sen21231": [
+    "sen21231"
+  ],
+  "sen54": [
+    "Particle, VOC, Humidity, and Temperature Sensor - SEN54"
+  ],
+  "sen55": [
+    "Sensirion Particle, VOC, Humidity, and Temperature Sensor - SEN55"
+  ],
+  "sen5x": [
+    "sen5x"
+  ],
+  "sen6x": [
+    "sen6x"
+  ],
+  "senseair": [
+    "senseair"
+  ],
+  "sfa30": [
+    "sfa30"
+  ],
+  "sfa40": [
+    "DFRobot_SFA40",
+    "SparkFun Formaldehyde Sensor - SFA40 (Qwiic)",
+    "sfa40"
+  ],
+  "sfm3200": [
+    "SFM3X00"
+  ],
+  "sgp30": [
+    "sgp30"
+  ],
+  "sgp40": [
+    "7Semi_SGP4x",
+    "SGP4x",
+    "SparkFun Air Quality Sensor - SGP40 (Qwiic)",
+    "sgp40"
+  ],
+  "sgp41": [
+    "Adafruit SGP41",
+    "sgp41"
+  ],
+  "sgp4x": [
+    "sgp4x"
+  ],
+  "sht11": [
+    "sht11"
+  ],
+  "sht20": [
+    "SHT2x"
+  ],
+  "sht21": [
+    "Sodaq_SHT2x"
+  ],
+  "sht25": [
+    "sht25-micropython"
+  ],
+  "sht2x": [
+    "7SEMISHT2X",
+    "7Semi SHT2x"
+  ],
+  "sht30": [
+    "ClosedCube SHT31D",
+    "sht30"
+  ],
+  "sht31": [
+    "sht31"
+  ],
+  "sht31d": [
+    "sht31d"
+  ],
+  "sht35": [
+    "Grove - I2C High Accuracy Temp_Humi Sensor SHT35"
+  ],
+  "sht3x": [
+    "Microfire_SHT3x",
+    "PWFusion_SHT3X",
+    "SHT3x",
+    "esp-sht3x-micropython",
+    "sht3xd"
+  ],
+  "sht45": [
+    "ArtronShop_SHT45"
+  ],
+  "sht4x": [
+    "SHT4X",
+    "sht4x"
+  ],
+  "sht85": [
+    "sht85"
+  ],
+  "shtc3": [
+    "ClosedCube SHTC3",
+    "SHT",
+    "SparkFun Humidity Sensor Breakout - SHTC3 (Qwiic)",
+    "shtc3"
+  ],
+  "shtcx": [
+    "shtcx"
+  ],
+  "si1142": [
+    "Soldered SI114X Light Sensor Arduino Library"
+  ],
+  "si1145": [
+    "SI1145_WE",
+    "si1145"
+  ],
+  "si7013": [
+    "EmotiBit SI7013"
+  ],
+  "si7021": [
+    "Adafruit Si7021 Library",
+    "SI7021",
+    "SparkFun Humidity and Temperature Sensor Breakout - Si7021",
+    "si7021"
+  ],
+  "si7051": [
+    "ClosedCube Si7051"
+  ],
+  "si7055": [
+    "ClosedCube Si7055"
+  ],
+  "sm300d2": [
+    "sm300d2"
+  ],
+  "sm9000": [
+    "TE SM9000-series"
+  ],
+  "smt100": [
+    "smt100"
+  ],
+  "son1303": [
+    "DFRobot_Heartrate"
+  ],
+  "sp3s": [
+    "SP3S-AQ2SpaceData"
+  ],
+  "spa06003": [
+    "Adafruit SPA06_003",
+    "SPA06",
+    "SPA06_003",
+    "Seeed Arduino SPA06",
+    "spa06",
+    "spa06_003"
+  ],
+  "spd1200": [
+    "ErdiLRF"
+  ],
+  "spl06": [
+    "SPL06-007"
+  ],
+  "spl07": [
+    "SPL07-003"
+  ],
+  "sps30": [
+    "Particulate Matter Sensor - SPS30",
+    "sps30"
+  ],
+  "sr04m": [
+    "Waterproof_Ultrasonic"
+  ],
+  "st1vafe3bx": [
+    "ProtoCentral ST1VAFE3BX"
+  ],
+  "stc31": [
+    "CO₂ Sensor - STC31 (Qwiic)"
+  ],
+  "stcc4": [
+    "SparkFun CO2 Sensor - STCC4/SHT40 (Qwiic)",
+    "stcc4"
+  ],
+  "sths34pf80": [
+    "M5-STHS34PF80",
+    "SparkFun Human Presence and Motion Sensor - STHS34PF80 (Qwiic)",
+    "sths34pf80"
+  ],
+  "stlm20dd9f": [
+    "OSS-EC_STM_STLM20DD9F_00000057"
+  ],
+  "stlm20w87f": [
+    "OSS-EC_STM_STLM20W87F_00000057"
+  ],
+  "stmpe610": [
+    "stmpe610"
+  ],
+  "stpm34": [
+    "STPM3X"
+  ],
+  "sts3x": [
+    "7SEMISTS3X",
+    "7Semi STS3x",
+    "DFRobot_STS3X",
+    "sts3x"
+  ],
+  "sts4x": [
+    "7SEMISTS4X",
+    "7Semi STS4x"
+  ],
+  "stts22h": [
+    "STM32duino STTS22H",
+    "SparkFun Temperature Sensor - STTS22H (Qwiic)",
+    "stts22h"
+  ],
+  "stts751": [
+    "STM32duino STTS751"
+  ],
+  "surveyorrtd": [
+    "Surveyor Temperature"
+  ],
+  "t5403barometric": [
+    "Sparkfun T5403 Barometric Sensor Library"
+  ],
+  "t6615": [
+    "t6615"
+  ],
+  "tal220": [
+    "Load Cell - 10kg, Straight Bar (TAL220)"
+  ],
+  "tal220b": [
+    "Load Cell - 5kg, Straight Bar (TAL220B)"
+  ],
+  "tal221": [
+    "Mini Load Cell - 500g, Straight Bar (TAL221)"
+  ],
+  "tas501": [
+    "Load Cell - 200kg, S-Type (TAS501)"
+  ],
+  "tas606": [
+    "Load Cell - 50kg, Disc (TAS606)"
+  ],
+  "tc1046": [
+    "OSS-EC_MICROCHIP_TC1046_00000057"
+  ],
+  "tc1047": [
+    "OSS-EC_MICROCHIP_TC1047_TC1047A_00000057"
+  ],
+  "tc74": [
+    "tc74"
+  ],
+  "tcs230": [
+    "MD_TCS230"
+  ],
+  "tcs3200": [
+    "TCS3200-MicroPython",
+    "tcs3200"
+  ],
+  "tcs3430": [
+    "DFRobot_TCS3430",
+    "tcs3430"
+  ],
+  "tcs3448": [
+    "Adafruit TCS3448",
+    "tcs3448"
+  ],
+  "tcs3472": [
+    "107-Arduino-TCS3472"
+  ],
+  "tcs34725": [
+    "SensorRoxoOBR",
+    "TCS",
+    "tcs34725"
+  ],
+  "tct40": [
+    "SparkFun Ultrasonic Distance Sensor - TCT40 (Qwiic)"
+  ],
+  "tee501": [
+    "tee501"
+  ],
+  "tel0157": [
+    "DFRobot_GNSS"
+  ],
+  "tel0171": [
+    "DFRobot_RTK_4G"
+  ],
+  "tem3200": [
+    "tem3200"
+  ],
+  "temt6000": [
+    "SparkFun Ambient Light Sensor Breakout - TEMT6000"
+  ],
+  "temt6000x01": [
+    "Ambient Light Sensor - SMD (TEMT6000x01)"
+  ],
+  "tfluna": [
+    "TF-Luna",
+    "TFLI2C",
+    "tfluna"
+  ],
+  "tfs20l": [
+    "TFS20"
+  ],
+  "th02": [
+    "Grove Temper Humidity TH02"
+  ],
+  "tl555q": [
+    "Deneyap Toprak Nemi Olcer"
+  ],
+  "tla2021": [
+    "ProtoCentral TLA20xx",
+    "TLA20xx"
+  ],
+  "tli4971": [
+    "TLI4971-Current-Sensor"
+  ],
+  "tlv493d": [
+    "tlv493d"
+  ],
+  "tmag5273": [
+    "7Semi_TMAG5273",
+    "SparkFun Linear 3D Hall-Effect Sensor - TMAG5273 (Qwiic)",
+    "tmag5273"
+  ],
+  "tmf8801": [
+    "Adafruit TMF8801",
+    "tmf8801"
+  ],
+  "tmf8806": [
+    "Adafruit TMF8806",
+    "tmf8806"
+  ],
+  "tmf8820": [
+    "SparkFun Qwiic dToF Imager - TMF8820"
+  ],
+  "tmf8821": [
+    "SparkFun Qwiic dToF Imager - TMF8821"
+  ],
+  "tmf8829": [
+    "ProtoCentral_TMF8829_dToF_Sensor_Library"
+  ],
+  "tmf882x": [
+    "SparkFun Qwiic TMF882X Library"
+  ],
+  "tmp006": [
+    "Adafruit TMP006",
+    "tmp006"
+  ],
+  "tmp007": [
+    "Adafruit TMP007 Library",
+    "tmp007"
+  ],
+  "tmp102": [
+    "7Semi-TMP102",
+    "SparkFun Digital Temperature Sensor - TMP102 (Qwiic)",
+    "tmp102"
+  ],
+  "tmp1075": [
+    "tmp1075"
+  ],
+  "tmp116": [
+    "7Semi TMP11x",
+    "TMP11x"
+  ],
+  "tmp117": [
+    "SparkFun High Precision Temperature Sensor - TMP117 (Qwiic)",
+    "TMP117-Arduino",
+    "tmp117"
+  ],
+  "tmp23x": [
+    "7SEMITMP23X",
+    "7Semi TMP23x"
+  ],
+  "tmp61": [
+    "TMP6x"
+  ],
+  "tmp9a00": [
+    "OSS-EC_TI_TMP9A00_00000057"
+  ],
+  "tof10120": [
+    "tof10120"
+  ],
+  "ts4231": [
+    "TS4231 Library"
+  ],
+  "ts8000": [
+    "TS8000 Library"
+  ],
+  "tsc2007": [
+    "Adafruit TSC2007",
+    "tsc2007"
+  ],
+  "tsd305": [
+    "TSD305lib"
+  ],
+  "tsl2550": [
+    "107-Arduino-TSL2550"
+  ],
+  "tsl2561": [
+    "Adafruit TSL2561",
+    "Joba Tsl2561 Library",
+    "tsl2561"
+  ],
+  "tsl2585": [
+    "Adafruit TSL2585",
+    "tsl2585"
+  ],
+  "tsl2591": [
+    "TSL2591MI",
+    "tsl2591"
+  ],
+  "tsys01": [
+    "ClosedCube TSYS01"
+  ],
+  "tt21100": [
+    "tt21100"
+  ],
+  "ttp223": [
+    "TTP223Row",
+    "ttp223"
+  ],
+  "tx07k": [
+    "TX07K-TXC"
+  ],
+  "tx20": [
+    "tx20"
+  ],
+  "ufc23": [
+    "ScioSense_UFC23"
+  ],
+  "ufireec": [
+    "ufire_ec"
+  ],
+  "ufireise": [
+    "ufire_ise"
+  ],
+  "ufm01": [
+    "ScioSense_UFM01",
+    "ufm01"
+  ],
+  "ufm02": [
+    "ScioSense_UFM02"
+  ],
+  "um980": [
+    "SparkFun UM980 Triband RTK GNSS Arduino Library"
+  ],
+  "urm13": [
+    "DFRobot_URM13"
+  ],
+  "us100": [
+    "us100"
+  ],
+  "us1881": [
+    "Hall-Effect Sensor - US1881 (Latching)"
+  ],
+  "usd1": [
+    "Bolder Flight Systems Ainstein USD1"
+  ],
+  "vcnl3040": [
+    "VCNL3040 Proximity Sensor Library"
+  ],
+  "vcnl4010": [
+    "vcnl4010"
+  ],
+  "vcnl4020": [
+    "vcnl4020"
+  ],
+  "vcnl4030x01": [
+    "Adafruit VCNL4030",
+    "VCNL4030",
+    "vcnl4030"
+  ],
+  "vcnl4040": [
+    "Adafruit VCNL4040",
+    "SparkFun Micro Proximity Sensor - 20cm, VCNL4040 (Qwiic)",
+    "vcnl4040"
+  ],
+  "vcnl4200": [
+    "Vishay_VCNL4200",
+    "vcnl4200"
+  ],
+  "veml3235": [
+    "veml3235"
+  ],
+  "veml3328": [
+    "DevLab_VEML3328"
+  ],
+  "veml6030": [
+    "SparkFun Ambient Light Sensor - VEML6030 (Qwiic)",
+    "SparkFun Ambient Light Sensor Arduino Library"
+  ],
+  "veml6040": [
+    "veml6040"
+  ],
+  "veml6046": [
+    "Adafruit VEML6046 Library"
+  ],
+  "veml6070": [
+    "veml6070"
+  ],
+  "veml6075": [
+    "veml6075"
+  ],
+  "veml7700": [
+    "7Semi VEML7700",
+    "Ambient Light Sensor - VEML7700 (Qwiic)",
+    "veml7700"
+  ],
+  "vl53l0x": [
+    "DFRobot_VL53L0X",
+    "vl53l0x"
+  ],
+  "vl53l1x": [
+    "SparkFun Distance Sensor Breakout - 4 Meter, VL53L1X (Qwiic)",
+    "vl53l1x",
+    "vl53l1x_pico"
+  ],
+  "vl53l4cd": [
+    "SparkFun Distance Sensor - 1.3 Meter, VL53L4CD (Qwiic)",
+    "vl53l4cd"
+  ],
+  "vl53l5cx": [
+    "SparkFun Qwiic ToF Imager - VL53L5CX",
+    "vl53l5cx"
+  ],
+  "vl6180": [
+    "SparkFun ToF Range Finder Sensor - VL6180",
+    "SparkFun VL6180 Sensor",
+    "vl6180"
+  ],
+  "vl6180x": [
+    "vl6180x"
+  ],
+  "vncl4020c": [
+    "VNCL4020C-Arduino"
+  ],
+  "wpi430": [
+    "WPI430-VMA430 GPS"
+  ],
+  "xdb401": [
+    "xdb401"
+  ],
+  "xgzp68xx": [
+    "xgzp68xx"
+  ],
+  "xiaomilywsd02mmc": [
+    "xiaomi_lywsd02mmc"
+  ],
+  "xiaomixmwsdj04mmc": [
+    "xiaomi_xmwsdj04mmc"
+  ],
+  "xm125": [
+    "SparkFun Pulsed Coherent Radar Sensor - Acconeer XM125 (Qwiic)",
+    "SparkFun XM125 Arduino Library"
+  ],
+  "xpt2046": [
+    "XPT2046_Bitbang"
+  ],
+  "xpt2046touchpad": [
+    "XPT2046-touch-pad-driver"
+  ],
+  "xycals21c": [
+    "xyc_als21c"
+  ],
+  "zc41": [
+    "ZC41"
+  ],
+  "ze40b": [
+    "ZE40B-TVOC"
+  ],
+  "zh06": [
+    "CSE_ZH06",
+    "ZH06-Ⅰ"
+  ],
+  "zmod4450": [
+    "Gas Sensor Module - ZMOD4450"
+  ],
+  "zp510": [
+    "ZP510"
+  ],
+  "zpa4756": [
+    "ZPA4756-0311A-R"
+  ],
+  "zyaura": [
+    "zyaura"
+  ]
+}

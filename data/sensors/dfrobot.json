@@ -2,15 +2,17 @@
   "source": "dfrobot",
   "source_url": "https://github.com/DFRobot",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-11-01T13:53:05.037047+00:00",
+  "scraped_at": "2026-11-10T23:57:24.286112+00:00",
   "stats": {
-    "sensor_count": 86,
-    "total_repos": 498,
-    "dfrobot_repos": 245,
+    "sensor_count": 87,
+    "total_repos": 499,
+    "dfrobot_repos": 246,
     "skipped_non_sensor": 104,
     "skipped_no_ic": 50,
-    "library_properties_fetched": 77
+    "library_properties_fetched": 78,
+    "kept_missing": 0
   },
+  "missed_scrapes": {},
   "sensors": [
     {
       "id": "10dof",
@@ -39,7 +41,8 @@
       "urls": [
         "https://github.com/DFRobot/DFRobot_64x8DTOF"
       ],
-      "description": "Library for DFRobot 64x8DTOF 64*8 dToF Laser Ranging Sensor.(SKU:SEN0682)"
+      "description": "DFRobot 64x8DTOF 64*8 dToF Laser Ranging Sensor.(SKU:SEN0682)",
+      "description_is_library_title": true
     },
     {
       "id": "64xdtof",
@@ -52,7 +55,8 @@
       "urls": [
         "https://github.com/DFRobot/DFRobot_64xDTOF"
       ],
-      "description": "Library for DFRobot 64x8DTOF 64*8 dToF Laser Ranging Sensor.(SKU:SEN0682)"
+      "description": "DFRobot 64x8DTOF 64*8 dToF Laser Ranging Sensor.(SKU:SEN0682)",
+      "description_is_library_title": true
     },
     {
       "id": "ads1115",
@@ -493,6 +497,7 @@
       "id": "ec10",
       "name": "EC10",
       "measures": [
+        "conductivity",
         "water_quality"
       ],
       "platforms": [
@@ -634,6 +639,16 @@
         "https://github.com/DFRobot/DFRobot_INA219"
       ],
       "description": "measure the current and voltage (SKU: SEN0291)."
+    },
+    {
+      "id": "irpositionv2",
+      "name": "IRPositionV2",
+      "measures": [],
+      "platforms": [],
+      "urls": [
+        "https://github.com/DFRobot/DFRobot_IRPositionV2"
+      ],
+      "description": "Track up to 16 infrared spots with the DFRobot IR positioning module.(SKU:SEN0701)"
     },
     {
       "id": "itg3200",

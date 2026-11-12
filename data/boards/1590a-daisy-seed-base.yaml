@@ -74,13 +74,13 @@ components:
   description: P-channel enhancement mode FET
   pin_count: 3
 - ref: R10
-  value: 1MEG
+  value: 1Mohm
   footprint: 0805
 - ref: R12
   value: 1kohm
   footprint: 0805
 - ref: R16
-  value: 1MEG
+  value: 1Mohm
   footprint: 0805
 - ref: R2
   value: 2.2kohm
@@ -103,10 +103,10 @@ components:
   footprint: 0805
   pulldown: Q2.S@3
 - ref: R7
-  value: 1MEG
+  value: 1Mohm
   footprint: 0805
 - ref: R8
-  value: 1MEG
+  value: 1Mohm
   footprint: 0805
 - ref: RV1
   value: 10k
@@ -120,18 +120,19 @@ components:
   pin_count: 4
 - ref: SW1
   value: switch
-  footprint: 1X3
+  footprint: 1X3_P2.54mm
   description: Switch, single pole double throw
   pin_count: 3
 - ref: SW2
   value: tactile switch
-  footprint: 1X2
+  footprint: 1X2_P2.54mm
 - ref: U201
   value: Daisy Seed
   footprint: DaisySeed
   description: Electrosmith Daisy Seed w/ Hothouse Pedal layout
   pin_count: 40
-  nc_pins: {D0/USB_ID: '1', D1: '2', D2: '3', D3: '4', D4: '5', D11: '12', D12: '13', D13: '14', D14: '15', AUDIO_OUT_R: '19', A0: '22', LED_2: '30', A9: '31', FOOT_SW2: '33', D27: '34', A11: '35', USB_D-: '36', USB_D+: '37', +3V3_D: '38'}
+  nc_pins: {D0/USB_ID: '1', D1: '2', D2: '3', D3: '4', D4: '5', D11: '12', D12: '13', D13: '14', D14: '15', AUDIO_OUT_R: '19',
+    A0: '22', LED_2: '30', A9: '31', FOOT_SW2: '33', D27: '34', A11: '35', USB_D-: '36', USB_D+: '37', +3V3_D: '38'}
 nets:
 - name: +3.3VA
   pins: [RV1.3, RV2.3, U201.+3V3_A]

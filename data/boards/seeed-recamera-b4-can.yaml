@@ -1,7 +1,7 @@
 name: Seeed reCamera B4 CAN
 slug: seeed-recamera-b4-can
 source: Seeed-Studio/OSHW-reCamera-Series
-format: kicad7
+format: kicad8
 description: SPI CAN FD controller (MCP2518FD+MCP2558FD), common mode choke
 tags: [can-bus]
 key_ics: [MCP2518FD, MCP2558FD]
@@ -20,12 +20,15 @@ components:
   footprint: U-FL3P-SMD-2.6X2.6X1.0MM
   manufacturer: HRS
   mpn: U.FL-R-SMT-1
+  prod_id: '320111077'
+  temp_range: "-40\xB0C to 90\xB0C"
   description: SMD U-FL Female CONN-Gold;3P-L2.6*W2.6*H1.25mm
   pin_count: 3
 - ref: ANT2
   value: ANT Connect
   footprint: ANTENNA-5P-13.5X6.5X6.5MM
   manufacturer: BOANTONG
+  prod_id: '320160445'
   description: DIP SMA-K ;5P-16.5*6.5mm
   pin_count: 5
 - ref: C1
@@ -33,96 +36,144 @@ components:
   footprint: '1210'
   manufacturer: Taiyo Yuden
   mpn: GMK325BJ226MM-P
+  prod_id: '302013268'
+  voltage: 35V
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 22uF-35V-20%-X5R;1210
 - ref: C11
   value: 33pF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402JRNPO9BN330
+  prod_id: '302010000'
+  voltage: 50V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 33pF-50V-5%-NPO;0402
 - ref: C12
   value: 100nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
 - ref: C13
   value: 4.7uF
   footprint: '0603'
   manufacturer: Samsung
   mpn: CL10A475KP8NNNC
+  prod_id: '302013253'
+  voltage: 10V
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
 - ref: C14
   value: 4.7uF
   footprint: '0603'
   manufacturer: Samsung
   mpn: CL10A475KP8NNNC
+  prod_id: '302013253'
+  voltage: 10V
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
 - ref: C15
   value: 100nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
 - ref: C16
   value: 100nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
 - ref: C17
   value: 100nF
   footprint: '0603'
   manufacturer: YAGEO
   mpn: CC0603KRX7R9BB104
+  prod_id: '302010138'
+  voltage: 50V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-50V-10%-X7R;0603
 - ref: C18
   value: 100nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
 - ref: C19
   value: 4.7uF
   footprint: '0603'
   manufacturer: Samsung
   mpn: CL10A475KP8NNNC
+  prod_id: '302013253'
+  voltage: 10V
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
 - ref: C2
   value: 100nF
   footprint: '0603'
   manufacturer: YAGEO
   mpn: CC0603KRX7R9BB104
+  prod_id: '302010138'
+  voltage: 50V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-50V-10%-X7R;0603
 - ref: C21
   value: 15pF
   footprint: '0402'
   manufacturer: Murata
   mpn: GRM1555C1H150JA01D
+  prod_id: '302010041'
+  voltage: 50V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 15pF-50V-5%-NPO;0402
 - ref: C22
   value: 15pF
   footprint: '0402'
   manufacturer: Murata
   mpn: GRM1555C1H150JA01D
+  prod_id: '302010041'
+  voltage: 50V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 15pF-50V-5%-NPO;0402
 - ref: C23
   value: 4.7uF
   footprint: '0603'
   manufacturer: Samsung
   mpn: CL10A475KP8NNNC
+  prod_id: '302013253'
+  voltage: 10V
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
 - ref: C24
   value: 100nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
 - ref: C25
   value: 4.7uF
   footprint: '0603'
   manufacturer: Samsung
   mpn: CL10A475KP8NNNC
+  prod_id: '302013253'
+  voltage: 10V
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
   decouples: U4
 - ref: C26
@@ -130,6 +181,9 @@ components:
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
   decouples: U6
 - ref: C27
@@ -137,177 +191,241 @@ components:
   footprint: '0603'
   manufacturer: Samsung
   mpn: CL10A475KP8NNNC
+  prod_id: '302013253'
+  voltage: 10V
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
 - ref: C28
   value: 100nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
 - ref: C29
   value: 4.7uF
   footprint: '0603'
   manufacturer: Samsung
   mpn: CL10A475KP8NNNC
+  prod_id: '302013253'
+  voltage: 10V
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
 - ref: C3
   value: 100nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
 - ref: C30
   value: 100nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
 - ref: C31
   value: 4.7nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R9BB472
+  prod_id: '302010261'
+  voltage: 50V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic;4.7nF-50V-10%-X7R;0402
 - ref: C32
   value: 100nF
   footprint: '0603'
   manufacturer: YAGEO
   mpn: CC0603KRX7R9BB104
+  prod_id: '302010138'
+  voltage: 50V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-50V-10%-X7R;0603
 - ref: C33
   value: 1uF
   footprint: 0805
   manufacturer: YAGEO
   mpn: CC0805KKX7R9BB105
+  prod_id: '302010322'
+  voltage: 50V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 1uF-50V-10%-X7R;0805
 - ref: C35
   value: 4.7uF
   footprint: '0603'
   manufacturer: Samsung
   mpn: CL10A475KP8NNNC
+  prod_id: '302013253'
+  voltage: 10V
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 4.7uF-10V-10%-X5R;0603
 - ref: C36
   value: 100nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
 - ref: C4
   value: 1nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R9BB102
+  prod_id: '302010005'
+  voltage: 50V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 1nF-50V-10%-X7R;0402
 - ref: C5
   value: 100nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
 - ref: C6
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
   mpn: CL21A226MAYNNNE
+  prod_id: '302013260'
+  voltage: 25V
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 22uF-25V-20%-X5R;0805
 - ref: C7
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
   mpn: CL21A226MAYNNNE
+  prod_id: '302013260'
+  voltage: 25V
+  temp_range: "-55\xB0C to 85\xB0C"
   description: SMD CAP Ceramic 22uF-25V-20%-X5R;0805
 - ref: C8
   value: 100nF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402KRX7R8BB104
+  prod_id: '302010024'
+  voltage: 25V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 100nF-25V-10%-X7R;0402
 - ref: C9
   value: 33pF
   footprint: '0402'
   manufacturer: YAGEO
   mpn: CC0402JRNPO9BN330
+  prod_id: '302010000'
+  voltage: 50V
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD CAP Ceramic 33pF-50V-5%-NPO;0402
 - ref: D1
   value: ESDPSA0402V05
   footprint: '0402'
   manufacturer: SEMITEL
   mpn: ESDPSA0402V05
+  prod_id: '304060074'
   description: SMD Diode ESD 0.05pF;0402
 - ref: D2
   value: ESDPSA0402V05
   footprint: '0402'
   manufacturer: SEMITEL
   mpn: ESDPSA0402V05
+  prod_id: '304060074'
   description: SMD Diode ESD 0.05pF;0402
 - ref: D3
   value: TPD1E10B06DPYR
   footprint: '0402'
+  voltage: 5.5V
   manufacturer: TI
   mpn: TPD1E10B06DPYR
+  prod_id: '304050312'
+  temp_range: "-40\xB0C to 125\xB0C"
   description: SMD Diode ESD 5.5V-6V-12pF-30KV-30KV;X1SON(2)
 - ref: D4
   value: SMBJ24CA
   footprint: DO-214AA_SMB
+  voltage: 24V
   manufacturer: Brightking
   mpn: SMBJ24CA
+  prod_id: '304051161'
+  temp_range: "-65\xB0C to 150\xB0C"
   description: SMD Diode TVS 24VWM 29.5V;SMB
 - ref: D5
   value: SM05-7
   footprint: SOT-23
+  voltage: 5V
   manufacturer: Diodes
   mpn: SM05-7
+  prod_id: '304050019'
+  temp_range: "-55\xB0C to 150\xB0C"
   description: SMD Diode TVS;5V-20.6V-SOT-23-3
   pin_count: 3
 - ref: D6
   value: TPD1E10B06DPYR
   footprint: '0402'
+  voltage: 5.5V
   manufacturer: TI
   mpn: TPD1E10B06DPYR
+  prod_id: '304050312'
+  temp_range: "-40\xB0C to 125\xB0C"
   description: SMD Diode ESD 5.5V-6V-12pF-30KV-30KV;X1SON(2)
 - ref: FB1
   value: 120ohm
   footprint: '0402'
+  current: 1.3A
   manufacturer: Murata
   mpn: BLM15PD121SN1D
+  prod_id: '303030040'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD Ferrite Bead 120R-1.3A;0402
 - ref: FB2
   value: 0ohm
   footprint: 0805
-  manufacturer: TDK
-  mpn: MPZ2012S101AT000
-  description: SMD Ferrite Bead 100R-4A;0805
+  current: 4A
 - ref: FB3
   value: 0ohm
   footprint: 0805
-  manufacturer: TDK
-  mpn: MPZ2012S101AT000
-  description: SMD Ferrite Bead 100R-4A;0805
+  current: 4A
 - ref: FB4
   value: 0ohm
   footprint: 0805
-  manufacturer: TDK
-  mpn: MPZ2012S101AT000
-  description: SMD Ferrite Bead 100R-4A;0805
+  current: 4A
 - ref: FB5
   value: 0ohm
   footprint: 0805
-  manufacturer: TDK
-  mpn: MPZ2012S101AT000
-  description: SMD Ferrite Bead 100R-4A;0805
+  current: 4A
 - ref: J1
   value: ST-BTB-058060-A
   footprint: BTB60-Male-Female-0.5-17.7x4.4mm
   manufacturer: SUNGTECH
   mpn: ST-BTB-058060-A
+  prod_id: '320210641'
+  temp_range: "-25\xB0C to 85\xB0C"
   description: SMD BTB Male CONN;2*30P-0.5mm-17.7*4.4*4mm
   pin_count: 60
-  nc_pins: {'2': '2', '4': '4', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '23': '23', '26': '26', '32': '32', '37': '37', '39': '39', '41': '41', '42': '42', '43': '43', '44': '44', '45': '45', '47': '47', '49': '49', '51': '51', '53': '53', '55': '55', '56': '56', '57': '57', '59': '59'}
+  nc_pins: {'2': '2', '4': '4', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '15': '15', '16': '16', '17': '17',
+    '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '23': '23', '26': '26', '32': '32', '37': '37', '39': '39',
+    '41': '41', '42': '42', '43': '43', '44': '44', '45': '45', '47': '47', '49': '49', '51': '51', '53': '53', '55': '55',
+    '56': '56', '57': '57', '59': '59'}
 - ref: J2
   value: JST SH 6-pin
   footprint: SMD-SH1.0-6P-90D
   manufacturer: JST
   mpn: SM06B-SRSS-TB(LF)(SN)
+  prod_id: '320150213'
+  temp_range: "-25\xB0C to +85\xB0C"
   description: SMD Male SH-Narutal R/A;6P-1.0-90D
   pin_count: 8
 - ref: J3
@@ -315,6 +433,7 @@ components:
   footprint: H4-2.54-65_35MIL
   manufacturer: SiTuoZhan
   mpn: FF-1025
+  prod_id: '320030017'
   description: DIP Black Female Header VERT;1*4P-2.54-8.5mm
   pin_count: 4
 - ref: K1
@@ -322,6 +441,7 @@ components:
   footprint: SW5-SMD-4.56X2.3X1.9MM
   manufacturer: DeYiLong
   mpn: TD-1100AP-A4N-D1R
+  prod_id: '311990111'
   description: SMD Switch;5P+2-L4.56*W1.90*H2.3mm
   pin_count: 5
 - ref: K2
@@ -329,19 +449,25 @@ components:
   footprint: SW5-SMD-4.56X2.3X1.9MM
   manufacturer: DeYiLong
   mpn: TD-1100AP-A4N-D1R
+  prod_id: '311990111'
   description: SMD Switch;5P+2-L4.56*W1.90*H2.3mm
   pin_count: 5
 - ref: L1
   value: 5.6uH
   footprint: INT2-SMD-4.2X4.4X1.8MM
+  current: 4.4A
   manufacturer: CODACA
   mpn: CSHB0430R-5R6M
+  prod_id: '303011672'
+  temp_range: "-40\xB0C to 125\xB0C"
   description: SMD Inductor 5.6uH-20%-4.4A;2P-L4.2*W4.4*H2.8mm
 - ref: L3
   value: common mode choke
   footprint: INT4-1.5-4.75X4.5X2MM
   manufacturer: PROD
   mpn: PCAQ4520MB-142
+  prod_id: '303050504'
+  temp_range: "-25\u2103 to 125\u2103"
   description: SMD Common Mode Chokes 1.4k@100MHz 1.9A-50V;4P-L4.75*W4.5*H2mm
   pin_count: 4
 - ref: Q3
@@ -349,6 +475,8 @@ components:
   footprint: DFN8P-0.65-3X3X0.8MM
   manufacturer: Rohm
   mpn: RQ3E120ATTB
+  prod_id: '305031179'
+  temp_range: "-55\xB0C to 150\u2103"
   description: SMD MOSFET P-CH 30V-12A;HSMT8
   pin_count: 9
 - ref: Q4
@@ -356,222 +484,325 @@ components:
   footprint: DFN8P-0.65-3X3X0.8MM
   manufacturer: Rohm
   mpn: RQ3E120ATTB
+  prod_id: '305031179'
+  temp_range: "-55\xB0C to 150\u2103"
   description: SMD MOSFET P-CH 30V-12A;HSMT8
   pin_count: 9
 - ref: R1
   value: 5.1kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-075K1L
+  prod_id: '301010495'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES;5.1K-1%-1/16W;0402
   pulldown: USB1.A5/CC1
 - ref: R10
   value: 7.5kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-077K5L
+  prod_id: '301011214'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 7.5K-1%-1/16W;0402
   pulldown: R11.1
 - ref: R11
   value: 0ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-070RL
+  prod_id: '301010000'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 0R-5%-1/16W;0402
 - ref: R12
   value: 20ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-0720RL
+  prod_id: '301010443'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD RES 20R-5%-1/16W;0402
 - ref: R13
   value: 0ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-070RL
+  prod_id: '301010000'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 0R-5%-1/16W;0402
 - ref: R14
   value: 11kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-0711KL
+  prod_id: '301010568'
   description: SMD RES 11K-1%-1/16W-0402
   pulldown: USB_DET
 - ref: R15
   value: 20kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-0720KL
+  prod_id: '301010072'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 20K-1%-1/16W;0402
 - ref: R16
   value: 33kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-0733KL
+  prod_id: '301010441'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 33K-1%-1/16W;0402
   pullup: R17.1
 - ref: R17
   value: 47kohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-0747KL
+  prod_id: '301010005'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 47K-5%-1/16W;0402
 - ref: R18
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-071KL
+  prod_id: '301010044'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 1K-1%-1/16W;0402
 - ref: R19
   value: 100kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-07100KL
+  prod_id: '301010456'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 100K-1%-1/16W;0402
   pulldown: SD0_PWR_3V3
 - ref: R2
   value: 5.1kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-075K1L
+  prod_id: '301010495'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES;5.1K-1%-1/16W;0402
   pulldown: USB1.B5/CC2
 - ref: R20
   value: 0ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-070RL
+  prod_id: '301010000'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 0R-5%-1/16W;0402
 - ref: R21
   value: 0ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-070RL
+  prod_id: '301010000'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 0R-5%-1/16W;0402
 - ref: R22
   value: 0ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-070RL
+  prod_id: '301010000'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 0R-5%-1/16W;0402
 - ref: R23
   value: 0ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-070RL
+  prod_id: '301010000'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 0R-5%-1/16W;0402
 - ref: R24
   value: 0ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-070RL
+  prod_id: '301010000'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 0R-5%-1/16W;0402
 - ref: R25
   value: 0ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-070RL
+  prod_id: '301010000'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 0R-5%-1/16W;0402
 - ref: R26
   value: 0ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-070RL
+  prod_id: '301010000'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 0R-5%-1/16W;0402
 - ref: R3
   value: 5.1ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-075R1L
+  prod_id: '301010437'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 5.1R-5%-1/16W;0402
 - ref: R32
   value: 0ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-070RL
+  prod_id: '301010000'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 0R-5%-1/16W;0402
 - ref: R33
   value: 62ohm
   footprint: 0805
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0805FR-0762RL
+  prod_id: '301010363'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD RES 62R-1%-1/8W;0805
 - ref: R34
   value: 62ohm
   footprint: 0805
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0805FR-0762RL
+  prod_id: '301010363'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD RES 62R-1%-1/8W;0805
 - ref: R35
   value: 100kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-07100KL
+  prod_id: '301010456'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 100K-1%-1/16W;0402
   pulldown: U5.2
 - ref: R36
   value: 100kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-07100KL
+  prod_id: '301010456'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 100K-1%-1/16W;0402
   pulldown: U5.6
 - ref: R37
   value: 100kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-07100KL
+  prod_id: '301010456'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 100K-1%-1/16W;0402
   pulldown: U6.2
 - ref: R38
   value: 100kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-07100KL
+  prod_id: '301010456'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 100K-1%-1/16W;0402
   pulldown: U6.6
 - ref: R4
   value: 5.1ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-075R1L
+  prod_id: '301010437'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 5.1R-5%-1/16W;0402
 - ref: R5
   value: 75kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-0775KL
+  prod_id: '301012338'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 75K-1%-1/16W;0402
   pulldown: U1.AAM
 - ref: R6
   value: 100kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-07100KL
+  prod_id: '301010456'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 100K-1%-1/16W;0402
 - ref: R7
   value: 20kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-0720KL
+  prod_id: '301010072'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 20K-1%-1/16W;0402
 - ref: R8
   value: 20ohm
   footprint: '0402'
+  tolerance: 5%
   manufacturer: YAGEO
   mpn: RC0402JR-0720RL
+  prod_id: '301010443'
+  temp_range: "-55\xB0C to 125\xB0C"
   description: SMD RES 20R-5%-1/16W;0402
 - ref: R9
   value: 40.2kohm
   footprint: '0402'
+  tolerance: 1%
   manufacturer: YAGEO
   mpn: RC0402FR-0740K2L
+  prod_id: '301010062'
+  temp_range: "-55\xB0C to 155\xB0C"
   description: SMD RES 40.2K-1%-1/16W;0402
 - ref: U1
   value: MP2315GJ
   footprint: TSOT23-8
+  current: 3A
   manufacturer: MPS
   mpn: MP2315GJ
+  prod_id: '310032387'
+  temp_range: "-40\xB0C to 125\xB0C"
   description: SMD IC PMIC;DCDC Buck-ADJ-3A;TSOT23-8
   pin_count: 8
 - ref: U2
@@ -579,6 +810,8 @@ components:
   footprint: VDFN14-0.65-4.5X3X0.85MM
   manufacturer: Microchip
   mpn: MCP2518FDT-E/QBB
+  prod_id: '310071026'
+  temp_range: "-40\xB0C to 125\xB0C"
   description: SMD IC Interface CAN Controller;VDFN-14
   pin_count: 15
   nc_pins: {CLKO/SOF: '3', nINT1/GPIO1: '8', nINT0/GPIO0/XSTBY: '9'}
@@ -587,6 +820,8 @@ components:
   footprint: SOIC8-1.27-5X4MM
   manufacturer: Microchip
   mpn: MCP2558FD-H/SN
+  prod_id: '310070734'
+  temp_range: "-40\xB0C to 150\xB0C"
   description: SMD IC Interface;CAN FD Transceiver;SOIC-8
   pin_count: 8
 - ref: U4
@@ -594,6 +829,8 @@ components:
   footprint: WLCSP4-0.4-0.77X0.77X0.33MM
   manufacturer: TI
   mpn: TPS22916CYFPR
+  prod_id: '310031638'
+  temp_range: "-40\xB0C to 85\xB0C"
   description: SMD IC LOW RON LOAD SWITCH;5.5V-2A;4-DSBGA
   pin_count: 4
 - ref: U5
@@ -601,6 +838,7 @@ components:
   footprint: SOT-363
   manufacturer: CJ
   mpn: BC856S
+  prod_id: '305050111'
   description: SMD Transistor Array 2 PNP -65V-100mA
   pin_count: 6
 - ref: U6
@@ -608,6 +846,7 @@ components:
   footprint: SOT-363
   manufacturer: CJ
   mpn: BC856S
+  prod_id: '305050111'
   description: SMD Transistor Array 2 PNP -65V-100mA
   pin_count: 6
 - ref: USB1
@@ -615,6 +854,7 @@ components:
   footprint: USB2.0-TYPE-C
   manufacturer: "\u91D1\u500D\u5229"
   mpn: USB-31C-F-16P-L7.35
+  prod_id: '320011358'
   description: SMD USB TYPE C-W/P;12+4P-8.94*7.35*3.26mm
   pin_count: 18
   nc_pins: {A8/SBU1: A8, B8/SBU2: B8}
@@ -623,6 +863,8 @@ components:
   footprint: X4-SMD-2.0X1.6MM
   manufacturer: "\u4E1C\u6676\u7535\u5B50"
   mpn: Y4000Fc001
+  prod_id: '306011483'
+  temp_range: "-40\xB0C to 85\xB0C"
   description: SMD Crystal 40MHz-9pF-10ppm-40R;4P-L2.0*W1.6*H0.5mm
   pin_count: 4
 nets:

@@ -2,8 +2,8 @@
 """
 Build SQLite database from stock history JSONL files.
 
-Reads gzipped JSONL files from data/history/ and creates a queryable
-SQLite database of stock change events.
+Reads gzipped JSONL files from data/history/ (monthly files, and since 0.9.0 one file per day
+under YYYY-MM/) and creates a queryable SQLite database of stock change events.
 
 Usage:
     python scripts/build_history_db.py [--data-dir PATH] [--output PATH]
@@ -60,16 +60,19 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
 
+    # WITHOUT ROWID: the rows live in the primary key's B-tree, which is also the order jlc_stock_history
+    # reads them in (one part, a date range), so they aren't stored twice. The files keep each event's
+    # price; jlc_stock_history doesn't return it, so it isn't loaded.
     conn.execute("""
         CREATE TABLE stock_events (
             lcsc TEXT NOT NULL,
             date TEXT NOT NULL,
+            event_type TEXT NOT NULL DEFAULT 'change',
             stock INTEGER,
-            price REAL,
             library_type TEXT,
-            event_type TEXT DEFAULT 'change',
+            stock_before INTEGER,
             PRIMARY KEY (lcsc, date, event_type)
-        )
+        ) WITHOUT ROWID
     """)
 
     # Load all history files
@@ -78,7 +81,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
     file_count = 0
 
     if history_dir.exists():
-        for gz_file in sorted(history_dir.glob("*.jsonl.gz")):
+        for gz_file in sorted(history_dir.rglob("*.jsonl.gz")):
             count = 0
             skipped = 0
             batch = []
@@ -109,6 +112,13 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
                                 skipped += 1
                                 continue
 
+                            stock_before = event.get("before")
+                            if stock_before is not None and (
+                                type(stock_before) is not int or stock_before < 0
+                            ):
+                                skipped += 1
+                                continue
+
                             lib_type = event.get("t")
                             if lib_type not in VALID_LIBRARY_TYPES:
                                 skipped += 1
@@ -119,14 +129,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
                                 skipped += 1
                                 continue
 
-                            batch.append((
-                                lcsc,
-                                date,
-                                stock,
-                                event.get("$"),
-                                lib_type,
-                                event_type,
-                            ))
+                            batch.append((lcsc, date, event_type, stock, lib_type, stock_before))
                             count += 1
                         except (json.JSONDecodeError, KeyError) as e:
                             skipped += 1
@@ -135,7 +138,8 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
 
                         if len(batch) >= 1000:
                             conn.executemany(
-                                "INSERT OR REPLACE INTO stock_events VALUES (?, ?, ?, ?, ?, ?)",
+                                "INSERT OR REPLACE INTO stock_events (lcsc, date, event_type, stock, library_type, stock_before) "
+                                "VALUES (?, ?, ?, ?, ?, ?)",
                                 batch,
                             )
                             batch = []
@@ -147,7 +151,8 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
             # Flush partial batch (including data recovered before truncation)
             if batch:
                 conn.executemany(
-                    "INSERT OR REPLACE INTO stock_events VALUES (?, ?, ?, ?, ?, ?)",
+                    "INSERT OR REPLACE INTO stock_events (lcsc, date, event_type, stock, library_type, stock_before) "
+                                "VALUES (?, ?, ?, ?, ?, ?)",
                     batch,
                 )
 
@@ -164,10 +169,6 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
                         msg += " (truncated)"
                     print(msg)
 
-    # Create indexes (must exist before MIN(date) query for index-only scan)
-    conn.execute("CREATE INDEX idx_events_lcsc ON stock_events(lcsc)")
-    conn.execute("CREATE INDEX idx_events_date ON stock_events(date)")
-
     # Tracking metadata (for Phase 2 analytics messaging)
     conn.execute("""
         CREATE TABLE tracking_meta (
@@ -176,20 +177,20 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
         )
     """)
 
-    # Derive tracking_started from earliest event date
-    cursor = conn.execute("SELECT MIN(date) FROM stock_events")
-    earliest = cursor.fetchone()[0]
+    # The first and last recorded dates, stored so the server doesn't need a date index (58 MB on
+    # 2026-11-11) to find them; tracking_started is the older name for the first.
+    earliest, latest = conn.execute("SELECT MIN(date), MAX(date) FROM stock_events").fetchone()
     if earliest:
-        conn.execute(
-            "INSERT INTO tracking_meta VALUES ('tracking_started', ?)",
-            (earliest,),
-        )
+        conn.executemany("INSERT INTO tracking_meta VALUES (?, ?)", [
+            ("tracking_started", earliest), ("history_start", earliest), ("history_end", latest)])
         if verbose:
             print(f"  Tracking started: {earliest}")
 
     conn.commit()
     conn.execute("ANALYZE")
     conn.commit()
+    # Files load in date order, not key order, which leaves the B-tree's pages part-filled
+    conn.execute("VACUUM")
 
     # Get final stats
     cursor = conn.execute("SELECT COUNT(*) FROM stock_events")

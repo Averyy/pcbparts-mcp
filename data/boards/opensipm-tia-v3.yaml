@@ -50,8 +50,8 @@ components:
   footprint: S14420
   pin_count: 3
 - ref: J1
-  value: 2x3 header
-  footprint: 2X3
+  value: 2x3 2.54mm header
+  footprint: 2X3_P2.54mm
   pin_count: 6
   nc_pins: {Pin_1: '1'}
 - ref: J2

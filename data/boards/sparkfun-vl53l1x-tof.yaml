@@ -23,6 +23,7 @@ components:
 - ref: C4
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U2
 - ref: D1
@@ -30,12 +31,17 @@ components:
   footprint: '0603'
   prod_id: DIO-00819
   description: Red SMD LED
+- ref: I2C
+  value: solder jumper (NC)
+  footprint: SJ-3
+  description: Normally closed trace jumper (2 of 2 connections)
+  pin_count: 3
 - ref: J1
   value: 1x1 header
   footprint: 1X01
 - ref: J2
   value: Qwiic connector
-  footprint: 1X04
+  footprint: 1X04_P1.00mm_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
   pin_count: 4
@@ -45,7 +51,7 @@ components:
   pin_count: 4
 - ref: J4
   value: Qwiic connector
-  footprint: 1X04
+  footprint: 1X04_P1.00mm_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
   pin_count: 4
@@ -58,24 +64,28 @@ components:
 - ref: R1
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
 - ref: R2
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pullup: '!SHUT'
 - ref: R3
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
-  pullup: D1.A
 - ref: R4
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R5
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: U2
   value: VL53L1X
@@ -132,6 +142,9 @@ positions:
 - ref: D1
   x: 3.17
   y: 6.1
+- ref: I2C
+  x: 12.7
+  y: 16.51
 - ref: J1
   x: 19.05
   y: 1.27

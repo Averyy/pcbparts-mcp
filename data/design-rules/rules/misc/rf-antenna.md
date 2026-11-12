@@ -4,112 +4,82 @@
 
 ## Quick Reference
 
-- **PCB trace antenna: free, tunable, but needs ground plane >= lambda/4 on longest edge.** 2.4 GHz IFA: ~15mm clear of ground. 915 MHz monopole: ~45mm clear of ground. Efficiency degrades sharply if ground plane is undersized.
-- **Chip antenna: demands exact layout per vendor datasheet.** Johanson specifies >= 2mm from shorter edges, >= 4mm from longer (radiating) edge. Infineon/Cypress AN91445: 0.8mm minimum for over-ground-plane parts like 2450AT42B100E, but 2-3mm gives measurably better return loss. Always include pi-match network for tuning.
-- **RF trace: 50 ohm GCPW, no vias, no layer changes.** Route on outer layer with continuous ground plane on adjacent layer. Keep < 20mm total. Via fences on both sides, spaced < lambda/20.
-- **Matching network: always include pi-pad footprint even if values are 0-ohm/open.** VNA tuning on prototype is required -- simulation alone is insufficient. Use +/-0.1pF caps and +/-2% inductors (0402 minimum).
-- **Module antenna placement: antenna edge overhangs or flush with base board edge.** If antenna cannot overhang, 15mm clearance in all directions on all layers -- no copper, no traces, no components.
+- **PCB antenna dimensions are reference-design-specific:** AN91445 MIFA: 7.2 * 11.1mm; IFA: 4 * 20.5mm on the documented 1.6mm FR4 board. These are element dimensions, not universal clearance zones [1, pp.10, 15].
+- **Chip antenna clearance is part- and orientation-specific.** AN91445 gives 0.8mm minimum antenna-edge-to-ground clearance for 2450AT42B100E, with better return loss at 2-3mm [1, pp.17-18].
+- **ESP32 RF trace: outer layer, no vias or layer changes, continuous adjacent ground.** Calculate the 50 ohm geometry for the actual stackup [4, RF].
+- **Reserve antenna tuning footprints:** AN1088 recommends a 3-element pi-network for its IFA; Johanson 2450AT18B0100001E specifies a T-network. Tune on the final board [7, p.6; 13, p.3].
+- **ESP32 module: place the PCB antenna outside the base board, feed point near its edge.** Otherwise provide >= 15mm clearance in all directions around the antenna area, with no copper, routing, or components [4, Positioning a Module on a Base Board].
 
 ## Design Rules
 
 ### Antenna Type Selection
 
-| Antenna Type | Board Area | Efficiency | Best For |
-|-------------|-----------|------------|----------|
-| PCB trace IFA/MIFA | 15-25mm clear zone | 60-80% | Cost-sensitive, board space available |
-| PCB meander monopole | 20-45mm clear zone | 50-70% | Sub-GHz, elongated boards |
-| Chip antenna | 3-5mm + clearance zone | 40-65% | Space-constrained, multi-band |
-| Helical PCB (sub-GHz) | 19x12mm | 65% | Compact 868/915 MHz |
-| Wire/whip | External | 85-95% | Maximum range |
-| Ceramic patch | 25x25mm (GNSS) | 70-85% | GNSS active antenna |
-
-- **Silicon Labs AN1088 IFA reference: copy geometry exactly -- even 0.5mm changes detune by 50+ MHz.** IFA on 2-layer FR4, 1.6mm thick, ground clearance 5.2mm from feed. Achieves -1.5 dBi peak gain, 72% efficiency. 1" board width is optimized -- wider or narrower shifts resonance significantly.
-- **Infineon/Cypress AN91445 MIFA: 7.2 x 11.1mm element, IFA: 4 x 20.5mm element.** Feed trace width = PCB thickness (1.6mm board = 1.6mm feed width). Table in AN91445 maps feed width to PCB thickness for each antenna variant.
-- **Meander monopole: reduces length ~40% but narrows bandwidth by half.** Folded structure occupies ~60% of straight monopole area but bandwidth drops from ~90 MHz to ~40 MHz at 868 MHz. Re-matching required for each board variant.
-- **Chip antenna selection:** Johanson 2450AT18x100 (2.4 GHz, 0402-size, -1 dBi peak gain, wide bandwidth). Abracon ACAG series (2.4 GHz, multiple sizes). For sub-GHz: Johanson 0868AT43A0020 (868 MHz, requires ground plane >= 50x30mm).
-- **Chip antenna feed must be perpendicular to the microstripline direction** per Johanson layout guide. Parallel feed couples to the ground plane edge and shifts impedance.
+- **Silicon Labs AN1088 IFA: copy the reference geometry and stackup, then tune for the application board.** Its legacy test designs are four-layer boards, 1.575mm (62mil) or 0.8mm thick, optimized for a 25.4mm (1in) board width. Changing the ground-plane size detunes the match [7, pp.2-6].
+- **AN91445 antenna feed width depends on separation to the RF ground layer and coplanar geometry.** Tables 2 and 4 use Er = 4.3 and give W = 1.651mm (65mil) for 1.524mm (60mil) separation; calculate width for the actual stackup and gap [1, pp.11, 16].
+- **Chip antenna selection:** Johanson 2450AT18B0100001E (legacy 2450AT18B100): 2.4-2.5 GHz, EIA 1206, 3.2 * 1.6 * 1.3mm, typical peak gain 1.5 dBi at 25 degrees C on evaluation board 2450AT18B0100001CE1. Abracon ACAG includes 2.4 GHz parts such as ACAG0201-2450-T. For 868 MHz: Johanson 0868AT43A0020001E (legacy 0868AT43A0020), 858-878 MHz; reproduce the ground and clearance geometry of its specified mounting configuration [13, pp.1-3; 8, p.4; 14, pp.1-4].
+- **Johanson's 2450AT45A100 horizontal-mount example needs > 2mm ground clearance at the short edges and > 4mm at the long edge facing ground.** Its alternate horizontal mounting permits > 1mm at the short end nearest ground; these are layout-specific dimensions [5, guideline 4].
+- **The feeder into the antenna's microstrip must be perpendicular to that microstrip** in Johanson's layout example, so the feeder does not become part of the resonant system. This applies to the coaxial/stripline feeder into the microstrip [5, guideline 5].
 
 ### Ground Plane Requirements
 
-- **Ground plane is half the antenna.** Monopole and IFA use the ground plane as the other radiating element. Undersized ground shifts resonant frequency, reduces efficiency, and skews radiation pattern.
-- **2.4 GHz minimum ground plane: 30x20mm.** Increasing to 40x30mm adds ~1 dB gain. Diminishing returns above 50x40mm.
-- **Sub-GHz (868/915 MHz) minimum ground plane: 50x30mm.** lambda/4 at 915 MHz = 82mm -- ground plane longest dimension should approach this. Below 50mm, efficiency drops below 50%.
-- **Ground plane must be solid under RF trace and matching network.** No routing, no splits, no slots crossing under the RF path. Ground vias every 5mm minimum, every 2mm near RF traces.
-- **Abracon testing: 10% ground plane area reduction from reference design shifted resonant frequency 30-50 MHz and degraded return loss by 3-5 dB.** Ground clearance zone sensitivity is not symmetric -- long (radiating) edge clearance matters 2x more than short edge.
+- **Use the antenna vendor's reference ground geometry.** Abracon's ground-length comparison is for ACAR4008-S698; changing ground length changes efficiency, with dependence on the operating band [8, p.5].
+- **For nRF52, keep the RF reference ground solid and free of routing beneath the RF path.** On boards with more than two layers, Nordic also specifies inner-layer keep-outs below the RF path to reduce stray capacitance; preserve the reference ground when reproducing that stackup. Stitch larger ground areas at least every 5mm and place vias beside the RF path [3, Typical mistakes; Ground planes].
 
 ### RF Trace Routing
 
-- **GCPW preferred over microstrip.** Better isolation, less sensitive to board thickness variation. Ground copper on both sides of center conductor with via fences connecting to ground plane below.
-- **50 ohm GCPW dimensions (FR4, 1oz copper, 1.6mm board):** 2-layer (1.5mm to the bottom ground, Er 4.4-4.5): trace 1.2mm, gap 0.25mm = 50 ohm. 4-layer (0.26mm prepreg, Er 4.4): trace 0.45mm, gap 0.64mm = 51 ohm. Solder mask over the line takes about 3 ohm off (the 1.2/0.25 line is 47 ohm under 25um of mask), so include it in the calculation. A 2.8mm trace is the plain-microstrip 50 ohm width on 1.5mm; with coplanar ground 0.2mm away it is 35 ohm. Use an impedance calculator with the actual stackup -- Er varies 3.8-4.6.
-- **No vias in RF trace.** Layer changes add 0.1-0.5nH inductance per via. If unavoidable, use 2+ vias in parallel (cuts inductance ~50%) with largest possible drill diameter.
-- **Bends: radius >= 3x trace width.** If 90-degree bend unavoidable, use mitered corner (cut corner at 45 degrees).
-- **RF trace length: every 10mm of 50 ohm trace adds ~0.05 dB loss at 2.4 GHz on FR4.** At 5.8 GHz: ~0.12 dB/cm. Keep total RF path < 20mm.
-- **Isolation between RF traces:** parallel microstrip coupling reaches -20 dB at 1mm spacing over 10mm length at 2.4 GHz. GCPW with via fences isolates best, but ADI puts the practical limit on a small PCB at about -45 dB between RF lines: don't budget for more.
-- **Silicon Labs AN629: via curtain spacing < lambda/10 of the highest harmonic of concern.** At 2.4 GHz (10th harmonic = 24 GHz): via spacing < 1.25mm. At 915 MHz: < 3.3mm. This is more aggressive than most generic guidelines.
+- **GCPW preferred over microstrip for isolation and reduced sensitivity to PCB thickness variation.** Ground copper on both sides of the center conductor needs via fences connecting to the ground plane below [2, Coplanar Waveguide (Grounded); 9, p.9].
+- **Calculated GCPW examples (FR4, unmasked, approximate impedance from a 2-D field solve; closed-form conductor-backed CPW models with and without the copper-thickness correction agree within about 4 ohm):** 2-layer (1.5mm to the bottom ground, Er 4.4-4.5, 0.035mm copper): trace 1.2mm, gap 0.25mm = 50 ohm. 4-layer (0.26mm to reference ground, Er 4.4, 0.018mm copper): trace 0.45mm, gap 0.64mm = 51 ohm. AN629 Table 1 gives reference geometries with Er 4.6, copper 0.018-0.035mm, W = 1.26mm / 0.45mm at those respective heights and gaps; the preceding values are calculated examples, not ADI table entries [9, p.9].
+- **Include solder mask in the impedance calculation.** In the 1.2/0.25mm example, 25um of mask takes about 3 ohm off (about 47 ohm); the shift depends on mask properties. A 2.8mm trace is approximately the plain-microstrip 50 ohm width on 1.5mm FR4; with coplanar ground 0.2mm away it is 35 ohm in the 2-D field-solve example. Recalculate for the actual dielectric, copper, and mask stackup [2, Characteristic Impedance; 9, p.9, reference geometry].
+- **If an RF layer transition is unavoidable, ADI recommends >= 2 parallel signal vias and the largest diameter compatible with the trace width.** ADI estimates a pair halves transition inductance [2, Layer Changes for Transmission Lines].
+- **Bends: radius >= 3 * trace width.** If a curved bend is impossible, use a compensated mitered right-angle bend; determine the miter from the geometry [2, Transmission Line Bends and Corner Compensation].
+- **Isolation between RF traces:** GCPW with via fences isolates best, but ADI puts the practical limit on a small PCB at about -45 dB between RF lines: don't budget for more [2, Signal Line Isolation].
+- **Silicon Labs AN629 via curtain: spacing < lambda/10 at the 10th harmonic.** This recommendation covers the PCB edges and internal ground-pour edges of its Si446x layouts; calculate pitch below [9, p.3].
 
 ### Matching Network
 
-- **Always include a 3-element pi-network footprint** between IC/module and antenna feed, even if initial values are 0-ohm series / open shunt. Every antenna needs tuning on the final board.
-- **Component placement: matching network first, then 50 ohm trace to antenna.** Placing match at antenna end means the trace transforms the impedance again -- both IC and antenna end up mismatched.
-- **Shunt capacitor grounding: thermal pad with multiple vias directly to ground plane.** Each via adds ~0.1nH. Two vias per shunt cap pad minimum. Use 0201 components to keep matching network compact.
-- **Adjacent inductors placed perpendicular to each other reduce magnetic coupling by 20+ dB.** Same orientation causes filter performance degradation. Silicon Labs AN629 explicitly requires this.
-- **Keep 0.5mm minimum clearance between matching network pads and ground pour.** Parasitic capacitance from ground pour detunes the match -- especially significant for sub-GHz where component values are already small.
-- **Matching network values from reference design are starting points.** Board size, enclosure, nearby components, and copper all shift impedance. Budget for 2-3 VNA tuning iterations.
+- **Separate radio matching from antenna matching.** Put the chip match at the RF pin and the antenna tuning network near the antenna; the intervening transmission line connects their 50 ohm reference points. Espressif explicitly recommends an additional antenna CLC near the PCB antenna [3, RF path; 4, RF].
+- **Shunt capacitor grounding: ADI recommends >= 2 grounding vias per component.** For nRF52 QFN radio matching, the shunt capacitor nearest ANT returns through the nearest VSS pin as shown in the reference layout; preserve that harmonic-filtering path [2, Bypass Capacitor Layout Considerations; 3, Matching the radio to 50 ohms].
+- **For AN629's Si446x matching networks, keep >= 0.5mm between traces/pads and adjacent ground pour.** If space allows, place nearby TX inductors perpendicular to each other, and the RX shunt inductor perpendicular to nearby TX inductors, to reduce detuning and coupling [9, p.6].
+- **Matching network values from the reference design are starting points.** Board size, enclosure, nearby components, and copper shift impedance. Measure antenna S11 and tune with the final enclosure and nearby objects in place [5, matching procedure; 7, p.6].
 
 ### Module Placement (ESP32, nRF52, etc.)
 
-- **Antenna end of module must overhang or be flush with base board edge.** Base board copper under the module antenna area couples to the antenna and degrades performance by 3-10 dB.
-- **If overhang not possible: 15mm clearance in all directions around antenna.** No copper on any layer, no components, no traces. Cut out base board under antenna if needed.
-- **ESP32 specific (Espressif HW design guidelines):** 4-layer preferred. CLC pi-match network of 0201 parts close to the RF pin, the two capacitors not facing the same way. For the 2nd harmonic, a stub trace on the ground pad of the first grounding capacitor at the chip: 15mil long, 100 ohm +/-10% (layer 2 cleared under it, layer 3 as reference); not needed with 0402 or larger parts. IPEX connector: keep all layers clear under the connector.
-- **Nordic nRF52 (general PCB guidelines): copy reference design exactly.** Matching network doubles as harmonic filter -- changing values to "improve match" often degrades regulatory compliance. 50 ohm CPWG mandatory from IC to matching network.
+- **If an ESP32 module antenna cannot overhang, cut away the base board beneath it where possible.** The clearance rule above applies to the antenna area; validate throughput and range in the assembled product, including its housing [4, Positioning a Module on a Base Board].
+- **ESP32 specific (Espressif HW design guidelines):** Four-layer preferred. CLC pi-match network of 0201 parts close to the RF pin, the two capacitors not facing the same way. For the 2nd harmonic, a stub trace on the ground pad of the first grounding capacitor at the chip: 0.381mm (15mil long, 100 ohm +/-10%); connect the stub via to layer 3 and keep layers 1 and 2 clear around it as shown in the reference. Not needed with 0402 or larger parts. IPEX connector: keep all layers clear under the connector [4, General Principles; RF].
+- **Nordic nRF52: copy radio matching values, geometry, placement, and trace lengths from the reference design.** The chip match also suppresses 2nd and 3rd harmonics; tuning must measure both fundamental output power and harmonics. The 50 ohm coplanar line belongs after the chip match, at reference point B toward the antenna network [3, RF path; Matching network; Not having a 50 ohms coplanar waveguide].
 
 ### Sub-GHz (LoRa/ISM 868/915 MHz)
 
-- **Semtech SX1261/SX1262: copy reference design RF section exactly -- component values AND layout geometry.** Even trace lengths between components are tuned. Load-pull optimum impedance: Zopt = 11.7 + j4.8 ohm at 915 MHz. CLE (Class-E) matching topology is frequency-band-specific.
-- **SX1262 2-layer vs 4-layer:** 2-layer reference uses wider traces and different matching values than 4-layer. Do not mix matching component values across stackup variants.
-- **TI DN038 helical PCB antenna: 19x12mm, 65% efficiency at 868 MHz.** Requires 2-component match (1.0pF series cap + 12nH shunt inductor). Bandwidth 40 MHz at VSWR 2. Re-match required if PCB thickness changes from 0.8mm reference.
-- **IFA for 915 MHz: ~45mm element length on FR4.** Folded/meander versions reduce to ~25-30mm but with bandwidth tradeoff. Ground plane >= lambda/4 (82mm) on longest axis for full efficiency.
-- **Harmonic suppression for regulatory compliance:** FCC Part 15.247 and ETSI EN 300 220 require harmonics < -20 dBc (FCC) or absolute power limits (ETSI). Add LC low-pass filter after matching network. For +20 dBm transmitters (SX1262), shield can may be required over RF section.
+- **Semtech SX1261/SX1262: select the reference design for the device, band, power, and stackup.** AN1200.40 compares two-layer SX1261 PCB_E406V03A with four-layer SX1262 PCB_E428V03A/PCB_E449V01A [10, pp.5, 7, 9-13].
+- **Zopt = 11.7 + j4.8 ohm at 915 MHz is Semtech's SX1261 load-pull example at the RFO pad, producing 14.6 dBm there to target +14 dBm after matching/filter/switch losses.** Semtech warns that the illustrated load-pull data and matching values are not necessarily the latest for each reference design [10, pp.17-19].
+- **TI DN038 helical PCB antenna: Table 1 gives 19 * 12mm geometry on the 0.8mm CC110L EM reference board.** At 868 MHz its demonstrated match uses 1.0pF series + 12nH shunt, with 40 MHz bandwidth at VSWR 2 and 65.55% measured efficiency on the TRXEB platform. Recalculate the match when PCB thickness changes [11, pp.3-7].
+- **Treat matching, harmonic filtering, and the RF switch as one network.** In Semtech's SX1261/2 design, the second-harmonic notch and higher-order low-pass stages contribute to the PA load; add the switch and repeat measurements before tuning the antenna network [10, pp.17, 20].
 
 ### 24 GHz mmWave
 
-- **Patch antenna arrays integrated on PCB.** At 24 GHz, lambda = 12.5mm -- antenna elements are small enough for PCB integration. ADI ADF4159 + ADF5901 + ADF5904 chipset for FMCW radar.
-- **Rogers 4003C or similar low-loss substrate required.** FR4 loss tangent (0.02) causes ~3 dB/cm loss at 24 GHz -- unusable for feed networks. RO4003C (tan_d = 0.0027) or RO3003 (tan_d = 0.0013) needed.
-- **Feed network symmetry is critical.** Wilkinson dividers for power splitting must have equal-length arms to within 0.1mm. Amplitude and phase imbalance cause beam squint and sidelobe degradation.
-- **VCO/PLL phase noise directly sets radar range resolution.** Isolate VCO from digital sections with ground moat and via wall.
+- **ADI ADF4159 + ADF5901 + ADF5904 support the documented 24 GHz FMCW radar with PCB patch antennas.** ADF4159's input limit is 13 GHz, so the ADF5901 VCO divide-by-2 output supplies PLL feedback [12, Ramp Generation; Transmit Stage; Antenna Design].
+- **For low-loss feed networks, RO4003C and RO3003 are material options.** Rogers gives typical tan_d = 0.0027 for RO4003C and 0.0010 for RO3003, both at 10 GHz and 23 degrees C; use loss data at the operating frequency when calculating feed loss [15, p.3; 16, p.2].
 
 ### GNSS Antenna Integration
 
-- **Active antenna: bias-tee for LNA power.** 3.3V through 100nH inductor to antenna center conductor. DC blocking cap (100pF-1nF) on receiver side. Verify LNA current draw (10-20mA typical) against inductor current rating.
-- **Ground plane sizing for passive GNSS patch: >= 70x70mm.** Below this, RHCP axial ratio degrades, reducing multipath rejection. L-shaped ground plane (GNSS at corner) is acceptable if total area meets minimum.
-- **Antenna placement: unobstructed sky view.** No components taller than antenna within 15mm. GPS/GNSS reception through plastic enclosure: add 0.5-1 dB link budget margin for plastic cover.
-- GNSS module integration details -> `misc/gnss-integration.md`.
+- GNSS bias-tee component selection, patch ground-plane sizing, and enclosure effects -> `misc/gnss-integration.md`.
 
 ### Bypass and Decoupling for RF ICs
 
-- **ADI RF layout guide: bypass cap SRF must exceed the operating frequency.** ADI's 0402 SRFs: 2pF 4 GHz, 20pF 2.5 GHz, 100pF 800 MHz, 1000pF 250 MHz, 1uF 60 MHz; above its SRF a cap is an inductor. At 2.4 GHz bypass with 20pF or less -- 100pF and 100nF are both inductive there. Parallel caps of rising value (20pF, 1000pF, 1uF) for broadband bypass.
-- **IC exposed paddle: minimum 9 ground vias in 3x3 grid directly under the paddle.** ADI recommends via drill 0.3mm, pitch 1mm. Incomplete paddle grounding adds inductance to the die ground -- 1nH shifts the RF match by several dB at 2.4 GHz.
+- **ADI RF layout guide: select RF bypass capacitors using the manufacturer's SRF.** ADI's illustrative 0402 SRFs: 2pF 4 GHz, 20pF 2.5 GHz, 100pF 800 MHz, 1000pF 250 MHz, 1uF 60 MHz; above its SRF a cap is inductive. In that table, 20pF covers 2.4 GHz; 100pF and 100nF are both inductive at 2.4 GHz for comparable package parasitics, so verify the actual part rather than choosing by capacitance alone. Parallel capacitors of increasing value provide broadband bypass [2, Selection of Decoupling or Bypass Capacitors, Table 2].
+- **RF IC exposed paddle: use the device reference footprint's via array.** AN629's Si446x reference uses 9 vias of 0.305mm (12mil) diameter; ADI illustrates a 5 * 5 array and recommends as many plated through-vias as the layout allows [9, p.6; 2, IC Ground Plane (Paddle)].
 
 ## Common Mistakes
 
-- **Routing digital traces under antenna clearance zone.** Even on inner layers, copper traces couple to the antenna and shift resonance by 50-200 MHz. The antenna clearance zone must be copper-free on ALL layers. Ground plane is required under the RF trace but NOT under the antenna element.
-- **Using FR4 Er = 4.4 for all layers.** Outer prepreg layers have Er ~3.8, inner core has Er ~4.2-4.6. Using wrong Er for impedance calculation gives 10-15% trace width error, shifting impedance to 40-45 ohm. Get actual stackup Er from fab house.
-- **Ground pour too close to matching network pads.** Parasitic capacitance from ground copper within 0.3mm of shunt component pads shifts the effective match by 5-15%, especially at sub-GHz where component values are already small (0.5-2pF). VNA shows good return loss on bare board, then production boards with tighter ground pour rules fail -> enforce 0.5mm minimum clearance in gerber review.
-- **Enclosure effects ignored during antenna design.** Plastic housing detunes antenna by 2-5% (lowers resonant frequency due to increased effective Er). Metal housing requires antenna window or external antenna. Tune matching network with final enclosure in place, not on bare board.
-- **Shared ground plane split between analog and RF sections.** Ground plane splits force return currents through narrow bridges, increasing inductance and creating slot antennas. Use solid ground plane everywhere -- isolate with via fences and component placement, not copper cuts.
-- **Silicon Labs AN1088: substituting "equivalent" chip antenna for reference IFA without re-matching.** Different antenna types present different impedances -- a chip antenna matched for one board is not interchangeable with an IFA even at the same frequency. Full VNA characterization required.
+- **Treating all chip antennas as ground-free or over-ground parts.** Johanson's specified no-ground region extends through every PCB layer; its separately designed over-ground-plane antennas require ground beneath them. Use the exact part's mounting drawing before assigning copper keep-outs [6, pp.6-7].
+- **Using one FR4 Er for every layer.** ADI gives example values of 4.2 for core and 3.8 for outer prepreg; obtain the layer-specific dielectric properties before fixing RF trace geometry [2, Characteristic Impedance].
+- **Ground-plane splits used to isolate RF circuitry.** In AN629's Si446x layouts, keep an unobstructed bottom-ground return between the TX low-pass/matching-network ground vias and the RFIC paddle ground vias; fill gaps with ground and stitch to the other ground layers [9, p.7].
 
 ## Formulas
 
-**Guided wavelength on PCB:**
-**Rule of thumb:** 2.4 GHz on FR4: lambda_g ~ 76 mm. 915 MHz: ~160 mm. 868 MHz: ~168 mm.
-**Formula:** lambda_g = c / (f * sqrt(Er_eff)), where Er_eff ~ (Er + 1) / 2 for microstrip
-**Example:** 2.4 GHz, FR4 Er=4.4 -> Er_eff ~ 2.7 -> lambda_g = 3e8 / (2.4e9 * 1.64) = 76 mm. Quarter-wave = 19 mm.
-
-**Pi-network matching (L-section cascade):**
-**Rule of thumb:** Start with reference design values. Adjust by +/-10% per iteration during VNA tuning.
-**Formula:** For L-to-high impedance: L_shunt = R_high / (2 * pi * f), C_series = 1 / (2 * pi * f * sqrt(R_high * R_low))
-**Example:** Match 25+j30 ohm antenna to 50 ohm at 2.4 GHz: first cancel j30 with series -j30 (2.2pF cap), then L-match remaining 25 ohm to 50 ohm: L=1.3nH shunt, C=1.3pF series. Verify with Smith chart tool.
+**Rule of thumb:** AN629 requires via-curtain pitch below one tenth of the free-space wavelength at the 10th harmonic [9, p.3].
+**Formula:** pitch < c / (10 * 10 * f_carrier), with c = 299792458 m/s.
+**Example:** 915 MHz carrier -> pitch < 299792458 / (100 * 915e6) = 0.0032764m = 3.276mm. This is the AN629 edge-radiation criterion.
 
 ## Sources
 
@@ -119,17 +89,19 @@
 
 ### References
 
-1. Infineon/Cypress AN91445 -- Antenna Design and RF Layout Guidelines: https://www.infineon.com/dgdl/Infineon-AN91445_Antenna_Design_and_RF_Layout_Guidelines-ApplicationNotes-v09_00-EN.pdf?fileId=8ac78c8c7cdc391c017d073e054f6227
-2. ADI -- PCBs Layout Guidelines for RF & Mixed-Signal: https://www.analog.com/en/resources/technical-articles/pcbs-layout-guidelines-for-rf--mixedsignal.html
-3. Nordic -- General PCB Design Guidelines for nRF52 Series: https://devzone.nordicsemi.com/guides/hardware-design-test-and-measuring/b/nrf5x/posts/general-pcb-design-guidelines-for-nrf52-series
-4. Espressif ESP32 HW Design Guidelines -- PCB Layout: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32/pcb-layout-design.html
-5. Johanson -- Chip Antenna Layout for BLE/802.11/Zigbee: https://www.johansontechnology.com/tech-notes/chip-antenna-layout-considerations-for-ble-80211-and-24g-zigbee/
-6. Johanson -- Understanding Chip Antennas Handbook: https://www.johansontechnology.com/docs/4469/johanson-understanding-chip-antennas-handbook.pdf
-7. Silicon Labs AN1088 -- Designing with Inverted-F 2.4 GHz PCB Antenna: https://www.silabs.com/documents/public/application-notes/an1088-designing-with-pcb-antenna.pdf
-8. Abracon -- PCB Trace vs. Chip Antenna Design Considerations: https://abracon.com/downloads/PCB-Trace-vs-Chip-Antenna-PCB-Design-Considerations.pdf
-9. Silicon Labs AN629 -- RF IC Layout Design Guide: https://www.silabs.com/documents/public/application-notes/AN629.pdf
-10. TI SWRA640H -- CC13xx/CC26xx HW Config and PCB Design: https://www.ti.com/lit/an/swra640h/swra640h.pdf
-11. Microchip/Atmel AT09567 -- ISM Band PCB Antenna Reference Design: https://ww1.microchip.com/downloads/en/Appnotes/Atmel-42332-ISM-Band-Antenna-Reference-Design_Application-Note_AT09567.pdf
-12. Semtech AN1200.40 -- SX1261/SX1262 Reference Design Explanation: https://cdn-reichelt.de/documents/datenblatt/A200/SX1262REFERENCE.pdf
-13. TI SWRA416 -- Miniature Helical PCB Antenna for 868/915 MHz: https://www.ti.com/lit/an/swra416/swra416.pdf
-14. ADI -- How to Build a 24 GHz FMCW Radar System: https://www.analog.com/en/resources/technical-articles/how-to-build-a-24-ghz-fmcw-radar-system.html
+1. Infineon/Cypress AN91445, document 001-91445 Rev. *H -- Antenna Design and RF Layout Guidelines: https://www.infineon.com/dgdl/Infineon-AN91445_Antenna_Design_and_RF_Layout_Guidelines-ApplicationNotes-v09_00-EN.pdf?fileId=8ac78c8c7cdc391c017d073e054f6227
+2. ADI -- PCBs Layout Guidelines for RF & Mixed-Signal (unpaginated web article, sections and Tables 1-2): https://www.analog.com/en/resources/technical-articles/pcbs-layout-guidelines-for-rf--mixedsignal.html
+3. Nordic -- General PCB Design Guidelines for nRF52 Series (unpaginated web guide): https://devzone.nordicsemi.com/guides/hardware-design-test-and-measuring/b/nrf5x/posts/general-pcb-design-guidelines-for-nrf52-series
+4. Espressif -- ESP32 Hardware Design Guidelines, PCB Layout Design (web edition, RF and module-positioning sections): https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32/pcb-layout-design.html
+5. Johanson -- Chip Antenna Layout for BLE/802.11/Zigbee (unpaginated web note, guidelines 1-5): https://www.johansontechnology.com/tech-notes/chip-antenna-layout-considerations-for-ble-80211-and-24g-zigbee/
+6. Johanson -- Understanding Chip Antennas Handbook (unversioned edition), pp.6-7: https://www.johansontechnology.com/docs/4469/johanson-understanding-chip-antennas-handbook.pdf
+7. Silicon Labs AN1088 Rev. 0.1 -- Designing with an Inverted-F 2.4 GHz PCB Antenna: https://www.silabs.com/documents/public/application-notes/an1088-designing-with-pcb-antenna.pdf
+8. Abracon (December 19, 2019) -- PCB Trace vs. Chip Antenna Design Considerations: https://abracon.com/downloads/PCB-Trace-vs-Chip-Antenna-PCB-Design-Considerations.pdf
+9. Silicon Labs AN629 Rev. 0.3 (2014) -- RF IC Layout Design Guide: https://www.silabs.com/documents/public/application-notes/AN629.pdf
+10. Semtech AN1200.40 Rev. 1.1 (May 2018) -- SX1261/SX1262 Reference Design Explanation: https://cdn-reichelt.de/documents/datenblatt/A200/SX1262REFERENCE.pdf
+11. TI DN038 / SWRA416 (November 27, 2012) -- Miniature Helical PCB Antenna for 868/915 MHz: https://www.ti.com/lit/an/swra416/swra416.pdf
+12. ADI -- How to Build a 24 GHz FMCW Radar System (unpaginated web article): https://www.analog.com/en/resources/technical-articles/how-to-build-a-24-ghz-fmcw-radar-system.html
+13. Johanson 2450AT18B0100001E datasheet, Doc# 36S0021A Rev. 5.0 (2024): https://www.johansontechnology.com/docs/3770/Antenna-2450AT18B0100001E-Rev5.0.pdf
+14. Johanson 0868AT43A0020001E datasheet, Rev. 2.0 (2023): https://www.johansontechnology.com/docs/4384/Antenna-0868AT43A0020001E-2.0.pdf
+15. Rogers RO4000 Series datasheet, Publication 92-004, revised 080322: https://www.rogerscorp.com/-/media/project/rogerscorp/documents/advanced-electronics-solutions/english/data-sheets/ro4000-laminates-ro4003c-and-ro4350b---data-sheet.pdf
+16. Rogers RO3000 Series datasheet, Publication 92-130, revised 013024: https://www.rogerscorp.com/-/media/project/rogerscorp/documents/advanced-electronics-solutions/english/data-sheets/ro3000-laminate-data-sheet-ro3003----ro3006----ro3010----ro3035.pdf

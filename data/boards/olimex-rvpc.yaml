@@ -43,6 +43,7 @@ components:
 - ref: PWR_JACK1
   value: PWRJ-2mm
   footprint: PWRJ-2mm(YDJ-1136)
+  mpn: YDJ-1134
 - ref: PWR_LED1
   value: LED/PTH/5MM/RED
   footprint: LED-5mm-PTH-KA
@@ -50,7 +51,6 @@ components:
   value: 2kohm
   footprint: R_0.125W_PTH
   power: 1/8W
-  pulldown: PWR_LED1.K
 - ref: R2
   value: 470ohm
   footprint: R_0.125W_PTH

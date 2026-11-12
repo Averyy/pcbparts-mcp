@@ -1,7 +1,7 @@
 name: GoodWatch
 slug: goodwatch
 source: travisgoodspeed/goodwatch
-format: kicad7
+format: kicad6
 description: CC430F6137 (MSP430 + sub-GHz radio SoC), LCD driving
 tags: [display, sub-ghz]
 key_ics: [CC430F613x, SN74AXC4T774RSVR, FT232RQ]
@@ -240,8 +240,10 @@ components:
 - ref: U5
   value: FT232RQ
   footprint: FT232RQ-REEL
+  mpn: FT232RQ-REEL
   pin_count: 33
-  nc_pins: {'3': '3', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '12': '12', '13': '13', '18': '18', '23': '23', '25': '25', '27': '27', '28': '28', '29': '29'}
+  nc_pins: {'3': '3', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '12': '12', '13': '13', '18': '18',
+    '23': '23', '25': '25', '27': '27', '28': '28', '29': '29'}
 - ref: Y1
   value: 32.768kHz
   footprint: SMD3215

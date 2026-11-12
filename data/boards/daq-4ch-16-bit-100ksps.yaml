@@ -3,7 +3,7 @@ slug: daq-4ch-16-bit-100ksps
 source: merouanelakdim/daq-high-precision-module
 format: kicad7
 description: 4-channel precision DAQ (STM32G0), analog MUX
-tags: [isolation]
+tags: [adc-dac]
 key_ics: [STM32G0]
 design_rules:
   layers: 2
@@ -82,20 +82,20 @@ components:
   value: ferrite bead
   footprint: '0603'
 - ref: J1_POWER_IN1
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
 - ref: J_SW1
-  value: 1x6 header
-  footprint: 1X6
+  value: 1x6 2.54mm header
+  footprint: 1X6_P2.54mm
   pin_count: 6
   nc_pins: {Pin_2: '2'}
 - ref: J_UART1
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: J_UART2
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: R1
   value: 1 kohm
@@ -133,10 +133,11 @@ components:
   value: STM32G0B1KBTx
   footprint: LQFP-32
   pin_count: 32
-  nc_pins: {PB9: '1', PA0: '7', PA1: '8', PA4: '11', PA8: '18', PA9/UCPD1_DBCC1: '19', PA10/UCPD1_DBCC2: '21', PA11/PA9: '22', PA12/PA10: '23', PA15: '26', PB3: '27', PB4: '28', PB5: '29', PB6: '30', PB7: '31', PB8: '32'}
+  nc_pins: {PB9: '1', PA0: '7', PA1: '8', PA4: '11', PA8: '18', PA9/UCPD1_DBCC1: '19', PA10/UCPD1_DBCC2: '21', PA11/PA9: '22',
+    PA12/PA10: '23', PA15: '26', PB3: '27', PB4: '28', PB5: '29', PB6: '30', PB7: '31', PB8: '32'}
 - ref: U3
   value: ADS8681RUM
-  footprint: QFN-16-1EP
+  footprint: QFN-16-1EP_4x4
   pin_count: 17
   nc_pins: {SDO-1: '12', RVS: '13'}
 - ref: U5

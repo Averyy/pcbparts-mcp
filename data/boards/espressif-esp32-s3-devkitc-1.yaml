@@ -220,7 +220,6 @@ components:
   mpn: 0402WGF5101TCE
   manufacturer: UniOhm
   description: "Thick Film Resistors, SMD, 5.1K(1%), 1/16w, H0.35, -55\u2103~155\u2103"
-  pullup: N17692194
 - ref: R12
   value: 10kohm
   footprint: '0402'

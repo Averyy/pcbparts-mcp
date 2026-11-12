@@ -111,6 +111,7 @@ class TestRoute:
         async with http:
             reply = await http.get(f"/mcp/datasheet/{lcsc}")
         assert reply.status_code == status and "error" in reply.json()
+        assert "JLCPCB rate limited" not in reply.text  # upstream detail stays in the log (0.9.0)
 
     async def test_busy_says_when(self, http):
         async with http:

@@ -12,6 +12,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from build_sensor_db import trim_zephyr_description
+
 from .common import (
     extract_manufacturer,
     has_ic_pattern,
@@ -116,6 +118,11 @@ SKIP_COMPATIBLES = {
     # MCU-internal (other vendors)
     "raspberrypi,pico-temp",
     "sifli,sf32lb-tsensor",
+    "bflb,tsen",
+    "silabs,emu-temp",
+    "raspberrypi,bcm283x-vc-thermal",
+    "realtek,ameba-temp",
+    "nxp,tmpsns",
     # Industrial controller (not a sensor IC)
     "festo,veaa-x-3",
     # Energy meter (not a sensor IC)
@@ -157,6 +164,7 @@ SKIP_PREFIXES = [
     "ti,cc2",
     "zephyr,",
     "sifli,",
+    "realtek,bee-",
 ]
 
 # Known IC -> measures overrides
@@ -190,6 +198,9 @@ KNOWN_IC_MEASURES = {
     "icm42670": ["acceleration", "gyroscope"],
     "icm42688": ["acceleration", "gyroscope"],
     "icm45605": ["acceleration", "gyroscope"],
+    # Bindings trimmed to their hardware sentence name no measure ("motion tracking device", "sensor hub")
+    "icm42686": ["acceleration", "gyroscope"],
+    "max32664c": ["biometric"],
     "icm45686": ["acceleration", "gyroscope"],
     "fxos8700": ["acceleration", "magnetic_field"],
     "fxas21002": ["gyroscope"],
@@ -435,7 +446,7 @@ def scrape_zephyr(output_dir: Path) -> None:
                 continue
 
             # Extract description
-            description = parsed.get("description", "")
+            description = trim_zephyr_description(parsed.get("description", ""))
 
             # Extract protocol from includes, following include chains up to 3 levels
             includes = parsed.get("includes", [])

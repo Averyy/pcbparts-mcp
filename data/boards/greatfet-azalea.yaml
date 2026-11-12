@@ -491,8 +491,6 @@ components:
 - ref: U2
   value: W25Q16DV
   footprint: SOIC8-208
-  manufacturer: Winbond
-  mpn: W25Q16JVSSIQ
   description: IC FLASH 16MBIT 104MHZ 8SOIC
   pin_count: 8
 - ref: U3

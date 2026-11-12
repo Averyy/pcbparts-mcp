@@ -1,7 +1,7 @@
 name: ASAC-FC rev-b
 slug: asac-fc-rev-b
 source: victorhook/asac-fc
-format: kicad7
+format: kicad6
 description: 'RP2040 flight controller: BMI270 IMU (SPI), USB-C'
 tags: [drone-uav, motor-control, sensors]
 key_ics: [RP2040, BMI270]
@@ -111,7 +111,7 @@ components:
   footprint: SOD-123
 - ref: J1
   value: 1x3 header
-  footprint: Conn
+  footprint: Conn_01x03
   pin_count: 3
 - ref: J10
   value: USB-C
@@ -120,46 +120,46 @@ components:
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J12
   value: 1x4 header
-  footprint: Conn
+  footprint: Conn_01x04
   pin_count: 4
 - ref: J14
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 1.27mm header
+  footprint: 1X3_P1.27mm
   pin_count: 3
 - ref: J15
   value: 1x4 header
-  footprint: Conn
+  footprint: Conn_01x04
   pin_count: 4
 - ref: J2
   value: 1x4 header
-  footprint: Conn
+  footprint: Conn_01x04
   pin_count: 4
 - ref: J3
   value: 1x4 header
-  footprint: Conn
+  footprint: Conn_01x04
   pin_count: 4
 - ref: J4
   value: 1x3 header
-  footprint: Conn
+  footprint: Conn_01x03
   pin_count: 3
 - ref: J5
   value: 1x4 header
-  footprint: Conn
+  footprint: Conn_01x04
   pin_count: 4
 - ref: J6
   value: 1x3 header
-  footprint: Conn
+  footprint: Conn_01x03
   pin_count: 3
 - ref: J7
   value: 1x2 header
-  footprint: Conn
+  footprint: Conn_01x02
 - ref: J8
   value: 1x4 header
-  footprint: Conn
+  footprint: Conn_01x04
   pin_count: 4
 - ref: J9
   value: 1x3 header
-  footprint: Conn
+  footprint: Conn_01x03
   pin_count: 3
 - ref: Q1
   value: P-channel MOSFET
@@ -231,7 +231,7 @@ components:
   nc_pins: {ASDX: '2', ASCX: '3', OSCB: '10', OSDO: '11'}
 - ref: U2
   value: RP2040
-  footprint: QFN-56-1EP
+  footprint: QFN-56-1EP_7x7
   pin_count: 57
   nc_pins: {GPIO15: '18', GPIO16: '27', GPIO17: '28', GPIO21: '32', GPIO29_ADC3: '41'}
 - ref: U3

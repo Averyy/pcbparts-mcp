@@ -1,6 +1,13 @@
 """Configuration for PCB Parts MCP server."""
 
 import os
+from pathlib import Path
+
+# Recorded stock events, built offline from the gzipped JSONL files in data/history/.
+STOCK_HISTORY_DB_PATH = Path(os.getenv("JLCPCB_HISTORY_DB_PATH", str(
+    Path(os.getenv("JLCPCB_DATA_DIR", str(Path(__file__).resolve().parents[2] / "data")))
+    / "stock_history.db"
+)))
 
 # Server settings
 HTTP_PORT = int(os.getenv("HTTP_PORT", "8080"))
@@ -141,6 +148,7 @@ USAGE_STATS_PATH = os.getenv("USAGE_STATS_PATH", "")
 
 CSE_CONCURRENT_LIMIT = 3
 CSE_RATE_LIMIT = 0.15
+CSE_STATUS_RETRY_DELAY = 3.0  # seconds before asking again after a status other than "Success"
 CSE_REQUEST_TIMEOUT = float(os.getenv("CSE_REQUEST_TIMEOUT", "45"))
 CSE_CACHE_TTL = 3600
 CSE_KICAD_CACHE_TTL = 60 * 60 * 24  # Cache extracted KiCad files for 24 hours

@@ -45,6 +45,15 @@ _FTS_STOP_WORDS = frozenset({
 # Column order: slug, name, description, key_coverage, tags_text, key_ics_text, all_ics_text, org_display
 _BM25_WEIGHTS = "10.0, 10.0, 5.0, 5.0, 8.0, 8.0, 3.0, 4.0"
 
+# Ranking-only vocabulary: dedicated supplies often state their topology instead
+# of the literal phrase "power supply". This does not expand search membership.
+_FUNCTION_RANKING_QUERIES = {
+    '"power"* + "supply"*': (
+        '"power"* + "supply"* OR "buck"* OR "boost"* OR "flyback"* '
+        'OR "DC" + "DC" OR "SMPS" OR "PSU" OR "LDO"* OR "regulator"* OR "charger"*'
+    ),
+}
+
 # Query-time term aliases: handle concatenated forms, common synonyms,
 # and hyphen mismatches (unicode61 splits on hyphens).
 _TERM_ALIASES: dict[str, str] = {
@@ -264,14 +273,54 @@ def search_boards(
     where_sql = " AND ".join(where_clauses) if where_clauses else "1=1"
 
     # --- Ranking ---
-    # FTS queries: rank by bm25 relevance (primary), component_count (tiebreaker)
+    # Prefer a board's stated function over incidental tags/IC mentions. Whole-row
+    # bm25 length normalization can otherwise bury large, dedicated reference designs.
+    # Compound tags describe functions ("led-driver"); broad single-word categories
+    # such as "sensors" need not appear literally in a dedicated board's description.
     # Component queries: key_ic boost, then component_count
     # Parametric only: component_count
     order_parts = []
     order_params: list[Any] = []
 
+    # FTS5 '+' joins tokens into a phrase while retaining prefix matching. Requiring
+    # adjacency avoids boosting unrelated words scattered through a description.
+    ranking_query = fts_query.replace(" AND ", " + ") if fts_query and " OR " not in fts_query else None
+    if not fts_query and tag and not component:
+        tag_queries = [_sanitize_fts_query(t) for t in tag]
+        ranking_query = " AND ".join(
+            f"({q.replace(' AND ', ' + ')})" for q in tag_queries if " AND " in q and " OR " not in q
+        )
+
+    if ranking_query:
+        order_parts.append(
+            "CASE WHEN b.slug IN (SELECT slug FROM boards_fts WHERE boards_fts MATCH ?) THEN 0 ELSE 1 END"
+        )
+        order_params.append(f"{{name description}}: ({ranking_query})")
+
+        if has_fts:
+            # A name match (including compound names such as FemtoBuck), then
+            # the description's first comma-separated clause, signals the board's
+            # own function more strongly than a later subsystem/coverage mention.
+            # Keep literal phrase matches above related functional vocabulary.
+            function_query = _FUNCTION_RANKING_QUERIES.get(ranking_query, ranking_query)
+            order_parts.append(
+                "CASE WHEN b.name LIKE ? ESCAPE '\\' OR b.slug IN "
+                "(SELECT slug FROM boards_fts WHERE boards_fts MATCH ?) THEN 0 "
+                "WHEN b.slug IN (SELECT slug FROM boards_fts WHERE boards_fts MATCH ? "
+                "AND instr(highlight(boards_fts, 2, char(1), char(2)), char(1)) "
+                "BETWEEN 1 AND instr(description || ',', ',')) THEN 1 "
+                "WHEN b.slug IN (SELECT slug FROM boards_fts WHERE boards_fts MATCH ?) THEN 2 "
+                "ELSE 3 END"
+            )
+            order_params.extend([
+                f"%{_escape_like(query.strip())}%",
+                f"name: ({ranking_query})",
+                f"description: ({function_query})",
+                f"description: ({function_query})",
+            ])
+
     if has_fts and fts_query:
-        # bm25() returns negative values (closer to 0 = better match)
+        # bm25() returns negative values (more negative = better match)
         # Use COALESCE for rows that matched via LIKE fallback (no FTS rank)
         order_parts.append(
             "COALESCE((SELECT bm25(boards_fts, " + _BM25_WEIGHTS + ") "
@@ -317,11 +366,22 @@ def search_boards(
         """
         total = conn.execute(count_sql, params).fetchone()[0]
 
+    # A query with no searchable words browses (documented), but say so: otherwise
+    # the browse list reads as boards matching the query.
+    note = None
+    if query is not None and not fts_query:
+        scope = "the boards matching the other filters" if (component or tag or org or layers is not None) \
+            else "the whole catalog by component count"
+        note = (f"query '{query.strip()}' has no searchable words (stop words such as board, design "
+                f"and pcb, and single characters, are ignored; quotes and OR are not operators), so this lists {scope}.")
+
     if not rows:
         result: dict[str, Any] = {"total": total, "results": []}
         hint = _empty_hint(conn, query if fts_query else None, component, tag, org, layers) if explain_empty else None
         if hint:
             result["hint"] = hint
+        if note:
+            result["note"] = note
         return result
 
     # Batch-fetch tags and key_ics for all result board_ids (avoids N+1)
@@ -404,7 +464,7 @@ def search_boards(
             entry["matched_by"] = hints
         results.append(entry)
 
-    return {"total": total, "results": results}
+    return {"total": total, "results": results, **({"note": note} if note else {})}
 
 
 def _empty_hint(conn: sqlite3.Connection, query: str | None, component: str | None,

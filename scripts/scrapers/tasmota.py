@@ -173,6 +173,20 @@ def _extract_ic_ids(name_cell: str) -> list[str]:
     return ids
 
 
+def tasmota_doc_url(name_cell_html: str) -> str | None:
+    """The link in a peripherals-table name cell, made absolute.
+
+    Hrefs are unquoted, so an absolute one ends at '>' or whitespace. Tasmota's
+    page has a typo'd href=https://https://gitlab.com/... for ICP-10125.
+    """
+    href_match = re.search(r'href=["\']?(\.\./([\w%-]+)/|https?://[^\s"\'<>]+)', name_cell_html)
+    if not href_match:
+        return None
+    if href_match.group(2):
+        return f"{DOCS_BASE}{href_match.group(2)}/"
+    return re.sub(r'^(?:https?://)+(?=https?://)', '', href_match.group(1))
+
+
 def scrape_tasmota(output_dir: Path) -> None:
     """Scrape Tasmota Supported Peripherals page for sensor ICs."""
     logger.info("Downloading Tasmota Supported Peripherals page...")
@@ -197,14 +211,7 @@ def scrape_tasmota(output_dir: Path) -> None:
         # Extract doc URL from name cell before stripping HTML
         # Relative links: href=../AHT1x/ -> https://tasmota.github.io/docs/AHT1x/
         # Absolute links: href=https://github.com/... -> use as-is
-        href_match = re.search(r'href=["\']?(\.\./([\w%-]+)/|https?://\S+)', cells[0])
-        if href_match:
-            if href_match.group(2):
-                doc_url = f"{DOCS_BASE}{href_match.group(2)}/"
-            else:
-                doc_url = href_match.group(1).rstrip("> ")
-        else:
-            doc_url = None
+        doc_url = tasmota_doc_url(cells[0])
 
         # Clean HTML tags from cells
         name_cell = re.sub(r'<[^>]+>', '', cells[0]).strip()

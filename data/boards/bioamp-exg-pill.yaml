@@ -1,7 +1,7 @@
 name: BioAmp EXG Pill
 slug: bioamp-exg-pill
 source: upsidedownlabs/BioAmp-EXG-Pill
-format: kicad7
+format: kicad6
 description: 'Biopotential analog frontend (25.4x10mm): TL074 quad op-amp instrumentation amplifier for ECG/EMG/EEG/EOG'
 tags: [biomedical, analog]
 key_ics: [TL074]
@@ -39,18 +39,18 @@ components:
   footprint: '0603'
   decouples: U1
 - ref: J1
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J2
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
 - ref: JP2
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
   pin_count: 3
 - ref: R1

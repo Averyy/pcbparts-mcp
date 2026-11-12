@@ -1,7 +1,7 @@
 name: Soldered HX711 Load Cell
 slug: soldered-hx711-load-cell
 source: SolderedElectronics/Load-cell-ampfilier-HX711-board-hardware-design
-format: kicad7
+format: kicad6
 description: Load cell ADC (HX711)
 tags: [adc-dac]
 key_ics: [HX711]
@@ -37,14 +37,14 @@ components:
   decouples: U1
 - ref: K1
   value: 1x5 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_5X1
   pin_count: 5
 - ref: K2
   value: 1x2 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_2X1
 - ref: K3
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: Q1
   value: MMBT4403

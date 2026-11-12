@@ -1,10 +1,10 @@
 name: T41 SDR Main Board
 slug: t41-sdr-main-board
 source: Greg-R/t41_2_main_board
-format: kicad7
+format: kicad8
 description: 'Teensy 4.1 (600MHz ARM) SDR transceiver main board: Si5351 synthesis, audio codec'
 tags: [audio, ham-radio, rf-sdr]
-key_ics: [Teensy4.1]
+key_ics: [Teensy4.1, PCM1808_module, PCM5102_module]
 outline:
   width_mm: 100.0
   height_mm: 100.0
@@ -133,8 +133,8 @@ components:
   pin_count: 14
   nc_pins: {'11': '11', '12': '12', '13': '13'}
 - ref: J1
-  value: 2x8 header
-  footprint: IDC-Header
+  value: 2x8 2.54mm header
+  footprint: IDC-Header_2x08
   pin_count: 16
 - ref: J10
   value: SJ-3524-SMT
@@ -143,49 +143,53 @@ components:
   pin_count: 4
   nc_pins: {'4': '4'}
 - ref: J11
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.50mm header
+  footprint: 1X2_P2.50mm
+  digikey: 455-2247-ND
   mpn: B2B-XH-A(LF)(SN)
-  manufacturer: JST Sales America Inc.
   description: CONN HEADER VERT 2POS 2.5MM
-- ref: J13
-  value: 1x3 header
-  footprint: 1X3
-  mpn: B3B-XH-A(LF)(SN)
   manufacturer: JST Sales America Inc.
+- ref: J13
+  value: 1x3 2.50mm header
+  footprint: 1X3_P2.50mm
+  digikey: 455-2248-ND
+  mpn: B3B-XH-A(LF)(SN)
   description: CONN HEADER VERT 3POS 2.5MM
+  manufacturer: JST Sales America Inc.
   pin_count: 3
 - ref: J15
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.50mm header
+  footprint: 1X4_P2.50mm
+  digikey: 455-2249-ND
   mpn: B4B-XH-A(LF)(SN)
-  manufacturer: JST Sales America Inc.
   description: CONN HEADER VERT 4POS 2.5MM
+  manufacturer: JST Sales America Inc.
   pin_count: 4
 - ref: J16
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.50mm header
+  footprint: 1X3_P2.50mm
+  digikey: 455-2248-ND
   mpn: B3B-XH-A(LF)(SN)
-  manufacturer: JST Sales America Inc.
   description: CONN HEADER VERT 3POS 2.5MM
+  manufacturer: JST Sales America Inc.
   pin_count: 3
 - ref: J2
-  value: 2x5 header
-  footprint: IDC-Header
+  value: 2x5 2.54mm header
+  footprint: IDC-Header_2x05
   pin_count: 10
   nc_pins: {Pin_3: '3', Pin_4: '4', Pin_9: '9', Pin_10: '10'}
 - ref: J3
-  value: 2x5 header
-  footprint: IDC-Header
+  value: 2x5 2.54mm header
+  footprint: IDC-Header_2x05
   pin_count: 10
 - ref: J4
-  value: 2x5 header
-  footprint: IDC-Header
+  value: 2x5 2.54mm header
+  footprint: IDC-Header_2x05
   pin_count: 10
   nc_pins: {Pin_3: '3', Pin_4: '4', Pin_9: '9', Pin_10: '10'}
 - ref: J5
-  value: 2x5 header
-  footprint: IDC-Header
+  value: 2x5 2.54mm header
+  footprint: IDC-Header_2x05
   pin_count: 10
   nc_pins: {Pin_1: '1', Pin_2: '2'}
 - ref: J6
@@ -207,11 +211,12 @@ components:
   pin_count: 4
   nc_pins: {'4': '4'}
 - ref: J9
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.50mm header
+  footprint: 1X3_P2.50mm
+  digikey: 455-2248-ND
   mpn: B3B-XH-A(LF)(SN)
-  manufacturer: JST Sales America Inc.
   description: CONN HEADER VERT 3POS 2.5MM
+  manufacturer: JST Sales America Inc.
   pin_count: 3
 - ref: R1
   value: 470ohm
@@ -257,7 +262,19 @@ components:
   value: Teensy4.1
   footprint: Teensy41
   pin_count: 67
-  nc_pins: {1_TX1_CTX2_MISO1: '3', 7_RX2_OUT1A: '9', 8_TX2_IN1: '10', 9_OUT1C: '11', 3V3@15: '15', 24_A10_TX6_SCL2: '16', 25_A11_RX6_SDA2: '17', 26_A12_MOSI1: '18', 27_A13_SCK1: '19', 33_MCLK2: '25', 34_RX8: '26', 40_A16: '32', 41_A17: '33', VUSB: '49', VBAT: '50', 3V3@51: '51', GND@52: '52', PROGRAM: '53', ON_OFF: '54', 5V: '55', D-@56: '56', D+@57: '57', GND@58: '58', GND@59: '59', R+: '60', LED: '61', T-: '62', T+: '63', GND@64: '64', R-: '65', D-@66: '66', D+@67: '67'}
+  nc_pins: {1_TX1_CTX2_MISO1: '3', 7_RX2_OUT1A: '9', 8_TX2_IN1: '10', 9_OUT1C: '11', 3V3@15: '15', 24_A10_TX6_SCL2: '16',
+    25_A11_RX6_SDA2: '17', 26_A12_MOSI1: '18', 27_A13_SCK1: '19', 33_MCLK2: '25', 34_RX8: '26', 40_A16: '32', 41_A17: '33',
+    VUSB: '49', VBAT: '50', 3V3@51: '51', GND@52: '52', PROGRAM: '53', ON_OFF: '54', 5V: '55', D-@56: '56', D+@57: '57', GND@58: '58',
+    GND@59: '59', R+: '60', LED: '61', T-: '62', T+: '63', GND@64: '64', R-: '65', D-@66: '66', D+@67: '67'}
+- ref: U2
+  value: PCM1808_module
+  footprint: PCM1808_module
+  pin_count: 15
+- ref: U3
+  value: PCM5102_module
+  footprint: PCM5102_module
+  pin_count: 15
+  nc_pins: {ROUT: '3'}
 - ref: U4
   value: P82B715DR
   footprint: SOIC-8
@@ -679,6 +696,12 @@ positions:
   x: 164.67
   y: 96.91
   rot: 90.0
+- ref: U2
+  x: 138.02
+  y: 73.7
+- ref: U3
+  x: 143.1
+  y: 109.97
 - ref: U4
   x: 135.62
   y: 117.87

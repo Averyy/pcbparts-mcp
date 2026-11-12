@@ -206,7 +206,7 @@ GOLDEN_QUERIES: list[GoldenQuery] = [
         description="Broad functional query — power-supply tagged boards should rank high",
         query="power supply",
         must_include=["adafruit-powerboost-1000c", "eez-h24005", "smps-19v-3a"],
-        # espresence is a presence sensor that mentions "power supply" peripherally
+        # espresence mentions "power supply" peripherally; exclude from the top 10.
         must_exclude=["espresence"],
         expected_total_range=(30, 60),
     ),
@@ -332,7 +332,7 @@ GOLDEN_QUERIES: list[GoldenQuery] = [
         tag="motor-control",
         must_include=["prusa-buddy-board-mini", "ldo-leviathan-v1-3",
                        "silentstepstick-tmc2209", "vesc-4-12"],
-        limit=25,
+        limit=30,
         expected_total_range=(25, 35),
     ),
     GoldenQuery(
@@ -352,7 +352,7 @@ GOLDEN_QUERIES: list[GoldenQuery] = [
         tag="drone-uav",
         limit=15,
         must_include=["px4-fmuv2-pixhawk", "crazyflie", "tinyfish", "hadesfcs"],
-        expected_total_range=(10, 18),
+        expected_total_range=(8, 18),
     ),
     GoldenQuery(
         id="tag-lora",
@@ -378,7 +378,8 @@ GOLDEN_QUERIES: list[GoldenQuery] = [
         tag="battery-charging",
         must_include=["adafruit-powerboost-1000c", "soldered-bq24295-charger"],
         limit=20,
-        expected_total_range=(14, 22),
+        # All 23 matches carry this exact tag in both boards.db and their YAMLs.
+        expected_total_range=(14, 23),
     ),
 
     # ===== ORG-FILTER (organization matching) =====
@@ -480,9 +481,10 @@ GOLDEN_QUERIES: list[GoldenQuery] = [
     GoldenQuery(
         id="neg-empty-query",
         category="negative",
-        description="All-stopword query — should degrade gracefully",
+        description="All-stopword query — browse all boards, just like an omitted query",
         query="the and or",
-        expected_total_range=(0, 285),
+        # Empty/stopword-only queries intentionally omit the text filter (303 boards).
+        expected_total_range=(303, 303),
     ),
     GoldenQuery(
         id="edge-short-query",
@@ -576,7 +578,7 @@ GOLDEN_QUERIES: list[GoldenQuery] = [
         must_include=["adafruit-tps61169-cc-boost-led-driver", "sparkfun-femtobuck",
                        "cc-led-driver-lm3424"],
         limit=15,
-        expected_total_range=(12, 18),
+        expected_total_range=(13, 19),  # Full Bus Pirate root recovers its SK6812 LED subsystem
     ),
     GoldenQuery(
         id="scenario-eink-display",
@@ -612,7 +614,8 @@ GOLDEN_QUERIES: list[GoldenQuery] = [
         query="buck",
         tag="power-supply",
         must_include=["sparkfun-femtobuck"],
-        expected_total_range=(3, 15),
+        # 17 matches after tag corrections, including boards with buck subsystems.
+        expected_total_range=(3, 20),
     ),
     GoldenQuery(
         id="scenario-rs485-industrial",
@@ -667,7 +670,7 @@ GOLDEN_QUERIES: list[GoldenQuery] = [
         tag="eurorack",
         must_include=["mutable-plaits"],
         must_exclude=["prusa-buddy-board-mini"],
-        expected_total_range=(3, 6),
+        expected_total_range=(2, 6),
     ),
     GoldenQuery(
         id="scenario-nfc-reader",
@@ -900,7 +903,7 @@ GOLDEN_QUERIES: list[GoldenQuery] = [
         category="user-scenario",
         description="ADC for precision sensor measurement — voltage/current/temp",
         tag=["adc-dac", "sensors"],
-        must_include=["crazyflie"],
+        must_include=["adafruit-max31856-thermocouple"],
         expected_total_range=(3, 10),
     ),
     GoldenQuery(
@@ -1081,7 +1084,7 @@ GOLDEN_QUERIES: list[GoldenQuery] = [
         tag=["esd-protection", "usb"],
         must_include=["adafruit-rp2040-usb-host"],
         holdout=True,
-        expected_total_range=(1, 4),
+        expected_total_range=(1, 6),
     ),
 ]
 

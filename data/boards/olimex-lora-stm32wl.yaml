@@ -18,6 +18,7 @@ components:
 - ref: BAT1
   value: BTH-DP-AA-LF
   footprint: BATTERY-1xAA
+  mpn: BH311P
 - ref: BATTERY1
   value: HN1x2
   footprint: HN1x2_Jumper
@@ -88,10 +89,6 @@ components:
   value: 220nF +80-20% 10VDC
   footprint: '0402'
   decouples: U5
-- ref: C9
-  value: 4.7uF
-  footprint: '0603'
-  decouples: U4
 - ref: CON1
   value: 1x10 header
   footprint: HN1x10
@@ -187,9 +184,6 @@ components:
 - ref: RESET1
   value: T1107A
   footprint: T1107A(6x3,8x2,5MM)
-- ref: SB1
-  value: NA
-  footprint: WU02S
 - ref: SJ1
   value: SJ_Closed_Board_Mounted
   footprint: SJ-1
@@ -199,18 +193,15 @@ components:
   pin_count: 3
 - ref: U2
   value: STM32L052K8U3
-  footprint: QFN32_EP(33)
+  footprint: QFN32_EP(33)_5.00x5.00x0.90
   pin_count: 33
-  nc_pins: {'2': '2', '3': '3', '6': '6', '7': '7', '14': '14', '15': '15', '16': '16', '18': '18', '19': '19', '20': '20', '29': '29'}
+  nc_pins: {'2': '2', '3': '3', '6': '6', '7': '7', '14': '14', '15': '15', '16': '16', '18': '18', '19': '19', '20': '20',
+    '29': '29'}
 - ref: U3
   value: IIS2MDCTR
   footprint: LGA-12
   pin_count: 12
   nc_pins: {'2': '2', '11': '11', '12': '12'}
-- ref: U4
-  value: BME280
-  footprint: BME280
-  pin_count: 8
 - ref: U5
   value: AHT20
   footprint: AHT20
@@ -260,9 +251,9 @@ nets:
 - name: /CMSIS-DAP/nRESET
   pins: [R1.2, U2.32]
 - name: /I2C1_SCL
-  pins: [BB-STM32WL_PLATFORM1.4, R11.2, U3.1, U4.4, U5.3, UEXT1.5]
+  pins: [BB-STM32WL_PLATFORM1.4, R11.2, U3.1, U5.3, UEXT1.5]
 - name: /I2C1_SDA
-  pins: [BB-STM32WL_PLATFORM1.3, R10.2, U3.4, U4.3, U5.4, UEXT1.6]
+  pins: [BB-STM32WL_PLATFORM1.3, R10.2, U3.4, U5.4, UEXT1.6]
 - name: /LPUART1_RX
   pins: [BB-STM32WL_PLATFORM1.20, UEXT1.4]
 - name: /LPUART1_TX
@@ -308,7 +299,6 @@ nets:
   - C6.2
   - C7.2
   - C8.2
-  - C9.1
   - CON1.10
   - CON1.2
   - L1.1
@@ -320,13 +310,10 @@ nets:
   - R3.1
   - R9.1
   - RESET1.2
-  - SB1.2
   - U1.1
   - U2.33
   - U3.6
   - U3.8
-  - U4.1
-  - U4.7
   - U5.5
   - UEXT1.2
   - USB1.5
@@ -360,8 +347,6 @@ nets:
   pins: [R4.2, U2.25]
 - name: Net-(R8-Pad2)
   pins: [R8.2, R9.2, SJ1.1]
-- name: Net-(SB1-Pad1)
-  pins: [SB1.1, U2.12]
 - name: PA0
   pins: [BB-STM32WL_PLATFORM1.14, BUTTON1.1, C10.1, CON1.6]
 - name: PA1
@@ -385,7 +370,6 @@ nets:
   pins:
   - C5.1
   - C8.1
-  - C9.2
   - CON1.1
   - FET2.3
   - R10.1
@@ -394,10 +378,6 @@ nets:
   - U3.10
   - U3.3
   - U3.9
-  - U4.2
-  - U4.5
-  - U4.6
-  - U4.8
   - U5.2
   - UEXT1.1
 positions:
@@ -459,10 +439,6 @@ positions:
   x: 82.93
   y: 110.74
   rot: 180.0
-- ref: C9
-  x: 69.34
-  y: 113.16
-  rot: 90.0
 - ref: CON1
   x: 85.09
   y: 138.43
@@ -569,9 +545,6 @@ positions:
 - ref: RESET1
   x: 107.06
   y: 114.3
-- ref: SB1
-  x: 90.07
-  y: 100.69
 - ref: SJ1
   x: 103.0
   y: 102.74
@@ -586,10 +559,6 @@ positions:
 - ref: U3
   x: 108.84
   y: 96.14
-- ref: U4
-  x: 78.6
-  y: 113.03
-  rot: 90.0
 - ref: U5
   x: 83.44
   y: 113.41

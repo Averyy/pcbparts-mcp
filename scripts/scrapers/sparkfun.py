@@ -296,6 +296,10 @@ def scrape_sparkfun(output_dir: Path) -> None:
             protocols.append("i2c")
         if "spi" in desc_lower and "spi" not in protocols:
             protocols.append("spi")
+        # "flexible I 2 C, SPI, or UART communication options" (BNO086). Not "serial": that also
+        # names serial numbers and I2C's serial clock.
+        if re.search(r"\buart\b", desc_lower) and "uart" not in protocols:
+            protocols.append("uart")
 
         # Infer measures from name + description
         combined_text = f"{name} {short_desc_html}"

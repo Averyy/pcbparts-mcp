@@ -3,7 +3,7 @@ slug: electrolama-zzh
 source: electrolama/zig-a-zig-ah
 format: eagle
 description: 'CC2652R1 bare-die Zigbee/Thread/BLE coordinator: full RF front-end with 2.4GHz balun (LFB182G45), CH340E USB-UART'
-tags: [rf-sdr, usb, zigbee-thread]
+tags: [bluetooth, rf-sdr, usb, zigbee-thread]
 key_ics: [LFB182G45, CC2652R1, CH340E]
 outline:
   width_mm: 34.4
@@ -82,14 +82,16 @@ components:
   height: 0.5mm
   manufacturer: Nexperia
   mpn: PRTR5V0U2F,115
+  mouser: 771-PRTR5V0U2F-T/R
+  rs: 8166931P
   pin_count: 6
 - ref: FL1
   value: balun
   footprint: LFB182G45BG5D920
   description: Balance Matching BAND PASS FILTER
-  height: mm
   manufacturer: Murata Electronics
   mpn: LFB182G45BG5D920
+  mouser: 81-LFB182G45BG5D920
   pin_count: 6
 - ref: IC1
   value: CH340E
@@ -98,25 +100,30 @@ components:
   nc_pins: {RTS#: '4', CTS#: '5', TNOW: '6'}
 - ref: IC2
   value: ME6211C33R5G
-  footprint: SOT-5
+  footprint: SOT65P212X110-5N
   pin_count: 4
 - ref: IC3
   value: CC2652R
-  footprint: QFN-49
-  description: Texas Instruments SimpleLink? Multi-Standard CC2652R Wireless MCU 48-VQFN -40
+  footprint: QFN50P700X700X100-49N
+  description: Texas Instruments SimpleLink? Multi-Standard CC2652R Wireless MCU 48-VQFN -40 to 85
   height: 1mm
   manufacturer: Texas Instruments
   mpn: CC2652R1FRGZT
+  mouser: 595-CC2652R1FRGZT
   pin_count: 49
-  nc_pins: {DIO_0: '5', DIO_1: '6', DIO_4: '9', DIO_5: '10', DIO_6: '11', DIO_8: '14', DIO_9: '15', DIO_10: '16', DIO_11: '17', DIO_12: '18', DIO_14: '20', DIO_15: '21', DIO_16: '26', DIO_17: '27', DIO_18: '28', DIO_19: '29', DIO_20: '30', DIO_21: '31', DIO_22: '32', DIO_23: '36', DIO_24: '37', DIO_25: '38', DIO_26: '39', DIO_27: '40', DIO_28: '41', DIO_29: '42', DIO_30: '43'}
+  nc_pins: {DIO_0: '5', DIO_1: '6', DIO_4: '9', DIO_5: '10', DIO_6: '11', DIO_8: '14', DIO_9: '15', DIO_10: '16', DIO_11: '17',
+    DIO_12: '18', DIO_14: '20', DIO_15: '21', DIO_16: '26', DIO_17: '27', DIO_18: '28', DIO_19: '29', DIO_20: '30', DIO_21: '31',
+    DIO_22: '32', DIO_23: '36', DIO_24: '37', DIO_25: '38', DIO_26: '39', DIO_27: '40', DIO_28: '41', DIO_29: '42', DIO_30: '43'}
 - ref: L1
-  value: BLM18HE152SN1
+  value: 1.5kohm
   footprint: '0603'
+  mpn: BLM18HE152SN1
 - ref: L2
   value: 6.8uH
   footprint: 0805
+  mpn: MLZ2012N6R8LT000
 - ref: L3
-  value: 0H
+  value: '0'
   footprint: '0402'
 - ref: LED1
   value: LED
@@ -143,16 +150,21 @@ components:
 - ref: Y1
   value: Q22FA12800150
   footprint: XTAL-4P-2016
+  digikey: 1253-2042-1-ND
+  manufacturer: KYOCERA
+  mpn: CX2016DB48000C0FPLC1
   description: "48MHz \xB110ppm Crystal 7pF 50 Ohms 4-SMD, No Lead"
   pin_count: 4
 - ref: Y2
   value: 32.768KHz
   footprint: XTAL-2P-3215
   lcsc: C32346
+  manufacturer: SEIKO EPSON
+  mpn: Q13FC1350000400
   description: SMD Crystal Resonators 32.768KHz +/-20ppm SMD-3215_2P RoHS
 nets:
 - name: ANT
-  pins: [C10.2, L3.2, MOD1.G$2.SMA_SIGNAL]
+  pins: [L3.2, MOD1.G$2.SMA_SIGNAL]
 - name: BSL
   pins: [IC3.DIO_13, R3.2, SW1.2_1, SW1.2_2]
 - name: DCDC_SW
@@ -162,7 +174,6 @@ nets:
 - name: GND
   pins:
   - C1.1
-  - C10.1
   - C11.2
   - C12.2
   - C13.2
@@ -178,8 +189,6 @@ nets:
   - C6.1
   - C7.1
   - C8.1
-  - C9.1
-  - CON3.GND@3
   - D1.2
   - FL1.GND@2
   - FL1.GND@5
@@ -208,21 +217,17 @@ nets:
 - name: PC_TX
   pins: [IC1.TXD, IC3.DIO_2]
 - name: RESET
-  pins: [C5.2, CON3.NRESET, IC3.RESET_N, R1.1]
+  pins: [C5.2, IC3.RESET_N, R1.1]
 - name: RF_N
   pins: [FL1.BAL@4, IC3.RF_N]
 - name: RF_P
   pins: [FL1.BAL@3, IC3.RF_P]
-- name: TCK
-  pins: [CON3.SWDCLK/TCK, IC3.JTAG_TCKC]
-- name: TMS
-  pins: [CON3.SWDIO/TMS, IC3.JTAG_TMSC]
 - name: UD+
   pins: [D1.6, IC1.UD+]
 - name: UD-
   pins: [D1.4, IC1.UD-]
 - name: UNBAL
-  pins: [C9.2, FL1.UNBAL, L3.1]
+  pins: [FL1.UNBAL, L3.1]
 - name: USB_D+
   pins: [D1.1, MOD1.G$1.USB_D+]
 - name: USB_D-
@@ -232,7 +237,6 @@ nets:
   - C1.2
   - C2.2
   - C4.1
-  - CON3.VCC
   - IC1.V3
   - IC1.VCC
   - IC2.VOUT

@@ -1,7 +1,7 @@
 name: PicoCNC v1.55
 slug: picocnc-v1-55
 source: phil-barrett/PicoCNC
-format: kicad7
+format: kicad8
 description: 'RP2040 grblHAL CNC controller: opto-isolated limit switches (12V NPN proximity), 0-10V + PWM spindle'
 tags: [ethernet, isolation, relay, sensors]
 key_ics: [W5500, RP2040]
@@ -109,7 +109,6 @@ components:
   value: 2.7kohm
   footprint: '0603'
   lcsc: C13167
-  pullup: D1.A
 - ref: R10
   value: 2.2kohm
   footprint: '0603'
@@ -248,7 +247,6 @@ components:
   value: 1kohm
   footprint: '0603'
   lcsc: C21190
-  pullup: D3.A
 - ref: R5
   value: 10kohm
   footprint: '0603'

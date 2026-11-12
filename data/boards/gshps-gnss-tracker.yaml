@@ -182,7 +182,7 @@ components:
   mpn: SS2040FL_R1_00001
 - ref: J1
   value: JST-PH 01x02 Male
-  footprint: JST_PH_S2B-PH-K
+  footprint: JST_PH_S2B-PH-K_1x02
   mpn: S2B-PH-K-S(LF)(SN)
 - ref: J2
   value: USB-C
@@ -191,19 +191,19 @@ components:
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J3
-  value: 1x3 header
+  value: 1x3 1.25mm header
   footprint: Molex_PicoBlade_53261-0371
   mpn: '0532610371'
   pin_count: 3
 - ref: J4
   value: SWD 10-pin
-  footprint: 2X5
+  footprint: 2X5_P1.27mm_SMD
   mpn: '4048'
   pin_count: 10
   nc_pins: {SWO/TDO: '6', KEY: '7', NC/TDI: '8', GNDDetect: '9'}
 - ref: J5
-  value: 1x24 header
-  footprint: Hirose_FH34SRJ-24S-0.5SH
+  value: 1x24 0.50mm header
+  footprint: Hirose_FH34SRJ-24S-0.5SH_1x24
   mpn: FH34SRJ-24S-0.5SH(50)
   pin_count: 24
   nc_pins: {NC@1: '1', NC@4: '4', NC@6: '6', NC@7: '7', NC@19: '19'}
@@ -416,7 +416,7 @@ components:
   mpn: TL3342F160QG/TR
 - ref: U1
   value: TP4056
-  footprint: HSOP-8-1EP
+  footprint: HSOP-8-1EP_3.9x4.9
   pin_count: 9
   nc_pins: {TEMP: '1'}
 - ref: U2
@@ -431,7 +431,7 @@ components:
   pin_count: 8
 - ref: U4
   value: RP2040
-  footprint: QFN-56-1EP
+  footprint: QFN-56-1EP_7x7
   pin_count: 57
   nc_pins: {GPIO22: '34', GPIO27_ADC1: '39', GPIO28_ADC2: '40', GPIO29_ADC3: '41'}
 - ref: U5
@@ -442,7 +442,7 @@ components:
   nc_pins: {NC@6: '6', NC@7: '7', EX_ANT: '11', RTCM: '14', TX_1: '15', NC@16: '16', NC@17: '17', NC@18: '18', NC@20: '20'}
 - ref: Y1
   value: 12.000MHz 18pF
-  footprint: Crystal_SMD_SeikoEpson_FA238-4Pin
+  footprint: Crystal_SMD_SeikoEpson_FA238-4Pin_3.2x2.5
   mpn: FA-238V 12.0000MA-C5
   pin_count: 4
 nets:

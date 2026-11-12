@@ -1,7 +1,7 @@
 name: Soldered W5500 Ethernet
 slug: soldered-w5500-ethernet
 source: SolderedElectronics/Ethernet-controller-W5500-board-hardware-design
-format: kicad7
+format: kicad6
 description: SPI Ethernet (W5500)
 tags: [ethernet]
 key_ics: [W5500]
@@ -18,6 +18,7 @@ components:
 - ref: C1
   value: 10uF
   footprint: ELECTROLITIC_CAP_4mm
+  mpn: EDK106M016A9BAA
 - ref: C10
   value: 6.8nF
   footprint: '0603'
@@ -37,6 +38,7 @@ components:
 - ref: C15
   value: 10uF
   footprint: ELECTROLITIC_CAP_4mm
+  mpn: EDK106M016A9BAA
   decouples: U2
 - ref: C16
   value: 18pF
@@ -90,6 +92,7 @@ components:
 - ref: FB1
   value: 600ohm
   footprint: '0603'
+  mpn: MMZ1608S601ATA00
 - ref: JP1
   value: solder jumper (NC)
   footprint: SJ-2
@@ -109,7 +112,7 @@ components:
   nc_pins: {NC_P7: '7'}
 - ref: K2
   value: 1x9 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_9X1
   pin_count: 9
 - ref: R1
   value: 33ohm
@@ -188,7 +191,8 @@ components:
   value: W5500
   footprint: WIZnet W5500
   pin_count: 48
-  nc_pins: {DNC: '7', NC@12: '12', NC@13: '13', VBG: '18', RSVD@23: '23', SPDLED: '24', DUPLED: '26', RSVD@38: '38', RSVD@39: '39', RSVD@40: '40', RSVD@41: '41', RSVD@42: '42', NC@46: '46', NC@47: '47'}
+  nc_pins: {DNC: '7', NC@12: '12', NC@13: '13', VBG: '18', RSVD@23: '23', SPDLED: '24', DUPLED: '26', RSVD@38: '38', RSVD@39: '39',
+    RSVD@40: '40', RSVD@41: '41', RSVD@42: '42', NC@46: '46', NC@47: '47'}
 - ref: U2
   value: SE5218
   footprint: SOT-23-5

@@ -18,10 +18,13 @@ components:
 - ref: BR1
   value: 50V/2A
   footprint: SOP270P700X270-4
+  allied: '70426672'
   description: COMCHIP TECHNOLOGY CDBHM240L-HF, Bridge Rectifier, 40V, 4-Pin MBS-2
   height: 2.9mm
   manufacturer: Comchip Technology
   mpn: CDBHM240L-HF
+  mouser: 750-CDBHM240L-HF
+  rs: '9066719'
   pin_count: 4
 - ref: C1
   value: 100nF
@@ -239,14 +242,26 @@ components:
   nc_pins: {I4P: '9', I4N: '10', NC@1: '35', NC@2: '45', NC@3: '46'}
 - ref: IC3
   value: LMR14020SDDA
-  footprint: SOIC-9
+  footprint: SOIC127P600X170-9N
   description: Voltage Regulators - Switching Regulators 40V 2A 2.2Mhz Simple Switcher
   height: 1.7mm
   manufacturer: Texas Instruments
   mpn: LMR14020SDDA
+  mouser: 595-LMR14020SDDA
+  rs: '1629813'
   pin_count: 9
+- ref: J1
+  value: 1x4 header
+  footprint: 1X04
+  prod_id: CONN-09696
+  pin_count: 4
+- ref: J2
+  value: 1x4 header
+  footprint: 1X04
+  prod_id: CONN-09696
+  pin_count: 4
 - ref: J3
-  value: 1x2 screw terminal
+  value: 1x2 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-2
   prod_id: CONN-08399
 - ref: J4
@@ -264,37 +279,38 @@ components:
   height: 3.27mm
   manufacturer: Yamaichi
   mpn: PKS019-4011-0
+  mouser: 945-PKS019-4011-0
   pin_count: 23
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: JP12
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: JP13
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: JP2
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: JP3
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: JP4
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: JP5
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: JP6
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: L1
@@ -314,7 +330,6 @@ components:
 - ref: R10
   value: 1kohm
   footprint: '0603'
-  pullup: PWR.A
 - ref: R11
   value: 1kohm
   footprint: RA1206-8
@@ -420,7 +435,8 @@ components:
   manufacturer: Espressif Systems
   mpn: ESP32-DEVKITC-32D
   pin_count: 38
-  nc_pins: {IO22: '22', TXD0: '23', RXD0: '24', IO21: '25', IO17: '30', IO16: '31', IO0: '33', IO2: '34', IO15: '35', SD1: '36', SD0: '37', CLK: '38'}
+  nc_pins: {IO22: '22', TXD0: '23', RXD0: '24', IO21: '25', IO17: '30', IO16: '31', IO0: '33', IO2: '34', IO15: '35', SD1: '36',
+    SD0: '37', CLK: '38'}
 - ref: Y1
   value: 16.384MHz
   footprint: CRYSTAL-SMD-3.2X2.5MM
@@ -448,10 +464,28 @@ nets:
   pins: [C31.1, IC3.BOOT]
   trace_width: '0.1524'
 - name: CF1
-  pins: [IC1.CF1, R9.2]
+  pins: [IC1.CF1, J1.4, R9.2]
   trace_width: '0.1524'
 - name: CF1-2
-  pins: [IC2.CF1, R20.2]
+  pins: [IC2.CF1, J2.4, R20.2]
+  trace_width: '0.1524'
+- name: CF2
+  pins: [IC1.CF2, J1.3]
+  trace_width: '0.1524'
+- name: CF2-2
+  pins: [IC2.CF2, J2.3]
+  trace_width: '0.1524'
+- name: CF3
+  pins: [IC1.CF3, J1.2]
+  trace_width: '0.1524'
+- name: CF3-2
+  pins: [IC2.CF3, J2.2]
+  trace_width: '0.1524'
+- name: CF4
+  pins: [IC1.CF4, J1.1]
+  trace_width: '0.1524'
+- name: CF4-2
+  pins: [IC2.CF4, J2.1]
   trace_width: '0.1524'
 - name: FB
   pins: [C32.2, IC3.FB, R22.1, R23.2]
@@ -801,24 +835,6 @@ nets:
 - name: WARN
   pins: [IC1.WARNOUT, IC2.WARNOUT, U1.IO34]
   trace_width: '0.1524'
-- name: ZX0
-  pins: [IC1.ZX0, ZX0.P]
-  trace_width: '0.1524'
-- name: ZX0-2
-  pins: [IC2.ZX0, ZX0-2.P]
-  trace_width: '0.1524'
-- name: ZX1
-  pins: [IC1.ZX1, ZX1.P]
-  trace_width: '0.1524'
-- name: ZX1-2
-  pins: [IC2.ZX1, ZX1-2.P]
-  trace_width: '0.1524'
-- name: ZX2
-  pins: [IC1.ZX2, ZX2.P]
-  trace_width: '0.1524'
-- name: ZX2-2
-  pins: [IC2.ZX2, ZX2-2.P]
-  trace_width: '0.1524'
 positions:
 - ref: BR1
   x: 37.74
@@ -1034,6 +1050,14 @@ positions:
   x: 26.31
   y: 7.11
   rot: 90.0
+- ref: J1
+  x: 10.16
+  y: 2.54
+  rot: 180.0
+- ref: J2
+  x: 20.32
+  y: 2.54
+  rot: 180.0
 - ref: J3
   x: 59.05
   y: 5.71

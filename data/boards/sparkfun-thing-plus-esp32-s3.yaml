@@ -171,15 +171,15 @@ components:
   pin_count: 6
   nc_pins: {NC@NC1: NC1, NC@NC2: NC2}
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper, 2-pole, closed/bridged
 - ref: JP2
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper, 2-pole, closed/bridged
 - ref: JP3
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper, 2-pole, closed/bridged
 - ref: R1
@@ -262,19 +262,18 @@ components:
   prod_id: RES-15343
 - ref: SW1
   value: switch
-  footprint: Push_SMD
+  footprint: Push_SMD_4.6x2.8
   prod_id: SWCH-15606
   description: Single Pole Single Throw (SPST) switch
 - ref: SW2
   value: switch
-  footprint: Push_SMD
+  footprint: Push_SMD_4.6x2.8
   prod_id: SWCH-15606
   description: Single Pole Single Throw (SPST) switch
 - ref: U1
   value: RT9080-3.3
   footprint: SOT-23-5
   prod_id: VREG-19034
-  description: 600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: U2
@@ -282,6 +281,7 @@ components:
   footprint: SOT-23-6
   prod_id: IC-13538
   description: Very low capacitance ESD protection diode, 4 data-line, SOT-23-6
+  mpn: DT1042-04SO
   pin_count: 6
   nc_pins: {I/O1: '1', I/O2: '3'}
 - ref: U3
@@ -306,7 +306,6 @@ components:
   value: RT9080-3.3
   footprint: SOT-23-5
   prod_id: VREG-19034
-  description: 600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage
   pin_count: 5
   nc_pins: {NC: '4'}
 nets:
@@ -319,7 +318,6 @@ nets:
   - JP1.B
   - JP2.B
   - R8.1
-  - U10.3.3V
   - U3.3V3
   - U6.VOUT
 - name: 3.3V_P
@@ -341,37 +339,13 @@ nets:
   - R6.1
   - U1.VOUT
 - name: EN
-  pins: [R13.2, U10.EN, U6.EN]
+  pins: [R13.2, U6.EN]
 - name: ESP0/STAT
   pins: [R7.1, SW1.1@1, U3.IO0]
-- name: ESP1
-  pins: [U10.GPIO6, U3.IOA1]
-- name: ESP10/A0
-  pins: [U10.A0, U3.IOA10]
-- name: ESP11/PICO
-  pins: [U10.PICO, U3.IOA11]
-- name: ESP12/SCK
-  pins: [U10.SCK, U3.IOA12]
-- name: ESP13/POCI
-  pins: [U10.POCI, U3.IOA13]
-- name: ESP14/A1
-  pins: [U10.A1, U3.IOA14]
-- name: ESP15/A2
-  pins: [U10.A2, U3.IOA15]
-- name: ESP16/A3
-  pins: [U10.A3, U3.IOA16]
-- name: ESP17/A4
-  pins: [U10.A4, U3.IOA17]
-- name: ESP18/A5
-  pins: [U10.A5, U3.IOA18]
 - name: ESP19/D-
   pins: [J1.D-@A7, J1.D-@B7, U2.I/O3, U3.IOA19]
-- name: ESP2
-  pins: [U10.GPIO5, U3.IOA2]
 - name: ESP20/D+
   pins: [J1.D+@A6, J1.D+@B6, U2.I/O4, U3.IOA20]
-- name: ESP21
-  pins: [U10.GPIO0, U3.IO21]
 - name: ESP33/SDIO3
   pins: [J2.DAT3/nCS, R6.2, U3.IO33]
 - name: ESP34/SDIO_CMD
@@ -382,16 +356,8 @@ nets:
   pins: [J2.CLK/SCK, R2.2, U3.IO38]
 - name: ESP39/SDIO0
   pins: [J2.DAT0/SDO, R3.2, U3.IO39]
-- name: ESP4
-  pins: [U10.GPIO4, U3.IOA4]
 - name: ESP40/SDIO1
   pins: [J2.DAT1, R4.2, U3.IO40]
-- name: ESP42/FREE
-  pins: [U10.FREEBIE, U3.IO42]
-- name: ESP43/TXO
-  pins: [U10.TX, U3.TXD0/IO43]
-- name: ESP44/RXI
-  pins: [U10.RX, U3.RXD0/IO44]
 - name: ESP45/Q_EN
   pins: [R17.2, R19.1, U1.EN, U3.IO45]
 - name: ESP46/LED
@@ -400,18 +366,12 @@ nets:
   pins: [J2.DAT2, R5.2, U3.IO47]
 - name: ESP48/SDIO_nDET
   pins: [J2.DET, U3.IO48]
-- name: ESP5
-  pins: [U10.GPIO3, U3.IOA5]
-- name: ESP6
-  pins: [U10.GPIO2, U3.IOA6]
-- name: ESP7
-  pins: [U10.GPIO1, U3.IOA7]
 - name: ESP8/SDA
-  pins: [J4.Pin_3, R15.2, U10.SDA, U3.IOA8, U4.SDA]
+  pins: [J4.Pin_3, R15.2, U3.IOA8, U4.SDA]
 - name: ESP9/SCL
-  pins: [J4.Pin_4, R12.2, U10.SCL, U3.IOA9, U4.SCL]
+  pins: [J4.Pin_4, R12.2, U3.IOA9, U4.SCL]
 - name: ESPnRST
-  pins: [C6.1, R8.2, SW2.1@1, U10.nRESET, U3.EN]
+  pins: [C6.1, R8.2, SW2.1@1, U3.EN]
 - name: GND
   pins:
   - C1.1
@@ -444,7 +404,6 @@ nets:
   - SW1.2@2
   - SW2.2@2
   - U1.GND
-  - U10.GND
   - U2.GND
   - U3.GND@1
   - U3.GND@2
@@ -502,7 +461,6 @@ nets:
   - C2.1
   - D3.A
   - J3.+
-  - U10.V_BATT
   - U4.CELL
   - U4.VDD
   - U5.VBAT
@@ -516,14 +474,7 @@ nets:
   - U1.VIN
   - U6.VIN
 - name: VUSB
-  pins:
-  - C9.1
-  - D2.A
-  - J1.VBUS@VBUS
-  - JP3.B
-  - U10.V_USB
-  - U2.VCC
-  - U5.VIN
+  pins: [C9.1, D2.A, J1.VBUS@VBUS, JP3.B, U2.VCC, U5.VIN]
 positions:
 - ref: C1
   x: 103.5

@@ -189,7 +189,7 @@ components:
   pin_count: 3
 - ref: L1
   value: 22uH
-  footprint: inductor_smd
+  footprint: inductor_smd_8x5
 - ref: P1
   value: HALL/Encoder
   footprint: MICRO_JST_6
@@ -209,19 +209,19 @@ components:
   pin_count: 7
 - ref: P4
   value: IN+
-  footprint: 1PAD
+  footprint: 1PAD_4x5
 - ref: P5
   value: IN-
-  footprint: 1PAD
+  footprint: 1PAD_4x5
 - ref: P6
   value: MOTOR1
-  footprint: 1PAD
+  footprint: 1PAD_4x5
 - ref: P7
   value: MOTOR2
-  footprint: 1PAD
+  footprint: 1PAD_4x5
 - ref: P9
   value: MOTOR3
-  footprint: 1PAD
+  footprint: 1PAD_4x5
 - ref: Q1
   value: IRFS7530
   footprint: D2PAK-7-GDS
@@ -296,7 +296,6 @@ components:
 - ref: R22
   value: 2.2kohm
   footprint: '0603'
-  pullup: D3.1
 - ref: R23
   value: 39kohm
   footprint: '0603'
@@ -405,7 +404,8 @@ components:
   value: STM32F40X
   footprint: lqfp64_pad_mod
   pin_count: 64
-  nc_pins: {'2': '2', '3': '3', '4': '4', '9': '9', '11': '11', '28': '28', '39': '39', '40': '40', '50': '50', '54': '54', '55': '55', '56': '56'}
+  nc_pins: {'2': '2', '3': '3', '4': '4', '9': '9', '11': '11', '28': '28', '39': '39', '40': '40', '50': '50', '54': '54',
+    '55': '55', '56': '56'}
 - ref: U2
   value: TC2117
   footprint: SOT-223
@@ -427,7 +427,7 @@ components:
   nc_pins: {'4': '4'}
 - ref: X2
   value: 8MHz 10ppm
-  footprint: Crystal
+  footprint: Crystal_5x3
   mpn: ABM3B-8.0-10-1UT
   pin_count: 3
 nets:
@@ -444,9 +444,9 @@ nets:
   - R6.2
   - U2.3
 - name: /CAN bus transceiver/CANH
-  pins: [P101.3, R401.1, U401.7]
+  pins: [P101.3, U401.7]
 - name: /CAN bus transceiver/CANL
-  pins: [P101.2, R401.2, U401.6]
+  pins: [P101.2, U401.6]
 - name: /CAN bus transceiver/CAN_RX
   pins: [U1.61, U401.4]
 - name: /CAN bus transceiver/CAN_TX

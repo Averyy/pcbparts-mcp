@@ -1,10 +1,10 @@
 name: epdiy v7
 slug: epdiy-v7
 source: vroland/epdiy-hardware
-format: kicad6
+format: kicad7
 description: "Large-format e-paper driver for 6\u20137.8\" panels, EPD power management IC (TPS651851) generating \xB115V/+22V/-20V\
   \ bias rails"
-tags: [display, eurorack, power-supply]
+tags: [display, power-supply]
 key_ics: [TPS651851, ESP32-S3]
 outline:
   width_mm: 100.0
@@ -318,7 +318,6 @@ components:
 - ref: R20
   value: 52.3kohm
   footprint: '0603'
-  lcsc: C23196
   pulldown: U3.VEE_FB
 - ref: R21
   value: 680kohm
@@ -336,7 +335,6 @@ components:
 - ref: R24
   value: 47.5kohm
   footprint: '0603'
-  lcsc: C25819
   pulldown: U3.VDDH_FB
 - ref: R26
   value: 47kohm
@@ -417,6 +415,7 @@ components:
   value: RT9080-33
   footprint: TSOT-23-5
   lcsc: C841192
+  mpn: RT9080-33GJ5
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: U10
@@ -447,6 +446,7 @@ components:
   value: USBLC6-2
   footprint: SOT-666
   lcsc: C2827693
+  mpn: USBLC6-2P6
   pin_count: 6
 - ref: U5
   value: XC6206PxxxMR
@@ -455,7 +455,7 @@ components:
   pin_count: 3
 - ref: U6
   value: ED078KH6
-  footprint: Hirose_FH12-40S-0.5SH
+  footprint: Hirose_FH12-40S-0.5SH_1x40
   lcsc: C202114
   pin_count: 40
   nc_pins: {NC@2: '2', NC@4: '4', NC@35: '35', NC@37: '37', NC@39: '39'}

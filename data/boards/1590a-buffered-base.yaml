@@ -69,12 +69,12 @@ components:
   description: DC Barrel Jack with an internal switch
   pin_count: 3
 - ref: J2
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: J3
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: J4
   value: AudioJack2_Ground
@@ -113,16 +113,16 @@ components:
   description: Complementary pair enhancement mode MOSFET, TSOT-23-6
   pin_count: 6
 - ref: R10
-  value: 1MEG
+  value: 1Mohm
   footprint: 0805
 - ref: R11
-  value: 1MEG
+  value: 1Mohm
   footprint: 0805
 - ref: R12
   value: 1kohm
   footprint: 0805
 - ref: R13
-  value: 1MEG
+  value: 1Mohm
   footprint: 0805
 - ref: R14
   value: 220ohm
@@ -150,14 +150,14 @@ components:
   value: 42.2kohm
   footprint: 0805
 - ref: R3
-  value: 10MEG
+  value: 10Mohm
   footprint: 0805
 - ref: R4
   value: 100kohm
   footprint: 0805
   pulldown: Q2.G
 - ref: R6
-  value: 1MEG
+  value: 1Mohm
   footprint: 0805
 - ref: R7
   value: 22kohm

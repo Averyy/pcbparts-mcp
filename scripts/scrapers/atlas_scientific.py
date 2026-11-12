@@ -71,6 +71,21 @@ SKIP_KEYWORDS = {"replacement", "soaker", "reference electrode", "tip cap",
                  "calibration", "solution", "reagent"}
 
 
+def product_protocols(sensor_id: str) -> list[str]:
+    """Protocols belong to the product, never to related reader links on its page."""
+    if sensor_id == "flowmeter":
+        return ["gpio"]
+    if sensor_id.endswith("probe") or sensor_id.startswith("surveyor"):
+        return ["analog"]
+    if sensor_id.startswith("ezocomplete"):
+        return ["usb"]
+    if sensor_id.endswith("oem"):
+        return ["i2c"]
+    if sensor_id.startswith("ezo") or sensor_id == "envco2":
+        return ["i2c", "uart"]
+    return []
+
+
 def _discover_products(session: wafer.SyncSession) -> list[tuple[str, str]]:
     """Discover product URLs and names from category pages."""
     all_products = {}  # url -> name
@@ -168,20 +183,12 @@ def scrape_atlas_scientific(output_dir: Path) -> None:
             if "/embedded-solutions/" in u:
                 detail_url = u
                 break
-        protocols = []
+        protocols = product_protocols(sensor_id)
 
         try:
             resp = session.get(detail_url, timeout=15)
             if resp.status_code == 200:
                 html = resp.text
-                text_upper = html.upper()
-                if "I2C" in text_upper:
-                    protocols.append("i2c")
-                if "UART" in text_upper:
-                    protocols.append("uart")
-                if "SPI" in text_upper and "DISPLAY" not in text_upper:
-                    protocols.append("spi")
-
                 # Get meta description
                 meta = re.search(r'<meta[^>]+(?:name|property)="description"[^>]+content="([^"]+)"', html, re.IGNORECASE)
                 desc = meta.group(1).strip() if meta else None

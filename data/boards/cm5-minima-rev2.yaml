@@ -1,7 +1,7 @@
 name: CM5 Minima REV2
 slug: cm5-minima-rev2
 source: piecol/CM5_MINIMA_REV2
-format: kicad7
+format: kicad9
 description: 'Ultra-compact CM5 carrier (54x57mm): USB-C PD, GbE'
 tags: [sensors, usb-pd, video]
 key_ics: [SHTC3]
@@ -18,70 +18,150 @@ components:
 - ref: C101
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
 - ref: C102
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
 - ref: C401
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
   mpn: CC0402KRX7R7BB104
+  voltage: 16V
 - ref: C501
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
   decouples: U405
 - ref: C502
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
 - ref: C601
   value: 4.7uF
   footprint: 0805
   mpn: C0805C475M3PAC
+  voltage: 25V
+  description: 4.7uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
 - ref: C602
   value: 100nF
   footprint: '0402'
   mpn: CC0402KRX7R7BB104
+  voltage: 16V
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
 - ref: C701
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
   decouples: U701
 - ref: C702
   value: 100uF
   footprint: EIA-7343
+  description: Capacitor, SP-Cap, 100u, 6.3V, 15mR ESR
+  mouser: 667-EEF-CX0J101R
+  manufacturer: Panasonic
   decouples: U701
 - ref: C703
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
   decouples: U701
 - ref: C704
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
   decouples: U702
 - ref: C705
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
   decouples: U702
 - ref: C706
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
   decouples: U702
 - ref: C707
   value: 4.7nF
   footprint: '0402'
+  description: 4.7nF capacitor 0402
 - ref: C708
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C709
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C710
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C711
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C712
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
 - ref: D101
   value: RCLAMP0502BA
   footprint: SOT-416
@@ -121,64 +201,105 @@ components:
 - ref: J101
   value: USB-C
   footprint: USB-C
-  description: Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal
+  description: USBC USB2 data and power connector
+  partno: USBF31-0171
+  mpn: USBF31-0171
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J501
   value: GT-HD001B-CNNG1
   footprint: EDAC 690-019-298-412
+  description: HDMI Connector, Right Angle, 19 Contacts, Receptacle, Surface Mount, Surface Mount Right Angle
   pin_count: 23
   nc_pins: {UTILITY/HEAC+: '14'}
 - ref: J502
-  value: 1x4 header
-  footprint: JST_SH_BM04B-SRSS-TB
+  value: JST SH 4-pin
+  footprint: JST_SH_BM04B-SRSS-TB_1x04
   description: Generic connectable mounting pin connector, single row, 01x04, script generated
   pin_count: 5
   nc_pins: {MountPin@MP: MP}
 - ref: J503
-  value: 1x10 header
-  footprint: JST_SUR_BM10B-SURS-TF
+  value: JST SUR 10-pin
+  footprint: JST_SUR_BM10B-SURS-TF_1x10
   description: Generic connectable mounting pin connector, single row, 01x10, script generated
   pin_count: 11
   nc_pins: {MountPin@MP: MP}
 - ref: J601
   value: JST_SHBM04B-SRSS-TB
-  footprint: JST_SH_BM04B-SRSS-TB
+  footprint: JST_SH_BM04B-SRSS-TB_1x04
+  description: 4 pin vertical 1mm pitch connector
+  partno: SHBM04B-SRSS-TB
+  mpn: SHBM04B-SRSS-TB
+  manufacturer: JST
   pin_count: 4
 - ref: J701
   value: M.2
   footprint: M.2 M Key socket 2230
-  description: M.2 Socket 3 Mechanical Key M
+  description: M.2 M Key connector
+  partno: MTSSD03-67MSW337
+  mpn: MTSSD03-67MSW337
+  manufacturer: MTCONN
   pin_count: 69
-  nc_pins: {PETn3: '5', NC@6: '6', PETp3: '7', NC@8: '8', PERn3: '11', PERp3: '13', PETn2: '17', PETp2: '19', PERn2: '23', NC@24: '24', PERp2: '25', NC@26: '26', NC@28: '28', PETn1: '29', NC@30: '30', PETp1: '31', NC@32: '32', NC@34: '34', PERn1: '35', NC@36: '36', PERp1: '37', DEVSLP: '38', NC@40: '40', NC@42: '42', NC@44: '44', NC@46: '46', NC@48: '48', NC@56: '56', NC@58: '58', NC@67: '67', PEDET: '69'}
+  nc_pins: {PETn3: '5', NC@6: '6', PETp3: '7', NC@8: '8', PERn3: '11', PERp3: '13', PETn2: '17', PETp2: '19', PERn2: '23',
+    NC@24: '24', PERp2: '25', NC@26: '26', NC@28: '28', PETn1: '29', NC@30: '30', PETp1: '31', NC@32: '32', NC@34: '34', PERn1: '35',
+    NC@36: '36', PERp1: '37', DEVSLP: '38', NC@40: '40', NC@42: '42', NC@44: '44', NC@46: '46', NC@48: '48', NC@56: '56',
+    NC@58: '58', NC@67: '67', PEDET: '69'}
 - ref: J802
-  value: 1x22 header
-  footprint: Hirose_FH12-22S-0.5SH
+  value: 1x22 0.50mm header
+  footprint: Hirose_FH12-22S-0.5SH_1x22
+  description: 22 Position FFC, FPC Connector Contacts, Bottom 0.020" (0.50mm) Surface Mount, Right Angle
+  mouser: 798-FH12-22S-0.5SH55
+  mpn: FH12-22S-0.5SH55
+  manufacturer: Hirose
   pin_count: 22
 - ref: L701
   value: 2.2uH
   footprint: L_Bourns_SRP5030CC
+  description: Inductor, SMT, 2520, 2u2, IRMS=7A, ISAT=8A, DCR=0.032R
+  partno: SRP5030CC-2R2M
+  mpn: SRP5030CC-2R2M
+  manufacturer: Bourns
 - ref: M701
   value: M.2 Solder Nut
   footprint: MountingHole_3.78mm_M2_Pad_TopOnly
+  description: Solder nut for M.2 slot
 - ref: Module301
   value: ComputeModule5-CM5
   footprint: Raspberry-Pi-5-Compute-Module_GPIO
-  description: RaspberryPi Compute module 5
+  description: 100 Position Connector Receptacle, Center Strip Contacts Surface Mount Gold
+  partno: 2x 10164227-1001A1RLF
+  mpn: 2x 10164227-1001A1RLF
+  manufacturer: Hirose
   pin_count: 100
-  nc_pins: {Ethernet_SYNC_OUT(3.3v): '18', GPIO26: '24', GPIO13: '28', GPIO16: '29', GPIO6: '30', GPIO12: '31', ID_SC: '35', ID_SD: '36', GPIO7: '37', GPIO11: '38', GPIO8: '39', GPIO9: '40', GPIO10: '44', GPIO22: '46', GPIO23: '47', GPIO17: '50', GPIO15: '51', GPIO14: '55', GPIO3: '56', SD_CLK: '57', GPIO2: '58', SD_DAT3: '61', SD_CMD: '62', SD_DAT0: '63', SD_DAT5: '64', SD_DAT1: '67', SD_DAT4: '68', SD_DAT2: '69', SD_DAT7: '70', SD_DAT6: '72', SD_VDD_Override: '73', SD_PWR_ON: '75', VBAT: '76', WiFi_nDisable: '89', BT_nDisable: '91', PMIC_ENABLE: '99'}
+  nc_pins: {Ethernet_SYNC_OUT(3.3v): '18', GPIO26: '24', GPIO13: '28', GPIO16: '29', GPIO6: '30', GPIO12: '31', ID_SC: '35',
+    ID_SD: '36', GPIO7: '37', GPIO11: '38', GPIO8: '39', GPIO9: '40', GPIO10: '44', GPIO22: '46', GPIO23: '47', GPIO17: '50',
+    GPIO15: '51', GPIO14: '55', GPIO3: '56', SD_CLK: '57', GPIO2: '58', SD_DAT3: '61', SD_CMD: '62', SD_DAT0: '63', SD_DAT5: '64',
+    SD_DAT1: '67', SD_DAT4: '68', SD_DAT2: '69', SD_DAT7: '70', SD_DAT6: '72', SD_VDD_Override: '73', SD_PWR_ON: '75', VBAT: '76',
+    WiFi_nDisable: '89', BT_nDisable: '91', PMIC_ENABLE: '99'}
 - ref: Module302
   value: ComputeModule5-CM5
   footprint: Raspberry-Pi-5-Compute-Module_HSS
-  description: RaspberryPi Compute module 5
+  description: 100 Position Connector Receptacle, Center Strip Contacts Surface Mount Gold
+  partno: 2x 10164227-1001A1RLF
+  mpn: 2x 10164227-1001A1RLF
+  manufacturer: Hirose
   pin_count: 100
-  nc_pins: {USB_OTG_ID: '101', USB3-0-RX_N: '128', USB3-0-RX_P: '130', USB3-0-TX_N: '140', USB3-0-TX_P: '142', HDMI1_HOTPLUG: '143', HDMI1_SDA: '145', HDMI1_TX2_P: '146', HDMI1_SCL: '147', HDMI1_TX2_N: '148', HDMI1_CEC: '149', HDMI1_TX1_P: '152', HDMI1_TX1_N: '154', USB3-1-RX_N: '157', HDMI1_TX0_P: '158', USB3-1-RX_P: '159', HDMI1_TX0_N: '160', USB3-1-D_P: '163', HDMI1_CLK_P: '164', USB3-1-D_N: '165', HDMI1_CLK_N: '166', USB3-1-TX_N: '169', USB3-1-TX_P: '171', MIPI1_D0_N: '175', MIPI1_D0_P: '177', MIPI1_D1_N: '181', MIPI1_D1_P: '183', MIPI1_C_N: '187', MIPI1_C_P: '189', MIPI1_D2_N: '193', MIPI1_D3_N: '194', MIPI1_D2_P: '195', MIPI1_D3_P: '196'}
+  nc_pins: {USB_OTG_ID: '101', USB3-0-RX_N: '128', USB3-0-RX_P: '130', USB3-0-TX_N: '140', USB3-0-TX_P: '142', HDMI1_HOTPLUG: '143',
+    HDMI1_SDA: '145', HDMI1_TX2_P: '146', HDMI1_SCL: '147', HDMI1_TX2_N: '148', HDMI1_CEC: '149', HDMI1_TX1_P: '152', HDMI1_TX1_N: '154',
+    USB3-1-RX_N: '157', HDMI1_TX0_P: '158', USB3-1-RX_P: '159', HDMI1_TX0_N: '160', USB3-1-D_P: '163', HDMI1_CLK_P: '164',
+    USB3-1-D_N: '165', HDMI1_CLK_N: '166', USB3-1-TX_N: '169', USB3-1-TX_P: '171', MIPI1_D0_N: '175', MIPI1_D0_P: '177', MIPI1_D1_N: '181',
+    MIPI1_D1_P: '183', MIPI1_C_N: '187', MIPI1_C_P: '189', MIPI1_D2_N: '193', MIPI1_D3_N: '194', MIPI1_D2_P: '195', MIPI1_D3_P: '196'}
 - ref: R101
   value: 2.2kohm
   footprint: '0402'
 - ref: R102
   value: 0ohm
   footprint: '0402'
+  description: Resistor 0R M2012 5%
+  partno: '9233750'
+  mpn: MCR10EZPJ000
+  manufacturer: Rohm
+  prod_id: '121629591'
 - ref: R104
   value: 10kohm
   footprint: '0402'
@@ -186,9 +307,19 @@ components:
 - ref: R105
   value: 0ohm
   footprint: '0402'
+  description: Resistor 0R M2012 5%
+  partno: '9233750'
+  mpn: MCR10EZPJ000
+  manufacturer: Rohm
+  prod_id: '121629591'
 - ref: R106
   value: 0ohm
   footprint: '0402'
+  description: Resistor 0R M2012 5%
+  partno: '9233750'
+  mpn: MCR10EZPJ000
+  manufacturer: Rohm
+  prod_id: '121629591'
 - ref: R401
   value: 470ohm
   footprint: '0402'
@@ -213,6 +344,11 @@ components:
 - ref: R701
   value: 15kohm
   footprint: '0402'
+  description: Resistor 15K M1005 1% 63mW
+  partno: '9239375'
+  mpn: MCR01MZPF1502
+  manufacturer: Rohm
+  prod_id: '120891581'
   pulldown: U701.ILIM
 - ref: R702
   value: 22kohm
@@ -236,6 +372,8 @@ components:
 - ref: R707
   value: 2.2kohm
   footprint: '0402'
+  description: Resistor 1K M1005 1% 63mW
+  partno: '9239235'
 - ref: SW101
   value: MK-11C04-G013
   footprint: SW-SMD_MK-11C04-G013
@@ -252,15 +390,19 @@ components:
   footprint: 7498111120AR
   manufacturer: "W\xFCrth Elektronik"
   mpn: 7498111120AR
+  description: \n                        \n                            1 Port RJ45Board Edge, Surface Mount 10/100/1000 Base-T,
+    AutoMDIX\n                        \n
   pin_count: 16
 - ref: U401
   value: TPD4EUSB30
   footprint: USON-10
+  description: Quad TVS diode for high speed signals (USB3, GigE etc.)
   mpn: TPD4EUSB30
   pin_count: 10
 - ref: U402
   value: TPD4EUSB30
   footprint: USON-10
+  description: Quad TVS diode for high speed signals (USB3, GigE etc.)
   mpn: TPD4EUSB30
   pin_count: 10
 - ref: U405
@@ -271,7 +413,7 @@ components:
   nc_pins: {FAULT: '3'}
 - ref: U601
   value: SHTC3
-  footprint: Sensirion_DFN-4-1EP
+  footprint: Sensirion_DFN-4-1EP_2x2
   description: "Humidity and Temperature Sensor, \xB12%RH, \xB10.2\xB0C, I2C, 1.62-3.6V, DFN-4"
   pin_count: 5
   nc_pins: {NC: '5'}
@@ -284,21 +426,34 @@ components:
 - ref: U701
   value: AP22653W6
   footprint: SOT-23-6
+  description: Power Switch/Driver 1:1 P-Channel 2.1A SOT-23-6
+  digikey: 31-AP22653W6-7CT-ND
+  mpn: AP22653W6
+  manufacturer: Diodes
   pin_count: 6
   nc_pins: {nFault: '4'}
 - ref: U702
   value: AP3441SHE-7B
-  footprint: DFN-8-1EP
+  footprint: DFN-8-1EP_2x2
+  description: 3A DC-DC converter
+  partno: AP3441SHE-7B
+  mpn: AP3441SHE-7B
+  manufacturer: Diodes
   pin_count: 9
   nc_pins: {PG: '2', nc: '5'}
 - ref: U703
   value: ASEK-32.768KHZ-L-R-T
   footprint: SMD3225
+  description: 32KHz Xtal oscilator
+  partno: ASEK-32.768KHZ-L-R-T
+  mpn: ASEK-32.768KHZ-L-R-T
+  manufacturer: abracon
   pin_count: 4
 - ref: USB701
   value: USB-C
   footprint: USB-C
   lcsc: C5454943
+  mpn: TYPEC-305-ACP16H458
   pin_count: 17
   nc_pins: {SUB1: A8, SUB2: B8}
 nets:

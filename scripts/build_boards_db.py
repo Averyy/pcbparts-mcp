@@ -151,6 +151,22 @@ _is_power_net = is_power_net
 _classify_role = classify_role
 
 
+
+def _split_pin(pin: str, refs) -> tuple[str, str]:
+    """A net pin "REF.LABEL" as (ref, label): the longest board ref the pin starts with wins, since
+    refs can hold dots (J5.1, an XT60) and so can labels (U1.A.1, U1.P0.13). Same rule as
+    parse_boards.split_pin (this script runs alone in the Docker build)."""
+    best = ""
+    i = pin.find(".")
+    while i != -1:
+        if pin[:i] in refs:
+            best = pin[:i]
+        i = pin.find(".", i + 1)
+    if best:
+        return best, pin[len(best) + 1:]
+    ref, _, label = pin.partition(".")
+    return ref, label
+
 def _extract_neighborhoods(board: dict) -> list[dict]:
     """Extract pin-grouped component neighborhoods for each IC on a board.
 
@@ -207,8 +223,9 @@ def _extract_neighborhoods(board: dict) -> list[dict]:
         for net in nets:
             ic_pin_names = []
             for pin in net["pins"]:
-                if pin.startswith(f"{ic_ref}."):
-                    ic_pin_names.append(pin.split(".", 1)[1])
+                owner, label = _split_pin(pin, comp_by_ref)
+                if owner == ic_ref:
+                    ic_pin_names.append(label)
 
             if not ic_pin_names:
                 continue
@@ -219,7 +236,7 @@ def _extract_neighborhoods(board: dict) -> list[dict]:
 
             # Find other components on this net
             for other_pin in net["pins"]:
-                other_ref = other_pin.split(".")[0]
+                other_ref = _split_pin(other_pin, comp_by_ref)[0]
                 if other_ref == ic_ref:
                     continue
                 other_comp = comp_by_ref.get(other_ref)

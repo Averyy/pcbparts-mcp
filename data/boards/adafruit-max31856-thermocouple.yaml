@@ -84,8 +84,8 @@ components:
   pin_count: 14
   nc_pins: {DNC: '6'}
 - ref: X1
-  value: 1x2 header
-  footprint: TERMBLOCK
+  value: 1x2 3.50mm screw terminal
+  footprint: TERMBLOCK_1X2
 nets:
 - name: '!CS'
   pins: [D1.C, JP1.3]

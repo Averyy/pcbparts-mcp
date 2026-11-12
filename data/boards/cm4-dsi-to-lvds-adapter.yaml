@@ -3,7 +3,7 @@ slug: cm4-dsi-to-lvds-adapter
 source: antmicro/cm4-baseboard-lvds-adapter
 format: kicad9
 description: MIPI DSI to dual-channel LVDS display bridge (SN65DSI84), level shifting
-tags: [level-shifting, power-supply, video]
+tags: [display, level-shifting, power-supply, video]
 key_ics: [SN65DSI84, TPS65150]
 outline:
   width_mm: 52.0
@@ -418,7 +418,7 @@ components:
   description: "Ferrite Bead, 0603 [1608 Metric], 220 ohm, 2.2 A, MPZ, 0.05 ohm, \xB1 25%, DC"
 - ref: J1
   value: Plug_Molex_SlimStack_2x20_556500488
-  footprint: Conn_Plug_Molex_SlimStack
+  footprint: Conn_Plug_Molex_SlimStack_2x20
   mpn: '556500488'
   manufacturer: Molex
   description: Mezzanine Connector, Header, 0.5 mm, 2 Rows, 40 Contacts, Surface Mount
@@ -426,13 +426,13 @@ components:
   nc_pins: {'33': '33', '34': '34', '35': '35', '36': '36', '37': '37', '38': '38', '39': '39', '40': '40'}
 - ref: J2
   value: JST SUR 1x10
-  footprint: Conn_JST_SUR
+  footprint: Conn_JST_SUR_1x10
   mpn: SM10B-SURS-TF
   manufacturer: JST Automotive Connectors
   pin_count: 11
 - ref: J3
   value: 1x40 header
-  footprint: Conn_FFC_Amphenol
+  footprint: Conn_FFC_Amphenol_1x40
   mpn: 62684-401100AHLF
   manufacturer: Amphenol
   description: FFC & FPC Connectors, 40 pin, 0.5mm, SMD/SMT, Right Angle, Bottom Concact
@@ -531,6 +531,7 @@ components:
 - ref: R12
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
   description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
@@ -594,10 +595,10 @@ components:
   manufacturer: Bourns
   tolerance: 1%
   description: "SMD Chip Resistor, 1.5 kohm, \xB1 1%, 62.5 mW, 0402 [1005 Metric], Thick Film"
-  pullup: D5.A
 - ref: R20
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
   description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
@@ -611,12 +612,14 @@ components:
 - ref: R22
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
   description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
 - ref: R23
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
   description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
@@ -702,12 +705,14 @@ components:
 - ref: R34
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
   description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
 - ref: R35
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
   description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
@@ -753,6 +758,7 @@ components:
 - ref: R41
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
   description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
@@ -767,6 +773,7 @@ components:
 - ref: R46
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
   description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
@@ -788,12 +795,14 @@ components:
 - ref: R5
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
   description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
 - ref: R51
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
   description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
@@ -830,7 +839,7 @@ components:
   nc_pins: {'4': '4'}
 - ref: U2
   value: NTS0104
-  footprint: DHVQFN-14-1EP
+  footprint: DHVQFN-14-1EP_2.5x3
   mpn: NTS0104BQ
   manufacturer: NXP
   description: Voltage Level Translator Bidirectional 1 Circuit 4 Channel 50Mbps 14-DHVQFN
@@ -843,7 +852,9 @@ components:
   manufacturer: Texas Instruments
   description: "Automotive Single-Channel MIPI\xAE DSI to Dual-Link LVDS Bridge"
   pin_count: 65
-  nc_pins: {RSVD2: '1', NC@4: '4', NC@5: '5', NC@6: '6', NC@7: '7', NC@8: '8', NC@9: '9', NC@10: '10', NC@11: '11', NC@12: '12', NC@13: '13', RSVD1: '34', B_Y3P: '50', B_Y3N: '51', B_CLKP: '53', B_CLKN: '54', B_Y2P: '56', B_Y2N: '57', B_Y1P: '59', B_Y1N: '60', B_Y0P: '61', B_Y0N: '62'}
+  nc_pins: {RSVD2: '1', NC@4: '4', NC@5: '5', NC@6: '6', NC@7: '7', NC@8: '8', NC@9: '9', NC@10: '10', NC@11: '11', NC@12: '12',
+    NC@13: '13', RSVD1: '34', B_Y3P: '50', B_Y3N: '51', B_CLKP: '53', B_CLKN: '54', B_Y2P: '56', B_Y2N: '57', B_Y1P: '59',
+    B_Y1N: '60', B_Y0P: '61', B_Y0N: '62'}
 - ref: U4
   value: TPS65150_HTSSOP
   footprint: HTSSOP-24_W4.4mm_P0.65mm
@@ -860,7 +871,7 @@ components:
   nc_pins: {NC: '3'}
 - ref: U6
   value: TLV76701_WSON
-  footprint: WSON-6-1EP
+  footprint: WSON-6-1EP_2x2
   mpn: TLV76701DRVT
   manufacturer: Texas Instruments
   description: 'LDO voltage regulator 1A, Vin: 2.5V-16V, Vout: 0.8V-14.6V; Iq: 50uA'

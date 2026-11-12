@@ -17,12 +17,12 @@ design_rules:
   min_via: 0.4mm
 components:
 - ref: J1
-  value: 1x6 header
-  footprint: Molex_SPOX_5267-06A
+  value: 1x6 2.50mm header
+  footprint: Molex_SPOX_5267-06A_1x06
   pin_count: 6
 - ref: J2
-  value: 1x2 header
-  footprint: Molex_SPOX_5267-02A
+  value: 1x2 2.50mm header
+  footprint: Molex_SPOX_5267-02A_1x02
 - ref: J3
   value: 1x6 screw terminal
   footprint: BR_762K_6pin

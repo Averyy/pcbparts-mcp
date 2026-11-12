@@ -152,6 +152,15 @@ components:
 - ref: RELAY
   value: 1x2 header
   footprint: 1X02
+- ref: SAMD21
+  value: ATSAMD21G
+  footprint: TQFP-48
+  prod_id: IC-13064
+  description: Atmel SAMD21G SMART ARM-Based Microcontroller
+  pin_count: 48
+  nc_pins: {'PA06(AIN6/SER0:2/TC1:0)': '11', 'PA07(AIN7/SER0:3/TC1:1)': '12', 'PA08(I2C/AIN16/SER0:0+)': '13', 'PA13(I2C/SER2:1+)': '22',
+    'PA14(XIN/SER2:2+)': '23', 'PB22(SER5:2+)': '37', 'PB23(SER5:3+)': '38', PA27: '39', PA28: '41', 'PA30(SWCLK/SER1:2+)': '45',
+    'PA31(SWDIO/SER1:3+)': '46', 'PB03(AIN11/SER5:1)': '48'}
 - ref: SW1
   value: tactile switch
   footprint: KMR2
@@ -479,6 +488,10 @@ positions:
 - ref: RELAY
   x: 28.19
   y: 41.15
+- ref: SAMD21
+  x: 29.46
+  y: 20.32
+  rot: 90.0
 - ref: SW1
   x: 25.66
   y: 30.73

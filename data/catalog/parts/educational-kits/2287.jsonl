@@ -1,0 +1,11 @@
+{"l":"C3039677","m":"VC-02_CN","f":"Ai-Thinker","p":"SMD,17x18mm","t":"e","c":2287,"d":"-40℃~+85℃ Offline voice UART、SPI、I2C、PWM、GPIO SMD,17x18mm V-Audio Modules ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Sensor Type","Offline voice"],["Response Frequency","-"],["Interface","UART、SPI、I2C、PWM、GPIO"]],"x":2}
+{"l":"C3039678","m":"VC-02_EN","f":"Ai-Thinker","p":"SMD,17x18mm","t":"e","c":2287,"d":"-40℃~+85℃ Offline speech recognition Offline voice UART、SPI、I2C、PWM、GPIO SMD,17x18mm V-Audio Modules ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Sensor Type","Offline voice"],["Features","Offline speech recognition"],["Response Frequency","-"],["Interface","UART、SPI、I2C、PWM、GPIO"]],"x":0}
+{"l":"C22400064","m":"T5-E1","f":"TUYA","p":"SMD,25.5x18mm","t":"e","c":2287,"d":"Voice playback SMD,25.5x18mm V-Audio Modules ROHS","a":[["Features","Voice playback"]],"x":0,"n":1}
+{"l":"C50291824","m":"DE101","f":"HANMUS","p":"QFN-48(7x7)","t":"e","c":2287,"d":"QFN-48(7x7) V-Audio Modules ROHS","a":[["Features","-"]],"x":0}
+{"l":"C50291829","m":"F16-16FX","f":"HANMUS","p":"DIP,31.1x18mm","t":"e","c":2287,"d":"DIP,31.1x18mm V-Audio Modules ROHS","a":[["Features","-"]],"x":0}
+{"l":"C50291830","m":"F16-24FX","f":"HANMUS","p":"DIP,31.1x18mm","t":"e","c":2287,"d":"DIP,31.1x18mm V-Audio Modules ROHS","a":[],"x":0}
+{"l":"C50291831","m":"F16-99FX","f":"HANMUS","p":"DIP,31.1x18mm","t":"e","c":2287,"d":"DIP,31.1x18mm V-Audio Modules ROHS","a":[],"x":0}
+{"l":"C50291832","m":"AF-II","f":"HANMUS","p":"DIP,32x26mm","t":"e","c":2287,"d":"DIP,32x26mm V-Audio Modules ROHS","a":[["Features","-"]],"x":0}
+{"l":"C50291833","m":"MF-PLUS","f":"HANMUS","p":"SMD,75x50mm","t":"e","c":2287,"d":"SMD,75x50mm V-Audio Modules ROHS","a":[["Features","-"]],"x":0}
+{"l":"C50291834","m":"DF-PLUS","f":"HANMUS","p":"-","t":"e","c":2287,"d":"- V-Audio Modules ROHS","a":[["Features","-"]],"x":0}
+{"l":"C50291835","m":"MF-LIVE","f":"HANMUS","p":"-","t":"e","c":2287,"d":"- V-Audio Modules ROHS","a":[["Features","-"]],"x":0}

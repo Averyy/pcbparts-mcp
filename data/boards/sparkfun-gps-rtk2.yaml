@@ -23,34 +23,48 @@ components:
 - ref: C1
   value: 47pF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-15063
 - ref: C2
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
   decouples: U2
 - ref: C3
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
 - ref: C4
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
   decouples: U2
 - ref: C5
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U2
 - ref: C6
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
   decouples: U2
 - ref: C7
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U2
 - ref: D1
@@ -95,6 +109,10 @@ components:
   value: ferrite bead
   footprint: '0402'
   prod_id: NDUC-15072
+- ref: FENCE
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
 - ref: J1
   value: 1x6 header
   footprint: 1X06
@@ -131,7 +149,7 @@ components:
   footprint: 1X09
   pin_count: 9
 - ref: JP5
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
   pin_count: 3
@@ -140,108 +158,153 @@ components:
   footprint: '0603'
   prod_id: DIO-00819
   description: Red SMD LED
+- ref: PPS
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: PPS_LED
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: PWR
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
 - ref: R1
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R10
   value: 27ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-09334
 - ref: R11
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R12
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R13
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R14
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R15
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
 - ref: R16
   value: 5.1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-12083
   pulldown: CC2
 - ref: R17
   value: 5.1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-12083
   pulldown: CC1
 - ref: R18
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R19
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R2
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R20
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R21
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R22
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R23
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R24
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R25
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R3
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R4
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R5
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R6
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R7
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R8
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R9
   value: 27ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-09334
+- ref: RTK
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: SPI
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
 - ref: U2
   value: 3.3V
   footprint: SOT-23-5
@@ -468,6 +531,10 @@ positions:
   x: 35.05
   y: 16.13
   rot: 90.0
+- ref: FENCE
+  x: 41.27
+  y: 31.75
+  rot: 270.0
 - ref: J1
   x: 1.27
   y: 34.29
@@ -499,6 +566,18 @@ positions:
 - ref: LED2
   x: 35.56
   y: 30.48
+  rot: 270.0
+- ref: PPS
+  x: 33.02
+  y: 7.62
+  rot: 90.0
+- ref: PPS_LED
+  x: 36.2
+  y: 31.75
+  rot: 270.0
+- ref: PWR
+  x: 33.78
+  y: 31.75
   rot: 270.0
 - ref: R1
   x: 35.56
@@ -595,6 +674,14 @@ positions:
 - ref: R9
   x: 13.97
   y: 13.72
+- ref: RTK
+  x: 38.73
+  y: 31.75
+  rot: 270.0
+- ref: SPI
+  x: 24.13
+  y: 8.51
+  rot: 90.0
 - ref: U2
   x: 12.7
   y: 24.13

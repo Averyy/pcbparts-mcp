@@ -108,9 +108,17 @@ A package filter includes its other spellings:
 
 ## Sorting and paging
 
-`sort_by` is `stock` or `price`, or sort by a spec with `sort_spec` and `sort_order` (`asc` by default): `jlc_search(query="n-channel mosfet SOT-23", sort_spec="RDS(on)@4.5V")`. RDS(on), dropout and Vf are listed at different test conditions, so they sort at one (`RDS(on)@4.5V`, `Dropout@500mA`, `Vf@1A`) or at the condition the search already gives; without one, `sort.note` says the figures were compared as listed. `sort_order` works only with `sort_spec`. Parts that don't list the spec come last. Each row's `sort_value` is the figure it sorted on. Query words work too: `lowest Iq`, `highest Isat`, `smallest DCR`, `most flash`. Isat rankings compare catalog numbers across potentially different inductance-drop criteria and rating bases; multi-diode current rankings can mix loading conditions. A mistyped catalog figure sorts to the top, so check the datasheets of the parts you pick.
+`sort_by` is `stock` or `price`, or sort by a spec with `sort_spec` and `sort_order` (`asc` by default; a query that names the spec, such as "lowest Iq LDO", also sets it): `jlc_search(query="n-channel mosfet SOT-23", sort_spec="RDS(on)@4.5V")`. RDS(on), dropout and Vf are listed at different test conditions, so they sort at one (`RDS(on)@4.5V`, `Dropout@500mA`, `Vf@1A`) or at the condition the search already gives; without one, `sort.note` says the figures were compared as listed. `sort_order` works only with `sort_spec`. Parts that don't list the spec come last. Each row's `sort_value` is the figure it sorted on. Query words work too: `lowest Iq`, `highest Isat`, `smallest DCR`, `most flash`. Isat rankings compare catalog numbers across potentially different inductance-drop criteria and rating bases; multi-diode current rankings can mix loading conditions. A mistyped catalog figure sorts to the top, so check the datasheets of the parts you pick.
 
 `limit` is 20 by default and up to 100; `offset` pages through the same search (`offset=20` with `limit=20` is page 2). `total` counts every match. Counts come from at most 50,000 candidates, and `counts_complete=false` says when that cap was hit.
+
+## Optional facets
+
+Pass `facets=true` for manufacturer, package and library-type counts over every match of the final effective search, after relaxation and MPN retries. Pagination does not change them. Counts are conjunctive: every active filter applies, including a manufacturer or package filter to its own facet. Library buckets use `basic`, `preferred` and `extended`; `no_fee` filters to basic plus preferred.
+
+`facets` reports `scope="filtered_snapshot"`, `matched_total`, `complete`, `status` and `elapsed_ms`. Each field contains at most 15 `buckets` with `value` and `count`, ordered by count descending then value, plus `omitted_buckets` and `omitted_count` for the rest. Null field values remain null buckets. Displayed counts plus `omitted_count` sum to `matched_total` for each completed facet.
+
+This optional work has its own private read connection and limits: about 200 ms (checked between steps, so a busy server can run slightly over), 2,000,000 SQLite VM steps and 5,000 Python post-filter candidates. `status="incomplete"` means a limit was reached; `"unavailable"` means facets could not run. Both have `complete=false`, null `matched_total` and no buckets, so partial counts cannot look exact. Search results are preserved. With the default `facets=false`, the reply is unchanged.
 
 ## Alternatives
 
@@ -128,6 +136,7 @@ The rules, for 120+ subcategories:
 RF parts (splitters, LNAs, filters, transceivers) have no rules: `similar_parts` are ordered by how much of the original's frequency range each covers (`frequency_coverage`). Modules and other part types without rules list parts in the original's package and part family first, marked `likely_drop_in`.
 
 A passing check means the catalog listings are compatible. It doesn't guarantee a drop-in: compare datasheets, pinouts and `package_warning`. `board_quantity` and `placements_per_board` turn `comparison.savings` into an order total, using the rounded legacy $3 Economic loading-fee estimate for each extended type added or removed; the result is not a current order quote.
+
 
 ## Empty searches and source scope
 

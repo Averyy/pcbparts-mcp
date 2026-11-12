@@ -71,8 +71,8 @@ components:
   lcsc: C14663
   decouples: U6
 - ref: J1
-  value: 2x6 header
-  footprint: 2X6
+  value: 2x6 2.54mm header
+  footprint: 2X6_P2.54mm
   pin_count: 12
 - ref: J10
   value: XLR3
@@ -83,12 +83,12 @@ components:
   footprint: Jack_XLR_Neutrik_NC3FD-H_Horizontal
   pin_count: 3
 - ref: J12
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J13
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J14
   value: 8P8C
@@ -111,12 +111,12 @@ components:
   footprint: Jack_XLR_Neutrik_NC3FD-H_Horizontal
   pin_count: 3
 - ref: J6
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J7
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J8
   value: XLR3
@@ -218,6 +218,7 @@ components:
   value: M24C64
   footprint: SOIC-8
   lcsc: C79988
+  mpn: M24C64-RMN6TP
   pin_count: 8
 - ref: U2
   value: CRE1S0505DC
@@ -229,25 +230,25 @@ components:
   pin_count: 4
 - ref: U4
   value: ADM2483xRW
-  footprint: SOIC-16W
+  footprint: SOIC-16W_7.5x10.3
   lcsc: C9637
   pin_count: 16
   nc_pins: {NC@10: '10', NC@11: '11', NC@14: '14'}
 - ref: U5
   value: ADM2483xRW
-  footprint: SOIC-16W
+  footprint: SOIC-16W_7.5x10.3
   lcsc: C9637
   pin_count: 16
   nc_pins: {NC@10: '10', NC@11: '11', NC@14: '14'}
 - ref: U6
   value: ADM2483xRW
-  footprint: SOIC-16W
+  footprint: SOIC-16W_7.5x10.3
   lcsc: C9637
   pin_count: 16
   nc_pins: {NC@10: '10', NC@11: '11', NC@14: '14'}
 - ref: U7
   value: ADM2483xRW
-  footprint: SOIC-16W
+  footprint: SOIC-16W_7.5x10.3
   lcsc: C9637
   pin_count: 16
   nc_pins: {NC@10: '10', NC@11: '11', NC@14: '14'}
