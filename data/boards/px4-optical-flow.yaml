@@ -18,89 +18,113 @@ components:
 - ref: ADDR0
   value: solder jumper
   footprint: SJ-2
+  partno: '*'
 - ref: ADDR1
   value: solder jumper
   footprint: SJ-2
+  partno: '*'
 - ref: ADDR2
   value: solder jumper
   footprint: SJ-2
+  partno: '*'
 - ref: C1
   value: 10nF
   footprint: '0402'
+  partno: CC0402KRX7R7BB103
 - ref: C10
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: IC1
 - ref: C11
   value: 2.2uF
   footprint: '0402'
+  partno: C1608Y5V1C225Z
 - ref: C12
   value: 2.2uF
   footprint: '0402'
+  partno: C1608Y5V1C225Z
 - ref: C13
   value: 470pF
   footprint: '0402'
+  partno: CC0402KRX7R9BB471
 - ref: C15
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: IC1
 - ref: C16
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U$5
 - ref: C17
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C18
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U12
 - ref: C19
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U$5
 - ref: C2
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U$5
 - ref: C20
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U$5
 - ref: C21
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U12
 - ref: C22
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U$5
 - ref: C23
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U12
 - ref: C24
   value: 10nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U$5
 - ref: C25
   value: 10nF
   footprint: '0402'
+  partno: CC0402KRX7R7BB103
 - ref: C26
   value: 1nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U$5
 - ref: C27
   value: 10uF
   footprint: EIA3216
+  partno: F931A106MAA
   decouples: U1
 - ref: C28
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: IC1
 - ref: C29
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U12
 - ref: C3
   value: 8pF
@@ -108,14 +132,17 @@ components:
 - ref: C30
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U12
 - ref: C31
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U1
 - ref: C32
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U$5
 - ref: C4
   value: 8pF
@@ -123,93 +150,119 @@ components:
 - ref: C5
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: IC1
 - ref: C6
   value: 10uF
   footprint: EIA3216
+  partno: F931A106MAA
   decouples: U1
 - ref: C7
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U1
 - ref: C8
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: IC1
 - ref: C9
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: IC1
 - ref: D1
   value: MSS1P4-M3
   footprint: MICROSMP
-  description: Schottky barrier diode in DO214AC, e
+  partno: MSS1P4-M3/89A
 - ref: IC1
   value: STM32F4X7VX
   footprint: TQFP100
+  partno: STM32F407VGT6
   description: STM32F4X7VX 100 pin LQFP STM32F407VE - 512 KB flash, no crypto STM32F407VG - 1
   pin_count: 100
-  nc_pins: {PORTC_L.PC1: '16', PORTC_L.PC2: '17', PORTC_L.PC3: '18', PORTA_L.PA0: '23', PORTA_L.PA1: '24', PORTA_L.PA7: '32', PORTC_L.PC4: '33', PORTC_L.PC5: '34', PORTB_L.PB0: '35', PORTB_L.PB1: '36', PORTE_H.PE9: '40', PORTE_H.PE10: '41', PORTE_H.PE11: '42', PORTD_H.PD10: '57', PORTD_H.PD14: '61', PORTD_H.PD15: '62', PORTA_H.PA8: '67', PORTD_L.PD0: '81', PORTD_L.PD1: '82', PORTD_L.PD2: '83', PORTD_L.PD7: '88', PORTB_L.PB5: '91'}
+  nc_pins: {PORTC_L.PC1: '16', PORTC_L.PC2: '17', PORTC_L.PC3: '18', PORTA_L.PA0: '23', PORTA_L.PA1: '24', PORTA_L.PA7: '32',
+    PORTC_L.PC4: '33', PORTC_L.PC5: '34', PORTB_L.PB0: '35', PORTB_L.PB1: '36', PORTE_H.PE9: '40', PORTE_H.PE10: '41', PORTE_H.PE11: '42',
+    PORTD_H.PD10: '57', PORTD_H.PD14: '61', PORTD_H.PD15: '62', PORTA_H.PA8: '67', PORTD_L.PD0: '81', PORTD_L.PD1: '82', PORTD_L.PD2: '83',
+    PORTD_L.PD7: '88', PORTB_L.PB5: '91'}
 - ref: J1
   value: DF13-4P-1.25
   footprint: DF13A-4P-1.25H
+  partno: DF13A-4P-1.25H(20)
   pin_count: 4
 - ref: J2
   value: DF13-6P-1.25
   footprint: DF13A-6P-1.25H
+  partno: DF13A-6P-1.25H(20)
   pin_count: 6
 - ref: J3
   value: DF13-6P-1.25
   footprint: DF13A-6P-1.25H
+  partno: DF13A-6P-1.25H(20)
   pin_count: 6
 - ref: J4
   value: MB1040
   footprint: MAXSONAR
+  partno: '*'
   pin_count: 7
   nc_pins: {-BW.S: BW}
 - ref: J5
   value: 47346-0001
   footprint: MOLEX-47346-0001
+  partno: 47346-0001
   description: MICRO USB B, BOTTOM MOUNT
   pin_count: 9
 - ref: J6
   value: ARM JTAG
   footprint: FTSH-105-01-XXX-DV-K
+  partno: M50-3900542
   pin_count: 9
 - ref: JP1
   value: solder jumper
   footprint: SJ-3
+  partno: RMCF0402ZT0R00
   pin_count: 3
 - ref: JP2
   value: solder jumper
   footprint: SJ-2
+  partno: '*'
 - ref: L1
   value: ferrite bead
   footprint: '0402'
+  partno: BKP1005HS121-T
 - ref: L11
   value: ferrite bead
   footprint: '0402'
+  partno: BKP1005HS121-T
 - ref: L2
   value: ferrite bead
   footprint: '0402'
+  partno: BKP1005HS121-T
 - ref: L8
   value: ferrite bead
   footprint: '0402'
+  partno: BKP1005HS121-T
 - ref: LED1
   value: green LED
   footprint: '0603'
+  partno: LNJ337W83RA
 - ref: LED2
   value: amber LED
   footprint: '0603'
+  partno: LNJ437W84RA
 - ref: LED3
   value: blue LED
   footprint: '0603'
+  partno: LNJ937W8CRA
 - ref: LED4
   value: red LED
   footprint: '0603'
+  partno: LNJ237W82RA
 - ref: Q1
   value: NTGS4111P
   footprint: TSOP-6
+  partno: NTGS4111P
   pin_count: 6
 - ref: R1
   value: 1.5kohm
@@ -218,33 +271,42 @@ components:
 - ref: R10
   value: 1kohm
   footprint: '0402'
+  partno: RMCF0402JT1K00
   pullup: UART4_RX
 - ref: R11
   value: 0ohm
   footprint: '0402'
+  partno: RMCF0402JT1K00
 - ref: R13
   value: 270ohm
   footprint: '0402'
+  partno: MCR01MZPJ271
 - ref: R14
   value: 270ohm
   footprint: '0402'
+  partno: MCR01MZPJ271
 - ref: R15
   value: 270ohm
   footprint: '0402'
+  partno: MCR01MZPJ820
 - ref: R16
   value: 10kohm
   footprint: '0402'
+  partno: RMCF0402FT10K0
   pullup: '!RESET'
 - ref: R17
   value: 270ohm
   footprint: '0402'
+  partno: MCR01MZPJ820
 - ref: R18
   value: 10kohm
   footprint: '0402'
+  partno: RMCF0402FT10K0
   pulldown: BOOT0
 - ref: R19
   value: 1kohm
   footprint: '0402'
+  partno: RMCF0402JT1K00
   pullup: U$5.BYPASS_CLKIN_N
 - ref: R2
   value: 1.5kohm
@@ -253,62 +315,78 @@ components:
 - ref: R20
   value: 1kohm
   footprint: '0402'
+  partno: RMCF0402JT1K00
   pullup: U$5.SER_DATAIN_N
 - ref: R3
   value: 100ohm
   footprint: '0402'
+  partno: RMCF0402JT100R
 - ref: R4
   value: 100ohm
   footprint: '0402'
+  partno: RMCF0402JT100R
 - ref: R5
   value: 10kohm
   footprint: '0402'
+  partno: RMCF0402FT10K0
   pulldown: PB2-BOOT1
 - ref: R6
   value: 22ohm
   footprint: '0402'
+  partno: RMCF0402JT22R0
 - ref: R7
   value: 10kohm
   footprint: '0402'
+  partno: MFR-25FBF-10K0
 - ref: R8
   value: 22ohm
   footprint: '0402'
+  partno: RMCF0402JT22R0
 - ref: R9
   value: 10kohm
   footprint: '0402'
+  partno: MCR01MZPJ271
   pullup: CAM_NRESET
 - ref: S1
   value: RESET
   footprint: EVQP7J01K
+  partno: EVQP7J01K
 - ref: U$5
   value: MT9V034
   footprint: CLCC-48
+  partno: MT9V034C12STM
   pin_count: 48
-  nc_pins: {SHFT_CLKOUT_N: '2', SHFT_CLKOUT_P: '3', SER_DATAOUT_N: '4', SER_DATAOUT_P: '5', STLN_OUT: '22', STFRM_OUT: '26', NC@36: '36', NC@37: '37'}
+  nc_pins: {SHFT_CLKOUT_N: '2', SHFT_CLKOUT_P: '3', SER_DATAOUT_N: '4', SER_DATAOUT_P: '5', STLN_OUT: '22', STFRM_OUT: '26',
+    NC@36: '36', NC@37: '37'}
 - ref: U$8
   value: M12 lens mount
   footprint: LENSMOUNT_LARGE_M12
+  partno: '*'
   description: Point Grey compatible M12 lens mount
 - ref: U1
   value: LDO regulator
   footprint: SOT-23-5
+  partno: MIC5207-3.3YM5
   description: Voltage Regulator LDO
   pin_count: 5
 - ref: U12
   value: L3GD20
   footprint: L3G4200DH-MAN
+  partno: L3GD20
   description: L3G4200DH - Digital 3-axis Gyroscope
   pin_count: 16
   nc_pins: {DRDY/INT2: '6', INT1: '7'}
 - ref: U8
   value: 128KB EEPROM
   footprint: MSOP-8
+  partno: 24FC128-I/MS
   description: I2C EEPROM
   pin_count: 8
   nc_pins: {WP: '7'}
 - ref: X1
   value: 24.000 KHz
   footprint: OSCILLATOR-3.2X2.5
+  partno: NX3225SA-24.000000MHZ
   pin_count: 4
 nets:
 - name: '!JTRST'

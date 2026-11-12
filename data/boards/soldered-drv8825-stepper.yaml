@@ -1,7 +1,7 @@
 name: Soldered DRV8825 Stepper
 slug: soldered-drv8825-stepper
 source: SolderedElectronics/Stepper-motor-driver-DRV8825-board-hardware-design
-format: kicad7
+format: kicad6
 description: 32-microstep stepper driver (DRV8825), current limiting
 tags: [3d-printer, motor-control]
 key_ics: [DRV8825]
@@ -16,20 +16,25 @@ design_rules:
   min_via: 0.5mm
 components:
 - ref: C1
-  value: 12101C335K4T2A
+  value: 3.3uF
   footprint: '1210'
+  mpn: 12101C335K4T2A
 - ref: C2
   value: 100nF
   footprint: 0805
+  mpn: CL21B104KCFNNNE
 - ref: C3
   value: 100nF
   footprint: 0805
+  mpn: CL21B104KCFNNNE
 - ref: C4
   value: 100nF
   footprint: 0805
+  mpn: CL21B104KCFNNNE
 - ref: C5
-  value: 08051C103KAT2A
+  value: 10nF
   footprint: 0805
+  mpn: 08051C103KAT2A
 - ref: C6
   value: 470nF
   footprint: '0603'
@@ -42,11 +47,11 @@ components:
   footprint: SJ-2
 - ref: K1
   value: 1x8 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_8X1
   pin_count: 8
 - ref: K2
   value: 1x8 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_8X1
   pin_count: 8
 - ref: R1
   value: 73L2R20G
@@ -58,8 +63,10 @@ components:
   value: 73L2R20G
   footprint: '0603'
 - ref: R4
-  value: tc33x-2-104e
+  value: 100kohm
   footprint: tc33x-2-103e
+  mpn: tc33x-2-104e
+  pullup: U1.AVREF
   pin_count: 3
 - ref: R5
   value: 1.5kohm

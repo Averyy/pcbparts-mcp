@@ -40,19 +40,16 @@ components:
 - ref: R3
   value: 330ohm
   footprint: 0805
-  mpn: RC0805JR-071KL
   tolerance: 5%
   power: 1/8W
 - ref: R4
   value: 330ohm
   footprint: 0805
-  mpn: RC0805JR-071KL
   tolerance: 5%
   power: 1/8W
 - ref: R5
   value: 330ohm
   footprint: 0805
-  mpn: RC0805JR-071KL
   tolerance: 5%
   power: 1/8W
 - ref: S1
@@ -61,7 +58,7 @@ components:
 - ref: U$1
   value: ESP-M2
   footprint: ESP-M2
-  description: ESP8285 Module - M2
+  description: Wifi Module
   manufacturer: Doctors of Intelligence & Technology Co., LTD
   mpn: ESP-M2
   pin_count: 18
@@ -89,15 +86,15 @@ components:
   nc_pins: {DIO2: '1', DIO3: '2'}
 - ref: U2
   value: AMS1117-3.3
-  footprint: SOT-4
-  description: Sot223/Pkg 1-Amp 3
+  footprint: SOT229P700X180-4N
+  description: Sot223/Pkg 1-Amp 3.3-Volt Low Drop Out Voltage Regulatator
   manufacturer: Advanced Monolithic Systems
   mpn: AMS1117-3.3
   pin_count: 3
 - ref: X1
   value: '734120110'
   footprint: '734120110'
-  description: MICRO COAXIAL CONNECTOR RECEPTACLE VERTICAL
+  description: U.FL _UMCC_ Connector Receptacle, Male Pin 50Ohm Surface Mount Solder
   manufacturer: Molex
   mpn: 734-12-0110
   pin_count: 4

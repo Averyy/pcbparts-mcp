@@ -78,16 +78,17 @@ components:
   footprint: SOD-323
 - ref: D2
   value: WS2812B
-  footprint: LED_WS2812B_PLCC4
+  footprint: LED_WS2812B_PLCC4_5.0x5.0
   pin_count: 4
   nc_pins: {DOUT: '2'}
 - ref: J1
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 1.27mm header
+  footprint: 1X5_P1.27mm
   pin_count: 5
 - ref: J2
   value: USB4145-03-0170-C_REVA2
   footprint: GCT_USB4145-03-0170-C_REVA2
+  mpn: USB4145-03-0170-C
   manufacturer: GCT
   pin_count: 20
   nc_pins: {SBU1: A8, SBU2: B8}
@@ -134,10 +135,13 @@ components:
   value: RP2040
   footprint: RP2040-QFN-56
   pin_count: 57
-  nc_pins: {GPIO0: '2', GPIO1: '3', GPIO2: '4', GPIO3: '5', GPIO6: '8', GPIO8: '11', GPIO9: '12', GPIO10: '13', GPIO11: '14', GPIO12: '15', GPIO13: '16', GPIO14: '17', GPIO15: '18', SWCLK: '24', SWD: '25', GPIO17: '28', GPIO18: '29', GPIO19: '30', GPIO20: '31', GPIO21: '32', GPIO22: '34', GPIO23: '35', GPIO24: '36', GPIO25: '37', GPIO26_ADC0: '38', GPIO27_ADC1: '39', GPIO28_ADC2: '40', GPIO29_ADC3: '41'}
+  nc_pins: {GPIO0: '2', GPIO1: '3', GPIO2: '4', GPIO3: '5', GPIO6: '8', GPIO8: '11', GPIO9: '12', GPIO10: '13', GPIO11: '14',
+    GPIO12: '15', GPIO13: '16', GPIO14: '17', GPIO15: '18', SWCLK: '24', SWD: '25', GPIO17: '28', GPIO18: '29', GPIO19: '30',
+    GPIO20: '31', GPIO21: '32', GPIO22: '34', GPIO23: '35', GPIO24: '36', GPIO25: '37', GPIO26_ADC0: '38', GPIO27_ADC1: '39',
+    GPIO28_ADC2: '40', GPIO29_ADC3: '41'}
 - ref: Y1
   value: 12MHz
-  footprint: Crystal_SMD_Abracon_ABM8G-4Pin
+  footprint: Crystal_SMD_Abracon_ABM8G-4Pin_3.2x2.5
   pin_count: 4
 nets:
 - name: +1V1

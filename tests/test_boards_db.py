@@ -327,6 +327,21 @@ class TestSearchFreeText:
     def test_only_stop_words_returns_all(self, boards_db):
         r = boards_db.search(query="the board design")
         assert r["total"] == 5  # all stop words → no FTS filter
+        # ...but says the query was ignored, so the browse list isn't read as matches
+        assert "'the board design' has no searchable words" in r["note"]
+        assert "whole catalog" in r["note"]
+
+    def test_boolean_looking_query_is_not_an_operator(self, boards_db):
+        r = boards_db.search(query='a" OR "b')
+        assert r["total"] == 5 and "OR are not operators" in r["note"]
+
+    def test_ignored_query_note_names_the_other_filters(self, boards_db):
+        r = boards_db.search(query="pcb", layers=4)
+        assert "matching the other filters" in r["note"]
+
+    def test_searchable_or_empty_query_has_no_note(self, boards_db):
+        assert "note" not in boards_db.search(query="")
+        assert "note" not in boards_db.search(query="MCP73831")
 
 
 # ---------------------------------------------------------------------------
@@ -955,3 +970,28 @@ class TestThreadSafety:
         boards_db._ensure_db()
         stats = boards_db.get_stats()
         assert stats["total_boards"] == 5
+
+
+def test_dotted_refs_keep_their_own_pins_and_neighbours():
+    """The LLC converter has J5 (the XT60's PCB part) and J5.1 (a BOM accessory); Olimex boards have
+    +3.3V1 test pads. Pins were split on the first dot, so J5 claimed J5.1's pins and dotted or "+" refs
+    never showed up as neighbours, in the DB build or in board_get."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+    from build_boards_db import _extract_neighborhoods
+    from pcbparts_mcp.boards_db.detail import _net_pins, _pin_neighborhood, split_pin
+
+    comps = [{"ref": "U1", "value": "LM5155"}, {"ref": "J5", "value": "XT60"},
+             {"ref": "J5.1", "value": "XT60 cap"}, {"ref": "+3.3V1", "value": "TESTPAD"}]
+    comp_by_ref = {c["ref"]: c for c in comps}
+    nets = [{"name": "SENSE", "pins": ["U1.3", "J5.1.1", "+3.3V1.1"]},
+            {"name": "VIN", "pins": ["J5.1", "U1.A.1"]}]
+    assert split_pin("J5.1.1", comp_by_ref) == ("J5.1", "1")
+    assert split_pin("U1.A.1", comp_by_ref) == ("U1", "A.1")
+    assert [mine for _, mine in _net_pins(nets, "J5", comp_by_ref)] == [["1"]]
+    assert [mine for _, mine in _net_pins(nets, "J5.1", comp_by_ref)] == [["1"]]
+    pins, _ = _pin_neighborhood(nets, "U1", comp_by_ref)
+    assert {e["ref"] for e in pins["3"]} == {"J5.1", "+3.3V1"}
+    hoods = _extract_neighborhoods({"components": comps, "nets": nets})
+    u1 = next(h for h in hoods if h["ref"] == "U1")
+    assert {e["ref"] for e in u1["pins"]["3"]} == {"J5.1", "+3.3V1"}

@@ -3,7 +3,7 @@ slug: bms-15s80-sc
 source: LibreSolar/bms-15s80-sc
 format: eagle
 description: "15-cell Li-ion battery management (bq76940), 24\u201348V systems"
-tags: [battery-charging, battery-management, can-bus]
+tags: [battery-management, can-bus]
 key_ics: [STM32F072CB, BQ76940, TJA1042T/3, LMR16006X, MIC5225]
 outline:
   width_mm: 80.0
@@ -18,167 +18,300 @@ components:
 - ref: C1
   value: 2.2uF
   footprint: '0603'
+  farnell: '1657937'
   decouples: U5
 - ref: C10
   value: 1uF
   footprint: '0603'
+  farnell: '1657937'
 - ref: C11
   value: 1uF
   footprint: '0603'
+  manufacturer: MURATA
+  mpn: GRM188R71E105KA12D
+  farnell: '1735540'
 - ref: C12
   value: 10uF
   footprint: '1210'
+  manufacturer: MURATA
+  mpn: GRM32ER7YA106KA12L
+  farnell: '1735537'
 - ref: C13
   value: 4.7nF
   footprint: '0603'
+  farnell: '2496834'
 - ref: C14
   value: 1uF
   footprint: '0603'
+  manufacturer: MURATA
+  mpn: GRM188R71E105KA12D
+  farnell: '1735540'
 - ref: C15
   value: 4.7nF
   footprint: '0603'
+  farnell: '2496834'
 - ref: C16
   value: 1uF
   footprint: '0603'
+  manufacturer: MURATA
+  mpn: GRM188R71E105KA12D
+  farnell: '1735540'
 - ref: C17
   value: 4.7nF
   footprint: '0603'
+  farnell: '2496834'
 - ref: C18
   value: 1uF
   footprint: '0603'
+  manufacturer: MURATA
+  mpn: GRM188R71E105KA12D
+  farnell: '1735540'
 - ref: C19
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C2
   value: 1uF
   footprint: '0603'
+  farnell: '499687'
   decouples: U5
 - ref: C20
   value: 100nF
   footprint: '0603'
+  manufacturer: MURATA
+  mpn: GRM188R71H104KA93D
+  farnell: '8820023'
   decouples: U3
 - ref: C21
   value: 100nF
   footprint: '0603'
+  manufacturer: MURATA
+  mpn: GRM188R71H104KA93D
+  farnell: '8820023'
 - ref: C22
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C23
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C24
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C25
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C26
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C27
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C28
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C29
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C3
   value: 1uF
   footprint: 0805
+  farnell: '499687'
 - ref: C30
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C31
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C32
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C33
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C34
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C35
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C36
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C37
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C38
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C39
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C4
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C40
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C41
   value: 2.2uF
   footprint: '1210'
+  manufacturer: TDK
+  mpn: C3225X7R2A225K230AB
+  farnell: '2112727'
 - ref: C42
   value: 22uF
   footprint: 0805
+  manufacturer: MURATA
+  mpn: GRM21BR60J226ME39L
+  farnell: '1735531'
   decouples: U5
 - ref: C43
   value: 100nF
   footprint: '0603'
+  manufacturer: MURATA
+  mpn: GRM188R71H104KA93D
+  farnell: '8820023'
   decouples: U3
 - ref: C44
   value: 100nF
   footprint: '0603'
+  manufacturer: MURATA
+  mpn: GRM188R71H104KA93D
+  farnell: '8820023'
   decouples: U6
 - ref: C45
   value: 100nF
   footprint: '0603'
+  manufacturer: MURATA
+  mpn: GRM188R71H104KA93D
+  farnell: '8820023'
   decouples: U5
 - ref: C46
   value: 100nF
   footprint: '0603'
+  manufacturer: AVX
+  mpn: 06035C104KAT2A
+  farnell: '1301804'
   decouples: U1
 - ref: C47
   value: 4.3pF
   footprint: '0603'
+  farnell: '8820023'
 - ref: C48
   value: 4.3pF
   footprint: '0603'
+  farnell: '8820023'
 - ref: C49
   value: 100nF
   footprint: '0603'
+  manufacturer: MURATA
+  mpn: GRM188R71H104KA93D
+  farnell: '8820023'
   decouples: U6
 - ref: C5
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C50
   value: 2.2uF
   footprint: '0603'
+  farnell: '1657937'
   decouples: U6
 - ref: C51
   value: 100nF
   footprint: '0603'
+  manufacturer: AVX
+  mpn: 06035C104KAT2A
+  farnell: '1301804'
   decouples: U1
 - ref: C6
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C7
   value: 100nF
   footprint: '0603'
+  manufacturer: WALSIN
+  mpn: 0603B104K500CT
+  farnell: '2496834'
 - ref: C8
   value: 10uF
   footprint: '1210'
+  manufacturer: MURATA
+  mpn: GRM32ER7YA106KA12L
+  farnell: '1735537'
 - ref: C9
   value: 10uF
   footprint: '1210'
+  manufacturer: MURATA
+  mpn: GRM32ER7YA106KA12L
+  farnell: '1735537'
 - ref: CELLS
   value: '66201821022'
   footprint: '66201821022'
@@ -193,74 +326,118 @@ components:
 - ref: D1
   value: NUP2105L
   footprint: SOT23
+  mpn: NUP2105L
+  farnell: '1510712'
   description: CAN bus ESD protection diode
   pin_count: 3
 - ref: D10
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D11
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D12
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D13
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D14
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D15
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D16
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D17
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D18
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D19
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D2
   value: 1N4148W
   footprint: SOD-123
+  manufacturer: DIODES INC.
+  mpn: 1N4148W-7-F.
+  farnell: '1776392'
 - ref: D20
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D21
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D22
   value: DFLS1100-7
   footprint: POWERDI123
+  manufacturer: DIODES INC.
+  mpn: DFLS1100-7
+  farnell: '1713889'
   description: Schottky Diode
 - ref: D24
   value: LED
@@ -271,59 +448,86 @@ components:
 - ref: D27
   value: 3.3V
   footprint: SOD-323
-  prod_id: DIO-12442
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D28
   value: 3.3V
   footprint: SOD-323
-  prod_id: DIO-12442
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D29
   value: 1N4148W
   footprint: SOD-123
+  manufacturer: DIODES INC.
+  mpn: 1N4148W-7-F.
+  farnell: '1776392'
 - ref: D3
   value: 1N4148W
   footprint: SOD-123
+  manufacturer: DIODES INC.
+  mpn: 1N4148W-7-F.
+  farnell: '1776392'
 - ref: D30
   value: 3.3V
   footprint: SOD-323
-  prod_id: DIO-12442
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D4
   value: 1N4148W
   footprint: SOD-123
+  manufacturer: DIODES INC.
+  mpn: 1N4148W-7-F.
+  farnell: '1776392'
 - ref: D5
   value: 3.3V
   footprint: SOD-323
-  prod_id: DIO-12442
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D6
   value: 1N4148W
   footprint: SOD-123
+  manufacturer: DIODES INC.
+  mpn: 1N4148W-7-F.
+  farnell: '1776392'
 - ref: D7
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D8
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: D9
   value: 5.6V
   footprint: SOD-323
   prod_id: DIO-12442
+  manufacturer: NXP
+  mpn: BZX384-C5V6
+  farnell: '8735743'
   description: Zener Diode Production Part - 8199 3
 - ref: IC1
   value: BQ76940
   footprint: TSSOP44
+  manufacturer: TEXAS INSTRUMENTS
+  mpn: BQ7694003DBT
+  farnell: '2425791'
   pin_count: 44
   nc_pins: {NC21: '21', NC22: '22', NC23: '23'}
 - ref: JP1
   value: RJ45
   footprint: RJ45-8
   prod_id: CONN-08506
+  manufacturer: AMPHENOL COMMERCIAL PRODUCTS
+  mpn: RJHSE-5080
+  farnell: '1860577'
   description: RJ45 Jack
   pin_count: 8
   nc_pins: {'4': '4', '5': '5'}
@@ -331,6 +535,9 @@ components:
   value: RJ45
   footprint: RJ45-8
   prod_id: CONN-08506
+  manufacturer: AMPHENOL COMMERCIAL PRODUCTS
+  mpn: RJHSE-5080
+  farnell: '1860577'
   description: RJ45 Jack
   pin_count: 8
   nc_pins: {'4': '4', '5': '5'}
@@ -372,323 +579,563 @@ components:
 - ref: Q10
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q11
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q12
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q13
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q14
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q15
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q16
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q17
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q18
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q19
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q4
   value: BSS123
   footprint: SOT-23-3
   prod_id: TRANS-00830
+  mpn: BSS123
+  farnell: '1510761'
   description: Common NMOSFET Parts
   pin_count: 3
 - ref: Q5
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q6
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q7
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q8
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: Q9
   value: DMN2004K
   footprint: SOT23
+  manufacturer: DIODES INC.
+  mpn: DMN2004K-7
+  farnell: '1713842'
   description: N-CHANNEL MOS FET with low VGS and ESD protection
   pin_count: 3
 - ref: R1
   value: 2.2kohm
   footprint: '0603'
+  manufacturer: YAGEO (PHYCOMP)
+  mpn: RC0603FR-072K2L.
+  farnell: '9238522'
   pullup: I2C1_SDA
 - ref: R11
   value: 100ohm
   footprint: '0603'
+  farnell: '2073348'
 - ref: R12
   value: 100ohm
   footprint: '0603'
+  farnell: '2073348'
 - ref: R13
   value: 100ohm
   footprint: '0603'
+  farnell: '2073348'
 - ref: R14
   value: 100kohm
   footprint: '0603'
 - ref: R15
   value: 5.6kohm
   footprint: '0603'
+  farnell: '2073348'
 - ref: R17
   value: 10kohm
   footprint: '0603'
+  manufacturer: YAGEO (PHYCOMP)
+  mpn: RC0603FR-0710KL
+  farnell: '9238603'
   pulldown: U6.BOOT0
 - ref: R2
   value: 2.2kohm
   footprint: '0603'
+  manufacturer: YAGEO (PHYCOMP)
+  mpn: RC0603FR-072K2L.
+  farnell: '9238522'
   pullup: I2C1_SCL
 - ref: R20
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R21
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R22
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R23
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R24
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R25
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R26
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R27
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R28
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R29
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R3
   value: 2.2kohm
   footprint: '0603'
+  manufacturer: YAGEO (PHYCOMP)
+  mpn: RC0603FR-072K2L.
+  farnell: '9238522'
   pullup: I2C2_SDA
 - ref: R30
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R31
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R32
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R33
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R34
   value: 33ohm
   footprint: '2010'
+  manufacturer: WELWYN
+  mpn: ASC2010-33RFT4
+  farnell: '2079038'
 - ref: R35
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R36
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R37
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R38
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R39
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R4
   value: 120ohm
   footprint: '1206'
+  manufacturer: WELWYN
+  mpn: WCR0805-120RFI
+  farnell: '1100308'
 - ref: R40
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R41
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R42
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R43
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R44
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R45
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R46
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R47
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R48
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R49
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R5
   value: 2.2kohm
   footprint: '0603'
+  manufacturer: YAGEO (PHYCOMP)
+  mpn: RC0603FR-072K2L.
+  farnell: '9238522'
   pullup: I2C2_SCL
 - ref: R50
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R51
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R52
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R53
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R54
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R55
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R56
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R57
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R58
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R59
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R6
   value: t.b.d.
   footprint: '0603'
+  farnell: '2073348'
 - ref: R60
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R61
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R62
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R63
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R64
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R65
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R66
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R67
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
 - ref: R68
   value: 56kohm
   footprint: '0603'
+  farnell: '2008380'
   pullup: U2.FB
 - ref: R69
   value: 10kohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJ3EKF1002V
+  farnell: '2303192'
   pulldown: U2.FB
 - ref: R7
   value: 0ohm
   footprint: '0603'
+  farnell: '9238603'
 - ref: R70
   value: 330ohm
   footprint: '0603'
+  farnell: '2073348'
 - ref: R71
   value: 330ohm
   footprint: '0603'
+  farnell: '2073348'
 - ref: R72
   value: 100kohm
   footprint: '0603'
+  farnell: '2073348'
   pulldown: BTN
 - ref: R73
   value: 10kohm
   footprint: '0603'
+  farnell: '2073348'
 - ref: R74
   value: 100kohm
   footprint: '0603'
+  farnell: '2303192'
   pulldown: REGOUT
 - ref: R75
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R76
   value: 1Mohm
   footprint: '0603'
+  manufacturer: PANASONIC ELECTRONIC COMPONENTS
+  mpn: ERJU06F1004V
+  farnell: '2145441'
 - ref: R77
   value: 100kohm
   footprint: '0603'
+  farnell: '2073348'
 - ref: R78
   value: 5.6kohm
   footprint: '0603'
+  farnell: '2073348'
   pulldown: V_BAT
 - ref: R79
   value: 100kohm
   footprint: '0603'
+  farnell: '2073348'
 - ref: R8
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: R80
   value: 5.6kohm
   footprint: '0603'
+  farnell: '2073348'
   pulldown: V_LOAD
 - ref: R9
   value: 1kohm
   footprint: '0603'
+  manufacturer: MULTICOMP
+  mpn: MCMR06X1001FTL
+  farnell: '2073348'
 - ref: S1
   value: '430182050816'
   footprint: '430182050816'
@@ -707,6 +1154,9 @@ components:
 - ref: U2
   value: LMR16006X
   footprint: SOT-23-6
+  manufacturer: TEXAS INSTRUMENTS
+  mpn: LMR16006XDDCT
+  farnell: '2455133'
   description: "LMR16006 SIMPLE SWITCHER\xAE 60 V 0"
   pin_count: 6
 - ref: U3
@@ -717,12 +1167,16 @@ components:
 - ref: U5
   value: MIC5225
   footprint: SOT-23-5
+  manufacturer: MICROCHIP
+  mpn: MIC5225-3.3YM5-TR
+  farnell: '2510262'
   pin_count: 5
   nc_pins: {ADJ: '4'}
 - ref: U6
   value: STM32F072CB
-  footprint: QFP-48
-  mpn: STM32F100C4T6B
+  footprint: QFP50P900X900X160-48N
+  farnell: '1838504'
+  newark: 86R1309
   description: ARM-based 32-bit MCU
   pin_count: 48
   nc_pins: {PC13-TAMPER-RTC: '2', PA0-WKUP: '10', PA6: '16', PA7: '17', PB0: '18', PB1: '19', PA11: '32', PA12: '33', PA15: '38'}
@@ -734,9 +1188,12 @@ components:
 - ref: X1
   value: ABS25-32.768
   footprint: MM20SS
+  mpn: ABS25-32.768KHZ-6
 - ref: Y1
   value: 8MHz
   footprint: '1'
+  manufacturer: MURATA
+  mpn: CSTCE8M00G15C99-R0
   description: Resonator
   pin_count: 3
 nets:

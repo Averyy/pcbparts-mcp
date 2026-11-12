@@ -2,7 +2,7 @@ name: tinyPEPPER
 slug: tinypepper
 source: fishpepper/tinyPEPPER
 format: kicad_legacy
-description: "4-in-1 drone ESC (16mm mounting), EFM8BB21 BLHeli_S"
+description: 4-in-1 drone ESC (16mm mounting), EFM8BB21 BLHeli_S
 tags: [drone-uav, motor-control]
 key_ics: [EFM8BB21]
 outline:
@@ -92,11 +92,11 @@ nets:
 - name: /single esc 3/Cp_0
   pins: [FET405.1, U401.9]
 - name: /single esc 3/PHASE_A_0
-  pins: [FET401.3, FET402.3, OUT_A401.1, R402.2, R403.1]
+  pins: [FET401.3, FET402.3, R402.2, R403.1]
 - name: /single esc 3/PHASE_B_0
-  pins: [FET403.3, FET404.3, OUT_B401.1, R404.2, R405.1]
+  pins: [FET403.3, FET404.3, R404.2, R405.1]
 - name: /single esc 3/PHASE_C_0
-  pins: [FET405.3, FET406.3, OUT_C401.1, R406.2, R407.1]
+  pins: [FET405.3, FET406.3, R406.2, R407.1]
 - name: GND
   pins:
   - C1000.1
@@ -108,8 +108,6 @@ nets:
   - U401.12
   - U401.21
   - U401.3
-- name: Net-(BL_TX3-Pad1)
-  pins: [BL_TX3.1, U401.18]
 - name: Net-(R401-Pad1)
   pins: [R401.1, U401.5]
 - name: Net-(R402-Pad1)

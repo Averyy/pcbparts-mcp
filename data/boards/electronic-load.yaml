@@ -104,13 +104,29 @@ components:
 - ref: C9
   value: 1uF
   footprint: CT3216
+- ref: D1
+  value: 1N581*
+  footprint: DO41-7.6
+  description: 1.0A SCHOTTKY BARRIER RECTIFIER
+- ref: D2
+  value: 1N581*
+  footprint: DO41-7.6
+  description: 1.0A SCHOTTKY BARRIER RECTIFIER
+- ref: D3
+  value: 1N581*
+  footprint: DO41-7.6
+  description: 1.0A SCHOTTKY BARRIER RECTIFIER
+- ref: D4
+  value: 1N581*
+  footprint: DO41-7.6
+  description: 1.0A SCHOTTKY BARRIER RECTIFIER
 - ref: D5
   value: BYG22B
   footprint: DO-214AC
 - ref: D7
   value: LL4148
   footprint: DIOMELF3515N
-  description: Check availability
+  description: MMELF, 100V, 0.15A, Switching Diode & Array
   manufacturer: Taiwan Semiconductor
   mpn: LL4148 L1
 - ref: IC7
@@ -120,7 +136,7 @@ components:
 - ref: J1
   value: XT60-M
   footprint: AMASS_XT60-M
-  description: DC supply; XT60; male; PIN:2; for cable; soldered; 60A; 500V Check availability
+  description: 'Plug; DC supply; XT60; male; PIN: 2; for cable; soldered; 30A; 500V'
   manufacturer: AMASS
   mpn: XT60-M
 - ref: J2
@@ -132,7 +148,7 @@ components:
 - ref: J3
   value: B4B-XH
   footprint: JST_B4B-XH-A(LF)(SN)
-  description: Check availability
+  description: Connector Header Through Hole 4 position 0.098 (2.50mm)
   manufacturer: JST Sales America Inc.
   mpn: B4B-XH-A(LF)(SN)
   pin_count: 4
@@ -163,7 +179,7 @@ components:
 - ref: J8
   value: B5B-XH
   footprint: JST_B5B-XH-A(LF)(SN)
-  description: Check availability
+  description: Connector Header Through Hole 5 position 0.098 (2.50mm)
   manufacturer: JST Sales America Inc.
   mpn: B5B-XH-A(LF)(SN)
   pin_count: 5
@@ -174,7 +190,7 @@ components:
 - ref: JP2
   value: B4B-XH
   footprint: JST_B4B-XH-A(LF)(SN)
-  description: Check availability
+  description: Connector Header Through Hole 4 position 0.098 (2.50mm)
   manufacturer: JST Sales America Inc.
   mpn: B4B-XH-A(LF)(SN)
   pin_count: 4
@@ -386,38 +402,38 @@ components:
   pin_count: 14
 - ref: U2
   value: MCP4725A0T-E
-  footprint: SOT-6
-  description: MCP4725 Series 1 Ch I2C EEPROM Memory 5
+  footprint: SOT95P270X145-6N
+  description: 12 Bit Digital to Analog Converter 1 SOT-23-6
   manufacturer: Microchip
   mpn: MCP4725A0T-E/CH
   pin_count: 6
 - ref: U3
   value: ADS1115
   footprint: MSOP10
-  description: 16-Bit Del-Sig ADC Four single-ended inputs or two differential inputs Internal
+  description: ADS1115 - 16 Bit 3.3k Samples per Second Analog to Digital Converter (ADC) Evaluation Board
   manufacturer: Texas Instruments
   mpn: ADS1115
   pin_count: 10
   nc_pins: {ALERT/RDY: '2', AIN1: '5'}
 - ref: U4
   value: ATMEGA328P-AU
-  footprint: QFP-32
-  description: ATmega Series 20 MHz 32 KB Flash 2 KB SRAM 8-Bit Microcontroller - TQFP-32
+  footprint: QFP80P900X900X120-32N
+  description: "AVR AVR\xAE ATmega Microcontroller IC 8-Bit 20MHz 32KB (16K x 16) FLASH 32-TQFP (7x7)"
   manufacturer: Microchip Technology
   mpn: ATMEGA328P-AU
   pin_count: 32
 - ref: U5
   value: OPA277
   footprint: SOIC-08_150MIL
-  description: High Precision OPERATIONAL AMPLIFIERS
+  description: "Op Amp Single Low Offset Voltage Amplifier \xB118V 8-Pin PDIP Tube"
   manufacturer: Texas Instruments
   mpn: OPA277
   pin_count: 7
   nc_pins: {CMP1: '1', CMP2: '8'}
 - ref: U6
   value: MCP79410-I
-  footprint: SOIC-8
-  description: MCP79410 Series 5
+  footprint: SOIC127P600X175-8N
+  description: "Real Time Clock (RTC) IC Clock/Calendar 64B, 1Kb I\xB2C, 2-Wire Serial 8-SOIC (0.154, 3.90mm Width)"
   manufacturer: Microchip
   mpn: MCP79410-I/SN
   pin_count: 8
@@ -430,8 +446,8 @@ components:
   nc_pins: {NC: '1', LV: '6'}
 - ref: U8
   value: PC817X2NIP0F
-  footprint: SOT-4
-  description: PC817 Series 1 Channel 80 V 5000 Vrms General Purpose Photocoupler - DIP-4
+  footprint: SOT254P975X400-4N
+  description: Optoisolator Transistor Output 5000Vrms 1 Channel 4-SMD
   manufacturer: Sharp Microelectronics
   mpn: PC817X2NIP0F
   pin_count: 4
@@ -448,7 +464,7 @@ nets:
 - name: 12V
   pins: [C26.+, D5.C, IC7.IN, J2.1, Q7.E, R32.1]
 - name: 16V
-  pins: [C11.+, C12.+, Q7.C, R31.1]
+  pins: [C11.+, C12.+, D1.C, D2.C, Q7.C, R31.1]
 - name: 4,096V
   pins: [C13.1, C9.+, R27.1, R28.1, U$3.VREF, U2.VDD]
 - name: 5V
@@ -543,6 +559,8 @@ nets:
   - C7.2
   - C8.-
   - C9.-
+  - D3.A
+  - D4.A
   - IC7.GND
   - J1.-
   - J3.4
@@ -626,6 +644,10 @@ nets:
   pins: [J4.2, R25.1]
 - name: N$26
   pins: [J4.1, R23.1]
+- name: N$27
+  pins: [D1.A, D3.C, J5.1]
+- name: N$28
+  pins: [D2.A, D4.C, J5.2]
 - name: N$3
   pins: [C1.2, R2.2]
 - name: N$30
@@ -786,6 +808,22 @@ positions:
 - ref: C9
   x: 87.12
   y: 37.21
+  rot: 270.0
+- ref: D1
+  x: 13.97
+  y: 43.18
+  rot: 90.0
+- ref: D2
+  x: 10.16
+  y: 43.18
+  rot: 90.0
+- ref: D3
+  x: 6.35
+  y: 43.18
+  rot: 270.0
+- ref: D4
+  x: 2.54
+  y: 43.18
   rot: 270.0
 - ref: D5
   x: 22.86

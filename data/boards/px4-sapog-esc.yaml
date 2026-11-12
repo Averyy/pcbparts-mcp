@@ -19,154 +19,196 @@ components:
   value: 18pF
   footprint: '0402'
   digikey: 399-8828-1-ND
+  manufacturer: Kemet
+  mpn: CBR04C180F5GAC
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-1%
   voltage: 50V
 - ref: C10
   value: 100nF
   footprint: '0402'
-  digikey: 445-5942-2-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-10%
-  voltage: 50V
+  digikey: 445-7361-1-ND
+  manufacturer: TDK Corporation
+  mpn: C1005X6S1E104M050BB
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-20%
+  voltage: 25V
   decouples: IC5
 - ref: C11
   value: 100nF
   footprint: '0402'
-  digikey: 445-5942-2-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-10%
-  voltage: 50V
+  digikey: 445-7361-1-ND
+  manufacturer: TDK Corporation
+  mpn: C1005X6S1E104M050BB
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-20%
+  voltage: 25V
   decouples: IC3
 - ref: C12
   value: 100nF
   footprint: '0402'
-  digikey: 445-5942-2-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-10%
-  voltage: 50V
+  digikey: 445-7361-1-ND
+  manufacturer: TDK Corporation
+  mpn: C1005X6S1E104M050BB
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-20%
+  voltage: 25V
   decouples: IC3
 - ref: C13
   value: 100nF
   footprint: '0402'
-  digikey: 445-5942-2-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-10%
-  voltage: 50V
+  digikey: 445-7361-1-ND
+  manufacturer: TDK Corporation
+  mpn: C1005X6S1E104M050BB
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-20%
+  voltage: 25V
   decouples: IC5
 - ref: C14
   value: 100nF
   footprint: '0402'
-  digikey: 445-5942-2-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-10%
-  voltage: 50V
+  digikey: 445-7361-1-ND
+  manufacturer: TDK Corporation
+  mpn: C1005X6S1E104M050BB
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-20%
+  voltage: 25V
   decouples: IC6
 - ref: C15
   value: 100nF
   footprint: '0402'
-  digikey: 445-5942-2-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-10%
-  voltage: 50V
+  digikey: 445-7361-1-ND
+  manufacturer: TDK Corporation
+  mpn: C1005X6S1E104M050BB
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-20%
+  voltage: 25V
 - ref: C16
   value: 22uF
   footprint: '1206'
-  digikey: 445-8045-6-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-20%
-  voltage: 35V
+  digikey: 1276-3299-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL31X226KAHN3NE
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-10%
+  voltage: 25V
 - ref: C17
   value: 22uF
   footprint: '1206'
-  digikey: 445-8045-6-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-20%
-  voltage: 35V
+  digikey: 1276-3299-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL31X226KAHN3NE
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-10%
+  voltage: 25V
 - ref: C18
   value: 22uF
   footprint: '1206'
-  digikey: 445-8045-6-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-20%
-  voltage: 35V
+  digikey: 1276-3299-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL31X226KAHN3NE
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-10%
+  voltage: 25V
 - ref: C19
   value: 22uF
   footprint: '1206'
-  digikey: 445-8045-6-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-20%
-  voltage: 35V
+  digikey: 1276-3299-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL31X226KAHN3NE
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-10%
+  voltage: 25V
   decouples: IC8
 - ref: C2
   value: 18pF
   footprint: '0402'
   digikey: 399-8828-1-ND
+  manufacturer: Kemet
+  mpn: CBR04C180F5GAC
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-1%
   voltage: 50V
 - ref: C20
   value: 22uF
   footprint: '1206'
-  digikey: 445-8045-6-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-20%
-  voltage: 35V
+  digikey: 1276-3299-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL31X226KAHN3NE
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-10%
+  voltage: 25V
 - ref: C21
   value: 22uF
   footprint: '1206'
-  digikey: 445-8045-6-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-20%
-  voltage: 35V
+  digikey: 1276-3299-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL31X226KAHN3NE
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-10%
+  voltage: 25V
 - ref: C22
   value: 22uF
   footprint: '1206'
-  digikey: 445-8045-6-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-20%
-  voltage: 35V
+  digikey: 1276-3299-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL31X226KAHN3NE
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-10%
+  voltage: 25V
 - ref: C23
   value: 22uF
   footprint: '1206'
-  digikey: 445-8045-6-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-20%
-  voltage: 35V
+  digikey: 1276-3299-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL31X226KAHN3NE
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-10%
+  voltage: 25V
   decouples: IC8
 - ref: C24
   value: 2.2nF
   footprint: '0402'
   digikey: 478-1105-1-ND
+  manufacturer: AVX Corporation
+  mpn: 04025C222KAT2A
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-10%
   voltage: 50V
 - ref: C25
   value: 22uF
   footprint: '1206'
-  digikey: 445-8045-6-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-20%
-  voltage: 35V
+  digikey: 1276-3299-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL31X226KAHN3NE
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-10%
+  voltage: 25V
 - ref: C26
   value: 22uF
   footprint: '1206'
-  digikey: 445-8045-6-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-20%
-  voltage: 35V
+  digikey: 1276-3299-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL31X226KAHN3NE
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-10%
+  voltage: 25V
 - ref: C27
   value: 22uF
   footprint: '1206'
-  digikey: 445-8045-6-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-20%
-  voltage: 35V
+  digikey: 1276-3299-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL31X226KAHN3NE
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-10%
+  voltage: 25V
   decouples: IC8
 - ref: C28
   value: 1uF
   footprint: '0603'
   digikey: 587-1242-1-ND
+  manufacturer: Taiyo Yuden
+  mpn: LMK107B7105KA-T
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-10%
   voltage: 10V
@@ -174,6 +216,8 @@ components:
   value: 4.7uF
   footprint: '0603'
   digikey: 1276-2087-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL10B475KQ8NQNC
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-10%
   voltage: 6.3V
@@ -182,6 +226,8 @@ components:
   value: 10nF
   footprint: '0402'
   digikey: 490-1312-1-ND
+  manufacturer: Murata Electronics North America
+  mpn: GRM155R71E103KA01D
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-10%
   voltage: 25V
@@ -190,46 +236,60 @@ components:
   value: 2.2nF
   footprint: '0402'
   digikey: 478-1105-1-ND
+  manufacturer: AVX Corporation
+  mpn: 04025C222KAT2A
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-10%
   voltage: 50V
 - ref: C31
   value: 1uF
   footprint: '0603'
-  digikey: 587-1242-1-ND
+  digikey: 445-5205-1-ND
+  manufacturer: TDK Corporation
+  mpn: C2012X7S2A105K125AB
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-10%
-  voltage: 10V
+  voltage: 100V
 - ref: C32
   value: 2.2nF
   footprint: '0402'
   digikey: 478-1105-1-ND
+  manufacturer: AVX Corporation
+  mpn: 04025C222KAT2A
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-10%
   voltage: 50V
 - ref: C33
   value: 1uF
   footprint: '0603'
-  digikey: 587-1242-1-ND
+  digikey: 445-5205-1-ND
+  manufacturer: TDK Corporation
+  mpn: C2012X7S2A105K125AB
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-10%
-  voltage: 10V
+  voltage: 100V
 - ref: C34
   value: 1uF
   footprint: '0603'
-  digikey: 587-1242-1-ND
+  digikey: 445-5205-1-ND
+  manufacturer: TDK Corporation
+  mpn: C2012X7S2A105K125AB
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-10%
-  voltage: 10V
+  voltage: 100V
 - ref: C35
   value: 100uF
   footprint: '3024'
   digikey: 718-1942-1-ND
+  manufacturer: Vishay Sprague
+  mpn: 597D107X0035F2T
   voltage: 35V
 - ref: C4
   value: 1uF
   footprint: '0603'
   digikey: 587-1242-1-ND
+  manufacturer: Taiyo Yuden
+  mpn: LMK107B7105KA-T
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-10%
   voltage: 10V
@@ -237,31 +297,39 @@ components:
 - ref: C5
   value: 100nF
   footprint: '0402'
-  digikey: 445-5942-2-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-10%
-  voltage: 50V
+  digikey: 445-7361-1-ND
+  manufacturer: TDK Corporation
+  mpn: C1005X6S1E104M050BB
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-20%
+  voltage: 25V
   decouples: IC5
 - ref: C6
   value: 100nF
   footprint: '0402'
-  digikey: 445-5942-2-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-10%
-  voltage: 50V
+  digikey: 445-7361-1-ND
+  manufacturer: TDK Corporation
+  mpn: C1005X6S1E104M050BB
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-20%
+  voltage: 25V
   decouples: IC1
 - ref: C7
   value: 100nF
   footprint: '0402'
-  digikey: 445-5942-2-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-10%
-  voltage: 50V
+  digikey: 445-7361-1-ND
+  manufacturer: TDK Corporation
+  mpn: C1005X6S1E104M050BB
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-20%
+  voltage: 25V
   decouples: IC8
 - ref: C8
   value: 4.7uF
   footprint: '0603'
   digikey: 1276-2087-1-ND
+  manufacturer: Samsung Electro-Mechanics America
+  mpn: CL10B475KQ8NQNC
   temp_range: "-55\xB0C ~ 125\xB0C"
   tolerance: +-10%
   voltage: 6.3V
@@ -269,71 +337,100 @@ components:
 - ref: C9
   value: 100nF
   footprint: '0402'
-  digikey: 445-5942-2-ND
-  temp_range: "-55\xB0C ~ 85\xB0C"
-  tolerance: +-10%
-  voltage: 50V
+  digikey: 445-7361-1-ND
+  manufacturer: TDK Corporation
+  mpn: C1005X6S1E104M050BB
+  temp_range: "-55\xB0C ~ 105\xB0C"
+  tolerance: +-20%
+  voltage: 25V
   decouples: IC7
 - ref: CON1
   value: JST SH 6-pin
   footprint: SM06B
   digikey: 455-1806-1-ND
+  manufacturer: JST Sales America Inc
+  mpn: SM06B-SRSS-TB(LF)(SN)
+  partno: SM06B-SRSS-TB
   description: CONN HEADER SH 6POS SIDE 1MM TIN
   pin_count: 8
 - ref: CON2
   value: 4-pin connector
   footprint: JST_GH-4P-RA
   digikey: 455-1566-1-ND
+  manufacturer: JST Sales America Inc
+  mpn: SM04B-GHS-TB(LF)(SN)-
   pin_count: 6
 - ref: CON3
   value: 4-pin connector
   footprint: JST_GH-4P-RA
   digikey: 455-1566-1-ND
+  manufacturer: JST Sales America Inc
+  mpn: SM04B-GHS-TB(LF)(SN)-
   pin_count: 6
 - ref: CON4
   value: 4-pin connector
   footprint: JST_GH-4P-RA
   digikey: 455-1566-1-ND
+  manufacturer: JST Sales America Inc
+  mpn: SM04B-GHS-TB(LF)(SN)-
   pin_count: 6
 - ref: CON5
   value: 4-pin connector
   footprint: JST_GH-4P-RA
   digikey: 455-1566-1-ND
+  manufacturer: JST Sales America Inc
+  mpn: SM04B-GHS-TB(LF)(SN)-
   pin_count: 6
 - ref: D3
   value: BAS21AHT1G
   footprint: SOD323
   digikey: BAS21AHT1GOSCT-ND
+  manufacturer: ON Semiconductor
+  mpn: BAS21AHT1G
 - ref: D4
   value: BAS21AHT1G
   footprint: SOD323
   digikey: BAS21AHT1GOSCT-ND
+  manufacturer: ON Semiconductor
+  mpn: BAS21AHT1G
 - ref: D5
   value: BAS21AHT1G
   footprint: SOD323
   digikey: BAS21AHT1GOSCT-ND
+  manufacturer: ON Semiconductor
+  mpn: BAS21AHT1G
 - ref: D6
   value: 1KSMB20A
   footprint: SMB
   digikey: 1KSMB20ACT-ND
+  manufacturer: Littelfuse Inc
+  mpn: 1KSMB20A
   description: TVS DIODE 17
 - ref: IC1
   value: STM32F105
   footprint: TQFP64-10X10
-  digikey: 497-8918-ND
+  digikey: 497-11547-ND
+  manufacturer: STMicroelectronics
+  mpn: STM32F105RCT7
+  temp_range: "-40\xB0C ~ 105\xB0C (TA)"
   description: MCU ARM 256KB FLASH MEM 64-LQFP
   pin_count: 64
-  nc_pins: {PC13: '2', PC14: '3', PC15: '4', NRST: '7', PA6: '22', PC4: '24', PC5: '25', PB2: '28', PB10: '29', PB11: '30', PB14: '35', PC9: '40', PA15: '50', PC10: '51', PD2: '54', PB3: '55', PB5: '57'}
+  nc_pins: {PC13: '2', PC14: '3', PC15: '4', NRST: '7', PA6: '22', PC4: '24', PC5: '25', PB2: '28', PB10: '29', PB11: '30',
+    PB14: '35', PC9: '40', PA15: '50', PC10: '51', PD2: '54', PB3: '55', PB5: '57'}
 - ref: IC2
   value: CAT24C02
   footprint: SOT-23-5
   digikey: CAT24C02TDI-GT3AOSCT-ND
+  manufacturer: ON Semiconductor
+  mpn: CAT24C02TDI-GT3A
   description: IC EEPROM 2KBIT 400KHZ TSOT23-5
   pin_count: 5
 - ref: IC3
   value: SN65HVD232D
   footprint: SOIC8
   digikey: 296-26344-1-ND
+  manufacturer: Texas Instruments
+  mpn: SN65HVD232DR
   description: IC CAN TRANSCEIVER 3
   pin_count: 8
   nc_pins: {NC@1: '5', NC@2: '8'}
@@ -341,6 +438,8 @@ components:
   value: SN65HVD232D
   footprint: SOIC8
   digikey: 296-26344-1-ND
+  manufacturer: Texas Instruments
+  mpn: SN65HVD232DR
   description: IC CAN TRANSCEIVER 3
   pin_count: 8
   nc_pins: {NC@1: '5', NC@2: '8'}
@@ -348,201 +447,284 @@ components:
   value: LM75BD
   footprint: TSSOP8
   digikey: 568-4768-1-ND
+  manufacturer: NXP Semiconductors
+  mpn: LM75BDP,118
   description: SENSOR TEMPERATURE I2C 8TSSOP
   pin_count: 8
 - ref: IC6
   value: FAN7888
   footprint: SOIC20
   digikey: FAN7888MXTR-ND
+  manufacturer: Fairchild Semiconductor
+  mpn: FAN7888MX
+  partno: FAN7888MX
   description: IC GATE DRIVER HALF BRIDG 20SOIC
   pin_count: 20
 - ref: IC7
   value: ZXCT1051
   footprint: SOT-23-5
   digikey: ZXCT1051E5CT-ND
+  manufacturer: Diodes Incorporated
+  mpn: ZXCT1051E5TA
   description: IC CURRENT MONITOR 1% SOT23-5
   pin_count: 5
 - ref: IC8
   value: 3.3V
   footprint: SOT-223
   digikey: NCV1117ST33T3GOSCT-ND
+  manufacturer: ON Semiconductor
+  mpn: NCV1117ST33T3G
   description: IC REG LDO 3
   pin_count: 4
 - ref: LED1
   value: LTST-C19HE1WT
   footprint: LITE_ON_RGB_LED
   digikey: 160-2162-1-ND
+  mpn: LTST-C19HE1WT
   pin_count: 4
 - ref: Q1
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  manufacturer: Infineon Technologies
+  mpn: BSC019N04NS G
   pin_count: 8
 - ref: Q2
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  manufacturer: Infineon Technologies
+  mpn: BSC019N04NS G
   pin_count: 8
 - ref: Q3
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  manufacturer: Infineon Technologies
+  mpn: BSC019N04NS G
   pin_count: 8
 - ref: Q4
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  manufacturer: Infineon Technologies
+  mpn: BSC019N04NS G
   pin_count: 8
 - ref: Q5
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  manufacturer: Infineon Technologies
+  mpn: BSC019N04NS G
   pin_count: 8
 - ref: Q6
   value: BSC019N04NS
   footprint: DFN5X6
   digikey: BSC019N04NS GTR-ND
+  manufacturer: Infineon Technologies
+  mpn: BSC019N04NS G
   pin_count: 8
 - ref: R1
   value: 200ohm
   footprint: '0402'
   digikey: 311-200JRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402JR-07200RL
   tolerance: 5%
 - ref: R10
   value: 560ohm
   footprint: '0402'
   digikey: 541-560LCT-ND
+  manufacturer: Vishay Dale
+  mpn: CRCW0402560RFKED
   tolerance: 1%
 - ref: R11
   value: 3ohm
   footprint: '0402'
   digikey: P3.0JCT-ND
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-2GEJ3R0X
   tolerance: 5%
 - ref: R12
   value: 3ohm
   footprint: '0402'
   digikey: P3.0JCT-ND
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-2GEJ3R0X
   tolerance: 5%
 - ref: R13
   value: 3.9kohm
   footprint: '0402'
   digikey: 311-3.90KLRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402FR-073K9L
   tolerance: 1%
 - ref: R14
   value: 5mohm
   footprint: 2010_CURRENT_SHUNT
-  digikey: 985-1563-1-ND
+  power: 1.5W
+  digikey: CSNL2010FT5L00CT-ND
+  manufacturer: Stackpole Electronics Inc
+  mpn: CSNL2010FT5L00
   tolerance: 1%
   pin_count: 4
 - ref: R15
   value: 560ohm
   footprint: '0402'
   digikey: 541-560LCT-ND
+  manufacturer: Vishay Dale
+  mpn: CRCW0402560RFKED
   tolerance: 1%
 - ref: R16
   value: 3ohm
   footprint: '0402'
   digikey: P3.0JCT-ND
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-2GEJ3R0X
   tolerance: 5%
 - ref: R17
   value: 3ohm
   footprint: '0402'
   digikey: P3.0JCT-ND
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-2GEJ3R0X
   tolerance: 5%
 - ref: R18
   value: 3.9kohm
   footprint: '0402'
   digikey: 311-3.90KLRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402FR-073K9L
   tolerance: 1%
 - ref: R19
   value: 560ohm
   footprint: '0402'
   digikey: 541-560LCT-ND
+  manufacturer: Vishay Dale
+  mpn: CRCW0402560RFKED
   tolerance: 1%
 - ref: R2
   value: 3.9kohm
   footprint: '0402'
   digikey: 311-3.90KLRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402FR-073K9L
   tolerance: 1%
   pullup: I2C_SDA
 - ref: R20
   value: 3ohm
   footprint: '0402'
   digikey: P3.0JCT-ND
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-2GEJ3R0X
   tolerance: 5%
 - ref: R21
   value: 3ohm
   footprint: '0402'
   digikey: P3.0JCT-ND
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-2GEJ3R0X
   tolerance: 5%
 - ref: R22
   value: 3.9kohm
   footprint: '0402'
   digikey: 311-3.90KLRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402FR-073K9L
   tolerance: 1%
 - ref: R23
   value: 200ohm
   footprint: '0402'
   digikey: 311-200JRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402JR-07200RL
   tolerance: 5%
+  partno: RC0402FR-07240RL
 - ref: R24
   value: 200ohm
   footprint: '0402'
   digikey: 311-200JRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402JR-07200RL
   tolerance: 5%
+  partno: RC0402FR-07240RL
 - ref: R25
   value: 200ohm
   footprint: '0402'
   digikey: 311-200JRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402JR-07200RL
   tolerance: 5%
+  partno: RC0402FR-07240RL
 - ref: R26
   value: 200ohm
   footprint: '0402'
   digikey: 311-200JRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402JR-07200RL
   tolerance: 5%
+  partno: RC0402FR-07240RL
 - ref: R3
   value: 3.9kohm
   footprint: '0402'
   digikey: 311-3.90KLRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402FR-073K9L
   tolerance: 1%
   pullup: I2C_SCL
 - ref: R4
   value: 3.9kohm
   footprint: '0402'
   digikey: 311-3.90KLRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402FR-073K9L
   tolerance: 1%
   pulldown: BOOT0
 - ref: R5
   value: 200ohm
   footprint: '0402'
   digikey: 311-200JRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402JR-07200RL
   tolerance: 5%
+  partno: RC0402FR-07240RL
 - ref: R6
   value: 200ohm
   footprint: '0402'
   digikey: 311-200JRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402JR-07200RL
   tolerance: 5%
+  partno: RC0402FR-07240RL
 - ref: R7
   value: 3.9kohm
   footprint: '0402'
   digikey: 311-3.90KLRCT-ND
+  manufacturer: Yageo
+  mpn: RC0402FR-073K9L
   tolerance: 1%
 - ref: R8
   value: 1.3kohm
   footprint: '0402'
   digikey: P1.3KDCCT-ND
-  tolerance: 5%
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-2AEB132X
+  tolerance: 0.1%
   pulldown: SENSE_VIN
 - ref: R9
   value: 10kohm
   footprint: '0402'
-  digikey: 311-10KJRCT-ND
-  tolerance: 5%
+  digikey: P10KDCCT-ND
+  manufacturer: Panasonic Electronic Components
+  mpn: ERA-2AEB103X
+  tolerance: 0.1%
   pullup: SENSE_VIN
 - ref: X1
   value: 24MHz
   footprint: OSCILLATOR-3.2X2.5
-  digikey: 1253-1182-1-ND
+  digikey: 1253-1198-1-ND
+  manufacturer: AVX Corp/Kyocera Corp
+  mpn: CX3225GB24000P0HPQCC
   description: Smd Crystal
   pin_count: 4
 nets:
@@ -593,7 +775,7 @@ nets:
 - name: FET_A_VB
   pins: [C31.1, D3.C, IC6.VB1]
 - name: FET_A_VS
-  pins: [A.P, C31.2, IC6.VS1, Q1.S, Q2.D, R13.1]
+  pins: [C31.2, IC6.VS1, Q1.S, Q2.D, R13.1]
 - name: FET_B_H
   pins: [IC1.PA9, IC6.HIN2]
 - name: FET_B_HO
@@ -605,7 +787,7 @@ nets:
 - name: FET_B_VB
   pins: [C33.1, D4.C, IC6.VB2]
 - name: FET_B_VS
-  pins: [B.P, C33.2, IC6.VS2, Q3.S, Q4.D, R18.1]
+  pins: [C33.2, IC6.VS2, Q3.S, Q4.D, R18.1]
 - name: FET_C_H
   pins: [IC1.PA10, IC6.HIN3]
 - name: FET_C_HO
@@ -617,10 +799,9 @@ nets:
 - name: FET_C_VB
   pins: [C34.1, D5.C, IC6.VB3]
 - name: FET_C_VS
-  pins: [C.P, C34.2, IC6.VS3, Q5.S, Q6.D, R22.1]
+  pins: [C34.2, IC6.VS3, Q5.S, Q6.D, R22.1]
 - name: GND
   pins:
-  - B-.P
   - C1.1
   - C10.2
   - C11.2
@@ -747,7 +928,6 @@ nets:
   pins: [IC1.PB6, R5.2]
 - name: VBAT
   pins:
-  - B+.P
   - C14.1
   - C16.2
   - C17.2

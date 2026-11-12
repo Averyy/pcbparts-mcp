@@ -1,6 +1,7 @@
 {
   "version": "1.0",
   "scraped_at": "2026-11-12T20:26:32.851469+00:00",
+  "prices_updated_at": "2026-11-12T20:26:32.851469+00:00",
   "stock_threshold": 10,
   "total_parts": 643248,
   "categories": {

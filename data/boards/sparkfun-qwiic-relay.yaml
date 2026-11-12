@@ -18,6 +18,8 @@ components:
 - ref: C1
   value: 10uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-11015
   decouples: U3
 - ref: D1
@@ -42,13 +44,13 @@ components:
   pin_count: 4
 - ref: J2
   value: Qwiic connector
-  footprint: 1X04
+  footprint: 1X04_P1.00mm_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
   pin_count: 4
 - ref: J3
   value: Qwiic connector
-  footprint: 1X04
+  footprint: 1X04_P1.00mm_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
   pin_count: 4
@@ -58,7 +60,7 @@ components:
   description: AVR ISP 6 Pin
   pin_count: 6
 - ref: J5
-  value: 1x3 screw terminal
+  value: 1x3 5.00mm screw terminal
   footprint: SCREWTERMINAL-5MM-3
   prod_id: CONN-10134
   pin_count: 3
@@ -86,33 +88,39 @@ components:
 - ref: R1
   value: 10ohm
   footprint: '0603'
+  tolerance: 5%
   prod_id: RES-09834
 - ref: R2
   value: 330ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00818
 - ref: R4
   value: 330ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00818
 - ref: R6
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R7
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R8
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pullup: '!RESET'
 - ref: R9
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
-  pulldown: D3.C
 - ref: U3
   value: ATTINY85
   footprint: ATTINY85

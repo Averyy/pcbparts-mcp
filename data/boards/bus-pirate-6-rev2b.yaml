@@ -325,25 +325,27 @@ components:
   value: 1N4148WT
   footprint: SOD-523
 - ref: J201
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J202
   value: USB-C
   footprint: HRO_TYPE-C-31-M-12
+  mpn: TYPE-C-31-M-12
   pin_count: 16
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J301
-  value: 1x10 header
-  footprint: 1X10
+  value: 1x10 2.54mm header
+  footprint: 1X10_P2.54mm
   pin_count: 10
 - ref: J302
-  value: 1x9 header
-  footprint: JST_SH_SM09B-SRSS-TB
+  value: JST SH 9-pin
+  footprint: JST_SH_SM09B-SRSS-TB_1x09
   pin_count: 9
 - ref: L201
-  value: CBW201209U300T
+  value: 30ohm
   footprint: 0805
+  mpn: CBW201209U300T
 - ref: LCD201
   value: TFT_20_QT200H1201
   footprint: TFT_20_QT200H1201
@@ -608,79 +610,79 @@ components:
   pullup: CURRENT_EN
 - ref: RN1
   value: 100kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN301
   value: 330ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN302
   value: 4.7kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN303
   value: 100kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN304
   value: 1Mohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN305
   value: 120ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN306
   value: 330ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN307
   value: 4.7kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN308
   value: 100kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN309
   value: 120ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN310
   value: 1Mohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN311
   value: 10kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN312
   value: 10kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN315
   value: 510ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN317
   value: 100kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN318
   value: 100kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN400
   value: 510ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN401
   value: 510ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
 - ref: RN402
   value: 510ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pin_count: 8
   nc_pins: {R1.1@3: '3', R1.8@6: '6'}
 - ref: SW101
@@ -764,16 +766,18 @@ components:
   pin_count: 5
 - ref: U503
   value: 74HCT245BQ
-  footprint: DHVQFN-20-1EP
+  footprint: DHVQFN-20-1EP_2.5x4.5
   pin_count: 20
   nc_pins: {B6: '12', B5: '13'}
 - ref: U504
   value: GS324MT
   footprint: TSSOP-14
+  mpn: GS324MT/TR
   pin_count: 14
 - ref: U505
   value: GS324MT
   footprint: TSSOP-14
+  mpn: GS324MT/TR
   pin_count: 14
 - ref: U506
   value: LMV321
@@ -782,10 +786,12 @@ components:
 - ref: U601
   value: GS321A
   footprint: SOT-23-5
+  mpn: GS321A-TR
   pin_count: 5
 - ref: U602
   value: GSV331
   footprint: SOT-23-5
+  mpn: GSV331-TR
   pin_count: 5
 - ref: U603
   value: LMV321

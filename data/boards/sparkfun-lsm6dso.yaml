@@ -23,11 +23,13 @@ components:
 - ref: C3
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U1
 - ref: C4
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U1
 - ref: D1
@@ -61,7 +63,7 @@ components:
   footprint: 1X06
   pin_count: 6
 - ref: L1
-  value: ferrite bead
+  value: 30ohm
   footprint: '0603'
   prod_id: NDUC-07859
 - ref: LED
@@ -71,24 +73,28 @@ components:
 - ref: R1
   value: 4.7kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07857
 - ref: R2
   value: 4.7kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07857
 - ref: R3
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pullup: '!CS!'
 - ref: R4
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
-  pullup: D1.A
 - ref: R5
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: ADDR.3
 - ref: SCX

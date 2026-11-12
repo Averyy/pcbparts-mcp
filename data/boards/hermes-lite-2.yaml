@@ -1296,19 +1296,15 @@ components:
 - ref: R71
   value: 1kohm
   footprint: '0603'
-  pullup: D2.2
 - ref: R72
   value: 1kohm
   footprint: '0603'
-  pullup: D3.2
 - ref: R73
   value: 1kohm
   footprint: '0603'
-  pullup: D4.2
 - ref: R74
   value: 1kohm
   footprint: '0603'
-  pullup: D5.2
 - ref: R75
   value: 2.2kohm
   footprint: '0603'
@@ -1831,7 +1827,6 @@ nets:
   - C4.2
   - C40.2
   - C41.2
-  - C42.1
   - C43.2
   - C44.2
   - C45.2
@@ -1890,8 +1885,6 @@ nets:
   - CN8.2
   - CN9.2
   - D12.2
-  - D6.2
-  - D7.2
   - D8.3
   - DB1.13
   - DB1.14
@@ -1916,20 +1909,6 @@ nets:
   - DB8.2
   - DB9.1
   - DB9.3
-  - GT1.1
-  - GT10.1
-  - GT11.1
-  - GT12.1
-  - GT13.1
-  - GT14.1
-  - GT2.1
-  - GT3.1
-  - GT4.1
-  - GT5.1
-  - GT6.1
-  - GT7.1
-  - GT8.1
-  - GT9.1
   - J10.1
   - J12.2
   - J15.1
@@ -1964,7 +1943,6 @@ nets:
   - R15.2
   - R16.1
   - R34.2
-  - R38.2
   - R4.2
   - R40.2
   - R46.2
@@ -2079,14 +2057,7 @@ nets:
   - T3.2
   - U14.5
 - name: Net-(B105-Pad1)
-  pins:
-  - B105.1
-  - C149.1
-  - C84.2
-  - D7.1
-  - Q4.3
-  - R96.1
-  - T3.3
+  pins: [B105.1, C149.1, C84.2, Q4.3, R96.1, T3.3]
 - name: Net-(B105-Pad2)
   pins: [B105.2, R99.1]
 - name: Net-(B106-Pad1)
@@ -2148,9 +2119,9 @@ nets:
 - name: Net-(B55-Pad2)
   pins: [B55.2, RF7.1]
 - name: Net-(B56-Pad1)
-  pins: [B56.1, C41.1, FB12.1, J3.1, R36.1, X2.4]
+  pins: [B56.1, C41.1, FB12.1, J3.1, X2.4]
 - name: Net-(B57-Pad1)
-  pins: [B57.1, C42.2, CL3.1, X2.3]
+  pins: [B57.1, CL3.1, X2.3]
 - name: Net-(B57-Pad2)
   pins: [B57.2, U6.4]
 - name: Net-(B59-Pad1)
@@ -2233,14 +2204,7 @@ nets:
 - name: Net-(B94-Pad1)
   pins: [B94.1, FB22.2, U13.8]
 - name: Net-(B97-Pad1)
-  pins:
-  - B97.1
-  - C148.1
-  - C84.1
-  - D6.1
-  - Q3.3
-  - R93.2
-  - T3.1
+  pins: [B97.1, C148.1, C84.1, Q3.3, R93.2, T3.1]
 - name: Net-(B97-Pad2)
   pins: [B97.2, R92.1]
 - name: Net-(B98-Pad1)
@@ -2398,9 +2362,9 @@ nets:
 - name: Net-(DB17-Pad3)
   pins: [DB17.3, R107.1, U13.6, U2.32]
 - name: Net-(DB21-Pad1)
-  pins: [DB21.1, R54.1, T1.1]
+  pins: [R54.1, T1.1]
 - name: Net-(DB25-Pad1)
-  pins: [DB25.1, R61.1, T1.2]
+  pins: [R61.1, T1.2]
 - name: Net-(DB6-Pad1)
   pins: [DB6.1, J8.1, U7.46]
 - name: Net-(DB6-Pad2)
@@ -2438,7 +2402,7 @@ nets:
 - name: Net-(J21-Pad2)
   pins: [J21.2, RF3.1]
 - name: Net-(J4-Pad1)
-  pins: [J4.1, R36.2, R38.1, X2.1]
+  pins: [J4.1, X2.1]
 - name: Net-(J4-Pad2)
   pins: [J4.2, U6.3]
 - name: Net-(J5-Pad2)

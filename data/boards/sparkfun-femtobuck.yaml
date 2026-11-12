@@ -18,10 +18,12 @@ components:
 - ref: C1
   value: 1uF
   footprint: '1206'
+  voltage: 50V
   tolerance: 10%
 - ref: C2
   value: 2.2uF
   footprint: '1206'
+  voltage: 50V
   tolerance: 10%
   decouples: U1
 - ref: CH1
@@ -48,15 +50,15 @@ components:
 - ref: R1
   value: 300mohm
   footprint: 0805
-  prod_id: RES-11622
   tolerance: 1%
   power: 1/8W
+  prod_id: RES-11622
 - ref: R2
   value: 300mohm
   footprint: 0805
-  prod_id: RES-11622
   tolerance: 1%
   power: 1/8W
+  prod_id: RES-11622
 - ref: SJ2
   value: NO Jumper
   footprint: SJ-2
@@ -64,6 +66,7 @@ components:
 - ref: U1
   value: AL8860
   footprint: SOT-23-5
+  prod_id: IC-16593
   pin_count: 5
 nets:
 - name: CTRL_CH1

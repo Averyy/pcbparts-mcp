@@ -2,7 +2,8 @@ name: Irrigation Controller
 slug: irrigation-controller
 source: LorandBiro/irrigation-controller
 format: kicad8
-description: "4-zone solenoid valve irrigation controller, STDN-3A24-ADJ 5V buck module"
+description: 4-zone solenoid valve irrigation controller, STDN-3A24-ADJ 5V buck module
+tags: [power-supply]
 outline:
   width_mm: 56.0
   height_mm: 65.0
@@ -27,10 +28,13 @@ components:
   footprint: '1206'
   description: Resettable fuse, polymeric positive temperature coefficient
 - ref: J1
-  value: 2x20 header
-  footprint: 2X20
+  value: 2x20 2.54mm header
+  footprint: 2X20_P2.54mm
   pin_count: 40
-  nc_pins: {GPIO2: '3', GPIO3: '5', GPIO14: '8', GND@9: '9', GPIO15: '10', GPIO18: '12', GND@14: '14', 3.3V@17: '17', GND@20: '20', GPIO9: '21', GPIO25: '22', GPIO11: '23', GPIO8: '24', GND@25: '25', GPIO7: '26', GPIO0: '27', GPIO1: '28', GPIO5: '29', GND@30: '30', GPIO6: '31', GPIO12: '32', GPIO13: '33', GND@34: '34', GPIO19: '35', GPIO16: '36', GPIO26: '37', GPIO20: '38', GND@39: '39', GPIO21: '40'}
+  nc_pins: {GPIO2: '3', GPIO3: '5', GPIO14: '8', GND@9: '9', GPIO15: '10', GPIO18: '12', GND@14: '14', 3.3V@17: '17', GND@20: '20',
+    GPIO9: '21', GPIO25: '22', GPIO11: '23', GPIO8: '24', GND@25: '25', GPIO7: '26', GPIO0: '27', GPIO1: '28', GPIO5: '29',
+    GND@30: '30', GPIO6: '31', GPIO12: '32', GPIO13: '33', GND@34: '34', GPIO19: '35', GPIO16: '36', GPIO26: '37', GPIO20: '38',
+    GND@39: '39', GPIO21: '40'}
 - ref: J2
   value: 1x2 screw terminal
   footprint: MX5-2P-BK

@@ -18,35 +18,44 @@ components:
 - ref: C10
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
 - ref: C17
   value: 10nF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 10%
   prod_id: CAP-00867
 - ref: C3
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U3
 - ref: C4
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
 - ref: C5
   value: 100uF
   footprint: PANASONIC_D
+  voltage: 25V
   prod_id: CAP-12547
 - ref: C6
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
 - ref: C7
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
 - ref: C8
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
 - ref: D1
   value: green LED
@@ -68,7 +77,9 @@ components:
   footprint: 2X20
   description: Raspberry Pi GPIO Header
   pin_count: 40
-  nc_pins: {GP4: '7', GP17: '11', GP18#: '12', GP27: '13', GP22: '15', GP23: '16', GP24: '18', MOSI: '19', MISO: '21', GP25: '22', SCLK: '23', CE0: '24', CE1: '26', ID_SD: '27', ID_SC: '28', GP5: '29', GP6: '31', GP12: '32', GP13: '33', GP19: '35', GP16: '36', GP26: '37', GP20: '38', GP21: '40'}
+  nc_pins: {GP4: '7', GP17: '11', GP18#: '12', GP27: '13', GP22: '15', GP23: '16', GP24: '18', MOSI: '19', MISO: '21', GP25: '22',
+    SCLK: '23', CE0: '24', CE1: '26', ID_SD: '27', ID_SC: '28', GP5: '29', GP6: '31', GP12: '32', GP13: '33', GP19: '35',
+    GP16: '36', GP26: '37', GP20: '38', GP21: '40'}
 - ref: J10
   value: 1x3 header
   footprint: 1X03
@@ -255,98 +266,118 @@ components:
 - ref: R1
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
 - ref: R10
   value: 5.1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-12083
   pulldown: CC2
 - ref: R11
   value: 5.1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-12083
   pulldown: CC1
 - ref: R12
   value: 330ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00818
 - ref: R13
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pulldown: Q8.G$1.B
 - ref: R14
   value: 47kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07871
   pulldown: Q10.G$2.C
 - ref: R15
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pulldown: Q10.G$1.B
 - ref: R16
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
-  pullup: D2.A
 - ref: R17
   value: 240ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07849
 - ref: R18
   value: 240ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07849
 - ref: R19
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
 - ref: R2
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
 - ref: R20
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pulldown: RVR-5V
 - ref: R21
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pulldown: USB-5V
 - ref: R3
   value: 47kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07871
   pulldown: Q2.G
 - ref: R4
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
 - ref: R5
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
 - ref: R6
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pulldown: Q3.G$1.B
 - ref: R7
   value: 47kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07871
   pulldown: Q5.G
 - ref: R8
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pulldown: Q6.G$1.B
 - ref: R9
   value: 47kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07871
   pulldown: Q7.G
 - ref: S1
@@ -387,46 +418,45 @@ nets:
   - Q4.G
   - R12.2
   - R16.2
-  - TP22.1
   - U3.VCC
 - name: CC1
   pins: [J20.CC1, R11.2]
 - name: CC2
   pins: [J20.CC2, R10.2]
 - name: CH0
-  pins: [J3.3, TP0.1, U1.CH0]
+  pins: [J3.3, U1.CH0]
 - name: CH1
-  pins: [J4.3, TP1.1, U1.CH1]
+  pins: [J4.3, U1.CH1]
 - name: CH10
-  pins: [J13.3, TP10.1, U1.CH10]
+  pins: [J13.3, U1.CH10]
 - name: CH11
-  pins: [J14.3, TP11.1, U1.CH11]
+  pins: [J14.3, U1.CH11]
 - name: CH12
-  pins: [J15.3, TP12.1, U1.CH12]
+  pins: [J15.3, U1.CH12]
 - name: CH13
-  pins: [J16.3, TP13.1, U1.CH13]
+  pins: [J16.3, U1.CH13]
 - name: CH14
-  pins: [J17.3, TP14.1, U1.CH14]
+  pins: [J17.3, U1.CH14]
 - name: CH15
-  pins: [J18.3, TP15.1, U1.CH15]
+  pins: [J18.3, U1.CH15]
 - name: CH2
-  pins: [J5.3, TP2.1, U1.CH2]
+  pins: [J5.3, U1.CH2]
 - name: CH3
-  pins: [J6.3, TP3.1, U1.CH3]
+  pins: [J6.3, U1.CH3]
 - name: CH340-TXO
-  pins: [D1.C, S1.O, TP23.1, U3.TXO]
+  pins: [D1.C, S1.O, U3.TXO]
 - name: CH4
-  pins: [J7.3, TP4.1, U1.CH4]
+  pins: [J7.3, U1.CH4]
 - name: CH5
-  pins: [J8.3, TP5.1, U1.CH5]
+  pins: [J8.3, U1.CH5]
 - name: CH6
-  pins: [J9.3, TP6.1, U1.CH6]
+  pins: [J9.3, U1.CH6]
 - name: CH7
-  pins: [J10.3, TP7.1, U1.CH7]
+  pins: [J10.3, U1.CH7]
 - name: CH8
-  pins: [J11.3, TP8.1, U1.CH8]
+  pins: [J11.3, U1.CH8]
 - name: CH9
-  pins: [J12.3, TP9.1, U1.CH9]
+  pins: [J12.3, U1.CH9]
 - name: D+
   pins: [J20.D+, U3.UD+]
 - name: D-
@@ -484,7 +514,6 @@ nets:
   - R7.1
   - R8.1
   - R9.1
-  - TP17.1
   - U1.!OE
   - U1.EXTCLK
   - U1.VSS
@@ -507,9 +536,9 @@ nets:
 - name: G_2_C_4
   pins: [Q10.G$2.C, Q9.G, R14.2]
 - name: LV_SCL
-  pins: [J1.SCL, J19.4, Q1.S, R4.1, TP18.1]
+  pins: [J1.SCL, J19.4, Q1.S, R4.1]
 - name: LV_SDA
-  pins: [J1.SDA, J19.3, Q4.S, R5.1, TP19.1]
+  pins: [J1.SDA, J19.3, Q4.S, R5.1]
 - name: N$2
   pins: [JP3.3, R4.2]
 - name: N$20
@@ -534,13 +563,12 @@ nets:
   - R18.2
   - R19.2
   - R2.2
-  - TP24.1
   - U1.VDD
   - U2.G2.P$V+
 - name: PI-RXI
-  pins: [J1.RXI, S1.P, TP26.1]
+  pins: [J1.RXI, S1.P]
 - name: PI-TXO
-  pins: [D2.C, J1.TXO, J21.1, TP20.1, U3.RXI]
+  pins: [D2.C, J1.TXO, J21.1, U3.RXI]
 - name: Q1_B
   pins: [Q11.Q1.B, Q11.Q2.C, R18.1]
 - name: Q1_C
@@ -555,10 +583,9 @@ nets:
   - Q7.D
   - Q8.G$1.E
   - R20.2
-  - TP25.1
   - U2.G1.A
 - name: RVR-TXO
-  pins: [J21.2, S1.S, TP21.1]
+  pins: [J21.2, S1.S]
 - name: SCL
   pins: [Q1.D, R2.1, U1.SCL]
 - name: SDA
@@ -588,7 +615,6 @@ nets:
   - Q3.G$2.E
   - Q5.S
   - Q6.G$2.E
-  - TP16.1
 - name: USB-5V
   pins:
   - F2.2

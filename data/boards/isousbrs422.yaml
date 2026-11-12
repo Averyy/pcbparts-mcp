@@ -2,8 +2,8 @@ name: isoUSBRS422
 slug: isousbrs422
 source: alperyazar/isoUSBRS422
 format: kicad_legacy
-description: "Galvanic isolation: FT230X USB-UART + ADM2682E isolated RS-422/485, integrated isolated DC-DC power"
-tags: [isolation, power-supply, usb]
+description: 'Galvanic isolation: FT230X USB-UART + ADM2682E isolated RS-422/485, integrated isolated DC-DC power'
+tags: [isolation, level-shifting, power-supply, usb]
 key_ics: [FT230X, SN74LVC2T45, ADM2682E]
 outline:
   width_mm: 49.78

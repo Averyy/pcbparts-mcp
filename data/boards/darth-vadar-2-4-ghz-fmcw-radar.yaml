@@ -49,6 +49,7 @@ components:
   height: 0.58mm
   manufacturer: ANAREN
   mpn: PD2425J5050S2HF
+  mouser: 620-PD2425J5050S2HF
   pin_count: 6
 - ref: IC2
   value: BGS12PN10
@@ -57,6 +58,7 @@ components:
   height: 0.4mm
   manufacturer: Infineon
   mpn: BGS12PN10E6327XTSA1
+  mouser: 726-BGS12PN10E6327XT
   pin_count: 10
   nc_pins: {N.C.: '5'}
 - ref: IC3
@@ -66,20 +68,24 @@ components:
   height: 0.4mm
   manufacturer: Infineon
   mpn: BGS12PN10E6327XTSA1
+  mouser: 726-BGS12PN10E6327XT
   pin_count: 10
   nc_pins: {N.C.: '5'}
 - ref: J1
   value: 1x2 header
   footprint: 10X02MTA
   description: AMP connector
+  mpn: MTA02-100
 - ref: J2
   value: 1x2 header
   footprint: 10X02MTA
   description: AMP connector
+  mpn: MTA02-100
 - ref: J3
   value: 1x2 header
   footprint: 10X02MTA
   description: AMP connector
+  mpn: MTA02-100
 - ref: L1
   value: MS85
   footprint: MS85
@@ -96,12 +102,15 @@ components:
   height: 0.9mm
   manufacturer: Infineon
   mpn: BGA622H6820XTSA1
+  mouser: 726-BGA622H6820XTSA1
   pin_count: 4
 - ref: LNA_IN
   value: SMA-
   footprint: J502-ND-142-0711-821
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0711-821
+  farnell: '1019328'
+  newark: 16F3627
   description: SMA 50 Ohm
   pin_count: 5
 - ref: LO_IN
@@ -116,6 +125,8 @@ components:
   footprint: J502-ND-142-0711-821
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0711-821
+  farnell: '1019328'
+  newark: 16F3627
   description: SMA 50 Ohm
   pin_count: 5
 - ref: OUT_2
@@ -123,6 +134,8 @@ components:
   footprint: J502-ND-142-0711-821
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0711-821
+  farnell: '1019328'
+  newark: 16F3627
   description: SMA 50 Ohm
   pin_count: 5
 - ref: R1
@@ -139,7 +152,7 @@ components:
   pin_count: 4
 - ref: U1
   value: MAX2750
-  footprint: SOP-8
+  footprint: SOP65P490X110-8N
   description: 2.4GHz ISM-band VCO
   manufacturer: Maxim Integrated
   mpn: MAX2750EUA+
@@ -149,6 +162,8 @@ components:
   footprint: J502-ND-142-0711-821
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0711-821
+  farnell: '1019328'
+  newark: 16F3627
   description: SMA 50 Ohm
   pin_count: 5
 - ref: X7
@@ -156,6 +171,8 @@ components:
   footprint: J502-ND-142-0711-821
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0711-821
+  farnell: '1019328'
+  newark: 16F3627
   description: SMA 50 Ohm
   pin_count: 5
 nets:
@@ -187,15 +204,12 @@ nets:
   - LO_IN.GND
   - OUT_1.2
   - OUT_2.2
-  - TP4.TP
   - U$1.GND
   - U$2.GND
   - U1.GND
   - U1.GND@1
   - X6.2
   - X7.2
-- name: IF
-  pins: [IF_OUT.TP, U$1.IF]
 - name: LNA_OUT
   pins: [C6.2, IC3.ANT]
 - name: LO
@@ -207,7 +221,7 @@ nets:
 - name: N$7
   pins: [C4.1, LNA_IN.1]
 - name: N$9
-  pins: [C6.1, L2.2, LNA.OUT]
+  pins: [C6.1, LNA.OUT]
 - name: OUTPUT_1
   pins: [IC1.OUTPUT_1, OUT_2.1, R1.1]
 - name: OUTPUT_2
@@ -240,11 +254,7 @@ nets:
   - J2.1
   - J3.1
   - L1.2
-  - L2.1
   - LNA.VCC
-  - TP1.TP
-  - TP2.TP
-  - TP3.TP
   - U1.VCC1
   - U1.VCC2
 - name: VCO

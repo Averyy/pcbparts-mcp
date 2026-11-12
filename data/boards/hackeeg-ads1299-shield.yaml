@@ -274,7 +274,6 @@ components:
 - ref: IC2
   value: TPS72325DBVT
   footprint: SOT-23-5
-  description: Cap-Free, NMOS, 250mA Low Dropout Regulator with Reverse Current Protection
   pin_count: 5
 - ref: IC3
   value: TPS73225DBVT
@@ -285,7 +284,9 @@ components:
   value: 24AA256UID
   footprint: SO-08
   manufacturer: MICROCHIP
-  mpn: 24LCS52-I/SN
+  mpn: 24AA256UID
+  farnell: '9757996'
+  newark: 27C9144
   description: EEPROM
   pin_count: 8
 - ref: IC6
@@ -307,6 +308,7 @@ components:
   value: TXS0102
   footprint: VFSOP-8
   description: 2-Bit Bi-Directional Level Shifter (I2C, etc.)
+  mpn: TXS0102DCUR
   pin_count: 8
 - ref: JP1
   value: 2x12 header
@@ -315,11 +317,12 @@ components:
 - ref: JP15
   value: External Sync
   footprint: JST-4-PTH
+  prod_id: PRT-09916
   pin_count: 4
 - ref: JP16
   value: Electrodes
   footprint: OST_302-R241
-  description: Conn Socket Strip SKT 24 POS 2
+  description: Conn Socket Strip SKT 24 POS 2.54mm Solder RA Thru-Hole
   manufacturer: On Shore
   mpn: 302-R241
   pin_count: 24
@@ -346,7 +349,9 @@ components:
   value: 2x18 header
   footprint: 2X18
   pin_count: 36
-  nc_pins: {'1': '1', '2': '2', '3': '3', '9': '9', '10': '10', '15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '23': '23', '24': '24', '25': '25', '26': '26', '30': '30', '31': '31', '32': '32', '34': '34'}
+  nc_pins: {'1': '1', '2': '2', '3': '3', '9': '9', '10': '10', '15': '15', '16': '16', '17': '17', '18': '18', '19': '19',
+    '20': '20', '21': '21', '22': '22', '23': '23', '24': '24', '25': '25', '26': '26', '30': '30', '31': '31', '32': '32',
+    '34': '34'}
 - ref: JP24
   value: 1x8 header
   footprint: 1X08

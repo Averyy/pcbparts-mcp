@@ -18,34 +18,34 @@ components:
 - ref: C1
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-00810
   voltage: 25V
   tolerance: 20%
+  prod_id: CAP-00810
 - ref: C2
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-00810
   voltage: 25V
   tolerance: 20%
+  prod_id: CAP-00810
 - ref: C3
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-00810
   voltage: 25V
   tolerance: 20%
+  prod_id: CAP-00810
   decouples: U1
 - ref: C4
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-00810
   voltage: 25V
   tolerance: 20%
+  prod_id: CAP-00810
 - ref: C5
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-00810
   voltage: 25V
   tolerance: 20%
+  prod_id: CAP-00810
   decouples: U1
 - ref: JP2
   value: 1x10 header
@@ -54,6 +54,7 @@ components:
 - ref: U1
   value: MAX3232
   footprint: SOIC-16
+  prod_id: IC-08171
   description: RS232 Transceiver
   pin_count: 16
 nets:

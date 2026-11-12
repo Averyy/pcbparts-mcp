@@ -4,87 +4,80 @@
 
 ## Quick Reference
 
-- **LDO only when dropout < 1V and Iout < 300mA.** At 12V-to-3.3V an LDO is 27.5% efficient -- use a buck (93% sync) or buck-then-LDO hybrid.
-- **Power budget every rail before selecting parts.** A 500mA/3.3V buck feeding a 1.1A-rated LDO cannot deliver the LDO's max 2.75W -- works at low speed, fails under full processor load.
-- **Sequence core -> auxiliary -> I/O.** Reversed sequence causes latch-up (immediate) or ESD stress on unpowered I/O (cumulative degradation).
-- **Design traces and vias for peak inrush, not steady-state.** 100uF on 1.8V without slew control: 6.5A inrush, 82% rail sag.
-- **4-switch buck-boost for Li-ion to 3.3V.** Battery spans 3.0-4.2V across Vout -- neither buck nor boost works alone. Up to 98% efficiency.
+- **Choose an LDO from loss, dropout and transient budgets, not a fixed current cutoff.** 12V-to-3.3V gives at most 27.5% efficiency before quiescent current; use a buck or hybrid when that loss exceeds the thermal budget [2, pp.2-3].
+- **Power budget every rail before selecting parts.** ADI's 500mA/3.3V ADP5304 cannot supply a 1.1A load through the LT1965; subtract other 3.3V loads and LDO ground current from that 500mA first [3, Power Budgeting].
+- **Use the processor's specified power-up and power-down sequence.** Core -> auxiliary -> I/O is AN-1311's Spartan-3A example, not a universal FPGA/processor requirement [4, p.1].
+- **Validate inrush with the actual source and output capacitance.** TI measured 6.46A and 82% sag when switching 100uF onto its already-powered 1.8V buck rail with 66uF output capacitance [7, pp.10-11].
+- **Use buck-boost when the required input range crosses the output voltage.** ADI's LTC3114-1 example regulates 3.3V; choose from efficiency curves at the actual input and load [6, Figure 6].
 
 ## Design Rules
 
 ### Topology Selection
 
-- **If LDO efficiency < 50%, switch to a buck.** 12V-to-3.3V LDO = 27.5% efficient. 3.3V-to-2.5V = 75.8%. Threshold is clear -- anything above 1.5x dropout-to-Vout ratio needs a switcher.
-- **Buck 12V to 3.3V synchronous at 10A: ~93% efficiency.** Diode (non-sync) buck loses ~3.6W in the freewheeling diode alone at 10A; sync buck replaces it with a 10mohm FET losing 0.73W. Always use sync buck above 1A.
-- **SIMO (single-inductor multiple-output) for ultra-compact multi-rail.** MAX17270: 3 regulated outputs from one inductor. Best for wearables/IoT where board area is critical and per-rail current is low. Not suitable for high transient loads -- shared inductor limits per-channel response.
-- **LDO for noise-sensitive rails.** 2.5V CMOS VIL = 0.7V, 1.8V CMOS VIL = 0.63V. After -10% supply tolerance: 0.63V and 0.57V margins. Switching noise (tens to hundreds of mV) can violate these thresholds. Buck-then-LDO hybrid solves both efficiency and noise.
-  - Low-noise analog/PLL: LT3045/LT3042 (ADI, ultralow noise with VIOC to minimize LDO headroom).
-  - General 3.3V from 5V: ADP125 (ADI, 500mA, SOT-23-5) or ADP1740 (ADI, 2A).
+- **Small input-output headroom can favor an LDO, including at light load.** At 3.3V-to-2.5V, efficiency approaches 75.8% when ground current is negligible; compare with the switcher's efficiency at the same load, then verify worst-case dropout and heat -> `power/ldo.md` [2, pp.2-3].
+- **AN-140's 12V-to-3.3V/10A synchronous example reaches about 93% at 200-500kHz.** Its loss model assumes 10mohm FETs and 2mohm inductor DCR: replacing a 0.5V freewheel diode reduces that conduction term from 3.625W to 0.725W, ignoring ripple. This is an example, not a guaranteed efficiency or a universal 1A topology boundary [2, pp.5-7].
+- **SIMO for compact multi-rail supplies:** MAX17270 provides three outputs from one inductor. Verify simultaneous load and transient requirements because outputs share that inductor; shared inductance alone does not rule out all high-transient applications [6, Figure 4 and Table 4].
+- **Size post-regulation from the load's supply-noise specification and the LDO's PSRR at the ripple frequency.** A logic input VIL limit is not an allowable supply-ripple specification; it depends on the receiver, driver VOL and ground noise [1, Switching Noise and Multirail PSU Caveats and Tips; 8, p.18].
+  - Low-noise analog/PLL: LT3045/LT3042; verify headroom and noise rejection for the operating point -> `power/ldo.md` [1, Multirail PSU Caveats and Tips].
+  - General 3.3V from 5V: ADP125 (500mA, 8-lead exposed-pad MSOP or LFCSP), not a SOT-23 footprint [9, p.1].
 
 ### Hybrid Topologies
 
-- **Buck then LDO: maximize efficiency, minimize noise.** Buck handles the large voltage step at >90% efficiency. LDO cleans ripple with minimal dropout.
-- **VIOC (voltage input-to-output control) eliminates wasted LDO headroom.** LT3070-1 regulates the upstream buck output to maintain only 85mV dropout. At 3A: 255mW dissipation vs 1.2W for a typical 400mV-dropout LDO -- nearly 5x reduction.
-- **Silent Switcher bucks may eliminate the post-LDO entirely.** LT8650S, LTC3310S: low EMI, small footprint. Evaluate output ripple vs load VIL requirements before adding an LDO stage.
-- **Quad-buck single-chip for FPGA/processor rails.** ADP5054: 17A total in 7mm * 7mm. Full solution ~41mm * 20mm. Replaces 4 discrete regulators plus sequencing glue.
-- **Power modules for extreme density.** LTM4700 uModule: up to 100A from 15mm * 22mm. Higher BOM cost but drastically reduced design effort and risk.
+- **Buck then LDO: budget headroom for rejection and transient response as well as dropout.** A stage barely above dropout need not deliver its advertised PSRR; LT3070-1 uses greater VIOC headroom for these reasons [8, p.18].
+- **LT3070-1 VIOC maintains 300mV typical input-output headroom (250-350mV specified).** Its 85mV typical dropout is specified at 5A, VOUT=1V, VBIAS=2.5V and 25 degrees C, not the VIOC target. At 3A, 300mV contributes 0.9W pass-element loss, excluding ground and bias supply power; compensate the coupled buck/LDO loop [8, pp.3-4, 18].
+- **Silent Switcher bucks can avoid a post-LDO when they meet the load's supply-noise budget.** LT8650S and LTC3310S are examples; evaluate ripple and transients at the load rather than comparing supply ripple directly with VIL [1, footnote 2].
+- **Quad-buck single-chip for FPGA/processor rails.** ADI's ADP5054 example supplies 17A total in 7mm * 7mm, with a full solution about 41mm * 20mm. The total is shared across channels, not available from each output [1, Package, Power, Cost, Efficiency, and Performance Trade-Offs].
+- **Power module example:** LTM4700 supplies up to 100A from 15mm * 22mm; check the module's operating-condition and thermal limits rather than treating package area as a power guarantee [1, Package, Power, Cost, Efficiency, and Performance Trade-Offs].
 
 ### Power Budgeting
 
-- **Work backward from every load.** Enumerate all loads per rail including pull-ups, LEDs, and dividers. Ten 4.7kohm pull-ups on 3.3V = 7mA. Twenty LEDs at 5mA = 100mA. These push marginal regulators into overcurrent.
-- **Multiply efficiencies at each cascaded stage.** A buck (90%) feeding an LDO (76%) for 3.3V to 2.5V: overall 68.4%. See Formulas section for calculation.
-- **Verify no cascaded stage exceeds upstream capacity.** ADP5304 buck at 500mA/3.3V = 1.65W max output. Downstream LT1965 LDO rated 1.1A at 2.5V = 2.75W demand. System works at light load, fails under full processor load when PSU1 current-limits or shuts down.
-- **Sleep current budget for battery systems.** Discrete design with 5 regulators at 10uA Iq each = 50uA total. PMIC with shared bias: lower total Iq. Matters when sleep target is < 10uA.
-- **Use LTpowerPlanner to visualize rail hierarchy.** Catches cascading capacity violations before component selection. Free tool, generates power tree diagram.
+- **Work backward from every load.** Include pull-ups, LEDs and dividers, and use their maximum active current; a pull-up's full V/R current is drawn when its line is held low, not continuously in every logic state [3, Power Budgeting].
+- **Verify current as well as power at cascaded stages.** ADI's ADP5304 at 500mA/3.3V provides 1.65W shared by its direct loads and the LT1965 input. An LDO passes approximately its load current, so a 1.1A/2.5V load (2.75W) cannot be supported even before considering the LDO's loss [3, Figure 2].
+- **Check PMIC quiescent current in the actual operating mode.** Shared bias can reduce duplicated circuitry, but the integrated and discrete solutions must be compared with the same enabled rails and sleep requirements [5, pp.2-3].
+- **Use LTpowerPlanner to visualize rail hierarchy.** Include direct and downstream loads on each source rail before selecting regulators [3, Power Budgeting, Figure 3].
 
 ### Sequencing
 
-- **Typical FPGA/processor: VCCINT -> VCCAUX -> VCCO.** Always check device datasheet -- sequence varies by family. Xilinx Spartan-3A has internal POR but still benefits from staggered inrush.
-- **Passive RC delay on enable pins: X5R varies +/-15% over temperature plus +/-10% DC bias.** A sequence that works at 25C can swap order at -20C or +85C, causing latch-up.
-- **Precision enable (ADP5134): +/-3% threshold accuracy.** Internal 0.97V reference, 80mV hysteresis. Connect attenuated output of regulator N to enable pin of regulator N+1 via resistor divider. Only 2 external resistors per channel.
-- **Dedicated sequencer ICs (ADM1184): +/-0.8% accuracy.** Use when >2-3 rails need coordinated sequencing, or when regulators lack precision enable pins. ADM1186 adds programmable timing.
+- **Check the exact processor's sequencing requirements and attached I/O circuits.** AN-1311's Spartan-3A example uses VCCINT -> VCCAUX -> VCCO to limit inrush and meet connected-circuit requirements despite internal POR; other devices require different orders -> `mcus/fpga.md` [4, p.1].
+- **Passive RC delays require worst-case capacitor and enable-threshold analysis.** X5R specifies +/-15% temperature change over -55 to +85 degrees C, not a +/-10% bias limit. Include the exact capacitor's bias curve and regulator EN threshold corners; RC delay is not rail-good feedback [4, p.3; 10, Table 1 and Choosing the Right Capacitor].
+- **Precision enable (ADP5134): +/-3% over input voltage and temperature.** Its threshold is 0.97V typical with 80mV typical hysteresis. Connect attenuated output of regulator N to enable pin of regulator N+1 via two resistors per channel; keep these tolerances in the release-voltage budget [4, pp.4-5].
+- **Dedicated sequencer ICs:** ADM1184 offers +/-0.8% monitoring accuracy over voltage and temperature; ADM1186 adds programmable timing. Use them when the timing/monitoring requirements exceed the regulators' enable capabilities, without a universal rail-count cutoff [4, p.6].
 
 ### Inrush Current Management
 
-- **Uncontrolled inrush damages traces, blows vias, collapses rails.** 100uF on 1.8V: 6.5A peak, rail drops from 1.8V to 320mV (82% sag). Other modules on that rail will reset.
-- **Load switches for hot-plugged or high-capacitance loads.** Slew-rate-controlled TPS229xx family. Multiple load switches can individually gate capacitive loads on a single rail -- cheaper than multiple regulators.
-- **Load switch rise time suffixes (TI TPS229xx):** A = fastest (<10us), B = ~100us, C = ~800us, D = ~9ms. Adjustable CT pin on TPS22965 allows custom rise time via external capacitor.
-- **Discrete inrush limiter: minimum 4 components** (2 MOSFETs, 2 resistors). R_SR in Mohm range to control slew. Prefer integrated load switches when current rating allows.
+- **Size slew control with the source's transient response.** TI's 6.46A peak, which pulled the 1.8V rail down to 320mV (an 82% drop), belongs to its 1.8V buck/66uF source and switched 100uF load; a different source impedance or switch gives different peak current and sag [7, pp.10-11].
+- **Load switches for hot-plugged or high-capacitance loads:** TPS22965 has an adjustable CT pin; individual switches can gate capacitive loads on a shared rail [7, pp.6, 8-9].
+- **Rise-time suffixes are device-specific.** TI's TPS22924 example has B/C/D rise times of 96us/800us/9ms. TPS22902B is 146us typical at 3.3V, so the letter B does not establish a family-wide timing value; check minimum timing and the actual output ramp [7, pp.7-8].
+- **TI's Figure 5 discrete limiter uses two MOSFETs and two resistors.** Its R_SR is in the Mohm range; an added capacitor reduces the required resistor. This is one implementation, not a minimum component count for every limiter [7, p.5].
 
 ### PMIC vs Discrete
 
-- **Discrete advantage: flexibility.** Need a 5th rail? Add one regulator. Need 3A instead of 2A? Swap one IC. But each rail needs: 2 feedback resistors, soft-start cap, EN/PGOOD pull-up/down, compensation network, sequencing glue.
-- **PMIC advantage: integration.** Automatic sequencing, single PGOOD/nPOR, fault handling, DVS via I2C -- all without external glue. Lower total Iq from shared bias.
+- **Compare the actual external components and sequencer functions.** TI's LP8732-Q1 comparison integrates four rails and sequencing; discrete regulator designs do not all need external compensation, soft-start capacitors or feedback resistors [5, pp.2-3].
+- **PMIC integration depends on the selected part and programming.** Verify sequencing, reset, fault response and DVS functions rather than assuming all PMICs provide them without external logic [5, pp.4-8].
 
 | PMIC Type | Configuration | Best For |
 |-----------|--------------|----------|
 | Externally configurable | Resistor-set voltages | Simple multi-rail without MCU |
-| Software configurable (I2C) | Volatile -- reprogram every startup | Systems with MCU already present |
-| Factory-programmed | Pre-set for specific processor | Matched processor (e.g., TPS65218D0 for AM335x) |
-| User-programmable (EEPROM/OTP) | Program once, retains settings | Flexible multi-processor (TPS6521815 for i.MX, Xilinx, Intel) |
+| Software configurable (I2C) | TI's configurable examples store changes in volatile registers; reapply after power loss | A controller is available for startup configuration [5, p.6] |
+| Factory-programmed | Pre-set for a specific processor | TPS65218D0 for AM335x/AM437x [5, p.7] |
+| User-programmable (EEPROM/OTP) | Nonvolatile configuration; rewrite capability depends on EEPROM vs OTP | TPS6521815 for supported i.MX, FPGA and SoC power trees [5, p.7] |
 
-- **DVS (dynamic voltage scaling) via PMIC:** centralized I2C control of rail voltages. Discrete DVS requires additional transistors + resistors per rail to switch feedback dividers.
-- **Hybrid PMIC + discrete is valid.** Use PMIC for core rails with sequencing, add a discrete buck for a 5th rail or higher-current demand. LP8732-Q1 (quad PMIC) + single external buck is common.
+- **DVS:** TI's discrete example switches feedback-divider resistors with transistors; its PMIC example changes voltages through registers. These are implementation examples, not requirements for every discrete regulator [5, pp.4-5].
+- **Hybrid PMIC + discrete is valid.** TI illustrates LP8732-Q1 plus an external converter for a fifth rail, avoiding a larger PMIC selected solely for that extra output [5, p.4, Figure 4].
 
 ## Common Mistakes
 
-- **LDO in SOT-23 for large voltage drop.** 12V to 3.3V at 100mA = 870mW. SOT-23 max ~260mW. Package fails thermally before hitting current limit -- no overcurrent protection triggers. Fix: buck converter, or buck-then-LDO hybrid.
-- **Via stitching undersized for power.** Standard via handles ~1A. A single via connecting regulator output to power plane acts as a fuse at inrush current. Failure is invisible -- via opens under a component, hard to see or probe. Fix: 3 vias minimum for 2A with margin.
-- **No PGOOD monitoring on critical rails.** System boots into undefined state if a rail fails to reach target. MCU starts executing with core powered but I/O rail still ramping -- undefined GPIO states can latch up external devices. Fix: tie PGOOD to processor reset, or use PMIC with integrated sequencing.
-- **Power budget ignores cascaded efficiency.** A 10W buck fed from an 85%-efficient upstream converter needs 11.8W input -- but the upstream stage was sized for 10W because the designer only budgeted the final stage. System works at 80% load, brownouts at 100% when the upstream hits its current limit. Fix: multiply each stage's input power = P_out / eta, working backward from load to source. A 3-stage chain at 90%/85%/92% delivers only 70.4% wall-to-load.
-- **Switching noise false-triggers 1.8V CMOS logic.** 1.8V CMOS VIL = 0.63V. After -10% tolerance = 0.57V. Switching noise of 200-400mV puts signals into indeterminate region. Fix: buck-then-LDO for 1.8V and 2.5V rails, or use Silent Switcher bucks.
+- **Assuming a SOT-23 package has a universal 260mW limit.** LDO dissipation depends on the selected part, local ambient and the assembled board's thermal path; thermal shutdown also differs from current limiting. Check the package/board model -> `guides/thermal.md` [2, Linear Regulator Power Loss; 3, Avoid Overheating].
+- **Treating a via as a universal 1A conductor.** ADI's two-via minimum (three preferred) assumes vias already rated for 1A in that board; plating, hole size, layer and allowed temperature rise change capacity -> `guides/pcb-layout.md` [3, Vias and Stitching].
+- **A timed enable chain releases the processor even if a rail never starts.** Use monitored rail-good signals or a sequencer/reset circuit that remains asserted on a failed supply; distinguish a delay from verified regulation -> `protection/voltage-supervisor.md` [4, pp.3, 6; 5, p.5].
+- **Budgeting upstream output power without downstream conversion loss.** Refer each downstream load to the upstream output using that downstream stage's efficiency; apply the upstream efficiency only when calculating its own input demand. Include shared direct loads [3, Power Budgeting].
 
 ## Formulas
 
 **Inrush current:**
-**Rule of thumb:** 100uF at 3.3V with fast turn-on: >3A inrush. Load switch reduces by 4-7x.
-**Formula:** I_inrush = C_load * dV / dt
-**Example:** 22uF, 3.3V, target max 600mA -> dt = 22uF * 3.3V / 600mA = 121us minimum rise time. Select TPS22902B (146us typ) or TPS22924C (800us).
-
-**Cascaded efficiency:**
-**Rule of thumb:** Two 90%-efficient stages = 81% overall. Three = 72.9%.
-**Formula:** eta_total = eta_1 * eta_2 * ... * eta_n
-**Example:** 12V wall -> buck (90%) -> LDO (76%) for 3.3V to 2.5V. Overall = 68.4%. Input power for 500mA at 2.5V: 1.25W / 0.684 = 1.83W from wall.
+**Rule of thumb:** Budget capacitor charging plus the load's startup current; use maximum effective capacitance and the fastest actual ramp, not just typical 10%-90% rise time [7, pp.2, 7-9; 11, p.19, Figure 8-1].
+**Formula:** I_switch(t) = C_load * dV_out/dt + I_load(t); for a linear full-swing ramp, dt_min = C_load * delta_V / (I_limit - I_load).
+**Example:** TI's 22uF/3.3V example with zero load current and a 600mA charging budget needs a linear full-swing dt >= 121us. TPS22902B's 146us is typical 10%-90% timing, not a guaranteed minimum full-swing ramp; verify the minimum timing, capacitor tolerance, ramp shape and startup load [7, p.7; 11, p.19, Figure 8-1].
 
 ## Sources
 
@@ -97,9 +90,13 @@
 ### References
 
 1. ADI -- Multirail Power Supply Design Part 1: Strategy: https://www.analog.com/en/resources/analog-dialogue/articles/multirail-power-supply-design-for-successful-application-boards-part1.html
-2. ADI AN-140 -- Linear vs Switching Regulators: https://www.analog.com/en/resources/app-notes/an-140.html
+2. ADI AN-140 -- Basic Concepts of Linear Regulator and Switching Mode Power Supplies (Rev.C, October 2013): https://www.analog.com/media/en/technical-documentation/app-notes/an140.pdf
 3. ADI -- Multirail Power Supply Design Part 2: Power Budgeting + Layout: https://www.analog.com/en/resources/analog-dialogue/articles/multirail-power-supply-design-for-successful-application-boards-part2.html
-4. ADI AN-1311 -- Power Supply Sequencing: https://www.analog.com/en/resources/app-notes/an-1311.html
-5. TI SLDA039B -- PMIC Power Management Design Guide: https://www.ti.com/lit/sg/slda039b/slda039b.pdf
+4. ADI AN-1311 -- Complex Power Supply Sequencing Made Easy (Rev.0, August 2014): https://www.analog.com/media/en/technical-documentation/app-notes/an-1311.pdf
+5. TI SLDA039B -- How to Design Flexible Processor Power Systems Using PMICs (revised January 2020): https://www.ti.com/lit/sg/slda039b/slda039b.pdf
 6. ADI -- Supply Topology Selection for Processors/MCUs: https://www.analog.com/en/resources/technical-articles/supply-topology-high-power.html
-7. TI SLVA670A -- Managing Inrush Current: https://www.ti.com/lit/an/slva670a/slva670a.pdf
+7. TI SLVA670A -- Managing Inrush Current (revised May 2015): https://www.ti.com/lit/an/slva670a/slva670a.pdf
+8. ADI -- LT3070-1 datasheet (Rev.0): https://www.analog.com/media/en/technical-documentation/data-sheets/lt3070-1.pdf
+9. ADI -- ADP124/ADP125 datasheet (Rev.D, December 2014): https://www.analog.com/media/en/technical-documentation/data-sheets/adp124_125.pdf
+10. ADI Tutorial 5527 -- Temperature and Voltage Variation of Ceramic Capacitors (2012-12-04): https://www.analog.com/en/resources/technical-articles/temperature-and-voltage-variation-ceramic-capacitor.html
+11. TI -- TPS22901/TPS22902/TPS22902B datasheet (SLVS803E, September 2020): https://www.ti.com/lit/ds/symlink/tps22902.pdf

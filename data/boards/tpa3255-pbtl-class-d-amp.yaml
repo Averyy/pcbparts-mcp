@@ -193,14 +193,14 @@ components:
   footprint: AC3FAH2-F-XLR
   pin_count: 4
 - ref: J3
-  value: 1x2 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08
+  value: 1x2 5.08mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02
 - ref: J4
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 1.27mm header
+  footprint: 1X2_P1.27mm
 - ref: J5
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 1.27mm header
+  footprint: 1X2_P1.27mm
 - ref: J6
   value: AC3MAH-AU-PRE
   footprint: AC3MAH-AU-PRE_AMP
@@ -324,7 +324,6 @@ components:
 - ref: R3
   value: 10kohm
   footprint: 0805
-  pulldown: D3.A1
 - ref: R30
   value: 30kohm
   footprint: 0805
@@ -347,7 +346,6 @@ components:
 - ref: R35
   value: 2.7kohm
   footprint: 0805
-  pulldown: D3.A2
 - ref: R36
   value: 1kohm
   footprint: 0805
@@ -397,7 +395,6 @@ components:
 - ref: R5
   value: 2.7kohm
   footprint: 0805
-  pullup: D6.K1
 - ref: R50
   value: 1kohm
   footprint: 0805
@@ -438,7 +435,7 @@ components:
   pin_count: 4
 - ref: U1
   value: TPA3255DDV
-  footprint: SOP-44
+  footprint: SOP63P810X120-44N
   manufacturer: Texas Instruments
   pin_count: 44
   nc_pins: {OSC_IOM: '9', OSC_IOP: '10'}
@@ -741,11 +738,11 @@ nets:
 - name: Net-(U7A-+)
   pins: [R38.1, R39.2, U7.+@3]
 - name: Net-(U7A--)
-  pins: [R41.1, R42.2, U7.-@2]
+  pins: [R42.2, U7.-@2]
 - name: Net-(U7B-+)
   pins: [R36.1, R37.2, U7.+@5]
 - name: Net-(U7B--)
-  pins: [R40.1, R41.2, U7.-@6]
+  pins: [R40.1, U7.-@6]
 - name: OC_ADJ
   pins: [R29.2, U1.OC_ADJ]
 - name: OUTA

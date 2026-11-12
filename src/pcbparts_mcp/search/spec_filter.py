@@ -246,11 +246,13 @@ class FuseFilter(SpecFilter):
 @dataclass
 class ScopedTextFilter(SpecFilter):
     """Words a part's text must have, in one subcategory of a multi-type search only: "ideal diode"
-    is every ORing controller but just the Power Distribution Switches that say so (LM66100)."""
+    is every ORing controller but just the Power Distribution Switches that say so (LM66100).
+    also: other wording that counts the same, as some listings say "battery base" for a holder."""
     subcategory: str = ""
+    also: tuple[str, ...] = ()
 
     def to_dict(self) -> dict[str, Any]:
-        return {"name": "text", "op": "=", "value": self.value, "subcategory": self.subcategory}
+        return {"name": "text", "op": "=", "value": " or ".join((self.value, *self.also)), "subcategory": self.subcategory}
 
 
 class BatterySizeFilter(SpecFilter):

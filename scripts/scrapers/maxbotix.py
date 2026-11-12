@@ -28,6 +28,50 @@ PRODUCT_TYPE_MAP = {
 
 MB_MODEL_RE = re.compile(r'\b(MB\d{3,5}[A-Z]*)\b', re.IGNORECASE)
 
+# Products that also report presence in a zone: ParkSonar/ProxSonar ("7-foot detection zone for
+# proximity information", high/low output), vehicle detection ("a preset 1.5 m proximity zone")
+# and ProxiView ("optical proximity sensing"). Plain rangefinders say none of these.
+PROXIMITY_RE = re.compile(r"\bproximity\s+(?:information|zone|sens(?:ing|or))\b", re.IGNORECASE)
+
+
+def product_measures(sensor_type: str, body: str) -> list[str]:
+    """Distance for every rangefinder, plus proximity when the product reports a detection zone."""
+    measures = ["distance", "lidar", "tof"] if sensor_type == "tof" else ["distance", "ultrasonic"]
+    if PROXIMITY_RE.search(re.sub(r'<[^>]+>', ' ', unescape(body))):
+        measures.append("proximity")
+    return sorted(measures)
+
+
+def product_protocols(title: str, body: str, model: str) -> list[str]:
+    """Read product outputs, with documented family fallbacks for terse listings."""
+    text = re.sub(r'<[^>]+>', ' ', unescape(body)).lower()
+    title = title.lower()
+    model = model.lower()
+    if model in {"mb1710", "mb1711"} or "usb" in title:
+        return ["usb"]
+    if model == "mb1712" or "i2c" in title:
+        return ["i2c"]
+    if model == "mb8000":
+        return ["i2c", "uart"]
+    if "parksonar" in title or "lv-proxsonar" in title:
+        return ["gpio", "uart"]
+    if model in {"mb8460", "mb8480"}:
+        return ["uart"]
+    if "analog envelope" in text or "analog voltage envelope" in text or "maxsonar-ae" in title or "maxsonar-csa" in title:
+        return ["analog", "uart"]
+    if any(family in title for family in ("lv-maxsonar", "xl-maxsonar", "hrlv-maxsonar", "hrlv-shortrange", "irxl-maxsonar")):
+        return ["analog", "pwm", "uart"]
+    protocols = set()
+    if "analog voltage" in text:
+        protocols.add("analog")
+    if "pulse-width" in text or "pulse width" in text:
+        protocols.add("pwm")
+    if "serial" in text or "uart" in text:
+        protocols.add("uart")
+    if "i2c" in text:
+        protocols.add("i2c")
+    return sorted(protocols)
+
 
 def scrape_maxbotix(output_dir: Path) -> None:
     """Scrape Maxbotix Shopify store for ultrasonic/LiDAR distance sensors."""
@@ -103,12 +147,13 @@ def scrape_maxbotix(output_dir: Path) -> None:
             sensors.append(make_sensor_entry(
                 sensor_id=sensor_id,
                 name=model,
-                measures=["distance", "ultrasonic"],
+                measures=product_measures(sensor_type, body),
                 platforms=[],
                 urls=[product_url],
                 description=desc,
                 manufacturer="MaxBotix",
                 sensor_type=sensor_type,
+                protocol=product_protocols(title, body, model),
             ))
 
     # Deduplicate by sensor_id (same model can appear in multiple products)

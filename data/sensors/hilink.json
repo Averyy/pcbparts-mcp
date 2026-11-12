@@ -2,13 +2,15 @@
   "source": "hilink",
   "source_url": "https://www.hlktech.net/index.php?id=product",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-11-01T13:28:22.489236+00:00",
+  "scraped_at": "2026-11-10T21:54:47.270171+00:00",
   "stats": {
     "sensor_count": 39,
     "total_products": 74,
     "skipped_non_sensor": 21,
-    "errors": 0
+    "errors": 0,
+    "kept_missing": 0
   },
+  "missed_scrapes": {},
   "sensors": [
     {
       "id": "as201",

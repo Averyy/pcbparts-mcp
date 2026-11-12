@@ -21,17 +21,20 @@ components:
 - ref: C1
   value: 4.7uF
   footprint: 0805
+  digikey: 587-5485-1-ND
   mpn: UMK212BBJ475KG-T
   manufacturer: Taiyo Yuden
   decouples: U3
 - ref: C2
   value: 82pF
   footprint: 0805
+  digikey: 311-1110-1-ND
   mpn: CC0805JRNPO9BN820
   manufacturer: Yageo
 - ref: C3
   value: 4.7uF
   footprint: 0805
+  digikey: 587-5485-1-ND
   mpn: UMK212BBJ475KG-T
   manufacturer: Taiyo Yuden
 - ref: C4
@@ -40,26 +43,24 @@ components:
 - ref: C5
   value: 100nF
   footprint: 0805
-  mpn: UMK212BBJ475KG-T
-  manufacturer: Taiyo Yuden
   decouples: U2
 - ref: C6
   value: 1uF
   footprint: 0805
-  mpn: UMK212BBJ475KG-T
-  manufacturer: Taiyo Yuden
   decouples: U2
 - ref: D1
   value: 1N5819HW-7-F
   footprint: SOD-123
+  digikey: 1N5819HW-FDICT-ND
   mpn: 1N5819HW-7-F
   manufacturer: Diodes Inc.
 - ref: D2
   value: LED
   footprint: 0805
 - ref: J1
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
+  digikey: S2112EC-40-ND
   mpn: PREC040DBAN-M71RC
   manufacturer: Sullins
   pin_count: 5
@@ -68,12 +69,13 @@ components:
   footprint: UPDI_PogoProg_pinHoles
   pin_count: 3
 - ref: J3
-  value: 1x4 header
-  footprint: JST_SH_SM04B-SRSS-TB
+  value: JST SH 4-pin
+  footprint: JST_SH_SM04B-SRSS-TB_1x04
   pin_count: 5
 - ref: L1
   value: 10uH
   footprint: '1210'
+  digikey: 587-6332-1-ND
   mpn: LBC3225T100MR
   manufacturer: Taiyo Yuden
 - ref: L2
@@ -82,24 +84,22 @@ components:
 - ref: R1
   value: 10kohm
   footprint: 0805
-  mpn: RC0805FR-0747KL
-  manufacturer: Yageo
   pullup: HV_EN
 - ref: R14
   value: 10kohm
   footprint: 0805
-  mpn: RC0805FR-0747KL
-  manufacturer: Yageo
   pulldown: HV_BLANK
 - ref: R2
   value: 13kohm
   footprint: 0805
+  digikey: 311-13.0KCRCT-ND
   mpn: RC0805FR-0713KL
   manufacturer: Yageo
   pulldown: U3.FB
 - ref: R3
   value: 240kohm
   footprint: 0805
+  digikey: 311-240KCRCT-ND
   mpn: RC0805FR-07240KL
   manufacturer: Yageo
 - ref: R4
@@ -114,12 +114,14 @@ components:
 - ref: R7
   value: 10kohm
   footprint: 0805
+  digikey: 311-10.0KCRCT-ND
   mpn: RC0805FR-0710KL
   manufacturer: Yageo
   pullup: SCL
 - ref: R8
   value: 10kohm
   footprint: 0805
+  digikey: 311-10.0KCRCT-ND
   mpn: RC0805FR-0710KL
   manufacturer: Yageo
   pullup: SDA
@@ -137,12 +139,14 @@ components:
 - ref: U3
   value: LM2733YMF
   footprint: SOT-23-5
+  digikey: LM2733YMF/NOPBCT-ND
   mpn: LM2733YMF/NOPB
   manufacturer: Texas Instr
   pin_count: 5
 - ref: U4
   value: HV5812WG
-  footprint: SOIC-28W
+  footprint: SOIC-28W_7.5x17.9
+  digikey: HV5812WG-GCT-ND
   mpn: HV5812WG-G
   manufacturer: Microchip
   pin_count: 28

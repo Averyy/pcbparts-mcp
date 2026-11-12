@@ -449,12 +449,12 @@ class TestFootprintFilter:
         assert "rate-limiting" not in note["note"]
         assert all(p["has_easyeda_footprint"] is True for p in result["similar_parts"])
 
-    async def test_no_note_when_nothing_was_limited(self, clock, monkeypatch):
+    async def test_note_when_twice_limit_caps_checks(self, clock, monkeypatch):
         client, session = make_client(clock, lambda url: FakeResponse(200, FOUND))
         stub_alternatives(client, monkeypatch, 60)
         result = await client.find_alternatives("C999999", has_easyeda_footprint=True, limit=5)
         assert len(session.urls) == 10  # 2 x limit, as before
-        assert "footprint_filter" not in result["summary"]
+        assert "top 10 of 60 candidates" in result["summary"]["footprint_filter"]["note"]
 
     async def test_no_note_without_the_filter(self, clock, monkeypatch):
         client, session = make_client(clock, lambda url: FakeResponse(200, FOUND))
@@ -503,7 +503,7 @@ class TestFootprintFilter:
         assert len(session.urls) == 4
         note = result["summary"]["footprint_filter"]
         assert note["unknown"] == 6
-        assert note["note"] == "6 candidate(s) skipped to stay under EasyEDA's rate limit. Try again in about 2 min."
+        assert note["note"].endswith("6 candidate(s) skipped to stay under EasyEDA's rate limit. Try again in about 2 min.")
 
     async def test_block_and_budget_notes_together(self, clock, monkeypatch):
         """A real block and our own budget are reported separately: only one is EasyEDA's doing.
@@ -530,7 +530,7 @@ class TestFootprintFilter:
         result = await client.find_alternatives("C999999", has_easyeda_footprint=True, limit=5)
         note = result["summary"]["footprint_filter"]
         assert note["unknown"] == 1
-        assert note["note"] == "1 candidate(s) skipped: their EasyEDA footprint lookup failed."
+        assert note["note"].endswith("1 candidate(s) skipped: their EasyEDA footprint lookup failed.")
 
     async def test_note_on_supported_categories_too(self, clock, monkeypatch):
         client, _ = make_client(clock, lambda url: FakeResponse(200, FOUND))

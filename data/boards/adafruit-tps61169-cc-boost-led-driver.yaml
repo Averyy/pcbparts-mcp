@@ -39,7 +39,7 @@ components:
   pin_count: 5
 - ref: L1
   value: 6.8~10uH
-  footprint: INDUCTOR
+  footprint: INDUCTOR_5X5MM_NR5040_NOTHERMALS
   current: 2A
 - ref: R1
   value: 10kohm
@@ -71,11 +71,11 @@ components:
   description: FAN5331 - LED/OLED 20V Boost Converter
   pin_count: 5
 - ref: X1
-  value: 1x2 header
-  footprint: TERMBLOCK
+  value: 1x2 3.50mm screw terminal
+  footprint: TERMBLOCK_1X2
 - ref: X2
-  value: 1x2 header
-  footprint: TERMBLOCK
+  value: 1x2 3.50mm screw terminal
+  footprint: TERMBLOCK_1X2
 nets:
 - name: +24V
   pins: [C2.1, C8.1, D2.C, JP1.4, X1.2]

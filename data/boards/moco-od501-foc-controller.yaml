@@ -28,34 +28,50 @@ components:
 - ref: C12
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C13
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C14
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C15
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C16
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C17
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C18
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C19
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C2
   value: 1uF
@@ -64,22 +80,32 @@ components:
 - ref: C20
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C21
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U4
 - ref: C22
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U6
 - ref: C23
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U6
 - ref: C24
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U4
 - ref: C25
   value: 10nF
@@ -95,9 +121,13 @@ components:
 - ref: C28
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
 - ref: C29
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
 - ref: C3
   value: 10uF
   footprint: '0603'
@@ -121,18 +151,26 @@ components:
 - ref: C35
   value: 100nF
   footprint: '0603'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U6
 - ref: C37
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C38
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C39
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C4
   value: 1uF
@@ -141,26 +179,38 @@ components:
 - ref: C40
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C41
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C42
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C43
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C44
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C45
   value: 10uF
   footprint: '1206'
+  lcsc: C2991915
+  mpn: C1206B106K050TEF
   voltage: 50V
 - ref: C5
   value: 1uF
@@ -184,13 +234,15 @@ components:
 - ref: D1
   value: SS34
   footprint: SMA
+  lcsc: C8678
+  mpn: SS34
 - ref: J1
-  value: 1x3 header
-  footprint: JST_GH_BM03B-GHS-TBT
+  value: JST GH 3-pin
+  footprint: JST_GH_BM03B-GHS-TBT_1x03
   pin_count: 3
 - ref: J2
-  value: 2x4 header
-  footprint: 2X4
+  value: 2x4 2.54mm header
+  footprint: 2X4_P2.54mm
   pin_count: 8
 - ref: J3
   value: A
@@ -208,41 +260,55 @@ components:
   value: C
   footprint: wire_3.2mm
 - ref: J8
-  value: 1x2 header
-  footprint: JST_GH_BM02B-GHS-TBT
+  value: JST GH 2-pin
+  footprint: JST_GH_BM02B-GHS-TBT_1x02
 - ref: J9
-  value: 1x2 header
-  footprint: JST_GH_BM02B-GHS-TBT
+  value: JST GH 2-pin
+  footprint: JST_GH_BM02B-GHS-TBT_1x02
 - ref: L1
   value: 22uH
-  footprint: L
+  footprint: L_7.3x7.3
 - ref: LD1
   value: multicolor LED
   footprint: RGB LED 1.6x1.6mm
+  lcsc: C375569
+  mpn: E6C0606RGBC3UDA
   pin_count: 4
 - ref: Q1
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: Q2
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: Q3
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: Q4
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: Q5
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: Q6
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: R1
   value: 54.9kohm
@@ -271,6 +337,8 @@ components:
 - ref: R2
   value: 10kohm
   footprint: '0402'
+  lcsc: C25744
+  mpn: 0402WGF1002TCE
   pulldown: /TEMP_SENSOR
 - ref: R3
   value: 10kohm
@@ -282,21 +350,26 @@ components:
 - ref: R5
   value: 5kohm
   footprint: '0402'
-  pulldown: LD1.GK
 - ref: R6
   value: 1kohm
   footprint: '0402'
 - ref: R7
   value: 0.5mohm
   footprint: '2512'
+  lcsc: C469426
+  mpn: ASR-M-3-0.5F
 - ref: R8
   value: 0.5mohm
   footprint: '2512'
+  lcsc: C469426
+  mpn: ASR-M-3-0.5F
 - ref: R9
   value: 0.5mohm
   footprint: '2512'
+  lcsc: C469426
+  mpn: ASR-M-3-0.5F
 - ref: SB1
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   pin_count: 3
 - ref: SW1
@@ -305,33 +378,48 @@ components:
 - ref: TH1
   value: NCP18XH103F03RB
   footprint: '0603'
+  lcsc: C13564
+  mpn: NCP18XH103F03RB
 - ref: U1
   value: LMR16006X
   footprint: SOT-23-6
+  lcsc: C87080
+  mpn: LMR16006XDDCR
   pin_count: 6
   nc_pins: {nSHDN: '4'}
 - ref: U2
   value: RT9013-33
   footprint: SOT-23-5
+  lcsc: C587158
+  mpn: TPRT9013-33GB
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: U3
   value: DRV8323H
-  footprint: QFN-40-1EP
+  footprint: QFN-40-1EP_6x6
+  lcsc: C701783
+  mpn: DRV8323HRTAR
   pin_count: 41
 - ref: U4
   value: STM32G431CBUx
-  footprint: QFN-48-1EP
+  footprint: QFN-48-1EP_7x7
+  lcsc: C529356
+  mpn: STM32G431CBU6
   pin_count: 49
-  nc_pins: {PC13: '2', PC14: '3', PC15: '4', PA0: '8', PA1: '9', PA4: '12', PB10: '22', PB11: '24', PA15: '38', PC11: '40', PB8: '46', PB9: '47'}
+  nc_pins: {PC13: '2', PC14: '3', PC15: '4', PA0: '8', PA1: '9', PA4: '12', PB10: '22', PB11: '24', PA15: '38', PC11: '40',
+    PB8: '46', PB9: '47'}
 - ref: U5
   value: TJA1050
   footprint: SOIC-8
+  lcsc: C6952
+  mpn: TJA1050T/CM,118
   pin_count: 8
   nc_pins: {VREF: '5'}
 - ref: U6
   value: AS5047x
   footprint: TSSOP-14
+  lcsc: C962063
+  mpn: AS5047P-ATSM
   pin_count: 14
   nc_pins: {B: '6', A: '7', W/PWM: '8', V: '9', U: '10', I/PWM: '14'}
 - ref: Y1

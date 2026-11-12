@@ -1,7 +1,7 @@
 name: ADUMx165 USB Isolator
 slug: adumx165-usb-isolator
 source: acha666/ADUMx165_USB_Isolator
-format: kicad7
+format: kicad8
 description: Isolated USB 2.0 High-Speed 480 Mbps (ADUM3165, 3.75kV)
 tags: [isolation, power-supply, usb]
 key_ics: [SN6505B]
@@ -222,7 +222,6 @@ components:
   value: 2kohm
   footprint: '0402'
   description: Resistor, small symbol
-  pullup: D3.A
 - ref: R8
   value: 110kohm
   footprint: '0402'
@@ -247,11 +246,13 @@ components:
   value: USBLC6-2
   footprint: SOT-666
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+  mpn: USBLC6-2P6
   pin_count: 6
 - ref: U2
   value: USBLC6-2
   footprint: SOT-666
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+  mpn: USBLC6-2P6
   pin_count: 6
 - ref: U3
   value: ADUM3165
@@ -260,7 +261,7 @@ components:
   nc_pins: {PGOOD: '14'}
 - ref: U4
   value: TLV76750DRVx
-  footprint: WSON-6-1EP
+  footprint: WSON-6-1EP_2x2
   description: 1A, 16V Precision Linear Voltage Regulator, with enable pin, Adjustable Output
   pin_count: 7
 - ref: U5
@@ -270,7 +271,7 @@ components:
   pin_count: 8
 - ref: U6
   value: CH334P
-  footprint: QFN-16-1EP
+  footprint: QFN-16-1EP_3x3
   description: USB HUB controller, UART, QFN-16
   pin_count: 17
   nc_pins: {nRESET/CDP: '13', PGANG: '14'}
@@ -278,16 +279,19 @@ components:
   value: USBLC6-2
   footprint: SOT-666
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+  mpn: USBLC6-2P6
   pin_count: 6
 - ref: U8
   value: USBLC6-2
   footprint: SOT-666
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+  mpn: USBLC6-2P6
   pin_count: 6
 - ref: U9
   value: USBLC6-2
   footprint: SOT-666
   description: Very low capacitance ESD protection diode, 2 data-line, SOT-666
+  mpn: USBLC6-2P6
   pin_count: 6
 - ref: Y1
   value: 24Mhz/12pF
@@ -296,7 +300,7 @@ components:
   pin_count: 4
 - ref: Y2
   value: CSTxE12M
-  footprint: Resonator_SMD_Murata_CSTxExxV-3Pin
+  footprint: Resonator_SMD_Murata_CSTxExxV-3Pin_3.0x1.1
   description: Three pin ceramic resonator, small symbol
   pin_count: 3
 nets:

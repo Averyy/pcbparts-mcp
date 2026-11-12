@@ -16,72 +16,72 @@ design_rules:
   min_via: 10mil
 components:
 - ref: 3/5V
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
   description: Solder Jumper
 - ref: APWR
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Solder Jumper
 - ref: C1
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-08390
   voltage: 100V
   tolerance: 10%
+  prod_id: CAP-08390
   decouples: IC2
 - ref: C10
   value: 220nF
   footprint: '0603'
-  prod_id: CAP-09885
   voltage: 50V
   tolerance: 20%
+  prod_id: CAP-09885
 - ref: C11
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-08390
   voltage: 100V
   tolerance: 10%
+  prod_id: CAP-08390
 - ref: C14
   value: 47uF
   footprint: PANASONIC_D
-  prod_id: CAP-10547
   voltage: 50V
   tolerance: 20%
+  prod_id: CAP-10547
   decouples: IC1
 - ref: C2
   value: 1uF
   footprint: '0603'
-  prod_id: CAP-00868
   voltage: 16V
   tolerance: 10%
+  prod_id: CAP-00868
   decouples: IC1
 - ref: C6
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-08390
   voltage: 100V
   tolerance: 10%
+  prod_id: CAP-08390
 - ref: C7
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-08390
   voltage: 100V
   tolerance: 10%
+  prod_id: CAP-08390
   decouples: IC1
 - ref: C8
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-08390
   voltage: 100V
   tolerance: 10%
+  prod_id: CAP-08390
   decouples: IC1
 - ref: C9
   value: 100nF
   footprint: '0603'
-  prod_id: CAP-08390
   voltage: 100V
   tolerance: 10%
+  prod_id: CAP-08390
   decouples: IC1
 - ref: D1
   value: B340A-13-F
@@ -105,15 +105,15 @@ components:
   footprint: 1X04
   pin_count: 4
 - ref: JP11
-  value: 1x4 screw terminal
+  value: 1x4 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-4_LOCK
   pin_count: 4
 - ref: JP12
-  value: 1x4 screw terminal
+  value: 1x4 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-4_LOCK
   pin_count: 4
 - ref: JP13
-  value: 1x2 screw terminal
+  value: 1x2 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-2_LOCK
 - ref: JP14
   value: 1x4 header
@@ -124,14 +124,14 @@ components:
   footprint: 1X04
   pin_count: 4
 - ref: JP5
-  value: 1x4 screw terminal
+  value: 1x4 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-4_LOCK
   pin_count: 4
 - ref: JP6
   value: 1x2 header
   footprint: 1X02
 - ref: JP7
-  value: 1x2 screw terminal
+  value: 1x2 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-2_LOCK
 - ref: PWR_LED
   value: yellow LED
@@ -139,44 +139,44 @@ components:
 - ref: R1
   value: 20kohm
   footprint: '0603'
-  prod_id: RES-09231
   tolerance: 5%
+  prod_id: RES-09231
   pullup: MS1
 - ref: R10
   value: 20kohm
   footprint: '0603'
-  prod_id: RES-09231
   tolerance: 5%
+  prod_id: RES-09231
   pulldown: ENABLE
 - ref: R11
   value: 20kohm
   footprint: '0603'
-  prod_id: RES-09231
   tolerance: 5%
+  prod_id: RES-09231
   pullup: DIR
 - ref: R12
   value: 20kohm
   footprint: '0603'
-  prod_id: RES-09231
   tolerance: 5%
+  prod_id: RES-09231
   pullup: STEP
 - ref: R13
   value: 8.2kohm
   footprint: '0603'
-  prod_id: RES-10646
   tolerance: 5%
   power: 1/10W
+  prod_id: RES-10646
   pullup: R16.CCW
 - ref: R14
   value: 1kohm
   footprint: '0603'
-  prod_id: RES-07856
   tolerance: 1%
+  prod_id: RES-07856
 - ref: R15
   value: 1kohm
   footprint: '0603'
-  prod_id: RES-07856
   tolerance: 1%
+  prod_id: RES-07856
 - ref: R16
   value: 10kohm
   footprint: TRIMPOT-3MM-2
@@ -185,64 +185,63 @@ components:
 - ref: R18
   value: 110mohm
   footprint: '2010'
-  prod_id: RES-08354
   tolerance: 1%
+  prod_id: RES-08354
 - ref: R19
   value: 110mohm
   footprint: '2010'
-  prod_id: RES-08354
   tolerance: 1%
+  prod_id: RES-08354
 - ref: R2
   value: 20kohm
   footprint: '0603'
-  prod_id: RES-09231
   tolerance: 5%
+  prod_id: RES-09231
   pullup: MS2
 - ref: R20
   value: 20kohm
   footprint: '0603'
-  prod_id: RES-09231
   tolerance: 5%
+  prod_id: RES-09231
   pulldown: IC1.ROSC
 - ref: R3
   value: 20kohm
   footprint: '0603'
-  prod_id: RES-09231
   tolerance: 5%
+  prod_id: RES-09231
   pullup: MS3
 - ref: R4
   value: 20kohm
   footprint: '0603'
-  prod_id: RES-09231
   tolerance: 5%
+  prod_id: RES-09231
   pullup: SLEEP
 - ref: R5
   value: 20kohm
   footprint: '0603'
-  prod_id: RES-09231
   tolerance: 5%
+  prod_id: RES-09231
   pullup: RESET
 - ref: R6
   value: 390ohm
   footprint: '0603'
-  prod_id: RES-07864
   tolerance: 1%
+  prod_id: RES-07864
 - ref: R7
   value: 330ohm
   footprint: '0603'
-  prod_id: RES-00818
   tolerance: 1%
+  prod_id: RES-00818
 - ref: R8
   value: 240ohm
   footprint: '0603'
-  prod_id: RES-07849
   tolerance: 1%
+  prod_id: RES-07849
 - ref: R9
   value: 1kohm
   footprint: '0603'
-  prod_id: RES-07856
   tolerance: 1%
-  pullup: PWR_LED.A
+  prod_id: RES-07856
 nets:
 - name: 5V_ALT
   pins: [APWR.1, IC2.OUT, IC2.OUT@1, R8.2]
@@ -261,7 +260,7 @@ nets:
 - name: CP2
   pins: [C6.2, IC1.CP2]
 - name: CUR_REF
-  pins: [IC1.REF, R16.WIPER, TP1.TP]
+  pins: [IC1.REF, R16.WIPER]
 - name: DIR
   pins: [IC1.DIR, R11.1, R14.2]
 - name: DIR_IN

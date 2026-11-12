@@ -78,20 +78,20 @@ components:
   value: 500mA
   footprint: '1206'
 - ref: J1
-  value: 1x3 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+  value: 1x3 5.08mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03
   pin_count: 3
 - ref: J2
-  value: 1x3 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+  value: 1x3 5.08mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03
   pin_count: 3
 - ref: J3
-  value: 1x3 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+  value: 1x3 5.08mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03
   pin_count: 3
 - ref: J4
-  value: 1x3 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08
+  value: 1x3 5.08mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03
   pin_count: 3
 - ref: K1
   value: SRD-05VDC-SL-C
@@ -136,7 +136,6 @@ components:
 - ref: R1
   value: 2kohm
   footprint: 0805
-  pullup: D1.A
 - ref: R10
   value: 1kohm
   footprint: 0805
@@ -212,7 +211,9 @@ components:
   value: ESP32-WROOM-32
   footprint: ESP32-WROOM-32
   pin_count: 39
-  nc_pins: {SENSOR_VP: '4', SENSOR_VN: '5', IO34: '6', IO35: '7', IO32: '8', IO33: '9', IO25: '10', IO26: '11', IO27: '12', IO14: '13', IO12: '14', IO13: '16', SHD/SD2: '17', SWP/SD3: '18', SCS/CMD: '19', SCK/CLK: '20', SDO/SD0: '21', SDI/SD1: '22', IO15: '23', IO2: '24', IO4: '26', IO16: '27', IO17: '28', NC: '32', IO22: '36', IO23: '37'}
+  nc_pins: {SENSOR_VP: '4', SENSOR_VN: '5', IO34: '6', IO35: '7', IO32: '8', IO33: '9', IO25: '10', IO26: '11', IO27: '12',
+    IO14: '13', IO12: '14', IO13: '16', SHD/SD2: '17', SWP/SD3: '18', SCS/CMD: '19', SCK/CLK: '20', SDO/SD0: '21', SDI/SD1: '22',
+    IO15: '23', IO2: '24', IO4: '26', IO16: '27', IO17: '28', NC: '32', IO22: '36', IO23: '37'}
 - ref: U5
   value: PC817
   footprint: SMDIP-4_W7.62mm

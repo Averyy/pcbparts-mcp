@@ -1,7 +1,7 @@
 name: Soldered TCA9548A I2C Mux
 slug: soldered-tca9548a-i2c-mux
 source: SolderedElectronics/I2C-multiplexer-TCA9548A-breakout-hardware-design
-format: kicad7
+format: kicad6
 description: "8-channel I2C multiplexer \u2014 critical for multi-sensor bus management, address conflict resolution"
 tags: [i2c-mux]
 key_ics: [TCA9548APWR]
@@ -46,11 +46,11 @@ components:
   pin_count: 5
 - ref: K12
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: K13
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: K14
   value: easyC-SMD
@@ -62,11 +62,11 @@ components:
   pin_count: 5
 - ref: K16
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: K17
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: K18
   value: easyC-SMD
@@ -82,15 +82,15 @@ components:
   pin_count: 5
 - ref: K3
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: K4
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: K5
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: K6
   value: easyC-SMD
@@ -102,11 +102,11 @@ components:
   pin_count: 5
 - ref: K8
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: K9
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: R1
   value: 10kohm

@@ -18,9 +18,11 @@ components:
 - ref: C10
   value: 4700pF,100V
   footprint: 0805
+  mpn: C2012X7R2A472K
 - ref: C11
   value: rechargeable battery
   footprint: ML414H
+  mpn: ML414H-IV01E
 - ref: C12
   value: 100nF
   footprint: '0402'
@@ -57,6 +59,7 @@ components:
 - ref: C2
   value: 47pF,200V
   footprint: 0805
+  mpn: C0805C470J2GACTU
 - ref: C21
   value: 100nF
   footprint: '0402'
@@ -96,6 +99,7 @@ components:
 - ref: C3
   value: 47pF,200V
   footprint: 0805
+  mpn: C0805C470J2GACTU
 - ref: C30
   value: 10uF
   footprint: 0805
@@ -104,8 +108,8 @@ components:
 - ref: C31
   value: 100uF
   footprint: PANASONIC_D
-  prod_id: CAP-12547
   voltage: 25V
+  prod_id: CAP-12547
 - ref: C32
   value: 22uF
   footprint: '1206'
@@ -144,29 +148,32 @@ components:
   footprint: SOD-323
 - ref: D3
   value: USBLC6-4SC6Y
-  footprint: SOT-6
+  footprint: SOT95P280X145-6N
   description: STMICROELECTRONICS - USBLC6-4SC6Y - ESD Protection Device, 17 V, SOT-23, 6 Pins
   height: 1.45mm
   manufacturer: STMicroelectronics
   mpn: USBLC6-4SC6Y
+  mouser: 511-USBLC6-4SC6Y
   pin_count: 6
   nc_pins: {I/O3: '4', I/O4: '6'}
 - ref: D4
   value: USBLC6-4SC6Y
-  footprint: SOT-6
+  footprint: SOT95P280X145-6N
   description: STMICROELECTRONICS - USBLC6-4SC6Y - ESD Protection Device, 17 V, SOT-23, 6 Pins
   height: 1.45mm
   manufacturer: STMicroelectronics
   mpn: USBLC6-4SC6Y
+  mouser: 511-USBLC6-4SC6Y
   pin_count: 6
   nc_pins: {I/O3: '4', I/O4: '6'}
 - ref: D5
   value: USBLC6-4SC6Y
-  footprint: SOT-6
+  footprint: SOT95P280X145-6N
   description: STMICROELECTRONICS - USBLC6-4SC6Y - ESD Protection Device, 17 V, SOT-23, 6 Pins
   height: 1.45mm
   manufacturer: STMicroelectronics
   mpn: USBLC6-4SC6Y
+  mouser: 511-USBLC6-4SC6Y
   pin_count: 6
   nc_pins: {I/O3: '4', I/O4: '6'}
 - ref: DEBUG
@@ -190,6 +197,7 @@ components:
 - ref: F2
   value: 350mA PTC
   footprint: '1206'
+  mpn: 1206L035YR
 - ref: J10
   value: 4P-2.0-90D
   footprint: HW4-2.0-90D
@@ -224,8 +232,9 @@ components:
   footprint: SMD_2*20
   pin_count: 40
 - ref: J4
-  value: 1x4 screw terminal
+  value: 1x4 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-4
+  partno: OSTTE040104
   pin_count: 4
 - ref: J5
   value: 1x3 header
@@ -247,8 +256,9 @@ components:
   value: 1x2 header
   footprint: 1X02
 - ref: L10
-  value: GZ1608D300TF
+  value: 30ohm
   footprint: R-0603A
+  mpn: GZ1608D300TF
 - ref: LED1
   value: LED
   footprint: '0603'
@@ -361,7 +371,6 @@ components:
 - ref: R41
   value: 1kohm
   footprint: '0603'
-  pullup: LED1.A
 - ref: R42
   value: 10Mohm
   footprint: '0603'
@@ -371,7 +380,6 @@ components:
 - ref: R44
   value: 1kohm
   footprint: '0603'
-  pullup: LED2.A
 - ref: R5
   value: 1.5kohm
   footprint: R-0402S
@@ -637,12 +645,10 @@ components:
 - ref: U5
   value: LP5910
   footprint: QFN6P
-  description: 3.5V to 28V Input, 5A, 570kHz Step-Down Converter with Eco-mode
   pin_count: 7
 - ref: U6
   value: TLV70433DBVR
   footprint: TLV70433DBVR
-  description: 3.5V to 28V Input, 5A, 570kHz Step-Down Converter with Eco-mode
   pin_count: 5
 - ref: USB1
   value: USB Micro-B
@@ -676,7 +682,7 @@ nets:
   class: +3V3
   trace_width: '0.2032'
 - name: 1V8
-  pins: [C6.1, C7.1, R43.1, U$4.TP, U5.OUT]
+  pins: [C6.1, R43.1, U5.OUT]
   trace_width: '0.1524'
 - name: 3V3
   pins:
@@ -689,7 +695,7 @@ nets:
   - TP15.PP
   trace_width: '0.1524'
 - name: 3V3_UART
-  pins: [C1.1, C5.1, J13.1, R3.2, U5.IN]
+  pins: [C5.1, J13.1, R3.2, U5.IN]
   trace_width: '0.1524'
 - name: A0
   pins: [J10.2, J3.13, TP9.PP, U1.A0@55]
@@ -756,20 +762,19 @@ nets:
   pins: [R17.2, U1.CELL_GPS_TX@84]
   trace_width: '0.1524'
 - name: CELL_VBUS
-  pins: [C12.1, C18.2, C34.2, D5.VBUS, U1.CELL_VBUS@15, USB1.VBUS]
+  pins: [C12.1, C18.2, D5.VBUS, U1.CELL_VBUS@15, USB1.VBUS]
   trace_width: '0.1524'
 - name: CLK1
   pins: [J2.6, U1.RESV@98]
   trace_width: '0.1524'
 - name: EN
-  pins: [R3.1, R4.2, U5.EN]
+  pins: [R3.1, U5.EN]
   trace_width: '0.1524'
 - name: G
   pins: [J3.40, R13.2, TP68.PP, U1.GREEN@29]
   trace_width: '0.1524'
 - name: GND
   pins:
-  - C1.2
   - C10.1
   - C11.-
   - C12.2
@@ -781,7 +786,6 @@ nets:
   - C17.2
   - C18.1
   - C2.2
-  - C20.1
   - C21.2
   - C22.2
   - C23.2
@@ -795,16 +799,9 @@ nets:
   - C31.-
   - C32.2
   - C33.2
-  - C34.1
-  - C35.1
-  - C36.1
-  - C37.1
-  - C38.1
-  - C39.1
   - C4.1
   - C5.2
   - C6.2
-  - C7.2
   - C8.1
   - C9.2
   - D3.GND
@@ -831,25 +828,17 @@ nets:
   - J7.7
   - J7.8
   - J9.1
-  - L11_NC.2
-  - L12_NC.2
-  - L13_NC.2
   - R14.2
-  - R26.2
-  - R27.1
   - R30.2
   - R32.2
   - R34.2
   - R36.2
-  - R38.1
-  - R4.1
   - S2.2
   - S3.2
   - S4.4
   - S5.3
   - S6.1
   - S6.4
-  - U$10.TP
   - U1.AGND/GND@63
   - U1.GND@1
   - U1.GND@10
@@ -887,9 +876,6 @@ nets:
   - USB2.GND
   - USB3.GND3
   - USB3.ID
-  - X1.2
-  - X2.2
-  - X3.2
   trace_width: '0.1524'
 - name: GNSS_ANT_PWR
   pins: [D1.P$1, U1.GNSS_ANT_PWR@91]
@@ -909,13 +895,13 @@ nets:
   pins: [J7.27, TP1.PP, U1.GNSS_PULSE@7]
   trace_width: '0.1524'
 - name: GNSS_VBUS
-  pins: [C33.1, C35.2, U1.GNSS_VBUS@4, U6.OUT]
+  pins: [C33.1, U1.GNSS_VBUS@4, U6.OUT]
   trace_width: '0.1524'
 - name: IN
   pins: [C123.1, R28.1, U6.IN]
   trace_width: '0.1524'
 - name: LI+
-  pins: [C36.2, C37.2, J3.3, Q1.3, TP6.PP, U1.LI+@53]
+  pins: [J3.3, Q1.3, TP6.PP, U1.LI+@53]
   class: +3V3
   trace_width: '0.2032'
 - name: MCU_N
@@ -1027,10 +1013,10 @@ nets:
   pins: [C10.2, R1.1, R10.2]
   trace_width: '0.1524'
 - name: NFC1
-  pins: [J7.4, R26.1, TP70.PP, U1.NFC1@27]
+  pins: [J7.4, TP70.PP, U1.NFC1@27]
   trace_width: '0.1524'
 - name: NFC2
-  pins: [J7.6, R27.2, TP71.PP, U1.NFC2@26]
+  pins: [J7.6, TP71.PP, U1.NFC2@26]
   trace_width: '0.1524'
 - name: PMID
   pins: [C23.1, C24.1, J3.4, U1.PMID@47]
@@ -1042,7 +1028,7 @@ nets:
   pins: [DEBUG.10, J3.34, S3.1, TP65.PP, U1.RESET@33]
   trace_width: '0.1524'
 - name: RTC_BAT
-  pins: [C20.2, J3.37, S5.2, TP4.PP, U1.RTC_BAT@73]
+  pins: [J3.37, S5.2, TP4.PP, U1.RTC_BAT@73]
   trace_width: '0.1524'
 - name: RTC_BTN
   pins: [J3.39, TP37.PP, U1.RTC_BTN@74]
@@ -1052,9 +1038,6 @@ nets:
   - C17.1
   - C22.1
   - C9.1
-  - L11_NC.1
-  - L12_NC.1
-  - L13_NC.1
   - R14.1
   - R32.1
   - R34.1
@@ -1162,7 +1145,7 @@ nets:
   pins: [C27.1, Q3.G, R19.1, R42.1, S6.2]
   trace_width: '0.1524'
 - name: TS
-  pins: [J3.6, J6.3, R38.2, TP32.PP, U1.TS@46]
+  pins: [J3.6, J6.3, TP32.PP, U1.TS@46]
   trace_width: '0.1524'
 - name: U_VBUS
   pins: [C26.1, C8.2, D4.VBUS, R28.2, USB3.VBUS]
@@ -1179,17 +1162,10 @@ nets:
   - R39.2
   trace_width: '0.1524'
 - name: VBUS_SOM
-  pins:
-  - C25.2
-  - C38.2
-  - C39.2
-  - J3.5
-  - Q4.D
-  - TP7.PP
-  - U1.VBUS@51
+  pins: [C25.2, J3.5, Q4.D, TP7.PP, U1.VBUS@51]
   trace_width: '0.1524'
 - name: VIN
-  pins: [C27.2, Q3.S, R42.2, U$9.TP]
+  pins: [C27.2, Q3.S, R42.2]
   class: vcc
 - name: VIN_SOM
   pins:

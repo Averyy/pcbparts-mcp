@@ -185,7 +185,7 @@ components:
   footprint: '0603'
 - ref: L1
   value: 10uH
-  footprint: INDUCTOR
+  footprint: INDUCTOR_4X4MM_NR401
 - ref: LED1
   value: WS2812B
   footprint: SK6805_1515
@@ -251,17 +251,17 @@ components:
   footprint: '0402'
 - ref: SW1
   value: RKB2
-  footprint: BTN_RKB2
+  footprint: BTN_RKB2_4.6X2.8
   description: SMT Tact Switches RKB2
   pin_count: 4
 - ref: SW2
   value: RKB2
-  footprint: BTN_RKB2
+  footprint: BTN_RKB2_4.6X2.8
   description: SMT Tact Switches RKB2
   pin_count: 4
 - ref: U1
   value: 8MB QSPI
-  footprint: USON8
+  footprint: USON8_4X4
   description: SOIC8 SPI Flash
   pin_count: 9
 - ref: U2
@@ -275,6 +275,7 @@ components:
   footprint: SOT-23-5
   lcsc: C424093
   description: MCP73831/2 LIPO Charger
+  mpn: MCP73831T-2ACI/OT
   pin_count: 5
 - ref: X1
   value: JSTPH
@@ -290,7 +291,7 @@ components:
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: Y1
   value: 12MHz/12pF
-  footprint: CRYSTAL
+  footprint: CRYSTAL_2.5X2
 nets:
 - name: '!RESET'
   pins: [IC1./RUN, JP1.16, R1.2, SW1.P, SW1.P1]
@@ -499,11 +500,11 @@ nets:
 - name: TX
   pins: [IC1.GPIO0, JP1.2]
 - name: USBBOOT
-  pins: [D3.C, IC1.GPIO7, SW2.P, SW2.P1, TP3.P$1]
+  pins: [D3.C, IC1.GPIO7, SW2.P, SW2.P1]
 - name: USB_D+
-  pins: [D+1.TP, R10.1, X6.D+]
+  pins: [R10.1, X6.D+]
 - name: USB_D-
-  pins: [D-1.TP, R9.1, X6.D-]
+  pins: [R9.1, X6.D-]
 - name: VBAT
   pins: [C20.1, JP3.1, Q3.D, U3.VBAT, X1.G$1.2]
   class: power

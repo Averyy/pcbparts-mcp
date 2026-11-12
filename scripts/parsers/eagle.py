@@ -23,7 +23,9 @@ from parse_boards import (
     normalize_footprint, normalize_value,
     extract_inline_specs, normalize_connector_value,
 )
-from parsers.common import is_junk_ref, is_useful_description, truncate, build_attributes
+from parsers.common import (
+    is_useful_description, truncate, build_attributes, value_or_symbol, keep_source_specs,
+)
 
 log = logging.getLogger(__name__)
 
@@ -60,14 +62,14 @@ def _is_junk_part(ref: str, lib: str, deviceset: str = "",
 
 
 def _build_library_lookups(lib_elements: dict[str, ET.Element]) -> tuple[
-    dict[tuple[str, str, str], dict[str, str]],  # (lib, deviceset, device) → tech attrs
+    dict[tuple[str, str, str, str], dict[str, str]],  # (lib, deviceset, device, technology) → attrs
     dict[tuple[str, str], str],                    # (lib, deviceset) → description
 ]:
     """Pre-build lookup dicts for tech attributes and descriptions in one pass.
 
     Avoids O(N*D) scanning per part by building O(1) lookup tables up front.
     """
-    tech_lookup: dict[tuple[str, str, str], dict[str, str]] = {}
+    tech_lookup: dict[tuple[str, str, str, str], dict[str, str]] = {}
     desc_lookup: dict[tuple[str, str], str] = {}
 
     for lib_name, lib_elem in lib_elements.items():
@@ -84,15 +86,15 @@ def _build_library_lookups(lib_elements: dict[str, ET.Element]) -> tuple[
             # Cache tech attributes per device
             for dev in ds.iter("device"):
                 dev_name = dev.get("name", "")
-                attrs: dict[str, str] = {}
                 for tech in dev.iter("technology"):
+                    attrs: dict[str, str] = {}
                     for attr in tech.iter("attribute"):
                         name = attr.get("name", "")
                         value = attr.get("value", "")
                         if name and value:
                             attrs[name] = value
-                if attrs:
-                    tech_lookup[(lib_name, ds_name, dev_name)] = attrs
+                    if attrs:
+                        tech_lookup[(lib_name, ds_name, dev_name, tech.get("name", ""))] = attrs
 
     return tech_lookup, desc_lookup
 
@@ -125,15 +127,24 @@ def _clean_html_description(html: str) -> str:
     return ""
 
 
-def _parse_deviceset_specs(deviceset: str) -> dict[str, str]:
-    """Extract specs from Eagle deviceset names like '0.1UF-25V-5%(0603)'.
+def _parse_deviceset_specs(deviceset: str, device: str = "") -> dict[str, str]:
+    """Extract specs from Eagle deviceset and device names like '0.1UF-25V-5%(0603)'.
 
-    SparkFun encodes value, voltage, tolerance, and package in deviceset names.
+    SparkFun encodes value, voltage, tolerance, and package in deviceset names ('1.0UF50V10%(1206)')
+    or in the device name ('0.1UF' with device '-0603-25V-(+80/-20%)').
     """
     specs: dict[str, str] = {}
+    if device:
+        device_specs = _parse_deviceset_specs(device)
+        specs.update({k: v for k, v in device_specs.items() if k == "voltage"})
+        # A plain tolerance token ("-0603-50V-5%"), not a range ("(+80/-20%)")
+        m = re.search(r"(?:^|-)(\d+(?:\.\d+)?)%(?:-|$)", device)
+        if m:
+            specs["tolerance"] = f"{m.group(1)}%"
 
-    # Voltage: -25V, -16V, -50V
-    m = re.search(r"(\d+\.?\d*)V(?:\b|-)", deviceset)
+    # Voltage: -25V, -16V, 50V10% — FemtoBuck's 1.0UF50V10% lost its 50 V to a word-boundary check;
+    # "3V3" is no 3 V rating
+    m = re.search(r"(?<![\d.])(\d+(?:\.\d+)?)V(?=$|[^A-Za-z0-9]|\d+(?:\.\d+)?%)", deviceset)
     if m:
         specs["voltage"] = f"{m.group(1)}V"
 
@@ -177,6 +188,14 @@ def parse_schematic(sch_path: Path) -> tuple[list[Component], list[Net]]:
                 dev_package = dev_elem.get("package", "")
                 lib_packages[lib_name][ds_name][dev_name] = dev_package
 
+    # Managed libraries can share a display name; select their URN before the name alias.
+    # The alias keeps older schematics without library_urn working.
+    for lib_elem in root.iter("library"):
+        if urn := lib_elem.get("urn"):
+            lib_elements[urn] = lib_elem
+            lib_packages[urn] = {ds.get("name", ""): {dev.get("name", ""): dev.get("package", "")
+                                  for dev in ds.iter("device")} for ds in lib_elem.iter("deviceset")}
+
     # Pre-build lookup tables for tech attributes and descriptions (O(1) per part)
     tech_lookup, desc_lookup = _build_library_lookups(lib_elements)
 
@@ -186,10 +205,14 @@ def parse_schematic(sch_path: Path) -> tuple[list[Component], list[Net]]:
 
     for part in root.iter("part"):
         name = part.get("name", "")
-        lib = part.get("library", "")
+        lib = part.get("library_urn") or part.get("library", "")
         deviceset = part.get("deviceset", "")
         device = part.get("device", "")
-        value = part.get("value", deviceset)
+        # An empty value attribute reads as the deviceset, as a missing one does: SAMD21 (an ATSAMD21G),
+        # SparkFun's named solder jumpers (MEAS, VE) and 5 mm LED bulbs were dropped for having none.
+        # A jumper's default state is in its device name: SparkFun's SOLDERJUMPER, device NO
+        full_name = f"{deviceset}_{device.strip('-_')}" if "JUMPER" in deviceset.upper() and device else deviceset
+        value = value_or_symbol(part.get("value", full_name), full_name)
 
         # Look up package
         package = ""
@@ -204,10 +227,11 @@ def parse_schematic(sch_path: Path) -> tuple[list[Component], list[Net]]:
             continue
 
         # Extract technology attributes (PROD_ID, MPN, BOM, etc.)
-        tech_attrs = tech_lookup.get((lib, deviceset, device), {})
+        tech_attrs = tech_lookup.get((lib, deviceset, device, part.get("technology", "")), {})
+        instance_attrs = {a.get("name", ""): a.get("value", "") for a in part.findall("attribute")}
 
         # Skip non-electrical parts
-        if _is_junk_part(name, lib, deviceset, tech_attrs.get("BOM")):
+        if _is_junk_part(name, part.get("library", ""), deviceset, tech_attrs.get("BOM")):
             log.debug("Skipping non-electrical: %s (lib=%s, ds=%s)", name, lib, deviceset)
             continue
 
@@ -217,39 +241,48 @@ def parse_schematic(sch_path: Path) -> tuple[list[Component], list[Net]]:
         fp = normalize_footprint(package, ref)
 
         # Build useful attributes dict via shared attribute mapper
-        attrs = build_attributes(tech_attrs)
-
-        # Extract specs from deviceset name (SparkFun-style)
-        ds_specs = _parse_deviceset_specs(deviceset)
-        if ds_specs:
-            attrs.update(ds_specs)
+        # Map each layer separately so aliases (MPN / MANUFACTURER_PART_NUMBER,
+        # VOLTAGE / VOLTAGERATING, etc.) obey the same precedence as exact keys.
+        # A passive's device name can carry its rating (BNO080's 0.1UF caps: device -0603-25V-(+80/-20%));
+        # on other parts a V there is a variant, such as a regulator's output
+        passive = re.match(r"^(?:R|C|L|FB)\d", name, re.IGNORECASE)
+        attrs = _parse_deviceset_specs(deviceset, device if passive else "")
+        attrs.update(build_attributes(tech_attrs))
+        placed = value
 
         # Extract inline specs from value for passives (e.g. "1uF 60V", "75K 1%")
         ref_prefix = re.match(r"^([A-Z]+)", ref, re.IGNORECASE)
         ref_prefix = ref_prefix.group(1) if ref_prefix else ""
         if ref_prefix in ("R", "C", "L", "FB"):
             cleaned_val, inline_specs = extract_inline_specs(value)
-            # Inline specs fill in gaps — don't overwrite deviceset specs
-            for k, v in inline_specs.items():
-                if k not in attrs:
-                    attrs[k] = v
+            # Explicit specs in the placed value take precedence over the library.
+            attrs.update(inline_specs)
             value = cleaned_val
+
+        attrs.update(build_attributes(instance_attrs))
 
         # Extract deviceset description for non-passives
         if ref_prefix not in ("R", "C", "L", "FB"):
-            desc = desc_lookup.get((lib, deviceset), "")
+            desc = attrs.get("description", desc_lookup.get((lib, deviceset), ""))
             if desc:
-                # For solder jumpers: replace ugly/empty values with description
+                # For solder jumpers: replace ugly/empty values with description, unless the name
+                # says whether it is normally open or closed
                 if ref_prefix == "SJ" and (
                     value.upper().startswith("SOLDERJUMPER")
-                    or value == deviceset  # value defaulted to deviceset name
+                    or value in (deviceset, full_name)  # value defaulted to deviceset name
                     or not value.strip()
-                ):
+                ) and not normalize_value(value, ref).endswith(("(NO)", "(NC)")):
                     value = desc.lower()
                 else:
-                    attrs["description"] = desc
+                    attrs.setdefault("description", desc)
 
+        # SparkFun's standard I2C pinout on a 1 mm four-pin package is the Qwiic JST-SH connector
+        # (BNO080 J2/J4, value "SMD", read "1x4 header" like a 2.54 mm header)
+        if (deviceset.upper().startswith("I2C_STANDARD") and re.search(r"(?:^|_)1MM(?:_|$)", package, re.I)
+                and value.upper() in ("SMD", "I2C", "I2C_STANDARD", deviceset.upper())):
+            value = "QWIIC"
         val = normalize_value(value, ref)
+        keep_source_specs(placed, val, ref, attrs)
         val = normalize_connector_value(val, package, ref)
 
         components.append(Component(
@@ -334,8 +367,9 @@ def extract_part_pins(sch_path: Path, part_names: set[str]
     symbols: dict[tuple[str, str], dict[str, str]] = {}
     gates: dict[tuple[str, str], dict[str, str]] = {}
     connects: dict[tuple[str, str, str], list[tuple[str, str, str]]] = {}
-    for lib in root.iter("library"):
-        lib_name = lib.get("name", "")
+    libraries = {lib.get("name", ""): lib for lib in root.iter("library")}
+    libraries.update({lib.get("urn"): lib for lib in root.iter("library") if lib.get("urn")})
+    for lib_name, lib in libraries.items():
         for sym in lib.iter("symbol"):
             symbols[(lib_name, sym.get("name", ""))] = {pin.get("name", ""): pin.get("direction", "io")
                                                          for pin in sym.iter("pin")}
@@ -358,7 +392,7 @@ def extract_part_pins(sch_path: Path, part_names: set[str]
     pins: dict[str, dict[str, str]] = {}
     connected: dict[str, set[str]] = {}
     for part in root.iter("part"):
-        ref, lib = part.get("name", ""), part.get("library", "")
+        ref, lib = part.get("name", ""), part.get("library_urn") or part.get("library", "")
         key = (lib, part.get("deviceset", ""), part.get("device", ""))
         if ref not in part_names or ref in pins or key not in connects:
             continue

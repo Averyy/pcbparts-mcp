@@ -792,7 +792,7 @@ class JLCPCBClient:
         }
 
         # Validate LCSC format (C followed by digits)
-        if not lcsc or not lcsc.startswith("C") or not lcsc[1:].isdigit():
+        if not lcsc or not lcsc.startswith("C") or not (lcsc[1:].isascii() and lcsc[1:].isdigit()):
             return unknown_result, "invalid"
 
         # Check cache first (with TTL awareness for errors vs successes)
@@ -1331,7 +1331,7 @@ class JLCPCBClient:
         lcsc = lcsc.strip().upper()
 
         # Validate LCSC code format (C followed by digits)
-        if not lcsc or not lcsc.startswith("C") or not lcsc[1:].isdigit():
+        if not lcsc or not lcsc.startswith("C") or not (lcsc[1:].isascii() and lcsc[1:].isdigit()):
             return None
 
         # Check cache first
@@ -1396,7 +1396,7 @@ class JLCPCBClient:
         callers (raises DatasheetLinkBusy beyond it). JLCPCB errors raise ValueError, as elsewhere.
         """
         lcsc = lcsc.strip().upper()
-        if not lcsc.startswith("C") or not lcsc[1:].isdigit():
+        if not lcsc.startswith("C") or not (lcsc[1:].isascii() and lcsc[1:].isdigit()):
             return None
         now = time.time()
         async with self._get_part_cache_lock():
@@ -1466,7 +1466,7 @@ class JLCPCBClient:
             Dict with original part info, alternatives (verified compatible), and
             similar_parts (for unsupported categories requiring manual verification).
         """
-        if not re.fullmatch(r"C\d+", lcsc.strip(), re.IGNORECASE):
+        if not re.fullmatch(r"C[0-9]+", lcsc.strip(), re.IGNORECASE):
             return {"error": "lcsc must be an LCSC C-code (e.g., C6186); use jlc_get_part(mpn=...) to find the code for an MPN"}
         if board_quantity < 1 or placements_per_board < 1:
             return {"error": "board_quantity and placements_per_board must be positive integers"}
@@ -1539,6 +1539,31 @@ class JLCPCBClient:
         # This allows matching variants like CASE-B-3528-21(mm) vs CASE-B-3528-19(mm)
 
         result = await self.search(**search_params)
+        retrieved = result.get("results", [])
+        # search() caps a page at MAX_PAGE_SIZE, so report the limit the request actually ran with
+        live_limit = max(1, min(search_params["limit"], MAX_PAGE_SIZE))
+        stages: dict[str, Any] = {
+            "retrieval": {"live_search": {
+                "retrieved": len(retrieved), "limit": live_limit,
+                "hit_limit": len(retrieved) >= live_limit,
+                "error": result.get("error"),
+            }},
+        }
+
+        async def retrieve(source, callback, **kwargs):
+            report = {"retrieved": 0, "limit": kwargs.get("limit", 500),
+                      "hit_limit": False, "error": None}
+            stages["retrieval"][source] = report
+            try:
+                parts = await run_db(COMPONENT_POOL, callback, **kwargs)
+            except Exception as exc:
+                logger.warning("Alternative source %s failed: %s", source, exc)
+                # A fixed label: raw SQLite text ("database is locked", table names) stays in the log
+                report["error"] = "retrieval_failed"
+                return []
+            report.update(retrieved=len(parts), hit_limit=len(parts) >= report["limit"],
+                          **getattr(parts, "retrieval", {}))
+            return parts
 
         # Filter out the original part
         original_lcsc = original.get("lcsc", "").upper()
@@ -1552,11 +1577,14 @@ class JLCPCBClient:
         orig_pkg_normalized = _normalize_package_for_matching(original.get("package") or "")
         # "SOT-23-6", "SMD2020-4P", "SMD,8x2.8mm" name a footprint; "SMD" or "Plugin" alone doesn't
         specific_package = bool(re.search(r"\d", original.get("package") or ""))
+        package_considered = len(candidates)
         if package_filter:
             candidates = [
                 p for p in candidates
                 if _normalize_package_for_matching(p.get("package", "")) == orig_pkg_normalized
             ]
+
+        package_failed = package_considered - len(candidates)
 
         # The live search sees only the best-stocked parts with the primary value; for a part like a
         # 60V 83A MOSFET those are small-signal 60V parts that fail every check. Add database parts that
@@ -1573,9 +1601,8 @@ class JLCPCBClient:
 
             live_codes = {p.get("lcsc") for p in candidates}
             candidates += [
-                p for p in await run_db(
-                    COMPONENT_POOL,
-                    self._alternative_candidates,
+                p for p in await retrieve(
+                    "database", self._alternative_candidates,
                     original=original,
                     subcategory=subcategory_name,
                     subcategory_id=subcategory_id,
@@ -1594,9 +1621,8 @@ class JLCPCBClient:
             if subcategory_id and self._subcategory_parts is not None:
                 live_codes = {p.get("lcsc") for p in candidates}
                 candidates += [
-                    p for p in await run_db(
-                        COMPONENT_POOL,
-                        self._subcategory_parts,
+                    p for p in await retrieve(
+                        "rf_subcategory", self._subcategory_parts,
                         subcategory_id=subcategory_id,
                         min_stock=effective_min_stock,
                         library_type=None if library_type == "no_fee" else library_type,
@@ -1614,9 +1640,8 @@ class JLCPCBClient:
             # UMW's TPS22917DBVR); add every maker's parts in the original's package
             live_codes = {p.get("lcsc") for p in candidates}
             candidates += [
-                p for p in await run_db(
-                    COMPONENT_POOL,
-                    self._subcategory_parts,
+                p for p in await retrieve(
+                    "package_subcategory", self._subcategory_parts,
                     subcategory_id=subcategory_id,
                     min_stock=effective_min_stock,
                     library_type=None if library_type == "no_fee" else library_type,
@@ -1628,80 +1653,93 @@ class JLCPCBClient:
 
         # For SUPPORTED categories: verify primary spec matches and compatibility
         # For UNSUPPORTED categories: skip verification, just return similar_parts
+        if package_filter:
+            package_kept = [p for p in candidates
+                            if _normalize_package_for_matching(p.get("package") or "") == orig_pkg_normalized]
+            package_failed += len(candidates) - len(package_kept)
+            candidates = package_kept
         compatible: list[dict[str, Any]] = []
         verification_info_map: dict[str, dict[str, Any]] = {}
 
-        if is_supported:
-            # Verify primary spec matches (JLCPCB search may return fuzzy matches)
-            verified = [
-                p for p in candidates
-                if not primary_attr or verify_primary_spec_match(original, p, primary_attr)
-            ]
-            # Then check full compatibility
-            for p in verified:
-                is_compat, verify_info = is_compatible_alternative(original, p, subcategory_name or "")
-                if is_compat:
-                    compatible.append(p)
-                    verification_info_map[p.get("lcsc", "")] = verify_info
-        else:
-            # For unsupported categories, skip strict verification
-            # Just return similar parts from same subcategory for manual comparison
-            compatible = candidates
-            for p in compatible:
-                verification_info_map[p.get("lcsc", "")] = {"specs_verified": [], "specs_unparseable": []}
+        primary_stage = {"passed": 0, "failed": 0, "unknown": 0}
+        spec_stage = {"passed": 0, "failed": 0, "unknown": 0}
+        for part in candidates:
+            if is_supported:
+                if primary_attr and not verify_primary_spec_match(original, part, primary_attr):
+                    primary_stage["failed"] += 1
+                    continue
+                is_compat, info = is_compatible_alternative(original, part, subcategory_name or "")
+                primary_unknown = (not primary_attr or primary_attr in info.get("specs_unparseable", [])
+                                   or primary_attr in info.get("unverified_requirements", []))
+                primary_stage["unknown" if primary_unknown else "passed"] += 1
+                spec_stage["failed" if not is_compat else
+                           "unknown" if info.get("specs_unparseable") or info.get("unverified_requirements")
+                           else "passed"] += 1
+                if not is_compat:
+                    continue
+            else:
+                primary_stage["unknown"] += 1
+                spec_stage["unknown"] += 1
+                info = {"specs_verified": [], "specs_unparseable": []}
+            compatible.append(part)
+            verification_info_map[part.get("lcsc", "")] = info
+        stages.update(primary=primary_stage, specs=spec_stage)
 
-        # Filter by EasyEDA footprint availability if requested
-        # Pre-filter to limit EasyEDA API calls (2x limit provides buffer for filtering)
+        # Eligibility must precede the bounded footprint window. Keep extended fallback examples
+        # separate: they can use only the budget left after all eligible candidates in the window.
+        extended_pool = [p for p in compatible if p.get("library_type") == "extended"
+                         and not verification_info_map[p.get("lcsc", "")].get("unverified_requirements")]
+        allowed_libraries = {"no_fee": ("basic", "preferred"), "basic": ("basic",),
+                             "preferred": ("preferred",), "extended": ("extended",)}.get(library_type)
+        eligible = [p for p in compatible if not allowed_libraries or p.get("library_type") in allowed_libraries]
+        stages["eligibility"] = {
+            "library": {"passed": len(eligible), "failed": len(compatible) - len(eligible)},
+            "package": {"applied": package_filter, "passed": len(candidates), "failed": package_failed},
+        }
+        compatible = eligible
         footprint_filter: dict[str, Any] | None = None
+        footprint_stage = {"requested": has_easyeda_footprint, "checked": 0, "compatible": 0,
+                           "incompatible": 0, "unknown": 0, "not_checked_cap": 0,
+                           "eligible_checked": 0, "fallback_checked": 0}
         if has_easyeda_footprint is not None:
-            # Only check top candidates: each uncached check is one /api/products request, and EasyEDA
-            # blocks an IP after ~24 of them (docs/ref-easyeda-api.md)
             max_easyeda_checks = min(effective_limit * 2, EASYEDA_MAX_FOOTPRINT_CHECKS)
-            candidates_to_check = compatible[:max_easyeda_checks]
-            candidate_codes = [p.get("lcsc", "") for p in candidates_to_check if p.get("lcsc")]
-            checks = await asyncio.gather(
-                *[self._check_easyeda_footprint(code) for code in candidate_codes]
-            )
-            easyeda_map = {code: info for code, (info, _) in zip(candidate_codes, checks)}
+            footprint_stage["limit"] = max_easyeda_checks
+            statuses = []
+
+            async def check_footprints(parts, budget, fallback=False):
+                window = [p for p in parts[:budget] if p.get("lcsc")]
+                checks = await asyncio.gather(*[self._check_easyeda_footprint(p["lcsc"]) for p in window])
+                footprint_stage["checked"] += len(window)
+                footprint_stage["fallback_checked" if fallback else "eligible_checked"] += len(window)
+                footprint_stage["not_checked_cap"] += max(0, len(parts) - budget)
+                kept = []
+                for part, (info, status) in zip(window, checks):
+                    statuses.append(status)
+                    has_fp = info.get("has_easyeda_footprint")
+                    outcome = "unknown" if has_fp is None else (
+                        "compatible" if has_fp == has_easyeda_footprint else "incompatible")
+                    footprint_stage[outcome] += 1
+                    if outcome == "compatible":
+                        part.update(info)
+                        kept.append(part)
+                return kept
+
+            compatible = await check_footprints(eligible, max_easyeda_checks)
+            extended_verified = [p for p in compatible if p.get("library_type") == "extended"
+                                 and not verification_info_map[p["lcsc"]].get("unverified_requirements")]
+            if library_type == "no_fee" and not any(
+                    not verification_info_map[p["lcsc"]].get("unverified_requirements") for p in compatible):
+                extended_verified = await check_footprints(
+                    extended_pool, max_easyeda_checks - footprint_stage["checked"], fallback=True)
             footprint_filter = self._footprint_filter_note(
-                candidates=len(compatible),
-                checked=len(candidate_codes),
-                capped=effective_limit * 2 > EASYEDA_MAX_FOOTPRINT_CHECKS and len(compatible) > max_easyeda_checks,
-                statuses=[status for _, status in checks],
+                candidates=footprint_stage["checked"] + footprint_stage["not_checked_cap"],
+                checked=footprint_stage["checked"], capped=footprint_stage["not_checked_cap"] > 0,
+                statuses=statuses, unknown=footprint_stage["unknown"],
             )
-
-            filtered_compatible = []
-            for part in candidates_to_check:
-                part_lcsc = part.get("lcsc", "")
-                if not part_lcsc:
-                    continue
-                easyeda_info = easyeda_map.get(part_lcsc, {})
-                has_fp = easyeda_info.get("has_easyeda_footprint")
-                if has_fp is None:
-                    continue
-                if has_fp == has_easyeda_footprint:
-                    part.update(easyeda_info)
-                    filtered_compatible.append(part)
-            compatible = filtered_compatible
-
-        # Count verified extended matches before a no-fee filter, including footprint requirements.
-        extended_verified = [
-            p for p in compatible
-            if p.get("library_type") == "extended"
-            and not verification_info_map[p.get("lcsc", "")].get("unverified_requirements")
-        ]
+        else:
+            extended_verified = extended_pool
         extended_count = len(extended_verified)
-
-        # Filter by library_type if specified (after compatibility check)
-        if library_type and library_type != "all":
-            if library_type == "no_fee":
-                compatible = [p for p in compatible if p.get("library_type") in ("basic", "preferred")]
-            elif library_type == "basic":
-                compatible = [p for p in compatible if p.get("library_type") == "basic"]
-            elif library_type == "preferred":
-                compatible = [p for p in compatible if p.get("library_type") == "preferred"]
-            elif library_type == "extended":
-                compatible = [p for p in compatible if p.get("library_type") == "extended"]
+        stages["footprints"] = footprint_stage
 
         # Score and rank alternatives
         min_price = min((p.get("price") for p in compatible if p.get("price")), default=None)
@@ -1767,6 +1805,14 @@ class JLCPCBClient:
                 frequency_check=frequency_check, drop_ins=drop_ins,
                 extended_count=extended_count if library_type == "no_fee" else 0, extended_examples=extended_examples,
             )
+        stages["output"] = {
+            "limit_per_list": effective_limit,
+            "alternatives_truncated": max(0, len(verified_scored) - len(top_scored)) if is_supported else 0,
+            "unverified_alternatives_truncated": max(0, len(unverified) - len(top_unverified)) if is_supported else 0,
+            "similar_parts_truncated": max(0, len(verified_scored) - len(top_scored)) if not is_supported else 0,
+            "extended_examples_truncated": max(0, extended_count - len(extended_examples)) if extended_examples else 0,
+        }
+        response["summary"]["stages"] = stages
         if footprint_filter:
             response["summary"]["footprint_filter"] = footprint_filter
         await self._add_known_footprints(response)
@@ -1792,19 +1838,19 @@ class JLCPCBClient:
                 part["has_easyeda_footprint"] = stored["has_easyeda_footprint"]
 
     def _footprint_filter_note(
-        self, candidates: int, checked: int, capped: bool, statuses: list[str]
+        self, candidates: int, checked: int, capped: bool, statuses: list[str], unknown: int | None = None
     ) -> dict[str, Any] | None:
         """Explain how the has_easyeda_footprint filter was limited, or None if it wasn't."""
         blocked = sum(1 for s in statuses if s in ("blocked", "cooldown"))
         over_budget = sum(1 for s in statuses if s == "budget")
         failed = sum(1 for s in statuses if s == "error")
-        if not capped and not blocked and not over_budget and not failed:
+        if not capped and not blocked and not over_budget and not failed and not unknown:
             return None
         notes = []
         if capped:
             notes.append(
                 f"Checked EasyEDA footprints for the top {checked} of {candidates} candidates "
-                f"(at most {EASYEDA_MAX_FOOTPRINT_CHECKS} per call), so more matching parts may exist."
+                f"(at most min(2 * limit, {EASYEDA_MAX_FOOTPRINT_CHECKS}) per call), so more matching parts may exist."
             )
         if blocked:
             wait = max(1, round(self._easyeda_products_cooldown.remaining / 60))
@@ -1819,10 +1865,13 @@ class JLCPCBClient:
             )
         if failed:
             notes.append(f"{failed} candidate(s) skipped: their EasyEDA footprint lookup failed.")
+        other_unknown = (unknown or 0) - blocked - over_budget - failed
+        if other_unknown > 0:
+            notes.append(f"{other_unknown} candidate(s) skipped: footprint availability is unknown.")
         return {
             "candidates": candidates,
             "checked": checked,
-            "unknown": blocked + over_budget + failed,
+            "unknown": unknown if unknown is not None else blocked + over_budget + failed,
             "note": " ".join(notes),
         }
 

@@ -4,49 +4,49 @@
 
 ## Quick Reference
 
-- **Precharge to 90-95% of pack voltage before closing main contactors.** 5*tau = 99.3%. Sequence: close negative contactor, close precharge contactor, monitor voltage rise, close positive contactor at threshold, open precharge contactor.
-- **Precharge resistor: R = t_precharge / (5 * C_dclink).** Energy dissipated equals E = 0.5 * C * V^2.
-- **Contactor coil drive: 3-phase current profile (pickup/hold/fast-decay).** Pickup current up to 5A, hold current in tens of mA. PWM at >= 20kHz to avoid audible noise.
-- **EV fuse derating: In >= Ib / (Kt * Ke * Kv * Ka * Kx).** At 60C ambient in sealed enclosure, derate by ~1.89x (60A fuse for 30A continuous load).
-- **Wire sizing rule of thumb: cross-section (mm^2) = current (A) / 3** for runs up to 5m at <= 2.5% voltage drop.
+- **TI's example sequence closes the main positive contactor at 90-95% of pack voltage.** Close negative, close precharge, verify voltage rise, close positive, then open precharge. The residual voltage must satisfy the actual contactor's make-current limit; 5 * tau reaches 99.3%, not 90-95% [3, p.3; 2, p.5].
+- **R = t_precharge / (5 * C_dclink) applies to a 99.3% target from zero initial voltage.** Size pulse energy at maximum charged-pack voltage, not nominal bus voltage [2, p.5].
+- **Non-economized coils need pickup/hold/fast-decay control.** Use the contactor's specified currents and timing; AN5940 uses >= 20kHz PWM to limit audible noise [3, pp.3-5; 4, p.9].
+- **Eaton's 1.89x fuse example needs all its stated derating factors.** A 30A load gives 56.9A minimum, rounded to 60A, for Kt=0.8, Ke=0.85, Kv=Kf=1, Ka=0.97 and Kx=0.8; this is not a universal 60 degrees C enclosure rule [7, pp.2-4].
+- **Victron's current/3 cable-area shortcut is for a total (positive plus negative) cable length up to 5m.** Its table is a 0.259V voltage-drop limit over positive-plus-negative length, not an ampacity rating; check cable temperature/installation and connector limits separately [8, Section 4.1].
 
 ## Design Rules
 
 ### Precharge Circuit Design
 
-- **Precharge is mandatory for any system with DC-link capacitance and contactors.** Without precharge, inrush current spike (50-100us duration, thousands of amps) welds contactor contacts. Most common contactor failure mode.
-- **Precharge contactor + series resistor in parallel with main positive contactor.** Place resistor after contactor to minimize energized connection points when system is off.
-- **Monitor voltage rise during precharge -- do not use a simple timer.** Voltage rising too slowly indicates soft short or downstream load left on. Voltage rising too fast indicates disconnected loads. Program upper/lower bounds on the voltage curve.
-- **Precharge contactor does not need high continuous current rating** -- precharge events last seconds. Must handle make-under-load thousands of times over vehicle life. Does not need to break current (opens after main contactor closes).
-- **Open precharge contactor after main contactor closes.** If main contactor fails open with precharge still connected, system current flows through precharge resistor -> thermal failure.
-- **Solid-state precharge replaces mechanical contactor.** TPSI3100-Q1 isolated switch driver + external FET forms solid-state relay needing no secondary bias supply. 5kV RMS reinforced isolation. Pair with INA180-Q1 for overcurrent detection at 25A fault threshold.
+- **Use precharge when inrush exceeds battery, contactor, capacitor or protection-device limits.** Sensata describes 50-100us inrush events reaching thousands of amps in the systems it discusses; those are examples, not every capacitive load's waveform [1, pp.2-4].
+- **Precharge contactor + series resistor in parallel with the main contactor.** Positive-leg placement is common; negative-leg placement is also possible. Placing the resistor after the precharge contactor reduces continuously energized connection points [1, pp.4-5].
+- **Monitor voltage rise during precharge -- do not use a simple timer.** Voltage rising too slowly can indicate a soft short or downstream load left on. Voltage rising too fast can indicate disconnected loads. Program upper/lower bounds on the voltage curve [1, p.11].
+- **Rate the precharge contactor for full pack voltage and peak make current.** Its normal few-second conduction reduces the continuous-current requirement, and it normally opens after the main contactor closes with negligible current; fault interruption still needs a defined path [1, p.5].
+- **Open precharge contactor after main contactor closes.** If main contactor fails open with precharge still connected, system current flows through precharge resistor -> thermal failure [1, p.12].
+- **TIDA-050080 uses TPSI3100-Q1 + external FET for passive precharge without a secondary bias supply.** Its 5kV RMS reinforced-isolation rating is an isolation-test rating, not a PCB working-voltage or creepage allowance. INA180-Q1 and the driver's fault comparator implement a 25A trip for this design's 20A initial current at 1000V [2, pp.1,6-8].
 
-> WARNING: Precharge resistor must handle pulse energy, not continuous power rating. A 400V/6mF system dissipates 480J in the resistor. Use wire-wound resistors with short-term overload rating (typically 5x for 5s = 25x for 1s). Confirm capacitive pulse energy with manufacturer if pulse data not published.
+> WARNING: Select the precharge resistor for the actual exponential pulse and repetition rate. A 400V/6mF initially discharged capacitor dissipates approximately 480J in the series resistance on a full charge. A 5x-power/5s overload specification alone does not establish capability at a shorter, higher-power pulse; obtain capacitive-pulse data or manufacturer confirmation [1, pp.6-10; 2, pp.5-6].
 
 ### Contactor Driver ICs
 
-- **Economized vs non-economized coils: know which type you have.** Economized coils integrate internal circuitry (two-coil economizer, or internal PWM with voltage/current feedback) -- just apply power. Non-economized coils are bare windings requiring external driver for pickup/hold/fast-decay profiles. Most high-voltage EV contactors (TE, Panasonic, GIGAVAC) offer both types.
-- **DRV3946-Q1: dual-channel integrated contactor driver for non-economized coils.** Programs pickup and hold current directly, eliminates external current regulation circuitry. Integrated current sense for closed-loop control.
-- **VNH7100BAS: H-bridge contactor driver for single-coil non-economized contactors.** Provides all 4 phases: pull-in (full voltage, HSA to LSB), slow recirculation (both high-side on), hold (PWM on LSB at 20kHz), fast decay (reverse polarity). Supports both MCU-controlled and standalone operation.
-- **Always use both high-side and low-side switches for coil drive.** Single-side switching has no protection against short-circuit to battery (high-side) or ground (low-side) -- coil energizes permanently and overheats.
-- **Contactor coil resistance varies ~60% over -40C to 125C** (copper tempco 0.393%/C). Voltage feedback (open-loop) requires pre-calibrated voltage-duty cycle map -- poor accuracy with large margin. Current feedback (closed-loop) measures coil current directly and adjusts PWM, eliminating calibration and temperature compensation.
-- **Fast decay time < 10ms typical** (L=52mH, R=11ohm contactor). Bulk capacitor absorbs inductive energy if battery path interrupted: C_bulk > I_coil * sqrt(L_coil) / (Vcc_max - Vbat). For VNH7100BAS, keep bulk cap voltage below 38V abs max.
-- **Back-EMF dip during pull-in confirms armature movement.** Monitor coil current during pull-in -- dip in rising current waveform indicates armature closing contacts. Absence means contactor did not actuate (mechanical jam or insufficient pull-in current).
-- **Contactor weld detection: close and open each contactor individually before precharge** to verify auxiliary feedback. Check downstream voltage sensors before initiating precharge sequence.
+- **Economized vs non-economized coils: know which type you have.** Economized coils integrate internal circuitry (two-coil economizer, or internal PWM with voltage/current feedback) -- just apply power. Non-economized coils are bare windings requiring external driver for pickup/hold/fast-decay profiles [3, pp.3-4].
+- **DRV3946-Q1: dual-channel integrated contactor driver for non-economized coils.** Programs pickup and hold current directly, eliminates external current regulation circuitry. Integrated current sense for closed-loop control [3, pp.5-6].
+- **VNH7100BAS: H-bridge contactor driver for single-coil non-economized contactors.** Provides all 4 phases: pull-in (full voltage, HSA to LSB), slow recirculation (both high-side on), hold (PWM on LSB at 20kHz), fast decay (reverse polarity). Supports both MCU-controlled and standalone operation [4, pp.5-14].
+- **For externally economized coils, TI recommends both high-side and low-side isolation.** A coil-wire short bypassing a single switch can leave the coil energized. TI also shows a converter-enable implementation; the two-switch recommendation is not universal for internally economized coils [3, pp.4-6].
+- **Use coil resistance at operating temperature in voltage-based PWM control.** AN5940 uses R(T) = R25 * (1 + 0.00393 * (T - 25)) plus +/-5% winding tolerance over -40 to +125 degrees C. Closed-loop current feedback removes the pre-calibrated voltage/duty map, but still has sensor/control tolerances [4, pp.8-9; 3, pp.5-6].
+- **AN5940 measured < 8ms fast decay with L=52mH, R=11ohm and approximately 0.5A hold current.** This is one contactor test. On battery disconnection, the bulk capacitor/clamp must absorb energy at the worst pull-in current while keeping VNH7100BAS supply below its 38V absolute maximum; AN5940 gives the conservative estimate C_bulk > I_coil^2 * L_coil / (V_limit - Vbat)^2; use a V_limit below the absolute maximum with clamp/tolerance margin [4, pp.10-12].
+- **A pull-in current dip provides secondary evidence of armature motion.** AN5940 uses this diagnostic in addition to other actuation checks; a waveform feature alone does not prove main-contact closure [4, pp.4-5].
+- **Implement contactor-status and insulation diagnostics before closing the main contactors.** Sensata's individual close/open check is conditional on auxiliary feedback and acceptable startup time, rather than a universal startup sequence [3, p.3; 1, p.11].
 
 ### Fusing
 
-- **EV fuse voltage rating must exceed maximum battery voltage at full SoC.** 800V system can reach 1000V at full charge -- use 1200V rated fuses.
-- **Many EV fuses provide short-circuit protection only** with a minimum breaking capacity. Overload faults below minimum breaking capacity will not clear -- requires separate protection mechanism.
-- **Bourns SinglFuse SF-1206HIA-M: AEC-Q200 equivalent SMD fuse** for BMS cell balance and sense lines. 0603 and 1206 packages, 0.5-20A, up to 250V. High inrush withstand, slow-blow.
-- **Eaton EV fuses for main power path:** bolt-down terminals for busbar, PCB thru-hole for board mount. Rated per JASO D622 and ISO 8820 for thermal shock, vibration, cyclic loading.
-- **Busbar/wire current density: target 1.3 A/mm^2** (IEC 60269-4 range 1.0-1.6). Higher density requires additional fuse derating (Ke factor).
-- **Cyclic loading derating: apply additional 0.8x factor** for variable loads with non-continuous profiles to buffer against thermal fatigue. Sustained overloads > 80% of fuse rating for > 1 second require further derating.
+- **Choose the fuse's DC voltage rating above maximum charged-pack voltage.** TIDA-050080 sizes semiconductor blocking ratings to 1200V for its 800V nominal/1000V maximum bus; that semiconductor example does not establish a universal EV fuse rating [7, p.2; 2, p.6].
+- **Many EV fuses provide short-circuit protection only** with a minimum breaking capacity. Overload faults below minimum breaking capacity will not clear -- requires separate protection mechanism [7, p.4].
+- **Bourns SF-0603HIA-M and SF-1206HIA-M are separate high-inrush slow-blow families.** The white paper's 0.5-20A and 24-250V ranges cover its broader fuse portfolio, not every HIA-M part. Use the exact part's DC voltage, interrupt rating and time-current curve; the paper describes Bourns' internal AEC-Q200-equivalent tests [6, pp.3-5].
+- **Eaton offers bolt-down and PCB through-hole EV fuse mounting.** Its guide lists AEC-Q200, JASO D622 and ISO 8820 as tests used in combinations depending on the fuse rating and mounting; verify qualification of the selected part [7, pp.1-2].
+- **Eaton's fuse thermal-connection reference is 1.3A/mm^2.** Higher connection current density needs Ke derating. This reference describes heat conducted out of the fuse, not allowable current density for every busbar or cable [7, p.3].
+- **Eaton recommends an additional 0.8 factor for irregular cyclic loading.** Evaluate the actual load profile and time-current coordination separately; the guide calls for further review of loads exceeding 80% of fuse rating for longer than 1s [7, p.4].
 
 ### Wire Sizing and Connectors
 
-- **Voltage-power thresholds:** 12V: up to 3000VA practical. 24V: up to 5000VA. 48V: 5000VA and above.
-- **Cable ampacity table (total length positive + negative, 0.259V drop):**
+- **Victron's inverter-system voltage guideline:** 12V up to 3000VA, 24V up to 5000VA, 48V at 5000VA and above. These are its low-voltage installation recommendations, not EV traction-bus limits [8, Section 4.1].
+- **Victron voltage-drop table (total positive + negative length, 0.259V drop; contact losses excluded).** These are voltage-drop current limits, not thermal ampacity ratings [8, Section 4.1]:
 
 | Cross-section (mm^2) | Max current at 5m | Max current at 10m |
 |----------------------|-------------------|---------------------|
@@ -57,47 +57,39 @@
 | 70 | 210A | 105A |
 | 95 | 285A | 143A |
 
-- **Anderson Powerpole connectors: derate for ambient temperature.** At 75C ambient, SB50 with 6 AWG (13.3 mm^2) drops from 80A to 58A max. CSA ratings (30C rise) are safe reference for user-accessible connectors; UL ratings (80C rise, 105C housing limit) are for enclosed-only applications.
-- **Use multi-stranded copper wire only.** Aluminum causes galvanic corrosion in copper contacts. Solid wire does not compress properly in crimp barrels and acts as lever arm on flat wiping contacts.
-- **Fuse each parallel inverter/charger individually** with identical fuses. Single large fuse will not trip on a short in one unit -- fault current through one unit is insufficient to blow oversized fuse.
+- **Anderson's SB50 derating example allows 58A with 6 AWG at 75 degrees C ambient and a 105 degrees C connector limit.** The 30 degrees C rise is not permission to handle a connector at 105 degrees C; use the manufacturer's touch-temperature guidance as well as its wire-specific curves [5, pp.11-12].
+- **Anderson flat-wiping/crimp contacts require multi-stranded copper.** Aluminum promotes galvanic corrosion and crimp relaxation; solid wire does not retain correctly in crimp barrels and can displace the wiping contact. This is Anderson's connector guidance [5, p.12].
+- **For parallel Victron inverters/chargers, fuse each unit individually with identical fuses.** The shared large fuse can fail to clear a branch fault quickly enough; coordinate branch cables, fuse curves and available fault current [8, Sections 4.7-4.8].
 
 ### BMS Integration
 
 - **CAN bus for BMS communication** -- automotive-standard transceiver with ESD protection (-> `interfaces/can.md`).
 - **Cell tap wiring: route sense wires away from high-current conductors.** Filter each sense line with RC to BMS AFE. Cell voltage monitoring and balancing details -> `power/battery.md`.
-- **Insulation monitoring mandatory before closing contactors.** Bender A-ISOMETER iso165C (up to 1000V DC, AEC-Q100) or TI BQ79616-Q1 isolation monitor. Trip threshold: >= 100 ohm/V (IEC 61557-8), typical 500 ohm/V for EV packs.
-- **Discharge path for DC-link capacitor.** Safety-critical discharge (crash): must reach < 60V within seconds. Non-emergency: minutes acceptable. TPSI2140-Q1 isolated switch + power resistor discharges 1000V/2mF to < 60V in ~2 minutes.
+- **Detect insulation faults before main-contactor closure.** Select the monitoring architecture and trip limits from the applicable vehicle/system requirements; TI's contactor note does not specify a universal ohm/V threshold or qualify a cell-monitor IC as an insulation monitor [3, p.3].
+- **TIDA-050080's TPSI2140-Q1/resistor path is non-emergency discharge.** Its example discharges a 2mF link from 1000V to below 60V in about 2 minutes. It does not meet a crash-discharge requirement measured in seconds; determine that time from the actual system requirement [2, pp.3,5,8].
 
 ## Common Mistakes
 
-- **Welded contactor diagnosed as "failed to open" when it actually welded on close.** Most contactor welding happens during closure from inrush current, not during opening. Problem not discovered until open is commanded.
-- **Precharge resistor burns out from repeated cycling.** Vehicle key cycling triggers precharge every time. Either size resistor for unlimited rapid cycles (heat-sinkable) or implement precharge counter with cooldown timer.
-- **Wet-switching a dry-rated contactor destroys it in one event.** Gold-contact dry-rated open-air switches cannot handle arcing. Conversely, wet-rated open-air contactors develop surface contamination in dry service. Use hermetically sealed contactors (GIGAVAC P195, GV210) for both wet and dry switching -- sealed gas environment prevents both arcing damage and contamination.
-- **FET SOA not checked for precharge switch.** In RC precharge, power dissipation in FET is ~1/3 of initial magnitude after one time constant. Use 100ms pulse length on SOA chart. Select 1200V breakdown for 800V systems.
-- **Single fuse for multiple parallel inverters.** Fault in one unit draws insufficient current to blow shared fuse. Each unit needs individual fusing.
-- **Solid-state relay as contactor replacement: failure mode is open, not welded.** Solid-state switches have leakage current in OFF mode and fixed voltage drop in ON mode. Regulations still require at least one electromechanical contactor at one pole when using solid-state at the other.
+- **Welded contactor diagnosed as "failed to open" when it actually welded on close.** Most contactor welding happens during closure from inrush current, not during opening. Problem not discovered until open is commanded [1, p.2].
+- **Precharge resistor burns out from repeated cycling.** Vehicle key cycling triggers precharge every time. Either size resistor for unlimited rapid cycles (heat-sinkable) or implement precharge counter with cooldown timer [1, p.12].
+- **Match wet/dry switching ratings to the actual contactor.** Sensata warns that wet-switching a dry-rated gold contact can destroy it in one event; its hermetically sealed GIGAVAC P195/GV210 examples support wet or dry use within their ratings, not immunity to arbitrary arcing [1, pp.12-13].
+- **Do not substitute resistor pulse power for FET dissipation.** TIDA-050080 uses a fully switched FET with a series precharge resistor; the resistor's power decays to exp(-2), approximately 13.5%, after one RC time constant. Its 100ms SOA check and 1200V device choice belong to its 50ohm/2mF, 1000V-maximum design, not every precharge circuit [2, pp.5-6].
+- **Do not assume a solid-state contactor fails open.** TI's contactor white paper states that mode is most common but supplies no device-level fail-open guarantee or cited regulation. Establish fault isolation and off-state leakage for the actual switch; do not remove mechanical isolation on that statement alone [3, p.6].
 
 ## Formulas
 
-**Precharge resistor value:**
-**Rule of thumb:** 50 ohm for 400V/6mF system with 1.5s precharge time.
-**Formula:** R = t_precharge / (5 * C_dclink)
-**Example:** 800V system, 2mF DC-link, 0.5s precharge -> R = 0.5 / (5 * 0.002) = 50 ohm. Peak current at t=0: 800V / 50 ohm = 16A.
+**Passive precharge sizing, initially discharged link and no downstream load [2, p.5]:**
+**Rule of thumb:** TIDA-050080 uses 5 * R * C for 99.3% voltage, not for the separate 90-95% contactor-sequence example.
+**Formula:** R = t_precharge / (5 * C_dclink); full-charge resistor energy E = 0.5 * C_dclink * V_pack_max^2. Use the resistor's pulse curve at the actual time, temperature and repeat rate; equal energy does not imply equal pulse capability.
+**Example:** 2mF, 0.5s target -> R=50ohm and RC=0.1s. At 800V the initial current is 16A and full-charge energy is 640J; at the reference design's 1000V maximum they become 20A and 1000J. Initial resistor power is respectively 12.8kW and 20kW; at 5 * RC the dissipated energy is (1 - exp(-10)) of the full-charge value.
 
-**Precharge resistor energy:**
-**Rule of thumb:** Energy in resistor equals energy stored in capacitor (for precharge >= 3 tau).
-**Formula:** E = 0.5 * C * V^2
-**Example:** 2mF at 800V -> E = 0.5 * 0.002 * 800^2 = 640J. Average power over 0.5s = 1280W. Select resistor with pulse energy rating >= 640J (e.g., 100W wire-wound with 5x/5s overload = 2500J capacity).
+**VNH7100BAS hold duty, AN5940's diode-recirculation topology [4, p.8, Equation 6]:**
+**Rule of thumb:** V_hold / V_bat omits recirculation-diode and bridge losses.
+**Formula:** Duty = (Vf + I_hold * R_coil) / (V_bat + Vf - I_hold * R_HBr). Use hot coil/bridge resistance and the actual recirculation path; this expression does not describe synchronous recirculation through an enabled FET.
 
-**Contactor hold current duty cycle:**
-**Rule of thumb:** Duty = V_hold / V_bat for first approximation. Actual calculation must include body diode drop and coil resistance.
-**Formula:** Duty = (Vf + I_hold * R_coil) / (V_bat + Vf - I_hold * R_HBr)
-**Example:** Vf=0.7V (body diode), I_hold=0.5A, R_coil=11 ohm, V_bat=12V, R_HBr=0.2 ohm -> Duty = (0.7 + 5.5) / (12 + 0.7 - 0.1) = 6.2 / 12.6 = 0.49 (49%).
-
-**Fuse nominal current with derating:**
-**Rule of thumb:** In sealed enclosure at 60C ambient, select fuse rated ~2x continuous load current.
-**Formula:** In >= Ib / (Kt * Ke * Kv * Ka * Kx)
-**Example:** 30A continuous, 60C ambient (Kt=0.8), sealed enclosure (Kx=0.8), 15mm^2 wire (Ke=0.85), 2500m altitude (Ka=0.97), DC (Kf=1.0), no forced air (Kv=1.0) -> In >= 30 / (0.8 * 0.85 * 1.0 * 0.97 * 0.8) = 56.7A -> use 60A fuse.
+**Eaton continuous-load fuse sizing [7, pp.2-4]:**
+**Rule of thumb:** Use part-specific corrections, then check cyclic loading, fault interruption and downstream coordination separately.
+**Formula:** In >= Ib / (Kt * Ke * Kv * Kf * Ka * Kx). Kf=1 for DC; Kx=0.8 is Eaton's small unventilated enclosure factor. The guide's Ke example has inconsistent wire-size arithmetic, so take Ke from the selected fuse's actual connection data rather than reproducing that derivation.
 
 ## Sources
 
@@ -108,13 +100,11 @@
 
 ### References
 
-1. Sensata -- How to Design Precharge Circuits for EVs White Paper: https://www.sensata.com/sites/default/files/a/sensata-how-to-design-precharge-circuits-evs-whitepaper.pdf
-2. TI TIDUF73 -- High-Voltage Passive Precharge Reference Design: https://www.ti.com/lit/pdf/tiduf73
-3. Battery Design Net -- Pre-Charge Resistor: https://www.batterydesign.net/pre-charge-resistor/
-4. TI SLVAF35 -- Driving High-Voltage Contactors in EV and HEVs: https://www.ti.com/lit/pdf/slvaf35
-5. ST AN5940 -- Contactor Driver using VNH7100BAS: https://www.st.com/resource/en/application_note/an5940-contactor-driver-using-the-vnh7100bas-stmicroelectronics.pdf
-6. Anderson Power -- Technical Reference (Amperage Ratings): https://www.andersonpower.com/content/dam/app/site/resources/techreference/ppmptecref.pdf
-7. Bourns -- Automotive Grade Fuses for 48V Systems White Paper: https://www.bourns.com/docs/technical-documents/technical-library/singlfuse/bourns-automotive-grade-fuses-provide-overcurrent-protection-in-harsh-environment-applications-white-paper.pdf
-8. Eaton -- EV Fuse Selection Guide ELX1527: https://www.eaton.com/content/dam/eaton/products/electronic-components/resources/technical/eaton-ev-fuse-selection-guide-elx1527-en.pdf
-9. Victron Energy -- DC Wiring (Cable Thickness Guide): https://www.victronenergy.com/media/pg/The_Wiring_Unlimited_book/en/dc-wiring.html
-10. ST AN5878 -- How to Design a Robust Automotive CAN System: https://www.st.com/resource/en/application_note/an5878-how-to-design-a-robust-automotive-can-system-stmicroelectronics.pdf
+1. Sensata WP-00012 (Rev. December 11, 2020) -- How to Design Precharge Circuits for EVs White Paper: https://www.sensata.com/sites/default/files/a/sensata-how-to-design-precharge-circuits-evs-whitepaper.pdf
+2. TI TIDUF73 (September 2024) -- High-Voltage Passive Precharge Reference Design: https://www.ti.com/lit/pdf/tiduf73
+3. TI SLVAF35A (July 2024) -- Driving High-Voltage Contactors in EV and HEVs: https://www.ti.com/lit/pdf/slvaf35
+4. ST AN5940 (Rev.1, March 2023) -- Contactor Driver using VNH7100BAS: https://www.st.com/resource/en/application_note/an5940-contactor-driver-using-the-vnh7100bas-stmicroelectronics.pdf
+5. Anderson Power -- Technical Reference (Amperage Ratings): https://www.andersonpower.com/content/dam/app/site/resources/techreference/ppmptecref.pdf
+6. Bourns -- Automotive Grade Fuses for 48V Systems White Paper: https://www.bourns.com/docs/technical-documents/technical-library/singlfuse/bourns-automotive-grade-fuses-provide-overcurrent-protection-in-harsh-environment-applications-white-paper.pdf
+7. Eaton ELX1527 (June 2025) -- EV Fuse Selection Guide ELX1527: https://www.eaton.com/content/dam/eaton/products/electronic-components/resources/technical/eaton-ev-fuse-selection-guide-elx1527-en.pdf
+8. Victron Energy -- DC Wiring (Cable Thickness Guide): https://www.victronenergy.com/media/pg/The_Wiring_Unlimited_book/en/dc-wiring.html

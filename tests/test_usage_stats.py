@@ -220,7 +220,7 @@ class TestUsageStats:
         assert totals["hours"][21] == 12 and sum(totals["hours"]) == 12  # all at 21:xx UTC
         assert UsageStats(clock=clock).summary()["totals"] == {
             "from": None, "to": None, "days": 0, "calls": 0, "hours": [0] * 24, "tools": {}, "apps": {},
-            "distributors": {}}
+            "distributors": {}, "reasons": {}, "why_empty": {}}
 
     def test_calls_per_utc_hour(self, tmp_path):
         clock = Clock(datetime.datetime(2026, 10, 18, 0, 30, tzinfo=UTC).timestamp())
@@ -375,7 +375,7 @@ class TestServerWiring:
                 await client.call_tool("board_get", {"slug": 5, "nope": True})
             with pytest.raises(ToolError):
                 await client.call_tool("not_a_tool", {})
-            assert len(stats.usage.tools) == 14
+            assert len(stats.usage.tools) == 15
         day = stats.usage.summary()["days"][0]
         assert day["tools"]["get_design_rules"]["ok"] == 1
         assert day["tools"]["digikey_get_part"]["failed"] == 1  # not configured: this server can't do it
@@ -502,6 +502,8 @@ SRC = Path(__file__).parent.parent / "src" / "pcbparts_mcp"
 
 # {"error": ...} replies, by their text with formatted parts as {}
 ERROR_REPLIES = {
+    "Invalid days: use an integer from 1 to 366": "bad_request",
+    "Stock history is not available on this server": "failed",
     "Part-number exclusions are not supported: {}. Search positively and exclude that identity during review.": "bad_request",
     "Invalid {}: {}": "bad_request",
     "Strict search cannot apply every constraint; see ignored_filters and parsed.adjusted_filters and use jlc_search_help(subcategory=...) for supported attributes": "bad_request",
@@ -583,7 +585,8 @@ ERROR_REPLIES = {
     "No EasyEDA symbol UUID for {}": "not_found",
 }
 NOT_TOOL_REPLIES = {"Rate limit exceeded", "Request body too large",  # HTTP middleware answers
-                    "Server is starting; try again in a moment", "No datasheet PDF found for {}"}  # /mcp/datasheet
+                    "Server is starting; try again in a moment", "No datasheet PDF found for {}",  # /mcp/datasheet
+                    "The datasheet source didn't answer; try again later"}
 
 # Exception messages the tools pass on as {"error": str(e)}
 EXCEPTION_MESSAGES = {

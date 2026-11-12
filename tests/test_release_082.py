@@ -61,10 +61,15 @@ class TestDesignRuleText:
         assert "Boot button pulls to GND through 10 kohm" not in text
         assert "boot button straight to GND" in text
 
-    def test_usb_series_resistors_are_footprints(self):
+    def test_usb_series_resistors_are_fitted_caps_are_footprints(self):
+        # 0.9.0 audit: Espressif's C3/C6/S3 checklists say "It is recommended to populate 22/33 ohm
+        # series resistors" and "reserve a footprint for a capacitor to ground"; 0.8.2 had read the
+        # footprint advice as applying to the resistors.
         text = (RULES / "mcus" / "esp32.md").read_text(encoding="utf-8")
         assert "22-33 ohm series resistors close to chip" not in text
-        assert "Reserve 22-33 ohm series-resistor footprints" in text
+        assert "Reserve 22-33 ohm series-resistor footprints" not in text
+        assert "Populate 22/33 ohm series resistors on S3/C3/C6 USB D+/D-, close to the chip." in text
+        assert "reserving a cap-to-ground footprint on each data trace" in text
 
     def test_srv05_4_capacitance(self):
         text = (RULES / "interfaces" / "usb.md").read_text(encoding="utf-8")

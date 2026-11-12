@@ -1,7 +1,7 @@
 name: Twisted Fields Driver Module
 slug: twisted-fields-driver-module
 source: Twisted-Fields/rp2040-motor-controller
-format: kicad7
+format: kicad8
 description: BLDC motor driver power stage module for RP2040 motor controller
 tags: [motor-control]
 key_ics: [INA240A1D, EG3113]
@@ -178,8 +178,8 @@ components:
   footprint: SMA
   lcsc: C726760
 - ref: J1
-  value: 1x2 header
-  footprint: AMASS_XT60PW-F
+  value: XT60PW-F
+  footprint: AMASS_XT60PW-F_1x02
   lcsc: C428722
 - ref: J19
   value: 1x3 header
@@ -187,24 +187,24 @@ components:
   lcsc: C99176
   pin_count: 3
 - ref: J2
-  value: 1x2 header
-  footprint: AMASS_XT60PW-M
+  value: XT60PW-M
+  footprint: AMASS_XT60PW-M_1x02
   lcsc: C98732
 - ref: J21
   value: Power Input
   footprint: CONN-TH_XT60UPB-M
   lcsc: C2918078
 - ref: J4
-  value: 2x6 header
-  footprint: 2X5
+  value: 2x6 2.54mm header
+  footprint: 2X5_P2.54mm
   pin_count: 10
 - ref: J5
-  value: 2x6 header
-  footprint: 2X5
+  value: 2x6 2.54mm header
+  footprint: 2X5_P2.54mm
   pin_count: 10
 - ref: J6
-  value: 1x6 header
-  footprint: 1X6
+  value: 1x6 2.54mm header
+  footprint: 1X6_P2.54mm
   pin_count: 6
 - ref: Q1
   value: PNP transistor

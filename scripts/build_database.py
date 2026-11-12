@@ -2,7 +2,7 @@
 """
 Build SQLite database from scraped JLCPCB component data.
 
-Reads gzipped JSONL files from data/categories/ and creates a searchable
+Reads sorted part, stock and price files from data/catalog/ and creates a searchable
 SQLite database with FTS5 full-text search.
 
 Usage:
@@ -12,7 +12,7 @@ The database is built on deploy/startup and used for parametric searches.
 """
 
 import argparse
-import gzip
+from itertools import groupby
 import json
 import sqlite3
 import sys
@@ -23,6 +23,7 @@ from typing import Any
 # Add parent directory to path for imports when running as script
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from pcbparts_mcp.catalog_files import read_catalog
 from pcbparts_mcp.mounting import english_package  # noqa: E402
 from pcbparts_mcp.parsers import (
     parse_capacitance,
@@ -609,17 +610,19 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
         # When the stock and prices were scraped: jlc_search replies give it as data_as_of
         if manifest.get("scraped_at"):
             conn.execute("INSERT OR REPLACE INTO metadata VALUES ('scraped_at', ?)", (manifest["scraped_at"],))
+        # Prices are refreshed weekly since 0.9.0: jlc_search replies give the last refresh as prices_as_of
+        if manifest.get("prices_updated_at"):
+            conn.execute("INSERT OR REPLACE INTO metadata VALUES ('prices_as_of', ?)", (manifest["prices_updated_at"],))
 
-    # Load all category files
-    categories_dir = data_dir / "categories"
+    # Load the catalog, including empty categories listed only in the manifest.
+    catalog_dir = data_dir / "catalog"
     total_parts = 0
     # English package -> JLCPCB's own spellings of it, for live package filters (jlc_stock_check)
     package_spellings: set[tuple[str, str]] = set()
-    category_counts = {}
+    category_counts = {slug: 0 for slug in manifest.get("categories", {})} if manifest_file.exists() else {}
     BATCH_SIZE = 1000  # Insert in batches for better performance
 
-    for gz_file in sorted(categories_dir.glob("*.jsonl.gz")):
-        cat_slug = gz_file.stem.replace(".jsonl", "")
+    for cat_slug, parts in groupby(read_catalog(catalog_dir), key=lambda item: item[0]):
         count = 0
         batch = []
 
@@ -630,49 +633,44 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
         placeholders = ", ".join(["?"] * len(all_cols))
         # OR IGNORE: a cross-category duplicate LCSC (same part under two categories) would
         # otherwise raise IntegrityError on the lcsc PRIMARY KEY and abort the whole build.
-        # First-inserted wins (deterministic under sorted(glob)); count-check below logs any.
+        # First-inserted wins (deterministic under sorted catalog categories); count-check below logs any.
         insert_sql = f"INSERT OR IGNORE INTO components ({', '.join(all_cols)}) VALUES ({placeholders})"
 
-        with gzip.open(gz_file, "rt", encoding="utf-8") as f:
-            for line in f:
-                if not line.strip():
-                    continue
+        for _, part in parts:
+            attrs = part.get("a", [])
 
-                part = json.loads(line)
-                attrs = part.get("a", [])
+            # Extract numeric values from attributes
+            numeric_values = extract_numeric_columns(attrs)
 
-                # Extract numeric values from attributes
-                numeric_values = extract_numeric_columns(attrs)
+            package = english_package(part.get("p"))
+            if package != part.get("p"):
+                package_spellings.add((package, part["p"]))
 
-                package = english_package(part.get("p"))
-                if package != part.get("p"):
-                    package_spellings.add((package, part["p"]))
+            # Build row tuple
+            row = [
+                part["l"],
+                part.get("m"),
+                part.get("f"),
+                package,
+                part.get("s"),
+                part.get("t"),
+                part.get("c"),
+                part.get("$"),
+                part.get("d"),
+                json.dumps(attrs),
+                *pcba_columns(part),
+            ]
+            # Add precomputed attribute values (None if not parsed)
+            for col_name in ATTRIBUTE_COLUMN_NAMES:
+                row.append(numeric_values.get(col_name))
 
-                # Build row tuple
-                row = [
-                    part["l"],
-                    part.get("m"),
-                    part.get("f"),
-                    package,
-                    part.get("s"),
-                    part.get("t"),
-                    part.get("c"),
-                    part.get("$"),
-                    part.get("d"),
-                    json.dumps(attrs),
-                    *pcba_columns(part),
-                ]
-                # Add precomputed attribute values (None if not parsed)
-                for col_name in ATTRIBUTE_COLUMN_NAMES:
-                    row.append(numeric_values.get(col_name))
+            batch.append(tuple(row))
+            count += 1
 
-                batch.append(tuple(row))
-                count += 1
-
-                # Insert batch when full
-                if len(batch) >= BATCH_SIZE:
-                    conn.executemany(insert_sql, batch)
-                    batch = []
+            # Insert batch when full
+            if len(batch) >= BATCH_SIZE:
+                conn.executemany(insert_sql, batch)
+                batch = []
 
         # Insert remaining parts
         if batch:
@@ -858,9 +856,9 @@ def main():
         print(f"Error: Data directory not found: {args.data_dir}")
         return 1
 
-    categories_dir = args.data_dir / "categories"
-    if not categories_dir.exists():
-        print(f"Error: Categories directory not found: {categories_dir}")
+    catalog_dir = args.data_dir / "catalog"
+    if not catalog_dir.exists():
+        print(f"Error: Catalog directory not found: {catalog_dir}")
         return 1
 
     build_database(args.data_dir, args.output, verbose=not args.quiet)

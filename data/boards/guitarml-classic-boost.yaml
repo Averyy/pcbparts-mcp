@@ -24,6 +24,9 @@ components:
 - ref: D1
   value: 1N5817
   footprint: DO-35_SOD27_P7.62mm_Horizontal
+- ref: LED1
+  value: LED
+  footprint: 1X2_P2.54mm
 - ref: POT1
   value: 100K
   footprint: Potentiometer_Omeg_PC16BU_Vertical

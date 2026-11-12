@@ -109,29 +109,29 @@ components:
   footprint: HAMAMATSU_S2744-09_rozs
 - ref: J1
   value: 2x3 header
-  footprint: Straight
+  footprint: Straight_2x03
   pin_count: 6
 - ref: J11
   value: 2x1 header
-  footprint: Straight
+  footprint: Straight_2x01
 - ref: J2
   value: 2x1 header
-  footprint: Straight
+  footprint: Straight_2x01
 - ref: J3
   value: 2x1 header
-  footprint: Straight
+  footprint: Straight_2x01
 - ref: J4
   value: 2x1 header
-  footprint: Straight
+  footprint: Straight_2x01
 - ref: J5
   value: 2x1 header
-  footprint: Straight
+  footprint: Straight_2x01
 - ref: J6
   value: 2x1 header
-  footprint: Straight
+  footprint: Straight_2x01
 - ref: J7
   value: 2x1 header
-  footprint: Straight
+  footprint: Straight_2x01
 - ref: M1
   value: HOLE
   footprint: MountingHole_3mm

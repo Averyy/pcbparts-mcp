@@ -2,7 +2,7 @@ name: Zigbee Rotary Dimmer
 slug: zigbee-rotary-dimmer
 source: dagroe/zigbee-rotary-dimmer-switch
 format: kicad8
-description: "Wall-mount Zigbee dimmer (ESP32-C6 native Zigbee), external IRM-01-5 mains PSU board"
+description: Wall-mount Zigbee dimmer (ESP32-C6 native Zigbee), external IRM-01-5 mains PSU board
 tags: [zigbee-thread]
 key_ics: [ESP32-C6]
 outline:
@@ -25,14 +25,14 @@ components:
   lcsc: C15195
 - ref: C3
   value: 47uF
-  footprint: C_Elec
+  footprint: C_Elec_4x5.4
   lcsc: C59921
   voltage: 16V
   tolerance: 20%
   decouples: U4
 - ref: C4
   value: 47uF
-  footprint: C_Elec
+  footprint: C_Elec_4x5.4
   lcsc: C59921
   voltage: 16V
   tolerance: 20%
@@ -77,23 +77,23 @@ components:
   description: Schottky diode
 - ref: J1
   value: JST SH 5-pin
-  footprint: JST_SH_SM05B-SRSS-TB
+  footprint: JST_SH_SM05B-SRSS-TB_1x05
   height: '2.95'
   manufacturer: JST (JAPAN SOLDERLESS TERMINALS)
   mpn: SM05B-SRSS-TB(LF)(SN)
   lcsc: C136657
   pin_count: 5
 - ref: J4
-  value: 1x2 header
-  footprint: JST_SH_SM02B-SRSS-TB
+  value: JST SH 2-pin
+  footprint: JST_SH_SM02B-SRSS-TB_1x02
   lcsc: C160402
 - ref: J5
-  value: 1x2 header
-  footprint: JST_SH_SM02B-SRSS-TB
+  value: JST SH 2-pin
+  footprint: JST_SH_SM02B-SRSS-TB_1x02
   lcsc: C160402
 - ref: J6
-  value: 1x2 header
-  footprint: JST_SH_SM02B-SRSS-TB
+  value: JST SH 2-pin
+  footprint: JST_SH_SM02B-SRSS-TB_1x02
   lcsc: C160402
 - ref: R1
   value: 10kohm
@@ -168,10 +168,14 @@ components:
 - ref: U3
   value: ESP32-C6-MINI
   footprint: WIFIM-SMD_61P-L16.6-W13.2-P0.80-ESP32-C6-MINI-1-N4
+  mpn: ESP32-C6-MINI-1-N4
   manufacturer: "ESPRESSIF(\u4E50\u946B)"
   lcsc: C5736265
   pin_count: 53
-  nc_pins: {NC@4: '4', IO2: '5', IO3: '6', NC@7: '7', IO4: '9', IO5: '10', IO0: '12', NC@21: '21', IO23: '29', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35', GND@36: '36', GND@37: '37', GND@38: '38', GND@39: '39', GND@40: '40', GND@41: '41', GND@42: '42', GND@43: '43', GND@44: '44', GND@45: '45', GND@46: '46', GND@47: '47', GND@48: '48', GND@49: '49', GND@50: '50', GND@52: '52', GND@53: '53'}
+  nc_pins: {NC@4: '4', IO2: '5', IO3: '6', NC@7: '7', IO4: '9', IO5: '10', IO0: '12', NC@21: '21', IO23: '29', NC@32: '32',
+    NC@33: '33', NC@34: '34', NC@35: '35', GND@36: '36', GND@37: '37', GND@38: '38', GND@39: '39', GND@40: '40', GND@41: '41',
+    GND@42: '42', GND@43: '43', GND@44: '44', GND@45: '45', GND@46: '46', GND@47: '47', GND@48: '48', GND@49: '49', GND@50: '50',
+    GND@52: '52', GND@53: '53'}
 - ref: U4
   value: SN74LV1T125DBV
   footprint: SOT-23-5
@@ -181,6 +185,7 @@ components:
 - ref: U6
   value: 'LDO: SSP7603P50M5R'
   footprint: SOT-23-5
+  mpn: SSP7603P50M5R
   manufacturer: "Siproin(\u4E0A\u6D77\u77FD\u670B)"
   lcsc: C411033
   description: 'Output Type: Maximum Input Voltage:15V Output Voltage:5V Output Voltage:5V MAX'
@@ -189,6 +194,7 @@ components:
 - ref: USB1
   value: USB-C
   footprint: USB-C
+  mpn: GT-USB-7016
   manufacturer: "G-Switch(\u54C1\u8D5E)"
   lcsc: C2843972
   pin_count: 13

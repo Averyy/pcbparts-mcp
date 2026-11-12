@@ -1,7 +1,7 @@
 name: T41 QSD2 Receiver
 slug: t41-qsd2-receiver
 source: Greg-R/qsd2
-format: kicad7
+format: kicad8
 description: 'Double-balanced quadrature sampling detector: ADT4-6T+ transformer, GALI-39+ wideband LNA'
 tags: [ham-radio-rf]
 key_ics: [AD8226, GALI-39+, SN74CBT3253]
@@ -130,18 +130,20 @@ components:
 - ref: J1
   value: 5-1814832-1
   footprint: RF_SMA_Vertical_5-1814832-1
+  digikey: A97594-ND
   mpn: 5-1814832-1
   manufacturer: TE Connectivity AMP Connectors
   description: CONN SMA JACK STR 50 OHM PCB
 - ref: J2
   value: 5-1814832-1
   footprint: RF_SMA_Vertical_5-1814832-1
+  digikey: A97594-ND
   mpn: 5-1814832-1
   manufacturer: TE Connectivity AMP Connectors
   description: CONN SMA JACK STR 50 OHM PCB
 - ref: J3
-  value: 2x8 header
-  footprint: IDC-Header
+  value: 2x8 2.54mm header
+  footprint: IDC-Header_2x08
   pin_count: 16
   nc_pins: {Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_9: '9', Pin_10: '10', Pin_13: '13', Pin_14: '14'}
 - ref: J4
@@ -314,9 +316,9 @@ nets:
 - name: /PREN
   pins: [C31.2, R28.2, U4.n1PRE, U4.n2PRE]
 - name: /REF_I
-  pins: [C23.1, R16.2, U5.REF, U7.VOUT]
+  pins: [C23.1, U5.REF, U7.VOUT]
 - name: /REF_Q
-  pins: [C27.1, R16.1, U6.REF, U8.VOUT]
+  pins: [C27.1, U6.REF, U8.VOUT]
 - name: /SET
   pins: [C25.1, J3.Pin_1, R28.1]
 - name: GND
@@ -330,8 +332,6 @@ nets:
   - C17.2
   - C18.2
   - C19.2
-  - C20.1
-  - C21.1
   - C22.1
   - C23.2
   - C24.2
@@ -376,9 +376,9 @@ nets:
 - name: Net-(C2-Pad2)
   pins: [C2.2, U10.1]
 - name: Net-(C20-Pad2)
-  pins: [C20.2, J4.3, R14.2]
+  pins: [J4.3, R14.2]
 - name: Net-(C21-Pad2)
-  pins: [C21.2, J4.2, R13.1]
+  pins: [J4.2, R13.1]
 - name: Net-(C29-Pad2)
   pins: [C29.2, R14.1]
 - name: Net-(C30-Pad2)

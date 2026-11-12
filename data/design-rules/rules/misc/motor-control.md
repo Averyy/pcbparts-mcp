@@ -4,87 +4,77 @@
 
 ## Quick Reference
 
-- **BLDC driver architecture: integrated FET for < 70W, gate driver + external FETs for > 70W.** Integrated FET: limited by package thermal. Gate driver: up to 3.5A/4.5A source/sink gate current.
-- **Bootstrap cap >= 10x gate capacitance of high-side FET.** Accounts for DC bias shift, temperature drift, and skipped cycles during load transients.
-- **Smart Gate Drive (DRV832x): adjustable IDRIVE eliminates external gate resistors.** Slew rate = Qgd / IDRIVE. Trade EMI vs thermal without board redesign.
-- **Current sense shunt: 1-10 mohm, <= 100ppm/C.** Kelvin-connect sense traces as differential pair. Triple-shunt gives simultaneous 3-phase measurement; dual-shunt saves cost but cannot measure one phase during 100% duty cycle sectors.
-- **TMC2209 stepper: SpreadCycle for torque, StealthChop for silence.** StallGuard4 sensorless stall detection via SGTHRS register (0-255). CoolStep reduces current by up to 75%.
+- **TI's 70W architecture boundary is typical guidance, not a rating.** Integrated-FET devices suit low/mid power and external-FET gate drivers higher power; actual winding current, hot Rds(on), PCB cooling and switching loss set the boundary [1, Section 2.1].
+- **Bootstrap capacitance must cover Qg and driver consumption at allowable droop.** The 10 * C_gate shortcut alone does not verify maximum on-time or MLCC bias loss [3, pp.3-4].
+- **DRV832x IDRIVE controls gate current, not dV/dt directly.** Qgd / IDRIVE estimates transition time; tune against the measured waveform [4, Sections 1.4, 2.1].
+- **Dual low-side shunts limit DC-bus utilization.** Triple-shunt sensing can select the two measurable phases near 100% peak duty; two fixed shunts cannot do that in every SVM sector [5, pp.4-5].
+- **TMC2209 StallGuard4 operates with StealthChop.** Its SGTHRS is unsigned 0-255; StallGuard2's signed SGT tuning procedure does not transfer to it [11, pp.29,58-59].
 
 ## Design Rules
 
 ### BLDC Gate Driver Selection
 
-- **DRV8316: integrated 3-phase MOSFET driver, 4.5-35V, up to 8A peak.** FOC/sinusoidal control with 200V/us adjustable slew rate. Internal dead time 500ns typical with VGS handshaking -- prevents shoot-through without MCU dead time insertion.
-- **DRV8323: 3-phase Smart Gate Driver, 6-60V, external FETs.** Integrates optional 3x current sense amplifiers, optional buck regulator. SPI or hardware interface variants.
-- **Rate motor driver voltage at 1.5-2x maximum battery voltage** for high-power motors and battery systems. 1.2x sufficient for well-regulated supplies and low-power motors.
-- **Gate driver current determines slew rate and EMI/thermal tradeoff.** Too high IDRIVE: VDS overshoot, SW node ringing, EMI failure. Too low IDRIVE: excessive switching loss, FET heating. DRV832x Smart Gate lets you tune IDRIVE via register without changing external components.
-- **IDRIVE slew rate calculation:** t_slew = Qgd / IDRIVE. Example: CSD18532Q5B (Qgd=6.9nC) at IDRIVE=25mA -> t_slew = 276ns. At IDRIVE=150mA -> t_rise = 46ns.
-- **Average gate drive current: I_avg = Qg * num_FETs * f_sw.** Example: 44nC * 6 FETs * 45kHz = 11.88mA. Verify gate driver supply can source this continuously.
+- **DRV8316: integrated 3-phase MOSFET driver, 4.5-35V, up to 8A peak.** It supports externally controlled FOC/sinusoidal commutation; the peak current is not a continuous thermal rating [12, pp.1,68-70].
+- **DRV8323: 6-60V external-FET Smart Gate Driver with three current-sense amplifiers.** The R suffix adds a 600mA buck regulator; S/H variants select SPI/hardware interfaces. Peak source/sink gate drive is 1A/2A [13, pp.1,5].
+- **TI recommends voltage-rating headroom of 1.2x maximum supply for well-regulated low-power motors, or 1.5-2x for high-power/battery systems.** Check regeneration and switching transients against the actual ratings; these are selection guidelines, not surge clamps [1, Section 2.1; 13, Section 10.1].
+- **Gate drive current determines the EMI/thermal tradeoff.** Excessive IDRIVE increases VDS overshoot, ringing and induced turn-on; insufficient IDRIVE increases switching loss. DRV832x provides adjustable current without external gate resistors [4, Section 2.1; 13, Section 8.3.1].
+- **IDRIVE estimates the voltage-transition duration: t_slew = Qgd / IDRIVE.** TI's CSD18532Q5B example uses Qgd=6.9nC (typical at VDS=30V, ID=25A); 25mA gives 276ns calculated versus approximately 312ns measured with DRV8701 at a 24V bus. This is a first-order constant-current approximation [4, pp.3,6].
+- **Budget average gate charge for every FET that switches.** I_avg = Qg * num_FETs * f_sw; TI's 44nC, six-FET, 45kHz example gives 11.88mA for gate charging alone. Add driver quiescent current and check the actual gate-voltage/bus-voltage charge data [4, p.7].
 
 ### Bootstrap Circuit
 
-- **Minimum bootstrap cap (detailed):** C_boot >= Q_total / delta_V_HB, where Q_total = Q_G + (I_HBS * D_max / f_sw) + (I_HB / f_sw). Below minimum -> UVLO trips, high-side FET turns off prematurely.
-- **VDD bypass cap >= 10x bootstrap cap.** Replenishes bootstrap cap charge without excessive ripple. 10x ratio limits VDD ripple to 10% worst case.
-- **Bootstrap diode: fast recovery or Schottky, low Vf, low junction capacitance.** Slow recovery diode causes large over/undershoot on HB-HS pin that can trigger driver UVLO. Voltage rating must exceed DC-link voltage with margin.
-- **Bootstrap resistor (2.2 ohm typical): limits peak inrush current at startup.** 0 ohm causes fast dv/dt on HB-HS that couples into LO/HO outputs (verified on UCC27710). Time constant = R_boot * C_boot / duty_cycle -- too high extends startup time.
-- **Use X7R or C0G MLCC for bootstrap cap.** Low ESR/ESL, voltage rating >= 2x VDD. Place bootstrap cap and VDD bypass cap as close as possible to driver supply pins.
+- **For bootstrap-only drivers such as UCC27710, calculate charge and allowable droop.** C_boot >= Q_total / delta_V_HB; include gate charge, floating-supply quiescent current and leakage for the longest high-side on-time. The falling UVLO threshold is only a lower bound: the remaining voltage must also fully enhance the FET [3, p.3; 13, Section 9.2.1.2].
+- **VDD bypass cap >= 10x bootstrap cap is TI's starting recommendation.** Its charge-sharing model limits VDD-capacitor ripple to approximately 10%; verify effective capacitance and supply impedance [3, p.4].
+- **Bootstrap diode: fast recovery or Schottky, low Vf, low junction capacitance.** Rate reverse voltage above the maximum DC-link voltage with margin and check startup peak current; diode recovery causes HB-HS overshoot/undershoot and UVLO trips in TI's test [3, pp.4-5].
+- **2.2 ohm is the UCC27710 startup example, not a universal bootstrap resistor.** It removes the unwanted output excursions seen with 0 ohm in that test. Check peak charging current and sufficient recharge during the actual high-side off-time; increasing R_boot delays startup [3, pp.6-7].
+- **Bootstrap MLCC rating: TI recommends 2x VDD with low ESR/ESL.** Use effective capacitance after voltage bias, temperature and tolerance; oversized capacitors also increase startup charge and diode stress [3, pp.3-4].
 
-> WARNING: At D > 50%, low-side on-time may be insufficient to fully recharge bootstrap cap. Verify bootstrap voltage at worst-case duty cycle. ICs with integrated charge pump (e.g., DRV8316) avoid this issue entirely.
+> WARNING: Bootstrap recharge depends on the switch-node-low interval and charging impedance, not a universal 50% duty-cycle threshold. DRV8316 and DRV832x use charge-pump high-side supplies; apply their capacitor and gate-charge requirements instead of a generic bootstrap network [3, pp.2-3; 12, Section 8.3.1; 13, Section 9.2.1.2].
 
 ### Dead Time and Shoot-Through
 
-- **DRV8316 internal dead time: 500ns typical at 200V/us slew rate.** Dead time varies with current direction: when body diode conducts in same direction as next FET, dead time shortens (VGS handshaking detects safe turn-on). When current reverses, dead time extends to datasheet typical/max.
-- **MCU dead time insertion: only needed if MCU dead time > driver dead time.** If MCU dead time < driver dead time, driver compensates automatically. Adding unnecessary MCU dead time increases duty cycle distortion.
-- **DRV831x/MCx831x Delay Compensation feature** auto-corrects asymmetric propagation delays between current-in and current-out phases, reducing duty cycle distortion in sinusoidal commutation. Recommended target: tpd + tdead.
+- **DRV8316's 500ns dead time is typical for the 200V/us setting and specified commutation direction.** When current flows out of OUTx, low-side-to-high-side commutation gives the typical delay; high-side-to-low-side commutation is shorter. Reverse current reverses those cases. VGS handshaking prevents overlap, so 500ns is not a fixed minimum [7, Section 2].
+- **Additional MCU dead time changes DRV8x output timing according to both current direction and input edges.** In the typical-delay cases, dead time follows the larger MCU/driver value; same-direction diode/FET conduction shortens it. Use SLVAF84's table rather than treating MCU dead time as required only above a threshold; this behavior does not establish safe dead time for unrelated external-FET drivers [7, Sections 3-4].
+- **Some DRV831x/MCx831x devices provide Delay Compensation** to reduce duty-cycle distortion from unequal delays. TI recommends a target of tpd + tdead; do not add this target as an extra physical shoot-through dead time [7, Section 5].
 
 ### Current Sensing
 
-- **Triple-shunt (one shunt per phase leg): most accurate.** Measures all 3 phase currents simultaneously in middle of PWM period (center-aligned SVM). Requires 3 ADC channels but provides redundancy -- if one fails, operates as dual-shunt.
-- **Dual-shunt: lower cost, measures 2 phases and calculates third** via i_a + i_b + i_c = 0. Cannot measure phase at 100% duty cycle (low-side FET off entire period). Full DC bus utilization still possible since at least 2 phases always measurable in each SVM sector.
-- **ADC sampling must be synchronized to PWM center.** Sample during low-side FET on-time only. Low-side on-time must exceed ADC conversion time + settling time to avoid transient artifacts from switching.
-- **Sense shunt placement for DRV832x:** connect between low-side FET source and PGND. Kelvin-connect SN and SP pins as differential pair directly to shunt pads. Place 100pF-1nF filter cap at amplifier input pins, not at shunt.
-- **Shielding on split-supply systems:** if DRV832x sense amplifier reference (AGND) is separated from power ground, route analog ground plane between sense amplifier and power stage to prevent switching noise coupling.
+- **Triple low-side shunts permit phase selection at high modulation.** With center-aligned SVM, measure two valid currents simultaneously and reconstruct the third when a phase reaches 100% duty. Two simultaneous ADC modules suffice; retaining a failed-sensor backup requires sacrificing full bus utilization [5, pp.3-4].
+- **Dual-shunt: measure two fixed phases and reconstruct the third.** Limit peak duty so each measured phase has a valid low-side conduction window. NXP's center-sampled symmetrical PWM requires minimum low-side on-time >= 2 * ADC conversion time, with settling and dead time added [5, p.5].
+- **Sense shunt placement for DRV8323/DRV8323R:** connect between low-side FET source and PGND. Kelvin-connect SPx and SNx directly to the shunt terminals; check amplifier settling and stability before adding an input filter [6, Sections 7.4, 8].
+- **In split-ground DRV832x layouts, shield SPx/SNx with power ground.** These inputs belong to the power-stage domain; VREF and SOx use the logic-ground domain. AGND is not a replacement for the amplifier's VREF input [6, Section 8].
 
 ### 3-Phase Layout
 
-- **Star-point grounding: all ground returns to single point under driver IC.** Digital, analog, and power grounds partitioned on board but joined at star point. Prevents power stage switching current from flowing through analog ground.
-- **DRV832x: common ground plane acceptable for most designs.** Split ground plane only needed when sense amplifier noise floor must be < 1 LSB. For split plane, join analog and power ground at single point near driver thermal pad.
-- **Half-bridge hot loop: input cap -> high-side FET drain -> high-side FET source/low-side FET drain -> low-side FET source -> sense resistor -> input cap ground.** Minimize this loop area. Place bypass cap directly adjacent to FET drain/source connections.
-- **Thermal pad: direct-connect vias (no thermal relief), 0.5mm (20mil) diameter, 0.2mm (8mil) hole.** Each via ~5.7C/W through 1.56mm FR-4. Array of vias under thermal pad for minimum thermal resistance. Do not solder-mask thermal vias -- causes excessive voiding.
-- **2-oz copper halves thermal resistance** vs 1-oz for same plane dimensions. Critical for motor drivers where thermal pad is primary heat path.
-- **SW node copper: keep minimal.** Large copper area on switch node acts as antenna -- radiates EMI at switching frequency and harmonics.
-- **Via current capacity per IPC-2152 (10C rise, 1-oz):** 0.15mm (6mil) = 0.2A, 0.2mm (8mil) = 0.55A, 0.25mm (10mil) = 0.81A, 0.4mm (16mil) = 1.1A. Use multi-via arrays for high-current connections.
+- **DRV832x normally uses a common ground plane.** Connect ground pins directly to the thermal pad and plane. If noise isolation requires a split, connect domains near the driver and place the thermal pad over power ground; there is no specified 1-LSB trigger for splitting [6, Section 2].
+- **DRV832x shunt and low-side FET pads need direct copper connections.** Thermal relief on the shunt adds parasitic inductance and voltage spikes; the driver thermal pad also needs direct connections [6, Sections 2, 7.2, 7.4]. General via sizing and exposed-pad assembly -> `guides/pcb-layout.md`, `guides/thermal.md`.
+- **Doubling copper thickness halves the lateral copper-path resistance in TI's fixed-geometry model.** It does not halve total junction-to-ambient thermal resistance [2, Section 2.3].
 
 ### Motor Drive EMC
 
-- **ST AN4694: ground grid improvements on 2-layer boards** provide near-ground-plane performance. Convert single-ended ground traces to grid by adding short connections and moving vias to create multiple parallel return paths.
+- **TI SLVA959B's two-layer ground-grid example** connects previously single-ended ground paths with added traces and moved vias, approaching ground-plane behavior. This example is not an ST AN4694 measurement [2, Section 1.2].
 
 ### Stepper Drivers
 
-- **TMC2209: 2A RMS, 256 microstep, UART interface.** SpreadCycle for max torque, StealthChop2 for silent operation (voltage-mode chopper). Integrated StallGuard4 + CoolStep for sensorless stall detection and load-adaptive current.
-- **A4988: 2A peak (1.4A RMS without heatsink), simple step/dir interface.** 16 microstep max. Fixed-frequency PWM chopper. No sensorless stall detection. Budget option for non-critical applications.
-- **SpreadCycle chopper tuning (Trinamic AN-001):** Start with TBL=1 (1-2us blank time), TOFF=5-20us range, HEND=10. Reduce hysteresis to 0, increase HEND until vibration stops improving, add 1-2 increments for margin. Measure fast-decay duration with scope -- should slightly exceed blank time. Distorted sine wave at low velocity with correct supply voltage -> increase TBL by one (too-low blank time is the cause).
-- **Supply voltage window:** R_coil * I_coil << Vs < 25 * R_coil * I_coil. Below minimum: motor cannot follow sine wave (back-EMF + resistive drop exceeds supply). Above maximum: excessive power dissipation and chopper frequency.
-- **StallGuard2 parameterization (Trinamic AN-002):** Optimize SGT in range -10 to +10. Set SGMIN=0 (disable CoolStep) during calibration. Run motor at medium velocity, adjust SGT until SG=0 at mechanical load close to stall. SGT outside -10 to +10 indicates suboptimal motor/speed/voltage combination. SFILT=1 averages over 4 full steps for noise reduction; SFILT=0 for fastest response.
-- **StallGuard velocity range is limited.** At zero/low velocity: resistive losses dominate, StallGuard cannot distinguish load from I^2R heating. At high velocity: driver cannot deliver full current. Only works in mid-velocity range. Motor coil resistance increases with temperature (copper tempco) -- calibrate at operating temperature extremes.
-- **CoolStep: load-adaptive current reduces power by up to 75%.** Automatically increases current when load increases (via StallGuard feedback). Set minimum current (SGMIN) high enough to prevent stall at maximum expected load transient.
-- **Motor selection for StallGuard accuracy:** lower coil resistance -> lower resistive loss offset -> more precise SG reading. Operating at 80% of nominal current reduces resistive losses to 64% while retaining 80% torque, improving StallGuard signal quality.
+- **TMC2209: up to 2A RMS / 2.8A peak with adequate cooling.** UART configures microstepping up to 256; MicroPlyer interpolates pin-selected steps. StallGuard4 and CoolStep use StealthChop; switching to SpreadCycle changes the available load-detection behavior [11, pp.1,14,58-60].
+- **A4988: up to 35V and +/-2A output rating, STEP/DIR, up to 1/16 microstep.** It uses fixed-off-time current regulation, not fixed-frequency PWM. Continuous current depends on PCB cooling; there is no guaranteed 1.4A RMS without a heatsink [10, pp.1-2,5,7].
+- **SpreadCycle tuning values depend on the IC clock and register encoding.** AN-001 starts with 1-2us blanking at 16MHz and 5-20us off-time; those are times, not raw TOFF register values. Its HEND encoding has a -3 offset, so a hysteresis-end value of 10 is encoded as 13. Check the selected driver's register table [8, Parameterization of spreadCycle].
+- **AN-001's supply guideline is R_coil * I_coil << Vs < 25 * R_coil * I_coil.** It describes the chopper/motor operating window, not permission to exceed the driver's voltage rating [8, Prerequisites].
+- **StallGuard2 parameterization applies to StallGuard2 devices, not TMC2209.** AN-002 recommends tuning SGT near -10 to +10, SEMIN=0 to disable CoolStep during calibration, and SFILT=0 for fastest stall response; SFILT=1 averages over four full steps [9, StallGuard2 Parameterization].
+- **TMC2209 StallGuard4 calibration:** at the operating speed/current, increase load and use half the lowest pre-stall SG_RESULT as the starting SGTHRS; then test across motors and temperature. SEMIN=0 disables CoolStep; SEMIN is a StallGuard-result threshold, not the minimum motor-current setting [11, pp.29-30,58-62].
+- **CoolStep's up-to-75% figure is an energy-saving claim, not a guaranteed current reduction.** Maintain torque margin for load transients and the actual speed range [11, pp.1,59-62].
 
 ## Common Mistakes
 
-- **Skipping bootstrap resistor causes false gate driver faults at startup.** 0 ohm bootstrap resistor allows fast dv/dt on HB-HS that couples into gate outputs. 2.2 ohm eliminates the issue with negligible impact on steady-state operation.
-- **Thermal relief on driver thermal pad vias.** Constricts heat path from die to bottom ground plane. Motor drivers dissipate significant power -- direct-connect vias are mandatory, not optional.
-- **Via clusters splitting ground plane under signal traces.** Creates gap forcing return current to detour around via field, forming large loop antenna. Stagger vias and route signal traces around via clusters.
-- **Ground plane discontinuity between power stage and sense amplifier.** Switching current return path detours through analog ground, injecting noise into current sense. Maintain continuous ground plane or use controlled split with single join point.
-- **StallGuard calibrated at room temperature only.** Coil resistance increases with temperature (copper tempco 0.393%/C), changing the SG reading. Calibrate at operating temperature extremes and add safety margin.
-- **Solder-masking thermal vias under driver pad.** Causes excessive voiding during reflow. Leave thermal vias exposed for direct solder connection.
+- **Calibrating StallGuard only at room temperature.** Coil resistance and motor losses change the reading; AN-002 requires tests with different motors, electronics and motor temperatures to establish a reliable threshold margin [9, Detecting a Stall].
+- **Assigning a via a universal current or thermal rating.** TI's 20mil pad/8mil hole example depends on its geometry; the quoted thermal calculation does not establish a plated-barrel rating. Use the actual barrel copper and board stackup -> `guides/thermal.md`, `guides/pcb-layout.md` [2, Section 2.5].
 
 ## Formulas
 
-**Bootstrap capacitor (rule of thumb):**
-**Rule of thumb:** C_boot >= 10 * C_gate. For 58nC Qg FET at 10V gate drive: C_gate = 58nC/10V = 5.8nF -> C_boot >= 58nF, use 100nF X7R.
-**Formula:** C_boot >= Q_total / delta_V_HB, where Q_total = Q_G + (I_HBS * D_max / f_sw) + (I_HB / f_sw), delta_V_HB = VDD - V_diode - V_UVLO
-**Example:** Q_G=58nC, I_HBS=100uA, D_max=0.95, f_sw=20kHz, I_HB=3mA, VDD=12V, V_diode=0.5V, V_UVLO=8V -> Q_total = 58nC + 4.75nC + 150nC = 212.75nC. delta_V_HB = 3.5V. C_boot >= 60.8nF -> use 100nF.
+**Bootstrap sizing for UCC27710-style floating supplies [3, p.3]:**
+**Rule of thumb:** C_boot >= 10 * C_gate, with C_gate = Qg / (VDD - V_diode), is only a starting check. Also satisfy charge/droop, minimum gate voltage and recharge timing using effective capacitance.
+**Formula:** C_boot >= Q_total / delta_V_HB; Q_total = Q_G + I_HBS * D_max / f_sw + I_HB / f_sw; delta_V_HB = VDD - V_diode - V_UVLO. I_HBS is HB-to-VSS leakage; I_HB is floating-supply quiescent current. Use worst-case device values and add any external leakage and longer skipped-cycle on-time.
+**Example:** Illustrative inputs Q_G=58nC, I_HBS=100uA, D_max=0.95, f_sw=20kHz, I_HB=3mA, VDD=12V, V_diode=0.5V, V_UVLO=8V give Q_total=212.75nC and delta_V_HB=3.5V, hence 60.8nF minimum. A nominal 100nF is acceptable only if its effective value exceeds that minimum and its resulting gate voltage satisfies the FET's drive requirement.
 
 Contactor coil drive formulas -> `misc/ev-power-systems.md`.
 
@@ -100,12 +90,14 @@ Contactor coil drive formulas -> `misc/ev-power-systems.md`.
 
 1. TI SLVAES1A -- Brushless-DC Motor Driver Considerations and Selection Guide: https://www.ti.com/document-viewer/lit/html/SLVAES1A
 2. TI SLVA959B -- Best Practices for Board Layout of Motor Drivers: https://www.ti.com/document-viewer/lit/html/SLVA959B
-3. TI SLUA887 -- Bootstrap Circuitry Selection for Half-Bridge Configurations: https://www.ti.com/document-viewer/lit/html/SLUA887
-4. TI SLVA714D -- Understanding Smart Gate Drive: https://www.ti.com/lit/an/slva714d/slva714d.pdf
-5. NXP AN14164 -- Current Sensing Techniques in Motor Control Applications: https://www.nxp.com/docs/en/application-note/AN14164.pdf
-6. ST AN4694 -- EMC Design Guides for Motor Control Applications: https://www.st.com/resource/en/application_note/an4694-emc-design-guides-for-motor-control-applications-stmicroelectronics.pdf
-7. TI SLVA951 -- Layout Guide for the DRV832x Family of Three-Phase Smart Gate Drivers: https://www.ti.com/lit/pdf/slva951
-8. TI SLVAF84 -- Delay and Dead Time in Integrated MOSFET Drivers: https://www.ti.com/document-viewer/lit/html/SLVAF84
-9. ADI (Trinamic) AN-001 -- Parameterization of spreadCycle: https://www.analog.com/en/resources/app-notes/an-001.html
-10. ADI (Trinamic) AN-002 -- Parameterization of StallGuard2 & CoolStep: https://www.analog.com/en/resources/app-notes/an-002.html
-11. Allegro -- A4988 DMOS Microstepping Driver Datasheet: https://www.allegromicro.com/-/media/files/datasheets/a4988-datasheet.pdf
+3. TI SLUA887A (September 2023) -- Bootstrap Circuitry Selection for Half-Bridge Configurations: https://www.ti.com/document-viewer/lit/html/SLUA887
+4. TI SLVA714D (March 2021) -- Understanding Smart Gate Drive: https://www.ti.com/lit/an/slva714d/slva714d.pdf
+5. NXP AN14164 (Rev.1.0, February 2024) -- Current Sensing Techniques in Motor Control Applications: https://www.nxp.com/docs/en/application-note/AN14164.pdf
+6. TI SLVA951 (March 2018) -- Layout Guide for the DRV832x Family of Three-Phase Smart Gate Drivers: https://www.ti.com/lit/pdf/slva951
+7. TI SLVAF84 (September 2021) -- Delay and Dead Time in Integrated MOSFET Drivers: https://www.ti.com/document-viewer/lit/html/SLVAF84
+8. ADI (Trinamic) AN-001 -- Parameterization of spreadCycle: https://www.analog.com/en/resources/app-notes/an-001.html
+9. ADI (Trinamic) AN-002 -- Parameterization of StallGuard2 & CoolStep: https://www.analog.com/en/resources/app-notes/an-002.html
+10. Allegro A4988 (Rev.8) -- DMOS Microstepping Driver Datasheet: https://www.allegromicro.com/-/media/files/datasheets/a4988-datasheet.pdf
+11. ADI TMC2209 (Rev.1.09, February 2023): https://www.analog.com/media/en/technical-documentation/data-sheets/TMC2209_datasheet_rev1.09.pdf
+12. TI DRV8316 (SLVSF16B, April 2022): https://www.ti.com/lit/ds/symlink/drv8316.pdf
+13. TI DRV832x (SLVSDJ3D, March 2022): https://www.ti.com/lit/ds/symlink/drv8323.pdf

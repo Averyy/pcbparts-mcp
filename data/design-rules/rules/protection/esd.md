@@ -4,116 +4,89 @@
 
 ## Quick Reference
 
-- **V_RWM >= 1.2 * max signal voltage.** Leakage rises exponentially near V_RWM -- bidirectional only if signal swings negative.
-- **V_CLAMP at IC = V_BR + R_DYN * I_SURGE + L_GND * dI/dt.** Must stay below IC absolute max at worst-case temperature.
-- **Ground inductance dominates: 1nH adds ~30V at IEC Level 4 (30 A/ns).** 4+ vias on TVS ground pad.
-- **Route connector -> TVS -> IC in series.** T-junction stubs bypass TVS entirely.
-- **Capacitance budget:** USB 2.0 <= 1.5pF, USB 3.2 Gen 1 < 0.5pF, USB 3.2 Gen 2 < 0.3pF, HDMI 2.1/DP 2.0 <= 0.15pF.
+- **V_RWM >= max signal voltage including tolerances.** Check leakage at that voltage and operating temperature; no universal 20% margin [2, §2.1].
+- **Include TVS-path and ground inductance in V_CLAMP at the IC.** Use clamping data for the applied waveform and current, including temperature limits; keep the resulting voltage below the protected circuit's rated tolerance [2, §2.4; 4, p.7].
+- **Ground inductance dominates: 1nH adds ~30V at IEC Level 4 (30 A/ns typical).** Use multiple ground vias at the TVS [4, pp.3-4, 8-10].
+- **Route connector -> TVS -> IC through the TVS pad.** A stub adds inductive overshoot at the IC [3, §2.1].
+- **TI USB capacitance recommendations:** < 4pF for USB 2.0; < 0.5pF at 5Gbps/lane, < 0.3pF at 10Gbps/lane [5, pp.5, 7, 9].
 
 ## Design Rules
 
 ### TVS Selection
 
-- **Unidirectional for always-positive signals** (VBUS, GPIO). Bidirectional for signals that swing negative (audio, RS-485, CAN, differential AC-coupled). Bidirectional has ~2x capacitance and worse negative clamping.
-- **V_RWM is the selection parameter, not V_BR.** V_BR is breakdown at 1mA -- leakage increases exponentially between V_RWM and V_BR. Select V_RWM >= max signal voltage including tolerances.
-- **Flat-clamp TVS when IC abs max is tight.** R_DYN as low as 60 mohm vs 500-900 mohm for standard Zener. At 24A surge: TVS3300 clamps to 39.4V vs SMAJ33A at 59.2V -- 20V difference that determines whether a 60V-rated IC survives.
-- **Multi-channel arrays for differential pairs** (USB, HDMI): 0.2pF mismatch between D+/D- converts CM ESD into DM noise. Use arrays with < 0.05pF channel mismatch.
-- **Analog signal distortion near V_RWM.** Leakage clips waveforms even without ESD event. Measurable above ~80% of V_RWM. Use V_RWM >= 1.5x peak signal for analog interfaces.
+- **Unidirectional for always-positive signals** (VBUS, GPIO). Bidirectional for signals whose voltage relative to ground swings negative (audio, RS-485, CAN); differential signaling alone does not require bidirectional protection [2, §2.5].
+- **V_RWM is the selection parameter, not V_BR.** V_BR is typically specified at 1mA, but use the device's stated test current; nominal voltage below V_BR does not assure low leakage [2, §2.2].
+- **Flat-clamp TVS when IC abs max is tight.** TI's 24A, 8/20us example gives 59.8V nominal for SMAJ33A versus about 39V for TVS3300; the SMAJ estimate rises to 63.4V at 85 degrees C [2, §3.3].
+- **Multi-channel arrays for differential pairs** (USB, HDMI): compare line-to-ground capacitance and channel matching at the same bias. USBLC6-2 specifies 0.015pF line-to-ground matching; its 1.2pF line-to-line capacitance is not its load to ground [8, p.2].
+- **Analog signal loading:** use the leakage and capacitance specifications at the actual bias; low-voltage surge TVS leakage can exceed 1mA, invalidating a low-current budget [2, §2.6, §3.6].
 
-> WARNING: Never use snap-back TVS on DC supply lines. The supply sustains current above I_hold -> TVS latches permanently and is destroyed by EOS. Standard Zener TVS has negligible latch-up risk on DC rails.
-
-**Capacitance limits by interface:**
-
-| Interface | Max TVS Capacitance |
-|-----------|-------------------|
-| CAN 2.0 / RS-485 | < 15pF |
-| CAN FD (> 2 Mbps) | < 12pF |
-| USB 2.0 | <= 1.5pF |
-| USB 3.2 Gen 1 (5 Gbps) | < 0.5pF |
-| USB 3.2 Gen 2 (10 Gbps) | < 0.3pF |
-| USB 3.2 Gen 2x2 (20 Gbps) | < 0.15pF |
-| HDMI 2.1 / DP 2.0 | <= 0.15pF |
-| LVDS / MIPI D-PHY | < 0.5pF |
-| PCIe Gen 4+ | < 0.25pF |
+> WARNING: A snap-back TVS on a DC rail latches if the supply load line sustains the on-state above the hold current. Select a hold voltage above the rail or prove the available current cannot sustain latch-up [6, §3].
 
 ### Part Recommendations
 
-- **USB 2.0 D+/D-:** TPD2E2U06 (TI, dual, 1.5pF, SOT-23-3) or ESD122 (TI, dual, 0.2pF, DFN1006-3) for tighter budget. General purpose USB/UART: USBLC6-2SC6 (ST, dual, 1.2pF, SOT-23-6).
-- **USB 3.2 Gen 1 TX/RX:** TPD4E02B04 (TI, 4-ch, 0.25pF, USON 2.5x1.0). Covers up to 10 Gbps per lane.
-- **USB 3.2 Gen 2x2 / 20 Gbps:** TPD1E01B04 (TI, 1-ch, 0.18pF, DFN0603). Use 8x for full Type-C TX/RX.
-- **General GPIO/signal:** ESD321 (TI, 1-ch, 0.9pF, DFN1006) for 3.6V lines. ESD441 (TI, 1-ch, 1pF, DFN0603) for 5.5V lines: CC and VBUS on a 5V-only USB-C port; ESD341 (0.66pF) for SBU. A Type-C CC pin can short to VBUS in the connector, so CC needs >= 22V DC tolerance (24V clamp such as ESD752, or TPD2S300) wherever VBUS can exceed 5.5V; see `interfaces/usb.md`.
-- **CAN:** ESD2CANFD24-Q1 (TI, 2-ch, 2.5pF, SOT-23). Standard ESD2CAN24-Q1 is 3pF -- check if CAN FD > 2 Mbps needs lower.
-- **HDMI TMDS:** TPD4E05U06 (TI, 4-ch, 0.4pF, USON 2.5x1.0) -- two devices cover 8 TMDS lines plus clock.
-- **USB-PD VBUS surge (5-48V):** TVS0500 (5V/9V clamp), TVS1400 (9V/18V), TVS2200 (20V/28V), TVS3300 (33V/38V). Flat-clamp family, 2x2mm DRV package.
-- **Ethernet:** ESD protection goes on the line side (before magnetics). Magnetics provide ~1500V isolation. ESDS304 (TI, 4-ch, 2.3pF, SOT-23) for 10/100/1000BASE.
+- **USB 2.0 D+/D-:** TPD2E2U06 (TI, dual, 1.5pF typical at 2.5V bias, 1MHz and 25 degrees C; SC70-3 DCK or 5-pin DRL) or ESD122 (TI, dual, 0.2pF, DFN1006-3). USBLC6-2SC6 (ST, dual, SOT23-6L) has 2.5pF typical / 3.5pF maximum line-to-ground capacitance at 1.65V bias and 25 degrees C [7, pp.1, 4; 5, p.5; 8, p.2].
+- **USB 3.2 Gen 1 TX/RX:** TPD4E02B04 (TI, 4-ch, 0.25pF, USON 2.5mm * 1.0mm). Covers up to 10Gbps per lane [5, pp.7-10].
+- **USB 3.2 Gen 2x2 / 20Gbps:** TPD1E01B04 (TI, 1-ch, 0.18pF, DFN0603 or DFN1006). Use eight for full Type-C TX/RX as in TI's example [5, pp.9, 12].
+- **General GPIO/signal:** ESD321 (TI, 1-ch, 0.9pF, DFN1006 or SOD523) for 3.6V lines. ESD441 (1pF, DFN0603) for 5.5V lines; ESD341 (0.66pF) for 3.6V SBU. For CC/SBU short-to-VBUS tolerance, TI lists ESD752 (24V working voltage, not a 24V clamp); match the DC fault voltage as well as ESD clamping -> `interfaces/usb.md` [5, pp.3, 14, 17].
+- **CAN:** ESD2CANFD24-Q1 (TI, 2-ch, 2.5pF typical, SOT-23); ESD2CAN24-Q1 is 3pF typical. Both are listed for CAN FD; capacitance alone does not impose a 2Mbps cutoff [9, §1-3, §5.7].
+- **HDMI TMDS:** TPD4E05U06 (TI, 4-ch, 0.5pF, USON 2.5mm * 1.0mm); two devices cover the eight conductors of three data pairs plus one clock pair [5, p.3; 6, §5.2.1].
+- **USB-PD VBUS surge:** TI lists TVS0500 for 5V VBUS (~9V clamp), TVS1400 for 9V (~18V), TVS2200 for 20V (~28V), and TVS3300 for 28V (~38V), in 2mm * 2mm DRV. These selections do not cover 48V VBUS; the figures are the application note's recommendations, not waveform-independent clamps [5, p.16].
+- **Ethernet:** ESDS304 (TI, 4-ch, 2.3pF typical, SOT-23-5) supports 10/100/1000BASE; TI's application places it between the magnetics and PHY. Keep its ground on the PHY side; line-side protection requires an isolation-compatible topology [10, §3, §7.2].
 
 ### Clamping Voltage Analysis
 
-- **Datasheet V_CLAMP assumes zero PCB parasitics at 25C.** Real clamping adds L_GND * dI/dt and temperature shift. Always calculate total V at IC.
-- **Temperature derating:** V_BR tempco ~1e-3/C. At 85C: V_CLAMP rises ~6%. SMAJ33A at 25C: 59.8V -> 63.4V at 85C. I_PP derates ~50% at 85C, ~80% at 125C.
-- **Package size determines R_DYN.** SMAJ (SMA) R_DYN ~884 mohm. SMBJ (SMB) ~504 mohm. Flat-clamp (DRV 2x2mm) ~60 mohm. Larger package = lower clamping at same surge current.
-- **Low-voltage TVS leakage.** 3.3V/3.6V TVS can reach 1uA at V_RWM -- check against battery/sleep current budget.
+- **Datasheet V_CLAMP is tied to a current, waveform, and temperature.** Do not extrapolate surge dynamic resistance to an ESD pulse; include PCB inductance separately [2, §2.4; 4, p.7].
+- **Temperature derating is device-specific.** TI's SMAJ33A example uses a 0.001/degree C coefficient and a 50% pulse-power derating at 85 degrees C; use the selected manufacturer's curves, not those factors for every TVS [2, §3.3-3.4].
+- **Compare R_DYN for the same waveform.** TI's 8/20us example uses 884 mohm (SMAJ33A), 504 mohm (SMBJ33A), and 60 mohm maximum (TVS3300); these are device examples, not package specifications [2, §3.3].
 
-**Worked example -- 24V industrial input, 33V V_RWM, IEC 61000-4-5 at 24A:**
+**TI example -- 24V industrial input allowing 33V DC, 24A 8/20us surge; estimates exclude PCB parasitics [2, §3.3-3.4]:**
 
-| Device | R_DYN | V_CLAMP at 24A | Verdict |
-|--------|-------|----------------|---------|
-| SMAJ33A | 884 mohm | 59.2V | At 85C: 63.4V. Exceeds 60V abs max -- fails. |
-| SMBJ33A | 504 mohm | 50.1V | At 85C: 54.2V. 60V IC survives with margin. |
-| TVS3300 | 60 mohm | 39.4V | Excellent. 32A rated at 85C, 4000 strikes at 125C. |
+| Device | V_CLAMP nominal | V_CLAMP at 85 degrees C | Limitation |
+|--------|-----------------|-------------------------|------------|
+| SMAJ33A | 59.8V | 63.4V estimated | Exceeds a 60V input rating; pulse-power budget also fails. |
+| SMBJ33A | 51.1V | 54.2V estimated | Verify the selected vendor's waveform and temperature ratings. |
+| TVS3300 | About 39V | Flat-clamp example | TI reports 32A capability at 85 degrees C and 4000 strikes at 30A, 125 degrees C. |
 
 ### PCB Layout
 
-- **Route connector -> TVS -> IC in series.** Never T-junction: a stub to TVS off the main trace adds inductance and lets current bypass TVS entirely.
-- **Ground inductance is the dominant failure mode.** At IEC Level 4 (30A, 0.8ns rise): 1nH adds ~30V. ST AN5686 measured: L_GND +600pH -> 72V peak, +1nH -> 89V, +5nH -> 238V. Design the ground path, not just the signal path.
-- **4+ vias on TVS ground pad.** Each via ~0.5nH; 4 in parallel ~0.125nH. Largest drill feasible. Plated-over vias with non-conductive fill preferred (preserves inner surface area for skin-effect current).
-- **No vias between connector and TVS** -- keep ESD path on same layer. Vias between TVS and IC are acceptable (added inductance steers current toward TVS).
-- **Keep-out zone around ESD path.** High dI/dt between connector and TVS radiates EMI into adjacent unprotected traces. No unprotected signals adjacent to this region on any layer.
-- **45-degree corners maximum** between connector and TVS. 90-degree corner at 8kV produces E-field > 7kV -- strong EMI source. Curved traces preferred.
-- **TVS ground connects to same-layer ground plane** with nearby stitching vias to adjacent internal ground plane. Chassis screw ground near TVS + connector ground further reduces impedance.
+- **Route connector -> TVS -> IC through the TVS pad.** A stub adds TVS-path inductance, increasing the voltage at the IC [4, pp.7-9].
+- **Ground inductance is the dominant failure mode.** For an 8kV contact discharge, ST uses 30 A/ns typical: 1nH adds ~30V. Its test board measured 56V peak with ~1nH baseline; adding 0.6nH, 1nH, and 5nH raised peaks to 72V, 89V, and 238V [4, pp.3-5].
+- **Use multiple TVS ground vias; four is TI's illustrated layout, not a universal inductance guarantee.** TI recommends large pad/drill diameters and nonconductive-filled, plated-over ground vias; do not assume four mutually coupled vias give one-quarter the single-via inductance [3, §2.4].
+- **No vias between connector and TVS** -- keep ESD path on same layer. Vias between TVS and IC are acceptable (added inductance steers current toward TVS) [3, §2.3].
+- **Keep-out zone around ESD path.** High dI/dt between connector and TVS radiates EMI into adjacent unprotected traces. No unprotected signals adjacent to this region on any layer [3, §2.2].
+- **45-degree corners maximum** between connector and TVS; curved traces preferred. TI's corner-field illustration does not establish a universal safe trace gap [3, §2.2].
+- **TVS ground connects to same-layer ground plane** with nearby stitching vias to adjacent internal ground plane. Chassis screw ground near TVS + connector ground further reduces impedance [3, §2.4].
 
 ### Snap-Back Latch-Up
 
-- **DC supplies: never use snap-back TVS.** Supply easily provides hold current -> permanent latch-up -> EOS destruction.
-- **USB 2.0 HS is inherently safe:** 500mV signal, 45 ohm termination. Max current through snap-back device is ~11mA -- far below any hold current.
-- **USB 2.0 FS/LS: calculate.** I_max = (3.6V - V_snapback) / R_series. For FS with 28 ohm: (3.6 - 2.0) / 28 = 57mA. If TVS I_hold > 57mA, safe.
-- **USB 3.x RX lines with AC coupling caps: latch-up impossible.** No DC path to sustain hold current. Place TVS at connector side of coupling caps.
-- **HDMI TMDS:** V_bias_max = 3.63V, R_min = 45 ohm. I_latch_max = (3.63 - V_snapback) / 45. Active pull-up circuits in HDMI receivers detect shorts and remove bias -> releases latch. No known field failures.
-- **High-frequency signals (> 5 MHz) need higher hold current** than DC I-V curves suggest. Pulsed hold current at 5 MHz was ~158mA vs DC hold current of ~22mA in Nexperia testing. This relaxes latch-up risk for high-speed data.
+- **DC supplies: reject snap-back TVS when the supply can sustain its hold current below the operating voltage.** Check both hold voltage and current; otherwise the TVS stays conducting after the pulse [6, §3].
+- **USB 2.0 HS:** Nexperia's worst-case high-state voltage is about 0.5V; snap-back voltage above 0.5V prevents sustained latch-up in HS mode. Check LS/FS operation separately [6, §5.1.1].
+- **USB 2.0 FS/LS: calculate using the correct driver resistance.** Nexperia uses 28 ohm minimum for legacy LS/FS without USB 2.0 capability, but 40.5 ohm minimum for a USB 2.0-capable driver; see Formulas [6, §5.1.1].
+- **USB 3.x:** connector-side protection outside the PHY coupling capacitors has no sustaining DC path in Nexperia's topology, absent a VBUS short. PHY-side TX protection requires a separate latch-up check [6, §5.1.2].
+- **HDMI TMDS:** V_bias_max = 3.63V, R_min = 45 ohm. Require I_hold > (3.63V - V_snapback) / 45 ohm unless V_hold exceeds the bias; do not assume every receiver removes its pull-up during a short [6, §5.2.1].
+- **Nexperia's pulsed hold-current result is conditional:** its 5MHz, 50% duty-cycle, 50-ohm test with ground-level low state required more hold current than DC. Do not apply this relaxation to a biased waveform or a different TVS without testing [6, §4].
 
 ### SEED Co-Design
 
-- **Z-R-Z structure:** series resistor between external TVS and IC shifts the external TVS I-V slope as seen at the IC. Delays IC internal protection triggering so both share surge current optimally.
-- **Optimal co-design:** both internal and external protection reach failure at the same voltage. System ESD robustness = sum of both protections' robustness.
-- **Without TLP curves in IC datasheet:** iterate series resistor experimentally (typically a few ohms) until system ESD robustness peaks. Resistor value must not degrade eye diagram.
+- **Z-R-Z structure:** series resistor between external TVS and IC shifts the external TVS I-V slope as seen at the IC. Delays IC internal protection triggering so both share surge current optimally [1, §5.2].
+- **Optimal co-design:** internal and external protection reaching failure at the same voltage gives a maximum shared current equal to the sum of their individual failure currents in the TLP model [1, §5.2].
+- **Without TLP curves in IC datasheet:** iterate series resistor experimentally until system ESD robustness peaks. Resistor value must not degrade eye diagram [1, §5.2].
 
 - USB D+/D- routing, CC resistors -> `interfaces/usb.md`. CAN physical layer -> `interfaces/can.md`. ESD on isolated interfaces -> `protection/isolation.md`.
 
 ## Common Mistakes
 
-- **Datasheet V_CLAMP used without ground inductance or temperature.** SMAJ33A: 59.8V datasheet + 30V from 1nH ground path + 6% at 85C = 95V+ at IC. Always calculate V_CLAMP(T) + L_GND * dI/dt.
-- **Pass-through TVS package placed backwards.** TI pass-through packages (DFN, SOT-5X3) route signal through device. Reversed orientation breaks signal path or protects the wrong side. Verify pin 1 against footprint.
-- **TVS on stub instead of in-line.** Stub inductance L2 means ESD current splits between TVS and IC. V at IC = V_CLAMP + L2 * dI/dt. Even 0.25nH adds 10V at Level 4.
-- **90-degree corners on ESD traces.** E-field concentration at corner > 7kV at 8kV strike. Causes arcing for trace gaps < 2.6mm and radiates EMI into nearby traces.
-- **Bidirectional TVS on always-positive DC rail.** Wastes 20-30% clamping headroom vs unidirectional. Negative clamping through V_F (~0.7V) on unidirectional is superior.
-- **TVS capacitance destroys differential impedance.** 1pF TVS on 90-ohm USB 3.x pair degrades return loss. Verify S-parameter impact at target data rate.
+- **A room-temperature surge calculation misses the hot limit.** TI's SMAJ33A example rises from 59.8V to 63.4V at 85 degrees C before any PCB overshoot is added [2, §3.3].
+- **TVS on stub instead of in-line.** Stub inductance adds to the TVS-ground path; at ST's typical 30 A/ns, 0.25nH adds 7.5V [3, §2.1; 4, pp.3-5].
+- **Bidirectional TVS on an always-positive DC rail clamps negative pulses in avalanche.** A unidirectional TVS instead conducts forward for negative pulses; compare the specified negative clamps, not a fixed 0.7V forward-drop assumption [2, §2.5].
+- **TVS capacitance alone does not qualify a high-speed link.** Verify the protected link's eye diagram and S-parameters at the target data rate [1, §3].
 
 ## Formulas
 
-**Clamping voltage at IC:**
-**Rule of thumb:** V_CLAMP is 1.5-2x V_RWM for standard TVS at rated surge current.
-**Formula:** V_IC = V_BR + R_DYN * I_SURGE + L_GND * dI/dt
-**Example:** SMBJ33A, V_BR=38V, R_DYN=504 mohm, I_SURGE=24A, L_GND=1nH, dI/dt=30 A/ns -> V_IC = 38 + 12.1 + 30 = 80.1V
-
-**Temperature-derated clamping:**
-**Rule of thumb:** V_CLAMP rises ~6% from 25C to 85C for standard Zener TVS.
-**Formula:** V_CLAMP(T) = V_CLAMP(25C) * (1 + 1e-3 * (TJ - 25))
-**Example:** SMAJ33A at 25C: 59.8V. At 85C: 59.8 * 1.06 = 63.4V.
-
-**Snap-back latch-up check:**
-**Rule of thumb:** If V_driver < V_snapback, latch-up is impossible.
+**Snap-back latch-up check [6, §5.1.1]:**
+**Rule of thumb:** If the maximum driver voltage is below the TVS hold voltage, the DC load line cannot sustain latch-up; otherwise compare available current to I_hold.
 **Formula:** I_max = (V_driver - V_snapback) / R_series
-**Example:** USB 2.0 FS, V_driver=3.6V, V_snapback=2.0V, R_series=28 ohm -> I_max=57mA. Safe if TVS I_hold > 57mA.
+**Example:** Legacy USB LS/FS without USB 2.0 capability, V_driver=3.6V, V_snapback=2.0V, R_series=28 ohm -> I_max=57.1mA. Require TVS I_hold > 57.1mA.
 
 ## Sources
 
@@ -125,11 +98,13 @@
 
 ### References
 
-1. TI SSZB130 -- System-Level ESD Protection Guide: https://www.ti.com/lit/pdf/sszb130
-2. ST AN5241 -- ESD Protection Fundamentals: https://www.st.com/resource/en/application_note/an5241-esd-protection-fundamentals-stmicroelectronics.pdf
-3. TI SLVAE37 -- How to Select a Surge Diode: https://www.ti.com/lit/pdf/slvae37
-4. ROHM 66AN046E -- Selection Method and Usage of TVS Diodes: https://fscdn.rohm.com/en/products/databook/applinote/discrete/diodes/selection_method_and_usage_of_tvs_diodes_an-e.pdf
-5. TI SLVA680A -- ESD Protection Layout Guide: https://www.ti.com/lit/pdf/slva680
-6. ST AN5686 -- PCB Layout Tips for ESD Protection: https://www.st.com/resource/en/application_note/an5686-pcb-layout-tips-to-maximize-esd-protection-efficiency-stmicroelectronics.pdf
-7. TI SLVAF82B -- ESD/Surge Protection for USB Interfaces: https://www.ti.com/lit/pdf/slvaf82
-8. Nexperia AN90038 -- ESD for High-Speed Without Latch-Up: https://assets.nexperia.com/documents/application-note/AN90038.pdf
+1. ST AN5241 (Rev 2, October 2023) -- ESD Protection Fundamentals: https://www.st.com/resource/en/application_note/an5241-esd-protection-fundamentals-stmicroelectronics.pdf
+2. TI SLVAE37 (January 2019) -- How to Select a Surge Diode: https://www.ti.com/lit/pdf/slvae37
+3. TI SLVA680A (April 2022) -- ESD Protection Layout Guide: https://www.ti.com/lit/pdf/slva680
+4. ST AN5686 (Rev 1, July 2021) -- PCB Layout Tips for ESD Protection: https://www.st.com/resource/en/application_note/an5686-pcb-layout-tips-to-maximize-esd-protection-efficiency-stmicroelectronics.pdf
+5. TI SLVAF82B (January 2024) -- ESD/Surge Protection for USB Interfaces: https://www.ti.com/lit/pdf/slvaf82
+6. Nexperia AN90038 (Rev 3, July 2023) -- ESD for High-Speed Without Latch-Up: https://assets.nexperia.com/documents/application-note/AN90038.pdf
+7. TI TPD2E2U06 datasheet (SLLSEG9C, December 2019): https://www.ti.com/lit/gpn/tpd2e2u06
+8. ST USBLC6-2 datasheet (DS4260 Rev 7, December 2021): https://www.st.com/resource/en/datasheet/usblc6-2.pdf
+9. TI ESD2CANxx24-Q1 datasheet (SLVSFW5): https://www.ti.com/lit/gpn/esd2canfd24-q1
+10. TI ESDS30x datasheet (SLVSEG8B, January 2024): https://www.ti.com/lit/gpn/esds304

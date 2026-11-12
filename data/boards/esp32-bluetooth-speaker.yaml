@@ -261,19 +261,19 @@ components:
   value: 15A
   footprint: Fuseholder_Cylinder-6.3x32mm_Schurter_0031-8002_Horizontal_Open
 - ref: J1
-  value: 1x2 screw terminal
-  footprint: JST_XH_S2B-XH-A-1
+  value: 1x2 2.50mm screw terminal
+  footprint: JST_XH_S2B-XH-A-1_1x02
 - ref: J2
-  value: 1x2 screw terminal
-  footprint: JST_XH_S2B-XH-A-1
+  value: 1x2 2.50mm screw terminal
+  footprint: JST_XH_S2B-XH-A-1_1x02
 - ref: J3
   value: USB-C
   footprint: USB-C
   description: USB 2.0-only 14P Type-C Receptacle connector
   pin_count: 15
 - ref: J4
-  value: 1x2 screw terminal
-  footprint: JST_PH_B2B-PH-K
+  value: 1x2 2.00mm screw terminal
+  footprint: JST_PH_B2B-PH-K_1x02
 - ref: L1
   value: 10uH
   footprint: WE-PD_1260
@@ -374,22 +374,18 @@ components:
 - ref: R27
   value: 1kohm
   footprint: 0805
-  pulldown: D4.K
 - ref: R28
   value: 1kohm
   footprint: 0805
-  pulldown: D5.K
 - ref: R29
   value: 1kohm
   footprint: 0805
-  pulldown: D6.K
 - ref: R3
   value: 3.3ohm
   footprint: '0603'
 - ref: R30
   value: 1kohm
   footprint: 0805
-  pulldown: D7.K
 - ref: R4
   value: 3.3ohm
   footprint: '0603'
@@ -412,7 +408,7 @@ components:
   footprint: 0805
 - ref: U1
   value: TPA3116D2
-  footprint: SOP-33
+  footprint: SOP65P810X115-33N
   pin_count: 33
   nc_pins: {SYNC: '16'}
 - ref: U2
@@ -425,7 +421,9 @@ components:
   footprint: ESP32-WROOM-32
   description: RF Module, ESP32-D0WDQ6 SoC, Wi-Fi 802.11b/g/n, Bluetooth, BLE, 32-bit
   pin_count: 39
-  nc_pins: {SENSOR_VP: '4', SENSOR_VN: '5', IO34: '6', IO35: '7', IO32: '8', IO33: '9', IO27: '12', IO14: '13', IO12: '14', IO13: '16', SHD/SD2: '17', SWP/SD3: '18', SCS/CMD: '19', SCK/CLK: '20', SDO/SD0: '21', SDI/SD1: '22', IO15: '23', IO2: '24', IO18: '30', NC: '32', IO23: '37'}
+  nc_pins: {SENSOR_VP: '4', SENSOR_VN: '5', IO34: '6', IO35: '7', IO32: '8', IO33: '9', IO27: '12', IO14: '13', IO12: '14',
+    IO13: '16', SHD/SD2: '17', SWP/SD3: '18', SCS/CMD: '19', SCK/CLK: '20', SDO/SD0: '21', SDI/SD1: '22', IO15: '23', IO2: '24',
+    IO18: '30', NC: '32', IO23: '37'}
 - ref: U4
   value: CH340C
   footprint: SOIC-16
@@ -440,7 +438,7 @@ components:
   nc_pins: {NC: '4'}
 - ref: U6
   value: TP4056
-  footprint: SOIC-8-1EP
+  footprint: SOIC-8-1EP_3.9x4.9
   description: "1A Standalone Linear Li-ion/LiPo single-cell battery charger, 4.2V \xB11% charge"
   pin_count: 9
   nc_pins: {TEMP: '1'}
@@ -449,12 +447,14 @@ components:
   footprint: VQFN-20
   manufacturer: Texas Instruments
   mpn: TPS61088RHLR
+  description: 10-A Fully-Integrated Synchronous Boost Converter
   pin_count: 21
   nc_pins: {NC_11: '11', NC_12: '12', MODE: '13'}
 - ref: U8
   value: MAX17048G_T10
-  footprint: SON-9
+  footprint: SON50P200X200X80-9N
   manufacturer: Analog Devices
+  description: "3\xB5A 1-Cell/2-Cell Fuel Gauge with ModelGauge"
   mpn: MAX17048G+T10
   pin_count: 8
   nc_pins: {nALERT: '5'}

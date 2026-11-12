@@ -1,0 +1,8 @@
+{"l":"C5792692","m":"PCF7926ATT/C1AC0700","f":"NXP Semicon","p":"TSSOP20","t":"e","c":2278,"d":"TSSOP20 RFID Modules ROHS","a":[],"x":0,"n":1}
+{"l":"C7383536","m":"SIM7500","f":"SILION","p":"SMD,28x28mm","t":"e","c":2278,"d":"-25℃~+65℃ 5V 960MHz Power-on reset (POR)、Thermal shutdown UART SMD,28x28mm RFID Modules ROHS","a":[["Operating Temperature","-25℃~+65℃"],["Voltage - Supply","5V"],["Frequency","960MHz"],["Features","Power-on reset (POR)、Thermal shutdown"],["Interface","UART"]],"x":0}
+{"l":"C7383539","m":"SIM3500","f":"SILION","p":"SMD,28x28mm","t":"e","c":2278,"d":"-25℃~+65℃ 5V 960MHz Power-on reset (POR)、Thermal shutdown UART SMD,28x28mm RFID Modules ROHS","a":[["Operating Temperature","-25℃~+65℃"],["Voltage - Supply","5V"],["Frequency","960MHz"],["Features","Power-on reset (POR)、Thermal shutdown"],["Interface","UART"]],"x":0}
+{"l":"C7383540","m":"SIM3600","f":"SILION","p":"SMD-20P,21x21mm","t":"e","c":2278,"d":"-25℃~+65℃ 5V 960MHz Power-on reset (POR) UART SMD-20P,21x21mm RFID Modules ROHS","a":[["Operating Temperature","-25℃~+65℃"],["Voltage - Supply","5V"],["Frequency","960MHz"],["Features","Power-on reset (POR)"],["Interface","UART"]],"x":0}
+{"l":"C54934871","m":"MH1612S-NFC-EVB-V3","f":"wisesun","p":"-","t":"e","c":2278,"d":"- RFID Modules ROHS","a":[],"x":0,"n":1}
+{"l":"C54934872","m":"WS1821T-NFC-EVB-V3","f":"wisesun","p":"-","t":"e","c":2278,"d":"- RFID Modules ROHS","a":[],"x":0,"n":1}
+{"l":"C54934873","m":"WS1830T-NFC-EVB-V3","f":"wisesun","p":"-","t":"e","c":2278,"d":"- RFID Modules ROHS","a":[],"x":0,"n":1}
+{"l":"C54934874","m":"WS1850T-NFC-EVB-V3","f":"wisesun","p":"-","t":"e","c":2278,"d":"- RFID Modules ROHS","a":[],"x":0,"n":1}

@@ -99,7 +99,7 @@ components:
   footprint: '0603'
 - ref: R3
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pulldown: SDA
   pin_count: 8
 - ref: R4
@@ -122,16 +122,17 @@ components:
   footprint: '0603'
   pulldown: X3.CC1
 - ref: SJ1
-  value: smd solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
+  description: SMD Solder JUMPER
 - ref: SW1
   value: KMR2
-  footprint: BTN_RKB2
+  footprint: BTN_RKB2_4.6X2.8
   description: SMT Tact Switches RKB2
   pin_count: 4
 - ref: SW2
   value: KMR2
-  footprint: BTN_RKB2
+  footprint: BTN_RKB2_4.6X2.8
   description: SMT Tact Switches RKB2
   pin_count: 4
 - ref: U1
@@ -149,6 +150,7 @@ components:
   footprint: SOT-23-5
   lcsc: C424093
   description: MCP73831/2 LIPO Charger
+  mpn: MCP73831T-2ACI/OT
   pin_count: 5
 - ref: U4
   value: AHT20-F
@@ -169,7 +171,7 @@ components:
   pin_count: 4
 - ref: X2
   value: MAX17048
-  footprint: TDFN8
+  footprint: TDFN8_2X2MM
   description: LiPo fuel gauge
   pin_count: 9
   nc_pins: {'!ALRT': '5'}

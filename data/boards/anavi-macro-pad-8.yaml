@@ -1,7 +1,7 @@
 name: ANAVI Macro Pad 8
 slug: anavi-macro-pad-8
 source: AnaviTechnology/anavi-macro-pad-8
-format: kicad7
+format: kicad6
 description: ATmega32U4 USB HID, Cherry MX switches
 tags: [keyboard]
 key_ics: [ATmega32U4]
@@ -40,21 +40,21 @@ components:
   pin_count: 6
   nc_pins: {'4': '4'}
 - ref: J2
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: J3
-  value: 1x3 header
-  footprint: LedConnector
+  value: 1x3 2.54mm header
+  footprint: LedConnector_1x03
   pin_count: 3
 - ref: J4
-  value: 1x3 header
-  footprint: LedConnector
+  value: 1x3 2.54mm header
+  footprint: LedConnector_1x03
   pin_count: 3
   nc_pins: {'2': '2'}
 - ref: J5
-  value: 2x3 header
-  footprint: 2X3
+  value: 2x3 2.54mm header
+  footprint: 2X3_P2.54mm
   pin_count: 6
 - ref: L1
   value: LED

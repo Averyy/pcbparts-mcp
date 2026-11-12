@@ -2,7 +2,7 @@ name: ANAVI Infrared pHAT
 slug: anavi-infrared-phat
 source: AnaviTechnology/anavi-infrared
 format: kicad_legacy
-description: "IR transceiver: TSOP34838 demodulator receiver + IR LED driver circuit, RPi HAT"
+description: 'IR transceiver: TSOP34838 demodulator receiver + IR LED driver circuit, RPi HAT'
 tags: [led-driver]
 key_ics: [CAT24C32WI-GT3]
 outline:
@@ -16,10 +16,10 @@ design_rules:
   min_via: 0.4mm
 components:
 - ref: C1
-  value: 100000uF
+  value: '0.1'
   footprint: '0603'
 - ref: C2
-  value: 4700000uF
+  value: '4.7'
   footprint: 0805
 - ref: IRRX1
   value: TSOP34838
@@ -72,7 +72,8 @@ components:
   value: Raspberry_PI
   footprint: 2X20
   pin_count: 40
-  nc_pins: {'7': '7', '13': '13', '15': '15', '16': '16', '18': '18', '19': '19', '21': '21', '22': '22', '23': '23', '24': '24', '26': '26', '29': '29', '31': '31', '32': '32', '33': '33', '35': '35', '36': '36', '37': '37', '38': '38', '40': '40'}
+  nc_pins: {'7': '7', '13': '13', '15': '15', '16': '16', '18': '18', '19': '19', '21': '21', '22': '22', '23': '23', '24': '24',
+    '26': '26', '29': '29', '31': '31', '32': '32', '33': '33', '35': '35', '36': '36', '37': '37', '38': '38', '40': '40'}
 - ref: SENS1
   value: I2C_SENS_1
   footprint: 1X4
@@ -92,6 +93,7 @@ components:
 - ref: UART1
   value: 1x4 header
   footprint: 1X4
+  pin_count: 4
 nets:
 - name: +3V3
   pins:
@@ -108,8 +110,13 @@ nets:
   - SENS2.1
   - SENS3.1
   - U1.8
+  - UART1.1
 - name: +5V
   pins: [R8.1, RASP_CONN1.2, RASP_CONN1.4]
+- name: /RXD
+  pins: [RASP_CONN1.10, UART1.3]
+- name: /TXD
+  pins: [RASP_CONN1.8, UART1.2]
 - name: GND
   pins:
   - C1.2
@@ -133,6 +140,7 @@ nets:
   - U1.2
   - U1.3
   - U1.4
+  - UART1.4
 - name: Net-(C2-Pad1)
   pins: [C2.1, IRRX1.3, R5.2]
 - name: Net-(IRRX1-Pad1)
@@ -231,6 +239,10 @@ positions:
 - ref: U1
   x: 197.27
   y: 92.83
+- ref: UART1
+  x: 167.1
+  y: 86.5
+  rot: 90.0
 copper_pours:
 - net: GND
   layers: [B.Cu, F.Cu]

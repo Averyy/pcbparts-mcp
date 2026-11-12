@@ -2,7 +2,8 @@ name: PX4 FMUv2 (Pixhawk)
 slug: px4-fmuv2-pixhawk
 source: PX4/Hardware
 format: eagle
-description: "STM32F427 + STM32F103 I/O co-proc, triple-redundant IMU (MPU6000, LSM303D, L3GD20H), MS5611 baro, industry-standard autopilot"
+description: STM32F427 + STM32F103 I/O co-proc, triple-redundant IMU (MPU6000, LSM303D, L3GD20H), MS5611 baro, industry-standard
+  autopilot
 tags: [drone-uav, sensors]
 key_ics: [STM32F427, STM32F103, MPU6000]
 outline:
@@ -18,373 +19,473 @@ components:
 - ref: B601
   value: MS621FE
   footprint: MS621FE
+  mpn: MS621FE
+  partno: MS621FE-FL11E
   description: SEIKO 6
 - ref: C1001
   value: 10uF
   footprint: 0805
   voltage: 25V
+  partno: CL21A106KAYNNNE
 - ref: C1002
   value: 10nF
   footprint: '0402'
+  partno: CC0402KRX7R7BB103
 - ref: C1003
   value: 1uF
   footprint: '0603'
+  partno: CC0603ZRY5V7BB105
 - ref: C1004
   value: 10uF
   footprint: '0603'
+  partno: C1608X5R1A106K080AC
 - ref: C1005
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C1008
   value: 2.2uF
   footprint: '0402'
+  partno: C1005X6S1C225K050BC
   decouples: U1002
 - ref: C101
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C102
   value: 8pF
   footprint: '0402'
+  partno: C1005C0G1H080C
 - ref: C103
   value: 8pF
   footprint: '0402'
+  partno: C1005C0G1H080C
 - ref: C1101
   value: 22uF
   footprint: 0805
   voltage: 25V
+  partno: CL21A226MAQNNNE
   decouples: U1102
 - ref: C1102
   value: 22uF
   footprint: 0805
   voltage: 25V
+  partno: CL21A226MAQNNNE
   decouples: U1103
 - ref: C1103
   value: 22uF
   footprint: 0805
   voltage: 25V
+  partno: CL21A226MAQNNNE
   decouples: U1104
 - ref: C1104
   value: 100uF
   footprint: '1206'
+  partno: C3216X5R1A107M160AC
   decouples: U1104
 - ref: C1105
   value: 100nF
   footprint: '0402'
+  partno: C1005X7R1E104K050BB
 - ref: C1106
   value: 100nF
   footprint: '0402'
+  partno: C1005X7R1E104K050BB
 - ref: C1107
   value: 100nF
   footprint: '0402'
+  partno: C1005X7R1E104K050BB
 - ref: C1108
   value: 10pF
   footprint: '0402'
   voltage: 25V
+  partno: C0402C100J3GACTU
 - ref: C1109
   value: 10pF
   footprint: '0402'
   voltage: 25V
+  partno: C0402C100J3GACTU
 - ref: C1110
   value: 10pF
   footprint: '0402'
   voltage: 25V
+  partno: C0402C100J3GACTU
 - ref: C201
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C202
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C401
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C402
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C501
   value: 10uF
   footprint: 0805
   voltage: 10V
+  partno: CC0805ZKY5V6BB106
   decouples: U603
 - ref: C502
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U501
 - ref: C503
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U502
 - ref: C504
   value: 10nF
   footprint: '0402'
+  partno: CC0402KRX7R7BB103
 - ref: C505
   value: 10nF
   footprint: '0402'
+  partno: CC0402KRX7R7BB103
 - ref: C506
   value: 10uF
   footprint: 0805
   voltage: 10V
+  partno: CC0805ZKY5V6BB106
   decouples: U504
 - ref: C507
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U504
 - ref: C508
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U501
 - ref: C509
   value: 10uF
   footprint: 0805
   voltage: 10V
+  partno: CC0805ZKY5V6BB106
 - ref: C510
   value: 470nF
   footprint: '0402'
+  partno: C1005X5R1C474K050BC
 - ref: C511
   value: 10uF
   footprint: 0805
   voltage: 10V
+  partno: CC0805ZKY5V6BB106
   decouples: U505
 - ref: C512
   value: 2.2uF
   footprint: '0603'
+  partno: C1608X6S1C225K080AC
 - ref: C513
   value: 2.2uF
   footprint: '0603'
+  partno: C1608X6S1C225K080AC
   decouples: U505
 - ref: C514
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U501
 - ref: C515
   value: 10nF
   footprint: '0603'
+  partno: 06033C103JAT2A
 - ref: C601
   value: 10uF
   footprint: 0805
   voltage: 25V
+  partno: CL21A106KAYNNNE
 - ref: C602
   value: 10nF
   footprint: '0402'
+  partno: CC0402KRX7R7BB103
 - ref: C603
   value: 1uF
   footprint: '0603'
+  partno: CC0603ZRY5V7BB105
 - ref: C604
   value: 22uF
   footprint: 0805
   voltage: 25V
+  partno: CL21A226MAQNNNE
 - ref: C605
   value: 22uF
   footprint: 0805
   voltage: 25V
+  partno: CL21A226MAQNNNE
   decouples: U603
 - ref: C606
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C607
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C608
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C609
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C610
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C611
   value: 2.2uF
   footprint: '0603'
+  partno: C1608X6S1C225K080AC
 - ref: C612
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C613
   value: 2.2uF
   footprint: '0603'
+  partno: C1608X6S1C225K080AC
 - ref: C614
   value: 100uF
   footprint: '1206'
+  partno: C3216X5R1A107M160AC
   decouples: U601
 - ref: C615
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C616
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C617
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
   decouples: U603
 - ref: C618
   value: 100uF
   footprint: '1206'
+  partno: C3216X5R1A107M160AC
   decouples: U602
 - ref: C701
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C702
   value: 1uF
   footprint: '0603'
+  partno: CC0603ZRY5V7BB105
   decouples: U702
 - ref: C703
   value: 5.6nF
   footprint: '0402'
+  partno: C0402C562K5RACTU
 - ref: C704
   value: 470nF
   footprint: '0402'
+  partno: C1005X5R1C474K050BC
 - ref: C801
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C802
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C803
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C804
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C805
   value: 8pF
   footprint: '0402'
+  partno: C1005C0G1H080C
 - ref: C806
   value: 8pF
   footprint: '0402'
+  partno: C1005C0G1H080C
 - ref: C901
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C902
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: C903
   value: 100nF
   footprint: '0402'
+  partno: CC0402ZRY5V7BB104
 - ref: D1001
   value: PMEG2005CT
   footprint: SOT-23-3
+  partno: PMEG2005CT
   description: 500 mA low VF dual MEGA Schottky barrier rectifier
   pin_count: 3
 - ref: D201
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D202
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D203
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D401
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D402
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D403
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D404
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D602
   value: RB751V40T1G
   footprint: SOD323
-  description: Schottky barrier diode in DO214AC, e
+  partno: RB751V40T1G
 - ref: D701
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D801
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D901
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D902
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D903
   value: PESD0402-140
   footprint: '0402'
+  partno: PESD0402-140
 - ref: D904
   value: MSS1P4-M3
   footprint: MICROSMP
-  description: Schottky barrier diode in DO214AC, e
+  partno: MSS1P4-M3/89A
 - ref: F1001
   value: 0ZCA0035FF2G
   footprint: '1206'
+  partno: 0ZCA0035FF2G
   description: Resettable Fuse PTC
 - ref: J201
   value: DF13C-6P-1.25V
   footprint: DF13C-6P-1.25V
+  partno: DF13C-6P-1.25V(20)
   description: DF13-6P 1
   pin_count: 6
 - ref: J202
   value: DF13C-6P-1.25V
   footprint: DF13C-6P-1.25V
+  partno: DF13C-6P-1.25V(20)
   description: DF13-6P 1
   pin_count: 6
 - ref: J203
   value: DF13C-6P-1.25V
   footprint: DF13C-6P-1.25V
+  partno: DF13C-6P-1.25V(20)
   description: DF13-6P 1
   pin_count: 6
 - ref: J204
   value: DF13C-6P-1.25V
   footprint: DF13C-6P-1.25V
+  partno: DF13C-6P-1.25V(20)
   description: DF13-6P 1
   pin_count: 6
 - ref: J301
   value: 47346-0001
   footprint: MOLEX-47346-0001
+  partno: 47346-0001
   description: MICRO USB B, BOTTOM MOUNT
   pin_count: 9
   nc_pins: {'4': ID}
 - ref: J302
   value: DF13C-4P-1.25V
   footprint: DF13C-4P-1.25V
+  partno: DF13C-4P-1.25V(20)
   description: DF13-4P 1
   pin_count: 4
 - ref: J401
   value: DF13C-4P-1.25V
   footprint: DF13C-4P-1.25V
+  partno: DF13C-4P-1.25V(20)
   description: DF13-4P 1
   pin_count: 4
 - ref: J402
   value: DF13C-3P-1.25V
   footprint: DF13C-3P-1.25V
+  partno: DF13C-3P-1.25V(20)
   description: DF13-3P 1
   pin_count: 3
 - ref: J403
   value: DF13C-7P-1.25V
   footprint: DF13C-7P-1.25V
+  partno: DF13C-7P-1.25V(20)
   description: DF13-7P 1
   pin_count: 7
 - ref: J404
   value: DF13C-5P-1.25V
   footprint: DF13C-5P-1.25V
+  partno: DF13C-5P-1.25V(20)
   description: DF13-5P 1
   pin_count: 5
 - ref: J405
   value: DF13C-4P-1.25V
   footprint: DF13C-4P-1.25V
+  partno: DF13C-4P-1.25V(20)
   description: DF13-4P 1
   pin_count: 4
 - ref: J601
   value: DF13C-6P-1.25V
   footprint: DF13C-6P-1.25V
+  partno: DF13C-6P-1.25V(20)
   description: DF13-6P 1
   pin_count: 6
 - ref: J701
   value: DF13C-2P-1.25V
   footprint: DF13C-2P-1.25V
+  partno: DF13C-2P-1.25V(20)
   description: DF13-2P 1
 - ref: J702
   value: DF13C-3P-1.25V
   footprint: DF13C-3P-1.25V
+  partno: DF13C-3P-1.25V(20)
   description: DF13-3P 1
   pin_count: 3
 - ref: J801
   value: JST ZH-
   footprint: JST-ZH-SMT-VERTICAL
+  partno: B3B-ZR-SM4-TF (LF)(SN)(P)
   pin_count: 3
 - ref: J901
   value: 3x16 header
@@ -394,573 +495,735 @@ components:
 - ref: JX301
   value: ARM JTAG
   footprint: FTSH-105-01-XXX-DV-K
+  partno: M50-3900542
   pin_count: 9
   nc_pins: {-TDI/EXTB.S: '8', -!RESET.S: '10'}
 - ref: JX801
   value: 3x1 header
-  footprint: HEADER
+  footprint: HEADER_3X01
   description: Single row 0.1" servo header
   pin_count: 3
 - ref: JX802
   value: ARM JTAG
   footprint: FTSH-105-01-XXX-DV-K
+  partno: M50-3900542
   pin_count: 9
   nc_pins: {-TDI/EXTB.S: '8', -!RESET.S: '10'}
 - ref: L1101
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  partno: KNH16C104DA5TS
   pin_count: 5
 - ref: L1102
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  partno: KNH16C104DA5TS
   pin_count: 5
 - ref: L201
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  partno: KNH16C104DA5TS
   pin_count: 5
 - ref: L202
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  partno: KNH16C104DA5TS
   pin_count: 5
 - ref: L203
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  partno: KNH16C104DA5TS
   pin_count: 5
 - ref: L401
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  partno: KNH16C104DA5TS
   pin_count: 5
 - ref: L402
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  partno: KNH16C104DA5TS
   pin_count: 5
 - ref: L403
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  partno: KNH16C104DA5TS
   pin_count: 5
 - ref: L404
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  partno: KNH16C104DA5TS
   pin_count: 5
 - ref: L603
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  partno: KNH16C104DA5TS
   pin_count: 5
 - ref: L701
   value: 47uH
   footprint: 0805
+  partno: MLZ2012M470W
 - ref: L901
   value: KNH16C104DA5TS
   footprint: KYOCERA-KNH16-DA
+  partno: KNH16C104DA5TS
   pin_count: 5
 - ref: LED701
   value: amber LED
   footprint: '0603'
+  partno: APTD1608SECK
 - ref: LED702
   value: green LED
   footprint: '0603'
+  partno: APTD1608CGCK
 - ref: LED703
   value: amber LED
   footprint: '0603'
+  partno: APTD1608SECK
 - ref: LED704
   value: green LED
   footprint: '0603'
+  partno: APTD1608CGCK
 - ref: LED705
   value: blue LED
   footprint: '0603'
+  partno: APTD1608QBC/D
 - ref: Q601
   value: MMBT3906*
   footprint: SOT23-BEC
+  partno: MMBT 3906 LT1
   description: PNP Transistror
   pin_count: 3
 - ref: R1001
   value: 100kohm
   footprint: '0402'
+  partno: RC0402FR-07100KL
   pulldown: U1001.ILIM
 - ref: R1002
   value: 10kohm
   footprint: '0402'
+  partno: RC0402FR-0710KL
 - ref: R101
   value: 470ohm
   footprint: '0402'
+  partno: RC0402FR-07470RL
 - ref: R102
   value: 10kohm
   footprint: '0402'
+  partno: RC0402FR-0710KL
   pulldown: PB2-BOOT1
 - ref: R1101
   value: 10kohm
   footprint: '0402'
+  partno: ERA-2AEB103X
 - ref: R1102
   value: 10kohm
   footprint: '0402'
+  partno: ERA-2AEB103X
 - ref: R1103
   value: 1Mohm
   footprint: '0402'
+  partno: RC0402FR-071ML
 - ref: R1104
   value: 1Mohm
   footprint: '0402'
+  partno: RC0402FR-071ML
 - ref: R1105
   value: 453kohm
   footprint: '0402'
+  partno: RMCF0402FT453K
   pullup: U1101.UV1
 - ref: R1106
   value: 56kohm
   footprint: '0402'
+  partno: ERA-2AEB563X
 - ref: R1107
   value: 105kohm
   footprint: '0402'
+  partno: ERJ-2RKF1053X
   pulldown: U1101.OV1
 - ref: R1109
   value: 453kohm
   footprint: '0402'
+  partno: RMCF0402FT453K
   pullup: U1101.UV2
 - ref: R1110
   value: 56kohm
   footprint: '0402'
+  partno: ERA-2AEB563X
 - ref: R1111
   value: 105kohm
   footprint: '0402'
+  partno: ERJ-2RKF1053X
   pulldown: U1101.OV2
 - ref: R1112
   value: 453kohm
   footprint: '0402'
+  partno: RMCF0402FT453K
   pullup: U1101.UV3
 - ref: R1113
   value: 56kohm
   footprint: '0402'
+  partno: ERA-2AEB563X
 - ref: R1114
   value: 105kohm
   footprint: '0402'
+  partno: ERJ-2RKF1053X
   pulldown: U1101.OV3
 - ref: R1115
   value: 0ohm
   footprint: '0402'
+  partno: ERJ-2GE0R00X
 - ref: R201
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R202
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R203
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R204
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R205
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R206
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R207
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R208
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R209
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R210
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R211
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R212
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R213
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R214
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R215
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R216
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R301
   value: 100kohm
   footprint: '0402'
+  partno: RC0402FR-07100KL
 - ref: R302
   value: 100kohm
   footprint: '0402'
+  partno: RC0402FR-07100KL
 - ref: R303
   value: 100kohm
   footprint: '0402'
+  partno: RC0402FR-07100KL
 - ref: R304
   value: 100kohm
   footprint: '0402'
+  partno: RC0402FR-07100KL
 - ref: R305
   value: 100kohm
   footprint: '0402'
+  partno: RC0402FR-07100KL
 - ref: R306
   value: 1.5kohm
   footprint: '0402'
+  partno: RC0402FR-071K5L
 - ref: R307
   value: 1.5kohm
   footprint: '0402'
+  partno: RC0402FR-071K5L
 - ref: R401
   value: 1.5kohm
   footprint: '0402'
+  partno: RC0402FR-071K5L
 - ref: R402
   value: 1.5kohm
   footprint: '0402'
+  partno: RC0402FR-071K5L
 - ref: R403
   value: 10kohm
   footprint: '0402'
+  partno: ERA-2AEB103X
   pulldown: PRESSURE_SENS
 - ref: R404
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R405
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R406
   value: 10kohm
   footprint: '0402'
+  partno: ERA-2AEB103X
 - ref: R407
   value: 10kohm
   footprint: '0402'
+  partno: ERA-2AEB103X
 - ref: R408
   value: 10kohm
   footprint: '0402'
+  partno: ERA-2AEB103X
 - ref: R409
   value: 120ohm
   footprint: '0402'
+  partno: RC0402FR-07120RL
 - ref: R602
   value: 1Mohm
   footprint: '0402'
+  partno: RC0402FR-071ML
 - ref: R603
   value: 10kohm
   footprint: '0402'
+  partno: RC0402FR-0710KL
   pullup: FMU-VDD_5V5
 - ref: R604
   value: 1Mohm
   footprint: '0402'
+  partno: RC0402FR-071ML
 - ref: R608
   value: 1kohm
   footprint: '0402'
+  partno: RC0402FR-071KL
   pullup: D602.C
 - ref: R609
   value: 10kohm
   footprint: '0402'
+  partno: ERA-2AEB103X
 - ref: R610
   value: 10kohm
   footprint: '0402'
+  partno: ERA-2AEB103X
 - ref: R611
   value: 10kohm
   footprint: '0402'
+  partno: RC0402FR-0710KL
   pulldown: FMU-BOOT0
 - ref: R615
   value: 10kohm
   footprint: '0402'
+  partno: RC0402FR-0710KL
   pulldown: '!VDD_5V_PERIPH_EN'
 - ref: R616
   value: 25.5kohm
   footprint: '0402'
+  partno: RMCF0402FT25K5
   pulldown: U602.ILIM
 - ref: R617
   value: 16.5kohm
   footprint: '0402'
+  partno: RMCF0402FT16K5
   pulldown: U601.ILIM
 - ref: R620
   value: 1.8kohm
   footprint: '0402'
+  partno: RC1005F182CS
   pullup: Q601.B
 - ref: R621
   value: 10ohm
   footprint: '0603'
+  partno: RC1608J100CS
 - ref: R635
   value: 10kohm
   footprint: '0402'
+  partno: RC0402FR-0710KL
   pullup: FMU-!RESET
 - ref: R701
   value: 9.09kohm
   footprint: '0402'
+  partno: RMCF0402FT9K09
 - ref: R702
   value: 10kohm
   footprint: '0402'
+  partno: RC0402FR-0710KL
   pulldown: U702.-IN
 - ref: R703
   value: 100kohm
   footprint: '0402'
+  partno: RC0402FR-07100KL
 - ref: R704
   value: 10kohm
   footprint: '0402'
+  partno: RC0402FR-0710KL
   pulldown: U701.REXT
 - ref: R705
   value: 453kohm
   footprint: '0402'
+  partno: RMCF0402FT453K
 - ref: R706
   value: 16.5kohm
   footprint: '0402'
+  partno: RMCF0402FT16K5
   pulldown: U702.FB
 - ref: R707
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R708
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R709
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R710
   value: 68ohm
   footprint: '0402'
+  partno: ERJ-2GEJ680X
 - ref: R711
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R712
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R713
   value: 1.5kohm
   footprint: '0402'
+  partno: RC0402FR-071K5L
   pulldown: SAFETY
 - ref: R735
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R736
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R801
   value: 10kohm
   footprint: '0402'
+  partno: RC0402FR-0710KL
   pulldown: IO-BOOT0
 - ref: R802
   value: 10kohm
   footprint: '0402'
+  partno: RC0402FR-0710KL
   pulldown: IO-BOOT1
 - ref: R803
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R804
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R901
   value: 10kohm
   footprint: '0402'
+  partno: RC0402FR-0710KL
 - ref: R902
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R903
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R904
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R905
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R906
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R907
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R908
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R909
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R910
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R911
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R912
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R913
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R914
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R915
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R916
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R917
   value: 220ohm
   footprint: '0402'
+  partno: RC0402FR-07220RL
 - ref: R918
   value: 10kohm
   footprint: '0402'
+  partno: ERA-2AEB103X
   pullup: R922.1
 - ref: R919
   value: 10kohm
   footprint: '0402'
+  partno: ERA-2AEB103X
 - ref: R922
   value: 10kohm
   footprint: '0402'
+  partno: ERA-2AEB103X
   pullup: R918.2
 - ref: RN1101
   value: 1Mohm
   footprint: EXB28V
+  partno: EXB-28V105JX
   description: Array Chip Resistor
   pin_count: 8
   nc_pins: {A.1: '1', A.2: '8'}
 - ref: S601
   value: RESET
   footprint: EVQP7J01K
+  partno: EVQ-P7J01P
 - ref: S801
   value: RESET
   footprint: EVQP7J01K
+  partno: EVQ-P7J01P
 - ref: U1001
   value: BQ24313
   footprint: QFN8-DSG
+  partno: BQ24313DSGT
   pin_count: 10
 - ref: U1002
   value: MIC5332
   footprint: MLF-8-EPAD
+  partno: MIC5332-SSYMT
   pin_count: 9
 - ref: U101
   value: STM32F4X7VX
   footprint: TQFP100
+  partno: STM32F427VI
   description: STM32F4X7VX 100 pin LQFP STM32F407VE - 512 KB flash, no crypto STM32F407VG - 1
   pin_count: 100
   nc_pins: {PORTC_L.PC1: '16'}
 - ref: U102
   value: FM25V01
   footprint: SOIC-8
+  mpn: FM25V01
+  partno: FM25V01-G
   description: FM25V01 128Kb Serial 3V F-RAM Memory
   pin_count: 8
 - ref: U1101
   value: LTC4417
   footprint: MO-220
+  partno: LTC4417IUF#PBF
   pin_count: 25
   nc_pins: {CAS: P$11, EN: P$22, '!SHDN': P$23}
 - ref: U1102
   value: NTHD4102PT1G
   footprint: '1206'
+  partno: NTHD4102PT1G
   pin_count: 8
 - ref: U1103
   value: NTHD4102PT1G
   footprint: '1206'
+  partno: NTHD4102PT1G
   pin_count: 8
 - ref: U1104
   value: NTHD4102PT1G
   footprint: '1206'
+  partno: NTHD4102PT1G
   pin_count: 8
 - ref: U201
   value: TXS0108
   footprint: QFN20-RGY
+  partno: TXS0108ERGYR
   pin_count: 20
 - ref: U202
   value: TXS0108
   footprint: QFN20-RGY
+  partno: TXS0108ERGYR
   pin_count: 20
   nc_pins: {A1: '1', A2: '3', B2: '18', B1: '20'}
 - ref: U301
   value: 2908-05WB-MG
   footprint: MICROSD
+  partno: 2908-05WB-MG
   pin_count: 8
 - ref: U302
   value: NUF2042XV6
   footprint: SOT563-6
+  partno: NUF2042XV6T1G
   pin_count: 6
 - ref: U401
   value: MAX3051
   footprint: SOT-23-8
+  partno: MAX3051EKA
   pin_count: 8
 - ref: U501
   value: L3GD20
   footprint: L3G4200DH-MAN
+  partno: L3GD20
   description: L3G4200DH - Digital 3-axis Gyroscope
   pin_count: 16
   nc_pins: {INT1: '7'}
 - ref: U502
   value: L3GD20H
   footprint: LGA-16L
+  mpn: L3GD20H
+  partno: L3GD20H
   description: 'L3GD20H MEMS motion sensor: 3-axis digital output gyroscope'
   pin_count: 16
   nc_pins: {INT1: '7', DEN: '8'}
 - ref: U504
   value: LSM303D
   footprint: LGA-16L
+  mpn: LSM303D
+  partno: LSM303D
   description: 'LSM303D Ultra compact high performance e-compass: 3D accelerometer and 3D'
   pin_count: 16
 - ref: U505
   value: MPU-6000
   footprint: QFN-24
+  mpn: MPU-6000
+  partno: MPU-6000
   description: 'Invensense MPU-6000: 3-axis gyro, 3-axis accel & 9-axis MotionFusion'
   pin_count: 24
-  nc_pins: {NC1: '2', NC2: '3', NC3: '4', NC4: '5', AUX_DA: '6', AUX_CL: '7', FSYNC: '11', NC5: '14', NC6: '15', NC7: '16', NC8: '17', RESV1: '19', RESV2: '21', CLKOUT: '22'}
+  nc_pins: {NC1: '2', NC2: '3', NC3: '4', NC4: '5', AUX_DA: '6', AUX_CL: '7', FSYNC: '11', NC5: '14', NC6: '15', NC7: '16',
+    NC8: '17', RESV1: '19', RESV2: '21', CLKOUT: '22'}
 - ref: U506
   value: MS5611-01
   footprint: MS5611-01BA
+  mpn: MS5611-01BA
+  partno: MS5611-01BA
   description: MS5611-01BA
   pin_count: 8
   nc_pins: {CSB1: '4'}
 - ref: U601
   value: BQ24315
   footprint: QFN8-DSG
+  partno: BQ24315DSGR
   pin_count: 10
 - ref: U602
   value: BQ24315
   footprint: QFN8-DSG
+  partno: BQ24315DSGR
   pin_count: 10
 - ref: U603
   value: MIC5332
   footprint: MLF-8-EPAD
+  partno: MIC5332-SSYMT
   pin_count: 9
 - ref: U701
   value: TCA62724FMG
   footprint: SON10
+  partno: TCA62724FMG
   description: Toshiba TCA62724FMG I2C RGB LED driver
   pin_count: 10
 - ref: U702
   value: LT3469
   footprint: SOT-23-8
+  partno: LT3469ETS8
   description: LT3469 Piezo microactuator driver with boost regulator
   pin_count: 8
 - ref: U703
   value: LRTB GFTG-T7AW-1+V7A7-29+R5T9-49-L
   footprint: 6-PLCC
+  partno: LRTB GFTG-T7AW-1+V7A7-29+R5T9-49-L
   description: RGB LED with separate anode/cathode terminals
   pin_count: 6
 - ref: U801
   value: STM32F10XCXT6
   footprint: TQFP48
+  partno: STM32F100C8T6B
   description: ST STM32F101/103 48pin LQFP
   pin_count: 48
   nc_pins: {PORTC.PC14: '3', PORTC.PC15: '4', PORTB_H.PB12: '25', PORTA_H.PA11: '32', PORTB_L.PB6: '42', PORTB_L.PB7: '43'}
 - ref: U901
   value: TXS0108
   footprint: QFN20-RGY
+  partno: TXS0108ERGYR
   pin_count: 20
   nc_pins: {A7: '8', A8: '9', B8: '12', B7: '13'}
 - ref: U902
   value: TXS0108
   footprint: QFN20-RGY
+  partno: TXS0108ERGYR
   pin_count: 20
 - ref: U903
   value: 74LVC2G240
   footprint: TSSOP8_SOT505-2
+  partno: 74LVC2G240DP,125
   description: Dual inverter tri-state, 3
   pin_count: 8
 - ref: X101
   value: 3.2x2.5 mm / 24 MHz / 15 ppm
   footprint: OSCILLATOR-3.2X2.5
+  partno: NX3225SA-24.000000MHZ
   pin_count: 4
 - ref: X503
   value: 0512811094
   footprint: 51281-1094
+  partno: 0781191109
   description: 10-pin FPC connector for PX4 sensor board
   pin_count: 10
 - ref: X801
   value: 3.2x2.5 mm / 24 MHz / 15 ppm
   footprint: OSCILLATOR-3.2X2.5
+  partno: NX3225SA-24.000000MHZ
   pin_count: 4
 nets:
 - name: '!ACCEL_MAG_CS'

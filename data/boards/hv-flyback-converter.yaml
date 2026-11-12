@@ -5,6 +5,7 @@ format: kicad8
 description: "High-voltage isolated flyback (4\u20136V\u2192180V output), LT3957A controller"
 tags: [isolation]
 key_ics: [LT3957AEUHE#PBF]
+netlist_source: schematic
 design_rules:
   layers: 2
   min_trace: 0.152mm
@@ -16,9 +17,11 @@ components:
   value: 100uF
   footprint: '1206'
   mpn: CC1206MKX5R5BB107
+  decouples: U1
 - ref: C10
   value: 68nF
   footprint: '1210'
+  mouser: 81-GCJ32Q7LV683KW01K
   manufacturer: Murata Electronics
   mpn: GCJ32QR7LV683KW01K
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 0.068 uF 630 VDC 10% 1210 X7R
@@ -26,6 +29,7 @@ components:
   value: 100uF
   footprint: '1206'
   mpn: CC1206MKX5R5BB107
+  decouples: U1
 - ref: C3
   value: 100nF
   footprint: 0805
@@ -50,6 +54,7 @@ components:
 - ref: C9
   value: 68nF
   footprint: '1210'
+  mouser: 81-GCJ32Q7LV683KW01K
   manufacturer: Murata Electronics
   mpn: GCJ32QR7LV683KW01K
   description: Multilayer Ceramic Capacitors MLCC - SMD/SMT 0.068 uF 630 VDC 10% 1210 X7R
@@ -73,23 +78,27 @@ components:
   footprint: SMB
   description: Surface-Mount Ultrafast Plastic Rectifier, 300V 2A 35ns
 - ref: J1
-  value: 1x3 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-3
+  value: 1x3 5.00mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-3_1x03
+  pin_count: 3
 - ref: J2
-  value: 1x2 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-2
+  value: 1x2 5.00mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2_1x02
 - ref: R1
   value: 100kohm
   footprint: 0805
   mpn: RC0805FR-07100KL
+  pullup: SW1.C
 - ref: R2
   value: 4.7kohm
   footprint: 0805
   mpn: RC0805FR-074K7L
+  pulldown: HVEN
 - ref: R3
   value: 100kohm
   footprint: 0805
   mpn: RC0805FR-07100KL
+  pullup: U1.SGND@23
 - ref: R4
   value: 140kohm
   footprint: 0805
@@ -110,6 +119,7 @@ components:
   value: 1.8Mohm
   footprint: '1206'
   height: '0.65'
+  mouser: 603-RC1206FR-071M8L
   manufacturer: YAGEO
   mpn: RC1206FR-071M8L
   description: Thick Film Resistors - SMD 1.8 MOhms 250 mW 1206 1%
@@ -121,11 +131,13 @@ components:
   value: switch
   footprint: SW_SPDT_PCM12
   description: Switch, single pole double throw
+  pin_count: 3
 - ref: TR1
   value: DA2032-ALD
-  footprint: SOP-12
+  footprint: SOP250P2197X889-12N
   mpn: DA2032-ALD
   description: COILCRAFT - DA2032-ALD - TRANSFORMER, FLYBACK, LT3750, SMD
+  pin_count: 10
 - ref: U1
   value: LT3957AEUHE#PBF
   footprint: LT3958EUHETRPBF
@@ -133,3 +145,97 @@ components:
   manufacturer: Analog Devices
   mpn: LT3957AEUHE#PBF
   description: DC/DC Cntrlr Single-OUT Flyback/Step Up 1200kHz Automotive 28-Pin QFN EP Tube
+  pin_count: 30
+nets:
+- name: +5V
+  pins:
+  - C1.1
+  - C2.1
+  - D1.A1
+  - J1.Pin_1
+  - R1.2
+  - R3.1
+  - TR1.10
+  - TR1.7
+  - TR1.8
+  - TR1.9
+  - U1.VIN
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C2.2
+  - C6.2
+  - D1.A2
+  - D2.A2
+  - D3.A
+  - J1.Pin_2
+  - J2.Pin_2
+  - R2.2
+  - TR1.1
+  - U1.GND@12
+  - U1.GND@13
+  - U1.GND@14
+  - U1.GND@15
+  - U1.GND@16
+  - U1.GND@17
+- name: HV
+  pins: [C9.1, D4.K, J2.Pin_1, R8.1]
+- name: HVEN
+  pins: [D2.A1, J1.Pin_3, R2.1, SW1.A]
+- name: NC
+  pins: [U1.NC@1, U1.NC@10, U1.NC@2, U1.NC@35, U1.NC@36]
+- name: Net-(C10-Pad1)
+  pins: [C10.1, C9.2]
+- name: Net-(C5-Pad1)
+  pins: [C5.1, R6.2]
+- name: Net-(C6-Pad1)
+  pins: [C6.1, R5.2]
+- name: Net-(D3-K)
+  pins:
+  - D3.K
+  - R5.1
+  - TR1.3
+  - TR1.4
+  - TR1.5
+  - TR1.6
+  - U1.SW@20
+  - U1.SW@21
+  - U1.SW@38
+  - U1.SW@8
+  - U1.SW@9
+- name: Net-(D4-A)
+  pins: [D4.A, TR1.12]
+- name: Net-(SW1-C)
+  pins: [R1.1, SW1.C]
+- name: Net-(U1-FBX)
+  pins: [R8.2, R9.1, U1.FBX]
+- name: Net-(U1-INTVCC)
+  pins: [C7.1, U1.INTVCC]
+- name: Net-(U1-RT)
+  pins: [R4.1, U1.RT]
+- name: Net-(U1-SENSE1)
+  pins: [R7.1, U1.SENSE1]
+- name: Net-(U1-SENSE2)
+  pins: [C8.1, R7.2, U1.SENSE2]
+- name: Net-(U1-SS)
+  pins: [C3.1, U1.SS]
+- name: Net-(U1-SYNC)
+  pins:
+  - C3.2
+  - C4.2
+  - C5.2
+  - C7.2
+  - C8.2
+  - R3.2
+  - R4.2
+  - R9.2
+  - U1.SGND@23
+  - U1.SGND@24
+  - U1.SGND@37
+  - U1.SGND@4
+  - U1.SYNC
+- name: Net-(U1-VC)
+  pins: [C4.1, R6.1, U1.VC]
+- name: UVLO
+  pins: [SW1.B, U1.EN/UVLO]

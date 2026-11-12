@@ -5,6 +5,7 @@ format: kicad_legacy
 description: 'High-voltage modular BMS (48-400V, 500A): STM32F303'
 tags: [battery-management, isolation, power-supply]
 key_ics: [STM32F303, LM5165]
+netlist_source: schematic
 components:
 - ref: BZ1
   value: AI-1027-TWT-5V
@@ -78,6 +79,7 @@ components:
   value: 2.2uF
   footprint: '0603'
   mpn: GRM188R61A225KE34D
+  decouples: U7
 - ref: C4
   value: 100nF
   footprint: '0603'
@@ -249,7 +251,7 @@ components:
 - ref: C91
   value: 47nF
   footprint: '0603'
-  voltage: 100V
+  voltage: 50V
   mpn: GCM188R71H473KA55D
 - ref: C92
   value: 10uF
@@ -286,11 +288,9 @@ components:
 - ref: D14
   value: MBR0520
   footprint: SOD-123
-  mpn: MBR0502L
 - ref: D15
   value: MBR0520
   footprint: SOD-123
-  mpn: MBR0502L
 - ref: D16
   value: POWER
   footprint: '0603'
@@ -298,11 +298,9 @@ components:
 - ref: D17
   value: MBR0520
   footprint: SOD-123
-  mpn: MBR0502L
 - ref: D18
   value: MBR0520
   footprint: SOD-123
-  mpn: MBR0502L
 - ref: D2
   value: STATUS
   footprint: '0603'
@@ -319,10 +317,12 @@ components:
   value: SP0502BAHT
   footprint: SOT-23
   mpn: SP0502BAHTG
+  pin_count: 3
 - ref: D4
   value: SZNUP2105L
   footprint: SOT-23
   mpn: SZNUP2105LT1G
+  pin_count: 3
 - ref: D5
   value: POWER
   footprint: '0603'
@@ -342,78 +342,85 @@ components:
 - ref: J1
   value: Contactor+
   footprint: EVC500
-  mpn: N/A
 - ref: J10
   value: 1x2 header
-  footprint: Pin
+  footprint: Pin_1x02
   mpn: 70543-0001
 - ref: J11
   value: CAN
-  footprint: Molex_KK-6410-05
+  footprint: Molex_KK-6410-05_05x2.54
   mpn: 70543-0004
+  pin_count: 5
 - ref: J12
   value: USB
   footprint: USB_Micro-B_Molex-105133-0001
   mpn: 47346-0001
+  pin_count: 6
+  nc_pins: {ID: '4'}
 - ref: J13
   value: 1x2 header
-  footprint: Pin
+  footprint: Pin_1x02
   mpn: 282834-2
 - ref: J14
   value: SERIAL
-  footprint: Molex_KK-6410-05
+  footprint: Molex_KK-6410-05_05x2.54
   mpn: 70543-0004
+  pin_count: 5
+  nc_pins: {Pin_2: '2'}
 - ref: J15
-  value: 1x2 header
-  footprint: PhoenixContact_GMSTBVA_2,5_2-G
+  value: 1x2 7.50mm screw terminal
+  footprint: PhoenixContact_GMSTBVA_2,5_2-G_1x02
   mpn: '30.102'
 - ref: J17
-  value: 1x5 header
+  value: 1x5 1.25mm header
   footprint: Molex_PicoBlade_53398-0571
   mpn: 53398-0571
+  pin_count: 5
 - ref: J18
   value: OLED
-  footprint: Molex_KK-6410-05
+  footprint: Molex_KK-6410-05_05x2.54
   mpn: 70543-0004
+  pin_count: 5
 - ref: J19
   value: 1x2 header
-  footprint: Pin
+  footprint: Pin_1x02
   mpn: 70543-0001
 - ref: J2
   value: 1x2 header
-  footprint: Pin
+  footprint: Pin_1x02
   mpn: 70543-0001
 - ref: J3
   value: 1x2 header
-  footprint: Pin
+  footprint: Pin_1x02
   mpn: 70543-0001
 - ref: J4
   value: Contactor-
   footprint: EVC500
-  mpn: N/A
 - ref: J5
-  value: 1x2 header
-  footprint: PhoenixContact_GMSTBVA_2,5_2-G
+  value: 1x2 7.50mm screw terminal
+  footprint: PhoenixContact_GMSTBVA_2,5_2-G_1x02
   mpn: '30.102'
 - ref: J6
   value: Power Button
-  footprint: Molex_KK-6410-05
+  footprint: Molex_KK-6410-05_05x2.54
   mpn: 282834-5
+  pin_count: 5
 - ref: J7
   value: 1x2 header
-  footprint: Pin
+  footprint: Pin_1x02
   mpn: 70543-0001
 - ref: J8
   value: 1x2 header
-  footprint: Pin
+  footprint: Pin_1x02
   mpn: 70543-0001
 - ref: J9
   value: 1x2 header
-  footprint: Pin
+  footprint: Pin_1x02
   mpn: 70543-0001
 - ref: K1
   value: SHV12-1A85-78L3K
   footprint: SHV12-1AB5-7BL3K
+  pin_count: 4
 - ref: L3
   value: '744043151'
   footprint: L_Wuerth_WE-PD2-Typ-MS
@@ -422,58 +429,72 @@ components:
   value: BSS138
   footprint: SOT-23
   mpn: BSS138
+  pin_count: 3
 - ref: Q2
   value: BSS138
   footprint: SOT-23
   mpn: BSS138
+  pin_count: 3
 - ref: Q26
   value: BSS138
   footprint: SOT-23
   mpn: BSS138
+  pin_count: 3
 - ref: Q27
   value: BSS138
   footprint: SOT-23
   mpn: BSS138
+  pin_count: 3
 - ref: Q28
   value: BSS138
   footprint: SOT-23
   mpn: BSS138
+  pin_count: 3
 - ref: Q29
   value: BSS138
   footprint: SOT-23
   mpn: BSS138
+  pin_count: 3
 - ref: Q3
   value: BSS138
   footprint: SOT-23
   mpn: BSS138
+  pin_count: 3
 - ref: Q30
   value: BSS138
   footprint: SOT-23
   mpn: BSS138
+  pin_count: 3
 - ref: Q4
   value: BUK98150-55A
   footprint: SOT-223
   mpn: BUK98150-55A/CUF
+  pin_count: 4
 - ref: Q5
   value: BUK98150-55A
   footprint: SOT-223
   mpn: BUK98150-55A/CUF
+  pin_count: 4
 - ref: Q6
   value: BUK98150-55A
   footprint: SOT-223
   mpn: BUK98150-55A/CUF
+  pin_count: 4
 - ref: Q7
   value: BUK98150-55A
   footprint: SOT-223
   mpn: BUK98150-55A/CUF
+  pin_count: 4
 - ref: Q8
   value: BUK98150-55A
   footprint: SOT-223
   mpn: BUK98150-55A/CUF
+  pin_count: 4
 - ref: Q9
   value: BSS138
   footprint: SOT-23
   mpn: BSS138
+  pin_count: 3
 - ref: R1
   value: 470ohm
   footprint: '0603'
@@ -486,6 +507,7 @@ components:
   value: 10kohm
   footprint: '0603'
   mpn: RC0603FR-0710KL
+  pullup: /MCU/Safety
 - ref: R111
   value: 240ohm
   footprint: '0603'
@@ -498,10 +520,12 @@ components:
   value: 10kohm
   footprint: '0603'
   mpn: RC0603FR-0710KL
+  pullup: U7.~RST
 - ref: R114
   value: 10kohm
   footprint: '0603'
   mpn: RC0603FR-0710KL
+  pulldown: /USB/Vusb
 - ref: R116
   value: 2.2kohm
   footprint: '0603'
@@ -534,6 +558,7 @@ components:
   value: 1kohm
   footprint: '0603'
   mpn: MCR03EZPFX1001
+  pulldown: R125.2
 - ref: R13
   value: 1kohm
   footprint: '0603'
@@ -542,14 +567,17 @@ components:
   value: 1kohm
   footprint: '0603'
   mpn: MCR03EZPFX1001
+  pulldown: R126.2
 - ref: R132
   value: 1kohm
   footprint: '0603'
   mpn: MCR03EZPFX1001
+  pulldown: U12.VINN
 - ref: R133
   value: 1kohm
   footprint: '0603'
   mpn: MCR03EZPFX1001
+  pulldown: U13.VINN
 - ref: R14
   value: 3.3kohm
   footprint: '0603'
@@ -614,10 +642,12 @@ components:
   value: 33kohm
   footprint: '0603'
   mpn: RC0603FR-0733KL
+  pulldown: U15.+@3
 - ref: R161
   value: 33kohm
   footprint: '0603'
   mpn: RC0603FR-0733KL
+  pulldown: U15.+@5
 - ref: R164
   value: 33kohm
   footprint: '0603'
@@ -629,23 +659,26 @@ components:
 - ref: R166
   value: 4.75kohm
   footprint: '0603'
-  mpn: RC0603JR-074K7L
+  pullup: /MCU/SCL
 - ref: R167
   value: 4.75kohm
   footprint: '0603'
-  mpn: RC0603JR-074K7L
+  pullup: /MCU/SDA
 - ref: R168
   value: 10kohm
   footprint: '0603'
   mpn: RC0603FR-0710KL
+  pullup: /MCU/NRST
 - ref: R17
   value: 3.3kohm
   footprint: '0603'
   mpn: RC0603FR-073K3L
+  pulldown: /MCU/Vpack
 - ref: R170
   value: 100kohm
   footprint: '0603'
   mpn: RC0603JR-07100KL
+  pullup: /MCU/NTC_Switch
 - ref: R172
   value: 100ohm
   footprint: '0603'
@@ -666,6 +699,7 @@ components:
   value: 10kohm
   footprint: '0603'
   mpn: RC0603FR-0710KL
+  pulldown: /MCU/PowerEnable
 - ref: R177
   value: 4.7Mohm
   footprint: '0603'
@@ -678,6 +712,7 @@ components:
   value: 130kohm
   footprint: '0603'
   mpn: RC0603FR-07130KL
+  pulldown: U19.RT
 - ref: R180
   value: 1ohm
   footprint: '0603'
@@ -746,6 +781,7 @@ components:
   value: 1kohm
   footprint: '0603'
   mpn: MCR03EZPFX1001
+  pulldown: U1.VINP
 - ref: R31
   value: 1kohm
   footprint: '0603'
@@ -774,6 +810,7 @@ components:
   value: 2kohm
   footprint: '0603'
   mpn: RC0603FR-072KL
+  pullup: /MCU/MISO
 - ref: R38
   value: 100ohm
   footprint: '0603'
@@ -786,6 +823,7 @@ components:
   value: 1.5kohm
   footprint: '0603'
   mpn: RC0603JR-071K5L
+  pulldown: /MCU/BUZZER
 - ref: R40
   value: 1kohm
   footprint: '0603'
@@ -794,10 +832,11 @@ components:
   value: 10kohm
   footprint: '0603'
   mpn: RC0603FR-0710KL
+  pulldown: Q2.G
 - ref: R42
   value: 4.75kohm
   footprint: '0603'
-  mpn: RC0603JR-074K7L
+  pullup: /MCU/OLED_SDA
 - ref: R43
   value: 470ohm
   footprint: '0603'
@@ -813,7 +852,7 @@ components:
 - ref: R46
   value: 4.75kohm
   footprint: '0603'
-  mpn: RC0603JR-074K7L
+  pulldown: /MCU/OLED_RST
 - ref: R47
   value: 4.7Mohm
   footprint: '0603'
@@ -825,7 +864,7 @@ components:
 - ref: R50
   value: 4.75kohm
   footprint: '0603'
-  mpn: RC0603JR-074K7L
+  pullup: /MCU/OLED_SCL
 - ref: R6
   value: 51ohm
   footprint: '0603'
@@ -850,79 +889,645 @@ components:
   value: TRANSF5
   footprint: WURTH-760390014
   mpn: '760390014'
+  pin_count: 6
 - ref: TR2
   value: HM2108NL
   footprint: HM2108NL
   mpn: HM2108NL
+  pin_count: 6
+  nc_pins: {'5': '5'}
 - ref: TR3
   value: TRANSF5
   footprint: WURTH-760390014
   mpn: '760390014'
+  pin_count: 6
 - ref: U1
   value: AMC1301 or AMC1302
   footprint: SSO-8
   mpn: AMC1301DWV
+  pin_count: 8
 - ref: U10
   value: SN6501DBV
   footprint: SOT-23-5
   mpn: SN6501DBVR
+  pin_count: 5
 - ref: U12
   value: AMC1301
   footprint: SSO-8
   mpn: AMC1301DWV
+  pin_count: 8
 - ref: U13
   value: AMC1301
   footprint: SSO-8
   mpn: AMC1301DWV
+  pin_count: 8
 - ref: U15
   value: OPA2197IDR
   footprint: SOIC-8
   mpn: OPA2197IDR
+  pin_count: 8
 - ref: U16
   value: ISL28022
   footprint: MSOP-10
   mpn: ISL28022FUZ-T7A
+  pin_count: 10
+  nc_pins: {A1: '1', A0: '2', ~Alert~: '3'}
 - ref: U17
   value: STM32F303CCTx
   footprint: LQFP-48
   mpn: STM32F303CCT6
+  pin_count: 48
+  nc_pins: {VBAT: '1', PB12/ADC4_IN3/COMP3_INM/I2C2_SMBA/I2S2_WS/OPAMP4_VOUT/SPI2_NSS/TIM1_BKIN/TSC_G6_IO2/USART3_CK: '25',
+    ? PB13/ADC3_IN5/COMP5_INP/I2S2_CK/OPAMP3_VINP/OPAMP3_VINP_SEC/OPAMP4_VINP/OPAMP4_VINP_SEC/SPI2_SCK/TIM1_CH1N/TSC_G6_IO3/USART3_CTS
+    : '26', ? PB14/ADC4_IN4/COMP3_INP/I2S2_ext_SD/OPAMP2_VINP/OPAMP2_VINP_SEC/SPI2_MISO/TIM15_CH1/TIM1_CH2N/TSC_G6_IO4/USART3_DE/USART3_RTS
+    : '27', PB15/ADC1_EXTI15/ADC2_EXTI15/ADC4_IN5/COMP6_INM/I2S2_SD/RTC_REFIN/SPI2_MOSI/TIM15_CH1N/TIM15_CH2/TIM1_CH3N: '28',
+    COMP3_OUT/I2C2_SMBA/I2S2_MCK/RCC_MCO/TIM1_CH1/TIM4_ETR/USART1_CK/PA8: '29', PB9/CAN_TX/COMP2_OUT/DAC_EXTI9/I2C1_SDA/IR_OUT/TIM17_CH1/TIM4_CH4/TIM8_CH3: '46'}
 - ref: U19
   value: LM5165YDRC
   footprint: Texas_S-PVSON-N10_ThermalVias
   mpn: LM5165YDRCT
+  pin_count: 11
+  nc_pins: {PGOOD: '6', HYS: '9'}
 - ref: U2
   value: LTC6820
   footprint: MSOP-16
   mpn: LTC6820IMS#PBF
+  pin_count: 16
 - ref: U3
   value: TPS76350
   footprint: SOT-23-5
   mpn: TPS76350DBVR
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U4
   value: SN6501DBV
   footprint: SOT-23-5
   mpn: SN6501DBVR
+  pin_count: 5
 - ref: U5
   value: SFH617A-2X009T
   footprint: SMDIP-4_W9.53mm_Clearance8mm
   mpn: SFH617A-2X009T
+  pin_count: 4
 - ref: U6
   value: TPS76350
   footprint: SOT-23-5
   mpn: TPS76350DBVR
+  pin_count: 5
+  nc_pins: {NC: '4'}
 - ref: U7
   value: CP2104
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
   mpn: CP2104-F03-GM
+  pin_count: 25
+  nc_pins: {RI: '1', VIO/NC: '10', GPIO.3: '11', GPIO.2: '12', GPIO.1: '13', GPIO.0: '14', ~SUSPEND: '15', SUSPEND: '17',
+    CTS: '18', RTS: '19', DSR: '22', DTR: '23', DCD: '24'}
 - ref: U8
   value: ISO1050DUBR
   footprint: ISO1050
   mpn: ISO1050DUBR
+  pin_count: 8
 - ref: U9
   value: SFH617A-2X009T
   footprint: SMDIP-4_W9.53mm_Clearance8mm
   mpn: SFH617A-2X009T
+  pin_count: 4
 - ref: Y1
   value: 8MHz
-  footprint: Crystal_SMD_Abracon_ABM3-2pin
+  footprint: Crystal_SMD_Abracon_ABM3-2pin_5.0x3.2
   mpn: ABM3-8.000MHZ-D2Y-T
+nets:
+- name: +12V
+  pins:
+  - C16.1
+  - C75.1
+  - C89.2
+  - C90.2
+  - J10.Pin_1
+  - J2.Pin_1
+  - J3.Pin_1
+  - J8.Pin_1
+  - J9.Pin_1
+  - K1.3
+  - R175.2
+  - R177.2
+  - U15.V+
+  - U19.VIN
+- name: +3V3
+  pins:
+  - BZ1.-
+  - C14.1
+  - C15.1
+  - C20.2
+  - C21.1
+  - C22.1
+  - C4.1
+  - C43.1
+  - C44.1
+  - C5.1
+  - C58.1
+  - C59.1
+  - C62.1
+  - C63.1
+  - C73.2
+  - C8.1
+  - C80.1
+  - C81.1
+  - C82.1
+  - C83.1
+  - C94.2
+  - D12.A
+  - D8.A
+  - J14.Pin_1
+  - J17.Pin_1
+  - J18.Pin_1
+  - J6.Pin_3
+  - R1.2
+  - R11.1
+  - R166.1
+  - R167.1
+  - R168.1
+  - R170.1
+  - R182.2
+  - R37.1
+  - R42.2
+  - R50.2
+  - TR1.5
+  - TR3.5
+  - U1.VDD2
+  - U10.VCC
+  - U12.VDD2
+  - U13.VDD2
+  - U16.Vs
+  - U17.VDD@24
+  - U17.VDD@36
+  - U17.VDD@48
+  - U17.VDDA
+  - U2.EN
+  - U2.MSTR
+  - U2.PHA
+  - U2.POL
+  - U2.VCC
+  - U2.Vcc0
+  - U4.VCC
+  - U8.Vcc1
+- name: /BAT+
+  pins: [D21.A2, J1.2, J5.Pin_1, K1.1, R19.1]
+- name: /CAN/5V_CAN
+  pins: [C46.1, C47.2, J11.Pin_2, U8.Vcc2]
+- name: /CAN/CANH
+  pins: [D4.K@2, J11.Pin_3, U8.CANL]
+- name: /CAN/CANL
+  pins: [D4.K@1, J11.Pin_4, U8.CANH]
+- name: /CAN/CAN_GND
+  pins: [C46.2, C47.1, D4.A, J11.Pin_5, U8.GND2, U9.2]
+- name: /CAN/CAN_RX
+  pins: [U17.ADC1_EXTI11/ADC2_EXTI11/CAN_RX/COMP1_OUT/TIM1_BKIN2/TIM1_CH1N/TIM1_CH4/TIM4_CH1/USART1_CTS/USB_DM/PA11, U8.RXD]
+- name: /CAN/CAN_TX
+  pins: [U17.CAN_TX/COMP2_OUT/TIM16_CH1/TIM1_CH2N/TIM1_ETR/TIM4_CH2/USART1_DE/USART1_RTS/USB_DP/PA12, U8.TXD]
+- name: /CAN/EnableRequest
+  pins: [D11.K, Q26.D, U9.4]
+- name: /CAN/Enable_CAN
+  pins: [J11.Pin_1, R116.1]
+- name: /Load+
+  pins: [D21.A1, J1.1, J15.Pin_1, R20.1, R44.1]
+- name: /MCU/BUZZER
+  pins: [Q1.G, R4.2, U17.ADC1_EXTI15/ADC2_EXTI15/I2C1_SCL/I2S3_WS/SPI1_NSS/SPI3_NSS/SYS_JTDI/TIM1_BKIN/TIM2_CH1/TIM2_ETR/TIM8_CH1/USART2_RX/PA15]
+- name: /MCU/ChargeEnable
+  pins: [R25.1, U17.PB0/ADC3_IN12/COMP4_INP/OPAMP2_VINP/OPAMP2_VINP_SEC/OPAMP3_VINP/OPAMP3_VINP_SEC/TIM1_CH2N/TIM3_CH3/TIM8_CH2N/TSC_G3_IO2]
+- name: /MCU/CoolingEnable
+  pins: [R32.1, U17.PB2/ADC2_IN12/ADC3_EXTI2/ADC4_EXTI2/COMP4_INM/OPAMP3_VINM/OPAMP3_VINM_SEC/TSC_G3_IO4]
+- name: /MCU/DischargeNegEnable
+  pins: [Q9.D, R24.1, U17.PC15/ADC1_EXTI15/ADC2_EXTI15/RCC_OSC32_OUT]
+- name: /MCU/DischargePosEnable
+  pins: [Q3.D, R23.1, U17.PB10/COMP5_INM/OPAMP3_VINM/OPAMP3_VINM_SEC/OPAMP4_VINM/OPAMP4_VINM_SEC/TIM2_CH3/TSC_SYNC/USART3_TX]
+- name: /MCU/LED0
+  pins: [R3.2, U17.PB1/ADC3_IN1/COMP4_OUT/OPAMP3_VOUT/TIM1_CH3N/TIM3_CH4/TIM8_CH3N/TSC_G3_IO3]
+- name: /MCU/MA
+  pins: [J19.Pin_1, TR2.6]
+- name: /MCU/MISO
+  pins: [R37.2, U17.ADC2_IN3/COMP1_OUT/OPAMP2_VOUT/SPI1_MISO/TIM16_CH1/TIM1_BKIN/TIM3_CH1/TIM8_BKIN/TSC_G2_IO3/PA6, U2.MISO]
+- name: /MCU/MOSI
+  pins: [U17.ADC2_IN4/COMP2_INP/COMP2_OUT/OPAMP1_VINP/OPAMP1_VINP_SEC/OPAMP2_VINP/OPAMP2_VINP_SEC/SPI1_MOSI/TIM17_CH1/TIM1_CH1N/TIM3_CH2/TIM8_CH1N/TSC_G2_IO4/PA7,
+    U2.MOSI]
+- name: /MCU/NRST
+  pins: [C78.1, J17.Pin_5, R168.2, U17.NRST]
+- name: /MCU/NTC_Switch
+  pins: [C84.2, R170.2, TH1.2, U17.ADC1_IN1/COMP1_INM/COMP1_OUT/COMP7_INP/RTC_TAMP2/SYS_WKUP1/TIM2_CH1/TIM2_ETR/TIM8_BKIN/TIM8_ETR/TSC_G1_IO1/USART2_CTS/PA0]
+- name: /MCU/OLED_RST
+  pins: [J18.Pin_3, R46.2, U17.PB8/CAN_RX/COMP1_OUT/I2C1_SCL/TIM16_CH1/TIM1_BKIN/TIM4_CH3/TIM8_CH2/TSC_SYNC]
+- name: /MCU/OLED_SCL
+  pins: [J18.Pin_4, R50.1, U17.PB6/I2C1_SCL/TIM16_CH1N/TIM4_CH1/TIM8_BKIN2/TIM8_CH1/TIM8_ETR/TSC_G5_IO3/USART1_TX]
+- name: /MCU/OLED_SDA
+  pins: [J18.Pin_2, R42.1, U17.PB7/I2C1_SDA/TIM17_CH1N/TIM3_CH4/TIM4_CH2/TIM8_BKIN/TSC_G5_IO4/USART1_RX]
+- name: /MCU/PA
+  pins: [J19.Pin_2, TR2.4]
+- name: /MCU/PowerButton
+  pins: [Q28.D, U17.PB4/I2S3_ext_SD/SPI1_MISO/SPI3_MISO/SYS_NJTRST/TIM16_CH1/TIM17_BKIN/TIM3_CH1/TIM8_CH2N/TSC_G5_IO2/USART2_RX]
+- name: /MCU/PowerEnable
+  pins: [Q29.G, R176.1, U17.PB5/I2C1_SMBA/I2S3_SD/SPI1_MOSI/SPI3_MOSI/TIM16_BKIN/TIM17_CH1/TIM3_CH2/TIM8_CH3N/USART2_CK]
+- name: /MCU/PowerLED
+  pins: [R2.2, U17.PB3/I2S3_CK/SPI1_SCK/SPI3_SCK/SYS_JTDO-TRACESWO/TIM2_CH2/TIM3_ETR/TIM4_ETR/TIM8_CH1N/TSC_G5_IO1/USART2_TX]
+- name: /MCU/PreChargeEnable
+  pins: [R45.1, U17.PB11/ADC1_EXTI11/ADC2_EXTI11/COMP6_INP/OPAMP4_VINP/OPAMP4_VINP_SEC/TIM2_CH4/TSC_G6_IO1/USART3_RX]
+- name: /MCU/RX_USB
+  pins: [J14.Pin_4, R111.2, U17.ADC1_IN4/COMP2_INP/OPAMP1_VINM/OPAMP1_VINM_SEC/OPAMP1_VINP/OPAMP1_VINP_SEC/TIM15_CH2/TIM2_CH4/TSC_G1_IO4/USART2_RX/PA3]
+- name: /MCU/SCK
+  pins: [U17.ADC2_IN2/COMP1_INM/COMP2_INM/COMP3_INM/COMP4_INM/COMP5_INM/COMP6_INM/COMP7_INM/DAC_OUT2/OPAMP1_VINP/OPAMP1_VINP_SEC/OPAMP2_VINM/OPAMP2_VINM_SEC/OPAMP3_VINP/OPAMP3_VINP_SEC/SPI1_SCK/TIM2_CH1/TIM2_ETR/TSC_G2_IO2/PA5,
+    U2.SCK]
+- name: /MCU/SCL
+  pins: [R166.2, U16.SCL, U17.COMP5_OUT/DAC_EXTI9/I2C2_SCL/I2S3_MCK/TIM15_BKIN/TIM1_CH2/TIM2_CH3/TSC_G4_IO1/USART1_TX/PA9]
+- name: /MCU/SDA
+  pins: [R167.2, U16.SDA, U17.COMP6_OUT/I2C2_SDA/TIM17_BKIN/TIM1_CH3/TIM2_CH4/TIM8_BKIN/TSC_G4_IO2/USART1_RX/PA10]
+- name: /MCU/SS
+  pins: [U17.ADC2_IN1/COMP1_INM/COMP2_INM/COMP3_INM/COMP4_INM/COMP5_INM/COMP6_INM/COMP7_INM/DAC_OUT1/I2S3_WS/OPAMP4_VINP/OPAMP4_VINP_SEC/SPI1_NSS/SPI3_NSS/TIM3_CH2/TSC_G2_IO1/USART2_CK/PA4,
+    U2.CSB]
+- name: /MCU/SWCLK
+  pins: [J17.Pin_2, U17.I2C1_SDA/SYS_JTCK-SWCLK/TIM1_BKIN/TIM8_CH2/TSC_G4_IO4/USART2_TX/PA14]
+- name: /MCU/SWDIO
+  pins: [J17.Pin_4, U17.IR_OUT/SYS_JTMS-SWDIO/TIM16_CH1N/TIM4_CH3/TSC_G4_IO3/USART3_CTS/PA13]
+- name: /MCU/Safety
+  pins: [Q3.G, Q9.G, R11.2, U17.PC13/RTC_OUT_ALARM/RTC_OUT_CALIB/RTC_TAMP1/RTC_TS/SYS_WKUP2/TIM1_CH1N]
+- name: /MCU/TX_USB
+  pins: [J14.Pin_3, R112.2, U17.ADC1_IN3/ADC3_EXTI2/ADC4_EXTI2/COMP2_INM/COMP2_OUT/OPAMP1_VOUT/TIM15_CH1/TIM2_CH3/TSC_G1_IO3/USART2_TX/PA2]
+- name: /MCU/Vpack
+  pins: [R16.2, R17.1, U17.ADC1_IN2/COMP1_INP/OPAMP1_VINP/OPAMP1_VINP_SEC/OPAMP3_VINP/OPAMP3_VINP_SEC/RTC_REFIN/TIM15_CH1N/TIM2_CH2/TSC_G1_IO2/USART2_DE/USART2_RTS/PA1]
+- name: /PowerMonitor/Current
+  pins: [D20.A1, J4.1, R29.2, R31.1]
+- name: /PowerMonitor/ISO+5V
+  pins:
+  - C1.1
+  - C13.1
+  - C52.1
+  - R26.2
+  - U1.VDD1
+  - U12.VDD1
+  - U3.VOUT
+- name: /PowerMonitor/ISO+5V_LOAD
+  pins: [C17.1, C53.1, R43.2, U13.VDD1, U6.VOUT]
+- name: /PowerMonitor/Vbat
+  pins: [C71.1, R164.2, U15.1, U16.Vbus]
+- name: /PowerSupply/ChargeDetect
+  pins: [D13.K, Q2.D, Q27.G, R178.2, U5.4]
+- name: /PowerSupply/PushButton
+  pins: [J6.Pin_2, R172.1]
+- name: /USB/D+
+  pins: [D3.K@2, J12.D+, U7.D+]
+- name: /USB/D-
+  pins: [D3.K@1, J12.D-, U7.D-]
+- name: /USB/Vusb
+  pins:
+  - C41.1
+  - C42.1
+  - J12.VBUS
+  - Q26.G
+  - R114.1
+  - U7.REGIN
+  - U7.VBUS
+- name: /switches/Charge
+  pins: [J10.Pin_2, Q5.D@2, Q5.D@4]
+- name: /switches/Cooling
+  pins: [J2.Pin_2, Q7.D@2, Q7.D@4]
+- name: /switches/DischargeNeg
+  pins: [J8.Pin_2, Q4.D@2, Q4.D@4]
+- name: /switches/DischargePos
+  pins: [J7.Pin_2, Q6.D@2, Q6.D@4]
+- name: /switches/Precharge
+  pins: [K1.2, Q8.D@2, Q8.D@4]
+- name: GND
+  pins:
+  - C11.1
+  - C14.2
+  - C15.2
+  - C16.2
+  - C20.1
+  - C21.2
+  - C22.2
+  - C39.2
+  - C4.2
+  - C40.2
+  - C41.2
+  - C42.2
+  - C43.2
+  - C44.2
+  - C5.2
+  - C58.2
+  - C59.2
+  - C6.2
+  - C62.2
+  - C63.2
+  - C7.1
+  - C71.2
+  - C72.1
+  - C73.1
+  - C75.2
+  - C76.2
+  - C77.2
+  - C78.2
+  - C8.2
+  - C80.2
+  - C81.2
+  - C82.2
+  - C83.2
+  - C84.1
+  - C89.1
+  - C90.1
+  - C91.1
+  - C92.1
+  - C93.1
+  - C94.1
+  - D1.K
+  - D10.A
+  - D2.K
+  - D3.A
+  - D7.A
+  - J12.GND
+  - J12.Shield
+  - J13.Pin_2
+  - J14.Pin_5
+  - J17.Pin_3
+  - J18.Pin_5
+  - J3.Pin_2
+  - J6.Pin_1
+  - J6.Pin_5
+  - Q1.S
+  - Q2.S
+  - Q26.S
+  - Q27.S
+  - Q28.S
+  - Q29.S
+  - Q3.S
+  - Q30.S
+  - Q4.S
+  - Q5.S
+  - Q6.S
+  - Q7.S
+  - Q8.S
+  - Q9.S
+  - R114.2
+  - R160.2
+  - R161.2
+  - R17.2
+  - R176.2
+  - R179.1
+  - R27.2
+  - R28.2
+  - R33.2
+  - R4.1
+  - R41.2
+  - R46.1
+  - R47.2
+  - R5.2
+  - R8.2
+  - TH1.1
+  - U1.GND2@5
+  - U10.GND@4
+  - U10.GND@5
+  - U12.GND2@5
+  - U13.GND2@5
+  - U15.V-
+  - U16.GND
+  - U17.BOOT0
+  - U17.VSS@23
+  - U17.VSS@35
+  - U17.VSS@47
+  - U17.VSSA
+  - U19.GND
+  - U19.ILIM
+  - U19.PAD
+  - U2.GND
+  - U2.SLOW
+  - U4.GND@4
+  - U4.GND@5
+  - U5.3
+  - U7.GND
+  - U7.PAD
+  - U8.GND1
+  - U9.3
+- name: GNDA
+  pins:
+  - C1.2
+  - C13.2
+  - C2.2
+  - C3.2
+  - C52.2
+  - D5.K
+  - J5.Pin_2
+  - R129.2
+  - R132.2
+  - R29.1
+  - R30.1
+  - TR1.2
+  - U1.GND2@4
+  - U12.GND2@4
+  - U3.GND
+- name: GNDREF
+  pins:
+  - C17.2
+  - C18.2
+  - C19.2
+  - C53.2
+  - D16.K
+  - D20.A2
+  - J4.2
+  - R130.2
+  - R133.2
+  - TR3.2
+  - U13.GND2@4
+  - U5.2
+  - U6.GND
+- name: Net-(BZ1-+)
+  pins: [BZ1.+, Q1.D]
+- name: Net-(C10-Pad1)
+  pins: [C10.1, R14.2, R39.2]
+- name: Net-(C10-Pad2)
+  pins: [C10.2, R15.2, R40.2]
+- name: Net-(C6-Pad1)
+  pins: [C6.1, TR2.2]
+- name: Net-(C65-Pad1)
+  pins: [C65.1, R142.1, R148.1]
+- name: Net-(C65-Pad2)
+  pins: [C65.2, R143.1, R149.1]
+- name: Net-(C66-Pad1)
+  pins: [C66.1, R144.1, R150.1]
+- name: Net-(C66-Pad2)
+  pins: [C66.2, R145.1, R151.1]
+- name: Net-(C68-Pad1)
+  pins: [C68.1, R148.2, R155.1]
+- name: Net-(C68-Pad2)
+  pins: [C68.2, R149.2, R156.1]
+- name: Net-(C69-Pad1)
+  pins: [C69.1, R150.2, R157.1]
+- name: Net-(C69-Pad2)
+  pins: [C69.2, R151.2, R158.1]
+- name: Net-(C7-Pad2)
+  pins: [C7.2, R6.1, R7.2]
+- name: Net-(C9-Pad1)
+  pins: [C9.1, R35.1, R39.1]
+- name: Net-(C9-Pad2)
+  pins: [C9.2, R38.1, R40.1]
+- name: Net-(C92-Pad2)
+  pins: [C92.2, R180.2]
+- name: Net-(C93-Pad2)
+  pins: [C93.2, R181.2]
+- name: Net-(D1-A)
+  pins: [D1.A, R1.1]
+- name: Net-(D10-K)
+  pins:
+  - D10.K
+  - D11.A
+  - D13.A
+  - D9.A
+  - Q29.D
+  - Q30.G
+  - R175.1
+- name: Net-(D12-K)
+  pins: [D12.K, R178.1]
+- name: Net-(D14-A)
+  pins: [D14.A, TR1.1]
+- name: Net-(D14-K)
+  pins: [C2.1, C3.1, D14.K, D15.K, U3.EN, U3.VIN]
+- name: Net-(D15-A)
+  pins: [D15.A, TR1.3]
+- name: Net-(D16-A)
+  pins: [D16.A, R43.1]
+- name: Net-(D17-A)
+  pins: [D17.A, TR3.1]
+- name: Net-(D17-K)
+  pins: [C18.1, C19.1, D17.K, D18.K, U6.EN, U6.VIN]
+- name: Net-(D18-A)
+  pins: [D18.A, TR3.3]
+- name: Net-(D2-A)
+  pins: [D2.A, R3.1]
+- name: Net-(D5-A)
+  pins: [D5.A, R26.1]
+- name: Net-(D7-K)
+  pins: [C88.1, D7.K, Q28.G, R172.2, R173.1, R174.1]
+- name: Net-(D8-K)
+  pins: [D8.K, R173.2]
+- name: Net-(D9-K)
+  pins: [C88.2, D9.K, R174.2]
+- name: Net-(J13-Pin_1)
+  pins: [J13.Pin_1, Q2.G, R41.1]
+- name: Net-(J15-Pin_2)
+  pins: [J15.Pin_2, R9.2]
+- name: Net-(J6-Pin_4)
+  pins: [J6.Pin_4, R2.1]
+- name: Net-(J7-Pin_1)
+  pins: [J7.Pin_1, J9.Pin_2]
+- name: Net-(K1-Pad4)
+  pins: [K1.4, R34.2]
+- name: Net-(Q27-D)
+  pins: [Q27.D, U17.PC14/RCC_OSC32_IN]
+- name: Net-(Q30-D)
+  pins: [Q30.D, R177.1, U19.EN]
+- name: Net-(Q4-G)
+  pins: [Q4.G, R24.2, R27.1]
+- name: Net-(Q5-G)
+  pins: [Q5.G, R25.2, R28.1]
+- name: Net-(Q6-G)
+  pins: [Q6.G, R23.2, R8.1]
+- name: Net-(Q7-G)
+  pins: [Q7.G, R32.2, R33.1]
+- name: Net-(Q8-G)
+  pins: [Q8.G, R45.2, R47.1]
+- name: Net-(R10-Pad1)
+  pins: [R10.1, U5.1]
+- name: Net-(R10-Pad2)
+  pins: [R10.2, R9.1]
+- name: Net-(R116-Pad2)
+  pins: [R116.2, U9.1]
+- name: Net-(R119-Pad1)
+  pins: [R119.1, R19.2]
+- name: Net-(R119-Pad2)
+  pins: [R119.2, R122.1]
+- name: Net-(R120-Pad1)
+  pins: [R120.1, R20.2]
+- name: Net-(R120-Pad2)
+  pins: [R120.2, R123.1]
+- name: Net-(R122-Pad2)
+  pins: [R122.2, R125.1]
+- name: Net-(R123-Pad2)
+  pins: [R123.2, R126.1]
+- name: Net-(R125-Pad2)
+  pins: [R125.2, R129.1, R22.1]
+- name: Net-(R126-Pad2)
+  pins: [R126.2, R130.1, R21.1]
+- name: Net-(R16-Pad1)
+  pins: [R16.1, R165.2, U15.7]
+- name: Net-(R34-Pad1)
+  pins: [R34.1, R44.2]
+- name: Net-(U1-VINN)
+  pins: [C12.2, R31.2, U1.VINN]
+- name: Net-(U1-VINP)
+  pins: [C12.1, R30.2, U1.VINP]
+- name: Net-(U1-VOUTN)
+  pins: [R35.2, U1.VOUTN]
+- name: Net-(U1-VOUTP)
+  pins: [R38.2, U1.VOUTP]
+- name: Net-(U10-D1)
+  pins: [TR3.6, U10.D1]
+- name: Net-(U10-D2)
+  pins: [TR3.4, U10.D2]
+- name: Net-(U12-VINN)
+  pins: [C49.2, R132.1, U12.VINN]
+- name: Net-(U12-VINP)
+  pins: [C49.1, R22.2, U12.VINP]
+- name: Net-(U12-VOUTN)
+  pins: [R142.2, U12.VOUTN]
+- name: Net-(U12-VOUTP)
+  pins: [R143.2, U12.VOUTP]
+- name: Net-(U13-VINN)
+  pins: [C50.2, R133.1, U13.VINN]
+- name: Net-(U13-VINP)
+  pins: [C50.1, R21.2, U13.VINP]
+- name: Net-(U13-VOUTN)
+  pins: [R144.2, U13.VOUTN]
+- name: Net-(U13-VOUTP)
+  pins: [R145.2, U13.VOUTP]
+- name: Net-(U15A-+)
+  pins: [R156.2, R160.1, U15.+@3]
+- name: Net-(U15A--)
+  pins: [R155.2, R164.1, U15.-@2]
+- name: Net-(U15B-+)
+  pins: [R158.2, R161.1, U15.+@5]
+- name: Net-(U15B--)
+  pins: [R157.2, R165.1, U15.-@6]
+- name: Net-(U16-Vin+)
+  pins: [C11.2, R13.1, R14.1, U16.Vin+]
+- name: Net-(U16-Vin-)
+  pins: [C72.2, R13.2, R15.1, U16.Vin-]
+- name: Net-(U17-PF0/I2C2_SDA/RCC_OSC_IN/TIM1_CH3N)
+  pins: [C76.1, U17.PF0/I2C2_SDA/RCC_OSC_IN/TIM1_CH3N, Y1.1]
+- name: Net-(U17-PF1/I2C2_SCL/RCC_OSC_OUT)
+  pins: [C77.1, U17.PF1/I2C2_SCL/RCC_OSC_OUT, Y1.2]
+- name: Net-(U19-FB)
+  pins: [L3.2, R180.1, R181.1, R182.1, U19.FB]
+- name: Net-(U19-RT)
+  pins: [R179.2, U19.RT]
+- name: Net-(U19-SS)
+  pins: [C91.2, U19.SS]
+- name: Net-(U19-SW)
+  pins: [L3.1, U19.SW]
+- name: Net-(U2-IBIAS)
+  pins: [R36.1, U2.IBIAS]
+- name: Net-(U2-ICMP)
+  pins: [R36.2, R5.1, U2.ICMP]
+- name: Net-(U2-IM)
+  pins: [R7.1, TR2.3, U2.IM]
+- name: Net-(U2-IP)
+  pins: [R6.2, TR2.1, U2.IP]
+- name: Net-(U4-D1)
+  pins: [TR1.6, U4.D1]
+- name: Net-(U4-D2)
+  pins: [TR1.4, U4.D2]
+- name: Net-(U7-RXD)
+  pins: [R112.1, U7.RXD]
+- name: Net-(U7-TXD)
+  pins: [R111.1, U7.TXD]
+- name: Net-(U7-VPP)
+  pins: [C40.1, U7.VPP]
+- name: Net-(U7-~RST)
+  pins: [R113.2, U7.~RST]
+- name: VDD
+  pins: [C39.1, R113.1, U7.VDD, U7.VIO]

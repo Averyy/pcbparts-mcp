@@ -53,15 +53,16 @@ components:
   pin_count: 6
 - ref: R1
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pulldown: SCL
   pin_count: 8
 - ref: R2
   value: 10kohm
   footprint: '0603'
 - ref: SJ2
-  value: smd solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
+  description: SMD Solder JUMPER
 - ref: U1
   value: ADS1115IDGST
   footprint: MSOP10

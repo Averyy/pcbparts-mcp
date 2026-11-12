@@ -1,7 +1,7 @@
 name: CatSniffer
 slug: catsniffer
 source: ElectronicCats/CatSniffer
-format: kicad7
+format: kicad8
 description: 'Multi-protocol IoT radio: CC1352 (Sub-GHz+2.4GHz) + SX1262 (LoRa) + RP2040, RF switching'
 tags: [lora, sub-ghz, zigbee-thread]
 key_ics: [RP2040, CC1352, SX1262]
@@ -18,330 +18,478 @@ components:
 - ref: BOOT1
   value: SW
   footprint: TS1088R02026
+  lcsc: C455281
+  mpn: TS-1088R-02526
 - ref: C1
   value: 1uF
   footprint: '0603'
+  mpn: 0603F105M500NT
+  lcsc: C108343
   decouples: U1
 - ref: C10
   value: 100nF
   footprint: '0402'
+  lcsc: C162179
+  mpn: GRM155R62A104ME14D
 - ref: C11
   value: 100nF
   footprint: '0402'
+  lcsc: C162179
+  mpn: GRM155R62A104ME14D
 - ref: C12
   value: 100nF
   footprint: '0402'
+  lcsc: C162179
+  mpn: GRM155R62A104ME14D
 - ref: C13
   value: 100nF
   footprint: '0402'
+  lcsc: C162179
+  mpn: GRM155R62A104ME14D
 - ref: C14
   value: 22uF
   footprint: '0603'
+  lcsc: C109447
+  mpn: CC0603MRX5R6BB226
 - ref: C15
   value: 100nF
   footprint: '0402'
+  lcsc: C162179
+  mpn: GRM155R62A104ME14D
 - ref: C16
   value: 100nF
   footprint: '0402'
+  lcsc: C162179
+  mpn: GRM155R62A104ME14D
 - ref: C17
   value: 22uF
   footprint: '0603'
+  lcsc: C109447
+  mpn: CC0603MRX5R6BB226
 - ref: C18
   value: 22pF
   footprint: '0603'
+  mpn: CL10C220JB81PNC
+  lcsc: C170132
 - ref: C19
   value: 22pF
   footprint: '0603'
+  mpn: CL10C220JB81PNC
+  lcsc: C170132
 - ref: C2
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
+  mpn: CC0603KRX7R9BB104
   decouples: U1
 - ref: C20
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
+  mpn: CL10C101JB8NNNC
 - ref: C21
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
+  mpn: CC0603KRX7R9BB104
 - ref: C22
   value: 47pF
   footprint: '0603'
+  lcsc: C519486
+  mpn: CC0603FRNPO9BN470
 - ref: C23
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
+  mpn: CL10C101JB8NNNC
 - ref: C24
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
+  mpn: CC0603KRX7R9BB104
   decouples: U7
 - ref: C25
   value: 3.3pF
   footprint: '0603'
+  mpn: GRM1885C1H3R3CA01D
+  lcsc: C162225
 - ref: C26
   value: 3.3pF
   footprint: '0603'
+  mpn: GRM1885C1H3R3CA01D
+  lcsc: C162225
 - ref: C27
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
+  mpn: CL10C101JB8NNNC
 - ref: C28
   value: 27pF
   footprint: '0402'
+  mpn: GJM1555C1H270FB01D
   mouser: 81-GJM1555C1H270FB1D
 - ref: C29
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
+  mpn: CC0603KRX7R9BB104
   decouples: U7
 - ref: C3
   value: 1uF
   footprint: '0402'
+  mpn: MSRLJ103SB5105MFNA01
   mouser: 963-MSRLJ103SB5105MF
   decouples: U3
 - ref: C30
   value: 100nF
   footprint: '0402'
+  mpn: MSAST105SB7104KFNB25
   mouser: 963-MSAST105SB7104KF
   decouples: U3
 - ref: C31
   value: 1nF
   footprint: '0603'
+  lcsc: C1588
+  mpn: CL10B102KB8NNNC
 - ref: C32
   value: 100nF
   footprint: '0402'
+  mpn: GRM155R62A104ME14D
+  lcsc: C162179
 - ref: C33
   value: 470nF
   footprint: '0603'
+  lcsc: C170149
+  mpn: CL10A474KB8NNNC
 - ref: C34
   value: 10pF
   footprint: '0603'
+  mpn: CL10C100DB81PNC
+  lcsc: C472782
 - ref: C35
   value: 1nF
   footprint: '0603'
+  lcsc: C1588
+  mpn: CL10B102KB8NNNC
 - ref: C36
   value: 10pF
   footprint: '0603'
+  mpn: CL10C100DB81PNC
+  lcsc: C472782
 - ref: C37
   value: 1uF
   footprint: '0603'
+  mpn: 0603F105M500NT
+  lcsc: C108343
 - ref: C38
   value: 1uF
   footprint: '0402'
+  mpn: MSRLJ103SB5105MFNA01
   mouser: 963-MSRLJ103SB5105MF
   decouples: U9
 - ref: C39
   value: 100nF
   footprint: '0402'
+  mpn: MSAST105SB7104KFNB25
   mouser: 963-MSAST105SB7104KF
   decouples: U3
 - ref: C4
   value: 27pF
   footprint: '0402'
+  mpn: GJM1555C1H270FB01D
   mouser: 81-GJM1555C1H270FB1D
 - ref: C40
   value: 100nF
   footprint: '0402'
+  mpn: MSAST105SB7104KFNB25
   mouser: 963-MSAST105SB7104KF
   decouples: U3
 - ref: C41
   value: 100nF
   footprint: '0402'
+  mpn: MSAST105SB7104KFNB25
   mouser: 963-MSAST105SB7104KF
   decouples: U9
 - ref: C42
   value: 100nF
   footprint: '0402'
+  mpn: MSAST105SB7104KFNB25
   mouser: 963-MSAST105SB7104KF
   decouples: U9
 - ref: C43
   value: 100nF
   footprint: '0402'
+  mpn: MSAST105SB7104KFNB25
   mouser: 963-MSAST105SB7104KF
   decouples: U3
 - ref: C44
   value: 100nF
   footprint: '0402'
+  mpn: MSAST105SB7104KFNB25
   mouser: 963-MSAST105SB7104KF
   decouples: U3
 - ref: C45
   value: 100nF
   footprint: '0402'
+  mpn: MSAST105SB7104KFNB25
   mouser: 963-MSAST105SB7104KF
   decouples: U9
 - ref: C46
   value: 100nF
   footprint: '0402'
+  mpn: MSAST105SB7104KFNB25
   mouser: 963-MSAST105SB7104KF
   decouples: U3
 - ref: C5
   value: 100nF
   footprint: '0402'
+  mpn: MSAST105SB7104KFNB25
   mouser: 963-MSAST105SB7104KF
   decouples: U3
 - ref: C6
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
+  mpn: CL10C101JB8NNNC
 - ref: C7
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
+  mpn: CL10C101JB8NNNC
 - ref: C8
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
+  mpn: CL10C101JB8NNNC
 - ref: C9
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
+  mpn: CL10C101JB8NNNC
 - ref: D1
   value: LED
   footprint: '0603'
+  lcsc: C524045
+  mpn: CL10C120JB81PNC
 - ref: D2
   value: LED
   footprint: '0603'
+  lcsc: C524045
+  mpn: CL10C120JB81PNC
 - ref: D3
   value: LED
   footprint: '0603'
+  lcsc: C524045
+  mpn: CL10C120JB81PNC
 - ref: D4
   value: LED
   footprint: '0603'
+  lcsc: C524045
+  mpn: CL10C120JB81PNC
 - ref: F1
   value: 0.5A
   footprint: 0805
   mouser: 594-MFU0805FF00500P1
+  mpn: MFU0805FF00500P100
 - ref: J1
   value: Antenna
   footprint: SMA_EDGE
+  lcsc: C530661
+  mpn: KH-SMA-KE8-G
 - ref: L1
-  value: 'BLM18HE152SN1D '
+  value: 1.5kohm
   footprint: '0603'
   mouser: BLM18HE152SN1D
+  mpn: BLM18HE152SN1D
 - ref: L2
   value: 6.8uH
   footprint: '0603'
+  mpn: MLZ1608M6R8WT000
   mouser: MLZ1608M6R8WT000
 - ref: L3
   value: 9.1nH
   footprint: '0603'
+  lcsc: C395094
+  mpn: VHF160808H9N1JT
 - ref: L4
   value: 47nH
   footprint: '0603'
+  lcsc: C578001
+  mpn: SCHF160808H47NJT
 - ref: L5
   value: 15uH
   footprint: '0603'
+  lcsc: C57838
+  mpn: SDFL1608T150KTF
 - ref: P1
   value: USB-C
   footprint: C393939
+  lcsc: C709357
+  mpn: KH-TYPE-C-16P
   pin_count: 7
 - ref: R1
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C319561
+  mpn: AR03DTCX5101
   pulldown: P1.CC
 - ref: R10
   value: 27ohm
   footprint: '0402'
+  mpn: ESR01MZPF27R0
   mouser: 755-ESR01MZPF27R0
 - ref: R11
   value: 27ohm
   footprint: '0402'
+  mpn: ESR01MZPF27R0
   mouser: 755-ESR01MZPF27R0
 - ref: R12
   value: 1kohm
   footprint: '0402'
+  mpn: MCS0402MD1001DE000
   mouser: 594-MCS0402MD1001DE0
 - ref: R13
   value: 10kohm
   footprint: '0402'
+  mpn: MCS04020D1002BE000
   mouser: 594-MCS04020D1002BE0
   pullup: /QSPI_SS
 - ref: R2
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C319561
+  mpn: AR03DTCX5101
   pulldown: P1.VCONN
 - ref: R3
   value: 330ohm
   footprint: '0603'
+  lcsc: C408915
+  mpn: AR03BTB3300
 - ref: R4
   value: 330ohm
   footprint: '0603'
+  lcsc: C408915
+  mpn: AR03BTB3300
 - ref: R5
   value: 330ohm
   footprint: '0603'
+  lcsc: C408915
+  mpn: AR03BTB3300
 - ref: R6
   value: 100kohm
   footprint: '0603'
+  lcsc: C179820
+  mpn: RT0603FRD07100KL
 - ref: R7
   value: 100ohm
   footprint: '0603'
+  lcsc: C700506
+  mpn: RT0603DRD07100RL
 - ref: R8
   value: 100ohm
   footprint: '0603'
+  lcsc: C700506
+  mpn: RT0603DRD07100RL
 - ref: R9
   value: 330ohm
   footprint: '0603'
+  lcsc: C408915
+  mpn: AR03BTB3300
 - ref: RESET1
   value: SW
   footprint: TS1088R02026
+  lcsc: C455281
+  mpn: TS-1088R-02526
 - ref: RESET_CC1
   value: SW
   footprint: TS1088R02026
+  lcsc: C455281
+  mpn: TS-1088R-02526
 - ref: SW1
   value: SW
   footprint: TS1088R02026
+  lcsc: C455281
+  mpn: TS-1088R-02526
 - ref: U1
   value: AP2112K-3.3
   footprint: SOT-23-5
-  mouser: 865-XC6210B332MR-G
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: U2
   value: RFSW8006QTR7
-  footprint: SON-9
+  footprint: SON50P200X200X90-9N
+  mpn: RFSW8006QTR7
   mouser: 772-RFSW8006QTR7
   pin_count: 8
 - ref: U3
   value: RP2040
-  footprint: QFN-56-1EP
+  footprint: QFN-56-1EP_7x7
+  lcsc: C2040
+  mpn: RP2040
   pin_count: 57
   nc_pins: {GPIO6: '8', GPIO7: '9', SWCLK: '24', SWD: '25', GPIO22: '34', GPIO29_ADC3: '41'}
 - ref: U4
   value: 0900PC15A0036
   footprint: 0900FM15D0039E
   mouser: 609-0900PC15A0036E
+  mpn: 0900PC15A0036E
   pin_count: 10
 - ref: U5
   value: 0900FM15D0039
   footprint: 0900FM15D0039E
   mouser: 609-0900FM15D0039E
+  mpn: 0900FM15D0039E
   pin_count: 10
 - ref: U6
   value: PE42421
   footprint: SOT-363_SC-70-6
+  lcsc: '-'
+  mpn: PE42421SCAA-Z
   mouser: 81-PE42421SCAA-Z
   pin_count: 6
 - ref: U7
   value: SX1262IMLTRT
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
   mouser: 947-SX1262IMLTRT
+  mpn: SX1262IMLTRT
   pin_count: 24
 - ref: U8
   value: CC1352P
-  footprint: VQFN-48-1EP
+  footprint: VQFN-48-1EP_7x7
   mouser: 595-CC1352P1F3RGZT
+  mpn: CC1352P1F3RGZT
   pin_count: 49
-  nc_pins: {TX_20DBM_P: '5', TX_20DBM_N: '6', DIO_5: '10', DIO_6: '11', DIO_7: '12', DIO_8: '14', DIO_9: '15', DIO_10: '16', DIO_11: '17', DIO_14: '20', DIO_18: '28', DIO_19: '29', DIO_20: '30', DIO_21: '31', DIO_22: '32', DIO_23: '36', DIO_25: '38', DIO_26: '39', DIO_27: '40', DIO_28: '41', DIO_29: '42', DIO_30: '43'}
+  nc_pins: {TX_20DBM_P: '5', TX_20DBM_N: '6', DIO_5: '10', DIO_6: '11', DIO_7: '12', DIO_8: '14', DIO_9: '15', DIO_10: '16',
+    DIO_11: '17', DIO_14: '20', DIO_18: '28', DIO_19: '29', DIO_20: '30', DIO_21: '31', DIO_22: '32', DIO_23: '36', DIO_25: '38',
+    DIO_26: '39', DIO_27: '40', DIO_28: '41', DIO_29: '42', DIO_30: '43'}
 - ref: U9
   value: W25Q16JV
   footprint: W25Q16JVUUIQ
   mouser: 454-W25Q16JVUUIQTR
+  mpn: W25Q16JVUUIQ TR
   pin_count: 8
 - ref: Y1
   value: 48MHz
   footprint: SMD3225
+  lcsc: C389928
+  mpn: 7325-4800A1620-00
   pin_count: 4
 - ref: Y2
   value: 32.768kHz
   footprint: SMD2012
+  lcsc: C97603
+  mpn: SC-20S,32.768kHz,20PPM,9pF
 - ref: Y3
   value: 32Mhz
   footprint: SMD2520
+  lcsc: C255969
+  mpn: Q24FA20H0021700
   pin_count: 4
 - ref: Y4
   value: 12MHz
   footprint: SMD3225
+  lcsc: C2848217
+  mpn: XC32M4-12.000-F20NJDT
   pin_count: 4
 nets:
 - name: +1V2

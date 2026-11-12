@@ -66,12 +66,27 @@ _THIN_CONSENSUS = 3
 _RAIL_LIST_LIMIT = 8
 
 
-def _net_pins(nets: list[dict], ref: str) -> list[tuple[dict, list[str]]]:
-    """Each net the part is on, with the part's own pin names there."""
+def split_pin(pin: str, refs) -> tuple[str, str]:
+    """A net pin "REF.LABEL" as (ref, label). Refs can hold dots (the LLC converter's J5.1 XT60, an
+    Olimex "5.0V/3.3V1" jumper) and so can labels (an Eagle gate pin U1.A.1, an nRF pin U1.P0.13),
+    so the longest board ref the pin starts with wins; with none, the first dot splits."""
+    best = ""
+    i = pin.find(".")
+    while i != -1:
+        if pin[:i] in refs:
+            best = pin[:i]
+        i = pin.find(".", i + 1)
+    if best:
+        return best, pin[len(best) + 1:]
+    ref, _, label = pin.partition(".")
+    return ref, label
+
+
+def _net_pins(nets: list[dict], ref: str, refs) -> list[tuple[dict, list[str]]]:
+    """Each net the part is on, with the part's own pin names there (J5's pins aren't J5.1's)."""
     found = []
-    prefix = f"{ref}."
     for net in nets:
-        mine = [p[len(prefix):] for p in net.get("pins", []) if p.startswith(prefix)]
+        mine = [label for owner, label in (split_pin(p, refs) for p in net.get("pins", [])) if owner == ref]
         if mine:
             found.append((net, mine))
     return found
@@ -84,8 +99,9 @@ def _pin_neighborhood(nets: list[dict], ref: str, comp_by_ref: dict[str, dict]
     parts when there are few (VBUS through a fuse and a TVS) or their count (a GND net)."""
     pins: dict[str, list[dict]] = {}
     power: dict[str, dict] = {}
-    for net, mine in _net_pins(nets, ref):
-        others = list(dict.fromkeys(p.split(".")[0] for p in net["pins"] if p.split(".")[0] != ref))
+    for net, mine in _net_pins(nets, ref, comp_by_ref):
+        owners = (split_pin(p, comp_by_ref)[0] for p in net["pins"])
+        others = list(dict.fromkeys(o for o in owners if o != ref))
         parts = [{"ref": o, "value": comp_by_ref[o].get("value", ""), "role": classify_role(o, comp_by_ref[o], ref)}
                  for o in others if o in comp_by_ref]
         for pin in mine:
@@ -218,10 +234,11 @@ def _enrich_neighborhoods(
                 ic_pin_counts[ref] = pin_count
 
     nets = _board_nets(conn, board_id)
+    refs = {r for (r,) in conn.execute("SELECT ref FROM board_components WHERE board_id = ?", [board_id])} if nets else set()
     result = []
     for h in neighborhoods:
         # Pins in the board's nets, rails included (the "_decoupling" group isn't a pin)
-        pin_names = {pin for _, mine in _net_pins(nets, h["ref"]) for pin in mine} if nets else \
+        pin_names = {pin for _, mine in _net_pins(nets, h["ref"], refs) for pin in mine} if nets else \
             {p for p in h["pins"] if p != "_decoupling"}
         # The part's own pin count where its footprint or symbol gave one, else its pins in nets
         entry: dict[str, Any] = {
@@ -328,7 +345,7 @@ def get_board(
 
         if matched:
             # Each pin's net: numbered pins ("3" on an ESP32 module, a KiCad pad) say what they are
-            pin_nets = {pin: net.get("name") for net, mine in _net_pins(nets, matched["ref"]) for pin in mine
+            pin_nets = {pin: net.get("name") for net, mine in _net_pins(nets, matched["ref"], comp_by_ref) for pin in mine
                         if net.get("name")}
             matched = {**matched, **_part_numbers(conn, row["id"], matched["ref"]),
                        "pins": _clean_junk_values(matched["pins"])}

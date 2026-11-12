@@ -23,57 +23,81 @@ components:
 - ref: C1
   value: 100nF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 10%
   prod_id: CAP-14993
   decouples: U1
 - ref: C10
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
   decouples: U5
 - ref: C11
   value: 2.2uF
   footprint: '0402'
+  voltage: 10V
+  tolerance: 10%
   prod_id: CAP-14232
 - ref: C12
   value: 100nF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 10%
   prod_id: CAP-14993
   decouples: U5
 - ref: C2
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
   decouples: U5
 - ref: C3
   value: 1nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-15061
 - ref: C4
   value: 1nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-15061
 - ref: C5
   value: 100nF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 10%
   prod_id: CAP-14993
   decouples: U5
 - ref: C6
   value: 100nF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 10%
   prod_id: CAP-14993
   decouples: U4
 - ref: C7
   value: 100nF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 10%
   prod_id: CAP-14993
   decouples: U3
 - ref: C8
   value: 47pF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-15063
 - ref: C9
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
   decouples: U5
 - ref: D1
@@ -120,6 +144,8 @@ components:
 - ref: D9
   value: PESD0402
   footprint: '0402'
+  digikey: PESD0402-140CT-ND
+  mouser: 650-PESD0402-140
   prod_id: DIO-15359
   description: ESD protection diode
 - ref: E1
@@ -131,6 +157,7 @@ components:
 - ref: FB1
   value: 120ohm
   footprint: '0402'
+  mpn: BLM15HB121SN1D
   prod_id: NDUC-14206
 - ref: GEO
   value: solder jumper (NC)
@@ -183,104 +210,128 @@ components:
 - ref: R1
   value: 3.3kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07851
 - ref: R10
   value: 33ohm
   footprint: 1206_RA
+  tolerance: 5%
   prod_id: RES-15081
   pin_count: 8
 - ref: R11
   value: 33ohm
   footprint: 1206_RA
+  tolerance: 5%
   prod_id: RES-15081
   pin_count: 8
   nc_pins: {C.1: P3, D.1: P4, D.2: P5, C.2: P6}
 - ref: R12
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R13
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R14
   value: 5.1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14340
   pulldown: J2.CC2
 - ref: R15
   value: 5.1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14340
   pulldown: J2.CC1
 - ref: R16
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
 - ref: R17
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
 - ref: R18
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R19
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R2
   value: 3.3kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07851
 - ref: R20
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R21
   value: 27ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-09334
 - ref: R22
   value: 27ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-09334
 - ref: R23
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
 - ref: R24
   value: 3.3kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07851
 - ref: R3
   value: 100kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-13495
 - ref: R4
   value: 910ohm
   footprint: '0603'
+  tolerance: 5%
   prod_id: RES-13860
 - ref: R5
   value: 470ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07869
 - ref: R6
   value: 470ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07869
 - ref: R7
   value: 910ohm
   footprint: '0603'
+  tolerance: 5%
   prod_id: RES-13860
 - ref: R8
   value: 33ohm
   footprint: 1206_RA
+  tolerance: 5%
   prod_id: RES-15081
   pin_count: 8
 - ref: R9
   value: 33ohm
   footprint: 1206_RA
+  tolerance: 5%
   prod_id: RES-15081
   pin_count: 8
 - ref: RTK
@@ -513,7 +564,7 @@ nets:
 - name: VIN
   pins: [C9.1, D3.5, J2.VBUS, J5.2, U5.EN, U5.IN]
 - name: V_BATT
-  pins: [BT2.+, C11.1, R24.1, TP1.1, U6.V_BKCP]
+  pins: [BT2.+, C11.1, R24.1, U6.V_BKCP]
 - name: V_RF
   pins: [R13.2, U6.V_RF]
 - name: WHEEL_TKS

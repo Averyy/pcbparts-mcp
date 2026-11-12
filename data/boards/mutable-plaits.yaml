@@ -299,26 +299,6 @@ components:
   footprint: WQP_PJ_301M6
   pin_count: 3
   nc_pins: {P2: P2}
-- ref: JP1
-  value: 1x2 header
-  footprint: FIDUCIAL-1X2
-  pin_count: 1
-  nc_pins: {'1': '1'}
-- ref: JP2
-  value: 1x2 header
-  footprint: FIDUCIAL-1X2
-  pin_count: 1
-  nc_pins: {'1': '1'}
-- ref: JP3
-  value: 1x2 header
-  footprint: FIDUCIAL-1X2
-  pin_count: 1
-  nc_pins: {'1': '1'}
-- ref: JP4
-  value: 1x2 header
-  footprint: FIDUCIAL-1X2
-  pin_count: 1
-  nc_pins: {'1': '1'}
 - ref: JP5
   value: 1x2 header
   footprint: 1X02
@@ -1266,18 +1246,6 @@ positions:
   x: 159.92
   y: 151.99
   rot: 180.0
-- ref: JP1
-  x: 120.87
-  y: 53.57
-- ref: JP2
-  x: 176.11
-  y: 53.57
-- ref: JP3
-  x: 120.87
-  y: 155.8
-- ref: JP4
-  x: 176.11
-  y: 155.8
 - ref: JP5
   x: 121.5
   y: 103.73

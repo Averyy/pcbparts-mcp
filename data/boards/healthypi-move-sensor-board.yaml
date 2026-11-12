@@ -233,13 +233,14 @@ components:
   footprint: '0402'
 - ref: SWIO8
   value: TPTP11R
-  footprint: TestPoint_Pad
+  footprint: TestPoint_Pad_1.0x1.0
 - ref: SWIO9
   value: TPTP11R
-  footprint: TestPoint_Pad
+  footprint: TestPoint_Pad_1.0x1.0
 - ref: U$10
   value: ECS-.327-12.5-34B
   footprint: ECX-31B
+  mpn: ECS-.327-12.5-34B-TR
 - ref: U$18
   value: MAX30208CLB+
   footprint: IC_MAX30208CLB_
@@ -253,15 +254,17 @@ components:
   value: MAX32664GTGD+
   footprint: MAX-QFN24
   pin_count: 24
-  nc_pins: {D.N.C: '2', N.C: '3', D.N.C@1: '4', D.N.C@2: '5', N.C@1: '15', D.N.C@3: '16', D.N.C@4: '17', ACCL_INT: '19', D.N.C@5: '20', D.N.C@6: '21'}
+  nc_pins: {D.N.C: '2', N.C: '3', D.N.C@1: '4', D.N.C@2: '5', N.C@1: '15', D.N.C@3: '16', D.N.C@4: '17', ACCL_INT: '19', D.N.C@5: '20',
+    D.N.C@6: '21'}
 - ref: U$30
   value: MAX30001CWV+
-  footprint: BGA30N50P5X6
+  footprint: BGA30N50P5X6_274X292X69N
   pin_count: 30
   nc_pins: {AOUT: C2, INT2B: E2}
 - ref: U$32
   value: ECS-.327-12.5-34B
   footprint: ECX-31B
+  mpn: ECS-.327-12.5-34B-TR
 - ref: U$48
   value: KX122-1037
   footprint: '1057'
@@ -269,7 +272,7 @@ components:
   nc_pins: {INT2: '6', NC: '11'}
 - ref: U1
   value: MAX17222ELT+T
-  footprint: SON-6
+  footprint: SON65P200X200X80-6N
   pin_count: 6
 - ref: U2
   value: MAX32664GTGC+
@@ -481,14 +484,11 @@ nets:
   - C5.2
   - C59.2
   - C6.1
-  - C67.2
-  - C68.2
   - C9.2
   - J3.1
   - J3.2
   - R13.1
   - R14.1
-  - R44.2
   - R7.1
   - R8.2
   - U$18.GND@1
@@ -541,9 +541,9 @@ nets:
 - name: Net-(U$3-VCORE)
   pins: [C4.1, U$3.VCORE]
 - name: Net-(U$30-BIN)
-  pins: [C67.1, C69.1, R42.2, U$30.BIN]
+  pins: [R42.2, U$30.BIN]
 - name: Net-(U$30-BIP)
-  pins: [C68.1, C69.2, R43.2, U$30.BIP]
+  pins: [R43.2, U$30.BIP]
 - name: Net-(U$30-CAPN)
   pins: [C26.2, U$30.CAPN]
 - name: Net-(U$30-CAPP)
@@ -554,8 +554,6 @@ nets:
   pins: [C66.2, U$30.DRVN]
 - name: Net-(U$30-DRVP)
   pins: [C63.2, U$30.DRVP]
-- name: Net-(U$30-RBIAS)
-  pins: [R44.1, U$30.RBIAS]
 - name: Net-(U$30-VBG)
   pins: [C34.1, U$30.VBG]
 - name: Net-(U$30-VREF)

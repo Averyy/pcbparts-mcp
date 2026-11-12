@@ -3,7 +3,7 @@ slug: opensipm-bias-control
 source: OpenSiPM/sipm-bias-control
 format: kicad9
 description: 'SiPM high-voltage bias generator: LT8362 boost converter (50-60V output)'
-tags: [adc-dac, audio, power-supply, sbc]
+tags: [adc-dac, power-supply]
 key_ics: [ATSAMD21E18A-AF, LT8361EMSE/LT8362EMSE, MCP47FEB22A2-E_ST, MIC5317-3.3, RT9072B]
 outline:
   width_mm: 37.61
@@ -93,9 +93,6 @@ components:
   value: LT8361EMSE/LT8362EMSE
   footprint: LT8364IMSE-PBF
   height: '1.1'
-  manufacturer: Linear Technology
-  mpn: LT8364EMSE#TRPBF
-  description: Switching Voltage Regulators Low IQ Boost/SEPIC/ Inverting Converter with 4A
   pin_count: 13
   nc_pins: {NC: '6', SYNC/MODE: '12'}
 - ref: IC2
@@ -104,25 +101,28 @@ components:
   height: '1.2'
   manufacturer: Microchip
   mpn: ATSAMD21E18A-AFT
+  arrow: ATSAMD21E18A-AFT
   description: ARM Microcontrollers - MCU Cortex-M0+,64KB FLASH,8KB SRAM T&R, - 32TQFP 125C
   pin_count: 32
-  nc_pins: {PA01: '2', PA03: '4', PA04: '5', PA05: '6', PA06: '7', PA07: '8', PA11: '14', PA14: '15', PA15: '16', PA16: '17', PA17: '18', PA18: '19', PA19: '20', PA22: '21', PA23: '22', PA27: '25', PA28: '27'}
+  nc_pins: {PA01: '2', PA03: '4', PA04: '5', PA05: '6', PA06: '7', PA07: '8', PA11: '14', PA14: '15', PA15: '16', PA16: '17',
+    PA17: '18', PA18: '19', PA19: '20', PA22: '21', PA23: '22', PA27: '25', PA28: '27'}
 - ref: IC4
   value: MCP47FEB22A2-E_ST
-  footprint: SOP-8
+  footprint: SOP65P640X120-8N
   height: '1.2'
+  mouser: 579-MCP47FEB22A2EST
   manufacturer: Microchip
   mpn: MCP47FEB22A2-E/ST
   description: Digital to Analog Converters - DAC Dual channel 12-bit nonvolatile, I2C DAC
   pin_count: 8
   nc_pins: {LAT/HVC: '6'}
 - ref: J2
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm_SMD
   pin_count: 4
 - ref: J3
-  value: 1x6 header
-  footprint: 2X3
+  value: 1x6 2.54mm header
+  footprint: 2X3_P2.54mm
   pin_count: 6
   nc_pins: {Pin_2: '2', Pin_3: '3'}
 - ref: J4
@@ -192,6 +192,7 @@ components:
 - ref: U1
   value: MIC5317-3.3
   footprint: MIC5317-3.3YM5-TR
+  mpn: MIC5317-3.3YM5-TR
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: U2
@@ -201,6 +202,7 @@ components:
 - ref: U3
   value: MCP6C02T-020E
   footprint: SOT-23-6
+  mpn: MCP6C02T-020E/CHY
   pin_count: 6
 nets:
 - name: +3V3
@@ -237,20 +239,19 @@ nets:
   - C12.1
   - C5.1
   - C6.1
-  - HV5.1
   - J3.Pin_5
   - R5.1
   - U2.VOUT
 - name: /BOOST_OUT
   pins: [C8.1, D3.K, R13.2, R4.1, U3.Vip]
 - name: /Boost_Gain
-  pins: [HV4.1, IC2.PA02, R2.1]
+  pins: [IC2.PA02, R2.1]
 - name: /FBX
   pins: [D2.K, IC1.FBX, R2.2, R4.2, R6.1]
 - name: /INTVCC
-  pins: [C3.2, HV6.1, IC1.INTVCC]
+  pins: [C3.2, IC1.INTVCC]
 - name: /LDO_SHDN
-  pins: [HV9.1, IC2.PA00, R3.1, U2.!SHDN]
+  pins: [IC2.PA00, R3.1, U2.!SHDN]
 - name: /OFFSET
   pins: [IC4.VOUT1, J3.Pin_4]
 - name: /RESET
@@ -268,9 +269,9 @@ nets:
 - name: /USB_DP
   pins: [IC2.PA25, J4.D+@A6, J4.D+@B6]
 - name: /gain
-  pins: [HV3.1, IC4.VOUT0, R16.2]
+  pins: [IC4.VOUT0, R16.2]
 - name: /nSHDN
-  pins: [IC1.EN/UVLO, IC2.PA10, R10.1, TP_BoostEnable1.1]
+  pins: [IC1.EN/UVLO, IC2.PA10, R10.1]
 - name: GND
   pins:
   - C1.2
@@ -308,8 +309,6 @@ nets:
   - R6.2
   - R8.2
   - R9.2
-  - TP_GND1.1
-  - TP_GND2.1
   - U1.GND
   - U2.GND
   - U3.Vref
@@ -317,7 +316,7 @@ nets:
 - name: Net-(C15-Pad2)
   pins: [C15.2, R11.1]
 - name: Net-(D2-A)
-  pins: [D2.A, TP_MCP_Out1.1, U3.Vout]
+  pins: [D2.A, U3.Vout]
 - name: Net-(D3-A)
   pins: [D3.A, IC1.SW1, IC1.SW2, L1.1]
 - name: Net-(IC1-RT)
@@ -327,7 +326,7 @@ nets:
 - name: Net-(IC1-VC)
   pins: [IC1.VC, R11.2]
 - name: Net-(IC2-VDDCORE)
-  pins: [C7.1, IC2.VDDCORE, TP_1.22V1.1]
+  pins: [C7.1, IC2.VDDCORE]
 - name: Net-(IC4-VREF)
   pins: [C14.2, IC4.VREF]
 - name: Net-(J4-CC1)
@@ -337,7 +336,7 @@ nets:
 - name: Net-(U2-FB)
   pins: [C12.2, R15.1, R16.1, R5.2, U2.FB]
 - name: Net-(U2-Vin)
-  pins: [C13.1, HV1.1, HV2.1, R13.1, U2.Vin, U3.Vim]
+  pins: [C13.1, R13.1, U2.Vin, U3.Vim]
 positions:
 - ref: C1
   x: 180.18

@@ -233,6 +233,7 @@ components:
   footprint: SW_FS57003PLT2B2M2QE
   manufacturer: E-Switch
   mpn: FS57003PLT2B2M2QE
+  description: Pushbutton Switch, FS5700 Series, 3PDT, Round Actuator, ON-ON, 1A, 9VDC,Solder | E-Switch FS57003PLT2B2M2QE
   pin_count: 9
 - ref: U1
   value: TL072
@@ -257,7 +258,6 @@ nets:
   - C8.2
   - D1.A
   - D3.K
-  - InG1.Pin_1
   - POT3.1
   - R1.1
   - R13.1
@@ -271,7 +271,7 @@ nets:
   - U1.V-
   - U2.V-
 - name: Net-(9v1-Pin_1)
-  pins: [9v1.Pin_1, D2.A, R15.2, R6.2]
+  pins: [D2.A, R15.2, R6.2]
 - name: Net-(C1-Pad2)
   pins: [C1.2, R2.2, R3.2]
 - name: Net-(C10-Pad1)

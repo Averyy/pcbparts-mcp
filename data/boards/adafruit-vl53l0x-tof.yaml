@@ -61,10 +61,9 @@ components:
 - ref: R3
   value: 10kohm
   footprint: '0603'
-  pullup: D2.A
 - ref: R7
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pin_count: 8
 - ref: U1
   value: VL53L0X

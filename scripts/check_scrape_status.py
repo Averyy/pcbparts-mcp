@@ -4,12 +4,16 @@
 Reads data/sensors/_scrape_status.json (written by scrape_sensors.py) and each
 source's JSON, and exits 1 if any registered scraper failed, left stale data in
 place, produced zero sensors, or logged too many errors. Used in CI to gate the
-deploy — fresh data from good sources is still committed either way.
+deploy. A temporary catalog build also gates publication so incompatible
+scrapes cannot commit data that breaks the Docker build.
 """
 
 import argparse
 import json
 import sys
+import shutil
+import sqlite3
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -17,6 +21,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from scrapers import SCRAPERS
+from build_sensor_db import build
 
 MAX_SOURCE_ERRORS = 5
 
@@ -85,12 +90,54 @@ def check_status(status: dict, sensors_dir: Path, keys=None) -> list[str]:
     return failures
 
 
+def check_catalog_build(sensors_dir: Path, allow_stale: bool = False) -> list[str]:
+    """Validate curated compatibility without replacing the deployed database.
+
+    A curated ID with no record (a reviewed part that left every source) fails the check
+    unless `allow_stale`. The pre-commit gate allows it, so the month's data still lands;
+    the status check after the commit doesn't, so the deploy waits for curated.json.
+    """
+    try:
+        with tempfile.TemporaryDirectory(prefix="sensor-catalog-") as directory:
+            # build() reads <data_dir>/sensors; stage the given directory there so a custom
+            # --sensors-dir is the one validated, whatever its name.
+            data_dir = Path(directory) / "data"
+            shutil.copytree(sensors_dir, data_dir / "sensors")
+            output = Path(directory) / "sensor.db"
+            build(data_dir, output, verbose=False)
+            with sqlite3.connect(output) as conn:
+                ids = {row[0] for row in conn.execute("SELECT id FROM sensors")}
+    except Exception as error:
+        return [f"catalog build failed: {error}"]
+    curated_path = sensors_dir / "curated.json"
+    curated = json.loads(curated_path.read_text(encoding="utf-8")) if curated_path.exists() else {}
+    stale = sorted(sid for sid, fields in curated.items()
+                   if sid not in ids and not (fields.get("exclude") or {}).get("value"))
+    if not stale:
+        return []
+    message = f"curated sensor IDs with no catalog record: {', '.join(stale)}"
+    if allow_stale:
+        print(f"WARN: {message} (fix data/sensors/curated.json before deploying)")
+        return []
+    return [message]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Check that the last sensor scrape run succeeded for all sources"
     )
     parser.add_argument("--sensors-dir", type=Path, default=Path("data/sensors"))
+    parser.add_argument("--build-only", action="store_true",
+                        help="Gate publication on a temporary catalog build; check freshness separately")
     args = parser.parse_args()
+
+    if args.build_only:
+        failures = check_catalog_build(args.sensors_dir, allow_stale=True)
+        for failure in failures:
+            print(f"FAIL: {failure}")
+        if not failures:
+            print("OK: sensor catalog builds successfully")
+        return int(bool(failures))
 
     status_path = args.sensors_dir / "_scrape_status.json"
     if not status_path.exists():
@@ -103,6 +150,7 @@ def main() -> int:
         return 1
 
     failures = check_status(status, args.sensors_dir)
+    failures.extend(check_catalog_build(args.sensors_dir))
     if failures:
         for failure in failures:
             print(f"FAIL: {failure}")

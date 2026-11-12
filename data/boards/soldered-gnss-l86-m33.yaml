@@ -1,7 +1,7 @@
 name: Soldered GNSS L86-M33
 slug: soldered-gnss-l86-m33
 source: SolderedElectronics/GNSS-GPS-L86-M33-breakout-hardware-design
-format: kicad7
+format: kicad6
 description: Quectel L86-M33 GNSS, battery backup
 tags: [gps-gnss]
 key_ics: [SE5218]
@@ -62,7 +62,7 @@ components:
   footprint: CR1220_HOLDER
 - ref: K3
   value: 1x8 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_8X1
   pin_count: 8
 - ref: Q1
   value: NPN transistor

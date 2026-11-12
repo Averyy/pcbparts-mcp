@@ -83,6 +83,7 @@ components:
   value: IS31FL3731
   footprint: QFN28_4MM_0.4MM
   description: IS31FL3731 PWM LED Matrix Driver
+  mpn: IS31FL3731-SALS2
   pin_count: 29
 nets:
 - name: ADDR

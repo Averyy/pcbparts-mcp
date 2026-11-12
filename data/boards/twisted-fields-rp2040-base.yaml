@@ -1,7 +1,7 @@
 name: Twisted Fields RP2040 Base
 slug: twisted-fields-rp2040-base
 source: Twisted-Fields/rp2040-motor-controller
-format: kicad7
+format: kicad8
 description: RP2040 MCU board with CAN bus for modular robot motor control, distributed architecture
 tags: [can-bus, motor-control, robotics]
 key_ics: [RP2040]
@@ -45,7 +45,7 @@ components:
   lcsc: C14663
 - ref: C115
   value: 220uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x7.7
   lcsc: C340768
   voltage: 25V
   decouples: U24
@@ -61,7 +61,7 @@ components:
   decouples: U29
 - ref: C120
   value: 47uF
-  footprint: Electrolytic-8x10
+  footprint: Electrolytic-8x10.5
   lcsc: C5246568
   voltage: 63V
 - ref: C121
@@ -353,7 +353,6 @@ components:
 - ref: C95
   value: 47uF
   footprint: 0805
-  lcsc: C59461
   voltage: 10V
   decouples: U11
 - ref: C96
@@ -410,17 +409,17 @@ components:
   mpn: ESD5Z3V3
 - ref: D33
   value: WS2812B
-  footprint: LED_WS2812_3528
+  footprint: LED_WS2812_3528_3.5x2.8
   lcsc: C2890364
   pin_count: 4
 - ref: D34
   value: WS2812B
-  footprint: LED_WS2812_3528
+  footprint: LED_WS2812_3528_3.5x2.8
   lcsc: C2890364
   pin_count: 4
 - ref: D35
   value: WS2812B
-  footprint: LED_WS2812_3528
+  footprint: LED_WS2812_3528_3.5x2.8
   lcsc: C2890364
   pin_count: 4
   nc_pins: {DOUT: '4'}
@@ -490,13 +489,13 @@ components:
   lcsc: C2982042
   pin_count: 3
 - ref: J11
-  value: 1x4 header
+  value: 1x4 2.54mm header
   footprint: PINREX-744-81-04TW00 _1x04_P2.54mm_Vertical
   lcsc: C2982033
   pin_count: 4
 - ref: J12
-  value: 1x6 header
-  footprint: Ckmtw-W-2510S06P
+  value: 1x6 2.54mm header
+  footprint: Ckmtw-W-2510S06P_1x06
   lcsc: C2982035
   pin_count: 6
 - ref: J13
@@ -515,8 +514,8 @@ components:
   lcsc: C2982044
   pin_count: 5
 - ref: J16
-  value: 2x5 header
-  footprint: 2X5
+  value: 2x5 2.54mm header
+  footprint: 2X5_P2.54mm
   lcsc: C239345
   pin_count: 10
   nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10'}
@@ -526,14 +525,14 @@ components:
   mpn: M12A-08PFFR-SF7003
   pin_count: 9
 - ref: J18
-  value: 1x6 header
-  footprint: 1X6
+  value: 1x6 2.54mm header
+  footprint: 1X6_P2.54mm
   lcsc: C718239
   pin_count: 6
   nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6'}
 - ref: J19
-  value: 2x5 header
-  footprint: 2X5
+  value: 2x5 2.54mm header
+  footprint: 2X5_P2.54mm
   lcsc: C239345
   pin_count: 10
   nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10'}
@@ -543,30 +542,30 @@ components:
   mpn: M12A-08PFFR-SF7003
   pin_count: 9
 - ref: J20
-  value: 2x5 header
-  footprint: 2X5
+  value: 2x5 2.54mm header
+  footprint: 2X5_P2.54mm
   lcsc: C239345
   pin_count: 10
   nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10'}
 - ref: J21
-  value: 1x6 header
-  footprint: 1X6
+  value: 1x6 2.54mm header
+  footprint: 1X6_P2.54mm
   lcsc: C718239
   pin_count: 6
   nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6'}
 - ref: J3
-  value: 1x6 header
-  footprint: Ckmtw-W-2510S06P
+  value: 1x6 2.54mm header
+  footprint: Ckmtw-W-2510S06P_1x06
   lcsc: C2982035
   pin_count: 6
 - ref: J4
-  value: 1x6 header
-  footprint: Ckmtw-W-2510S06P
+  value: 1x6 2.54mm header
+  footprint: Ckmtw-W-2510S06P_1x06
   lcsc: C2982035
   pin_count: 6
 - ref: J5
-  value: 1x6 header
-  footprint: Ckmtw-W-2510S06P
+  value: 1x6 2.54mm header
+  footprint: Ckmtw-W-2510S06P_1x06
   lcsc: C2982035
   pin_count: 6
 - ref: J6
@@ -576,14 +575,14 @@ components:
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J7
-  value: 2x5 header
-  footprint: 2X5
+  value: 2x5 2.54mm header
+  footprint: 2X5_P2.54mm
   lcsc: C239345
   pin_count: 10
   nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10'}
 - ref: J8
-  value: 1x3 header
-  footprint: BOOMELE-2510-3A
+  value: 1x3 2.54mm header
+  footprint: BOOMELE-2510-3A_1x03
   lcsc: C509148
   pin_count: 3
   nc_pins: {Pin_2: '2'}
@@ -604,6 +603,7 @@ components:
 - ref: L3
   value: 47uH
   footprint: L_Chilisin_BMRB00060612
+  current: 2.8A
   lcsc: C5189938
 - ref: Q1
   value: AO7400-VB
@@ -720,12 +720,10 @@ components:
 - ref: R20
   value: 47kohm
   footprint: '0603'
-  lcsc: C328360
   pullup: Q3.G
 - ref: R21
   value: 47kohm
   footprint: '0603'
-  lcsc: C328360
   pullup: Q4.G
 - ref: R22
   value: 500kohm
@@ -956,6 +954,11 @@ components:
   footprint: RP2040-QFN-56
   lcsc: C2040
   pin_count: 57
+- ref: U16
+  value: SFH617A-1X007T
+  footprint: SOP-4
+  lcsc: C32565
+  pin_count: 4
 - ref: U17
   value: CA-IS3052G
   footprint: SOIC-8
@@ -963,7 +966,7 @@ components:
   pin_count: 8
 - ref: U18
   value: MCP2515-xSO
-  footprint: SOIC-18W
+  footprint: SOIC-18W_7.5x11.6
   lcsc: C12368
   pin_count: 18
   nc_pins: {CLKOUT/SOF: '3', nTX0RTS: '4', nTX1RTS: '5', nTX2RTS: '6', nRX1BF: '10', nRX0BF: '11'}
@@ -974,15 +977,12 @@ components:
   pin_count: 57
 - ref: U22
   value: ADS7822U
-  footprint: SOIC-8
+  footprint: SOIC127P599X175-8N
   lcsc: C16324
   pin_count: 8
 - ref: U23
   value: SN74LVC1G07QDCKTQ1
   footprint: SOT-353_SC-70-5
-  digikey: TC7SH34FULJ(CTCT-ND
-  mpn: TC7SH34FU,LJ(CT
-  lcsc: C171458
   pin_count: 5
 - ref: U24
   value: MT2492
@@ -992,44 +992,48 @@ components:
 - ref: U25
   value: SN74LVC1G07QDCKTQ1
   footprint: SOT-353_SC-70-5
-  digikey: TC7SH34FULJ(CTCT-ND
-  mpn: TC7SH34FU,LJ(CT
-  lcsc: C171458
   pin_count: 5
 - ref: U26
   value: ADC081S021CISD
   footprint: SOT-23-6
   lcsc: C130227
+  mpn: ADC081S021CISD/NOPB
   pin_count: 6
 - ref: U27
   value: USBLC6-2
   footprint: SOT-666
   lcsc: C2827693
+  mpn: USBLC6-2P6
   pin_count: 6
 - ref: U28
   value: USBLC6-2
   footprint: SOT-666
   lcsc: C2827693
+  mpn: USBLC6-2P6
   pin_count: 6
 - ref: U29
   value: USBLC6-4
   footprint: SOT-23-6
   lcsc: C558419
+  mpn: USBLC6-4SC6
   pin_count: 6
 - ref: U3
   value: USBLC6-4
   footprint: SOT-23-6
   lcsc: C558419
+  mpn: USBLC6-4SC6
   pin_count: 6
 - ref: U30
   value: USBLC6-4
   footprint: SOT-23-6
   lcsc: C558419
+  mpn: USBLC6-4SC6
   pin_count: 6
 - ref: U31
   value: USBLC6-4
   footprint: SOT-23-6
   lcsc: C558419
+  mpn: USBLC6-4SC6
   pin_count: 6
   nc_pins: {I/O3: '4'}
 - ref: U32
@@ -1039,7 +1043,7 @@ components:
   pin_count: 3
 - ref: U33
   value: TX4139
-  footprint: SOIC-8-1EP
+  footprint: SOIC-8-1EP_3.9x4.9
   lcsc: C329266
   pin_count: 9
   nc_pins: {POK: '7'}
@@ -1062,18 +1066,17 @@ components:
   value: USBLC6-4
   footprint: SOT-23-6
   lcsc: C558419
+  mpn: USBLC6-4SC6
   pin_count: 6
 - ref: U6
   value: SN74LVC1G07QDCKTQ1
   footprint: SOT-353_SC-70-5
-  digikey: TC7SH34FULJ(CTCT-ND
-  mpn: TC7SH34FU,LJ(CT
-  lcsc: C171458
   pin_count: 5
 - ref: U9
   value: ADC081S021CISD
   footprint: SOT-23-6
   lcsc: C130227
+  mpn: ADC081S021CISD/NOPB
   pin_count: 6
 - ref: Y1
   value: 12MHz
@@ -2443,6 +2446,9 @@ positions:
   x: 126.6
   y: 79.29
   rot: 90.0
+- ref: U16
+  x: 138.34
+  y: 72.17
 - ref: U17
   x: 100.26
   y: 94.95

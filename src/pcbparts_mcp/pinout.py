@@ -30,9 +30,9 @@ def parse_easyeda_pins(data: dict[str, Any]) -> list[dict[str, Any]]:
     not {spice_pin}: module symbols leave {spice_pin} at 0 or reuse low numbers
     (SIM7080G: VBAT is spice 0, number 35).
 
-    Multi-unit symbols keep their pins in ``subparts``, one dataStr per unit, and leave the
-    top-level shape empty: MIMXRT1052CVL5B (BGA-196) has 153 + 43 pins there and returned
-    "missing pin data".
+    Multi-unit symbols keep their pins in ``subparts``, one dataStr per unit, and usually leave
+    the top-level shape empty: MIMXRT1052CVL5B (BGA-196) has 153 + 43 pins there and returned
+    "missing pin data". Some also draw the whole symbol at the top level; its pins win.
 
     Args:
         data: EasyEDA component response dict with dataStr.shape array (and optional subparts)
@@ -41,12 +41,25 @@ def parse_easyeda_pins(data: dict[str, Any]) -> list[dict[str, Any]]:
         List of pin dicts with number, name, and electrical type, sorted by pin number
         (BGA balls in natural order: A1, A2, ..., A10).
     """
-    pins = _parse_unit(data)
+    pins = list({(p["number"], p["name"]): p for p in _parse_unit(data)}.values())
+    # Units only add pins the top-level symbol lacks. Some symbols have both a complete
+    # top-level drawing and split units naming the same pins differently (LM358 C328566:
+    # OUT1 and OUTA, VEE and GND), which listed every pin twice. A pin drawn in two units
+    # (a shared supply) is listed once, from the first unit. A unit's electrical type
+    # fills in a same-numbered pin that has none (same pad).
+    by_number: dict[str, list[dict[str, Any]]] = {}
+    for pin in pins:
+        by_number.setdefault(pin["number"], []).append(pin)
     for unit in data.get("subparts") or []:
         if isinstance(unit, dict):
-            pins.extend(_parse_unit(unit))
-    # A pin drawn in two units (a shared supply) is listed once
-    pins = list({(p["number"], p["name"]): p for p in pins}.values())
+            for pin in _parse_unit(unit):
+                known = by_number.get(pin["number"])
+                if not known:
+                    by_number[pin["number"]] = [pin]
+                    pins.append(pin)
+                elif "electrical" in pin:
+                    for same in known:
+                        same.setdefault("electrical", pin["electrical"])
     pins.sort(key=lambda p: _sort_key(p["number"]))
     return pins
 

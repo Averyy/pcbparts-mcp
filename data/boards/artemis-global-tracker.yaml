@@ -30,136 +30,189 @@ components:
 - ref: C1
   value: 10nF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 10%
   prod_id: CAP-00867
   decouples: U1
 - ref: C10
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
 - ref: C11
   value: 4.7uF
   footprint: '0603'
+  voltage: 6.3V
   prod_id: CAP-08280
 - ref: C12
   value: 220nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-07822
   decouples: U6
 - ref: C13
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
 - ref: C14
   value: 100pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-07883
 - ref: C15
   value: 100pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-07883
 - ref: C16
   value: 100pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-07883
 - ref: C17
   value: 4.7uF
   footprint: '0603'
+  voltage: 6.3V
   prod_id: CAP-08280
   decouples: U9
 - ref: C18
   value: 15pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-07881
 - ref: C19
   value: 15pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-07881
 - ref: C2
   value: 2.2uF
   footprint: '0603'
+  voltage: 10V
+  tolerance: 20%
   prod_id: CAP-07888
   decouples: U2
 - ref: C20
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U8
 - ref: C21
   value: 22uF
   footprint: 0805
+  voltage: 16V
+  tolerance: 20%
   prod_id: CAP-14260
   decouples: U10
 - ref: C22
   value: 10uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-11015
   decouples: U8
 - ref: C23
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
   decouples: U8
 - ref: C24
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
 - ref: C25
   value: 22uF
   footprint: 0805
+  voltage: 16V
+  tolerance: 20%
   prod_id: CAP-14260
   decouples: U10
 - ref: C27
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
   decouples: U10
 - ref: C28
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U8
 - ref: C29
   value: 1nF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 10%
   prod_id: CAP-07886
 - ref: C3
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
 - ref: C30
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
 - ref: C31
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
 - ref: C4
   value: 220nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-07822
 - ref: C5
   value: 1000000uF
   footprint: CPOL-RADIAL-1F-2.7V
-  prod_id: CAP-14696
   voltage: 2.7V
+  prod_id: CAP-14696
 - ref: C6
   value: 1000000uF
   footprint: CPOL-RADIAL-1F-2.7V
-  prod_id: CAP-14696
   voltage: 2.7V
+  prod_id: CAP-14696
 - ref: C7
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U1
 - ref: C8
   value: 4.7uF
   footprint: '0603'
+  voltage: 6.3V
   prod_id: CAP-08280
 - ref: C9
   value: 10nF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 10%
   prod_id: CAP-00867
 - ref: D1
   value: green LED
@@ -356,134 +409,162 @@ components:
 - ref: R1
   value: 330ohm
   footprint: '0402'
+  tolerance: 5%
   prod_id: RES-15407
 - ref: R10
   value: 100ohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14962
 - ref: R11
   value: 100ohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14962
 - ref: R12
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
-  pullup: D2.A
 - ref: R13
   value: 2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-15406
 - ref: R14
   value: 10kohm
   footprint: '0402'
+  tolerance: 0.1%
   prod_id: RES-16147
   pulldown: ARTEMIS_D22
 - ref: R15
   value: 3.3kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-15923
 - ref: R16
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
 - ref: R17
   value: 10kohm
   footprint: '0402'
+  tolerance: 0.1%
   prod_id: RES-16147
   pullup: ARTEMIS_D26
 - ref: R19
   value: 10kohm
   footprint: '0402'
+  tolerance: 0.1%
   prod_id: RES-16147
   pullup: ARTEMIS_D44
 - ref: R2
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
 - ref: R20
   value: 5.1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14340
   pulldown: CC4
 - ref: R21
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
 - ref: R22
   value: 10kohm
   footprint: '0402'
+  tolerance: 0.1%
   prod_id: RES-16147
   pullup: Q3.G
 - ref: R23
   value: 10kohm
   footprint: '0402'
+  tolerance: 0.1%
   prod_id: RES-16147
   pulldown: ARTEMIS_D13
 - ref: R24
   value: 20kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-09383
 - ref: R25
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
 - ref: R26
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: ARTEMIS_!RESET
 - ref: R27
   value: 220kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08969
   pulldown: ARTEMIS_BOOT
 - ref: R28
   value: 2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-15406
   pulldown: U9.PROG
 - ref: R29
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
 - ref: R3
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
 - ref: R30
   value: 10kohm
   footprint: '0402'
+  tolerance: 0.1%
   prod_id: RES-16147
   pulldown: ARTEMIS_D34
 - ref: R31
   value: 20kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14972
   pulldown: U12.G1.Y
 - ref: R4
   value: 5.1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14340
   pulldown: CC3
 - ref: R5
   value: 10kohm
   footprint: '0402'
+  tolerance: 0.1%
   prod_id: RES-16147
   pulldown: ARTEMIS_D27
 - ref: R6
   value: 12kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-10327
   pulldown: JP1.3
 - ref: R7
   value: 30.1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-14690
   pulldown: JP1.1
 - ref: R8
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: ARTEMIS_D28
 - ref: R9
@@ -558,9 +639,10 @@ components:
   nc_pins: {NC: 6 13 14 15 28 42 51, SQI_O: 30 45, TIMEPULSE: '33', LNA_EN: '35', P1015: '36', PI013/!EXTINT: '43', D_SEL: '48'}
 - ref: U5
   value: AS179-92
-  footprint: SOT-6
+  footprint: SOT65P220X100-6N
   prod_id: IC-15047
   description: SKYWORKS SOLUTIONS - AS179-92LF - IC, SWITCH, RF, SPDT, 0.02-3.0GHZ
+  mpn: AS179-92LF
   pin_count: 6
 - ref: U6
   value: MS8607-02BA01
@@ -574,7 +656,8 @@ components:
   prod_id: SUB-14402
   description: The Artemis Module from SparkFun is a Cortex-M4F with BLE 5
   pin_count: 59
-  nc_pins: {AD16(TRIG0/SCCRST): AD16, (SLSCK/SLSCL/CLKOUT)D0: D0, (SLSDO/SLSDA)D1: D1, (SLSDI)D2: D2, (SLNCE/I2SWCLK)D3: D3, (ADCD1P/TX1/PDMCLK)D14: D14, (RX1/TRIG1/PDMDATA)D36: D36, (SDO3/RX1)D38: D38, (I2SWCLK/CMPOUT)~D23: ~D23, (SWO/I2SDAT/PDMDATA)~D45: ~D45}
+  nc_pins: {AD16(TRIG0/SCCRST): AD16, (SLSCK/SLSCL/CLKOUT)D0: D0, (SLSDO/SLSDA)D1: D1, (SLSDI)D2: D2, (SLNCE/I2SWCLK)D3: D3,
+    (ADCD1P/TX1/PDMCLK)D14: D14, (RX1/TRIG1/PDMDATA)D36: D36, (SDO3/RX1)D38: D38, (I2SWCLK/CMPOUT)~D23: ~D23, (SWO/I2SDAT/PDMDATA)~D45: ~D45}
 - ref: U8
   value: V_SUPERVISOR
   footprint: SOT-23-3
@@ -640,7 +723,7 @@ nets:
   class: 3.3V
   trace_width: '0.2032'
 - name: 3V3SW
-  pins: [3V3SW.1, C13.1, Q2.D, R16.2, U12.G1.A, U4.VCC]
+  pins: [C13.1, Q2.D, R16.2, U12.G1.A, U4.VCC]
 - name: ANTENNA
   pins: [C16.1, J7.SIGNAL]
 - name: ARTEMIS_!RESET
@@ -672,11 +755,11 @@ nets:
 - name: ARTEMIS_D10
   pins: [U4.P1014, U7.(SDO1/TX1/PDMCLK)D10]
 - name: ARTEMIS_D13
-  pins: [R23.1, R24.2, U7.~AD13(I2SBCLK/RX1), VIN/3.1]
+  pins: [R23.1, R24.2, U7.~AD13(I2SBCLK/RX1)]
 - name: ARTEMIS_D15
   pins: [J11.2, U7.(ADCD1N/RX1/PDMDATA)D15]
 - name: ARTEMIS_D17
-  pins: [D17.1, J1.ON/!OFF!, U7.(CMPRF1/TRIG1/SCCCLK)D17]
+  pins: [J1.ON/!OFF!, U7.(CMPRF1/TRIG1/SCCCLK)D17]
 - name: ARTEMIS_D18
   pins: [J1.NET_AVAIL, U7.(CMPIN1/SCCIO)~D18]
 - name: ARTEMIS_D19
@@ -684,9 +767,9 @@ nets:
 - name: ARTEMIS_D22
   pins: [R14.1, U3.ON, U7.(PDMCLK/SWO)~D22]
 - name: ARTEMIS_D24
-  pins: [J1.TX(IN), TX1.1, U7.(TX1/32KHZ/SWO)~D24]
+  pins: [J1.TX(IN), U7.(TX1/32KHZ/SWO)~D24]
 - name: ARTEMIS_D25
-  pins: [J1.RX(OUT), RX1.1, U7.(SDA2/SDI2/RX1)~D25]
+  pins: [J1.RX(OUT), U7.(SDA2/SDI2/RX1)~D25]
 - name: ARTEMIS_D26
   pins: [Q2.G, R17.1, U7.(SCCRST)~D26]
 - name: ARTEMIS_D27
@@ -708,7 +791,7 @@ nets:
 - name: ARTEMIS_D40_SDA4
   pins: [QWIIC.3, U7.(SDA4/SDI4/RX1)D40]
 - name: ARTEMIS_D41
-  pins: [D41.1, J1.RING_INDICATOR, U7.(BLEIF_IRQ/SWO/I2SWCLK)D41]
+  pins: [J1.RING_INDICATOR, U7.(BLEIF_IRQ/SWO/I2SWCLK)D41]
 - name: ARTEMIS_D42
   pins: [J10.2, U7.(SCL3/SCK3/TX1)~D42]
 - name: ARTEMIS_D43
@@ -726,13 +809,13 @@ nets:
 - name: ARTEMIS_D9_SDA
   pins: [I2C.3, U4.SDA/CS, U6.SDA, U7.(SDA1/SDI1/RX1/SCCIO)D9]
 - name: ARTEMIS_RX0
-  pins: [R2.1, RX0.1, U1.TXO, U7.~D49(RX0/SDA5/SDI5)]
+  pins: [R2.1, U1.TXO, U7.~D49(RX0/SDA5/SDI5)]
 - name: ARTEMIS_SWDCK
   pins: [DEBUG.SWDCLK, U7.D20(SWDCK/TX1)]
 - name: ARTEMIS_SWDIO
   pins: [DEBUG.SWDIO, U7.D21(SWDIO/RX1/SCCRST)]
 - name: ARTEMIS_TX0
-  pins: [R3.1, TX0.1, U1.RXI, U7.~D48(TX0/SCL5/SCK5)]
+  pins: [R3.1, U1.RXI, U7.~D48(TX0/SCL5/SCK5)]
 - name: C
   pins: [C3.2, U2.C-]
 - name: CC3
@@ -750,14 +833,7 @@ nets:
 - name: EN
   pins: [3V3EN.2, EN.1, U10.EN]
 - name: EXT_PWR
-  pins:
-  - 5V3.1
-  - J1.EXT_PWR_1
-  - J1.EXT_PWR_2
-  - Q1.S
-  - R13.2
-  - U11.G1.A
-  - U5.V1
+  pins: [J1.EXT_PWR_1, J1.EXT_PWR_2, Q1.S, R13.2, U11.G1.A, U5.V1]
 - name: G1_Y
   pins: [U11.G1.Y, U12.G1.B]
 - name: GATE
@@ -893,18 +969,12 @@ nets:
   pins: [U4.RTC_0, X2.2]
 - name: RTC_1
   pins: [U4.RTC_1, X2.1]
-- name: RXD_MOSI
-  pins: [GPS_RX.1, U4.RXD/MOSI]
-- name: SAFEBOOT
-  pins: [SAFEBOOT.1, U4.!SAFEBOOT]
 - name: SENSE
   pins: [Q1.D, R9.1, U3.SENSE]
 - name: STAT
   pins: [R29.1, U9.STAT]
 - name: TIMER
   pins: [C10.1, U3.TIMER]
-- name: TXD_MISO
-  pins: [GPS_TX.1, U4.TXD/MISO]
 - name: V2
   pins: [R31.1, U12.G1.Y, U5.V2]
 - name: VBUS

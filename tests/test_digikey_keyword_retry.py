@@ -149,7 +149,7 @@ async def test_quota_and_usage_count_both_requests_but_not_cached_repeats(digike
     assert await client.get_part("209") == result
     assert quota.status()["used_today"] == 2
     assert stats.usage.summary()["totals"]["distributors"]["digikey"] == {
-        "sent": 2, "cached": 1, "rate_limited": 0,
+        "sent": 2, "cached": 1, "rate_limited": 0, "retry_found": 1,
     }
     assert_retry_requests(fake)
 
@@ -210,3 +210,26 @@ async def test_all_digit_details_success_sends_no_keyword_request(digikey):
     assert [(r.method, r.url.path) for r in fake.requests] == [
         ("GET", "/products/v4/search/209/productdetails"),
     ]
+
+
+def digikey_events():
+    return stats.usage.summary()["days"][0]["distributors"]["digikey"]
+
+
+async def test_retry_counts_whether_the_keyword_search_found_the_part(digikey):
+    fake = FakeDigiKey(httpx.Response(404), httpx.Response(200, json={"Products": [product()]}))
+    await digikey(fake).get_part("209")
+    assert digikey_events() == {"sent": 2, "cached": 0, "rate_limited": 0, "retry_found": 1}
+
+
+async def test_retry_counts_a_miss_and_a_cached_repeat_adds_nothing(digikey):
+    fake = FakeDigiKey(httpx.Response(404), httpx.Response(200, json={"Products": [product("209-5")]}))
+    client = digikey(fake)
+    await client.get_part("209")
+    await client.get_part("209")
+    assert digikey_events() == {"sent": 2, "cached": 1, "rate_limited": 0, "retry_missed": 1}
+
+
+async def test_no_retry_event_without_a_keyword_search(digikey):
+    await digikey(FakeDigiKey(httpx.Response(404))).get_part("ABC123")
+    assert digikey_events() == {"sent": 1, "cached": 0, "rate_limited": 0}

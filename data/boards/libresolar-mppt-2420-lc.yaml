@@ -3,7 +3,7 @@ slug: libresolar-mppt-2420-lc
 source: LibreSolar/mppt-2420-lc
 format: kicad_legacy
 description: Discrete MPPT buck converter with gate drivers, current sensing
-tags: [energy-harvesting, inverter, power-supply]
+tags: [energy-harvesting, power-supply]
 key_ics: [STM32]
 outline:
   width_mm: 114.5
@@ -310,7 +310,7 @@ components:
   mpn: '1714971'
 - ref: J4
   value: 2x5 header
-  footprint: Box_Header
+  footprint: Box_Header_2x05x2.54
   pin_count: 10
 - ref: J5
   value: 1x3 header
@@ -331,8 +331,8 @@ components:
   mpn: 54602-908LF
   pin_count: 8
 - ref: JP3
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm_Horizontal
 - ref: L1
   value: 22uH
   footprint: L-FERYSTER-DTMSS-27
@@ -364,8 +364,8 @@ components:
   manufacturer: Lite-On
   mpn: LTST-C190GKT
 - ref: P1
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
 - ref: P3
   value: USB Micro B
   footprint: USB_Micro-B_10103594-0001LF
@@ -692,7 +692,7 @@ components:
   mpn: PTS840 GK SMTR LFS
 - ref: SWD1
   value: ST_Nucleo_SWD
-  footprint: 1X6
+  footprint: 1X6_P2.54mm
   pin_count: 6
   nc_pins: {'6': '6'}
 - ref: T1
@@ -752,8 +752,6 @@ components:
 - ref: U6
   value: 24AA01
   footprint: SOT-23-5
-  manufacturer: Microchip
-  mpn: 24AA32AFT-I/OT
   pin_count: 5
 - ref: U7
   value: LM258

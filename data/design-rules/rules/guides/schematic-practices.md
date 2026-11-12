@@ -4,66 +4,56 @@
 
 ## Quick Reference
 
-- **Net names: ALL CAPS, 4 chars max preferred.** `BTN1` not `USER_INPUT_BUTTON_1`. Long names truncate on PCB pads -- you may only see `USER_IN...` on a 0402 pad.
-- **Voltage rails: `+3V3` not `+3.3V`.** `3.3V` misreads as `33V` on small screens. Use `+` prefix, electrical function first: `+3V3_IO`, `+3V3_AN`, `+1V8_CORE`. If the name truncates, you still see `+3V3`.
-- **Pin numbers on every symbol MUST match footprint.** SOT-23 pinouts vary between manufacturers for the same package -- 2N3904 from ON Semi vs Nexperia have different B/C/E mapping. Cross-reference datasheet, symbol, and footprint for every transistor.
-- **One logical function per sheet.** Power, MCU, memory, analog front-end each get their own sheet. A sheet that requires scrolling is too large -- split it.
-- **Duplicate net names across sheets = unintended shorts.** Two nets with the same name on different sheets merge silently. Copy-paste a block without renaming every net = invisible short that passes ERC.
+- **Use short, unambiguous net names that remain identifiable on PCB pads.** Uppercase and four-character names are readability recommendations, not electrical or industry-standard limits; do not sacrifice uniqueness to meet them [1, Nets and Ports; 4, Net labeling guidelines].
+- **Voltage rails: `+3V3_IO`, `+3V3_AN`, `+1V8_CORE` are a naming convention.** Putting voltage first keeps it visible when names truncate; using `3V3` avoids a small decimal point being missed. Apply the convention consistently, without treating it as a standard requirement [1, Nets and Ports; 4, Power and ground symbols].
+- **Pin numbers on every symbol must match the selected MPN's footprint.** Cross-reference datasheet, symbol and footprint for every transistor; a package name alone does not validate the B/C/E mapping [4, Transistors and Checklist].
+- **Use logical sheets for complex designs.** Power, MCU, memory and analog front-end sheets keep associated circuitry readable in exported PDFs; this is an organization recommendation, not a mandatory sheet-size rule [1, Logical Separation].
+- **Check net-identifier scope before copying blocks.** In Altium, same-name net labels connect across sheets in Global scope; local labels in hierarchical designs do not. Inspect compiled connectivity rather than assuming every duplicate name is a short [6, Net Labels and Net Identifier Scope].
 
 ## Design Rules
 
 ### Signal Flow and Sheet Layout
 
-- **Name sheets with letter prefixes for alphabetical ordering.** `A_Block_Diagram`, `B_Power_Supply`, `C_MCU`, `D_Memory`, `E_Connectors`, `Z_Revision_History`.
+- **For alphabetical sheet lists, letter prefixes preserve intended order.** `A_Block_Diagram`, `B_Power_Supply`, `C_MCU`, `D_Memory`, `E_Connectors`, `Z_Revision_History` are a project convention, not a standards requirement [4, section 2].
 
 ### Hierarchy vs Flat
 
-- **Block diagram on the top-level sheet always.** Every hierarchical design needs a top sheet showing functional blocks and inter-block signal flow. This is the primary navigation aid when schematics are exported as PDF to non-ECAD reviewers.
+- **For complex hierarchical designs, use a top sheet showing functional blocks and inter-block signal flow.** This provides navigation when exporting PDF to reviewers without ECAD; small flat designs do not require a block-diagram sheet [1, Easy Schematics Layout; 3; 4, sections 8-9].
 
 ### Net Naming
 
-- **Active-low: use `n` prefix consistently.** `nRESET`, `nCS`, `nIRQ`. Pick one convention (prefix `n`, suffix `_B`, or overbar) and enforce project-wide. Mixed conventions cause missed inversions during layout review.
-- **Assign net names to ALL nets, including short ones.** Auto-generated names like `Net-C12-Pad2` propagate to PCB pads and tracks -- meaningless during debug, and fab houses may flag or reject boards with auto-generated identifiers.
-- **Net names within a sheet, ports between sheets.** Ports are CAD navigation aids -- they do NOT appear in the netlist. Using ports for intra-sheet connections creates invisible connectivity that confuses PDF readers.
-- **Cross-probe every off-page connector.** Misspelled net name on an off-page connector creates an open circuit that ERC may not catch -- both sides appear validly connected to their local nets.
+- **Mark active-low signals consistently.** An overbar is Sierra's recommended convention; a textual naming convention must preserve the same polarity meaning throughout the project [4, Net labeling guidelines].
+- **Name nets where it improves identification and cross-sheet connectivity.** Auto-generated names remain valid electrical identifiers; directly wired local nets do not require manual names [2, Creating Connectivity With Ports and Net Names; 4, Net labeling guidelines].
+- **Use net labels within a sheet and ports between sheets as the default drawing convention.** Port objects are absent as graphical objects from the netlist, but they establish electrical connectivity and can name nets depending on tool options [2, Creating Connectivity With Ports and Net Names; 6, Port].
+- **Cross-probe every off-page connector in the compiled design.** Check both its spelling and the applicable sheet-scope rules; text that looks connected on a PDF is not proof of compiled connectivity [4, Checklist; 6].
 
 ### Symbol and Component Rules
 
-- **Heterogeneous ICs (FPGA, MCU): split into sub-symbols (UxA, UxB, UxC).** Show all possible pin functions on the symbol. Annotate the active function externally (label `GPIO6` outside the symbol next to pin `AA5/GPIO.6/CLKOK/PWM/T3`). Prevents accidental dual-assignment of the same pin.
-- **Never flip standard-orientation symbols.** Flipping a P-channel MOSFET upside down looks like N-channel. Flipping op-amps can swap +/- terminals silently if wires don't update. Exception: passive 2-pin components (R, C, L, LED) can orient freely.
-- **Multi-gate symbols with hidden power pins (LM324, 74HC series).** If the power section isn't explicitly placed, decoupling is missed entirely and BOM has no record of needed caps. Fix: make all power pins visible, or verify power connectivity in netlist before layout.
-
-### Reference Designators
-
-- **Number refdes by sheet, not globally sequential.** Sheet B: R200, C200, U200. Sheet C: R300, etc. When components move between sheets during revision, they keep original refdes -- global renumbering invalidates prior test reports and ECOs.
-- **Separate refdes ranges for repeated hierarchical blocks.** Channel 1: R100-R199. Channel 2: R200-R299. Maps directly to physical placement grouping.
+- **Heterogeneous ICs (FPGA, MCU): split into sub-symbols (UxA, UxB, UxC) when needed for readability.** Annotate the active pin function externally; Sierra's example labels `GPIO6` next to pin `AA5/GPIO.6/CLKOK/PWM/T3`. Verify pin assignments against the selected IC rather than treating that illustration as a universal pinout [4, Heterogeneous schematic symbol].
+- **Keep transistor/MOSFET symbols in a recognizable orientation; recheck connections after mirroring op-amps.** Orientation is a readability recommendation, not a change in device type. Two-terminal R/C/L/LED symbols can be oriented for clarity, while polarized parts still require a polarity check [1, Symbol Orientation; 4, Op-amp and Checklist].
 
 ### BOM Attributes
 
-- **Minimum BOM fields before layout handoff:** MPN, manufacturer, package/footprint, value, tolerance (where applicable), voltage rating (caps), current rating (inductors/fuses), temperature range, DNP flag.
-- **Populate MPN at symbol placement time.** Late MPN assignment leads to footprint mismatches -- 0402 symbol assigned a 0603 part, or SOIC-8 symbol assigned TSSOP-8 MPN. Footprint must be locked to MPN from the start.
-- **Mark second-source alternatives in `ALT_MPN` field** (e.g., `ALT_MPN=TPS63001DRCR`). Keeps procurement flexibility without creating schematic variants.
-- **DNP components stay in schematic and BOM.** Mark with `DNP=TRUE` attribute. Deleting DNP components loses design intent and makes future population changes require schematic re-editing.
+- **Populate the actual MPN and package when placing symbols.** Include manufacturer, value and critical tolerance/dielectric/rating parameters; make exceptional requirements visible so procurement does not replace them with generic parts [1, Easy Schematics Documentation; 4, section 17].
+- **A DNP attribute alone does not define assembly output.** In Altium, a Not Fitted variant component stays in the schematic and PCB but is omitted from the variant BOM by default. To list it explicitly, enable Show Not Fitted and the Fitted column; check the selected variant in every assembly output [7, Not Fitted; 8, Excluding Not Fitted Components].
 
 ### Documentation Annotations
 
-- **Regulator output formula next to feedback divider** (in documentation color): `Vout = (1 + R2/R1) * Vref`. Saves debug time when probing a rail that reads wrong.
-- **LED current, op-amp gain, crystal load caps** annotated next to their respective circuits. `2.1Vf, 20mA` / `Gain = 10 V/V` / `CL = 12pF, C1 = C2 = 18pF`.
-- **Use a distinct documentation color** (e.g., purple) for all annotation text. Distinguishes design-intent notes from electrical connections in PDF exports.
-- **Include revision history sheet** (first or last page): date, author, reviewer, description of changes, review comments. Only reliable change record when schematics are exported as PDF.
+- **Annotate regulator setpoints using the actual feedback-divider designators and device equation.** A generic R1/R2 formula is ambiguous when the top and bottom resistor names are unspecified [1, Easy Schematics Documentation].
+- **Annotate expected LED current and amplifier gain using the circuit's calculated values.** The annotations are design-specific, not default current or gain values [1, Easy Schematics Documentation].
+- **Use a distinct documentation color** (e.g., purple) for annotation text, and verify readability in the exported PDF; the color is a drawing convention [1, Easy Schematics Documentation].
+- **Include revision history in exported schematic documents:** date, description of changes and review information on the first or last page. This preserves useful context for readers without the ECAD project [4, section 6].
 
 ### Verification and DRC
 
-- **ERC waive per-instance only.** Suppressing an ERC category globally (e.g., "unconnected pin") hides real errors introduced later. Re-run full ERC before every layout handoff.
-- **Netlist-vs-layout diff before ordering boards.** After any schematic change post-layout, re-synchronize and diff. Unsynchronized changes are the #1 cause of "schematic says X, board does Y" failures.
+- **Run the configured electrical checks before every layout handoff.** Confirm that enabled rules cover the intended pin connections; a clean report checks only the configured rules [5, DRCs; 4, section 15].
+- **Re-synchronize and inspect connectivity after any schematic change post-layout.** Review the compiled netlist and transferred connections before ordering boards [2, Better PCB Design Software Keeps You Synchronized; 4, section 16].
 
 ## Common Mistakes
 
-- **Test points in schematic but missing from layout.** TP symbols exist in netlist but layout engineer treats them as annotation-only. They pass DRC silently because they have one connected pin. Fix: verify every TP has a physical footprint placed, not just a netlist entry.
-- **Op-amp feedback tapped after a series sense resistor.** Load-dependent voltage drop enters feedback loop, causing output to shift with load current. Fix: tap feedback directly at the output pin, before any series element.
-- **Power port naming inconsistency across sheets.** One sheet uses `VCC3V3`, another `+3V3`, a third `3.3V`. These are three separate nets in the netlist -- power rail is silently split. Fix: define rail names in a project-level net name table before schematic entry.
-- **Schematic-to-layout desync after late changes.** Engineer edits schematic after layout is 90% complete, forgets to re-sync. Board arrives with a net connected to the wrong pin. Fix: lock schematic before layout starts; any post-layout change triggers mandatory resync and diff review.
-- **Copy-paste schematic block with unchanged net names.** Duplicated subcircuit shares net names with original, shorting unrelated signals across sheets. Silent -- no ERC error because both nets are validly connected. Fix: use hierarchical sheets for repeated blocks, or rename every net in pasted copies.
+- **Assuming matching text on different identifier types guarantees a connection.** Altium ports and net labels do not automatically connect solely because their names match; inspect the configured net-naming options and compiled connectivity [6, Net Identifiers].
+- **Relying on letter case to isolate nets.** Altium net identifiers are case-insensitive: `abc` and `ABC` identify the same net wherever the selected scope connects them. Use distinct names or hierarchy, not capitalization, for separate signals [6, Net Identifiers].
+- **Naming power ports inconsistently across sheets.** `VCC3V3`, `+3V3` and `3.3V` do not connect by name; explicit wiring or hierarchical connections can still connect them. Verify intended connectivity and naming in the compiled design [6, Power Ports and Net Identifier Scope].
 
 ## Sources
 
@@ -79,5 +69,6 @@
 3. Altium -- Hierarchical Block Diagrams and Schematic Designs: https://resources.altium.com/p/how-hierarchical-schematic-design-can-help-your-next-pcb-schematic-layout
 4. Sierra Circuits -- How to Draw and Design a PCB Schematic: https://www.protoexpress.com/blog/how-to-draw-design-pcb-schematic/
 5. Cadence -- Best Practices for Capturing Circuit Board Schematics: https://resources.pcb.cadence.com/blog/2021-best-practices-for-capturing-circuit-board-schematics
-6. SparkFun -- How to Read a Schematic: https://learn.sparkfun.com/tutorials/how-to-read-a-schematic/all
-7. Altium -- Naming Convention and PCB Data Management: https://resources.altium.com/p/naming-convention-and-pcb-data-management
+6. Altium Designer -- Creating Circuit Connectivity in Your Schematics (updated 2026-10-06; HTML section names cited): https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity
+7. Altium Designer -- Design Variants (updated 2026-11-02): https://www.altium.com/documentation/altium-designer/design-variants
+8. Altium Designer -- Preparing a BOM in the Report Manager (updated 2026-10-13): https://www.altium.com/documentation/altium-designer/preparing-for-manufacture/output-jobs/bom-report-manager

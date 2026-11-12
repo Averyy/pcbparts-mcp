@@ -678,11 +678,12 @@ def build_spec_filter_clauses(
     # SpecFilters keep their existing string/operator semantics.
     for f in spec_filters:
         if isinstance(f, ScopedTextFilter):
-            fts, fts_params = build_fts_clause(f.value, True)
-            if fts:
+            clauses = [clause for clause in (build_fts_clause(words, True) for words in (f.value, *f.also)) if clause[0]]
+            if clauses:
+                matches = " OR ".join(f"(1 {fts.strip()})" for fts, _ in clauses)
                 sql_clauses.append("AND (subcategory_id NOT IN (SELECT id FROM subcategories WHERE lower(name) = ?) "
-                                   f"OR (1 {fts.strip()}))")
-                params.extend([f.subcategory.lower(), *fts_params])
+                                   f"OR {matches})")
+                params.extend([f.subcategory.lower(), *(value for _, values in clauses for value in values)])
             continue
         if isinstance(f, FuseFilter):
             scope = "subcategory_id != ? OR " if f.subcategory_id is not None else ""

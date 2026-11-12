@@ -204,38 +204,38 @@ components:
   nc_pins: {'2': '2', '3': '3', '10': '10', '11': '11', '13': '13', '14': '14', '15': '15', A8: A8, B8: B8}
 - ref: J2
   value: JTAG
-  footprint: 1X9
+  footprint: 1X9_P2.54mm
   mpn: MTP125-1108S1
   lcsc: C358689
   pin_count: 9
 - ref: J3
-  value: 1x9 header
-  footprint: 1X9
+  value: 1x9 2.54mm header
+  footprint: 1X9_P2.54mm
   mpn: PZ254V-11-09P
   lcsc: C492408
   pin_count: 9
 - ref: J4
-  value: 2x4 header
-  footprint: 2X4
+  value: 2x4 2.54mm header
+  footprint: 2X4_P2.54mm
   mpn: MTP125-1204S1
   lcsc: C358693
   pin_count: 8
 - ref: J5
-  value: 2x5 header
-  footprint: 2X5
+  value: 2x5 1.27mm header
+  footprint: 2X5_P1.27mm_SMD
   mpn: FTSH-105-01-F-DV-K
   lcsc: C448647
   pin_count: 10
   nc_pins: {'7': '7'}
 - ref: J6
-  value: 2x7 header
-  footprint: 2X7
+  value: 2x7 1.27mm header
+  footprint: 2X7_P1.27mm_SMD
   mpn: FTSH-107-01-F-DV-K
   pin_count: 14
   nc_pins: {'11': '11', '12': '12', '13': '13', '14': '14'}
 - ref: J7
-  value: 1x4 header
-  footprint: JST_SH_SM04B-SRSS-TB
+  value: JST SH 4-pin
+  footprint: JST_SH_SM04B-SRSS-TB_1x04
   mpn: SM04B-SRSS-TB(LF)(SN)
   lcsc: C160404
   pin_count: 5
@@ -380,50 +380,50 @@ components:
   lcsc: C25104
 - ref: RN1
   value: 100kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: 4D02WGJ0104TCE
   lcsc: C25724
   pin_count: 8
 - ref: RN2
   value: 100kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: 4D02WGJ0104TCE
   lcsc: C25724
   pin_count: 8
 - ref: RN3
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: 4D02WGJ0101TCE
   lcsc: C48442
   pin_count: 8
 - ref: RN4
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: 4D02WGJ0101TCE
   lcsc: C48442
   pin_count: 8
 - ref: RN5
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: 4D02WGJ0101TCE
   lcsc: C48442
   pin_count: 8
 - ref: RN6
   value: 100ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: 4D02WGJ0101TCE
   lcsc: C48442
   pin_count: 8
   nc_pins: {'3': '3', '4': '4'}
 - ref: RN7
   value: 100kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: 4D02WGJ0104TCE
   lcsc: C25724
   pin_count: 8
 - ref: RN8
   value: 100kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: 4D02WGJ0104TCE
   lcsc: C25724
   pin_count: 8
@@ -456,13 +456,14 @@ components:
   nc_pins: {'4': '4'}
 - ref: U3
   value: FT2232HQ
-  footprint: QFN-64-1EP
+  footprint: QFN-64-1EP_9x9
   mpn: FT2232HQ-REEL
   lcsc: C193662
   pin_count: 65
-  nc_pins: {'24': '24', '26': '26', '27': '27', '28': '28', '32': '32', '33': '33', '34': '34', '36': '36', '48': '48', '52': '52', '53': '53', '54': '54', '55': '55', '57': '57', '58': '58', '59': '59'}
+  nc_pins: {'24': '24', '26': '26', '27': '27', '28': '28', '32': '32', '33': '33', '34': '34', '36': '36', '48': '48', '52': '52',
+    '53': '53', '54': '54', '55': '55', '57': '57', '58': '58', '59': '59'}
 - ref: U4
-  value: 93LC46BT-I/OT
+  value: 93LC56BT-I/OT
   footprint: SOT-23-6_RoundRect
   mpn: 93LC56BT-I/OT
   lcsc: C190271
@@ -658,7 +659,6 @@ nets:
   - C22.2
   - C23.2
   - C24.2
-  - C25.1
   - C26.2
   - C3.2
   - C4.2
@@ -717,7 +717,7 @@ nets:
 - name: Net-(C24-Pad1)
   pins: [C24.1, U3.3, Y1.3]
 - name: Net-(C25-Pad2)
-  pins: [C25.2, J1.S1, R3.2]
+  pins: [J1.S1, R3.2]
 - name: Net-(D1-Pad2)
   pins: [D1.2, R4.2]
 - name: Net-(D2-Pad1)

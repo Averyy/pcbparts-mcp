@@ -3,7 +3,7 @@ slug: sparkfun-mcp4725-dac
 source: sparkfun/MCP4725_Breakout
 format: eagle
 description: 12-bit I2C DAC with EEPROM, address select
-tags: [adc-dac, audio]
+tags: [adc-dac]
 key_ics: [MCP4725]
 outline:
   width_mm: 15.24

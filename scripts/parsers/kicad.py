@@ -21,7 +21,10 @@ from parse_boards import (
     normalize_footprint, normalize_value,
     extract_inline_specs, normalize_connector_value,
 )
-from parsers.common import is_junk_ref, is_useful_description, truncate, build_attributes
+from parsers.common import (
+    is_junk_ref, is_useful_description, truncate, build_attributes, value_from_properties, value_or_symbol,
+    keep_source_specs,
+)
 
 log = logging.getLogger(__name__)
 
@@ -133,7 +136,8 @@ def _get_property(node: list, name: str) -> str:
 # Schematic parser
 # ---------------------------------------------------------------------------
 
-def parse_schematic(sch_path: Path, *, repo_root: Path | None = None) -> tuple[list[Component], list[Net]]:
+def parse_schematic(sch_path: Path, *, repo_root: Path | None = None,
+                    property_aliases: dict | None = None) -> tuple[list[Component], list[Net]]:
     """Parse a KiCad S-expression schematic file.
 
     Returns (components, []) — nets come from PCB file.
@@ -156,7 +160,7 @@ def parse_schematic(sch_path: Path, *, repo_root: Path | None = None) -> tuple[l
     boundary = (repo_root or sch_path.parent).resolve()
     _parse_schematic_recursive(sch_path, components, seen_uuids, seen_refs,
                                 root_uuid=root_uuid, inst_path=f"/{root_uuid}",
-                                _cached=(root, text), boundary=boundary)
+                                _cached=(root, text), boundary=boundary, property_aliases=property_aliases)
 
     log.info("Parsed KiCad schematic: %d components", len(components))
     return components, []
@@ -166,7 +170,8 @@ def _parse_schematic_recursive(sch_path: Path, components: list[Component],
                                 seen_uuids: set[str], seen_refs: set[str], *,
                                 root_uuid: str = "", inst_path: str = "",
                                 _cached: tuple | None = None,
-                                boundary: Path | None = None) -> None:
+                                boundary: Path | None = None,
+                                property_aliases: dict | None = None) -> None:
     """Parse a single .kicad_sch file, recursing into sub-sheets."""
     if _cached:
         root, text = _cached
@@ -178,9 +183,20 @@ def _parse_schematic_recursive(sch_path: Path, components: list[Component],
     if boundary is None:
         boundary = sch_path.parent.resolve()
 
+    # Power symbols and flags are marked (power) in the sheet's library: Olimex's are in its own
+    # OLIMEX_Power library, which a library-name check misses.
+    power_symbols: set[str] = set()
+    lib_symbols = _find(root, "lib_symbols")
+    if lib_symbols:
+        for lib_sym in _find_all(lib_symbols, "symbol"):
+            if len(lib_sym) >= 2 and any(child == "power" or (isinstance(child, list) and child[:1] == ["power"])
+                                         for child in lib_sym[2:]):
+                power_symbols.add(lib_sym[1])
+
     # Parse symbol instances (actual placed components, not lib_symbols)
     for sym in _find_all(root, "symbol"):
-        _process_symbol(sym, components, seen_uuids, seen_refs, inst_path=inst_path)
+        _process_symbol(sym, components, seen_uuids, seen_refs, inst_path=inst_path,
+                        property_aliases=property_aliases, power_symbols=power_symbols)
 
     # Recurse into sub-sheets
     for sheet in _find_all(root, "sheet"):
@@ -198,7 +214,7 @@ def _parse_schematic_recursive(sch_path: Path, components: list[Component],
                 _parse_schematic_recursive(sub_path, components, seen_uuids, seen_refs,
                                             root_uuid=root_uuid,
                                             inst_path=sub_inst_path,
-                                            boundary=boundary)
+                                            boundary=boundary, property_aliases=property_aliases)
             else:
                 log.debug("Sub-sheet not found: %s", sub_path)
 
@@ -226,13 +242,15 @@ def _resolve_instance_ref(sym: list, inst_path: str) -> str | None:
 
 def _process_symbol(sym: list, components: list[Component],
                      seen_uuids: set[str], seen_refs: set[str], *,
-                     inst_path: str = "") -> None:
+                     inst_path: str = "", property_aliases: dict | None = None,
+                     power_symbols: set[str] | None = None) -> None:
     """Process a single (symbol ...) block into a Component."""
     lib_id = _get_str(sym, "lib_id")
 
-    # Skip power symbols
+    # Skip power symbols: the power library, or any symbol its sheet marks (power)
     lib_name = lib_id.split(":")[0] if ":" in lib_id else ""
-    if lib_name.lower() in _POWER_LIBS:
+    if (lib_name.lower() in _POWER_LIBS or lib_id in (power_symbols or ())
+            or _get_str(sym, "lib_name") in (power_symbols or ())):
         return
 
     # Skip DNP
@@ -260,6 +278,11 @@ def _process_symbol(sym: list, components: list[Component],
     value = _get_property(sym, "Value")
     footprint_raw = _get_property(sym, "Footprint")
     description = _get_property(sym, "Description")
+    # A fitted part with no value ("~") is named by its symbol: Twisted Fields U16 is
+    # Isolator:SFH617A-1X007T, the T41 SDR's audio converters PCM1808_module/PCM5102_module,
+    # PocketPD's BOOT button SW5 Button_Side_TS24CA, OpenAirScope's RF-match shunts C53/C54 Device:C.
+    # DNP and not-in-BOM parts were skipped above; an empty value dropped these with their nets.
+    value = value_or_symbol(value, lib_id, footprint_raw)
 
     # Skip power symbols by ref prefix (#PWR, #FLG)
     if ref.startswith("#"):
@@ -271,6 +294,8 @@ def _process_symbol(sym: list, components: list[Component],
 
     # Skip junk references
     if is_junk_ref(ref):
+        if "?" in ref:
+            log.warning("Excluding unannotated reference %s (value=%s)", ref, value)
         return
 
     # Track ref to deduplicate multi-unit components
@@ -294,7 +319,9 @@ def _process_symbol(sym: list, components: list[Component],
             if val and val != "~":
                 raw_attrs[key] = val
 
-    attrs = build_attributes(raw_attrs)
+    attrs = build_attributes(raw_attrs, property_aliases, ref)
+    value = value_from_properties(value, ref, raw_attrs, attrs, symbol=lib_id)
+    placed = value
 
     # Add description if useful
     if description and is_useful_description(description) and "description" not in attrs:
@@ -311,6 +338,7 @@ def _process_symbol(sym: list, components: list[Component],
         value = cleaned_val
 
     val = normalize_value(value, ref)
+    keep_source_specs(placed, val, ref, attrs)
     val = normalize_connector_value(val, package, ref)
 
     components.append(Component(
@@ -326,7 +354,8 @@ def _process_symbol(sym: list, components: list[Component],
 # PCB parser
 # ---------------------------------------------------------------------------
 
-def parse_pcb(pcb_path: Path, part_names: set[str], components: list[Component] | None = None
+def parse_pcb(pcb_path: Path, part_names: set[str], components: list[Component] | None = None,
+              *, reference_paths: dict[str, str] | None = None
               ) -> tuple[list[Position], BoardOutline | None, DesignRules | None, list[Net], list[CopperPour]]:
     """Parse a KiCad PCB file in a single pass.
 
@@ -342,6 +371,7 @@ def parse_pcb(pcb_path: Path, part_names: set[str], components: list[Component] 
     tree = _parse_sexpr(text)
     root = tree[0] if tree and isinstance(tree[0], list) and tree[0] and tree[0][0] == "kicad_pcb" else tree
 
+    _align_footprint_refs(root, reference_paths)
     positions = _extract_positions(root, part_names)
     outline = _extract_outline(root)
     design_rules = _extract_design_rules(root)
@@ -443,7 +473,24 @@ def _extract_nets(root: list, part_names: set[str]) -> list[Net]:
     return nets
 
 
-def extract_part_pins(pcb_path: Path, part_names: set[str]
+def _align_footprint_refs(root: list, reference_paths: dict[str, str] | None) -> None:
+    """Use stable schematic paths when a legacy layout has stale reference text."""
+    if not reference_paths:
+        return
+    for fp in _iter_footprints(root):
+        ref = reference_paths.get(_get_str(fp, "path").upper())
+        if not ref:
+            continue
+        for text in _find_all(fp, "fp_text"):
+            if len(text) >= 3 and text[1] == "reference":
+                text[2] = ref
+        for prop in _find_all(fp, "property"):
+            if len(prop) >= 3 and prop[1] == "Reference":
+                prop[2] = ref
+
+
+def extract_part_pins(pcb_path: Path, part_names: set[str],
+                      *, reference_paths: dict[str, str] | None = None
                       ) -> tuple[dict[str, dict[str, str]], dict[str, set[str]]]:
     """Every pin of each part, {ref: {label: pad number}}, labelled as nets label them, and the pins
     wired to another pad on the board, the parts the parser drops included ({ref: {label}}).
@@ -456,6 +503,7 @@ def extract_part_pins(pcb_path: Path, part_names: set[str]
     text = pcb_path.read_text(encoding="utf-8", errors="replace")
     tree = _parse_sexpr(text)
     root = tree[0] if tree and isinstance(tree[0], list) and tree[0] and tree[0][0] == "kicad_pcb" else tree
+    _align_footprint_refs(root, reference_paths)
     marks_pins = "(pintype " in text  # "~" numbers an unnumbered pad (a fiducial) in KiCad 5
     # Distinct pads on each net across the whole board (a pad split in pieces counts once)
     net_pads: dict[str, set[tuple[int, str]]] = {}

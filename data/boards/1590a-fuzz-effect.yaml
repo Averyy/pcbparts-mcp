@@ -32,12 +32,12 @@ components:
   footprint: SOD-123
   description: 100 V, 200 mA Surface Mount General Purpose Signal Schottky Diode
 - ref: J1
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: J2
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
   nc_pins: {Pin_4: '4'}
 - ref: Q1
@@ -49,7 +49,7 @@ components:
   value: 10kohm
   footprint: 0805
 - ref: R2
-  value: 1MEG
+  value: 1Mohm
   footprint: 0805
 - ref: RV1
   value: 100k

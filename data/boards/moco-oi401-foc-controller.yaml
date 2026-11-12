@@ -2,7 +2,7 @@ name: moco-oi401 FOC Controller
 slug: moco-oi401-foc-controller
 source: ziteh/moco
 format: kicad7
-description: "PMSM/BLDC FOC controller: STM32G431 MCU, DRV8316C integrated motor driver"
+description: 'PMSM/BLDC FOC controller: STM32G431 MCU, DRV8316C integrated motor driver'
 tags: [inverter, motor-control]
 key_ics: [STM32G431CBUx, RT9013-33, DRV8316CR, LM4040A50, AS5047x]
 outline:
@@ -19,174 +19,209 @@ components:
   value: 1uF
   footprint: '0603'
   lcsc: C15849
+  mpn: CL10A105KB8NNNC
   decouples: U1
 - ref: C10
   value: 100nF
   footprint: '0402'
   lcsc: C1525
+  mpn: CL05B104KO5NNNC
 - ref: C11
   value: 12pF
   footprint: '0402'
   lcsc: C1547
+  mpn: 0402CG120J500NT
 - ref: C12
   value: 12pF
   footprint: '0402'
   lcsc: C1547
+  mpn: 0402CG120J500NT
 - ref: C13
   value: 47nF
   footprint: '0603'
   lcsc: C1622
+  mpn: CL10B473KB8NNNC
   voltage: 50V
 - ref: C14
   value: 1uF
   footprint: '0603'
   lcsc: C15849
-  voltage: 16V
+  mpn: CL10A105KB8NNNC
+  voltage: 50V
 - ref: C15
   value: 1uF
   footprint: '0603'
   lcsc: C15849
-  voltage: 6.3V
+  mpn: CL10A105KB8NNNC
+  voltage: 50V
 - ref: C16
   value: 100nF
   footprint: '0603'
   lcsc: C14663
+  mpn: CC0603KRX7R9BB104
   voltage: 50V
 - ref: C17
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C18
   value: 100nF
   footprint: '0603'
   lcsc: C14663
-  voltage: 6.3V
+  mpn: CC0603KRX7R9BB104
+  voltage: 50V
 - ref: C19
   value: 22uF
   footprint: 0805
   lcsc: C45783
-  voltage: 16V
+  mpn: CL21A226MAQNNNE
+  voltage: 25V
   decouples: U3
 - ref: C2
   value: 1uF
   footprint: '0603'
   lcsc: C15849
+  mpn: CL10A105KB8NNNC
   decouples: U1
 - ref: C20
   value: 22pF
   footprint: '0603'
   lcsc: C1653
+  mpn: CL10C220JB8NNNC
 - ref: C21
   value: 22pF
   footprint: '0603'
   lcsc: C1653
+  mpn: CL10C220JB8NNNC
 - ref: C22
   value: 22pF
   footprint: '0603'
   lcsc: C1653
+  mpn: CL10C220JB8NNNC
 - ref: C23
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C24
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C25
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C26
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C27
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C28
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C29
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C3
   value: 100nF
   footprint: '0402'
   lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U2
 - ref: C30
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C31
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C32
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C33
   value: 10uF
   footprint: 0805
   lcsc: C440198
+  mpn: GRM21BR61H106KE43L
   voltage: 50V
 - ref: C34
   value: 100nF
   footprint: '0603'
   lcsc: C14663
+  mpn: CC0603KRX7R9BB104
   decouples: U5
 - ref: C4
   value: 100nF
   footprint: '0402'
   lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U5
 - ref: C5
   value: 100nF
   footprint: '0402'
   lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U2
 - ref: C6
   value: 100nF
   footprint: '0402'
   lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U2
 - ref: C7
   value: 10nF
   footprint: '0402'
   lcsc: C15195
+  mpn: CL05B103KB5NNNC
   decouples: U5
 - ref: C8
   value: 1uF
   footprint: '0402'
   lcsc: C52923
+  mpn: CL05A105KA5NQNC
   decouples: U5
 - ref: C9
   value: 100nF
   footprint: '0402'
   lcsc: C1525
+  mpn: CL05B104KO5NNNC
 - ref: J1
-  value: 2x4 header
-  footprint: 2X4
+  value: 2x4 2.54mm header
+  footprint: 2X4_P2.54mm
   pin_count: 8
 - ref: J2
-  value: 1x3 header
-  footprint: JST_GH_SM03B-GHS-TB
+  value: JST GH 3-pin
+  footprint: JST_GH_SM03B-GHS-TB_1x03
   lcsc: C514175
+  mpn: SM03B-GHS-TB(LF)(SN)
   pin_count: 3
 - ref: J3
   value: V+
@@ -206,104 +241,120 @@ components:
 - ref: L1
   value: 47uH
   footprint: L_Taiyo-Yuden_MD-3030
+  mpn: SMNR3015-470MT
   lcsc: C135243
 - ref: LD1
   value: multicolor LED
   footprint: RGB LED 1.6x1.6mm
   lcsc: C375569
+  mpn: E6C0606RGBC3UDA
   pin_count: 4
 - ref: R1
   value: 1kohm
   footprint: '0402'
-  lcsc: C25104
 - ref: R10
   value: 10kohm
   footprint: '0603'
   lcsc: C25804
+  mpn: 0603WAF1002T5E
 - ref: R11
   value: 10kohm
   footprint: '0603'
   lcsc: C25804
+  mpn: 0603WAF1002T5E
 - ref: R12
   value: 10kohm
   footprint: '0603'
   lcsc: C25804
+  mpn: 0603WAF1002T5E
 - ref: R2
   value: 5.1kohm
   footprint: '0402'
   lcsc: C25905
-  pulldown: LD1.GK
+  mpn: 0402WGF5101TCE
 - ref: R3
   value: 1kohm
   footprint: '0402'
-  lcsc: C25104
 - ref: R5
   value: 5.1kohm
   footprint: '0603'
   lcsc: C23186
+  mpn: 0603WAF5101T5E
   pullup: / Rotary Sensor/MISO
 - ref: R6
   value: 5.1kohm
   footprint: '0603'
   lcsc: C23186
+  mpn: 0603WAF5101T5E
   pullup: /Driver/nFAULT
 - ref: R7
   value: 330ohm
   footprint: '0603'
   lcsc: C23138
+  mpn: 0603WAF3300T5E
 - ref: R8
   value: 330ohm
   footprint: '0603'
   lcsc: C23138
+  mpn: 0603WAF3300T5E
 - ref: R9
   value: 330ohm
   footprint: '0603'
   lcsc: C23138
+  mpn: 0603WAF3300T5E
 - ref: SB1
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
 - ref: SB2
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
 - ref: SB3
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
 - ref: SW1
   value: RESET
   footprint: SW_SPST_CK_RS282G05A3
   lcsc: C5117871
+  mpn: GT-TC060B-H027-L1
 - ref: U1
   value: RT9013-33
   footprint: SOT-23-5
   lcsc: C587158
+  mpn: TPRT9013-33GB
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: U2
   value: STM32G431CBUx
-  footprint: QFN-48-1EP
+  footprint: QFN-48-1EP_7x7
   lcsc: C529356
+  mpn: STM32G431CBU6
   pin_count: 49
-  nc_pins: {PC13: '2', PC14: '3', PC15: '4', PA2: '10', PA3: '11', PA4: '12', PC4: '16', PB0: '17', PB1: '18', PB10: '22', PC6: '29', PA11: '33', PA12: '34', PA15: '38', PC10: '39', PC11: '40', PB8: '46'}
+  nc_pins: {PC13: '2', PC14: '3', PC15: '4', PA2: '10', PA3: '11', PA4: '12', PC4: '16', PB0: '17', PB1: '18', PB10: '22',
+    PC6: '29', PA11: '33', PA12: '34', PA15: '38', PC10: '39', PC11: '40', PB8: '46'}
 - ref: U3
   value: DRV8316CR
-  footprint: VQFN-40_RGF
+  footprint: VQFN-40_RGF_5x7
   lcsc: C5447274
+  mpn: DRV8316CRRGFR
   pin_count: 41
   nc_pins: {NC@1: '1', NC@24: '24'}
 - ref: U4
   value: LM4040A50
   footprint: SOT-353_SC-70-5
+  mpn: LM4040A50IDCKRG4
   lcsc: C3680585
 - ref: U5
   value: AS5047x
   footprint: TSSOP-14
   lcsc: C962063
+  mpn: AS5047P-ATSM
   pin_count: 14
   nc_pins: {B: '6', A: '7', W/PWM: '8', V: '9', U: '10', I/PWM: '14'}
 - ref: Y1
   value: 16MHz
   footprint: SMD3225
   lcsc: C13738
+  mpn: X322516MLB4SI
   pin_count: 4
 nets:
 - name: +3.3V

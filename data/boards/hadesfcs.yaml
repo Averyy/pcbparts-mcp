@@ -16,18 +16,24 @@ design_rules:
   min_via: 0.4mm
 components:
 - ref: ADC_FCC1
-  value: 1x4 header
+  value: 1x4 1.25mm header
   footprint: Molex_PicoBlade_53048-0410
+  pin_count: 4
 - ref: ANT1
   value: 5-1814832-1
   footprint: TE_5-1814832-1
+  manufacturer: TE Connectivity
+  description: SMA/QMA socket 50 Ohm | TE Connectivity 518148321 _SMA/QMA socket 50 Ohm RF Connectors_.
+  mpn: '518148321'
   pin_count: 5
 - ref: BAT1
   value: XT60-M
   footprint: AMASS_XT60-M
+  mpn: XT60-M
+  manufacturer: AMASS
 - ref: C1
   value: 100uF
-  footprint: C_Elec
+  footprint: C_Elec_6.3x7.7
 - ref: C10
   value: 100nF
   footprint: '0402'
@@ -258,7 +264,7 @@ components:
   footprint: '0402'
 - ref: C8
   value: 100uF
-  footprint: C_Elec
+  footprint: C_Elec_6.3x7.7
 - ref: C9
   value: 47uF
   footprint: '1210'
@@ -298,38 +304,46 @@ components:
 - ref: FCC1
   value: STM32H753VITx
   footprint: LQFP-100
+  pin_count: 100
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '7': '7', '8': '8', '9': '9', '15': '15', '16': '16', '32': '32',
+    '33': '33', '37': '37', '38': '38', '39': '39', '40': '40', '41': '41', '42': '42', '43': '43', '44': '44', '45': '45',
+    '57': '57', '58': '58', '63': '63', '64': '64', '65': '65', '77': '77', '78': '78', '79': '79', '80': '80', '95': '95',
+    '96': '96', '97': '97', '98': '98'}
 - ref: GPS_BAT1
-  value: 1x2 header
+  value: 1x2 1.25mm header
   footprint: Molex_PicoBlade_53048-0210
 - ref: GPS_NAVC1
-  value: 1x7 header
+  value: 1x7 1.25mm header
   footprint: Molex_PicoBlade_53048-0710
+  pin_count: 7
 - ref: HSE1
   value: 25MHz
-  footprint: Crystal_SMD_Abracon_ABM8G-4Pin
+  footprint: Crystal_SMD_Abracon_ABM8G-4Pin_3.2x2.5
   pin_count: 4
 - ref: HSE2
   value: 25MHz
-  footprint: Crystal_SMD_Abracon_ABM8G-4Pin
+  footprint: Crystal_SMD_Abracon_ABM8G-4Pin_3.2x2.5
   pin_count: 4
 - ref: I2C3_FCC1
-  value: 1x4 header
+  value: 1x4 1.25mm header
   footprint: Molex_PicoBlade_53048-0410
+  pin_count: 4
 - ref: I2C3_NAVC1
-  value: 1x4 header
+  value: 1x4 1.25mm header
   footprint: Molex_PicoBlade_53048-0410
+  pin_count: 4
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
 - ref: JP2
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
 - ref: JP3
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
   pin_count: 3
 - ref: JP4
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
   pin_count: 3
 - ref: L1
@@ -383,13 +397,15 @@ components:
 - ref: NAVC1
   value: STM32F405RGTx
   footprint: LQFP-64
+  pin_count: 64
+  nc_pins: {'4': '4', '27': '27', '39': '39', '50': '50', '54': '54', '55': '55', '56': '56', '57': '57'}
 - ref: PWM_POW1
-  value: 2x8 header
-  footprint: 2X8
+  value: 2x8 2.54mm header
+  footprint: 2X8_P2.54mm
   pin_count: 16
 - ref: PWM_SIG1
   value: 2.54mm
-  footprint: 1X8
+  footprint: 1X8_P2.54mm
   pin_count: 8
 - ref: R1
   value: 10mohm
@@ -409,9 +425,11 @@ components:
 - ref: R13
   value: 4.7kohm
   footprint: '0402'
+  pullup: I2C3_SCL_FCC
 - ref: R14
   value: 4.7kohm
   footprint: '0402'
+  pullup: I2C3_SDA_FCC
 - ref: R15
   value: 330ohm
   footprint: '0603'
@@ -470,9 +488,11 @@ components:
 - ref: R30
   value: 4.7kohm
   footprint: '0402'
+  pullup: I2C3_SCL_NAVC
 - ref: R31
   value: 4.7kohm
   footprint: '0402'
+  pullup: I2C3_SDA_NAVC
 - ref: R32
   value: 620ohm
   footprint: '0603'
@@ -581,8 +601,9 @@ components:
   footprint: '0402'
   pullup: I2C1_SCL_FCC
 - ref: RCIN_FCC1
-  value: 1x6 header
+  value: 1x6 1.25mm header
   footprint: Molex_PicoBlade_53048-0610
+  pin_count: 6
 - ref: REG1
   value: MIC26903YJL-TR
   footprint: MIC24054YJLTR
@@ -590,6 +611,7 @@ components:
   height: '2'
   manufacturer: Micrel
   mpn: MIC26903YJL-TR
+  mouser: 998-MIC26903YJLTR
   pin_count: 31
   nc_pins: {'3': '3'}
 - ref: REG2
@@ -599,6 +621,7 @@ components:
   height: '1'
   manufacturer: STMicroelectronics
   mpn: LD39200PU33R
+  mouser: 511-LD39200PU33R
   pin_count: 7
   nc_pins: {'4': '4'}
 - ref: SW1
@@ -608,30 +631,34 @@ components:
   height: '2'
   manufacturer: ALPS
   mpn: SKRPANE010
+  mouser: 688-SKRPANE010
   pin_count: 4
 - ref: SW2
   value: TDD01H0SB1R
-  footprint: SOT-3
+  footprint: SOT175P420X230-3N
   description: DIP Switches / SIP Switches Jumper Switch 2 positions
   height: '2.3'
   manufacturer: C & K COMPONENTS
   mpn: TDD01H0SB1R
+  mouser: 611-TDD01H0SB1R
   pin_count: 3
 - ref: SW3
   value: TDD01H0SB1R
-  footprint: SOT-3
+  footprint: SOT175P420X230-3N
   description: DIP Switches / SIP Switches Jumper Switch 2 positions
   height: '2.3'
   manufacturer: C & K COMPONENTS
   mpn: TDD01H0SB1R
+  mouser: 611-TDD01H0SB1R
   pin_count: 3
 - ref: SW4
   value: TDD01H0SB1R
-  footprint: SOT-3
+  footprint: SOT175P420X230-3N
   description: DIP Switches / SIP Switches Jumper Switch 2 positions
   height: '2.3'
   manufacturer: C & K COMPONENTS
   mpn: TDD01H0SB1R
+  mouser: 611-TDD01H0SB1R
   pin_count: 3
 - ref: SW5
   value: SKRPANE010
@@ -640,20 +667,29 @@ components:
   height: '2'
   manufacturer: ALPS
   mpn: SKRPANE010
+  mouser: 688-SKRPANE010
   pin_count: 4
 - ref: SWD1
-  value: 2x5 header
-  footprint: 2X5
+  value: 2x5 1.27mm header
+  footprint: 2X5_P1.27mm_SMD
+  pin_count: 10
+  nc_pins: {'6': '6', '7': '7', '8': '8'}
 - ref: SWD2
-  value: 2x5 header
-  footprint: 2X5
+  value: 2x5 1.27mm header
+  footprint: 2X5_P1.27mm_SMD
+  pin_count: 10
+  nc_pins: {'6': '6', '7': '7', '8': '8'}
 - ref: U1
   value: INA219AIDCNR
-  footprint: SOT-8
+  footprint: SOT65P280X145-8N
+  description: 26-V, Bi-Directional, Zero-Drift, High-Side, I2C Out Current/Power Monitor 8-SOT-23 -40 to 125
+  manufacturer: Texas Instruments
+  mpn: INA219AIDCNR
   pin_count: 8
 - ref: U10
   value: u-blox MAX-8Q
   footprint: GPS18P-SMD-1.1-10X9.6MM
+  description: SMD GPS Module;
   pin_count: 18
   nc_pins: {'5': '5', '15': '15', '16': '16', '17': '17'}
 - ref: U11
@@ -673,11 +709,13 @@ components:
   nc_pins: {'15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '25': '25'}
 - ref: U3
   value: 24CW1280T-I_OT
-  footprint: SOT-5
+  footprint: SOT95P280X145-5N
   description: MICROCHIP - 24CW1280T-I/OT - EEPROM, 128KBIT, -40 TO 85DEG C
   height: '1.45'
   manufacturer: Microchip
   mpn: 24CW1280T-I/OT
+  mouser: 579-24CW1280T-I/OT
+  rs: '1871851'
   pin_count: 5
   nc_pins: {'5': '5'}
 - ref: U4
@@ -687,10 +725,13 @@ components:
   height: '0.8'
   manufacturer: Winbond
   mpn: W25N01GVZEIG TR
+  mouser: 454-W25N01GVZEIGTR
   pin_count: 9
 - ref: U5
   value: BMI088
-  footprint: PQFN-16
+  footprint: PQFN50P450X300X100-16N
+  manufacturer: Bosch Sensortec
+  description: High-performance 6-axis inertial sensor _accelerometer + gyroscope_
   pin_count: 16
   nc_pins: {'1': '1', '2': '2', '5': '5', '13': '13'}
 - ref: U6
@@ -700,6 +741,8 @@ components:
 - ref: U7
   value: MPRLS0025PA00001A
   footprint: XDCR_MPRLS0025PA00001A
+  description: Pressure Sensor 0psi to 25psi Absolute 12-Pin T/R
+  manufacturer: Honeywell Sensing
   pin_count: 12
   nc_pins: {'1': '1', '5': '5', '7': '7', '11': '11'}
 - ref: U8
@@ -709,29 +752,36 @@ components:
   height: '0.7'
   manufacturer: STMicroelectronics
   mpn: IIS2MDCTR
+  mouser: 511-IIS2MDCTR
   pin_count: 12
   nc_pins: {'2': '2', '11': '11', '12': '12'}
 - ref: U9
   value: 24CW1280T-I_OT
-  footprint: SOT-5
+  footprint: SOT95P280X145-5N
   description: MICROCHIP - 24CW1280T-I/OT - EEPROM, 128KBIT, -40 TO 85DEG C
   height: '1.45'
   manufacturer: Microchip
   mpn: 24CW1280T-I/OT
+  mouser: 579-24CW1280T-I/OT
+  rs: '1871851'
   pin_count: 5
   nc_pins: {'5': '5'}
 - ref: UART3_FCC1
-  value: 1x4 header
+  value: 1x4 1.25mm header
   footprint: Molex_PicoBlade_53048-0410
+  pin_count: 4
 - ref: UART4_FCC1
-  value: 1x4 header
+  value: 1x4 1.25mm header
   footprint: Molex_PicoBlade_53048-0410
+  pin_count: 4
 - ref: UART4_NAVC1
-  value: 1x4 header
+  value: 1x4 1.25mm header
   footprint: Molex_PicoBlade_53048-0410
+  pin_count: 4
 - ref: UART5_FCC1
-  value: 1x4 header
+  value: 1x4 1.25mm header
   footprint: Molex_PicoBlade_53048-0410
+  pin_count: 4
 - ref: USB1
   value: USB Micro-B
   footprint: USB_Micro-B_Wuerth_629105150521_CircularHoles
@@ -753,6 +803,7 @@ components:
 nets:
 - name: +3V3
   pins:
+  - ADC_FCC1.1
   - C10.1
   - C12.1
   - C15.1
@@ -792,9 +843,23 @@ nets:
   - C65.1
   - FB1.2
   - FB2.2
+  - FCC1.100
+  - FCC1.11
+  - FCC1.27
+  - FCC1.50
+  - FCC1.6
+  - FCC1.75
+  - GPS_NAVC1.1
+  - I2C3_FCC1.1
+  - I2C3_NAVC1.1
   - JP3.1
   - JP4.1
   - LED2.2
+  - NAVC1.1
+  - NAVC1.19
+  - NAVC1.32
+  - NAVC1.48
+  - NAVC1.64
   - R10.1
   - R11.1
   - R12.1
@@ -809,11 +874,14 @@ nets:
   - R37.1
   - R38.1
   - R9.1
+  - RCIN_FCC1.1
   - REG2.1
   - REG2.2
   - SW2.1
   - SW3.1
   - SW4.1
+  - SWD1.1
+  - SWD2.1
   - U1.4
   - U10.7
   - U10.8
@@ -835,6 +903,10 @@ nets:
   - U8.3
   - U8.9
   - U9.4
+  - UART3_FCC1.1
+  - UART4_FCC1.1
+  - UART4_NAVC1.1
+  - UART5_FCC1.1
 - name: +5V
   pins:
   - C11.1
@@ -858,10 +930,21 @@ nets:
   - R5.1
   - REG2.5
   - REG2.6
+- name: ADC3_0_FCC
+  pins: [ADC_FCC1.3, FCC1.17]
+- name: ADC3_1_FCC
+  pins: [ADC_FCC1.4, FCC1.18]
 - name: BAR_NRST_NAVC
-  pins: [R37.2, U7.8]
+  pins: [NAVC1.26, R37.2, U7.8]
+- name: BOOT0_FCC
+  pins: [FCC1.94, R22.2]
+- name: BOOT0_NAVC
+  pins: [NAVC1.60, R26.2]
+- name: BOOT1_NAVC
+  pins: [NAVC1.28, R27.2]
 - name: GND
   pins:
+  - ADC_FCC1.2
   - ANT1.2
   - ANT1.3
   - ANT1.4
@@ -933,11 +1016,24 @@ nets:
   - C71.1
   - C8.2
   - C9.2
+  - FCC1.10
+  - FCC1.19
+  - FCC1.26
+  - FCC1.49
+  - FCC1.74
+  - FCC1.99
+  - GPS_BAT1.2
+  - GPS_NAVC1.2
   - HSE1.2
   - HSE1.4
   - HSE2.2
   - HSE2.4
+  - I2C3_FCC1.2
+  - I2C3_NAVC1.2
   - JP3.3
+  - NAVC1.12
+  - NAVC1.18
+  - NAVC1.63
   - PWM_POW1.10
   - PWM_POW1.12
   - PWM_POW1.14
@@ -961,6 +1057,7 @@ nets:
   - R6.1
   - R7.1
   - R8.1
+  - RCIN_FCC1.2
   - REG1.2
   - REG1.21
   - REG1.23
@@ -978,6 +1075,12 @@ nets:
   - SW4.2
   - SW5.3
   - SW5.4
+  - SWD1.3
+  - SWD1.5
+  - SWD1.9
+  - SWD2.3
+  - SWD2.5
+  - SWD2.9
   - U1.3
   - U1.7
   - U1.8
@@ -1003,6 +1106,10 @@ nets:
   - U8.6
   - U8.8
   - U9.2
+  - UART3_FCC1.2
+  - UART4_FCC1.2
+  - UART4_NAVC1.2
+  - UART5_FCC1.2
   - USB1.5
   - USB1.6
   - USB2.5
@@ -1011,36 +1118,138 @@ nets:
   - USB3.6
   - USB4.5
   - USB4.6
+- name: GPIO_A_FCC
+  pins: [FCC1.81, R40.2]
+- name: GPIO_A_NAVC
+  pins: [NAVC1.8, R40.1]
+- name: GPIO_B_FCC
+  pins: [FCC1.82, R41.2]
+- name: GPIO_B_NAVC
+  pins: [NAVC1.9, R41.1]
+- name: GPIO_C_FCC
+  pins: [FCC1.83, R42.2]
+- name: GPIO_C_NAVC
+  pins: [NAVC1.10, R42.1]
+- name: GPIO_D_FCC
+  pins: [FCC1.84, R43.2]
+- name: GPIO_D_NAVC
+  pins: [NAVC1.11, R43.1]
+- name: GPIO_E_FCC
+  pins: [FCC1.85, R44.2]
+- name: GPIO_E_NAVC
+  pins: [NAVC1.24, R44.1]
+- name: GPIO_F_FCC
+  pins: [FCC1.86, R45.2]
+- name: GPIO_F_NAVC
+  pins: [NAVC1.25, R45.1]
+- name: GPIO_G_FCC
+  pins: [FCC1.87, R46.2]
+- name: GPIO_G_NAVC
+  pins: [NAVC1.37, R46.1]
+- name: GPIO_H_FCC
+  pins: [FCC1.88, R47.2]
+- name: GPIO_H_NAVC
+  pins: [NAVC1.38, R47.1]
 - name: GPS_BAT_BACKUP
   pins: [JP4.2, U10.6]
+- name: GPS_LNA_EN_NAVC
+  pins: [GPS_NAVC1.7, NAVC1.2, U10.13]
 - name: GPS_NRST_NAVC
-  pins: [R38.2, U10.9]
+  pins: [GPS_NAVC1.6, NAVC1.3, R38.2, U10.9]
+- name: GPS_PPS_NAVC
+  pins: [GPS_NAVC1.5, NAVC1.53, U10.4]
 - name: HSE_IN_FCC
-  pins: [C32.1, HSE1.1]
+  pins: [C32.1, FCC1.12, HSE1.1]
 - name: HSE_IN_NAVC
-  pins: [C52.1, HSE2.1]
+  pins: [C52.1, HSE2.1, NAVC1.5]
+- name: HSE_OUT_FCC
+  pins: [FCC1.13, R23.1]
+- name: HSE_OUT_NAVC
+  pins: [NAVC1.6, R32.1]
 - name: I2C1_SCL_FCC
-  pins: [R50.2, R9.2]
+  pins: [FCC1.92, R50.2, R9.2]
 - name: I2C1_SCL_NAVC
-  pins: [R28.2, U5.8, U6.1, U7.3, U8.1, U9.1]
+  pins:
+  - NAVC1.61
+  - R28.2
+  - U5.8
+  - U6.1
+  - U7.3
+  - U8.1
+  - U9.1
 - name: I2C1_SDA_FCC
-  pins: [R10.2, R51.2]
+  pins: [FCC1.93, R10.2, R51.2]
 - name: I2C1_SDA_NAVC
-  pins: [R29.2, U5.9, U6.6, U7.2, U8.4, U9.3]
+  pins:
+  - NAVC1.62
+  - R29.2
+  - U5.9
+  - U6.6
+  - U7.2
+  - U8.4
+  - U9.3
 - name: I2C2_SCL_FCC
-  pins: [R11.2, U1.5, U2.26, U3.1]
+  pins: [FCC1.46, R11.2, U1.5, U2.26, U3.1]
+- name: I2C2_SCL_NAVC
+  pins: [NAVC1.29, R50.1]
 - name: I2C2_SDA_FCC
-  pins: [R12.2, U1.6, U2.27, U3.3]
+  pins: [FCC1.47, R12.2, U1.6, U2.27, U3.3]
+- name: I2C2_SDA_NAVC
+  pins: [NAVC1.30, R51.1]
+- name: I2C3_SCL_FCC
+  pins: [FCC1.67, I2C3_FCC1.3, R13.2]
+- name: I2C3_SCL_NAVC
+  pins: [I2C3_NAVC1.3, NAVC1.41, R30.2]
+- name: I2C3_SDA_FCC
+  pins: [FCC1.66, I2C3_FCC1.4, R14.2]
+- name: I2C3_SDA_NAVC
+  pins: [I2C3_NAVC1.4, NAVC1.40, R31.2]
+- name: INT_ACC_NAVC
+  pins: [NAVC1.20, U5.16]
+- name: INT_BAR_NAVC
+  pins: [NAVC1.23, U7.9]
+- name: INT_GYR_NAVC
+  pins: [NAVC1.21, U5.12]
+- name: INT_MAG_NAVC
+  pins: [NAVC1.22, U8.7]
+- name: LED_A_FCC
+  pins: [FCC1.34, LED3.2]
+- name: LED_A_NAVC
+  pins: [LED9.2, NAVC1.33]
+- name: LED_B_FCC
+  pins: [FCC1.35, LED4.2]
+- name: LED_B_NAVC
+  pins: [LED10.2, NAVC1.34]
+- name: LED_C_FCC
+  pins: [FCC1.36, LED5.2]
+- name: LED_C_NAVC
+  pins: [LED11.2, NAVC1.35]
+- name: LED_D_FCC
+  pins: [FCC1.89, LED6.2]
+- name: LED_D_NAVC
+  pins: [LED12.2, NAVC1.36]
+- name: LED_E_FCC
+  pins: [FCC1.90, LED7.2]
+- name: LED_F_FCC
+  pins: [FCC1.91, LED8.2]
 - name: NRST_FCC
-  pins: [C31.1, SW1.1, SW1.2]
+  pins: [C31.1, FCC1.14, SW1.1, SW1.2, SWD1.10]
 - name: NRST_NAVC
-  pins: [C49.1, SW5.1, SW5.2]
+  pins: [C49.1, NAVC1.7, SW5.1, SW5.2, SWD2.10]
 - name: Net-(ANT1-Pad1)
   pins: [ANT1.1, C66.1, C67.1, L2.2]
+- name: Net-(C13-Pad1)
+  pins: [C13.1, FCC1.48]
+- name: Net-(C14-Pad1)
+  pins: [C14.1, FCC1.73]
 - name: Net-(C3-Pad1)
   pins: [C3.1, REG1.1]
 - name: Net-(C33-Pad1)
   pins: [C33.1, HSE1.3, R23.2]
+- name: Net-(C37-Pad1)
+  pins: [C37.1, NAVC1.31]
+- name: Net-(C38-Pad1)
+  pins: [C38.1, NAVC1.47]
 - name: Net-(C4-Pad1)
   pins: [C4.1, D1.2, R3.2, REG1.28]
 - name: Net-(C53-Pad1)
@@ -1075,6 +1284,8 @@ nets:
   pins: [D4.1, FB5.2]
 - name: Net-(D5-Pad1)
   pins: [D5.1, FB6.2]
+- name: Net-(GPS_BAT1-Pad1)
+  pins: [GPS_BAT1.1, JP4.3]
 - name: Net-(JP3-Pad2)
   pins: [JP3.2, U10.18]
 - name: Net-(L2-Pad1)
@@ -1191,15 +1402,94 @@ nets:
   - REG1.27
   - REG1.30
   - U1.2
+- name: SPI1_CS_FLASH_FCC
+  pins: [FCC1.28, U4.1]
+- name: SPI1_MISO_FCC
+  pins: [FCC1.30, U4.2]
+- name: SPI1_MOSI_FCC
+  pins: [FCC1.31, U4.5]
+- name: SPI1_SCK_FCC
+  pins: [FCC1.29, U4.6]
+- name: SWCLK_FCC
+  pins: [FCC1.76, SWD1.4]
+- name: SWCLK_NAVC
+  pins: [NAVC1.49, SWD2.4]
+- name: SWDIO_FCC
+  pins: [FCC1.72, SWD1.2]
+- name: SWDIO_NAVC
+  pins: [NAVC1.46, SWD2.2]
+- name: TIM4_CH1_FCC
+  pins: [FCC1.59, RCIN_FCC1.3]
+- name: TIM4_CH2_FCC
+  pins: [FCC1.60, RCIN_FCC1.4]
+- name: TIM4_CH3_FCC
+  pins: [FCC1.61, RCIN_FCC1.5]
+- name: TIM4_CH4_FCC
+  pins: [FCC1.62, RCIN_FCC1.6]
+- name: UART1_RX_FCC
+  pins: [FCC1.54, U11.6]
+- name: UART1_RX_NAVC
+  pins: [GPS_NAVC1.4, NAVC1.59, U10.2]
+- name: UART1_TX_FCC
+  pins: [FCC1.53, U11.7]
+- name: UART1_TX_NAVC
+  pins: [GPS_NAVC1.3, NAVC1.58, U10.3]
+- name: UART2_RX_FCC
+  pins: [FCC1.25, R48.2]
+- name: UART2_RX_NAVC
+  pins: [NAVC1.17, R49.1]
+- name: UART2_TX_FCC
+  pins: [FCC1.24, R49.2]
+- name: UART2_TX_NAVC
+  pins: [NAVC1.16, R48.1]
+- name: UART3_RX_FCC
+  pins: [FCC1.56, UART3_FCC1.4]
+- name: UART3_RX_NAVC
+  pins: [NAVC1.52, U12.6]
+- name: UART3_TX_FCC
+  pins: [FCC1.55, UART3_FCC1.3]
+- name: UART3_TX_NAVC
+  pins: [NAVC1.51, U12.7]
+- name: UART4_RX_FCC
+  pins: [FCC1.23, UART4_FCC1.4]
+- name: UART4_RX_NAVC
+  pins: [NAVC1.15, UART4_NAVC1.4]
+- name: UART4_TX_FCC
+  pins: [FCC1.22, UART4_FCC1.3]
+- name: UART4_TX_NAVC
+  pins: [NAVC1.14, UART4_NAVC1.3]
+- name: UART5_RX_FCC
+  pins: [FCC1.51, UART5_FCC1.4]
+- name: UART5_TX_FCC
+  pins: [FCC1.52, UART5_FCC1.3]
+- name: USB_DM_FCC
+  pins: [FCC1.70, R53.1]
+- name: USB_DM_NAVC
+  pins: [NAVC1.44, R56.1]
+- name: USB_DP_FCC
+  pins: [FCC1.71, R52.1]
+- name: USB_DP_NAVC
+  pins: [NAVC1.45, R55.1]
+- name: USB_ID_FCC
+  pins: [FCC1.69, R54.1]
+- name: USB_ID_NAVC
+  pins: [NAVC1.43, R57.1]
+- name: USB_VBUS_FCC
+  pins: [FCC1.68, JP1.2]
+- name: USB_VBUS_NAVC
+  pins: [JP2.2, NAVC1.42]
 - name: VDDA_FCC
-  pins: [C27.1, C28.1, FB1.1, R21.2]
+  pins: [C27.1, C28.1, FB1.1, FCC1.21, R21.2]
 - name: VDDA_NAVC
-  pins: [C50.1, C51.1, FB2.1]
+  pins: [C50.1, C51.1, FB2.1, NAVC1.13]
 - name: VIN+
   pins: [BAT1.2, R1.2, U1.1]
 - name: VREF+_FCC
-  pins: [C29.1, C30.1, R21.1]
+  pins: [C29.1, C30.1, FCC1.20, R21.1]
 positions:
+- ref: ADC_FCC1
+  x: 111.12
+  y: 80.39
 - ref: ANT1
   x: 38.63
   y: 81.1
@@ -1527,6 +1817,16 @@ positions:
   x: 116.74
   y: 36.88
   rot: 90.0
+- ref: FCC1
+  x: 101.98
+  y: 55.7
+- ref: GPS_BAT1
+  x: 30.63
+  y: 71.78
+  rot: 270.0
+- ref: GPS_NAVC1
+  x: 45.8
+  y: 80.39
 - ref: HSE1
   x: 88.09
   y: 55.19
@@ -1535,6 +1835,13 @@ positions:
   x: 59.02
   y: 66.24
   rot: 270.0
+- ref: I2C3_FCC1
+  x: 120.27
+  y: 40.13
+  rot: 90.0
+- ref: I2C3_NAVC1
+  x: 65.68
+  y: 80.39
 - ref: JP1
   x: 82.47
   y: 34.04
@@ -1611,6 +1918,9 @@ positions:
   x: 78.94
   y: 73.1
   rot: 90.0
+- ref: NAVC1
+  x: 71.02
+  y: 68.0
 - ref: PWM_POW1
   x: 52.45
   y: 30.1
@@ -1854,6 +2164,10 @@ positions:
   x: 96.42
   y: 50.9
   side: back
+- ref: RCIN_FCC1
+  x: 120.27
+  y: 50.67
+  rot: 90.0
 - ref: REG1
   x: 41.91
   y: 43.82
@@ -1876,6 +2190,12 @@ positions:
 - ref: SW5
   x: 56.96
   y: 73.17
+- ref: SWD1
+  x: 97.56
+  y: 81.66
+- ref: SWD2
+  x: 88.7
+  y: 81.66
 - ref: U1
   x: 49.66
   y: 42.8
@@ -1916,6 +2236,21 @@ positions:
 - ref: U9
   x: 58.42
   y: 58.39
+- ref: UART3_FCC1
+  x: 120.27
+  y: 58.8
+  rot: 90.0
+- ref: UART4_FCC1
+  x: 120.27
+  y: 75.06
+  rot: 90.0
+- ref: UART4_NAVC1
+  x: 57.61
+  y: 80.39
+- ref: UART5_FCC1
+  x: 120.27
+  y: 66.93
+  rot: 90.0
 - ref: USB1
   x: 78.87
   y: 29.21

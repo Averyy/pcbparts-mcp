@@ -18,76 +18,116 @@ components:
 - ref: C1
   value: 270pF
   footprint: '0402'
+  lcsc: C524551
+  mpn: GCM1555C1H271JA16D
 - ref: C10
   value: 2.2uF
   footprint: '0402'
+  lcsc: C501836
+  mpn: 0402X225K160NT
   voltage: 16V
 - ref: C11
   value: 4.7uF
   footprint: '1206'
+  lcsc: C29823
+  mpn: 1206B475K500NT
   voltage: 50V
 - ref: C12
   value: 1uF
   footprint: '0402'
+  lcsc: C52923
+  mpn: CL05A105KA5NQNC
 - ref: C13
   value: 1uF
   footprint: '0402'
+  lcsc: C52923
+  mpn: CL05A105KA5NQNC
 - ref: C14
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
+  mpn: CC0603KRX7R9BB104
   voltage: 50V
 - ref: C15
   value: 2.2uF
   footprint: '1206'
+  lcsc: C50254
+  mpn: CL31B225KBHNNNE
   voltage: 50V
 - ref: C16
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
+  mpn: CC0603KRX7R9BB104
   voltage: 50V
 - ref: C17
   value: 4.7uF
   footprint: '1206'
+  lcsc: C29823
+  mpn: 1206B475K500NT
   voltage: 50V
 - ref: C18
   value: 22nF
   footprint: '0402'
+  lcsc: C1532
+  mpn: 0402B223K500NT
 - ref: C19
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
+  mpn: CC0603KRX7R9BB104
   voltage: 50V
 - ref: C2
   value: 10uF
   footprint: '0402'
+  lcsc: C15525
+  mpn: CL05A106MQ5NUNC
   decouples: U1
 - ref: C20
   value: 2.2nF
   footprint: '0603'
+  lcsc: C1604
+  mpn: 0603B222K500NT
 - ref: C21
   value: 2.2nF
   footprint: '0603'
+  lcsc: C1604
+  mpn: 0603B222K500NT
 - ref: C22
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
+  mpn: CC0603KRX7R9BB104
   voltage: 50V
 - ref: C23
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
+  mpn: CC0603KRX7R9BB104
   voltage: 50V
 - ref: C24
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
+  mpn: CC0603KRX7R9BB104
   voltage: 50V
 - ref: C25
   value: 68uF
   footprint: EIA-6032
+  lcsc: C7220
+  mpn: TAJC686K016RNJ
   decouples: U1
 - ref: C26
   value: 47uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x7.7
+  lcsc: C108053
+  mpn: VES470M1HTR-0607
   voltage: 50V
 - ref: C27
   value: 2.2uF
   footprint: '1206'
+  lcsc: C50254
+  mpn: CL31B225KBHNNNE
   voltage: 50V
 - ref: C28
   value: 22uF
@@ -100,6 +140,8 @@ components:
 - ref: C3
   value: 4.7uF
   footprint: '0402'
+  lcsc: C23733
+  mpn: CL05A475MP5NRNC
   decouples: U1
 - ref: C30
   value: 22uF
@@ -116,6 +158,8 @@ components:
 - ref: C33
   value: 2.2uF
   footprint: '0402'
+  lcsc: C501836
+  mpn: 0402X225K160NT
   voltage: 16V
 - ref: C34
   value: 22uF
@@ -128,54 +172,82 @@ components:
 - ref: C36
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U3
 - ref: C37
   value: 12pF
   footprint: '0402'
+  lcsc: C1547
+  mpn: 0402CG120J500NT
 - ref: C38
   value: 12pF
   footprint: '0402'
+  lcsc: C1547
+  mpn: 0402CG120J500NT
 - ref: C39
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U3
 - ref: C4
   value: 270pF
   footprint: '0402'
+  lcsc: C524551
+  mpn: GCM1555C1H271JA16D
 - ref: C40
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U3
 - ref: C41
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U3
 - ref: C42
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U3
 - ref: C43
   value: 1uF
   footprint: '0402'
+  lcsc: C52923
+  mpn: CL05A105KA5NQNC
   decouples: U3
 - ref: C44
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U4
 - ref: C45
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U4
 - ref: C46
   value: 100nF
   footprint: '0402'
+  lcsc: C1525
+  mpn: CL05B104KO5NNNC
   decouples: U4
 - ref: C47
   value: 22pF
   footprint: '0402'
+  lcsc: C1555
+  mpn: 0402CG220J500NT
 - ref: C48
   value: 22pF
   footprint: '0402'
+  lcsc: C1555
+  mpn: 0402CG220J500NT
 - ref: C49
   value: 1uF
   footprint: '0603'
@@ -183,6 +255,8 @@ components:
 - ref: C5
   value: 82pF
   footprint: '0402'
+  lcsc: C107011
+  mpn: CC0402JRNPO9BN820
 - ref: C50
   value: 100nF
   footprint: '0603'
@@ -190,249 +264,381 @@ components:
 - ref: C6
   value: 2.2nF
   footprint: '0603'
+  lcsc: C1604
+  mpn: 0603B222K500NT
 - ref: C7
   value: 2.2nF
   footprint: '0603'
+  lcsc: C1604
+  mpn: 0603B222K500NT
 - ref: C8
   value: 15nF
   footprint: '0402'
+  lcsc: C114405
+  mpn: CC0402KRX7R9BB153
 - ref: C9
   value: 2.2uF
   footprint: '1206'
+  lcsc: C50254
+  mpn: CL31B225KBHNNNE
   voltage: 50V
 - ref: D1
   value: SS34
   footprint: SMA
+  lcsc: C8678
+  mpn: SS34
 - ref: J1
-  value: 1x6 header
-  footprint: JST_GH_SM06B-GHS-TB
+  value: JST GH 6-pin
+  footprint: JST_GH_SM06B-GHS-TB_1x06
+  lcsc: C2829255
+  mpn: GH1.25-6PWBPZ
   pin_count: 6
 - ref: J2
-  value: 1x6 header
-  footprint: 1X6
+  value: 1x6 2.54mm header
+  footprint: 1X6_P2.54mm
   pin_count: 6
 - ref: J3
-  value: 1x2 header
-  footprint: AMASS_XT60-M
+  value: XT60-M
+  footprint: AMASS_XT60-M_1x02
+  lcsc: C98733
+  mpn: XT60
 - ref: J4
-  value: 1x9 header
-  footprint: JST_GH_SM09B-GHS-TB
+  value: JST GH 9-pin
+  footprint: JST_GH_SM09B-GHS-TB_1x09
+  lcsc: C2829258
+  mpn: GH1.25-9PWBPZ
   pin_count: 9
 - ref: J5
   value: 1x3 header
   footprint: AMASS MR30PB-F
+  mpn: MR30PB-F
   pin_count: 3
 - ref: J6
-  value: 2x2 header
-  footprint: JST_GH_SM03B-GHS-TB
+  value: JST GH 4-pin
+  footprint: JST_GH_SM03B-GHS-TB_1x03
+  lcsc: C2829252
+  mpn: GH1.25-3PWBPZ
   pin_count: 3
 - ref: J7
-  value: 2x2 header
-  footprint: JST_GH_SM03B-GHS-TB
+  value: JST GH 4-pin
+  footprint: JST_GH_SM03B-GHS-TB_1x03
+  lcsc: C2829252
+  mpn: GH1.25-3PWBPZ
   pin_count: 3
 - ref: L1
   value: 22uH
-  footprint: L_Bourns-SRN8040
+  footprint: L_Bourns-SRN8040_8x8.15
+  lcsc: C354640
+  mpn: CKCS8040-22uH/M
   current: 1.5A
 - ref: LD1
   value: multicolor LED
   footprint: RGB LED 1.6x1.6mm
+  lcsc: C375569
+  mpn: E6C0606RGBC3UDA
   pin_count: 4
 - ref: Q1
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: Q2
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: Q3
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: Q4
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: Q5
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: Q6
   value: CSD18540Q5B
   footprint: TDSON-8-1
+  lcsc: C86513
+  mpn: CSD18540Q5B
   pin_count: 5
 - ref: R1
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C25900
+  mpn: 0402WGF4701TCE
 - ref: R10
   value: 3.3kohm
   footprint: '0402'
+  lcsc: C25890
+  mpn: 0402WGF3301TCE
 - ref: R11
   value: 3.3kohm
   footprint: '0402'
+  lcsc: C25890
+  mpn: 0402WGF3301TCE
 - ref: R12
   value: 3.3kohm
   footprint: '0402'
+  lcsc: C25890
+  mpn: 0402WGF3301TCE
 - ref: R13
   value: 2.2ohm
   footprint: '0603'
+  lcsc: C22939
+  mpn: 0603WAF220KT5E
 - ref: R14
   value: 2.2ohm
   footprint: '0603'
+  lcsc: C22939
+  mpn: 0603WAF220KT5E
 - ref: R15
   value: 47kohm
   footprint: '0402'
+  lcsc: C25792
+  mpn: 0402WGF4702TCE
 - ref: R16
   value: 22ohm
   footprint: '0402'
+  lcsc: C25092
+  mpn: 0402WGF220JTCE
 - ref: R17
   value: 22ohm
   footprint: '0402'
+  lcsc: C25092
+  mpn: 0402WGF220JTCE
 - ref: R18
   value: 10kohm
   footprint: '0402'
+  lcsc: C25744
+  mpn: 0402WGF1002TCE
   pullup: /nFAULT
 - ref: R19
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
+  mpn: 0402WGF1001TCE
   pulldown: /EN_GATE
 - ref: R2
   value: 10kohm
   footprint: '0402'
+  lcsc: C25744
+  mpn: 0402WGF1002TCE
   pulldown: /MCU_BOOT0
 - ref: R20
   value: 10kohm
   footprint: '0402'
+  lcsc: C25744
+  mpn: 0402WGF1002TCE
   pullup: /Motor Driver/nOCTW
 - ref: R21
   value: 3.3kohm
   footprint: '0402'
+  lcsc: C25890
+  mpn: 0402WGF3301TCE
   pulldown: U2.DC_CAL
 - ref: R22
   value: 220kohm
   footprint: '0402'
+  lcsc: C25767
+  mpn: 0402WGF2203TCE
   tolerance: 1%
   pulldown: U2.RT_CLK
 - ref: R23
   value: 18kohm
   footprint: '0402'
+  lcsc: C25762
+  mpn: 0402WGF1802TCE
   pulldown: U2.DTC
 - ref: R24
   value: 10kohm
   footprint: '0402'
+  lcsc: C25744
+  mpn: 0402WGF1002TCE
   pullup: /Motor Driver/PWRGD
 - ref: R25
   value: 2.2ohm
   footprint: '0603'
+  lcsc: C22939
+  mpn: 0603WAF220KT5E
 - ref: R26
   value: 2.2ohm
   footprint: '0603'
+  lcsc: C22939
+  mpn: 0603WAF220KT5E
 - ref: R27
   value: 0.5mohm
   footprint: '2512'
+  lcsc: C469426
+  mpn: ASR-M-3-0.5F
 - ref: R28
   value: 2.2ohm
   footprint: '0603'
+  lcsc: C22939
+  mpn: 0603WAF220KT5E
 - ref: R29
   value: 2.2ohm
   footprint: '0603'
+  lcsc: C22939
+  mpn: 0603WAF220KT5E
 - ref: R3
   value: 4.7kohm
   footprint: '0402'
+  lcsc: C25900
+  mpn: 0402WGF4701TCE
 - ref: R30
   value: 120ohm
   footprint: '0402'
+  lcsc: C25079
+  mpn: 0402WGF1200TCE
 - ref: R31
   value: 120ohm
   footprint: '0402'
+  lcsc: C25079
+  mpn: 0402WGF1200TCE
 - ref: R32
   value: 0.5mohm
   footprint: '2512'
+  lcsc: C469426
+  mpn: ASR-M-3-0.5F
 - ref: R33
   value: 18kohm
   footprint: '0402'
+  lcsc: C25762
+  mpn: 0402WGF1802TCE
   pullup: /Motor Driver/V_SENSE
 - ref: R34
   value: 3.3kohm
   footprint: '0402'
+  lcsc: C25890
+  mpn: 0402WGF3301TCE
   pulldown: /Motor Driver/V_SENSE
 - ref: R35
   value: 10kohm
   footprint: '0402'
+  lcsc: C25744
+  mpn: 0402WGF1002TCE
   pulldown: /MCU/TEMP_SENSE
 - ref: R36
   value: 10kohm
   footprint: '0402'
+  lcsc: C25744
+  mpn: 0402WGF1002TCE
   pullup: U4.nRESET
 - ref: R37
   value: 120ohm
   footprint: '0402'
+  lcsc: C25079
+  mpn: 0402WGF1200TCE
 - ref: R38
   value: 10kohm
   footprint: '0402'
+  lcsc: C25744
+  mpn: 0402WGF1002TCE
   pullup: /SPI_SENSOR_nCS
 - ref: R4
   value: 10kohm
   footprint: '0402'
+  lcsc: C25744
+  mpn: 0402WGF1002TCE
 - ref: R5
   value: 680ohm
   footprint: '0402'
+  lcsc: C25130
+  mpn: 0402WGF6800TCE
 - ref: R6
   value: 10kohm
   footprint: '0402'
+  lcsc: C25744
+  mpn: 0402WGF1002TCE
   pullup: /MCU_nRESET
 - ref: R7
   value: 680ohm
   footprint: '0402'
+  lcsc: C25130
+  mpn: 0402WGF6800TCE
 - ref: R8
   value: 1kohm
   footprint: '0402'
-  pulldown: LD1.GK
+  lcsc: C11702
+  mpn: 0402WGF1001TCE
 - ref: R9
   value: 330ohm
   footprint: '0402'
+  lcsc: C25104
+  mpn: 0402WGF3300TCE
 - ref: SW1
   value: tactile switch
   footprint: SW_SPST_CK_RS282G05A3
+  lcsc: C520860
+  mpn: TS-1092S-B3D2-G
 - ref: SW2
   value: tactile switch
   footprint: SW_SPST_CK_RS282G05A3
+  lcsc: C520860
+  mpn: TS-1092S-B3D2-G
 - ref: TH1
   value: NCP18XH103F03RB
   footprint: '0603'
+  lcsc: C13564
+  mpn: NCP18XH103F03RB
 - ref: U1
   value: XC6220B331MR
   footprint: SOT-23-5
+  lcsc: C86534
+  mpn: XC6220B331MR-G
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: U2
   value: DRV8301
-  footprint: HTSSOP-56-1EP
+  footprint: HTSSOP-56-1EP_6.1x14
+  lcsc: C98969
+  mpn: DRV8301DCAR
   pin_count: 57
   nc_pins: {EN_BUCK: '55'}
 - ref: U3
   value: STM32G431CBT6
   footprint: LQFP-48
+  lcsc: C529355
+  mpn: STM32G431CBT6
   pin_count: 48
   nc_pins: {PC14-OCS32_IN: '3', PC15-OCS32_OUT: '4'}
 - ref: U4
   value: MCP25625
-  footprint: QFN-28-1EP
+  footprint: QFN-28-1EP_6x6
+  lcsc: C191253
+  mpn: MCP25625T-E/ML
   pin_count: 28
   nc_pins: {NC@2: '2', nTx1RTS: '6', nTx2RTS: '7', nRx1BF: '11', nRx0BF: '12', CLKOUT: '22', nTx0RTS: '23', NC@25: '25'}
 - ref: U5
   value: AS5147
   footprint: TSSOP-14
+  lcsc: C481876
+  mpn: AS5147P-HTSM
   pin_count: 14
   nc_pins: {W/PWM: '8', V: '9', U: '10'}
 - ref: Y1
   value: 8MHz
   footprint: SMD3225
+  mpn: 1C208000BC0R
+  lcsc: C57131
   pin_count: 4
 - ref: Y2
   value: 16MHz
   footprint: SMD3225
+  lcsc: C13738
+  mpn: X322516MLB4SI
   pin_count: 3
 nets:
 - name: +5V

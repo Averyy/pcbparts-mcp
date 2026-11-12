@@ -199,7 +199,7 @@ components:
   value: 6V 1A
   footprint: F0805
 - ref: HEAD1
-  value: 1x16 header
+  value: 1x16 2.54mm header
   footprint: HEADER_16P2.54
   pin_count: 32
   nc_pins: {'1': 1 P$1}
@@ -222,6 +222,7 @@ components:
 - ref: L5
   value: 4.7uH
   footprint: INDUCTOR-NR3015
+  mpn: NR3015T4R7M
 - ref: L7
   value: 15nH
   footprint: R-0402S
@@ -256,7 +257,6 @@ components:
 - ref: R1
   value: 3kohm
   footprint: R-0402S
-  pullup: CNG.K
 - ref: R10
   value: 30kohm
   footprint: R-0402S
@@ -345,12 +345,14 @@ components:
 - ref: U$2
   value: SKY13351-378
   footprint: MLPD-6-1X1
+  mpn: SKY13351-378LF
   pin_count: 8
 - ref: U1
   value: NRF52840
   footprint: AQN507X7X0.85_HA-74_V2
   pin_count: 83
-  nc_pins: {P0.02/AIN0@A12: P$A12, P0.16@AC11: P$AC11, P0.07@M2: P$M2, P1.07@P23: P$P23, P1.06@R24: P$R24, P1.05@T23: P$T23, P1.04@U24: P$U24}
+  nc_pins: {P0.02/AIN0@A12: P$A12, P0.16@AC11: P$AC11, P0.07@M2: P$M2, P1.07@P23: P$P23, P1.06@R24: P$R24, P1.05@T23: P$T23,
+    P1.04@U24: P$U24}
 - ref: U3
   value: XC6208A42
   footprint: USP-6C
@@ -395,7 +397,6 @@ nets:
   - C38.2
   - C42.2
   - C46.2
-  - D5.P$1
   - DEBUG.1
   - HEAD1.15
   - L5.2
@@ -444,14 +445,12 @@ nets:
   pins: [L3.1, U1.DCC@B3]
 - name: DEC1_C1
   pins: [C15.2, U1.DEC1@C1]
-- name: DEC2_A18
-  pins: [C29.2, U1.DEC2@A18]
 - name: DEC3V3_AC5
   pins: [C4.2, U1.DEC3V3@AC5]
 - name: DEC3_D23
   pins: [C18.1, U1.DEC3@D23]
 - name: DEC4_B5
-  pins: [C13.1, C33.1, C43.1, L4.2, U1.DEC4@B5, U1.DEC6@E24]
+  pins: [C13.1, C43.1, L4.2, U1.DEC4@B5, U1.DEC6@E24]
 - name: DEC5_N24
   pins: [C45.1, U1.DEC5@N24]
 - name: DN
@@ -461,9 +460,9 @@ nets:
 - name: EN
   pins: [C48.2, HEAD2.11, R18.1, U6.CE]
 - name: F_/HOLD
-  pins: [R13.2, U1.P0.23@AC19, U5./HOLD]
+  pins: [U1.P0.23@AC19, U5./HOLD]
 - name: F_/WP
-  pins: [R12.1, U1.P0.22@AD18, U5./WP]
+  pins: [U1.P0.22@AD18, U5./WP]
 - name: F_CLK
   pins: [U1.P0.19@AC15, U5.CLK]
 - name: F_CS
@@ -487,7 +486,6 @@ nets:
   - C17.1
   - C18.2
   - C19.1
-  - C2.2
   - C20.2
   - C21.1
   - C22.1
@@ -497,11 +495,9 @@ nets:
   - C26.1
   - C27.2
   - C28.1
-  - C29.1
   - C3.1
   - C31.1
   - C32.1
-  - C33.2
   - C34.2
   - C35.2
   - C36.2
@@ -522,7 +518,6 @@ nets:
   - C6.1
   - C8.1
   - C9.1
-  - D1.1
   - DEBUG.3
   - DEBUG.5
   - DEBUG.9
@@ -533,8 +528,6 @@ nets:
   - R16.2
   - R17.1
   - R22.2
-  - R24.1
-  - R26.1
   - R4.2
   - RESET.P$1
   - RESET.P$2
@@ -569,7 +562,6 @@ nets:
   - Q3.3
   - R15.1
   - R23.1
-  - S4.1
   - U3.VBAT
 - name: LX
   pins: [L5.1, U6.LX]
@@ -580,21 +572,19 @@ nets:
 - name: MOSI
   pins: [HEAD1.5, U1.P1.13@A16]
 - name: N$10
-  pins: [C1.1, C2.1, RF.1]
+  pins: [C1.1, RF.1]
 - name: N$13
   pins: [LED1.A, R14.2]
-- name: N$14
-  pins: [L2.2, S3.1]
 - name: N$18
   pins: [F1.1, USB.VBUS]
 - name: N$20
-  pins: [C47.1, D5.P$2, L7.2, S5.2]
+  pins: [C47.1, L7.2]
 - name: N$21
   pins: [CNG.K, R1.1, R20.2]
 - name: N$23
   pins: [R8.2, RGB.4]
 - name: N$24
-  pins: [R25.1, R26.2, RGB.1]
+  pins: [R25.1, RGB.1]
 - name: N$25
   pins: [C31.2, D4.CATHODE, Q2.3]
 - name: N$26
@@ -608,7 +598,7 @@ nets:
 - name: N$32
   pins: [ANT.RF, C23.2, C30.1]
 - name: N$33
-  pins: [Q1.1, Q2.1, Q4.3, R10.1, R24.2]
+  pins: [Q1.1, Q2.1, Q4.3, R10.1]
 - name: N$36
   pins: [Q1.3, Q3.1, R21.2]
 - name: N$6
@@ -644,11 +634,11 @@ nets:
 - name: SDA
   pins: [HEAD2.1, U1.P0.26@G1]
 - name: SWDCLK
-  pins: [DEBUG.4, SWDC.1, U1.SWDCLK@AA24]
+  pins: [DEBUG.4, U1.SWDCLK@AA24]
 - name: SWDIO
-  pins: [DEBUG.2, SWDI.1, U1.SWDIO@AC24]
+  pins: [DEBUG.2, U1.SWDIO@AC24]
 - name: SWO
-  pins: [DEBUG.6, SWO.1, U1.P1.00@AD22]
+  pins: [DEBUG.6, U1.P1.00@AD22]
 - name: TX
   pins: [HEAD1.2, U1.P0.06@L1]
 - name: VDD
@@ -660,11 +650,7 @@ nets:
   - C32.2
   - C8.2
   - R11.2
-  - R12.2
-  - R13.1
   - R6.2
-  - S1.1
-  - S3.2
   - U1.VDD@A22
   - U1.VDD@AD14
   - U1.VDD@AD23
@@ -672,7 +658,7 @@ nets:
   - U1.VDD@W1
   - U5.VCC
 - name: VDDH
-  pins: [C11.2, S1.2, S4.2, S5.1, U1.VDDH@Y2]
+  pins: [C11.2, U1.VDDH@Y2]
 - name: VIN
   pins:
   - C39.2
@@ -693,7 +679,6 @@ nets:
   - C35.1
   - C9.2
   - CNG.A
-  - D1.2
   - D3.P$1
   - D4.ANODE
   - F1.2

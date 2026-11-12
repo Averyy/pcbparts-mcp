@@ -1,7 +1,7 @@
 name: Soldered INA219
 slug: soldered-ina219
 source: SolderedElectronics/Voltage---current-sensor-INA219-breakout-hardware-design
-format: kicad7
+format: kicad6
 description: INA219 I2C current/power monitor, 0.1ohm shunt
 tags: [current-sensing]
 key_ics: [INA219]
@@ -38,7 +38,7 @@ components:
   pin_count: 5
 - ref: K3
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: K4
   value: easyC-SMD

@@ -14,6 +14,14 @@ from ..search.spec_filter import SPEC_TO_COLUMN, escape_like
 ALTERNATIVE_SCAN_ROWS = 2000
 
 
+class CandidateBatch(list):
+    """Candidate rows with retrieval bounds, without changing the list callback contract."""
+
+    def __init__(self, parts=(), **retrieval):
+        super().__init__(parts)
+        self.retrieval = retrieval
+
+
 def get_subcategory_name(
     subcategory_id: int,
     subcategories: dict[int, dict[str, Any]],
@@ -176,13 +184,16 @@ def find_alternative_candidates(
     params.append(max_rows)
 
     results: list[dict[str, Any]] = []
+    scanned = 0
     for row in conn.execute(" ".join(sql), params):
+        scanned += 1
         part = row_to_dict(row, subcategories)
         if accept is None or accept(part):
             results.append(part)
             if len(results) >= limit:
                 break
-    return results
+    return CandidateBatch(results, scanned=scanned, scan_limit=max_rows,
+                          scan_hit_limit=scanned >= max_rows)
 
 
 def subcategory_parts(

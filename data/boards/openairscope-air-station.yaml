@@ -1,7 +1,7 @@
 name: OpenAirScope Air Station
 slug: openairscope-air-station
 source: emertcakir/OpenAirScope
-format: kicad8
+format: kicad9
 description: 'Comprehensive outdoor air quality station: STM32H743 + ESP32-C3, LoRaWAN telemetry'
 tags: [lora, rs485, sensors]
 key_ics: [ESP32-C3, STM32H743]
@@ -165,6 +165,12 @@ components:
 - ref: C52
   value: 100nF
   footprint: '0603'
+- ref: C53
+  value: C
+  footprint: '0402'
+- ref: C54
+  value: C
+  footprint: '0402'
 - ref: C55
   value: 100nF
   footprint: '0603'
@@ -331,9 +337,10 @@ components:
 - ref: D6
   value: PESD1CAN_215
   footprint: SOT-23-3
+  digikey: 1727-3817-1-ND
   mpn: PESD1CAN,215
-  manufacturer: Nexperia USA Inc.
   description: TVS DIODE 24V 70V SOT23
+  manufacturer: Nexperia USA Inc.
   pin_count: 3
 - ref: D7
   value: SM712
@@ -365,6 +372,7 @@ components:
   value: JST ZR 5-pin
   footprint: JST_S5B-ZR_LF__SN_
   manufacturer: JST
+  description: 'Wire-To-Board Connector, Side Entry, ZH Series, Through Hole, Header, 5, 1.5 mm RoHS Compliant: Yes'
   mpn: S5B-ZR (LF)(SN)
   pin_count: 5
   nc_pins: {'2': '2'}
@@ -374,12 +382,12 @@ components:
   description: Micro SD Card Socket
   pin_count: 9
 - ref: J13
-  value: 1x7 header
-  footprint: 1X7
+  value: 1x7 2.54mm header
+  footprint: 1X7_P2.54mm
   pin_count: 7
 - ref: J14
-  value: 1x8 header
-  footprint: 1X8
+  value: 1x8 2.54mm header
+  footprint: 1X8_P2.54mm
   pin_count: 8
 - ref: J2
   value: JST PH 2-pin
@@ -388,40 +396,42 @@ components:
   mpn: S2B-PH-K-S(LF)(SN)
   description: Connector Header Through Hole, Right Angle 2 position
 - ref: J3
-  value: 2x7 header
-  footprint: 2X7
+  value: 2x7 1.27mm header
+  footprint: 2X7_P1.27mm
   description: ST Debug Connector, standard ARM Cortex-M SWD and JTAG interface plus UART
   pin_count: 14
   nc_pins: {NC@1: '1', NC@2: '2', JRCLK/NC: '9'}
 - ref: J4
-  value: 1x8 header
-  footprint: 1X8
+  value: 1x8 2.54mm header
+  footprint: 1X8_P2.54mm
   pin_count: 8
 - ref: J5
-  value: 1x8 header
-  footprint: 1X8
+  value: 1x8 2.54mm header
+  footprint: 1X8_P2.54mm
   pin_count: 8
 - ref: J6
   value: RFPC-SMA27-F
   footprint: GRADCONN_RFPC-SMA27-F
   manufacturer: GradConn
   mpn: RFPC-SMA27-F
+  description: SMA Connector Jack, Female Socket 50 Ohms Panel Mount, Through Hole, Right Angle Solder
   pin_count: 5
 - ref: J7
-  value: 1x7 header
-  footprint: 1X7
+  value: 1x7 2.54mm header
+  footprint: 1X7_P2.54mm
   pin_count: 7
 - ref: J8
-  value: 1x2 screw terminal
+  value: 1x2 5.00mm screw terminal
   footprint: TerminalBlock_RND_205-00045
 - ref: J9
-  value: 1x2 screw terminal
+  value: 1x2 5.00mm screw terminal
   footprint: TerminalBlock_RND_205-00045
 - ref: L1
-  value: 1mH
+  value: 1uH
   footprint: IND_XEL4030-102MEC
   manufacturer: Coilcraft
   mpn: XEL4030-102MEC
+  description: 1 uH Shielded Molded Inductor  10.7 A 9.78mOhm Max 1616 (4040 Metric)
 - ref: L2
   value: L
   footprint: '0603'
@@ -748,8 +758,10 @@ components:
   pulldown: C91.1
 - ref: S1
   value: 1825910-6
-  footprint: Switch_Tactile_THT
+  footprint: Switch_Tactile_THT_6x6
+  digikey: 450-1650-ND
   mpn: 1825910-6
+  description: SWITCH TACTILE SPST-NO 0.05A 24V
   manufacturer: TE Connectivity ALCOSWITCH Switches
   pin_count: 4
 - ref: SW3
@@ -767,7 +779,7 @@ components:
   description: Temperature dependent resistor, negative temperature coefficient
 - ref: U1
   value: MCP73871
-  footprint: QFN-20-1EP
+  footprint: QFN-20-1EP_4x4
   description: Single cell, Li-Ion/Li-Po charge management controller
   pin_count: 21
 - ref: U10
@@ -780,10 +792,11 @@ components:
   footprint: XDCR_SGP41-D-R4
   manufacturer: Sensirion
   mpn: SGP41-D-R4
+  description: Air Quality Sensor VOC and NOx Gas Sensor 3.3V 6-Pin DFN EP
   pin_count: 7
 - ref: U12
   value: SCD40-D-R2
-  footprint: Sensirion_SCD4x-1EP
+  footprint: Sensirion_SCD4x-1EP_10.1x10.1
   description: Photoacoustic CO2 sensor, 40 000 ppm, I2C, 2.4-5.5 V, Base accuracy 400 - 2000
   pin_count: 7
 - ref: U13
@@ -794,13 +807,13 @@ components:
   nc_pins: {NC: '2'}
 - ref: U14
   value: CM1624
-  footprint: OnSemi_UDFN-16-1EP
+  footprint: OnSemi_UDFN-16-1EP_1.35x3.3
   description: MMC interface, EMI filter, TVS, Line termination, UDFN-16
   pin_count: 17
   nc_pins: {ESD1@4: '4', ESD3: '5', ESD1@13: '13'}
 - ref: U15
   value: DS3231M
-  footprint: SOIC-16W
+  footprint: SOIC-16W_7.5x10.3
   description: Extremely Accurate I2C-Integrated RTC/TCXO/Crystal SOIC-16
   pin_count: 16
 - ref: U2
@@ -810,8 +823,9 @@ components:
   pin_count: 3
 - ref: U3
   value: TPS61023DRLT
-  footprint: SOT-6
+  footprint: SOT50P160X60-6N
   manufacturer: Texas Instruments
+  description: 3.7-A boost converter with 0.5-V ultra-low input voltage
   mpn: TPS61023DRLT
   pin_count: 6
 - ref: U4
@@ -824,11 +838,15 @@ components:
   footprint: LQFP-144
   description: STMicroelectronics Arm Cortex-M7 MCU, 2048KB flash, 1024KB RAM, 480 MHz
   pin_count: 144
-  nc_pins: {PE5: '4', PE6: '5', PF10: '22', PH0: '23', PH1: '24', PC2_C: '28', PC3_C: '29', PC4: '44', PC5: '45', PF11: '49', PF12: '50', PF13: '53', PG1: '57', PE10: '63', PE12: '65', PE13: '66', PE14: '67', PB13: '74', PB14: '75', PB15: '76', PD14: '85', PD15: '86', PG5: '90', PG6: '91', PG7: '92', PG8: '93', PD0: '114', PD1: '115', PD3: '117', PD4: '118', PD5: '119', PD6: '122', PD7: '123', PG9: '124', PG10: '125', PB4: '134', PE0: '141', PE1: '142'}
+  nc_pins: {PE5: '4', PE6: '5', PF10: '22', PH0: '23', PH1: '24', PC2_C: '28', PC3_C: '29', PC4: '44', PC5: '45', PF11: '49',
+    PF12: '50', PF13: '53', PG1: '57', PE10: '63', PE12: '65', PE13: '66', PE14: '67', PB13: '74', PB14: '75', PB15: '76',
+    PD14: '85', PD15: '86', PG5: '90', PG6: '91', PG7: '92', PG8: '93', PD0: '114', PD1: '115', PD3: '117', PD4: '118', PD5: '119',
+    PD6: '122', PD7: '123', PG9: '124', PG10: '125', PB4: '134', PE0: '141', PE1: '142'}
 - ref: U6
   value: M95256
   footprint: SOIC-8
   description: SPI EEPROM, 256Kb (32K x 8), No Identification Page, 2.5 to 5.5V, SO8
+  mpn: M95256-WMN6P
   pin_count: 8
 - ref: U7
   value: ESP32-C3-WROOM-02
@@ -839,6 +857,8 @@ components:
   value: RAK3172
   footprint: RAK3172
   manufacturer: Shenzhen RAKwireless Technology Co.,Ltd.
+  description: RAK3172 is a low-power long-range transceiver module based on the STM32WLE5CC chip. It provides an easy-to-use,
+    small-size, low-power solution for long range wireless data applications
   mpn: RAK3172
   pin_count: 32
   nc_pins: {SWDIO/PA13: '7', SWCLK/PA14: '8', MOSI/PA7: '13', MISO/PA6: '14', PB12: '27', PB5: '30'}
@@ -851,7 +871,9 @@ components:
 - ref: XTAL1
   value: ECS-_327-12_5-34B-TR
   footprint: SMD-2
+  digikey: XC1617CT-ND
   mpn: ECS-.327-12.5-34B-TR
+  description: CRYSTAL 32.7680KHZ 12.5PF SMD
   manufacturer: ECS Inc.
 nets:
 - name: +3V3P
@@ -1762,6 +1784,14 @@ positions:
   x: 173.23
   y: 87.18
   rot: -90.0
+- ref: C53
+  x: 187.43
+  y: 99.66
+  rot: 180.0
+- ref: C54
+  x: 187.39
+  y: 103.88
+  rot: 180.0
 - ref: C55
   x: 107.0
   y: 84.2

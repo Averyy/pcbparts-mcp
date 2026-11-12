@@ -108,17 +108,18 @@ components:
   nc_pins: {'6': '6'}
 - ref: J5
   value: JST PH
-  footprint: JST_PH_S2B-PH-K
+  footprint: JST_PH_S2B-PH-K_1x02
 - ref: J6
-  value: 1x10 header
-  footprint: 1X10
+  value: 1x10 2.54mm header
+  footprint: 1X10_P2.54mm_Horizontal
   pin_count: 10
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
 - ref: L1
-  value: BLM18BA121SN1D
+  value: 120ohm
   footprint: '0603'
+  mpn: BLM18BA121SN1D
 - ref: Q1
   value: FDN340P
   footprint: SOT-23
@@ -149,11 +150,9 @@ components:
 - ref: R3
   value: 1kohm
   footprint: '0603'
-  pullup: D3.2
 - ref: R4
   value: 1kohm
   footprint: '0603'
-  pullup: D4.2
 - ref: R5
   value: 200kohm
   footprint: '0603'
@@ -175,12 +174,16 @@ components:
 - ref: U1
   value: USBLC6-2
   footprint: SOT-23-6
+  mpn: USBLC6-2SC6
   pin_count: 6
 - ref: U2
   value: SIM7080G
   footprint: SIM7080G
   pin_count: 77
-  nc_pins: {'3': '3', '4': '4', '5': '5', '9': '9', '10': '10', '11': '11', '12': '12', '14': '14', '22': '22', '23': '23', '28': '28', '29': '29', '38': '38', '43': '43', '44': '44', '46': '46', '47': '47', '48': '48', '49': '49', '50': '50', '51': '51', '52': '52', '53': '53', '54': '54', '55': '55', '56': '56', '57': '57', '58': '58', '59': '59', '60': '60', '61': '61', '62': '62', '64': '64', '65': '65'}
+  nc_pins: {'3': '3', '4': '4', '5': '5', '9': '9', '10': '10', '11': '11', '12': '12', '14': '14', '22': '22', '23': '23',
+    '28': '28', '29': '29', '38': '38', '43': '43', '44': '44', '46': '46', '47': '47', '48': '48', '49': '49', '50': '50',
+    '51': '51', '52': '52', '53': '53', '54': '54', '55': '55', '56': '56', '57': '57', '58': '58', '59': '59', '60': '60',
+    '61': '61', '62': '62', '64': '64', '65': '65'}
 - ref: U3
   value: ST4SIM-200M
   footprint: ST4SIM-200M
@@ -218,8 +221,6 @@ nets:
   - C15.2
   - C16.2
   - C17.2
-  - C2.2
-  - C3.2
   - C4.2
   - C5.2
   - C6.2
@@ -292,9 +293,9 @@ nets:
 - name: Net-(C17-Pad1)
   pins: [C17.1, J5.1, Q5.3, U6.3]
 - name: Net-(C2-Pad1)
-  pins: [C2.1, J1.1, R1.2]
+  pins: [J1.1, R1.2]
 - name: Net-(C3-Pad1)
-  pins: [C3.1, R1.1, U2.32]
+  pins: [R1.1, U2.32]
 - name: Net-(C9-Pad1)
   pins: [C9.1, D2.5, J4.1, U2.18, U3.8]
 - name: Net-(D1-Pad2)

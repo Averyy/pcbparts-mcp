@@ -3,7 +3,7 @@ slug: lab-bench-psu
 source: BojanSof/Lab-Bench-PSU
 format: kicad6
 description: 'Adjustable CC/CV bench supply: LM2576 switching pre-reg + LM317 linear post-stage, LM324 error amplifier'
-tags: [audio, display]
+tags: [display]
 key_ics: [LM2576]
 outline:
   width_mm: 110.0
@@ -107,20 +107,20 @@ components:
   value: 1N4007
   footprint: DO-41_SOD81_P10.16mm_Horizontal
 - ref: J1
-  value: 1x2 header
-  footprint: SolderWire-1.5sqmm
+  value: 1x2 6.00mm solder wire pads
+  footprint: SolderWire-1.5sqmm_1x02
 - ref: J2
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: J3
-  value: 1x6 header
-  footprint: 1X6
+  value: 1x6 2.54mm header
+  footprint: 1X6_P2.54mm
   pin_count: 6
   nc_pins: {'6': '6'}
 - ref: J4
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J5
   value: Output

@@ -88,34 +88,35 @@ components:
 - ref: F1
   value: 120mA PTC
   footprint: '1206'
+  mpn: 1206L012THR
 - ref: J1
   value: 282834-2
   footprint: CONN_282834-2
-  description: Terminal block; 2
+  description: TERMI-BLOK PCB MOUNT, 90 2P.
   manufacturer: TE Connectivity
   mpn: 282834-2
 - ref: J2
   value: 282834-2
   footprint: CONN_282834-2
-  description: Terminal block; 2
+  description: TERMI-BLOK PCB MOUNT, 90 2P.
   manufacturer: TE Connectivity
   mpn: 282834-2
 - ref: J3
   value: 282834-2
   footprint: CONN_282834-2
-  description: Terminal block; 2
+  description: TERMI-BLOK PCB MOUNT, 90 2P.
   manufacturer: TE Connectivity
   mpn: 282834-2
 - ref: J4
   value: 282834-2
   footprint: CONN_282834-2
-  description: Terminal block; 2
+  description: TERMI-BLOK PCB MOUNT, 90 2P.
   manufacturer: TE Connectivity
   mpn: 282834-2
 - ref: J5
   value: 282834-2
   footprint: CONN_282834-2
-  description: Terminal block; 2
+  description: TERMI-BLOK PCB MOUNT, 90 2P.
   manufacturer: TE Connectivity
   mpn: 282834-2
 - ref: J6
@@ -137,11 +138,13 @@ components:
   footprint: 2X03
   pin_count: 6
 - ref: L1
-  value: DR73-100-R
+  value: 10uH
   footprint: DR73
+  mpn: DR73-100-R
 - ref: L2
-  value: DR73-220-R
+  value: 22uH
   footprint: DR73
+  mpn: DR73-220-R
 - ref: R1
   value: 10.7kohm
   footprint: '0603'
@@ -275,6 +278,7 @@ components:
   value: MAX9934TAUA
   footprint: 21-0036K
   description: Linear IC - Op-amp Maxim Integrated MAX9934TAUA+ Current sensor uMAX 8
+  digikey: MAX9934TAUA+-ND
   manufacturer: Maxim Integrated
   mpn: MAX9934TAUA+
   pin_count: 8
@@ -283,14 +287,15 @@ components:
   value: MAX9934TAUA
   footprint: 21-0036K
   description: Linear IC - Op-amp Maxim Integrated MAX9934TAUA+ Current sensor uMAX 8
+  digikey: MAX9934TAUA+-ND
   manufacturer: Maxim Integrated
   mpn: MAX9934TAUA+
   pin_count: 8
   nc_pins: {N.C._2: '4', N.C.: '5'}
 - ref: U3
   value: BQ25570RGRR
-  footprint: QFN-21
-  description: Ultra Low Power Harvester Power Management IC with Boost Charger, and Nanopower
+  footprint: QFN50P350X350X100-21N
+  description: Ultra Low Power Harvester Power Management IC with Boost Charger, and Nanopower Buck Converter 20-VQFN
   manufacturer: Texas Instruments
   mpn: BQ25570RGRR
   pin_count: 25
@@ -308,17 +313,17 @@ components:
   pin_count: 10
 - ref: U7
   value: ADS7041IRUGR
-  footprint: QFN-8
+  footprint: QFN50P150X150X40-8N
   pin_count: 8
 nets:
 - name: '!CS!'
-  pins: [R14.1, TP20.TP, U7.!CS!]
+  pins: [R14.1, U7.!CS!]
 - name: A0
   pins: [J7.1, U6.A0]
 - name: A1
   pins: [J7.2, U6.A1]
 - name: AINP
-  pins: [C22.2, R24.1, TP17.TP, U7.AINP]
+  pins: [C22.2, R24.1, U7.AINP]
 - name: BUF_IN
   pins:
   - SJ10.1
@@ -331,9 +336,9 @@ nets:
 - name: BUF_OUT
   pins: [R24.2, SJ13.2]
 - name: CMES1
-  pins: [R1.2, SJ15.2, TP24.TP, U1.OUT]
+  pins: [R1.2, SJ15.2, U1.OUT]
 - name: CMES2
-  pins: [R2.2, SJ14.2, TP23.TP, U2.OUT]
+  pins: [R2.2, SJ14.2, U2.OUT]
 - name: COM
   pins: [SJ3.3, U4.COM]
 - name: CS
@@ -344,11 +349,7 @@ nets:
   pins:
   - C1.2
   - C10.2
-  - C11.2
   - C12.2
-  - C13.2
-  - C14.2
-  - C15.2
   - C16.2
   - C17.2
   - C18.2
@@ -363,7 +364,6 @@ nets:
   - C4.1
   - C5.1
   - C6.2
-  - C7.2
   - C8.2
   - C9.2
   - J1.1
@@ -386,8 +386,6 @@ nets:
   - R20.1
   - R5.1
   - R8.1
-  - TP12.TP
-  - TP4.TP
   - U1.GROUND
   - U2.GROUND
   - U3.EP@1
@@ -407,11 +405,11 @@ nets:
 - name: IN
   pins: [SJ13.3, U5.IN-, U5.OUT]
 - name: IN_2
-  pins: [SJ10.2, TP14.TP, U5.IN+]
+  pins: [SJ10.2, U5.IN+]
 - name: LBOOST
-  pins: [L2.2, TP2.TP, U3.LBOOST]
+  pins: [L2.2, U3.LBOOST]
 - name: LBUCK
-  pins: [L1.2, TP1.TP, U3.LBUCK]
+  pins: [L1.2, U3.LBUCK]
 - name: N$12
   pins: [J7.5, R15.2]
 - name: N$2
@@ -430,26 +428,17 @@ nets:
   pins: [R10.1, R8.2, U3.OK_PROG]
 - name: RSN2
   pins:
-  - C14.1
   - J1.2
   - J3.2
   - R3.2
   - SJ1.2
   - SJ3.1
   - SJ9.2
-  - TP9.TP
   - U2.RSN
 - name: RSP1
-  pins:
-  - C16.1
-  - J2.2
-  - R11.2
-  - R16.2
-  - SJ2.2
-  - TP11.TP
-  - U1.RSP
+  pins: [C16.1, J2.2, R11.2, R16.2, SJ2.2, U1.RSP]
 - name: RSP1_DIV
-  pins: [R16.1, R17.2, SJ11.2, TP16.TP]
+  pins: [R16.1, R17.2, SJ11.2]
 - name: S1
   pins: [SJ11.3, U6.S1]
 - name: S2
@@ -459,9 +448,9 @@ nets:
 - name: S4
   pins: [SJ15.1, U6.S4]
 - name: SCLK
-  pins: [R15.1, TP22.TP, U7.SCLK]
+  pins: [R15.1, U7.SCLK]
 - name: SDO
-  pins: [J7.4, R23.1, TP21.TP]
+  pins: [J7.4, R23.1]
 - name: SDO_2
   pins: [R23.2, U7.SDO]
 - name: SW
@@ -469,11 +458,11 @@ nets:
 - name: V+
   pins: [C19.1, SJ9.1, U4.NO, U4.V+]
 - name: VBAT
-  pins: [C18.1, J4.2, JP1.2, R18.2, TP6.TP, U3.VBAT]
+  pins: [C18.1, J4.2, JP1.2, R18.2, U3.VBAT]
 - name: VBAT_DIV
-  pins: [R18.1, R19.2, SJ12.2, TP19.TP]
+  pins: [R18.1, R19.2, SJ12.2]
 - name: VBAT_OK
-  pins: [JP2.4, TP7.TP, U3.VBAT_OK]
+  pins: [JP2.4, U3.VBAT_OK]
 - name: VBAT_OV
   pins: [R4.1, R5.2, U3.VBAT_OV]
 - name: VCC_SW
@@ -486,26 +475,23 @@ nets:
   - SJ7.1
   - SJ8.1
 - name: VCC_SW1
-  pins: [C2.2, C3.2, R6.1, SJ4.2, TP26.TP, U1.VCC]
+  pins: [C2.2, C3.2, R6.1, SJ4.2, U1.VCC]
 - name: VCC_SW2
-  pins: [C4.2, C5.2, R7.1, SJ5.2, TP25.TP, U2.VCC]
+  pins: [C4.2, C5.2, R7.1, SJ5.2, U2.VCC]
 - name: VCC_SW3
-  pins: [C21.1, SJ6.2, TP13.TP, U6.EN, U6.V+]
+  pins: [C21.1, SJ6.2, U6.EN, U6.V+]
 - name: VCC_SW4
-  pins: [C20.1, SJ7.2, TP15.TP, U5.VCC+]
+  pins: [C20.1, SJ7.2, U5.VCC+]
 - name: VCC_SW5
-  pins: [C23.2, C24.1, SJ8.2, TP18.TP, U7.AVDD, U7.DVDD]
+  pins: [C23.2, C24.1, SJ8.2, U7.AVDD, U7.DVDD]
 - name: VIN_DC
   pins:
   - C10.1
   - C12.1
-  - C13.1
-  - C15.1
   - L2.1
   - R11.1
   - R22.2
   - SJ2.1
-  - TP10.TP
   - U1.RSN
   - U3.VIN_DC
 - name: VOC_SAMP
@@ -514,11 +500,9 @@ nets:
   pins:
   - C17.1
   - C6.1
-  - C7.1
   - L1.1
   - R3.1
   - SJ1.1
-  - TP3.TP
   - U2.RSP
   - U3.VOUT
 - name: VOUT_EN
@@ -526,18 +510,11 @@ nets:
 - name: VOUT_SET
   pins: [R12.1, R13.2, U3.VOUT_SET]
 - name: VRDIV
-  pins: [R12.2, R4.2, R9.2, TP8.TP, U3.VRDIV]
+  pins: [R12.2, R4.2, R9.2, U3.VRDIV]
 - name: VREF_SAMP
   pins: [C1.1, U3.VREF_SAMP]
 - name: VSTOR
-  pins:
-  - C11.1
-  - C8.1
-  - C9.1
-  - JP1.6
-  - JP2.2
-  - TP5.TP
-  - U3.VSTOR
+  pins: [C8.1, C9.1, JP1.6, JP2.2, U3.VSTOR]
 positions:
 - ref: C1
   x: 19.0

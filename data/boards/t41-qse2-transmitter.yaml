@@ -1,7 +1,7 @@
 name: T41 QSE2 Transmitter
 slug: t41-qse2-transmitter
 source: Greg-R/qse2
-format: kicad7
+format: kicad8
 description: 'Quadrature sampling exciter for HF transmit: I/Q modulation, Class E PA driver'
 tags: [ham-radio, ham-radio-rf]
 key_ics: [SN74LVC1G14DBV, NCP114ASN330T1G, AD8137ARZ-R7, NCV8114ASN165T1G, UA78M05IDCYR]
@@ -154,18 +154,20 @@ components:
 - ref: J1
   value: 5-1814832-1
   footprint: RF_SMA_Vertical_5-1814832-1
+  digikey: A97594-ND
   mpn: 5-1814832-1
   manufacturer: TE Connectivity AMP Connectors
   description: CONN SMA JACK STR 50 OHM PCB
 - ref: J2
   value: 5-1814832-1
   footprint: RF_SMA_Vertical_5-1814832-1
+  digikey: A97594-ND
   mpn: 5-1814832-1
   manufacturer: TE Connectivity AMP Connectors
   description: CONN SMA JACK STR 50 OHM PCB
 - ref: J3
-  value: 2x8 header
-  footprint: IDC-Header
+  value: 2x8 2.54mm header
+  footprint: IDC-Header_2x08
   pin_count: 16
   nc_pins: {Pin_9: '9', Pin_10: '10', Pin_13: '13', Pin_14: '14'}
 - ref: J4
@@ -175,14 +177,15 @@ components:
   pin_count: 4
   nc_pins: {'4': '4'}
 - ref: J6
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.50mm header
+  footprint: 1X2_P2.50mm
 - ref: J7
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.50mm header
+  footprint: 1X4_P2.50mm
+  digikey: 455-2249-ND
   mpn: B4B-XH-A(LF)(SN)
-  manufacturer: JST Sales America Inc.
   description: CONN HEADER VERT 4POS 2.5MM
+  manufacturer: JST Sales America Inc.
   pin_count: 4
 - ref: R1
   value: 270ohm
@@ -411,9 +414,9 @@ nets:
 - name: /SET
   pins: [C25.1, J3.Pin_1, R28.1]
 - name: /TXRX
-  pins: [C8.2, J3.Pin_2, J6.Pin_1, R3.1]
+  pins: [C8.2, J3.Pin_2, J6.Pin_1]
 - name: /TXRX_OA
-  pins: [C2.2, R3.2, U5.PD_NOT, U9.PD_NOT]
+  pins: [C2.2, U5.PD_NOT, U9.PD_NOT]
 - name: GND
   pins:
   - C1.1

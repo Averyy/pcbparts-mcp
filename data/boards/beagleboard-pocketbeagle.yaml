@@ -45,6 +45,12 @@ components:
   value: 100nF
   footprint: '0402'
   voltage: 6.3V
+- ref: FB1
+  value: FB-_INCH_-0603
+  footprint: '0603'
+- ref: FB2
+  value: FB-_INCH_-0603
+  footprint: '0603'
 - ref: LED1
   value: PWR
   footprint: '0603'
@@ -59,7 +65,6 @@ components:
 - ref: R1
   value: 1kohm
   footprint: '0402'
-  pulldown: /N$4
 - ref: R10
   value: 10kohm
   footprint: RN0804
@@ -113,7 +118,10 @@ components:
   value: OSD3358-512M-BSM
   footprint: OSD335X-BGA-256
   pin_count: 256
-  nc_pins: {A5: A5, A6: A6, B5: B5, D5: D5, D12: D12, D13: D13, D14: D14, D15: D15, D16: D16, E13: E13, E14: E14, E15: E15, E16: E16, F14: F14, F15: F15, F16: F16, G14: G14, G15: G15, G16: G16, H6: H6, H14: H14, H15: H15, H16: H16, J6: J6, J14: J14, J15: J15, K4: K4, K13: K13, L13: L13, M1: M1, M13: M13, N1: N1, N2: N2, P1: P1, P2: P2, P3: P3, P4: P4, R1: R1, R2: R2, R3: R3, R4: R4, R12: R12, T1: T1, T2: T2, T3: T3, T4: T4, T12: T12, T13: T13}
+  nc_pins: {A5: A5, A6: A6, B5: B5, D5: D5, D12: D12, D13: D13, D14: D14, D15: D15, D16: D16, E13: E13, E14: E14, E15: E15,
+    E16: E16, F14: F14, F15: F15, F16: F16, G14: G14, G15: G15, G16: G16, H6: H6, H14: H14, H15: H15, H16: H16, J6: J6, J14: J14,
+    J15: J15, K4: K4, K13: K13, L13: L13, M1: M1, M13: M13, N1: N1, N2: N2, P1: P1, P2: P2, P3: P3, P4: P4, R1: R1, R2: R2,
+    R3: R3, R4: R4, R12: R12, T1: T1, T2: T2, T3: T3, T4: T4, T12: T12, T13: T13}
 - ref: U2
   value: SN74LVC1G07DCK
   footprint: SC70(TI-DCK)
@@ -146,7 +154,7 @@ components:
   pin_count: 13
 - ref: Y1
   value: 24 MHz
-  footprint: CRYSTAL
+  footprint: CRYSTAL_5X3.2MM
 nets:
 - name: /(U1.A1)PWM0A
   pins: [P1.36, U1.A1]
@@ -545,6 +553,13 @@ positions:
 - ref: C7
   x: 167.56
   y: 114.2
+- ref: FB1
+  x: 127.73
+  y: 102.95
+- ref: FB2
+  x: 171.75
+  y: 114.2
+  rot: 180.0
 - ref: LED1
   x: 124.68
   y: 95.07

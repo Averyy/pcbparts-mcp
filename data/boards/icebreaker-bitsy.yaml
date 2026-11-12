@@ -1,7 +1,7 @@
 name: iCEBreaker-Bitsy
 slug: icebreaker-bitsy
 source: icebreaker-fpga/icebreaker
-format: kicad7
+format: kicad8
 description: Ultra-compact iCE40UP5K FPGA in Feather-like form factor, SPI flash
 tags: [fpga]
 key_ics: [iCE40UP5K]
@@ -199,17 +199,17 @@ components:
   value: 1x1 header
   footprint: 1X1
 - ref: P32
-  value: 1x2 header
-  footprint: PAD_SMD
+  value: UP
+  footprint: PAD_SMD_1x2.65
 - ref: P33
-  value: 1x2 header
-  footprint: PAD_SMD
+  value: UP
+  footprint: PAD_SMD_1x2.65
 - ref: P34
-  value: 1x2 header
-  footprint: PAD_SMD
+  value: UP
+  footprint: PAD_SMD_1x2.65
 - ref: P35
-  value: 1x2 header
-  footprint: PAD_SMD
+  value: UP
+  footprint: PAD_SMD_1x2.65
 - ref: P36
   value: 1x1 header
   footprint: 1X1
@@ -227,10 +227,10 @@ components:
   footprint: 1X1
 - ref: P40
   value: 1x1 header
-  footprint: PAD_SMD_R
+  footprint: PAD_SMD_R_1x1
 - ref: P41
   value: 1x1 header
-  footprint: PAD_SMD_R
+  footprint: PAD_SMD_R_1x1
 - ref: P5
   value: 1x1 header
   footprint: 1X1
@@ -255,11 +255,9 @@ components:
 - ref: R11
   value: 2.2kohm
   footprint: '0402'
-  pullup: D1.A
 - ref: R12
   value: 2.2kohm
   footprint: '0402'
-  pullup: D2.A
 - ref: R13
   value: 2.2kohm
   footprint: '0402'
@@ -294,24 +292,24 @@ components:
   pullup: /CLK_EN
 - ref: R9
   value: 10kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   pullup: /SPI_SCK
   pin_count: 8
 - ref: SW1
   value: TACT
-  footprint: SW_SPST
+  footprint: SW_SPST_3x4x2.5
 - ref: U1
   value: USBLC6-2
   footprint: SOT-666
   pin_count: 6
 - ref: U2
   value: TLV75533PDRV
-  footprint: WSON-6-1EP
+  footprint: WSON-6-1EP_2x2
   pin_count: 7
   nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: U3
   value: TLV73312PDRV
-  footprint: WSON-6-1EP
+  footprint: WSON-6-1EP_2x2
   pin_count: 7
   nc_pins: {NC@2: '2', NC@5: '5'}
 - ref: U4
@@ -321,15 +319,16 @@ components:
   pin_count: 8
 - ref: U5
   value: W25Q128JVxxM
-  footprint: WSON-8-1EP
+  footprint: WSON-8-1EP_6x5
   pin_count: 8
 - ref: U6
   value: ICE40UP5K
-  footprint: QFN-48-1EP
+  footprint: QFN-48-1EP_7x7
+  mpn: ICE40UP5K-SG48
   pin_count: 49
 - ref: X1
   value: 12MHz
-  footprint: Oscillator_SMD_SCTF_S2DXX-4Pin
+  footprint: Oscillator_SMD_SCTF_S2DXX-4Pin_2.5x2.0
   pin_count: 4
 nets:
 - name: +1V2

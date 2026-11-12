@@ -92,6 +92,7 @@ components:
 - ref: D1
   value: 1N4148WT
   footprint: SOD-523
+  lcsc: C232841
 - ref: EXLED1
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
@@ -112,22 +113,25 @@ components:
 - ref: J1
   value: USB-C
   footprint: TYPE-C-31-M-13C
+  lcsc: C2848620
+  mpn: TYPE-C-31-M-13C
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J2
   value: TRS
   footprint: PJ-398A-5A_PJ-399B-6A
+  lcsc: C128994
   pin_count: 3
 - ref: J3
   value: 1x4 header
   footprint: OLED
   pin_count: 4
 - ref: J4
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
 - ref: LED1
   value: YS-SK6812MINI-E
@@ -248,9 +252,11 @@ components:
 - ref: SMDSW1
   value: TS-1088R-02026
   footprint: TS-1088R-02026
+  lcsc: C455280
 - ref: SMDSW2
   value: TS-1088R-02026
   footprint: TS-1088R-02026
+  lcsc: C455280
 - ref: SW1
   value: tactile switch
   footprint: keyswitch_cherrymx_hotswap_1.5u
@@ -316,28 +322,35 @@ components:
   footprint: keyswitch_cherrymx_hotswap_1u
 - ref: U1
   value: RP2040
-  footprint: QFN-56-1EP
+  footprint: QFN-56-1EP_7x7
+  lcsc: C2040
   pin_count: 57
 - ref: U2
   value: NCP1117LPST33T3G
   footprint: SOT-223-3_TabPin2
+  lcsc: C146799
   pin_count: 3
 - ref: U3
   value: TPD4E05U06DQAR
   footprint: USON-10
+  lcsc: C138714
   pin_count: 10
 - ref: U4
   value: W25Q128JVSIQ
   footprint: SOIC-8
+  lcsc: C113767
   pin_count: 8
 - ref: Y1
   value: 12MHz 18pF
   footprint: SMD3225
+  mpn: Q22FA23V0041800
+  lcsc: C91749
   description: "12MHz 18pF \xB120ppm SMD3225-4P Crystals ROHS"
   pin_count: 4
 - ref: ZD1
   value: RB521S30T1G
   footprint: SOD-523
+  lcsc: C145179
 - ref: rBT1
   value: Breakaway Tabs
   footprint: Breakaway_Tabs
@@ -401,6 +414,7 @@ components:
 - ref: rD1
   value: 1N4148WT
   footprint: SOD-523
+  lcsc: C232841
 - ref: rEXLED1
   value: YS-SK6812MINI-E
   footprint: YS-SK6812MINI-E
@@ -421,22 +435,25 @@ components:
 - ref: rJ1
   value: USB-C
   footprint: TYPE-C-31-M-13C
+  lcsc: C2848620
+  mpn: TYPE-C-31-M-13C
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: rJ2
   value: TRS
   footprint: PJ-398A-5A_PJ-399B-6A
+  lcsc: C128994
   pin_count: 3
 - ref: rJ3
   value: 1x4 header
   footprint: OLED
   pin_count: 4
 - ref: rJ4
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: rJP1
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
 - ref: rLED1
   value: YS-SK6812MINI-E
@@ -552,9 +569,11 @@ components:
 - ref: rSMDSW1
   value: TS-1088R-02026
   footprint: TS-1088R-02026
+  lcsc: C455280
 - ref: rSMDSW2
   value: TS-1088R-02026
   footprint: TS-1088R-02026
+  lcsc: C455280
 - ref: rSW1
   value: tactile switch
   footprint: keyswitch_cherrymx_hotswap_1.5u
@@ -620,28 +639,35 @@ components:
   footprint: keyswitch_cherrymx_hotswap_1u
 - ref: rU1
   value: RP2040
-  footprint: QFN-56-1EP
+  footprint: QFN-56-1EP_7x7
+  lcsc: C2040
   pin_count: 57
 - ref: rU2
   value: NCP1117LPST33T3G
   footprint: SOT-223-3_TabPin2
+  lcsc: C146799
   pin_count: 3
 - ref: rU3
   value: TPD4E05U06DQAR
   footprint: USON-10
+  lcsc: C138714
   pin_count: 10
 - ref: rU4
   value: W25Q128JVSIQ
   footprint: SOIC-8
+  lcsc: C113767
   pin_count: 8
 - ref: rY1
   value: 12MHz 18pF
   footprint: SMD3225
+  mpn: Q22FA23V0041800
+  lcsc: C91749
   description: "12MHz 18pF \xB120ppm SMD3225-4P Crystals ROHS"
   pin_count: 4
 - ref: rZD1
   value: RB521S30T1G
   footprint: SOD-523
+  lcsc: C145179
 nets:
 - name: +1V1
   pins: [C3.1, C4.1, C5.1, U1.DVDD@23, U1.DVDD@50, U1.VREG_VOUT]

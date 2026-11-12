@@ -1,9 +1,9 @@
 name: Glasgow Interface Explorer
 slug: glasgow-interface-explorer
 source: GlasgowEmbedded/glasgow
-format: kicad7
+format: kicad8
 description: iCE40HX8K FPGA, USB 2.0 FX2LP (CY7C68013A) debug tool
-tags: [fpga]
+tags: [fpga, level-shifting]
 key_ics: [CY7C68013A, ICE40HX8K]
 outline:
   width_mm: 80.0
@@ -356,7 +356,7 @@ components:
   decouples: U36
 - ref: C87
   value: 150uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x5.9
   mpn: A765EB157M1ALAE022
   manufacturer: KEMET
   decouples: U36
@@ -492,20 +492,20 @@ components:
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J2
-  value: 2x10 header
-  footprint: IDC-Header
+  value: 2x10 2.54mm header
+  footprint: IDC-Header_2x10
   manufacturer: Molex
   mpn: 87834-2019
   pin_count: 20
   nc_pins: {Pin_19: '19', Pin_20: '20'}
 - ref: J4
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: Molex_KK-254
   manufacturer: Molex
   mpn: 22-05-3021
 - ref: J5
-  value: 2x22 header
-  footprint: 2X22
+  value: 2x22 1.27mm header
+  footprint: 2X22_P1.27mm_SMD
   mpn: FTS-122-01-L-DV
   manufacturer: Samtec Inc.
   pin_count: 44
@@ -531,7 +531,6 @@ components:
   footprint: '0402'
   manufacturer: Yageo
   mpn: RC0402FR-1310KL
-  pullup: D1.A
 - ref: R13
   value: 2.2kohm
   footprint: '0402'
@@ -734,37 +733,37 @@ components:
   pulldown: /nFPGA_RESET
 - ref: RN10
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-1333RL
   manufacturer: Yageo
   pin_count: 8
 - ref: RN11
   value: 10kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-0710KL
   manufacturer: Yageo
   pin_count: 8
 - ref: RN12
   value: 10kohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-0710KL
   manufacturer: Yageo
   pin_count: 8
 - ref: RN7
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-1333RL
   manufacturer: Yageo
   pin_count: 8
 - ref: RN8
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-1333RL
   manufacturer: Yageo
   pin_count: 8
 - ref: RN9
   value: 33ohm
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   mpn: YC124-JR-1333RL
   manufacturer: Yageo
   pin_count: 8
@@ -777,7 +776,7 @@ components:
   nc_pins: {'3': '3'}
 - ref: U1
   value: CY7C68013A
-  footprint: Cypress_QFN-56-1EP
+  footprint: Cypress_QFN-56-1EP_8x8
   manufacturer: Cypress
   mpn: CY7C68013A-56LTXC
   pin_count: 57
@@ -872,7 +871,7 @@ components:
   pin_count: 6
 - ref: U36
   value: TLV73312PQDRVR
-  footprint: DFN-6-1EP
+  footprint: DFN-6-1EP_2x2
   mpn: TLV73312PQDRVRQ1
   manufacturer: Texas Instruments
   pin_count: 7
@@ -896,7 +895,7 @@ components:
   pin_count: 4
 - ref: U8
   value: TLV75533PDRVR
-  footprint: DFN-6-1EP
+  footprint: DFN-6-1EP_2x2
   mpn: TLV75533PDRVR
   manufacturer: Texas Instruments
   pin_count: 7

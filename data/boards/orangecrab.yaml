@@ -3,7 +3,7 @@ slug: orangecrab
 source: orangecrab-fpga/orangecrab-hardware
 format: kicad_legacy
 description: ECP5 FPGA (LFE5U-25F), DDR3L SDRAM
-tags: [fpga, rf-sdr]
+tags: [fpga]
 key_ics: [LFE5U-25F, ECP5]
 outline:
   width_mm: 50.8
@@ -385,12 +385,12 @@ components:
   mpn: BLM15AG601SN1D
 - ref: J1
   value: 1x12 header
-  footprint: Feather_PinHeader
+  footprint: Feather_PinHeader_1x12
   mpn: DNP
   pin_count: 12
 - ref: J2
   value: 1x16 header
-  footprint: Feather_PinHeader
+  footprint: Feather_PinHeader_1x16
   mpn: DNP
   pin_count: 16
 - ref: J3
@@ -398,6 +398,7 @@ components:
   footprint: USB-C
   manufacturer: GCT
   mpn: USB4105-GF-A
+  lcsc: C167321
   pin_count: 17
   nc_pins: {A8: A8, B8: B8}
 - ref: J4
@@ -408,13 +409,13 @@ components:
   pin_count: 10
 - ref: J5
   value: JST
-  footprint: JST_PH_B2B-PH-SM4-TB
+  footprint: JST_PH_B2B-PH-SM4-TB_1x02
   mpn: S2B-PH-SM4-TB(LF)(SN)
   manufacturer: JST Sales America Inc.
   pin_count: 3
 - ref: J6
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   mpn: DNP
   pin_count: 5
 - ref: L1
@@ -434,264 +435,264 @@ components:
   mpn: LQM21PN2R2NGCD
 - ref: OSC1
   value: KC2520B48.0000C10E00
-  footprint: Oscilator
+  footprint: Oscilator_2.5x2.0
   mpn: ECS-2520MV-480-BN-TR
   manufacturer: ECS Inc.
   pin_count: 4
 - ref: R1
   value: 1kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-071KL
 - ref: R10
   value: 56.2kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0756K2L
   pulldown: U5.14
 - ref: R11
   value: 3.09kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-073K09L
   pulldown: U5.12
 - ref: R12
   value: 4.32kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-074K32L
   pulldown: U5.16
 - ref: R13
   value: 51ohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0751RL
 - ref: R14
   value: 5.1kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-075K1L
   pulldown: J3.B5
 - ref: R15
   value: 120kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-07120KL
   pulldown: U1.1
 - ref: R16
   value: 5.1kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-075K1L
   pulldown: J3.A5
 - ref: R17
   value: 100kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-07100KL
 - ref: R19
   value: 240ohm
   footprint: '0402'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0402FR-07240RL
 - ref: R2
   value: 1kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-071KL
   pulldown: ECP5_VREF
 - ref: R20
   value: 1.5kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-071K5L
 - ref: R21
   value: 20ohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0720RL
 - ref: R22
   value: 1.5kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-071K5L
 - ref: R23
   value: 4.7kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-074K7L
 - ref: R24
   value: 3.57kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-073K57L
 - ref: R25
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
   pullup: EN
 - ref: R26
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
   pulldown: U5.1
 - ref: R27
   value: 4.7kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-074K7L
   pulldown: JTAG_TCK
 - ref: R28
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
 - ref: R29
   value: 20ohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0720RL
 - ref: R3
   value: 51ohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0751RL
 - ref: R30
   value: 4.7kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-074K7L
 - ref: R31
   value: 1.5kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-071K5L
 - ref: R32
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
   pullup: U9.16
 - ref: R33
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
   pulldown: U9.16
 - ref: R34
   value: 150kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-07150KL
 - ref: R35
   value: 120kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-07120KL
   pulldown: U2.1
 - ref: R37
   value: 360kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-07360KL
 - ref: R38
   value: 82kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0782KL
   pulldown: U7.1
 - ref: R39
   value: 4.7kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-074K7L
 - ref: R4
   value: 4.7kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-074K7L
 - ref: R40
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
 - ref: R41
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
 - ref: R42
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
 - ref: R43
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
 - ref: R44
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
 - ref: R45
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
   pulldown: ADC_SENSE_HI
 - ref: R46
   value: 5.1kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-075K1L
 - ref: R48
   value: 51ohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0751RL
 - ref: R49
   value: 51ohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0751RL
 - ref: R5
   value: 51ohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0751RL
 - ref: R50
   value: 51ohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0751RL
 - ref: R51
   value: 51ohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0751RL
 - ref: R6
   value: 51ohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0751RL
 - ref: R7
   value: 10kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-0710KL
 - ref: R8
   value: 4.7kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-074K7L
 - ref: R9
   value: 3.57kohm
   footprint: '0201'
-  manufacturer: "\u200EYageo\u200E"
+  manufacturer: Yageo
   mpn: RC0201FR-073K57L
   pulldown: U5.15
 - ref: SW1
@@ -735,13 +736,13 @@ components:
   nc_pins: {G8: G8, J1: J1, J9: J9, L1: L1, L9: L9}
 - ref: U5
   value: BQ24232
-  footprint: QFN-16-1EP
+  footprint: QFN-16-1EP_3x3
   mpn: BQ24232RGTR
   manufacturer: Texas Instruments
   pin_count: 17
 - ref: U6
   value: W25Q128JVP
-  footprint: WSON-8-1EP
+  footprint: WSON-8-1EP_6x5
   mpn: W25Q128JVPIQ
   manufacturer: Winbond Electronics
   pin_count: 8
@@ -849,15 +850,7 @@ nets:
   - U4.H1
   - U4.M8
 - name: EN
-  pins:
-  - J1.2
-  - R18.1
-  - R25.1
-  - R36.1
-  - U1.5
-  - U10.3
-  - U2.5
-  - U7.5
+  pins: [J1.2, R25.1, U1.5, U10.3, U2.5, U7.5]
 - name: FPGA_RESET
   pins: [J2.1, R39.1, U3.T15, U3.V17]
 - name: GND
@@ -1482,9 +1475,7 @@ nets:
   - C6.2
   - C7.2
   - D2.1
-  - R18.2
   - R25.2
-  - R36.2
   - U1.3
   - U2.3
   - U5.10

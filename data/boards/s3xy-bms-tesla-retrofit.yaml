@@ -1,7 +1,7 @@
 name: S3XY-BMS Tesla Retrofit
 slug: s3xy-bms-tesla-retrofit
 source: clowrey/S3XY-BMS-PCB
-format: kicad8
+format: kicad9
 description: 'Tesla Model 3/Y 400V battery pack retrofit BMS: RP2354B, TI INA228 20-bit current sensor'
 tags: [battery-management, current-sensing, isolation, sensors]
 key_ics: [RP2354B, INA228]
@@ -18,812 +18,1120 @@ components:
 - ref: C1
   value: 10uF
   footprint: 0805
+  lcsc: C440198
   voltage: 50V
   description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
 - ref: C10
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
 - ref: C100
   value: 1uF
   footprint: '0603'
+  lcsc: C15849
   description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
 - ref: C101
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C102
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
   description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
 - ref: C103
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
   description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
 - ref: C11
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C112
   value: 680uF
   footprint: CP_Radial_D10.0mm_P5.00mm
+  lcsc: C46550429
   voltage: 35V Polymer
   description: 35V 4.1A@100kHz 680uF Polymer
 - ref: C117
   value: 15pF
   footprint: '0402'
+  voltage: 50V
+  lcsc: C1548
   description: 0402CG150J500NT
 - ref: C118
   value: 15pF
   footprint: '0402'
+  voltage: 50V
+  lcsc: C1548
   description: 0402CG150J500NT
 - ref: C12
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C120
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C123
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C124
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C126
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C127
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C128
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C129
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C130
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C131
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C132
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C14
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
   decouples: U13
 - ref: C15
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C16
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C17
   value: 1uF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C15849
   description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
 - ref: C18
   value: 1uF
   footprint: '0603'
+  lcsc: C15849
   description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
 - ref: C19
   value: 1uF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C15849
   description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
 - ref: C2
   value: 10uF
   footprint: 0805
+  lcsc: C440198
   voltage: 50V
   description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
 - ref: C20
   value: 1uF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C15849
   description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
 - ref: C21
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
   decouples: U28
 - ref: C22
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
   decouples: U32
 - ref: C23
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C25
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
   decouples: U1
 - ref: C26
   value: 1uF
   footprint: '0603'
+  lcsc: C15849
   description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
 - ref: C27
   value: 1uF
   footprint: '0603'
+  lcsc: C15849
   description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
 - ref: C28
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C29
   value: 10uF
   footprint: 0805
+  lcsc: C440198
   voltage: 50V X5R
   description: "10uF 50V X5R \xB110% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
 - ref: C3
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C30
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
   description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
 - ref: C31
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
   description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
 - ref: C32
   value: 4.7uF
   footprint: '0402'
+  voltage: 10V
+  lcsc: C23733
   description: CL05A475MP5NRNC
 - ref: C33
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C34
   value: 680uF
   footprint: CP_Radial_D10.0mm_P5.00mm
+  lcsc: C46550429
   voltage: 35V Polymer
   description: 35V 4.1A@100kHz 680uF Polymer
 - ref: C35
   value: 15pF
   footprint: '0402'
+  voltage: 50V
+  lcsc: C1548
   description: 0402CG150J500NT
 - ref: C36
   value: 15pF
   footprint: '0402'
+  voltage: 50V
+  lcsc: C1548
   description: 0402CG150J500NT
 - ref: C37
   value: 4.7uF
   footprint: '0402'
+  voltage: 10V
+  lcsc: C23733
   description: CL05A475MP5NRNC
   decouples: U27
 - ref: C38
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C39
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C4
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
   decouples: U25
 - ref: C40
   value: 1uF
   footprint: '0603'
+  lcsc: C15849
   description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
 - ref: C41
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
 - ref: C42
   value: 100nF
   footprint: '0603'
-  description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
+  lcsc: C14663
 - ref: C43
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
 - ref: C44
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C45
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C46
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
 - ref: C47
   value: 4.7uF
   footprint: '0402'
+  voltage: 10V
+  lcsc: C23733
   description: CL05A475MP5NRNC
 - ref: C48
   value: 4.7uF
   footprint: '0402'
+  voltage: 10V
+  lcsc: C23733
   description: CL05A475MP5NRNC
   decouples: U27
 - ref: C49
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C5
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
 - ref: C50
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
   decouples: U21
 - ref: C51
   value: 10uF
   footprint: 0805
+  lcsc: C440198
   voltage: 50V X5R
   description: "10uF 50V X5R \xB110% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
 - ref: C52
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C53
   value: 4.7uF
   footprint: '0603'
+  voltage: 16V
+  lcsc: C19666
   description: "CL10A475KO8NNNC - 16V 4.7uF X5R \xB110%"
   decouples: U21
 - ref: C54
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C55
   value: 10uF
   footprint: 0805
+  lcsc: C440198
   voltage: 50V
   description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
   decouples: U17
 - ref: C56
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C57
   value: 10uF
   footprint: 0805
+  lcsc: C440198
   voltage: 50V
   description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
   decouples: U17
 - ref: C58
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
 - ref: C59
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U11
 - ref: C6
   value: 10uF
   footprint: 0805
+  lcsc: C440198
   voltage: 50V X5R
   description: "10uF 50V X5R \xB110% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
 - ref: C60
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U11
 - ref: C61
   value: 4.7uF
   footprint: '0402'
+  voltage: 10V
+  lcsc: C23733
   description: CL05A475MP5NRNC
 - ref: C62
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C63
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U11
 - ref: C64
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U11
 - ref: C65
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U11
 - ref: C66
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U11
 - ref: C67
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U11
 - ref: C68
   value: 100pF
   footprint: '0603'
+  lcsc: C14858
   description: "CL10C101JB8NNNC - 100pF 50V C0G \xB15%"
 - ref: C69
   value: 680uF
   footprint: CP_Radial_D10.0mm_P5.00mm
+  lcsc: C46550429
   voltage: 35V Polymer
   description: 35V 4.1A@100kHz 680uF Polymer
   decouples: U17
 - ref: C7
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C70
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
 - ref: C71
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C72
   value: 4.7uF
   footprint: '0402'
+  voltage: 10V
+  lcsc: C23733
   description: CL05A475MP5NRNC
 - ref: C73
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C74
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U11
 - ref: C75
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U27
 - ref: C76
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C77
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C78
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  lcsc: C1525
   description: CL05B104KO5NNNC
   decouples: U11
 - ref: C79
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
   decouples: U15
 - ref: C8
   value: 10uF
   footprint: 0805
+  lcsc: C440198
   voltage: 50V
   description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
 - ref: C80
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
   decouples: U19
 - ref: C81
   value: 1nF
   footprint: '1206'
+  lcsc: C9196
   description: 1206B102K202NT
 - ref: C82
   value: 1nF
   footprint: '1206'
+  lcsc: C9196
   description: 1206B102K202NT
 - ref: C83
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C84
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C85
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C86
   value: 1uF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C15849
   description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
 - ref: C87
   value: 4.7uF
   footprint: '0402'
+  voltage: 10V
+  lcsc: C23733
   description: CL05A475MP5NRNC
 - ref: C88
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C89
   value: 4.7uF
   footprint: '0402'
+  voltage: 10V
+  lcsc: C23733
   description: CL05A475MP5NRNC
   decouples: U11
 - ref: C9
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C90
   value: 1uF
   footprint: '0603'
+  lcsc: C15849
   description: "CL10A105KB8NNNC - 1uF 50V X5R \xB110%"
 - ref: C91
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C92
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C93
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
   decouples: U18
 - ref: C94
   value: 100nF
   footprint: '0603'
+  lcsc: C14663
 - ref: C95
   value: 22uF
   footprint: 0805
+  lcsc: C45783
   voltage: 25V X5R
   description: "CL21A226MAQNNNE - 22uF 25V X5R \xB120%"
 - ref: C96
   value: 10uF
   footprint: 0805
+  lcsc: C440198
   voltage: 50V X5R
   description: "10uF 50V X5R \xB110% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
 - ref: C97
   value: 100nF
   footprint: '0603'
+  voltage: 50V
+  lcsc: C14663
   description: CC0603KRX7R9BB104 - 100nF 50V X7R
 - ref: C98
   value: 10uF
   footprint: 0805
+  lcsc: C440198
   voltage: 50V
   description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
   decouples: U19
 - ref: C99
   value: 10uF
   footprint: 0805
+  lcsc: C440198
   voltage: 50V
   description: "GRM21BR61H106KE43L - 10uF 50V X5R \xB110%"
   decouples: U15
 - ref: D1
   value: SMCJ33CA
   footprint: SMC
+  voltage: 33V
+  lcsc: C224050
   description: 1.5kW@10/1000us 1uA 28.2A@10/1000us 33V 40.6V 53.3V Bidirectional IEC 61000-4-2
 - ref: D10
   value: SMCJ33CA
   footprint: SMC
+  voltage: 33V
+  lcsc: C224050
   description: 1.5kW@10/1000us 1uA 28.2A@10/1000us 33V 40.6V 53.3V Bidirectional IEC 61000-4-2
 - ref: D11
   value: SS54
   footprint: SMA
+  voltage: 40V
+  current: 5A
+  lcsc: C22452
   description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
 - ref: D12
   value: SMB6.8CA
   footprint: SMB
+  voltage: 5.8V
+  power: 600W
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D13
   value: SMB6.8CA
   footprint: SMB
+  voltage: 5.8V
+  power: 600W
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D14
   value: SS54
   footprint: SMA
+  voltage: 40V
+  current: 5A
+  lcsc: C22452
   description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
 - ref: D15
   value: SS54
   footprint: SMA
+  voltage: 40V
+  current: 5A
+  lcsc: C22452
   description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
 - ref: D16
   value: SMB6.8CA
   footprint: SMB
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D17
   value: SMB6.8CA
   footprint: SMB
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D18
   value: SMB6.8CA
   footprint: SMB
+  voltage: 5.8V
+  power: 600W
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D19
   value: green LED
   footprint: 0805
+  lcsc: C2297
 - ref: D2
   value: green LED
   footprint: 0805
+  lcsc: C2297
 - ref: D20
   value: SMB6.8CA
   footprint: SMB
+  voltage: 5.8V
+  power: 600W
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D21
   value: SS54
   footprint: SMA
+  voltage: 40V
+  current: 5A
+  lcsc: C22452
   description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
 - ref: D22
   value: SMB6.8CA
   footprint: SMB
+  voltage: 5.8V
+  power: 600W
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D23
   value: white LED
   footprint: 0805
+  lcsc: C34499
 - ref: D24
   value: SS54
   footprint: SMA
+  voltage: 40V
+  current: 5A
+  lcsc: C22452
   description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
 - ref: D25
   value: SMCJ33CA
   footprint: SMC
+  voltage: 33V
+  lcsc: C224050
   description: 1.5kW@10/1000us 1uA 28.2A@10/1000us 33V 40.6V 53.3V Bidirectional IEC 61000-4-2
 - ref: D26
   value: white LED
   footprint: 0805
+  lcsc: C34499
 - ref: D27
   value: SMB6.8CA
   footprint: SMB
+  voltage: 5.8V
+  power: 600W
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D28
   value: red LED
   footprint: 0805
+  lcsc: C84256
 - ref: D29
   value: white LED
   footprint: 0805
+  lcsc: C34499
 - ref: D3
   value: green LED
   footprint: 0805
+  lcsc: C2297
 - ref: D30
   value: SS54
   footprint: SMA
+  voltage: 40V
+  current: 5A
+  lcsc: C22452
   description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
 - ref: D31
   value: white LED
   footprint: 0805
+  lcsc: C34499
 - ref: D32
   value: white LED
   footprint: 0805
+  lcsc: C34499
 - ref: D33
   value: red LED
   footprint: 0805
+  lcsc: C84256
 - ref: D34
   value: red LED
   footprint: 0805
+  lcsc: C84256
 - ref: D35
   value: white LED
   footprint: 0805
+  lcsc: C34499
 - ref: D36
   value: SS54
   footprint: SMA
+  voltage: 40V
+  current: 5A
+  lcsc: C22452
   description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
 - ref: D37
   value: green LED
   footprint: 0805
+  lcsc: C2297
 - ref: D38
   value: green LED
   footprint: 0805
+  lcsc: C2297
 - ref: D39
   value: SS54
   footprint: SMA
+  voltage: 40V
+  current: 5A
+  lcsc: C22452
   description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
 - ref: D4
   value: green LED
   footprint: 0805
+  lcsc: C2297
 - ref: D40
   value: red LED
   footprint: 0805
+  lcsc: C84256
 - ref: D41
   value: red LED
   footprint: 0805
+  lcsc: C84256
 - ref: D42
   value: SMB6.8CA
   footprint: SMB
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D43
   value: red LED
   footprint: 0805
+  lcsc: C84256
 - ref: D44
   value: green LED
   footprint: 0805
+  lcsc: C2297
 - ref: D45
   value: SMB6.8CA
   footprint: SMB
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D46
   value: white LED
   footprint: 0805
+  lcsc: C34499
 - ref: D47
   value: white LED
   footprint: 0805
+  lcsc: C34499
 - ref: D49
   value: SMB6.8CA
   footprint: SMB
+  voltage: 5.8V
+  power: 600W
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D5
   value: white LED
   footprint: 0805
+  lcsc: C34499
 - ref: D50
   value: SMB6.8CA
   footprint: SMB
+  voltage: 5.8V
+  power: 600W
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D51
   value: SMB6.8CA
   footprint: SMB
+  voltage: 5.8V
+  power: 600W
+  lcsc: C78395
   description: Bidirectional transient-voltage-suppression diode
 - ref: D53
   value: SS54
   footprint: SMA
+  voltage: 40V
+  current: 5A
+  lcsc: C22452
   description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
 - ref: D6
   value: SS54
   footprint: SMA
+  voltage: 40V
+  current: 5A
+  lcsc: C22452
   description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
 - ref: D7
   value: SMCJ33CA
   footprint: SMC
+  voltage: 33V
+  lcsc: C224050
   description: 1.5kW@10/1000us 1uA 28.2A@10/1000us 33V 40.6V 53.3V Bidirectional IEC 61000-4-2
 - ref: D8
   value: green LED
   footprint: 0805
+  lcsc: C2297
 - ref: D9
   value: SS54
   footprint: SMA
+  voltage: 40V
+  current: 5A
+  lcsc: C22452
   description: 1mA@40V 40V 550mV@5A 5A Independent SMB(DO-214AA) Schottky Diodes
 - ref: FB1
   value: 120ohm@100MHz
   footprint: '0603'
+  current: 2A
+  lcsc: C14709
   description: "120\u03A9@100MHz 2A 50m\u03A9 \xB125% 0603 Ferrite BeadsBLM18PG121SN1D"
 - ref: FB2
   value: 600R@100MHz
   footprint: '0603'
+  lcsc: C1002
   description: "200mA 450m\u03A9"
 - ref: FB3
   value: 120ohm@100MHz
   footprint: '0603'
+  current: 2A
+  lcsc: C14709
   description: "120\u03A9@100MHz 2A 50m\u03A9 \xB125% 0603 Ferrite BeadsBLM18PG121SN1D"
 - ref: FB4
   value: 600R@100MHz
   footprint: '0603'
+  lcsc: C1002
   description: "200mA 450m\u03A9"
 - ref: FB5
   value: 600R@100MHz
   footprint: '0603'
+  lcsc: C1002
   description: "200mA 450m\u03A9 600\u03A9@100MHz"
 - ref: FB6
   value: 600R@100MHz
   footprint: '0603'
+  lcsc: C1002
   description: "200mA 450m\u03A9"
 - ref: FB7
   value: 120ohm@100MHz
   footprint: '0603'
+  current: 2A
+  lcsc: C14709
   description: "120\u03A9@100MHz 2A 50m\u03A9 \xB125% 0603 Ferrite BeadsBLM18PG121SN1D"
 - ref: FL1
   value: SDCW3225S-2-102TF
   footprint: FILTER-SMD_4P-L3.2-W2.5-BL
+  lcsc: C192586
   pin_count: 4
 - ref: FL3
   value: SDCW3225S-2-102TF
   footprint: FILTER-SMD_4P-L3.2-W2.5-BL
+  lcsc: C192586
   pin_count: 4
 - ref: J15
   value: USB-C
   footprint: USB-C
+  lcsc: C2765186
   description: USB 2.0-only 16P Type-C Receptacle connector
   pin_count: 17
   nc_pins: {CC1: A5, SBU1: A8, CC2: B5, SBU2: B8}
 - ref: J17
   value: USB-C
   footprint: USB-C
+  lcsc: C2765186
   description: USB 2.0-only 16P Type-C Receptacle connector
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J18
   value: USB-C
   footprint: USB-C
+  lcsc: C2765186
   description: USB 2.0-only 16P Type-C Receptacle connector
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J19
   value: 8P8C_LED_Shielded_x2
   footprint: RJ45_Amphenol_RJHSE538X-02
+  lcsc: C3010546
   description: RJ connector, 8P8C (8 positions 8 connected), two LEDs, RJ45, Shielded, two
   pin_count: 25
-  nc_pins: {'1': '1', '2': '2', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '12': '12', '13': '13', '14': '14', '19': '19', '20': '20', '21': '21', '22': '22', '23': '23', '24': '24'}
+  nc_pins: {'1': '1', '2': '2', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '12': '12', '13': '13', '14': '14',
+    '19': '19', '20': '20', '21': '21', '22': '22', '23': '23', '24': '24'}
 - ref: J3
   value: 8P8C_LED_Shielded_x2
   footprint: RJ45_Amphenol_RJHSE538X-02
+  lcsc: C3010546
   description: RJ connector, 8P8C (8 positions 8 connected), two LEDs, RJ45, Shielded, two
   pin_count: 25
   nc_pins: {'9': '9', '10': '10', '11': '11', '12': '12'}
 - ref: J6
   value: OEM Connector
   footprint: CONN_SD-34912-001_02_MOL
+  lcsc: C587318
+  mpn: '349128020'
 - ref: JP10
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
   description: Jumper, 2-pole, open
 - ref: JP11
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
   description: Jumper, 2-pole, open
 - ref: JP12
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
   description: Jumper, 2-pole, open
 - ref: L1
   value: 6.8uH
   footprint: L_Changjiang_FXL0630
+  current: 5A
+  lcsc: C167221
 - ref: L2
   value: 6.8uH
   footprint: L_Changjiang_FXL0630
+  lcsc: C167221
 - ref: L3
   value: 22uH
   footprint: L_Changjiang_FXL1040
   current: 5.5A
+  lcsc: C475917
 - ref: L4
   value: 6.8uH
   footprint: L_Changjiang_FXL0630
+  current: 5A
+  lcsc: C167221
 - ref: L5
   value: 6.8uH
   footprint: L_Changjiang_FXL0630
+  current: 5A
+  lcsc: C167221
 - ref: L6
   value: 3.3uH
   footprint: L_pol_2016
+  lcsc: C42411119
+  description: AOTA-B201610S3R3-101-T
 - ref: L7
   value: 3.3uH
   footprint: L_pol_2016
+  lcsc: C42411119
+  description: AOTA-B201610S3R3-101-T
 - ref: L8
   value: 22uH
   footprint: L_Changjiang_FXL1040
   current: 5.5A
+  lcsc: C475917
 - ref: L9
   value: 6.8uH
   footprint: L_Changjiang_FXL0630
+  current: 5A
+  lcsc: C167221
 - ref: PS1
   value: MFM-15-5
   footprint: Converter_ACDC_MeanWell_MFM-15-xx_THT
@@ -832,771 +1140,963 @@ components:
   nc_pins: {AC/L: '1', AC/N: '2', -Vo: '3', +Vo: '4'}
 - ref: Q1
   value: CRSM034N06L2
-  footprint: AO_DFN-8-1EP
+  footprint: AO_DFN-8-1EP_5.55x5.2
+  voltage: 60V
+  current: 80A
+  lcsc: C467174
   description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
   pin_count: 5
 - ref: Q2
   value: CRSM034N06L2
-  footprint: AO_DFN-8-1EP
+  footprint: AO_DFN-8-1EP_5.55x5.2
+  voltage: 60V
+  current: 80A
+  lcsc: C467174
   description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
   pin_count: 5
 - ref: Q3
   value: CRSM034N06L2
-  footprint: AO_DFN-8-1EP
+  footprint: AO_DFN-8-1EP_5.55x5.2
+  voltage: 60V
+  current: 80A
+  lcsc: C467174
   description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
   pin_count: 5
 - ref: Q5
   value: CRSM034N06L2
-  footprint: AO_DFN-8-1EP
+  footprint: AO_DFN-8-1EP_5.55x5.2
+  voltage: 60V
+  current: 80A
+  lcsc: C467174
   description: "N-Channel 1.7V 2.8m\u03A9@10V,80A 3.224nF@30V 54.2nC@10V 60V 79.1W 80A DFN-8(5x6)"
   pin_count: 5
 - ref: R1
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R10
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
 - ref: R100
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R101
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R102
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R103
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R104
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R105
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R106
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R107
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R108
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R109
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R11
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R110
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R111
   value: 510r
   footprint: '0603'
+  lcsc: C23193
   description: Resistor, small symbol
 - ref: R112
   value: 510r
   footprint: '0603'
+  lcsc: C23193
   description: Resistor, small symbol
 - ref: R113
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pulldown: CTR-FC-Pos
 - ref: R114
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R115
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R116
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R117
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pulldown: CTR-FC-NEG
 - ref: R118
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R119
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
 - ref: R12
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pullup: I2C SCL Shunt
 - ref: R120
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R124
   value: 510r
   footprint: '0603'
+  lcsc: C23193
   description: Resistor, small symbol
 - ref: R125
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R126
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R127
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R128
   value: 120r
   footprint: '1206'
+  lcsc: C17909
   description: Resistor, small symbol
 - ref: R13
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pullup: I2C SDA Shunt
 - ref: R130
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R131
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R134
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R135
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R14
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
 - ref: R140
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
   pulldown: 5V Sense
 - ref: R144
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
 - ref: R146
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
   pullup: 5V Sense
 - ref: R148
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
 - ref: R149
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   pulldown: U17.VSENSE
 - ref: R15
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
 - ref: R150
   value: 100kohm
   footprint: '0603'
+  lcsc: C25803
   description: Resistor, small symbol
 - ref: R153
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R155
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R16
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
 - ref: R167
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
 - ref: R168
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
 - ref: R17
   value: 100kohm
   footprint: '0603'
+  lcsc: C25803
   description: Resistor, small symbol
   pulldown: U19.OUTB
 - ref: R170
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
 - ref: R171
   value: 33r
   footprint: '0402'
+  lcsc: C25105
   description: 0402WGF330JTCE
 - ref: R174
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pulldown: J18.CC1
 - ref: R175
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pulldown: J18.CC2
 - ref: R18
   value: 120r
   footprint: '1206'
+  lcsc: C17909
   description: Resistor, small symbol
 - ref: R19
   value: 33r
   footprint: '0402'
+  lcsc: C25105
   description: 0402WGF330JTCE
 - ref: R193
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R194
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R195
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R196
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R2
   value: 47r
   footprint: '0603'
+  lcsc: C23182
   description: Resistor, small symbol
 - ref: R20
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
 - ref: R21
   value: 22ohm
   footprint: '0402'
+  lcsc: C25092
   description: 0402WGF1001TCE
 - ref: R214
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R215
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R216
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R217
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R218
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R219
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R22
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
   pulldown: Emergency Stop
 - ref: R220
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R221
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R222
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R223
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R224
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R225
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R226
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R227
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R228
   value: 220r
   footprint: '0603'
+  lcsc: C22962
   description: Resistor, small symbol
 - ref: R229
   value: 220r
   footprint: '0603'
+  lcsc: C22962
   description: Resistor, small symbol
 - ref: R23
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R24
   value: 22ohm
   footprint: '0402'
+  lcsc: C25092
   description: 0402WGF1001TCE
 - ref: R25
   value: 100kohm
   footprint: '0603'
+  lcsc: C25803
   description: Resistor, small symbol
   pulldown: U19.OUTA
 - ref: R26
   value: 33ohm
   footprint: '0603'
+  lcsc: C23140
   description: Resistor, small symbol
 - ref: R27
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R28
   value: 100kohm
   footprint: '0603'
+  lcsc: C25803
   description: Resistor, small symbol
 - ref: R29
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
   pulldown: VContactor Sense
 - ref: R3
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R30
   value: 100r
   footprint: '0603'
+  lcsc: C22775
   description: Resistor, small symbol
 - ref: R31
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
   pulldown: Extra Input
 - ref: R33
   value: 33r
   footprint: '0402'
+  lcsc: C25105
   description: 0402WGF330JTCE
 - ref: R34
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
 - ref: R35
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
 - ref: R36
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R37
   value: 2.2kohm
   footprint: '0603'
+  lcsc: C4190
   description: Resistor, small symbol
 - ref: R38
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R39
   value: 2.2kohm
   footprint: '0603'
+  lcsc: C4190
   description: Resistor, small symbol
 - ref: R4
   value: 100kohm
   footprint: '0603'
+  lcsc: C25803
   description: Resistor, small symbol
   pulldown: U15.OUTA
 - ref: R40
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R41
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R42
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
   pullup: SX Serial RX
 - ref: R43
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
 - ref: R44
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
 - ref: R45
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R46
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
 - ref: R47
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R48
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
 - ref: R49
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
 - ref: R5
   value: 33ohm
   footprint: '0603'
+  lcsc: C23140
   description: Resistor, small symbol
 - ref: R50
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
   pulldown: FC-CTR-POS-AUX
 - ref: R51
   value: 22ohm
   footprint: '0402'
+  lcsc: C25092
   description: 0402WGF1001TCE
 - ref: R52
   value: 22ohm
   footprint: '0402'
+  lcsc: C25092
   description: 0402WGF1001TCE
 - ref: R53
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pulldown: J17.CC1
 - ref: R54
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
 - ref: R55
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pulldown: J17.CC2
 - ref: R56
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
-  pullup: D23.A
 - ref: R57
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
   pulldown: /GPIO0
 - ref: R58
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R59
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
   pullup: /MCU2_GPIO0
 - ref: R6
   value: 33ohm
   footprint: '0603'
+  lcsc: C23140
   description: Resistor, small symbol
 - ref: R60
   value: 3.3kohm
   footprint: '0402'
+  lcsc: C25890
   pullup: U17.VSENSE
 - ref: R61
   value: 510r
   footprint: '0603'
+  lcsc: C23193
   description: Resistor, small symbol
 - ref: R62
   value: 100kohm
   footprint: '0603'
+  lcsc: C25803
   description: Resistor, small symbol
   pulldown: U15.OUTB
 - ref: R63
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
 - ref: R64
   value: 1kohm
   footprint: '0402'
+  lcsc: C11702
   description: 0402WGF1001TCE
 - ref: R65
   value: 2.7kohm
   footprint: '0603'
+  lcsc: C13167
   description: Resistor, small symbol
   pullup: BatSPI_MISO
 - ref: R66
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
   pullup: 3.3V Sense
 - ref: R67
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
   pulldown: 3.3V Sense
 - ref: R68
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
 - ref: R69
   value: 33ohm
   footprint: '0603'
+  lcsc: C23140
   description: Resistor, small symbol
 - ref: R7
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R70
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R71
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R72
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R73
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
   pulldown: FC-CTR-NEG-AUX
 - ref: R74
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R75
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
-  pullup: D26.A
 - ref: R76
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R78
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R79
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R8
   value: 47r
   footprint: '0603'
+  lcsc: C23182
   description: Resistor, small symbol
 - ref: R80
   value: 33r
   footprint: '0402'
+  lcsc: C25105
   description: 0402WGF330JTCE
 - ref: R81
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R82
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pullup: I2C SCL Vsense
 - ref: R83
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R84
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
 - ref: R85
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pullup: I2C SDA Vsense
 - ref: R86
   value: 10kohm
   footprint: '0603'
+  lcsc: C25804
   description: Resistor, small symbol
 - ref: R87
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R88
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R89
   value: 510r
   footprint: '0603'
+  lcsc: C23193
   description: Resistor, small symbol
 - ref: R9
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R90
   value: 100ohm
   footprint: '0603'
+  lcsc: C22775
   description: Resistor, small symbol
 - ref: R91
   value: 24kohm
   footprint: '0603'
+  lcsc: C23352
   description: Resistor, small symbol
 - ref: R92
   value: 1kohm
   footprint: '0603'
+  lcsc: C21190
   description: Resistor, small symbol
 - ref: R93
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pulldown: CTR_EN
 - ref: R95
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pulldown: CTR-LNK-POS
 - ref: R96
   value: 5.1kohm
   footprint: '0603'
+  lcsc: C23186
   description: Resistor, small symbol
   pulldown: CTR-LNK-NEG
 - ref: R98
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: R99
   value: 1Mohm
   footprint: '1206'
+  lcsc: C17927
   description: Resistor, small symbol
 - ref: SW1
   value: TS-1187A-B-A-B
   footprint: SW_Push_1P1T_XKB_TS-1187A
+  lcsc: C318884
   description: BOOT
 - ref: SW2
   value: TS-1187A-B-A-B
   footprint: SW_Push_1P1T_XKB_TS-1187A
+  lcsc: C318884
   description: RESET
 - ref: SW3
   value: TS-1187A-B-A-B
   footprint: SW_Push_1P1T_XKB_TS-1187A
+  lcsc: C318884
   description: BOOT
 - ref: SW4
   value: TS-1187A-B-A-B
   footprint: SW_Push_1P1T_XKB_TS-1187A
+  lcsc: C318884
   description: RESET
 - ref: TH1
   value: B59451C1130B070
   footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
-  description: Temperature dependent resistor, positive temperature coefficient
+  lcsc: C2762811
+  description: "PTC 440V 56\u03A9"
 - ref: TH2
   value: B59451C1130B070
   footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
-  description: Temperature dependent resistor, positive temperature coefficient
+  lcsc: C2762811
+  description: "PTC 440V 56\u03A9"
 - ref: TH3
   value: B59451C1130B070
   footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
-  description: Temperature dependent resistor, positive temperature coefficient
+  lcsc: C2762811
+  description: "PTC 440V 56\u03A9"
 - ref: TH4
   value: B59451C1130B070
   footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
-  description: Temperature dependent resistor, positive temperature coefficient
+  lcsc: C2762811
+  description: "PTC 440V 56\u03A9"
 - ref: TH5
   value: B59451C1130B070
   footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
-  description: Temperature dependent resistor, positive temperature coefficient
+  lcsc: C2762811
+  description: "PTC 440V 56\u03A9"
 - ref: TH6
   value: B59451C1130B070
   footprint: RV_Disc_D15.5mm_W7.5mm_P5.0mm
-  description: Temperature dependent resistor, positive temperature coefficient
+  lcsc: C2762811
+  description: "PTC 440V 56\u03A9"
 - ref: TR10
   value: HM2113ZNLT
   footprint: HM2113ZNLT
+  lcsc: C5730533
   description: Low profile BMS Transformers
   pin_count: 6
 - ref: U1
   value: SN74LV1T08DBVR
   footprint: SOT-23-5
+  lcsc: C2682144
   description: Single power supply 2-input POSITIVE AND Gate with Logic Level Shifter
   pin_count: 5
 - ref: U10
   value: LTV-217-B-G
   footprint: SSOP-4
+  lcsc: C115450
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
   pin_count: 4
 - ref: U11
   value: RP2354B
-  footprint: RP2350-QFN-80-1EP
+  footprint: RP2350-QFN-80-1EP_10x10
+  lcsc: C39843328
   description: 2Mbit internal flash
   pin_count: 81
-  nc_pins: {GPIO13: '12', GPIO15: '14', GPIO16: '16', GPIO17: '17', GPIO18: '18', GPIO19: '19', GPIO20: '20', GPIO21: '21', GPIO22: '22', GPIO23: '23', GPIO24: '25', GPIO26: '27', GPIO27: '28', GPIO33: '42', GPIO34: '43', GPIO35: '44', GPIO36: '45', GPIO37: '46', GPIO40_ADC0: '49', GPIO41_ADC1: '52', GPIO42_ADC2: '53', GPIO43_ADC3: '54', GPIO44_ADC4: '55', GPIO45_ADC5: '56', GPIO46_ADC6: '57', GPIO47_ADC7: '58', QSPI_SD3: '70', QSPI_SCLK: '71', QSPI_SD0: '72', QSPI_SD2: '73', QSPI_SD1: '74'}
+  nc_pins: {GPIO13: '12', GPIO15: '14', GPIO16: '16', GPIO17: '17', GPIO18: '18', GPIO19: '19', GPIO20: '20', GPIO21: '21',
+    GPIO22: '22', GPIO23: '23', GPIO24: '25', GPIO26: '27', GPIO27: '28', GPIO33: '42', GPIO34: '43', GPIO35: '44', GPIO36: '45',
+    GPIO37: '46', GPIO40_ADC0: '49', GPIO41_ADC1: '52', GPIO42_ADC2: '53', GPIO43_ADC3: '54', GPIO44_ADC4: '55', GPIO45_ADC5: '56',
+    GPIO46_ADC6: '57', GPIO47_ADC7: '58', QSPI_SD3: '70', QSPI_SCLK: '71', QSPI_SD0: '72', QSPI_SD2: '73', QSPI_SD1: '74'}
 - ref: U12
   value: ADS1115
   footprint: TSSOP-10
+  lcsc: C37593
   description: Ultra-Small, Low-Power, I2C-Compatible, 860-SPS, 16-Bit ADCs With Internal
   pin_count: 10
 - ref: U13
   value: ISO1050DUB
   footprint: SOP-8
+  lcsc: C16428
   description: Isolated CAN Transceiver, SOP-8
   pin_count: 8
 - ref: U14
   value: F0505S-1
   footprint: H0505S-1WR2
-  description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+  lcsc: C7465182
+  description: 1W 200mA
+  mpn: F0505S-1WR3
   pin_count: 4
 - ref: U15
   value: UCC27524DR
   footprint: SOIC-8
+  current: 5A
+  lcsc: C465729
   description: Dual 5A MOSFET driver, 4.5V..18V supply, non-inverting, SOIC-8
   pin_count: 8
 - ref: U17
@@ -1609,110 +2109,137 @@ components:
 - ref: U18
   value: ISO1540
   footprint: SOIC-8
+  lcsc: C179739
   description: I2C Isolator, 2.5 kVrms, Bidirectional clock and data, SOIC-8
   pin_count: 8
 - ref: U19
   value: UCC27524DR
   footprint: SOIC-8
+  current: 5A
+  lcsc: C465729
   description: Dual 5A MOSFET driver, 4.5V..18V supply, non-inverting, SOIC-8
   pin_count: 8
 - ref: U2
   value: ISO1540
   footprint: SOIC-8
+  lcsc: C179739
   description: I2C Isolator, 2.5 kVrms, Bidirectional clock and data, SOIC-8
   pin_count: 8
 - ref: U20
   value: LTV-217-B-G
   footprint: SSOP-4
+  lcsc: C115450
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
   pin_count: 4
 - ref: U21
   value: AMS1117-3.3
   footprint: SOT-223-3_TabPin2
-  description: 1A Low Dropout regulator, positive, 3.3V fixed output, SOT-223
+  lcsc: C6186
+  description: 1A
   pin_count: 3
 - ref: U22
   value: F0505S-1
   footprint: H0505S-1WR2
-  description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+  lcsc: C7465182
+  description: 1W 200mA
+  mpn: F0505S-1WR3
   pin_count: 4
 - ref: U23
   value: F0505S-1
   footprint: H0505S-1WR2
-  description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+  lcsc: C7465182
+  description: 1W 200mA
+  mpn: F0505S-1WR3
   pin_count: 4
 - ref: U24
   value: F0505S-1
   footprint: H0505S-1WR2
-  description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+  lcsc: C7465182
+  description: 1W 200mA
+  mpn: F0505S-1WR3
   pin_count: 4
 - ref: U25
   value: ISO1050DUB
   footprint: SOP-8
+  lcsc: C16428
   description: Isolated CAN Transceiver, SOP-8
   pin_count: 8
 - ref: U27
   value: RP2354B
-  footprint: RP2350-QFN-80-1EP
+  footprint: RP2350-QFN-80-1EP_10x10
+  lcsc: C39843328
   description: 2MB internal flash
   pin_count: 81
   nc_pins: {QSPI_SD3: '70', QSPI_SCLK: '71', QSPI_SD0: '72', QSPI_SD2: '73', QSPI_SD1: '74'}
 - ref: U28
   value: AM26LV32EIDR
   footprint: SOIC-16
+  lcsc: C527448
   description: 32Mbps 3.3V RS485 Quad Line Receivers, SOIC-16
   pin_count: 16
   nc_pins: {3B: '9', 3A: '10', 3Y: '11'}
 - ref: U3
   value: INA228
   footprint: VSSOP-10
+  lcsc: C5214669
   description: Shunt Monitor
   pin_count: 10
   nc_pins: {nAlert: '3'}
 - ref: U32
   value: SP3485EN-L
   footprint: SOIC-8
+  lcsc: C8963
   description: 10Mbps 2mA 3.3V 32 Half-Duplex Transceiver SOIC-8 RS-485 / RS-422 ICs ROHS
+  mpn: SP3485EN-L/TR
   pin_count: 8
   nc_pins: {RO: '1'}
 - ref: U4
   value: ISO1540
   footprint: SOIC-8
+  lcsc: C179739
   description: I2C Isolator, 2.5 kVrms, Bidirectional clock and data, SOIC-8
   pin_count: 8
 - ref: U5
   value: LTV-217-B-G
   footprint: SSOP-4
+  lcsc: C115450
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
   pin_count: 4
 - ref: U6
   value: F0505S-1
   footprint: H0505S-1WR2
-  description: 1W 200mA 2400uF 30mVp-p 3kV 4.5V~5.5V 5V
+  lcsc: C7465182
+  description: 1W 200mA
+  mpn: F0505S-1WR3
   pin_count: 4
 - ref: U7
   value: LTV-217-B-G
   footprint: SSOP-4
+  lcsc: C115450
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
   pin_count: 4
 - ref: U8
   value: LTV-217-B-G
   footprint: SSOP-4
+  lcsc: C115450
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
   pin_count: 4
 - ref: U9
   value: LTV-217-B-G
   footprint: SSOP-4
+  lcsc: C115450
   description: DC Optocoupler, Vce 70V, CTR 50%, SMDIP-4
   pin_count: 4
 - ref: Y1
   value: ABM8-272-T3
   footprint: SMD3225
+  lcsc: C20625731
   description: 12MHz
   pin_count: 4
 - ref: Y2
   value: ABM8-272-T3
   footprint: SMD3225
+  lcsc: C20625731
   description: 12MHz
   pin_count: 4
 nets:
@@ -1898,14 +2425,6 @@ nets:
   pins: [R57.2, U27.GPIO0]
 - name: /GPIO25
   pins: [R119.1, U27.GPIO25]
-- name: /GPIO44_ADC4
-  pins: [GPIO44.1, U27.GPIO44_ADC4]
-- name: /GPIO45_ADC5
-  pins: [GPIO45.1, U27.GPIO45_ADC5]
-- name: /GPIO46_ADC6
-  pins: [GPIO46.1, U27.GPIO46_ADC6]
-- name: /GPIO47_ADC7
-  pins: [GPIO47.1, U27.GPIO47_ADC7]
 - name: /HV Sense 5V
   pins:
   - C18.2

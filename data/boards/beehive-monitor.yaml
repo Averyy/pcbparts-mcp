@@ -64,16 +64,17 @@ components:
   value: MP2307
   footprint: SO8-TH
   manufacturer: Monolithic Power
+  description: Buck Switching Regulator IC Positive Adjustable 0.925V 1 Output 3A 8-SOIC (0.154, 3.90mm Width) Exposed Pad
   mpn: MP2307
   pin_count: 8
   nc_pins: {BS: '1', FB: '5', COMP: '6', EN: '7', SS: '8'}
 - ref: J2
-  value: 1x4 header
-  footprint: JST_XH_B4B-XH-A
+  value: JST XH 4-pin
+  footprint: JST_XH_B4B-XH-A_1x04
   pin_count: 4
 - ref: J4
-  value: 1x7 header
-  footprint: JST_XH_B7B-XH-A
+  value: JST XH 7-pin
+  footprint: JST_XH_B7B-XH-A_1x07
   pin_count: 7
   nc_pins: {Pin_3: '3', Pin_5: '5', Pin_6: '6', Pin_7: '7'}
 - ref: JP2
@@ -140,8 +141,12 @@ components:
   footprint: XCVR_ESP32-S3-WROOM-1U
   manufacturer: Espressif Systems
   mpn: ESP32-S3-WROOM-1U
+  description: 2.4 GHz Wi-Fi (802.11 b/g/n) and Bluetooth 5 (LE) module
   pin_count: 49
-  nc_pins: {IO4: '4', IO5: '5', IO6: '6', IO7: '7', IO15: '8', IO16: '9', IO17: '10', IO18: '11', IO8: '12', IO19: '13', IO20: '14', IO3: '15', IO46: '16', IO9: '17', IO10: '18', IO11: '19', IO12: '20', IO13: '21', IO14: '22', IO21: '23', IO47: '24', IO48: '25', IO45: '26', IO35: '28', IO36: '29', IO37: '30', IO38: '31', IO39: '32', IO40: '33', IO41: '34', IO42: '35', RXD0: '36', TXD0: '37', IO2: '38', IO1: '39'}
+  nc_pins: {IO4: '4', IO5: '5', IO6: '6', IO7: '7', IO15: '8', IO16: '9', IO17: '10', IO18: '11', IO8: '12', IO19: '13', IO20: '14',
+    IO3: '15', IO46: '16', IO9: '17', IO10: '18', IO11: '19', IO12: '20', IO13: '21', IO14: '22', IO21: '23', IO47: '24',
+    IO48: '25', IO45: '26', IO35: '28', IO36: '29', IO37: '30', IO38: '31', IO39: '32', IO40: '33', IO41: '34', IO42: '35',
+    RXD0: '36', TXD0: '37', IO2: '38', IO1: '39'}
 - ref: U2
   value: HX711
   footprint: SOP-16
@@ -152,14 +157,16 @@ components:
   value: ADXL362
   footprint: LGA-16-3X2.5
   manufacturer: Analog Devices
+  description: "Accelerometer X, Y, Z Axis \xB12g, 4g, 8g 6.25Hz ~ 400Hz 16-LGA (3x3.25)"
   prod_id: IC-11297
   mpn: ADXL362
   pin_count: 11
 - ref: U5
   value: TP5100
-  footprint: QFN-17
+  footprint: QFN65P400X400X90-17N
   manufacturer: NanJing Top Power ASIC Corp.
   mpn: TP5100
+  description: 2A-switch buck 8.4V / 4.2V rechargeable lithium battery
   pin_count: 17
   nc_pins: {PWR_ON-: '6', nSTDBY: '14', nCHRG: '15'}
 - ref: U6

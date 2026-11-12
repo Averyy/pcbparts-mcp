@@ -23,10 +23,14 @@ components:
 - ref: C1
   value: 47pF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-15063
 - ref: C3
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
 - ref: D1
   value: yellow LED
@@ -102,58 +106,72 @@ components:
 - ref: R1
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R11
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R14
   value: 33ohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14883
 - ref: R18
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R19
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R2
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R20
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R21
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R3
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R4
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R5
   value: 3.3kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07851
 - ref: R6
   value: 33ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08270
 - ref: R7
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R8
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: U1
   value: MAX-M10S

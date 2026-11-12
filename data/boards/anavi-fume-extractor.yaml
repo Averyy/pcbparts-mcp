@@ -33,14 +33,17 @@ components:
   pin_count: 22
   nc_pins: {'1': '1', '17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22'}
 - ref: FAN1
-  value: 1x2 header
-  footprint: JST_XH_B02B-XH-A
+  value: JST XH 2-pin
+  footprint: JST_XH_B02B-XH-A_1x02
 - ref: J1
   value: USB Micro-B
   footprint: USB_Micro-B_Molex-105017-0001
+  pin_count: 6
+  nc_pins: {'2': '2', '3': '3', '4': '4'}
 - ref: JP1
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
+  pin_count: 3
 - ref: K1
   value: SANYOU_SRD_Form_C
   footprint: Relay_SPDT_SANYOU_SRD_Series_Form_C
@@ -66,7 +69,7 @@ components:
 - ref: R4
   value: 2kohm
   footprint: '0603'
-  pullup: ESP-12.12
+  pullup: SW1.2
 - ref: R5
   value: 2,7K
   footprint: '0603'
@@ -77,7 +80,7 @@ components:
 - ref: R7
   value: 2kohm
   footprint: '0603'
-  pullup: ESP-12.7
+  pullup: SW2.2
 - ref: R8
   value: 220kohm
   footprint: '0603'
@@ -86,7 +89,7 @@ components:
 - ref: R9
   value: 56kohm
   footprint: '0603'
-  pulldown: ESP-12.2
+  pulldown: U5.4
 - ref: SW1
   value: switch
   footprint: SW_PUSH_6mm_h4.3mm
@@ -95,25 +98,29 @@ components:
   footprint: SW_PUSH_6mm_h4.3mm
 - ref: U1
   value: I2C_SENS_1
-  footprint: 1X4
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: U2
   value: I2C_SENS_1
-  footprint: 1X4
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: U3
   value: I2C_SENS_1
-  footprint: 1X4
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: U4
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
+  pin_count: 4
 - ref: U5
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
+  pin_count: 4
+  nc_pins: {'3': '3'}
 - ref: U6
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
+  pin_count: 4
 - ref: V1
   value: LD1117S33TR
   footprint: SOT-223
@@ -125,6 +132,7 @@ nets:
   - C2.1
   - ESP-12.3
   - ESP-12.8
+  - JP1.1
   - R2.1
   - R3.1
   - R4.2
@@ -132,9 +140,19 @@ nets:
   - U1.1
   - U2.1
   - U3.1
+  - U4.3
+  - U6.2
   - V1.2
 - name: +5V
-  pins: [C1.1, D2.1, K1.1, K1.2, V1.3]
+  pins:
+  - C1.1
+  - D2.1
+  - J1.1
+  - K1.1
+  - K1.2
+  - U5.1
+  - U6.1
+  - V1.3
 - name: GND
   pins:
   - C1.2
@@ -142,36 +160,51 @@ nets:
   - D1.1
   - ESP-12.10
   - ESP-12.9
+  - FAN1.2
+  - J1.5
+  - J1.6
+  - JP1.3
   - P1.1
   - Q1.2
   - R6.2
   - R9.2
+  - SW1.1
+  - SW2.1
   - U1.2
   - U2.2
   - U3.2
+  - U4.4
+  - U5.2
+  - U6.3
   - V1.1
 - name: Net-(D1-Pad2)
   pins: [D1.2, R1.2]
 - name: Net-(D2-Pad2)
   pins: [D2.2, K1.5, Q1.3]
+- name: Net-(ESP-12-Pad11)
+  pins: [ESP-12.11, U6.4]
 - name: Net-(ESP-12-Pad12)
-  pins: [ESP-12.12, R4.1]
+  pins: [ESP-12.12, R4.1, SW1.2]
 - name: Net-(ESP-12-Pad13)
-  pins: [ESP-12.13, R2.2, U1.4, U2.4, U3.4]
+  pins: [ESP-12.13, R2.2, U1.4, U2.4, U3.4, U4.1]
 - name: Net-(ESP-12-Pad14)
-  pins: [ESP-12.14, R3.2, U1.3, U2.3, U3.3]
+  pins: [ESP-12.14, R3.2, U1.3, U2.3, U3.3, U4.2]
 - name: Net-(ESP-12-Pad15)
   pins: [ESP-12.15, P1.3]
 - name: Net-(ESP-12-Pad16)
   pins: [ESP-12.16, P1.2]
 - name: Net-(ESP-12-Pad2)
-  pins: [ESP-12.2, R8.2, R9.1]
+  pins: [ESP-12.2, R8.2, R9.1, U5.4]
 - name: Net-(ESP-12-Pad4)
   pins: [ESP-12.4, R1.1]
+- name: Net-(ESP-12-Pad5)
+  pins: [ESP-12.5, JP1.2]
 - name: Net-(ESP-12-Pad6)
   pins: [ESP-12.6, R5.1]
 - name: Net-(ESP-12-Pad7)
-  pins: [ESP-12.7, R7.2]
+  pins: [ESP-12.7, R7.2, SW2.2]
+- name: Net-(FAN1-Pad1)
+  pins: [FAN1.1, K1.3]
 - name: Net-(Q1-Pad1)
   pins: [Q1.1, R5.2, R6.1]
 positions:
@@ -192,6 +225,16 @@ positions:
 - ref: ESP-12
   x: 80.9
   y: 80.01
+- ref: FAN1
+  x: 109.7
+  y: 107.92
+- ref: J1
+  x: 67.44
+  y: 96.77
+  rot: 270.0
+- ref: JP1
+  x: 135.55
+  y: 94.05
 - ref: K1
   x: 121.0
   y: 82.4
@@ -236,6 +279,14 @@ positions:
   x: 130.78
   y: 103.74
   rot: 90.0
+- ref: SW1
+  x: 83.31
+  y: 107.7
+  rot: 180.0
+- ref: SW2
+  x: 135.9
+  y: 81.53
+  rot: 270.0
 - ref: U1
   x: 108.39
   y: 95.38
@@ -247,6 +298,17 @@ positions:
 - ref: U3
   x: 108.39
   y: 85.22
+  rot: 270.0
+- ref: U4
+  x: 94.49
+  y: 101.09
+- ref: U5
+  x: 120.0
+  y: 107.65
+  rot: 90.0
+- ref: U6
+  x: 125.22
+  y: 75.18
   rot: 270.0
 - ref: V1
   x: 72.64

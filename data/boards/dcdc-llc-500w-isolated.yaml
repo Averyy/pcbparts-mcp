@@ -3,7 +3,7 @@ slug: dcdc-llc-500w-isolated
 source: Rootthecause/DCDC
 format: kicad8
 description: 'Credit-card sized 500W (750W peak) isolated DC-DC: LLC resonant topology, UCC25600 controller'
-tags: [inverter, isolation, power-supply]
+tags: [isolation, power-supply]
 key_ics: [RP-1515S, LM2904BIDDFR, UCC21520DW, UCC25600, ZXRE330ASA-7]
 outline:
   width_mm: 85.6
@@ -19,9 +19,10 @@ components:
   value: 2uF
   footprint: MKP1848520704K2
   height: '19'
+  mouser: 75-MKP1848520704K2
   manufacturer: Vishay
   mpn: MKP1848520704K2
-  description: 2F Film Capacitor 700V Polypropylene (PP), Metallized Radial
+  description: 2uF Film Capacitor 700V Polypropylene (PP), Metallized Radial
 - ref: C11
   value: 2200uF
   footprint: CP_Radial_D12.5mm_P5.00mm_symbol_inside
@@ -309,6 +310,14 @@ components:
   value: 1.6A
   footprint: Fuseholder0,25Zoll_32mm_littlefuse_102_122
   mpn: 0ADBC1600-BE
+- ref: F1.1
+  value: Fuse_clips
+  footprint: '~'
+  mpn: 01220083Z
+- ref: F1.2
+  value: Fuse_clips
+  footprint: '~'
+  mpn: 01220083Z
 - ref: F2
   value: 500mA
   footprint: NANO-0154-OMNI-BLOK-Fuse-Holder
@@ -321,6 +330,7 @@ components:
   value: 43650-0315
   footprint: 43650-03YY_151617
   height: '9.9'
+  mouser: 538-43650-0315
   manufacturer: Molex
   mpn: 43650-0315
   description: Micro-Fit 3.0 Vertical Header, 3.00mm Pitch, Single Row, 3 Circuits, with PCB
@@ -342,12 +352,12 @@ components:
   mpn: 43030-0039
   description: Crimp for molex micofit receptacle housing, 8.5 A
 - ref: J2
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
   mpn: 42375-2486
 - ref: J3
-  value: 1x2 header
-  footprint: Molex_Micro-Fit_3.0_43650-0215
+  value: 1x2 3.00mm header
+  footprint: Molex_Micro-Fit_3.0_43650-0215_1x02
   mpn: 43650-0215
 - ref: J3.2
   value: 1x1 header
@@ -360,19 +370,19 @@ components:
   mpn: 43030-0039
   description: Crimp for molex micofit receptacle housing, 8.5 A
 - ref: J4
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
   mpn: 42375-2486
 - ref: J5
-  value: 1x2 header
-  footprint: AMASS_XT60-F
+  value: XT60 Male
+  footprint: AMASS_XT60-F_1x02
 - ref: J5.1
   value: XT60 Female
   footprint: '~'
   description: Female
 - ref: J8
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
   mpn: 42375-2486
 - ref: JP1
   value: Fan Voltage Select
@@ -382,6 +392,7 @@ components:
   value: 4.7uH
   footprint: ASPI-4030S
   height: '3'
+  mouser: ASPI-4030S-4R7M-T
   manufacturer: ABRACON
   mpn: ASPI-4030S-4R7M-T
   description: Fixed Inductors 4.7uH 20% Shielded -40C +125C
@@ -393,12 +404,13 @@ components:
   value: 10uH
   footprint: ASPI-4030S
   height: '3'
+  mouser: 815-ASPI-4030S-100MT
   manufacturer: ABRACON
   mpn: ASPI-4030S-100M-T
   description: Fixed Inductors 10uH 20% Shielded -40C +125C
 - ref: M1
   value: Fan
-  footprint: 1X2
+  footprint: 1X2_P2.54mm
 - ref: Q1
   value: PMV20ENR
   footprint: SOT-23
@@ -448,6 +460,7 @@ components:
   value: BSC027N06LS5ATMA1
   footprint: BSC027N06LS5ATMA1
   height: '1'
+  mouser: 726-BSC027N06LS5ATMA
   manufacturer: Infineon
   mpn: BSC027N06LS5ATMA1
   pin_count: 9
@@ -455,6 +468,7 @@ components:
   value: BSC027N06LS5ATMA1
   footprint: BSC027N06LS5ATMA1
   height: '1'
+  mouser: 726-BSC027N06LS5ATMA
   manufacturer: Infineon
   mpn: BSC027N06LS5ATMA1
   pin_count: 9
@@ -513,7 +527,6 @@ components:
   value: 2.2kohm
   footprint: '0603'
   mpn: ESR03EZPJ222
-  pulldown: D7.K
 - ref: R23
   value: 10kohm
   footprint: '0603'
@@ -657,7 +670,9 @@ components:
 - ref: R54
   value: 10Mohm
   footprint: '1206'
+  power: 250mW
   mpn: CHV1206-JW-106ELF
+  voltage: 800V
 - ref: R55
   value: 10kohm
   footprint: '0603'
@@ -801,7 +816,7 @@ components:
   description: "Inductor, rotated by 45\xB0"
 - ref: TH1
   value: 3.9k PTC
-  footprint: 1X2
+  footprint: 1X2_P2.54mm
   mpn: TFPTL15L3901FL2B
 - ref: TH2
   value: 1k PTC
@@ -819,7 +834,7 @@ components:
   pin_count: 8
 - ref: U11
   value: UCC21520DW
-  footprint: SOIC-16W
+  footprint: SOIC-16W_7.5x10.3
   mpn: UCC21520DW
   pin_count: 16
   nc_pins: {NC@7: '7', NC@12: '12', NC@13: '13'}
@@ -847,7 +862,7 @@ components:
   pin_count: 3
 - ref: U3
   value: MP4541
-  footprint: SOIC-8-1EP
+  footprint: SOIC-8-1EP_3.9x4.9
   mpn: MP4541GN-Z
   pin_count: 8
 - ref: U4

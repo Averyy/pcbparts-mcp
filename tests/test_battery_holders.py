@@ -70,7 +70,7 @@ async def test_holders_filed_under_battery_accessories_are_kept(local_client):
     with sqlite3.connect(f"file:{Path('data/components.db').resolve()}?mode=ro", uri=True) as conn:
         listed = dict(conn.execute("SELECT lcsc, lower(mpn || ' ' || ifnull(description, '')) FROM components "
                                    "WHERE subcategory_id = 1303"))
-    assert all("holder" in listed[lcsc] for lcsc in accessories)
+    assert all("holder" in listed[lcsc] or "battery base" in listed[lcsc] for lcsc in accessories)
 
 
 @pytest.mark.parametrize("query", ["battery charger", "battery management", "AA battery charger"])
@@ -173,7 +173,7 @@ async def test_size_search_matches_catalog_fts_exactly(local_client, query, fts)
     with sqlite3.connect(f"file:{Path('data/components.db').resolve()}?mode=ro", uri=True) as conn:
         expected = {row[0] for row in conn.execute(
             "SELECT lcsc FROM components WHERE (subcategory_id IN (1651, 3742, 2989, 3739) OR (subcategory_id = 1303 "
-            "AND lcsc IN (SELECT lcsc FROM components_fts WHERE components_fts MATCH '\"holder\"*'))) "
+            "AND lcsc IN (SELECT lcsc FROM components_fts WHERE components_fts MATCH '\"holder\"* OR (\"battery\"* AND \"base\"*)'))) "
             "AND lcsc IN (SELECT lcsc FROM components_fts WHERE components_fts MATCH ?)", (fts,),
         )}
     result = await all_parts(local_client, query)
@@ -231,3 +231,11 @@ async def test_reported_adjustable_search_stays_in_holder_scope(local_client):
     assert not any(f["name"] == "Output Type" for f in result["filters_applied"]["spec_filters"])
     assert any(f["filter"] == "Output Type = Adjustable" and f["now"] is None
                for f in result["parsed"]["adjusted_filters"])
+
+
+async def test_battery_base_listings_count_as_holders(local_client):
+    """Battery accessories mostly doesn't say "holder": C5375990 and C5375986 are "Battery base"."""
+    assert "C5375990" in await all_parts(local_client, "CR2032 battery holder")
+    holders = await all_parts(local_client, "battery holder")
+    assert {"C5375990", "C5375986"} <= holders.keys()
+    assert "C17701039" not in holders  # a CR123A contact spring, in the same subcategory

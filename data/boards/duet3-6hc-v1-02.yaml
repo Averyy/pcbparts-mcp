@@ -13,7 +13,7 @@ design_rules:
 components:
 - ref: BC1
   value: SYM_2D_Barcode
-  footprint: 2D_Barcode
+  footprint: 2D_Barcode_6x6
   mpn: Walkbury 2D Barcode Target Point
 - ref: C1
   value: 10uF
@@ -407,7 +407,7 @@ components:
   value: 2.2uF
   footprint: '0603'
   mpn: JMK107BJ225KA-T
-  voltage: 6.5V
+  voltage: 6.3V
 - ref: C17
   value: 2.2nF
   footprint: '0402'
@@ -494,7 +494,7 @@ components:
   value: 2.2uF
   footprint: '0603'
   mpn: JMK107BJ225KA-T
-  voltage: 6.5V
+  voltage: 6.3V
 - ref: C185
   value: 22uF
   footprint: 0805
@@ -534,7 +534,7 @@ components:
   value: 22pF
   footprint: '0402'
   mpn: C0402C220J4GACTU
-  voltage: 50V
+  voltage: 16V
 - ref: C192
   value: 100nF
   footprint: '0402'
@@ -549,7 +549,7 @@ components:
   value: 22pF
   footprint: '0402'
   mpn: C0402C220J4GACTU
-  voltage: 50V
+  voltage: 16V
 - ref: C195
   value: 1n 1KV
   footprint: 0805
@@ -573,7 +573,7 @@ components:
   value: 2.2uF
   footprint: '0603'
   mpn: JMK107BJ225KA-T
-  voltage: 6.5V
+  voltage: 6.3V
 - ref: C201
   value: 2.2uF
   footprint: '1210'
@@ -596,7 +596,7 @@ components:
   voltage: 10V
 - ref: C205
   value: 100u 16V+
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x7.7
   mpn: 865080545012 (16V version can be used)
 - ref: C206
   value: 10nF
@@ -888,7 +888,7 @@ components:
   value: 2.2uF
   footprint: '0603'
   mpn: JMK107BJ225KA-T
-  voltage: 6.5V
+  voltage: 6.3V
 - ref: C52
   value: 2.2uF
   footprint: '0603'
@@ -909,7 +909,7 @@ components:
   value: 2.2uF
   footprint: '0603'
   mpn: JMK107BJ225KA-T
-  voltage: 6.5V
+  voltage: 6.3V
 - ref: C56
   value: 100nF
   footprint: '0402'
@@ -955,7 +955,7 @@ components:
   value: 2.2uF
   footprint: '0603'
   mpn: JMK107BJ225KA-T
-  voltage: 6.5V
+  voltage: 6.3V
 - ref: C64
   value: 10nF
   footprint: '0402'
@@ -965,7 +965,7 @@ components:
   value: 2.2uF
   footprint: '0603'
   mpn: JMK107BJ225KA-T
-  voltage: 6.5V
+  voltage: 6.3V
 - ref: C66
   value: 10pF
   footprint: '0402'
@@ -1094,7 +1094,7 @@ components:
   voltage: 100V
 - ref: C88
   value: 100u 16V+
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x7.7
   mpn: 865080545012 (16V version can be used)
   decouples: U22
 - ref: C9
@@ -1484,69 +1484,69 @@ components:
   mpn: MCCQ-122 - 15A Fitted
 - ref: J1
   value: SWD
-  footprint: JST_ZH
+  footprint: JST_ZH_1x06
   mpn: B6B-ZR(LF)(SN) or 64800611622
   pin_count: 6
 - ref: J10
-  value: 1x2 header
-  footprint: JST_VH_B2P-VH-B
+  value: JST VH 2-pin
+  footprint: JST_VH_B2P-VH-B_1x02
   mpn: VH396-02-S010
 - ref: J11
-  value: 1x2 header
-  footprint: JST_VH_B2P-VH-B
+  value: JST VH 2-pin
+  footprint: JST_VH_B2P-VH-B_1x02
   mpn: VH396-02-S010
 - ref: J12
-  value: 1x2 header
-  footprint: JST_VH_B2P-VH-B
+  value: JST VH 2-pin
+  footprint: JST_VH_B2P-VH-B_1x02
   mpn: VH396-02-S010
 - ref: J13
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: 1X02
   mpn: '61900211121'
 - ref: J14
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: 1X02
   mpn: '61900211121'
 - ref: J15
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: 1X02
   mpn: '61900211121'
 - ref: J16
-  value: 1x5 header
+  value: 1x5 2.54mm header
   footprint: 1X05
   mpn: '61900511121'
   pin_count: 5
 - ref: J17
-  value: 1x5 header
+  value: 1x5 2.54mm header
   footprint: 1X05
   mpn: '61900511121'
   pin_count: 5
 - ref: J18
-  value: 1x5 header
+  value: 1x5 2.54mm header
   footprint: 1X05
   mpn: '61900511121'
   pin_count: 5
 - ref: J19
-  value: 1x5 header
+  value: 1x5 2.54mm header
   footprint: 1X05
   mpn: '61900511121'
   pin_count: 5
 - ref: J2
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: 1X02
   mpn: '61900211121'
 - ref: J20
-  value: 1x5 header
+  value: 1x5 2.54mm header
   footprint: 1X05
   mpn: '61900511121'
   pin_count: 5
 - ref: J21
-  value: 1x5 header
+  value: 1x5 2.54mm header
   footprint: 1X05
   mpn: '61900511121'
   pin_count: 5
 - ref: J22
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: 1X02
   mpn: '61900211121'
 - ref: J23
@@ -1556,18 +1556,18 @@ components:
   pin_count: 8
   nc_pins: {'1': '1', '2': '2', '5': '5', '6': '6'}
 - ref: J24
-  value: 1x4 header
-  footprint: JST_VH_B4P-VH
+  value: JST VH 4-pin
+  footprint: JST_VH_B4P-VH_1x04
   mpn: VH396-04-S010
   pin_count: 4
 - ref: J25
-  value: 1x4 header
-  footprint: JST_VH_B4P-VH
+  value: JST VH 4-pin
+  footprint: JST_VH_B4P-VH_1x04
   mpn: VH396-04-S010
   pin_count: 4
 - ref: J26
-  value: 1x4 header
-  footprint: JST_VH_B4P-VH
+  value: JST VH 4-pin
+  footprint: JST_VH_B4P-VH_1x04
   mpn: VH396-04-S010
   pin_count: 4
 - ref: J27
@@ -1582,73 +1582,73 @@ components:
   pin_count: 10
   nc_pins: {Pin_10: '10'}
 - ref: J29
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   mpn: THS-03-R - Jumper fitted to VIN Side
   pin_count: 3
 - ref: J3
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: 1X02
   mpn: '61900211121'
 - ref: J30
-  value: 1x3 header
+  value: 1x3 2.54mm header
   footprint: 1X03
   mpn: '61900311121'
   pin_count: 3
 - ref: J31
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: 1X02
   mpn: '61900211121'
 - ref: J32
-  value: 1x5 header
+  value: 1x5 2.54mm header
   footprint: 1X05
   mpn: '61900511121'
   pin_count: 5
 - ref: J33
-  value: 1x5 header
+  value: 1x5 2.54mm header
   footprint: 1X05
   mpn: '61900511121'
   pin_count: 5
 - ref: J34
-  value: 1x5 header
+  value: 1x5 2.54mm header
   footprint: 1X05
   mpn: '61900511121'
   pin_count: 5
 - ref: J35
-  value: 1x4 header
-  footprint: JST_VH_B4P-VH
+  value: JST VH 4-pin
+  footprint: JST_VH_B4P-VH_1x04
   mpn: VH396-04-S010
   pin_count: 4
 - ref: J36
-  value: 1x4 header
-  footprint: JST_VH_B4P-VH
+  value: JST VH 4-pin
+  footprint: JST_VH_B4P-VH_1x04
   mpn: VH396-04-S010
   pin_count: 4
 - ref: J37
-  value: 1x4 header
-  footprint: JST_VH_B4P-VH
+  value: JST VH 4-pin
+  footprint: JST_VH_B4P-VH_1x04
   mpn: VH396-04-S010
   pin_count: 4
 - ref: J38
-  value: 2x5 header
-  footprint: IDC-Header
+  value: 2x5 2.54mm header
+  footprint: IDC-Header_2x05
   mpn: '61201021621'
   pin_count: 10
 - ref: J39
-  value: 2x6 header
-  footprint: 2X6
+  value: 2x6 2.54mm header
+  footprint: 2X6_P2.54mm
   mpn: THD-06-R
   pin_count: 12
 - ref: J4
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: 1X02
   mpn: '61900211121'
 - ref: J41
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: 1X02
   mpn: '61900211121'
 - ref: J42
-  value: 1x4 header
+  value: 1x4 2.54mm header
   footprint: 1X04
   mpn: '61900411121'
   pin_count: 4
@@ -1669,64 +1669,65 @@ components:
   pin_count: 14
   nc_pins: {NC: '7'}
 - ref: J48
-  value: 2x13 header
-  footprint: IDC-Header
+  value: 2x13 2.54mm header
+  footprint: IDC-Header_2x13
   mpn: '61202621621'
   pin_count: 26
-  nc_pins: {Pin_1: '1', Pin_3: '3', Pin_5: '5', Pin_7: '7', Pin_8: '8', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_13: '13', Pin_15: '15', Pin_16: '16', Pin_18: '18', Pin_26: '26'}
+  nc_pins: {Pin_1: '1', Pin_3: '3', Pin_5: '5', Pin_7: '7', Pin_8: '8', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_13: '13',
+    Pin_15: '15', Pin_16: '16', Pin_18: '18', Pin_26: '26'}
 - ref: J49
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: 1X02
   mpn: '61900211121'
 - ref: J5
-  value: 1x2 header
+  value: 1x2 2.54mm header
   footprint: 1X02
   mpn: '61900211121'
 - ref: J50
-  value: 1x3 header
+  value: 1x3 2.54mm header
   footprint: 1X03
   mpn: '61900311121'
   pin_count: 3
 - ref: J52
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   mpn: THS-03-R - Jumper fitted to 12V side
   pin_count: 3
 - ref: J6
-  value: 1x4 header
-  footprint: FanPinHeader
+  value: 1x4 2.54mm header
+  footprint: FanPinHeader_1x04
   mpn: '470533000'
   pin_count: 4
 - ref: J7
-  value: 1x4 header
-  footprint: FanPinHeader
+  value: 1x4 2.54mm header
+  footprint: FanPinHeader_1x04
   mpn: '470533000'
   pin_count: 4
 - ref: J8
-  value: 1x4 header
-  footprint: FanPinHeader
+  value: 1x4 2.54mm header
+  footprint: FanPinHeader_1x04
   mpn: '470533000'
   pin_count: 4
 - ref: J9
-  value: 1x6 screw terminal
+  value: 1x6 9.50mm screw terminal
   footprint: screwt-barrier-9.5mm-1x6
   mpn: HB950-9.50-6P
   pin_count: 6
 - ref: JP2
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
   mpn: THS-02-R - Jumper not fitted
 - ref: JP4
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
   mpn: THS-02-R - Jumper not fitted
 - ref: JP5
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
   mpn: THS-02-R - Jumper not fitted
 - ref: JP9
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   mpn: THS-03-R - Jumper fitted to EXT 5V side
   pin_count: 3
 - ref: L1
@@ -1788,10 +1789,6 @@ components:
   footprint: '1812'
   mpn: '744235110'
   pin_count: 4
-- ref: M9
-  value: FID
-  footprint: Fiducial_0.5mm_Mask1.5mm
-  mpn: Virtual Component DNP
 - ref: NT1
   value: NT_VSSA
   footprint: NetTie-2_SMD_Pad0.5mm
@@ -2118,7 +2115,6 @@ components:
   value: 2.2kohm
   footprint: '0402'
   mpn: RK73H1ETTP2201F
-  pullup: D23.A
 - ref: R131
   value: 10kohm
   footprint: '0402'
@@ -2267,8 +2263,8 @@ components:
 - ref: R16
   value: 15kohm
   footprint: '0603'
-  mpn: RCC060315K0FKEA
   power: 0.2W
+  mpn: RCC060315K0FKEA
 - ref: R160
   value: 27kohm
   footprint: '0402'
@@ -2520,7 +2516,6 @@ components:
   value: 2.2kohm
   footprint: '0402'
   mpn: RK73H1ETTP2201F
-  pullup: D7.A
 - ref: R210
   value: 47ohm
   footprint: '0402'
@@ -3148,7 +3143,8 @@ components:
   pin_count: 8
 - ref: U14
   value: TS30041
-  footprint: QFN-16-1EP
+  footprint: QFN-16-1EP_3x3
+  current: 1A
   mpn: TS30041-M000QFNR
   pin_count: 17
   nc_pins: {NC@6: '6', NC@7: '7', PG: '8', EN_SYNC: '9'}
@@ -3190,7 +3186,7 @@ components:
   pin_count: 6
 - ref: U21
   value: CM1624
-  footprint: UDFN-16-1EP
+  footprint: UDFN-16-1EP_1.35x3.3
   mpn: "CM1624\u221208DE"
   pin_count: 17
   nc_pins: {ESD3: '5'}
@@ -3240,12 +3236,12 @@ components:
   pin_count: 16
 - ref: X1
   value: 12Mhz
-  footprint: Crystal_SMD_ECS-33B-4Pin
+  footprint: Crystal_SMD_ECS-33B-4Pin_3.2x2.5
   mpn: FL1200112TR-ND or ECS-120-10-33B-CKM-TR,
   pin_count: 4
 - ref: X2
   value: 25Mhz
-  footprint: Crystal_SMD_ECS-33B-4Pin
+  footprint: Crystal_SMD_ECS-33B-4Pin_3.2x2.5
   mpn: TSX-3225 25.0000MF10P-C0 (note requires different caps if changed)
   pin_count: 4
 nets:
@@ -6402,9 +6398,6 @@ positions:
 - ref: L9
   x: 127.8
   y: 149.2
-- ref: M9
-  x: 148.7
-  y: 238.8
 - ref: NT1
   x: 99.4
   y: 196.5

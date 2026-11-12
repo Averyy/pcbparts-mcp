@@ -1,8 +1,8 @@
 name: BeagleConnect Freedom
 slug: beagleconnect-freedom
 source: beagleboard/beagleconnect-freedom
-format: kicad7
-description: "CC1352P dual-band wireless MCU, MSP430F5503"
+format: kicad6
+description: CC1352P dual-band wireless MCU, MSP430F5503
 tags: [usb, zigbee-thread]
 key_ics: [CC1352P]
 outline:
@@ -18,701 +18,1150 @@ components:
 - ref: AE1
   value: Antenna_Dipole
   footprint: RFECA3216060A1T
+  manufacturer: Walsin Technology Corporation
+  mpn: RFECA3216060A1T
+  description: Chip Antenna
+  prod_id: '318010523'
   pin_count: 3
 - ref: B1
   value: 0900PC15A0036E
   footprint: 0900PC15A0036
+  mpn: 0900PC15A0036E
+  manufacturer: Johanson Technology Inc.
+  description: BALUN 862MHZ-928MHZ 0805
+  prod_id: '310060581'
   pin_count: 10
 - ref: BZ1
   value: Buzzer
   footprint: BUZZER3-5.5X5X2MM
+  description: SMD Buzzer 3V;3P-L5.0*W5.0*H2mm
+  prod_id: '312020683'
 - ref: C1
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
   decouples: U1
 - ref: C10
   value: 10uF
   footprint: '0402'
-  description: CAP CER 0.1UF 10V X5R 0402
+  mpn: CC0402MRX5R5BB106
+  manufacturer: YAGEO
+  description: SMD CAP Ceramic 10uF-6.3V-20%-X5R;0402
+  prod_id: '302010053'
   decouples: U2
 - ref: C11
   value: 10uF
   footprint: '0402'
-  description: CAP CER 0.1UF 10V X5R 0402
+  mpn: CC0402MRX5R5BB106
+  manufacturer: YAGEO
+  description: SMD CAP Ceramic 10uF-6.3V-20%-X5R;0402
+  prod_id: '302010053'
 - ref: C12
   value: 10uF
   footprint: '0603'
-  description: CAP CER 0.1UF 10V X5R 0402
+  mpn: CC0603KRX5R6BB106
+  manufacturer: YAGEO
+  description: SMD CAP Ceramic 10uF-10V-10%-X5R;0603
+  prod_id: '302010103'
 - ref: C13
   value: 100pF
   footprint: '0402'
+  mpn: CC0402JRNPO9BN101
   description: CAP CER 100PF 50V C0G/NPO 0402
+  prod_id: '302010012'
 - ref: C14
   value: 10uF
   footprint: '0402'
+  mpn: CL10A106MQ8NNNC
   description: CAP CER 10UF 6.3V X5R 0603
+  prod_id: '302010053'
   decouples: U7
 - ref: C15
   value: 8pF
   footprint: '0402'
+  mpn: CC0402DRNPO9BN8R0
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 8PF 50V C0G/NP0 0402
+  prod_id: '302010026'
 - ref: C16
   value: 8pF
   footprint: '0402'
+  mpn: CC0402DRNPO9BN8R0
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 8PF 50V C0G/NP0 0402
+  prod_id: '302010026'
 - ref: C17
   value: 1uF
   footprint: '0402'
-  description: CAP CER 0.1UF 10V X5R 0402
+  mpn: CC0402KRX5R6BB105
+  manufacturer: YAGEO
+  description: SMD CAP Ceramic 1uF-10V-10%-X5R;0402
+  prod_id: '302010040'
 - ref: C18
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
   decouples: U4
 - ref: C19
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
   decouples: U4
 - ref: C2
   value: 1nF
   footprint: '0402'
-  description: CAP CER 0.1UF 10V X5R 0402
+  mpn: CC0402KRX7R9BB102
+  manufacturer: YAGEO
+  description: SMD CAP Ceramic 1nF-50V-10%-X7R;0402
+  prod_id: '302010005'
 - ref: C20
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
   decouples: U4
 - ref: C21
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
   decouples: U4
 - ref: C22
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
 - ref: C23
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
 - ref: C24
   value: 22uF
   footprint: '0603'
+  mpn: GRM188R61A226ME15D
+  manufacturer: Murata Electronics North America
   description: CAP CER 22UF 10V X5R 0603
+  prod_id: '302010120'
 - ref: C25
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
   decouples: U5
 - ref: C26
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
 - ref: C27
   value: 100pF
   footprint: '0201'
+  mpn: CC0201JRNPO9BN101
+  manufacturer: YAGEO
   description: CAP CER 100pF 50V NPO 0201
+  prod_id: '302010420'
 - ref: C28
   value: 2.4pF
   footprint: '0201'
-  description: CAP CER 2.4PF 50V NP0 0201
+  mpn: GJM0335C1E2R4CB01D
+  manufacturer: Murata Electronics North America
+  prod_id: '302012904'
 - ref: C3
   value: 24pF
   footprint: '0402'
 - ref: C31
   value: 0.5pF
   footprint: '0201'
-  description: CAP CER 1PF 50V C0G/NP0 0201
+  mpn: CC0201CRNPO9BNR50
+  manufacturer: YAGEO
+  description: SMD CAP Ceramic;0.5pF-50V-0.25pF-NPO;0201
+  prod_id: '302010281'
 - ref: C33
   value: 3.9pF
   footprint: '0201'
+  mpn: GJM0335C1H3R9BB01D
+  manufacturer: Murata Electronics North America
   description: CAP CER 3.9PF 50V C0G/NP0 0201
+  prod_id: '302012906'
 - ref: C34
-  value: 0F
+  value: 0ohm
   footprint: '0201'
-  description: CAP CER 1PF 50V C0G/NP0 0402
 - ref: C36
   value: 47pF
   footprint: '0201'
-  description: CAP CER 47PF 50V C0G/NP0 0201
+  mpn: GRM0335C1E470JA01D
+  manufacturer: Murata Electronics North America
+  prod_id: '302012202'
 - ref: C37
   value: 1nF
   footprint: '0402'
-  description: CAP CER 1PF 50V C0G/NP0 0402
+  mpn: CC0402JRX7R9BB102
+  manufacturer: YAGEO
+  description: CAP CER 1nF 50V X7R 0402
+  prod_id: '302010394'
 - ref: C38
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
 - ref: C39
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
 - ref: C4
   value: 24pF
   footprint: '0402'
 - ref: C40
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
   decouples: U7
 - ref: C41
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
   decouples: U8
 - ref: C42
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
   decouples: U9
 - ref: C44
   value: 220nF
   footprint: '0402'
+  mpn: 0402ZD224KAT2A
+  description: CAP CER 0.22UF 10V X5R 0402
+  manufacturer: AVX Corporation
+  prod_id: '302010051'
 - ref: C45
   value: 10uF
   footprint: '0402'
+  mpn: CL10A106MQ8NNNC
   description: CAP CER 10UF 6.3V X5R 0603
+  prod_id: '302010053'
   decouples: U7
 - ref: C46
   value: 2.4pF
   footprint: '0201'
-  description: CAP CER 2.4PF 50V NP0 0201
-- ref: C47
-  value: DNP 7P
-  footprint: '0402'
-  description: 7pF-50V-0.5pF-NPO;0402
-- ref: C48
-  value: DNP 7P
-  footprint: '0402'
-  description: 7pF-50V-0.5pF-NPO;0402
+  mpn: GJM0335C1E2R4CB01D
+  manufacturer: Murata Electronics North America
+  prod_id: '302012904'
 - ref: C49
   value: 3pF
   footprint: '0201'
-  description: CAP CER 3PF 50V C0G 0402
+  mpn: GJM0335C1H3R0CB01J
+  manufacturer: Murata Electronics North America
+  description: CAP CER 3PF 50V C0G 0201
+  prod_id: '302012905'
 - ref: C5
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
 - ref: C50
   value: 100pF
   footprint: '0201'
+  mpn: CC0201JRNPO9BN101
+  manufacturer: YAGEO
   description: CAP CER 100pF 50V NPO 0201
+  prod_id: '302010420'
   decouples: U4
 - ref: C51
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
   decouples: U10
 - ref: C52
   value: 4.7pF
   footprint: '0201'
+  mpn: GJM0335C1H4R7BB01D
+  manufacturer: Murata
   description: CAP CER 4.7PF 50V C0G/NP0 0201
+  prod_id: '302012908'
 - ref: C53
   value: 100pF
   footprint: '0201'
+  mpn: CC0201JRNPO9BN101
+  manufacturer: YAGEO
   description: CAP CER 100pF 50V NPO 0201
+  prod_id: '302010420'
 - ref: C54
   value: 100pF
   footprint: '0201'
+  mpn: CC0402JRNPO9BN101
+  manufacturer: YAGEO
   description: CAP CER 100pF 50V NPO 0402
+  prod_id: '302010012'
 - ref: C55
   value: 10nF
   footprint: '0201'
-  description: CAP CER 10nF 50V X7R 0201
+  mpn: CC0201KRX7R7BB103
+  manufacturer: YAGEO
+  prod_id: '302010431'
   decouples: U4
 - ref: C56
   value: 0.7pF
   footprint: '0201'
-  description: CAP CER 0.7PF 50V C0G/NP0 0402
+  mpn: GJM0335G2AR70WB01D
+  manufacturer: Murata Electronics North America
+  description: CAP CER 0.7PF 50V C0G/NP0 0201
+  prod_id: '302012907'
 - ref: C6
   value: 10uF
   footprint: '0402'
-  description: CAP CER 0.1UF 10V X5R 0402
+  mpn: CC0402MRX5R5BB106
+  manufacturer: YAGEO
+  description: SMD CAP Ceramic 10uF-6.3V-20%-X5R;0402
+  prod_id: '302010053'
   decouples: U1
 - ref: C7
   value: 100nF
   footprint: '0402'
+  mpn: CL05A104MP5NNNC
+  manufacturer: Samsung Electro-Mechanics
   description: CAP CER 0.1UF 10V X5R 0402
+  prod_id: '302011121'
   decouples: U1
 - ref: C8
   value: 220nF
   footprint: '0402'
+  mpn: 0402ZD224KAT2A
+  description: CAP CER 0.22UF 10V X5R 0402
+  manufacturer: AVX Corporation
+  prod_id: '302010051'
 - ref: C9
   value: 470nF
   footprint: '0402'
+  mpn: CL05A474KP5NNNC
+  description: CAP CER 0.47UF 10V X5R 0402
+  manufacturer: Samsung Electro-Mechanics
+  prod_id: '302010232'
 - ref: D10
   value: ESDPSA0402V05
   footprint: '0402'
+  description: SMD Diode ESD 0.05pF;0402
+  prod_id: '304060074'
 - ref: D100
   value: 1N4148WS
   footprint: SOD-323
 - ref: D11
   value: ESDPSA0402V05
   footprint: '0402'
+  description: SMD Diode ESD 0.05pF;0402
+  prod_id: '304060074'
 - ref: D12
   value: BAT54XV2
   footprint: SOD-523
+  description: SMD DIODE SCHOTTKY 30V-200MA;SOD523
+  prod_id: '304020722'
 - ref: D13
   value: BAT54XV2
   footprint: SOD-523
+  description: SMD DIODE SCHOTTKY 30V-200MA;SOD523
+  prod_id: '304020722'
 - ref: D2
   value: LED
   footprint: '0402'
+  mpn: SML-D12U1WT86
+  manufacturer: Rohm Semiconductor
+  description: LED RED DIFFUSED 1608 SMD
+  prod_id: '304090122'
 - ref: D3
   value: LED
   footprint: '0402'
+  mpn: SML-D12U1WT86
+  manufacturer: Rohm Semiconductor
+  description: LED RED DIFFUSED 1608 SMD
+  prod_id: '304090122'
 - ref: D4
   value: LED
   footprint: '0402'
+  mpn: SML-D12U1WT86
+  manufacturer: Rohm Semiconductor
+  description: LED RED DIFFUSED 1608 SMD
+  prod_id: '304090122'
 - ref: D5
   value: LED
   footprint: '0402'
+  mpn: SML-D12U1WT86
+  manufacturer: Rohm Semiconductor
+  description: LED RED DIFFUSED 1608 SMD
+  prod_id: '304090122'
 - ref: D6
   value: LED
   footprint: '0402'
+  mpn: SML-D12U1WT86
+  manufacturer: Rohm Semiconductor
+  description: LED RED DIFFUSED 1608 SMD
+  prod_id: '304090122'
 - ref: D7
   value: LED
   footprint: '0402'
+  mpn: SML-D12U1WT86
+  manufacturer: Rohm Semiconductor
+  description: LED RED DIFFUSED 1608 SMD
+  prod_id: '304090122'
 - ref: D8
   value: ESDPSA0402V05
   footprint: '0402'
+  description: SMD Diode ESD 0.05pF;0402
+  prod_id: '304060074'
 - ref: D9
   value: PMEG6020ER,115
   footprint: SOD-123
+  mpn: PMEG6020ER,115
+  manufacturer: Nexperia USA Inc.
 - ref: F1
   value: 3A
   footprint: '1812'
+  mpn: PTC RESET FUSE 6V 3A 1812
+  description: PTC RESET FUSE 6V 3A 1812
+  manufacturer: DaRong
+  prod_id: '307010029'
 - ref: J1
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm_SMD
+  prod_id: '320031347'
+  description: SMD Black Female Header;1*2P-2.54-7.1mm-TYPE-A
 - ref: J2
   value: TAG-CONNECT-10
   footprint: Tag-Connect-10
+  manufacturer: Tag Connect, Inc
+  prod_id: '0'
   pin_count: 10
   nc_pins: {Pin_7: '7', Pin_9: '9'}
 - ref: J3
   value: TAG-CONNECT-10
   footprint: Tag-Connect-10
+  manufacturer: Tag Connect, Inc
+  prod_id: '0'
   pin_count: 10
   nc_pins: {Pin_2: '2', Pin_3: '3', Pin_5: '5', Pin_6: '6', Pin_8: '8', Pin_10: '10'}
 - ref: J4
   value: mikroBUS
   footprint: MikroBus-SMD
-  description: Order 2 of these connectors! Right tight top
+  mpn: ST-FH-254-0144-B
+  manufacturer: Sinotop Electronics Ltd
+  description: CONN HDR 8POS 0.1 TIN SMD
+  prod_id: '320030864'
   pin_count: 16
 - ref: J5
   value: mikroBUS
   footprint: MikroBus-SMD
+  mpn: ST-FH-254-0144-B
+  manufacturer: Sinotop Electronics Ltd
+  description: CONN HDR 8POS 0.1 TIN SMD
+  prod_id: '320030864'
   pin_count: 16
 - ref: J8
   value: UFL
   footprint: A-1JB
+  mpn: A-1JB
   description: CONN UMC JACK STR 50 OHM SMD
+  prod_id: '320111077'
   pin_count: 3
 - ref: L1
   value: 120R-1.3A
   footprint: '0402'
-  description: FERRITE BEAD 1.5 KOHM 0603 1LN
+  mpn: BLM15PD121SN1D
+  manufacturer: Murata
+  description: SMD Ferrite Bead 120R-1.3A;0402
+  prod_id: '303030040'
 - ref: L10
   value: 1nH
   footprint: '0201'
-  description: FIXED IND 1NH 1A 100 MOHM SMD
+  mpn: MHQ0603P1N0CT000
+  manufacturer: TDK
+  prod_id: '303011638'
+  description: "SMD Inductor;1nH\xB10.2nH-1A;0201"
 - ref: L11
   value: 1nH
   footprint: '0201'
-  description: FIXED IND 1NH 1A 100 MOHM SMD
+  mpn: MHQ0603P1N0CT000
+  manufacturer: TDK
+  prod_id: '303011638'
+  description: "SMD Inductor;1nH\xB10.2nH-1A;0201"
 - ref: L12
   value: 12nH
   footprint: '0201'
-  description: FIXED IND 12NH 500MA 100 MOHM SMD
+  mpn: LQP03TG12NJ02D
+  manufacturer: Murata
+  prod_id: '303011637'
+  description: SMD Inductor;12nH-2%-180mA-0201
 - ref: L13
   value: 12nH
   footprint: '0201'
-  description: FIXED IND 12NH 500MA 100 MOHM SMD
+  mpn: LQP03TG12NJ02D
+  manufacturer: Murata
+  prod_id: '303011637'
+  description: SMD Inductor;12nH-2%-180mA-0201
 - ref: L14
   value: 3.9nH
   footprint: '0201'
-  description: FIXED IND 3.9NH 170MA 100 MOHM SMD
+  mpn: LQP03HQ3N9B02D
+  manufacturer: Murata Electronics
+  prod_id: '303011225'
+  description: SMD Inductor 3.9nH-0.1nH-500mA;0201
 - ref: L15
-  value: 0H
+  value: '0'
   footprint: '0201'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010525'
 - ref: L2
   value: 470nH
   footprint: L2X1.6X1MM
+  mpn: ASMPM-0806-R47M-T
+  prod_id: '303010172'
+  description: SMD Innductor 0.47uH-20%;L2.0*W1.6*H1.0mm
 - ref: L3
   value: 120R-1.3A
   footprint: '0402'
-  description: FERRITE BEAD 1.5 KOHM 0603 1LN
+  mpn: BLM15PD121SN1D
+  manufacturer: Murata
+  description: SMD Ferrite Bead 120R-1.3A;0402
+  prod_id: '303030040'
 - ref: L4
   value: 6.8uH
   footprint: 0805
-  description: FERRITE BEAD 1.5 KOHM 0805 1LN
+  mpn: MLZ2012N6R8LT000
+  manufacturer: TDK
+  description: SMD FIXED Inductor 6.8UH-20%-550MA;0805
+  prod_id: '303011320'
 - ref: L5
-  value: 0.002nH
+  value: 2.0pF
   footprint: '0201'
+  manufacturer: YAGEO
   description: CAP CER 2.0PF 50V NP0 0201
 - ref: L6
-  value: 0H
+  value: '0'
   footprint: '0201'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010525'
 - ref: L7
   value: 27nH
   footprint: '0201'
-  description: FIXED IND 27NH 120MA 100MOHM SMD
+  mpn: LQP03TG27NH02D
+  manufacturer: Murata
+  prod_id: '303011639'
+  description: SMD Inductor 27nH-3%-120mA;0201
 - ref: L8
   value: 2.5nH
   footprint: '0201'
+  mpn: LQP03HQ2N5B02D
+  manufacturer: Murata Electronics Inc
   description: FIXED IND 2.5NH 600MA 100 MOHM SMD
+  prod_id: '303011636'
 - ref: L9
   value: 4.7nH
   footprint: '0201'
-  description: FIXED IND 4.7NH 350MA 100 MOHM SMD
+  mpn: LQP03TN4N7J02D
+  manufacturer: Murata
+  prod_id: '303010096'
+  description: SMD Inductor;4.7nH-5%-350mA;0201
 - ref: Q1
   value: CJ2305
   footprint: SOT-23
+  prod_id: '305030014'
+  description: SMD MOSFET P-CH 8V-4.1A;SOT-23
   pin_count: 3
 - ref: Q2
   value: 2N7002PW
   footprint: SOT-323_SC-70
+  description: SMD MOSFET N-CH 60V-310mA;SOT-323
+  prod_id: '305030008'
   pin_count: 3
 - ref: Q3
   value: BC856S
   footprint: SOT-363_SC-70-6
+  description: SMD Transistor Array 2 PNP -65V-100mA;SOT-363
+  prod_id: '305050111'
   pin_count: 6
 - ref: Q4
   value: CJ2305
   footprint: SOT-23
+  prod_id: '305030014'
+  description: SMD MOSFET P-CH 8V-4.1A;SOT-23
   pin_count: 3
 - ref: R1
   value: 1kohm
   footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
   description: RES SMD 1K OHM 5% 1/16W 0402
-  pulldown: D2.K
+  prod_id: '301010006'
 - ref: R10
   value: 470ohm
   footprint: '0402'
 - ref: R11
   value: 1kohm
   footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
   description: RES SMD 1K OHM 5% 1/16W 0402
+  prod_id: '301010006'
   pullup: USER_BOOT
 - ref: R12
   value: 100kohm
   footprint: '0402'
+  mpn: RC0402JR-07100KL
+  manufacturer: Yageo
   description: RES SMD 100K OHM 5% 1/16W 0402
+  prod_id: '301010456'
   pulldown: Q2.G
 - ref: R13
   value: 100ohm
   footprint: '0402'
+  prod_id: '301010028'
+  description: SMD RES 100R-5%-1/16W;0402
 - ref: R14
   value: 1Mohm
   footprint: '0402'
+  prod_id: '301010009'
+  description: SMD RES 1M-5%-1/16W;0402
 - ref: R15
   value: 33ohm
   footprint: '0402'
 - ref: R16
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R17
   value: 47kohm
   footprint: '0402'
+  prod_id: '301010005'
+  description: SMD RES 47K-5%-1/16W;0402
+  mpn: RC0402JR-0747KL
   pullup: /USB Input/nMSP430_RST
 - ref: R18
   value: 5.1kohm
   footprint: '0402'
+  mpn: RC0402JR-075K1L
+  description: RES SMD 5.1K OHM 5% 1/16W 0402
+  manufacturer: Yageo
+  prod_id: '301010495'
   pulldown: USB1.CC2
 - ref: R19
   value: 5.1kohm
   footprint: '0402'
+  mpn: RC0402JR-075K1L
+  description: RES SMD 5.1K OHM 5% 1/16W 0402
+  manufacturer: Yageo
+  prod_id: '301010495'
   pulldown: USB1.CC1
 - ref: R2
   value: 1kohm
   footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
   description: RES SMD 1K OHM 5% 1/16W 0402
-  pulldown: D3.K
+  prod_id: '301010006'
 - ref: R20
   value: 10ohm
   footprint: '0402'
+  mpn: RC0402JR-0710RL
+  description: RES SMD 10 OHM 5% 1/16W 0402
+  manufacturer: Yageo
+  prod_id: '301010444'
 - ref: R21
   value: 10ohm
   footprint: '0402'
+  mpn: RC0402JR-0710RL
+  description: RES SMD 10 OHM 5% 1/16W 0402
+  manufacturer: Yageo
+  prod_id: '301010444'
 - ref: R22
   value: 1Mohm
   footprint: '0402'
+  mpn: RC0402JR-071ML
+  description: RES SMD 1M OHM 5% 1/16W 0402
+  manufacturer: Yageo
+  prod_id: '301010009'
 - ref: R23
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R24
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R25
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R26
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R27
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R28
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R29
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R3
   value: 1kohm
   footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
   description: RES SMD 1K OHM 5% 1/16W 0402
-  pulldown: D4.K
+  prod_id: '301010006'
 - ref: R30
   value: 1.5kohm
   footprint: '0402'
+  mpn: RC0402JR-071K5L
+  description: RES SMD 1.5K OHM 5% 1/16W 0402
+  manufacturer: Yageo
+  prod_id: '301010001'
 - ref: R31
   value: 1.2kohm
   footprint: '0402'
+  mpn: RC0402FR-071K2L
+  description: SMD RES 1.2K-1%-1/16W;0402
+  manufacturer: YAGEO
+  prod_id: '301010470'
   pulldown: U2.ISET
 - ref: R32
   value: 47kohm
   footprint: '0402'
+  prod_id: '301010005'
+  description: SMD RES 47K-5%-1/16W;0402
+  mpn: RC0402JR-0747KL
 - ref: R33
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R34
   value: 453kohm
   footprint: '0402'
+  manufacturer: Stackpole Electronics Inc
+  mpn: RMCF0402FT453K
+  description: RES 453K OHM 1% 1/16W 0402
+  prod_id: '301010670'
   pullup: U3.FB
 - ref: R35
   value: 100kohm
   footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402JR-07100KL
+  description: RES SMD 100K OHM 5% 1/16W 0402
+  prod_id: '301010456'
   pulldown: U3.FB
 - ref: R36
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R37
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R38
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R39
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R4
   value: 1kohm
   footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
   description: RES SMD 1K OHM 5% 1/16W 0402
-  pulldown: D5.K
+  prod_id: '301010006'
 - ref: R40
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R41
   value: 2.21kohm
   footprint: '0402'
+  mpn: ERJ-2RKF2211X
+  manufacturer: Panasonic Electronic Components
   description: RES SMD 2.21K OHM 1% 1/10W 0402
+  prod_id: '301010881'
   pullup: RESET_N
 - ref: R42
   value: 2.21kohm
   footprint: '0402'
+  mpn: ERJ-2RKF2211X
+  manufacturer: Panasonic Electronic Components
   description: RES SMD 2.21K OHM 1% 1/10W 0402
+  prod_id: '301010881'
   pulldown: MB1_CTRL
 - ref: R43
   value: 2.21kohm
   footprint: '0402'
+  mpn: ERJ-2RKF2211X
+  manufacturer: Panasonic Electronic Components
   description: RES SMD 2.21K OHM 1% 1/10W 0402
+  prod_id: '301010881'
   pullup: U6.nWP/SIO2
 - ref: R44
   value: 2.21kohm
   footprint: '0402'
+  mpn: ERJ-2RKF2211X
+  manufacturer: Panasonic Electronic Components
   description: RES SMD 2.21K OHM 1% 1/10W 0402
+  prod_id: '301010881'
   pullup: nFLASH_CS
 - ref: R45
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R46
   value: 100kohm
   footprint: '0402'
+  mpn: RC0402JR-07100KL
+  manufacturer: Yageo
   description: RES SMD 100K OHM 5% 1/16W 0402
+  prod_id: '301010456'
   pullup: RESET_N
 - ref: R47
   value: 100kohm
   footprint: '0402'
+  mpn: RC0402JR-07100KL
+  manufacturer: Yageo
   description: RES SMD 100K OHM 5% 1/16W 0402
+  prod_id: '301010456'
   pullup: USER_BOOT
 - ref: R48
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R49
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R5
   value: 1kohm
   footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
   description: RES SMD 1K OHM 5% 1/16W 0402
-  pulldown: D6.K
+  prod_id: '301010006'
 - ref: R50
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R51
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R52
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R53
   value: 2.21kohm
   footprint: '0402'
+  mpn: ERJ-2RKF2211X
+  manufacturer: Panasonic Electronic Components
   description: RES SMD 2.21K OHM 1% 1/10W 0402
+  prod_id: '301010881'
   pullup: U9.nCS
 - ref: R54
   value: 0ohm
   footprint: '0402'
+  mpn: RMCF0402ZT0R00
+  manufacturer: Stackpole Electronics Inc
   description: RES 0 OHM JUMPER 1/16W 0402
+  prod_id: '301010000'
 - ref: R55
   value: 2.21kohm
   footprint: '0402'
+  mpn: ERJ-2RKF2211X
+  manufacturer: Panasonic Electronic Components
   description: RES SMD 2.21K OHM 1% 1/10W 0402
+  prod_id: '301010881'
   pullup: I2C_CTRL
 - ref: R56
   value: 10kohm
   footprint: '0402'
-  description: RES SMD 2.21K OHM 1% 1/10W 0402
   pullup: SCL
 - ref: R57
   value: 10kohm
   footprint: '0402'
-  description: RES SMD 2.21K OHM 1% 1/10W 0402
   pullup: SDA
-- ref: R58
-  value: DNP 0
-  footprint: '0402'
-  description: RES 0 OHM JUMPER 1/16W 0402
-- ref: R59
-  value: DNP 2.21K
-  footprint: '0402'
-  description: RES SMD 2.21K OHM 1% 1/10W 0402
 - ref: R6
   value: 1kohm
   footprint: '0402'
+  mpn: RC0402JR-071KL
+  manufacturer: Yageo
   description: RES SMD 1K OHM 5% 1/16W 0402
+  prod_id: '301010006'
 - ref: R60
   value: 4.7kohm
   footprint: '0402'
-  description: RES SMD 2.21K OHM 1% 1/10W 0402
   pullup: SEN_SDA
 - ref: R61
   value: 4.7kohm
   footprint: '0402'
-  description: RES SMD 2.21K OHM 1% 1/10W 0402
   pullup: SEN_SCL
 - ref: R7
   value: 2.21kohm
   footprint: '0402'
+  mpn: ERJ-2RKF2211X
+  manufacturer: Panasonic Electronic Components
   description: RES SMD 2.21K OHM 1% 1/10W 0402
+  prod_id: '301010881'
   pullup: INT_SENSOR
 - ref: R8
   value: 100kohm
   footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402JR-07100KL
+  description: RES SMD 100K OHM 5% 1/16W 0402
+  prod_id: '301010456'
   pulldown: Q3.B1
 - ref: R9
   value: 100kohm
   footprint: '0402'
+  manufacturer: Yageo
+  mpn: RC0402JR-07100KL
+  description: RES SMD 100K OHM 5% 1/16W 0402
+  prod_id: '301010456'
   pulldown: Q3.C2
 - ref: SH1
   value: Shield
-  footprint: SHIELDING
+  footprint: SHIELDING_27.5x15.5x0.2
   pin_count: 5
 - ref: SW1
   value: TS23M-BN-PT-PF
   footprint: TS23M-BN-PT-PF
+  description: SMD Side  Button 160gf;5P-L4.65*W3.5*H1.85mm
+  prod_id: '311021319'
   pin_count: 5
 - ref: SW2
   value: TS23M-BN-PT-PF
   footprint: TS23M-BN-PT-PF
+  description: SMD Side  Button 160gf;5P-L4.65*W3.5*H1.85mm
+  prod_id: '311021319'
   pin_count: 5
 - ref: U1
   value: MSP430F5503
   footprint: Texas_S-PVQFN-N48_EP5.15x5.15mm
+  mpn: MSP430F5503IRGZR
+  description: IC MCU 16BIT 8KB FLASH 48VQFN
+  manufacturer: Texas Instruments
+  prod_id: '310011336'
   pin_count: 49
-  nc_pins: {P6.0/CB0: '1', P5.0/VeREF+: '5', P5.1/VeREF-: '6', P5.4/XIN: '8', P5.5/XOUT: '9', TA0.1/P1.2: '16', TA0.2/P1.3: '17', PJ.0/TDO: '23', PJ.1/TDI/TCLK: '24', PJ.2/TMS: '25', PJ.3/TCK: '26'}
+  nc_pins: {P6.0/CB0: '1', P5.0/VeREF+: '5', P5.1/VeREF-: '6', P5.4/XIN: '8', P5.5/XOUT: '9', TA0.1/P1.2: '16', TA0.2/P1.3: '17',
+    PJ.0/TDO: '23', PJ.1/TDI/TCLK: '24', PJ.2/TMS: '25', PJ.3/TCK: '26'}
 - ref: U10
   value: TS5A2066YZPR
   footprint: TS5A2066YZPR
-  description: SMD IC Dual SPST DSBGA-8
+  prod_id: '310991037'
+  description: SMD IC Dual SPST Analog Switch;DSBGA-8
   pin_count: 8
 - ref: U11
   value: SKY13317-373
   footprint: SKY13317-373LF
+  prod_id: '310060642'
+  description: SMD IC RF Switch-20MHz-6GHz SP3T;QFN-8
+  mpn: SKY13317-373LF
   pin_count: 9
   nc_pins: {NC: '2'}
 - ref: U2
   value: BQ21040
   footprint: SOT-23-6
+  mpn: BQ21040DBVR
+  description: IC BAT CHG LI-ION 1 CELL SOT23-6
+  manufacturer: Texas Instruments
+  prod_id: '310032031'
   pin_count: 6
 - ref: U3
   value: TPS62821
   footprint: TPS62821DLC
+  mpn: TPS62821DLCR
+  manufacturer: Texas Instruments
   description: IC REG BUCK ADJ 1A 8VSON-HR
+  prod_id: '310032030'
   pin_count: 8
   nc_pins: {NC: '4', PG: '8'}
 - ref: U4
   value: CC1352P
-  footprint: QFN-48-1EP
+  footprint: QFN-48-1EP_7x7
+  description: SMD IC RF TxRx + MCU 2.4G & sub 1G ;VQFN-48
+  prod_id: '310060580'
   pin_count: 49
 - ref: U5
   value: TS5A23157
-  footprint: QFN10_0.6
+  footprint: QFN10_0.6_2X1.5X0.5MM
+  mpn: TS5A23157RSER
+  manufacturer: Texas Instruments
+  prod_id: '310100448'
+  description: SMD IC Dual SPDT Analog Switch;UQFN-10
   pin_count: 10
 - ref: U6
   value: GD25Q16CEIGR
   footprint: MX25R8035FZUIL0
-  description: IC FLASH 8M SPI 33MHZ 8USON
+  mpn: GD25Q16CEIGR
+  manufacturer: Gigadevice
+  description: SMD IC NOR Flash;16Mbit-SPI;USON-8;2*3mm
+  prod_id: '310091053'
   pin_count: 9
 - ref: U7
   value: OPT3001
   footprint: USON6
+  mpn: OPT3001DNPR
+  description: SENSOR OPT 550NM AMBIENT 6USON
+  manufacturer: Texas Instruments
+  prod_id: '314020321'
   pin_count: 6
 - ref: U8
   value: HDC2010
   footprint: HDC2010
+  mpn: HDC2010YPAR
+  description: GEN 2 HUMIDITY SENSOR
+  manufacturer: Texas Instruments
+  prod_id: '314010579'
   pin_count: 6
 - ref: U9
   value: LIS2DE12
   footprint: LGA-12
+  mpn: LIS2DE12TR
+  description: ACCEL 2-16G I2C/SPI 12LGA
+  manufacturer: STMicroelectronics
+  prod_id: '314080306'
   pin_count: 12
   nc_pins: {INT2: '11'}
 - ref: USB1
   value: USB-C
   footprint: USB-C
+  mpn: UBF31-0171
+  manufacturer: MTCONN
+  prod_id: '320010943'
+  description: SMD USB Type-c;12P+4-8.9*7.3*3.2mm
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: Y1
   value: 24MHz
   footprint: SMD3225
+  mpn: ABM8-24.000MHZ-B2-T
+  description: CRYSTAL 24.0000MHZ 18PF SMD
+  manufacturer: Abracon LLC
+  prod_id: '306011063'
   pin_count: 4
 - ref: Y2
   value: 32.768KHz
   footprint: SMD2012
+  mpn: ECS-.327-7-12-C-TR
+  description: CRYSTAL 32.7680KHZ 7PF SMD
+  manufacturer: ECS Inc.
+  prod_id: '306010020'
 - ref: Y3
   value: 48MHz
   footprint: SMD2016
+  mpn: NX2016SA-48M-EXS00A-CS05517
+  description: CRYSTAL 48MHZ 7PF SMD
+  manufacturer: Kyocera International Inc. Electronic Components
+  prod_id: '306011062'
   pin_count: 4
 nets:
 - name: /Programming/CC1352_TDI
@@ -761,7 +1210,7 @@ nets:
 - name: /USB Input/nMSP430_RST
   pins: [C2.2, J3.Pin_1, R17.1, U1.nRST/NMI/SBWTDIO]
 - name: 2.4G
-  pins: [D6.A, R58.1, U4.DIO_18]
+  pins: [D6.A, U4.DIO_18]
 - name: 3V3
   pins:
   - BZ1.-
@@ -893,11 +1342,8 @@ nets:
   - C26.1
   - C27.2
   - C28.1
-  - C29.1
   - C3.1
-  - C30.2
   - C31.1
-  - C32.2
   - C33.1
   - C37.2
   - C38.1
@@ -906,11 +1352,8 @@ nets:
   - C40.1
   - C41.1
   - C42.1
-  - C43.1
   - C44.1
   - C45.2
-  - C47.2
-  - C48.2
   - C5.1
   - C50.2
   - C51.1
@@ -953,7 +1396,6 @@ nets:
   - R48.1
   - R5.2
   - R54.2
-  - R59.2
   - R8.1
   - R9.1
   - SH1.1
@@ -1032,7 +1474,7 @@ nets:
 - name: Net-(AE1-Pad3)
   pins: [AE1.Attach, C37.1]
 - name: Net-(B1-Pad1)
-  pins: [B1.UBP_2_4_GHZ, C34.1, C43.2]
+  pins: [B1.UBP_2_4_GHZ, C34.1]
   class: RF
   trace_width: '0.294'
 - name: Net-(B1-Pad4)
@@ -1048,15 +1490,15 @@ nets:
   class: RF
   trace_width: '0.294'
 - name: Net-(C29-Pad2)
-  pins: [C29.2, C34.2, L15.2, L5.2]
+  pins: [C34.2, L15.2, L5.2]
   class: RF
   trace_width: '0.294'
 - name: Net-(C30-Pad1)
-  pins: [C30.1, C36.2, L6.2]
+  pins: [C36.2, L6.2]
   class: RF
   trace_width: '0.294'
 - name: Net-(C32-Pad1)
-  pins: [C32.1, J8.1, L6.1]
+  pins: [J8.1, L6.1]
 - name: Net-(C33-Pad2)
   pins: [C33.2, C46.2, C56.2, L13.1, L14.2]
   class: RF
@@ -1164,8 +1606,6 @@ nets:
   - U4.DIO_15
 - name: V18
   pins: [C8.2, U1.V18]
-- name: V3
-  pins: [R58.2, R59.1, U11.V3]
 - name: VCORE
   pins: [C9.2, U1.VCORE]
 - name: VDD
@@ -1202,9 +1642,9 @@ nets:
 - name: X32K_Q2
   pins: [C16.1, U4.X32K_Q2, Y2.2]
 - name: X48M_N
-  pins: [C47.1, U4.X48M_N, Y3.1]
+  pins: [U4.X48M_N, Y3.1]
 - name: X48M_P
-  pins: [C48.1, U4.X48M_P, Y3.3]
+  pins: [U4.X48M_P, Y3.3]
 - name: nCHG
   pins: [R6.2, U2.nCHG]
 - name: nCS
@@ -1386,16 +1826,6 @@ positions:
   x: 274.78
   y: 43.06
   rot: 90.0
-  side: back
-- ref: C47
-  x: 282.19
-  y: 53.97
-  rot: -90.0
-  side: back
-- ref: C48
-  x: 280.64
-  y: 53.95
-  rot: -90.0
   side: back
 - ref: C49
   x: 275.11
@@ -1837,16 +2267,6 @@ positions:
   x: 278.68
   y: 62.51
   rot: 180.0
-- ref: R58
-  x: 265.48
-  y: 40.85
-  rot: 90.0
-  side: back
-- ref: R59
-  x: 263.97
-  y: 40.37
-  rot: 180.0
-  side: back
 - ref: R6
   x: 289.94
   y: 43.31

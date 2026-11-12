@@ -18,15 +18,16 @@ components:
 - ref: C1
   value: 10uF
   footprint: '1210'
-  prod_id: CAP-09824
+  voltage: 50V
   tolerance: 20%
+  prod_id: CAP-09824
   decouples: U1
 - ref: C2
   value: 10uF
   footprint: '1206'
-  prod_id: CAP-10057
   voltage: 6.3V
   tolerance: 20%
+  prod_id: CAP-10057
 - ref: C3
   value: 47uF
   footprint: EIA3528
@@ -38,15 +39,15 @@ components:
 - ref: C5
   value: 1uF
   footprint: '0603'
-  prod_id: CAP-00868
   voltage: 16V
   tolerance: 10%
+  prod_id: CAP-00868
 - ref: C6
   value: 1uF
   footprint: '0603'
-  prod_id: CAP-00868
   voltage: 16V
   tolerance: 10%
+  prod_id: CAP-00868
 - ref: D1
   value: ZLLS500
   footprint: SOT23
@@ -82,20 +83,20 @@ components:
   value: 1x2 header
   footprint: 1X02
 - ref: J6
-  value: 1x2 screw terminal
+  value: 1x2 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-2
 - ref: J7
-  value: 1x2 screw terminal
+  value: 1x2 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-2
 - ref: J8
-  value: 1x2 screw terminal
+  value: 1x2 3.50mm screw terminal
   footprint: SCREWTERMINAL-3.5MM-2
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Jumper
 - ref: JP2
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
   description: Jumper
 - ref: JP3
@@ -111,34 +112,34 @@ components:
 - ref: R1
   value: 220mohm
   footprint: 0805
-  prod_id: RES-09883
   tolerance: 1%
+  prod_id: RES-09883
 - ref: R2
   value: 47kohm
   footprint: '0603'
-  prod_id: RES-07871
   tolerance: 1%
+  prod_id: RES-07871
 - ref: R3
   value: 220kohm
   footprint: '0603'
-  prod_id: RES-08969
   tolerance: 1%
+  prod_id: RES-08969
   pulldown: FB
 - ref: R4
   value: 10kohm
   footprint: '0603'
-  prod_id: RES-00824
   tolerance: 1%
+  prod_id: RES-00824
 - ref: R5
   value: 10kohm
   footprint: '0603'
-  prod_id: RES-00824
   tolerance: 1%
+  prod_id: RES-00824
 - ref: R6
   value: 220kohm
   footprint: '0603'
-  prod_id: RES-08969
   tolerance: 1%
+  prod_id: RES-08969
 - ref: R7
   value: 10kohm
   footprint: TRIMPOT-3MM

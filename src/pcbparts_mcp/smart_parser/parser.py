@@ -42,7 +42,8 @@ class ParsedQuery:
 _SCOPED_TEXT = {
     **dict.fromkeys(("ideal diode", "ideal diodes", *_POWER_MUX_WORDS), ("ideal diode", ("power distribution switches",))),
     **dict.fromkeys(("lora", "lora transceiver", "lora chip"), ("lora", ("rf transceiver ics",))),
-    **dict.fromkeys(_BATTERY_HOLDER_WORDS, ("holder", ("battery accessories",))),
+    # Only 2 of the 25 Battery accessories listings say "holder"; C5375990 says "Battery base"
+    **dict.fromkeys(_BATTERY_HOLDER_WORDS, ("holder", ("battery accessories",), ("battery base",))),
 }
 
 _BATTERY_SIZES = tuple(
@@ -254,8 +255,8 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
             elif kw_lower in _SCOPED_TEXT:
                 # A part type split across categories, one of which is broader than it: single-chip ideal
                 # diodes (LM66100) are Power Distribution Switches, LoRa chips (SX1276) RF Transceiver ICs
-                words, scopes = _SCOPED_TEXT[kw_lower]
-                result.spec_filters.extend(ScopedTextFilter("text", "=", words, scope) for scope in scopes)
+                words, scopes, *also = _SCOPED_TEXT[kw_lower]
+                result.spec_filters.extend(ScopedTextFilter("text", "=", words, scope, *also) for scope in scopes)
             elif kw_lower.startswith("class d"):
                 result.spec_filters.append(SpecFilter("Class", "=", "Class D"))
                 detected.setdefault("semantic", []).append("class d (from keyword)")

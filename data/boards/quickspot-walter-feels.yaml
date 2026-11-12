@@ -1,7 +1,7 @@
 name: QuickSpot Walter-Feels
 slug: quickspot-walter-feels
 source: QuickSpot/walter-hardware
-format: kicad7
+format: kicad6
 description: MPPT solar (LTC4015), CAN (SN65HVDA1050)
 tags: [can-bus, energy-harvesting, power-supply, rs232, rs485]
 key_ics: [LTC4015, SN65HVDA1050, LT3120]
@@ -373,7 +373,7 @@ components:
   nc_pins: {A@2: '2'}
 - ref: D3
   value: ESDCAN01-2BLY
-  footprint: SOT-3
+  footprint: SOT95P255X150-3N
   lcsc: C1976606
   pin_count: 3
 - ref: D4
@@ -405,6 +405,8 @@ components:
   height: '0.8'
   manufacturer: Analog Devices
   mpn: LTC4015EUHF#PBF
+  mouser: 584-LTC4015EUHF#PBF
+  arrow: LTC4015EUHF#PBF
   lcsc: C687159
   pin_count: 39
   nc_pins: {nSMBALERT: '6'}
@@ -432,14 +434,15 @@ components:
   lcsc: C17275119
   pin_count: 9
 - ref: J6
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   lcsc: C5116483
   pin_count: 4
 - ref: L1
   value: 10uH
   footprint: INDPM178169X700N
   lcsc: C1331642
+  mpn: SRP1770C-100M
 - ref: L2
   value: PM4343.332NLT
   footprint: INDPM140128X650N
@@ -448,10 +451,12 @@ components:
   value: 10uH
   footprint: SRR7045100M
   lcsc: C1329516
+  mpn: SRR7045-100M
 - ref: L4
   value: common mode choke
   footprint: ACT45B1012PTL003
   lcsc: C76584
+  mpn: ACT45B-510-2P-TL003
   pin_count: 4
 - ref: Q1
   value: FDMC8030
@@ -461,6 +466,7 @@ components:
 - ref: Q2
   value: FDMC8327L
   footprint: FDMC86139P
+  mouser: 512-FDMC8327L
   manufacturer: onsemi
   mpn: FDMC8327L
   lcsc: C890957
@@ -469,6 +475,7 @@ components:
   value: SI7611DN-T1
   footprint: VISHAY_SIS468DN-T1-GE3
   lcsc: C506599
+  mpn: SI7611DN-T1-GE3
   pin_count: 9
 - ref: Q4
   value: CSD17318Q2
@@ -507,11 +514,13 @@ components:
   value: 3mohm
   footprint: RES_KRL3216T4-M-R003-F-T1
   lcsc: C4119998
+  mpn: KRL3216T4-M-R003-F-T1
   pin_count: 4
 - ref: R14
   value: 4mohm
   footprint: RES_KRL3216T4-M-R003-F-T1
   lcsc: C2090348
+  mpn: KRL3216T4-M-R004-F-T1
   pin_count: 4
 - ref: R15
   value: 60.4ohm
@@ -671,12 +680,12 @@ components:
   nc_pins: {POK: '5'}
 - ref: U14
   value: SN65HVDA1050AQDRQ1
-  footprint: SOIC-8
+  footprint: SOIC127P600X175-8N
   lcsc: C115764
   pin_count: 8
 - ref: U2
   value: MAX3221
-  footprint: SOP-16
+  footprint: SOP65P640X110-16N
   lcsc: C44383
   partno: MAX3221IPWR
   pin_count: 16
@@ -685,11 +694,12 @@ components:
   value: MIC2005A-2
   footprint: MIC2005A-2YM5
   lcsc: C625654
+  mpn: MIC2005A-2YM5-TR
   pin_count: 5
   nc_pins: {FAULT/: '4'}
 - ref: U4
   value: THVD1450D
-  footprint: SOIC-8
+  footprint: SOIC127P599X175-8N
   lcsc: C2671361
   pin_count: 8
 - ref: U5
@@ -710,7 +720,7 @@ components:
   nc_pins: {NC@3: '3', NC@4: '4', DAP: '7'}
 - ref: U8
   value: LPS22HBTR
-  footprint: HLGA10
+  footprint: HLGA10_2X2
   lcsc: C94049
   pin_count: 10
   nc_pins: {INT_DRDY: '7'}

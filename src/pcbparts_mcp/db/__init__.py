@@ -27,6 +27,7 @@ from ..search.spec_sort import SpecSort
 from .connection import build_database, load_caches
 from .lookup import get_by_lcsc, get_by_lcsc_batch, get_by_mpn
 from .categories import (
+    CandidateBatch,
     get_subcategory_name,
     get_category_for_subcategory,
     get_categories_for_client,
@@ -85,6 +86,7 @@ class ComponentDatabase:
         self._attribute_names: dict[int, set[str]] = {}
         self._pcba_type_loaded: bool | None = None
         self._scraped_at: str | None = None
+        self._prices_as_of: str | None = None
         self._english_packages = False
 
     @serialized
@@ -137,10 +139,13 @@ class ComponentDatabase:
                 )
 
             try:
-                row = self._conn.execute("SELECT value FROM metadata WHERE key = 'scraped_at'").fetchone()
+                meta = dict(self._conn.execute(
+                    "SELECT key, value FROM metadata WHERE key IN ('scraped_at', 'prices_as_of')").fetchall())
             except sqlite3.OperationalError:  # built before 0.8.15
-                row = None
-            self._scraped_at = _iso_utc(row[0]) if row else None
+                meta = {}
+            self._scraped_at = _iso_utc(meta["scraped_at"]) if "scraped_at" in meta else None
+            # Since 0.9.0 prices are refreshed weekly (stock daily); earlier data scraped both together
+            self._prices_as_of = _iso_utc(meta["prices_as_of"]) if "prices_as_of" in meta else self._scraped_at
 
             # Load caches
             (
@@ -172,10 +177,16 @@ class ComponentDatabase:
                 self._pcba_type_loaded = None
 
     def scraped_at(self) -> str | None:
-        """When the catalog's stock and prices were scraped ("2026-11-04T20:10:49Z"), or None for a
-        database built before 0.8.15."""
+        """When the catalog's stock was scraped ("2026-11-04T20:10:49Z"), or None for a database
+        built before 0.8.15."""
         self._ensure_db()
         return self._scraped_at
+
+    def prices_as_of(self) -> str | None:
+        """When the catalog's 1-piece prices were last all refreshed: weekly since 0.9.0, a part new
+        since then has the price it was first scraped with. scraped_at for older data."""
+        self._ensure_db()
+        return self._prices_as_of
 
     def english_packages(self) -> bool:
         """Whether the database was built with packages in English (english_package), since 0.8.15."""
@@ -310,6 +321,7 @@ class ComponentDatabase:
         count_unlisted: bool = False,
         pcba_type: str | None = None,
         spec_sort: SpecSort | None = None,
+        capture_plan: bool = False,
     ) -> dict[str, Any]:
         """
         Search components with parametric filtering.
@@ -383,6 +395,7 @@ class ComponentDatabase:
             count_unlisted=count_unlisted,
             pcba_type=pcba_type,
             spec_sort=spec_sort,
+            capture_plan=capture_plan,
         )
 
         self._snapshot_parts(result.get("results", []))
@@ -533,13 +546,13 @@ class ComponentDatabase:
     ) -> list[dict[str, Any]]:
         """Parts that can meet the original's compatibility rules, no-fee first, then by stock.
 
-        find_alternatives adds these to its live search; on a database error it gets none.
+        find_alternatives reports database errors separately from an empty retrieval.
         """
         self._ensure_db()
         if not self._conn:
-            return []
+            raise sqlite3.OperationalError("Component database unavailable")
         try:
-            return self._snapshot_parts(find_alternative_candidates(
+            parts = find_alternative_candidates(
                 conn=self._conn,
                 subcategories=self._subcategories,
                 original=original,
@@ -549,10 +562,11 @@ class ComponentDatabase:
                 library_type=library_type,
                 accept=accept,
                 limit=limit,
-            ))
+            )
+            return CandidateBatch(self._snapshot_parts(parts), **getattr(parts, "retrieval", {}))
         except sqlite3.Error:
             logger.warning("Alternative candidates query failed for %s", original.get("lcsc"), exc_info=True)
-            return []
+            raise
 
     @serialized
     def subcategory_parts(
@@ -563,10 +577,10 @@ class ComponentDatabase:
         limit: int = 500,
     ) -> list[dict[str, Any]]:
         """In-stock parts of a subcategory from any maker, no-fee first, then by stock (RF similar
-        parts). On a database error, none."""
+        parts). Database errors propagate to the alternatives stage report."""
         self._ensure_db()
         if not self._conn:
-            return []
+            raise sqlite3.OperationalError("Component database unavailable")
         try:
             return self._snapshot_parts(subcategory_parts(
                 conn=self._conn,
@@ -578,7 +592,7 @@ class ComponentDatabase:
             ))
         except sqlite3.Error:
             logger.warning("Subcategory parts query failed for %s", subcategory_id, exc_info=True)
-            return []
+            raise
 
     def _row_to_dict(self, row: sqlite3.Row) -> dict[str, Any]:
         """Convert a database row to a component dict."""

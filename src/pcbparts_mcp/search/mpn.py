@@ -14,7 +14,7 @@ from functools import lru_cache
 # particular, decimal points and +/#/,/: carry ordering-code information.
 MPN_KEY_SQL = "REPLACE(REPLACE(REPLACE(REPLACE(UPPER(mpn), '-', ''), ' ', ''), '_', ''), '/', '')"
 
-LCSC_CODE = re.compile(r"C\d+", re.IGNORECASE)
+LCSC_CODE = re.compile(r"C[0-9]+", re.IGNORECASE)  # ASCII digits: \d also matches "C٦١٨٦"
 
 # BOM entries for a part that isn't fitted or isn't chosen yet, compared without
 # punctuation or case. Full-text search found JST ...-N-A connectors for "N/A".

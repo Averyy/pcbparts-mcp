@@ -99,13 +99,14 @@ components:
   footprint: TEST_PAD40x70_SQUARE
 - ref: L1
   value: 2.2uH
-  footprint: YS75
+  footprint: YS75_7X8MM
   current: 3A
 - ref: L2
   value: 1uH
   footprint: CD32
   current: 2.5A
   tolerance: 20%
+  mpn: SWPA3015S1R0MT
 - ref: PWR_In/Out1
   value: PH2.0-3PWB
   footprint: PH2.0-3PWB
@@ -120,7 +121,6 @@ components:
 - ref: R1
   value: 2.2kohm
   footprint: '0402'
-  pulldown: PWR_LED1.K
 - ref: R10
   value: 49.9kohm
   footprint: '0402'
@@ -187,10 +187,11 @@ components:
 - ref: U1
   value: BL4054B
   footprint: SOT-23-5
+  mpn: BL4054B-42TPRN
   pin_count: 5
 - ref: U2
   value: CH32V003F4P6
-  footprint: TSSOP20_Pitch-0.65mm
+  footprint: TSSOP20_Pitch-0.65mm_6.6x4.5x1.2
   pin_count: 20
   nc_pins: {PD7/NRST/T2CH4/OPP1/UCK_: '4'}
 - ref: U3
@@ -222,6 +223,7 @@ components:
 - ref: USB-PWR_In1
   value: USB-C
   footprint: USB2.0_TYPE-C(A40-00119-A52-12)_Paste
+  mpn: A40-00119-A52-12
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: VBAT1
@@ -237,6 +239,7 @@ components:
 nets:
 - name: +3.3V
   pins:
+  - +3.3V1.Pad
   - C1.2
   - C10.1
   - EXT1.1
@@ -251,9 +254,10 @@ nets:
   - UEXT4.1
   - pUEXT1.P1
 - name: +5V
-  pins: [C6.1, D3.K@1, PWR_In/Out1.P2@3, R7.1]
+  pins: [+5V1.Pad, C6.1, D3.K@1, PWR_In/Out1.P2@3, R7.1]
 - name: +5V_USB
   pins:
+  - +5V_USB1.Pad
   - C2.1
   - CHARGING1.A
   - D2.A@2

@@ -395,7 +395,7 @@ components:
   voltage: 10V
   tolerance: 20%
   dielectric: X5R
-  decouples: U9
+  decouples: U10
 - ref: C71
   value: 10uF
   footprint: '0402'
@@ -628,16 +628,19 @@ components:
   footprint: '2016'
   current: 2.0A
   tolerance: 20%
+  mpn: PIM201610-3R3MTS00
 - ref: L3
   value: 4.7uH
   footprint: CD42(43)
   current: 2.33A
   tolerance: 20%
+  mpn: NRS4018T4R7MDGJ
 - ref: L4
   value: 1uH
   footprint: '2016'
   current: 4.2A
   tolerance: 20%
+  mpn: PIM201610-1R0MTS00
 - ref: L5
   value: FB0805 600R
   footprint: 0805
@@ -682,17 +685,20 @@ components:
   footprint: SS-12D11G5
   pin_count: 4
 - ref: Q1
-  value: 12MHz
+  value: 12MHz 18pF
   footprint: TSX-3.2x2.5mm_GND(3)
+  tolerance: 30ppm
+  mpn: ABM8-12.000MHZ-D2Y-T
   pin_count: 3
 - ref: Q2
-  value: 12MHz
+  value: 12MHz 18pF
   footprint: TSX-3.2x2.5mm_GND(3)
+  tolerance: 30ppm
+  mpn: ABM8-12.000MHZ-D2Y-T
   pin_count: 3
 - ref: R1
   value: 2.2kohm
   footprint: '0402'
-  pulldown: PWR_LED1.K
 - ref: R10
   value: 27ohm
   footprint: '0402'
@@ -937,7 +943,6 @@ components:
 - ref: R74
   value: 2.2kohm
   footprint: '0402'
-  pulldown: LED1.K
 - ref: R75
   value: 27kohm
   footprint: '0402'
@@ -1054,6 +1059,7 @@ components:
 - ref: U10
   value: APS6404L
   footprint: SO-8
+  mpn: APS6404L-3SQR-SN
   pin_count: 8
 - ref: U11
   value: PAM8003DR
@@ -1079,7 +1085,7 @@ components:
   pin_count: 6
 - ref: U6
   value: FE1.1s
-  footprint: SSOP28
+  footprint: SSOP28_10x4
   pin_count: 28
   nc_pins: {TESTJ/SDA: '27'}
 - ref: U7
@@ -1089,12 +1095,8 @@ components:
   nc_pins: {NC: '6'}
 - ref: U8
   value: ES8311
-  footprint: QFN-20_EP(21)
+  footprint: QFN-20_EP(21)_3x3x0.6
   pin_count: 21
-- ref: U9
-  value: W25Q128JVSIQ
-  footprint: SO-8_208mil
-  pin_count: 8
 - ref: UEXT1
   value: P-B-V-10-LF
   footprint: GBH-254-SMT-10
@@ -1106,20 +1108,24 @@ components:
 - ref: USB-PGM1
   value: USB-C
   footprint: USB2.0_TYPE-C(A40-00119-A52-12)_Paste
+  mpn: A40-00119-A52-12
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: USB-PWR1
   value: USB-C
   footprint: USB2.0_TYPE-C(A40-00119-A52-12)_Paste
+  mpn: A40-00119-A52-12
   pin_count: 17
   nc_pins: {DP1: A6, DN1: A7, SBU1: A8, DP2: B6, DN2: B7, SBU2: B8}
 - ref: USB_HOST1-2
   value: USB-B
   footprint: USB_TWO_LEVEL
+  mpn: USBB1-FRWH-4A
   pin_count: 9
 - ref: USB_HOST3-4
   value: USB-B
   footprint: USB_TWO_LEVEL
+  mpn: USBB1-FRWH-4A
   pin_count: 9
 - ref: VBAT1
   value: TESTPAD
@@ -1135,6 +1141,7 @@ components:
 nets:
 - name: +3.3V
   pins:
+  - +3.3V1.Pad
   - C1.2
   - C10.1
   - C11.1
@@ -1186,11 +1193,11 @@ nets:
   - U3.QSPI_IOVDD
   - U3.USB_OTP_VDD
   - U3.VREG_VIN
-  - U9.VCC
   - UEXT1.1
   - UEXT2.1
 - name: +3.3VA
   pins:
+  - +3.3VA1.Pad
   - C56.1
   - FET2.G
   - FET3.G
@@ -1202,6 +1209,7 @@ nets:
   - VR1.VOUT
 - name: +5V
   pins:
+  - +5V1.Pad
   - C25.1
   - C32.1
   - C36.1
@@ -1216,6 +1224,7 @@ nets:
   - U6.V5
 - name: +5VA
   pins:
+  - +5VA1.Pad
   - C23.1
   - C24.2
   - C84.2
@@ -1232,6 +1241,7 @@ nets:
   - U11.PVDDR
 - name: +5V_USB
   pins:
+  - +5V_USB1.Pad
   - C2.1
   - CHARGING1.A
   - D1.K@1
@@ -1247,6 +1257,7 @@ nets:
   - USB-PWR1.VBUS@B9
 - name: /+1V1
   pins:
+  - +1V1.Pad
   - C15.1
   - C16.1
   - C17.1
@@ -1388,7 +1399,7 @@ nets:
 - name: /GPIO7\SPI0_TX(MOSI)
   pins: [U3.GPIO7/SPI0_TX/UART1_RTS/I2C1_SCL/PWM3_B/SIO/PIO0/PIO1/PIO2/USB_VBUS_DET/UART1_RX, UEXT1.8]
 - name: /GPIO8\QMI_CS1n
-  pins: [R78.2, U10.#CS, U3.GPIO8/SPI1_RX/UART1_TX/I2C0_SDA/PWM4_A/SIO/PIO0/PIO1/PIO2/QMI_CS1n/USB_VBUS_EN, U9.#CS]
+  pins: [R78.2, U10.#CS, U3.GPIO8/SPI1_RX/UART1_TX/I2C0_SDA/PWM4_A/SIO/PIO0/PIO1/PIO2/QMI_CS1n/USB_VBUS_EN]
 - name: /GPIO9\SPI1_CSn\SD_DAT0
   pins: [R92.1, U3.GPIO9/SPI1_CSn/UART1_RX/I2C0_SCL/PWM4_B/SIO/PIO0/PIO1/PIO2/USB_OVCUR_DET]
 - name: /HCEC
@@ -1446,17 +1457,17 @@ nets:
 - name: /PWR_SW
   pins: [D2.K@1, D3.K@1, FET1.2, PWR_ON/OFF1.SW2, PWR_ON/OFF1.SW3]
 - name: /QSPI_CLK
-  pins: [U1.CLK, U10.CLK, U3.QSPI_SCLK/QMI_SCK/UART1_CTS/I2C1_SDA/SIO/UART1_TX, U9.CLK]
+  pins: [U1.CLK, U10.CLK, U3.QSPI_SCLK/QMI_SCK/UART1_CTS/I2C1_SDA/SIO/UART1_TX]
 - name: /QSPI_CSn
   pins: [R18.1, R6.2, U1.#CS, U3.QSPI_SSn/QMI_CS0n/UART1_RTS/I2C1_SCL/SIO/UART1_RX]
 - name: /QSPI_SD0
-  pins: [U1.DI(IO0), U10.DI(IO0), U3.QSPI_SD0/QMI_SD0/UART0_TX/I2C0_SDA/SIO, U9.DI(IO0)]
+  pins: [U1.DI(IO0), U10.DI(IO0), U3.QSPI_SD0/QMI_SD0/UART0_TX/I2C0_SDA/SIO]
 - name: /QSPI_SD1
-  pins: [U1.DO(IO1), U10.DO(IO1), U3.QSPI_SD1/QMI_SD1/UART0_RX/I2C0_SCL/SIO, U9.DO(IO1)]
+  pins: [U1.DO(IO1), U10.DO(IO1), U3.QSPI_SD1/QMI_SD1/UART0_RX/I2C0_SCL/SIO]
 - name: /QSPI_SD2
-  pins: [U1.#WP(IO2), U10.#WP(IO2), U3.QSPI_SD2/QMI_SD2/UART0_CTS/I2C1_SDA/SIO/UART0_TX, U9.#WP(IO2)]
+  pins: [U1.#WP(IO2), U10.#WP(IO2), U3.QSPI_SD2/QMI_SD2/UART0_CTS/I2C1_SDA/SIO/UART0_TX]
 - name: /QSPI_SD3
-  pins: [U1.#HOLD(IO3), U10.#HOLD(IO3), U3.QSPI_SD3/QMI_SD3/UART0_RTS/I2C1_SCL/SIO/UART0_RX, U9.#HOLD(IO3)]
+  pins: [U1.#HOLD(IO3), U10.#HOLD(IO3), U3.QSPI_SD3/QMI_SD3/UART0_RTS/I2C1_SCL/SIO/UART0_RX]
 - name: /RUN
   pins: [RST1.1, U3.RUN(RESET#)]
 - name: /SD_VDD
@@ -1592,7 +1603,6 @@ nets:
   - U5.GND
   - U6.GND
   - U7.GND
-  - U9.GND
   - UEXT1.2
   - UEXT2.2
   - USB-PGM1.GND@A1
@@ -2728,10 +2738,6 @@ positions:
   x: 174.1
   y: 101.7
   rot: 180.0
-- ref: U9
-  x: 165.0
-  y: 83.25
-  rot: -90.0
 - ref: UEXT1
   x: 189.0
   y: 85.25

@@ -133,30 +133,37 @@ components:
   value: 1uF
   footprint: '0402'
   manufacturer: Murata Electronics
+  mpn: GRM155R61E105KA12D
 - ref: C48
   value: 4.7uF
   footprint: '0603'
+  mpn: EMK107ABJ475MA-T
 - ref: C49
   value: 47nF
   footprint: '0402'
   manufacturer: Murata
+  mpn: GRM155R71E473KA88D
 - ref: C5
   value: 2.2uF
   footprint: '0402'
 - ref: C50
   value: 10uF
   footprint: '0402'
+  mpn: 0603ZD106KAT2A
 - ref: C51
   value: 100uF
   footprint: '1206'
+  mpn: CL31A107MQHNNNE
 - ref: C52
   value: 1uF
   footprint: '0402'
   manufacturer: Murata Electronics
+  mpn: GRM155R61E105KA12D
 - ref: C53
   value: 22uF
   footprint: 0805
   manufacturer: Samsung
+  mpn: CL21A226MQQNNNG
 - ref: C54
   value: 10uF
   footprint: '0402'
@@ -183,7 +190,10 @@ components:
   value: 2x35 header
   footprint: Panasonic-AXK770147G-MFG
   pin_count: 70
-  nc_pins: {Pin_6: '6', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_14: '14', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_21: '21', Pin_23: '23', Pin_27: '27', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_39: '39', Pin_41: '41', Pin_42: '42', Pin_44: '44', Pin_45: '45', Pin_46: '46', Pin_47: '47', Pin_48: '48', Pin_49: '49', Pin_51: '51', Pin_52: '52', Pin_53: '53', Pin_55: '55', Pin_56: '56', Pin_57: '57', Pin_59: '59', Pin_64: '64', Pin_66: '66', Pin_68: '68'}
+  nc_pins: {Pin_6: '6', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_14: '14', Pin_15: '15', Pin_16: '16',
+    Pin_17: '17', Pin_21: '21', Pin_23: '23', Pin_27: '27', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_39: '39', Pin_41: '41',
+    Pin_42: '42', Pin_44: '44', Pin_45: '45', Pin_46: '46', Pin_47: '47', Pin_48: '48', Pin_49: '49', Pin_51: '51', Pin_52: '52',
+    Pin_53: '53', Pin_55: '55', Pin_56: '56', Pin_57: '57', Pin_59: '59', Pin_64: '64', Pin_66: '66', Pin_68: '68'}
 - ref: J11
   value: 2x12 header
   footprint: AA03-S024VA1
@@ -197,8 +207,8 @@ components:
   footprint: 78171-0004
   pin_count: 6
 - ref: J3
-  value: 2x20 header
-  footprint: 2X20
+  value: 2x20 2.54mm header
+  footprint: 2X20_P2.54mm_SMD
   pin_count: 40
   nc_pins: {Pin_19: '19', Pin_21: '21', Pin_23: '23', Pin_32: '32', Pin_36: '36'}
 - ref: J4
@@ -207,8 +217,8 @@ components:
   pin_count: 17
   nc_pins: {Pin_11: '11', Pin_12: '12'}
 - ref: J5
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   pin_count: 3
 - ref: J6
   value: 504740-5100
@@ -228,20 +238,23 @@ components:
   pin_count: 32
   nc_pins: {Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_20: '20', Pin_23: '23', Pin_30: '30'}
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
 - ref: JP3
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
 - ref: JP4
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
 - ref: L1
   value: 4.7uH
   footprint: 0805
+  digikey: MLZ2012N4R7LT000
 - ref: L2
   value: 2.2uH
   footprint: '1008'
+  mpn: BDHE002520122R2MQ1
+  digikey: 2184-BDHE002520122R2MQ1CT-ND
 - ref: R1
   value: 2.7kohm
   footprint: '0402'
@@ -285,9 +298,11 @@ components:
 - ref: R20
   value: 5.23kohm
   footprint: '0402'
+  mpn: RMCF0402FT5K23
 - ref: R21
   value: 30.1kohm
   footprint: '0402'
+  mpn: RMCF0402FT30K1
   pulldown: /Battery charger/BATT_NTC_CONN_R
 - ref: R3
   value: 1kohm
@@ -330,6 +345,7 @@ components:
 - ref: U13
   value: MIC5504-1.8
   footprint: SOT-23-5
+  mpn: MIC5504-1.8YM5
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: U14
@@ -340,12 +356,15 @@ components:
 - ref: U15
   value: BQ25895RTW
   footprint: Texas_S-PWQFN-N24_EP2.7x2.7mm_ThermalVias
+  digikey: 296-44345-1-ND
   manufacturer: Texas Instruments
+  mpn: BQ25895RTWR
   pin_count: 25
   nc_pins: {STAT: '4'}
 - ref: U16
   value: MIC5365-3.0
   footprint: SOT-23-5
+  mpn: MIC5365-3.0YD5-TR
   pin_count: 5
 - ref: U3
   value: TPA2006D1DRBR
@@ -360,10 +379,14 @@ components:
   value: SN65DSI83TPAPRQ1
   footprint: SN65DSI83TPAPRQ1
   pin_count: 65
-  nc_pins: {RSVD2: '1', RSVD@4: '4', RSVD@5: '5', RSVD@6: '6', RSVD@7: '7', RSVD@8: '8', RSVD@9: '9', RSVD@10: '10', RSVD@11: '11', RSVD@12: '12', RSVD@13: '13', DA2P: '27', DA2N: '28', DA3P: '29', DA3N: '30', RSVD1: '34', A_Y3P: '36', A_Y3N: '37', RSVD@50: '50', RSVD@51: '51', RSVD@53: '53', RSVD@54: '54', RSVD@56: '56', RSVD@57: '57', RSVD@59: '59', RSVD@60: '60', RSVD@61: '61', RSVD@62: '62'}
+  nc_pins: {RSVD2: '1', RSVD@4: '4', RSVD@5: '5', RSVD@6: '6', RSVD@7: '7', RSVD@8: '8', RSVD@9: '9', RSVD@10: '10', RSVD@11: '11',
+    RSVD@12: '12', RSVD@13: '13', DA2P: '27', DA2N: '28', DA3P: '29', DA3N: '30', RSVD1: '34', A_Y3P: '36', A_Y3N: '37', RSVD@50: '50',
+    RSVD@51: '51', RSVD@53: '53', RSVD@54: '54', RSVD@56: '56', RSVD@57: '57', RSVD@59: '59', RSVD@60: '60', RSVD@61: '61',
+    RSVD@62: '62'}
 - ref: U6
   value: MIC5504-1.8
   footprint: SOT-23-5
+  mpn: MIC5504-1.8YM5
   pin_count: 5
   nc_pins: {NC: '4'}
 - ref: U7
@@ -921,8 +944,6 @@ nets:
   pins: [R7.2, U1.BCLK]
 - name: BTST
   pins: [C49.2, U15.BTST]
-- name: CE
-  pins: [JP2.2, U15.~CE]
 - name: COMP
   pins: [C43.1, U10.COMP]
 - name: C_EXT
@@ -1053,7 +1074,6 @@ nets:
   - J9.Pin_19
   - J9.Pin_31@31
   - J9.Pin_32@32
-  - JP2.1
   - R12.1
   - R13.1
   - R14.2

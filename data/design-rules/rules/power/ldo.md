@@ -4,107 +4,74 @@
 
 ## Quick Reference
 
-- **Thermal gate: P = (Vin - Vout) * Iout.** SOT-23-5 limit ~0.25W, SOT-223 ~0.75W, DFN 3x3 ~1.5W.
-- **PSRR headroom: >= 500mV above dropout.** Below ~200mV headroom, PSRR approaches 0dB.
-- **Output cap: >= 1uF X7R ceramic for modern ceramic-stable LDOs.** No ESR concern.
-- **NR/bypass pin: 10-100nF for ~10dB noise reduction.** Larger cap = slower startup (tau = R_NR * C_NR).
-- **Parts:** AP2112K-3.3 (general), TPS7A20 (low-noise), LP5907 (ultra-low-noise 6.5uVrms), TPS7A02 (25nA Iq), LT3045 (0.8uVrms, parallelable).
+- **Thermal gate: use the selected device's board-dependent thermal resistance.** Package names alone do not set a safe wattage; include ground-current dissipation [11, Thermal Considerations].
+- **PSRR headroom means Vin - Vout, not voltage above dropout.** AN-1120 recommends >= 1V generally; ADP151 performs well with 500mV under its stated load conditions [2, p.8].
+- **Output capacitance is device-specific.** AP2112 uses 1uF; LT3045 requires >= 10uF effective output capacitance, ESR < 20mohm and ESL < 2nH [8, p.1; 11, p.13].
+- **NR/SS charging determines startup as well as noise.** At VNR/SS=0V, TPS7A91 charging current is 4-9uA with SS_CTRL grounded or 65-150uA with SS_CTRL tied to VIN [6, Table 2-1].
+- **Parts:** AP2112K-3.3 (general), TPS7A20 (low-noise), LP5907 (no external NR cap), TPS7A02 (25nA typical Iq), LT3045 (parallelable) [8-12].
 
 ## Design Rules
 
 ### Thermal and Package Selection
 
-| Package | theta_JA (C/W) | Max P at 50C ambient |
-|---------|----------------|----------------------|
-| SOT-23-5 | ~285 | 0.26W |
-| SOT-223 | ~100 | 0.75W |
-| DFN 3x3 | ~50 | 1.5W |
-
-- **12V-to-3.3V at 30mA already hits SOT-23 limit.** P = 8.7V * 0.03A = 0.26W. At 100mA: 0.87W -> SOT-23 junction reaches 273C. Use a buck or larger package.
+- **Use board-specific thermal data rather than a SOT-23/SOT-223/DFN power table.** LT3045's datasheet gives measured thermal resistance versus copper area; use that method with worst-case input, load and ambient, then verify the assembled board [11, Thermal Considerations].
 - **Recommended LDOs by application:**
-  - General 3.3V digital: AP2112K-3.3 (600mA, SOT-23-5, 250mV dropout)
-  - Low-noise analog/RF: TPS7A20 (300mA, 10uVrms, 92dB PSRR at 1kHz)
-  - Ultra-low-noise: LP5907 (250mA, 6.5uVrms, 82dB PSRR at 1kHz)
-  - Sub-uV noise (VCOs, PLLs, SERDES clocks): LT3045 (0.8uVrms 10Hz-100kHz, 79dB PSRR at 1MHz) -- quieter than a Li-ion battery; parallelable for higher current
-  - Nano-Iq battery IoT: TPS7A02 (200mA, 25nA Iq)
-  - 2-5A loads: ADP7158/ADP7159, LT3073, MAX38907
+  - General 3.3V digital: AP2112K-3.3 (600mA, SOT25/SOT-23-5, 250mV typical and 400mV maximum dropout at 600mA, 25 degrees C; recommended input <= 6V) [8, pp.1,3,8].
+  - Low-noise analog/RF: TPS7A20 (300mA; typical noise 10uVrms at 1mA or 7uVrms at 300mA, Vout=2.8V, 10Hz-100kHz; typical PSRR 92dB at 1kHz, 300mA, Vin=Vout+1V) [9, pp.6-7].
+  - Ultra-low-noise: LP5907 (250mA; 6.5uVrms typical at 250mA, 10Hz-100kHz; 82dB typical PSRR at 1kHz and 20mA, with Vin=Vout+1V and 1uF input/output caps) [10, p.5].
+  - Sub-uV noise (VCOs, PLLs, SERDES clocks): LT3045 (0.8uVrms typical, 10Hz-100kHz, 500mA, Vout=1.3-15V, CSET=4.7uF, COUT=10uF; parallelable for higher current). Its headline PSRR is 76dB at 1MHz [11, pp.1,3].
+  - Nano-Iq battery IoT: TPS7A02 (200mA, 25nA typical no-load Iq) [12, pp.1,6].
+  - 2-5A low-noise designs: ADI lists ADP7158/ADP7159, LT3073 and MAX38907 as candidates; check each part's individual current rating rather than assuming all support 5A [1, Compromises].
 
 ### Output Capacitor and Stability
 
-- **Older ESR-dependent LDOs (TPS760xx era) need the ESR zero for stability.** ESR must fall in a device-specific range -- e.g., TPS76050 requires 0.1-20 ohm with 2.2uF minimum. Ceramic caps (ESR < 10 mohm) on these parts cause oscillation. Fix: add 1 ohm series resistor, or replace with a ceramic-stable LDO.
-- **Stability diagnostic: fast load step (0 to Imax in <1us).** Four or fewer rings = adequate phase margin (>= 45 deg). Sustained ringing = unstable. Use a MOSFET switch + function generator, not an electronic load -- electronic loads are too slow.
-- **Y5V/Z5U caps: capacitance variation with temperature can cause oscillation at -20C even if stable at 25C.** X7R or X5R only.
-- **Large Cout can trigger current limit during startup** (within 20-50us), dramatically slowing turn-on. TPS7A20 is stable from 0.47uF to 200uF but higher values hit current limit.
+- **Older ESR-dependent LDOs need a device-specific ESR window.** TPS76050's typical stability plot at 25 degrees C requires 0.1-20 ohm ESR with 2.2uF; TI demonstrates oscillation with a low-ESR ceramic and a stable response after adding 1 ohm in series with that capacitor [3, pp.2-5].
+- **Stability diagnostic: use a MOSFET switch and function generator for a fast load step.** TI's heuristic is four rings or fewer for sufficient phase margin; it does not establish a numerical phase margin or a universal load-step edge time [3, pp.3-5].
+- **Use X7R/X5R output caps; exclude Y5V/Z5U.** Keep the effective capacitance above the selected LDO's minimum across voltage and temperature [7, Minimum Input- and Output Capacitance].
+- **Large Cout can trigger current limit during startup.** TPS7A20 specifies 0.47-200uF effective output capacitance for stability, using >= 1uF nominal ceramic and <= 100mohm ESR; stability within that range does not guarantee an unchanged startup ramp [9, p.5; 6, Section 2.1.4.8].
 - Cap DC bias derating -> `guides/passives.md`. Per-IC placement -> `power/decoupling.md`.
 
 ### PSRR and Noise
 
-- **PSRR at 1kHz vs switching frequency are different specs.** A typical LDO has 60-80dB PSRR at DC, rolls off at 20dB/decade from 3dB point (~1-10kHz), hits 0dB at unity-gain (~1-3MHz). Above unity-gain, only the output cap provides rejection. For post-switcher use: check PSRR at your switching frequency (500kHz-2MHz), not the 1kHz headline.
-- **PSRR degrades 20+dB at heavy load.** ADP151 loses over 20dB between 100mA and 200mA because the pass element output impedance drops. Fix: choose an LDO rated >= 1.5x your expected load.
-- **PSRR degrades sharply near dropout.** Pass device enters triode/linear region, loop gain collapses. At very low headroom, PSRR approaches 0dB. Budget >= 500mV above dropout.
-- **NR/bypass pin filters reference noise only (not error amplifier noise).** ~3x (10dB) improvement in 20Hz-2kHz band. Above 20kHz the curves converge -- the error amplifier open-loop characteristic limits further reduction.
-- **Adjustable LDOs: reduce error amplifier noise gain with a cap across the top feedback resistor.** Set the C * R3 zero between 10-100Hz to cut 1/f noise. Some LDOs are not unity-gain stable -- check phase margin.
-- **Comparing noise specs: always use 10Hz-100kHz, same load conditions.** ADP223 at 1.2V: 27.7uVrms (10Hz-100kHz) vs 26.2uVrms (100Hz-100kHz) -- the second hides 8.9uVrms of 1/f noise. LDOs requiring external NR caps can be 100x noisier without them.
-- **Cascading two LDOs adds ~30dB PSRR.** Each stage needs >= 500mV headroom. Total min input = Vout + 2 * (dropout + headroom).
-- **Post-LDO LC filter for when PSRR at switching frequency is insufficient.** 1uF + 1uH gives fc ~160kHz and ~33dB attenuation at 1MHz. Add a 10uF damping cap with 1 ohm series resistor to suppress LC resonance peaking.
+- **Use PSRR curves at the switcher's frequency, load and headroom.** AN-1120's 60dB/3kHz/3MHz example is a simplified model that ignores output-capacitor and pass-element parasitics; it is not a frequency template for every LDO [2, p.6].
+- **ADP151 loses over 20dB of DC loop gain between 100mA and 200mA.** AN-1120 recommends a current rating >= 1.5 times the expected load to preserve PSRR; this is a selection guideline, not a guarantee of a particular rejection [2, pp.7-8].
+- **Headroom near dropout destroys rejection before it necessarily loses DC regulation.** ADP151's comparison uses a 2.8V output at 200mA with 500mV versus 1V input-output differential; check the corresponding curve rather than adding a universal 500mV to dropout [2, p.8].
+- **A reference bypass cap and an error-amplifier noise-gain network are different remedies.** For the adjustable LDO circuit in AN-1120, the R1/R3/C1 network sets high-frequency noise gain to 1.5-2 and its zero to 10-100Hz. The measured improvement is approximately 3 times (10dB) over 20Hz-2kHz, converging above 20kHz; those figures do not describe every NR pin [2, pp.4-5].
+- **Comparing noise specs: use the same bandwidth and load conditions.** ADP223 at 1.2V: 27.7uVrms (10Hz-100kHz) versus 26.2uVrms (100Hz-100kHz); the latter excludes 8.9uVrms in the 10-100Hz band. LDOs requiring external NR caps can be up to 100 times noisier without them [2, p.5].
+- **Cascaded ADP151s improved PSRR by up to 30dB in AN-1120's comparison.** The comparison uses 200mA and 1V total headroom; allocate >= 500mV input-output differential to each stage. Do not add dropout a second time to that differential [2, p.9].
+- **For switcher ripple, AN-1120 prefers an input LC filter over a post-LDO filter.** Its example uses 1uF and 1uH (approximately 160kHz corner), plus a 10uF/1ohm series damping branch, giving approximately 33dB attenuation at 1MHz. A postfilter adds inductor-DCR load-regulation error; rate the inductor for maximum load current [2, pp.8-9].
 
 ### Startup and Sequencing
 
-- **Soft-start charging currents vary widely.** TPS7A91: 4-9uA (slow mode) vs 65-150uA (fast mode). This 16x range directly affects turn-on time and inrush calculations.
-- **Fast-charge circuitry reduces NR filter startup penalty.** Modern LDOs (TPS7A84A, TPS7A91, TPS7A96) use a higher current source until ~97% of Vref, then switch to normal NR filter for steady-state noise performance.
-
-> WARNING: EN pin tied to VIN with a slow ramp causes the LDO to operate in dropout during the entire ramp. When VIN exceeds Vout + dropout, the loop snaps from saturated to regulating, causing output overshoot. In multi-rail systems this overshoot can latch up downstream ICs. Use a dedicated EN signal with a sharp edge, or add RC delay on EN.
-
-- **Never leave EN floating** -- may oscillate or pick up noise. Tie to VIN through a resistor divider if no sequencing controller is used.
-- **Startup with pre-biased output** (charge from previous power cycle) can cause reverse current through the PMOS body diode or output overshoot. Verify anti-backfeed behavior in datasheet.
+- **Fast-charge behavior is architecture-specific.** TPS7A84A and TPS7A91 use a changeover at approximately 97% of Vref; TPS7A96's changeover is programmed with FB_PG resistors, so 97% is an example setting for that device [6, Sections 2.2.1-2.2.3].
+- **With EN tied to a slowly ramping VIN, check startup in dropout for overshoot.** TI identifies overshoot as a possible outcome, not an inevitable one. Use controlled EN sequencing when the downstream rails require it; verify the actual ramp [6, Section 2.1.4.7; 7, LDOs for Digital Loads].
+- **EN defaults differ by part.** TPS7A02 has a smart pulldown that holds it disabled with EN floating; connect EN to VIN for always-on operation as specified by its datasheet [12, pp.3,19-20].
+- **A pre-biased output needs a reverse-current check.** A PMOS pass device's body diode conducts toward VIN when sufficiently forward biased; use a protected part or the protection circuit specified for the power-down path [4, Sections 4-5].
 
 ### Nano-Iq and Battery Applications
 
-- **25nA Iq (TPS7A02) vs 1uA Iq (TPS7A05): battery life 8.7 years vs 5.0 years** in a duty-cycled system (10000:1 standby/active ratio, 100mAh battery, 1600uA active at 16MHz). The LDO Iq dominates total system current in standby.
-- **TPS7A02 maintains >= 98% current efficiency above 10uA load.** Dynamic biasing increases bandwidth with load current, avoiding the slow-transient penalty of traditional low-Iq LDOs.
-- **Ground current increases with load.** Bipolar-pass LDOs (LM317 era): 10-100x increase from no-load to full-load. CMOS-pass LDOs: 2-5x. Check Ignd vs Iload curve -- matters for efficiency at moderate loads.
-- **Battery end-of-discharge check:** Li-ion at 3.0V with a 2.8V LDO at 200mV dropout works. At 3.3V output it does not -- you're in dropout with no PSRR, no load regulation.
+- **TPS7A02 versus TPS7A05: TI calculates 8.7 versus 5.0 years, not an unconditional battery-life gain.** Assumptions: 100mAh, 1%/year battery self-discharge, 10nA capacitor leakage, 1uA MCU standby, 1600uA active at 16MHz, and 10000:1 standby/active time. Iq is 25nA versus 1uA; these inputs reproduce the reported lifetimes [5, p.4, Table 1].
+- **TPS7A02's example curve maintains >= 98% current efficiency above 10uA load.** Dynamic biasing increases bandwidth with instantaneous load; verify transient response as well as no-load Iq [5, p.3].
 
 ### Reverse Current Protection
 
-- **PMOS LDOs have a body diode from Vout to Vin.** When Vout > Vin (power-down sequencing), current dumps back into the input supply.
-- **Multi-rail sequencing hazard:** if LDO A powers down before LDO B and they share downstream load, Vout_B > Vin_A forward-biases the body diode. Damages LDO and raises rail A above programmed level.
-- **Bipolar-pass LDOs also have parasitic diodes** (pn junction in wafer structure) that conduct reverse current. Unlike MOSFET body diodes, these are not rated -- always use protection with bipolar types.
-- **Series Schottky (prevention):** blocks reverse current entirely. Penalty: V_F adds to dropout (100-300mV).
-- **Bypass Schottky (shunt):** diode from Vout to Vin (cathode to Vin). No dropout penalty but leakage current flows during normal operation. Select IR < 1uA at max operating temp -- Schottky leakage increases exponentially (tens of mA at 85C possible). ROHM RB168VWM-30 (PMDE, 30V/1A, IR = 0.6uA) has ultra-low leakage.
-- Some LDOs include internal reverse current protection (ADP1740/ADP1741) -- check before adding external diodes.
+- **For bipolar-pass LDOs, the reverse path is an unrated parasitic junction.** ROHM distinguishes a rapidly falling input or sustained externally driven output from an open input; protection requirements depend on that case and the pass device [4, Sections 4-5].
+- **An input series diode isolates the upstream supply; include its actual VF in the headroom budget.** ROHM gives application-dependent diode selection rather than a universal 100-300mV Schottky drop [4, Sections 2-3].
+- **A bypass Schottky goes from Vout to Vin, cathode at Vin; it diverts reverse current rather than blocking backfeed.** ROHM recommends low VF (approximately <= 0.7V) and IR <= 1uA. RB168VWM-30 is a PMDE 30V/1A part with IR <= 0.6uA at 30V in the app note's table; check leakage at the maximum operating temperature [4, pp.2-3, Table 4].
+- Some LDOs include internal reverse current protection (ADP1740/ADP1741) -- check before adding external diodes [7, Reverse-Current Protection Feature].
 
 ## Common Mistakes
 
-- **Post-regulator LDO makes switcher noise worse at resonance.** LDO output impedance peaks at its unity-gain bandwidth (typically 200kHz-1MHz). If the switcher fundamental or a harmonic lands on this peak, the LDO amplifies ripple instead of rejecting it -- measured 6-8dB gain on ADP151 at 800kHz with 100mA load. Fix: check LDO output impedance (Zout) curve at your switching frequency; if Zout peaks there, add a post-LDO LC filter or change the switcher frequency.
-- **Ceramic output cap piezoelectric noise in audio circuits.** High-K MLCC dielectrics (X7R/X5R in 0805+) are piezoelectric -- LDO output ripple excites the cap mechanically, creating audible whine at the loop bandwidth frequency. Fix: C0G caps for noise-sensitive outputs, or smaller case sizes (0402/0603 have less piezoelectric coupling).
-- **LDO oscillates only at cold temperature.** X7R ceramic output caps lose 15-30% capacitance at -20C, pushing effective ESR and capacitance outside the LDO's stable region. Board passes all bench tests at 25C but fails thermal chamber testing. Particularly common with older ESR-dependent LDOs where the stability range is narrow. Fix: simulate output cap effective values at temperature extremes using manufacturer tools (Murata SimSurfing); add 50% capacitance margin or switch to X7R with lower voltage rating (less derating).
-- **Parallel LDOs for higher current without matching.** Two AP2112K-3.3 outputs tied together -- the one with slightly higher output voltage (within +/-1% tolerance) sources all the current until it thermally folds back, then the other takes over and also folds back. Oscillates between the two at 1-10Hz. Fix: only use LDOs explicitly designed for parallel operation (LT3045 SET pin daisy-chain with 5mohm ballast resistors) or use a single higher-current part.
-- **LDO thermal shutdown cycles destroy downstream ICs.** SOT-23 LDO at thermal limit enters shutdown-cooldown-restart cycle at 0.5-2Hz. Each restart produces an uncontrolled voltage ramp that violates downstream power sequencing -- FPGA I/O latch-up observed at 1Hz thermal cycling. Fix: if thermal calculation shows Tj within 20C of shutdown threshold, move to a larger package rather than relying on thermal protection.
-- **Ignoring output cap leakage in nA-Iq battery systems.** Ceramic cap leakage (V_rated / insulation_resistance) can rival the LDO's 25nA Iq. TPS7A02 can stabilize with very small ceramic caps to minimize this.
+- **Paralleling ordinary voltage-reference LDOs without current sharing.** Output-voltage mismatch prevents equal sharing. LT3045 supports paralleling with tied SET and IN pins; its example uses 20mohm ballast per output for better than 20% sharing accuracy at full load, with the ballast sized for the required sharing accuracy [11, Paralleling Devices].
+- **Relying on thermal shutdown for normal regulation.** Shutdown hysteresis produces repeated off/on operation under sustained overheating; it does not define a safe continuous load. Check operating junction limits, not only the shutdown threshold [7, Thermal Shutdown].
+- **Ignoring output-cap leakage in nA-Iq battery systems.** TI includes capacitor leakage alongside battery self-discharge and MCU standby current, and recommends measuring the selected capacitor over operating conditions [5, p.4].
 
 ## Formulas
 
-**Power dissipation and junction temperature:**
-**Rule of thumb:** If P > 0.25W, SOT-23 is not viable.
-**Formula:** P = (Vin - Vout) * Iout, T_J = T_A + P * theta_JA
-**Example:** 5V->3.3V at 500mA, SOT-223 (100C/W), T_A = 50C -> P = 0.85W, T_J = 135C -> too hot, need DFN or buck
-
-**Load transient output deviation:**
-**Rule of thumb:** 22uF ceramic limits deviation to ~100mV for a 500mA step.
-**Formula:** delta_V = delta_I * delta_t / C_out + delta_I * ESR
-  - delta_t = LDO loop response time (~5us typical, rarely in datasheet -- measure with fast load step)
-  - ESL term for fast edges: V_ESL = ESL * dI/dt (PCB trace adds ~4-6nH per cm (10-15nH per inch))
-**Example:** 1A step in 2us, 100uF tantalum, 55 mohm ESR, 5us response -> 50mV (cap) + 55mV (ESR) = 105mV
-
-**NR pin startup time:**
-**Rule of thumb:** 10nF = fast startup, moderate noise. 100nF = slow startup, best noise.
-**Formula:** tau_NR = R_NR * C_NR (R_NR is LDO internal NR resistance)
-**Example:** R_NR = 250K, C_NR = 100nF -> tau_NR = 25ms. Startup to 90% ~= 2.2 * tau = 55ms. To regulation ~= 5 * tau = 125ms.
-
-**Inrush current:**
-**Formula:** I_inrush = I_load + C_out * dVout/dt
-**Example:** TPS7A20, Vout = 1.8V, C_out = 1.4uF, tau = 117us -> dV/dt = 1.8V/117us = 15.4V/ms -> I_inrush = 0 + 1.4uF * 15.4kV/s = 21.5mA. Current limit engages at ~20-50us if C_out is much larger.
+**LDO thermal calculation including ground current:**
+**Rule of thumb:** Use the datasheet's ground current at the actual load, not its no-load Iq [11, Calculating Junction Temperature].
+**Formula:** P = (Vin - Vout) * Iout + Vin * Ignd; T_J = T_A + P * theta_JA
+**Example:** In LT3045's datasheet example, a 5.25V maximum input, 3.3V/500mA output and assumed 12.5mA ground current give P = 1.041W. With the example DFN board's approximately 35 degrees C/W, the rise is approximately 36 degrees C; add the design's maximum ambient and compare against its junction rating [11, p.22; recalculated without rounding P to 1W].
 
 ## Sources
 
@@ -115,13 +82,15 @@
 
 ### References
 
-1. TI SLVA079 -- LDO Terms and Definitions: https://www.ti.com/lit/an/slva079/slva079.pdf
-2. ADI -- Comprehensive Guide to LDO Regulators: https://www.analog.com/en/resources/analog-dialogue/articles/a-comprehensive-guide-to-ldo-regulators.html
-3. ADI AN-1120 -- Noise Sources in LDO Regulators: https://www.analog.com/en/resources/app-notes/an-1120.html
-4. TI SLVA115A -- ESR, Stability, and the LDO: https://www.ti.com/lit/an/slva115a/slva115a.pdf
-5. ROHM -- Reverse Current Protection Diodes for LDOs: https://fscdn.rohm.com/en/products/databook/applinote/common/how_to_choose_reverse_current_protection_diode_for_ldo_an-e.pdf
-6. Microchip AN6030 -- LDO Basics: Parameters and Measurements: https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ApplicationNotes/ApplicationNotes/AN6030-LDO-Basics-Parameter-Definitions-Measurements-and-Calculations-DS00006030.pdf
-7. TI SLYT151 -- Understanding the Load-Transient Response of LDOs: https://www.ti.com/lit/an/slyt151/slyt151.pdf
-8. TI SBVA084 -- Increase Battery Life With Nano Quiescent Current LDO: https://www.ti.com/lit/an/sbva084/sbva084.pdf
-9. TI SLVAFX0 -- Demystifying LDO Turn-On (Startup) Time: https://www.ti.com/lit/wp/slvafx0/slvafx0.pdf
-10. ADI -- How to Successfully Apply Low-Dropout Regulators: https://www.analog.com/en/resources/analog-dialogue/articles/applying-low-dropout-regulators.html
+1. ADI -- A Comprehensive Guide to LDO Regulators: https://www.analog.com/en/resources/analog-dialogue/articles/a-comprehensive-guide-to-ldo-regulators.html
+2. ADI AN-1120 (Rev. 0, June 2011) -- Noise Sources in Low Dropout (LDO) Regulators: https://www.analog.com/en/resources/app-notes/an-1120.html
+3. TI SLVA115A (February 2020) -- ESR, Stability, and the LDO Regulator: https://www.ti.com/lit/an/slva115a/slva115a.pdf
+4. ROHM 66AN115E (Rev.001, January 2024) -- How to Select Reverse Current Protection Diodes for LDO Regulators: https://fscdn.rohm.com/en/products/databook/applinote/common/how_to_choose_reverse_current_protection_diode_for_ldo_an-e.pdf
+5. TI SBVA084 (June 2020) -- Increase Your Battery Life With Nano Quiescent Current LDO: https://www.ti.com/lit/pdf/sbva084
+6. TI SLVAFX0B (March 2026) -- Demystifying LDO Turn-On (Start-Up) Time: https://www.ti.com/lit/pdf/slvafx0
+7. ADI -- How to Successfully Apply Low-Dropout Regulators: https://www.analog.com/en/resources/analog-dialogue/articles/applying-low-dropout-regulators.html
+8. Diodes AP2112 (DS39724 Rev.2-2, June 2017): https://www.diodes.com/assets/Datasheets/AP2112.pdf
+9. TI TPS7A20 (SBVS338H, July 2024): https://www.ti.com/lit/gpn/tps7a20
+10. TI LP5907 (SNVS798Q, July 2025): https://www.ti.com/lit/ds/symlink/lp5907.pdf
+11. ADI LT3045 (Rev. D): https://www.analog.com/media/en/technical-documentation/data-sheets/3045fa.pdf
+12. TI TPS7A02 (SBVS277C, September 2022): https://www.ti.com/lit/ds/symlink/tps7a02.pdf

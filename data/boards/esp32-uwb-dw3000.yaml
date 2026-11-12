@@ -25,6 +25,8 @@ components:
 - ref: C11
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-00868
   decouples: U2
 - ref: C12
@@ -33,6 +35,8 @@ components:
 - ref: C13
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-00868
   decouples: U2
 - ref: C2
@@ -92,13 +96,14 @@ components:
   footprint: QFN24_4MM_SMSC
   description: CP2104
   pin_count: 25
-  nc_pins: {G$1.RI: '1', G$1.#RST: '9', G$1.NC: '10', G$1.GPIO3: '11', G$1.GPIO2: '12', G$1.GPIO1/RXLED: '13', G$1.GPIO0/TXLED: '14', G$1.#SUSPEND: '15', G$1.SUSPEND: '17', G$1.CTS: '18', G$1.DSR: '22', G$1.DCD: '24'}
+  nc_pins: {G$1.RI: '1', G$1.#RST: '9', G$1.NC: '10', G$1.GPIO3: '11', G$1.GPIO2: '12', G$1.GPIO1/RXLED: '13', G$1.GPIO0/TXLED: '14',
+    G$1.#SUSPEND: '15', G$1.SUSPEND: '17', G$1.CTS: '18', G$1.DSR: '22', G$1.DCD: '24'}
 - ref: J1
-  value: 1x20 header
+  value: 1x20 2.54mm header
   footprint: 20P-2.54
   pin_count: 20
 - ref: J2
-  value: 1x12 header
+  value: 1x12 2.54mm header
   footprint: 12P-2.54
   pin_count: 12
 - ref: J3
@@ -158,6 +163,7 @@ components:
 - ref: R24
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pullup: EN
 - ref: R3
@@ -185,7 +191,6 @@ components:
   value: ME6217C33M5G
   footprint: SOT-23-5
   prod_id: VREG-12457
-  description: AP2112 - 600mA CMOS LDO Regulator w/ Enable
   pin_count: 5
 - ref: U3
   value: ESP-WROOM-32
@@ -218,9 +223,6 @@ nets:
   - J1.P$1
   - R16.1
   - R17.1
-  - R18.1
-  - R19.1
-  - R6.1
   - R7.2
   - R9.2
   - U1.3V3
@@ -259,7 +261,6 @@ nets:
   - C11.2
   - C12.2
   - C13.2
-  - C14.2
   - C2.2
   - C3.2
   - C4.2
@@ -307,7 +308,7 @@ nets:
   pins: [J2.5, Q3.C, R10.2, R7.1, U1.IO0, U3.IO0]
   trace_width: '0.2032'
 - name: IO12/MISO
-  pins: [J1.P$6, R6.2, U1.IO12, U3.IO12]
+  pins: [J1.P$6, U1.IO12, U3.IO12]
   trace_width: '0.2032'
 - name: IO13/MOSI
   pins: [J1.P$7, R16.2, U1.IO13, U3.IO13]
@@ -316,7 +317,7 @@ nets:
   pins: [J1.P$8, R17.2, U1.IO14, U3.IO14]
   trace_width: '0.2032'
 - name: IO15/NSS
-  pins: [J1.P$9, R18.2, U1.IO15, U3.IO15]
+  pins: [J1.P$9, U1.IO15, U3.IO15]
   trace_width: '0.2032'
 - name: IO16
   pins: [J2.8, U1.NC1, U3.IO16]
@@ -331,7 +332,7 @@ nets:
   pins: [J1.P$11, U1.IO19, U3.IO19, U5.SPIMISO]
   trace_width: '0.2032'
 - name: IO2
-  pins: [J1.P$5, R19.2, U1.IO2, U3.IO2]
+  pins: [J1.P$5, U1.IO2, U3.IO2]
   trace_width: '0.2032'
 - name: IO21/RES
   pins: [J2.10, U1.IO21, U3.IO21]
@@ -407,9 +408,6 @@ nets:
   trace_width: '0.2032'
 - name: N$18
   pins: [D5.A, R23.2]
-  trace_width: '0.2032'
-- name: N$3
-  pins: [C14.1, U2.NC]
   trace_width: '0.2032'
 - name: N$5
   pins: [D3.C, R3.2]

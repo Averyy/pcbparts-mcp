@@ -9,24 +9,18 @@ from pathlib import Path
 
 import pytest
 
+from conftest import write_catalog_category
+
 # Import from scraper script
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 from scrape_components import generate_stock_history
 from build_history_db import build_history_db
 
 
-def _write_jsonl_gz(path: Path, parts: list[dict]):
-    """Write a list of part dicts to a gzipped JSONL file."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with gzip.open(path, "wt") as f:
-        for part in parts:
-            f.write(json.dumps(part) + "\n")
-
-
 def _read_history_events(history_dir: Path) -> list[dict]:
     """Read all events from history JSONL.gz files."""
     events = []
-    for gz_file in sorted(history_dir.glob("*.jsonl.gz")):
+    for gz_file in sorted(history_dir.rglob("*.jsonl.gz")):
         with gzip.open(gz_file, "rt") as f:
             for line in f:
                 if line.strip():
@@ -40,36 +34,37 @@ class TestGenerateStockHistory:
     def test_stock_change_tracked_low_stock(self):
         """Stock changes on low-stock parts should be tracked."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
             # Old data: part with 50 stock
-            _write_jsonl_gz(categories_dir / "resistors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "resistors", [
                 {"l": "C1234", "s": 50, "$": 0.01, "t": "b"},
             ])
 
             # New data: stock dropped to 25 (delta=25, threshold for <100 is >10)
             results = {"resistors": [{"l": "C1234", "s": 25, "$": 0.01, "t": "b"}]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             assert stats["events"] >= 1
             assert any(e["l"] == "C1234" and e["s"] == 25 for e in events)
+            assert next(e for e in events if e["l"] == "C1234")["before"] == 50
 
     def test_stock_change_ignored_high_stock(self):
         """Stock changes on parts with >1000 stock should be ignored."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
-            _write_jsonl_gz(categories_dir / "resistors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "resistors", [
                 {"l": "C1234", "s": 5000, "$": 0.001, "t": "b"},
             ])
 
             results = {"resistors": [{"l": "C1234", "s": 4500, "$": 0.001, "t": "b"}]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             stock_changes = [e for e in events if e["l"] == "C1234" and "e" not in e]
@@ -78,17 +73,17 @@ class TestGenerateStockHistory:
     def test_stock_change_below_threshold_ignored(self):
         """Small stock changes below tier threshold should be ignored."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
             # Stock 200, delta of 5 — threshold for 100-500 is >25
-            _write_jsonl_gz(categories_dir / "caps.jsonl.gz", [
+            write_catalog_category(Path(tmp), "caps", [
                 {"l": "C5678", "s": 200, "$": 0.05, "t": "e"},
             ])
 
             results = {"caps": [{"l": "C5678", "s": 195, "$": 0.05, "t": "e"}]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             stock_changes = [e for e in events if e["l"] == "C5678" and "e" not in e]
@@ -97,11 +92,11 @@ class TestGenerateStockHistory:
     def test_new_part_tracked(self):
         """New parts with 0 < stock <= 1000 should be recorded."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
             # Old data has one part
-            _write_jsonl_gz(categories_dir / "resistors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "resistors", [
                 {"l": "C1111", "s": 100, "$": 0.01, "t": "b"},
             ])
 
@@ -111,19 +106,20 @@ class TestGenerateStockHistory:
                 {"l": "C2222", "s": 500, "$": 0.02, "t": "e"},
             ]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             new_events = [e for e in events if e["l"] == "C2222" and e.get("e") == "new"]
             assert len(new_events) == 1
+            assert new_events[0]["before"] is None
 
     def test_new_part_high_stock_not_tracked(self):
         """New parts with stock > 1000 should NOT be recorded."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
-            _write_jsonl_gz(categories_dir / "resistors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "resistors", [
                 {"l": "C1111", "s": 100, "$": 0.01, "t": "b"},
             ])
 
@@ -132,7 +128,7 @@ class TestGenerateStockHistory:
                 {"l": "C9999", "s": 50000, "$": 0.001, "t": "b"},
             ]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             new_events = [e for e in events if e["l"] == "C9999"]
@@ -141,10 +137,10 @@ class TestGenerateStockHistory:
     def test_new_part_zero_stock_not_tracked(self):
         """New parts with stock=0 should NOT be recorded (no value in tracking)."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
-            _write_jsonl_gz(categories_dir / "resistors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "resistors", [
                 {"l": "C1111", "s": 100, "$": 0.01, "t": "b"},
             ])
 
@@ -153,7 +149,7 @@ class TestGenerateStockHistory:
                 {"l": "C3333", "s": 0, "$": 0.01, "t": "b"},
             ]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             new_events = [e for e in events if e["l"] == "C3333"]
@@ -162,10 +158,10 @@ class TestGenerateStockHistory:
     def test_disappeared_part_tracked(self):
         """Parts that disappear from scrape should be marked as gone."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
-            _write_jsonl_gz(categories_dir / "resistors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "resistors", [
                 {"l": "C1111", "s": 100, "$": 0.01, "t": "b"},
                 {"l": "C2222", "s": 50, "$": 0.02, "t": "e"},
             ])
@@ -173,30 +169,32 @@ class TestGenerateStockHistory:
             # Only C1111 in new data — C2222 disappeared
             results = {"resistors": [{"l": "C1111", "s": 100, "$": 0.01, "t": "b"}]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             gone_events = [e for e in events if e["l"] == "C2222" and e.get("e") == "gone"]
             assert len(gone_events) == 1
             assert gone_events[0]["s"] == 0
+            assert gone_events[0]["before"] == 50
 
     def test_reappeared_part_tracked(self):
         """Parts that go from 0 stock to >0 should be marked as reappear."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
-            _write_jsonl_gz(categories_dir / "resistors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "resistors", [
                 {"l": "C1234", "s": 0, "$": 0.01, "t": "b"},
             ])
 
             results = {"resistors": [{"l": "C1234", "s": 200, "$": 0.01, "t": "b"}]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             reappear = [e for e in events if e["l"] == "C1234" and e.get("e") == "reappear"]
             assert len(reappear) == 1
+            assert reappear[0]["before"] == 0
 
             # No duplicate stock-change event — reappear covers it
             stock_changes = [e for e in events if e["l"] == "C1234" and "e" not in e]
@@ -205,16 +203,16 @@ class TestGenerateStockHistory:
     def test_reappeared_part_high_stock_tracked(self):
         """Parts reappearing with >1000 stock should still be tracked (availability signal)."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
-            _write_jsonl_gz(categories_dir / "resistors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "resistors", [
                 {"l": "C1234", "s": 0, "$": 0.01, "t": "b"},
             ])
 
             results = {"resistors": [{"l": "C1234", "s": 5000, "$": 0.01, "t": "b"}]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             reappear = [e for e in events if e["l"] == "C1234" and e.get("e") == "reappear"]
@@ -224,50 +222,51 @@ class TestGenerateStockHistory:
     def test_library_type_change_tracked(self):
         """Library type changes should be recorded as type_change."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
-            _write_jsonl_gz(categories_dir / "resistors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "resistors", [
                 {"l": "C1234", "s": 5000, "$": 0.001, "t": "e"},
             ])
 
             # Type changed from extended to basic
             results = {"resistors": [{"l": "C1234", "s": 5000, "$": 0.001, "t": "b"}]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             type_events = [e for e in events if e["l"] == "C1234" and e.get("e") == "type_change"]
             assert len(type_events) == 1
             assert type_events[0]["t"] == "b"
+            assert type_events[0]["before"] == 5000
 
     def test_no_old_files_skips(self):
         """If no old JSONL files exist, history should be skipped."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
-            categories_dir.mkdir(parents=True)
+            catalog_dir = Path(tmp) / "catalog"
+            catalog_dir.mkdir(parents=True)
             history_dir = Path(tmp) / "history"
 
             results = {"resistors": [{"l": "C1234", "s": 100, "$": 0.01, "t": "b"}]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             assert stats.get("skipped") is True
-            assert not history_dir.exists() or not list(history_dir.glob("*.jsonl.gz"))
+            assert not history_dir.exists() or not list(history_dir.rglob("*.jsonl.gz"))
 
     def test_null_stock_treated_as_zero(self):
         """Parts with null/missing stock should be treated as 0."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
-            _write_jsonl_gz(categories_dir / "resistors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "resistors", [
                 {"l": "C1234", "s": None, "$": 0.01, "t": "b"},
             ])
 
             # New data has stock 50 (reappear from 0)
             results = {"resistors": [{"l": "C1234", "s": 50, "$": 0.01, "t": "b"}]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             reappear = [e for e in events if e["l"] == "C1234" and e.get("e") == "reappear"]
@@ -276,13 +275,13 @@ class TestGenerateStockHistory:
     def test_multiple_categories(self):
         """History should work across multiple category files."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
-            _write_jsonl_gz(categories_dir / "resistors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "resistors", [
                 {"l": "C1111", "s": 50, "$": 0.01, "t": "b"},
             ])
-            _write_jsonl_gz(categories_dir / "capacitors.jsonl.gz", [
+            write_catalog_category(Path(tmp), "capacitors", [
                 {"l": "C2222", "s": 80, "$": 0.02, "t": "e"},
             ])
 
@@ -291,7 +290,7 @@ class TestGenerateStockHistory:
                 "capacitors": [{"l": "C2222", "s": 40, "$": 0.02, "t": "e"}],
             }
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             assert any(e["l"] == "C1111" for e in events)
@@ -300,10 +299,10 @@ class TestGenerateStockHistory:
     def test_tiered_thresholds(self):
         """Verify each tier's threshold behavior."""
         with tempfile.TemporaryDirectory() as tmp:
-            categories_dir = Path(tmp) / "categories"
+            catalog_dir = Path(tmp) / "catalog"
             history_dir = Path(tmp) / "history"
 
-            _write_jsonl_gz(categories_dir / "parts.jsonl.gz", [
+            write_catalog_category(Path(tmp), "parts", [
                 # 500-1000 tier: need delta > 100
                 {"l": "C_MID", "s": 700, "$": 0.01, "t": "b"},
                 # 100-500 tier: need delta > 25
@@ -321,7 +320,7 @@ class TestGenerateStockHistory:
                 {"l": "C_VLOW", "s": 75, "$": 0.01, "t": "b"},
             ]}
 
-            stats = generate_stock_history(categories_dir, history_dir, results)
+            stats = generate_stock_history(catalog_dir, history_dir, results)
             events = _read_history_events(history_dir)
 
             tracked_parts = {e["l"] for e in events if "e" not in e}
@@ -344,7 +343,7 @@ class TestBuildHistoryDb:
             # Write some events
             events = [
                 {"l": "C1234", "d": "2026-02-20", "s": 100, "$": 0.01, "t": "b"},
-                {"l": "C1234", "d": "2026-02-21", "s": 80, "$": 0.01, "t": "b"},
+                {"l": "C1234", "d": "2026-02-21", "s": 80, "$": 0.01, "t": "b", "before": 100},
                 {"l": "C5678", "d": "2026-02-21", "s": 0, "$": 0.02, "t": "e", "e": "gone"},
             ]
             with gzip.open(history_dir / "2026-02.jsonl.gz", "wt") as f:
@@ -364,6 +363,9 @@ class TestBuildHistoryDb:
                 "SELECT stock, event_type FROM stock_events WHERE lcsc='C5678'"
             ).fetchone()
             assert row == (0, "gone")
+            assert conn.execute(
+                "SELECT stock_before FROM stock_events WHERE lcsc='C1234' ORDER BY date"
+            ).fetchall() == [(None,), (100,)]
 
             conn.close()
 
@@ -437,6 +439,10 @@ class TestBuildHistoryDb:
                 {"l": "C5555", "d": "2026", "s": 50, "$": 0.01, "t": "b"},
                 # Missing lcsc
                 {"d": "2026-02-21", "s": 50, "$": 0.01, "t": "b"},
+                # Invalid optional before-values
+                {"l": "C6666", "d": "2026-02-21", "s": 50, "before": -1},
+                {"l": "C7777", "d": "2026-02-21", "s": 50, "before": "100"},
+                {"l": "C8888", "d": "2026-02-21", "s": 50, "before": True},
             ]
             with gzip.open(history_dir / "2026-02.jsonl.gz", "wt") as f:
                 for event in events:
@@ -462,3 +468,53 @@ class TestBuildHistoryDb:
 
             # No leftover temp files
             assert not db_path.with_suffix(".db.tmp").exists()
+
+    def test_events_are_stored_once_without_price(self, tmp_path):
+        """0.9.0: the rows live in the primary key (WITHOUT ROWID), with no other index, and the
+        files' price isn't loaded: 367 MB became 107 MB on 2026-11-11 with identical replies."""
+        (tmp_path / "history").mkdir()
+        with gzip.open(tmp_path / "history" / "2026-02.jsonl.gz", "wt") as f:
+            f.write(json.dumps({"l": "C1", "d": "2026-02-21", "s": 5, "$": 0.5, "t": "e"}) + "\n")
+        db_path = tmp_path / "stock_history.db"
+        build_history_db(tmp_path, db_path, verbose=False)
+        conn = sqlite3.connect(db_path)
+        sql = conn.execute("SELECT sql FROM sqlite_master WHERE name='stock_events'").fetchone()[0]
+        assert "WITHOUT ROWID" in sql
+        assert [row[3] for row in conn.execute("PRAGMA index_list(stock_events)")] == ["pk"]
+        assert "price" not in {row[1] for row in conn.execute("PRAGMA table_info(stock_events)")}
+        assert dict(conn.execute("SELECT key, value FROM tracking_meta")) == {
+            "tracking_started": "2026-02-21", "history_start": "2026-02-21", "history_end": "2026-02-21"}
+        conn.close()
+
+    def test_daily_files_in_month_directories(self, tmp_path):
+        """Monthly files (before 0.9.0) and daily files under YYYY-MM/ are both loaded."""
+        history = tmp_path / "history"
+        (history / "2026-11").mkdir(parents=True)
+        with gzip.open(history / "2026-11.jsonl.gz", "wt") as f:
+            f.write(json.dumps({"l": "C1", "d": "2026-11-11", "s": 50, "t": "e"}) + "\n")
+        with gzip.open(history / "2026-11" / "2026-11-12.jsonl.gz", "wt") as f:
+            f.write(json.dumps({"l": "C1", "d": "2026-11-12", "s": 30, "t": "e", "before": 50}) + "\n")
+        db_path = tmp_path / "stock_history.db"
+        assert build_history_db(tmp_path, db_path, verbose=False)["total_events"] == 2
+        conn = sqlite3.connect(db_path)
+        assert conn.execute("SELECT date, stock, stock_before FROM stock_events ORDER BY date").fetchall() == [
+            ("2026-11-11", 50, None), ("2026-11-12", 30, 50)]
+        conn.close()
+
+    def test_server_uses_the_stored_dates(self, tmp_path):
+        """Without a date index, the server reads the window's end from tracking_meta, not MIN/MAX."""
+        from pcbparts_mcp.history_db import StockHistoryDatabase
+        (tmp_path / "history").mkdir()
+        with gzip.open(tmp_path / "history" / "2026-03.jsonl.gz", "wt") as f:
+            for day in ("2026-03-01", "2026-03-20"):
+                f.write(json.dumps({"l": "C1", "d": day, "s": 40, "t": "e"}) + "\n")
+        db_path = tmp_path / "stock_history.db"
+        build_history_db(tmp_path, db_path, verbose=False)
+        assert StockHistoryDatabase(db_path).history("C1", 366)["window"]["end"] == "2026-03-20"
+        conn = sqlite3.connect(db_path)
+        conn.execute("UPDATE tracking_meta SET value='2026-03-10' WHERE key='history_end'")
+        conn.commit()
+        conn.close()
+        reply = StockHistoryDatabase(db_path).history("C1", 366)
+        assert reply["window"]["end"] == "2026-03-10"
+        assert [e["date"] for e in reply["events"]] == ["2026-03-01"]

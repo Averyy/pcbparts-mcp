@@ -2,7 +2,7 @@ name: SolarMeshtasticNode
 slug: solarmeshtasticnode
 source: h0lad/SolarMeshtasticNode
 format: kicad9
-description: "Solar-powered Meshtastic node: Heltec HT-CT62 LoRa module, BQ25185 solar-input charger (battery-tracking VINDPM)"
+description: 'Solar-powered Meshtastic node: Heltec HT-CT62 LoRa module, BQ25185 solar-input charger (battery-tracking VINDPM)'
 tags: [battery-charging, energy-harvesting, lora]
 key_ics: [BQ25185]
 outline:
@@ -59,26 +59,26 @@ components:
   value: LED
   footprint: 0805
 - ref: J1
-  value: 1x2 header
-  footprint: JST_PH_B2B-PH-K
+  value: JST PH 2-pin
+  footprint: JST_PH_B2B-PH-K_1x02
 - ref: J2
-  value: 1x2 header
-  footprint: JST_PH_B2B-PH-K
+  value: JST PH 2-pin
+  footprint: JST_PH_B2B-PH-K_1x02
 - ref: J3
-  value: 1x4 header
-  footprint: JST_PH_B4B-PH-K
+  value: JST PH 4-pin
+  footprint: JST_PH_B4B-PH-K_1x04
   pin_count: 4
 - ref: J5
-  value: 1x4 header
-  footprint: JST_PH_B4B-PH-K
+  value: JST PH 4-pin
+  footprint: JST_PH_B4B-PH-K_1x04
   pin_count: 4
 - ref: J7
-  value: 1x4 header
-  footprint: JST_PH_B4B-PH-K
+  value: JST PH 4-pin
+  footprint: JST_PH_B4B-PH-K_1x04
   pin_count: 4
 - ref: J8
-  value: 1x2 header
-  footprint: JST_PH_B2B-PH-K
+  value: JST PH 2-pin
+  footprint: JST_PH_B2B-PH-K_1x02
 - ref: Q1
   value: MMBT2222A
   footprint: SOT-23
@@ -149,14 +149,15 @@ components:
   footprint: SMA_L4.3-W2.6-LS5.1-RD
 - ref: U1
   value: BQ25185
-  footprint: SON-11
+  footprint: SON40P220X200X80-11N
   pin_count: 11
 - ref: U2
   value: HT-CT62
   footprint: Heltec_HT-CT62
   description: LoRa/LoRaWAN node module with ESP32-C3 and SX1262
   pin_count: 22
-  nc_pins: {2.4G_Ant: '1', GPIO7: '3', GPIO6: '4', GPIO5: '5', GPIO4: '6', GPIO3: '7', GPIO2: '8', GPIO10: '14', GPIO8: '16', LoRa_Ant: '22'}
+  nc_pins: {2.4G_Ant: '1', GPIO7: '3', GPIO6: '4', GPIO5: '5', GPIO4: '6', GPIO3: '7', GPIO2: '8', GPIO10: '14', GPIO8: '16',
+    LoRa_Ant: '22'}
 - ref: U3
   value: HE9073A30MR
   footprint: SOT-23-3_L2.9-W1.6-P1.90-LS2.8-BR-CW

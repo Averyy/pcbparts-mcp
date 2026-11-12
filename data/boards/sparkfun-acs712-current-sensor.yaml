@@ -33,12 +33,12 @@ components:
   value: 1nF
   footprint: '0402'
 - ref: JP1
-  value: 1x1 header
-  footprint: 1X01
+  value: 1x1 2.00mm header
+  footprint: 1X01_P2.00mm
   description: Header 1
 - ref: JP2
-  value: 1x1 header
-  footprint: 1X01
+  value: 1x1 2.00mm header
+  footprint: 1X01_P2.00mm
   description: Header 1
 - ref: JP3
   value: 1x3 header

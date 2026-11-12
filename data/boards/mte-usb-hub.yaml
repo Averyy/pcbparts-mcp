@@ -3,7 +3,7 @@ slug: mte-usb-hub
 source: MicroType-Engineering/MTE_USB_HUB
 format: kicad6
 description: USB 3.2 Gen1 hub (USB7206) with USB-C PD negotiation (HD3SS3220), multi-rail power tree
-tags: [usb-pd]
+tags: [usb]
 key_ics: [USB7206, HD3SS3220]
 outline:
   width_mm: 100.0
@@ -16,294 +16,401 @@ design_rules:
   min_via: 0.4mm
 components:
 - ref: C1
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C10
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C11
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C12
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C13
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C14
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C15
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
 - ref: C16
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
 - ref: C17
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
 - ref: C18
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
 - ref: C19
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
 - ref: C2
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C20
-  value: CC0402JRNPO9BN330
+  value: 33pF
   footprint: CAPACITOR_0402N
+  mpn: CC0402JRNPO9BN330
 - ref: C21
-  value: CC0402JRNPO9BN270
+  value: 27pF
   footprint: CAPACITOR_0402N
+  mpn: CC0402JRNPO9BN270
   pin_count: 2
   nc_pins: {'1': '1', '2': '2'}
 - ref: C22
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
 - ref: C23
-  value: CC0402JRNPO9BN330
+  value: 33pF
   footprint: CAPACITOR_0402N
+  mpn: CC0402JRNPO9BN330
 - ref: C24
-  value: CC0402JRNPO9BN270
+  value: 27pF
   footprint: CAPACITOR_0402N
+  mpn: CC0402JRNPO9BN270
   pin_count: 2
   nc_pins: {'1': '1', '2': '2'}
 - ref: C25
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
 - ref: C26
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
 - ref: C27
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
 - ref: C28
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U1
 - ref: C29
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U1
 - ref: C3
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C30
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U1
 - ref: C31
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U1
 - ref: C32
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U1
 - ref: C33
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U1
 - ref: C34
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U1
 - ref: C35
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U1
 - ref: C36
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
 - ref: C37
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U2
 - ref: C38
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U2
 - ref: C39
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U2
 - ref: C4
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C40
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB105
   decouples: U2
 - ref: C41
-  value: CC0603KRX5R9BB105
+  value: 1uF
   footprint: CAPACITOR_0603N
+  mpn: CC0603KRX5R9BB105
 - ref: C42
-  value: CC0603KRX5R9BB105
+  value: 1uF
   footprint: CAPACITOR_0603N
+  mpn: CC0603KRX5R9BB105
 - ref: C43
-  value: GCJ32EC71E226KE02
+  value: 22uF
   footprint: CAPACITOR_1210N
+  manufacturer: Murata Electronics
+  mpn: GCJ32EC71E226KE02
 - ref: C44
-  value: GCJ32EC71E226KE02
+  value: 22uF
   footprint: CAPACITOR_1210N
+  manufacturer: Murata Electronics
+  mpn: GCJ32EC71E226KE02
 - ref: C45
-  value: GCJ32EC71E226KE02
+  value: 22uF
   footprint: CAPACITOR_1210N
+  manufacturer: Murata Electronics
+  mpn: GCJ32EC71E226KE02
 - ref: C46
-  value: EEE-HAE471UAP
+  value: 470uF
   footprint: CAPAE1030X1080L350X120N
+  manufacturer: Panasonic Electronic Components
+  mpn: EEE-HAE471UAP
   decouples: U4
 - ref: C47
-  value: EEE-HAE471UAP
+  value: 470uF
   footprint: CAPAE1030X1080L350X120N
+  manufacturer: Panasonic Electronic Components
+  mpn: EEE-HAE471UAP
 - ref: C48
-  value: GCJ32EC71E226KE02
+  value: 22uF
   footprint: CAPACITOR_1210N
+  manufacturer: Murata Electronics
+  mpn: GCJ32EC71E226KE02
 - ref: C49
   value: 10uF
   footprint: CAPACITOR_1206N
+  manufacturer: Murata Electronics
+  mpn: GRM31CR71E106KA12L
   decouples: U3
 - ref: C5
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C50
   value: 10uF
   footprint: CAPACITOR_1206N
+  manufacturer: Murata Electronics
+  mpn: GRM31CR71E106KA12L
   decouples: U3
 - ref: C51
   value: 10uF
   footprint: CAPACITOR_1206N
+  manufacturer: Murata Electronics
+  mpn: GRM31CR71E106KA12L
   decouples: U3
 - ref: C52
   value: 10uF
   footprint: CAPACITOR_1206N
+  manufacturer: Murata Electronics
+  mpn: GRM31CR71E106KA12L
   decouples: U3
 - ref: C53
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C54
   value: 22uF
   footprint: CAPACITOR_0805N
+  mpn: CL21A226MOCLRNC
 - ref: C55
   value: 22uF
   footprint: CAPACITOR_0805N
+  mpn: CL21A226MOCLRNC
 - ref: C56
   value: 10uF
   footprint: CAPACITOR_1206N
+  manufacturer: Murata Electronics
+  mpn: GRM31CR71E106KA12L
 - ref: C57
   value: 10uF
   footprint: CAPACITOR_1206N
+  manufacturer: Murata Electronics
+  mpn: GRM31CR71E106KA12L
 - ref: C58
   value: 10uF
   footprint: CAPACITOR_1206N
+  manufacturer: Murata Electronics
+  mpn: GRM31CR71E106KA12L
   decouples: U4
 - ref: C59
   value: 10uF
   footprint: CAPACITOR_1206N
+  manufacturer: Murata Electronics
+  mpn: GRM31CR71E106KA12L
   decouples: U4
 - ref: C6
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C60
   value: 10uF
   footprint: CAPACITOR_1206N
+  manufacturer: Murata Electronics
+  mpn: GRM31CR71E106KA12L
   decouples: U4
 - ref: C61
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C62
   value: 15nF
   footprint: CAPACITOR_0402N
+  manufacturer: Taiyo Yuden
+  mpn: TMK105BJ153KV-F
 - ref: C63
   value: 470nF
   footprint: CAPACITOR_0402N
+  manufacturer: Taiyo Yuden
+  mpn: TMK105ABJ474KV-F
 - ref: C64
   value: 2.2uF
   footprint: CAPACITOR_0402N
+  mpn: TMK105CBJ225MV-F
 - ref: C65
-  value: C0402C121J3GAC7867
+  value: 120pF
   footprint: CAPACITOR_0402N
+  manufacturer: KEMET
+  mpn: C0402C121J3GAC7867
 - ref: C66
   value: 220uF
   footprint: CAPACITOR_1210N
+  manufacturer: Murata Electronics
+  mpn: GRM32ER60J227ME05L
 - ref: C67
   value: 220uF
   footprint: CAPACITOR_1210N
+  manufacturer: Murata Electronics
+  mpn: GRM32ER60J227ME05L
 - ref: C68
   value: 220uF
   footprint: CAPACITOR_1210N
+  manufacturer: Murata Electronics
+  mpn: GRM32ER60J227ME05L
   decouples: U2
 - ref: C69
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
-  decouples: U?1
+  mpn: CC0402KRX5R7BB105
 - ref: C7
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C70
-  value: CC0402KRX5R7BB105
+  value: 1uF
   footprint: CAPACITOR_0402N
-  decouples: U?1
+  mpn: CC0402KRX5R7BB105
 - ref: C75
   value: 2.2uF
   footprint: CAPACITOR_0402N
+  mpn: TMK105CBJ225MV-F
 - ref: C76
   value: 2.2uF
   footprint: CAPACITOR_0402N
+  mpn: TMK105CBJ225MV-F
 - ref: C77
   value: 10uF
   footprint: CAPACITOR_0805N
+  manufacturer: Murata Electronics
+  mpn: GRM21BR61H106ME43
   decouples: U6
 - ref: C78
   value: 10uF
   footprint: CAPACITOR_0805N
+  manufacturer: Murata Electronics
+  mpn: GRM21BR61H106ME43
   decouples: U6
 - ref: C79
   value: 10uF
   footprint: CAPACITOR_0805N
+  manufacturer: Murata Electronics
+  mpn: GRM21BR61H106ME43
 - ref: C8
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: C80
   value: 10uF
   footprint: CAPACITOR_0805N
+  manufacturer: Murata Electronics
+  mpn: GRM21BR61H106ME43
 - ref: C9
-  value: CC0402KRX5R7BB104
+  value: 100nF
   footprint: CAPACITOR_0402N
+  mpn: CC0402KRX5R7BB104
 - ref: D1
   value: BAS16GWJ
   footprint: SODFL360X160X130L45X62N
+  manufacturer: Nexperia
 - ref: D10
   value: ESD8004MUTAG
   footprint: ESD8004MUTAG
+  manufacturer: ON Semiconductor
   pin_count: 10
 - ref: D11
   value: ESD9X3.3ST5G
   footprint: SODFL1006X43N
+  manufacturer: ON Semiconductor
 - ref: D5
   value: ESD8004MUTAG
   footprint: ESD8004MUTAG
+  manufacturer: ON Semiconductor
   pin_count: 10
 - ref: D6
   value: ESD8004MUTAG
   footprint: ESD8004MUTAG
+  manufacturer: ON Semiconductor
   pin_count: 10
 - ref: D7
   value: ESD8004MUTAG
   footprint: ESD8004MUTAG
+  manufacturer: ON Semiconductor
   pin_count: 10
 - ref: D8
   value: ESD9X3.3ST5G
   footprint: SODFL1006X43N
+  manufacturer: ON Semiconductor
 - ref: D9
   value: ESD8004MUTAG
   footprint: ESD8004MUTAG
+  manufacturer: ON Semiconductor
   pin_count: 10
 - ref: J1
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
 - ref: J2
   value: USB-C
   footprint: USB-C
@@ -328,167 +435,273 @@ components:
 - ref: L1
   value: ACM1211-701-2PL-TL01
   footprint: ACM1211-701-2PL-TL01
+  manufacturer: TDK Corporation
   pin_count: 4
 - ref: L2
-  value: FCUL0624-H-R22M=P3
+  value: 220nH
   footprint: INDM730X660X240L150X140N
+  manufacturer: Murata Electronics
+  mpn: FCUL0624-H-R22M=P3
 - ref: L3
-  value: '74405042022'
+  value: 2.2uH
   footprint: INDM400X400X200L95X310N
+  manufacturer: "W\xFCrth Elektronik"
+  mpn: '74405042022'
 - ref: L4
   value: 1.5uH
   footprint: INDM1350X1350X700L250X300N
+  mpn: SRP1270-1R5M
 - ref: Q1
   value: CSD16342Q5A
   footprint: CSD16342Q5A
+  manufacturer: Texas Instruments
   pin_count: 8
 - ref: Q2
   value: CSD17577Q5AT
   footprint: CSD16342Q5A
+  manufacturer: Texas Instruments
   pin_count: 8
 - ref: R1
-  value: RC0402JR-0710KL
+  value: 10kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0710KL
+  pullup: U1.RESET_N
 - ref: R10
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.SLV_I2C_DAT
 - ref: R11
-  value: RC0402JR-0710KL
+  value: 10kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0710KL
+  pulldown: U1.~CFG_STRAP_1
 - ref: R12
-  value: RC0402JR-07200KL
+  value: 200kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-07200KL
+  pulldown: U1.~CFG_STRAP_2
 - ref: R13
-  value: RC0402JR-07200KL
+  value: 200kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-07200KL
+  pulldown: U1.~CFG_STRAP_3
 - ref: R14
-  value: RC0402JR-07200KL
+  value: 200kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-07200KL
+  pulldown: U1.~CFG_NON_REM
 - ref: R15
-  value: RC0402JR-0710RL
+  value: 10ohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0710RL
 - ref: R16
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.SPI_CLK
 - ref: R17
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.SPI_D1
 - ref: R18
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.SPI_D2
 - ref: R19
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.SPI_D3
 - ref: R2
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.I2S_SDI
 - ref: R20
-  value: RC0402JR-0710KL
+  value: 10kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0710KL
+  pullup: U1.TEST_1
 - ref: R21
-  value: RC0402JR-0710KL
+  value: 10kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0710KL
+  pullup: U1.TEST_2
 - ref: R22
-  value: RC0402JR-0710KL
+  value: 10kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0710KL
+  pullup: U1.TEST_3
 - ref: R23
-  value: RT0402DRE0712KL
+  value: 12kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RT0402DRE0712KL
+  pulldown: U1.RBIAS
 - ref: R24
-  value: RC0402JR-0710KL
+  value: 10kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0710KL
+  pulldown: U1.USB3DN_5_RXDP
 - ref: R25
-  value: RC0402JR-0710KL
+  value: 10kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0710KL
+  pulldown: U1.USB3DN_5_RXDM
 - ref: R26
-  value: RC0402FR-07887KL
+  value: 887kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402FR-07887KL
 - ref: R27
-  value: RC0402JR-07200KL
+  value: 200kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-07200KL
+  pullup: U2.DIR
 - ref: R28
-  value: RC0402JR-074K7L
+  value: 4.7kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-074K7L
+  pullup: /UFP_MUX/OUT1
 - ref: R29
-  value: RC0402JR-074K7L
+  value: 4.7kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-074K7L
+  pullup: /UFP_MUX/OUT2
 - ref: R3
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.I2S_SDO
 - ref: R30
-  value: RL1206JR-070R51L
+  value: 510mohm
   footprint: RESISTOR_1206N
+  manufacturer: Yageo
+  mpn: RL1206JR-070R51L
 - ref: R32
-  value: RC0402JR-0710KL
+  value: 10kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0710KL
 - ref: R33
-  value: RC0402JR-0710KL
+  value: 10kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0710KL
+  pulldown: U3.FB
 - ref: R34
-  value: RC0402FR-0780K6L
+  value: 80.6kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402FR-0780K6L
+  pullup: U4.RON
 - ref: R35
-  value: RC0402FR-071K58L
+  value: 1.58kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402FR-071K58L
 - ref: R36
-  value: RC0402FR-0773K2L
+  value: 73.2kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402FR-0773K2L
+  pullup: U4.FB
 - ref: R37
-  value: RC0402JR-0710KL
+  value: 10kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0710KL
+  pulldown: U4.FB
 - ref: R4
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.I2S_CLK
 - ref: R5
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.I2S_LRCK
 - ref: R6
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.I2S_MCLK
 - ref: R7
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.MSTR_I2C_CLK
 - ref: R8
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.MSTR_I2C_DATA
 - ref: R9
-  value: RC0402JR-0747KL
+  value: 47kohm
   footprint: RESISTOR_0402N
-- ref: R?1
-  value: RC0402FR-07390RL
-  footprint: RESISTOR_0402N
-- ref: R?2
-  value: RC0402JR-07240RL
-  footprint: RESISTOR_0402N
+  manufacturer: Yageo
+  mpn: RC0402JR-0747KL
+  pulldown: U1.SLV_I2C_CLK
 - ref: U1
   value: USB7206
-  footprint: QFN101P40
+  footprint: QFN101P40_1200X1200X90L60X20T800N
   pin_count: 100
-  nc_pins: {NC@4: '4', NC@12: '12', NC@13: '13', NC@49: '49', NC@50: '50', PRT_CTL3_U3: '51', PRT_CTL4_U3: '52', PRT_CTL5_U3: '54', PRT_CTL5/OCS: '56', PRT_CTL4/OCS: '57', PRT_CTL3/OCS: '58', PRT_CTL2/OCS: '59', PRT_CTL1/OCS: '60', PF29: '74', PRT_CTL6: '77', NC@80: '80', USB3DN_5_TXDP: '83', USB3DN_5_TXDM: '84', ATEST: '96'}
+  nc_pins: {NC@4: '4', NC@12: '12', NC@13: '13', NC@49: '49', NC@50: '50', PRT_CTL3_U3: '51', PRT_CTL4_U3: '52', PRT_CTL5_U3: '54',
+    PRT_CTL5/OCS: '56', PRT_CTL4/OCS: '57', PRT_CTL3/OCS: '58', PRT_CTL2/OCS: '59', PRT_CTL1/OCS: '60', PF29: '74', PRT_CTL6: '77',
+    NC@80: '80', USB3DN_5_TXDP: '83', USB3DN_5_TXDM: '84', ATEST: '96'}
 - ref: U2
   value: HD3SS3220
-  footprint: QFN31P40
+  footprint: QFN31P40_250X450X80L30X20T120X320N
   pin_count: 31
   nc_pins: {CURRENT_MODE: '3', ADDR: '22', OUT3: '23', VCONN_FAULT_N: '24', ID: '27'}
 - ref: U3
   value: TPS563207SDRLR
-  footprint: SOL6P50
+  footprint: SOL6P50_160X160X60L21N
+  manufacturer: Texas Instruments
   pin_count: 6
 - ref: U4
   value: LM3150MH
-  footprint: SOP15P65
+  footprint: SOP15P65_500X640X110L60X24T310X300N
   pin_count: 15
 - ref: U6
   value: UCS2114
   footprint: UCS2114
   pin_count: 20
-- ref: U?1
-  value: LM317DCYR
-  footprint: SOT223-4P230
-  pin_count: 4
 - ref: Y1
-  value: RH100-25.000-20-F-1030-TR
+  value: 25MHz
   footprint: RH100-12.000-10-2020-EXT-TR
+  manufacturer: Raltron Electronics
+  mpn: RH100-25.000-20-F-1030-TR
   pin_count: 4
 nets:
 - name: +12V
@@ -535,7 +748,6 @@ nets:
   - R27.1
   - R28.1
   - R29.1
-  - R?2.1
   - U1.VDD33@26
   - U1.VDD33@43
   - U1.VDD33@53
@@ -549,8 +761,6 @@ nets:
   - U1.~PRT_DIS_6_M
   - U1.~PRT_DIS_6_P
   - U2.VCC33
-  - U?1.OUTPUT@2
-  - U?1.OUTPUT@4
 - name: +5V
   pins:
   - C37.1
@@ -579,7 +789,6 @@ nets:
   - U6.VS@9
   - U6.V_S@6
   - U6.V_S@7
-  - U?1.INPUT
 - name: /1.15V
   pins:
   - C15.1
@@ -873,7 +1082,6 @@ nets:
   - R7.1
   - R8.1
   - R9.1
-  - R?1.2
   - U1.TESTEN
   - U1.VSS
   - U2.EPAD
@@ -925,8 +1133,6 @@ nets:
   pins: [C48.2, R30.1]
 - name: Net-(C64-Pad1)
   pins: [C64.1, U4.VCC]
-- name: Net-(R?1-Pad1)
-  pins: ['R?1.1', 'R?2.2', 'U?1.ADJUST']
 - name: RBIAS
   pins: [R23.1, U1.RBIAS]
 - name: RESET_N
@@ -1453,12 +1659,6 @@ positions:
   x: 61.2
   y: 71.8
   rot: -90.0
-- ref: R?1
-  x: 28.52
-  y: 54.13
-- ref: R?2
-  x: 34.05
-  y: 49.16
 - ref: U1
   x: 50.0
   y: 82.0
@@ -1477,9 +1677,6 @@ positions:
   x: 58.4
   y: 107.65
   rot: -90.0
-- ref: U?1
-  x: 23.02
-  y: 52.82
 - ref: Y1
   x: 45.6
   y: 72.2

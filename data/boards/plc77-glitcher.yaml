@@ -70,7 +70,8 @@ components:
   value: AT90S2313P
   footprint: DIL20
   pin_count: 20
-  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '6': '6', '7': '7', '8': '8', '9': '9', '11': '11', '12': '12', '15': '15', '17': '17', '18': '18', '19': '19'}
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '6': '6', '7': '7', '8': '8', '9': '9', '11': '11', '12': '12', '15': '15',
+    '17': '17', '18': '18', '19': '19'}
 - ref: IC2
   value: '7405'
   footprint: DIL14
@@ -95,15 +96,36 @@ components:
 - ref: R1
   value: 1Mohm
   footprint: '1210'
+- ref: R10
+  value: R
+  footprint: '0204_7'
 - ref: R11
   value: 2.2kohm
   footprint: '1206'
+- ref: R2
+  value: R
+  footprint: '0207_10'
 - ref: R3
   value: 470ohm
   footprint: '1210'
 - ref: R4
   value: 470ohm
   footprint: '1210'
+- ref: R5
+  value: R
+  footprint: '2010'
+- ref: R6
+  value: R
+  footprint: '0204_7'
+- ref: R7
+  value: R
+  footprint: '0204_7'
+- ref: R8
+  value: R
+  footprint: '0204_7'
+- ref: R9
+  value: R
+  footprint: '0204_7'
 - ref: U$7
   value: POWER1
   footprint: POWER1
@@ -310,10 +332,18 @@ positions:
   x: 116.12
   y: 127.55
   rot: 270.0
+- ref: R10
+  x: 113.26
+  y: 121.2
+  rot: 90.0
 - ref: R11
   x: 113.26
   y: 119.93
   rot: 90.0
+- ref: R2
+  x: 155.81
+  y: 115.8
+  rot: 270.0
 - ref: R3
   x: 160.25
   y: 132.31
@@ -322,6 +352,24 @@ positions:
   x: 155.81
   y: 131.99
   rot: 90.0
+- ref: R5
+  x: 149.14
+  y: 103.42
+- ref: R6
+  x: 155.81
+  y: 131.99
+  rot: 90.0
+- ref: R7
+  x: 160.25
+  y: 131.99
+  rot: 270.0
+- ref: R8
+  x: 147.87
+  y: 103.42
+- ref: R9
+  x: 116.12
+  y: 125.96
+  rot: 270.0
 - ref: U$7
   x: 101.52
   y: 134.85

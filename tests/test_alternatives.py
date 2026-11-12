@@ -1,10 +1,11 @@
 """Tests for the alternatives module - spec parsing and compatibility checking."""
 
-import gzip
 import json
 from pathlib import Path
 
 import pytest
+
+from conftest import write_catalog_category
 
 from pcbparts_mcp.alternatives import (
     # Parsers
@@ -863,9 +864,7 @@ def mosfet_db(tmp_path):
         _row("C2006", 5, "e", **N60, **{"Current - Continuous Drain(Id)": "100A", "RDS(on)": "8mΩ@10V"}),  # stock < 10
         _row("C2007", 200, "b", **N60, **{"Current - Continuous Drain(Id)": "90A", "RDS(on)": "10mΩ@10V"}),
     ]
-    (tmp_path / "categories").mkdir()
-    with gzip.open(tmp_path / "categories" / "transistors.jsonl.gz", "wt") as f:
-        f.writelines(json.dumps(r) + "\n" for r in rows)
+    write_catalog_category(tmp_path, "transistors", rows)
     (tmp_path / "subcategories.json").write_text(json.dumps(
         {"2954": {"name": "MOSFETs", "category_id": 1, "category_name": "Transistors/Thyristors"}}))
     build_database(tmp_path, tmp_path / "components.db", verbose=False)
@@ -1047,3 +1046,203 @@ class TestFindAlternativesIntegration:
             # First alternative should have higher or equal score than last
             if "score" in alternatives[0] and "score" in alternatives[-1]:
                 assert alternatives[0]["score"] >= alternatives[-1]["score"]
+
+
+@pytest.fixture
+async def real_alternative_records(monkeypatch):
+    """Real catalog records; only retrieval order and footprint answers are controlled."""
+    import sys
+    from contextlib import ExitStack
+    from pcbparts_mcp.client import JLCPCBClient
+    from pcbparts_mcp.db import ComponentDatabase
+
+    sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
+    from search_baseline import offline
+
+    database = ComponentDatabase()
+    clients = []
+    with ExitStack() as stack:
+        stack.enter_context(offline())
+
+        def setup(code):
+            original = database.get_by_lcsc(code)
+            subcategory = original["subcategory"]
+            sid = database.resolve_subcategory_name(subcategory)
+            primary = COMPATIBILITY_RULES[subcategory]["primary"]
+            records = database.find_alternative_candidates(
+                original, subcategory, sid, limit=200,
+                accept=lambda p: p["lcsc"] != code
+                and verify_primary_spec_match(original, p, primary)
+                and is_compatible_alternative(original, p, subcategory)[0],
+            )
+            client = JLCPCBClient()
+            clients.append(client)
+            client.set_categories(database.get_categories_for_client())
+            checked = []
+
+            async def get_part(lcsc):
+                return original
+
+            async def search(**kwargs):
+                return {"results": records[:kwargs["limit"]]}
+
+            async def footprint(lcsc):
+                checked.append(lcsc)
+                return {"has_easyeda_footprint": True}, "cached"
+
+            monkeypatch.setattr(client, "get_part", get_part)
+            monkeypatch.setattr(client, "search", search)
+            monkeypatch.setattr(client, "_check_easyeda_footprint", footprint)
+            return client, original, records, checked
+
+        yield setup
+        for client in clients:
+            await client.close()
+        database.close()
+
+
+async def test_real_no_fee_eligibility_precedes_footprint_window(real_alternative_records):
+    client, original, records, checked = real_alternative_records("C8678")
+    extended = [p for p in records if p["library_type"] == "extended"][:15]
+    eligible = [p for p in records if p["library_type"] in ("basic", "preferred")][:16]
+    assert len(extended) == 15 and len(eligible) == 16
+    records[:] = extended + eligible
+    result = await client.find_alternatives(original["lcsc"], library_type="no_fee",
+                                            has_easyeda_footprint=True, limit=10)
+    assert checked == [p["lcsc"] for p in eligible[:15]]
+    assert len(result["alternatives"]) == 10
+    assert not result["unverified_alternatives"]
+    stages = result["summary"]["stages"]
+    assert stages["eligibility"]["library"] == {"passed": 16, "failed": 15}
+    assert stages["footprints"]["eligible_checked"] == 15
+    assert stages["footprints"]["fallback_checked"] == 0
+    assert stages["footprints"]["not_checked_cap"] == 1
+    assert stages["output"]["alternatives_truncated"] == 5
+
+
+async def test_real_same_package_before_footprints(real_alternative_records):
+    from pcbparts_mcp.client import _normalize_package_for_matching
+    client, original, records, checked = real_alternative_records("C1525")
+    normalize = _normalize_package_for_matching
+    mismatches = [p for p in records if normalize(p["package"]) != normalize(original["package"])]
+    matches = [p for p in records if normalize(p["package"]) == normalize(original["package"])]
+    assert mismatches and matches
+    records[:] = mismatches[:15] + matches[:10]
+    result = await client.find_alternatives(original["lcsc"], same_package=True,
+                                            has_easyeda_footprint=True, limit=10)
+    assert checked and set(checked) <= {p["lcsc"] for p in matches}
+    assert result["summary"]["stages"]["eligibility"]["package"]["failed"] == 15
+    assert all(normalize(p["package"]) == normalize(original["package"])
+               for p in result["alternatives"] + result["unverified_alternatives"])
+
+
+async def test_real_verified_manual_separation_and_fallback(real_alternative_records):
+    client, original, records, checked = real_alternative_records("C2913202")
+    result = await client.find_alternatives(original["lcsc"], has_easyeda_footprint=True, limit=10)
+    assert result["alternatives"] and result["unverified_alternatives"]
+    assert not ({p["lcsc"] for p in result["alternatives"]}
+                & {p["lcsc"] for p in result["unverified_alternatives"]})
+    assert all(p["unchecked_requirements"] for p in result["unverified_alternatives"])
+    checked.clear()
+    fallback = await client.find_alternatives(original["lcsc"], library_type="no_fee",
+                                              has_easyeda_footprint=True, limit=10)
+    assert fallback["alternatives"] == [] and fallback["unverified_alternatives"] == []
+    examples = fallback["summary"]["extended_examples"]
+    assert examples and all(p["lcsc"] in checked for p in examples)
+    assert len(checked) <= 15
+    assert fallback["summary"]["stages"]["footprints"]["fallback_checked"] == len(checked)
+
+
+@pytest.mark.parametrize("requested", [True, False])
+async def test_real_footprint_unknown_is_not_false(real_alternative_records, monkeypatch, requested):
+    client, original, records, checked = real_alternative_records("C82942")
+    records[:] = records[:3]
+    answers = dict(zip([p["lcsc"] for p in records], [True, False, None]))
+
+    async def footprint(lcsc):
+        return {"has_easyeda_footprint": answers[lcsc]}, "cached"
+
+    monkeypatch.setattr(client, "_check_easyeda_footprint", footprint)
+    result = await client.find_alternatives(original["lcsc"], has_easyeda_footprint=requested)
+    assert [p["lcsc"] for p in result["alternatives"]] == [code for code, value in answers.items()
+                                                             if value is requested]
+    stages = result["summary"]["stages"]["footprints"]
+    assert (stages["checked"], stages["compatible"], stages["incompatible"], stages["unknown"]) == (3, 1, 1, 1)
+    assert result["summary"]["footprint_filter"]["unknown"] == 1
+
+
+@pytest.mark.parametrize("limit,cap", [(3, 6), (10, 15)])
+async def test_real_both_footprint_caps_reported(real_alternative_records, limit, cap):
+    client, original, records, checked = real_alternative_records("C82942")
+    result = await client.find_alternatives(original["lcsc"], has_easyeda_footprint=True, limit=limit)
+    stages = result["summary"]["stages"]
+    assert len(checked) == cap
+    assert stages["footprints"]["not_checked_cap"] == min(len(records), limit * 5 + 20) - cap
+    assert stages["footprints"]["limit"] == cap
+    assert "more matching parts may exist" in result["summary"]["footprint_filter"]["note"]
+    assert stages["output"]["alternatives_truncated"] == cap - limit
+
+
+@pytest.mark.parametrize("source", ["find_alternative_candidates", "subcategory_parts"])
+def test_database_alternative_retrieval_errors_propagate(mosfet_db, monkeypatch, source):
+    import sqlite3
+    import pcbparts_mcp.db as db_module
+
+    def fail(**kwargs):
+        raise sqlite3.OperationalError("replay retrieval failed")
+
+    monkeypatch.setattr(db_module, source, fail)
+    with pytest.raises(sqlite3.OperationalError, match="replay retrieval failed"):
+        if source == "find_alternative_candidates":
+            mosfet_db.find_alternative_candidates(C2557, "MOSFETs", 2954)
+        else:
+            mosfet_db.subcategory_parts(2954)
+
+
+async def test_real_retrieval_error_visible_with_usable_live_results(real_alternative_records):
+    import sqlite3
+    client, original, records, checked = real_alternative_records("C82942")
+
+    def fail(**kwargs):
+        raise sqlite3.OperationalError("replay retrieval failed")
+
+    client.set_alternative_candidates(fail)
+    result = await client.find_alternatives(original["lcsc"], limit=10)
+    assert result["alternatives"]
+    retrieval = result["summary"]["stages"]["retrieval"]
+    assert retrieval["database"]["retrieved"] == 0
+    assert retrieval["database"]["error"] == "retrieval_failed"  # the exception text stays in the log
+    assert retrieval["live_search"]["retrieved"] == 50
+    assert retrieval["live_search"]["hit_limit"] is True
+
+
+def test_database_candidate_scan_bound_reported(mosfet_db):
+    from pcbparts_mcp.db.categories import find_alternative_candidates
+    mosfet_db._ensure_db()
+    found = find_alternative_candidates(mosfet_db._conn, mosfet_db._subcategories,
+                                        C2557, "MOSFETs", 2954, max_rows=2, accept=lambda p: False)
+    assert found == []
+    assert found.retrieval == {"scanned": 2, "scan_limit": 2, "scan_hit_limit": True}
+
+
+async def test_real_extended_fallback_uses_only_remaining_budget(real_alternative_records):
+    client, original, records, checked = real_alternative_records("C8678")
+    extended = [p for p in records if p["library_type"] == "extended"][:20]
+    eligible = [p for p in records if p["library_type"] in ("basic", "preferred")][:2]
+    records[:] = extended + eligible
+    eligible_codes = {p["lcsc"] for p in eligible}
+    # Eligible footprint mismatches leave no verified no-fee output, allowing fallback examples.
+    async def footprint(lcsc):
+        checked.append(lcsc)
+        return {"has_easyeda_footprint": lcsc not in eligible_codes}, "cached"
+
+    client._check_easyeda_footprint = footprint
+    result = await client.find_alternatives(original["lcsc"], library_type="no_fee",
+                                            has_easyeda_footprint=True, limit=10)
+    assert checked[:2] == [p["lcsc"] for p in eligible]
+    assert len(checked) == 15
+    assert result["alternatives"] == []
+    assert result["summary"]["extended_examples"]
+    footprints = result["summary"]["stages"]["footprints"]
+    assert (footprints["eligible_checked"], footprints["fallback_checked"]) == (2, 13)
+    assert footprints["incompatible"] == 2 and footprints["compatible"] == 13

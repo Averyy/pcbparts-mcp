@@ -86,10 +86,10 @@ components:
   description: Two-piece EMI RF shielding cabinet
 - ref: L1
   value: 22uH
-  footprint: L
+  footprint: L_7.3x7.3
 - ref: L2
   value: 22uH
-  footprint: L
+  footprint: L_7.3x7.3
 - ref: R38
   value: 2*50G
   footprint: 0805

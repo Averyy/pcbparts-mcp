@@ -1,7 +1,7 @@
 name: HackRF One
 slug: hackrf-one
 source: greatscottgadgets/hackrf
-format: kicad7
+format: kicad6
 description: 'SDR RF front-end: LPC4320 MCU, MAX2837 transceiver'
 tags: [adc-dac, rf-sdr]
 key_ics: [LPC4320, MAX2837, MAX5864, RFFC5072, MGA-81563]
@@ -1444,15 +1444,9 @@ components:
 - ref: R25
   value: 475ohm
   footprint: '0402'
-  manufacturer: Stackpole
-  mpn: RMCF0402JT470R
-  description: RES TF 1/16W 470 OHM 5% 0402
 - ref: R26
   value: 475ohm
   footprint: '0402'
-  manufacturer: Stackpole
-  mpn: RMCF0402JT470R
-  description: RES TF 1/16W 470 OHM 5% 0402
 - ref: R27
   value: 1.8kohm
   footprint: '0402'
@@ -2013,7 +2007,10 @@ components:
   mpn: XC2C64A-7VQG100C
   description: IC CR-II CPLD 64MCELL 100-VQFP
   pin_count: 100
-  nc_pins: {BANK1F2M1: '14', BANK1F2M2: '15', BANK1F2M3: '16', NC@20: '20', NC@25: '25', NC@44: '44', NC@46: '46', BANK1F4M9: '49', BANK1F4M10: '50', BANK1F4M11: '52', BANK1F4M12: '53', NC@54: '54', BANK1F4M15: '58', NC@59: '59', BANK1F4M16: '60', NC@63: '63', NC@65: '65', NC@66: '66', BANK2F3M13: '68', NC@73: '73', NC@75: '75', NC@80: '80', NC@82: '82', NC@85: '85', NC@86: '86', NC@87: '87', NC@93: '93', NC@95: '95', NC@96: '96'}
+  nc_pins: {BANK1F2M1: '14', BANK1F2M2: '15', BANK1F2M3: '16', NC@20: '20', NC@25: '25', NC@44: '44', NC@46: '46', BANK1F4M9: '49',
+    BANK1F4M10: '50', BANK1F4M11: '52', BANK1F4M12: '53', NC@54: '54', BANK1F4M15: '58', NC@59: '59', BANK1F4M16: '60', NC@63: '63',
+    NC@65: '65', NC@66: '66', BANK2F3M13: '68', NC@73: '73', NC@75: '75', NC@80: '80', NC@82: '82', NC@85: '85', NC@86: '86',
+    NC@87: '87', NC@93: '93', NC@95: '95', NC@96: '96'}
 - ref: U25
   value: MGA-81563
   footprint: SOT-363
@@ -2035,7 +2032,8 @@ components:
   mpn: RFFC5072TR7
   description: WIDEBAND SYNTHESIZER/VCO WITH INTEGRATED 6GHz MIXER
   pin_count: 33
-  nc_pins: {ENBL/GPO5: '1', EXT_LO: '2', EXT_LO_DEC: '3', NC@11: '11', NC@13: '13', NC@14: '14', NC@17: '17', NC@18: '18', NC@20: '20', NC@21: '21'}
+  nc_pins: {ENBL/GPO5: '1', EXT_LO: '2', EXT_LO_DEC: '3', NC@11: '11', NC@13: '13', NC@14: '14', NC@17: '17', NC@18: '18',
+    NC@20: '20', NC@21: '21'}
 - ref: U5
   value: SKY13453
   footprint: SKY13350-385LF
@@ -2407,7 +2405,7 @@ nets:
 - name: /mcu/usb/power/U0_TXD
   pins: [P22.Pin_20, P25.Pin_5, U23.P2_0]
 - name: /mcu/usb/power/USB_SHIELD
-  pins: [C155.1, J1.SHIELD@0, P80.Pin_1, P80.Pin_2, R35.1]
+  pins: [J1.SHIELD@0, P80.Pin_1, P80.Pin_2]
 - name: /mcu/usb/power/VBAT
   pins: [C136.1, P20.Pin_1, U23.VBAT]
 - name: /mcu/usb/power/VBUS
@@ -2540,7 +2538,6 @@ nets:
   - C152.2
   - C153.2
   - C154.2
-  - C155.2
   - C156.2
   - C157.2
   - C158.2
@@ -2666,7 +2663,6 @@ nets:
   - R15.2
   - R16.2
   - R17.2
-  - R35.2
   - R37.1
   - R39.2
   - R4.1
@@ -2778,23 +2774,23 @@ nets:
 - name: MIX_CLK
   pins: [C67.1, U19.CLK4]
 - name: MIX_IPN
-  pins: [L1.2, T1.PR1, U4.MIX_IPN]
+  pins: [T1.PR1, U4.MIX_IPN]
 - name: MIX_IPP
-  pins: [L1.1, T1.PR2, U4.MIX_IPP]
+  pins: [T1.PR2, U4.MIX_IPP]
 - name: MIX_OPN
-  pins: [L2.1, L4.2, T2.PR2, U4.MIX_OPN]
+  pins: [L2.1, T2.PR2, U4.MIX_OPN]
 - name: MIX_OPP
-  pins: [L3.1, L4.1, T2.PR1, U4.MIX_OPP]
+  pins: [L3.1, T2.PR1, U4.MIX_OPP]
 - name: MODE_DATA
   pins: [R51.1, U21.MODE/DATA]
 - name: Net-(C102-Pad2)
-  pins: [C102.2, L6.2, T3.PR1]
+  pins: [C102.2, T3.PR1]
 - name: Net-(C104-Pad2)
-  pins: [C104.2, L8.1, T4.PR2]
+  pins: [C104.2, T4.PR2]
 - name: Net-(C105-Pad1)
   pins: [C105.1, FB2.2, NT3.2]
 - name: Net-(C111-Pad2)
-  pins: [C111.2, L8.2, T4.PR1]
+  pins: [C111.2, T4.PR1]
 - name: Net-(C114-Pad1)
   pins: [C114.1, R26.2]
 - name: Net-(C114-Pad2)
@@ -2810,7 +2806,7 @@ nets:
 - name: Net-(C64-Pad2)
   pins: [C64.2, D1.K, L13.2, P4.RF]
 - name: Net-(C99-Pad2)
-  pins: [C99.2, L6.1, T3.PR2]
+  pins: [C99.2, T3.PR2]
 - name: Net-(D10-Pad1)
   pins: [D10.K, L13.1]
 - name: Net-(D10-Pad2)
@@ -2959,9 +2955,9 @@ nets:
 - name: TXENABLE
   pins: [U17.TXENABLE, U23.P4_4]
 - name: TXRF
-  pins: [C104.1, L9.1, U17.TXRF+]
+  pins: [C104.1, U17.TXRF+]
 - name: TXRF_2
-  pins: [C111.1, L9.2, U17.TXRF-]
+  pins: [C111.1, U17.TXRF-]
 - name: TX_AMP
   pins: [C55.1, C63.1, U12.V3, U14.V1, U23.P5_6]
 - name: TX_IF

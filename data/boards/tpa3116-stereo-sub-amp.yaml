@@ -180,6 +180,7 @@ components:
 - ref: J13
   value: SUB
   footprint: SCREWTERMINAL-5MM-2
+  prod_id: PRT-08432
 - ref: J14
   value: AUDIO_IN
   footprint: 1X04
@@ -199,9 +200,11 @@ components:
 - ref: J3
   value: LEFT
   footprint: SCREWTERMINAL-5MM-2
+  prod_id: PRT-08432
 - ref: J4
   value: RIGHT
   footprint: SCREWTERMINAL-5MM-2
+  prod_id: PRT-08432
 - ref: J5
   value: LEFT+
   footprint: BANANA_CONN

@@ -2,12 +2,14 @@
   "source": "circuitpython",
   "source_url": "https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_Bundle/main/docs/drivers.rst",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-11-01T13:25:07.204151+00:00",
+  "scraped_at": "2026-11-10T21:51:13.576786+00:00",
   "stats": {
-    "sensor_count": 126,
-    "total_entries_checked": 405,
-    "skipped_no_measures": 1
+    "sensor_count": 127,
+    "total_entries_checked": 409,
+    "skipped_no_measures": 1,
+    "kept_missing": 0
   },
+  "missed_scrapes": {},
   "sensors": [
     {
       "id": "adt7410",
@@ -485,6 +487,20 @@
         "https://docs.circuitpython.org/projects/fxos8700/en/latest/"
       ],
       "description": "FXOS8700 Accelerometer"
+    },
+    {
+      "id": "gt911",
+      "name": "gt911",
+      "measures": [
+        "touch"
+      ],
+      "platforms": [
+        "circuitpython"
+      ],
+      "urls": [
+        "https://docs.circuitpython.org/projects/gt911/en/latest/"
+      ],
+      "description": "GT911 Capacitive Touch Screen Driver"
     },
     {
       "id": "hcsr04",

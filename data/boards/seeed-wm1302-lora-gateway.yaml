@@ -245,53 +245,68 @@ components:
   value: BAT54XV2T1G
   footprint: SOD-523
 - ref: FB1
-  value: BLM15PD121SN1D
+  value: 120ohm
   footprint: F0402
+  mpn: BLM15PD121SN1D
 - ref: L1
-  value: LQP15MN1N2B02D
+  value: 1.2nH
   footprint: '0402'
+  mpn: LQP15MN1N2B02D
 - ref: L10
-  value: LQW15AN2N5B00D
+  value: 2.5nH
   footprint: '0402'
+  mpn: LQW15AN2N5B00D
 - ref: L11
-  value: LQW15AN4N7C00D
+  value: 4.7nH
   footprint: '0402'
+  mpn: LQW15AN4N7C00D
 - ref: L12
-  value: LQW15AN12NG00D
+  value: 12nH
   footprint: '0402'
+  mpn: LQW15AN12NG00D
 - ref: L13
-  value: LQW15AN12NG00D
+  value: 12nH
   footprint: '0402'
+  mpn: LQW15AN12NG00D
 - ref: L14
   value: 15uH
   footprint: 0805
+  mpn: MLZ2012M150WT
 - ref: L16
-  value: LQW15AN7N5G00D
+  value: 7.5nH
   footprint: '0402'
+  mpn: LQW15AN7N5G00D
 - ref: L17
-  value: LQW15AN5N6C10D
+  value: 5.6nH
   footprint: '0402'
+  mpn: LQW15AN5N6C10D
 - ref: L2
-  value: LQW15AN6N8G00D
+  value: 6.8nH
   footprint: '0402'
+  mpn: LQW15AN6N8G00D
 - ref: L24
-  value: LQW15AN5N6C10D
+  value: 5.6nH
   footprint: '0402'
+  mpn: LQW15AN5N6C10D
 - ref: L4
   value: 0ohm
   footprint: F0603
 - ref: L5
   value: 1uH
   footprint: L4.4X3.0MM
+  mpn: LQH44PN1R0NP0L
 - ref: L6
   value: 15uH
   footprint: 0805
+  mpn: MLZ2012M150WT
 - ref: L8
-  value: LQW15AN3N0B00
+  value: 3nH
   footprint: '0402'
+  mpn: LQW15AN3N0B00
 - ref: L9
-  value: LQW15AN47NJ00D
+  value: 47nH
   footprint: '0402'
+  mpn: LQW15AN47NJ00D
 - ref: Q10
   value: CJ2102
   footprint: SOT-323
@@ -395,7 +410,6 @@ components:
 - ref: R47
   value: 1kohm
   footprint: '0402'
-  pullup: D4.+
 - ref: R49
   value: 0ohm
   footprint: '0402'
@@ -486,7 +500,8 @@ components:
   value: SX1302IMLTRT
   footprint: QFN68-0.35-7X7X0.75MM
   pin_count: 69
-  nc_pins: {RADIO_CTRL1: '11', RADIO_CTRL5: '17', RADIO_CTRL6: '22', RADIO_CTRL7: '26', RADIO_CTRL8: '27', RADIO_CTRL10: '29', RADIO_CTRL11: '31', GPIO11: '50', GPIO10: '51', GPIO9: '52', GPIO6: '57', GPIO5: '58', GPIO3: '60', GPIO1: '64'}
+  nc_pins: {RADIO_CTRL1: '11', RADIO_CTRL5: '17', RADIO_CTRL6: '22', RADIO_CTRL7: '26', RADIO_CTRL8: '27', RADIO_CTRL10: '29',
+    RADIO_CTRL11: '31', GPIO11: '50', GPIO10: '51', GPIO9: '52', GPIO6: '57', GPIO5: '58', GPIO3: '60', GPIO1: '64'}
 - ref: U10
   value: HDF866A3-S6
   footprint: FILTER6P-1.1-3X3X1.3MM
@@ -526,24 +541,17 @@ components:
   value: DSB221SDN
   footprint: X4-SMD-2.5X2.0X1.0MM
   pin_count: 4
-- ref: X3
-  value: 2x1 header
-  footprint: X2-SMD-3.2X1.5X0.55MM
 nets:
 - name: 1302_CS
-  pins: [R33.2, R43.1, U1.HOST_CSN, U12.PA4]
+  pins: [R33.2, R43.1, U1.HOST_CSN]
 - name: 1302_RESET
-  pins: [C1.2, D7.-, R1.2, U1.RESET, U12.PA2]
+  pins: [C1.2, D7.-, R1.2, U1.RESET]
 - name: 1302_RESET_HOST
   pins: [D7.+, R59.1]
 - name: 32MHZ
-  pins: [R37.2, R6.2, R9.2, X1.OUT]
+  pins: [R6.2, R9.2, X1.OUT]
 - name: ANT
   pins: [C59.2, C60.1, L17.1, U9.ANT]
-- name: BOOT0
-  pins: [R56.2, R57.1, U12.BOOT0]
-- name: CE
-  pins: [R8.1, U4.CE]
 - name: CONFIG_OK
   pins: [R31.1, U1.GPIO0]
 - name: CPS
@@ -556,12 +564,6 @@ nets:
   pins: [L6.2, U5.DCC_SW]
 - name: DCC_SW_2
   pins: [L14.2, U7.DCC_SW]
-- name: DCC_SW_3
-  pins: [L20.2, U11.DCC_SW]
-- name: DM
-  pins: [J1.36, R66.1]
-- name: DP
-  pins: [J1.38, R64.1]
 - name: EN
   pins: [R82.2, U6.EN]
 - name: EVENT
@@ -569,15 +571,13 @@ nets:
 - name: FB
   pins: [R83.1, R87.2, U6.FB]
 - name: FEM_CS
-  pins: [R14.2, R34.1, U1.RADIO_CTRL0, U3.CE]
+  pins: [R14.2, R34.1, U1.RADIO_CTRL0]
 - name: FEM_PA_ON
   pins: [R15.2, U1.RADIO_CTRL4]
 - name: GND
   pins:
   - ANT1.GND1
   - ANT1.GND2
-  - ANT2.GND1
-  - ANT2.GND2
   - C12.1
   - C13.1
   - C15.1
@@ -597,8 +597,6 @@ nets:
   - C28.1
   - C29.1
   - C3.1
-  - C30.1
-  - C31.1
   - C32.1
   - C33.1
   - C34.1
@@ -621,35 +619,19 @@ nets:
   - C51.1
   - C52.1
   - C55.1
-  - C56.1
   - C57.1
   - C58.1
   - C60.2
   - C61.2
   - C62.1
-  - C63.2
-  - C65.2
   - C67.2
   - C69.1
   - C7.1
   - C70.1
   - C71.1
   - C72.1
-  - C73.2
-  - C74.2
-  - C76.1
-  - C77.2
-  - C78.2
-  - C80.1
-  - C81.2
   - C82.2
   - C83.1
-  - C84.2
-  - C85.1
-  - C86.1
-  - C87.1
-  - C88.1
-  - C89.1
   - C9.1
   - C90.1
   - C92.1
@@ -658,37 +640,12 @@ nets:
   - D3.-
   - D4.-
   - D5.1
-  - D6.1
-  - J1.GND@1
-  - J1.GND@10
-  - J1.GND@11
-  - J1.GND@12
-  - J1.GND@13
-  - J1.GND@14
-  - J1.GND@15
-  - J1.GND@166
-  - J1.GND@2
-  - J1.GND@3
-  - J1.GND@4
-  - J1.GND@5
-  - J1.GND@6
-  - J1.GND@7
-  - J1.GND@8
-  - J1.GND@9
   - Q10.S
   - R1.1
-  - R11.1
-  - R12.1
   - R17.2
   - R4.1
-  - R53.1
-  - R53.2
   - R54.1
   - R54.2
-  - R55.1
-  - R55.2
-  - R57.2
-  - R73.1
   - R74.1
   - R74.2
   - R87.1
@@ -698,7 +655,6 @@ nets:
   - S4.S1
   - S5.S1
   - S6.S1
-  - TP3.T
   - U1.GND
   - U1.GND@1
   - U1.GND@2
@@ -713,22 +669,12 @@ nets:
   - U10.GND@1
   - U10.GND@2
   - U10.GND@3
-  - U11.GND
-  - U11.GND@1
-  - U11.GND@2
-  - U11.GND@3
-  - U11.PAD
-  - U12.PAD
-  - U12.VSS
-  - U12.VSS@1
   - U13.ADDR/!THERM
   - U13.GND
   - U2.GND
   - U2.GND@1
   - U2.GND@2
   - U2.GND@3
-  - U3.VSS
-  - U4.VSS
   - U5.GND
   - U5.GND@1
   - U5.PAD
@@ -745,84 +691,42 @@ nets:
   - U9.GND
   - U9.GND@1
   - X1.GND
-- name: HOST_CS0
-  pins: [J1.51, R43.2]
-- name: HOST_CS1
-  pins: [J1.25, R51.2]
-- name: HOST_IO1
-  pins: [J1.33, R61.2]
-- name: HOST_IO2
-  pins: [J1.31, R63.2]
-- name: HOST_IO4
-  pins: [J1.8, R67.2]
-- name: HOST_IO5
-  pins: [J1.10, R60.2]
 - name: HOST_MISO
   pins: [R39.1, R44.2]
-- name: HOST_MOSI
-  pins: [J1.49, R46.2]
 - name: HOST_MOSI_2
   pins: [R5.1, U1.HOST_MOSI]
-- name: HOST_RST
-  pins: [J1.22, R59.2, R77.2]
-- name: HOST_SCK
-  pins: [J1.45, R49.2]
 - name: HOST_SCK_2
   pins: [R10.1, U1.HOST_SCK]
 - name: I2C_SCL
-  pins: [R68.2, R76.1, R81.1, U12.PB6, U13.SCL]
+  pins: [R81.1, U13.SCL]
 - name: I2C_SDA
-  pins: [R58.2, R70.1, R75.1, U12.PB7, U13.SDA]
+  pins: [R75.1, U13.SDA]
 - name: IN
-  pins: [C2.2, L11.2, R52.1, U8.IN]
+  pins: [C2.2, L11.2, U8.IN]
 - name: IN_2
-  pins: [C11.1, R13.2, U2.IN]
+  pins: [C11.1, U2.IN]
 - name: IN_3
-  pins: [R35.2, R62.1, R69.2, U10.IN]
-- name: MCU_RESET
-  pins: [C85.2, R71.2, R77.1, TP5.T, U12.NRST]
+  pins: [R69.2, U10.IN]
 - name: MISO
-  pins: [R44.1, R45.1, U1.HOST_MISO, U11.MISO]
+  pins: [R44.1, U1.HOST_MISO]
 - name: MISO_A
   pins: [U1.RADIO_A_MISO, U5.MISO]
 - name: MISO_B
   pins: [U1.RADIO_B_MISO, U7.MISO]
 - name: MOSI
-  pins: [R40.2, R46.1, R48.1, R5.2]
-- name: MOSI_2
-  pins: [R40.1, U11.MOSI]
+  pins: [R46.1, R5.2]
 - name: MOSI_A
   pins: [U1.RADIO_A_MOSI, U5.MOSI]
 - name: MOSI_B
   pins: [U1.RADIO_B_MOSI, U7.MOSI]
-- name: N$104
-  pins: [J1.47, R39.2]
-- name: N$109
-  pins: [C78.1, C79.1, L21.2]
-- name: N$110
-  pins: [ANT2.D, C79.2, D6.2]
 - name: N$111
   pins: [C59.1, C91.2]
-- name: N$119
-  pins: [C77.1, L21.1, R62.2]
 - name: N$12
-  pins: [R3.1, R4.2, X1.ENABLE]
-- name: N$122
-  pins: [R64.2, U12.PA12]
-- name: N$123
-  pins: [R66.2, U12.PA11]
+  pins: [R4.2, X1.ENABLE]
 - name: N$124
   pins: [C92.2, Q10.G, R79.2]
-- name: N$129
-  pins: [J1.14, R76.2]
-- name: N$130
-  pins: [J1.16, R70.2]
-- name: N$133
-  pins: [J1.30, R81.2]
-- name: N$134
-  pins: [J1.32, R75.2]
 - name: N$14
-  pins: [C62.2, L4.1, R3.2, X1.VDD]
+  pins: [C62.2, L4.1, X1.VDD]
 - name: N$16
   pins: [D4.+, R47.2]
 - name: N$23
@@ -836,9 +740,7 @@ nets:
 - name: N$36
   pins: [C53.2, C54.1, C7.2, L10.2]
 - name: N$37
-  pins: [C4.1, C8.2, R12.2]
-- name: N$7
-  pins: [C68.1, C74.1, C75.2]
+  pins: [C4.1, C8.2]
 - name: N$80
   pins: [D3.+, R32.2]
 - name: N$81
@@ -850,33 +752,21 @@ nets:
 - name: N$84
   pins: [C1.1, R80.1]
 - name: N$88
-  pins: [C56.2, C57.2, L16.1, L8.2]
-- name: N$9
-  pins: [C66.2, R37.1]
+  pins: [C57.2, L16.1, L8.2]
 - name: N$92
   pins: [C61.1, C91.1, L17.2, L24.1]
 - name: N$94
   pins: [ANT1.D, C64.2, D5.2]
 - name: OUT
-  pins: [C8.1, R11.2, R52.2, U8.OUT]
+  pins: [C8.1, U8.OUT]
 - name: OUT_2
-  pins: [R35.1, U10.OUT, U9.LNA_IN]
+  pins: [U10.OUT, U9.LNA_IN]
 - name: OUT_3
-  pins: [C10.1, C6.1, C75.1, R13.1, U2.OUT]
-- name: PA0_CLK_IN
-  pins: [R72.2, R73.2, U12.PA0-CLK_IN]
+  pins: [C10.1, C6.1, U2.OUT]
 - name: PA_OUT
   pins: [L2.1, L8.1, U9.PA_OUT]
-- name: PC14_OSC32_IN
-  pins: [C81.1, U12.PC14-OSC32_IN, X3.2]
-- name: PC15_OSC32_OUT
-  pins: [C84.1, U12.PC15-OSC32_OUT, X3.1]
-- name: PG
-  pins: [TP15.T, U6.PG]
-- name: PPS
-  pins: [J1.19, TP2.T, U1.PPS, U12.PB4]
 - name: RADIO_A_CLK_32M
-  pins: [R25.2, R72.1, U5.BUSY]
+  pins: [R25.2, U5.BUSY]
 - name: RADIO_A_CLK_I
   pins: [R25.1, U1.RADIO_A_CLK_I]
 - name: RADIO_A_CLK_O
@@ -948,45 +838,15 @@ nets:
 - name: RX_ON
   pins: [R32.1, U1.GPIO4]
 - name: SCK
-  pins: [R10.2, R41.2, R49.1, R50.1]
-- name: SCK_2
-  pins: [R41.1, U11.SCK]
+  pins: [R10.2, R49.1]
 - name: SCK_A
   pins: [U1.RADIO_A_SCK, U5.SCK]
 - name: SCK_B
   pins: [U1.RADIO_B_SCK, U7.SCK]
 - name: SP_VALID
   pins: [R17.1, U1.SP_VALID]
-- name: STM32_MISO
-  pins: [R45.2, U12.PA6]
-- name: STM32_MOSI
-  pins: [R48.2, U12.PA7]
-- name: STM32_SCK
-  pins: [R50.2, U12.PA5]
 - name: SW
   pins: [L5.1, U6.SW]
-- name: SWCLK
-  pins: [TP7.T, U12.PA14]
-- name: SWDIO
-  pins: [TP8.T, U12.PA13]
-- name: SX1261_BUSY
-  pins: [R67.1, U11.BUSY, U12.PA3]
-- name: SX1261_CS
-  pins: [R42.1, R51.1, U11.NSS, U12.PB0]
-- name: SX1261_IO1
-  pins: [R61.1, U1.GPIO7, U11.DIO1, U12.PB1]
-- name: SX1261_IO2
-  pins: [R63.1, U11.DIO2]
-- name: SX1261_IO3
-  pins: [TP9.T, U11.DIO3]
-- name: SX1261_RFIN
-  pins: [C68.2, L22.2, U11.RFI_N]
-- name: SX1261_RFIP
-  pins: [C73.1, L22.1, U11.RFI_P]
-- name: SX1261_RST
-  pins: [R38.1, R60.1, U11.NRESET, U12.PA8]
-- name: SX1302_GPIO8
-  pins: [U1.GPIO8, U12.PB3]
 - name: TX
   pins: [C4.2, U9.TX]
 - name: TX_IN
@@ -1010,31 +870,17 @@ nets:
   - C42.2
   - C45.2
   - C47.2
-  - C76.2
-  - C80.2
   - C83.2
-  - C86.2
-  - C87.2
-  - C88.2
-  - C89.2
   - C90.2
   - Q8.D
   - R33.1
   - R34.2
-  - R56.1
-  - R58.1
   - R65.1
-  - R68.1
-  - R71.1
   - R80.2
-  - TP1.T
   - U1.VCC_IO
   - U1.VCC_IO@1
   - U1.VCC_IO@2
   - U1.VCC_IO@3
-  - U12.VDD
-  - U12.VDD@1
-  - U12.VDDA
   - U13.VDD
 - name: VCC_1V2
   pins:
@@ -1051,7 +897,6 @@ nets:
   - L5.2
   - R79.1
   - R83.2
-  - TP14.T
   - U1.VCC_CORE
   - U1.VCC_CORE@1
   - U1.VCC_CORE@2
@@ -1068,8 +913,6 @@ nets:
   - FB1.2
   - L2.2
   - R2.2
-  - TP6.T
-  - U3.VOUT
 - name: VCC_RADIO
   pins:
   - C21.2
@@ -1079,38 +922,20 @@ nets:
   - C39.2
   - C48.2
   - C67.1
-  - L15.1
   - L4.2
-  - L7.1
-  - R36.1
-  - R38.2
-  - R42.2
   - R7.2
-  - TP10.T
-  - U11.VBAT
-  - U11.VBAT_IO
-  - U4.VOUT
   - U5.VBAT_DIO
   - U5.VBAT_RF
   - U5.VDD_IN
   - U7.VBAT_DIO
   - U7.VBAT_RF
   - U7.VDD_IN
-- name: VDD_IN
-  pins: [C65.1, L18.2, R36.2, U11.VDD_IN]
 - name: VIN
   pins:
   - C15.2
   - C22.2
-  - C30.2
-  - C31.2
   - C69.2
   - C70.2
-  - J1.3V3@1
-  - J1.3V3@2
-  - J1.3V3@3
-  - J1.3V3@4
-  - J1.3V3@5
   - Q8.S
   - R2.1
   - R47.1
@@ -1118,21 +943,14 @@ nets:
   - R78.1
   - R8.2
   - R82.1
-  - TP4.T
-  - U3.VIN
-  - U4.VIN
   - U6.VIN
 - name: VREG
-  pins: [C34.2, L6.1, L7.2, U5.VREG]
+  pins: [C34.2, L6.1, U5.VREG]
 - name: VREG_2
-  pins: [C46.2, L14.1, L15.2, U7.VREG]
-- name: VREG_3
-  pins: [C63.1, L18.1, L20.1, U11.VREG]
+  pins: [C46.2, L14.1, U7.VREG]
 - name: VR_PA
   pins: [C36.2, C37.2, L9.2, U5.VR_PA]
 - name: XTA
   pins: [C14.1, U5.XTA]
 - name: XTA_2
   pins: [C38.1, U7.XTA]
-- name: XTA_3
-  pins: [C66.1, U11.XTA]

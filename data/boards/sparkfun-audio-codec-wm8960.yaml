@@ -15,128 +15,188 @@ design_rules:
   min_drill: 0.2mm
   min_via: 5mil
 components:
+- ref: AVDD-ISO
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
 - ref: C1
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
   decouples: U3
 - ref: C10
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
   decouples: U4
 - ref: C12
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
 - ref: C13
   value: 10nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-14847
   decouples: U4
 - ref: C14
   value: 10uF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-14848
 - ref: C15
   value: 1nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-15061
 - ref: C16
   value: 1nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-15061
 - ref: C17
   value: 1nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-15061
 - ref: C18
   value: 1nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-15061
 - ref: C19
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
 - ref: C20
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
 - ref: C21
   value: 47nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-14243
 - ref: C22
   value: 47nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-14243
 - ref: C23
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
 - ref: C24
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
 - ref: C25
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
 - ref: C26
   value: 1uF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12417
 - ref: C27
   value: 47nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-14243
 - ref: C28
   value: 47nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-14243
 - ref: C29
   value: 47nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-14243
 - ref: C3
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
   decouples: U4
 - ref: C30
   value: 47nF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-14243
 - ref: C31
   value: 10uF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-14848
   decouples: U3
 - ref: C4
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
   decouples: U4
 - ref: C5
   value: 100nF
   footprint: '0402'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-12416
   decouples: U4
 - ref: C6
   value: 4.7uF
   footprint: '0603'
+  voltage: 6.3V
   prod_id: CAP-08280
 - ref: C7
   value: 4.7uF
   footprint: '0603'
+  voltage: 6.3V
   prod_id: CAP-08280
 - ref: C8
   value: 4.7uF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-14240
 - ref: C9
   value: 4.7uF
   footprint: '0402'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-14240
 - ref: D1
   value: red LED
@@ -178,72 +238,96 @@ components:
   value: 220ohm
   footprint: 0805
   prod_id: NDUC-10201
+- ref: LED
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
 - ref: R1
   value: 100ohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14962
 - ref: R10
   value: 10ohm
   footprint: '0402'
+  tolerance: 5%
   prod_id: RES-16072
 - ref: R13
   value: 10ohm
   footprint: '0402'
+  tolerance: 5%
   prod_id: RES-16072
 - ref: R14
   value: 10ohm
   footprint: '0402'
+  tolerance: 5%
   prod_id: RES-16072
 - ref: R15
   value: 10ohm
   footprint: '0402'
+  tolerance: 5%
   prod_id: RES-16072
 - ref: R16
   value: 10ohm
   footprint: '0402'
+  tolerance: 5%
   prod_id: RES-16072
 - ref: R17
   value: 10ohm
   footprint: '0402'
+  tolerance: 5%
   prod_id: RES-16072
 - ref: R18
   value: 100kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-13495
   pullup: EN
 - ref: R2
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
 - ref: R3
   value: 2.2kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14341
 - ref: R4
   value: 100ohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14962
 - ref: R5
   value: 1kohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14342
-  pulldown: D1.C
 - ref: R6
   value: 100ohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14962
 - ref: R7
   value: 100ohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14962
 - ref: R8
   value: 100ohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14962
 - ref: R9
   value: 100ohm
   footprint: '0402'
+  tolerance: 1%
   prod_id: RES-14962
+- ref: SPKVDD
+  value: solder jumper (NC)
+  footprint: SJ-3
+  description: Normally closed trace jumper (1 of 2 connections)
+  pin_count: 3
 - ref: U3
   value: XC6222B331MR-G
   footprint: SOT-23-5
@@ -426,6 +510,10 @@ nets:
 - name: VMID
   pins: [C8.2, U4.VMID]
 positions:
+- ref: AVDD-ISO
+  x: 14.15
+  y: 7.93
+  rot: 270.0
 - ref: C1
   x: 5.75
   y: 8.37
@@ -574,6 +662,9 @@ positions:
   x: 11.27
   y: 16.15
   rot: 270.0
+- ref: LED
+  x: 14.83
+  y: 5.21
 - ref: R1
   x: 16.83
   y: 30.8
@@ -632,6 +723,10 @@ positions:
 - ref: R9
   x: 8.57
   y: 30.8
+  rot: 270.0
+- ref: SPKVDD
+  x: 9.53
+  y: 11.43
   rot: 270.0
 - ref: U3
   x: 9.21

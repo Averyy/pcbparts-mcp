@@ -1,7 +1,7 @@
 name: Yardstick One
 slug: yardstick-one
 source: greatscottgadgets/yardstick
-format: kicad7
+format: kicad6
 description: Sub-GHz RF (CC1111 transceiver), 300-928 MHz matching
 tags: [sub-ghz]
 key_ics: [CC1111]
@@ -136,13 +136,13 @@ components:
   mpn: GRM155R71E103KA01D
   description: CAP CER 10000PF 25V 10% X7R 0402
 - ref: C27
-  value: 100pF
+  value: 47pF
   footprint: '0402'
   manufacturer: Samsung Electro-Mechanics
   mpn: CL05C470JB5NNNC
   description: CAP CER 47PF 50V C0G/NP0 0402
 - ref: C28
-  value: 100pF
+  value: 47pF
   footprint: '0402'
   manufacturer: Samsung Electro-Mechanics
   mpn: CL05C470JB5NNNC
@@ -173,7 +173,7 @@ components:
   mpn: CC0402KRX7R9BB221
   description: CAP CER 220PF 50V 10% X7R 0402
 - ref: C32
-  value: 100pF
+  value: 47pF
   footprint: '0402'
   manufacturer: Samsung Electro-Mechanics
   mpn: CL05C470JB5NNNC
@@ -451,7 +451,7 @@ components:
   pin_count: 4
 - ref: U5
   value: SKY13251
-  footprint: QFN-8-1EP
+  footprint: QFN-8-1EP_2x2
   manufacturer: Skyworks Solutions Inc.
   mpn: SKY13251-349LF
   description: IC RF SWITCH SP3T 3GHZ 8QFN
@@ -459,7 +459,7 @@ components:
   nc_pins: {NC: '2'}
 - ref: U6
   value: SKY13251
-  footprint: QFN-8-1EP
+  footprint: QFN-8-1EP_2x2
   manufacturer: Skyworks Solutions Inc.
   mpn: SKY13251-349LF
   description: IC RF SWITCH SP3T 3GHZ 8QFN

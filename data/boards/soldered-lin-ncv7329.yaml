@@ -1,7 +1,7 @@
 name: Soldered LIN NCV7329
 slug: soldered-lin-ncv7329
 source: SolderedElectronics/LIN-Transceiver-NCV7329-MASTER-breakout-hardware-design
-format: kicad7
+format: kicad6
 description: "LIN bus transceiver (NCV7329) \u2014 automotive protocol, not covered elsewhere"
 tags: [automotive]
 key_ics: [NCV7329]
@@ -35,7 +35,7 @@ components:
   footprint: SJ-2
 - ref: K1
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: K2
   value: screw terminal

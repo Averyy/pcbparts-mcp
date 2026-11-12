@@ -3,7 +3,7 @@ slug: cc-led-driver-lm3424
 source: rleh/constant-current-led-driver
 format: kicad_legacy
 description: 'LM3424 boost constant-current LED driver: up to 70V output for series LED strings, 827mA/389mA configurable'
-tags: [bluetooth, led-driver, power-supply]
+tags: [led-driver, power-supply]
 key_ics: [LM3424]
 outline:
   width_mm: 49.0
@@ -50,7 +50,7 @@ components:
   footprint: '2220'
 - ref: C4
   value: CIN
-  footprint: Electrolytic-10x10
+  footprint: Electrolytic-10x10.5
 - ref: C5
   value: 100nF
   footprint: '0603'
@@ -96,8 +96,9 @@ components:
   value: '-'
   footprint: TestPoint_Pad_D2.0mm
 - ref: L1
-  value: 15mH
-  footprint: L
+  value: 15uH
+  footprint: L_12x12
+  mpn: MSS1210-153ME
 - ref: Q1
   value: 2N7002
   footprint: SOT-23
@@ -178,7 +179,7 @@ components:
   footprint: '0603'
 - ref: U1
   value: LM3424
-  footprint: ETSSOP-20-1EP
+  footprint: ETSSOP-20-1EP_4.4x6.5
   pin_count: 21
 nets:
 - name: +VDC
@@ -235,7 +236,6 @@ nets:
   - U1.21
 - name: Net-(C10-Pad1)
   pins:
-  - C10.1
   - C11.1
   - C12.1
   - C13.1
@@ -245,7 +245,7 @@ nets:
   - R16.1
   - R9.1
 - name: Net-(C10-Pad2)
-  pins: [C10.2, R10.1, R14.2]
+  pins: [R10.1, R14.2]
 - name: Net-(C15-Pad1)
   pins: [C15.1, R16.2, R17.1, U1.12]
 - name: Net-(C17-Pad1)

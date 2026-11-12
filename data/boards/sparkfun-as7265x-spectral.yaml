@@ -15,39 +15,59 @@ design_rules:
   min_drill: 15mil
   min_via: 7mil
 components:
+- ref: BULB1
+  value: LED
+  footprint: LED_5MM_NOSILK
+- ref: BULB2
+  value: LED
+  footprint: LED_5MM_NOSILK
+- ref: BULB3
+  value: LED
+  footprint: LED_5MM_NOSILK
 - ref: C1
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-00868
   decouples: U2
 - ref: C2
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U1
 - ref: C3
   value: 10uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-11015
   decouples: U1
 - ref: C4
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U3
 - ref: C5
   value: 10uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-11015
   decouples: U3
 - ref: C6
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U4
 - ref: C7
   value: 10uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-11015
   decouples: U4
 - ref: D1
@@ -76,7 +96,7 @@ components:
   prod_id: DIO-14126
 - ref: J1
   value: Qwiic connector
-  footprint: 1X04
+  footprint: 1X04_P1.00mm_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
   pin_count: 4
@@ -91,7 +111,7 @@ components:
   footprint: 1X02
 - ref: J4
   value: Qwiic connector
-  footprint: 1X04
+  footprint: 1X04_P1.00mm_RA
   prod_id: CONN-13694
   description: SparkFun I2C Standard Qwiic Connector
   pin_count: 4
@@ -105,80 +125,91 @@ components:
   footprint: 1X04
   pin_count: 4
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
   pin_count: 3
 - ref: JP2
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
   description: Normally open jumper
 - ref: JP3
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: JP4
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: JP5
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: JP7
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
 - ref: R1
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pulldown: U3.MISO
 - ref: R10
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
   pullup: SDA_S
 - ref: R11
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R12
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R2
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R3
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pullup: I2C_ENB
 - ref: R4
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pullup: '!RST'
 - ref: R5
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pulldown: U3.!CS_SD
 - ref: R7
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pulldown: U4.MISO
 - ref: R8
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
   pulldown: U4.!CS_SD
 - ref: R9
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
   pullup: SCL_S
 - ref: U1
@@ -278,7 +309,7 @@ nets:
   - U3.GND
   - U4.GND
 - name: I2C_ENB
-  pins: [JP2.2, R3.1, TP1.1, U1.I2C_ENB]
+  pins: [JP2.2, R3.1, U1.I2C_ENB]
 - name: LED_DRV
   pins: [BULB1.C, D2.C, U1.LED_DRV]
 - name: LED_DRV1
@@ -320,6 +351,17 @@ nets:
 - name: TX/SDA
   pins: [J1.3, J2.2, J4.3, J8.3, R12.1, U1.TX/SDA]
 positions:
+- ref: BULB1
+  x: 7.37
+  y: 25.15
+  rot: 120.0
+- ref: BULB2
+  x: 28.19
+  y: 25.02
+  rot: 240.0
+- ref: BULB3
+  x: 17.78
+  y: 6.99
 - ref: C1
   x: 12.7
   y: 34.29

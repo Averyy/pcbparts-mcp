@@ -1,7 +1,7 @@
 name: Soldered RS-485
 slug: soldered-rs-485
 source: SolderedElectronics/RS-485-Transceiver-breakout-hardware-design
-format: kicad7
+format: kicad6
 description: RS-485 transceiver (SN65176BDR)
 tags: [rs485]
 key_ics: [SN65176BDR]
@@ -38,7 +38,7 @@ components:
   pin_count: 3
 - ref: K2
   value: 1x6 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_6X1
   pin_count: 6
 - ref: R1
   value: 20kohm

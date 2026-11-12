@@ -25,7 +25,7 @@ _EXCLUDED_FILES = {"INDEX.MD", "DESIGN-STYLE-GUIDE.MD", "VERIFIED-SOURCES.MD"}
 _ALIASES: dict[str, list[str]] = {
     "buck": ["power/switching"],
     "boost": ["power/switching"],
-    "flyback": ["power/switching"],
+    "flyback": ["power/switching", "misc/relays-inductive-loads"],
     "buck-boost": ["power/switching"],
     "usb-c": ["interfaces/usb"],
     "usbc": ["interfaces/usb"],
@@ -93,9 +93,17 @@ _ALIASES: dict[str, list[str]] = {
     "efuse": ["mcus/esp32"],
     "efuses": ["mcus/esp32"],
     "pcba": ["guides/dfm"],
-    "assembly": ["guides/dfm"],
-    "dfa": ["guides/dfm"],
+    "assembly": ["guides/assembly-dfa", "guides/dfm"],
+    "dfa": ["guides/assembly-dfa", "guides/dfm"],
     "manufacturing": ["guides/dfm"],
+    **{word: ["misc/leds"] for word in (
+        "led", "ws2812", "ws2812b", "ws2812b-v5", "ws2812c", "ws2812c-2020",
+        "sk6812", "sk6812rgbw", "apa102", "apa102c", "sk9822", "neopixel", "addressable led")},
+    **{word: ["misc/relays-inductive-loads"] for word in ("relay", "relays", "solenoid")},
+    **{word: ["misc/buttons-debounce"] for word in ("button", "buttons", "debounce", "debouncing")},
+    **{word: ["mcus/nrf52"] for word in ("nrf52", "nrf52832", "nrf52840", "nordic")},
+    **{word: ["guides/assembly-dfa"] for word in (
+        "fiducial", "fiducials", "tombstone", "tombstoning", "pick-and-place", "reflow")},
 }
 
 _MAX_FULL_CONTENT = 3  # Return file list instead of content when more matches
@@ -226,7 +234,10 @@ def get_design_rules(topic: str = "", rules_dir: Path | None = None) -> dict:
     # Resolve aliases first (the whole topic, then each word as written, so "type-c" and
     # "4 layer" are found), then fall back to word matching. Remaining words are split on
     # hyphens too, so "op-amp" matches "op-amp-basics"
-    alias_keys: set[str] = set(_ALIASES.get(" ".join(topic.lower().split()), []))
+    # "pick and place", "pick_and_place" and "pick & place" find the "pick-and-place" alias
+    phrase = " ".join(topic.lower().replace("&", " and ").replace("_", " ").split())
+    alias_keys: set[str] = set(_ALIASES.get(" ".join(topic.lower().split()), [])
+                               or _ALIASES.get(phrase, []) or _ALIASES.get(phrase.replace(" ", "-"), []))
     unresolved_words: list[str] = []
     if not alias_keys:
         for word in topic.lower().split():

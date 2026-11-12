@@ -15,6 +15,7 @@
 | `guides/pcb-layout.md` | Ground planes, return paths, stackup, trace width, vias, thermal relief |
 | `guides/signal-integrity.md` | Transmission lines, reflections, termination, crosstalk, differential pairs |
 | `guides/emc.md` | EMC/EMI fundamentals, filtering, shielding, SMPS hot loops |
+| `guides/assembly-dfa.md` | Assembly polarity, tooling, fiducials, QFN/BGA inspection and double-sided reflow |
 | `guides/dfm.md` | Manufacturing constraints, fab tolerances, DFA, IPC classes, panelization |
 | `guides/test-debug.md` | Test points, debug headers (SWD/JTAG), current shunts, ICT/flying probe, board bring-up |
 
@@ -54,6 +55,7 @@
 | File | What It Covers |
 |------|----------------|
 | `mcus/esp32.md` | Strapping pins, power, RF, USB-JTAG (per-chip: C3, S3, C6) |
+| `mcus/nrf52.md` | Nordic nRF52832/nRF52840 supplies, crystals, RF, GPIO and SWD |
 | `mcus/stm32.md` | Boot config, reset circuit, HSE crystal |
 | `mcus/rp2040.md` | External flash, USB boot, 1.1V core power |
 | `mcus/fpga.md` | FPGA power sequencing, BGA decoupling, configuration flash, IO banking, SERDES, clock distribution |
@@ -72,3 +74,11 @@
 | `misc/ev-power-systems.md` | High-voltage DC (48-800V), precharge, contactor drivers (pickup/hold profiles), wire sizing, fusing, insulation monitoring |
 | `misc/motor-control.md` | BLDC gate drivers (DRV83xx), 3-phase layout, bootstrap, current sensing, stepper drivers (TMC2209 StallGuard4/CoolStep, A4988) |
 | `misc/audio.md` | I2S interface, audio codec integration, Class D amplifier layout, MEMS microphones, DAC output stage |
+
+### User Controls and Loads
+
+| File | What It Covers |
+|------|----------------|
+| `misc/leds.md` | Indicator LED current, WS2812/SK6812/APA102/SK9822 power and data |
+| `misc/relays-inductive-loads.md` | Relay drive margins, suppression, contact ratings and snubbers |
+| `misc/buttons-debounce.md` | Switch bounce, RC/Schmitt thresholds, pull-ups and reset |

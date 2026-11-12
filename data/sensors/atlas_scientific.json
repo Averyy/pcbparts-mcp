@@ -2,13 +2,15 @@
   "source": "atlas_scientific",
   "source_url": "https://atlas-scientific.com",
   "scraper_version": "1.0.0",
-  "scraped_at": "2026-11-01T13:29:39.667251+00:00",
+  "scraped_at": "2026-11-10T21:56:03.132490+00:00",
   "stats": {
     "sensor_count": 28,
-    "total_products": 93,
+    "total_products": 92,
     "skipped": 23,
-    "errors": 0
+    "errors": 0,
+    "kept_missing": 0
   },
+  "missed_scrapes": {},
   "sensors": [
     {
       "id": "dooem",
@@ -39,6 +41,9 @@
         "https://atlas-scientific.com/probes/mini-d-o-probe/"
       ],
       "description": "The Atlas Scientific Lab Grade Dissolved Oxygen probe is a durable little probe that can work in almost any environment.",
+      "protocol": [
+        "analog"
+      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -72,6 +77,9 @@
         "https://atlas-scientific.com/probes/industrial-conductivity-probe-k-0-1/"
       ],
       "description": "The Atlas Scientific line of conductivity probes has been designed to provide stable and precise readings free of fringe effect over a broad conductivity range.",
+      "protocol": [
+        "analog"
+      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -301,6 +309,9 @@
         "https://atlas-scientific.com/probes/3-8-flow-meter/"
       ],
       "description": "Check out Atlas Scientific’s 1/2″ Flow Meter and see how our products can help you finish your project today!",
+      "protocol": [
+        "gpio"
+      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -334,6 +345,9 @@
         "https://atlas-scientific.com/probes/micro-orp-probe/"
       ],
       "description": "The Atlas Scientific consumer-grade ORP probe is the perfect choice for testing water samples, environmental monitoring, basic lab work, and early-stage prototypes.",
+      "protocol": [
+        "analog"
+      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -364,9 +378,12 @@
         "https://atlas-scientific.com/probes/industrial-gen3-ph-probe-nt/",
         "https://atlas-scientific.com/probes/industrial-ph-probe/",
         "https://atlas-scientific.com/probes/micro-ph-probe/",
-        "https://atlas-scientific.com/probes/micro-ph-probe/?attribute_half-cell-sma-adapter=Yes%2C+I+need+an+adapter+%28%2B%245.99%29&#038;attribute_ph-flow-cell=Yes%2C+I+would+like+one+%28%2B%2474.99%29"
+        "https://atlas-scientific.com/probes/mini-ph-probe/"
       ],
       "description": "The Atlas Scientific Consumer Grade pH probe gives accurate readings over a wide pH range. This probe has been designed to work will in common pH reading application.",
+      "protocol": [
+        "analog"
+      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -398,6 +415,9 @@
         "https://atlas-scientific.com/probes/standard-temp-probe/"
       ],
       "description": "The Industrial PT-1000 Temperature Probe is a high-accuracy 4-wire temperature sensor.",
+      "protocol": [
+        "analog"
+      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -428,6 +448,9 @@
         "https://atlas-scientific.com/embedded-solutions/dissolved-oxygen-meter/"
       ],
       "description": "If you are looking for basic measurements that you can rely on, The Atlas Scientific Surveyor Dissolved Oxygen Meter is your solution.",
+      "protocol": [
+        "analog"
+      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -441,6 +464,9 @@
         "https://atlas-scientific.com/embedded-solutions/orp-sensor-meter/"
       ],
       "description": "For those of you looking to add ORP measurements into your device but want something simple, the Atlas Scientific Surveyor ORP Meter/Sensor is for you.",
+      "protocol": [
+        "analog"
+      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -454,6 +480,9 @@
         "https://atlas-scientific.com/embedded-solutions/surveryor-analog-ph-sensor-meter/"
       ],
       "description": "If you are building a machine that requires pH measuring capabilities, but you only need the accuracy found in a low-cost handheld pH meter, the Atlas Scientific Surveyor pH meter might be for you.",
+      "protocol": [
+        "analog"
+      ],
       "manufacturer": "Atlas Scientific"
     },
     {
@@ -467,6 +496,9 @@
         "https://atlas-scientific.com/embedded-solutions/surveyor-analog-rtd-sensor-meter/"
       ],
       "description": "The Atlas Scientific Surveyor™ Analog Temperature Meter is an analog temperature sensing solution that gives consistent readings over the life of your machine",
+      "protocol": [
+        "analog"
+      ],
       "manufacturer": "Atlas Scientific"
     }
   ]

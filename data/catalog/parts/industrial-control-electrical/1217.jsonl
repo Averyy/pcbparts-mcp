@@ -1,0 +1,67 @@
+{"l":"C6553835","m":"TL1100CF160Q.08RED","f":"E-Switch","p":"Plugin","t":"e","c":1217,"d":"插件 Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6553848","m":"TL1105EF250Q7.3RED","f":"E-Switch","p":"Plugin","t":"e","c":1217,"d":"插件 Tactile Switch/Push Button Switch ROHS","a":[],"x":0,"n":1}
+{"l":"C6554039","m":"TL6800AF260QJ","f":"E-Switch","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6558197","m":"FSM6JSMATR","f":"TE Connectivity","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6558199","m":"FSMCTTR","f":"TE Connectivity","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6617702","m":"EVQ-P4HB3B","f":"PANASONIC","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":2}
+{"l":"C6630024","m":"PTS526SMG15SMTR21 LFS","f":"C&K","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6644885","m":"JB15LPC","f":"NKK Switches","p":"Plugin","t":"e","c":1217,"d":"插件 Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6650173","m":"1301.9303","f":"SCHURTER","p":"Plugin","t":"e","c":1217,"d":"插件 Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6650427","m":"1571262-4","f":"TE Connectivity","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0,"n":1}
+{"l":"C6669023","m":"RT1105AF350Q","f":"E-Switch","p":"Plugin","t":"e","c":1217,"d":"插件 Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6717758","m":"TL1016AAF220QG","f":"E-Switch","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6734770","m":"USLPT2819DT2TR","f":"TE Connectivity","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6748648","m":"B3U-3100P","f":"Omron Electronics","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6859601","m":"FSM1LPATR","f":"TE Connectivity","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6884699","m":"JB15KH","f":"NKK Switches","p":"Plugin","t":"e","c":1217,"d":"插件 Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C6886437","m":"TS20-42-25-WT-160-SMT-TR","f":"CUI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C19191549","m":"TPS645-5NC105","f":"ROCPU Switches","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C19191551","m":"TPB01-142L4","f":"ROCPU Switches","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C19191552","m":"TPS645-5NC60","f":"ROCPU Switches","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch ROHS","a":[],"x":0}
+{"l":"C49108617","m":"YZA-021","f":"YIZHI","p":"-","t":"e","c":1217,"d":"-10°C to +60°C -40°C to +80°C 2*4*3.5MM 50,000 cycles 50mA Rectangle button SPST Surface Mount Tactile Switch - Tactile Switch/Push Button Switch","a":[["StorageTemperatureRange","-40°C to +80°C"],["Installation Method","Surface Mount"],["Type","Tactile Switch"],["Switch Size","2*4*3.5MM"],["ButtonShape","Rectangle button"],["WorkingLife","50,000 cycles"],["Circuit","SPST"],["RatedCurrent","50mA"],["ApplicableTemperatureRange","-10°C to +60°C"]],"x":0}
+{"l":"C49108619","m":"YZA-042-1.5","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[["StorageTemperatureRange","-40°C to +80°C"],["Installation Method","Momentary"],["Type","Tactile Switch"],["Switch Size","3.3*3.3*1.5MM"],["ButtonShape","Rectangle button"],["PressForce","250±50gf"],["WorkingLife","50,000 cycles"],["Circuit","SPST"],["RatedCurrent","50mA"],["ApplicableTemperatureRange","-10°C to +60°C"]],"x":0,"n":1}
+{"l":"C49108621","m":"YZA-009","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[["StorageTemperatureRange","-30~80℃"],["Installation Method","Momentary"],["Type","Tactile Switch"],["Switch Size","3*4*2.0MM"],["ButtonShape","Rectangle button"],["PressForce","250±50gf"],["WorkingLife","30,000 cycles"],["Circuit","SPST"],["RatedCurrent","50mA"]],"x":0,"n":1}
+{"l":"C49108622","m":"YZA-011","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108623","m":"YZA-040","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108625","m":"YZA-018","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108628","m":"YZA-032-5.0W","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0}
+{"l":"C49108631","m":"YZA-036","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108632","m":"YZA-037","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108633","m":"YZA-048","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108634","m":"YZA-044-1.5","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108638","m":"YZA-044-3.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108643","m":"YZA-056-3.5","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108645","m":"YZA-056-4.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108646","m":"YZA-056-4.3","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0}
+{"l":"C49108648","m":"YZA-056-5.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0}
+{"l":"C49108650","m":"YZA-056-6.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108653","m":"YZA-056-7.5","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0}
+{"l":"C49108654","m":"YZA-056-8.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108656","m":"YZA-072-4.3","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[["Installation Method","Momentary"],["Type","Tactile Switch"],["Lifetime","50,000 cycles"],["Switch Size","6*6*4.3MM"],["ButtonShape","Rectangle button"],["PressForce","260gf"],["Circuit","SPST"],["RatedCurrent","50mA"]],"x":0}
+{"l":"C49108658","m":"YZA-072-5.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108667","m":"YZA-072-9.5","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108668","m":"YZA-072-10.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0}
+{"l":"C49108675","m":"YZA-072-14.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108679","m":"YZA-031-4.3W","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108684","m":"YZA-057-4.3","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49108693","m":"YZA-059-5.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0}
+{"l":"C49108694","m":"YZA-059-6.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0}
+{"l":"C49108695","m":"YZA-059-7.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0}
+{"l":"C49339600","m":"YZA-091-4.3","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49339653","m":"YZA-070-3.1","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49339654","m":"YZA-070-3.5","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49339658","m":"YZA-071-3.5","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49339661","m":"YZA-086-4.3","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49339720","m":"YZA-103-7.5","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49339753","m":"YZA-049R","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49339754","m":"YZA-054","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49339760","m":"YZA-006","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49339761","m":"YZA-007","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C49339765","m":"YZA-069-5.0","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0}
+{"l":"C49339773","m":"YZA-030-4.3","f":"YIZHI","p":"-","t":"e","c":1217,"d":"- Tactile Switch/Push Button Switch","a":[],"x":0,"n":1}
+{"l":"C50377143","m":"SK22D07VG3","f":"YIZHI","p":"-","t":"e","c":1217,"d":"-","a":[],"x":0}
+{"l":"C50377144","m":"SK22D07VG4","f":"YIZHI","p":"-","t":"e","c":1217,"d":"-","a":[],"x":0}
+{"l":"C50377150","m":"SS12D00G6","f":"YIZHI","p":"-","t":"e","c":1217,"d":"-","a":[],"x":0}
+{"l":"C50377153","m":"SK23D07VG5","f":"YIZHI","p":"-","t":"e","c":1217,"d":"-","a":[],"x":0}
+{"l":"C51927389","m":"MSK12D19G4","f":"YIZHI","p":"-","t":"e","c":1217,"d":"-","a":[],"x":0,"n":1}
+{"l":"C51927488","m":"MSS12D16G2","f":"YIZHI","p":"-","t":"e","c":1217,"d":"-","a":[],"x":0,"n":1}

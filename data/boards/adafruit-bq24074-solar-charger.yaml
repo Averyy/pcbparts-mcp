@@ -16,7 +16,7 @@ design_rules:
   min_via: 8mil
 components:
 - ref: 1A
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: SMD Solder JUMPER
 - ref: BATT
@@ -121,7 +121,7 @@ components:
   footprint: JST-PH-2-SMT-RA
   description: JST 2-Pin Connectors of various flavors
 - ref: THERM
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
   description: SMD Solder JUMPER
 - ref: X2

@@ -329,6 +329,7 @@ class DigiKeyClient:
                 if key not in seen:
                     seen.add(key)
                     products.append(candidate)
+            stats.usage.record_distributor("digikey", "retry_found" if products else "retry_missed")
 
         if not products:
             # Cached too, so asking again for a wrong or partial number costs no request

@@ -85,6 +85,31 @@ class TestMultiUnitPinout:
     def test_a_pin_in_two_units_is_listed_once(self):
         data = {"subparts": [self.unit(("1", "VCC"), ("2", "IN")), self.unit(("1", "VCC"), ("3", "OUT"))]}
         assert [p["number"] for p in parse_easyeda_pins(data)] == ["1", "2", "3"]
+        # ...even when the units name it differently
+        data = {"subparts": [self.unit(("4", "VEE"), ("1", "OUT1")), self.unit(("4", "GND"), ("7", "OUT2"))]}
+        assert [(p["number"], p["name"]) for p in parse_easyeda_pins(data)] == [
+            ("1", "OUT1"), ("4", "VEE"), ("7", "OUT2")]
+
+    def test_a_complete_top_level_symbol_wins_over_its_units(self):
+        """LM358 C328566 draws all 8 pins at the top level and again as two units with other
+        names (OUTA, GND), and jlc_get_pinout listed 16 pins."""
+        top = [("1", "OUT1"), ("2", "IN1-"), ("3", "IN1+"), ("4", "VEE"),
+               ("5", "IN2+"), ("6", "IN2-"), ("7", "OUT2"), ("8", "VCC")]
+        data = {**self.unit(*top), "subparts": [
+            self.unit(("1", "OUTA"), ("2", "INA-"), ("3", "INA+"), ("4", "GND"), ("8", "V+")),
+            self.unit(("5", "INB+"), ("6", "INB-"), ("7", "OUTB"), ("4", "GND"), ("8", "V+"))]}
+        assert [(p["number"], p["name"]) for p in parse_easyeda_pins(data)] == top
+
+    def test_unit_electrical_type_fills_the_same_pad(self):
+        typed = "P~show~{e}~{n}~0~0~180~g{n}~0^^0~0^^M0,0h10~#000^^1~0~0~0~{name}~start~~~#000^^1~0~0~0~{n}~end~~~#000"
+        data = {**self.unit(("1", "OUT1"), ("2", "IN1-")), "subparts": [{"dataStr": {"shape": [
+            typed.format(e=2, n=1, name="OUTA"), typed.format(e=0, n=2, name="INA-")]}}]}
+        pins = parse_easyeda_pins(data)
+        assert [(p["name"], p.get("electrical")) for p in pins] == [("OUT1", "output"), ("IN1-", None)]
+
+    def test_units_fill_pins_a_partial_top_level_lacks(self):
+        data = {**self.unit(("1", "OUT1")), "subparts": [self.unit(("1", "OUTA"), ("2", "IN1-"))]}
+        assert [(p["number"], p["name"]) for p in parse_easyeda_pins(data)] == [("1", "OUT1"), ("2", "IN1-")]
 
     async def test_pinout_tool(self, monkeypatch):
         test = self

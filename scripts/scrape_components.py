@@ -3,7 +3,7 @@
 Scrape all JLCPCB components for local database.
 
 Uses concurrent workers with wafer for anti-detection HTTP to avoid rate limiting.
-Outputs gzipped JSONL files per category.
+Outputs a sorted catalog with separate stock and weekly price files.
 
 Usage:
     python scripts/scrape_components.py [--resume] [--workers N]
@@ -20,8 +20,9 @@ import shutil
 import sys
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
+from collections.abc import Iterable
 from typing import Any
 
 import wafer
@@ -31,6 +32,7 @@ from wafer import ChallengeDetected, ConnectionFailed, RateLimited, WaferTimeout
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pcbparts_mcp.config import DEFAULT_MIN_STOCK
+from pcbparts_mcp.catalog_files import read_catalog, read_prices, write_catalog
 
 # Configure logging for scraper output
 logging.basicConfig(
@@ -47,6 +49,7 @@ PAGE_SIZE = 100
 REQUEST_TIMEOUT = 30.0   # Total budget per call (wafer>=0.2 counts retries+rotations against it).
 ATTEMPT_TIMEOUT = 10.0   # Per-attempt cap so the 10-rotation budget can actually fire under 403 storms.
 MAX_RETRIES = 3
+EMPTY_PAGE_RETRIES = 2   # Re-requests of a page that came back empty before the listed total
 WORKER_STAGGER = 0.1
 GZIP_LEVEL = 9
 
@@ -244,6 +247,7 @@ async def scrape_subcategory(
     """Scrape all parts from a subcategory. Returns (parts, total_count)."""
     parts = []
     page = 1
+    empty_retries = 0
 
     while True:
         params = {
@@ -264,7 +268,15 @@ async def scrape_subcategory(
         total = page_info.get("total", 0)
 
         if not items:
+            # An empty page while the API still lists more parts is a dropped page, not the end
+            # of the subcategory: stopping here used to publish the subcategory short.
+            if len(parts) < total and empty_retries < EMPTY_PAGE_RETRIES:
+                empty_retries += 1
+                logger.warning(f"  {subcat.name}: empty page {page} with {len(parts)} of {total} "
+                               f"listed parts collected; retrying it")
+                continue
             break
+        empty_retries = 0  # per page: an earlier page's retries don't use up a later page's
 
         for item in items:
             parts.append(transform_part(item, subcat.id))
@@ -275,6 +287,8 @@ async def scrape_subcategory(
 
         page += 1
 
+    if len(parts) < total:
+        logger.warning(f"  {subcat.name}: collected {len(parts)} of {total} listed parts")
     return parts, len(parts)
 
 
@@ -378,38 +392,44 @@ async def worker(
 
 HISTORY_HIGH_STOCK_CAP = 1000  # Don't track stock changes for parts above this level
 
+# Scrape gaps (carry_over_gaps), set from the 263 daily catalog snapshots in git (2026-02-21 to
+# 2026-11-11). On the four gap days (03-03, 03-16, 03-18, 05-15) 5 to 42 subcategories each lost
+# >=100 parts and >=10% at once, and 97-100% of every one of them was back the next day. On all
+# other days at most 2 subcategories lost that much, never more than 320 parts each, and none
+# came back: those were delistings (04-02 sub 2008 lost all 128, 07-17 sub 2090 320 of 865).
+GAP_MIN_LOST = 100           # a bulk loss: at least this many parts...
+GAP_MIN_FRACTION = 0.1       # ...and this share of the subcategory, missing at once
+GAP_MIN_SUBCATEGORIES = 3    # a gap day has this many bulk losses...
+GAP_SURE_LOST = 1000         # ...or a single bulk loss this large
+GAP_MAX_DAYS = 2             # carried on the gap's first day and the next; then the loss is accepted
+
 
 def generate_stock_history(
-    categories_dir: Path,
+    previous_catalog_dir: Path,
     history_dir: Path,
     results: dict[str, list[dict[str, Any]]],
+    *,
+    now: datetime | None = None,
 ) -> dict[str, int]:
-    """Compare old JSONL data with new scrape results and record stock changes.
+    """Compare the previous catalog with new scrape results and record stock changes.
 
-    Writes events to data/history/YYYY-MM.jsonl.gz as gzip multi-stream append.
+    Writes data/history/YYYY-MM/YYYY-MM-DD.jsonl.gz as gzip multi-stream append.
     Returns stats dict with event counts.
 
     Note: Iterates results directly (no intermediate dict) to reduce peak memory.
     Cross-category duplicate LCSCs are deduplicated via seen_lcsc set.
     """
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today = (now or datetime.now(timezone.utc)).astimezone(timezone.utc).strftime("%Y-%m-%d")
     month = today[:7]  # YYYY-MM
 
-    # Load old data from existing JSONL files: {lcsc: (stock, price, lib_type)}
+    # Load the previous snapshot: {lcsc: (stock, price, lib_type)}
     old_data: dict[str, tuple[int, float | None, str | None]] = {}
-    for gz_file in categories_dir.glob("*.jsonl.gz"):
-        with gzip.open(gz_file, "rt", encoding="utf-8") as f:
-            for line in f:
-                if not line or line == "\n":
-                    continue
-                part = json.loads(line)
-                lcsc = part.get("l")
-                if lcsc:
-                    old_data[lcsc] = (
-                        part.get("s") or 0,
-                        part.get("$"),
-                        part.get("t"),
-                    )
+    if (previous_catalog_dir / "stock.tsv").exists():
+        # Without prices.tsv this scrape rebuilds every price (write_scrape_outputs); history still
+        # compares stock, and gone events then carry no price.
+        with_prices = (previous_catalog_dir / "prices.tsv").exists()
+        for _, part in read_catalog(previous_catalog_dir, prices=with_prices):
+            old_data[part["l"]] = (part.get("s") or 0, part.get("$"), part.get("t"))
 
     if not old_data:
         logger.info("No old data found — skipping history generation")
@@ -432,6 +452,10 @@ def generate_stock_history(
 
     def add_event(event: dict) -> None:
         """Append event and update stats inline."""
+        # Actual previous snapshot stock, never inferred from the last event.
+        # A newly seen part has no previous observation (not a known zero).
+        previous = old_data.get(event["l"])
+        event["before"] = previous[0] if previous is not None else None
         events.append(event)
         etype = event.get("e", "change")
         stats[etype] = stats.get(etype, 0) + 1
@@ -497,8 +521,9 @@ def generate_stock_history(
         return {"events": 0}
 
     # Write events via gzip multi-stream append
-    history_dir.mkdir(parents=True, exist_ok=True)
-    history_file = history_dir / f"{month}.jsonl.gz"
+    daily_dir = history_dir / month
+    daily_dir.mkdir(parents=True, exist_ok=True)
+    history_file = daily_dir / f"{today}.jsonl.gz"
     with open(history_file, "ab") as raw_f:
         with gzip.GzipFile(fileobj=raw_f, mode="wb") as gz:
             for event in events:
@@ -513,7 +538,174 @@ def generate_stock_history(
     return stats
 
 
+def carry_over_gaps(
+    previous_parts: Iterable[tuple[str, dict[str, Any]]],
+    results: dict[str, list[dict[str, Any]]],
+    previous_carried: dict[str, dict[str, Any]],
+    today: str,
+    category_slugs: set[str],
+) -> tuple[dict[str, list[dict[str, Any]]], dict[str, dict[str, Any]]]:
+    """Find subcategories whose parts went missing in a scrape gap and return the previous rows.
+
+    A bulk loss is a subcategory missing at least GAP_MIN_LOST parts and GAP_MIN_FRACTION of its
+    rows, counting only parts found nowhere in today's results (moved parts aren't lost). New bulk
+    losses are carried when the day has at least GAP_MIN_SUBCATEGORIES of them, or alone when one
+    is GAP_SURE_LOST or more: a single smaller one is a delisting. A subcategory carried the day
+    before (in `previous_carried`) continues its own gap while it is still a bulk loss, without
+    counting toward today's quorum. A gap is carried on its first day and the next (GAP_MAX_DAYS);
+    after that the loss is accepted. Returns the parts to carry, by category slug, and the manifest
+    record by subcategory id.
+    """
+    today_codes = {part.get("l") for parts in results.values() for part in parts}
+    sizes: dict[int, int] = {}
+    lost_by_sub: dict[int, list[tuple[str, dict[str, Any]]]] = {}
+    for slug, part in previous_parts:  # streamed: only missing parts are kept in memory
+        sizes[part["c"]] = sizes.get(part["c"], 0) + 1
+        if part["l"] not in today_codes:
+            lost_by_sub.setdefault(part["c"], []).append((slug, part))
+    carried: dict[str, list[dict[str, Any]]] = {}
+    record: dict[str, dict[str, Any]] = {}
+    bulk = {sub_id: lost for sub_id, lost in lost_by_sub.items()
+            if len(lost) >= GAP_MIN_LOST and len(lost) >= GAP_MIN_FRACTION * sizes[sub_id]}
+    # Only new losses make a gap day: yesterday's carried subcategories would otherwise turn one
+    # unrelated delisting on the gap's second day into a gap.
+    gap_day = sum(str(sub_id) not in previous_carried for sub_id in bulk) >= GAP_MIN_SUBCATEGORIES
+    for sub_id, lost in sorted(bulk.items()):
+        size = sizes[sub_id]
+        continuing = str(sub_id) in previous_carried
+        if not continuing and not gap_day and len(lost) < GAP_SURE_LOST:
+            logger.info(f"  Subcategory {sub_id}: {len(lost)} of {size} parts gone (a delisting, not a gap)")
+            continue
+        slugs = {slug for slug, _ in lost}
+        since = (previous_carried.get(str(sub_id)) or {}).get("since", today)
+        if (date.fromisoformat(today) - date.fromisoformat(since)).days >= GAP_MAX_DAYS:
+            logger.warning(f"  Subcategory {sub_id}: {len(lost)} of {size} parts still missing "
+                           f"since {since}; no longer carried")
+            continue
+        if len(slugs) != 1 or not slugs <= category_slugs:
+            logger.warning(f"  Subcategory {sub_id}: {len(lost)} parts missing from categories "
+                           f"{sorted(slugs)} not in today's list; not carried")
+            continue
+        slug = slugs.pop()
+        carried.setdefault(slug, []).extend(part for _, part in lost)
+        record[str(sub_id)] = {"category": slug, "parts": len(lost), "of": size, "since": since}
+        logger.warning(f"  Subcategory {sub_id} ({slug}): {len(lost)} of {size} parts missing "
+                       f"at once; keeping the previous scrape's rows (gap since {since})")
+    return carried, record
+
+
 # === Main Scraper ===
+
+def write_scrape_outputs(
+    output_dir: Path,
+    categories: list[dict[str, Any]],
+    results: dict[str, list[dict[str, Any]]],
+    progress: ScrapeProgress,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Prepare catalog, history and manifest offline in an existing staging copy."""
+    now = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
+    catalog_dir = output_dir / "catalog"
+    manifest_path = output_dir / "manifest.json"
+    previous = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
+    prices_updated_at = previous.get("prices_updated_at")
+    refresh_prices = not (catalog_dir / "prices.tsv").exists() or not prices_updated_at
+    if not refresh_prices:
+        last_refresh = datetime.fromisoformat(prices_updated_at).astimezone(timezone.utc)
+        # Calendar days, not 7 x 24 hours: the daily run starts hours earlier or later from day to
+        # day (19:42 and 22:30 UTC in one week), and elapsed time would push some refreshes to day 8.
+        refresh_prices = (now.date() - last_refresh.date()).days >= 7
+    previous_prices = {} if refresh_prices else read_prices(catalog_dir)
+    if refresh_prices:
+        prices_updated_at = now.isoformat()
+
+    carried_record: dict[str, dict[str, Any]] = {}
+    if results:
+        try:
+            if (catalog_dir / "stock.tsv").exists():
+                carried, carried_record = carry_over_gaps(
+                    read_catalog(catalog_dir, prices=(catalog_dir / "prices.tsv").exists()),
+                    results, previous.get("carried_forward") or {}, now.date().isoformat(),
+                    {slugify(cat["name"]) for cat in categories})
+                if carried:
+                    results = {slug: [*results.get(slug, []), *carried.get(slug, [])]
+                               for slug in {*results, *carried}}
+            history_stats = generate_stock_history(catalog_dir, output_dir / "history", results, now=now)
+            if history_stats.get("events", 0) > 0:
+                logger.info(f"Stock history: {history_stats['events']} events recorded")
+        except Exception:
+            raise RuntimeError("Stock history generation failed; published data unchanged") from None
+
+    # Keep the first occurrence globally, visiting sorted category slugs as before.
+    seen_lcsc: set[str] = set()
+    total_dupes = 0
+    unique_results = {slugify(cat["name"]): [] for cat in categories}
+    for cat_slug, parts in sorted(results.items()):
+        unique_parts = []
+        duplicates = 0
+        for part in parts:
+            lcsc = part.get("l")
+            if lcsc and lcsc not in seen_lcsc:
+                seen_lcsc.add(lcsc)
+                unique_parts.append(part)
+            else:
+                duplicates += 1
+        unique_results[cat_slug] = unique_parts
+        total_dupes += duplicates
+        if duplicates:
+            logger.info(f"  {cat_slug}: {len(unique_parts)} parts ({duplicates} duplicates removed)")
+        else:
+            logger.info(f"  {cat_slug}: {len(unique_parts)} parts")
+    if total_dupes:
+        logger.info(f"Deduplicated {total_dupes} LCSCs total (within + cross-category)")
+
+    # 340k prices change daily, but 261k move <0.05% from currency drift (~2.3 MB/day).
+    # Refresh weekly to keep git deltas small; new parts and stored None get prices immediately.
+    prices = {}
+    for parts in unique_results.values():
+        for part in parts:
+            code = part["l"]
+            stored = previous_prices.get(code)
+            prices[code] = stored if stored is not None else part.get("$")
+    progress.category_counts = write_catalog(catalog_dir, unique_results, prices)
+    progress.total_parts = sum(progress.category_counts.values())
+
+    # Generate manifest
+    logger.info("")
+    logger.info("Generating manifest...")
+    manifest = {
+        "version": "1.0",
+        "scraped_at": now.isoformat(),
+        "prices_updated_at": prices_updated_at,
+        "stock_threshold": STOCK_THRESHOLD,
+        "total_parts": progress.total_parts,
+        "categories": {},
+    }
+
+    for cat in categories:
+        cat_slug = slugify(cat["name"])
+        count = progress.category_counts.get(cat_slug, 0)
+        manifest["categories"][cat_slug] = {
+            "id": cat["id"],
+            "name": cat["name"],
+            "count": count,
+            "status": "empty" if count == 0 else "complete",
+        }
+
+    # Subcategories published with the previous scrape's rows; the next scrape reads "since" from here,
+    # and validate_manifest judges today's scraped counts without them.
+    if carried_record:
+        manifest["carried_forward"] = carried_record
+
+    # Mark any still-failed subcategories
+    if progress.failed_subcategories:
+        manifest["failed_subcategories"] = list(progress.failed_subcategories)
+
+    with open(output_dir / "manifest.json", "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=2)
+
+    return manifest
+
 
 async def _run_scraper_staged(
     output_dir: Path,
@@ -530,8 +722,7 @@ async def _run_scraper_staged(
     logger.info("")
 
     # Setup output directories
-    categories_dir = output_dir / "categories"
-    categories_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load or create progress
     progress_file = output_dir / "progress.json"
@@ -683,93 +874,7 @@ async def _run_scraper_staged(
     if progress.failed_subcategories or {sub.id for sub in subcategories} - progress.completed_subcategories:
         raise RuntimeError("Component scrape incomplete; published data unchanged (resume with --resume)")
 
-    if results:
-        # Generate stock history (compare old JSONL with new results)
-        try:
-            history_dir = output_dir / "history"
-            history_stats = generate_stock_history(categories_dir, history_dir, results)
-            if history_stats.get("events", 0) > 0:
-                logger.info(f"Stock history: {history_stats['events']} events recorded")
-        except Exception:
-            raise RuntimeError("Stock history generation failed; published data unchanged") from None
-
-        # Write category files, deduplicated by LCSC *globally* across categories, so a
-        # cross-category duplicate can't reach build_database.py's lcsc PRIMARY KEY twice
-        # (which would raise IntegrityError and fail the image build). Iterate sorted so the
-        # first-alphabetical file wins — matches build_database.py's sorted(glob) order.
-        logger.info("")
-        logger.info("Writing category files...")
-        seen_lcsc: set[str] = set()
-        total_dupes = 0
-        progress.category_counts = {}
-        for cat_slug, parts in sorted(results.items()):
-            unique_parts = []
-            duplicates = 0
-            for part in parts:
-                lcsc = part.get("l")
-                if lcsc and lcsc not in seen_lcsc:
-                    seen_lcsc.add(lcsc)
-                    unique_parts.append(part)
-                else:
-                    duplicates += 1
-
-            output_file = categories_dir / f"{cat_slug}.jsonl.gz"
-            with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL, encoding="utf-8") as f:
-                for part in unique_parts:
-                    f.write(json.dumps(part, separators=(",", ":")) + "\n")
-
-            progress.category_counts[cat_slug] = len(unique_parts)
-            total_dupes += duplicates
-            if duplicates > 0:
-                logger.info(f"  {cat_slug}: {len(unique_parts)} parts ({duplicates} duplicates removed)")
-            else:
-                logger.info(f"  {cat_slug}: {len(unique_parts)} parts")
-
-        if total_dupes:
-            logger.info(f"Deduplicated {total_dupes} LCSCs total (within + cross-category)")
-
-        # Create empty files for categories with no parts
-        all_cat_slugs = {slugify(cat["name"]) for cat in categories}
-        for cat_slug in all_cat_slugs:
-            output_file = categories_dir / f"{cat_slug}.jsonl.gz"
-            if cat_slug not in results:
-                progress.category_counts[cat_slug] = 0
-                with gzip.open(output_file, "wt", compresslevel=GZIP_LEVEL, encoding="utf-8") as f:
-                    pass  # Empty file
-                logger.info(f"  {cat_slug}: 0 parts (empty)")
-
-    for old_file in categories_dir.glob("*.jsonl.gz"):
-        if old_file.name.removesuffix(".jsonl.gz") not in {slugify(cat["name"]) for cat in categories}:
-            old_file.unlink()
-    progress.total_parts = sum(progress.category_counts.values())
-
-    # Generate manifest
-    logger.info("")
-    logger.info("Generating manifest...")
-    manifest = {
-        "version": "1.0",
-        "scraped_at": datetime.now(timezone.utc).isoformat(),
-        "stock_threshold": STOCK_THRESHOLD,
-        "total_parts": progress.total_parts,
-        "categories": {},
-    }
-
-    for cat in categories:
-        cat_slug = slugify(cat["name"])
-        count = progress.category_counts.get(cat_slug, 0)
-        manifest["categories"][cat_slug] = {
-            "id": cat["id"],
-            "name": cat["name"],
-            "count": count,
-            "status": "empty" if count == 0 else "complete",
-        }
-
-    # Mark any still-failed subcategories
-    if progress.failed_subcategories:
-        manifest["failed_subcategories"] = list(progress.failed_subcategories)
-
-    with open(output_dir / "manifest.json", "w", encoding="utf-8") as f:
-        json.dump(manifest, f, indent=2)
+    manifest = write_scrape_outputs(output_dir, categories, results, progress)
 
     # Progress is retained until the outer validation/publication succeeds.
 
@@ -802,8 +907,8 @@ def publish_staged_files(output_dir: Path, staging: Path, files: list[Path]) -> 
     backup.mkdir(exist_ok=True)
     published = []
     expected = {source.relative_to(staging) for source in files}
-    stale = [p for p in (output_dir / "categories").glob("*.jsonl.gz")
-             if p.relative_to(output_dir) not in expected]
+    stale = [p for p in (output_dir / "catalog").rglob("*")
+             if p.is_file() and p.relative_to(output_dir) not in expected]
     try:
         for source in [*files, *stale]:
             relative = source.relative_to(output_dir) if source in stale else source.relative_to(staging)
@@ -819,11 +924,16 @@ def publish_staged_files(output_dir: Path, staging: Path, files: list[Path]) -> 
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 source.replace(destination)
             published.append((destination, saved, existed, None if source in stale else source))
+        parts_dir = output_dir / "catalog" / "parts"
+        for directory in sorted((p for p in parts_dir.rglob("*") if p.is_dir()), reverse=True):
+            if not any(directory.iterdir()):
+                directory.rmdir()
     except OSError:
         for destination, saved, existed, source in reversed(published):
             if source is not None:
                 shutil.copy2(destination, source)
             if existed:
+                destination.parent.mkdir(parents=True, exist_ok=True)
                 saved.replace(destination)
             else:
                 destination.unlink(missing_ok=True)
@@ -835,13 +945,20 @@ async def run_scraper(output_dir: Path, num_workers: int = 4, resume: bool = Fal
     from check_component_scrape import validate_manifest
     output_dir.mkdir(parents=True, exist_ok=True)
     staging = output_dir / ".scrape-staging"
-    if not resume or not staging.exists():
-        if staging.exists():
-            shutil.rmtree(staging)
-        staging.mkdir()
-        for name in ("categories", "history"):
-            if (output_dir / name).exists():
-                shutil.copytree(output_dir / name, staging / name)
+    if not resume and staging.exists():
+        shutil.rmtree(staging)
+    staging.mkdir(exist_ok=True)
+    # Outputs are always rebuilt from the published files, which stay untouched until publication;
+    # a resume reuses only the scraped results (progress.json, partial/). Reused staging outputs
+    # could be half-written (catalog files that disagree) or already hold today's history events.
+    for name in ("catalog", "history"):
+        if (staging / name).exists():
+            shutil.rmtree(staging / name)
+        if (output_dir / name).exists():
+            shutil.copytree(output_dir / name, staging / name)
+    (staging / "manifest.json").unlink(missing_ok=True)
+    if (output_dir / "manifest.json").exists():
+        shutil.copy2(output_dir / "manifest.json", staging / "manifest.json")
     await _run_scraper_staged(staging, num_workers, resume)
     current = json.loads((staging / "manifest.json").read_text(encoding="utf-8"))
     previous_path = output_dir / "manifest.json"
@@ -850,8 +967,8 @@ async def run_scraper(output_dir: Path, num_workers: int = 4, resume: bool = Fal
     if failures:
         raise RuntimeError("Component scrape rejected; published data unchanged: " + "; ".join(failures))
     # Every byte is prepared and validated before the first published file is replaced.
-    files = [*sorted((staging / "categories").glob("*.jsonl.gz")),
-             *sorted((staging / "history").glob("*.jsonl.gz")),
+    files = [*sorted(p for p in (staging / "catalog").rglob("*") if p.is_file()),
+             *sorted((staging / "history").rglob("*.jsonl.gz")),
              staging / "subcategories.json", staging / "manifest.json"]
     publish_staged_files(output_dir, staging, files)
     shutil.rmtree(staging)

@@ -971,7 +971,7 @@ class TestCSEClient:
 
     @pytest.mark.asyncio
     async def test_search_non_success_not_cached(self, client):
-        """Non-success API responses should not be cached."""
+        """A status other than Success is asked once more, then reported as a failure and not cached."""
         error_response = {
             "status": "Error",
             "partCount": 0,
@@ -988,12 +988,13 @@ class TestCSEClient:
         mock_http.get = mock_get
         client._http = mock_http
 
-        result1 = await client.search("test_fail")
-        assert result1["results"] == []
-
-        # Second call should hit API again (not cached)
-        result2 = await client.search("test_fail")
-        assert call_count == 2
+        with patch("pcbparts_mcp.cse.CSE_STATUS_RETRY_DELAY", 0):
+            with pytest.raises(ValueError, match="no usable answer"):
+                await client.search("test_fail")
+            assert call_count == 2
+            with pytest.raises(ValueError, match="no usable answer"):
+                await client.search("test_fail")
+        assert call_count == 4  # not cached
 
 
 # --- CSE get_kicad tests ---

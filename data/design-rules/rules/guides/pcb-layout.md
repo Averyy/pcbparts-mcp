@@ -7,7 +7,7 @@
 - **4-layer: signal layers < 0.25 mm (10 mil) from their planes, thick core between planes.** At 0.13 mm (5 mil) Ott puts the trace-loop radiation reduction at 10 dB or more vs equal spacing [5, Fig.2]. The cheapest EMC improvement on a 4-layer board.
 - **Default: one solid ground plane, routing partitioned into analog/digital zones** [3]. Splits are rare exceptions (below).
 - **Fast signals changing between two ground planes need a ground via next to the signal via;** between ground and power, the return goes through a decoupling cap [16, Fig.4-13/4-14]. Passing through the same plane needs nothing extra.
-- **50-ohm microstrip: W/H ~ 2:1 on FR4 (Er ~ 4.0).** 50-ohm stripline: B/W ~ 2-2.2:1. IPC-2141A equations are ~5-6% accurate between 50-100 ohm; less accurate outside that range.
+- **50-ohm microstrip: W/H ~ 2:1 on FR4 (Er ~ 4.0).** 50-ohm stripline: B/W ~ 2-2.2:1 neglecting trace thickness; with 1 oz copper the stripline equation reads low there, so get final widths from the fab's field solver. IPC-2141A equations are ~5-6% accurate between 50-100 ohm; less accurate outside that range [7].
 - **Size trace current with IPC-2152, not IPC-2221B's "internal = half external"** [9]. IPC-2152's baseline is one isolated trace in still air with no planes; copper weight, nearby planes, board and neighbouring traces change the real rise.
 
 ## Design Rules
@@ -50,9 +50,9 @@
 
 ### Microstrip vs Stripline
 
-- **Microstrip (surface layer):** propagation delay ~136 ps/in (5.4 ps/mm) at Er = 4.0 [7]. Higher radiation, lower dielectric loss. Trace width ~2x stripline for same impedance.
-- **Stripline (buried between planes):** propagation delay ~170 ps/in (6.7 ps/mm) at Er = 4.0, ~25% more delay than microstrip [7]. Better shielding, lower radiation. Required for high-speed signals that must be contained.
-- **Propagation delay depends only on dielectric constant, not trace dimensions.** All impedance variants on the same layer have identical delay -- useful for length matching.
+- **Microstrip (surface layer):** propagation delay ~136 ps/in (5.4 ps/mm) at Er = 4.0 by MT-094's width-independent equation [7]; Altium puts microstrip's effective dielectric constant at about 3, which is ~147 ps/in [8]. Higher radiation, lower dielectric loss. Trace width ~2x stripline for same impedance.
+- **Stripline (buried between planes):** propagation delay ~170 ps/in (6.7 ps/mm) at Er = 4.0 [7]. Better shielding, lower radiation. Required for high-speed signals that must be contained.
+- **Stripline delay depends only on the dielectric constant, so every impedance on one stripline layer has the same delay.** Microstrip delay also depends on W/H (wider traces run slower) and on the coupling mode of a differential pair; when length-matching microstrip nets of different widths, take delay from the stackup field solver [7, 8].
 - **Termination rule:** if one-way propagation delay >= half the signal rise/fall time, terminate in characteristic impedance. Conservative: 2-inch/nanosecond rule. Example: 5 ns rise time -> terminate traces >= 10 inches.
 
 ### Trace Width & Current Capacity
@@ -70,7 +70,7 @@
 - **Stitching via pitch for shielding:** a fraction of the wavelength at the highest frequency of concern; sources differ on the fraction (lambda/10 to lambda/20). Altium's 0.5 mm (20 mil) pitch shielding to ~43 GHz is a grounded-coplanar feedline example [12].
 - **Single-ended via impedance** is dominated by stitching via placement and antipad size. **Differential via impedance** is more sensitive to signal via-to-via spacing and antipad than to stitching vias -- stitching mainly affects field confinement (localization frequency).
 - **Via-in-pad where BGA escape or a thermal-pad via array needs it** [11]. Specify epoxy fill + planarization + cap plate so solder doesn't wick; it adds cost, so confirm with the assembler. Not needed where pads can be reached by a trace.
-- **Via aspect ratio <= 10:1** (board thickness : hole diameter) for reliable plating. Preferred <= 8:1. A 1.6 mm board needs >= 0.2 mm drill.
+- **Through-via aspect ratio (board thickness : hole diameter): use the ordered fab process's limit.** A 1.6 mm board is 8:1 with a 0.2 mm drill and 10.7:1 with 0.15 mm; check whether the fab divides by drilled or finished diameter. Fab limits -> `guides/dfm.md`.
 - **Blind via aspect ratio: 1:1 max.** Deeper holes trap air during plating -> open circuits. When exceeded, use stacked microvias (2-3x standard process cost).
 - **Staggered vias** are cheaper and more reliable than stacked -- less precision required, lower stress. Use staggered unless vertical alignment is physically required.
 - Thermal via sizing for exposed pads -> `guides/thermal.md`. Full DFM constraints -> `guides/dfm.md`.
@@ -79,13 +79,13 @@
 
 - **Annular ring vs breakout, one supplier's microvia data:** 0.05 mm (2 mil) = 98%, 0.13 mm (5 mil) = 5%, >= 0.15 mm (6 mil) = ~0% [13]. Rates are process-specific: use your fab's annular-ring limit.
 - **Teardrop pads recommended** where traces under 0.5 mm (20 mil) meet annular pads (drill misalignment) and on flex boards (shear, vibration) [13]. A recommendation, not a fab requirement.
-- **Thermal relief:** typical 0.2 mm spoke width, 0.25 mm clearance; smaller for dense small passives within fab limits [14]. Apply on SMD pads connected to large copper pours and through-hole pins connected to planes.
+- **Thermal relief:** typical 0.2 mm spoke width, 0.25 mm clearance; smaller for dense small passives within fab limits [14]. Apply on SMD pads connected to large copper pours and through-hole pins connected to planes, except where the device vendor requires direct copper: current-shunt and power-stage FET pads (TI DRV832x: relief on a shunt adds inductance and voltage spikes -> `misc/motor-control.md`).
 - **DO NOT use thermal relief on:** vias connecting to planes (put relief on the SMD pad instead), die-attach/exposed pads, thermal pads of ICs. A thermal relief on a via has no value -- confine heat at the SMD pad, not at the via.
 
 ### Component Placement
 
 - **Decoupling caps within 2 mm of IC power pins.** Via to ground within 1 mm of cap ground pad. Full strategy -> `power/decoupling.md`.
-- **Crystal oscillators within 5 mm of MCU clock pins.** Inner layers preferred, no vias on clock traces. Full crystal design -> `misc/crystal.md`.
+- **Crystal oscillators within 5 mm of MCU clock pins.** Route the oscillator traces on the crystal's layer with no vias (NXP AN3208); the local ground under the oscillator follows the MCU vendor. Full crystal design -> `misc/crystal.md`.
 - **All connectors on one board edge** (two edges acceptable if opposite). Signals entering/exiting through different edges create large CM current loops -> `guides/emc.md`.
 
 ## Common Mistakes
@@ -99,14 +99,14 @@
 ## Formulas
 
 **Microstrip impedance (IPC-2141A / ADI MT-094):**
-**Rule of thumb:** W/H ~ 2:1 gives ~50 ohm on FR4 (Er ~ 4.0). W/H ~ 1:1 gives ~75 ohm.
+**Rule of thumb:** W/H ~ 2:1 gives ~50 ohm on FR4 (Er ~ 4.0). W/H ~ 0.83 (W = 8.3 mil at H = 10 mil, 1 oz) gives ~75 ohm [7].
 **Formula:** Zo = (87 / sqrt(Er + 1.41)) * ln(5.98H / (0.8W + T)) -- dimensions in mils
-**Example:** Er = 4.0, H = 10 mil, W = 20 mil, T = 1.4 mil -> Zo = (87 / sqrt(5.41)) * ln(59.8 / 17.4) = 37.4 * 1.23 = 46 ohm. Equation predicts ~5% low for 50-ohm target; decrease W to 18 mil.
+**Example:** Er = 4.0, H = 10 mil, W = 20 mil, T = 1.4 mil -> Zo = (87 / sqrt(5.41)) * ln(59.8 / 17.4) = 37.4 * 1.23 = 46 ohm. MT-094 treats this geometry as ~50 ohm; the 46 ohm is the equation's own error, which grows below 50 ohm. Don't narrow the trace to make the equation read 50; take the final width from the fab's field solver [7].
 
 **Stripline impedance:**
-**Rule of thumb:** B/W ~ 2-2.2:1 for 50 ohm (B = plane-to-plane spacing).
+**Rule of thumb:** B/W ~ 2-2.2:1 for 50 ohm (B = plane-to-plane spacing), neglecting trace thickness T [7].
 **Formula:** Zo = (60 / sqrt(Er)) * ln(1.9B / (0.8W + T)) -- dimensions in mils
-**Example:** Er = 4.0, B = 20 mil, W = 8 mil, T = 1.4 mil -> Zo = 30 * ln(38 / 7.8) = 30 * 1.58 = 47.5 ohm.
+**Example:** Er = 4.0, B = 20 mil, W = 8 mil, T = 1.4 mil -> Zo = 30 * ln(38 / 7.8) = 30 * 1.58 = 47.5 ohm. With T = 1.4 mil, B/W = 2-2.2 gives ~42-44 ohm and 50 ohm needs B/W ~2.8 (W ~7.2 mil).
 
 **IPC-2152 trace current capacity:**
 **Rule of thumb:** none safe: at 1 oz and 10C rise the fit below needs ~0.29 mm (11 mil) for 1A, before plane and board corrections [9].

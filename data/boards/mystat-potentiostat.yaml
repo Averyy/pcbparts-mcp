@@ -3,7 +3,7 @@ slug: mystat-potentiostat
 source: matthew-yates/MYSTAT
 format: kicad7
 description: 'USB potentiostat/galvanostat for electrochemistry: 20-bit DAC (DAC1220), 22-bit ADC (MCP3550)'
-tags: [adc-dac, audio]
+tags: [adc-dac]
 key_ics: [DAC1220, MCP3550, ADR421]
 outline:
   width_mm: 60.0
@@ -102,7 +102,7 @@ components:
   mpn: 08055C104KAT2A
   decouples: U10
 - ref: C24
-  value: pF
+  value: 4.7nF
   footprint: 0805
   manufacturer: Yageo
   mpn: CC0805KRX7R9BB472
@@ -241,6 +241,8 @@ components:
   footprint: CONN_2173157-3
   manufacturer: TE Connectivity AMP Connectors
   mpn: 2173157-3
+  description: Splash Proof Micro USB B-Type low MOQ
+  digikey: A124356CT-ND
   pin_count: 9
   nc_pins: {'4': '4'}
 - ref: J3
@@ -280,8 +282,8 @@ components:
   mpn: '9011-05-11'
   pin_count: 4
 - ref: P1
-  value: 1x6 header
-  footprint: 1X6
+  value: 1x6 2.54mm header
+  footprint: 1X6_P2.54mm
   manufacturer: Sullins Connector Solutions
   mpn: PRPC006SAAN-RC
   pin_count: 6

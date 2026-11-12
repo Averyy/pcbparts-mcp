@@ -1,7 +1,7 @@
 name: RPi CM5 IO Board rev2
 slug: rpi-cm5-io-board-rev2
 source: rpi-cm5io
-format: kicad7
+format: kicad9
 source_url: https://pip-assets.raspberrypi.com/categories/1098-design-files/documents/RP-008099-DD-1-CM5%20IO%20Board,%20revision%202,%20KiCAD%20files..zip
 org: raspberrypi
 org_display: Raspberry Pi
@@ -21,259 +21,521 @@ components:
 - ref: BT1
   value: coin cell holder
   footprint: '3034'
+  description: Battery Retainer Coin, 20.0mm 1 Cell SMD (SMT) Tab
+  digikey: 36-3034-ND
+  mpn: '3034'
+  manufacturer: Keystone
 - ref: C1
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
 - ref: C10
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
 - ref: C11
   value: 4.7nF
   footprint: '0402'
+  description: 4.7nF capacitor 0402
 - ref: C12
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
 - ref: C13
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
 - ref: C14
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C15
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C16
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C17
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C18
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
 - ref: C19
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
 - ref: C2
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C3
   value: 100uF
   footprint: EIA-7343
+  description: Capacitor, SP-Cap, 100u, 6.3V, 15mR ESR
+  mouser: 667-EEF-CX0J101R
+  manufacturer: Panasonic
 - ref: C4
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C5
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C6
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C7
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C8
   value: 10uF
   footprint: 0805
+  description: 10uF 10% 10V Ceramic Capacitor X7R 0805 (2012 Metric)
+  digikey: 490-14381-1-ND
+  mpn: GRM21BR71A106KA73L
+  manufacturer: Murata
+  prod_id: '111893011'
 - ref: C9
   value: 100nF
   footprint: '0402'
+  description: 0.1uF 10% 16V Ceramic Capacitor X7R 0402 (1005 Metric)
+  partno: '2611911'
+  mpn: RM EMK105 B7104KV-F
+  manufacturer: TAIYO YUDEN EUROPE GMBH
+  prod_id: '110091611'
 - ref: D1
   value: LED Red
   footprint: '0603'
+  description: Red 620nm LED Indication - Discrete 2.2V 2-SMD, No Lead
+  digikey: LTST-S270KRKT
+  mpn: SML-A12U8TT86Q
+  manufacturer: Rohm
+  prod_id: '650295101'
 - ref: D2
   value: LED Green
   footprint: '0603'
+  description: Green 572nm LED Indication - Discrete 2.2V 2-SMD, No Lead
+  digikey: LTST-S270KGKT
+  mpn: SML-A12M8TT86N
+  manufacturer: Rohm
+  prod_id: '650263301'
 - ref: D3
   value: LED Green
   footprint: '0603'
+  description: Green 572nm LED Indication - Discrete 2.2V 2-SMD, No Lead
+  digikey: LTST-S270KGKT
+  mpn: SML-A12M8TT86N
+  manufacturer: Rohm
+  prod_id: '650263301'
 - ref: J10
   value: 690-019-298-412
   footprint: EDAC 690-019-298-412
+  description: HDMI Connector, Right Angle, 19 Contacts, Receptacle, Surface Mount, Surface Mount Right Angle
+  partno: '2614936'
+  mpn: 690-019-298-412
+  manufacturer: EDAC
+  prod_id: UCON00802
   pin_count: 23
   nc_pins: {UTILITY/HEAC+: '14'}
 - ref: J11
   value: USB-C
   footprint: USB-C
+  description: USBC USB2 data and power connector
+  partno: USBF31-0171
+  mpn: USBF31-0171
+  manufacturer: MTCONN
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J12
   value: USB3_A
   footprint: MTCONN_UBAF30-D2011
+  description: Dual USB 3 connector
+  partno: UBAF30-D2011
+  mpn: UBAF30-D2011
+  manufacturer: Mtconn
   pin_count: 19
 - ref: J14
   value: JST_SHBM04B-SRSS-TB
-  footprint: JST_SH_BM04B-SRSS-TB
+  footprint: JST_SH_BM04B-SRSS-TB_1x04
+  description: 4 pin vertical 1mm pitch connector
+  partno: SHBM04B-SRSS-TB
+  mpn: SHBM04B-SRSS-TB
+  manufacturer: JST
   pin_count: 4
 - ref: J16
-  value: 1x22 header
-  footprint: Hirose_FH12-22S-0.5SH
+  value: 1x22 0.50mm header
+  footprint: Hirose_FH12-22S-0.5SH_1x22
+  description: 22 Position FFC, FPC Connector Contacts, Bottom 0.020" (0.50mm) Surface Mount, Right Angle
+  mouser: 798-FH12-22S-0.5SH55
+  mpn: FH12-22S-0.5SH55
+  manufacturer: Hirose
   pin_count: 22
   nc_pins: {Pin_18: '18'}
 - ref: J2
-  value: 2x7 header
-  footprint: PinHeader
+  value: 2x7 2.54mm header
+  footprint: 2X7_P2.54mm
+  description: PinHeader_2x07_P2.54mm_Vertical
+  partno: THD-07-R
+  mpn: THD-07-R
+  manufacturer: Toby
   pin_count: 14
   nc_pins: {Pin_8: '8'}
 - ref: J22
   value: 690-019-298-412
   footprint: EDAC 690-019-298-412
+  description: HDMI Connector, Right Angle, 19 Contacts, Receptacle, Surface Mount, Surface Mount Right Angle
+  partno: '2614936'
+  mpn: 690-019-298-412
+  manufacturer: EDAC
+  prod_id: UCON00802
   pin_count: 23
   nc_pins: {UTILITY/HEAC+: '14'}
 - ref: J4
   value: M.2
   footprint: M.2 M Key socket
-  description: M.2 Socket 3 Mechanical Key M
+  description: M.2 M Key connector
+  partno: MTSSD03-67MSW337
+  mpn: MTSSD03-67MSW337
+  manufacturer: MTCONN
   pin_count: 73
-  nc_pins: {PETn3: '5', NC@6: '6', PETp3: '7', NC@8: '8', PERn3: '11', PERp3: '13', PETn2: '17', PETp2: '19', NC@20: '20', NC@22: '22', PERn2: '23', NC@24: '24', PERp2: '25', NC@26: '26', NC@28: '28', PETn1: '29', NC@30: '30', PETp1: '31', NC@32: '32', NC@34: '34', PERn1: '35', NC@36: '36', PERp1: '37', DEVSLP: '38', NC@40: '40', NC@42: '42', NC@44: '44', NC@46: '46', NC@48: '48', NC@56: '56', NC@58: '58', NC@67: '67', PEDET: '69'}
+  nc_pins: {PETn3: '5', NC@6: '6', PETp3: '7', NC@8: '8', PERn3: '11', PERp3: '13', PETn2: '17', PETp2: '19', NC@20: '20',
+    NC@22: '22', PERn2: '23', NC@24: '24', PERp2: '25', NC@26: '26', NC@28: '28', PETn1: '29', NC@30: '30', PETp1: '31', NC@32: '32',
+    NC@34: '34', PERn1: '35', NC@36: '36', PERp1: '37', DEVSLP: '38', NC@40: '40', NC@42: '42', NC@44: '44', NC@46: '46',
+    NC@48: '48', NC@56: '56', NC@58: '58', NC@67: '67', PEDET: '69'}
 - ref: J5
-  value: 1x22 header
-  footprint: Hirose_FH12-22S-0.5SH
+  value: 1x22 0.50mm header
+  footprint: Hirose_FH12-22S-0.5SH_1x22
+  description: 22 Position FFC, FPC Connector Contacts, Bottom 0.020" (0.50mm) Surface Mount, Right Angle
+  mouser: 798-FH12-22S-0.5SH55
+  mpn: FH12-22S-0.5SH55
+  manufacturer: Hirose
   pin_count: 22
 - ref: J6
-  value: 2x2 header
-  footprint: PinHeader
+  value: 2x2 2.54mm header
+  footprint: 2X2_P2.54mm
+  description: PinHeader_2x02_P2.54mm_Vertical
+  partno: THD-02-R
+  mpn: 151-604-425-761
+  manufacturer: EDAC
+  prod_id: UCON00791
   pin_count: 4
 - ref: J7
   value: Micro_SD_Card_Det
   footprint: '1892'
+  description: "9 (8 + 1) Position Card Connector microSD\u2122 Surface Mount, Right Angle Gold"
+  partno: '2358234'
+  mpn: 503398-1892
+  manufacturer: Molex
+  prod_id: UCON00512
   pin_count: 11
   nc_pins: {DET_B: '9', DET_A: '10'}
 - ref: J8
-  value: 2x20 header
-  footprint: PinHeader
+  value: 2x20 2.54mm header
+  footprint: 2X20_P2.54mm
+  description: PinHeader_2x20_P2.54mm_Vertical
+  partno: THD-20-R
+  mpn: THD-20-R
+  manufacturer: Toby
+  prod_id: UCON00511
   pin_count: 40
 - ref: J9
-  value: 2x2 header
-  footprint: PinHeader
+  value: 2x2 2.54mm header
+  footprint: 2X2_P2.54mm
+  description: PinHeader_2x02_P2.54mm_Vertical
+  partno: THD-02-R
+  mpn: 151-604-425-761
+  manufacturer: EDAC
+  prod_id: UCON00791
   pin_count: 4
 - ref: L1
   value: 2.2uH
   footprint: L_Bourns_SRP5030CC
+  description: Inductor, SMT, 2520, 2u2, IRMS=7A, ISAT=8A, DCR=0.032R
+  partno: SRP5030CC-2R2M
+  mpn: SRP5030CC-2R2M
+  manufacturer: Bourns
 - ref: Module1
   value: ComputeModule5-CM5
   footprint: Raspberry-Pi-5-Compute-Module
-  description: RaspberryPi Compute module 5
+  description: 100 Position Connector Receptacle, Center Strip Contacts Surface Mount Gold
+  partno: 2x 10164227-1001A1RLF
+  mpn: 2x 10164227-1001A1RLF
+  manufacturer: Hirose
   pin_count: 200
   nc_pins: {SD_DAT5: '64', SD_DAT4: '68', SD_DAT7: '70', SD_DAT6: '72', SD_VDD_Override: '73'}
 - ref: R1
   value: 1kohm
   footprint: '0402'
+  description: Resistor 1K M1005 1% 63mW
+  partno: '9239235'
+  mpn: RK73H1ETTP1001F
+  manufacturer: KOA EUROPE GMBH
+  prod_id: '125049511'
 - ref: R10
   value: 1kohm
   footprint: '0402'
+  description: Resistor 1K M1005 1% 63mW
+  partno: '9239235'
+  mpn: RK73H1ETTP1001F
+  manufacturer: KOA EUROPE GMBH
+  prod_id: '125049511'
 - ref: R11
   value: 10kohm
   footprint: '0402'
+  description: Resistor 10K M1005 1% 63mW
+  mpn: MCR01MZPF1002
+  manufacturer: Rohm
   tolerance: 1%
 - ref: R12
   value: 15kohm
   footprint: '0402'
+  description: Resistor 15K M1005 1% 63mW
+  partno: '9239375'
+  mpn: MCR01MZPF1502
+  manufacturer: Rohm
+  prod_id: '120891581'
   tolerance: 1%
-  pulldown: Net-(U6-ILIM)
+  pulldown: U6.ILIM
 - ref: R13
   value: 10kohm
   footprint: '0402'
+  description: Resistor 10K M1005 1% 63mW
+  mpn: MCR01MZPF1002
+  manufacturer: Rohm
   tolerance: 1%
 - ref: R14
   value: 100kohm
   footprint: '0402'
+  description: Resistor 100K M1005 1% 63mW
+  mpn: MCR01MZPF1003
+  manufacturer: Rohm
   tolerance: 1%
   pulldown: /CM5_HighSpeed/PCIE_PWR_EN
 - ref: R15
   value: 10kohm
   footprint: '0402'
+  description: Resistor 10K M1005 1% 63mW
+  mpn: MCR01MZPF1002
+  manufacturer: Rohm
   tolerance: 1%
 - ref: R16
   value: 2.2kohm
   footprint: '0402'
+  description: Resistor 2.2K M1005 1% 63mW
   tolerance: 1%
   pulldown: /PCIe-M2/FB
 - ref: R17
   value: 1kohm
   footprint: '0402'
+  description: Resistor 1K M1005 1% 63mW
+  partno: '9239235'
+  mpn: RK73H1ETTP1001F
+  manufacturer: KOA EUROPE GMBH
+  prod_id: '125049511'
 - ref: R2
   value: 470ohm
   footprint: '0402'
+  description: Resistor 470R M1005 1% 63mW
+  partno: '9239197'
+  mpn: RK73G1ETQTP4700D
+  manufacturer: KOA EUROPE GMBH
+  prod_id: '120887981'
 - ref: R3
   value: 470ohm
   footprint: '0402'
+  description: Resistor 470R M1005 1% 63mW
+  partno: '9239197'
+  mpn: RK73G1ETQTP4700D
+  manufacturer: KOA EUROPE GMBH
+  prod_id: '120887981'
 - ref: R5
   value: 0ohm
   footprint: 0805
+  description: Resistor 0R M2012 5%
+  partno: '9233750'
+  mpn: MCR10EZPJ000
+  manufacturer: Rohm
+  prod_id: '121629591'
 - ref: R6
   value: 2.2kohm
   footprint: '0402'
+  description: Resistor 2.2K M1005 1% 63mW
   tolerance: 1%
 - ref: R7
   value: 2.2kohm
   footprint: '0402'
+  description: Resistor 2.2K M1005 1% 63mW
   tolerance: 1%
 - ref: R8
   value: 2.2kohm
   footprint: '0402'
+  description: Resistor 2.2K M1005 1% 63mW
   tolerance: 1%
 - ref: R9
   value: 2.2kohm
   footprint: '0402'
+  description: Resistor 2.2K M1005 1% 63mW
   tolerance: 1%
   pulldown: /+5v
 - ref: SW1
   value: Right angle Tact button
   footprint: SW_Tactile_SPST_Angled_PTS645Vx58-2LFS
+  description: Right angle through hole Tact switch
+  partno: PTS645VH58-2LFS
+  mpn: PTS645VH58-2LFS
+  manufacturer: CK
 - ref: U1
   value: TPD4EUSB30
   footprint: USON-10
+  description: Quad TVS diode for high speed signals (USB3, GigE etc.)
+  partno: '2335455'
   pin_count: 10
 - ref: U12
   value: RT9742SNGV
   footprint: TSOT-23
+  description: Power Switch/Driver 1:1 N-Channel 500mA SOT-23-3
+  partno: '2575555'
+  mpn: RT9742SNGV
+  manufacturer: RichTek
+  prod_id: USWI00155
   pin_count: 3
 - ref: U18
   value: RT9742GGJ5
   footprint: SOT-23-5
+  description: Power Switch/Driver 1:1 N-Channel 1A TSOT-23-5
+  partno: '2545875'
+  mpn: RT9742GGJ5
+  manufacturer: RichTek
+  prod_id: USWI00166
   pin_count: 5
   nc_pins: {nFLG: '3'}
 - ref: U2
   value: TPD4EUSB30
   footprint: USON-10
+  description: Quad TVS diode for high speed signals (USB3, GigE etc.)
+  partno: '2335455'
   pin_count: 10
 - ref: U3
-  value: MagJack-A70-112-331N126
+  value: TRJG0926HENL
   footprint: TRJG0926HENL
+  description: Gigabit Ethernet Magjack
+  partno: TRJG0926HENL
+  mpn: TRJG0926HENL
+  manufacturer: Trxcon
+  prod_id: UCON00900
   pin_count: 20
 - ref: U6
   value: AP22653W6
   footprint: SOT-23-6
+  description: Power Switch/Driver 1:1 P-Channel 2.1A SOT-23-6
+  digikey: 31-AP22653W6-7CT-ND
+  mpn: AP22653W6
+  manufacturer: Diodes
   pin_count: 6
   nc_pins: {nFault: '4'}
 - ref: U7
   value: ASEK-32.768KHZ-L-R-T
   footprint: SMD3225
+  description: 32KHz Xtal oscilator
+  partno: ASEK-32.768KHZ-L-R-T
+  mpn: ASEK-32.768KHZ-L-R-T
+  manufacturer: abracon
   pin_count: 4
 - ref: U8
   value: AP3441SHE-7B
-  footprint: DFN-8
+  footprint: DFN-8-1EP_2x2
+  description: 3A DC-DC converter
+  partno: AP3441SHE-7B
+  mpn: AP3441SHE-7B
+  manufacturer: Diodes
   pin_count: 9
   nc_pins: {PG: '2', nc: '5'}
 nets:
 - name: /+3.3v
   pins:
-  - D1.2
-  - D2.2
-  - J16.22
-  - J5.22
-  - J8.1
-  - J8.17
-  - Module1.84
-  - Module1.86
+  - D1.A
+  - D2.A
+  - J16.Pin_22
+  - J5.Pin_22
+  - J8.Pin_1
+  - J8.Pin_17
+  - Module1.+3.3v_(Output)@84
+  - Module1.+3.3v_(Output)@86
   - R11.1
   - R13.1
   - R5.1
   - R8.1
-  - U18.5
-  - U3.15
-  - U3.17
+  - U18.IN
+  - U3.LEDG_A
+  - U3.LEDY_A
 - name: /+5v
   pins:
   - C10.1
@@ -283,303 +545,303 @@ nets:
   - C4.1
   - C6.1
   - C9.1
-  - J11.A4
-  - J11.A9
-  - J11.B4
-  - J11.B9
-  - J14.1
-  - J8.2
-  - J8.4
-  - Module1.77
-  - Module1.79
-  - Module1.81
-  - Module1.83
-  - Module1.85
-  - Module1.87
+  - J11.VBUS@A4
+  - J11.VBUS@A9
+  - J11.VBUS@B4
+  - J11.VBUS@B9
+  - J14.Pin_1
+  - J8.Pin_2
+  - J8.Pin_4
+  - Module1.+5v_(Input)@77
+  - Module1.+5v_(Input)@79
+  - Module1.+5v_(Input)@81
+  - Module1.+5v_(Input)@83
+  - Module1.+5v_(Input)@85
+  - Module1.+5v_(Input)@87
   - R9.1
-  - U12.1
-  - U6.1
-  - U8.3
+  - U12.IN
+  - U6.IN
+  - U8.VIN
 - name: /CC1
-  pins: [J11.A5, Module1.94]
+  pins: [J11.CC1, Module1.CC1]
 - name: /CC2
-  pins: [J11.B5, Module1.96]
+  pins: [J11.CC2, Module1.CC2]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/+1.8v
-  pins: [Module1.88, Module1.90]
+  pins: [Module1.+1.8v_(Output)@88, Module1.+1.8v_(Output)@90]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/CAM_GPIO0
-  pins: [J5.17, Module1.97]
+  pins: [J5.Pin_17, Module1.CAM_GPIO0]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/CAM_GPIO1
-  pins: [J5.18, Module1.100]
+  pins: [J5.Pin_18, Module1.CAM_GPIO1]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/EEPROM_nWP
-  pins: [J2.4, Module1.20]
+  pins: [J2.Pin_4, Module1.EEPROM_nWP]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/ETH_LEDG
-  pins: [Module1.17, R2.2]
+  pins: [Module1.Ethernet_nLED2(3.3v), R2.2]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/ETH_LEDY
-  pins: [Module1.15, R3.2]
+  pins: [Module1.Ethernet_nLED3(3.3v), R3.2]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO10
-  pins: [J8.19, Module1.44]
+  pins: [J8.Pin_19, Module1.GPIO10]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO11
-  pins: [J8.23, Module1.38]
+  pins: [J8.Pin_23, Module1.GPIO11]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO12
-  pins: [J8.32, Module1.31]
+  pins: [J8.Pin_32, Module1.GPIO12]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO13
-  pins: [J8.33, Module1.28]
+  pins: [J8.Pin_33, Module1.GPIO13]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO14
-  pins: [J8.8, Module1.55]
+  pins: [J8.Pin_8, Module1.GPIO14]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO15
-  pins: [J8.10, Module1.51]
+  pins: [J8.Pin_10, Module1.GPIO15]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO16
-  pins: [J8.36, Module1.29]
+  pins: [J8.Pin_36, Module1.GPIO16]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO17
-  pins: [J8.11, Module1.50]
+  pins: [J8.Pin_11, Module1.GPIO17]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO18
-  pins: [J8.12, Module1.49]
+  pins: [J8.Pin_12, Module1.GPIO18]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO19
-  pins: [J8.35, Module1.26]
+  pins: [J8.Pin_35, Module1.GPIO19]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO2
-  pins: [J8.3, Module1.58]
+  pins: [J8.Pin_3, Module1.GPIO2]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO20
-  pins: [J8.38, Module1.27]
+  pins: [J8.Pin_38, Module1.GPIO20]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO21
-  pins: [J8.40, Module1.25]
+  pins: [J8.Pin_40, Module1.GPIO21]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO22
-  pins: [J8.15, Module1.46]
+  pins: [J8.Pin_15, Module1.GPIO22]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO23
-  pins: [J8.16, Module1.47]
+  pins: [J8.Pin_16, Module1.GPIO23]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO24
-  pins: [J8.18, Module1.45]
+  pins: [J8.Pin_18, Module1.GPIO24]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO25
-  pins: [J8.22, Module1.41]
+  pins: [J8.Pin_22, Module1.GPIO25]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO26
-  pins: [J8.37, Module1.24]
+  pins: [J8.Pin_37, Module1.GPIO26]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO27
-  pins: [J8.13, Module1.48]
+  pins: [J8.Pin_13, Module1.GPIO27]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO3
-  pins: [J8.5, Module1.56]
+  pins: [J8.Pin_5, Module1.GPIO3]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO4
-  pins: [J8.7, Module1.54]
+  pins: [J8.Pin_7, Module1.GPIO4]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO5
-  pins: [J8.29, Module1.34]
+  pins: [J8.Pin_29, Module1.GPIO5]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO6
-  pins: [J8.31, Module1.30]
+  pins: [J8.Pin_31, Module1.GPIO6]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO7
-  pins: [J8.26, Module1.37]
+  pins: [J8.Pin_26, Module1.GPIO7]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO8
-  pins: [J8.24, Module1.39]
+  pins: [J8.Pin_24, Module1.GPIO8]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO9
-  pins: [J8.21, Module1.40]
+  pins: [J8.Pin_21, Module1.GPIO9]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/GPIO_VREF
-  pins: [Module1.78, R5.2, R6.1, R7.1]
+  pins: [Module1.GPIO_VREF(1.8v/3.3v_Input), R5.2, R6.1, R7.1]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/ID_SC
-  pins: [J6.1, J8.28, Module1.35]
+  pins: [J6.Pin_1, J8.Pin_28, Module1.ID_SC]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/ID_SD
-  pins: [J6.3, J8.27, Module1.36]
+  pins: [J6.Pin_3, J8.Pin_27, Module1.ID_SD]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/PMIC_ENABLE
-  pins: [J2.12, Module1.99]
+  pins: [J2.Pin_12, Module1.PMIC_ENABLE]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/PWM
-  pins: [J14.2, Module1.19, R11.2]
+  pins: [J14.Pin_2, Module1.FAN_PWM, R11.2]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/PWR_BUT
-  pins: [J2.14, Module1.92, SW1.1]
+  pins: [J2.Pin_14, Module1.PWR_BUT, SW1.1]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_CLK
-  pins: [J7.5, Module1.57]
+  pins: [J7.CLK, Module1.SD_CLK]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_CMD
-  pins: [J7.3, Module1.62]
+  pins: [J7.CMD, Module1.SD_CMD]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT0
-  pins: [J7.7, Module1.63]
+  pins: [J7.DAT0, Module1.SD_DAT0]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT1
-  pins: [J7.8, Module1.67]
+  pins: [J7.DAT1, Module1.SD_DAT1]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT2
-  pins: [J7.1, Module1.69]
+  pins: [J7.DAT2, Module1.SD_DAT2]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_DAT3
-  pins: [J7.2, Module1.61]
+  pins: [J7.DAT3/CD, Module1.SD_DAT3]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_PWR
-  pins: [C5.1, J7.4, U18.1]
+  pins: [C5.1, J7.VDD, U18.OUT]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SD_PWR_ON
-  pins: [Module1.75, R13.2, U18.4]
+  pins: [Module1.SD_PWR_ON, R13.2, U18.EN]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/SYNC_OUT
-  pins: [J2.6, Module1.18]
+  pins: [J2.Pin_6, Module1.Ethernet_SYNC_OUT(3.3v)]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TACHO
-  pins: [J14.4, Module1.16]
+  pins: [J14.Pin_4, Module1.FAN_TACHO]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TR0_TAP
-  pins: [J9.3, U3.11]
+  pins: [J9.Pin_3, U3.VC1]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TR1_TAP
-  pins: [J9.1, U3.12]
+  pins: [J9.Pin_1, U3.VC2]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TR2_TAP
-  pins: [J9.2, U3.13]
+  pins: [J9.Pin_2, U3.VC3]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TR3_TAP
-  pins: [J9.4, U3.14]
+  pins: [J9.Pin_4, U3.VC4]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD0_N
-  pins: [Module1.10, U2.4, U2.7, U3.2]
+  pins: [Module1.Ethernet_Pair0_N, U2.7, U2.D2+, U3.TRD0-]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD0_P
-  pins: [Module1.12, U2.5, U2.6, U3.1]
+  pins: [Module1.Ethernet_Pair0_P, U2.6, U2.D2-, U3.TRD0+]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD1_N
-  pins: [Module1.6, U2.2, U2.9, U3.6]
+  pins: [Module1.Ethernet_Pair1_N, U2.9, U2.D1-, U3.TRD1-]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD1_P
-  pins: [Module1.4, U2.1, U2.10, U3.3]
+  pins: [Module1.Ethernet_Pair1_P, U2.10, U2.D1+, U3.TRD1+]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD2_N
-  pins: [Module1.9, U1.4, U1.7, U3.8]
+  pins: [Module1.Ethernet_Pair2_N, U1.7, U1.D2+, U3.TRD2-]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD2_P
-  pins: [Module1.11, U1.5, U1.6, U3.7]
+  pins: [Module1.Ethernet_Pair2_P, U1.6, U1.D2-, U3.TRD2+]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD3_N
-  pins: [Module1.5, U1.2, U1.9, U3.10]
+  pins: [Module1.Ethernet_Pair3_N, U1.9, U1.D1-, U3.TRD3-]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/TRD3_P
-  pins: [Module1.3, U1.1, U1.10, U3.9]
+  pins: [Module1.Ethernet_Pair3_P, U1.10, U1.D1+, U3.TRD3+]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/USBOTG
-  pins: [J2.10, Module1.101]
+  pins: [J2.Pin_10, Module1.USB_OTG_ID]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/VBAT
-  pins: [BT1.1, Module1.76]
+  pins: [BT1.+@1, Module1.VBAT]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/nPWR_LED
-  pins: [Module1.95, R10.2]
+  pins: [Module1.LED_nPWR, R10.2]
 - name: /CM5_GPIO ( Ethernet, GPIO, SDCARD)/nRPIBOOT
-  pins: [J2.2, Module1.93]
+  pins: [J2.Pin_2, Module1.nRPIBOOT]
 - name: /CM5_HighSpeed/DPHY0_C_N
-  pins: [J5.8, Module1.127]
+  pins: [J5.Pin_8, Module1.MIPI0_C_N]
 - name: /CM5_HighSpeed/DPHY0_C_P
-  pins: [J5.9, Module1.129]
+  pins: [J5.Pin_9, Module1.MIPI0_C_P]
 - name: /CM5_HighSpeed/DPHY0_D0_N
-  pins: [J5.2, Module1.115]
+  pins: [J5.Pin_2, Module1.MIPI0_D0_N]
 - name: /CM5_HighSpeed/DPHY0_D0_P
-  pins: [J5.3, Module1.117]
+  pins: [J5.Pin_3, Module1.MIPI0_D0_P]
 - name: /CM5_HighSpeed/DPHY0_D1_N
-  pins: [J5.5, Module1.121]
+  pins: [J5.Pin_5, Module1.MIPI0_D1_N]
 - name: /CM5_HighSpeed/DPHY0_D1_P
-  pins: [J5.6, Module1.123]
+  pins: [J5.Pin_6, Module1.MIPI0_D1_P]
 - name: /CM5_HighSpeed/DPHY0_D2_N
-  pins: [J5.11, Module1.133]
+  pins: [J5.Pin_11, Module1.MIPI0_D2_N]
 - name: /CM5_HighSpeed/DPHY0_D2_P
-  pins: [J5.12, Module1.135]
+  pins: [J5.Pin_12, Module1.MIPI0_D2_P]
 - name: /CM5_HighSpeed/DPHY0_D3_N
-  pins: [J5.14, Module1.139]
+  pins: [J5.Pin_14, Module1.MIPI0_D3_N]
 - name: /CM5_HighSpeed/DPHY0_D3_P
-  pins: [J5.15, Module1.141]
+  pins: [J5.Pin_15, Module1.MIPI0_D3_P]
 - name: /CM5_HighSpeed/DPHY1_C_N
-  pins: [J16.8, Module1.187]
+  pins: [J16.Pin_8, Module1.MIPI1_C_N]
 - name: /CM5_HighSpeed/DPHY1_C_P
-  pins: [J16.9, Module1.189]
+  pins: [J16.Pin_9, Module1.MIPI1_C_P]
 - name: /CM5_HighSpeed/DPHY1_D0_N
-  pins: [J16.2, Module1.175]
+  pins: [J16.Pin_2, Module1.MIPI1_D0_N]
 - name: /CM5_HighSpeed/DPHY1_D0_P
-  pins: [J16.3, Module1.177]
+  pins: [J16.Pin_3, Module1.MIPI1_D0_P]
 - name: /CM5_HighSpeed/DPHY1_D1_N
-  pins: [J16.5, Module1.181]
+  pins: [J16.Pin_5, Module1.MIPI1_D1_N]
 - name: /CM5_HighSpeed/DPHY1_D1_P
-  pins: [J16.6, Module1.183]
+  pins: [J16.Pin_6, Module1.MIPI1_D1_P]
 - name: /CM5_HighSpeed/DPHY1_D2_N
-  pins: [J16.11, Module1.193]
+  pins: [J16.Pin_11, Module1.MIPI1_D2_N]
 - name: /CM5_HighSpeed/DPHY1_D2_P
-  pins: [J16.12, Module1.195]
+  pins: [J16.Pin_12, Module1.MIPI1_D2_P]
 - name: /CM5_HighSpeed/DPHY1_D3_N
-  pins: [J16.14, Module1.194]
+  pins: [J16.Pin_14, Module1.MIPI1_D3_N]
 - name: /CM5_HighSpeed/DPHY1_D3_P
-  pins: [J16.15, Module1.196]
+  pins: [J16.Pin_15, Module1.MIPI1_D3_P]
 - name: /CM5_HighSpeed/HDMI0_CEC
-  pins: [J22.13, Module1.151]
+  pins: [J22.CEC, Module1.HDMI0_CEC]
 - name: /CM5_HighSpeed/HDMI0_CK_N
-  pins: [J22.12, Module1.190]
+  pins: [J22.CK-, Module1.HDMI0_CLK_N]
 - name: /CM5_HighSpeed/HDMI0_CK_P
-  pins: [J22.10, Module1.188]
+  pins: [J22.CK+, Module1.HDMI0_CLK_P]
 - name: /CM5_HighSpeed/HDMI0_D0_N
-  pins: [J22.9, Module1.184]
+  pins: [J22.D0-, Module1.HDMI0_TX0_N]
 - name: /CM5_HighSpeed/HDMI0_D0_P
-  pins: [J22.7, Module1.182]
+  pins: [J22.D0+, Module1.HDMI0_TX0_P]
 - name: /CM5_HighSpeed/HDMI0_D1_N
-  pins: [J22.6, Module1.178]
+  pins: [J22.D1-, Module1.HDMI0_TX1_N]
 - name: /CM5_HighSpeed/HDMI0_D1_P
-  pins: [J22.4, Module1.176]
+  pins: [J22.D1+, Module1.HDMI0_TX1_P]
 - name: /CM5_HighSpeed/HDMI0_D2_N
-  pins: [J22.3, Module1.172]
+  pins: [J22.D2-, Module1.HDMI0_TX2_N]
 - name: /CM5_HighSpeed/HDMI0_D2_P
-  pins: [J22.1, Module1.170]
+  pins: [J22.D2+, Module1.HDMI0_TX2_P]
 - name: /CM5_HighSpeed/HDMI0_HOTPLUG
-  pins: [J22.19, Module1.153]
+  pins: [J22.HPD/HEAC-, Module1.HDMI0_HOTPLUG]
 - name: /CM5_HighSpeed/HDMI0_SCL
-  pins: [J22.15, Module1.200]
+  pins: [J22.SCL, Module1.HDMI0_SCL]
 - name: /CM5_HighSpeed/HDMI0_SDA
-  pins: [J22.16, Module1.199]
+  pins: [J22.SDA, Module1.HDMI0_SDA]
 - name: /CM5_HighSpeed/HDMI1_CEC
-  pins: [J10.13, Module1.149]
+  pins: [J10.CEC, Module1.HDMI1_CEC]
 - name: /CM5_HighSpeed/HDMI1_CK_N
-  pins: [J10.12, Module1.166]
+  pins: [J10.CK-, Module1.HDMI1_CLK_N]
 - name: /CM5_HighSpeed/HDMI1_CK_P
-  pins: [J10.10, Module1.164]
+  pins: [J10.CK+, Module1.HDMI1_CLK_P]
 - name: /CM5_HighSpeed/HDMI1_D0_N
-  pins: [J10.9, Module1.160]
+  pins: [J10.D0-, Module1.HDMI1_TX0_N]
 - name: /CM5_HighSpeed/HDMI1_D0_P
-  pins: [J10.7, Module1.158]
+  pins: [J10.D0+, Module1.HDMI1_TX0_P]
 - name: /CM5_HighSpeed/HDMI1_D1_N
-  pins: [J10.6, Module1.154]
+  pins: [J10.D1-, Module1.HDMI1_TX1_N]
 - name: /CM5_HighSpeed/HDMI1_D1_P
-  pins: [J10.4, Module1.152]
+  pins: [J10.D1+, Module1.HDMI1_TX1_P]
 - name: /CM5_HighSpeed/HDMI1_D2_N
-  pins: [J10.3, Module1.148]
+  pins: [J10.D2-, Module1.HDMI1_TX2_N]
 - name: /CM5_HighSpeed/HDMI1_D2_P
-  pins: [J10.1, Module1.146]
+  pins: [J10.D2+, Module1.HDMI1_TX2_P]
 - name: /CM5_HighSpeed/HDMI1_HOTPLUG
-  pins: [J10.19, Module1.143]
+  pins: [J10.HPD/HEAC-, Module1.HDMI1_HOTPLUG]
 - name: /CM5_HighSpeed/HDMI1_SCL
-  pins: [J10.15, Module1.147]
+  pins: [J10.SCL, Module1.HDMI1_SCL]
 - name: /CM5_HighSpeed/HDMI1_SDA
-  pins: [J10.16, Module1.145]
+  pins: [J10.SDA, Module1.HDMI1_SDA]
 - name: /CM5_HighSpeed/HDMI_5v
-  pins: [C13.1, J10.18, J22.18, U12.2]
+  pins: [C13.1, J10.+5V, J22.+5V, U12.OUT]
 - name: /CM5_HighSpeed/PCIE_CLK_N
-  pins: [J4.53, Module1.112]
+  pins: [J4.REFCLKn, Module1.PCIe_CLK_N]
 - name: /CM5_HighSpeed/PCIE_CLK_P
-  pins: [J4.55, Module1.110]
+  pins: [J4.REFCLKp, Module1.PCIe_CLK_P]
 - name: /CM5_HighSpeed/PCIE_PWR_EN
-  pins: [Module1.106, R14.1, U8.7]
+  pins: [Module1.PCIE_PWR_EN, R14.1, U8.EN]
 - name: /CM5_HighSpeed/PCIE_RX_N
-  pins: [J4.43, Module1.118]
+  pins: [J4.PETp0, Module1.PCIe_RX_N]
 - name: /CM5_HighSpeed/PCIE_RX_P
-  pins: [J4.41, Module1.116]
+  pins: [J4.PETn0, Module1.PCIe_RX_P]
 - name: /CM5_HighSpeed/PCIE_TX_N
-  pins: [J4.49, Module1.124]
+  pins: [J4.PERp0, Module1.PCIe_TX_N]
 - name: /CM5_HighSpeed/PCIE_TX_P
-  pins: [J4.47, Module1.122]
+  pins: [J4.PERn0, Module1.PCIe_TX_P]
 - name: /CM5_HighSpeed/PCIE_nCLKREQ
-  pins: [J4.52, Module1.102]
+  pins: [J4.nCLKREQ, Module1.PCIe_nCLKREQ]
 - name: /CM5_HighSpeed/PCIE_nRST
-  pins: [J4.50, Module1.109]
+  pins: [J4.nPERST, Module1.PCIe_nRST]
 - name: /CM5_HighSpeed/PCIE_nWAKE
-  pins: [J4.54, Module1.104]
+  pins: [J4.nPEWAKE, Module1.PCIE_nWAKE]
 - name: /CM5_HighSpeed/SCL0
-  pins: [J5.20, Module1.80]
+  pins: [J5.Pin_20, Module1.SCL0]
 - name: /CM5_HighSpeed/SCL1
-  pins: [J16.20, J6.2, R7.2]
+  pins: [J16.Pin_20, J6.Pin_2, R7.2]
 - name: /CM5_HighSpeed/SDA0
-  pins: [J5.21, Module1.82]
+  pins: [J5.Pin_21, Module1.SDA0]
 - name: /CM5_HighSpeed/SDA1
-  pins: [J16.21, J6.4, R6.2]
+  pins: [J16.Pin_21, J6.Pin_4, R6.2]
 - name: /CM5_HighSpeed/USB3-0-D_N
-  pins: [J12.A2, Module1.136]
+  pins: [J12.D-@A2, Module1.USB3-0-D_N]
 - name: /CM5_HighSpeed/USB3-0-D_P
-  pins: [J12.A3, Module1.134]
+  pins: [J12.D+@A3, Module1.USB3-0-D_P]
 - name: /CM5_HighSpeed/USB3-0-RX_N
-  pins: [J12.A6, Module1.128]
+  pins: [J12.SSRX+@A6, Module1.USB3-0-RX_N]
 - name: /CM5_HighSpeed/USB3-0-RX_P
-  pins: [J12.A5, Module1.130]
+  pins: [J12.SSRX-@A5, Module1.USB3-0-RX_P]
 - name: /CM5_HighSpeed/USB3-0-TX_N
-  pins: [J12.A9, Module1.140]
+  pins: [J12.SSTX+@A9, Module1.USB3-0-TX_N]
 - name: /CM5_HighSpeed/USB3-0-TX_P
-  pins: [J12.A8, Module1.142]
+  pins: [J12.SSTX-@A8, Module1.USB3-0-TX_P]
 - name: /CM5_HighSpeed/USB3-1-D_N
-  pins: [J12.B2, Module1.165]
+  pins: [J12.D-@B2, Module1.USB3-1-D_N]
 - name: /CM5_HighSpeed/USB3-1-D_P
-  pins: [J12.B3, Module1.163]
+  pins: [J12.D+@B3, Module1.USB3-1-D_P]
 - name: /CM5_HighSpeed/USB3-1-RX_N
-  pins: [J12.B6, Module1.157]
+  pins: [J12.SSRX+@B6, Module1.USB3-1-RX_N]
 - name: /CM5_HighSpeed/USB3-1-RX_P
-  pins: [J12.B5, Module1.159]
+  pins: [J12.SSRX-@B5, Module1.USB3-1-RX_P]
 - name: /CM5_HighSpeed/USB3-1-TX_N
-  pins: [J12.B9, Module1.169]
+  pins: [J12.SSTX+@B9, Module1.USB3-1-TX_N]
 - name: /CM5_HighSpeed/USB3-1-TX_P
-  pins: [J12.B8, Module1.171]
+  pins: [J12.SSTX-@B8, Module1.USB3-1-TX_P]
 - name: /CM5_HighSpeed/VBUS
-  pins: [C3.1, C7.1, C8.1, J12.A1, J12.B1, U6.6]
+  pins: [C3.1, C7.1, C8.1, J12.VBUS@A1, J12.VBUS@B1, U6.OUT]
 - name: /CM5_HighSpeed/VBUS_EN
-  pins: [Module1.111, U6.3]
+  pins: [Module1.VBUS_EN, U6.EN]
 - name: /PCIe-M2/FB
-  pins: [C11.2, R15.2, R16.1, U8.1]
+  pins: [C11.2, R15.2, R16.1, U8.FB]
 - name: /PCIe-M2/M2_3v3
   pins:
   - C11.1
@@ -588,27 +850,29 @@ nets:
   - C16.1
   - C17.1
   - C19.1
-  - D3.2
-  - J4.12
-  - J4.14
-  - J4.16
-  - J4.18
-  - J4.2
-  - J4.4
-  - J4.70
-  - J4.72
-  - J4.74
+  - D3.A
+  - J4.3.3V@12
+  - J4.3.3V@14
+  - J4.3.3V@16
+  - J4.3.3V@18
+  - J4.3.3V@2
+  - J4.3.3V@4
+  - J4.3.3V@70
+  - J4.3.3V@72
+  - J4.3.3V@74
   - L1.2
   - R15.1
-  - U7.1
-  - U7.4
+  - U7.EN
+  - U7.VDD
 - name: /USB2_N
-  pins: [J11.A7, J11.B7, Module1.103]
+  pins: [J11.D-@A7, J11.D-@B7, Module1.USB2_N]
 - name: /USB2_P
-  pins: [J11.A6, J11.B6, Module1.105]
+  pins: [J11.D+@A6, J11.D+@B6, Module1.USB2_P]
+- name: CT
+  pins: [C1.1, U3.CT@4, U3.CT@5]
 - name: GND
   pins:
-  - BT1.2
+  - BT1.-
   - C1.2
   - C10.2
   - C12.2
@@ -627,179 +891,177 @@ nets:
   - C7.2
   - C8.2
   - C9.2
-  - J10.11
-  - J10.17
-  - J10.2
-  - J10.5
-  - J10.8
-  - J10.SH1
-  - J10.SH2
-  - J10.SH3
-  - J10.SH4
-  - J11.A1
-  - J11.A12
-  - J11.B1
-  - J11.B12
-  - J11.S1
-  - J12.10
-  - J12.A4
-  - J12.A7
-  - J12.B4
-  - J12.B7
-  - J14.3
-  - J16.1
-  - J16.10
-  - J16.13
-  - J16.16
-  - J16.19
-  - J16.4
-  - J16.7
-  - J2.1
-  - J2.11
-  - J2.13
-  - J2.3
-  - J2.5
-  - J2.7
-  - J2.9
-  - J22.11
-  - J22.17
-  - J22.2
-  - J22.5
-  - J22.8
-  - J22.SH1
-  - J22.SH2
-  - J22.SH3
-  - J22.SH4
-  - J4.1
-  - J4.15
-  - J4.21
-  - J4.27
-  - J4.3
-  - J4.33
-  - J4.39
-  - J4.45
-  - J4.51
-  - J4.57
-  - J4.71
-  - J4.73
-  - J4.75
-  - J4.9
-  - J4.M1
-  - J4.M2
-  - J4.M3
-  - J4.M4
+  - J10.CKS
+  - J10.D0S
+  - J10.D1S
+  - J10.D2S
+  - J10.GND
+  - J10.SH@SH1
+  - J10.SH@SH2
+  - J10.SH@SH3
+  - J10.SH@SH4
+  - J11.GND@A1
+  - J11.GND@A12
+  - J11.GND@B1
+  - J11.GND@B12
+  - J11.SHIELD@S1
+  - J12.DRAIN@A7
+  - J12.DRAIN@B7
+  - J12.GND@A4
+  - J12.GND@B4
+  - J12.SHIELD@10
+  - J14.Pin_3
+  - J16.Pin_1
+  - J16.Pin_10
+  - J16.Pin_13
+  - J16.Pin_16
+  - J16.Pin_19
+  - J16.Pin_4
+  - J16.Pin_7
+  - J2.Pin_1
+  - J2.Pin_11
+  - J2.Pin_13
+  - J2.Pin_3
+  - J2.Pin_5
+  - J2.Pin_7
+  - J2.Pin_9
+  - J22.CKS
+  - J22.D0S
+  - J22.D1S
+  - J22.D2S
+  - J22.GND
+  - J22.SH@SH1
+  - J22.SH@SH2
+  - J22.SH@SH3
+  - J22.SH@SH4
+  - J4.GND2230
+  - J4.GND2242
+  - J4.GND2260
+  - J4.GND2280
+  - J4.GND@1
+  - J4.GND@15
+  - J4.GND@21
+  - J4.GND@27
+  - J4.GND@3
+  - J4.GND@33
+  - J4.GND@39
+  - J4.GND@45
+  - J4.GND@51
+  - J4.GND@57
+  - J4.GND@71
+  - J4.GND@73
+  - J4.GND@75
+  - J4.GND@9
   - J4.S1
   - J4.S2
-  - J5.1
-  - J5.10
-  - J5.13
-  - J5.16
-  - J5.19
-  - J5.4
-  - J5.7
-  - J7.11
-  - J7.6
-  - J8.14
-  - J8.20
-  - J8.25
-  - J8.30
-  - J8.34
-  - J8.39
-  - J8.6
-  - J8.9
-  - Module1.1
-  - Module1.107
-  - Module1.108
-  - Module1.113
-  - Module1.114
-  - Module1.119
-  - Module1.120
-  - Module1.125
-  - Module1.126
-  - Module1.13
-  - Module1.131
-  - Module1.132
-  - Module1.137
-  - Module1.138
-  - Module1.14
-  - Module1.144
-  - Module1.150
-  - Module1.155
-  - Module1.156
-  - Module1.161
-  - Module1.162
-  - Module1.167
-  - Module1.168
-  - Module1.173
-  - Module1.174
-  - Module1.179
-  - Module1.180
-  - Module1.185
-  - Module1.186
-  - Module1.191
-  - Module1.192
-  - Module1.197
-  - Module1.198
-  - Module1.2
-  - Module1.22
-  - Module1.23
-  - Module1.32
-  - Module1.33
-  - Module1.42
-  - Module1.43
-  - Module1.52
-  - Module1.53
-  - Module1.59
-  - Module1.60
-  - Module1.65
-  - Module1.66
-  - Module1.7
-  - Module1.71
-  - Module1.74
-  - Module1.8
-  - Module1.98
+  - J5.Pin_1
+  - J5.Pin_10
+  - J5.Pin_13
+  - J5.Pin_16
+  - J5.Pin_19
+  - J5.Pin_4
+  - J5.Pin_7
+  - J7.SHIELD@11
+  - J7.VSS
+  - J8.Pin_14
+  - J8.Pin_20
+  - J8.Pin_25
+  - J8.Pin_30
+  - J8.Pin_34
+  - J8.Pin_39
+  - J8.Pin_6
+  - J8.Pin_9
+  - Module1.GND@1
+  - Module1.GND@107
+  - Module1.GND@108
+  - Module1.GND@113
+  - Module1.GND@114
+  - Module1.GND@119
+  - Module1.GND@120
+  - Module1.GND@125
+  - Module1.GND@126
+  - Module1.GND@13
+  - Module1.GND@131
+  - Module1.GND@132
+  - Module1.GND@137
+  - Module1.GND@138
+  - Module1.GND@14
+  - Module1.GND@144
+  - Module1.GND@150
+  - Module1.GND@155
+  - Module1.GND@156
+  - Module1.GND@161
+  - Module1.GND@162
+  - Module1.GND@167
+  - Module1.GND@168
+  - Module1.GND@173
+  - Module1.GND@174
+  - Module1.GND@179
+  - Module1.GND@180
+  - Module1.GND@185
+  - Module1.GND@186
+  - Module1.GND@191
+  - Module1.GND@192
+  - Module1.GND@197
+  - Module1.GND@198
+  - Module1.GND@2
+  - Module1.GND@22
+  - Module1.GND@23
+  - Module1.GND@32
+  - Module1.GND@33
+  - Module1.GND@42
+  - Module1.GND@43
+  - Module1.GND@52
+  - Module1.GND@53
+  - Module1.GND@59
+  - Module1.GND@60
+  - Module1.GND@65
+  - Module1.GND@66
+  - Module1.GND@7
+  - Module1.GND@71
+  - Module1.GND@74
+  - Module1.GND@8
+  - Module1.GND@98
   - R12.2
   - R14.2
   - R16.2
   - R9.2
   - SW1.2
-  - U1.3
-  - U1.8
-  - U12.3
-  - U18.2
-  - U2.3
-  - U2.8
-  - U3.19
-  - U3.20
-  - U6.2
-  - U7.2
-  - U8.4
-  - U8.8
-  - U8.9
-- name: Net-(C1-Pad1)
-  pins: [C1.1, U3.4, U3.5]
+  - U1.GND@3
+  - U1.GND@8
+  - U12.GND
+  - U18.GND
+  - U2.GND@3
+  - U2.GND@8
+  - U3.SHIELD@19
+  - U3.SHIELD@20
+  - U6.GND
+  - U7.GND
+  - U8.PAD
+  - U8.PGND
+  - U8.SGND
 - name: Net-(D1-K)
-  pins: [D1.1, R10.1]
+  pins: [D1.K, R10.1]
 - name: Net-(D2-K)
-  pins: [D2.1, R1.1]
+  pins: [D2.K, R1.1]
 - name: Net-(D3-K)
-  pins: [D3.1, R17.1]
+  pins: [D3.K, R17.1]
 - name: Net-(J16-Pin_17)
-  pins: [J16.17, R8.2]
-- name: Net-(J4-DAS{slash}~{DSS}{slash}~{LED1})
-  pins: [J4.10, R17.2]
+  pins: [J16.Pin_17, R8.2]
+- name: Net-(J4-DAS/nDSS/nLED1)
+  pins: [J4.DAS/nDSS/nLED1, R17.2]
 - name: Net-(J4-SUSCLK)
-  pins: [J4.68, U7.3]
+  pins: [J4.SUSCLK, U7.Out]
 - name: Net-(Module1A-LED_nACT)
-  pins: [Module1.21, R1.2]
+  pins: [Module1.LED_nACT, R1.2]
 - name: Net-(U3-LEDG_K)
-  pins: [R3.1, U3.18]
+  pins: [R3.1, U3.LEDG_K]
 - name: Net-(U3-LEDY_K)
-  pins: [R2.1, U3.16]
+  pins: [R2.1, U3.LEDY_K]
 - name: Net-(U6-ILIM)
-  pins: [R12.1, U6.5]
+  pins: [R12.1, U6.ILIM]
 - name: Net-(U8-LX)
-  pins: [L1.1, U8.6]
+  pins: [L1.1, U8.LX]
 positions:
 - ref: BT1
   x: 90.0
@@ -1035,3 +1297,12 @@ positions:
   x: 208.6
   y: 137.0
   rot: 90.0
+copper_pours:
+- net: /+5v
+  layers: [B.Cu, F.Cu]
+- net: /CM5_HighSpeed/VBUS
+  layers: [B.Cu]
+- net: /PCIe-M2/M2_3v3
+  layers: [F.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu]

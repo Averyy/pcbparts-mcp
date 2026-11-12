@@ -40,8 +40,36 @@ def _make_sensor_id(model_name: str) -> str:
     return re.sub(r'[^a-z0-9]', '', model_name.lower())
 
 
-def _discover_product_urls() -> list[str]:
-    """Discover product page URLs from the Benewake homepage."""
+# Interface names in the product menu -> protocol tags. Ethernet, GMSL and 1000Base-T have no
+# tag in the catalog vocabulary, so those parts get none rather than a guessed serial bus.
+INTERFACE_PROTOCOLS = [
+    (re.compile(r"\bUART\b", re.I), "uart"),
+    (re.compile(r"\bI²C\b|\bI2C\b|\bIIC\b", re.I), "i2c"),
+    # "I/O": the switching-value output mode (TF-NOVA: "configured for I/O output mode")
+    (re.compile(r"\bI/O\b", re.I), "gpio"),
+    (re.compile(r"\bRS-?485\b", re.I), "rs485"),
+    (re.compile(r"\bRS-?232\b", re.I), "rs232"),
+    (re.compile(r"\bCAN\b"), "can"),
+    (re.compile(r"\bSPI\b"), "spi"),
+]
+
+
+def product_interfaces(html: str) -> dict[str, list[str]]:
+    """Protocols per product path from the product menu's "Interface" rows.
+
+    Every page carries the menu, e.g. `<a class="pro3_list" href="/tf-nova">` ...
+    `Interface<span>UART, I/O, I²C</span>`. A row that names no known bus maps to [].
+    """
+    interfaces = {}
+    for href, body in re.findall(r'<a class="pro3_list" href="([^"]+)">(.*?)</a>', html, re.S):
+        row = re.search(r"Interface\s*<span>(.*?)</span>", body, re.S)
+        if row:
+            interfaces[href] = sorted({tag for pattern, tag in INTERFACE_PROTOCOLS if pattern.search(row.group(1))})
+    return interfaces
+
+
+def _discover_product_urls() -> tuple[list[str], dict[str, list[str]]]:
+    """Discover product page URLs, and each listed product's interfaces, from the homepage."""
     resp = wafer.get(BASE_URL + "/", timeout=15, attempt_timeout=attempt_cap(15))
     resp.raise_for_status()
     html = resp.text
@@ -59,7 +87,7 @@ def _discover_product_urls() -> list[str]:
         if "/index.html" not in path:
             urls.add(path)
 
-    return sorted(urls)
+    return sorted(urls), product_interfaces(html)
 
 
 def _extract_protocols_from_meta(description: str) -> list[str]:
@@ -86,7 +114,7 @@ def scrape_benewake(output_dir: Path) -> None:
     source_url = BASE_URL
     logger.info("Discovering Benewake products from homepage...")
 
-    product_paths = _discover_product_urls()
+    product_paths, interfaces = _discover_product_urls()
     logger.info(f"Found {len(product_paths)} product pages")
 
     session = make_session(15)
@@ -141,8 +169,10 @@ def scrape_benewake(output_dir: Path) -> None:
             if description and len(description) > 200:
                 description = description[:197] + "..."
 
-            # Extract protocols from meta description
-            protocols = _extract_protocols_from_meta(description)
+            # The product menu's Interface row is the spec; the meta description is a fallback
+            # for a product the menu doesn't list
+            protocols = (interfaces[path] if path in interfaces
+                         else product_interfaces(html).get(path, _extract_protocols_from_meta(description)))
 
             sensors.append(make_sensor_entry(
                 sensor_id=sensor_id,

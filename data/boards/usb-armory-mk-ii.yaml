@@ -2,131 +2,3425 @@ name: USB Armory Mk II
 slug: usb-armory-mk-ii
 source: usbarmory/usbarmory
 format: kicad7
-description: "USB armory Mk II LAN: i.MX6ULL SoC, DDR3 SDRAM"
+description: 'USB armory Mk II LAN: i.MX6ULL SoC, DDR3 SDRAM'
 tags: [security, embedded]
 key_ics: [PF1510, MCIMX6Y2DVM09AB]
+outline:
+  width_mm: 75.36
+  height_mm: 19.57
+design_rules:
+  layers: 6
+  min_trace: 0.1mm
+  min_clearance: 0.1mm
+  min_drill: 0.15mm
+  min_via: 0.406mm
 components:
 - ref: C1
   value: 4.7uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: ZRB15XR61A475ME01D
+  description: X5R, 20%, 10V
+  digikey: 490-10984-1-ND
 - ref: C10
   value: 1uF
   footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
+- ref: C100
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+  decouples: U2
+- ref: C101
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C102
+  value: 10uF
+  footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
+  decouples: U2
+- ref: C103
+  value: 22uF
+  footprint: SM0402
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: CL05A226MQ5N6J8
+  description: X5R, 20%, 6.3V
+  digikey: 1276-7090-2-ND
+- ref: C104
+  value: 100nF
+  footprint: SM0402
+  voltage: 100V
+  tolerance: 20%
+  manufacturer: Murata Electronics
+  mpn: GRM155R62A104ME14D
+  description: X5R, 20%, 100V
+  digikey: 490-10459-2-ND
+- ref: C105
+  value: 68nF
+  footprint: SM0603
+  voltage: 100V
+  tolerance: 10%
+  manufacturer: TDK Corporation
+  mpn: C1608X7S2A683K080AB
+  description: X7S, 10%, 100V
+  digikey: 445-6034-6-ND
+- ref: C106
+  value: 1uF
+  footprint: SM0201
+  voltage: 16V
+  tolerance: 20%
+  manufacturer: Murata Electronics
+  mpn: GRM033R61C105ME15D
+  description: X5R, 20%, 16V
+  digikey: 490-18654-2-ND
+- ref: C107
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C108
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C109
+  value: 10nF
+  footprint: SM0201
+  voltage: 16V
+  tolerance: 10%
+  manufacturer: Murata Electronics
+  mpn: GRM033R71C103KE14D
+  description: X7R, 10%, 16V
+  digikey: 490-14453-2-ND
 - ref: C11
   value: 100nF
   footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C110
+  value: 1uF
+  footprint: SM0201
+  voltage: 16V
+  tolerance: 20%
+  manufacturer: Murata Electronics
+  mpn: GRM033R61C105ME15D
+  description: X5R, 20%, 16V
+  digikey: 490-18654-2-ND
+- ref: C111
+  value: 4.7uF
+  footprint: SM0603
+  voltage: 35V
+  tolerance: 10%
+  manufacturer: Murata Electronics North America
+  mpn: GRM188R6YA475KE15D
+  description: X5R, 10%, 35V
+  digikey: 490-7205-1-ND
+- ref: C112
+  value: 47uF
+  footprint: SM1210
+  voltage: 16V
+  tolerance: 10%
+  manufacturer: Murata Electronics
+  mpn: GRM32ER61C476KE15K
+  description: X5R, 10%, 16V
+  digikey: 490-6538-2-ND
+- ref: C113
+  value: 47uF
+  footprint: SM1210
+  voltage: 16V
+  tolerance: 10%
+  manufacturer: Murata Electronics
+  mpn: GRM32ER61C476KE15K
+  description: X5R, 10%, 16V
+  digikey: 490-6538-2-ND
+- ref: C114
+  value: 47uF
+  footprint: SM1210
+  voltage: 16V
+  tolerance: 10%
+  manufacturer: Murata Electronics
+  mpn: GRM32ER61C476KE15K
+  description: X5R, 10%, 16V
+  digikey: 490-6538-2-ND
+- ref: C115
+  value: 4.7uF
+  footprint: SM1210
+  voltage: 100V
+  tolerance: 10%
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL32B475KCVZW6E
+  description: X7R, 10%, 100V
+  digikey: 1276-7060-2-ND
+- ref: C116
+  value: 4.7uF
+  footprint: SM1210
+  voltage: 100V
+  tolerance: 10%
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL32B475KCVZW6E
+  description: X7R, 10%, 100V
+  digikey: 1276-7060-2-ND
+- ref: C117
+  value: 4.7uF
+  footprint: SM1210
+  voltage: 100V
+  tolerance: 10%
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL32B475KCVZW6E
+  description: X7R, 10%, 100V
+  digikey: 1276-7060-2-ND
 - ref: C12
   value: 100nF
   footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
 - ref: C13
   value: 2.2uF
   footprint: SM0402
+  voltage: 25V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM155R61E225ME15D
+  description: X5R, 20%, 25V
+  digikey: 490-10457-1-ND
+  decouples: U5
 - ref: C14
   value: 1uF
   footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
 - ref: C15
   value: 1uF
   footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
 - ref: C16
   value: 47uF
   footprint: SM0603
+  voltage: 6.3V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM188R60J476ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-13247-1-ND
 - ref: C17
   value: 10uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
+  decouples: U1
 - ref: C18
   value: 10uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
+  decouples: U1
+- ref: C19
+  value: 47pF
+  footprint: SM0201
+  voltage: 50V
+  tolerance: 5%
+  manufacturer: Murata Electronics
+  mpn: GRM0335C1H470JA01D
+  description: C0G, 5%, 50V
+  digikey: 490-6129-6-ND
 - ref: C2
   value: 4.7uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: ZRB15XR61A475ME01D
+  description: X5R, 20%, 10V
+  digikey: 490-10984-1-ND
 - ref: C20
   value: 10uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
 - ref: C21
   value: 10uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
 - ref: C22
   value: 10uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
 - ref: C23
   value: 4.7uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: ZRB15XR61A475ME01D
+  description: X5R, 20%, 10V
+  digikey: 490-10984-1-ND
 - ref: C24
   value: 10uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
 - ref: C25
   value: 1uF
   footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
 - ref: C26
   value: 10uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
 - ref: C27
   value: 470nF
   footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM033R60J474ME90D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10410-2-ND
+- ref: C28
+  value: 16pF
+  footprint: SM0201
+  voltage: 25V
+  tolerance: 1%
+  manufacturer: KEMET
+  mpn: CBR02C160F3GAC
+  description: C0G, 1%, 25V
+  digikey: 399-8574-1-ND
+- ref: C29
+  value: 16pF
+  footprint: SM0201
+  voltage: 25V
+  tolerance: 1%
+  manufacturer: KEMET
+  mpn: CBR02C160F3GAC
+  description: C0G, 1%, 25V
+  digikey: 399-8574-1-ND
 - ref: C3
   value: 4.7uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: ZRB15XR61A475ME01D
+  description: X5R, 20%, 10V
+  digikey: 490-10984-1-ND
+- ref: C30
+  value: 18pF
+  footprint: SM0201
+  voltage: 50V
+  tolerance: 5%
+  manufacturer: Murata Electronics North America
+  mpn: GRM0335C1H180JA01D
+  description: C0G, 5%, 50V
+  digikey: 490-6117-2-ND
+- ref: C31
+  value: 18pF
+  footprint: SM0201
+  voltage: 50V
+  tolerance: 5%
+  manufacturer: Murata Electronics North America
+  mpn: GRM0335C1H180JA01D
+  description: C0G, 5%, 50V
+  digikey: 490-6117-2-ND
 - ref: C32
   value: 10uF
   footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
+- ref: C33
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C34
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C35
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C36
+  value: 4.7uF
+  footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: ZRB15XR61A475ME01D
+  description: X5R, 20%, 10V
+  digikey: 490-10984-1-ND
+- ref: C37
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C38
+  value: 1uF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
+- ref: C39
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
 - ref: C4
   value: 1uF
   footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
+- ref: C40
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C41
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C42
+  value: 18pF
+  footprint: SM0201
+  voltage: 50V
+  tolerance: 5%
+  manufacturer: Murata Electronics North America
+  mpn: GRM0335C1H180JA01D
+  description: C0G, 5%, 50V
+  digikey: 490-6117-2-ND
+- ref: C43
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C44
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C45
+  value: 10uF
+  footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
+- ref: C46
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C47
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C48
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C49
+  value: 1uF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
+  decouples: U2
+- ref: C5
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C50
+  value: 1uF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
+  decouples: U2
+- ref: C51
+  value: 10uF
+  footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
+- ref: C52
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C53
+  value: 10uF
+  footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
+- ref: C54
+  value: 10uF
+  footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
+- ref: C55
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C56
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C57
+  value: 22uF
+  footprint: SM0402
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: CL05A226MQ5N6J8
+  description: X5R, 20%, 6.3V
+  digikey: 1276-7090-2-ND
+- ref: C58
+  value: 1uF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
+- ref: C59
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C6
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  digikey: 490-10430-2-ND
+- ref: C60
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C61
+  value: 1uF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
+- ref: C62
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C63
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C64
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+- ref: C65
+  value: 10nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics
+  mpn: GCM033R71A103MA03D
+  description: X7R, 20%, 10V
+  digikey: 490-GCM033R71A103MA03DDKR-ND
+- ref: C66
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C67
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C68
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C69
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C7
+  value: 100nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R61A104ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-5405-2-ND
+  decouples: U5
+- ref: C70
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C71
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C72
+  value: 10nF
+  footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics
+  mpn: GCM033R71A103MA03D
+  description: X7R, 20%, 10V
+  digikey: 490-GCM033R71A103MA03DDKR-ND
+- ref: C73
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C74
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C75
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C76
+  value: 100nF
+  footprint: SM0402
+  voltage: 100V
+  tolerance: 20%
+  manufacturer: Murata Electronics
+  mpn: GRM155R62A104ME14D
+  description: X5R, 20%, 100V
+  digikey: 490-10459-2-ND
+- ref: C77
+  value: 22uF
+  footprint: SM0402
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: CL05A226MQ5N6J8
+  description: X5R, 20%, 6.3V
+  digikey: 1276-7090-2-ND
+- ref: C78
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C79
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
 - ref: C8
   value: 1uF
   footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
+- ref: C80
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+  decouples: U2
+- ref: C81
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C82
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C83
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C84
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C85
+  value: 4.7uF
+  footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: ZRB15XR61A475ME01D
+  description: X5R, 20%, 10V
+  digikey: 490-10984-1-ND
+- ref: C86
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C87
+  value: 22uF
+  footprint: SM0402
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: CL05A226MQ5N6J8
+  description: X5R, 20%, 6.3V
+  digikey: 1276-7090-2-ND
+  decouples: U2
+- ref: C88
+  value: 4.7uF
+  footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: ZRB15XR61A475ME01D
+  description: X5R, 20%, 10V
+  digikey: 490-10984-1-ND
+  decouples: U2
+- ref: C89
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+  decouples: U2
 - ref: C9
   value: 1uF
   footprint: SM0201
+  voltage: 10V
+  tolerance: 20%
   manufacturer: Murata Electronics North America
+  mpn: GRM033R61A105ME15D
+  description: X5R, 20%, 10V
+  digikey: 490-13226-2-ND
+- ref: C90
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+  decouples: U2
+- ref: C91
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C92
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C93
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C94
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C95
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C96
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: C97
+  value: 10uF
+  footprint: SM0402
+  voltage: 10V
+  tolerance: 20%
+  manufacturer: Samsung Electro-Mechanics
+  mpn: CL05A106MP8NUB8
+  description: X5R, 20%, 10V
+  digikey: 1276-6830-1-ND
+- ref: C98
+  value: 22uF
+  footprint: SM0402
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: CL05A226MQ5N6J8
+  description: X5R, 20%, 6.3V
+  digikey: 1276-7090-2-ND
+- ref: C99
+  value: 220nF
+  footprint: SM0201
+  voltage: 6.3V
+  tolerance: 20%
+  manufacturer: Murata Electronics North America
+  mpn: GRM033R60J224ME15D
+  description: X5R, 20%, 6.3V
+  digikey: 490-10407-1-ND
+- ref: D1
+  value: white LED
+  footprint: SM0603_LED
+  voltage: 2.85V
+  current: 5mA
+  manufacturer: OSRAM Opto Semiconductors Inc.
+  mpn: LW Q38E-Q1OO-3K6L-1
+  description: LED, white
+  digikey: 475-2831-2-ND
+- ref: D2
+  value: blue LED
+  footprint: SM0603_LED
+  voltage: 2.85V
+  current: 5mA
+  manufacturer: OSRAM Opto Semiconductors Inc.
+  mpn: LB Q39G-L2OO-35-1
+  description: LED, blue
+  digikey: 475-2816-2-ND
+- ref: D4
+  value: NSR20F30NXT5G
+  footprint: DSN2
+  voltage: 30V
+  current: 2.0A
+  manufacturer: ON Semiconductor
+  mpn: NSR20F30NXT5G
+  description: Schottky, 30V, 2.0A, 480mV@2A
+  digikey: NSR20F30NXT5GOSTR-ND
+- ref: D5
+  value: SMAJ58CA
+  footprint: DO-214AC
+  manufacturer: Bourns Inc.
+  mpn: SMAJ58CA
+  description: TVS diode, 58V
+  digikey: SMAJ58CABDKR-ND
+- ref: D6
+  value: CTLSH10-100L
+  footprint: TLM364
+  manufacturer: Central Semiconductor Corp
+  mpn: CTLSH10-100L TR13 PBFREE
+  description: Diode Schottky 100V 10A
+  digikey: 3372-SB10100LTR-ND
+  pin_count: 3
+- ref: J1
+  value: USBC-RECEPTACLE
+  footprint: MOLEX_105450-0101
+  manufacturer: Molex
+  mpn: 105450-0101
+  description: Type-C Receptacle
+  digikey: WM12856TR-ND
+  pin_count: 25
+  nc_pins: {TX1+: A2, TX1-: A3, SBU1: A8, RX2-: A10, RX2+: A11, TX2+: B2, TX2-: B3, SBU2: B8, RX1-: B10, RX1+: B11}
+- ref: J2
+  value: 7499210121A
+  footprint: WURTH_7499210121A
+  manufacturer: "W\xFCrth Elektronik"
+  mpn: 7499210121A
+  description: RJ45 connector
+  digikey: 732-4974-ND
+  pin_count: 16
+  nc_pins: {NC@7: '7', NC@8: '8'}
 - ref: L1
   value: 1uH
   footprint: SM0603
+  tolerance: 20%
+  current: 1.7A
   manufacturer: Murata Electronics North America
+  mpn: DFE18SAN1R0MG0L
+  description: 20%, 1.7A, 128 mOhm
+  digikey: 490-16577-1-ND
 - ref: L2
   value: 1uH
   footprint: SM0603
+  tolerance: 20%
+  current: 1.7A
   manufacturer: Murata Electronics North America
+  mpn: DFE18SAN1R0MG0L
+  description: 20%, 1.7A, 128 mOhm
+  digikey: 490-16577-1-ND
 - ref: L3
   value: 1uH
   footprint: SM0603
+  tolerance: 20%
+  current: 1.7A
   manufacturer: Murata Electronics North America
+  mpn: DFE18SAN1R0MG0L
+  description: 20%, 1.7A, 128 mOhm
+  digikey: 490-16577-1-ND
+- ref: L4
+  value: 47uH
+  footprint: WE-LQS-5040
+  tolerance: 20%
+  current: 1A
+  manufacturer: "W\xFCrth Elektronik"
+  mpn: '74404054470'
+  description: 20%, 1A, 272 mOhm
+  digikey: 732-5524-6-ND
+- ref: Q1
+  value: MMBTA56
+  footprint: SOT-23
+  manufacturer: Onsemi
+  mpn: MMBTA56LT1G
+  description: PNP Driver Transistor
+  digikey: MMBTA56LT1GOSTR-ND
+  pin_count: 3
 - ref: R1
   value: 100kohm
   footprint: SM0201
+  tolerance: 5%
+  power: 50mW
   manufacturer: Vishay Dale
+  mpn: CRCW0201100KJNED
+  description: 5%, 50mW
+  digikey: 541-100KAGTR-ND
+- ref: R10
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R11
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R12
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R13
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R14
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R15
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R16
+  value: 22ohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020122R0JNED
+  description: 5%, 50mW
+  digikey: 541-22AGTR-ND
+- ref: R17
+  value: 4.7kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW02014K70JNED
+  description: 5%, 50mW
+  digikey: 541-4.7KAGTR-ND
+- ref: R18
+  value: 4.7kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW02014K70JNED
+  description: 5%, 50mW
+  digikey: 541-4.7KAGTR-ND
+- ref: R19
+  value: 1.8kohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-1GNF1801C
+  description: 1%, 50mW
+  digikey: P122788CT-ND
 - ref: R2
   value: 100kohm
   footprint: SM0201
+  tolerance: 5%
+  power: 50mW
   manufacturer: Vishay Dale
+  mpn: CRCW0201100KJNED
+  description: 5%, 50mW
+  digikey: 541-100KAGTR-ND
+- ref: R20
+  value: 680ohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-1GNF6800C
+  description: 1%, 50mW
+  digikey: P123124CT-ND
+- ref: R21
+  value: 2.2kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW02012K20JNED
+  description: 5%, 50mW
+  digikey: 541-2.2KAGDKR-ND
 - ref: R22
   value: 100kohm
   footprint: SM0201
+  tolerance: 5%
+  power: 50mW
   manufacturer: Vishay Dale
+  mpn: CRCW0201100KJNED
+  description: 5%, 50mW
+  digikey: 541-100KAGTR-ND
+- ref: R23
+  value: 6.49kohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW02016K49FNED
+  description: 1%, 50mW
+  digikey: 541-CRCW02016K49FNEDTR-ND
+  pulldown: U8.RBIAS
+- ref: R24
+  value: 2.2kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW02012K20JNED
+  description: 5%, 50mW
+  digikey: 541-2.2KAGDKR-ND
+- ref: R25
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R26
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+  pulldown: /Crystals/JTAG_MOD
+- ref: R27
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R28
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R29
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R3
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R30
+  value: 220ohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW0201220RFNED
+  description: 1%, 50mW
+  digikey: 541-CRCW0201220RFNEDDKR-ND
+- ref: R31
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+  pulldown: /DDR/DRAM_SDCKE0
+- ref: R32
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R33
+  value: 100kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW0201100KJNED
+  description: 5%, 50mW
+  digikey: 541-100KAGTR-ND
+  pulldown: /USB/USB1_VBUS
+- ref: R34
+  value: 1Mohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW02011M00FKED
+  description: 1%, 50mW
+  digikey: 541-1.00MAABTR-ND
+- ref: R35
+  value: 220ohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW0201220RFNED
+  description: 1%, 50mW
+  digikey: 541-CRCW0201220RFNEDDKR-ND
+- ref: R36
+  value: 301kohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-1GNF3013C
+  description: 1%, 50mW
+  digikey: P122918TR-ND
+  pulldown: U7.RCLASS
+- ref: R37
+  value: 68.1kohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-1GNF6812C
+  description: 1%, 50mW
+  digikey: P123130DKR-ND
+  pulldown: U7.FSEL
+- ref: R38
+  value: 25.5kohm
+  footprint: SM0805
+  tolerance: 1%
+  power: 250mW
+  manufacturer: KOA Speer Electronics, Inc.
+  mpn: RK73H2ATTD2552F
+  description: 1%, 250mW
+  digikey: 2019-RK73H2ATTD2552FTR-ND
+  pulldown: /Ethernet/V_POE
+- ref: R39
+  value: 30.1kohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-1GNF3012C
+  description: 1%, 50mW
+  digikey: P122917DKR-ND
+- ref: R4
+  value: 10ohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110R0JNED
+  description: 5%, 50mW
+  digikey: 541-10AGDKR-ND
+- ref: R40
+  value: 120kohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-1GNF1203C
+  description: 1%, 50mW
+  digikey: P122695DKR-ND
+  pulldown: U7.ILIM
+- ref: R41
+  value: 158kohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-1GNF1583C
+  description: 1%, 50mW
+  digikey: P122753TR-ND
+- ref: R42
+  value: 49.9kohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Panasonic Electronic Components
+  mpn: ERJ-1GNF4992C
+  description: 1%, 50mW
+  digikey: P123047TR-ND
+  pulldown: U7.FB
+- ref: R47
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R48
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R5
+  value: 2.2Mohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Yageo
+  mpn: RC0201JR-072M2L
+  description: 5%, 50mW
+  digikey: YAG2882TR-ND
+- ref: R50
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+  pulldown: /DDR/DRAM_RESET_B
+- ref: R51
+  value: 240ohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW0201240RFNED
+  description: 1%, 50mW
+  digikey: 541-2949-2-ND
+- ref: R52
+  value: 470ohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW0201470RJNED
+  description: 5%, 50mW
+  digikey: 541-470AGCT-ND
+- ref: R53
+  value: 240ohm
+  footprint: SM0201
+  tolerance: 1%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW0201240RFNED
+  description: 1%, 50mW
+  digikey: 541-2949-2-ND
+- ref: R57
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R6
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R7
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R8
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: R9
+  value: 10kohm
+  footprint: SM0201
+  tolerance: 5%
+  power: 50mW
+  manufacturer: Vishay Dale
+  mpn: CRCW020110K0JNED
+  description: 5%, 50mW
+  digikey: 541-10KAGTR-ND
+- ref: SW1
+  value: CAS-220TA
+  footprint: CAS-220-A
+  manufacturer: Nidec Copal Electronics
+  mpn: CAS-220TA
+  description: DPDT slide switch
+  digikey: CAS220JTR-ND
+  pin_count: 6
 - ref: U1
   value: MC34PF1510A6EP
   footprint: SOT1369-4
   manufacturer: NXP
+  mpn: MC34PF1510A6EP
+  description: PMIC
+  digikey: 568-14653-1-ND
+  pin_count: 41
+  nc_pins: {nINT: '9', nRESETBMCU: '10', NC@33: '33', NC@34: '34', LDO2P7: '38', USBPHY: '39'}
+- ref: U10
+  value: MT41K256M16
+  footprint: MICRON-FBGA-96
+  manufacturer: Micron
+  mpn: MT41K256M16TW-107:P
+  description: DDR RAM
+  digikey: 557-1792-ND
+  pin_count: 96
+  nc_pins: {NC_J1: J1, NC_J9: J9, NC_L1: L1, NC_L9: L9}
+- ref: U13
+  value: ATECC608B
+  footprint: UDFN-8
+  manufacturer: Microchip
+  mpn: ATECC608B-MAHDA
+  description: Secure Element
+  digikey: ATECC608B-MAHDA-SCT-ND
+  pin_count: 9
+  nc_pins: {NC1: '1', NC2: '2', NC3: '3', NC4: '7'}
+- ref: U14
+  value: TUSB320
+  footprint: RWB-QFN-12
+  manufacturer: Texas Instruments
+  mpn: TUSB320IRWBR
+  description: Type-C port controller
+  digikey: 296-42175-1-ND
+  pin_count: 12
+  nc_pins: {ID: '9'}
+- ref: U15
+  value: TPD1E10B06
+  footprint: X1SON-2
+  manufacturer: Texas Instruments
+  mpn: TPD1E10B06DPYR
+  description: ESD protection
+  digikey: 296-30406-1-ND
+- ref: U2
+  value: MX6UL-VM
+  footprint: SOT1534-2
+  mpn: MCIMX6Y2DVM09AB
+  manufacturer: NXP
+  description: SoC
+  digikey: 568-14995-ND
+  pin_count: 289
+  nc_pins: {SD1_DATA3: A2, nNAND_READY: A3, NAND_CLE: A4, LCD_CLK: A8, LCD_DATA01: A9, LCD_DATA09: A11, LCD_DATA18: A13, LCD_DATA22: A14,
+    SD1_DATA2: B1, SD1_DATA1: B2, SD1_DATA0: B3, nNAND_CE1: B5, LCD_ENABLE: B8, LCD_DATA00: B9, LCD_DATA08: B11, LCD_DATA17: B13,
+    LCD_DATA21: B14, LCD_DATA23: B16, SD1_CLK: C1, SD1_CMD: C2, nNAND_CE0: C5, LCD_VSYNC: C9, LCD_DATA04: C10, LCD_DATA12: C12,
+    LCD_DATA16: C13, LCD_DATA20: C14, CSI_DATA07: D1, CSI_DATA06: D2, CSI_DATA05: D3, CSI_DATA04: D4, nNAND_WP: D5, LCD_HSYNC: D9,
+    LCD_DATA03: D10, LCD_DATA07: D11, LCD_DATA15: D13, LCD_DATA19: D14, ENET1_RX_ER: D15, CSI_DATA03: E1, CSI_DATA02: E2,
+    CSI_PIXCLK: E5, NAND_DQS: E6, LCD_RESET: E9, LCD_DATA02: E10, LCD_DATA10: E12, ENET1_TX_DATA1: E14, ENET1_TX_DATA0: E15,
+    ENET1_RX_EN: E16, ENET1_RX_DATA1: E17, DRAM_ODT1: F1, CSI_VSYNC: F2, CSI_HSYNC: F3, CSI_MCLK: F5, ENET1_TX_CLK: F14, ENET1_RX_DATA0: F16,
+    UART5_TX_DATA: F17, UART5_RX_DATA: G13, nUART3_RTS: G14, UART4_RX_DATA: G16, nDRAM_CS1: H5, nUART2_RTS: H14, nUART3_CTS: H15,
+    UART3_RX_DATA: H16, UART3_TX_DATA: H17, DRAM_SDCKE1: J3, nUART1_RTS: J14, nUART2_CTS: J15, UART1_TX_DATA: K14, nUART1_CTS: K15,
+    UART1_RX_DATA: K16, GPIO1_IO01: L15, GPIO1_IO04: M16, GPIO1_IO05: M17, SNVS_TAMPER5: N8, SNVS_TAMPER8: N9, SNVS_TAMPER7: N10,
+    SNVS_TAMPER6: N11, SNVS_TAMPER4: P9, SNVS_TAMPER3: P10, SNVS_TAMPER2: P11, CCM_CLK1_N: P16, CCM_CLK1_P: P17, SNVS_TAMPER9: R6,
+    ONOFF: R8, SNVS_TAMPER1: R9, SNVS_TAMPER0: R10, GPANAIO: R13, SNVS_PMIC_ON_REQ: T9, USB_OTG2_DN: T13, CCM_PMIC_STBY_REQ: U9,
+    USB_OTG2_DP: U13, nUSB_OTG1_CHD: U16}
+- ref: U3
+  value: EMMC16G
+  footprint: FBGA-153
+  manufacturer: Kingston
+  mpn: EMMC16G-TB29-PZ90
+  description: eMMC 16GB
+  partno: '-'
+  pin_count: 153
+  nc_pins: {NC3: A7, NC4: A8, NC5: A9, NC6: A10, NC7: A11, NC8: A12, NC9: A13, NC10: A14, NC11: B1, NC12: B7, NC13: B8, NC14: B9,
+    NC15: B10, NC16: B11, NC17: B12, NC18: B13, NC19: B14, NC24: C8, NC25: C9, NC26: C10, NC27: C11, NC28: C12, NC29: C13,
+    NC30: C14, NC33: D3, NC35: D12, NC36: D13, NC37: D14, NC38: E1, NC39: E2, NC40: E3, NC41: E5, NC42: E8, NC43: E9, NC44: E10,
+    NC45: E12, NC46: E13, NC47: E14, NC48: F1, NC49: F2, NC50: F3, NC51: F10, NC52: F12, NC53: F13, NC54: F14, NC55: G1, NC56: G2,
+    NC57: G3, NC58: G10, NC59: G12, NC60: G13, NC61: G14, NC62: H1, NC63: H2, NC64: H3, DS: H5, NC65: H12, NC66: H13, NC67: H14,
+    NC68: J1, NC69: J2, NC70: J3, NC71: J12, NC72: J13, NC73: J14, NC74: K1, NC75: K2, NC76: K3, NC77: K6, NC78: K7, NC79: K10,
+    NC80: K12, NC81: K13, NC82: K14, NC83: L1, NC84: L2, NC85: L3, NC86: L12, NC87: L13, NC88: L14, NC89: M1, NC90: M2, NC91: M3,
+    NC92: M7, NC93: M8, NC94: M9, NC95: M10, NC96: M11, NC97: M12, NC98: M13, NC99: M14, NC102: N6, NC103: N7, NC104: N8,
+    NC105: N9, NC106: N10, NC107: N11, NC108: N12, NC109: N13, NC110: N14, NC111: P1, NC112: P2, NC113: P7, NC114: P8, NC115: P9,
+    NC116: P10, NC117: P11, NC118: P12, NC119: P13, NC120: P14}
+- ref: U4
+  value: SE050
+  footprint: SOT1969-1
+  manufacturer: NXP
+  mpn: SE050C1HQ1/Z01SCZ
+  description: Secure Element
+  digikey: 568-15377-2-ND
+  pin_count: 21
+  nc_pins: {NC@2: '2', ISO_7816_IO1: '3', NC@4: '4', NC@5: '5', NC@6: '6', NC@7: '7', NC@8: '8', ISO_7816_CLK: '13', ISO_7816_IO2: '16',
+    NC@20: '20'}
+- ref: U5
+  value: FPF2286UCX
+  footprint: WLCSP-6
+  manufacturer: ON Semiconductor
+  mpn: FPF2286UCX
+  description: OVP
+  digikey: FPF2286UCXOSCT-ND
+  pin_count: 6
+- ref: U6
+  value: TPD4E05U06
+  footprint: DQA-USON-10
+  manufacturer: Texas Instruments
+  mpn: TPD4E05U06DQAR
+  description: ESD protection
+  digikey: 296-35765-2-ND
+  pin_count: 10
+- ref: U7
+  value: KTA1136
+  footprint: TQFN44-16
+  manufacturer: Kinetic Technologies
+  mpn: KTA1136EUAE-TR
+  description: PoE PD Controller
+  mouser: 389-KTA1136EUAE-TR
+  pin_count: 17
+  nc_pins: {BIAS: '14', RSV: '16'}
+- ref: U8
+  value: DP83825I
+  footprint: XCVR_DP83825IRMQR
+  manufacturer: Texas Instruments
+  mpn: DP83825IRMQR
+  description: Ethernet PHY
+  digikey: 296-DP83825IRMQTTR-ND
+  pin_count: 25
+  nc_pins: {XO: '12'}
+- ref: U9
+  value: TPD4E1U06
+  footprint: SOT-65
+  manufacturer: Texas Instruments
+  mpn: TPD4E1U06DCK
+  description: ESD protection
+  digikey: 296-39347-2-ND
+  pin_count: 6
+  nc_pins: {NC: '5'}
+- ref: Y1
+  value: 24MHz
+  footprint: '3225'
+  manufacturer: Epson
+  mpn: TSX-3225 24.0000MF15X-AC3
+  description: 9 pF
+  digikey: SER3635TR-ND
+  pin_count: 4
+- ref: Y2
+  value: 32.768kHz
+  footprint: CM7V-T1A
+  manufacturer: Micro Crystal
+  mpn: CM7V-T1A-32.768kHz-12.5pF-20PPM-TA-QC
+  description: 12.5pF
+  mouser: 428-200458-MG01
+nets:
+- name: /Boot/BT_CFG1[5]
+  pins: [R48.1, U2.LCD_DATA05, U2.LCD_DATA11, U2.LCD_DATA14]
+- name: /Boot/BT_CFG1[6]
+  pins: [R47.1, U2.LCD_DATA06]
+- name: /Boot/BT_CFG2[5]
+  pins: [R27.1, U2.LCD_DATA13]
+- name: /Crystals/JTAG_MOD
+  pins: [R26.1, U2.JTAG_MOD]
+- name: /Crystals/RTC_XTALI
+  pins: [C30.1, U2.RTC_XTALI, Y2.1]
+- name: /Crystals/RTC_XTALO
+  pins: [C31.1, U2.RTC_XTALO, Y2.2]
+- name: /Crystals/XTALI
+  pins: [C28.1, R5.1, U2.XTALI, Y1.3]
+- name: /Crystals/XTALO
+  pins: [C29.1, U2.XTALO, Y1.1]
+- name: /DDR/DDR_ZQ
+  pins: [R53.1, U10.ZQ]
+- name: /DDR/DRAM_A0
+  pins: [U10.A0, U2.DRAM_ADDR00]
+- name: /DDR/DRAM_A1
+  pins: [U10.A1, U2.DRAM_ADDR01]
+- name: /DDR/DRAM_A10
+  pins: [U10.A10/AP, U2.DRAM_ADDR10]
+- name: /DDR/DRAM_A11
+  pins: [U10.A11, U2.DRAM_ADDR11]
+- name: /DDR/DRAM_A12
+  pins: [U10.A12/nBC, U2.DRAM_ADDR12]
+- name: /DDR/DRAM_A13
+  pins: [U10.A13, U2.DRAM_ADDR13]
+- name: /DDR/DRAM_A14
+  pins: [U10.A14, U2.DRAM_ADDR14]
+- name: /DDR/DRAM_A15
+  pins: [U10.NC_M7_/_A15, U2.DRAM_ADDR15]
+- name: /DDR/DRAM_A2
+  pins: [U10.A2, U2.DRAM_ADDR02]
+- name: /DDR/DRAM_A3
+  pins: [U10.A3, U2.DRAM_ADDR03]
+- name: /DDR/DRAM_A4
+  pins: [U10.A4, U2.DRAM_ADDR04]
+- name: /DDR/DRAM_A5
+  pins: [U10.A5, U2.DRAM_ADDR05]
+- name: /DDR/DRAM_A6
+  pins: [U10.A6, U2.DRAM_ADDR06]
+- name: /DDR/DRAM_A7
+  pins: [U10.A7, U2.DRAM_ADDR07]
+- name: /DDR/DRAM_A8
+  pins: [U10.A8, U2.DRAM_ADDR08]
+- name: /DDR/DRAM_A9
+  pins: [U10.A9, U2.DRAM_ADDR09]
+- name: /DDR/DRAM_CAS_B
+  pins: [U10.nCAS, U2.nDRAM_CAS]
+- name: /DDR/DRAM_CS0_B
+  pins: [U10.nCS, U2.nDRAM_CS0]
+- name: /DDR/DRAM_D0
+  pins: [U10.DQ0, U2.DRAM_DATA00]
+- name: /DDR/DRAM_D1
+  pins: [U10.DQ6, U2.DRAM_DATA01]
+- name: /DDR/DRAM_D10
+  pins: [U10.DQ14, U2.DRAM_DATA10]
+- name: /DDR/DRAM_D11
+  pins: [U10.DQ13, U2.DRAM_DATA11]
+- name: /DDR/DRAM_D12
+  pins: [U10.DQ15, U2.DRAM_DATA12]
+- name: /DDR/DRAM_D13
+  pins: [U10.DQ10, U2.DRAM_DATA13]
+- name: /DDR/DRAM_D14
+  pins: [U10.DQ11, U2.DRAM_DATA14]
+- name: /DDR/DRAM_D15
+  pins: [U10.DQ9, U2.DRAM_DATA15]
+- name: /DDR/DRAM_D2
+  pins: [U10.DQ3, U2.DRAM_DATA02]
+- name: /DDR/DRAM_D3
+  pins: [U10.DQ4, U2.DRAM_DATA03]
+- name: /DDR/DRAM_D4
+  pins: [U10.DQ5, U2.DRAM_DATA04]
+- name: /DDR/DRAM_D5
+  pins: [U10.DQ7, U2.DRAM_DATA05]
+- name: /DDR/DRAM_D6
+  pins: [U10.DQ2, U2.DRAM_DATA06]
+- name: /DDR/DRAM_D7
+  pins: [U10.DQ1, U2.DRAM_DATA07]
+- name: /DDR/DRAM_D8
+  pins: [U10.DQ8, U2.DRAM_DATA08]
+- name: /DDR/DRAM_D9
+  pins: [U10.DQ12, U2.DRAM_DATA09]
+- name: /DDR/DRAM_DQM0
+  pins: [U10.LDM, U2.DRAM_DQM0]
+- name: /DDR/DRAM_DQM1
+  pins: [U10.UDM, U2.DRAM_DQM1]
+- name: /DDR/DRAM_RAS_B
+  pins: [U10.nRAS, U2.nDRAM_RAS]
+- name: /DDR/DRAM_RESET_B
+  pins: [R50.1, U10.nRESET, U2.DRAM_RESET]
+- name: /DDR/DRAM_SDBA0
+  pins: [U10.BA0, U2.DRAM_SDBA0]
+- name: /DDR/DRAM_SDBA1
+  pins: [U10.BA1, U2.DRAM_SDBA1]
+- name: /DDR/DRAM_SDBA2
+  pins: [U10.BA2, U2.DRAM_SDBA2]
+- name: /DDR/DRAM_SDCKE0
+  pins: [R31.1, U10.CKE, U2.DRAM_SDCKE0]
+- name: /DDR/DRAM_SDCLK0_N
+  pins: [R52.1, U10.nCK, U2.DRAM_SDCLK0_N]
+- name: /DDR/DRAM_SDCLK0_P
+  pins: [R52.2, U10.CK, U2.DRAM_SDCLK0_P]
+- name: /DDR/DRAM_SDODT0
+  pins: [U10.ODT, U2.DRAM_ODT0]
+- name: /DDR/DRAM_SDQS0_N
+  pins: [U10.nLDQS, U2.DRAM_SDQS0_N]
+- name: /DDR/DRAM_SDQS0_P
+  pins: [U10.LDQS, U2.DRAM_SDQS0_P]
+- name: /DDR/DRAM_SDQS1_N
+  pins: [U10.nUDQS, U2.DRAM_SDQS1_N]
+- name: /DDR/DRAM_SDQS1_P
+  pins: [U10.UDQS, U2.DRAM_SDQS1_P]
+- name: /DDR/DRAM_WE_B
+  pins: [U10.nWE, U2.nDRAM_SDWE]
+- name: /DDR/DRAM_ZQPAD
+  pins: [R51.1, U2.DRAM_ZQPAD]
+- name: /Ethernet/ENET2_RX_DATA0
+  pins: [U2.ENET2_RX_DATA0, U8.RX_D0]
+- name: /Ethernet/ENET2_RX_DATA1
+  pins: [U2.ENET2_RX_DATA1, U8.RX_D1]
+- name: /Ethernet/ENET2_RX_EN
+  pins: [U2.ENET2_RX_EN, U8.CRS_DV]
+- name: /Ethernet/ENET2_RX_ER
+  pins: [U2.ENET2_RX_ER, U8.RX_ER]
+- name: /Ethernet/ENET2_TX_CLK
+  pins: [C42.1, R4.1, U8.XI/50MHzIn]
+- name: /Ethernet/ENET2_TX_DATA0
+  pins: [U2.ENET2_TX_DATA0, U8.TX_D0]
+- name: /Ethernet/ENET2_TX_DATA1
+  pins: [U2.ENET2_TX_DATA1, U8.TX_D1]
+- name: /Ethernet/ENET2_TX_EN
+  pins: [U2.ENET2_TX_EN, U8.TX_EN]
+- name: /Ethernet/LED0
+  pins: [R35.2, U8.LED0]
+- name: /Ethernet/LED2
+  pins: [R30.2, U8.50MHzOut/LED2]
+- name: /Ethernet/RCT
+  pins: [C104.1, J2.RCT]
+- name: /Ethernet/RD_N
+  pins: [J2.RD-, U8.RD_M, U9.D2-]
+- name: /Ethernet/RD_P
+  pins: [J2.RD+, U8.RD_P, U9.D1-]
+- name: /Ethernet/TCT
+  pins: [C76.1, J2.TCT]
+- name: /Ethernet/TD_N
+  pins: [J2.TD-, U8.TD_M, U9.D2+]
+- name: /Ethernet/TD_P
+  pins: [J2.TD+, U8.TD_P, U9.D1+]
+- name: /Ethernet/V_POE
+  pins: [C105.1, D5.A1, J2.VC1+, R38.2, U7.VDD48I]
+- name: /PMIC/LICELL
+  pins: [C12.1, U1.LICELL]
+- name: /PMIC/VCORE
+  pins: [C14.1, U1.VCORE]
+- name: /PMIC/VDIG
+  pins: [C15.1, U1.VDIG]
+- name: /PMIC/VSNVS_3V
+  pins: [C27.1, R1.1, R22.1, U1.VSNVS]
+- name: /PMIC/VSYS
+  pins:
+  - C1.1
+  - C16.1
+  - C2.1
+  - C3.1
+  - C4.1
+  - C8.1
+  - C9.1
+  - R2.1
+  - U1.SW1IN
+  - U1.SW2IN
+  - U1.SW3IN
+  - U1.VLDO1IN
+  - U1.VLDO2IN
+  - U1.VLDO3IN
+  - U1.VSYS1
+  - U1.VSYS2
+- name: /Power/NVCC_PLL_OUT
+  pins: [C95.1, C97.1, U2.NVCC_PLL]
+- name: /Power/VDD_ARM_CAP
+  pins:
+  - C101.1
+  - C103.1
+  - C99.1
+  - U2.VDD_ARM_CAP1
+  - U2.VDD_ARM_CAP2
+  - U2.VDD_ARM_CAP3
+  - U2.VDD_ARM_CAP4
+- name: /Power/VDD_SNVS_CAP
+  pins: [C93.1, U2.VDD_SNVS_CAP]
+- name: /Power/VDD_SOC_CAP
+  pins:
+  - C92.1
+  - C94.1
+  - C96.1
+  - C98.1
+  - U2.VDD_SOC_CAP1
+  - U2.VDD_SOC_CAP10
+  - U2.VDD_SOC_CAP2
+  - U2.VDD_SOC_CAP3
+  - U2.VDD_SOC_CAP4
+  - U2.VDD_SOC_CAP5
+  - U2.VDD_SOC_CAP6
+  - U2.VDD_SOC_CAP7
+  - U2.VDD_SOC_CAP8
+  - U2.VDD_SOC_CAP9
+- name: /USB/USB1_CC1
+  pins: [J1.CC1, U14.CC1, U6.D2+, U6.NC@7]
+- name: /USB/USB1_CC2
+  pins: [J1.CC2, U14.CC2, U6.D2-, U6.NC@6]
+- name: /USB/USB1_DN
+  pins: [J1.D-@A7, J1.D-@B7, U2.USB_OTG1_DN, U6.D1+, U6.NC@10]
+- name: /USB/USB1_DP
+  pins: [J1.D+@A6, J1.D+@B6, U2.USB_OTG1_DP, U6.D1-, U6.NC@9]
+- name: /USB/USB1_VBUS
+  pins:
+  - C111.1
+  - C6.1
+  - D4.K
+  - J1.VBUS@A4
+  - J1.VBUS@A9
+  - J1.VBUS@B4
+  - J1.VBUS@B9
+  - R33.1
+  - R34.1
+  - U15.1
+  - U5.IN@A2
+  - U5.IN@B2
+- name: /USB/VDD_USB_CAP
+  pins: [C52.1, C53.1, U2.VDD_USB_CAP]
+- name: /eMMC/SD2_CLK
+  pins: [R16.1, U3.CLK]
+- name: /eMMC/SD2_CLK_R
+  pins: [R16.2, U2.nNAND_RE]
+- name: /eMMC/SD2_CMD
+  pins: [R7.2, U2.nNAND_WE, U3.CMD]
+- name: /eMMC/SD2_DATA0
+  pins: [R15.2, U2.NAND_DATA00, U3.DAT0]
+- name: /eMMC/SD2_DATA1
+  pins: [R14.2, U2.NAND_DATA01, U3.DAT1]
+- name: /eMMC/SD2_DATA2
+  pins: [R13.2, U2.NAND_DATA02, U3.DAT2]
+- name: /eMMC/SD2_DATA3
+  pins: [R12.2, U2.NAND_DATA03, U3.DAT3, U3.NC1]
+- name: /eMMC/SD2_DATA4
+  pins: [R11.2, U2.NAND_DATA04, U3.DAT4, U3.NC2]
+- name: /eMMC/SD2_DATA5
+  pins: [R10.2, U2.NAND_DATA05, U3.DAT5, U3.NC21, U3.NC31, U3.NC32]
+- name: /eMMC/SD2_DATA6
+  pins: [R9.2, U2.NAND_DATA06, U3.DAT6, U3.NC22]
+- name: /eMMC/SD2_DATA7
+  pins: [R8.2, U2.NAND_DATA07, U3.DAT7, U3.NC23]
+- name: /eMMC/SD2_RESET_B
+  pins: [R6.2, U2.NAND_ALE, U3.nRST]
+- name: /eMMC/VDDI
+  pins: [C35.1, C36.1, U3.NC20, U3.VDDI]
+- name: DCDC_3V3
+  pins:
+  - C107.1
+  - C108.1
+  - C11.1
+  - C24.1
+  - C26.1
+  - C33.1
+  - C39.1
+  - C41.1
+  - C43.1
+  - C44.1
+  - C45.1
+  - C46.1
+  - C47.1
+  - C48.1
+  - C5.1
+  - C51.1
+  - C54.1
+  - C55.1
+  - C58.1
+  - C61.1
+  - C62.1
+  - C64.1
+  - C65.1
+  - C72.1
+  - J2.LED_GREEN+
+  - J2.LED_YELLOW+
+  - L3.2
+  - R17.1
+  - R18.1
+  - R21.2
+  - R24.2
+  - R25.2
+  - R28.1
+  - R29.1
+  - R47.2
+  - R57.1
+  - SW1.A@4
+  - SW1.C@3
+  - U1.SW3FB
+  - U1.VDDIO
+  - U13.VCC
+  - U14.VDD
+  - U2.NVCC_CSI
+  - U2.NVCC_ENET
+  - U2.NVCC_GPIO
+  - U2.NVCC_LCD
+  - U2.NVCC_UART
+  - U3.VCC1
+  - U3.VCC2
+  - U3.VCC3
+  - U3.VCC4
+  - U4.VIN
+  - U8.VDDA3V3
+  - U8.VDDIO
+- name: DDR_1V35
+  pins:
+  - C10.1
+  - C20.1
+  - C22.1
+  - C57.1
+  - C59.1
+  - C60.1
+  - C63.1
+  - C67.1
+  - C68.1
+  - C69.1
+  - C70.1
+  - C71.1
+  - C73.1
+  - C74.1
+  - C75.1
+  - C77.1
+  - C78.1
+  - C79.1
+  - C81.1
+  - C82.1
+  - L2.2
+  - U1.SW2FB
+  - U1.VINREFDDR
+  - U10.VDD1
+  - U10.VDD2
+  - U10.VDD3
+  - U10.VDD4
+  - U10.VDD5
+  - U10.VDD6
+  - U10.VDD7
+  - U10.VDD8
+  - U10.VDD9
+  - U10.VDDQ1
+  - U10.VDDQ2
+  - U10.VDDQ3
+  - U10.VDDQ4
+  - U10.VDDQ5
+  - U10.VDDQ6
+  - U10.VDDQ7
+  - U10.VDDQ8
+  - U10.VDDQ9
+  - U2.NVCC_DRAM1
+  - U2.NVCC_DRAM2
+  - U2.NVCC_DRAM3
+  - U2.NVCC_DRAM4
+  - U2.NVCC_DRAM5
+  - U2.NVCC_DRAM6
+- name: DDR_VREF
+  pins:
+  - C25.1
+  - C66.1
+  - C83.1
+  - C84.1
+  - U1.VREFDDR
+  - U10.VREFCA
+  - U10.VREFDQ
+  - U2.DRAM_VREF
+- name: EMMC_1V8
+  pins:
+  - C32.1
+  - C34.1
+  - R10.1
+  - R11.1
+  - R12.1
+  - R13.1
+  - R14.1
+  - R15.1
+  - R6.1
+  - R7.1
+  - R8.1
+  - R9.1
+  - U1.VLDO1
+  - U2.NVCC_NAND
+  - U3.NC101
+  - U3.VCCQ1
+  - U3.VCCQ2
+  - U3.VCCQ3
+  - U3.VCCQ4
+  - U3.VCCQ5
+- name: ENET_MDC
+  pins: [U2.GPIO1_IO07, U8.MDC]
+- name: ENET_MDIO
+  pins: [R21.1, U2.GPIO1_IO06, U8.MDIO]
+- name: ENET_PWRDN
+  pins: [R24.1, U2.GPIO1_IO09, U8.INTR/PWRDN]
+- name: ENET_nRST
+  pins: [C56.1, R25.1, U2.GPIO1_IO08, U8.RST_N]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C100.2
+  - C101.2
+  - C102.2
+  - C103.2
+  - C104.2
+  - C107.2
+  - C108.2
+  - C11.2
+  - C111.2
+  - C112.2
+  - C113.2
+  - C114.2
+  - C12.2
+  - C13.2
+  - C14.2
+  - C15.2
+  - C16.2
+  - C17.2
+  - C18.2
+  - C2.2
+  - C20.2
+  - C21.2
+  - C22.2
+  - C23.2
+  - C24.2
+  - C25.2
+  - C26.2
+  - C27.2
+  - C28.2
+  - C29.2
+  - C3.2
+  - C30.2
+  - C31.2
+  - C32.2
+  - C33.2
+  - C34.2
+  - C35.2
+  - C36.2
+  - C37.2
+  - C38.2
+  - C39.2
+  - C4.2
+  - C40.2
+  - C41.2
+  - C42.2
+  - C43.2
+  - C44.2
+  - C45.2
+  - C46.2
+  - C47.2
+  - C48.2
+  - C49.2
+  - C5.2
+  - C50.2
+  - C51.2
+  - C52.2
+  - C53.2
+  - C54.2
+  - C55.2
+  - C56.2
+  - C57.2
+  - C58.2
+  - C59.2
+  - C6.2
+  - C60.2
+  - C61.2
+  - C62.2
+  - C63.2
+  - C64.2
+  - C65.2
+  - C66.2
+  - C67.2
+  - C68.2
+  - C69.2
+  - C7.2
+  - C70.2
+  - C71.2
+  - C72.2
+  - C73.2
+  - C74.2
+  - C75.2
+  - C76.2
+  - C77.2
+  - C78.2
+  - C79.2
+  - C8.2
+  - C80.2
+  - C81.2
+  - C82.2
+  - C83.2
+  - C84.2
+  - C85.2
+  - C86.2
+  - C87.2
+  - C88.2
+  - C89.2
+  - C9.2
+  - C90.2
+  - C91.2
+  - C92.2
+  - C93.2
+  - C94.2
+  - C95.2
+  - C96.2
+  - C97.2
+  - C98.2
+  - C99.2
+  - J1.GND@A1
+  - J1.GND@A12
+  - J1.GND@B1
+  - J1.GND@B12
+  - J1.SHIELD@S
+  - L4.2
+  - Q1.B
+  - R23.1
+  - R26.2
+  - R31.2
+  - R33.2
+  - R5.2
+  - R50.2
+  - R51.2
+  - R53.2
+  - SW1.A@1
+  - SW1.C@6
+  - U1.EP
+  - U1.GND@32
+  - U1.GND@40
+  - U1.STANDBY
+  - U1.VDDOTP
+  - U10.VSS1
+  - U10.VSS10
+  - U10.VSS11
+  - U10.VSS12
+  - U10.VSS2
+  - U10.VSS3
+  - U10.VSS4
+  - U10.VSS5
+  - U10.VSS6
+  - U10.VSS7
+  - U10.VSS8
+  - U10.VSS9
+  - U10.VSSQ1
+  - U10.VSSQ2
+  - U10.VSSQ3
+  - U10.VSSQ4
+  - U10.VSSQ5
+  - U10.VSSQ6
+  - U10.VSSQ7
+  - U10.VSSQ8
+  - U10.VSSQ9
+  - U13.GND
+  - U13.THERMAL
+  - U14.EN_N
+  - U14.GND
+  - U15.2
+  - U2.BOOT_MODE0
+  - U2.NGND_KEL0
+  - U2.TEST_MODE
+  - U2.VSS1
+  - U2.VSS10
+  - U2.VSS11
+  - U2.VSS12
+  - U2.VSS13
+  - U2.VSS14
+  - U2.VSS15
+  - U2.VSS16
+  - U2.VSS17
+  - U2.VSS18
+  - U2.VSS19
+  - U2.VSS2
+  - U2.VSS20
+  - U2.VSS21
+  - U2.VSS22
+  - U2.VSS23
+  - U2.VSS24
+  - U2.VSS25
+  - U2.VSS26
+  - U2.VSS27
+  - U2.VSS28
+  - U2.VSS29
+  - U2.VSS3
+  - U2.VSS30
+  - U2.VSS31
+  - U2.VSS32
+  - U2.VSS33
+  - U2.VSS34
+  - U2.VSS35
+  - U2.VSS36
+  - U2.VSS37
+  - U2.VSS38
+  - U2.VSS39
+  - U2.VSS4
+  - U2.VSS40
+  - U2.VSS41
+  - U2.VSS42
+  - U2.VSS43
+  - U2.VSS44
+  - U2.VSS45
+  - U2.VSS46
+  - U2.VSS47
+  - U2.VSS5
+  - U2.VSS6
+  - U2.VSS7
+  - U2.VSS8
+  - U2.VSS9
+  - U3.NC100
+  - U3.NC34
+  - U3.VSS1
+  - U3.VSS2
+  - U3.VSS3
+  - U3.VSS4
+  - U3.VSS5
+  - U3.VSS6
+  - U3.VSSQ1
+  - U3.VSSQ2
+  - U3.VSSQ3
+  - U3.VSSQ4
+  - U3.VSSQ5
+  - U4.ISO_14443_LA
+  - U4.ISO_14443_LB
+  - U4.ISO_7816_RST_N
+  - U4.Thermal
+  - U4.VSS
+  - U5.GND
+  - U5.OVLO
+  - U6.GND@3
+  - U6.GND@8
+  - U8.EP@25
+  - U8.GND@21
+  - U8.GND@9
+  - U9.GND
+  - Y1.2
+  - Y1.4
+- name: GNDPWR
+  pins:
+  - C105.2
+  - C106.2
+  - C109.2
+  - C110.2
+  - C115.2
+  - C116.2
+  - C117.2
+  - C19.2
+  - D5.A2
+  - J2.SHIELD
+  - J2.SHILED
+  - J2.VC1-
+  - R36.1
+  - R37.1
+  - R38.1
+  - R40.1
+  - R42.1
+  - U7.EP
+  - U7.GND
+  - U7.PGND
+  - U7.SCL
+  - U7.SDA
+- name: I2C1_SCL
+  pins: [R17.2, U1.SCL, U13.SCL, U14.SCL/OUT2, U2.GPIO1_IO02, U4.I2C_SCL]
+- name: I2C1_SDA
+  pins: [R18.2, U1.SDA, U13.SDA, U14.SDA/OUT1, U2.GPIO1_IO03, U4.I2C_SDA]
+- name: LDO2_3V3
+  pins:
+  - C21.1
+  - C38.1
+  - C40.1
+  - C85.1
+  - C86.1
+  - C91.1
+  - D1.A
+  - D2.A
+  - R3.1
+  - U1.VLDO2
+  - U2.ADC_VREFH
+  - U2.VDDA_ADC_3P3
+  - U2.VDD_HIGH_IN
+  - U2.VDD_SNVS_IN
+- name: Net-(C109-Pad1)
+  pins: [C109.1, R39.1]
+- name: Net-(D1-K)
+  pins: [D1.K, R19.1]
+- name: Net-(D2-K)
+  pins: [D2.K, R20.1]
+- name: Net-(J2-LED_GREEN-)
+  pins: [J2.LED_GREEN-, R35.1]
+- name: Net-(J2-LED_YELLOW-)
+  pins: [J2.LED_YELLOW-, R30.1]
+- name: Net-(Q1-C)
+  pins: [Q1.C, R42.2, U7.FB]
+- name: Net-(Q1-E)
+  pins: [Q1.E, R41.1]
+- name: Net-(SW1A-B)
+  pins: [R32.2, R48.2, SW1.B@2]
+- name: Net-(SW1B-B)
+  pins: [R27.2, SW1.B@5]
+- name: Net-(U1-ONKEY)
+  pins: [R2.2, U1.ONKEY]
+- name: Net-(U1-PWRON)
+  pins: [R1.2, U1.PWRON]
+- name: Net-(U1-SW1LX)
+  pins: [L1.1, U1.SW1LX]
+- name: Net-(U1-SW2LX)
+  pins: [L2.1, U1.SW2LX]
+- name: Net-(U1-SW3LX)
+  pins: [L3.1, U1.SW3LX]
+- name: Net-(U14-ADDR)
+  pins: [R28.2, U14.ADDR]
+- name: Net-(U14-VBUS_DET)
+  pins: [R34.2, U14.VBUS_DET]
+- name: Net-(U2D-CSI_DATA00)
+  pins: [R19.2, U2.CSI_DATA00]
+- name: Net-(U2D-CSI_DATA01)
+  pins: [R20.2, U2.CSI_DATA01]
+- name: Net-(U2F-ENET2_TX_CLK)
+  pins: [R4.2, U2.ENET2_TX_CLK]
+- name: Net-(U2K-BOOT_MODE1)
+  pins: [R3.2, U2.BOOT_MODE1]
+- name: Net-(U4-VCC)
+  pins: [U4.VCC, U4.VOUT]
+- name: Net-(U7-COMP)
+  pins: [C19.1, R39.2, U7.COMP]
+- name: Net-(U7-CSS)
+  pins: [C106.1, U7.CSS]
+- name: Net-(U7-FSEL)
+  pins: [R37.2, U7.FSEL]
+- name: Net-(U7-ILIM)
+  pins: [R40.2, U7.ILIM]
+- name: Net-(U7-RCLASS)
+  pins: [R36.2, U7.RCLASS]
+- name: Net-(U7-SW)
+  pins: [D6.A@1, D6.A@2, L4.1, U7.SW]
+- name: Net-(U7-VDD)
+  pins: [C110.1, U7.VDD]
+- name: Net-(U8-RBIAS)
+  pins: [R23.2, U8.RBIAS]
+- name: PMIC_WDI
+  pins: [R22.2, U1.WDI, U2.ENET1_TX_EN]
+- name: POE_5V
+  pins:
+  - C112.1
+  - C113.1
+  - C114.1
+  - C115.1
+  - C116.1
+  - C117.1
+  - D4.A
+  - D6.K
+  - R41.2
+  - U7.VDD48O
+- name: SD_3V3_1V8
+  pins: [C23.1, C37.1, U1.VLDO3, U2.NVCC_SD1]
+- name: SE050_ENA
+  pins: [R29.2, U2.UART4_TX_DATA, U4.ENA]
+- name: TUSB_PORT
+  pins: [R32.1, U14.PORT]
+- name: USB1_INT_B
+  pins: [R57.2, U14.INT_N/OUT3, U2.GPIO1_IO00]
+- name: VDD_ARM_SOC_IN
+  pins:
+  - C17.1
+  - C18.1
+  - C87.1
+  - C88.1
+  - C89.1
+  - C90.1
+  - L1.2
+  - U1.SW1FB
+  - U2.VDD_SOC_IN1
+  - U2.VDD_SOC_IN2
+  - U2.VDD_SOC_IN3
+  - U2.VDD_SOC_IN4
+  - U2.VDD_SOC_IN5
+  - U2.VDD_SOC_IN6
+- name: VDD_HIGH_CAP
+  pins: [C100.1, C102.1, C80.1, U2.NVCC_DRAM_2P5, U2.VDD_HIGH_CAP1, U2.VDD_HIGH_CAP2]
+- name: VSYS_5V
+  pins:
+  - C13.1
+  - C49.1
+  - C50.1
+  - C7.1
+  - U1.VIN
+  - U2.USB_OTG1_VBUS
+  - U2.USB_OTG2_VBUS
+  - U5.OUT@A1
+  - U5.OUT@B1
+positions:
+- ref: C1
+  x: 159.73
+  y: 98.36
+  side: back
+- ref: C10
+  x: 158.08
+  y: 97.16
+  rot: 180.0
+- ref: C100
+  x: 153.38
+  y: 101.16
+  side: back
+- ref: C101
+  x: 150.75
+  y: 93.88
+  side: back
+- ref: C102
+  x: 154.25
+  y: 101.91
+  side: back
+- ref: C103
+  x: 148.81
+  y: 93.51
+  rot: 180.0
+  side: back
+- ref: C104
+  x: 119.56
+  y: 91.83
+- ref: C105
+  x: 115.64
+  y: 103.82
+  rot: 180.0
+- ref: C106
+  x: 128.53
+  y: 96.09
+  side: back
+- ref: C107
+  x: 164.57
+  y: 90.75
+  rot: -90.0
+- ref: C108
+  x: 168.73
+  y: 89.97
+  rot: 180.0
+- ref: C109
+  x: 129.36
+  y: 95.21
+  rot: -90.0
+  side: back
+- ref: C11
+  x: 165.85
+  y: 99.44
+- ref: C110
+  x: 125.24
+  y: 92.93
+  rot: 90.0
+  side: back
+- ref: C111
+  x: 167.43
+  y: 95.41
+  rot: 180.0
+- ref: C112
+  x: 120.68
+  y: 89.61
+  rot: 180.0
+  side: back
+- ref: C113
+  x: 120.68
+  y: 86.99
+  rot: 180.0
+  side: back
+- ref: C114
+  x: 125.76
+  y: 86.99
+  side: back
+- ref: C115
+  x: 120.68
+  y: 94.95
+  rot: 180.0
+  side: back
+- ref: C116
+  x: 120.68
+  y: 92.39
+  rot: 180.0
+  side: back
+- ref: C117
+  x: 120.68
+  y: 98.76
+  rot: 180.0
+  side: back
+- ref: C12
+  x: 160.16
+  y: 102.89
+  rot: -90.0
+- ref: C13
+  x: 162.92
+  y: 103.29
+  rot: -90.0
+- ref: C14
+  x: 158.08
+  y: 98.26
+  rot: 180.0
+- ref: C15
+  x: 158.08
+  y: 97.71
+  rot: 180.0
+- ref: C16
+  x: 161.37
+  y: 103.67
+  rot: -90.0
+- ref: C17
+  x: 156.68
+  y: 100.4
+  rot: 90.0
+- ref: C18
+  x: 156.68
+  y: 102.1
+  rot: -90.0
+- ref: C19
+  x: 128.53
+  y: 95.5
+  side: back
+- ref: C2
+  x: 164.37
+  y: 95.13
+- ref: C20
+  x: 162.28
+  y: 94.06
+  rot: 90.0
+- ref: C21
+  x: 157.98
+  y: 94.82
+  rot: 90.0
+- ref: C22
+  x: 161.33
+  y: 94.06
+  rot: 90.0
+- ref: C23
+  x: 165.71
+  y: 94.75
+  rot: 90.0
+- ref: C24
+  x: 163.61
+  y: 91.77
+- ref: C25
+  x: 158.08
+  y: 96.61
+  rot: 180.0
+- ref: C26
+  x: 163.61
+  y: 92.75
+- ref: C27
+  x: 159.58
+  y: 102.89
+  rot: -90.0
+- ref: C28
+  x: 154.81
+  y: 98.33
+  rot: 90.0
+  side: back
+- ref: C29
+  x: 158.13
+  y: 100.91
+  side: back
+- ref: C3
+  x: 160.38
+  y: 94.06
+  rot: 90.0
+- ref: C30
+  x: 150.73
+  y: 101.89
+  side: back
+- ref: C31
+  x: 150.73
+  y: 102.69
+  side: back
+- ref: C32
+  x: 159.73
+  y: 99.98
+  side: back
+- ref: C33
+  x: 151.8
+  y: 94.55
+  side: back
+- ref: C34
+  x: 146.0
+  y: 91.8
+  rot: 180.0
+  side: back
+- ref: C35
+  x: 157.66
+  y: 87.31
+  rot: 90.0
+- ref: C36
+  x: 156.91
+  y: 86.98
+  rot: 90.0
+- ref: C37
+  x: 145.13
+  y: 91.01
+  side: back
+- ref: C38
+  x: 151.95
+  y: 97.45
+  rot: 90.0
+  side: back
+- ref: C39
+  x: 161.48
+  y: 91.85
+  rot: 90.0
+- ref: C4
+  x: 157.85
+  y: 102.03
+  rot: 180.0
+- ref: C40
+  x: 152.6
+  y: 97.45
+  rot: 90.0
+  side: back
+- ref: C41
+  x: 163.28
+  y: 90.47
+- ref: C42
+  x: 156.84
+  y: 92.61
+  rot: 90.0
+- ref: C43
+  x: 159.58
+  y: 91.89
+  rot: -90.0
+- ref: C44
+  x: 163.28
+  y: 91.03
+- ref: C45
+  x: 163.56
+  y: 89.47
+  rot: 180.0
+- ref: C46
+  x: 151.8
+  y: 93.88
+  side: back
+- ref: C47
+  x: 151.53
+  y: 95.81
+  rot: -90.0
+  side: back
+- ref: C48
+  x: 145.12
+  y: 92.6
+  side: back
+- ref: C49
+  x: 152.33
+  y: 101.16
+  side: back
+- ref: C5
+  x: 167.18
+  y: 99.69
+  rot: 90.0
+  side: back
+- ref: C50
+  x: 152.33
+  y: 101.71
+  side: back
+- ref: C51
+  x: 128.7
+  y: 103.7
+- ref: C52
+  x: 150.73
+  y: 100.61
+  rot: 180.0
+  side: back
+- ref: C53
+  x: 150.41
+  y: 99.89
+  rot: 180.0
+  side: back
+- ref: C54
+  x: 123.86
+  y: 102.98
+  rot: -90.0
+  side: back
+- ref: C55
+  x: 151.81
+  y: 92.94
+  side: back
+- ref: C56
+  x: 123.75
+  y: 99.39
+  rot: -90.0
+  side: back
+- ref: C57
+  x: 128.7
+  y: 99.76
+  rot: 180.0
+- ref: C58
+  x: 128.37
+  y: 102.91
+- ref: C59
+  x: 129.03
+  y: 99.01
+  rot: 180.0
+- ref: C6
+  x: 165.1
+  y: 103.29
+  rot: 90.0
+- ref: C60
+  x: 129.03
+  y: 95.21
+  rot: 180.0
+- ref: C61
+  x: 123.86
+  y: 101.86
+  side: back
+- ref: C62
+  x: 128.37
+  y: 101.71
+- ref: C63
+  x: 139.43
+  y: 99.81
+- ref: C64
+  x: 123.86
+  y: 100.66
+  side: back
+- ref: C65
+  x: 128.37
+  y: 102.31
+- ref: C66
+  x: 144.33
+  y: 99.31
+  side: back
+- ref: C67
+  x: 139.43
+  y: 91.31
+- ref: C68
+  x: 139.43
+  y: 95.81
+- ref: C69
+  x: 139.43
+  y: 90.71
+- ref: C7
+  x: 164.85
+  y: 102.49
+- ref: C70
+  x: 139.43
+  y: 99.01
+- ref: C71
+  x: 129.03
+  y: 91.31
+  rot: 180.0
+- ref: C72
+  x: 123.86
+  y: 101.26
+  side: back
+- ref: C73
+  x: 129.03
+  y: 95.81
+  rot: 180.0
+- ref: C74
+  x: 129.03
+  y: 98.21
+  rot: 180.0
+- ref: C75
+  x: 139.43
+  y: 95.21
+- ref: C76
+  x: 119.56
+  y: 93.11
+- ref: C77
+  x: 147.03
+  y: 95.81
+  side: back
+- ref: C78
+  x: 146.73
+  y: 94.21
+  side: back
+- ref: C79
+  x: 146.73
+  y: 95.01
+  side: back
+- ref: C8
+  x: 165.85
+  y: 96.71
+- ref: C80
+  x: 145.93
+  y: 98.51
+  rot: 180.0
+  side: back
+- ref: C81
+  x: 146.73
+  y: 96.61
+  side: back
+- ref: C82
+  x: 146.73
+  y: 97.41
+  side: back
+- ref: C83
+  x: 141.42
+  y: 95.67
+  rot: -90.0
+  side: back
+- ref: C84
+  x: 129.03
+  y: 91.86
+  rot: 180.0
+- ref: C85
+  x: 151.93
+  y: 98.95
+  side: back
+- ref: C86
+  x: 151.3
+  y: 97.45
+  rot: 90.0
+  side: back
+- ref: C87
+  x: 150.2
+  y: 95.9
+  side: back
+- ref: C88
+  x: 150.2
+  y: 94.9
+  side: back
+- ref: C89
+  x: 148.4
+  y: 94.7
+  rot: 180.0
+  side: back
+- ref: C9
+  x: 158.08
+  y: 96.06
+  rot: 180.0
+- ref: C90
+  x: 148.4
+  y: 95.25
+  rot: 180.0
+  side: back
+- ref: C91
+  x: 149.93
+  y: 99.0
+  rot: 180.0
+  side: back
+- ref: C92
+  x: 147.56
+  y: 94.76
+  rot: -90.0
+  side: back
+- ref: C93
+  x: 150.23
+  y: 97.81
+  rot: 90.0
+  side: back
+- ref: C94
+  x: 148.4
+  y: 95.8
+  rot: 180.0
+  side: back
+- ref: C95
+  x: 152.33
+  y: 100.61
+  side: back
+- ref: C96
+  x: 148.33
+  y: 97.51
+  rot: -90.0
+  side: back
+- ref: C97
+  x: 153.68
+  y: 98.95
+  side: back
+- ref: C98
+  x: 149.13
+  y: 97.21
+  rot: -90.0
+  side: back
+- ref: C99
+  x: 149.13
+  y: 92.73
+  rot: 180.0
+  side: back
+- ref: D1
+  x: 132.63
+  y: 86.96
+  rot: -90.0
+- ref: D2
+  x: 135.83
+  y: 86.96
+  rot: -90.0
+- ref: D4
+  x: 122.09
+  y: 104.42
+  rot: 180.0
+  side: back
+- ref: D5
+  x: 115.64
+  y: 103.49
+  rot: 180.0
+  side: back
+- ref: D6
+  x: 125.08
+  y: 96.57
+- ref: J1
+  x: 177.5
+  y: 95.41
+  rot: 90.0
+- ref: J2
+  x: 107.57
+  y: 95.01
+  rot: 90.0
+- ref: L1
+  x: 157.88
+  y: 99.76
+  rot: -90.0
+- ref: L2
+  x: 159.18
+  y: 94.05
+  rot: 90.0
+- ref: L3
+  x: 163.99
+  y: 93.93
+  rot: 180.0
+- ref: L4
+  x: 124.34
+  y: 91.51
+  rot: 180.0
+- ref: Q1
+  x: 125.61
+  y: 90.8
+  side: back
+- ref: R1
+  x: 165.85
+  y: 98.78
+  rot: 180.0
+- ref: R10
+  x: 159.13
+  y: 88.81
+  rot: 90.0
+- ref: R11
+  x: 157.23
+  y: 89.21
+  rot: 180.0
+- ref: R12
+  x: 157.23
+  y: 88.69
+  rot: 180.0
+- ref: R13
+  x: 157.23
+  y: 90.78
+  rot: 180.0
+- ref: R14
+  x: 157.23
+  y: 90.26
+  rot: 180.0
+- ref: R15
+  x: 157.23
+  y: 89.73
+  rot: 180.0
+- ref: R16
+  x: 147.03
+  y: 92.56
+  rot: 90.0
+  side: back
+- ref: R17
+  x: 165.85
+  y: 99.98
+  rot: 180.0
+- ref: R18
+  x: 165.85
+  y: 100.53
+  rot: 180.0
+- ref: R19
+  x: 133.89
+  y: 86.96
+  rot: 90.0
+- ref: R2
+  x: 165.85
+  y: 98.01
+  rot: 180.0
+- ref: R20
+  x: 134.57
+  y: 86.96
+  rot: 90.0
+- ref: R21
+  x: 127.28
+  y: 104.49
+- ref: R22
+  x: 165.85
+  y: 101.08
+  rot: 180.0
+- ref: R23
+  x: 124.86
+  y: 104.52
+  rot: 90.0
+- ref: R24
+  x: 125.11
+  y: 100.31
+  rot: 180.0
+  side: back
+- ref: R25
+  x: 124.33
+  y: 99.39
+  rot: -90.0
+  side: back
+- ref: R26
+  x: 153.93
+  y: 100.61
+  side: back
+- ref: R27
+  x: 150.76
+  y: 92.94
+  rot: 180.0
+  side: back
+- ref: R28
+  x: 164.94
+  y: 88.8
+- ref: R29
+  x: 166.31
+  y: 99.94
+  rot: 180.0
+  side: back
+- ref: R3
+  x: 147.03
+  y: 101.41
+  rot: -90.0
+  side: back
+- ref: R30
+  x: 105.13
+  y: 90.92
+  side: back
+- ref: R31
+  x: 144.33
+  y: 97.71
+  rot: 180.0
+  side: back
+- ref: R32
+  x: 151.51
+  y: 87.66
+  rot: 90.0
+- ref: R33
+  x: 166.69
+  y: 101.84
+  rot: -90.0
+- ref: R34
+  x: 167.34
+  y: 93.28
+  rot: 90.0
+  side: back
+- ref: R35
+  x: 105.13
+  y: 101.64
+  side: back
+- ref: R36
+  x: 125.89
+  y: 92.93
+  rot: -90.0
+  side: back
+- ref: R37
+  x: 127.33
+  y: 98.2
+  rot: 180.0
+  side: back
+- ref: R38
+  x: 119.63
+  y: 101.5
+  rot: -90.0
+- ref: R39
+  x: 128.53
+  y: 94.93
+  rot: 180.0
+  side: back
+- ref: R4
+  x: 156.28
+  y: 92.61
+  rot: 90.0
+- ref: R40
+  x: 128.1
+  y: 97.0
+  rot: 90.0
+  side: back
+- ref: R41
+  x: 124.36
+  y: 88.89
+  rot: 180.0
+  side: back
+- ref: R42
+  x: 126.54
+  y: 92.93
+  rot: -90.0
+  side: back
+- ref: R47
+  x: 149.0
+  y: 87.66
+  rot: 90.0
+- ref: R48
+  x: 150.73
+  y: 87.66
+  rot: 90.0
+- ref: R5
+  x: 154.43
+  y: 101.16
+  rot: 180.0
+  side: back
+- ref: R50
+  x: 145.13
+  y: 93.91
+  side: back
+- ref: R51
+  x: 144.33
+  y: 98.71
+  rot: 180.0
+  side: back
+- ref: R52
+  x: 129.13
+  y: 93.41
+  rot: 90.0
+- ref: R53
+  x: 128.53
+  y: 93.41
+  rot: 90.0
+  side: back
+- ref: R57
+  x: 164.94
+  y: 88.26
+- ref: R6
+  x: 160.53
+  y: 90.53
+- ref: R7
+  x: 161.48
+  y: 90.78
+  rot: -90.0
+- ref: R8
+  x: 159.03
+  y: 91.89
+  rot: -90.0
+- ref: R9
+  x: 159.33
+  y: 90.53
+  rot: 180.0
+- ref: SW1
+  x: 150.63
+  y: 89.61
+  side: back
+- ref: U1
+  x: 161.97
+  y: 99.0
+  rot: 180.0
+- ref: U10
+  x: 138.73
+  y: 88.41
+  rot: 180.0
+- ref: U13
+  x: 166.49
+  y: 91.04
+- ref: U14
+  x: 168.36
+  y: 89.14
+  rot: 90.0
+  side: back
+- ref: U15
+  x: 168.01
+  y: 93.03
+  rot: 90.0
+  side: back
+- ref: U2
+  x: 148.73
+  y: 95.41
+- ref: U3
+  x: 160.28
+  y: 91.79
+  rot: -90.0
+  side: back
+- ref: U4
+  x: 167.39
+  y: 102.83
+  rot: 90.0
+  side: back
+- ref: U5
+  x: 164.1
+  y: 103.29
+  rot: -90.0
+- ref: U6
+  x: 167.83
+  y: 95.96
+  rot: -90.0
+  side: back
+- ref: U7
+  x: 125.56
+  y: 95.77
+  side: back
+- ref: U8
+  x: 125.36
+  y: 101.89
+  rot: -90.0
+- ref: U9
+  x: 122.15
+  y: 102.08
+  rot: 90.0
+  side: back
+- ref: Y1
+  x: 156.93
+  y: 99.21
+  rot: 180.0
+  side: back
+- ref: Y2
+  x: 148.63
+  y: 101.81
+  rot: -90.0
+  side: back
+copper_pours:
+- net: /Ethernet/V_POE
+  layers: [In3.Cu]
+- net: /PMIC/VSNVS_3V
+  layers: [In2.Cu]
+- net: /PMIC/VSYS
+  layers: [In2.Cu]
+- net: /USB/USB1_VBUS
+  layers: [In2.Cu, In3.Cu]
+- net: DCDC_3V3
+  layers: [In3.Cu]
+- net: DDR_1V35
+  layers: [In3.Cu]
+- net: EMMC_1V8
+  layers: [In2.Cu]
+- net: GND
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+- net: GNDPWR
+  layers: [B.Cu, F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu]
+- net: POE_5V
+  layers: [In3.Cu]
+- net: SD_3V3_1V8
+  layers: [In2.Cu, In3.Cu]
+- net: VDD_ARM_SOC_IN
+  layers: [In3.Cu]
+- net: VDD_HIGH_CAP
+  layers: [In3.Cu]
+- net: VSYS_5V
+  layers: [In2.Cu]

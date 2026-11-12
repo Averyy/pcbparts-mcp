@@ -3,7 +3,7 @@ slug: cheap-focer-2
 source: shamansystems/Cheap-FOCer-2
 format: kicad_legacy
 description: Cost-optimized VESC 6 variant with onboard IMU, STM32F405
-tags: [drone-uav, inverter, motor-control, sensors]
+tags: [inverter, motor-control, sensors]
 key_ics: [STM32F405]
 outline:
   width_mm: 59.1
@@ -118,11 +118,11 @@ components:
   voltage: 100V
 - ref: C38
   value: 330uF
-  footprint: CP
+  footprint: CP_10x20
   voltage: 63V
 - ref: C39
   value: 330uF
-  footprint: CP
+  footprint: CP_10x20
   voltage: 63V
 - ref: C4
   value: 10nF
@@ -263,26 +263,26 @@ components:
   value: 100v, 1A
   footprint: SMA
 - ref: J1
-  value: 1x2 header
-  footprint: JST_PH_B2B-PH-K
+  value: JST PH 2-pin
+  footprint: JST_PH_B2B-PH-K_1x02
 - ref: J2
-  value: 1x7 header
-  footprint: JST_PH_B7B-PH-K
+  value: JST PH 7-pin
+  footprint: JST_PH_B7B-PH-K_1x07
   pin_count: 7
 - ref: J3
-  value: 1x3 header
-  footprint: JST_PH_B3B-PH-K
+  value: JST PH 3-pin
+  footprint: JST_PH_B3B-PH-K_1x03
   pin_count: 3
 - ref: J4
-  value: 1x2 header
-  footprint: JST_PH_B2B-PH-K
+  value: JST PH 2-pin
+  footprint: JST_PH_B2B-PH-K_1x02
 - ref: J5
-  value: 2x5 header
-  footprint: 2X5
+  value: 2x5 2.00mm header
+  footprint: 2X5_P2.00mm
   pin_count: 10
 - ref: J6
-  value: 1x3 header
-  footprint: 1X2
+  value: 1x3 2.54mm header
+  footprint: 1X2_P2.54mm
 - ref: L1
   value: 22uH
   footprint: L_Taiyo-Yuden_NR-60xx
@@ -320,12 +320,12 @@ components:
   value: MOTOR1
   footprint: 1pin_4mm
 - ref: P4
-  value: 1x6 header
-  footprint: JST_PH_B6B-PH-K
+  value: JST PH 6-pin
+  footprint: JST_PH_B6B-PH-K_1x06
   pin_count: 6
 - ref: P5
   value: SWD
-  footprint: 1X5
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: POS1
   value: POS
@@ -366,7 +366,6 @@ components:
 - ref: R12
   value: 2.2kohm
   footprint: '0603'
-  pullup: D5.2
 - ref: R13
   value: 10kohm
   footprint: '0603'
@@ -585,7 +584,7 @@ components:
   pin_count: 3
 - ref: U2
   value: DRV8301
-  footprint: HTSSOP-56-1EP
+  footprint: HTSSOP-56-1EP_6.1x14
   pin_count: 57
   nc_pins: {'4': '4', '5': '5', '12': '12'}
 - ref: U3
@@ -603,6 +602,8 @@ components:
 - ref: U6
   value: BMI160
   footprint: Bosch_LGA-14
+  manufacturer: Bosch
+  mpn: BMI160
   pin_count: 14
   nc_pins: {'2': '2', '3': '3', '4': '4', '9': '9', '10': '10', '11': '11'}
 - ref: USB1
@@ -614,6 +615,7 @@ components:
   value: 8MHz 10ppm
   footprint: SMD5032
   mpn: ABM3B-8.0-10-1UT
+  tolerance: 10ppm
 nets:
 - name: +5V
   pins:
@@ -681,11 +683,11 @@ nets:
 - name: /MCU/LED_RED
   pins: [R10.2, U5.27]
 - name: /MCU/MISO_ADC_EXT2
-  pins: [C3.2, R40.2, R68.2, R9.1, U5.22]
+  pins: [C3.2, R9.1, U5.22]
 - name: /MCU/RX_SDA_NSS
   pins: [R7.1, U5.20, U5.30]
 - name: /MCU/SCK_ADC_EXT
-  pins: [C2.2, R5.1, R71.2, R72.2, U5.21]
+  pins: [C2.2, R5.1, U5.21]
 - name: /MCU/SDI
   pins: [U2.9, U5.53]
 - name: /MCU/SDO
@@ -875,8 +877,6 @@ nets:
   - R59.1
   - R60.1
   - R61.1
-  - R68.1
-  - R71.1
   - U1.1
   - U2.28
   - U2.57
@@ -1047,10 +1047,8 @@ nets:
   - R24.2
   - R25.2
   - R34.1
-  - R40.1
   - R69.1
   - R70.2
-  - R72.1
   - U1.2
   - U2.24
   - U2.49

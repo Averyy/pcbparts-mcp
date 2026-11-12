@@ -1,7 +1,7 @@
 name: LDO Leviathan v1.3
 slug: ldo-leviathan-v1-3
 source: MotorDynamicsLab/Leviathan
-format: kicad7
+format: kicad9
 description: 'Modern Voron 3D printer controller: STM32H743 480MHz, 5x TMC2209 + 2x TMC5160 (48V)'
 tags: [3d-printer, can-bus, motor-control]
 key_ics: [STM32H743, TMC2209, TMC5160]
@@ -29,14 +29,17 @@ components:
   value: 2.2uF
   footprint: '0603'
   lcsc: C99228
+  mpn: 0603B225K250NT
 - ref: C101
   value: 2.2uF
   footprint: '0603'
   lcsc: C99228
+  mpn: 0603B225K250NT
 - ref: C102
   value: 2.2uF
   footprint: '0603'
   lcsc: C99228
+  mpn: 0603B225K250NT
 - ref: C103
   value: 100nF
   footprint: '0603'
@@ -44,9 +47,13 @@ components:
 - ref: C104
   value: 12pF
   footprint: '0603'
+  lcsc: C38523
+  mpn: CL10C120JB8NNNC
 - ref: C105
   value: 12pF
   footprint: '0603'
+  lcsc: C38523
+  mpn: CL10C120JB8NNNC
 - ref: C106
   value: 220uF
   footprint: CP_Radial_D10.0mm_P5.00mm
@@ -69,7 +76,7 @@ components:
   voltage: 100V
 - ref: C11
   value: 47uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x5.8
   lcsc: C249977
   voltage: 35V
   decouples: U3
@@ -90,33 +97,39 @@ components:
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C114
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C115
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C116
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C117
   value: 10uF
   footprint: '1206'
   lcsc: C89632
+  mpn: CL31B106KBHNNNE
 - ref: C118
   value: 10uF
   footprint: '1206'
   lcsc: C89632
+  mpn: CL31B106KBHNNNE
 - ref: C119
   value: 470nF
   footprint: '0402'
   lcsc: C961501
 - ref: C12
   value: 47uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x5.8
   lcsc: C249977
   voltage: 35V
   decouples: U3
@@ -128,6 +141,7 @@ components:
   value: 10uF
   footprint: '1206'
   lcsc: C89632
+  mpn: CL31B106KBHNNNE
 - ref: C122
   value: 100nF
   footprint: '0603'
@@ -175,15 +189,18 @@ components:
   value: 100uF
   footprint: CP_Radial_D6.3mm_P2.50mm
   lcsc: C472886
+  mpn: 25ZLG100MEFCT16.3X11
   voltage: 25V
 - ref: C131
   value: 10uF
   footprint: '1206'
   lcsc: C89632
+  mpn: CL31B106KBHNNNE
 - ref: C132
   value: 10uF
   footprint: '1206'
   lcsc: C89632
+  mpn: CL31B106KBHNNNE
 - ref: C133
   value: 100nF
   footprint: '0402'
@@ -205,11 +222,13 @@ components:
   value: 1uF
   footprint: '0603'
   lcsc: C76617
+  mpn: C1608X7R1C105KT000N
   decouples: U11
 - ref: C138
   value: 2.2uF
   footprint: '0603'
   lcsc: C86018
+  mpn: GRM188R71A225KE15D
   decouples: U11
 - ref: C139
   value: 22nF
@@ -227,19 +246,28 @@ components:
 - ref: C141
   value: 10uF
   footprint: EIA-3216
+  lcsc: C124849
+  mpn: TC212A106M010B
 - ref: C142
   value: 10uF
   footprint: EIA-3216
+  lcsc: C124849
+  mpn: TC212A106M010B
 - ref: C143
   value: 10uF
   footprint: EIA-3216
+  lcsc: C124849
+  mpn: TC212A106M010B
 - ref: C144
   value: 10uF
   footprint: EIA-3216
+  lcsc: C124849
+  mpn: TC212A106M010B
 - ref: C145
   value: 4.7uF
   footprint: '0603'
   lcsc: C108342
+  mpn: 0603B475K100NT
   decouples: U9
 - ref: C146
   value: 100nF
@@ -259,10 +287,11 @@ components:
   value: 1uF
   footprint: '0603'
   lcsc: C29936
+  mpn: CL10B105KA8NNNC
   decouples: U9
 - ref: C15
   value: 47uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x5.8
   lcsc: C249977
   voltage: 35V
   decouples: U4
@@ -285,6 +314,7 @@ components:
   value: 2.2uF
   footprint: '0603'
   lcsc: C99228
+  mpn: 0603B225K250NT
 - ref: C154
   value: 100nF
   footprint: '0603'
@@ -302,6 +332,7 @@ components:
   value: 1uF
   footprint: '0603'
   lcsc: C29936
+  mpn: CL10B105KA8NNNC
   decouples: U9
 - ref: C158
   value: 100nF
@@ -314,7 +345,7 @@ components:
   lcsc: C83054
 - ref: C16
   value: 47uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x5.8
   lcsc: C249977
   voltage: 35V
   decouples: U4
@@ -339,10 +370,12 @@ components:
 - ref: C164
   value: 100nF
   footprint: '0603'
+  lcsc: C116838
   decouples: U12
 - ref: C165
   value: 100nF
   footprint: '0603'
+  lcsc: C116838
   decouples: U12
 - ref: C166
   value: 4.7uF
@@ -369,7 +402,7 @@ components:
   decouples: U5
 - ref: C19
   value: 47uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x5.8
   lcsc: C249977
   voltage: 35V
   decouples: U5
@@ -380,7 +413,7 @@ components:
   decouples: U1
 - ref: C20
   value: 47uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x5.8
   lcsc: C249977
   voltage: 35V
   decouples: U5
@@ -422,7 +455,7 @@ components:
   lcsc: C107026
 - ref: C3
   value: 47uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x5.8
   lcsc: C249977
   voltage: 35V
   decouples: U1
@@ -459,21 +492,25 @@ components:
   value: 4.7uF
   footprint: '0402'
   lcsc: C368809
+  mpn: CL05A475KP5NRNC
 - ref: C37
   value: 4.7uF
   footprint: '0402'
   lcsc: C368809
+  mpn: CL05A475KP5NRNC
 - ref: C38
   value: 4.7uF
   footprint: '0402'
   lcsc: C368809
+  mpn: CL05A475KP5NRNC
 - ref: C39
   value: 4.7uF
   footprint: '0402'
   lcsc: C368809
+  mpn: CL05A475KP5NRNC
 - ref: C4
   value: 47uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x5.8
   lcsc: C249977
   voltage: 35V
   decouples: U1
@@ -481,6 +518,7 @@ components:
   value: 4.7uF
   footprint: '0402'
   lcsc: C368809
+  mpn: CL05A475KP5NRNC
 - ref: C41
   value: 100nF
   footprint: '0402'
@@ -530,38 +568,47 @@ components:
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C52
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C53
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C54
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C55
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C56
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C57
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C58
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C59
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C6
   value: 100nF
   footprint: '0402'
@@ -571,45 +618,55 @@ components:
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C61
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C62
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C63
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C64
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C65
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C66
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C67
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C68
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C69
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C7
   value: 47uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x5.8
   lcsc: C249977
   voltage: 35V
   decouples: U2
@@ -617,6 +674,7 @@ components:
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C71
   value: 220uF
   footprint: CP_Radial_D10.0mm_P5.00mm
@@ -654,13 +712,15 @@ components:
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C79
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C8
   value: 47uF
-  footprint: Electrolytic
+  footprint: Electrolytic-6.3x5.8
   lcsc: C249977
   voltage: 35V
   decouples: U2
@@ -668,10 +728,12 @@ components:
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C81
   value: 1nF
   footprint: '0603'
   lcsc: C77438
+  mpn: 0603B102K101CT
 - ref: C82
   value: 470nF
   footprint: '0402'
@@ -693,6 +755,7 @@ components:
   value: 10uF
   footprint: '1206'
   lcsc: C14860
+  mpn: CL31B106KAHNNNE
   decouples: U7
 - ref: C87
   value: 100nF
@@ -750,6 +813,7 @@ components:
   value: 10uF
   footprint: '1206'
   lcsc: C14860
+  mpn: CL31B106KAHNNNE
   decouples: U8
 - ref: C98
   value: 100nF
@@ -768,26 +832,32 @@ components:
   value: CUS10S30,H3F
   footprint: SOD-323
   lcsc: C146335
+  mpn: CUS10S30,H3F
 - ref: D11
   value: BAT54J,115
   footprint: SOD-323
   lcsc: C130415
+  mpn: BAT54J,115
 - ref: D12
   value: BAT54J,115
   footprint: SOD-323
   lcsc: C130415
+  mpn: BAT54J,115
 - ref: D13
   value: BAT54J,115
   footprint: SOD-323
   lcsc: C130415
+  mpn: BAT54J,115
 - ref: D14
   value: BAT54J,115
   footprint: SOD-323
   lcsc: C130415
+  mpn: BAT54J,115
 - ref: D15
   value: BAT54J,115
   footprint: SOD-323
   lcsc: C130415
+  mpn: BAT54J,115
 - ref: D16
   value: red LED
   footprint: '0603'
@@ -812,6 +882,7 @@ components:
   value: BAT60AE6327
   footprint: SOD-323
   lcsc: C117485
+  mpn: BAT60AE6327
 - ref: D21
   value: SMBJ28A
   footprint: SMB
@@ -874,12 +945,12 @@ components:
   lcsc: C434419
 - ref: EXP1
   value: LCD
-  footprint: IDC-Header
+  footprint: IDC-Header_2x05
   lcsc: C390693
   pin_count: 10
 - ref: EXP2
-  value: 2x5 header
-  footprint: IDC-Header
+  value: 2x5 2.54mm header
+  footprint: IDC-Header_2x05
   lcsc: C390693
   pin_count: 10
 - ref: F1
@@ -912,50 +983,42 @@ components:
   value: 600ohm
   footprint: 0805
   lcsc: C21286
-- ref: HS1
-  value: Heatsink
-  footprint: M2_Heatsink
-- ref: HS2
-  value: Heatsink
-  footprint: M2_Heatsink
-- ref: HS5
-  value: Heatsink
-  footprint: Heatsink
+  mpn: CBW201209U601T
 - ref: J1
-  value: 1x2 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-2
+  value: 1x2 5.00mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-2_1x02
 - ref: J10
-  value: 1x4 header
-  footprint: JST_XH_B4B-XH-A
+  value: JST XH 4-pin
+  footprint: JST_XH_B4B-XH-A_1x04
   lcsc: C566013
   pin_count: 4
 - ref: J11
-  value: 1x4 header
-  footprint: JST_XH_B4B-XH-A
+  value: JST XH 4-pin
+  footprint: JST_XH_B4B-XH-A_1x04
   lcsc: C566013
   pin_count: 4
 - ref: J12
-  value: 1x2 header
-  footprint: JST_XH_B2B-XH-A
+  value: JST XH 2-pin
+  footprint: JST_XH_B2B-XH-A_1x02
   lcsc: C161869
 - ref: J13
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   lcsc: C429954
   pin_count: 3
 - ref: J14
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   lcsc: C429954
   pin_count: 3
 - ref: J15
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   lcsc: C429954
   pin_count: 3
 - ref: J16
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   lcsc: C429954
   pin_count: 3
 - ref: J17
@@ -965,129 +1028,130 @@ components:
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J18
-  value: 1x2 header
-  footprint: JST_XH_B2B-XH-A
+  value: JST XH 2-pin
+  footprint: JST_XH_B2B-XH-A_1x02
   lcsc: C161869
 - ref: J19
-  value: 1x2 header
-  footprint: JST_XH_B2B-XH-A
+  value: JST XH 2-pin
+  footprint: JST_XH_B2B-XH-A_1x02
   lcsc: C161869
 - ref: J2
-  value: 1x4 header
-  footprint: JST_XH_B4B-XH-A
+  value: JST XH 4-pin
+  footprint: JST_XH_B4B-XH-A_1x04
   lcsc: C566013
   pin_count: 4
 - ref: J20
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
   lcsc: C429954
   pin_count: 3
 - ref: J21
-  value: 1x3 header
-  footprint: JST_XH_B3B-XH-A
+  value: JST XH 3-pin
+  footprint: JST_XH_B3B-XH-A_1x03
   lcsc: C565985
   pin_count: 3
 - ref: J22
-  value: 1x3 header
-  footprint: JST_XH_B3B-XH-A
+  value: JST XH 3-pin
+  footprint: JST_XH_B3B-XH-A_1x03
   lcsc: C565985
   pin_count: 3
 - ref: J23
-  value: 1x3 header
-  footprint: JST_XH_B3B-XH-A
+  value: JST XH 3-pin
+  footprint: JST_XH_B3B-XH-A_1x03
   lcsc: C565985
   pin_count: 3
 - ref: J24
-  value: 1x3 header
-  footprint: JST_XH_B3B-XH-A
+  value: JST XH 3-pin
+  footprint: JST_XH_B3B-XH-A_1x03
   lcsc: C565985
   pin_count: 3
 - ref: J25
-  value: 1x3 header
-  footprint: JST_XH_B3B-XH-A
+  value: JST XH 3-pin
+  footprint: JST_XH_B3B-XH-A_1x03
   lcsc: C565985
   pin_count: 3
 - ref: J26
-  value: 1x2 header
-  footprint: JST_XH_B2B-XH-A
+  value: JST XH 2-pin
+  footprint: JST_XH_B2B-XH-A_1x02
   lcsc: C161869
 - ref: J27
-  value: 1x2 header
-  footprint: JST_XH_B2B-XH-A
+  value: JST XH 2-pin
+  footprint: JST_XH_B2B-XH-A_1x02
   lcsc: C161869
 - ref: J28
-  value: 1x3 header
-  footprint: JST_XH_B3B-XH-A
+  value: JST XH 3-pin
+  footprint: JST_XH_B3B-XH-A_1x03
   lcsc: C565985
   pin_count: 3
 - ref: J29
-  value: 1x3 header
-  footprint: JST_XH_B3B-XH-A
+  value: JST XH 3-pin
+  footprint: JST_XH_B3B-XH-A_1x03
   lcsc: C565985
   pin_count: 3
 - ref: J3
-  value: 1x4 header
-  footprint: JST_XH_B4B-XH-A
+  value: JST XH 4-pin
+  footprint: JST_XH_B4B-XH-A_1x04
   lcsc: C566013
   pin_count: 4
 - ref: J30
-  value: 1x3 header
-  footprint: JST_XH_B3B-XH-A
+  value: JST XH 3-pin
+  footprint: JST_XH_B3B-XH-A_1x03
   lcsc: C565985
   pin_count: 3
 - ref: J31
-  value: 1x3 header
-  footprint: JST_XH_B3B-XH-A
+  value: JST XH 3-pin
+  footprint: JST_XH_B3B-XH-A_1x03
   lcsc: C565985
   pin_count: 3
 - ref: J32
-  value: 1x3 header
-  footprint: JST_XH_B3B-XH-A
+  value: JST XH 3-pin
+  footprint: JST_XH_B3B-XH-A_1x03
   lcsc: C565985
   pin_count: 3
 - ref: J33
-  value: 2x2 header
-  footprint: Molex_Micro-Fit_3.0_43045-0400
+  value: 2x2 3.00mm header
+  footprint: Molex_Micro-Fit_3.0_43045-0400_2x02
   pin_count: 4
 - ref: J34
-  value: 2x15 header
-  footprint: 2X15
+  value: 2x15 2.54mm header
+  footprint: 2X15_P2.54mm_Horizontal
   pin_count: 30
 - ref: J4
-  value: 1x4 header
-  footprint: JST_XH_B4B-XH-A
+  value: JST XH 4-pin
+  footprint: JST_XH_B4B-XH-A_1x04
   lcsc: C566013
   pin_count: 4
 - ref: J5
-  value: 1x4 header
-  footprint: JST_XH_B4B-XH-A
+  value: JST XH 4-pin
+  footprint: JST_XH_B4B-XH-A_1x04
   lcsc: C566013
   pin_count: 4
 - ref: J6
-  value: 1x4 header
-  footprint: JST_XH_B4B-XH-A
+  value: JST XH 4-pin
+  footprint: JST_XH_B4B-XH-A_1x04
   lcsc: C566013
   pin_count: 4
 - ref: J7
-  value: 1x6 screw terminal
-  footprint: TerminalBlock_Phoenix_MKDS-1,5-6
+  value: 1x6 5.00mm screw terminal
+  footprint: TerminalBlock_Phoenix_MKDS-1,5-6_1x06
   pin_count: 6
 - ref: J8
   value: SWD
-  footprint: 2X3
+  footprint: 2X3_P2.54mm
   lcsc: C225518
   pin_count: 6
 - ref: J9
-  value: 1x6 header
-  footprint: JST_XH_B6B-XH-A
+  value: JST XH 6-pin
+  footprint: JST_XH_B6B-XH-A_1x06
   lcsc: C144397
   pin_count: 6
 - ref: JP1
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
 - ref: L1
   value: 33uH
   footprint: L_Taiyo-Yuden_NR-60xx
+  lcsc: C2049900
 - ref: L2
   value: 10uH
   footprint: 0805
@@ -1099,6 +1163,8 @@ components:
   height: '15.5'
   manufacturer: RECOM Power
   mpn: R-745.0P
+  mouser: 919-R-745.0P
+  arrow: R-745.0P
   lcsc: C2684867
   description: Recom Switching Regulator, 6.5 28V Input, 3 5.5V Output, 2A
   pin_count: 12
@@ -1107,84 +1173,99 @@ components:
   value: K7812-2000
   footprint: Converter_DCDC_RECOM_R-78B-2.0_THT
   lcsc: C970731
+  mpn: K7812-2000R3
   pin_count: 3
 - ref: PS3
   value: K7805-2000
   footprint: Converter_DCDC_RECOM_R-78B-2.0_THT
   lcsc: C970791
+  mpn: K7805-2000R3
   pin_count: 3
 - ref: Q1
   value: SUD50P06-15
   footprint: TO-252
+  lcsc: C141584
+  mpn: SUD50P06-15-GE3
   pin_count: 3
 - ref: Q10
   value: SiZ270DT
-  footprint: Vishay_PowerPair
+  footprint: Vishay_PowerPair_3x3S
   pin_count: 5
 - ref: Q11
   value: SiZ270DT
-  footprint: Vishay_PowerPair
+  footprint: Vishay_PowerPair_3x3S
   pin_count: 5
 - ref: Q12
   value: SiZ270DT
-  footprint: Vishay_PowerPair
+  footprint: Vishay_PowerPair_3x3S
   pin_count: 5
 - ref: Q13
   value: SQ2348ES
   footprint: SOT-23
   lcsc: C710085
+  mpn: SQ2348ES-T1
   pin_count: 3
 - ref: Q14
   value: SQ2348ES
   footprint: SOT-23
   lcsc: C710085
+  mpn: SQ2348ES-T1
   pin_count: 3
 - ref: Q15
   value: SQ2348ES
   footprint: SOT-23
   lcsc: C710085
+  mpn: SQ2348ES-T1
   pin_count: 3
 - ref: Q16
   value: SQ2348ES
   footprint: SOT-23
   lcsc: C710085
+  mpn: SQ2348ES-T1
   pin_count: 3
 - ref: Q2
   value: SUD50P06-15
   footprint: TO-252
+  lcsc: C141584
+  mpn: SUD50P06-15-GE3
   pin_count: 3
 - ref: Q3
   value: SiZ270DT
-  footprint: Vishay_PowerPair
+  footprint: Vishay_PowerPair_3x3S
   pin_count: 5
 - ref: Q4
   value: SiZ270DT
-  footprint: Vishay_PowerPair
+  footprint: Vishay_PowerPair_3x3S
   pin_count: 5
 - ref: Q5
   value: DMTH6005LK3Q-13
   footprint: TO-252
+  lcsc: C211367
+  mpn: DMTH6005LK3Q-13
   pin_count: 3
 - ref: Q6
   value: SiZ270DT
-  footprint: Vishay_PowerPair
+  footprint: Vishay_PowerPair_3x3S
   pin_count: 5
 - ref: Q7
   value: SiZ270DT
-  footprint: Vishay_PowerPair
+  footprint: Vishay_PowerPair_3x3S
   pin_count: 5
 - ref: Q8
   value: DMTH6005LK3Q-13
   footprint: TO-252
+  lcsc: C211367
+  mpn: DMTH6005LK3Q-13
   pin_count: 3
 - ref: Q9
   value: SiZ270DT
-  footprint: Vishay_PowerPair
+  footprint: Vishay_PowerPair_3x3S
   pin_count: 5
 - ref: R1
   value: 10kohm
   footprint: '0402'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: EN_DRV0
 - ref: R10
   value: 110mohm
@@ -1194,21 +1275,28 @@ components:
   value: 2.2kohm
   footprint: '0603'
   lcsc: C445630
+  mpn: ERA3AEB222V
 - ref: R101
   value: 100ohm
   footprint: '0402'
+  lcsc: C115420
+  mpn: RS-03K1000FT
 - ref: R102
   value: 100ohm
   footprint: '0402'
+  lcsc: C115420
+  mpn: RS-03K1000FT
 - ref: R103
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: SWCLK
 - ref: R104
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: SWDIO
 - ref: R105
   value: 120ohm
@@ -1230,6 +1318,7 @@ components:
   value: 1kohm
   footprint: '0603'
   lcsc: C14676
+  mpn: RC0603JR-071KL
 - ref: R11
   value: 110mohm
   footprint: 0805
@@ -1238,11 +1327,13 @@ components:
   value: 5.1kohm
   footprint: '0603'
   lcsc: C23186
+  mpn: 0603WAF5101T5E
   pulldown: J17.CC1
 - ref: R111
   value: 5.1kohm
   footprint: '0603'
   lcsc: C23186
+  mpn: 0603WAF5101T5E
   pulldown: J17.CC2
 - ref: R12
   value: 110mohm
@@ -1264,6 +1355,7 @@ components:
   value: 15kohm
   footprint: '0603'
   lcsc: C73802
+  mpn: RS-03K153JT
 - ref: R17
   value: 3kohm
   footprint: '2512'
@@ -1279,158 +1371,177 @@ components:
   value: 3kohm
   footprint: '2512'
   lcsc: C71872
+  mpn: 25121WJ0302T4E
   power: 1W
 - ref: R2
   value: 10kohm
   footprint: '0402'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: EN_DRV1
 - ref: R20
   value: 10kohm
   footprint: '0603'
-  pullup: D4.A
+  lcsc: C384294
+  mpn: WR06X103JTL
 - ref: R21
   value: 100kohm
   footprint: '0603'
   lcsc: C14675
+  mpn: RC0603FR-07100KL
   pulldown: D3.A
 - ref: R22
   value: 10ohm
   footprint: '0402'
-  lcsc: C226359
 - ref: R23
   value: 10ohm
   footprint: '0402'
-  lcsc: C226359
 - ref: R24
   value: 10kohm
   footprint: '0402'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: EN_DRV_HV1
 - ref: R25
   value: 7.5kohm
   footprint: '0603'
   lcsc: C23234
+  mpn: 0603WAF7501T5E
 - ref: R26
   value: 10ohm
   footprint: '0402'
-  lcsc: C226359
 - ref: R27
   value: 10ohm
   footprint: '0402'
-  lcsc: C226359
 - ref: R28
   value: 7.5kohm
   footprint: '0603'
   lcsc: C23234
+  mpn: 0603WAF7501T5E
 - ref: R29
   value: 2.2ohm
   footprint: '0402'
   lcsc: C327251
+  mpn: RC0402FR-072R2L
 - ref: R3
   value: 10kohm
   footprint: '0402'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: EN_DRV2
 - ref: R30
   value: 47ohm
   footprint: '0402'
   lcsc: C144756
+  mpn: AC0402FR-0747RL
 - ref: R31
   value: 75mohm
   footprint: '2512'
   lcsc: C705611
+  mpn: RL2512FK-070R075L
   power: 1W
 - ref: R32
   value: 47ohm
   footprint: '0402'
   lcsc: C144756
+  mpn: AC0402FR-0747RL
 - ref: R33
   value: 100kohm
   footprint: '0603'
   lcsc: C25803
+  mpn: 0603WAF1003T5E
   pullup: nRESET
 - ref: R34
   value: 100ohm
   footprint: '0603'
   lcsc: C115420
+  mpn: RS-03K1000FT
 - ref: R35
   value: 10ohm
   footprint: '0402'
-  lcsc: C226359
 - ref: R36
   value: 10ohm
   footprint: '0402'
-  lcsc: C226359
 - ref: R37
   value: 1kohm
   footprint: '0603'
   lcsc: C115325
+  mpn: RS-03K1001FT
   pulldown: U7.IN
 - ref: R38
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pulldown: U7.OUT
 - ref: R39
   value: 100kohm
   footprint: '0402'
   lcsc: C132374
+  mpn: WR06X1003FTL
   pulldown: SPI4_MOSI
 - ref: R4
   value: 10kohm
   footprint: '0402'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: EN_DRV3
 - ref: R40
   value: 10ohm
   footprint: '0402'
-  lcsc: C226359
 - ref: R41
   value: 10ohm
   footprint: '0402'
-  lcsc: C226359
 - ref: R42
   value: 47ohm
   footprint: '0402'
   lcsc: C144756
+  mpn: AC0402FR-0747RL
 - ref: R43
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pulldown: U9.PB2
 - ref: R44
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pulldown: BOOT0
 - ref: R45
   value: 75mohm
   footprint: '2512'
   lcsc: C705611
+  mpn: RL2512FK-070R075L
   power: 1W
 - ref: R46
   value: 47ohm
   footprint: '0402'
   lcsc: C144756
+  mpn: AC0402FR-0747RL
 - ref: R47
   value: 100ohm
   footprint: '0603'
   lcsc: C115420
+  mpn: RS-03K1000FT
 - ref: R48
   value: 1kohm
   footprint: '0603'
   lcsc: C115325
+  mpn: RS-03K1001FT
   pulldown: U8.IN
 - ref: R49
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pulldown: U8.OUT
 - ref: R5
   value: 10kohm
   footprint: '0402'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: EN_DRV4
 - ref: R50
   value: 22ohm
@@ -1444,6 +1555,7 @@ components:
   value: 10kohm
   footprint: '0402'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: EN_DRV_HV0
 - ref: R53
   value: 22ohm
@@ -1457,11 +1569,12 @@ components:
   value: 3.6kohm
   footprint: '0603'
   lcsc: C103578
-  pullup: D7.A
+  mpn: RTT03362JTP
 - ref: R56
   value: 2.2ohm
   footprint: '0402'
   lcsc: C327251
+  mpn: RC0402FR-072R2L
 - ref: R57
   value: 47ohm
   footprint: '0402'
@@ -1470,6 +1583,7 @@ components:
   value: 75mohm
   footprint: '2512'
   lcsc: C705611
+  mpn: RL2512FK-070R075L
   power: 1W
 - ref: R59
   value: 47ohm
@@ -1483,11 +1597,12 @@ components:
   value: 1kohm
   footprint: '0603'
   lcsc: C115325
-  pullup: D8.A
+  mpn: RS-03K1001FT
 - ref: R62
   value: 4.7kohm
   footprint: '0603'
   lcsc: C99782
+  mpn: RC0603FR-074K7L
   pullup: BTN_EN1
 - ref: R64
   value: 100ohm
@@ -1505,12 +1620,13 @@ components:
   value: 100kohm
   footprint: '0402'
   lcsc: C132374
+  mpn: WR06X1003FTL
   pulldown: SPI4_MOSI
 - ref: R68
   value: 1kohm
   footprint: '0603'
   lcsc: C14676
-  pullup: D9.A
+  mpn: RC0603JR-071KL
 - ref: R69
   value: 22ohm
   footprint: '0402'
@@ -1527,6 +1643,7 @@ components:
   value: 4.7kohm
   footprint: '0603'
   lcsc: C99782
+  mpn: RC0603FR-074K7L
   pullup: BTN_EN2
 - ref: R72
   value: 47ohm
@@ -1540,6 +1657,7 @@ components:
   value: 75mohm
   footprint: '2512'
   lcsc: C705611
+  mpn: RL2512FK-070R075L
   power: 1W
 - ref: R75
   value: 47ohm
@@ -1549,18 +1667,22 @@ components:
   value: 2.2kohm
   footprint: '0603'
   lcsc: C445630
+  mpn: ERA3AEB222V
 - ref: R77
   value: 2.2kohm
   footprint: '0603'
   lcsc: C445630
+  mpn: ERA3AEB222V
 - ref: R78
   value: 100ohm
   footprint: '0603'
   lcsc: C327825
+  mpn: MR06X1000FTL
 - ref: R79
   value: 100ohm
   footprint: '0603'
   lcsc: C327825
+  mpn: MR06X1000FTL
 - ref: R8
   value: 110mohm
   footprint: 0805
@@ -1569,45 +1691,55 @@ components:
   value: 100ohm
   footprint: '0603'
   lcsc: C327825
+  mpn: MR06X1000FTL
 - ref: R81
   value: 100ohm
   footprint: '0603'
   lcsc: C327825
+  mpn: MR06X1000FTL
 - ref: R82
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: Z_PROBE
 - ref: R83
   value: 1kohm
   footprint: '0603'
   lcsc: C14676
+  mpn: RC0603JR-071KL
 - ref: R84
   value: 1kohm
   footprint: '0603'
   lcsc: C14676
+  mpn: RC0603JR-071KL
 - ref: R85
   value: 1kohm
   footprint: '0603'
   lcsc: C14676
+  mpn: RC0603JR-071KL
 - ref: R86
   value: 1kohm
   footprint: '0603'
   lcsc: C14676
+  mpn: RC0603JR-071KL
 - ref: R87
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: Filament
 - ref: R88
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: X-Endstop
 - ref: R89
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: Y-Endstop
 - ref: R9
   value: 110mohm
@@ -1617,51 +1749,61 @@ components:
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: Z-Endstop
 - ref: R91
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: TACH0
 - ref: R92
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pulldown: Q13.G
 - ref: R93
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: TACH1
 - ref: R94
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pulldown: Q14.G
 - ref: R95
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: TACH2
 - ref: R96
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pulldown: Q15.G
 - ref: R97
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pullup: TACH3
 - ref: R98
   value: 10kohm
   footprint: '0603'
   lcsc: C384294
+  mpn: WR06X103JTL
   pulldown: Q16.G
 - ref: R99
   value: 2.2kohm
   footprint: '0603'
   lcsc: C445630
+  mpn: ERA3AEB222V
 - ref: RV1
   value: 54V
   footprint: '1206'
@@ -1728,19 +1870,21 @@ components:
   lcsc: C231329
 - ref: U1
   value: TMC2209_LA
-  footprint: QFN-28-1EP
+  footprint: QFN-28-1EP_5x5
   lcsc: C465949
   pin_count: 29
   nc_pins: {SPREAD: '7', INDEX: '12', VREF: '17', STDBY: '20'}
 - ref: U10
   value: TMC5160-WA
-  footprint: QFN-56-1EP
+  footprint: QFN-56-1EP_8x8
   lcsc: C1161714
   pin_count: 48
   nc_pins: {ENCB_DCEN_CFG4: '23', ENCA_DCIN_CFG5: '24', ENCN_DCO_CFG6: '26', DIAG1_SWP: '28'}
 - ref: U11
   value: AP2112K-3.3V/AP2127K-3.3V
   footprint: SOT-23-5
+  lcsc: C51118/C156285
+  mpn: AP2112K-3.3TRG1
   pin_count: 5
 - ref: U12
   value: TJA1057GT
@@ -1751,6 +1895,7 @@ components:
   value: USBLC6-2
   footprint: SOT-23-6
   lcsc: C7519
+  mpn: USBLC6-2SC6
   pin_count: 6
 - ref: U15
   value: 74LVC1G17GW
@@ -1759,37 +1904,37 @@ components:
   pin_count: 5
 - ref: U16
   value: LM3407MY
-  footprint: MSOP-8-1EP
+  footprint: MSOP-8-1EP_3x3
   lcsc: C543051
   pin_count: 9
   nc_pins: {EN: '3'}
 - ref: U2
   value: TMC2209_LA
-  footprint: QFN-28-1EP
+  footprint: QFN-28-1EP_5x5
   lcsc: C465949
   pin_count: 29
   nc_pins: {SPREAD: '7', INDEX: '12', VREF: '17', STDBY: '20'}
 - ref: U3
   value: TMC2209_LA
-  footprint: QFN-28-1EP
+  footprint: QFN-28-1EP_5x5
   lcsc: C465949
   pin_count: 29
   nc_pins: {SPREAD: '7', INDEX: '12', VREF: '17', STDBY: '20'}
 - ref: U4
   value: TMC2209_LA
-  footprint: QFN-28-1EP
+  footprint: QFN-28-1EP_5x5
   lcsc: C465949
   pin_count: 29
   nc_pins: {SPREAD: '7', INDEX: '12', VREF: '17', STDBY: '20'}
 - ref: U5
   value: TMC2209_LA
-  footprint: QFN-28-1EP
+  footprint: QFN-28-1EP_5x5
   lcsc: C465949
   pin_count: 29
   nc_pins: {SPREAD: '7', INDEX: '12', VREF: '17', STDBY: '20'}
 - ref: U6
   value: TMC5160-WA
-  footprint: QFN-56-1EP
+  footprint: QFN-56-1EP_8x8
   lcsc: C1161714
   pin_count: 48
   nc_pins: {ENCB_DCEN_CFG4: '23', ENCA_DCIN_CFG5: '24', ENCN_DCO_CFG6: '26', DIAG1_SWP: '28'}
@@ -1813,7 +1958,7 @@ components:
   nc_pins: {PF11: '49', PF12: '50', PF13: '53', PD8: '77', PG15: '132', PB9: '140', PE0: '141'}
 - ref: Y1
   value: 25MHz
-  footprint: Crystal_SMD_Abracon_ABM8G-4Pin
+  footprint: Crystal_SMD_Abracon_ABM8G-4Pin_3.2x2.5
   lcsc: C91750
   pin_count: 4
 nets:
@@ -3730,19 +3875,6 @@ positions:
   x: 208.89
   y: 101.57
   rot: 180.0
-- ref: HS1
-  x: 170.0
-  y: 82.26
-  rot: 180.0
-  side: back
-- ref: HS2
-  x: 100.0
-  y: 82.26
-  rot: 180.0
-  side: back
-- ref: HS5
-  x: 102.4
-  y: 86.3
 - ref: J1
   x: 211.0
   y: 90.05

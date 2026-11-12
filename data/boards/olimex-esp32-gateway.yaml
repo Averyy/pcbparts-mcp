@@ -72,12 +72,6 @@ components:
   voltage: 50V
   tolerance: 20%
   dielectric: Y5V
-- ref: C18
-  value: 10uF
-  footprint: '0603'
-  voltage: 6.3V
-  tolerance: 20%
-  dielectric: X5R
 - ref: C19
   value: 1nF
   footprint: '1206'
@@ -90,12 +84,6 @@ components:
   voltage: 6.3V
   tolerance: 20%
   dielectric: X5R
-- ref: C20
-  value: 1nF
-  footprint: '1206'
-  voltage: 2000V
-  tolerance: 10%
-  dielectric: X7R
 - ref: C23
   value: 22uF
   footprint: '0603'
@@ -108,13 +96,6 @@ components:
   voltage: 50V
   tolerance: 20%
   dielectric: Y5V
-- ref: C3
-  value: 47uF
-  footprint: 0805
-  voltage: 6.3V
-  tolerance: 20%
-  dielectric: X5R
-  decouples: U1
 - ref: C4
   value: 47uF
   footprint: 0805
@@ -125,9 +106,6 @@ components:
 - ref: C5
   value: 1uF
   footprint: '0603'
-- ref: C6
-  value: NA C0402
-  footprint: '0402'
 - ref: C8
   value: 22uF
   footprint: '0603'
@@ -140,10 +118,6 @@ components:
   voltage: 6.3V
   tolerance: 20%
   dielectric: X5R
-- ref: CON1
-  value: 1x20 header
-  footprint: HN1x20
-  pin_count: 20
 - ref: D1
   value: 1N5819S4
   footprint: SOD-123_1C-2A_KA
@@ -177,14 +151,12 @@ components:
 - ref: GPIO17_E1
   value: Opened
   footprint: SJ
-- ref: L1
-  value: NA(FB0805 600R 2A)
-  footprint: 0805
 - ref: L2
   value: 1uH
   footprint: CD32
   current: 2.5A
   tolerance: 20%
+  mpn: SWPA3015S1R0MT
 - ref: L3
   value: 600ohm
   footprint: 0805
@@ -196,6 +168,7 @@ components:
 - ref: LAN1
   value: RJLD-060TC1
   footprint: RJLBC-060TC1
+  mpn: LPJ4013EDNL
   pin_count: 14
   nc_pins: {'4': '4', '5': '5'}
 - ref: LED1
@@ -225,13 +198,6 @@ components:
   pin_count: 3
 - ref: R1
   value: 2.2kohm
-  footprint: '0603'
-  pulldown: LED1.1
-- ref: R10
-  value: NA R0603
-  footprint: '0603'
-- ref: R11
-  value: NA R0603
   footprint: '0603'
 - ref: R12
   value: 33ohm
@@ -325,7 +291,6 @@ components:
 - ref: R4
   value: 2.2kohm
   footprint: '0603'
-  pulldown: PWRLED1.1
 - ref: R40
   value: 10kohm
   footprint: '0603'
@@ -342,9 +307,6 @@ components:
   value: 10kohm
   footprint: '0603'
   pullup: /GPI34\BUT1
-- ref: R46
-  value: NA R0603
-  footprint: '0603'
 - ref: R5
   value: 1kohm
   footprint: '0603'
@@ -360,9 +322,6 @@ components:
   value: 2.2kohm
   footprint: '0603'
   pullup: MICRO_SD1.1
-- ref: R9
-  value: NA R0603
-  footprint: '0603'
 - ref: RM2
   value: RA1206_(4X0603)_4B8_2.2k
   footprint: R_MATRIX_4
@@ -398,16 +357,17 @@ components:
 - ref: U3
   value: ESP32-WROOM-32E
   footprint: ESP-WROOM-32_MODULE
+  mpn: ESP32-WROOM-32E-N4
   pin_count: 40
   nc_pins: {'17': '17', '18': '18', '19': '19', '20': '20', '21': '21', '22': '22', '32': '32', Past: Past}
 - ref: U4
   value: LAN8710A-EZC-ABC
-  footprint: QFN32_EP(33)
+  footprint: QFN32_EP(33)_5.00x5.00x0.90
   pin_count: 34
   nc_pins: {'4': '4', '14': '14', '18': '18', '20': '20', '26': '26', PAST: PAST}
 - ref: U5
   value: CH340X
-  footprint: MSOP-10_Pitch-0.5mm
+  footprint: MSOP-10_Pitch-0.5mm_3.00x3.00x1.00
   pin_count: 10
 - ref: USB-UART1
   value: USB-C
@@ -421,7 +381,6 @@ nets:
   - C8.1
   - C9.1
   - FET1.3
-  - L1.2
   - L3.1
   - R38.2
   - RM2.3.1
@@ -434,9 +393,7 @@ nets:
   pins:
   - C1.1
   - C2.1
-  - CON1.1
   - FET1.2
-  - L1.1
   - L2.2
   - L4.1
   - R19.2
@@ -451,7 +408,6 @@ nets:
   - U3.2
 - name: +5V
   pins:
-  - C3.1
   - C4.1
   - D2.1
   - D6.1
@@ -462,7 +418,7 @@ nets:
   - U1.3
   - U1.4
 - name: +5V_EXT
-  pins: [CON1.20, D6.2, FET2.1, R30.1]
+  pins: [D6.2, FET2.1, R30.1]
 - name: /+5V_USB
   pins:
   - C23.1
@@ -478,31 +434,19 @@ nets:
 - name: /D-
   pins: [U5.2, USB-UART1.A7, USB-UART1.B7]
 - name: /D_Com
-  pins: [D4.3, R37.2, R46.2]
+  pins: [D4.3, R37.2]
 - name: /ESP_EN
-  pins: [C5.1, CON1.3, D5.2, R24.2, RST1.1, U3.3]
+  pins: [C5.1, D5.2, R24.2, RST1.1, U3.3]
 - name: /GPI34\BUT1
-  pins: [BUT1.1, CON1.15, R45.2, R46.1, U3.6]
-- name: /GPI35
-  pins: [CON1.16, U3.7]
-- name: /GPI36
-  pins: [CON1.17, U3.4]
-- name: /GPI39
-  pins: [CON1.18, U3.5]
+  pins: [BUT1.1, R45.2, U3.6]
 - name: /GPIO0
   pins: [D4.2, U3.25]
-- name: /GPIO12\HS2_DATA2
-  pins: [CON1.7, R11.1, U3.14]
-- name: /GPIO13\HS2_DATA3
-  pins: [CON1.8, R9.1, U3.16]
 - name: /GPIO14\HS2_CLK
-  pins: [CON1.9, R43.1, U3.13]
+  pins: [R43.1, U3.13]
 - name: /GPIO15\HS2_CMD
-  pins: [CON1.10, MICRO_SD1.3, R29.2, U3.23]
-- name: /GPIO16
-  pins: [CON1.11, U3.27]
+  pins: [MICRO_SD1.3, R29.2, U3.23]
 - name: /GPIO17\EMAC_CLK_OUT_180
-  pins: [C6.1, GPIO17_E1.1, R12.2, U4.5]
+  pins: [GPIO17_E1.1, R12.2, U4.5]
 - name: /GPIO18\MDIO(RMII)
   pins: [RM3.1.1, U3.30, U4.16]
 - name: /GPIO19\EMAC_TXD0(RMII)
@@ -522,17 +466,13 @@ nets:
 - name: /GPIO27\EMAC_RX_CRS_DV
   pins: [RM3.2.1, U3.12, U4.15]
 - name: /GPIO2\HS2_DATA0
-  pins: [CON1.5, D4.1, R16.1, R3.2, U3.24]
-- name: /GPIO32
-  pins: [CON1.13, U3.8]
+  pins: [D4.1, R16.1, R3.2, U3.24]
 - name: /GPIO33\LED
-  pins: [CON1.14, LED1.2, U3.9]
+  pins: [LED1.2, U3.9]
 - name: /GPIO3\U0RXD
   pins: [D1.2, R40.2, U3.34]
-- name: /GPIO4\HS2_DATA1
-  pins: [CON1.6, R10.1, U3.26]
 - name: /GPIO5\PHY_PWR
-  pins: [CON1.4, T1.1, U3.29]
+  pins: [T1.1, U3.29]
 - name: /PHYAD0
   pins: [RM3.4.1, U4.13]
 - name: /PHYAD1
@@ -572,19 +512,13 @@ nets:
   - C15.2
   - C16.2
   - C17.2
-  - C18.1
   - C19.2
-  - C20.2
   - C23.2
   - C24.2
-  - C3.2
   - C4.2
   - C5.2
-  - C6.2
   - C8.2
   - C9.2
-  - CON1.19
-  - CON1.2
   - D2.2
   - GND1.1
   - MICRO_SD1.6
@@ -628,15 +562,13 @@ nets:
 - name: Net-(C10-Pad1)
   pins: [C10.1, L4.2, MICRO_SD1.4]
 - name: Net-(C18-Pad2)
-  pins: [C18.2, PHY_RST1.2, R38.1, U4.19]
+  pins: [PHY_RST1.2, R38.1, U4.19]
 - name: Net-(C19-Pad1)
-  pins: [C19.1, C20.1, LAN1.GND1, LAN1.GND2]
+  pins: [C19.1, LAN1.GND1, LAN1.GND2]
 - name: Net-(C2-Pad2)
   pins: [C2.2, FET1.1, R5.1, R6.2]
 - name: Net-(C24-Pad1)
   pins: [C24.1, R40.1, U5.10]
-- name: Net-(CON1-Pad12)
-  pins: [CON1.12, GPIO17_E1.2]
 - name: Net-(D1-Pad1)
   pins: [D1.1, U5.8]
 - name: Net-(D3-Pad2)
@@ -664,15 +596,15 @@ nets:
 - name: Net-(LED1-Pad1)
   pins: [LED1.1, R1.2]
 - name: Net-(MICRO_SD1-Pad1)
-  pins: [MICRO_SD1.1, R11.2, R8.2]
+  pins: [MICRO_SD1.1, R8.2]
 - name: Net-(MICRO_SD1-Pad2)
-  pins: [MICRO_SD1.2, R2.2, R9.2]
+  pins: [MICRO_SD1.2, R2.2]
 - name: Net-(MICRO_SD1-Pad5)
   pins: [MICRO_SD1.5, R43.2]
 - name: Net-(MICRO_SD1-Pad7)
   pins: [MICRO_SD1.7, R16.2]
 - name: Net-(MICRO_SD1-Pad8)
-  pins: [MICRO_SD1.8, R10.2, R7.2]
+  pins: [MICRO_SD1.8, R7.2]
 - name: Net-(PWRLED1-Pad1)
   pins: [PWRLED1.1, R4.1]
 - name: Net-(Q4-Pad1)
@@ -738,10 +670,6 @@ positions:
   x: 93.6
   y: 98.3
   rot: 180.0
-- ref: C18
-  x: 105.92
-  y: 98.68
-  rot: 180.0
 - ref: C19
   x: 92.08
   y: 85.22
@@ -749,20 +677,12 @@ positions:
 - ref: C2
   x: 89.79
   y: 99.06
-- ref: C20
-  x: 92.08
-  y: 77.6
-  rot: 90.0
 - ref: C23
   x: 107.19
   y: 118.75
 - ref: C24
   x: 107.19
   y: 115.57
-- ref: C3
-  x: 116.97
-  y: 112.9
-  rot: 180.0
 - ref: C4
   x: 116.97
   y: 114.94
@@ -771,9 +691,6 @@ positions:
   x: 88.14
   y: 118.11
   rot: 180.0
-- ref: C6
-  x: 91.31
-  y: 91.69
 - ref: C8
   x: 105.66
   y: 104.01
@@ -782,9 +699,6 @@ positions:
   x: 104.14
   y: 104.01
   rot: 90.0
-- ref: CON1
-  x: 95.0
-  y: 128.02
 - ref: D1
   x: 107.06
   y: 122.68
@@ -825,9 +739,6 @@ positions:
   y: 101.09
   rot: 270.0
   side: back
-- ref: L1
-  x: 86.11
-  y: 101.98
 - ref: L2
   x: 116.46
   y: 121.79
@@ -875,13 +786,6 @@ positions:
 - ref: R1
   x: 117.86
   y: 82.68
-- ref: R10
-  x: 86.49
-  y: 107.95
-- ref: R11
-  x: 77.85
-  y: 118.36
-  rot: 180.0
 - ref: R12
   x: 91.69
   y: 90.17
@@ -998,9 +902,6 @@ positions:
   x: 82.3
   y: 97.28
   rot: 180.0
-- ref: R46
-  x: 82.3
-  y: 98.81
 - ref: R5
   x: 89.79
   y: 97.54
@@ -1015,10 +916,6 @@ positions:
 - ref: R8
   x: 77.85
   y: 119.89
-  rot: 180.0
-- ref: R9
-  x: 81.03
-  y: 118.36
   rot: 180.0
 - ref: RM2
   x: 94.61

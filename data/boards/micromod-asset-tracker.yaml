@@ -15,6 +15,10 @@ design_rules:
   min_drill: 0.2mm
   min_via: 0.13mm
 components:
+- ref: 3V3_LED
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
 - ref: BT1
   value: ML414H
   footprint: ML414H_IV01E
@@ -27,135 +31,189 @@ components:
 - ref: C1
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U5
 - ref: C10
   value: 47pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-08913
 - ref: C11
   value: 47pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-08913
 - ref: C12
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
 - ref: C13
   value: 220nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-07822
   decouples: U5
 - ref: C14
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U1
 - ref: C15
   value: 68pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-14092
   decouples: U1
 - ref: C16
   value: 10uF
   footprint: '0603'
+  voltage: 6.3V
+  tolerance: 20%
   prod_id: CAP-11015
 - ref: C17
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-00868
 - ref: C18
   value: 33pF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 5%
+  digikey: 490-5936-1-ND
   manufacturer: Murata
+  mpn: GRM1555C1H330JA
   prod_id: CAP-15358
 - ref: C19
   value: 27pF
   footprint: '0402'
+  voltage: 25V
+  tolerance: 5%
+  digikey: 490-11384-1-ND
   manufacturer: Murata
+  mpn: GRM1555C1H270JA
   prod_id: CAP-15357
 - ref: C2
   value: 10uF
   footprint: EIA3216
+  voltage: 16V
   prod_id: CAP-00811
   decouples: U5
 - ref: C20
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
 - ref: C21
   value: 47pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-08913
 - ref: C22
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: IC1
 - ref: C23
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: IC2
 - ref: C24
   value: 15pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-07881
 - ref: C3
   value: 4.7uF
   footprint: '0603'
+  voltage: 6.3V
   prod_id: CAP-08280
 - ref: C31
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
   decouples: U8
 - ref: C4
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
 - ref: C46
   value: 100nF
   footprint: '0603'
+  voltage: 25V
   prod_id: CAP-00810
 - ref: C5
   value: 220nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 10%
   prod_id: CAP-07822
 - ref: C51
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
 - ref: C52
   value: 100nF
   footprint: '0603'
+  voltage: 25V
+  tolerance: 5%
   prod_id: CAP-08604
   decouples: U13
 - ref: C53
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
   decouples: U14
 - ref: C54
   value: 1uF
   footprint: '0603'
+  voltage: 16V
+  tolerance: 10%
   prod_id: CAP-13930
   decouples: U14
 - ref: C6
   value: 4.7uF
   footprint: '0603'
+  voltage: 35V
   prod_id: CAP-14106
 - ref: C7
   value: 47pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-08913
 - ref: C8
   value: 47pF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 5%
   prod_id: CAP-08913
 - ref: C9
   value: 1nF
   footprint: '0603'
+  voltage: 50V
+  tolerance: 10%
   prod_id: CAP-07886
 - ref: D1
   value: 3.3V
@@ -165,11 +223,15 @@ components:
 - ref: D10
   value: PESD0402
   footprint: '0402'
+  digikey: PESD0402-140CT-ND
+  mouser: 650-PESD0402-140
   prod_id: DIO-15359
   description: ESD protection diode
 - ref: D11
   value: PESD0402
   footprint: '0402'
+  digikey: PESD0402-140CT-ND
+  mouser: 650-PESD0402-140
   prod_id: DIO-15359
   description: ESD protection diode
 - ref: D12
@@ -246,6 +308,10 @@ components:
   prod_id: CONN-15100
   description: SMA Antenna Connector w/ Ground
   pin_count: 3
+- ref: EN
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
 - ref: F2
   value: 6V/2A
   footprint: '1210'
@@ -258,26 +324,35 @@ components:
   current: 1.8A
 - ref: IC1
   value: SN74AVC4T774PW
-  footprint: SOP-16
-  description: Texas Instruments,SN74AVC4T774PW,IC, Texas Instruments SN74AVC4T774PW, Dual
+  footprint: SOP65P640X120-16N
+  arrow: SN74AVC4T774PW
+  description: Texas Instruments,SN74AVC4T774PW,IC, Texas Instruments SN74AVC4T774PW, Dual, Bus Transceiver, 4-Bit Non-Inverting
+    3-State, 1.2  3.6 V, 16-Pin TSSOP
   manufacturer: Texas Instruments
   mpn: SN74AVC4T774PW
+  mouser: 595-SN74AVC4T774PW
   prod_id: IC-15360
   pin_count: 16
 - ref: IC2
   value: SN74AVC4T774PW
-  footprint: SOP-16
-  description: Texas Instruments,SN74AVC4T774PW,IC, Texas Instruments SN74AVC4T774PW, Dual
+  footprint: SOP65P640X120-16N
+  arrow: SN74AVC4T774PW
+  description: Texas Instruments,SN74AVC4T774PW,IC, Texas Instruments SN74AVC4T774PW, Dual, Bus Transceiver, 4-Bit Non-Inverting
+    3-State, 1.2  3.6 V, 16-Pin TSSOP
   manufacturer: Texas Instruments
   mpn: SN74AVC4T774PW
+  mouser: 595-SN74AVC4T774PW
   prod_id: IC-15360
   pin_count: 16
 - ref: IC3
   value: SN74AVC4T774PW
-  footprint: SOP-16
-  description: Texas Instruments,SN74AVC4T774PW,IC, Texas Instruments SN74AVC4T774PW, Dual
+  footprint: SOP65P640X120-16N
+  arrow: SN74AVC4T774PW
+  description: Texas Instruments,SN74AVC4T774PW,IC, Texas Instruments SN74AVC4T774PW, Dual, Bus Transceiver, 4-Bit Non-Inverting
+    3-State, 1.2  3.6 V, 16-Pin TSSOP
   manufacturer: Texas Instruments
   mpn: SN74AVC4T774PW
+  mouser: 595-SN74AVC4T774PW
   prod_id: IC-15360
   pin_count: 16
 - ref: J1
@@ -302,9 +377,6 @@ components:
   value: 1x4 header
   footprint: 1X04
   pin_count: 4
-- ref: J13
-  value: 1x1 header
-  footprint: 1X01
 - ref: J14
   value: 1x4 header
   footprint: 1X04
@@ -330,9 +402,6 @@ components:
   footprint: 1X04
   prod_id: CONN-09696
   pin_count: 4
-- ref: J19
-  value: 1x1 header
-  footprint: 1X01
 - ref: J2
   value: JTAG
   footprint: 2X5-PTH-1.27MM
@@ -345,7 +414,9 @@ components:
   prod_id: CONN-14877
   description: MicroMod Connector
   pin_count: 67
-  nc_pins: {G11: '8', USBHOST_D+: '35', USBHOST_D-: '37', CAN-RX: '41', CAN-TX: '43', AUD_IN/CAM_PCLK: '54', AUD_OUT/CAM_MCLK: '56', AUD_MCLK: '58', SPI_SCK1/SDIO_CLK: '60', SPI_SDO1/SDIO_CMD: '62', G10/ADC_D+/CAM_VSYNC: '63', SPI_SDI1/SDIO_DATA0: '64', G9/ADC_D-/CAM_HSYNC: '65', SDIO_DATA1: '66', G8: '67', SDIO_DATA2: '68', SPI_!CS1!/SDIO_DATA3: '70'}
+  nc_pins: {G11: '8', USBHOST_D+: '35', USBHOST_D-: '37', CAN-RX: '41', CAN-TX: '43', AUD_IN/CAM_PCLK: '54', AUD_OUT/CAM_MCLK: '56',
+    AUD_MCLK: '58', SPI_SCK1/SDIO_CLK: '60', SPI_SDO1/SDIO_CMD: '62', G10/ADC_D+/CAM_VSYNC: '63', SPI_SDI1/SDIO_DATA0: '64',
+    G9/ADC_D-/CAM_HSYNC: '65', SDIO_DATA1: '66', G8: '67', SDIO_DATA2: '68', SPI_!CS1!/SDIO_DATA3: '70'}
 - ref: J5
   value: 1x5 header
   footprint: 1X05
@@ -368,7 +439,7 @@ components:
   value: 1x1 header
   footprint: 1X01
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
   pin_count: 3
@@ -414,7 +485,7 @@ components:
   description: Normally closed trace jumper (1 of 2 connections)
   pin_count: 3
 - ref: JP2
-  value: solder jumper
+  value: solder jumper (NC)
   footprint: SJ-3
   description: Normally closed trace jumper (2 of 2 connections)
   pin_count: 3
@@ -453,7 +524,13 @@ components:
 - ref: L2
   value: 68nH
   footprint: 0402_COILCRAFT
+  digikey: 490-2633-1-ND
+  mouser: 81-LQG15HS68NJ02D
   prod_id: NDUC-15356
+- ref: MEAS
+  value: solder jumper (NC)
+  footprint: SJ-2
+  pin_count: 4
 - ref: Q1
   value: 310mA/60V/1.6ohm
   footprint: SOT323
@@ -517,111 +594,135 @@ components:
 - ref: R1
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R10
   value: 20kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-09383
   pullup: VIN/3.1
 - ref: R11
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R12
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R13
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R14
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
   pulldown: U2.PROG
 - ref: R15
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: '!RESET!'
 - ref: R16
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: ICM_PWR
 - ref: R17
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: MICROSD_PWR
 - ref: R18
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: LTE_PWR_ON
 - ref: R19
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: RTS1
 - ref: R2
   value: 5.1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-12083
   pulldown: J1.CC1
 - ref: R20
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: DSR
 - ref: R21
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R22
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R23
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
 - ref: R24
   value: 10ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-12581
 - ref: R25
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: Q8.D
 - ref: R26
   value: 200kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-09385
   pullup: U7.EN
 - ref: R27
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R28
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R29
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
   pullup: Q5.S
 - ref: R3
   value: 5.1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-12083
   pulldown: J1.CC2
 - ref: R30
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
   pullup: SARA_INT
 - ref: R31
@@ -631,18 +732,22 @@ components:
 - ref: R32
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R33
   value: 100ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07863
 - ref: R34
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R35
   value: 470ohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07869
 - ref: R36
   value: 0ohm
@@ -655,71 +760,86 @@ components:
 - ref: R38
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: Q1.D
 - ref: R39
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: Q3.D
 - ref: R4
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R40
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pulldown: DTR
 - ref: R41
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: SD_!CS!
 - ref: R42
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
   pullup: Q7.G
 - ref: R43
   value: 1kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07856
 - ref: R44
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: SARA_!ON!
 - ref: R45
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: ANT_REG_EN
 - ref: R48
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
   pullup: ICM-20948-LV_SDO
 - ref: R5
   value: 100kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07828
   pullup: U5.EN
 - ref: R6
   value: 4.7kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07857
 - ref: R7
   value: 2.2kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-08272
 - ref: R8
   value: 3.3kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-07851
 - ref: R9
   value: 10kohm
   footprint: '0603'
+  tolerance: 1%
   prod_id: RES-00824
 - ref: S1
   value: RESET
@@ -744,7 +864,8 @@ components:
   footprint: SARA-LGA
   prod_id: IC-15573
   pin_count: 96
-  nc_pins: {RSVD: '2', GPIO4: '25', I2S_WA: '34', I2S_TXD: '35', I2S_CLK: '36', I2S_RXD: '37', GPIO5: '42', SDIO_D2: '44', SDIO_CLK: '45', SDIO_CMD: '46', SDIO_D0: '47', SDIO_D3: '48', SDIO_D1: '49'}
+  nc_pins: {RSVD: '2', GPIO4: '25', I2S_WA: '34', I2S_TXD: '35', I2S_CLK: '36', I2S_RXD: '37', GPIO5: '42', SDIO_D2: '44',
+    SDIO_CLK: '45', SDIO_CMD: '46', SDIO_D0: '47', SDIO_D3: '48', SDIO_D1: '49'}
 - ref: U13
   value: 9DoF IMU
   footprint: QFN24-3X3-ICM-20948
@@ -784,6 +905,7 @@ components:
   footprint: UDFN-8
   prod_id: VREG-14094
   description: AP7361C 3.3V LDO Regulator
+  mpn: AP7361C-33FGE
   pin_count: 5
 - ref: U7
   value: PCA9306
@@ -797,7 +919,15 @@ components:
   prod_id: COMP-08268
   description: Single Inverter
   pin_count: 4
+- ref: VE
+  value: solder jumper (NO)
+  footprint: SJ-2
+  description: Normally open jumper
 - ref: VIN/3
+  value: solder jumper (NC)
+  footprint: SJ-2
+  description: Normally closed trace jumper
+- ref: VIN_LED
   value: solder jumper (NC)
   footprint: SJ-2
   description: Normally closed trace jumper
@@ -889,7 +1019,7 @@ nets:
   pins: [R21.1, U2.STAT]
   trace_width: '0.000153125'
 - name: CTS1
-  pins: [IC1.B3, J4.CTS1, TP7.1]
+  pins: [IC1.B3, J4.CTS1]
   trace_width: '0.000153125'
 - name: D0
   pins: [J4.D0, J5.4, J8.5]
@@ -898,16 +1028,16 @@ nets:
   pins: [J4.D1/CAM_TRIG, J8.6]
   trace_width: '0.000153125'
 - name: DCD
-  pins: [IC2.B2, J4.RX2, TP19.1]
+  pins: [IC2.B2, J4.RX2]
   trace_width: '0.000153125'
 - name: DIR4
   pins: [DSR.2, IC2.DIR4]
   trace_width: '0.000153125'
 - name: DSR
-  pins: [IC2.B4, JP17.2, R20.2, TP21.1]
+  pins: [IC2.B4, JP17.2, R20.2]
   trace_width: '0.000153125'
 - name: DTR
-  pins: [IC2.B1, J4.TX2, R40.1, TP18.1]
+  pins: [IC2.B1, J4.TX2, R40.1]
   trace_width: '0.000153125'
 - name: EN
   pins: [D1.C, R5.1, U5.EN, VE.2]
@@ -1018,7 +1148,6 @@ nets:
   - J5.5
   - J6.5
   - J7.1
-  - L1.2
   - Q1.S
   - Q2.S
   - Q3.S
@@ -1105,7 +1234,7 @@ nets:
   pins: [JP2.1, R7.2]
   trace_width: '0.000153125'
 - name: N$14
-  pins: [BT1.+, D6.A, R8.1, TP24.1]
+  pins: [BT1.+, D6.A, R8.1]
   trace_width: '0.000153125'
 - name: N$15
   pins: [C18.2, E3.SIGNAL, L2.2]
@@ -1129,7 +1258,7 @@ nets:
   pins: [D5.C, R21.2]
   trace_width: '0.000153125'
 - name: N$25
-  pins: [C21.1, FB1.1, R24.2, TP22.1]
+  pins: [C21.1, FB1.1, R24.2]
   trace_width: '0.000153125'
 - name: N$26
   pins: [Q2.G, R27.2]
@@ -1147,7 +1276,7 @@ nets:
   pins: [Q1.G, R32.2]
   trace_width: '0.000153125'
 - name: N$33
-  pins: [J13.1, Q1.D, R33.1, R38.1]
+  pins: [Q1.D, R33.1, R38.1]
   trace_width: '0.000153125'
 - name: N$34
   pins: [D12.C, R33.2]
@@ -1156,7 +1285,7 @@ nets:
   pins: [Q3.G, R34.2]
   trace_width: '0.000153125'
 - name: N$36
-  pins: [J19.1, Q3.D, R35.1, R39.1]
+  pins: [Q3.D, R35.1, R39.1]
   trace_width: '0.000153125'
 - name: N$37
   pins: [D13.C, R35.2]
@@ -1216,28 +1345,28 @@ nets:
   pins: [C51.1, U13.REGOUT]
   trace_width: '0.000153125'
 - name: RI
-  pins: [IC2.B3, JP14.2, TP20.1]
+  pins: [IC2.B3, JP14.2]
   trace_width: '0.000153125'
 - name: RTC_3V
   pins: [D3.C, D6.C, J4.RTC_3V, R8.2]
   trace_width: '0.000153125'
 - name: RTS1
-  pins: [IC1.B4, J4.RTS1, R19.2, TP8.1]
+  pins: [IC1.B4, J4.RTS1, R19.2]
   trace_width: '0.000153125'
 - name: RX1
-  pins: [IC1.B1, J4.RX1, TP5.1]
+  pins: [IC1.B1, J4.RX1]
   trace_width: '0.000153125'
 - name: RXD_O
   pins: [R36.2, U1.RXD_O]
   trace_width: '0.000153125'
 - name: SARA_!ON!
-  pins: [JP16.2, Q7.D, R43.1, R44.1, TP13.1]
+  pins: [JP16.2, Q7.D, R43.1, R44.1]
   trace_width: '0.000153125'
 - name: SARA_!RESET!
   pins: [Q4.D, U1.RESET_N]
   trace_width: '0.000153125'
 - name: SARA_ANT
-  pins: [C18.1, L1.1, U1.ANT]
+  pins: [C18.1, U1.ANT]
   trace_width: '0.000153125'
 - name: SARA_ANT_DET
   pins: [R23.1, U1.ANT_DET]
@@ -1246,16 +1375,16 @@ nets:
   pins: [D11.1, E4.SIGNAL, FB1.2, U1.ANT_GNSS]
   trace_width: '0.000153125'
 - name: SARA_CTS
-  pins: [IC1.A3, TP3.1, U1.CTS_O]
+  pins: [IC1.A3, U1.CTS_O]
   trace_width: '0.000153125'
 - name: SARA_DCD/RXD2O
-  pins: [IC2.A2, TP15.1, U1.DCD_O]
+  pins: [IC2.A2, U1.DCD_O]
   trace_width: '0.000153125'
 - name: SARA_DSR/RTS2I
-  pins: [IC2.A4, TP17.1, U1.DSR_O]
+  pins: [IC2.A4, U1.DSR_O]
   trace_width: '0.000153125'
 - name: SARA_DTR/TXD2I
-  pins: [IC2.A1, TP14.1, U1.DTR_I]
+  pins: [IC2.A1, U1.DTR_I]
   trace_width: '0.000153125'
 - name: SARA_EXT_INT
   pins: [JP19.3, U1.EXT_INT]
@@ -1264,7 +1393,7 @@ nets:
   pins: [JP19.1, U1.GPIO3]
   trace_width: '0.000153125'
 - name: SARA_INT
-  pins: [JP15.2, Q5.D, R30.1, TP12.1]
+  pins: [JP15.2, Q5.D, R30.1]
   trace_width: '0.000153125'
 - name: SARA_NI
   pins: [R34.1, U1.GPIO1]
@@ -1273,31 +1402,31 @@ nets:
   pins: [Q2.D, S3.1, U1.PWR_ON]
   trace_width: '0.000153125'
 - name: SARA_RI/CTS2O
-  pins: [IC2.A3, TP16.1, U1.RI_O]
+  pins: [IC2.A3, U1.RI_O]
   trace_width: '0.000153125'
 - name: SARA_RTS
-  pins: [IC1.A4, TP4.1, U1.RTS_I]
+  pins: [IC1.A4, U1.RTS_I]
   trace_width: '0.000153125'
 - name: SARA_RXD
-  pins: [IC1.A1, R36.1, TP1.1]
+  pins: [IC1.A1, R36.1]
   trace_width: '0.000153125'
 - name: SARA_SCL
   pins: [J14.4, JP7.1, R4.1, U7.SCL2]
   trace_width: '0.000153125'
 - name: SARA_SCL_1.8V
-  pins: [TP10.1, U1.SCL, U7.SCL1]
+  pins: [U1.SCL, U7.SCL1]
   trace_width: '0.000153125'
 - name: SARA_SDA
   pins: [J14.3, JP8.1, R1.1, U7.SDA2]
   trace_width: '0.000153125'
 - name: SARA_SDA_1.8V
-  pins: [TP9.1, U1.SDA, U7.SDA1]
+  pins: [U1.SDA, U7.SDA1]
   trace_width: '0.000153125'
 - name: SARA_TP
   pins: [R32.1, U1.GPIO6/TP]
   trace_width: '0.000153125'
 - name: SARA_TXD
-  pins: [IC1.A2, R37.1, TP2.1]
+  pins: [IC1.A2, R37.1]
   trace_width: '0.000153125'
 - name: SARA_USB_D+
   pins: [J18.2, JP4.2, U1.USB_D+]
@@ -1312,7 +1441,7 @@ nets:
   pins: [J11.DAT3/!CS!, JP10.2, R41.1]
   trace_width: '0.000153125'
 - name: SD_PWR
-  pins: [C46.1, J11.VCC, Q6.D, TP23.1]
+  pins: [C46.1, J11.VCC, Q6.D]
   trace_width: '0.000153125'
 - name: SIM_CLK
   pins: [C8.1, D8.1, J17.CLK, U1.SIM_CLK]
@@ -1339,7 +1468,7 @@ nets:
   pins: [J2.SWDIO, J4.SWDIO]
   trace_width: '0.000153125'
 - name: TX1
-  pins: [IC1.B2, J4.TX1, TP6.1]
+  pins: [IC1.B2, J4.TX1]
   trace_width: '0.000153125'
 - name: TXD_I
   pins: [R37.2, U1.TXD_I]
@@ -1412,6 +1541,9 @@ nets:
   pins: [BYP.1, F2.1, J1.VBUS, JP5.1]
   trace_width: '0.000153125'
 positions:
+- ref: 3V3_LED
+  x: 8.89
+  y: 47.75
 - ref: BT1
   x: 29.21
   y: 3.81
@@ -1595,6 +1727,9 @@ positions:
 - ref: E4
   x: 59.69
   y: 76.2
+- ref: EN
+  x: 59.69
+  y: 42.55
 - ref: F2
   x: 11.43
   y: 3.81
@@ -1630,9 +1765,6 @@ positions:
   x: 74.93
   y: 25.4
   rot: 270.0
-- ref: J13
-  x: 1.27
-  y: 66.04
 - ref: J14
   x: 74.93
   y: 50.8
@@ -1652,9 +1784,6 @@ positions:
   x: 1.27
   y: 63.5
   rot: 270.0
-- ref: J19
-  x: 1.27
-  y: 68.58
 - ref: J2
   x: 30.48
   y: 17.78
@@ -1755,6 +1884,10 @@ positions:
   x: 19.56
   y: 65.09
   rot: 90.0
+- ref: MEAS
+  x: 23.62
+  y: 14.35
+  rot: 180.0
 - ref: Q1
   x: 12.7
   y: 48.64
@@ -2008,10 +2141,17 @@ positions:
   x: 51.82
   y: 47.62
   rot: 180.0
+- ref: VE
+  x: 36.7
+  y: 20.83
+  rot: 180.0
 - ref: VIN/3
   x: 16.48
   y: 14.64
   rot: 270.0
+- ref: VIN_LED
+  x: 8.89
+  y: 45.72
 copper_pours:
 - net: 3.3V
   layers: [In14.Cu]

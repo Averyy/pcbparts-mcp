@@ -2,10 +2,13 @@
 
 import asyncio
 import contextlib
+import functools
+import inspect
 import json
 import logging
 import math
 import re
+import sqlite3
 import time
 from collections import defaultdict
 from contextlib import asynccontextmanager
@@ -17,7 +20,7 @@ from fastmcp.exceptions import NotFoundError, ValidationError
 from fastmcp.server.dependencies import get_http_request
 from fastmcp.server.middleware import Middleware as FastMCPMiddleware
 from mcp.types import ToolAnnotations
-from pydantic import BeforeValidator
+from pydantic import BeforeValidator, Field
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, RedirectResponse
@@ -40,6 +43,7 @@ from .cse import CSEClient
 from .mounting import english_package
 from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, offload, run_db
 from .db import get_db, close_db
+from .history_db import get_history_db, close_history_db
 from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
 from .search import SpecFilter, get_attribute_names
@@ -181,6 +185,7 @@ async def lifespan(app):
     if _client:
         await _client.close()
     await run_db(COMPONENT_POOL, close_db)
+    await run_db(COMPONENT_POOL, close_history_db)
     await run_db(SENSOR_POOL, close_sensor_db)
     await run_db(BOARD_POOL, close_boards_db)
 
@@ -201,7 +206,7 @@ async def _every_minute() -> None:
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only to cross-reference specific part numbers (shared daily limit; batch Mouser lookups). sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files).",
+    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only to cross-reference specific part numbers (shared daily limit; batch Mouser lookups). sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows a part's recorded stock changes.",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -209,11 +214,25 @@ mcp = FastMCP(
 )
 
 
+# Error replies meaning it worked and found nothing, with the reason shown in the usage counts
+_NOT_FOUND_ERRORS = (
+    ("mpn_not_in_snapshot", r"No part found in the local snapshot for MPN "),
+    ("part_not_found", r"Part not found: "),
+    ("lcsc_not_found", r"Part .* not found$"),
+    ("board_not_found", r"Board '.*' not found$"),
+    ("no_parts_for_query", r"No (JLCPCB parts|parts) found for "),
+    ("no_ecad_model", r"No ECAD model available for "),
+    ("no_kicad_in_archive", r"No KiCad files found in model archive "),
+    ("no_easyeda_symbol", r"No EasyEDA symbol (available|UUID) for "),
+    ("no_easyeda_symbol", r"EasyEDA has no symbol "),
+)
+
 # Our error replies, sorted for the usage counts by the start of their text (stats.OUTCOMES). Anchored
 # at the start because many messages end with what the user typed. A message that matches none of
 # these counts as "failed", so an unexpected failure shows up. tests/test_usage_stats.py checks every
 # error message in the code against this list.
-_ERROR_KINDS = [(kind, re.compile(pattern)) for kind, pattern in (
+# re.S: messages echo caller input, which can hold a newline ("Board 'a\nb' not found")
+_ERROR_KINDS = [(kind, re.compile(pattern, re.S)) for kind, pattern in (
     # a limit turned the request away: ours, Mouser's, DigiKey's, JLCPCB's or EasyEDA's
     ("rate_limited", r"\w+ daily quota exceeded "),
     ("rate_limited", r"\w+ lookups are limited to "),
@@ -221,6 +240,7 @@ _ERROR_KINDS = [(kind, re.compile(pattern)) for kind, pattern in (
     ("rate_limited", r"\w+ refused this server's requests"),
     ("rate_limited", r"JLCPCB rate limited"),
     ("rate_limited", r"Couldn't check EasyEDA for .* right now"),
+    ("failed", r"Stock history is not available on this server"),
     # the request was invalid
     ("bad_request", r"(Subcategory|Category) not found: "),
     ("bad_request", r"Subcategory ID \S+ not found$"),
@@ -240,16 +260,46 @@ _ERROR_KINDS = [(kind, re.compile(pattern)) for kind, pattern in (
     ("bad_request", r"Query contains (invalid characters|no searchable terms)$"),
     ("bad_request", r"(Invalid slug|Invalid UUID format|UUID is required)$"),
     # it worked and found nothing
-    ("not_found", r"No part found in the local snapshot for MPN "),
-    ("not_found", r"Part not found: "),
-    ("not_found", r"Part .* not found$"),
-    ("not_found", r"Board '.*' not found$"),
-    ("not_found", r"No (JLCPCB parts|parts) found for "),
-    ("not_found", r"No ECAD model available for "),
-    ("not_found", r"No KiCad files found in model archive "),
-    ("not_found", r"No EasyEDA symbol (available|UUID) for "),
-    ("not_found", r"EasyEDA has no symbol "),
+    *(("not_found", pattern) for _, pattern in _NOT_FOUND_ERRORS),
 )]
+
+_NOT_FOUND_REASONS = [(reason, re.compile(pattern, re.S)) for reason, pattern in _NOT_FOUND_ERRORS]
+
+# Why a call failed, for the usage counts. Anchored, like _ERROR_KINDS; no match is "unexpected_error".
+_FAILED_REASONS = [(reason, re.compile(pattern, re.S)) for reason, pattern in (
+    ("service_not_ready", r"(Boards database|Sensor database|Database) not available|Design rules are not available"
+                          r"|Categories not loaded|CSE client not initialized|Stock history is not available on this server"),
+    ("not_configured", r"(CSE credentials|Mouser API key|DigiKey API credentials) not configured"),
+    ("no_pcba_types", r"This catalog doesn't have PCBA types yet"),
+    ("query_too_complex", r"Search failed: query too complex"),
+    ("board_db_failed", r"Board (search|retrieval) failed"),
+    ("jlcpcb_waf", r"JLCPCB blocked request"),
+    ("jlcpcb_unavailable", r"JLCPCB (returned|connection|request|API)"),
+    ("easyeda_failed", r"Failed to fetch (EasyEDA data|component data from EasyEDA)|Invalid EasyEDA response"),
+    ("mouser_failed", r"Mouser part lookup failed"),
+    ("digikey_failed", r"DigiKey part lookup failed"),
+    ("cse_auth_failed", r"CSE authentication failed"),
+    ("cse_lookup_failed", r"CSE (search|get_kicad) failed"),
+    ("cse_download_http_4xx", r"CSE model download failed \(HTTP 4"),
+    ("cse_download_http_5xx", r"CSE model download failed \(HTTP 5"),
+    ("cse_download_http", r"CSE model download failed \(HTTP"),
+    ("cse_download_network", r"CSE model download failed \(network"),
+    ("cse_download_too_large", r"CSE model download too large"),
+    ("cse_invalid_zip", r"CSE returned invalid zip file"),
+)]
+
+# What an empty reply's hint opens with: its most specific cause comes first
+_EMPTY_HINT_REASONS = [(reason, re.compile(pattern, re.S)) for reason, pattern in (
+    ("part_number_filtered_out", r"\d+ in-stock parts? match "),
+    ("part_number_not_in_stock", r"No in-stock part matches "),
+    ("words_unmatched", r"No part's description has all of the words "),
+    ("no_part_type", r"No part type matched "),
+    ("blocked_by_library_type", r"No (basic|preferred|no-fee) part matches"),
+    ("no_catalog_subcategory", r"JLCPCB has no "),
+    ("stock_below_minimum", r"No part \S+ with stock >= "),
+    ("part_number_fragment", r"JLCPCB's search matches whole part numbers"),
+)]
+_LCSC_CODE_HINT = re.compile(r"'.*' looks like an LCSC code")
 
 
 def _error_kind(message: str) -> str:
@@ -270,6 +320,56 @@ def _call_outcome(result: Any) -> str:
     if any(key in content and not content[key] for key in ("results", "matched_files")):
         return "not_found"
     return "ok"
+
+
+def _first_reason(table: list[tuple[str, re.Pattern]], text: str) -> str | None:
+    return next((reason for reason, pattern in table if pattern.match(text)), None)
+
+
+def _empty_reason(content: dict) -> str:
+    """Why a reply counted as not_found (stats.REASONS): one reason, the most specific it shows."""
+    if content.get("error"):
+        reason = _first_reason(_NOT_FOUND_REASONS, str(content["error"])) or "no_results"
+        if reason == "mpn_not_in_snapshot":
+            if content.get("next_call") is None:
+                return "placeholder_mpn"
+            if _LCSC_CODE_HINT.match(str(content.get("hint") or "")):
+                return "lcsc_code_as_mpn"
+        return reason
+    if "alternatives" in content:
+        return "no_alternatives"
+    if content.get("total") and not content.get("results"):
+        return "offset_past_end"
+    blocking = {item.get("constraint") for item in (content.get("why_empty") or {}).get("blocking") or []}
+    if blocking:
+        return "blocked_by_several" if len(blocking) > 1 else f"blocked_by_{blocking.pop()}"
+    if reason := _first_reason(_EMPTY_HINT_REASONS, str(content.get("hint") or "")):
+        return reason
+    if content.get("unlisted"):
+        return "value_not_listed"
+    if content.get("ignored_filters"):
+        return "filter_ignored_or_sparse"
+    if (content.get("filters_applied") or {}).get("spec_filters"):
+        return "spec_filters_no_match"
+    return "no_results"
+
+
+def _why_empty_result(why_empty: dict) -> str:
+    """How the checks behind a why_empty reply went (stats.WHY_EMPTY_RESULTS)."""
+    if why_empty.get("status"):
+        return str(why_empty["status"])
+    if not why_empty.get("extra_queries"):
+        return "no_counterfactual"
+    return "complete" if why_empty.get("diagnostics_complete") else "incomplete"
+
+
+def _call_reason(outcome: str, content: dict, error: Exception | None) -> str:
+    """Why a call counted as not_found or failed (stats.REASONS)."""
+    if error is not None:
+        return "exception"
+    if outcome == "not_found":
+        return _empty_reason(content)
+    return _first_reason(_FAILED_REASONS, str(content.get("error") or "")) or "unexpected_error"
 
 
 def _exception_outcome(error: Exception) -> str:
@@ -303,7 +403,13 @@ class UsageStatsMiddleware(FastMCPMiddleware):
     def _record(context, start: float, result: Any = None, error: Exception | None = None) -> None:
         try:
             outcome = _exception_outcome(error) if error is not None else _call_outcome(result)
-            stats.usage.record_call(context.message.name, outcome, (time.monotonic() - start) * 1000, _caller_ip())
+            content = getattr(result, "structured_content", None)
+            content = content if isinstance(content, dict) else {}
+            reason = _call_reason(outcome, content, error) if outcome in ("not_found", "failed") else None
+            stats.usage.record_call(context.message.name, outcome, (time.monotonic() - start) * 1000, _caller_ip(),
+                                    reason=reason)
+            if isinstance(content.get("why_empty"), dict):
+                stats.usage.record_why_empty(_why_empty_result(content["why_empty"]))
         except Exception:
             logger.exception("Usage stats: couldn't count a tool call")
 
@@ -704,10 +810,12 @@ def _keep_part_number_matches(retry: dict, part_number_text: str, limit: int, of
     MPN fallback shortens part numbers down to prefixes like "YS" that match unrelated parts.
     Counts follow the kept parts; a retry with more matches than one page is marked incomplete."""
     keys = [re.sub(r"[^0-9a-z]", "", t.casefold()) for t in part_number_text.split()]
-    def matches(part: dict) -> bool:
-        mpn = re.sub(r"[^0-9a-z]", "", (part.get("model") or "").casefold())
+    def matches_mpn(model: str) -> bool:
+        mpn = re.sub(r"[^0-9a-z]", "", (model or "").casefold())
         return any(key in mpn or (len(mpn) >= 5 and mpn in key) for key in keys if key)
-    kept = [p for p in retry.get("results", []) if matches(p)]
+    if plan := retry.get("_facet_plan"):
+        plan.mpn_predicate = matches_mpn
+    kept = [p for p in retry.get("results", []) if matches_mpn(p.get("model"))]
     complete = (retry.get("total") or 0) <= len(retry.get("results", []))
     counts = {tier: sum(p.get("library_type") == tier for p in kept) for tier in ("basic", "preferred", "extended")}
     retry.update(results=kept[offset:offset + limit], total=len(kept), library_type_counts=counts,
@@ -753,6 +861,22 @@ def _protected_mpn_tokens(query: str, parsed: ParsedQuery, *, remaining_text: st
     return tokens
 
 
+
+def _facets_on_every_reply(fn):
+    """facets=true promises a facets block: argument errors and early hints returned without one
+    (the supercapacitor hint, part-number exclusions). They get the unavailable block."""
+    signature = inspect.signature(fn)
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        result = fn(*args, **kwargs)
+        if (isinstance(result, dict) and "facets" not in result
+                and signature.bind_partial(*args, **kwargs).arguments.get("facets")):
+            from .search.facets import collect_facets
+            result["facets"] = collect_facets(get_db(), None)
+        return result
+    return wrapper
+
 @mcp.tool(
     annotations=ToolAnnotations(
         title="Search Components",
@@ -763,6 +887,7 @@ def _protected_mpn_tokens(query: str, parsed: ParsedQuery, *, remaining_text: st
     )
 )
 @offload(COMPONENT_POOL)
+@_facets_on_every_reply
 def jlc_search(
     query: str | None = None,
     subcategory_id: int | None = None,
@@ -782,10 +907,12 @@ def jlc_search(
     pcba_type: str | None = None,
     sort_spec: str | None = None,
     sort_order: SortOrder = None,
+    facets: bool = False,
 ) -> dict:
     """Search in-stock JLCPCB parts locally with natural-language parsing and spec filters.
-    Stock and price (the 1-piece price) are from the daily catalog snapshot, scraped at data_as_of;
-    jlc_get_part and jlc_stock_check are live. Default 20 results; strict=true disables relaxation.
+    Stock is from the daily catalog snapshot, scraped at data_as_of; the 1-piece price is refreshed
+    weekly (prices_as_of; a part new since then has its first scraped price). jlc_get_part and
+    jlc_stock_check are live. Default 20 results; strict=true disables relaxation.
     Reply: filters_applied lists every filter that ran, given or read from the query; parsed shows
     only what the query text gave. relaxed names query words, a
     query-only library preference or part type left out; ignored_filters explains unapplied/rare filters,
@@ -875,7 +1002,9 @@ def jlc_search(
             conditions; sort at one: "RDS(on)@4.5V" (gate drive), "Dropout@500mA" (load), "Vf@1A".
             Without one it's taken from the query's gate drive, a Dropout filter's load, an Output
             Current or If filter. A listed 0 counts as not listed.
-        sort_order: "asc" (default, lowest first) or "desc" (highest first), with sort_spec.
+        sort_order: "asc" (default, lowest first) or "desc" (highest first), with sort_spec or a
+            query that names the spec ("lowest Iq LDO"); also ascending/lowest and descending/highest.
+        facets: Include bounded manufacturer/package/library counts for all final matches (default false).
     """
     # Validate query length to prevent abuse
     MAX_QUERY_LENGTH = 500
@@ -1196,6 +1325,8 @@ def jlc_search(
             if len(token_key) > len(searched_key) and token_key.startswith(searched_key):
                 search_args["part_number"] = token
                 break
+    if facets:
+        search_args["capture_plan"] = True
     result = db.search(query=effective_query, **search_args)
 
     # A library phrase in the query is a preference; an explicit argument is a constraint.
@@ -1433,12 +1564,20 @@ def jlc_search(
 
     if result.get("total") == 0 and not result.get("error") and not result.get("ignored_filters"):
         from .search.diagnostics import diagnose_empty
-        result["why_empty"] = diagnose_empty(db, effective_query, search_args)
+        # capture_plan is an execution flag for facets, not a constraint to report
+        result["why_empty"] = diagnose_empty(
+            db, effective_query, {k: v for k, v in search_args.items() if k != "capture_plan"})
 
-    # Stock and price are the daily snapshot's: C14663 read 38,555,997 at $0.0083 here and 37,538,619
-    # at $0.0072 in jlc_get_part, a day later
+    if facets:
+        from .search.facets import collect_facets
+        plan = result.pop("_facet_plan", None)
+        result["facets"] = collect_facets(db, None if result.get("error") else plan)
+
+    # Stock is the daily snapshot's and price the weekly one's: C14663 read 38,555,997 at $0.0083 here
+    # and 37,538,619 at $0.0072 in jlc_get_part, a day later
     if as_of := db.scraped_at():
         result["data_as_of"] = as_of
+        result["prices_as_of"] = db.prices_as_of()
     return result
 
 
@@ -1679,6 +1818,42 @@ def jlc_search_help(
 
 @mcp.tool(
     annotations=ToolAnnotations(
+        title="Recorded Stock History",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=False,
+    )
+)
+@offload(COMPONENT_POOL)
+def jlc_stock_history(lcsc: str, days: Annotated[int, Field(ge=1, le=366, strict=True)] = 180) -> dict:
+    """Recorded low-stock events for one part, newest first (at most 100; more_events flags more).
+    Gone means missing from a scrape, not a confirmed stockout; suspect scrape gaps are labelled.
+    Reply includes the window, recording limits and current_stock from the catalog snapshot.
+
+    Args:
+        lcsc: One LCSC C-code, e.g. C8314; ignores case and surrounding spaces.
+        days: 1-366 calendar days ending on the newest recorded date (default 180).
+    """
+    lcsc = lcsc.strip().upper()[:20]  # ASCII digits, bounded: "C" + a million digits was echoed back
+    if not re.fullmatch(r"C[0-9]{1,12}", lcsc):
+        return {"error": "lcsc must be an LCSC C-code (e.g., C6186); use jlc_get_part(mpn=...) to find the code for an MPN"}
+    if type(days) is not int or not 1 <= days <= 366:
+        return {"error": "Invalid days: use an integer from 1 to 366"}
+    try:
+        result = get_history_db().history(lcsc, days)
+    except (OSError, sqlite3.Error):
+        logger.exception("Stock history database unavailable")
+        return {"error": "Stock history is not available on this server"}
+    db = get_db()
+    part = db.get_by_lcsc(lcsc)
+    result["current_stock"] = part["stock"] if part else None
+    result["current_stock_as_of"] = db.scraped_at()
+    return result
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
         title="Get Part Details",
         readOnlyHint=True,
         destructiveHint=False,
@@ -1709,7 +1884,8 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     applicable, and a note naming the part types for related full-text results (and parts another
     manufacturer numbered after the original). An LCSC code given as mpn finds that part
     (match=lcsc); BOM placeholders such as N/A or DNP find nothing.
-    MPN lookups search the daily catalog snapshot (stock >= 10), most stock first.
+    MPN lookups search the daily catalog snapshot (stock >= 10), most stock first; its prices are
+    refreshed weekly (prices_as_of).
     Rows carry data_source (kind/provider/observed_at); cached live observations retain their timestamp.
     MPN misses describe snapshot scope, availability outside it is unknown, and next_call offers an explicit
     jlc_stock_check with min_stock=0 without executing it.
@@ -1751,6 +1927,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
         reply = {
             "mpn": mpn,
             "data_as_of": db.scraped_at(),
+            "prices_as_of": db.prices_as_of(),
             "total": len(results),
             "results": results,
             **match_info,
@@ -1858,6 +2035,8 @@ async def jlc_find_alternatives(
     Stock comes from the live search or the daily catalog snapshot. Each part's data_source identifies
     that observation. Savings use a rounded $3 Economic loading-fee estimate (is_estimate and
     assembly_service_assumption), not a current quote; Standard service differs.
+    summary.stages reports retrieval counts/limits/errors, primary/spec passed/failed/unknown,
+    library/package eligibility, footprint outcomes/cap omissions and per-list output truncation.
 
     Args:
         lcsc: LCSC code of the original part (e.g., "C2557")
@@ -1866,8 +2045,9 @@ async def jlc_find_alternatives(
         library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", or omit
             for all; case-insensitive, accepts no-fee. Invalid values list valid choices.
         has_easyeda_footprint: True: only parts with an EasyEDA footprint (for Atopile/KiCad);
-            False: only parts without; omit: no filter (fastest). Checks at most 15 candidates
-            per call and leaves out any it couldn't check; summary.footprint_filter says when.
+            False: only parts without; omit: no filter (fastest). Checks at most min(2 * limit, 15)
+            eligible candidates; extended fallback examples use only the remaining budget.
+            Leaves out unknowns; summary.footprint_filter describes limits and lookup failures.
         limit: Max entries per verified/unverified list (max 50)
         board_quantity: Number of boards for project savings (default 1)
         placements_per_board: Original part placements per board (default 1)
@@ -2175,14 +2355,17 @@ async def cse_search(
     query: str,
     limit: int = 5,
 ) -> dict:
-    """Check whether KiCad, Eagle or Altium symbols, footprints and 3D models exist for a part on
-    SamacSys ComponentSearchEngine, with its datasheet. Slow (a search takes about 15 s, longer when
-    ComponentSearchEngine is busy; answers are kept): only when you need ECAD models. For part
-    search use jlc_search; for EasyEDA footprints, jlc_get_part.
+    """Search SamacSys ComponentSearchEngine for generic ECAD/3D availability and datasheets.
+    Reply: results and total; rows include has_model, has_3d, model_quality and cse_part_id,
+    without confirming individual ECAD formats. Use cse_get_kicad for actual KiCad files.
+    Slow (a search takes about 15 s, longer when busy; answers are kept): only when you need ECAD
+    models. For part search use jlc_search; for EasyEDA footprints, jlc_get_part.
+    Search requests use CSE_REQUEST_TIMEOUT (default 45s per request phase); a non-Success API
+    status is retried once after 3 s. No overall tool deadline; search requires no credentials.
 
     Args:
-        query: MPN or keyword (e.g., "LM358P", "STM32F103")
-        limit: Max results (1-10)
+        query: MPN or keyword (e.g., "LM358P", "STM32F103"), max 500 characters
+        limit: Max results (default 5, clamped to 1-10)
     """
     if not _cse_client:
         return {"error": "CSE client not initialized"}
@@ -2220,10 +2403,15 @@ async def cse_get_kicad(
     ComponentSearchEngine; works for any manufacturer. Slow (a search of about 15 s, then a
     download; files are kept): only when you need the KiCad files. For EasyEDA footprints use
     jlc_get_part.
+    Requires CSEARCH_USER and CSEARCH_PASS. Reply: part_id, search metadata when resolved by query,
+    kicad_symbol and kicad_footprint (either file may be null). No overall tool deadline; search
+    requests use CSE_REQUEST_TIMEOUT (default 45s per request phase), model downloads 30s per phase.
+    A non-Success search status is retried once after 3 s.
 
     Args:
-        query: MPN (e.g., "LM358P", "ESP32-WROOM-32E"); picks the best match that has a model
-        part_id: cse_part_id from cse_search, to skip the search
+        query: MPN (e.g., "LM358P", "ESP32-WROOM-32E"), max 500 characters; picks the first search
+            result with has_model and cse_part_id. Default null; provide query or part_id.
+        part_id: cse_part_id from cse_search, to skip the search; default null, a nonzero ID wins
     """
     if not _cse_client:
         return {"error": "CSE client not initialized"}
@@ -2260,28 +2448,39 @@ def sensor_recommend(
     limit: int = 15,
 ) -> dict:
     """Recommend sensor ICs and modules for what you want to measure, with protocol and platform
-    support. Filter choices come from the catalog; unknown values list valid choices.
+    support. Unknown measure, protocol and platform values return valid_values; an unknown type
+    returns no matches.
     Accepts 1-wire/one-wire and heart rate/blood oxygen aliases. Not for buying parts: use jlc_search.
-    Results are sorted by how many platforms have drivers for the sensor.
-    CCS811 exposes estimated eco2 and VOC output; humidity/temperature are compensation inputs,
-    with cited operating/stress voltage evidence. Generic MCU/platform IDs such as RP2040 are excluded.
+    Exact normalized query-ID/alias matches come first; within each group, results are
+    sorted by how many platforms have drivers (platform_count descending), then name ascending.
+    Calculated CO2 (CCS811, ENS160, ENS161, SGP30, iAQ-Core, APC1, SM300D2) is under eco2, not co2;
+    capability_note says what such a part really outputs (BME680/BME688: IAQ and CO2 equivalent come
+    from Bosch's BSEC library on the host), and compensation inputs aren't direct measurements. Generic MCU/platform IDs such as RP2040 are excluded.
+    A query with no searchable words (stop words, single letters, symbols) is ignored and the reply
+    adds a note.
 
     Args:
-        query: Name, description or manufacturer (e.g., "BME280", "waterproof")
-        measure: One, or a list that must all match: temperature, humidity, pressure, distance,
-            tof, lidar, ultrasonic, radar, co2, co, gas, voc, formaldehyde, h2s, nh3, ozone,
+        query: Name, description or manufacturer (e.g., "BME280", "waterproof"), max 500 characters
+        measure: One, or a list/JSON-array string of up to 20 that must all match: temperature,
+            humidity, pressure, distance, tof, lidar, ultrasonic, radar, co2, eco2, co, gas, voc,
+            formaldehyde, h2s, nh3, ozone,
             oxygen, particulate, light, color, uv, optical, acceleration, gyroscope,
             magnetic_field, tilt, vibration, rotation, motion, pir, proximity, gesture,
             face_recognition, current, voltage, sound, flow, level, force, weight, touch, ph,
             dissolved_oxygen, conductivity, orp, water_quality, moisture, soil_moisture, rain,
-            wind, weather, ir_temperature, flame, biometric, radiation, gps. "imu" means
-            acceleration, gyroscope or magnetic_field; everyday words (barometric, lux, dust,
-            compass) are mapped too.
+            wind, weather, ir_temperature, flame, biometric, radiation, gps, speed, material.
+            Accepted values come from the catalog. "imu" means
+            acceleration, gyroscope or magnetic_field for a scalar or singleton list; in a
+            multi-item list all expanded measures are required. Everyday words (barometric,
+            lux, dust, compass) are mapped too.
         type: Sensing technology (e.g., "tof", "ultrasonic", "ndir", "electrochemical", "mems")
-        protocol: "i2c", "spi", "uart", "analog", "pwm", "gpio", "one_wire", "rs485", "can" or "i2s"
+        protocol: "i2c", "i3c", "spi", "uart", "analog", "pwm", "gpio", "one_wire", "rs485", "rs232",
+            "can", "i2s", "usb", "ble", "hdq" or "ssi";
+            gpio includes gpio/analog/pwm/one_wire, digital includes gpio/pwm/one_wire,
+            and 1-wire/one-wire alias one_wire
         platform: "arduino", "esphome", "micropython", "circuitpython", "tasmota", "zephyr" or
             "raspberry_pi". ESP-IDF has no support records; unknown platforms return valid_values.
-        limit: Max results (max 100)
+        limit: Max results (default 15, clamped to 1-100)
     """
     # Handle JSON-string measure param from some MCP clients (filter non-string
     # elements — they bypass Pydantic and get .lower()'d in sensor_db.search)
@@ -2295,6 +2494,9 @@ def sensor_recommend(
 
     if query and len(query) > 500:
         return {"error": "Query too long (max 500 characters)", "results": [], "total": 0}
+    # A NUL or other control character reaches FTS5 and raised a generic tool failure
+    if query and re.search(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", query):
+        return {"error": "Query contains invalid characters", "results": [], "total": 0}
 
     if isinstance(measure, list):
         cap_err = _check_list_cap("measure", measure, MAX_MEASURE_ITEMS)
@@ -2362,7 +2564,12 @@ def board_search(
     consensus), query= for a function ("motor driver", "USB power delivery"), tag= to browse.
     Tags ignore case/whitespace; usb-c means usb. Unknown tags return valid_values from the catalog.
     Combine them to narrow.
-    Results are sorted by relevance, then component count; matched_by says why each appeared
+    Matching function phrases in a board's name/description rank ahead of incidental mentions;
+    compound-tag browsing also favors boards describing that function. Remaining ties use
+    relevance, then component count.
+    Empty or all-stopword queries browse the catalog, keeping any other filters; for an all-stopword
+    query a note says so.
+    matched_by says why each appeared
     (key IC, component, text, tag). A component consensus counts distinct boards per pin choice
     (pct divides by consensus.board_count); browsing by tag alone adds tag_consensus, the ICs boards
     in that category commonly use. An empty reply's hint names the words no board matches and what
@@ -2551,8 +2758,9 @@ async def datasheet_redirect(request):
     except DatasheetLinkBusy as e:
         return JSONResponse({"error": str(e), "retry_after": e.retry_after}, status_code=429,
                             headers={"Retry-After": str(e.retry_after)})
-    except ValueError as e:  # JLCPCB rate limit, WAF challenge or timeout
-        return JSONResponse({"error": str(e)}, status_code=502)
+    except ValueError as e:  # JLCPCB rate limit, WAF challenge or timeout: details stay in the log
+        logger.warning(f"Datasheet link for {lcsc} failed: {e}")
+        return JSONResponse({"error": "The datasheet source didn't answer; try again later"}, status_code=502)
     if not url:
         return JSONResponse({"error": f"No datasheet PDF found for {lcsc}"}, status_code=404)
     return RedirectResponse(url, status_code=302, headers={"Cache-Control": "no-store"})

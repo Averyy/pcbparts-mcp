@@ -1,7 +1,7 @@
 name: Soldered BQ27441 Fuel Gauge
 slug: soldered-bq27441-fuel-gauge
 source: SolderedElectronics/Fuel-gauge-BQ27441-breakout-hardware-design
-format: kicad7
+format: kicad6
 description: Coulomb-counting fuel gauge (BQ27441DRZR)
 tags: [battery-management]
 key_ics: [BQ27441]
@@ -45,7 +45,7 @@ components:
   footprint: SJ-2
 - ref: K1
   value: 1x1 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_1X1
 - ref: K2
   value: JST-2pin-SMD
   footprint: JST-2pin-SMD
@@ -62,7 +62,7 @@ components:
   pin_count: 5
 - ref: K6
   value: 1x4 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_4X1
   pin_count: 4
 - ref: R1
   value: 10kohm
@@ -93,6 +93,7 @@ components:
 - ref: U1
   value: BQ27441DRZR
   footprint: BQ27441
+  mpn: BQ27441DRZR-G1A
   pin_count: 12
   nc_pins: {NC@4: '4', NC@9: '9', NC@11: '11'}
 - ref: U2

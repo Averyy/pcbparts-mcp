@@ -1,8 +1,8 @@
 name: NFC Copy Cat
 slug: nfc-copy-cat
 source: ElectronicCats/NFC-Copy-Cat
-format: kicad7
-description: "External PN532 NFC module interface + MagSpoof magnetic stripe emulation coil driver"
+format: kicad6
+description: External PN532 NFC module interface + MagSpoof magnetic stripe emulation coil driver
 tags: [nfc-rfid]
 key_ics: [ATSAMD21E18A, AP2112K-3.3, MCP73831-2-OT, TC4424, GD25Q16C]
 outline:
@@ -64,35 +64,35 @@ components:
 - ref: F1
   value: PTC fuse
   footprint: 0805
+  mpn: MFU0805FF00500P100
 - ref: J1
   value: USB Micro-B
   footprint: U254051N4BH806
   pin_count: 6
   nc_pins: {'4': '4'}
 - ref: J2
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
 - ref: J3
-  value: 1x8 header
-  footprint: 1X8
+  value: 1x8 2.54mm header
+  footprint: 1X8_P2.54mm
   pin_count: 8
   nc_pins: {'8': '8'}
 - ref: J4
-  value: 1x9 header
-  footprint: 1X9
+  value: 1x9 2.54mm header
+  footprint: 1X9_P2.54mm
   pin_count: 9
   nc_pins: {'1': '1', '4': '4'}
 - ref: J5
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
 - ref: J6
   value: SWD
-  footprint: 1X4
+  footprint: 1X4_P2.54mm
   pin_count: 4
 - ref: R1
   value: 1kohm
   footprint: 0805
-  pullup: D2.2
 - ref: R2
   value: 2.2kohm
   footprint: 0805
@@ -130,11 +130,13 @@ components:
 - ref: U1
   value: AP2112K-3.3
   footprint: SOT-23-5
+  manufacturer: Diodes Inc.
+  description: AP2112 Series 0.6 A 3.3 V Fixed Output SMT LDO Linear Regulator - SOT23-5
   pin_count: 5
   nc_pins: {'4': '4'}
 - ref: U2
   value: ATSAMD21E18A
-  footprint: QFN-32-1EP
+  footprint: QFN-32-1EP_5x5
   pin_count: 33
   nc_pins: {'1': '1', '2': '2', '4': '4', '16': '16', '21': '21', '22': '22', '33': '33'}
 - ref: U3

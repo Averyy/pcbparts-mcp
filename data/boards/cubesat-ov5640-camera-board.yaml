@@ -2,7 +2,8 @@ name: CubeSat OV5640 Camera Board
 slug: cubesat-ov5640-camera-board
 source: proveskit/development_boards
 format: kicad8
-description: "FPC interfaces for external OV2640/OV5640 camera modules on shared DVP bus, TLV743xx LDOs for 1.5V/2.8V sensor rails"
+description: FPC interfaces for external OV2640/OV5640 camera modules on shared DVP bus, TLV743xx LDOs for 1.5V/2.8V sensor
+  rails
 tags: [level-shifting, power-supply, sensors]
 key_ics: [TLV74315, TLV74328]
 outline:
@@ -70,23 +71,23 @@ components:
   value: 1x1 header
   footprint: TestPoint_Pad_D1.5mm
 - ref: J2
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J7
-  value: 1x12 header
-  footprint: Molex_Pico-Lock_504050-1291
+  value: 1x12 1.50mm header
+  footprint: Molex_Pico-Lock_504050-1291_1x12
   pin_count: 12
 - ref: J8
-  value: 1x4 header
-  footprint: JST_SH_BM04B-SRSS-TB
+  value: JST SH 4-pin
+  footprint: JST_SH_BM04B-SRSS-TB_1x04
   pin_count: 4
 - ref: JP1
-  value: solder jumper
+  value: solder jumper (NO)
   footprint: SJ-2
 - ref: OSC1
   value: 24MHz 3.3V Oscillator
-  footprint: Oscillator_SMD_SeikoEpson_SG8002CE-4Pin
+  footprint: Oscillator_SMD_SeikoEpson_SG8002CE-4Pin_3.2x2.5
   pin_count: 4
 - ref: Q1
   value: BSS83P
@@ -104,7 +105,6 @@ components:
   value: 10kohm
   footprint: '0603'
   description: 100K 0603
-  pullup: D1.A
 - ref: R6
   value: 10kohm
   footprint: '0603'
@@ -126,7 +126,7 @@ components:
   pin_count: 5
   nc_pins: {P4: '4'}
 - ref: X1
-  value: 1x24 header
+  value: 1x24 0.50mm header
   footprint: Molex_502244-2430
   pin_count: 24
   nc_pins: {DATA0: '1'}

@@ -6,6 +6,8 @@ from pathlib import Path
 
 import wafer
 
+from build_sensor_db import description_quality, strip_software_prefix
+
 from .common import (
     attempt_cap,
     extract_manufacturer,
@@ -27,6 +29,14 @@ KNOWN_IC_MEASURES = {
     "ads1x15": ["current", "voltage"],
     "ads1110": ["current", "voltage"],
     "ads1220": ["current", "voltage"],
+    # General-purpose ADCs whose text names no measure; listed under voltage (see
+    # MEASURE_ADDITIONS in build_sensor_db.py). Without these they dropped as non-sensors.
+    "ad7193": ["voltage"],
+    "ad7194": ["voltage"],
+    "ads122c04": ["voltage"],
+    "mcp3427": ["voltage"],
+    "tla2021": ["voltage"],
+    "ina229": ["current", "voltage"],
     "max30102": ["biometric"],
     "as3935": ["weather"],
     "sr04": ["distance", "ultrasonic"],
@@ -48,6 +58,18 @@ KNOWN_IC_MEASURES = {
 # ICs that are NOT sensors — explicitly skip even if measures are detected.
 # These are display drivers, DACs, etc. that get false positive measure matches.
 SKIP_ICS = {"tm1637", "max7219", "ht16k33", "pca9685"}
+
+# A Deneyap module library is titled after the whole board, which carries chips the title
+# doesn't attribute: "Deneyap Temperature&Humidity, Barometer Sensor SHT4X" is an SHT4x beside an
+# MS5637 barometer, and "Deneyap 9 Dof IMU MMC5603NJ, LSM6DSM" is a magnetometer beside an IMU. The
+# board's measures and wording are not the first-named chip's, so they count only when no other
+# library describes that chip. ("Deneyap Kart" is the dev board a chip library may run on.)
+MODULE_LIBRARY = re.compile(r"\bDeneyap\b(?!\s+Kart)", re.IGNORECASE)
+
+
+def chip_texts(texts: list[str]) -> list[str]:
+    """Texts describing the chip itself: module-board titles only when nothing else does."""
+    return [t for t in texts if not MODULE_LIBRARY.search(t)] or texts
 
 
 def scrape_arduino(output_dir: Path) -> None:
@@ -85,9 +107,22 @@ def scrape_arduino(output_dir: Path) -> None:
         paragraph = _html_tag_re.sub('', lib.get("paragraph", "")).strip()
         repo = lib.get("repository", "")
 
-        # Strategy 1: regex on sentence (most specific — finds the actual IC model)
+        # A particle-size token at the start of a sentence (e.g. PM1) is not
+        # the model when a single library-title model also appears later.
         ic_id = None
-        if sentence:
+        title_ids = {normalize_sensor_id(m.group(1)) for m in ic_regex.finditer(lib_name)}
+        sentence_ids = {normalize_sensor_id(m.group(1)) for m in ic_regex.finditer(sentence)}
+        first_sentence_model = ic_regex.search(sentence)
+        if len(title_ids) == 1 and first_sentence_model and re.fullmatch(
+            r"PM\d+", first_sentence_model.group(1),
+        ):
+            title_id = next(iter(title_ids))
+            if title_id and has_ic_pattern(title_id) and title_id in sentence_ids:
+                ic_id = title_id
+
+        # Otherwise retain the sentence's model: a library title can name a
+        # sibling or family, and must not silently re-identify that record.
+        if not ic_id and sentence:
             m = ic_regex.search(sentence)
             if m:
                 candidate = normalize_sensor_id(m.group(1))
@@ -189,8 +224,12 @@ def scrape_arduino(output_dir: Path) -> None:
             skipped_nonsensor += 1
             continue
 
-        # Best description: longest sentence, capped at 200 chars
-        best_desc = max(agg["sentences"], key=len) if agg["sentences"] else None
+        sentences = chip_texts(agg["sentences"])
+        # Prefer hardware text to library prose before using length as a tie-breaker.
+        best_desc = max(sentences, key=lambda d: (description_quality(d), len(d))) if sentences else None
+        library_title = bool(best_desc and strip_software_prefix(best_desc) != best_desc)
+        if best_desc:
+            best_desc = strip_software_prefix(best_desc)
         if best_desc and len(best_desc) > 200:
             best_desc = best_desc[:197] + "..."
 
@@ -203,13 +242,16 @@ def scrape_arduino(output_dir: Path) -> None:
             # actual capabilities, not an application-level library description.
             # This avoids aggregation noise (e.g., "gesture recognition with MPU6050").
             best_measures = []
-            for sentence in agg["sentences"]:
+            for sentence in sentences:
                 m = infer_measures(sentence)
                 if len(m) > len(best_measures):
                     best_measures = m
             measures = best_measures
 
-            # If no measures from sentences, try combined text of all descriptions
+            # If no measures from sentences, try combined text of the chip's descriptions,
+            # then of every description (a module board title as the last resort)
+            if not measures:
+                measures = infer_measures(" ".join(sentences + chip_texts(agg["paragraphs"])))
             if not measures:
                 combined = " ".join(agg["sentences"] + agg["paragraphs"])
                 measures = infer_measures(combined)
@@ -225,8 +267,8 @@ def scrape_arduino(output_dir: Path) -> None:
                 skipped_no_measures += 1
                 continue
 
-        # Best name: shortest original library name (closest to IC name)
-        best_name = min(agg["names"], key=len) if agg["names"] else ic_id.upper()
+        # A library can cover several models; its title is not the part name.
+        best_name = ic_id.upper()
 
         # Extract manufacturer from descriptions
         manufacturer = None
@@ -250,6 +292,8 @@ def scrape_arduino(output_dir: Path) -> None:
             description=best_desc,
             manufacturer=manufacturer,
         ))
+        if library_title:
+            sensors[-1]["description_is_library_title"] = True
 
     logger.info(f"Filtered out {skipped_nonsensor} non-sensor ICs, dropped {skipped_no_measures} with no identifiable measures")
     stats = {

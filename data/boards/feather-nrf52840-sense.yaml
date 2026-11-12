@@ -3,7 +3,7 @@ slug: feather-nrf52840-sense
 source: adafruit/Adafruit-Feather-nRF52840-Sense-PCB
 format: eagle
 description: BLE 5 sensor board (nRF52840) with onboard IMU, gesture/proximity/color sensor
-tags: [sensors]
+tags: [bluetooth, sensors]
 key_ics: [nRF52840]
 outline:
   width_mm: 50.8
@@ -80,7 +80,7 @@ components:
   pin_count: 8
 - ref: IC3
   value: LIS3MDL
-  footprint: LGA12
+  footprint: LGA12_2X2MM
   description: Digital output magnetic sensor
   pin_count: 12
   nc_pins: {INT: '7', DRDY: '8'}
@@ -98,7 +98,8 @@ components:
   footprint: MDBT50
   description: Raytac Corporation
   pin_count: 61
-  nc_pins: {P1.12: '5', P1.13: '6', P1.14: '7', P1.15: '8', P1.04: '56', P1.06: '57', P1.07: '58', P1.05: '59', P1.03: '60', P1.01: '61'}
+  nc_pins: {P1.12: '5', P1.13: '6', P1.14: '7', P1.15: '8', P1.04: '56', P1.06: '57', P1.07: '58', P1.05: '59', P1.03: '60',
+    P1.01: '61'}
 - ref: MS1
   value: Featherwing headers
   footprint: FEATHERWING_NODIM
@@ -119,7 +120,7 @@ components:
   footprint: '0603'
 - ref: R12
   value: 100kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pin_count: 8
 - ref: R3
   value: 4.7kohm
@@ -130,17 +131,17 @@ components:
   pulldown: U3.PROG
 - ref: R7
   value: 4.7kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pullup: SDA
   pin_count: 8
 - ref: SW1
   value: KMR2
-  footprint: BTN_RKB2
+  footprint: BTN_RKB2_4.6X2.8
   description: SMT Tact Switches RKB2
   pin_count: 4
 - ref: SW2
   value: KMR2
-  footprint: BTN_RKB2
+  footprint: BTN_RKB2_4.6X2.8
   description: SMT Tact Switches RKB2
   pin_count: 4
 - ref: SWC
@@ -165,6 +166,7 @@ components:
   footprint: SOT-23-5
   lcsc: C424093
   description: MCP73831/2 LIPO Charger
+  mpn: MCP73831T-2ACI/OT
   pin_count: 5
 - ref: U4
   value: SHT30
@@ -205,7 +207,6 @@ nets:
   - IC3.VDD
   - IC3.VDDIO
   - IC4.VDD
-  - L1.1
   - LED1.VDD
   - MDBT1.VDD
   - MDBT1.VDDH
@@ -242,9 +243,9 @@ nets:
 - name: CAP1
   pins: [C12.2, IC3.C1]
 - name: D+
-  pins: [D+.TP, R11.1, X1.D+]
+  pins: [R11.1, X1.D+]
 - name: D-
-  pins: [D-.TP, R10.1, X1.D-]
+  pins: [R10.1, X1.D-]
 - name: D10
   pins: [MDBT1.P0.27, MS1.GPIO10]
 - name: D11
@@ -263,8 +264,6 @@ nets:
   pins: [MDBT1.P0.07, MS1.GPIO6]
 - name: D9
   pins: [MDBT1.P0.26, MS1.GPIO9]
-- name: DCCH
-  pins: [L1.2, MDBT1.DCCH]
 - name: EN
   pins: [MS1.EN, R12.G$2.1, U2.EN]
 - name: GND
@@ -331,8 +330,6 @@ nets:
   pins: [D2.A, R1.2]
 - name: NEOPIX
   pins: [LED1.DI, MDBT1.P0.16]
-- name: NFC2
-  pins: [MDBT1.P0.09/NFC1, TP1.TP]
 - name: PDM_CLK
   pins: [IC4.CLK, MDBT1.P0.01/XL2]
 - name: PDM_DAT

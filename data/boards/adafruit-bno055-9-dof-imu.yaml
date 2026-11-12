@@ -65,11 +65,11 @@ components:
   pin_count: 6
 - ref: R1
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pin_count: 8
 - ref: R3
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pin_count: 8
 - ref: R4
   value: 10kohm

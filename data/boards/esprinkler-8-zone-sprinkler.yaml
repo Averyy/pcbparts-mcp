@@ -18,622 +18,879 @@ components:
 - ref: C1
   value: 680uF
   footprint: CP_Radial_D13.0mm_P5.00mm
+  lcsc: C26225
   manufacturer: CX(Dongguan Chengxing Elec)
+  mpn: GR687M050J20RR0VH4FP0
   decouples: U1
 - ref: C2
   value: 10uF
   footprint: '1206'
   manufacturer: Samsung Electro-Mechanics
+  mpn: CL31A106KBHNNNE
+  lcsc: C13585
   decouples: U1
 - ref: C3
   value: 10nF
   footprint: 0805
   manufacturer: Samsung Electro-Mechanics
+  mpn: CL21B103KBANNNC
+  lcsc: C1710
 - ref: C4
   value: 220uF
   footprint: CP_Radial_D6.3mm_P2.50mm
+  lcsc: C2036
   manufacturer: CX(Dongguan Chengxing Elec)
+  mpn: GR227M010E11RR0VH4FP0
 - ref: D1
   value: MB10S
   footprint: OnSemi_751EP_SOIC-4
+  lcsc: C2488
   manufacturer: MDD(Microdiode Semiconductor)
+  mpn: MB10S-50MIL
   pin_count: 4
 - ref: D10
   value: red LED
   footprint: '0603'
   manufacturer: Hubei KENTO Elec
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D11
   value: red LED
   footprint: '0603'
   manufacturer: Hubei KENTO Elec
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D12
   value: red LED
   footprint: '0603'
   manufacturer: Hubei KENTO Elec
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D13
   value: red LED
   footprint: '0603'
   manufacturer: Hubei KENTO Elec
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D14
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
+  mpn: BTB16-600BWRG
+  lcsc: C669873
   description: Triode for alternating current, anode1/anode2/gate
   pin_count: 3
 - ref: D15
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
+  mpn: BTB16-600BWRG
+  lcsc: C669873
   description: Triode for alternating current, anode1/anode2/gate
   pin_count: 3
 - ref: D16
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
+  mpn: BTB16-600BWRG
+  lcsc: C669873
   description: Triode for alternating current, anode1/anode2/gate
   pin_count: 3
 - ref: D17
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
+  mpn: BTB16-600BWRG
+  lcsc: C669873
   description: Triode for alternating current, anode1/anode2/gate
   pin_count: 3
 - ref: D18
   value: red LED
   footprint: '0603'
   manufacturer: Hubei KENTO Elec
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D19
   value: red LED
   footprint: '0603'
   manufacturer: Hubei KENTO Elec
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D2
   value: SS34
   footprint: SMA
   manufacturer: MDD(Microdiode Semiconductor)
+  mpn: SS34
+  lcsc: C8678
   description: Schottky diode
 - ref: D20
   value: red LED
   footprint: '0603'
   manufacturer: Hubei KENTO Elec
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D21
   value: red LED
   footprint: '0603'
   manufacturer: Hubei KENTO Elec
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D3
   value: red LED
   footprint: '0603'
   manufacturer: Hubei KENTO Elec
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: D4
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
+  mpn: BTB16-600BWRG
+  lcsc: C669873
   description: Triode for alternating current, anode1/anode2/gate
   pin_count: 3
 - ref: D5
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
+  mpn: BTB16-600BWRG
+  lcsc: C669873
   description: Triode for alternating current, anode1/anode2/gate
   pin_count: 3
 - ref: D6
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
+  mpn: BTB16-600BWRG
+  lcsc: C669873
   description: Triode for alternating current, anode1/anode2/gate
   pin_count: 3
 - ref: D7
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
+  mpn: BTB16-600BWRG
+  lcsc: C669873
   description: Triode for alternating current, anode1/anode2/gate
   pin_count: 3
 - ref: D8
   value: Generic_Triac_A1A2G
   footprint: TO-220
   manufacturer: STMicroelectronics
+  mpn: BTB16-600BWRG
+  lcsc: C669873
   description: Triode for alternating current, anode1/anode2/gate
   pin_count: 3
 - ref: D9
   value: red LED
   footprint: '0603'
   manufacturer: Hubei KENTO Elec
+  mpn: KT-0603R
+  lcsc: C2286
 - ref: F1
   value: M205 2A
   footprint: Fuseholder_Cylinder-5x20mm_Schurter_0031_8201_Horizontal_Open
   manufacturer: XFCN
+  mpn: PTF-15
+  lcsc: C842712
 - ref: F2
   value: 250mA
   footprint: BelFuse_0ZRE0033FF_L11.4mm_W3.8mm
+  lcsc: C20871
   manufacturer: RUILON(Shenzhen Ruilongyuan Elec)
+  mpn: RLVR240-025
   description: Resettable fuse, polymeric positive temperature coefficient
+- ref: J1
+  value: 1x12 7.62mm header
+  footprint: DBT30C-7.62-12P-BK-P
+  manufacturer: DORABO
+  mpn: DBT30C-7.62-12P-BK-P
+  lcsc: C395945
+  pin_count: 12
 - ref: J4
-  value: 1x19 header
-  footprint: 1X19
+  value: 1x19 2.54mm header
+  footprint: 1X19_P2.54mm
   manufacturer: Shenzhen Kinghelm Elec
+  mpn: KH-2.54FH-1X19P-H8.5
+  lcsc: C2932678
   pin_count: 19
-  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10', Pin_13: '13', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18'}
+  nc_pins: {Pin_1: '1', Pin_2: '2', Pin_3: '3', Pin_4: '4', Pin_5: '5', Pin_6: '6', Pin_7: '7', Pin_8: '8', Pin_9: '9', Pin_10: '10',
+    Pin_13: '13', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18'}
 - ref: J5
-  value: 1x19 header
-  footprint: 1X19
+  value: 1x19 2.54mm header
+  footprint: 1X19_P2.54mm
   manufacturer: Shenzhen Kinghelm Elec
+  mpn: KH-2.54FH-1X19P-H8.5
+  lcsc: C2932678
   pin_count: 19
   nc_pins: {Pin_12: '12', Pin_13: '13', Pin_14: '14', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18', Pin_19: '19'}
 - ref: J6
-  value: 1x4 screw terminal
-  footprint: TerminalBlock_Phoenix_PT-1,5-4-5.0-H
+  value: 1x4 5.00mm screw terminal
+  footprint: TerminalBlock_Phoenix_PT-1,5-4-5.0-H_1x04
   manufacturer: DORABO
+  mpn: DB301V-5.0-4P-BU-S
+  lcsc: C3034542
   pin_count: 4
 - ref: L1
   value: 33uH
   footprint: L_APV_ANR5045
   manufacturer: SXN(Shun Xiang Nuo Elec)
+  mpn: SMNR5040-330MT
+  lcsc: C9390
 - ref: L2
   value: 33uH
   footprint: L_APV_ANR5045
   manufacturer: SXN(Shun Xiang Nuo Elec)
+  mpn: SMNR5040-330MT
+  lcsc: C9390
 - ref: Q1
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
+  mpn: AO3400A
+  lcsc: C20917
   description: N-MOSFET transistor, gate/source/drain
   pin_count: 3
 - ref: Q10
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
+  mpn: AO3400A
+  lcsc: C20917
   description: N-MOSFET transistor, gate/source/drain
   pin_count: 3
 - ref: Q11
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
+  mpn: AO3400A
+  lcsc: C20917
   description: N-MOSFET transistor, gate/source/drain
   pin_count: 3
 - ref: Q2
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
+  mpn: AO3400A
+  lcsc: C20917
   description: N-MOSFET transistor, gate/source/drain
   pin_count: 3
 - ref: Q3
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
+  mpn: AO3400A
+  lcsc: C20917
   description: N-MOSFET transistor, gate/source/drain
   pin_count: 3
 - ref: Q4
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
+  mpn: AO3400A
+  lcsc: C20917
   description: N-MOSFET transistor, gate/source/drain
   pin_count: 3
 - ref: Q5
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
+  mpn: AO3400A
+  lcsc: C20917
   description: N-MOSFET transistor, gate/source/drain
   pin_count: 3
 - ref: Q6
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
+  mpn: AO3400A
+  lcsc: C20917
   description: N-MOSFET transistor, gate/source/drain
   pin_count: 3
 - ref: Q7
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
+  mpn: AO3400A
+  lcsc: C20917
   description: N-MOSFET transistor, gate/source/drain
   pin_count: 3
 - ref: Q8
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
+  mpn: AO3400A
+  lcsc: C20917
   description: N-MOSFET transistor, gate/source/drain
   pin_count: 3
 - ref: Q9
   value: AO3400A
   footprint: SOT-23
   manufacturer: Alpha & Omega Semicon
+  mpn: AO3400A
+  lcsc: C20917
   description: N-MOSFET transistor, gate/source/drain
   pin_count: 3
 - ref: R1
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: R10
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
   description: Resistor, small symbol
 - ref: R11
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
   description: Resistor, small symbol
 - ref: R12
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
   description: Resistor, small symbol
 - ref: R13
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
   description: Resistor, small symbol
 - ref: R14
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
   description: Resistor, small symbol
 - ref: R15
   value: 300ohm
   footprint: 0805
+  lcsc: C17617
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F3000T5E
   description: Resistor, small symbol
 - ref: R16
   value: 300ohm
   footprint: 0805
+  lcsc: C17617
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F3000T5E
   description: Resistor, small symbol
 - ref: R17
   value: 300ohm
   footprint: 0805
+  lcsc: C17617
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F3000T5E
   description: Resistor, small symbol
 - ref: R18
   value: 300ohm
   footprint: 0805
+  lcsc: C17617
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F3000T5E
   description: Resistor, small symbol
 - ref: R19
   value: 300ohm
   footprint: 0805
+  lcsc: C17617
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F3000T5E
   description: Resistor, small symbol
 - ref: R2
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pulldown: Q1.G
 - ref: R20
   value: 22ohm
   footprint: 0805
+  lcsc: C17561
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F220JT5E
   description: Resistor, small symbol
 - ref: R21
   value: 22ohm
   footprint: 0805
+  lcsc: C17561
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F220JT5E
   description: Resistor, small symbol
 - ref: R22
   value: 22ohm
   footprint: 0805
+  lcsc: C17561
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F220JT5E
   description: Resistor, small symbol
 - ref: R23
   value: 22ohm
   footprint: 0805
+  lcsc: C17561
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F220JT5E
   description: Resistor, small symbol
 - ref: R24
   value: 22ohm
   footprint: 0805
+  lcsc: C17561
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F220JT5E
   description: Resistor, small symbol
 - ref: R25
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: R26
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
 - ref: R27
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: R28
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
 - ref: R29
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: R3
   value: 1kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1001T5E
+  lcsc: C17513
 - ref: R30
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
 - ref: R31
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: R32
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
 - ref: R33
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: R34
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
 - ref: R35
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pulldown: Q3.G
 - ref: R36
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pulldown: Q4.G
 - ref: R37
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pulldown: Q5.G
 - ref: R38
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pulldown: Q6.G
 - ref: R39
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pulldown: Q7.G
 - ref: R4
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: R40
   value: 1kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1001T5E
+  lcsc: C17513
 - ref: R41
   value: 1kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1001T5E
+  lcsc: C17513
 - ref: R42
   value: 1kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1001T5E
+  lcsc: C17513
 - ref: R43
   value: 1kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1001T5E
+  lcsc: C17513
 - ref: R44
   value: 1kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1001T5E
+  lcsc: C17513
 - ref: R45
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
   description: Resistor, small symbol
 - ref: R46
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
   description: Resistor, small symbol
 - ref: R47
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
   description: Resistor, small symbol
 - ref: R48
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
   description: Resistor, small symbol
 - ref: R49
   value: 300ohm
   footprint: 0805
+  lcsc: C17617
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F3000T5E
   description: Resistor, small symbol
 - ref: R5
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pullup: U1.VSENSE
 - ref: R50
   value: 300ohm
   footprint: 0805
+  lcsc: C17617
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F3000T5E
   description: Resistor, small symbol
 - ref: R51
   value: 300ohm
   footprint: 0805
+  lcsc: C17617
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F3000T5E
   description: Resistor, small symbol
 - ref: R52
   value: 300ohm
   footprint: 0805
+  lcsc: C17617
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F3000T5E
   description: Resistor, small symbol
 - ref: R53
   value: 22ohm
   footprint: 0805
+  lcsc: C17561
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F220JT5E
   description: Resistor, small symbol
 - ref: R54
   value: 22ohm
   footprint: 0805
+  lcsc: C17561
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F220JT5E
   description: Resistor, small symbol
 - ref: R55
   value: 22ohm
   footprint: 0805
+  lcsc: C17561
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F220JT5E
   description: Resistor, small symbol
 - ref: R56
   value: 22ohm
   footprint: 0805
+  lcsc: C17561
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F220JT5E
   description: Resistor, small symbol
 - ref: R57
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: R58
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
 - ref: R59
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: R6
   value: 3.24kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F3241T5E
+  lcsc: C17609
   description: "125mW Thick Film Resistor 150V \xB1100ppm/\u2103 \xB11% 3.24k\u03A9 0805 Chip Resistor"
   pulldown: U1.VSENSE
 - ref: R60
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
 - ref: R61
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: R62
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
 - ref: R63
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: R64
   value: 120ohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1200T5E
+  lcsc: C17437
 - ref: R65
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pulldown: Q8.G
 - ref: R66
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pulldown: Q9.G
 - ref: R67
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pulldown: Q10.G
 - ref: R68
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pulldown: Q11.G
 - ref: R69
   value: 1kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1001T5E
+  lcsc: C17513
 - ref: R7
   value: 10kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1002T5E
+  lcsc: C17414
   pulldown: Q2.G
 - ref: R70
   value: 1kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1001T5E
+  lcsc: C17513
 - ref: R71
   value: 1kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1001T5E
+  lcsc: C17513
 - ref: R72
   value: 1kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1001T5E
+  lcsc: C17513
 - ref: R8
   value: 1kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
+  mpn: 0805W8F1001T5E
+  lcsc: C17513
 - ref: R9
   value: 1.2kohm
   footprint: 0805
   manufacturer: UNI-ROYAL(Uniroyal Elec)
-  pulldown: D3.K
+  mpn: 0805W8F1201T5E
+  lcsc: C17379
 - ref: U1
   value: TPS5430DDA
   footprint: TI_SO-PowerPAD-8_ThermalVias
   manufacturer: Texas Instruments
+  mpn: TPS5430DDAR
+  lcsc: C9864
   description: 3A, Step Down Swift Converter, Adjustable Output Voltage, 5.5-36V Input
   pin_count: 9
   nc_pins: {NC@2: '2', NC@3: '3', EN: '5'}
 - ref: U10
   value: MOC3063S
   footprint: MOC306XS_LTO
+  lcsc: C77950
   manufacturer: Lite-On
+  mpn: MOC3063S-TA1
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
   pin_count: 6
   nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U2
   value: MOC3063S
   footprint: MOC306XS_LTO
+  lcsc: C77950
   manufacturer: Lite-On
+  mpn: MOC3063S-TA1
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
   pin_count: 6
   nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U3
   value: MOC3063S
   footprint: MOC306XS_LTO
+  lcsc: C77950
   manufacturer: Lite-On
+  mpn: MOC3063S-TA1
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
   pin_count: 6
   nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U4
   value: MOC3063S
   footprint: MOC306XS_LTO
+  lcsc: C77950
   manufacturer: Lite-On
+  mpn: MOC3063S-TA1
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
   pin_count: 6
   nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U5
   value: MOC3063S
   footprint: MOC306XS_LTO
+  lcsc: C77950
   manufacturer: Lite-On
+  mpn: MOC3063S-TA1
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
   pin_count: 6
   nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U6
   value: MOC3063S
   footprint: MOC306XS_LTO
+  lcsc: C77950
   manufacturer: Lite-On
+  mpn: MOC3063S-TA1
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
   pin_count: 6
   nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U7
   value: MOC3063S
   footprint: MOC306XS_LTO
+  lcsc: C77950
   manufacturer: Lite-On
+  mpn: MOC3063S-TA1
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
   pin_count: 6
   nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U8
   value: MOC3063S
   footprint: MOC306XS_LTO
+  lcsc: C77950
   manufacturer: Lite-On
+  mpn: MOC3063S-TA1
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
   pin_count: 6
   nc_pins: {NC@3: '3', NC@5: '5'}
 - ref: U9
   value: MOC3063S
   footprint: MOC306XS_LTO
+  lcsc: C77950
   manufacturer: Lite-On
+  mpn: MOC3063S-TA1
   description: Zero Cross Opto-Triac, Vdrm 600V, Ift 5mA, DIP6
   pin_count: 6
   nc_pins: {NC@3: '3', NC@5: '5'}
@@ -1030,6 +1287,9 @@ positions:
 - ref: F2
   x: 136.65
   y: 109.6
+- ref: J1
+  x: 150.62
+  y: 136.65
 - ref: J4
   x: 240.03
   y: 68.07

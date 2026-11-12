@@ -133,3 +133,65 @@ class TestCheckStatus:
         """Without explicit keys, every registered scraper is checked."""
         failures = check_status({"run_at": RUN_AT, "sources": {}}, tmp_path)
         assert len(failures) == len(SCRAPERS)
+
+
+def test_catalog_build_gate_warns_and_status_check_rejects_missing_curated_id(tmp_path, monkeypatch, capsys):
+    import build_sensor_db as builder
+    import check_scrape_status as checker
+
+    monkeypatch.setattr(builder, 'MIN_SENSOR_COUNT', 0)
+    sensors = tmp_path / 'sensors'
+    for key in SCRAPERS:
+        _write_source(sensors, key)
+    (sensors / '_scrape_status.json').write_text(json.dumps(_status(list(SCRAPERS))))
+    (sensors / 'arduino.json').write_text(json.dumps({
+        'scraped_at': FRESH, 'stats': {'sensor_count': 1, 'errors': 0},
+        'sensors': [{'id': 'ads1293', 'name': 'ADS1293', 'measures': ['voltage']}],
+    }))
+    (sensors / 'curated.json').write_text(json.dumps({'ads1293': {'voltage': {
+        'value': '2.7-5.5', 'evidence': {'url': 'https://example.com/datasheet'},
+        'review_date': '2026-11-10',
+    }}}))
+    database = tmp_path / 'sensor.db'
+    database.write_bytes(b'existing catalog must survive validation')
+    monkeypatch.setattr(sys, 'argv', ['check_scrape_status.py', '--sensors-dir', str(sensors), '--build-only'])
+    assert checker.main() == 0
+    assert database.read_bytes() == b'existing catalog must survive validation'
+    # A fresh, successful scrape can still lose a curated device. The pre-commit gate lets the
+    # month's data land and warns (failing it discarded every source's data); the status check
+    # after the commit fails, so the deploy waits for curated.json.
+    _write_source(sensors, 'arduino')
+    assert checker.check_status(_status(list(SCRAPERS)), sensors) == []
+    capsys.readouterr()
+    assert checker.main() == 0
+    assert "WARN: curated sensor IDs with no catalog record: ads1293" in capsys.readouterr().out
+    assert database.read_bytes() == b'existing catalog must survive validation'
+    monkeypatch.setattr(sys, 'argv', ['check_scrape_status.py', '--sensors-dir', str(sensors)])
+    assert checker.main() == 1
+    assert "curated sensor IDs with no catalog record: ads1293" in capsys.readouterr().out
+
+
+def test_workflow_build_gate_precedes_commit_and_retains_freshness_gate():
+    workflow = (Path(__file__).parent.parent / '.github/workflows/scrape-sensors.yml').read_text()
+    assert workflow.index('python scripts/scrape_sensors.py') < workflow.index('python scripts/check_scrape_status.py --build-only')
+    assert workflow.index('python scripts/check_scrape_status.py --build-only') < workflow.index('git add data/sensors/')
+    assert workflow.index('git push') < workflow.index('python scripts/check_scrape_status.py\n') < workflow.index('gh workflow run docker-build.yml')
+
+
+def test_build_check_validates_the_given_directory_whatever_its_name(tmp_path):
+    """A custom --sensors-dir built its parent's "sensors" sibling instead."""
+    import shutil
+    from pathlib import Path
+    from check_scrape_status import check_catalog_build
+    root = Path(__file__).parent.parent / "data" / "sensors"
+    custom = tmp_path / "cache-copy"
+    shutil.copytree(root, custom)
+    assert check_catalog_build(custom) == []
+    curated = custom / "curated.json"
+    import json
+    data = json.loads(curated.read_text(encoding="utf-8"))
+    data["nosuchsensor"] = {"voltage": {"value": "3.3", "evidence": {"url": "https://example.com"},
+                                         "review_date": "2026-11-10"}}
+    curated.write_text(json.dumps(data), encoding="utf-8")
+    assert "nosuchsensor" in check_catalog_build(custom)[0]
+    assert check_catalog_build(custom, allow_stale=True) == []

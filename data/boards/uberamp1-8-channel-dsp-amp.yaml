@@ -68,12 +68,12 @@ components:
 - ref: C111
   value: 3.9nF
   footprint: '0603'
-  voltage: 16V
+  voltage: 50V
   mpn: GCM1885C1H392GA16D
 - ref: C112
   value: 3.9nF
   footprint: '0603'
-  voltage: 16V
+  voltage: 50V
   mpn: GCM1885C1H392GA16D
 - ref: C113
   value: 470pF
@@ -119,12 +119,12 @@ components:
   value: 220uF
   footprint: CP_Radial_D12.5mm_P5.00mm
   mpn: URZ1J221MHD1TO
-  voltage: 65V
+  voltage: 63V
 - ref: C128
   value: 220uF
   footprint: CP_Radial_D12.5mm_P5.00mm
   mpn: URZ1J221MHD1TO
-  voltage: 65V
+  voltage: 63V
 - ref: C129
   value: 33uF
   footprint: '1206'
@@ -150,7 +150,7 @@ components:
   value: 220uF
   footprint: CP_Radial_D12.5mm_P5.00mm
   mpn: URZ1J221MHD1TO
-  voltage: 65V
+  voltage: 63V
 - ref: C133
   value: 10uF
   footprint: '0603'
@@ -261,7 +261,7 @@ components:
   value: 220uF
   footprint: CP_Radial_D12.5mm_P5.00mm
   mpn: URZ1J221MHD1TO
-  voltage: 65V
+  voltage: 63V
 - ref: C17
   value: 10uF
   footprint: '0603'
@@ -293,22 +293,22 @@ components:
 - ref: C23
   value: 10uF
   footprint: '1210'
-  voltage: 16V
+  voltage: 63V
   mpn: CL32B106KMVNNWE
 - ref: C24
   value: 10uF
   footprint: '1210'
-  voltage: 16V
+  voltage: 63V
   mpn: CL32B106KMVNNWE
 - ref: C25
   value: 10uF
   footprint: '1210'
-  voltage: 16V
+  voltage: 63V
   mpn: CL32B106KMVNNWE
 - ref: C26
   value: 10uF
   footprint: '1210'
-  voltage: 16V
+  voltage: 63V
   mpn: CL32B106KMVNNWE
 - ref: C27
   value: 1uF
@@ -337,22 +337,22 @@ components:
 - ref: C31
   value: 10nF
   footprint: '0603'
-  voltage: 63V
+  voltage: 200V
   mpn: C0603X103K2RECTU
 - ref: C32
   value: 10nF
   footprint: '0603'
-  voltage: 63V
+  voltage: 200V
   mpn: C0603X103K2RECTU
 - ref: C33
   value: 10nF
   footprint: '0603'
-  voltage: 63V
+  voltage: 200V
   mpn: C0603X103K2RECTU
 - ref: C34
   value: 10nF
   footprint: '0603'
-  voltage: 63V
+  voltage: 200V
   mpn: C0603X103K2RECTU
 - ref: C4
   value: 100pF
@@ -581,32 +581,32 @@ components:
   mpn: TPA3255DDVR
   pin_count: 44
 - ref: J10
-  value: 1x2 header
-  footprint: AMASS_XT30U-M
+  value: XT30U-M
+  footprint: AMASS_XT30U-M_1x02
 - ref: J2
   value: coaxial connector
   footprint: mmcx_f_vert
 - ref: J3
-  value: 1x6 header
-  footprint: JST_GH_BM06B-GHS-TBT
+  value: JST GH 6-pin
+  footprint: JST_GH_BM06B-GHS-TBT_1x06
   mpn: BM03B-GHS-TBT
   pin_count: 6
 - ref: J4
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
   pin_count: 4
   nc_pins: {Pin_4: '4'}
 - ref: J5
-  value: 1x5 header
-  footprint: JST_GH_BM05B-GHS-TBT
+  value: JST GH 5-pin
+  footprint: JST_GH_BM05B-GHS-TBT_1x05
   pin_count: 5
 - ref: J6
   value: AudioJack4
   footprint: Jack_3.5mm_PJ320D_Horizontal
   pin_count: 4
 - ref: J7
-  value: 1x6 header
-  footprint: JST_GH_BM06B-GHS-TBT
+  value: JST GH 6-pin
+  footprint: JST_GH_BM06B-GHS-TBT_1x06
   mpn: BM03B-GHS-TBT
   pin_count: 6
   nc_pins: {Pin_4: '4'}
@@ -763,19 +763,15 @@ components:
 - ref: R165
   value: t3.6k
   footprint: '0603'
-  mpn: RT0603DRE076K8L
 - ref: R166
   value: t3.6k
   footprint: '0603'
-  mpn: RT0603DRE076K8L
 - ref: R167
   value: t3.6k
   footprint: '0603'
-  mpn: RT0603DRE076K8L
 - ref: R168
   value: t3.6k
   footprint: '0603'
-  mpn: RT0603DRE076K8L
 - ref: R17
   value: t10k
   footprint: '0603'
@@ -1007,19 +1003,15 @@ components:
 - ref: R53
   value: t2k
   footprint: '0603'
-  mpn: RT0603DRD073K6L
 - ref: R55
   value: t2k
   footprint: '0603'
-  mpn: RT0603DRD073K6L
 - ref: R58
   value: t2k
   footprint: '0603'
-  mpn: RT0603DRD073K6L
 - ref: R59
   value: t2k
   footprint: '0603'
-  mpn: RT0603DRD073K6L
 - ref: R63
   value: t2k
   footprint: '0603'
@@ -1063,7 +1055,6 @@ components:
 - ref: U13
   value: L78L05
   footprint: SOT-89-3
-  mpn: ua78l05acpke6
   pin_count: 3
 - ref: U14
   value: AK4454
@@ -1080,7 +1071,6 @@ components:
 - ref: U16
   value: OPA1642
   footprint: SOIC-8
-  mpn: NE5532DR
   description: Dual operational amplifier
   pin_count: 8
 - ref: U18
@@ -1102,7 +1092,6 @@ components:
 - ref: U20
   value: LM7812_TO220
   footprint: TO-220
-  mpn: L7812CV
   pin_count: 3
 - ref: U21
   value: 24.576MHz oscillator
@@ -1134,9 +1123,10 @@ components:
 - ref: U26
   value: ESP32-WROOM-32D
   footprint: ESP32-WROOM-32D
-  mpn: ESP32-WROOM-32E-N16
   pin_count: 39
-  nc_pins: {SENSOR_VP: '4', SENSOR_VN: '5', IO34: '6', IO35: '7', IO32: '8', IO33: '9', IO27: '12', IO13: '16', SHD/SD2: '17', SWP/SD3: '18', SCS/CMD: '19', SCK/CLK: '20', SDO/SD0: '21', SDI/SD1: '22', IO15: '23', IO2: '24', IO4: '26', IO17: '28', IO5: '29', IO18: '30', IO19: '31', NC: '32', IO23: '37'}
+  nc_pins: {SENSOR_VP: '4', SENSOR_VN: '5', IO34: '6', IO35: '7', IO32: '8', IO33: '9', IO27: '12', IO13: '16', SHD/SD2: '17',
+    SWP/SD3: '18', SCS/CMD: '19', SCK/CLK: '20', SDO/SD0: '21', SDI/SD1: '22', IO15: '23', IO2: '24', IO4: '26', IO17: '28',
+    IO5: '29', IO18: '30', IO19: '31', NC: '32', IO23: '37'}
 - ref: U27
   value: '4040'
   footprint: texas_R-PVQFN-N16
@@ -1151,7 +1141,7 @@ components:
   nc_pins: {pgood: '5', '8': '8', '9': '9', '10': '10'}
 - ref: U29
   value: max97220
-  footprint: qfn_4p4p
+  footprint: qfn_4p4p_3x3
   mpn: MAX97220B
   description: Dual operational amplifier with charge pump
   pin_count: 17
@@ -1171,7 +1161,7 @@ components:
   pin_count: 8
 - ref: s45
   value: ref
-  footprint: pad
+  footprint: pad_1.2x1.5
 nets:
 - name: +5V
   pins:

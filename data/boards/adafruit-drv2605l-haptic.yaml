@@ -53,16 +53,18 @@ components:
   footprint: 1X01
 - ref: R3
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pin_count: 8
   nc_pins: {G$2.1: '2', G$2.2: '7'}
 - ref: SJ1
-  value: smd solder jumper
+  value: solder jumper (NC)
   footprint: SJ-2
+  description: SMD Solder JUMPER
 - ref: U1
   value: DRV2605L
   footprint: PSOP10
   description: DRV2605
+  mpn: DRV2605LDGS
   pin_count: 10
 nets:
 - name: GND
@@ -89,9 +91,9 @@ nets:
 - name: N$2
   pins: [D1.A, SJ1.1]
 - name: OUT+
-  pins: [JP1.1, TP1.P$1, TP3.P$1, U1.OUT+]
+  pins: [JP1.1, U1.OUT+]
 - name: OUT-
-  pins: [JP3.1, TP2.P$1, TP4.P$1, U1.OUT-]
+  pins: [JP3.1, U1.OUT-]
 - name: SCL
   pins: [CONN3.G$1.SCL, CONN4.G$1.SCL, JP2.3, R3.G$1.2, U1.SCL]
 - name: SDA

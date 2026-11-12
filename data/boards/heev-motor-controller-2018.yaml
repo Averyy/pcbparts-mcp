@@ -2,9 +2,9 @@ name: HEEV Motor Controller 2018
 slug: heev-motor-controller-2018
 source: HEEV/motor-controller-2018
 format: kicad_legacy
-description: 'Shell Eco-Marathon motor controller: TMC4671 dedicated hardware FOC chip, STM32'
-tags: [inverter, motor-control, power-supply]
-key_ics: [STM32, TMC4671]
+description: 'Shell Eco-Marathon motor controller logic board: TMC4671 hardware FOC chip, STM32F303 MCU'
+tags: [can-bus, motor-control, power-supply, signal-conditioning]
+key_ics: [TMC4671, STM32F303]
 outline:
   width_mm: 99.7
   height_mm: 85.09
@@ -18,426 +18,545 @@ components:
 - ref: C101
   value: 4.7uF
   footprint: 0805
+  digikey: 732-7628-1-ND
   decouples: U101
 - ref: C102
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U101
 - ref: C103
   value: 33uF
   footprint: CP_Radial_D8.0mm_P3.50mm
+  digikey: P10340-ND
 - ref: C104
   value: 4.7uF
   footprint: 0805
+  digikey: 732-7628-1-ND
   decouples: U101
 - ref: C105
   value: 4.7uF
   footprint: 0805
+  digikey: 732-7628-1-ND
   decouples: U101
 - ref: C201
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U201
 - ref: C202
   value: 1uF
   footprint: 0805
+  digikey: 732-7672-1-ND
   decouples: U206
 - ref: C203
   value: 150nF
   footprint: 0805
+  digikey: 732-7674-1-ND
 - ref: C204
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
 - ref: C205
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
 - ref: C206
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
 - ref: C207
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
 - ref: C208
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U202
 - ref: C209
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U203
 - ref: C210
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U205
 - ref: C211
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U204
 - ref: C212
   value: 1uF
   footprint: 0805
+  digikey: 732-7672-1-ND
   decouples: U206
 - ref: C213
   value: 1uF
   footprint: 0805
+  digikey: 732-7672-1-ND
   decouples: U205
 - ref: C214
   value: 4.7uF
   footprint: 0805
+  digikey: 732-7628-1-ND
   decouples: U202
 - ref: C215
   value: 100pF
   footprint: 0805
+  digikey: 1276-1014-1-ND
 - ref: C216
   value: 100pF
   footprint: 0805
+  digikey: 1276-1014-1-ND
 - ref: C217
   value: 100pF
   footprint: 0805
+  digikey: 1276-1014-1-ND
 - ref: C218
   value: 100pF
   footprint: 0805
+  digikey: 1276-1014-1-ND
 - ref: C219
   value: 100pF
   footprint: 0805
+  digikey: 1276-1014-1-ND
 - ref: C220
   value: 100pF
   footprint: 0805
+  digikey: 1276-1014-1-ND
 - ref: C301
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U301
 - ref: C302
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U301
 - ref: C303
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
 - ref: C304
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U301
 - ref: C305
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U301
 - ref: C306
   value: 4.7uF
   footprint: 0805
+  digikey: 732-7628-1-ND
   decouples: U301
 - ref: C307
   value: 1uF
   footprint: 0805
+  digikey: 732-7672-1-ND
   decouples: U301
 - ref: C308
   value: 10nF
   footprint: 0805
+  digikey: 732-12169-1-ND
   decouples: U301
 - ref: C309
   value: 27pF
   footprint: 0805
+  digikey: 1276-2622-1-ND
 - ref: C310
   value: 27pF
   footprint: 0805
+  digikey: 1276-2622-1-ND
 - ref: C311
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
 - ref: C401
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U401
 - ref: C402
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
 - ref: C403
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U401
 - ref: C404
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U401
 - ref: C405
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U401
 - ref: C406
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U401
 - ref: C407
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
 - ref: C408
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U401
 - ref: C409
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U401
 - ref: C410
   value: 470nF
   footprint: 0805
+  digikey: 732-7670-1-ND
   decouples: U401
 - ref: C411
   value: 4.7uF
   footprint: 0805
+  digikey: 732-7628-1-ND
   decouples: U401
 - ref: C412
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
 - ref: C413
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
 - ref: C414
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
 - ref: C415
   value: 100nF
   footprint: 0805
+  digikey: 1276-2444-1-ND
   decouples: U401
 - ref: C416
   value: 4.7uF
   footprint: 0805
+  digikey: 732-7628-1-ND
   decouples: U401
 - ref: C417
   value: 10nF
   footprint: 0805
+  digikey: 732-12169-1-ND
 - ref: C418
   value: 10nF
   footprint: 0805
+  digikey: 732-12169-1-ND
 - ref: C419
   value: 10nF
   footprint: 0805
+  digikey: 732-12169-1-ND
 - ref: C420
   value: 10nF
   footprint: 0805
+  digikey: 732-12169-1-ND
 - ref: D101
   value: 15V Zener
   footprint: SOD-123F
+  digikey: BZT52HC15WF-7DICT-ND
 - ref: D102
   value: D_USB
   footprint: SOD-123F
+  digikey: MBR1020VLCT-ND
 - ref: D103
   value: Vin
   footprint: LED_0603
+  digikey: 732-12015-1-ND
 - ref: D104
   value: 5V
   footprint: LED_0603
+  digikey: 732-12015-1-ND
 - ref: D105
   value: 3.3V
   footprint: LED_0603
+  digikey: 732-12015-1-ND
 - ref: D301
   value: CAN_Status
   footprint: '0603'
+  digikey: 732-12013-1-ND
 - ref: D302
   value: Heartbeat
   footprint: '0603'
+  digikey: 732-12015-1-ND
 - ref: D303
   value: User_LED
   footprint: '0603'
+  digikey: 732-12017-1-ND
 - ref: F101
   value: 50mA PTC
   footprint: '0603'
+  digikey: 507-1816-1-ND
 - ref: F102
   value: 50mA PTC
   footprint: '0603'
+  digikey: 507-1816-1-ND
 - ref: F103
   value: 50mA PTC
   footprint: '0603'
+  digikey: 507-1816-1-ND
 - ref: F104
   value: 120mA PTC
   footprint: '0603'
+  digikey: 507-1819-1-ND
 - ref: F105
   value: 50mA PTC
   footprint: '0603'
+  digikey: 507-1816-1-ND
 - ref: J101
   value: CAN
   footprint: Molex-duraClick-4conn
+  digikey: WM7171CT-ND
   pin_count: 5
   nc_pins: {'0': '0'}
 - ref: J102
   value: Throttle
   footprint: Molex-duraClick-4conn
+  digikey: WM7171CT-ND
   pin_count: 5
   nc_pins: {'0': '0'}
 - ref: J103
   value: Motor T
   footprint: Molex-duraClick-2conn
+  digikey: WM7169CT-ND
   pin_count: 3
   nc_pins: {'0': '0'}
 - ref: J104
   value: Tran T
   footprint: Molex-duraClick-2conn
+  digikey: WM7169CT-ND
   pin_count: 3
   nc_pins: {'0': '0'}
 - ref: J105
   value: USB Micro-B
   footprint: USB_Micro-B
+  digikey: 609-4618-1-ND
   pin_count: 6
   nc_pins: {'4': '4'}
 - ref: J106
   value: Extra IO
   footprint: Molex-UltraFit-14p-vert
+  digikey: WM11743-ND
   pin_count: 14
 - ref: J107
   value: Hall Sensors
   footprint: MICRO_JST_6
+  digikey: 455-1708-ND
   pin_count: 6
 - ref: J108
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
+  digikey: S1212EC-02-ND
 - ref: J109
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
+  digikey: S1212EC-05-ND
   pin_count: 5
 - ref: J110
-  value: 1x4 header
-  footprint: 1X4
+  value: 1x4 2.54mm header
+  footprint: 1X4_P2.54mm
+  digikey: S1212EC-04-ND
   pin_count: 4
 - ref: J111
-  value: 2x22 header
-  footprint: 2X22
+  value: 2x22 2.54mm header
+  footprint: 2X22_P2.54mm
+  digikey: S7125-ND
   pin_count: 44
-  nc_pins: {'4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '12': '12', '13': '13', '25': '25', '29': '29', '30': '30', '31': '31', '33': '33', '37': '37', '38': '38', '39': '39', '41': '41'}
+  nc_pins: {'4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9', '10': '10', '11': '11', '12': '12', '13': '13', '25': '25',
+    '29': '29', '30': '30', '31': '31', '33': '33', '37': '37', '38': '38', '39': '39', '41': '41'}
 - ref: J301
   value: SWD
-  footprint: 1X6
+  footprint: 1X6_P2.54mm
+  digikey: S1212EC-06-ND
   pin_count: 6
 - ref: J302
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
+  digikey: S1212EC-03-ND
   pin_count: 3
 - ref: J401
   value: Trinamic_TRMI
   footprint: DF20F-10DP-1V(56)
+  digikey: H10726CT-ND
   pin_count: 11
   nc_pins: {'0': '0', '2': '2'}
 - ref: J402
-  value: 1x3 header
-  footprint: 1X3
+  value: 1x3 2.54mm header
+  footprint: 1X3_P2.54mm
+  digikey: S1212EC-03-ND
   pin_count: 3
 - ref: JP101
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
+  digikey: S1212EC-02-ND
 - ref: JP201
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm
+  digikey: S1212EC-02-ND
 - ref: Q101
   value: P-channel MOSFET
   footprint: TO-252
+  digikey: 785-1102-1-ND
   pin_count: 3
 - ref: R101
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
   pullup: /MotorTemp
 - ref: R102
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
   pulldown: D101.2
 - ref: R103
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
 - ref: R104
   value: 1kohm
   footprint: 0805
-  pullup: D104.2
+  digikey: A129749CT-ND
 - ref: R105
   value: 330ohm
   footprint: 0805
+  digikey: 311-330CRCT-ND
 - ref: R201
   value: 2kohm
   footprint: 0805
+  digikey: A126358CT-ND
 - ref: R202
   value: 2kohm
   footprint: 0805
+  digikey: A126358CT-ND
 - ref: R203
   value: 2kohm
   footprint: 0805
+  digikey: A126358CT-ND
 - ref: R204
   value: 2kohm
   footprint: 0805
+  digikey: A126358CT-ND
 - ref: R205
   value: 2kohm
   footprint: 0805
+  digikey: A126358CT-ND
 - ref: R206
   value: 3.9kohm
   footprint: 0805
+  digikey: 311-3.90CRCT-ND
   pulldown: U201.12
 - ref: R207
   value: 100ohm
   footprint: 0805
+  digikey: 311-100CRCT-ND
 - ref: R208
   value: 100ohm
   footprint: 0805
+  digikey: 311-100CRCT-ND
 - ref: R209
   value: 100ohm
   footprint: 0805
+  digikey: 311-100CRCT-ND
 - ref: R210
   value: 4.7kohm
   footprint: 0805
+  digikey: 311-4.70KCRCT-ND
   pullup: U205.1
 - ref: R211
   value: 4.7kohm
   footprint: 0805
+  digikey: 311-4.70KCRCT-ND
   pullup: U205.3
 - ref: R212
   value: 4.7kohm
   footprint: 0805
+  digikey: 311-4.70KCRCT-ND
   pullup: U205.5
 - ref: R213
   value: 100ohm
   footprint: 0805
+  digikey: 311-100CRCT-ND
 - ref: R214
   value: 100ohm
   footprint: 0805
+  digikey: 311-100CRCT-ND
 - ref: R215
   value: 100ohm
   footprint: 0805
+  digikey: 311-100CRCT-ND
 - ref: R216
   value: 120ohm
   footprint: 0805
+  digikey: A129738CT-ND
 - ref: R217
   value: 4.7kohm
   footprint: 0805
+  digikey: 311-4.70KCRCT-ND
   pullup: U205.9
 - ref: R218
   value: 4.7kohm
   footprint: 0805
+  digikey: 311-4.70KCRCT-ND
   pullup: U205.11
 - ref: R219
   value: 4.7kohm
   footprint: 0805
+  digikey: 311-4.70KCRCT-ND
   pullup: U205.13
 - ref: R220
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
   pulldown: U206.8
 - ref: R301
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
   pulldown: /STM32/Boot
 - ref: R302
   value: 330ohm
   footprint: 0805
+  digikey: 311-330CRCT-ND
 - ref: R303
   value: 4.7kohm
   footprint: 0805
+  digikey: 311-4.70KCRCT-ND
   pullup: /STM32/User_SW
 - ref: R304
   value: 100ohm
   footprint: 0805
+  digikey: 311-100CRCT-ND
 - ref: R305
   value: 100ohm
   footprint: 0805
+  digikey: 311-100CRCT-ND
 - ref: R306
   value: 330ohm
   footprint: 0805
+  digikey: 311-330CRCT-ND
 - ref: R307
   value: 330ohm
   footprint: 0805
+  digikey: 311-330CRCT-ND
 - ref: R308
   value: 1.5kohm
   footprint: 0805
@@ -445,51 +564,65 @@ components:
 - ref: R401
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
   pullup: /TMC4671/A_Current_Ref
 - ref: R402
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
   pulldown: /TMC4671/A_Current_Ref
 - ref: R403
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
   pullup: /TMC4671/B_Current_Ref
 - ref: R404
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
   pulldown: /TMC4671/B_Current_Ref
 - ref: R405
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
   pullup: U401.50
 - ref: R406
   value: 100ohm
   footprint: 0805
+  digikey: 311-100CRCT-ND
 - ref: R407
   value: 100ohm
   footprint: 0805
+  digikey: 311-100CRCT-ND
 - ref: R408
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
   pulldown: /TMC4671/Batt_V
 - ref: R409
   value: 10kohm
   footprint: 0805
+  digikey: A129761CT-ND
 - ref: R410
   value: 110kohm
   footprint: 0805
+  digikey: 311-110KCRCT-ND
 - ref: SW301
   value: Reset
   footprint: SW_SPST_FSMSM
+  digikey: 450-1758-1-ND
 - ref: SW302
   value: Boot
   footprint: SW_SPST_FSMSM
+  digikey: 450-1758-1-ND
 - ref: SW303
   value: User_SW
   footprint: SW_SPST_FSMSM
+  digikey: 450-1758-1-ND
 - ref: U101
   value: AP7361C-33
   footprint: SOT-223
+  digikey: AP7361C-33E-13DICT-ND
   pin_count: 4
   nc_pins: {'4': '4'}
 - ref: U102
@@ -500,45 +633,56 @@ components:
 - ref: U201
   value: MCP6004
   footprint: SOIC-14
+  digikey: MCP6004-I/SL-ND
   pin_count: 14
 - ref: U202
   value: MCP6004
   footprint: SOIC-14
+  digikey: MCP6004-I/SL-ND
   pin_count: 14
 - ref: U203
   value: MCP6004
   footprint: SOIC-14
+  digikey: MCP6004-I/SL-ND
   pin_count: 14
 - ref: U204
   value: 74HC7014
   footprint: SOIC-14
+  digikey: 1727-6342-1-ND
   pin_count: 14
 - ref: U205
   value: 74HC7014
   footprint: SOIC-14
+  digikey: 1727-6342-1-ND
   pin_count: 14
 - ref: U206
   value: mcp2562
   footprint: SOIC-8
+  digikey: 568-11881-1-ND
   pin_count: 8
 - ref: U301
   value: STM32F303RETx
   footprint: LQFP-64
+  digikey: 497-15163-ND
   pin_count: 64
-  nc_pins: {'3': '3', '4': '4', '8': '8', '9': '9', '10': '10', '11': '11', '25': '25', '43': '43', '54': '54', '56': '56', '57': '57', '58': '58', '59': '59'}
+  nc_pins: {'3': '3', '4': '4', '8': '8', '9': '9', '10': '10', '11': '11', '25': '25', '43': '43', '54': '54', '56': '56',
+    '57': '57', '58': '58', '59': '59'}
 - ref: U401
   value: TMC4671
   footprint: QFN76P
+  digikey: 1460-1302-ND
   pin_count: 77
   nc_pins: {'64': '64', '65': '65', '66': '66'}
 - ref: X401
   value: IQXO-50
   footprint: Clock-FOX924
+  digikey: 631-1074-1-ND
   pin_count: 4
   nc_pins: {'1': '1'}
 - ref: Y301
   value: 8Mhz
   footprint: Crystal_SMD_HC49-SD
+  digikey: 535-10212-1-ND
 nets:
 - name: +3V3
   pins:

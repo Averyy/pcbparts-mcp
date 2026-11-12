@@ -1,7 +1,7 @@
 name: Soldered Capacitive Soil
 slug: soldered-capacitive-soil
 source: SolderedElectronics/Capacitive-soil-sensor-hardware-design
-format: kicad7
+format: kicad6
 description: 555 timer (TLC555) + SGM358 op-amp analog signal conditioning, trimmer pot
 tags: [signal-conditioning]
 key_ics: [TLC555]
@@ -40,7 +40,7 @@ components:
   footprint: SOD-323
 - ref: K1
   value: 1x3 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_3X1
   pin_count: 3
 - ref: R1
   value: 1Mohm
@@ -71,8 +71,10 @@ components:
   footprint: '0603'
   pulldown: R6.1
 - ref: R8
-  value: tc33x-2-103e
+  value: 10kohm
   footprint: tc33x-2-103e
+  mpn: tc33x-2-103e
+  pullup: C7.1
   pin_count: 3
 - ref: R9
   value: 10kohm
@@ -84,6 +86,7 @@ components:
 - ref: U2
   value: SGM358YMS
   footprint: MSOP-8
+  mpn: SGM358YMS/TR
   pin_count: 8
 nets:
 - name: CONT
@@ -99,7 +102,6 @@ nets:
   - C7.2
   - C8.2
   - K1.3
-  - PAD2.1
   - R1.2
   - R7.1
   - R8.3
@@ -115,7 +117,7 @@ nets:
 - name: Net-(C7-Pad1)
   pins: [C7.1, R8.2, R9.1]
 - name: Net-(D1-Pad1)
-  pins: [D1.A, PAD1.1, R2.1]
+  pins: [D1.A, R2.1]
 - name: Net-(R10-Pad2)
   pins: [R10.2, R11.1]
 - name: Net-(R6-Pad1)

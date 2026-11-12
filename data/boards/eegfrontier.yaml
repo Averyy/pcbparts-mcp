@@ -48,8 +48,10 @@ components:
   value: LED
   footprint: 0805
 - ref: J1
-  value: 1x8 header
-  footprint: 1X8
+  value: 1x8 2.54mm header
+  footprint: 1X8_P2.54mm_Horizontal
+  pin_count: 8
+  nc_pins: {Pin_8: '8'}
 - ref: R1
   value: 10kohm
   footprint: 0805
@@ -91,8 +93,129 @@ components:
   footprint: MODULE_102010428
   manufacturer: Seeed Technology Co., Ltd
   mpn: '102010428'
+  description: "RP2040 XIAO RP2040 series ARM\xAE Cortex\xAE-M0+ MCU 32-Bit Embedded Evaluation Board"
+  pin_count: 14
+  nc_pins: {P29/A3/D3: '4', P6/SDA/D4: '5', 5V: '14'}
 - ref: U2
   value: ADS1299
-  footprint: QFP-64
+  footprint: QFP50P1200X1200X120-64N
   manufacturer: Texas Instruments
+  description: Low-Noise, 4-Channel, 24-Bit Analog-to-Digital Converter for Biopotential Measurements
   mpn: ADS1299-4PAGR
+  pin_count: 62
+  nc_pins: {IN8N: '1', IN8P: '2', IN7N: '3', IN7P: '4', IN6N: '5', IN6P: '6', IN5N: '7', IN5P: '8', SRB1: '17', SRB2: '18',
+    CLK: '37', SCLK: '40', DAISY_IN: '41', GPIO1: '42', GPIO2: '44', GPIO3: '45', GPIO4: '46', BIASREF: '60', RESERVED: '64'}
+nets:
+- name: 3V3_A
+  pins:
+  - C1.1
+  - C3.2
+  - C4.2
+  - C6.1
+  - U2.AVDD1
+  - U2.AVDD@1@19
+  - U2.AVDD@1@21
+  - U2.AVDD@1@22
+  - U2.AVDD@1@56
+  - U2.AVDD@2
+- name: 3V3_D
+  pins:
+  - C2.1
+  - C5.1
+  - R1.1
+  - R3.1
+  - U1.3V3
+  - U2.DVDD@48
+  - U2.DVDD@50
+- name: BTN_START
+  pins: [SW1.1, U1.P7/SCL/D5]
+- name: EEG_BIAS
+  pins: [J1.Pin_6, U2.BIASIN, U2.BIASOUT]
+- name: EEG_CH1
+  pins: [J1.Pin_1, R5.1]
+- name: EEG_CH2
+  pins: [J1.Pin_2, R7.1]
+- name: EEG_CH3
+  pins: [J1.Pin_3, R9.1]
+- name: EEG_CH4
+  pins: [J1.Pin_4, R11.1]
+- name: EEG_DRDY
+  pins: [U1.P28/A2/D2, U2.nDRDY]
+- name: EEG_REF
+  pins: [J1.Pin_5, R10.1, R4.1, R6.1, R8.1, U2.BIASINV]
+- name: EEG_RESET
+  pins: [U1.P26/A0/D0, U2.nRESET]
+- name: EEG_START
+  pins: [U1.P27/A1/D1, U2.START]
+- name: GND
+  pins:
+  - C1.2
+  - C10.2
+  - C11.2
+  - C12.2
+  - C2.2
+  - C3.1
+  - C4.1
+  - C5.2
+  - C6.2
+  - C7.2
+  - C8.2
+  - C9.2
+  - D1.K
+  - D2.K
+  - J1.Pin_7
+  - SW1.2
+  - U1.GND
+  - U2.AVSS1
+  - U2.AVSS@1@20
+  - U2.AVSS@1@23
+  - U2.AVSS@1@32
+  - U2.AVSS@1@57
+  - U2.AVSS@2
+  - U2.CLKSEL
+  - U2.DGND@33
+  - U2.DGND@49
+  - U2.DGND@51
+  - U2.VREFN
+- name: LED_STREAM
+  pins: [R2.1, U1.P0//TX/D6]
+- name: Net-(D1-A)
+  pins: [D1.A, R3.2]
+- name: Net-(D2-A)
+  pins: [D2.A, R2.2]
+- name: Net-(U2-IN1N)
+  pins: [R4.2, U2.IN1N]
+- name: Net-(U2-IN1P)
+  pins: [R5.2, U2.IN1P]
+- name: Net-(U2-IN2N)
+  pins: [R6.2, U2.IN2N]
+- name: Net-(U2-IN2P)
+  pins: [R7.2, U2.IN2P]
+- name: Net-(U2-IN3N)
+  pins: [R8.2, U2.IN3N]
+- name: Net-(U2-IN3P)
+  pins: [R9.2, U2.IN3P]
+- name: Net-(U2-IN4N)
+  pins: [R10.2, U2.IN4N]
+- name: Net-(U2-IN4P)
+  pins: [R11.2, U2.IN4P]
+- name: Net-(U2-VCAP1)
+  pins: [C10.1, U2.VCAP1]
+- name: Net-(U2-VCAP2)
+  pins: [C9.1, U2.VCAP2]
+- name: Net-(U2-VCAP3)
+  pins: [C11.1, U2.VCAP3]
+- name: Net-(U2-VCAP4)
+  pins: [C12.1, U2.VCAP4]
+- name: Net-(U2-VREFP)
+  pins: [C7.1, C8.1, U2.VREFP]
+- name: Net-(U2-nPWDN)
+  pins: [R1.2, U2.nPWDN]
+- name: SPI_CS
+  pins: [U1.D7/CSB/P1/RX, U2.nCS]
+- name: SPI_MISO
+  pins: [U1.D9/MISO/P4, U2.DOUT]
+- name: SPI_MOSI
+  pins: [U1.D10/MOSI/P3, U2.DIN]
+- name: SPI_SCK
+  pins: [U1.D8/SCK/P2, U2.RESV1]

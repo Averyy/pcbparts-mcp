@@ -1,9 +1,9 @@
 name: ESP32-C3-DevKit-RUST-1
 slug: esp32-c3-devkit-rust-1
 source: esp-rs/esp-rust-board
-format: kicad7
+format: kicad6
 description: ESP32-C3-MINI-1 RISC-V (WiFi+BLE), ICM-42670-P 6-axis IMU
-tags: [battery-charging, led-driver, power-supply, sensors, wifi]
+tags: [battery-charging, bluetooth, led-driver, power-supply, sensors, wifi]
 key_ics: [ESP32-C3-MINI-1, MCP73831, ICM-42670, SHTC3]
 outline:
   width_mm: 22.86
@@ -124,7 +124,7 @@ components:
   lcsc: C383211
 - ref: D9
   value: WS2812B
-  footprint: LED_SK6812MINI_PLCC4
+  footprint: LED_SK6812MINI_PLCC4_3.5x3.5
   lcsc: C527089
   pin_count: 4
   nc_pins: {DOUT: '2'}
@@ -139,6 +139,7 @@ components:
   value: 2.2uH
   footprint: L_Bourns-SRN4018
   lcsc: C370436
+  mpn: SPH4018H2R2MT
 - ref: Q1
   value: DMG3415U
   footprint: SOT-23
@@ -244,7 +245,7 @@ components:
   lcsc: C116501
 - ref: U1
   value: SHTC3
-  footprint: SON-5
+  footprint: SON100P200X200X80-5N
   manufacturer: Sensirion
   lcsc: C194656
   pin_count: 5
@@ -259,7 +260,8 @@ components:
   footprint: ESP32-C3-MINI-1
   lcsc: C2838502
   pin_count: 36
-  nc_pins: {NC@4: '4', NC@7: '7', NC@9: '9', NC@10: '10', NC@15: '15', NC@17: '17', NC@24: '24', NC@25: '25', NC@28: '28', NC@29: '29', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35'}
+  nc_pins: {NC@4: '4', NC@7: '7', NC@9: '9', NC@10: '10', NC@15: '15', NC@17: '17', NC@24: '24', NC@25: '25', NC@28: '28',
+    NC@29: '29', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35'}
 - ref: U5
   value: SY8088
   footprint: SOT-23-5
@@ -269,6 +271,7 @@ components:
   value: MCP73831
   footprint: SOT-23-5
   lcsc: C424093
+  mpn: MCP73831T-2ACI/OT
   pin_count: 5
 nets:
 - name: +3V3

@@ -36,6 +36,8 @@ components:
   footprint: J502-ND-142-0701-801
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-801
+  farnell: '1608592'
+  newark: 90F2624
   description: SMA 50 Ohm
   pin_count: 5
 - ref: X2
@@ -43,21 +45,17 @@ components:
   footprint: J502-ND-142-0701-801
   manufacturer: JOHNSON COMPONENTS
   mpn: 142-0701-801
+  farnell: '1608592'
+  newark: 90F2624
   description: SMA 50 Ohm
   pin_count: 5
 nets:
-- name: '1'
-  pins: [TP3.MP, X1.1]
-- name: '10'
-  pins: [C1.1, TP4.MP]
 - name: GND
-  pins: [TP2.MP, U1.E1, U1.E2, X1.GND, X2.GND]
+  pins: [U1.E1, U1.E2, X1.GND, X2.GND]
 - name: N$2
   pins: [C1.2, R1.1, U1.B]
 - name: N$4
   pins: [C2.1, R1.2, R2.2, U1.C]
-- name: N$5
-  pins: [R2.1, TP1.MP]
 - name: N$6
   pins: [C2.2, X2.1]
 positions:

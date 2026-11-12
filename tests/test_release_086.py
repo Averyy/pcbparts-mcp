@@ -58,15 +58,18 @@ class TestFocusOnAnyPart:
 class TestUsbRules:
     def test_cc_tvs_rated_for_a_short_to_vbus(self):
         content = (get_design_rules(topic="usb"))["content"]
-        assert "at least 22 V DC tolerant" in content and "TPD2S300" in content
+        assert "at least 22 V-tolerant" in content and "TPD2S300" in content  # wording from the 0.9.0 audit
         assert "Never put CC on a spare channel of the D+/D- ESD array" in content
         assert "VRWM <= 5V, breakdown 5-7V" not in content
 
     def test_cc_windows_labelled_with_thresholds(self):
         content = (get_design_rules(topic="usb"))["content"]
-        assert "R2.5 Table 4-36" in content and "0.613-0.745 V" in content and "1.165-1.368 V" in content
-        assert "R1.x tabled 0.25-0.61" in content and "0.20 V Ra/Rd threshold" not in content
+        assert "R2.4 Table 4-36" in content and "0.613-0.745 V" in content and "1.165-1.368 V" in content
+        assert "0.20 V Ra/Rd threshold" not in content
+        # 0.9.0: the table's Disconnect/Connect Threshold row is 2.043 V, not "below 0.276 V"
+        assert "reads disconnect below 0.276" not in content
 
     def test_esd441_line(self):
         content = (get_design_rules(topic="esd"))["content"]
-        assert "ESD341 (0.66pF) for SBU" in content and ">= 22V DC tolerance" in content
+        # 0.9.0 audit: match the actual DC fault voltage rather than a blanket 22V
+        assert "ESD341 (0.66pF) for 3.6V SBU" in content and "match the DC fault voltage" in content

@@ -17,7 +17,7 @@ design_rules:
 components:
 - ref: ANT1
   value: NFC_ANTENNA
-  footprint: NFCANT
+  footprint: NFCANT_25X15
 - ref: C1
   value: 100nF
   footprint: '0603'
@@ -41,7 +41,7 @@ components:
   pin_count: 6
 - ref: R3
   value: 10kohm
-  footprint: RESPACK
+  footprint: RESPACK_4X0603
   pin_count: 8
   nc_pins: {G$4.1: '4', G$4.2: '5'}
 - ref: RF1

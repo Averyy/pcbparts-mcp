@@ -1,7 +1,7 @@
 name: Antmicro CM4 Baseboard
 slug: antmicro-cm4-baseboard
 source: antmicro/cm4-baseboard
-format: kicad7
+format: kicad9
 description: 'Industrial CM4 carrier: USB-C PD (15V 3A), PoE'
 tags: [ethernet, nfc-rfid, usb-pd, video]
 key_ics: [FT4233H, PN7160, MCP23017, TPS2372, DS1338]
@@ -962,21 +962,21 @@ components:
   manufacturer: Murata
 - ref: J201
   value: connector
-  footprint: Conn_Socket_Hirose_DF40
+  footprint: Conn_Socket_Hirose_DF40_2x50
   manufacturer: Hirose Electric
   mpn: DF40HC(3.0)-100DS-0.4V(51)
   pin_count: 100
   nc_pins: {'19': '19', '64': '64', '68': '68', '70': '70', '72': '72', '75': '75'}
 - ref: J202
   value: connector
-  footprint: Conn_Socket_Hirose_DF40
+  footprint: Conn_Socket_Hirose_DF40_2x50
   manufacturer: Hirose Electric
   mpn: DF40HC(3.0)-100DS-0.4V(51)
   pin_count: 100
   nc_pins: {'4': '4', '6': '6', '69': '69', '71': '71'}
 - ref: J301
   value: Molex Nano-Fit 1x2
-  footprint: Conn_Molex_Nano-Fit
+  footprint: Conn_Molex_Nano-Fit_1x2
   manufacturer: Molex
   mpn: 105430-1202
   pin_count: 3
@@ -992,7 +992,8 @@ components:
   manufacturer: TE Connectivity
   mpn: 1-2199230-6
   pin_count: 69
-  nc_pins: {NC@6: '6', NC@8: '8', NC@20: '20', NC@22: '22', NC@24: '24', NC@26: '26', NC@28: '28', NC@30: '30', NC@32: '32', NC@34: '34', NC@36: '36', NC@38: '38', NC@46: '46', NC@48: '48', NC@56: '56', NC@58: '58', NC@67: '67', NC@69: '69'}
+  nc_pins: {NC@6: '6', NC@8: '8', NC@20: '20', NC@22: '22', NC@24: '24', NC@26: '26', NC@28: '28', NC@30: '30', NC@32: '32',
+    NC@34: '34', NC@36: '36', NC@38: '38', NC@46: '46', NC@48: '48', NC@56: '56', NC@58: '58', NC@67: '67', NC@69: '69'}
 - ref: J502
   value: microSD
   footprint: MicroSD_Amphenol_1140084168
@@ -1001,14 +1002,15 @@ components:
   pin_count: 11
 - ref: J601
   value: FFC connector
-  footprint: Conn_FFC_WE
+  footprint: Conn_FFC_WE_68715014x22
   mpn: '68715014522'
   manufacturer: "W\xFCrth Elektronik"
   pin_count: 52
-  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '13': '13', '14': '14', '16': '16', '17': '17', '31': '31', '33': '33', '35': '35', '36': '36', '37': '37', '38': '38', '43': '43', '44': '44', '45': '45', '46': '46'}
+  nc_pins: {'1': '1', '2': '2', '3': '3', '4': '4', '13': '13', '14': '14', '16': '16', '17': '17', '31': '31', '33': '33',
+    '35': '35', '36': '36', '37': '37', '38': '38', '43': '43', '44': '44', '45': '45', '46': '46'}
 - ref: J701
   value: 2x20 header
-  footprint: Conn_Socket_Molex_SlimStack
+  footprint: Conn_Socket_Molex_SlimStack_2x20
   mpn: '543630489'
   manufacturer: Molex
   pin_count: 41
@@ -1022,25 +1024,25 @@ components:
   nc_pins: {UTILITY/HEAC+: '14'}
 - ref: J801
   value: 2x20 header
-  footprint: Conn_Socket_Samtec_ERF5
+  footprint: Conn_Socket_Samtec_ERF5_2x20
   mpn: ERF5-020-05.0-L-DV-K-TR
   manufacturer: Samtec
   pin_count: 40
 - ref: J802
   value: JST SH 1x4
-  footprint: Conn_JST_SH
+  footprint: Conn_JST_SH_1x4
   mpn: SM04B-SRSS-TB(LF)(SN)
   manufacturer: JST Automotive Connectors
   pin_count: 5
 - ref: J803
   value: JST SH 1x4
-  footprint: Conn_JST_SH
+  footprint: Conn_JST_SH_1x4
   mpn: SM04B-SRSS-TB(LF)(SN)
   manufacturer: JST Automotive Connectors
   pin_count: 5
 - ref: J804
   value: JST SH 1x2
-  footprint: Conn_JST_SH
+  footprint: Conn_JST_SH_1x2
   mpn: SM02B-SRSS-TB(LF)(SN)
   manufacturer: JST Automotive Connectors
   pin_count: 3
@@ -1109,11 +1111,13 @@ components:
 - ref: R2
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R201
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R203
@@ -1177,41 +1181,49 @@ components:
 - ref: R216
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R217
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R218
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R219
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R220
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R221
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R222
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R223
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R224
@@ -1223,21 +1235,25 @@ components:
 - ref: R225
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R226
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R227
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R228
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R229
@@ -1290,6 +1306,7 @@ components:
 - ref: R239
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R241
@@ -1313,11 +1330,13 @@ components:
 - ref: R258
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R259
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R260
@@ -1349,6 +1368,7 @@ components:
 - ref: R3
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
   description: SMD Chip Resistor, Jumper, 0 ohm, 100 mW, 0402 [1005 Metric], Thick Film
@@ -1413,7 +1433,6 @@ components:
   manufacturer: Bourns
   mpn: CR0402-FX-1002GLF
   tolerance: 1%
-  pullup: D302.A
 - ref: R311
   value: 10kohm
   footprint: '0402'
@@ -1508,7 +1527,6 @@ components:
   mpn: CR0402-FX-1001GLF
   manufacturer: Bourns
   tolerance: 1%
-  pullup: D304.A
 - ref: R326
   value: 470ohm
   footprint: '0402'
@@ -1536,6 +1554,7 @@ components:
 - ref: R403
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R404
@@ -1745,25 +1764,26 @@ components:
   tolerance: 1%
 - ref: R701
   value: 4x100ohm
-  footprint: R_Array
+  footprint: R_Array_4x0402
   mpn: EXB-28V101JX
   manufacturer: Panasonic
   pin_count: 8
 - ref: R705
   value: 4x100ohm
-  footprint: R_Array
+  footprint: R_Array_4x0402
   mpn: EXB-28V101JX
   manufacturer: Panasonic
   pin_count: 8
 - ref: R706
   value: 4x100ohm
-  footprint: R_Array
+  footprint: R_Array_4x0402
   mpn: EXB-28V101JX
   manufacturer: Panasonic
   pin_count: 8
 - ref: R802
   value: 0ohm
   footprint: '0402'
+  current: 1A
   mpn: ERJ2GE0R00X
   manufacturer: Panasonic
 - ref: R804
@@ -1799,7 +1819,6 @@ components:
   mpn: CR0402-FX-1001GLF
   manufacturer: Bourns
   tolerance: 1%
-  pullup: D906.A
 - ref: R903
   value: 910kohm
   footprint: '0402'
@@ -1891,6 +1910,7 @@ components:
 - ref: R919
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R920
@@ -1968,6 +1988,7 @@ components:
 - ref: R931
   value: 0ohm
   footprint: '0402'
+  current: 1A
   manufacturer: Panasonic
   mpn: ERJ2GE0R00X
 - ref: R933
@@ -2028,7 +2049,7 @@ components:
   pin_count: 12
 - ref: U204
   value: MCP23017T-E
-  footprint: QFN-28-1EP
+  footprint: QFN-28-1EP_6x6
   manufacturer: Microchip Technology
   mpn: MCP23017T-E/ML
   pin_count: 29
@@ -2087,7 +2108,7 @@ components:
   pin_count: 6
 - ref: U801
   value: PN7160A1
-  footprint: VFQFN-40-1EP
+  footprint: VFQFN-40-1EP_6x6
   mpn: PN7160A1HN/C100E
   manufacturer: NXP
   pin_count: 41
@@ -2122,18 +2143,20 @@ components:
   pin_count: 6
 - ref: U904
   value: NTS0104
-  footprint: DHVQFN-14-1EP
+  footprint: DHVQFN-14-1EP_2.5x3
   mpn: NTS0104BQ
   manufacturer: NXP
   pin_count: 15
   nc_pins: {A4: '5', NC@6: '6', NC@9: '9', B4: '10'}
 - ref: U905
   value: FT4233HPQ
-  footprint: QFN-76-1EP
+  footprint: QFN-76-1EP_9x9
   mpn: FT4233HPQ-REEL
   manufacturer: FTDI Chip
   pin_count: 77
-  nc_pins: {ADBUS2: '13', ADBUS3: '14', ADBUS4: '15', ADBUS5: '16', ADBUS6: '17', ADBUS7: '18', BDBUS3: '22', BDBUS4: '23', BDBUS6: '25', BDBUS7: '26', FSOURCE: '34', VPP: '35', CDBUS2: '38', CDBUS3: '39', CDBUS4: '40', CDBUS5: '42', CDBUS6: '43', CDBUS7: '44', DDBUS2: '50', DDBUS3: '51', DDBUS4: '52', DDBUS5: '53', DDBUS6: '56', DDBUS7: '57'}
+  nc_pins: {ADBUS2: '13', ADBUS3: '14', ADBUS4: '15', ADBUS5: '16', ADBUS6: '17', ADBUS7: '18', BDBUS3: '22', BDBUS4: '23',
+    BDBUS6: '25', BDBUS7: '26', FSOURCE: '34', VPP: '35', CDBUS2: '38', CDBUS3: '39', CDBUS4: '40', CDBUS5: '42', CDBUS6: '43',
+    CDBUS7: '44', DDBUS2: '50', DDBUS3: '51', DDBUS4: '52', DDBUS5: '53', DDBUS6: '56', DDBUS7: '57'}
 - ref: U906
   value: TUSB321RWBR
   footprint: Texas_X2QFN-12
@@ -2148,19 +2171,20 @@ components:
   pin_count: 12
 - ref: Y801
   value: 27.12MHz
-  footprint: Resonator_SMD_Murata_XRCGB
+  footprint: Resonator_SMD_Murata_XRCGB_2x1.6x0.65
   mpn: XRCGB27M120F3M13R0
   manufacturer: Murata
+  load_capacitance: 10pF
   pin_count: 4
 - ref: Y802
-  value: 32.768kHz
-  footprint: Resonator_SMD_MicroCrystal_CM7V-T1A
+  value: 32.768 kHz
+  footprint: Resonator_SMD_MicroCrystal_CM7V-T1A_3.2x1.5x0.65
   mpn: CM7V-T1A-32.768kHz-12.5pF-20PPM-TC-QA
   manufacturer: Micro Crystal
   description: Crystal, 32.768 kHz, SMD, 3.2mm x 1.5mm, 12.5 pF, 20 ppm, CC7V-T1A
 - ref: Y901
-  value: 12MHz
-  footprint: Resonator_SMD_Abracon_ABM8G
+  value: 12 MHz
+  footprint: Resonator_SMD_Abracon_ABM8G_3.2x2.5
   mpn: ABM8G-12.000MHZ-18-D2Y-T
   manufacturer: Abracon
   pin_count: 4

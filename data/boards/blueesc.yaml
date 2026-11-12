@@ -151,7 +151,6 @@ components:
 - ref: R15
   value: 1kohm
   footprint: '0603'
-  pullup: LED1.A
 - ref: R16
   value: 4.7kohm
   footprint: '0603'

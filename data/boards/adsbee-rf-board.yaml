@@ -1,7 +1,7 @@
 name: ADSBee RF Board
 slug: adsbee-rf-board
 source: CoolNamesAllTaken/adsbee
-format: kicad8
+format: kicad7
 description: 'Complete 1090MHz ADS-B RF frontend: SAW-6 bandpass filter, BGA2818 wideband LNA'
 tags: [rf-sdr]
 key_ics: [BGA2818]
@@ -51,8 +51,8 @@ components:
   footprint: SMA_Amphenol_132289_EdgeMount
   mpn: '132289'
 - ref: J2
-  value: 1x2 header
-  footprint: 1X2
+  value: 1x2 2.54mm header
+  footprint: 1X2_P2.54mm_Horizontal
 - ref: J6
   value: coaxial connector
   footprint: SMA_Amphenol_132289_EdgeMount

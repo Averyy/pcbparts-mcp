@@ -20,6 +20,7 @@ from .cse_store import CSEStore, query_key
 from .config import (
     CSE_CONCURRENT_LIMIT,
     CSE_RATE_LIMIT,
+    CSE_STATUS_RETRY_DELAY,
     CSE_REQUEST_TIMEOUT,
     CSE_CACHE_TTL,
     CSE_KICAD_CACHE_TTL,
@@ -140,21 +141,27 @@ class CSEClient:
         if offset > 0:
             params["offset"] = str(offset)
 
-        try:
-            async with self._get_semaphore():
-                response = await self._get_http().get(_CSE_API_URL, params=params)
-                await asyncio.sleep(CSE_RATE_LIMIT)
-        except httpx.HTTPError:
-            raise ValueError("CSE API request failed (network/connection error)")
+        # A first request for a query can come back with another status (F0R0, R0F0), holding real
+        # parts or unrelated ones ("blorptastic9": 10 random parts); asking again gave "Success" in
+        # all 8 checks, 2026-11-09. Reporting that first answer as empty made parts look missing.
+        for attempt in range(2):
+            try:
+                async with self._get_semaphore():
+                    response = await self._get_http().get(_CSE_API_URL, params=params)
+                    await asyncio.sleep(CSE_RATE_LIMIT)
+            except httpx.HTTPError:
+                raise ValueError("CSE API request failed (network/connection error)")
 
-        if response.status_code >= 400:
-            raise ValueError(f"CSE API returned HTTP {response.status_code}")
-        data = response.json()
-
-        if data.get("status") != "Success":
+            if response.status_code >= 400:
+                raise ValueError(f"CSE API returned HTTP {response.status_code}")
+            data = response.json()
+            if data.get("status") == "Success":
+                break
             logger.warning(f"CSE API returned non-success status: {data.get('status')}")
-            # Don't cache failed responses
-            return {"results": [], "total": 0}
+            if attempt == 0:
+                await asyncio.sleep(CSE_STATUS_RETRY_DELAY)
+        else:
+            raise ValueError("CSE API gave no usable answer (status other than Success, twice)")
 
         raw_parts = data.get("parts", [])
 

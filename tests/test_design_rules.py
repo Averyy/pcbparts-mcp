@@ -1,5 +1,7 @@
 """Tests for the design_rules module."""
 
+import re
+
 import pytest
 from pathlib import Path, PureWindowsPath
 
@@ -153,7 +155,7 @@ def test_rule_key_uses_forward_slashes_on_windows():
     ("esp32s3", "mcus/esp32"), ("pull-up", "interfaces/i2c"), ("pullup", "interfaces/i2c"),
     ("stepper", "misc/motor-control"), ("bldc", "misc/motor-control"), ("rs485", "interfaces/uart"),
     ("solar", "power/power-path"), ("4 layer", "guides/pcb-layout"), ("strapping pins", "mcus/esp32"),
-    ("jlcpcb", "guides/dfm"), ("assembly", "guides/dfm"), ("buck-boost", "power/switching"),
+    ("jlcpcb", "guides/dfm"), ("buck-boost", "power/switching"),
 ])
 def test_keywords_find_the_rule(topic, key):
     result = get_design_rules(topic)
@@ -161,7 +163,7 @@ def test_keywords_find_the_rule(topic, key):
     assert "note" not in result
 
 
-@pytest.mark.parametrize("topic, key", [("boot mode", "mcus/esp32"), ("relay", "misc/mosfet-circuits"),
+@pytest.mark.parametrize("topic, key", [("boot mode", "mcus/esp32"),
                                         ("RS-422 termination", None)])
 def test_topic_found_in_the_text(topic, key):
     """No file is named for it, but one discusses it: the best files come back, marked as such."""
@@ -172,9 +174,10 @@ def test_topic_found_in_the_text(topic, key):
     assert "discuss it most" in result["note"]
 
 
-def test_passing_mentions_find_nothing():
-    # "LED" appears only in passing (Ethernet link LEDs, optocouplers); listing the index is better
-    result = get_design_rules("led")
+def test_passing_mentions_find_nothing(rules_dir):
+    # A passing mention should not promote an unrelated rule in a directory without an LED rule.
+    (rules_dir / "power" / "ldo.md").write_text("# LDO\nOne LED indicator.\n")
+    result = get_design_rules("led", rules_dir=rules_dir)
     assert result["matched_files"] == []
     assert "Available rules" in result["content"]
 
@@ -186,3 +189,57 @@ def test_text_matches_are_ranked(rules_dir):
     # usb: 9 mentions; ldo: 2 mentions, one in a heading (counted 5 times)
     assert result["matched_files"] == ["interfaces/usb", "power/ldo"]
     assert result["content"].startswith("# USB")
+
+
+_NEW_RULES = [
+    "misc/leds", "misc/relays-inductive-loads", "misc/buttons-debounce",
+    "mcus/nrf52", "guides/assembly-dfa",
+]
+
+
+@pytest.mark.parametrize("topic, key", [
+    ("led", "misc/leds"), ("ws2812", "misc/leds"), ("sk6812", "misc/leds"),
+    ("apa102", "misc/leds"), ("sk9822", "misc/leds"),
+    ("relay", "misc/relays-inductive-loads"), ("flyback", "misc/relays-inductive-loads"),
+    ("debounce", "misc/buttons-debounce"), ("button", "misc/buttons-debounce"),
+    ("nrf52", "mcus/nrf52"), ("nrf52840", "mcus/nrf52"), ("nordic", "mcus/nrf52"),
+    ("fiducial", "guides/assembly-dfa"), ("assembly", "guides/assembly-dfa"),
+    ("tombstone", "guides/assembly-dfa"),
+])
+def test_new_design_rule_topics(topic, key):
+    result = get_design_rules(topic)
+    assert key in result["matched_files"]
+    assert "note" not in result
+
+
+@pytest.mark.parametrize("key", _NEW_RULES)
+def test_new_rule_citations_resolve_and_references_are_used(key):
+    result = get_design_rules(key)
+    assert result["matched_files"] == [key]
+    body, references = result["content"].split("### References\n", 1)
+    reference_ids = [int(n) for n in re.findall(r"^(\d+)\. ", references, re.MULTILINE)]
+    assert reference_ids == list(range(1, len(reference_ids) + 1))
+    cited_ids = {
+        int(match)
+        for citation in re.findall(r"\[([^]\n]+)\]", body)
+        for match in re.findall(r"(?:^|;\s*)(\d+)(?=,|$)", citation)
+    }
+    assert cited_ids == set(reference_ids)
+    assert cited_ids
+    assert result["content"].isascii()
+
+
+def test_index_lists_all_46_rules():
+    from pcbparts_mcp.design_rules import _build_index, _RULES_DIR
+
+    index = _build_index(_RULES_DIR)
+    assert len(index) == 46
+    content = get_design_rules()["content"]
+    for key in index:
+        assert f"`{key}.md`" in content
+
+
+@pytest.mark.parametrize("topic", ["pick-and-place", "pick and place", "pick_and_place", "pick & place"])
+def test_pick_and_place_spellings_find_assembly_rules(topic):
+    from pcbparts_mcp.design_rules import get_design_rules
+    assert get_design_rules(topic)["matched_files"] == ["guides/assembly-dfa"]

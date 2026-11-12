@@ -3,7 +3,7 @@ slug: adafruit-qt-py-esp32-s3
 source: adafruit/Adafruit-QT-Py-ESP32-S3-PCB
 format: eagle
 description: ESP32-S3 WiFi/BLE in QT Py form factor, native USB-C
-tags: [led-driver, power-supply, wifi]
+tags: [bluetooth, led-driver, power-supply, wifi]
 key_ics: [ESP32-S3, AP2112K]
 outline:
   width_mm: 17.78
@@ -108,7 +108,7 @@ components:
   value: 2nH
   footprint: '0402'
 - ref: L2
-  value: 0H
+  value: 0ohm
   footprint: '0402'
 - ref: LED1
   value: WS2812B
@@ -117,13 +117,11 @@ components:
   nc_pins: {DO: '3'}
 - ref: Q1
   value: BOOT0
-  footprint: BTN_KMR2
-  description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
+  footprint: BTN_KMR2_4.6X2.8
   pin_count: 4
 - ref: Q2
   value: reset
-  footprint: BTN_KMR2
-  description: 'SMT Tact Switches 6x6mm - Digikey: P12940SCT-ND KMR2 (4'
+  footprint: BTN_KMR2_4.6X2.8
   pin_count: 4
 - ref: R1
   value: 10kohm
@@ -155,12 +153,15 @@ components:
   description: Johanson 2
 - ref: X2
   value: ESP32-S3
-  footprint: QFN56
+  footprint: QFN56_7X7
   description: WiFi 802.11b/g/n Transceiver Module 2.4GHz Antenna Not Included Surface Mount
+  digikey: 1965-ESP32-S2CT-ND
   manufacturer: Espressif Systems
   mpn: ESP32-S3
   pin_count: 57
-  nc_pins: {IO1: '6', IO2: '7', IO3: '8', IO4: '9', IO11: '16', IO12: '17', IO13: '18', IO14: '19', XTAL_32K_P: '21', SPICS1: '28', SPIHD: '30', SPIWP: '31', SPICS0: '32', SPICLK: '33', SPIQ: '34', SPID: '35', SPICLK_N: '36', SPICLK_P: '37', IO33: '38', IO34: '39', MTMS: '48', U0TXD: '49', U0RXD: '50', IO45: '51', IO46: '52'}
+  nc_pins: {IO1: '6', IO2: '7', IO3: '8', IO4: '9', IO11: '16', IO12: '17', IO13: '18', IO14: '19', XTAL_32K_P: '21', SPICS1: '28',
+    SPIHD: '30', SPIWP: '31', SPICS0: '32', SPICLK: '33', SPIQ: '34', SPID: '35', SPICLK_N: '36', SPICLK_P: '37', IO33: '38',
+    IO34: '39', MTMS: '48', U0TXD: '49', U0RXD: '50', IO45: '51', IO46: '52'}
 - ref: X6
   value: USB TYPE C
   footprint: USB-C
@@ -169,10 +170,10 @@ components:
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: Y1
   value: 40MHz
-  footprint: CRYSTAL
+  footprint: CRYSTAL_2X1.6
 nets:
 - name: '!RESET'
-  pins: [C3.1, Q2.P, Q2.P1, R1.2, SWC1.TP, X2.CHIP_PU]
+  pins: [C3.1, Q2.P, Q2.P1, R1.2, X2.CHIP_PU]
 - name: +5V
   pins: [C1.1, D1.C, D2.C, JP3.7, U1.EN, U1.IN]
   class: power
@@ -242,7 +243,6 @@ nets:
   - CONN1.G$1.GND
   - CONN1.G$2.MT
   - CONN1.G$3.MT
-  - GND.P$1
   - JP3.6
   - LED1.GND
   - Q1.S
@@ -258,7 +258,7 @@ nets:
   class: power
   trace_width: '0.254'
 - name: IO0
-  pins: [Q1.P, Q1.P1, SWC2.TP, X2.IO0]
+  pins: [Q1.P, Q1.P1, X2.IO0]
 - name: IO10_DBLTAP
   pins: [C20.1, R17.2, X2.IO10]
 - name: MISO
@@ -293,8 +293,6 @@ nets:
   pins: [CONN1.G$1.SDA, X2.MTDI]
 - name: TX
   pins: [JP1.7, X2.IO5]
-- name: VBAT
-  pins: [D2.A, VBAT.P$1]
 - name: VBUS
   pins: [D1.A, X6.VBUS]
   class: power

@@ -1,7 +1,7 @@
 name: Soldered MAX7219 LED Matrix
 slug: soldered-max7219-led-matrix
 source: SolderedElectronics/8x8-LED-matrix-Purple-MAX7219-board-hardware-design
-format: kicad7
+format: kicad6
 description: "SPI LED matrix driver (MAX7219) \u2014 multiplexed display driving, daisy-chain topology"
 tags: [display]
 key_ics: [MAX7219]
@@ -209,11 +209,11 @@ components:
   footprint: '0402'
 - ref: K1
   value: 1x5 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_5X1
   pin_count: 5
 - ref: K2
   value: 1x5 header
-  footprint: HEADER_MALE
+  footprint: HEADER_MALE_5X1
   pin_count: 5
 - ref: R1
   value: 22kohm

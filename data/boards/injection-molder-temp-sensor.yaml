@@ -24,90 +24,90 @@ components:
   value: C
   footprint: Axial
 - ref: J1
-  value: 1x2 header
-  footprint: Molex_SPOX_5267-02A
+  value: 1x2 2.50mm header
+  footprint: Molex_SPOX_5267-02A_1x02
 - ref: J10
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J11
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J12
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J13
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J14
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J15
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J16
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J17
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J18
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J19
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J2
-  value: 1x2 header
-  footprint: Molex_SPOX_5267-02A
+  value: 1x2 2.50mm header
+  footprint: Molex_SPOX_5267-02A_1x02
 - ref: J20
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J21
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J22
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J3
-  value: 1x9 header
-  footprint: Molex_SPOX_5267-09A
+  value: 1x9 2.50mm header
+  footprint: Molex_SPOX_5267-09A_1x09
   pin_count: 9
 - ref: J4
-  value: 1x9 header
-  footprint: Molex_SPOX_5267-09A
+  value: 1x9 2.50mm header
+  footprint: Molex_SPOX_5267-09A_1x09
   pin_count: 9
 - ref: J5
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J6
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J7
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J8
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 - ref: J9
-  value: 1x5 header
-  footprint: 1X5
+  value: 1x5 2.54mm header
+  footprint: 1X5_P2.54mm
   pin_count: 5
 nets:
 - name: +3V3

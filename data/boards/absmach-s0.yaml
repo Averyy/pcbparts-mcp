@@ -2,8 +2,8 @@ name: Absmach S0
 slug: absmach-s0
 source: absmach/s0
 format: kicad9
-description: "Wireless M-Bus (RC-S2LP-868), SIM7080G LTE-M/NB-IoT modem"
-tags: [cellular, sub-ghz, wifi, zigbee-thread]
+description: Wireless M-Bus (RC-S2LP-868), SIM7080G LTE-M/NB-IoT modem
+tags: [bluetooth, cellular, sub-ghz, wifi, zigbee-thread]
 key_ics: [ESP32-C6-MINI-1/U, SIM7080G, TXB0108RGY, RC-S2LP-868, AMS1117-3.3]
 outline:
   width_mm: 54.63
@@ -180,7 +180,7 @@ components:
   lcsc: C668306
 - ref: J1
   value: SWD 10-pin
-  footprint: 2X5
+  footprint: 2X5_P1.27mm
   lcsc: C2935953
   description: Cortex Debug Connector, standard ARM Cortex-M SWD and JTAG interface
   pin_count: 10
@@ -208,21 +208,26 @@ components:
   description: USB 2.0-only 14P Type-C Receptacle connector
   pin_count: 15
 - ref: J6
-  value: 1x2 header
-  footprint: JST_EH_B2B-EH-A
+  value: JST EH 2-pin
+  footprint: JST_EH_B2B-EH-A_1x02
   lcsc: C20079
 - ref: J7
-  value: 2x23 header
-  footprint: 2X23
+  value: 2x23 2.54mm header
+  footprint: 2X23_P2.54mm
   lcsc: C725895
   pin_count: 46
-  nc_pins: {Pin_5: '5', Pin_6: '6', Pin_9: '9', Pin_10: '10', Pin_12: '12', Pin_14: '14', Pin_15: '15', Pin_16: '16', Pin_17: '17', Pin_18: '18', Pin_23: '23', Pin_24: '24', Pin_25: '25', Pin_26: '26', Pin_27: '27', Pin_28: '28', Pin_32: '32', Pin_33: '33', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39', Pin_40: '40', Pin_41: '41', Pin_42: '42'}
+  nc_pins: {Pin_5: '5', Pin_6: '6', Pin_9: '9', Pin_10: '10', Pin_12: '12', Pin_14: '14', Pin_15: '15', Pin_16: '16', Pin_17: '17',
+    Pin_18: '18', Pin_23: '23', Pin_24: '24', Pin_25: '25', Pin_26: '26', Pin_27: '27', Pin_28: '28', Pin_32: '32', Pin_33: '33',
+    Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39', Pin_40: '40', Pin_41: '41', Pin_42: '42'}
 - ref: J8
-  value: 2x23 header
-  footprint: 2X23
+  value: 2x23 2.54mm header
+  footprint: 2X23_P2.54mm
   lcsc: C725895
   pin_count: 46
-  nc_pins: {Pin_3: '3', Pin_4: '4', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_13: '13', Pin_14: '14', Pin_16: '16', Pin_21: '21', Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_27: '27', Pin_28: '28', Pin_29: '29', Pin_30: '30', Pin_31: '31', Pin_32: '32', Pin_33: '33', Pin_34: '34', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39', Pin_40: '40', Pin_41: '41', Pin_42: '42'}
+  nc_pins: {Pin_3: '3', Pin_4: '4', Pin_10: '10', Pin_11: '11', Pin_12: '12', Pin_13: '13', Pin_14: '14', Pin_16: '16', Pin_21: '21',
+    Pin_22: '22', Pin_23: '23', Pin_24: '24', Pin_27: '27', Pin_28: '28', Pin_29: '29', Pin_30: '30', Pin_31: '31', Pin_32: '32',
+    Pin_33: '33', Pin_34: '34', Pin_35: '35', Pin_36: '36', Pin_37: '37', Pin_38: '38', Pin_39: '39', Pin_40: '40', Pin_41: '41',
+    Pin_42: '42'}
 - ref: Q1
   value: NPN transistor
   footprint: SOT-23
@@ -352,14 +357,17 @@ components:
   lcsc: C20627095
   description: ESP32-C6-MINI-1 is a module that supports 2.4 GHz Wi-Fi 6 (802.11 ax)
   pin_count: 52
-  nc_pins: {NC@4: '4', NC@7: '7', GPIO0/ADC1_CH0/XTAL_32K_P: '12', GPIO1/ADC1_CH1/XTAL_32K_N: '13', NC@21: '21', NC@32: '32', NC@33: '33', NC@34: '34', NC@35: '35'}
+  nc_pins: {NC@4: '4', NC@7: '7', GPIO0/ADC1_CH0/XTAL_32K_P: '12', GPIO1/ADC1_CH1/XTAL_32K_N: '13', NC@21: '21', NC@32: '32',
+    NC@33: '33', NC@34: '34', NC@35: '35'}
 - ref: U2
   value: SIM7080G
   footprint: XCVR_SIM7080G
   manufacturer: SIMCOM
   lcsc: C2943992
   pin_count: 68
-  nc_pins: {UART1_DCD: '5', PCM_DIN: '9', PCM_DOUT: '10', PCM_CLK: '11', PCM_SYNC: '12', GPIO5: '14', UART2_TXD: '22', UART2_RXD: '23', ADC: '38', ANT_CONTROL1: '43', ANT_CONTROL0: '44', SPI_CS: '48', SPI_MOSI: '49', SPI_CLK: '50', SPI_MISO: '51', GPIO1: '57', GPIO2: '58', GPIO3: '59', GPIO4: '60', UART3_TXD: '61', UART3_RXD: '62'}
+  nc_pins: {UART1_DCD: '5', PCM_DIN: '9', PCM_DOUT: '10', PCM_CLK: '11', PCM_SYNC: '12', GPIO5: '14', UART2_TXD: '22', UART2_RXD: '23',
+    ADC: '38', ANT_CONTROL1: '43', ANT_CONTROL0: '44', SPI_CS: '48', SPI_MOSI: '49', SPI_CLK: '50', SPI_MISO: '51', GPIO1: '57',
+    GPIO2: '58', GPIO3: '59', GPIO4: '60', UART3_TXD: '61', UART3_RXD: '62'}
 - ref: U3
   value: NANO SIM XG6P H1.35
   footprint: SIM-SMD_NANO-SIM-XG6P-H1.35
@@ -379,6 +387,7 @@ components:
   digikey: 3206-RC-S2LP-868TR-ND
   manufacturer: Radio Controlli
   mpn: RC-S2LP-868
+  description: 802.15.4 6LoWPAN Transceiver Module 868MHz Antenna Not Included, U.FL Surface Mount
   lcsc: C37069913
   pin_count: 21
   nc_pins: {GPIO-0: '5', GPIO-1: '6', GPIO-2: '7', GPIO-3: '8', ANT: '20'}

@@ -63,16 +63,16 @@ components:
   pin_count: 17
   nc_pins: {SBU1: A8, SBU2: B8}
 - ref: J2
-  value: 1x14 header
-  footprint: Pin
+  value: 1x14 2.54mm header
+  footprint: Pin_1x14
   pin_count: 14
 - ref: J3
-  value: 1x14 header
-  footprint: Pin
+  value: 1x14 2.54mm header
+  footprint: Pin_1x14
   pin_count: 14
 - ref: J4
-  value: 1x4 header
-  footprint: Pin
+  value: 1x4 2.54mm header
+  footprint: Pin_1x04
   pin_count: 4
 - ref: R1
   value: 5.1kohm
@@ -122,7 +122,7 @@ components:
   nc_pins: {NC: '4'}
 - ref: U2
   value: CH32V203G6
-  footprint: QFN-28-1EP
+  footprint: QFN-28-1EP_4x4
   lcsc: C5142280
   pin_count: 29
 - ref: Y1

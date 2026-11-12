@@ -18,325 +18,399 @@ components:
 - ref: C1
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
 - ref: C10
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C11
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C112
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C113
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C114
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C115
   value: 68pF
   footprint: '0402'
+  digikey: 399-19382-1-ND
   description: "68pF \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
 - ref: C116
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
   decouples: U36
 - ref: C117
   value: 1.2nF
   footprint: '0603'
+  digikey: 399-7851-1-ND
   description: "1200pF \xB110% 50V Ceramic Capacitor X7R 0603 (1608 Metric)"
 - ref: C118
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C119
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C12
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
   decouples: U5
 - ref: C120
   value: 1uF
   footprint: '0603'
+  digikey: 1276-1942-1-ND
   description: "1\xB5F \xB110% 25V Ceramic Capacitor X7R 0603 (1608 Metric)"
 - ref: C121
   value: 68pF
   footprint: '0402'
+  digikey: 399-19382-1-ND
   description: "68pF \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
 - ref: C122
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
   decouples: U39
 - ref: C123
   value: 1.2nF
   footprint: '0603'
+  digikey: 399-7851-1-ND
   description: "1200pF \xB110% 50V Ceramic Capacitor X7R 0603 (1608 Metric)"
 - ref: C124
   value: 1uF
   footprint: '0603'
+  digikey: 1276-1942-1-ND
   description: "1\xB5F \xB110% 25V Ceramic Capacitor X7R 0603 (1608 Metric)"
 - ref: C125
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C126
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C127
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C128
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C129
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C13
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C130
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C131
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C132
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C133
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
   decouples: U42
 - ref: C134
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C135
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C136
   value: 330pF
   footprint: '0402'
+  digikey: 399-7787-1-ND
   description: "330pF \xB15% 50V Ceramic Capacitor C0G, NP0 0402 (1005 Metric)"
 - ref: C137
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
   decouples: U42
 - ref: C14
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C15
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C16
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C17
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C18
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C19
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C20
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C21
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C22
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C23
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C24
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C25
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C26
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
 - ref: C27
   value: 22uF
   footprint: '1206'
+  digikey: 1276-3146-1-ND
   description: "22\xB5F \xB110% 6.3V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C28
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
   decouples: U8
 - ref: C29
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
 - ref: C3
   value: 1uF
   footprint: '0603'
+  digikey: 1276-1942-1-ND
   description: "1\xB5F \xB110% 25V Ceramic Capacitor X7R 0603 (1608 Metric)"
 - ref: C30
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C31
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
   decouples: U7
 - ref: C32
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
   decouples: U10
 - ref: C33
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
   decouples: U10
 - ref: C4
   value: 100nF
   footprint: '0402'
+  digikey: 490-13342-1-ND
   description: "0.1\xB5F \xB110% 50V Ceramic Capacitor X7R 0402 (1005 Metric)"
 - ref: C5
   value: 1uF
   footprint: '0603'
+  digikey: 1276-1942-1-ND
   description: "1\xB5F \xB110% 25V Ceramic Capacitor X7R 0603 (1608 Metric)"
 - ref: C6
   value: 1uF
   footprint: '0603'
+  digikey: 1276-1942-1-ND
   description: "1\xB5F \xB110% 25V Ceramic Capacitor X7R 0603 (1608 Metric)"
 - ref: C7
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C8
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: C9
   value: 10uF
   footprint: '1206'
+  digikey: 1276-1804-1-ND
   description: "10\xB5F \xB110% 25V Ceramic Capacitor X7R 1206 (3216 Metric)"
 - ref: DS1
   value: LTST-C190KGKT
   footprint: LED_0603
+  digikey: 160-1435-1-ND
   mpn: LTST-C190KGKT
   description: LED GREEN CLEAR CHIP SMD
   manufacturer: Lite-On Inc.
 - ref: DS2
   value: LTST-C190KGKT
   footprint: LED_0603
+  digikey: 160-1435-1-ND
   mpn: LTST-C190KGKT
   description: LED GREEN CLEAR CHIP SMD
   manufacturer: Lite-On Inc.
 - ref: F1
   value: ERB-RE5R00V
   footprint: '0603'
+  digikey: P15125CT-ND
   description: 5A 32VDC 0603
   manufacturer: Panasonic
 - ref: F14
   value: LPF04023600L
   footprint: '0402'
   manufacturer: ATC
+  digikey: 1284-1984-1-ND
   pin_count: 4
 - ref: F15
   value: LPF04023600L
   footprint: '0402'
   manufacturer: ATC
+  digikey: 1284-1984-1-ND
   pin_count: 4
 - ref: F16
   value: LP0603A2140ANTR
   footprint: '0603'
   manufacturer: AVX
+  digikey: 478-2914-1-ND
   pin_count: 4
 - ref: F17
   value: DEA162300HT-8047A1
   footprint: F_DEA16_LGA
   manufacturer: TDK
+  digikey: 445-175383-1-ND
   pin_count: 4
 - ref: FB1
-  value: BLM18HE152SN1D
+  value: 1.5kohm
   footprint: '0603'
+  digikey: 490-5216-1-ND
   mpn: BLM18HE152SN1D
   description: FERRITE BEAD 1.5 KOHM 0603 1LN
   manufacturer: Murata Electronics North America
+  pullup: /Digitial I/O via PMOD/3V3_IN
 - ref: J1
   value: PJ1-021-SMT-TR
   footprint: CUI_PJ1-021-SMT-TR
+  digikey: CP1-021PJCT-ND
   description: CONN PWR JACK 1.75X4.75MM SOLDER
   pin_count: 3
 - ref: J18
   value: 5-1814832-1
   footprint: RF_SMA_Vertical_5-1814832-1
+  digikey: A97594-ND
   mpn: 5-1814832-1
   description: CONN SMA JACK STR 50 OHM PCB
   manufacturer: TE Connectivity AMP Connectors
 - ref: J19
   value: 5-1814832-1
   footprint: RF_SMA_Vertical_5-1814832-1
+  digikey: A97594-ND
   mpn: 5-1814832-1
   description: CONN SMA JACK STR 50 OHM PCB
   manufacturer: TE Connectivity AMP Connectors
 - ref: J2
-  value: 2x6 header
-  footprint: 2X6
+  value: 2x6 2.54mm header
+  footprint: 2X6_P2.54mm_Horizontal
+  digikey: S5520-ND
   description: CONN HDR 12POS 0.1 TIN PCB R/A
   manufacturer: Sullins Connector Solutions
   pin_count: 12
 - ref: J20
   value: 5-1814832-1
   footprint: RF_SMA_Vertical_5-1814832-1
+  digikey: A97594-ND
   mpn: 5-1814832-1
   description: CONN SMA JACK STR 50 OHM PCB
   manufacturer: TE Connectivity AMP Connectors
 - ref: J21
   value: 5-1814832-1
   footprint: RF_SMA_Vertical_5-1814832-1
+  digikey: A97594-ND
   mpn: 5-1814832-1
   description: CONN SMA JACK STR 50 OHM PCB
   manufacturer: TE Connectivity AMP Connectors
 - ref: J22
   value: 5-1814832-1
   footprint: RF_SMA_Vertical_5-1814832-1
+  digikey: A97594-ND
   mpn: 5-1814832-1
   description: CONN SMA JACK STR 50 OHM PCB
   manufacturer: TE Connectivity AMP Connectors
@@ -344,224 +418,274 @@ components:
   value: ACP3225
   footprint: '3225'
   description: CMC 500 Ohms @ 100MHz 2A DCR 40 mOhm
+  digikey: 445-172408-1-ND
   pin_count: 4
 - ref: L10
   value: 43nH
   footprint: '0603'
+  digikey: 490-6892-1-ND
   description: FIXED IND 43NH 380MA 290 MOHM
 - ref: L2
   value: 3.3uH
   footprint: SRR6038-3R3Y
   description: FIXED IND 3.3UH 3.5A 20 MOHM SMD
+  digikey: SRR6038-3R3YCT-ND
+  mpn: SRR6038-3R3Y
 - ref: L9
   value: 43nH
   footprint: '0603'
+  digikey: 490-6892-1-ND
   description: FIXED IND 43NH 380MA 290 MOHM
 - ref: R10
   value: 10kohm
   footprint: '0402'
+  digikey: 311-10.0KLRCT-ND
   description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
   pullup: U7.3
 - ref: R11
   value: 10kohm
   footprint: '0402'
+  digikey: 311-10.0KLRCT-ND
   description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
   pulldown: /Digitial I/O via PMOD/~1ST~_2ND_NYQ_BAND_SEL
 - ref: R12
   value: 10kohm
   footprint: '0402'
+  digikey: 311-10.0KLRCT-ND
   description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
   pullup: /Digitial I/O via PMOD/I2C_SCL_PMOD
 - ref: R14
   value: 10kohm
   footprint: '0402'
+  digikey: 311-10.0KLRCT-ND
   description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
   pullup: /Digitial I/O via PMOD/I2C_SDA_PMOD
 - ref: R16
   value: 33ohm
   footprint: '0402'
+  digikey: 311-33.0LRCT-ND
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R17
   value: 33ohm
   footprint: '0402'
+  digikey: 311-33.0LRCT-ND
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R18
   value: 33ohm
   footprint: '0402'
+  digikey: 311-33.0LRCT-ND
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R19
   value: 33ohm
   footprint: '0402'
+  digikey: 311-33.0LRCT-ND
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R2
   value: 10ohm
   footprint: '0402'
+  digikey: 311-10.0LRCT-ND
   description: "10 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R20
   value: 33ohm
   footprint: '0402'
+  digikey: 311-33.0LRCT-ND
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R21
   value: 33ohm
   footprint: '0402'
+  digikey: 311-33.0LRCT-ND
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R22
   value: 33ohm
   footprint: '0402'
+  digikey: 311-33.0LRCT-ND
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R23
   value: 100ohm
   footprint: '0402'
+  digikey: 311-100LRCT-ND
   description: "100 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R24
   value: 33ohm
   footprint: '0402'
+  digikey: 311-33.0LRCT-ND
   description: "33 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R25
   value: 100ohm
   footprint: '0402'
+  digikey: 311-100LRCT-ND
   description: "100 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R29
   value: 10kohm
   footprint: '0402'
+  digikey: 311-10.0KLRCT-ND
   description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
   pullup: U42.3
 - ref: R3
   value: 10ohm
   footprint: '0402'
+  digikey: 311-10.0LRCT-ND
   description: "10 Ohms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R30
   value: 10kohm
   footprint: '0402'
+  digikey: 311-10.0KLRCT-ND
   description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R31
   value: 75ohm
   footprint: '0603'
+  digikey: 311-75.0HRCT-ND
   description: "75 Ohms \xB11% 0.1W, 1/10W Chip Resistor 0603 (1608 Metric) Moisture Resistant Thick Film"
 - ref: R4
   value: 100kohm
   footprint: '0402'
+  digikey: 311-100KLRCT-ND
   description: "100 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
   pulldown: /Power Input & Regulation/PWR_IN_CMC
 - ref: R5
-  value: CSR1206-0R002F1
+  value: 2mohm
   footprint: '1206'
+  digikey: 696-1370-1-ND
   description: RES 0.002 OHM 1% 1W 1206
+  mpn: CSR1206-0R002F1
   pin_count: 4
 - ref: R6
   value: 180ohm
   footprint: '0603'
+  digikey: 311-180GRCT-ND
   description: "180 Ohms \xB15% 0.1W, 1/10W Chip Resistor 0603 (1608 Metric) Moisture Resistant Thick Film"
 - ref: R7
   value: 61.9kohm
   footprint: '0402'
+  digikey: 311-61.9KLRCT-ND
   description: "61.9 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
 - ref: R8
   value: 10kohm
   footprint: '0402'
+  digikey: 311-10.0KLRCT-ND
   description: "10 kOhms \xB11% 0.063W, 1/16W Chip Resistor 0402 (1005 Metric) Moisture Resistant Thick Film"
   pulldown: /Power Input & Regulation/V_FB
 - ref: RN1
   value: EXB-28V103JX
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   description: 4x 10K +/- 5%
+  digikey: Y7103CT-ND
   pin_count: 8
 - ref: RN2
   value: EXB-28V103JX
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   description: 4x 10K +/- 5%
+  digikey: Y7103CT-ND
   pin_count: 8
 - ref: RN3
   value: EXB-28V103JX
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   description: 4x 10K +/- 5%
+  digikey: Y7103CT-ND
   pin_count: 8
 - ref: RN4
   value: EXB-28V103JX
-  footprint: R_Array_Convex
+  footprint: R_Array_Convex_4x0402
   description: 4x 10K +/- 5%
+  digikey: Y7103CT-ND
   pin_count: 8
 - ref: T7
   value: MABA-011082
   footprint: T_6pin_23_balun
   description: 1:1 Transformer Balun 5 - 8000 MHz
+  digikey: 1465-1843-1-ND
   pin_count: 6
 - ref: T8
   value: MABA-011082
   footprint: T_6pin_23_balun
   description: 1:1 Transformer Balun 5 - 8000 MHz
+  digikey: 1465-1843-1-ND
   pin_count: 6
 - ref: U1
   value: MCP1755ST-5002E_DB
   footprint: MCP1755ST-5002E_DB
+  digikey: MCP1755ST-5002E/DBCT-ND
   description: IC REG LINEAR 5V 300MA SOT223-3
   pin_count: 3
 - ref: U10
   value: SN74HCU04PWR
   footprint: SN74HCU04PWR
   description: IC INVERTER 6CH 6-INP 14TSSOP
+  digikey: 296-9821-1-ND
   pin_count: 14
 - ref: U2
   value: MCP1755ST-5002E_DB
   footprint: MCP1755ST-5002E_DB
+  digikey: MCP1755ST-5002E/DBCT-ND
   description: IC REG LINEAR 5V 300MA SOT223-3
   pin_count: 3
 - ref: U3
   value: MCP1755ST-5002E_DB
   footprint: MCP1755ST-5002E_DB
+  digikey: MCP1755ST-5002E/DBCT-ND
   description: IC REG LINEAR 5V 300MA SOT223-3
   pin_count: 3
 - ref: U35
   value: ADL5611ARKZ-R7
   footprint: ADL5611ARKZ-R7
+  digikey: ADL5611ARKZ-R7CT-ND
   description: IC AMP W-CDMA 30MHZ-6GHZ SOT89-3
   pin_count: 3
 - ref: U36
   value: PE43711
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
+  digikey: 1046-1138-1-ND
   description: RF ATTENUATOR 31.5DB 50OHM 24QFN
   pin_count: 25
   nc_pins: {'25': '25'}
 - ref: U37
   value: HMC544AETR
   footprint: SOT-23-6
+  digikey: 1127-1856-1-ND
   description: IC RF SWITCH SPDT 4GHZ SOT26
   pin_count: 6
 - ref: U38
   value: ADL5611ARKZ-R7
   footprint: ADL5611ARKZ-R7
+  digikey: ADL5611ARKZ-R7CT-ND
   description: IC AMP W-CDMA 30MHZ-6GHZ SOT89-3
   pin_count: 3
 - ref: U39
   value: PE43711
-  footprint: QFN-24-1EP
+  footprint: QFN-24-1EP_4x4
+  digikey: 1046-1138-1-ND
   description: RF ATTENUATOR 31.5DB 50OHM 24QFN
   pin_count: 25
   nc_pins: {'25': '25'}
 - ref: U4
   value: MCP1755ST-5002E_DB
   footprint: MCP1755ST-5002E_DB
+  digikey: MCP1755ST-5002E/DBCT-ND
   description: IC REG LINEAR 5V 300MA SOT223-3
   pin_count: 3
 - ref: U40
   value: HMC544AETR
   footprint: SOT-23-6
+  digikey: 1127-1856-1-ND
   description: IC RF SWITCH SPDT 4GHZ SOT26
   pin_count: 6
 - ref: U41
   value: HMC544AETR
   footprint: SOT-23-6
+  digikey: 1127-1856-1-ND
   description: IC RF SWITCH SPDT 4GHZ SOT26
   pin_count: 6
 - ref: U42
   value: PCAL6416APW
   footprint: TSSOP-24_W4.40mm
+  digikey: 568-9922-1-ND
   description: IC I/O EXPANDER 16BIT 24TSSOP
   pin_count: 24
   nc_pins: {'1': '1'}
 - ref: U5
   value: INA219AIDCNR
   footprint: SOT-23-8
+  digikey: 296-23770-1-ND
   mpn: INA219AIDCNR
   description: IC CURRENT MONITOR 1% SOT23-8
   manufacturer: Texas Instruments
@@ -569,6 +693,7 @@ components:
 - ref: U6
   value: TPS562208DDCT
   footprint: TPS562208DDCT
+  digikey: 296-43806-1-ND
   description: IC REG BUCK ADJ 2A TSOT23-6
   pin_count: 6
 - ref: U7
@@ -578,11 +703,13 @@ components:
 - ref: U8
   value: M24C02
   footprint: TSSOP-8
+  mpn: M24C02-FDW
   pin_count: 8
 - ref: U9
   value: SN74LVC125APWR
   footprint: SN74LVC125APWR
   description: IC BUF NON-INVERT 3.6V 14TSSOP
+  digikey: 296-1222-1-ND
   pin_count: 14
 nets:
 - name: +3V3
@@ -603,7 +730,6 @@ nets:
   - R12.1
   - R14.1
   - R29.1
-  - R9.1
   - RN1.5
   - RN1.6
   - RN1.7
@@ -616,10 +742,6 @@ nets:
   - RN3.6
   - RN3.7
   - RN3.8
-  - RN5.5
-  - RN5.6
-  - RN5.7
-  - RN5.8
   - U10.14
   - U36.2
   - U39.2
@@ -636,27 +758,27 @@ nets:
 - name: /Digitial I/O via PMOD/EEPROM_SDA
   pins: [RN3.2, U7.15, U8.5]
 - name: /Digitial I/O via PMOD/I2C_SCL_PMOD
-  pins: [J2.3, R12.2, R13.1, U7.22]
+  pins: [J2.3, R12.2, U7.22]
 - name: /Digitial I/O via PMOD/I2C_SDA_PMOD
-  pins: [J2.1, R14.2, R15.1, U7.23]
+  pins: [J2.1, R14.2, U7.23]
 - name: /Digitial I/O via PMOD/INA219_PWR_MON_SCL
   pins: [RN3.3, U5.5, U7.14]
 - name: /Digitial I/O via PMOD/INA219_PWR_MON_SDA
   pins: [RN3.4, U5.6, U7.13]
 - name: /Digitial I/O via PMOD/~1ST~_2ND_NYQ_BAND_SEL
-  pins: [J2.5, R11.1, R9.2, U10.13]
+  pins: [J2.5, R11.1, U10.13]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW0_BUF
   pins: [R18.1, U9.3]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW0_INV_BUF
   pins: [R19.1, U10.2]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW0_PMOD
-  pins: [J2.2, RN4.8, RN5.1, U10.1, U9.2]
+  pins: [J2.2, RN4.8, U10.1, U9.2]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW1_BUF
   pins: [R16.1, U9.6]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW1_INV_BUF
   pins: [R17.1, U10.4]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW1_PMOD
-  pins: [J2.4, RN4.7, RN5.2, U10.3, U9.5]
+  pins: [J2.4, RN4.7, U10.3, U9.5]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW2_BUF
   pins: [R24.2, U9.8]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW2_INV
@@ -664,13 +786,13 @@ nets:
 - name: /Digitial I/O via PMOD/~RX~_TX_SW2_INV_BUF
   pins: [R20.1, U10.6]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW2_PMOD
-  pins: [J2.6, RN4.6, RN5.3, U10.5, U9.9]
+  pins: [J2.6, RN4.6, U10.5, U9.9]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW3_BUF
   pins: [R22.2, U9.11]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW3_INV_BUF
   pins: [R21.2, U10.8]
 - name: /Digitial I/O via PMOD/~RX~_TX_SW3_PMOD
-  pins: [J2.8, RN4.5, RN5.4, U10.9, U9.12]
+  pins: [J2.8, RN4.5, U10.9, U9.12]
 - name: /Power Input & Regulation/+5V_CH0
   pins: [C13.1, C17.1, C21.1, U1.3]
 - name: /Power Input & Regulation/+5V_CH1
@@ -712,15 +834,7 @@ nets:
 - name: /Power Input & Regulation/PWR_IN_FUSED
   pins: [C3.1, C4.2, F1.2, L1.1]
 - name: /Power Input & Regulation/PWR_RETURN
-  pins:
-  - C1.1
-  - C2.2
-  - C3.2
-  - C4.1
-  - J1.2
-  - J1.3
-  - L1.2
-  - R1.2
+  pins: [C1.1, C3.2, C4.1, J1.2, J1.3, L1.2]
 - name: /Power Input & Regulation/V_FB
   pins: [R7.2, R8.1, U6.4]
 - name: /Power Input & Regulation/V_SW_NODE
@@ -814,7 +928,6 @@ nets:
   - C17.2
   - C18.2
   - C19.2
-  - C2.1
   - C20.2
   - C21.2
   - C22.2
@@ -849,10 +962,7 @@ nets:
   - J21.1
   - J22.1
   - L1.3
-  - R1.1
   - R11.2
-  - R13.2
-  - R15.2
   - R31.2
   - R4.2
   - R6.2
