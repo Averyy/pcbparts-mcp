@@ -8,6 +8,7 @@ old DB left intact).
 import gzip
 import json
 import sqlite3
+from contextlib import closing
 import sys
 from pathlib import Path
 
@@ -65,7 +66,7 @@ class TestBuildDatabase:
         stats = build_database(tmp_path, db_path, verbose=False)
         assert stats["category_counts"] == {"resistors": 1, "empty": 0}
         assert stats["categories"] == 2
-        with sqlite3.connect(db_path) as conn:
+        with closing(sqlite3.connect(db_path)) as conn, conn:
             assert conn.execute("SELECT name, slug FROM categories ORDER BY id").fetchall() == [
                 ("Resistors", "resistors"), ("Empty", "empty")]
 
@@ -84,7 +85,7 @@ class TestBuildDatabase:
         ])
         db_path = tmp_path / "components.db"
         build_database(tmp_path, db_path, verbose=False)
-        with sqlite3.connect(db_path) as conn:
+        with closing(sqlite3.connect(db_path)) as conn, conn:
             sql = ("SELECT num_pins, pitch_mm, num_contacts, num_positions, num_positions_or_pins, "
                    "reference_series FROM components ORDER BY lcsc")
             expected = [(2, 2, 2, 2, 2, " sh "), (None,) * 6,
@@ -120,7 +121,7 @@ class TestBuildDatabase:
         build_database(tmp_path, db_path, verbose=False)
         sql = "SELECT rds_gate_min_v FROM components ORDER BY stock DESC"
         expected = [(v,) for v in (2.5, 2.5, 10, 3.3, None, None, 0, .35, 4.5, 4, 4.5, None, None)]
-        with sqlite3.connect(db_path) as conn:
+        with closing(sqlite3.connect(db_path)) as conn, conn:
             assert conn.execute(sql).fetchall() == expected
             assert any("idx_mosfet_gate" in row[3] for row in conn.execute(
                 "EXPLAIN QUERY PLAN SELECT lcsc FROM components "
@@ -137,7 +138,7 @@ class TestBuildDatabase:
             assert database.search(gate_drive_v=3.3, limit=100) == indexed
         finally:
             database.close()
-        with sqlite3.connect(db_path) as conn:
+        with closing(sqlite3.connect(db_path)) as conn, conn:
             conn.execute("DROP INDEX idx_mosfet_gate")
             conn.execute("ALTER TABLE components DROP COLUMN rds_gate_min_v")
         database = ComponentDatabase(db_path=db_path)
@@ -149,7 +150,7 @@ class TestBuildDatabase:
             assert page["total"] == len(values)
         finally:
             database.close()
-        with sqlite3.connect(db_path) as conn:
+        with closing(sqlite3.connect(db_path)) as conn, conn:
             assert migrate_mosfet_gate_column(conn) == len(values)
             assert conn.execute(sql).fetchall() == expected
             assert migrate_mosfet_gate_column(conn) == len(values)
@@ -416,7 +417,7 @@ def test_database_age_warning(tmp_path, caplog, missing_schema):
     db_path = tmp_path / "components.db"
     build_database(tmp_path, db_path, verbose=False)
     if missing_schema:
-        with sqlite3.connect(db_path) as conn:
+        with closing(sqlite3.connect(db_path)) as conn, conn:
             if missing_schema.startswith("idx_"):
                 conn.execute(f"DROP INDEX {missing_schema}")
             else:

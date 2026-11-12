@@ -100,11 +100,15 @@ async def test_blocked_check_sends_exactly_one_request(monkeypatch):
             f"http://127.0.0.1:{server.server_address[1]}/api/products/{{lcsc}}/components",
         )
         client = JLCPCBClient()  # real wafer sessions
-        result = await client.check_easyeda_footprint("C8304")
+        try:
+            result = await client.check_easyeda_footprint("C8304")
+        finally:
+            await client.close()
         assert result == {"has_easyeda_footprint": None, "easyeda_symbol_uuid": None, "easyeda_footprint_uuid": None}
         assert len(hits) == 1
     finally:
         server.shutdown()
+        server.server_close()  # shutdown() only stops serve_forever; this closes the listening socket
 
 
 async def test_no_requests_while_blocked():

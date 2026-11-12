@@ -2,6 +2,7 @@
 
 import json
 import sqlite3
+from contextlib import closing
 import sys
 import tempfile
 from pathlib import Path
@@ -82,7 +83,7 @@ def test_curated_fields_survive_rescrapes_and_all_build_rules(curated_data, monk
         scrape["sensors"][0].update(description=description, voltage=voltage)
         source.write_text(json.dumps(scrape))
         builder.build(curated_data, output, verbose=False)
-        with sqlite3.connect(output) as conn:
+        with closing(sqlite3.connect(output)) as conn:
             conn.row_factory = sqlite3.Row
             row = conn.execute("SELECT * FROM sensors WHERE id='ads1293'").fetchone()
             for field, value in values.items():
@@ -137,13 +138,13 @@ def test_curated_only_changes_named_fields_and_supports_null_and_exclusion(curat
     path.write_text(json.dumps(corrections))
     output = curated_data / "sensor.db"
     build(curated_data, output, verbose=False)
-    with sqlite3.connect(output) as conn:
+    with closing(sqlite3.connect(output)) as conn:
         assert conn.execute("SELECT manufacturer, voltage, description FROM sensors").fetchone() == (
             None, "1.7-3.6", "A scraped description long enough to block the legacy guard")
     corrections["ads1293"]["exclude"] = {**_curated_field(True), "reason": "Verified non-part"}
     path.write_text(json.dumps(corrections))
     build(curated_data, output, verbose=False)
-    with sqlite3.connect(output) as conn:
+    with closing(sqlite3.connect(output)) as conn:
         for table in ["sensors", "sensors_fts", "sensor_measures", "sensor_protocols", "sensor_platforms", "sensor_urls"]:
             assert conn.execute(f"SELECT count(*) FROM {table}").fetchone()[0] == 0
 
@@ -162,7 +163,7 @@ def test_curated_voltage_modes_and_unknown_survive_build_and_reply(curated_data,
     output = curated_data / "sensor.db"
     build(curated_data, output, verbose=False)
 
-    with sqlite3.connect(output) as conn:
+    with closing(sqlite3.connect(output)) as conn:
         assert conn.execute("SELECT voltage FROM sensors WHERE id='ads1293'").fetchone()[0] == voltage
         result = search_sensors(conn, query="ads1293")["results"][0]
         assert result["voltage"] == voltage
@@ -671,7 +672,7 @@ def measures(tmp_path_factory):
     from build_sensor_db import build
     out = tmp_path_factory.mktemp("sensors") / "sensor.db"
     build(Path(__file__).parent.parent / "data", out, verbose=False)
-    with sqlite3.connect(out) as conn:
+    with closing(sqlite3.connect(out)) as conn:
         rows = conn.execute("SELECT sensor_id, measure FROM sensor_measures").fetchall()
     result: dict[str, set[str]] = {}
     for sensor_id, measure in rows:
@@ -822,7 +823,7 @@ def test_exclusion_survives_fresh_scrape_absence_and_return(curated_data):
     for records in ([record], [], [{**record, "name": "New scrape title", "measures": ["temperature"]}]):
         source.write_text(json.dumps({"sensors": records}))
         builder.build(curated_data, output, verbose=False)
-        with sqlite3.connect(output) as conn:
+        with closing(sqlite3.connect(output)) as conn:
             for table in ("sensors", "sensors_fts", "sensor_measures", "sensor_platforms", "sensor_urls"):
                 assert conn.execute(f"SELECT count(*) FROM {table}").fetchone()[0] == 0
 
@@ -844,7 +845,7 @@ def test_shared_driver_transfers_support_without_software_measurements(curated_d
     }}))
     output = curated_data / "sensor.db"
     builder.build(curated_data, output, verbose=False)
-    with sqlite3.connect(output) as conn:
+    with closing(sqlite3.connect(output)) as conn:
         assert conn.execute("SELECT id, voltage FROM sensors").fetchall() == [("part123", "3.3")]
         assert conn.execute("SELECT measure FROM sensor_measures").fetchall() == [("temperature",)]
         assert conn.execute("SELECT protocol FROM sensor_protocols").fetchall() == [("i2c",)]
@@ -1036,7 +1037,7 @@ def test_reviewer_rescrapes_resolve_before_curated_fields_and_exclusions(curated
     }))
     output = curated_data / 'sensor.db'
     builder.build(curated_data, output, verbose=False)
-    with sqlite3.connect(output) as conn:
+    with closing(sqlite3.connect(output)) as conn:
         assert conn.execute('SELECT id, voltage, type FROM sensors').fetchall() == [
             ('a02yyuw', '3.3-5.0', 'ultrasonic')]
         assert conn.execute('SELECT id FROM sensors_fts').fetchall() == [('a02yyuw',)]

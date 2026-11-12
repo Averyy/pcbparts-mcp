@@ -510,11 +510,15 @@ class TestBuildHistoryDb:
                 f.write(json.dumps({"l": "C1", "d": day, "s": 40, "t": "e"}) + "\n")
         db_path = tmp_path / "stock_history.db"
         build_history_db(tmp_path, db_path, verbose=False)
-        assert StockHistoryDatabase(db_path).history("C1", 366)["window"]["end"] == "2026-03-20"
+        reader = StockHistoryDatabase(db_path)
+        assert reader.history("C1", 366)["window"]["end"] == "2026-03-20"
+        reader.close()
         conn = sqlite3.connect(db_path)
         conn.execute("UPDATE tracking_meta SET value='2026-03-10' WHERE key='history_end'")
         conn.commit()
         conn.close()
-        reply = StockHistoryDatabase(db_path).history("C1", 366)
+        reader = StockHistoryDatabase(db_path)
+        reply = reader.history("C1", 366)
+        reader.close()
         assert reply["window"]["end"] == "2026-03-10"
         assert [e["date"] for e in reply["events"]] == ["2026-03-01"]

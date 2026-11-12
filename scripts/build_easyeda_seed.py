@@ -45,6 +45,7 @@ import os
 import random
 import re
 import sqlite3
+from contextlib import closing
 import sys
 import time
 from dataclasses import dataclass, field
@@ -706,48 +707,48 @@ def main(argv: Iterable[str] | None = None) -> int:
         parser.error(f"--page-size must be 1-{MAX_PAGE_SIZE} (EasyEDA answers HTTP 500 to 10,000)")
 
     seed = Seed.load(args.csv, args.state)
-    db = open_db(args.db)
-    if args.step == "report":
-        print(report(seed, db))
-        return 0
-    if args.fresh:
-        seed.state["manufacturers"] = {}
-        seed.ambiguous.clear()
-    if args.step in ("parts", "validate") and not args.force:
-        since = time.time() - seed.state.get("last_search_at", 0)
-        if since < QUIET_AFTER_SEARCH:
-            print(f"Last search request was {since / 60:.0f} min ago; /api/products steps wait "
-                  f"{QUIET_AFTER_SEARCH // 60} min after search traffic (or pass --force).")
-            return 3
-
-    async def run() -> int:
-        client = make_client()
-        easyeda = EasyEDA(client, Pacer(args.delay))
-        try:
-            if args.step == "manufacturers":
-                await run_manufacturers(seed, db, easyeda, args.page_size, args.only, args.max_manufacturers,
-                                        args.redo)
-            elif args.step == "names":
-                await run_names(seed, db, easyeda, args.page_size, args.only, args.max_manufacturers)
-            elif args.step == "parts":
-                await run_parts(seed, db, easyeda, args.types.replace(",", ""), args.max_requests, args.refresh_days)
-            elif args.step == "validate":
-                return 1 if await run_validate(seed, easyeda, args.sample) else 0
+    with closing(open_db(args.db)) as db:
+        if args.step == "report":
+            print(report(seed, db))
             return 0
-        except Blocked as e:
-            print(f"{stamp()} EasyEDA blocked this IP ({e}) after {easyeda.pacer.requests} request(s). Progress "
-                  "saved; stop all EasyEDA traffic and run this again in a few minutes.")
-            return 2
-        finally:
-            seed.save()
-            await client.close()
-            print(f"{stamp()} {easyeda.pacer.requests} EasyEDA request(s) this run")
+        if args.fresh:
+            seed.state["manufacturers"] = {}
+            seed.ambiguous.clear()
+        if args.step in ("parts", "validate") and not args.force:
+            since = time.time() - seed.state.get("last_search_at", 0)
+            if since < QUIET_AFTER_SEARCH:
+                print(f"Last search request was {since / 60:.0f} min ago; /api/products steps wait "
+                      f"{QUIET_AFTER_SEARCH // 60} min after search traffic (or pass --force).")
+                return 3
 
-    try:
-        return asyncio.run(run())
-    except KeyboardInterrupt:
-        print("Interrupted; progress saved.")
-        return 130
+        async def run() -> int:
+            client = make_client()
+            easyeda = EasyEDA(client, Pacer(args.delay))
+            try:
+                if args.step == "manufacturers":
+                    await run_manufacturers(seed, db, easyeda, args.page_size, args.only, args.max_manufacturers,
+                                            args.redo)
+                elif args.step == "names":
+                    await run_names(seed, db, easyeda, args.page_size, args.only, args.max_manufacturers)
+                elif args.step == "parts":
+                    await run_parts(seed, db, easyeda, args.types.replace(",", ""), args.max_requests, args.refresh_days)
+                elif args.step == "validate":
+                    return 1 if await run_validate(seed, easyeda, args.sample) else 0
+                return 0
+            except Blocked as e:
+                print(f"{stamp()} EasyEDA blocked this IP ({e}) after {easyeda.pacer.requests} request(s). Progress "
+                      "saved; stop all EasyEDA traffic and run this again in a few minutes.")
+                return 2
+            finally:
+                seed.save()
+                await client.close()
+                print(f"{stamp()} {easyeda.pacer.requests} EasyEDA request(s) this run")
+
+        try:
+            return asyncio.run(run())
+        except KeyboardInterrupt:
+            print("Interrupted; progress saved.")
+            return 130
 
 
 if __name__ == "__main__":

@@ -14,6 +14,7 @@ import sys
 import shutil
 import sqlite3
 import tempfile
+from contextlib import closing
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -105,7 +106,9 @@ def check_catalog_build(sensors_dir: Path, allow_stale: bool = False) -> list[st
             shutil.copytree(sensors_dir, data_dir / "sensors")
             output = Path(directory) / "sensor.db"
             build(data_dir, output, verbose=False)
-            with sqlite3.connect(output) as conn:
+            # closing(): sqlite3's own context manager doesn't close, and Windows can't delete
+            # the temporary directory while the database is open.
+            with closing(sqlite3.connect(output)) as conn:
                 ids = {row[0] for row in conn.execute("SELECT id FROM sensors")}
     except Exception as error:
         return [f"catalog build failed: {error}"]

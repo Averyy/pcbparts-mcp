@@ -1,5 +1,6 @@
 """Why calls found nothing or failed, in /mcp/stats: fixed labels, one a call, never what users typed."""
 
+from contextlib import closing
 import datetime
 import json
 import sys
@@ -333,7 +334,7 @@ async def test_calculated_co2_is_listed_as_eco2(local_client, sensor_id):
 async def ids_all(_client, measure):
     """Every id tagged with a measure: the tool's replies are capped, so this reads the database."""
     import sqlite3
-    with sqlite3.connect(f"file:{Path('data/sensor.db').resolve()}?mode=ro", uri=True) as conn:
+    with closing(sqlite3.connect(f"file:{Path('data/sensor.db').resolve()}?mode=ro", uri=True)) as conn, conn:
         return {row[0] for row in conn.execute("SELECT sensor_id FROM sensor_measures WHERE measure = ?", (measure,))}
 
 

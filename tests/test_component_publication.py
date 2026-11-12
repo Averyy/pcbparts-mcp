@@ -1,4 +1,5 @@
 """Replay real subcategory records through scrape failure/retry/publication boundaries."""
+from contextlib import closing
 import gzip
 import json
 from pathlib import Path
@@ -101,7 +102,7 @@ async def test_real_records_retry_before_history_and_publish(tmp_path, monkeypat
         db_path = tmp_path/'stock_history.db'
         assert build_history_db(tmp_path, db_path, verbose=False)['total_events'] == 2
         import sqlite3
-        with sqlite3.connect(db_path) as conn:
+        with closing(sqlite3.connect(db_path)) as conn, conn:
             assert conn.execute('SELECT stock_before FROM stock_events ORDER BY date').fetchall() == [
                 (None,), (old_parts[0]['s'],)]
     else:

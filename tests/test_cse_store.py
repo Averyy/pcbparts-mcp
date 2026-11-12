@@ -39,6 +39,22 @@ def kicad_zip() -> bytes:
     return buf.getvalue()
 
 
+@pytest.fixture(autouse=True)
+def _close_stores(monkeypatch):
+    """Close every store a test opens: each holds its SQLite file open (Windows can't remove it)."""
+    opened = []
+    original = CSEStore.__init__
+
+    def tracking_init(self, *args, **kwargs):
+        original(self, *args, **kwargs)
+        opened.append(self)
+
+    monkeypatch.setattr(CSEStore, "__init__", tracking_init)
+    yield
+    for store in opened:
+        store.close()
+
+
 def client_with(store_path, answers):
     """A CSEClient whose HTTP calls return answers(url) and are counted in .urls."""
     client = CSEClient(store_path=str(store_path))
