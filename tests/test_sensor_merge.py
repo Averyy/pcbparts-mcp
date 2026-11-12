@@ -78,7 +78,7 @@ def test_curated_fields_survive_rescrapes_and_all_build_rules(curated_data, monk
     source = curated_data / "sensors" / "arduino.json"
     for description, voltage in [("Original scraped hardware description", "1.7-3.6"),
                                  ("New scrape overwrites the hardware description", "9.0-12.0")]:
-        scrape = json.loads(source.read_text())
+        scrape = json.loads(source.read_text(encoding="utf-8"))
         scrape["sensors"][0].update(description=description, voltage=voltage)
         source.write_text(json.dumps(scrape))
         builder.build(curated_data, output, verbose=False)
@@ -166,7 +166,7 @@ def test_curated_voltage_modes_and_unknown_survive_build_and_reply(curated_data,
         assert conn.execute("SELECT voltage FROM sensors WHERE id='ads1293'").fetchone()[0] == voltage
         result = search_sensors(conn, query="ads1293")["results"][0]
         assert result["voltage"] == voltage
-    assert json.loads(path.read_text())["ads1293"]["voltage"]["reason"] == reason
+    assert json.loads(path.read_text(encoding="utf-8"))["ads1293"]["voltage"]["reason"] == reason
 
 
 class TestCleanName:
@@ -326,7 +326,7 @@ def test_library_scrapers_select_hardware_and_preserve_cleaned_title_rank(tmp_pa
     response = SimpleNamespace(raise_for_status=lambda: None, json=lambda: {"libraries": libraries}, text=markdown)
     monkeypatch.setattr(scraper.wafer, "get", lambda *args, **kwargs: response)
     getattr(scraper, f"scrape_{source}")(tmp_path)
-    record, = json.loads((tmp_path / f"{source}.json").read_text())["sensors"]
+    record, = json.loads((tmp_path / f"{source}.json").read_text(encoding="utf-8"))["sensors"]
     assert record["description"] == ("XYZ123 temperature sensor" if hardware_available else
                                      "XYZ123 high accuracy temperature sensor")
     assert record.get("description_is_library_title", False) is not hardware_available
@@ -339,7 +339,7 @@ def test_dfrobot_scraper_cleans_library_title(tmp_path, monkeypatch):
     monkeypatch.setattr(dfrobot, "_fetch_library_properties", lambda _: {
         "sentence": "Library for XYZ123 temperature sensor"})
     dfrobot.scrape_dfrobot(tmp_path)
-    record, = json.loads((tmp_path / "dfrobot.json").read_text())["sensors"]
+    record, = json.loads((tmp_path / "dfrobot.json").read_text(encoding="utf-8"))["sensors"]
     assert record["description"] == "XYZ123 temperature sensor"
     assert record["description_is_library_title"] is True
 
@@ -360,7 +360,7 @@ def test_zephyr_scraper_trims_before_writing_json(tmp_path, monkeypatch):
     monkeypatch.setattr(zephyr.tempfile, "mkdtemp", lambda **_: str(checkout))
     monkeypatch.setattr(zephyr.subprocess, "run", lambda *args, **kwargs: None)
     zephyr.scrape_zephyr(tmp_path)
-    record, = json.loads((tmp_path / "zephyr.json").read_text())["sensors"]
+    record, = json.loads((tmp_path / "zephyr.json").read_text(encoding="utf-8"))["sensors"]
     assert record["description"] == "XYZ123 temperature sensor. It supports I2C and SPI."
 
 
@@ -510,7 +510,7 @@ class TestMergeSensors:
 
     def test_alias_merge(self, sensor_data_dir):
         aliases = json.loads(
-            (sensor_data_dir / "sensors" / "ic_aliases.json").read_text()
+            (sensor_data_dir / "sensors" / "ic_aliases.json").read_text(encoding="utf-8")
         )
         merged = merge_sensors(sensor_data_dir, aliases, quiet=True)
 
@@ -741,7 +741,7 @@ class TestMeasureWordsThatAreNotMeasures:
 
 # Real scrape records are essential here: synthetic aliases cannot expose cross-device leaks.
 _REAL_DATA = Path(__file__).parent.parent / "data"
-_ALIAS_AUDIT = json.loads((_REAL_DATA / "sensors" / "ic_alias_evidence.json").read_text())
+_ALIAS_AUDIT = json.loads((_REAL_DATA / "sensors" / "ic_alias_evidence.json").read_text(encoding="utf-8"))
 _SPLIT_ALIASES = [(r["alias"], r["target"]) for r in _ALIAS_AUDIT["aliases"]
                   if r["active"] and r["decision"] == "remove"]
 _KEPT_ALIASES = [(r["alias"], r["target"]) for r in _ALIAS_AUDIT["aliases"] if r["decision"] == "keep"]
@@ -817,7 +817,7 @@ def test_exclusion_survives_fresh_scrape_absence_and_return(curated_data):
     source = curated_data / "sensors" / "arduino.json"
     correction = {"ads1293": {"exclude": {**_curated_field(True), "reason": "Reviewed non-part"}}}
     (curated_data / "sensors" / "curated.json").write_text(json.dumps(correction))
-    record = json.loads(source.read_text())["sensors"][0]
+    record = json.loads(source.read_text(encoding="utf-8"))["sensors"][0]
     output = curated_data / "sensor.db"
     for records in ([record], [], [{**record, "name": "New scrape title", "measures": ["temperature"]}]):
         source.write_text(json.dumps({"sensors": records}))
@@ -883,7 +883,7 @@ def test_arduino_corroborated_title_beats_measurand_and_shortest_title(tmp_path,
     monkeypatch.setattr(arduino.wafer, "get", lambda *a, **kw: SimpleNamespace(
         raise_for_status=lambda: None, json=lambda: {"libraries": libraries}))
     arduino.scrape_arduino(tmp_path)
-    sensors = {s["id"]: s for s in json.loads((tmp_path / "arduino.json").read_text())["sensors"]}
+    sensors = {s["id"]: s for s in json.loads((tmp_path / "arduino.json").read_text(encoding="utf-8"))["sensors"]}
     assert "pm1" not in sensors
     assert sensors["bmv080"]["name"] == "BMV080"
     assert sensors["ad8494"]["name"] == "AD8494"
@@ -1407,7 +1407,7 @@ def test_deneyap_board_titles_do_not_define_a_chip(tmp_path, monkeypatch):
 
     monkeypatch.setattr(arduino.wafer, "get", lambda *a, **k: Index())
     arduino.scrape_arduino(tmp_path)
-    sensors = {s["id"]: s for s in json.loads((tmp_path / "arduino.json").read_text())["sensors"]}
+    sensors = {s["id"]: s for s in json.loads((tmp_path / "arduino.json").read_text(encoding="utf-8"))["sensors"]}
     assert sensors["sht4x"]["measures"] == ["humidity", "temperature"]
     assert "Deneyap" not in sensors["sht4x"]["description"]
     # Only a board title describes the LSM6DSM: it still supplies the measures

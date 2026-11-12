@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 
 import pcbparts_mcp.server as server
+from pcbparts_mcp.db import get_db
 from pcbparts_mcp.parsers import (
     parse_capacitance_max, parse_current, parse_isolation_voltage, parse_frequency, parse_inductance, parse_length_mm, parse_memory_size,
     parse_power, parse_q_factor, parse_resistance, parse_voltage,
@@ -156,10 +157,16 @@ class TestBOMWords:
     @pytest.mark.parametrize("line", [
         pytest.param(line, id=line["ref"], marks=pytest.mark.xfail(reason=line["known_gap"]))
         if "known_gap" in line else pytest.param(line, id=line["ref"])
-        for line in json.loads((Path(__file__).parent / "baseline" / "feather_bom.json").read_text())
+        for line in json.loads((Path(__file__).parent / "baseline" / "feather_bom.json").read_text(encoding="utf-8"))
     ])
     async def test_feather_bom(self, line):
         result = await search(f'{line["value"]} {line["footprint"]} {line["word"]}', limit=100)
+        # A line naming one part records the codes it matched; once none is stocked (BME280 sold
+        # out on 2026-11-12) there's nothing to find. Passive lines have no targets and never skip.
+        if not result["total"] and line.get("targets"):
+            stocked = get_db().get_by_lcsc_batch(line["targets"])
+            if not any(stocked.values()):
+                pytest.skip(f"no recorded target is stocked any more ({', '.join(line['targets'])})")
         assert result["total"] > 0
         for part in result["results"]:
             assert part["subcategory"] in line["subcategories"]

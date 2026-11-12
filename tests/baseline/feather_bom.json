@@ -92,6 +92,26 @@
     "subcategories": [
       "LED Indication - Discrete",
       "RGB LEDs(Built-in IC)"
+    ],
+    "targets": [
+      "C4154873",
+      "C4154881",
+      "C4154882",
+      "C22371519",
+      "C42417599",
+      "C52917433",
+      "C52917434",
+      "C52941386",
+      "C52941387",
+      "C52941388",
+      "C52941389",
+      "C52941391",
+      "C53153007",
+      "C53153008",
+      "C53153009",
+      "C53153010",
+      "C55109525",
+      "C55629353"
     ]
   },
   {
@@ -101,6 +121,14 @@
     "word": "mosfet",
     "subcategories": [
       "MOSFETs"
+    ],
+    "targets": [
+      "C96616",
+      "C459537",
+      "C709946",
+      "C5878786",
+      "C6285748",
+      "C7202986"
     ]
   },
   {
@@ -146,6 +174,21 @@
     "word": "switch",
     "subcategories": [
       "Tactile Switches"
+    ],
+    "targets": [
+      "C72443",
+      "C99271",
+      "C221675",
+      "C221676",
+      "C221678",
+      "C221679",
+      "C221680",
+      "C221681",
+      "C221682",
+      "C221683",
+      "C269272",
+      "C2804664",
+      "C31159362"
     ]
   },
   {
@@ -155,6 +198,12 @@
     "word": "IC",
     "subcategories": [
       "WiFi Modules"
+    ],
+    "targets": [
+      "C2913206",
+      "C2980299",
+      "C3013941",
+      "C22356044"
     ]
   },
   {
@@ -164,6 +213,11 @@
     "word": "IC",
     "subcategories": [
       "Voltage Regulators - Linear, Low Drop Out (LDO) Regulators"
+    ],
+    "targets": [
+      "C22365427",
+      "C22365428",
+      "C23380830"
     ]
   },
   {
@@ -173,6 +227,12 @@
     "word": "IC",
     "subcategories": [
       "Battery Management"
+    ],
+    "targets": [
+      "C424093",
+      "C625597",
+      "C625598",
+      "C42432883"
     ]
   },
   {
@@ -182,6 +242,9 @@
     "word": "IC",
     "subcategories": [
       "Temperature and Humidity Sensor"
+    ],
+    "targets": [
+      "C92489"
     ]
   },
   {

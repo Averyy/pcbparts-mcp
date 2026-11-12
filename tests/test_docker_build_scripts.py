@@ -13,7 +13,7 @@ import pytest
 
 ROOT = Path(__file__).parent.parent
 SCRIPTS = ROOT / "scripts"
-COPIED_ALONE = re.findall(r"COPY\s+\S+\s+scripts/(\w+\.py)\s+/app/scripts/", (ROOT / "Dockerfile").read_text())
+COPIED_ALONE = re.findall(r"COPY\s+\S+\s+scripts/(\w+\.py)\s+/app/scripts/", (ROOT / "Dockerfile").read_text(encoding="utf-8"))
 LOCAL_MODULES = {p.stem for p in SCRIPTS.glob("*.py")} | {p.name for p in SCRIPTS.iterdir() if p.is_dir()}
 
 sys.path.insert(0, str(SCRIPTS))

@@ -1524,13 +1524,13 @@ class TestExplicitLayout:
         assert board.components[0].pin_count == 3
         assert board.components[0].nc_pins == {"NC": "2"}  # PARENT is wired, though its net is filtered
         output = tmp_path / "output/child.yaml"
-        before = yaml.safe_load(output.read_text())
+        before = yaml.safe_load(output.read_text(encoding="utf-8"))
         for component in before["components"]:
             component.pop("pin_count", None)
             component.pop("nc_pins", None)
         output.write_text(yaml.safe_dump(before, sort_keys=False))
         assert parser.merge_pin_info("child", info) == (2, [])
-        restored = yaml.safe_load(output.read_text())["components"]
+        restored = yaml.safe_load(output.read_text(encoding="utf-8"))["components"]
         assert next(c for c in restored if c["ref"] == "U1")["nc_pins"] == {"NC": "2"}
 
     def test_missing_explicit_layout_does_not_fall_back(self, tmp_path):
@@ -1565,7 +1565,7 @@ class TestReferenceBoardMetadataAndFerrites:
         from board_overrides import BOARD_META_OVERRIDES
 
         board_path = Path(__file__).resolve().parent.parent / "data" / "boards" / f"{slug}.yaml"
-        board = yaml.safe_load(board_path.read_text())
+        board = yaml.safe_load(board_path.read_text(encoding="utf-8"))
         assert BOARD_META_OVERRIDES[slug]["key_ics"] == board["key_ics"]
 
 
@@ -1735,7 +1735,7 @@ class TestElectricalValueProperties:
         sch.write_text(f'''(kicad_sch (uuid "root")
           (symbol (lib_id "Device:Part") (uuid "part")
             (property "Reference" "{ref}") (property "Value" "{mpn}")
-            (property "Footprint" "Device:0402") (property "{key}" "{electrical}"))))''')
+            (property "Footprint" "Device:0402") (property "{key}" "{electrical}"))))''', encoding="utf-8")
         parts, _ = parse_schematic(sch)
         assert parts[0].value == expected
         assert parts[0].attributes['mpn'] == mpn
@@ -2002,7 +2002,7 @@ $EndSCHEMATC
         assert pins == {'R1': {'1': '1', '2': '2'}, 'R2': {'1': '1', '2': '2', '3': '3'}}
         assert wired == {'R1': {'1'}, 'R2': {'1'}}
         assert all(p.read_bytes() == before for p, before in sources.items())
-        cache.write_text(cache.read_text().replace('DEF Device_R', 'DEF Missing'))
+        cache.write_text(cache.read_text(encoding="utf-8").replace('DEF Device_R', 'DEF Missing'))
         with pytest.raises(ValueError, match='no definition for Device:R'):
             export_schematic(root, {'R1', 'R2'})
 

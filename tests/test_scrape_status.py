@@ -172,7 +172,7 @@ def test_catalog_build_gate_warns_and_status_check_rejects_missing_curated_id(tm
 
 
 def test_workflow_build_gate_precedes_commit_and_retains_freshness_gate():
-    workflow = (Path(__file__).parent.parent / '.github/workflows/scrape-sensors.yml').read_text()
+    workflow = (Path(__file__).parent.parent / '.github/workflows/scrape-sensors.yml').read_text(encoding="utf-8")
     assert workflow.index('python scripts/scrape_sensors.py') < workflow.index('python scripts/check_scrape_status.py --build-only')
     assert workflow.index('python scripts/check_scrape_status.py --build-only') < workflow.index('git add data/sensors/')
     assert workflow.index('git push') < workflow.index('python scripts/check_scrape_status.py\n') < workflow.index('gh workflow run docker-build.yml')

@@ -266,8 +266,8 @@ def main() -> None:
     parser.add_argument("--boards-dir", type=Path, default=Path("data/boards"))
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    report = audit([yaml.safe_load(p.read_text()) for p in sorted(args.boards_dir.glob("*.yaml"))])
-    args.output.write_text(json.dumps(report, indent=2) + "\n")
+    report = audit([yaml.safe_load(p.read_text(encoding="utf-8")) for p in sorted(args.boards_dir.glob("*.yaml"))])
+    args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: len(v) if isinstance(v, list) else v for k, v in report.items()}))
 
 
