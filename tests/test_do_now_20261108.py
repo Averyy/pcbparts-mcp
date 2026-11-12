@@ -63,7 +63,8 @@ async def test_bounded_empty_diagnostics(local_client):
     recovered = await call(local_client, **suggestion['next_call']['arguments'])
     assert recovered['results']
     assert all(p['specs']['Connector Type'] == 'Type-C' for p in recovered['results'])
-    r = await call(local_client, query='BME280', package='0402', strict=True)
+    # A basic-library part, which JLCPCB keeps stocked (BME280 sold out on 2026-11-12).
+    r = await call(local_client, query='AMS1117-3.3', package='0402', strict=True)
     assert any(b['constraint']=='package' for b in r['why_empty']['blocking'])
     r = await call(local_client, query='10k resistor', package='QFN-999', min_stock=2_000_000_000, strict=True)
     assert not r['results'] and not r['why_empty']['blocking']
@@ -74,9 +75,9 @@ async def test_bounded_empty_diagnostics(local_client):
 async def test_diagnostic_budget_does_not_interrupt_regular_search(local_client, monkeypatch):
     from pcbparts_mcp.search import diagnostics
     monkeypatch.setattr(diagnostics, 'DIAGNOSTIC_SECONDS', 0)
-    r = await call(local_client, query='BME280', package='0402', strict=True)
+    r = await call(local_client, query='AMS1117-3.3', package='0402', strict=True)
     assert r['why_empty']['diagnostics_complete'] is False
-    assert (await call(local_client, query='BME280'))['results']
+    assert (await call(local_client, query='AMS1117-3.3'))['results']
 
 
 async def test_snapshot_provenance_and_explicit_live_next_step(local_client):

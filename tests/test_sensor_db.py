@@ -454,7 +454,7 @@ class TestSearchResults:
 
 # Exercise import-time query aliases and the complete build against actual scraped records.
 _SENSOR_DATA = Path(__file__).parent.parent / "data"
-_IDENTITY_AUDIT = json.loads((_SENSOR_DATA / "sensors" / "ic_alias_evidence.json").read_text())
+_IDENTITY_AUDIT = json.loads((_SENSOR_DATA / "sensors" / "ic_alias_evidence.json").read_text(encoding="utf-8"))
 
 
 @pytest.fixture(scope="module")
@@ -536,7 +536,7 @@ def test_real_sensor_punctuated_and_family_queries(real_sensor_catalog, query):
 @pytest.mark.parametrize("sid,evidence", _IDENTITY_AUDIT["split_field_evidence"].items())
 def test_real_sensor_verified_datasheet_fields(real_sensor_catalog, sid, evidence):
     part = search_sensors(real_sensor_catalog, query=sid)["results"][0]
-    curated = json.loads((Path(__file__).resolve().parents[1] / "data/sensors/curated.json").read_text())
+    curated = json.loads((Path(__file__).resolve().parents[1] / "data/sensors/curated.json").read_text(encoding="utf-8"))
     if not evidence["source_url"]:
         # Later field reviews supersede the identity audit's deliberately unset values.
         for field in evidence["unset_fields"]:
@@ -671,7 +671,7 @@ def test_real_sensor_mains_powered_meter_says_so(real_sensor_catalog):
 ])
 def test_real_sensor_curated_technology_survives_build(real_sensor_catalog, sid, expected):
     curated = json.loads(
-        (Path(__file__).resolve().parents[1] / "data/sensors/curated.json").read_text()
+        (Path(__file__).resolve().parents[1] / "data/sensors/curated.json").read_text(encoding="utf-8")
     )
     assert curated[sid]["type"]["value"] == expected
     part = search_sensors(real_sensor_catalog, query=sid)["results"][0]
@@ -695,7 +695,7 @@ def test_former_and_scraped_names_are_search_only_aliases(real_sensor_catalog, q
 
 
 def test_all_persisted_former_and_source_names_find_their_record(real_sensor_catalog):
-    aliases = json.loads((_SENSOR_DATA / 'sensors/name_aliases.json').read_text())
+    aliases = json.loads((_SENSOR_DATA / 'sensors/name_aliases.json').read_text(encoding="utf-8"))
     for sid, names in aliases.items():
         for name in names:
             result = search_sensors(real_sensor_catalog, query=name, limit=2000)

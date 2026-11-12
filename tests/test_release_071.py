@@ -239,7 +239,7 @@ async def test_existing_supercapacitor_hint_is_preserved():
 
 @pytest.mark.parametrize("total,allow,success", [(96, False, True), (95, False, True), (94, False, False), (94, True, True)])
 def test_scrape_part_count_guard(monkeypatch, tmp_path, total, allow, success):
-    workflow = yaml.safe_load(Path(".github/workflows/scrape-components.yml").read_text())
+    workflow = yaml.safe_load(Path(".github/workflows/scrape-components.yml").read_text(encoding="utf-8"))
     assert workflow[True]["workflow_dispatch"]["inputs"]["allow_part_drop"]["default"] is False
     steps = workflow["jobs"]["scrape"]["steps"]
     guard = next(s for s in steps if s["name"] == "Check part count")
@@ -249,10 +249,10 @@ def test_scrape_part_count_guard(monkeypatch, tmp_path, total, allow, success):
     script = guard["run"].split("\n", 1)[1].rstrip().removesuffix("PY")
     (tmp_path / "data").mkdir()
     manifest = tmp_path / "data/manifest.json"
-    previous = json.loads(Path("data/manifest.json").read_text())
+    previous = json.loads(Path("data/manifest.json").read_text(encoding="utf-8"))
     manifest.write_text(json.dumps(previous))
     (tmp_path / "scripts").mkdir()
-    (tmp_path / "scripts/check_component_scrape.py").write_text(Path("scripts/check_component_scrape.py").read_text())
+    (tmp_path / "scripts/check_component_scrape.py").write_text(Path("scripts/check_component_scrape.py").read_text(encoding="utf-8"), encoding="utf-8")
     git = ["git", "-C", str(tmp_path), "-c", "user.name=test", "-c", "user.email=test@example.com",
            "-c", "commit.gpgsign=false"]
     subprocess.run([*git, "init", "-q"], check=True)

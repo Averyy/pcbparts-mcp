@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 from search_baseline import offline
 
 RECOVERIES = [json.loads(line) for line in
-              (Path(__file__).parent / "baseline/mpn_recoveries.jsonl").read_text().splitlines()]
+              (Path(__file__).parent / "baseline/mpn_recoveries.jsonl").read_text(encoding="utf-8").splitlines()]
 
 
 @pytest.fixture(autouse=True)
