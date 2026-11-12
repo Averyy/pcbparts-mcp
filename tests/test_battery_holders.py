@@ -1,6 +1,7 @@
 """Offline battery-holder parsing and catalog search regressions."""
 
 import sqlite3
+from contextlib import closing
 import sys
 from pathlib import Path
 
@@ -67,7 +68,7 @@ async def test_holders_filed_under_battery_accessories_are_kept(local_client):
     found = await all_parts(local_client, "battery holder")
     assert {"C5375989", "C5377561"} <= set(found)
     accessories = [p["lcsc"] for p in found.values() if p["subcategory"] == "Battery accessories"]
-    with sqlite3.connect(f"file:{Path('data/components.db').resolve()}?mode=ro", uri=True) as conn:
+    with closing(sqlite3.connect(f"file:{Path('data/components.db').resolve()}?mode=ro", uri=True)) as conn, conn:
         listed = dict(conn.execute("SELECT lcsc, lower(mpn || ' ' || ifnull(description, '')) FROM components "
                                    "WHERE subcategory_id = 1303"))
     assert all("holder" in listed[lcsc] or "battery base" in listed[lcsc] for lcsc in accessories)
@@ -170,7 +171,7 @@ async def test_multiple_sizes_are_union_including_strict_mode(local_client):
 ])
 async def test_size_search_matches_catalog_fts_exactly(local_client, query, fts):
     # Compare complete sets, so a future stocked D holder is supported too.
-    with sqlite3.connect(f"file:{Path('data/components.db').resolve()}?mode=ro", uri=True) as conn:
+    with closing(sqlite3.connect(f"file:{Path('data/components.db').resolve()}?mode=ro", uri=True)) as conn, conn:
         expected = {row[0] for row in conn.execute(
             "SELECT lcsc FROM components WHERE (subcategory_id IN (1651, 3742, 2989, 3739) OR (subcategory_id = 1303 "
             "AND lcsc IN (SELECT lcsc FROM components_fts WHERE components_fts MATCH '\"holder\"* OR (\"battery\"* AND \"base\"*)'))) "

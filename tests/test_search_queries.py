@@ -2,6 +2,7 @@
 before 0.6.5. Each runs the tool on the real database and checks every result, not one part
 number, so the daily data can change under it."""
 
+from contextlib import closing
 import json
 import re
 from pathlib import Path
@@ -513,7 +514,7 @@ class TestFuseRatings:
         import sqlite3
         from pcbparts_mcp.search.engine import SearchEngine
 
-        with sqlite3.connect(":memory:") as conn:
+        with closing(sqlite3.connect(":memory:")) as conn, conn:
             conn.execute("CREATE TABLE components (package TEXT, subcategory_id INTEGER, stock INTEGER)")
             conn.executemany("INSERT INTO components VALUES (?, ?, ?)", [
                 ("9001", 1, 10), ("9001", 2, 9), ("9002", 1, 10), ("9002", 2, 10), ("9003", 1, 9),
@@ -674,7 +675,7 @@ class TestFuseRatings:
 
         clauses, params, post_filters, ignored = build_spec_filter_clauses(parse_smart_query(query).spec_filters)
         assert not post_filters and not ignored
-        with sqlite3.connect(":memory:") as conn:
+        with closing(sqlite3.connect(":memory:")) as conn, conn:
             conn.execute("CREATE TABLE components (current_max_a REAL)")
             conn.executemany("INSERT INTO components VALUES (?)", [(wanted,), (wanted * .995,), (wanted * 1.005,)])
             assert conn.execute("SELECT current_max_a FROM components WHERE 1=1 " + " ".join(clauses), params).fetchall() == [(wanted,)]
@@ -715,7 +716,7 @@ class TestPackageConstraints:
                  "SOIC-8-150mil", "SOP-8-150mil", "SOIC-8-300mil", "SOIC-80-150mil", "SOIC-8"]
         if requested == "QFN-24-EP":
             wanted = wanted | {"QFN-24-EP(4.000001x4)"}
-        with sqlite3.connect(":memory:") as conn:
+        with closing(sqlite3.connect(":memory:")) as conn, conn:
             conn.execute("CREATE TABLE components (package TEXT)")
             conn.executemany("INSERT INTO components VALUES (?)", [(name,) for name in names])
             sql, params = build_package_clause([requested], index_package_names(names))
@@ -1032,7 +1033,7 @@ class TestConnectorRequirements:
         import sqlite3
         from pcbparts_mcp.search.query_builder import build_spec_filter_clauses
         from pcbparts_mcp.search.spec_filter import CONNECTOR_FILTER_COLUMNS, ConnectorFilter, SpecFilter, connector_value
-        with sqlite3.connect(":memory:") as conn:
+        with closing(sqlite3.connect(":memory:")) as conn, conn:
             conn.create_function("connector_value", 2, connector_value)
             column = CONNECTOR_FILTER_COLUMNS[name]
             conn.execute(f"CREATE TABLE components (attributes TEXT, {column} REAL)")
@@ -2086,7 +2087,7 @@ class TestRelease078:
         """The text a query word is matched against (the full-text index: part number, maker, description)."""
         import sqlite3
         codes = [p["lcsc"] for p in result["results"]]
-        with sqlite3.connect(server.get_db().db_path) as conn:
+        with closing(sqlite3.connect(server.get_db().db_path)) as conn, conn:
             rows = conn.execute("SELECT lcsc, mpn || ' ' || manufacturer || ' ' || description FROM components "
                                 f"WHERE lcsc IN ({','.join('?' * len(codes))})", codes).fetchall()
         return dict(rows)

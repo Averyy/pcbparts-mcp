@@ -174,6 +174,7 @@ class TestPcbaType:
         conn.execute("INSERT INTO c VALUES ('C1','M','F','0603',10,0.1,'e',1,'d','[]','s',1)")
         conn.execute("INSERT INTO c VALUES ('C2','M','F','0603',10,0.1,'e',1,'d','[]',NULL,NULL)")
         rows = [row_to_dict(r, {}) for r in conn.execute("SELECT * FROM c ORDER BY lcsc")]
+        conn.close()
         assert rows[0]["pcba_type"] == "standard_only" and rows[0]["no_datasheet"] is True
         assert "pcba_type" not in rows[1] and "no_datasheet" not in rows[1]
 

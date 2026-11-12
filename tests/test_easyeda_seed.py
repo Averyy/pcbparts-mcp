@@ -63,7 +63,8 @@ def db(tmp_path) -> sqlite3.Connection:
         ("C20", "Texas Instruments", "e", 7, "TPS1"),
     ])
     conn.commit()
-    return conn
+    yield conn
+    conn.close()
 
 
 @pytest.fixture

@@ -2,6 +2,7 @@
 and C8218 were preferred=true in search and false in jlc_get_part)."""
 
 import sqlite3
+from contextlib import closing
 
 import pytest
 
@@ -16,14 +17,14 @@ API_LIBRARY = {  # library_type code in the local DB -> JLCPCB API fields
 
 
 def _row(library_type: str) -> sqlite3.Row:
-    conn = sqlite3.connect(":memory:")
-    conn.row_factory = sqlite3.Row
-    return conn.execute(
-        "SELECT 'C1671' AS lcsc, 'CL10C470JB8NNNC' AS mpn, 'Samsung' AS manufacturer, '0603' AS package, "
-        "1000 AS stock, 0.001 AS price, ? AS library_type, 2929 AS subcategory_id, '' AS description, "
-        "'[]' AS attributes",
-        (library_type,),
-    ).fetchone()
+    with closing(sqlite3.connect(":memory:")) as conn:
+        conn.row_factory = sqlite3.Row
+        return conn.execute(
+            "SELECT 'C1671' AS lcsc, 'CL10C470JB8NNNC' AS mpn, 'Samsung' AS manufacturer, '0603' AS package, "
+            "1000 AS stock, 0.001 AS price, ? AS library_type, 2929 AS subcategory_id, '' AS description, "
+            "'[]' AS attributes",
+            (library_type,),
+        ).fetchone()
 
 
 @pytest.mark.parametrize("code, expected", [("b", False), ("p", True), ("e", False)])

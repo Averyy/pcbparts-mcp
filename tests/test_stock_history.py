@@ -4,6 +4,7 @@ import gzip
 import json
 import runpy
 import sqlite3
+from contextlib import closing
 import sys
 import threading
 from datetime import date
@@ -67,7 +68,7 @@ def build_reader(tmp_path, events):
 async def test_c8314_real_march_observations(tmp_path, monkeypatch, real_history):
     # Replay an earlier slice of the real records: March is outside today's newest
     # 100 observations, and there is intentionally no date override in this API.
-    with sqlite3.connect(real_history.db_path) as conn:
+    with closing(sqlite3.connect(real_history.db_path)) as conn, conn:
         records = [{"l": "C8314", "d": day, "s": stock, "e": kind}
                    for day, stock, kind in conn.execute(
                        "SELECT date, stock, event_type FROM stock_events "
@@ -182,7 +183,7 @@ async def test_real_events_are_capped_newest_first(tool_history):
     reply = await server.jlc_stock_history("C8314", 366)
     assert len(reply["events"]) == 100
     assert reply["more_events"] is True
-    with sqlite3.connect(tool_history.db_path) as conn:
+    with closing(sqlite3.connect(tool_history.db_path)) as conn, conn:
         expected = conn.execute(
             "SELECT date, event_type, stock FROM stock_events WHERE lcsc='C8314' "
             "ORDER BY date DESC, event_type DESC LIMIT 100").fetchall()
@@ -227,7 +228,7 @@ def test_before_values_only_when_recorded(tmp_path):
 
 def test_legacy_database_without_before_column(tmp_path):
     path = tmp_path / "legacy.db"
-    with sqlite3.connect(path) as conn:
+    with closing(sqlite3.connect(path)) as conn, conn:
         conn.execute("CREATE TABLE stock_events (lcsc TEXT, date TEXT, stock INTEGER, event_type TEXT)")
         conn.execute("INSERT INTO stock_events VALUES ('C1','2026-03-13',280,'change')")
     reader = StockHistoryDatabase(path)
@@ -265,7 +266,10 @@ def test_config_respects_data_dir_and_override(tmp_path, monkeypatch):
     assert config["STOCK_HISTORY_DB_PATH"] == tmp_path / "override.db"
 
 
-@pytest.mark.parametrize("code", ["C" + "1" * 1_000_000, "C" + "1" * 13, "C\u0661\u0662"])
+# Short ids: pytest puts the test id in the PYTEST_CURRENT_TEST environment variable, and
+# Windows refuses values over 32,767 characters.
+@pytest.mark.parametrize("code", ["C" + "1" * 1_000_000, "C" + "1" * 13, "C\u0661\u0662"],
+                         ids=["million-digits", "13-digits", "arabic-indic-digits"])
 async def test_overlong_or_non_ascii_codes_are_refused_without_echo(tool_history, code):
     """0.9.0 limits check: "C" plus a million digits was accepted and echoed in a 1 MB reply."""
     reply = await server.jlc_stock_history(code)
