@@ -10,6 +10,9 @@ STOCK_HISTORY_DB_PATH = Path(os.getenv("JLCPCB_HISTORY_DB_PATH", str(
 )))
 
 # Server settings
+# Bind address for uvicorn. Set 127.0.0.1 or ::1 for localhost only, :: for every IPv6
+# interface, or a specific IPv4/IPv6 address.
+HTTP_HOST = os.getenv("HTTP_HOST", "0.0.0.0")
 HTTP_PORT = int(os.getenv("HTTP_PORT", "8080"))
 RATE_LIMIT_REQUESTS = int(os.getenv("RATE_LIMIT_REQUESTS", "100"))
 
