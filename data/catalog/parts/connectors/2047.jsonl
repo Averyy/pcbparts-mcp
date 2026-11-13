@@ -24,7 +24,6 @@
 {"l":"C5171742","m":"3-1105050-1","f":"TE Connectivity","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0}
 {"l":"C5172242","m":"2-5331677-2","f":"TE Connectivity","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0}
 {"l":"C5336409","m":"09330006214","f":"Harting Tech","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0}
-{"l":"C5357045","m":"09691827420","f":"Harting Tech","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0}
 {"l":"C5399843","m":"8638PPS2005LF","f":"Amphenol ICC","p":"Plugin","t":"e","c":2047,"d":"插件 Pin / Jack ROHS","a":[],"x":0,"n":1}
 {"l":"C5401895","m":"8638PSS2005LF","f":"Amphenol ICC","p":"Plugin","t":"e","c":2047,"d":"插件 Pin / Jack ROHS","a":[],"x":0,"n":1}
 {"l":"C5402275","m":"8638PSS1505LF","f":"Amphenol ICC","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0,"n":1}
@@ -39,6 +38,7 @@
 {"l":"C6370158","m":"2032631234","f":"MOLEX","p":"-","t":"e","c":2047,"d":"Silver - Pin / Jack ROHS","a":[["Contact Plating","Silver"]],"x":0}
 {"l":"C6466845","m":"AT62-210-1231-1820","f":"Amphenol ICC","p":"-","t":"e","c":2047,"d":"Gold - Pin / Jack ROHS","a":[["Contact Plating","Gold"]],"x":0}
 {"l":"C6993683","m":"MS14M23F","f":"Amphenol ICC","p":"-","t":"e","c":2047,"d":"14~26 Copper alloy Gold - Pin / Jack ROHS","a":[["Contact Plating","Gold"],["Contact Material","Copper alloy"],["Wire Gauge - AWG","14~26"]],"x":0}
+{"l":"C7500513","m":"284697-E","f":"TE Connectivity","p":"SMD,P=1.27mm","t":"e","c":2047,"d":"SMD,P=1.27mm Pin / Jack ROHS","a":[],"x":0}
 {"l":"C17180131","m":"M39029/57-358","f":"Amphenol ICC","p":"-","t":"e","c":2047,"d":"16~20 Gold - Pin / Jack ROHS","a":[["Contact Plating","Gold"],["Wire Gauge - AWG","16~20"]],"x":0}
 {"l":"C17208330","m":"M39029/4-110","f":"Amphenol ICC","p":"-","t":"e","c":2047,"d":"0.2~0.6 20~24 Gold - Pin / Jack ROHS","a":[["Contact Plating","Gold"],["Wire Gauge - mm2","0.2~0.6"],["Wire Gauge - AWG","20~24"]],"x":0}
 {"l":"C17240026","m":"60.205.11","f":"TE Connectivity","p":"-","t":"e","c":2047,"d":"Brass Gold - Pin / Jack ROHS","a":[["Contact Plating","Gold"],["Contact Material","Brass"]],"x":0}

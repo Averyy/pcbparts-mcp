@@ -17,6 +17,7 @@
 {"l":"C17595535","m":"EV-VNH7040AY","f":"STMicroelectronics","p":"-","t":"e","c":3222,"d":"Power Management - Modules ROHS","a":[["Type","Power Management"],["Features","-"]],"x":0}
 {"l":"C22414744","m":"THJP0603AST1","f":"Vishay Intertech","p":"-","t":"e","c":3222,"d":"- Modules ROHS","a":[["Operating Temperature","-65℃~+150℃"],["Features","-"]],"x":0,"n":1}
 {"l":"C22462519","m":"WT8002","f":"WT(Guangzhou Wei Chuang Elec)","p":"-","t":"e","c":3222,"d":"- Modules ROHS","a":[],"x":0,"n":1}
+{"l":"C46034082","m":"Hi3516CV610-20S","f":"HISILICON","p":"QFN-88_9x9mm","t":"e","c":3222,"d":"QFN-88_9x9mm Modules ROHS","a":[],"x":2,"n":1}
 {"l":"C49270384","m":"TDSEMIC-557A","f":"TDSEMIC","p":"-","t":"e","c":3222,"d":"- Modules ROHS","a":[["Operating Temperature","-40℃~+120℃"],["Type","Temperature control module"],["Voltage - Supply","12V"],["Features","-"]],"x":0}
 {"l":"C49270386","m":"TDSEMIC-803A","f":"TDSEMIC","p":"-","t":"e","c":3222,"d":"- Modules ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Type","Relay module"],["Voltage - Supply","5V"],["Features","-"]],"x":0}
 {"l":"C54831082","m":"KTH7112_EVB_PCBA","f":"CONNTEK","p":"-","t":"e","c":3222,"d":"- Modules ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Voltage - Supply","5V"],["Interface","SPI"]],"x":0,"n":1}
