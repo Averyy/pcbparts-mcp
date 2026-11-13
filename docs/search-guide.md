@@ -6,7 +6,7 @@ How `jlc_search` reads a query, the spec filter syntax, package matching, sortin
 
 A query like `100nF 25V X7R 0402` becomes filters: the capacitance, a voltage rating of at least 25V, the dielectric and the package. Words that aren't values or package names search the part text.
 
-**Values and units.** `u`, `µ` and `μ` all mean micro, and `Ω` is optional: `2.2µF`, `10 kΩ`, `4u7` (4.7uF, or 4.7uH in an inductor query), `6V3` (6.3V). Resistance prefixes keep their case: `10M` and `10Meg` are megaohms, `10m` and `10 milliohm` are milliohms. Package `1005` is metric for imperial `0402`.
+**Values and units.** `u`, `µ` and `μ` all mean micro, and `Ω` is optional: `2.2µF`, `10 kΩ`, `4u7` (4.7uF, or 4.7uH in an inductor query), `6V3` (6.3V). Resistance prefixes keep their case: `10M` and `10Meg` are megaohms, `10m` and `10 milliohm` are milliohms. A value has at most 4 significant digits before a one-letter unit (`1000R`, `4R75`, `4k7`); a longer run is a part number that ends in that letter, so `9774025151R` searches for that Würth spacer rather than a 9.77 GΩ resistor. Package `1005` is metric for imperial `0402`.
 
 **Comparisons in the text.** `Iq < 10uA`, `Vf < 0.3V` and `quiescent current < 10µA` keep their quantity and operator. A sign before a bare value applies to the part's main rating: `10uF capacitor < 25V` means a voltage rating under 25V.
 

@@ -6,8 +6,9 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 
 ## 0.9.1 (2026-11-13)
 
-Self-hosting only: no tool, argument or reply changes.
+Changed replies: `jlc_search` for part numbers that end in R, k or M. Self-hosters: a new `HTTP_HOST` setting.
 
+- A part number that ends in a unit letter is searched as a part number. `jlc_search("9774025151R")` read the Würth spacer's number as a 9.77 GΩ resistance, searched chip resistors and found nothing; with `strict=true` it returned an error. A value now has at most 4 significant digits before a one-letter unit (`1000R`, `4R75` and `4k7` are unchanged, and spelled-out units such as `12345 ohm` are always a resistance). The search finds C7496631.
 - The new `HTTP_HOST` setting chooses the address the server listens on: `127.0.0.1` or `::1` keeps it on this machine, `::` listens on every IPv6 interface, and a specific address listens only there. The default stays `0.0.0.0`, every IPv4 interface, which also lets other machines on the network connect to a server run from source. An empty value counts as unset. In Docker keep `0.0.0.0`: `docker-compose.yml` already publishes the port on 127.0.0.1 only. Contributed by @plaes in #23.
 
 ## 0.9.0 (2026-11-12)

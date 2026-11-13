@@ -64,6 +64,13 @@ _POSITION = re.compile(r'\b(\d+)\s*-?\s*(?:pos(?:ition)?|way|P)\b', re.IGNORECAS
 _PIN_STRUCTURE = re.compile(r'\b([12])\s*[xX]\s*(\d+)\b')
 
 
+def value_digits(*digit_runs: str) -> bool:
+    """Whole-number digits a value could be written with: at most 4 significant digits (E-series
+    resistors have 3; 1000R and 4R75 have 1 and 3). A longer run before a letter is a part number
+    ending in that letter, such as Wurth's 9774025151R spacer, not a 9.77 GOhm resistor."""
+    return len("".join(digit_runs).strip("0")) <= 4
+
+
 def _parse_resistance_value(match: re.Match) -> tuple[float, str]:
     """Parse resistance match to (ohms, normalized_string)."""
     groups = match.groups()
@@ -145,6 +152,8 @@ def extract_values(query: str, *, connector_context: bool = False) -> tuple[list
 
     # Resistance (European notation first)
     for match in _RES_EURO.finditer(query):
+        if not value_digits(match.group(1), match.group(3)):
+            continue
         ohms, norm = _parse_resistance_value(match)
         extractions.append((match.start(), match.end(), ExtractedValue(
             raw=match.group(0),
@@ -157,6 +166,9 @@ def extract_values(query: str, *, connector_context: bool = False) -> tuple[list
     for match in _RES_STD.finditer(query):
         # Skip if already matched by European pattern
         if any(s <= match.start() < e for s, e, _ in extractions):
+            continue
+        # Only a bare letter is ambiguous: "ohm", "kohm" and "meg" spelled out mean a resistance
+        if len(match.group(2)) == 1 and "." not in match.group(1) and not value_digits(match.group(1)):
             continue
         ohms, norm = _parse_resistance_value(match)
         extractions.append((match.start(), match.end(), ExtractedValue(
