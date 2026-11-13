@@ -79,6 +79,7 @@ COPY --chown=appuser:appuser data/design-rules/rules/ /app/data/design-rules/rul
 # Add src to Python path
 ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1
+ENV HTTP_HOST=0.0.0.0
 ENV HTTP_PORT=8080
 ENV RATE_LIMIT_REQUESTS=100
 

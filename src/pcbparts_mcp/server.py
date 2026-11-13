@@ -29,7 +29,7 @@ from starlette.routing import Route
 from . import __version__, stats
 from .cache import DailyQuota, QuotaStore
 from .config import (
-    RATE_LIMIT_REQUESTS, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
+    RATE_LIMIT_REQUESTS, HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
     DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
@@ -2856,7 +2856,7 @@ def main():
 
     uvicorn.run(
         "pcbparts_mcp.server:app",
-        host="0.0.0.0",
+        host=HTTP_HOST,
         port=HTTP_PORT,
         lifespan="on",
     )
