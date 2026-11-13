@@ -128,7 +128,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 git clone --depth 1 https://github.com/Averyy/pcbparts-mcp  # current files only (~80 MB; full history ~7 GB)
 cd pcbparts-mcp
 uv venv && uv pip install -e .
-uv run python -m pcbparts_mcp.server  # NOTE: By default binds to 0.0.0.0, override via HTTP_HOST variable
+uv run python -m pcbparts_mcp.server  # http://localhost:8080/mcp; listens on all interfaces, HTTP_HOST=127.0.0.1 for this machine only
 ```
 
 Or with Docker (needs BuildKit, the default since Docker 23). `docker-compose.yml` joins an external network named `web`, so create it first:
@@ -152,7 +152,7 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `MOUSER_API_KEY` | — | Enables `mouser_get_part` |
 | `DIGIKEY_CLIENT_ID`, `DIGIKEY_CLIENT_SECRET` | — | Enable `digikey_get_part` |
 | `CSEARCH_USER`, `CSEARCH_PASS` | — | SamacSys login for `cse_get_kicad` |
-| `HTTP_HOST` | `0.0.0.0` | Bind address: `127.0.0.1` or `::1` for localhost only, `::` for every IPv6 interface, or a specific IPv4 or IPv6 address |
+| `HTTP_HOST` | `0.0.0.0` | Bind address: `127.0.0.1` or `::1` for localhost only, `::` for every IPv6 interface, or a specific IPv4 or IPv6 address. In Docker keep `0.0.0.0`: `docker-compose.yml` already publishes the port on 127.0.0.1 only, and a localhost bind inside the container can't be reached from outside it |
 | `HTTP_PORT` | `8080` | Server port |
 | `RATE_LIMIT_REQUESTS` | `100` | Requests per minute per IP |
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Comma-separated Host headers to accept (DNS-rebinding protection; localhost always works) |

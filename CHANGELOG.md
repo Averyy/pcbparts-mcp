@@ -4,6 +4,12 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.9.1 (2026-11-13)
+
+Self-hosting only: no tool, argument or reply changes.
+
+- The new `HTTP_HOST` setting chooses the address the server listens on: `127.0.0.1` or `::1` keeps it on this machine, `::` listens on every IPv6 interface, and a specific address listens only there. The default stays `0.0.0.0`, every IPv4 interface, which also lets other machines on the network connect to a server run from source. An empty value counts as unset. In Docker keep `0.0.0.0`: `docker-compose.yml` already publishes the port on 127.0.0.1 only. Contributed by @plaes in #23.
+
 ## 0.9.0 (2026-11-12)
 
 Changed replies: `sensor_recommend` (every record re-checked: voltages against makers' datasheets, descriptions, identities, measures), `get_design_rules` (33 files audited, 5 new topics), `board_get` data on 295 boards, `board_search` ranking and tags, `jlc_get_pinout` on some multi-unit symbols, `jlc_find_alternatives` with `library_type` and `has_easyeda_footprint`, `cse_search` and `cse_get_kicad`, and holder searches. Snapshot prices in `jlc_search` and `jlc_get_part(mpn=...)` are refreshed weekly, given as `prices_as_of`. New tool: `jlc_stock_history`. `/mcp/stats` gains fields. Self-hosters building from source: the catalog moved to `data/catalog/`.
