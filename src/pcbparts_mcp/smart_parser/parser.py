@@ -8,7 +8,7 @@ from ..search.spec_filter import BatterySizeFilter, ConnectorFilter, FuseFilter,
 from ..search.spec_sort import SpecSort, extract_sort_phrase
 from ..subcategory_aliases import BATTERY_HOLDER_SUBCATEGORIES, _BATTERY_HOLDER_WORDS, _POWER_MUX_WORDS, SUBCATEGORY_GROUPS
 from .packages import extract_package, extract_package_choices
-from .values import ExtractedValue, extract_values, normalize_value_notation
+from .values import ExtractedValue, extract_values, normalize_value_notation, value_digits
 from .models import extract_model_number
 from .types import PD_ROLE_PATTERN, SCHMITT_KEYWORDS, extract_component_type, extract_mounting_type
 from .semantic import (
@@ -684,10 +684,14 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
     remaining = re.sub(r'(?<!\S)/+(?!\S)', ' ', remaining)  # Slashes left from "20V/4.2A/52mohm"
     remaining = re.sub(r'\s+', ' ', remaining).strip()
 
-    unsupported = re.findall(
-        r"\b\d+(?:\.\d+)?(?:[a-zA-Z]+|\s+(?:[a-zA-Z]*[FHAVW]|[a-zA-Z]*ohm))\b",
-        remaining,
-    )
+    unsupported = [
+        token for token in re.findall(
+            r"\b\d+(?:\.\d+)?(?:[a-zA-Z]+|\s+(?:[a-zA-Z]*[FHAVW]|[a-zA-Z]*ohm))\b",
+            remaining,
+        )
+        # A digit run too long for a value is a part number searched as text (9774025151R)
+        if not ((digits := re.fullmatch(r"(\d+)[a-zA-Z]+", token)) and not value_digits(digits.group(1)))
+    ]
     if unsupported and not model:
         detected.setdefault("unsupported_constraints", []).extend(unsupported)
 

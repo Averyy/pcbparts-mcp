@@ -165,7 +165,7 @@ Reply: `{content, matched_files, topic}`, with `note` on text-fallback matches. 
 
 ## How jlc_search reads a query
 
-- Units: `u`/`µ`/`μ` mean micro, `4u7` is 4.7uF (4.7uH for inductors), `6V3` is 6.3V. `10M`/`10Meg` are megaohms, `10m` milliohms. Package `1005` is `0402`.
+- Units: `u`/`µ`/`μ` mean micro, `4u7` is 4.7uF (4.7uH for inductors), `6V3` is 6.3V. `10M`/`10Meg` are megaohms, `10m` milliohms. A value has at most 4 significant digits before a unit letter (`1000R`, `4R75`); a longer run such as `9774025151R` is searched as a part number. Package `1005` is `0402`.
 - A value goes to the spec the part type lists: `5V relay` is the coil voltage, `3.3V LDO` the output, `12V buck` an output range covering 12V, `3.3V level shifter` a supply range covering it, `24V input 3.3V output` both sides of a regulator. A current under 1mA in an LDO/DC-DC query is the quiescent current. A resistance with an ohm unit on MOSFETs, load switches or inductors is a maximum RDS(on) or DCR. If the part type doesn't list the spec, the value is left out and `parsed.adjusted_filters` says so.
 - In a MOSFET query, a voltage next to `logic level`, `GPIO` or `MCU` (up to 5V) or `gate`/`Vgs` (up to 20V) is the gate drive; parts with RDS(on) listed at or below it rank first.
 - Comparisons in the text keep their operator: `Iq < 10uA`, `Vf < 0.3V`. A sign before a bare value applies to the main rating (`10uF capacitor < 25V`).
