@@ -1519,11 +1519,6 @@
     "category_id": 10,
     "category_name": "Audio Products / Vibration Motors"
   },
-  "1528": {
-    "name": "Aluminosilicate insulation board",
-    "category_id": 62,
-    "category_name": "Building materials / Building hardware"
-  },
   "1582": {
     "name": "Decorative panel",
     "category_id": 62,
@@ -3254,11 +3249,6 @@
     "category_id": 26,
     "category_name": "Instrumentation and meters"
   },
-  "241": {
-    "name": "Labor protective gloves",
-    "category_id": 42,
-    "category_name": "Labor protection supplies"
-  },
   "3688": {
     "name": "Block",
     "category_id": 54,
@@ -3599,8 +3589,8 @@
     "category_id": 69,
     "category_name": "Motor Driver ICs"
   },
-  "3462": {
-    "name": "folding bed",
+  "3230": {
+    "name": "Double-sided tape",
     "category_id": 49,
     "category_name": "Office Daily Use"
   },
@@ -3919,16 +3909,6 @@
     "category_id": 68,
     "category_name": "Power Modules"
   },
-  "3457": {
-    "name": "cable tray",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
-  "3551": {
-    "name": "Fire axe",
-    "category_id": 56,
-    "category_name": "Safety/fire protection"
-  },
   "2029": {
     "name": "SiC Diodes",
     "category_id": 66,
@@ -4151,11 +4131,6 @@
   },
   "1754": {
     "name": "Hex driver sleeve",
-    "category_id": 50,
-    "category_name": "Tool Equipment"
-  },
-  "1818": {
-    "name": "Pry bar",
     "category_id": 50,
     "category_name": "Tool Equipment"
   },

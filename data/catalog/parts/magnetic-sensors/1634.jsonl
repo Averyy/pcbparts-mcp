@@ -1143,3 +1143,20 @@
 {"l":"C56127443","m":"KTH2612B-TO3","f":"CONNTEK","p":"TO-92S","t":"e","c":1634,"d":"-40℃~+125℃ 1mT 2mT 3.5mA 3.8V~60V 3mT 45mA Open-drain Unipolar TO-92S Hall Switches ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Type","Unipolar"],["Release Points","2mT"],["Output Type","Open-drain"],["Voltage - Supply","3.8V~60V"],["Output Current","45mA"],["Operation Points","3mT"],["Operating Current","3.5mA"],["BHYS","1mT"]],"x":0,"n":1}
 {"l":"C56127444","m":"KTH2612B-ST3","f":"CONNTEK","p":"SOT-23-3L","t":"e","c":1634,"d":"-40℃~+125℃ 1mT 2mT 3.5mA 3.8V~60V 3mT 45mA Open-drain Unipolar SOT-23-3L Hall Switches ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Type","Unipolar"],["Release Points","2mT"],["Output Type","Open-drain"],["Voltage - Supply","3.8V~60V"],["Output Current","45mA"],["Operation Points","3mT"],["Operating Current","3.5mA"],["BHYS","1mT"]],"x":0,"n":1}
 {"l":"C56127445","m":"KTH2612B-SS3","f":"CONNTEK","p":"SOT-23","t":"e","c":1634,"d":"-40℃~+125℃ 1mT 2mT 3.5mA 3.8V~60V 3mT 45mA Open-drain Unipolar SOT-23 Hall Switches ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Type","Unipolar"],["Release Points","2mT"],["Output Type","Open-drain"],["Voltage - Supply","3.8V~60V"],["Output Current","45mA"],["Operation Points","3mT"],["Operating Current","3.5mA"],["BHYS","1mT"]],"x":0,"n":1}
+{"l":"C56360445","m":"H6527MI","f":"HXY MOSFET","p":"SOT-23-3L","t":"e","c":1634,"d":"SOT-23-3L Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360446","m":"H6043I","f":"HXY MOSFET","p":"SOT-23","t":"e","c":1634,"d":"SOT-23 Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360447","m":"H6044NS","f":"HXY MOSFET","p":"TO-92S","t":"e","c":1634,"d":"TO-92S Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360448","m":"H6046I","f":"HXY MOSFET","p":"SOT-23","t":"e","c":1634,"d":"SOT-23 Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360449","m":"H6050I","f":"HXY MOSFET","p":"SOT-23","t":"e","c":1634,"d":"SOT-23 Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360450","m":"A3212ELHLT-T-HXY","f":"HXY MOSFET","p":"SOT-23-3L","t":"e","c":1634,"d":"SOT-23-3L Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360451","m":"AH1912-W-7-HXY","f":"HXY MOSFET","p":"SOT-23-3L","t":"e","c":1634,"d":"SOT-23-3L Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360452","m":"AH180N-WG-7-HXY","f":"HXY MOSFET","p":"SOT-23-3L","t":"e","c":1634,"d":"SOT-23-3L Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360453","m":"AH1809-W-7-HXY","f":"HXY MOSFET","p":"SOT-23-3L","t":"e","c":1634,"d":"SOT-23-3L Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360454","m":"AH180-WG-7-HXY","f":"HXY MOSFET","p":"SOT-23-3L","t":"e","c":1634,"d":"SOT-23-3L Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360455","m":"DRV5032FALPG-HXY","f":"HXY MOSFET","p":"TO-92S","t":"e","c":1634,"d":"TO-92S Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360456","m":"DRV5032FALPGM-HXY","f":"HXY MOSFET","p":"T0-92S","t":"e","c":1634,"d":"T0-92S Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360457","m":"DRV5032FBLPG-HXY","f":"HXY MOSFET","p":"T0-92S","t":"e","c":1634,"d":"T0-92S Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360458","m":"DRV5032FBLPGM-HXY","f":"HXY MOSFET","p":"TO-92S","t":"e","c":1634,"d":"TO-92S Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360459","m":"SS360NT-HXY","f":"HXY MOSFET","p":"SOT-23-3L","t":"e","c":1634,"d":"SOT-23-3L Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360460","m":"SS460S-HXY","f":"HXY MOSFET","p":"TO-92S","t":"e","c":1634,"d":"TO-92S Hall Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56360461","m":"SM353LT-HXY","f":"HXY MOSFET","p":"SOT-23-3L","t":"e","c":1634,"d":"SOT-23-3L Hall Switches ROHS","a":[],"x":0,"n":1}
