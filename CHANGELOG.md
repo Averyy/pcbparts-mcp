@@ -4,6 +4,14 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.9.3 (2026-11-14)
+
+Changed replies: `digikey_get_part` finds part numbers several makers sell, adds a not-found hint, and gives the daily-limit reset time.
+
+- `digikey_get_part` now finds numbers several makers sell, including `LM358DR`, `NE555DR`, `BSS138` and `AO3400A`, which returned "Part not found". It returns one listing per maker, most stock first. Each lookup uses one DigiKey keyword search; the all-digit retry's second request is gone. DigiKey part numbers still select the packaging asked for.
+- A number with no exact match now has a `hint` suggesting the DigiKey part number (usually ending in `-ND`); a miss for a number already ending in `-ND` has no hint.
+- The DigiKey daily-limit error now gives the reset time without a request count, with the same self-hosting and `jlc_search` advice.
+
 ## 0.9.2 (2026-11-14)
 
 Changed replies: `jlc_search` for header lengths, queries with two mm lengths, and part numbers that start with digits.

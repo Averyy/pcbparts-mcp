@@ -40,8 +40,8 @@ _NOT_IN_APP_NAME = re.compile(r"[^A-Za-z0-9 ._()/+-]")  # app names are self-rep
 OUTCOMES = ("ok", "similar_only", "not_found", "bad_request", "rate_limited", "failed")
 TOOL_COUNTS = ("calls", *OUTCOMES, "ms")
 DISTRIBUTOR_EVENTS = ("sent", "cached", "rate_limited")
-# DigiKey only, and only once one has happened: an all-digit number missed the direct lookup and went on
-# to a keyword search, which found the part or didn't. That search is also counted in "sent".
+# Historical DigiKey counts from before 0.9.3: an all-digit number missed the direct lookup and
+# went on to a keyword search, which found the part or didn't. Also counted in "sent".
 DISTRIBUTOR_RETRY_EVENTS = ("retry_found", "retry_missed")
 # Why a call counted as not_found or failed: one label a call, so a tool's labels add up to its not_found +
 # failed. Only these can be stored, which keeps what users typed out of the counts and bounds the file.
@@ -291,7 +291,7 @@ class UsageStats:
                       "similar-parts-only replies as not found; historical counts have not been reclassified. reasons (from 0.9.0; "
                       "earlier days have none): for each tool, why calls came back not_found or failed, one fixed label a "
                       "call. why_empty: how the checks behind jlc_search's why_empty went (no_counterfactual: no library, "
-                      "package or stock limit to test). distributors retry_found and retry_missed: DigiKey all-digit "
+                      "package or stock limit to test). distributors retry_found and retry_missed: before 0.9.3, DigiKey all-digit "
                       "numbers that missed the direct lookup and went on to a keyword search, also counted in sent."),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {

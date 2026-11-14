@@ -3,6 +3,7 @@ TPS62130RGTR (prod, 2026-11-04) came back as the 3000-piece reel 296-37682-2-ND 
 3000 at $1.00, next to price $1.99, the cut tape's single-unit price."""
 
 import inspect
+import time
 
 import pytest
 
@@ -85,9 +86,11 @@ class TestPackaging:
 class TestClientPassesTheNumber:
     async def test_get_part(self):
         client = DigiKeyClient("id", "secret")
+        # A valid token, so the lookup never asks DigiKey for one (no network in unit tests)
+        client._apps[0].access_token, client._apps[0].token_expires_at = "tok", time.time() + 600
 
         async def fake_request(method, path, **kwargs):
-            return {"Product": PRODUCT}
+            return {"ExactMatches": [PRODUCT]}
 
         client._request = fake_request
         result = (await client.get_part("296-37682-2-ND"))["results"][0]

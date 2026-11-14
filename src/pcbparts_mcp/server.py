@@ -27,10 +27,11 @@ from starlette.responses import JSONResponse, RedirectResponse
 from starlette.routing import Route
 
 from . import __version__, stats
-from .cache import DailyQuota, QuotaStore
+from .cache import DailyQuota, QuotaPool, QuotaStore
 from .config import (
     RATE_LIMIT_REQUESTS, HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
+    DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2,
     DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
@@ -66,7 +67,7 @@ _mouser_client: MouserClient | None = None
 _digikey_client: DigiKeyClient | None = None
 _cse_client: CSEClient | None = None
 _categories: list[dict[str, Any]] = []  # Live category cache
-_distributor_quotas: dict[str, DailyQuota] = {}  # "mouser"/"digikey" when configured, for /health
+_distributor_quotas: dict[str, DailyQuota | QuotaPool] = {}  # "mouser"/"digikey" when configured, for /health
 _easyeda_seeded = 0  # rows in the seed table, counted at startup (components.db doesn't change)
 _easyeda_stored: tuple[float, int | None] = (float("-inf"), None)  # (time.monotonic(), store size)
 _cse_stored: tuple[float, dict[str, int] | None] = (float("-inf"), None)  # (time.monotonic(), store counts)
@@ -144,12 +145,22 @@ async def lifespan(app):
         logger.info(f"Mouser client initialized (requests today: {mouser_quota.status()['used_today']})")
 
     # Initialize DigiKey client if credentials are configured
+    second_app = None
+    if bool(DIGIKEY_CLIENT_ID_2) != bool(DIGIKEY_CLIENT_SECRET_2):
+        missing = "DIGIKEY_CLIENT_SECRET_2" if DIGIKEY_CLIENT_ID_2 else "DIGIKEY_CLIENT_ID_2"
+        logger.error(f"{missing} is missing; using only the first DigiKey app")
+    elif DIGIKEY_CLIENT_ID_2 and DIGIKEY_CLIENT_SECRET_2:
+        second_app = (DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2)
     if DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET:
-        digikey_quota = DailyQuota("DigiKey", DISTRIBUTOR_DAILY_LIMIT, store=quota_store, per_minute=DIGIKEY_PER_MINUTE,
-                                   own_key="DigiKey API credentials (free at https://developer.digikey.com)")
+        app_quotas = [DailyQuota("DigiKey", DISTRIBUTOR_DAILY_LIMIT, store=quota_store,
+                                store_key="DigiKey" if index == 0 else "DigiKey#2",
+                                own_key="DigiKey API credentials (free at https://developer.digikey.com)")
+                      for index in range(2 if second_app else 1)]
+        digikey_quota = QuotaPool(app_quotas, per_minute=DIGIKEY_PER_MINUTE)
         _distributor_quotas["digikey"] = digikey_quota
-        _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, quota=digikey_quota)
-        logger.info(f"DigiKey client initialized (requests today: {digikey_quota.status()['used_today']})")
+        _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, quota=digikey_quota, second_app=second_app)
+        counts = ", ".join(str(q.status()["used_today"]) for q in app_quotas)
+        logger.info(f"DigiKey client initialized: {len(app_quotas)} app(s) (requests today: {counts})")
 
     if _distributor_quotas:
         logger.info(f"Distributor request counts: {f'kept in {quota_store.path}' if quota_store else 'memory only'}")
@@ -2258,7 +2269,8 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None, footp
 def _redact(message: str, *secrets: str) -> str:
     """Distributor error text goes back to anonymous callers: blank out our credentials in case the
     API ever echoes them."""
-    for secret in secrets:
+    for secret in sorted(set(secrets) | {DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET,
+                                        DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2}, key=len, reverse=True):
         if secret:
             message = message.replace(secret, "[redacted]")
     return message
@@ -2297,10 +2309,11 @@ async def mouser_get_part(part_number: str) -> dict:
     try:
         return await _mouser_client.get_part(part_number, caller=_caller_ip())
     except (MouserError, MouserAPIError) as e:  # our own message or Mouser's
-        logger.error(f"Mouser part lookup failed: {type(e).__name__}: {e}")
-        return {"error": f"Mouser part lookup failed: {_redact(str(e), MOUSER_API_KEY)}"}
+        message = _redact(str(e), MOUSER_API_KEY)  # in the log as in the reply
+        logger.error(f"Mouser part lookup failed: {type(e).__name__}: {message}")
+        return {"error": f"Mouser part lookup failed: {message}"}
     except Exception as e:
-        logger.error(f"Mouser part lookup failed: {type(e).__name__}: {e}")
+        logger.error(f"Mouser part lookup failed: {type(e).__name__}: {_redact(str(e), MOUSER_API_KEY)}")
         return {"error": "Mouser part lookup failed. Check server logs for details."}
 
 
@@ -2320,12 +2333,11 @@ async def digikey_get_part(product_number: str) -> dict:
     Reply: part_number, price, price_breaks and min_qty are one packaging's (the DigiKey PN given,
     else the smallest order, usually cut tape; packaging names it); other_packaging lists the rest
     (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status.
+    A number several makers use returns each maker's listing, most stock first.
 
     Args:
         product_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a
-            partial one can find nothing and still uses a request. An all-digit MPN ("209") that
-            the lookup misses is tried by keyword (one more request) and can return several
-            makers' parts: check manufacturer.
+            partial one can find nothing and still uses a request. One keyword search per lookup.
     """
     if not _digikey_client:
         return {"error": "DigiKey API credentials not configured. Set DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET in environment."}
@@ -2335,10 +2347,11 @@ async def digikey_get_part(product_number: str) -> dict:
     try:
         return await _digikey_client.get_part(product_number, caller=_caller_ip())
     except DigiKeyError as e:  # our own message (HTTP status) or DigiKey's OAuth error
-        logger.error(f"DigiKey part lookup failed: {type(e).__name__}: {e}")
-        return {"error": f"DigiKey part lookup failed: {_redact(str(e), DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET)}"}
+        message = _redact(str(e))  # every app's credentials, in the log as in the reply
+        logger.error(f"DigiKey part lookup failed: {type(e).__name__}: {message}")
+        return {"error": f"DigiKey part lookup failed: {message}"}
     except Exception as e:
-        logger.error(f"DigiKey part lookup failed: {type(e).__name__}: {e}")
+        logger.error(f"DigiKey part lookup failed: {type(e).__name__}: {_redact(str(e))}")
         return {"error": "DigiKey part lookup failed. Check server logs for details."}
 
 

@@ -118,7 +118,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 - `jlc_search` covers parts with at least 10 in stock, from a snapshot taken daily (`data_as_of` in each reply). Its prices are refreshed weekly (`prices_as_of`). `jlc_get_part(lcsc=...)` and `jlc_stock_check` are live, and `jlc_stock_check` also reaches the rest of JLCPCB's 7M+ part catalog.
 - For Economic assembly, **basic** and **preferred** parts avoid the extended-type loading fee. Alternatives savings use a rounded legacy **$3 estimate** per extended type, not a current quote; Standard assembly fees differ. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
 - Spec figures are JLCPCB's listings, and alternatives are checked against the catalog. Check the datasheet and pinout before you order.
-- On pcbparts.dev, all users share one Mouser key and one DigiKey app: 1,000 requests a day each. Self-host with your own keys to get your own limits.
+- The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev. Self-host with your own keys to get your own limits.
 
 [docs/search-guide.md](docs/search-guide.md) covers how queries are read, spec filter syntax, package matching, sorting and the alternatives rules.
 
@@ -169,7 +169,7 @@ These four cache and statistics paths are unset outside Docker, which keeps that
 - **Endpoint:** `https://pcbparts.dev/mcp`, Streamable HTTP (stateless), no auth
 - **Rate limit:** 100 requests a minute per IP
 - **Health:** `https://pcbparts.dev/health` (version, cache sizes, each distributor's requests today)
-- **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups (including DigiKey's keyword retries found and missed), and why calls found nothing or failed: one label a call from a fixed list (`reasons`), plus how the checks behind an empty search went (`why_empty`). No IPs, queries or part numbers are kept.
+- **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups (including historical DigiKey keyword retries from before 0.9.3), and why calls found nothing or failed: one label a call from a fixed list (`reasons`), plus how the checks behind an empty search went (`why_empty`). No IPs, queries or part numbers are kept.
 
 ## More
 

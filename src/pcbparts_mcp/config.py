@@ -122,6 +122,8 @@ MOUSER_CACHE_TTL = 3600
 # DigiKey API
 DIGIKEY_CLIENT_ID = os.getenv("DIGIKEY_CLIENT_ID", "")
 DIGIKEY_CLIENT_SECRET = os.getenv("DIGIKEY_CLIENT_SECRET", "")
+DIGIKEY_CLIENT_ID_2 = os.getenv("DIGIKEY_CLIENT_ID_2", "")
+DIGIKEY_CLIENT_SECRET_2 = os.getenv("DIGIKEY_CLIENT_SECRET_2", "")
 DIGIKEY_BASE_URL = "https://api.digikey.com/products/v4"
 DIGIKEY_TOKEN_URL = "https://api.digikey.com/v1/oauth2/token"
 DIGIKEY_CACHE_TTL = 3600

@@ -20,7 +20,7 @@ from pcbparts_mcp.stats import KEEP_DAYS, MAX_APPS, PUBLIC_DAYS, UsageStats
 UTC = datetime.timezone.utc
 NOW = datetime.datetime(2026, 10, 17, 21, 15, tzinfo=UTC).timestamp()
 
-PRODUCT = {"Product": {"ManufacturerProductNumber": "LM358P", "ProductVariations": [], "Parameters": []}}
+PRODUCT = {"ExactMatches": [{"ManufacturerProductNumber": "LM358P", "ProductVariations": [], "Parameters": []}]}
 
 
 class Clock:
@@ -58,22 +58,50 @@ class TestPacer:
 
         async def sleep(seconds):
             slept.append(round(seconds, 6))
+            clock.advance(seconds)
 
         pacer = Pacer(5, clock=clock, sleep=sleep)
         for _ in range(3):
             await pacer.wait()
-        assert slept == [0.2, 0.4]  # the first goes at once, then one every 0.2 s
+        assert slept == [0.2, 0.2]  # the first goes at once, then one every 0.2 s
 
-    async def test_concurrent_callers_get_distinct_slots(self):
-        clock, slept = Clock(), []
+    async def test_concurrent_callers_leave_one_interval_apart(self):
+        clock, slept, left = Clock(), [], []
 
         async def sleep(seconds):
             slept.append(round(seconds, 6))
+            clock.advance(seconds)
             await asyncio.sleep(0)  # let the others in while this one waits
 
         pacer = Pacer(5, clock=clock, sleep=sleep)
-        await asyncio.gather(*(pacer.wait() for _ in range(4)))
-        assert sorted(slept) == [0.2, 0.4, 0.6]
+
+        async def go():
+            await pacer.wait()
+            left.append(clock())
+
+        await asyncio.gather(*(go() for _ in range(4)))
+        assert slept == [0.2, 0.2, 0.2]
+        assert [round(b - a, 6) for a, b in zip(left, left[1:])] == [0.2, 0.2, 0.2]
+
+    async def test_a_stall_does_not_release_a_burst(self):
+        # Review finding: booked slots all fell due together after an event-loop stall. Spacing
+        # now counts from when the previous caller actually left.
+        clock, left, stalled = Clock(), [], []
+
+        async def sleep(seconds):
+            clock.advance(seconds if stalled else 5)  # the first sleep stalls for 5 s
+            stalled.append(True)
+            await asyncio.sleep(0)
+
+        pacer = Pacer(5, clock=clock, sleep=sleep)
+
+        async def go():
+            await pacer.wait()
+            left.append(clock())
+
+        await asyncio.gather(*(go() for _ in range(5)))
+        assert stalled and len(left) == 5
+        assert all(round(b - a, 6) >= 0.2 for a, b in zip(left, left[1:])), left
 
     async def test_no_wait_once_the_gap_has_passed(self):
         clock, slept = Clock(), []
@@ -92,6 +120,7 @@ class TestPacer:
 
         async def sleep(seconds):
             slept.append(round(seconds, 6))
+            clock.advance(seconds)
 
         fake = FakeDigiKey(*(httpx.Response(200, json=PRODUCT) for _ in range(3)))
         client = digikey(fake)
@@ -99,7 +128,8 @@ class TestPacer:
         for number in ("A1", "A2", "A3"):
             await client.get_part(number)
         assert fake.product_requests == 3
-        assert slept == [0.2, 0.4]
+        # The token request goes first and takes a slot too; then each request waits 0.2 s
+        assert slept == [0.2, 0.2, 0.2]
 
 
 class TestDigiKeyNotFound:
@@ -108,15 +138,13 @@ class TestDigiKeyNotFound:
         fake = FakeDigiKey(httpx.Response(404, json={"title": "Not Found", "status": 404}))
         client = digikey(fake, quota)
         first = await client.get_part("LM358")
-        assert first == {"error": "Part not found: LM358"}
+        assert first == {"error": "Part not found: LM358", "hint": "DigiKey has no exact match for this number. If you have it, try the DigiKey part number (usually ending in -ND)."}
         assert await client.get_part(" LM358 ") == first
         assert fake.product_requests == 1  # the repeat cost no request
         assert quota.status()["used_today"] == 1
 
-    async def test_all_digit_miss_points_to_the_digikey_number(self):
-        # Keystone 209: not found by its MPN, found as 36-209-ND
-        fake = FakeDigiKey(httpx.Response(404, json={"title": "Not Found", "status": 404}),
-                           httpx.Response(200, json={"Products": [], "ExactMatches": []}))
+    async def test_mpn_miss_points_to_the_digikey_number(self):
+        fake = FakeDigiKey(httpx.Response(200, json={"Products": [], "ExactMatches": []}))
         first = await digikey(fake).get_part("209")
         assert first["error"] == "Part not found: 209"
         assert "-ND" in first["hint"]
@@ -131,7 +159,7 @@ class TestDigiKeyNotFound:
         assert 3590 < left["digikey:LM358P"] <= 3600
 
     async def test_empty_product_is_a_cached_not_found(self):
-        fake = FakeDigiKey(httpx.Response(200, json={"Product": {}}))
+        fake = FakeDigiKey(httpx.Response(200, json={"ExactMatches": []}))
         client = digikey(fake)
         assert (await client.get_part("XYZ"))["error"] == "Part not found: XYZ"
         assert (await client.get_part("XYZ"))["error"] == "Part not found: XYZ"
@@ -546,6 +574,7 @@ ERROR_REPLIES = {
     "Board retrieval failed": "failed",
     "{} daily quota exceeded ({} requests/day on this shared server). It resets at {}.{}": "rate_limited",
     "{} daily quota exceeded ({}). It resets at {}.{}": "rate_limited",
+    "{} daily quota exceeded on this shared server. It resets at {}.{}": "rate_limited",
     "{} daily quota exceeded (counted by {}). {} doesn't say when its count resets, so this server tries again at {}.{}": "rate_limited",
     "{} lookups are limited to {} a minute on this shared server. Try again in {} s.{}": "rate_limited",
     "{} is limiting requests per minute. Try again in {} s.{}": "rate_limited",

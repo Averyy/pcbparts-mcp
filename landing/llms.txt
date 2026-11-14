@@ -124,9 +124,9 @@ Reply: `{results, total}`, optional `not_found` listing unmatched inputs. Each r
 
 ### digikey_get_part
 
-`product_number` (required, max 500 characters): one DigiKey PN or full MPN per call (a partial number can find nothing and still uses a request; an all-digit MPN such as "209" that the lookup misses is tried by keyword search, costing one more request and possibly returning several makers' parts, so check `manufacturer`; `hint` is added if it's still not found). `part_number`, `price`, `price_breaks` and `min_qty` are one packaging's (the PN given, else the smallest order); `packaging` names it and `other_packaging` lists the rest. `lifecycle` is DigiKey's product status.
+`product_number` (required, max 500 characters): one DigiKey PN or full MPN per call (one keyword search per lookup; a partial number can find nothing and still uses a request; a miss includes a `hint` suggesting a DigiKey PN unless the input already ends in `-ND`). `part_number`, `price`, `price_breaks` and `min_qty` are one packaging's (the PN given, else the smallest order); `packaging` names it and `other_packaging` lists the rest. `lifecycle` is DigiKey's product status.
 
-Reply: `{results, total}`. Each result has the shared Mouser fields above except `unit_weight_g`; its `price_breaks` contain only `qty` and `price`, using the result's `currency`. Optional `packaging`, `other_packaging` (`part_number`, `packaging`, `min_qty`, `price`), and `reel_fee`/`marketplace` on the result or other packaging.
+Reply: `{results, total}`. A number several makers use returns each maker's listing, most stock first. Each result has the shared Mouser fields above except `unit_weight_g`; its `price_breaks` contain only `qty` and `price`, using the result's `currency`. Optional `packaging`, `other_packaging` (`part_number`, `packaging`, `min_qty`, `price`), and `reel_fee`/`marketplace` on the result or other packaging.
 
 ### cse_search, cse_get_kicad
 
@@ -188,4 +188,4 @@ Reply: `{content, matched_files, topic}`, with `note` on text-fallback matches. 
 
 ## Quotas
 
-Mouser and DigiKey share one key each across all pcbparts.dev users: 1,000 requests a day each (DigiKey's resets at 00:00 UTC), and at most 25 a minute for Mouser and 100 for DigiKey. Batch Mouser lookups, look up one DigiKey part at a time, and don't retry a quota error. Self-hosting with your own keys gives your own limits: https://github.com/Averyy/pcbparts-mcp#self-hosting
+The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev (DigiKey's resets at 00:00 UTC), with at most 25 requests a minute for Mouser and 100 for DigiKey. Batch Mouser lookups, look up one DigiKey part at a time, and don't retry a quota error. Self-hosting with your own keys gives your own limits: https://github.com/Averyy/pcbparts-mcp#self-hosting
