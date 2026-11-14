@@ -34,7 +34,7 @@ DAILY_429_BODY = {
     "detail": "Daily Ratelimit exceeded. Please try again after the number of seconds in the Retry-After header",
 }
 PRODUCT = {
-    "Product": {
+    "ExactMatches": [{
         "Description": {"ProductDescription": "Test"},
         "Manufacturer": {"Name": "Test"},
         "ManufacturerProductNumber": "TEST123",
@@ -44,7 +44,7 @@ PRODUCT = {
         "Classifications": {},
         "ProductVariations": [],
         "Parameters": [],
-    },
+    }],
 }
 
 
@@ -210,7 +210,7 @@ class TestDigiKeyLimits:
         fake = FakeDigiKey(httpx.Response(429, json=DAILY_429_BODY, headers=DAILY_429_HEADERS))
         client = digikey(fake, q)
         first = await client.get_part("LM358P")
-        assert "DigiKey daily quota exceeded (1000 requests/day, counted by DigiKey)" in first["error"]
+        assert first["error"].startswith("DigiKey daily quota exceeded on this shared server.")
         assert "2026-10-17 00:00 UTC" in first["error"]
         assert await client.get_part("NE555P") == first
         assert fake.product_requests == 1  # nothing sent while paused

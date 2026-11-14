@@ -492,7 +492,7 @@ class TestDigiKeyClient:
         detail_resp = MagicMock()
         detail_resp.status_code = 200
         detail_resp.json.return_value = {
-            "Product": {
+            "ExactMatches": [{
                 "Description": {"ProductDescription": "Test"},
                 "Manufacturer": {"Name": "Test"},
                 "ManufacturerProductNumber": "TEST123",
@@ -502,7 +502,7 @@ class TestDigiKeyClient:
                 "Classifications": {},
                 "ProductVariations": [],
                 "Parameters": [],
-            },
+            }],
         }
         detail_resp.raise_for_status = MagicMock()
 
@@ -518,19 +518,19 @@ class TestDigiKeyClient:
             with patch.object(client._http, "request", side_effect=mock_request):
                 await client.get_part("TEST123")
 
-        assert client._access_token == "test-token-123"
+        assert client._apps[0].access_token == "test-token-123"
 
     @pytest.mark.asyncio
     async def test_token_reuse(self, client):
         """Token is reused when still valid."""
         # Pre-set a valid token
-        client._access_token = "existing-token"
-        client._token_expires_at = time.time() + 500
+        client._apps[0].access_token = "existing-token"
+        client._apps[0].token_expires_at = time.time() + 500
 
         detail_resp = MagicMock()
         detail_resp.status_code = 200
         detail_resp.json.return_value = {
-            "Product": {
+            "ExactMatches": [{
                 "Description": {"ProductDescription": "Test"},
                 "Manufacturer": {"Name": "Test"},
                 "ManufacturerProductNumber": "REUSE123",
@@ -540,7 +540,7 @@ class TestDigiKeyClient:
                 "Classifications": {},
                 "ProductVariations": [],
                 "Parameters": [],
-            },
+            }],
         }
         detail_resp.raise_for_status = MagicMock()
 
@@ -548,17 +548,17 @@ class TestDigiKeyClient:
             await client.get_part("REUSE123")
 
         # Token should not have changed
-        assert client._access_token == "existing-token"
+        assert client._apps[0].access_token == "existing-token"
 
     @pytest.mark.asyncio
     async def test_get_part(self, client):
-        client._access_token = "token"
-        client._token_expires_at = time.time() + 500
+        client._apps[0].access_token = "token"
+        client._apps[0].token_expires_at = time.time() + 500
 
         detail_resp = MagicMock()
         detail_resp.status_code = 200
         detail_resp.json.return_value = {
-            "Product": {
+            "ExactMatches": [{
                 "Description": {"ProductDescription": "Dual Op Amp"},
                 "Manufacturer": {"Name": "TI"},
                 "ManufacturerProductNumber": "LM358P",
@@ -572,7 +572,7 @@ class TestDigiKeyClient:
                 "Parameters": [
                     {"ParameterId": 1, "ParameterText": "Type", "ValueText": "General Purpose"},
                 ],
-            },
+            }],
         }
         detail_resp.raise_for_status = MagicMock()
 
@@ -586,12 +586,12 @@ class TestDigiKeyClient:
 
     @pytest.mark.asyncio
     async def test_get_part_not_found(self, client):
-        client._access_token = "token"
-        client._token_expires_at = time.time() + 500
+        client._apps[0].access_token = "token"
+        client._apps[0].token_expires_at = time.time() + 500
 
         detail_resp = MagicMock()
         detail_resp.status_code = 200
-        detail_resp.json.return_value = {"Product": {}}
+        detail_resp.json.return_value = {"ExactMatches": []}
         detail_resp.raise_for_status = MagicMock()
 
         with patch.object(client._http, "request", new_callable=AsyncMock, return_value=detail_resp):
@@ -601,13 +601,13 @@ class TestDigiKeyClient:
 
     @pytest.mark.asyncio
     async def test_cache_hit(self, client):
-        client._access_token = "token"
-        client._token_expires_at = time.time() + 500
+        client._apps[0].access_token = "token"
+        client._apps[0].token_expires_at = time.time() + 500
 
         detail_resp = MagicMock()
         detail_resp.status_code = 200
         detail_resp.json.return_value = {
-            "Product": {
+            "ExactMatches": [{
                 "Description": {"ProductDescription": "Test"},
                 "Manufacturer": {"Name": "Test"},
                 "ManufacturerProductNumber": "TEST123",
@@ -617,7 +617,7 @@ class TestDigiKeyClient:
                 "Classifications": {},
                 "ProductVariations": [],
                 "Parameters": [],
-            },
+            }],
         }
         detail_resp.raise_for_status = MagicMock()
 
@@ -630,8 +630,8 @@ class TestDigiKeyClient:
     @pytest.mark.asyncio
     async def test_token_expired_retry(self, client):
         """When API returns 401, token is refreshed and request retried."""
-        client._access_token = "expired-token"
-        client._token_expires_at = time.time() + 500
+        client._apps[0].access_token = "expired-token"
+        client._apps[0].token_expires_at = time.time() + 500
 
         # First response: 401, second: success
         resp_401 = MagicMock()
@@ -640,7 +640,7 @@ class TestDigiKeyClient:
         resp_ok = MagicMock()
         resp_ok.status_code = 200
         resp_ok.json.return_value = {
-            "Product": {
+            "ExactMatches": [{
                 "Description": {"ProductDescription": "Test"},
                 "Manufacturer": {"Name": "Test"},
                 "ManufacturerProductNumber": "RETRY123",
@@ -650,7 +650,7 @@ class TestDigiKeyClient:
                 "Classifications": {},
                 "ProductVariations": [],
                 "Parameters": [],
-            },
+            }],
         }
         resp_ok.raise_for_status = MagicMock()
 
@@ -674,7 +674,7 @@ class TestDigiKeyClient:
 
         assert result["total"] == 1
         # Token should be refreshed
-        assert client._access_token == "test-token-123"
+        assert client._apps[0].access_token == "test-token-123"
 
     @pytest.mark.asyncio
     async def test_oauth_error_response(self, client):

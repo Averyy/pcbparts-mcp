@@ -29,6 +29,6 @@ def _no_real_footprint_store(monkeypatch):
     monkeypatch.setattr(server, "CSE_STORE_PATH", "")
     monkeypatch.setattr(server, "DISTRIBUTOR_QUOTA_PATH", "")
     monkeypatch.setattr(server, "USAGE_STATS_PATH", "")
-    for name in ("MOUSER_API_KEY", "DIGIKEY_CLIENT_ID", "DIGIKEY_CLIENT_SECRET"):
+    for name in ("MOUSER_API_KEY", "DIGIKEY_CLIENT_ID", "DIGIKEY_CLIENT_SECRET", "DIGIKEY_CLIENT_ID_2", "DIGIKEY_CLIENT_SECRET_2"):
         monkeypatch.setattr(server, name, "")
     monkeypatch.setattr(stats, "usage", stats.UsageStats())
