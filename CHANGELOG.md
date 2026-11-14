@@ -4,6 +4,16 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.9.2 (2026-11-14)
+
+Changed replies: `jlc_search` for header lengths, queries with two mm lengths, and part numbers that start with digits.
+
+- A part number that starts with 7 or more digits (Würth `9774025151R` and `61300211121`, Amphenol `10118194-0001LF`) is a part number, searched on its own like `STM32F103C8T6`, with the query's other words in `parsed.detected.not_searched`. `9774025151R M2.5 spacer` had searched both words; the listing doesn't say M2.5, so nothing matched and the retry dropped the part number too, returning 534 unrelated standoffs. It now finds the spacer, and an unknown part number with a part type returns nothing rather than other parts. Whole numbers with a unit (`4700000 ohm`, `1000000uF`) are still values; packages and LCSC codes are unaffected.
+
+- Pin and female header searches take named lengths: `insulation height 5mm` (also body or plastic height), `mating pin length 6mm` and `tail length 3mm` filter those attributes, and `at least`, `over`, `under`, `at most` or a sign set the comparison. `pin header 1x16P 2.54mm insulation height 5mm` had read 5mm as a second pitch and found nothing.
+- A query searches one pitch. Every `N mm` reads as a pitch, and two different pitches can never both match, so `pin header 2.54mm 5mm` found nothing; now it searches 2.54mm and `parsed.detected.not_searched` says why 5mm was left out. With `strict=true` the second pitch is an unsupported constraint.
+- `Insulation Height`, `Length of Mating Pin` and `Length of End Connection Pin` are numeric, so `spec_filters` can use `>`, `<` and ranges on them (`Insulation Height > 2.5mm` was ignored). `=` on them allows 1%, as on Height and Diameter, so `= 5mm` also matches 5.04mm.
+
 ## 0.9.1 (2026-11-13)
 
 Changed replies: `jlc_search` for part numbers that end in R, k or M. Self-hosters: a new `HTTP_HOST` setting.

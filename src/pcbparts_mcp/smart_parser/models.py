@@ -2,6 +2,17 @@
 
 import re
 
+from .values import value_digits
+
+# Part numbers that start with digits: Wurth 9774025151R and 61300211121, Amphenol 10118194-0001LF,
+# Molex 5023320410. Seven or more digits, so packages (0402, 1206) and LCSC codes (C7496631) stay out;
+# then up to four letters and digits and hyphenated suffixes. Unmatched, "9774025151R M2.5 spacer"
+# searched both words, matched nothing (the listing has no M2.5) and dropped the part number.
+_DIGIT_FIRST_MODEL = re.compile(r"(?<![\w.-])(\d{7,}(?:[A-Z]{1,4}\d*)?(?:-[A-Z0-9]+)*)(?![\w.-])", re.IGNORECASE)
+# A unit after a space: "4700000 ohm" and "10000000 pF" are values
+_SPACED_UNIT = re.compile(r"\s+(?:[kmgu]?ohms?\b|meg\b|milliohm\b|[munp]?[fh]\b|[kmu]?[vaw]\b|[kmg]?hz\b|%|mm\b)",
+                          re.IGNORECASE)
+
 
 # Common model number patterns (component-specific part numbers)
 # Order matters! More specific patterns must come before generic ones.
@@ -65,5 +76,15 @@ def extract_model_number(query: str) -> tuple[str | None, str]:
                 # Not a package - this is a valid model number
                 remaining = query[:match.start()] + query[match.end():]
                 return model, remaining.strip()
+
+    for match in _DIGIT_FIRST_MODEL.finditer(query):
+        # A whole number with a unit is a value (1000000uF), whatever its length
+        value = re.fullmatch(r"(\d+)([A-Za-z]+)", match.group(1))
+        if value and value_digits(value.group(1)):
+            continue
+        if match.group(1).isdigit() and _SPACED_UNIT.match(query, match.end()):
+            continue
+        remaining = query[:match.start()] + query[match.end():]
+        return match.group(1), remaining.strip()
 
     return None, query
