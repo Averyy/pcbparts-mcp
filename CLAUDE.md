@@ -67,6 +67,8 @@ uv run pytest tests/ -v -m integration     # integration tests (hits live APIs)
 uv run pytest tests/ -v -m ""              # all tests
 ```
 
+**Tests must pass on the Windows CI runner too**, which local macOS runs don't cover; a branch CI run catches failures that happen every time, not flaky ones. So: no wall-clock timing in tests (inject a fake clock; Windows clocks tick every ~15.6 ms), `encoding="utf-8"` on text reads and non-ASCII writes, close SQLite connections before deleting their files, keep test ids short, and don't run `bash` from a test (it starts WSL). `tests/test_windows_safe.py` enforces the first two.
+
 ## Frontend & Design Work
 
 **Always use the `/frontend-design` skill** for any frontend or design tasks (landing page, UI components, styling). Read `docs/branding-style-guide.md` before making any visual changes — it defines the PCB-inspired design language, color palette, typography, and component patterns.

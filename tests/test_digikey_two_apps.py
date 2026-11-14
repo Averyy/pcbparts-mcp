@@ -172,7 +172,7 @@ def test_restart_keeps_both_counts_and_original_store_key(tmp_path, clock):
     restarted = pool(clock, limit=2, path=path)
     assert [q.status()["used_today"] for q in restarted.quotas] == [2, 1]
     assert restarted.acquire() == (1, None)
-    assert set(json.loads(path.read_text())) == {"DigiKey", "DigiKey#2"}
+    assert set(json.loads(path.read_text(encoding="utf-8"))) == {"DigiKey", "DigiKey#2"}
 
 
 @pytest.mark.parametrize("status,headers,wait,wording", [
@@ -426,14 +426,27 @@ async def test_lookup_queued_during_a_penalty_is_neither_sent_nor_counted(clock)
     assert digikey["sent"] == 1 and digikey["rate_limited"] == 1
 
 
+def paced_by(clock, per_second=10):
+    """A pacer on the test clock: its sleep advances that clock, so timing is exact and the same on
+    every OS (Windows clocks tick every ~15.6 ms, so wall-clock gaps flake). Exact because the
+    pacer lets one caller sleep at a time."""
+    async def sleep(seconds):
+        clock.advance(seconds)
+        await asyncio.sleep(0)
+    return Pacer(per_second, clock=clock, sleep=sleep)
+
+
+def gaps_of(times):
+    return [round(later - earlier, 6) for earlier, later in zip(times, times[1:])]  # float noise at ~1.8e9 s
+
+
 async def test_slow_quota_save_does_not_shorten_the_gap(clock, monkeypatch):
     # Review finding: the pacer counted the gap from when a lookup left the queue, before the
-    # synchronous quota save; a slow save let the next request go right after. Real timers.
-    import time as real_time
+    # synchronous quota save; a slow save let the next request go right after. Test clock.
     sent_at, stalls = [], []
 
     async def handler(request):
-        sent_at.append(real_time.monotonic())
+        sent_at.append(clock())
         return ok()
 
     original = DailyQuota._save
@@ -441,21 +454,20 @@ async def test_slow_quota_save_does_not_shorten_the_gap(clock, monkeypatch):
     def slow_save(self):
         if not stalls:
             stalls.append(True)
-            real_time.sleep(0.1)  # one blocking 100 ms write
+            clock.advance(0.2)  # one 200 ms write, longer than the 100 ms gap
         original(self)
 
     dk = DigiKeyClient(*CREDS[:2], quota=pool(clock), second_app=CREDS[2:])
     dk._http = httpx.AsyncClient(transport=httpx.MockTransport(handler))
     preset_tokens(dk)
-    dk._pacer = Pacer(20)  # 50 ms apart
+    dk._pacer = paced_by(clock)
     monkeypatch.setattr(DailyQuota, "_save", slow_save)
     try:
         await asyncio.gather(*(dk.get_part(f"P{i}") for i in range(4)))
     finally:
         await dk.close()
     assert stalls and len(sent_at) == 4
-    gaps = [later - earlier for earlier, later in zip(sent_at, sent_at[1:])]
-    assert min(gaps) >= 0.045, gaps
+    assert min(gaps_of(sent_at)) >= 0.1, gaps_of(sent_at)
 
 
 async def test_token_daily_limit_on_first_app_moves_lookup_to_second(clock):
@@ -547,27 +559,26 @@ def one_app(clock, fake, limit=1000):
 
 async def test_slow_token_refresh_does_not_release_a_burst(clock):
     # Review finding: lookups that took their pacer slots before a slow token refresh all sent
-    # together when it finished. Real timers: 20 ms pacing, a 300 ms refresh.
-    import time as real_time
+    # together when it finished. Test clock: a 300 ms refresh, 100 ms pacing.
     sent_at = []
 
     async def handler(request):
         if "oauth2/token" in str(request.url):
-            await asyncio.sleep(0.3)
+            clock.advance(0.3)
+            await asyncio.sleep(0)
             return httpx.Response(200, json={"access_token": "token-x", "expires_in": 599})
-        sent_at.append(real_time.monotonic())
+        sent_at.append(clock())
         return ok()
 
     dk = DigiKeyClient(*CREDS[:2], quota=pool(clock), second_app=CREDS[2:])
     dk._http = httpx.AsyncClient(transport=httpx.MockTransport(handler))
-    dk._pacer = Pacer(50)
+    dk._pacer = paced_by(clock)
     try:
         results = await asyncio.gather(*(dk.get_part(f"P{i}") for i in range(6)))
     finally:
         await dk.close()
     assert all(r["total"] == 1 for r in results) and len(sent_at) == 6
-    gaps = [later - earlier for earlier, later in zip(sent_at, sent_at[1:])]
-    assert min(gaps) >= 0.015, gaps
+    assert min(gaps_of(sent_at)) >= 0.1, gaps_of(sent_at)
 
 
 async def test_no_token_request_while_paused_after_a_401(clock):
@@ -763,12 +774,11 @@ async def test_client_marks_the_minute_at_the_send(client, clock, monkeypatch):
 
 async def test_slow_first_http_client_build_does_not_eat_the_gap(clock, monkeypatch):
     # Review finding: the pacer was marked before the HTTP client was lazily built, so a slow
-    # first build (loading TLS certificates, say) shortened the gap to the next request. Real timers.
-    import time as real_time
+    # first build (loading TLS certificates, say) shortened the gap to the next request. Test clock.
     sent_at = []
 
     async def handler(request):
-        sent_at.append(real_time.monotonic())
+        sent_at.append(clock())
         if "oauth2/token" in str(request.url):
             return httpx.Response(200, json={"access_token": "token-x", "expires_in": 599})
         return ok()
@@ -776,16 +786,15 @@ async def test_slow_first_http_client_build_does_not_eat_the_gap(clock, monkeypa
     real_client = httpx.AsyncClient
 
     def slow_client(*args, **kwargs):
-        real_time.sleep(0.1)
+        clock.advance(0.2)
         return real_client(transport=httpx.MockTransport(handler))
 
     dk = DigiKeyClient(*CREDS[:2], quota=pool(clock), second_app=CREDS[2:])
-    dk._pacer = Pacer(20)  # 50 ms apart
+    dk._pacer = paced_by(clock)
     monkeypatch.setattr(httpx, "AsyncClient", slow_client)
     try:
         results = await asyncio.gather(*(dk.get_part(f"P{i}") for i in range(3)))
     finally:
         await dk.close()
     assert all(r["total"] == 1 for r in results) and len(sent_at) == 4  # a token, then 3 products
-    gaps = [later - earlier for earlier, later in zip(sent_at, sent_at[1:])]
-    assert min(gaps) >= 0.045, gaps
+    assert min(gaps_of(sent_at)) >= 0.1, gaps_of(sent_at)
