@@ -347,6 +347,8 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         remaining = _add_cellular_network(query, remaining, result, detected)
     if _COAX in (subcat_now, (subcategory_hint or "").lower()):
         remaining = _add_rf_series(query, remaining, result, detected)
+    if (header := next((s for s in (subcat_now, (subcategory_hint or "").lower()) if s in _HEADERS), None)):
+        remaining = _add_header_lengths(remaining, header, result, detected)
 
     # Named comparisons must be consumed before a bare current/voltage gets its default
     # quantity and >= operator (Iq is not load current; Vf is not reverse voltage).
@@ -370,6 +372,18 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
                                                   f"{resistances[0].normalized}@{frequencies[0].normalized}"))
             values = [v for v in values if v not in resistances + frequencies]
             remaining = re.sub(r"\bat\b", " ", remaining, flags=re.I).strip()
+    # Every "N mm" reads as a pitch, and two different pitches can never both match: "pin header
+    # 2.54mm 5mm" found nothing. Search the first; report the others (strict can't drop them).
+    pitches = [v for v in values if v.unit_type == "pitch"]
+    extra_pitches = [v for v in pitches[1:] if v.normalized != pitches[0].normalized]
+    for extra in extra_pitches:
+        values.remove(extra)
+        if strict:
+            detected.setdefault("unsupported_constraints", []).append(extra.raw)
+        else:
+            detected.setdefault("not_searched", []).append(
+                f"{extra.raw}: a part has one pitch, so only {pitches[0].raw} was searched as the pitch; name what "
+                f"{extra.raw} measures (\"insulation height {extra.raw}\") or pass it in spec_filters")
     if values:
         detected["values"] = [{"raw": v.raw, "type": v.unit_type, "normalized": v.normalized} for v in values]
 
@@ -863,6 +877,49 @@ _NAMED_COMPARISONS = [
     (re.compile(r"\b(?:quiescent\s+current(?:\s*\(Iq\))?|standby\s+current|Supply\s+Current\s*\(Iq\)|Iq)\s*(<=|>=|<|>|=)\s*(\d+(?:\.\d+)?\s*[num]?A)\b", re.IGNORECASE), "Quiescent Current"),
     (re.compile(r"\bVf\s*(<=|>=|<|>|=)\s*(\d+(?:\.\d+)?\s*[mk]?V)\b", re.IGNORECASE), "Vf"),
 ]
+
+
+_HEADERS = ("pin headers", "female headers")
+# Header lengths named in a query: (attribute, words for it, part types that list it). Without the
+# name, "insulation height 5mm" read 5mm as a second Pitch, and two pitches never match.
+_HEADER_LENGTHS = (
+    ("Insulation Height", r"(?:insulation|insulator|plastic|body)\s+height", _HEADERS),
+    ("Length of Mating Pin", r"length\s+of\s+(?:the\s+)?mating\s+pins?|mating\s+(?:pin\s+)?length", ("pin headers",)),
+    ("Length of End Connection Pin",
+     r"length\s+of\s+(?:the\s+)?end\s+connection\s+pins?|end\s+connection\s+pin\s+length|(?:solder\s+)?tail\s+length",
+     ("pin headers",)),
+)
+_LENGTH_OPERATORS = (
+    (">=", r">=|≥|at\s+least|min(?:imum)?"),
+    ("<=", r"<=|≤|at\s+most|max(?:imum)?"),
+    (">", r">|over|above|more\s+than|taller\s+than|longer\s+than"),
+    ("<", r"<|under|below|less\s+than|shorter\s+than"),
+    ("=", r"="),
+)
+_LENGTH_OPERATOR = "|".join(f"(?:{words})" for _, words in _LENGTH_OPERATORS)
+_LENGTH_VALUE = r"(\d+(?:\.\d+)?)\s*mm\b"
+
+
+def _add_header_lengths(remaining: str, subcategory: str, result: ParsedQuery, detected: dict[str, Any]) -> str:
+    """"insulation height 5mm", "tail length at least 3mm", "8.5mm insulation height": the value is
+    that attribute's, not a pitch. Only the part types that list the attribute take it."""
+    for name, words, part_types in _HEADER_LENGTHS:
+        if subcategory not in part_types:
+            continue
+        after = re.compile(rf"\b(?:{words})\s*(?:of|:)?\s*({_LENGTH_OPERATOR})?\s*{_LENGTH_VALUE}", re.IGNORECASE)
+        before = re.compile(rf"(?<![\w.]){_LENGTH_VALUE}\s+(?:{words})\b", re.IGNORECASE)
+
+        def take(match: re.Match[str]) -> str:
+            written = match.group(1) if match.re is after else None
+            value = match.group(2) if match.re is after else match.group(1)
+            operator = next((op for op, op_words in _LENGTH_OPERATORS
+                             if written and re.fullmatch(op_words, written.strip(), re.IGNORECASE)), "=")
+            result.spec_filters.append(SpecFilter(name, operator, f"{value}mm"))
+            detected.setdefault("semantic", []).append(f"{match.group(0)} (-> {name} {operator} {value}mm)")
+            return " "
+
+        remaining = before.sub(take, after.sub(take, remaining))
+    return re.sub(r"\s+", " ", remaining).strip()
 
 
 def _add_named_comparisons(remaining: str, result: ParsedQuery, detected: dict[str, Any]) -> str:

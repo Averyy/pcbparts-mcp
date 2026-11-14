@@ -141,6 +141,11 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Diameter": parse_length_mm,
     "Length": parse_length_mm,
     "Width": parse_length_mm,
+    # Header body and pin lengths ("2.5mm", "8.5mm"; "-" when unlisted): Pin Headers list all three
+    # for 73-88% of parts, Female Headers list Insulation Height for 93%
+    "Insulation Height": parse_length_mm,
+    "Length of Mating Pin": parse_length_mm,
+    "Length of End Connection Pin": parse_length_mm,
     # Special handling
     "Impedance @ Frequency": "special",  # Uses impedance_at_freq_match()
     # String-match specs (no parser - use exact match)
