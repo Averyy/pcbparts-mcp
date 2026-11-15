@@ -75,6 +75,7 @@
 {"l":"C53262707","m":"NRS2531ETZ","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"插件 Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C53262708","m":"NRS1531CZ","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"-40℃~+95℃ 5MBd 650nm Transmitter 插件 Fiber Optical Transceivers ROHS","a":[["Operating Temperature","-40℃~+95℃"],["Type","Transmitter"],["Features","-"],["Signaling Rate","5MBd"],["Wavelength","650nm"]],"x":0,"n":1}
 {"l":"C53262709","m":"NRS2531CZ","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"-40℃~+95℃ 5MBd 650nm Receivers 插件 Fiber Optical Transceivers ROHS","a":[["Operating Temperature","-40℃~+95℃"],["Type","Receivers"],["Features","-"],["Signaling Rate","5MBd"],["Wavelength","650nm"]],"x":0,"n":1}
+{"l":"C53262711","m":"NRS2539Z","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C53262712","m":"NRS1634Z","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"插件 Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C53262713","m":"NRS2634Z","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"插件 Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C53262717","m":"NRS2541ETZ","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
@@ -90,3 +91,8 @@
 {"l":"C55166877","m":"NRS2416TZ","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C55806609","m":"FR05MHIR","f":"Firecomms","p":"-","t":"e","c":2196,"d":"- Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C55806612","m":"FR2521","f":"Firecomms","p":"-","t":"e","c":2196,"d":"- Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
+{"l":"C56367140","m":"NRS1538CZ","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
+{"l":"C56367141","m":"NRS2538CZ","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
+{"l":"C56367142","m":"NRS1649Z","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
+{"l":"C56367143","m":"NRS2549Z","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
+{"l":"C56367345","m":"NRS2412CTZ","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}

@@ -127,6 +127,7 @@
 {"l":"C22417734","m":"BAT-HLD-012-SMT-TR","f":"TE Connectivity","p":"-","t":"e","c":2989,"d":"- Button And Strip Battery Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C22427402","m":"S1741-46R","f":"Harwin","p":"SMD","t":"e","c":2989,"d":"SMD Button And Strip Battery Connector ROHS","a":[["Operating Temperature","-55℃~+125℃"],["Contact Material","Phosphor Bronze"],["Connector Type","Battery buckle"]],"x":0}
 {"l":"C22445132","m":"S7221-45R","f":"Harwin","p":"SMD","t":"e","c":2989,"d":"SMD Button And Strip Battery Connector ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Contact Plating","Gold"],["Contact Material","Copper Alloy"],["Connector Type","Battery buckle"]],"x":0}
+{"l":"C25366634","m":"UMPT-10-07.5-S-V-S-W-TR","f":"Samtec","p":"-","t":"e","c":2989,"d":"- Button And Strip Battery Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C42611457","m":"10174480-05A100LF","f":"Amphenol ICC","p":"-","t":"e","c":2989,"d":"- Button And Strip Battery Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C43857496","m":"10174479-05A100LF","f":"Amphenol ICC","p":"-","t":"e","c":2989,"d":"- Button And Strip Battery Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C47089307","m":"XDCR-1220-006","f":"Lian Xin Technology","p":"SMD","t":"e","c":2989,"d":"-25℃~+85℃ Battery base Gold Phosphor bronze SMD Button And Strip Battery Connector ROHS","a":[["Operating Temperature","-25℃~+85℃"],["Contact Plating","Gold"],["Contact Material","Phosphor Bronze"],["Connector Type","Battery base"]],"x":0}
@@ -160,7 +161,7 @@
 {"l":"C54973994","m":"HYCW-BS-5-1-CR2032","f":"HOAUC","p":"Plugin","t":"e","c":2989,"d":"插件 Button And Strip Battery Connector ROHS","a":[["Operating Temperature","-55℃~+85℃"],["Contact Material","Phosphor Bronze"],["Connector Type","Battery base"],["Battery Type","CR2032"]],"x":0,"n":1}
 {"l":"C55318124","m":"LAIL-CR2032-DIP90-B01-1AJ","f":"LAILAN","p":"Plugin","t":"e","c":2989,"d":"Plugin Button And Strip Battery Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C55318125","m":"LAIL-CR2032-DIP90-B02-1AK","f":"LAILAN","p":"Plugin","t":"e","c":2989,"d":"Plugin Button And Strip Battery Connector ROHS","a":[],"x":0,"n":1}
-{"l":"C55318126","m":"LAIL-CR2032-DIP90-B03-1BJ","f":"LAILAN","p":"Plugin","t":"e","c":2989,"d":"Plugin Button And Strip Battery Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C55318126","m":"LAIL-CR2032-DIP90-B03-1BJ","f":"LAILAN","p":"Plugin","t":"e","c":2989,"d":"Plugin Button And Strip Battery Connector ROHS","a":[["Operating Temperature","-25℃~+85℃"],["Contact Plating","Nickel"],["Contact Material","Brass"],["Connector Type","Battery base"],["Battery Type","CR2032"]],"x":0,"n":1}
 {"l":"C55318127","m":"LAIL-CR1220-SMT-B02-3AA","f":"LAILAN","p":"SMD","t":"e","c":2989,"d":"SMD Button And Strip Battery Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C55318128","m":"LAIL-CR2032-SMT-B01-2AA","f":"LAILAN","p":"SMD","t":"e","c":2989,"d":"SMD Button And Strip Battery Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C55318129","m":"LAIL-CR1220-SMT-B03-2AA","f":"LAILAN","p":"SMD","t":"e","c":2989,"d":"SMD Button And Strip Battery Connector ROHS","a":[],"x":0,"n":1}

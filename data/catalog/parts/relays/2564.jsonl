@@ -43,6 +43,7 @@
 {"l":"C49573811","m":"DIL-2A12B","f":"MiRelay","p":"Plugin","t":"e","c":2564,"d":"插件 Reed Relays ROHS","a":[],"x":0}
 {"l":"C51821976","m":"SIP-1A05","f":"MiRelay","p":"Plugin","t":"e","c":2564,"d":"插件 Reed Relays ROHS","a":[],"x":0}
 {"l":"C52754156","m":"HVR1B12-05","f":"MiRelay","p":"Plugin,40x15mm","t":"e","c":2564,"d":"插件,40x15mm Reed Relays ROHS","a":[["Length","40mm"],["Width","15mm"]],"x":0}
+{"l":"C54780326","m":"HI-1A05","f":"MiRelay","p":"Plugin","t":"e","c":2564,"d":"插件 Reed Relays ROHS","a":[],"x":0,"n":1}
 {"l":"C54946125","m":"SIP-1A12","f":"MiRelay","p":"Plugin","t":"e","c":2564,"d":"Plugin Reed Relays ROHS","a":[],"x":0,"n":1}
 {"l":"C54946127","m":"SIP-1A24B","f":"MiRelay","p":"Plugin","t":"e","c":2564,"d":"Plugin Reed Relays ROHS","a":[],"x":0,"n":1}
 {"l":"C56126906","m":"HVR1B12-02","f":"MiRelay","p":"Plugin","t":"e","c":2564,"d":"Plugin Reed Relays ROHS","a":[],"x":0,"n":1}
