@@ -9,7 +9,6 @@
 {"l":"C238061","m":"1025-7","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C238062","m":"1027","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C238063","m":"1028","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
-{"l":"C238065","m":"103","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C238068","m":"1056TR","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C238075","m":"110TR","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C238097","m":"3000","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
@@ -204,7 +203,7 @@
 {"l":"C5445008","m":"3030TR","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C5457098","m":"MY-FJ-115II-R","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery contact plate Nickel plated Phosphor bronze - ROHS","a":[["Type","Battery contact plate"],["Contact material","Phosphor bronze"],["Contact coating","Nickel plating"]],"x":0}
 {"l":"C5457099","m":"MY-SJ-0272","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery contact plate Nickel plated Stainless steel - ROHS","a":[["Contact material","Stainless steel"],["Type","Battery contact plate"],["Contact coating","Nickel plated"]],"x":0}
-{"l":"C5457100","m":"MY-2032-32-J","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery buckle CR2032 Nickel plated Phosphor bronze - ROHS","a":[["Type","Battery buckle"],["Contact material","Phosphor bronze"],["Applicable battery specifications","CR2032"],["Contact coating","Nickel plated"]],"x":0}
+{"l":"C5457100","m":"MY-2032-32-J","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery buckle CR2032 Nickel plated Phosphor bronze - ROHS","a":[["Type","Battery buckle"],["Contact material","Phosphor Bronze"],["Applicable battery specifications","CR2032"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C5457104","m":"MY-FJ-01","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery buckle Brass Nickel plated - ROHS","a":[["Contact material","Brass"],["Type","Battery buckle"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C5457105","m":"MY-2032-13N","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery buckle CR2032 Nickel plated Phosphor bronze - ROHS","a":[["Type","Battery buckle"],["Contact material","Phosphor Bronze"],["Applicable battery specifications","CR2032"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C5457106","m":"MY-FJ-120","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery spring contact Steel Tin plated - ROHS","a":[["Contact material","Steel"],["Type","Battery spring contact"],["Contact coating","Tin Plated"]],"x":0}

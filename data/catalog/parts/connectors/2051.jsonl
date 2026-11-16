@@ -70,7 +70,6 @@
 {"l":"C42931385","m":"SFP 17610143 1X2Y","f":"CND-tek","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C42931387","m":"SFP 1658723 1X4H","f":"CND-tek","p":"Plugin","t":"e","c":2051,"d":"插件 Optical Module Connector ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Number of Ports","4"],["Connector Type","SFP"],["Supplementary Features","-"],["Mounting Type","Cage、Straight"]],"x":0,"n":1}
 {"l":"C42931389","m":"SFP 2007198 1X1Y+","f":"CND-tek","p":"Plugin","t":"e","c":2051,"d":"插件 Optical Module Connector ROHS","a":[],"x":0,"n":1}
-{"l":"C42931390","m":"SFP 22946675 1X1H+","f":"CND-tek","p":"Plugin","t":"e","c":2051,"d":"插件 Optical Module Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C42931391","m":"SFP 20072631 1X2Y+","f":"CND-tek","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C42931392","m":"SFP 21692601 1X4Y+","f":"CND-tek","p":"Plugin","t":"e","c":2051,"d":"插件 Optical Module Connector ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Number of Ports","4"],["Connector Type","SFP+"],["Supplementary Features","-"],["Mounting Type","Cage、Straight"]],"x":0,"n":1}
 {"l":"C42931393","m":"SFP 1658391 2X1Y","f":"CND-tek","p":"Plugin","t":"e","c":2051,"d":"插件 Optical Module Connector ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Number of Ports","2"],["Connector Type","SFP"],["Supplementary Features","With column"],["Mounting Type","Cage、Straight"]],"x":0,"n":1}
@@ -177,3 +176,31 @@
 {"l":"C56359828","m":"KH-SFP-K100-4002","f":"Shenzhen Kinghelm Elec","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C56359829","m":"KH-SFP-K100-4003","f":"Shenzhen Kinghelm Elec","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
 {"l":"C56359830","m":"KH-SFP-K100-4105","f":"Shenzhen Kinghelm Elec","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56451966","m":"SFP+1X4-CAGE-51511","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56451967","m":"QSFP+1X1-51531","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452010","m":"SFP-1X1-CAGE-51501","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452011","m":"SFP-1X1-CAGE-51502","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452012","m":"SFP+1X1-CAGE-51503","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452013","m":"SFP+1X1-CAGE-51504","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452014","m":"SFP-1X2-CAGE-51505","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452015","m":"SFP+1X2-CAGE-51506","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452016","m":"SFP-1X4-CAGE-51507","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452017","m":"SFP-1X4-CAGE-51508","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452018","m":"SFP+1X4-CAGE-51509","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452020","m":"SFP-2X1-CAGE-51512","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452022","m":"SFP-2X1-CAGE-51514","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452023","m":"SFP-2X1-CAGE-51515","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452124","m":"SFP+2X1-CAGE-51516","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452125","m":"SFP+2X1-CAGE-51517","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452126","m":"SFP+2X1-CAGE-51518","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452127","m":"SFP+2X1-CAGE-51519","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452128","m":"SFP-20P-51520","f":"CHUANGYUE","p":"SMD","t":"e","c":2051,"d":"SMD Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452129","m":"SFP-2X2-CAGE-51521","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452130","m":"SFP+2X2-CAGE-51522","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452131","m":"SFP+2X2-CAGE-51523","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452132","m":"SFP-2X4-CAGE-51524","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452133","m":"SFP-2X4-CAGE-51525","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452134","m":"SFP-2X4-CAGE-51526","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452135","m":"SFP+2X4-CAGE-51527","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452138","m":"QSFP+-38P-51530","f":"CHUANGYUE","p":"SMD,P=0.4mm,Surface Mount，Right Angle(Staggered pins)","t":"e","c":2051,"d":"SMD,P=0.4mm,Surface Mount，Right Angle(Staggered pins) Optical Module Connector ROHS","a":[],"x":0,"n":1}
+{"l":"C56452140","m":"QSFP-DD-1X1-CAGE-51533","f":"CHUANGYUE","p":"Plugin","t":"e","c":2051,"d":"Plugin Optical Module Connector ROHS","a":[],"x":0,"n":1}

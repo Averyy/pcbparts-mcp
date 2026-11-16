@@ -10,7 +10,6 @@
 {"l":"C2927629","m":"H5TC4G83EFR-RDA","f":"SK HYNIX","p":"-","t":"e","c":2325,"d":"- DRAM ROHS","a":[],"x":0,"n":1}
 {"l":"C3002777","m":"K4B2G1646F-BCMA","f":"Samsung","p":"FBGA-96","t":"e","c":2325,"d":"0℃~+85℃ 1.5V 2Gbit DDR3 FBGA-96 DRAM ROHS","a":[["Operating Temperature","0℃~+85℃"],["Memory Size","2Gbit"],["Voltage - Supply","1.5V"],["Interface","DDR3"]],"x":0,"n":1}
 {"l":"C3028887","m":"APS6404L-3SQN-SN","f":"AP Memory","p":"SOP-8L","t":"e","c":2325,"d":"SOP-8L DRAM ROHS","a":[],"x":0}
-{"l":"C17356821","m":"S80KS5122GABHM020","f":"Infineon Technologies","p":"FBGA-24(6x8)","t":"e","c":2325,"d":"FBGA-24(6x8) DRAM ROHS","a":[["Operating Temperature","-"],["Memory Size","-"],["Voltage - Supply","-、-"],["Features","Hardware reset function、Built-in self-refresh logic"],["Refresh Current","44mA"],["Interface","-"]],"x":0}
 {"l":"C17627475","m":"S80KS5122GABHI020","f":"Infineon Technologies","p":"FBGA-24(6x8)","t":"e","c":2325,"d":"FBGA-24(6x8) DRAM ROHS","a":[["Voltage - Supply","-"],["Refresh Current","40mA"]],"x":0}
 {"l":"C17668865","m":"D1216ECMDXGJDI-U","f":"Kingston Technology","p":"FBGA-96(7.5x13.5)","t":"e","c":2325,"d":"-40℃~+95℃ 1.283V~1.45V 2Gbit FBGA-96(7.5x13.5) DRAM ROHS","a":[["Operating Temperature","-40℃~+95℃"],["Memory Size","2Gbit"],["Voltage - Supply","1.283V~1.45V"]],"x":0}
 {"l":"C19192462","m":"H9HCNNNCPMMLXR-NEE","f":"SK HYNIX","p":"BGA-200","t":"e","c":2325,"d":"600mV、1.1V、1.8V BGA-200 DRAM ROHS","a":[["Operating Temperature","-"],["Memory Size","-"],["Voltage - Supply","600mV、1.1V、1.8V"],["Interface","-"]],"x":2}

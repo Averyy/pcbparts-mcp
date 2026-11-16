@@ -217,7 +217,6 @@
 {"l":"C532305","m":"917709-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C532429","m":"1-1534170-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C532555","m":"1393449-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
-{"l":"C532564","m":"1452408-2","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C532573","m":"1534099-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C532575","m":"1534131-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"4 Holder - Connector Accessories ROHS","a":[["Type","Holder"],["Number of Pins","4"]],"x":0}
 {"l":"C532583","m":"1586359-8","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
@@ -766,7 +765,6 @@
 {"l":"C5342126","m":"T1320100125-000","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C5342136","m":"T2080072201-000","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C5342137","m":"T1012241100-000","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
-{"l":"C5342141","m":"T2080122201-000","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C5342144","m":"T1010061400-000","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C5342146","m":"T1010242101-000","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C5342151","m":"T3209251212-001","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
@@ -1398,8 +1396,16 @@
 {"l":"C22310975","m":"0192150013","f":"MOLEX","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C22363803","m":"2YP209","f":"HJ Tech","p":"-","t":"e","c":3287,"d":"0.8mm 11.7mm 37.8mm - Connector Accessories ROHS","a":[["Length","37.8mm"],["Height","0.8mm"],["Width","11.7mm"]],"x":0}
 {"l":"C22364027","m":"249-119","f":"WAGO","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
+{"l":"C22374336","m":"TJC3-2S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"2 Holder XH P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XH"],["Number of Pins","2"]],"x":0}
 {"l":"C22374337","m":"TJC3-3S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"3 Holder XH P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XH"],["Number of Pins","3"]],"x":0}
+{"l":"C22374338","m":"TJC3-4S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"4 Holder XH P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XH"],["Number of Pins","4"]],"x":0}
+{"l":"C22374339","m":"TJC3-5S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"5 Holder XH P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XH"],["Number of Pins","5"]],"x":0}
 {"l":"C22374340","m":"TJC3-6S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"6 Holder XH P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XH"],["Number of Pins","6"]],"x":0}
+{"l":"C22374341","m":"TJC3-7S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"7 Holder XH P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XH"],["Number of Pins","7"]],"x":0}
+{"l":"C22374342","m":"TJC3-8S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"8 Holder XH P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XH"],["Number of Pins","8"]],"x":0}
+{"l":"C22374343","m":"TJC3-9S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"9 Holder XH P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XH"],["Number of Pins","9"]],"x":0}
+{"l":"C22374344","m":"TJC3-10S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"10 Holder XH P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XH"],["Number of Pins","10"]],"x":0}
+{"l":"C22374346","m":"TJC3-12S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"12 Holder XH P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XH"],["Number of Pins","12"]],"x":0}
 {"l":"C22378138","m":"PA-H-6S","f":"DLL","p":"P=2mm","t":"e","c":3287,"d":"6 Holder P=2mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","-"],["Number of Pins","6"]],"x":0}
 {"l":"C22378299","m":"XAD-8S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"8 Holder XAD P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XAD"],["Number of Pins","8"]],"x":0}
 {"l":"C22378300","m":"XAD-10S","f":"DLL","p":"P=2.5mm","t":"e","c":3287,"d":"10 Holder XAD P=2.5mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","XAD"],["Number of Pins","10"]],"x":0}
@@ -1508,6 +1514,7 @@
 {"l":"C24661167","m":"10155475-000LF","f":"Amphenol ICC","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C24663010","m":"10730124","f":"APTIV(Delphi)","p":"-","t":"e","c":3287,"d":"Sealing plug - Connector Accessories ROHS","a":[["Type","Sealing plug"]],"x":0,"n":1}
 {"l":"C24686911","m":"2840877-4","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"2 Holder - Connector Accessories ROHS","a":[["Type","Holder"],["Number of Pins","2"]],"x":0,"n":1}
+{"l":"C24833733","m":"PAD-4S","f":"DLL","p":"P=2mm","t":"e","c":3287,"d":"4 Holder PAD P=2mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","PAD"],["Number of Pins","4"]],"x":0}
 {"l":"C25168708","m":"42022-4GS","f":"DLL","p":"-","t":"e","c":3287,"d":"4 Holder - Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","-"],["Number of Pins","4"]],"x":0}
 {"l":"C25168710","m":"42022-6G","f":"DLL","p":"-","t":"e","c":3287,"d":"6 Holder - Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","-"],["Number of Pins","6"]],"x":0}
 {"l":"C25168711","m":"42022-2GF","f":"DLL","p":"P=6.3mm","t":"e","c":3287,"d":"2 Holder P=6.3mm Connector Accessories ROHS","a":[["Type","Holder"],["Reference Series","-"],["Number of Pins","2"]],"x":0}
@@ -1562,6 +1569,7 @@
 {"l":"C29626364","m":"2118720-2","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C29631349","m":"3213027","f":"Phoenix Contact","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C30902463","m":"2403747-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
+{"l":"C31556429","m":"7165-0472","f":"SUMITOMO","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C31762283","m":"3270203","f":"Phoenix Contact","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C31842982","m":"1417389","f":"Phoenix Contact","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C31887773","m":"2-353293-7","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
@@ -1607,6 +1615,7 @@
 {"l":"C42668391","m":"217140-1000","f":"MOLEX","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C42681754","m":"2400920-2","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C42682046","m":"2403754-2","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
+{"l":"C42797445","m":"7165-1635","f":"SUMITOMO","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C43420146","m":"2401684-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C43420160","m":"2403747-4","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C43420161","m":"2403748-2","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
