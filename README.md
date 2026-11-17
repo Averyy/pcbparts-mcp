@@ -33,9 +33,13 @@ To skip the approval prompt on every call, add this to `~/.claude/settings.json`
 }
 ```
 
-### Claude Desktop and Cursor
+### Claude Desktop and claude.ai
 
-Claude Desktop: Settings → Connectors → "Add custom connector", or edit `~/Library/Application Support/Claude/claude_desktop_config.json`. Cursor: edit `~/.cursor/mcp.json`. Both take:
+Customize → Connectors → "+ Add" → "Add custom connector", with the URL `https://pcbparts.dev/mcp`. Remote servers are added this way; `claude_desktop_config.json` only runs local servers.
+
+### Cursor
+
+Edit `~/.cursor/mcp.json`:
 
 ```json
 {
@@ -78,7 +82,7 @@ Add to the Extensions config:
 }
 ```
 
-## Tools (16)
+## Tools (15)
 
 | Tool | What it does |
 |------|--------------|
@@ -143,7 +147,7 @@ docker compose -f docker-compose.local.yml up --build   # built from source
 
 The server builds `data/components.db` on first run. After upgrading, it logs a warning if the database is too old for the new version; rebuild it with `uv run python scripts/build_database.py`.
 
-Build recorded stock history with `uv run python scripts/build_history_db.py`. `jlc_stock_history(lcsc, days=180)` shows up to 100 events, newest first, over 1-366 days ending at the newest recorded date; a list of up to 50 codes gets a summary and the newest 10 events per part in one reply. Changes above 1,000 stock are not tracked, and a missing part in a scrape is not a confirmed stockout. `JLCPCB_DATA_DIR` sets the data directory; `JLCPCB_HISTORY_DB_PATH` can override the history DB path.
+Build recorded stock history with `uv run python scripts/build_history_db.py`. `JLCPCB_DATA_DIR` sets the data directory; `JLCPCB_HISTORY_DB_PATH` can override the history DB path. Only changes leaving stock at 1,000 or below are recorded; [llms.txt](https://pcbparts.dev/llms.txt) has the tool's limits.
 
 Mouser keys are free from Mouser's API hub, and DigiKey client credentials from DigiKey's developer portal. `cse_get_kicad` downloads need a SamacSys ComponentSearchEngine account; `cse_search` works without one.
 

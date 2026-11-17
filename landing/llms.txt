@@ -16,7 +16,7 @@ Claude Code:
 claude mcp add -s user --transport http pcbparts https://pcbparts.dev/mcp
 ```
 
-Claude Desktop (`claude_desktop_config.json`) and Cursor (`~/.cursor/mcp.json`); VS Code (`.vscode/mcp.json`) uses the key `"servers"` instead of `"mcpServers"`:
+Claude Desktop and claude.ai: Customize → Connectors → "+ Add" → "Add custom connector" with the URL above (`claude_desktop_config.json` only runs local servers). Cursor (`~/.cursor/mcp.json`); VS Code (`.vscode/mcp.json`) uses the key `"servers"` instead of `"mcpServers"`:
 
 ```json
 {
