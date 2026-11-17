@@ -5,12 +5,24 @@
 | Endpoint | Called from | Returns |
 | --- | --- | --- |
 | `GET https://easyeda.com/api/products/{lcsc}/components` | `_check_easyeda_footprint()` (behind `check_easyeda_footprint()`): every live `get_part()`, and up to 15 times per `find_alternatives(has_easyeda_footprint=...)` call | Whether EasyEDA has a symbol/footprint, plus their UUIDs |
-| `GET https://easyeda.com/api/components/{uuid}` | `get_easyeda_component()` (`jlc_get_pinout`) | Symbol data and pins. A missing UUID is HTTP 200 with `{"success": false, "code": 404}` (`EasyEDAComponentNotFound`) |
+| `GET https://easyeda.com/api/components/{uuid}` | `get_easyeda_component()` (`jlc_get_pinout`); `footprint_pads()` for `find_alternatives(land_compatible=true)`, up to 30 candidates plus the original per call | Symbol data and pins, or a footprint's pads. A missing UUID is HTTP 200 with `{"success": false, "code": 404}` (`EasyEDAComponentNotFound`) |
 | `POST https://easyeda.com/api/components/search` | `scripts/build_easyeda_seed.py` only, never the server | Up to thousands of LCSC-library parts per request, each with its symbol and footprint UUIDs |
 
 Each has its own wafer session in `client.py`. `_get_easyeda_products_session()` sends exactly one
 request per check (`max_retries=0, max_rotations=0`). `_get_easyeda_session()` keeps wafer's
 retries for symbol data, with `attempt_timeout` paired to its `timeout`.
+
+Land checks (0.9.4, `land.py`) fetch footprints through `_get_easyeda_land_session()`, one attempt
+per request like the products session, because `/api/components`' own limit was never measured.
+They take footprint UUIDs from the part, the store or the seed only, never `/api/products`. Each
+call compares at most `EASYEDA_LAND_MAX_CHECKS` (30) candidates; fetches are budgeted process-wide
+(`EASYEDA_LAND_BUDGET`, 60 per 60s) and a 403/429 pauses them with the same doubling cooldown.
+Pads come from memory, then the newer of the store's `footprint_pads` table (live fetches, on the
+volume) and the pads seed (`data/easyeda/pads.csv`, loaded into `components.db` as `easyeda_pads`),
+and only then one request. A footprint the server has is never fetched again on a request, whatever
+its age, so clones that share a footprint and repeat checks cost no request; refreshing is the seed
+script's job (see "The pads seed" below). Measured 2026-11-17: 120-160 ms and about 12 kB per
+footprint; the C295747 check fetched 23 footprints (5.7 s for the whole call), 1.7 s once stored.
 
 Where a footprint answer comes from, first match wins:
 
@@ -244,6 +256,30 @@ checked live at runtime). Validation: 50 of 50 again. 397,062 rows, 39.6 MB of C
 timestamps (13.4 MB gzipped), 655 ambiguous parts skipped. The parts left under 50% are mostly connector makers whose single, complete result page
 just doesn't cover them (TE Connectivity 19%, MOLEX 30%, Samtec 31%): those parts likely have no
 EasyEDA footprint, which only `/api/products` can confirm.
+
+## The pads seed (`scripts/build_easyeda_pads.py`, 0.9.4)
+
+`data/easyeda/pads.csv` holds footprint pads for land checks, one row per footprint UUID:
+`footprint_uuid,pads,fetched`, pads as `easyeda_store.pack_pads()` writes them
+(`[[number, x_mm, y_mm, through_hole], ...]`, `[]` when EasyEDA has none). The DB build loads it into
+`components.db` as `easyeda_pads` (the Dockerfile mounts the whole `data/easyeda/` folder, so a
+missing file builds an empty table); a malformed row fails the build.
+
+- **Where it runs:** your own machine only, like the footprint seed. It uses your IP's EasyEDA limits.
+- **What it fetches:** footprint UUIDs from `components.db`'s `easyeda_footprints` (the footprint seed)
+  for the chosen categories (`--categories`, default Connectors; `all` for everything), most-stocked
+  part first, one `/api/components/{uuid}` request each through the client's one-attempt land session.
+- **Pace:** `--interval` seconds between requests (default 2, minimum 1). It stops on the first 403/429
+  (exit code 2) and resumes on the next run; it saves every `--save-every` rows (default 200) and on exit.
+- **Refresh:** `--refresh-days N` also re-fetches rows last fetched or confirmed N+ days ago. A row whose
+  pads didn't change keeps its `fetched` date, so a refresh commit only touches changed footprints; when
+  each row was last confirmed is kept in `data/easyeda/pads_state.json` (not committed).
+- **Scale (2026-11-17):** 48,403 distinct connector footprints (15.4 pins on average), about 400 bytes
+  a row, so roughly 19 MB of CSV; about 27 h at one request per 2 s. Only 44.5% of connector parts
+  (55.5% of those with 1,000+ stock) have a footprint UUID in the footprint seed; the rest can't be
+  collected until that seed knows them, and land checks report them as unknown.
+- **Library search doesn't help:** a search result's `dataStr` holds only the symbol's `head` (checked
+  2026-11-17), so there's no bulk source of pads; each footprint costs one request.
 
 ## The seed (`scripts/build_easyeda_seed.py`)
 

@@ -96,6 +96,7 @@ async def lifespan(app):
 
     # Seeded EasyEDA footprint answers (data/easyeda/footprints.csv, built into the DB)
     _client.set_easyeda_seed(db.get_easyeda_seed)
+    _client.set_easyeda_pads_seed(db.get_easyeda_pads)
     # jlc_find_alternatives also looks in the database for parts that meet the rules
     _client.set_alternative_candidates(db.find_alternative_candidates)
     # and, for RF parts, at every maker's parts in the subcategory to check against the original's band
@@ -217,7 +218,7 @@ async def _every_minute() -> None:
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only to cross-reference specific part numbers (shared daily limit; batch Mouser lookups). sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows a part's recorded stock changes.",
+    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only to cross-reference specific part numbers (shared daily limit; batch Mouser lookups). sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -324,6 +325,10 @@ def _call_outcome(result: Any) -> str:
         return "ok"
     if content.get("error"):
         return _error_kind(str(content["error"]))
+    if "parts" in content and "what_is_recorded" in content:
+        # Single history replies count as ok even with no events or snapshot stock. A batch
+        # follows that rule if any valid code was answered; all-invalid codes are bad_request.
+        return "ok" if any(not part.get("error") for part in content["parts"]) else "bad_request"
     if "alternatives" in content:
         if content["alternatives"]:
             return "ok"
@@ -528,7 +533,7 @@ def _caller_ip() -> str | None:
 
 
 # Helpers to handle JSON string arrays from MCP clients
-def _parse_list_param(value: list[str] | str | None) -> list[str] | None:
+def _parse_list_param(value: list[str] | str | None, *, allow_blank: bool = False) -> list[str] | None:
     """Accept a list, JSON array, or one literal value; never discard an element."""
     if value is None:
         return None
@@ -542,7 +547,7 @@ def _parse_list_param(value: list[str] | str | None) -> list[str] | None:
             value = [value]
     if isinstance(value, str):
         value = [value]
-    if not isinstance(value, list) or any(not isinstance(v, str) or not v.strip() for v in value):
+    if not isinstance(value, list) or any(not isinstance(v, str) or (not allow_blank and not v.strip()) for v in value):
         raise ValueError("expected a string or array of nonempty strings")
     return value or None
 
@@ -1837,18 +1842,50 @@ def jlc_search_help(
     )
 )
 @offload(COMPONENT_POOL)
-def jlc_stock_history(lcsc: str, days: Annotated[int, Field(ge=1, le=366, strict=True)] = 180) -> dict:
-    """Recorded low-stock events for one part, newest first (at most 100; more_events flags more).
-    Gone means missing from a scrape, not a confirmed stockout; suspect scrape gaps are labelled.
-    Reply includes the window, recording limits and current_stock from the catalog snapshot.
+def jlc_stock_history(lcsc: str | list[str], days: Annotated[int, Field(ge=1, le=366, strict=True)] = 180) -> dict:
+    """Recorded low-stock events, newest first: one code gets at most 100; a list gives one reply
+    with a per-part summary and the newest 10 events each, notes once. more_events flags more.
+    Gone is missing from a scrape, not a confirmed stockout; suspect gaps are labelled.
+    Includes the window, recording limits and current_stock from the catalog snapshot.
 
     Args:
-        lcsc: One LCSC C-code, e.g. C8314; ignores case and surrounding spaces.
+        lcsc: One LCSC C-code (e.g. C8314) or a list of up to 50; ignores case and surrounding
+            spaces, de-duplicates lists. Also accepts a JSON array string; never comma-split.
         days: 1-366 calendar days ending on the newest recorded date (default 180).
     """
+    invalid_code = {"error": "lcsc must be an LCSC C-code (e.g., C6186); use jlc_get_part(mpn=...) to find the code for an MPN"}
+    if not isinstance(lcsc, str) or lcsc.lstrip().startswith("["):
+        try:
+            # Blank list entries are per-part code errors, rather than rejecting the BOM.
+            codes = _parse_list_param(lcsc, allow_blank=True)
+        except ValueError as exc:
+            return _argument_error("lcsc", exc, ["string", "array of strings", "JSON array of strings"])
+        if not codes:
+            return {"error": "lcsc must be a nonempty list of up to 50 LCSC C-codes"}
+        if error := _check_list_cap("lcsc codes", codes, 50):
+            return error
+        codes = list(dict.fromkeys(code.strip().upper()[:20] for code in codes))
+        valid_codes = [code for code in codes if re.fullmatch(r"C[0-9]{1,12}", code)]
+        if type(days) is not int or not 1 <= days <= 366:
+            return {"error": "Invalid days: use an integer from 1 to 366"}
+        try:
+            result = get_history_db().history_many(valid_codes, days)
+        except (OSError, sqlite3.Error):
+            logger.exception("Stock history database unavailable")
+            return {"error": "Stock history is not available on this server"}
+        db = get_db()
+        stock = db.get_by_lcsc_batch(valid_codes)
+        histories = {part["lcsc"]: part for part in result["parts"]}
+        result["parts"] = [
+            {"lcsc": code, "current_stock": stock[code]["stock"] if stock.get(code) else None,
+             **histories[code]} if code in histories else {"lcsc": code, **invalid_code}
+            for code in codes
+        ]
+        result["current_stock_as_of"] = db.scraped_at()
+        return result
     lcsc = lcsc.strip().upper()[:20]  # ASCII digits, bounded: "C" + a million digits was echoed back
     if not re.fullmatch(r"C[0-9]{1,12}", lcsc):
-        return {"error": "lcsc must be an LCSC C-code (e.g., C6186); use jlc_get_part(mpn=...) to find the code for an MPN"}
+        return invalid_code
     if type(days) is not int or not 1 <= days <= 366:
         return {"error": "Invalid days: use an integer from 1 to 366"}
     try:
@@ -2025,6 +2062,7 @@ async def jlc_find_alternatives(
     limit: int = 10,
     board_quantity: int = 1,
     placements_per_board: int = 1,
+    land_compatible: bool = False,
 ) -> dict:
     """Find catalog-checked alternatives, ranked no-fee first (same-package passives/crystals first
     within each tier). Reply: summary.found counts verified alternatives; unverified_alternatives
@@ -2047,7 +2085,9 @@ async def jlc_find_alternatives(
     that observation. Savings use a rounded $3 Economic loading-fee estimate (is_estimate and
     assembly_service_assumption), not a current quote; Standard service differs.
     summary.stages reports retrieval counts/limits/errors, primary/spec passed/failed/unknown,
-    library/package eligibility, footprint outcomes/cap omissions and per-list output truncation.
+    library/package eligibility, footprint and land-check outcomes/cap omissions and per-list output truncation.
+    Connector alternatives list "land pattern and pin 1 position" as unchecked: makers' footprints for
+    one series often differ; land_compatible=true compares them (summary.land_note explains the fields).
 
     Args:
         lcsc: LCSC code of the original part (e.g., "C2557")
@@ -2062,6 +2102,11 @@ async def jlc_find_alternatives(
         limit: Max entries per verified/unverified list (max 50)
         board_quantity: Number of boards for project savings (default 1)
         placements_per_board: Original part placements per board (default 1)
+        land_compatible: True for a board whose copper is already made: compares the top 30
+            candidates' EasyEDA footprint pads with the original's and adds land (fits, turn,
+            max_offset_mm, renumbered); parts that fit as drawn with the same pad numbers come first.
+            Takes a few seconds more the first time footprints are compared (stored after);
+            land is null where a footprint isn't known.
     """
     if not _client:
         raise RuntimeError("Client not initialized")
@@ -2082,6 +2127,7 @@ async def jlc_find_alternatives(
             limit=clamp_limit(limit, MAX_ALTERNATIVES),
             board_quantity=board_quantity,
             placements_per_board=placements_per_board,
+            land_compatible=land_compatible,
         )
     except ValueError as e:  # actionable JLCPCB messages (rate limited / WAF / timeout)
         return {"error": str(e)}

@@ -255,6 +255,7 @@
                 <li>Distributor, JLCPCB, LCSC and EasyEDA answers are reused for up to 24 hours. They are held in memory only, so a server restart clears them.</li>
                 <li>SamacSys ComponentSearchEngine search text and results, and KiCad files, are stored on our server's disk and reused for up to one year (a week for a search where some parts had no model). Expired entries are deleted the next time the server starts.</li>
                 <li>EasyEDA answers about whether a part has a footprint are stored on disk with no fixed end date, since they rarely change. Each holds the part number, the answer, EasyEDA's symbol and footprint IDs, and when it was checked.</li>
+                <li>EasyEDA footprint pad positions, used to compare a replacement part's footprint with the original's, are stored on disk by footprint ID with no fixed end date, since footprints rarely change.</li>
             </ul>
             <p>Storing these answers means the same lookup doesn't have to be repeated.</p>
             <p>If a lookup fails, the error log line may include the part number or search text involved, so we can fix the problem.</p>
@@ -308,6 +309,7 @@
                         <tr><td>In-memory answer caches</td><td>Reused for up to 24 hours; cleared on restart</td></tr>
                         <tr><td>On-disk ECAD and KiCad caches (no user identifiers)</td><td>Reused for up to one year (a week for searches where some parts had no model); expired entries deleted at the next restart</td></tr>
                         <tr><td>On-disk EasyEDA footprint answers (part numbers, the answer, EasyEDA IDs, when checked; no user identifiers)</td><td>No fixed end date</td></tr>
+                        <tr><td>On-disk EasyEDA footprint pads (footprint IDs and pad positions; no user identifiers)</td><td>No fixed end date</td></tr>
                         <tr><td>Mouser and DigiKey daily lookup counts and pauses (no user identifiers)</td><td>Replaced each UTC day</td></tr>
                         <tr><td>Emails you send us</td><td>As long as needed to handle your request</td></tr>
                     </tbody>

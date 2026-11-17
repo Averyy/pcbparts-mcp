@@ -530,6 +530,7 @@ SRC = Path(__file__).parent.parent / "src" / "pcbparts_mcp"
 
 # {"error": ...} replies, by their text with formatted parts as {}
 ERROR_REPLIES = {
+    "lcsc must be a nonempty list of up to 50 LCSC C-codes": "bad_request",
     "Invalid days: use an integer from 1 to 366": "bad_request",
     "Stock history is not available on this server": "failed",
     "Part-number exclusions are not supported: {}. Search positively and exclude that identity during review.": "bad_request",

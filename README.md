@@ -84,7 +84,7 @@ Add to the Extensions config:
 |------|--------------|
 | `jlc_search` | Main search: plain-words queries, spec filters and sorting by a spec over the daily catalog snapshot |
 | `jlc_stock_check` | Live JLCPCB stock, including out-of-stock and low-stock parts |
-| `jlc_stock_history` | Recorded low-stock events for one LCSC code, with scrape-gap warnings and snapshot stock |
+| `jlc_stock_history` | Recorded low-stock events for one LCSC code or a list of up to 50, with scrape-gap warnings and snapshot stock |
 | `jlc_get_part` | Full details for an LCSC code or manufacturer part number |
 | `jlc_get_pinout` | Pin numbers and names from the EasyEDA symbol; `footprint=true` adds the footprint's pads |
 | `jlc_find_alternatives` | Replacements checked against compatibility rules, with unverified candidates listed apart |
@@ -143,7 +143,7 @@ docker compose -f docker-compose.local.yml up --build   # built from source
 
 The server builds `data/components.db` on first run. After upgrading, it logs a warning if the database is too old for the new version; rebuild it with `uv run python scripts/build_database.py`.
 
-Build recorded stock history with `uv run python scripts/build_history_db.py`. `jlc_stock_history(lcsc, days=180)` shows up to 100 events, newest first, over 1-366 days ending at the newest recorded date. Changes above 1,000 stock are not tracked, and a missing part in a scrape is not a confirmed stockout. `JLCPCB_DATA_DIR` sets the data directory; `JLCPCB_HISTORY_DB_PATH` can override the history DB path.
+Build recorded stock history with `uv run python scripts/build_history_db.py`. `jlc_stock_history(lcsc, days=180)` shows up to 100 events, newest first, over 1-366 days ending at the newest recorded date; a list of up to 50 codes gets a summary and the newest 10 events per part in one reply. Changes above 1,000 stock are not tracked, and a missing part in a scrape is not a confirmed stockout. `JLCPCB_DATA_DIR` sets the data directory; `JLCPCB_HISTORY_DB_PATH` can override the history DB path.
 
 Mouser keys are free from Mouser's API hub, and DigiKey client credentials from DigiKey's developer portal. `cse_get_kicad` downloads need a SamacSys ComponentSearchEngine account; `cse_search` works without one.
 

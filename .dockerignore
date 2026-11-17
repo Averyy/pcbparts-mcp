@@ -18,6 +18,7 @@ data/*.db.tmp
 data/wafer
 data/sensors/_scrape_status.json
 data/easyeda/seed_state.json
+data/easyeda/pads_state.json
 data/easyeda/*.tmp
 
 # Not needed at runtime / build

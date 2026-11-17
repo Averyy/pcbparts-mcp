@@ -61,19 +61,35 @@ class StockHistoryDatabase:
     @serialized
     def history(self, lcsc: str, days: int = 180) -> dict:
         self._ensure_db()
+        window = self._window(days)
+        events, more_events = self._events(lcsc, window, EVENT_LIMIT)
+        return {
+            "lcsc": lcsc,
+            "window": window,
+            "events": events,
+            "more_events": more_events,
+            "what_is_recorded": dict(WHAT_IS_RECORDED),
+        }
+
+    def _window(self, days: int) -> dict:
         end = self._history_end
         start = (date.fromisoformat(end) - timedelta(days=days - 1)).isoformat() if end else None
+        return {"start": start, "end": end,
+                "history_start": self._history_start, "history_end": end}
+
+    def _events(self, lcsc: str, window: dict, limit: int) -> tuple[list[dict], bool]:
+        """Build identical event labels and before-values under the caller's connection lock."""
         events = []
         more_events = False
-        if end:
+        if window["end"]:
             before_column = "stock_before" if self._has_before else "NULL AS stock_before"
             rows = self._conn.execute(
                 f"SELECT date, event_type, stock, {before_column} FROM stock_events "
                 "WHERE lcsc = ? AND date >= ? AND date <= ? "
                 "ORDER BY date DESC, event_type DESC LIMIT ?",
-                (lcsc, start, end, EVENT_LIMIT + 1),
+                (lcsc, window["start"], window["end"], limit + 1),
             ).fetchall()
-            more_events = len(rows) > EVENT_LIMIT
+            more_events = len(rows) > limit
             # Look beyond the requested window/cap so a return at its edge still
             # carries the warning about the preceding suspect disappearance.
             gaps = [date.fromisoformat(row[0]) for row in self._conn.execute(
@@ -81,7 +97,7 @@ class StockHistoryDatabase:
                 f"AND date IN ({','.join('?' for _ in SUSPECT_SCRAPES)})",
                 (lcsc, *SUSPECT_SCRAPES),
             )]
-            for row in rows[:EVENT_LIMIT]:
+            for row in rows[:limit]:
                 day, kind = row["date"], row["event_type"]
                 note = None
                 if kind == "gone":
@@ -96,14 +112,37 @@ class StockHistoryDatabase:
                 if row["stock_before"] is not None:
                     event["stock_before"] = row["stock_before"]
                 events.append(event)
-        return {
-            "lcsc": lcsc,
-            "window": {"start": start, "end": end,
-                       "history_start": self._history_start, "history_end": end},
-            "events": events,
-            "more_events": more_events,
-            "what_is_recorded": dict(WHAT_IS_RECORDED),
-        }
+        return events, more_events
+
+    @serialized
+    def history_many(self, codes: list[str], days: int = 180, per_part_limit: int = 10) -> dict:
+        """Summarize the full window once, then read bounded events through each part's PK."""
+        self._ensure_db()
+        window = self._window(days)
+        summaries = {}
+        if codes and window["end"]:
+            rows = self._conn.execute(
+                "SELECT lcsc, COUNT(*) AS events, "
+                "SUM(event_type = 'gone') AS gone, "
+                "MIN(CASE WHEN event_type != 'gone' THEN stock END) AS lowest_recorded, "
+                "MAX(CASE WHEN event_type = 'gone' THEN date END) AS last_gone "
+                f"FROM stock_events WHERE lcsc IN ({','.join('?' for _ in codes)}) "
+                "AND date BETWEEN ? AND ? GROUP BY lcsc",
+                (*codes, window["start"], window["end"]),
+            ).fetchall()
+            summaries = {row["lcsc"]: {key: row[key] for key in (
+                "events", "gone", "lowest_recorded", "last_gone")} for row in rows}
+        parts = []
+        for code in codes:
+            events, more_events = self._events(code, window, per_part_limit)
+            parts.append({
+                "lcsc": code,
+                "summary": summaries.get(code, {"events": 0, "gone": 0,
+                                                "lowest_recorded": None, "last_gone": None}),
+                "events": events,
+                "more_events": more_events,
+            })
+        return {"window": window, "parts": parts, "what_is_recorded": dict(WHAT_IS_RECORDED)}
 
     @serialized
     def close(self) -> None:

@@ -83,6 +83,7 @@ data/*.db.tmp
 
 # EasyEDA seed builder progress (scripts/build_easyeda_seed.py)
 data/easyeda/seed_state.json
+data/easyeda/pads_state.json
 data/easyeda/*.tmp
 
 # The committed catalog: its directory names come from JLCPCB category names, so no pattern above

@@ -124,6 +124,41 @@ async def test_digikey_exact_match_trusted_and_selects_packaging(digikey):
     assert_keyword_request(fake, "785-1000-2-ND")
 
 
+# DigiKey's reply for B2B-PH-K-S(LF)(SN) on 2026-11-14: no ExactMatches, one Product listed
+# without JST's (LF)(SN) endings. 0.9.3 answered "Part not found".
+@pytest.mark.parametrize("asked, listed", [
+    ("B2B-PH-K-S(LF)(SN)", "B2B-PH-K-S"),
+    ("b2b-ph-k-s (lf)(sn)", "B2B-PH-K-S"),
+    ("B2B-PH-K-S(LF)", "B2B-PH-K-S"),
+    ("B2B-PH-K-S", "B2B-PH-K-S(LF)(SN)"),
+    ("SM04B-SRSS-TB(LF)(SN)", "SM04B-SRSS-TB(LF)(SN)"),
+])
+async def test_jst_finish_codes_optional(digikey, asked, listed):
+    fake = FakeDigiKey(httpx.Response(200, json={"ExactMatches": [], "Products": [
+        product(listed, "JST Sales America Inc.", "455-1704-ND", stock=315042)]}))
+    result = await digikey(fake).get_part(asked)
+    assert result["total"] == 1
+    found = result["results"][0]
+    assert (found["mfr_part_number"], found["part_number"], found["stock"]) == (listed, "455-1704-ND", 315042)
+    assert_keyword_request(fake, asked.strip())
+
+
+# Only JST's two finish codes are set aside, and only on JST parts: other bracketed endings name
+# another maker's copy (UMW, TOKMAS) or a different variant (Hirose's (50)).
+@pytest.mark.parametrize("asked, listed, maker", [
+    ("B2B-PH-K-S(LF)(SN)", "B2B-PH-K-S", "SHOU HAN"),
+    ("LM258DR(UMW)", "LM258DR", "Texas Instruments"),
+    ("OPA340NA/3K(TOKMAS)", "OPA340NA/3K", "Texas Instruments"),
+    ("DF13-2P-1.25DSA(50)", "DF13-2P-1.25DSA", "Hirose Electric Co Ltd"),
+    ("B2B-PH-K-S(HF)", "B2B-PH-K-S", "JST Sales America Inc."),
+])
+async def test_other_bracket_endings_stay_distinct(digikey, asked, listed, maker):
+    fake = FakeDigiKey(httpx.Response(200, json={"ExactMatches": [], "Products": [product(listed, maker)]}))
+    result = await digikey(fake).get_part(asked)
+    assert result["error"] == f"Part not found: {asked}"
+    assert_keyword_request(fake, asked)
+
+
 @pytest.mark.parametrize("keyword", [
     httpx.Response(200, json={"ExactMatches": [], "Products": [product("AO3400A")]}),
     httpx.Response(200, json={"ExactMatches": [], "Products": []}),

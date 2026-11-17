@@ -10,6 +10,7 @@ This module provides intelligent alternative finding that:
 import re
 from typing import Any, Callable
 from .catalog_evidence import multi_diode, reviewed_specs
+from .land import CONNECTOR_LAND_UNCHECKED
 
 # Import shared parsers from the unified parsers module
 from pcbparts_mcp.parsers import (
@@ -1595,6 +1596,10 @@ def is_compatible_alternative(
     specs_unparseable: list[str] = []
     unverified_requirements: list[str] = []
     unchecked_requirements: list[str] = [*rules.get("unchecked", [])]
+    if original.get("category") == "Connectors":
+        # Same series, different makers' footprints: of 34 PH 2-pin parts checked for C295747, 8 didn't
+        # fit its pads, 6 only turned 180 degrees and 4 numbered pads 1 and 2 the other way round
+        unchecked_requirements.append(CONNECTOR_LAND_UNCHECKED)
 
     def result(is_compat: bool) -> tuple[bool, dict[str, Any]]:
         return is_compat, {
