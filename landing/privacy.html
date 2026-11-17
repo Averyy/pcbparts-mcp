@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - PCB Parts MCP</title>
+    <meta name="description" content="What the PCB Parts MCP server at pcbparts.dev collects, why, who it shares it with, and how long it keeps it. No accounts, no cookies, no tracking.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pcbparts.dev/privacy.html">
+
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pcbparts.dev/privacy.html">
+    <meta property="og:title" content="Privacy Policy - PCB Parts MCP">
+    <meta property="og:description" content="No accounts, no cookies, no tracking. What the pcbparts.dev MCP server collects and why.">
+    <meta property="og:image" content="https://pcbparts.dev/pcbparts-og.png">
+    <meta property="og:site_name" content="PCB Parts MCP">
+
+    <meta name="theme-color" content="#0B1A12">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pcb-bg: #0B1A12;
+            --pcb-surface: #0F2318;
+            --pcb-card: #0D1F16;
+            --pcb-trace: #1B4D35;
+            --pcb-trace-dim: #153D2A;
+            --pcb-bright: #00875A;
+            --copper: #CD7F32;
+            --copper-bright: #E8A94F;
+            --copper-dim: rgba(205, 127, 50, 0.15);
+            --silk: #E8E4D9;
+            --silk-dim: #8A9A8E;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--pcb-bg);
+            background-image:
+                linear-gradient(var(--pcb-trace-dim) 1px, transparent 1px),
+                linear-gradient(90deg, var(--pcb-trace-dim) 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-attachment: fixed;
+            color: var(--silk);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+        header {
+            border-bottom: 2px solid var(--copper);
+            background: rgba(11, 26, 18, 0.92);
+        }
+
+        header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding-top: 18px;
+            padding-bottom: 18px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--silk);
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            text-decoration: none;
+            word-spacing: -0.2em;
+        }
+
+        .brand img { height: 24px; }
+        .brand .dim { color: var(--silk-dim); font-weight: 400; }
+
+        .back {
+            color: var(--silk-dim);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .back:hover { color: var(--copper-bright); }
+
+        main {
+            background: rgba(13, 31, 22, 0.94);
+            border: 1px solid var(--pcb-trace);
+            border-radius: 4px;
+            margin: 48px auto;
+            padding: 48px 56px;
+        }
+
+        .zone {
+            color: var(--copper);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 8px; }
+
+        .updated {
+            color: var(--silk-dim);
+            font-size: 0.9rem;
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            font-size: 1.15rem;
+            color: var(--copper-bright);
+            margin: 40px 0 12px;
+            padding-top: 24px;
+            border-top: 1px solid var(--pcb-trace);
+        }
+
+        h3 { font-size: 0.95rem; margin: 24px 0 8px; }
+
+        p, li { color: #d6d2c6; }
+        p { margin-bottom: 14px; }
+        ul { margin: 0 0 14px 22px; }
+        li { margin-bottom: 8px; }
+        li::marker { color: var(--copper); }
+        strong { color: var(--silk); font-weight: 600; }
+
+        a {
+            color: var(--copper-bright);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            text-decoration-color: var(--copper);
+        }
+
+        a:hover { color: var(--silk); }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            background: var(--pcb-surface);
+            border: 1px solid var(--pcb-trace);
+            border-radius: 3px;
+            padding: 1px 5px;
+        }
+
+        .summary {
+            background: var(--copper-dim);
+            border-left: 3px solid var(--copper);
+            padding: 20px 24px;
+            margin-bottom: 8px;
+        }
+
+        .summary ul { margin-bottom: 0; }
+        .summary li:last-child { margin-bottom: 0; }
+
+        .table-wrap { overflow-x: auto; margin-bottom: 14px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+
+        th, td {
+            text-align: left;
+            vertical-align: top;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--pcb-trace);
+        }
+
+        th {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--silk-dim);
+            font-weight: 400;
+        }
+
+        td { color: #d6d2c6; }
+
+        footer {
+            color: var(--silk-dim);
+            font-size: 0.8rem;
+            padding-bottom: 48px;
+            text-align: center;
+        }
+
+        footer a { color: var(--silk-dim); }
+
+        @media (max-width: 640px) {
+            .container { padding: 0 16px; }
+            main { margin: 24px auto; padding: 28px 20px; border-left: none; border-right: none; border-radius: 0; }
+            h1 { font-size: 1.5rem; }
+            th, td { padding: 8px 6px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a class="brand" href="/">
+                <img src="/favicon.svg" alt="">
+                <span>PCB <span class="dim">Parts MCP</span></span>
+            </a>
+            <a class="back" href="/">&larr; Home</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <main>
+            <div class="zone">Legal</div>
+            <h1>Privacy Policy</h1>
+            <p class="updated">Effective November 16, 2026</p>
+
+            <div class="summary">
+                <ul>
+                    <li><strong>No accounts, no sign-in, no cookies, no ads, no analytics trackers.</strong></li>
+                    <li>We use what your AI assistant sends a tool (search text, part numbers, filters) to answer that call. Usage counts don't include it, and nothing we keep links it to you.</li>
+                    <li>Your IP address is used for rate limiting and abuse prevention and appears in server logs. It is never stored in our usage statistics.</li>
+                    <li>To answer some calls we send part numbers or search text, never your IP address, to JLCPCB, EasyEDA, Mouser, DigiKey or SamacSys.</li>
+                    <li>We don't sell or share data for advertising, and we don't use it to train AI models.</li>
+                </ul>
+            </div>
+
+            <h2>Who we are and what this covers</h2>
+            <p>PCB Parts MCP is an independent, open-source project. This policy covers the hosted service we run: the website at <a href="https://pcbparts.dev">pcbparts.dev</a> and the MCP server at <code>https://pcbparts.dev/mcp</code>, including when you use it through a connector in Claude, Cursor or any other MCP client.</p>
+            <p>The <a href="https://github.com/Averyy/pcbparts-mcp">source code</a> is public, so you can check everything described here. If you or your organization run your own copy of the server, that copy is not covered by this policy; whoever runs it is responsible for it.</p>
+
+            <h2>What we collect and why</h2>
+
+            <h3>1. Tool call contents</h3>
+            <p>When your AI assistant calls one of our tools, it sends the arguments for that call: for example a search query such as <code>10uF 0805 capacitor</code>, a part number such as <code>C2040</code> or <code>STM32F103C8T6</code>, filters, or a board or sensor name. We use them only to answer that call. We never receive your conversation, your files, or your AI assistant's memory, only the arguments your assistant chooses to send. Please don't put personal information in part searches.</p>
+            <p>Parts of some answers are cached to keep the service fast and to stay within our suppliers' rate limits. Caches are keyed by the part number or search text and contain no IP address or other identifier:</p>
+            <ul>
+                <li>Distributor, JLCPCB and EasyEDA answers are kept in memory for up to 24 hours and are cleared whenever the server restarts.</li>
+                <li>SamacSys ComponentSearchEngine search text and results, and KiCad files, are kept on our server's disk for up to one year. EasyEDA answers about whether a part has a footprint are kept on disk with no fixed end date, since they rarely change. This means the same lookup doesn't have to be repeated.</li>
+            </ul>
+            <p>If a lookup fails, the error log line may include the part number or search text involved, so we can fix the problem.</p>
+
+            <h3>2. IP address</h3>
+            <ul>
+                <li><strong>Rate limiting:</strong> we count requests per IP address over a rolling one-minute window, in memory only, so one caller can't overload the shared service.</li>
+                <li><strong>Mouser and DigiKey lookups:</strong> these use daily limits shared by every user. Once an hour, the server logs how many lookups were sent and the IP addresses of the five callers that sent the most, so we can spot abuse of the shared limits.</li>
+                <li><strong>Server logs:</strong> like most websites, our web server and application logs record standard request details such as the IP address, time, and requested path. Logs are rotated automatically and older entries are overwritten.</li>
+            </ul>
+
+            <h3>3. App name</h3>
+            <p>When an MCP client connects, it reports its own name, for example <code>claude-ai</code> or <code>cursor</code>. We count connections per app name per day. These counts are published on our public statistics page.</p>
+
+            <h3>4. Anonymous usage statistics</h3>
+            <p>We keep daily counts so we can see which tools are useful and which ones fail. For each day, we keep calls per tool and their outcome (found, nothing found, invalid request, rate-limited, failed), the average response time, calls per hour, Mouser and DigiKey lookup counts, and, for failed or empty calls, a reason chosen from a fixed list of labels. The counts never contain IP addresses, queries or part numbers.</p>
+            <p>To count distinct callers, we hash each IP address with a random salt that is held in memory only and replaced every day. The day's hashes are never written to disk and are thrown away at the end of the day. Only the total number of distinct callers is kept. The last 30 days of these counts are public at <a href="https://pcbparts.dev/mcp/stats">pcbparts.dev/mcp/stats</a>.</p>
+
+            <h3>5. The website</h3>
+            <p>The website uses no cookies, no analytics, and no tracking scripts. Its fonts are loaded from Google Fonts, so your browser connects to Google when you open a page; Google's handling of that connection is covered by the <a href="https://policies.google.com/privacy">Google Privacy Policy</a>.</p>
+
+            <h3>6. Email</h3>
+            <p>If you email us, we keep your message and email address so we can reply, and for as long as needed to handle your request.</p>
+
+            <h3>What we don't collect</h3>
+            <p>No names, accounts, passwords, payment details, location, device identifiers, health data, cookies, or chat history.</p>
+
+            <h2>Who we share data with</h2>
+            <p>We don't sell personal information or share it for advertising. To answer some tool calls, our server makes requests to these parts and CAD data providers. Those requests come from our server, with our credentials. They contain only the part number or search text needed for that call, never your IP address or anything else that identifies you:</p>
+            <ul>
+                <li><strong>JLCPCB and EasyEDA</strong> for live stock, pricing, part details and footprints</li>
+                <li><strong>Mouser Electronics</strong> and <strong>DigiKey</strong> for part lookups, through their official APIs</li>
+                <li><strong>SamacSys ComponentSearchEngine</strong> for ECAD models and KiCad files</li>
+            </ul>
+            <p>Each provider handles the requests we send under its own privacy policy. Our server runs on a rented virtual server whose hosting provider can technically access the machine. We may also disclose information if the law requires it.</p>
+            <p>Your AI assistant (for example Claude, ChatGPT or Cursor) is run by a separate company, and its own privacy policy covers your conversations with it.</p>
+
+            <h2>How long we keep it</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Data</th><th>Kept for</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Per-IP rate-limit counters</td><td>About one minute, in memory only</td></tr>
+                        <tr><td>Daily caller hashes and salt</td><td>Until the end of the UTC day or a server restart, in memory only</td></tr>
+                        <tr><td>Anonymous daily usage counts</td><td>365 days (the last 30 are public)</td></tr>
+                        <tr><td>Server logs (IP addresses, hourly top-caller lines, error details)</td><td>Rotated automatically by size; older entries are overwritten</td></tr>
+                        <tr><td>In-memory answer caches</td><td>Up to 24 hours, or until a restart</td></tr>
+                        <tr><td>On-disk ECAD and KiCad caches (no user identifiers)</td><td>Up to one year</td></tr>
+                        <tr><td>On-disk EasyEDA footprint answers (part numbers only, no user identifiers)</td><td>No fixed end date</td></tr>
+                        <tr><td>Emails you send us</td><td>As long as needed to handle your request</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Security</h2>
+            <p>All traffic to pcbparts.dev uses HTTPS. The server keeps as little data as possible, and what it keeps is mostly anonymous counts and cached parts data. API keys for third-party services stay on the server and are removed from any error message before it is sent back to you.</p>
+
+            <h2>Your choices and rights</h2>
+            <p>Using the service is optional and needs no account. Because we don't link what we keep to names or accounts, we usually can't find data that belongs to a particular person. If you'd like to ask about, see, or delete data about you, for example log lines containing your IP address, email us at <a href="mailto:info@pcbparts.dev">info@pcbparts.dev</a> and we'll do what we can. Depending on where you live, you may have rights under laws such as the GDPR or CCPA, and you can also complain to your local data protection authority.</p>
+            <p>To keep everything on your own infrastructure, you can <a href="https://github.com/Averyy/pcbparts-mcp#self-hosting">self-host</a> the server.</p>
+
+            <h2>Children</h2>
+            <p>The service is a tool for electronics design. It isn't directed at children under 13 (or under 16 where local law sets that age), and we don't knowingly collect their personal information.</p>
+
+            <h2>Changes</h2>
+            <p>If we change this policy, we'll update the effective date above. Every change is recorded in the project's public <a href="https://github.com/Averyy/pcbparts-mcp/commits/main/landing/privacy.html">change history</a>.</p>
+
+            <h2>Contact</h2>
+            <p>Questions about privacy: <a href="mailto:info@pcbparts.dev">info@pcbparts.dev</a>, or open an issue on <a href="https://github.com/Averyy/pcbparts-mcp/issues">GitHub</a>.</p>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 PCB Parts MCP &middot; <a href="/">Home</a> &middot; <a href="/llms.txt">llms.txt</a> &middot; <a href="https://github.com/Averyy/pcbparts-mcp">GitHub</a></p>
+        </footer>
+    </div>
+</body>
+</html>

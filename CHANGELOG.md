@@ -4,6 +4,12 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.9.4 (2026-11-16)
+
+No reply changes.
+
+- Privacy policy at [pcbparts.dev/privacy.html](https://pcbparts.dev/privacy.html), linked from the site footer, the sitemap and the README. It covers what the hosted server collects (tool arguments, IP addresses for rate limiting and logs, the app name, anonymous daily counts), what it shares with JLCPCB, EasyEDA, Mouser, DigiKey and SamacSys, and how long each is kept.
+
 ## 0.9.3 (2026-11-14)
 
 Changed replies: `digikey_get_part` finds part numbers several makers sell, adds a not-found hint, and gives the daily-limit reset time.

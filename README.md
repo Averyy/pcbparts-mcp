@@ -171,6 +171,10 @@ These four cache and statistics paths are unset outside Docker, which keeps that
 - **Health:** `https://pcbparts.dev/health` (version, cache sizes, each distributor's requests today)
 - **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups (including historical DigiKey keyword retries from before 0.9.3), and why calls found nothing or failed: one label a call from a fixed list (`reasons`), plus how the checks behind an empty search went (`why_empty`). No IPs, queries or part numbers are kept.
 
+## Privacy
+
+The hosted server at pcbparts.dev needs no account and sets no cookies. It uses tool arguments only to answer each call, and uses IP addresses for rate limiting and in server logs; part numbers and search text, never your IP, go to the parts providers it queries. The [privacy policy](https://pcbparts.dev/privacy.html) covers what is kept, for how long, and who it is shared with. A self-hosted copy is covered by whoever runs it.
+
 ## More
 
 - [llms.txt](https://pcbparts.dev/llms.txt): this service described for LLMs, with the defaults and limits they need
