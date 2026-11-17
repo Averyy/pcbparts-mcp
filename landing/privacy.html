@@ -230,14 +230,14 @@
         <main>
             <div class="zone">Legal</div>
             <h1>Privacy Policy</h1>
-            <p class="updated">Effective November 16, 2026</p>
+            <p class="updated">Effective November 17, 2026</p>
 
             <div class="summary">
                 <ul>
                     <li><strong>No accounts, no sign-in, no cookies, no ads, no analytics trackers.</strong></li>
                     <li>We use what your AI assistant sends a tool (search text, part numbers, filters) to answer that call. Usage counts don't include it, and nothing we keep links it to you.</li>
                     <li>Your IP address is used for rate limiting and abuse prevention and appears in server logs. It is never stored in our usage statistics.</li>
-                    <li>To answer some calls we send part numbers or search text, never your IP address, to JLCPCB, EasyEDA, Mouser, DigiKey or SamacSys.</li>
+                    <li>To answer some calls our server sends part numbers or search text, never your IP address, to JLCPCB, LCSC, EasyEDA, Mouser, DigiKey or SamacSys. Links in our answers, such as datasheet links, take whoever opens them straight to those sites.</li>
                     <li>We don't sell or share data for advertising, and we don't use it to train AI models.</li>
                 </ul>
             </div>
@@ -252,24 +252,26 @@
             <p>When your AI assistant calls one of our tools, it sends the arguments for that call: for example a search query such as <code>10uF 0805 capacitor</code>, a part number such as <code>C2040</code> or <code>STM32F103C8T6</code>, filters, or a board or sensor name. We use them only to answer that call. We never receive your conversation, your files, or your AI assistant's memory, only the arguments your assistant chooses to send. Please don't put personal information in part searches.</p>
             <p>Parts of some answers are cached to keep the service fast and to stay within our suppliers' rate limits. Caches are keyed by the part number or search text and contain no IP address or other identifier:</p>
             <ul>
-                <li>Distributor, JLCPCB and EasyEDA answers are kept in memory for up to 24 hours and are cleared whenever the server restarts.</li>
-                <li>SamacSys ComponentSearchEngine search text and results, and KiCad files, are kept on our server's disk for up to one year. EasyEDA answers about whether a part has a footprint are kept on disk with no fixed end date, since they rarely change. This means the same lookup doesn't have to be repeated.</li>
+                <li>Distributor, JLCPCB, LCSC and EasyEDA answers are reused for up to 24 hours. They are held in memory only, so a server restart clears them.</li>
+                <li>SamacSys ComponentSearchEngine search text and results, and KiCad files, are stored on our server's disk and reused for up to one year (a week for a search where some parts had no model). Expired entries are deleted the next time the server starts.</li>
+                <li>EasyEDA answers about whether a part has a footprint are stored on disk with no fixed end date, since they rarely change. Each holds the part number, the answer, EasyEDA's symbol and footprint IDs, and when it was checked.</li>
             </ul>
+            <p>Storing these answers means the same lookup doesn't have to be repeated.</p>
             <p>If a lookup fails, the error log line may include the part number or search text involved, so we can fix the problem.</p>
 
             <h3>2. IP address</h3>
             <ul>
                 <li><strong>Rate limiting:</strong> we count requests per IP address over a rolling one-minute window, in memory only, so one caller can't overload the shared service.</li>
-                <li><strong>Mouser and DigiKey lookups:</strong> these use daily limits shared by every user. Once an hour, the server logs how many lookups were sent and the IP addresses of the five callers that sent the most, so we can spot abuse of the shared limits.</li>
-                <li><strong>Server logs:</strong> like most websites, our web server and application logs record standard request details such as the IP address, time, and requested path. Logs are rotated automatically and older entries are overwritten.</li>
+                <li><strong>Mouser and DigiKey lookups:</strong> these use daily limits shared by every user. For each hour with lookups, the server logs how many were sent, from how many IP addresses, and the five IP addresses that sent the most with their counts, so we can spot abuse of the shared limits. The day's lookup counts, and any pause after a distributor refuses requests, are kept on disk so a restart doesn't reset them; they contain no IP addresses, queries or part numbers.</li>
+                <li><strong>Server logs:</strong> like most websites, our web server and application logs can record standard request details such as the IP address, time, and requested path (our short datasheet links put the part number in the path). The application's logs are capped at about 30 MB, with the oldest entries overwritten first, and start empty with each new release.</li>
             </ul>
 
             <h3>3. App name</h3>
             <p>When an MCP client connects, it reports its own name, for example <code>claude-ai</code> or <code>cursor</code>. We count connections per app name per day. These counts are published on our public statistics page.</p>
 
             <h3>4. Anonymous usage statistics</h3>
-            <p>We keep daily counts so we can see which tools are useful and which ones fail. For each day, we keep calls per tool and their outcome (found, nothing found, invalid request, rate-limited, failed), the average response time, calls per hour, Mouser and DigiKey lookup counts, and, for failed or empty calls, a reason chosen from a fixed list of labels. The counts never contain IP addresses, queries or part numbers.</p>
-            <p>To count distinct callers, we hash each IP address with a random salt that is held in memory only and replaced every day. The day's hashes are never written to disk and are thrown away at the end of the day. Only the total number of distinct callers is kept. The last 30 days of these counts are public at <a href="https://pcbparts.dev/mcp/stats">pcbparts.dev/mcp/stats</a>.</p>
+            <p>We keep daily counts so we can see which tools are useful and which ones fail. For each day, we keep calls per tool and their outcome (found, similar parts only, nothing found, invalid request, rate-limited, failed), the average response time, calls per hour, Mouser and DigiKey lookup counts, for failed or empty calls a reason chosen from a fixed list of labels, and totals for how the checks behind empty searches turned out. The counts never contain IP addresses, queries or part numbers.</p>
+            <p>To count distinct callers, we hash each IP address with a random salt that is held in memory only. The salt and the day's hashes are replaced with the first call of each new UTC day, and a restart discards them too. The hashes are never written to disk; only the total number of distinct callers is kept. The 30 most recent days of these counts are public at <a href="https://pcbparts.dev/mcp/stats">pcbparts.dev/mcp/stats</a>.</p>
 
             <h3>5. The website</h3>
             <p>The website uses no cookies, no analytics, and no tracking scripts. Its fonts are loaded from Google Fonts, so your browser connects to Google when you open a page; Google's handling of that connection is covered by the <a href="https://policies.google.com/privacy">Google Privacy Policy</a>.</p>
@@ -281,13 +283,15 @@
             <p>No names, accounts, passwords, payment details, location, device identifiers, health data, cookies, or chat history.</p>
 
             <h2>Who we share data with</h2>
-            <p>We don't sell personal information or share it for advertising. To answer some tool calls, our server makes requests to these parts and CAD data providers. Those requests come from our server, with our credentials. They contain only the part number or search text needed for that call, never your IP address or anything else that identifies you:</p>
+            <p>We don't sell personal information or share it for advertising. To answer some tool calls, our server makes requests to these parts and CAD data providers. Those requests come from our server, with our credentials. They contain only what that call needs (part numbers, search text, filters, and the provider's own part or model IDs), never your IP address or anything else that identifies you:</p>
             <ul>
                 <li><strong>JLCPCB and EasyEDA</strong> for live stock, pricing, part details and footprints</li>
+                <li><strong>LCSC</strong> for specifications and datasheets when JLCPCB lists none</li>
                 <li><strong>Mouser Electronics</strong> and <strong>DigiKey</strong> for part lookups, through their official APIs</li>
                 <li><strong>SamacSys ComponentSearchEngine</strong> for ECAD models and KiCad files</li>
             </ul>
-            <p>Each provider handles the requests we send under its own privacy policy. Our server runs on a rented virtual server whose hosting provider can technically access the machine. We may also disclose information if the law requires it.</p>
+            <p>Our answers also contain links, such as datasheets, LCSC product pages, manufacturers' datasheets and reference-board sources on GitHub. Our short datasheet links (<code>pcbparts.dev/mcp/datasheet/…</code>) redirect to the PDF on JLCPCB's or LCSC's servers. Opening any of these links connects your browser or AI assistant directly to that site, which then sees your IP address.</p>
+            <p>Each provider handles the requests it receives under its own privacy policy. Our server runs on a rented virtual server whose hosting provider can technically access the machine. We may also disclose information if the law requires it.</p>
             <p>Your AI assistant (for example Claude, ChatGPT or Cursor) is run by a separate company, and its own privacy policy covers your conversations with it.</p>
 
             <h2>How long we keep it</h2>
@@ -297,13 +301,14 @@
                         <tr><th>Data</th><th>Kept for</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td>Per-IP rate-limit counters</td><td>About one minute, in memory only</td></tr>
-                        <tr><td>Daily caller hashes and salt</td><td>Until the end of the UTC day or a server restart, in memory only</td></tr>
-                        <tr><td>Anonymous daily usage counts</td><td>365 days (the last 30 are public)</td></tr>
-                        <tr><td>Server logs (IP addresses, hourly top-caller lines, error details)</td><td>Rotated automatically by size; older entries are overwritten</td></tr>
-                        <tr><td>In-memory answer caches</td><td>Up to 24 hours, or until a restart</td></tr>
-                        <tr><td>On-disk ECAD and KiCad caches (no user identifiers)</td><td>Up to one year</td></tr>
-                        <tr><td>On-disk EasyEDA footprint answers (part numbers only, no user identifiers)</td><td>No fixed end date</td></tr>
+                        <tr><td>Per-IP rate-limit counters</td><td>Only the last minute counts; in memory only</td></tr>
+                        <tr><td>Daily caller hashes and salt</td><td>Until the first call of the next UTC day or a server restart; in memory only</td></tr>
+                        <tr><td>Anonymous daily usage counts</td><td>365 days (the 30 most recent are public)</td></tr>
+                        <tr><td>Application logs (request details, hourly top-caller lines, error details)</td><td>Capped at about 30 MB, oldest entries overwritten first; cleared with each new release</td></tr>
+                        <tr><td>In-memory answer caches</td><td>Reused for up to 24 hours; cleared on restart</td></tr>
+                        <tr><td>On-disk ECAD and KiCad caches (no user identifiers)</td><td>Reused for up to one year (a week for searches where some parts had no model); expired entries deleted at the next restart</td></tr>
+                        <tr><td>On-disk EasyEDA footprint answers (part numbers, the answer, EasyEDA IDs, when checked; no user identifiers)</td><td>No fixed end date</td></tr>
+                        <tr><td>Mouser and DigiKey daily lookup counts and pauses (no user identifiers)</td><td>Replaced each UTC day</td></tr>
                         <tr><td>Emails you send us</td><td>As long as needed to handle your request</td></tr>
                     </tbody>
                 </table>

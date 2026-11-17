@@ -125,7 +125,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 ## Self-hosting
 
 ```bash
-git clone --depth 1 https://github.com/Averyy/pcbparts-mcp  # current files only (~80 MB; full history ~7 GB)
+git clone https://github.com/Averyy/pcbparts-mcp  # about 160 MB with full history
 cd pcbparts-mcp
 uv venv && uv pip install -e .
 uv run python -m pcbparts_mcp.server  # http://localhost:8080/mcp; listens on all interfaces, HTTP_HOST=127.0.0.1 for this machine only
@@ -173,7 +173,7 @@ These four cache and statistics paths are unset outside Docker, which keeps that
 
 ## Privacy
 
-The hosted server at pcbparts.dev needs no account and sets no cookies. It uses tool arguments only to answer each call, and uses IP addresses for rate limiting and in server logs; part numbers and search text, never your IP, go to the parts providers it queries. The [privacy policy](https://pcbparts.dev/privacy.html) covers what is kept, for how long, and who it is shared with. A self-hosted copy is covered by whoever runs it.
+The hosted server at pcbparts.dev needs no account and sets no cookies. It uses tool arguments only to answer each call, and uses IP addresses for rate limiting and in server logs; part numbers and search text, never your IP, go to the parts providers it queries. Links in its answers, such as datasheet links, go straight to those providers' sites. The [privacy policy](https://pcbparts.dev/privacy.html) covers what is kept, for how long, and who it is shared with. A self-hosted copy is covered by whoever runs it.
 
 ## More
 
