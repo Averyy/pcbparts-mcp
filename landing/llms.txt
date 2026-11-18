@@ -220,12 +220,13 @@ Reply: `{content, matched_files, topic}`, with `note` on text-fallback matches. 
 
 ## Rate limit
 
-Each IP address may send 100 HTTP requests in any rolling minute. An address in the AI platforms' published outbound ranges (Anthropic's, which claude.ai and Claude connectors call from, and OpenAI's ChatGPT connectors list) may send 1,000, since many of their users share each one. Each MCP message (`initialize`, `tools/call`, ...) is one request, so a stateless client's tool call is about three. `/health` isn't counted.
+Each IP address may send 100 HTTP requests in any rolling minute. An address in the AI platforms' published outbound ranges (Anthropic's, which claude.ai and Claude connectors call from, and OpenAI's ChatGPT connectors list) may send 1,000, since many of their users share each one. Each MCP message (`initialize`, `tools/call`, ...) is one request, so a stateless client's tool call is about three. `/health` and `/mcp/stats` are never refused or counted.
 
 - Replies carry `X-RateLimit-Limit` (requests a minute for your address), `X-RateLimit-Remaining` (requests left in the current minute) and `X-RateLimit-Reset` (whole seconds until your oldest counted request leaves the minute, so one more is allowed; 0 when none are counted); `/health` replies too, without counting. Not on the few errors sent before the limit is checked (413 for an oversized body, 421/403 for an unknown Host or Origin).
 - Over the limit: HTTP 429 with a `Retry-After` header (seconds, at least 1) and a JSON body `{error, retry_after, reason, resets_at, tell_user}`: `retry_after` is the same seconds, `resets_at` that moment in UTC (ISO 8601), `tell_user` one sentence to show the user, `reason` why:
   - `per_ip_rate_limit`: your address sent its limit in the last minute.
   - `too_many_clients`: the server is serving as many addresses as it can at once; not caused by your use.
+  - `server_busy`: a database worker pool is overloaded (12 calls waiting, or the oldest waiting 0.5 s, by default). Only new `tools/call` requests are refused for this reason; `initialize`, notifications, `tools/list` and other methods still pass this check. Live lookups waiting on upstream services don't contribute to database pressure. Wait the short computed `retry_after` (2-5 seconds); for this refusal `X-RateLimit-Remaining` is 0 and `X-RateLimit-Reset` is that retry delay. It doesn't mean your address used its allowance.
 - Refused requests aren't counted: wait `retry_after` seconds, then send again. For heavy use, self-host: https://github.com/Averyy/pcbparts-mcp#self-hosting
 
 ## Quotas

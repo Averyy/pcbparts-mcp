@@ -18,6 +18,7 @@ from starlette.routing import Route
 
 from pcbparts_mcp import server
 from pcbparts_mcp.cache import SELF_HOSTING_URL, CallerTally
+from pcbparts_mcp.db_worker import DatabasePressure
 
 UTC = datetime.timezone.utc
 NOW = datetime.datetime(2026, 11, 18, 20, 5, tzinfo=UTC).timestamp()
@@ -130,7 +131,7 @@ class TestHeaders:
             health = await c.get("/health", headers={"X-Forwarded-For": A})
             assert (health.status_code, limits(health)) == (200, ("2", "0", "40"))
             stats_reply = await c.get("/mcp/stats", headers={"X-Forwarded-For": B})
-            assert limits(stats_reply) == ("2", "1", "60")  # counted like /mcp
+            assert limits(stats_reply) == ("2", "2", "0")  # stats is also exempt
 
     async def test_limit_for_sets_everything(self, clock):
         class PerAddress(server.RateLimitMiddleware):
@@ -182,7 +183,7 @@ class TestRealApp:
             usage = await c.get("/mcp/stats", headers={"X-Forwarded-For": A})
             assert usage.status_code == 200
             assert usage.headers["cache-control"] == "public, max-age=60"  # the route's own headers kept
-            assert limits(usage)[:2] == (limit, str(server.RATE_LIMIT_REQUESTS - 1))
+            assert limits(usage)[:2] == (limit, limit)
 
     async def test_mcp_stream(self, clock):
         """A real streamable-HTTP MCP reply (SSE) carries the headers and arrives whole."""
@@ -212,7 +213,8 @@ class TestRealApp:
         assert data[1][0]["result"]["content"][0]["text"] == "pong"
 
 
-async def test_stream_not_buffered(clock):
+@pytest.mark.parametrize("under_pressure", [False, True], ids=["healthy", "busy"])
+async def test_stream_not_buffered(clock, under_pressure):
     """The headers go out with the reply's start and each body chunk is passed on as it comes, so
     an SSE stream isn't held back: the second event is made only once the first has left the
     middleware (buffering would hang until the guard below fails the test)."""
@@ -226,9 +228,14 @@ async def test_stream_not_buffered(clock):
     async def sse(request):
         return StreamingResponse(events(), media_type="text/event-stream")
 
+    pressure = DatabasePressure(clock)
+    if under_pressure:
+        for _ in range(8):
+            pressure.enqueue(server.COMPONENT_POOL)
     app = Starlette(routes=[Route("/mcp", sse, methods=["POST"])],
                     middleware=[Middleware(server.BodySizeLimitMiddleware),  # prod's order
-                                Middleware(server.RateLimitMiddleware, requests_per_minute=5, clock=clock)])
+                                Middleware(server.RateLimitMiddleware, requests_per_minute=5, clock=clock,
+                                           pressure=pressure)])
     sent = []
 
     async def send(message):
@@ -242,7 +249,7 @@ async def test_stream_not_buffered(clock):
         nonlocal asked
         if not asked:
             asked = True
-            return {"type": "http.request", "body": b"{}", "more_body": False}
+            return {"type": "http.request", "body": b'{"id":1,"method":"tools/list"}', "more_body": False}
         await asyncio.Event().wait()  # no disconnect; cancelled once the reply is done
         return {"type": "http.disconnect"}
 

@@ -24,6 +24,14 @@ RATE_LIMIT_REQUESTS = int(os.getenv("RATE_LIMIT_REQUESTS", "100"))
 # sustain for database-served calls (scripts/load_test.py, 2026-11-18: about 1,800 a minute with
 # the CPU scaled to the VPS), so one busy platform address can't take the whole server.
 PLATFORM_RATE_LIMIT = int(os.getenv("PLATFORM_RATE_LIMIT", "1000"))
+# Shed new tools/call requests if ANY database pool has this many jobs waiting to start, or its
+# oldest has waited this many seconds. Measured 2026-11-18 at a third of a CPU (the VPS estimate,
+# knee ~600 calls/min): 8 / 0.25 s kept accepted p95 near 1.5 s past the knee but refused 11-17%
+# of calls at 360-600 a minute; 16 / 1.0 s refused ~1% at 360 but let accepted p95 reach ~2.5 s.
+# Without a cap, 840 a minute collapsed to p95 12.8 s. 12 / 0.5 s sits between; the CPU quota
+# exaggerates queueing at moderate load, so check prod's server_busy counts and tune by env.
+DB_BUSY_MAX_WAITING = max(1, int(os.getenv("DB_BUSY_MAX_WAITING", "12")))
+DB_BUSY_MAX_WAIT_SECONDS = max(0.001, float(os.getenv("DB_BUSY_MAX_WAIT_SECONDS", "0.5")))
 # Anthropic's published outbound ranges (https://platform.claude.com/docs/en/api/ip-addresses, "will
 # not change without notice"), comma-separated; set empty to give them the normal limit
 ANTHROPIC_IP_RANGES = [r.strip() for r in os.getenv("ANTHROPIC_IP_RANGES", "160.79.104.0/21,153.61.208.0/20").split(",")

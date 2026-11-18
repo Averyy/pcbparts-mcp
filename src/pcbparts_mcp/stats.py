@@ -84,7 +84,9 @@ MAX_DISTINCT_PARTS = 100_000  # distinct part numbers counted a day per distribu
 # HTTP requests the per-IP rate limit (server.RateLimitMiddleware) turned away, by the group of the
 # address (RateLimitMiddleware._refusal_group()): everyone_else at the normal limit, platform_ranges
 # for the AI platforms' published addresses (Anthropic, OpenAI) at PLATFORM_RATE_LIMIT.
-REFUSAL_GROUPS = ("everyone_else", "platform_ranges")
+# server_busy is shared database pressure, regardless of the caller's address group. Kept in
+# per_ip_refusals for an additive change to the existing refusal totals; never stores IPs.
+REFUSAL_GROUPS = ("everyone_else", "platform_ranges", "server_busy")
 
 
 def _new_day() -> dict[str, Any]:
@@ -289,7 +291,7 @@ class UsageStats:
                 counts["distinct"] += 1
 
     def record_refusal(self, group: str = "everyone_else") -> None:
-        """One HTTP request the per-IP rate limit turned away (no IP is kept). group: one of
+        """One HTTP request admission control turned away (no IP is kept). group: one of
         REFUSAL_GROUPS; anything else counts as everyone_else."""
         refusals = self._day()["per_ip_refusals"]
         group = group if group in REFUSAL_GROUPS else "everyone_else"
@@ -405,9 +407,10 @@ class UsageStats:
                       "looked up with Mouser and DigiKey, from stored answers or with a request (total), and how many "
                       "were different that day (distinct, ignoring case and - _ /; counted through salted hashes "
                       "held in memory, so a restart counts them again; not in totals, which can't add them across "
-                      "days). per_ip_refusals: HTTP requests the per-IP rate limit turned away (429), total and by "
+                      "days). per_ip_refusals: HTTP requests admission control turned away (429), total and by "
                       "group (platform_ranges: addresses in the AI platforms' published ranges, which have a "
-                      "higher limit; everyone_else: every other caller); null on days before it was counted."),
+                      "higher limit; everyone_else: every other caller; server_busy: shared database queue "
+                      "pressure, regardless of address); null on days before it was counted."),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {
                 "from": dates[-1] if dates else None,

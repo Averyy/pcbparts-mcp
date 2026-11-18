@@ -24,6 +24,7 @@ from mcp.types import ToolAnnotations
 from pydantic import BeforeValidator, Field
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
 from starlette.responses import JSONResponse, RedirectResponse
 from starlette.routing import Route
 
@@ -31,6 +32,7 @@ from . import __version__, platform_ranges, stats
 from .cache import SELF_HOSTING_URL, CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
 from .config import (
     RATE_LIMIT_REQUESTS, PLATFORM_RATE_LIMIT, ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE,
+    DB_BUSY_MAX_WAITING, DB_BUSY_MAX_WAIT_SECONDS,
     HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
     DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2, MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS,
@@ -46,7 +48,7 @@ from .distributor_store import DistributorStore
 from .lifecycle import Entry, LifecycleLookup, STATUSES, makers_match
 from .cse import CSEClient
 from .mounting import english_package
-from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, offload, run_db
+from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, database_pressure, offload, run_db
 from .db import get_db, close_db
 from .db.lookup import related_note
 from .history_db import get_history_db, close_history_db
@@ -82,6 +84,7 @@ _cse_stored: tuple[float, dict[str, int] | None] = (float("-inf"), None)  # (tim
 # Requests the per-IP rate limit turned away, per IP, logged as one line for each hour that had any
 # (the only place refused IPs appear; /mcp/stats counts them without IPs)
 _refused_callers = CallerTally("Per-IP rate limit", what="refusals")
+_busy_refused_callers = CallerTally("Server busy limit", what="refusals")
 
 # /health is public, isn't rate limited and is fetched by every landing page visit, so the store
 # count it shows is refreshed at most this often (seconds) instead of on every request.
@@ -224,6 +227,7 @@ async def lifespan(app):
     for quota in _distributor_quotas.values():
         quota.callers.flush()  # the hour so far, so a deploy doesn't lose it
     _refused_callers.flush()
+    _busy_refused_callers.flush()
     stats.usage.save()
     if _cse_client:
         await _cse_client.close()
@@ -254,6 +258,7 @@ async def _every_minute() -> None:
             for quota in _distributor_quotas.values():
                 quota.callers.flush_if_due()
             _refused_callers.flush_if_due()
+            _busy_refused_callers.flush_if_due()
             stats.usage.save()
             if minutes % 60 == 0 and _distributor_store is not None:
                 _distributor_store.prune()
@@ -545,6 +550,7 @@ RATE_LIMIT_REASONS = {
     "per_ip_rate_limit": "this address sent its limit of requests in the last minute",
     "too_many_clients": "the server is tracking as many addresses as it can (MAX_TRACKED_IPS); "
                         "not about this address's use",
+    "server_busy": "a database worker pool has too many waiting calls, or its oldest wait is too long",
 }
 
 
@@ -574,7 +580,7 @@ def _load_platform_ranges() -> platform_ranges.PlatformRanges:
     return loaded.ranges
 
 
-class RateLimitMiddleware(BaseHTTPMiddleware):
+class RateLimitMiddleware:
     """Rate limiting middleware: RATE_LIMIT_REQUESTS (100) requests a rolling minute per IP, and
     PLATFORM_RATE_LIMIT for the AI platforms' shared addresses (platform_ranges.py: Anthropic's and
     OpenAI's published ranges), the limit _limit_for() gives each address.
@@ -584,8 +590,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     the oldest counted request leaves the window; see _Allowance). A refusal is a 429 with
     Retry-After and a JSON body: error and retry_after (as before 0.10.0, and clients read
     retry_after: keep it), reason (a RATE_LIMIT_REASONS key), resets_at (UTC) and tell_user (one
-    sentence a client can show). Refused requests aren't counted. /health isn't limited or counted;
-    its headers show where the address stands.
+    sentence a client can show). Refused requests aren't counted. /health and /mcp/stats aren't
+    limited or counted; their headers show where the address stands.
+
+    Database queue pressure also sheds NEW tools/call requests with server_busy. Only database
+    offloads contribute pressure: live lookups waiting on upstream services don't fill this cap.
+    Pure ASGI so response chunks pass straight through, including SSE streams.
 
     Includes protections against memory exhaustion from IP spoofing:
     - Maximum tracked IPs limit (10,000): past it, new addresses are refused (too_many_clients)
@@ -600,8 +610,13 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
     def __init__(self, app, requests_per_minute: int = RATE_LIMIT_REQUESTS,
                  clock: Callable[[], float] | None = None, platform_per_minute: int = PLATFORM_RATE_LIMIT,
-                 platform_addresses: platform_ranges.PlatformRanges | None = None):
-        super().__init__(app)
+                 platform_addresses: platform_ranges.PlatformRanges | None = None,
+                 pressure=None, busy_max_waiting: int = DB_BUSY_MAX_WAITING,
+                 busy_max_wait: float = DB_BUSY_MAX_WAIT_SECONDS):
+        self.app = app
+        self.pressure = database_pressure if pressure is None else pressure
+        self.busy_max_waiting = busy_max_waiting
+        self.busy_max_wait = busy_max_wait
         self.requests_per_minute = requests_per_minute
         self.platform_per_minute = platform_per_minute
         # None: load them from config (and log how many), once: Starlette builds the middleware
@@ -656,8 +671,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                    default=now)
         return max(1, math.ceil(last + RATE_LIMIT_WINDOW - now))
 
-    def _allowance(self, client_ip: str, *, count: bool = True) -> _Allowance:
-        """Judge a request from client_ip and count it if allowed. count=False only looks (/health)."""
+    def _allowance(self, client_ip: str, *, count: bool = True, dry_run: bool = False) -> _Allowance:
+        """Judge and count a request. count=False only looks (exempt routes); dry_run checks
+        without charging, so an exhausted address is refused before reading its body under pressure."""
         now = self._now()
         window_start = now - RATE_LIMIT_WINDOW
         limit = self._limit_for(client_ip)
@@ -677,7 +693,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         timestamps = [t for t in self.request_counts.get(client_ip, ()) if t > window_start]
         # Checked before adding the current request; a refused request isn't counted
         refused = count and len(timestamps) >= limit
-        if count:
+        if count and not dry_run:
             if not refused:
                 timestamps.append(now)
             self.request_counts[client_ip] = timestamps
@@ -698,6 +714,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         seconds = f"{wait} second{'' if wait == 1 else 's'}"
         if allowance.refused == "too_many_clients":
             tell_user = f"pcbparts is serving too many addresses at once; try again in {seconds}."
+        elif allowance.refused == "server_busy":
+            tell_user = f"pcbparts is busy answering database calls; try again in {seconds}."
         else:
             allows = f"pcbparts allows {limit:,} request{'' if limit == 1 else 's'} a minute per address"
             if shared:
@@ -710,40 +728,92 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             headers={**cls._headers(allowance), "Retry-After": str(wait)},
         )
 
-    def _refusal_group(self, client_ip: str) -> str:
+    def _refusal_group(self, client_ip: str, reason: str | None = None) -> str:
         """Which stats.REFUSAL_GROUPS group a refused address counts under: platform_ranges for an
-        AI platform's address (PLATFORM_RATE_LIMIT), everyone_else for the rest."""
+        AI platform's address (PLATFORM_RATE_LIMIT), everyone_else for the rest; server_busy for
+        database pressure regardless of address."""
+        if reason == "server_busy":
+            return "server_busy"
         return "platform_ranges" if self._is_platform(client_ip) else "everyone_else"
 
-    def _count_refusal(self, client_ip: str) -> None:
+    def _count_refusal(self, client_ip: str, reason: str | None = None) -> None:
         """Count a refusal for /mcp/stats (no IP) and for the hourly most-refused-IPs log line.
         Counting never breaks the reply."""
         try:
-            stats.usage.record_refusal(self._refusal_group(client_ip))
+            stats.usage.record_refusal(self._refusal_group(client_ip, reason))
         except Exception:
             logger.exception("Usage stats: couldn't count a rate-limit refusal")
         try:
-            _refused_callers.record(client_ip)
+            tally = _busy_refused_callers if reason == "server_busy" else _refused_callers
+            tally.record(client_ip)
         except Exception:
             logger.exception("Couldn't note a rate-limit refusal for the hourly log line")
 
-    async def dispatch(self, request, call_next):
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        request = Request(scope)
         client_ip = self._get_client_ip(request)
-        if request.url.path == "/health":  # not limited or counted
+        if request.url.path in ("/health", "/mcp/stats"):  # not limited or counted
             allowance = self._allowance(client_ip, count=False)
         else:
+            if (request.method == "POST" and request.url.path in ("/mcp", "/mcp/")
+                    and self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait)):
+                allowance = self._allowance(client_ip, dry_run=True)
+                if allowance.refused:
+                    self._count_refusal(client_ip)
+                    return await self._refusal(allowance, shared=self._is_platform(client_ip))(scope, receive, send)
+                # Peek only under pressure. Bound the ACTUAL bytes too: Content-Length may be
+                # absent or false. Replay the body once to the SDK, which still validates JSON-RPC.
+                # The outer body-size guard rejects oversized declared lengths before this read.
+                body = bytearray()
+                while True:
+                    message = await receive()
+                    if message["type"] == "http.disconnect":
+                        return
+                    chunk = message.get("body", b"")
+                    if len(body) + len(chunk) > MAX_REQUEST_BODY_BYTES:
+                        response = JSONResponse({"error": "Request body too large"}, status_code=413)
+                        return await response(scope, receive, send)
+                    body.extend(chunk)
+                    if not message.get("more_body", False):
+                        break
+                original_receive = receive
+                replay = bytes(body)
+
+                async def receive_body():
+                    nonlocal replay
+                    if replay is not None:
+                        message = {"type": "http.request", "body": replay, "more_body": False}
+                        replay = None
+                        return message
+                    return await original_receive()
+
+                receive = receive_body
+                try:
+                    payload = json.loads(body)
+                except (ValueError, RecursionError):
+                    payload = None
+                # Notifications (no id), cheap methods and invalid/batch payloads go to the SDK.
+                if isinstance(payload, dict) and payload.get("method") == "tools/call" and "id" in payload:
+                    wait = self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait)
+                    if wait:
+                        allowance = _Allowance(self._limit_for(client_ip), 0, wait, self._now(), "server_busy")
+                        self._count_refusal(client_ip, "server_busy")
+                        return await self._refusal(allowance)(scope, receive, send)
             allowance = self._allowance(client_ip)
             if allowance.refused:
                 self._count_refusal(client_ip)
-                return self._refusal(allowance, shared=self._is_platform(client_ip))
-        response = await call_next(request)
-        # call_next returns once the app has sent its status and headers, before any of the body:
-        # these go out with them and a streamed (SSE) reply still streams. A new list, since an
-        # app may send its headers as a tuple.
-        response.raw_headers = [*response.raw_headers,
-                                *((name.lower().encode("latin-1"), value.encode("latin-1"))
-                                  for name, value in self._headers(allowance).items())]
-        return response
+                return await self._refusal(allowance, shared=self._is_platform(client_ip))(scope, receive, send)
+
+        async def send_headers(message):
+            if message["type"] == "http.response.start":
+                message = {**message, "headers": [*message.get("headers", ()),
+                           *((name.lower().encode("latin-1"), value.encode("latin-1"))
+                             for name, value in self._headers(allowance).items())]}
+            await send(message)
+
+        await self.app(scope, receive, send_headers)
 
 
 def _client_ip(request) -> str:

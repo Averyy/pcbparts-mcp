@@ -298,7 +298,7 @@ class TestMiddleware:
             f"same AI platform; try again in 60 seconds, or run your own copy for heavy use: {SELF_HOSTING_URL}")
         assert other[-1].json()["tell_user"].startswith("pcbparts allows 2 requests a minute per address; try again")
         # The refusals are split by group in /mcp/stats, without IPs
-        assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 3, "everyone_else": 1, "platform_ranges": 2}
+        assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 3, "everyone_else": 1, "platform_ranges": 2, "server_busy": 0}
 
     async def test_thousands_in_tell_user(self):
         clock = Clock()
