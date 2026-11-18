@@ -184,6 +184,7 @@ class _KeyState:
     readings: list[Reading] = field(default_factory=list)
     not_listed: dict[str, float] = field(default_factory=dict)  # source -> when it said so
     limited: dict[str, int] = field(default_factory=dict)  # source -> seconds until it may be asked
+    day_spent: set[str] = field(default_factory=set)  # sources limited because their whole day is spent
     failed: set[str] = field(default_factory=set)
 
     def add(self, reading: Reading) -> None:
@@ -213,9 +214,12 @@ def _best_per_maker(readings: list[Reading]) -> list[Reading]:
 
 class LifecycleLookup:
     """part_lifecycle: answers from the store; parts it doesn't have go to Mouser in 10-part
-    requests, and to DigiKey when Mouser doesn't list them (or can't be asked). Both clients write
-    what they fetch into the store and their 3-day answer cache, as for mouser_get_part and
-    digikey_get_part."""
+    requests, and to DigiKey only when Mouser doesn't list them (for the maker given) or can't be
+    asked today: Mouser's daily limit is spent, Mouser isn't configured, or the number is one
+    Mouser doesn't take (3-40 characters). A Mouser per-minute pause leaves the part unknown with
+    retry_after, and a failed Mouser lookup with lookup_failed, without asking DigiKey: a minute's
+    wait or a fault isn't a reason to spend DigiKey's smaller day. Both clients write what they
+    fetch into the store and their 3-day answer cache, as for mouser_get_part and digikey_get_part."""
 
     def __init__(self, store: DistributorStore, mouser: MouserClient | None = None,
                  digikey: DigiKeyClient | None = None):
@@ -233,10 +237,19 @@ class LifecycleLookup:
                     for reading in self._store.readings(entry.mpn or ""):
                         state.add(reading)
 
-        # Mouser first, then DigiKey for what it doesn't list; a part with a reading is never asked
+        # Mouser first, then DigiKey for what it doesn't list or can't answer today; a part with a
+        # reading is never asked
         await self._ask_mouser(self._unanswered(entries, states, "mouser"), caller)
-        await self._ask_digikey(self._unanswered(entries, states, "digikey"), caller)
+        await self._ask_digikey([state for state in self._unanswered(entries, states, "digikey")
+                                 if self._digikey_may_ask(state)], caller)
         return [self._result(entry, states.get(mpn_key(entry.mpn or ""))) for entry in entries]
+
+    @staticmethod
+    def _digikey_may_ask(state: _KeyState) -> bool:
+        """DigiKey is asked unless Mouser failed or only paused for a minute (see the class)."""
+        if "mouser" in state.failed:
+            return False
+        return "mouser" not in state.limited or "mouser" in state.day_spent
 
     @staticmethod
     def _unanswered(entries: list[Entry], states: dict[str, _KeyState], source: str) -> list[_KeyState]:
@@ -266,14 +279,20 @@ class LifecycleLookup:
             except (MouserError, MouserAPIError) as e:
                 logger.warning(f"part_lifecycle: Mouser lookup failed: {type(e).__name__}: {e}")
                 answers, error = None, None
-            except Exception as e:  # anything else: DigiKey may still answer
+            except Exception as e:  # anything else: those parts' lookups failed
                 logger.error(f"part_lifecycle: Mouser lookup failed: {type(e).__name__}")
                 answers, error = None, None
             for number in chunk:
                 state = states[mpn_key(number)]
-                if error is not None:
+                # Not checked: Mouser's 50-result cap crowded the number out of a reply and it
+                # couldn't be asked again, so Mouser may list it. A limit held that request back
+                # (as for a refused lookup), or it failed or came back crowded too (a failure).
+                unchecked = answers is not None and not answers[number].checked
+                if error is not None or (unchecked and self._mouser.held_back()):
                     state.limited["mouser"] = self._mouser.retry_after()
-                elif answers is None:
+                    if self._mouser.day_spent():
+                        state.day_spent.add("mouser")
+                elif answers is None or unchecked:
                     state.failed.add("mouser")
                 else:
                     answer = answers[number]

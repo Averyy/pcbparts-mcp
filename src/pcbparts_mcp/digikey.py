@@ -221,6 +221,14 @@ class DigiKeyClient:
             self._http = httpx.AsyncClient(timeout=15.0)
         return self._http
 
+    def _redact(self, text: str) -> str:
+        """DigiKey's own error text goes into our exceptions, which callers show and log (part_lifecycle
+        logs them as they are): blank out every app's client ID and secret in case DigiKey echoes one."""
+        secrets = {secret for app in self._apps for secret in (app.client_id, app.client_secret) if secret}
+        for secret in sorted(secrets, key=len, reverse=True):
+            text = text.replace(secret, "[redacted]")
+        return text
+
     def _get_token_lock(self, app: DigiKeyApp) -> asyncio.Lock:
         # Safe in single-threaded asyncio: no await between None check and assignment
         if app.token_lock is None:
@@ -276,7 +284,7 @@ class DigiKeyClient:
             # Check for OAuth error responses (some providers return 200 with error)
             if "error" in data:
                 error_desc = data.get("error_description", data["error"])
-                raise DigiKeyError(f"DigiKey OAuth error: {error_desc}")
+                raise DigiKeyError(self._redact(f"DigiKey OAuth error: {error_desc}"))
 
             app.access_token = data["access_token"]
             expires_in = data.get("expires_in", 599)

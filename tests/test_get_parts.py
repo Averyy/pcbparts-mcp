@@ -182,6 +182,15 @@ class TestMpnRows:
         assert other == {"input": {"mpn": "AO3400A", "manufacturer": "Nobody Inc"}, "mpn": "AO3400A", "total": 0,
                          "results": [], "not_found": True, "other_manufacturers": ["Alpha & Omega Semicon"]}
 
+    async def test_related_parts_dont_name_other_manufacturers(self, db):
+        """"LM32" finds only full-text related parts (LM324s): their makers don't list the number,
+        so a miss for the maker given names none of them (other_manufacturers is "listed only under
+        other makers", as on gone rows)."""
+        assert (await get_parts(["LM32"]))["results"][0]["match"] == "related"
+        row = (await get_parts([{"mpn": "LM32", "manufacturer": "Nobody Inc"}]))["results"][0]
+        assert row == {"input": {"mpn": "LM32", "manufacturer": "Nobody Inc"}, "mpn": "LM32", "total": 0,
+                       "results": [], "not_found": True}
+
     async def test_the_maker_picks_matched_mpn_too(self, db):
         row = (await get_parts([{"mpn": "LM-358", "manufacturer": "JSMSEMI"}]))["results"][0]
         assert (row["match"], row["matched_mpn"], row["total"]) == ("separators", "LM358", 1)

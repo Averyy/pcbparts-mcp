@@ -317,6 +317,8 @@ def get_sold_out_rows(
         for row in conn.execute(f"SELECT * FROM sold_out WHERE lcsc IN ({','.join('?' * len(codes))})", codes):
             part = sold_out_part(row, subcategories)
             listed = {key: part[key] for key in _SOLD_OUT_ROW_KEYS[:6]}
+            # One tier at most, never breaks: a client (Backplane's hub) checks a part with one break
+            # or fewer live by its lcsc, which is what a gone part's unknown stock needs
             if (prices := snapshot_prices(part["price"], None)) is not None:
                 listed["prices"] = prices
             listed.update((key, part[key]) for key in _SOLD_OUT_ROW_KEYS[6:])

@@ -22,7 +22,8 @@ from conftest import write_catalog_category
 
 import pcbparts_mcp.server as server
 from pcbparts_mcp.catalog_files import (
-    SOLD_OUT_DIR, SOLD_OUT_KEYS, read_catalog, read_sold_out, sold_out_row, write_sold_out,
+    PRICE_TIERS_FILE, SOLD_OUT_DIR, SOLD_OUT_KEYS, read_catalog, read_sold_out, sold_out_row, write_price_tiers,
+    write_sold_out,
 )
 from pcbparts_mcp.db import ComponentDatabase
 from pcbparts_mcp.history_db import StockHistoryDatabase
@@ -438,6 +439,37 @@ class TestGetPartByMpn:
         assert all(int(tier["qty"].rstrip("+")) >= 1 and isinstance(tier["price"], float) for tier in match["prices"])
 
 
+async def test_backplane_live_follow_up_needs_one_tier_and_the_code(tmp_path, monkeypatch):
+    """Backplane's hub takes the jlc_get_part(mpn) result whose model matches and, when it has one
+    price break or fewer, looks its lcsc up live and uses that stock (research-backplane-code-review.md).
+    A gone row keeps that working: its lcsc, and its last 1-piece price as its one tier (none
+    without a price), on a database with price breaks and even if breaks were kept for its code."""
+    data = _data_dir(tmp_path)
+    write_price_tiers(data / "catalog" / PRICE_TIERS_FILE, {"C5252902": "1:0.039,100:0.03,1000:0.025"},
+                      "2026-11-17T22:00:00+00:00")
+    build_database(data, data / "c.db", verbose=False)
+    with closing(sqlite3.connect(data / "c.db")) as conn:  # breaks for gone codes, which the build drops
+        conn.executemany("INSERT OR REPLACE INTO price_tiers VALUES (?, ?)",
+                         [(code, "1:0.7,100:0.6,1000:0.5") for code in ("C2040", "C9001", "C9003")])
+        conn.commit()
+    db = ComponentDatabase(db_path=data / "c.db", data_dir=data)
+    monkeypatch.setattr(server, "get_db", lambda: db)
+    try:
+        with offline():
+            rp2040 = await server.jlc_get_part(mpn="RP2040")
+            lm358 = await server.jlc_get_part(mpn="LM358")
+            header = await server.jlc_get_part(mpn="HDR-2X5")
+            rows = (await server.jlc_get_parts(["RP2040", "C2040"]))["results"]
+    finally:
+        db.close()  # before the temporary directory goes (Windows)
+    assert rp2040["price_tiers_as_of"] and len(lm358["results"][0]["prices"]) == 3  # in-stock parts list breaks
+    match = next(r for r in rp2040["results"] if r["model"].casefold() == "rp2040")
+    assert (match["gone"], match["lcsc"], match["prices"]) == (True, "C2040", [{"qty": "1+", "price": 0.7}])
+    priceless = header["results"][0]
+    assert (priceless["gone"], priceless["lcsc"], priceless["price"], "prices" in priceless) == (True, "C9003", None, False)
+    assert [r["prices"] for r in (rows[0]["results"][0], rows[1])] == [[{"qty": "1+", "price": 0.7}]] * 2
+
+
 class TestGoneBeatsRelatedOnly:
     """IRFB4710PBF (Infineon, C2660) left the snapshot; in stock there is only JSMSEMI's
     IRFB4710PBF-JSM, a full-text "related" result. The part asked for answers first."""
@@ -558,6 +590,8 @@ def test_backfill_replays_the_committed_catalogs(tmp_path):
                        check=True, capture_output=True)
 
     subprocess.run([git, "init", "-q"], cwd=tmp_path, check=True, capture_output=True)
+    # As Windows runners set it: git archive would hand back stock.tsv with CRLF, which read_catalog rejects
+    subprocess.run([git, "config", "core.autocrlf", "true"], cwd=tmp_path, check=True, capture_output=True)
     commit([_part("C1"), _part("C2"), _part("C3")], "2026-11-12")
     commit([_part("C1"), _part("C3")], "2026-11-13")
     commit([_part("C1")], "2026-11-14")

@@ -25,6 +25,12 @@ Network = ipaddress.IPv4Network | ipaddress.IPv6Network
 
 # The keys an entry of OpenAI's "prefixes" list may have, and the IP version each one holds
 OPENAI_PREFIX_KEYS = {"ipv4Prefix": 4, "ipv6Prefix": 6}
+# What a plausible list holds, per IP version: no prefix shorter than this, and at most this many
+# addresses in all (overlaps counted once). Every address in the list gets the platform limit, so a
+# list such as 0.0.0.0/0 (a bad download or a changed format) would give it to everyone. The
+# 2026-11 list: 289 IPv4 prefixes, the largest a /16 and a /23, 69,243 addresses, no IPv6.
+OPENAI_SHORTEST_PREFIX = {4: 12, 6: 32}
+OPENAI_MAX_ADDRESSES = {4: 2 ** 22, 6: 2 ** 100}  # four /12s; sixteen /32s
 
 
 class OpenAIList(NamedTuple):
@@ -38,8 +44,9 @@ def parse_openai_list(data: Any) -> OpenAIList:
 
     Raises ValueError unless it's an object with a non-empty "prefixes" list in which every entry
     has exactly one of ipv4Prefix/ipv6Prefix holding a prefix of that IP version (other keys are
-    ignored), so a changed format is noticed instead of half read. Host bits after the prefix
-    length are ignored."""
+    ignored), so a changed format is noticed instead of half read, and the list is plausible: no
+    prefix shorter than OPENAI_SHORTEST_PREFIX, no more addresses than OPENAI_MAX_ADDRESSES. Host
+    bits after the prefix length are ignored."""
     if not isinstance(data, dict):
         raise ValueError("not a JSON object")
     entries = data.get("prefixes")
@@ -61,7 +68,16 @@ def parse_openai_list(data: Any) -> OpenAIList:
             raise ValueError(f"prefix {number} ({key}): {e}") from None
         if network.version != OPENAI_PREFIX_KEYS[key]:
             raise ValueError(f"prefix {number} is under {key} but is IPv{network.version}: {value}")
+        if network.prefixlen < OPENAI_SHORTEST_PREFIX[network.version]:
+            raise ValueError(f"prefix {number} ({network}) is wider than a "
+                             f"/{OPENAI_SHORTEST_PREFIX[network.version]}: not a plausible connector range")
         prefixes.append(network)
+    for version, most in OPENAI_MAX_ADDRESSES.items():
+        size = sum(network.num_addresses for network in ipaddress.collapse_addresses(
+            network for network in prefixes if network.version == version))
+        if size > most:
+            raise ValueError(f"the IPv{version} prefixes cover {size:,} addresses, more than {most:,}: "
+                             "not a plausible connector list")
     created = data.get("creationTime")
     return OpenAIList(prefixes, created if isinstance(created, str) else None)
 

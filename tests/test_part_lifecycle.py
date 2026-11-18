@@ -17,7 +17,7 @@ from pcbparts_mcp.cache import DailyQuota, Pacer, QuotaPool
 from pcbparts_mcp.digikey import DigiKeyClient
 from pcbparts_mcp.distributor_store import DistributorStore
 from pcbparts_mcp.lifecycle import Reading
-from pcbparts_mcp.mouser import MouserClient, MouserError
+from pcbparts_mcp.mouser import MouserClient, MouserError, _normalize_part
 
 UTC = datetime.timezone.utc
 NOW = datetime.datetime(2026, 11, 18, 12, tzinfo=UTC).timestamp()
@@ -114,9 +114,10 @@ async def setup(clock, monkeypatch):
     """Build the server's clients on one store, as lifespan does. Returns a factory."""
     made = []
 
-    def create(mouser=None, digikey=None, mouser_limit=1000, digikey_limit=1000, gate=None, store=None):
+    def create(mouser=None, digikey=None, mouser_limit=1000, digikey_limit=1000, gate=None, store=None,
+               mouser_per_minute=None):
         store = store or DistributorStore(clock=clock)
-        mq = DailyQuota("Mouser", mouser_limit, clock=clock, own_key="Mouser API key")
+        mq = DailyQuota("Mouser", mouser_limit, clock=clock, own_key="Mouser API key", per_minute=mouser_per_minute)
         dq = QuotaPool([DailyQuota("DigiKey", digikey_limit, clock=clock, own_key="DigiKey API credentials")])
         m = d = None
         if mouser is not None:
@@ -245,12 +246,131 @@ class TestMouserPerPart:
         assert store.readings("LM358P")[0].raw == "not stated by Mouser"
         assert [(r.found, r.source) for r in store.readings("NOPE1")] == [(False, "mouser")]
 
+    async def test_unrelated_results_dont_make_a_miss_live_three_days(self, setup, clock):
+        """A lone number owns whatever Mouser returns for it; when none of it matches, the reply's
+        not_found names it and it's kept a day, not as long as a found part."""
+        odd = mouser_part("XYZ-1", mouser_pn="123-XYZ1")
+        fake = FakeMouser(responses=[httpx.Response(200, json={"Errors": [], "SearchResults": {
+            "NumberOfResult": 1, "Parts": [odd]}})] * 2)
+        m, _, _, _, _ = setup(mouser=fake)
+        reply = await m.get_part("OLDNAME1")
+        assert reply["not_found"] == ["OLDNAME1"] and [r["mfr_part_number"] for r in reply["results"]] == ["XYZ-1"]
+        clock.advance(DAY - 1)
+        assert await m.get_part("OLDNAME1") == reply and len(fake.sent) == 1
+        clock.advance(1)
+        await m.get_part("OLDNAME1")
+        assert len(fake.sent) == 2
+
+    async def test_a_kept_batch_with_an_unmatched_answer_lasts_a_day(self, setup, clock):
+        """The kept-batch check reads matched too (an answer can hold results and still not match)."""
+        fake = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P"))
+        m, _, store, _, _ = setup(mouser=fake)
+        found, odd = _normalize_part(mouser_part("LM358P")), _normalize_part(mouser_part("XYZ-1", mouser_pn="123-XYZ1"))
+        store.put_answer("mouser", "batch:LM358P|OLDNAME1", {"answers": {
+            "LM358P": {"results": [found], "matched": True}, "OLDNAME1": {"results": [odd], "matched": False}},
+            "extras": []}, True, clock())
+        clock.advance(DAY)
+        await m.get_part("LM358P|OLDNAME1")
+        assert fake.sent == ["LM358P|OLDNAME1"]
+
     async def test_limit_refusals_are_not_kept(self, setup):
         fake = FakeMouser(mouser_part("LM358P"))
         m, _, store, mq, _ = setup(mouser=fake, mouser_limit=0)
         assert "daily quota exceeded" in (await m.get_part("LM358P"))["error"]
         assert store.get_answer("mouser", "LM358P") is None and fake.sent == []
         assert m.retry_after() == MIDNIGHT - NOW
+
+
+# --- Mouser's 50-result cap ---
+
+class CappedMouser(FakeMouser):
+    """Mouser's cap: the parts each number asked finds, number by number, cut at `cap` (50), with
+    NumberOfResult counting all of them."""
+
+    def __init__(self, *parts, cap=50, total=None):
+        super().__init__(*parts)
+        self.cap, self.total = cap, total
+
+    def __call__(self, request: httpx.Request) -> httpx.Response:
+        numbers = json.loads(request.content)["SearchByPartRequest"]["mouserPartNumber"]
+        self.sent.append(numbers)
+        hits = []
+        for asked in (_alnum(n) for n in numbers.split("|")):
+            hits += [p for p in self.parts if _alnum(p["ManufacturerPartNumber"]).startswith(asked) and p not in hits]
+        return httpx.Response(200, json={"Errors": [], "SearchResults": {
+            "NumberOfResult": len(hits) if self.total is None else self.total, "Parts": hits[:self.cap]}})
+
+
+BROAD = [mouser_part(f"LM358{i:02}X") for i in range(60)]  # more than one reply holds
+
+
+class TestResultCap:
+    async def test_crowded_numbers_are_asked_again(self, setup):
+        fake = CappedMouser(*BROAD, mouser_part("TPS54331DR"), mouser_part("NE555P"))
+        m, _, store, mq, _ = setup(mouser=fake)
+        reply = await m.get_part("LM358|TPS54331DR|NE555P")
+        assert fake.sent == ["LM358|TPS54331DR|NE555P", "TPS54331DR|NE555P"]  # without the number that filled it
+        assert "not_found" not in reply and mq.status()["used_today"] == 2
+        assert [r["mfr_part_number"] for r in reply["results"]][-2:] == ["TPS54331DR", "NE555P"]
+        assert len(reply["results"]) == 52
+        # Kept per part from the second reply; LM358's own 50 too, but no "not listed" from the capped one
+        assert store.get_answer("mouser", "TPS54331DR") is not None
+        assert [r.found for r in store.readings("LM358")] == []
+        assert (await m.get_part("TPS54331DR|NE555P"))["total"] == 2 and len(fake.sent) == 2
+
+    async def test_number_of_result_above_the_parts_sent_is_capped_too(self, setup):
+        fake = CappedMouser(*BROAD[:40], mouser_part("TPS54331DR"), cap=30)
+        m, _, _, _, _ = setup(mouser=fake)
+        reply = await m.get_part("LM358|TPS54331DR")
+        assert fake.sent == ["LM358|TPS54331DR", "TPS54331DR"] and "not_found" not in reply
+
+    async def test_a_pooled_lookup_doesnt_depend_on_anothers_broad_number(self, setup):
+        gate = Gate()
+        fake = CappedMouser(*BROAD, mouser_part("TPS54331DR"))
+        m, _, store, _, _ = setup(mouser=fake, gate=gate)
+        broad = asyncio.create_task(m.get_part("LM358", caller="198.51.100.1"))
+        mine = asyncio.create_task(m.get_part("TPS54331DR", caller="203.0.113.9"))
+        await settle()
+        gate.opened.set()
+        await broad
+        reply = await mine
+        assert fake.sent == ["LM358|TPS54331DR", "TPS54331DR"]
+        assert [r["mfr_part_number"] for r in reply["results"]] == ["TPS54331DR"] and "not_found" not in reply
+        assert [(r.found, r.source) for r in store.readings("TPS54331DR")] == [(True, "mouser")]
+
+    async def test_one_more_request_at_most_and_no_negative_from_a_capped_reply(self, setup):
+        """Two broad numbers: the second request is capped too, and TPS54331DR is left unchecked:
+        not found in this reply, nothing kept, and part_lifecycle doesn't call it not listed."""
+        fake = CappedMouser(*BROAD, *(mouser_part(f"LM324{i:02}X") for i in range(60)), mouser_part("TPS54331DR"))
+        digikey = FakeDigiKey(dk_product("TPS54331DR"))
+        m, _, store, _, _ = setup(mouser=fake, digikey=digikey)
+        result = (await lifecycle(["LM358", "LM324", "TPS54331DR"]))["results"][2]
+        assert fake.sent == ["LM358|LM324|TPS54331DR", "LM324|TPS54331DR"]
+        assert result == {"input": "TPS54331DR", "mpn": "TPS54331DR", "status": "unknown", "lookup_failed": True}
+        assert "TPS54331DR" not in digikey.asked
+        assert store.get_answer("mouser", "TPS54331DR") is None and store.readings("TPS54331DR") == []
+        assert store.get_answer("mouser", "batch:LM358|LM324|TPS54331DR") is None
+        reply = await m.get_part("LM358|LM324|TPS54331DR")  # the broad ones are kept: TPS54331DR goes alone
+        assert fake.sent[2:] == ["TPS54331DR"] and "not_found" not in reply
+
+    async def test_a_limit_holding_back_the_second_request(self, setup):
+        fake = CappedMouser(*BROAD, mouser_part("TPS54331DR"))
+        digikey = FakeDigiKey(dk_product("TPS54331DR"))
+        _, _, store, _, _ = setup(mouser=fake, digikey=digikey, mouser_per_minute=1)
+        reply = await lifecycle(["LM358", "TPS54331DR"])
+        assert fake.sent == ["LM358|TPS54331DR"]  # the minute's one request
+        assert reply["results"][1] == {"input": "TPS54331DR", "mpn": "TPS54331DR", "status": "unknown",
+                                       "retry_after": 60}
+        assert "TPS54331DR" not in digikey.asked  # a minute's wait isn't Mouser not listing it
+        assert store.get_answer("mouser", "TPS54331DR") is None and store.readings("TPS54331DR") == []
+
+    async def test_a_single_broad_number_is_not_asked_again(self, setup):
+        fake = CappedMouser(*BROAD)
+        m, _, store, _, _ = setup(mouser=fake)
+        assert (await m.get_part("LM358"))["total"] == 50
+        assert fake.sent == ["LM358"]
+        assert store.get_answer("mouser", "LM358") is not None  # what Mouser answers for it alone
+        assert store.readings("LM358") == []  # no "not listed": the part itself may be past the cap
 
 
 # --- concurrent one-part lookups share a request ---
@@ -481,13 +601,44 @@ class TestLookups:
         assert (result["status"], result["source"]) == ("active", "digikey")
         assert mouser.sent == [] and digikey.asked == ["LM358P"]
 
-    async def test_mouser_failure_goes_to_digikey(self, setup):
-        mouser = FakeMouser(responses=[httpx.Response(503)])
-        setup(mouser=mouser, digikey=FakeDigiKey(dk_product("LM358P", status="Obsolete")))
-        assert (await lifecycle(["LM358P"]))["results"][0]["status"] == "obsolete"
+    async def test_mouser_failure_is_lookup_failed_without_digikey(self, setup):
+        """A failed Mouser lookup says nothing about whether Mouser lists the part: DigiKey's smaller
+        day isn't spent on it."""
+        mouser, digikey = FakeMouser(responses=[httpx.Response(503)]), FakeDigiKey(dk_product("LM358P", status="Obsolete"))
+        setup(mouser=mouser, digikey=digikey)
+        reply = await lifecycle(["LM358P"])
+        assert reply["results"][0] == {"input": "LM358P", "mpn": "LM358P", "status": "unknown", "lookup_failed": True}
+        assert digikey.asked == [] and "retry_after" not in reply
+
+    async def test_our_minute_cap_is_retry_after_without_digikey(self, setup):
+        mouser, digikey = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P")), FakeDigiKey(dk_product("NE555P"))
+        setup(mouser=mouser, digikey=digikey, mouser_per_minute=1)
+        assert (await lifecycle(["LM358P"]))["results"][0]["source"] == "mouser"
+        reply = await lifecycle(["NE555P"])
+        assert reply["results"][0] == {"input": "NE555P", "mpn": "NE555P", "status": "unknown", "retry_after": 60}
+        assert reply["retry_after"] == 60 and digikey.asked == [] and len(mouser.sent) == 1
+
+    async def test_mousers_minute_refusal_is_retry_after_without_digikey(self, setup):
+        minute = {"Errors": [{"Code": "TooManyRequests", "Message": "Maximum calls per minute exceeded."}]}
+        mouser, digikey = FakeMouser(responses=[httpx.Response(403, json=minute)]), FakeDigiKey(dk_product("LM358P"))
+        setup(mouser=mouser, digikey=digikey)
+        result = (await lifecycle(["LM358P"]))["results"][0]
+        assert (result["status"], result["retry_after"]) == ("unknown", 60)
+        assert digikey.asked == []
+
+    async def test_mousers_daily_refusal_goes_to_digikey(self, setup):
+        """Mouser's day spent (its refusal, every key): nothing goes to Mouser until the reset, so DigiKey answers."""
+        daily = {"Errors": [{"Code": "TooManyRequests", "Message": "Maximum calls per day exceeded.",
+                             "ResourceKey": "MaxCallPerDay"}]}
+        mouser, digikey = FakeMouser(responses=[httpx.Response(403, json=daily)]), FakeDigiKey(dk_product("LM358P"))
+        setup(mouser=mouser, digikey=digikey)
+        result = (await lifecycle(["LM358P"]))["results"][0]
+        assert (result["status"], result["source"]) == ("active", "digikey")
+        assert len(mouser.sent) == 1 and digikey.asked == ["LM358P"]
 
     async def test_both_fail(self, setup):
-        setup(mouser=FakeMouser(responses=[httpx.Response(503)]), digikey=FakeDigiKey(responses=[httpx.Response(500)]))
+        # Mouser not listing it sends it to DigiKey, whose lookup fails
+        setup(mouser=FakeMouser(), digikey=FakeDigiKey(responses=[httpx.Response(500)]))
         reply = await lifecycle(["LM358P"])
         assert reply["results"][0]["lookup_failed"] is True
         assert server._lifecycle_outcome(reply) == "failed"
@@ -592,6 +743,18 @@ class TestInputs:
         assert reply["results"][6]["status"] == "active"
         assert reply["status_counts"]["unknown"] == 6 and fake.sent == ["LM358P"]
         assert server._lifecycle_outcome({**reply, "results": reply["results"][:6]}) == "bad_request"
+
+    async def test_a_pipe_in_an_mpn_is_its_own_error(self, setup):
+        """Mouser batches join numbers with "|": "LM358P|NE555P" as one MPN would be two numbers in
+        a request, and ten such parts twenty, past Mouser's 10."""
+        fake = FakeMouser(*(mouser_part(f"PART{i}X") for i in range(10)), mouser_part("NE555P"))
+        setup(mouser=fake)
+        parts = [f"PART{i}X|NE555P" for i in range(9)] + [{"mpn": "PART9X|NE555P"}, "NE555P"]
+        reply = await lifecycle(parts)
+        assert [r.get("error") for r in reply["results"][:10]] == [
+            "Invalid part: an MPN can't contain '|' (give each part on its own)"] * 10
+        assert reply["results"][10]["status"] == "active" and fake.sent == ["NE555P"]
+        assert server._lifecycle_outcome({**reply, "results": reply["results"][:10]}) == "bad_request"
 
     async def test_counted_by_the_parts_own_errors_when_none_was_looked_up(self, setup, monkeypatch):
         class Down:

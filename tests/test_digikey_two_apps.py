@@ -517,6 +517,36 @@ async def test_401_resend_waits_out_a_daily_pause_on_that_app(client, clock):
     assert fake.apps == [CREDS[0], CREDS[2]]
 
 
+@pytest.mark.parametrize("spent", [False, True], ids=["app1", "app2"])
+async def test_oauth_error_text_is_redacted_in_the_client(client, clock, monkeypatch, caplog, spent):
+    """DigiKey's OAuth error_description goes into DigiKeyError, which part_lifecycle logs as it is
+    (without the tools' _redact): the client blanks out both apps' credentials before raising."""
+    echo = {"error": "invalid_client", "error_description": "Unknown client " + " ".join(CREDS)}
+    quotas = pool(clock)
+    if spent:  # the second app's token request answers
+        quotas.quotas[0]._count = quotas.quotas[0]._limit
+    asked = []
+
+    def oauth(request):
+        asked.append(parse_qs(request.content.decode())["client_id"][0])
+        return httpx.Response(200, json=echo)
+
+    dk, _ = client(quotas)
+    dk._http = httpx.AsyncClient(transport=httpx.MockTransport(oauth))
+    with pytest.raises(DigiKeyError) as raised:
+        await dk.get_part("A")
+    assert asked == [CREDS[2] if spent else CREDS[0]]
+    assert str(raised.value) == "DigiKey OAuth error: Unknown client " + " ".join(["[redacted]"] * 4)
+    monkeypatch.setattr(server, "_mouser_client", None)
+    monkeypatch.setattr(server, "_digikey_client", dk)
+    monkeypatch.setattr(server, "_distributor_store", None)
+    with caplog.at_level(logging.WARNING):
+        reply = await server.part_lifecycle(parts=["AO3400A"])
+    assert reply["results"][0]["lookup_failed"] is True
+    assert "[redacted]" in caplog.text
+    assert all(secret not in caplog.text and secret not in json.dumps(reply) for secret in CREDS)
+
+
 async def test_failure_logs_are_redacted_like_replies(monkeypatch, caplog):
     # Review finding: the log line carried the unredacted exception text.
     configure(monkeypatch)

@@ -514,11 +514,17 @@ class QuotaPool:
         remaining = _header_int(headers, "x-ratelimit-remaining")
         if status == 403 or (status == 429 and remaining != 0):
             reason = "refused" if status == 403 else "burst"
-            until = quota.now() + (600 if status == 403 else (_header_int(headers, "retry-after") or 60))
-            for app in self.quotas:
-                if until > app._shared_paused_until:
-                    app._shared_paused_until, app._shared_pause_reason = until, reason
-                    app._save()
+            self.share_penalty(quota.now() + (600 if status == 403 else (_header_int(headers, "retry-after") or 60)),
+                               reason)
+
+    def share_penalty(self, until: float, reason: str) -> None:
+        """Pause every app or key until `until` for a per-minute ("burst") or 403 ("refused")
+        refusal. Kept apart from each one's own pause, so a longer daily pause on the app that got
+        it can't swallow it: that refusal says the whole pool is sending too fast."""
+        for app in self.quotas:
+            if until > app._shared_paused_until:
+                app._shared_paused_until, app._shared_pause_reason = until, reason
+                app._save()
 
     def status(self) -> dict[str, Any]:
         index = self._active_index()

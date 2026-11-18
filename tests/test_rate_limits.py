@@ -131,7 +131,15 @@ class TestHeaders:
             health = await c.get("/health", headers={"X-Forwarded-For": A})
             assert (health.status_code, limits(health)) == (200, ("2", "0", "40"))
             stats_reply = await c.get("/mcp/stats", headers={"X-Forwarded-For": B})
-            assert limits(stats_reply) == ("2", "2", "0")  # stats is also exempt
+            assert limits(stats_reply) == ("2", "1", "60")  # stats counts, as before 0.10.0
+
+    async def test_stats_is_limited_per_address(self, clock):
+        """/mcp/stats had main's 100 a minute per address; only the busy check passes it by."""
+        async with client(app_with(2, clock)) as c:
+            assert [(await c.get("/mcp/stats", headers={"X-Forwarded-For": A})).status_code
+                    for _ in range(3)] == [200, 200, 429]
+            assert (await post(c, A)).status_code == 429  # one allowance for every path
+            assert (await c.get("/health", headers={"X-Forwarded-For": A})).status_code == 200
 
     async def test_limit_for_sets_everything(self, clock):
         class PerAddress(server.RateLimitMiddleware):
@@ -183,7 +191,7 @@ class TestRealApp:
             usage = await c.get("/mcp/stats", headers={"X-Forwarded-For": A})
             assert usage.status_code == 200
             assert usage.headers["cache-control"] == "public, max-age=60"  # the route's own headers kept
-            assert limits(usage)[:2] == (limit, limit)
+            assert limits(usage)[:2] == (limit, str(server.RATE_LIMIT_REQUESTS - 1))  # counted
 
     async def test_mcp_stream(self, clock):
         """A real streamable-HTTP MCP reply (SSE) carries the headers and arrives whole."""

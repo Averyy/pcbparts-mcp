@@ -25,7 +25,7 @@ from pydantic import BeforeValidator, Field
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse, RedirectResponse
+from starlette.responses import JSONResponse, RedirectResponse, Response
 from starlette.routing import Route
 
 from . import __version__, platform_ranges, stats
@@ -81,8 +81,9 @@ _distributor_quotas: dict[str, DailyQuota | QuotaPool] = {}  # "mouser"/"digikey
 _easyeda_seeded = 0  # rows in the seed table, counted at startup (components.db doesn't change)
 _easyeda_stored: tuple[float, int | None] = (float("-inf"), None)  # (time.monotonic(), store size)
 _cse_stored: tuple[float, dict[str, int] | None] = (float("-inf"), None)  # (time.monotonic(), store counts)
-# Requests the per-IP rate limit turned away, per IP, logged as one line for each hour that had any
-# (the only place refused IPs appear; /mcp/stats counts them without IPs)
+# Requests the per-IP rate limit turned away, and server_busy refusals, per IP, each logged as one
+# line for each hour that had any with the five most-refused IPs (the only places refused IPs
+# appear; /mcp/stats counts them without IPs; the privacy page describes both lines)
 _refused_callers = CallerTally("Per-IP rate limit", what="refusals")
 _busy_refused_callers = CallerTally("Server busy limit", what="refusals")
 
@@ -543,6 +544,9 @@ mcp.add_middleware(UsageStatsMiddleware())
 
 # The per-IP rate limit counts each address's requests over a rolling window of this many seconds
 RATE_LIMIT_WINDOW = 60
+# Under database pressure the rate limit reads a POST's body to see whether it's a tools/call: a body
+# that hasn't all arrived within this many seconds is refused as server_busy (MCP calls are a few KB)
+BUSY_BODY_READ_SECONDS = 2.0
 
 # Why the per-IP rate limit refused a request: the `reason` in its 429 body (llms.txt lists them).
 # Add reasons, never rename one: clients branch on them.
@@ -590,12 +594,16 @@ class RateLimitMiddleware:
     the oldest counted request leaves the window; see _Allowance). A refusal is a 429 with
     Retry-After and a JSON body: error and retry_after (as before 0.10.0, and clients read
     retry_after: keep it), reason (a RATE_LIMIT_REASONS key), resets_at (UTC) and tell_user (one
-    sentence a client can show). Refused requests aren't counted. /health and /mcp/stats aren't
-    limited or counted; their headers show where the address stands.
+    sentence a client can show). Requests the per-IP limit refuses aren't counted. /health isn't
+    limited or counted; its headers show where the address stands. /mcp/stats is limited and
+    counted like any request (as before 0.10.0), but never refused as server_busy.
 
     Database queue pressure also sheds NEW tools/call requests with server_busy. Only database
     offloads contribute pressure: live lookups waiting on upstream services don't fill this cap.
-    Pure ASGI so response chunks pass straight through, including SSE streams.
+    A busy refusal counts against the address's allowance like an answered request, so an address
+    that keeps sending through an overload runs into its per-IP limit too; while pressure lasts, a
+    POST's body (read to tell a tools/call from cheaper methods) has BUSY_BODY_READ_SECONDS to
+    arrive. Pure ASGI so response chunks pass straight through, including SSE streams.
 
     Includes protections against memory exhaustion from IP spoofing:
     - Maximum tracked IPs limit (10,000): past it, new addresses are refused (too_many_clients)
@@ -612,11 +620,13 @@ class RateLimitMiddleware:
                  clock: Callable[[], float] | None = None, platform_per_minute: int = PLATFORM_RATE_LIMIT,
                  platform_addresses: platform_ranges.PlatformRanges | None = None,
                  pressure=None, busy_max_waiting: int = DB_BUSY_MAX_WAITING,
-                 busy_max_wait: float = DB_BUSY_MAX_WAIT_SECONDS):
+                 busy_max_wait: float = DB_BUSY_MAX_WAIT_SECONDS,
+                 busy_body_timeout: float = BUSY_BODY_READ_SECONDS):
         self.app = app
         self.pressure = database_pressure if pressure is None else pressure
         self.busy_max_waiting = busy_max_waiting
         self.busy_max_wait = busy_max_wait
+        self.busy_body_timeout = busy_body_timeout
         self.requests_per_minute = requests_per_minute
         self.platform_per_minute = platform_per_minute
         # None: load them from config (and log how many), once: Starlette builds the middleware
@@ -749,37 +759,66 @@ class RateLimitMiddleware:
         except Exception:
             logger.exception("Couldn't note a rate-limit refusal for the hourly log line")
 
+    def _busy_refusal(self, client_ip: str, wait: int) -> JSONResponse:
+        """The server_busy 429, charged to the address's allowance like an answered request (so a
+        flood during an overload also meets the per-IP limit); the per-IP 429 instead when that
+        charge finds the address out of requests."""
+        charged = self._allowance(client_ip)
+        if charged.refused:
+            self._count_refusal(client_ip)
+            return self._refusal(charged, shared=self._is_platform(client_ip))
+        self._count_refusal(client_ip, "server_busy")
+        return self._refusal(_Allowance(self._limit_for(client_ip), 0, wait, self._now(), "server_busy"))
+
+    async def _peek_body(self, receive) -> bytes | Response | None:
+        """The request's whole body, read under database pressure, or the reply that ends it here:
+        413 past MAX_REQUEST_BODY_BYTES (Content-Length may be absent or false, so the actual bytes
+        are counted; the outer body-size guard rejects oversized declared lengths before this read),
+        an empty 400 when the client disconnects (nobody reads it and the server drops it, but the
+        middleware above expects a response: BaseHTTPMiddleware raises "No response returned."
+        without one), or None when it hasn't all arrived within busy_body_timeout."""
+        body = bytearray()
+        try:
+            async with asyncio.timeout(self.busy_body_timeout):
+                while True:
+                    message = await receive()
+                    if message["type"] == "http.disconnect":
+                        return Response(status_code=400)
+                    chunk = message.get("body", b"")
+                    if len(body) + len(chunk) > MAX_REQUEST_BODY_BYTES:
+                        return JSONResponse({"error": "Request body too large"}, status_code=413)
+                    body.extend(chunk)
+                    if not message.get("more_body", False):
+                        return bytes(body)
+        except TimeoutError:
+            return None
+
     async def __call__(self, scope, receive, send):
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
         request = Request(scope)
         client_ip = self._get_client_ip(request)
-        if request.url.path in ("/health", "/mcp/stats"):  # not limited or counted
+        if request.url.path == "/health":  # not limited or counted
             allowance = self._allowance(client_ip, count=False)
         else:
+            # /mcp/stats is limited per address like other requests; only POST /mcp can be busy
             if (request.method == "POST" and request.url.path in ("/mcp", "/mcp/")
                     and self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait)):
                 allowance = self._allowance(client_ip, dry_run=True)
                 if allowance.refused:
                     self._count_refusal(client_ip)
                     return await self._refusal(allowance, shared=self._is_platform(client_ip))(scope, receive, send)
-                # Peek only under pressure. Bound the ACTUAL bytes too: Content-Length may be
-                # absent or false. Replay the body once to the SDK, which still validates JSON-RPC.
-                # The outer body-size guard rejects oversized declared lengths before this read.
-                body = bytearray()
-                while True:
-                    message = await receive()
-                    if message["type"] == "http.disconnect":
-                        return
-                    chunk = message.get("body", b"")
-                    if len(body) + len(chunk) > MAX_REQUEST_BODY_BYTES:
-                        response = JSONResponse({"error": "Request body too large"}, status_code=413)
-                        return await response(scope, receive, send)
-                    body.extend(chunk)
-                    if not message.get("more_body", False):
-                        break
+                # Peek only under pressure, then replay the body once to the SDK, which still
+                # validates JSON-RPC
+                body = await self._peek_body(receive)
+                if body is None:  # too slow while the server is overloaded: refused as busy
+                    wait = self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait) or 2
+                    return await self._busy_refusal(client_ip, wait)(scope, receive, send)
+                if isinstance(body, Response):  # 413, or the client left: charged as it would be unpressured
+                    self._allowance(client_ip)
+                    return await body(scope, receive, send)
                 original_receive = receive
-                replay = bytes(body)
+                replay = body
 
                 async def receive_body():
                     nonlocal replay
@@ -798,9 +837,7 @@ class RateLimitMiddleware:
                 if isinstance(payload, dict) and payload.get("method") == "tools/call" and "id" in payload:
                     wait = self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait)
                     if wait:
-                        allowance = _Allowance(self._limit_for(client_ip), 0, wait, self._now(), "server_busy")
-                        self._count_refusal(client_ip, "server_busy")
-                        return await self._refusal(allowance)(scope, receive, send)
+                        return await self._busy_refusal(client_ip, wait)(scope, receive, send)
             allowance = self._allowance(client_ip)
             if allowance.refused:
                 self._count_refusal(client_ip)
@@ -2395,7 +2432,9 @@ def _get_parts_mpn_row(mpn: str, answer: tuple[str, list[dict[str, Any]], dict[s
     others = list(dict.fromkeys(p["manufacturer"] for p in found))[:GET_PARTS_MAX_MATCHES]
     if kind == "none":
         row.update(results=[], not_found=True)
-        if found:  # listed, but only under other makers
+        # Listed, but only under other makers: their parts are numbered so, not merely full-text
+        # related (a JSMSEMI "-JSM" copy found by its text doesn't list the number), as below
+        if found and found_info.get("match") != "related":
             row["other_manufacturers"] = others
         return row
     info = dict(info)
@@ -2862,7 +2901,8 @@ async def mouser_get_part(part_number: str) -> dict:
     """Mouser price, stock and datasheet for specific parts. Its shared daily limit often runs out,
     so use it only when JLCPCB can't answer: jlc_search / jlc_get_part found nothing, or the user
     asked for Mouser's own stock or price. For lifecycle, use part_lifecycle (a whole BOM per call).
-    Batch up to 10 parts per call (one request). Don't retry a quota error.
+    Batch up to 10 parts per call (one request; one more when a broad number filled Mouser's
+    50-result reply, for the numbers it crowded out). Don't retry a quota error.
     Reply: each part's answer is kept up to 3 days (not found: a day); observed_at is the oldest
     one's time. lifecycle is Mouser's status where it states one (Not Recommended for New Designs,
     End of Life, Obsolete, Discontinued), else null: Mouser states none for most parts, including
@@ -2877,7 +2917,7 @@ async def mouser_get_part(part_number: str) -> dict:
 
     Args:
         part_number: Mouser PN or MPN, or up to 10 joined by "|" ("595-LM358P|NE555P"),
-            3-40 chars each. Loose match, max 50 results per call: use full PNs when batching;
+            3-40 chars each. Loose match, max 50 results per request: use full PNs when batching;
             match results by requested and matched_by.
     """
     if not _mouser_client:
@@ -2986,15 +3026,16 @@ async def part_lifecycle(parts: list[str | dict[str, Any]] | str) -> dict:
     """Lifecycle status of up to 50 parts in one call (a BOM's lifecycle check): active, nrnd,
     last_time_buy, obsolete or unknown, from Mouser and DigiKey. Use it instead of mouser_get_part /
     digikey_get_part for lifecycle. Readings are kept 90 days (not listed: a week) for every caller; a
-    part not kept yet is looked up on Mouser, then DigiKey if Mouser doesn't list it, within their
-    shared daily limits. When those are spent it comes back unknown with retry_after (seconds); kept
+    part not kept yet is looked up on Mouser, and on DigiKey only if Mouser doesn't list it or
+    Mouser's daily limit is spent. A limit in the way (Mouser's per-minute one, or both daily ones)
+    leaves it unknown with retry_after (seconds); a failed lookup, unknown with lookup_failed. Kept
     parts still answer.
     Reply: results in input order: input (as given), mpn, manufacturer, status, raw (the
     distributor's wording; Mouser states none for most active parts: "not stated by Mouser"),
     source, observed_at, last_buy_date where DigiKey gives one. An unknown status can add not_found
-    (neither lists it), retry_after, lookup_failed, error (unusable input), or makers: each maker's
-    reading, when several list the number and none was given, or only other makers do.
-    status_counts counts the statuses.
+    (neither lists it), retry_after, lookup_failed, error (unusable input, such as an MPN with
+    "|"), or makers: each maker's reading, when several list the number and none was given, or
+    only other makers do. status_counts counts the statuses.
 
     Args:
         parts: Up to 50, each an MPN ("LM358P"), an LCSC code ("C7950": MPN and maker from the
@@ -3043,6 +3084,10 @@ async def part_lifecycle(parts: list[str | dict[str, Any]] | str) -> dict:
                 entry.maker = entry.maker or part.get("manufacturer") or None
                 if not entry.mpn:
                     entry.error = {"error": "Give a part number or an LCSC code"}
+
+    for entry in entries:  # Mouser's batches join numbers with "|": one holding it would be several
+        if entry.error is None and entry.mpn and "|" in entry.mpn:
+            entry.error = {"error": "Invalid part: an MPN can't contain '|' (give each part on its own)"}
 
     store = _distributor_store or (_mouser_client or _digikey_client)._store
     results = await LifecycleLookup(store, _mouser_client, _digikey_client).answer(entries, caller=_caller_ip())

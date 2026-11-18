@@ -127,6 +127,26 @@ class TestOpenAIList:
         with pytest.raises(ValueError):
             parse_openai_list(data)
 
+    @pytest.mark.parametrize("entries", [
+        [{"ipv4Prefix": "0.0.0.0/0"}],
+        [{"ipv4Prefix": "1.2.3.0/24"}, {"ipv4Prefix": "10.0.0.0/11"}],
+        [{"ipv6Prefix": "::/0"}],
+        [{"ipv6Prefix": "2001:db8::/31"}],
+        [{"ipv4Prefix": f"{n}.0.0.0/12"} for n in (10, 20, 30, 40, 50)],  # each allowed, too many in all
+        [{"ipv6Prefix": f"2001:{n:x}::/32"} for n in range(17)],
+    ], ids=["all4", "wide4", "all6", "wide6", "sum4", "sum6"])
+    def test_implausible_lists_rejected(self, entries):
+        """Every address listed gets the platform limit: a list that would cover far more than
+        OpenAI's connectors can't be used (docker-build.yml then keeps the committed copy)."""
+        with pytest.raises(ValueError, match="plausible"):
+            parse_openai_list(openai_json(*entries))
+
+    def test_widest_plausible_prefixes_pass(self):
+        entries = [{"ipv4Prefix": f"{n}.0.0.0/12"} for n in (10, 20, 30, 40)] + [
+            {"ipv4Prefix": "10.0.0.0/12"},  # an overlap counts once
+            *({"ipv6Prefix": f"2001:{n:x}::/32"} for n in range(16))]
+        assert len(parse_openai_list(openai_json(*entries)).prefixes) == 21
+
     def test_committed_copy(self):
         """The fallback copy the image ships when CI can't refresh it, and config's default."""
         parsed = platform_ranges.read_openai_list(COMMITTED)

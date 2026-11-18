@@ -31,6 +31,10 @@ from pcbparts_mcp.catalog_files import SOLD_OUT_DIR, read_catalog, write_sold_ou
 from scrape_components import update_sold_out  # noqa: E402
 
 CATALOG = "data/catalog"
+# File contents exactly as committed: git archive applies core.autocrlf (true on Windows runners), which
+# turns stock.tsv's LF into CRLF that read_catalog rejects. git show doesn't convert; it gets the same
+# settings anyway, so no read in this script depends on the machine's git config.
+RAW = ("-c", "core.autocrlf=false", "-c", "core.eol=lf")
 
 
 def git(repo: Path, *args: str) -> bytes:
@@ -39,17 +43,17 @@ def git(repo: Path, *args: str) -> bytes:
 
 def catalog_codes(repo: Path, rev: str) -> set[str]:
     """The LCSC codes a commit's catalog lists (its stock.tsv)."""
-    return {line.split(b"\t", 1)[0].decode() for line in git(repo, "show", f"{rev}:{CATALOG}/stock.tsv").splitlines()}
+    return {line.split(b"\t", 1)[0].decode() for line in git(repo, *RAW, "show", f"{rev}:{CATALOG}/stock.tsv").splitlines()}
 
 
 def scrape_date(repo: Path, rev: str) -> str:
     """The UTC date of the scrape a commit's catalog came from (its manifest's scraped_at)."""
-    return json.loads(git(repo, "show", f"{rev}:data/manifest.json"))["scraped_at"][:10]
+    return json.loads(git(repo, *RAW, "show", f"{rev}:data/manifest.json"))["scraped_at"][:10]
 
 
 def extract_catalog(repo: Path, rev: str, target: Path) -> Path:
     """A commit's catalog files (parts, stock.tsv, prices.tsv) unpacked under target."""
-    archive = subprocess.Popen(["git", "archive", "--format=tar", rev, CATALOG], cwd=repo, stdout=subprocess.PIPE)
+    archive = subprocess.Popen(["git", *RAW, "archive", "--format=tar", rev, CATALOG], cwd=repo, stdout=subprocess.PIPE)
     with tarfile.open(fileobj=archive.stdout, mode="r|") as tar:
         tar.extractall(target, filter="data")
     if archive.wait() != 0:

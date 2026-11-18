@@ -590,7 +590,10 @@ class ComponentDatabase:
             return []
         parts = get_by_mpn(self._conn, mpn, self._subcategories, match_info=match_info, sold_out=True)
         if with_prices:
-            parts = add_snapshot_prices(self._conn, parts, False)  # no price breaks are kept for them
+            # No price breaks for them, ever: one tier (the last 1-piece price) or none. Backplane's
+            # hub looks a result with one break or fewer up live by its lcsc for current stock, and
+            # a gone part's stock is exactly what it needs to check (see its row in jlc_get_parts too)
+            parts = add_snapshot_prices(self._conn, parts, False)
         return self._snapshot_parts(parts)
 
     @serialized

@@ -192,7 +192,7 @@ def client(app):
 
 class TestBusyHTTP:
     @pytest.mark.parametrize("ip,limit", [("203.0.113.7", 100), ("160.79.104.10", 1000)], ids=["normal", "platform"])
-    async def test_shape_headers_recovery_and_no_ip_charge(self, busy, ip, limit):
+    async def test_shape_headers_recovery_and_ip_charge(self, busy, ip, limit):
         async with client(app_for(busy)) as c:
             reply = await c.post("/mcp", json=CALL, headers={"X-Forwarded-For": ip})
             assert reply.status_code == 429
@@ -205,7 +205,7 @@ class TestBusyHTTP:
                 busy.pressure.discard(busy.pool, token)
             reply = await c.post("/mcp", json=CALL, headers={"X-Forwarded-For": ip})
             assert reply.status_code == 200 and reply.json() == CALL
-            assert reply.headers["x-ratelimit-remaining"] == str(limit - 1)
+            assert reply.headers["x-ratelimit-remaining"] == str(limit - 2)  # the busy refusal counted too
 
     @pytest.mark.parametrize("payload", [
         {"id": 1, "method": "initialize"}, {"method": "notifications/initialized"},
@@ -225,12 +225,65 @@ class TestBusyHTTP:
             assert reply.status_code == 200 and reply.content == raw
 
     async def test_health_stats_and_non_posts_never_busy(self, busy):
-        async with client(app_for(busy, requests_per_minute=1)) as c:
-            assert (await c.get("/mcp")).status_code == 200  # uses up this address's allowance
-            for path in ("/health", "/mcp/stats"):
-                for _ in range(2):
-                    assert (await c.get(path)).status_code == 200
-            assert (await c.get("/mcp")).json()["reason"] == "per_ip_rate_limit"
+        async with client(app_for(busy, requests_per_minute=3)) as c:
+            assert (await c.get("/mcp")).status_code == 200
+            for _ in range(2):
+                assert (await c.get("/health")).status_code == 200  # not counted
+                assert (await c.get("/mcp/stats")).status_code == 200  # counted, never busy
+            assert (await c.get("/mcp/stats")).json()["reason"] == "per_ip_rate_limit"
+            assert (await c.get("/health")).status_code == 200
+
+    async def test_busy_refusals_use_up_the_address(self, busy):
+        """A flood during an overload: each busy 429 takes one of the address's requests, so it
+        then gets per-IP 429s (refused before its body is read), and other addresses carry on."""
+        async with client(app_for(busy, requests_per_minute=3)) as c:
+            reasons = [(await c.post("/mcp", json=CALL, headers={"X-Forwarded-For": "203.0.113.7"})).json()["reason"]
+                       for _ in range(4)]
+            assert reasons == ["server_busy"] * 3 + ["per_ip_rate_limit"]
+            other = await c.post("/mcp", json=CALL, headers={"X-Forwarded-For": "203.0.113.8"})
+            assert other.json()["reason"] == "server_busy"
+        assert busy.usage.summary()["days"][0]["per_ip_refusals"]["server_busy"] == 4
+        assert busy.tally._counts == {"203.0.113.7": 3, "203.0.113.8": 1}
+
+    async def test_slow_body_refused_as_busy(self, busy):
+        """A body that doesn't arrive in time while the server is overloaded is refused as busy, and charged."""
+        stalled = asyncio.Event()
+
+        async def chunks():
+            yield b'{"jsonrpc":"2.0",'
+            await stalled.wait()  # never set: the rest never comes
+            yield b"}"
+
+        async with client(app_for(busy, busy_body_timeout=0, requests_per_minute=2)) as c:
+            reply = await c.post("/mcp", content=chunks())
+            assert reply.status_code == 429 and reply.json()["reason"] == "server_busy"
+            assert reply.json()["retry_after"] == 2
+            assert (await c.post("/mcp", json=CALL)).json()["reason"] == "server_busy"
+            assert (await c.post("/mcp", json=CALL)).json()["reason"] == "per_ip_rate_limit"
+
+    async def test_disconnect_mid_body_under_pressure(self, busy, caplog):
+        """The client leaves while the busy peek reads its body: no "No response returned."
+        RuntimeError from BodySizeLimitMiddleware, no traceback; charged as without pressure."""
+        app = app_for(busy, requests_per_minute=1)
+        messages = [{"type": "http.request", "body": b'{"jsonrpc":', "more_body": True}, {"type": "http.disconnect"}]
+        sent = []
+
+        async def receive():
+            return messages.pop(0) if messages else {"type": "http.disconnect"}
+
+        async def send(message):
+            sent.append(message)
+
+        scope = {"type": "http", "asgi": {"version": "3.0"}, "http_version": "1.1", "method": "POST",
+                 "scheme": "http", "path": "/mcp", "raw_path": b"/mcp", "root_path": "", "query_string": b"",
+                 "headers": [(b"host", b"localhost"), (b"content-type", b"application/json")],
+                 "client": ("203.0.113.7", 5000), "server": ("localhost", 80)}
+        with caplog.at_level(logging.ERROR):
+            await app(scope, receive, send)
+        assert sent[0]["type"] == "http.response.start" and not caplog.records
+        async with client(app) as c:  # that used the address's one request
+            reply = await c.post("/mcp", json={"id": 1, "method": "tools/list"}, headers={"X-Forwarded-For": "203.0.113.7"})
+            assert reply.json()["reason"] == "per_ip_rate_limit"
 
     async def test_exhausted_address_refused_before_body_read(self, busy):
         async def chunks():

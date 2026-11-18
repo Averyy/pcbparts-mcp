@@ -339,6 +339,47 @@ class TestPerMinute:
         assert fake.used == [1, 2, 2]  # key 2 again: a minute's pause isn't its day
 
 
+    @pytest.mark.parametrize("first", ["daily", "minute"])
+    @pytest.mark.parametrize("minute,wait", [
+        (httpx.Response(403, json=MINUTE_403), 60),
+        (httpx.Response(429, headers={"retry-after": "20"}), 20),
+    ], ids=["403", "429"])
+    async def test_minute_refusal_kept_beside_a_daily_one(self, make, clock, first, minute, wait):
+        """Two batches in flight on key 1: one refused for the day, one for the minute, in either
+        order. Key 1's daily pause is the longer, but the minute's refusal still pauses every key:
+        the pool mustn't send the next request on key 2 at once."""
+        quotas = pool(clock, n=2)
+        daily = httpx.Response(403, json=DAILY_403)
+        replies = [daily, minute] if first == "daily" else [minute, daily]
+        both_in, release = asyncio.Event(), asyncio.Event()
+
+        async def handler(request):
+            keys.append(KEYS.index(request.url.params["apiKey"]) + 1)
+            if len(keys) == 1:
+                await both_in.wait()  # both batches are on key 1 before either answer comes back
+                return replies[0]
+            if len(keys) == 2:
+                both_in.set()
+                await release.wait()  # answered once the first batch is done with its answer
+                return replies[1]
+            return httpx.Response(200, json={"Errors": [], "SearchResults": {"NumberOfResult": 0, "Parts": []}})
+
+        keys = []
+        m = make(quotas, handler)
+        a = asyncio.create_task(m.get_part("PARTA1|PARTA2"))
+        b = asyncio.create_task(m.get_part("PARTB1|PARTB2"))
+        await a
+        release.set()
+        paused = {"error": f"Mouser is limiting requests per minute. Try again in {wait} s.{ADVICE}"}
+        assert await b == paused
+        assert keys == ([1, 1, 2] if first == "daily" else [1, 1])  # the daily refusal's batch moved on before the minute's
+        assert await m.get_part("PARTC1|PARTC2") == paused and len(keys) == (3 if first == "daily" else 2)
+        assert quotas.quotas[0].status()["paused_until"] == "2026-11-19 00:00 UTC"  # and key 1's day stays over
+        clock.advance(wait)
+        assert "error" not in await m.get_part("PARTD1|PARTD2")
+        assert keys[-1] == 2
+
+
 class TestRestart:
     def test_counts_and_pauses_survive(self, tmp_path, clock):
         path = tmp_path / "quota.json"
