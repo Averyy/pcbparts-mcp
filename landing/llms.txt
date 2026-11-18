@@ -4,7 +4,7 @@
 
 - Endpoint: `https://pcbparts.dev/mcp` (Streamable HTTP, stateless)
 - Auth: none
-- Rate limit: 100 requests a minute per IP
+- Rate limit: 100 requests a minute per IP, with `X-RateLimit-*` headers on replies (see Rate limit)
 - Health: `https://pcbparts.dev/health`
 - Source: https://github.com/Averyy/pcbparts-mcp
 
@@ -215,6 +215,16 @@ Reply: `{content, matched_files, topic}`, with `note` on text-fallback matches. 
 | `extended` | Fee per unique type; calculator uses a rounded $3 estimate | Everything else |
 | `no_fee` | none | Filter for basic and preferred together |
 | `all` | | No library filter |
+
+## Rate limit
+
+Each IP address may send 100 HTTP requests in any rolling minute; each MCP message (`initialize`, `tools/call`, ...) is one request. `/health` isn't counted.
+
+- Replies carry `X-RateLimit-Limit` (requests a minute for your address), `X-RateLimit-Remaining` (requests left in the current minute) and `X-RateLimit-Reset` (whole seconds until your oldest counted request leaves the minute, so one more is allowed; 0 when none are counted); `/health` replies too, without counting. Not on the few errors sent before the limit is checked (413 for an oversized body, 421/403 for an unknown Host or Origin).
+- Over the limit: HTTP 429 with a `Retry-After` header (seconds, at least 1) and a JSON body `{error, retry_after, reason, resets_at, tell_user}`: `retry_after` is the same seconds, `resets_at` that moment in UTC (ISO 8601), `tell_user` one sentence to show the user, `reason` why:
+  - `per_ip_rate_limit`: your address sent its limit in the last minute.
+  - `too_many_clients`: the server is serving as many addresses as it can at once; not caused by your use.
+- Refused requests aren't counted: wait `retry_after` seconds, then send again. For heavy use, self-host: https://github.com/Averyy/pcbparts-mcp#self-hosting
 
 ## Quotas
 

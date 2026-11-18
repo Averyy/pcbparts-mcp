@@ -2,6 +2,7 @@
 
 import asyncio
 import contextlib
+import datetime
 import functools
 import inspect
 import json
@@ -13,7 +14,7 @@ import time
 from collections import defaultdict
 from contextlib import asynccontextmanager
 from difflib import get_close_matches
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Callable, Literal, NamedTuple
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import NotFoundError, ValidationError
@@ -27,7 +28,7 @@ from starlette.responses import JSONResponse, RedirectResponse
 from starlette.routing import Route
 
 from . import __version__, stats
-from .cache import CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
+from .cache import SELF_HOSTING_URL, CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
 from .config import (
     RATE_LIMIT_REQUESTS, HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
@@ -530,11 +531,48 @@ class UsageStatsMiddleware(FastMCPMiddleware):
 mcp.add_middleware(UsageStatsMiddleware())
 
 
+# The per-IP rate limit counts each address's requests over a rolling window of this many seconds
+RATE_LIMIT_WINDOW = 60
+
+# Why the per-IP rate limit refused a request: the `reason` in its 429 body (llms.txt lists them).
+# Add reasons, never rename one: clients branch on them.
+RATE_LIMIT_REASONS = {
+    "per_ip_rate_limit": "this address sent its limit of requests in the last minute",
+    "too_many_clients": "the server is tracking as many addresses as it can (MAX_TRACKED_IPS); "
+                        "not about this address's use",
+}
+
+
+class _Allowance(NamedTuple):
+    """What the per-IP rate limit decided for one request; its X-RateLimit-* headers and its 429
+    say the same."""
+    limit: int  # requests a minute this address may send (RateLimitMiddleware._limit_for)
+    remaining: int  # requests left in the current window, this one counted; 0 when refused
+    reset: int  # whole seconds until the oldest counted request leaves the window, so one more is
+    #             allowed (0: none counted); refused: until one request would be allowed again (>= 1)
+    at: float  # when it was decided (the middleware's clock, epoch seconds)
+    refused: str | None = None  # why it was refused (a RATE_LIMIT_REASONS key); None: allowed
+
+
+def _utc_iso(timestamp: float) -> str:
+    return datetime.datetime.fromtimestamp(timestamp, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Rate limiting middleware - 100 requests/minute per IP.
+    """Rate limiting middleware: RATE_LIMIT_REQUESTS (100) requests a rolling minute per IP, the
+    limit _limit_for() gives each address.
+
+    Every reply it sees says where the address stands: X-RateLimit-Limit (requests a minute),
+    X-RateLimit-Remaining (left in the current window) and X-RateLimit-Reset (whole seconds until
+    the oldest counted request leaves the window; see _Allowance). A refusal is a 429 with
+    Retry-After and a JSON body: error and retry_after (as before 0.10.0, and clients read
+    retry_after: keep it), reason (a RATE_LIMIT_REASONS key), resets_at (UTC) and tell_user (one
+    sentence a client can show). Refused requests aren't counted. /health isn't limited or counted;
+    its headers show where the address stands.
 
     Includes protections against memory exhaustion from IP spoofing:
-    - Maximum tracked IPs limit (10,000)
+    - Maximum tracked IPs limit (10,000): past it, new addresses are refused (too_many_clients)
+      while the addresses already tracked carry on
     - Periodic cleanup of stale IPs
 
     Each refusal (429) is counted in /mcp/stats (per_ip_refusals, no IP) and in the hourly
@@ -543,58 +581,104 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
     MAX_TRACKED_IPS = 10_000  # Prevent memory exhaustion from spoofed IPs
 
-    def __init__(self, app, requests_per_minute: int = RATE_LIMIT_REQUESTS):
+    def __init__(self, app, requests_per_minute: int = RATE_LIMIT_REQUESTS,
+                 clock: Callable[[], float] | None = None):
         super().__init__(app)
         self.requests_per_minute = requests_per_minute
+        self._clock = clock  # epoch seconds; None: time.time()
         self.request_counts: dict[str, list[float]] = {}
-        self._last_cleanup = time.time()
+        self._last_cleanup = self._now()
+
+    def _now(self) -> float:
+        return self._clock() if self._clock is not None else time.time()
 
     def _get_client_ip(self, request) -> str:
         return _client_ip(request)
 
+    def _limit_for(self, client_ip: str) -> int:
+        """Requests a minute this address may send. The check, the headers and the 429 all use
+        this. The same for every address so far; a higher limit for the AI platforms' address
+        ranges would go here (and in _refusal_group)."""
+        return self.requests_per_minute
+
     def _cleanup_stale_ips(self, now: float) -> None:
-        """Remove IPs with no recent requests. Called periodically."""
-        window_start = now - 60
+        """Remove IPs with no request left in the window. Called periodically."""
+        window_start = now - RATE_LIMIT_WINDOW
         stale_ips = [
             ip for ip, timestamps in self.request_counts.items()
-            if not timestamps or timestamps[-1] < window_start
+            if not timestamps or timestamps[-1] <= window_start
         ]
         for ip in stale_ips:
             del self.request_counts[ip]
 
-    def _check_rate_limit(self, client_ip: str) -> bool:
-        now = time.time()
-        window_start = now - 60
+    @staticmethod
+    def _reset_seconds(timestamps: list[float], limit: int, now: float) -> int:
+        """Whole seconds until one more request is allowed: until the oldest counted request leaves
+        the window, or with no room, until enough have left for one more. 0 with none counted."""
+        if limit <= 0:
+            return RATE_LIMIT_WINDOW
+        if not timestamps:
+            return 0
+        leaves_at = timestamps[max(0, len(timestamps) - limit)] + RATE_LIMIT_WINDOW
+        return max(1, math.ceil(leaves_at - now))
 
-        # Periodic cleanup every 60 seconds to remove stale IPs
-        if now - self._last_cleanup > 60:
-            self._cleanup_stale_ips(now)
-            self._last_cleanup = now
+    def _seconds_until_untracked(self, now: float) -> int:
+        """With MAX_TRACKED_IPS addresses tracked, whole seconds until the first of them goes stale
+        and frees a place (at least 1)."""
+        last = min((timestamps[-1] for timestamps in self.request_counts.values() if timestamps),
+                   default=now)
+        return max(1, math.ceil(last + RATE_LIMIT_WINDOW - now))
 
-        # If tracking too many IPs, do aggressive cleanup
-        if len(self.request_counts) >= self.MAX_TRACKED_IPS:
-            self._cleanup_stale_ips(now)
-            # If still at limit after cleanup, reject to prevent memory exhaustion
-            if len(self.request_counts) >= self.MAX_TRACKED_IPS:
-                return True  # Rate limit as protection
+    def _allowance(self, client_ip: str, *, count: bool = True) -> _Allowance:
+        """Judge a request from client_ip and count it if allowed. count=False only looks (/health)."""
+        now = self._now()
+        window_start = now - RATE_LIMIT_WINDOW
+        limit = self._limit_for(client_ip)
 
-        # Get or create entry for this IP
-        if client_ip not in self.request_counts:
-            self.request_counts[client_ip] = [now]
-            return False
+        if count:
+            # Periodic cleanup every minute to remove stale IPs
+            if now - self._last_cleanup > RATE_LIMIT_WINDOW:
+                self._cleanup_stale_ips(now)
+                self._last_cleanup = now
+            # A new address while tracking too many: aggressive cleanup, then refuse it if still
+            # full, to prevent memory exhaustion. Addresses already tracked carry on.
+            if client_ip not in self.request_counts and len(self.request_counts) >= self.MAX_TRACKED_IPS:
+                self._cleanup_stale_ips(now)
+                if len(self.request_counts) >= self.MAX_TRACKED_IPS:
+                    return _Allowance(limit, 0, self._seconds_until_untracked(now), now, "too_many_clients")
 
-        # Filter old entries
-        self.request_counts[client_ip] = [
-            t for t in self.request_counts[client_ip] if t > window_start
-        ]
+        timestamps = [t for t in self.request_counts.get(client_ip, ()) if t > window_start]
+        # Checked before adding the current request; a refused request isn't counted
+        refused = count and len(timestamps) >= limit
+        if count:
+            if not refused:
+                timestamps.append(now)
+            self.request_counts[client_ip] = timestamps
+        remaining = 0 if refused else max(0, limit - len(timestamps))
+        return _Allowance(limit, remaining, self._reset_seconds(timestamps, limit, now), now,
+                          "per_ip_rate_limit" if refused else None)
 
-        # Check if rate limited before adding current request
-        if len(self.request_counts[client_ip]) >= self.requests_per_minute:
-            return True
+    @staticmethod
+    def _headers(allowance: _Allowance) -> dict[str, str]:
+        return {"X-RateLimit-Limit": str(allowance.limit),
+                "X-RateLimit-Remaining": str(allowance.remaining),
+                "X-RateLimit-Reset": str(allowance.reset)}
 
-        # Add current request
-        self.request_counts[client_ip].append(now)
-        return False
+    @classmethod
+    def _refusal(cls, allowance: _Allowance) -> JSONResponse:
+        wait, limit = allowance.reset, allowance.limit
+        seconds = f"{wait} second{'' if wait == 1 else 's'}"
+        if allowance.refused == "too_many_clients":
+            tell_user = f"pcbparts is serving too many addresses at once; try again in {seconds}."
+        else:
+            tell_user = (f"pcbparts allows {limit} request{'' if limit == 1 else 's'} a minute per address; "
+                         f"try again in {seconds}, or run your own copy for heavy use: {SELF_HOSTING_URL}")
+        return JSONResponse(
+            status_code=429,
+            content={"error": "Rate limit exceeded", "retry_after": wait, "reason": allowance.refused,
+                     "resets_at": _utc_iso(math.ceil(allowance.at + wait)), "tell_user": tell_user},
+            headers={**cls._headers(allowance), "Retry-After": str(wait)},
+        )
 
     @staticmethod
     def _refusal_group(client_ip: str) -> str:
@@ -616,18 +700,22 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             logger.exception("Couldn't note a rate-limit refusal for the hourly log line")
 
     async def dispatch(self, request, call_next):
-        if request.url.path == "/health":
-            return await call_next(request)
-
         client_ip = self._get_client_ip(request)
-        if self._check_rate_limit(client_ip):
-            self._count_refusal(client_ip)
-            return JSONResponse(
-                status_code=429,
-                content={"error": "Rate limit exceeded", "retry_after": 60},
-                headers={"Retry-After": "60"},
-            )
-        return await call_next(request)
+        if request.url.path == "/health":  # not limited or counted
+            allowance = self._allowance(client_ip, count=False)
+        else:
+            allowance = self._allowance(client_ip)
+            if allowance.refused:
+                self._count_refusal(client_ip)
+                return self._refusal(allowance)
+        response = await call_next(request)
+        # call_next returns once the app has sent its status and headers, before any of the body:
+        # these go out with them and a streamed (SSE) reply still streams. A new list, since an
+        # app may send its headers as a tuple.
+        response.raw_headers = [*response.raw_headers,
+                                *((name.lower().encode("latin-1"), value.encode("latin-1"))
+                                  for name, value in self._headers(allowance).items())]
+        return response
 
 
 def _client_ip(request) -> str:

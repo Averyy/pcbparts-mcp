@@ -444,8 +444,10 @@ class TestRefusals:
                 assert (await c.get("/health", headers={"X-Forwarded-For": "203.0.113.7"})).status_code == 200
         assert [r.status_code for r in replies] == [200, 200, 429, 200, 200, 429, 429]
         refusal = replies[2]
-        assert refusal.json() == {"error": "Rate limit exceeded", "retry_after": 60}  # unchanged for clients
-        assert refusal.headers["retry-after"] == "60"
+        body = refusal.json()  # error and retry_after unchanged for clients; 0.10.0 adds fields
+        assert {key: body[key] for key in ("error", "retry_after")} == {"error": "Rate limit exceeded", "retry_after": 60}
+        assert body["reason"] == "per_ip_rate_limit"
+        assert refusal.headers["retry-after"] == "60"  # all three at the same moment: a full minute
         assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 3, "everyone_else": 3}
         usage.save()
         assert "203.0.113" not in (tmp_path / "usage.json").read_text(encoding="utf-8")
